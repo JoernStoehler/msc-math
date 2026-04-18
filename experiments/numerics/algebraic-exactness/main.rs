@@ -5,12 +5,12 @@
 //! library path without changing the library core.
 //!
 //! Input Artifacts: None.
-//! Output Artifacts: experiments/numerics/algebraic-exactness/exact-polytopes.jsonl, experiments/numerics/algebraic-exactness/exact-kkt-comparison.jsonl
+//! Output Artifacts: experiments/numerics/algebraic-exactness/{smoke-exact-polytopes.jsonl,smoke-exact-kkt-comparison.jsonl,exact-polytopes.jsonl,exact-kkt-comparison.jsonl}
 
 use dev_numerical_analysis::algebraic::catalog::{
     ElementRecord, ExactKktComparisonRow, ExactPolytopeCatalogRow,
 };
-use dev_numerical_analysis::algebraic::field::ExactOrderedField;
+use dev_numerical_analysis::algebraic::field::{CatalogField, ExactOrderedField};
 use dev_numerical_analysis::algebraic::fixtures::{
     exact_hko_pentagon, exact_hypercube, exact_simplex, hko_capacity_formula_f64,
     HKO_RANK_DEFICIENT_SIGMA, HKO_WINNING_SIGMA,
@@ -19,14 +19,15 @@ use dev_numerical_analysis::algebraic::geom::ExactPolytope4D;
 use dev_numerical_analysis::algebraic::kkt::solve_kkt_exact;
 use nalgebra::DMatrix;
 use serde::Serialize;
+use std::env;
 use std::fs::{self, File};
 use std::io::{BufWriter, Write};
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use symplectic::geom::known_polytopes;
 use symplectic::kkt::rational_solver as library_rational_solver;
 use symplectic::ehz_capacity_pruned;
 
-fn polytope_row<F: ExactOrderedField>(
+fn polytope_row<F: CatalogField>(
     name: &str,
     polytope: &ExactPolytope4D<F>,
 ) -> ExactPolytopeCatalogRow {
@@ -48,11 +49,11 @@ fn polytope_row<F: ExactOrderedField>(
             .iter()
             .map(|vertex| std::array::from_fn(|i| ElementRecord::from_field(&vertex[i])))
             .collect(),
-        has_zero_omega: polytope.omega_signs().iter().flatten().any(|&sign| sign == 0),
+        has_zero_omega: has_off_diagonal_zero_omega(polytope.omega_signs()),
     }
 }
 
-fn exact_kkt_row<F: ExactOrderedField>(
+fn exact_kkt_row<F: CatalogField>(
     name: &str,
     sigma_label: &str,
     sigma: &[usize],
@@ -78,6 +79,10 @@ fn exact_kkt_row<F: ExactOrderedField>(
 }
 
 fn write_jsonl<T: Serialize>(path: &Path, rows: &[T]) {
+    if let Some(parent) = path.parent() {
+        fs::create_dir_all(parent)
+            .unwrap_or_else(|err| panic!("failed to create {}: {err}", parent.display()));
+    }
     let file = File::create(path).unwrap_or_else(|err| panic!("failed to create {}: {err}", path.display()));
     let mut writer = BufWriter::new(file);
     for row in rows {
@@ -85,6 +90,59 @@ fn write_jsonl<T: Serialize>(path: &Path, rows: &[T]) {
         writeln!(&mut writer).expect("write jsonl newline");
     }
     writer.flush().expect("flush jsonl writer");
+}
+
+fn has_off_diagonal_zero_omega(omega_signs: &[Vec<i8>]) -> bool {
+    omega_signs.iter().enumerate().any(|(row_idx, row)| {
+        row.iter()
+            .enumerate()
+            .any(|(col_idx, &sign)| row_idx != col_idx && sign == 0)
+    })
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum RunMode {
+    Smoke,
+    Canonical,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum RunModeArgError {
+    Help,
+    Unknown,
+}
+
+fn parse_run_mode<I>(args: I) -> Result<RunMode, RunModeArgError>
+where
+    I: IntoIterator,
+    I::Item: Into<String>,
+{
+    let mut mode = RunMode::Smoke;
+    for arg in args {
+        match arg.into().as_str() {
+            "--canonical" => mode = RunMode::Canonical,
+            "--help" | "-h" => return Err(RunModeArgError::Help),
+            _ => return Err(RunModeArgError::Unknown),
+        }
+    }
+    Ok(mode)
+}
+
+fn output_path(manifest_dir: &Path, filename: &str, mode: RunMode) -> PathBuf {
+    let output_dir = manifest_dir.join("algebraic-exactness");
+    match mode {
+        RunMode::Smoke => output_dir.join(format!("smoke-{filename}")),
+        RunMode::Canonical => output_dir.join(filename),
+    }
+}
+
+fn print_help_and_exit() -> ! {
+    eprintln!(
+        "Usage: cargo run -p dev-numerical-analysis --release --bin num-algebraic-exactness [--canonical]"
+    );
+    eprintln!("  default: write untracked smoke outputs under experiments/numerics/algebraic-exactness/");
+    eprintln!("  --canonical: refresh the tracked exact-polytopes.jsonl and exact-kkt-comparison.jsonl outputs");
+    std::process::exit(2);
 }
 
 fn normalized_incidence_rows(rows: &[Vec<bool>]) -> Vec<Vec<bool>> {
@@ -134,20 +192,29 @@ fn omega_mismatch_positions(lhs: &[Vec<i8>], rhs: &DMatrix<i8>) -> Vec<(usize, u
 }
 
 fn main() {
+    let mode = match parse_run_mode(env::args().skip(1)) {
+        Ok(mode) => mode,
+        Err(RunModeArgError::Help) => print_help_and_exit(),
+        Err(RunModeArgError::Unknown) => {
+            eprintln!("unknown argument");
+            print_help_and_exit();
+        }
+    };
+
     let exact_simplex = exact_simplex().expect("exact simplex");
     let exact_hypercube = exact_hypercube().expect("exact hypercube");
     let exact_hko = exact_hko_pentagon().expect("exact hko");
 
-    let output_dir = Path::new(env!("CARGO_MANIFEST_DIR")).join("algebraic-exactness");
-    fs::create_dir_all(&output_dir)
-        .unwrap_or_else(|err| panic!("failed to create {}: {err}", output_dir.display()));
+    let manifest_dir = Path::new(env!("CARGO_MANIFEST_DIR"));
+    let polytope_output_path = output_path(manifest_dir, "exact-polytopes.jsonl", mode);
+    let kkt_output_path = output_path(manifest_dir, "exact-kkt-comparison.jsonl", mode);
 
     let polytope_rows = vec![
         polytope_row("simplex_exact_q", &exact_simplex),
         polytope_row("hypercube_exact_q", &exact_hypercube),
         polytope_row("hko_pentagon_exact_pentagon_field", &exact_hko),
     ];
-    write_jsonl(&output_dir.join("exact-polytopes.jsonl"), &polytope_rows);
+    write_jsonl(&polytope_output_path, &polytope_rows);
 
     let library_simplex = known_polytopes::simplex();
     let simplex_best = ehz_capacity_pruned(&library_simplex.polytope).expect("library simplex capacity");
@@ -204,7 +271,7 @@ fn main() {
             Some(hko_rank_deficient_reference.q_exact_f64),
         ),
     ];
-    write_jsonl(&output_dir.join("exact-kkt-comparison.jsonl"), &kkt_rows);
+    write_jsonl(&kkt_output_path, &kkt_rows);
 
     let winning_action = kkt_rows
         .iter()
@@ -229,6 +296,12 @@ fn main() {
     println!("exact-polytopes rows: {}", polytope_rows.len());
     println!("exact-kkt rows: {}", kkt_rows.len());
     println!(
+        "Output mode: {:?}\npolytope rows: {}\nkkt rows: {}",
+        mode,
+        polytope_output_path.display(),
+        kkt_output_path.display()
+    );
+    println!(
         "HKO combinatorics vs dyadic library: incidence_match={}, adjacency_match={}, omega_match={}",
         hko_incidence_match, hko_adjacency_match, hko_omega_match
     );
@@ -241,4 +314,42 @@ fn main() {
         expected_capacity,
         (winning_action - expected_capacity).abs()
     );
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{has_off_diagonal_zero_omega, parse_run_mode, RunMode, RunModeArgError};
+
+    #[test]
+    fn diagonal_zero_omega_does_not_trigger_catalog_flag() {
+        let omega = vec![vec![0, 1], vec![-1, 0]];
+        assert!(!has_off_diagonal_zero_omega(&omega));
+    }
+
+    #[test]
+    fn off_diagonal_zero_omega_triggers_catalog_flag() {
+        let omega = vec![vec![0, 0], vec![0, 0]];
+        assert!(has_off_diagonal_zero_omega(&omega));
+    }
+
+    #[test]
+    fn run_mode_defaults_to_smoke() {
+        assert_eq!(parse_run_mode(Vec::<String>::new()), Ok(RunMode::Smoke));
+    }
+
+    #[test]
+    fn canonical_flag_switches_run_mode() {
+        assert_eq!(
+            parse_run_mode(vec!["--canonical".to_string()]),
+            Ok(RunMode::Canonical)
+        );
+    }
+
+    #[test]
+    fn unknown_argument_is_rejected() {
+        assert_eq!(
+            parse_run_mode(vec!["--unexpected".to_string()]),
+            Err(RunModeArgError::Unknown)
+        );
+    }
 }

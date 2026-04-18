@@ -29,8 +29,12 @@ HKO-style polytopes whose intended coordinates live in an algebraic extension of
 
 ## Generated Data
 
-- `experiments/numerics/algebraic-exactness/exact-polytopes.jsonl`
-- `experiments/numerics/algebraic-exactness/exact-kkt-comparison.jsonl`
+- Canonical tracked refresh:
+  - `experiments/numerics/algebraic-exactness/exact-polytopes.jsonl`
+  - `experiments/numerics/algebraic-exactness/exact-kkt-comparison.jsonl`
+- Default smoke run:
+  - `experiments/numerics/algebraic-exactness/smoke-exact-polytopes.jsonl`
+  - `experiments/numerics/algebraic-exactness/smoke-exact-kkt-comparison.jsonl`
 
 ## Success Criteria
 
@@ -51,9 +55,13 @@ HKO-style polytopes whose intended coordinates live in an algebraic extension of
 ```bash
 cargo build -p dev-numerical-analysis --release
 cargo run -p dev-numerical-analysis --release --bin num-algebraic-exactness
+cargo run -p dev-numerical-analysis --release --bin num-algebraic-exactness -- --canonical
 ```
+
+- Default run writes untracked `smoke-*.jsonl` outputs for local inspection.
+- `--canonical` is the deliberate tracked-artifact refresh path.
 
 ## Follow-Up Design Note
 
 - Scalar-API planning for a reusable real-algebraic arithmetic layer lives in
-  [algebraic-scalar-api.md](/workspaces/msc-math/.codex/worktrees/algebraic-exactness-spike/research/numerics/design/algebraic-scalar-api.md).
+  [algebraic-scalar-api.md](./algebraic-scalar-api.md).

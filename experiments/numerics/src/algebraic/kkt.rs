@@ -3,6 +3,11 @@
 //! This is the experiment analogue of the library rational solver. It solves a
 //! selected sigma exactly, including the rank-deficient/null-space positivity
 //! path, but does not attempt exhaustive exact search across all sigmas.
+//!
+//! TODO: add [lem:...] to formal math for the exact KKT system assembly used
+//! here.
+//! TODO: add [lem:...] to formal math for the rank-deficient exact positivity
+//! search path used here.
 
 use super::field::{cmp_field, max_field, min_field, ExactOrderedField};
 use super::geom::omega0;
@@ -347,11 +352,20 @@ fn find_positive_beta<F: ExactOrderedField>(beta0: &[F], null_vecs: &[Vec<F>]) -
 mod tests {
     use super::*;
     use crate::algebraic::fixtures::{
-        exact_hko_pentagon, exact_simplex, HKO_RANK_DEFICIENT_SIGMA, HKO_WINNING_SIGMA,
+        exact_hko_pentagon, exact_hypercube, exact_simplex, HKO_RANK_DEFICIENT_SIGMA,
+        HKO_WINNING_SIGMA,
     };
     use symplectic::geom::known_polytopes;
     use symplectic::kkt::rational_solver as library_rational_solver;
     use symplectic::ehz_capacity_pruned;
+
+    fn assert_close(lhs: f64, rhs: f64, tolerance: f64, label: &str) {
+        let diff = (lhs - rhs).abs();
+        assert!(
+            diff <= tolerance,
+            "{label}: |{lhs} - {rhs}| = {diff} > {tolerance}"
+        );
+    }
 
     #[test]
     fn simplex_best_sigma_matches_library_rational_solver() {
@@ -364,23 +378,64 @@ mod tests {
             library_rational_solver::solve_kkt_exact(library.polytope.dual_vertices(), best.best_sigma())
                 .expect("library rational simplex sigma");
 
-        assert_eq!(exact_result.q_exact_f64, library_result.q_exact_f64);
+        assert_eq!(exact_result.q_exact, library_result.q_exact);
+        assert_eq!(exact_result.beta, library_result.beta);
     }
 
     #[test]
-    fn hko_selected_winning_sigma_solves_exactly() {
+    fn hypercube_best_sigma_matches_library_rational_solver() {
+        let exact = exact_hypercube().expect("exact hypercube");
+        let library = known_polytopes::hypercube();
+        let best = ehz_capacity_pruned(&library.polytope).expect("library hypercube capacity");
+
+        let exact_result = solve_kkt_exact(exact.dual_vertices(), best.best_sigma()).expect("exact hypercube sigma");
+        let library_result =
+            library_rational_solver::solve_kkt_exact(library.polytope.dual_vertices(), best.best_sigma())
+                .expect("library rational hypercube sigma");
+
+        assert_eq!(exact_result.q_exact, library_result.q_exact);
+        assert_eq!(exact_result.beta, library_result.beta);
+    }
+
+    #[test]
+    fn hko_selected_winning_sigma_stays_close_to_dyadic_reference() {
         let exact = exact_hko_pentagon().expect("exact hko");
         let result = solve_kkt_exact(exact.dual_vertices(), HKO_WINNING_SIGMA).expect("exact hko winning sigma");
+        let library = known_polytopes::hko_pentagon();
+        let reference =
+            library_rational_solver::solve_kkt_exact(library.polytope.dual_vertices(), HKO_WINNING_SIGMA)
+                .expect("dyadic HKO winning sigma");
+
         assert!(result.q_exact_f64 > 0.14);
         assert!(result.beta.iter().all(ExactOrderedField::is_positive));
+        assert_close(result.q_exact_f64, reference.q_exact_f64, 1.0e-12, "winning q");
+
+        let exact_beta_f64: Vec<f64> = result.beta.iter().map(ExactOrderedField::to_f64).collect();
+        let reference_beta_f64: Vec<f64> = reference
+            .beta
+            .iter()
+            .map(num_traits::ToPrimitive::to_f64)
+            .map(Option::unwrap)
+            .collect();
+        for (idx, (lhs, rhs)) in exact_beta_f64.iter().zip(reference_beta_f64.iter()).enumerate() {
+            assert_close(*lhs, *rhs, 1.0e-12, &format!("winning beta[{idx}]"));
+        }
     }
 
     #[test]
-    fn hko_rank_deficient_sigma_solves_exactly() {
+    fn hko_rank_deficient_sigma_stays_close_to_dyadic_reference() {
         let exact = exact_hko_pentagon().expect("exact hko");
         let result =
             solve_kkt_exact(exact.dual_vertices(), HKO_RANK_DEFICIENT_SIGMA).expect("exact hko rank-deficient sigma");
+        let library = known_polytopes::hko_pentagon();
+        let reference = library_rational_solver::solve_kkt_exact(
+            library.polytope.dual_vertices(),
+            HKO_RANK_DEFICIENT_SIGMA,
+        )
+        .expect("dyadic HKO rank-deficient sigma");
+
         assert!(result.q_exact_f64 > 0.0);
         assert!(result.beta.iter().all(ExactOrderedField::is_positive));
+        assert_close(result.q_exact_f64, reference.q_exact_f64, 1.0e-12, "rank-deficient q");
     }
 }
