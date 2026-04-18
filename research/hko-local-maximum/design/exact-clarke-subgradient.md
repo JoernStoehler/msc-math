@@ -18,7 +18,12 @@ Packet 1 exact geometry / symmetry tooling now lives in:
 - `research/hko-local-maximum/design/exact-clarke-closure-plan.md`
 - `experiments/hko-local-maximum/exact-clarke/`
 
-The full theorem-facing orbit catalog is still open.
+The full theorem-facing orbit catalog is still open, but Packet 2 now has two
+exact footholds:
+
+- one symmetry-reduced six-facet endpoint prototype is certified exactly;
+- one neighboring seven-facet equality-case surface is certified as an exact
+  one-parameter KKT segment with constant action.
 
 ## Research Question
 
@@ -143,7 +148,9 @@ evidence rather than the main route to the `M_10` statement.
 - The exact first-order statement may still leave a quotient-space theorem gap
   if the symmetry tangent space is not encoded correctly.
 - The active set in the paper may need interpretation before it yields a finite
-  exact matrix.
+  exact matrix. In particular, the current exact Packet 2 evidence suggests
+  that some paper families are best treated as exact KKT segments whose
+  interior points do not contribute new extreme first-order rows.
 
 If any of these occur, stop and record the specific obstruction before opening
 another implementation line.
@@ -151,10 +158,11 @@ another implementation line.
 ## Immediate Next Steps
 
 1. Extract the paper-derived orbit-family data needed for the exact gradients.
-2. Write down the exact dual-vertex coordinates of HKO2024 in repo notation.
-3. Confirm the actual coefficient field.
-4. Prototype the matrix build in SageMath on one or two orbit families before
-   writing the full checker.
+2. Turn the current exact endpoint and KKT-segment certificates into a
+   theorem-facing statement about which active-gradient rows can be extreme.
+3. Write down the exact dual-vertex coordinates of HKO2024 in repo notation.
+4. Prototype the matrix build in SageMath on the endpoint family first, then
+   add the segment-family reduction before writing the full checker.
 
 ## Related Files
 
@@ -162,4 +170,5 @@ another implementation line.
 - `formal/hko-local-maximum/gradient-analysis.tex`
 - `formal/hko-local-maximum/second-order.tex`
 - `research/hko-local-maximum/design/gradient-analysis.md`
+- `research/hko-local-maximum/design/exact-clarke-orbit-catalog.md`
 - `research/hko-local-maximum/design/second-order.md`
