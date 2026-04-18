@@ -35,8 +35,8 @@
 //! open_ascent_writers, run_parallel_seeds, ...}`.
 
 use exp_sys_landscape::{
-    apply_dual_step, ascent_direction, compute_active_sys_state, compute_sys,
-    compute_step_bound, finalize_ascent_output, open_ascent_writers, parse_ascent_args,
+    apply_dual_step, ascent_direction, compute_capacity_result, compute_step_bound, compute_sys,
+    compute_sys_from_capacity, finalize_ascent_output, open_ascent_writers, parse_ascent_args,
     run_parallel_seeds, smoke_output_path, trace_path_for, AscentArgs, AscentMode, SeedResult,
     SummaryRow, TraceRow, MAX_STEP_SIZE,
 };
@@ -155,14 +155,14 @@ fn gradient_ascent(
             break;
         }
 
-        // 1. Shared local state
-        let state = compute_active_sys_state(&current)?;
-        let sys = state.sys;
+        // 1. Active-orbit state and current sys value for this iterate.
+        let capacity = compute_capacity_result(&current)?;
+        let sys = compute_sys_from_capacity(&current, &capacity)?;
         let duals = current.dual_vertices_f64();
 
         // 2. Ascent direction: single branch when unique, nonsmooth maximin
         // direction when several active orbit branches tie.
-        let d_sys_a = ascent_direction(&current, &state, AscentMode::General)?;
+        let d_sys_a = ascent_direction(&current, &capacity, AscentMode::General)?;
 
         let gradient_norm = d_sys_a
             .iter()

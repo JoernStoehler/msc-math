@@ -258,19 +258,8 @@ pub fn compute_step_bound(polytope: &Polytope4D, direction: &[Vector4<f64>]) -> 
 }
 
 // ============================================================================
-// Shared ascent state and direction selection
+// Shared ascent helpers and direction selection
 // ============================================================================
-
-/// Shared local state for one ascent iteration.
-///
-/// This packages the active-orbit capacity result together with the smooth
-/// volume term. It does not choose a single orbit branch.
-#[derive(Clone, Debug)]
-pub struct ActiveSysState {
-    pub capacity: OrbitSearchResult,
-    pub vol: f64,
-    pub sys: f64,
-}
 
 /// Mode-specific projection for the ascent direction.
 #[derive(Clone, Copy, Debug)]
@@ -281,21 +270,23 @@ pub enum AscentMode<'a> {
     },
 }
 
-/// Compute the active-orbit local state for one polytope.
-pub fn compute_active_sys_state(polytope: &Polytope4D) -> Option<ActiveSysState> {
-    let capacity = compute_capacity_result(polytope)?;
+/// Compute sys = c_EHZ(K)^2 / (2 vol(K)) from a cached capacity result.
+///
+/// `capacity` must come from the same `polytope`.
+pub fn compute_sys_from_capacity(
+    polytope: &Polytope4D,
+    capacity: &OrbitSearchResult,
+) -> Option<f64> {
     let vol = volume(polytope).ok().filter(|&v| v > 0.0)?;
-    let sys = capacity.capacity() * capacity.capacity() / (2.0 * vol);
-    sys.is_finite()
-        .then_some(ActiveSysState { capacity, vol, sys })
+    let cap = capacity.capacity();
+    let sys = cap * cap / (2.0 * vol);
+    sys.is_finite().then_some(sys)
 }
 
 /// Compute sys = c_EHZ(K)^2 / (2 vol(K)) for a polytope using HK2017.
 pub fn compute_sys(polytope: &Polytope4D) -> Option<f64> {
-    let vol = volume(polytope).ok().filter(|&v| v > 0.0)?;
-    let cap = compute_capacity_result(polytope)?.capacity();
-    let sys = cap * cap / (2.0 * vol);
-    sys.is_finite().then_some(sys)
+    let capacity = compute_capacity_result(polytope)?;
+    compute_sys_from_capacity(polytope, &capacity)
 }
 
 /// Compute the active-orbit capacity result.
@@ -397,13 +388,13 @@ fn admissible_active_orbits(result: &OrbitSearchResult) -> Vec<&OrbitKktData> {
 /// With a single active orbit, this reduces to that branch gradient. At
 /// switching points, it solves a maximin LP for a feasible direction `d`
 /// satisfying `max_d min_i <∇sys_i, d>` under box bounds on the ambient
-/// coordinates.
+/// coordinates. `capacity` must come from the same `polytope`.
 pub fn ascent_direction(
     polytope: &Polytope4D,
-    state: &ActiveSysState,
+    capacity: &OrbitSearchResult,
     mode: AscentMode<'_>,
 ) -> Option<Vec<Vector4<f64>>> {
-    let active_orbits: Vec<OrbitKktData> = admissible_active_orbits(&state.capacity)
+    let active_orbits: Vec<OrbitKktData> = admissible_active_orbits(capacity)
         .into_iter()
         .cloned()
         .collect();
@@ -910,6 +901,21 @@ mod tests {
     use super::*;
     use symplectic::algorithms::billiard::facet_classification::classify_facets;
     use symplectic::geom::known_polytopes;
+
+    #[test]
+    fn compute_sys_from_capacity_matches_compute_sys() {
+        let kp = known_polytopes::lagrangian_triangle_product();
+        let capacity = compute_capacity_result(&kp.polytope)
+            .expect("known polytope should have a capacity result");
+        let cached = compute_sys_from_capacity(&kp.polytope, &capacity)
+            .expect("cached capacity result should produce sys");
+        let direct = compute_sys(&kp.polytope).expect("known polytope should produce sys");
+
+        assert!(
+            (cached - direct).abs() < 1e-12,
+            "cached={cached}, direct={direct}"
+        );
+    }
 
     #[test]
     fn admissible_active_orbits_ignore_indeterminate_candidates() {
