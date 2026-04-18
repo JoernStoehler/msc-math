@@ -249,6 +249,16 @@ sys as a continuous function on polytope space, no privileged threshold.
 - Gradient flow convergence, local maxima below sys=1, random noise effects.
 - Partial data in gradient-ascent experiments.
 - Witness-search successor line: `research/sys-landscape/design/witness-search-program.md:55-83`
+- Local unblocked queue after the bounded hostile-landscape closure:
+  1. trajectory aggregate features from `step_events.jsonl`
+  2. richer cached orbit/KKT scalar payload for endpoint rows
+  3. bounded face-level Euclidean feature summaries
+  4. bounded face-level symplectic feature summaries
+- LICCA-blocked queue:
+  1. more `gradient-ascent-general` endpoint rows
+  2. more `gradient-ascent-products` endpoint rows
+  3. more `variable-f-ascent` endpoint rows
+- Restart rule for future sessions: if new LICCA rows exist, refresh the canonical ascent JSONLs / caches and rerun `sys-normalized-dataset` plus `experiments/sys-landscape/feature-pattern-search/analyze.py` before inventing new model families.
 
 ## [open] Computing capacity
 

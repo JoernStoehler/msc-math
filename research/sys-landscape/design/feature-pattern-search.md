@@ -548,16 +548,93 @@ implementation packet is slower than hoped. If simplification is needed, cut an
 enrichment table or defer orbit features, but keep the `poly_id` / `state_id`
 contract.
 
-## Next Implementation Packet
+## Next Work Packets
 
-1. Add a new `exp-sys-landscape` binary that converts the current source JSONLs
-   into the Stage 1 core tables.
-2. Keep the first binary focused on source normalization and ID assignment, not
-   model fitting.
-3. Add a Python analyzer only after the core tables exist and can be inspected
-   directly.
-4. Delay any decision about including the HKO cut-and-ascent packet in the main
-   closure analysis until the core tables are inspectable. Default is exclude.
-5. Encode the source-priority rule directly in the converter so the historical
-   root ascent JSONLs do not silently outrank later `data/smoke.jsonl` or
-   `data/licca.jsonl` packets if those appear locally.
+The bounded closure pass is complete. The next decisions are no longer about
+dataset shape; they are about where local developer time still has a good
+feedback loop before large LICCA runs arrive.
+
+### Unblocked Local Packets
+
+These use the current exact geometry, normalized core tables, and smoke/local
+verification loops. They do not need new cluster-scale data before
+implementation starts.
+
+1. **Trajectory aggregate features from `step_events.jsonl`**
+   - Build a new `feature_trajectory.jsonl` keyed by endpoint `state_id` or
+     `poly_id`, then join it into the existing analyzer.
+   - Candidate columns:
+     total positive `delta_sys`, max single-step gain, within-cell vs overshoot
+     vs wiggle counts, gradient-norm summaries, phase count, escape-round
+     counts.
+   - Why next:
+     this is the cleanest remaining non-geometry surface, and the data already
+     exists in `step_events.jsonl`.
+   - Feedback loop:
+     strong. One extractor plus the current analyzer is enough to test value.
+
+2. **Richer cached orbit/KKT scalar payload**
+   - Extend experiment-side cache writes so endpoint records preserve a few more
+     orbit-search scalars when they are already computed, instead of storing
+     only `best_sigma`.
+   - Candidate columns:
+     admissibility mode, action interval width, `q_error_bound`, simple `beta`
+     summaries when the payload is already available.
+   - Why next:
+     the current sigma-local orbit block was the first non-metadata block that
+     helped endpoint prediction at all.
+   - Feedback loop:
+     still strong if this stays on small scalar summaries rather than a full
+     orbit object export.
+
+3. **Bounded face-level Euclidean features**
+   - Add a `poly_id`-keyed table with scalar summaries of facet 3-volumes, edge
+     lengths, ridge sizes, and incidence-matrix-derived counts.
+   - Why next:
+     exact geometry is already present and this stays within the current local
+     modeling pipeline.
+   - Feedback loop:
+     good as long as the output is summary statistics, not raw long lists.
+
+4. **Bounded face-level symplectic features**
+   - Add a `poly_id`-keyed table with scale-normalized summaries such as ridge
+     `omega_0`/area style quantities or incidence-conditioned symplectic
+     summaries.
+   - Why next:
+     if endpoint structure exists beyond the current cheap blocks, richer
+     face-level symplectic data is the most plausible local next step.
+   - Feedback loop:
+     acceptable only if the first packet stays narrow and summary-based.
+
+### LICCA-Blocked Packets
+
+These are now blocked primarily by row count, not by missing local scaffolding.
+
+1. **More fixed-`F` ascent endpoints**
+   - Highest-value future dataset growth.
+   - Priority order:
+     `gradient-ascent-general`, then `gradient-ascent-products`, then
+     `variable-f-ascent`.
+   - Reason:
+     the bounded pass already shows within-random signal; endpoint-side data is
+     the main thin surface.
+
+2. **Refresh the canonical main-surface packets from LICCA outputs**
+   - Once new LICCA JSONLs arrive, keep using the current normalized converter
+     and feature-pattern-search pipeline before inventing new methods.
+   - Required rerun order:
+     refresh canonical experiment JSONLs / caches, rerun
+     `sys-normalized-dataset`, then rerun
+     `experiments/sys-landscape/feature-pattern-search/analyze.py`.
+
+### Current Prioritization
+
+If local work continues before new LICCA rows arrive, use this order:
+
+1. trajectory aggregate features
+2. richer cached orbit/KKT scalar payload
+3. bounded face-level Euclidean features
+4. bounded face-level symplectic features
+
+If new LICCA rows arrive first, pause local feature proliferation and refresh
+the endpoint datasets before adding more model families.
