@@ -114,6 +114,23 @@ Close the first-order `M_10` theorem surface:
   The segment endpoints coincide exactly with the corresponding six-facet
   endpoint-family rows, so Packet 3 should use endpoint-family rows together
   with midpoint prototype rows, not an endpoint-only reduction.
+- The exact HKO volume row is now derived in the Packet 3 facet-major `R^40`
+  order. The HKO product geometry forces each facet centroid onto the normal
+  line, so the tangential normal-tilt term vanishes exactly and
+  `∂vol/∂a_k = -(S / |a_k|^3) a_k` for every facet. Here
+  `S = 5 sqrt(5) / 4` is the common facet `3`-volume and
+  `S / |a_k|^3 = 25/32 + 5 sqrt(5) / 16` is the common scalar multiplier on
+  the dual vertices. This is recorded in
+  `experiments/hko-local-maximum/exact-clarke/hko-volume-derivative.json`.
+- The reduced Packet 3 prototype `sys` rows are now assembled exactly from the
+  prototype capacity rows and the exact HKO volume row. The resulting artifact
+  records exact endpoint-family rows, endpoint-segment rows, and the midpoint
+  row in the shared facet-major `R^40` order; the neighboring seven-facet
+  `sys` row family is again degree `2` in `lambda`, with exact interpolation
+  residual `0` through `lambda = 0`, `1/2`, and `1`, and the two segment
+  endpoints coincide exactly with the corresponding six-facet endpoint-family
+  `sys` rows. This is recorded in
+  `experiments/hko-local-maximum/exact-clarke/reduced-sys-prototypes.json`.
 - Working Packet 2 hypothesis from the current paper-plus-numerics comparison:
   modulo diagonal `72^\circ` rotation and `q/p` exchange, the minimizing-family
   catalog may reduce to one six-facet endpoint prototype together with one
@@ -197,6 +214,10 @@ Deliverables:
   `experiments/hko-local-maximum/exact-clarke/segment-gradient-reduction.json`.
 - Current exact dual-vertex row-reduction certificate:
   `experiments/hko-local-maximum/exact-clarke/segment-a-gradient-reduction.json`.
+- Current exact HKO volume-row certificate:
+  `experiments/hko-local-maximum/exact-clarke/hko-volume-derivative.json`.
+- Current exact reduced prototype `sys` rows:
+  `experiments/hko-local-maximum/exact-clarke/reduced-sys-prototypes.json`.
 - Current billiard sigma-surface count ladder:
   `experiments/hko-local-maximum/exact-clarke/billiard-sigma-counts.json`.
 - Current exact-sigma feasibility probe:
@@ -279,8 +300,8 @@ Checks:
 
 ## Immediate Next Steps
 
-1. Turn the exact segment-to-endpoint reduction into the reduced active-row
-   list used by Packet 3.
+1. Turn the current exact prototype `sys` rows into the reduced active-row list
+   used by Packet 3, including the symmetry-image expansion step.
 2. Build a first exact active-gradient matrix over the reduced family surface.
 3. Add SageMath to the devcontainer install surface or record the chosen exact
    runtime for Packet 3. If the Rust number-field backend lands first, benchmark
@@ -401,8 +422,7 @@ Current target benchmark ladder:
 ## Suggested Priority Order
 
 1. Finish the paper-to-repo family catalog.
-2. Derive the exact HKO volume-derivative row.
-3. Write down the reduced active-row catalog.
-4. Attempt the small exact matrix route on that reduced family surface.
-5. Revisit the exhaustive `6240`-sigma route only after the faster backend is
+2. Write down the reduced active-row catalog.
+3. Attempt the small exact matrix route on that reduced family surface.
+4. Revisit the exhaustive `6240`-sigma route only after the faster backend is
    available and benchmarked.

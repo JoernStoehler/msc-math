@@ -34,6 +34,9 @@ exact footholds:
 - the same artifact shows that the two segment endpoints are exactly the
   corresponding six-facet endpoint rows, so the only genuinely new seven-facet
   prototype row on this neighboring segment is the midpoint row.
+- the exact HKO volume row is now committed in the checker coordinate order,
+  and the corresponding reduced prototype `sys` rows are committed as exact
+  Packet 3 support artifacts.
 
 ## Research Question
 
@@ -169,9 +172,9 @@ another implementation line.
 
 1. Extract the paper-derived orbit-family data needed for the exact gradients.
 2. Turn the current exact endpoint and KKT-segment certificates into the
-   reduced active-row list used by the checker.
-3. Write down the exact dual-vertex coordinates of HKO2024 in repo notation.
-4. Prototype the matrix build in SageMath on the reduced prototype-row
+   reduced active-row list used by the checker, now using the committed exact
+   HKO volume row and the committed exact prototype `sys` rows.
+3. Prototype the matrix build in SageMath on the reduced prototype-row
    surface, then compare its kernel against the committed symmetry basis.
 
 ## Related Files
