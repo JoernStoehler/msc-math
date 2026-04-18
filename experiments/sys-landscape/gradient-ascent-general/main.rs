@@ -48,7 +48,7 @@ use std::collections::HashMap;
 use std::path::Path;
 use std::sync::{Arc, Mutex};
 use std::time::Instant;
-use symplectic::database::{load_many, save, DualVerticesKey, PolytopeRecord};
+use symplectic::database::{load_many, save, DualVerticesKey, PolytopeRecord, SigmaAction};
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::random::sample_random_polytope;
 
@@ -342,6 +342,13 @@ fn process_seed(
     let final_capacity = final_state.capacity.capacity();
     let mut final_record = PolytopeRecord::from_polytope(&best_polytope);
     final_record = final_record.with_computed_fields(final_state.vol, 0.0, final_capacity, 0.0);
+    final_record = final_record.with_sigmas(
+        vec![SigmaAction {
+            perm: final_state.capacity.best_sigma().to_vec(),
+            action: final_capacity,
+        }],
+        0.0,
+    );
     let starting_dual_vertices_rational = dual_vertices_rational_strings(polytope);
     let final_dual_vertices_rational = dual_vertices_rational_strings(&best_polytope);
     let final_dvs: Vec<[f64; 4]> = best_polytope
@@ -490,6 +497,12 @@ fn main() {
                     }
                     if record.capacity_err.is_none() {
                         record.capacity_err = result.final_record.capacity_err;
+                    }
+                    if record.sigma_gap_cutoff.is_none() {
+                        record.sigma_gap_cutoff = result.final_record.sigma_gap_cutoff;
+                    }
+                    if record.sigmas.is_none() {
+                        record.sigmas = result.final_record.sigmas.clone();
                     }
                 })
                 .or_insert_with(|| result.final_record.clone());
