@@ -1,0 +1,517 @@
+<!--
+Purpose: fix the data contract for the hostile-landscape feature/pattern-search closure task.
+Context: this note chooses the dataset shape, row IDs, source files, and staged enrichment plan
+before implementation so later analysis does not have to redesign persisted artifacts.
+-->
+
+# Feature Pattern Search Dataset Plan
+
+## Goal
+
+Close the hostile-landscape caveat in `RESULTS.md` and `TASKS.md` with a bounded
+standard-method pass over existing random-sample and ascent artifacts, while
+laying the data foundation in a form that still makes sense if the analysis is
+later expanded for publication.
+
+The design question here is not "which regressor should we try first?" The
+durable question is "what persisted dataset shape lets us try many methods
+without rebuilding the whole data surface each time?"
+
+## Current Research Surface
+
+The closure task wants to distinguish two possibilities:
+
+1. There is a transferable signal that predicts higher `sys` across random
+   samples and ascent-found local maxima.
+2. Any signal is weak, non-transferable, or reducible to dataset/family/facet
+   count effects, which supports the hostile-landscape interpretation.
+
+Main modeling-surface rule:
+
+- exclude packets deliberately constructed in the neighborhood of HKO2024 from
+  the default hostile-landscape dataset
+- use them only as separately labeled control/sensitivity packets if later
+  needed
+
+Reason:
+
+- otherwise the easiest "pattern" to learn may be "start near the one known
+  counterexample"
+- that would weaken the thesis-level question, which is whether data science can
+  find useful structure without already encoding the unique known `sys > 1`
+  spoiler
+
+Current committed source surfaces already cover:
+
+- random generic samples: `experiments/sys-landscape/random-sample/random-sweep.jsonl`
+  with 70 rows
+- random Lagrangian products:
+  `experiments/sys-landscape/random-product-sample/random-product-sweep.jsonl`
+  with 100 rows
+- fixed-`F` ascent endpoints:
+  `gradient-ascent-general.jsonl` with 10 rows and
+  `gradient-ascent-products.jsonl` with 12 rows
+- fixed-`F` ascent event logs:
+  `gradient-ascent-general-trace.jsonl` with 146 rows and
+  `gradient-ascent-products-trace.jsonl` with 141 rows
+- variable-`F` continuation endpoints:
+  `experiments/sys-landscape/variable-f-ascent/variable-f-ascent.jsonl`
+  with 90 rows
+- separately labeled HKO-specific control packet, excluded from the default
+  modeling surface:
+  `experiments/hko-local-maximum/cut-and-ascent/cut-and-ascent.jsonl`
+  with 20 rows
+- reusable rational polytope caches:
+  `experiments/sys-landscape/cache.jsonl` with 170 rows and
+  `experiments/combinatorial-cells/polytopes.jsonl` with 953 rows
+- existing orbit/symplectic feature packet:
+  `experiments/combinatorial-cells/omega-hypothesis/omega-obstacle.jsonl`
+  with 953 rows
+
+## Approach Options Compared
+
+### Option A: One wide ad hoc table built directly from current JSONL files
+
+Pros:
+
+- fastest to start
+- one Python script can consume it immediately
+
+Cons:
+
+- geometry identity and search provenance get fused into one row
+- later orbit or derivative enrichments require rewriting the core table
+- duplicates the same polytope if it appears in several roles
+- poor fit for transfer tests and future publication-grade comparisons
+
+### Option B: Normalized endpoint/state core plus joinable enrichment tables
+
+Pros:
+
+- stable geometry identity via `poly_id`
+- stable provenance identity via `state_id`
+- current random and ascent artifacts fit this shape without inventing missing
+  intermediate geometry
+- later orbit, derivative, or novel symplectic features can land as separate
+  `poly_id`-keyed tables
+- works for the thesis closure pass and still scales to publication follow-up
+
+Cons:
+
+- more joins and more files than a one-off wide table
+- requires explicit ID and table conventions up front
+
+### Option C: Full state graph now, with stored geometry for every intermediate
+
+Pros:
+
+- best long-term shape for trajectory-aware methods
+- makes every ascent move a first-class object
+
+Cons:
+
+- current trace artifacts do not store intermediate polytope geometry
+- retrofitting this now would require new experiment output, not just
+  conversion of committed data
+- LICCA-scale intermediate geometry would increase output size and cache policy
+  complexity immediately
+
+### Choice
+
+Choose **Option B now**.
+
+This is the right "do it properly now" compromise:
+
+- it locks the durable IDs and joins now
+- it does not pretend the current trace logs contain intermediate states that
+  were never persisted
+- it leaves a clean pivot path to Option C later if future runs decide to emit
+  intermediate geometries explicitly
+
+## Dataset Contract
+
+### Identity Rules
+
+- `poly_id`: stable geometry ID defined as a content hash of the ordered
+  rational dual-vertex list used by `PolytopeRecord`
+- `state_id`: stable provenance ID for one occurrence of a polytope in a
+  dataset or search lineage
+
+`poly_id` deliberately preserves facet order. This is not an attempt to quotient
+out by relabeling or combinatorial isomorphism. The experiment surfaces already
+use facet-indexed objects such as `sigma`, `beta`, ridge pairs, and ascent
+directions, so ordered dual vertices are the correct persisted identity.
+
+The authoritative geometry payload is still the exact rational dual-vertex list
+itself. The hash is the join key, not a replacement for storing the exact
+geometry.
+
+Recommended canonicalization rule for `poly_id`:
+
+- serialize `dual_vertices_rational` as a JSON array of 4-tuples of
+  `"numerator/denominator"` strings in the stored facet order
+- hash that canonical byte string with a stable content hash such as `blake3`
+- store both `poly_id` and the exact rational payload in `polytopes.jsonl`
+
+### Core Tables
+
+#### `polytopes.jsonl`
+
+One row per unique geometry.
+
+Required columns:
+
+- `poly_id`
+- `dual_vertices_rational`
+- `vertices_rational`
+- `facet_count`
+- `geometry_source`
+
+Primary source:
+
+- direct copy/conversion from `PolytopeRecord` rows in
+  `experiments/sys-landscape/cache.jsonl`
+- direct copy/conversion from `PolytopeRecord` rows in
+  `experiments/combinatorial-cells/polytopes.jsonl`
+- optionally direct copy/conversion from
+  `experiments/sys-landscape/variable-f-ascent/cache.jsonl` when a later
+  packet decides that its larger local cache is worth consuming explicitly
+- additional rows reconstructed from endpoint `dual_vertices` or
+  `final_dual_vertices` fields when no cache row exists yet
+
+Current exact-cache counts:
+
+- `sys-landscape/cache.jsonl`: 170 rows
+- `combinatorial-cells/polytopes.jsonl`: 953 rows
+- `variable-f-ascent/cache.jsonl`: 12786 rows, but with weaker provenance
+  metadata than the other two caches
+
+#### `states.jsonl`
+
+One row per dataset/search occurrence of one polytope.
+
+Required columns:
+
+- `state_id`
+- `poly_id`
+- `dataset`
+- `family`
+- `role`
+- `search_space`
+- `optimizer`
+- `backend`
+- `source_name`
+- `seed_index` when present
+- `lineage_id` when present
+- `parent_state_id` when an explicit parent exists
+
+Current role vocabulary:
+
+- `random_sample`
+- `ascent_endpoint`
+- `continuation_endpoint`
+- `hko_control` for excluded control/sensitivity packets only
+
+#### `capacity_results.jsonl`
+
+One row per `poly_id` carrying the scalar target values and cheap search
+summaries.
+
+Required columns:
+
+- `poly_id`
+- `capacity`
+- `volume`
+- `sys`
+- `iterations`
+- `search_result_source`
+
+### Event Table
+
+#### `step_events.jsonl`
+
+One row per logged ascent event, not one row per persisted intermediate state.
+
+Required columns:
+
+- `state_id`
+- `phase`
+- `iteration`
+- `step_type`
+- `t_fraction`
+- `t_actual`
+- `sys_before`
+- `sys_after`
+- `delta_sys`
+- `gradient_norm`
+
+Reason for this table shape:
+
+- the current fixed-`F` trace files are event logs keyed by ascent name
+- they do not contain intermediate geometry, so they cannot populate a genuine
+  `from_state_id -> to_state_id` geometry graph
+- if future runs emit intermediate geometries, those can add a new
+  `state_transitions.jsonl` table without changing the endpoint contract
+
+## Enrichment Tables
+
+### `feature_geometry.jsonl`
+
+Cheap-to-medium Euclidean/symplectic black-box features computed from the
+polytope geometry alone.
+
+Examples:
+
+- dual-vertex norm summaries
+- centered dual-matrix singular/eigenvalue summaries
+- pairwise cosine summaries
+- all-pair `|omega0|` summaries
+- q/p energy-split sparsity summaries
+
+### `feature_skeleton.jsonl`
+
+Features that require `Skeleton::compute(polytope)` but not a fresh orbit solve.
+
+Examples:
+
+- vertex, edge, ridge counts
+- simple/non-simple flags
+- ridge-degree summaries
+- ridge `|omega0|` summaries
+- threshold counts for small ridge `|omega0|`
+
+### `feature_orbit.jsonl`
+
+Orbit-sensitive enrichment keyed by `poly_id`, not part of the core endpoint
+contract.
+
+Examples:
+
+- best `sigma`
+- best `beta`
+- orbit length
+- orbit `omega` summaries
+- admissibility / interval metadata from `OrbitSearchResult`
+
+Why separate:
+
+- current random caches often already store one best `sigma`
+- current ascent endpoint summaries do **not** store the richer orbit payload
+- treating orbit data as a joinable enrichment lets the closure pass start from
+  geometry-only features and add orbit-sensitive features later without
+  redesigning the dataset
+- the current complete orbit/symplectic feature packet is
+  `experiments/combinatorial-cells/omega-hypothesis/omega-obstacle.jsonl`,
+  which covers 953 cached polytopes but does not yet cover the sys-landscape
+  ascent endpoints
+
+### Future Optional Tables
+
+- `feature_derivatives.jsonl`
+- `feature_family_specific.jsonl`
+- `state_transitions.jsonl` if future runs emit intermediate geometries
+
+## Source Mapping
+
+### Source Priority Rule
+
+For the first converter packet, use explicit live-vs-historical priority rather
+than assuming every committed JSONL is equally current.
+
+Recommended rule:
+
+1. exact geometry/capacity data comes from rational caches first
+2. current explicit experiment outputs come next
+3. historical fallback JSONLs are allowed only when no current higher-priority
+   artifact exists locally
+
+Immediate consequence:
+
+- `gradient-ascent-general.jsonl` and `gradient-ascent-products.jsonl` are
+  usable for the first local scaffold, but they must be labeled as historical
+  root artifacts because their logbooks treat them as superseded by
+  `data/smoke.jsonl` and future `data/licca.jsonl`
+
+### `polytopes.jsonl`
+
+Use these sources in order:
+
+1. exact `PolytopeRecord` rows already present in `sys-landscape/cache.jsonl`
+2. exact `PolytopeRecord` rows in `combinatorial-cells/polytopes.jsonl`
+3. reconstructed polytopes from endpoint `dual_vertices` / `final_dual_vertices`
+   when neither cache already contains the geometry
+
+Exact join available now:
+
+- rational caches join exactly by ordered `dual_vertices_rational`
+
+Exact join not available yet:
+
+- summary/event packets that only carry `dual_vertices` or `final_dual_vertices`
+  as `f64` require new code to match or reconstruct against the rational cache
+
+### `states.jsonl`
+
+Create one `state_id` row from each source packet:
+
+- `random-sample/random-sweep.jsonl`
+- `random-product-sample/random-product-sweep.jsonl`
+- `gradient-ascent-general/gradient-ascent-general.jsonl`
+- `gradient-ascent-products/gradient-ascent-products.jsonl`
+- `variable-f-ascent/variable-f-ascent.jsonl`
+- exclude `hko-local-maximum/cut-and-ascent/cut-and-ascent.jsonl` from the
+  default converter output; add it only in a separately labeled control mode if
+  needed later
+
+Current committed counts:
+
+- `random-sweep.jsonl`: 70
+- `random-product-sweep.jsonl`: 100
+- `gradient-ascent-general.jsonl`: 10
+- `gradient-ascent-products.jsonl`: 12
+- `variable-f-ascent.jsonl`: 90
+- `cut-and-ascent.jsonl`: 20, excluded by default from main modeling
+
+Recommended stable `state_id` scheme:
+
+- `random_sample::random_F5_0`
+- `random_product::random_3x3_0`
+- `ga_general::general_0`
+- `ga_products::products_0`
+- `variable_f::rq1_general_0_p0`
+- `cut_and_ascent::hko_p0`
+
+Recommended `lineage_id` rules:
+
+- `general_7` for `rq1_general_7_p*`
+- `rq2_seed_<base>` for the four-way comparison paths in variable-`F`
+- `products_5` or `general_3` for fixed-`F` ascent endpoints
+- `None` for random baselines
+
+Known caveat:
+
+- `cut-and-ascent` is a preliminary HKO-specific control packet and is excluded
+  by default from the generic-search evidence surface
+
+### `step_events.jsonl`
+
+Populate only from:
+
+- `gradient-ascent-general-trace.jsonl`
+- `gradient-ascent-products-trace.jsonl`
+
+Variable-`F` currently does not emit step-level event logs in the same format,
+so it contributes endpoint states only.
+
+Current committed event counts:
+
+- `gradient-ascent-general-trace.jsonl`: 146
+- `gradient-ascent-products-trace.jsonl`: 141
+
+Exact join available now:
+
+- general/products summary rows join to their event rows exactly by `name`
+
+Known gap:
+
+- variable-`F` and cut-and-ascent currently have no parallel event export
+
+## Column Ownership And Cost
+
+### Already present in current committed artifacts
+
+Low code cost, no rerun needed:
+
+- source/dataset names
+- endpoint dual vertices
+- scalar `capacity`, `volume`, `sys` on random packets
+- ascent summary metrics such as `best_strategy`, `n_ascent_phases`,
+  `n_gradient_iters_total`, and `total_delta`
+- fixed-`F` step-event columns from the trace JSONLs
+
+### Cheap to add from cached geometry
+
+Low-to-medium code cost, low rerun cost:
+
+- rational geometry copy into `polytopes.jsonl`
+- exact `poly_id` creation
+- Euclidean dual-vertex summaries
+- skeleton counts and ridge summaries
+
+### Medium-cost enrichments
+
+Medium code cost, medium compute only on cache misses:
+
+- recompute or recover best orbit payload for endpoint rows whose geometry is
+  not already represented by a cached `PolytopeRecord` with `sigmas`
+- feature blocks that require `Skeleton::compute` plus orbit-sensitive joins
+- matching `f64` endpoint geometries back into the rational cache in a way that
+  is explicit about exact match versus reconstructed fallback
+
+### High-cost future expansion
+
+High code and artifact cost:
+
+- storing intermediate ascent geometries for every step
+- emitting full lineage graphs for LICCA-scale runs
+- derivative-heavy enrichments across the whole endpoint packet
+
+## Implementation Stages
+
+### Stage 1: core dataset scaffold
+
+Build:
+
+- `polytopes.jsonl`
+- `states.jsonl`
+- `capacity_results.jsonl`
+- `step_events.jsonl`
+
+No model fitting yet. This stage proves the IDs, joins, and source selection.
+
+### Stage 2: cheap enrichments for the closure pass
+
+Build:
+
+- `feature_geometry.jsonl`
+- `feature_skeleton.jsonl`
+
+These are the first feature blocks for the bounded hostile-landscape pass.
+
+### Stage 3: optional orbit enrichment
+
+Build:
+
+- `feature_orbit.jsonl`
+
+Only after the core tables and cheap features are working cleanly.
+
+## Pivot Rules
+
+Pivot away from the current plan if:
+
+- the cache join rate for ascent endpoints is much worse than expected and
+  orbit enrichment would require large fresh recomputation immediately
+- the endpoint/state contract reveals that one source packet is too stale or
+  structurally different to share the same table
+- LICCA-returned data arrives with a different live-vs-historical priority than
+  the current local artifacts
+
+Do **not** pivot back to an ad hoc one-off wide table just because the first
+implementation packet is slower than hoped. If simplification is needed, cut an
+enrichment table or defer orbit features, but keep the `poly_id` / `state_id`
+contract.
+
+## Next Implementation Packet
+
+1. Add a new `exp-sys-landscape` binary that converts the current source JSONLs
+   into the Stage 1 core tables.
+2. Keep the first binary focused on source normalization and ID assignment, not
+   model fitting.
+3. Add a Python analyzer only after the core tables exist and can be inspected
+   directly.
+4. Delay any decision about including the HKO cut-and-ascent packet in the main
+   closure analysis until the core tables are inspectable. Default is exclude.
+5. Encode the source-priority rule directly in the converter so the historical
+   root ascent JSONLs do not silently outrank later `data/smoke.jsonl` or
+   `data/licca.jsonl` packets if those appear locally.

@@ -37,7 +37,24 @@ cd experiments/sys-landscape/variable-f-ascent/ && uv run analyze.py            
 | main.rs | Binary: variable-F gradient ascent (RQ1 + RQ2) |
 | analyze.py | Figures + summary statistics |
 | variable-f-ascent.jsonl | Per-trial results |
+| variable-f-ascent/cache.jsonl | Local exact-geometry cache for touched start, added, endpoint, and intermediate polytopes |
 | research/sys-landscape/design/variable-f-ascent.md | This file |
+
+### Output contract note
+
+As of 2026-04-18, `variable-f-ascent.jsonl` is no longer just a thin endpoint
+summary. Each row also stores:
+
+- `source_name` and `lineage_id` for grouping related paths or placements
+- `direct_parent_trial` when the parent row exists in the same dataset
+- exact rational dual vertices for the ascent start, the post-addition state
+  when present, and the final endpoint
+
+The local `cache.jsonl` now also persists `volume`, `volume_err`,
+`capacity_err`, and best-sigma metadata when those values were already computed
+during the run. It still does **not** try to encode experiment-specific
+provenance in the shared `source` field, because the cache contains many
+intermediate gradient-step polytopes from mixed lineages.
 
 ## Methodology
 
