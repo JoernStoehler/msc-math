@@ -200,9 +200,17 @@ Stronger conjecture: HKO2024 may be (up to perturbation/symplectomorphism) the o
 - Beyond fixed-F ascent — let random walks flip facet combinatorics mid-trajectory.
 - Post-Kai: defer beyond thesis unless Jörn explicitly reopens research development before the 2026-04-21 cutoff. If fixed-F LICCA finds nothing, this remains a future-research next step, not a thesis blocker.
 
-### [future] Analytical formula for sys(P_5 x R(theta) P_5)
+### [open] Analytical formula for sys(P_5 x R(theta) P_5)
 - Standalone mathematical result in `RESULTS.md`: explain the shape of the pentagon rotation curve.
-- Jörn knows the symbolic enumeration algorithm. Missing work: run it in a CAS over a field such as `Q(sin(theta), cos(theta), sqrt(5))`, then write the proof cleanly.
+- Scout workspace landed on 2026-04-18:
+  `research/sys-landscape/design/pentagon-rotation-formula.md`,
+  `formal/sys-landscape/pentagon-rotation-formula.tex`,
+  `experiments/sys-landscape/pentagon-rotation-formula/`.
+- Current conjecture:
+  `sys(theta) = ((5 + 2 sqrt(5)) / 10) sec^2(theta)` on `0 <= theta <= pi/10`,
+  mirrored by `theta -> pi/5 - theta` on the second half of the fundamental domain.
+- Current proof state: the draft writes out the active `2`-bounce `sec` / `sec^2` branch calculation and isolates the remaining blocker as the `3`-bounce exclusion lemma.
+- Next step after merge: open a new proof-focused worktree; use the owned experiment surface only as feedback and sanity checking unless the proof route stalls.
 - Scope target is `P_5 x R(theta) P_5`; no general formula for higher `(n,m)` pairs is required. Higher-pair function fitting remains useful only if it reveals recognizable shapes and later conjectures.
 
 ## [open] sys landscape structure
