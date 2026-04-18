@@ -123,6 +123,16 @@ So the current exact evidence says that the theorem-facing equality-case
 surface is not a finite list of isolated `7`-facet beta points. It is a
 constant-action exact KKT segment between neighboring endpoint beta profiles.
 
+Moreover, the exact segment certificate shows that `xi` is constant along this
+segment. Since the height derivative of the action uses the KKT formula
+`dA/dh_k = -xi beta_k / (2 Q^2)` on visited facets and `0` on unvisited
+facets, the capacity-height derivative family is affine in `lambda`.
+Because the HKO volume derivative is uniform across facets by symmetry, the
+same is true for the `sys` height-gradient family on this segment. So the
+interior equality-case gradients should contribute no new extreme first-order
+directions beyond the endpoint gradients; the remaining work is to write this
+reduction cleanly and exactly in the theorem-facing checker.
+
 ### Midpoint Representative
 
 The midpoint representative is the special value `lambda = 1/2`, giving

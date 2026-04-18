@@ -93,6 +93,16 @@
       "7": "1/4 - sqrt(5)/20",
       "9": "sqrt(5)/10"
     },
+    "capacity_height_derivative_by_facet": {
+      "0": "(2*sqrt(5)*lambda - (5 - sqrt(5))*(lambda - 1))/(4*sqrt(5 - 2*sqrt(5)))",
+      "1": "-(5 - sqrt(5))*(lambda - 1)/(4*sqrt(5 - 2*sqrt(5)))",
+      "2": "lambda*(5 - sqrt(5))/(4*sqrt(5 - 2*sqrt(5)))",
+      "3": "(lambda*(5 - sqrt(5)) + 2*sqrt(5)*(1 - lambda))/(4*sqrt(5 - 2*sqrt(5)))",
+      "6": "(5 - sqrt(5))/(4*sqrt(5 - 2*sqrt(5)))",
+      "7": "(5 - sqrt(5))/(4*sqrt(5 - 2*sqrt(5)))",
+      "9": "sqrt(5)/(2*sqrt(5 - 2*sqrt(5)))"
+    },
+    "capacity_height_prefactor": "5/sqrt(5 - 2*sqrt(5))",
     "closure_check": [
       "0",
       "0",

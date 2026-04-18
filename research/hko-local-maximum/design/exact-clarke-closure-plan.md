@@ -97,6 +97,12 @@ Close the first-order `M_10` theorem surface:
   exact stationarity residual `0`, constant
   `Q = sqrt(5 - 2 sqrt(5)) / 5`, and therefore constant action
   `5 / (2 sqrt(5 - 2 sqrt(5)))` for all `lambda`.
+- In that exact segment family, `xi` is constant, so the capacity height
+  derivatives are affine in `lambda`. Since the HKO volume derivative is
+  uniform across facets by symmetry, the same affine reduction should hold for
+  the `sys` height-gradient family. This is the current exact route to showing
+  that interior equality-case gradients add no new extreme first-order
+  directions beyond the endpoint gradients.
 - Working Packet 2 hypothesis from the current paper-plus-numerics comparison:
   modulo diagonal `72^\circ` rotation and `q/p` exchange, the minimizing-family
   catalog may reduce to one six-facet endpoint prototype together with one

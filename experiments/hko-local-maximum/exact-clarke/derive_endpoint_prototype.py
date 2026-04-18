@@ -148,6 +148,8 @@ def main() -> None:
         stationarity_matrix * Matrix(mu_xi_solution) - stationarity_rhs
     )
     stationarity_residual = [simplify(entry) for entry in stationarity_residual]
+    xi_solution = mu_xi_solution[4]
+    capacity_height_prefactor = simplify(-xi_solution / (2 * segment_q**2))
 
     payload = {
         "field_generator": "t = sqrt(5 - 2*sqrt(5)) = tan(pi/5)",
@@ -176,6 +178,11 @@ def main() -> None:
             "action": str(simplify(Rational(1, 2) / segment_q)),
             "mu_xi_solution": [str(entry) for entry in mu_xi_solution],
             "stationarity_residual": [str(entry) for entry in stationarity_residual],
+            "capacity_height_prefactor": str(capacity_height_prefactor),
+            "capacity_height_derivative_by_facet": {
+                str(facet): str(simplify(capacity_height_prefactor * segment_profile_by_facet[facet]))
+                for facet in union_facets
+            },
         },
     }
 
