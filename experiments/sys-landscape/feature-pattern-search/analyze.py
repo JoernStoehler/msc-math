@@ -95,11 +95,55 @@ FEATURE_BLOCKS = [
     "face_symplectic",
     "skeleton",
     "omega",
+    "orbit_combinatorics",
+    "orbit_geometry",
+    "orbit_search",
     "orbit",
     "trajectory",
     "all",
 ]
 MODEL_SPECS = [("ridge", "Ridge"), ("rf", "Random forest")]
+
+ORBIT_COMBINATORICS_KEYS = [
+    "orbit_sigma_available",
+    "orbit_sigma_count",
+    "orbit_sigma_gap_cutoff",
+    "orbit_sigma_len",
+    "orbit_sigma_fraction",
+    "orbit_selected_out_degree_mean",
+    "orbit_selected_out_degree_std",
+    "orbit_selected_out_degree_min",
+    "orbit_selected_out_degree_max",
+    "orbit_cycle_zero_fraction",
+    "orbit_cycle_transition_fraction",
+    "orbit_cycle_bidirectional_fraction",
+    "orbit_cycle_adjacent_fraction",
+]
+ORBIT_GEOMETRY_KEYS = [
+    "orbit_selected_norm_mean",
+    "orbit_selected_norm_std",
+    "orbit_selected_norm_min",
+    "orbit_selected_norm_max",
+    "orbit_cycle_abs_omega_mean",
+    "orbit_cycle_abs_omega_std",
+    "orbit_cycle_abs_omega_min",
+    "orbit_cycle_abs_omega_max",
+    "orbit_cycle_abs_omega_le_1e3_fraction",
+    "orbit_cycle_abs_omega_le_1e2_fraction",
+    "orbit_cycle_abs_omega_le_1e1_fraction",
+]
+ORBIT_SEARCH_KEYS = [
+    "orbit_kkt_available",
+    "orbit_search_scalar_available",
+    "orbit_result_iterations_log1p",
+    "orbit_result_returned_orbit_count",
+    "orbit_best_beta_margin",
+    "orbit_best_q_error_bound",
+    "orbit_best_has_mu",
+    "orbit_best_has_xi",
+    "orbit_best_is_admissible_exact",
+    "orbit_best_is_indeterminate_f64",
+]
 
 
 @dataclass
@@ -459,6 +503,12 @@ def build_feature_dict(row: JoinedRow, block: str) -> dict[str, float | str]:
         return dict(row.skeleton)
     if block == "omega":
         return dict(row.omega)
+    if block == "orbit_combinatorics":
+        return {key: row.orbit[key] for key in ORBIT_COMBINATORICS_KEYS}
+    if block == "orbit_geometry":
+        return {key: row.orbit[key] for key in ORBIT_GEOMETRY_KEYS}
+    if block == "orbit_search":
+        return {key: row.orbit[key] for key in ORBIT_SEARCH_KEYS}
     if block == "orbit":
         return dict(row.orbit)
     if block == "trajectory":
@@ -716,9 +766,12 @@ def write_summary(
             "- `face_symplectic`: ridge-polygon symplectic-area summaries after volume normalization by `vol(K)^(1/2)`",
             "- `skeleton`: combinatorial counts and degree summaries from the exact 4D face lattice",
             "- `omega`: volume-normalized dual-side `omega_0` magnitude summaries, exact omega-sign structure, and directed transition-graph summaries",
-            "- `orbit`: cached-`best_sigma` support size plus sigma-local geometry, `omega_0`, transition summaries, and bounded best-orbit KKT scalars",
+            "- `orbit_combinatorics`: cached-`best_sigma` support-size and cycle-structure summaries",
+            "- `orbit_geometry`: sigma-local dual-norm and cycle `omega_0` magnitude summaries",
+            "- `orbit_search`: bounded best-orbit KKT and search-scalar availability summaries",
+            "- `orbit`: the legacy merged orbit packet kept as a reference aggregate",
             "- `trajectory`: endpoint-keyed step-event aggregates such as overshoot mix, phase restarts, and gradient/step-size summaries",
-            "- `all`: metadata, geometry, face_geometry, face_symplectic, skeleton, omega, orbit, and trajectory together",
+            "- `all`: metadata, geometry, face_geometry, face_symplectic, skeleton, omega, orbit_combinatorics, orbit_geometry, orbit_search, orbit, and trajectory together",
             "",
             "## Symmetry Status",
             "",
@@ -730,7 +783,10 @@ def write_summary(
             "| `face_symplectic` | yes | yes | yes | Ridge-polygon symplectic areas divided by `vol(K)^(1/2)`. |",
             "| `skeleton` | yes | yes | yes | Pure combinatorics; unaffected by translation, `Sp(4)`, or scaling. |",
             "| `omega` | yes | no | mixed | `omega_0` magnitudes are volume-normalized, but the dual-coordinate packet still depends on translation gauge; transition graph and zero-sign structure do not. |",
-            "| `orbit` | mixed | mixed | mixed | Mixes sigma-local geometry, transition summaries, and search/KKT scalars. |",
+            "| `orbit_combinatorics` | yes | yes | yes | Sigma support counts and cycle-structure summaries. |",
+            "| `orbit_geometry` | yes | no | mixed | Sigma-local norms and cycle `omega_0` magnitudes. |",
+            "| `orbit_search` | no | no | no | Search-procedure diagnostics and cached KKT scalars. |",
+            "| `orbit` | mixed | mixed | mixed | Legacy aggregate of the three orbit sub-blocks above. |",
             "| `trajectory` | no | no | no | Search-procedure diagnostics, not geometry invariants. |",
             "",
             "## Metrics",
@@ -778,6 +834,9 @@ def write_summary(
     face_symplectic_random = ridge_rows[("within_random", "face_symplectic")]
     skeleton_random = ridge_rows[("within_random", "skeleton")]
     omega_random = ridge_rows[("within_random", "omega")]
+    orbit_combinatorics_random = ridge_rows[("within_random", "orbit_combinatorics")]
+    orbit_geometry_random = ridge_rows[("within_random", "orbit_geometry")]
+    orbit_search_random = ridge_rows[("within_random", "orbit_search")]
     orbit_random = ridge_rows[("within_random", "orbit")]
     trajectory_random = ridge_rows[("within_random", "trajectory")]
     metadata_random = ridge_rows[("within_random", "metadata")]
@@ -786,11 +845,23 @@ def write_summary(
     face_symplectic_endpoint = ridge_rows[("within_endpoint", "face_symplectic")]
     skeleton_endpoint = ridge_rows[("within_endpoint", "skeleton")]
     omega_endpoint = ridge_rows[("within_endpoint", "omega")]
+    orbit_combinatorics_endpoint = ridge_rows[("within_endpoint", "orbit_combinatorics")]
+    orbit_geometry_endpoint = ridge_rows[("within_endpoint", "orbit_geometry")]
+    orbit_search_endpoint = ridge_rows[("within_endpoint", "orbit_search")]
     orbit_endpoint = ridge_rows[("within_endpoint", "orbit")]
     trajectory_endpoint = ridge_rows[("within_endpoint", "trajectory")]
     metadata_endpoint = ridge_rows[("within_endpoint", "metadata")]
     all_random_to_endpoint = ridge_rows[("random_to_endpoint", "all")]
     trajectory_endpoint_to_random = ridge_rows[("endpoint_to_random", "trajectory")]
+    orbit_endpoint_subblocks = {
+        "combinatorics": orbit_combinatorics_endpoint,
+        "geometry": orbit_geometry_endpoint,
+        "search": orbit_search_endpoint,
+    }
+    best_orbit_endpoint_name, best_orbit_endpoint_row = max(
+        orbit_endpoint_subblocks.items(),
+        key=lambda item: item[1]["r2"],
+    )
     lines.extend(
         [
             "",
@@ -798,11 +869,13 @@ def write_summary(
             "",
             f"- within-random ridge: metadata `R^2={format_metric(metadata_random['r2'])}`, geometry `R^2={format_metric(geometry_random['r2'])}`, face_geometry `R^2={format_metric(face_geometry_random['r2'])}`, face_symplectic `R^2={format_metric(face_symplectic_random['r2'])}`, skeleton `R^2={format_metric(skeleton_random['r2'])}`, omega `R^2={format_metric(omega_random['r2'])}`, orbit `R^2={format_metric(orbit_random['r2'])}`, trajectory `R^2={format_metric(trajectory_random['r2'])}`",
             f"- within-endpoint ridge: metadata `R^2={format_metric(metadata_endpoint['r2'])}`, geometry `R^2={format_metric(geometry_endpoint['r2'])}`, face_geometry `R^2={format_metric(face_geometry_endpoint['r2'])}`, face_symplectic `R^2={format_metric(face_symplectic_endpoint['r2'])}`, skeleton `R^2={format_metric(skeleton_endpoint['r2'])}`, omega `R^2={format_metric(omega_endpoint['r2'])}`, orbit `R^2={format_metric(orbit_endpoint['r2'])}`, trajectory `R^2={format_metric(trajectory_endpoint['r2'])}`",
+            f"- orbit split on within-endpoint ridge: combinatorics `R^2={format_metric(orbit_combinatorics_endpoint['r2'])}`, geometry `R^2={format_metric(orbit_geometry_endpoint['r2'])}`, search `R^2={format_metric(orbit_search_endpoint['r2'])}`",
+            f"- endpoint-side orbit signal, if any, sits in `{best_orbit_endpoint_name}` (`R^2={format_metric(best_orbit_endpoint_row['r2'])}`)",
             "- random-forest strengthens the face-level picture: `face_geometry` remains strong within random, while volume-normalized `face_symplectic` stays the strongest non-metadata endpoint-side face block.",
             f"- random-to-endpoint transfer with full ridge block: `R^2={format_metric(all_random_to_endpoint['r2'])}`",
             f"- endpoint-to-random transfer with trajectory ridge: `R^2={format_metric(trajectory_endpoint_to_random['r2'])}`",
             "- All geometric magnitude blocks in this packet now use the `vol(K)=1` convention; other symmetry-aware normalizations remain possible and are not ruled out by this packet.",
-            "- the richer orbit block now includes bounded best-orbit KKT scalars, using cached search-level payloads where available and a one-best-sigma fallback solve on older cache rows.",
+            "- the richer orbit packet is now split into combinatorics, geometry, and search sub-blocks while keeping the merged `orbit` aggregate for reference.",
         ]
     )
 

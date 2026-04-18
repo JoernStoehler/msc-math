@@ -54,6 +54,9 @@ Implementation status:
   the endpoint regime more than geometry/skeleton/omega alone
   (`R^2 ≈ 0.11` with ridge), but they still underperform the metadata baseline
   (`R^2 ≈ 0.44`) and remain strongly non-transferable
+- 2026-04-18: the orbit packet is now interpreted as three sub-blocks
+  (`orbit_combinatorics`, `orbit_geometry`, `orbit_search`) with the merged
+  `orbit` packet kept only as a reference aggregate
 - current implication:
   there is still no evidence for a cheap transferable pattern; the next
   enrichment step, if pursued, should move past cached-`best_sigma` summaries

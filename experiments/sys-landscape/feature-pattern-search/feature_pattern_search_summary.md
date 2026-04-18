@@ -2,7 +2,7 @@
 
 ## Dataset
 
-- normalized input source: temporary refresh via `cargo run -p exp-sys-landscape --release --bin sys-normalized-dataset -- --out-dir /tmp/feature-pattern-search-a8v3jetr/normalized`
+- normalized input source: temporary refresh via `cargo run -p exp-sys-landscape --release --bin sys-normalized-dataset -- --out-dir /tmp/feature-pattern-search-3_fok5b7/normalized`
 - joined rows: `282`
 - random rows: `170`
 - endpoint rows: `112`
@@ -50,9 +50,12 @@
 - `face_symplectic`: ridge-polygon symplectic-area summaries after volume normalization by `vol(K)^(1/2)`
 - `skeleton`: combinatorial counts and degree summaries from the exact 4D face lattice
 - `omega`: volume-normalized dual-side `omega_0` magnitude summaries, exact omega-sign structure, and directed transition-graph summaries
-- `orbit`: cached-`best_sigma` support size plus sigma-local geometry, `omega_0`, transition summaries, and bounded best-orbit KKT scalars
+- `orbit_combinatorics`: cached-`best_sigma` support-size and cycle-structure summaries
+- `orbit_geometry`: sigma-local dual-norm and cycle `omega_0` magnitude summaries
+- `orbit_search`: bounded best-orbit KKT and search-scalar availability summaries
+- `orbit`: the legacy merged orbit packet kept as a reference aggregate
 - `trajectory`: endpoint-keyed step-event aggregates such as overshoot mix, phase restarts, and gradient/step-size summaries
-- `all`: metadata, geometry, face_geometry, face_symplectic, skeleton, omega, orbit, and trajectory together
+- `all`: metadata, geometry, face_geometry, face_symplectic, skeleton, omega, orbit_combinatorics, orbit_geometry, orbit_search, orbit, and trajectory together
 
 ## Symmetry Status
 
@@ -64,7 +67,10 @@
 | `face_symplectic` | yes | yes | yes | Ridge-polygon symplectic areas divided by `vol(K)^(1/2)`. |
 | `skeleton` | yes | yes | yes | Pure combinatorics; unaffected by translation, `Sp(4)`, or scaling. |
 | `omega` | yes | no | mixed | `omega_0` magnitudes are volume-normalized, but the dual-coordinate packet still depends on translation gauge; transition graph and zero-sign structure do not. |
-| `orbit` | mixed | mixed | mixed | Mixes sigma-local geometry, transition summaries, and search/KKT scalars. |
+| `orbit_combinatorics` | yes | yes | yes | Sigma support counts and cycle-structure summaries. |
+| `orbit_geometry` | yes | no | mixed | Sigma-local norms and cycle `omega_0` magnitudes. |
+| `orbit_search` | no | no | no | Search-procedure diagnostics and cached KKT scalars. |
+| `orbit` | mixed | mixed | mixed | Legacy aggregate of the three orbit sub-blocks above. |
 | `trajectory` | no | no | no | Search-procedure diagnostics, not geometry invariants. |
 
 ## Metrics
@@ -82,6 +88,9 @@ Reported metrics are test-set `R^2` and RMSE. Within-regime results use grouped 
 | Within random | `face_symplectic` | 0.5483 | 0.1380 |
 | Within random | `skeleton` | 0.1628 | 0.1879 |
 | Within random | `omega` | 0.4251 | 0.1557 |
+| Within random | `orbit_combinatorics` | 0.2686 | 0.1756 |
+| Within random | `orbit_geometry` | 0.0350 | 0.2017 |
+| Within random | `orbit_search` | 0.4301 | 0.1550 |
 | Within random | `orbit` | 0.4495 | 0.1523 |
 | Within random | `trajectory` | -0.0140 | 0.2068 |
 | Within random | `all` | 0.5985 | 0.1301 |
@@ -92,6 +101,9 @@ Reported metrics are test-set `R^2` and RMSE. Within-regime results use grouped 
 | Within endpoint | `face_symplectic` | 0.4000 | 0.0940 |
 | Within endpoint | `skeleton` | -0.0588 | 0.1248 |
 | Within endpoint | `omega` | 0.0901 | 0.1157 |
+| Within endpoint | `orbit_combinatorics` | 0.1186 | 0.1139 |
+| Within endpoint | `orbit_geometry` | 0.1275 | 0.1133 |
+| Within endpoint | `orbit_search` | 0.1197 | 0.1138 |
 | Within endpoint | `orbit` | 0.1104 | 0.1144 |
 | Within endpoint | `trajectory` | 0.0066 | 0.1209 |
 | Within endpoint | `all` | 0.3239 | 0.0997 |
@@ -102,6 +114,9 @@ Reported metrics are test-set `R^2` and RMSE. Within-regime results use grouped 
 | Random -> endpoint | `face_symplectic` | -9.1481 | 0.3864 |
 | Random -> endpoint | `skeleton` | -12.5768 | 0.4470 |
 | Random -> endpoint | `omega` | -11.9827 | 0.4371 |
+| Random -> endpoint | `orbit_combinatorics` | -14.6469 | 0.4799 |
+| Random -> endpoint | `orbit_geometry` | -21.4307 | 0.5745 |
+| Random -> endpoint | `orbit_search` | -36.5149 | 0.7430 |
 | Random -> endpoint | `orbit` | -32.4641 | 0.7018 |
 | Random -> endpoint | `trajectory` | -17.8854 | 0.5272 |
 | Random -> endpoint | `all` | -11.0146 | 0.4205 |
@@ -112,6 +127,9 @@ Reported metrics are test-set `R^2` and RMSE. Within-regime results use grouped 
 | Endpoint -> random | `face_symplectic` | -20.1806 | 0.9450 |
 | Endpoint -> random | `skeleton` | -7.3161 | 0.5921 |
 | Endpoint -> random | `omega` | -3.4124 | 0.4313 |
+| Endpoint -> random | `orbit_combinatorics` | -6.9007 | 0.5771 |
+| Endpoint -> random | `orbit_geometry` | -7.0820 | 0.5837 |
+| Endpoint -> random | `orbit_search` | -6.4751 | 0.5614 |
 | Endpoint -> random | `orbit` | -6.6180 | 0.5667 |
 | Endpoint -> random | `trajectory` | -6.1604 | 0.5494 |
 | Endpoint -> random | `all` | -22.9752 | 1.0054 |
@@ -127,6 +145,9 @@ Reported metrics are test-set `R^2` and RMSE. Within-regime results use grouped 
 | Within random | `face_symplectic` | 0.8779 | 0.0717 |
 | Within random | `skeleton` | 0.1103 | 0.1937 |
 | Within random | `omega` | 0.7948 | 0.0930 |
+| Within random | `orbit_combinatorics` | 0.2083 | 0.1827 |
+| Within random | `orbit_geometry` | 0.0430 | 0.2009 |
+| Within random | `orbit_search` | 0.2902 | 0.1730 |
 | Within random | `orbit` | 0.3970 | 0.1594 |
 | Within random | `trajectory` | -0.0147 | 0.2068 |
 | Within random | `all` | 0.9003 | 0.0648 |
@@ -137,6 +158,9 @@ Reported metrics are test-set `R^2` and RMSE. Within-regime results use grouped 
 | Within endpoint | `face_symplectic` | 0.2934 | 0.1020 |
 | Within endpoint | `skeleton` | -0.3751 | 0.1423 |
 | Within endpoint | `omega` | -0.2536 | 0.1358 |
+| Within endpoint | `orbit_combinatorics` | 0.0739 | 0.1167 |
+| Within endpoint | `orbit_geometry` | 0.0785 | 0.1165 |
+| Within endpoint | `orbit_search` | 0.0395 | 0.1189 |
 | Within endpoint | `orbit` | 0.0967 | 0.1153 |
 | Within endpoint | `trajectory` | 0.0003 | 0.1213 |
 | Within endpoint | `all` | 0.3438 | 0.0983 |
@@ -147,6 +171,9 @@ Reported metrics are test-set `R^2` and RMSE. Within-regime results use grouped 
 | Random -> endpoint | `face_symplectic` | -4.6835 | 0.2892 |
 | Random -> endpoint | `skeleton` | -14.8860 | 0.4835 |
 | Random -> endpoint | `omega` | -4.6180 | 0.2875 |
+| Random -> endpoint | `orbit_combinatorics` | -14.3903 | 0.4759 |
+| Random -> endpoint | `orbit_geometry` | -18.2522 | 0.5323 |
+| Random -> endpoint | `orbit_search` | -27.4477 | 0.6470 |
 | Random -> endpoint | `orbit` | -20.3696 | 0.5608 |
 | Random -> endpoint | `trajectory` | -17.7599 | 0.5254 |
 | Random -> endpoint | `all` | -2.8902 | 0.2393 |
@@ -157,6 +184,9 @@ Reported metrics are test-set `R^2` and RMSE. Within-regime results use grouped 
 | Endpoint -> random | `face_symplectic` | -0.0082 | 0.2062 |
 | Endpoint -> random | `skeleton` | -7.0737 | 0.5834 |
 | Endpoint -> random | `omega` | -4.4154 | 0.4778 |
+| Endpoint -> random | `orbit_combinatorics` | -6.5284 | 0.5634 |
+| Endpoint -> random | `orbit_geometry` | -6.5943 | 0.5658 |
+| Endpoint -> random | `orbit_search` | -6.7741 | 0.5725 |
 | Endpoint -> random | `orbit` | -6.5339 | 0.5636 |
 | Endpoint -> random | `trajectory` | -6.1450 | 0.5488 |
 | Endpoint -> random | `all` | -0.4932 | 0.2509 |
@@ -175,8 +205,10 @@ Reported metrics are test-set `R^2` and RMSE. Within-regime results use grouped 
 
 - within-random ridge: metadata `R^2=0.1846`, geometry `R^2=0.4427`, face_geometry `R^2=0.3847`, face_symplectic `R^2=0.5483`, skeleton `R^2=0.1628`, omega `R^2=0.4251`, orbit `R^2=0.4495`, trajectory `R^2=-0.0140`
 - within-endpoint ridge: metadata `R^2=0.4364`, geometry `R^2=-0.0965`, face_geometry `R^2=0.1030`, face_symplectic `R^2=0.4000`, skeleton `R^2=-0.0588`, omega `R^2=0.0901`, orbit `R^2=0.1104`, trajectory `R^2=0.0066`
+- orbit split on within-endpoint ridge: combinatorics `R^2=0.1186`, geometry `R^2=0.1275`, search `R^2=0.1197`
+- endpoint-side orbit signal, if any, sits in `geometry` (`R^2=0.1275`)
 - random-forest strengthens the face-level picture: `face_geometry` remains strong within random, while volume-normalized `face_symplectic` stays the strongest non-metadata endpoint-side face block.
 - random-to-endpoint transfer with full ridge block: `R^2=-11.0146`
 - endpoint-to-random transfer with trajectory ridge: `R^2=-6.1604`
 - All geometric magnitude blocks in this packet now use the `vol(K)=1` convention; other symmetry-aware normalizations remain possible and are not ruled out by this packet.
-- the richer orbit block now includes bounded best-orbit KKT scalars, using cached search-level payloads where available and a one-best-sigma fallback solve on older cache rows.
+- the richer orbit packet is now split into combinatorics, geometry, and search sub-blocks while keeping the merged `orbit` aggregate for reference.
