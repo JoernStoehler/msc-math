@@ -15,9 +15,7 @@ use rand_distr::{Distribution, StandardNormal};
 use symplectic::algorithms::hk2017::combinations;
 use symplectic::algorithms::hk2017::permutations::for_each_cyclic_permutation;
 use symplectic::derivatives::{
-    capacity_derivatives_a_from_kkt_result,
-    directional_derivative_a,
-    volume_derivatives_a,
+    capacity_derivatives_a_from_kkt_result, directional_derivative_a, volume_derivatives_a,
 };
 use symplectic::kkt::saddle_point_solver::{solve_kkt_for, KktResult, EPS_Q_POSITIVE};
 use symplectic::{ehz_capacity, OrbitSearchResult, Polytope4D};
@@ -29,8 +27,7 @@ pub const EPS_BETA_CERTIFIED: f64 = 1e-9;
 
 /// Perturbation sizes for the first-order prediction test.
 pub const T_VALUES: &[f64] = &[
-    1e-1, 3e-2, 1e-2, 3e-3, 1e-3, 3e-4, 1e-4, 3e-5, 1e-5, 3e-6, 1e-6, 3e-7,
-    1e-7,
+    1e-1, 3e-2, 1e-2, 3e-3, 1e-3, 3e-4, 1e-4, 3e-5, 1e-5, 3e-6, 1e-6, 3e-7, 1e-7,
 ];
 
 /// Shared row schema for the first-order gradient harness.
@@ -124,7 +121,7 @@ fn sys_derivatives_a(
 pub fn analyze_polytope(polytope: &Polytope4D) -> Option<PolytopeInfo> {
     let ehz = ehz_capacity_safe(polytope)?;
     let cap = ehz.capacity();
-    let vol = symplectic::volume(polytope).ok()?;
+    let vol = symplectic::volume(polytope);
     if vol <= 0.0 {
         return None;
     }
@@ -178,7 +175,10 @@ fn compute_perturbed(
         .filter(|kkt| kkt.q_corrected > EPS_Q_POSITIVE && kkt.beta.iter().all(|&b| b > 0.0))
         .map(|kkt| 0.5 / kkt.q_corrected);
 
-    let vol = symplectic::volume(&polytope).ok().filter(|&v| v > 0.0);
+    let vol = {
+        let v = symplectic::volume(&polytope);
+        (v > 0.0).then_some(v)
+    };
 
     let sys = match (cap, vol) {
         (Some(c), Some(v)) => Some(c * c / (2.0 * v)),

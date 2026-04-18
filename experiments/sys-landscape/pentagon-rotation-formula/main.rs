@@ -29,11 +29,13 @@ use std::env;
 use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::path::PathBuf;
+use symplectic::algorithms::billiard::facet_classification::{
+    classify_facets, FacetClassification,
+};
 use symplectic::algorithms::billiard::{bounce_count_from_sigma, for_each_sigma};
-use symplectic::algorithms::billiard::facet_classification::{classify_facets, FacetClassification};
 use symplectic::algorithms::{
-    aggregate_orbits, OrbitGuaranteeMode, OrbitSearchError, OrbitSolveBackend, OrbitSolveError,
-    solve_orbit_sigma,
+    aggregate_orbits, solve_orbit_sigma, OrbitGuaranteeMode, OrbitSearchError, OrbitSolveBackend,
+    OrbitSolveError,
 };
 use symplectic::geom::lagrangian_product::lagrangian_product;
 use symplectic::geom::polygon::{polygon_area, regular_polygon_2d, rotate_polygon_2d};
@@ -119,7 +121,7 @@ fn main() {
             lagrangian_product(&qn, &qh, &pn, &ph).expect("pentagon product construction failed");
         let classification =
             classify_facets(&polytope).expect("pentagon product should classify as a product");
-        let vol = volume(&polytope).expect("volume computation failed");
+        let vol = volume(&polytope);
         match cli.mode {
             SweepMode::Minima => {
                 let result = collect_minima_safe_billiard_result(&polytope)
@@ -407,11 +409,7 @@ fn parse_sigma_blocks(
     (q_blocks, p_blocks)
 }
 
-fn relative_facet_index(
-    classification: &FacetClassification,
-    facet: usize,
-    q_type: bool,
-) -> usize {
+fn relative_facet_index(classification: &FacetClassification, facet: usize, q_type: bool) -> usize {
     let indices = if q_type {
         &classification.q_indices
     } else {

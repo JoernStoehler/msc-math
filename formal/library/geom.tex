@@ -302,16 +302,50 @@ from the centroid or via the standard 2D shoelace formula on the vertex list.
 \begin{unverified}
 \begin{definition}[Volume of a 4D polytope]\label{def:volume}
 % [TODO: JÖRN - verify statement]
-% Source: volume.rs, qhull.rs doc comments
+% Source: volume.rs doc comments
 The \emph{volume} of a 4D convex polytope $K$ is the standard
 Lebesgue measure $\operatorname{vol}(K) = \int_K dx$.
-In the implementation, volume is computed by triangulating $K$
-into simplices via qhull and summing the simplex volumes:
+For a 4-simplex $\Delta = \operatorname{conv}(v_0,v_1,v_2,v_3,v_4)$,
 \[
   \operatorname{vol}(\Delta)
-  = \frac{1}{4!}\, |\det(v_1 - v_0 \mid v_2 - v_0 \mid v_3 - v_0 \mid v_4 - v_0)|.
+  = \frac{1}{4!}\,
+    \left|\det(v_1 - v_0 \mid v_2 - v_0 \mid v_3 - v_0 \mid v_4 - v_0)\right|.
 \]
 \end{definition}
+\end{unverified}
+
+\begin{unverified}
+\begin{lemma}[Origin-star triangulation of volume]\label{lem:volume-star-triangulation}
+% [TODO: JÖRN - verify statement and proof]
+% Source: volume.rs doc comments
+Let
+\[
+  K = \{x \in \mathbb{R}^4 : \langle a_i, x \rangle \leq 1 \text{ for } i=1,\ldots,F\}
+\]
+be a bounded polytope. Then $0 \in \operatorname{int}(K)$. For each facet
+$F_i$, let $\mathcal{T}_i$ be any triangulation of $F_i$ into tetrahedra.
+Then
+\[
+  \operatorname{vol}(K)
+  = \sum_{i=1}^F \sum_{\tau \in \mathcal{T}_i}
+    \operatorname{vol}\bigl(\operatorname{conv}(0,\tau)\bigr).
+\]
+\noindent
+In the implementation, $\mathcal{T}_i$ is built by taking the arithmetic
+mean of the vertices of $F_i$ and fanning over the ridge polygons in cyclic
+order.
+\end{lemma}
+
+\begin{proof}
+Because $\langle a_i, 0 \rangle = 0 < 1$ for every~$i$, the origin lies in
+the interior of~$K$. The cones $\operatorname{conv}(0,F_i)$ over the facets
+cover~$K$, and distinct cones intersect only along lower-dimensional faces,
+so their overlaps have measure zero. Each facet triangulation $\mathcal{T}_i$
+partitions $F_i$ into tetrahedra with pairwise lower-dimensional overlaps.
+Coning every tetrahedron in $\mathcal{T}_i$ to~$0$ therefore partitions
+$\operatorname{conv}(0,F_i)$ into 4-simplices up to measure-zero overlaps.
+Summing over all facets yields the claimed formula.
+\end{proof}
 \end{unverified}
 
 

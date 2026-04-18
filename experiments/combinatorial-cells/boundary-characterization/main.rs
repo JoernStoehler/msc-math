@@ -18,6 +18,10 @@
 //!         experiments/combinatorial-cells/boundary-characterization/combinatorial-boundaries-crossing.jsonl,
 //!         experiments/combinatorial-cells/boundary-characterization/combinatorial-boundaries-gradient.jsonl
 
+use exp_combinatorial_cells::{
+    compute_step_bound_detailed, construct_at_t, ehz_capacity_instrumented, name_from_record,
+    source_dataset_from_record, BoundaryEvent, EventType,
+};
 use nalgebra::Vector4;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
@@ -27,15 +31,8 @@ use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::path::Path;
 use std::time::Instant;
-use exp_combinatorial_cells::{
-    compute_step_bound_detailed, construct_at_t, ehz_capacity_instrumented, name_from_record,
-    source_dataset_from_record, BoundaryEvent, EventType,
-};
 use symplectic::database;
-use symplectic::derivatives::{
-    capacity_derivatives_a_from_kkt_result,
-    volume_derivatives_a,
-};
+use symplectic::derivatives::{capacity_derivatives_a_from_kkt_result, volume_derivatives_a};
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::skeleton::Skeleton;
 use symplectic::geom::volume::volume;
@@ -282,7 +279,7 @@ fn compute_sys(
     Vec<usize>,
     symplectic::kkt::saddle_point_solver::KktResult,
 )> {
-    let vol = volume(polytope).ok()?;
+    let vol = volume(polytope);
     if vol <= 0.0 {
         return None;
     }
@@ -417,8 +414,7 @@ fn evaluate_gradient_crossing(
     let eps_before = (BEFORE_EPS_FRACTION * t).max(EPS_FLOOR);
     let poly_before = construct_at_t(duals, direction, t - eps_before)?;
     let (sys_b, cap_b, vol_b, perm_b, kkt_b) = compute_sys(&poly_before)?;
-    let d_sys_a_b =
-        compute_sys_gradient_a(&poly_before, vol_b, cap_b, sys_b, &kkt_b, &perm_b);
+    let d_sys_a_b = compute_sys_gradient_a(&poly_before, vol_b, cap_b, sys_b, &kkt_b, &perm_b);
 
     let mut d_sys_a_after = None;
     for &frac in CROSSING_EPS_FRACTIONS {
@@ -426,7 +422,12 @@ fn evaluate_gradient_crossing(
         if let Some(poly_after) = construct_at_t(duals, direction, t + eps) {
             if let Some((sys_a, cap_a, vol_a, perm_a, kkt_a)) = compute_sys(&poly_after) {
                 d_sys_a_after = Some(compute_sys_gradient_a(
-                    &poly_after, vol_a, cap_a, sys_a, &kkt_a, &perm_a,
+                    &poly_after,
+                    vol_a,
+                    cap_a,
+                    sys_a,
+                    &kkt_a,
+                    &perm_a,
                 ));
                 break;
             }
@@ -435,8 +436,16 @@ fn evaluate_gradient_crossing(
 
     let d_sys_a_a = d_sys_a_after?;
 
-    let norm_b: f64 = d_sys_a_b.iter().map(|v| v.norm_squared()).sum::<f64>().sqrt();
-    let norm_a: f64 = d_sys_a_a.iter().map(|v| v.norm_squared()).sum::<f64>().sqrt();
+    let norm_b: f64 = d_sys_a_b
+        .iter()
+        .map(|v| v.norm_squared())
+        .sum::<f64>()
+        .sqrt();
+    let norm_a: f64 = d_sys_a_a
+        .iter()
+        .map(|v| v.norm_squared())
+        .sum::<f64>()
+        .sqrt();
 
     let dd_b: f64 = d_sys_a_b
         .iter()
@@ -495,8 +504,7 @@ fn main() {
     println!("Loading starting polytopes from owned cache (F <= {MAX_FACET_COUNT})...");
 
     let owned_db_path = Path::new(env!("CARGO_MANIFEST_DIR")).join("polytopes.jsonl");
-    let db = database::load_many(&[owned_db_path.as_path()])
-        .expect("failed to load database");
+    let db = database::load_many(&[owned_db_path.as_path()]).expect("failed to load database");
 
     let mut polytopes: Vec<(String, String, Polytope4D)> = Vec::new();
 
@@ -531,17 +539,17 @@ fn main() {
 
     let out_dir = base_dir.join("boundary-characterization");
 
-    let anatomy_file =
-        File::create(out_dir.join("combinatorial-boundaries-anatomy.jsonl")).expect("create anatomy JSONL");
+    let anatomy_file = File::create(out_dir.join("combinatorial-boundaries-anatomy.jsonl"))
+        .expect("create anatomy JSONL");
     let mut anatomy_writer = BufWriter::new(anatomy_file);
 
-    let crossing_file =
-        File::create(out_dir.join("combinatorial-boundaries-crossing.jsonl")).expect("create crossing JSONL");
+    let crossing_file = File::create(out_dir.join("combinatorial-boundaries-crossing.jsonl"))
+        .expect("create crossing JSONL");
     let mut crossing_writer = BufWriter::new(crossing_file);
 
     let mut gradient_writer = if RUN_GRADIENT {
-        let f =
-            File::create(out_dir.join("combinatorial-boundaries-gradient.jsonl")).expect("create gradient JSONL");
+        let f = File::create(out_dir.join("combinatorial-boundaries-gradient.jsonl"))
+            .expect("create gradient JSONL");
         Some(BufWriter::new(f))
     } else {
         None
@@ -567,7 +575,10 @@ fn main() {
 
         let base = (|| {
             let instrumented = ehz_capacity_instrumented(polytope)?;
-            let vol = volume(polytope).ok().filter(|&v| v > 0.0)?;
+            let vol = volume(polytope);
+            if vol <= 0.0 {
+                return None;
+            }
             let cap = instrumented.capacity;
             let sys = cap * cap / (2.0 * vol);
             let perm = instrumented.best_permutation;
@@ -604,20 +615,17 @@ fn main() {
             let boundary =
                 compute_step_bound_detailed(polytope, &dir.d, EPS_NUMERICAL_ZERO, MAX_STEP_SIZE);
 
-            let (ev_vertex, ev_facet_new, ev_facet_pair, ev_facet_degen) =
-                match &boundary.event {
-                    EventType::IncidenceFlip {
-                        vertex_index,
-                        new_facet,
-                    } => (Some(*vertex_index), Some(*new_facet), None, None),
-                    EventType::OmegaFlip { facet_i, facet_j } => {
-                        (None, None, Some([*facet_i, *facet_j]), None)
-                    }
-                    EventType::DualVertexDegen { facet } => {
-                        (None, None, None, Some(*facet))
-                    }
-                    EventType::Unbounded => (None, None, None, None),
-                };
+            let (ev_vertex, ev_facet_new, ev_facet_pair, ev_facet_degen) = match &boundary.event {
+                EventType::IncidenceFlip {
+                    vertex_index,
+                    new_facet,
+                } => (Some(*vertex_index), Some(*new_facet), None, None),
+                EventType::OmegaFlip { facet_i, facet_j } => {
+                    (None, None, Some([*facet_i, *facet_j]), None)
+                }
+                EventType::DualVertexDegen { facet } => (None, None, None, Some(*facet)),
+                EventType::Unbounded => (None, None, None, None),
+            };
 
             let anatomy_row = AnatomyRow {
                 polytope_name: name.clone(),
@@ -660,9 +668,7 @@ fn main() {
 
             // Gradient crossing
             if RUN_GRADIENT {
-                if let Some(mut grad_row) =
-                    evaluate_gradient_crossing(duals, &dir.d, &boundary)
-                {
+                if let Some(mut grad_row) = evaluate_gradient_crossing(duals, &dir.d, &boundary) {
                     grad_row.polytope_name = name.clone();
                     grad_row.direction_type = dir.dir_type.clone();
                     grad_row.direction_index = dir.index;

@@ -100,7 +100,7 @@ mod tests {
             let (pn, ph) = regular_polygon_2d(n2, 1.0);
             let polytope = lagrangian_product(&qn, &qh, &pn, &ph).unwrap();
 
-            let vol4 = volume(&polytope).unwrap();
+            let vol4 = volume(&polytope);
             let area_q = polygon_area(&qn, &qh).unwrap();
             let area_p = polygon_area(&pn, &ph).unwrap();
             let expected = area_q * area_p;
@@ -129,8 +129,8 @@ mod tests {
         assert_eq!(our_polytope.facet_count(), hko.polytope.facet_count());
 
         // Same volume
-        let our_vol = volume(&our_polytope).unwrap();
-        let hko_vol = volume(&hko.polytope).unwrap();
+        let our_vol = volume(&our_polytope);
+        let hko_vol = volume(&hko.polytope);
         let rel_err = (our_vol - hko_vol).abs() / hko_vol;
         assert!(
             rel_err < 1e-6,
@@ -152,7 +152,7 @@ mod tests {
         for &theta in &angles {
             let (rpn, rph) = rotate_polygon_2d(&pn, &ph, theta);
             let polytope = lagrangian_product(&qn, &qh, &rpn, &rph).unwrap();
-            let vol = volume(&polytope).unwrap();
+            let vol = volume(&polytope);
             let rel_err = (vol - expected_vol).abs() / expected_vol;
             assert!(
                 rel_err < 1e-6,

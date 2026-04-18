@@ -15,6 +15,9 @@
 //! Filter: F <= 10 (HK2017 is exponential in F)
 //! Output Artifacts: experiments/combinatorial-cells/multiple-crossings/combinatorial-boundaries-sweep.jsonl
 
+use exp_combinatorial_cells::{
+    compute_step_bound_detailed, ehz_capacity_instrumented, name_from_record, EventType,
+};
 use nalgebra::Vector4;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
@@ -24,14 +27,8 @@ use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::path::Path;
 use std::time::Instant;
-use exp_combinatorial_cells::{
-    compute_step_bound_detailed, ehz_capacity_instrumented, name_from_record, EventType,
-};
 use symplectic::database;
-use symplectic::derivatives::{
-    capacity_derivatives_a_from_kkt_result,
-    volume_derivatives_a,
-};
+use symplectic::derivatives::{capacity_derivatives_a_from_kkt_result, volume_derivatives_a};
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::volume::volume;
 use symplectic::kkt::saddle_point_solver::solve_kkt_for;
@@ -143,7 +140,7 @@ fn compute_sys(
     Vec<usize>,
     symplectic::kkt::saddle_point_solver::KktResult,
 )> {
-    let vol = volume(polytope).ok()?;
+    let vol = volume(polytope);
     if vol <= 0.0 {
         return None;
     }
@@ -268,8 +265,7 @@ fn main() {
     println!("Loading starting polytopes from owned cache (F <= {MAX_FACET_COUNT})...");
 
     let owned_db_path = Path::new(env!("CARGO_MANIFEST_DIR")).join("polytopes.jsonl");
-    let db = database::load_many(&[owned_db_path.as_path()])
-        .expect("failed to load database");
+    let db = database::load_many(&[owned_db_path.as_path()]).expect("failed to load database");
 
     let mut polytopes: Vec<(String, Polytope4D)> = Vec::new();
 
@@ -302,9 +298,8 @@ fn main() {
     // =========================================================================
 
     let out_dir = base_dir.join("multiple-crossings");
-    let sweep_file =
-        File::create(out_dir.join("combinatorial-boundaries-sweep.jsonl"))
-            .expect("create sweep JSONL");
+    let sweep_file = File::create(out_dir.join("combinatorial-boundaries-sweep.jsonl"))
+        .expect("create sweep JSONL");
     let mut sweep_writer = BufWriter::new(sweep_file);
 
     // =========================================================================
@@ -325,7 +320,10 @@ fn main() {
 
         let base = (|| {
             let instrumented = ehz_capacity_instrumented(polytope)?;
-            let vol = volume(polytope).ok().filter(|&v| v > 0.0)?;
+            let vol = volume(polytope);
+            if vol <= 0.0 {
+                return None;
+            }
             let cap = instrumented.capacity;
             let sys = cap * cap / (2.0 * vol);
             let perm = instrumented.best_permutation;

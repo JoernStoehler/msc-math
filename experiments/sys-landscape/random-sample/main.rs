@@ -2,30 +2,41 @@
 //!
 //! Goal: Compute systolic ratios for random 4D polytopes across facet counts F=5..12,
 //!   to probe whether random generic polytopes approach the Viterbo threshold.
-//! Input Artifacts: sys-landscape family cache at experiments/sys-landscape/cache.jsonl.
-//! Output Artifacts: experiments/sys-landscape/random-sample/random-sweep.jsonl
+//! Input Artifacts: experiments/sys-landscape/cache.jsonl
+//! Output Artifacts: experiments/sys-landscape/random-sample/random-sweep.jsonl,
 //!         experiments/sys-landscape/cache.jsonl
 //!
 //! Architecture:
-//! 1. `cargo run -p exp-sys-landscape --release --bin sys-random-sample` generates dataset
-//! 2. Polytopes are generated via `generate_polytope` (blake3 per-attempt seeding)
+//! 1. Bare `cargo run -p exp-sys-landscape --release --bin sys-random-sample`
+//!    is a smoke/default run: it writes temp output + temp cache under `/tmp`.
+//! 2. Canonical refreshes pass explicit repo-owned paths, e.g.
+//!    `--out experiments/sys-landscape/random-sample/random-sweep.jsonl`
+//!    and `--cache experiments/sys-landscape/cache.jsonl`.
+//! 3. Polytopes are generated via `generate_polytope` (blake3 per-attempt seeding)
 //!    and cached in the sys-landscape family cache. Re-runs skip generation + capacity.
-//! 3. Writes to random-sample/random-sweep.jsonl
-//! 4. Python script plots sys vs F
+//! 4. Canonical runs write to `random-sample/random-sweep.jsonl`
+//! 5. Python script plots sys vs F
 //!
 //! Dataset design:
 //! - Random polytopes with facet counts F=5..12
 //! - Height range h in [0.8, 1.2]
 //! - Default root capacity wrapper (`symplectic::ehz_capacity`), which
 //!   auto-routes Lagrangian products to billiard and other inputs to pruned HK2017
+//!
+//! CLI (all optional):
+//! - `--seed <u64>`            RNG seed                               (default: 42)
+//! - `--samples-per-f <usize>` samples for each included facet count  (default: plan value)
+//! - `--max-f <usize>`         cap facet counts included in the run   (default: 12)
+//! - `--out <path>`            output JSONL path                      (default: untracked temp)
+//! - `--cache <path>`          cache JSONL path                       (default: untracked temp)
 
-use exp_sys_landscape::orbit_scalars_from_result;
+use exp_sys_landscape::{orbit_scalars_from_result, smoke_output_path};
 use num_rational::BigRational;
 use serde::Serialize;
 use std::collections::HashMap;
 use std::fs::File;
 use std::io::{BufWriter, Write};
-use std::path::Path;
+use std::path::PathBuf;
 use std::time::Instant;
 use symplectic::database::{load_many, save, DualVerticesKey, PolytopeRecord, SigmaAction, Source};
 use symplectic::ehz_capacity;
@@ -47,6 +58,103 @@ const RANDOM_PLAN: &[(usize, usize)] = &[
     (11, 5),
     (12, 5),
 ];
+
+struct Args {
+    seed: u64,
+    samples_per_f: Option<usize>,
+    max_f: usize,
+    out: PathBuf,
+    cache: PathBuf,
+}
+
+fn default_smoke_cache_path() -> PathBuf {
+    smoke_output_path("sys-random-sample", "smoke-cache.jsonl")
+}
+
+fn default_smoke_output_path() -> PathBuf {
+    smoke_output_path("sys-random-sample", "smoke-random-sweep.jsonl")
+}
+
+fn parse_args() -> Args {
+    parse_args_from(std::env::args())
+}
+
+fn parse_args_from(
+    argv: impl IntoIterator<Item = impl Into<String>>,
+) -> Args {
+    let argv: Vec<String> = argv.into_iter().map(Into::into).collect();
+
+    let mut seed = SEED;
+    let mut samples_per_f = None;
+    let mut max_f = RANDOM_PLAN
+        .iter()
+        .map(|(f, _)| *f)
+        .max()
+        .expect("random plan should be non-empty");
+    let mut out = None;
+    let mut cache = None;
+
+    let mut i = 1;
+    while i < argv.len() {
+        let arg = argv[i].as_str();
+        let need_value = |flag: &str| -> &str {
+            argv.get(i + 1)
+                .map(|s| s.as_str())
+                .unwrap_or_else(|| panic!("{flag} requires a value"))
+        };
+        match arg {
+            "--seed" => {
+                seed = need_value("--seed")
+                    .parse()
+                    .expect("--seed must be a u64");
+                i += 2;
+            }
+            "--samples-per-f" => {
+                samples_per_f = Some(
+                    need_value("--samples-per-f")
+                        .parse()
+                        .expect("--samples-per-f must be a non-negative integer"),
+                );
+                i += 2;
+            }
+            "--max-f" => {
+                max_f = need_value("--max-f")
+                    .parse()
+                    .expect("--max-f must be a positive integer");
+                assert!(max_f >= 5, "--max-f must be at least 5");
+                i += 2;
+            }
+            "--out" => {
+                out = Some(PathBuf::from(need_value("--out")));
+                i += 2;
+            }
+            "--cache" => {
+                cache = Some(PathBuf::from(need_value("--cache")));
+                i += 2;
+            }
+            other => panic!("unknown argument: {other}"),
+        }
+    }
+
+    Args {
+        seed,
+        samples_per_f,
+        max_f,
+        out: out.unwrap_or_else(default_smoke_output_path),
+        cache: cache.unwrap_or_else(default_smoke_cache_path),
+    }
+}
+
+fn sweep_plan(samples_per_f: Option<usize>, max_f: usize) -> Vec<(usize, usize)> {
+    RANDOM_PLAN
+        .iter()
+        .copied()
+        .filter(|(facet_count, _)| *facet_count <= max_f)
+        .map(|(facet_count, default_samples)| {
+            (facet_count, samples_per_f.unwrap_or(default_samples))
+        })
+        .collect()
+}
 
 #[derive(Debug, Serialize)]
 struct RandomSweepRow {
@@ -80,30 +188,43 @@ fn rational_vec4_to_strings(data: &[[BigRational; 4]]) -> Vec<[String; 4]> {
 }
 
 fn main() {
+    let args = parse_args();
     let t0 = Instant::now();
+    let plan = sweep_plan(args.samples_per_f, args.max_f);
+    assert!(
+        !plan.is_empty(),
+        "no facet counts selected; increase --max-f to at least 5"
+    );
 
-    let family_cache_path = Path::new(env!("CARGO_MANIFEST_DIR")).join("cache.jsonl");
-    let output_path =
-        Path::new(env!("CARGO_MANIFEST_DIR")).join("random-sample/random-sweep.jsonl");
+    if let Some(parent) = args.cache.parent() {
+        if !parent.as_os_str().is_empty() {
+            std::fs::create_dir_all(parent).expect("create cache directory");
+        }
+    }
+    if let Some(parent) = args.out.parent() {
+        if !parent.as_os_str().is_empty() {
+            std::fs::create_dir_all(parent).expect("create output directory");
+        }
+    }
 
-    let mut db = load_many(&[family_cache_path.as_path()])
+    let mut db = load_many(&[args.cache.as_path()])
         .expect("failed to load sys-landscape family cache");
     println!("Loaded family cache: {} entries\n", db.len());
 
-    let file = File::create(&output_path).expect("failed to create output file");
+    let file = File::create(&args.out).expect("failed to create output file");
     let mut writer = BufWriter::new(file);
 
     let mut total = 0usize;
     let mut cache_hits = 0usize;
     let mut attempt: u64 = 0;
 
-    for &(facet_count, n_samples) in RANDOM_PLAN {
+    for (facet_count, n_samples) in plan {
         println!("F={facet_count:2}: generating {n_samples:2} samples (h in [{H_MIN}, {H_MAX}])");
         let mut accepted = 0usize;
 
         while accepted < n_samples {
             let source = Source::Random {
-                master_seed: SEED,
+                master_seed: args.seed,
                 attempt,
                 facet_count_target: facet_count,
                 h_min: H_MIN,
@@ -159,7 +280,7 @@ fn main() {
             }
 
             // Cache miss: generate polytope
-            let p = match generate_polytope(facet_count, H_MIN, H_MAX, SEED, attempt) {
+            let p = match generate_polytope(facet_count, H_MIN, H_MAX, args.seed, attempt) {
                 Ok(p) => p,
                 Err(_) => {
                     // Rejection: this (seed, attempt) doesn't produce a valid polytope
@@ -169,7 +290,7 @@ fn main() {
             };
 
             let start_vol = Instant::now();
-            let vol = volume(&p).expect("volume computation failed");
+            let vol = volume(&p);
             let time_volume_ms = start_vol.elapsed().as_secs_f64() * 1000.0;
 
             let start_cap = Instant::now();
@@ -222,14 +343,61 @@ fn main() {
     }
 
     writer.flush().expect("flush output");
-    save(&family_cache_path, &db).expect("failed to save sys-landscape family cache");
+    save(&args.cache, &db).expect("failed to save sys-landscape family cache");
 
-    println!("\nWrote {total} entries to {}", output_path.display());
-    println!(
-        "Cache: {} entries (saved to {})",
-        db.len(),
-        family_cache_path.display()
-    );
+    println!("\nWrote {total} entries to {}", args.out.display());
+    println!("Cache: {} entries (saved to {})", db.len(), args.cache.display());
     println!("Cache hits: {cache_hits}/{total}");
     println!("Total time: {:.1}s", t0.elapsed().as_secs_f64());
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn parse_args_defaults_to_temp_paths() {
+        let args = parse_args_from(["sys-random-sample"]);
+        assert_eq!(args.seed, SEED);
+        assert_eq!(args.samples_per_f, None);
+        assert!(
+            args.out.to_string_lossy().contains("sys-random-sample"),
+            "default output path should use smoke temp dir: {:?}",
+            args.out
+        );
+        assert!(
+            args.cache.to_string_lossy().contains("sys-random-sample"),
+            "default cache path should use smoke temp dir: {:?}",
+            args.cache
+        );
+    }
+
+    #[test]
+    fn parse_args_overrides_paths_and_limits() {
+        let args = parse_args_from([
+            "sys-random-sample",
+            "--seed",
+            "7",
+            "--samples-per-f",
+            "2",
+            "--max-f",
+            "6",
+            "--out",
+            "tmp/out.jsonl",
+            "--cache",
+            "tmp/cache.jsonl",
+        ]);
+
+        assert_eq!(args.seed, 7);
+        assert_eq!(args.samples_per_f, Some(2));
+        assert_eq!(args.max_f, 6);
+        assert_eq!(args.out, PathBuf::from("tmp/out.jsonl"));
+        assert_eq!(args.cache, PathBuf::from("tmp/cache.jsonl"));
+    }
+
+    #[test]
+    fn sweep_plan_respects_override_and_limit() {
+        let plan = sweep_plan(Some(1), 6);
+        assert_eq!(plan, vec![(5, 1), (6, 1)]);
+    }
 }

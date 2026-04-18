@@ -2,10 +2,10 @@
 //!
 //! Split from mod.rs to keep long regression suites in dedicated files.
 
-use crate::{ehz_capacity_pruned, ehz_capacity_unpruned};
 use crate::geom::lagrangian_product::lagrangian_product;
 use crate::geom::polygon::{regular_polygon_2d, rotate_polygon_2d};
 use crate::kkt::qp_assembly::build_augmented_system;
+use crate::{ehz_capacity_pruned, ehz_capacity_unpruned};
 
 // ── KKT null space fix regressions ──
 //
@@ -255,11 +255,13 @@ fn pentagon_capacity() {
     );
 
     // Verify sys > 1 (counterexample property).
-    let vol = volume(&kp.polytope).expect("volume computation failed");
+    let vol = volume(&kp.polytope);
     let sys = result.capacity() * result.capacity() / (2.0 * vol);
     eprintln!(
         "Pentagon: capacity={:.6}, volume={:.6}, sys={:.6}",
-        result.capacity(), vol, sys
+        result.capacity(),
+        vol,
+        sys
     );
     assert!(sys > 1.0, "pentagon should have sys > 1, got {}", sys);
 }

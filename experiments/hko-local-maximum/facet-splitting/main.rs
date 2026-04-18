@@ -56,8 +56,8 @@ const SPLITTING_EPSILONS: &[f64] = &[1e-3, 1e-4];
 #[derive(Debug, Serialize)]
 struct SplittingRow {
     // Cutting direction
-    source_facet: usize,    // which existing facet normal this is near (usize::MAX for control, usize::MAX-1 for mixed)
-    angular_offset: f64,    // angle from source facet normal (radians)
+    source_facet: usize, // which existing facet normal this is near (usize::MAX for control, usize::MAX-1 for mixed)
+    angular_offset: f64, // angle from source facet normal (radians)
     cutting_normal: [f64; 4],
     epsilon: f64,
     // Results
@@ -82,7 +82,7 @@ struct SplittingRow {
 
 /// Safely compute sys for a polytope, catching panics from degenerate geometry.
 fn safe_sys(polytope: &Polytope4D) -> Option<(f64, f64, f64)> {
-    let vol = volume(polytope).unwrap_or(0.0);
+    let vol = volume(polytope);
     if vol <= 0.0 {
         return None;
     }
@@ -172,7 +172,7 @@ fn run_phase_b(base_dir: &std::path::Path) {
     let normals: Vec<Vector4<f64>> = duals.iter().map(|a| a / a.norm()).collect();
     let vertices = polytope.vertices_f64();
 
-    let vol_orig = volume(polytope).expect("volume");
+    let vol_orig = volume(polytope);
     let cap_orig = ehz_capacity(polytope).expect("ehz").capacity();
     let sys_orig = cap_orig * cap_orig / (2.0 * vol_orig);
     println!("HKO2024 baseline: F={f}, sys={sys_orig:.10}");
@@ -193,10 +193,13 @@ fn run_phase_b(base_dir: &std::path::Path) {
     // So we only need 2 representative facets, not 10.
     let representative_facets = [0usize, 5]; // Q-space rep, P-space rep
     for &facet_k in &representative_facets {
-        println!("\nFacet {facet_k} (representative): normal = [{:.4}, {:.4}, {:.4}, {:.4}]",
-            normals[facet_k][0], normals[facet_k][1], normals[facet_k][2], normals[facet_k][3]);
+        println!(
+            "\nFacet {facet_k} (representative): normal = [{:.4}, {:.4}, {:.4}, {:.4}]",
+            normals[facet_k][0], normals[facet_k][1], normals[facet_k][2], normals[facet_k][3]
+        );
 
-        let samples = sample_near_normal(&normals[facet_k], N_SPLITTING_SAMPLES_PER_FACET, &mut rng);
+        let samples =
+            sample_near_normal(&normals[facet_k], N_SPLITTING_SAMPLES_PER_FACET, &mut rng);
 
         for (dir, angular_offset) in &samples {
             for &eps in SPLITTING_EPSILONS {
@@ -212,7 +215,9 @@ fn run_phase_b(base_dir: &std::path::Path) {
                 // Add cutting halfspace: <n, x> <= h_K(n) - eps
                 // In dual vertex form: a = n / h, so new dual vertex = dir / (h_k_n - eps)
                 let new_h = h_k_n - eps;
-                if new_h <= 0.0 { continue; }
+                if new_h <= 0.0 {
+                    continue;
+                }
                 let mut new_duals: Vec<Vector4<f64>> = duals.to_vec();
                 new_duals.push(dir / new_h);
 
@@ -331,7 +336,9 @@ fn run_phase_b(base_dir: &std::path::Path) {
                 .fold(f64::NEG_INFINITY, f64::max);
 
             let new_h = h_k_n - eps;
-            if new_h <= 0.0 { continue; }
+            if new_h <= 0.0 {
+                continue;
+            }
             let mut new_duals: Vec<Vector4<f64>> = duals.to_vec();
             new_duals.push(dir / new_h);
 
@@ -421,55 +428,57 @@ fn run_phase_b(base_dir: &std::path::Path) {
                 .fold(f64::NEG_INFINITY, f64::max);
 
             let new_h = h_k_n - eps;
-            if new_h <= 0.0 { continue; }
+            if new_h <= 0.0 {
+                continue;
+            }
             let mut new_duals2: Vec<Vector4<f64>> = duals.to_vec();
             new_duals2.push(dir / new_h);
 
             if let Ok(split_poly) = Polytope4D::from_f64(new_duals2) {
-                    let (split_sys, split_vol, split_cap) = match safe_sys(&split_poly) {
-                        Some(v) => v,
-                        None => continue,
-                    };
-                    let delta = split_sys - sys_orig;
+                let (split_sys, split_vol, split_cap) = match safe_sys(&split_poly) {
+                    Some(v) => v,
+                    None => continue,
+                };
+                let delta = split_sys - sys_orig;
 
-                    let lib_result = ehz_capacity(&split_poly).ok();
-                    let n_valid = 0;
-                    let best_sub = lib_result
-                        .as_ref()
-                        .map(|r| r.best_subset())
-                        .unwrap_or_default();
-                    let best_perm = lib_result
-                        .as_ref()
-                        .map(|r| r.best_sigma().to_vec())
-                        .unwrap_or_default();
-                    let d_sys_d_h_new = f64::NAN;
+                let lib_result = ehz_capacity(&split_poly).ok();
+                let n_valid = 0;
+                let best_sub = lib_result
+                    .as_ref()
+                    .map(|r| r.best_subset())
+                    .unwrap_or_default();
+                let best_perm = lib_result
+                    .as_ref()
+                    .map(|r| r.best_sigma().to_vec())
+                    .unwrap_or_default();
+                let d_sys_d_h_new = f64::NAN;
 
-                    total_ok += 1;
-                    println!(
-                        "  Control #{i}: angle_to_nearest={min_angle:.4}, eps={eps:.1e}, \
+                total_ok += 1;
+                println!(
+                    "  Control #{i}: angle_to_nearest={min_angle:.4}, eps={eps:.1e}, \
                          Δsys={delta:.6e}, d_sys_d_h_new={d_sys_d_h_new:.6e}"
-                    );
+                );
 
-                    let row = SplittingRow {
-                        source_facet: usize::MAX, // sentinel for "control"
-                        angular_offset: min_angle,
-                        cutting_normal: [dir[0], dir[1], dir[2], dir[3]],
-                        epsilon: eps,
-                        sys_original: sys_orig,
-                        sys_split: split_sys,
-                        delta_sys: delta,
-                        capacity_split: split_cap,
-                        volume_split: split_vol,
-                        facet_count_split: split_poly.facet_count(),
-                        n_valid_orbits: n_valid,
-                        best_subset: best_sub,
-                        best_permutation: best_perm,
-                        d_sys_d_h_new,
-                        construction_ok: true,
-                        time_ms: t_split.elapsed().as_secs_f64() * 1000.0,
-                    };
-                    serde_json::to_writer(&mut split_writer, &row).expect("write splitting");
-                    writeln!(split_writer).expect("newline");
+                let row = SplittingRow {
+                    source_facet: usize::MAX, // sentinel for "control"
+                    angular_offset: min_angle,
+                    cutting_normal: [dir[0], dir[1], dir[2], dir[3]],
+                    epsilon: eps,
+                    sys_original: sys_orig,
+                    sys_split: split_sys,
+                    delta_sys: delta,
+                    capacity_split: split_cap,
+                    volume_split: split_vol,
+                    facet_count_split: split_poly.facet_count(),
+                    n_valid_orbits: n_valid,
+                    best_subset: best_sub,
+                    best_permutation: best_perm,
+                    d_sys_d_h_new,
+                    construction_ok: true,
+                    time_ms: t_split.elapsed().as_secs_f64() * 1000.0,
+                };
+                serde_json::to_writer(&mut split_writer, &row).expect("write splitting");
+                writeln!(split_writer).expect("newline");
             }
         }
     }

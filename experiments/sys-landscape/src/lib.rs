@@ -283,7 +283,10 @@ pub enum AscentMode<'a> {
 /// Compute the active-orbit local state for one polytope.
 pub fn compute_active_sys_state(polytope: &Polytope4D) -> Option<ActiveSysState> {
     let capacity = compute_capacity_result(polytope)?;
-    let vol = volume(polytope).ok().filter(|&v| v > 0.0)?;
+    let vol = volume(polytope);
+    if vol <= 0.0 {
+        return None;
+    }
     let sys = capacity.capacity() * capacity.capacity() / (2.0 * vol);
     sys.is_finite()
         .then_some(ActiveSysState { capacity, vol, sys })
@@ -296,7 +299,10 @@ pub fn compute_sys_from_capacity(
     polytope: &Polytope4D,
     capacity: &OrbitSearchResult,
 ) -> Option<f64> {
-    let vol = volume(polytope).ok().filter(|&v| v > 0.0)?;
+    let vol = volume(polytope);
+    if vol <= 0.0 {
+        return None;
+    }
     let cap = capacity.capacity();
     let sys = cap * cap / (2.0 * vol);
     sys.is_finite().then_some(sys)
@@ -304,7 +310,10 @@ pub fn compute_sys_from_capacity(
 
 /// Compute sys = c_EHZ(K)^2 / (2 vol(K)) for a polytope using HK2017.
 pub fn compute_sys(polytope: &Polytope4D) -> Option<f64> {
-    let vol = volume(polytope).ok().filter(|&v| v > 0.0)?;
+    let vol = volume(polytope);
+    if vol <= 0.0 {
+        return None;
+    }
     let cap = compute_capacity_result(polytope)?.capacity();
     let sys = cap * cap / (2.0 * vol);
     sys.is_finite().then_some(sys)

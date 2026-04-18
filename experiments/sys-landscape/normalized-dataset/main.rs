@@ -544,7 +544,7 @@ fn capacity_from_record(
         .record
         .to_polytope()
         .expect("reconstruct exact cache row for computed capacity");
-    let volume = volume(&polytope).expect("volume from exact cache row");
+    let volume = volume(&polytope);
     let result = ehz_capacity(&polytope).expect("capacity from exact cache row");
     let capacity = result.capacity();
     CapacityResultRow {

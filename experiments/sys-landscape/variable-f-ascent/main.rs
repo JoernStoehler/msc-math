@@ -190,7 +190,10 @@ struct GradientAscentRow {
 // ============================================================================
 
 fn compute_sys(polytope: &Polytope4D, db: &mut Db) -> Option<f64> {
-    let vol = volume(polytope).ok().filter(|&v| v > 0.0)?;
+    let vol = volume(polytope);
+    if vol <= 0.0 {
+        return None;
+    }
     let cap = compute_capacity(polytope, db)?;
     persist_scalar_fields(polytope, vol, cap, db);
     let sys = cap * cap / (2.0 * vol);
@@ -306,7 +309,10 @@ fn gradient_ascent_phase_limited(
 
         let (cap, best_perm) = compute_capacity_result(&current, db)?;
         let kkt = solve_kkt_for(&current, &best_perm).feasible()?;
-        let vol = volume(&current).ok().filter(|&v| v > 0.0)?;
+        let vol = volume(&current);
+        if vol <= 0.0 {
+            return None;
+        }
         let sys = cap * cap / (2.0 * vol);
         let duals = current.dual_vertices_f64();
 

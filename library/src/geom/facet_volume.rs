@@ -205,8 +205,7 @@ mod tests {
             .sum::<f64>()
             / 4.0;
 
-        let vol_qhull = crate::geom::volume::volume(polytope)
-            .expect("qhull volume");
+        let vol_qhull = crate::geom::volume::volume_qhull(polytope).expect("qhull volume");
 
         assert!(
             (vol_from_facets - vol_qhull).abs() / vol_qhull < 1e-6,
@@ -244,8 +243,7 @@ mod tests {
             .sum::<f64>()
             / 4.0;
 
-        let vol_qhull = crate::geom::volume::volume(polytope)
-            .expect("qhull volume");
+        let vol_qhull = crate::geom::volume::volume_qhull(polytope).expect("qhull volume");
 
         // Looser than hypercube (1e-6) because the crosspolytope has 16 facets
         // with non-axis-aligned normals, producing more triangulation error in

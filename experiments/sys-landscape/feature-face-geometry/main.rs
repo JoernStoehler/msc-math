@@ -159,8 +159,7 @@ fn build_row(poly: &PolytopeInputRow) -> FaceGeometryFeatureRow {
         parse_vec4(&poly.vertices_rational),
     )
     .unwrap_or_else(|e| panic!("reconstruct {}: {e}", poly.poly_id));
-    let polytope_volume =
-        volume(&polytope).unwrap_or_else(|e| panic!("volume {}: {e}", poly.poly_id));
+    let polytope_volume = volume(&polytope);
     let linear_scale = polytope_volume.powf(0.25);
     let facet_scale = polytope_volume.powf(0.75);
     assert!(

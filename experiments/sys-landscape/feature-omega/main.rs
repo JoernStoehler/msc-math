@@ -160,8 +160,7 @@ fn build_row(poly: &PolytopeInputRow) -> OmegaFeatureRow {
         parse_vec4(&poly.vertices_rational),
     )
     .unwrap_or_else(|e| panic!("reconstruct {}: {e}", poly.poly_id));
-    let polytope_volume =
-        volume(&polytope).unwrap_or_else(|e| panic!("volume {}: {e}", poly.poly_id));
+    let polytope_volume = volume(&polytope);
     let omega_scale = polytope_volume.sqrt();
     assert!(
         omega_scale > 0.0,
