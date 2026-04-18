@@ -93,6 +93,13 @@ Secondary confidence plan:
 - If the Rust number-field backend becomes ready and can emit the same witness
   contract faster, allow it to replace Sage as the computational workhorse for
   the larger exact route.
+- The current first concrete Sage-facing surface is the widened-seed witness
+  bundle at
+  `experiments/hko-local-maximum/exact-clarke/widened-seed-witness.json`,
+  with Sage verification script
+  `experiments/hko-local-maximum/exact-clarke/verify_widened_seed_witness.sage`.
+  That bundle is not the final theorem witness, but it fixes the producer /
+  verifier contract for Packet 3.
 
 ## Intended Input Surface
 
@@ -169,6 +176,14 @@ Preferred artifact shapes:
   quadratic.
 - The same artifact shape should be emitted independent of whether the backend
   is Sage, SymPy scaffolding, or the future Rust exact backend.
+
+Current concrete Packet 3 artifact shape:
+
+- one backend-neutral JSON witness bundle carrying the field, dual geometry,
+  symmetry basis, exact seed-row families, expected row counts/ranks, and
+  exact common scalar checks;
+- one Sage verifier that reads only that witness and writes a machine-readable
+  verification summary.
 
 ## Minimal Mathematical Plan
 

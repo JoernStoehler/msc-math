@@ -21,6 +21,13 @@ Packet 1 completed:
   emitted as a dedicated Packet 3 support artifact.
 - the reduced endpoint/midpoint prototype `sys` rows are now emitted exactly in
   the Packet 3 `R^40` coordinate order.
+- the current widened Packet 3 seed surface is now bundled into the
+  backend-neutral witness artifact `widened-seed-witness.json` via
+  `build_widened_seed_witness.py`.
+- `verify_widened_seed_witness.sage` is now the first concrete Sage verifier
+  for Packet 3: it reconstructs the quartic field from that witness and
+  replays exact geometry, symmetry-rank, closure, normalization, and seed-row
+  rank checks.
 - the next blocker is no longer volume-row or row-assembly arithmetic; it is
   permutation-level prototype multiplicity. One endpoint seed plus one midpoint
   seed expand to only `20` symmetry images, so that reduced surface cannot
@@ -51,6 +58,8 @@ Packet 1 completed:
 | `classify_permutation_seed_orbits.py` | Packet 3 planning script classifying numerical representative permutations modulo HKO symmetries and cyclic relabeling |
 | `derive_endpoint_seed_rows.py` | Packet 3 support script exactifying the current numerical six-facet seed permutations into exact endpoint-family `sys` rows |
 | `derive_midpoint_seed_rows.py` | Packet 3 support script exactifying the midpoint-style numerical seven-facet seed permutations into exact midpoint-family `sys` rows |
+| `build_widened_seed_witness.py` | Packet 3 witness assembler that freezes the current widened exact seed surface into one backend-neutral JSON artifact |
+| `verify_widened_seed_witness.sage` | SageMath verifier for the widened seed witness; writes a machine-readable verification summary |
 | `billiard-sigma-counts.json` | Generated Packet 2 count ladder for the HKO billiard combinatorics surface |
 | `billiard-exact-probe.json` | Generated timing probe for exact quartic KKT solves on sampled directed-feasible sigma words |
 | `hko-geometry.json` | Generated exact geometry record |
@@ -59,6 +68,7 @@ Packet 1 completed:
 | `numerical-permutation-orbits.json` | Generated numerical symmetry-quotiented permutation-seed count surface for Packet 3 planning |
 | `endpoint-seed-rows.json` | Generated exact six-facet seed rows chosen from the current numerical permutation-orbit planning surface |
 | `midpoint-seed-rows.json` | Generated exact midpoint-style seven-facet seed rows chosen from the current numerical permutation-orbit planning surface |
+| `widened-seed-witness.json` | Generated backend-neutral Packet 3 witness bundle for geometry, symmetry, and the current widened exact seed rows |
 | `hko-symmetry-tangent.json` | Generated exact symmetry tangent-space certificate |
 | `numerical-minima-summary.json` | Generated current numerical minima summary |
 | `numerical-family-reconciliation.json` | Generated Packet 2 bookkeeping summary of endpoint/equality-case classes |
@@ -84,6 +94,8 @@ python3 derive_reduced_sys_prototypes.py
 python3 classify_permutation_seed_orbits.py
 python3 derive_endpoint_seed_rows.py
 python3 derive_midpoint_seed_rows.py
+python3 build_widened_seed_witness.py
+sage verify_widened_seed_witness.sage
 ```
 
 ## Scope Boundary
@@ -96,6 +108,35 @@ python3 derive_midpoint_seed_rows.py
 
 It does **not** yet close the full theorem route, because the final
 paper-derived orbit catalog and exact active-gradient matrix are still pending.
+
+`widened-seed-witness.json` and `verify_widened_seed_witness.sage` now give a
+concrete Sage-facing Packet 3 surface, but they still do **not** close the
+theorem route. They currently verify only:
+
+- the quartic field and dual-geometry bundle already frozen by Packet 1;
+- exact symmetry-basis rank;
+- exact closure / normalization / common-scalar checks on the current widened
+  exact seed rows;
+- exact row ranks for the current endpoint and midpoint seed families.
+
+They do **not** yet verify:
+
+- the two unresolved asymmetric seven-facet seed families;
+- the final active-gradient matrix `G`;
+- the final kernel-equals-symmetry certificate.
+
+## Sage Note
+
+The repo now contains a concrete Sage verifier surface for Packet 3, but this
+devcontainer still does not expose a runnable `sage` binary. So:
+
+- `build_widened_seed_witness.py` is runnable here and freezes the current
+  witness bundle;
+- `verify_widened_seed_witness.sage` is intended to run either in an external
+  Sage environment or after Sage is added to the repo environment;
+- the same witness shape is intended to stay backend-neutral, so a future Rust
+  producer should be able to emit it unchanged while Sage remains the
+  independent verifier.
 
 ## Field Note
 

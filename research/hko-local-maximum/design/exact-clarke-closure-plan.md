@@ -419,6 +419,16 @@ Current target:
 - exact symmetry-inclusion/equality certificate format;
 - one short theorem-facing summary artifact that is backend-neutral.
 
+Current concrete first step:
+- `experiments/hko-local-maximum/exact-clarke/build_widened_seed_witness.py`
+  now assembles the current Packet 3 widened seed surface into
+  `widened-seed-witness.json`;
+- `experiments/hko-local-maximum/exact-clarke/verify_widened_seed_witness.sage`
+  is the first concrete Sage verifier on that contract.
+- This witness does not yet contain the final active matrix or kernel basis,
+  but it already fixes the backend-neutral field/geometry/symmetry/row bundle
+  shape for later producers.
+
 ### 4. Prepare The Checker Architecture For Backend Swaps
 
 Objective:
