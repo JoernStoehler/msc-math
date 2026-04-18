@@ -80,6 +80,11 @@ if command -v latexmk >/dev/null 2>&1; then
 else
   echo "[post-create] WARNING: latexmk not found (TexLive may not be installed)" >&2
 fi
+if command -v sage >/dev/null 2>&1; then
+  echo "[post-create] sage: $(sage --version 2>/dev/null || echo 'available')"
+else
+  echo "[post-create] WARNING: sage not found" >&2
+fi
 
 # Pre-warm TeX formats in user tree if missing
 if [ ! -d "${HOME}/.texlive2023/texmf-var/web2c" ]; then

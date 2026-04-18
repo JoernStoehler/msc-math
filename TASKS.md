@@ -113,6 +113,20 @@ HKO2024 lives in multiple ambient spaces (LP(5,5), LP(6,5), F=10, F=13, convex b
 - Non-smooth second-order sufficiency proof sketch needs rigor check.
 - `formal/hko-local-maximum/second-order.tex`
 
+### [open] [group:hko] Exact Clarke-subgradient checker for HKO2024
+- Preferred route for the intended `RESULTS.md` `M_10` theorem: prove that the Clarke-flat directions in dual-vertex coordinates are exactly the infinitesimal symmetry directions, using exact linear algebra instead of the current second-order numerical evidence route.
+- Design note: `research/hko-local-maximum/design/exact-clarke-subgradient.md`
+- Durable execution tracker: `research/hko-local-maximum/design/exact-clarke-closure-plan.md`
+- Current Packet 1 artifacts: `experiments/hko-local-maximum/exact-clarke/hko-geometry.json`, `experiments/hko-local-maximum/exact-clarke/hko-symmetry-tangent.json`, `experiments/hko-local-maximum/exact-clarke/numerical-minima-summary.json`
+- Decision: use SageMath as the primary exact algebra system. Do not force the route to stay quadratic; accept the actual smallest manageable number field and use a quadratic block-embedding cross-check only if the final formulas collapse to a quadratic subfield.
+- Input contract: take the active orbit families from HKO2024 itself, not from our HK2017 or billiard search. The checker may reuse repo notation and dual-vertex definitions, but it must not depend on floating-point KKT solves or empirical active-set discovery.
+- Acceptance: exact artifact exists for the active-gradient matrix, its rank/kernel, the symmetry tangent-space basis, and exact certificates that the two subspaces coincide; thesis/formal wording can then cite this as the first-order quotient-space proof surface.
+- Stop condition: if the paper-derived orbit data does not determine exact gradients cleanly, or if the coefficient field grows beyond a still-manageable simple setup, stop and record the obstruction instead of widening the implementation scope ad hoc.
+- Dedicated-session split:
+  - Session A: extract the exact HKO2024 dual-vertex coordinates and paper-derived orbit-family data; confirm the actual coefficient field.
+  - Session B: implement the SageMath checker and emit machine-readable exact certificates plus a short theorem-facing summary.
+  - Session C: integrate the exact result into `formal/` / thesis wording and reclassify the second-order note as supporting evidence if the first-order proof closes.
+
 ### [future] [group:hko] Higher-F perturbation validation (F=10→12, F=10→13)
 - `RESULTS.md` records F=12/F=13 validation as pending/future evidence for the broad HKO2024 local-maximality conjecture; only F=11 checks are currently done.
 - Extends facet-splitting and cut-and-ascent to add 2-3 facets simultaneously
@@ -202,7 +216,18 @@ Stronger conjecture: HKO2024 may be (up to perturbation/symplectomorphism) the o
 
 ### [future] Analytical formula for sys(P_5 x R(theta) P_5)
 - Standalone mathematical result in `RESULTS.md`: explain the shape of the pentagon rotation curve.
-- Jörn knows the symbolic enumeration algorithm. Missing work: run it in a CAS over a field such as `Q(sin(theta), cos(theta), sqrt(5))`, then write the proof cleanly.
+- Current evidence from the existing `lagrangian-products-5x5.jsonl` sweep and a local reconstruction pass (2026-04-18): on the fundamental domain `0 <= theta <= pi/5`, the sampled curve matches the exact piecewise formula
+  `sys(theta) = ((5 + 2 sqrt(5)) / 10) sec^2(theta)` for `0 <= theta <= pi/10`,
+  mirrored by `sys(theta) = ((5 + 2 sqrt(5)) / 10) sec^2(pi/5 - theta)` for `pi/10 <= theta <= pi/5`.
+- The reconstruction route is no longer "blind CAS first": for `0 <= theta <= pi/10`, the minimizer appears to stay in the 2-bounce family "vertex to opposite edge". Writing the opposite-edge point as `x(lambda)`, the minimizing parameter is forced by one orthogonality condition between the chord and a dual edge:
+  `lambda(theta) = 1/2 - tan(theta) / (2 tan(pi/10))`.
+  Substituting this into the support-function length gives `c(theta) = c(0) sec(theta)` and the `sec^2` systolic-ratio law. At `theta = pi/10`, this family degenerates to the diagonal and ties the HKO value.
+- Remaining proof obligations:
+  1. Prove the active support vertices and the minimizing 2-bounce family stay fixed on `0 <= theta <= pi/10`.
+  2. Prove no other 2-bounce or 3-bounce family beats that value away from `theta = pi/10`; at the midpoint, explain the 3-bounce tie rather than treating it as a new branch.
+  3. Align the repo angle convention with the HKO paper's `90 degree` rotation so the theorem statement and proof use one parameterization.
+  4. Decide whether the CAS pass is still needed after the hand derivation, or only as a verification check on the same branch formula.
+- Acceptance check for closing this item: a formal or thesis-ready proof of the piecewise `sec^2` formula, with the midpoint/HKO identification and angle-convention translation stated explicitly.
 - Scope target is `P_5 x R(theta) P_5`; no general formula for higher `(n,m)` pairs is required. Higher-pair function fitting remains useful only if it reveals recognizable shapes and later conjectures.
 
 ## [open] sys landscape structure
@@ -317,6 +342,8 @@ Instrument development. Results promote to `library/`.
 
 ### [future] Crosspolytope optimality proof
 - Minimizing orbit has clean structure (uniform beta, max omega). Symmetry argument may avoid exhaustive enumeration.
+- Defer for thesis push: this would strengthen the standalone crosspolytope result, but it does not support a main thesis claim and is lower priority than HKO, numerics, and writeup-closing work.
+- Acceptance: replace the current "exhaustive through m=13" caveat with a proof that the symmetric m=4 orbit is globally minimizing, or explicitly keep it as future work if no short argument appears.
 
 ### [blocked] [group:tube] Tube vs HK2017 benchmark
 - Blocked on: Jörn writing down the tube algorithm + rotation formula + correctness proof (first task in the tube subtree).
