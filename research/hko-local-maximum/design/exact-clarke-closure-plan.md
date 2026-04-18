@@ -289,3 +289,120 @@ Checks:
    plan.
 4. Compare the reduced exact kernel certificate against the committed symmetry
    tangent basis.
+
+## Unblocked Before Fast Rust Exact Backend
+
+These are the current highest-value tasks that do not depend on the pending
+Rust exact-arithmetic / number-field backend.
+
+### 1. Finish Packet 2 At The Mathematical Level
+
+Objective:
+- derive the theorem-facing minimizing-family catalog from the HKO2024 paper in
+  repo notation, rather than from numerical collectors.
+
+Why unblocked:
+- this is a translation/derivation problem, not a large exact-computation
+  problem.
+
+Current target:
+- identify the endpoint `2`-bounce family surface cleanly;
+- identify the `3`-bounce equality-case surface cleanly;
+- verify whether the current neighboring-endpoint segment is exactly the right
+  repo-facing model for those paper equality cases.
+
+### 2. Write Down The Reduced Active-Row Catalog
+
+Objective:
+- convert the current exact Packet 2 certificates into the finite row catalog
+  that Packet 3 should actually use.
+
+Why unblocked:
+- the key reduction artifacts already exist.
+
+Current target:
+- endpoint-family rows;
+- midpoint-family rows;
+- symmetry images of those prototype rows;
+- an explicit statement that the neighboring seven-facet segment contributes no
+  new rows outside the span of the endpoint rows together with the midpoint
+  row.
+
+### 3. Derive The Exact HKO Volume-Derivative Row In Dual Coordinates
+
+Objective:
+- write down the exact `∂vol/∂a_k` row for HKO2024 in the chosen `R^40`
+  coordinate order.
+
+Why unblocked:
+- this is one fixed-polytope exact geometry computation, not a thousands-of-
+  sigmas certification program.
+
+Why useful:
+- once this row is explicit, the exact `sys` rows can be formed directly from
+  the exact capacity rows already derived on the reduced family surface.
+
+### 4. Assemble A Small Provisional Exact Active-Gradient Matrix
+
+Objective:
+- try the exact checker on the reduced family surface first, without waiting
+  for the `6240`-sigma exhaustive route.
+
+Why unblocked:
+- the reduced family surface is small compared to the full sigma surface.
+
+Current target:
+- build exact rows for the endpoint and midpoint prototype families;
+- generate the symmetry copies;
+- form a provisional exact matrix `G_reduced`;
+- compare `ker(G_reduced)` against the committed exact symmetry tangent basis.
+
+### 5. Prepare The Checker Architecture For Backend Swaps
+
+Objective:
+- make the final exact-checker pipeline backend-agnostic.
+
+Why unblocked:
+- schema/interface design can happen before the fast backend lands.
+
+Current target:
+- exact sigma certificate shape;
+- exact row/certificate JSON shape;
+- matrix/certificate output format;
+- explicit boundary between current sympy scaffolding, future Sage route, and
+  future Rust exact backend.
+
+### 6. Tighten The Final Theorem Surface
+
+Objective:
+- write down the exact first-order theorem statement in the correct quotient
+  form before the final computation lands.
+
+Why unblocked:
+- this is statement/proof-surface work, not backend work.
+
+Current target:
+- local maximality modulo translations, scaling, and linear symplectic maps;
+- Clarke directional derivative statement on the quotient;
+- exact certificate contract needed to justify the theorem wording.
+
+### 7. Queue The Backend Decision Test Explicitly
+
+Objective:
+- as soon as the Rust number-field backend lands, measure the real cost of the
+  exhaustive `6240`-sigma route instead of speculating.
+
+Current target benchmark ladder:
+- one exact sigma solve;
+- small batch, e.g. `100`;
+- if promising, reassess whether the `6240` directed-feasible sigma surface
+  should replace the current smaller-input plan.
+
+## Suggested Priority Order
+
+1. Finish the paper-to-repo family catalog.
+2. Derive the exact HKO volume-derivative row.
+3. Write down the reduced active-row catalog.
+4. Attempt the small exact matrix route on that reduced family surface.
+5. Revisit the exhaustive `6240`-sigma route only after the faster backend is
+   available and benchmarked.
