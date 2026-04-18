@@ -82,6 +82,23 @@ The current sympy probe makes this more concrete in the present environment:
 So the statement “`6240` exact checks sounds feasible” depends strongly on the
 backend. In the current sympy-based exact tooling, it does not yet look cheap.
 
+That conclusion should be read narrowly:
+
+- it is a statement about the current sympy-based exact backend;
+- it is not evidence that the `6240` directed-feasible sigma surface is too
+  large in principle;
+- if the in-repo Rust number-field work lands and gives the expected speedup,
+  this exact exhaustive route should be revisited before we spend more effort
+  proving that the theorem input must be narrowed all the way down to the
+  current `717` valid-orbit surface.
+
+Current practical suggestion:
+
+- treat `717` as the smaller exact-input fallback that already looks finite
+  enough to be realistic;
+- treat `6240` as the cleaner self-contained exhaustive-input route that is
+  waiting on a faster exact backend rather than on a new combinatorial idea.
+
 ## Symmetry-Reduced Numerical Hypothesis
 
 Modulo diagonal `72^o` rotation and `q/p` exchange, the current exact-action

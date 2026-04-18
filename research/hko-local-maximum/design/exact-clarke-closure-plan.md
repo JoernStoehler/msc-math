@@ -27,6 +27,9 @@ Close the first-order `M_10` theorem surface:
   coordinates and orbit formulas; do not force the route to remain quadratic.
 - Tooling policy: SageMath is the primary exact algebra system.
   The devcontainer should gain a reproducible Sage install surface.
+  If the in-repo Rust number-field backend becomes available earlier and is
+  substantially faster on this workload, use it to pre-certify the large sigma
+  surface or to emit exact action/gap data feeding the final checker.
 - Input policy: the final theorem-facing orbit catalog must come from the HKO
   geometry / paper route, not from floating-point active-set discovery.
   Numerical artifacts may be used only as cross-checks and bookkeeping aids.
@@ -117,6 +120,20 @@ Close the first-order `M_10` theorem surface:
   seven-facet equality-case segment between neighboring endpoints. The
   remaining theorem work is to derive this reduction from the HKO billiard
   geometry rather than infer it from the numerical collector.
+- The HKO billiard sigma-surface count ladder is now explicit:
+  `50,400` raw block words,
+  `6,240` directed-feasible sigma words,
+  `717` currently valid KKT orbits,
+  `150` current exact minima.
+  So the exhaustive `6240`-sigma route is not ruled out by combinatorics.
+  The current blocker is backend cost.
+- The current sympy feasibility probe gives a lower-bound style estimate of
+  roughly `14` hours for the `6240`-sigma route before exact positivity and
+  action-gap certification. This is too slow to make that route the default in
+  the current environment, but it is not evidence that the route is
+  mathematically oversized. If the Rust number-field backend delivers the
+  expected speedup, this route should be revisited as a self-contained theorem
+  input surface.
 
 ## Work Packets
 
@@ -256,6 +273,9 @@ Checks:
   does not currently expose a directly installable `sagemath` apt package.
   Packet 1 therefore uses the committed sympy fallback, while Packet 3 still
   needs an explicit environment choice for the full Sage route.
+- Exact backend choice can dominate feasibility more than sigma count does.
+  The `6240` directed-feasible sigma route currently looks too slow in sympy,
+  but may become practical once the Rust number-field work lands.
 
 ## Immediate Next Steps
 
@@ -263,6 +283,9 @@ Checks:
    list used by Packet 3.
 2. Build a first exact active-gradient matrix over the reduced family surface.
 3. Add SageMath to the devcontainer install surface or record the chosen exact
-   runtime for Packet 3.
+   runtime for Packet 3. If the Rust number-field backend lands first, benchmark
+   it directly on the `6240` directed-feasible sigma surface before deciding
+   whether the exhaustive exact route should replace the current smaller-input
+   plan.
 4. Compare the reduced exact kernel certificate against the committed symmetry
    tangent basis.
