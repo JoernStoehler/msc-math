@@ -39,11 +39,17 @@ Implementation status:
   (`R^2 ≈ -0.12` with ridge), and the full
   `metadata + geometry + skeleton` block still underperforms metadata alone on
   the endpoint surface
+- 2026-04-18: bounded `feature_omega.jsonl` enrichment landed via
+  `sys-feature-omega`
+- current omega result:
+  ridge-local `omega_0` summaries and directed transition-graph features help
+  within the random regime (`R^2 ≈ 0.27` with ridge), but they still fail on
+  the endpoint regime (`R^2 ≈ -0.03`) and do not transfer across regimes
 - current implication:
   there is still no evidence for a cheap transferable pattern; the next
-  enrichment step, if pursued, should move past pure combinatorics toward
-  richer face-level symplectic data or orbit-sensitive features rather than
-  more provenance metadata
+  enrichment step, if pursued, should move past cheap combinatorics and
+  cheap omega summaries toward richer face-level symplectic data or
+  orbit-sensitive features rather than more provenance metadata
 
 The design question here is not "which regressor should we try first?" The
 durable question is "what persisted dataset shape lets us try many methods

@@ -19,7 +19,8 @@
 - `metadata`: facet count plus dataset/family/role/search-space/optimizer/backend
 - `geometry`: cheap dual-vertex summaries from `polytopes.jsonl`
 - `skeleton`: combinatorial counts and degree summaries from the exact 4D face lattice
-- `all`: metadata, geometry, and skeleton together
+- `omega`: ridge-local `omega_0` summaries, exact omega-sign structure, and directed transition-graph summaries
+- `all`: metadata, geometry, skeleton, and omega together
 
 ## Metrics
 
@@ -33,22 +34,26 @@ Reported metrics are test-set `R^2` and RMSE. Within-regime results use grouped 
 | Within random | `metadata` | 0.1906 | 0.1847 |
 | Within random | `geometry` | 0.4260 | 0.1556 |
 | Within random | `skeleton` | 0.1350 | 0.1910 |
-| Within random | `all` | 0.4030 | 0.1586 |
+| Within random | `omega` | 0.2652 | 0.1760 |
+| Within random | `all` | 0.4872 | 0.1470 |
 | Within endpoint | `null` | -0.0227 | 0.1227 |
 | Within endpoint | `metadata` | 0.4367 | 0.0911 |
 | Within endpoint | `geometry` | -0.1145 | 0.1281 |
 | Within endpoint | `skeleton` | -0.1228 | 0.1285 |
-| Within endpoint | `all` | 0.1299 | 0.1132 |
+| Within endpoint | `omega` | -0.0275 | 0.1230 |
+| Within endpoint | `all` | 0.1743 | 0.1102 |
 | Random -> endpoint | `null` | -17.8854 | 0.5272 |
 | Random -> endpoint | `metadata` | -12.4344 | 0.4446 |
 | Random -> endpoint | `geometry` | -9.9589 | 0.4016 |
 | Random -> endpoint | `skeleton` | -12.1083 | 0.4392 |
-| Random -> endpoint | `all` | -9.3885 | 0.3910 |
+| Random -> endpoint | `omega` | -11.3543 | 0.4264 |
+| Random -> endpoint | `all` | -9.4368 | 0.3919 |
 | Endpoint -> random | `null` | -6.2430 | 0.5526 |
 | Endpoint -> random | `metadata` | -8.0876 | 0.6190 |
 | Endpoint -> random | `geometry` | -5.5594 | 0.5259 |
 | Endpoint -> random | `skeleton` | -7.6995 | 0.6056 |
-| Endpoint -> random | `all` | -6.9862 | 0.5803 |
+| Endpoint -> random | `omega` | -6.8095 | 0.5738 |
+| Endpoint -> random | `all` | -6.5111 | 0.5627 |
 
 ### Random forest
 
@@ -58,22 +63,26 @@ Reported metrics are test-set `R^2` and RMSE. Within-regime results use grouped 
 | Within random | `metadata` | 0.1345 | 0.1910 |
 | Within random | `geometry` | 0.4174 | 0.1567 |
 | Within random | `skeleton` | 0.1103 | 0.1937 |
-| Within random | `all` | 0.4186 | 0.1566 |
+| Within random | `omega` | 0.2514 | 0.1777 |
+| Within random | `all` | 0.4654 | 0.1501 |
 | Within endpoint | `null` | -0.0227 | 0.1227 |
 | Within endpoint | `metadata` | 0.4377 | 0.0910 |
 | Within endpoint | `geometry` | -0.3199 | 0.1394 |
 | Within endpoint | `skeleton` | -0.3751 | 0.1423 |
-| Within endpoint | `all` | 0.2861 | 0.1025 |
+| Within endpoint | `omega` | -0.2243 | 0.1342 |
+| Within endpoint | `all` | 0.2688 | 0.1037 |
 | Random -> endpoint | `null` | -17.8854 | 0.5272 |
 | Random -> endpoint | `metadata` | -13.1447 | 0.4562 |
 | Random -> endpoint | `geometry` | -9.9360 | 0.4012 |
 | Random -> endpoint | `skeleton` | -14.8860 | 0.4835 |
-| Random -> endpoint | `all` | -9.4454 | 0.3921 |
+| Random -> endpoint | `omega` | -14.3213 | 0.4748 |
+| Random -> endpoint | `all` | -9.9978 | 0.4023 |
 | Endpoint -> random | `null` | -6.2430 | 0.5526 |
 | Endpoint -> random | `metadata` | -6.8134 | 0.5739 |
 | Endpoint -> random | `geometry` | -3.8119 | 0.4504 |
 | Endpoint -> random | `skeleton` | -7.0737 | 0.5834 |
-| Endpoint -> random | `all` | -5.9044 | 0.5395 |
+| Endpoint -> random | `omega` | -5.8803 | 0.5386 |
+| Endpoint -> random | `all` | -5.7993 | 0.5354 |
 
 ## Top States
 
@@ -87,8 +96,8 @@ Reported metrics are test-set `R^2` and RMSE. Within-regime results use grouped 
 
 ## Interpretation
 
-- within-random ridge: metadata `R^2=0.1906`, geometry `R^2=0.4260`, skeleton `R^2=0.1350`
-- within-endpoint ridge: metadata `R^2=0.4367`, geometry `R^2=-0.1145`, skeleton `R^2=-0.1228`
-- random-to-endpoint transfer with full ridge block: `R^2=-9.3885`
-- endpoint-to-random transfer with geometry ridge: `R^2=-5.5594`
-- this packet still stops before orbit-sensitive enrichments; the new signal surface is metadata plus cheap geometry plus pure skeleton features.
+- within-random ridge: metadata `R^2=0.1906`, geometry `R^2=0.4260`, skeleton `R^2=0.1350`, omega `R^2=0.2652`
+- within-endpoint ridge: metadata `R^2=0.4367`, geometry `R^2=-0.1145`, skeleton `R^2=-0.1228`, omega `R^2=-0.0275`
+- random-to-endpoint transfer with full ridge block: `R^2=-9.4368`
+- endpoint-to-random transfer with omega ridge: `R^2=-6.8095`
+- this packet still stops before orbit recomputation; the new signal surface is metadata plus cheap geometry plus pure skeleton and omega/transition features.

@@ -42,6 +42,10 @@ path = "normalized-dataset/main.rs"
 name = "sys-feature-skeleton"
 path = "feature-skeleton/main.rs"
 
+[[bin]]
+name = "sys-feature-omega"
+path = "feature-omega/main.rs"
+
 [lints]
 workspace = true
 
