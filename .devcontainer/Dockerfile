@@ -28,6 +28,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3 \
     python3-venv \
     python3-pip \
+    python3-sympy \
     ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
@@ -90,6 +91,23 @@ RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
 ENV UV_INSTALL_DIR=/usr/local
 ENV UV_VERSION=0.5.14
 RUN curl -LsSf https://astral.sh/uv/${UV_VERSION}/install.sh | sh
+
+# Install SageMath via the officially documented conda-forge route.
+# Ubuntu 24.04 does not currently expose a usable `sagemath` apt candidate in
+# this image, so we bake a Miniforge-based Sage environment into the image and
+# expose `sage` / `mamba` / `conda` via `/usr/local/bin`.
+ENV MINIFORGE_DIR=/opt/miniforge
+RUN set -eux; \
+    installer="/tmp/Miniforge3-$(uname)-$(uname -m).sh"; \
+    curl -L "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh" -o "$installer"; \
+    bash "$installer" -b -p "$MINIFORGE_DIR"; \
+    rm -f "$installer"; \
+    "$MINIFORGE_DIR/bin/mamba" create -y -n sage sage; \
+    ln -sf "$MINIFORGE_DIR/bin/mamba" /usr/local/bin/mamba; \
+    ln -sf "$MINIFORGE_DIR/bin/conda" /usr/local/bin/conda; \
+    ln -sf "$MINIFORGE_DIR/envs/sage/bin/sage" /usr/local/bin/sage; \
+    "$MINIFORGE_DIR/envs/sage/bin/sage" --version; \
+    "$MINIFORGE_DIR/bin/conda" clean -afy
 
 # Switch to dev user for language toolchains.
 # Toolchains live in the dev user's HOME so that cargo/elan behave normally.

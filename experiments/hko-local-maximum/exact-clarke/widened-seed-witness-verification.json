@@ -1,0 +1,167 @@
+{
+  "field": {
+    "generator_name": "t",
+    "degree": 4,
+    "minimal_polynomial": "x^4 - 10*x^2 + 5",
+    "passed": true
+  },
+  "geometry": {
+    "n_dual_vertices": 10,
+    "dual_vertex_lengths": [
+      4
+    ],
+    "current_float_cross_check_max_abs_diff": 2.220446049250313e-16,
+    "passed": true
+  },
+  "symmetry_basis": {
+    "expected_rank": 15,
+    "actual_rank": 15,
+    "n_columns": 15,
+    "ambient_dimension": 40,
+    "passed": true
+  },
+  "row_families": [
+    {
+      "family_id": "endpoint_seed_rows",
+      "expected_row_count": 5,
+      "actual_row_count": 5,
+      "expected_rank": 5,
+      "actual_rank": 5,
+      "row_ids": [
+        "6-facet-class-03",
+        "6-facet-class-08",
+        "6-facet-class-02",
+        "6-facet-class-01",
+        "6-facet-class-04"
+      ],
+      "closure_failures": [],
+      "normalization_failures": [],
+      "capacity_failures": [],
+      "sys_value_failures": [],
+      "passed": true
+    },
+    {
+      "family_id": "midpoint_seed_rows",
+      "expected_row_count": 6,
+      "actual_row_count": 6,
+      "expected_rank": 6,
+      "actual_rank": 6,
+      "row_ids": [
+        "7-facet-class-03",
+        "7-facet-class-08",
+        "7-facet-class-09",
+        "7-facet-class-02",
+        "7-facet-class-04",
+        "7-facet-class-06"
+      ],
+      "closure_failures": [],
+      "normalization_failures": [],
+      "capacity_failures": [],
+      "sys_value_failures": [],
+      "passed": true
+    }
+  ],
+  "widened_seed_union": {
+    "expected_row_count": 11,
+    "actual_row_count": 11,
+    "actual_rank": 11,
+    "ambient_dimension": 40,
+    "right_kernel_dimension": 29,
+    "seed_plus_symmetry_rank": 26,
+    "symmetry_annihilation_passed": true,
+    "symmetry_residual_summary": [
+      {
+        "label": "translation_e0",
+        "nonzero_count": 0,
+        "sample_nonzero_entries": [],
+        "passed": true
+      },
+      {
+        "label": "translation_e1",
+        "nonzero_count": 0,
+        "sample_nonzero_entries": [],
+        "passed": true
+      },
+      {
+        "label": "translation_e2",
+        "nonzero_count": 0,
+        "sample_nonzero_entries": [],
+        "passed": true
+      },
+      {
+        "label": "translation_e3",
+        "nonzero_count": 0,
+        "sample_nonzero_entries": [],
+        "passed": true
+      },
+      {
+        "label": "scaling",
+        "nonzero_count": 0,
+        "sample_nonzero_entries": [],
+        "passed": true
+      },
+      {
+        "label": "sp_a11",
+        "nonzero_count": 0,
+        "sample_nonzero_entries": [],
+        "passed": true
+      },
+      {
+        "label": "sp_a12",
+        "nonzero_count": 0,
+        "sample_nonzero_entries": [],
+        "passed": true
+      },
+      {
+        "label": "sp_a21",
+        "nonzero_count": 0,
+        "sample_nonzero_entries": [],
+        "passed": true
+      },
+      {
+        "label": "sp_a22",
+        "nonzero_count": 0,
+        "sample_nonzero_entries": [],
+        "passed": true
+      },
+      {
+        "label": "sp_b11",
+        "nonzero_count": 0,
+        "sample_nonzero_entries": [],
+        "passed": true
+      },
+      {
+        "label": "sp_b12",
+        "nonzero_count": 0,
+        "sample_nonzero_entries": [],
+        "passed": true
+      },
+      {
+        "label": "sp_b22",
+        "nonzero_count": 0,
+        "sample_nonzero_entries": [],
+        "passed": true
+      },
+      {
+        "label": "sp_c11",
+        "nonzero_count": 0,
+        "sample_nonzero_entries": [],
+        "passed": true
+      },
+      {
+        "label": "sp_c12",
+        "nonzero_count": 0,
+        "sample_nonzero_entries": [],
+        "passed": true
+      },
+      {
+        "label": "sp_c22",
+        "nonzero_count": 0,
+        "sample_nonzero_entries": [],
+        "passed": true
+      }
+    ],
+    "kernel_dimension_minus_symmetry_dimension": 14
+  },
+  "passed": true
+}

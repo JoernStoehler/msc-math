@@ -113,6 +113,28 @@ HKO2024 lives in multiple ambient spaces (LP(5,5), LP(6,5), F=10, F=13, convex b
 - Non-smooth second-order sufficiency proof sketch needs rigor check.
 - `formal/hko-local-maximum/second-order.tex`
 
+### [open] [group:hko] Exact Clarke-subgradient checker for HKO2024
+- Preferred route for the intended `RESULTS.md` `M_10` theorem: prove that the Clarke-flat directions in dual-vertex coordinates are exactly the infinitesimal symmetry directions, using exact linear algebra instead of the current second-order numerical evidence route.
+- Design note: `research/hko-local-maximum/design/exact-clarke-subgradient.md`
+- Durable execution tracker: `research/hko-local-maximum/design/exact-clarke-closure-plan.md`
+- Current Packet 1 artifacts: `experiments/hko-local-maximum/exact-clarke/hko-geometry.json`, `experiments/hko-local-maximum/exact-clarke/hko-symmetry-tangent.json`, `experiments/hko-local-maximum/exact-clarke/numerical-minima-summary.json`
+- Current execution policy: prefer the larger exact-computation route with the simplest trustworthy setup. Use symmetry/paper reductions first as validation, bookkeeping, and explanation surfaces; make them load-bearing only if the larger exact route fails to become thesis-ready.
+- Backend contract: keep the checker backend-agnostic as long as it emits a trusted witness artifact. Current default is SageMath for exact number fields and exact linear algebra; the future Rust number-field backend is an explicit candidate if it gives the same witness contract with better performance. SymPy remains acceptable for smaller exact scaffolding and witness generation when performance is sufficient.
+- Current concrete Sage surface: `experiments/hko-local-maximum/exact-clarke/build_widened_seed_witness.py` now emits `widened-seed-witness.json`, and `experiments/hko-local-maximum/exact-clarke/verify_widened_seed_witness.sage` replays exact field/geometry/symmetry/representative-row checks on that single artifact. This is a Packet 3 witness-contract milestone, not the final theorem checker.
+- Current exact Sage finding: on the present widened representative surface, the representative rows annihilate all `15` committed symmetry generators exactly. The earlier affine/scaling mismatch came from the representative-row formula, not the symmetry tangent encoding. The widened representative row matrix still has right-kernel dimension `29`, so the remaining obstruction is active-row multiplicity rather than affine-symmetry compatibility.
+- Input contract: theorem input may come from a larger exact finite candidate or active surface if the backend can certify the relevant action minima/gaps and emit exact row/rank/kernel witnesses. The checker must not depend on floating-point KKT solves or empirical active-set discovery in the final proof artifact, but numerical planning surfaces are acceptable for choosing what to exactify next.
+- Current context: the HKO billiard sigma-word surface has `50,400` raw block words and `6,240` directed-feasible sigma words, versus `717` currently valid KKT orbits and `150` exact minima. In the current sympy probe, the `6240` route is too slow to treat as the default theorem path (`~14h` lower-bound projection before positivity/gap certification), but this is a backend limitation rather than a combinatorics impossibility.
+- Current symmetry-quotiented combinatorics count: the `6,240` directed-feasible sigma words collapse to `628` cyclic representatives modulo the order-10 HKO symplectic symmetry group; that is the most relevant finite input size for a Sage-first representative-based route before exact KKT/action pruning.
+- Current Sage feasibility signal: the first exact Sage KKT probe on a `100`-representative sample from that `628`-orbit surface projects to about `1.84s` for the full front-end linear-solve stage. So the old SymPy-based `~14h` objection does not apply to the current Sage representative-first route at this KKT front-end rung.
+- Suggested revisit point: if the Rust number-field work lands and gives a much faster exact backend than the current sympy route, reevaluate the `6240` directed-feasible sigma surface as a self-contained exhaustive theorem input. That route is currently blocked by exact backend cost, not by the size of the finite sigma set itself.
+- Current reduced-route obstruction: one exact endpoint representative plus one exact midpoint representative give only `20` symmetry images, so that ultra-small reduced surface cannot reach active-matrix rank `25`. Current widening state: `5` six-facet representative permutation-orbit classes and `6` midpoint-style seven-facet representative permutation-orbit classes are exactified; only `2` asymmetric seven-facet representative classes remain unresolved on the current numerical planning surface.
+- Acceptance: exact artifact exists for the active first-order certificate on the candidate/minimizer surface, together with the symmetry tangent-space basis and any extra argument needed if the final writeup compresses that certificate to a `rank/kernel` summary; thesis/formal wording can then cite this as the first-order quotient-space proof surface.
+- Stop condition: if the larger exact route cannot be made correct+trusted with a manageable backend/witness setup, record the obstruction explicitly, then decide whether a more compressed paper/symmetry route is actually needed rather than opening that extra setup complexity by default.
+- Dedicated-session split:
+  - Session A: keep exactifying the widened active-row representative surface and converge on a correct+trusted witness contract for the large exact route.
+  - Session B: implement the exact checker backend and machine-readable witness artifact (`G`, rank, kernel, symmetry inclusion/equality certificates), using Sage or the Rust exact backend depending on readiness/performance.
+  - Session C: integrate the exact result into `formal/` / thesis wording and reclassify the second-order note as supporting evidence if the first-order proof closes.
+
 ### [future] [group:hko] Higher-F perturbation validation (F=10→12, F=10→13)
 - `RESULTS.md` records F=12/F=13 validation as pending/future evidence for the broad HKO2024 local-maximality conjecture; only F=11 checks are currently done.
 - Extends facet-splitting and cut-and-ascent to add 2-3 facets simultaneously
@@ -347,6 +369,8 @@ Instrument development. Results promote to `library/`.
 
 ### [future] Crosspolytope optimality proof
 - Minimizing orbit has clean structure (uniform beta, max omega). Symmetry argument may avoid exhaustive enumeration.
+- Defer for thesis push: this would strengthen the standalone crosspolytope result, but it does not support a main thesis claim and is lower priority than HKO, numerics, and writeup-closing work.
+- Acceptance: replace the current "exhaustive through m=13" caveat with a proof that the symmetric m=4 orbit is globally minimizing, or explicitly keep it as future work if no short argument appears.
 
 ### [blocked] [group:tube] Tube vs HK2017 benchmark
 - Blocked on: Jörn writing down the tube algorithm + rotation formula + correctness proof (first task in the tube subtree).

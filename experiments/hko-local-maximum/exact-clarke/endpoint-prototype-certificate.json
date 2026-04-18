@@ -1,0 +1,151 @@
+{
+  "beta_names": {
+    "a": "sqrt(5) / 10",
+    "b": "(5 - sqrt(5)) / 20",
+    "c": "(5 - sqrt(5)) / 40",
+    "d": "(5 + sqrt(5)) / 40"
+  },
+  "endpoint_prototype": {
+    "action": "5/(2*sqrt(5 - 2*sqrt(5)))",
+    "action_float": 3.440954801177934,
+    "beta_profile_formulas": [
+      "sqrt(5)/10",
+      "sqrt(5)/10",
+      "1/4 - sqrt(5)/20",
+      "1/4 - sqrt(5)/20",
+      "1/4 - sqrt(5)/20",
+      "1/4 - sqrt(5)/20"
+    ],
+    "closure_check": [
+      "0",
+      "0",
+      "0",
+      "0"
+    ],
+    "normalization_check": "1",
+    "positive_permutation": [
+      9,
+      3,
+      6,
+      7,
+      1,
+      0
+    ],
+    "q_value_signed": "sqrt(5 - 2*sqrt(5))/5",
+    "subset": [
+      0,
+      1,
+      3,
+      6,
+      7,
+      9
+    ]
+  },
+  "field_generator": "t = sqrt(5 - 2*sqrt(5)) = tan(pi/5)",
+  "midpoint_prototype": {
+    "action": "5/(2*sqrt(5 - 2*sqrt(5)))",
+    "action_float": 3.440954801177934,
+    "beta_profile_formulas": [
+      "sqrt(5)/10",
+      "1/8 - sqrt(5)/40",
+      "sqrt(5)/40 + 1/8",
+      "1/4 - sqrt(5)/20",
+      "1/4 - sqrt(5)/20",
+      "1/8 - sqrt(5)/40",
+      "sqrt(5)/40 + 1/8"
+    ],
+    "closure_check": [
+      "0",
+      "0",
+      "0",
+      "0"
+    ],
+    "construction": "facetwise average of neighboring endpoint beta profiles on the union subset",
+    "normalization_check": "1",
+    "positive_permutation": [
+      9,
+      2,
+      3,
+      6,
+      7,
+      1,
+      0
+    ],
+    "q_value_signed": "sqrt(5 - 2*sqrt(5))/5",
+    "subset": [
+      0,
+      1,
+      2,
+      3,
+      6,
+      7,
+      9
+    ]
+  },
+  "segment_family": {
+    "action": "5/(2*sqrt(5 - 2*sqrt(5)))",
+    "beta_profile_by_facet": {
+      "0": "sqrt(5)*lambda/10 - (5 - sqrt(5))*(lambda - 1)/20",
+      "1": "-(5 - sqrt(5))*(lambda - 1)/20",
+      "2": "lambda*(5 - sqrt(5))/20",
+      "3": "lambda*(5 - sqrt(5))/20 + sqrt(5)*(1 - lambda)/10",
+      "6": "1/4 - sqrt(5)/20",
+      "7": "1/4 - sqrt(5)/20",
+      "9": "sqrt(5)/10"
+    },
+    "capacity_height_derivative_by_facet": {
+      "0": "(2*sqrt(5)*lambda - (5 - sqrt(5))*(lambda - 1))/(4*sqrt(5 - 2*sqrt(5)))",
+      "1": "-(5 - sqrt(5))*(lambda - 1)/(4*sqrt(5 - 2*sqrt(5)))",
+      "2": "lambda*(5 - sqrt(5))/(4*sqrt(5 - 2*sqrt(5)))",
+      "3": "(lambda*(5 - sqrt(5)) + 2*sqrt(5)*(1 - lambda))/(4*sqrt(5 - 2*sqrt(5)))",
+      "6": "(5 - sqrt(5))/(4*sqrt(5 - 2*sqrt(5)))",
+      "7": "(5 - sqrt(5))/(4*sqrt(5 - 2*sqrt(5)))",
+      "9": "sqrt(5)/(2*sqrt(5 - 2*sqrt(5)))"
+    },
+    "capacity_height_prefactor": "5/sqrt(5 - 2*sqrt(5))",
+    "closure_check": [
+      "0",
+      "0",
+      "0",
+      "0"
+    ],
+    "dq_dlambda": "0",
+    "mu_xi_solution": [
+      "-sqrt(5 - 2*sqrt(5))/10 + sqrt(5)*sqrt(5 - 2*sqrt(5))/10",
+      "1/2 - sqrt(5)/10",
+      "-lambda/2 + sqrt(5)*lambda/10",
+      "-sqrt(5)*lambda*sqrt(5 - 2*sqrt(5))/10 + lambda*sqrt(5 - 2*sqrt(5))/2 - 2*sqrt(5 - 2*sqrt(5))/5",
+      "-2*sqrt(5 - 2*sqrt(5))/5"
+    ],
+    "normalization_check": "1",
+    "parameter": "lambda",
+    "positive_permutation": [
+      9,
+      2,
+      3,
+      6,
+      7,
+      1,
+      0
+    ],
+    "q_value_signed": "sqrt(5 - 2*sqrt(5))/5",
+    "stationarity_residual": [
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0"
+    ],
+    "union_subset": [
+      0,
+      1,
+      2,
+      3,
+      6,
+      7,
+      9
+    ]
+  }
+}
