@@ -30,9 +30,12 @@
 //! (`Hβ + Nμ + ηξ = 0`) instead of re-labeling it into a local asymmetric
 //! variant before derivative consumers use it again.
 
-use exp_hko_local_maximum::ehz_capacity_instrumented;
+use exp_hko_local_maximum::{
+    ehz_capacity_instrumented, exact_hko_polytope, exact_simplex_polytope, ExactBankEntry,
+    ExactBankTarget, EXACT_BANK_ENTRIES,
+};
 use nalgebra::{Matrix4, Vector4};
-use real_algebraic::{Algebraic, OrderedField, Rational, TanPiFifth};
+use real_algebraic::OrderedField;
 use serde::Serialize;
 use std::fs::File;
 use std::io::{BufWriter, Write};
@@ -78,17 +81,6 @@ const MIN_STEP_FRACTION: f64 = 1e-12;
 /// Near machine epsilon (~1e-16); guards against treating f64 noise as
 /// a meaningful direction or rate. Used in step bounds and gradient checks.
 const EPS_NUMERICAL_ZERO: f64 = 1e-15;
-
-/// Hand-picked exact certification bank seed used by the exact-bank mode.
-///
-/// The HKO entries come from the algebraic exactness spike and the current
-/// HKO smoke artifact; the simplex control is the rational exact control case.
-const HKO_WINNING_SIGMA: &[usize] = &[1, 8, 7, 3, 4, 5, 9];
-const HKO_RANK_DEFICIENT_SIGMA: &[usize] = &[1, 7, 2, 8, 4, 6, 5];
-const HKO_FLOAT_WINNING_SIGMA: &[usize] = &[0, 1, 7, 3, 9, 5];
-const HKO_NEAR_OPTIMAL_SIGMA_A: &[usize] = &[0, 1, 7, 6, 3, 9];
-const HKO_NEAR_OPTIMAL_SIGMA_B: &[usize] = &[0, 6, 7, 2, 3, 9];
-const SIMPLEX_CONTROL_SIGMA: &[usize] = &[0, 2, 1, 3, 4];
 
 // ============================================================================
 // Output schemas
@@ -171,75 +163,6 @@ struct ExactBestSigmaDiagnostics {
     float_capacity_gradient_a: Vec<[f64; 4]>,
     max_abs_capacity_gradient_diff: f64,
 }
-
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-enum ExactBankTarget {
-    HkoPentagon,
-    SimplexControl,
-}
-
-impl ExactBankTarget {
-    fn polytope_name(self) -> &'static str {
-        match self {
-            Self::HkoPentagon => "hko_pentagon",
-            Self::SimplexControl => "simplex_control",
-        }
-    }
-
-    fn exact_field(self) -> &'static str {
-        match self {
-            Self::HkoPentagon => "q_tan_pi_fifth",
-            Self::SimplexControl => "rational",
-        }
-    }
-}
-
-#[derive(Clone, Copy, Debug)]
-struct ExactBankEntry {
-    row_name: &'static str,
-    sigma_label: &'static str,
-    target: ExactBankTarget,
-    sigma: &'static [usize],
-}
-
-const EXACT_BANK_ENTRIES: &[ExactBankEntry] = &[
-    ExactBankEntry {
-        row_name: "hko_exact_winning_sigma",
-        sigma_label: "winning_sigma",
-        target: ExactBankTarget::HkoPentagon,
-        sigma: HKO_WINNING_SIGMA,
-    },
-    ExactBankEntry {
-        row_name: "hko_exact_rank_deficient_sigma",
-        sigma_label: "rank_deficient_sigma",
-        target: ExactBankTarget::HkoPentagon,
-        sigma: HKO_RANK_DEFICIENT_SIGMA,
-    },
-    ExactBankEntry {
-        row_name: "hko_float_best_sigma",
-        sigma_label: "current_float_best_sigma",
-        target: ExactBankTarget::HkoPentagon,
-        sigma: HKO_FLOAT_WINNING_SIGMA,
-    },
-    ExactBankEntry {
-        row_name: "hko_near_optimal_sigma_a",
-        sigma_label: "near_optimal_sigma_a",
-        target: ExactBankTarget::HkoPentagon,
-        sigma: HKO_NEAR_OPTIMAL_SIGMA_A,
-    },
-    ExactBankEntry {
-        row_name: "hko_near_optimal_sigma_b",
-        sigma_label: "near_optimal_sigma_b",
-        target: ExactBankTarget::HkoPentagon,
-        sigma: HKO_NEAR_OPTIMAL_SIGMA_B,
-    },
-    ExactBankEntry {
-        row_name: "simplex_control_best_sigma",
-        sigma_label: "best_sigma",
-        target: ExactBankTarget::SimplexControl,
-        sigma: SIMPLEX_CONTROL_SIGMA,
-    },
-];
 
 #[derive(Debug, Serialize)]
 struct ExactCertificationBankRow {
@@ -385,51 +308,6 @@ fn compute_sensitivity(
         gradient_norm_n,
         gradient_norm_hn,
     }
-}
-
-type TanPiFifthField = Algebraic<TanPiFifth>;
-
-fn exact_hko_polytope() -> ExactPolytope4D<TanPiFifthField> {
-    let z = TanPiFifthField::zero();
-    let one = TanPiFifthField::one();
-    let t = TanPiFifthField::generator();
-    let t2 = t.clone() * t.clone();
-    let t3 = t2.clone() * t.clone();
-
-    let a = (TanPiFifthField::one() + t2.clone()) / TanPiFifthField::from_i64(4);
-    let b = (TanPiFifthField::from_i64(7) * t.clone() - t3.clone()) / TanPiFifthField::from_i64(4);
-    let sec36 = (TanPiFifthField::from_i64(3) - t2.clone()) / TanPiFifthField::from_i64(2);
-
-    ExactPolytope4D::new(vec![
-        [one.clone(), t.clone(), z.clone(), z.clone()],
-        [-a.clone(), b.clone(), z.clone(), z.clone()],
-        [-sec36.clone(), z.clone(), z.clone(), z.clone()],
-        [-a.clone(), -b.clone(), z.clone(), z.clone()],
-        [one.clone(), -t.clone(), z.clone(), z.clone()],
-        [z.clone(), z.clone(), t.clone(), -one.clone()],
-        [z.clone(), z.clone(), b.clone(), a.clone()],
-        [z.clone(), z.clone(), z.clone(), sec36.clone()],
-        [z.clone(), z.clone(), -b, a],
-        [z.clone(), z.clone(), -t, -one],
-    ])
-    .expect("exact HKO pentagon polytope")
-}
-
-fn exact_simplex_polytope() -> ExactPolytope4D<Rational> {
-    let z = Rational::from_i64(0);
-    ExactPolytope4D::new(vec![
-        [Rational::from_i64(-5), z.clone(), z.clone(), z.clone()],
-        [z.clone(), Rational::from_i64(-5), z.clone(), z.clone()],
-        [z.clone(), z.clone(), Rational::from_i64(-5), z.clone()],
-        [z.clone(), z.clone(), z.clone(), Rational::from_i64(-5)],
-        [
-            Rational::from_i64(5),
-            Rational::from_i64(5),
-            Rational::from_i64(5),
-            Rational::from_i64(5),
-        ],
-    ])
-    .expect("exact simplex control polytope")
 }
 
 #[derive(Debug)]
@@ -1455,10 +1333,12 @@ fn main() {
 mod tests {
     use super::{
         build_exact_bank_row, exact_bank_output_path, CliOptions, ExactBankEntry, ExactBankTarget,
-        EXACT_BANK_ENTRIES, HKO_FLOAT_WINNING_SIGMA, HKO_NEAR_OPTIMAL_SIGMA_A,
-        HKO_NEAR_OPTIMAL_SIGMA_B, HKO_WINNING_SIGMA, NEAR_OPTIMAL_GAP, SIMPLEX_CONTROL_SIGMA,
+        EXACT_BANK_ENTRIES, NEAR_OPTIMAL_GAP,
     };
-    use exp_hko_local_maximum::ehz_capacity_instrumented;
+    use exp_hko_local_maximum::{
+        ehz_capacity_instrumented, HKO_FLOAT_WINNING_SIGMA, HKO_NEAR_OPTIMAL_SIGMA_A,
+        HKO_NEAR_OPTIMAL_SIGMA_B, HKO_WINNING_SIGMA, SIMPLEX_CONTROL_SIGMA,
+    };
     use std::path::Path;
     use symplectic::geom::known_polytopes;
 
