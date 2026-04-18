@@ -128,6 +128,7 @@ struct StateRow {
     optimizer: String,
     backend: String,
     source_name: String,
+    root_group_id: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     seed_index: Option<usize>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -476,6 +477,24 @@ fn infer_variable_f_lineage_id(row: &VariableFRow, source_name: &str) -> String 
     source_name.to_string()
 }
 
+fn infer_root_group_id(
+    dataset: &str,
+    family: &str,
+    source_name: &str,
+    role: &str,
+) -> String {
+    if role == "random_sample" {
+        return format!("{dataset}::{source_name}");
+    }
+    if family == "general" && source_name.starts_with("general_") {
+        return format!("general::{source_name}");
+    }
+    if family == "lagrangian_product" && source_name.starts_with("products_") {
+        return format!("lagrangian_product::{source_name}");
+    }
+    format!("{dataset}::{source_name}")
+}
+
 fn infer_variable_f_parent_state_id(row: &VariableFRow) -> Option<String> {
     row.direct_parent_trial
         .as_ref()
@@ -620,6 +639,12 @@ fn main() {
             optimizer: "none".into(),
             backend: "ehz_capacity".into(),
             source_name: row.name.clone(),
+            root_group_id: infer_root_group_id(
+                "random_sample",
+                "general",
+                &row.name,
+                "random_sample",
+            ),
             seed_index: None,
             lineage_id: None,
             parent_state_id: None,
@@ -668,6 +693,12 @@ fn main() {
             optimizer: "none".into(),
             backend: "ehz_capacity_billiard".into(),
             source_name: row.name.clone(),
+            root_group_id: infer_root_group_id(
+                "random_product_sample",
+                "lagrangian_product",
+                &row.name,
+                "random_sample",
+            ),
             seed_index: None,
             lineage_id: None,
             parent_state_id: None,
@@ -725,6 +756,12 @@ fn main() {
             search_space: "general".into(),
             optimizer: "gradient_ascent".into(),
             backend: "ehz_capacity".into(),
+            root_group_id: infer_root_group_id(
+                "gradient_ascent_general",
+                "general",
+                &source_name,
+                "ascent_endpoint",
+            ),
             source_name,
             seed_index: Some(row.seed_index),
             lineage_id: Some(lineage),
@@ -797,6 +834,12 @@ fn main() {
             search_space: "lagrangian_product".into(),
             optimizer: "projected_gradient_ascent".into(),
             backend: "ehz_capacity".into(),
+            root_group_id: infer_root_group_id(
+                "gradient_ascent_products",
+                "lagrangian_product",
+                &source_name,
+                "ascent_endpoint",
+            ),
             source_name,
             seed_index: Some(row.seed_index),
             lineage_id: Some(lineage),
@@ -861,6 +904,12 @@ fn main() {
             search_space: row.path.clone(),
             optimizer: "gradient_ascent".into(),
             backend: "ehz_capacity".into(),
+            root_group_id: infer_root_group_id(
+                "variable_f_ascent",
+                "general",
+                &source_name,
+                "continuation_endpoint",
+            ),
             source_name,
             seed_index: None,
             lineage_id: Some(lineage_id),

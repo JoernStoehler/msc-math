@@ -22,13 +22,16 @@ Implementation status:
 - the converter currently relies on exact cache rows for `vertices_rational`,
   so the shared `experiments/sys-landscape/cache.jsonl` must already contain the
   fixed-`F` ascent endpoints; this session refreshed that cache contract
+- 2026-04-18: `states.jsonl` gained an explicit `root_group_id` ancestry key so
+  grouped CV and leakage control no longer depend on Python-side lineage
+  heuristics
 - 2026-04-18: first bounded modeling pass landed at
   `experiments/sys-landscape/feature-pattern-search/analyze.py`
 - current first-pass result:
   cheap dual-vertex geometry summaries help within the random regime
   (`R^2 ≈ 0.43` with ridge, vs `0.19` for the metadata baseline),
-  but they fail within the local-endpoint regime (`R^2 ≈ -0.11`) and show
-  no random/local transfer (`R^2 < -5` on both transfer surfaces)
+  but they fail within the endpoint regime (`R^2 ≈ -0.11`) and show
+  no random/endpoint transfer (`R^2 < -5` on both transfer surfaces)
 - current implication:
   there is no evidence yet for a cheap transferable pattern; the next
   enrichment step, if pursued, should be richer local-max geometry

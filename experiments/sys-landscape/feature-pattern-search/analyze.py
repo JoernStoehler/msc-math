@@ -58,7 +58,7 @@ SUMMARY_MD = EXPERIMENT_DIR / "feature_pattern_search_summary.md"
 RIDGE_PNG = EXPERIMENT_DIR / "feature_pattern_search_ridge.png"
 RF_PNG = EXPERIMENT_DIR / "feature_pattern_search_rf.png"
 
-LOCAL_DATASETS = {
+ENDPOINT_DATASETS = {
     "gradient_ascent_general",
     "gradient_ascent_products",
     "variable_f_ascent",
@@ -69,9 +69,9 @@ RANDOM_DATASETS = {
 }
 SURFACES = [
     ("within_random", "Within random"),
-    ("within_local", "Within local"),
-    ("random_to_local", "Random -> local"),
-    ("local_to_random", "Local -> random"),
+    ("within_endpoint", "Within endpoint"),
+    ("random_to_endpoint", "Random -> endpoint"),
+    ("endpoint_to_random", "Endpoint -> random"),
 ]
 FEATURE_BLOCKS = ["null", "metadata", "geometry", "combined"]
 MODEL_SPECS = [("ridge", "Ridge"), ("rf", "Random forest")]
@@ -89,7 +89,9 @@ class JoinedRow:
 
 
 def cv_group_id(state: dict, regime: str) -> str:
-    if regime == "local" and state.get("source_name"):
+    if state.get("root_group_id"):
+        return str(state["root_group_id"])
+    if regime == "endpoint" and state.get("source_name"):
         return str(state["source_name"])
     return str(state.get("lineage_id") or state["state_id"])
 
@@ -217,8 +219,8 @@ def load_joined_rows(normalized_dir: Path) -> tuple[list[JoinedRow], list[dict]]
     rows: list[JoinedRow] = []
     for state in states:
         dataset = state["dataset"]
-        regime = "local" if dataset in LOCAL_DATASETS else "random"
-        if dataset not in LOCAL_DATASETS | RANDOM_DATASETS:
+        regime = "endpoint" if dataset in ENDPOINT_DATASETS else "random"
+        if dataset not in ENDPOINT_DATASETS | RANDOM_DATASETS:
             raise ValueError(f"unexpected dataset {dataset}")
         poly = polytopes[state["poly_id"]]
         rows.append(
@@ -328,7 +330,7 @@ def evaluate_transfer(
 
 def run_evaluations(rows: list[JoinedRow]) -> list[dict]:
     random_rows = [row for row in rows if row.regime == "random"]
-    local_rows = [row for row in rows if row.regime == "local"]
+    endpoint_rows = [row for row in rows if row.regime == "endpoint"]
     results: list[dict] = []
 
     for model_name, _model_label in MODEL_SPECS:
@@ -343,30 +345,30 @@ def run_evaluations(rows: list[JoinedRow]) -> list[dict]:
                     "rmse": rmse,
                 }
             )
-            r2, rmse = evaluate_cv(local_rows, block, model_name)
+            r2, rmse = evaluate_cv(endpoint_rows, block, model_name)
             results.append(
                 {
-                    "surface": "within_local",
+                    "surface": "within_endpoint",
                     "model": model_name,
                     "block": block,
                     "r2": r2,
                     "rmse": rmse,
                 }
             )
-            r2, rmse = evaluate_transfer(random_rows, local_rows, block, model_name)
+            r2, rmse = evaluate_transfer(random_rows, endpoint_rows, block, model_name)
             results.append(
                 {
-                    "surface": "random_to_local",
+                    "surface": "random_to_endpoint",
                     "model": model_name,
                     "block": block,
                     "r2": r2,
                     "rmse": rmse,
                 }
             )
-            r2, rmse = evaluate_transfer(local_rows, random_rows, block, model_name)
+            r2, rmse = evaluate_transfer(endpoint_rows, random_rows, block, model_name)
             results.append(
                 {
-                    "surface": "local_to_random",
+                    "surface": "endpoint_to_random",
                     "model": model_name,
                     "block": block,
                     "r2": r2,
@@ -395,7 +397,7 @@ def write_summary(
 ) -> None:
     counts_by_regime = {
         regime: sum(1 for row in joined_rows if row.regime == regime)
-        for regime in ["random", "local"]
+        for regime in ["random", "endpoint"]
     }
     counts_by_dataset: dict[str, int] = {}
     for row in joined_rows:
@@ -413,7 +415,7 @@ def write_summary(
         f"- normalized input source: {normalized_source_label}",
         f"- joined rows: `{len(joined_rows)}`",
         f"- random rows: `{counts_by_regime['random']}`",
-        f"- local rows: `{counts_by_regime['local']}`",
+        f"- endpoint rows: `{counts_by_regime['endpoint']}`",
         "- dataset counts:",
     ]
     for dataset, count in sorted(counts_by_dataset.items()):
@@ -431,7 +433,7 @@ def write_summary(
             "",
             "## Metrics",
             "",
-            "Reported metrics are test-set `R^2` and RMSE. Within-regime results use grouped CV keyed by shared source ancestry in the local regime and by `state_id` in the random regime. Transfer results train on one regime and test on the other.",
+            "Reported metrics are test-set `R^2` and RMSE. Within-regime results use grouped CV keyed by shared source ancestry in the endpoint regime and by `state_id` in the random regime. Transfer results train on one regime and test on the other.",
             "",
         ]
     )
@@ -471,20 +473,20 @@ def write_summary(
     ridge_rows = { (row["surface"], row["block"]): row for row in results if row["model"] == "ridge" }
     geometry_random = ridge_rows[("within_random", "geometry")]
     metadata_random = ridge_rows[("within_random", "metadata")]
-    geometry_local = ridge_rows[("within_local", "geometry")]
-    metadata_local = ridge_rows[("within_local", "metadata")]
-    combined_random_to_local = ridge_rows[("random_to_local", "combined")]
-    geometry_local_to_random = ridge_rows[("local_to_random", "geometry")]
+    geometry_endpoint = ridge_rows[("within_endpoint", "geometry")]
+    metadata_endpoint = ridge_rows[("within_endpoint", "metadata")]
+    combined_random_to_endpoint = ridge_rows[("random_to_endpoint", "combined")]
+    geometry_endpoint_to_random = ridge_rows[("endpoint_to_random", "geometry")]
     lines.extend(
         [
             "",
             "## Interpretation",
             "",
             f"- within-random ridge: metadata `R^2={format_metric(metadata_random['r2'])}`, geometry `R^2={format_metric(geometry_random['r2'])}`",
-            f"- within-local ridge: metadata `R^2={format_metric(metadata_local['r2'])}`, geometry `R^2={format_metric(geometry_local['r2'])}`",
-            f"- random-to-local transfer with combined ridge: `R^2={format_metric(combined_random_to_local['r2'])}`",
-            f"- local-to-random transfer with geometry ridge: `R^2={format_metric(geometry_local_to_random['r2'])}`",
-            "- cheap geometry summaries help inside the random regime, but they do not explain the local-endpoint regime and do not transfer across regimes.",
+            f"- within-endpoint ridge: metadata `R^2={format_metric(metadata_endpoint['r2'])}`, geometry `R^2={format_metric(geometry_endpoint['r2'])}`",
+            f"- random-to-endpoint transfer with combined ridge: `R^2={format_metric(combined_random_to_endpoint['r2'])}`",
+            f"- endpoint-to-random transfer with geometry ridge: `R^2={format_metric(geometry_endpoint_to_random['r2'])}`",
+            "- cheap geometry summaries help inside the random regime, but they do not explain the endpoint regime and do not transfer across regimes.",
             "- treat this as a bounded first pass: cheap geometry summaries only, no skeleton or orbit enrichments yet.",
         ]
     )
