@@ -144,6 +144,14 @@ Close the first-order `M_10` theorem surface:
   cyclic relabeling, the frozen surface currently shows `5` six-facet seed
   orbits and `8` seven-facet seed orbits. This is a planning surface only, not
   theorem input.
+- The first exactification step beyond the original prototype pair is now done
+  on the six-facet side: the `5` current numerical six-facet seed orbits have
+  been converted into exact endpoint-family `sys` rows with exact closure and
+  normalization checks in
+  `experiments/hko-local-maximum/exact-clarke/endpoint-seed-rows.json`. This
+  artifact is still planning/input-scaffolding rather than theorem input,
+  because the seed choice is numerical, but it moves Packet 3 from “one
+  endpoint seed” to “several exact endpoint seeds.”
 - Working Packet 2 hypothesis from the current paper-plus-numerics comparison:
   modulo diagonal `72^\circ` rotation and `q/p` exchange, the minimizing-family
   catalog may reduce to one six-facet endpoint prototype together with one
@@ -233,6 +241,8 @@ Deliverables:
   `experiments/hko-local-maximum/exact-clarke/reduced-sys-prototypes.json`.
 - Current numerical permutation-seed orbit classifier:
   `experiments/hko-local-maximum/exact-clarke/numerical-permutation-orbits.json`.
+- Current exactified six-facet seed rows:
+  `experiments/hko-local-maximum/exact-clarke/endpoint-seed-rows.json`.
 - Current billiard sigma-surface count ladder:
   `experiments/hko-local-maximum/exact-clarke/billiard-sigma-counts.json`.
 - Current exact-sigma feasibility probe:
@@ -317,9 +327,11 @@ Checks:
 
 1. Use the new permutation-orbit artifact to choose the next exact
    permutation-level seeds beyond the current endpoint/midpoint pair.
-2. Exactify additional seed permutations and test how much row rank they add
-   beyond the current `20`-row symmetry expansion.
-3. Build the first exact active-gradient matrix over a widened reduced family
+2. Exactify the seven-facet seed families next, or justify a smaller subset of
+   them from the paper geometry before exactification.
+3. Test how much row rank the widened seed surface adds beyond the current
+   one-endpoint-plus-one-midpoint `20`-row obstruction.
+4. Build the first exact active-gradient matrix over a widened reduced family
    surface, not just the one-endpoint-plus-one-midpoint surface.
 3. Add SageMath to the devcontainer install surface or record the chosen exact
    runtime for Packet 3. If the Rust number-field backend lands first, benchmark

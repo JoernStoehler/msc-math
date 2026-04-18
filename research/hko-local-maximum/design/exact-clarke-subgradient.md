@@ -41,6 +41,10 @@ exact footholds:
   endpoint-family seed plus one midpoint seed produce only `20` symmetry
   images, so they cannot by themselves yield an active matrix of rank `25`;
   additional symmetry-inequivalent permutation-level seeds are required.
+- the first widened six-facet exactification step is now done: five
+  symmetry-quotiented numerical six-facet seed permutations have been
+  exactified into endpoint-family `sys` rows with exact closure and
+  normalization checks.
 
 ## Research Question
 
@@ -181,7 +185,9 @@ another implementation line.
 3. Choose the next permutation-level seeds using the new symmetry-quotiented
    numerical planning surface in
    `experiments/hko-local-maximum/exact-clarke/numerical-permutation-orbits.json`.
-4. Prototype the matrix build in SageMath on the widened reduced prototype-row
+4. Exactify the seven-facet side analogously, or shrink it by a paper-derived
+   argument before exactification.
+5. Prototype the matrix build in SageMath on the widened reduced prototype-row
    surface, then compare its kernel against the committed symmetry basis.
 
 ## Related Files
