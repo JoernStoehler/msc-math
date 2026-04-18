@@ -25,20 +25,23 @@
 //! generate_polytope equivalent for Lagrangian products. Database lookup is
 //! key-based (BigRational dual vertices), not Source-based.
 
-use std::collections::HashMap;
-use symplectic::algorithms::billiard::bounce_count_from_sigma;
-use symplectic::database::{load_many, save, DualVerticesKey, PolytopeRecord, SigmaAction, Source};
-use symplectic::geom::lagrangian_product::lagrangian_product;
-use symplectic::geom::polygon::random_polygon_2d;
-use symplectic::geom::volume::volume;
-use symplectic::ehz_capacity_billiard;
+use exp_sys_landscape::orbit_scalars_from_result;
+use num_rational::BigRational;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use serde::Serialize;
+use std::collections::HashMap;
 use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::path::Path;
 use std::time::Instant;
+use symplectic::algorithms::billiard::bounce_count_from_sigma;
+use symplectic::database::{load_many, save, DualVerticesKey, PolytopeRecord, SigmaAction, Source};
+use symplectic::ehz_capacity_billiard;
+use symplectic::geom::lagrangian_product::lagrangian_product;
+use symplectic::geom::polygon::random_polygon_2d;
+use symplectic::geom::polytope::Polytope4D;
+use symplectic::geom::volume::volume;
 
 const SEED: u64 = 42;
 const H_MIN: f64 = 0.8;
@@ -65,6 +68,8 @@ struct RandomProductRow {
     m: usize,
     facet_count: usize,
     dual_vertices: Vec<[f64; 4]>,
+    dual_vertices_rational: Vec<[String; 4]>,
+    vertices_rational: Vec<[String; 4]>,
     h_min: f64,
     h_max: f64,
     volume: f64,
@@ -74,6 +79,28 @@ struct RandomProductRow {
     bounces: usize,
     time_volume_ms: f64,
     time_capacity_ms: f64,
+}
+
+fn f64_dual_vertices(polytope: &Polytope4D) -> Vec<[f64; 4]> {
+    polytope
+        .dual_vertices_f64()
+        .iter()
+        .map(|a| [a[0], a[1], a[2], a[3]])
+        .collect()
+}
+
+fn rational_vec4_to_strings(data: &[[BigRational; 4]]) -> Vec<[String; 4]> {
+    data.iter()
+        .map(|row| std::array::from_fn(|i| format!("{}/{}", row[i].numer(), row[i].denom())))
+        .collect()
+}
+
+fn dual_vertices_rational_strings(polytope: &Polytope4D) -> Vec<[String; 4]> {
+    rational_vec4_to_strings(polytope.dual_vertices())
+}
+
+fn vertices_rational_strings(polytope: &Polytope4D) -> Vec<[String; 4]> {
+    rational_vec4_to_strings(polytope.vertices())
 }
 
 fn main() {
@@ -123,6 +150,11 @@ fn main() {
                         rotation_p_rad: 0.0,
                     });
                 }
+                if record.orbit_scalars.is_none() {
+                    let result = ehz_capacity_billiard(&polytope)
+                        .expect("billiard should accept cached Lagrangian product");
+                    record.orbit_scalars = Some(orbit_scalars_from_result(&result));
+                }
                 if let (Some(vol), Some(cap)) = (record.volume, record.capacity) {
                     let sys = cap * cap / (2.0 * vol);
 
@@ -131,11 +163,9 @@ fn main() {
                         k,
                         m,
                         facet_count: k + m,
-                        dual_vertices: polytope
-                            .dual_vertices_f64()
-                            .iter()
-                            .map(|a| [a[0], a[1], a[2], a[3]])
-                            .collect(),
+                        dual_vertices: f64_dual_vertices(&polytope),
+                        dual_vertices_rational: dual_vertices_rational_strings(&polytope),
+                        vertices_rational: vertices_rational_strings(&polytope),
                         h_min: H_MIN,
                         h_max: H_MAX,
                         volume: vol,
@@ -163,8 +193,8 @@ fn main() {
             let time_volume_ms = start_vol.elapsed().as_secs_f64() * 1000.0;
 
             let start_cap = Instant::now();
-            let result =
-                ehz_capacity_billiard(&polytope).expect("billiard should accept Lagrangian product");
+            let result = ehz_capacity_billiard(&polytope)
+                .expect("billiard should accept Lagrangian product");
             let time_capacity_ms = start_cap.elapsed().as_secs_f64() * 1000.0;
 
             let cap = result.capacity();
@@ -193,6 +223,7 @@ fn main() {
                 }],
                 0.0,
             );
+            record = record.with_orbit_scalars(orbit_scalars_from_result(&result));
             db.insert(key, record);
 
             let row = RandomProductRow {
@@ -200,11 +231,9 @@ fn main() {
                 k,
                 m,
                 facet_count: k + m,
-                dual_vertices: polytope
-                    .dual_vertices_f64()
-                    .iter()
-                    .map(|a| [a[0], a[1], a[2], a[3]])
-                    .collect(),
+                dual_vertices: f64_dual_vertices(&polytope),
+                dual_vertices_rational: dual_vertices_rational_strings(&polytope),
+                vertices_rational: vertices_rational_strings(&polytope),
                 h_min: H_MIN,
                 h_max: H_MAX,
                 volume: vol,

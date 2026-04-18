@@ -36,13 +36,12 @@
 //! open_ascent_writers, run_parallel_seeds, ...}`.
 
 use exp_sys_landscape::{
-    apply_dual_step, ascent_direction, compute_capacity_result, compute_step_bound, compute_sys,
-    compute_sys_from_capacity, finalize_ascent_output, open_ascent_writers, parse_ascent_args,
-    run_parallel_seeds, smoke_output_path, trace_path_for, AscentArgs, AscentMode, SeedResult,
-    SummaryRow, TraceRow, MAX_STEP_SIZE,
+    apply_dual_step, ascent_direction, compute_active_sys_state, compute_step_bound, compute_sys,
+    dual_vertices_rational_strings, finalize_ascent_output, open_ascent_writers,
+    orbit_scalars_from_result, parse_ascent_args, run_parallel_seeds, smoke_output_path,
+    trace_path_for, AscentArgs, AscentMode, SeedResult, SummaryRow, TraceRow, MAX_STEP_SIZE,
 };
 use nalgebra::Vector4;
-use symplectic::database::{load_many, save, DualVerticesKey, PolytopeRecord};
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use rand_distr::{Distribution, StandardNormal};
@@ -50,7 +49,10 @@ use std::collections::HashMap;
 use std::path::Path;
 use std::sync::{Arc, Mutex};
 use std::time::Instant;
-use symplectic::algorithms::billiard::facet_classification::{classify_facets, FacetClassification};
+use symplectic::algorithms::billiard::facet_classification::{
+    classify_facets, FacetClassification,
+};
+use symplectic::database::{load_many, save, DualVerticesKey, PolytopeRecord, SigmaAction};
 use symplectic::geom::lagrangian_product::lagrangian_product;
 use symplectic::geom::polygon::random_polygon_2d;
 use symplectic::geom::polytope::Polytope4D;
@@ -160,25 +162,21 @@ fn gradient_ascent(
             break;
         }
 
-        // 1. Active-orbit state and current sys value for this iterate.
-        let capacity = compute_capacity_result(&current)?;
-        let sys = compute_sys_from_capacity(&current, &capacity)?;
+        // 1. Shared local state
+        let state = compute_active_sys_state(&current)?;
+        let sys = state.sys;
         let duals = current.dual_vertices_f64();
 
         // 2. Ascent direction with explicit LP-preserving coordinate bounds.
         let d_sys_a = ascent_direction(
             &current,
-            &capacity,
+            &state,
             AscentMode::LagrangianProduct {
                 classification: lagrangian_class,
             },
         )?;
 
-        let gradient_norm = d_sys_a
-            .iter()
-            .map(|d| d.norm_squared())
-            .sum::<f64>()
-            .sqrt();
+        let gradient_norm = d_sys_a.iter().map(|d| d.norm_squared()).sum::<f64>().sqrt();
         if gradient_norm < EPS {
             break;
         }
@@ -330,14 +328,9 @@ fn process_seed(
                 break;
             }
             if let Some(wiggled) = wiggle(&best_polytope, rng) {
-                if let Some(result) = gradient_ascent(
-                    name,
-                    n_phases,
-                    &wiggled,
-                    lagrangian_class,
-                    t0,
-                    budget,
-                ) {
+                if let Some(result) =
+                    gradient_ascent(name, n_phases, &wiggled, lagrangian_class, t0, budget)
+                {
                     n_phases += 1;
                     n_iters_total += result.n_iters;
                     n_escape_overshoot += result.n_overshoot_improvements;
@@ -360,6 +353,21 @@ fn process_seed(
     }
 
     let total_time_ms = t0.elapsed().as_secs_f64() * 1000.0;
+    let final_state = compute_active_sys_state(&best_polytope)?;
+    let final_capacity = final_state.capacity.capacity();
+    let mut final_record = PolytopeRecord::from_polytope(&best_polytope);
+    final_record = final_record.with_computed_fields(final_state.vol, 0.0, final_capacity, 0.0);
+    final_record = final_record.with_sigmas(
+        vec![SigmaAction {
+            perm: final_state.capacity.best_sigma().to_vec(),
+            action: final_capacity,
+        }],
+        0.0,
+    );
+    final_record =
+        final_record.with_orbit_scalars(orbit_scalars_from_result(&final_state.capacity));
+    let starting_dual_vertices_rational = dual_vertices_rational_strings(polytope);
+    let final_dual_vertices_rational = dual_vertices_rational_strings(&best_polytope);
     let final_dvs: Vec<[f64; 4]> = best_polytope
         .dual_vertices_f64()
         .iter()
@@ -370,6 +378,8 @@ fn process_seed(
         summary: SummaryRow {
             name: name.to_string(),
             seed_index,
+            source_name: name.to_string(),
+            lineage_id: format!("products::{name}"),
             polytope_type: polytope_type.to_string(),
             facet_count: best_polytope.facet_count(),
             starting_sys,
@@ -381,9 +391,13 @@ fn process_seed(
             n_escape_wiggle,
             best_strategy,
             total_time_ms,
+            starting_dual_vertices_rational,
+            final_dual_vertices_rational,
             final_dual_vertices: final_dvs,
         },
         trace: all_trace,
+        final_record,
+        final_polytope: best_polytope,
     })
 }
 
@@ -391,10 +405,7 @@ fn process_seed(
 /// stream. Bucket (q_f, p_f) is determined by `i mod LAGRANGIAN_SPLITS.len()`,
 /// so contiguous index ranges are evenly spread across buckets (10k total ->
 /// ~3333 per bucket for a 3-way split).
-fn generate_for_seed(
-    i: usize,
-    rng: &mut ChaCha8Rng,
-) -> Option<(String, Polytope4D)> {
+fn generate_for_seed(i: usize, rng: &mut ChaCha8Rng) -> Option<(String, Polytope4D)> {
     let bucket_idx = i % LAGRANGIAN_SPLITS.len();
     let (q_f, p_f) = LAGRANGIAN_SPLITS[bucket_idx];
     let bucket_name = format!("lagrangian_{q_f}x{p_f}");
@@ -415,10 +426,7 @@ fn generate_for_seed(
 
 /// Insert a polytope into the database if not already present.
 /// Stores rational geometry for future vertex-enumeration-free reconstruction.
-fn insert_polytope_to_db(
-    db: &mut HashMap<DualVerticesKey, PolytopeRecord>,
-    polytope: &Polytope4D,
-) {
+fn insert_polytope_to_db(db: &mut HashMap<DualVerticesKey, PolytopeRecord>, polytope: &Polytope4D) {
     let key: DualVerticesKey = polytope.dual_vertices().to_vec();
     if db.contains_key(&key) {
         return;
@@ -428,8 +436,10 @@ fn insert_polytope_to_db(
 }
 
 fn main() {
-    let default_out =
-        smoke_output_path("sys-gradient-ascent-products", "smoke-gradient-ascent-products.jsonl");
+    let default_out = smoke_output_path(
+        "sys-gradient-ascent-products",
+        "smoke-gradient-ascent-products.jsonl",
+    );
     let args: AscentArgs = parse_ascent_args(DEFAULT_SEED, 12, default_out, "products");
     let t_global = Instant::now();
 
@@ -491,6 +501,36 @@ fn main() {
         let name = format!("products_{i}");
         let result = process_seed(&name, i, &bucket_name, &polytope, &class, &mut rng_i)?;
 
+        if !no_db_update {
+            let mut db = db_for_closure.lock().expect("lock db for final insert");
+            let key = result.final_record.key();
+            db.entry(key)
+                .and_modify(|record| {
+                    if record.volume.is_none() {
+                        record.volume = result.final_record.volume;
+                    }
+                    if record.volume_err.is_none() {
+                        record.volume_err = result.final_record.volume_err;
+                    }
+                    if record.capacity.is_none() {
+                        record.capacity = result.final_record.capacity;
+                    }
+                    if record.capacity_err.is_none() {
+                        record.capacity_err = result.final_record.capacity_err;
+                    }
+                    if record.sigma_gap_cutoff.is_none() {
+                        record.sigma_gap_cutoff = result.final_record.sigma_gap_cutoff;
+                    }
+                    if record.sigmas.is_none() {
+                        record.sigmas = result.final_record.sigmas.clone();
+                    }
+                    if record.orbit_scalars.is_none() {
+                        record.orbit_scalars = result.final_record.orbit_scalars.clone();
+                    }
+                })
+                .or_insert_with(|| result.final_record.clone());
+        }
+
         // Per-seed progress print from inside the closure. Writing to stdout
         // via println! is thread-safe (line-buffered, each call flushes its
         // own line), so two threads cannot interleave within a single line.
@@ -505,7 +545,10 @@ fn main() {
             s.total_time_ms / 1000.0,
         );
         if s.final_sys > 1.0 {
-            eprintln!("*** VITERBO VIOLATION: {} sys={:.6} ***", s.name, s.final_sys);
+            eprintln!(
+                "*** VITERBO VIOLATION: {} sys={:.6} ***",
+                s.name, s.final_sys
+            );
         }
 
         Some(result)

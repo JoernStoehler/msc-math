@@ -9,8 +9,10 @@ Goal: Assess whether gradient ascent + escape rounds push sys above
       sys(HKO2024) = 1.0472 on general (non-Lagrangian) F=10 polytopes,
       and build a distribution of ascent endpoints. Bayesian update on
       the conjecture that no hit exists uses 3/N upper credible bound.
-Input Artifacts: experiments/sys-landscape/gradient-ascent-general/data/*.jsonl (per-seed summaries).
-       Preference order: licca.jsonl > licca-shard-*.jsonl (legacy architecture-A) > smoke.jsonl.
+Input Artifacts:
+  - experiments/sys-landscape/gradient-ascent-general/data/*.jsonl (per-seed summaries)
+  - experiments/sys-landscape/gradient-ascent-general/gradient-ascent-general.jsonl (bounded local fallback)
+       Preference order: licca.jsonl > licca-shard-*.jsonl (legacy architecture-A) > gradient-ascent-general.jsonl.
 Output Artifacts:
   - gradient_ascent_general_distribution.png   (final sys histogram; linear)
   - gradient_ascent_general_tail.png           (final sys histogram; log-y tail)
@@ -45,13 +47,14 @@ STRATEGY_COLORS = {"within_cell": "#9E9E9E", "overshoot": "#E91E63", "wiggle": "
 
 def pick_jsonl_files() -> list[Path]:
     """Prefer architecture-B licca.jsonl, then legacy architecture-A shards,
-    then smoke, then pre-refactor legacy file.
+    then the pre-refactor legacy file.
 
     Returns all files matching the highest-priority tier that has data. This
     keeps the analyzer stable across the local smoke / LICCA production
     lifecycle described in the logbook. The legacy `licca-shard-*.jsonl` tier
     is retained so old committed architecture-A data still loads after merge;
-    the current `job.sh` does not produce shard files.
+    the current `job.sh` does not produce shard files, and the current
+    `job-smoke.sh` writes temp outputs outside `data/`.
     """
     if DATA_DIR.exists():
         licca = DATA_DIR / "licca.jsonl"
@@ -60,9 +63,6 @@ def pick_jsonl_files() -> list[Path]:
         shards = sorted(DATA_DIR.glob("licca-shard-*.jsonl"))
         if shards:
             return shards
-        smoke = sorted(DATA_DIR.glob("smoke.jsonl"))
-        if smoke:
-            return smoke
     if LEGACY_SUMMARY_PATH.exists():
         return [LEGACY_SUMMARY_PATH]
     print(

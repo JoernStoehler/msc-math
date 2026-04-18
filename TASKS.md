@@ -236,18 +236,38 @@ sys as a continuous function on polytope space, no privileged threshold.
 - Direction-filtered subdifferential is a negative result.
 - `experiments/numerics/gradient/` (`numerics/`, `numerics-edge-cases/`, `numerics-subdifferential/`)
 
-### [open] [group:landscape] Feature regression + local-maxima pattern search
+### [done] [2026-04-18] [group:landscape] Feature regression + local-maxima pattern search
 - Post-Kai priority: closure-blocking for the hostile-landscape thesis wording, but bounded in method scope and effort. Do not invent novel tools here; throw standard data-science methods at the available datasets and see whether any transferable signal actually appears.
 - Run regression/classifier methods on random polytopes using Euclidean and symplectic feature data. More importantly, run the same checks on local maxima found by ascent.
+- Default dataset boundary: omit packets constructed near HKO2024 from the main modeling surface so the analysis does not learn the spoiler "start near the one known counterexample"; HKO-local packets may appear only as separately labeled controls or sensitivity checks.
+- Durable data contract before modeling: `research/sys-landscape/design/feature-pattern-search.md` chooses the normalized `poly_id`/`state_id` core-plus-enrichment dataset shape over an ad hoc wide table or a fake full state graph, and fixes `poly_id` as a hash of canonical exact dual vertices.
 - Candidate outcomes: a transferable signal gives a conjecture or guided search strategy; no signal or only non-transferable structure supports the hostile-landscape conclusion.
 - Dependencies: random/polytope datasets are available now; use current local-maxima datasets immediately and extend to LICCA-returned local maxima if those artifacts arrive in time.
-- Acceptance: produce a bounded standard-method pass over random samples and ascent-found local maxima, report cross-validated predictive performance plus feature importance or failure mode, state whether any signal transfers between the two regimes, and update `RESULTS.md`.
-- Stop condition: if a real signal appears, surface it for Jörn's mathematical interpretation before turning it into a conjecture; if the standard-method pass yields no transferable signal, record that negative result and stop; do not open a novel method-development line here.
+- First implementation packet: add a `sys-*` converter that normalizes the existing random/ascent JSONLs into core tables (`polytopes`, `states`, `capacity_results`, `step_events`) with an explicit source-priority rule. Do not start with model fitting or force intermediate-state geometry that current trace logs do not contain.
+- Landed in this worktree as `sys-normalized-dataset`; verified current normalized counts are `282` states / `282` capacity rows / `287` step events once the refreshed `experiments/sys-landscape/cache.jsonl` includes the fixed-`F` ascent endpoints.
+- Bounded pass landed in `experiments/sys-landscape/feature-pattern-search/` with `feature_geometry`, `feature_skeleton`, `feature_omega`, sigma-local `feature_orbit`, and state-keyed `feature_trajectory` blocks plus refreshed summary plots and markdown.
+- Follow-up packet landed: fixed-`F` endpoint and random-baseline cache rows now persist bounded `orbit_scalars`; `feature_orbit` still falls back to one best-sigma KKT solve for older rows, which currently includes the `variable-f-ascent` packet.
+- Follow-up packet landed: bounded `feature_face_geometry` now evaluates edge-length and facet-3-volume summaries in the `vol(K)=1` convention; it helps within-random (`R^2=0.3847` ridge, `0.7009` RF) and still adds only a small endpoint-only signal (`0.1030` ridge, `0.1218` RF), with transfer still strongly negative.
+- Follow-up packet landed: the geometric magnitude packets now use the `vol(K)=1` convention, with bounded `feature_face_symplectic` using ridge-polygon symplectic-area summaries normalized by `vol(K)^(1/2)`; it is strong within random and becomes the strongest non-metadata endpoint-side block so far, but it still fails transfer in both directions. Record that other symmetry-aware normalizations remain possible future variants, and keep the summary's symmetry-status table explicit about which blocks are not translation-invariant or not `Sp(4)`-invariant.
+- Result: cheap geometry helps within the random regime, richer orbit/KKT scalars improve the random `orbit` block further, sigma-local orbit features still help the endpoint regime more than the other non-metadata blocks, trajectory aggregates from fixed-`F` step logs stay near-null, metadata still beats every non-metadata block on endpoints, and the transfer surfaces stay strongly negative or become even more negative once the random packet carries search-level orbit scalars.
+- Closure: record the negative result in `RESULTS.md` as evidence for the hostile-landscape interpretation; do not open a novel method-development line here without a separate thesis-scope decision.
+- Next blocked direction for a future LICCA session: row count, not local code scaffolding, is now the main bottleneck if this line is reopened.
+- Highest-value LICCA follow-up: generate many more endpoint rows for `gradient-ascent-general` and `gradient-ascent-products`, then `variable-f-ascent`; random baselines already show within-regime signal and have lower marginal value than endpoint packets.
+- Current posterior from the bounded pass: more rows alone are unlikely to create a clean transferable random-to-endpoint heuristic, but LICCA-scale endpoint data is still plausibly high-value for revealing stronger endpoint-only structure or for making the current negative transfer result much more decisive.
+- Re-entry point: reuse the normalized dataset + feature-pattern-search pipeline exactly as-is, refresh the canonical ascent JSONLs / caches from LICCA outputs, rerun `sys-normalized-dataset`, then rerun `experiments/sys-landscape/feature-pattern-search/analyze.py` before inventing richer models.
 
 ### [future] Systematic landscape analysis
 - Gradient flow convergence, local maxima below sys=1, random noise effects.
 - Partial data in gradient-ascent experiments.
 - Witness-search successor line: `research/sys-landscape/design/witness-search-program.md:55-83`
+- Local unblocked queue after the bounded hostile-landscape closure:
+  1. only after richer columns: trajectory/state-graph methods beyond the current scalar `feature_trajectory` block
+  2. optional local refinement: explain or normalize the new face-symplectic block if a cleaner endpoint-side interpretation is needed before LICCA rows arrive
+- LICCA-blocked queue:
+  1. more `gradient-ascent-general` endpoint rows
+  2. more `gradient-ascent-products` endpoint rows
+  3. more `variable-f-ascent` endpoint rows
+- Restart rule for future sessions: if new LICCA rows exist, refresh the canonical ascent JSONLs / caches and rerun `sys-normalized-dataset` plus `experiments/sys-landscape/feature-pattern-search/analyze.py` before inventing new model families.
 
 ## [open] Computing capacity
 

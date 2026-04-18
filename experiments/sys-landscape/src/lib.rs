@@ -7,6 +7,7 @@
 
 use good_lp::{constraint, default_solver, variable, variables, Expression, Solution, SolverModel};
 use nalgebra::{Matrix4, Vector4};
+use num_rational::BigRational;
 use rayon::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
@@ -15,6 +16,7 @@ use std::io::{BufRead, BufReader, BufWriter, Write};
 use std::path::{Path, PathBuf};
 use std::sync::{Arc, Mutex};
 use symplectic::algorithms::billiard::facet_classification::FacetClassification;
+use symplectic::database::{OrbitScalars, PolytopeRecord};
 use symplectic::derivatives::{
     clarke_directional_derivative_a, sys_subgradients_a, ClarkeSubdiffA,
 };
@@ -154,10 +156,7 @@ pub fn compute_step_bound_detailed(
             }
         } else {
             // Non-simple vertex (>4 incident facets). Conservative bound.
-            let max_d = direction
-                .iter()
-                .map(|dk| dk.norm())
-                .fold(0.0f64, f64::max);
+            let max_d = direction.iter().map(|dk| dk.norm()).fold(0.0f64, f64::max);
             for (j, a_j) in duals.iter().enumerate() {
                 if vertex_facets.contains(&j) {
                     continue;
@@ -258,8 +257,19 @@ pub fn compute_step_bound(polytope: &Polytope4D, direction: &[Vector4<f64>]) -> 
 }
 
 // ============================================================================
-// Shared ascent helpers and direction selection
+// Shared ascent state and direction selection
 // ============================================================================
+
+/// Shared local state for one ascent iteration.
+///
+/// This packages the active-orbit capacity result together with the smooth
+/// volume term. It does not choose a single orbit branch.
+#[derive(Clone, Debug)]
+pub struct ActiveSysState {
+    pub capacity: OrbitSearchResult,
+    pub vol: f64,
+    pub sys: f64,
+}
 
 /// Mode-specific projection for the ascent direction.
 #[derive(Clone, Copy, Debug)]
@@ -268,6 +278,15 @@ pub enum AscentMode<'a> {
     LagrangianProduct {
         classification: &'a FacetClassification,
     },
+}
+
+/// Compute the active-orbit local state for one polytope.
+pub fn compute_active_sys_state(polytope: &Polytope4D) -> Option<ActiveSysState> {
+    let capacity = compute_capacity_result(polytope)?;
+    let vol = volume(polytope).ok().filter(|&v| v > 0.0)?;
+    let sys = capacity.capacity() * capacity.capacity() / (2.0 * vol);
+    sys.is_finite()
+        .then_some(ActiveSysState { capacity, vol, sys })
 }
 
 /// Compute sys = c_EHZ(K)^2 / (2 vol(K)) from a cached capacity result.
@@ -285,13 +304,32 @@ pub fn compute_sys_from_capacity(
 
 /// Compute sys = c_EHZ(K)^2 / (2 vol(K)) for a polytope using HK2017.
 pub fn compute_sys(polytope: &Polytope4D) -> Option<f64> {
-    let capacity = compute_capacity_result(polytope)?;
-    compute_sys_from_capacity(polytope, &capacity)
+    let vol = volume(polytope).ok().filter(|&v| v > 0.0)?;
+    let cap = compute_capacity_result(polytope)?.capacity();
+    let sys = cap * cap / (2.0 * vol);
+    sys.is_finite().then_some(sys)
 }
 
 /// Compute the active-orbit capacity result.
 pub fn compute_capacity_result(polytope: &Polytope4D) -> Option<OrbitSearchResult> {
     symplectic::ehz_capacity(polytope).ok()
+}
+
+pub fn orbit_scalars_from_result(result: &OrbitSearchResult) -> OrbitScalars {
+    let best = result.best_orbit();
+    OrbitScalars {
+        iterations: result.iterations,
+        returned_orbit_count: result.orbits.len(),
+        best_beta_margin: best.beta_margin,
+        best_q_error_bound: best.q_error_bound,
+        best_has_mu: best.mu.is_some(),
+        best_has_xi: best.xi.is_some(),
+        best_is_admissible_exact: matches!(best.admissibility, OrbitAdmissibility::AdmissibleExact),
+        best_is_indeterminate_f64: matches!(
+            best.admissibility,
+            OrbitAdmissibility::IndeterminateF64
+        ),
+    }
 }
 
 fn flatten_gradient(grad: &[Vector4<f64>]) -> Vec<f64> {
@@ -388,13 +426,13 @@ fn admissible_active_orbits(result: &OrbitSearchResult) -> Vec<&OrbitKktData> {
 /// With a single active orbit, this reduces to that branch gradient. At
 /// switching points, it solves a maximin LP for a feasible direction `d`
 /// satisfying `max_d min_i <∇sys_i, d>` under box bounds on the ambient
-/// coordinates. `capacity` must come from the same `polytope`.
+/// coordinates.
 pub fn ascent_direction(
     polytope: &Polytope4D,
-    capacity: &OrbitSearchResult,
+    state: &ActiveSysState,
     mode: AscentMode<'_>,
 ) -> Option<Vec<Vector4<f64>>> {
-    let active_orbits: Vec<OrbitKktData> = admissible_active_orbits(capacity)
+    let active_orbits: Vec<OrbitKktData> = admissible_active_orbits(&state.capacity)
         .into_iter()
         .cloned()
         .collect();
@@ -428,6 +466,16 @@ pub fn apply_dual_step(
     Some((polytope, sys))
 }
 
+pub fn rational_vec4_to_strings(data: &[[BigRational; 4]]) -> Vec<[String; 4]> {
+    data.iter()
+        .map(|row| std::array::from_fn(|i| format!("{}/{}", row[i].numer(), row[i].denom())))
+        .collect()
+}
+
+pub fn dual_vertices_rational_strings(polytope: &Polytope4D) -> Vec<[String; 4]> {
+    rational_vec4_to_strings(polytope.dual_vertices())
+}
+
 // ============================================================================
 // Shared CLI + I/O for ascent experiments
 // ============================================================================
@@ -450,10 +498,19 @@ pub fn apply_dual_step(
 /// line 507); products passes `lagrangian_{q_f}x{p_f}` where `q_f` and `p_f`
 /// are the facet counts of the two Lagrangian factors (see
 /// `gradient-ascent-products/main.rs` line 443, `bucket_name`).
+///
+/// The row stores both exact rational endpoint geometry and the legacy `f64`
+/// endpoint dual vertices. The exact fields are the durable join surface for
+/// later normalized datasets; the `f64` field remains for backwards-compatible
+/// plotting and quick inspection.
 #[derive(Debug, Serialize, Deserialize)]
 pub struct SummaryRow {
     pub name: String,
     pub seed_index: usize,
+    #[serde(default)]
+    pub source_name: String,
+    #[serde(default)]
+    pub lineage_id: String,
     pub polytope_type: String,
     pub facet_count: usize,
     pub starting_sys: f64,
@@ -465,6 +522,10 @@ pub struct SummaryRow {
     pub n_escape_wiggle: usize,
     pub best_strategy: String,
     pub total_time_ms: f64,
+    #[serde(default)]
+    pub starting_dual_vertices_rational: Vec<[String; 4]>,
+    #[serde(default)]
+    pub final_dual_vertices_rational: Vec<[String; 4]>,
     pub final_dual_vertices: Vec<[f64; 4]>,
 }
 
@@ -487,6 +548,8 @@ pub struct TraceRow {
 pub struct SeedResult {
     pub summary: SummaryRow,
     pub trace: Vec<TraceRow>,
+    pub final_polytope: Polytope4D,
+    pub final_record: PolytopeRecord,
 }
 
 /// Parsed CLI arguments shared across ascent binaries.
@@ -546,7 +609,9 @@ pub fn parse_ascent_args(
                 i += 2;
             }
             "--n-start" => {
-                n_start = value().parse().expect("--n-start must be a non-negative integer");
+                n_start = value()
+                    .parse()
+                    .expect("--n-start must be a non-negative integer");
                 i += 2;
             }
             "--seed" => {
@@ -634,10 +699,7 @@ pub fn open_ascent_writers(
     summary_path: &Path,
     trace_path: &Path,
     fresh: bool,
-) -> (
-    Arc<Mutex<BufWriter<File>>>,
-    Arc<Mutex<BufWriter<File>>>,
-) {
+) -> (Arc<Mutex<BufWriter<File>>>, Arc<Mutex<BufWriter<File>>>) {
     if fresh {
         let _ = std::fs::remove_file(summary_path);
         let _ = std::fs::remove_file(trace_path);
@@ -707,7 +769,9 @@ pub fn write_result(
     let summary_json = serde_json::to_string(&result.summary)
         .expect("SummaryRow serialization is infallible for f64/String fields");
     {
-        let mut w = summary_writer.lock().expect("summary writer mutex poisoned");
+        let mut w = summary_writer
+            .lock()
+            .expect("summary writer mutex poisoned");
         writeln!(w, "{summary_json}").expect("failed to write summary row");
         w.flush().expect("failed to flush summary row");
     }
@@ -752,10 +816,7 @@ pub fn write_result(
 pub fn run_parallel_seeds<F>(
     args: &AscentArgs,
     completed: &HashSet<String>,
-    writers: &(
-        Arc<Mutex<BufWriter<File>>>,
-        Arc<Mutex<BufWriter<File>>>,
-    ),
+    writers: &(Arc<Mutex<BufWriter<File>>>, Arc<Mutex<BufWriter<File>>>),
     best: &Arc<Mutex<(f64, String)>>,
     process: F,
 ) where
@@ -877,9 +938,8 @@ pub fn finalize_ascent_output(
     });
     // Remove duplicates from crash-resume (see doc comment on `write_result`).
     // dedup_by keeps the first of each adjacent run of equal keys.
-    trace_rows.dedup_by(|a, b| {
-        a.name == b.name && a.phase == b.phase && a.iteration == b.iteration
-    });
+    trace_rows
+        .dedup_by(|a, b| a.name == b.name && a.phase == b.phase && a.iteration == b.iteration);
     let trace_tmp = trace_path.with_extension("jsonl.tmp");
     {
         let f = File::create(&trace_tmp)
@@ -970,7 +1030,10 @@ mod tests {
         let predicted = clarke_directional_derivative_a(&subdiff, &direction)
             .expect("nonempty subdifferential should evaluate");
 
-        assert!(predicted > 0.99, "predicted directional derivative = {predicted}");
+        assert!(
+            predicted > 0.99,
+            "predicted directional derivative = {predicted}"
+        );
         assert!(direction[0][0] > 0.99, "direction = {:?}", direction[0]);
         assert!(direction[0][1] > 0.99, "direction = {:?}", direction[0]);
     }
@@ -1002,9 +1065,25 @@ mod tests {
         )
         .expect("LP-bounded switching pair should admit a positive direction");
 
-        assert!(direction[q_idx][2].abs() < 1e-9, "direction = {:?}", direction[q_idx]);
-        assert!(direction[q_idx][3].abs() < 1e-9, "direction = {:?}", direction[q_idx]);
-        assert!(direction[p_idx][0].abs() < 1e-9, "direction = {:?}", direction[p_idx]);
-        assert!(direction[p_idx][1].abs() < 1e-9, "direction = {:?}", direction[p_idx]);
+        assert!(
+            direction[q_idx][2].abs() < 1e-9,
+            "direction = {:?}",
+            direction[q_idx]
+        );
+        assert!(
+            direction[q_idx][3].abs() < 1e-9,
+            "direction = {:?}",
+            direction[q_idx]
+        );
+        assert!(
+            direction[p_idx][0].abs() < 1e-9,
+            "direction = {:?}",
+            direction[p_idx]
+        );
+        assert!(
+            direction[p_idx][1].abs() < 1e-9,
+            "direction = {:?}",
+            direction[p_idx]
+        );
     }
 }

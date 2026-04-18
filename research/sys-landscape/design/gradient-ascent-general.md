@@ -25,8 +25,11 @@ Architecture B (2026-04-12): rayon par_iter on one LICCA task,
 `vectorized-bouncing-gray.md` for the A→B decision rationale and
 `peppy-hugging-melody.md` session state for history.
 
-The old committed `gradient-ascent-general.jsonl` (N=10) is **not** byte-reproducible
-under the new per-seed RNG scheme and has been superseded by `data/smoke.jsonl`.
+The tracked root `gradient-ascent-general.jsonl` was refreshed on 2026-04-18
+to the widened summary schema used by the normalized dataset converter. It is
+now the bounded local packet that `analyze.py` falls back to when no
+`data/licca.jsonl`, legacy shard set, or `data/smoke.jsonl` is present.
+Production evidence still targets `data/licca.jsonl`.
 
 ## Predecessor
 
@@ -47,9 +50,9 @@ uv run analyze.py
 Expect ~20 s compute. Produces `data/smoke.jsonl`, `data/smoke-trace.jsonl`,
 and the six figure files. `job-smoke.sh` is plain bash with no SLURM
 directives and uses the repo-local `target/release/sys-gradient-ascent-general`.
-`analyze.py` picks up
-`data/licca.jsonl` > `data/licca-shard-*.jsonl` (legacy) > `data/smoke.jsonl`
-in priority order.
+`analyze.py` picks up `data/licca.jsonl` > `data/licca-shard-*.jsonl`
+(legacy) > `data/smoke.jsonl` > `gradient-ascent-general.jsonl` in priority
+order.
 
 ### Wall-time budget
 
@@ -122,7 +125,7 @@ existing `licca.jsonl` and skips already-completed seeds. Do NOT pass
 | `data/smoke.jsonl` | Local smoke output, 3 seeds (LFS) |
 | `data/licca.jsonl` | LICCA production output (N=10000, LFS) |
 | `data/licca-shard-*.jsonl` | Legacy architecture-A shard outputs (LFS) — kept for post-merge reads, not produced by current `job.sh` |
-| `gradient-ascent-general.jsonl` | Historical N=10 dataset from before the refactor — superseded, not read by the current `analyze.py` |
+| `gradient-ascent-general.jsonl` | Refreshed bounded local packet (N=10) and analyzer fallback when `data/` is absent |
 | `gradient_ascent_general_*.png` | Figures |
 
 ## Algorithm
@@ -139,4 +142,11 @@ General polytopes: 10 seeds, mean sys 0.823, max sys 0.901. Warm starts from gra
 
 ## Data status
 
-Fresh data regenerated 2026-04-04 after warm-start removal and split from boundary-crossing-search. 10 fresh general polytopes, no warm starts (warm-start source `large-scale-descent` was deleted as superseded). Polytopes use standard master seed (42), low attempt numbers, and benefit from database caching for initial capacity/volume computation.
+Current refreshed bounded packet (2026-04-18, `gradient-ascent-general.jsonl`):
+
+- `N=10` general seeds from the post-split, no-warm-start pipeline
+- mean final `sys = 0.7939`, max `sys = 0.9030` (`general_9`), 90th percentile
+  `0.8778`
+- mean improvement from random start to final endpoint: `+0.4749`
+- all `10/10` seeds needed an escape strategy beyond plain within-cell ascent
+- no seed exceeded `sys = 0.95`, `1.00`, or `sys(K_HKO) = 1.0472`

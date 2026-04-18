@@ -57,9 +57,9 @@ to overstate, harder to justify, or harder to turn into thesis text.
   - [sub][evidence] In the one-dimensional regular pentagon rotation family, sys > 1 occupies a visible interval around the HKO angle, but shape perturbations add many narrow directions.
   - [sub][evidence] Variable-F ascent often improves lower local maxima, but the observed improvements still stay below sys = 1.
   - [sub][mechanism] Combinatorial cells are narrow, anisotropic, and crossed frequently by gradient steps; sys behaves continuously across tested boundaries while gradients and active orbits can change sharply.
-  - [sub][planned] Run regression and classifier methods on random polytopes using Euclidean and symplectic feature data to test whether high-sys examples have a learnable pattern.
-  - [sub][planned] More importantly, run the same pattern search on the local maxima found by ascent; success would give a conjecture or guided search strategy, while failure would support the hostile-landscape claim.
-  - [sub][caveat] Until those regression/pattern-finding checks fail or only find non-transferable structure, the hostile-landscape conclusion is not closed.
+  - [sub][evidence] A bounded standard-method pattern-search pass on normalized random and ascent-endpoint datasets found regime-specific but non-transferable structure: cheap geometry helps within random, richer sigma-local orbit/KKT scalars improve the random `orbit` block further, bounded face-level Euclidean summaries in the `vol(K)=1` convention add only a small endpoint-side signal, bounded face-level symplectic summaries normalized by `vol(K)^(1/2)` become the strongest non-metadata endpoint-side block so far, fixed-`F` trajectory aggregates from `step_events.jsonl` stay near-null, metadata still dominates the endpoint regime, and transfer stays strongly negative.
+  - [sub][artifact] The closure packet lives in `experiments/sys-landscape/feature-pattern-search/` with `feature_geometry.jsonl`, `feature_face_geometry.jsonl`, `feature_face_symplectic.jsonl`, `feature_skeleton.jsonl`, `feature_omega.jsonl`, `feature_orbit.jsonl`, `feature_trajectory.jsonl`, and `feature_pattern_search_summary.md`; fixed-`F` endpoint and random-baseline cache rows now also persist bounded `orbit_scalars`, while `variable_f_ascent` still relies on the one-best-sigma fallback path.
+  - [sub][interpretation] The current data-science evidence therefore supports the hostile-landscape reading rather than a transferable search heuristic from generic random samples to ascent-found endpoints.
   - [sub][method] The hostile-search claim rests on reproducible fixed-F and variable-F ascent runs, with capacity and orbit computations recorded by the experiment pipeline.
   - [sub][caveat] Random polytope distributions and Lagrangian product families are reproducible baselines, not uniform models of all convex bodies.
   - [sub][interpretation] Blind sampling is therefore a weak strategy unless it is guided by structure near a known high-sys family.
@@ -92,7 +92,8 @@ to overstate, harder to justify, or harder to turn into thesis text.
 - The project developed reproducible experimental baselines for random polytopes, Lagrangian products, local maxima, and feature-based pattern search.
   - [sub][method] Random polytope and Lagrangian product distributions give reproducible baselines, not uniform models of all convex bodies.
   - [sub][method] Fixed-F and variable-F ascent provide local-maxima datasets for the landscape and regression questions.
-  - [sub][planned] Regression and classifier checks on random polytopes and ascent-found local maxima still need to run before the hostile-landscape result is closed.
+  - [sub][method] The normalized hostile-landscape dataset now supports joined `poly_id`/`state_id` analyses across random samples, fixed-F ascent endpoints, variable-F continuation endpoints, and fixed-F step-event logs.
+  - [sub][result] The first bounded regression pass remains negative in the thesis-relevant way after the orbit/KKT scalar follow-up: feature blocks built from cheap geometry, skeleton, omega/transition, cached sigma-local orbit structure, bounded best-orbit KKT scalars, and scalar fixed-`F` trajectory summaries do not yield a transferable predictor from random samples to ascent-found endpoints.
 
 ## Research Infrastructure And Process
 

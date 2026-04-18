@@ -23,9 +23,11 @@ Architecture B (2026-04-12): rayon par_iter on one LICCA task,
 `vectorized-bouncing-gray.md` for the A→B decision rationale and
 `peppy-hugging-melody.md` session state for history.
 
-The old committed `gradient-ascent-products.jsonl` (N=12, 3 buckets × 4) is
-**not** byte-reproducible under the new per-seed RNG scheme and has been
-superseded by `data/smoke.jsonl`.
+The tracked root `gradient-ascent-products.jsonl` was refreshed on 2026-04-18
+to the widened summary schema used by the normalized dataset converter. It is
+now the bounded local packet that `analyze.py` falls back to when no
+`data/licca.jsonl`, legacy shard set, or `data/smoke.jsonl` is present.
+Production evidence still targets `data/licca.jsonl`.
 
 ## Predecessor
 
@@ -47,9 +49,9 @@ Expect ~15 s compute. Produces `data/smoke.jsonl`, `data/smoke-trace.jsonl`,
 and the six figure files. `job-smoke.sh` is plain bash with no SLURM
 directives and uses the repo-local `target/release/sys-gradient-ascent-products`.
 Seed 0 lands in bucket `lagrangian_3x7`, seed 1 in `lagrangian_4x6`, seed 2
-in `lagrangian_5x5`. `analyze.py` picks up
-`data/licca.jsonl` > `data/licca-shard-*.jsonl` (legacy) > `data/smoke.jsonl`
-in priority order.
+in `lagrangian_5x5`. `analyze.py` picks up `data/licca.jsonl` >
+`data/licca-shard-*.jsonl` (legacy) > `data/smoke.jsonl` >
+`gradient-ascent-products.jsonl` in priority order.
 
 ### Wall-time budget
 
@@ -122,7 +124,7 @@ existing `licca.jsonl` and skips already-completed seeds. Do NOT pass
 | `data/smoke.jsonl` | Local smoke output, 3 seeds (LFS) |
 | `data/licca.jsonl` | LICCA production output (N=10000, LFS) |
 | `data/licca-shard-*.jsonl` | Legacy architecture-A shard outputs (LFS) — kept for post-merge reads, not produced by current `job.sh` |
-| `gradient-ascent-products.jsonl` | Historical N=12 dataset from before the refactor — superseded, not read by the current `analyze.py` |
+| `gradient-ascent-products.jsonl` | Refreshed bounded local packet (N=12) and analyzer fallback when `data/` is absent |
 | `gradient_ascent_products_*.png` | Figures |
 
 ## Algorithm
@@ -139,4 +141,10 @@ Lagrangian products: 12 seeds, mean sys 0.821, max sys 0.933. Best overall sys=0
 
 ## Data status
 
-Fresh data generated 2026-04-04 after warm-start removal and split from boundary-crossing-search. 12 fresh Lagrangian products (3 splits x 4 per bucket), no warm starts (warm-start source `large-scale-descent` was deleted as superseded). Polytopes use standard master seed (42), low attempt numbers, and benefit from database caching for initial capacity/volume computation.
+Current refreshed bounded packet (2026-04-18, `gradient-ascent-products.jsonl`):
+
+- `N=12` Lagrangian product seeds, four in each split bucket
+- overall best `sys = 0.8727` (`products_5`, bucket `lagrangian_5x5`)
+- per-bucket means: `0.8322` (`3x7`), `0.7841` (`4x6`), `0.8407` (`5x5`)
+- `10/12` seeds used overshoot or wiggle rather than plain within-cell ascent
+- no seed exceeded `sys = 0.95`, `1.00`, or `sys(K_HKO) = 1.0472`

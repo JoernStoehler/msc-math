@@ -21,8 +21,9 @@
 //! Output Artifacts: variable-f-ascent/variable-f-ascent.jsonl
 //!         variable-f-ascent/cache.jsonl
 
-use exp_sys_landscape::compute_step_bound;
+use exp_sys_landscape::{compute_step_bound, orbit_scalars_from_result};
 use nalgebra::Vector4;
+use num_rational::BigRational;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use rand_distr::{Distribution, StandardNormal};
@@ -33,10 +34,7 @@ use std::io::{BufRead, BufReader, BufWriter, Write};
 use std::path::PathBuf;
 use std::time::{Instant, SystemTime, UNIX_EPOCH};
 use symplectic::database::{load, save, DualVerticesKey, PolytopeRecord, SigmaAction};
-use symplectic::derivatives::{
-    capacity_derivatives_a_from_kkt_result,
-    volume_derivatives_a,
-};
+use symplectic::derivatives::{capacity_derivatives_a_from_kkt_result, volume_derivatives_a};
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::skeleton::Skeleton;
 use symplectic::geom::volume::volume;
@@ -141,6 +139,13 @@ struct ResultRow {
     path: String,
     /// Seed/source identifier
     name: String,
+    /// External source or seed group that defines the lineage
+    source_name: String,
+    /// Stable lineage identifier across related paths or placements
+    lineage_id: String,
+    /// Parent trial row when one exists in this dataset
+    #[serde(skip_serializing_if = "Option::is_none")]
+    direct_parent_trial: Option<String>,
     /// Facet count at start of gradient ascent
     starting_f: usize,
     /// sys before any optimization in this trial
@@ -161,6 +166,13 @@ struct ResultRow {
     facet_remained_active: Option<bool>,
     /// Wall-clock time for this trial
     total_time_ms: f64,
+    /// Exact dual vertices at the start of the ascent stage
+    starting_dual_vertices_rational: Vec<[String; 4]>,
+    /// Exact dual vertices immediately after facet addition, if applicable
+    #[serde(skip_serializing_if = "Option::is_none")]
+    after_addition_dual_vertices_rational: Option<Vec<[String; 4]>>,
+    /// Exact dual vertices at the endpoint
+    final_dual_vertices_rational: Vec<[String; 4]>,
     /// Final dual vertices
     final_dual_vertices: Vec<[f64; 4]>,
 }
@@ -180,6 +192,7 @@ struct GradientAscentRow {
 fn compute_sys(polytope: &Polytope4D, db: &mut Db) -> Option<f64> {
     let vol = volume(polytope).ok().filter(|&v| v > 0.0)?;
     let cap = compute_capacity(polytope, db)?;
+    persist_scalar_fields(polytope, vol, cap, db);
     let sys = cap * cap / (2.0 * vol);
     sys.is_finite().then_some(sys)
 }
@@ -213,6 +226,9 @@ fn compute_capacity(polytope: &Polytope4D, db: &mut Db) -> Option<f64> {
         .entry(key)
         .or_insert_with(|| PolytopeRecord::from_polytope(polytope));
     record.capacity = Some(cap);
+    if record.capacity_err.is_none() {
+        record.capacity_err = Some(0.0);
+    }
     Some(cap)
 }
 
@@ -233,10 +249,19 @@ fn compute_capacity_result(polytope: &Polytope4D, db: &mut Db) -> Option<(f64, V
         .entry(key)
         .or_insert_with(|| PolytopeRecord::from_polytope(polytope));
     record.capacity = Some(cap);
+    if record.capacity_err.is_none() {
+        record.capacity_err = Some(0.0);
+    }
+    if record.sigma_gap_cutoff.is_none() {
+        record.sigma_gap_cutoff = Some(0.0);
+    }
     record.sigmas = Some(vec![SigmaAction {
         perm: perm.clone(),
         action: cap,
     }]);
+    if record.orbit_scalars.is_none() {
+        record.orbit_scalars = Some(orbit_scalars_from_result(&r));
+    }
     Some((cap, perm))
 }
 
@@ -548,6 +573,35 @@ fn dvs_to_array(polytope: &Polytope4D) -> Vec<[f64; 4]> {
         .collect()
 }
 
+fn rational_vec4_to_strings(data: &[[BigRational; 4]]) -> Vec<[String; 4]> {
+    data.iter()
+        .map(|row| std::array::from_fn(|i| format!("{}/{}", row[i].numer(), row[i].denom())))
+        .collect()
+}
+
+fn dual_vertices_rational_strings(polytope: &Polytope4D) -> Vec<[String; 4]> {
+    rational_vec4_to_strings(polytope.dual_vertices())
+}
+
+fn persist_scalar_fields(polytope: &Polytope4D, vol: f64, cap: f64, db: &mut Db) {
+    let key: DualVerticesKey = polytope.dual_vertices().to_vec();
+    let record = db
+        .entry(key)
+        .or_insert_with(|| PolytopeRecord::from_polytope(polytope));
+    if record.volume.is_none() {
+        record.volume = Some(vol);
+    }
+    if record.volume_err.is_none() {
+        record.volume_err = Some(0.0);
+    }
+    if record.capacity.is_none() {
+        record.capacity = Some(cap);
+    }
+    if record.capacity_err.is_none() {
+        record.capacity_err = Some(0.0);
+    }
+}
+
 fn write_row(row: &ResultRow, writer: &mut BufWriter<File>) {
     serde_json::to_writer(&mut *writer, row).expect("write row");
     writeln!(writer).expect("newline");
@@ -588,9 +642,14 @@ fn smoke_run(
         ga_path.display()
     );
 
-    let (trial_name, source_sys, start_polytope) =
+    let (trial_name, source_name, source_sys, start_polytope) =
         if let Some((src_name, src_sys, src_polytope)) = local_maxima.first() {
-            (format!("smoke_{src_name}"), *src_sys, src_polytope.clone())
+            (
+                format!("smoke_{src_name}"),
+                src_name.clone(),
+                *src_sys,
+                src_polytope.clone(),
+            )
         } else {
             println!("Smoke mode: no local maxima found, sampling a random F=10 polytope.");
             let mut sampled = None;
@@ -602,7 +661,12 @@ fn smoke_run(
             }
             let polytope = sampled.expect("smoke fallback polytope generation");
             let sys = compute_sys(&polytope, db).expect("compute smoke start sys");
-            ("smoke_random_f10".to_string(), sys, polytope)
+            (
+                "smoke_random_f10".to_string(),
+                "smoke_random_f10".to_string(),
+                sys,
+                polytope,
+            )
         };
 
     let start_sys = compute_sys(&start_polytope, db).expect("compute smoke start sys");
@@ -627,6 +691,9 @@ fn smoke_run(
         rq: "smoke".into(),
         path: "smoke_probe".into(),
         name: trial_name,
+        source_name: source_name.clone(),
+        lineage_id: format!("smoke::{source_name}"),
+        direct_parent_trial: None,
         starting_f: 11,
         starting_sys: start_sys,
         sys_after_addition: sys_after_add,
@@ -637,6 +704,9 @@ fn smoke_run(
         placement_direction: Some([dir[0], dir[1], dir[2], dir[3]]),
         facet_remained_active: Some(active),
         total_time_ms: t0.elapsed().as_secs_f64() * 1000.0,
+        starting_dual_vertices_rational: dual_vertices_rational_strings(&f11_polytope),
+        after_addition_dual_vertices_rational: Some(dual_vertices_rational_strings(&f11_polytope)),
+        final_dual_vertices_rational: dual_vertices_rational_strings(&result.final_polytope),
         final_dual_vertices: dvs_to_array(&result.final_polytope),
     };
     write_row(&row, writer);
@@ -806,6 +876,9 @@ fn main() {
                         rq: "rq1".into(),
                         path: "f10_localmax_then_f11".into(),
                         name: trial_name.clone(),
+                        source_name: src_name.clone(),
+                        lineage_id: format!("rq1::{src_name}"),
+                        direct_parent_trial: None,
                         starting_f: 11,
                         starting_sys: *src_sys,
                         sys_after_addition: Some(sys_after_add_val),
@@ -816,6 +889,15 @@ fn main() {
                         placement_direction: Some([dir[0], dir[1], dir[2], dir[3]]),
                         facet_remained_active: Some(active),
                         total_time_ms: t0.elapsed().as_secs_f64() * 1000.0,
+                        starting_dual_vertices_rational: dual_vertices_rational_strings(
+                            &f11_polytope,
+                        ),
+                        after_addition_dual_vertices_rational: Some(
+                            dual_vertices_rational_strings(&f11_polytope),
+                        ),
+                        final_dual_vertices_rational: dual_vertices_rational_strings(
+                            &result.final_polytope,
+                        ),
                         final_dual_vertices: dvs_to_array(&result.final_polytope),
                     };
                     write_row(&row, &mut writer);
@@ -911,6 +993,9 @@ fn main() {
                             rq: "rq2".into(),
                             path: "f10_ascent".into(),
                             name: path_a_name.clone(),
+                            source_name: seed_name.clone(),
+                            lineage_id: format!("rq2::{seed_name}"),
+                            direct_parent_trial: None,
                             starting_f: 10,
                             starting_sys: start_sys,
                             sys_after_addition: None,
@@ -921,6 +1006,13 @@ fn main() {
                             placement_direction: None,
                             facet_remained_active: None,
                             total_time_ms: t0.elapsed().as_secs_f64() * 1000.0,
+                            starting_dual_vertices_rational: dual_vertices_rational_strings(
+                                start_polytope,
+                            ),
+                            after_addition_dual_vertices_rational: None,
+                            final_dual_vertices_rational: dual_vertices_rational_strings(
+                                &result.final_polytope,
+                            ),
                             final_dual_vertices: dvs_to_array(&result.final_polytope),
                         };
                         write_row(&row, &mut writer);
@@ -951,22 +1043,33 @@ fn main() {
                         {
                             Some(result) => {
                                 let active = last_facet_active(&result.final_polytope);
-                                let row = ResultRow {
-                                    rq: "rq2".into(),
-                                    path: "f10_ascent_then_f11".into(),
-                                    name: path_d_name.clone(),
-                                    starting_f: 11,
-                                    starting_sys: start_sys,
-                                    sys_after_addition: sys_after_add,
-                                    final_sys: result.final_sys,
-                                    delta_vs_source: result.final_sys - start_sys,
-                                    n_iterations: result.n_iters,
-                                    n_phases: result.n_phases,
-                                    placement_direction: Some([dir[0], dir[1], dir[2], dir[3]]),
-                                    facet_remained_active: Some(active),
-                                    total_time_ms: t0.elapsed().as_secs_f64() * 1000.0,
-                                    final_dual_vertices: dvs_to_array(&result.final_polytope),
-                                };
+                                let row =
+                                    ResultRow {
+                                        rq: "rq2".into(),
+                                        path: "f10_ascent_then_f11".into(),
+                                        name: path_d_name.clone(),
+                                        source_name: seed_name.clone(),
+                                        lineage_id: format!("rq2::{seed_name}"),
+                                        direct_parent_trial: Some(path_a_name.clone()),
+                                        starting_f: 11,
+                                        starting_sys: start_sys,
+                                        sys_after_addition: sys_after_add,
+                                        final_sys: result.final_sys,
+                                        delta_vs_source: result.final_sys - start_sys,
+                                        n_iterations: result.n_iters,
+                                        n_phases: result.n_phases,
+                                        placement_direction: Some([dir[0], dir[1], dir[2], dir[3]]),
+                                        facet_remained_active: Some(active),
+                                        total_time_ms: t0.elapsed().as_secs_f64() * 1000.0,
+                                        starting_dual_vertices_rational:
+                                            dual_vertices_rational_strings(&f11_polytope),
+                                        after_addition_dual_vertices_rational: Some(
+                                            dual_vertices_rational_strings(&f11_polytope),
+                                        ),
+                                        final_dual_vertices_rational:
+                                            dual_vertices_rational_strings(&result.final_polytope),
+                                        final_dual_vertices: dvs_to_array(&result.final_polytope),
+                                    };
                                 write_row(&row, &mut writer);
                                 println!(
                                     "  [D: F=10→F=11] a_sys={a_sys:.4} → add={:.4} → final={:.4} (Δ={:+.4}), active={active}, {:.1}s",
@@ -1000,6 +1103,9 @@ fn main() {
                                 rq: "rq2".into(),
                                 path: "f10_add_then_f11".into(),
                                 name: path_b_name.clone(),
+                                source_name: seed_name.clone(),
+                                lineage_id: format!("rq2::{seed_name}"),
+                                direct_parent_trial: None,
                                 starting_f: 11,
                                 starting_sys: start_sys,
                                 sys_after_addition: sys_after_add,
@@ -1010,6 +1116,15 @@ fn main() {
                                 placement_direction: Some([dir[0], dir[1], dir[2], dir[3]]),
                                 facet_remained_active: Some(active),
                                 total_time_ms: t0.elapsed().as_secs_f64() * 1000.0,
+                                starting_dual_vertices_rational: dual_vertices_rational_strings(
+                                    &f11_polytope,
+                                ),
+                                after_addition_dual_vertices_rational: Some(
+                                    dual_vertices_rational_strings(&f11_polytope),
+                                ),
+                                final_dual_vertices_rational: dual_vertices_rational_strings(
+                                    &result.final_polytope,
+                                ),
                                 final_dual_vertices: dvs_to_array(&result.final_polytope),
                             };
                             write_row(&row, &mut writer);
@@ -1043,6 +1158,9 @@ fn main() {
                             rq: "rq2".into(),
                             path: "random_f11".into(),
                             name: path_c_name.clone(),
+                            source_name: seed_name.clone(),
+                            lineage_id: format!("rq2::{seed_name}"),
+                            direct_parent_trial: None,
                             starting_f: 11,
                             starting_sys: f11_start_sys.unwrap_or(f64::NAN),
                             sys_after_addition: None,
@@ -1053,6 +1171,13 @@ fn main() {
                             placement_direction: None,
                             facet_remained_active: None,
                             total_time_ms: t0.elapsed().as_secs_f64() * 1000.0,
+                            starting_dual_vertices_rational: dual_vertices_rational_strings(
+                                f11_polytope,
+                            ),
+                            after_addition_dual_vertices_rational: None,
+                            final_dual_vertices_rational: dual_vertices_rational_strings(
+                                &result.final_polytope,
+                            ),
                             final_dual_vertices: dvs_to_array(&result.final_polytope),
                         };
                         write_row(&row, &mut writer);
