@@ -347,6 +347,12 @@ Checks:
 - Exact backend choice can dominate feasibility more than sigma count does.
   The `6240` directed-feasible sigma route currently looks too slow in sympy,
   but may become practical once the Rust number-field work lands.
+- The same `6240` directed-feasible sigma words collapse to `628` cyclic
+  representatives modulo the order-10 HKO symplectic symmetry group, so the
+  representative-first Sage route is materially smaller before any exact
+  KKT/action pruning.
+- Orbit-size distribution on that quotient surface is almost generic:
+  `620` orbits have the full symplectic size `10`, and only `8` have size `5`.
 - The first local Sage Packet 3 check on the widened representative surface now
   isolates the earlier affine/scaling inconsistency to the representative-row
   formula, not the symmetry tangent encoding. After correcting the exact
@@ -373,6 +379,9 @@ Checks:
 6. Benchmark the candidate exact backends against that witness contract:
    current Sage route, current sympy scaffolding where feasible, and the Rust
    number-field backend as soon as it is ready enough to run the same packet.
+7. Decide whether the next Sage-facing front end should start from all `628`
+   symmetry-quotiented directed-feasible sigma representatives before exact
+   KKT/action pruning, or from a narrower exactified representative surface.
 
 ## Unblocked Before Fast Rust Exact Backend
 
@@ -497,6 +506,9 @@ Finite representative route:
   compute exact first-order rows for the true minima, then reapply the same
   order-10 symmetry group if the final cone certificate wants the full active
   family rather than representatives only.
+- Current scale check: the `6240` directed-feasible sigma words become `628`
+  symmetry-quotiented cyclic representatives, so this front-end reduction is
+  already close to a factor of `10` before any exact KKT/action pruning.
 
 Immediate implementation consequence:
 - before scaling this route up, keep the corrected envelope-theorem row formula
