@@ -61,6 +61,7 @@ Terminology note:
 | `count_billiard_sigma_surface.py` | Packet 2 count ladder for raw billiard words, directed-feasible sigma words, valid KKT orbits, and exact minima |
 | `classify_billiard_sigma_orbits.py` | Packet 2 symmetry quotient of the directed-feasible sigma surface by cyclic relabeling and the order-10 HKO symplectic symmetry group |
 | `probe_exact_billiard_sigma.py` | Packet 2 feasibility probe for exact quartic KKT solves on sampled directed-feasible billiard sigma words |
+| `probe_sage_sigma_orbits.sage` | Packet 2 Sage feasibility probe for exact KKT solves on sampled symmetry-quotiented directed-feasible sigma representatives |
 | `derive_endpoint_prototype.py` | Exact Packet 2 certificate for one endpoint prototype, one midpoint prototype, and the full equality-case beta segment between neighboring endpoints |
 | `derive_segment_gradient_reduction.py` | Exact Packet 2 certificate that the seven-facet KKT segment gives an affine height-gradient family |
 | `derive_segment_a_gradient_reduction.py` | Exact Packet 2 certificate that the seven-facet KKT segment gives a degree-2 dual-vertex row family spanned by three prototype rows |
@@ -74,6 +75,7 @@ Terminology note:
 | `billiard-sigma-counts.json` | Generated Packet 2 count ladder for the HKO billiard combinatorics surface |
 | `billiard-sigma-orbits.json` | Generated symmetry-quotiented count surface for directed-feasible HKO sigma words |
 | `billiard-exact-probe.json` | Generated timing probe for exact quartic KKT solves on sampled directed-feasible sigma words |
+| `billiard-sage-probe.json` | Generated Sage timing probe for sampled symmetry-quotiented sigma representatives |
 | `hko-geometry.json` | Generated exact geometry record |
 | `hko-volume-derivative.json` | Generated exact HKO volume-row certificate |
 | `reduced-sys-prototypes.json` | Generated exact reduced prototype `sys` rows and their interpolation/coincidence checks |
@@ -100,6 +102,7 @@ python3 classify_numerical_minima.py
 python3 count_billiard_sigma_surface.py
 python3 classify_billiard_sigma_orbits.py
 python3 probe_exact_billiard_sigma.py --limit 200
+sage probe_sage_sigma_orbits.sage --limit 100
 python3 derive_endpoint_prototype.py
 python3 derive_segment_gradient_reduction.py
 python3 derive_segment_a_gradient_reduction.py
@@ -219,6 +222,19 @@ The symmetry-quotiented billiard combinatorics surface is now also frozen:
 So a Sage-first representative-based route would not start from all `6240`
 directed-feasible words independently; its symmetry-quotiented front-end
 surface is `628`.
+
+The first Sage front-end timing probe is also now committed:
+
+- on a `100`-representative sample from that `628`-orbit surface, the exact
+  KKT linear solve stage runs in about `0.0015s` to `0.0046s` per
+  representative, with median about `0.0028s`;
+- the measured front-end solve cost projects to about `1.84s` for all `628`
+  representatives;
+- in that sample, `99/100` systems were consistent, with `68` unique solutions
+  and `31` positive-dimensional solution spaces.
+
+So the old SymPy-based `~14h` objection does not carry over to the current
+Sage front-end solve stage on symmetry-quotiented representatives.
 
 At the current numerical level, the beta-pattern surface compresses much
 further than the raw gradient-class counts:

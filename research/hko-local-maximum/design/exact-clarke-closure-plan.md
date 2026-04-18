@@ -353,6 +353,10 @@ Checks:
   KKT/action pruning.
 - Orbit-size distribution on that quotient surface is almost generic:
   `620` orbits have the full symplectic size `10`, and only `8` have size `5`.
+- The first Sage KKT probe on a `100`-representative sample from that `628`
+  surface projects to about `1.84s` for the full front-end exact linear-solve
+  stage, so the old SymPy-based `~14h` objection does not apply at this Sage
+  representative-first rung.
 - The first local Sage Packet 3 check on the widened representative surface now
   isolates the earlier affine/scaling inconsistency to the representative-row
   formula, not the symmetry tangent encoding. After correcting the exact
@@ -382,6 +386,9 @@ Checks:
 7. Decide whether the next Sage-facing front end should start from all `628`
    symmetry-quotiented directed-feasible sigma representatives before exact
    KKT/action pruning, or from a narrower exactified representative surface.
+8. Turn the current Sage front-end probe from "solve the KKT linear system"
+   into "classify unique/free/inconsistent representatives and measure the
+   exact positivity/action-comparison cost on the survivors."
 
 ## Unblocked Before Fast Rust Exact Backend
 
@@ -527,6 +534,11 @@ Current target benchmark ladder:
 - small batch, e.g. `100`;
 - if promising, reassess whether the `6240` directed-feasible sigma surface
   should replace the current smaller-input plan.
+
+Current status:
+- the `100`-representative Sage front-end probe is already promising: median
+  exact KKT linear solve time is about `0.0028s`, p90 about `0.0040s`, and the
+  full `628`-representative front-end solve stage projects to about `1.84s`.
 
 ## Suggested Priority Order
 
