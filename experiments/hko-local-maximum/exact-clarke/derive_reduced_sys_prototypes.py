@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # /// script
 # requires-python = ">=3.12"
+# dependencies = ["sympy"]
 # ///
 
 """Assemble exact reduced sys-row prototypes for the Packet 3 checker.

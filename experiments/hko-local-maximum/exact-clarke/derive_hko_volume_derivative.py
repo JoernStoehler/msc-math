@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # /// script
 # requires-python = ">=3.12"
+# dependencies = ["sympy"]
 # ///
 
 """Derive the exact HKO volume-derivative row in dual coordinates.

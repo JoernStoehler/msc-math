@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # /// script
 # requires-python = ">=3.12"
+# dependencies = ["sympy"]
 # ///
 
 """Quotient the directed-feasible HKO billiard sigma surface by HKO symmetries.

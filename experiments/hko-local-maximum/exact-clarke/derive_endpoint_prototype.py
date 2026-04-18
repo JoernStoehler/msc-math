@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # /// script
 # requires-python = ">=3.12"
+# dependencies = ["sympy"]
 # ///
 
 """Derive exact endpoint and segment-family prototypes for the HKO2024 minimizers.

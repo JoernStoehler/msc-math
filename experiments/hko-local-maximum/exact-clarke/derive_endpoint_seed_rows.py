@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # /// script
 # requires-python = ">=3.12"
+# dependencies = ["sympy"]
 # ///
 
 """Exactify the numerical six-facet permutation seed orbits.

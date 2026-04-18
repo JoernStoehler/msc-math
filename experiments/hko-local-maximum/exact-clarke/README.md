@@ -140,7 +140,8 @@ They do **not** yet verify:
 
 - the two unresolved asymmetric seven-facet representative families;
 - the final active-gradient matrix `G`;
-- the final kernel-equals-symmetry certificate.
+- the final cone certificate, nor any justified reduction of that theorem to a
+  kernel-equals-symmetry summary.
 
 ## Sage Note
 

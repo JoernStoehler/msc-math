@@ -128,7 +128,7 @@ HKO2024 lives in multiple ambient spaces (LP(5,5), LP(6,5), F=10, F=13, convex b
 - Current Sage feasibility signal: the first exact Sage KKT probe on a `100`-representative sample from that `628`-orbit surface projects to about `1.84s` for the full front-end linear-solve stage. So the old SymPy-based `~14h` objection does not apply to the current Sage representative-first route at this KKT front-end rung.
 - Suggested revisit point: if the Rust number-field work lands and gives a much faster exact backend than the current sympy route, reevaluate the `6240` directed-feasible sigma surface as a self-contained exhaustive theorem input. That route is currently blocked by exact backend cost, not by the size of the finite sigma set itself.
 - Current reduced-route obstruction: one exact endpoint representative plus one exact midpoint representative give only `20` symmetry images, so that ultra-small reduced surface cannot reach active-matrix rank `25`. Current widening state: `5` six-facet representative permutation-orbit classes and `6` midpoint-style seven-facet representative permutation-orbit classes are exactified; only `2` asymmetric seven-facet representative classes remain unresolved on the current numerical planning surface.
-- Acceptance: exact artifact exists for the active-gradient matrix, its rank/kernel, the symmetry tangent-space basis, and exact certificates that the two subspaces coincide; thesis/formal wording can then cite this as the first-order quotient-space proof surface.
+- Acceptance: exact artifact exists for the active first-order certificate on the candidate/minimizer surface, together with the symmetry tangent-space basis and any extra argument needed if the final writeup compresses that certificate to a `rank/kernel` summary; thesis/formal wording can then cite this as the first-order quotient-space proof surface.
 - Stop condition: if the larger exact route cannot be made correct+trusted with a manageable backend/witness setup, record the obstruction explicitly, then decide whether a more compressed paper/symmetry route is actually needed rather than opening that extra setup complexity by default.
 - Dedicated-session split:
   - Session A: keep exactifying the widened active-row representative surface and converge on a correct+trusted witness contract for the large exact route.
@@ -224,12 +224,12 @@ Stronger conjecture: HKO2024 may be (up to perturbation/symplectomorphism) the o
 
 ### [future] Analytical formula for sys(P_5 x R(theta) P_5)
 - Standalone mathematical result in `RESULTS.md`: explain the shape of the pentagon rotation curve.
-- Current evidence from the existing `lagrangian-products-5x5.jsonl` sweep and a local reconstruction pass (2026-04-18): on the fundamental domain `0 <= theta <= pi/5`, the sampled curve matches the exact piecewise formula
+- Current empirical lead from the existing `lagrangian-products-5x5.jsonl` sweep and a local reconstruction pass (2026-04-18): on the fundamental domain `0 <= theta <= pi/5`, the sampled curve appears consistent with the piecewise formula
   `sys(theta) = ((5 + 2 sqrt(5)) / 10) sec^2(theta)` for `0 <= theta <= pi/10`,
   mirrored by `sys(theta) = ((5 + 2 sqrt(5)) / 10) sec^2(pi/5 - theta)` for `pi/10 <= theta <= pi/5`.
-- The reconstruction route is no longer "blind CAS first": for `0 <= theta <= pi/10`, the minimizer appears to stay in the 2-bounce family "vertex to opposite edge". Writing the opposite-edge point as `x(lambda)`, the minimizing parameter is forced by one orthogonality condition between the chord and a dual edge:
+- Working geometric lead, not yet a committed derivation: for `0 <= theta <= pi/10`, the minimizer appears to stay in the 2-bounce family "vertex to opposite edge". Writing the opposite-edge point as `x(lambda)`, the minimizing parameter appears to be forced by one orthogonality condition between the chord and a dual edge:
   `lambda(theta) = 1/2 - tan(theta) / (2 tan(pi/10))`.
-  Substituting this into the support-function length gives `c(theta) = c(0) sec(theta)` and the `sec^2` systolic-ratio law. At `theta = pi/10`, this family degenerates to the diagonal and ties the HKO value.
+  The intended next check is to turn that lead into a committed derivation surface; until then, treat the `sec^2` law as a conjectural explanation of the sampled curve rather than as an established repo result. At `theta = pi/10`, this family appears to degenerate to the diagonal and tie the HKO value.
 - Remaining proof obligations:
   1. Prove the active support vertices and the minimizing 2-bounce family stay fixed on `0 <= theta <= pi/10`.
   2. Prove no other 2-bounce or 3-bounce family beats that value away from `theta = pi/10`; at the midpoint, explain the 3-bounce tie rather than treating it as a new branch.

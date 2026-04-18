@@ -57,7 +57,8 @@ Close the first-order `M_10` theorem surface:
 - The quartic field is not caused by the `a_i = n_i / h_i` normalization:
   the common support height is quadratic, but the standard-coordinate facet
   normals already leave `Q(sqrt(5))`.
-- The repo does not yet contain an explicit `R^40` symmetry tangent basis.
+- The repo now contains an explicit `R^40` symmetry tangent basis with exact
+  rank `15`.
 - The repo does not yet contain a paper-derived exact catalog of the minimizing
   orbit families in repo notation.
 - The repo currently contains stale count surfaces for the minima:
@@ -297,15 +298,18 @@ Objective:
 Deliverables:
 - Sage entrypoint;
 - exact active-gradient matrix `G`;
-- exact `rank(G)`, basis of `ker(G)`, symmetry tangent basis, and inclusion /
-  equality certificates;
+- exact cone or equivalent separating-certificate output for the active rows,
+  together with any justified `rank(G)` / `ker(G)` summary;
+- exact symmetry tangent basis and symmetry-inclusion certificates;
 - machine-readable certificate output;
 - short theorem-facing summary.
 
 Checks:
-- exact rerun reproduces `rank(G) = 25` and `dim ker(G) = 15`;
-- every symmetry basis vector lies in `ker(G)`;
-- exact dimension count proves `ker(G) = Sym`.
+- exact rerun reproduces the intended first-order quotient-space certificate on
+  the active rows;
+- every symmetry basis vector lies in the certified nondecreasing cone;
+- if `ker(G) = Sym` is used in the final writeup, the repo also contains the
+  extra argument that reduces the cone statement to that kernel statement.
 
 Stop condition:
 - if Packet 2 is unresolved, do not present Packet 3 as a theorem closure;
