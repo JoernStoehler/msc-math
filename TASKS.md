@@ -210,7 +210,9 @@ Stronger conjecture: HKO2024 may be (up to perturbation/symplectomorphism) the o
   `sys(theta) = ((5 + 2 sqrt(5)) / 10) sec^2(theta)` on `0 <= theta <= pi/10`,
   mirrored by `theta -> pi/5 - theta` on the second half of the fundamental domain.
 - Current proof state: the draft writes out the active `2`-bounce `sec` / `sec^2` branch calculation and isolates the remaining blocker as the `3`-bounce exclusion lemma.
-- Next step after merge: open a new proof-focused worktree; use the owned experiment surface only as feedback and sanity checking unless the proof route stalls.
+- Pre-SageMath merge handoff landed on 2026-04-18:
+  `handoffs/p5-rotation-sagemath-handoff.md`.
+- Next step after this merge: continue from the SageMath migration branch, port the current CAS witnesses and branch descriptors, and use that surface to finish the `3`-bounce exclusion instead of extending the SymPy-only proof worktree.
 - Scope target is `P_5 x R(theta) P_5`; no general formula for higher `(n,m)` pairs is required. Higher-pair function fitting remains useful only if it reveals recognizable shapes and later conjectures.
 
 ## [open] sys landscape structure
