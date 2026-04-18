@@ -36,15 +36,16 @@ Implementation status:
   `sys-feature-skeleton`
 - current skeleton result:
   pure skeleton features also fail on the endpoint regime
-  (`R^2 ≈ -0.12` with ridge), and the full
+  (`R^2 ≈ -0.06` with ridge), and the full
   `metadata + geometry + skeleton` block still underperforms metadata alone on
   the endpoint surface
 - 2026-04-18: bounded `feature_omega.jsonl` enrichment landed via
   `sys-feature-omega`
 - current omega result:
   ridge-local `omega_0` summaries and directed transition-graph features help
-  within the random regime (`R^2 ≈ 0.27` with ridge), but they still fail on
-  the endpoint regime (`R^2 ≈ -0.03`) and do not transfer across regimes
+  within the random regime (`R^2 ≈ 0.43` with ridge), but they still add only
+  a small endpoint-side signal (`R^2 ≈ 0.09`) and do not transfer across
+  regimes
 - 2026-04-18: fixed-`F` ascent cache writes now preserve cached `best_sigma`
   payloads for endpoint rows, and a bounded `feature_orbit.jsonl` enrichment
   landed via `sys-feature-orbit`

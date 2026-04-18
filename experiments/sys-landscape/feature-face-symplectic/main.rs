@@ -3,6 +3,9 @@
 //! Goal: enrich the hostile-landscape normalized dataset with volume-normalized
 //! ridge-local symplectic area summaries derived from ordered ridge polygons in
 //! exact 4D polytope geometry.
+//! TODO: add formal labels in `formal/sys-landscape/*.tex` for the ridge
+//! symplectic-area definition and the `vol(K)^(1/2)` normalization rule, then
+//! cite them here as `[def:...]` / `[lem:...]`.
 //! Input Artifacts:
 //!   - experiments/sys-landscape/normalized-dataset outputs under `--normalized-dir`
 //!     (`polytopes.jsonl` required)

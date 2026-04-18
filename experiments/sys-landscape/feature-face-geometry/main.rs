@@ -3,6 +3,8 @@
 //! Goal: enrich the hostile-landscape normalized dataset with scalar summaries
 //! of edge lengths and facet 3-volumes derived from exact polytope geometry
 //! after rescaling each polytope to the `vol(K)=1` convention.
+//! TODO: add formal labels in `formal/sys-landscape/*.tex` for the `vol(K)=1`
+//! face-geometry normalization rule and cite them here as `[def:...]` / `[lem:...]`.
 //! Input Artifacts:
 //!   - experiments/sys-landscape/normalized-dataset outputs under `--normalized-dir`
 //!     (`polytopes.jsonl` required)

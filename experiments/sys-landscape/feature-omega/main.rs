@@ -4,6 +4,9 @@
 //! summaries from exact facet adjacency, omega signs, and ridge-local `omega_0`
 //! magnitudes, without orbit recomputation, after rescaling each polytope to
 //! the `vol(K)=1` convention.
+//! TODO: add formal labels in `formal/sys-landscape/*.tex` for the
+//! volume-normalized dual-side `omega_0` summaries and cite them here as
+//! `[def:...]` / `[lem:...]`.
 //! Input Artifacts:
 //!   - experiments/sys-landscape/normalized-dataset outputs under `--normalized-dir`
 //!     (`polytopes.jsonl` required)
