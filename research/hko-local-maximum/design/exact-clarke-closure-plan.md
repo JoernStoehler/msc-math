@@ -339,10 +339,11 @@ Checks:
   extension.
 - The quotient theorem still depends on encoding the symmetry tangent space
   correctly in dual-vertex coordinates, especially the translation directions.
-- SageMath remains the intended primary CAS surface, but this devcontainer base
-  does not currently expose a directly installable `sagemath` apt package.
-  Packet 1 therefore uses the committed sympy fallback, while Packet 3 still
-  needs an explicit environment choice for the full Sage route.
+- SageMath remains the intended primary CAS surface. The local devcontainer now
+  bakes Sage via the official Miniforge / conda-forge route because Ubuntu
+  24.04 on this base still does not expose a usable `sagemath` apt candidate.
+  Packet 1 still keeps the committed sympy fallback for smaller scaffolding,
+  but Packet 3 now has a runnable local Sage route.
 - Exact backend choice can dominate feasibility more than sigma count does.
   The `6240` directed-feasible sigma route currently looks too slow in sympy,
   but may become practical once the Rust number-field work lands.

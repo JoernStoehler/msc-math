@@ -24,6 +24,7 @@ historical cloud prefix.
 - tmux (session persistence across disconnects; `set -g mouse on` for scroll)
 - Codex CLI processes
 - Everything Codex spawns: shell commands, cargo, python, latexmk, etc.
+- SageMath via a baked Miniforge/conda-forge install, exposed as `sage`
 
 ### Access paths
 
@@ -134,3 +135,33 @@ bash .devcontainer/host-devcontainer-rebuild.sh
 This rebuilds the image and recreates the container. Bind-mounted state
 (`/srv/devhome/`) persists. Container-local state (installed packages not in
 the Dockerfile) is lost.
+
+## SageMath In The Local Devcontainer
+
+The local image now installs SageMath in the Dockerfile via the official
+conda-forge / Miniforge route, not via Ubuntu `apt`.
+
+Reason:
+
+- on this Ubuntu 24.04 base, `apt-cache policy sagemath` currently has no
+  installable candidate even with the standard `main universe restricted
+  multiverse` components enabled;
+- the official Sage installation guide documents conda-forge as a supported
+  installation route.
+
+Practical consequences:
+
+- after a normal rebuild, `sage --version` should work immediately inside the
+  container;
+- `mamba` and `conda` are also exposed on `PATH` via `/usr/local/bin`;
+- the Sage environment is large, so rebuilds will take noticeably longer and
+  the image will be larger than before.
+
+Minimal acceptance check after rebuild:
+
+```bash
+sage --version
+cd experiments/hko-local-maximum/exact-clarke
+python3 build_widened_seed_witness.py
+sage verify_widened_seed_witness.sage
+```

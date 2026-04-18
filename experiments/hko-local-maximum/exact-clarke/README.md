@@ -8,9 +8,10 @@ Packet 1 completed:
 
 - exact HKO geometry and the explicit symmetry tangent basis are implemented in
   `check.sage`;
-- the same Packet 1 artifacts are currently runnable in this devcontainer via
-  `check_packet1.py`, because this Ubuntu base image does not provide a
-  directly installable `sagemath` package by name;
+- the local devcontainer now exposes a working `sage` command via the baked
+  Miniforge / conda-forge install in `.devcontainer/Dockerfile`;
+- the same Packet 1 artifacts remain runnable via `check_packet1.py` as a
+  pure-Python fallback and for smaller scaffolding packets;
 - current numerical exact-minimum surfaces can be summarized with
   `summarize_numerical_minima.py`;
 - Packet 2 numerical reconciliation now has a durable bookkeeping surface via
@@ -28,6 +29,8 @@ Packet 1 completed:
   for Packet 3: it reconstructs the quartic field from that witness and
   replays exact geometry, symmetry-rank, closure, normalization, and seed-row
   rank checks.
+- the current widened-seed witness verification now runs successfully in the
+  local devcontainer and emits `widened-seed-witness-verification.json`.
 - the next blocker is no longer volume-row or row-assembly arithmetic; it is
   permutation-level prototype multiplicity. One endpoint seed plus one midpoint
   seed expand to only `20` symmetry images, so that reduced surface cannot
@@ -69,6 +72,7 @@ Packet 1 completed:
 | `endpoint-seed-rows.json` | Generated exact six-facet seed rows chosen from the current numerical permutation-orbit planning surface |
 | `midpoint-seed-rows.json` | Generated exact midpoint-style seven-facet seed rows chosen from the current numerical permutation-orbit planning surface |
 | `widened-seed-witness.json` | Generated backend-neutral Packet 3 witness bundle for geometry, symmetry, and the current widened exact seed rows |
+| `widened-seed-witness-verification.json` | Generated Sage verification summary for the current widened seed witness |
 | `hko-symmetry-tangent.json` | Generated exact symmetry tangent-space certificate |
 | `numerical-minima-summary.json` | Generated current numerical minima summary |
 | `numerical-family-reconciliation.json` | Generated Packet 2 bookkeeping summary of endpoint/equality-case classes |
@@ -127,16 +131,29 @@ They do **not** yet verify:
 
 ## Sage Note
 
-The repo now contains a concrete Sage verifier surface for Packet 3, but this
-devcontainer still does not expose a runnable `sage` binary. So:
+The local devcontainer now exposes a runnable `sage` binary via the baked
+Miniforge / conda-forge install in `.devcontainer/Dockerfile`.
 
-- `build_widened_seed_witness.py` is runnable here and freezes the current
-  witness bundle;
-- `verify_widened_seed_witness.sage` is intended to run either in an external
-  Sage environment or after Sage is added to the repo environment;
-- the same witness shape is intended to stay backend-neutral, so a future Rust
-  producer should be able to emit it unchanged while Sage remains the
-  independent verifier.
+Current verified command:
+
+```bash
+cd experiments/hko-local-maximum/exact-clarke
+python3 build_widened_seed_witness.py
+sage verify_widened_seed_witness.sage
+```
+
+That verifier currently passes and emits:
+
+- `widened-seed-witness-verification.json`, with `passed = true`,
+- exact symmetry rank `15`,
+- endpoint family rank `5`,
+- midpoint family rank `6`,
+- widened seed-union rank `11`,
+- widened-seed-plus-symmetry rank `26`.
+
+The same witness shape is still intended to stay backend-neutral, so a future
+Rust producer should be able to emit it unchanged while Sage remains the
+independent verifier.
 
 ## Field Note
 

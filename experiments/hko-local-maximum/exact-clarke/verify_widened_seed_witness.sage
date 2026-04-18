@@ -59,8 +59,8 @@ def build_verification_payload(witness):
         vector_from_coeff_matrix(K, column)
         for column in witness["symmetry_basis"]["columns_power_basis"]
     ]
-    symmetry_matrix = matrix(K, [list(column) for column in symmetry_columns]).transpose()
-    symmetry_rank = symmetry_matrix.rank()
+    symmetry_row_matrix = matrix(K, [list(column) for column in symmetry_columns])
+    symmetry_rank = symmetry_row_matrix.rank()
 
     common_capacity = field_element_from_coeff_vector(
         K, witness["expected_common_scalars"]["signed_capacity_power_basis"]
@@ -120,7 +120,7 @@ def build_verification_payload(witness):
                 "expected_row_count": family["expected_row_count"],
                 "actual_row_count": len(family["rows"]),
                 "expected_rank": family["expected_rank"],
-                "actual_rank": actual_rank,
+                "actual_rank": int(actual_rank),
                 "row_ids": row_ids,
                 "closure_failures": closure_failures,
                 "normalization_failures": normalization_failures,
@@ -131,13 +131,14 @@ def build_verification_payload(witness):
         )
         combined_seed_rows.extend(rows)
 
-    widened_seed_rank = rows_to_matrix(K, combined_seed_rows).rank()
-    seed_plus_symmetry_rank = rows_to_matrix(K, combined_seed_rows + [list(column) for column in symmetry_columns]).rank()
+    widened_seed_matrix = rows_to_matrix(K, combined_seed_rows)
+    widened_seed_rank = widened_seed_matrix.rank()
+    seed_plus_symmetry_rank = widened_seed_matrix.stack(symmetry_row_matrix).rank()
 
     summary = {
         "field": {
             "generator_name": witness["field"]["generator_name"],
-            "degree": K.degree(),
+            "degree": int(K.degree()),
             "minimal_polynomial": str(polynomial),
             "passed": (
                 K.degree() == witness["field"]["degree"]
@@ -154,17 +155,17 @@ def build_verification_payload(witness):
         },
         "symmetry_basis": {
             "expected_rank": witness["symmetry_basis"]["expected_rank"],
-            "actual_rank": symmetry_rank,
+            "actual_rank": int(symmetry_rank),
             "n_columns": len(symmetry_columns),
-            "ambient_dimension": symmetry_matrix.nrows(),
+            "ambient_dimension": len(symmetry_columns[0]),
             "passed": symmetry_rank == witness["symmetry_basis"]["expected_rank"],
         },
         "row_families": row_family_summaries,
         "widened_seed_union": {
             "expected_row_count": witness["expected_total_seed_rows"],
             "actual_row_count": len(combined_seed_rows),
-            "actual_rank": widened_seed_rank,
-            "seed_plus_symmetry_rank": seed_plus_symmetry_rank,
+            "actual_rank": int(widened_seed_rank),
+            "seed_plus_symmetry_rank": int(seed_plus_symmetry_rank),
         },
     }
     summary["passed"] = (
