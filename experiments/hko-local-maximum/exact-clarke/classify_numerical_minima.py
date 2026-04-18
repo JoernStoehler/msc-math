@@ -110,6 +110,28 @@ def collect_classes(
     return classes
 
 
+def beta_multiset_prototypes(classes: list[dict[str, object]]) -> list[dict[str, object]]:
+    grouped: dict[tuple[float, ...], list[dict[str, object]]] = defaultdict(list)
+    for entry in classes:
+        beta_multiset = tuple(
+            sorted(round(float(value), GRADIENT_ROUND_DIGITS) for value in entry["representative_beta"])
+        )
+        grouped[beta_multiset].append(entry)
+
+    prototypes: list[dict[str, object]] = []
+    for prototype_id, (beta_multiset, entries) in enumerate(sorted(grouped.items()), start=1):
+        prototypes.append(
+            {
+                "id": f"beta-multiset-{prototype_id:02d}",
+                "beta_multiset": list(beta_multiset),
+                "class_ids": [entry["id"] for entry in entries],
+                "n_classes": len(entries),
+                "representative_subsets": [entry["subset"] for entry in entries],
+            }
+        )
+    return prototypes
+
+
 def candidate_segment_relation(
     target: dict[str, object], endpoints: list[dict[str, object]]
 ) -> dict[str, object] | None:
@@ -207,6 +229,8 @@ def main() -> None:
         "size7_subsets": [list(subset) for subset in size7_subsets],
         "size6_gradient_classes": endpoint_classes,
         "size7_gradient_classes": equality_classes,
+        "size6_beta_multiset_prototypes": beta_multiset_prototypes(endpoint_classes),
+        "size7_beta_multiset_prototypes": beta_multiset_prototypes(equality_classes),
     }
 
     OUTPUT_PATH.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n")

@@ -78,3 +78,10 @@ The numerical reconciliation script records the current evidence that the
 seven-facet gradient classes lie on segments between neighboring six-facet
 endpoint classes. This is bookkeeping support for Packet 2, not yet the final
 paper-derived theorem-facing catalog.
+
+At the current numerical level, the beta-pattern surface compresses much
+further than the raw gradient-class counts:
+
+- the six-facet exact minima use one beta multiset up to floating jitter;
+- the seven-facet exact minima split into exactly two beta multisets:
+  one midpoint-style family and one asymmetric split family.

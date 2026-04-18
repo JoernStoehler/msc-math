@@ -60,6 +60,28 @@ Close the first-order `M_10` theorem surface:
   surface: `1/2` and approximately `0.129573855671`. The ten visited
   six-facet subsets form one orbit under diagonal `72^\circ` rotation plus
   `q/p` exchange, and the ten visited seven-facet subsets do as well.
+- Up to floating jitter in the current numerical artifact, the beta-pattern
+  surface compresses to one six-facet beta multiset and two seven-facet beta
+  multisets. This suggests that the remaining Packet 2 work is not combinatoric
+  subset enumeration but exact identification of a very small number of
+  prototype beta-pattern families.
+- Current numerical-fit summary for those prototype beta multisets:
+  endpoint six-facet family `{a, a, b, b, b, b}` with
+  `a ≈ 0.22360679775`, `b ≈ 0.138196601125`;
+  midpoint-style seven-facet family `{a, d, d, b, b, c, c}` with
+  `c ≈ 0.069098300563`, `d ≈ 0.180901699437`;
+  asymmetric seven-facet family
+  `{a, b, b, b + λ(a-b), a - λ(a-b), λ b, (1-λ) b}` with
+  `λ ≈ 0.129573855671`.
+- These are numerical fits only. They are useful Packet 2 targets, not yet
+  exact theorem input. A later exact derivation must either prove these formulas
+  or replace them with the correct exact paper-derived expressions.
+- Working Packet 2 hypothesis from the current paper-plus-numerics comparison:
+  modulo diagonal `72^\circ` rotation and `q/p` exchange, the minimizing-family
+  catalog may reduce to one six-facet endpoint prototype together with two
+  seven-facet equality-case beta prototypes (midpoint split and asymmetric
+  split). The remaining theorem work is to derive this reduction from the HKO
+  billiard geometry rather than infer it from the numerical collector.
 
 ## Work Packets
 
