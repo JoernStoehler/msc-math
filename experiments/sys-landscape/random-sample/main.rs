@@ -19,16 +19,17 @@
 //! - Default root capacity wrapper (`symplectic::ehz_capacity`), which
 //!   auto-routes Lagrangian products to billiard and other inputs to pruned HK2017
 
-use std::collections::HashMap;
-use symplectic::database::{load_many, save, DualVerticesKey, PolytopeRecord, SigmaAction, Source};
-use symplectic::geom::volume::volume;
-use symplectic::random::generate_polytope;
-use symplectic::ehz_capacity;
+use num_rational::BigRational;
 use serde::Serialize;
+use std::collections::HashMap;
 use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::path::Path;
 use std::time::Instant;
+use symplectic::database::{load_many, save, DualVerticesKey, PolytopeRecord, SigmaAction, Source};
+use symplectic::ehz_capacity;
+use symplectic::geom::volume::volume;
+use symplectic::random::generate_polytope;
 
 const SEED: u64 = 42;
 const H_MIN: f64 = 0.8;
@@ -51,6 +52,8 @@ struct RandomSweepRow {
     name: String,
     facet_count: usize,
     dual_vertices: Vec<[f64; 4]>,
+    dual_vertices_rational: Vec<[String; 4]>,
+    vertices_rational: Vec<[String; 4]>,
     h_min: f64,
     h_max: f64,
     volume: f64,
@@ -69,12 +72,18 @@ fn find_by_source<'a>(
     db.iter().find(|(_, r)| r.source.as_ref() == Some(source))
 }
 
+fn rational_vec4_to_strings(data: &[[BigRational; 4]]) -> Vec<[String; 4]> {
+    data.iter()
+        .map(|row| std::array::from_fn(|i| format!("{}/{}", row[i].numer(), row[i].denom())))
+        .collect()
+}
+
 fn main() {
     let t0 = Instant::now();
 
     let family_cache_path = Path::new(env!("CARGO_MANIFEST_DIR")).join("cache.jsonl");
-    let output_path = Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("random-sample/random-sweep.jsonl");
+    let output_path =
+        Path::new(env!("CARGO_MANIFEST_DIR")).join("random-sample/random-sweep.jsonl");
 
     let mut db = load_many(&[family_cache_path.as_path()])
         .expect("failed to load sys-landscape family cache");
@@ -88,9 +97,7 @@ fn main() {
     let mut attempt: u64 = 0;
 
     for &(facet_count, n_samples) in RANDOM_PLAN {
-        println!(
-            "F={facet_count:2}: generating {n_samples:2} samples (h in [{H_MIN}, {H_MAX}])"
-        );
+        println!("F={facet_count:2}: generating {n_samples:2} samples (h in [{H_MIN}, {H_MAX}])");
         let mut accepted = 0usize;
 
         while accepted < n_samples {
@@ -105,7 +112,9 @@ fn main() {
             // Try Source-based lookup first
             if let Some((_, record)) = find_by_source(&db, &source) {
                 // Cache hit: reconstruct polytope from rational data (skip vertex enumeration)
-                let p = record.to_polytope().expect("failed to reconstruct polytope from database");
+                let p = record
+                    .to_polytope()
+                    .expect("failed to reconstruct polytope from database");
                 let vol = record.volume.expect("cached record missing volume");
                 let cap = record.capacity.expect("cached record missing capacity");
                 let sys = cap * cap / (2.0 * vol);
@@ -113,7 +122,15 @@ fn main() {
                 let row = RandomSweepRow {
                     name: format!("random_F{facet_count}_{accepted}"),
                     facet_count,
-                    dual_vertices: p.dual_vertices_f64().iter().map(|a| [a[0], a[1], a[2], a[3]]).collect(),
+                    dual_vertices: p
+                        .dual_vertices_f64()
+                        .iter()
+                        .map(|a| [a[0], a[1], a[2], a[3]])
+                        .collect(),
+                    dual_vertices_rational: rational_vec4_to_strings(
+                        &record.dual_vertices_rational,
+                    ),
+                    vertices_rational: rational_vec4_to_strings(&record.vertices_rational),
                     h_min: H_MIN,
                     h_max: H_MAX,
                     volume: vol,
@@ -170,7 +187,13 @@ fn main() {
             let row = RandomSweepRow {
                 name: format!("random_F{facet_count}_{accepted}"),
                 facet_count,
-                dual_vertices: p.dual_vertices_f64().iter().map(|a| [a[0], a[1], a[2], a[3]]).collect(),
+                dual_vertices: p
+                    .dual_vertices_f64()
+                    .iter()
+                    .map(|a| [a[0], a[1], a[2], a[3]])
+                    .collect(),
+                dual_vertices_rational: rational_vec4_to_strings(p.dual_vertices()),
+                vertices_rational: rational_vec4_to_strings(p.vertices()),
                 h_min: H_MIN,
                 h_max: H_MAX,
                 volume: vol,
