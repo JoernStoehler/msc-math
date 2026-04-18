@@ -151,6 +151,20 @@ That verifier currently passes and emits:
 - widened seed-union rank `11`,
 - widened-seed-plus-symmetry rank `26`.
 
+Current exact warning from that same verification:
+
+- the current widened seed rows annihilate all `10` linear symplectic
+  generators in the committed symmetry basis;
+- they do **not** annihilate the current `4` translation generators or the
+  current scaling generator;
+- equivalently, the current widened seed row matrix has right-kernel dimension
+  `29`, not the target `15`, and its current affine/scaling symmetry
+  compatibility is not yet correct enough for theorem use.
+
+So the next Packet 3 issue is now sharper than "add more active rows": first
+resolve whether the current translation/scaling tangent encoding or the
+current exact seed-row formula is missing a term or using the wrong convention.
+
 The same witness shape is still intended to stay backend-neutral, so a future
 Rust producer should be able to emit it unchanged while Sage remains the
 independent verifier.

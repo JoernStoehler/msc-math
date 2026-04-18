@@ -60,6 +60,7 @@ def build_verification_payload(witness):
         for column in witness["symmetry_basis"]["columns_power_basis"]
     ]
     symmetry_row_matrix = matrix(K, [list(column) for column in symmetry_columns])
+    symmetry_column_matrix = symmetry_row_matrix.transpose()
     symmetry_rank = symmetry_row_matrix.rank()
 
     common_capacity = field_element_from_coeff_vector(
@@ -134,6 +135,37 @@ def build_verification_payload(witness):
     widened_seed_matrix = rows_to_matrix(K, combined_seed_rows)
     widened_seed_rank = widened_seed_matrix.rank()
     seed_plus_symmetry_rank = widened_seed_matrix.stack(symmetry_row_matrix).rank()
+    widened_seed_right_kernel = widened_seed_matrix.right_kernel()
+    widened_seed_right_kernel_dimension = widened_seed_right_kernel.dimension()
+    symmetry_residual_matrix = widened_seed_matrix * symmetry_column_matrix
+    symmetry_annihilation_passed = all(
+        symmetry_residual_matrix[row, col] == 0
+        for row in range(symmetry_residual_matrix.nrows())
+        for col in range(symmetry_residual_matrix.ncols())
+    )
+    symmetry_residual_summary = []
+    for col, label in enumerate(witness["symmetry_basis"]["labels"]):
+        nonzero_entries = []
+        for row in range(symmetry_residual_matrix.nrows()):
+            value = symmetry_residual_matrix[row, col]
+            if value != 0:
+                nonzero_entries.append(
+                    {
+                        "row_index": row,
+                        "row_id": row_family_summaries[0]["row_ids"][row]
+                        if row < len(row_family_summaries[0]["row_ids"])
+                        else row_family_summaries[1]["row_ids"][row - len(row_family_summaries[0]["row_ids"])],
+                        "value": str(value),
+                    }
+                )
+        symmetry_residual_summary.append(
+            {
+                "label": label,
+                "nonzero_count": len(nonzero_entries),
+                "sample_nonzero_entries": nonzero_entries[:3],
+                "passed": len(nonzero_entries) == 0,
+            }
+        )
 
     summary = {
         "field": {
@@ -165,7 +197,14 @@ def build_verification_payload(witness):
             "expected_row_count": witness["expected_total_seed_rows"],
             "actual_row_count": len(combined_seed_rows),
             "actual_rank": int(widened_seed_rank),
+            "ambient_dimension": widened_seed_matrix.ncols(),
+            "right_kernel_dimension": int(widened_seed_right_kernel_dimension),
             "seed_plus_symmetry_rank": int(seed_plus_symmetry_rank),
+            "symmetry_annihilation_passed": symmetry_annihilation_passed,
+            "symmetry_residual_summary": symmetry_residual_summary,
+            "kernel_dimension_minus_symmetry_dimension": int(
+                widened_seed_right_kernel_dimension - symmetry_rank
+            ),
         },
     }
     summary["passed"] = (

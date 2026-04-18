@@ -347,23 +347,33 @@ Checks:
 - Exact backend choice can dominate feasibility more than sigma count does.
   The `6240` directed-feasible sigma route currently looks too slow in sympy,
   but may become practical once the Rust number-field work lands.
+- The first local Sage Packet 3 check on the widened seed surface now reveals
+  an exact affine/scaling inconsistency: the current widened seed rows
+  annihilate the `Sp(4)` generators but not the current translation/scaling
+  generators. So before treating the widened seed surface as a serious
+  approximation to the final active matrix, resolve whether the issue lies in
+  the affine/scaling tangent encoding, the exact seed-row formula, or the
+  current convention matching between those two surfaces.
 
 ## Immediate Next Steps
 
 1. Use the new permutation-orbit artifact to choose the next exact
    permutation-level seeds beyond the current endpoint/midpoint pair.
-2. Resolve the remaining two asymmetric seven-facet seed orbits, either by
+2. Resolve the new exact affine/scaling inconsistency on the widened seed
+   surface: current Sage verification shows that the seed rows annihilate the
+   `Sp(4)` generators but not the current translation/scaling generators.
+3. Resolve the remaining two asymmetric seven-facet seed orbits, either by
    deriving their exact `lambda` values or by shrinking them away via a
    paper-derived argument.
-3. Freeze the backend-neutral witness contract for the large exact route:
+4. Freeze the backend-neutral witness contract for the large exact route:
    exact row dump, exact active matrix, exact rank/kernel basis, exact
    symmetry-space inclusion/equality checks, and one short theorem-facing
    summary artifact.
-4. Test how much row rank the widened seed surface adds beyond the current
+5. Test how much row rank the widened seed surface adds beyond the current
    one-endpoint-plus-one-midpoint `20`-row obstruction.
-5. Build the first exact active-gradient matrix over a widened reduced family
+6. Build the first exact active-gradient matrix over a widened reduced family
    surface, not just the one-endpoint-plus-one-midpoint surface.
-6. Benchmark the candidate exact backends against that witness contract:
+7. Benchmark the candidate exact backends against that witness contract:
    current Sage route, current sympy scaffolding where feasible, and the Rust
    number-field backend as soon as it is ready enough to run the same packet.
 
