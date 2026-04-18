@@ -1,0 +1,457 @@
+% formal/sys-landscape/pentagon-rotation-formula.tex — input by formal/main.tex
+%
+% Private proof draft for the explicit systolic-ratio formula of
+% `P_5 x_L R(theta) P_5`.
+%
+% Sources:
+%   - Generated data: experiments/sys-landscape/pentagon-rotation-formula/theta-sweep.jsonl
+%   - HKO source: papers/hko2024/counterexample.tex
+%   - Research log: research/sys-landscape/design/pentagon-rotation-formula.md
+%
+% Structure:
+%   - Theorem statement for the explicit formula
+%   - Proof skeleton and intermediate lemmas
+%   - Explicit statement of gaps and verification targets
+
+\subsection{Pentagon Rotation Formula (Draft)}
+\label{sec:pentagon-rotation-formula}
+
+This section is a private proof draft for the explicit formula of
+\[
+  \mathrm{sys}\!\left(P_5 \times_L R(\theta) P_5\right).
+\]
+It is intended for agent and Jörn review, not yet thesis-facing exposition.
+
+Let
+\[
+  v_k := \left(
+    \cos\left(\frac{2\pi k}{5}\right),
+    \sin\left(\frac{2\pi k}{5}\right)
+  \right),
+  \qquad 0 \le k \le 4,
+\]
+and let~$P_5$ be the regular pentagon with those vertices. Since rotating both
+factors by the same angle is symplectic, the experiment convention used in
+`experiments/sys-landscape/pentagon-rotation-formula/main.rs` is symplectically
+equivalent to the standard one used here. The HKO special case, stated as a
+rotation by $90$ degrees, corresponds to $\theta = \pi/10$ in the present
+parameter because $90^\circ \equiv 18^\circ \pmod{72^\circ}$.
+
+\begin{unverified}
+\paragraph{Conjectural target.}
+\label{conj:pentagon-rotation-formula}
+Let~$P_5 \subset \mathbb{R}^2$ be the regular pentagon with circumradius~$1$
+in the angle convention used by the experiment code. For
+\[
+  K_\theta := P_5 \times_L R(\theta) P_5,
+  \qquad 0 \le \theta \le \frac{\pi}{5},
+\]
+one has
+\[
+  \mathrm{sys}(K_\theta)
+  =
+  \frac{5 + 2\sqrt{5}}{10}
+  \sec^2\!\bigl(\min(\theta, \tfrac{\pi}{5} - \theta)\bigr).
+\]
+Equivalently,
+\[
+  \mathrm{sys}(K_\theta)
+  =
+  \frac{5 + 2\sqrt{5}}{10}\sec^2(\theta)
+  \quad \text{for } 0 \le \theta \le \frac{\pi}{10},
+\]
+and the second half of the fundamental domain follows by the symmetry
+$\theta \mapsto \frac{\pi}{5} - \theta$.
+\end{unverified}
+
+\begin{unverified}
+\begin{proposition}[The active 2-bounce branch has the claimed secant law]
+\label{prop:pentagon-rotation-two-bounce}
+Let~$K_\theta := P_5 \times_L R(\theta)P_5$ with
+$0 \le \theta \le \frac{\pi}{10}$. Among the 2-bounce trajectories joining a
+vertex of~$P_5$ to the opposite edge, the minimizing branch is attained at
+\[
+  \lambda(\theta)
+  =
+  \frac{1}{2}
+  -
+  \frac{\tan(\theta)}{2\tan(\pi/10)},
+\]
+and its capacity is
+\[
+  c_{2\text{-bounce}}(K_\theta)
+  =
+  \left(1+\cos\left(\frac{\pi}{5}\right)\right)^2 \sec(\theta).
+\]
+Consequently,
+\[
+  \mathrm{sys}(K_\theta)
+  \le
+  \frac{5 + 2\sqrt{5}}{10}\sec^2(\theta)
+  \qquad
+  \text{for } 0 \le \theta \le \frac{\pi}{10}.
+\]
+\end{proposition}
+
+% [TODO: JÖRN - confirm the exact preferred theorem statement once the private
+% proof is stable.]
+
+\begin{proof}
+We compute the active 2-bounce branch explicitly on the half-domain
+$0 \le \theta \le \pi/10$.
+
+\paragraph{2-bounce family.}
+The combinatorial classification of 2-bounce trajectories that cannot be
+translated into the interior depends only on the table pentagon and is the same
+as in the HKO proof: they are exactly the chords joining a vertex to a point on
+the opposite edge. By cyclic symmetry it is enough to study the family joining
+$v_0$ to the edge $[v_2,v_3]$.
+
+\[
+  x_\lambda := \lambda v_2 + (1-\lambda) v_3,
+  \qquad 0 \le \lambda \le 1.
+\]
+Since
+\[
+  v_2 = \left(
+    -\cos\left(\frac{\pi}{5}\right),
+    \sin\left(\frac{\pi}{5}\right)
+  \right),
+  \qquad
+  v_3 = \left(
+    -\cos\left(\frac{\pi}{5}\right),
+    -\sin\left(\frac{\pi}{5}\right)
+  \right),
+\]
+we have
+\[
+  x_\lambda
+  =
+  \left(
+    -\cos\left(\frac{\pi}{5}\right),
+    (2\lambda-1)\sin\left(\frac{\pi}{5}\right)
+  \right),
+\]
+and therefore the chord vector is
+\[
+  d_\lambda := x_\lambda - v_0
+  =
+  \left(
+    -\left(1+\cos\left(\frac{\pi}{5}\right)\right),
+    (2\lambda-1)\sin\left(\frac{\pi}{5}\right)
+  \right).
+\]
+
+For the rotated support pentagon, write
+\[
+  w_k(\theta) := R(\theta)v_k.
+\]
+On the half-domain $0 \le \theta \le \pi/10$, the vector $-d_\lambda$ stays in
+the normal cone of $w_0(\theta)$, while $d_\lambda$ stays in the union of the
+adjacent normal cones of $w_2(\theta)$ and $w_3(\theta)$. Therefore
+\[
+  h_{R(\theta)P_5}(-d_\lambda)
+  =
+  \langle -d_\lambda, w_0(\theta)\rangle,
+\]
+and
+\[
+  h_{R(\theta)P_5}(d_\lambda)
+  =
+  \max\Bigl(
+    \langle d_\lambda, w_2(\theta)\rangle,
+    \langle d_\lambda, w_3(\theta)\rangle
+  \Bigr).
+\]
+The support-switch expression
+\[
+  \langle d_\lambda, w_2(\theta)-w_3(\theta)\rangle
+\]
+is affine and strictly increasing in~$\lambda$, because
+\[
+  \frac{d}{d\lambda}
+  \langle d_\lambda, w_2(\theta)-w_3(\theta)\rangle
+  =
+  4\sin^2\left(\frac{\pi}{5}\right)\cos\theta
+  >
+  0
+  \qquad
+  \text{for } 0 \le \theta \le \frac{\pi}{10}.
+\]
+Hence there is a unique switch point, characterized by
+\[
+  \langle d_\lambda, w_2(\theta)-w_3(\theta)\rangle = 0.
+\]
+Since
+\[
+  w_2(\theta)-w_3(\theta)
+  =
+  R(\theta)(v_2-v_3)
+  =
+  2\sin\left(\frac{\pi}{5}\right)(-\sin\theta,\cos\theta),
+\]
+the support-switch equation becomes
+\[
+  \left(1+\cos\left(\frac{\pi}{5}\right)\right)\sin\theta
+  +
+  (2\lambda-1)\sin\left(\frac{\pi}{5}\right)\cos\theta
+  =
+  0.
+\]
+Using
+\[
+  \frac{1+\cos(\pi/5)}{\sin(\pi/5)}
+  =
+  \frac{2\cos^2(\pi/10)}{2\sin(\pi/10)\cos(\pi/10)}
+  =
+  \cot(\pi/10),
+\]
+this yields
+\[
+  \lambda(\theta)
+  =
+  \frac{1}{2}
+  -
+  \frac{\tan(\theta)}{2\tan(\pi/10)}.
+\]
+In particular, $\lambda(0)=1/2$ gives the opposite-edge midpoint and
+$\lambda(\pi/10)=0$ gives the diagonal endpoint $v_3$.
+
+Let
+\[
+  L_\theta(\lambda)
+  :=
+  h_{R(\theta)P_5}(-d_\lambda)
+  +
+  h_{R(\theta)P_5}(d_\lambda)
+\]
+be the 2-bounce $T^\circ$-length along this family. Since
+$\langle d_\lambda,w_2(\theta)-w_3(\theta)\rangle$ is increasing in~$\lambda$,
+the active support is~$w_3(\theta)$ for $\lambda \le \lambda(\theta)$ and
+$w_2(\theta)$ for $\lambda \ge \lambda(\theta)$. Therefore
+\[
+  L_\theta(\lambda)
+  =
+  \langle -d_\lambda, w_0(\theta)\rangle
+  +
+  \langle d_\lambda, w_3(\theta)\rangle
+  \qquad
+  \text{for } \lambda \le \lambda(\theta),
+\]
+and
+\[
+  L_\theta(\lambda)
+  =
+  \langle -d_\lambda, w_0(\theta)\rangle
+  +
+  \langle d_\lambda, w_2(\theta)\rangle
+  \qquad
+  \text{for } \lambda \ge \lambda(\theta).
+\]
+Since
+\[
+  d'_\lambda = \left(0, 2\sin\left(\frac{\pi}{5}\right)\right),
+\]
+the derivative on the left branch is
+\begin{align*}
+  L'_\theta(\lambda)
+  &=
+  \langle -d'_\lambda, w_0(\theta)\rangle
+  +
+  \langle d'_\lambda, w_3(\theta)\rangle \\
+  &=
+  2\sin\left(\frac{\pi}{5}\right)
+  \left(
+    \sin\left(\theta + \frac{6\pi}{5}\right) - \sin\theta
+  \right) \\
+  &=
+  4\sin\left(\frac{\pi}{5}\right)\sin\left(\frac{3\pi}{5}\right)
+  \cos\left(\theta + \frac{3\pi}{5}\right)
+  <
+  0,
+\end{align*}
+because
+$\theta + \frac{3\pi}{5} \in [\frac{3\pi}{5}, \frac{7\pi}{10}] \subset
+(\frac{\pi}{2}, \pi)$.
+On the right branch one gets
+\begin{align*}
+  L'_\theta(\lambda)
+  &=
+  \langle -d'_\lambda, w_0(\theta)\rangle
+  +
+  \langle d'_\lambda, w_2(\theta)\rangle \\
+  &=
+  2\sin\left(\frac{\pi}{5}\right)
+  \left(
+    \sin\left(\theta + \frac{4\pi}{5}\right) - \sin\theta
+  \right) \\
+  &=
+  4\sin\left(\frac{\pi}{5}\right)\sin\left(\frac{2\pi}{5}\right)
+  \cos\left(\theta + \frac{2\pi}{5}\right)
+  \ge
+  0,
+\end{align*}
+with strict inequality on $0 \le \theta < \pi/10$. Thus
+$L_\theta(\lambda)$ decreases up to $\lambda(\theta)$ and increases
+afterwards, so the unique minimizer is $\lambda(\theta)$.
+
+\paragraph{Capacity along the active branch.}
+Set
+\[
+  A := 1+\cos\left(\frac{\pi}{5}\right).
+\]
+The support-switch equation implies
+\[
+  (2\lambda(\theta)-1)\sin\left(\frac{\pi}{5}\right)
+  =
+  -A\tan\theta,
+\]
+so the minimizing chord vector is
+\[
+  d_{\lambda(\theta)} = (-A,-A\tan\theta).
+\]
+Therefore
+\[
+  h_{R(\theta)P_5}(-d_{\lambda(\theta)})
+  =
+  \langle -d_{\lambda(\theta)}, w_0(\theta)\rangle
+  =
+  A(\cos\theta+\tan\theta\sin\theta)
+  =
+  A\sec\theta.
+\]
+At the minimizing parameter one may use $w_2(\theta)$ for the forward segment,
+because the support values at $w_2(\theta)$ and $w_3(\theta)$ agree there. Thus
+\begin{align*}
+  h_{R(\theta)P_5}(d_{\lambda(\theta)})
+  &=
+  \langle d_{\lambda(\theta)}, w_2(\theta)\rangle \\
+  &=
+  A\left(
+    \cos\left(\frac{\pi}{5}\right)\cos\theta
+    +
+    \sin\left(\frac{\pi}{5}\right)\sin\theta
+    +
+    \tan\theta
+    \left(
+      \cos\left(\frac{\pi}{5}\right)\sin\theta
+      -
+      \sin\left(\frac{\pi}{5}\right)\cos\theta
+    \right)
+  \right) \\
+  &=
+  A\cos\left(\frac{\pi}{5}\right)\sec\theta.
+\end{align*}
+Hence the 2-bounce capacity candidate is
+\[
+  c_{\mathrm{EHZ}}(K_\theta)
+  =
+  A\left(1+\cos\left(\frac{\pi}{5}\right)\right)\sec\theta
+  =
+  A^2 \sec\theta
+  \quad \text{for } 0 \le \theta \le \frac{\pi}{10}.
+\]
+At $\theta=0$, this is $c_{\mathrm{EHZ}}(K_0)=A^2$.
+
+The volume stays constant:
+\[
+  \operatorname{vol}(K_\theta)=\operatorname{area}(P_5)^2,
+  \qquad
+  \operatorname{area}(P_5)=\frac{5}{2}\sin\left(\frac{2\pi}{5}\right).
+\]
+Therefore
+\[
+  \mathrm{sys}(K_\theta)
+  =
+  \frac{A^4}{2\operatorname{area}(P_5)^2}\sec^2\theta.
+\]
+Using
+\[
+  \sin^2\left(\frac{2\pi}{5}\right)=\frac{5+\sqrt{5}}{8},
+  \qquad
+  A=\frac{5+\sqrt{5}}{4},
+\]
+we obtain
+\[
+  \frac{A^4}{2\operatorname{area}(P_5)^2}
+  =
+  \frac{(5+\sqrt{5})^4}{256}
+  \cdot
+  \frac{16}{25(5+\sqrt{5})}
+  =
+  \frac{(5+\sqrt{5})^3}{400}
+  =
+  \frac{5+2\sqrt{5}}{10}.
+\]
+This proves the claimed secant law and the resulting upper bound on the
+systolic ratio.
+\end{proof}
+\end{unverified}
+
+\begin{unverified}
+\begin{lemma}[Minimizing parameter for the active 2-bounce family]
+\label{lem:pentagon-rotation-lambda}
+For the candidate 2-bounce branch on $0 \le \theta \le \frac{\pi}{10}$, the
+minimizing opposite-edge parameter is
+\[
+  \lambda(\theta)
+  =
+  \frac{1}{2}
+  -
+  \frac{\tan(\theta)}{2\tan(\pi/10)}.
+\]
+\end{lemma}
+\end{unverified}
+
+\begin{unverified}
+\begin{lemma}[Capacity law on the active 2-bounce branch]
+\label{lem:pentagon-rotation-capacity}
+On the same branch,
+\[
+  c_{\mathrm{EHZ}}(K_\theta)
+  =
+  c_{\mathrm{EHZ}}(K_0)\sec(\theta).
+\]
+\end{lemma}
+\end{unverified}
+
+\begin{unverified}
+\begin{lemma}[Empirical affine-branch picture]
+\label{lem:pentagon-rotation-empirical-branch}
+The owned sweep
+`experiments/sys-landscape/pentagon-rotation-formula/theta-sweep.jsonl`
+supports the following picture:
+\begin{enumerate}
+\item On the open half-domain $0 \le \theta < \pi/10$, every sampled minimum
+  belongs to one affine 2-bounce class.
+\item At $\theta=\pi/10$, many 2-bounce and 3-bounce minima tie.
+\item On the second half-domain $\pi/10 < \theta \le \pi/5$, the minima fall
+  into one mirrored affine 2-bounce class.
+\end{enumerate}
+This is a sanity check only. It is not part of the proof.
+\end{lemma}
+\end{unverified}
+
+\begin{unverified}
+\begin{lemma}[3-bounce exclusion: current blocker]
+\label{lem:pentagon-rotation-three-bounce}
+Every minimizing 3-bounce trajectory on $0 \le \theta \le \pi/10$ has
+$T^\circ$-length at least that of the minimizing 2-bounce family above.
+\end{lemma}
+
+% [GAP - The current best route is to prove that every minimizing 3-bounce
+% branch collapses to a boundary point of the edge-parameter domain, hence to a
+% 2-bounce comparison, by a theta-uniform adaptation of the HKO sliding or
+% first-order stationarity argument. The active support labels differ from the
+% HKO midpoint labels in the convention used here, so that reduction still
+% needs a clean write-up.]
+\end{unverified}
+
+\begin{unverified}
+\begin{remark}
+The current computational evidence supports the theorem statement to
+floating-point precision on the owned sweep
+`experiments/sys-landscape/pentagon-rotation-formula/theta-sweep.jsonl`.
+This is a sanity check only; it is not part of the proof.
+\end{remark}
+\end{unverified}
