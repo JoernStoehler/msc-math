@@ -72,19 +72,30 @@ Out of scope:
 
 ## Benchmark bank
 
-First-pass bank:
+Implemented bank:
 
-- rational integer-coordinate controls with facet counts `F = 5, 6, 7, 8, 9, 10`;
-- HKO2024 exact as the algebraic `F = 10` case;
-- optionally the rational/dyadic HKO approximation if useful as a bridge row.
+- rational integer-coordinate controls with facet counts `F = 5, 6, 7, 8, 9, 10`:
+  - `simplex_f5`
+  - `cut_simplex_f6`
+  - `double_cut_simplex_f7`
+  - `hypercube_f8`
+  - `cut_hypercube_f9`
+  - `double_cut_hypercube_f10`
+- HKO2024 exact as the algebraic `F = 10` case:
+  - `hko_pentagon_exact_f10`
 
-Prefer existing named controls from the repo over freshly generated random
-polytopes for the first pass.
+Smoke bank:
+
+- `simplex_f5`
+- `hypercube_f8`
+- `cut_hypercube_f9`
 
 Reason:
 
-- existing controls already have known structure and expected capacities;
-- failures are easier to interpret than on ad-hoc random inputs.
+- the rational family stays integer-coordinate and deterministic;
+- smoke mode exercises small, medium, and already-expensive rows without paying
+  the full `F = 10` canonical cost;
+- canonical mode adds the `F = 6, 7, 10` rational rows and the algebraic HKO row.
 
 ## Search-size reality check
 
@@ -181,10 +192,21 @@ Each result row should record at least:
 - `scalar_mode` in `{rdf, rational_exact, algebraic_exact}`
 - `sigma_count_total`
 - `sigma_count_admissible`
-- `minimizer_count`
+- `sage_minimizer_representative_count`
 - `capacity`
 - `wall_time_ms`
 - whether the run completed, timed out, or failed
+
+And should also carry the Rust unpruned baseline columns:
+
+- `rust_f64_capacity`
+- `rust_f64_iterations`
+- `rust_f64_representative_sigma`
+- `rust_f64_wall_time_ms`
+
+The sigma/count fields are diagnostic only. Sage counts cyclic-permutation
+representatives in its own search order and does not normalize those counts to
+the Rust collector semantics.
 
 Useful optional columns:
 
@@ -214,6 +236,7 @@ Minimal successful packet:
 ```bash
 cargo build -p dev-numerical-analysis --release --bin num-sage-feasibility
 cargo run -p dev-numerical-analysis --release --bin num-sage-feasibility -- --smoke
+cargo run -p dev-numerical-analysis --release --bin num-sage-feasibility -- --canonical
 cd experiments/numerics/sage-feasibility && sage -python analyze.py --smoke
 cd experiments/numerics/sage-feasibility && sage -python analyze.py --canonical
 ```
