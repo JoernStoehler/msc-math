@@ -28,7 +28,7 @@ Planned deliverables:
   - Data and figures live next to the experiment that produced them.
   - Durable Sage validation lives under `experiments/verification/sage/` when it stops being topic-local.
 - `contracts/`: Canonical algorithm correspondence and verification contracts.
-- Topic-local notes: use colocated `README.md`, `RESEARCH.md`, and `PLAN-<goal>.md` files near the code or experiment they describe instead of broad top-level research/logbook trees.
+- Topic-local notes: use colocated `REASONING.md`, `DECISIONS.md`, and `NEXT-STEPS.md` files near the code or experiment they describe instead of broad top-level research/logbook trees.
 - `thesis/`: Publishable thesis sources. The thesis is self-contained and does not `\input` files from `formal/`, `experiments/`, or `crates/`.
 - `papers/<abbreviationYear>/`: Downloaded arXiv paper sources.
 - `RESULTS.md`: Thesis content plan and project findings.
@@ -55,7 +55,7 @@ Required project instructions live in this root map or in discoverable skills. `
 - **Rust file scope:** Prefer one concern per `.rs` file. Keep one main public symbol, or one tight router surface, plus private helpers that have no better home.
 - **Rust tests:** Move smoke/unit tests into `test_*.rs` files instead of growing implementation files. Larger verification or performance suites belong in `experiments/verification/` or experiment-owned performance surfaces.
 - **Experiment paths:** Use semantic experiment paths. Do not force balanced subtrees when the semantics are asymmetric.
-- **Research notes:** Prefer local `RESEARCH.md` and `PLAN-<goal>.md` files over giant shared logbooks. Git history on those files is the change log.
+- **Research notes:** Prefer local `REASONING.md`, `DECISIONS.md`, and `NEXT-STEPS.md` files over giant shared logbooks. Git history on those files is the change log.
 - **Data ownership:** Keep generated data with the producer that writes it. Avoid multiple binaries writing to the same tracked output.
 - **Cross-file references:** Comments and notes should reference neighboring surfaces explicitly, e.g. `<file>.tex:\ref{label}`, `<file>.rs:symbol`, or `<file>.sage:symbol`.
 - **Jörn's time:** Spend agent time on exploration, verification, and local review before asking Jörn. Ask Jörn only for mathematical judgment, thesis-scope decisions, advisor-facing framing, taste, or external-world actions.

@@ -53,7 +53,7 @@ Diagram rule:
 | `formal/` | developer-facing mathematics for crates and experiments | supports math/code correspondence; not thesis input |
 | `contracts/` | canonical algorithm correspondence and verification contracts | cross-surface metadata for important algorithms |
 | `thesis/` | self-contained publication artifact | must not depend on runtime links into `crates/`, `formal/`, or `experiments/` |
-| local topic docs | local `README.md`, `RESEARCH.md`, and `PLAN-<goal>.md` files | exploratory and planning notes stay near the code or experiment they describe |
+| local topic docs | local `REASONING.md`, `DECISIONS.md`, and `NEXT-STEPS.md` files | reasoning, retained decisions, and current work stay near the code or experiment they describe |
 
 ## Dependency Direction
 
@@ -84,8 +84,8 @@ Current boundary facts:
   and dependency direction.
 - `formal/` is the developer-facing math layer for nontrivial algorithms.
 - `contracts/` stores canonical cross-surface algorithm metadata.
-- Local `RESEARCH.md` / `PLAN-<goal>.md` files store planning and design notes,
-  not runtime code.
+- Local `REASONING.md`, `DECISIONS.md`, and `NEXT-STEPS.md` files store reasoning,
+  retained decisions, and current work, not runtime code.
 - `thesis/` is intentionally publication-owned and self-contained.
 - `thesis/` must not depend on runtime links into `crates/`, `experiments/`,
   or `formal/`.

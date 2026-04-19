@@ -146,7 +146,7 @@ fn simplex_projected_backend_unsupported() {
 /// action 4.0. The full enumeration proving c_EHZ = 4.0 (minimum over all
 /// orbits) was done by `experiments/crosspolytope/main/main.rs` using
 /// symmetry-reduced exhaustive search (see
-/// `research/crosspolytope/design/main.md` for search completeness details).
+/// `experiments/crosspolytope/REASONING.md` for search completeness details).
 ///
 /// Known minimizing orbit: subset {0, 3, 12, 15}, permutation [0, 12, 15, 3],
 /// β = (0.25, 0.25, 0.25, 0.25). All transition edges have ω₀ = +1.0.
