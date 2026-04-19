@@ -54,6 +54,9 @@ Implementation status:
   the endpoint regime more than geometry/skeleton/omega alone
   (`R^2 ≈ 0.11` with ridge), but they still underperform the metadata baseline
   (`R^2 ≈ 0.44`) and remain strongly non-transferable
+- 2026-04-18: the orbit packet is now interpreted as three sub-blocks
+  (`orbit_combinatorics`, `orbit_geometry`, `orbit_search`) with the merged
+  `orbit` packet kept only as a reference aggregate
 - current implication:
   there is still no evidence for a cheap transferable pattern; the next
   enrichment step, if pursued, should move past cached-`best_sigma` summaries
@@ -569,7 +572,7 @@ implementation starts.
      `22 / 282` states (`10 / 10` general ascent, `12 / 12` product ascent,
      `0 / 90` variable-F continuation, `0` random baselines).
    - Result:
-     near-null. Ridge `R^2` is `-0.0140` within random, `0.0026` within the
+     near-null. Ridge `R^2` is `-0.0140` within random, `0.0066` within the
      endpoint union, and strongly negative on both transfer surfaces.
    - Interpretation:
      this closes the cheap scalar "maybe the signal is in fixed-`F` step-event
@@ -588,8 +591,8 @@ implementation starts.
      `q_error_bound`, and boolean `mu` / `xi` / exact-certification flags.
    - Result:
      the richer `orbit` block improves the random regime further
-     (`R^2=0.3222` ridge, `0.3970` RF) but leaves the endpoint regime
-     essentially unchanged (`R^2=0.1083` ridge, `0.0967` RF). Transfer remains
+     (`R^2=0.4495` ridge, `0.3223` RF) but leaves the endpoint regime
+     essentially unchanged (`R^2=0.1104` ridge, `0.0906` RF). Transfer remains
      strongly negative and becomes even more negative on the random-to-endpoint
      surface once the random packet carries search-level orbit scalars.
    - Interpretation:
@@ -674,3 +677,33 @@ If local work continues before new LICCA rows arrive, use this order:
 
 If new LICCA rows arrive first, pause local feature proliferation and refresh
 the endpoint datasets before adding more model families.
+
+### Residual Endpoint Check
+
+- 2026-04-18: residual packet landed as
+  `experiments/sys-landscape/feature-pattern-search/analyze_residual.py`.
+- method:
+  metadata-first additive grouped CV on the endpoint union, with the block
+  model trained on the metadata residuals and grouped by the existing endpoint
+  `root_group_id` / `source_name` fallback.
+- current result:
+  `face_symplectic` is the clearest endpoint-side residual gain beyond
+  metadata (`Delta R^2 ≈ 0.12` ridge, `≈ 0.00` RF); `trajectory` is a small
+  positive residual on both models; `face_geometry` is marginally positive for
+  ridge only; `geometry`, `skeleton`, `omega`, `orbit`, and the full
+  non-metadata union do not improve the metadata baseline.
+
+### Regime Classification Packet
+
+- 2026-04-18: endpoint-vs-random classification pass landed at
+  `experiments/sys-landscape/feature-pattern-search/analyze_regime_classification.py`
+  with grouped CV keyed by `root_group_id` / lineage fallback.
+- current reading:
+  `metadata` is the trivial separator because it includes provenance fields;
+  among non-provenance blocks, `orbit` is strongest
+  (`balanced_accuracy=0.9018` logistic, `0.9464` random forest), with
+  `face_symplectic`, `omega`, and `skeleton` close behind; only `trajectory`
+  is genuinely weak on this task.
+- implication:
+  the hostile-landscape split is still best explained by provenance/search-side
+  structure rather than a cheap pure-geometry separator.
