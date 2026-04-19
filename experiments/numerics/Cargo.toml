@@ -30,6 +30,10 @@ path = "unknown-predicates/main.rs"
 name = "num-algebraic-exactness"
 path = "algebraic-exactness/main.rs"
 
+[[bin]]
+name = "num-sage-feasibility"
+path = "sage-feasibility/main.rs"
+
 [[test]]
 name = "verify_numerics_tests"
 path = "error-bounds/tests.rs"
