@@ -521,7 +521,7 @@ def analyze_rows(rows: list[dict], canonical: bool) -> list[dict]:
 
 def main() -> None:
     args = parse_args()
-    canonical = args.canonical and not args.smoke
+    canonical = args.canonical
     rows = read_jsonl(input_path(canonical))
     report_rows = analyze_rows(rows, canonical)
     write_jsonl(output_path(canonical), report_rows)
