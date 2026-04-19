@@ -136,57 +136,6 @@ def refresh_normalized_dataset(out_dir: Path) -> None:
     subprocess.run(cmd, cwd=REPO_ROOT, check=True)
 
 
-def parse_rational(token: str) -> float:
-    if "/" not in token:
-        return float(token)
-    numerator, denominator = token.split("/", 1)
-    return int(numerator) / int(denominator)
-
-
-def refresh_geometry_features(normalized_dir: Path, out_path: Path) -> None:
-    """Populate `feature_geometry.jsonl` when the cached file is absent."""
-
-    states = load_jsonl(normalized_dir / "states.jsonl")
-    capacities = {
-        row["poly_id"]: row for row in load_jsonl(normalized_dir / "capacity_results.jsonl")
-    }
-    polytopes = {
-        row["poly_id"]: row for row in load_jsonl(normalized_dir / "polytopes.jsonl")
-    }
-
-    rows: list[dict] = []
-    for state in states:
-        poly = polytopes[state["poly_id"]]
-        volume = capacities[state["poly_id"]]["volume"]
-        dual_vertices = [
-            [parse_rational(coord) for coord in row]
-            for row in poly["dual_vertices_rational"]
-        ]
-        dual_scale = volume ** 0.25
-        arr = np.asarray(dual_vertices, dtype=float) * dual_scale
-        norms = np.linalg.norm(arr, axis=1)
-        centroid = np.mean(arr, axis=0)
-        coord_std = np.std(arr, axis=0)
-        rows.append(
-            {
-                "poly_id": state["poly_id"],
-                "geom_vol1_norm_mean": float(np.mean(norms)),
-                "geom_vol1_norm_std": float(np.std(norms)),
-                "geom_vol1_norm_min": float(np.min(norms)),
-                "geom_vol1_norm_max": float(np.max(norms)),
-                "geom_vol1_centroid_norm": float(np.linalg.norm(centroid)),
-                "geom_vol1_coord_std_x": float(coord_std[0]),
-                "geom_vol1_coord_std_y": float(coord_std[1]),
-                "geom_vol1_coord_std_z": float(coord_std[2]),
-                "geom_vol1_coord_std_w": float(coord_std[3]),
-            }
-        )
-
-    with out_path.open("w") as handle:
-        for row in rows:
-            handle.write(json.dumps(row) + "\n")
-
-
 def load_joined_rows(normalized_dir: Path) -> list[JoinedRow]:
     states = load_jsonl(normalized_dir / "states.jsonl")
     capacities = {
@@ -198,7 +147,11 @@ def load_joined_rows(normalized_dir: Path) -> list[JoinedRow]:
 
     feature_geometry_path = FEATURE_JSONL
     if not feature_geometry_path.exists():
-        refresh_geometry_features(normalized_dir, feature_geometry_path)
+        raise FileNotFoundError(
+            f"{feature_geometry_path} is missing; run "
+            "`experiments/sys-landscape/feature-pattern-search/analyze.py` first "
+            "to refresh the canonical geometry feature packet."
+        )
 
     geometry_by_poly = {
         row["poly_id"]: {key: value for key, value in row.items() if key != "poly_id"}

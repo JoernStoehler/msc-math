@@ -572,7 +572,7 @@ implementation starts.
      `22 / 282` states (`10 / 10` general ascent, `12 / 12` product ascent,
      `0 / 90` variable-F continuation, `0` random baselines).
    - Result:
-     near-null. Ridge `R^2` is `-0.0140` within random, `0.0026` within the
+     near-null. Ridge `R^2` is `-0.0140` within random, `0.0066` within the
      endpoint union, and strongly negative on both transfer surfaces.
    - Interpretation:
      this closes the cheap scalar "maybe the signal is in fixed-`F` step-event
@@ -591,8 +591,8 @@ implementation starts.
      `q_error_bound`, and boolean `mu` / `xi` / exact-certification flags.
    - Result:
      the richer `orbit` block improves the random regime further
-     (`R^2=0.3222` ridge, `0.3970` RF) but leaves the endpoint regime
-     essentially unchanged (`R^2=0.1083` ridge, `0.0967` RF). Transfer remains
+     (`R^2=0.4495` ridge, `0.3223` RF) but leaves the endpoint regime
+     essentially unchanged (`R^2=0.1104` ridge, `0.0906` RF). Transfer remains
      strongly negative and becomes even more negative on the random-to-endpoint
      surface once the random packet carries search-level orbit scalars.
    - Interpretation:
@@ -702,7 +702,8 @@ the endpoint datasets before adding more model families.
   `metadata` is the trivial separator because it includes provenance fields;
   among non-provenance blocks, `orbit` is strongest
   (`balanced_accuracy=0.9018` logistic, `0.9464` random forest), with
-  `face_symplectic` and `omega` the cleanest pure geometric blocks behind it.
+  `face_symplectic`, `omega`, and `skeleton` close behind; only `trajectory`
+  is genuinely weak on this task.
 - implication:
   the hostile-landscape split is still best explained by provenance/search-side
   structure rather than a cheap pure-geometry separator.

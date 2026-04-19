@@ -71,5 +71,5 @@ Reported metrics are out-of-fold accuracy, balanced accuracy, and ROC AUC. Split
 
 - metadata is the clearest separator, but that block includes regime-linked provenance fields (`dataset`, `family`, `role`, `search_space`, `optimizer`, `backend`), so it is not a pure geometry test.
 - among non-provenance blocks, logistic regression and random forest both favor `orbit`.
-- `orbit` is the strongest non-provenance separator; `face_symplectic` and `omega` are the cleanest pure geometric blocks behind it, while `skeleton` and `trajectory` are weak separators on this task.
+- `orbit` is the strongest non-provenance separator; `skeleton`, `omega`, and `face_symplectic` are also strong separators, while `trajectory` is the only clearly weak block on this task.
 - `all` is only a ceiling because it mixes the provenance block with every feature family.

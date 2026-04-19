@@ -54,7 +54,7 @@ from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import MaxAbsScaler
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
-from figure_config import FIGSIZE_DUAL, setup
+from figure_config import FIGSIZE_DUAL, FIGSIZE_SQUARE, setup
 
 setup()
 
@@ -883,31 +883,30 @@ def write_summary(
 
 
 def plot_model_results(results: list[dict], model_name: str, out_path: Path, title: str) -> None:
-    surface_labels = [label for _key, label in SURFACES]
-    x = np.arange(len(SURFACES))
-    width = 0.8 / len(FEATURE_BLOCKS)
-    fig, ax = plt.subplots(figsize=FIGSIZE_DUAL)
-    center = (len(FEATURE_BLOCKS) - 1) / 2.0
+    fig, axes = plt.subplots(2, 2, figsize=FIGSIZE_SQUARE, sharex=False, sharey=False)
+    axes_flat = axes.flatten()
+    y = np.arange(len(FEATURE_BLOCKS))
 
-    for idx, block in enumerate(FEATURE_BLOCKS):
-        heights = []
-        for surface_key, _surface_label in SURFACES:
-            row = next(
-                result
-                for result in results
-                if result["model"] == model_name
-                and result["surface"] == surface_key
-                and result["block"] == block
-            )
-            heights.append(row["r2"])
-        ax.bar(x + (idx - center) * width, heights, width=width, label=block)
+    for ax, (surface_key, surface_label) in zip(axes_flat, SURFACES):
+        surface_rows = {
+            row["block"]: row
+            for row in results
+            if row["model"] == model_name and row["surface"] == surface_key
+        }
+        values = [surface_rows[block]["r2"] for block in FEATURE_BLOCKS]
+        colors = [
+            "#d62728" if value < 0 else "#4c78a8"
+            for value in values
+        ]
+        ax.barh(y, values, color=colors)
+        ax.axvline(0.0, color="black", linewidth=0.8, alpha=0.5)
+        ax.set_yticks(y)
+        ax.set_yticklabels(FEATURE_BLOCKS)
+        ax.invert_yaxis()
+        ax.set_title(surface_label)
+        ax.set_xlabel(r"Test $R^2$")
 
-    ax.axhline(0.0, color="black", linewidth=0.8, alpha=0.5)
-    ax.set_xticks(x)
-    ax.set_xticklabels(surface_labels)
-    ax.set_ylabel(r"Test $R^2$")
-    ax.set_title(title)
-    ax.legend(ncols=2)
+    fig.suptitle(title)
     fig.savefig(out_path)
     plt.close(fig)
 
