@@ -10,7 +10,7 @@ The previous experiment log mixed operational notes with status history. The dur
 - Keep projection in 4D via radial projection → stereographic projection, because it preserves enough geometric structure for faces/trajectories while being fast enough for interactive use.
 - Keep configurable north pole and pole-clipping behavior; changing `MAX_RADIUS` and projection pole is required tuning to avoid near-pole blow-up.
 - Keep screenshot automation in `main/viz/screenshot-figures.mjs` as the canonical path for thesis figures because hand-capturing introduces drift.
-- Keep formal/experimental boundaries: reusable correctness claims live in crates/formal, while this topic remains exploratory + presentation oriented.
+- Keep formal/experimental boundaries: reusable correctness claims live in formal/, while this topic remains exploratory + presentation oriented.
 
 Rejected routes and constraints worth remembering:
 - Do not restore the removed `docs/viz` deployment path; local `main/viz` plus `python3 -m http.server` is the active layout.

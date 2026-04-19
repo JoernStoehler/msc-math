@@ -72,11 +72,10 @@ const N_WIGGLES: usize = 5;
 
 /// Multiplicative perturbation scale for dual vertex components: a_k[i] -> a_k[i] * (1 + 0.05 * N(0,1)).
 /// Per-facet displacement has expected norm ~0.05 * |a_k| (unit-scale dual vertices: ~0.05).
-/// Cell-widths data (experiments/combinatorial-cells/cell-widths/main.rs): median non-orbit cell width = 0.124, median
-/// orbit cell width = 0.258. So per-facet displacement ~0.05 is ~40% of the narrowest
-/// median cell width. With F=11 facets all perturbed simultaneously, boundary crossing
-/// is highly likely — confirmed by data: wiggle dominated overshoot as escape strategy
-/// (experiments/sys-landscape/gradient-ascent-general/main.rs, experiments/sys-landscape/gradient-ascent-products/main.rs).
+/// Local cell-width probes suggest this scale is large enough to cross
+/// boundaries often, while still small enough to keep most perturbed
+/// polytopes constructible. See `experiments/combinatorial-cells/REASONING.md`
+/// and `experiments/sys-landscape/REASONING.md`.
 /// If changed: much smaller (e.g. 0.01) reduces boundary-crossing probability and escape
 /// effectiveness. Much larger (e.g. 0.2) risks producing degenerate polytopes
 /// (Polytope4D::from_f64 failure) or landing too far from the current optimum.
@@ -126,8 +125,9 @@ struct ResultRow {
 /// 3. **Dual vertex degeneration:** |a_k + t*d_k| -> 0.
 ///
 /// Copied from exp-sys-landscape/src/lib.rs (cannot cross-crate import from
-/// exp-sys-landscape). Cell-widths data shows omega_0 flips account for 30.5%
-/// of boundary events in per-facet probes (experiments/combinatorial-cells/cell-widths/main.rs).
+/// exp-sys-landscape). Local combinatorial-cells probes showed that omega_0
+/// sign flips make up a substantial share of first boundary events; see
+/// `experiments/combinatorial-cells/REASONING.md`.
 fn compute_step_bound(polytope: &Polytope4D, direction: &[Vector4<f64>]) -> f64 {
     let duals = polytope.dual_vertices_f64();
     let vertices = polytope.vertices_f64();

@@ -136,11 +136,11 @@ Current recurring code-level entities:
 
 | Entity | Current role | Main surface |
 | --- | --- | --- |
-| `Polytope4D` | central polytope object for geometry and algorithms | `library/src/lib.rs`, `geom` |
-| `OrbitSearchResult` | shared capacity/orbit search result returned by the root `ehz_capacity`, `ehz_capacity_pruned`, `ehz_capacity_unpruned`, and `ehz_capacity_billiard` family; contains the orbit list plus `min_action` bounds and iterations | `library/src/algorithms/orbit_search.rs`, `library/src/lib.rs` |
-| `OrbitKktData` | one solved orbit payload: `sigma`, `beta`, action interval, `q`, optional multipliers, admissibility | `library/src/algorithms/orbit_search.rs` |
-| `GeometricOrbit` | recovered geometric trajectory/orbit data derived from an `OrbitKktData` payload | `library/src/algorithms/hk2017/orbit_recovery.rs` |
-| `PolytopeRecord` | persisted JSONL row, including optional `Source` provenance and optional `SigmaAction` orbit summaries | `library/src/database.rs` |
+| `Polytope4D` | central polytope object for geometry and algorithms | `crates/symplectic/src/lib.rs`, `geom` |
+| `OrbitSearchResult` | shared capacity/orbit search result returned by the root `ehz_capacity`, `ehz_capacity_pruned`, `ehz_capacity_unpruned`, and `ehz_capacity_billiard` family; contains the orbit list plus `min_action` bounds and iterations | `crates/symplectic/src/algorithms/orbit_search.rs`, `crates/symplectic/src/lib.rs` |
+| `OrbitKktData` | one solved orbit payload: `sigma`, `beta`, action interval, `q`, optional multipliers, admissibility | `crates/symplectic/src/algorithms/orbit_search.rs` |
+| `GeometricOrbit` | recovered geometric trajectory/orbit data derived from an `OrbitKktData` payload | `crates/symplectic/src/algorithms/hk2017/orbit_recovery.rs` |
+| `PolytopeRecord` | persisted JSONL row, including optional `Source` provenance and optional `SigmaAction` orbit summaries | `crates/symplectic/src/database.rs` |
 
 Current observed transformation chain:
 
@@ -186,7 +186,7 @@ Current observed API tiers for experiment code:
 
 | Tier | Current meaning | Examples |
 | --- | --- | --- |
-| simple public | short root reexports and trivial preset routers in `library/src/lib.rs` | `symplectic::ehz_capacity`, `symplectic::ehz_capacity_pruned`, `symplectic::ehz_capacity_unpruned`, `symplectic::ehz_capacity_billiard`, `symplectic::OrbitSearchResult`, `symplectic::volume`, `symplectic::omega0`, `symplectic::lagrangian_product` |
+| simple public | short root reexports and trivial preset routers in `crates/symplectic/src/lib.rs` | `symplectic::ehz_capacity`, `symplectic::ehz_capacity_pruned`, `symplectic::ehz_capacity_unpruned`, `symplectic::ehz_capacity_billiard`, `symplectic::OrbitSearchResult`, `symplectic::volume`, `symplectic::omega0`, `symplectic::lagrangian_product` |
 | expert public | deeper modules and building blocks used by experiments that need non-default control | `symplectic::database`, `symplectic::random`, `symplectic::derivatives`, `symplectic::algorithms::solve_orbit_sigma`, `symplectic::algorithms::aggregate_orbits`, `symplectic::algorithms::hk2017`, `symplectic::algorithms::billiard`, `symplectic::kkt::saddle_point_solver`, `symplectic::algorithms::facet_adjacency` |
 | unclear | public paths whose long-term experiment-facing status is not yet explicit | `symplectic::algorithms::hk2017::orbit_recovery`, `symplectic::algorithms::billiard::facet_classification`, `symplectic::kkt::qp_assembly::build_augmented_system` |
 | accidental internal | public-in-practice helpers that experiments currently reach through | `symplectic::algorithms::hk2017::permutations::for_each_cyclic_permutation` |
@@ -223,7 +223,7 @@ Current helper families recorded in discovery:
 
 Current storage/persistence architecture:
 
-- `library/src/database.rs` provides JSONL storage machinery.
+- `crates/symplectic/src/database.rs` provides JSONL storage machinery.
 - Callers choose paths and path policy; the storage layer does not define a
   canonical mutable shared cache path.
 - `PolytopeRecord` stores defining rational geometry plus optional computed
@@ -347,7 +347,7 @@ but before this session there was no dedicated repo-level architecture file.
 These are open questions, not current architecture facts:
 
 - Which deep public paths should remain supported experiment-facing imports?
-- Which repeated helpers belong in topic helper crates versus `library/`?
+- Which repeated helpers belong in topic helper crates versus `crates/symplectic/`?
 - Which path, if any, should become the explicitly canonical shared polytope
   catalog?
 - Which reusable stored fields should downstream consumers be allowed to trust

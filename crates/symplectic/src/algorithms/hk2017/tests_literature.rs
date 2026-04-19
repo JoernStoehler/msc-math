@@ -143,10 +143,11 @@ fn simplex_projected_backend_unsupported() {
 ///
 /// This is a fast certificate test (single KKT solve + geometric orbit recovery, ~ms).
 /// It proves c_EHZ(crosspolytope) ≤ 4.0 by exhibiting a feasible orbit with
-/// action 4.0. The full enumeration proving c_EHZ = 4.0 (minimum over all
-/// orbits) was done by `experiments/crosspolytope/main/main.rs` using
-/// symmetry-reduced exhaustive search (see
-/// `experiments/crosspolytope/REASONING.md` for search completeness details).
+/// action 4.0. The companion experiment
+/// `experiments/crosspolytope/main/main.rs` performs a symmetry-reduced search;
+/// see `experiments/crosspolytope/REASONING.md` for the current completeness
+/// boundary and why the global minimum claim is still treated as
+/// computation+assumption rather than a finished exhaustive proof.
 ///
 /// Known minimizing orbit: subset {0, 3, 12, 15}, permutation [0, 12, 15, 3],
 /// β = (0.25, 0.25, 0.25, 0.25). All transition edges have ω₀ = +1.0.
