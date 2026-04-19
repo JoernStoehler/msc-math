@@ -12,6 +12,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "algebraic-numbers"
+version = "0.1.0"
+dependencies = [
+ "criterion",
+ "num-bigint",
+ "num-rational",
+ "num-traits",
+ "proptest",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "amd"
 version = "0.2.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -436,6 +449,7 @@ dependencies = [
 name = "dev-numerical-analysis"
 version = "0.1.0"
 dependencies = [
+ "algebraic-numbers",
  "good_lp",
  "nalgebra",
  "num-bigint",
@@ -444,7 +458,6 @@ dependencies = [
  "rand 0.8.5",
  "rand_chacha 0.3.1",
  "rand_distr",
- "real-algebraic",
  "serde",
  "serde_json",
  "symplectic",
@@ -505,6 +518,7 @@ dependencies = [
 name = "exp-hko-local-maximum"
 version = "0.1.0"
 dependencies = [
+ "algebraic-numbers",
  "good_lp",
  "nalgebra",
  "num-bigint",
@@ -513,7 +527,6 @@ dependencies = [
  "rand 0.8.5",
  "rand_chacha 0.3.1",
  "rand_distr",
- "real-algebraic",
  "serde",
  "serde_json",
  "symplectic",
@@ -1187,19 +1200,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "real-algebraic"
-version = "0.1.0"
-dependencies = [
- "criterion",
- "num-bigint",
- "num-rational",
- "num-traits",
- "proptest",
- "serde",
- "serde_json",
-]
-
-[[package]]
 name = "regex"
 version = "1.12.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1415,6 +1415,7 @@ checksum = "73473c0e59e6d5812c5dfe2a064a6444949f089e20eec9a2e5506596494e4623"
 name = "symplectic"
 version = "0.1.0"
 dependencies = [
+ "algebraic-numbers",
  "approx",
  "blake3",
  "criterion",
@@ -1428,7 +1429,6 @@ dependencies = [
  "rand 0.8.5",
  "rand_chacha 0.3.1",
  "rand_distr",
- "real-algebraic",
  "rstest",
  "serde",
  "serde_json",

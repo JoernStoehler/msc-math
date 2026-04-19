@@ -1,6 +1,6 @@
 //! Pentagon-field alias for the algebraic exactness spike.
 //!
-//! The experiment now uses the shared `real-algebraic` implementation of
+//! The experiment now uses the shared `algebraic-numbers` implementation of
 //! `Q[t]/(t^4 - 10 t^2 + 5)` with the distinguished real root `t = tan(pi/5)`.
 //!
 //! TODO: add [def:...] to formal math for the `Q[t]/(t^4 - 10 t^2 + 5)` power
@@ -8,7 +8,7 @@
 //! TODO: add [lem:...] to formal math for the interval-refinement sign test in
 //! the distinguished real embedding `t = tan(pi/5)`.
 
-use real_algebraic::{Algebraic, TanPiFifth};
+use algebraic_numbers::{Algebraic, TanPiFifth};
 
 /// Exact pentagon-field element in basis `1, t, t^2, t^3`.
 pub type PentagonField = Algebraic<TanPiFifth>;

@@ -1,0 +1,31 @@
+[package]
+name = "symplectic"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+nalgebra.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+rand.workspace = true
+rand_chacha.workspace = true
+rand_distr.workspace = true
+num-bigint.workspace = true
+num-rational.workspace = true
+num-traits.workspace = true
+tempfile.workspace = true
+wait-timeout.workspace = true
+good_lp.workspace = true
+num-integer.workspace = true
+blake3.workspace = true
+algebraic-numbers.workspace = true
+
+[dev-dependencies]
+proptest.workspace = true
+rstest.workspace = true
+approx.workspace = true
+criterion.workspace = true
+
+[[bench]]
+name = "profiling"
+harness = false

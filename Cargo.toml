@@ -1,7 +1,7 @@
 [workspace]
 members = [
-    "library",
-    "real-algebraic",
+    "crates/symplectic",
+    "crates/algebraic-numbers",
     "experiments/hko-local-maximum",
     "experiments/sys-landscape",
     "experiments/sys-landscape/gradient-ascent-dev",
@@ -16,7 +16,7 @@ members = [
 resolver = "2"
 
 [workspace.dependencies]
-symplectic = { path = "library" }
+symplectic = { path = "crates/symplectic" }
 nalgebra = { version = "0.33", features = ["serde-serialize"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
@@ -31,7 +31,7 @@ num-integer = "0.1"
 tempfile = "3"
 wait-timeout = "0.2"
 good_lp = { version = "1.15", default-features = false, features = ["clarabel"] }
-real-algebraic = { path = "real-algebraic" }
+algebraic-numbers = { path = "crates/algebraic-numbers" }
 proptest = "1"
 rstest = "0.23"
 approx = "0.5"

@@ -1,0 +1,17 @@
+["hk2017-search"]
+formal = ["formal/library/algorithms.tex:alg:ehz", "formal/library/kkt.tex:lem:kkt"]
+rust = ["crates/symplectic/src/algorithms/hk2017/", "crates/symplectic/src/algorithms/orbit_search.rs"]
+sage = ["experiments/verification/sage/"]
+contract = "contracts/hk2017-search.md"
+
+["billiard-capacity"]
+formal = ["formal/library/algorithms.tex:alg:billiard", "formal/library/algorithms.tex:thm:billiard-characterization"]
+rust = ["crates/symplectic/src/algorithms/billiard/"]
+sage = ["experiments/verification/sage/"]
+contract = "contracts/billiard-capacity.md"
+
+["kkt-error-bounds"]
+formal = ["formal/numerics/error-bounds.tex", "formal/numerics/q-error.tex"]
+rust = ["crates/symplectic/src/kkt/", "experiments/numerics/error-bounds/"]
+sage = ["experiments/verification/sage/"]
+contract = "contracts/kkt-error-bounds.md"

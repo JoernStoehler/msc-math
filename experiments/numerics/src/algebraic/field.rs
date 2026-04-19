@@ -1,5 +1,5 @@
 //! Thin scalar bridge from the algebraic-exactness experiment to
-//! `real-algebraic`.
+//! `algebraic-numbers`.
 //!
 //! The experiment keeps its exact geometry/KKT code local, but arithmetic and
 //! sign-sensitive comparisons now come from the shared companion crate instead
@@ -10,11 +10,11 @@ use super::pentagon::PentagonField;
 use num_bigint::BigInt;
 use num_rational::BigRational;
 
-pub use real_algebraic::cmp_field;
-pub use real_algebraic::max_field;
-pub use real_algebraic::min_field;
-pub use real_algebraic::OrderedField as ExactOrderedField;
-pub use real_algebraic::Sign as ExactSign;
+pub use algebraic_numbers::cmp_field;
+pub use algebraic_numbers::max_field;
+pub use algebraic_numbers::min_field;
+pub use algebraic_numbers::OrderedField as ExactOrderedField;
+pub use algebraic_numbers::Sign as ExactSign;
 
 /// Experiment-owned catalog metadata attached to supported scalar backends.
 pub trait CatalogField: ExactOrderedField {

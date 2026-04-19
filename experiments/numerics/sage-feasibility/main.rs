@@ -19,7 +19,7 @@ use dev_numerical_analysis::algebraic::fixtures::exact_hko_pentagon;
 use nalgebra::Vector4;
 use num_bigint::BigInt;
 use num_rational::BigRational;
-use real_algebraic::{canonical_element, CanonicalElement, OrderedField};
+use algebraic_numbers::{canonical_element, CanonicalElement, OrderedField};
 use serde::Serialize;
 use std::fs::File;
 use std::io::{BufWriter, Write};

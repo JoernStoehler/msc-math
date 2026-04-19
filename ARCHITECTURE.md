@@ -2,12 +2,12 @@
 Purpose: repo-level component and code-architecture map for humans and agents.
 Context: this file describes the current component structure first. It is not a
 progress tracker or migration plan. For the fact base behind this file, see
-`research/repo-maintainability/design/repo-facts.md`.
+`TASKS.md`, `AGENTS.md`, and the local topic docs under `experiments/**`.
 It answers these recurring questions:
 - which repo areas own which kinds of code and mathematics
-- how `library/`, `experiments/`, `formal/`, `thesis/`, and `research/` relate
+- how `crates/`, `experiments/`, `formal/`, `contracts/`, and `thesis/` relate
 - which core entities and result containers recur across the repo
-- what the current library-facing API tiers look like for experiment code
+- what the current crate-facing API tiers look like for experiment code
 - what topic helper crates currently are and are not
 - how persisted polytope/cache/output data currently fits into the architecture
 - which boundaries are clear today and which are still open design questions
@@ -37,7 +37,7 @@ Diagram rule:
 
 - State: first current-state pass.
 - Last updated: 2026-04-16.
-- Source note: [repo-facts.md](/workspaces/msc-math/research/repo-maintainability/design/repo-facts.md:1).
+- Source note: current-state migration pass in `layout-migration`.
 - Known limits:
   - API tiering and helper boundaries are partly descriptive today and partly
     still open design questions.
@@ -48,11 +48,12 @@ Diagram rule:
 
 | Area | Current role | Notes |
 | --- | --- | --- |
-| `library/` | reusable Rust crate `symplectic` | small root reexport surface; larger practical expert-facing surface through deeper public modules |
+| `crates/` | durable Rust crates | `crates/symplectic/` owns the main symplectic implementation; `crates/algebraic-numbers/` owns exact ordered algebraic scalar arithmetic |
 | `experiments/` | topic-grouped experiment packages, binaries, analyses, and local helper crates | exploratory algorithms start here; slow validation and broad sweeps stay here |
-| `formal/` | developer-facing mathematics for library and experiments | supports math/code correspondence; not thesis input |
-| `thesis/` | self-contained publication artifact | must not depend on runtime links into `library/`, `formal/`, or `experiments/` |
-| `research/` | design/program notes and experiment-planning material | architecture-program discovery notes live here |
+| `formal/` | developer-facing mathematics for crates and experiments | supports math/code correspondence; not thesis input |
+| `contracts/` | canonical algorithm correspondence and verification contracts | cross-surface metadata for important algorithms |
+| `thesis/` | self-contained publication artifact | must not depend on runtime links into `crates/`, `formal/`, or `experiments/` |
+| local topic docs | local `README.md`, `RESEARCH.md`, and `PLAN-<goal>.md` files | exploratory and planning notes stay near the code or experiment they describe |
 
 ## Dependency Direction
 
@@ -60,28 +61,33 @@ Current high-level dependency structure:
 
 ```mermaid
 flowchart LR
-    L["library/"]
+    C["crates/"]
     E["experiments/"]
     F["formal/"]
+    K["contracts/"]
     T["thesis/"]
-    R["research/"]
+    D["local topic docs"]
 
-    E --> L
-    L -. math correspondence .-> F
+    E --> C
+    C -. math correspondence .-> F
     E -. topic math / notes .-> F
-    R -. design + planning .-> E
-    R -. design + planning .-> L
+    K -. correspondence / verification .-> C
+    K -. correspondence / verification .-> E
+    D -. local planning / interpretation .-> E
+    D -. local planning / interpretation .-> C
 ```
 
 Current boundary facts:
 
 - Experiment code imports `symplectic` directly.
-- `library/src/lib.rs` already documents library-internal submodule boundaries
+- `crates/symplectic/src/lib.rs` already documents crate-internal submodule boundaries
   and dependency direction.
 - `formal/` is the developer-facing math layer for nontrivial algorithms.
-- `research/` stores planning and design notes, not runtime code.
+- `contracts/` stores canonical cross-surface algorithm metadata.
+- Local `RESEARCH.md` / `PLAN-<goal>.md` files store planning and design notes,
+  not runtime code.
 - `thesis/` is intentionally publication-owned and self-contained.
-- `thesis/` must not depend on runtime links into `library/`, `experiments/`,
+- `thesis/` must not depend on runtime links into `crates/`, `experiments/`,
   or `formal/`.
 
 ## Library Subsystems

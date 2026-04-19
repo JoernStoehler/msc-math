@@ -52,8 +52,8 @@ bash .devcontainer/codex-cloud-smoke.sh
 This script checks:
 
 - `cargo`, `uv`, `git lfs`, `qconvex`
-- `cd library/ && cargo test --release --lib`
-- `cd library/ && cargo clippy --lib -- -D warnings`
+- `cd crates/symplectic/ && cargo test --release --lib`
+- `cd crates/symplectic/ && cargo clippy --lib -- -D warnings`
 - one representative experiment build
 - one representative Python analysis run on self-generated smoke data
 
@@ -61,7 +61,7 @@ This script checks:
 
 The default Codex `universal` image already covers most of the common stack.
 The repo-specific addition we currently need is `qhull-bin`, because the Rust
-library shells out to `qconvex` in `library/src/geom/qhull.rs`.
+the symplectic crate shells out to `qconvex` in `crates/symplectic/src/geom/qhull.rs`.
 
 The setup script also pre-caches:
 

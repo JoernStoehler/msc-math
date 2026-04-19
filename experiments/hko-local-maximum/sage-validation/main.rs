@@ -17,7 +17,7 @@
 use exp_hko_local_maximum::{
     exact_hko_polytope, exact_simplex_polytope, ExactBankEntry, ExactBankTarget, EXACT_BANK_ENTRIES,
 };
-use real_algebraic::{canonical_element, CanonicalElement, OrderedField};
+use algebraic_numbers::{canonical_element, CanonicalElement, OrderedField};
 use serde::Serialize;
 use std::fs::File;
 use std::io::{BufWriter, Write};
