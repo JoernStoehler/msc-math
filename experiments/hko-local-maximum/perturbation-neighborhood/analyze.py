@@ -49,7 +49,7 @@ def pick_jsonl_files(data_dir: Path) -> list[Path]:
         print(f"ERROR: data directory not found: {data_dir}", file=sys.stderr)
         print(
             "Run the binary first (from the repository root, see "
-            "research/hko-local-maximum/design/perturbation-neighborhood.md 'How to run').",
+            "experiments/hko-local-maximum/perturbation-neighborhood/main.rs).",
             file=sys.stderr,
         )
         sys.exit(1)

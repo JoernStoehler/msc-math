@@ -20,12 +20,12 @@ target API have already landed in code.
 - Out of scope here: broad data-flow cleanup, thesis prose, and the full
   execution DAG for all maintainability work.
 - Landed code scaffold:
-  - `library/src/algorithms/orbit_search.rs` now defines the shared public
+  - `crates/symplectic/src/algorithms/orbit_search.rs` now defines the shared public
     types `OrbitAdmissibility`, `OrbitGuaranteeMode`, `OrbitSolveBackend`,
     `OrbitKktData`, `OrbitSearchResult`, `OrbitSearchError`, and
     `GeometricOrbitError`.
-  - These types are re-exported from `library/src/algorithms/mod.rs` and
-    `library/src/lib.rs`.
+  - These types are re-exported from `crates/symplectic/src/algorithms/mod.rs` and
+    `crates/symplectic/src/lib.rs`.
   - Packet 2 first slice: `solve_orbit_sigma(...)` now exists on the shared
     result-layer module and the current HK2017/billiard solver bridges route
     through it for the saddle-point backend.
@@ -38,7 +38,7 @@ target API have already landed in code.
     `orbit_search.rs` on top of the saddle-point backend. The refactor target
     is now to keep that machinery as building blocks rather than as a second
     overlapping top-level algorithm family.
-  - Packet 3 first slice: `library/src/derivatives.rs` now defines
+  - Packet 3 first slice: `crates/symplectic/src/derivatives.rs` now defines
     `OrbitGradientA`, `ClarkeSubdiffA`, and `DerivativeError`, plus helper
     functions on both the current `KktResult` seam and the new
     `OrbitKktData` seam. The first migrated consumer packages are
@@ -97,11 +97,11 @@ target API have already landed in code.
 ## Goal
 
 - Give `hk2017`, `hk2017_unpruned`, and `billiard` one shared orbit/result
-  layer in `library/`, while keeping their search frontends separate.
+  layer in `crates/symplectic/`, while keeping their search frontends separate.
 - Make the public `ehz_capacity*` family trivial router/preset glue on top of
   the shared building blocks instead of translating back into a second thin
   result type or growing a second overlapping algorithm family.
-- Make the richer HK2017-family algorithm output available from `library/`
+- Make the richer HK2017-family algorithm output available from `crates/symplectic/`
   without forcing every caller onto a heavy report surface.
 - Remove repeated experiment-local instrumentation for "collect all minimum or
   near-minimum orbits" and "re-solve one sigma to recover beta/mu".
@@ -267,7 +267,7 @@ new repo evidence contradicts them.
   rather than expecting another convenience router family.
 - `subset` should not be stored in the richer orbit payload. It is derived from
   `sigma` by sorting.
-- Clarke-subdifferential support should move into `library/`; a primitive data
+- Clarke-subdifferential support should move into `crates/symplectic/`; a primitive data
   type such as an ordered list of per-orbit gradients is the intended first
   surface.
 - Orbit-level derivative/subdifferential helpers are worth adding when they
@@ -379,47 +379,47 @@ consumers found this concrete demand surface:
 - Strong evidence for storing:
   - `sigma`
     - orbit recovery uses the facet order directly
-      ([orbit_recovery.rs](</workspaces/msc-math/library/src/algorithms/hk2017/orbit_recovery.rs:95>))
+      ([orbit_recovery.rs](</workspaces/msc-math/crates/symplectic/src/algorithms/hk2017/orbit_recovery.rs:95>))
     - derivative assembly re-solves from `best_permutation`
-      ([derivatives.rs](</workspaces/msc-math/library/src/derivatives.rs:290>))
+      ([derivatives.rs](</workspaces/msc-math/crates/symplectic/src/derivatives.rs:290>))
     - cached minimum-sigma reload in orbit-recovery verification
       ([orbit-recovery/main.rs](</workspaces/msc-math/experiments/verification/orbit-recovery/main.rs:603>))
   - `beta`
     - orbit recovery needs dwell-time coefficients
-      ([orbit_recovery.rs](</workspaces/msc-math/library/src/algorithms/hk2017/orbit_recovery.rs:96>))
+      ([orbit_recovery.rs](</workspaces/msc-math/crates/symplectic/src/algorithms/hk2017/orbit_recovery.rs:96>))
     - analytical derivatives and subdifferential experiments use it directly
-      ([derivatives.rs](</workspaces/msc-math/library/src/derivatives.rs:39>),
+      ([derivatives.rs](</workspaces/msc-math/crates/symplectic/src/derivatives.rs:39>),
       [gradient-analysis/main.rs](</workspaces/msc-math/experiments/hko-local-maximum/gradient-analysis/main.rs:253>),
       [numerics-subdifferential/main.rs](</workspaces/msc-math/experiments/numerics/gradient/numerics-subdifferential/main.rs:305>))
   - `q` as the public field name
     - live code currently uses the internal name `q_corrected` for the same `Q`
       scalar
-      ([saddle_point_solver.rs](</workspaces/msc-math/library/src/kkt/saddle_point_solver.rs:207>),
-      [billiard/mod.rs](</workspaces/msc-math/library/src/algorithms/billiard/mod.rs:179>),
-      [tests_literature.rs](</workspaces/msc-math/library/src/algorithms/hk2017/tests_literature.rs:127>))
+      ([saddle_point_solver.rs](</workspaces/msc-math/crates/symplectic/src/kkt/saddle_point_solver.rs:207>),
+      [billiard/mod.rs](</workspaces/msc-math/crates/symplectic/src/algorithms/billiard/mod.rs:179>),
+      [tests_literature.rs](</workspaces/msc-math/crates/symplectic/src/algorithms/hk2017/tests_literature.rs:127>))
   - `action`
     - already the canonical scalar summary in result/caching code
-      ([orbit_search.rs](</workspaces/msc-math/library/src/algorithms/orbit_search.rs:128>),
+      ([orbit_search.rs](</workspaces/msc-math/crates/symplectic/src/algorithms/orbit_search.rs:128>),
       [orbit-recovery/main.rs](</workspaces/msc-math/experiments/verification/orbit-recovery/main.rs:561>))
   - `mu` when available
     - analytical derivatives and system-gradient work need it directly
-      ([derivatives.rs](</workspaces/msc-math/library/src/derivatives.rs:34>),
+      ([derivatives.rs](</workspaces/msc-math/crates/symplectic/src/derivatives.rs:34>),
       [gradient-analysis/main.rs](</workspaces/msc-math/experiments/hko-local-maximum/gradient-analysis/main.rs:257>),
       [numerics-subdifferential/main.rs](</workspaces/msc-math/experiments/numerics/gradient/numerics-subdifferential/main.rs:312>))
   - `xi` when available
     - real but narrower dependency: convention conversion and KKT auditing
       ([gradient-analysis/main.rs](</workspaces/msc-math/experiments/hko-local-maximum/gradient-analysis/main.rs:196>),
-      [derivatives.rs](</workspaces/msc-math/library/src/derivatives.rs:294>))
+      [derivatives.rs](</workspaces/msc-math/crates/symplectic/src/derivatives.rs:294>))
 - Lower evidence for storing as first-class payload fields:
   - `beta_margin`
     - current code computes `min(beta)` locally where needed
-      ([billiard/mod.rs](</workspaces/msc-math/library/src/algorithms/billiard/mod.rs:181>),
-      [orbit_search.rs](</workspaces/msc-math/library/src/algorithms/orbit_search.rs:167>),
-      [beta_feasibility.rs](</workspaces/msc-math/library/src/kkt/beta_feasibility.rs:49>))
+      ([billiard/mod.rs](</workspaces/msc-math/crates/symplectic/src/algorithms/billiard/mod.rs:181>),
+      [orbit_search.rs](</workspaces/msc-math/crates/symplectic/src/algorithms/orbit_search.rs:167>),
+      [beta_feasibility.rs](</workspaces/msc-math/crates/symplectic/src/kkt/beta_feasibility.rs:49>))
   - `q_error_bound`
     - strong evidence on the producer/proof side, but no current downstream
       runtime consumer yet
-      ([saddle_point_solver.rs](</workspaces/msc-math/library/src/kkt/saddle_point_solver.rs:561>))
+      ([saddle_point_solver.rs](</workspaces/msc-math/crates/symplectic/src/kkt/saddle_point_solver.rs:561>))
   - `action_lower`, `action_upper`, `admissibility`
     - planned public-surface fields, but there is not yet live code that reads
       them because the richer API does not exist yet
@@ -655,7 +655,7 @@ These points are not yet fully settled.
   Current code fact after the Packet 2 collector slice: only the saddle-point
   backend is wired through the public collector entrypoints; projected remains
   blocked on exposing a compatible `Q`-bound/payload surface from
-  `library/src/kkt/projection_solver.rs`.
+  `crates/symplectic/src/kkt/projection_solver.rs`.
 - How beta-side uncertainty should be represented is deferred for now.
   Current state:
   - `beta` itself is still worth storing
@@ -767,8 +767,8 @@ Current design lean from discussion:
 - The billiard algorithm is structurally close to the intended HK2017 richer
   result surface: it also uses enumerate -> solve -> aggregate on the shared
   orbit/result layer
-  ([billiard/mod.rs](</workspaces/msc-math/library/src/algorithms/billiard/mod.rs:1>),
-  [lib.rs](</workspaces/msc-math/library/src/lib.rs:103>)).
+  ([billiard/mod.rs](</workspaces/msc-math/crates/symplectic/src/algorithms/billiard/mod.rs:1>),
+  [lib.rs](</workspaces/msc-math/crates/symplectic/src/lib.rs:103>)).
 - The main difference is not result shape but enumeration policy:
   billiard exploits Lagrangian-product structure and the known bounce bound, so
   it only enumerates block-structured `sigma` with bounded length rather than

@@ -23,7 +23,7 @@ the committed docs/code they govern.
 
 ## Goal
 
-- Enable future research by making `library/`, `experiments/`, datasets, and
+- Enable future research by making `crates/symplectic/`, `experiments/`, datasets, and
   top-level docs clearer, more predictable, and easier for agents to extend.
 - Reduce avoidable agent failure modes: guessing import paths, duplicating
   helpers, depending on accidental internals, and misreading data ownership.
@@ -48,9 +48,9 @@ These are observed facts as of 2026-04-16, not design decisions.
 - Before this session, no top-level `ARCHITECTURE.md` existed.
   Evidence from the initial discovery pass: `rg --files -g 'ARCHITECTURE.md' -g 'README.md'`.
 - Repo orientation is currently split across `AGENTS.md`, `TASKS.md`,
-  `library/src/lib.rs`, `library/src/database.rs`, and per-package
+  `crates/symplectic/src/lib.rs`, `crates/symplectic/src/database.rs`, and per-package
   `experiments/<topic>/src/lib.rs` headers.
-- The simple public library surface in `library/src/lib.rs` re-exports the
+- The simple public library surface in `crates/symplectic/src/lib.rs` re-exports the
   settled router family and shared result types: `ehz_capacity` (auto),
   `ehz_capacity_pruned`, `ehz_capacity_unpruned`,
   `ehz_capacity_billiard`, `OrbitSearchResult`, `OrbitSearchError`,
@@ -89,7 +89,7 @@ These are observed facts as of 2026-04-16, not design decisions.
 - Which deep paths are expert-but-allowed dependencies during the thesis push?
 - Which deep paths should be treated as accidental internals and not gain new
   callers?
-- Which repeated helpers should move to `library/`, to
+- Which repeated helpers should move to `crates/symplectic/`, to
   `experiments/<topic>/src/lib.rs`, or stay per-binary?
 - Which dataset is the canonical shared polytope catalog, and which paths are
   mirrors or transient outputs?
@@ -136,7 +136,7 @@ Use one conceptual unit per chat message to avoid mixing design layers.
 ## Current Drafting Step
 
 - Current-state fact note now exists at
-  `research/repo-maintainability/design/repo-facts.md`.
+  `.codex/reference/repo-maintainability/design/repo-facts.md`.
 - Current merged top-level doc pass now exists:
   - `ARCHITECTURE.md` for component/code architecture plus the current
     persisted-data architecture
@@ -145,10 +145,10 @@ Use one conceptual unit per chat message to avoid mixing design layers.
   after the landed router/building-block refactor, then use this note as
   history rather than as a live design queue.
 - Dedicated design note for that unit now exists at
-  `research/repo-maintainability/design/hk2017-result-api-plan.md`.
+  `.codex/reference/repo-maintainability/design/hk2017-result-api-plan.md`.
 - Evidence source for later fill:
   - consolidated current-state fact note
-    `research/repo-maintainability/design/repo-facts.md`
+    `.codex/reference/repo-maintainability/design/repo-facts.md`
   - D1 import surface inventory
   - D2 shared-helper inventory
   - D3 data-flow inventory
@@ -161,12 +161,12 @@ Use one conceptual unit per chat message to avoid mixing design layers.
 
 ## Discovery Artifacts
 
-- D0: `research/repo-maintainability/design/repo-facts.md`
-- D1: `research/repo-maintainability/design/import-surface-inventory.md`
-- D2: `research/repo-maintainability/design/shared-helper-inventory.md`
-- D3: `research/repo-maintainability/design/data-flow-inventory.md`
-- D4: `research/repo-maintainability/design/docs-navigation-inventory.md`
-- D5: `research/repo-maintainability/design/execution-constraints-inventory.md`
+- D0: `.codex/reference/repo-maintainability/design/repo-facts.md`
+- D1: `.codex/reference/repo-maintainability/design/import-surface-inventory.md`
+- D2: `.codex/reference/repo-maintainability/design/shared-helper-inventory.md`
+- D3: `.codex/reference/repo-maintainability/design/data-flow-inventory.md`
+- D4: `.codex/reference/repo-maintainability/design/docs-navigation-inventory.md`
+- D5: `.codex/reference/repo-maintainability/design/execution-constraints-inventory.md`
 
 ## Discovery Packet Queue
 
@@ -176,10 +176,10 @@ refactor patches.
 ### D1. Import-Surface Inventory
 
 - Status: written.
-- Note: `research/repo-maintainability/design/import-surface-inventory.md`
+- Note: `.codex/reference/repo-maintainability/design/import-surface-inventory.md`
 - Objective: list the library paths used by experiments and classify them as
   `simple public`, `expert public`, `accidental internal`, or `unclear`.
-- Scope: `library/src/lib.rs`, `library/src/**/mod.rs`, and all Rust imports
+- Scope: `crates/symplectic/src/lib.rs`, `crates/symplectic/src/**/mod.rs`, and all Rust imports
   under `experiments/`.
 - Expected output: a matrix of import path -> current callers -> candidate tier
   -> why later agents would pick it.
@@ -190,7 +190,7 @@ refactor patches.
 ### D2. Shared-Helper Inventory
 
 - Status: written.
-- Note: `research/repo-maintainability/design/shared-helper-inventory.md`
+- Note: `.codex/reference/repo-maintainability/design/shared-helper-inventory.md`
 - Objective: group repeated helper logic by the right home:
   `library`, `topic-local helper crate`, or `per-binary local`.
 - Scope: repeated orbit enumeration wrappers, `sys` helpers, step-bound logic,
@@ -205,10 +205,10 @@ refactor patches.
 ### D3. Data-Flow And Cache Inventory
 
 - Status: written.
-- Note: `research/repo-maintainability/design/data-flow-inventory.md`
+- Note: `.codex/reference/repo-maintainability/design/data-flow-inventory.md`
 - Objective: record the canonical shared datasets, the mirrors, and the
   intentionally local/transient datasets.
-- Scope: `library/src/database.rs`, mirrored polytope caches, topic-local
+- Scope: `crates/symplectic/src/database.rs`, mirrored polytope caches, topic-local
   search traces, and experiment outputs that are read by analyzers.
 - Expected output: table with `dataset`, `producer`, `consumers`, `trusted
   fields`, `canonical or mirror`, `regenerate or preserve`, and `drift risk`.
@@ -220,10 +220,10 @@ refactor patches.
 ### D4. Docs And Navigation Inventory
 
 - Status: written.
-- Note: `research/repo-maintainability/design/docs-navigation-inventory.md`
+- Note: `.codex/reference/repo-maintainability/design/docs-navigation-inventory.md`
 - Objective: identify which frequently needed questions are already answered by
   existing docs and which require a new repo-level guide.
-- Scope: `AGENTS.md`, `TASKS.md`, `library/src/lib.rs`, `library/src/database.rs`,
+- Scope: `AGENTS.md`, `TASKS.md`, `crates/symplectic/src/lib.rs`, `crates/symplectic/src/database.rs`,
   `experiments/<topic>/src/lib.rs`, and relevant research notes.
 - Expected output: question -> current answer source -> gap -> eventual home
   (`ARCHITECTURE.md`, file header, task packet, or no new doc needed).
@@ -234,7 +234,7 @@ refactor patches.
 ### D5. Execution Constraints Inventory
 
 - Status: written.
-- Note: `research/repo-maintainability/design/execution-constraints-inventory.md`
+- Note: `.codex/reference/repo-maintainability/design/execution-constraints-inventory.md`
 - Objective: record the operational constraints that the later execution DAG
   must obey.
 - Scope: worktree usage, LFS safety, allowed verification commands, and what
@@ -254,7 +254,7 @@ decision surface should cover these questions explicitly:
 1. Library boundary: what must be stable before thesis submission, and what may
    remain expert-only?
 2. Helper-location policy: when does repeated experiment logic belong in
-   `library/` versus `experiments/<topic>/src/lib.rs`?
+   `crates/symplectic/` versus `experiments/<topic>/src/lib.rs`?
 3. Data policy: what is the canonical shared catalog and what counts as a
    mirror or transient analysis artifact?
 4. Architecture-doc scope: what belongs in `AGENTS.md`,

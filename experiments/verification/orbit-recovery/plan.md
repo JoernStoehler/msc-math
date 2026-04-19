@@ -1,10 +1,9 @@
 <!--
 Purpose: temporary implementation plan for rewriting the orbit-recovery
 experiment around a reusable target-pool + cache-lookup architecture.
-Context: keep this separate from `research/verification/design/orbit-recovery.md`
-while the old note still serves as the historical logbook. Delete or fold this
-plan into the design note once the rewrite lands and the new experiment shape is
-stable.
+Context: keep this separate from the owning experiment implementation while the
+rewrite is still speculative. Track stable outcomes here and in the experiment
+outputs under `experiments/verification/orbit-recovery/`.
 -->
 
 # Orbit Recovery Rewrite Plan
@@ -266,7 +265,7 @@ Acceptance check:
 After the rewrite produces stable results:
 
 - regenerate the orbit-recovery output,
-- update `research/verification/design/orbit-recovery.md`,
+- update this file and the corresponding experiment outputs,
 - remove historical/current ambiguity,
 - delete or fold this plan file into the stable note.
 
@@ -340,6 +339,6 @@ Stop and re-evaluate before continuing if:
 
 ## Cleanup Rule
 
-Delete this file, or fold its stable conclusions into
-`research/verification/design/orbit-recovery.md`, once the rewrite lands and the
-new experiment structure is no longer speculative.
+Delete this file, or fold its stable conclusions into this plan and the owning
+experiment outputs, once the rewrite lands and the new experiment structure is
+no longer speculative.

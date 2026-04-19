@@ -94,7 +94,7 @@ pub struct BoundaryEvent {
 /// Source: `experiments/combinatorial-cells/cell-widths/main.rs` (enriched
 /// version with omega_0 detection).
 /// Cell-widths data shows omega_0 flips account for 30.5% of boundary events in per-facet probes
-/// (research/combinatorial-cells/design/cell-widths.md). The old `compute_step_bound_a` missed these entirely.
+/// (experiments/combinatorial-cells/cell-widths/main.rs). The old `compute_step_bound_a` missed these entirely.
 pub fn compute_step_bound_detailed(
     polytope: &Polytope4D,
     direction: &[Vector4<f64>],

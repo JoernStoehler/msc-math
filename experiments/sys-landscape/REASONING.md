@@ -1,6 +1,6 @@
 # Sys-Landscape Reasoning
 
-This topic is now documented as a three-file local note set to support future work without opening `research/sys-landscape/design/*.md`.
+This topic is now documented as a three-file local note set (`REASONING.md`, `DECISIONS.md`, `NEXT-STEPS.md`) to support future work.
 
 ## Current Scientific State
 

@@ -12,7 +12,7 @@ current mathematical state instead of reconstructing it.
 
 ## Files To Start From
 
-- `research/sys-landscape/design/pentagon-rotation-formula.md`
+- `experiments/sys-landscape/pentagon-rotation-formula/`
 - `formal/sys-landscape/pentagon-rotation-formula.tex`
 - `experiments/sys-landscape/pentagon-rotation-formula/cas_witnesses.py`
 - `experiments/sys-landscape/pentagon-rotation-formula/main.rs`

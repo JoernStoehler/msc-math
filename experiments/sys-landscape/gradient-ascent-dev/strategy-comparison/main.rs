@@ -3,7 +3,7 @@
 //! Systematic comparison of overshoot, wiggle, noise, and random restart
 //! strategies on the same polytope set.
 //!
-//! Related: research/sys-landscape/design/gradient-ascent-dev/strategy-comparison.md
+//! Related: experiments/sys-landscape/gradient-ascent-dev/strategy-comparison/main.rs
 //! Input Artifacts: None
 //! Output Artifacts: None
 

@@ -20,37 +20,37 @@ boundary questions that still need a Jörn decision.
   - `rg -n "use symplectic::" experiments -g '*.rs'`
   - `rg -n "symplectic::" experiments -g '*.rs'`
   - `rg -n "use symplectic::constants::|symplectic::constants::" experiments -g '*.rs'`
-  - `sed -n '1,220p' library/src/lib.rs`
-  - `sed -n '1,220p' library/src/geom/mod.rs`
-  - `sed -n '1,220p' library/src/kkt/mod.rs`
-  - `sed -n '1,220p' library/src/algorithms/mod.rs`
-  - `sed -n '1,220p' library/src/algorithms/hk2017/mod.rs`
-  - `sed -n '1,220p' library/src/algorithms/billiard/mod.rs`
-  - `sed -n '1,240p' library/src/database.rs`
-  - `sed -n '1,240p' library/src/dataset.rs`
-  - `sed -n '1,240p' library/src/derivatives.rs`
-  - `sed -n '1,220p' library/src/random.rs`
-  - `sed -n '1,200p' library/src/constants.rs`
-  - `sed -n '1,220p' library/src/algorithms/hk2017/orbit_recovery.rs`
-  - `sed -n '1,220p' library/src/algorithms/facet_adjacency.rs`
-  - `sed -n '1,220p' library/src/geom/test_utils.rs`
-  - `sed -n '1,220p' library/src/geom/known_polytopes.rs`
-  - `sed -n '1,260p' library/src/kkt/saddle_point_solver.rs`
-  - `sed -n '1,220p' library/src/kkt/projection_solver.rs`
-  - `sed -n '1,220p' library/src/kkt/beta_feasibility.rs`
-  - `sed -n '1,220p' library/src/kkt/constraint_solver.rs`
-  - `sed -n '1,260p' research/repo-maintainability/design/main.md`
+  - `sed -n '1,220p' crates/symplectic/src/lib.rs`
+  - `sed -n '1,220p' crates/symplectic/src/geom/mod.rs`
+  - `sed -n '1,220p' crates/symplectic/src/kkt/mod.rs`
+  - `sed -n '1,220p' crates/symplectic/src/algorithms/mod.rs`
+  - `sed -n '1,220p' crates/symplectic/src/algorithms/hk2017/mod.rs`
+  - `sed -n '1,220p' crates/symplectic/src/algorithms/billiard/mod.rs`
+  - `sed -n '1,240p' crates/symplectic/src/database.rs`
+  - `sed -n '1,240p' crates/symplectic/src/dataset.rs`
+  - `sed -n '1,240p' crates/symplectic/src/derivatives.rs`
+  - `sed -n '1,220p' crates/symplectic/src/random.rs`
+  - `sed -n '1,200p' crates/symplectic/src/constants.rs`
+  - `sed -n '1,220p' crates/symplectic/src/algorithms/hk2017/orbit_recovery.rs`
+  - `sed -n '1,220p' crates/symplectic/src/algorithms/facet_adjacency.rs`
+  - `sed -n '1,220p' crates/symplectic/src/geom/test_utils.rs`
+  - `sed -n '1,220p' crates/symplectic/src/geom/known_polytopes.rs`
+  - `sed -n '1,260p' crates/symplectic/src/kkt/saddle_point_solver.rs`
+  - `sed -n '1,220p' crates/symplectic/src/kkt/projection_solver.rs`
+  - `sed -n '1,220p' crates/symplectic/src/kkt/beta_feasibility.rs`
+  - `sed -n '1,220p' crates/symplectic/src/kkt/constraint_solver.rs`
+  - `sed -n '1,260p' .codex/reference/repo-maintainability/design/main.md`
 - Files checked for callers:
   - `experiments/**/**/*.rs`
-  - `library/src/lib.rs`
-  - `library/src/**/mod.rs`
+  - `crates/symplectic/src/lib.rs`
+  - `crates/symplectic/src/**/mod.rs`
 
 ## Inventory
 
 ### Simple public
 
 - `symplectic::ehz_capacity`, `symplectic::ehz_capacity_pruned`, `symplectic::ehz_capacity_unpruned`, `symplectic::ehz_capacity_billiard`, `symplectic::OrbitSearchResult`, `symplectic::volume`, `symplectic::omega0`, `symplectic::lagrangian_product`, `symplectic::regular_polygon_2d`, `symplectic::rotate_polygon_2d`, `symplectic::known_polytopes`, `symplectic::test_utils`, `symplectic::Polytope4D`, `symplectic::ConstructionError`, `symplectic::Skeleton`, `symplectic::QhullError`.
-- Why: these are the root reexports in `library/src/lib.rs` and read like the intended short path for routine experiment code.
+- Why: these are the root reexports in `crates/symplectic/src/lib.rs` and read like the intended short path for routine experiment code.
 - Examples of current callers:
   - `experiments/combinatorial-cells/omega-hypothesis/main.rs` uses `symplectic::ehz_capacity`.
   - `experiments/hko-local-maximum/cut-and-ascent/main.rs` and `experiments/sys-landscape/random-sample/main.rs` use the root auto wrapper.
@@ -103,7 +103,7 @@ boundary questions that still need a Jörn decision.
 - Should `hk2017::permutations::for_each_cyclic_permutation` be treated as a stable expert surface, or as an accidental helper that later code should not import directly?
 - Should `billiard::facet_classification` remain reachable from experiments, or move behind a topic-local helper once the gradient-ascent-products dependency is revisited?
 - Should `kkt::qp_assembly::build_augmented_system` remain an experiment-facing low-level tool for numerics, or be treated as internal assembly code?
-- Should the experiment code standardize on the root reexports in `library/src/lib.rs`, or is the deep-module form acceptable for the thesis phase?
+- Should the experiment code standardize on the root reexports in `crates/symplectic/src/lib.rs`, or is the deep-module form acceptable for the thesis phase?
 - Should `database`, `dataset`, `random`, and `derivatives` remain expert public library APIs, or be moved to topic-local helper crates when the program turns from discovery to refactor?
 
 ## Next Safe Resume Point

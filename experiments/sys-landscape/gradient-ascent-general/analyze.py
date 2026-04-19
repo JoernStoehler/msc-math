@@ -67,7 +67,7 @@ def pick_jsonl_files() -> list[Path]:
         return [LEGACY_SUMMARY_PATH]
     print(
         f"ERROR: no data in {DATA_DIR} or at {LEGACY_SUMMARY_PATH}. "
-        "From the repository root, see research/sys-landscape/design/gradient-ascent-general.md 'How to run'.",
+        "From the repository root, see experiments/sys-landscape/gradient-ascent-general/job.sh 'How to run'.",
         file=sys.stderr,
     )
     sys.exit(1)

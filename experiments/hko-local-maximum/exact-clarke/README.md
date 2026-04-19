@@ -250,4 +250,4 @@ further than the raw gradient-class counts:
 
 The current symmetry-reduced prototype hypothesis is summarized in:
 
-- `research/hko-local-maximum/design/exact-clarke-orbit-catalog.md`
+- `experiments/hko-local-maximum/DECISIONS.md`

@@ -39,6 +39,7 @@ Planned deliverables:
 - `.devcontainer/`: Local devcontainer and Codex web environment documentation.
 - `.agents/skills/`: Codex skills. Detailed conventions and workflows live here.
 - `.codex/agents/`: Codex subagent definitions.
+- `.codex/reference/`: Durable agent-facing reference notes, prompt packets, and repo-maintainability design material.
 - `.codex/worktrees/`: Repo-local worktrees for isolated Codex sessions.
 
 ## Current Instruction Sources

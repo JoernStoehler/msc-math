@@ -69,7 +69,7 @@ HKO2024 lives in multiple ambient spaces (LP(5,5), LP(6,5), F=10, F=13, convex b
 
 ### [done] [2026-04] 1a. First-order analysis in a_i space (gradient-analysis)
 - Rank 25 in R^40, 15 flat directions. LP confirms 0 in conv(150 per-orbit gradients).
-- `research/hko-local-maximum/design/gradient-analysis.md`
+- `experiments/hko-local-maximum/REASONING.md`
 
 ### [done] [2026-04] 1e. Second-order analysis along flat directions
 - All 15 basis + 100 random curvatures negative (-0.31 to -0.02). Supports local maximality.
@@ -85,11 +85,11 @@ HKO2024 lives in multiple ambient spaces (LP(5,5), LP(6,5), F=10, F=13, convex b
 
 ### [done] [2026-03] 1c. Subdifferential LP in (n,h)-space
 - Phase C LP confirms 0 in conv(per-orbit gradients). Superseded by 1a (a_i space, no gauge).
-- `research/hko-local-maximum/design/subdifferential-lp.md`
+- `experiments/hko-local-maximum/DECISIONS.md`
 
 ### [done] [2026-03] 1d. Lagrangian boundary mapping
 - Characteristic radius ~0.035, anisotropic (7x aspect ratio), ~10^-31 volume fraction.
-- `research/hko-local-maximum/design/lagrangian-boundary.md`
+- `experiments/hko-local-maximum/REASONING.md`
 
 ### [done] [2026-03] Perturbation neighborhood (LP(5,5) random perturbations)
 - Historical single-eps artifact `pentagon-perturb.jsonl`: 101 recorded perturbations all retain sys>1 (min 1.0142, max 1.0472). Current smoke/LICCA pipeline is tracked separately below.
@@ -107,7 +107,7 @@ HKO2024 lives in multiple ambient spaces (LP(5,5), LP(6,5), F=10, F=13, convex b
 
 ### [Jörn] [group:hko] Verify h-space proof
 - Danskin + symmetry + Euler homogeneity argument. ~15 min.
-- `research/hko-local-maximum/design/gradient-analysis.md`
+- `experiments/hko-local-maximum/REASONING.md`
 
 ### [Jörn] [group:hko] Verify second-order formal proposition
 - Non-smooth second-order sufficiency proof sketch needs rigor check.
@@ -115,8 +115,8 @@ HKO2024 lives in multiple ambient spaces (LP(5,5), LP(6,5), F=10, F=13, convex b
 
 ### [open] [group:hko] Exact Clarke-subgradient checker for HKO2024
 - Preferred route for the intended `RESULTS.md` `M_10` theorem: prove that the Clarke-flat directions in dual-vertex coordinates are exactly the infinitesimal symmetry directions, using exact linear algebra instead of the current second-order numerical evidence route.
-- Design note: `research/hko-local-maximum/design/exact-clarke-subgradient.md`
-- Durable execution tracker: `research/hko-local-maximum/design/exact-clarke-closure-plan.md`
+- Design note: `experiments/hko-local-maximum/DECISIONS.md`
+- Durable execution tracker: `experiments/hko-local-maximum/NEXT-STEPS.md`
 - Current Packet 1 artifacts: `experiments/hko-local-maximum/exact-clarke/hko-geometry.json`, `experiments/hko-local-maximum/exact-clarke/hko-symmetry-tangent.json`, `experiments/hko-local-maximum/exact-clarke/numerical-minima-summary.json`
 - Current execution policy: prefer the larger exact-computation route with the simplest trustworthy setup. Use symmetry/paper reductions first as validation, bookkeeping, and explanation surfaces; make them load-bearing only if the larger exact route fails to become thesis-ready.
 - Backend contract: keep the checker backend-agnostic as long as it emits a trusted witness artifact. Current default is SageMath for exact number fields and exact linear algebra; the future Rust number-field backend is an explicit candidate if it gives the same witness contract with better performance. SymPy remains acceptable for smaller exact scaffolding and witness generation when performance is sufficient.
@@ -138,7 +138,7 @@ HKO2024 lives in multiple ambient spaces (LP(5,5), LP(6,5), F=10, F=13, convex b
 ### [future] [group:hko] Higher-F perturbation validation (F=10→12, F=10→13)
 - `RESULTS.md` records F=12/F=13 validation as pending/future evidence for the broad HKO2024 local-maximality conjecture; only F=11 checks are currently done.
 - Extends facet-splitting and cut-and-ascent to add 2-3 facets simultaneously
-- Suggested in `research/hko-local-maximum/design/cut-and-ascent.md`
+- Suggested by the continuation notes in `experiments/hko-local-maximum/DECISIONS.md`
 
 ### [future] [group:hko] F-refinement convergence (increasing F as smooth approximation)
 
@@ -167,39 +167,39 @@ Stronger conjecture: HKO2024 may be (up to perturbation/symplectomorphism) the o
 ### [done] [2026-04] 2d. Variable-F ascent (F to F+1)
 - 90 trials. F=10 local maxima often improve at F=11 but marginal; no sys>1.
 - `experiments/sys-landscape/variable-f-ascent/`
-- Successor baseline for the next continuation line: `research/sys-landscape/design/witness-search-program.md:67-75`
+- Successor baseline for the next continuation line: `experiments/sys-landscape/NEXT-STEPS.md`
 
 ### [open] [group:witness-search] Witness oracle instrumentation + benchmark bank
 - Upgrade exact witness search from "best permutation only" to a reusable local-structure oracle: top-`m` / within-gap returns, incumbent warm starts, near-active witness metadata, runtime diagnostics.
 - Bundle the benchmark bank into the same session; do not track it as a separate item.
 - Post-Kai priority: optional AI-work-pattern / publication-polish trial through about 2026-04-21. Do not treat this as required thesis coverage. Stop if the first session does not produce a reusable oracle surface, benchmark report, or clear negative finding without high Jörn interpretation load.
-- Pointer: `research/sys-landscape/design/witness-search-program.md:22-38`
+- Pointer: `experiments/sys-landscape/NEXT-STEPS.md`
 
 ### [future] [group:witness-search] Witness reuse + safe prefilter calibration
 - Quantify trust radius for local witness caches and benchmark safe pruning via `U_A(K) < 1`.
 - Compare minimizer-only, top-`m`, within-gap, parent-cache, and hybrid witness sets.
 - Fold permutation-neighborhood search and warm-start benchmarking into this line, not separate tracker headers.
-- Pointer: `research/sys-landscape/design/witness-search-program.md:40-53`
+- Pointer: `experiments/sys-landscape/NEXT-STEPS.md`
 
 ### [future] [group:witness-search] Reduced-model ascent on witness sets
 - Soft-min / log-sum-exp reduced-model ascent first; min-norm convex-hull QP second if the first pass is promising.
 - Acceptance criterion: compare against exact-evaluate-every-step on the same seeds; report best exact `sys`, exact-call count, and wall-clock.
-- Pointer: `research/sys-landscape/design/witness-search-program.md:55-65`
+- Pointer: `experiments/sys-landscape/NEXT-STEPS.md`
 
 ### [future] [group:witness-search] Witness-guided F→F+1 continuation
 - Replace random facet addition with witness-guided vertex splitting and witness lifting into the child problem.
 - Compare directly against `experiments/sys-landscape/variable-f-ascent/` and `experiments/hko-local-maximum/cut-and-ascent/`.
-- Pointer: `research/sys-landscape/design/witness-search-program.md:67-75`
+- Pointer: `experiments/sys-landscape/NEXT-STEPS.md`
 
 ### [future] [group:witness-search] Symmetry-family search
 - Search low-dimensional orbit-union families instead of only generic iid proposals.
 - Use the reuse, prefilter, and reduced-model machinery inside those families.
 - Keep combinatorial/order-type diagnostics as supporting logging inside this line.
-- Pointer: `research/sys-landscape/design/witness-search-program.md:77-83`
+- Pointer: `experiments/sys-landscape/NEXT-STEPS.md`
 
 ### [future] [group:witness-search] Box-pruning on structured families
 - Downstream of the symmetry-family line: use witness upper bounds to prune parameter boxes once a productive family exists.
-- Pointer: `research/sys-landscape/design/witness-search-program.md:77-83`
+- Pointer: `experiments/sys-landscape/NEXT-STEPS.md`
 
 ### [done] [2026-03] Random sampling (general + products + calibration)
 - Random polytopes max sys=0.578. Random products max sys=0.794 (6x6).
@@ -225,7 +225,7 @@ Stronger conjecture: HKO2024 may be (up to perturbation/symplectomorphism) the o
 ### [open] Analytical formula for sys(P_5 x R(theta) P_5)
 - Standalone mathematical result in `RESULTS.md`: explain the shape of the pentagon rotation curve.
 - Scout workspace landed on 2026-04-18:
-  `research/sys-landscape/design/pentagon-rotation-formula.md`,
+  `experiments/sys-landscape/REASONING.md`,
   `formal/sys-landscape/pentagon-rotation-formula.tex`,
   `experiments/sys-landscape/pentagon-rotation-formula/`.
 - Current conjecture:
@@ -264,7 +264,7 @@ sys as a continuous function on polytope space, no privileged threshold.
 - Post-Kai priority: closure-blocking for the hostile-landscape thesis wording, but bounded in method scope and effort. Do not invent novel tools here; throw standard data-science methods at the available datasets and see whether any transferable signal actually appears.
 - Run regression/classifier methods on random polytopes using Euclidean and symplectic feature data. More importantly, run the same checks on local maxima found by ascent.
 - Default dataset boundary: omit packets constructed near HKO2024 from the main modeling surface so the analysis does not learn the spoiler "start near the one known counterexample"; HKO-local packets may appear only as separately labeled controls or sensitivity checks.
-- Durable data contract before modeling: `research/sys-landscape/design/feature-pattern-search.md` chooses the normalized `poly_id`/`state_id` core-plus-enrichment dataset shape over an ad hoc wide table or a fake full state graph, and fixes `poly_id` as a hash of canonical exact dual vertices.
+- Durable data contract before modeling: `experiments/sys-landscape/REASONING.md` records the normalized `poly_id`/`state_id` core-plus-enrichment dataset shape over an ad hoc wide table or a fake full state graph, and fixes `poly_id` as a hash of canonical exact dual vertices.
 - Candidate outcomes: a transferable signal gives a conjecture or guided search strategy; no signal or only non-transferable structure supports the hostile-landscape conclusion.
 - Dependencies: random/polytope datasets are available now; use current local-maxima datasets immediately and extend to LICCA-returned local maxima if those artifacts arrive in time.
 - First implementation packet: add a `sys-*` converter that normalizes the existing random/ascent JSONLs into core tables (`polytopes`, `states`, `capacity_results`, `step_events`) with an explicit source-priority rule. Do not start with model fitting or force intermediate-state geometry that current trace logs do not contain.
@@ -283,7 +283,7 @@ sys as a continuous function on polytope space, no privileged threshold.
 ### [future] Systematic landscape analysis
 - Gradient flow convergence, local maxima below sys=1, random noise effects.
 - Partial data in gradient-ascent experiments.
-- Witness-search successor line: `research/sys-landscape/design/witness-search-program.md:55-83`
+- Witness-search successor line: `experiments/sys-landscape/NEXT-STEPS.md`
 - Local unblocked queue after the bounded hostile-landscape closure:
   1. only after richer columns: trajectory/state-graph methods beyond the current scalar `feature_trajectory` block
   2. optional local refinement: explain or normalize the new face-symplectic block if a cleaner endpoint-side interpretation is needed before LICCA rows arrive
@@ -307,7 +307,7 @@ Instrument development. Results promote to `library/`.
 
 ### [open] [group:library] Capacity/orbit result API architecture
 - Problem: the public library API should expose one clear algorithm family with nice names: `ehz_capacity` (auto), `ehz_capacity_pruned`, `ehz_capacity_unpruned`, and `ehz_capacity_billiard`. Non-default consumers still need richer algorithm control: all certified candidate orbits, all minimum-action simple orbits within tolerance, near-active witnesses, pruning/solver diagnostics, and recovered primal trajectories. That richer control should come from explicit building blocks, not from a second overlapping family of assembled algorithm entrypoints.
-- Durable design note: `research/repo-maintainability/design/hk2017-result-api-plan.md`.
+- Durable design note: `.codex/reference/repo-maintainability/design/hk2017-result-api-plan.md`.
 - Architecture note from the first repo-level doc pass: the old `EhzResult` layering was accidental complexity. The root and explicit `ehz_capacity*` family now returns `OrbitSearchResult`; geometric-orbit recovery is still a separate pass; derivatives stay as low-level functions plus orbit-level helpers rather than a heavyweight report object.
 - Execution status on `capacity-result-api-exec`: Packet 1 scaffold landed as `library/src/algorithms/orbit_search.rs` with shared enums/types for the new result layer. Packet 2 and the current follow-up refactor now treat the intended API split as: one router family `ehz_capacity`, `ehz_capacity_pruned`, `ehz_capacity_unpruned`, `ehz_capacity_billiard`, plus explicit building blocks for sigma traversal, one-sigma solve, and aggregation. Concretely, the library now has shared `solve_orbit_sigma(...)`, shared exact-fallback / guarantee-mode helpers, a public `aggregate_orbits(...)` building block for non-default consumers, and algorithm-specific sigma traversal helpers under `algorithms::hk2017` and `algorithms::billiard`. The root `ehz_capacity*` family returns `OrbitSearchResult`, `OrbitSearchResult` exposes scalar convenience accessors (`capacity()`, `best_sigma()`, `best_beta()`, `best_subset()`), and the legacy deeper HK2017 `EhzResult` family has been deleted. `orbit_recovery::recover_and_verify(...)` now consumes `OrbitKktData` rather than a root-shaped summary object. `library/src/derivatives.rs` exposes `OrbitGradientA`, `ClarkeSubdiffA`, `DerivativeError`, a `KktResult`-level derivative helper, an `OrbitKktData`-level derivative helper, and primitive Clarke directional-derivative helpers; the migrated buildable packages now include `exp-combinatorial-cells`, `exp-sys-landscape`, `exp-hko-local-maximum` (`hko-second-order`, `hko-cut-and-ascent`, `hko-gradient-analysis`, `hko-lagrangian-boundary`), the full `dev-gradient` package, `axioms-orbit-recovery`, `visualization`, `dev-algorithm-comparison` (`benchmark`, `profile`, `ablation`), `dev-capacity-validation` (`correctness`), and `dev-numerical-analysis` (`q-error`, `unknown-predicates`). `hko-gradient-analysis` now uses `OrbitKktData` and the orbit-level derivative helper while intentionally keeping its experiment-local stricter `beta > EPS_BETA_POSITIVE` valid-orbit policy; `hko-second-order` now also uses `OrbitKktData` and the orbit-level derivative helper, removing its per-orbit KKT re-solve for multiplier recovery; `omega-hypothesis` now uses the `KktResult`-level derivative helper instead of raw `beta/q/mu/sigma` glue; the repeated all-valid-orbit summary helper in `exp-combinatorial-cells` now lives once in `experiments/combinatorial-cells/src/lib.rs` instead of four binary-local copies; the repeated stricter-orbit collector in `exp-hko-local-maximum` now lives once in `experiments/hko-local-maximum/src/lib.rs` instead of two binary-local copies; and the `dev-gradient` package now centralizes its strict-orbit enumeration and safe-wrapper helpers in `experiments/numerics/gradient/src/lib.rs`. `unknown-predicates` now uses the new interval-rich result surface (`min_action`, `min_action_lower`, `min_action_upper`, `beta_min`, `has_unknown`) rather than the deleted `capacity_uncertain`/`numerical_gap()` output contract. The legacy billiard scalar adapter path (`billiard_capacity`, `BilliardResult`, `collect_legacy_capacity(...)`, `legacy_solution_from_orbit(...)`) and the dead `capacity_accumulator` module have now been deleted; the ablation experiment uses its own local result row type instead of borrowing library scalar-result structs. The root `ehz_capacity*` family deliberately stays on the unresolved f64 search surface. Non-default consumers that want stronger guarantee modes are expected to use the building blocks directly rather than calling a second overlapping assembled family. The current open limitation beyond that cleanup is still explicit projected-backend support: `OrbitSearchError::UnsupportedBackend` reports that `library/src/kkt/projection_solver.rs` does not yet expose the payload/error-bound contract needed by the shared result layer.
 - Near-term follow-up worth doing without another design round: use the pre-merge review pass to trim any remaining stale migration wording and wrapper-shaped test names so the branch reads like the settled router/building-block architecture rather than the migration path that produced it.
@@ -325,7 +325,7 @@ Instrument development. Results promote to `library/`.
 - The local-first packet is now split into two experiments with shared target-pool logic in `experiments/verification/src/lib.rs`.
 - `experiments/verification/all-minimum/` owns minimum-set validation: it recomputes minima from the polytope via pruned HK2017 sigma enumeration, `solve_orbit_sigma(...)`, and `aggregate_orbits(..., OrbitGuaranteeMode::MinimaSafe)`, then writes trusted minimum-orbit rows to `all-minimum-orbits.jsonl`.
 - `experiments/verification/orbit-recovery/` now consumes those trusted rows, rebuilds one-sigma KKT data, and checks geometric recovery with `recover_and_verify(...)` only.
-- Current outputs are `experiments/verification/all-minimum/{all-minimum,all-minimum-orbits}.jsonl` and `experiments/verification/orbit-recovery/{orbit-recovery,orbit-recovery-orbits}.jsonl`, plus matching `smoke-*` files. Design notes live in `research/verification/design/all-minimum.md` and `research/verification/design/orbit-recovery.md`.
+- Current outputs are `experiments/verification/all-minimum/{all-minimum,all-minimum-orbits}.jsonl` and `experiments/verification/orbit-recovery/{orbit-recovery,orbit-recovery-orbits}.jsonl`, plus matching `smoke-*` files. Current package reasoning lives in `experiments/verification/REASONING.md` and `experiments/verification/DECISIONS.md`.
 - Explicit tolerance choice landed in the experiment: use a tiny action-tie cutoff `1e-12` after the broader `MinimaSafe` candidate collector. Reason: `gap = 0.0` undercounted the known simplex multiplicity. The summary rows keep the broader candidate interval visible so loose lower bounds remain observable.
 - Canonical local-first run on 2026-04-17: `all-minimum` passes 28/28 selected polytopes and writes 469 trusted minimum orbits total; `orbit-recovery` then rebuilds and recovers 469/469 trusted minimum orbits successfully. Expected multiplicities are hit on the documented symmetric witnesses (`simplex = 6`, `hypercube = 2`). The largest observed sigma-level minimum set in this packet is `hko_pentagon = 412`, with observed action spread `4.44e-15`.
 - Discussion item left intentionally open after pre-merge review: some `all-minimum` rows still have broad `MinimaSafe` intervals or missing finite upper bounds on individual retained rows, while the current pass/fail rule treats those as diagnostics rather than failures. Keep that semantics visible in tracker/docs until Jörn decides whether the packet is “trusted output + diagnostics” or “interval-resolved certification.”
@@ -480,9 +480,9 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
   - `experiments/hko-local-maximum/perturbation-neighborhood/`: split historical `pentagon-perturb.jsonl` findings from current `data/{smoke,licca}-eps-*.jsonl` analyzer outputs; update stale task/design min/max wording.
 - Closed in checkpoint `9d55e7f8`:
   - `experiments/combinatorial-cells/convexity/`: design note now matches committed JSONL (2800 rows, 2661 successful midpoint constructions, 1558/1558 product transition failures, 0/1103 random transition failures).
-  - `research/numerics/design/error-bounds.md`: stale M1 wording marked historical; stale `make smoke` / `make full` commands removed.
-  - `research/crosspolytope/design/main.md`: elapsed-time wording reconciled to the committed `1095.1s` JSONL result vs historical `1112.8s` console/table total.
-  - `research/hko-local-maximum/design/cut-and-ascent.md`: stale `~10s per trial` scale-up estimate removed.
+  - `experiments/numerics/REASONING.md`: stale M1 wording marked historical; stale `make smoke` / `make full` commands removed from the live topic-note surface.
+  - `experiments/crosspolytope/REASONING.md`: elapsed-time wording reconciled to the committed `1095.1s` JSONL result vs historical `1112.8s` console/table total.
+  - `experiments/hko-local-maximum/DECISIONS.md`: stale `~10s per trial` scale-up estimate removed from the live continuation-note surface.
 - Stop condition for this closure bundle was reached. Keep any remaining work on dedicated packets instead of reopening this row into another broad numerics sweep.
 - Post-Kai priority: high-value polish because it protects thesis claims. Before about 2026-04-21, prefer shallow evidence repairs and stale-note fixes; after that, weaken or qualify claims instead of rerunning broad experiments.
 
@@ -527,17 +527,17 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 - Post-Kai: use the polish window for pruning and correctness alignment. After about 2026-04-21, only fix items that would make the thesis wrong or unreproducible; leave code-side cleanup as future work.
 
 ### [open] [group:pm] Repo maintainability / architecture program
-- Durable planning note: `research/repo-maintainability/design/main.md`
+- Durable planning note: `.codex/reference/repo-maintainability/design/main.md`
 - Purpose: gather repo facts first, then prepare the Jörn review surface for the broad maintainability refactor. Separate `observed facts`, `open architecture decisions`, and `candidate execution packets` before freezing a multi-session DAG.
 - Seeded facts already recorded in the note: before this session there was no top-level `ARCHITECTURE.md`; experiments already depend on deep library paths; topic packages already have `src/lib.rs` helper crates; the 170-row polytope cache is mirrored in three identical files; `variable-f-ascent` cache is intentionally local.
 - Discovery artifacts now written:
-  - `research/repo-maintainability/design/repo-facts.md`
-  - `research/repo-maintainability/design/import-surface-inventory.md`
-  - `research/repo-maintainability/design/shared-helper-inventory.md`
-  - `research/repo-maintainability/design/data-flow-inventory.md`
-  - `research/repo-maintainability/design/docs-navigation-inventory.md`
-  - `research/repo-maintainability/design/execution-constraints-inventory.md`
-- Current documentation method: facts first, architecture prose second. The consolidated current-state fact base is `research/repo-maintainability/design/repo-facts.md`; `ARCHITECTURE.md` should be derived from it instead of mixing discovery with policy.
+  - `.codex/reference/repo-maintainability/design/repo-facts.md`
+  - `.codex/reference/repo-maintainability/design/import-surface-inventory.md`
+  - `.codex/reference/repo-maintainability/design/shared-helper-inventory.md`
+  - `.codex/reference/repo-maintainability/design/data-flow-inventory.md`
+  - `.codex/reference/repo-maintainability/design/docs-navigation-inventory.md`
+  - `.codex/reference/repo-maintainability/design/execution-constraints-inventory.md`
+- Current documentation method: facts first, architecture prose second. The consolidated current-state fact base is `.codex/reference/repo-maintainability/design/repo-facts.md`; `ARCHITECTURE.md` should be derived from it instead of mixing discovery with policy.
 - `ARCHITECTURE.md` now carries both the component/code architecture and the current persisted-data architecture. `scripts/dataflow.sh` regenerates `DATAFLOW.md`, which is the current declared artifact audit surface for producer/consumer and timestamp questions, while `AGENTS.md` remains the short repo map and `ARCHITECTURE.md` stays descriptive.
 - Current phase: architecture-doc pass and capacity/orbit API decision surface reviewed. Next step is execution-packet planning and worktree setup for the approved shared result-layer direction (`hk2017`, `hk2017_unpruned`, `billiard` sharing one orbit/result layer with separate search frontends).
 - Discussion order for the next phase: keep the design note as the source of approved API direction, then write and execute bounded packets incrementally instead of freezing the whole DAG upfront.
@@ -577,13 +577,13 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 - Stop condition: if an optimization would change committed data values, alter thesis-facing figures, or merge transient search states into a shared cache, stop for Jörn's thesis-priority decision.
 
 ### [open] [group:docs] Agent-facing architecture and navigation guide
-- Goal: give future agents a repo-level map for the common "where does this live?" questions across `library/`, `experiments/`, datasets, and verification commands. Current orientation is split across `AGENTS.md`, `TASKS.md`, `library/src/lib.rs`, `library/src/database.rs`, and per-package `src/lib.rs` headers; there is no top-level architecture guide today.
+- Goal: give future agents a repo-level map for the common "where does this live?" questions across `crates/symplectic/`, `experiments/`, datasets, and verification commands. Current orientation is split across `AGENTS.md`, `TASKS.md`, `crates/symplectic/src/lib.rs`, `crates/symplectic/src/database.rs`, and per-package `src/lib.rs` headers; there is no top-level architecture guide today.
 - Preferred output: top-level `ARCHITECTURE.md` that answers the frequent navigation questions first and links outward to module headers, formal files, and tracker packets instead of duplicating them. This is documentation and boundary-setting work, not a broad refactor task.
 - Minimum contents:
-  - workspace map (`library/`, `experiments/`, `formal/`, `research/`, `thesis/`) with which surfaces are thesis-facing, experiment-owned, or infrastructure.
-  - stable/simple library entry points versus expert deep import paths versus intentionally experiment-local helpers.
+  - workspace map (`crates/`, `experiments/`, `formal/`, `contracts/`, `.codex/reference/`, `thesis/`) with which surfaces are thesis-facing, experiment-owned, or infrastructure.
+  - stable/simple crate entry points versus expert deep import paths versus intentionally experiment-local helpers.
   - data-flow map: canonical shared polytope catalog, mirrored caches, experiment-owned transient datasets, and JSONL/LFS rules.
-  - code-placement rules: when to promote to `library/`, when to extract to `experiments/<topic>/src/lib.rs`, and when to keep logic per-binary.
+  - code-placement rules: when to promote to `crates/symplectic/`, when to extract to `experiments/<topic>/src/lib.rs`, and when to keep logic per-binary.
   - "start here" verification commands for common agent tasks (build one package, run one experiment smoke, check a data mirror).
 - Dependency note: this guide should consume conclusions from "Capacity/orbit result API architecture", "Experiment-to-library algorithm surface audit", and "Experiment data-flow audit and cache plan". A first draft may land earlier only if it marks open decisions explicitly instead of guessing them.
 - Acceptance check: a new agent can answer the common navigation questions without source spelunking: where to compute capacity/volume/sys, where shared experiment helpers belong, which caches are canonical, which import paths are intended to be stable, and which artifacts are generated-only.
@@ -654,13 +654,13 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 - Cleaned stale post-migration references in non-onboarding Markdown, TeX, Rust comments, and scan-caught Python diagnostics; no mathematical claims or experiment conclusions changed.
 - First-pass cleanup covered `thesis/tube-algorithm-notes.md`, `thesis/appendix-rewrite-notes.md`, `library/src/geom/review-notes.md`, `experiments/numerics/error-bounds/algorithm-notes.md`, and formal headers.
 - Follow-up experiment Rust pass removed old wave/subagent migration TODO scaffolding and stale pre-migration crate-path references from experiment comments; the experiment/library migration-wording scan returns no matches.
-- Research-note migration coverage audit: `/tmp/1-answer.md` reports 33/33 live `experiments/**/main.rs` directories have live `research/**/design/*.md` notes, 0 live experiments need migration, and the only `logbook*` path is the generated profiling history file. The full matrix was a one-time audit aid; do not preserve it unless a future formal-file coverage task needs row-level evidence.
+- Research-note migration coverage audit: `/tmp/1-answer.md` was the one-time pre-migration matrix for retiring `research/**/design/*.md` in favor of topic-local `REASONING.md`, `DECISIONS.md`, and `NEXT-STEPS.md` notes. Keep it only if a future coverage task needs the row-level audit evidence.
 - Preserved copied-code provenance comments and historical deletion/audit notes by marking them historical or leaving already explicit provenance wording.
-- Verification: stale-path scans now report only explicitly historical/provenance hits; changed live references point to existing `formal/`, `library/`, `research/`, `.devcontainer/`, or experiment paths.
+- Verification: stale-path scans now report only explicitly historical/provenance hits; changed live references point to existing `formal/`, `crates/`, `.codex/reference/`, `.devcontainer/`, or experiment paths.
 
 ### [done] [2026-04-15] [group:library] Remove HK2017 capacity fixture, keep profiling bench
 - Decision: delete `library/tests/fixtures/capacity_dataset.json` and `library/src/algorithms/hk2017/generate_capacity_fixtures.rs`. Broad HK2017 validation belongs in `experiments/verification/correctness/`; library tests keep small live smoke/regression checks for literature values, conformality, symplectic invariance, pruning agreement, and billiard agreement.
-- `library/benches/profiling.rs` is still the Criterion source cited by `research/verification/design/algorithm-comparison/benchmark.md` for phase profiling and micro-benchmarks; keep `library/Cargo.toml` bench metadata unchanged.
+- `library/benches/profiling.rs` remains the Criterion source cited by the verification benchmark write-up for phase profiling and micro-benchmarks; keep `library/Cargo.toml` bench metadata unchanged.
 - Updated `experiments/verification/algorithm-comparison/profiling/analyze.py` and refreshed its generated profiling artifacts so the benchmark design notes no longer point at deleted fixture tests.
 - Convention update: `AGENTS.md`, `$rust-conventions`, and `$experiment-conventions` now state the boundary between fast crate tests and slow validation experiments.
 - Verification for the branch: `cargo test -p symplectic --release --lib`; `cd library/ && cargo clippy --lib -- -D warnings`; `cargo test -p dev-capacity-validation --bin axioms-correctness --release`; `cargo build --workspace --release`; `uv run analyze.py` in `experiments/verification/algorithm-comparison/profiling/`; `cd thesis/ && latexmk && ./check-build.sh`; `cd formal/ && latexmk`. No bench metadata changed, so `cargo bench -p symplectic --bench profiling --no-run` is not required.

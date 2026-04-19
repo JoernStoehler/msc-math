@@ -17,4 +17,4 @@
 
 ## Why these notes replaced legacy docs
 - The old `README.md` and `RESEARCH.md` were provisional routing documents; they duplicated static map/commands and became stale as outputs grew.
-- The design notes in `research/combinatorial-cells/design/*.md` are now the historical source of truth; current local docs now provide operational reasoning, decisions, and next work so a reader can proceed without cross-referencing that tree.
+- Historical design notes are superseded by local operational docs; readers should use `REASONING.md`, `DECISIONS.md`, and `NEXT-STEPS.md` for current claims and next steps.

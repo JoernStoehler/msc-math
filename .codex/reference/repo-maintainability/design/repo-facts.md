@@ -19,29 +19,29 @@ policy unless the current repo already states that policy explicitly.
 
 - [AGENTS.md](/workspaces/msc-math/AGENTS.md:1)
 - [TASKS.md](/workspaces/msc-math/TASKS.md:445)
-- [library/src/lib.rs](/workspaces/msc-math/library/src/lib.rs:1)
-- [library/src/database.rs](/workspaces/msc-math/library/src/database.rs:1)
+- [crates/symplectic/src/lib.rs](/workspaces/msc-math/crates/symplectic/src/lib.rs:1)
+- [crates/symplectic/src/database.rs](/workspaces/msc-math/crates/symplectic/src/database.rs:1)
 - [experiments/combinatorial-cells/src/lib.rs](/workspaces/msc-math/experiments/combinatorial-cells/src/lib.rs:1)
 - [experiments/hko-local-maximum/src/lib.rs](/workspaces/msc-math/experiments/hko-local-maximum/src/lib.rs:1)
 - [experiments/numerics/gradient/src/lib.rs](/workspaces/msc-math/experiments/numerics/gradient/src/lib.rs:1)
 - [experiments/sys-landscape/src/lib.rs](/workspaces/msc-math/experiments/sys-landscape/src/lib.rs:1)
-- [import-surface-inventory.md](/workspaces/msc-math/research/repo-maintainability/design/import-surface-inventory.md:1)
-- [shared-helper-inventory.md](/workspaces/msc-math/research/repo-maintainability/design/shared-helper-inventory.md:1)
-- [data-flow-inventory.md](/workspaces/msc-math/research/repo-maintainability/design/data-flow-inventory.md:1)
-- [docs-navigation-inventory.md](/workspaces/msc-math/research/repo-maintainability/design/docs-navigation-inventory.md:1)
-- [execution-constraints-inventory.md](/workspaces/msc-math/research/repo-maintainability/design/execution-constraints-inventory.md:1)
+- [import-surface-inventory.md](/workspaces/msc-math/.codex/reference/repo-maintainability/design/import-surface-inventory.md:1)
+- [shared-helper-inventory.md](/workspaces/msc-math/.codex/reference/repo-maintainability/design/shared-helper-inventory.md:1)
+- [data-flow-inventory.md](/workspaces/msc-math/.codex/reference/repo-maintainability/design/data-flow-inventory.md:1)
+- [docs-navigation-inventory.md](/workspaces/msc-math/.codex/reference/repo-maintainability/design/docs-navigation-inventory.md:1)
+- [execution-constraints-inventory.md](/workspaces/msc-math/.codex/reference/repo-maintainability/design/execution-constraints-inventory.md:1)
 
 ## Repo-Wide Structure
 
 - The planned deliverables are:
   - printed thesis in `thesis/build/main.pdf`
-  - Rust library in `library/`
+  - Rust library in `crates/symplectic/`
   - reproducible experiment pipeline in `experiments/`
 - The top-level repo areas and their stated roles are:
-  - `library/`: Rust crate `symplectic`
+  - `crates/symplectic/`: Rust crate `symplectic`
   - `formal/`: developer-facing mathematical sources
   - `experiments/`: Rust/Python experiment packages by topic
-  - `research/`: design notes and experiment plans
+  - `.codex/reference/repo-maintainability/`: durable repo-maintainability reference notes
   - `thesis/`: self-contained publication sources
   - `papers/`: downloaded paper sources
   - `TASKS.md`: project tracker
@@ -55,22 +55,22 @@ policy unless the current repo already states that policy explicitly.
 - Repo orientation is currently split across:
   - `AGENTS.md`
   - `TASKS.md`
-  - `library/src/lib.rs`
-  - `library/src/database.rs`
+  - `crates/symplectic/src/lib.rs`
+  - `crates/symplectic/src/database.rs`
   - per-topic `experiments/<topic>/src/lib.rs` headers
-- `library/src/lib.rs` already explains library-internal submodule boundaries
+- `crates/symplectic/src/lib.rs` already explains library-internal submodule boundaries
   and dependency direction.
-- `library/src/database.rs` already explains that the storage layer does not
+- `crates/symplectic/src/database.rs` already explains that the storage layer does not
   choose a canonical mutable shared cache path.
 - Topic `src/lib.rs` files already exist as package-local helper/doc surfaces,
   even when some are still thin.
 - The maintainability program state already lives in
-  [main.md](/workspaces/msc-math/research/repo-maintainability/design/main.md:1)
+  [main.md](/workspaces/msc-math/.codex/reference/repo-maintainability/design/main.md:1)
   and [TASKS.md](/workspaces/msc-math/TASKS.md:445).
 
 ## Library Surface Facts
 
-- The simple root reexport surface in `library/src/lib.rs` is small. It
+- The simple root reexport surface in `crates/symplectic/src/lib.rs` is small. It
   includes:
   - `ehz_capacity`, `ehz_capacity_pruned`, `ehz_capacity_unpruned`, `ehz_capacity_billiard`, `OrbitSearchResult`
   - `volume`, `omega0`, `lagrangian_product`
@@ -120,7 +120,7 @@ policy unless the current repo already states that policy explicitly.
 
 ## Data And Dataset Facts
 
-- `library/src/database.rs` provides JSONL loading/saving/merge machinery but
+- `crates/symplectic/src/database.rs` provides JSONL loading/saving/merge machinery but
   does not define a canonical shared cache path.
 - `PolytopeRecord` uses `dual_vertices_rational` and `vertices_rational` as
   defining data, with optional later-filled fields such as `source`, `volume`,
@@ -145,9 +145,9 @@ policy unless the current repo already states that policy explicitly.
 ## Current Dependency / Ownership Facts
 
 - The thesis is self-contained and must not depend on runtime links into
-  `experiments/`, `formal/`, or `library/`.
+  `experiments/`, `formal/`, or `crates/symplectic/`.
 - `formal/` is developer-facing math, not thesis input.
-- Stable code is intended to migrate from `experiments/` into `library/`, but
+- Stable code is intended to migrate from `experiments/` into `crates/symplectic/`, but
   exploratory code starts in `experiments/`.
 - Library tests are for fast regressions; slow validation and broad sweeps
   belong in `experiments/`.
@@ -172,7 +172,7 @@ policy unless the current repo already states that policy explicitly.
 - Which current deep paths are intended expert-facing dependencies versus
   accidental internals?
 - Which repeated helpers should stay per-binary, move to topic helper crates,
-  or eventually move into `library/`?
+  or eventually move into `crates/symplectic/`?
 - Which of the byte-identical cache paths should be treated as canonical, if
   any?
 - Which current-state facts belong in `AGENTS.md`, `ARCHITECTURE.md`, and a

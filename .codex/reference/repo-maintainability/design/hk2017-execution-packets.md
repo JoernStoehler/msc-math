@@ -12,7 +12,7 @@ queue. It is intentionally incremental: only the first packets are defined.
 - Parent branch: `capacity-result-api-exec`
 - Parent worktree: `/workspaces/msc-math/.codex/worktrees/capacity-result-api-exec`
 - Source design note:
-  `research/repo-maintainability/design/hk2017-result-api-plan.md`
+  `.codex/reference/repo-maintainability/design/hk2017-result-api-plan.md`
 - Planning rule: do not freeze the whole DAG up front. Add packets as earlier
   packets land and expose the next dependency surface.
 - Current progress:
@@ -22,7 +22,7 @@ queue. It is intentionally incremental: only the first packets are defined.
     branch after the scaffold landed.
   - Packet 2 slice 1 landed:
     - seam report at
-      `research/repo-maintainability/design/packet-2-search-frontend-seam-report.md`
+      `.codex/reference/repo-maintainability/design/packet-2-search-frontend-seam-report.md`
     - shared `solve_orbit_sigma(...)` primitive for the saddle-point path
     - current HK2017 and billiard solver bridges now route through that
       primitive
@@ -56,7 +56,7 @@ queue. It is intentionally incremental: only the first packets are defined.
       Lagrangian products is now mainly for verification/debugging rather than
       normal consumption
   - Packet 3 slice 1 landed:
-    - `library/src/derivatives.rs` now defines `OrbitGradientA`,
+    - `crates/symplectic/src/derivatives.rs` now defines `OrbitGradientA`,
       `ClarkeSubdiffA`, and `DerivativeError`
     - added derivative helpers on both clean seams:
       - `(polytope, sigma, KktResult) -> OrbitGradientA`
@@ -313,7 +313,7 @@ queue. It is intentionally incremental: only the first packets are defined.
      - wire guarantee/backend parameters through the search layer
      - keep old wrappers only as staging aids if needed
    - Planning artifact:
-     - `research/repo-maintainability/design/packet-2-search-frontend-seam-report.md`
+     - `.codex/reference/repo-maintainability/design/packet-2-search-frontend-seam-report.md`
   - Landed so far:
      - shared seam identified: extract below frontend sigma generation and
        above frontend-local certified-winner metadata
@@ -330,7 +330,7 @@ queue. It is intentionally incremental: only the first packets are defined.
         `billiard`
    - Known blocker discovered in this packet:
      - `OrbitSolveBackend::Projected` is still unsupported at the shared
-       payload boundary because `library/src/kkt/projection_solver.rs` does not
+       payload boundary because `crates/symplectic/src/kkt/projection_solver.rs` does not
        yet expose `q_error_bound`
    - Why second:
      - this establishes the real architectural seam before consumer migration
@@ -379,7 +379,7 @@ queue. It is intentionally incremental: only the first packets are defined.
     - the repeated all-valid-orbit summary helper in the
       `exp-combinatorial-cells` package is now centralized in `src/lib.rs`,
       which reduces four copies of the same instrumentation without forcing the
-      semantics into `library/`
+      semantics into `crates/symplectic/`
     - the repeated stricter-orbit collector in `exp-hko-local-maximum` is now
       centralized in `src/lib.rs`, which removes another duplicated
       experiment-local search loop while preserving the package's stricter

@@ -49,7 +49,7 @@ rg -n 'Worktrees|Planning and Verification|JSONL / LFS Safety|Git Conventions' A
 Implication for later packets:
 
 - Discovery notes can land in the current root checkout because the write scope
-  is isolated under `research/repo-maintainability/`.
+  is isolated under `.codex/reference/repo-maintainability/`.
 - Broad implementation packets should default to dedicated worktrees once they
   edit shared library or experiment files.
 
@@ -128,12 +128,12 @@ Implication for later packets:
 - Current root checkout already has unrelated changes:
   - modified `TASKS.md`
   - untracked `VERIFICATION.md`
-  - untracked `research/repo-maintainability/`
+  - durable `.codex/reference/repo-maintainability/` notes
 
 Implication for later packets:
 
 - Root-checkout discovery work should stay confined to the new
-  `research/repo-maintainability/` area plus the already-touched tracker file.
+  `.codex/reference/repo-maintainability/` area plus the already-touched tracker file.
 - Implementation packets that touch shared code should prefer worktrees to
   avoid coupling with this planning state.
 

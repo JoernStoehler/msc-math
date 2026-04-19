@@ -323,8 +323,9 @@ Current documentation split:
 - local `src/lib.rs` headers own package-local intent and local architecture.
 - `formal/` owns developer-facing mathematics and formal labels for
   math-code correspondence.
-- `TASKS.md` and `research/.../design/*.md` own active planning, discovery, and
-  open design questions.
+- `TASKS.md`, `.codex/reference/repo-maintainability/`, and topic-local
+  `REASONING.md` / `DECISIONS.md` / `NEXT-STEPS.md` notes own active planning,
+  discovery, and open design questions.
 
 Current architectural fact: repo orientation already exists in several places,
 but before this session there was no dedicated repo-level architecture file.

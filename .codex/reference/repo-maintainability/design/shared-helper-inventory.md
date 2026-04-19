@@ -3,7 +3,7 @@ Purpose: discovery packet D2 for the repo maintainability / architecture program
 Context: records repeated helper logic across experiments so later sessions can
 resume from concrete implementations and copies instead of chat history. This
 note separates observed duplication from the suggested helper home; final moves
-into `library/` or any new public API promise remain reserved for the main
+into `crates/symplectic/` or any new public API promise remain reserved for the main
 thread or Jörn.
 -->
 
@@ -55,7 +55,7 @@ thread or Jörn.
 - Reason:
   - The shared core is topic-level geometry, not a thesis-facing stable API.
   - `experiments/sys-landscape/src/lib.rs` already exists as the shared helper crate for this family, so it is the natural extraction point for the common classifier.
-  - Promotion into `library/` would commit to a public API around an exploratory boundary classifier before that boundary is settled.
+  - Promotion into `crates/symplectic/` would commit to a public API around an exploratory boundary classifier before that boundary is settled.
 - Jörn decision point:
   - Whether the combinatorial-cells copies should keep the local wrapper until the topic boundary is frozen, or import the shared helper crate directly.
 
@@ -93,7 +93,7 @@ thread or Jörn.
   - The shared `experiments/numerics/gradient/src/lib.rs` helper crate exists, but it is still empty except for the module header.
 - Suggested home: `topic-local helper crate`.
 - Reason:
-  - The common core is a pure subset/permutation enumeration plus KKT filtering loop, which fits the numerics topic crate better than `library/`.
+  - The common core is a pure subset/permutation enumeration plus KKT filtering loop, which fits the numerics topic crate better than `crates/symplectic/`.
   - The strict vs inclusive threshold policy is caller-specific and should stay in the binaries.
   - The result shape (`(action, perm, kkt_result)`) is still experiment-facing, so it does not yet justify a public library surface.
 - Jörn decision point:
@@ -115,7 +115,7 @@ thread or Jörn.
 - Suggested home: `unclear`.
 - Reason:
   - The math core is shared, but the output schema is not.
-  - These helpers are instrumentation, not production algorithms, so folding them into `library/` would create a public promise around debug-only metadata.
+  - These helpers are instrumentation, not production algorithms, so folding them into `crates/symplectic/` would create a public promise around debug-only metadata.
   - A shared core would still need a decision on which orbit metadata is mandatory versus optional.
 - Jörn decision point:
   - Whether the shared core should expose just the orbit enumeration result, or also the extra instrumentation fields used by some binaries.
@@ -124,7 +124,7 @@ thread or Jörn.
 
 ## Blockers / Jörn Decision Points
 
-- Do not promote any of these families into `library/` without an explicit API decision.
+- Do not promote any of these families into `crates/symplectic/` without an explicit API decision.
 - Do not collapse the solver instrumentation variants into one shared type until the required metadata is fixed.
 - Do not merge the step-bound helper into a new public surface before the combinatorial-cells topic boundary is agreed.
 

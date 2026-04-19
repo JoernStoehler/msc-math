@@ -17,66 +17,66 @@ concrete `sigma: &[usize]` and then does the same work:
 
 1. solve `(polytope, sigma)` through the saddle-point bridge,
 2. convert `KktResult` into `OrbitKktData`,
-3. aggregate the solved orbit(s) with [`aggregate_orbits`](../../../library/src/algorithms/orbit_search.rs:545) or [`aggregate_orbits_f64_only`](../../../library/src/algorithms/orbit_search.rs:596),
-4. finalize to an [`OrbitSearchResult`](../../../library/src/algorithms/orbit_search.rs:95).
+3. aggregate the solved orbit(s) with [`aggregate_orbits`](../../../crates/symplectic/src/algorithms/orbit_search.rs:545) or [`aggregate_orbits_f64_only`](../../../crates/symplectic/src/algorithms/orbit_search.rs:596),
+4. finalize to an [`OrbitSearchResult`](../../../crates/symplectic/src/algorithms/orbit_search.rs:95).
 
 This is the smallest extraction that lets Packet 2 add shared collector
-entrypoints in [`orbit_search.rs`](../../../library/src/algorithms/orbit_search.rs:1)
+entrypoints in [`orbit_search.rs`](../../../crates/symplectic/src/algorithms/orbit_search.rs:1)
 without changing solver math or forcing the three candidate generators into one
 abstraction.
 
 ## Files and functions in the current loop
 
 - HK2017 public wrappers on the current surface:
-  [ehz_capacity_pruned](../../../library/src/lib.rs:80),
-  [ehz_capacity_unpruned](../../../library/src/lib.rs:90),
-  [ehz_capacity](../../../library/src/lib.rs:121)
+  [ehz_capacity_pruned](../../../crates/symplectic/src/lib.rs:80),
+  [ehz_capacity_unpruned](../../../crates/symplectic/src/lib.rs:90),
+  [ehz_capacity](../../../crates/symplectic/src/lib.rs:121)
   route through the shared orbit-search result layer.
 - HK2017 enumeration:
-  [enumerate_unpruned](../../../library/src/algorithms/hk2017/enumeration.rs:18),
-  [enumerate_pruned](../../../library/src/algorithms/hk2017/enumeration.rs:22),
-  [enumerate_impl](../../../library/src/algorithms/hk2017/enumeration.rs:26).
+  [enumerate_unpruned](../../../crates/symplectic/src/algorithms/hk2017/enumeration.rs:18),
+  [enumerate_pruned](../../../crates/symplectic/src/algorithms/hk2017/enumeration.rs:22),
+  [enumerate_impl](../../../crates/symplectic/src/algorithms/hk2017/enumeration.rs:26).
 - HK2017 candidate generators used inside the loop:
   `combinations` from `hk2017/combinatorics.rs`,
-  [for_each_cyclic_permutation](../../../library/src/algorithms/hk2017/permutations.rs:35),
+  [for_each_cyclic_permutation](../../../crates/symplectic/src/algorithms/hk2017/permutations.rs:35),
   and optionally
-  [build_transition_matrix](../../../library/src/algorithms/facet_adjacency.rs:30) +
-  [is_feasible_cycle](../../../library/src/algorithms/facet_adjacency.rs:44).
+  [build_transition_matrix](../../../crates/symplectic/src/algorithms/facet_adjacency.rs:30) +
+  [is_feasible_cycle](../../../crates/symplectic/src/algorithms/facet_adjacency.rs:44).
 - Shared one-sigma solve seam now used by HK2017:
-  [solve_orbit_sigma](../../../library/src/algorithms/orbit_search.rs:192)
+  [solve_orbit_sigma](../../../crates/symplectic/src/algorithms/orbit_search.rs:192)
   called from the HK2017 traversal helpers and wired into the shared result
   surface.
 - Billiard public frontend:
-  [ehz_capacity_billiard](../../../library/src/lib.rs:102).
+  [ehz_capacity_billiard](../../../crates/symplectic/src/lib.rs:102).
 - Billiard candidate preparation/generation:
   `classify_facets` from `billiard/facet_classification.rs`,
-  [enumerate_blocks](../../../library/src/algorithms/billiard/block_enumeration.rs:68),
-  [enumerate_k_bounce_sigmas](../../../library/src/algorithms/billiard/block_enumeration.rs:102),
+  [enumerate_blocks](../../../crates/symplectic/src/algorithms/billiard/block_enumeration.rs:68),
+  [enumerate_k_bounce_sigmas](../../../crates/symplectic/src/algorithms/billiard/block_enumeration.rs:102),
   and the same
-  [build_transition_matrix](../../../library/src/algorithms/facet_adjacency.rs:30) +
-  [is_feasible_cycle](../../../library/src/algorithms/facet_adjacency.rs:44).
+  [build_transition_matrix](../../../crates/symplectic/src/algorithms/facet_adjacency.rs:30) +
+  [is_feasible_cycle](../../../crates/symplectic/src/algorithms/facet_adjacency.rs:44).
 - Shared one-sigma solve seam now used by billiard:
-  [solve_orbit_sigma](../../../library/src/algorithms/orbit_search.rs:192)
+  [solve_orbit_sigma](../../../crates/symplectic/src/algorithms/orbit_search.rs:192)
   called from the billiard traversal helpers and wired into the shared result
   surface.
 - Shared tracking/finalization:
-  [aggregate_orbits](../../../library/src/algorithms/orbit_search.rs:545),
-  [aggregate_orbits_f64_only](../../../library/src/algorithms/orbit_search.rs:596),
-  [OrbitSearchResult](../../../library/src/algorithms/orbit_search.rs:95).
+  [aggregate_orbits](../../../crates/symplectic/src/algorithms/orbit_search.rs:545),
+  [aggregate_orbits_f64_only](../../../crates/symplectic/src/algorithms/orbit_search.rs:596),
+  [OrbitSearchResult](../../../crates/symplectic/src/algorithms/orbit_search.rs:95).
 - Shared lower solver contract:
-  [solve_kkt_for](../../../library/src/kkt/saddle_point_solver.rs:292),
-  [KktOutcome::feasible](../../../library/src/kkt/saddle_point_solver.rs:167),
-  [KktResult](../../../library/src/kkt/saddle_point_solver.rs:198).
+  [solve_kkt_for](../../../crates/symplectic/src/kkt/saddle_point_solver.rs:292),
+  [KktOutcome::feasible](../../../crates/symplectic/src/kkt/saddle_point_solver.rs:167),
+  [KktResult](../../../crates/symplectic/src/kkt/saddle_point_solver.rs:198).
 - Shared Packet 1 target surface for Packet 2 wiring:
-  [OrbitKktData / OrbitSearchResult / enums](../../../library/src/algorithms/orbit_search.rs:15).
+  [OrbitKktData / OrbitSearchResult / enums](../../../crates/symplectic/src/algorithms/orbit_search.rs:15).
 
 ## Stage map and data passed
 
 | Stage | HK2017 pruned/unpruned | Billiard | Data passed onward |
 | --- | --- | --- | --- |
-| Candidate generation | `m`, `subset`, cyclic `perm` from [enumerate_impl](../../../library/src/algorithms/hk2017/enumeration.rs:26) | `k`, block selections, `sigma` from [enumerate_k_bounce_sigmas](../../../library/src/algorithms/billiard/block_enumeration.rs:102) | Concrete `sigma: &[usize]` plus frontend-local metadata (`subset` or `k`) |
-| Cheap pruning | optional directed adjacency via [is_feasible_cycle](../../../library/src/algorithms/facet_adjacency.rs:44) | same directed adjacency check in [ehz_capacity_billiard](../../../library/src/lib.rs:102) | surviving `sigma: &[usize]` |
-| Solve | [solve_orbit_sigma](../../../library/src/algorithms/orbit_search.rs:192) | same helper path | `OrbitKktData` or `OrbitSolveError` |
+| Candidate generation | `m`, `subset`, cyclic `perm` from [enumerate_impl](../../../crates/symplectic/src/algorithms/hk2017/enumeration.rs:26) | `k`, block selections, `sigma` from [enumerate_k_bounce_sigmas](../../../crates/symplectic/src/algorithms/billiard/block_enumeration.rs:102) | Concrete `sigma: &[usize]` plus frontend-local metadata (`subset` or `k`) |
+| Cheap pruning | optional directed adjacency via [is_feasible_cycle](../../../crates/symplectic/src/algorithms/facet_adjacency.rs:44) | same directed adjacency check in [ehz_capacity_billiard](../../../crates/symplectic/src/lib.rs:102) | surviving `sigma: &[usize]` |
+| Solve | [solve_orbit_sigma](../../../crates/symplectic/src/algorithms/orbit_search.rs:192) | same helper path | `OrbitKktData` or `OrbitSolveError` |
 | Classify/convert | `OrbitAdmissibility` is attached to each solved orbit; no separate result wrapper is involved | same helper path | `OrbitKktData { admissibility, q, beta, ... }` |
 | Track shared capacity state | `aggregate_orbits(...)` and `aggregate_orbits_f64_only(...)` own the shared trimming/sorting/finalization logic | same helper path | `OrbitSearchResult { orbits, min_action, min_action_lower, min_action_upper, iterations }` |
 | Track frontend-local metadata | At planning time, HK2017 still carried winner-subset metadata and billiard still carried winner-bounce metadata in their local wrappers | local wrapper metadata only |
@@ -95,7 +95,7 @@ abstraction.
   HK2017 needs the certified winner's unordered subset,
   billiard needs the certified winner's `k`.
 - Packet 1 already created the shared target result surface in
-  [`orbit_search.rs`](../../../library/src/algorithms/orbit_search.rs:1), so
+  [`orbit_search.rs`](../../../crates/symplectic/src/algorithms/orbit_search.rs:1), so
   Packet 2 can wire a collector there without first solving the candidate
   generation differences.
 

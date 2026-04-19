@@ -21,7 +21,7 @@ Commands used:
 - `cd /workspaces/msc-math && rg -n "owned_db_path|save\\(&owned_db_path|load_many\\(&\\[owned_db_path.as_path\\(\\)\\]\\)" experiments/combinatorial-cells/*/main.rs experiments/verification/orbit-recovery/main.rs`
 - `cd /workspaces/msc-math && rg -n "save\\(&family_cache_path|load_many\\(&\\[family_cache_path.as_path\\(\\)\\]\\)" experiments/sys-landscape/*/main.rs`
 - `cd /workspaces/msc-math && rg -n "cache\\.jsonl|polytopes\\.jsonl|orbit-recovery\\.jsonl|gradient-ascent-general\\.jsonl|gradient-ascent-products\\.jsonl|variable-f-ascent\\.jsonl" experiments/*/*/analyze.py experiments/*/*/main.rs`
-- `cd /workspaces/msc-math && nl -ba library/src/database.rs | sed -n '1,260p'`
+- `cd /workspaces/msc-math && nl -ba crates/symplectic/src/database.rs | sed -n '1,260p'`
 - `cd /workspaces/msc-math && nl -ba experiments/verification/orbit-recovery/main.rs | sed -n '1,220p'`
 - `cd /workspaces/msc-math && nl -ba experiments/combinatorial-cells/omega-hypothesis/main.rs | sed -n '1,220p'`
 - `cd /workspaces/msc-math && nl -ba experiments/sys-landscape/random-sample/main.rs | sed -n '1,220p'`
@@ -30,7 +30,7 @@ Commands used:
 
 Key evidence:
 
-- `library/src/database.rs` says there is no canonical mutable shared cache path and that callers own path policy. See [database.rs](</workspaces/msc-math/library/src/database.rs:1>).
+- `crates/symplectic/src/database.rs` says there is no canonical mutable shared cache path and that callers own path policy. See [database.rs](</workspaces/msc-math/crates/symplectic/src/database.rs:1>).
 - The three candidate shared-cache files had identical SHA-256 hashes on 2026-04-16.
 - `experiments/sys-landscape/src/lib.rs` documents the append/resume/canonicalization rules for local output files, not for the polytope cache itself. See [sys-landscape lib](</workspaces/msc-math/experiments/sys-landscape/src/lib.rs:485>).
 
@@ -91,8 +91,8 @@ All three hashed to `8679b89763a10bf1380410f288845f03bcdc8e365035aa31235ff00c9cc
 
 ## Current Producer / Consumer Notes
 
-- `library/src/database.rs` is storage machinery, not policy. It loads and saves arbitrary JSONL files, merges multiple files fieldwise, and refuses to choose between conflicting values. See [database.rs](</workspaces/msc-math/library/src/database.rs:1>).
-- `PolytopeRecord` treats `dual_vertices_rational` and `vertices_rational` as defining data. `source`, `volume`, `capacity`, `sigma_gap_cutoff`, and `sigmas` are optional fields filled in later. See [database.rs](</workspaces/msc-math/library/src/database.rs:114>).
+- `crates/symplectic/src/database.rs` is storage machinery, not policy. It loads and saves arbitrary JSONL files, merges multiple files fieldwise, and refuses to choose between conflicting values. See [database.rs](</workspaces/msc-math/crates/symplectic/src/database.rs:1>).
+- `PolytopeRecord` treats `dual_vertices_rational` and `vertices_rational` as defining data. `source`, `volume`, `capacity`, `sigma_gap_cutoff`, and `sigmas` are optional fields filled in later. See [database.rs](</workspaces/msc-math/crates/symplectic/src/database.rs:114>).
 - `orbit-recovery` trusts cached `capacity` and `sigmas.first().perm` to skip full EHZ on hits. See [orbit-recovery/main.rs](</workspaces/msc-math/experiments/verification/orbit-recovery/main.rs:89>).
 - `omega-hypothesis`, `cell-widths`, and `boundary-characterization` all consume the shared catalog as input and assume cached `capacity` plus `sigmas` are available when present. See [omega-hypothesis/main.rs](</workspaces/msc-math/experiments/combinatorial-cells/omega-hypothesis/main.rs:17>).
 - `sys-landscape` uses one family cache for the random-sample and random-product-sample runs, and the gradient-ascent binaries also read and write that same file. See [random-sample/main.rs](</workspaces/msc-math/experiments/sys-landscape/random-sample/main.rs:5>) and [gradient-ascent-general/main.rs](</workspaces/msc-math/experiments/sys-landscape/gradient-ascent-general/main.rs:17>).

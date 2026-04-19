@@ -6,7 +6,7 @@ The verify-numerics experiment has proven Q error bounds and empirically validat
 
 ## Scope
 
-1. **Update `research/numerics/design/error-bounds.md`** with the algorithm design discussion (the specification below, the vertex-enumeration dead end, the projection solver insight).
+1. **Track the algorithm design discussion** (the specification below, the vertex-enumeration dead end, the projection solver insight) in this file.
 
 2. **Write `formal/numerics/error-bounds.tex`** formalizing:
    - The solver specification (inputs, outputs, trinary classification)
@@ -37,7 +37,7 @@ The verify-numerics experiment has proven Q error bounds and empirically validat
   - `projection_solver.rs` and `saddle_point_solver.rs` — f64 solver copies
   - `analyze.py` — stage 3 checks (propositions, bounds, β > 0 classification)
   - `formal/numerics/error-bounds.tex` — proven bounds and solver specification
-  - `research/numerics/design/error-bounds.md` — full findings and status
+  - `experiments/numerics/error-bounds/algorithm-notes.md` — full findings and status
   - `testdata/*.jsonl` — committed regression fixtures
 - `library/src/kkt/projection_solver.rs` — reduced-gradient sign fixed in `e56cf161` (2026-04-12), with regression test `reduced_gradient_sign_distinguishes_fix`
 - `library/src/kkt/qp_assembly.rs` — matrix assembly reference
@@ -129,7 +129,7 @@ The capacity algorithm iterates over all subsets S ⊆ {1,...,F} and all cyclic 
 
 ### Scope and iteration guidance
 
-**Agent owns:** All experiment files (`main.rs`, `projection_solver.rs`, `saddle_point_solver.rs`, `collect_poly.rs`, `analyze.py`), `formal/numerics/error-bounds.tex`, `research/numerics/design/error-bounds.md`, JSONL data, TASKS.md updates, solver algorithm changes.
+**Agent owns:** All experiment files (`main.rs`, `projection_solver.rs`, `saddle_point_solver.rs`, `collect_poly.rs`, `analyze.py`), `formal/numerics/error-bounds.tex`, `experiments/numerics/error-bounds/algorithm-notes.md`, JSONL data, TASKS.md updates, solver algorithm changes.
 
 **Needs Jörn:** GAP in cor:taylor-structure proof, mathematical review of new bounds, merge to main, scope decisions.
 
@@ -159,6 +159,6 @@ cat experiments/verification/correctness/correctness.jsonl experiments/sys-lands
 2. `formal/numerics/error-bounds.tex` has direction-dependent β error bound proven (or marked GAP with clear statement)
 3. `projection_solver.rs` has projection solver implementation matching the specification
 4. `analyze.py` reports zero violations on proven bounds with the new solver
-5. `research/numerics/design/error-bounds.md` documents the algorithm design discussion and all findings
+5. `experiments/numerics/error-bounds/algorithm-notes.md` documents the algorithm design discussion and all findings
 6. Generic `reviewer` subagent finds no blocking formal-math issues
 7. `cargo build -p dev-numerical-analysis --release --bin num-error-bounds --bin num-collect-poly` succeeds

@@ -3,7 +3,7 @@
 //! Calibrates step fractions using cell geometry data from
 //! combinatorial-profiling. Compares fixed vs adaptive strategies.
 //!
-//! Related: research/sys-landscape/design/gradient-ascent-dev/step-calibration.md
+//! Related: experiments/sys-landscape/gradient-ascent-dev/step-calibration/main.rs
 //! Input Artifacts: None
 //! Output Artifacts: None
 
