@@ -35,7 +35,7 @@ use exp_hko_local_maximum::{
     ExactBankTarget, EXACT_BANK_ENTRIES,
 };
 use nalgebra::{Matrix4, Vector4};
-use real_algebraic::OrderedField;
+use algebraic_numbers::OrderedField;
 use serde::Serialize;
 use std::fs::File;
 use std::io::{BufWriter, Write};

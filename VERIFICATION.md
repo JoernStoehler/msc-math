@@ -27,7 +27,7 @@ This file does not replace:
 - `RESULTS.md`: what the thesis should claim, and with what strength.
 - `TASKS.md`: ownership, sequencing, and deadline choices.
 - `formal/`: theorem statements, proof sketches, labels, and math notes.
-- `library/`: stable reusable algorithms.
+- `crates/`: stable reusable Rust crates.
 - `experiments/`: evidence-producing protocols and generated artifacts.
 - `thesis/`: the actual submitted text.
 

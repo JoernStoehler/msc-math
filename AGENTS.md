@@ -9,23 +9,27 @@ Topic: Probing Viterbo's Conjecture.
 
 Planned deliverables:
 1. A printed-quality LaTeX thesis: `thesis/build/main.pdf`
-2. A high-performance Rust library for symplectic geometry on polytopes: `library/`
+2. Durable Rust crates for symplectic geometry and exact arithmetic: `crates/`
 3. A reproducible experiment pipeline: `experiments/`
 
 ## Current Layout
 
-- `library/`: Rust library crate `symplectic`, with code in `library/src/`, tests in `library/tests/`, and benches in `library/benches/`.
-- `formal/`: Developer-facing mathematical sources for the library and experiments.
-  - `formal/library/*.tex`: library module mathematics.
-  - `formal/<topic>/*.tex`: experiment and research mathematics by topic.
+- `crates/`: Durable Rust crates.
+  - `crates/symplectic/`: symplectic geometry crate, with code in `crates/symplectic/src/` and benches in `crates/symplectic/benches/`.
+  - `crates/algebraic-numbers/`: exact ordered algebraic scalar crate, with code in `crates/algebraic-numbers/src/`, benches in `crates/algebraic-numbers/benches/`, and smoke/property tests in `crates/algebraic-numbers/tests/`.
+- `formal/`: Developer-facing mathematical sources for the crates and experiments.
+  - `formal/library/*.tex`: reusable crate mathematics.
+  - `formal/<topic>/*.tex`: experiment and topic mathematics.
   - `formal/main.tex`: full formal build.
 - `experiments/`: Rust/Python experiment packages grouped by research topic.
   - `experiments/<topic>/Cargo.toml`: package manifest and binary registrations.
   - `experiments/<topic>/<experiment>/main.rs`: experiment binary entrypoint.
   - `experiments/<topic>/<experiment>/analyze.py`: analysis and figure generation when present.
   - Data and figures live next to the experiment that produced them.
-- `research/`: Design notes, method selection, and experiment plans.
-- `thesis/`: Publishable thesis sources. The thesis is self-contained and does not `\input` files from `formal/`, `experiments/`, or `library/`.
+  - Durable Sage validation lives under `experiments/verification/sage/` when it stops being topic-local.
+- `contracts/`: Canonical algorithm correspondence and verification contracts.
+- Topic-local notes: use colocated `README.md`, `RESEARCH.md`, and `PLAN-<goal>.md` files near the code or experiment they describe instead of broad top-level research/logbook trees.
+- `thesis/`: Publishable thesis sources. The thesis is self-contained and does not `\input` files from `formal/`, `experiments/`, or `crates/`.
 - `papers/<abbreviationYear>/`: Downloaded arXiv paper sources.
 - `RESULTS.md`: Thesis content plan and project findings.
 - `ARCHITECTURE.md`: Repo-level architecture map: component boundaries, core entities, library subsystems, and persisted-data architecture.
@@ -44,10 +48,16 @@ Required project instructions live in this root map or in discoverable skills. `
 ## General Conventions
 
 - **File headers:** Every source file starts with a comment block stating purpose and context. Module-level files also state the module architecture.
-- **Self-contained thesis:** Thesis sources copy or own their publication assets. Experiment code must not make thesis correctness depend on links into `experiments/`, `formal/`, or `library/`.
-- **Feature lifecycle:** New code starts in the relevant `experiments/` subtree when it is still exploratory. Stable, approved algorithms migrate into `library/`. Validation experiments either become library tests or remain in `experiments/`.
-- **Test/validation boundary:** Library tests are fast live checks for developer feedback and ordinary regressions. Slow mathematical validation, edge-case searches, broad random sweeps, and generated evidence datasets live in `experiments/`.
+- **Self-contained thesis:** Thesis sources copy or own their publication assets. Experiment code must not make thesis correctness depend on links into `experiments/`, `formal/`, or `crates/`.
+- **Feature lifecycle:** New code starts in the relevant `experiments/` subtree when it is still exploratory. Stable, approved algorithms migrate into `crates/`. Validation experiments either become crate tests or remain in `experiments/`.
+- **Test/validation boundary:** Crate tests are fast live checks for developer feedback and ordinary regressions. Slow mathematical validation, edge-case searches, broad random sweeps, and generated evidence datasets live in `experiments/`.
 - **Math-code correspondence:** Non-trivial Rust algorithms must cross-reference formal mathematics with labels such as `[lem:label]`, `[thm:label]`, or `[def:label]`. The matching `\label{...}` lives in `formal/library/*.tex` or the relevant `formal/<topic>/*.tex` file.
+- **Rust file scope:** Prefer one concern per `.rs` file. Keep one main public symbol, or one tight router surface, plus private helpers that have no better home.
+- **Rust tests:** Move smoke/unit tests into `test_*.rs` files instead of growing implementation files. Larger verification or performance suites belong in `experiments/verification/` or experiment-owned performance surfaces.
+- **Experiment paths:** Use semantic experiment paths. Do not force balanced subtrees when the semantics are asymmetric.
+- **Research notes:** Prefer local `RESEARCH.md` and `PLAN-<goal>.md` files over giant shared logbooks. Git history on those files is the change log.
+- **Data ownership:** Keep generated data with the producer that writes it. Avoid multiple binaries writing to the same tracked output.
+- **Cross-file references:** Comments and notes should reference neighboring surfaces explicitly, e.g. `<file>.tex:\ref{label}`, `<file>.rs:symbol`, or `<file>.sage:symbol`.
 - **Jörn's time:** Spend agent time on exploration, verification, and local review before asking Jörn. Ask Jörn only for mathematical judgment, thesis-scope decisions, advisor-facing framing, taste, or external-world actions.
 - **Define the check first:** Before acting, decide what result would prove the task is done. Tool success is not task success.
 - **No status-only handoff:** Before replying, do the next useful step, ask one Jörn-only question, or report a concrete blocker.
@@ -95,7 +105,7 @@ Supported environments:
 ## Quick Commands
 
 ```bash
-# Rust library
+# Rust crates
 cargo test -p symplectic --release --lib
 cargo clippy -p symplectic --lib -- -D warnings
 cargo test -p symplectic --release -- --ignored

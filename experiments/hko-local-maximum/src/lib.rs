@@ -2,7 +2,7 @@
 //!
 //! Shared experiment-local helpers for the HKO local-maximum program.
 
-use real_algebraic::{Algebraic, OrderedField, Rational, TanPiFifth};
+use algebraic_numbers::{Algebraic, OrderedField, Rational, TanPiFifth};
 use symplectic::algorithms::facet_adjacency::{build_transition_matrix, is_feasible_cycle};
 use symplectic::algorithms::hk2017::combinations;
 use symplectic::algorithms::hk2017::permutations::for_each_cyclic_permutation;

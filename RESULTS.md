@@ -101,7 +101,7 @@ to overstate, harder to justify, or harder to turn into thesis text.
 
 [deliverable][established]
 - The project is available for future research as a Rust library plus reproducible experiment pipeline.
-  - [sub][artifact] It includes the `library/` crate, development tests, documentation, experiment packages, generated data and figures, research notes, and the dev environment.
+  - [sub][artifact] It includes the `crates/` tree, development tests, documentation, experiment packages, generated data and figures, local topic notes, and the dev environment.
   - [sub][artifact] The repo history and notes preserve failed methods, design choices, and enough context for later work to resume from local artifacts.
 
 [process result][writeup-gap]
