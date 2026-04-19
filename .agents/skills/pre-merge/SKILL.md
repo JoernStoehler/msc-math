@@ -12,8 +12,8 @@ Run all phases in order before telling Jörn work is ready. Every phase runs on 
 Run all of these. If a command fails, fix the issue and rerun before proceeding.
 
 ```bash
-cd library/ && cargo test --release --lib
-cd library/ && cargo clippy --lib -- -D warnings
+cd crates/symplectic/ && cargo test --release --lib
+cd crates/symplectic/ && cargo clippy --lib -- -D warnings
 cargo build --workspace --release
 cd thesis/ && latexmk && ./check-build.sh
 cd formal/library/ && latexmk

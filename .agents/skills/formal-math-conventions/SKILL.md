@@ -13,7 +13,7 @@ Current layout:
 - `formal/main.tex`: full formal build.
 - `formal/preamble.tex`: shared theorem environments, packages, and notation helpers.
 - `formal/bibliography.bib`: bibliography for formal builds.
-- `formal/library/*.tex`: mathematics for `library/src/**`.
+- `formal/library/*.tex`: mathematics for `crates/symplectic/src/**`.
 - `formal/<topic>/*.tex`: mathematics for experiment and research topics.
 
 ## Before Editing
@@ -23,7 +23,7 @@ Current layout:
 3. For Rust-linked work, also load `$rust-conventions` and grep for the cited labels:
 
 ```bash
-rg -n "\[(lem|thm|def|prop|cor|rem|eq):" library experiments
+rg -n "\[(lem|thm|def|prop|cor|rem|eq):" crates experiments
 rg -n '\\label\{(lem|thm|def|prop|cor|rem|eq):' formal
 ```
 

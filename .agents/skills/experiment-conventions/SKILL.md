@@ -29,7 +29,7 @@ Formal mathematics for experiments lives in `formal/<topic>/*.tex`, not beside `
 ## Before Editing
 
 1. Read sibling experiments in the same `experiments/<topic>/` package.
-2. Read the relevant `research/<topic>/design/` notes when the task involves methodology.
+2. Read local topic notes such as `REASONING.md`, `DECISIONS.md`, and `NEXT-STEPS.md` in `experiments/<topic>/` or a parent experiment folder when the task involves methodology or current interpretation.
 3. Read the corresponding `formal/<topic>/*.tex` file when the experiment implements or tests a formal claim.
 4. Load `$rust-conventions` for `main.rs`, `src/lib.rs`, or tests.
 5. Load `$python-conventions` for `analyze.py` or figure/table generation.
@@ -50,7 +50,7 @@ Do this before implementation. If the method choice changes the thesis direction
 
 Use experiments for slow or broad mathematical checks: algorithm agreement across datasets, random or seeded edge-case searches, validation against literature values, invariant sweeps such as conformality or symplectic invariance, and generated evidence files.
 
-When a validation experiment replaces library fixture coverage, record the boundary explicitly: library tests keep small live smoke/regression checks, while the experiment owns broad evidence and data freshness. The experiment logbook or design note should state the command that regenerates data and the command that verifies the committed artifact.
+When a validation experiment replaces crate fixture coverage, record the boundary explicitly: crate tests keep small live smoke/regression checks, while the experiment owns broad evidence and data freshness. Put the regeneration and verification commands in a local note with a narrow name such as `REASONING.md`, `DECISIONS.md`, or `NEXT-STEPS.md`; do not create giant logbooks.
 
 ## Rust Pipeline
 
@@ -59,7 +59,10 @@ When a validation experiment replaces library fixture coverage, record the bound
 - Cargo binary names use hyphens, matching existing package style.
 - Shared helpers used by multiple binaries in the same topic belong in `experiments/<topic>/src/lib.rs`.
 - Per-experiment helpers stay in that experiment's `main.rs`.
-- Exploratory behavior stays in `experiments/`; stable approved algorithms migrate to `library/`.
+- Exploratory behavior stays in `experiments/`; stable approved algorithms migrate to `crates/`.
+- Keep data with the producer. Avoid multiple maintained binaries writing to the same tracked output file.
+- Use semantic experiment paths. Do not reorganize a topic just to make the subtree visually balanced.
+- Durable reusable Sage validation belongs under `experiments/verification/sage/`. Topic-local Sage can stay with its producer until it stabilizes into a reusable comparison surface.
 - Every Cargo binary entrypoint `main.rs` and every experiment `.py` script declares
   `Input Artifacts:` and `Output Artifacts:` in the top doc comment/docstring.
 - Use exact repo-relative paths when practical. Use `None` when the file does not
@@ -95,5 +98,5 @@ cargo build --workspace --release
 
 - Numerical claims cite their source inline: file name, row id, command, or script output.
 - Label speculation as interpretation.
-- Record dead ends with the reason they failed so future agents do not retry them.
+- Record dead ends with the reason they failed so future agents do not retry them. Prefer a terse `DECISIONS.md` entry over a long chronological dump.
 - Keep thesis-facing conclusions aligned with `RESULTS.md` and the relevant `formal/` source.

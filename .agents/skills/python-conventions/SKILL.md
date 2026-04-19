@@ -38,6 +38,8 @@ EXPERIMENT_DIR = Path(__file__).resolve().parent
 ```
 Scripts live at `experiments/<topic>/<experiment>/analyze.py`. No hardcoded absolute paths. Define `REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent` only if referencing paths outside the experiment directory.
 
+Keep analysis outputs with the producer experiment that writes them. If several analyses need related data, prefer loading multiple producer-owned files over making unrelated binaries share one tracked output path.
+
 ## Figures
 
 - Use named size constants from `figure_config.py` (`FIGSIZE_SINGLE`, `FIGSIZE_DUAL`, etc.) — never hardcode figsize. See `figure_config.py` for the full list.
