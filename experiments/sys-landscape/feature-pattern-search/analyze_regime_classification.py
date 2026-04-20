@@ -22,7 +22,7 @@ Input Artifacts:
     `feature_omega.jsonl`, `feature_orbit.jsonl`, `feature_trajectory.jsonl`
   - optionally a precomputed normalized dataset directory passed by `--normalized-dir`
 Output Artifacts:
-  - experiments/sys-landscape/feature-pattern-search/regime_classification_summary.md
+  - research/sys-landscape-regime-classification-summary.md
   - experiments/sys-landscape/feature-pattern-search/regime_classification_bars.png
 """
 
@@ -65,7 +65,7 @@ FEATURE_SKELETON_JSONL = EXPERIMENT_DIR / "feature_skeleton.jsonl"
 FEATURE_OMEGA_JSONL = EXPERIMENT_DIR / "feature_omega.jsonl"
 FEATURE_ORBIT_JSONL = EXPERIMENT_DIR / "feature_orbit.jsonl"
 FEATURE_TRAJECTORY_JSONL = EXPERIMENT_DIR / "feature_trajectory.jsonl"
-SUMMARY_MD = EXPERIMENT_DIR / "regime_classification_summary.md"
+SUMMARY_MD = REPO_ROOT / "research" / "sys-landscape-regime-classification-summary.md"
 FIGURE_PNG = EXPERIMENT_DIR / "regime_classification_bars.png"
 
 ENDPOINT_DATASETS = {

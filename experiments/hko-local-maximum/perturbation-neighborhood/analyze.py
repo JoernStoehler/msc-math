@@ -11,9 +11,9 @@ Goal: Plot histogram of systolic ratios under HK-O pentagon dual-vertex perturba
 Input Artifacts: experiments/hko-local-maximum/perturbation-neighborhood/pentagon-perturb.jsonl
        or experiments/hko-local-maximum/perturbation-neighborhood/data/licca-eps-*.jsonl
 Output Artifacts: experiments/hko-local-maximum/perturbation-neighborhood/pentagon_perturb_sys_hist.png
-        experiments/hko-local-maximum/perturbation-neighborhood/pentagon_perturb_stats.md
+        research/hko-local-maximum-perturbation-neighborhood-stats.md
         experiments/hko-local-maximum/perturbation-neighborhood/pentagon_perturb_stats.tex
-        experiments/hko-local-maximum/perturbation-neighborhood/pentagon_perturb_pca.md
+        research/hko-local-maximum-perturbation-neighborhood-pca.md
         experiments/hko-local-maximum/perturbation-neighborhood/pentagon_perturb_pca.tex
 
 Row identity across buckets is (eps, name). Buckets are grouped by the eps field
@@ -32,9 +32,13 @@ from figure_config import setup, FIGSIZE_SINGLE
 setup()
 
 EXPERIMENT_DIR = Path(__file__).resolve().parent
+REPO_ROOT = EXPERIMENT_DIR.parent.parent.parent
+RESEARCH_DIR = REPO_ROOT / "research"
 DATA_DIR = EXPERIMENT_DIR / "data"
 CANONICAL_DATA = EXPERIMENT_DIR / "pentagon-perturb.jsonl"
 FIGURES_DIR = EXPERIMENT_DIR
+STATS_MD = RESEARCH_DIR / "hko-local-maximum-perturbation-neighborhood-stats.md"
+PCA_MD = RESEARCH_DIR / "hko-local-maximum-perturbation-neighborhood-pca.md"
 N_PCA_COMPONENTS = 5
 PCA_BUCKET_EPS = 0.01
 
@@ -305,7 +309,7 @@ def main() -> None:
     FIGURES_DIR.mkdir(parents=True, exist_ok=True)
 
     table_md = format_stats_table_md(bucket_stats, base_sys)
-    table_path = FIGURES_DIR / "pentagon_perturb_stats.md"
+    table_path = STATS_MD
     table_path.write_text(table_md + "\n")
     print(f"Saved: {table_path}")
 
@@ -332,7 +336,7 @@ def main() -> None:
         pca_rows = build_pca_rows(base_row, components, strengths, N_PCA_COMPONENTS)
 
         pca_md = format_pca_table_md(pca_rows)
-        pca_md_path = FIGURES_DIR / "pentagon_perturb_pca.md"
+        pca_md_path = PCA_MD
         pca_md_path.write_text(pca_md + "\n")
         print(f"Saved: {pca_md_path}")
 

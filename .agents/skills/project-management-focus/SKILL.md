@@ -65,7 +65,7 @@ When choosing whether a candidate task is shallow enough to delegate, read `refe
 - Header status must match the actual owner and state.
 - `[active]` means one session owns the whole `###` task.
 - Mark an item `[done]` only when the acceptance check is met or Jörn explicitly closes it.
-- Link to local `REASONING.md`, `DECISIONS.md`, and `NEXT-STEPS.md` notes, formal files, result docs, commits, or handoffs instead of duplicating evidence.
+- Link to `research/*.md` notes, formal files, result docs, commits, or handoffs instead of duplicating evidence.
 - Preserve why a task is blocked, stale, deferred, or Jörn-owned.
 - Update notes for new evidence, blockers, and resume points. Change a header status or owner only when Jörn assigned or approved that ownership in the current PM surface.
 

@@ -27,8 +27,8 @@ Planned deliverables:
   - `experiments/<topic>/<experiment>/analyze.py`: analysis and figure generation when present.
   - Data and figures live next to the experiment that produced them.
   - Durable Sage validation lives under `experiments/verification/sage/` when it stops being topic-local.
+- `research/`: Research-facing notes, interpreted analysis, decision history, and topic summaries.
 - `contracts/`: Canonical algorithm correspondence and verification contracts.
-- Topic-local notes: use colocated `REASONING.md`, `DECISIONS.md`, and `NEXT-STEPS.md` files near the code or experiment they describe instead of broad top-level research/logbook trees.
 - `thesis/`: Publishable thesis sources. The thesis is self-contained and does not `\input` files from `formal/`, `experiments/`, or `crates/`.
 - `papers/<abbreviationYear>/`: Downloaded arXiv paper sources.
 - `RESULTS.md`: Thesis content plan and project findings.
@@ -54,7 +54,7 @@ Required project instructions live in this root map or in discoverable skills. `
 - **Test/validation boundary:** Crate tests are fast live checks for developer feedback and ordinary regressions. Slow mathematical validation, edge-case searches, broad random sweeps, and generated evidence datasets live in `experiments/`.
 - **Math-code correspondence:** Non-trivial Rust algorithms must cross-reference formal mathematics with labels such as `[lem:label]`, `[thm:label]`, or `[def:label]`. The matching `\label{...}` lives in `formal/library/*.tex` or the relevant `formal/<topic>/*.tex` file.
 - **Experiment paths:** Use semantic experiment paths. Do not force balanced subtrees when the semantics are asymmetric.
-- **Research notes:** Prefer local `REASONING.md`, `DECISIONS.md`, and `NEXT-STEPS.md` files over giant shared logbooks. Git history on those files is the change log.
+- **Research notes:** Put research-state notes, interpreted analysis, decision history, and next-step planning in `research/`. Keep only execution-facing packet docs under `experiments/`.
 - **Data ownership:** Keep generated data with the producer that writes it. Avoid multiple binaries writing to the same tracked output.
 - **Cross-file references:** Comments and notes should reference neighboring surfaces explicitly, e.g. `<file>.tex:\ref{label}`, `<file>.rs:symbol`, or `<file>.sage:symbol`.
 - **Jörn's time:** Spend agent time on exploration, verification, and local review before asking Jörn. Ask Jörn only for mathematical judgment, thesis-scope decisions, advisor-facing framing, taste, or external-world actions.

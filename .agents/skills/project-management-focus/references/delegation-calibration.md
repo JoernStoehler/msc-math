@@ -69,7 +69,7 @@ Use this template:
 - Actual output:
   - Answer/report path: `/tmp/2-answer.md`.
   - Commit(s): `28ac0da2` (`Refresh visualization audit notes`) on `main`.
-- Files changed: `experiments/visualization/REASONING.md`, `experiments/visualization/main/main.rs`.
+- Files changed: `research/visualization.md`, `experiments/visualization/main/main.rs`.
   - Verification run: delegate reported no `RESULTS.md` changes needed, no contradictions found, and `cargo build -p visualization --release --bin visualization` passing for the stale visualization note.
 - Outcome:
   - Substantively done, but wrong execution context. The useful patch was small and relevant; the process violated the intended worktree isolation.

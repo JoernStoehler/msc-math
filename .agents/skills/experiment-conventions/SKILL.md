@@ -29,7 +29,7 @@ Formal mathematics for experiments lives in `formal/<topic>/*.tex`, not beside `
 ## Before Editing
 
 1. Read sibling experiments in the same `experiments/<topic>/` package.
-2. Read local topic notes such as `REASONING.md`, `DECISIONS.md`, and `NEXT-STEPS.md` in `experiments/<topic>/` or a parent experiment folder when the task involves methodology or current interpretation.
+2. Read the relevant `research/<topic>.md` note and any narrower `research/<topic>-*.md` note when the task involves methodology, current interpretation, or decision history. Read Markdown inside `experiments/` only when it is execution-facing packet documentation.
 3. Read the corresponding `formal/<topic>/*.tex` file when the experiment implements or tests a formal claim.
 4. Load `$rust-conventions` for `main.rs`, `src/lib.rs`, or tests.
 5. Load `$python-conventions` for `analyze.py` or figure/table generation.
@@ -51,7 +51,7 @@ Do this before implementation. If the method choice changes the thesis direction
 
 Use experiments for slow or broad mathematical checks: algorithm agreement across datasets, random or seeded edge-case searches, validation against literature values, invariant sweeps such as conformality or symplectic invariance, and generated evidence files.
 
-When a validation experiment replaces crate fixture coverage, record the boundary explicitly: crate tests keep small live smoke/regression checks, while the experiment owns broad evidence and data freshness. Put the regeneration and verification commands in a local note with a narrow name such as `REASONING.md`, `DECISIONS.md`, or `NEXT-STEPS.md`; do not create giant logbooks.
+When a validation experiment replaces crate fixture coverage, record the boundary explicitly: crate tests keep small live smoke/regression checks, while the experiment owns broad evidence and data freshness. Put research interpretation in `research/`; keep regeneration and verification commands in execution-facing docs or code comments near the producer.
 
 ## Rust Pipeline
 
@@ -84,5 +84,5 @@ cargo build --workspace --release
 
 - Numerical claims cite their source inline: file name, row id, command, or script output.
 - Label speculation as interpretation.
-- Record dead ends with the reason they failed so future agents do not retry them. Prefer a terse `DECISIONS.md` entry over a long chronological dump.
+- Record dead ends with the reason they failed so future agents do not retry them. Prefer a terse `research/*.md` history entry over a long chronological dump.
 - Keep thesis-facing conclusions aligned with `RESULTS.md` and the relevant `formal/` source.

@@ -69,7 +69,7 @@ HKO2024 lives in multiple ambient spaces (LP(5,5), LP(6,5), F=10, F=13, convex b
 
 ### [done] [2026-04] 1a. First-order analysis in a_i space (gradient-analysis)
 - Rank 25 in R^40, 15 flat directions. LP confirms 0 in conv(150 per-orbit gradients).
-- `experiments/hko-local-maximum/REASONING.md`
+- `research/hko-local-maximum.md`
 
 ### [done] [2026-04] 1e. Second-order analysis along flat directions
 - All 15 basis + 100 random curvatures negative (-0.31 to -0.02). Supports local maximality.
@@ -85,11 +85,11 @@ HKO2024 lives in multiple ambient spaces (LP(5,5), LP(6,5), F=10, F=13, convex b
 
 ### [done] [2026-03] 1c. Subdifferential LP in (n,h)-space
 - Phase C LP confirms 0 in conv(per-orbit gradients). Superseded by 1a (a_i space, no gauge).
-- `experiments/hko-local-maximum/DECISIONS.md`
+- `research/hko-local-maximum.md`
 
 ### [done] [2026-03] 1d. Lagrangian boundary mapping
 - Characteristic radius ~0.035, anisotropic (7x aspect ratio), ~10^-31 volume fraction.
-- `experiments/hko-local-maximum/REASONING.md`
+- `research/hko-local-maximum.md`
 
 ### [done] [2026-03] Perturbation neighborhood (LP(5,5) random perturbations)
 - Historical single-eps artifact `pentagon-perturb.jsonl`: 101 recorded perturbations all retain sys>1 (min 1.0142, max 1.0472). Current smoke/LICCA pipeline is tracked separately below.
@@ -107,7 +107,7 @@ HKO2024 lives in multiple ambient spaces (LP(5,5), LP(6,5), F=10, F=13, convex b
 
 ### [Jörn] [group:hko] Verify h-space proof
 - Danskin + symmetry + Euler homogeneity argument. ~15 min.
-- `experiments/hko-local-maximum/REASONING.md`
+- `research/hko-local-maximum.md`
 
 ### [Jörn] [group:hko] Verify second-order formal proposition
 - Non-smooth second-order sufficiency proof sketch needs rigor check.
@@ -115,8 +115,8 @@ HKO2024 lives in multiple ambient spaces (LP(5,5), LP(6,5), F=10, F=13, convex b
 
 ### [open] [group:hko] Exact Clarke-subgradient checker for HKO2024
 - Preferred route for the intended `RESULTS.md` `M_10` theorem: prove that the Clarke-flat directions in dual-vertex coordinates are exactly the infinitesimal symmetry directions, using exact linear algebra instead of the current second-order numerical evidence route.
-- Design note: `experiments/hko-local-maximum/DECISIONS.md`
-- Durable execution tracker: `experiments/hko-local-maximum/NEXT-STEPS.md`
+- Design note: `research/hko-local-maximum.md`
+- Durable execution tracker: `research/hko-local-maximum.md`
 - Current Packet 1 artifacts: `experiments/hko-local-maximum/exact-clarke/hko-geometry.json`, `experiments/hko-local-maximum/exact-clarke/hko-symmetry-tangent.json`, `experiments/hko-local-maximum/exact-clarke/numerical-minima-summary.json`
 - Current execution policy: prefer the larger exact-computation route with the simplest trustworthy setup. Use symmetry/paper reductions first as validation, bookkeeping, and explanation surfaces; make them load-bearing only if the larger exact route fails to become thesis-ready.
 - Backend contract: keep the checker backend-agnostic as long as it emits a trusted witness artifact. Current default is SageMath for exact number fields and exact linear algebra; the future Rust number-field backend is an explicit candidate if it gives the same witness contract with better performance. SymPy remains acceptable for smaller exact scaffolding and witness generation when performance is sufficient.
@@ -138,7 +138,7 @@ HKO2024 lives in multiple ambient spaces (LP(5,5), LP(6,5), F=10, F=13, convex b
 ### [future] [group:hko] Higher-F perturbation validation (F=10→12, F=10→13)
 - `RESULTS.md` records F=12/F=13 validation as pending/future evidence for the broad HKO2024 local-maximality conjecture; only F=11 checks are currently done.
 - Extends facet-splitting and cut-and-ascent to add 2-3 facets simultaneously
-- Suggested by the continuation notes in `experiments/hko-local-maximum/DECISIONS.md`
+- Suggested by the continuation notes in `research/hko-local-maximum.md`
 
 ### [future] [group:hko] F-refinement convergence (increasing F as smooth approximation)
 
@@ -167,39 +167,39 @@ Stronger conjecture: HKO2024 may be (up to perturbation/symplectomorphism) the o
 ### [done] [2026-04] 2d. Variable-F ascent (F to F+1)
 - 90 trials. F=10 local maxima often improve at F=11 but marginal; no sys>1.
 - `experiments/sys-landscape/variable-f-ascent/`
-- Successor baseline for the next continuation line: `experiments/sys-landscape/NEXT-STEPS.md`
+- Successor baseline for the next continuation line: `research/sys-landscape.md`
 
 ### [open] [group:witness-search] Witness oracle instrumentation + benchmark bank
 - Upgrade exact witness search from "best permutation only" to a reusable local-structure oracle: top-`m` / within-gap returns, incumbent warm starts, near-active witness metadata, runtime diagnostics.
 - Bundle the benchmark bank into the same session; do not track it as a separate item.
 - Post-Kai priority: optional AI-work-pattern / publication-polish trial through about 2026-04-21. Do not treat this as required thesis coverage. Stop if the first session does not produce a reusable oracle surface, benchmark report, or clear negative finding without high Jörn interpretation load.
-- Pointer: `experiments/sys-landscape/NEXT-STEPS.md`
+- Pointer: `research/sys-landscape.md`
 
 ### [future] [group:witness-search] Witness reuse + safe prefilter calibration
 - Quantify trust radius for local witness caches and benchmark safe pruning via `U_A(K) < 1`.
 - Compare minimizer-only, top-`m`, within-gap, parent-cache, and hybrid witness sets.
 - Fold permutation-neighborhood search and warm-start benchmarking into this line, not separate tracker headers.
-- Pointer: `experiments/sys-landscape/NEXT-STEPS.md`
+- Pointer: `research/sys-landscape.md`
 
 ### [future] [group:witness-search] Reduced-model ascent on witness sets
 - Soft-min / log-sum-exp reduced-model ascent first; min-norm convex-hull QP second if the first pass is promising.
 - Acceptance criterion: compare against exact-evaluate-every-step on the same seeds; report best exact `sys`, exact-call count, and wall-clock.
-- Pointer: `experiments/sys-landscape/NEXT-STEPS.md`
+- Pointer: `research/sys-landscape.md`
 
 ### [future] [group:witness-search] Witness-guided F→F+1 continuation
 - Replace random facet addition with witness-guided vertex splitting and witness lifting into the child problem.
 - Compare directly against `experiments/sys-landscape/variable-f-ascent/` and `experiments/hko-local-maximum/cut-and-ascent/`.
-- Pointer: `experiments/sys-landscape/NEXT-STEPS.md`
+- Pointer: `research/sys-landscape.md`
 
 ### [future] [group:witness-search] Symmetry-family search
 - Search low-dimensional orbit-union families instead of only generic iid proposals.
 - Use the reuse, prefilter, and reduced-model machinery inside those families.
 - Keep combinatorial/order-type diagnostics as supporting logging inside this line.
-- Pointer: `experiments/sys-landscape/NEXT-STEPS.md`
+- Pointer: `research/sys-landscape.md`
 
 ### [future] [group:witness-search] Box-pruning on structured families
 - Downstream of the symmetry-family line: use witness upper bounds to prune parameter boxes once a productive family exists.
-- Pointer: `experiments/sys-landscape/NEXT-STEPS.md`
+- Pointer: `research/sys-landscape.md`
 
 ### [done] [2026-03] Random sampling (general + products + calibration)
 - Random polytopes max sys=0.578. Random products max sys=0.794 (6x6).
@@ -225,7 +225,7 @@ Stronger conjecture: HKO2024 may be (up to perturbation/symplectomorphism) the o
 ### [open] Analytical formula for sys(P_5 x R(theta) P_5)
 - Standalone mathematical result in `RESULTS.md`: explain the shape of the pentagon rotation curve.
 - Scout workspace landed on 2026-04-18:
-  `experiments/sys-landscape/REASONING.md`,
+  `research/sys-landscape.md`,
   `formal/sys-landscape/pentagon-rotation-formula.tex`,
   `experiments/sys-landscape/pentagon-rotation-formula/`.
 - Current conjecture:
@@ -264,7 +264,7 @@ sys as a continuous function on polytope space, no privileged threshold.
 - Post-Kai priority: closure-blocking for the hostile-landscape thesis wording, but bounded in method scope and effort. Do not invent novel tools here; throw standard data-science methods at the available datasets and see whether any transferable signal actually appears.
 - Run regression/classifier methods on random polytopes using Euclidean and symplectic feature data. More importantly, run the same checks on local maxima found by ascent.
 - Default dataset boundary: omit packets constructed near HKO2024 from the main modeling surface so the analysis does not learn the spoiler "start near the one known counterexample"; HKO-local packets may appear only as separately labeled controls or sensitivity checks.
-- Durable data contract before modeling: `experiments/sys-landscape/REASONING.md` records the normalized `poly_id`/`state_id` core-plus-enrichment dataset shape over an ad hoc wide table or a fake full state graph, and fixes `poly_id` as a hash of canonical exact dual vertices.
+- Durable data contract before modeling: `research/sys-landscape.md` records the normalized `poly_id`/`state_id` core-plus-enrichment dataset shape over an ad hoc wide table or a fake full state graph, and fixes `poly_id` as a hash of canonical exact dual vertices.
 - Candidate outcomes: a transferable signal gives a conjecture or guided search strategy; no signal or only non-transferable structure supports the hostile-landscape conclusion.
 - Dependencies: random/polytope datasets are available now; use current local-maxima datasets immediately and extend to LICCA-returned local maxima if those artifacts arrive in time.
 - First implementation packet: add a `sys-*` converter that normalizes the existing random/ascent JSONLs into core tables (`polytopes`, `states`, `capacity_results`, `step_events`) with an explicit source-priority rule. Do not start with model fitting or force intermediate-state geometry that current trace logs do not contain.
@@ -283,7 +283,7 @@ sys as a continuous function on polytope space, no privileged threshold.
 ### [future] Systematic landscape analysis
 - Gradient flow convergence, local maxima below sys=1, random noise effects.
 - Partial data in gradient-ascent experiments.
-- Witness-search successor line: `experiments/sys-landscape/NEXT-STEPS.md`
+- Witness-search successor line: `research/sys-landscape.md`
 - Local unblocked queue after the bounded hostile-landscape closure:
   1. only after richer columns: trajectory/state-graph methods beyond the current scalar `feature_trajectory` block
   2. optional local refinement: explain or normalize the new face-symplectic block if a cleaner endpoint-side interpretation is needed before LICCA rows arrive
@@ -325,7 +325,7 @@ Instrument development. Results promote to `crates/symplectic/`.
 - The local-first packet is now split into two experiments with shared target-pool logic in `experiments/verification/src/lib.rs`.
 - `experiments/verification/all-minimum/` owns minimum-set validation: it recomputes minima from the polytope via pruned HK2017 sigma enumeration, `solve_orbit_sigma(...)`, and `aggregate_orbits(..., OrbitGuaranteeMode::MinimaSafe)`, then writes trusted minimum-orbit rows to `all-minimum-orbits.jsonl`.
 - `experiments/verification/orbit-recovery/` now consumes those trusted rows, rebuilds one-sigma KKT data, and checks geometric recovery with `recover_and_verify(...)` only.
-- Current outputs are `experiments/verification/all-minimum/{all-minimum,all-minimum-orbits}.jsonl` and `experiments/verification/orbit-recovery/{orbit-recovery,orbit-recovery-orbits}.jsonl`, plus matching `smoke-*` files. Current package reasoning lives in `experiments/verification/REASONING.md` and `experiments/verification/DECISIONS.md`.
+- Current outputs are `experiments/verification/all-minimum/{all-minimum,all-minimum-orbits}.jsonl` and `experiments/verification/orbit-recovery/{orbit-recovery,orbit-recovery-orbits}.jsonl`, plus matching `smoke-*` files. Current package reasoning, decisions, and next steps live in `research/verification.md`.
 - Explicit tolerance choice landed in the experiment: use a tiny action-tie cutoff `1e-12` after the broader `MinimaSafe` candidate collector. Reason: `gap = 0.0` undercounted the known simplex multiplicity. The summary rows keep the broader candidate interval visible so loose lower bounds remain observable.
 - Canonical local-first run on 2026-04-17: `all-minimum` passes 28/28 selected polytopes and writes 469 trusted minimum orbits total; `orbit-recovery` then rebuilds and recovers 469/469 trusted minimum orbits successfully. Expected multiplicities are hit on the documented symmetric witnesses (`simplex = 6`, `hypercube = 2`). The largest observed sigma-level minimum set in this packet is `hko_pentagon = 412`, with observed action spread `4.44e-15`.
 - Discussion item left intentionally open after pre-merge review: some `all-minimum` rows still have broad `MinimaSafe` intervals or missing finite upper bounds on individual retained rows, while the current pass/fail rule treats those as diagnostics rather than failures. Keep that semantics visible in tracker/docs until Jörn decides whether the packet is “trusted output + diagnostics” or “interval-resolved certification.”
@@ -343,13 +343,13 @@ Instrument development. Results promote to `crates/symplectic/`.
 - Rationale for current state: degenerate orbits are never capacity-achieving, so final capacity comes from well-conditioned orbits with proven low error. The remaining gap is publication/writeup polish rather than a blocker for the two main thesis results.
 - Remaining open surface: Part III (f64 algorithm description), a thesis-facing treatment of the LP null-space search case (39 natural-data violations in cases with near-zero eigenvalues), and the GAP in `cor:taylor-structure` (needs Jörn).
 - Post-Kai priority: publication polish and thesis confidence, not a prerequisite for the two main thesis results. Before about 2026-04-21, agents may close self-verifying pieces such as stale notes/tests; after that, leave explicit caveats or cut proof ambitions rather than opening new solver work.
-- `experiments/numerics/error-bounds/`, `experiments/numerics/error-bounds/algorithm-notes.md`
+- `experiments/numerics/error-bounds/`, `research/numerics-error-bounds.md`
 
 ### [open] [group:numerics] Projection solver
 - 5-step algorithm: (1) solve equality constraints → (m-5)-dim affine space, (2) project H → reduced Hessian, (3) eigendecompose → null directions, (4) beta>0 as LP on projected null space, (5) recover multipliers.
 - Basic implementation in `kkt/projection_solver.rs`. The remaining asks here are mathematical rigor and ablation/comparison writeup; treat broad promotion or refactor as defer/future polish unless a bounded local-validation or stale-note cleanup slice becomes useful before about 2026-04-21.
 - Post-Kai: do not let this row reopen a broad solver-development program during thesis closeout.
-- `experiments/numerics/error-bounds/algorithm-notes.md`
+- `research/numerics-error-bounds.md`
 
 ### [open] [group:numerics] Beta-LP unification
 - Replace `find_positive_beta_1d`/`find_positive_beta_nd` with single LP: maximize min_j beta_j subject to beta = beta_0 + V*alpha.
@@ -480,9 +480,9 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
   - `experiments/hko-local-maximum/perturbation-neighborhood/`: split historical `pentagon-perturb.jsonl` findings from current `data/{smoke,licca}-eps-*.jsonl` analyzer outputs; update stale task/design min/max wording.
 - Closed in checkpoint `9d55e7f8`:
   - `experiments/combinatorial-cells/convexity/`: design note now matches committed JSONL (2800 rows, 2661 successful midpoint constructions, 1558/1558 product transition failures, 0/1103 random transition failures).
-  - `experiments/numerics/REASONING.md`: stale M1 wording marked historical; stale `make smoke` / `make full` commands removed from the live topic-note surface.
-  - `experiments/crosspolytope/REASONING.md`: elapsed-time wording reconciled to the committed `1095.1s` JSONL result vs historical `1112.8s` console/table total.
-  - `experiments/hko-local-maximum/DECISIONS.md`: stale `~10s per trial` scale-up estimate removed from the live continuation-note surface.
+  - `research/numerics.md`: stale M1 wording marked historical; stale `make smoke` / `make full` commands removed from the live topic-note surface.
+  - `research/crosspolytope.md`: elapsed-time wording reconciled to the committed `1095.1s` JSONL result vs historical `1112.8s` console/table total.
+- `research/hko-local-maximum.md`: stale `~10s per trial` scale-up estimate removed from the live continuation-note surface.
 - Stop condition for this closure bundle was reached. Keep any remaining work on dedicated packets instead of reopening this row into another broad numerics sweep.
 - Post-Kai priority: high-value polish because it protects thesis claims. Before about 2026-04-21, prefer shallow evidence repairs and stale-note fixes; after that, weaken or qualify claims instead of rerunning broad experiments.
 
@@ -652,9 +652,9 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 
 ### [done] [2026-04-15] [group:repo-layout] Mechanical stale-path cleanup outside onboarding
 - Cleaned stale post-migration references in non-onboarding Markdown, TeX, Rust comments, and scan-caught Python diagnostics; no mathematical claims or experiment conclusions changed.
-- First-pass cleanup covered `thesis/tube-algorithm-notes.md`, `thesis/appendix-rewrite-notes.md`, `crates/symplectic/src/geom/review-notes.md`, `experiments/numerics/error-bounds/algorithm-notes.md`, and formal headers.
+- First-pass cleanup covered `thesis/tube-algorithm-notes.md`, `thesis/appendix-rewrite-notes.md`, `crates/symplectic/src/geom/review-notes.md`, `research/numerics-error-bounds.md`, and formal headers.
 - Follow-up experiment Rust pass removed old wave/subagent migration TODO scaffolding and stale pre-migration crate-path references from experiment comments; the experiment/library migration-wording scan returns no matches.
-- Research-note migration coverage audit: `/tmp/1-answer.md` was the one-time pre-migration matrix for retiring `research/**/design/*.md` in favor of topic-local `REASONING.md`, `DECISIONS.md`, and `NEXT-STEPS.md` notes. Keep it only if a future coverage task needs the row-level audit evidence.
+- Research-note migration coverage audit: `/tmp/1-answer.md` was the one-time pre-migration matrix for retiring the older `research/**/design/*.md` layout before the current flat `research/*.md` topic-note convention. Keep it only if a future coverage task needs the row-level audit evidence.
 - Preserved copied-code provenance comments and historical deletion/audit notes by marking them historical or leaving already explicit provenance wording.
 - Verification: stale-path scans now report only explicitly historical/provenance hits; changed live references point to existing `formal/`, `crates/`, `.codex/reference/`, `.devcontainer/`, or experiment paths.
 

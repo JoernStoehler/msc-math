@@ -74,8 +74,8 @@ const N_WIGGLES: usize = 5;
 /// Per-facet displacement has expected norm ~0.05 * |a_k| (unit-scale dual vertices: ~0.05).
 /// Local cell-width probes suggest this scale is large enough to cross
 /// boundaries often, while still small enough to keep most perturbed
-/// polytopes constructible. See `experiments/combinatorial-cells/REASONING.md`
-/// and `experiments/sys-landscape/REASONING.md`.
+/// polytopes constructible. See `research/combinatorial-cells.md`
+/// and `research/sys-landscape.md`.
 /// If changed: much smaller (e.g. 0.01) reduces boundary-crossing probability and escape
 /// effectiveness. Much larger (e.g. 0.2) risks producing degenerate polytopes
 /// (Polytope4D::from_f64 failure) or landing too far from the current optimum.
@@ -127,7 +127,7 @@ struct ResultRow {
 /// Copied from exp-sys-landscape/src/lib.rs (cannot cross-crate import from
 /// exp-sys-landscape). Local combinatorial-cells probes showed that omega_0
 /// sign flips make up a substantial share of first boundary events; see
-/// `experiments/combinatorial-cells/REASONING.md`.
+/// `research/combinatorial-cells.md`.
 fn compute_step_bound(polytope: &Polytope4D, direction: &[Vector4<f64>]) -> f64 {
     let duals = polytope.dual_vertices_f64();
     let vertices = polytope.vertices_f64();

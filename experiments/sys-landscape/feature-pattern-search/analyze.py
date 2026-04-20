@@ -28,7 +28,7 @@ Output Artifacts:
   - experiments/sys-landscape/feature-pattern-search/feature_omega.jsonl
   - experiments/sys-landscape/feature-pattern-search/feature_orbit.jsonl
   - experiments/sys-landscape/feature-pattern-search/feature_trajectory.jsonl
-  - experiments/sys-landscape/feature-pattern-search/feature_pattern_search_summary.md
+  - research/sys-landscape-feature-pattern-search-summary.md
   - experiments/sys-landscape/feature-pattern-search/feature_pattern_search_ridge.png
   - experiments/sys-landscape/feature-pattern-search/feature_pattern_search_rf.png
 """
@@ -68,7 +68,7 @@ FEATURE_SKELETON_JSONL = EXPERIMENT_DIR / "feature_skeleton.jsonl"
 FEATURE_OMEGA_JSONL = EXPERIMENT_DIR / "feature_omega.jsonl"
 FEATURE_ORBIT_JSONL = EXPERIMENT_DIR / "feature_orbit.jsonl"
 FEATURE_TRAJECTORY_JSONL = EXPERIMENT_DIR / "feature_trajectory.jsonl"
-SUMMARY_MD = EXPERIMENT_DIR / "feature_pattern_search_summary.md"
+SUMMARY_MD = REPO_ROOT / "research" / "sys-landscape-feature-pattern-search-summary.md"
 RIDGE_PNG = EXPERIMENT_DIR / "feature_pattern_search_ridge.png"
 RF_PNG = EXPERIMENT_DIR / "feature_pattern_search_rf.png"
 

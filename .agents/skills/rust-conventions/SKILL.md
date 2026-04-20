@@ -104,7 +104,7 @@ Within an experiment package (`experiments/<group>/`), shared helpers belong in 
 
 Use semantic paths in `experiments/`. Do not force balanced trees when one topic naturally needs `verification/sage/`, `error-bounds/`, `exact-clarke/`, or another asymmetric structure.
 
-For local prose near code or experiments, prefer narrowly named files such as `REASONING.md`, `DECISIONS.md`, and `NEXT-STEPS.md` over generic logbooks or catch-all status notes.
+Keep research interpretation and decision history in `research/`. Markdown that stays near Rust experiment code should be execution-facing: run instructions, artifact schemas, or packet-local operational notes.
 
 Cargo binary entrypoints in `experiments/**` carry machine-readable crate docs with
 `Input Artifacts:` and `Output Artifacts:`. Use repo-relative artifact paths when the

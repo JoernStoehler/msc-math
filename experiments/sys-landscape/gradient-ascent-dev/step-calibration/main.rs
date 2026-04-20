@@ -3,7 +3,7 @@
 //! Calibrates step fractions using cell geometry data from
 //! combinatorial-profiling. Compares fixed vs adaptive strategies.
 //!
-//! Related: experiments/sys-landscape/REASONING.md
+//! Related: research/sys-landscape.md
 //! Input Artifacts: None
 //! Output Artifacts: None
 

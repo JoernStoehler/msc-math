@@ -145,7 +145,7 @@ fn simplex_projected_backend_unsupported() {
 /// It proves c_EHZ(crosspolytope) ≤ 4.0 by exhibiting a feasible orbit with
 /// action 4.0. The companion experiment
 /// `experiments/crosspolytope/main/main.rs` performs a symmetry-reduced search;
-/// see `experiments/crosspolytope/REASONING.md` for the current completeness
+/// see `research/crosspolytope.md` for the current completeness
 /// boundary and why the global minimum claim is still treated as
 /// computation+assumption rather than a finished exhaustive proof.
 ///

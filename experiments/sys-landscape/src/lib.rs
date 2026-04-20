@@ -91,7 +91,7 @@ pub struct BoundaryEvent {
 /// 2. **omega_0 flip:** sign(omega_0(a_i, a_j)) changes for ridge-adjacent facets.
 /// 3. **Dual vertex degeneration:** |a_k + t*d_k| -> 0.
 ///
-/// Source: `experiments/combinatorial-cells/REASONING.md`.
+/// Source: `research/combinatorial-cells.md`.
 /// Local combinatorial-cells probes showed that omega_0 sign flips make up a
 /// substantial share of first boundary events, so the old
 /// `compute_step_bound_a` missed an important failure mode.
