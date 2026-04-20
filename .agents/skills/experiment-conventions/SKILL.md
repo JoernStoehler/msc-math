@@ -91,8 +91,11 @@ cargo build --workspace --release
 - `.jsonl` files are generated artifacts and are tracked by Git LFS.
 - Do not edit `.jsonl` with patch-style line edits.
 - For smoke tests, write temporary output under an untracked temp directory and delete it before finishing.
+- For smoke or warmup runs, write temporary datasets under an untracked temp directory and delete them after the run.
 - Smoke/default experiment runs should write untracked `smoke-*.jsonl` style outputs unless the caller explicitly requests a canonical refresh path.
 - If a compatibility run modifies tracked outputs, restore them before finishing unless the task is explicitly to refresh data.
+- If a script touches tracked outputs only for compatibility, restore those paths before finishing.
+- If a tracked `.jsonl` changes unexpectedly, stop and report the exact file and command.
 - If code is newer than committed data for the same experiment, report the freshness mismatch and regenerate only when the task calls for refreshed results.
 - Use `scripts/dataflow.sh` to regenerate `DATAFLOW.md`.
 - `DATAFLOW.md` is built from declared `Input Artifacts:` / `Output Artifacts:` headers on experiment Python scripts and Cargo binary entrypoints. Treat that audit as declared artifact ownership plus local timestamp metadata, not as full transitive source provenance.

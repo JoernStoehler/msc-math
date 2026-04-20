@@ -88,10 +88,7 @@ Required project instructions live in this root map or in discoverable skills. `
 
 ## JSONL / LFS Safety
 
-- `.jsonl` files are generated artifacts and are LFS-tracked. Do not edit `.jsonl` with patch-style line edits.
-- For smoke or warmup runs, write temporary datasets under an untracked temp directory and delete them after the run.
-- If a script touches tracked outputs only for compatibility, restore those paths before finishing.
-- If a tracked `.jsonl` changes unexpectedly, stop and report the exact file and command.
+- `.jsonl` files are generated artifacts tracked by Git LFS.
 - Use `scripts/dataflow.sh` to regenerate `DATAFLOW.md`.
 
 ## Environment
