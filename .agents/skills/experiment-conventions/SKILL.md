@@ -1,6 +1,6 @@
 ---
 name: experiment-conventions
-description: Experiment package conventions for `experiments/**`, including Rust binaries, Python analysis scripts, generated `.jsonl` data, figures, Cargo package layout, and links to topic files under `formal/`. Use before designing, editing, running, reviewing, or documenting experiments.
+description: Experiment package conventions for `experiments/**`, including Rust binaries, Python analysis scripts, figures, Cargo package layout, methodology notes, and links to topic files under `formal/`. Use before designing, editing, running, reviewing, or documenting experiments. Load alongside `python-conventions` for `analyze.py` work and alongside `dataset-conventions` when the task creates, refreshes, audits, compares, or validates tracked experiment datasets or artifact declarations.
 ---
 
 # Experiment Conventions
@@ -34,6 +34,7 @@ Formal mathematics for experiments lives in `formal/<topic>/*.tex`, not beside `
 4. Load `$rust-conventions` for `main.rs`, `src/lib.rs`, or tests.
 5. Load `$python-conventions` for `analyze.py` or figure/table generation.
 6. Load `$formal-math-conventions` for formal statements, labels, or proof updates.
+7. Load `$dataset-conventions` as well when the task creates or refreshes `.jsonl` or `.csv` outputs, changes `Input Artifacts:` / `Output Artifacts:` declarations, touches `DATAFLOW.md`, compares tracked datasets across runs, or depends on dataset freshness or validation.
 
 ## Methodology First
 
@@ -60,15 +61,8 @@ When a validation experiment replaces crate fixture coverage, record the boundar
 - Shared helpers used by multiple binaries in the same topic belong in `experiments/<topic>/src/lib.rs`.
 - Per-experiment helpers stay in that experiment's `main.rs`.
 - Exploratory behavior stays in `experiments/`; stable approved algorithms migrate to `crates/`.
-- Keep data with the producer. Avoid multiple maintained binaries writing to the same tracked output file.
 - Use semantic experiment paths. Do not reorganize a topic just to make the subtree visually balanced.
 - Durable reusable Sage validation belongs under `experiments/verification/sage/`. Topic-local Sage can stay with its producer until it stabilizes into a reusable comparison surface.
-- Every Cargo binary entrypoint `main.rs` and every experiment `.py` script declares
-  `Input Artifacts:` and `Output Artifacts:` in the top doc comment/docstring.
-- Use exact repo-relative paths when practical. Use `None` when the file does not
-  own or consume repo artifacts. If one declaration line covers a maintained
-  family, keep the family explicit and machine-readable.
-- `scripts/dataflow.sh` parses these declarations and regenerates `DATAFLOW.md` for the repo's artifact audit.
 
 Run examples:
 
@@ -85,20 +79,6 @@ cargo build --workspace --release
 - Shared figure styling comes from `experiments/figure_config.py`.
 - Generated thesis-facing figures should be readable at thesis text width.
 - Captions in generated `.tex` tables or thesis text state observations; interpretations belong in body text.
-
-## Data Safety
-
-- `.jsonl` files are generated artifacts and are tracked by Git LFS.
-- Do not edit `.jsonl` with patch-style line edits.
-- For smoke tests, write temporary output under an untracked temp directory and delete it before finishing.
-- For smoke or warmup runs, write temporary datasets under an untracked temp directory and delete them after the run.
-- Smoke/default experiment runs should write untracked `smoke-*.jsonl` style outputs unless the caller explicitly requests a canonical refresh path.
-- If a compatibility run modifies tracked outputs, restore them before finishing unless the task is explicitly to refresh data.
-- If a script touches tracked outputs only for compatibility, restore those paths before finishing.
-- If a tracked `.jsonl` changes unexpectedly, stop and report the exact file and command.
-- If code is newer than committed data for the same experiment, report the freshness mismatch and regenerate only when the task calls for refreshed results.
-- Use `scripts/dataflow.sh` to regenerate `DATAFLOW.md`.
-- `DATAFLOW.md` is built from declared `Input Artifacts:` / `Output Artifacts:` headers on experiment Python scripts and Cargo binary entrypoints. Treat that audit as declared artifact ownership plus local timestamp metadata, not as full transitive source provenance.
 
 ## Reporting Results
 
