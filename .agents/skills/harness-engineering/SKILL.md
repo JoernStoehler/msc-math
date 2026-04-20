@@ -23,6 +23,11 @@ The harness is:
 - `.codex/config.toml` and `.codex/reference/**`: Codex CLI configuration and reference material.
 - `.devcontainer/**`: runtime-environment setup for local devcontainer and Codex web sessions.
 
+## Further Reading
+
+- OpenAI, "Harness engineering: leveraging Codex in an agent-first world":
+  https://openai.com/index/harness-engineering/
+
 ## Design Rules
 
 - Keep `AGENTS.md` short and task-facing. It is always loaded, so every sentence competes with the task context.

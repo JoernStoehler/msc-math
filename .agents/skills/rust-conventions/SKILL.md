@@ -47,6 +47,9 @@ No rayon inside algorithms — parallelism is at the dataset level (each polytop
 Extract a helper or subfunction only when there is a clean boundary that makes
 the surrounding code easier to understand or modify.
 
+- Prefer one concern per `.rs` file. Keep one main public symbol, or one tight
+  router surface, plus private helpers that have no better home.
+
 - Prefer inline code when the logic is tightly coupled to one call site and the
   extracted helper would force readers to jump away only to recover the same
   local context.

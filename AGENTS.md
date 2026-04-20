@@ -53,8 +53,6 @@ Required project instructions live in this root map or in discoverable skills. `
 - **Feature lifecycle:** New code starts in the relevant `experiments/` subtree when it is still exploratory. Stable, approved algorithms migrate into `crates/`. Validation experiments either become crate tests or remain in `experiments/`.
 - **Test/validation boundary:** Crate tests are fast live checks for developer feedback and ordinary regressions. Slow mathematical validation, edge-case searches, broad random sweeps, and generated evidence datasets live in `experiments/`.
 - **Math-code correspondence:** Non-trivial Rust algorithms must cross-reference formal mathematics with labels such as `[lem:label]`, `[thm:label]`, or `[def:label]`. The matching `\label{...}` lives in `formal/library/*.tex` or the relevant `formal/<topic>/*.tex` file.
-- **Rust file scope:** Prefer one concern per `.rs` file. Keep one main public symbol, or one tight router surface, plus private helpers that have no better home.
-- **Rust tests:** Move smoke/unit tests into `test_*.rs` files instead of growing implementation files. Larger verification or performance suites belong in `experiments/verification/` or experiment-owned performance surfaces.
 - **Experiment paths:** Use semantic experiment paths. Do not force balanced subtrees when the semantics are asymmetric.
 - **Research notes:** Prefer local `REASONING.md`, `DECISIONS.md`, and `NEXT-STEPS.md` files over giant shared logbooks. Git history on those files is the change log.
 - **Data ownership:** Keep generated data with the producer that writes it. Avoid multiple binaries writing to the same tracked output.
@@ -92,10 +90,9 @@ Required project instructions live in this root map or in discoverable skills. `
 
 - `.jsonl` files are generated artifacts and are LFS-tracked. Do not edit `.jsonl` with patch-style line edits.
 - For smoke or warmup runs, write temporary datasets under an untracked temp directory and delete them after the run.
-- Smoke/default experiment runs should write untracked `smoke-*.jsonl` style outputs unless the caller explicitly requests a canonical refresh path.
 - If a script touches tracked outputs only for compatibility, restore those paths before finishing.
 - If a tracked `.jsonl` changes unexpectedly, stop and report the exact file and command.
-- When auditing freshness or shared-cache drift, prefer running `scripts/dataflow.sh` over reconstructing the artifact DAG by hand. It regenerates `DATAFLOW.md` from declared `Input Artifacts:` / `Output Artifacts:` headers on experiment Python scripts and Cargo binary entrypoints. Treat that audit as declared artifact ownership plus local timestamp metadata, not as full transitive source provenance.
+- Use `scripts/dataflow.sh` to regenerate `DATAFLOW.md`.
 
 ## Environment
 
