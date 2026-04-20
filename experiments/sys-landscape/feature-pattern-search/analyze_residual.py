@@ -21,7 +21,6 @@ Input Artifacts:
   - optionally a precomputed normalized dataset directory passed by
     `--normalized-dir`
 Output Artifacts:
-  - research/sys-landscape-feature-pattern-search-residual-summary.md
   - experiments/sys-landscape/feature-pattern-search/feature_pattern_search_residual.png
 """
 
@@ -59,7 +58,6 @@ FEATURE_SKELETON_JSONL = EXPERIMENT_DIR / "feature_skeleton.jsonl"
 FEATURE_OMEGA_JSONL = EXPERIMENT_DIR / "feature_omega.jsonl"
 FEATURE_ORBIT_JSONL = EXPERIMENT_DIR / "feature_orbit.jsonl"
 FEATURE_TRAJECTORY_JSONL = EXPERIMENT_DIR / "feature_trajectory.jsonl"
-SUMMARY_MD = REPO_ROOT / "research" / "sys-landscape-feature-pattern-search-residual-summary.md"
 RESIDUAL_PNG = EXPERIMENT_DIR / "feature_pattern_search_residual.png"
 
 ENDPOINT_DATASETS = {
@@ -406,9 +404,6 @@ def write_summary(rows: list[JoinedRow], results: dict[str, dict[str, dict[str, 
             )
         lines.append("")
 
-    SUMMARY_MD.write_text("\n".join(lines) + "\n")
-
-
 def plot_residual_deltas(results: dict[str, dict[str, dict[str, float]]]) -> None:
     x = np.arange(len(TESTED_BLOCKS))
     width = 0.35
@@ -452,10 +447,8 @@ def main() -> None:
         for block in TESTED_BLOCKS:
             results[model_name][block] = evaluate_additive_cv(rows, block, model_name)
 
-    write_summary(rows, results)
     plot_residual_deltas(results)
 
-    print(f"Saved {SUMMARY_MD}")
     print(f"Saved {RESIDUAL_PNG}")
 
 

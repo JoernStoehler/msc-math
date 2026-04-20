@@ -11,9 +11,7 @@ Goal: Plot histogram of systolic ratios under HK-O pentagon dual-vertex perturba
 Input Artifacts: experiments/hko-local-maximum/perturbation-neighborhood/pentagon-perturb.jsonl
        or experiments/hko-local-maximum/perturbation-neighborhood/data/licca-eps-*.jsonl
 Output Artifacts: experiments/hko-local-maximum/perturbation-neighborhood/pentagon_perturb_sys_hist.png
-        research/hko-local-maximum-perturbation-neighborhood-stats.md
         experiments/hko-local-maximum/perturbation-neighborhood/pentagon_perturb_stats.tex
-        research/hko-local-maximum-perturbation-neighborhood-pca.md
         experiments/hko-local-maximum/perturbation-neighborhood/pentagon_perturb_pca.tex
 
 Row identity across buckets is (eps, name). Buckets are grouped by the eps field
@@ -32,13 +30,9 @@ from figure_config import setup, FIGSIZE_SINGLE
 setup()
 
 EXPERIMENT_DIR = Path(__file__).resolve().parent
-REPO_ROOT = EXPERIMENT_DIR.parent.parent.parent
-RESEARCH_DIR = REPO_ROOT / "research"
 DATA_DIR = EXPERIMENT_DIR / "data"
 CANONICAL_DATA = EXPERIMENT_DIR / "pentagon-perturb.jsonl"
 FIGURES_DIR = EXPERIMENT_DIR
-STATS_MD = RESEARCH_DIR / "hko-local-maximum-perturbation-neighborhood-stats.md"
-PCA_MD = RESEARCH_DIR / "hko-local-maximum-perturbation-neighborhood-pca.md"
 N_PCA_COMPONENTS = 5
 PCA_BUCKET_EPS = 0.01
 
@@ -98,21 +92,6 @@ def compute_stats(values: np.ndarray) -> dict:
         "min": float(np.min(values)),
         "max": float(np.max(values)),
     }
-
-
-def format_stats_table_md(bucket_stats: list[tuple[float, dict]], base_sys: float) -> str:
-    def fmt(x: float) -> str:
-        return f"{x:.4f}"
-    lines = [
-        "| eps | N | mean | median | std | min | max | base sys |",
-        "|---|---|---|---|---|---|---|---|",
-    ]
-    for eps, s in bucket_stats:
-        lines.append(
-            f"| {eps:.4g} | {s['N']} | {fmt(s['mean'])} | {fmt(s['median'])} | "
-            f"{fmt(s['std'])} | {fmt(s['min'])} | {fmt(s['max'])} | {fmt(base_sys)} |"
-        )
-    return "\n".join(lines)
 
 
 def format_stats_table_tex(bucket_stats: list[tuple[float, dict]], base_sys: float) -> str:
@@ -236,15 +215,6 @@ def build_pca_rows(
     return rows
 
 
-def format_pca_table_md(rows: list[list[str]]) -> str:
-    headers = ["component"] + [f"facet {i}" for i in range(1, 11)] + ["strength"]
-    sep = ["---"] * len(headers)
-    lines = ["| " + " | ".join(headers) + " |", "| " + " | ".join(sep) + " |"]
-    for row in rows:
-        lines.append("| " + " | ".join(row) + " |")
-    return "\n".join(lines)
-
-
 def format_pca_table_tex(rows: list[list[str]]) -> str:
     headers = ["Component"] + [f"Facet {i}" for i in range(1, 11)] + ["Strength"]
     col_spec = "l" + "c" * 11
@@ -308,11 +278,6 @@ def main() -> None:
 
     FIGURES_DIR.mkdir(parents=True, exist_ok=True)
 
-    table_md = format_stats_table_md(bucket_stats, base_sys)
-    table_path = STATS_MD
-    table_path.write_text(table_md + "\n")
-    print(f"Saved: {table_path}")
-
     stats_tex = format_stats_table_tex(bucket_stats, base_sys)
     stats_tex_path = FIGURES_DIR / "pentagon_perturb_stats.tex"
     stats_tex_path.write_text(stats_tex + "\n")
@@ -335,21 +300,11 @@ def main() -> None:
         strengths = explained_ratio[:N_PCA_COMPONENTS]
         pca_rows = build_pca_rows(base_row, components, strengths, N_PCA_COMPONENTS)
 
-        pca_md = format_pca_table_md(pca_rows)
-        pca_md_path = PCA_MD
-        pca_md_path.write_text(pca_md + "\n")
-        print(f"Saved: {pca_md_path}")
-
         pca_tex = format_pca_table_tex(pca_rows)
         pca_tex_path = FIGURES_DIR / "pentagon_perturb_pca.tex"
         pca_tex_path.write_text(pca_tex + "\n")
         print(f"Saved: {pca_tex_path}")
 
         print(f"\nPCA computed on eps={pca_eps} bucket, N={len(pca_rows_raw)}")
-
-    print("\nStats table:\n")
-    print(table_md)
-
-
 if __name__ == "__main__":
     main()

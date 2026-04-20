@@ -28,7 +28,6 @@ Output Artifacts:
   - experiments/sys-landscape/feature-pattern-search/feature_omega.jsonl
   - experiments/sys-landscape/feature-pattern-search/feature_orbit.jsonl
   - experiments/sys-landscape/feature-pattern-search/feature_trajectory.jsonl
-  - research/sys-landscape-feature-pattern-search-summary.md
   - experiments/sys-landscape/feature-pattern-search/feature_pattern_search_ridge.png
   - experiments/sys-landscape/feature-pattern-search/feature_pattern_search_rf.png
 """
@@ -68,7 +67,6 @@ FEATURE_SKELETON_JSONL = EXPERIMENT_DIR / "feature_skeleton.jsonl"
 FEATURE_OMEGA_JSONL = EXPERIMENT_DIR / "feature_omega.jsonl"
 FEATURE_ORBIT_JSONL = EXPERIMENT_DIR / "feature_orbit.jsonl"
 FEATURE_TRAJECTORY_JSONL = EXPERIMENT_DIR / "feature_trajectory.jsonl"
-SUMMARY_MD = REPO_ROOT / "research" / "sys-landscape-feature-pattern-search-summary.md"
 RIDGE_PNG = EXPERIMENT_DIR / "feature_pattern_search_ridge.png"
 RF_PNG = EXPERIMENT_DIR / "feature_pattern_search_rf.png"
 
@@ -879,9 +877,6 @@ def write_summary(
         ]
     )
 
-    SUMMARY_MD.write_text("\n".join(lines) + "\n")
-
-
 def plot_model_results(results: list[dict], model_name: str, out_path: Path, title: str) -> None:
     fig, axes = plt.subplots(2, 2, figsize=FIGSIZE_SQUARE, sharex=False, sharey=False)
     axes_flat = axes.flatten()
@@ -979,7 +974,6 @@ def main() -> None:
                 for row in trajectory_rows:
                     handle.write(json.dumps(row) + "\n")
             results = run_evaluations(joined_rows)
-            write_summary(normalized_source_label, joined_rows, results)
             plot_model_results(results, "ridge", RIDGE_PNG, "Feature Pattern Search: Ridge")
             plot_model_results(results, "rf", RF_PNG, "Feature Pattern Search: Random forest")
             print(f"Saved {FEATURE_JSONL}")
@@ -989,7 +983,6 @@ def main() -> None:
             print(f"Saved {FEATURE_OMEGA_JSONL}")
             print(f"Saved {FEATURE_ORBIT_JSONL}")
             print(f"Saved {FEATURE_TRAJECTORY_JSONL}")
-            print(f"Saved {SUMMARY_MD}")
             print(f"Saved {RIDGE_PNG}")
             print(f"Saved {RF_PNG}")
             return
@@ -1014,7 +1007,6 @@ def main() -> None:
         for row in trajectory_rows:
             handle.write(json.dumps(row) + "\n")
     results = run_evaluations(joined_rows)
-    write_summary(normalized_source_label, joined_rows, results)
     plot_model_results(results, "ridge", RIDGE_PNG, "Feature Pattern Search: Ridge")
     plot_model_results(results, "rf", RF_PNG, "Feature Pattern Search: Random forest")
 
@@ -1025,7 +1017,6 @@ def main() -> None:
     print(f"Saved {FEATURE_OMEGA_JSONL}")
     print(f"Saved {FEATURE_ORBIT_JSONL}")
     print(f"Saved {FEATURE_TRAJECTORY_JSONL}")
-    print(f"Saved {SUMMARY_MD}")
     print(f"Saved {RIDGE_PNG}")
     print(f"Saved {RF_PNG}")
 

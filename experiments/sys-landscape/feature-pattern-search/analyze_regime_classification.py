@@ -22,7 +22,6 @@ Input Artifacts:
     `feature_omega.jsonl`, `feature_orbit.jsonl`, `feature_trajectory.jsonl`
   - optionally a precomputed normalized dataset directory passed by `--normalized-dir`
 Output Artifacts:
-  - research/sys-landscape-regime-classification-summary.md
   - experiments/sys-landscape/feature-pattern-search/regime_classification_bars.png
 """
 
@@ -65,7 +64,6 @@ FEATURE_SKELETON_JSONL = EXPERIMENT_DIR / "feature_skeleton.jsonl"
 FEATURE_OMEGA_JSONL = EXPERIMENT_DIR / "feature_omega.jsonl"
 FEATURE_ORBIT_JSONL = EXPERIMENT_DIR / "feature_orbit.jsonl"
 FEATURE_TRAJECTORY_JSONL = EXPERIMENT_DIR / "feature_trajectory.jsonl"
-SUMMARY_MD = REPO_ROOT / "research" / "sys-landscape-regime-classification-summary.md"
 FIGURE_PNG = EXPERIMENT_DIR / "regime_classification_bars.png"
 
 ENDPOINT_DATASETS = {
@@ -432,9 +430,6 @@ def write_summary(normalized_source_label: str, rows: list[JoinedRow], results: 
         ]
     )
 
-    SUMMARY_MD.write_text("\n".join(lines) + "\n")
-
-
 def plot_results(results: list[dict], out_path: Path) -> None:
     x = np.arange(len(FEATURE_BLOCKS))
     width = 0.36
@@ -474,17 +469,13 @@ def main() -> None:
             )
             rows = load_joined_rows(normalized_dir)
             results = run_evaluations(rows)
-            write_summary(normalized_source_label, rows, results)
             plot_results(results, FIGURE_PNG)
-            print(f"Saved {SUMMARY_MD}")
             print(f"Saved {FIGURE_PNG}")
             return
 
     rows = load_joined_rows(normalized_dir)
     results = run_evaluations(rows)
-    write_summary(normalized_source_label, rows, results)
     plot_results(results, FIGURE_PNG)
-    print(f"Saved {SUMMARY_MD}")
     print(f"Saved {FIGURE_PNG}")
 
 
