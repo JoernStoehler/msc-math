@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/devcontainers/base:ubuntu
+FROM mcr.microsoft.com/devcontainers/base:ubuntu-24.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -77,12 +77,12 @@ RUN set -eux; \
     install -m 0755 "$tmpdir/code" /usr/local/bin/code-tunnel; \
     rm -rf "$tmpdir"
 
-# Node.js 22.x (npm included) for JS tooling.
-# We keep this in the image so that npm is always available for postCreate
-# steps without re-downloading Node on each run.
+# Node.js (npm included) for JS tooling.
+# Pin an exact package version so rebuilds do not drift within the 22.x line.
+ENV NODEJS_VERSION=22.22.1-1nodesource1
 RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
     && apt-get update \
-    && apt-get install -y --no-install-recommends nodejs \
+    && apt-get install -y --no-install-recommends "nodejs=${NODEJS_VERSION}" \
     && rm -rf /var/lib/apt/lists/* \
     && node -v && npm -v
 
@@ -99,7 +99,7 @@ RUN curl -LsSf https://astral.sh/uv/${UV_VERSION}/install.sh | sh
 ENV MINIFORGE_DIR=/opt/miniforge
 ENV MINIFORGE_VERSION=25.11.0-1
 ENV MINIFORGE_SHA256=be1bad9d4e67a8753eb76fb4940e9a08036786675c7adf060627e55791bf110d
-ENV SAGE_VERSION=10.7
+ENV SAGE_VERSION=10.8
 RUN set -eux; \
     installer="/tmp/Miniforge3-${MINIFORGE_VERSION}-$(uname)-$(uname -m).sh"; \
     curl -L "https://github.com/conda-forge/miniforge/releases/download/${MINIFORGE_VERSION}/Miniforge3-${MINIFORGE_VERSION}-$(uname)-$(uname -m).sh" -o "$installer"; \
@@ -114,18 +114,17 @@ RUN set -eux; \
     "$MINIFORGE_DIR/bin/conda" clean -afy
 
 # Switch to dev user for language toolchains.
-# Toolchains live in the dev user's HOME so that cargo/elan behave normally.
+# Toolchains live in the dev user's HOME so that cargo behaves normally.
 USER vscode
 ENV HOME=/home/vscode
 ENV PATH="$HOME/.cargo/bin:$HOME/.local/bin:/usr/local:$PATH"
 
 # Install Rust (rustup + basic components) in this devcontainer image.
 # We install rustfmt/clippy here so they're available without additional setup.
-RUN curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain stable \
+RUN curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain 1.94.0 \
     && "$HOME/.cargo/bin/rustup" component add rustfmt clippy rust-analyzer || true
 
-# Cargo tools: nextest (per-test timing/parallel), cargo-watch (auto-rerun)
-RUN curl -LsSf https://get.nexte.st/latest/linux | tar zxf - -C "$HOME/.cargo/bin" \
-    && "$HOME/.cargo/bin/cargo" install cargo-watch
+# Cargo tools: nextest (per-test timing/parallel)
+RUN curl -LsSf https://get.nexte.st/latest/linux | tar zxf - -C "$HOME/.cargo/bin"
 
 WORKDIR /workspaces/msc-math

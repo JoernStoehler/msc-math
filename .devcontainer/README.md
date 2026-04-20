@@ -26,6 +26,10 @@ historical cloud prefix.
 - Everything Codex spawns: shell commands, cargo, python, latexmk, etc.
 - SageMath via a baked Miniforge/conda-forge install, exposed as `sage`
 
+Version policy in this container:
+- pinned for reproducibility: base image, Rust toolchain, Node.js package version, `uv`, Miniforge, SageMath
+- intentionally latest on rebuild: `code-tunnel`, Codex CLI, Claude Code
+
 ### Access paths
 
 1. **VS Code tunnel (desktop):** Chrome → vscode.dev → tunnel → container → bash → tmux → codex
@@ -154,6 +158,7 @@ Practical consequences:
 - after a normal rebuild, `sage --version` should work immediately inside the
   container;
 - `mamba` and `conda` are also exposed on `PATH` via `/usr/local/bin`;
+- the image pins `SAGE_VERSION=10.8` in `.devcontainer/Dockerfile`;
 - the Sage environment is large, so rebuilds will take noticeably longer and
   the image will be larger than before.
 

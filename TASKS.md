@@ -693,7 +693,7 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 - Branch audit: 5 branches fully merged with 0-file diffs (`citation-verification`, `citation-verification-d`, `database-cleanup`, `delete-api-reference`, `housekeeping-triage`) — safe `git branch -d` candidates. 1 unmerged: `numerical-story-expand` (1 ahead / 9 behind, +458/-160 in `thesis/numerical-story.md`). Jörn decides per-branch.
 
 ### [done] [2026-04-12] Delete api-reference/
-- Never used organically by agents; agents read source directly. Removed `api-reference/`, the old API extract workspace member, the pre-commit hook, and stale project-doc references.
+- Never used organically by agents; agents read source directly. Removed `api-reference/`, the old API extract workspace member, and stale project-doc references. The current repo still carries a `.pre-commit-config.yaml` large-file guard for non-LFS files over 10 MB.
 
 ### [done] [2026-04] Polytope database
 - `crates/symplectic/src/database.rs`, JSONL format, 1198 entries. 6 experiments migrated.
