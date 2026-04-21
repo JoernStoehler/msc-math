@@ -58,11 +58,13 @@ When a validation experiment replaces crate fixture coverage, record the boundar
 - Register binaries in `experiments/<topic>/Cargo.toml`.
 - Binary paths use `experiments/<topic>/<experiment>/main.rs`.
 - Cargo binary names use hyphens, matching existing package style.
-- Shared helpers used by multiple binaries in the same topic belong in `experiments/<topic>/src/lib.rs`.
-- Per-experiment helpers stay in that experiment's `main.rs`.
+- Shared helpers used by multiple binaries in the same topic belong in `experiments/<topic>/src/lib.rs` only when they are stable semantic primitives or stable shared contracts.
+- Keep case-specific or exploratory helpers in the binary that owns them even when another binary has a structurally similar pipeline.
+- Keep `main.rs` thin once an experiment has more than one semantic stage; route into local modules or `src/lib.rs` instead of letting the entrypoint become the whole experiment.
 - Exploratory behavior stays in `experiments/`; stable approved algorithms migrate to `crates/`.
 - Use semantic experiment paths. Do not reorganize a topic just to make the subtree visually balanced.
 - Durable reusable Sage validation belongs under `experiments/verification/sage/`. Topic-local Sage can stay with its producer until it stabilizes into a reusable comparison surface.
+- Rust experiment entrypoints follow the Rust rule "pass the data a function actually needs": prefer explicit inputs and flat local structs over oversized context arguments.
 
 Run examples:
 

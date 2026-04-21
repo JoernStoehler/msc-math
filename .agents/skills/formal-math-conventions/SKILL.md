@@ -39,6 +39,9 @@ rg -n '\\label\{(lem|thm|def|prop|cor|rem|eq):' formal
 - Label format: `\label{<type>:<name>}` where `<type>` is one of `lem`, `thm`, `def`, `alg`, `cor`, `rem`, `prop`, `eq`, `fact`, `sec`, `tab`, or `fig`.
 - Labels are unique across all `formal/**/*.tex` files.
 - Rust code cites labels with `[lem:label]`, `[thm:label]`, `[def:label]`, and similar bracketed forms. Do not use rendered theorem numbers in code comments.
+- Rust citations follow the `$rust-conventions` proof-burden rule: cite the
+  formal label when code correctness depends on the result; do not force labels
+  onto pure orchestration or obvious plumbing.
 - If code needs a label that does not exist, add a TODO in code rather than inventing a false reference.
 
 ## Proof Standards
@@ -47,7 +50,8 @@ rg -n '\\label\{(lem|thm|def|prop|cor|rem|eq):' formal
 - Mark uncertainty directly above the affected statement or proof:
   - `% [TODO: JÖRN - ...]` for a point requiring Jörn's judgment.
   - `% [GAP - ...]` for an above-background-risk gap.
-- Do not duplicate proofs in Rust doc comments. Code comments should cite formal labels and summarize what the cited result gives.
+- Do not duplicate proofs in Rust doc comments. Code comments should cite formal
+  labels and summarize what the cited result gives.
 
 ## Build Checks
 
