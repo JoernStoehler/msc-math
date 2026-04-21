@@ -5,7 +5,7 @@ Format: `## [status] Group` / `### [status] [date] Item`. Body only when header 
 Run `bash scripts/tasks-toc.sh` for section index.
 
 **What the thesis should say:** `RESULTS.md`.
-**How thesis success is measured:** `VERIFICATION.md`.
+**How thesis success is measured:** `FINAL-VERIFICATION.md`.
 **Priority:** Thesis coherence + experiment quality > code refactors. Code refactors only matter if they unblock thesis content or experiment correctness.
 **Maintenance:** Record decisions and reasons — these can't be derived later. Don't cache derivable state (build status, test counts) — run the command instead.
 **Dependencies:** thesis/ is stale and will be restructured — most thesis work is blocked on restructuring decisions. Work on `crates/symplectic/`, `formal/`, and `experiments/` is independent and can proceed now.

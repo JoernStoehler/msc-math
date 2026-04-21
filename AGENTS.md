@@ -32,7 +32,7 @@ Planned deliverables:
 - `thesis/`: Publishable thesis sources. The thesis is self-contained and does not `\input` files from `formal/`, `experiments/`, or `crates/`.
 - `papers/<abbreviationYear>/`: Downloaded arXiv paper sources.
 - `RESULTS.md`: Thesis claim surface: what the thesis should say and with what strength.
-- `VERIFICATION.md`: Literal thesis-done truth-spec: what must be true for the thesis project to count as finished.
+- `FINAL-VERIFICATION.md`: Literal thesis-done truth-spec: what must be true for the thesis project to count as finished.
 - `ARCHITECTURE.md`: Repo-level architecture map: component boundaries, core entities, library subsystems, and persisted-data architecture.
 - `TASKS.md`: Unified project tracker and default home for sequencing, ownership, and intermediate milestones. Run `bash scripts/tasks-toc.sh` for section line ranges.
 - `scratch/`: Undocumented scratch notes, migration notes, and temporary working material. Do not treat it as current convention text.
@@ -86,10 +86,10 @@ Required project instructions live in this root map or in discoverable skills. `
 - Include a quality gate in the plan. Use subagent review when Jörn asks for delegation or the active session instructions allow it; otherwise run a local review against the same checklist.
 - Route planning surfaces explicitly:
   `RESULTS.md` = claim surface,
-  `VERIFICATION.md` = literal thesis-done truth-spec,
+  `FINAL-VERIFICATION.md` = literal thesis-done truth-spec,
   `TASKS.md` = default home for sequencing and intermediate milestones.
-- Do not put an intermediate milestone such as `writer-ready`, `submission-ready`, or `freeze-ready` into `VERIFICATION.md` unless Jörn explicitly wants that milestone to become part of the literal finished-state specification.
-- If an intermediate milestone needs durable multi-session acceptance criteria but is still not part of thesis-done, create a separate planning or milestone file instead of extending `VERIFICATION.md` by default.
+- Do not put an intermediate milestone such as `writer-ready`, `submission-ready`, or `freeze-ready` into `FINAL-VERIFICATION.md` unless Jörn explicitly wants that milestone to become part of the literal finished-state specification.
+- If an intermediate milestone needs durable multi-session acceptance criteria but is still not part of thesis-done, create a separate planning or milestone file instead of extending `FINAL-VERIFICATION.md` by default.
 - Update the plan after meaningful results. Do not leave stale statuses.
 - Before asking Jörn to review a draft, proof sketch, experiment write-up, or conclusion, first run the checks that agents can run: buildability, internal consistency, source attribution, figure/text alignment, claim/data alignment, label/cross-reference resolution, missing tests, and scope drift.
 

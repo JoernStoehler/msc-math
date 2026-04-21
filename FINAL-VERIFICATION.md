@@ -3,10 +3,11 @@ Purpose: define "the thesis project is done" as a pedantic sufficiency tree.
 Context: rewritten on 2026-04-16 after the first gate-style draft proved too
 summary-like. This file now breaks parent nodes into children until leaf nodes
 become directly observable, even when the resulting execution plan is slow or
-repetitive.
+repetitive. Renamed from `VERIFICATION.md` on 2026-04-21 when the repo split
+the final truth-spec from reusable pre-final verification workflow packets.
 -->
 
-# Verification Gates
+# Final Verification Gates
 
 ## Context And Goal
 
@@ -28,6 +29,12 @@ as `writer-ready`, `submission-ready`, or `freeze-ready`. Put those in
 `TASKS.md` or a separate planning surface unless Jorn explicitly asks for them
 here.
 
+This file is the authoritative final finished-state spec. It does not own the
+day-to-day workflow for readiness checks, thesis-claim audits, reproducibility
+passes, or other reusable pre-final verification runs. Those belong in the
+`verification` skill under `.agents/skills/verification/` and its packet
+references.
+
 This file does not replace:
 
 - `RESULTS.md`: what the thesis should claim, and with what strength.
@@ -47,7 +54,7 @@ Use local context first:
 - `RESULTS.md` answers what the thesis should claim and with what strength.
 - `TASKS.md` answers ownership, sequencing, deadline, and stop-condition
   choices.
-- `VERIFICATION.md` answers what would make the thesis project finished.
+- `FINAL-VERIFICATION.md` answers what would make the thesis project finished.
 - The submitted thesis artifact answers what the thesis actually says.
 - The cited formal note, library module, experiment package, or preserved
   artifact answers what that source actually contains.
@@ -759,9 +766,9 @@ Sufficient children:
 
 Sufficient children:
 
-- T5.1.a [observable] If the thesis says the project provides a Rust library,
-  `library/` exists and the thesis-facing APIs, modules, or explicitly named
-  internal code paths actually exist.
+- T5.1.a [observable] If the thesis says the project provides durable Rust
+  crates or a Rust library surface, `crates/` exists and the thesis-facing
+  APIs, modules, or explicitly named internal code paths actually exist.
 - T5.1.b [observable] If the thesis says the project provides a reproducible
   experiment pipeline, `experiments/` contains the thesis-facing experiment
   packages, scripts, and cited outputs or preserved artifacts that the thesis

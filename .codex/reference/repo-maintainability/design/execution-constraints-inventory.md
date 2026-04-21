@@ -127,7 +127,7 @@ Implication for later packets:
 
 - Current root checkout already has unrelated changes:
   - modified `TASKS.md`
-  - untracked `VERIFICATION.md`
+  - modified `FINAL-VERIFICATION.md`
   - durable `.codex/reference/repo-maintainability/` notes
 
 Implication for later packets:
