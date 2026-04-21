@@ -22,6 +22,12 @@ checks". Actual execution efficiency is irrelevant here.
 This file is allowed to be pedantic, overlapping, repetitive, and expensive to
 execute. The point is coverage, not convenience.
 
+This file specifies the literal thesis-done gate only. It is not the default
+place for phase gates, workflow milestones, or pre-submit planning targets such
+as `writer-ready`, `submission-ready`, or `freeze-ready`. Put those in
+`TASKS.md` or a separate planning surface unless Jorn explicitly asks for them
+here.
+
 This file does not replace:
 
 - `RESULTS.md`: what the thesis should claim, and with what strength.

@@ -383,6 +383,65 @@ Instrument development. Results promote to `crates/symplectic/`.
 thesis/ is stale (see `thesis/handwritten-notes.md`). Most work here is blocked on restructuring decisions.
 tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, independent of restructuring.
 
+### [open] [group:pm] Writer-ready milestone
+- Meaning: the remaining mainline work is writing `thesis/` from already-chosen thesis content.
+- Thesis-external work may still happen after this milestone, but only when writing or thesis-driven reexamination makes the exact work concrete.
+- Do not mark this done by corner-cutting. It is false if thesis-external work that is already foreseeable and worth doing before writing is still knowingly being postponed.
+- Current status on 2026-04-20: false.
+  - `Thesis restructuring` is still open, so the writing target is not yet stable enough to classify the thesis-external boundary cleanly.
+  - The thesis-relevant packets outside `thesis/` have not yet been classified as `must finish before writer-ready`, `allowed after writer-ready only if writing makes it concrete`, or `defer/future`.
+- Revisit this row only after `Thesis restructuring` and `Writer-ready boundary classification` update `TASKS.md` enough that the pre-writing / contingent / defer split is visible from repo state.
+- Acceptance check: every still-relevant thesis-external packet has an explicit side of the writer-ready boundary, and anything left outside `thesis/` after the milestone is contingent work discovered during writing rather than work we already knew should happen first.
+
+### [Jörn] [group:pm] Writer-ready boundary classification
+- For each thesis-relevant packet outside `thesis/`, decide whether it is `must finish before writer-ready`, `allowed after writer-ready only if writing makes it concrete`, or `defer/future`.
+- Use one question only: is this work already foreseeable and worth doing before writing, or does it become concrete only during writing or thesis-driven reexamination?
+- This is classification, not execution. If the classification exposes missing pre-writing work, keep or create the corresponding task row instead of hiding it under the milestone.
+- Likely inputs include retained `RESULTS.md` items, thesis-facing correctness or alignment passes, figure/table source preparation, and any open experiment/formal/code packet still on the thesis path.
+- 2026-04-21 draft default if agents proceed before a full outline lands:
+  - `must finish before writer-ready`: thesis-facing provenance cleanup (`S1`), HKO claim-strength freeze, hostile-landscape claim-strength freeze, numerical appendix route freeze, and explicit status for `lem:cap-derivative` / `lem:vol-derivative`.
+  - `allowed after writer-ready only if writing makes it concrete`: HKO Packet 3 completion, figure inventory, AI/process reflection, and thesis-style experiment prose for surviving sections.
+  - `defer/future`: new LICCA runs unless results are already about to land, tube implementation, pentagon rotation proof, and the full Appendix A redesign / combinatorics-theorem route.
+- Acceptance: the relevant thesis-external packets are classified in `TASKS.md`, and the writer-ready row can then be checked locally from those classifications.
+
+### [active] [group:pm] 2026-04-21 to 2026-04-23 pre-writing packet queue
+- Purpose: use the blocked-on-`thesis/` window for bounded thesis-readiness packets, not new research branches.
+- Integration owner: this session keeps PM + tracker ownership and integrates delegated packet results after verification.
+- Ordered queue:
+  - `P1` keep the writer-ready boundary visible in `TASKS.md` and avoid losing the current recommendation.
+  - `P2` integrate `S1` dataflow/generated-output cleanup if the root checkout does not already contain it; verification `bash scripts/dataflow.sh`.
+  - `P3` run `HKO theorem/evidence/blocker compression`; verification `cd formal && latexmk`, plus the exact-clarke witness check if that packet touches witness-facing docs.
+  - `P4` run `Hostile-landscape retained-claim compression` after `P2`; verification `cd formal && latexmk` if formal files move.
+  - `P5` run `Numerical appendix route freeze`; verification is a tracker + note review check, not a new theorem or code path.
+- Delegation shape:
+  - `P1` main-thread integration with explorer support only.
+  - `P2` is the only currently clean one-agent top-to-bottom execution packet with an existing verification command.
+  - `P3` and `P5` are Jörn-gated prep until the retained claim / route boundary is fixed.
+  - `P4` is best treated as an explorer or small writeup packet after `P2`, not as an immediate top-to-bottom execution packet before the retained claim is named.
+- Stop condition: if a packet opens a new theorem program, new experiment family, or a change to another session's active LICCA ownership, stop and re-plan instead of guessing.
+
+### [open] [group:writeup] HKO theorem/evidence/blocker compression
+- Goal: compress the HKO material outside `thesis/` into a thesis-safe theorem/evidence/blocker split that matches current exact and numerical artifacts.
+- Scope: `research/hko-local-maximum.md`, `research/hko-local-maximum-exact-clarke.md`, and thesis-relevant `formal/hko-local-maximum/**` edits only if they are needed to reflect the retained claim honestly.
+- Packet shape: one agent can own this top-to-bottom after the claim-strength boundary is fixed; a follow-up review pass is useful but not required to start.
+- Verification: `cd formal && latexmk` if formal files move; if witness-facing docs or contracts change, also run `cd experiments/hko-local-maximum/exact-clarke && python3 build_widened_seed_witness.py && sage verify_widened_seed_witness.sage`.
+- Stop condition: if the packet needs Packet 3 representative coverage, a new proof idea, or a stronger theorem statement than the current artifacts license, stop and weaken/caveat instead of extending the math program.
+
+### [open] [group:writeup] Hostile-landscape retained-claim compression
+- Goal: compress the hostile-landscape material outside `thesis/` into the retained thesis-safe claim set: bounded negative evidence, non-transferable heuristics, no strong density wording without new returned LICCA artifacts.
+- Scope: `research/sys-landscape.md` and thesis-relevant `formal/sys-landscape/**` files touched by the retained claim set.
+- Dependency: do this after `S1` so the data/provenance surface is stable while claims are being compressed.
+- Packet shape: one agent can own this top-to-bottom after the retained claim boundary is fixed; reviewer value is mostly stale-claim checking.
+- Verification: `cd formal && latexmk` if formal files move.
+- Stop condition: if the packet wants a new density claim, new feature-search method, or a new LICCA obligation, stop and keep that work future/pending instead.
+
+### [open] [group:numerics] Numerical appendix route freeze
+- Goal: decide whether the numerical appendix stays on the current critical path as a minimal honest appendix or whether the larger Appendix A redesign/combinatorics-theorem route is explicitly deferred.
+- Inputs: `thesis/appendix-rewrite-notes.md`, `thesis/numerical-story.md`, `thesis/appendix-numerical.tex`, and the retained thesis claim set in `RESULTS.md`.
+- Agent scope: draft the route decision surface and the fallback wording that keeps the thesis truthful without opening a new theorem program.
+- Jörn gate: if both routes remain plausible after the draft, Jörn chooses which route to keep on the mainline.
+- Acceptance: `TASKS.md` records the current route, what is explicitly deferred, and what remaining appendix work is still load-bearing for the thesis.
+
 ### [Jörn] [group:writeup] Thesis restructuring
 - Current content stale. Decisions needed: chapter structure, what content survives, what gets rewritten.
 - a_i replaces (n,h). Sign conventions changed. Simplification theorem ordering changed.
@@ -617,6 +676,36 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 - Clarify H-representation irredundancy. Fix Defs 12-13 (area/volume are algorithms, not definitions).
 - Consider splitting into `math_geometry.tex`, `math_symplectic.tex`, `math_reeb.tex`.
 - Post-Kai: do not perform a broad split unless it directly helps the thesis by 2026-04-21. Prefer narrow corrections to definitions and labels.
+
+### [open] [group:pm] Pre-freeze thesis-facing simplification round
+- Setup landed on 2026-04-20:
+  - integration branch/worktree: `prefreeze-simplify-exec` at `.codex/worktrees/prefreeze-simplify-exec/`
+  - live coordination surfaces: `scratch/prefreeze-2026-04-20-index.md`, `scratch/prefreeze-2026-04-20-context.md`, and packet notes `scratch/prefreeze-2026-04-20-s{1..7}-*.md`
+- Packet sessions:
+  - `S1` dataflow + generated-output cleanup
+  - `S2` small reusable Rust `sys` surface
+  - `S3` exact/algebraic boundary
+  - `S4` formal library structure
+  - `S5` HKO thesis-facing write-up
+  - `S6` hostile-landscape thesis-facing write-up
+  - `S7` merge + synthesis
+- Hard dependencies:
+  - `S1`/`S2`/`S3`/`S4` depend only on the setup state above.
+  - `S5` starts only after merged `S3` and merged `S4`.
+  - `S6` starts only after merged `S1`.
+  - `S7` starts only after the accepted packet branches are merged into `prefreeze-simplify-exec`.
+- Serialized ownership rule:
+  - only setup / merge sessions edit `TASKS.md`
+  - only `S7` edits `RESULTS.md` or does final architecture/result synthesis
+  - each packet session updates only its own root-`scratch/` note while work is live
+- 2026-04-21 PM reduction from the packet notes and current worktree state:
+  - the original `S1`-`S7` dependency graph is now obsolete as a live execution graph; treat this row as a salvage/replan note, not as the current packet DAG.
+  - `S1` is the only packet currently marked ready-to-merge with a direct thesis-facing payoff; its note reports a clean `bash scripts/dataflow.sh` verification and the worktree exists at `.codex/worktrees/prefreeze-s1-dataflow/`.
+  - `S3` is marked `discarded locally`; do not merge it as a packet. Salvage only the research-note clarifications and stale `real_algebraic` naming fix if those are independently useful.
+  - `S4` is marked `discarded locally`; do not retry it as a full packet.
+  - `S5` and `S6` remain blocked in their packet notes, but should not stay blocked on the old graph; if they are revived, recut them as smaller claim-compression packets after re-planning.
+- Immediate next action: integrate `S1`, then re-plan any remaining thesis-facing write-up work as smaller packets; leave `S2` optional and `S3` / `S4` discarded unless a smaller salvage task is explicitly opened.
+- Acceptance check: `S7` merges accepted packets, refreshes `TASKS.md` / `RESULTS.md` / `ARCHITECTURE.md`, and reruns the round verification matrix from `scratch/prefreeze-2026-04-20-context.md`.
 
 ### [done] [2026-04-12] [group:docs] Library architecture docs audit
 - Library docs audit: existing headers + per-module formal files cover architecture mostly held; 0 blockers, 7 gaps, 3 nits across `lib.rs`, `kkt/`, `algorithms` umbrella, `algorithms/tube`.
