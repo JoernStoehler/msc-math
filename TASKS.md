@@ -63,7 +63,7 @@ Before `sbatch`, create the experiment-local `logs/` directory because SLURM ope
 ## [open] HKO2024 local maximality
 
 Main conjecture: HKO2024 is a local maximum of the systolic ratio. Potentially publishable alongside thesis.
-Key files: `experiments/hko-local-maximum/`, `thesis/handwritten-notes.md`.
+Key files: `experiments/hko-local-maximum/`, `research/hko-local-maximum-status.md`, `research/hko-local-maximum.md`, `research/hko-local-maximum-exact-clarke.md`.
 Literature: BBLM2023 classifies smooth local maximizers (only ball for k=1). Polytope case genuinely open.
 HKO2024 lives in multiple ambient spaces (LP(5,5), LP(6,5), F=10, F=13, convex bodies) — local max in one space != local max in a larger space.
 
@@ -380,7 +380,7 @@ Instrument development. Results promote to `crates/symplectic/`.
 
 ## [open] Thesis
 
-thesis/ is stale (see `thesis/handwritten-notes.md`). Most work here is blocked on restructuring decisions.
+thesis/ is stale (see `thesis/appendix-rewrite-notes.md` and `thesis/numerical-story.md`). Most work here is blocked on restructuring decisions.
 tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, independent of restructuring.
 
 ### [open] [group:pm] Writer-ready milestone
@@ -446,7 +446,7 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 - Current content stale. Decisions needed: chapter structure, what content survives, what gets rewritten.
 - a_i replaces (n,h). Sign conventions changed. Simplification theorem ordering changed.
 - Blocks: S0, experiment writeups, experiments chapter, introduction, conclusion.
-- See `thesis/handwritten-notes.md` for narrative notes.
+- See `thesis/appendix-rewrite-notes.md` and `thesis/numerical-story.md` for current narrative notes.
 
 ### [Jörn] [group:tube] tube-algorithm.tex (8 TODOs)
 - 5 Jörn questions (quaternionic formula, TF_ij equivalence, rotation number, closing steps, correctness proof).

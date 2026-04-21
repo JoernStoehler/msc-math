@@ -1,5 +1,9 @@
 # HKO Local Maximum Research Note
 
+Status entrypoint:
+`research/hko-local-maximum-status.md` is the fastest summary of current claim
+strength, proof-route status, and authoritative surfaces.
+
 ## Scope
 
 This note is the consolidated research-facing record for `hko-local-maximum`.
