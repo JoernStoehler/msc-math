@@ -5,6 +5,8 @@
 //! gradient-ascent-products, rotated-regular-products, rejection-calibration.
 //! Local cell geometry experiments now live in exp-combinatorial-cells.
 
+pub mod datasets;
+
 use good_lp::{constraint, default_solver, variable, variables, Expression, Solution, SolverModel};
 use nalgebra::{Matrix4, Vector4};
 use num_rational::BigRational;
@@ -25,6 +27,13 @@ use symplectic::geom::skeleton::Skeleton;
 use symplectic::geom::symplectic_form::omega0;
 use symplectic::geom::volume::volume;
 use symplectic::{OrbitAdmissibility, OrbitKktData, OrbitSearchResult};
+
+pub use datasets::{
+    canonical_dataset_cache_path, canonical_dataset_path, canonical_dataset_trace_path,
+    continuation_cache_path, dataset_path, datasets_root, family_dir, legacy_experiment_path,
+    package_root, shared_family_cache_path, DatasetFamily, DatasetRole, DatasetSpec,
+    HkoProximity,
+};
 
 // ============================================================================
 // Step bound constants

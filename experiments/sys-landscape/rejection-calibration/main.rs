@@ -5,6 +5,7 @@
 //! Input Artifacts: None (generates candidates from hardcoded parameter grid and seed).
 //! Output Artifacts: experiments/sys-landscape/rejection-calibration/acceptance.jsonl (acceptance rates per config).
 
+use exp_sys_landscape::{dataset_path, DatasetFamily};
 use symplectic::dataset::AcceptanceRow;
 use symplectic::random::sample_random_polytope;
 use rand::SeedableRng;
@@ -73,8 +74,7 @@ fn main() {
     const N_ATTEMPTS: usize = 1000;
     const SEED: u64 = 42;
 
-    let output_path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("rejection-calibration/acceptance.jsonl");
+    let output_path = dataset_path(DatasetFamily::RejectionCalibration, "acceptance.jsonl");
 
     println!("Running acceptance rate sweep...");
     println!("  n_attempts = {N_ATTEMPTS}");

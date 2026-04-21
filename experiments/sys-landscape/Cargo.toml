@@ -66,6 +66,26 @@ path = "feature-trajectory/main.rs"
 name = "sys-pentagon-rotation-formula"
 path = "pentagon-rotation-formula/main.rs"
 
+[[bin]]
+name = "sys-dataset-random"
+path = "datasets/random.rs"
+
+[[bin]]
+name = "sys-dataset-random-product"
+path = "datasets/random-product.rs"
+
+[[bin]]
+name = "sys-dataset-ascent"
+path = "datasets/ascent.rs"
+
+[[bin]]
+name = "sys-dataset-ascent-product"
+path = "datasets/ascent-product.rs"
+
+[[bin]]
+name = "sys-dataset-continuation"
+path = "datasets/continuation.rs"
+
 [lints]
 workspace = true
 

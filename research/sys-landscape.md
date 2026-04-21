@@ -4,6 +4,7 @@
 - Capture the current status of the `sys-landscape` experimentation branch in a single research-facing note.
 - Keep the experimental artifact and code locations in `experiments/` as canonical storage.
 - Track evidence quality, modeling implications, decisions, and execution order without introducing runbook-level process instructions.
+- Keep tool-by-tool verdicts in `research/sys-landscape-toolbox-audit.md`; this note stays as the topic-level narrative and decision surface.
 
 ## Current State
 - Topic evidence is now documented as one note in `research/sys-landscape.md`.

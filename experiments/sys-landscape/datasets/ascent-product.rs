@@ -1,11 +1,11 @@
-//! Projected gradient ascent on the Lagrangian product submanifold.
+//! Dataset producer: fixed-`F` ascent on the Lagrangian-product submanifold.
 //!
 //! Goal: Run projected gradient ascent on random Lagrangian products and
 //! record both the summary outcomes and per-step traces.
 //! Input Artifacts: experiments/sys-landscape/cache.jsonl
 //! Output Artifacts: experiments/sys-landscape/cache.jsonl
-//!         experiments/sys-landscape/gradient-ascent-products/gradient-ascent-products.jsonl
-//!         experiments/sys-landscape/gradient-ascent-products/gradient-ascent-products-trace.jsonl
+//!         experiments/sys-landscape/datasets/ascent-product.jsonl
+//!         experiments/sys-landscape/datasets/ascent-product-trace.jsonl
 //!
 //! At each iteration, builds the active-orbit first-order model for `sys`.
 //! With one active orbit, it uses that branch gradient directly; at switching
@@ -27,9 +27,12 @@
 //! - `--no-db-update`     do not load or save the sys-landscape family cache
 //!                        (set by LICCA shards to avoid concurrent write races)
 //!
+//! Canonical refresh example:
+//! `cargo run -p exp-sys-landscape --release --bin sys-dataset-ascent-product -- --out experiments/sys-landscape/datasets/ascent-product.jsonl --db-update`
+//!
 //! Architecture B (2026-04-12): rayon `par_iter` over `[n_start, n_start+n)`
 //! at the dataset level. Seed i uses its own RNG stream
-//! `ChaCha8Rng::seed_from_u64(seed + i)`, is named `products_{i}`, and has
+//! `ChaCha8Rng::seed_from_u64(seed + i)`, is named `ascent_product_{i}`, and has
 //! bucket `i mod LAGRANGIAN_SPLITS.len()`. The output for index i is
 //! byte-reproducible regardless of thread assignment. Shared CLI / writer /
 //! resume plumbing lives in `exp_sys_landscape::{parse_ascent_args,
@@ -437,16 +440,17 @@ fn insert_polytope_to_db(db: &mut HashMap<DualVerticesKey, PolytopeRecord>, poly
 
 fn main() {
     let default_out = smoke_output_path(
-        "sys-gradient-ascent-products",
-        "smoke-gradient-ascent-products.jsonl",
+        "sys-dataset-ascent-product",
+        "smoke-ascent-product.jsonl",
     );
-    let args: AscentArgs = parse_ascent_args(DEFAULT_SEED, 12, default_out, "products");
+    let args: AscentArgs =
+        parse_ascent_args(DEFAULT_SEED, 12, default_out, "ascent_product");
     let t_global = Instant::now();
 
     let summary_path = args.out.clone();
     let trace_path = trace_path_for(&summary_path);
 
-    println!("gradient-ascent-products: projected gradient ascent on Lagrangian products");
+    println!("dataset-ascent-product: fixed-F ascent on Lagrangian products");
     println!("  n:            {}", args.n);
     println!("  n-start:      {}", args.n_start);
     println!("  seed:         {}", args.seed);
@@ -498,7 +502,7 @@ fn main() {
 
         let class = classify_facets(&polytope).expect("should classify as Lagrangian");
 
-        let name = format!("products_{i}");
+        let name = format!("ascent_product_{i}");
         let result = process_seed(&name, i, &bucket_name, &polytope, &class, &mut rng_i)?;
 
         if !no_db_update {

@@ -36,6 +36,7 @@
 
 use exp_sys_landscape::{
     apply_dual_step, ascent_direction, compute_active_sys_state, compute_step_bound, compute_sys,
+    shared_family_cache_path,
     dual_vertices_rational_strings, finalize_ascent_output, open_ascent_writers,
     orbit_scalars_from_result, parse_ascent_args, run_parallel_seeds, smoke_output_path,
     trace_path_for, AscentArgs, AscentMode, SeedResult, SummaryRow, TraceRow, MAX_STEP_SIZE,
@@ -45,7 +46,6 @@ use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use rand_distr::{Distribution, StandardNormal};
 use std::collections::HashMap;
-use std::path::Path;
 use std::sync::{Arc, Mutex};
 use std::time::Instant;
 use symplectic::database::{load_many, save, DualVerticesKey, PolytopeRecord, SigmaAction};
@@ -442,7 +442,7 @@ fn main() {
 
     // DB state: loaded once, shared across threads under a Mutex when !no_db_update.
     // On LICCA (--no-db-update), both load and insertion are skipped entirely.
-    let family_cache_path = Path::new(env!("CARGO_MANIFEST_DIR")).join("cache.jsonl");
+    let family_cache_path = shared_family_cache_path();
     let db_arc: Arc<Mutex<HashMap<DualVerticesKey, PolytopeRecord>>> = if args.no_db_update {
         Arc::new(Mutex::new(HashMap::new()))
     } else {

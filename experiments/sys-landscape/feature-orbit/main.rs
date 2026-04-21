@@ -15,6 +15,7 @@
 
 use num_bigint::BigInt;
 use num_rational::BigRational;
+use exp_sys_landscape::{continuation_cache_path, package_root};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::fs::File;
@@ -248,7 +249,7 @@ fn build_cache_index(package_root: &Path) -> HashMap<DualVerticesKey, PolytopeRe
     let paths = [
         package_root.join("cache.jsonl"),
         repo_root.join("experiments/combinatorial-cells/polytopes.jsonl"),
-        package_root.join("variable-f-ascent/cache.jsonl"),
+        continuation_cache_path(),
     ];
     let refs = paths.iter().map(PathBuf::as_path).collect::<Vec<_>>();
     load_many(&refs).unwrap_or_else(|e| panic!("load orbit caches: {e}"))
@@ -424,8 +425,8 @@ fn build_row(
 
 fn main() {
     let (normalized_dir, out) = parse_args();
-    let package_root = Path::new(env!("CARGO_MANIFEST_DIR"));
-    let cache = build_cache_index(package_root);
+    let package_root = package_root();
+    let cache = build_cache_index(&package_root);
     let polytopes = read_jsonl::<PolytopeInputRow>(&normalized_dir.join("polytopes.jsonl"));
     let mut rows = polytopes
         .iter()

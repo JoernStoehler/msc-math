@@ -18,6 +18,7 @@
 //! specialized algorithm because the JSONL rows report billiard-native
 //! `iterations` and `bounces`, which the root `symplectic::ehz_capacity`
 //! wrapper does not expose.
+use exp_sys_landscape::{dataset_path, DatasetFamily};
 use serde::Serialize;
 use std::fs::File;
 use std::io::{BufWriter, Write};
@@ -75,9 +76,7 @@ fn main() {
 }
 
 fn experiment_output_path(file_name: &str) -> PathBuf {
-    std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("rotated-regular-products")
-        .join(file_name)
+    dataset_path(DatasetFamily::RotatedRegular, file_name)
 }
 
 /// Heptagon x heptagon fine sweep over [0, 180/7] degrees.

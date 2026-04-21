@@ -1,4 +1,6 @@
-//! Variable-F gradient ascent: test whether allowing facet count to grow
+//! Dataset producer: continuation surface via variable-`F` ascent.
+//!
+//! Test whether allowing facet count to grow
 //! (F → F+1) unlocks higher sys values than fixed-F optimization.
 //!
 //! Two research questions:
@@ -13,17 +15,17 @@
 //! Gradient ascent algorithm copied from gradient-ascent-general/main.rs
 //! (self-contained per experiment convention).
 //!
-//! Usage: cargo run -p exp-sys-landscape --release --bin sys-variable-f-ascent
+//! Usage: cargo run -p exp-sys-landscape --release --bin sys-dataset-continuation
 //! Flags: --fresh  (clear existing data and rerun)
 //!        --smoke  (run one bounded probe against temp output/cache)
 //!        --out <path>  (override output JSONL path)
-//! Input Artifacts: experiments/sys-landscape/gradient-ascent-general/gradient-ascent-general.jsonl
-//! Output Artifacts: variable-f-ascent/variable-f-ascent.jsonl
-//!         variable-f-ascent/cache.jsonl
+//! Input Artifacts: experiments/sys-landscape/datasets/ascent.jsonl
+//! Output Artifacts: experiments/sys-landscape/datasets/continuation.jsonl
+//!         experiments/sys-landscape/datasets/continuation-cache.jsonl
 
 use exp_sys_landscape::{
-    compute_step_bound, continuation_cache_path, dataset_path, family_dir, package_root,
-    DatasetFamily, orbit_scalars_from_result,
+    canonical_dataset_cache_path, canonical_dataset_path, compute_step_bound,
+    orbit_scalars_from_result,
 };
 use nalgebra::Vector4;
 use num_rational::BigRational;
@@ -622,18 +624,17 @@ fn smoke_paths() -> (PathBuf, PathBuf) {
         .expect("system clock before UNIX_EPOCH")
         .as_millis();
     let smoke_dir = std::env::temp_dir().join(format!(
-        "sys-variable-f-ascent-smoke-{}-{stamp}",
+        "sys-dataset-continuation-smoke-{}-{stamp}",
         std::process::id()
     ));
     std::fs::create_dir_all(&smoke_dir).expect("create smoke temp dir");
     (
-        smoke_dir.join("smoke-variable-f-ascent.jsonl"),
+        smoke_dir.join("smoke-continuation.jsonl"),
         smoke_dir.join("smoke-cache.jsonl"),
     )
 }
 
 fn smoke_run(
-    package_root: &std::path::Path,
     output_path: &std::path::Path,
     cache_path: &std::path::Path,
     writer: &mut BufWriter<File>,
@@ -643,7 +644,7 @@ fn smoke_run(
     println!("Smoke mode: temp output {}", output_path.display());
     println!("Smoke mode: temp cache   {}", cache_path.display());
 
-    let ga_path = package_root.join("gradient-ascent-general/gradient-ascent-general.jsonl");
+    let ga_path = canonical_dataset_path("ascent");
     let local_maxima = load_local_maxima(&ga_path);
     println!(
         "Smoke mode: loaded {} local maxima from {}",
@@ -729,10 +730,9 @@ fn smoke_run(
 
 fn main() {
     let t_global = Instant::now();
-    let base = family_dir(DatasetFamily::Continuation);
-    let default_output_path = base.join("variable-f-ascent.jsonl");
+    let default_output_path = canonical_dataset_path("continuation");
 
-    println!("variable-f-ascent: variable-F gradient ascent experiment\n");
+    println!("dataset-continuation: variable-F continuation experiment\n");
 
     // CLI args
     let args: Vec<String> = std::env::args().collect();
@@ -765,7 +765,10 @@ fn main() {
         let (smoke_output_path, smoke_cache_path) = smoke_paths();
         (out_path.unwrap_or(smoke_output_path), smoke_cache_path)
     } else {
-        (out_path.unwrap_or(default_output_path), continuation_cache_path())
+        (
+            out_path.unwrap_or(default_output_path),
+            canonical_dataset_cache_path("continuation"),
+        )
     };
 
     let completed = if smoke {
@@ -804,7 +807,6 @@ fn main() {
 
     if smoke {
         smoke_run(
-            &package_root(),
             &output_path,
             &cache_path,
             &mut writer,
@@ -822,14 +824,11 @@ fn main() {
 
     println!("=== RQ1: Improving F=10 local maxima in F=11 space ===\n");
 
-    // Load local maxima from gradient-ascent-general
-    let ga_path = dataset_path(
-        DatasetFamily::AscentGeneral,
-        "gradient-ascent-general.jsonl",
-    );
+    // Load local maxima from the canonical ascent dataset.
+    let ga_path = canonical_dataset_path("ascent");
     let local_maxima = load_local_maxima(&ga_path);
     println!(
-        "Loaded {} local maxima from gradient-ascent-general.\n",
+        "Loaded {} local maxima from datasets/ascent.jsonl.\n",
         local_maxima.len()
     );
 

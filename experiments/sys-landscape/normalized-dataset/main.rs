@@ -31,7 +31,10 @@
 //! stays an event log keyed by endpoint `state_id`.
 
 use blake3::Hasher;
-use exp_sys_landscape::{rational_vec4_to_strings, SummaryRow, TraceRow};
+use exp_sys_landscape::{
+    continuation_cache_path, dataset_path, package_root, rational_vec4_to_strings, DatasetFamily,
+    SummaryRow, TraceRow,
+};
 use num_rational::BigRational;
 use num_traits::ToPrimitive;
 use serde::de::DeserializeOwned;
@@ -213,19 +216,30 @@ struct DatasetPaths {
 }
 
 impl DatasetPaths {
-    fn defaults(package_root: &Path) -> Self {
+    fn defaults() -> Self {
         Self {
-            random_sample: package_root.join("random-sample/random-sweep.jsonl"),
-            random_product: package_root.join("random-product-sample/random-product-sweep.jsonl"),
-            general_summary: package_root
-                .join("gradient-ascent-general/gradient-ascent-general.jsonl"),
-            general_trace: package_root
-                .join("gradient-ascent-general/gradient-ascent-general-trace.jsonl"),
-            products_summary: package_root
-                .join("gradient-ascent-products/gradient-ascent-products.jsonl"),
-            products_trace: package_root
-                .join("gradient-ascent-products/gradient-ascent-products-trace.jsonl"),
-            variable_f: package_root.join("variable-f-ascent/variable-f-ascent.jsonl"),
+            random_sample: dataset_path(DatasetFamily::RandomGeneric, "random-sweep.jsonl"),
+            random_product: dataset_path(
+                DatasetFamily::RandomProduct,
+                "random-product-sweep.jsonl",
+            ),
+            general_summary: dataset_path(
+                DatasetFamily::AscentGeneral,
+                "gradient-ascent-general.jsonl",
+            ),
+            general_trace: dataset_path(
+                DatasetFamily::AscentGeneral,
+                "gradient-ascent-general-trace.jsonl",
+            ),
+            products_summary: dataset_path(
+                DatasetFamily::AscentProduct,
+                "gradient-ascent-products.jsonl",
+            ),
+            products_trace: dataset_path(
+                DatasetFamily::AscentProduct,
+                "gradient-ascent-products-trace.jsonl",
+            ),
+            variable_f: dataset_path(DatasetFamily::Continuation, "variable-f-ascent.jsonl"),
             out_dir: smoke_output_dir(),
         }
     }
@@ -244,8 +258,8 @@ fn smoke_output_dir() -> PathBuf {
     dir
 }
 
-fn parse_args(package_root: &Path) -> DatasetPaths {
-    let mut paths = DatasetPaths::defaults(package_root);
+fn parse_args() -> DatasetPaths {
+    let mut paths = DatasetPaths::defaults();
     let args: Vec<String> = std::env::args().collect();
     let mut i = 1usize;
     while i < args.len() {
@@ -432,7 +446,7 @@ fn build_exact_candidate_index(
         &mut by_poly_id,
     );
     load_exact_cache(
-        &package_root.join("variable-f-ascent/cache.jsonl"),
+        &continuation_cache_path(),
         "experiments/sys-landscape/variable-f-ascent/cache.jsonl",
         &mut by_poly_id,
     );
@@ -587,8 +601,8 @@ fn push_capacity_row(
 }
 
 fn main() {
-    let package_root = Path::new(env!("CARGO_MANIFEST_DIR"));
-    let paths = parse_args(package_root);
+    let package_root = package_root();
+    let paths = parse_args();
     std::fs::create_dir_all(&paths.out_dir).expect("create output directory");
 
     println!("normalized-dataset: Stage 1 converter");
@@ -597,7 +611,7 @@ fn main() {
     println!("  products-summary: {}", paths.products_summary.display());
     println!("  variable-f: {}", paths.variable_f.display());
 
-    let (exact_by_poly_id, exact_by_facet_count) = build_exact_candidate_index(package_root);
+    let (exact_by_poly_id, exact_by_facet_count) = build_exact_candidate_index(&package_root);
     println!("Loaded exact cache entries: {}", exact_by_poly_id.len());
 
     let random_rows: Vec<RandomSweepRow> = read_jsonl(&paths.random_sample);
