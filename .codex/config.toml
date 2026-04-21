@@ -32,12 +32,11 @@ file_opener = "vscode"
 [tui]
 theme = "github"
 terminal_title = ["spinner", "thread"]
-status_line = ["model-with-reasoning", "current-dir", "context-usage", "five-hour-limit"]
+status_line = ["model-with-reasoning", "context-usage", "five-hour-limit"]
 
 [features]
 apps = false
 shell_snapshot = true
-codex_hooks = true
 
 # Subagents: we allow recursion
 [agents]
