@@ -9,18 +9,16 @@ Current rule:
 - shared path helpers live in `experiments/sys-landscape/src/datasets.rs`.
 
 The intended shape here is:
-- one normalized-table producer for the join surface;
-- one polytope-feature assembler for polytope-level enrichment;
-- one trajectory-feature producer for step-event summaries;
+- one core-table producer for the join surface;
+- one feature producer for cheap derived datascience tables;
 - feature logic lives in library modules rather than one executable per feature block.
 
 ## Flat Dataset Producers
 
 | Flat binary | Backing code today | Role |
 | --- | --- | --- |
-| `sys-dataset-normalized` | `datasets/normalized.rs` | join raw corpus into stable tables |
-| `sys-dataset-polytope-features` | `datasets/polytope-features.rs` + `src/polytope_features.rs` | combined polytope-level enrichment |
-| `sys-dataset-feature-trajectory` | `datasets/feature-trajectory.rs` | ascent trace summary block |
+| `sys-dataset-core-tables` | `datasets/core-tables.rs` | join raw corpus into stable tables |
+| `sys-dataset-features` | `datasets/features.rs` + `src/datascience/**/*.rs` | write datascience-facing feature tables |
 
 ## Planned Consumer Split
 
@@ -36,7 +34,6 @@ Today the consumer side still lives partly in legacy folders such as `feature-pa
 [smoke-pipeline.sh](../smoke-pipeline.sh) runs the current end-to-end dataset
 surface against temp directories:
 - `raw/` producers emit ad hoc corpus files;
-- `sys-dataset-normalized --raw-dir <tmp/raw>` is a smoke convenience alias for
+- `sys-dataset-core-tables --raw-dir <tmp/raw>` is a smoke convenience alias for
   the current canonical raw stems in that directory;
-- `sys-dataset-polytope-features` writes one combined polytope-level feature JSONL;
-- `sys-dataset-feature-trajectory` writes the trajectory summary JSONL.
+- `sys-dataset-features` writes the feature outputs under the chosen output directory.

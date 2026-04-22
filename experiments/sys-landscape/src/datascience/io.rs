@@ -1,4 +1,4 @@
-//! Shared shell helpers for sys-landscape dataset feature binaries.
+//! Shared JSONL and exact-coordinate decoding helpers for datascience tables.
 
 use num_bigint::BigInt;
 use num_rational::BigRational;
@@ -7,48 +7,8 @@ use serde::Deserialize;
 use serde::Serialize;
 use std::fs::File;
 use std::io::{BufRead, BufReader, BufWriter, Write};
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use std::str::FromStr;
-use std::time::{SystemTime, UNIX_EPOCH};
-
-pub struct StandardFeatureArgs {
-    pub normalized_dir: PathBuf,
-    pub out: PathBuf,
-}
-
-pub fn default_feature_output_path(stem: &str) -> PathBuf {
-    let stamp = SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .expect("system clock before UNIX_EPOCH")
-        .as_millis();
-    std::env::temp_dir().join(format!("sys-feature-{stem}-{stamp}.jsonl"))
-}
-
-pub fn parse_standard_feature_args(stem: &str) -> StandardFeatureArgs {
-    let args: Vec<String> = std::env::args().collect();
-    let mut normalized_dir: Option<PathBuf> = None;
-    let mut out: Option<PathBuf> = None;
-    let mut i = 1usize;
-    while i < args.len() {
-        match args[i].as_str() {
-            "--normalized-dir" => {
-                let value = args.get(i + 1).expect("--normalized-dir requires a value");
-                normalized_dir = Some(PathBuf::from(value));
-                i += 2;
-            }
-            "--out" => {
-                let value = args.get(i + 1).expect("--out requires a value");
-                out = Some(PathBuf::from(value));
-                i += 2;
-            }
-            other => panic!("unknown argument: {other}"),
-        }
-    }
-    StandardFeatureArgs {
-        normalized_dir: normalized_dir.expect("--normalized-dir is required"),
-        out: out.unwrap_or_else(|| default_feature_output_path(stem)),
-    }
-}
 
 pub fn read_jsonl<T: DeserializeOwned>(path: &Path) -> Vec<T> {
     let file = File::open(path).unwrap_or_else(|e| panic!("open {}: {e}", path.display()));

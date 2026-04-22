@@ -252,7 +252,7 @@ fn smoke_output_dir() -> PathBuf {
         .expect("system clock before UNIX_EPOCH")
         .as_millis();
     let dir = std::env::temp_dir().join(format!(
-        "sys-normalized-dataset-{}-{stamp}",
+        "sys-core-tables-{}-{stamp}",
         std::process::id()
     ));
     std::fs::create_dir_all(&dir).expect("create temp output dir");
@@ -681,7 +681,7 @@ fn main() {
     let paths = parse_args();
     std::fs::create_dir_all(&paths.out_dir).expect("create output directory");
 
-    println!("normalized-dataset: Stage 1 converter");
+    println!("core-tables: Stage 1 converter");
     println!("  out-dir: {}", paths.out_dir.display());
     println!("  general-summary: {}", paths.general_summary.display());
     println!("  products-summary: {}", paths.products_summary.display());

@@ -35,34 +35,6 @@ name = "sys-variable-f-ascent"
 path = "variable-f-ascent/main.rs"
 
 [[bin]]
-name = "sys-normalized-dataset"
-path = "normalized-dataset/main.rs"
-
-[[bin]]
-name = "sys-feature-skeleton"
-path = "feature-skeleton/main.rs"
-
-[[bin]]
-name = "sys-feature-face-geometry"
-path = "feature-face-geometry/main.rs"
-
-[[bin]]
-name = "sys-feature-face-symplectic"
-path = "feature-face-symplectic/main.rs"
-
-[[bin]]
-name = "sys-feature-omega"
-path = "feature-omega/main.rs"
-
-[[bin]]
-name = "sys-feature-orbit"
-path = "feature-orbit/main.rs"
-
-[[bin]]
-name = "sys-feature-trajectory"
-path = "feature-trajectory/main.rs"
-
-[[bin]]
 name = "sys-pentagon-rotation-formula"
 path = "pentagon-rotation-formula/main.rs"
 
@@ -87,16 +59,12 @@ name = "sys-dataset-continuation"
 path = "raw/continuation.rs"
 
 [[bin]]
-name = "sys-dataset-normalized"
-path = "datasets/normalized.rs"
+name = "sys-dataset-core-tables"
+path = "datasets/core-tables.rs"
 
 [[bin]]
-name = "sys-dataset-polytope-features"
-path = "datasets/polytope-features.rs"
-
-[[bin]]
-name = "sys-dataset-feature-trajectory"
-path = "datasets/feature-trajectory.rs"
+name = "sys-dataset-features"
+path = "datasets/features.rs"
 
 [lints]
 workspace = true

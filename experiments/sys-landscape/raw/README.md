@@ -31,7 +31,7 @@ The legacy packet directories remain in place until later cleanup removes or arc
 Use [smoke-pipeline.sh](../smoke-pipeline.sh) to exercise the full low-friction
 surface on temporary outputs:
 - raw producers write under a temp `raw/` directory;
-- `sys-dataset-normalized --raw-dir <tmp/raw>` consumes the current canonical
+- `sys-dataset-core-tables --raw-dir <tmp/raw>` consumes the current canonical
   smoke stems from that directory as a convenience alias;
 - `sys-dataset-ascent` and `sys-dataset-ascent-product` run with a small
   `--seed-time-budget-secs` override;

@@ -22,8 +22,8 @@
 //!         variable-f-ascent/cache.jsonl
 
 use exp_sys_landscape::{
-    compute_step_bound, continuation_cache_path, dataset_path, family_dir, package_root,
-    DatasetFamily, orbit_scalars_from_result,
+    compute_step_bound, continuation_cache_path, experiment_path, package_root,
+    orbit_scalars_from_result, CONTINUATION_EXPERIMENT_DIR, GRADIENT_ASCENT_GENERAL_DIR,
 };
 use nalgebra::Vector4;
 use num_rational::BigRational;
@@ -729,7 +729,7 @@ fn smoke_run(
 
 fn main() {
     let t_global = Instant::now();
-    let base = family_dir(DatasetFamily::Continuation);
+    let base = package_root().join(CONTINUATION_EXPERIMENT_DIR);
     let default_output_path = base.join("variable-f-ascent.jsonl");
 
     println!("variable-f-ascent: variable-F gradient ascent experiment\n");
@@ -823,10 +823,7 @@ fn main() {
     println!("=== RQ1: Improving F=10 local maxima in F=11 space ===\n");
 
     // Load local maxima from gradient-ascent-general
-    let ga_path = dataset_path(
-        DatasetFamily::AscentGeneral,
-        "gradient-ascent-general.jsonl",
-    );
+    let ga_path = experiment_path(GRADIENT_ASCENT_GENERAL_DIR, "gradient-ascent-general.jsonl");
     let local_maxima = load_local_maxima(&ga_path);
     println!(
         "Loaded {} local maxima from gradient-ascent-general.\n",

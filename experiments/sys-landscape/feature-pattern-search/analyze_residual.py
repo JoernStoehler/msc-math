@@ -18,7 +18,7 @@ Input Artifacts:
   - experiments/sys-landscape/feature-pattern-search/feature_omega.jsonl
   - experiments/sys-landscape/feature-pattern-search/feature_orbit.jsonl
   - experiments/sys-landscape/feature-pattern-search/feature_trajectory.jsonl
-  - optionally a precomputed normalized dataset directory passed by
+  - optionally a precomputed core-table directory passed by
     `--normalized-dir`
 Output Artifacts:
   - experiments/sys-landscape/feature-pattern-search/feature_pattern_search_residual.png
@@ -126,7 +126,7 @@ def refresh_normalized_dataset(out_dir: Path) -> None:
         "exp-sys-landscape",
         "--release",
         "--bin",
-        "sys-normalized-dataset",
+        "sys-dataset-core-tables",
         "--",
         "--out-dir",
         str(out_dir),

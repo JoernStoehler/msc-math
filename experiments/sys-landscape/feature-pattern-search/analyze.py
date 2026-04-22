@@ -5,7 +5,7 @@
 # ///
 
 """
-Goal: Run a bounded hostile-landscape pattern-search pass on the normalized
+Goal: Run a bounded hostile-landscape pattern-search pass on the core-table
       dataset, comparing a narrow metadata baseline against cheap geometry
       features derived from exact dual vertices.
 Input Artifacts:
@@ -19,7 +19,7 @@ Input Artifacts:
   - experiments/sys-landscape/gradient-ascent-products/gradient-ascent-products.jsonl
   - experiments/sys-landscape/gradient-ascent-products/gradient-ascent-products-trace.jsonl
   - experiments/sys-landscape/variable-f-ascent/variable-f-ascent.jsonl
-  - optionally a precomputed normalized dataset directory passed by `--normalized-dir`
+  - optionally a precomputed core-table directory passed by `--normalized-dir`
 Output Artifacts:
   - experiments/sys-landscape/feature-pattern-search/feature_geometry.jsonl
   - experiments/sys-landscape/feature-pattern-search/feature_face_geometry.jsonl
@@ -262,7 +262,7 @@ def build_geometry_features(poly: dict, volume: float) -> dict[str, float]:
     }
 
 
-def refresh_normalized_dataset(out_dir: Path) -> None:
+def refresh_core_tables(out_dir: Path) -> None:
     cmd = [
         "cargo",
         "run",
@@ -270,7 +270,7 @@ def refresh_normalized_dataset(out_dir: Path) -> None:
         "exp-sys-landscape",
         "--release",
         "--bin",
-        "sys-normalized-dataset",
+        "sys-dataset-core-tables",
         "--",
         "--out-dir",
         str(out_dir),
@@ -278,7 +278,7 @@ def refresh_normalized_dataset(out_dir: Path) -> None:
     subprocess.run(cmd, cwd=REPO_ROOT, check=True)
 
 
-def refresh_skeleton_features(normalized_dir: Path, out_path: Path) -> None:
+def refresh_feature_dataset(core_tables_dir: Path, out_dir: Path) -> None:
     cmd = [
         "cargo",
         "run",
@@ -286,108 +286,62 @@ def refresh_skeleton_features(normalized_dir: Path, out_path: Path) -> None:
         "exp-sys-landscape",
         "--release",
         "--bin",
-        "sys-feature-skeleton",
+        "sys-dataset-features",
         "--",
-        "--normalized-dir",
-        str(normalized_dir),
-        "--out",
-        str(out_path),
+        "--core-tables-dir",
+        str(core_tables_dir),
+        "--out-dir",
+        str(out_dir),
     ]
     subprocess.run(cmd, cwd=REPO_ROOT, check=True)
 
 
-def refresh_face_geometry_features(normalized_dir: Path, out_path: Path) -> None:
-    cmd = [
-        "cargo",
-        "run",
-        "-p",
-        "exp-sys-landscape",
-        "--release",
-        "--bin",
-        "sys-feature-face-geometry",
-        "--",
-        "--normalized-dir",
-        str(normalized_dir),
-        "--out",
-        str(out_path),
+def prefixed_rows(rows: list[dict], prefixes: tuple[str, ...], id_key: str) -> list[dict]:
+    return [
+        {
+            id_key: row[id_key],
+            **{
+                key: value
+                for key, value in row.items()
+                if key != id_key and any(key.startswith(prefix) for prefix in prefixes)
+            },
+        }
+        for row in rows
     ]
-    subprocess.run(cmd, cwd=REPO_ROOT, check=True)
 
 
-def refresh_omega_features(normalized_dir: Path, out_path: Path) -> None:
-    cmd = [
-        "cargo",
-        "run",
-        "-p",
-        "exp-sys-landscape",
-        "--release",
-        "--bin",
-        "sys-feature-omega",
-        "--",
-        "--normalized-dir",
-        str(normalized_dir),
-        "--out",
-        str(out_path),
-    ]
-    subprocess.run(cmd, cwd=REPO_ROOT, check=True)
-
-
-def refresh_face_symplectic_features(normalized_dir: Path, out_path: Path) -> None:
-    cmd = [
-        "cargo",
-        "run",
-        "-p",
-        "exp-sys-landscape",
-        "--release",
-        "--bin",
-        "sys-feature-face-symplectic",
-        "--",
-        "--normalized-dir",
-        str(normalized_dir),
-        "--out",
-        str(out_path),
-    ]
-    subprocess.run(cmd, cwd=REPO_ROOT, check=True)
-
-
-def refresh_orbit_features(normalized_dir: Path, out_path: Path) -> None:
-    cmd = [
-        "cargo",
-        "run",
-        "-p",
-        "exp-sys-landscape",
-        "--release",
-        "--bin",
-        "sys-feature-orbit",
-        "--",
-        "--normalized-dir",
-        str(normalized_dir),
-        "--out",
-        str(out_path),
-    ]
-    subprocess.run(cmd, cwd=REPO_ROOT, check=True)
-
-
-def refresh_trajectory_features(normalized_dir: Path, out_path: Path) -> None:
-    cmd = [
-        "cargo",
-        "run",
-        "-p",
-        "exp-sys-landscape",
-        "--release",
-        "--bin",
-        "sys-feature-trajectory",
-        "--",
-        "--normalized-dir",
-        str(normalized_dir),
-        "--out",
-        str(out_path),
-    ]
-    subprocess.run(cmd, cwd=REPO_ROOT, check=True)
+def split_feature_rows(
+    polytope_rows: list[dict], trajectory_rows: list[dict]
+) -> tuple[list[dict], list[dict], list[dict], list[dict], list[dict], list[dict]]:
+    return (
+        prefixed_rows(polytope_rows, ("edge_length_", "facet_volume_"), "poly_id"),
+        prefixed_rows(polytope_rows, ("ridge_symp_",), "poly_id"),
+        prefixed_rows(
+            polytope_rows,
+            (
+                "vertex_count",
+                "edge_count",
+                "ridge_count",
+                "is_simple",
+                "simple_vertex_fraction",
+                "edge_density",
+                "vertex_incident_",
+                "vertex_degree_",
+                "ridge_size_",
+                "facet_vertex_count_",
+                "facet_neighbor_count_",
+            ),
+            "poly_id",
+        ),
+        prefixed_rows(polytope_rows, ("allpair_", "ridge_abs_omega_", "transition_"), "poly_id"),
+        prefixed_rows(polytope_rows, ("orbit_",), "poly_id"),
+        trajectory_rows,
+    )
 
 
 def load_joined_rows(
-    normalized_dir: Path,
+    core_tables_dir: Path,
+    feature_dir: Path,
 ) -> tuple[
     list[JoinedRow],
     list[dict],
@@ -398,12 +352,12 @@ def load_joined_rows(
     list[dict],
     list[dict],
 ]:
-    states = load_jsonl(normalized_dir / "states.jsonl")
+    states = load_jsonl(core_tables_dir / "states.jsonl")
     capacities = {
-        row["poly_id"]: row for row in load_jsonl(normalized_dir / "capacity_results.jsonl")
+        row["poly_id"]: row for row in load_jsonl(core_tables_dir / "capacity_results.jsonl")
     }
     polytopes = {
-        row["poly_id"]: row for row in load_jsonl(normalized_dir / "polytopes.jsonl")
+        row["poly_id"]: row for row in load_jsonl(core_tables_dir / "polytopes.jsonl")
     }
 
     geometry_rows: list[dict] = []
@@ -413,32 +367,36 @@ def load_joined_rows(
         geometry_rows.append({"poly_id": poly_id, **features})
         geometry_by_poly[poly_id] = features
 
-    face_geometry_rows = load_jsonl(FEATURE_FACE_GEOMETRY_JSONL)
+    polytope_feature_rows = load_jsonl(feature_dir / "polytope-features.jsonl")
+    trajectory_rows = load_jsonl(feature_dir / "trajectory-features.jsonl")
+    (
+        face_geometry_rows,
+        face_symplectic_rows,
+        skeleton_rows,
+        omega_rows,
+        orbit_rows,
+        trajectory_rows,
+    ) = split_feature_rows(polytope_feature_rows, trajectory_rows)
     face_geometry_by_poly = {
         row["poly_id"]: {key: value for key, value in row.items() if key != "poly_id"}
         for row in face_geometry_rows
     }
-    face_symplectic_rows = load_jsonl(FEATURE_FACE_SYMPLECTIC_JSONL)
     face_symplectic_by_poly = {
         row["poly_id"]: {key: value for key, value in row.items() if key != "poly_id"}
         for row in face_symplectic_rows
     }
-    skeleton_rows = load_jsonl(FEATURE_SKELETON_JSONL)
     skeleton_by_poly = {
         row["poly_id"]: {key: value for key, value in row.items() if key != "poly_id"}
         for row in skeleton_rows
     }
-    omega_rows = load_jsonl(FEATURE_OMEGA_JSONL)
     omega_by_poly = {
         row["poly_id"]: {key: value for key, value in row.items() if key != "poly_id"}
         for row in omega_rows
     }
-    orbit_rows = load_jsonl(FEATURE_ORBIT_JSONL)
     orbit_by_poly = {
         row["poly_id"]: {key: value for key, value in row.items() if key != "poly_id"}
         for row in orbit_rows
     }
-    trajectory_rows = load_jsonl(FEATURE_TRAJECTORY_JSONL)
     trajectory_by_state = {
         row["state_id"]: {key: value for key, value in row.items() if key != "state_id"}
         for row in trajectory_rows
@@ -909,40 +867,11 @@ def plot_model_results(results: list[dict], model_name: str, out_path: Path, tit
 def main() -> None:
     args = parse_args()
     if args.normalized_dir is not None:
-        normalized_dir = args.normalized_dir.resolve()
-        normalized_source_label = f"`{normalized_dir}`"
-        refresh_face_geometry_features(normalized_dir, FEATURE_FACE_GEOMETRY_JSONL)
-        refresh_face_symplectic_features(normalized_dir, FEATURE_FACE_SYMPLECTIC_JSONL)
-        refresh_skeleton_features(normalized_dir, FEATURE_SKELETON_JSONL)
-        refresh_omega_features(normalized_dir, FEATURE_OMEGA_JSONL)
-        refresh_orbit_features(normalized_dir, FEATURE_ORBIT_JSONL)
-        refresh_trajectory_features(normalized_dir, FEATURE_TRAJECTORY_JSONL)
-        (
-            joined_rows,
-            geometry_rows,
-            face_geometry_rows,
-            face_symplectic_rows,
-            skeleton_rows,
-            omega_rows,
-            orbit_rows,
-            trajectory_rows,
-        ) = load_joined_rows(normalized_dir)
-    else:
-        with tempfile.TemporaryDirectory(prefix="feature-pattern-search-") as temp_dir:
-            normalized_dir = Path(temp_dir) / "normalized"
-            normalized_dir.mkdir(parents=True, exist_ok=True)
-            refresh_normalized_dataset(normalized_dir)
-            normalized_source_label = (
-                "temporary refresh via "
-                "`cargo run -p exp-sys-landscape --release --bin "
-                "sys-normalized-dataset -- --out-dir <temp>`"
-            )
-            refresh_face_geometry_features(normalized_dir, FEATURE_FACE_GEOMETRY_JSONL)
-            refresh_face_symplectic_features(normalized_dir, FEATURE_FACE_SYMPLECTIC_JSONL)
-            refresh_skeleton_features(normalized_dir, FEATURE_SKELETON_JSONL)
-            refresh_omega_features(normalized_dir, FEATURE_OMEGA_JSONL)
-            refresh_orbit_features(normalized_dir, FEATURE_ORBIT_JSONL)
-            refresh_trajectory_features(normalized_dir, FEATURE_TRAJECTORY_JSONL)
+        core_tables_dir = args.normalized_dir.resolve()
+        with tempfile.TemporaryDirectory(prefix="feature-pattern-search-features-") as feature_tmp:
+            feature_dir = Path(feature_tmp)
+            normalized_source_label = f"`{core_tables_dir}`"
+            refresh_feature_dataset(core_tables_dir, feature_dir)
             (
                 joined_rows,
                 geometry_rows,
@@ -952,40 +881,33 @@ def main() -> None:
                 omega_rows,
                 orbit_rows,
                 trajectory_rows,
-            ) = load_joined_rows(normalized_dir)
-
-            write_feature_jsonl(geometry_rows)
-            with FEATURE_FACE_GEOMETRY_JSONL.open("w") as handle:
-                for row in face_geometry_rows:
-                    handle.write(json.dumps(row) + "\n")
-            with FEATURE_FACE_SYMPLECTIC_JSONL.open("w") as handle:
-                for row in face_symplectic_rows:
-                    handle.write(json.dumps(row) + "\n")
-            with FEATURE_SKELETON_JSONL.open("w") as handle:
-                for row in skeleton_rows:
-                    handle.write(json.dumps(row) + "\n")
-            with FEATURE_OMEGA_JSONL.open("w") as handle:
-                for row in omega_rows:
-                    handle.write(json.dumps(row) + "\n")
-            with FEATURE_ORBIT_JSONL.open("w") as handle:
-                for row in orbit_rows:
-                    handle.write(json.dumps(row) + "\n")
-            with FEATURE_TRAJECTORY_JSONL.open("w") as handle:
-                for row in trajectory_rows:
-                    handle.write(json.dumps(row) + "\n")
-            results = run_evaluations(joined_rows)
-            plot_model_results(results, "ridge", RIDGE_PNG, "Feature Pattern Search: Ridge")
-            plot_model_results(results, "rf", RF_PNG, "Feature Pattern Search: Random forest")
-            print(f"Saved {FEATURE_JSONL}")
-            print(f"Saved {FEATURE_FACE_GEOMETRY_JSONL}")
-            print(f"Saved {FEATURE_FACE_SYMPLECTIC_JSONL}")
-            print(f"Saved {FEATURE_SKELETON_JSONL}")
-            print(f"Saved {FEATURE_OMEGA_JSONL}")
-            print(f"Saved {FEATURE_ORBIT_JSONL}")
-            print(f"Saved {FEATURE_TRAJECTORY_JSONL}")
-            print(f"Saved {RIDGE_PNG}")
-            print(f"Saved {RF_PNG}")
-            return
+            ) = load_joined_rows(core_tables_dir, feature_dir)
+    else:
+        with tempfile.TemporaryDirectory(prefix="feature-pattern-search-") as temp_dir:
+            core_tables_dir = Path(temp_dir) / "core-tables"
+            feature_dir = Path(temp_dir) / "features"
+            core_tables_dir.mkdir(parents=True, exist_ok=True)
+            feature_dir.mkdir(parents=True, exist_ok=True)
+            refresh_core_tables(core_tables_dir)
+            refresh_feature_dataset(core_tables_dir, feature_dir)
+            normalized_source_label = (
+                "temporary refresh via "
+                "`cargo run -p exp-sys-landscape --release --bin "
+                "sys-dataset-core-tables -- --out-dir <temp/core-tables>` "
+                "and `cargo run -p exp-sys-landscape --release --bin "
+                "sys-dataset-features -- --core-tables-dir <temp/core-tables> "
+                "--out-dir <temp/features>`"
+            )
+            (
+                joined_rows,
+                geometry_rows,
+                face_geometry_rows,
+                face_symplectic_rows,
+                skeleton_rows,
+                omega_rows,
+                orbit_rows,
+                trajectory_rows,
+            ) = load_joined_rows(core_tables_dir, feature_dir)
 
     write_feature_jsonl(geometry_rows)
     with FEATURE_FACE_GEOMETRY_JSONL.open("w") as handle:

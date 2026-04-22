@@ -46,21 +46,17 @@ cargo run -p exp-sys-landscape --bin sys-dataset-continuation -- \
   --cache "$RAW_DIR/continuation-cache.jsonl" \
   --ascent-input "$RAW_DIR/ascent.jsonl"
 
-cargo run -p exp-sys-landscape --bin sys-dataset-normalized -- \
+cargo run -p exp-sys-landscape --bin sys-dataset-core-tables -- \
   --out-dir "$NORM_DIR" \
   --raw-dir "$RAW_DIR"
 
-cargo run -p exp-sys-landscape --bin sys-dataset-polytope-features -- \
-  --normalized-dir "$NORM_DIR" \
-  --out "$FEATURE_DIR/polytope-features.jsonl" \
+cargo run -p exp-sys-landscape --bin sys-dataset-features -- \
+  --core-tables-dir "$NORM_DIR" \
+  --out-dir "$FEATURE_DIR" \
   --continuation-cache "$RAW_DIR/continuation-cache.jsonl"
 
-cargo run -p exp-sys-landscape --bin sys-dataset-feature-trajectory -- \
-  --normalized-dir "$NORM_DIR" \
-  --out "$FEATURE_DIR/feature-trajectory.jsonl"
-
 uv run "$ROOT/experiments/sys-landscape/methods/eda.py" \
-  --normalized-dir "$NORM_DIR" \
+  --core-tables-dir "$NORM_DIR" \
   --out-dir "$METHOD_DIR" \
   --polytope-features "$FEATURE_DIR/polytope-features.jsonl"
 
