@@ -15,8 +15,9 @@
 
 use exp_sys_landscape::{package_root, raw_dataset_cache_path};
 use exp_sys_landscape::features::{
-    default_feature_output_path, parse_vec4, read_jsonl, write_jsonl,
+    default_feature_output_path, deserialize_vec4_rational, read_jsonl, write_jsonl,
 };
+use num_rational::BigRational;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
@@ -30,8 +31,10 @@ use symplectic::{OrbitAdmissibility, OrbitSolveBackend};
 #[derive(Debug, Deserialize)]
 struct PolytopeInputRow {
     poly_id: String,
-    dual_vertices_rational: Vec<[String; 4]>,
-    vertices_rational: Vec<[String; 4]>,
+    #[serde(deserialize_with = "deserialize_vec4_rational")]
+    dual_vertices_rational: Vec<[BigRational; 4]>,
+    #[serde(deserialize_with = "deserialize_vec4_rational")]
+    vertices_rational: Vec<[BigRational; 4]>,
     facet_count: usize,
 }
 
@@ -220,7 +223,7 @@ fn build_row(
     poly: &PolytopeInputRow,
     cache: &HashMap<DualVerticesKey, PolytopeRecord>,
 ) -> OrbitFeatureRow {
-    let dual_vertices = parse_vec4(&poly.dual_vertices_rational);
+    let dual_vertices = poly.dual_vertices_rational.clone();
     let Some(record) = cache.get(&dual_vertices) else {
         return empty_row(&poly.poly_id, poly.facet_count);
     };
@@ -232,7 +235,7 @@ fn build_row(
     };
 
     let polytope =
-        Polytope4D::from_rational_parts(dual_vertices, parse_vec4(&poly.vertices_rational))
+        Polytope4D::from_rational_parts(dual_vertices, poly.vertices_rational.clone())
             .unwrap_or_else(|e| panic!("reconstruct {}: {e}", poly.poly_id));
     let duals = polytope.dual_vertices_f64();
     let transition = build_transition_matrix(&polytope);

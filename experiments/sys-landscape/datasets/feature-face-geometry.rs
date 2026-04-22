@@ -11,8 +11,9 @@
 //! Output Artifacts: None by default (writes to an untracked temp file unless `--out` is set)
 
 use exp_sys_landscape::features::{
-    parse_standard_feature_args, parse_vec4, read_jsonl, write_jsonl,
+    deserialize_vec4_rational, parse_standard_feature_args, read_jsonl, write_jsonl,
 };
+use num_rational::BigRational;
 use serde::{Deserialize, Serialize};
 use symplectic::geom::facet_volume::facet_volume_3d;
 use symplectic::geom::polytope::Polytope4D;
@@ -22,8 +23,10 @@ use symplectic::geom::volume::volume;
 #[derive(Debug, Deserialize)]
 struct PolytopeInputRow {
     poly_id: String,
-    dual_vertices_rational: Vec<[String; 4]>,
-    vertices_rational: Vec<[String; 4]>,
+    #[serde(deserialize_with = "deserialize_vec4_rational")]
+    dual_vertices_rational: Vec<[BigRational; 4]>,
+    #[serde(deserialize_with = "deserialize_vec4_rational")]
+    vertices_rational: Vec<[BigRational; 4]>,
     facet_count: usize,
 }
 
@@ -74,8 +77,8 @@ fn max_share(values: &[f64]) -> f64 {
 
 fn build_row(poly: &PolytopeInputRow) -> FaceGeometryFeatureRow {
     let polytope = Polytope4D::from_rational_parts(
-        parse_vec4(&poly.dual_vertices_rational),
-        parse_vec4(&poly.vertices_rational),
+        poly.dual_vertices_rational.clone(),
+        poly.vertices_rational.clone(),
     )
     .unwrap_or_else(|e| panic!("reconstruct {}: {e}", poly.poly_id));
     let polytope_volume = volume(&polytope);

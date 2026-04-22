@@ -2,7 +2,8 @@
 
 use num_bigint::BigInt;
 use num_rational::BigRational;
-use serde::de::DeserializeOwned;
+use serde::de::{DeserializeOwned, Deserializer, Error as DeError};
+use serde::Deserialize;
 use serde::Serialize;
 use std::fs::File;
 use std::io::{BufRead, BufReader, BufWriter, Write};
@@ -76,22 +77,34 @@ pub fn write_jsonl<T: Serialize>(path: &Path, rows: &[T]) {
     writer.flush().expect("flush output");
 }
 
-pub fn parse_rational(token: &str) -> BigRational {
+fn parse_rational_token<E: DeError>(token: &str) -> Result<BigRational, E> {
     if let Some((numer, denom)) = token.split_once('/') {
         let numer =
-            BigInt::from_str(numer).unwrap_or_else(|e| panic!("bad numerator {token}: {e}"));
-        let denom =
-            BigInt::from_str(denom).unwrap_or_else(|e| panic!("bad denominator {token}: {e}"));
-        BigRational::new(numer, denom)
+            BigInt::from_str(numer).map_err(|e| E::custom(format!("bad numerator {token}: {e}")))?;
+        let denom = BigInt::from_str(denom)
+            .map_err(|e| E::custom(format!("bad denominator {token}: {e}")))?;
+        Ok(BigRational::new(numer, denom))
     } else {
-        BigRational::from_integer(
-            BigInt::from_str(token).unwrap_or_else(|e| panic!("bad integer {token}: {e}")),
-        )
+        let integer =
+            BigInt::from_str(token).map_err(|e| E::custom(format!("bad integer {token}: {e}")))?;
+        Ok(BigRational::from_integer(integer))
     }
 }
 
-pub fn parse_vec4(data: &[[String; 4]]) -> Vec<[BigRational; 4]> {
-    data.iter()
-        .map(|row| std::array::from_fn(|i| parse_rational(&row[i])))
+pub fn deserialize_vec4_rational<'de, D>(deserializer: D) -> Result<Vec<[BigRational; 4]>, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    Vec::<[String; 4]>::deserialize(deserializer)?
+        .into_iter()
+        .map(|row| {
+            let [x0, x1, x2, x3] = row;
+            Ok([
+                parse_rational_token::<D::Error>(&x0)?,
+                parse_rational_token::<D::Error>(&x1)?,
+                parse_rational_token::<D::Error>(&x2)?,
+                parse_rational_token::<D::Error>(&x3)?,
+            ])
+        })
         .collect()
 }

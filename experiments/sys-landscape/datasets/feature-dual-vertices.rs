@@ -8,7 +8,7 @@
 //! Output Artifacts: None by default (writes to an untracked temp file unless `--out` is set)
 
 use exp_sys_landscape::features::{
-    parse_rational, parse_standard_feature_args, read_jsonl, write_jsonl,
+    deserialize_vec4_rational, parse_standard_feature_args, read_jsonl, write_jsonl,
 };
 use num_rational::BigRational;
 use num_traits::ToPrimitive;
@@ -17,7 +17,8 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Deserialize)]
 struct PolytopeInputRow {
     poly_id: String,
-    dual_vertices_rational: Vec<[String; 4]>,
+    #[serde(deserialize_with = "deserialize_vec4_rational")]
+    dual_vertices_rational: Vec<[BigRational; 4]>,
     facet_count: usize,
 }
 
@@ -40,7 +41,7 @@ fn enrich_row(row: PolytopeInputRow) -> DualVerticesFeatureRow {
     let dual_vertices_f64 = row
         .dual_vertices_rational
         .iter()
-        .map(|vertex| std::array::from_fn(|i| rational_to_f64(&parse_rational(&vertex[i]))))
+        .map(|vertex| std::array::from_fn(|i| rational_to_f64(&vertex[i])))
         .collect::<Vec<_>>();
     let dual_vertices_flat_f64 = dual_vertices_f64
         .iter()
