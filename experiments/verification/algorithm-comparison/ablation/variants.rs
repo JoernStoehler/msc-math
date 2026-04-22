@@ -1,3 +1,16 @@
+//! Experiment-local HK2017 variant runners for the ablation study.
+//!
+//! Extracted from the original monolithic `ablation/main.rs`. A1-A3 stay local
+//! so the stable library is not changed mid-experiment, and the A3 transition
+//! checks match the surface formalized in
+//! `formal/verification/algorithm-comparison/ablation.tex`
+//! [lem:transition-feasibility].
+
+//! A0..A3 variant implementations and adjacency/feasibility helpers.
+//!
+//! The code stays experiment-local because it compares historical and proposed
+//! pruning strategies side by side instead of defining one durable crate API.
+
 use crate::kkt::{
     omega0, solve_kkt_full, EPS_BETA_POSITIVE, EPS_DIRECTED, EPS_FACET_INCIDENCE, EPS_Q_POSITIVE,
 };

@@ -1,3 +1,8 @@
+//! Shared constants and data models for the split ablation study.
+//!
+//! Extracted from the original monolithic `ablation/main.rs` to keep the JSONL
+//! row schema and fixed dataset parameters unchanged across the module split.
+
 use serde::{Deserialize, Serialize};
 use symplectic::geom::polytope::Polytope4D;
 

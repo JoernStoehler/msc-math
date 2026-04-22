@@ -1,27 +1,16 @@
-//! Historical KKT helper copy used by the ablation variants.
+//! Historical normalized-normal KKT solver retained for this crosspolytope search.
 //!
-//! Extracted from the original monolithic `ablation/main.rs`. These helpers
-//! intentionally keep the older gap-ratio `solve_kkt_svd_path` so A1-A3 share
-//! the same solver path instead of mixing in the library's newer condition-number fallback.
-
-//! Historical copy of the experiment-local KKT solver for ablation runs.
-//!
-//! This intentionally keeps the older gap-ratio SVD path so all A0..A3
-//! variants use the same solver surface during timing and agreement checks.
+//! This stays experiment-local because it preserves the older search-specific
+//! numerical behavior rather than exposing a durable library API.
 
 use nalgebra::{DMatrix, DVector, Vector4};
+use symplectic::geom::symplectic_form::omega0;
 
 pub(crate) const EPS_BETA_POSITIVE: f64 = 1e-12;
 pub(crate) const EPS_Q_POSITIVE: f64 = 1e-15;
 const EPS_SVD_FLOOR: f64 = 1e-12;
-const SVD_GAP_THRESHOLD: f64 = 100.0;
+const SVD_CONDITION_TAU: f64 = 1e-3;
 const EPS_KKT_RESIDUAL: f64 = 1e-6;
-pub(crate) const EPS_FACET_INCIDENCE: f64 = 1e-8;
-pub(crate) const EPS_DIRECTED: f64 = 1e-8;
-
-pub(crate) fn omega0(u: &Vector4<f64>, v: &Vector4<f64>) -> f64 {
-    u[0] * v[2] - u[2] * v[0] + u[1] * v[3] - u[3] * v[1]
-}
 
 fn q_from_beta(normals: &[Vector4<f64>], perm: &[usize], beta: &[f64]) -> f64 {
     let m = beta.len();
@@ -153,15 +142,34 @@ fn solve_kkt_svd_path(
     }
     let u = svd.u.as_ref()?;
     let v_t = svd.v_t.as_ref()?;
-    let floor = max_sv * EPS_SVD_FLOOR;
-    let nonzero = sv.iter().filter(|&&s| s > floor).count();
-    let mut rank = nonzero;
-    for i in (1..nonzero).rev() {
-        if sv[i - 1] / sv[i] > SVD_GAP_THRESHOLD {
-            rank = i;
-            break;
+    let threshold = max_sv * SVD_CONDITION_TAU;
+    let rank = sv.iter().filter(|&&s| s > threshold).count();
+
+    if rank < size && m >= 5 {
+        let mut c_matrix = DMatrix::zeros(m, 5);
+        for i in 0..m {
+            let n = &normals[perm[i]];
+            for j in 0..4 {
+                c_matrix[(i, j)] = n[j];
+            }
+            c_matrix[(i, 4)] = heights[perm[i]];
+        }
+        let c_svd = c_matrix.svd(false, false);
+        let sigma_c = c_svd
+            .singular_values
+            .iter()
+            .cloned()
+            .fold(f64::INFINITY, f64::min);
+        if sigma_c > EPS_SVD_FLOOR {
+            for j in rank..size {
+                let delta_beta_norm: f64 = (0..m).map(|k| v_t[(j, k)].powi(2)).sum::<f64>().sqrt();
+                if delta_beta_norm > sv[j] / sigma_c {
+                    return None;
+                }
+            }
         }
     }
+
     let mut x0 = DVector::zeros(size);
     for i in 0..rank {
         let coeff = u.column(i).dot(rhs) / sv[i];
@@ -173,6 +181,7 @@ fn solve_kkt_svd_path(
     if residual > EPS_KKT_RESIDUAL {
         return None;
     }
+
     let beta0: Vec<f64> = (0..m).map(|i| x0[i]).collect();
     if beta0.iter().all(|&b| b > EPS_BETA_POSITIVE) {
         let q_val = q_from_beta(normals, perm, &beta0);
@@ -181,6 +190,7 @@ fn solve_kkt_svd_path(
     if rank == size {
         return None;
     }
+
     let null_beta: Vec<Vec<f64>> = (rank..size)
         .map(|i| (0..m).map(|j| v_t[(i, j)]).collect())
         .collect();
@@ -189,6 +199,7 @@ fn solve_kkt_svd_path(
     } else {
         find_positive_beta_nd(&beta0, &null_beta)?
     };
+
     let constraint_residual: f64 = (0..4)
         .map(|d| {
             (0..m)
@@ -201,11 +212,12 @@ fn solve_kkt_svd_path(
     if constraint_residual.sqrt() > EPS_KKT_RESIDUAL {
         return None;
     }
+
     let q_val = q_from_beta(normals, perm, &beta_opt);
     Some((beta_opt, q_val))
 }
 
-pub(crate) fn solve_kkt_full(
+pub(crate) fn solve_kkt(
     normals: &[Vector4<f64>],
     heights: &[f64],
     perm: &[usize],

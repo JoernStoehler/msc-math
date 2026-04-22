@@ -1,3 +1,15 @@
+//! Fixture builders for the ablation dataset families.
+//!
+//! Extracted from the original monolithic `ablation/main.rs`. The regression
+//! cut-simplex fixture is the experiment copy of the non-simple example in
+//! `formal/verification/algorithm-comparison/ablation.tex` [ex:a3-prunes].
+
+//! Dataset constructors for the algorithm-comparison ablation experiment.
+//!
+//! The regression and non-simple fixtures stay local to this binary because the
+//! study compares variant behavior on a fixed hand-picked dataset rather than a
+//! durable library surface.
+
 use crate::models::{AblationFixture, H_MAX, H_MIN, N_PER_GROUP, SEED};
 use nalgebra::Vector4;
 use rand::SeedableRng;
@@ -37,6 +49,8 @@ fn make_bipyramid(normals_3d: &[[f64; 3]], heights_3d: &[f64], apex_height: f64)
 }
 
 fn make_cut_simplex(cut_slope: f64) -> Polytope4D {
+    // This is the cut-simplex family discussed in
+    // formal/verification/algorithm-comparison/ablation.tex:\ref{ex:a3-prunes}.
     let s19 = 19.0_f64.sqrt();
     let norm = (1.0 + cut_slope * cut_slope).sqrt();
     let normals = vec![
