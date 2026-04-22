@@ -128,10 +128,7 @@ pub fn recover_and_verify_sigma_beta_action(
 /// [`OrbitKktData`] record.
 ///
 /// [lem:base-point-recovery], [rem:beta-to-tau]
-pub fn recover_and_verify(
-    polytope: &Polytope4D,
-    orbit: &OrbitKktData,
-) -> Option<GeometricOrbit> {
+pub fn recover_and_verify(polytope: &Polytope4D, orbit: &OrbitKktData) -> Option<GeometricOrbit> {
     let duals = polytope.dual_vertices_f64();
     let sigma = &orbit.sigma;
     let beta = &orbit.beta;
@@ -142,9 +139,7 @@ pub fn recover_and_verify(
     //
     // tau_k = T * beta_k, where T = capacity.
     // [rem:beta-to-tau]
-    let dwell_times: Vec<f64> = (0..m)
-        .map(|k| capacity * beta[k])
-        .collect();
+    let dwell_times: Vec<f64> = (0..m).map(|k| capacity * beta[k]).collect();
 
     // ── Stage 2: recover base point ──
     //
@@ -210,34 +205,21 @@ pub fn recover_and_verify(
     if solution_dim > 0 {
         if let Some(v_mat) = &svd.v_t {
             let null_vecs: Vec<Vector4<f64>> = (rank..4)
-                .map(|i| {
-                    Vector4::new(v_mat[(i, 0)], v_mat[(i, 1)], v_mat[(i, 2)], v_mat[(i, 3)])
-                })
+                .map(|i| Vector4::new(v_mat[(i, 0)], v_mat[(i, 1)], v_mat[(i, 2)], v_mat[(i, 3)]))
                 .collect();
-            base_point = optimize_in_null_space(
-                base_point,
-                &null_vecs,
-                &displacements,
-                duals,
-            );
+            base_point = optimize_in_null_space(base_point, &null_vecs, &displacements, duals);
         }
     }
 
     // ── Stage 3: compute breakpoints and verify ──
     //
     // Breakpoints: b + v_k for k = 0..=m.
-    let breakpoints: Vec<Vector4<f64>> = (0..=m)
-        .map(|k| base_point + displacements[k])
-        .collect();
+    let breakpoints: Vec<Vector4<f64>> = (0..=m).map(|k| base_point + displacements[k]).collect();
 
     // Max violation: max_{j,k} (<a_j, breakpoint_k> - 1).
     let max_violation = breakpoints
         .iter()
-        .flat_map(|p| {
-            duals
-                .iter()
-                .map(move |a| a.dot(p) - 1.0)
-        })
+        .flat_map(|p| duals.iter().map(move |a| a.dot(p) - 1.0))
         .fold(f64::NEG_INFINITY, f64::max);
 
     // Closure error: ||breakpoints[m] - breakpoints[0]||.
@@ -280,9 +262,7 @@ fn max_violation_for(
         .iter()
         .flat_map(|v| {
             let p = b + v;
-            dual_vertices
-                .iter()
-                .map(move |a| a.dot(&p) - 1.0)
+            dual_vertices.iter().map(move |a| a.dot(&p) - 1.0)
         })
         .fold(f64::NEG_INFINITY, f64::max)
 }
@@ -411,10 +391,13 @@ mod tests {
 
         let mut nonpositive_beta = beta.to_vec();
         nonpositive_beta[0] = 0.0;
-        assert!(
-            recover_and_verify_sigma_beta_action(&kp.polytope, sigma, &nonpositive_beta, action)
-                .is_none()
-        );
+        assert!(recover_and_verify_sigma_beta_action(
+            &kp.polytope,
+            sigma,
+            &nonpositive_beta,
+            action
+        )
+        .is_none());
     }
 
     /// Run the full recovery + verification pipeline on a known polytope and
@@ -470,8 +453,7 @@ mod tests {
 
         // Facet sequence matches the best permutation.
         assert_eq!(
-            recovery.facet_sequence,
-            orbit.sigma,
+            recovery.facet_sequence, orbit.sigma,
             "{name}: facet_sequence does not match best_permutation"
         );
 
@@ -491,11 +473,7 @@ mod tests {
     }
 
     /// Helper to verify on-facet property: each breakpoint k lies on facet sigma(k).
-    fn check_on_facet(
-        name: &str,
-        polytope: &Polytope4D,
-        result: &OrbitSearchResult,
-    ) {
+    fn check_on_facet(name: &str, polytope: &Polytope4D, result: &OrbitSearchResult) {
         let duals = polytope.dual_vertices_f64();
         let orbit = best_orbit_payload(result);
         let sigma = &orbit.sigma;

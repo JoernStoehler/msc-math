@@ -3,11 +3,11 @@
 //! These tests describe the intended external API first. They are expected to
 //! fail until the crate surface is implemented.
 
-use num_rational::BigRational;
 use algebraic_numbers::{
     canonical_element, cmp_field, dot, max_field, min_field, solve_square, validate_field_spec,
     Algebraic, FieldSpecError, OrderedField, Sign, SolveResult, StaticFieldSpec, TanPiFifth,
 };
+use num_rational::BigRational;
 
 struct SqrtTwo;
 

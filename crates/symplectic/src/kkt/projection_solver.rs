@@ -22,9 +22,9 @@
 //!
 //! Mathematical correspondence: [lem:kkt], Part C.2 of algorithm design
 
-use super::constraint_solver;
 use super::beta_feasibility;
-use super::{classify_margin, EPS_EIGEN_FLOOR, QP, Solution, Verdict};
+use super::constraint_solver;
+use super::{classify_margin, Solution, Verdict, EPS_EIGEN_FLOOR, QP};
 use nalgebra::{DMatrix, DVector};
 
 /// Eigenvalue threshold for the reduced Hessian H'.
@@ -165,9 +165,9 @@ fn q_value_from_dvec(h: &DMatrix<f64>, beta: &DVector<f64>) -> f64 {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use super::super::qp_assembly::build_qp;
-    use super::super::{QP, Verdict};
+    use super::super::{Verdict, QP};
+    use super::*;
     use crate::geom::known_polytopes;
     use nalgebra::{DMatrix, DVector};
 
@@ -463,11 +463,7 @@ mod tests {
         // Constraint satisfaction sanity check (C beta = d).
         let beta_dv = DVector::from_column_slice(&sol.beta);
         let residual = (&qp.c * &beta_dv - &qp.d).norm();
-        assert!(
-            residual < 1e-10,
-            "||C beta - d|| = {:.2e}",
-            residual
-        );
+        assert!(residual < 1e-10, "||C beta - d|| = {:.2e}", residual);
     }
 
     // ── Cross-variant tests: projection solver vs saddle-point solver ──
@@ -546,18 +542,16 @@ mod tests {
             // Verify C beta = d.
             let beta_dv = DVector::from_column_slice(&sol.beta);
             let residual = (&qp.c * &beta_dv - &qp.d).norm();
-            assert!(
-                residual < 1e-8,
-                "||C beta - d|| = {:.2e}",
-                residual
-            );
+            assert!(residual < 1e-8, "||C beta - d|| = {:.2e}", residual);
 
             // Verify Q = (1/2) beta^T H beta.
             let q_check = 0.5 * beta_dv.dot(&(&qp.h * &beta_dv));
             assert!(
                 (sol.q - q_check).abs() < 1e-10,
                 "Q = {}, direct = {}, diff = {:.2e}",
-                sol.q, q_check, (sol.q - q_check).abs()
+                sol.q,
+                q_check,
+                (sol.q - q_check).abs()
             );
         }
     }

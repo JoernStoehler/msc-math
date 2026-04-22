@@ -86,8 +86,7 @@ pub fn simplex() -> &'static KnownPolytope {
         ];
 
         KnownPolytope {
-            polytope: Polytope4D::new(dual_vertices)
-                .expect("simplex construction"),
+            polytope: Polytope4D::new(dual_vertices).expect("simplex construction"),
             capacity: 0.25,
             name: "simplex",
             source: "Y. Nir thesis 2013",
@@ -118,8 +117,7 @@ pub fn hypercube() -> &'static KnownPolytope {
         ];
 
         KnownPolytope {
-            polytope: Polytope4D::new(dual_vertices)
-                .expect("hypercube construction"),
+            polytope: Polytope4D::new(dual_vertices).expect("hypercube construction"),
             capacity: 4.0,
             name: "hypercube",
             source: "HK2019 Ex 4.6",
@@ -149,8 +147,7 @@ pub fn crosspolytope() -> &'static KnownPolytope {
         }
 
         KnownPolytope {
-            polytope: Polytope4D::new(dual_vertices)
-                .expect("crosspolytope construction"),
+            polytope: Polytope4D::new(dual_vertices).expect("crosspolytope construction"),
             capacity: 4.0,
             name: "crosspolytope",
             source: "computed (no literature value)",
@@ -311,8 +308,7 @@ pub fn lagrangian_triangle_square() -> &'static KnownPolytope {
             Vector4::new(0.0, 0.0, 0.0, -1.0) / 0.5,
         ];
 
-        let halfspaces: Vec<Vector4<f64>> =
-            triangle_halfspaces.chain(square_halfspaces).collect();
+        let halfspaces: Vec<Vector4<f64>> = triangle_halfspaces.chain(square_halfspaces).collect();
 
         KnownPolytope {
             polytope: Polytope4D::from_f64(halfspaces)
@@ -351,8 +347,7 @@ pub fn symplectic_triangle_square() -> &'static KnownPolytope {
             Vector4::new(0.0, 0.0, 0.0, -1.0) / 0.5,
         ];
 
-        let halfspaces: Vec<Vector4<f64>> =
-            triangle_halfspaces.chain(square_halfspaces).collect();
+        let halfspaces: Vec<Vector4<f64>> = triangle_halfspaces.chain(square_halfspaces).collect();
 
         let area_tri = 3.0 * 3.0_f64.sqrt() / 4.0;
         let area_sq = 1.0;

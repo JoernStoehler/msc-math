@@ -442,7 +442,10 @@ fn find_positive_beta(
     // After all eliminations: constraints have empty coefficients.
     // Feasibility requires 0 > rhs, i.e. rhs < 0.
     for (coeffs, rhs) in &constraints {
-        assert!(coeffs.is_empty(), "FM elimination left non-empty coefficients");
+        assert!(
+            coeffs.is_empty(),
+            "FM elimination left non-empty coefficients"
+        );
         if !rhs.is_negative() {
             return None; // Infeasible (certified)
         }
@@ -587,10 +590,7 @@ mod tests {
         // for many pairs. Q can be zero even with nonzero beta.
         let perm = vec![0, 1, 2, 3];
         if let Some(r) = solve_kkt_exact(hypercube.dual_vertices(), &perm) {
-            assert!(
-                r.q_exact_f64.is_finite(),
-                "Q_exact_f64 should be finite"
-            );
+            assert!(r.q_exact_f64.is_finite(), "Q_exact_f64 should be finite");
         }
         // Both Some and None are valid — no panic is the key invariant.
     }
@@ -625,10 +625,7 @@ mod tests {
         let result = solve_kkt_exact(pentagon.dual_vertices(), &perm);
 
         if let Some(r) = result {
-            assert!(
-                r.q_exact_f64.is_finite(),
-                "Q_exact_f64 should be finite"
-            );
+            assert!(r.q_exact_f64.is_finite(), "Q_exact_f64 should be finite");
             for (i, b) in r.beta.iter().enumerate() {
                 assert!(
                     b.is_positive(),
@@ -676,15 +673,12 @@ mod tests {
     #[test]
     fn simplex_exact_vs_numerical() {
         let simplex = crate::geom::known_polytopes::simplex();
-        let result = crate::ehz_capacity_pruned(&simplex.polytope)
-            .expect("simplex should have capacity");
+        let result =
+            crate::ehz_capacity_pruned(&simplex.polytope).expect("simplex should have capacity");
         let perm = result.best_sigma();
         if let Some(exact) = solve_kkt_exact(simplex.polytope.dual_vertices(), perm) {
             let q_exact = exact.q_exact_f64;
-            assert!(
-                q_exact > 0.0,
-                "exact Q should be positive, got {q_exact}"
-            );
+            assert!(q_exact > 0.0, "exact Q should be positive, got {q_exact}");
         }
     }
 
@@ -709,8 +703,8 @@ mod tests {
     #[test]
     fn winning_beta_positive_exact() {
         let simplex = crate::geom::known_polytopes::simplex();
-        let result = crate::ehz_capacity_pruned(&simplex.polytope)
-            .expect("simplex should have capacity");
+        let result =
+            crate::ehz_capacity_pruned(&simplex.polytope).expect("simplex should have capacity");
         let perm = result.best_sigma();
         if let Some(exact) = solve_kkt_exact(simplex.polytope.dual_vertices(), perm) {
             assert!(

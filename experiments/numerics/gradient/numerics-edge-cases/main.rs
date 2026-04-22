@@ -38,19 +38,19 @@
 //!
 //! Self-contained: generates all polytopes internally.
 
+use dev_gradient::{analyze_polytope, enumerate_all_orbits, first_order_test, write_rows};
+use nalgebra::Vector4;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
-use dev_gradient::{analyze_polytope, enumerate_all_orbits, first_order_test, write_rows};
 use rand_distr::{Distribution, StandardNormal, Uniform};
-use std::fs::File;
 use std::env;
+use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::path::PathBuf;
 use std::time::Instant;
 use symplectic::geom::facet_volume::facet_volume_3d;
 use symplectic::random::generate_random_polytopes;
 use symplectic::Polytope4D;
-use nalgebra::Vector4;
 
 // ============================================================================
 // CLI helpers

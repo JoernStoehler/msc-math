@@ -16,6 +16,9 @@
 //! Filter: F <= 10 (HK2017 is exponential in F)
 //! Output Artifacts: experiments/combinatorial-cells/cell-widths/combinatorial-boundaries-profiling.jsonl
 
+use exp_combinatorial_cells::{
+    compute_step_bound_detailed, ehz_capacity_instrumented, name_from_record,
+};
 use nalgebra::Vector4;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
@@ -25,9 +28,6 @@ use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::path::Path;
 use std::time::Instant;
-use exp_combinatorial_cells::{
-    compute_step_bound_detailed, ehz_capacity_instrumented, name_from_record,
-};
 use symplectic::database;
 use symplectic::geom::polytope::Polytope4D;
 
@@ -140,8 +140,7 @@ fn main() {
     println!("Loading starting polytopes from owned cache (F <= {MAX_FACET_COUNT})...");
 
     let owned_db_path = Path::new(env!("CARGO_MANIFEST_DIR")).join("polytopes.jsonl");
-    let db = database::load_many(&[owned_db_path.as_path()])
-        .expect("failed to load database");
+    let db = database::load_many(&[owned_db_path.as_path()]).expect("failed to load database");
 
     let mut polytopes: Vec<(String, Polytope4D)> = Vec::new();
 
@@ -174,9 +173,8 @@ fn main() {
     // =========================================================================
 
     let out_dir = base_dir.join("cell-widths");
-    let profiling_file =
-        File::create(out_dir.join("combinatorial-boundaries-profiling.jsonl"))
-            .expect("create profiling JSONL");
+    let profiling_file = File::create(out_dir.join("combinatorial-boundaries-profiling.jsonl"))
+        .expect("create profiling JSONL");
     let mut profiling_writer = BufWriter::new(profiling_file);
 
     // =========================================================================

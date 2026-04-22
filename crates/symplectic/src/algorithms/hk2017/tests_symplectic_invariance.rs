@@ -2,9 +2,9 @@
 //!
 //! Split from mod.rs to keep module routing and docs short.
 
+use crate::ehz_capacity_unpruned;
 use crate::geom::polytope::Polytope4D;
 use nalgebra::Matrix4;
-use crate::ehz_capacity_unpruned;
 
 // ── Symplectomorphism invariance ──
 

@@ -14,19 +14,19 @@
 //! 3. `cargo run -p dev-numerical-analysis --release --bin num-sage-feasibility -- --canonical`
 //!    refreshes `sage-feasibility-input.jsonl`.
 
+use algebraic_numbers::{canonical_element, CanonicalElement, OrderedField};
 use dev_numerical_analysis::algebraic::field::ExactOrderedField;
 use dev_numerical_analysis::algebraic::fixtures::exact_hko_pentagon;
 use nalgebra::Vector4;
 use num_bigint::BigInt;
 use num_rational::BigRational;
-use algebraic_numbers::{canonical_element, CanonicalElement, OrderedField};
 use serde::Serialize;
 use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::path::{Path, PathBuf};
 use std::time::Instant;
-use symplectic::geom::polytope::Polytope4D;
 use symplectic::ehz_capacity_unpruned;
+use symplectic::geom::polytope::Polytope4D;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 struct CliOptions {
@@ -204,11 +204,7 @@ fn rational_row(fixture: RationalFixture) -> SageFeasibilityInputRow {
         family: "rational_control".to_string(),
         facet_count: polytope.facet_count(),
         exact_field: "rational".to_string(),
-        dual_vertices: fixture
-            .dual_vertices
-            .iter()
-            .map(canonical_vec4)
-            .collect(),
+        dual_vertices: fixture.dual_vertices.iter().map(canonical_vec4).collect(),
         rust_f64_capacity: capacity,
         rust_f64_iterations: iterations,
         rust_f64_returned_orbit_count: returned_orbit_count,
@@ -222,7 +218,14 @@ fn hko_row() -> SageFeasibilityInputRow {
     let f64_dual_vertices: Vec<_> = exact_hko
         .dual_vertices()
         .iter()
-        .map(|dual| Vector4::new(dual[0].to_f64(), dual[1].to_f64(), dual[2].to_f64(), dual[3].to_f64()))
+        .map(|dual| {
+            Vector4::new(
+                dual[0].to_f64(),
+                dual[1].to_f64(),
+                dual[2].to_f64(),
+                dual[3].to_f64(),
+            )
+        })
         .collect();
     let rust_polytope =
         Polytope4D::from_f64(f64_dual_vertices).expect("Rust HKO f64 benchmark polytope");

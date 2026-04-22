@@ -7,26 +7,16 @@ use super::combinatorics::combinations;
 use super::permutations::for_each_cyclic_permutation;
 
 /// Visit every HK2017 sigma without adjacency pruning.
-pub fn for_each_sigma_unpruned(
-    polytope: &Polytope4D,
-    mut visit: impl FnMut(&[usize]),
-) {
+pub fn for_each_sigma_unpruned(polytope: &Polytope4D, mut visit: impl FnMut(&[usize])) {
     for_each_sigma_impl(polytope, false, &mut visit)
 }
 
 /// Visit every HK2017 sigma that survives adjacency pruning.
-pub fn for_each_sigma_pruned(
-    polytope: &Polytope4D,
-    mut visit: impl FnMut(&[usize]),
-) {
+pub fn for_each_sigma_pruned(polytope: &Polytope4D, mut visit: impl FnMut(&[usize])) {
     for_each_sigma_impl(polytope, true, &mut visit)
 }
 
-fn for_each_sigma_impl(
-    polytope: &Polytope4D,
-    use_pruning: bool,
-    visit: &mut dyn FnMut(&[usize]),
-) {
+fn for_each_sigma_impl(polytope: &Polytope4D, use_pruning: bool, visit: &mut dyn FnMut(&[usize])) {
     let f = polytope.facet_count();
     let adj = use_pruning.then(|| build_transition_matrix(polytope));
 

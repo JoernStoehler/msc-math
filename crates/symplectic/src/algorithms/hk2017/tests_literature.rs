@@ -4,7 +4,9 @@
 
 use super::*;
 use crate::algorithms::orbit_search::solve_sigma_stream;
-use crate::algorithms::{aggregate_orbits, OrbitGuaranteeMode, OrbitSearchError, OrbitSolveBackend};
+use crate::algorithms::{
+    aggregate_orbits, OrbitGuaranteeMode, OrbitSearchError, OrbitSolveBackend,
+};
 use crate::geom::known_polytopes;
 use crate::kkt::saddle_point_solver::solve_kkt_for;
 use crate::{ehz_capacity_pruned, ehz_capacity_unpruned};
@@ -97,12 +99,11 @@ fn symplectic_triangle_square_capacity() {
 #[test]
 fn simplex_orbit_aggregation() {
     let kp = known_polytopes::simplex();
-    let (orbits, iterations) = solve_sigma_stream(
-        &kp.polytope,
-        OrbitSolveBackend::SaddlePoint,
-        |visit| for_each_sigma_pruned(&kp.polytope, visit),
-    )
-    .expect("sigma solve stream should succeed on simplex");
+    let (orbits, iterations) =
+        solve_sigma_stream(&kp.polytope, OrbitSolveBackend::SaddlePoint, |visit| {
+            for_each_sigma_pruned(&kp.polytope, visit)
+        })
+        .expect("sigma solve stream should succeed on simplex");
     let result = aggregate_orbits(
         &kp.polytope,
         orbits,
@@ -112,7 +113,10 @@ fn simplex_orbit_aggregation() {
     )
     .expect("orbit aggregation should succeed on simplex");
 
-    assert!(!result.orbits.is_empty(), "collector must return at least one orbit");
+    assert!(
+        !result.orbits.is_empty(),
+        "collector must return at least one orbit"
+    );
     assert!(
         result.min_action_lower <= result.min_action_upper,
         "minimum-action interval should be ordered"
@@ -130,11 +134,9 @@ fn simplex_orbit_aggregation() {
 #[test]
 fn simplex_projected_backend_unsupported() {
     let kp = known_polytopes::simplex();
-    let err = solve_sigma_stream(
-        &kp.polytope,
-        OrbitSolveBackend::Projected,
-        |visit| for_each_sigma_pruned(&kp.polytope, visit),
-    )
+    let err = solve_sigma_stream(&kp.polytope, OrbitSolveBackend::Projected, |visit| {
+        for_each_sigma_pruned(&kp.polytope, visit)
+    })
     .expect_err("projected backend is not wired into the shared collector yet");
     assert_eq!(err, OrbitSearchError::UnsupportedBackend);
 }
@@ -183,7 +185,11 @@ fn crosspolytope_upper_bound() {
     let orbit = crate::algorithms::OrbitKktData {
         sigma: perm.to_vec(),
         beta: kkt_result.beta.clone(),
-        beta_margin: kkt_result.beta.iter().copied().fold(f64::INFINITY, f64::min),
+        beta_margin: kkt_result
+            .beta
+            .iter()
+            .copied()
+            .fold(f64::INFINITY, f64::min),
         action,
         action_lower: action,
         action_upper: action,

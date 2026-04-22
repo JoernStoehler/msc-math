@@ -281,7 +281,11 @@ fn precompute(polytope: &Polytope4D, skeleton: &Skeleton) -> Result<TubePrecompu
         }
 
         // Ridge vertices in R^4.
-        let verts: Vec<Vector4<f64>> = ridge.vertices.iter().map(|&vi| all_vertices_f64[vi]).collect();
+        let verts: Vec<Vector4<f64>> = ridge
+            .vertices
+            .iter()
+            .map(|&vi| all_vertices_f64[vi])
+            .collect();
 
         if omega_val > 0.0 {
             // Directed edge fi -> fj.
@@ -332,10 +336,7 @@ const ROTATION_INCREMENT_FALLBACK: f64 = 0.25;
 /// **Warning:** The current implementation approximates the CH2021 formula by
 /// using the angle between Reeb vectors (not the exact transition matrix trace).
 /// See TODO [JÖRN] below. The result is clamped to [0.01, 0.49] as a safety bound.
-fn compute_rotation_increment(
-    a_j: &Vector4<f64>,
-    a_l: &Vector4<f64>,
-) -> f64 {
+fn compute_rotation_increment(a_j: &Vector4<f64>, a_l: &Vector4<f64>) -> f64 {
     // Reeb vectors: R_i = 2 J_0 a_i.
     let r_j = Vector4::new(-a_j[2], -a_j[3], a_j[0], a_j[1]) * 2.0;
     let r_l = Vector4::new(-a_l[2], -a_l[3], a_l[0], a_l[1]) * 2.0;
@@ -395,7 +396,11 @@ fn dfs_search(
     // ── Prune: action lower bound ──
     // [lem:prune-action]: if min_{End} a(y) > c*, no orbit in this tube can beat c*.
     if *best_action < f64::INFINITY {
-        let min_action = min_action_on_polygon(&tube.end_vertices_4d, &tube.action_gradient, tube.action_constant);
+        let min_action = min_action_on_polygon(
+            &tube.end_vertices_4d,
+            &tube.action_gradient,
+            tube.action_constant,
+        );
         if min_action > *best_action {
             *tubes_pruned += 1;
             return;
@@ -422,13 +427,7 @@ fn dfs_search(
         let has_close_edge_2 = precomp.directed_edges[sigma_1].contains(&sigma_2);
 
         if has_close_edge_1 && has_close_edge_2 {
-            try_close_tube(
-                precomp,
-                tube,
-                best_action,
-                best_sequence,
-                best_fixed_point,
-            );
+            try_close_tube(precomp, tube, best_action, best_sequence, best_fixed_point);
         }
     }
 
@@ -482,10 +481,14 @@ fn extend_tube(
     }
 
     // Compute Phi(y) = y + ((h_l - y . n_l) / denom) * R_k for each End vertex.
-    let new_end_raw: Vec<Vector4<f64>> = tube.end_vertices_4d.iter().map(|y| {
-        let t = (1.0 - y.dot(a_l)) / denom;
-        y + r_k * t
-    }).collect();
+    let new_end_raw: Vec<Vector4<f64>> = tube
+        .end_vertices_4d
+        .iter()
+        .map(|y| {
+            let t = (1.0 - y.dot(a_l)) / denom;
+            y + r_k * t
+        })
+        .collect();
 
     // New End = Phi(End) ∩ (F_{sigma(k)} ∩ F_l).
     // The target 2-face is the ridge between sigma_k and l.
@@ -521,125 +524,131 @@ fn extend_tube(
 
     // For each vertex of new_end, compute the action value.
     // Then fit an affine function to get (gradient, constant).
-    let action_values: Vec<f64> = new_end.iter().map(|y_prime| {
-        // Invert the step map: x = Phi^{-1}(y').
-        // From y' = x + t(x) * R_k, we can recover x iteratively or use the formula.
-        // Since t(x) = (h_l - x . n_l) / denom, and y' = x + t * R_k:
-        //   x = y' - t * R_k
-        //   t = (h_l - (y' - t * R_k) . n_l) / denom
-        //   t = (h_l - y' . n_l + t * R_k . n_l) / denom
-        //   t * denom = h_l - y' . n_l + t * denom
-        //   Hmm, this is 0 = h_l - y' . n_l, which says y' . n_l = h_l.
-        // This is correct: y' lies on H_l, so y' . n_l = h_l.
-        // So we can recover t from x: t = (h_l - x . n_l) / denom.
-        // And x = y' - t * R_k.
-        //
-        // But we need to find x from y'. Since y' is on H_l: y' . n_l = h_l.
-        // From y' = x + t * R_k and t = (h_l - x . n_l) / denom:
-        // We need to solve for x. Use the step matrix inverse:
-        // y' = step_matrix * x + step_offset
-        // x = step_matrix^{-1} * (y' - step_offset)
-        //
-        // For the action at y': old_action(x) + t(x).
-        // old_action(x) = action_gradient . x + action_constant.
-        // t(x) = (h_l - x . n_l) / denom.
-        //
-        // Combined: (action_gradient - a_l / denom) . x + (action_constant + 1.0 / denom).
+    let action_values: Vec<f64> = new_end
+        .iter()
+        .map(|y_prime| {
+            // Invert the step map: x = Phi^{-1}(y').
+            // From y' = x + t(x) * R_k, we can recover x iteratively or use the formula.
+            // Since t(x) = (h_l - x . n_l) / denom, and y' = x + t * R_k:
+            //   x = y' - t * R_k
+            //   t = (h_l - (y' - t * R_k) . n_l) / denom
+            //   t = (h_l - y' . n_l + t * R_k . n_l) / denom
+            //   t * denom = h_l - y' . n_l + t * denom
+            //   Hmm, this is 0 = h_l - y' . n_l, which says y' . n_l = h_l.
+            // This is correct: y' lies on H_l, so y' . n_l = h_l.
+            // So we can recover t from x: t = (h_l - x . n_l) / denom.
+            // And x = y' - t * R_k.
+            //
+            // But we need to find x from y'. Since y' is on H_l: y' . n_l = h_l.
+            // From y' = x + t * R_k and t = (h_l - x . n_l) / denom:
+            // We need to solve for x. Use the step matrix inverse:
+            // y' = step_matrix * x + step_offset
+            // x = step_matrix^{-1} * (y' - step_offset)
+            //
+            // For the action at y': old_action(x) + t(x).
+            // old_action(x) = action_gradient . x + action_constant.
+            // t(x) = (h_l - x . n_l) / denom.
+            //
+            // Combined: (action_gradient - a_l / denom) . x + (action_constant + 1.0 / denom).
 
-        // We need x = Phi^{-1}(y'). Use direct formula:
-        // step_matrix * x = y' - step_offset.
-        // step_matrix = I - (R_k * n_l^T) / denom.
-        // This matrix has a known inverse by Sherman-Morrison:
-        // (I - u v^T)^{-1} = I + u v^T / (1 - v^T u)   when v^T u != 1.
-        // v^T u = n_l^T R_k / denom = denom / denom = 1. So SM doesn't apply directly.
-        //
-        // Alternative: since y' lies on H_l (y' . n_l = h_l), we can solve directly.
-        // x = y' - t * R_k where t satisfies y' = x + t * R_k.
-        // From y' . n_l = h_l and x . n_l = h_l - t * denom (since x is on H_{sigma(k)}... wait, x is on End, not on H_l).
-        //
-        // Let's just compute action values directly for the vertices.
-        // For each new_end vertex y', find the pre-image x in the old End.
-        // x is the point in old End such that Phi(x) = y'.
-        // Since Phi(x) = x + t(x) R_k, and t(x) = (h_l - x.n_l)/denom:
+            // We need x = Phi^{-1}(y'). Use direct formula:
+            // step_matrix * x = y' - step_offset.
+            // step_matrix = I - (R_k * n_l^T) / denom.
+            // This matrix has a known inverse by Sherman-Morrison:
+            // (I - u v^T)^{-1} = I + u v^T / (1 - v^T u)   when v^T u != 1.
+            // v^T u = n_l^T R_k / denom = denom / denom = 1. So SM doesn't apply directly.
+            //
+            // Alternative: since y' lies on H_l (y' . n_l = h_l), we can solve directly.
+            // x = y' - t * R_k where t satisfies y' = x + t * R_k.
+            // From y' . n_l = h_l and x . n_l = h_l - t * denom (since x is on H_{sigma(k)}... wait, x is on End, not on H_l).
+            //
+            // Let's just compute action values directly for the vertices.
+            // For each new_end vertex y', find the pre-image x in the old End.
+            // x is the point in old End such that Phi(x) = y'.
+            // Since Phi(x) = x + t(x) R_k, and t(x) = (h_l - x.n_l)/denom:
 
-        // For a point y' in the new End that came from Phi(old_end_vertex):
-        // We track which old vertex it came from. But after clipping, we may
-        // have new vertices. Let's use the affine formula instead.
+            // For a point y' in the new End that came from Phi(old_end_vertex):
+            // We track which old vertex it came from. But after clipping, we may
+            // have new vertices. Let's use the affine formula instead.
 
-        // a'(y') in terms of y': since a'(y') = a(x) + t(x) where x = Phi^{-1}(y'),
-        // and both a and t are affine in x, a' is affine in x and hence affine in y'
-        // (since Phi is affine and invertible).
-        //
-        // For action_gradient_new . y' + action_constant_new, we can use any 5 non-degenerate
-        // points... but actually it's simpler:
-        //
-        // a(x) + t(x) = (action_gradient + delta_a_gradient) . x + (action_constant + delta_a_constant)
-        // where delta_a_gradient = -a_l / denom, delta_a_constant = 1.0 / denom.
-        //
-        // Let combined_gradient = action_gradient - a_l / denom
-        // Let combined_constant = action_constant + 1.0 / denom
-        //
-        // Then a'(y') = combined_gradient . x + combined_constant
-        //             = combined_gradient . (step_matrix^{-1} (y' - step_offset)) + combined_constant
-        //
-        // We need step_matrix^{-1}.
-        // step_matrix = I - (R_k n_l^T)/denom.
-        // For points y' on H_l (y'.n_l = h_l), the action on Phi^{-1} can be computed:
-        //
-        // Phi(x) = x + t(x) R_k, so x = y' - t(x) R_k.
-        // n_l . x = n_l . y' - t(x) (n_l . R_k) = h_l - t(x) * denom.
-        // Also t(x) = (h_l - n_l.x) / denom, so t(x) = t(x). Consistent but not helpful.
-        //
-        // From x = y' - t R_k:
-        //   n_l . x = h_l - t * denom
-        //   t = (h_l - n_l . x) / denom = (h_l - (h_l - t * denom)) / denom = t. (tautology)
-        //
-        // We need another equation. The old End point x lies on F_{sigma(k-1)} ∩ F_{sigma(k)}.
-        // n_{sigma(k)} . x = h_{sigma(k)}.
-        // From x = y' - t * R_k:
-        //   n_{sigma(k)} . x = n_{sigma(k)} . y' - t * (n_{sigma(k)} . R_k)
-        // The Reeb vector R_k = (2/h_k) J_0 n_k, so n_k . R_k = (2/h_k) n_k . (J_0 n_k) = (2/h_k) omega_0(n_k, n_k) = 0.
-        // Therefore n_{sigma(k)} . x = n_{sigma(k)} . y'.
-        // So x doesn't need t for this constraint.
-        //
-        // Actually, from R_k . n_k = 0 (Reeb tangent to its own facet):
-        //   x = y' - t * R_k implies n_k . x = n_k . y'.
-        //
-        // We need t. Use the H_l constraint on x:
-        //   n_l . x = n_l . y' - t * denom = h_l - t * denom.
-        // But x is NOT necessarily on H_l. x is on End (which is on F_{sigma(k-1)} ∩ F_{sigma(k)}).
-        // We know y' IS on H_l by construction (it's on the target ridge).
-        // So n_l . y' = h_l (approximately).
-        // And t = (h_l - n_l . x) / denom.
-        //
-        // Substitute x = y' - t R_k into t = (h_l - n_l . x) / denom:
-        //   t = (h_l - n_l . (y' - t R_k)) / denom
-        //   t = (h_l - n_l . y' + t * n_l . R_k) / denom
-        //   t * denom = h_l - n_l . y' + t * denom
-        //   0 = h_l - n_l . y'
-        // So n_l . y' = h_l (which we already know). This means t is underdetermined
-        // from just these two equations.
-        //
-        // The correct approach: store the combined action gradient+constant as a function of y'.
-        // Use the relationship: a'(y') = a(x) + t(x) where Phi(x) = y'.
-        // Since a and t are both affine in x, their sum is affine in x.
-        // Since Phi is an affine bijection, x = Phi^{-1}(y') is affine in y'.
-        // Hence a' is affine in y'.
-        //
-        // For the numerical computation, we can just evaluate at the vertices.
-        // We track the old End vertices and their images through Phi.
+            // a'(y') in terms of y': since a'(y') = a(x) + t(x) where x = Phi^{-1}(y'),
+            // and both a and t are affine in x, a' is affine in x and hence affine in y'
+            // (since Phi is affine and invertible).
+            //
+            // For action_gradient_new . y' + action_constant_new, we can use any 5 non-degenerate
+            // points... but actually it's simpler:
+            //
+            // a(x) + t(x) = (action_gradient + delta_a_gradient) . x + (action_constant + delta_a_constant)
+            // where delta_a_gradient = -a_l / denom, delta_a_constant = 1.0 / denom.
+            //
+            // Let combined_gradient = action_gradient - a_l / denom
+            // Let combined_constant = action_constant + 1.0 / denom
+            //
+            // Then a'(y') = combined_gradient . x + combined_constant
+            //             = combined_gradient . (step_matrix^{-1} (y' - step_offset)) + combined_constant
+            //
+            // We need step_matrix^{-1}.
+            // step_matrix = I - (R_k n_l^T)/denom.
+            // For points y' on H_l (y'.n_l = h_l), the action on Phi^{-1} can be computed:
+            //
+            // Phi(x) = x + t(x) R_k, so x = y' - t(x) R_k.
+            // n_l . x = n_l . y' - t(x) (n_l . R_k) = h_l - t(x) * denom.
+            // Also t(x) = (h_l - n_l.x) / denom, so t(x) = t(x). Consistent but not helpful.
+            //
+            // From x = y' - t R_k:
+            //   n_l . x = h_l - t * denom
+            //   t = (h_l - n_l . x) / denom = (h_l - (h_l - t * denom)) / denom = t. (tautology)
+            //
+            // We need another equation. The old End point x lies on F_{sigma(k-1)} ∩ F_{sigma(k)}.
+            // n_{sigma(k)} . x = h_{sigma(k)}.
+            // From x = y' - t * R_k:
+            //   n_{sigma(k)} . x = n_{sigma(k)} . y' - t * (n_{sigma(k)} . R_k)
+            // The Reeb vector R_k = (2/h_k) J_0 n_k, so n_k . R_k = (2/h_k) n_k . (J_0 n_k) = (2/h_k) omega_0(n_k, n_k) = 0.
+            // Therefore n_{sigma(k)} . x = n_{sigma(k)} . y'.
+            // So x doesn't need t for this constraint.
+            //
+            // Actually, from R_k . n_k = 0 (Reeb tangent to its own facet):
+            //   x = y' - t * R_k implies n_k . x = n_k . y'.
+            //
+            // We need t. Use the H_l constraint on x:
+            //   n_l . x = n_l . y' - t * denom = h_l - t * denom.
+            // But x is NOT necessarily on H_l. x is on End (which is on F_{sigma(k-1)} ∩ F_{sigma(k)}).
+            // We know y' IS on H_l by construction (it's on the target ridge).
+            // So n_l . y' = h_l (approximately).
+            // And t = (h_l - n_l . x) / denom.
+            //
+            // Substitute x = y' - t R_k into t = (h_l - n_l . x) / denom:
+            //   t = (h_l - n_l . (y' - t R_k)) / denom
+            //   t = (h_l - n_l . y' + t * n_l . R_k) / denom
+            //   t * denom = h_l - n_l . y' + t * denom
+            //   0 = h_l - n_l . y'
+            // So n_l . y' = h_l (which we already know). This means t is underdetermined
+            // from just these two equations.
+            //
+            // The correct approach: store the combined action gradient+constant as a function of y'.
+            // Use the relationship: a'(y') = a(x) + t(x) where Phi(x) = y'.
+            // Since a and t are both affine in x, their sum is affine in x.
+            // Since Phi is an affine bijection, x = Phi^{-1}(y') is affine in y'.
+            // Hence a' is affine in y'.
+            //
+            // For the numerical computation, we can just evaluate at the vertices.
+            // We track the old End vertices and their images through Phi.
 
-        // PUNT: for simplicity, compute the action directly from scratch for each vertex.
-        // This is O(k) per vertex but correct.
-        compute_action_at_point(precomp, &tube.sequence, l, y_prime)
-    }).collect();
+            // PUNT: for simplicity, compute the action directly from scratch for each vertex.
+            // This is O(k) per vertex but correct.
+            compute_action_at_point(precomp, &tube.sequence, l, y_prime)
+        })
+        .collect();
 
     // Fit affine function: a(y) = g . y + c.
     // Use the first vertex and approximate gradient from finite differences.
     let (new_action_gradient, new_action_constant) = if new_end.len() >= 2 {
         fit_affine_function(&new_end, &action_values)
     } else {
-        (Vector4::zeros(), action_values.first().copied().unwrap_or(0.0))
+        (
+            Vector4::zeros(),
+            action_values.first().copied().unwrap_or(0.0),
+        )
     };
 
     // Update Start' = phi'^{-1}(End').
@@ -648,7 +657,10 @@ fn extend_tube(
     // phi'(x) = new_phi_matrix * x + new_phi_offset.
     // x = new_phi_matrix^{-1} * (y' - new_phi_offset).
     let new_start = if let Some(phi_inv) = new_phi_matrix.try_inverse() {
-        new_end.iter().map(|y| phi_inv * (y - new_phi_offset)).collect()
+        new_end
+            .iter()
+            .map(|y| phi_inv * (y - new_phi_offset))
+            .collect()
     } else {
         // Degenerate: phi' is singular.
         return None;
@@ -695,19 +707,26 @@ fn try_close_tube(
 
     // First closing step: extend by sigma(1).
     // Triple: (sigma(k-1), sigma(k), sigma(1)).
-    let edge_idx_1 = match precomp.directed_edges[sigma_k].iter().position(|&j| j == sigma_1) {
+    let edge_idx_1 = match precomp.directed_edges[sigma_k]
+        .iter()
+        .position(|&j| j == sigma_1)
+    {
         Some(idx) => idx,
         None => return,
     };
 
-    let extended_1 = match extend_tube(precomp, tube, sigma_1, sigma_k_minus_1, sigma_k, edge_idx_1) {
+    let extended_1 = match extend_tube(precomp, tube, sigma_1, sigma_k_minus_1, sigma_k, edge_idx_1)
+    {
         Some(t) => t,
         None => return,
     };
 
     // Second closing step: extend by sigma(2).
     // Triple: (sigma(k), sigma(1), sigma(2)).
-    let edge_idx_2 = match precomp.directed_edges[sigma_1].iter().position(|&j| j == sigma_2) {
+    let edge_idx_2 = match precomp.directed_edges[sigma_1]
+        .iter()
+        .position(|&j| j == sigma_2)
+    {
         Some(idx) => idx,
         None => return,
     };
@@ -943,7 +962,11 @@ fn compute_action_at_point(
 
     // Invert step by step, accumulating action.
     // Walk backward: from endpoint through each extension step.
-    let full_seq: Vec<usize> = sequence.iter().copied().chain(std::iter::once(new_facet)).collect();
+    let full_seq: Vec<usize> = sequence
+        .iter()
+        .copied()
+        .chain(std::iter::once(new_facet))
+        .collect();
 
     // For each step i from 2 to k (inclusive), the triple is (seq[i-2], seq[i-1], seq[i]).
     // The step map takes a point on F_{seq[i-2]} ∩ F_{seq[i-1]} to F_{seq[i-1]} ∩ F_{seq[i]}.
@@ -1009,9 +1032,7 @@ fn clip_polygon_to_convex_hull(
         let rel = p - centroid;
         Vector2::new(rel.dot(&d1), rel.dot(&d2))
     };
-    let unproject = |p: &Vector2<f64>| -> Vector4<f64> {
-        centroid + d1 * p.x + d2 * p.y
-    };
+    let unproject = |p: &Vector2<f64>| -> Vector4<f64> { centroid + d1 * p.x + d2 * p.y };
 
     let subject_2d: Vec<Vector2<f64>> = subject.iter().map(&project).collect();
     let clip_2d: Vec<Vector2<f64>> = clip.iter().map(project).collect();
@@ -1048,13 +1069,17 @@ fn sutherland_hodgman(subject: &[Vector2<f64>], clip: &[Vector2<f64>]) -> Vec<Ve
 
             if curr_inside {
                 if !prev_inside {
-                    if let Some(intersection) = line_intersection_2d(&previous, &current, &edge_start, &edge_end) {
+                    if let Some(intersection) =
+                        line_intersection_2d(&previous, &current, &edge_start, &edge_end)
+                    {
                         output.push(intersection);
                     }
                 }
                 output.push(current);
             } else if prev_inside {
-                if let Some(intersection) = line_intersection_2d(&previous, &current, &edge_start, &edge_end) {
+                if let Some(intersection) =
+                    line_intersection_2d(&previous, &current, &edge_start, &edge_end)
+                {
                     output.push(intersection);
                 }
             }
@@ -1094,10 +1119,7 @@ fn line_intersection_2d(
 /// Fit an affine function f(x) = g . x + c to a set of (point, value) pairs.
 ///
 /// Uses least-squares if more than 5 points.
-fn fit_affine_function(
-    points: &[Vector4<f64>],
-    values: &[f64],
-) -> (Vector4<f64>, f64) {
+fn fit_affine_function(points: &[Vector4<f64>], values: &[f64]) -> (Vector4<f64>, f64) {
     if points.is_empty() || values.is_empty() {
         return (Vector4::zeros(), 0.0);
     }
@@ -1135,7 +1157,10 @@ fn fit_affine_function(
 
 /// Look up the rotation increment for a directed edge j -> l.
 fn get_rotation_increment(precomp: &TubePrecomputation, j: usize, l: usize) -> f64 {
-    if let Some(idx) = precomp.directed_edges[j].iter().position(|&target| target == l) {
+    if let Some(idx) = precomp.directed_edges[j]
+        .iter()
+        .position(|&target| target == l)
+    {
         precomp.rotation_increments[j][idx]
     } else {
         0.25 // Fallback — should not happen for valid directed edges.

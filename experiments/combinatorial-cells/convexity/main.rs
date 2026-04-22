@@ -16,6 +16,9 @@
 //! Filter: F <= 10 (HK2017 is exponential in F)
 //! Output Artifacts: experiments/combinatorial-cells/convexity/combinatorial-boundaries-convexity.jsonl
 
+use exp_combinatorial_cells::{
+    compute_step_bound_detailed, construct_at_t, ehz_capacity_instrumented, name_from_record,
+};
 use nalgebra::Vector4;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
@@ -25,11 +28,8 @@ use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::path::Path;
 use std::time::Instant;
-use exp_combinatorial_cells::{
-    compute_step_bound_detailed, construct_at_t, ehz_capacity_instrumented, name_from_record,
-};
-use symplectic::database;
 use symplectic::algorithms::facet_adjacency::build_transition_matrix;
+use symplectic::database;
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::skeleton::Skeleton;
 use symplectic::geom::symplectic_form::omega0;
@@ -211,8 +211,7 @@ fn main() {
     println!("Loading starting polytopes from owned cache (F <= {MAX_FACET_COUNT})...");
 
     let owned_db_path = Path::new(env!("CARGO_MANIFEST_DIR")).join("polytopes.jsonl");
-    let db = database::load_many(&[owned_db_path.as_path()])
-        .expect("failed to load database");
+    let db = database::load_many(&[owned_db_path.as_path()]).expect("failed to load database");
 
     let mut polytopes: Vec<(String, Polytope4D)> = Vec::new();
 
@@ -245,8 +244,8 @@ fn main() {
     // =========================================================================
 
     let out_dir = base_dir.join("convexity");
-    let convexity_file =
-        File::create(out_dir.join("combinatorial-boundaries-convexity.jsonl")).expect("create convexity JSONL");
+    let convexity_file = File::create(out_dir.join("combinatorial-boundaries-convexity.jsonl"))
+        .expect("create convexity JSONL");
     let mut convexity_writer = BufWriter::new(convexity_file);
 
     // =========================================================================

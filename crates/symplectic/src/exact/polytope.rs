@@ -57,7 +57,9 @@ impl<F: OrderedField> ExactPolytope4D<F> {
         let vertex_adjacency: Vec<Vec<bool>> = (0..f)
             .map(|i| {
                 (0..f)
-                    .map(|j| i != j && (0..vertex_count).any(|v| incidence[v][i] && incidence[v][j]))
+                    .map(|j| {
+                        i != j && (0..vertex_count).any(|v| incidence[v][i] && incidence[v][j])
+                    })
                     .collect()
             })
             .collect();
@@ -124,9 +126,7 @@ pub fn dot4<F: OrderedField>(left: &[F; 4], right: &[F; 4]) -> F {
 
 /// Exact standard symplectic form `omega_0`.
 pub fn omega0<F: OrderedField>(u: &[F; 4], v: &[F; 4]) -> F {
-    u[0].clone() * v[2].clone()
-        - u[2].clone() * v[0].clone()
-        + u[1].clone() * v[3].clone()
+    u[0].clone() * v[2].clone() - u[2].clone() * v[0].clone() + u[1].clone() * v[3].clone()
         - u[3].clone() * v[1].clone()
 }
 
@@ -152,8 +152,10 @@ fn cross_product_4d<F: OrderedField>(a: &[F; 4], b: &[F; 4], c: &[F; 4]) -> [F; 
     let bc_13 = b[1].clone() * c[3].clone() - b[3].clone() * c[1].clone();
     let bc_23 = b[2].clone() * c[3].clone() - b[3].clone() * c[2].clone();
 
-    let d0 = a[1].clone() * bc_23.clone() - a[2].clone() * bc_13.clone() + a[3].clone() * bc_12.clone();
-    let d1 = -(a[0].clone() * bc_23.clone() - a[2].clone() * bc_03.clone() + a[3].clone() * bc_02.clone());
+    let d0 =
+        a[1].clone() * bc_23.clone() - a[2].clone() * bc_13.clone() + a[3].clone() * bc_12.clone();
+    let d1 = -(a[0].clone() * bc_23.clone() - a[2].clone() * bc_03.clone()
+        + a[3].clone() * bc_02.clone());
     let d2 = a[0].clone() * bc_13 - a[1].clone() * bc_03.clone() + a[3].clone() * bc_01.clone();
     let d3 = -(a[0].clone() * bc_12 - a[1].clone() * bc_02 + a[2].clone() * bc_01);
     [d0, d1, d2, d3]
@@ -239,7 +241,11 @@ fn affine_rank<F: OrderedField>(points: &[[F; 4]]) -> usize {
     let origin = &points[0];
     let rows: Vec<Vec<F>> = points[1..]
         .iter()
-        .map(|point| (0..4).map(|i| point[i].clone() - origin[i].clone()).collect())
+        .map(|point| {
+            (0..4)
+                .map(|i| point[i].clone() - origin[i].clone())
+                .collect()
+        })
         .collect();
     rank_rows(&rows, 4)
 }
@@ -298,7 +304,10 @@ fn enumerate_vertices<F: OrderedField>(
             }
         }
 
-        if feasible && !descriptor.is_empty() && !descriptors.iter().any(|known| known == &descriptor) {
+        if feasible
+            && !descriptor.is_empty()
+            && !descriptors.iter().any(|known| known == &descriptor)
+        {
             vertices.push(vertex);
             descriptors.push(descriptor);
         }
@@ -363,7 +372,8 @@ mod tests {
         let t2 = t.clone() * t.clone();
         let t3 = t2.clone() * t.clone();
         let a = (TanPiFifthField::one() + t2.clone()) / TanPiFifthField::from_i64(4);
-        let b = (TanPiFifthField::from_i64(7) * t.clone() - t3.clone()) / TanPiFifthField::from_i64(4);
+        let b =
+            (TanPiFifthField::from_i64(7) * t.clone() - t3.clone()) / TanPiFifthField::from_i64(4);
         let sec36 = (TanPiFifthField::from_i64(3) - t2.clone()) / TanPiFifthField::from_i64(2);
 
         ExactPolytope4D::new(vec![

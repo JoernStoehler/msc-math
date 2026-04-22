@@ -48,10 +48,10 @@
 //!
 //! Self-contained: generates all polytopes internally.
 
+use dev_gradient::{ehz_capacity_safe, enumerate_all_orbits, random_direction, solve_kkt_safe};
 use nalgebra::{DVector, Vector4};
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
-use dev_gradient::{ehz_capacity_safe, enumerate_all_orbits, random_direction, solve_kkt_safe};
 use rand_distr::{Distribution, StandardNormal};
 use serde::Serialize;
 use std::env;
@@ -63,8 +63,7 @@ use std::time::{Instant, SystemTime, UNIX_EPOCH};
 use symplectic::algorithms::hk2017::combinations;
 use symplectic::algorithms::hk2017::permutations::for_each_cyclic_permutation;
 use symplectic::derivatives::{
-    capacity_derivatives_a_from_kkt_result,
-    clarke_directional_derivative_a,
+    capacity_derivatives_a_from_kkt_result, clarke_directional_derivative_a,
     directional_derivative_a,
 };
 use symplectic::geom::symplectic_form::omega0;
@@ -262,7 +261,9 @@ fn smoke_mode() -> bool {
 }
 
 fn print_usage_and_exit() -> ! {
-    eprintln!("Usage: cargo run -p dev-gradient --release --bin gradient-subdifferential [--smoke]");
+    eprintln!(
+        "Usage: cargo run -p dev-gradient --release --bin gradient-subdifferential [--smoke]"
+    );
     eprintln!("  --smoke: run a reduced run into a temporary directory");
     eprintln!("  -h, --help: show usage");
     std::process::exit(2);
@@ -739,9 +740,7 @@ fn q5b_process_polytope(
     // Compute gradients for ALL tied orbits (interior + boundary).
     let orbit_grads: Vec<Vec<Vector4<f64>>> = tied_orbits
         .iter()
-        .map(|(_action, perm, kkt)| {
-            capacity_derivatives_a_from_kkt_result(polytope, perm, kkt)
-        })
+        .map(|(_action, perm, kkt)| capacity_derivatives_a_from_kkt_result(polytope, perm, kkt))
         .collect();
     let interior_orbit_grads: Vec<Vec<Vector4<f64>>> = orbit_grads
         .iter()

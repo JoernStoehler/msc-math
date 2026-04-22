@@ -6,8 +6,8 @@
 //! - edge cases and numerical degeneracies,
 //! - constraint residual checks for returned feasible candidates.
 
-use super::saddle_point_solver::*;
 use super::qp_assembly::build_augmented_system;
+use super::saddle_point_solver::*;
 use crate::geom::known_polytopes;
 use nalgebra::{DMatrix, DVector};
 
@@ -56,7 +56,8 @@ fn find_best_q_exhaustive(polytope: &crate::geom::polytope::Polytope4D) -> (f64,
                 perm.extend_from_slice(&rest);
                 let (kkt, rhs) = build_augmented_system(polytope, &perm);
                 if let KktOutcome::Feasible(result) = solve_saddle_point(&kkt, &rhs) {
-                    if result.beta.iter().all(|&b| b > EPS_BETA_POSITIVE) && result.q_corrected > EPS_Q_POSITIVE
+                    if result.beta.iter().all(|&b| b > EPS_BETA_POSITIVE)
+                        && result.q_corrected > EPS_Q_POSITIVE
                     {
                         found = true;
                         if result.q_corrected > best_q {
@@ -148,7 +149,10 @@ fn lagrangian_triangle_product_finds_valid_solution() {
     let tri_prod = known_polytopes::lagrangian_triangle_product();
     let (best_q, found) = find_best_q_exhaustive(&tri_prod.polytope);
 
-    assert!(found, "should find at least one valid candidate on triangle product");
+    assert!(
+        found,
+        "should find at least one valid candidate on triangle product"
+    );
     let capacity = 0.5 / best_q;
     assert!(
         (capacity - tri_prod.capacity).abs() < 1e-4 * tri_prod.capacity,
@@ -216,7 +220,10 @@ fn q_error_bound_nonnegative_and_small() {
             }
         });
     }
-    assert!(checked > 0, "should have found at least one solution to check");
+    assert!(
+        checked > 0,
+        "should have found at least one solution to check"
+    );
 }
 
 // ── Inertia tests ──
@@ -249,7 +256,10 @@ fn zero_matrix_returns_none() {
     let size = 8;
     let kkt = DMatrix::zeros(size, size);
     let rhs = DVector::zeros(size);
-    assert!(matches!(solve_saddle_point(&kkt, &rhs), KktOutcome::SingularMatrix));
+    assert!(matches!(
+        solve_saddle_point(&kkt, &rhs),
+        KktOutcome::SingularMatrix
+    ));
 }
 
 /// Identity matrix with standard RHS: verify it doesn't panic.
@@ -296,10 +306,16 @@ fn perturbed_lp44_degenerate_orbit() {
         .enumerate()
         .map(|(i, a)| {
             let s = 1e-4 * ((i + 1) as f64);
-            nalgebra::Vector4::new(a[0] + s * 0.3, a[1] - s * 0.7, a[2] + s * 0.5, a[3] - s * 0.1)
+            nalgebra::Vector4::new(
+                a[0] + s * 0.3,
+                a[1] - s * 0.7,
+                a[2] + s * 0.5,
+                a[3] - s * 0.1,
+            )
         })
         .collect();
-    let perturbed_poly = crate::geom::polytope::Polytope4D::from_f64(perturbed).expect("perturbed LP(4,4)");
+    let perturbed_poly =
+        crate::geom::polytope::Polytope4D::from_f64(perturbed).expect("perturbed LP(4,4)");
     // Solve KKT directly for the degenerate 4-facet orbit [1,5,3,7].
     // At the symmetric point this orbit has β = 0.25. Under perturbation,
     // the KKT eigenvalues shift from null to small-but-retained, making
@@ -335,12 +351,20 @@ fn perturbed_lp44_ehz_capacity_no_panic() {
         .enumerate()
         .map(|(i, a)| {
             let s = 0.01 * ((i + 1) as f64);
-            nalgebra::Vector4::new(a[0] + s * 0.3, a[1] - s * 0.7, a[2] + s * 0.5, a[3] - s * 0.1)
+            nalgebra::Vector4::new(
+                a[0] + s * 0.3,
+                a[1] - s * 0.7,
+                a[2] + s * 0.5,
+                a[3] - s * 0.1,
+            )
         })
         .collect();
     let pp = crate::geom::polytope::Polytope4D::from_f64(perturbed).expect("perturbed LP(4,4)");
     let result = crate::ehz_capacity_pruned(&pp);
-    assert!(result.is_ok(), "ehz_capacity should succeed on perturbed LP(4,4)");
+    assert!(
+        result.is_ok(),
+        "ehz_capacity should succeed on perturbed LP(4,4)"
+    );
 }
 
 // ── Constraint satisfaction ──
@@ -388,7 +412,12 @@ fn closure_constraint_satisfied() {
             if let KktOutcome::Feasible(result) = solve_saddle_point(&kkt, &rhs) {
                 #[allow(clippy::needless_range_loop)]
                 for d in 0..4 {
-                    let sum: f64 = result.beta.iter().enumerate().map(|(idx, &b)| b * dual_verts[perm[idx]][d]).sum();
+                    let sum: f64 = result
+                        .beta
+                        .iter()
+                        .enumerate()
+                        .map(|(idx, &b)| b * dual_verts[perm[idx]][d])
+                        .sum();
                     assert!(
                         sum.abs() < 1e-6,
                         "closure[{}] violated: sum = {:.2e} (perm {:?})",

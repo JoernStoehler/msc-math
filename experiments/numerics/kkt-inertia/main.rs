@@ -1,4 +1,9 @@
-#![allow(clippy::collapsible_if, clippy::op_ref, clippy::bool_comparison, dead_code)]
+#![allow(
+    clippy::collapsible_if,
+    clippy::op_ref,
+    clippy::bool_comparison,
+    dead_code
+)]
 
 //! KKT matrix inertia experiment.
 //!
@@ -36,10 +41,7 @@ fn cyclic_permutations(elements: &[usize]) -> Vec<Vec<usize>> {
     result
 }
 
-fn for_each_cyclic_permutation_local(
-    elements: &[usize],
-    callback: &mut impl FnMut(&[usize]),
-) {
+fn for_each_cyclic_permutation_local(elements: &[usize], callback: &mut impl FnMut(&[usize])) {
     if elements.len() <= 1 {
         callback(elements);
         return;
@@ -49,12 +51,7 @@ fn for_each_cyclic_permutation_local(
     heap_perms_buf(&mut buf, 1, k, callback);
 }
 
-fn heap_perms_buf(
-    buf: &mut [usize],
-    offset: usize,
-    k: usize,
-    callback: &mut impl FnMut(&[usize]),
-) {
+fn heap_perms_buf(buf: &mut [usize], offset: usize, k: usize, callback: &mut impl FnMut(&[usize])) {
     if k == 1 {
         callback(buf);
         return;
@@ -158,7 +155,12 @@ fn eigen_solve(
     rank: usize,
 ) -> DVector<f64> {
     let mut indices: Vec<usize> = (0..size).collect();
-    indices.sort_by(|&a, &b| eigenvalues[b].abs().partial_cmp(&eigenvalues[a].abs()).unwrap());
+    indices.sort_by(|&a, &b| {
+        eigenvalues[b]
+            .abs()
+            .partial_cmp(&eigenvalues[a].abs())
+            .unwrap()
+    });
 
     let mut x = DVector::zeros(size);
     for &i in indices.iter().take(rank) {
@@ -169,7 +171,13 @@ fn eigen_solve(
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
-enum Definiteness { PD, ND, Indefinite, NearZero, Trivial }
+enum Definiteness {
+    PD,
+    ND,
+    Indefinite,
+    NearZero,
+    Trivial,
+}
 
 struct NodeInfo {
     q: f64,
@@ -208,7 +216,11 @@ fn node_hessian_check(
     let eigenvalues = &eig.eigenvalues;
     let eigenvectors = &eig.eigenvectors;
 
-    let lambda_max_abs = eigenvalues.iter().cloned().map(f64::abs).fold(0.0_f64, f64::max);
+    let lambda_max_abs = eigenvalues
+        .iter()
+        .cloned()
+        .map(f64::abs)
+        .fold(0.0_f64, f64::max);
     let threshold = lambda_max_abs * EIGEN_CONDITION_TAU;
     let rank = eigenvalues.iter().filter(|&&e| e.abs() > threshold).count();
 
@@ -246,8 +258,16 @@ fn node_hessian_check(
         let h_block = kkt.view((0, 0), (m, m)).clone_owned();
         let h_restricted = p.transpose() * &h_block * &p;
         let eig = h_restricted.symmetric_eigen();
-        let lam_min = eig.eigenvalues.iter().cloned().fold(f64::INFINITY, f64::min);
-        let lam_max = eig.eigenvalues.iter().cloned().fold(f64::NEG_INFINITY, f64::max);
+        let lam_min = eig
+            .eigenvalues
+            .iter()
+            .cloned()
+            .fold(f64::INFINITY, f64::min);
+        let lam_max = eig
+            .eigenvalues
+            .iter()
+            .cloned()
+            .fold(f64::NEG_INFINITY, f64::max);
 
         if lam_min > EPS_DEFINITE {
             Definiteness::PD
@@ -260,7 +280,13 @@ fn node_hessian_check(
         }
     };
 
-    Some(NodeInfo { q, beta_min, definiteness, tangent_dim, m })
+    Some(NodeInfo {
+        q,
+        beta_min,
+        definiteness,
+        tangent_dim,
+        m,
+    })
 }
 
 /// Compute eigenvalues of both M and H|_T for diagnostic output on mismatches.
@@ -311,7 +337,12 @@ fn eigenvalue_diagnostics(
         vals
     };
 
-    Some(HessianEigenvalues { h_t_eigenvalues, m_eigenvalues, p, tangent_dim })
+    Some(HessianEigenvalues {
+        h_t_eigenvalues,
+        m_eigenvalues,
+        p,
+        tangent_dim,
+    })
 }
 
 fn main() {
@@ -328,8 +359,10 @@ fn main() {
     // ── Part 1: Hessian definiteness census ─────────────────────────────
     println!("--- Part 1: Restricted Hessian H|_T across all (S,σ) nodes ---");
     println!("  Filtered to β>0, Q>0 nodes (valid KKT solutions).");
-    println!("{:<25} {:>4} {:>7} {:>7} {:>7} {:>7} {:>7} {:>7} {:>7} {:>7}",
-        "polytope", "F", "total", "β>0", "Q>0", "triv", "PD", "ND", "indef", "~zero");
+    println!(
+        "{:<25} {:>4} {:>7} {:>7} {:>7} {:>7} {:>7} {:>7} {:>7} {:>7}",
+        "polytope", "F", "total", "β>0", "Q>0", "triv", "PD", "ND", "indef", "~zero"
+    );
     println!("{}", "-".repeat(97));
 
     let eps_beta = 1e-8;
@@ -375,9 +408,10 @@ fn main() {
             }
         }
 
-        println!("{:<25} {:>4} {:>7} {:>7} {:>7} {:>7} {:>7} {:>7} {:>7} {:>7}",
-            name, f, total, n_beta_pos, n_q_pos,
-            n_trivial, n_pd, n_nd, n_indef, n_nearzero);
+        println!(
+            "{:<25} {:>4} {:>7} {:>7} {:>7} {:>7} {:>7} {:>7} {:>7} {:>7}",
+            name, f, total, n_beta_pos, n_q_pos, n_trivial, n_pd, n_nd, n_indef, n_nearzero
+        );
     }
 
     println!();
@@ -386,14 +420,17 @@ fn main() {
     println!("--- Part 2: Inertia decomposition check ---");
     println!("  Lemma: n_-(M) = n_-(H|_T) + p, where p = rank(A).");
     println!("  Check: n_-(M) = p ↔ H|_T has no negative eigenvalues.");
-    println!("{:<25} {:>6} {:>7} {:>7} {:>7} {:>7} {:>7} {:>7}",
-        "polytope", "total", "n-=p", "n->p", "PD", "ND", "indef", "match?");
+    println!(
+        "{:<25} {:>6} {:>7} {:>7} {:>7} {:>7} {:>7} {:>7}",
+        "polytope", "total", "n-=p", "n->p", "PD", "ND", "indef", "match?"
+    );
     println!("{}", "-".repeat(85));
 
     let eig_eps = 1e-10;
     let mut total_inertia_mismatches = 0u64;
     // Collect mismatch details for diagnostic output
-    let mut mismatch_details: Vec<(String, Vec<usize>, HessianEigenvalues, Definiteness)> = Vec::new();
+    let mut mismatch_details: Vec<(String, Vec<usize>, HessianEigenvalues, Definiteness)> =
+        Vec::new();
 
     for (name, polytope) in &polytopes {
         let f = polytope.facet_count();
@@ -418,7 +455,11 @@ fn main() {
 
                     let eig = kkt_mat.symmetric_eigen();
                     let n_neg = eig.eigenvalues.iter().filter(|&&e| e < -eig_eps).count();
-                    let n_zero = eig.eigenvalues.iter().filter(|&&e| e.abs() <= eig_eps).count();
+                    let n_zero = eig
+                        .eigenvalues
+                        .iter()
+                        .filter(|&&e| e.abs() <= eig_eps)
+                        .count();
 
                     let info = node_hessian_check(&normals, &heights, &perm);
                     let (def, tangent_dim) = match info {
@@ -429,21 +470,25 @@ fn main() {
 
                     let inertia_says_pd = n_neg == p && n_zero == (5 - p);
                     let inertia_says_nsd = n_neg == p;
-                    if inertia_says_nsd { n_negp += 1; } else { n_neggtp += 1; }
+                    if inertia_says_nsd {
+                        n_negp += 1;
+                    } else {
+                        n_neggtp += 1;
+                    }
 
                     let is_mismatch = match def {
                         Definiteness::PD => {
                             n_pd += 1;
                             !inertia_says_pd
-                        },
+                        }
                         Definiteness::ND => {
                             n_nd += 1;
                             inertia_says_nsd
-                        },
+                        }
                         Definiteness::Indefinite => {
                             n_indef += 1;
                             inertia_says_nsd
-                        },
+                        }
                         Definiteness::NearZero | Definiteness::Trivial => false,
                     };
 
@@ -451,12 +496,7 @@ fn main() {
                         mismatches += 1;
                         // Collect eigenvalue diagnostics for this mismatch
                         if let Some(diag) = eigenvalue_diagnostics(&normals, &heights, &perm) {
-                            mismatch_details.push((
-                                name.to_string(),
-                                perm.to_vec(),
-                                diag,
-                                def,
-                            ));
+                            mismatch_details.push((name.to_string(), perm.to_vec(), diag, def));
                         }
                     }
                 }
@@ -464,43 +504,93 @@ fn main() {
         }
 
         let ok = mismatches == 0;
-        println!("{:<25} {:>6} {:>7} {:>7} {:>7} {:>7} {:>7} {:>7}",
-            name, total, n_negp, n_neggtp, n_pd, n_nd, n_indef,
-            if ok { "OK".to_string() } else { format!("{} FAIL", mismatches) });
+        println!(
+            "{:<25} {:>6} {:>7} {:>7} {:>7} {:>7} {:>7} {:>7}",
+            name,
+            total,
+            n_negp,
+            n_neggtp,
+            n_pd,
+            n_nd,
+            n_indef,
+            if ok {
+                "OK".to_string()
+            } else {
+                format!("{} FAIL", mismatches)
+            }
+        );
         total_inertia_mismatches += mismatches;
     }
 
     if total_inertia_mismatches > 0 {
-        println!("\n  {} inertia mismatches found. Eigenvalue diagnostics:\n", total_inertia_mismatches);
+        println!(
+            "\n  {} inertia mismatches found. Eigenvalue diagnostics:\n",
+            total_inertia_mismatches
+        );
         for (i, (name, perm, diag, def)) in mismatch_details.iter().enumerate() {
             println!("  Mismatch {}: polytope={}, perm={:?}", i + 1, name, perm);
-            println!("    H|_T classification: {:?}  (tangent_dim={}, p={})", def, diag.tangent_dim, diag.p);
-            println!("    H|_T eigenvalues: {:?}", diag.h_t_eigenvalues.iter()
-                .map(|v| format!("{:.3e}", v)).collect::<Vec<_>>());
-            println!("    M eigenvalues:    {:?}", diag.m_eigenvalues.iter()
-                .map(|v| format!("{:.3e}", v)).collect::<Vec<_>>());
+            println!(
+                "    H|_T classification: {:?}  (tangent_dim={}, p={})",
+                def, diag.tangent_dim, diag.p
+            );
+            println!(
+                "    H|_T eigenvalues: {:?}",
+                diag.h_t_eigenvalues
+                    .iter()
+                    .map(|v| format!("{:.3e}", v))
+                    .collect::<Vec<_>>()
+            );
+            println!(
+                "    M eigenvalues:    {:?}",
+                diag.m_eigenvalues
+                    .iter()
+                    .map(|v| format!("{:.3e}", v))
+                    .collect::<Vec<_>>()
+            );
             let n_neg_m = diag.m_eigenvalues.iter().filter(|&&e| e < -eig_eps).count();
-            let n_zero_m = diag.m_eigenvalues.iter().filter(|&&e| e.abs() <= eig_eps).count();
+            let n_zero_m = diag
+                .m_eigenvalues
+                .iter()
+                .filter(|&&e| e.abs() <= eig_eps)
+                .count();
             let n_pos_m = diag.m_eigenvalues.iter().filter(|&&e| e > eig_eps).count();
-            println!("    M inertia (n+,n0,n-) = ({},{},{}), expected n- = p = {}",
-                n_pos_m, n_zero_m, n_neg_m, diag.p);
+            println!(
+                "    M inertia (n+,n0,n-) = ({},{},{}), expected n- = p = {}",
+                n_pos_m, n_zero_m, n_neg_m, diag.p
+            );
             // Check if any H|_T eigenvalue is near the classification threshold
-            let near_threshold: Vec<f64> = diag.h_t_eigenvalues.iter()
+            let near_threshold: Vec<f64> = diag
+                .h_t_eigenvalues
+                .iter()
                 .filter(|&&v| v.abs() < 10.0 * EPS_DEFINITE && v.abs() > 0.1 * EPS_DEFINITE)
-                .cloned().collect();
+                .cloned()
+                .collect();
             if !near_threshold.is_empty() {
-                println!("    → H|_T eigenvalue(s) near threshold ({:.0e}): {:?}",
+                println!(
+                    "    → H|_T eigenvalue(s) near threshold ({:.0e}): {:?}",
                     EPS_DEFINITE,
-                    near_threshold.iter().map(|v| format!("{:.3e}", v)).collect::<Vec<_>>());
+                    near_threshold
+                        .iter()
+                        .map(|v| format!("{:.3e}", v))
+                        .collect::<Vec<_>>()
+                );
             }
             // Check if any M eigenvalue is near the threshold
-            let m_near: Vec<f64> = diag.m_eigenvalues.iter()
+            let m_near: Vec<f64> = diag
+                .m_eigenvalues
+                .iter()
                 .filter(|&&v| v.abs() < 10.0 * eig_eps && v.abs() > 0.1 * eig_eps)
-                .cloned().collect();
+                .cloned()
+                .collect();
             if !m_near.is_empty() {
-                println!("    → M eigenvalue(s) near threshold ({:.0e}): {:?}",
+                println!(
+                    "    → M eigenvalue(s) near threshold ({:.0e}): {:?}",
                     eig_eps,
-                    m_near.iter().map(|v| format!("{:.3e}", v)).collect::<Vec<_>>());
+                    m_near
+                        .iter()
+                        .map(|v| format!("{:.3e}", v))
+                        .collect::<Vec<_>>()
+                );
             }
             println!();
         }
@@ -510,6 +600,12 @@ fn main() {
 
     // ── Summary ───────────────────────────────────────────────────────────
     println!("=== Summary ===");
-    println!("  Part 1 (H|_T census):      diagnostic (all {} polytopes)", polytopes.len());
-    println!("  Part 2 (inertia check):    {} mismatches", total_inertia_mismatches);
+    println!(
+        "  Part 1 (H|_T census):      diagnostic (all {} polytopes)",
+        polytopes.len()
+    );
+    println!(
+        "  Part 2 (inertia check):    {} mismatches",
+        total_inertia_mismatches
+    );
 }

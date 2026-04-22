@@ -25,7 +25,10 @@ fn valid_construction() {
     let p = Polytope4D::from_f64(halfspaces).unwrap();
     assert_eq!(p.facet_count(), 5);
     assert_eq!(p.dual_vertices_f64().len(), 5);
-    assert!(!p.vertices_f64().is_empty(), "vertices should be precomputed");
+    assert!(
+        !p.vertices_f64().is_empty(),
+        "vertices should be precomputed"
+    );
 }
 
 #[test]
@@ -215,7 +218,11 @@ fn dual_vertices_count_and_nonzero() {
 
     assert_eq!(p.dual_vertices_f64().len(), 5);
     for (i, dv) in p.dual_vertices_f64().iter().enumerate() {
-        assert!(dv.norm() > 1e-10, "dual vertex[{i}] should be nonzero: {:?}", dv);
+        assert!(
+            dv.norm() > 1e-10,
+            "dual vertex[{i}] should be nonzero: {:?}",
+            dv
+        );
     }
 }
 
@@ -435,9 +442,14 @@ fn from_f64_division_accepted() {
         -Vector4::w(),
     ];
     let heights = vec![1.0; 8];
-    let p =
-        Polytope4D::from_f64(normals.iter().zip(heights.iter()).map(|(n, &h)| n / h).collect())
-            .unwrap();
+    let p = Polytope4D::from_f64(
+        normals
+            .iter()
+            .zip(heights.iter())
+            .map(|(n, &h)| n / h)
+            .collect(),
+    )
+    .unwrap();
     assert_eq!(p.facet_count(), 8);
 }
 
@@ -463,7 +475,10 @@ fn from_rational_parts_matches_from_f64() {
     assert_eq!(original.vertices().len(), reconstructed.vertices().len());
     assert_eq!(original.incidence(), reconstructed.incidence());
     assert_eq!(original.omega_signs(), reconstructed.omega_signs());
-    assert_eq!(original.vertex_adjacency(), reconstructed.vertex_adjacency());
+    assert_eq!(
+        original.vertex_adjacency(),
+        reconstructed.vertex_adjacency()
+    );
 }
 
 #[test]
@@ -480,5 +495,8 @@ fn from_rational_parts_crosspolytope() {
     assert_eq!(original.vertices().len(), reconstructed.vertices().len());
     assert_eq!(original.incidence(), reconstructed.incidence());
     assert_eq!(original.omega_signs(), reconstructed.omega_signs());
-    assert_eq!(original.vertex_adjacency(), reconstructed.vertex_adjacency());
+    assert_eq!(
+        original.vertex_adjacency(),
+        reconstructed.vertex_adjacency()
+    );
 }

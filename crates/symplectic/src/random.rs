@@ -175,7 +175,10 @@ mod tests {
         key1[8..].copy_from_slice(&1u64.to_le_bytes());
         let seed1 = blake3::derive_key("polytope-gen", &key1);
 
-        assert_ne!(seed0, seed1, "different attempts must produce different seeds");
+        assert_ne!(
+            seed0, seed1,
+            "different attempts must produce different seeds"
+        );
     }
 
     /// generate_polytope is reproducible: same (master_seed, attempt) → same result.

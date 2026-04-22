@@ -9,9 +9,9 @@
 
 use crate::geom::polytope::Polytope4D;
 use crate::geom::rational_arithmetic::rational_to_f64;
+use crate::kkt::classify_margin;
 use crate::kkt::rational_solver::solve_kkt_exact;
 use crate::kkt::saddle_point_solver::{solve_kkt_for, KktOutcome, KktResult, EPS_Q_POSITIVE};
-use crate::kkt::classify_margin;
 
 /// Admissibility status of a numerically solved orbit candidate.
 ///
@@ -230,11 +230,7 @@ fn orbit_from_saddle_point_result(
         return Err(OrbitSolveError::Inadmissible);
     }
 
-    let beta_margin = result
-        .beta
-        .iter()
-        .copied()
-        .fold(f64::INFINITY, f64::min);
+    let beta_margin = result.beta.iter().copied().fold(f64::INFINITY, f64::min);
     let admissibility = match classify_margin(beta_margin) {
         crate::kkt::Verdict::True => OrbitAdmissibility::AdmissibleF64,
         crate::kkt::Verdict::Indeterminate => OrbitAdmissibility::IndeterminateF64,
@@ -308,10 +304,7 @@ fn exact_orbit_from_sigma(
     })
 }
 
-fn resolve_orbit_exact(
-    polytope: &Polytope4D,
-    orbit: &OrbitKktData,
-) -> Option<OrbitKktData> {
+fn resolve_orbit_exact(polytope: &Polytope4D, orbit: &OrbitKktData) -> Option<OrbitKktData> {
     exact_orbit_from_sigma(polytope, &orbit.sigma, orbit.mu, orbit.xi)
 }
 
@@ -466,7 +459,10 @@ fn trim_orbits_to_gap(orbits: &mut Vec<OrbitKktData>, gap: f64) -> Result<(), Or
     Ok(())
 }
 
-fn summarize_orbits(orbits: Vec<OrbitKktData>, iterations: u64) -> Result<OrbitSearchResult, OrbitSearchError> {
+fn summarize_orbits(
+    orbits: Vec<OrbitKktData>,
+    iterations: u64,
+) -> Result<OrbitSearchResult, OrbitSearchError> {
     let min_action = orbits
         .iter()
         .filter(|orbit| {

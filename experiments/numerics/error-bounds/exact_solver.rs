@@ -68,9 +68,17 @@ pub fn solve_qp_exact(
             }
             let q = compute_q_exact(h, &beta);
             let q_f64 = rational_to_f64(&q);
-            Some(ExactQpResult { beta, lambda, q_exact: q, q_exact_f64: q_f64 })
+            Some(ExactQpResult {
+                beta,
+                lambda,
+                q_exact: q,
+                q_exact_f64: q_f64,
+            })
         }
-        GaussResult::RankDeficient { particular, null_space } => {
+        GaussResult::RankDeficient {
+            particular,
+            null_space,
+        } => {
             let beta0: Vec<BigRational> = particular[..m].to_vec();
             let null_beta: Vec<Vec<BigRational>> =
                 null_space.iter().map(|v| v[..m].to_vec()).collect();
@@ -78,7 +86,12 @@ pub fn solve_qp_exact(
             let lambda = compute_exact_lambda(h, c, &beta);
             let q = compute_q_exact(h, &beta);
             let q_f64 = rational_to_f64(&q);
-            Some(ExactQpResult { beta, lambda, q_exact: q, q_exact_f64: q_f64 })
+            Some(ExactQpResult {
+                beta,
+                lambda,
+                q_exact: q,
+                q_exact_f64: q_f64,
+            })
         }
     }
 }
@@ -98,10 +111,7 @@ pub fn f64_to_rat(x: f64) -> BigRational {
     };
     let r = BigRational::new(BigInt::from(sign * mantissa), BigInt::from(1));
     if exponent >= 0 {
-        r * BigRational::new(
-            BigInt::from(1i64) << (exponent as usize),
-            BigInt::from(1),
-        )
+        r * BigRational::new(BigInt::from(1i64) << (exponent as usize), BigInt::from(1))
     } else {
         r / BigRational::new(
             BigInt::from(1i64) << ((-exponent) as usize),
@@ -257,7 +267,9 @@ fn gauss_solve_with_null_space(
             });
 
         match best_row {
-            None => { free_cols.push(col); }
+            None => {
+                free_cols.push(col);
+            }
             Some(best) if rational_abs_f64(&aug[best][col]) <= threshold => {
                 free_cols.push(col);
             }
@@ -396,7 +408,9 @@ fn find_positive_beta(
                 let a_u = &c_u[elim_idx];
                 let mut new_coeffs = Vec::with_capacity(c_l.len() - 1);
                 for i in 0..c_l.len() {
-                    if i == elim_idx { continue; }
+                    if i == elim_idx {
+                        continue;
+                    }
                     new_coeffs.push(a_l * &c_u[i] - a_u * &c_l[i]);
                 }
                 let new_rhs = a_l * r_u - a_u * r_l;

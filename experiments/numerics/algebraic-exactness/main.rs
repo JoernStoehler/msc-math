@@ -23,9 +23,9 @@ use std::env;
 use std::fs::{self, File};
 use std::io::{BufWriter, Write};
 use std::path::{Path, PathBuf};
+use symplectic::ehz_capacity_pruned;
 use symplectic::geom::known_polytopes;
 use symplectic::kkt::rational_solver as library_rational_solver;
-use symplectic::ehz_capacity_pruned;
 
 fn polytope_row<F: CatalogField>(
     name: &str,
@@ -36,7 +36,11 @@ fn polytope_row<F: CatalogField>(
         name: name.to_string(),
         field,
         field_description: field.description().to_string(),
-        basis: field.basis_labels().iter().map(|label| (*label).to_string()).collect(),
+        basis: field
+            .basis_labels()
+            .iter()
+            .map(|label| (*label).to_string())
+            .collect(),
         facet_count: polytope.facet_count(),
         vertex_count: polytope.vertices().len(),
         dual_vertices: polytope
@@ -83,7 +87,8 @@ fn write_jsonl<T: Serialize>(path: &Path, rows: &[T]) {
         fs::create_dir_all(parent)
             .unwrap_or_else(|err| panic!("failed to create {}: {err}", parent.display()));
     }
-    let file = File::create(path).unwrap_or_else(|err| panic!("failed to create {}: {err}", path.display()));
+    let file = File::create(path)
+        .unwrap_or_else(|err| panic!("failed to create {}: {err}", path.display()));
     let mut writer = BufWriter::new(file);
     for row in rows {
         serde_json::to_writer(&mut writer, row).expect("serialize jsonl row");
@@ -140,7 +145,9 @@ fn print_help_and_exit() -> ! {
     eprintln!(
         "Usage: cargo run -p dev-numerical-analysis --release --bin num-algebraic-exactness [--canonical]"
     );
-    eprintln!("  default: write untracked smoke outputs under experiments/numerics/algebraic-exactness/");
+    eprintln!(
+        "  default: write untracked smoke outputs under experiments/numerics/algebraic-exactness/"
+    );
     eprintln!("  --canonical: refresh the tracked exact-polytopes.jsonl and exact-kkt-comparison.jsonl outputs");
     std::process::exit(2);
 }
@@ -166,7 +173,10 @@ fn same_bool_matrix(lhs: &[Vec<bool>], rhs: &DMatrix<bool>) -> bool {
     lhs.len() == rhs.nrows()
         && lhs.iter().enumerate().all(|(row_idx, row)| {
             row.len() == rhs.ncols()
-                && row.iter().enumerate().all(|(col_idx, val)| *val == rhs[(row_idx, col_idx)])
+                && row
+                    .iter()
+                    .enumerate()
+                    .all(|(col_idx, val)| *val == rhs[(row_idx, col_idx)])
         })
 }
 
@@ -174,7 +184,10 @@ fn same_i8_matrix(lhs: &[Vec<i8>], rhs: &DMatrix<i8>) -> bool {
     lhs.len() == rhs.nrows()
         && lhs.iter().enumerate().all(|(row_idx, row)| {
             row.len() == rhs.ncols()
-                && row.iter().enumerate().all(|(col_idx, val)| *val == rhs[(row_idx, col_idx)])
+                && row
+                    .iter()
+                    .enumerate()
+                    .all(|(col_idx, val)| *val == rhs[(row_idx, col_idx)])
         })
 }
 
@@ -217,25 +230,34 @@ fn main() {
     write_jsonl(&polytope_output_path, &polytope_rows);
 
     let library_simplex = known_polytopes::simplex();
-    let simplex_best = ehz_capacity_pruned(&library_simplex.polytope).expect("library simplex capacity");
-    let simplex_reference =
-        library_rational_solver::solve_kkt_exact(library_simplex.polytope.dual_vertices(), simplex_best.best_sigma())
-            .expect("library simplex rational sigma");
+    let simplex_best =
+        ehz_capacity_pruned(&library_simplex.polytope).expect("library simplex capacity");
+    let simplex_reference = library_rational_solver::solve_kkt_exact(
+        library_simplex.polytope.dual_vertices(),
+        simplex_best.best_sigma(),
+    )
+    .expect("library simplex rational sigma");
 
     let library_hypercube = known_polytopes::hypercube();
     let hypercube_best =
         ehz_capacity_pruned(&library_hypercube.polytope).expect("library hypercube capacity");
-    let hypercube_reference =
-        library_rational_solver::solve_kkt_exact(library_hypercube.polytope.dual_vertices(), hypercube_best.best_sigma())
-            .expect("library hypercube rational sigma");
+    let hypercube_reference = library_rational_solver::solve_kkt_exact(
+        library_hypercube.polytope.dual_vertices(),
+        hypercube_best.best_sigma(),
+    )
+    .expect("library hypercube rational sigma");
 
     let library_hko = known_polytopes::hko_pentagon();
-    let hko_winning_reference =
-        library_rational_solver::solve_kkt_exact(library_hko.polytope.dual_vertices(), HKO_WINNING_SIGMA)
-            .expect("library hko winning sigma");
-    let hko_rank_deficient_reference =
-        library_rational_solver::solve_kkt_exact(library_hko.polytope.dual_vertices(), HKO_RANK_DEFICIENT_SIGMA)
-            .expect("library hko rank-deficient sigma");
+    let hko_winning_reference = library_rational_solver::solve_kkt_exact(
+        library_hko.polytope.dual_vertices(),
+        HKO_WINNING_SIGMA,
+    )
+    .expect("library hko winning sigma");
+    let hko_rank_deficient_reference = library_rational_solver::solve_kkt_exact(
+        library_hko.polytope.dual_vertices(),
+        HKO_RANK_DEFICIENT_SIGMA,
+    )
+    .expect("library hko rank-deficient sigma");
 
     let kkt_rows = vec![
         exact_kkt_row(
@@ -275,23 +297,22 @@ fn main() {
 
     let winning_action = kkt_rows
         .iter()
-        .find(|row| row.name == "hko_pentagon_exact_pentagon_field" && row.sigma_label == "winning_sigma")
+        .find(|row| {
+            row.name == "hko_pentagon_exact_pentagon_field" && row.sigma_label == "winning_sigma"
+        })
         .expect("winning hko row")
         .action_exact_f64;
     let expected_capacity = hko_capacity_formula_f64();
-    let hko_incidence_match = same_incidence(exact_hko.incidence(), library_hko.polytope.incidence());
+    let hko_incidence_match =
+        same_incidence(exact_hko.incidence(), library_hko.polytope.incidence());
     let hko_adjacency_match = same_bool_matrix(
         exact_hko.vertex_adjacency(),
         library_hko.polytope.vertex_adjacency(),
     );
-    let hko_omega_match = same_i8_matrix(
-        exact_hko.omega_signs(),
-        library_hko.polytope.omega_signs(),
-    );
-    let hko_omega_mismatches = omega_mismatch_positions(
-        exact_hko.omega_signs(),
-        library_hko.polytope.omega_signs(),
-    );
+    let hko_omega_match =
+        same_i8_matrix(exact_hko.omega_signs(), library_hko.polytope.omega_signs());
+    let hko_omega_mismatches =
+        omega_mismatch_positions(exact_hko.omega_signs(), library_hko.polytope.omega_signs());
 
     println!("exact-polytopes rows: {}", polytope_rows.len());
     println!("exact-kkt rows: {}", kkt_rows.len());
@@ -306,7 +327,10 @@ fn main() {
         hko_incidence_match, hko_adjacency_match, hko_omega_match
     );
     if !hko_omega_mismatches.is_empty() {
-        println!("HKO omega mismatches (facet_i, facet_j, exact, dyadic): {:?}", hko_omega_mismatches);
+        println!(
+            "HKO omega mismatches (facet_i, facet_j, exact, dyadic): {:?}",
+            hko_omega_mismatches
+        );
     }
     println!(
         "HKO winning action: {:.15} (analytic capacity {:.15}, diff {:.3e})",

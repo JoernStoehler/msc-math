@@ -139,11 +139,7 @@ mod tests {
 
     /// Verify the critical invariant: margin = min(beta).
     fn assert_margin_is_tight(result: &MarginResult) {
-        let min_beta = result
-            .beta
-            .iter()
-            .copied()
-            .fold(f64::INFINITY, f64::min);
+        let min_beta = result.beta.iter().copied().fold(f64::INFINITY, f64::min);
         assert!(
             (result.margin - min_beta).abs() < 1e-12,
             "margin ({:.2e}) != min(beta) ({:.2e}), diff = {:.2e}",
@@ -154,7 +150,11 @@ mod tests {
     }
 
     /// Verify beta = beta0 + V * alpha reconstruction.
-    fn assert_beta_reconstruction(beta0: &DVector<f64>, null_basis: &DMatrix<f64>, result: &MarginResult) {
+    fn assert_beta_reconstruction(
+        beta0: &DVector<f64>,
+        null_basis: &DMatrix<f64>,
+        result: &MarginResult,
+    ) {
         let expected = beta0 + null_basis * &result.alpha;
         let diff = (&result.beta - &expected).norm();
         assert!(
@@ -206,7 +206,11 @@ mod tests {
         let v = DMatrix::from_vec(2, 1, vec![1.0, 0.0]);
         let result = find_max_margin(&beta0, &v);
 
-        assert!(result.margin > 0.0, "expected feasible, got margin = {}", result.margin);
+        assert!(
+            result.margin > 0.0,
+            "expected feasible, got margin = {}",
+            result.margin
+        );
         assert_margin_is_tight(&result);
         assert_beta_reconstruction(&beta0, &v, &result);
     }
@@ -217,7 +221,11 @@ mod tests {
         let v = DMatrix::from_vec(2, 1, vec![1.0, -1.0]);
         let result = find_max_margin(&beta0, &v);
 
-        assert!(result.margin < 0.0, "expected infeasible, got margin = {}", result.margin);
+        assert!(
+            result.margin < 0.0,
+            "expected infeasible, got margin = {}",
+            result.margin
+        );
         assert_margin_is_tight(&result);
         assert_beta_reconstruction(&beta0, &v, &result);
     }
@@ -228,7 +236,11 @@ mod tests {
         let v = DMatrix::from_vec(2, 1, vec![1.0, -1.0]);
         let result = find_max_margin(&beta0, &v);
 
-        assert!(result.margin.abs() < 1e-14, "expected margin ~ 0, got {}", result.margin);
+        assert!(
+            result.margin.abs() < 1e-14,
+            "expected margin ~ 0, got {}",
+            result.margin
+        );
         assert_margin_is_tight(&result);
         assert_beta_reconstruction(&beta0, &v, &result);
     }
@@ -239,8 +251,16 @@ mod tests {
         let v = DMatrix::from_vec(2, 1, vec![1.0, -1.0]);
         let result = find_max_margin(&beta0, &v);
 
-        assert!((result.margin - 3.0).abs() < 1e-12, "expected margin = 3, got {}", result.margin);
-        assert!((result.alpha[0] - 1.0).abs() < 1e-12, "expected alpha = 1, got {}", result.alpha[0]);
+        assert!(
+            (result.margin - 3.0).abs() < 1e-12,
+            "expected margin = 3, got {}",
+            result.margin
+        );
+        assert!(
+            (result.alpha[0] - 1.0).abs() < 1e-12,
+            "expected alpha = 1, got {}",
+            result.alpha[0]
+        );
         assert_margin_is_tight(&result);
         assert_beta_reconstruction(&beta0, &v, &result);
     }
@@ -251,7 +271,11 @@ mod tests {
         let v = DMatrix::from_vec(3, 1, vec![1e-16, 0.0, 1e-17]);
         let result = find_max_margin(&beta0, &v);
 
-        assert!((result.margin - 1.0).abs() < 1e-10, "expected margin ~ 1, got {}", result.margin);
+        assert!(
+            (result.margin - 1.0).abs() < 1e-10,
+            "expected margin ~ 1, got {}",
+            result.margin
+        );
         assert_margin_is_tight(&result);
     }
 
@@ -268,9 +292,18 @@ mod tests {
         ]);
         let result = find_max_margin(&beta0, &v);
 
-        assert!(result.margin > 0.0, "expected feasible, got margin = {}", result.margin);
+        assert!(
+            result.margin > 0.0,
+            "expected feasible, got margin = {}",
+            result.margin
+        );
         for j in 0..3 {
-            assert!(result.beta[j] > 0.0, "beta[{}] = {} should be > 0", j, result.beta[j]);
+            assert!(
+                result.beta[j] > 0.0,
+                "beta[{}] = {} should be > 0",
+                j,
+                result.beta[j]
+            );
         }
         assert_margin_is_tight(&result);
         assert_beta_reconstruction(&beta0, &v, &result);
@@ -288,7 +321,11 @@ mod tests {
         ]);
         let result = find_max_margin(&beta0, &v);
 
-        assert!(result.margin < 0.0, "expected infeasible, got margin = {}", result.margin);
+        assert!(
+            result.margin < 0.0,
+            "expected infeasible, got margin = {}",
+            result.margin
+        );
         assert_margin_is_tight(&result);
         assert_beta_reconstruction(&beta0, &v, &result);
     }
@@ -307,7 +344,11 @@ mod tests {
         ]);
         let result = find_max_margin(&beta0, &v);
 
-        assert!(result.margin.abs() < 0.1, "expected margin ~ 0, got {}", result.margin);
+        assert!(
+            result.margin.abs() < 0.1,
+            "expected margin ~ 0, got {}",
+            result.margin
+        );
         assert_margin_is_tight(&result);
         assert_beta_reconstruction(&beta0, &v, &result);
     }
@@ -383,7 +424,11 @@ mod tests {
         ]);
         let result = find_max_margin(&beta0, &v);
 
-        assert!(result.margin > 0.0, "expected feasible, got margin = {}", result.margin);
+        assert!(
+            result.margin > 0.0,
+            "expected feasible, got margin = {}",
+            result.margin
+        );
         assert_margin_is_tight(&result);
         assert_beta_reconstruction(&beta0, &v, &result);
     }
@@ -394,9 +439,12 @@ mod tests {
         let v = DMatrix::from_vec(2, 1, vec![0.0, 1.0]);
         let result = find_max_margin(&beta0, &v);
 
-        assert!(result.margin > 0.0, "expected positive margin, got {}", result.margin);
+        assert!(
+            result.margin > 0.0,
+            "expected positive margin, got {}",
+            result.margin
+        );
         assert_margin_is_tight(&result);
         assert_beta_reconstruction(&beta0, &v, &result);
     }
-
 }

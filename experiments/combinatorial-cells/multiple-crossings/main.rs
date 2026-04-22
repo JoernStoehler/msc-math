@@ -351,28 +351,15 @@ fn main() {
         let grad_norm: f64 = d_sys_a.iter().map(|v| v.norm_squared()).sum::<f64>().sqrt();
         if grad_norm > EPS_NUMERICAL_ZERO {
             let grad_dir: Vec<Vector4<f64>> = d_sys_a.iter().map(|v| v / grad_norm).collect();
-            let row = multi_boundary_sweep(
-                duals,
-                &grad_dir,
-                SWEEP_BUDGET,
-                sys,
-                name,
-                "gradient",
-            );
+            let row = multi_boundary_sweep(duals, &grad_dir, SWEEP_BUDGET, sys, name, "gradient");
             serde_json::to_writer(&mut sweep_writer, &row).unwrap();
             writeln!(sweep_writer).unwrap();
             total_sweep += 1;
 
             // Negative gradient
             let neg_dir: Vec<Vector4<f64>> = grad_dir.iter().map(|v| -v).collect();
-            let row = multi_boundary_sweep(
-                duals,
-                &neg_dir,
-                SWEEP_BUDGET,
-                sys,
-                name,
-                "neg_gradient",
-            );
+            let row =
+                multi_boundary_sweep(duals, &neg_dir, SWEEP_BUDGET, sys, name, "neg_gradient");
             serde_json::to_writer(&mut sweep_writer, &row).unwrap();
             writeln!(sweep_writer).unwrap();
             total_sweep += 1;

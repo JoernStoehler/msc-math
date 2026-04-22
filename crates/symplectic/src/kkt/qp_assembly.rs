@@ -10,9 +10,9 @@
 //!
 //! Mathematical correspondence: [lem:kkt]
 
+use super::QP;
 use crate::geom::polytope::Polytope4D;
 use crate::geom::symplectic_form::omega0;
-use super::QP;
 use nalgebra::{DMatrix, DVector};
 
 /// Assemble the QP {C, d, H} from a polytope and cyclic permutation.
@@ -179,7 +179,11 @@ mod tests {
 
         let qp = build_qp(&polytope, &perm);
 
-        assert_eq!(qp.c.nrows(), 5, "C should have 5 rows (4 closure + 1 normalization)");
+        assert_eq!(
+            qp.c.nrows(),
+            5,
+            "C should have 5 rows (4 closure + 1 normalization)"
+        );
         assert_eq!(qp.c.ncols(), m, "C should have m={} columns", m);
         assert_eq!(qp.d.nrows(), 5, "d should have 5 rows");
         assert_eq!(qp.h.nrows(), m, "H should be m x m");
@@ -201,7 +205,12 @@ mod tests {
                 assert!(
                     (qp.h[(i, j)] - qp.h[(j, i)]).abs() < 1e-15,
                     "H[{},{}]={} != H[{},{}]={}",
-                    i, j, qp.h[(i, j)], j, i, qp.h[(j, i)]
+                    i,
+                    j,
+                    qp.h[(i, j)],
+                    j,
+                    i,
+                    qp.h[(j, i)]
                 );
             }
         }
@@ -220,7 +229,8 @@ mod tests {
             assert!(
                 qp.h[(i, i)].abs() < 1e-15,
                 "H[{0},{0}] = {1} should be 0",
-                i, qp.h[(i, i)]
+                i,
+                qp.h[(i, i)]
             );
         }
     }
@@ -241,7 +251,12 @@ mod tests {
                 assert!(
                     (qp.h[(i, j)] - expected).abs() < 1e-15,
                     "H[{},{}]={} != omega0(a_{}, a_{})={}",
-                    i, j, qp.h[(i, j)], perm[i], perm[j], expected
+                    i,
+                    j,
+                    qp.h[(i, j)],
+                    perm[i],
+                    perm[j],
+                    expected
                 );
             }
         }
@@ -263,13 +278,19 @@ mod tests {
                 assert!(
                     (qp.c[(d, col)] - a[d]).abs() < 1e-15,
                     "C[{},{}]={} != a_{}[{}]={}",
-                    d, col, qp.c[(d, col)], facet_idx, d, a[d]
+                    d,
+                    col,
+                    qp.c[(d, col)],
+                    facet_idx,
+                    d,
+                    a[d]
                 );
             }
             assert!(
                 (qp.c[(4, col)] - 1.0).abs() < 1e-15,
                 "C[4,{}]={} should be 1.0",
-                col, qp.c[(4, col)]
+                col,
+                qp.c[(4, col)]
             );
         }
     }
@@ -283,11 +304,7 @@ mod tests {
         let qp = build_qp(&polytope, &perm);
 
         for d in 0..4 {
-            assert!(
-                qp.d[d].abs() < 1e-15,
-                "d[{}]={} should be 0",
-                d, qp.d[d]
-            );
+            assert!(qp.d[d].abs() < 1e-15, "d[{}]={} should be 0", d, qp.d[d]);
         }
         assert!(
             (qp.d[4] - 1.0).abs() < 1e-15,
@@ -329,7 +346,12 @@ mod tests {
                 assert!(
                     (kkt[(i, j)] - kkt[(j, i)]).abs() < 1e-15,
                     "KKT[{},{}]={} != KKT[{},{}]={}",
-                    i, j, kkt[(i, j)], j, i, kkt[(j, i)]
+                    i,
+                    j,
+                    kkt[(i, j)],
+                    j,
+                    i,
+                    kkt[(j, i)]
                 );
             }
         }
@@ -354,14 +376,20 @@ mod tests {
                 assert!(
                     (kkt[(i, j)] - expected).abs() < 1e-15,
                     "H[{},{}]={} != omega0(a_{}, a_{})={}",
-                    i, j, kkt[(i, j)], perm[i], perm[j], expected
+                    i,
+                    j,
+                    kkt[(i, j)],
+                    perm[i],
+                    perm[j],
+                    expected
                 );
             }
             // Diagonal is zero
             assert!(
                 kkt[(i, i)].abs() < 1e-15,
                 "H[{0},{0}]={1} should be 0",
-                i, kkt[(i, i)]
+                i,
+                kkt[(i, i)]
             );
         }
 
@@ -372,12 +400,14 @@ mod tests {
                 assert!(
                     (kkt[(i, m + d)] - expected).abs() < 1e-15,
                     "A[{},{}] mismatch",
-                    i, d
+                    i,
+                    d
                 );
                 assert!(
                     (kkt[(m + d, i)] - expected).abs() < 1e-15,
                     "A^T[{},{}] mismatch",
-                    d, i
+                    d,
+                    i
                 );
             }
         }
@@ -402,23 +432,22 @@ mod tests {
                 assert!(
                     kkt[(i, j)].abs() < 1e-15,
                     "Zero block [{},{}]={} should be 0",
-                    i, j, kkt[(i, j)]
+                    i,
+                    j,
+                    kkt[(i, j)]
                 );
             }
         }
 
         // Check RHS: [0, ..., 0, 1].
         for i in 0..m + 4 {
-            assert!(
-                rhs[i].abs() < 1e-15,
-                "rhs[{}]={} should be 0",
-                i, rhs[i]
-            );
+            assert!(rhs[i].abs() < 1e-15, "rhs[{}]={} should be 0", i, rhs[i]);
         }
         assert!(
             (rhs[m + 4] - 1.0).abs() < 1e-15,
             "rhs[{}]={} should be 1.0",
-            m + 4, rhs[m + 4]
+            m + 4,
+            rhs[m + 4]
         );
     }
 
@@ -506,7 +535,12 @@ mod tests {
         ];
         let heights = vec![1.0; 8];
         Polytope4D::from_f64(
-            normals.iter().zip(heights.iter()).map(|(n, &h)| n / h).collect(),
-        ).expect("Hypercube construction should succeed")
+            normals
+                .iter()
+                .zip(heights.iter())
+                .map(|(n, &h)| n / h)
+                .collect(),
+        )
+        .expect("Hypercube construction should succeed")
     }
 }

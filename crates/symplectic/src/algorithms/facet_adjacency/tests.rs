@@ -59,7 +59,8 @@ fn undirected_adjacency_is_symmetric() {
         for i in 0..f {
             for j in 0..f {
                 assert_eq!(
-                    adj[(i, j)], adj[(j, i)],
+                    adj[(i, j)],
+                    adj[(j, i)],
                     "asymmetric undirected adjacency at ({i},{j}) for {}",
                     kp.name
                 );

@@ -67,13 +67,16 @@ pub struct ConstraintSolution {
 /// # Panics
 ///
 /// Panics if `c.nrows() != d.nrows()` (dimension mismatch).
-pub fn solve_constraints(
-    c: &DMatrix<f64>,
-    d: &DVector<f64>,
-) -> Option<ConstraintSolution> {
+pub fn solve_constraints(c: &DMatrix<f64>, d: &DVector<f64>) -> Option<ConstraintSolution> {
     let p = c.nrows();
     let m = c.ncols();
-    assert_eq!(p, d.nrows(), "C has {} rows but d has {} rows", p, d.nrows());
+    assert_eq!(
+        p,
+        d.nrows(),
+        "C has {} rows but d has {} rows",
+        p,
+        d.nrows()
+    );
 
     // Edge case: zero-row constraint matrix (no constraints).
     if p == 0 {
@@ -192,7 +195,11 @@ mod tests {
         assert!(
             (a - b).abs() < tol,
             "{}: |{} - {}| = {} >= {}",
-            msg, a, b, (a - b).abs(), tol
+            msg,
+            a,
+            b,
+            (a - b).abs(),
+            tol
         );
     }
 
@@ -227,7 +234,11 @@ mod tests {
 
         let sol = solve_constraints(&c, &d).expect("consistent system");
         assert_eq!(sol.rank, 3);
-        assert_eq!(sol.null_basis.ncols(), 3, "expected 3 null-space dimensions");
+        assert_eq!(
+            sol.null_basis.ncols(),
+            3,
+            "expected 3 null-space dimensions"
+        );
         assert_eq!(sol.null_basis.nrows(), 6);
     }
 
@@ -281,7 +292,11 @@ mod tests {
         let sol = solve_constraints(&c, &d).expect("consistent system");
         assert_eq!(sol.rank, 2);
         assert_eq!(sol.null_basis.ncols(), 1, "expected 1 null-space dimension");
-        assert!(sol.x0.norm() < 1e-12, "expected x0 ~ 0, got ||x0|| = {}", sol.x0.norm());
+        assert!(
+            sol.x0.norm() < 1e-12,
+            "expected x0 ~ 0, got ||x0|| = {}",
+            sol.x0.norm()
+        );
     }
 
     /// Singular values near threshold: verify rank detection.
@@ -293,8 +308,15 @@ mod tests {
         let d = DVector::from_column_slice(&[5.0, 0.0, 0.0]);
 
         let sol = solve_constraints(&c, &d).expect("consistent (d in column space)");
-        assert_eq!(sol.rank, 1, "expected rank 1 (only sigma=1.0 above threshold)");
-        assert_eq!(sol.null_basis.ncols(), 2, "expected 2 null-space dimensions");
+        assert_eq!(
+            sol.rank, 1,
+            "expected rank 1 (only sigma=1.0 above threshold)"
+        );
+        assert_eq!(
+            sol.null_basis.ncols(),
+            2,
+            "expected 2 null-space dimensions"
+        );
     }
 
     /// Single variable: full column rank with more rows than columns.
@@ -357,12 +379,14 @@ mod tests {
         ];
 
         for (i, (c, d)) in cases.iter().enumerate() {
-            let sol = solve_constraints(c, d).unwrap_or_else(|| panic!("case {} should be consistent", i));
+            let sol = solve_constraints(c, d)
+                .unwrap_or_else(|| panic!("case {} should be consistent", i));
             let residual = (c * &sol.x0 - d).norm();
             assert!(
                 residual < 1e-10,
                 "case {}: ||Cx0 - d|| = {:.2e} (expected < 1e-10)",
-                i, residual
+                i,
+                residual
             );
         }
     }
@@ -372,10 +396,7 @@ mod tests {
     fn null_basis_in_kernel() {
         let cases: Vec<DMatrix<f64>> = vec![
             // 2x5, rank 2 -> 3 null vectors
-            DMatrix::from_row_slice(
-                2, 5,
-                &[1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0],
-            ),
+            DMatrix::from_row_slice(2, 5, &[1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0]),
             // 3x6 [I3 | I3], rank 3 -> 3 null vectors
             {
                 let mut c = DMatrix::zeros(3, 6);
@@ -400,7 +421,8 @@ mod tests {
             assert!(
                 max_entry < 1e-10,
                 "case {}: max|CV| = {:.2e} (expected < 1e-10)",
-                i, max_entry
+                i,
+                max_entry
             );
         }
     }
@@ -448,9 +470,13 @@ mod tests {
             let sol = solve_constraints(c, d).unwrap_or_else(|| panic!("case {} consistent", i));
             let m = c.ncols();
             assert_eq!(
-                sol.null_basis.ncols(), m - sol.rank,
+                sol.null_basis.ncols(),
+                m - sol.rank,
                 "case {}: null_dim {} != m - rank = {} - {}",
-                i, sol.null_basis.ncols(), m, sol.rank,
+                i,
+                sol.null_basis.ncols(),
+                m,
+                sol.rank,
             );
         }
     }
@@ -481,7 +507,8 @@ mod tests {
             assert!(
                 residual < 1e-10,
                 "alpha[{}]: ||C(x0 + V alpha) - d|| = {:.2e}",
-                j, residual
+                j,
+                residual
             );
         }
     }
@@ -508,7 +535,8 @@ mod tests {
                 assert!(
                     x.norm() >= x0_norm - 1e-12,
                     "||x0 + V alpha|| = {} < ||x0|| = {} (violated min-norm)",
-                    x.norm(), x0_norm
+                    x.norm(),
+                    x0_norm
                 );
             }
         }

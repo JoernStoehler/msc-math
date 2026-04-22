@@ -36,9 +36,7 @@ pub struct InstrumentedCapacitySummary {
 
 /// Enumerate all valid HK2017 orbits, then return the best action/permutation plus
 /// the total valid-orbit count and the best/second-best action gap.
-pub fn ehz_capacity_instrumented(
-    polytope: &Polytope4D,
-) -> Option<InstrumentedCapacitySummary> {
+pub fn ehz_capacity_instrumented(polytope: &Polytope4D) -> Option<InstrumentedCapacitySummary> {
     let f = polytope.facet_count();
     let adj = build_transition_matrix(polytope);
     let mut orbits: Vec<(f64, Vec<usize>)> = Vec::new();
@@ -95,7 +93,10 @@ pub fn ehz_capacity_instrumented(
 #[derive(Debug, Clone)]
 pub enum EventType {
     /// A vertex's slack with respect to a non-incident facet reaches zero.
-    IncidenceFlip { vertex_index: usize, new_facet: usize },
+    IncidenceFlip {
+        vertex_index: usize,
+        new_facet: usize,
+    },
     /// sign(omega_0(a_i, a_j)) changes for ridge-adjacent facets i, j.
     OmegaFlip { facet_i: usize, facet_j: usize },
     /// |a_k + t*d_k| -> 0 (dual vertex degenerates).
@@ -126,7 +127,11 @@ pub struct BoundaryEvent {
 /// Derive a human-readable name from a database record's `Source`.
 pub fn name_from_record(record: &PolytopeRecord, index: usize) -> String {
     match &record.source {
-        Some(Source::Random { facet_count_target, attempt, .. }) => {
+        Some(Source::Random {
+            facet_count_target,
+            attempt,
+            ..
+        }) => {
             format!("random_F{facet_count_target}_a{attempt}")
         }
         Some(Source::LagrangianProduct { n1, n2, .. }) => {

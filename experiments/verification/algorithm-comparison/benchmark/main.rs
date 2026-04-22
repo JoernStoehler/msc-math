@@ -23,16 +23,16 @@
 //! fixtures. The crate-level `ehz_capacity` entrypoint hides per-algorithm
 //! comparison paths.
 
-use symplectic::{ehz_capacity_billiard, ehz_capacity_pruned, ehz_capacity_unpruned};
-use symplectic::random::generate_random_polytopes;
-use symplectic::geom::lagrangian_product::lagrangian_product;
-use symplectic::geom::polygon::random_polygon_2d;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use serde::{Deserialize, Serialize};
 use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::time::Instant;
+use symplectic::geom::lagrangian_product::lagrangian_product;
+use symplectic::geom::polygon::random_polygon_2d;
+use symplectic::random::generate_random_polytopes;
+use symplectic::{ehz_capacity_billiard, ehz_capacity_pruned, ehz_capacity_unpruned};
 
 const SEED: u64 = 42;
 const H_MIN: f64 = 0.5;
@@ -88,10 +88,10 @@ fn main() {
     let t0 = Instant::now();
     let mut rng = ChaCha8Rng::seed_from_u64(SEED);
     let mut entries = Vec::new();
-    
+
     // Construct output path relative to repo root (works from any cwd)
-    let output_path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("benchmark/benchmark.jsonl");
+    let output_path =
+        std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("benchmark/benchmark.jsonl");
 
     println!("Generating benchmark dataset...\n");
 
@@ -112,7 +112,11 @@ fn main() {
                 let t_start = Instant::now();
                 let result = ehz_capacity_unpruned(p).expect("unpruned failed");
                 let time_ms = t_start.elapsed().as_secs_f64() * 1000.0;
-                (Some(time_ms), Some(result.capacity()), Some(result.iterations))
+                (
+                    Some(time_ms),
+                    Some(result.capacity()),
+                    Some(result.iterations),
+                )
             } else {
                 (None, None, None)
             };
@@ -121,7 +125,11 @@ fn main() {
                 name: format!("random_F{f}_{i}"),
                 group: "random".to_string(),
                 facet_count: p.facet_count(),
-                dual_vertices: p.dual_vertices_f64().iter().map(|a| [a[0], a[1], a[2], a[3]]).collect(),
+                dual_vertices: p
+                    .dual_vertices_f64()
+                    .iter()
+                    .map(|a| [a[0], a[1], a[2], a[3]])
+                    .collect(),
                 time_pruned_ms,
                 capacity_pruned: result_pruned.capacity(),
                 iterations_pruned: result_pruned.iterations,
@@ -165,7 +173,11 @@ fn main() {
                 name: format!("lagrangian_{n}x{m}_{i}"),
                 group: "lagrangian".to_string(),
                 facet_count: p.facet_count(),
-                dual_vertices: p.dual_vertices_f64().iter().map(|a| [a[0], a[1], a[2], a[3]]).collect(),
+                dual_vertices: p
+                    .dual_vertices_f64()
+                    .iter()
+                    .map(|a| [a[0], a[1], a[2], a[3]])
+                    .collect(),
                 time_pruned_ms,
                 capacity_pruned: result_pruned.capacity(),
                 iterations_pruned: result_pruned.iterations,
@@ -202,9 +214,6 @@ fn main() {
     );
     println!(
         "  Lagrangian products: {} (billiard comparison)",
-        entries
-            .iter()
-            .filter(|e| e.group == "lagrangian")
-            .count()
+        entries.iter().filter(|e| e.group == "lagrangian").count()
     );
 }

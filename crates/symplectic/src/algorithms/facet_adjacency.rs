@@ -35,9 +35,7 @@ pub fn build_transition_matrix(polytope: &Polytope4D) -> DMatrix<bool> {
     let vertex_adj = polytope.vertex_adjacency();
     let omega_signs = polytope.omega_signs();
 
-    DMatrix::from_fn(f, f, |i, j| {
-        vertex_adj[(i, j)] && omega_signs[(i, j)] >= 0
-    })
+    DMatrix::from_fn(f, f, |i, j| vertex_adj[(i, j)] && omega_signs[(i, j)] >= 0)
 }
 
 /// Check if a cyclic permutation forms an adjacent cycle in the given adjacency matrix.

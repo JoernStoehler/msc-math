@@ -16,7 +16,7 @@
 use crate::geom::known_polytopes;
 use crate::kkt::qp_assembly::build_augmented_system;
 use crate::kkt::saddle_point_solver::{
-    solve_kkt_for, EPS_BETA_POSITIVE, EPS_Q_POSITIVE, KktOutcome,
+    solve_kkt_for, KktOutcome, EPS_BETA_POSITIVE, EPS_Q_POSITIVE,
 };
 use nalgebra::DVector;
 use std::time::Instant;

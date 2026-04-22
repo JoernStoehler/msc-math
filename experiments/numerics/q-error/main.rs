@@ -1,4 +1,9 @@
-#![allow(clippy::collapsible_if, clippy::op_ref, clippy::bool_comparison, dead_code)]
+#![allow(
+    clippy::collapsible_if,
+    clippy::op_ref,
+    clippy::bool_comparison,
+    dead_code
+)]
 
 //! Numerical accuracy experiment for the KKT solver.
 //!
@@ -16,11 +21,11 @@
 //! the current pruned general HK2017/KKT pipeline and its Q-side error story,
 //! not the root auto-dispatch wrapper.
 use nalgebra::{DMatrix, DVector, Vector4};
+use symplectic::ehz_capacity_pruned;
 use symplectic::geom::known_polytopes;
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::symplectic_form::omega0;
 use symplectic::kkt::rational_solver as kkt_rational;
-use symplectic::ehz_capacity_pruned;
 
 // ── Local KKT enumeration helpers ──
 //
@@ -37,10 +42,7 @@ fn cyclic_permutations(elements: &[usize]) -> Vec<Vec<usize>> {
     result
 }
 
-fn for_each_cyclic_permutation_local(
-    elements: &[usize],
-    callback: &mut impl FnMut(&[usize]),
-) {
+fn for_each_cyclic_permutation_local(elements: &[usize], callback: &mut impl FnMut(&[usize])) {
     if elements.len() <= 1 {
         callback(elements);
         return;
@@ -159,7 +161,12 @@ fn eigen_solve(
     rank: usize,
 ) -> DVector<f64> {
     let mut indices: Vec<usize> = (0..size).collect();
-    indices.sort_by(|&a, &b| eigenvalues[b].abs().partial_cmp(&eigenvalues[a].abs()).unwrap());
+    indices.sort_by(|&a, &b| {
+        eigenvalues[b]
+            .abs()
+            .partial_cmp(&eigenvalues[a].abs())
+            .unwrap()
+    });
 
     let mut x = DVector::zeros(size);
     for &i in indices.iter().take(rank) {
@@ -206,7 +213,10 @@ fn error_bound_sweep(polytope: &Polytope4D) -> SweepResult {
                 let eigenvalues = &eig.eigenvalues;
                 let eigenvectors = &eig.eigenvectors;
 
-                let lambda_max_abs = eigenvalues.iter().cloned().map(f64::abs)
+                let lambda_max_abs = eigenvalues
+                    .iter()
+                    .cloned()
+                    .map(f64::abs)
                     .fold(0.0_f64, f64::max);
                 if lambda_max_abs < 1e-12 {
                     continue; // Numerically zero matrix
@@ -219,7 +229,8 @@ fn error_bound_sweep(polytope: &Polytope4D) -> SweepResult {
                 }
 
                 // |λ_min| among retained eigenvalues
-                let abs_lambda_min = eigenvalues.iter()
+                let abs_lambda_min = eigenvalues
+                    .iter()
                     .filter(|&&e| e.abs() > threshold)
                     .map(|e| e.abs())
                     .fold(f64::INFINITY, f64::min)
@@ -256,14 +267,19 @@ fn error_bound_sweep(polytope: &Polytope4D) -> SweepResult {
                 assert!(
                     q_error_bound < 1e-6,
                     "E too large at (S,σ)={:?}: E={:.2e}, |r|={:.2e}, |λ_min|={:.2e}",
-                    perm, q_error_bound, residual_norm, abs_lambda_min
+                    perm,
+                    q_error_bound,
+                    residual_norm,
+                    abs_lambda_min
                 );
 
                 // ASSERT: Q correction must be small (absolute or relative)
                 assert!(
                     q_correction.abs() < 1e-6 || q_correction.abs() < 1e-6 * q_raw.abs(),
                     "Q correction too large at (S,σ)={:?}: correction={:.2e}, Q_raw={:.2e}",
-                    perm, q_correction, q_raw
+                    perm,
+                    q_correction,
+                    q_raw
                 );
             }
         }
@@ -287,12 +303,12 @@ fn error_bound_sweep(polytope: &Polytope4D) -> SweepResult {
 
 /// Result of exact comparison for one polytope.
 struct ExactResult {
-    q_numerical: f64,     // Q̃ (corrected numerical)
-    q_exact: f64,         // Q_exact (rational, converted to f64 for display)
-    actual_error: f64,    // |Q̃ - Q_exact|
-    error_bound: f64,     // E from error bound lemma (mathematical)
-    f64_eps: f64,         // f64 rounding tolerance (machine precision)
-    bound_valid: bool,    // actual_error ≤ max(E, f64_eps)?
+    q_numerical: f64,  // Q̃ (corrected numerical)
+    q_exact: f64,      // Q_exact (rational, converted to f64 for display)
+    actual_error: f64, // |Q̃ - Q_exact|
+    error_bound: f64,  // E from error bound lemma (mathematical)
+    f64_eps: f64,      // f64 rounding tolerance (machine precision)
+    bound_valid: bool, // actual_error ≤ max(E, f64_eps)?
     perm_size: usize,
 }
 
@@ -317,11 +333,16 @@ fn exact_comparison(polytope: &Polytope4D) -> Option<ExactResult> {
     let eigenvalues = &eig.eigenvalues;
     let eigenvectors = &eig.eigenvectors;
 
-    let lambda_max_abs = eigenvalues.iter().cloned().map(f64::abs).fold(0.0_f64, f64::max);
+    let lambda_max_abs = eigenvalues
+        .iter()
+        .cloned()
+        .map(f64::abs)
+        .fold(0.0_f64, f64::max);
     let threshold = lambda_max_abs * EIGEN_CONDITION_TAU;
     let rank = eigenvalues.iter().filter(|&&e| e.abs() > threshold).count();
 
-    let abs_lambda_min = eigenvalues.iter()
+    let abs_lambda_min = eigenvalues
+        .iter()
         .filter(|&&e| e.abs() > threshold)
         .map(|e| e.abs())
         .fold(f64::INFINITY, f64::min)
@@ -380,15 +401,24 @@ fn main() {
     // ── Part 1: All-node error bound sweep ──────────────────────────────
     println!("--- Part 1: Error bound sweep (ALL nodes) ---");
     println!("  For each (S,σ): assert E < 1e-6 and |q_correction| < 1e-6");
-    println!("{:<25} {:>4} {:>8} {:>6} {:>12} {:>12} {:>12}",
-        "polytope", "F", "total", "solved", "worst_E", "worst_|r|", "worst_corr");
+    println!(
+        "{:<25} {:>4} {:>8} {:>6} {:>12} {:>12} {:>12}",
+        "polytope", "F", "total", "solved", "worst_E", "worst_|r|", "worst_corr"
+    );
     println!("{}", "-".repeat(85));
 
     for (name, polytope) in &polytopes {
         let result = error_bound_sweep(polytope);
-        println!("{:<25} {:>4} {:>8} {:>6} {:>12.3e} {:>12.3e} {:>12.3e}",
-            name, polytope.facet_count(), result.total_nodes, result.solvable_nodes,
-            result.worst_e, result.worst_residual, result.worst_correction);
+        println!(
+            "{:<25} {:>4} {:>8} {:>6} {:>12.3e} {:>12.3e} {:>12.3e}",
+            name,
+            polytope.facet_count(),
+            result.total_nodes,
+            result.solvable_nodes,
+            result.worst_e,
+            result.worst_residual,
+            result.worst_correction
+        );
     }
 
     println!("\n  All error bound assertions passed.\n");
@@ -398,18 +428,27 @@ fn main() {
     println!("  Exact KKT solve via Gaussian elimination over Q.");
     println!("  Assert: |Q̃ - Q_exact| ≤ max(E, f64_eps)");
     println!("  E = mathematical error bound, f64_eps = machine precision tolerance");
-    println!("{:<25} {:>3} {:>16} {:>16} {:>12} {:>12} {:>12} {:>6}",
-        "polytope", "m", "Q̃_numerical", "Q_exact", "|Q̃-Q_ex|", "E_math", "f64_eps", "valid");
+    println!(
+        "{:<25} {:>3} {:>16} {:>16} {:>12} {:>12} {:>12} {:>6}",
+        "polytope", "m", "Q̃_numerical", "Q_exact", "|Q̃-Q_ex|", "E_math", "f64_eps", "valid"
+    );
     println!("{}", "-".repeat(100));
 
     let mut all_exact_valid = true;
     for (name, polytope) in &polytopes {
         match exact_comparison(polytope) {
             Some(r) => {
-                println!("{:<25} {:>3} {:>16.12} {:>16.12} {:>12.3e} {:>12.3e} {:>12.3e} {:>6}",
-                    name, r.perm_size, r.q_numerical, r.q_exact,
-                    r.actual_error, r.error_bound, r.f64_eps,
-                    if r.bound_valid { "OK" } else { "FAIL" });
+                println!(
+                    "{:<25} {:>3} {:>16.12} {:>16.12} {:>12.3e} {:>12.3e} {:>12.3e} {:>6}",
+                    name,
+                    r.perm_size,
+                    r.q_numerical,
+                    r.q_exact,
+                    r.actual_error,
+                    r.error_bound,
+                    r.f64_eps,
+                    if r.bound_valid { "OK" } else { "FAIL" }
+                );
                 if !r.bound_valid {
                     all_exact_valid = false;
                 }
@@ -420,12 +459,17 @@ fn main() {
         }
     }
 
-    assert!(all_exact_valid,
-        "Exact comparison FAILED: |Q̃ - Q_exact| > max(E, f64_eps) for some polytope");
+    assert!(
+        all_exact_valid,
+        "Exact comparison FAILED: |Q̃ - Q_exact| > max(E, f64_eps) for some polytope"
+    );
     println!("\n  All exact comparison assertions passed.\n");
 
     // ── Summary ───────────────────────────────────────────────────────────
     println!("=== Summary ===");
-    println!("  Part 1 (error bounds):     PASSED (all {} polytopes)", polytopes.len());
+    println!(
+        "  Part 1 (error bounds):     PASSED (all {} polytopes)",
+        polytopes.len()
+    );
     println!("  Part 2 (exact comparison): PASSED");
 }

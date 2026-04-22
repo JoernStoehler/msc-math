@@ -49,10 +49,7 @@ pub struct InputRow {
 /// Spectral norm = max singular value.
 pub fn spectral_norm(m: &DMatrix<f64>) -> f64 {
     let svd = m.clone().svd(false, false);
-    svd.singular_values
-        .iter()
-        .cloned()
-        .fold(0.0f64, f64::max)
+    svd.singular_values.iter().cloned().fold(0.0f64, f64::max)
 }
 
 /// Smallest singular value.
@@ -135,8 +132,8 @@ pub fn solve_and_record(
 
 /// Write rows to JSONL.
 pub fn write_jsonl(rows: &[InputRow], path: &str) {
-    let mut file = std::fs::File::create(path)
-        .unwrap_or_else(|e| panic!("Cannot create {}: {}", path, e));
+    let mut file =
+        std::fs::File::create(path).unwrap_or_else(|e| panic!("Cannot create {}: {}", path, e));
 
     for row in rows {
         let json = serde_json::to_string(row).expect("JSON serialization failed");

@@ -121,7 +121,10 @@ fn main() {
     let mut detail_writer = create_jsonl_writer(&run_paths.detail_path);
 
     eprintln!("Mode: {}", run_mode_label(run_paths.mode));
-    eprintln!("Trusted sigma rows: {}", trusted_orbits.values().map(Vec::len).sum::<usize>());
+    eprintln!(
+        "Trusted sigma rows: {}",
+        trusted_orbits.values().map(Vec::len).sum::<usize>()
+    );
 
     let mut failures = 0usize;
     let mut families = BTreeMap::<String, usize>::new();
@@ -249,7 +252,10 @@ fn load_trusted_orbits(path: &Path) -> HashMap<String, Vec<TrustedOrbitRow>> {
     grouped
 }
 
-fn validate_target(target: &Target, rows: Vec<TrustedOrbitRow>) -> (OrbitRecoverySummaryRow, Vec<OrbitRecoveryDetailRow>) {
+fn validate_target(
+    target: &Target,
+    rows: Vec<TrustedOrbitRow>,
+) -> (OrbitRecoverySummaryRow, Vec<OrbitRecoveryDetailRow>) {
     let mut summary = OrbitRecoverySummaryRow {
         name: target.name.clone(),
         family: target.family.clone(),
@@ -372,26 +378,35 @@ fn validate_target(target: &Target, rows: Vec<TrustedOrbitRow>) -> (OrbitRecover
         .max_by(f64::total_cmp);
 
     if summary.failed_solves > 0 {
-        summary.failure_stage.get_or_insert_with(|| "kkt".to_string());
         summary
-            .failure_reasons
-            .push(format!("{} trusted sigmas failed one-sigma solve", summary.failed_solves));
+            .failure_stage
+            .get_or_insert_with(|| "kkt".to_string());
+        summary.failure_reasons.push(format!(
+            "{} trusted sigmas failed one-sigma solve",
+            summary.failed_solves
+        ));
     }
     if failed_recoveries > 0 {
-        summary.failure_stage.get_or_insert_with(|| "recovery".to_string());
         summary
-            .failure_reasons
-            .push(format!("{failed_recoveries} trusted sigmas failed geometric recovery"));
+            .failure_stage
+            .get_or_insert_with(|| "recovery".to_string());
+        summary.failure_reasons.push(format!(
+            "{failed_recoveries} trusted sigmas failed geometric recovery"
+        ));
     }
     if invalid > 0 {
-        summary.failure_stage.get_or_insert_with(|| "validation".to_string());
         summary
-            .failure_reasons
-            .push(format!("{invalid} recovered orbits violated geometric thresholds"));
+            .failure_stage
+            .get_or_insert_with(|| "validation".to_string());
+        summary.failure_reasons.push(format!(
+            "{invalid} recovered orbits violated geometric thresholds"
+        ));
     }
     if let Some(worst_sigma_action_error) = summary.worst_sigma_action_error {
         if worst_sigma_action_error > ACTION_TOL {
-            summary.failure_stage.get_or_insert_with(|| "trusted_input".to_string());
+            summary
+                .failure_stage
+                .get_or_insert_with(|| "trusted_input".to_string());
             summary.failure_reasons.push(format!(
                 "trusted sigma rows disagree with rebuilt one-sigma solve: max action drift {:.2e}",
                 worst_sigma_action_error
@@ -452,7 +467,13 @@ fn recover_trusted_orbit(
         && action_error < ACTION_TOL;
 
     detail.recovery_status = "ok".to_string();
-    detail.active_facets = Some(recovery.dwell_times.iter().filter(|&&tau| tau > 0.0).count());
+    detail.active_facets = Some(
+        recovery
+            .dwell_times
+            .iter()
+            .filter(|&&tau| tau > 0.0)
+            .count(),
+    );
     detail.solution_dim = Some(recovery.solution_dim);
     detail.max_violation = Some(recovery.max_violation);
     detail.closure_error = Some(recovery.closure_error);
@@ -491,10 +512,7 @@ fn log_summary(summary: &OrbitRecoverySummaryRow) {
     if summary.passes_validation {
         eprintln!(
             "  {} [{}] trusted={} recovered={} OK",
-            summary.name,
-            summary.family,
-            summary.trusted_min_orbit_count,
-            summary.recovered_orbits,
+            summary.name, summary.family, summary.trusted_min_orbit_count, summary.recovered_orbits,
         );
         return;
     }

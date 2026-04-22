@@ -97,11 +97,7 @@ fn build_kkt_matrix<F: OrderedField>(
     (matrix, rhs)
 }
 
-fn compute_q_exact<F: OrderedField>(
-    dual_vertices: &[[F; 4]],
-    sigma: &[usize],
-    beta: &[F],
-) -> F {
+fn compute_q_exact<F: OrderedField>(dual_vertices: &[[F; 4]], sigma: &[usize], beta: &[F]) -> F {
     let m = beta.len();
     let mut sum = F::zero();
     for i in 1..m {
@@ -173,7 +169,11 @@ fn gauss_solve_with_null_space<F: OrderedField>(
     }
 
     if free_cols.is_empty() {
-        return Some(GaussResult::FullRank(back_substitute(&aug, &pivot_positions, n)?));
+        return Some(GaussResult::FullRank(back_substitute(
+            &aug,
+            &pivot_positions,
+            n,
+        )?));
     }
 
     let particular = back_substitute(&aug, &pivot_positions, n)?;
@@ -224,7 +224,10 @@ fn choose_positive_solution<F: OrderedField>(
     beta_len: usize,
 ) -> Option<Vec<F>> {
     let beta0 = particular[..beta_len].to_vec();
-    let null_beta: Vec<Vec<F>> = null_space.iter().map(|vec| vec[..beta_len].to_vec()).collect();
+    let null_beta: Vec<Vec<F>> = null_space
+        .iter()
+        .map(|vec| vec[..beta_len].to_vec())
+        .collect();
     let alpha = find_positive_alpha(&beta0, &null_beta)?;
 
     let mut solution = particular.to_vec();
@@ -397,7 +400,8 @@ mod tests {
         let t2 = t.clone() * t.clone();
         let t3 = t2.clone() * t.clone();
         let a = (TanPiFifthField::one() + t2.clone()) / TanPiFifthField::from_i64(4);
-        let b = (TanPiFifthField::from_i64(7) * t.clone() - t3.clone()) / TanPiFifthField::from_i64(4);
+        let b =
+            (TanPiFifthField::from_i64(7) * t.clone() - t3.clone()) / TanPiFifthField::from_i64(4);
         let sec36 = (TanPiFifthField::from_i64(3) - t2.clone()) / TanPiFifthField::from_i64(2);
 
         ExactPolytope4D::new(vec![

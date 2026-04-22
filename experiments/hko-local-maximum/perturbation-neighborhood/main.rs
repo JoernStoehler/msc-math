@@ -160,7 +160,9 @@ fn parse_args() -> Args {
         let arg = argv[i].as_str();
         match arg {
             "--n" => {
-                let value = argv.get(i + 1).unwrap_or_else(|| usage_error("--n requires a value"));
+                let value = argv
+                    .get(i + 1)
+                    .unwrap_or_else(|| usage_error("--n requires a value"));
                 n = value
                     .parse()
                     .unwrap_or_else(|_| usage_error("--n must be a non-negative integer"));
@@ -182,7 +184,9 @@ fn parse_args() -> Args {
                 let value = argv
                     .get(i + 1)
                     .unwrap_or_else(|| usage_error("--seed requires a value"));
-                seed = value.parse().unwrap_or_else(|_| usage_error("--seed must be a u64"));
+                seed = value
+                    .parse()
+                    .unwrap_or_else(|_| usage_error("--seed must be a u64"));
                 i += 2;
             }
             "--out" => {

@@ -32,10 +32,7 @@ pub fn cyclic_permutations(elements: &[usize]) -> Vec<Vec<usize>> {
 /// The callback receives a slice that is valid only during the call.
 ///
 /// [alg:ehz]: cyclic permutation enumeration (zero-alloc variant).
-pub fn for_each_cyclic_permutation(
-    elements: &[usize],
-    callback: &mut impl FnMut(&[usize]),
-) {
+pub fn for_each_cyclic_permutation(elements: &[usize], callback: &mut impl FnMut(&[usize])) {
     if elements.len() <= 1 {
         callback(elements);
         return;
@@ -50,12 +47,7 @@ pub fn for_each_cyclic_permutation(
 /// Heap's algorithm on `buf[offset..offset+k]`, calling `callback` with the full buffer.
 ///
 /// Generates all k! permutations of the sub-slice while leaving `buf[..offset]` fixed.
-fn heap_perms_buf(
-    buf: &mut [usize],
-    offset: usize,
-    k: usize,
-    callback: &mut impl FnMut(&[usize]),
-) {
+fn heap_perms_buf(buf: &mut [usize], offset: usize, k: usize, callback: &mut impl FnMut(&[usize])) {
     if k == 1 {
         callback(buf);
         return;
@@ -138,11 +130,7 @@ mod tests {
     fn all_permutations_unique() {
         let perms = cyclic_permutations(&[0, 1, 2, 3, 4]);
         let as_set: HashSet<Vec<usize>> = perms.iter().cloned().collect();
-        assert_eq!(
-            as_set.len(),
-            perms.len(),
-            "duplicate permutations detected"
-        );
+        assert_eq!(as_set.len(), perms.len(), "duplicate permutations detected");
     }
 
     #[test]
@@ -153,7 +141,11 @@ mod tests {
         let expected_set: HashSet<usize> = elements.iter().copied().collect();
         for p in &perms {
             let got_set: HashSet<usize> = p.iter().copied().collect();
-            assert_eq!(got_set, expected_set, "permutation {:?} has wrong elements", p);
+            assert_eq!(
+                got_set, expected_set,
+                "permutation {:?} has wrong elements",
+                p
+            );
         }
     }
 
@@ -166,9 +158,8 @@ mod tests {
                 if i >= j {
                     continue;
                 }
-                let is_rotation = (0..a.len()).any(|shift| {
-                    (0..a.len()).all(|k| a[(k + shift) % a.len()] == b[k])
-                });
+                let is_rotation = (0..a.len())
+                    .any(|shift| (0..a.len()).all(|k| a[(k + shift) % a.len()] == b[k]));
                 assert!(
                     !is_rotation,
                     "permutations {:?} and {:?} are cyclic rotations of each other",

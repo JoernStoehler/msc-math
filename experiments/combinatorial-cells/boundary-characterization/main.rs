@@ -679,17 +679,15 @@ fn main() {
 
             // Gradient crossing
             if RUN_GRADIENT {
-                if let Some(grad_row) =
-                    evaluate_gradient_crossing(
-                        duals,
-                        &dir.d,
-                        &boundary,
-                        name,
-                        &dir.dir_type,
-                        dir.index,
-                        boundary.event.name(),
-                    )
-                {
+                if let Some(grad_row) = evaluate_gradient_crossing(
+                    duals,
+                    &dir.d,
+                    &boundary,
+                    name,
+                    &dir.dir_type,
+                    dir.index,
+                    boundary.event.name(),
+                ) {
                     if let Some(ref mut w) = gradient_writer {
                         serde_json::to_writer(&mut *w, &grad_row).unwrap();
                         writeln!(w).unwrap();

@@ -14,10 +14,10 @@
 //! 3. `cargo run -p exp-hko-local-maximum --release --bin hko-sage-validation -- --canonical`
 //!    refreshes `sage-validation-input.jsonl`.
 
+use algebraic_numbers::{canonical_element, CanonicalElement, OrderedField};
 use exp_hko_local_maximum::{
     exact_hko_polytope, exact_simplex_polytope, ExactBankEntry, ExactBankTarget, EXACT_BANK_ENTRIES,
 };
-use algebraic_numbers::{canonical_element, CanonicalElement, OrderedField};
 use serde::Serialize;
 use std::fs::File;
 use std::io::{BufWriter, Write};

@@ -1,8 +1,8 @@
 //! Property-style tests for arithmetic and tiny linear algebra.
 
+use algebraic_numbers::{solve_square, Algebraic, OrderedField, SolveResult, StaticFieldSpec};
 use num_rational::BigRational;
 use proptest::prelude::*;
-use algebraic_numbers::{solve_square, Algebraic, OrderedField, SolveResult, StaticFieldSpec};
 
 struct SqrtTwo;
 

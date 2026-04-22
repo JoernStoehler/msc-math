@@ -16,8 +16,10 @@
 //!
 //! Dependency: `good_lp` with feature `clarabel` (LP solver for max-margin search).
 
-use good_lp::{constraint, default_solver, variable, variables, Expression, SolverModel,
-    Solution as LpSolution};
+use good_lp::{
+    constraint, default_solver, variable, variables, Expression, Solution as LpSolution,
+    SolverModel,
+};
 use nalgebra::{DMatrix, DVector};
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -139,13 +141,16 @@ fn q_value_from_dvec(h: &DMatrix<f64>, beta: &DVector<f64>) -> f64 {
 /// Solve Cx = d via SVD with threshold rank detection.
 ///
 /// Returns `None` if the system is inconsistent (d not in the column space of C).
-pub fn solve_constraints(
-    c: &DMatrix<f64>,
-    d: &DVector<f64>,
-) -> Option<ConstraintSolution> {
+pub fn solve_constraints(c: &DMatrix<f64>, d: &DVector<f64>) -> Option<ConstraintSolution> {
     let p = c.nrows();
     let m = c.ncols();
-    assert_eq!(p, d.nrows(), "C has {} rows but d has {} rows", p, d.nrows());
+    assert_eq!(
+        p,
+        d.nrows(),
+        "C has {} rows but d has {} rows",
+        p,
+        d.nrows()
+    );
 
     // Edge case: zero-row constraint matrix (no constraints).
     if p == 0 {
@@ -464,12 +469,15 @@ pub fn solve_projected_with_diagnostics(qp: &QP) -> (Solution, Option<ProjDiagno
     let constraint_sol = match solve_constraints(&qp.c, &qp.d) {
         Some(sol) => sol,
         None => {
-            return (Solution {
-                verdict: Verdict::False,
-                q: 0.0,
-                beta: vec![0.0; m],
-                margin: f64::NEG_INFINITY,
-            }, None);
+            return (
+                Solution {
+                    verdict: Verdict::False,
+                    q: 0.0,
+                    beta: vec![0.0; m],
+                    margin: f64::NEG_INFINITY,
+                },
+                None,
+            );
         }
     };
 
@@ -480,14 +488,20 @@ pub fn solve_projected_with_diagnostics(qp: &QP) -> (Solution, Option<ProjDiagno
     // Compute sigma_min(C) and ||C|| from SVD (re-compute to get singular values).
     let svd_c = qp.c.clone().svd(false, false);
     let sigma_vals = &svd_c.singular_values;
-    let sigma_min_c = sigma_vals.iter().cloned()
+    let sigma_min_c = sigma_vals
+        .iter()
+        .cloned()
         .filter(|&s| s > 1e-15)
         .fold(f64::INFINITY, f64::min);
     let norm_c = sigma_vals.iter().cloned().fold(0.0f64, f64::max);
 
     // ||H|| = max |eigenvalue of H|.
     let eig_h = qp.h.clone().symmetric_eigen();
-    let norm_h = eig_h.eigenvalues.iter().map(|e| e.abs()).fold(0.0f64, f64::max);
+    let norm_h = eig_h
+        .eigenvalues
+        .iter()
+        .map(|e| e.abs())
+        .fold(0.0f64, f64::max);
 
     // Special case: k = 0 (unique beta from constraints).
     if k == 0 {
@@ -587,8 +601,18 @@ pub fn solve_projected_with_diagnostics(qp: &QP) -> (Solution, Option<ProjDiagno
 
     // Compute eta_k (certification bound from eq:eta-computable).
     let eta = compute_eta_bound(
-        m, k, v, eigenvectors, eigenvalues, &alpha0, &margin_result.beta,
-        norm_h, norm_c, sigma_min_c, eps_gamma, &null_indices,
+        m,
+        k,
+        v,
+        eigenvectors,
+        eigenvalues,
+        &alpha0,
+        &margin_result.beta,
+        norm_h,
+        norm_c,
+        sigma_min_c,
+        eps_gamma,
+        &null_indices,
     );
 
     let sol = Solution {
@@ -627,16 +651,16 @@ pub fn solve_projected_with_diagnostics(qp: &QP) -> (Solution, Option<ProjDiagno
 fn compute_eta_bound(
     m: usize,
     k: usize,
-    v: &DMatrix<f64>,        // m x k null-space basis
-    w: &DMatrix<f64>,        // k x k eigenvectors of H'
-    gamma: &DVector<f64>,    // k eigenvalues of H'
-    alpha: &DVector<f64>,    // k critical-point coords
+    v: &DMatrix<f64>,           // m x k null-space basis
+    w: &DMatrix<f64>,           // k x k eigenvectors of H'
+    gamma: &DVector<f64>,       // k eigenvalues of H'
+    alpha: &DVector<f64>,       // k critical-point coords
     _beta_final: &DVector<f64>, // m final beta (for reference)
     norm_h: f64,
     norm_c: f64,
     sigma_min_c: f64,
     eps_gamma: f64,
-    null_indices: &[usize],  // indices of null eigenvalues
+    null_indices: &[usize], // indices of null eigenvalues
 ) -> Vec<f64> {
     if k == 0 || sigma_min_c < 1e-15 {
         return vec![f64::INFINITY; m];

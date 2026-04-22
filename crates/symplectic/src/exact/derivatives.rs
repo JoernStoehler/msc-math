@@ -97,7 +97,9 @@ mod tests {
         let gradient = capacity_derivatives_a_exact(&polytope, &orbit);
 
         assert_eq!(gradient.len(), polytope.facet_count());
-        assert!(gradient.iter().any(|vec| vec.iter().any(|entry| !entry.is_zero())));
+        assert!(gradient
+            .iter()
+            .any(|vec| vec.iter().any(|entry| !entry.is_zero())));
     }
 
     #[test]
@@ -113,15 +115,17 @@ mod tests {
         let dual_vertices_f64: Vec<Vector4<f64>> = polytope
             .dual_vertices()
             .iter()
-            .map(|dual| Vector4::new(dual[0].to_f64(), dual[1].to_f64(), dual[2].to_f64(), dual[3].to_f64()))
+            .map(|dual| {
+                Vector4::new(
+                    dual[0].to_f64(),
+                    dual[1].to_f64(),
+                    dual[2].to_f64(),
+                    dual[3].to_f64(),
+                )
+            })
             .collect();
-        let float_gradient = capacity_derivatives_a(
-            &beta_f64,
-            q_f64,
-            &mu_f64,
-            &sigma,
-            &dual_vertices_f64,
-        );
+        let float_gradient =
+            capacity_derivatives_a(&beta_f64, q_f64, &mu_f64, &sigma, &dual_vertices_f64);
 
         for (exact, float) in exact_gradient.iter().zip(float_gradient.iter()) {
             for idx in 0..4 {

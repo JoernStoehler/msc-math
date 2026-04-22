@@ -106,7 +106,10 @@ impl std::fmt::Display for ConstructionError {
                 write!(f, "halfspaces[{i}] and [{j}] are duplicates")
             }
             Self::Unbounded => {
-                write!(f, "polytope is unbounded (dual vertices do not positively span R^4)")
+                write!(
+                    f,
+                    "polytope is unbounded (dual vertices do not positively span R^4)"
+                )
             }
             Self::NoVertices => write!(f, "no vertices found (inconsistent halfspaces)"),
             Self::RedundantFacet(i) => write!(f, "facet {i} is redundant"),
@@ -211,9 +214,7 @@ impl Polytope4D {
 
         let dual_vertices: Vec<[BigRational; 4]> = dual_vertices_f64
             .iter()
-            .map(|a| {
-                std::array::from_fn(|c| super::rational_arithmetic::f64_to_rational(a[c]))
-            })
+            .map(|a| std::array::from_fn(|c| super::rational_arithmetic::f64_to_rational(a[c])))
             .collect();
 
         Self::build(dual_vertices, Some(dual_vertices_f64))
@@ -294,10 +295,7 @@ impl Polytope4D {
             .map(|y| {
                 std::array::from_fn(|c| {
                     &y[c]
-                        + super::rational_arithmetic::random_small_rational(
-                            rng,
-                            perturbation_bits,
-                        )
+                        + super::rational_arithmetic::random_small_rational(rng, perturbation_bits)
                 })
             })
             .collect();
@@ -333,9 +331,8 @@ impl Polytope4D {
         let v_count = vertices.len();
         let f_count = dual_vertices.len();
 
-        let incidence = DMatrix::from_fn(v_count, f_count, |v, f| {
-            vertex_descriptors[v].contains(&f)
-        });
+        let incidence =
+            DMatrix::from_fn(v_count, f_count, |v, f| vertex_descriptors[v].contains(&f));
 
         let vertex_adjacency = DMatrix::from_fn(f_count, f_count, |i, k| {
             i != k && (0..v_count).any(|v| incidence[(v, i)] && incidence[(v, k)])

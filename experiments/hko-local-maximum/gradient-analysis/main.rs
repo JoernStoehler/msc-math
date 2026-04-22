@@ -30,12 +30,12 @@
 //! (`Hβ + Nμ + ηξ = 0`) instead of re-labeling it into a local asymmetric
 //! variant before derivative consumers use it again.
 
+use algebraic_numbers::OrderedField;
 use exp_hko_local_maximum::{
     ehz_capacity_instrumented, exact_hko_polytope, exact_simplex_polytope, ExactBankEntry,
     ExactBankTarget, EXACT_BANK_ENTRIES,
 };
 use nalgebra::{Matrix4, Vector4};
-use algebraic_numbers::OrderedField;
 use serde::Serialize;
 use std::fs::File;
 use std::io::{BufWriter, Write};

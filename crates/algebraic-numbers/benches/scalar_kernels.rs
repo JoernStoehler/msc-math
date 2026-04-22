@@ -1,9 +1,9 @@
 //! Criterion benches for the scalar kernels we care about.
 
+use algebraic_numbers::{dot, solve_square, Algebraic, OrderedField, TanPiFifth};
 use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion};
 use num_rational::BigRational;
 use num_traits::Signed;
-use algebraic_numbers::{dot, solve_square, Algebraic, OrderedField, TanPiFifth};
 
 type TanPiFifthField = Algebraic<TanPiFifth>;
 

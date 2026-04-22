@@ -58,7 +58,9 @@ impl<F: ExactOrderedField> ExactPolytope4D<F> {
         let vertex_adjacency: Vec<Vec<bool>> = (0..f)
             .map(|i| {
                 (0..f)
-                    .map(|j| i != j && (0..vertex_count).any(|v| incidence[v][i] && incidence[v][j]))
+                    .map(|j| {
+                        i != j && (0..vertex_count).any(|v| incidence[v][i] && incidence[v][j])
+                    })
                     .collect()
             })
             .collect();
@@ -147,9 +149,7 @@ pub fn dot4<F: ExactOrderedField>(left: &[F; 4], right: &[F; 4]) -> F {
 
 /// Exact standard symplectic form `omega_0`.
 pub fn omega0<F: ExactOrderedField>(u: &[F; 4], v: &[F; 4]) -> F {
-    u[0].clone() * v[2].clone()
-        - u[2].clone() * v[0].clone()
-        + u[1].clone() * v[3].clone()
+    u[0].clone() * v[2].clone() - u[2].clone() * v[0].clone() + u[1].clone() * v[3].clone()
         - u[3].clone() * v[1].clone()
 }
 
@@ -175,8 +175,10 @@ fn cross_product_4d<F: ExactOrderedField>(a: &[F; 4], b: &[F; 4], c: &[F; 4]) ->
     let bc_13 = b[1].clone() * c[3].clone() - b[3].clone() * c[1].clone();
     let bc_23 = b[2].clone() * c[3].clone() - b[3].clone() * c[2].clone();
 
-    let d0 = a[1].clone() * bc_23.clone() - a[2].clone() * bc_13.clone() + a[3].clone() * bc_12.clone();
-    let d1 = -(a[0].clone() * bc_23.clone() - a[2].clone() * bc_03.clone() + a[3].clone() * bc_02.clone());
+    let d0 =
+        a[1].clone() * bc_23.clone() - a[2].clone() * bc_13.clone() + a[3].clone() * bc_12.clone();
+    let d1 = -(a[0].clone() * bc_23.clone() - a[2].clone() * bc_03.clone()
+        + a[3].clone() * bc_02.clone());
     let d2 = a[0].clone() * bc_13 - a[1].clone() * bc_03.clone() + a[3].clone() * bc_01.clone();
     let d3 = -(a[0].clone() * bc_12 - a[1].clone() * bc_02 + a[2].clone() * bc_01);
     [d0, d1, d2, d3]
@@ -282,7 +284,8 @@ fn check_bounded<F: ExactOrderedField>(dual_vertices: &[[F; 4]]) -> Result<(), E
     for i in 0..f {
         for j in (i + 1)..f {
             for k in (j + 1)..f {
-                let normal = cross_product_4d(&dual_vertices[i], &dual_vertices[j], &dual_vertices[k]);
+                let normal =
+                    cross_product_4d(&dual_vertices[i], &dual_vertices[j], &dual_vertices[k]);
                 if normal.iter().all(ExactOrderedField::is_zero) {
                     continue;
                 }
@@ -412,11 +415,16 @@ mod tests {
         lhs.len() == rhs.nrows()
             && lhs.iter().enumerate().all(|(row_idx, row)| {
                 row.len() == rhs.ncols()
-                    && row.iter().enumerate().all(|(col_idx, val)| *val == rhs[(row_idx, col_idx)])
+                    && row
+                        .iter()
+                        .enumerate()
+                        .all(|(col_idx, val)| *val == rhs[(row_idx, col_idx)])
             })
     }
 
-    fn assert_exact_polytope_self_consistent<F: ExactOrderedField>(polytope: &super::ExactPolytope4D<F>) {
+    fn assert_exact_polytope_self_consistent<F: ExactOrderedField>(
+        polytope: &super::ExactPolytope4D<F>,
+    ) {
         let one = F::one();
 
         for (vertex_idx, vertex) in polytope.vertices().iter().enumerate() {
@@ -446,11 +454,16 @@ mod tests {
         }
 
         for row in 0..polytope.facet_count() {
-            assert_eq!(polytope.omega_signs()[row][row], 0, "omega diagonal should vanish");
+            assert_eq!(
+                polytope.omega_signs()[row][row],
+                0,
+                "omega diagonal should vanish"
+            );
             for col in 0..polytope.facet_count() {
                 let expected_adjacency = row != col
-                    && (0..polytope.vertices().len())
-                        .any(|vertex| polytope.incidence()[vertex][row] && polytope.incidence()[vertex][col]);
+                    && (0..polytope.vertices().len()).any(|vertex| {
+                        polytope.incidence()[vertex][row] && polytope.incidence()[vertex][col]
+                    });
                 assert_eq!(
                     polytope.vertex_adjacency()[row][col],
                     expected_adjacency,
@@ -472,7 +485,10 @@ mod tests {
 
         assert_eq!(exact.facet_count(), library.polytope.facet_count());
         assert_eq!(exact.vertices().len(), library.polytope.vertices().len());
-        assert!(same_incidence(exact.incidence(), library.polytope.incidence()));
+        assert!(same_incidence(
+            exact.incidence(),
+            library.polytope.incidence()
+        ));
         assert_exact_polytope_self_consistent(&exact);
     }
 
@@ -482,7 +498,10 @@ mod tests {
         let library = known_polytopes::hypercube();
 
         assert_eq!(exact.vertices().len(), library.polytope.vertices().len());
-        assert!(same_incidence(exact.incidence(), library.polytope.incidence()));
+        assert!(same_incidence(
+            exact.incidence(),
+            library.polytope.incidence()
+        ));
         assert_exact_polytope_self_consistent(&exact);
     }
 
@@ -495,8 +514,16 @@ mod tests {
         assert_exact_polytope_self_consistent(&exact);
 
         for &(i, j) in &[(1usize, 6usize), (3usize, 8usize), (4usize, 9usize)] {
-            assert_eq!(exact.omega_signs()[i][j], 0, "known exact HKO zero pair ({i}, {j})");
-            assert_eq!(exact.omega_signs()[j][i], 0, "known exact HKO zero pair ({j}, {i})");
+            assert_eq!(
+                exact.omega_signs()[i][j],
+                0,
+                "known exact HKO zero pair ({i}, {j})"
+            );
+            assert_eq!(
+                exact.omega_signs()[j][i],
+                0,
+                "known exact HKO zero pair ({j}, {i})"
+            );
         }
     }
 

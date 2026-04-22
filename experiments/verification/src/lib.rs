@@ -199,9 +199,7 @@ fn build_random_targets(db: &HashMap<DualVerticesKey, PolytopeRecord>) -> Vec<Ta
         .collect()
 }
 
-fn build_lagrangian_product_targets(
-    db: &HashMap<DualVerticesKey, PolytopeRecord>,
-) -> Vec<Target> {
+fn build_lagrangian_product_targets(db: &HashMap<DualVerticesKey, PolytopeRecord>) -> Vec<Target> {
     let mut by_pair: BTreeMap<(usize, usize), (String, Target)> = BTreeMap::new();
 
     for record in db.values() {
@@ -250,7 +248,10 @@ fn build_correctness_targets(manifest_dir: &Path) -> Vec<Target> {
         }
         let row: CorrectnessRow =
             serde_json::from_str(&line).expect("failed to parse correctness row");
-        if !matches!(row.test_group.as_str(), "scaled" | "transformed" | "perturbed") {
+        if !matches!(
+            row.test_group.as_str(),
+            "scaled" | "transformed" | "perturbed"
+        ) {
             continue;
         }
         by_group

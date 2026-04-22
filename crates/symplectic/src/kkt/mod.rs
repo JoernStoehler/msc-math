@@ -32,12 +32,12 @@
 //! - `projection_solver` — Project to constraint null space, optimize reduced objective
 //! - `rational_solver` — Exact rational KKT solver (validation/ground-truth only; NOT used in main capacity enumeration)
 
-pub mod qp_assembly;
-pub mod saddle_point_solver;
-pub mod constraint_solver;
 pub mod beta_feasibility;
+pub mod constraint_solver;
 pub mod projection_solver;
+pub mod qp_assembly;
 pub mod rational_solver;
+pub mod saddle_point_solver;
 #[cfg(test)]
 mod test_saddle_point_solver;
 

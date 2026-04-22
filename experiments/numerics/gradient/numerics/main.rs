@@ -38,6 +38,7 @@
 //!
 //! Self-contained: generates all polytopes internally.
 
+use dev_gradient::{analyze_polytope, first_order_test, write_rows};
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use std::env;
@@ -49,7 +50,6 @@ use std::time::Instant;
 use symplectic::geom::polygon::random_polygon_2d;
 use symplectic::random::generate_random_polytopes;
 use symplectic::{lagrangian_product, regular_polygon_2d, rotate_polygon_2d};
-use dev_gradient::{analyze_polytope, first_order_test, write_rows};
 
 // ============================================================================
 // Constants
@@ -302,7 +302,9 @@ fn smoke_mode() -> bool {
 }
 
 fn print_usage_and_exit() -> ! {
-    eprintln!("Usage: cargo run -p dev-gradient --release --bin gradient-basic-validation [--smoke]");
+    eprintln!(
+        "Usage: cargo run -p dev-gradient --release --bin gradient-basic-validation [--smoke]"
+    );
     eprintln!("  --smoke: run a reduced run into a temporary directory");
     eprintln!("  -h, --help: show usage");
     std::process::exit(2);

@@ -75,7 +75,12 @@ pub struct ReebTrajectory {
 ///
 /// [def:reeb-vector-field]: Reeb direction on facet F_i is J_0 a_i (tangent to F_i).
 pub fn reeb_direction(dual_vertex: &Vector4<f64>) -> Vector4<f64> {
-    Vector4::new(-dual_vertex[2], -dual_vertex[3], dual_vertex[0], dual_vertex[1])
+    Vector4::new(
+        -dual_vertex[2],
+        -dual_vertex[3],
+        dual_vertex[0],
+        dual_vertex[1],
+    )
 }
 
 /// Forward-simulate a Reeb trajectory with default parameters.
@@ -154,10 +159,7 @@ pub fn simulate_with(
                 let residual = a_j.dot(&current_point) - 1.0;
                 let denom = a_j.dot(&r);
                 // On the boundary of fj AND Reeb pushes through it
-                if residual.abs() < EPS_FACET_INCIDENCE
-                    && denom > EPS_DENOM
-                    && denom > best_denom
-                {
+                if residual.abs() < EPS_FACET_INCIDENCE && denom > EPS_DENOM && denom > best_denom {
                     best_denom = denom;
                     best_immediate = Some(fj);
                 }
@@ -247,10 +249,22 @@ mod tests {
     #[test]
     fn reeb_direction_axis_aligned() {
         let cases = [
-            (Vector4::new(1.0, 0.0, 0.0, 0.0), Vector4::new(0.0, 0.0, 1.0, 0.0)),
-            (Vector4::new(0.0, 1.0, 0.0, 0.0), Vector4::new(0.0, 0.0, 0.0, 1.0)),
-            (Vector4::new(0.0, 0.0, 1.0, 0.0), Vector4::new(-1.0, 0.0, 0.0, 0.0)),
-            (Vector4::new(0.0, 0.0, 0.0, 1.0), Vector4::new(0.0, -1.0, 0.0, 0.0)),
+            (
+                Vector4::new(1.0, 0.0, 0.0, 0.0),
+                Vector4::new(0.0, 0.0, 1.0, 0.0),
+            ),
+            (
+                Vector4::new(0.0, 1.0, 0.0, 0.0),
+                Vector4::new(0.0, 0.0, 0.0, 1.0),
+            ),
+            (
+                Vector4::new(0.0, 0.0, 1.0, 0.0),
+                Vector4::new(-1.0, 0.0, 0.0, 0.0),
+            ),
+            (
+                Vector4::new(0.0, 0.0, 0.0, 1.0),
+                Vector4::new(0.0, -1.0, 0.0, 0.0),
+            ),
         ];
         for (n, expected) in &cases {
             let r = reeb_direction(n);
@@ -329,7 +343,11 @@ mod tests {
             let a = &duals[seg.facet];
             let start_res = (a.dot(&seg.start) - 1.0).abs();
             let end_res = (a.dot(&seg.end) - 1.0).abs();
-            assert!(start_res < 1e-7, "start not on facet {}: {start_res}", seg.facet);
+            assert!(
+                start_res < 1e-7,
+                "start not on facet {}: {start_res}",
+                seg.facet
+            );
             assert!(end_res < 1e-7, "end not on facet {}: {end_res}", seg.facet);
         }
     }
@@ -439,13 +457,22 @@ mod tests {
         let start = skel.facet_centroid(&kp.polytope, 0);
 
         let traj_default = simulate(&kp.polytope, start, 0);
-        let traj_explicit =
-            simulate_with(&kp.polytope, start, 0, DEFAULT_MAX_SEGMENTS, DEFAULT_CLOSURE_TOL);
+        let traj_explicit = simulate_with(
+            &kp.polytope,
+            start,
+            0,
+            DEFAULT_MAX_SEGMENTS,
+            DEFAULT_CLOSURE_TOL,
+        );
 
         assert_eq!(traj_default.segments.len(), traj_explicit.segments.len());
         assert_eq!(traj_default.closed, traj_explicit.closed);
 
-        for (a, b) in traj_default.segments.iter().zip(traj_explicit.segments.iter()) {
+        for (a, b) in traj_default
+            .segments
+            .iter()
+            .zip(traj_explicit.segments.iter())
+        {
             assert_eq!(a.facet, b.facet);
             assert!((a.start - b.start).norm() < 1e-14);
             assert!((a.end - b.end).norm() < 1e-14);

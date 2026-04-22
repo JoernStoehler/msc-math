@@ -21,9 +21,7 @@ pub mod facet_classification;
 #[cfg(test)]
 mod kkt_benchmark;
 
-use crate::algorithms::facet_adjacency::{
-    build_transition_matrix, is_feasible_cycle,
-};
+use crate::algorithms::facet_adjacency::{build_transition_matrix, is_feasible_cycle};
 use crate::geom::polytope::Polytope4D;
 use block_enumeration::{enumerate_blocks, enumerate_k_bounce_sigmas};
 use facet_classification::classify_facets;

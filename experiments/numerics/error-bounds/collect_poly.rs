@@ -16,7 +16,7 @@ use std::io::BufRead;
 #[path = "collect_common.rs"]
 mod common;
 
-use common::{solve_and_record, write_jsonl, print_summary, InputRow, P};
+use common::{print_summary, solve_and_record, write_jsonl, InputRow, P};
 use symplectic::algorithms::hk2017::combinations;
 use symplectic::algorithms::hk2017::permutations::for_each_cyclic_permutation;
 use symplectic::omega0;
@@ -82,7 +82,9 @@ fn generate_natural(polytopes_path: &str, max_facets: usize) -> Vec<InputRow> {
                         "polytope_sigma_node",
                         instance_counter,
                         "poly",
-                        &h, &c, &d,
+                        &h,
+                        &c,
+                        &d,
                         Some(poly_idx),
                         Some(perm.to_vec()),
                         Some(f),
@@ -95,7 +97,8 @@ fn generate_natural(polytopes_path: &str, max_facets: usize) -> Vec<InputRow> {
         if (poly_idx + 1) % 10 == 0 {
             println!(
                 "  Processed {} polytopes, {} σ-nodes so far",
-                poly_idx + 1, instance_counter
+                poly_idx + 1,
+                instance_counter
             );
         }
     }
@@ -131,8 +134,8 @@ fn main() {
         std::process::exit(1);
     });
 
-    let output_path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("error-bounds/collected_poly.jsonl");
+    let output_path =
+        std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("error-bounds/collected_poly.jsonl");
     let rows = generate_natural(&polytopes_path, max_facets);
     write_jsonl(&rows, output_path.to_str().expect("utf-8 output path"));
     print_summary(&rows, "Natural (polytope)");

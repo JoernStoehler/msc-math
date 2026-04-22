@@ -22,8 +22,8 @@ mod solvers;
 #[path = "exact_solver.rs"]
 mod exact_solver;
 
-use solvers::{solve_projected_with_diagnostics, QP, Verdict};
-use exact_solver::{solve_qp_exact, f64_to_rat, rational_to_f64};
+use exact_solver::{f64_to_rat, rational_to_f64, solve_qp_exact};
+use solvers::{solve_projected_with_diagnostics, Verdict, QP};
 
 // ── Output record ──
 
@@ -55,7 +55,6 @@ struct Record {
     norm_beta_exact: f64,
 
     // ── Perturbation chain diagnostics [lem:link-beta] eq:eta-computable ──
-
     proj_eps_gamma: f64,
     proj_eta_max: f64,
     proj_eta_ratio: f64,
@@ -117,14 +116,15 @@ struct TestProblem {
 // ══════════════════════════════════════════════════════════════════════════════
 
 fn load_input(path: &str) -> Vec<TestProblem> {
-    let file = std::fs::File::open(path)
-        .unwrap_or_else(|e| panic!("Cannot open {}: {}", path, e));
+    let file = std::fs::File::open(path).unwrap_or_else(|e| panic!("Cannot open {}: {}", path, e));
     let reader = std::io::BufReader::new(file);
 
     let mut problems = Vec::new();
     for (idx, line) in reader.lines().enumerate() {
         let line = line.unwrap_or_else(|e| panic!("Read error in {} line {}: {}", path, idx, e));
-        if line.trim().is_empty() { continue; }
+        if line.trim().is_empty() {
+            continue;
+        }
         let row: InputRow = serde_json::from_str(&line)
             .unwrap_or_else(|e| panic!("Parse error in {} line {}: {}", path, idx, e));
         problems.push(input_row_to_test_problem(&row));
@@ -191,7 +191,11 @@ fn main() {
         let exact = solve_qp_exact(&prob.h_rat, &prob.c_rat, &prob.d_rat);
         let (q_exact, beta_exact, verdict_exact, margin_exact) = match &exact {
             Some(r) => {
-                let margin: f64 = r.beta.iter().map(|b| rational_to_f64(b)).fold(f64::INFINITY, f64::min);
+                let margin: f64 = r
+                    .beta
+                    .iter()
+                    .map(|b| rational_to_f64(b))
+                    .fold(f64::INFINITY, f64::min);
                 (r.q_exact_f64, Some(&r.beta), "feasible".to_string(), margin)
             }
             None => (f64::NAN, None, "infeasible".to_string(), f64::NEG_INFINITY),
@@ -238,7 +242,12 @@ fn main() {
         let beta_err_proj = match (&beta_exact, &proj_sol.beta) {
             (Some(be), pb) if !pb.is_empty() && proj_feasible => {
                 let be_f64: Vec<f64> = be.iter().map(|b| rational_to_f64(b)).collect();
-                be_f64.iter().zip(pb.iter()).map(|(a, b)| (a - b).powi(2)).sum::<f64>().sqrt()
+                be_f64
+                    .iter()
+                    .zip(pb.iter())
+                    .map(|(a, b)| (a - b).powi(2))
+                    .sum::<f64>()
+                    .sqrt()
             }
             _ => f64::NAN,
         };
@@ -247,16 +256,32 @@ fn main() {
             let svd = prob.c_f64.clone().svd(false, false);
             let s = &svd.singular_values;
             let s_max = s.iter().cloned().fold(0.0f64, f64::max);
-            let s_min = s.iter().cloned().filter(|&x| x > 1e-15).fold(f64::INFINITY, f64::min);
-            let cond = if s_min > 0.0 { s_max / s_min } else { f64::INFINITY };
+            let s_min = s
+                .iter()
+                .cloned()
+                .filter(|&x| x > 1e-15)
+                .fold(f64::INFINITY, f64::min);
+            let cond = if s_min > 0.0 {
+                s_max / s_min
+            } else {
+                f64::INFINITY
+            };
             (cond, if s_min.is_finite() { s_min } else { 0.0 }, s_max)
         };
         let (cond_h, norm_h) = {
             let eig = prob.h_f64.clone().symmetric_eigen();
             let ev = &eig.eigenvalues;
             let ev_max = ev.iter().map(|e| e.abs()).fold(0.0f64, f64::max);
-            let ev_min = ev.iter().map(|e| e.abs()).filter(|&e| e > 1e-15).fold(f64::INFINITY, f64::min);
-            let cond = if ev_min > 0.0 { ev_max / ev_min } else { f64::INFINITY };
+            let ev_min = ev
+                .iter()
+                .map(|e| e.abs())
+                .filter(|&e| e > 1e-15)
+                .fold(f64::INFINITY, f64::min);
+            let cond = if ev_min > 0.0 {
+                ev_max / ev_min
+            } else {
+                f64::INFINITY
+            };
             (cond, ev_max)
         };
 
@@ -295,15 +320,20 @@ fn main() {
             sigma_max_c,
             norm_beta_exact,
             proj_eps_gamma: proj_diag.as_ref().map_or(f64::NAN, |d| d.eps_gamma),
-            proj_eta_max: proj_diag.as_ref().map_or(f64::NAN, |d| {
-                d.eta.iter().cloned().fold(0.0f64, f64::max)
-            }),
+            proj_eta_max: proj_diag
+                .as_ref()
+                .map_or(f64::NAN, |d| d.eta.iter().cloned().fold(0.0f64, f64::max)),
             proj_eta_ratio: {
                 match (&beta_exact, &proj_diag) {
                     (Some(be), Some(diag)) if proj_feasible => {
                         let be_f64: Vec<f64> = be.iter().map(|b| rational_to_f64(b)).collect();
                         let mut max_ratio = 0.0f64;
-                        for k_idx in 0..prob.m.min(be_f64.len()).min(diag.eta.len()).min(proj_sol.beta.len()) {
+                        for k_idx in 0..prob
+                            .m
+                            .min(be_f64.len())
+                            .min(diag.eta.len())
+                            .min(proj_sol.beta.len())
+                        {
                             let actual_err = (proj_sol.beta[k_idx] - be_f64[k_idx]).abs();
                             if diag.eta[k_idx] > 0.0 && diag.eta[k_idx].is_finite() {
                                 max_ratio = max_ratio.max(actual_err / diag.eta[k_idx]);
@@ -317,33 +347,41 @@ fn main() {
             proj_beta_err_inf: match (&beta_exact, &proj_sol.beta) {
                 (Some(be), pb) if !pb.is_empty() && proj_feasible => {
                     let be_f64: Vec<f64> = be.iter().map(|b| rational_to_f64(b)).collect();
-                    be_f64.iter().zip(pb.iter())
+                    be_f64
+                        .iter()
+                        .zip(pb.iter())
                         .map(|(a, b)| (a - b).abs())
                         .fold(0.0f64, f64::max)
                 }
                 _ => f64::NAN,
             },
             proj_certified_margin: match &proj_diag {
-                Some(diag) if proj_feasible => {
-                    proj_sol.beta.iter().zip(diag.eta.iter())
-                        .map(|(&b, &e)| b - e)
-                        .fold(f64::INFINITY, f64::min)
-                }
+                Some(diag) if proj_feasible => proj_sol
+                    .beta
+                    .iter()
+                    .zip(diag.eta.iter())
+                    .map(|(&b, &e)| b - e)
+                    .fold(f64::INFINITY, f64::min),
                 _ => f64::NAN,
             },
             proj_n_reliable_eigs: proj_diag.as_ref().map_or(0, |d| {
-                d.eigenvalues.iter().filter(|&&g| g.abs() > d.eps_gamma).count()
+                d.eigenvalues
+                    .iter()
+                    .filter(|&&g| g.abs() > d.eps_gamma)
+                    .count()
             }),
             proj_n_uncertain_eigs: proj_diag.as_ref().map_or(0, |d| {
-                d.eigenvalues.iter().filter(|&&g| g.abs() <= d.eps_gamma).count()
+                d.eigenvalues
+                    .iter()
+                    .filter(|&&g| g.abs() <= d.eps_gamma)
+                    .count()
             }),
             proj_null_dim: proj_diag.as_ref().map_or(0, |d| d.null_dim),
             proj_delta_alpha: {
                 // [rem:eigendirection-error]: |delta_alpha_j| ~ eps_mach / |gamma_j|
                 match (&beta_exact, &proj_diag) {
-                    (Some(be), Some(diag)) if !proj_sol.beta.is_empty()
-                        && proj_feasible
-                        && diag.null_dim > 0 =>
+                    (Some(be), Some(diag))
+                        if !proj_sol.beta.is_empty() && proj_feasible && diag.null_dim > 0 =>
                     {
                         let be_f64: Vec<f64> = be.iter().map(|b| rational_to_f64(b)).collect();
                         let k = diag.null_dim;
@@ -356,9 +394,9 @@ fn main() {
                     _ => Vec::new(),
                 }
             },
-            proj_eigenvalues: proj_diag.as_ref().map_or(Vec::new(), |d| {
-                d.eigenvalues.iter().copied().collect()
-            }),
+            proj_eigenvalues: proj_diag
+                .as_ref()
+                .map_or(Vec::new(), |d| d.eigenvalues.iter().copied().collect()),
         };
 
         let json = serde_json::to_string(&record).expect("serialize");

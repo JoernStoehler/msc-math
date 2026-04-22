@@ -98,7 +98,8 @@ fn comparison_orders_values_in_the_real_embedding() {
 fn multiplication_reduces_to_the_canonical_basis() {
     let t = TanPiFifthField::generator();
     let t4 = t.clone() * t.clone() * t.clone() * t.clone();
-    let expected = TanPiFifthField::from_i64(10) * t.clone() * t.clone() - TanPiFifthField::from_i64(5);
+    let expected =
+        TanPiFifthField::from_i64(10) * t.clone() * t.clone() - TanPiFifthField::from_i64(5);
     assert_eq!(t4, expected);
 }
 
@@ -114,7 +115,8 @@ fn sign_classification_distinguishes_negative_zero_and_positive() {
 fn equivalent_representations_canonicalize_to_the_same_value() {
     let t = TanPiFifthField::generator();
     let left = t.clone() * t.clone() * t.clone() * t.clone();
-    let right = TanPiFifthField::from_i64(10) * t.clone() * t.clone() - TanPiFifthField::from_i64(5);
+    let right =
+        TanPiFifthField::from_i64(10) * t.clone() * t.clone() - TanPiFifthField::from_i64(5);
     assert_eq!(left.coeffs(), right.coeffs());
 }
 

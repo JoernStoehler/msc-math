@@ -16,8 +16,8 @@ mod solvers;
 #[path = "exact_solver.rs"]
 mod exact_solver;
 
-use solvers::{solve_projected_with_diagnostics, QP, Verdict};
-use exact_solver::{solve_qp_exact, f64_to_rat, rational_to_f64};
+use exact_solver::{f64_to_rat, rational_to_f64, solve_qp_exact};
+use solvers::{solve_projected_with_diagnostics, Verdict, QP};
 
 // ══════════════════════════════════════════════════════════════════════════════
 // Test data loading
@@ -46,14 +46,15 @@ fn load_testdata(filename: &str) -> Vec<TestCase> {
         env!("CARGO_MANIFEST_DIR"),
         filename,
     );
-    let file = std::fs::File::open(&path)
-        .unwrap_or_else(|e| panic!("Cannot open {}: {}", path, e));
+    let file = std::fs::File::open(&path).unwrap_or_else(|e| panic!("Cannot open {}: {}", path, e));
     let reader = std::io::BufReader::new(file);
 
     let mut cases = Vec::new();
     for (idx, line) in reader.lines().enumerate() {
         let line = line.unwrap_or_else(|e| panic!("Read error line {}: {}", idx, e));
-        if line.trim().is_empty() { continue; }
+        if line.trim().is_empty() {
+            continue;
+        }
         let input: TestInput = serde_json::from_str(&line)
             .unwrap_or_else(|e| panic!("Parse error line {}: {}", idx, e));
 
@@ -72,7 +73,15 @@ fn load_testdata(filename: &str) -> Vec<TestCase> {
             .collect();
         let d_rat: Vec<BigRational> = input.d.iter().map(|&v| f64_to_rat(v)).collect();
 
-        cases.push(TestCase { h_f64, c_f64, d_f64, h_rat, c_rat, d_rat, m });
+        cases.push(TestCase {
+            h_f64,
+            c_f64,
+            d_f64,
+            h_rat,
+            c_rat,
+            d_rat,
+            m,
+        });
     }
     cases
 }
@@ -113,7 +122,9 @@ fn eigendirection_error_scaling() {
             _ => continue, // skip k=0
         };
 
-        if proj_sol.verdict == Verdict::False { continue; }
+        if proj_sol.verdict == Verdict::False {
+            continue;
+        }
 
         let be_f64: Vec<f64> = exact.beta.iter().map(|b| rational_to_f64(b)).collect();
         let k = diag.null_dim;
@@ -128,7 +139,9 @@ fn eigendirection_error_scaling() {
         // Check each retained eigendirection
         for j in 0..k {
             let gamma_j = diag.eigenvalues[j].abs();
-            if gamma_j <= diag.eps_gamma { continue; } // skip null eigenvalues
+            if gamma_j <= diag.eps_gamma {
+                continue;
+            } // skip null eigenvalues
 
             let da_j = delta_alpha[j].abs();
             // The scaling predicts: |delta_alpha_j| ~ eps_mach / |gamma_j|
@@ -157,8 +170,16 @@ fn eigendirection_error_scaling() {
             println!("  VIOLATION: {}", v);
         }
     }
-    assert_eq!(n_violated, 0, "{} violations (max ratio {:.1})", n_violated, max_ratio);
-    assert!(n_tested >= 10, "Too few eigendirections tested: {}", n_tested);
+    assert_eq!(
+        n_violated, 0,
+        "{} violations (max ratio {:.1})",
+        n_violated, max_ratio
+    );
+    assert!(
+        n_tested >= 10,
+        "Too few eigendirections tested: {}",
+        n_tested
+    );
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -200,7 +221,9 @@ fn eta_bound_validity() {
             None => continue,
         };
 
-        if proj_sol.verdict == Verdict::False { continue; }
+        if proj_sol.verdict == Verdict::False {
+            continue;
+        }
 
         let be_f64: Vec<f64> = exact.beta.iter().map(|b| rational_to_f64(b)).collect();
         let m = case.m;
@@ -209,7 +232,11 @@ fn eta_bound_validity() {
         // by O(1), which the bound doesn't cover — see formal/numerics/error-bounds.tex).
         // Thresholds match EPS_EIGEN_FLOOR and EPS_EIGEN_THRESHOLD in projection_solver.rs.
         let has_null_eigenvalues = diag.eigenvalues.iter().any(|&g| {
-            let lambda_max = diag.eigenvalues.iter().map(|e| e.abs()).fold(0.0f64, f64::max);
+            let lambda_max = diag
+                .eigenvalues
+                .iter()
+                .map(|e| e.abs())
+                .fold(0.0f64, f64::max);
             let threshold = if lambda_max < solvers::EPS_EIGEN_FLOOR {
                 f64::INFINITY
             } else {
@@ -258,6 +285,10 @@ fn eta_bound_validity() {
             println!("  VIOLATION: {}", v);
         }
     }
-    assert_eq!(n_violated, 0, "{} violations (max ratio {:.3})", n_violated, max_ratio);
+    assert_eq!(
+        n_violated, 0,
+        "{} violations (max ratio {:.3})",
+        n_violated, max_ratio
+    );
     assert!(n_tested >= 10, "Too few components tested: {}", n_tested);
 }

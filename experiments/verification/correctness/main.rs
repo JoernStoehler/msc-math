@@ -36,16 +36,6 @@
 //! fixtures. The crate-level `ehz_capacity` entrypoint would hide those
 //! per-algorithm checks.
 
-use symplectic::random::generate_random_polytopes;
-use symplectic::geom::known_polytopes::{
-    hko_pentagon, hypercube, lagrangian_triangle_product, lagrangian_triangle_square,
-    simplex, symplectic_triangle_product, symplectic_triangle_square,
-};
-use symplectic::algorithms::billiard::facet_classification::classify_facets;
-use symplectic::geom::lagrangian_product::lagrangian_product;
-use symplectic::geom::polygon::random_polygon_2d;
-use symplectic::geom::polytope::Polytope4D;
-use symplectic::{ehz_capacity_billiard, ehz_capacity_pruned, ehz_capacity_unpruned};
 use nalgebra::Matrix4;
 use rand::{Rng, SeedableRng};
 use rand_chacha::ChaCha8Rng;
@@ -53,6 +43,16 @@ use rand_distr::StandardNormal;
 use serde::{Deserialize, Serialize};
 use std::fs::File;
 use std::io::{BufWriter, Write};
+use symplectic::algorithms::billiard::facet_classification::classify_facets;
+use symplectic::geom::known_polytopes::{
+    hko_pentagon, hypercube, lagrangian_triangle_product, lagrangian_triangle_square, simplex,
+    symplectic_triangle_product, symplectic_triangle_square,
+};
+use symplectic::geom::lagrangian_product::lagrangian_product;
+use symplectic::geom::polygon::random_polygon_2d;
+use symplectic::geom::polytope::Polytope4D;
+use symplectic::random::generate_random_polytopes;
+use symplectic::{ehz_capacity_billiard, ehz_capacity_pruned, ehz_capacity_unpruned};
 
 fn maybe_billiard_capacity(polytope: &Polytope4D) -> Option<f64> {
     if classify_facets(polytope).is_err() {
@@ -75,7 +75,7 @@ struct VerificationEntry {
     capacity_pruned: f64,
     capacity_unpruned: Option<f64>,
     capacity_billiard: Option<f64>,
-    alpha: Option<f64>, // For scaled polytopes
+    alpha: Option<f64>,             // For scaled polytopes
     expected_capacity: Option<f64>, // For literature
 }
 
@@ -83,10 +83,10 @@ fn main() {
     println!("Generating correctness dataset (47 polytopes, 71 capacity values)...\n");
     let mut rng = ChaCha8Rng::seed_from_u64(42);
     let mut entries = Vec::new();
-    
+
     // Construct output path relative to repo root (works from any cwd)
-    let output_path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("correctness/correctness.jsonl");
+    let output_path =
+        std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("correctness/correctness.jsonl");
 
     // Test 1: Generate 10 base polytopes (5 random generic + 5 Lagrangian products)
     println!("Test 1: Generating 10 base polytopes (5 generic + 5 Lagrangian)...");
@@ -120,7 +120,11 @@ fn main() {
             test_group: "base".to_string(),
             base_index: None,
             facet_count: p.facet_count(),
-            dual_vertices: p.dual_vertices_f64().iter().map(|a| [a[0], a[1], a[2], a[3]]).collect(),
+            dual_vertices: p
+                .dual_vertices_f64()
+                .iter()
+                .map(|a| [a[0], a[1], a[2], a[3]])
+                .collect(),
             capacity_pruned: pruned,
             capacity_unpruned: Some(unpruned),
             capacity_billiard: billiard,
@@ -143,7 +147,9 @@ fn main() {
     ];
 
     for kp in literature {
-        let pruned = ehz_capacity_pruned(&kp.polytope).expect("pruned").capacity();
+        let pruned = ehz_capacity_pruned(&kp.polytope)
+            .expect("pruned")
+            .capacity();
         let billiard = maybe_billiard_capacity(&kp.polytope);
 
         entries.push(VerificationEntry {
@@ -151,7 +157,12 @@ fn main() {
             test_group: "literature".to_string(),
             base_index: None,
             facet_count: kp.polytope.facet_count(),
-            dual_vertices: kp.polytope.dual_vertices_f64().iter().map(|a| [a[0], a[1], a[2], a[3]]).collect(),
+            dual_vertices: kp
+                .polytope
+                .dual_vertices_f64()
+                .iter()
+                .map(|a| [a[0], a[1], a[2], a[3]])
+                .collect(),
             capacity_pruned: pruned,
             capacity_unpruned: None,
             capacity_billiard: billiard,
@@ -165,9 +176,9 @@ fn main() {
     println!("Test 3: Generating 10 scaled polytopes (reusing base)...");
     for (i, p) in base_polytopes.iter().enumerate() {
         let alpha: f64 = rng.gen_range(0.5..2.0);
-        let scaled = Polytope4D::from_f64(
-            p.dual_vertices_f64().iter().map(|a| a / alpha).collect(),
-        ).expect("scaled");
+        let scaled =
+            Polytope4D::from_f64(p.dual_vertices_f64().iter().map(|a| a / alpha).collect())
+                .expect("scaled");
 
         let pruned = ehz_capacity_pruned(&scaled).expect("pruned").capacity();
         let billiard = if i >= 5 {
@@ -181,7 +192,11 @@ fn main() {
             test_group: "scaled".to_string(),
             base_index: Some(i),
             facet_count: scaled.facet_count(),
-            dual_vertices: scaled.dual_vertices_f64().iter().map(|a| [a[0], a[1], a[2], a[3]]).collect(),
+            dual_vertices: scaled
+                .dual_vertices_f64()
+                .iter()
+                .map(|a| [a[0], a[1], a[2], a[3]])
+                .collect(),
             capacity_pruned: pruned,
             capacity_unpruned: None,
             capacity_billiard: billiard,
@@ -196,14 +211,20 @@ fn main() {
     for (i, p) in base_polytopes.iter().enumerate() {
         let m = random_sp4_matrix(&mut rng);
         let transformed = apply_symplectomorphism(p, &m);
-        let pruned = ehz_capacity_pruned(&transformed).expect("pruned").capacity();
+        let pruned = ehz_capacity_pruned(&transformed)
+            .expect("pruned")
+            .capacity();
 
         entries.push(VerificationEntry {
             name: format!("transformed_{}", i),
             test_group: "transformed".to_string(),
             base_index: Some(i),
             facet_count: transformed.facet_count(),
-            dual_vertices: transformed.dual_vertices_f64().iter().map(|a| [a[0], a[1], a[2], a[3]]).collect(),
+            dual_vertices: transformed
+                .dual_vertices_f64()
+                .iter()
+                .map(|a| [a[0], a[1], a[2], a[3]])
+                .collect(),
             capacity_pruned: pruned,
             capacity_unpruned: None,
             capacity_billiard: None,
@@ -218,12 +239,16 @@ fn main() {
     for (i, p) in base_polytopes.iter().enumerate() {
         let epsilon = 0.01;
         let perturbed = Polytope4D::from_f64(
-            p.dual_vertices_f64().iter().map(|a| {
-                // Perturb height h_i → h_i * (1 + ε·δ), so a_i → a_i / (1 + ε·δ)
-                let delta = rng.gen::<f64>() - 0.5;
-                a / (1.0 + epsilon * delta)
-            }).collect(),
-        ).expect("perturbed");
+            p.dual_vertices_f64()
+                .iter()
+                .map(|a| {
+                    // Perturb height h_i → h_i * (1 + ε·δ), so a_i → a_i / (1 + ε·δ)
+                    let delta = rng.gen::<f64>() - 0.5;
+                    a / (1.0 + epsilon * delta)
+                })
+                .collect(),
+        )
+        .expect("perturbed");
         let pruned = ehz_capacity_pruned(&perturbed).expect("pruned").capacity();
 
         entries.push(VerificationEntry {
@@ -231,7 +256,11 @@ fn main() {
             test_group: "perturbed".to_string(),
             base_index: Some(i),
             facet_count: perturbed.facet_count(),
-            dual_vertices: perturbed.dual_vertices_f64().iter().map(|a| [a[0], a[1], a[2], a[3]]).collect(),
+            dual_vertices: perturbed
+                .dual_vertices_f64()
+                .iter()
+                .map(|a| [a[0], a[1], a[2], a[3]])
+                .collect(),
             capacity_pruned: pruned,
             capacity_unpruned: None,
             capacity_billiard: None,
@@ -242,7 +271,11 @@ fn main() {
     println!("  → 10 pruned = 10 capacity values\n");
 
     // Write to JSONL
-    println!("Writing {} entries to {}...", entries.len(), output_path.display());
+    println!(
+        "Writing {} entries to {}...",
+        entries.len(),
+        output_path.display()
+    );
     let file = File::create(output_path).expect("create file");
     let mut writer = BufWriter::new(file);
     for entry in &entries {
@@ -251,14 +284,24 @@ fn main() {
     }
 
     let total_pruned = entries.len();
-    let total_unpruned = entries.iter().filter(|e| e.capacity_unpruned.is_some()).count();
-    let total_billiard = entries.iter().filter(|e| e.capacity_billiard.is_some()).count();
+    let total_unpruned = entries
+        .iter()
+        .filter(|e| e.capacity_unpruned.is_some())
+        .count();
+    let total_billiard = entries
+        .iter()
+        .filter(|e| e.capacity_billiard.is_some())
+        .count();
 
     println!("\n✓ Dataset complete:");
     println!("  Polytopes: {}", entries.len());
-    println!("  Capacity values: {} pruned + {} unpruned + {} billiard = {} total",
-             total_pruned, total_unpruned, total_billiard,
-             total_pruned + total_unpruned + total_billiard);
+    println!(
+        "  Capacity values: {} pruned + {} unpruned + {} billiard = {} total",
+        total_pruned,
+        total_unpruned,
+        total_billiard,
+        total_pruned + total_unpruned + total_billiard
+    );
 }
 
 fn apply_symplectomorphism(p: &Polytope4D, m: &Matrix4<f64>) -> Polytope4D {
@@ -302,12 +345,14 @@ mod tests {
     const TOL: f64 = 1e-6;
 
     fn load_dataset() -> Vec<VerificationEntry> {
-        let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-            .join("correctness/correctness.jsonl");
-        let file = File::open(&path)
-            .expect("Run `cargo run -p dev-capacity-validation --release --bin axioms-correctness` first");
+        let path =
+            std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("correctness/correctness.jsonl");
+        let file = File::open(&path).expect(
+            "Run `cargo run -p dev-capacity-validation --release --bin axioms-correctness` first",
+        );
         let reader = BufReader::new(file);
-        reader.lines()
+        reader
+            .lines()
             .map(|line| {
                 let line_str = line.expect("read line");
                 serde_json::from_str::<VerificationEntry>(&line_str).expect("parse")
@@ -325,44 +370,68 @@ mod tests {
         for entry in base {
             let pruned = entry.capacity_pruned;
             let unpruned = entry.capacity_unpruned.expect("unpruned missing");
-            assert!((pruned - unpruned).abs() / pruned < TOL,
-                "{}: pruned≠unpruned", entry.name);
+            assert!(
+                (pruned - unpruned).abs() / pruned < TOL,
+                "{}: pruned≠unpruned",
+                entry.name
+            );
 
             if let Some(bil) = entry.capacity_billiard {
-                assert!((pruned - bil).abs() / pruned < TOL,
-                    "{}: pruned≠billiard", entry.name);
+                assert!(
+                    (pruned - bil).abs() / pruned < TOL,
+                    "{}: pruned≠billiard",
+                    entry.name
+                );
                 billiard_count += 1;
             }
         }
-        assert_eq!(billiard_count, 5, "Expected exactly 5 Lagrangian products with billiard values");
+        assert_eq!(
+            billiard_count, 5,
+            "Expected exactly 5 Lagrangian products with billiard values"
+        );
     }
 
     #[test]
     fn test_2_literature() {
         let dataset = load_dataset();
-        let lit: Vec<_> = dataset.iter().filter(|e| e.test_group == "literature").collect();
+        let lit: Vec<_> = dataset
+            .iter()
+            .filter(|e| e.test_group == "literature")
+            .collect();
         assert_eq!(lit.len(), 7, "Expected 7 literature polytopes");
 
         let mut billiard_count = 0;
         for entry in lit {
             let expected = entry.expected_capacity.expect("expected missing");
-            assert!((entry.capacity_pruned - expected).abs() / expected < TOL,
-                "{}: computed≠published", entry.name);
+            assert!(
+                (entry.capacity_pruned - expected).abs() / expected < TOL,
+                "{}: computed≠published",
+                entry.name
+            );
 
             if let Some(bil) = entry.capacity_billiard {
-                assert!((bil - expected).abs() / expected < TOL,
-                    "{}: billiard≠published", entry.name);
+                assert!(
+                    (bil - expected).abs() / expected < TOL,
+                    "{}: billiard≠published",
+                    entry.name
+                );
                 billiard_count += 1;
             }
         }
-        assert_eq!(billiard_count, 4, "Expected exactly 4 Lagrangian products with billiard values");
+        assert_eq!(
+            billiard_count, 4,
+            "Expected exactly 4 Lagrangian products with billiard values"
+        );
     }
 
     #[test]
     fn test_3_conformality() {
         let dataset = load_dataset();
         let base: Vec<_> = dataset.iter().filter(|e| e.test_group == "base").collect();
-        let scaled: Vec<_> = dataset.iter().filter(|e| e.test_group == "scaled").collect();
+        let scaled: Vec<_> = dataset
+            .iter()
+            .filter(|e| e.test_group == "scaled")
+            .collect();
         assert_eq!(scaled.len(), 10, "Expected 10 scaled polytopes");
 
         let mut billiard_count = 0;
@@ -370,32 +439,51 @@ mod tests {
             let base_entry = &base[entry.base_index.unwrap()];
             let alpha = entry.alpha.unwrap();
             let expected = alpha * alpha * base_entry.capacity_pruned;
-            assert!((entry.capacity_pruned - expected).abs() / expected < TOL,
-                "{}: c(αK)≠α²c(K)", entry.name);
+            assert!(
+                (entry.capacity_pruned - expected).abs() / expected < TOL,
+                "{}: c(αK)≠α²c(K)",
+                entry.name
+            );
 
             // If base has billiard, scaled should too (and satisfy conformality)
             if let Some(base_bil) = base_entry.capacity_billiard {
-                let bil = entry.capacity_billiard.expect("scaled Lagrangian missing billiard");
+                let bil = entry
+                    .capacity_billiard
+                    .expect("scaled Lagrangian missing billiard");
                 let expected_bil = alpha * alpha * base_bil;
-                assert!((bil - expected_bil).abs() / expected_bil < TOL,
-                    "{}: billiard c(αK)≠α²c(K)", entry.name);
+                assert!(
+                    (bil - expected_bil).abs() / expected_bil < TOL,
+                    "{}: billiard c(αK)≠α²c(K)",
+                    entry.name
+                );
                 billiard_count += 1;
             }
         }
-        assert_eq!(billiard_count, 5, "Expected exactly 5 scaled Lagrangian products with billiard");
+        assert_eq!(
+            billiard_count, 5,
+            "Expected exactly 5 scaled Lagrangian products with billiard"
+        );
     }
 
     #[test]
     fn test_4_symplectic_invariance() {
         let dataset = load_dataset();
         let base: Vec<_> = dataset.iter().filter(|e| e.test_group == "base").collect();
-        let transformed: Vec<_> = dataset.iter().filter(|e| e.test_group == "transformed").collect();
+        let transformed: Vec<_> = dataset
+            .iter()
+            .filter(|e| e.test_group == "transformed")
+            .collect();
         assert_eq!(transformed.len(), 10);
 
         for entry in transformed {
             let base_entry = &base[entry.base_index.unwrap()];
-            assert!((entry.capacity_pruned - base_entry.capacity_pruned).abs() / base_entry.capacity_pruned < TOL,
-                "{}: c(MK)≠c(K)", entry.name);
+            assert!(
+                (entry.capacity_pruned - base_entry.capacity_pruned).abs()
+                    / base_entry.capacity_pruned
+                    < TOL,
+                "{}: c(MK)≠c(K)",
+                entry.name
+            );
         }
     }
 
@@ -403,14 +491,22 @@ mod tests {
     fn test_5_continuity() {
         let dataset = load_dataset();
         let base: Vec<_> = dataset.iter().filter(|e| e.test_group == "base").collect();
-        let perturbed: Vec<_> = dataset.iter().filter(|e| e.test_group == "perturbed").collect();
+        let perturbed: Vec<_> = dataset
+            .iter()
+            .filter(|e| e.test_group == "perturbed")
+            .collect();
         assert_eq!(perturbed.len(), 10);
 
         for entry in perturbed {
             let base_entry = &base[entry.base_index.unwrap()];
-            let rel_change = (entry.capacity_pruned - base_entry.capacity_pruned).abs() / base_entry.capacity_pruned;
-            assert!(rel_change < 0.1, "{}: 1% perturbation → {:.1}% change",
-                entry.name, rel_change * 100.0);
+            let rel_change = (entry.capacity_pruned - base_entry.capacity_pruned).abs()
+                / base_entry.capacity_pruned;
+            assert!(
+                rel_change < 0.1,
+                "{}: 1% perturbation → {:.1}% change",
+                entry.name,
+                rel_change * 100.0
+            );
         }
     }
 
@@ -421,16 +517,26 @@ mod tests {
 
         for i in 0..dataset.len() {
             for j in 0..dataset.len() {
-                if i == j { continue; }
+                if i == j {
+                    continue;
+                }
                 let k1 = &dataset[i];
                 let k2 = &dataset[j];
 
                 let p1 = Polytope4D::from_f64(
-                    k1.dual_vertices.iter().map(|a| Vector4::from_row_slice(a)).collect(),
-                ).expect("p1");
+                    k1.dual_vertices
+                        .iter()
+                        .map(|a| Vector4::from_row_slice(a))
+                        .collect(),
+                )
+                .expect("p1");
                 let p2 = Polytope4D::from_f64(
-                    k2.dual_vertices.iter().map(|a| Vector4::from_row_slice(a)).collect(),
-                ).expect("p2");
+                    k2.dual_vertices
+                        .iter()
+                        .map(|a| Vector4::from_row_slice(a))
+                        .collect(),
+                )
+                .expect("p2");
 
                 // Containment check: a · v ≤ 1 for all dual vertices a of K2
                 // α_max = min over v,a of 1 / (a · v) when a · v > 0
@@ -446,8 +552,12 @@ mod tests {
 
                 if alpha_max > 0.1 && alpha_max < f64::INFINITY {
                     let scaled_cap = alpha_max * alpha_max * k1.capacity_pruned;
-                    assert!(scaled_cap <= k2.capacity_pruned + TOL,
-                        "{}⊂{}: α²c(K1)>c(K2)", k1.name, k2.name);
+                    assert!(
+                        scaled_cap <= k2.capacity_pruned + TOL,
+                        "{}⊂{}: α²c(K1)>c(K2)",
+                        k1.name,
+                        k2.name
+                    );
                     tested += 1;
                 }
             }

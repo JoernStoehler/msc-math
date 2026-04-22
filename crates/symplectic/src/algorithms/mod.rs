@@ -22,22 +22,15 @@
 //!   adjacency matrices for permutation pruning.
 //! - `orbit_search` — shared result-layer types for HK2017-family frontends.
 
-pub mod facet_adjacency;
-pub mod orbit_search;
-pub mod hk2017;
 pub mod billiard;
+pub mod facet_adjacency;
+pub mod hk2017;
+pub mod orbit_search;
 #[cfg(test)]
 mod tube;
 
 pub use orbit_search::{
-    aggregate_orbits,
-    GeometricOrbitError,
-    OrbitAdmissibility,
-    OrbitGuaranteeMode,
-    OrbitKktData,
-    OrbitSearchError,
-    OrbitSearchResult,
+    aggregate_orbits, solve_orbit_sigma, GeometricOrbitError, OrbitAdmissibility,
+    OrbitGuaranteeMode, OrbitKktData, OrbitSearchError, OrbitSearchResult, OrbitSolveBackend,
     OrbitSolveError,
-    OrbitSolveBackend,
-    solve_orbit_sigma,
 };

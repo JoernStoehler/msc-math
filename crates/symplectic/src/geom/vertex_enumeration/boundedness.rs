@@ -7,10 +7,10 @@ use num_rational::BigRational;
 use num_traits::{Signed, Zero};
 
 #[cfg(test)]
+use super::exact_linalg::rank_over_q;
+#[cfg(test)]
 use super::exact_linalg::test_support::{cross_product_4d_rational, dot4};
 use super::exact_linalg::{cross_product_4d_int, dot4_int, rank_int};
-#[cfg(test)]
-use super::exact_linalg::rank_over_q;
 use crate::geom::polytope::ConstructionError;
 
 /// f64 pre-filter for a single triple in the bounded check.

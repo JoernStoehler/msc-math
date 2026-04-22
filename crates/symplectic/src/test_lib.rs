@@ -6,7 +6,8 @@ use super::*;
 fn top_level_capacity_matches_billiard_on_lagrangian_products() {
     let kp = known_polytopes::lagrangian_triangle_product();
     let auto = ehz_capacity(&kp.polytope).expect("auto capacity");
-    let billiard = ehz_capacity_billiard(&kp.polytope).expect("billiard should accept Lagrangian product");
+    let billiard =
+        ehz_capacity_billiard(&kp.polytope).expect("billiard should accept Lagrangian product");
 
     assert!(
         (auto.capacity() - billiard.capacity()).abs() < 1e-10,

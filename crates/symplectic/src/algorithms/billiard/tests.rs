@@ -74,7 +74,10 @@ fn triangle_product_orbit_aggregation() {
     )
     .expect("billiard orbit aggregation should succeed");
 
-    assert!(!result.orbits.is_empty(), "collector must return at least one orbit");
+    assert!(
+        !result.orbits.is_empty(),
+        "collector must return at least one orbit"
+    );
     assert!(result.min_action_lower <= result.min_action_upper);
 }
 
@@ -85,9 +88,8 @@ fn triangle_product_orbit_aggregation() {
 #[ignore] // 50k KKT solves -- slow in debug, run with --release --ignored
 fn hko_pentagon_capacity() {
     let kp = known_polytopes::hko_pentagon();
-    let expected = 2.0
-        * (std::f64::consts::PI / 10.0).cos()
-        * (1.0 + (std::f64::consts::PI / 5.0).cos());
+    let expected =
+        2.0 * (std::f64::consts::PI / 10.0).cos() * (1.0 + (std::f64::consts::PI / 5.0).cos());
     assert_capacity("hko_pentagon", &kp.polytope, expected, 1e-6);
 }
 
@@ -174,7 +176,10 @@ fn agrees_with_hk2017_hko_pentagon() {
 fn rejects_non_lagrangian_product() {
     let kp = known_polytopes::simplex();
     let result = for_each_sigma(&kp.polytope, |_| {});
-    assert!(result.is_err(), "simplex should not be a Lagrangian product");
+    assert!(
+        result.is_err(),
+        "simplex should not be a Lagrangian product"
+    );
 }
 
 /// Verify billiard algorithm rejects the symplectic triangle product
@@ -232,7 +237,10 @@ fn assert_result_properties(
         assert!(b > 0.0, "{}: beta[{}] = {:.2e} <= 0", name, i, b);
     }
 
-    assert!(result.capacity() > 0.0, "{name}: billiard capacity should be positive");
+    assert!(
+        result.capacity() > 0.0,
+        "{name}: billiard capacity should be positive"
+    );
 }
 
 /// Verify structural properties of the shared result surface on small
@@ -263,11 +271,15 @@ fn lagrangian_test_cases_fast() -> Vec<(&'static str, crate::geom::polytope::Pol
         ("hypercube", known_polytopes::hypercube().polytope.clone()),
         (
             "triangle_product",
-            known_polytopes::lagrangian_triangle_product().polytope.clone(),
+            known_polytopes::lagrangian_triangle_product()
+                .polytope
+                .clone(),
         ),
         (
             "triangle_square",
-            known_polytopes::lagrangian_triangle_square().polytope.clone(),
+            known_polytopes::lagrangian_triangle_square()
+                .polytope
+                .clone(),
         ),
     ]
 }

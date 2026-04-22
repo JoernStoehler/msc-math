@@ -193,7 +193,9 @@ fn parse_run_paths(manifest_dir: &Path) -> RunPaths {
 }
 
 fn print_help_and_exit() -> ! {
-    eprintln!("Usage: cargo run -p dev-capacity-validation --release --bin axioms-all-minimum [--full]");
+    eprintln!(
+        "Usage: cargo run -p dev-capacity-validation --release --bin axioms-all-minimum [--full]"
+    );
     eprintln!("  default: write untracked smoke outputs for infrastructure checks");
     eprintln!("  --full: refresh the canonical local-first all-minimum dataset");
     std::process::exit(2);
@@ -249,7 +251,8 @@ fn validate_target(target: &Target) -> (AllMinimumSummaryRow, Vec<AllMinimumOrbi
     summary.min_action = Some(minimum_result.min_action);
     summary.min_action_lower = Some(minimum_result.min_action_lower);
     summary.min_action_upper = Some(minimum_result.min_action_upper);
-    summary.interval_width = Some(minimum_result.min_action_upper - minimum_result.min_action_lower);
+    summary.interval_width =
+        Some(minimum_result.min_action_upper - minimum_result.min_action_lower);
     summary.observed_action_max = Some(minimum_result.observed_action_max);
     summary.observed_action_spread = Some(minimum_result.observed_action_spread);
     summary.admissible_f64_count = Some(
@@ -310,7 +313,9 @@ fn validate_target(target: &Target) -> (AllMinimumSummaryRow, Vec<AllMinimumOrbi
     }
 
     if summary.scalar_matches == Some(false) {
-        summary.failure_stage.get_or_insert_with(|| "scalar".to_string());
+        summary
+            .failure_stage
+            .get_or_insert_with(|| "scalar".to_string());
         summary.failure_reasons.push(format!(
             "scalar capacity mismatch: |{} - {}| = {:.2e}",
             summary.min_action.unwrap_or(f64::NAN),
@@ -319,7 +324,9 @@ fn validate_target(target: &Target) -> (AllMinimumSummaryRow, Vec<AllMinimumOrbi
         ));
     }
     if summary.count_matches_expected == Some(false) {
-        summary.failure_stage.get_or_insert_with(|| "validation".to_string());
+        summary
+            .failure_stage
+            .get_or_insert_with(|| "validation".to_string());
         summary.failure_reasons.push(format!(
             "expected {} minimum orbits, got {}",
             target.expected_min_orbit_count.unwrap_or(0),
