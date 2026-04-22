@@ -6,6 +6,7 @@
 //! Local cell geometry experiments now live in exp-combinatorial-cells.
 
 pub mod datasets;
+pub mod features;
 
 use good_lp::{constraint, default_solver, variable, variables, Expression, Solution, SolverModel};
 use nalgebra::{Matrix4, Vector4};
