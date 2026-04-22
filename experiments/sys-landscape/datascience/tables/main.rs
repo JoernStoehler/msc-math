@@ -6,6 +6,7 @@
 mod features;
 mod features_trace;
 mod load_caches;
+mod rows;
 mod write_database;
 
 fn main() {

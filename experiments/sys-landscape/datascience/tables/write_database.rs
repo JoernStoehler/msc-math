@@ -1,7 +1,6 @@
 //! Write the final datascience tables.
 
-use crate::features::PolytopeTableRow;
-use crate::features_trace::ObservationTableRow;
+use crate::rows::{ObservationTableRow, PolytopeTableRow};
 use serde::Serialize;
 use std::fs::File;
 use std::io::{BufWriter, Write};
