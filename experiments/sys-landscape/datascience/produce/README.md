@@ -33,7 +33,8 @@ Current committed producer artifacts:
 - `sys-dataset-ascent-product` writes `ascent-product.jsonl` and `ascent-product-trace.jsonl`.
 - `sys-dataset-continuation` writes `continuation.jsonl` and `continuation-cache.jsonl`.
 
-The legacy packet directories remain in place until later cleanup removes or archives them.
+Older `sys-landscape` experiment directories still exist outside `datascience/`, but
+this directory is the maintained producer surface for the datascience pipeline.
 
 ## Smoke Path
 

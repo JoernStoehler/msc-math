@@ -641,7 +641,7 @@ def write_summary(
             "- `orbit_combinatorics`: cached-`best_sigma` support-size and cycle-structure summaries",
             "- `orbit_geometry`: sigma-local dual-norm and cycle `omega_0` magnitude summaries",
             "- `orbit_search`: bounded best-orbit KKT and search-scalar availability summaries",
-            "- `orbit`: the legacy merged orbit packet kept as a reference aggregate",
+            "- `orbit`: the merged orbit packet kept as a reference aggregate",
             "- `trajectory`: endpoint-keyed step-event aggregates such as overshoot mix, phase restarts, and gradient/step-size summaries",
             "- `all`: metadata, geometry, face_geometry, face_symplectic, skeleton, omega, orbit_combinatorics, orbit_geometry, orbit_search, orbit, and trajectory together",
             "",

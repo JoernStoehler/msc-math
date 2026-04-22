@@ -13,8 +13,6 @@ use std::path::{Path, PathBuf};
 use std::time::{SystemTime, UNIX_EPOCH};
 use symplectic::database::{load_many, OrbitScalars, PolytopeRecord, SigmaAction};
 
-type VariableFRow = ResultRow;
-
 #[derive(Clone)]
 pub struct LoadedPolytopeRow {
     pub poly_id: String,
@@ -149,7 +147,7 @@ pub fn parse_args() -> DatasetPaths {
             .get(i + 1)
             .unwrap_or_else(|| panic!("{flag} requires a value"));
         match flag {
-            "--produce-dir" | "--raw-dir" => {
+            "--produce-dir" => {
                 let dir = PathBuf::from(value);
                 random_sample = dir.join("random.jsonl");
                 random_product = dir.join("random-product.jsonl");
@@ -304,7 +302,7 @@ fn ensure_polytope(
     orbit_payloads: &HashMap<String, OrbitPayload>,
     dual_vertices_rational: Vec<[String; 4]>,
     facet_count: usize,
-    fallback_capacity: f64,
+    reported_capacity: f64,
     volume: f64,
     sys: f64,
     capacity_iterations: Option<u64>,
@@ -314,7 +312,7 @@ fn ensure_polytope(
     let orbit_payload = orbit_payloads.get(&poly_id);
     let capacity = orbit_payload
         .and_then(|row| row.capacity)
-        .unwrap_or(fallback_capacity);
+        .unwrap_or(reported_capacity);
     match polytopes.get_mut(&poly_id) {
         Some(existing) => {
             if existing.capacity_iterations.is_none() {
@@ -613,7 +611,7 @@ fn load_continuation_rows(
     observations: &mut Vec<LoadedObservationRow>,
     orbit_payloads: &HashMap<String, OrbitPayload>,
 ) {
-    for row in read_jsonl::<VariableFRow>(path) {
+    for row in read_jsonl::<ResultRow>(path) {
         let poly_id = ensure_polytope(
             polytopes,
             orbit_payloads,
