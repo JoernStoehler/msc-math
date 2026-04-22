@@ -31,8 +31,8 @@ use symplectic::{OrbitAdmissibility, OrbitKktData, OrbitSearchResult};
 pub use datasets::{
     canonical_dataset_cache_path, canonical_dataset_path, canonical_dataset_trace_path,
     continuation_cache_path, dataset_path, datasets_root, family_dir, legacy_experiment_path,
-    package_root, shared_family_cache_path, DatasetFamily, DatasetRole, DatasetSpec,
-    HkoProximity,
+    package_root, raw_dataset_cache_path, raw_dataset_path, raw_dataset_trace_path, raw_root,
+    shared_family_cache_path, DatasetFamily, DatasetRole, DatasetSpec, HkoProximity,
 };
 
 // ============================================================================

@@ -68,23 +68,67 @@ path = "pentagon-rotation-formula/main.rs"
 
 [[bin]]
 name = "sys-dataset-random"
-path = "datasets/random.rs"
+path = "raw/random.rs"
 
 [[bin]]
 name = "sys-dataset-random-product"
-path = "datasets/random-product.rs"
+path = "raw/random-product.rs"
 
 [[bin]]
 name = "sys-dataset-ascent"
-path = "datasets/ascent.rs"
+path = "raw/ascent.rs"
 
 [[bin]]
 name = "sys-dataset-ascent-product"
-path = "datasets/ascent-product.rs"
+path = "raw/ascent-product.rs"
 
 [[bin]]
 name = "sys-dataset-continuation"
-path = "datasets/continuation.rs"
+path = "raw/continuation.rs"
+
+[[bin]]
+name = "sys-dataset-normalized"
+path = "datasets/normalized.rs"
+
+[[bin]]
+name = "sys-dataset-feature-skeleton"
+path = "datasets/feature-skeleton.rs"
+
+[[bin]]
+name = "sys-dataset-feature-face-geometry"
+path = "datasets/feature-face-geometry.rs"
+
+[[bin]]
+name = "sys-dataset-feature-face-symplectic"
+path = "datasets/feature-face-symplectic.rs"
+
+[[bin]]
+name = "sys-dataset-feature-omega"
+path = "datasets/feature-omega.rs"
+
+[[bin]]
+name = "sys-dataset-feature-orbit"
+path = "datasets/feature-orbit.rs"
+
+[[bin]]
+name = "sys-dataset-feature-trajectory"
+path = "datasets/feature-trajectory.rs"
+
+[[bin]]
+name = "sys-dataset-feature-capacity"
+path = "datasets/feature-capacity.rs"
+
+[[bin]]
+name = "sys-dataset-feature-volume"
+path = "datasets/feature-volume.rs"
+
+[[bin]]
+name = "sys-dataset-feature-sys"
+path = "datasets/feature-sys.rs"
+
+[[bin]]
+name = "sys-dataset-feature-dual-vertices"
+path = "datasets/feature-dual-vertices.rs"
 
 [lints]
 workspace = true

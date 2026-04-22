@@ -19,13 +19,12 @@
 //! Flags: --fresh  (clear existing data and rerun)
 //!        --smoke  (run one bounded probe against temp output/cache)
 //!        --out <path>  (override output JSONL path)
-//! Input Artifacts: experiments/sys-landscape/datasets/ascent.jsonl
-//! Output Artifacts: experiments/sys-landscape/datasets/continuation.jsonl
-//!         experiments/sys-landscape/datasets/continuation-cache.jsonl
+//! Input Artifacts: experiments/sys-landscape/raw/ascent.jsonl
+//! Output Artifacts: experiments/sys-landscape/raw/continuation.jsonl
+//!         experiments/sys-landscape/raw/continuation-cache.jsonl
 
 use exp_sys_landscape::{
-    canonical_dataset_cache_path, canonical_dataset_path, compute_step_bound,
-    orbit_scalars_from_result,
+    compute_step_bound, orbit_scalars_from_result, raw_dataset_cache_path, raw_dataset_path,
 };
 use nalgebra::Vector4;
 use num_rational::BigRational;
@@ -644,7 +643,7 @@ fn smoke_run(
     println!("Smoke mode: temp output {}", output_path.display());
     println!("Smoke mode: temp cache   {}", cache_path.display());
 
-    let ga_path = canonical_dataset_path("ascent");
+    let ga_path = raw_dataset_path("ascent");
     let local_maxima = load_local_maxima(&ga_path);
     println!(
         "Smoke mode: loaded {} local maxima from {}",
@@ -730,7 +729,7 @@ fn smoke_run(
 
 fn main() {
     let t_global = Instant::now();
-    let default_output_path = canonical_dataset_path("continuation");
+    let default_output_path = raw_dataset_path("continuation");
 
     println!("dataset-continuation: variable-F continuation experiment\n");
 
@@ -767,7 +766,7 @@ fn main() {
     } else {
         (
             out_path.unwrap_or(default_output_path),
-            canonical_dataset_cache_path("continuation"),
+            raw_dataset_cache_path("continuation"),
         )
     };
 
@@ -825,10 +824,10 @@ fn main() {
     println!("=== RQ1: Improving F=10 local maxima in F=11 space ===\n");
 
     // Load local maxima from the canonical ascent dataset.
-    let ga_path = canonical_dataset_path("ascent");
+    let ga_path = raw_dataset_path("ascent");
     let local_maxima = load_local_maxima(&ga_path);
     println!(
-        "Loaded {} local maxima from datasets/ascent.jsonl.\n",
+        "Loaded {} local maxima from raw/ascent.jsonl.\n",
         local_maxima.len()
     );
 

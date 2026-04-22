@@ -1,13 +1,14 @@
 # Sys-Landscape Methods
 
 This directory is reserved for consumer-side method scripts that read one or more
-produced dataset surfaces under `experiments/sys-landscape/`.
+dataset tables under `experiments/sys-landscape/`.
 
 Target rule:
-- dataset producers own raw/derived JSONLs;
-- method scripts do not create competing canonical datasets;
-- a method may consume several producer families at once through the normalized
-  join layer or explicit dataset paths.
+- `raw/` owns geometry/witness corpus and generator traces;
+- `datasets/` owns join tables and durable feature blocks;
+- method scripts do not create competing canonical geometry datasets;
+- a method may consume several dataset tables at once and perform its own
+  filtering, centering, or design-matrix construction locally.
 
 Current status:
 - legacy consumer scripts such as `feature-pattern-search/analyze.py` still live

@@ -1,35 +1,36 @@
 # Sys-Landscape Datasets
 
-This directory is the flat dataset-layer surface for `experiments/sys-landscape/`.
+This directory is the flat datascience-ready table layer for `experiments/sys-landscape/`.
 
 Current rule:
-- producer executables own tracked data;
-- consumer/method scripts should read produced datasets instead of rebuilding them;
-- shared domain logic lives in `experiments/sys-landscape/src/lib.rs`;
-- canonical output names in this directory follow `name.jsonl`, `name-trace.jsonl`, `name-cache.jsonl`, and transient smoke names `smoke-name.jsonl`.
+- `raw/` owns the expensive geometry/witness corpus and generator traces;
+- `datasets/` owns datascience-ready tables and durable feature blocks;
+- consumer/method scripts should read dataset tables instead of rebuilding geometry;
+- shared path helpers live in `experiments/sys-landscape/src/datasets.rs`.
 
-The current legacy producer folders stay in place until a later cleanup pass removes or archives them.
+The current dataset binaries still mostly reuse legacy packet code under `normalized-dataset/` and `feature-*/`. The flat naming layer exists now so later cleanup can remove the legacy packets without changing the public surface again.
 
-## Canonical Producers
+## Flat Dataset Producers
 
-| Canonical file stem | Producer entrypoint | Legacy source | Notes |
-| --- | --- | --- | --- |
-| `random` | `datasets/random.rs` | `random-sample/main.rs` | generic random baseline |
-| `random-product` | `datasets/random-product.rs` | `random-product-sample/main.rs` | product baseline |
-| `ascent` | `datasets/ascent.rs` | `gradient-ascent-general/main.rs` | fixed-`F` general ascent |
-| `ascent-product` | `datasets/ascent-product.rs` | `gradient-ascent-products/main.rs` | fixed-`F` product ascent |
-| `continuation` | `datasets/continuation.rs` | `variable-f-ascent/main.rs` | variable-`F` continuation surface |
-
-The following producers remain legacy-only for now:
-- `rejection-calibration/`
-- `rotated-regular-products/`
-- `normalized-dataset/`
-- `feature-*/`
+| Flat binary | Backing code today | Role |
+| --- | --- | --- |
+| `sys-dataset-normalized` | `normalized-dataset/main.rs` | join raw corpus into stable tables |
+| `sys-dataset-feature-skeleton` | `feature-skeleton/main.rs` | combinatorial feature block |
+| `sys-dataset-feature-dual-vertices` | `datasets/feature-dual-vertices.rs` | floating-point dual-vertex block |
+| `sys-dataset-feature-capacity` | `datasets/feature-capacity.rs` | scalar capacity block |
+| `sys-dataset-feature-volume` | `datasets/feature-volume.rs` | scalar volume block |
+| `sys-dataset-feature-sys` | `datasets/feature-sys.rs` | scalar systolic-ratio block |
+| `sys-dataset-feature-face-geometry` | `feature-face-geometry/main.rs` | Euclidean face-geometry block |
+| `sys-dataset-feature-face-symplectic` | `feature-face-symplectic/main.rs` | symplectic face block |
+| `sys-dataset-feature-omega` | `feature-omega/main.rs` | omega / sign pattern block |
+| `sys-dataset-feature-orbit` | `feature-orbit/main.rs` | orbit / sigma-derived block |
+| `sys-dataset-feature-trajectory` | `feature-trajectory/main.rs` | ascent trace summary block |
 
 ## Planned Consumer Split
 
 The intended long-run split is:
-- `datasets/`: producer-side surfaces and derived join tables
+- `raw/`: cache-worthy geometry and witness corpus
+- `datasets/`: datascience-ready tables
 - `methods/`: consumer-side modeling, exploratory analysis, and comparison scripts
 
-Today the consumer side still lives partly in legacy folders such as `feature-pattern-search/`. That is acceptable while the new producer surface and canonical dataset names are still settling.
+Today the consumer side still lives partly in legacy folders such as `feature-pattern-search/`. That is acceptable while the dataset-table surface settles.

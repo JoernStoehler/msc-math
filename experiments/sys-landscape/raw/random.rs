@@ -3,18 +3,18 @@
 //! Goal: Compute systolic ratios for random 4D polytopes across facet counts F=5..12,
 //!   to probe whether random generic polytopes approach the Viterbo threshold.
 //! Input Artifacts: experiments/sys-landscape/cache.jsonl
-//! Output Artifacts: experiments/sys-landscape/datasets/random.jsonl,
+//! Output Artifacts: experiments/sys-landscape/raw/random.jsonl,
 //!         experiments/sys-landscape/cache.jsonl
 //!
 //! Architecture:
 //! 1. Bare `cargo run -p exp-sys-landscape --release --bin sys-dataset-random`
 //!    is a smoke/default run: it writes temp output + temp cache under `/tmp`.
 //! 2. Canonical refreshes pass explicit repo-owned paths, e.g.
-//!    `--out experiments/sys-landscape/datasets/random.jsonl`
+//!    `--out experiments/sys-landscape/raw/random.jsonl`
 //!    and `--cache experiments/sys-landscape/cache.jsonl`.
 //! 3. Polytopes are generated via `generate_polytope` (blake3 per-attempt seeding)
 //!    and cached in the sys-landscape family cache. Re-runs skip generation + capacity.
-//! 4. Canonical runs write to `datasets/random.jsonl`
+//! 4. Canonical runs write to `raw/random.jsonl`
 //! 5. Legacy plotting scripts can still consume the historical packet until migrated.
 //!
 //! Dataset design:

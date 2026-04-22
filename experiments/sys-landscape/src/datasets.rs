@@ -1,10 +1,10 @@
-//! Dataset-family registry for the sys-landscape producer surface.
+//! Sys-landscape data-layout helpers.
 //!
-//! This module does not move tracked artifacts yet. It gives the package a
-//! central vocabulary for the maintained dataset families, their current
-//! producer directories, and their modeling role/provenance. Future
-//! refactors can move folders mechanically after callers already depend on
-//! these helpers instead of repeating path literals.
+//! The project currently has overlapping legacy packets and newer flat entry
+//! points. This module centralizes the repo paths used by:
+//! - raw cache-worthy corpus producers;
+//! - datascience-ready table producers;
+//! - legacy packet locations that still back some of the flat binaries.
 
 use std::path::PathBuf;
 
@@ -191,6 +191,22 @@ pub fn continuation_cache_path() -> PathBuf {
 
 pub fn datasets_root() -> PathBuf {
     package_root().join("datasets")
+}
+
+pub fn raw_root() -> PathBuf {
+    package_root().join("raw")
+}
+
+pub fn raw_dataset_path(stem: &str) -> PathBuf {
+    raw_root().join(format!("{stem}.jsonl"))
+}
+
+pub fn raw_dataset_trace_path(stem: &str) -> PathBuf {
+    raw_root().join(format!("{stem}-trace.jsonl"))
+}
+
+pub fn raw_dataset_cache_path(stem: &str) -> PathBuf {
+    raw_root().join(format!("{stem}-cache.jsonl"))
 }
 
 pub fn canonical_dataset_path(stem: &str) -> PathBuf {

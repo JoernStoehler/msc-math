@@ -3,17 +3,17 @@
 //! Goal: Sample random Lagrangian products across polygon-pair buckets and
 //! record their systolic ratios.
 //! Input Artifacts: experiments/sys-landscape/cache.jsonl
-//! Output Artifacts: experiments/sys-landscape/datasets/random-product.jsonl,
+//! Output Artifacts: experiments/sys-landscape/raw/random-product.jsonl,
 //!         experiments/sys-landscape/cache.jsonl
 //!
 //! Architecture:
 //! 1. Bare `cargo run -p exp-sys-landscape --release --bin sys-dataset-random-product`
 //!    is a smoke/default run: it writes temp output + temp cache under `/tmp`.
 //! 2. Canonical refreshes pass explicit repo-owned paths, e.g.
-//!    `--out experiments/sys-landscape/datasets/random-product.jsonl`
+//!    `--out experiments/sys-landscape/raw/random-product.jsonl`
 //!    and `--cache experiments/sys-landscape/cache.jsonl`.
 //! 3. Polytopes are cached in the sys-landscape family cache. Re-runs skip capacity.
-//! 4. Canonical runs write to `datasets/random-product.jsonl`
+//! 4. Canonical runs write to `raw/random-product.jsonl`
 //! 5. Legacy plotting scripts can still consume the historical packet until migrated.
 //!
 //! Dataset design:

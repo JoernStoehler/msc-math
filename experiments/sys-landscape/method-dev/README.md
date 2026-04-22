@@ -9,6 +9,8 @@ Current examples:
 - `variable-f-ascent/`
 - `random-sample/`
 - `random-product-sample/`
+- `normalized-dataset/`
+- `feature-*/`
 
 These folders are not moved here yet. The point of this directory is to make the
 intended split explicit while the repo still carries overlapping old and new
