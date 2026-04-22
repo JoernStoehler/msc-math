@@ -54,7 +54,10 @@ pub fn read_jsonl<T: DeserializeOwned>(path: &Path) -> Vec<T> {
     let reader = BufReader::new(file);
     reader
         .lines()
-        .map_while(Result::ok)
+        .enumerate()
+        .map(|(idx, line)| {
+            line.unwrap_or_else(|e| panic!("read {} line {}: {e}", path.display(), idx + 1))
+        })
         .filter(|line| !line.trim().is_empty())
         .map(|line| {
             serde_json::from_str::<T>(&line)
