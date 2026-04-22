@@ -34,7 +34,11 @@ git log -1 --format='%H %ci' -- experiments/<topic>/<experiment>/main.rs
 git log -1 --format='%H %ci' -- experiments/<topic>/<experiment>/*.jsonl
 ```
 
-If code is newer than data, regenerate on this branch.
+If code is newer than data:
+
+- regenerate on this branch when the branch changes the tracked artifact contract for the same filename
+- otherwise report the dataset as stale and schedule refresh as post-merge follow-up by default
+- only treat stale generator data as a pre-merge blocker when Jörn explicitly asked for a data-refresh pass in this branch
 
 ## Phase 4: Review
 
