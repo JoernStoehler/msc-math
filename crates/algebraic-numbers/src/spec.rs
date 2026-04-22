@@ -78,6 +78,8 @@ fn validate_spec_data(
     minimal_polynomial: &[BigRational],
     interval: &(BigRational, BigRational),
 ) -> Result<(), FieldSpecError> {
+    // TODO: cite the formal field-spec validation statement once the
+    // minimal-polynomial and isolating-interval contract is written up in formal/.
     let poly = trim(minimal_polynomial.to_vec());
     if poly.iter().all(Zero::is_zero) {
         return Err(FieldSpecError::ZeroPolynomial);
@@ -179,6 +181,8 @@ fn poly_div_rem(
 }
 
 fn sturm_sequence(poly: &[BigRational]) -> Vec<Vec<BigRational>> {
+    // TODO: cite the formal Sturm-sequence statement once the root-counting
+    // argument is written up in formal/.
     let mut seq = vec![trim(poly.to_vec()), derivative(poly)];
     while !seq
         .last()
@@ -216,6 +220,8 @@ fn sign_variations_at(seq: &[Vec<BigRational>], x: &BigRational) -> usize {
 }
 
 fn sturm_root_count_between(poly: &[BigRational], lo: &BigRational, hi: &BigRational) -> usize {
+    // TODO: cite the formal Sturm root-count statement once the interval
+    // counting argument is written up in formal/.
     let seq = sturm_sequence(poly);
     sign_variations_at(&seq, lo) - sign_variations_at(&seq, hi)
 }

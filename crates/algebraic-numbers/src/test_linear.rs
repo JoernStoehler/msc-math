@@ -36,8 +36,8 @@ fn rank_rows_counts_full_and_deficient_cases() {
         vec![BigRational::from_i64(1), BigRational::from_i64(2)],
         vec![BigRational::from_i64(2), BigRational::from_i64(4)],
     ];
-    assert_eq!(rank_rows(&full_rank, 2), 2);
-    assert_eq!(rank_rows(&rank_deficient, 2), 1);
+    assert_eq!(rank_rows(&full_rank), 2);
+    assert_eq!(rank_rows(&rank_deficient), 1);
 }
 
 #[test]
@@ -83,6 +83,6 @@ fn rank_rows_is_invariant_under_row_operations() {
         ],
     ];
 
-    assert_eq!(rank_rows(&original, 3), 2);
-    assert_eq!(rank_rows(&row_equivalent, 3), 2);
+    assert_eq!(rank_rows(&original), 2);
+    assert_eq!(rank_rows(&row_equivalent), 2);
 }

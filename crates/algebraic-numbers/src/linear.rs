@@ -58,13 +58,14 @@ pub fn solve_square<const N: usize, F: OrderedField>(
 }
 
 /// Row rank of a dense matrix given as owned rows.
-pub fn rank_rows<F: OrderedField>(rows: &[Vec<F>], ncols: usize) -> usize {
+pub fn rank_rows<F: OrderedField>(rows: &[Vec<F>]) -> usize {
     if rows.is_empty() {
         return 0;
     }
 
     let mut mat = rows.to_vec();
     let m = mat.len();
+    let ncols = mat[0].len();
     let mut rank = 0usize;
 
     for col in 0..ncols {

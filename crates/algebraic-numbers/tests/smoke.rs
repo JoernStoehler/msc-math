@@ -1,6 +1,6 @@
 //! Small workflow smoke tests for the real-algebraic crate.
 
-use real_algebraic::{dot, Algebraic, OrderedField, TanPiFifth};
+use algebraic_numbers::{dot, Algebraic, OrderedField, TanPiFifth};
 
 type TanPiFifthField = Algebraic<TanPiFifth>;
 

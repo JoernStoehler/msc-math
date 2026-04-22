@@ -82,6 +82,8 @@ impl<S: StaticFieldSpec> Algebraic<S> {
             !self.coeffs.iter().all(Zero::is_zero),
             "zero has no multiplicative inverse"
         );
+        // TODO: cite the formal Bezout/invertibility statement once the
+        // algebraic-number field construction is written up in formal/.
         let modulus = normalize_monic::<S>(S::minimal_polynomial());
         let (gcd, s_coeffs, _) = poly_extended_gcd(self.coeffs.clone(), modulus.clone());
         assert!(
@@ -123,6 +125,8 @@ impl<S: StaticFieldSpec> OrderedField for Algebraic<S> {
             return Sign::Zero;
         }
 
+        // TODO: cite the formal sign-determination statement once the interval
+        // refinement argument and field-spec contract are written up in formal/.
         let modulus = normalize_monic::<S>(S::minimal_polynomial());
         let (mut lo, mut hi) = S::isolating_interval();
         let mut lo_sign = sign_rational(&eval_poly(&modulus, &lo));
@@ -514,6 +518,8 @@ fn sign_refinement_budget(
     lo: &BigRational,
     hi: &BigRational,
 ) -> usize {
+    // This is a conservative bit-height heuristic for interval refinement,
+    // not a proved optimal bound.
     let max_bits = coeffs
         .iter()
         .chain(modulus.iter())
@@ -531,17 +537,6 @@ fn rational_height_bits(value: &BigRational) -> usize {
 fn bigint_height_bits(value: &num_bigint::BigInt) -> usize {
     let digits = value.to_str_radix(2);
     digits.trim_start_matches('-').len().max(1)
-}
-
-fn poly_add(left: &[BigRational], right: &[BigRational]) -> Vec<BigRational> {
-    let len = left.len().max(right.len());
-    let mut out = vec![rat_zero(); len];
-    for idx in 0..len {
-        let l = left.get(idx).cloned().unwrap_or_else(rat_zero);
-        let r = right.get(idx).cloned().unwrap_or_else(rat_zero);
-        out[idx] = l + r;
-    }
-    trim(out)
 }
 
 fn poly_sub(left: &[BigRational], right: &[BigRational]) -> Vec<BigRational> {
@@ -631,6 +626,8 @@ fn poly_extended_gcd(
 
 fn approximate_root_f64<S: StaticFieldSpec>() -> f64 {
     assert_valid_field_spec::<S>();
+    // TODO: cite the formal uniqueness/approximation statement once the
+    // isolating-interval-to-real-root correspondence is written up in formal/.
     let modulus = normalize_monic::<S>(S::minimal_polynomial());
     let (mut lo, mut hi) = S::isolating_interval();
     let mut lo_sign = sign_rational(&eval_poly(&modulus, &lo));

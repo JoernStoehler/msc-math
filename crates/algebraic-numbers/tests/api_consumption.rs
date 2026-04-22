@@ -4,7 +4,7 @@
 //! fail until the crate surface is implemented.
 
 use num_rational::BigRational;
-use real_algebraic::{
+use algebraic_numbers::{
     canonical_element, cmp_field, dot, max_field, min_field, solve_square, validate_field_spec,
     Algebraic, FieldSpecError, OrderedField, Sign, SolveResult, StaticFieldSpec, TanPiFifth,
 };
@@ -164,7 +164,7 @@ fn canonical_serialization_is_stable_and_readable() {
     assert_eq!(encoded.coeffs.len(), 2);
 
     let json = serde_json::to_string(&encoded).expect("serialize canonical element");
-    let decoded = serde_json::from_str::<real_algebraic::CanonicalElement>(&json)
+    let decoded = serde_json::from_str::<algebraic_numbers::CanonicalElement>(&json)
         .expect("deserialize canonical element");
     assert_eq!(decoded, encoded);
 }

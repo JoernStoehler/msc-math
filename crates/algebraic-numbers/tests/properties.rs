@@ -2,7 +2,7 @@
 
 use num_rational::BigRational;
 use proptest::prelude::*;
-use real_algebraic::{solve_square, Algebraic, OrderedField, SolveResult, StaticFieldSpec};
+use algebraic_numbers::{solve_square, Algebraic, OrderedField, SolveResult, StaticFieldSpec};
 
 struct SqrtTwo;
 
