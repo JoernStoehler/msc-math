@@ -15,7 +15,6 @@
 //!    refreshes `sage-feasibility-input.jsonl`.
 
 use algebraic_numbers::{canonical_element, CanonicalElement, OrderedField};
-use dev_numerical_analysis::algebraic::field::ExactOrderedField;
 use dev_numerical_analysis::algebraic::fixtures::exact_hko_pentagon;
 use nalgebra::Vector4;
 use num_bigint::BigInt;
