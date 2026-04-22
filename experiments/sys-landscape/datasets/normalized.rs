@@ -24,7 +24,7 @@
 //!
 //! Source-priority rule for exact geometry:
 //! 1. exact cache records
-//! 2. exact dual-vertex payloads on summary rows, if they identify a cached polytope
+//! 2. exact dual-vertex payloads on summary rows
 //! 3. legacy `f64` dual-vertex matching into the exact caches
 //!
 //! The converter does not invent intermediate geometry. `step_events.jsonl`
@@ -35,6 +35,7 @@ use exp_sys_landscape::{
     package_root, raw_dataset_cache_path, raw_dataset_path, raw_dataset_trace_path,
     rational_vec4_to_strings, SummaryRow, TraceRow,
 };
+use num_bigint::BigInt;
 use num_rational::BigRational;
 use num_traits::ToPrimitive;
 use serde::de::DeserializeOwned;
@@ -43,9 +44,11 @@ use std::collections::HashMap;
 use std::fs::File;
 use std::io::{BufRead, BufReader, BufWriter, Write};
 use std::path::{Path, PathBuf};
+use std::str::FromStr;
 use std::time::{SystemTime, UNIX_EPOCH};
 use symplectic::database::{load, PolytopeRecord};
 use symplectic::ehz_capacity;
+use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::volume::volume;
 
 const MATCH_TOLERANCE: f64 = 1e-9;
@@ -212,6 +215,7 @@ struct DatasetPaths {
     products_summary: PathBuf,
     products_trace: PathBuf,
     variable_f: PathBuf,
+    continuation_cache: PathBuf,
     out_dir: PathBuf,
 }
 
@@ -225,6 +229,7 @@ impl DatasetPaths {
             products_summary: raw_dataset_path("ascent-product"),
             products_trace: raw_dataset_trace_path("ascent-product"),
             variable_f: raw_dataset_path("continuation"),
+            continuation_cache: raw_dataset_cache_path("continuation"),
             out_dir: smoke_output_dir(),
         }
     }
@@ -281,6 +286,23 @@ fn parse_args() -> DatasetPaths {
                 paths.variable_f = PathBuf::from(value);
                 i += 2;
             }
+            "--random-sample" => {
+                let value = args.get(i + 1).expect("--random-sample requires a value");
+                paths.random_sample = PathBuf::from(value);
+                i += 2;
+            }
+            "--random-product" => {
+                let value = args.get(i + 1).expect("--random-product requires a value");
+                paths.random_product = PathBuf::from(value);
+                i += 2;
+            }
+            "--continuation-cache" => {
+                let value = args
+                    .get(i + 1)
+                    .expect("--continuation-cache requires a value");
+                paths.continuation_cache = PathBuf::from(value);
+                i += 2;
+            }
             other => panic!("unknown argument: {other}"),
         }
     }
@@ -331,6 +353,26 @@ fn rational_dual_vertices_to_f64(data: &[[BigRational; 4]]) -> Vec<[f64; 4]> {
                     .unwrap_or_else(|| panic!("cannot convert rational dual vertex to f64"))
             })
         })
+        .collect()
+}
+
+fn parse_rational(token: &str) -> BigRational {
+    if let Some((numer, denom)) = token.split_once('/') {
+        let numer =
+            BigInt::from_str(numer).unwrap_or_else(|e| panic!("bad numerator {token}: {e}"));
+        let denom =
+            BigInt::from_str(denom).unwrap_or_else(|e| panic!("bad denominator {token}: {e}"));
+        BigRational::new(numer, denom)
+    } else {
+        BigRational::from_integer(
+            BigInt::from_str(token).unwrap_or_else(|e| panic!("bad integer {token}: {e}")),
+        )
+    }
+}
+
+fn parse_vec4(data: &[[String; 4]]) -> Vec<[BigRational; 4]> {
+    data.iter()
+        .map(|row| std::array::from_fn(|i| parse_rational(&row[i])))
         .collect()
 }
 
@@ -408,12 +450,39 @@ fn load_exact_cache(path: &Path, label: &str, entries: &mut HashMap<String, Exac
     }
 }
 
-fn build_exact_candidate_index(
-    package_root: &Path,
-) -> (
-    HashMap<String, ExactCacheEntry>,
-    HashMap<usize, Vec<ExactCacheEntry>>,
+fn register_exact_duals(
+    entries: &mut HashMap<String, ExactCacheEntry>,
+    exact_duals: &[[String; 4]],
+    label: &str,
 ) {
+    if exact_duals.is_empty() {
+        return;
+    }
+    let poly_id = poly_id_from_strings(exact_duals);
+    if entries.contains_key(&poly_id) {
+        return;
+    }
+    let polytope = Polytope4D::new(parse_vec4(exact_duals))
+        .unwrap_or_else(|e| panic!("reconstruct exact duals for {label}: {e}"));
+    let record = PolytopeRecord::from_polytope(&polytope);
+    let dual_vertices_f64 = polytope
+        .dual_vertices_f64()
+        .iter()
+        .map(|a| [a[0], a[1], a[2], a[3]])
+        .collect();
+    entries.insert(
+        poly_id.clone(),
+        ExactCacheEntry {
+            poly_id,
+            record,
+            facet_count: exact_duals.len(),
+            dual_vertices_f64,
+            geometry_source: label.to_string(),
+        },
+    );
+}
+
+fn build_exact_cache(package_root: &Path, continuation_cache_path: &Path) -> HashMap<String, ExactCacheEntry> {
     let repo_root = package_root
         .parent()
         .and_then(Path::parent)
@@ -431,10 +500,16 @@ fn build_exact_candidate_index(
         &mut by_poly_id,
     );
     load_exact_cache(
-        &raw_dataset_cache_path("continuation"),
-        "experiments/sys-landscape/raw/continuation-cache.jsonl",
+        continuation_cache_path,
+        "continuation cache",
         &mut by_poly_id,
     );
+    by_poly_id
+}
+
+fn build_facet_count_index(
+    by_poly_id: &HashMap<String, ExactCacheEntry>,
+) -> HashMap<usize, Vec<ExactCacheEntry>> {
     let mut by_facet_count: HashMap<usize, Vec<ExactCacheEntry>> = HashMap::new();
     for entry in by_poly_id.values() {
         by_facet_count
@@ -442,7 +517,7 @@ fn build_exact_candidate_index(
             .or_default()
             .push(entry.clone());
     }
-    (by_poly_id, by_facet_count)
+    by_facet_count
 }
 
 fn infer_variable_f_source_name(row: &VariableFRow) -> String {
@@ -596,8 +671,7 @@ fn main() {
     println!("  products-summary: {}", paths.products_summary.display());
     println!("  variable-f: {}", paths.variable_f.display());
 
-    let (exact_by_poly_id, exact_by_facet_count) = build_exact_candidate_index(&package_root);
-    println!("Loaded exact cache entries: {}", exact_by_poly_id.len());
+    let mut exact_by_poly_id = build_exact_cache(&package_root, &paths.continuation_cache);
 
     let random_rows: Vec<RandomSweepRow> = read_jsonl(&paths.random_sample);
     let random_product_rows: Vec<RandomProductRow> = read_jsonl(&paths.random_product);
@@ -606,6 +680,44 @@ fn main() {
     let products_rows: Vec<SummaryRow> = read_jsonl(&paths.products_summary);
     let products_trace_rows: Vec<TraceRow> = read_jsonl(&paths.products_trace);
     let variable_f_rows: Vec<VariableFRow> = read_jsonl(&paths.variable_f);
+
+    for row in &random_rows {
+        register_exact_duals(
+            &mut exact_by_poly_id,
+            &row.dual_vertices_rational,
+            &format!("random sample summary {}", row.name),
+        );
+    }
+    for row in &random_product_rows {
+        register_exact_duals(
+            &mut exact_by_poly_id,
+            &row.dual_vertices_rational,
+            &format!("random product summary {}", row.name),
+        );
+    }
+    for row in &general_rows {
+        register_exact_duals(
+            &mut exact_by_poly_id,
+            &row.final_dual_vertices_rational,
+            &format!("ascent summary {}", row.name),
+        );
+    }
+    for row in &products_rows {
+        register_exact_duals(
+            &mut exact_by_poly_id,
+            &row.final_dual_vertices_rational,
+            &format!("ascent-product summary {}", row.name),
+        );
+    }
+    for row in &variable_f_rows {
+        register_exact_duals(
+            &mut exact_by_poly_id,
+            &row.final_dual_vertices_rational,
+            &format!("continuation summary {}", row.name),
+        );
+    }
+    let exact_by_facet_count = build_facet_count_index(&exact_by_poly_id);
+    println!("Loaded exact cache entries: {}", exact_by_poly_id.len());
 
     let mut polytopes = HashMap::<String, PolytopeRow>::new();
     let mut capacities = HashMap::<String, CapacityResultRow>::new();

@@ -22,6 +22,7 @@
 //! - `--n-start <offset>` starting global seed index                  (default: 0)
 //! - `--seed <u64>`       base RNG seed                               (default: 42)
 //! - `--out <path>`       output summary .jsonl                       (default: untracked temp smoke path)
+//! - `--seed-time-budget-secs <f64>` per-seed wall-clock budget       (default: 120)
 //! - `--fresh`            delete existing summary + trace files before running
 //! - `--db-update`        load and save the sys-landscape family cache
 //! - `--no-db-update`     do not load or save the sys-landscape family cache
@@ -272,10 +273,11 @@ fn process_seed(
     seed_index: usize,
     polytope_type: &str,
     polytope: &Polytope4D,
+    seed_time_budget_secs: f64,
     rng: &mut ChaCha8Rng,
 ) -> Option<SeedResult> {
     let t0 = Instant::now();
-    let budget = SEED_TIME_BUDGET_SECS;
+    let budget = seed_time_budget_secs;
 
     let starting_sys = compute_sys(polytope)?;
 
@@ -413,7 +415,13 @@ fn main() {
         "sys-dataset-ascent",
         "smoke-ascent.jsonl",
     );
-    let args: AscentArgs = parse_ascent_args(DEFAULT_SEED, 10, default_out, "ascent");
+    let args: AscentArgs = parse_ascent_args(
+        DEFAULT_SEED,
+        10,
+        SEED_TIME_BUDGET_SECS,
+        default_out,
+        "ascent",
+    );
     let t_global = Instant::now();
 
     let summary_path = args.out.clone();
@@ -426,6 +434,7 @@ fn main() {
     println!("  out:          {}", summary_path.display());
     println!("  trace:        {}", trace_path.display());
     println!("  fresh:        {}", args.fresh);
+    println!("  budget:       {:.1}s/seed", args.seed_time_budget_secs);
     println!("  no-db-update: {}\n", args.no_db_update);
 
     let completed = if args.fresh {
@@ -456,6 +465,7 @@ fn main() {
     };
 
     let no_db_update = args.no_db_update;
+    let seed_time_budget_secs = args.seed_time_budget_secs;
     let db_for_closure = Arc::clone(&db_arc);
 
     run_parallel_seeds(&args, &completed, &writers, &best, move |i, seed_i| {
@@ -484,7 +494,14 @@ fn main() {
         }
 
         let name = format!("ascent_{i}");
-        let result = process_seed(&name, i, "ascent", &polytope, &mut rng_i)?;
+        let result = process_seed(
+            &name,
+            i,
+            "ascent",
+            &polytope,
+            seed_time_budget_secs,
+            &mut rng_i,
+        )?;
 
         if !no_db_update {
             let mut db = db_for_closure.lock().expect("lock db for final insert");

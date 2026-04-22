@@ -10,7 +10,7 @@
 //!     (`polytopes.jsonl` required)
 //!   - experiments/sys-landscape/cache.jsonl
 //!   - experiments/combinatorial-cells/polytopes.jsonl
-//!   - experiments/sys-landscape/raw/continuation-cache.jsonl
+//!   - experiments/sys-landscape/raw/continuation-cache.jsonl (or `--continuation-cache`)
 //! Output Artifacts: None by default (writes to an untracked temp file unless `--out` is set)
 
 use num_bigint::BigInt;
@@ -77,10 +77,11 @@ struct OrbitFeatureRow {
     orbit_best_is_indeterminate_f64: f64,
 }
 
-fn parse_args() -> (PathBuf, PathBuf) {
+fn parse_args() -> (PathBuf, PathBuf, PathBuf) {
     let args: Vec<String> = std::env::args().collect();
     let mut normalized_dir: Option<PathBuf> = None;
     let mut out: Option<PathBuf> = None;
+    let mut continuation_cache: Option<PathBuf> = None;
     let mut i = 1usize;
     while i < args.len() {
         match args[i].as_str() {
@@ -94,6 +95,13 @@ fn parse_args() -> (PathBuf, PathBuf) {
                 out = Some(PathBuf::from(value));
                 i += 2;
             }
+            "--continuation-cache" => {
+                let value = args
+                    .get(i + 1)
+                    .expect("--continuation-cache requires a value");
+                continuation_cache = Some(PathBuf::from(value));
+                i += 2;
+            }
             other => panic!("unknown argument: {other}"),
         }
     }
@@ -105,7 +113,9 @@ fn parse_args() -> (PathBuf, PathBuf) {
             .as_millis();
         std::env::temp_dir().join(format!("sys-feature-orbit-{stamp}.jsonl"))
     });
-    (normalized_dir, out)
+    let continuation_cache =
+        continuation_cache.unwrap_or_else(|| raw_dataset_cache_path("continuation"));
+    (normalized_dir, out, continuation_cache)
 }
 
 fn read_jsonl<T: for<'de> Deserialize<'de>>(path: &Path) -> Vec<T> {
@@ -240,7 +250,10 @@ fn fallback_orbit_scalars(polytope: &Polytope4D, record: &PolytopeRecord) -> Opt
     })
 }
 
-fn build_cache_index(package_root: &Path) -> HashMap<DualVerticesKey, PolytopeRecord> {
+fn build_cache_index(
+    package_root: &Path,
+    continuation_cache: &Path,
+) -> HashMap<DualVerticesKey, PolytopeRecord> {
     let repo_root = package_root
         .parent()
         .and_then(Path::parent)
@@ -249,7 +262,7 @@ fn build_cache_index(package_root: &Path) -> HashMap<DualVerticesKey, PolytopeRe
     let paths = [
         package_root.join("cache.jsonl"),
         repo_root.join("experiments/combinatorial-cells/polytopes.jsonl"),
-        raw_dataset_cache_path("continuation"),
+        continuation_cache.to_path_buf(),
     ];
     let refs = paths.iter().map(PathBuf::as_path).collect::<Vec<_>>();
     load_many(&refs).unwrap_or_else(|e| panic!("load orbit caches: {e}"))
@@ -424,9 +437,9 @@ fn build_row(
 }
 
 fn main() {
-    let (normalized_dir, out) = parse_args();
+    let (normalized_dir, out, continuation_cache) = parse_args();
     let package_root = package_root();
-    let cache = build_cache_index(&package_root);
+    let cache = build_cache_index(&package_root, &continuation_cache);
     let polytopes = read_jsonl::<PolytopeInputRow>(&normalized_dir.join("polytopes.jsonl"));
     let mut rows = polytopes
         .iter()

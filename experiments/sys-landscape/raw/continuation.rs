@@ -19,6 +19,8 @@
 //! Flags: --fresh  (clear existing data and rerun)
 //!        --smoke  (run one bounded probe against temp output/cache)
 //!        --out <path>  (override output JSONL path)
+//!        --cache <path>  (override cache JSONL path)
+//!        --ascent-input <path>  (override source ascent JSONL path)
 //! Input Artifacts: experiments/sys-landscape/raw/ascent.jsonl
 //! Output Artifacts: experiments/sys-landscape/raw/continuation.jsonl
 //!         experiments/sys-landscape/raw/continuation-cache.jsonl
@@ -634,6 +636,7 @@ fn smoke_paths() -> (PathBuf, PathBuf) {
 }
 
 fn smoke_run(
+    ascent_input_path: &std::path::Path,
     output_path: &std::path::Path,
     cache_path: &std::path::Path,
     writer: &mut BufWriter<File>,
@@ -643,12 +646,11 @@ fn smoke_run(
     println!("Smoke mode: temp output {}", output_path.display());
     println!("Smoke mode: temp cache   {}", cache_path.display());
 
-    let ga_path = raw_dataset_path("ascent");
-    let local_maxima = load_local_maxima(&ga_path);
+    let local_maxima = load_local_maxima(ascent_input_path);
     println!(
         "Smoke mode: loaded {} local maxima from {}",
         local_maxima.len(),
-        ga_path.display()
+        ascent_input_path.display()
     );
 
     let (trial_name, source_name, source_sys, start_polytope) =
@@ -730,6 +732,8 @@ fn smoke_run(
 fn main() {
     let t_global = Instant::now();
     let default_output_path = raw_dataset_path("continuation");
+    let default_cache_path = raw_dataset_cache_path("continuation");
+    let default_ascent_input_path = raw_dataset_path("ascent");
 
     println!("dataset-continuation: variable-F continuation experiment\n");
 
@@ -738,6 +742,8 @@ fn main() {
     let mut smoke = false;
     let fresh = args.iter().any(|a| a == "--fresh");
     let mut out_path: Option<PathBuf> = None;
+    let mut cache_path_override: Option<PathBuf> = None;
+    let mut ascent_input_path: Option<PathBuf> = None;
 
     let mut i = 1usize;
     while i < args.len() {
@@ -754,19 +760,33 @@ fn main() {
                 out_path = Some(PathBuf::from(value));
                 i += 2;
             }
+            "--cache" => {
+                let value = args.get(i + 1).expect("--cache requires a value");
+                cache_path_override = Some(PathBuf::from(value));
+                i += 2;
+            }
+            "--ascent-input" => {
+                let value = args.get(i + 1).expect("--ascent-input requires a value");
+                ascent_input_path = Some(PathBuf::from(value));
+                i += 2;
+            }
             other => {
                 panic!("unknown argument: {other}");
             }
         }
     }
+    let ascent_input_path = ascent_input_path.unwrap_or(default_ascent_input_path);
 
     let (output_path, cache_path) = if smoke {
         let (smoke_output_path, smoke_cache_path) = smoke_paths();
-        (out_path.unwrap_or(smoke_output_path), smoke_cache_path)
+        (
+            out_path.unwrap_or(smoke_output_path),
+            cache_path_override.unwrap_or(smoke_cache_path),
+        )
     } else {
         (
             out_path.unwrap_or(default_output_path),
-            raw_dataset_cache_path("continuation"),
+            cache_path_override.unwrap_or(default_cache_path),
         )
     };
 
@@ -806,6 +826,7 @@ fn main() {
 
     if smoke {
         smoke_run(
+            &ascent_input_path,
             &output_path,
             &cache_path,
             &mut writer,
@@ -824,11 +845,11 @@ fn main() {
     println!("=== RQ1: Improving F=10 local maxima in F=11 space ===\n");
 
     // Load local maxima from the canonical ascent dataset.
-    let ga_path = raw_dataset_path("ascent");
-    let local_maxima = load_local_maxima(&ga_path);
+    let local_maxima = load_local_maxima(&ascent_input_path);
     println!(
-        "Loaded {} local maxima from raw/ascent.jsonl.\n",
-        local_maxima.len()
+        "Loaded {} local maxima from {}.\n",
+        local_maxima.len(),
+        ascent_input_path.display()
     );
 
     let mut rq1_improved = 0usize;

@@ -34,3 +34,11 @@ The intended long-run split is:
 - `methods/`: consumer-side modeling, exploratory analysis, and comparison scripts
 
 Today the consumer side still lives partly in legacy folders such as `feature-pattern-search/`. That is acceptable while the dataset-table surface settles.
+
+## Smoke Path
+
+[smoke-pipeline.sh](../smoke-pipeline.sh) runs the current end-to-end dataset
+surface against temp directories:
+- `raw/` producers emit ad hoc corpus files;
+- `sys-dataset-normalized` consumes those temp raw files;
+- the flat `sys-dataset-feature-*` binaries write temp feature JSONLs.

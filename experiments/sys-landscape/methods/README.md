@@ -11,7 +11,17 @@ Target rule:
   filtering, centering, or design-matrix construction locally.
 
 Current status:
+- `eda.py` is the first flat consumer-side script; it reads normalized tables
+  and optional feature blocks from ad hoc directories and writes smoke plots /
+  summary JSON to an ad hoc output directory;
 - legacy consumer scripts such as `feature-pattern-search/analyze.py` still live
   in their historical folders;
 - future refactors should move consumer-only analysis here after the dataset
   producer layout is stable.
+
+## Smoke Path
+
+[smoke-pipeline.sh](../smoke-pipeline.sh) finishes by running `uv run
+methods/eda.py` on the temp normalized / feature outputs. This is the current
+check that the flat Rust producer surface is already pleasant for low-friction
+Python consumer work.
