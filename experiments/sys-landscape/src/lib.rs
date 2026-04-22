@@ -7,6 +7,7 @@
 
 pub mod datasets;
 pub mod features;
+pub mod polytope_features;
 
 use good_lp::{constraint, default_solver, variable, variables, Expression, Solution, SolverModel};
 use nalgebra::{Matrix4, Vector4};

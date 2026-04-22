@@ -4,7 +4,7 @@
 //! points. This module centralizes the repo paths used by:
 //! - raw cache-worthy corpus producers;
 //! - datascience-ready table producers;
-//! - legacy packet locations that still back some of the flat binaries.
+//! - legacy packet locations that still back some older analyses.
 
 use std::path::PathBuf;
 
@@ -19,11 +19,7 @@ pub enum DatasetFamily {
     Continuation,
     RotatedRegular,
     Normalized,
-    FeatureSkeleton,
-    FeatureFaceGeometry,
-    FeatureFaceSymplectic,
-    FeatureOmega,
-    FeatureOrbit,
+    FeaturePolytope,
     FeatureTrajectory,
 }
 
@@ -118,39 +114,11 @@ impl DatasetFamily {
                 hko_proximity: HkoProximity::None,
                 spoiler_risk: false,
             },
-            DatasetFamily::FeatureSkeleton => DatasetSpec {
-                stable_id: "feature-skeleton",
-                producer_dir: "feature-skeleton",
+            DatasetFamily::FeaturePolytope => DatasetSpec {
+                stable_id: "polytope-features",
+                producer_dir: "datasets",
                 role: DatasetRole::FeatureBlock,
                 hko_proximity: HkoProximity::None,
-                spoiler_risk: false,
-            },
-            DatasetFamily::FeatureFaceGeometry => DatasetSpec {
-                stable_id: "feature-face-geometry",
-                producer_dir: "feature-face-geometry",
-                role: DatasetRole::FeatureBlock,
-                hko_proximity: HkoProximity::None,
-                spoiler_risk: false,
-            },
-            DatasetFamily::FeatureFaceSymplectic => DatasetSpec {
-                stable_id: "feature-face-symplectic",
-                producer_dir: "feature-face-symplectic",
-                role: DatasetRole::FeatureBlock,
-                hko_proximity: HkoProximity::None,
-                spoiler_risk: false,
-            },
-            DatasetFamily::FeatureOmega => DatasetSpec {
-                stable_id: "feature-omega",
-                producer_dir: "feature-omega",
-                role: DatasetRole::FeatureBlock,
-                hko_proximity: HkoProximity::None,
-                spoiler_risk: false,
-            },
-            DatasetFamily::FeatureOrbit => DatasetSpec {
-                stable_id: "feature-orbit",
-                producer_dir: "feature-orbit",
-                role: DatasetRole::FeatureBlock,
-                hko_proximity: HkoProximity::FamilyAdjacent,
                 spoiler_risk: false,
             },
             DatasetFamily::FeatureTrajectory => DatasetSpec {

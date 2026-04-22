@@ -50,41 +50,9 @@ cargo run -p exp-sys-landscape --bin sys-dataset-normalized -- \
   --out-dir "$NORM_DIR" \
   --raw-dir "$RAW_DIR"
 
-cargo run -p exp-sys-landscape --bin sys-dataset-feature-capacity -- \
+cargo run -p exp-sys-landscape --bin sys-dataset-polytope-features -- \
   --normalized-dir "$NORM_DIR" \
-  --out "$FEATURE_DIR/feature-capacity.jsonl"
-
-cargo run -p exp-sys-landscape --bin sys-dataset-feature-volume -- \
-  --normalized-dir "$NORM_DIR" \
-  --out "$FEATURE_DIR/feature-volume.jsonl"
-
-cargo run -p exp-sys-landscape --bin sys-dataset-feature-sys -- \
-  --normalized-dir "$NORM_DIR" \
-  --out "$FEATURE_DIR/feature-sys.jsonl"
-
-cargo run -p exp-sys-landscape --bin sys-dataset-feature-dual-vertices -- \
-  --normalized-dir "$NORM_DIR" \
-  --out "$FEATURE_DIR/feature-dual-vertices.jsonl"
-
-cargo run -p exp-sys-landscape --bin sys-dataset-feature-skeleton -- \
-  --normalized-dir "$NORM_DIR" \
-  --out "$FEATURE_DIR/feature-skeleton.jsonl"
-
-cargo run -p exp-sys-landscape --bin sys-dataset-feature-face-geometry -- \
-  --normalized-dir "$NORM_DIR" \
-  --out "$FEATURE_DIR/feature-face-geometry.jsonl"
-
-cargo run -p exp-sys-landscape --bin sys-dataset-feature-face-symplectic -- \
-  --normalized-dir "$NORM_DIR" \
-  --out "$FEATURE_DIR/feature-face-symplectic.jsonl"
-
-cargo run -p exp-sys-landscape --bin sys-dataset-feature-omega -- \
-  --normalized-dir "$NORM_DIR" \
-  --out "$FEATURE_DIR/feature-omega.jsonl"
-
-cargo run -p exp-sys-landscape --bin sys-dataset-feature-orbit -- \
-  --normalized-dir "$NORM_DIR" \
-  --out "$FEATURE_DIR/feature-orbit.jsonl" \
+  --out "$FEATURE_DIR/polytope-features.jsonl" \
   --continuation-cache "$RAW_DIR/continuation-cache.jsonl"
 
 cargo run -p exp-sys-landscape --bin sys-dataset-feature-trajectory -- \
@@ -94,7 +62,7 @@ cargo run -p exp-sys-landscape --bin sys-dataset-feature-trajectory -- \
 uv run "$ROOT/experiments/sys-landscape/methods/eda.py" \
   --normalized-dir "$NORM_DIR" \
   --out-dir "$METHOD_DIR" \
-  --dual-vertices "$FEATURE_DIR/feature-dual-vertices.jsonl"
+  --polytope-features "$FEATURE_DIR/polytope-features.jsonl"
 
 echo
 echo "Smoke outputs:"

@@ -29,7 +29,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--normalized-dir", type=Path, required=True)
     parser.add_argument("--out-dir", type=Path, required=True)
-    parser.add_argument("--dual-vertices", type=Path)
+    parser.add_argument("--polytope-features", type=Path)
     return parser.parse_args()
 
 
@@ -51,10 +51,10 @@ def main() -> None:
         for row in load_jsonl(args.normalized_dir / "capacity_results.jsonl")
     }
 
-    dual_vertices = {}
-    if args.dual_vertices and args.dual_vertices.exists():
-        dual_vertices = {
-            row["poly_id"]: row for row in load_jsonl(args.dual_vertices)
+    polytope_features = {}
+    if args.polytope_features and args.polytope_features.exists():
+        polytope_features = {
+            row["poly_id"]: row for row in load_jsonl(args.polytope_features)
         }
 
     dataset_counts: Counter[str] = Counter()
@@ -71,9 +71,9 @@ def main() -> None:
         sys_by_dataset[dataset].append(float(cap["sys"]))
         x_by_dataset[dataset].append(float(poly["facet_count"]))
         y_by_dataset[dataset].append(float(cap["sys"]))
-        dual_row = dual_vertices.get(state["poly_id"])
-        if dual_row is not None:
-            dual_vertex_counts.append(int(dual_row["dual_vertex_count"]))
+        feature_row = polytope_features.get(state["poly_id"])
+        if feature_row is not None:
+            dual_vertex_counts.append(int(feature_row["dual_vertex_count"]))
 
     figure_path = args.out_dir / "eda_sys_vs_facet_count.png"
     fig, ax = plt.subplots(figsize=FIGSIZE_SINGLE)
