@@ -39,7 +39,8 @@ use exp_sys_landscape::{orbit_scalars_from_result, smoke_output_path};
 use num_rational::BigRational;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
-use serde::Serialize;
+mod rows;
+use rows::RandomProductRow;
 use std::collections::HashMap;
 use std::fs::File;
 use std::io::{BufWriter, Write};
@@ -156,26 +157,6 @@ fn included_pairs(max_sides: usize) -> Vec<(usize, usize)> {
         .copied()
         .filter(|(k, m)| *k <= max_sides && *m <= max_sides)
         .collect()
-}
-
-#[derive(Debug, Serialize)]
-struct RandomProductRow {
-    name: String,
-    k: usize,
-    m: usize,
-    facet_count: usize,
-    dual_vertices: Vec<[f64; 4]>,
-    dual_vertices_rational: Vec<[String; 4]>,
-    vertices_rational: Vec<[String; 4]>,
-    h_min: f64,
-    h_max: f64,
-    volume: f64,
-    capacity: f64,
-    sys: f64,
-    iterations: u64,
-    bounces: usize,
-    time_volume_ms: f64,
-    time_capacity_ms: f64,
 }
 
 fn f64_dual_vertices(polytope: &Polytope4D) -> Vec<[f64; 4]> {

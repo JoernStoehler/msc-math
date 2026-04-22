@@ -30,10 +30,11 @@ use exp_sys_landscape::{
 };
 use nalgebra::Vector4;
 use num_rational::BigRational;
+mod rows;
+use rows::{GradientAscentRow, ResultRow};
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use rand_distr::{Distribution, StandardNormal};
-use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet};
 use std::fs::{File, OpenOptions};
 use std::io::{BufRead, BufReader, BufWriter, Write};
@@ -136,60 +137,6 @@ const EPS: f64 = 1e-15;
 // ============================================================================
 // Output schema
 // ============================================================================
-
-#[derive(Debug, Serialize)]
-struct ResultRow {
-    /// "rq1" or "rq2"
-    rq: String,
-    /// "f10_localmax_then_f11", "f10_ascent", "f10_add_then_f11", "random_f11", "f10_ascent_then_f11"
-    path: String,
-    /// Seed/source identifier
-    name: String,
-    /// External source or seed group that defines the lineage
-    source_name: String,
-    /// Stable lineage identifier across related paths or placements
-    lineage_id: String,
-    /// Parent trial row when one exists in this dataset
-    #[serde(skip_serializing_if = "Option::is_none")]
-    direct_parent_trial: Option<String>,
-    /// Facet count at start of gradient ascent
-    starting_f: usize,
-    /// sys before any optimization in this trial
-    starting_sys: f64,
-    /// sys immediately after facet addition (before ascent), or null
-    sys_after_addition: Option<f64>,
-    /// sys after gradient ascent
-    final_sys: f64,
-    /// final_sys - starting_sys (of the source F=10 polytope for RQ1, of start for RQ2)
-    delta_vs_source: f64,
-    /// Total gradient iterations across all phases
-    n_iterations: usize,
-    /// Number of ascent phases (initial + escape rounds)
-    n_phases: usize,
-    /// Facet placement direction (unit vector), or null
-    placement_direction: Option<[f64; 4]>,
-    /// Whether the added facet is still non-redundant at the end
-    facet_remained_active: Option<bool>,
-    /// Wall-clock time for this trial
-    total_time_ms: f64,
-    /// Exact dual vertices at the start of the ascent stage
-    starting_dual_vertices_rational: Vec<[String; 4]>,
-    /// Exact dual vertices immediately after facet addition, if applicable
-    #[serde(skip_serializing_if = "Option::is_none")]
-    after_addition_dual_vertices_rational: Option<Vec<[String; 4]>>,
-    /// Exact dual vertices at the endpoint
-    final_dual_vertices_rational: Vec<[String; 4]>,
-    /// Final dual vertices
-    final_dual_vertices: Vec<[f64; 4]>,
-}
-
-/// For loading gradient-ascent-general results.
-#[derive(Debug, Deserialize)]
-struct GradientAscentRow {
-    name: String,
-    final_sys: f64,
-    final_dual_vertices: Vec<[f64; 4]>,
-}
 
 // ============================================================================
 // Gradient step in a-space (copied from gradient-ascent-general)

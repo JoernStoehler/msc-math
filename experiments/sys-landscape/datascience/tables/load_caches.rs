@@ -2,8 +2,10 @@
 
 use blake3::Hasher;
 use exp_sys_landscape::{package_root, rational_vec4_to_strings, SummaryRow, TraceRow};
+#[path = "../produce/rows.rs"]
+mod rows;
+use rows::{RandomProductRow, RandomSweepRow, ResultRow};
 use serde::de::DeserializeOwned;
-use serde::Deserialize;
 use std::collections::HashMap;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
@@ -11,59 +13,7 @@ use std::path::{Path, PathBuf};
 use std::time::{SystemTime, UNIX_EPOCH};
 use symplectic::database::{load_many, OrbitScalars, PolytopeRecord, SigmaAction};
 
-#[derive(Debug, Deserialize)]
-struct RandomSweepRow {
-    name: String,
-    facet_count: usize,
-    #[serde(default)]
-    dual_vertices_rational: Vec<[String; 4]>,
-    capacity: f64,
-    volume: f64,
-    sys: f64,
-    iterations: u64,
-}
-
-#[derive(Debug, Deserialize)]
-struct RandomProductRow {
-    name: String,
-    facet_count: usize,
-    k: usize,
-    m: usize,
-    #[serde(default)]
-    dual_vertices_rational: Vec<[String; 4]>,
-    capacity: f64,
-    volume: f64,
-    sys: f64,
-    iterations: u64,
-}
-
-#[derive(Debug, Deserialize)]
-struct VariableFRow {
-    rq: String,
-    path: String,
-    name: String,
-    #[serde(default)]
-    source_name: String,
-    #[serde(default)]
-    lineage_id: String,
-    #[serde(default)]
-    direct_parent_trial: Option<String>,
-    starting_f: usize,
-    starting_sys: f64,
-    #[serde(default)]
-    sys_after_addition: Option<f64>,
-    final_sys: f64,
-    delta_vs_source: f64,
-    n_iterations: usize,
-    n_phases: usize,
-    #[serde(default)]
-    placement_direction: Option<[f64; 4]>,
-    #[serde(default)]
-    facet_remained_active: Option<bool>,
-    total_time_ms: f64,
-    #[serde(default)]
-    final_dual_vertices_rational: Vec<[String; 4]>,
-}
+type VariableFRow = ResultRow;
 
 #[derive(Clone)]
 pub struct LoadedPolytopeRow {

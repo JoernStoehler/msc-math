@@ -31,7 +31,8 @@
 
 use exp_sys_landscape::{orbit_scalars_from_result, smoke_output_path};
 use num_rational::BigRational;
-use serde::Serialize;
+mod rows;
+use rows::RandomSweepRow;
 use std::collections::HashMap;
 use std::fs::File;
 use std::io::{BufWriter, Write};
@@ -153,23 +154,6 @@ fn sweep_plan(samples_per_f: Option<usize>, max_f: usize) -> Vec<(usize, usize)>
             (facet_count, samples_per_f.unwrap_or(default_samples))
         })
         .collect()
-}
-
-#[derive(Debug, Serialize)]
-struct RandomSweepRow {
-    name: String,
-    facet_count: usize,
-    dual_vertices: Vec<[f64; 4]>,
-    dual_vertices_rational: Vec<[String; 4]>,
-    vertices_rational: Vec<[String; 4]>,
-    h_min: f64,
-    h_max: f64,
-    volume: f64,
-    capacity: f64,
-    sys: f64,
-    iterations: u64,
-    time_volume_ms: f64,
-    time_capacity_ms: f64,
 }
 
 /// Find a cached record by Source metadata. Linear scan, negligible for <1000 records.
