@@ -5,108 +5,131 @@ description: Rust conventions for `crates/**/*.rs` and `experiments/**/*.rs`, in
 
 # Rust Conventions
 
-## Coordinate convention
+## Standard Rust
 
-(q₁, q₂, p₁, p₂) — components [0,1] = q-space, [2,3] = p-space, [0,2] and [1,3] = symplectic planes. Defined in `crates/symplectic/src/geom/symplectic_form.rs`. Common mistake: assuming (q₁, p₁, q₂, p₂).
+Prefer ordinary Rust for scientific computing: correct code, explicit control
+flow, plain structs/enums, and local readability.
 
-## Math-code correspondence
+- Start with standard Rust practices. Add repo-specific machinery only when it
+  clearly pays for itself.
+- Prefer KISS and YAGNI over elegant-looking abstraction.
+- Prefer moderate duplication over indirection and over abstraction whenever
+  copy-editing and inline context make the code easier to read.
+- Do not prematurely factor out intermediate computations just to "provide"
+  them to later glue code. Let callers compute what they need locally unless the
+  intermediate result is independently useful.
+- Prefer plain data structs first. Add checked constructors, hidden fields, or
+  type-level encodings only when they prevent a real misuse pattern or make the
+  API easier to use correctly.
+- For plain data structs, prefer public fields over trivial accessor methods.
+- When an invariant is not enforced by the type, document it briefly on the type
+  or at the construction site.
+- Public signatures should make data flow, mathematical domain, and failure
+  modes easier to read, not harder.
+- Prefer functions that say "I need X, Y, Z" over functions that force callers
+  through one preselected intermediate object or pipeline shape.
+- Use the clearest standard error surface for the caller: `Option`, `Result`,
+  enums, `assert!`, and `panic!` all have their place.
 
-Types, function signatures, and function bodies have 1:1 structural correspondence to mathematical definitions. Not "inspired by" — literal correspondence.
+## Overriding Custom Conventions
 
-- Doc comment formulas must match the code's actual computation
-- Invariants stated in doc comments are enforced by types/constructors/assert!
-- Properties stated in doc comments have corresponding tests
-- Types encode mathematical invariants, validated in `::new()`
+These rules are repo-specific and override the generic default above.
 
-## Cross-references to formal math
+### Math-facing code vs orchestration
 
-Format: `[lem:label]`, `[thm:label]`, `[def:label]` -- matching `\label{}` in `formal/**/*.tex`.
+Distinguish mathematical code from glue code.
 
-- Include a one-line English description of the referenced result
-- Never duplicate proofs -- formal math is the single maintained source of truth
-- Never invent labels -- use `// TODO: add [lem:...] to formal math` if the lemma isn't written
-- In source code, never use rendered numbers like "Lemma 3.2" -- always use the label
-- Every non-trivial code block must map to a formal statement
+- Mathematical code implements a definition, lemma-shaped computation, exact
+  predicate, optimizer step, geometric transformation, or other result-bearing
+  operation.
+- Orchestration code wires inputs and outputs together, iterates over jobs,
+  formats artifacts, dispatches algorithms, or manages pipeline control flow.
+- Put the proof burden, formal labels, and math-specific case distinctions on
+  the mathematical code.
+- Keep orchestration code simple and explicit. Do not force formal structure or
+  abstraction patterns onto glue code just because nearby math code is formal.
 
-Read the matching formal file before editing non-trivial `.rs` files:
+### Math-facing code
+
+When code correctness depends on a formal statement, cite the label in Rust with
+`[lem:label]`, `[thm:label]`, `[def:label]`, and similar bracketed forms.
+
+- Do not invent labels. If the formal statement is missing, leave a TODO naming
+  the missing label.
+- Do not cite rendered theorem numbers like "Lemma 3.2".
+- Do not duplicate proofs in Rust comments.
+- Do not force labels onto pure orchestration, obvious plumbing, or experiment
+  wrappers.
+
+Read the matching formal file before editing mathematical algorithm code:
 - `crates/symplectic/src/geom/**` -> `formal/library/geom.tex`
 - `crates/symplectic/src/kkt/**` -> `formal/library/kkt.tex`
 - `crates/symplectic/src/algorithms/**` -> `formal/library/algorithms.tex`
-- `experiments/<topic>/<experiment>/**` -> `formal/<topic>/*.tex` when a formal file exists
+- `experiments/<topic>/**` -> `formal/<topic>/*.tex` when such a file exists
 
-Load `$formal-math-conventions` when editing a formal label, adding a new reference, or changing a mathematical algorithm.
+Load `$formal-math-conventions` when editing formal labels or changing a
+mathematical algorithm.
 
-## Algorithms
+### File and helper boundaries
 
-Three capacity algorithms: `hk2017` (general, exponential), `billiard` (Lagrangian products, fast), `tube` (no Lagrangian 2-faces). Where domains overlap, algorithms must agree on computed capacity.
+Optimize for local readability.
 
-No rayon inside algorithms — parallelism is at the dataset level (each polytope independently).
+- Prefer one main concern per `.rs` file.
+- Keep tightly coupled logic inline when extracting it would force readers to
+  jump away and reconstruct the same local context.
+- Extract a helper when it names a real stage, is reused, or cleanly separates a
+  boundary that future edits can touch independently.
+- Prefer a context-specific helper over a generic "future-proof" abstraction
+  when there is only one caller.
+- Do not split `A -> C` into `A -> B` plus `B -> C` unless `B` has a real life
+  of its own, such as multiple callers, a distinct semantic stage, or an
+  independently checkable intermediate result.
 
-## Helper boundaries
+Bad smell: multiple single-use helpers with similar shapes that make one simple
+function readable only by opening several files.
 
-Extract a helper or subfunction only when there is a clean boundary that makes
-the surrounding code easier to understand or modify.
+### Tests
 
-- Prefer one concern per `.rs` file. Keep one main public symbol, or one tight
-  router surface, plus private helpers that have no better home.
+Crate tests are for fast feedback during ordinary development.
 
-- Prefer inline code when the logic is tightly coupled to one call site and the
-  extracted helper would force readers to jump away only to recover the same
-  local context.
-- Prefer a context-specialized helper over a generic one when there is only one
-  caller and the specialized signature is simpler to read than a "future-proof"
-  abstraction.
-- Extract shared logic when multiple callers would otherwise duplicate the same
-  mathematically meaningful stage or when one boundary lets later refactors
-  change one side without re-reading the full caller body.
-- When deciding whether to extract, optimize for reader/refactor cost, not for
-  minimizing raw line count:
-  - how often will a future agent need to understand the helper body?
-  - how often will a future agent need to refactor both caller and callee
-    together?
-  - does the helper hide a real algorithm stage, or only move local glue into a
-    second file/function?
+- Prefer small deterministic examples, named known polytopes, exact invariants,
+  and narrow regression cases.
+- Move long smoke/unit test bodies into `test_*.rs` files when inline tests start
+  to dominate an implementation file.
+- Keep expensive random sweeps, broad validation datasets, and mathematical
+  evidence generation in `experiments/`, not in default crate tests.
 
-Bad smell: two helpers that are only used once each, have nearly the same
-shape, and force callers to reconstruct local invariants that were clearer
-inline.
+### Measured claims and constants
 
-## Tests
+- Empirical constants need a short comment saying where they came from, what
+  they were tuned against, and what to re-check if changed.
+- Performance claims need a benchmark source, date, and input range.
 
-Crate tests should give fast, live feedback while editing Rust code. Prefer small deterministic examples, named known polytopes, exact invariants, and narrowly scoped regression cases.
+### Experiments vs crates
 
-Move smoke/unit tests into `test_*.rs` files when inline test modules start to dominate an implementation file. Let `test_*.rs` files be longer; keep implementation files focused on one concern.
+Stable reusable code lives in `crates/`. Experiment-specific behavior stays in
+`experiments/`.
 
-Do not add broad generated datasets, expensive random sweeps, or cached validation fixtures to `crates/` to make default tests pass quickly. Put slow mathematical validation, edge-case searches, and generated evidence datasets under `experiments/`, then keep only small smoke/regression checks in the crate.
+- In an experiment package, shared helpers belong in `src/lib.rs` when multiple
+  binaries use them. One-off binary-local helpers stay in that `main.rs`.
+- Use semantic experiment paths; do not force balanced trees.
+- Keep research interpretation and decision history in `research/`.
+- Rust binaries under `experiments/**` carry machine-readable crate docs with
+  `Input Artifacts:` and `Output Artifacts:`.
 
-## Magic numbers
+## Domain Knowledge
 
-Empirically chosen constants: document rationale, motivating data point, limitations, and what to re-validate if changed. All in a comment on the constant definition.
+### Coordinate convention
 
-## Performance claims
+Use `(q1, q2, p1, p2)`. Components `[0,1]` are q-space, `[2,3]` are p-space,
+and `[0,2]` / `[1,3]` are the symplectic planes. The common wrong assumption is
+`(q1, p1, q2, p2)`. The defining code lives in
+`crates/symplectic/src/geom/symplectic_form.rs`.
 
-Never state performance without an inline benchmark citation. "~1ms" is a claim. "1.5-2.0ms for F=5-16 (criterion bench 2026-03-23)" is measured.
+### Capacity algorithms
 
-## Error handling
+The core capacity algorithms are `hk2017`, `billiard`, and `tube`. When their
+domains overlap, they should agree on the computed capacity.
 
-Standard Rust error handling, plus:
-
-- When math is violated, panic. Don't try to recover gracefully — the math needs to be fixed, not worked around.
-- Don't use `Option<T>` in math code. `None` has no canonical mathematical meaning.
-- In math code, use enums instead of errors or panics to classify cases (e.g. invertible vs singular, feasible vs infeasible). Each variant is a mathematical proposition.
-- Callers of math code must match on all variants and handle each case locally. Don't propagate with `?`. If a case is proven or conjectured to not occur, `assert!` on it.
-
-## Experiment binaries
-
-Only stable, validated code lives in `crates/`. Don't modify a durable crate for experiment-specific behavior.
-
-Within an experiment package (`experiments/<group>/`), shared helpers belong in `src/lib.rs` when multiple binaries need the same function. This avoids copy-paste duplication and lets improvements propagate. Per-binary helpers that only one experiment uses stay in that binary's `main.rs`.
-
-Use semantic paths in `experiments/`. Do not force balanced trees when one topic naturally needs `verification/sage/`, `error-bounds/`, `exact-clarke/`, or another asymmetric structure.
-
-Keep research interpretation and decision history in `research/`. Markdown that stays near Rust experiment code should be execution-facing: run instructions, artifact schemas, or packet-local operational notes.
-
-Cargo binary entrypoints in `experiments/**` carry machine-readable crate docs with
-`Input Artifacts:` and `Output Artifacts:`. Use repo-relative artifact paths when the
-binary owns concrete files in the repo, and `None` when the binary only prints to
-stdout or only operates on ad-hoc CLI paths outside the maintained artifact set.
+Do not add rayon inside core algorithms unless you have measured reason to break
+the repo default that parallelism lives at the dataset/job level.
