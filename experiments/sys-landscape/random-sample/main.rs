@@ -30,9 +30,7 @@
 //! - `--out <path>`            output JSONL path                      (default: untracked temp)
 //! - `--cache <path>`          cache JSONL path                       (default: untracked temp)
 
-use exp_sys_landscape::{
-    orbit_scalars_from_result, rational_vec4_to_strings, smoke_output_path,
-};
+use exp_sys_landscape::{orbit_scalars_from_result, rational_vec4_to_strings, smoke_output_path};
 use serde::Serialize;
 use std::collections::HashMap;
 use std::fs::File;
@@ -80,9 +78,7 @@ fn parse_args() -> Args {
     parse_args_from(std::env::args())
 }
 
-fn parse_args_from(
-    argv: impl IntoIterator<Item = impl Into<String>>,
-) -> Args {
+fn parse_args_from(argv: impl IntoIterator<Item = impl Into<String>>) -> Args {
     let argv: Vec<String> = argv.into_iter().map(Into::into).collect();
 
     let mut seed = SEED;
@@ -104,10 +100,26 @@ fn parse_args_from(
                 .unwrap_or_else(|| panic!("{flag} requires a value"))
         };
         match arg {
+            "-h" | "--help" => {
+                eprintln!(
+                    "Usage: cargo run -p exp-sys-landscape --release --bin sys-random-sample -- [--seed <u64>] [--samples-per-f <usize>] [--max-f <usize>] [--out <path>] [--cache <path>]"
+                );
+                eprintln!("  --seed <u64>           RNG seed (default: 42)");
+                eprintln!("  --samples-per-f <usize> Samples for each selected facet count (default: plan-defined)");
+                eprintln!(
+                    "  --max-f <usize>        Max facet count included in the run (default: 12)"
+                );
+                eprintln!(
+                    "  --out <path>           Output JSONL (default: smoke output under /tmp)"
+                );
+                eprintln!("  --cache <path>         Cache JSONL (default: smoke cache under /tmp)");
+                eprintln!(
+                    "Smoke/default behavior is a temporary /tmp run unless --out/--cache are set."
+                );
+                std::process::exit(0);
+            }
             "--seed" => {
-                seed = need_value("--seed")
-                    .parse()
-                    .expect("--seed must be a u64");
+                seed = need_value("--seed").parse().expect("--seed must be a u64");
                 i += 2;
             }
             "--samples-per-f" => {
@@ -202,8 +214,8 @@ fn main() {
         }
     }
 
-    let mut db = load_many(&[args.cache.as_path()])
-        .expect("failed to load sys-landscape family cache");
+    let mut db =
+        load_many(&[args.cache.as_path()]).expect("failed to load sys-landscape family cache");
     println!("Loaded family cache: {} entries\n", db.len());
 
     let file = File::create(&args.out).expect("failed to create output file");
@@ -341,7 +353,11 @@ fn main() {
     save(&args.cache, &db).expect("failed to save sys-landscape family cache");
 
     println!("\nWrote {total} entries to {}", args.out.display());
-    println!("Cache: {} entries (saved to {})", db.len(), args.cache.display());
+    println!(
+        "Cache: {} entries (saved to {})",
+        db.len(),
+        args.cache.display()
+    );
     println!("Cache hits: {cache_hits}/{total}");
     println!("Total time: {:.1}s", t0.elapsed().as_secs_f64());
 }

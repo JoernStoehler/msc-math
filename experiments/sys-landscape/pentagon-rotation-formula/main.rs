@@ -211,6 +211,20 @@ fn parse_cli() -> Cli {
 
     while let Some(arg) = args.next() {
         match arg.as_str() {
+            "-h" | "--help" => {
+                eprintln!(
+                    "Usage: cargo run -p exp-sys-landscape --release --bin sys-pentagon-rotation-formula -- [--canonical] [--three-bounce-branches]"
+                );
+                eprintln!(
+                    "  --canonical             Write canonical file names instead of smoke names."
+                );
+                eprintln!("  --three-bounce-branches Enable three-bounce branch dataset mode.");
+                eprintln!("Mode default: minima dataset over 0.0..36.0° with step 0.25°.");
+                eprintln!("Defaults are smoke-style outputs when --canonical is not supplied:");
+                eprintln!("  minima: smoke-theta-sweep.jsonl");
+                eprintln!("  branches: smoke-three-bounce-branches.jsonl");
+                std::process::exit(0);
+            }
             "--canonical" => canonical = true,
             "--three-bounce-branches" => mode = SweepMode::ThreeBounceBranches,
             _ => panic!("unknown argument: {arg}"),

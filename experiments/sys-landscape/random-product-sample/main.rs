@@ -94,14 +94,16 @@ fn parse_args() -> Args {
     parse_args_from(std::env::args())
 }
 
-fn parse_args_from(
-    argv: impl IntoIterator<Item = impl Into<String>>,
-) -> Args {
+fn parse_args_from(argv: impl IntoIterator<Item = impl Into<String>>) -> Args {
     let argv: Vec<String> = argv.into_iter().map(Into::into).collect();
 
     let mut seed = SEED;
     let mut samples_per_bucket = SAMPLES_PER_BUCKET;
-    let mut max_sides = PAIRS.iter().map(|(_, m)| *m).max().expect("pair list non-empty");
+    let mut max_sides = PAIRS
+        .iter()
+        .map(|(_, m)| *m)
+        .max()
+        .expect("pair list non-empty");
     let mut out = None;
     let mut cache = None;
 
@@ -114,10 +116,24 @@ fn parse_args_from(
                 .unwrap_or_else(|| panic!("{flag} requires a value"))
         };
         match arg {
+            "-h" | "--help" => {
+                eprintln!(
+                    "Usage: cargo run -p exp-sys-landscape --release --bin sys-random-product-sample -- [--seed <u64>] [--samples-per-bucket <usize>] [--max-sides <usize>] [--out <path>] [--cache <path>]"
+                );
+                eprintln!("  --seed <u64>                 RNG seed (default: 42)");
+                eprintln!("  --samples-per-bucket <usize>  Samples per (k,m) bucket (default: 10)");
+                eprintln!("  --max-sides <usize>           Max polygon side count (default: 6)");
+                eprintln!("  --out <path>                  Output JSONL (default: smoke output under /tmp)");
+                eprintln!(
+                    "  --cache <path>                Cache JSONL (default: smoke cache under /tmp)"
+                );
+                eprintln!(
+                    "Smoke/default behavior is a temporary /tmp run unless --out/--cache are set."
+                );
+                std::process::exit(0);
+            }
             "--seed" => {
-                seed = need_value("--seed")
-                    .parse()
-                    .expect("--seed must be a u64");
+                seed = need_value("--seed").parse().expect("--seed must be a u64");
                 i += 2;
             }
             "--samples-per-bucket" => {
@@ -155,7 +171,8 @@ fn parse_args_from(
 }
 
 fn included_pairs(max_sides: usize) -> Vec<(usize, usize)> {
-    PAIRS.iter()
+    PAIRS
+        .iter()
         .copied()
         .filter(|(k, m)| *k <= max_sides && *m <= max_sides)
         .collect()
@@ -219,8 +236,7 @@ fn main() {
     }
 
     let mut db: HashMap<DualVerticesKey, PolytopeRecord> =
-        load_many(&[args.cache.as_path()])
-            .expect("failed to load sys-landscape family cache");
+        load_many(&[args.cache.as_path()]).expect("failed to load sys-landscape family cache");
     println!("Loaded family cache: {} entries\n", db.len());
 
     let file = File::create(&args.out).expect("failed to create output file");
@@ -230,10 +246,7 @@ fn main() {
     let mut cache_hits = 0usize;
 
     for (k, m) in pairs {
-        println!(
-            "Bucket ({k},{m}) with {} samples",
-            args.samples_per_bucket
-        );
+        println!("Bucket ({k},{m}) with {} samples", args.samples_per_bucket);
 
         let mut accepted = 0usize;
         while accepted < args.samples_per_bucket {
@@ -366,7 +379,11 @@ fn main() {
     save(&args.cache, &db).expect("failed to save sys-landscape family cache");
 
     println!("\nWrote {total} entries to {}", args.out.display());
-    println!("Cache: {} entries (saved to {})", db.len(), args.cache.display());
+    println!(
+        "Cache: {} entries (saved to {})",
+        db.len(),
+        args.cache.display()
+    );
     println!("Cache hits: {cache_hits}/{total}");
     println!("Total time: {:.1}s", t0.elapsed().as_secs_f64());
 }

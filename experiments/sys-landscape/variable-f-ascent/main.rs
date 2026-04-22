@@ -622,6 +622,67 @@ fn smoke_paths() -> (PathBuf, PathBuf) {
     )
 }
 
+#[derive(Debug)]
+struct Cli {
+    smoke: bool,
+    fresh: bool,
+    out_path: Option<PathBuf>,
+}
+
+fn print_help() {
+    eprintln!(
+        "Usage: cargo run -p exp-sys-landscape --release --bin sys-variable-f-ascent -- [--fresh] [--smoke] [--out <path>]"
+    );
+    eprintln!("  --fresh         Delete output JSONL before running and recompute from scratch.");
+    eprintln!("  --smoke         Run one bounded probe (default temp output/cache under /tmp).");
+    eprintln!("  --out <path>    Override output JSONL path (default depends on mode).");
+    eprintln!("Output defaults:");
+    eprintln!(
+        "  non-smoke: {}/variable-f-ascent/variable-f-ascent.jsonl",
+        env!("CARGO_MANIFEST_DIR")
+    );
+    eprintln!("  smoke: temporary dir created via smoke_paths() as in current default smoke mode");
+}
+
+fn parse_args() -> Cli {
+    let args: Vec<String> = std::env::args().collect();
+    let mut out_path: Option<PathBuf> = None;
+    let mut smoke = false;
+    let mut fresh = false;
+
+    let mut i = 1usize;
+    while i < args.len() {
+        match args[i].as_str() {
+            "-h" | "--help" => {
+                print_help();
+                std::process::exit(0);
+            }
+            "--fresh" => {
+                fresh = true;
+                i += 1;
+            }
+            "--smoke" => {
+                smoke = true;
+                i += 1;
+            }
+            "--out" => {
+                let value = args
+                    .get(i + 1)
+                    .unwrap_or_else(|| panic!("--out requires a value"));
+                out_path = Some(PathBuf::from(value));
+                i += 2;
+            }
+            other => panic!("unknown argument: {other}"),
+        }
+    }
+
+    Cli {
+        smoke,
+        fresh,
+        out_path,
+    }
+}
+
 fn smoke_run(
     package_root: &std::path::Path,
     output_path: &std::path::Path,
@@ -724,32 +785,10 @@ fn main() {
 
     println!("variable-f-ascent: variable-F gradient ascent experiment\n");
 
-    // CLI args
-    let args: Vec<String> = std::env::args().collect();
-    let mut smoke = false;
-    let fresh = args.iter().any(|a| a == "--fresh");
-    let mut out_path: Option<PathBuf> = None;
-
-    let mut i = 1usize;
-    while i < args.len() {
-        match args[i].as_str() {
-            "--fresh" => {
-                i += 1;
-            }
-            "--smoke" => {
-                smoke = true;
-                i += 1;
-            }
-            "--out" => {
-                let value = args.get(i + 1).expect("--out requires a value");
-                out_path = Some(PathBuf::from(value));
-                i += 2;
-            }
-            other => {
-                panic!("unknown argument: {other}");
-            }
-        }
-    }
+    let cli = parse_args();
+    let smoke = cli.smoke;
+    let fresh = cli.fresh;
+    let out_path = cli.out_path;
 
     let (output_path, cache_path) = if smoke {
         let (smoke_output_path, smoke_cache_path) = smoke_paths();

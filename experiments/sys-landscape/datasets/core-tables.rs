@@ -309,6 +309,17 @@ fn parse_args() -> DatasetPaths {
     let mut i = 1usize;
     while i < args.len() {
         match args[i].as_str() {
+            "-h" | "--help" => {
+                eprintln!("Usage: cargo run -p exp-sys-landscape --release --bin sys-normalized-dataset [--raw-dir <path>] [--out-dir <path>] [--general-summary <path>] [--general-trace <path>] [--products-summary <path>] [--products-trace <path>] [--variable-f <path>]");
+                eprintln!("  --raw-dir <path>          Override the raw dataset root and derive standard input paths from it");
+                eprintln!("  --out-dir <path>          Output directory for generated tables (default: untracked /tmp temp directory)");
+                eprintln!("  --general-summary <path>  Input summary file: gradient-ascent-general/gradient-ascent-general.jsonl");
+                eprintln!("  --general-trace <path>    Input trace file: gradient-ascent-general/gradient-ascent-general-trace.jsonl");
+                eprintln!("  --products-summary <path> Input summary file: gradient-ascent-products/gradient-ascent-products.jsonl");
+                eprintln!("  --products-trace <path>   Input trace file: gradient-ascent-products/gradient-ascent-products-trace.jsonl");
+                eprintln!("  --variable-f <path>       Input continuation rows: variable-f-ascent/variable-f-ascent.jsonl");
+                std::process::exit(0);
+            }
             "--raw-dir" => {
                 let value = args.get(i + 1).expect("--raw-dir requires a value");
                 apply_raw_dir(&mut paths, Path::new(value));
@@ -611,12 +622,7 @@ fn infer_variable_f_lineage_id(row: &VariableFRow, source_name: &str) -> String 
     source_name.to_string()
 }
 
-fn infer_root_group_id(
-    dataset: &str,
-    family: &str,
-    source_name: &str,
-    role: &str,
-) -> String {
+fn infer_root_group_id(dataset: &str, family: &str, source_name: &str, role: &str) -> String {
     if role == "random_sample" {
         return format!("{dataset}::{source_name}");
     }
