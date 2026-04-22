@@ -24,7 +24,6 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 from figure_config import setup, FIGSIZE_SINGLE
 setup()
 
-REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
 EXPERIMENT_DIR = Path(__file__).resolve().parent
 DATA_PATH = EXPERIMENT_DIR / "random-product-sweep.jsonl"
 FIGURES_DIR = EXPERIMENT_DIR
@@ -46,7 +45,7 @@ PAIRS = [
 def load_jsonl(path: Path) -> list[dict]:
     if not path.exists():
         print(f"ERROR: data file not found: {path}", file=sys.stderr)
-        print("Run: cargo run --bin random_product_sweep --release", file=sys.stderr)
+        print("Run: cargo run -p exp-sys-landscape --release --bin sys-random-product-sample", file=sys.stderr)
         sys.exit(1)
     with open(path) as f:
         return [json.loads(line) for line in f if line.strip()]

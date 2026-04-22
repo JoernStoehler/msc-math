@@ -11,8 +11,8 @@ Goal: Assess whether projected gradient ascent on Lagrangian products reaches
       credible bound on hit density under 0 hits.
 Input Artifacts:
   - experiments/sys-landscape/gradient-ascent-products/data/*.jsonl (per-seed summaries)
-  - experiments/sys-landscape/gradient-ascent-products/gradient-ascent-products.jsonl (bounded local fallback)
-       Preference order: licca.jsonl > licca-shard-*.jsonl (legacy architecture-A) > gradient-ascent-products.jsonl.
+  - experiments/sys-landscape/gradient-ascent-products/gradient-ascent-products.jsonl (local committed summary file)
+       Preference order: licca.jsonl > licca-shard-*.jsonl (older shard layout) > gradient-ascent-products.jsonl.
 Output Artifacts:
   - gradient_ascent_products_distribution.png   (final sys histogram; linear)
   - gradient_ascent_products_tail.png           (final sys histogram; log-y tail)
@@ -37,7 +37,7 @@ setup()
 
 EXPERIMENT_DIR = Path(__file__).resolve().parent
 DATA_DIR = EXPERIMENT_DIR / "data"
-LEGACY_SUMMARY_PATH = EXPERIMENT_DIR / "gradient-ascent-products.jsonl"
+LOCAL_SUMMARY_PATH = EXPERIMENT_DIR / "gradient-ascent-products.jsonl"
 HKO_SYS = 1.0472
 HIGH_SYS_THRESHOLDS = [0.95, 0.99, 1.00, HKO_SYS]
 
@@ -51,13 +51,13 @@ STRATEGY_COLORS = {"within_cell": "#9E9E9E", "overshoot": "#E91E63", "wiggle": "
 
 
 def pick_jsonl_files() -> list[Path]:
-    """Prefer architecture-B licca.jsonl, then legacy architecture-A shards,
-    then the pre-refactor legacy file.
+    """Prefer licca.jsonl, then older shard files, then the local committed
+    summary file.
 
-    The legacy `licca-shard-*.jsonl` tier is retained so old committed
-    architecture-A data still loads after merge; the current `job.sh` does
-    not produce shard files, and the current `job-smoke.sh` writes temp
-    outputs outside `data/`.
+    The `licca-shard-*.jsonl` tier is retained so older committed shard
+    outputs still load after merge; the current `job.sh` does not produce
+    shard files, and the current `job-smoke.sh` writes temp outputs outside
+    `data/`.
     """
     if DATA_DIR.exists():
         licca = DATA_DIR / "licca.jsonl"
@@ -66,10 +66,10 @@ def pick_jsonl_files() -> list[Path]:
         shards = sorted(DATA_DIR.glob("licca-shard-*.jsonl"))
         if shards:
             return shards
-    if LEGACY_SUMMARY_PATH.exists():
-        return [LEGACY_SUMMARY_PATH]
+    if LOCAL_SUMMARY_PATH.exists():
+        return [LOCAL_SUMMARY_PATH]
     print(
-        f"ERROR: no data in {DATA_DIR} or at {LEGACY_SUMMARY_PATH}. "
+        f"ERROR: no data in {DATA_DIR} or at {LOCAL_SUMMARY_PATH}. "
         "From the repository root, see experiments/sys-landscape/gradient-ascent-products/job.sh 'How to run'.",
         file=sys.stderr,
     )

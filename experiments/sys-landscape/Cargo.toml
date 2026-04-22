@@ -48,31 +48,27 @@ path = "pentagon-rotation-formula/main.rs"
 
 [[bin]]
 name = "sys-dataset-random"
-path = "raw/random.rs"
+path = "datascience/produce/random.rs"
 
 [[bin]]
 name = "sys-dataset-random-product"
-path = "raw/random-product.rs"
+path = "datascience/produce/random-product.rs"
 
 [[bin]]
 name = "sys-dataset-ascent"
-path = "raw/ascent.rs"
+path = "datascience/produce/ascent.rs"
 
 [[bin]]
 name = "sys-dataset-ascent-product"
-path = "raw/ascent-product.rs"
+path = "datascience/produce/ascent-product.rs"
 
 [[bin]]
 name = "sys-dataset-continuation"
-path = "raw/continuation.rs"
+path = "datascience/produce/continuation.rs"
 
 [[bin]]
-name = "sys-dataset-core-tables"
-path = "datasets/core-tables.rs"
-
-[[bin]]
-name = "sys-dataset-features"
-path = "datasets/features.rs"
+name = "sys-dataset"
+path = "datascience/tables/main.rs"
 
 [lints]
 workspace = true

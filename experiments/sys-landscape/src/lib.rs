@@ -5,10 +5,7 @@
 //! gradient-ascent-products, rotated-regular-products, rejection-calibration.
 //! Local cell geometry experiments now live in exp-combinatorial-cells.
 
-pub mod datascience;
 pub mod datasets;
-pub use datascience::polytope_features;
-pub use datascience::trajectory_features;
 
 use good_lp::{constraint, default_solver, variable, variables, Expression, Solution, SolverModel};
 use nalgebra::{Matrix4, Vector4};
