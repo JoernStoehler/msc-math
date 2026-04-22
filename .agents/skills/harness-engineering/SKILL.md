@@ -40,6 +40,10 @@ The harness is:
 - Keep focus skills, workflow skills, and subagent roles separate. Focus skills define what the main session keeps active; workflow skills define reusable procedures inside a focus; subagent roles define separate-context output contracts.
 - Write skill bodies positive-first: operating model, action checklist or template, Jörn gates, and stop conditions. Add negative examples only when they prevent an observed or high-cost failure mode.
 - Review skill drafts for actionability. Ask reviewers which sentences would change behavior on a real task, which sentences are dense, and which examples or guardrails are redundant.
+- For convention skills, use a stricter actionability test: each rule should remove a decision, not hand it back to the agent under time pressure.
+- Prefer defaults, bans, narrow explicit exceptions, and observable review checks over open-ended prompts such as `when it pays for itself`, `when it clearly helps`, `strong boundary`, or `likely future tasks`.
+- If a sentence mainly asks the reader to make a fresh design judgment, it belongs in a design memo or review note, not in an operational skill.
+- Pressure-test convention skills against one concrete task. Ask a reviewer or low-effort subagent what action they would take because of each rule, and treat `UNCLEAR` answers as rewrite targets.
 - When a harness decision depends on Codex mechanics, compare Jörn's proposed model with current official OpenAI docs. If they differ, state the difference explicitly and explain whether the docs describe a hard product constraint, a recommendation, or a default that local experience may override.
 - Use one subagent role with loaded checklists when the role is stable and only the review surface changes.
 - Split a subagent only when the role, permissions, or output contract differs.
@@ -58,8 +62,9 @@ The harness is:
 6. If editing a skill, follow `$skill-creator`: frontmatter has only `name` and `description`; the description carries trigger conditions.
 7. If moving content out of `AGENTS.md`, add it to the skill whose description should trigger for that work.
 8. Check for stale path assumptions with `rg`, especially `crates/`, `.agents/rules`, `math.tex`, `logbook.md`, and old review-agent names.
-9. For Codex product behavior claims, cite the official OpenAI source or say the claim is based on local observed behavior.
-10. Run validation:
+9. For convention skills, run one concrete actionability probe before calling the draft done. Use a realistic task and ask, line by line, what action a rushed agent would take. Rewrite every rule that comes back as `UNCLEAR`, vague, or purely philosophical.
+10. For Codex product behavior claims, cite the official OpenAI source or say the claim is based on local observed behavior.
+11. Run validation:
 
 ```bash
 uv run --with pyyaml python /home/vscode/.codex/skills/.system/skill-creator/scripts/quick_validate.py .agents/skills/<skill-name>
