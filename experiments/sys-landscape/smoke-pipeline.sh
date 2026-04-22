@@ -48,14 +48,7 @@ cargo run -p exp-sys-landscape --bin sys-dataset-continuation -- \
 
 cargo run -p exp-sys-landscape --bin sys-dataset-normalized -- \
   --out-dir "$NORM_DIR" \
-  --random-sample "$RAW_DIR/random.jsonl" \
-  --random-product "$RAW_DIR/random-product.jsonl" \
-  --general-summary "$RAW_DIR/ascent.jsonl" \
-  --general-trace "$RAW_DIR/ascent-trace.jsonl" \
-  --products-summary "$RAW_DIR/ascent-product.jsonl" \
-  --products-trace "$RAW_DIR/ascent-product-trace.jsonl" \
-  --variable-f "$RAW_DIR/continuation.jsonl" \
-  --continuation-cache "$RAW_DIR/continuation-cache.jsonl"
+  --raw-dir "$RAW_DIR"
 
 cargo run -p exp-sys-landscape --bin sys-dataset-feature-capacity -- \
   --normalized-dir "$NORM_DIR" \

@@ -24,4 +24,5 @@ Current status:
 [smoke-pipeline.sh](../smoke-pipeline.sh) finishes by running `uv run
 methods/eda.py` on the temp normalized / feature outputs. This is the current
 check that the flat Rust producer surface is already pleasant for low-friction
-Python consumer work.
+Python consumer work. The normalized stage now takes `--raw-dir <tmp/raw>` so
+the smoke shell does not have to restate every raw corpus file path.
