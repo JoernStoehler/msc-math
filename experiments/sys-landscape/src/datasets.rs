@@ -2,10 +2,10 @@
 
 use std::path::PathBuf;
 
-pub const RAW_DIR: &str = "raw";
+pub const RAW_DIR: &str = "datascience/produce";
 pub const CONTINUATION_EXPERIMENT_DIR: &str = "variable-f-ascent";
 pub const GRADIENT_ASCENT_GENERAL_DIR: &str = "gradient-ascent-general";
-pub const SHARED_CACHE_FILE: &str = "cache.jsonl";
+pub const SHARED_CACHE_FILE: &str = "shared-cache.jsonl";
 pub const CONTINUATION_CACHE_FILE: &str = "cache.jsonl";
 
 pub fn package_root() -> PathBuf {
@@ -17,7 +17,7 @@ pub fn experiment_path(experiment_dir: &str, file_name: &str) -> PathBuf {
 }
 
 pub fn shared_family_cache_path() -> PathBuf {
-    package_root().join(SHARED_CACHE_FILE)
+    raw_root().join(SHARED_CACHE_FILE)
 }
 
 pub fn continuation_cache_path() -> PathBuf {
