@@ -1,7 +1,7 @@
 //! Load producer outputs and merge them into unified datascience input rows.
 
 use blake3::Hasher;
-use exp_sys_landscape::{experiment_path, package_root, rational_vec4_to_strings, SummaryRow, TraceRow};
+use exp_sys_landscape::{package_root, rational_vec4_to_strings, SummaryRow, TraceRow};
 use serde::de::DeserializeOwned;
 use serde::Deserialize;
 use std::collections::HashMap;
@@ -162,53 +162,18 @@ fn smoke_output_dir() -> PathBuf {
     dir
 }
 
-fn prefer_existing(primary: PathBuf, fallback: PathBuf) -> PathBuf {
-    if primary.exists() {
-        primary
-    } else {
-        fallback
-    }
-}
-
 fn default_paths() -> DatasetPaths {
     let produce_dir = package_root().join("datascience/produce");
     DatasetPaths {
-        random_sample: prefer_existing(
-            produce_dir.join("random.jsonl"),
-            experiment_path("random-sample", "random-sweep.jsonl"),
-        ),
-        random_product: prefer_existing(
-            produce_dir.join("random-product.jsonl"),
-            experiment_path("random-product-sample", "random-product-sweep.jsonl"),
-        ),
-        ascent_summary: prefer_existing(
-            produce_dir.join("ascent.jsonl"),
-            experiment_path("gradient-ascent-general", "gradient-ascent-general.jsonl"),
-        ),
-        ascent_trace: prefer_existing(
-            produce_dir.join("ascent-trace.jsonl"),
-            experiment_path("gradient-ascent-general", "gradient-ascent-general-trace.jsonl"),
-        ),
-        ascent_product_summary: prefer_existing(
-            produce_dir.join("ascent-product.jsonl"),
-            experiment_path("gradient-ascent-products", "gradient-ascent-products.jsonl"),
-        ),
-        ascent_product_trace: prefer_existing(
-            produce_dir.join("ascent-product-trace.jsonl"),
-            experiment_path("gradient-ascent-products", "gradient-ascent-products-trace.jsonl"),
-        ),
-        continuation_summary: prefer_existing(
-            produce_dir.join("continuation.jsonl"),
-            experiment_path("variable-f-ascent", "variable-f-ascent.jsonl"),
-        ),
-        shared_cache: prefer_existing(
-            produce_dir.join("shared-cache.jsonl"),
-            package_root().join("cache.jsonl"),
-        ),
-        continuation_cache: prefer_existing(
-            produce_dir.join("continuation-cache.jsonl"),
-            experiment_path("variable-f-ascent", "cache.jsonl"),
-        ),
+        random_sample: produce_dir.join("random.jsonl"),
+        random_product: produce_dir.join("random-product.jsonl"),
+        ascent_summary: produce_dir.join("ascent.jsonl"),
+        ascent_trace: produce_dir.join("ascent-trace.jsonl"),
+        ascent_product_summary: produce_dir.join("ascent-product.jsonl"),
+        ascent_product_trace: produce_dir.join("ascent-product-trace.jsonl"),
+        continuation_summary: produce_dir.join("continuation.jsonl"),
+        shared_cache: produce_dir.join("shared-cache.jsonl"),
+        continuation_cache: produce_dir.join("continuation-cache.jsonl"),
         out_dir: smoke_output_dir(),
     }
 }
@@ -451,15 +416,16 @@ fn observation_id(dataset: &str, name: &str) -> String {
     format!("{dataset}:{name}")
 }
 
-pub fn load_caches(paths: &DatasetPaths) -> LoadedCaches {
-    let orbit_payloads = orbit_payloads(paths);
-    let mut polytopes = HashMap::<String, LoadedPolytopeRow>::new();
-    let mut observations = Vec::<LoadedObservationRow>::new();
-
-    for row in read_jsonl::<RandomSweepRow>(&paths.random_sample) {
+fn load_random_sample_rows(
+    path: &Path,
+    polytopes: &mut HashMap<String, LoadedPolytopeRow>,
+    observations: &mut Vec<LoadedObservationRow>,
+    orbit_payloads: &HashMap<String, OrbitPayload>,
+) {
+    for row in read_jsonl::<RandomSweepRow>(path) {
         let poly_id = ensure_polytope(
-            &mut polytopes,
-            &orbit_payloads,
+            polytopes,
+            orbit_payloads,
             row.dual_vertices_rational,
             row.facet_count,
             row.capacity,
@@ -500,11 +466,18 @@ pub fn load_caches(paths: &DatasetPaths) -> LoadedCaches {
             trace_events: Vec::new(),
         });
     }
+}
 
-    for row in read_jsonl::<RandomProductRow>(&paths.random_product) {
+fn load_random_product_rows(
+    path: &Path,
+    polytopes: &mut HashMap<String, LoadedPolytopeRow>,
+    observations: &mut Vec<LoadedObservationRow>,
+    orbit_payloads: &HashMap<String, OrbitPayload>,
+) {
+    for row in read_jsonl::<RandomProductRow>(path) {
         let poly_id = ensure_polytope(
-            &mut polytopes,
-            &orbit_payloads,
+            polytopes,
+            orbit_payloads,
             row.dual_vertices_rational,
             row.facet_count,
             row.capacity,
@@ -545,8 +518,10 @@ pub fn load_caches(paths: &DatasetPaths) -> LoadedCaches {
             trace_events: Vec::new(),
         });
     }
+}
 
-    let ascent_traces = read_jsonl_if_exists::<TraceRow>(&paths.ascent_trace)
+fn trace_events_by_name(path: &Path) -> HashMap<String, Vec<TraceEvent>> {
+    read_jsonl_if_exists::<TraceRow>(path)
         .into_iter()
         .fold(HashMap::<String, Vec<TraceEvent>>::new(), |mut acc, row| {
             acc.entry(row.name.clone()).or_default().push(TraceEvent {
@@ -561,11 +536,21 @@ pub fn load_caches(paths: &DatasetPaths) -> LoadedCaches {
                 gradient_norm: row.gradient_norm,
             });
             acc
-        });
-    for row in read_jsonl::<SummaryRow>(&paths.ascent_summary) {
+        })
+}
+
+fn load_ascent_rows(
+    summary_path: &Path,
+    trace_path: &Path,
+    polytopes: &mut HashMap<String, LoadedPolytopeRow>,
+    observations: &mut Vec<LoadedObservationRow>,
+    orbit_payloads: &HashMap<String, OrbitPayload>,
+) {
+    let trace_events = trace_events_by_name(trace_path);
+    for row in read_jsonl::<SummaryRow>(summary_path) {
         let poly_id = ensure_polytope(
-            &mut polytopes,
-            &orbit_payloads,
+            polytopes,
+            orbit_payloads,
             row.final_dual_vertices_rational.clone(),
             row.facet_count,
             0.0,
@@ -608,30 +593,23 @@ pub fn load_caches(paths: &DatasetPaths) -> LoadedCaches {
             placement_direction: None,
             facet_remained_active: None,
             total_time_ms: Some(row.total_time_ms),
-            trace_events: ascent_traces.get(&row.name).cloned().unwrap_or_default(),
+            trace_events: trace_events.get(&row.name).cloned().unwrap_or_default(),
         });
     }
+}
 
-    let ascent_product_traces = read_jsonl_if_exists::<TraceRow>(&paths.ascent_product_trace)
-        .into_iter()
-        .fold(HashMap::<String, Vec<TraceEvent>>::new(), |mut acc, row| {
-            acc.entry(row.name.clone()).or_default().push(TraceEvent {
-                phase: row.phase,
-                iteration: row.iteration,
-                step_type: row.step_type,
-                t_fraction: row.t_fraction,
-                t_actual: row.t_actual,
-                sys_before: row.sys_before,
-                sys_after: row.sys_after,
-                delta_sys: row.delta_sys,
-                gradient_norm: row.gradient_norm,
-            });
-            acc
-        });
-    for row in read_jsonl::<SummaryRow>(&paths.ascent_product_summary) {
+fn load_ascent_product_rows(
+    summary_path: &Path,
+    trace_path: &Path,
+    polytopes: &mut HashMap<String, LoadedPolytopeRow>,
+    observations: &mut Vec<LoadedObservationRow>,
+    orbit_payloads: &HashMap<String, OrbitPayload>,
+) {
+    let trace_events = trace_events_by_name(trace_path);
+    for row in read_jsonl::<SummaryRow>(summary_path) {
         let poly_id = ensure_polytope(
-            &mut polytopes,
-            &orbit_payloads,
+            polytopes,
+            orbit_payloads,
             row.final_dual_vertices_rational.clone(),
             row.facet_count,
             0.0,
@@ -674,14 +652,21 @@ pub fn load_caches(paths: &DatasetPaths) -> LoadedCaches {
             placement_direction: None,
             facet_remained_active: None,
             total_time_ms: Some(row.total_time_ms),
-            trace_events: ascent_product_traces.get(&row.name).cloned().unwrap_or_default(),
+            trace_events: trace_events.get(&row.name).cloned().unwrap_or_default(),
         });
     }
+}
 
-    for row in read_jsonl::<VariableFRow>(&paths.continuation_summary) {
+fn load_continuation_rows(
+    path: &Path,
+    polytopes: &mut HashMap<String, LoadedPolytopeRow>,
+    observations: &mut Vec<LoadedObservationRow>,
+    orbit_payloads: &HashMap<String, OrbitPayload>,
+) {
+    for row in read_jsonl::<VariableFRow>(path) {
         let poly_id = ensure_polytope(
-            &mut polytopes,
-            &orbit_payloads,
+            polytopes,
+            orbit_payloads,
             row.final_dual_vertices_rational.clone(),
             row.final_dual_vertices_rational.len(),
             0.0,
@@ -731,6 +716,45 @@ pub fn load_caches(paths: &DatasetPaths) -> LoadedCaches {
             trace_events: Vec::new(),
         });
     }
+}
+
+pub fn load_caches(paths: &DatasetPaths) -> LoadedCaches {
+    let orbit_payloads = orbit_payloads(paths);
+    let mut polytopes = HashMap::<String, LoadedPolytopeRow>::new();
+    let mut observations = Vec::<LoadedObservationRow>::new();
+
+    load_random_sample_rows(
+        &paths.random_sample,
+        &mut polytopes,
+        &mut observations,
+        &orbit_payloads,
+    );
+    load_random_product_rows(
+        &paths.random_product,
+        &mut polytopes,
+        &mut observations,
+        &orbit_payloads,
+    );
+    load_ascent_rows(
+        &paths.ascent_summary,
+        &paths.ascent_trace,
+        &mut polytopes,
+        &mut observations,
+        &orbit_payloads,
+    );
+    load_ascent_product_rows(
+        &paths.ascent_product_summary,
+        &paths.ascent_product_trace,
+        &mut polytopes,
+        &mut observations,
+        &orbit_payloads,
+    );
+    load_continuation_rows(
+        &paths.continuation_summary,
+        &mut polytopes,
+        &mut observations,
+        &orbit_payloads,
+    );
 
     let mut polytope_rows = polytopes.into_values().collect::<Vec<_>>();
     polytope_rows.sort_by(|a, b| a.poly_id.cmp(&b.poly_id));

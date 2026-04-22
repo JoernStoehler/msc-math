@@ -18,12 +18,8 @@ Output Artifacts:
 """
 
 import argparse
-import json
 import math
-import subprocess
-import sys
 import tempfile
-from dataclasses import dataclass
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -41,32 +37,12 @@ try:
 except ImportError:  # pragma: no cover - fallback for older scikit-learn.
     StratifiedGroupKFold = None
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent.parent.parent))
-from figure_config import FIGSIZE_DUAL, setup
+from common import FIGSIZE_DUAL, JoinedRow, load_joined_rows, refresh_dataset, setup
 
 setup()
 
 EXPERIMENT_DIR = Path(__file__).resolve().parent
-REPO_ROOT = EXPERIMENT_DIR.parent.parent.parent.parent.parent
-
-FEATURE_GEOMETRY_JSONL = EXPERIMENT_DIR / "feature_geometry.jsonl"
-FEATURE_FACE_GEOMETRY_JSONL = EXPERIMENT_DIR / "feature_face_geometry.jsonl"
-FEATURE_FACE_SYMPLECTIC_JSONL = EXPERIMENT_DIR / "feature_face_symplectic.jsonl"
-FEATURE_SKELETON_JSONL = EXPERIMENT_DIR / "feature_skeleton.jsonl"
-FEATURE_OMEGA_JSONL = EXPERIMENT_DIR / "feature_omega.jsonl"
-FEATURE_ORBIT_JSONL = EXPERIMENT_DIR / "feature_orbit.jsonl"
-FEATURE_TRAJECTORY_JSONL = EXPERIMENT_DIR / "feature_trajectory.jsonl"
 FIGURE_PNG = EXPERIMENT_DIR / "regime_classification_bars.png"
-
-ENDPOINT_DATASETS = {
-    "gradient_ascent_general",
-    "gradient_ascent_products",
-    "variable_f_ascent",
-}
-RANDOM_DATASETS = {
-    "random_sample",
-    "random_product_sample",
-}
 
 FEATURE_BLOCKS = [
     "null",
@@ -83,128 +59,12 @@ FEATURE_BLOCKS = [
 MODEL_SPECS = [("logistic", "Logistic regression"), ("rf", "Random forest")]
 
 
-@dataclass
-class JoinedRow:
-    state_id: str
-    poly_id: str
-    regime: str
-    group_id: str
-    metadata: dict[str, str | float]
-    geometry: dict[str, float]
-    face_geometry: dict[str, float]
-    face_symplectic: dict[str, float]
-    skeleton: dict[str, float]
-    omega: dict[str, float]
-    orbit: dict[str, float]
-    trajectory: dict[str, float]
-
-
-def cv_group_id(state: dict, regime: str) -> str:
-    if state.get("root_group_id"):
-        return str(state["root_group_id"])
-    if regime == "endpoint" and state.get("source_name"):
-        return str(state["source_name"])
-    return str(state.get("lineage_id") or state["observation_id"])
-
-
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--dataset-dir",
-        type=Path,
-        help="Use an existing dataset directory instead of refreshing a temp one.",
+        "--dataset-dir", type=Path, help="Use an existing dataset directory instead of refreshing a temp one."
     )
     return parser.parse_args()
-
-
-def load_jsonl(path: Path) -> list[dict]:
-    with path.open() as handle:
-        return [json.loads(line) for line in handle if line.strip()]
-
-
-def refresh_dataset(out_dir: Path) -> None:
-    cmd = [
-        "cargo",
-        "run",
-        "-p",
-        "exp-sys-landscape",
-        "--release",
-        "--bin",
-        "sys-dataset",
-        "--",
-        "--out-dir",
-        str(out_dir),
-    ]
-    subprocess.run(cmd, cwd=REPO_ROOT, check=True)
-
-
-def load_joined_rows(dataset_dir: Path) -> list[JoinedRow]:
-    observations = load_jsonl(dataset_dir / "observation-table.jsonl")
-    polytopes = {
-        row["poly_id"]: row for row in load_jsonl(dataset_dir / "polytope-table.jsonl")
-    }
-
-    geometry_by_poly = {
-        row["poly_id"]: {key: value for key, value in row.items() if key != "poly_id"}
-        for row in load_jsonl(FEATURE_GEOMETRY_JSONL)
-    }
-    face_geometry_by_poly = {
-        row["poly_id"]: {key: value for key, value in row.items() if key != "poly_id"}
-        for row in load_jsonl(FEATURE_FACE_GEOMETRY_JSONL)
-    }
-    face_symplectic_by_poly = {
-        row["poly_id"]: {key: value for key, value in row.items() if key != "poly_id"}
-        for row in load_jsonl(FEATURE_FACE_SYMPLECTIC_JSONL)
-    }
-    skeleton_by_poly = {
-        row["poly_id"]: {key: value for key, value in row.items() if key != "poly_id"}
-        for row in load_jsonl(FEATURE_SKELETON_JSONL)
-    }
-    omega_by_poly = {
-        row["poly_id"]: {key: value for key, value in row.items() if key != "poly_id"}
-        for row in load_jsonl(FEATURE_OMEGA_JSONL)
-    }
-    orbit_by_poly = {
-        row["poly_id"]: {key: value for key, value in row.items() if key != "poly_id"}
-        for row in load_jsonl(FEATURE_ORBIT_JSONL)
-    }
-    trajectory_by_observation = {
-        row["observation_id"]: {key: value for key, value in row.items() if key != "observation_id"}
-        for row in load_jsonl(FEATURE_TRAJECTORY_JSONL)
-    }
-
-    rows: list[JoinedRow] = []
-    for observation in observations:
-        dataset = observation["dataset"]
-        regime = "endpoint" if dataset in ENDPOINT_DATASETS else "random"
-        if dataset not in ENDPOINT_DATASETS | RANDOM_DATASETS:
-            raise ValueError(f"unexpected dataset {dataset}")
-        poly = polytopes[observation["poly_id"]]
-        rows.append(
-            JoinedRow(
-                state_id=observation["observation_id"],
-                poly_id=observation["poly_id"],
-                regime=regime,
-                group_id=cv_group_id(observation, regime),
-                metadata={
-                    "facet_count": float(poly["facet_count"]),
-                    "family": observation["family"],
-                    "dataset": dataset,
-                    "role": observation["role"],
-                    "search_space": observation["search_space"],
-                    "optimizer": observation["optimizer"],
-                    "backend": observation["backend"],
-                },
-                geometry=geometry_by_poly[observation["poly_id"]],
-                face_geometry=face_geometry_by_poly[observation["poly_id"]],
-                face_symplectic=face_symplectic_by_poly[observation["poly_id"]],
-                skeleton=skeleton_by_poly[observation["poly_id"]],
-                omega=omega_by_poly[observation["poly_id"]],
-                orbit=orbit_by_poly[observation["poly_id"]],
-                trajectory=trajectory_by_observation[observation["observation_id"]],
-            )
-        )
-    return rows
 
 
 def build_feature_dict(row: JoinedRow, block: str) -> dict[str, float | str]:

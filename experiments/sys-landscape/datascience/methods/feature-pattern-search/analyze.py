@@ -25,13 +25,9 @@ Output Artifacts:
 """
 
 import argparse
-import json
 import math
 import statistics
-import subprocess
-import sys
 import tempfile
-from dataclasses import dataclass
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -44,33 +40,32 @@ from sklearn.model_selection import GroupKFold
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import MaxAbsScaler
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent.parent.parent))
-from figure_config import FIGSIZE_DUAL, FIGSIZE_SQUARE, setup
+from common import (
+    ENDPOINT_DATASETS,
+    EXPERIMENT_DIR,
+    FEATURE_FACE_GEOMETRY_JSONL,
+    FEATURE_FACE_SYMPLECTIC_JSONL,
+    FEATURE_GEOMETRY_JSONL,
+    FEATURE_OMEGA_JSONL,
+    FEATURE_ORBIT_JSONL,
+    FEATURE_SKELETON_JSONL,
+    FEATURE_TRAJECTORY_JSONL,
+    FIGSIZE_DUAL,
+    FIGSIZE_SQUARE,
+    JoinedRow,
+    RANDOM_DATASETS,
+    REPO_ROOT,
+    cv_group_id,
+    load_jsonl,
+    refresh_dataset,
+    setup,
+    write_jsonl,
+)
 
 setup()
 
-EXPERIMENT_DIR = Path(__file__).resolve().parent
-REPO_ROOT = EXPERIMENT_DIR.parent.parent.parent.parent.parent
-
-FEATURE_JSONL = EXPERIMENT_DIR / "feature_geometry.jsonl"
-FEATURE_FACE_GEOMETRY_JSONL = EXPERIMENT_DIR / "feature_face_geometry.jsonl"
-FEATURE_FACE_SYMPLECTIC_JSONL = EXPERIMENT_DIR / "feature_face_symplectic.jsonl"
-FEATURE_SKELETON_JSONL = EXPERIMENT_DIR / "feature_skeleton.jsonl"
-FEATURE_OMEGA_JSONL = EXPERIMENT_DIR / "feature_omega.jsonl"
-FEATURE_ORBIT_JSONL = EXPERIMENT_DIR / "feature_orbit.jsonl"
-FEATURE_TRAJECTORY_JSONL = EXPERIMENT_DIR / "feature_trajectory.jsonl"
 RIDGE_PNG = EXPERIMENT_DIR / "feature_pattern_search_ridge.png"
 RF_PNG = EXPERIMENT_DIR / "feature_pattern_search_rf.png"
-
-ENDPOINT_DATASETS = {
-    "gradient_ascent_general",
-    "gradient_ascent_products",
-    "variable_f_ascent",
-}
-RANDOM_DATASETS = {
-    "random_sample",
-    "random_product_sample",
-}
 SURFACES = [
     ("within_random", "Within random"),
     ("within_endpoint", "Within endpoint"),
@@ -136,44 +131,12 @@ ORBIT_SEARCH_KEYS = [
 ]
 
 
-@dataclass
-class JoinedRow:
-    state_id: str
-    poly_id: str
-    regime: str
-    group_id: str
-    sys: float
-    metadata: dict[str, str | float]
-    geometry: dict[str, float]
-    face_geometry: dict[str, float]
-    face_symplectic: dict[str, float]
-    skeleton: dict[str, float]
-    omega: dict[str, float]
-    orbit: dict[str, float]
-    trajectory: dict[str, float]
-
-
-def cv_group_id(state: dict, regime: str) -> str:
-    if state.get("root_group_id"):
-        return str(state["root_group_id"])
-    if regime == "endpoint" and state.get("source_name"):
-        return str(state["source_name"])
-    return str(state.get("lineage_id") or state["observation_id"])
-
-
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--dataset-dir",
-        type=Path,
-        help="Use an existing dataset directory instead of refreshing a temp one.",
+        "--dataset-dir", type=Path, help="Use an existing dataset directory instead of refreshing a temp one."
     )
     return parser.parse_args()
-
-
-def load_jsonl(path: Path) -> list[dict]:
-    with path.open() as handle:
-        return [json.loads(line) for line in handle if line.strip()]
 
 
 def parse_rational(token: str) -> float:
@@ -252,23 +215,6 @@ def build_geometry_features(poly: dict, volume: float) -> dict[str, float]:
         "geom_vol1_sval_3": singular_values[2],
         "geom_vol1_sval_4": singular_values[3],
     }
-
-
-def refresh_dataset(out_dir: Path) -> None:
-    cmd = [
-        "cargo",
-        "run",
-        "-p",
-        "exp-sys-landscape",
-        "--release",
-        "--bin",
-        "sys-dataset",
-        "--",
-        "--out-dir",
-        str(out_dir),
-    ]
-    subprocess.run(cmd, cwd=REPO_ROOT, check=True)
-
 
 def prefixed_rows(rows: list[dict], prefixes: tuple[str, ...], id_key: str) -> list[dict]:
     return [
@@ -588,12 +534,6 @@ def format_metric(value: float) -> str:
     return f"{value:.4f}"
 
 
-def write_feature_jsonl(rows: list[dict]) -> None:
-    with FEATURE_JSONL.open("w") as handle:
-        for row in rows:
-            handle.write(json.dumps(row) + "\n")
-
-
 def write_summary(
     dataset_source_label: str,
     joined_rows: list[JoinedRow],
@@ -870,30 +810,18 @@ def main() -> None:
                 trajectory_rows,
             ) = load_joined_rows(dataset_dir)
 
-    write_feature_jsonl(geometry_rows)
-    with FEATURE_FACE_GEOMETRY_JSONL.open("w") as handle:
-        for row in face_geometry_rows:
-            handle.write(json.dumps(row) + "\n")
-    with FEATURE_FACE_SYMPLECTIC_JSONL.open("w") as handle:
-        for row in face_symplectic_rows:
-            handle.write(json.dumps(row) + "\n")
-    with FEATURE_SKELETON_JSONL.open("w") as handle:
-        for row in skeleton_rows:
-            handle.write(json.dumps(row) + "\n")
-    with FEATURE_OMEGA_JSONL.open("w") as handle:
-        for row in omega_rows:
-            handle.write(json.dumps(row) + "\n")
-    with FEATURE_ORBIT_JSONL.open("w") as handle:
-        for row in orbit_rows:
-            handle.write(json.dumps(row) + "\n")
-    with FEATURE_TRAJECTORY_JSONL.open("w") as handle:
-        for row in trajectory_rows:
-            handle.write(json.dumps(row) + "\n")
+    write_jsonl(FEATURE_GEOMETRY_JSONL, geometry_rows)
+    write_jsonl(FEATURE_FACE_GEOMETRY_JSONL, face_geometry_rows)
+    write_jsonl(FEATURE_FACE_SYMPLECTIC_JSONL, face_symplectic_rows)
+    write_jsonl(FEATURE_SKELETON_JSONL, skeleton_rows)
+    write_jsonl(FEATURE_OMEGA_JSONL, omega_rows)
+    write_jsonl(FEATURE_ORBIT_JSONL, orbit_rows)
+    write_jsonl(FEATURE_TRAJECTORY_JSONL, trajectory_rows)
     results = run_evaluations(joined_rows)
     plot_model_results(results, "ridge", RIDGE_PNG, "Feature Pattern Search: Ridge")
     plot_model_results(results, "rf", RF_PNG, "Feature Pattern Search: Random forest")
 
-    print(f"Saved {FEATURE_JSONL}")
+    print(f"Saved {FEATURE_GEOMETRY_JSONL}")
     print(f"Saved {FEATURE_FACE_GEOMETRY_JSONL}")
     print(f"Saved {FEATURE_FACE_SYMPLECTIC_JSONL}")
     print(f"Saved {FEATURE_SKELETON_JSONL}")
