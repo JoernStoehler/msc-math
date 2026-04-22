@@ -14,7 +14,7 @@ The current dataset binaries still mostly reuse legacy packet code under `normal
 
 | Flat binary | Backing code today | Role |
 | --- | --- | --- |
-| `sys-dataset-normalized` | `normalized-dataset/main.rs` | join raw corpus into stable tables |
+| `sys-dataset-normalized` | `datasets/normalized.rs` | join raw corpus into stable tables |
 | `sys-dataset-feature-skeleton` | `feature-skeleton/main.rs` | combinatorial feature block |
 | `sys-dataset-feature-dual-vertices` | `datasets/feature-dual-vertices.rs` | floating-point dual-vertex block |
 | `sys-dataset-feature-capacity` | `datasets/feature-capacity.rs` | scalar capacity block |
@@ -40,6 +40,6 @@ Today the consumer side still lives partly in legacy folders such as `feature-pa
 [smoke-pipeline.sh](../smoke-pipeline.sh) runs the current end-to-end dataset
 surface against temp directories:
 - `raw/` producers emit ad hoc corpus files;
-- `sys-dataset-normalized --raw-dir <tmp/raw>` derives the canonical smoke
-  input files from one raw directory;
+- `sys-dataset-normalized --raw-dir <tmp/raw>` is a smoke convenience alias for
+  the current canonical raw stems in that directory;
 - the flat `sys-dataset-feature-*` binaries write temp feature JSONLs.
