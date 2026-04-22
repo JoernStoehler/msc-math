@@ -4,22 +4,19 @@
 //! write them into one features output directory.
 
 use exp_sys_landscape::datascience::io::write_jsonl;
-use exp_sys_landscape::polytope_features::{build_cache_index, enrich_row as enrich_polytope_row, load_inputs as load_polytope_inputs};
+use exp_sys_landscape::polytope_features::{enrich_row as enrich_polytope_row, load_inputs as load_polytope_inputs};
 use exp_sys_landscape::trajectory_features::{enrich_row as enrich_trajectory_row, load_inputs as load_trajectory_inputs};
-use exp_sys_landscape::{package_root, raw_dataset_cache_path};
 use std::path::PathBuf;
 
 struct Args {
     core_tables_dir: PathBuf,
     out_dir: PathBuf,
-    continuation_cache: PathBuf,
 }
 
 fn parse_args() -> Args {
     let args: Vec<String> = std::env::args().collect();
     let mut core_tables_dir: Option<PathBuf> = None;
     let mut out_dir: Option<PathBuf> = None;
-    let mut continuation_cache: Option<PathBuf> = None;
     let mut i = 1usize;
     while i < args.len() {
         match args[i].as_str() {
@@ -33,20 +30,12 @@ fn parse_args() -> Args {
                 out_dir = Some(PathBuf::from(value));
                 i += 2;
             }
-            "--continuation-cache" => {
-                let value = args
-                    .get(i + 1)
-                    .expect("--continuation-cache requires a value");
-                continuation_cache = Some(PathBuf::from(value));
-                i += 2;
-            }
             other => panic!("unknown argument: {other}"),
         }
     }
     Args {
         core_tables_dir: core_tables_dir.expect("--core-tables-dir is required"),
         out_dir: out_dir.expect("--out-dir is required"),
-        continuation_cache: continuation_cache.unwrap_or_else(|| raw_dataset_cache_path("continuation")),
     }
 }
 
@@ -55,10 +44,9 @@ fn main() {
     std::fs::create_dir_all(&args.out_dir).expect("create features output dir");
 
     let polytope_inputs = load_polytope_inputs(&args.core_tables_dir);
-    let orbit_cache = build_cache_index(&package_root(), &args.continuation_cache);
     let polytope_rows = polytope_inputs
         .iter()
-        .map(|row| enrich_polytope_row(row, &orbit_cache))
+        .map(enrich_polytope_row)
         .collect::<Vec<_>>();
     write_jsonl(&args.out_dir.join("polytope-features.jsonl"), &polytope_rows);
 

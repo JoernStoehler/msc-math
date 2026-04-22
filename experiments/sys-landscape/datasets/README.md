@@ -36,4 +36,5 @@ surface against temp directories:
 - `raw/` producers emit ad hoc corpus files;
 - `sys-dataset-core-tables --raw-dir <tmp/raw>` is a smoke convenience alias for
   the current canonical raw stems in that directory;
-- `sys-dataset-features` writes the feature outputs under the chosen output directory.
+- `sys-dataset-features` reads the written core tables and writes the feature
+  outputs under the chosen output directory.

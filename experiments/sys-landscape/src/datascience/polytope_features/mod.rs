@@ -20,7 +20,7 @@ use feature_dual_vertices::DualVertexFields;
 use feature_face_geometry::FaceGeometryFields;
 use feature_face_symplectic::FaceSymplecticFields;
 use feature_omega::OmegaFields;
-pub use feature_orbit::{build_cache_index, OrbitCacheIndex, OrbitFields};
+use feature_orbit::OrbitFields;
 use feature_skeleton::SkeletonFields;
 use feature_sys::SysFields;
 use feature_volume::VolumeFields;
@@ -28,6 +28,7 @@ use num_rational::BigRational;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::path::Path;
+use symplectic::database::{OrbitScalars, SigmaAction};
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::skeleton::Skeleton;
 use symplectic::geom::volume::volume;
@@ -53,7 +54,18 @@ struct CapacityResultRow {
     search_result_source: String,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Deserialize)]
+struct OrbitRecordRow {
+    poly_id: String,
+    #[serde(default)]
+    sigma_gap_cutoff: Option<f64>,
+    #[serde(default)]
+    sigmas: Option<Vec<SigmaAction>>,
+    #[serde(default)]
+    orbit_scalars: Option<OrbitScalars>,
+}
+
+#[derive(Clone)]
 pub struct PolytopeFeatureInputRow {
     pub poly_id: String,
     pub dual_vertices_rational: Vec<[BigRational; 4]>,
@@ -64,6 +76,9 @@ pub struct PolytopeFeatureInputRow {
     pub sys: f64,
     pub capacity_iterations: Option<u64>,
     pub capacity_source: String,
+    pub sigma_gap_cutoff: Option<f64>,
+    pub sigmas: Option<Vec<SigmaAction>>,
+    pub orbit_scalars: Option<OrbitScalars>,
 }
 
 #[derive(Debug, Serialize)]
@@ -187,12 +202,19 @@ pub fn load_inputs(core_tables_dir: &Path) -> Vec<PolytopeFeatureInputRow> {
         .into_iter()
         .map(|row| (row.poly_id.clone(), row))
         .collect::<HashMap<_, _>>();
+    let mut orbit_records = read_jsonl::<OrbitRecordRow>(&core_tables_dir.join("orbit_records.jsonl"))
+        .into_iter()
+        .map(|row| (row.poly_id.clone(), row))
+        .collect::<HashMap<_, _>>();
     let mut rows = polytopes
         .into_iter()
         .map(|poly| {
             let cap = capacities
                 .remove(&poly.poly_id)
                 .unwrap_or_else(|| panic!("missing capacity_results row for {}", poly.poly_id));
+            let orbit = orbit_records
+                .remove(&poly.poly_id)
+                .unwrap_or_else(|| panic!("missing orbit_records row for {}", poly.poly_id));
             PolytopeFeatureInputRow {
                 poly_id: poly.poly_id,
                 dual_vertices_rational: poly.dual_vertices_rational,
@@ -203,6 +225,9 @@ pub fn load_inputs(core_tables_dir: &Path) -> Vec<PolytopeFeatureInputRow> {
                 sys: cap.sys,
                 capacity_iterations: cap.iterations,
                 capacity_source: cap.search_result_source,
+                sigma_gap_cutoff: orbit.sigma_gap_cutoff,
+                sigmas: orbit.sigmas,
+                orbit_scalars: orbit.orbit_scalars,
             }
         })
         .collect::<Vec<_>>();
@@ -210,7 +235,7 @@ pub fn load_inputs(core_tables_dir: &Path) -> Vec<PolytopeFeatureInputRow> {
     rows
 }
 
-pub fn enrich_row(row: &PolytopeFeatureInputRow, cache: &OrbitCacheIndex) -> PolytopeFeatureRow {
+pub fn enrich_row(row: &PolytopeFeatureInputRow) -> PolytopeFeatureRow {
     let polytope = Polytope4D::from_rational_parts(
         row.dual_vertices_rational.clone(),
         row.vertices_rational.clone(),
@@ -250,7 +275,6 @@ pub fn enrich_row(row: &PolytopeFeatureInputRow, cache: &OrbitCacheIndex) -> Pol
         &duals,
         facet_count,
         &omega_fields.transition,
-        cache,
     );
 
     PolytopeFeatureRow {

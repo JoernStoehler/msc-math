@@ -52,8 +52,7 @@ cargo run -p exp-sys-landscape --bin sys-dataset-core-tables -- \
 
 cargo run -p exp-sys-landscape --bin sys-dataset-features -- \
   --core-tables-dir "$NORM_DIR" \
-  --out-dir "$FEATURE_DIR" \
-  --continuation-cache "$RAW_DIR/continuation-cache.jsonl"
+  --out-dir "$FEATURE_DIR"
 
 uv run "$ROOT/experiments/sys-landscape/methods/eda.py" \
   --core-tables-dir "$NORM_DIR" \

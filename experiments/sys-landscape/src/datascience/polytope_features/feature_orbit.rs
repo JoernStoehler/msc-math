@@ -1,14 +1,10 @@
 use super::PolytopeFeatureInputRow;
 use nalgebra::{DMatrix, Vector4};
-use std::collections::HashMap;
-use std::path::{Path, PathBuf};
 use symplectic::algorithms::solve_orbit_sigma;
-use symplectic::database::{load_many, DualVerticesKey, OrbitScalars, PolytopeRecord};
+use symplectic::database::OrbitScalars;
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::symplectic_form::omega0;
 use symplectic::{OrbitAdmissibility, OrbitSolveBackend};
-
-pub type OrbitCacheIndex = HashMap<DualVerticesKey, PolytopeRecord>;
 
 pub struct OrbitFields {
     pub orbit_sigma_available: f64,
@@ -47,21 +43,6 @@ pub struct OrbitFields {
     pub orbit_best_is_indeterminate_f64: f64,
 }
 
-pub fn build_cache_index(package_root: &Path, continuation_cache: &Path) -> OrbitCacheIndex {
-    let repo_root = package_root
-        .parent()
-        .and_then(Path::parent)
-        .and_then(Path::parent)
-        .expect("package root should be experiments/sys-landscape");
-    let paths = [
-        package_root.join("cache.jsonl"),
-        repo_root.join("experiments/combinatorial-cells/polytopes.jsonl"),
-        continuation_cache.to_path_buf(),
-    ];
-    let refs = paths.iter().map(PathBuf::as_path).collect::<Vec<_>>();
-    load_many(&refs).unwrap_or_else(|e| panic!("load orbit caches: {e}"))
-}
-
 fn stats_or_zero(values: &[f64]) -> (f64, f64, f64, f64) {
     if values.is_empty() {
         return (0.0, 0.0, 0.0, 0.0);
@@ -87,8 +68,8 @@ fn fraction_at_most(values: &[f64], threshold: f64) -> f64 {
     values.iter().filter(|&&value| value <= threshold).count() as f64 / values.len() as f64
 }
 
-fn fallback_orbit_scalars(polytope: &Polytope4D, record: &PolytopeRecord) -> Option<OrbitScalars> {
-    let best_sigma = record.sigmas.as_ref()?.first()?;
+fn fallback_orbit_scalars(polytope: &Polytope4D, row: &PolytopeFeatureInputRow) -> Option<OrbitScalars> {
+    let best_sigma = row.sigmas.as_ref()?.first()?;
     let orbit =
         solve_orbit_sigma(polytope, &best_sigma.perm, OrbitSolveBackend::SaddlePoint).ok()?;
     Some(OrbitScalars {
@@ -154,13 +135,8 @@ pub fn compute(
     duals: &[Vector4<f64>],
     facet_count: usize,
     transition: &DMatrix<bool>,
-    cache: &OrbitCacheIndex,
 ) -> OrbitFields {
-    let dual_key = row.dual_vertices_rational.clone();
-    let Some(record) = cache.get(&dual_key) else {
-        return zero();
-    };
-    let Some(sigmas) = record.sigmas.as_ref() else {
+    let Some(sigmas) = row.sigmas.as_ref() else {
         return zero();
     };
     let Some(best_sigma) = sigmas.first() else {
@@ -213,10 +189,10 @@ pub fn compute(
         stats_or_zero(&cycle_abs_omegas);
     let (orbit_selected_out_degree_mean, orbit_selected_out_degree_std, orbit_selected_out_degree_min, orbit_selected_out_degree_max) =
         stats_or_zero(&selected_out_degrees);
-    let orbit_scalars = record
+    let orbit_scalars = row
         .orbit_scalars
         .clone()
-        .or_else(|| fallback_orbit_scalars(polytope, record));
+        .or_else(|| fallback_orbit_scalars(polytope, row));
     let orbit_search_scalar_available = orbit_scalars
         .as_ref()
         .is_some_and(|scalars| scalars.returned_orbit_count > 0 || scalars.iterations > 0);
@@ -225,7 +201,7 @@ pub fn compute(
     OrbitFields {
         orbit_sigma_available: 1.0,
         orbit_sigma_count: sigmas.len() as f64,
-        orbit_sigma_gap_cutoff: record.sigma_gap_cutoff.unwrap_or(0.0),
+        orbit_sigma_gap_cutoff: row.sigma_gap_cutoff.unwrap_or(0.0),
         orbit_sigma_len: perm.len() as f64,
         orbit_sigma_fraction: perm.len() as f64 / facet_count as f64,
         orbit_selected_norm_mean,

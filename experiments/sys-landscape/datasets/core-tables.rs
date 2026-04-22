@@ -1,8 +1,8 @@
 //! Normalize the hostile-landscape source packets into core joinable tables.
 //!
-//! Goal: convert the current random/ascent JSONLs into four durable core tables:
-//! `polytopes.jsonl`, `states.jsonl`, `capacity_results.jsonl`, and
-//! `step_events.jsonl`.
+//! Goal: convert the current random/ascent JSONLs into durable core tables:
+//! `polytopes.jsonl`, `states.jsonl`, `capacity_results.jsonl`,
+//! `orbit_records.jsonl`, and `step_events.jsonl`.
 //! Input Artifacts: experiments/sys-landscape/cache.jsonl
 //!         experiments/combinatorial-cells/polytopes.jsonl
 //!         experiments/sys-landscape/raw/continuation-cache.jsonl
@@ -46,7 +46,7 @@ use std::io::{BufRead, BufReader, BufWriter, Write};
 use std::path::{Path, PathBuf};
 use std::str::FromStr;
 use std::time::{SystemTime, UNIX_EPOCH};
-use symplectic::database::{load, PolytopeRecord};
+use symplectic::database::{load, OrbitScalars, PolytopeRecord, SigmaAction};
 use symplectic::ehz_capacity;
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::volume::volume;
@@ -182,6 +182,18 @@ struct CapacityResultRow {
     #[serde(skip_serializing_if = "Option::is_none")]
     iterations: Option<u64>,
     search_result_source: String,
+}
+
+#[derive(Serialize, Clone)]
+struct OrbitRecordRow {
+    poly_id: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    sigma_gap_cutoff: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    sigmas: Option<Vec<SigmaAction>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    orbit_scalars: Option<OrbitScalars>,
+    orbit_record_source: String,
 }
 
 #[derive(Debug, Serialize)]
@@ -676,6 +688,30 @@ fn push_capacity_row(
         .or_insert(new_row);
 }
 
+fn push_orbit_record_row(output: &mut HashMap<String, OrbitRecordRow>, entry: &ExactCacheEntry) {
+    let new_row = OrbitRecordRow {
+        poly_id: entry.poly_id.clone(),
+        sigma_gap_cutoff: entry.record.sigma_gap_cutoff,
+        sigmas: entry.record.sigmas.clone(),
+        orbit_scalars: entry.record.orbit_scalars.clone(),
+        orbit_record_source: entry.geometry_source.clone(),
+    };
+    output
+        .entry(entry.poly_id.clone())
+        .and_modify(|existing| {
+            if existing.sigmas.is_none() && new_row.sigmas.is_some() {
+                existing.sigmas = new_row.sigmas.clone();
+                existing.sigma_gap_cutoff = new_row.sigma_gap_cutoff;
+                existing.orbit_record_source = new_row.orbit_record_source.clone();
+            }
+            if existing.orbit_scalars.is_none() && new_row.orbit_scalars.is_some() {
+                existing.orbit_scalars = new_row.orbit_scalars.clone();
+                existing.orbit_record_source = new_row.orbit_record_source.clone();
+            }
+        })
+        .or_insert(new_row);
+}
+
 fn main() {
     let package_root = package_root();
     let paths = parse_args();
@@ -737,6 +773,7 @@ fn main() {
 
     let mut polytopes = HashMap::<String, PolytopeRow>::new();
     let mut capacities = HashMap::<String, CapacityResultRow>::new();
+    let mut orbit_records = HashMap::<String, OrbitRecordRow>::new();
     let mut states = Vec::<StateRow>::new();
     let mut step_events = Vec::<StepEventRow>::new();
 
@@ -756,6 +793,7 @@ fn main() {
             Some(row.iterations),
             "random-sample/random-sweep.jsonl",
         );
+        push_orbit_record_row(&mut orbit_records, entry);
         states.push(StateRow {
             state_id: dual_vertices_to_state_key("random_sample", &row.name),
             poly_id: entry.poly_id.clone(),
@@ -810,6 +848,7 @@ fn main() {
             Some(row.iterations),
             "random-product-sample/random-product-sweep.jsonl",
         );
+        push_orbit_record_row(&mut orbit_records, entry);
         states.push(StateRow {
             state_id: dual_vertices_to_state_key("random_product", &row.name),
             poly_id: entry.poly_id.clone(),
@@ -864,6 +903,7 @@ fn main() {
             None,
             "gradient-ascent-general/gradient-ascent-general.jsonl",
         );
+        push_orbit_record_row(&mut orbit_records, entry);
         let lineage = if row.lineage_id.is_empty() {
             row.name.clone()
         } else {
@@ -942,6 +982,7 @@ fn main() {
             None,
             "gradient-ascent-products/gradient-ascent-products.jsonl",
         );
+        push_orbit_record_row(&mut orbit_records, entry);
         let lineage = if row.lineage_id.is_empty() {
             row.name.clone()
         } else {
@@ -1020,6 +1061,7 @@ fn main() {
             None,
             "variable-f-ascent/variable-f-ascent.jsonl",
         );
+        push_orbit_record_row(&mut orbit_records, entry);
         let source_name = infer_variable_f_source_name(row);
         let lineage_id = infer_variable_f_lineage_id(row, &source_name);
         states.push(StateRow {
@@ -1064,6 +1106,8 @@ fn main() {
 
     let mut capacity_rows = capacities.into_values().collect::<Vec<_>>();
     capacity_rows.sort_by(|a, b| a.poly_id.cmp(&b.poly_id));
+    let mut orbit_record_rows = orbit_records.into_values().collect::<Vec<_>>();
+    orbit_record_rows.sort_by(|a, b| a.poly_id.cmp(&b.poly_id));
 
     states.sort_by(|a, b| a.state_id.cmp(&b.state_id));
     step_events.sort_by(|a, b| {
@@ -1079,11 +1123,13 @@ fn main() {
         &paths.out_dir.join("capacity_results.jsonl"),
         &capacity_rows,
     );
+    write_jsonl(&paths.out_dir.join("orbit_records.jsonl"), &orbit_record_rows);
     write_jsonl(&paths.out_dir.join("step_events.jsonl"), &step_events);
 
     println!("Wrote {} polytopes", polytope_rows.len());
     println!("Wrote {} states", states.len());
     println!("Wrote {} capacity rows", capacity_rows.len());
+    println!("Wrote {} orbit records", orbit_record_rows.len());
     println!("Wrote {} step events", step_events.len());
     println!("Output directory: {}", paths.out_dir.display());
 }
