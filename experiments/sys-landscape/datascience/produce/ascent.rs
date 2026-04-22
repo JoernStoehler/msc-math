@@ -2,10 +2,10 @@
 //!
 //! Goal: Run unconstrained gradient ascent on general random polytopes and
 //! record both the summary outcomes and per-step traces.
-//! Input Artifacts: experiments/sys-landscape/cache.jsonl
-//! Output Artifacts: experiments/sys-landscape/cache.jsonl
-//!         experiments/sys-landscape/raw/ascent.jsonl
-//!         experiments/sys-landscape/raw/ascent-trace.jsonl
+//! Input Artifacts: experiments/sys-landscape/datascience/produce/shared-cache.jsonl
+//! Output Artifacts: experiments/sys-landscape/datascience/produce/shared-cache.jsonl
+//!         experiments/sys-landscape/datascience/produce/ascent.jsonl
+//!         experiments/sys-landscape/datascience/produce/ascent-trace.jsonl
 //!
 //! At each iteration, builds the active-orbit first-order model for `sys`.
 //! With one active orbit, uses that branch gradient directly; at switching
@@ -29,7 +29,7 @@
 //!                        (set by LICCA to avoid concurrent write races)
 //!
 //! Canonical refresh example:
-//! `cargo run -p exp-sys-landscape --release --bin sys-dataset-ascent -- --out experiments/sys-landscape/raw/ascent.jsonl --db-update`
+//! `cargo run -p exp-sys-landscape --release --bin sys-dataset-ascent -- --out experiments/sys-landscape/datascience/produce/ascent.jsonl --db-update`
 //!
 //! Architecture B (2026-04-12): rayon `par_iter` over `[n_start, n_start+n)`
 //! at the dataset level. Seed i uses its own RNG stream

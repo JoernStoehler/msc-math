@@ -21,9 +21,9 @@
 //!        --out <path>  (override output JSONL path)
 //!        --cache <path>  (override cache JSONL path)
 //!        --ascent-input <path>  (override source ascent JSONL path)
-//! Input Artifacts: experiments/sys-landscape/raw/ascent.jsonl
-//! Output Artifacts: experiments/sys-landscape/raw/continuation.jsonl
-//!         experiments/sys-landscape/raw/continuation-cache.jsonl
+//! Input Artifacts: experiments/sys-landscape/datascience/produce/ascent.jsonl
+//! Output Artifacts: experiments/sys-landscape/datascience/produce/continuation.jsonl
+//!         experiments/sys-landscape/datascience/produce/continuation-cache.jsonl
 
 use exp_sys_landscape::{
     compute_step_bound, orbit_scalars_from_result, raw_dataset_cache_path, raw_dataset_path,

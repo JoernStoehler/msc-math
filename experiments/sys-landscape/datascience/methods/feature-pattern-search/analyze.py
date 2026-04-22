@@ -9,27 +9,19 @@ Goal: Run a bounded hostile-landscape pattern-search pass on the dataset
       surface, comparing a narrow metadata baseline against cheap geometry
       features derived from exact dual vertices.
 Input Artifacts:
-  - experiments/sys-landscape/cache.jsonl
-  - experiments/combinatorial-cells/polytopes.jsonl
-  - experiments/sys-landscape/variable-f-ascent/cache.jsonl
-  - experiments/sys-landscape/random-sample/random-sweep.jsonl
-  - experiments/sys-landscape/random-product-sample/random-product-sweep.jsonl
-  - experiments/sys-landscape/gradient-ascent-general/gradient-ascent-general.jsonl
-  - experiments/sys-landscape/gradient-ascent-general/gradient-ascent-general-trace.jsonl
-  - experiments/sys-landscape/gradient-ascent-products/gradient-ascent-products.jsonl
-  - experiments/sys-landscape/gradient-ascent-products/gradient-ascent-products-trace.jsonl
-  - experiments/sys-landscape/variable-f-ascent/variable-f-ascent.jsonl
   - optionally a precomputed dataset directory passed by `--dataset-dir`
+  - otherwise the datascience producer caches under
+    `experiments/sys-landscape/datascience/produce/`
 Output Artifacts:
-  - experiments/sys-landscape/feature-pattern-search/feature_geometry.jsonl
-  - experiments/sys-landscape/feature-pattern-search/feature_face_geometry.jsonl
-  - experiments/sys-landscape/feature-pattern-search/feature_face_symplectic.jsonl
-  - experiments/sys-landscape/feature-pattern-search/feature_skeleton.jsonl
-  - experiments/sys-landscape/feature-pattern-search/feature_omega.jsonl
-  - experiments/sys-landscape/feature-pattern-search/feature_orbit.jsonl
-  - experiments/sys-landscape/feature-pattern-search/feature_trajectory.jsonl
-  - experiments/sys-landscape/feature-pattern-search/feature_pattern_search_ridge.png
-  - experiments/sys-landscape/feature-pattern-search/feature_pattern_search_rf.png
+  - experiments/sys-landscape/datascience/methods/feature-pattern-search/feature_geometry.jsonl
+  - experiments/sys-landscape/datascience/methods/feature-pattern-search/feature_face_geometry.jsonl
+  - experiments/sys-landscape/datascience/methods/feature-pattern-search/feature_face_symplectic.jsonl
+  - experiments/sys-landscape/datascience/methods/feature-pattern-search/feature_skeleton.jsonl
+  - experiments/sys-landscape/datascience/methods/feature-pattern-search/feature_omega.jsonl
+  - experiments/sys-landscape/datascience/methods/feature-pattern-search/feature_orbit.jsonl
+  - experiments/sys-landscape/datascience/methods/feature-pattern-search/feature_trajectory.jsonl
+  - experiments/sys-landscape/datascience/methods/feature-pattern-search/feature_pattern_search_ridge.png
+  - experiments/sys-landscape/datascience/methods/feature-pattern-search/feature_pattern_search_rf.png
 """
 
 import argparse

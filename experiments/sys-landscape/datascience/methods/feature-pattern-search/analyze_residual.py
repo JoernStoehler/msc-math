@@ -11,17 +11,17 @@ Context: this residual packet is a sibling to `analyze.py`. It keeps the
       original analyzer intact, reuses the existing feature JSONL outputs, and
       evaluates additive metadata-first models on the endpoint regime only.
 Input Artifacts:
-  - experiments/sys-landscape/feature-pattern-search/feature_geometry.jsonl
-  - experiments/sys-landscape/feature-pattern-search/feature_face_geometry.jsonl
-  - experiments/sys-landscape/feature-pattern-search/feature_face_symplectic.jsonl
-  - experiments/sys-landscape/feature-pattern-search/feature_skeleton.jsonl
-  - experiments/sys-landscape/feature-pattern-search/feature_omega.jsonl
-  - experiments/sys-landscape/feature-pattern-search/feature_orbit.jsonl
-  - experiments/sys-landscape/feature-pattern-search/feature_trajectory.jsonl
+  - experiments/sys-landscape/datascience/methods/feature-pattern-search/feature_geometry.jsonl
+  - experiments/sys-landscape/datascience/methods/feature-pattern-search/feature_face_geometry.jsonl
+  - experiments/sys-landscape/datascience/methods/feature-pattern-search/feature_face_symplectic.jsonl
+  - experiments/sys-landscape/datascience/methods/feature-pattern-search/feature_skeleton.jsonl
+  - experiments/sys-landscape/datascience/methods/feature-pattern-search/feature_omega.jsonl
+  - experiments/sys-landscape/datascience/methods/feature-pattern-search/feature_orbit.jsonl
+  - experiments/sys-landscape/datascience/methods/feature-pattern-search/feature_trajectory.jsonl
   - optionally a precomputed dataset directory passed by
     `--dataset-dir`
 Output Artifacts:
-  - experiments/sys-landscape/feature-pattern-search/feature_pattern_search_residual.png
+  - experiments/sys-landscape/datascience/methods/feature-pattern-search/feature_pattern_search_residual.png
 """
 
 import argparse
@@ -144,7 +144,7 @@ def load_joined_rows(dataset_dir: Path) -> list[JoinedRow]:
     if not feature_geometry_path.exists():
         raise FileNotFoundError(
             f"{feature_geometry_path} is missing; run "
-            "`experiments/sys-landscape/feature-pattern-search/analyze.py` first "
+            "`experiments/sys-landscape/datascience/methods/feature-pattern-search/analyze.py` first "
             "to refresh the canonical geometry feature packet."
         )
 

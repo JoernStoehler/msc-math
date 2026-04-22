@@ -8,21 +8,13 @@
 Goal: classify endpoint vs random regime on the hostile-landscape surface and
       compare the existing feature families as regime separators.
 Input Artifacts:
-  - experiments/sys-landscape/cache.jsonl
-  - experiments/combinatorial-cells/polytopes.jsonl
-  - experiments/sys-landscape/variable-f-ascent/cache.jsonl
-  - experiments/sys-landscape/random-sample/random-sweep.jsonl
-  - experiments/sys-landscape/random-product-sample/random-product-sweep.jsonl
-  - experiments/sys-landscape/gradient-ascent-general/gradient-ascent-general.jsonl
-  - experiments/sys-landscape/gradient-ascent-products/gradient-ascent-products.jsonl
-  - experiments/sys-landscape/variable-f-ascent/variable-f-ascent.jsonl
+  - optionally a precomputed dataset directory passed by `--dataset-dir`
   - feature tables in this directory:
     `feature_geometry.jsonl`, `feature_face_geometry.jsonl`,
     `feature_face_symplectic.jsonl`, `feature_skeleton.jsonl`,
     `feature_omega.jsonl`, `feature_orbit.jsonl`, `feature_trajectory.jsonl`
-  - optionally a precomputed dataset directory passed by `--dataset-dir`
 Output Artifacts:
-  - experiments/sys-landscape/feature-pattern-search/regime_classification_bars.png
+  - experiments/sys-landscape/datascience/methods/feature-pattern-search/regime_classification_bars.png
 """
 
 import argparse

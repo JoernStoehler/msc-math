@@ -2,10 +2,10 @@
 //!
 //! Goal: Run projected gradient ascent on random Lagrangian products and
 //! record both the summary outcomes and per-step traces.
-//! Input Artifacts: experiments/sys-landscape/cache.jsonl
-//! Output Artifacts: experiments/sys-landscape/cache.jsonl
-//!         experiments/sys-landscape/raw/ascent-product.jsonl
-//!         experiments/sys-landscape/raw/ascent-product-trace.jsonl
+//! Input Artifacts: experiments/sys-landscape/datascience/produce/shared-cache.jsonl
+//! Output Artifacts: experiments/sys-landscape/datascience/produce/shared-cache.jsonl
+//!         experiments/sys-landscape/datascience/produce/ascent-product.jsonl
+//!         experiments/sys-landscape/datascience/produce/ascent-product-trace.jsonl
 //!
 //! At each iteration, builds the active-orbit first-order model for `sys`.
 //! With one active orbit, it uses that branch gradient directly; at switching
@@ -29,7 +29,7 @@
 //!                        (set by LICCA shards to avoid concurrent write races)
 //!
 //! Canonical refresh example:
-//! `cargo run -p exp-sys-landscape --release --bin sys-dataset-ascent-product -- --out experiments/sys-landscape/raw/ascent-product.jsonl --db-update`
+//! `cargo run -p exp-sys-landscape --release --bin sys-dataset-ascent-product -- --out experiments/sys-landscape/datascience/produce/ascent-product.jsonl --db-update`
 //!
 //! Architecture B (2026-04-12): rayon `par_iter` over `[n_start, n_start+n)`
 //! at the dataset level. Seed i uses its own RNG stream
