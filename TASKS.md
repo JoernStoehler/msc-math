@@ -268,7 +268,7 @@ sys as a continuous function on polytope space, no privileged threshold.
 - Candidate outcomes: a transferable signal gives a conjecture or guided search strategy; no signal or only non-transferable structure supports the hostile-landscape conclusion.
 - Dependencies: random/polytope datasets are available now; use current local-maxima datasets immediately and extend to LICCA-returned local maxima if those artifacts arrive in time.
 - First implementation packet: add a `sys-*` converter that normalizes the existing random/ascent JSONLs into core tables (`polytopes`, `states`, `capacity_results`, `step_events`) with an explicit source-priority rule. Do not start with model fitting or force intermediate-state geometry that current trace logs do not contain.
-- Landed in this worktree as the `sys-dataset-core-tables` + `sys-dataset-features` pipeline; verified current core-table counts are `282` states / `282` capacity rows / `287` step events once the refreshed `experiments/sys-landscape/cache.jsonl` includes the fixed-`F` ascent endpoints.
+- Landed in this worktree as the `sys-dataset` pipeline; verified current shared-table counts are `282` states / `282` capacity rows / `287` step events once the refreshed `experiments/sys-landscape/cache.jsonl` includes the fixed-`F` ascent endpoints.
 - Bounded pass landed in `experiments/sys-landscape/feature-pattern-search/` with `feature_geometry`, `feature_skeleton`, `feature_omega`, sigma-local `feature_orbit`, and state-keyed `feature_trajectory` blocks plus refreshed summary plots. The markdown ledger surfaces now exist in `research/sys-landscape-toolbox-audit.md` and `research/sys-landscape-datascience/method-ledger.md`; the remaining gap is method-by-method population and thesis-use judgment, not file creation.
 - Follow-up packet landed: fixed-`F` endpoint and random-baseline cache rows now persist bounded `orbit_scalars`; `feature_orbit` still falls back to one best-sigma KKT solve for older rows, which currently includes the `variable-f-ascent` packet.
 - Follow-up packet landed: bounded `feature_face_geometry` now evaluates edge-length and facet-3-volume summaries in the `vol(K)=1` convention; it helps within-random (`R^2=0.3847` ridge, `0.7009` RF) and still adds only a small endpoint-only signal (`0.1030` ridge, `0.1218` RF), with transfer still strongly negative.
@@ -279,7 +279,7 @@ sys as a continuous function on polytope space, no privileged threshold.
 - Next blocked direction for a future LICCA session: row count, not local code scaffolding, is now the main bottleneck if this line is reopened.
 - Highest-value LICCA follow-up: generate many more endpoint rows for `gradient-ascent-general` and `gradient-ascent-products`, then `variable-f-ascent`; random baselines already show within-regime signal and have lower marginal value than endpoint packets.
 - Current posterior from the bounded pass: more rows alone are unlikely to create a clean transferable random-to-endpoint heuristic, but LICCA-scale endpoint data is still plausibly high-value for revealing stronger endpoint-only structure or for making the current negative transfer result much more decisive.
-- Re-entry point: reuse the current dataset + feature-pattern-search pipeline exactly as-is, refresh the canonical ascent JSONLs / caches from LICCA outputs, rerun `sys-dataset-core-tables`, rerun `sys-dataset-features`, then rerun `experiments/sys-landscape/feature-pattern-search/analyze.py` before inventing richer models.
+- Re-entry point: reuse the current dataset + feature-pattern-search pipeline exactly as-is, refresh the canonical ascent JSONLs / caches from LICCA outputs, rerun `sys-dataset`, then rerun `experiments/sys-landscape/feature-pattern-search/analyze.py` before inventing richer models.
 
 ### [future] Systematic landscape analysis
 - Gradient flow convergence, local maxima below sys=1, random noise effects.
@@ -292,7 +292,7 @@ sys as a continuous function on polytope space, no privileged threshold.
   1. more `gradient-ascent-general` endpoint rows
   2. more `gradient-ascent-products` endpoint rows
   3. more `variable-f-ascent` endpoint rows
-- Restart rule for future sessions: if new LICCA rows exist, refresh the canonical ascent JSONLs / caches and rerun `sys-dataset-core-tables`, `sys-dataset-features`, and `experiments/sys-landscape/feature-pattern-search/analyze.py` before inventing new model families.
+- Restart rule for future sessions: if new LICCA rows exist, refresh the canonical ascent JSONLs / caches and rerun `sys-dataset` and `experiments/sys-landscape/feature-pattern-search/analyze.py` before inventing new model families.
 
 ## [open] Computing capacity
 

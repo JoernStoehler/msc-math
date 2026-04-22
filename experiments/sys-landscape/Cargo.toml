@@ -59,12 +59,8 @@ name = "sys-dataset-continuation"
 path = "raw/continuation.rs"
 
 [[bin]]
-name = "sys-dataset-core-tables"
-path = "datasets/core-tables.rs"
-
-[[bin]]
-name = "sys-dataset-features"
-path = "datasets/features.rs"
+name = "sys-dataset"
+path = "datasets/main.rs"
 
 [lints]
 workspace = true

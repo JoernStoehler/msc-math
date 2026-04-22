@@ -5,8 +5,8 @@
 # ///
 
 """
-Goal: Run a bounded hostile-landscape pattern-search pass on the core-table
-      dataset, comparing a narrow metadata baseline against cheap geometry
+Goal: Run a bounded hostile-landscape pattern-search pass on the dataset
+      surface, comparing a narrow metadata baseline against cheap geometry
       features derived from exact dual vertices.
 Input Artifacts:
   - experiments/sys-landscape/cache.jsonl
@@ -19,7 +19,7 @@ Input Artifacts:
   - experiments/sys-landscape/gradient-ascent-products/gradient-ascent-products.jsonl
   - experiments/sys-landscape/gradient-ascent-products/gradient-ascent-products-trace.jsonl
   - experiments/sys-landscape/variable-f-ascent/variable-f-ascent.jsonl
-  - optionally a precomputed core-table directory passed by `--normalized-dir`
+  - optionally a precomputed dataset directory passed by `--dataset-dir`
 Output Artifacts:
   - experiments/sys-landscape/feature-pattern-search/feature_geometry.jsonl
   - experiments/sys-landscape/feature-pattern-search/feature_face_geometry.jsonl
@@ -172,9 +172,9 @@ def cv_group_id(state: dict, regime: str) -> str:
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--normalized-dir",
+        "--dataset-dir",
         type=Path,
-        help="Use an existing normalized dataset directory instead of refreshing a temp one.",
+        help="Use an existing dataset directory instead of refreshing a temp one.",
     )
     return parser.parse_args()
 
@@ -262,7 +262,7 @@ def build_geometry_features(poly: dict, volume: float) -> dict[str, float]:
     }
 
 
-def refresh_core_tables(out_dir: Path) -> None:
+def refresh_dataset(out_dir: Path) -> None:
     cmd = [
         "cargo",
         "run",
@@ -270,26 +270,8 @@ def refresh_core_tables(out_dir: Path) -> None:
         "exp-sys-landscape",
         "--release",
         "--bin",
-        "sys-dataset-core-tables",
+        "sys-dataset",
         "--",
-        "--out-dir",
-        str(out_dir),
-    ]
-    subprocess.run(cmd, cwd=REPO_ROOT, check=True)
-
-
-def refresh_feature_dataset(core_tables_dir: Path, out_dir: Path) -> None:
-    cmd = [
-        "cargo",
-        "run",
-        "-p",
-        "exp-sys-landscape",
-        "--release",
-        "--bin",
-        "sys-dataset-features",
-        "--",
-        "--core-tables-dir",
-        str(core_tables_dir),
         "--out-dir",
         str(out_dir),
     ]
@@ -355,8 +337,7 @@ def split_feature_rows(
 
 
 def load_joined_rows(
-    core_tables_dir: Path,
-    feature_dir: Path,
+    dataset_dir: Path,
 ) -> tuple[
     list[JoinedRow],
     list[dict],
@@ -367,12 +348,12 @@ def load_joined_rows(
     list[dict],
     list[dict],
 ]:
-    states = load_jsonl(core_tables_dir / "states.jsonl")
+    states = load_jsonl(dataset_dir / "states.jsonl")
     capacities = {
-        row["poly_id"]: row for row in load_jsonl(core_tables_dir / "capacity_results.jsonl")
+        row["poly_id"]: row for row in load_jsonl(dataset_dir / "capacity_results.jsonl")
     }
     polytopes = {
-        row["poly_id"]: row for row in load_jsonl(core_tables_dir / "polytopes.jsonl")
+        row["poly_id"]: row for row in load_jsonl(dataset_dir / "polytopes.jsonl")
     }
 
     geometry_rows: list[dict] = []
@@ -382,8 +363,8 @@ def load_joined_rows(
         geometry_rows.append({"poly_id": poly_id, **features})
         geometry_by_poly[poly_id] = features
 
-    polytope_feature_rows = load_jsonl(feature_dir / "polytope-features.jsonl")
-    trajectory_rows = load_jsonl(feature_dir / "trajectory-features.jsonl")
+    polytope_feature_rows = load_jsonl(dataset_dir / "polytope-features.jsonl")
+    trajectory_rows = load_jsonl(dataset_dir / "trajectory-features.jsonl")
     (
         face_geometry_rows,
         face_symplectic_rows,
@@ -634,7 +615,7 @@ def write_feature_jsonl(rows: list[dict]) -> None:
 
 
 def write_summary(
-    normalized_source_label: str,
+    dataset_source_label: str,
     joined_rows: list[JoinedRow],
     results: list[dict],
 ) -> None:
@@ -692,7 +673,7 @@ def write_summary(
         "",
         "## Dataset",
         "",
-        f"- normalized input source: {normalized_source_label}",
+        f"- dataset source: {dataset_source_label}",
         f"- joined rows: `{len(joined_rows)}`",
         f"- random rows: `{counts_by_regime['random']}`",
         f"- endpoint rows: `{counts_by_regime['endpoint']}`",
@@ -881,38 +862,23 @@ def plot_model_results(results: list[dict], model_name: str, out_path: Path, tit
 
 def main() -> None:
     args = parse_args()
-    if args.normalized_dir is not None:
-        core_tables_dir = args.normalized_dir.resolve()
-        with tempfile.TemporaryDirectory(prefix="feature-pattern-search-features-") as feature_tmp:
-            feature_dir = Path(feature_tmp)
-            normalized_source_label = f"`{core_tables_dir}`"
-            refresh_feature_dataset(core_tables_dir, feature_dir)
-            (
-                joined_rows,
-                geometry_rows,
-                face_geometry_rows,
-                face_symplectic_rows,
-                skeleton_rows,
-                omega_rows,
-                orbit_rows,
-                trajectory_rows,
-            ) = load_joined_rows(core_tables_dir, feature_dir)
+    if args.dataset_dir is not None:
+        dataset_dir = args.dataset_dir.resolve()
+        (
+            joined_rows,
+            geometry_rows,
+            face_geometry_rows,
+            face_symplectic_rows,
+            skeleton_rows,
+            omega_rows,
+            orbit_rows,
+            trajectory_rows,
+        ) = load_joined_rows(dataset_dir)
     else:
         with tempfile.TemporaryDirectory(prefix="feature-pattern-search-") as temp_dir:
-            core_tables_dir = Path(temp_dir) / "core-tables"
-            feature_dir = Path(temp_dir) / "features"
-            core_tables_dir.mkdir(parents=True, exist_ok=True)
-            feature_dir.mkdir(parents=True, exist_ok=True)
-            refresh_core_tables(core_tables_dir)
-            refresh_feature_dataset(core_tables_dir, feature_dir)
-            normalized_source_label = (
-                "temporary refresh via "
-                "`cargo run -p exp-sys-landscape --release --bin "
-                "sys-dataset-core-tables -- --out-dir <temp/core-tables>` "
-                "and `cargo run -p exp-sys-landscape --release --bin "
-                "sys-dataset-features -- --core-tables-dir <temp/core-tables> "
-                "--out-dir <temp/features>`"
-            )
+            dataset_dir = Path(temp_dir) / "dataset"
+            dataset_dir.mkdir(parents=True, exist_ok=True)
+            refresh_dataset(dataset_dir)
             (
                 joined_rows,
                 geometry_rows,
@@ -922,7 +888,7 @@ def main() -> None:
                 omega_rows,
                 orbit_rows,
                 trajectory_rows,
-            ) = load_joined_rows(core_tables_dir, feature_dir)
+            ) = load_joined_rows(dataset_dir)
 
     write_feature_jsonl(geometry_rows)
     with FEATURE_FACE_GEOMETRY_JSONL.open("w") as handle:

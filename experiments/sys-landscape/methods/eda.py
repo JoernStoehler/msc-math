@@ -27,9 +27,8 @@ setup()
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--core-tables-dir", type=Path, required=True)
+    parser.add_argument("--dataset-dir", type=Path, required=True)
     parser.add_argument("--out-dir", type=Path, required=True)
-    parser.add_argument("--polytope-features", type=Path)
     return parser.parse_args()
 
 
@@ -42,20 +41,19 @@ def main() -> None:
     args = parse_args()
     args.out_dir.mkdir(parents=True, exist_ok=True)
 
-    states = load_jsonl(args.core_tables_dir / "states.jsonl")
+    states = load_jsonl(args.dataset_dir / "states.jsonl")
     polytopes = {
-        row["poly_id"]: row for row in load_jsonl(args.core_tables_dir / "polytopes.jsonl")
+        row["poly_id"]: row for row in load_jsonl(args.dataset_dir / "polytopes.jsonl")
     }
     capacities = {
         row["poly_id"]: row
-        for row in load_jsonl(args.core_tables_dir / "capacity_results.jsonl")
+        for row in load_jsonl(args.dataset_dir / "capacity_results.jsonl")
     }
 
-    polytope_features = {}
-    if args.polytope_features and args.polytope_features.exists():
-        polytope_features = {
-            row["poly_id"]: row for row in load_jsonl(args.polytope_features)
-        }
+    polytope_features = {
+        row["poly_id"]: row
+        for row in load_jsonl(args.dataset_dir / "polytope-features.jsonl")
+    }
 
     dataset_counts: Counter[str] = Counter()
     sys_by_dataset: defaultdict[str, list[float]] = defaultdict(list)

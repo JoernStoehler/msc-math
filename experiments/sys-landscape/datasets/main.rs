@@ -1,8 +1,7 @@
-//! Normalize the hostile-landscape source packets into core joinable tables.
+//! Assemble the hostile-landscape dataset tables from the raw corpus.
 //!
-//! Goal: convert the current random/ascent JSONLs into durable core tables:
-//! `polytopes.jsonl`, `states.jsonl`, `capacity_results.jsonl`,
-//! `orbit_records.jsonl`, and `step_events.jsonl`.
+//! Goal: load the current raw producer outputs, enrich them into the shared
+//! datascience tables, and write the whole dataset surface in one pass.
 //! Input Artifacts: experiments/sys-landscape/cache.jsonl
 //!         experiments/combinatorial-cells/polytopes.jsonl
 //!         experiments/sys-landscape/raw/continuation-cache.jsonl
@@ -22,18 +21,18 @@
 //! - include variable-F continuation endpoints
 //! - exclude HKO-near control packets
 //!
-//! Source-priority rule for exact geometry:
+//! Source-priority rule for exact geometry and witness payload:
 //! 1. exact cache records
 //! 2. exact dual-vertex payloads on summary rows
 //! 3. legacy `f64` dual-vertex matching into the exact caches
 //!
-//! The converter does not invent intermediate geometry. `step_events.jsonl`
+//! The assembler does not invent intermediate geometry. `step_events.jsonl`
 //! stays an event log keyed by endpoint `state_id`.
 
 use blake3::Hasher;
 use exp_sys_landscape::{
     experiment_path, package_root, raw_dataset_cache_path, raw_dataset_path, raw_dataset_trace_path,
-    rational_vec4_to_strings, SummaryRow, TraceRow,
+    rational_vec4_to_strings, polytope_features, trajectory_features, SummaryRow, TraceRow,
 };
 use num_bigint::BigInt;
 use num_rational::BigRational;
@@ -295,10 +294,7 @@ fn smoke_output_dir() -> PathBuf {
         .duration_since(UNIX_EPOCH)
         .expect("system clock before UNIX_EPOCH")
         .as_millis();
-    let dir = std::env::temp_dir().join(format!(
-        "sys-core-tables-{}-{stamp}",
-        std::process::id()
-    ));
+    let dir = std::env::temp_dir().join(format!("sys-dataset-{}-{stamp}", std::process::id()));
     std::fs::create_dir_all(&dir).expect("create temp output dir");
     dir
 }
@@ -765,7 +761,7 @@ fn main() {
     let variable_f_source = repo_relative_label(&paths.variable_f);
     std::fs::create_dir_all(&paths.out_dir).expect("create output directory");
 
-    println!("core-tables: Stage 1 converter");
+    println!("dataset: raw -> shared tables");
     println!("  out-dir: {}", paths.out_dir.display());
     println!("  general-summary: {}", paths.general_summary.display());
     println!("  products-summary: {}", paths.products_summary.display());
@@ -1174,10 +1170,32 @@ fn main() {
     write_jsonl(&paths.out_dir.join("orbit_records.jsonl"), &orbit_record_rows);
     write_jsonl(&paths.out_dir.join("step_events.jsonl"), &step_events);
 
+    let polytope_feature_inputs = polytope_features::load_inputs(&paths.out_dir);
+    let polytope_feature_rows = polytope_feature_inputs
+        .iter()
+        .map(polytope_features::enrich_row)
+        .collect::<Vec<_>>();
+    write_jsonl(
+        &paths.out_dir.join("polytope-features.jsonl"),
+        &polytope_feature_rows,
+    );
+
+    let trajectory_feature_inputs = trajectory_features::load_inputs(&paths.out_dir);
+    let trajectory_feature_rows = trajectory_feature_inputs
+        .iter()
+        .map(trajectory_features::enrich_row)
+        .collect::<Vec<_>>();
+    write_jsonl(
+        &paths.out_dir.join("trajectory-features.jsonl"),
+        &trajectory_feature_rows,
+    );
+
     println!("Wrote {} polytopes", polytope_rows.len());
     println!("Wrote {} states", states.len());
     println!("Wrote {} capacity rows", capacity_rows.len());
     println!("Wrote {} orbit records", orbit_record_rows.len());
     println!("Wrote {} step events", step_events.len());
+    println!("Wrote {} polytope feature rows", polytope_feature_rows.len());
+    println!("Wrote {} trajectory feature rows", trajectory_feature_rows.len());
     println!("Output directory: {}", paths.out_dir.display());
 }

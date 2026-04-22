@@ -18,8 +18,8 @@ Input Artifacts:
   - experiments/sys-landscape/feature-pattern-search/feature_omega.jsonl
   - experiments/sys-landscape/feature-pattern-search/feature_orbit.jsonl
   - experiments/sys-landscape/feature-pattern-search/feature_trajectory.jsonl
-  - optionally a precomputed core-table directory passed by
-    `--normalized-dir`
+  - optionally a precomputed dataset directory passed by
+    `--dataset-dir`
 Output Artifacts:
   - experiments/sys-landscape/feature-pattern-search/feature_pattern_search_residual.png
 """
@@ -98,9 +98,9 @@ class JoinedRow:
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--normalized-dir",
+        "--dataset-dir",
         type=Path,
-        help="Use an existing normalized dataset directory instead of refreshing a temp one.",
+        help="Use an existing dataset directory instead of refreshing a temp one.",
     )
     return parser.parse_args()
 
@@ -118,7 +118,7 @@ def cv_group_id(state: dict) -> str:
     return str(state.get("lineage_id") or state["state_id"])
 
 
-def refresh_normalized_dataset(out_dir: Path) -> None:
+def refresh_dataset(out_dir: Path) -> None:
     cmd = [
         "cargo",
         "run",
@@ -126,7 +126,7 @@ def refresh_normalized_dataset(out_dir: Path) -> None:
         "exp-sys-landscape",
         "--release",
         "--bin",
-        "sys-dataset-core-tables",
+        "sys-dataset",
         "--",
         "--out-dir",
         str(out_dir),
@@ -134,13 +134,13 @@ def refresh_normalized_dataset(out_dir: Path) -> None:
     subprocess.run(cmd, cwd=REPO_ROOT, check=True)
 
 
-def load_joined_rows(normalized_dir: Path) -> list[JoinedRow]:
-    states = load_jsonl(normalized_dir / "states.jsonl")
+def load_joined_rows(dataset_dir: Path) -> list[JoinedRow]:
+    states = load_jsonl(dataset_dir / "states.jsonl")
     capacities = {
-        row["poly_id"]: row for row in load_jsonl(normalized_dir / "capacity_results.jsonl")
+        row["poly_id"]: row for row in load_jsonl(dataset_dir / "capacity_results.jsonl")
     }
     polytopes = {
-        row["poly_id"]: row for row in load_jsonl(normalized_dir / "polytopes.jsonl")
+        row["poly_id"]: row for row in load_jsonl(dataset_dir / "polytopes.jsonl")
     }
 
     feature_geometry_path = FEATURE_JSONL
@@ -429,15 +429,15 @@ def plot_residual_deltas(results: dict[str, dict[str, dict[str, float]]]) -> Non
 
 def main() -> None:
     args = parse_args()
-    if args.normalized_dir is not None:
-        normalized_dir = args.normalized_dir.resolve()
+    if args.dataset_dir is not None:
+        dataset_dir = args.dataset_dir.resolve()
     else:
         temp_dir = tempfile.TemporaryDirectory(prefix="feature-pattern-search-residual-")
-        normalized_dir = Path(temp_dir.name) / "normalized"
-        normalized_dir.mkdir(parents=True, exist_ok=True)
-        refresh_normalized_dataset(normalized_dir)
+        dataset_dir = Path(temp_dir.name) / "dataset"
+        dataset_dir.mkdir(parents=True, exist_ok=True)
+        refresh_dataset(dataset_dir)
 
-    rows = load_joined_rows(normalized_dir)
+    rows = load_joined_rows(dataset_dir)
     if not rows:
         raise RuntimeError("no endpoint rows were loaded")
 

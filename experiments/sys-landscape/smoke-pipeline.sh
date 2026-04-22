@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Low-friction end-to-end smoke run for the sys-landscape raw -> datasets ->
+# Low-friction end-to-end smoke run for the sys-landscape raw -> dataset ->
 # methods surface. All outputs go to a temp directory.
 
 set -euo pipefail
@@ -7,12 +7,11 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 WORKDIR="$(mktemp -d)"
 RAW_DIR="$WORKDIR/raw"
-NORM_DIR="$WORKDIR/normalized"
-FEATURE_DIR="$WORKDIR/features"
+DATASET_DIR="$WORKDIR/dataset"
 METHOD_DIR="$WORKDIR/methods"
 ASCENT_BUDGET_SECS="${ASCENT_BUDGET_SECS:-5}"
 
-mkdir -p "$RAW_DIR" "$NORM_DIR" "$FEATURE_DIR" "$METHOD_DIR"
+mkdir -p "$RAW_DIR" "$DATASET_DIR" "$METHOD_DIR"
 
 echo "Smoke workspace: $WORKDIR"
 
@@ -46,23 +45,17 @@ cargo run -p exp-sys-landscape --bin sys-dataset-continuation -- \
   --cache "$RAW_DIR/continuation-cache.jsonl" \
   --ascent-input "$RAW_DIR/ascent.jsonl"
 
-cargo run -p exp-sys-landscape --bin sys-dataset-core-tables -- \
-  --out-dir "$NORM_DIR" \
+cargo run -p exp-sys-landscape --bin sys-dataset -- \
+  --out-dir "$DATASET_DIR" \
   --raw-dir "$RAW_DIR"
 
-cargo run -p exp-sys-landscape --bin sys-dataset-features -- \
-  --core-tables-dir "$NORM_DIR" \
-  --out-dir "$FEATURE_DIR"
-
 uv run "$ROOT/experiments/sys-landscape/methods/eda.py" \
-  --core-tables-dir "$NORM_DIR" \
-  --out-dir "$METHOD_DIR" \
-  --polytope-features "$FEATURE_DIR/polytope-features.jsonl"
+  --dataset-dir "$DATASET_DIR" \
+  --out-dir "$METHOD_DIR"
 
 echo
 echo "Smoke outputs:"
 echo "  ascent budget: ${ASCENT_BUDGET_SECS}s/seed"
 echo "  raw:        $RAW_DIR"
-echo "  normalized: $NORM_DIR"
-echo "  features:   $FEATURE_DIR"
+echo "  dataset:    $DATASET_DIR"
 echo "  methods:    $METHOD_DIR"

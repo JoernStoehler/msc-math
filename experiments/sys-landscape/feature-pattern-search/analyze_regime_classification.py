@@ -20,7 +20,7 @@ Input Artifacts:
     `feature_geometry.jsonl`, `feature_face_geometry.jsonl`,
     `feature_face_symplectic.jsonl`, `feature_skeleton.jsonl`,
     `feature_omega.jsonl`, `feature_orbit.jsonl`, `feature_trajectory.jsonl`
-  - optionally a precomputed core-table directory passed by `--normalized-dir`
+  - optionally a precomputed dataset directory passed by `--dataset-dir`
 Output Artifacts:
   - experiments/sys-landscape/feature-pattern-search/regime_classification_bars.png
 """
@@ -118,9 +118,9 @@ def cv_group_id(state: dict, regime: str) -> str:
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--normalized-dir",
+        "--dataset-dir",
         type=Path,
-        help="Use an existing normalized dataset directory instead of refreshing a temp one.",
+        help="Use an existing dataset directory instead of refreshing a temp one.",
     )
     return parser.parse_args()
 
@@ -130,7 +130,7 @@ def load_jsonl(path: Path) -> list[dict]:
         return [json.loads(line) for line in handle if line.strip()]
 
 
-def refresh_normalized_dataset(out_dir: Path) -> None:
+def refresh_dataset(out_dir: Path) -> None:
     cmd = [
         "cargo",
         "run",
@@ -138,7 +138,7 @@ def refresh_normalized_dataset(out_dir: Path) -> None:
         "exp-sys-landscape",
         "--release",
         "--bin",
-        "sys-dataset-core-tables",
+        "sys-dataset",
         "--",
         "--out-dir",
         str(out_dir),
@@ -146,10 +146,10 @@ def refresh_normalized_dataset(out_dir: Path) -> None:
     subprocess.run(cmd, cwd=REPO_ROOT, check=True)
 
 
-def load_joined_rows(normalized_dir: Path) -> list[JoinedRow]:
-    states = load_jsonl(normalized_dir / "states.jsonl")
+def load_joined_rows(dataset_dir: Path) -> list[JoinedRow]:
+    states = load_jsonl(dataset_dir / "states.jsonl")
     polytopes = {
-        row["poly_id"]: row for row in load_jsonl(normalized_dir / "polytopes.jsonl")
+        row["poly_id"]: row for row in load_jsonl(dataset_dir / "polytopes.jsonl")
     }
 
     geometry_by_poly = {
@@ -350,7 +350,7 @@ def write_summary(normalized_source_label: str, rows: list[JoinedRow], results: 
         "",
         "## Dataset",
         "",
-        f"- normalized input source: {normalized_source_label}",
+        f"- dataset source: {normalized_source_label}",
         f"- joined rows: `{len(rows)}`",
         f"- groups used for leakage control: `{len(groups)}`",
         f"- random rows: `{counts['random']}`",
@@ -454,26 +454,26 @@ def plot_results(results: list[dict], out_path: Path) -> None:
 
 def main() -> None:
     args = parse_args()
-    if args.normalized_dir is not None:
-        normalized_dir = args.normalized_dir.resolve()
-        normalized_source_label = f"`{normalized_dir}`"
+    if args.dataset_dir is not None:
+        dataset_dir = args.dataset_dir.resolve()
+        normalized_source_label = f"`{dataset_dir}`"
     else:
         with tempfile.TemporaryDirectory(prefix="regime-classification-") as temp_dir:
-            normalized_dir = Path(temp_dir) / "core-tables"
-            normalized_dir.mkdir(parents=True, exist_ok=True)
-            refresh_normalized_dataset(normalized_dir)
+            dataset_dir = Path(temp_dir) / "dataset"
+            dataset_dir.mkdir(parents=True, exist_ok=True)
+            refresh_dataset(dataset_dir)
             normalized_source_label = (
                 "temporary refresh via "
                 "`cargo run -p exp-sys-landscape --release --bin "
-                "sys-dataset-core-tables -- --out-dir <temp/core-tables>`"
+                "sys-dataset -- --out-dir <temp/dataset>`"
             )
-            rows = load_joined_rows(normalized_dir)
+            rows = load_joined_rows(dataset_dir)
             results = run_evaluations(rows)
             plot_results(results, FIGURE_PNG)
             print(f"Saved {FIGURE_PNG}")
             return
 
-    rows = load_joined_rows(normalized_dir)
+    rows = load_joined_rows(dataset_dir)
     results = run_evaluations(rows)
     plot_results(results, FIGURE_PNG)
     print(f"Saved {FIGURE_PNG}")
