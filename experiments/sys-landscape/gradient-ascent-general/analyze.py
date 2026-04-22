@@ -11,8 +11,8 @@ Goal: Assess whether gradient ascent + escape rounds push sys above
       the conjecture that no hit exists uses 3/N upper credible bound.
 Input Artifacts:
   - experiments/sys-landscape/gradient-ascent-general/data/*.jsonl (per-seed summaries)
-  - experiments/sys-landscape/gradient-ascent-general/gradient-ascent-general.jsonl (bounded local fallback)
-       Preference order: licca.jsonl > licca-shard-*.jsonl (legacy architecture-A) > gradient-ascent-general.jsonl.
+  - experiments/sys-landscape/datascience/produce/ascent.jsonl (bounded local fallback)
+       Preference order: licca.jsonl > licca-shard-*.jsonl (legacy architecture-A) > datascience/produce/ascent.jsonl.
 Output Artifacts:
   - gradient_ascent_general_distribution.png   (final sys histogram; linear)
   - gradient_ascent_general_tail.png           (final sys histogram; log-y tail)
@@ -37,7 +37,7 @@ setup()
 
 EXPERIMENT_DIR = Path(__file__).resolve().parent
 DATA_DIR = EXPERIMENT_DIR / "data"
-LEGACY_SUMMARY_PATH = EXPERIMENT_DIR / "gradient-ascent-general.jsonl"
+LEGACY_SUMMARY_PATH = EXPERIMENT_DIR.parent / "datascience/produce/ascent.jsonl"
 HKO_SYS = 1.0472
 HIGH_SYS_THRESHOLDS = [0.95, 0.99, 1.00, HKO_SYS]
 

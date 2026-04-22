@@ -8,7 +8,7 @@
 Plot systolic ratio summary for random 4D polytopes by facet count.
 
 Goal: Visualize how sys varies with F using random polytopes and the pruned algorithm.
-Input Artifacts: experiments/sys-landscape/random-sample/random-sweep.jsonl
+Input Artifacts: experiments/sys-landscape/datascience/produce/random.jsonl
 Output Artifacts: experiments/sys-landscape/random-sample/random_sweep_sys_vs_f.png
 """
 
@@ -26,7 +26,7 @@ setup()
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
 EXPERIMENT_DIR = Path(__file__).resolve().parent
-DATA_PATH = EXPERIMENT_DIR / "random-sweep.jsonl"
+DATA_PATH = REPO_ROOT / "experiments/sys-landscape/datascience/produce/random.jsonl"
 FIGURES_DIR = EXPERIMENT_DIR
 
 

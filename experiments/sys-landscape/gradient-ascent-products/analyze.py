@@ -11,8 +11,8 @@ Goal: Assess whether projected gradient ascent on Lagrangian products reaches
       credible bound on hit density under 0 hits.
 Input Artifacts:
   - experiments/sys-landscape/gradient-ascent-products/data/*.jsonl (per-seed summaries)
-  - experiments/sys-landscape/gradient-ascent-products/gradient-ascent-products.jsonl (bounded local fallback)
-       Preference order: licca.jsonl > licca-shard-*.jsonl (legacy architecture-A) > gradient-ascent-products.jsonl.
+  - experiments/sys-landscape/datascience/produce/ascent-product.jsonl (bounded local fallback)
+       Preference order: licca.jsonl > licca-shard-*.jsonl (legacy architecture-A) > datascience/produce/ascent-product.jsonl.
 Output Artifacts:
   - gradient_ascent_products_distribution.png   (final sys histogram; linear)
   - gradient_ascent_products_tail.png           (final sys histogram; log-y tail)
@@ -37,7 +37,7 @@ setup()
 
 EXPERIMENT_DIR = Path(__file__).resolve().parent
 DATA_DIR = EXPERIMENT_DIR / "data"
-LEGACY_SUMMARY_PATH = EXPERIMENT_DIR / "gradient-ascent-products.jsonl"
+LEGACY_SUMMARY_PATH = EXPERIMENT_DIR.parent / "datascience/produce/ascent-product.jsonl"
 HKO_SYS = 1.0472
 HIGH_SYS_THRESHOLDS = [0.95, 0.99, 1.00, HKO_SYS]
 
