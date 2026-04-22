@@ -1,16 +1,16 @@
-//! Free gradient ascent in R^{4F} on general polytopes.
+//! Dataset producer: fixed-`F` ascent on the Lagrangian-product submanifold.
 //!
-//! Goal: Run unconstrained gradient ascent on general random polytopes and
+//! Goal: Run projected gradient ascent on random Lagrangian products and
 //! record both the summary outcomes and per-step traces.
 //! Input Artifacts: experiments/sys-landscape/cache.jsonl
 //! Output Artifacts: experiments/sys-landscape/cache.jsonl
-//!         experiments/sys-landscape/gradient-ascent-general/gradient-ascent-general.jsonl
-//!         experiments/sys-landscape/gradient-ascent-general/gradient-ascent-general-trace.jsonl
+//!         experiments/sys-landscape/raw/ascent-product.jsonl
+//!         experiments/sys-landscape/raw/ascent-product-trace.jsonl
 //!
 //! At each iteration, builds the active-orbit first-order model for `sys`.
-//! With one active orbit, uses that branch gradient directly; at switching
-//! points, chooses a maximin ascent direction from the active gradient family.
-//! It then steps directly in a-space: a_k(t) = a_k + t * d_k.
+//! With one active orbit, it uses that branch gradient directly; at switching
+//! points, it chooses a maximin ascent direction under LP-preserving coordinate
+//! bounds. It then steps directly in a-space: a_k(t) = a_k + t * d_k.
 //! Boundary-crossing via overshoot (multiples of t_max) and wiggle (random
 //! perturbation of dual vertices).
 //!
@@ -18,7 +18,7 @@
 //! and gradient-ascent-products, 2026-04-04).
 //!
 //! CLI (all optional):
-//! - `--n <count>`        number of seeds this invocation processes   (default: 10)
+//! - `--n <count>`        number of seeds this invocation processes   (default: 12)
 //! - `--n-start <offset>` starting global seed index                  (default: 0)
 //! - `--seed <u64>`       base RNG seed                               (default: 42)
 //! - `--out <path>`       output summary .jsonl                       (default: untracked temp smoke path)
@@ -26,11 +26,15 @@
 //! - `--fresh`            delete existing summary + trace files before running
 //! - `--db-update`        load and save the sys-landscape family cache
 //! - `--no-db-update`     do not load or save the sys-landscape family cache
-//!                        (set by LICCA to avoid concurrent write races)
+//!                        (set by LICCA shards to avoid concurrent write races)
+//!
+//! Canonical refresh example:
+//! `cargo run -p exp-sys-landscape --release --bin sys-dataset-ascent-product -- --out experiments/sys-landscape/raw/ascent-product.jsonl --db-update`
 //!
 //! Architecture B (2026-04-12): rayon `par_iter` over `[n_start, n_start+n)`
 //! at the dataset level. Seed i uses its own RNG stream
-//! `ChaCha8Rng::seed_from_u64(seed + i)`, so the output for index i is
+//! `ChaCha8Rng::seed_from_u64(seed + i)`, is named `ascent_product_{i}`, and has
+//! bucket `i mod LAGRANGIAN_SPLITS.len()`. The output for index i is
 //! byte-reproducible regardless of thread assignment. Shared CLI / writer /
 //! resume plumbing lives in `exp_sys_landscape::{parse_ascent_args,
 //! open_ascent_writers, run_parallel_seeds, ...}`.
@@ -49,9 +53,13 @@ use rand_distr::{Distribution, StandardNormal};
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
 use std::time::Instant;
+use symplectic::algorithms::billiard::facet_classification::{
+    classify_facets, FacetClassification,
+};
 use symplectic::database::{load_many, save, DualVerticesKey, PolytopeRecord, SigmaAction};
+use symplectic::geom::lagrangian_product::lagrangian_product;
+use symplectic::geom::polygon::random_polygon_2d;
 use symplectic::geom::polytope::Polytope4D;
-use symplectic::random::sample_random_polytope;
 
 // ============================================================================
 // Configuration
@@ -59,16 +67,16 @@ use symplectic::random::sample_random_polytope;
 
 const DEFAULT_SEED: u64 = 42;
 
-/// Facet count for fresh polytopes.
-const FACET_COUNT: usize = 10;
+/// Lagrangian product splits (q_facets, p_facets) summing to 10.
+const LAGRANGIAN_SPLITS: &[(usize, usize)] = &[(3, 7), (4, 6), (5, 5)];
 
 /// Height range for random generation.
 const H_MIN: f64 = 0.8;
 const H_MAX: f64 = 1.2;
 
-/// Maximum attempts per seed index to generate a valid polytope before giving up
-/// on that index. Each retry draws new numbers from the same per-seed RNG stream,
-/// so output for a given global index is still byte-reproducible.
+/// Maximum attempts per seed index to generate a valid Lagrangian product
+/// before giving up on that index. Retries draw new numbers from the same
+/// per-seed RNG stream, so output remains byte-reproducible.
 const MAX_POLYTOPE_ATTEMPTS: usize = 100;
 
 /// Maximum gradient ascent iterations per phase.
@@ -132,13 +140,15 @@ struct AscentResult {
 ///
 /// At each step:
 /// 1. Builds the active-orbit first-order model of `sys`
-/// 2. Tries STEP_FRACTIONS of t_max (within cell) and OVERSHOOT_MULTIPLIERS (crosses boundary)
-/// 3. Picks the candidate with highest sys
+/// 2. Enforces LP-preserving coordinate bounds on the ascent direction
+/// 3. Tries STEP_FRACTIONS of t_max (within cell) and OVERSHOOT_MULTIPLIERS (crosses boundary)
+/// 4. Picks the candidate with highest sys
 // TODO: add [lem:sys-sensitivity] to formal math (see gradient-correctness experiment)
 fn gradient_ascent(
     name: &str,
     phase: usize,
     start: &Polytope4D,
+    lagrangian_class: &FacetClassification,
     t0: Instant,
     budget: f64,
 ) -> Option<AscentResult> {
@@ -161,9 +171,14 @@ fn gradient_ascent(
         let sys = state.sys;
         let duals = current.dual_vertices_f64();
 
-        // 2. Ascent direction: single branch when unique, nonsmooth maximin
-        // direction when several active orbit branches tie.
-        let d_sys_a = ascent_direction(&current, &state, AscentMode::General)?;
+        // 2. Ascent direction with explicit LP-preserving coordinate bounds.
+        let d_sys_a = ascent_direction(
+            &current,
+            &state,
+            AscentMode::LagrangianProduct {
+                classification: lagrangian_class,
+            },
+        )?;
 
         let gradient_norm = d_sys_a.iter().map(|d| d.norm_squared()).sum::<f64>().sqrt();
         if gradient_norm < EPS {
@@ -270,6 +285,7 @@ fn process_seed(
     seed_index: usize,
     polytope_type: &str,
     polytope: &Polytope4D,
+    lagrangian_class: &FacetClassification,
     seed_time_budget_secs: f64,
     rng: &mut ChaCha8Rng,
 ) -> Option<SeedResult> {
@@ -288,7 +304,7 @@ fn process_seed(
     let mut all_trace = Vec::new();
 
     // Phase 0: initial gradient ascent (with overshoot at each step)
-    if let Some(result) = gradient_ascent(name, n_phases, polytope, t0, budget) {
+    if let Some(result) = gradient_ascent(name, n_phases, polytope, lagrangian_class, t0, budget) {
         n_phases += 1;
         n_iters_total += result.n_iters;
         n_escape_overshoot += result.n_overshoot_improvements;
@@ -317,7 +333,9 @@ fn process_seed(
                 break;
             }
             if let Some(wiggled) = wiggle(&best_polytope, rng) {
-                if let Some(result) = gradient_ascent(name, n_phases, &wiggled, t0, budget) {
+                if let Some(result) =
+                    gradient_ascent(name, n_phases, &wiggled, lagrangian_class, t0, budget)
+                {
                     n_phases += 1;
                     n_iters_total += result.n_iters;
                     n_escape_overshoot += result.n_overshoot_improvements;
@@ -366,7 +384,7 @@ fn process_seed(
             name: name.to_string(),
             seed_index,
             source_name: name.to_string(),
-            lineage_id: format!("general::{name}"),
+            lineage_id: format!("products::{name}"),
             polytope_type: polytope_type.to_string(),
             facet_count: best_polytope.facet_count(),
             starting_sys,
@@ -388,8 +406,27 @@ fn process_seed(
     })
 }
 
+/// Generate a Lagrangian product for global seed index i from its own RNG
+/// stream. Bucket (q_f, p_f) is determined by `i mod LAGRANGIAN_SPLITS.len()`,
+/// so contiguous index ranges are evenly spread across buckets (10k total ->
+/// ~3333 per bucket for a 3-way split).
+fn generate_for_seed(i: usize, rng: &mut ChaCha8Rng) -> Option<(String, Polytope4D)> {
+    let bucket_idx = i % LAGRANGIAN_SPLITS.len();
+    let (q_f, p_f) = LAGRANGIAN_SPLITS[bucket_idx];
+    let bucket_name = format!("lagrangian_{q_f}x{p_f}");
+
+    for _ in 0..MAX_POLYTOPE_ATTEMPTS {
+        let (qn, qh) = random_polygon_2d(q_f, H_MIN, H_MAX, rng);
+        let (pn, ph) = random_polygon_2d(p_f, H_MIN, H_MAX, rng);
+        if let Ok(p) = lagrangian_product(&qn, &qh, &pn, &ph) {
+            return Some((bucket_name, p));
+        }
+    }
+    None
+}
+
 // ============================================================================
-// Polytope database helper
+// Main
 // ============================================================================
 
 /// Insert a polytope into the database if not already present.
@@ -403,28 +440,24 @@ fn insert_polytope_to_db(db: &mut HashMap<DualVerticesKey, PolytopeRecord>, poly
     db.insert(key, record);
 }
 
-// ============================================================================
-// Main
-// ============================================================================
-
 fn main() {
     let default_out = smoke_output_path(
-        "sys-gradient-ascent-general",
-        "smoke-gradient-ascent-general.jsonl",
+        "sys-dataset-ascent-product",
+        "smoke-ascent-product.jsonl",
     );
     let args: AscentArgs = parse_ascent_args(
         DEFAULT_SEED,
-        10,
+        12,
         SEED_TIME_BUDGET_SECS,
         default_out,
-        "general",
+        "ascent_product",
     );
     let t_global = Instant::now();
 
     let summary_path = args.out.clone();
     let trace_path = trace_path_for(&summary_path);
 
-    println!("gradient-ascent-general: free gradient ascent on general polytopes");
+    println!("dataset-ascent-product: fixed-F ascent on Lagrangian products");
     println!("  n:            {}", args.n);
     println!("  n-start:      {}", args.n_start);
     println!("  seed:         {}", args.seed);
@@ -432,7 +465,8 @@ fn main() {
     println!("  trace:        {}", trace_path.display());
     println!("  fresh:        {}", args.fresh);
     println!("  budget:       {:.1}s/seed", args.seed_time_budget_secs);
-    println!("  no-db-update: {}\n", args.no_db_update);
+    println!("  no-db-update: {}", args.no_db_update);
+    println!("  buckets:      {LAGRANGIAN_SPLITS:?}\n");
 
     let completed = if args.fresh {
         std::collections::HashSet::new()
@@ -468,34 +502,22 @@ fn main() {
     run_parallel_seeds(&args, &completed, &writers, &best, move |i, seed_i| {
         let mut rng_i = ChaCha8Rng::seed_from_u64(seed_i);
 
-        let mut polytope_opt: Option<Polytope4D> = None;
-        for _ in 0..MAX_POLYTOPE_ATTEMPTS {
-            if let Ok(p) = sample_random_polytope(FACET_COUNT, H_MIN, H_MAX, &mut rng_i) {
-                polytope_opt = Some(p);
-                break;
-            }
-        }
-        let polytope = match polytope_opt {
-            Some(p) => p,
-            None => {
-                eprintln!(
-                    "WARNING: seed {i}: no valid polytope after {MAX_POLYTOPE_ATTEMPTS} attempts, skipping"
-                );
-                return None;
-            }
-        };
+        let (bucket_name, polytope) = generate_for_seed(i, &mut rng_i)?;
 
         if !no_db_update {
             let mut db = db_for_closure.lock().expect("lock db for insert");
             insert_polytope_to_db(&mut db, &polytope);
         }
 
-        let name = format!("general_{i}");
+        let class = classify_facets(&polytope).expect("should classify as Lagrangian");
+
+        let name = format!("ascent_product_{i}");
         let result = process_seed(
             &name,
             i,
-            "general",
+            &bucket_name,
             &polytope,
+            &class,
             seed_time_budget_secs,
             &mut rng_i,
         )?;
@@ -535,7 +557,7 @@ fn main() {
         // own line), so two threads cannot interleave within a single line.
         let s = &result.summary;
         println!(
-            "[seed {i}] {name}: sys: {:.4}->{:.4} (d={:.4}), strategy={}, phases={}, {:.1}s",
+            "[seed {i}] {name} ({bucket_name}): sys: {:.4}->{:.4} (d={:.4}), strategy={}, phases={}, {:.1}s",
             s.starting_sys,
             s.final_sys,
             s.total_delta,

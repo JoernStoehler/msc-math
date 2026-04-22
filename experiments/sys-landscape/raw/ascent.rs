@@ -1,11 +1,11 @@
-//! Free gradient ascent in R^{4F} on general polytopes.
+//! Dataset producer: fixed-`F` ascent on general random polytopes.
 //!
 //! Goal: Run unconstrained gradient ascent on general random polytopes and
 //! record both the summary outcomes and per-step traces.
 //! Input Artifacts: experiments/sys-landscape/cache.jsonl
 //! Output Artifacts: experiments/sys-landscape/cache.jsonl
-//!         experiments/sys-landscape/gradient-ascent-general/gradient-ascent-general.jsonl
-//!         experiments/sys-landscape/gradient-ascent-general/gradient-ascent-general-trace.jsonl
+//!         experiments/sys-landscape/raw/ascent.jsonl
+//!         experiments/sys-landscape/raw/ascent-trace.jsonl
 //!
 //! At each iteration, builds the active-orbit first-order model for `sys`.
 //! With one active orbit, uses that branch gradient directly; at switching
@@ -27,6 +27,9 @@
 //! - `--db-update`        load and save the sys-landscape family cache
 //! - `--no-db-update`     do not load or save the sys-landscape family cache
 //!                        (set by LICCA to avoid concurrent write races)
+//!
+//! Canonical refresh example:
+//! `cargo run -p exp-sys-landscape --release --bin sys-dataset-ascent -- --out experiments/sys-landscape/raw/ascent.jsonl --db-update`
 //!
 //! Architecture B (2026-04-12): rayon `par_iter` over `[n_start, n_start+n)`
 //! at the dataset level. Seed i uses its own RNG stream
@@ -409,22 +412,22 @@ fn insert_polytope_to_db(db: &mut HashMap<DualVerticesKey, PolytopeRecord>, poly
 
 fn main() {
     let default_out = smoke_output_path(
-        "sys-gradient-ascent-general",
-        "smoke-gradient-ascent-general.jsonl",
+        "sys-dataset-ascent",
+        "smoke-ascent.jsonl",
     );
     let args: AscentArgs = parse_ascent_args(
         DEFAULT_SEED,
         10,
         SEED_TIME_BUDGET_SECS,
         default_out,
-        "general",
+        "ascent",
     );
     let t_global = Instant::now();
 
     let summary_path = args.out.clone();
     let trace_path = trace_path_for(&summary_path);
 
-    println!("gradient-ascent-general: free gradient ascent on general polytopes");
+    println!("dataset-ascent: fixed-F ascent on general polytopes");
     println!("  n:            {}", args.n);
     println!("  n-start:      {}", args.n_start);
     println!("  seed:         {}", args.seed);
@@ -490,11 +493,11 @@ fn main() {
             insert_polytope_to_db(&mut db, &polytope);
         }
 
-        let name = format!("general_{i}");
+        let name = format!("ascent_{i}");
         let result = process_seed(
             &name,
             i,
-            "general",
+            "ascent",
             &polytope,
             seed_time_budget_secs,
             &mut rng_i,

@@ -20,7 +20,7 @@ Input Artifacts:
     `feature_geometry.jsonl`, `feature_face_geometry.jsonl`,
     `feature_face_symplectic.jsonl`, `feature_skeleton.jsonl`,
     `feature_omega.jsonl`, `feature_orbit.jsonl`, `feature_trajectory.jsonl`
-  - optionally a precomputed normalized dataset directory passed by `--normalized-dir`
+  - optionally a precomputed core-table directory passed by `--normalized-dir`
 Output Artifacts:
   - experiments/sys-landscape/feature-pattern-search/regime_classification_bars.png
 """
@@ -138,7 +138,7 @@ def refresh_normalized_dataset(out_dir: Path) -> None:
         "exp-sys-landscape",
         "--release",
         "--bin",
-        "sys-normalized-dataset",
+        "sys-dataset-core-tables",
         "--",
         "--out-dir",
         str(out_dir),
@@ -459,13 +459,13 @@ def main() -> None:
         normalized_source_label = f"`{normalized_dir}`"
     else:
         with tempfile.TemporaryDirectory(prefix="regime-classification-") as temp_dir:
-            normalized_dir = Path(temp_dir) / "normalized"
+            normalized_dir = Path(temp_dir) / "core-tables"
             normalized_dir.mkdir(parents=True, exist_ok=True)
             refresh_normalized_dataset(normalized_dir)
             normalized_source_label = (
                 "temporary refresh via "
                 "`cargo run -p exp-sys-landscape --release --bin "
-                "sys-normalized-dataset -- --out-dir <temp>`"
+                "sys-dataset-core-tables -- --out-dir <temp/core-tables>`"
             )
             rows = load_joined_rows(normalized_dir)
             results = run_evaluations(rows)

@@ -5,6 +5,11 @@
 //! gradient-ascent-products, rotated-regular-products, rejection-calibration.
 //! Local cell geometry experiments now live in exp-combinatorial-cells.
 
+pub mod datascience;
+pub mod datasets;
+pub use datascience::polytope_features;
+pub use datascience::trajectory_features;
+
 use good_lp::{constraint, default_solver, variable, variables, Expression, Solution, SolverModel};
 use nalgebra::{Matrix4, Vector4};
 use num_rational::BigRational;
@@ -25,6 +30,13 @@ use symplectic::geom::skeleton::Skeleton;
 use symplectic::geom::symplectic_form::omega0;
 use symplectic::geom::volume::volume;
 use symplectic::{OrbitAdmissibility, OrbitKktData, OrbitSearchResult};
+
+pub use datasets::{
+    continuation_cache_path, experiment_path, package_root, raw_dataset_cache_path,
+    raw_dataset_path, raw_dataset_trace_path, raw_root, CONTINUATION_EXPERIMENT_DIR,
+    GRADIENT_ASCENT_GENERAL_DIR,
+    shared_family_cache_path,
+};
 
 // ============================================================================
 // Step bound constants
@@ -569,6 +581,7 @@ pub struct AscentArgs {
     pub out: PathBuf,
     pub fresh: bool,
     pub no_db_update: bool,
+    pub seed_time_budget_secs: f64,
     /// Name prefix for the seed — used to build polytope names (e.g. `general_42`).
     pub prefix: String,
 }
@@ -588,10 +601,12 @@ pub fn smoke_output_path(label: &str, file_name: &str) -> PathBuf {
 /// `"products"`).
 ///
 /// Recognized flags:
-/// `--n`, `--n-start`, `--seed`, `--out`, `--fresh`, `--db-update`, `--no-db-update`.
+/// `--n`, `--n-start`, `--seed`, `--out`, `--fresh`, `--db-update`,
+/// `--no-db-update`, `--seed-time-budget-secs`.
 pub fn parse_ascent_args(
     default_seed: u64,
     default_n: usize,
+    default_seed_time_budget_secs: f64,
     default_out: PathBuf,
     prefix: &str,
 ) -> AscentArgs {
@@ -603,6 +618,7 @@ pub fn parse_ascent_args(
     let mut out: Option<PathBuf> = None;
     let mut fresh = false;
     let mut no_db_update = true;
+    let mut seed_time_budget_secs: f64 = default_seed_time_budget_secs;
 
     let mut i = 1;
     while i < argv.len() {
@@ -631,6 +647,12 @@ pub fn parse_ascent_args(
                 out = Some(PathBuf::from(value()));
                 i += 2;
             }
+            "--seed-time-budget-secs" => {
+                seed_time_budget_secs = value()
+                    .parse()
+                    .expect("--seed-time-budget-secs must be an f64");
+                i += 2;
+            }
             "--fresh" => {
                 fresh = true;
                 i += 1;
@@ -654,6 +676,7 @@ pub fn parse_ascent_args(
         out: out.unwrap_or(default_out),
         fresh,
         no_db_update,
+        seed_time_budget_secs,
         prefix: prefix.to_string(),
     }
 }

@@ -1,18 +1,18 @@
 //! Normalize the hostile-landscape source packets into core joinable tables.
 //!
-//! Goal: convert the current random/ascent JSONLs into four durable core tables:
-//! `polytopes.jsonl`, `states.jsonl`, `capacity_results.jsonl`, and
-//! `step_events.jsonl`.
+//! Goal: convert the current random/ascent JSONLs into durable core tables:
+//! `polytopes.jsonl`, `states.jsonl`, `capacity_results.jsonl`,
+//! `orbit_records.jsonl`, and `step_events.jsonl`.
 //! Input Artifacts: experiments/sys-landscape/cache.jsonl
 //!         experiments/combinatorial-cells/polytopes.jsonl
-//!         experiments/sys-landscape/variable-f-ascent/cache.jsonl
-//!         experiments/sys-landscape/random-sample/random-sweep.jsonl
-//!         experiments/sys-landscape/random-product-sample/random-product-sweep.jsonl
-//!         experiments/sys-landscape/gradient-ascent-general/gradient-ascent-general.jsonl
-//!         experiments/sys-landscape/gradient-ascent-general/gradient-ascent-general-trace.jsonl
-//!         experiments/sys-landscape/gradient-ascent-products/gradient-ascent-products.jsonl
-//!         experiments/sys-landscape/gradient-ascent-products/gradient-ascent-products-trace.jsonl
-//!         experiments/sys-landscape/variable-f-ascent/variable-f-ascent.jsonl
+//!         experiments/sys-landscape/raw/continuation-cache.jsonl
+//!         experiments/sys-landscape/raw/random.jsonl
+//!         experiments/sys-landscape/raw/random-product.jsonl
+//!         experiments/sys-landscape/raw/ascent.jsonl
+//!         experiments/sys-landscape/raw/ascent-trace.jsonl
+//!         experiments/sys-landscape/raw/ascent-product.jsonl
+//!         experiments/sys-landscape/raw/ascent-product-trace.jsonl
+//!         experiments/sys-landscape/raw/continuation.jsonl
 //! Output Artifacts: None by default (writes to an untracked temp directory unless `--out-dir` is set)
 //!
 //! Default dataset boundary:
@@ -24,14 +24,18 @@
 //!
 //! Source-priority rule for exact geometry:
 //! 1. exact cache records
-//! 2. exact dual-vertex payloads on summary rows, if they identify a cached polytope
+//! 2. exact dual-vertex payloads on summary rows
 //! 3. legacy `f64` dual-vertex matching into the exact caches
 //!
 //! The converter does not invent intermediate geometry. `step_events.jsonl`
 //! stays an event log keyed by endpoint `state_id`.
 
 use blake3::Hasher;
-use exp_sys_landscape::{rational_vec4_to_strings, SummaryRow, TraceRow};
+use exp_sys_landscape::{
+    experiment_path, package_root, raw_dataset_cache_path, raw_dataset_path, raw_dataset_trace_path,
+    rational_vec4_to_strings, SummaryRow, TraceRow,
+};
+use num_bigint::BigInt;
 use num_rational::BigRational;
 use num_traits::ToPrimitive;
 use serde::de::DeserializeOwned;
@@ -40,9 +44,11 @@ use std::collections::HashMap;
 use std::fs::File;
 use std::io::{BufRead, BufReader, BufWriter, Write};
 use std::path::{Path, PathBuf};
+use std::str::FromStr;
 use std::time::{SystemTime, UNIX_EPOCH};
-use symplectic::database::{load, PolytopeRecord};
+use symplectic::database::{load, OrbitScalars, PolytopeRecord, SigmaAction};
 use symplectic::ehz_capacity;
+use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::volume::volume;
 
 const MATCH_TOLERANCE: f64 = 1e-9;
@@ -178,6 +184,18 @@ struct CapacityResultRow {
     search_result_source: String,
 }
 
+#[derive(Serialize, Clone)]
+struct OrbitRecordRow {
+    poly_id: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    sigma_gap_cutoff: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    sigmas: Option<Vec<SigmaAction>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    orbit_scalars: Option<OrbitScalars>,
+    orbit_record_source: String,
+}
+
 #[derive(Debug, Serialize)]
 struct StepEventRow {
     state_id: String,
@@ -209,26 +227,67 @@ struct DatasetPaths {
     products_summary: PathBuf,
     products_trace: PathBuf,
     variable_f: PathBuf,
+    continuation_cache: PathBuf,
     out_dir: PathBuf,
 }
 
 impl DatasetPaths {
-    fn defaults(package_root: &Path) -> Self {
+    fn defaults() -> Self {
         Self {
-            random_sample: package_root.join("random-sample/random-sweep.jsonl"),
-            random_product: package_root.join("random-product-sample/random-product-sweep.jsonl"),
-            general_summary: package_root
-                .join("gradient-ascent-general/gradient-ascent-general.jsonl"),
-            general_trace: package_root
-                .join("gradient-ascent-general/gradient-ascent-general-trace.jsonl"),
-            products_summary: package_root
-                .join("gradient-ascent-products/gradient-ascent-products.jsonl"),
-            products_trace: package_root
-                .join("gradient-ascent-products/gradient-ascent-products-trace.jsonl"),
-            variable_f: package_root.join("variable-f-ascent/variable-f-ascent.jsonl"),
+            random_sample: prefer_existing(
+                raw_dataset_path("random"),
+                experiment_path("random-sample", "random-sweep.jsonl"),
+            ),
+            random_product: prefer_existing(
+                raw_dataset_path("random-product"),
+                experiment_path("random-product-sample", "random-product-sweep.jsonl"),
+            ),
+            general_summary: prefer_existing(
+                raw_dataset_path("ascent"),
+                experiment_path("gradient-ascent-general", "gradient-ascent-general.jsonl"),
+            ),
+            general_trace: prefer_existing(
+                raw_dataset_trace_path("ascent"),
+                experiment_path("gradient-ascent-general", "gradient-ascent-general-trace.jsonl"),
+            ),
+            products_summary: prefer_existing(
+                raw_dataset_path("ascent-product"),
+                experiment_path("gradient-ascent-products", "gradient-ascent-products.jsonl"),
+            ),
+            products_trace: prefer_existing(
+                raw_dataset_trace_path("ascent-product"),
+                experiment_path("gradient-ascent-products", "gradient-ascent-products-trace.jsonl"),
+            ),
+            variable_f: prefer_existing(
+                raw_dataset_path("continuation"),
+                experiment_path("variable-f-ascent", "variable-f-ascent.jsonl"),
+            ),
+            continuation_cache: prefer_existing(
+                raw_dataset_cache_path("continuation"),
+                experiment_path("variable-f-ascent", "cache.jsonl"),
+            ),
             out_dir: smoke_output_dir(),
         }
     }
+}
+
+fn prefer_existing(primary: PathBuf, fallback: PathBuf) -> PathBuf {
+    if primary.exists() {
+        primary
+    } else {
+        fallback
+    }
+}
+
+fn apply_raw_dir(paths: &mut DatasetPaths, raw_dir: &Path) {
+    paths.random_sample = raw_dir.join("random.jsonl");
+    paths.random_product = raw_dir.join("random-product.jsonl");
+    paths.general_summary = raw_dir.join("ascent.jsonl");
+    paths.general_trace = raw_dir.join("ascent-trace.jsonl");
+    paths.products_summary = raw_dir.join("ascent-product.jsonl");
+    paths.products_trace = raw_dir.join("ascent-product-trace.jsonl");
+    paths.variable_f = raw_dir.join("continuation.jsonl");
+    paths.continuation_cache = raw_dir.join("continuation-cache.jsonl");
 }
 
 fn smoke_output_dir() -> PathBuf {
@@ -237,19 +296,24 @@ fn smoke_output_dir() -> PathBuf {
         .expect("system clock before UNIX_EPOCH")
         .as_millis();
     let dir = std::env::temp_dir().join(format!(
-        "sys-normalized-dataset-{}-{stamp}",
+        "sys-core-tables-{}-{stamp}",
         std::process::id()
     ));
     std::fs::create_dir_all(&dir).expect("create temp output dir");
     dir
 }
 
-fn parse_args(package_root: &Path) -> DatasetPaths {
-    let mut paths = DatasetPaths::defaults(package_root);
+fn parse_args() -> DatasetPaths {
+    let mut paths = DatasetPaths::defaults();
     let args: Vec<String> = std::env::args().collect();
     let mut i = 1usize;
     while i < args.len() {
         match args[i].as_str() {
+            "--raw-dir" => {
+                let value = args.get(i + 1).expect("--raw-dir requires a value");
+                apply_raw_dir(&mut paths, Path::new(value));
+                i += 2;
+            }
             "--out-dir" => {
                 let value = args.get(i + 1).expect("--out-dir requires a value");
                 paths.out_dir = PathBuf::from(value);
@@ -280,6 +344,23 @@ fn parse_args(package_root: &Path) -> DatasetPaths {
             "--variable-f" => {
                 let value = args.get(i + 1).expect("--variable-f requires a value");
                 paths.variable_f = PathBuf::from(value);
+                i += 2;
+            }
+            "--random-sample" => {
+                let value = args.get(i + 1).expect("--random-sample requires a value");
+                paths.random_sample = PathBuf::from(value);
+                i += 2;
+            }
+            "--random-product" => {
+                let value = args.get(i + 1).expect("--random-product requires a value");
+                paths.random_product = PathBuf::from(value);
+                i += 2;
+            }
+            "--continuation-cache" => {
+                let value = args
+                    .get(i + 1)
+                    .expect("--continuation-cache requires a value");
+                paths.continuation_cache = PathBuf::from(value);
                 i += 2;
             }
             other => panic!("unknown argument: {other}"),
@@ -332,6 +413,26 @@ fn rational_dual_vertices_to_f64(data: &[[BigRational; 4]]) -> Vec<[f64; 4]> {
                     .unwrap_or_else(|| panic!("cannot convert rational dual vertex to f64"))
             })
         })
+        .collect()
+}
+
+fn parse_rational(token: &str) -> BigRational {
+    if let Some((numer, denom)) = token.split_once('/') {
+        let numer =
+            BigInt::from_str(numer).unwrap_or_else(|e| panic!("bad numerator {token}: {e}"));
+        let denom =
+            BigInt::from_str(denom).unwrap_or_else(|e| panic!("bad denominator {token}: {e}"));
+        BigRational::new(numer, denom)
+    } else {
+        BigRational::from_integer(
+            BigInt::from_str(token).unwrap_or_else(|e| panic!("bad integer {token}: {e}")),
+        )
+    }
+}
+
+fn parse_vec4(data: &[[String; 4]]) -> Vec<[BigRational; 4]> {
+    data.iter()
+        .map(|row| std::array::from_fn(|i| parse_rational(&row[i])))
         .collect()
 }
 
@@ -409,12 +510,39 @@ fn load_exact_cache(path: &Path, label: &str, entries: &mut HashMap<String, Exac
     }
 }
 
-fn build_exact_candidate_index(
-    package_root: &Path,
-) -> (
-    HashMap<String, ExactCacheEntry>,
-    HashMap<usize, Vec<ExactCacheEntry>>,
+fn register_exact_duals(
+    entries: &mut HashMap<String, ExactCacheEntry>,
+    exact_duals: &[[String; 4]],
+    label: &str,
 ) {
+    if exact_duals.is_empty() {
+        return;
+    }
+    let poly_id = poly_id_from_strings(exact_duals);
+    if entries.contains_key(&poly_id) {
+        return;
+    }
+    let polytope = Polytope4D::new(parse_vec4(exact_duals))
+        .unwrap_or_else(|e| panic!("reconstruct exact duals for {label}: {e}"));
+    let record = PolytopeRecord::from_polytope(&polytope);
+    let dual_vertices_f64 = polytope
+        .dual_vertices_f64()
+        .iter()
+        .map(|a| [a[0], a[1], a[2], a[3]])
+        .collect();
+    entries.insert(
+        poly_id.clone(),
+        ExactCacheEntry {
+            poly_id,
+            record,
+            facet_count: exact_duals.len(),
+            dual_vertices_f64,
+            geometry_source: label.to_string(),
+        },
+    );
+}
+
+fn build_exact_cache(package_root: &Path, continuation_cache_path: &Path) -> HashMap<String, ExactCacheEntry> {
     let repo_root = package_root
         .parent()
         .and_then(Path::parent)
@@ -432,10 +560,16 @@ fn build_exact_candidate_index(
         &mut by_poly_id,
     );
     load_exact_cache(
-        &package_root.join("variable-f-ascent/cache.jsonl"),
-        "experiments/sys-landscape/variable-f-ascent/cache.jsonl",
+        continuation_cache_path,
+        "continuation cache",
         &mut by_poly_id,
     );
+    by_poly_id
+}
+
+fn build_facet_count_index(
+    by_poly_id: &HashMap<String, ExactCacheEntry>,
+) -> HashMap<usize, Vec<ExactCacheEntry>> {
     let mut by_facet_count: HashMap<usize, Vec<ExactCacheEntry>> = HashMap::new();
     for entry in by_poly_id.values() {
         by_facet_count
@@ -443,7 +577,7 @@ fn build_exact_candidate_index(
             .or_default()
             .push(entry.clone());
     }
-    (by_poly_id, by_facet_count)
+    by_facet_count
 }
 
 fn infer_variable_f_source_name(row: &VariableFRow) -> String {
@@ -486,13 +620,24 @@ fn infer_root_group_id(
     if role == "random_sample" {
         return format!("{dataset}::{source_name}");
     }
-    if family == "general" && source_name.starts_with("general_") {
+    if family == "general"
+        && (source_name.starts_with("general_") || source_name.starts_with("ascent_"))
+    {
         return format!("general::{source_name}");
     }
-    if family == "lagrangian_product" && source_name.starts_with("products_") {
+    if family == "lagrangian_product"
+        && (source_name.starts_with("products_") || source_name.starts_with("ascent_product_"))
+    {
         return format!("lagrangian_product::{source_name}");
     }
     format!("{dataset}::{source_name}")
+}
+
+fn repo_relative_label(path: &Path) -> String {
+    path.strip_prefix(package_root())
+        .unwrap_or(path)
+        .display()
+        .to_string()
 }
 
 fn infer_variable_f_parent_state_id(row: &VariableFRow) -> Option<String> {
@@ -586,19 +731,47 @@ fn push_capacity_row(
         .or_insert(new_row);
 }
 
+fn push_orbit_record_row(output: &mut HashMap<String, OrbitRecordRow>, entry: &ExactCacheEntry) {
+    let new_row = OrbitRecordRow {
+        poly_id: entry.poly_id.clone(),
+        sigma_gap_cutoff: entry.record.sigma_gap_cutoff,
+        sigmas: entry.record.sigmas.clone(),
+        orbit_scalars: entry.record.orbit_scalars.clone(),
+        orbit_record_source: entry.geometry_source.clone(),
+    };
+    output
+        .entry(entry.poly_id.clone())
+        .and_modify(|existing| {
+            if existing.sigmas.is_none() && new_row.sigmas.is_some() {
+                existing.sigmas = new_row.sigmas.clone();
+                existing.sigma_gap_cutoff = new_row.sigma_gap_cutoff;
+                existing.orbit_record_source = new_row.orbit_record_source.clone();
+            }
+            if existing.orbit_scalars.is_none() && new_row.orbit_scalars.is_some() {
+                existing.orbit_scalars = new_row.orbit_scalars.clone();
+                existing.orbit_record_source = new_row.orbit_record_source.clone();
+            }
+        })
+        .or_insert(new_row);
+}
+
 fn main() {
-    let package_root = Path::new(env!("CARGO_MANIFEST_DIR"));
-    let paths = parse_args(package_root);
+    let package_root = package_root();
+    let paths = parse_args();
+    let random_sample_source = repo_relative_label(&paths.random_sample);
+    let random_product_source = repo_relative_label(&paths.random_product);
+    let general_summary_source = repo_relative_label(&paths.general_summary);
+    let products_summary_source = repo_relative_label(&paths.products_summary);
+    let variable_f_source = repo_relative_label(&paths.variable_f);
     std::fs::create_dir_all(&paths.out_dir).expect("create output directory");
 
-    println!("normalized-dataset: Stage 1 converter");
+    println!("core-tables: Stage 1 converter");
     println!("  out-dir: {}", paths.out_dir.display());
     println!("  general-summary: {}", paths.general_summary.display());
     println!("  products-summary: {}", paths.products_summary.display());
     println!("  variable-f: {}", paths.variable_f.display());
 
-    let (exact_by_poly_id, exact_by_facet_count) = build_exact_candidate_index(package_root);
-    println!("Loaded exact cache entries: {}", exact_by_poly_id.len());
+    let mut exact_by_poly_id = build_exact_cache(&package_root, &paths.continuation_cache);
 
     let random_rows: Vec<RandomSweepRow> = read_jsonl(&paths.random_sample);
     let random_product_rows: Vec<RandomProductRow> = read_jsonl(&paths.random_product);
@@ -608,8 +781,47 @@ fn main() {
     let products_trace_rows: Vec<TraceRow> = read_jsonl(&paths.products_trace);
     let variable_f_rows: Vec<VariableFRow> = read_jsonl(&paths.variable_f);
 
+    for row in &random_rows {
+        register_exact_duals(
+            &mut exact_by_poly_id,
+            &row.dual_vertices_rational,
+            &format!("random sample summary {}", row.name),
+        );
+    }
+    for row in &random_product_rows {
+        register_exact_duals(
+            &mut exact_by_poly_id,
+            &row.dual_vertices_rational,
+            &format!("random product summary {}", row.name),
+        );
+    }
+    for row in &general_rows {
+        register_exact_duals(
+            &mut exact_by_poly_id,
+            &row.final_dual_vertices_rational,
+            &format!("ascent summary {}", row.name),
+        );
+    }
+    for row in &products_rows {
+        register_exact_duals(
+            &mut exact_by_poly_id,
+            &row.final_dual_vertices_rational,
+            &format!("ascent-product summary {}", row.name),
+        );
+    }
+    for row in &variable_f_rows {
+        register_exact_duals(
+            &mut exact_by_poly_id,
+            &row.final_dual_vertices_rational,
+            &format!("continuation summary {}", row.name),
+        );
+    }
+    let exact_by_facet_count = build_facet_count_index(&exact_by_poly_id);
+    println!("Loaded exact cache entries: {}", exact_by_poly_id.len());
+
     let mut polytopes = HashMap::<String, PolytopeRow>::new();
     let mut capacities = HashMap::<String, CapacityResultRow>::new();
+    let mut orbit_records = HashMap::<String, OrbitRecordRow>::new();
     let mut states = Vec::<StateRow>::new();
     let mut step_events = Vec::<StepEventRow>::new();
 
@@ -627,8 +839,9 @@ fn main() {
             &mut capacities,
             entry,
             Some(row.iterations),
-            "random-sample/random-sweep.jsonl",
+            &random_sample_source,
         );
+        push_orbit_record_row(&mut orbit_records, entry);
         states.push(StateRow {
             state_id: dual_vertices_to_state_key("random_sample", &row.name),
             poly_id: entry.poly_id.clone(),
@@ -681,8 +894,9 @@ fn main() {
             &mut capacities,
             entry,
             Some(row.iterations),
-            "random-product-sample/random-product-sweep.jsonl",
+            &random_product_source,
         );
+        push_orbit_record_row(&mut orbit_records, entry);
         states.push(StateRow {
             state_id: dual_vertices_to_state_key("random_product", &row.name),
             poly_id: entry.poly_id.clone(),
@@ -735,8 +949,9 @@ fn main() {
             &mut capacities,
             entry,
             None,
-            "gradient-ascent-general/gradient-ascent-general.jsonl",
+            &general_summary_source,
         );
+        push_orbit_record_row(&mut orbit_records, entry);
         let lineage = if row.lineage_id.is_empty() {
             row.name.clone()
         } else {
@@ -813,8 +1028,9 @@ fn main() {
             &mut capacities,
             entry,
             None,
-            "gradient-ascent-products/gradient-ascent-products.jsonl",
+            &products_summary_source,
         );
+        push_orbit_record_row(&mut orbit_records, entry);
         let lineage = if row.lineage_id.is_empty() {
             row.name.clone()
         } else {
@@ -891,8 +1107,9 @@ fn main() {
             &mut capacities,
             entry,
             None,
-            "variable-f-ascent/variable-f-ascent.jsonl",
+            &variable_f_source,
         );
+        push_orbit_record_row(&mut orbit_records, entry);
         let source_name = infer_variable_f_source_name(row);
         let lineage_id = infer_variable_f_lineage_id(row, &source_name);
         states.push(StateRow {
@@ -937,6 +1154,8 @@ fn main() {
 
     let mut capacity_rows = capacities.into_values().collect::<Vec<_>>();
     capacity_rows.sort_by(|a, b| a.poly_id.cmp(&b.poly_id));
+    let mut orbit_record_rows = orbit_records.into_values().collect::<Vec<_>>();
+    orbit_record_rows.sort_by(|a, b| a.poly_id.cmp(&b.poly_id));
 
     states.sort_by(|a, b| a.state_id.cmp(&b.state_id));
     step_events.sort_by(|a, b| {
@@ -952,11 +1171,13 @@ fn main() {
         &paths.out_dir.join("capacity_results.jsonl"),
         &capacity_rows,
     );
+    write_jsonl(&paths.out_dir.join("orbit_records.jsonl"), &orbit_record_rows);
     write_jsonl(&paths.out_dir.join("step_events.jsonl"), &step_events);
 
     println!("Wrote {} polytopes", polytope_rows.len());
     println!("Wrote {} states", states.len());
     println!("Wrote {} capacity rows", capacity_rows.len());
+    println!("Wrote {} orbit records", orbit_record_rows.len());
     println!("Wrote {} step events", step_events.len());
     println!("Output directory: {}", paths.out_dir.display());
 }

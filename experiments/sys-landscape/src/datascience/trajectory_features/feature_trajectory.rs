@@ -1,122 +1,6 @@
-//! Compute bounded trajectory-aggregate features keyed by `state_id`.
-//!
-//! Goal: enrich the hostile-landscape normalized dataset with search-dynamics
-//! summaries derived from `step_events.jsonl`, without storing raw event logs in
-//! the downstream analyzer.
-//! Input Artifacts:
-//!   - experiments/sys-landscape/normalized-dataset outputs under `--normalized-dir`
-//!     (`states.jsonl` and `step_events.jsonl` required)
-//! Output Artifacts: None by default (writes to an untracked temp file unless `--out` is set)
+//! Cheap trajectory-summary features for datascience consumers.
 
-use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
-use std::fs::File;
-use std::io::{BufRead, BufReader, BufWriter, Write};
-use std::path::{Path, PathBuf};
-
-#[derive(Debug, Deserialize)]
-struct StateInputRow {
-    state_id: String,
-}
-
-#[derive(Debug, Deserialize, Clone)]
-struct StepEventInputRow {
-    state_id: String,
-    phase: usize,
-    iteration: usize,
-    step_type: String,
-    t_fraction: f64,
-    t_actual: f64,
-    sys_before: f64,
-    sys_after: f64,
-    delta_sys: f64,
-    gradient_norm: f64,
-}
-
-#[derive(Debug, Serialize)]
-struct TrajectoryFeatureRow {
-    state_id: String,
-    trajectory_trace_available: f64,
-    trajectory_event_count: usize,
-    trajectory_phase_count: usize,
-    trajectory_mean_iters_per_phase: f64,
-    trajectory_overshoot_fraction: f64,
-    trajectory_overshoot_15_fraction: f64,
-    trajectory_overshoot_2_fraction: f64,
-    trajectory_overshoot_3_fraction: f64,
-    trajectory_t_fraction_mean: f64,
-    trajectory_t_fraction_std: f64,
-    trajectory_t_fraction_max: f64,
-    trajectory_t_actual_mean: f64,
-    trajectory_t_actual_std: f64,
-    trajectory_t_actual_max: f64,
-    trajectory_gradient_norm_mean: f64,
-    trajectory_gradient_norm_std: f64,
-    trajectory_gradient_norm_max: f64,
-    trajectory_delta_share_top1: f64,
-    trajectory_delta_share_top3: f64,
-    trajectory_restart_drop_mean: f64,
-    trajectory_restart_drop_max: f64,
-    trajectory_restart_drop_fraction: f64,
-    trajectory_efficiency_mean: f64,
-    trajectory_efficiency_std: f64,
-    trajectory_efficiency_max: f64,
-}
-
-fn parse_args() -> (PathBuf, PathBuf) {
-    let args: Vec<String> = std::env::args().collect();
-    let mut normalized_dir: Option<PathBuf> = None;
-    let mut out: Option<PathBuf> = None;
-    let mut i = 1usize;
-    while i < args.len() {
-        match args[i].as_str() {
-            "--normalized-dir" => {
-                let value = args.get(i + 1).expect("--normalized-dir requires a value");
-                normalized_dir = Some(PathBuf::from(value));
-                i += 2;
-            }
-            "--out" => {
-                let value = args.get(i + 1).expect("--out requires a value");
-                out = Some(PathBuf::from(value));
-                i += 2;
-            }
-            other => panic!("unknown argument: {other}"),
-        }
-    }
-    let normalized_dir = normalized_dir.expect("--normalized-dir is required");
-    let out = out.unwrap_or_else(|| {
-        let stamp = std::time::SystemTime::now()
-            .duration_since(std::time::UNIX_EPOCH)
-            .expect("system clock before UNIX_EPOCH")
-            .as_millis();
-        std::env::temp_dir().join(format!("sys-feature-trajectory-{stamp}.jsonl"))
-    });
-    (normalized_dir, out)
-}
-
-fn read_jsonl<T: for<'de> Deserialize<'de>>(path: &Path) -> Vec<T> {
-    let file = File::open(path).unwrap_or_else(|e| panic!("open {}: {e}", path.display()));
-    let reader = BufReader::new(file);
-    reader
-        .lines()
-        .map_while(Result::ok)
-        .filter(|line| !line.trim().is_empty())
-        .map(|line| {
-            serde_json::from_str::<T>(&line)
-                .unwrap_or_else(|e| panic!("parse {}: {e}\nline={line}", path.display()))
-        })
-        .collect()
-}
-
-fn write_jsonl<T: Serialize>(path: &Path, rows: &[T]) {
-    let file = File::create(path).unwrap_or_else(|e| panic!("create {}: {e}", path.display()));
-    let mut writer = BufWriter::new(file);
-    for row in rows {
-        serde_json::to_writer(&mut writer, row).expect("serialize row");
-        writeln!(writer).expect("write newline");
-    }
-    writer.flush().expect("flush output");
-}
+use super::{TrajectoryFeatureInputRow, TrajectoryFeatureRow};
 
 fn stats_or_zero(values: &[f64]) -> (f64, f64, f64) {
     if values.is_empty() {
@@ -166,12 +50,12 @@ fn zero_row(state_id: &str) -> TrajectoryFeatureRow {
     }
 }
 
-fn build_row(state_id: &str, events: &[StepEventInputRow]) -> TrajectoryFeatureRow {
-    if events.is_empty() {
-        return zero_row(state_id);
+pub fn compute(input: &TrajectoryFeatureInputRow) -> TrajectoryFeatureRow {
+    if input.events.is_empty() {
+        return zero_row(&input.state_id);
     }
 
-    let mut sorted = events.to_vec();
+    let mut sorted = input.events.clone();
     sorted.sort_by(|a, b| a.phase.cmp(&b.phase).then(a.iteration.cmp(&b.iteration)));
 
     let event_count = sorted.len();
@@ -253,7 +137,7 @@ fn build_row(state_id: &str, events: &[StepEventInputRow]) -> TrajectoryFeatureR
     };
 
     TrajectoryFeatureRow {
-        state_id: state_id.to_string(),
+        state_id: input.state_id.clone(),
         trajectory_trace_available: 1.0,
         trajectory_event_count: event_count,
         trajectory_phase_count: phase_count,
@@ -280,37 +164,4 @@ fn build_row(state_id: &str, events: &[StepEventInputRow]) -> TrajectoryFeatureR
         trajectory_efficiency_std,
         trajectory_efficiency_max,
     }
-}
-
-fn main() {
-    let (normalized_dir, out) = parse_args();
-    let states: Vec<StateInputRow> = read_jsonl(&normalized_dir.join("states.jsonl"));
-    let step_events: Vec<StepEventInputRow> = read_jsonl(&normalized_dir.join("step_events.jsonl"));
-
-    let mut events_by_state = HashMap::<String, Vec<StepEventInputRow>>::new();
-    for event in step_events {
-        events_by_state
-            .entry(event.state_id.clone())
-            .or_default()
-            .push(event);
-    }
-
-    let mut rows = states
-        .iter()
-        .map(|state| {
-            let events = events_by_state
-                .get(&state.state_id)
-                .map(Vec::as_slice)
-                .unwrap_or(&[]);
-            build_row(&state.state_id, events)
-        })
-        .collect::<Vec<_>>();
-    rows.sort_by(|a, b| a.state_id.cmp(&b.state_id));
-    write_jsonl(&out, &rows);
-
-    println!(
-        "feature-trajectory: wrote {} rows to {}",
-        rows.len(),
-        out.display()
-    );
 }

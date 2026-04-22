@@ -22,6 +22,7 @@
 //! - `--n-start <offset>` starting global seed index                  (default: 0)
 //! - `--seed <u64>`       base RNG seed                               (default: 42)
 //! - `--out <path>`       output summary .jsonl                       (default: untracked temp smoke path)
+//! - `--seed-time-budget-secs <f64>` per-seed wall-clock budget       (default: 120)
 //! - `--fresh`            delete existing summary + trace files before running
 //! - `--db-update`        load and save the sys-landscape family cache
 //! - `--no-db-update`     do not load or save the sys-landscape family cache
@@ -37,6 +38,7 @@
 
 use exp_sys_landscape::{
     apply_dual_step, ascent_direction, compute_active_sys_state, compute_step_bound, compute_sys,
+    shared_family_cache_path,
     dual_vertices_rational_strings, finalize_ascent_output, open_ascent_writers,
     orbit_scalars_from_result, parse_ascent_args, run_parallel_seeds, smoke_output_path,
     trace_path_for, AscentArgs, AscentMode, SeedResult, SummaryRow, TraceRow, MAX_STEP_SIZE,
@@ -46,7 +48,6 @@ use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use rand_distr::{Distribution, StandardNormal};
 use std::collections::HashMap;
-use std::path::Path;
 use std::sync::{Arc, Mutex};
 use std::time::Instant;
 use symplectic::algorithms::billiard::facet_classification::{
@@ -282,10 +283,11 @@ fn process_seed(
     polytope_type: &str,
     polytope: &Polytope4D,
     lagrangian_class: &FacetClassification,
+    seed_time_budget_secs: f64,
     rng: &mut ChaCha8Rng,
 ) -> Option<SeedResult> {
     let t0 = Instant::now();
-    let budget = SEED_TIME_BUDGET_SECS;
+    let budget = seed_time_budget_secs;
 
     let starting_sys = compute_sys(polytope)?;
 
@@ -440,7 +442,13 @@ fn main() {
         "sys-gradient-ascent-products",
         "smoke-gradient-ascent-products.jsonl",
     );
-    let args: AscentArgs = parse_ascent_args(DEFAULT_SEED, 12, default_out, "products");
+    let args: AscentArgs = parse_ascent_args(
+        DEFAULT_SEED,
+        12,
+        SEED_TIME_BUDGET_SECS,
+        default_out,
+        "products",
+    );
     let t_global = Instant::now();
 
     let summary_path = args.out.clone();
@@ -453,6 +461,7 @@ fn main() {
     println!("  out:          {}", summary_path.display());
     println!("  trace:        {}", trace_path.display());
     println!("  fresh:        {}", args.fresh);
+    println!("  budget:       {:.1}s/seed", args.seed_time_budget_secs);
     println!("  no-db-update: {}", args.no_db_update);
     println!("  buckets:      {LAGRANGIAN_SPLITS:?}\n");
 
@@ -473,7 +482,7 @@ fn main() {
 
     // DB state: loaded once, shared across threads under a Mutex when !no_db_update.
     // On LICCA (--no-db-update), both load and insertion are skipped entirely.
-    let family_cache_path = Path::new(env!("CARGO_MANIFEST_DIR")).join("cache.jsonl");
+    let family_cache_path = shared_family_cache_path();
     let db_arc: Arc<Mutex<HashMap<DualVerticesKey, PolytopeRecord>>> = if args.no_db_update {
         Arc::new(Mutex::new(HashMap::new()))
     } else {
@@ -484,6 +493,7 @@ fn main() {
     };
 
     let no_db_update = args.no_db_update;
+    let seed_time_budget_secs = args.seed_time_budget_secs;
     let db_for_closure = Arc::clone(&db_arc);
 
     run_parallel_seeds(&args, &completed, &writers, &best, move |i, seed_i| {
@@ -499,7 +509,15 @@ fn main() {
         let class = classify_facets(&polytope).expect("should classify as Lagrangian");
 
         let name = format!("products_{i}");
-        let result = process_seed(&name, i, &bucket_name, &polytope, &class, &mut rng_i)?;
+        let result = process_seed(
+            &name,
+            i,
+            &bucket_name,
+            &polytope,
+            &class,
+            seed_time_budget_secs,
+            &mut rng_i,
+        )?;
 
         if !no_db_update {
             let mut db = db_for_closure.lock().expect("lock db for final insert");
