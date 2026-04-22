@@ -13,15 +13,13 @@
 //!   - experiments/sys-landscape/raw/continuation-cache.jsonl (or `--continuation-cache`)
 //! Output Artifacts: None by default (writes to an untracked temp file unless `--out` is set)
 
-use num_bigint::BigInt;
-use num_rational::BigRational;
 use exp_sys_landscape::{package_root, raw_dataset_cache_path};
+use exp_sys_landscape::features::{
+    default_feature_output_path, parse_vec4, read_jsonl, write_jsonl,
+};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-use std::fs::File;
-use std::io::{BufRead, BufReader, BufWriter, Write};
 use std::path::{Path, PathBuf};
-use std::str::FromStr;
 use symplectic::algorithms::facet_adjacency::build_transition_matrix;
 use symplectic::algorithms::solve_orbit_sigma;
 use symplectic::database::{load_many, DualVerticesKey, OrbitScalars, PolytopeRecord};
@@ -106,60 +104,10 @@ fn parse_args() -> (PathBuf, PathBuf, PathBuf) {
         }
     }
     let normalized_dir = normalized_dir.expect("--normalized-dir is required");
-    let out = out.unwrap_or_else(|| {
-        let stamp = std::time::SystemTime::now()
-            .duration_since(std::time::UNIX_EPOCH)
-            .expect("system clock before UNIX_EPOCH")
-            .as_millis();
-        std::env::temp_dir().join(format!("sys-feature-orbit-{stamp}.jsonl"))
-    });
+    let out = out.unwrap_or_else(|| default_feature_output_path("orbit"));
     let continuation_cache =
         continuation_cache.unwrap_or_else(|| raw_dataset_cache_path("continuation"));
     (normalized_dir, out, continuation_cache)
-}
-
-fn read_jsonl<T: for<'de> Deserialize<'de>>(path: &Path) -> Vec<T> {
-    let file = File::open(path).unwrap_or_else(|e| panic!("open {}: {e}", path.display()));
-    let reader = BufReader::new(file);
-    reader
-        .lines()
-        .map_while(Result::ok)
-        .filter(|line| !line.trim().is_empty())
-        .map(|line| {
-            serde_json::from_str::<T>(&line)
-                .unwrap_or_else(|e| panic!("parse {}: {e}\nline={line}", path.display()))
-        })
-        .collect()
-}
-
-fn write_jsonl<T: Serialize>(path: &Path, rows: &[T]) {
-    let file = File::create(path).unwrap_or_else(|e| panic!("create {}: {e}", path.display()));
-    let mut writer = BufWriter::new(file);
-    for row in rows {
-        serde_json::to_writer(&mut writer, row).expect("serialize row");
-        writeln!(writer).expect("write newline");
-    }
-    writer.flush().expect("flush output");
-}
-
-fn parse_rational(token: &str) -> BigRational {
-    if let Some((numer, denom)) = token.split_once('/') {
-        let numer =
-            BigInt::from_str(numer).unwrap_or_else(|e| panic!("bad numerator {token}: {e}"));
-        let denom =
-            BigInt::from_str(denom).unwrap_or_else(|e| panic!("bad denominator {token}: {e}"));
-        BigRational::new(numer, denom)
-    } else {
-        BigRational::from_integer(
-            BigInt::from_str(token).unwrap_or_else(|e| panic!("bad integer {token}: {e}")),
-        )
-    }
-}
-
-fn parse_vec4(data: &[[String; 4]]) -> Vec<[BigRational; 4]> {
-    data.iter()
-        .map(|row| std::array::from_fn(|i| parse_rational(&row[i])))
-        .collect()
 }
 
 fn stats_or_zero(values: &[f64]) -> (f64, f64, f64, f64) {
