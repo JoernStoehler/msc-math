@@ -281,6 +281,72 @@ sys as a continuous function on polytope space, no privileged threshold.
 - Current posterior from the bounded pass: more rows alone are unlikely to create a clean transferable random-to-endpoint heuristic, but LICCA-scale endpoint data is still plausibly high-value for revealing stronger endpoint-only structure or for making the current negative transfer result much more decisive.
 - Re-entry point: reuse the current dataset + feature-pattern-search pipeline exactly as-is, refresh the canonical ascent JSONLs / caches from LICCA outputs, rerun `sys-dataset-core-tables`, rerun `sys-dataset-features`, then rerun `experiments/sys-landscape/feature-pattern-search/analyze.py` before inventing richer models.
 
+### [open] [group:landscape-ds] Post-scaffold hostile-landscape datascience split
+- Settled:
+  - The maintained datascience path is now `raw/* -> sys-dataset-core-tables -> sys-dataset-features -> methods/*.py`.
+  - The first bounded method pass is thesis-usable negative evidence: within-regime signal exists, transfer from random to ascent endpoints is strongly negative, metadata still dominates endpoints, and trajectory summaries are near-null.
+  - The current evidence-bearing method packets are the random/product baselines, fixed-`F` ascent, variable-`F` continuation, and the `feature-pattern-search` regression/classification/residual scripts.
+- Polish or redo:
+  - `research/sys-landscape.md` still describes the superseded `normalized-dataset` / per-feature-bin surface and should be rewritten around the merged `raw -> datasets -> methods` architecture.
+  - `research/sys-landscape-toolbox-audit.md` is still a scaffold; it has the right columns and buckets but not the row-by-row hostile-landscape verdicts yet.
+  - `research/sys-landscape-datascience/method-ledger.md` exists, but `M012` / `M013` still have undecided thesis use and skipped standard-toolbox rows are still missing.
+  - `RESULTS.md` / thesis wording should eventually cite the audit and avoid repeating packet-level detail once the audit is populated.
+- Ready agent work:
+  - populate the audit row by row from the committed packets already listed in the ledger
+  - add explicit skipped / inapplicable standard-toolbox rows instead of leaving the unused-method surface implicit
+  - tighten stale notes and README text to match the merged datascience pipeline
+  - do not reopen scaffold design unless the current `raw -> datasets -> methods` split is no longer enough
+- Jörn decisions still needed:
+  - whether `M012` regime classification is thesis-facing evidence, supporting-only, or spike-only
+  - whether `M013` residual analysis is thesis-facing evidence, supporting-only, or spike-only
+  - which skipped methods count as part of the thesis-relevant "standard toolbox" and therefore must appear explicitly in the audit
+  - whether any HKO-local control should enter the datascience write-up or stay outside the main hostile-landscape surface
+- Blockers:
+  - LICCA rows are only a blocker for stronger density wording or a reopened endpoint-only modeling pass; they are not a blocker for the current negative-transfer thesis wording
+  - `variable-f-ascent` still has weaker orbit-feature provenance than the fixed-`F` packets because older rows fall back to one-best-sigma orbit recovery; this is a blocker only if a later method needs equal orbit-feature richness across all endpoint families
+- Dependency chain:
+  - canonical producer packets -> `sys-dataset-core-tables` -> `sys-dataset-features` -> method scripts -> audit / ledger -> thesis wording
+  - richer endpoint-only methods depend more on endpoint row count than on more feature engineering
+  - witness-guided continuation / reduced-model search is a separate successor line downstream of witness-oracle instrumentation, not part of the current datascience closure packet
+
+### [open] [group:landscape-ds] Populate the hostile-landscape audit from current packets
+- Turn `research/sys-landscape-toolbox-audit.md` from a scaffold into the canonical per-method verdict surface for the thesis.
+- Use the current attempted rows in `research/sys-landscape-datascience/method-ledger.md` as the starting inventory, then add skipped / inapplicable rows for standard methods the thesis might be expected to mention.
+- For each method, record:
+  - question
+  - search surface
+  - concrete repo evidence
+  - validity guard or caveat
+  - observation
+  - inference
+  - thesis use
+  - reopen condition
+- Acceptance check: a later session can answer "did we do this method, what did it show, and may the thesis cite it?" by reading the audit without reconstructing chat history.
+
+### [Jörn] [group:landscape-ds] Decide the thesis-facing status of the remaining method packets
+- Make explicit thesis-use judgments for:
+  - `M011` bounded regression pass
+  - `M012` regime classification
+  - `M013` residual analysis
+- Also decide which absent methods must appear explicitly as skipped in the audit:
+  - PCA / projection methods
+  - clustering / manifold learning
+  - SVM / boosting / nearest-neighbor methods
+  - neural-network methods
+  - permutation / bootstrap inference, if they are meant to count as part of the datascience toolbox here
+- Acceptance check: `research/sys-landscape-toolbox-audit.md`, `research/sys-landscape-datascience/method-ledger.md`, and the hostile-landscape paragraph in `RESULTS.md` agree on what is main evidence, supporting-only, spike-only, redo-before-thesis, or omitted.
+
+### [future] [group:landscape-ds] LICCA-returned endpoint refresh and datascience rerun
+- Trigger: new canonical `gradient-ascent-general`, `gradient-ascent-products`, or `variable-f-ascent` JSONLs / caches land from LICCA.
+- Refresh path:
+  1. replace the canonical endpoint artifacts
+  2. rerun `sys-dataset-core-tables`
+  3. rerun `sys-dataset-features`
+  4. rerun `experiments/sys-landscape/feature-pattern-search/analyze.py`
+  5. rerun `analyze_regime_classification.py` and `analyze_residual.py` if the row-count jump is large enough to matter
+- Goal: strengthen or weaken the endpoint-only / density wording with more rows, not invent new scaffold or feature families first.
+- Acceptance check: updated audit / claim surfaces state only what the enlarged endpoint dataset supports.
+
 ### [future] Systematic landscape analysis
 - Gradient flow convergence, local maxima below sys=1, random noise effects.
 - Partial data in gradient-ascent experiments.
