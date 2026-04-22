@@ -4,34 +4,29 @@
 //! sigma sequences of the HKO pentagon. Reports total time, valid solution
 //! count, per-sigma timing, and phase breakdown.
 //!
-//! Run with: `cargo test --release bench_kkt -- --nocapture --ignored`
+//! Run with: `cargo test --release -- --ignored --nocapture bench_kkt`
 //!
 //! Mathematical correspondence: [alg:billiard], performance characterization
 
-// All contents are test-only (profiling benchmarks, not production code).
-// The module is `pub mod` in mod.rs for visibility, but everything inside
-// is gated behind #[cfg(test)].
+#![cfg(test)]
 
-#[cfg(test)]
+// Test-only profiling benchmarks (not library functionality).
+//
+// This module is only compiled during `cfg(test)` builds.
 use crate::geom::known_polytopes;
-#[cfg(test)]
 use crate::kkt::qp_assembly::build_augmented_system;
-#[cfg(test)]
-use crate::kkt::saddle_point_solver::{solve_kkt_for, KktOutcome, EPS_BETA_POSITIVE, EPS_Q_POSITIVE};
-#[cfg(test)]
+use crate::kkt::saddle_point_solver::{
+    solve_kkt_for, EPS_BETA_POSITIVE, EPS_Q_POSITIVE, KktOutcome,
+};
 use nalgebra::DVector;
-#[cfg(test)]
 use std::time::Instant;
 
-#[cfg(test)]
 use super::block_enumeration::{enumerate_blocks, enumerate_k_bounce_sigmas};
-#[cfg(test)]
 use super::facet_classification::classify_facets;
 
 /// Collect all billiard sigma sequences for the HKO pentagon.
 ///
 /// Returns the polytope and the sigma sequences as owned vectors.
-#[cfg(test)]
 fn pentagon_sigmas() -> (crate::geom::polytope::Polytope4D, Vec<Vec<usize>>) {
     let kp = known_polytopes::hko_pentagon();
     let polytope = kp.polytope.clone();
@@ -57,7 +52,6 @@ fn pentagon_sigmas() -> (crate::geom::polytope::Polytope4D, Vec<Vec<usize>>) {
 ///
 /// **Why release mode:** needs many KKT solves for stable timing.
 /// **Why #[ignore]:** profiling test, not correctness. Run manually.
-#[cfg(test)]
 #[test]
 #[ignore] // profiling test, run manually with --release --nocapture --ignored
 fn bench_kkt_eigen() {
@@ -103,7 +97,6 @@ fn bench_kkt_eigen() {
 ///
 /// **Why release mode:** needs many KKT solves for stable timing.
 /// **Why #[ignore]:** profiling test, not correctness. Run manually.
-#[cfg(test)]
 #[test]
 #[ignore] // profiling test, run manually with --release --nocapture --ignored
 fn bench_kkt_eigen_profile() {

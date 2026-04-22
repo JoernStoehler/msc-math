@@ -10,8 +10,8 @@
 //!
 //! Mathematical correspondence: [lem:lagrangian-facets]
 
-use crate::geom::polytope::Polytope4D;
 use super::BilliardError;
+use crate::geom::polytope::Polytope4D;
 use nalgebra::Vector4;
 
 /// Tolerance for classifying facet dual vertices as q-type or p-type.
@@ -92,10 +92,7 @@ impl FacetClassification {
     /// q-facets may move only in q-components; p-facets may move only in
     /// p-components.
     pub fn mask_dual_direction_in_place(&self, direction: &mut [Vector4<f64>]) {
-        debug_assert_eq!(
-            direction.len(),
-            self.q_indices.len() + self.p_indices.len()
-        );
+        debug_assert_eq!(direction.len(), self.q_indices.len() + self.p_indices.len());
 
         for &idx in &self.q_indices {
             if let Some(slot) = direction.get_mut(idx) {

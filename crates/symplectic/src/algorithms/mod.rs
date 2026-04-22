@@ -26,7 +26,8 @@ pub mod facet_adjacency;
 pub mod orbit_search;
 pub mod hk2017;
 pub mod billiard;
-pub mod tube;
+#[cfg(test)]
+mod tube;
 
 pub use orbit_search::{
     aggregate_orbits,

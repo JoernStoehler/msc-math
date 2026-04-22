@@ -87,6 +87,7 @@ pub struct TubeResult {
     /// Facet sequence of the minimum-action orbit.
     pub best_sequence: Vec<usize>,
     /// Fixed point (starting point) of the minimum-action orbit in R^4.
+    #[allow(dead_code)]
     pub fixed_point: Vector4<f64>,
     /// Total number of tubes explored during the search.
     pub tubes_explored: u64,
