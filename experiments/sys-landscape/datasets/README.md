@@ -40,5 +40,6 @@ Today the consumer side still lives partly in legacy folders such as `feature-pa
 [smoke-pipeline.sh](../smoke-pipeline.sh) runs the current end-to-end dataset
 surface against temp directories:
 - `raw/` producers emit ad hoc corpus files;
-- `sys-dataset-normalized` consumes those temp raw files;
+- `sys-dataset-normalized --raw-dir <tmp/raw>` derives the canonical smoke
+  input files from one raw directory;
 - the flat `sys-dataset-feature-*` binaries write temp feature JSONLs.

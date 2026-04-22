@@ -235,6 +235,17 @@ impl DatasetPaths {
     }
 }
 
+fn apply_raw_dir(paths: &mut DatasetPaths, raw_dir: &Path) {
+    paths.random_sample = raw_dir.join("random.jsonl");
+    paths.random_product = raw_dir.join("random-product.jsonl");
+    paths.general_summary = raw_dir.join("ascent.jsonl");
+    paths.general_trace = raw_dir.join("ascent-trace.jsonl");
+    paths.products_summary = raw_dir.join("ascent-product.jsonl");
+    paths.products_trace = raw_dir.join("ascent-product-trace.jsonl");
+    paths.variable_f = raw_dir.join("continuation.jsonl");
+    paths.continuation_cache = raw_dir.join("continuation-cache.jsonl");
+}
+
 fn smoke_output_dir() -> PathBuf {
     let stamp = SystemTime::now()
         .duration_since(UNIX_EPOCH)
@@ -254,6 +265,11 @@ fn parse_args() -> DatasetPaths {
     let mut i = 1usize;
     while i < args.len() {
         match args[i].as_str() {
+            "--raw-dir" => {
+                let value = args.get(i + 1).expect("--raw-dir requires a value");
+                apply_raw_dir(&mut paths, Path::new(value));
+                i += 2;
+            }
             "--out-dir" => {
                 let value = args.get(i + 1).expect("--out-dir requires a value");
                 paths.out_dir = PathBuf::from(value);
