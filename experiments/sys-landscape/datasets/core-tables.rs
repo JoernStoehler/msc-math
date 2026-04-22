@@ -32,7 +32,7 @@
 
 use blake3::Hasher;
 use exp_sys_landscape::{
-    package_root, raw_dataset_cache_path, raw_dataset_path, raw_dataset_trace_path,
+    experiment_path, package_root, raw_dataset_cache_path, raw_dataset_path, raw_dataset_trace_path,
     rational_vec4_to_strings, SummaryRow, TraceRow,
 };
 use num_bigint::BigInt;
@@ -234,16 +234,48 @@ struct DatasetPaths {
 impl DatasetPaths {
     fn defaults() -> Self {
         Self {
-            random_sample: raw_dataset_path("random"),
-            random_product: raw_dataset_path("random-product"),
-            general_summary: raw_dataset_path("ascent"),
-            general_trace: raw_dataset_trace_path("ascent"),
-            products_summary: raw_dataset_path("ascent-product"),
-            products_trace: raw_dataset_trace_path("ascent-product"),
-            variable_f: raw_dataset_path("continuation"),
-            continuation_cache: raw_dataset_cache_path("continuation"),
+            random_sample: prefer_existing(
+                raw_dataset_path("random"),
+                experiment_path("random-sample", "random-sweep.jsonl"),
+            ),
+            random_product: prefer_existing(
+                raw_dataset_path("random-product"),
+                experiment_path("random-product-sample", "random-product-sweep.jsonl"),
+            ),
+            general_summary: prefer_existing(
+                raw_dataset_path("ascent"),
+                experiment_path("gradient-ascent-general", "gradient-ascent-general.jsonl"),
+            ),
+            general_trace: prefer_existing(
+                raw_dataset_trace_path("ascent"),
+                experiment_path("gradient-ascent-general", "gradient-ascent-general-trace.jsonl"),
+            ),
+            products_summary: prefer_existing(
+                raw_dataset_path("ascent-product"),
+                experiment_path("gradient-ascent-products", "gradient-ascent-products.jsonl"),
+            ),
+            products_trace: prefer_existing(
+                raw_dataset_trace_path("ascent-product"),
+                experiment_path("gradient-ascent-products", "gradient-ascent-products-trace.jsonl"),
+            ),
+            variable_f: prefer_existing(
+                raw_dataset_path("continuation"),
+                experiment_path("variable-f-ascent", "variable-f-ascent.jsonl"),
+            ),
+            continuation_cache: prefer_existing(
+                raw_dataset_cache_path("continuation"),
+                experiment_path("variable-f-ascent", "cache.jsonl"),
+            ),
             out_dir: smoke_output_dir(),
         }
+    }
+}
+
+fn prefer_existing(primary: PathBuf, fallback: PathBuf) -> PathBuf {
+    if primary.exists() {
+        primary
+    } else {
+        fallback
     }
 }
 
@@ -588,13 +620,24 @@ fn infer_root_group_id(
     if role == "random_sample" {
         return format!("{dataset}::{source_name}");
     }
-    if family == "general" && source_name.starts_with("general_") {
+    if family == "general"
+        && (source_name.starts_with("general_") || source_name.starts_with("ascent_"))
+    {
         return format!("general::{source_name}");
     }
-    if family == "lagrangian_product" && source_name.starts_with("products_") {
+    if family == "lagrangian_product"
+        && (source_name.starts_with("products_") || source_name.starts_with("ascent_product_"))
+    {
         return format!("lagrangian_product::{source_name}");
     }
     format!("{dataset}::{source_name}")
+}
+
+fn repo_relative_label(path: &Path) -> String {
+    path.strip_prefix(package_root())
+        .unwrap_or(path)
+        .display()
+        .to_string()
 }
 
 fn infer_variable_f_parent_state_id(row: &VariableFRow) -> Option<String> {
@@ -715,6 +758,11 @@ fn push_orbit_record_row(output: &mut HashMap<String, OrbitRecordRow>, entry: &E
 fn main() {
     let package_root = package_root();
     let paths = parse_args();
+    let random_sample_source = repo_relative_label(&paths.random_sample);
+    let random_product_source = repo_relative_label(&paths.random_product);
+    let general_summary_source = repo_relative_label(&paths.general_summary);
+    let products_summary_source = repo_relative_label(&paths.products_summary);
+    let variable_f_source = repo_relative_label(&paths.variable_f);
     std::fs::create_dir_all(&paths.out_dir).expect("create output directory");
 
     println!("core-tables: Stage 1 converter");
@@ -791,7 +839,7 @@ fn main() {
             &mut capacities,
             entry,
             Some(row.iterations),
-            "random-sample/random-sweep.jsonl",
+            &random_sample_source,
         );
         push_orbit_record_row(&mut orbit_records, entry);
         states.push(StateRow {
@@ -846,7 +894,7 @@ fn main() {
             &mut capacities,
             entry,
             Some(row.iterations),
-            "random-product-sample/random-product-sweep.jsonl",
+            &random_product_source,
         );
         push_orbit_record_row(&mut orbit_records, entry);
         states.push(StateRow {
@@ -901,7 +949,7 @@ fn main() {
             &mut capacities,
             entry,
             None,
-            "gradient-ascent-general/gradient-ascent-general.jsonl",
+            &general_summary_source,
         );
         push_orbit_record_row(&mut orbit_records, entry);
         let lineage = if row.lineage_id.is_empty() {
@@ -980,7 +1028,7 @@ fn main() {
             &mut capacities,
             entry,
             None,
-            "gradient-ascent-products/gradient-ascent-products.jsonl",
+            &products_summary_source,
         );
         push_orbit_record_row(&mut orbit_records, entry);
         let lineage = if row.lineage_id.is_empty() {
@@ -1059,7 +1107,7 @@ fn main() {
             &mut capacities,
             entry,
             None,
-            "variable-f-ascent/variable-f-ascent.jsonl",
+            &variable_f_source,
         );
         push_orbit_record_row(&mut orbit_records, entry);
         let source_name = infer_variable_f_source_name(row);

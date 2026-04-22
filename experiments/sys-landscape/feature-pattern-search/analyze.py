@@ -314,11 +314,16 @@ def split_feature_rows(
     polytope_rows: list[dict], trajectory_rows: list[dict]
 ) -> tuple[list[dict], list[dict], list[dict], list[dict], list[dict], list[dict]]:
     return (
-        prefixed_rows(polytope_rows, ("edge_length_", "facet_volume_"), "poly_id"),
-        prefixed_rows(polytope_rows, ("ridge_symp_",), "poly_id"),
+        prefixed_rows(
+            polytope_rows,
+            ("facet_count", "vertex_count", "edge_count", "edge_length_", "facet_volume_"),
+            "poly_id",
+        ),
+        prefixed_rows(polytope_rows, ("facet_count", "ridge_count", "ridge_symp_"), "poly_id"),
         prefixed_rows(
             polytope_rows,
             (
+                "facet_count",
                 "vertex_count",
                 "edge_count",
                 "ridge_count",
@@ -333,8 +338,18 @@ def split_feature_rows(
             ),
             "poly_id",
         ),
-        prefixed_rows(polytope_rows, ("allpair_", "ridge_abs_omega_", "transition_"), "poly_id"),
-        prefixed_rows(polytope_rows, ("orbit_",), "poly_id"),
+        prefixed_rows(
+            polytope_rows,
+            (
+                "facet_count",
+                "allpair_",
+                "ridge_abs_omega_",
+                "ridge_zero_fraction",
+                "transition_",
+            ),
+            "poly_id",
+        ),
+        prefixed_rows(polytope_rows, ("facet_count", "orbit_"), "poly_id"),
         trajectory_rows,
     )
 
