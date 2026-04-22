@@ -8,7 +8,7 @@
 Plot systolic ratio summary for random 4D polytopes by facet count.
 
 Goal: Visualize how sys varies with F using random polytopes and the pruned algorithm.
-Input Artifacts: experiments/sys-landscape/datascience/produce/random.jsonl
+Input Artifacts: experiments/sys-landscape/random-sample/random-sweep.jsonl
 Output Artifacts: experiments/sys-landscape/random-sample/random_sweep_sys_vs_f.png
 """
 
@@ -24,16 +24,15 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 from figure_config import setup, FIGSIZE_SINGLE
 setup()
 
-REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
 EXPERIMENT_DIR = Path(__file__).resolve().parent
-DATA_PATH = REPO_ROOT / "experiments/sys-landscape/datascience/produce/random.jsonl"
+DATA_PATH = EXPERIMENT_DIR / "random-sweep.jsonl"
 FIGURES_DIR = EXPERIMENT_DIR
 
 
 def load_jsonl(path: Path) -> list[dict]:
     if not path.exists():
         print(f"ERROR: data file not found: {path}", file=sys.stderr)
-        print("Run: cargo run --bin random_sweep --release", file=sys.stderr)
+        print("Run: cargo run -p exp-sys-landscape --release --bin sys-random-sample", file=sys.stderr)
         sys.exit(1)
     with open(path) as f:
         return [json.loads(line) for line in f if line.strip()]

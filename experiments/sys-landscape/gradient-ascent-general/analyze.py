@@ -11,8 +11,8 @@ Goal: Assess whether gradient ascent + escape rounds push sys above
       the conjecture that no hit exists uses 3/N upper credible bound.
 Input Artifacts:
   - experiments/sys-landscape/gradient-ascent-general/data/*.jsonl (per-seed summaries)
-  - experiments/sys-landscape/datascience/produce/ascent.jsonl (bounded local fallback)
-       Preference order: licca.jsonl > licca-shard-*.jsonl (legacy architecture-A) > datascience/produce/ascent.jsonl.
+  - experiments/sys-landscape/gradient-ascent-general/gradient-ascent-general.jsonl (local committed summary file)
+       Preference order: licca.jsonl > licca-shard-*.jsonl (older shard layout) > gradient-ascent-general.jsonl.
 Output Artifacts:
   - gradient_ascent_general_distribution.png   (final sys histogram; linear)
   - gradient_ascent_general_tail.png           (final sys histogram; log-y tail)
@@ -37,7 +37,7 @@ setup()
 
 EXPERIMENT_DIR = Path(__file__).resolve().parent
 DATA_DIR = EXPERIMENT_DIR / "data"
-LEGACY_SUMMARY_PATH = EXPERIMENT_DIR.parent / "datascience/produce/ascent.jsonl"
+LOCAL_SUMMARY_PATH = EXPERIMENT_DIR / "gradient-ascent-general.jsonl"
 HKO_SYS = 1.0472
 HIGH_SYS_THRESHOLDS = [0.95, 0.99, 1.00, HKO_SYS]
 
@@ -46,13 +46,13 @@ STRATEGY_COLORS = {"within_cell": "#9E9E9E", "overshoot": "#E91E63", "wiggle": "
 
 
 def pick_jsonl_files() -> list[Path]:
-    """Prefer architecture-B licca.jsonl, then legacy architecture-A shards,
-    then the pre-refactor legacy file.
+    """Prefer licca.jsonl, then older shard files, then the local committed
+    summary file.
 
     Returns all files matching the highest-priority tier that has data. This
     keeps the analyzer stable across the local smoke / LICCA production
-    lifecycle described in the logbook. The legacy `licca-shard-*.jsonl` tier
-    is retained so old committed architecture-A data still loads after merge;
+    lifecycle described in the logbook. The `licca-shard-*.jsonl` tier is
+    retained so older committed shard outputs still load after merge;
     the current `job.sh` does not produce shard files, and the current
     `job-smoke.sh` writes temp outputs outside `data/`.
     """
@@ -63,10 +63,10 @@ def pick_jsonl_files() -> list[Path]:
         shards = sorted(DATA_DIR.glob("licca-shard-*.jsonl"))
         if shards:
             return shards
-    if LEGACY_SUMMARY_PATH.exists():
-        return [LEGACY_SUMMARY_PATH]
+    if LOCAL_SUMMARY_PATH.exists():
+        return [LOCAL_SUMMARY_PATH]
     print(
-        f"ERROR: no data in {DATA_DIR} or at {LEGACY_SUMMARY_PATH}. "
+        f"ERROR: no data in {DATA_DIR} or at {LOCAL_SUMMARY_PATH}. "
         "From the repository root, see experiments/sys-landscape/gradient-ascent-general/job.sh 'How to run'.",
         file=sys.stderr,
     )

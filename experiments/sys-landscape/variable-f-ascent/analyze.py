@@ -5,7 +5,7 @@
 
 """
 Goal: Analyze variable-F gradient ascent results (RQ1 + RQ2).
-Input Artifacts: experiments/sys-landscape/datascience/produce/continuation.jsonl
+Input Artifacts: experiments/sys-landscape/variable-f-ascent/variable-f-ascent.jsonl
 Output Artifacts: experiments/sys-landscape/variable-f-ascent/variable-f-rq1.png
         experiments/sys-landscape/variable-f-ascent/variable-f-rq2.png
 """
@@ -24,8 +24,7 @@ from figure_config import setup, FIGSIZE_SINGLE, SCATTER_SIZE
 setup()
 
 EXPERIMENT_DIR = Path(__file__).resolve().parent
-REPO_ROOT = EXPERIMENT_DIR.parent.parent.parent
-DATA_PATH = REPO_ROOT / "experiments/sys-landscape/datascience/produce/continuation.jsonl"
+DATA_PATH = EXPERIMENT_DIR / "variable-f-ascent.jsonl"
 
 
 def load_data():
