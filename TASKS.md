@@ -372,6 +372,25 @@ Instrument development. Results promote to `crates/symplectic/`.
 - All 6 axioms pass. The local-first post-refactor follow-up is now split into `all-minimum` (trusted minimum-set validation) and `orbit-recovery` (geometry-only recovery on trusted rows); both canonical packets pass on 2026-04-17.
 - `experiments/verification/correctness/`
 
+### [open] [group:data-refresh] Post-merge stale canonical dataset refresh after Rust cleanup merge
+- Trigger: `rust-convention-cleanup` merged on 2026-04-22 after a pre-merge pass that found many experiment generators newer than their committed canonical `.jsonl` outputs.
+- Default rule from `$pre-merge`: this was not a data-refresh branch, so the code merged first and the canonical dataset refresh is now a scheduled follow-up rather than an in-branch blocker.
+- Refresh families flagged during pre-merge:
+  - `experiments/combinatorial-cells/{boundary-characterization,cell-widths,convexity,multiple-crossings}`
+  - `experiments/hko-local-maximum/{cut-and-ascent,gradient-analysis,lagrangian-boundary,perturbation-neighborhood,sage-validation,second-order}`
+  - `experiments/numerics/{algebraic-exactness,sage-feasibility}`
+  - `experiments/numerics/gradient/{numerics,numerics-edge-cases,numerics-subdifferential}`
+  - `experiments/sys-landscape/{pentagon-rotation-formula,random-sample,random-product-sample,rejection-calibration,variable-f-ascent}`
+  - `experiments/verification/{all-minimum,correctness,orbit-recovery}`
+  - `experiments/verification/algorithm-comparison/{ablation,benchmark}`
+- Execution rule:
+  - refresh only the canonical tracked outputs for these existing filenames
+  - keep smoke outputs untracked
+  - if a family turns out to be intentionally frozen or superseded, record that explicitly instead of silently skipping it
+- Acceptance check:
+  - code-vs-data commit dates are no longer stale for the retained canonical outputs above
+  - any intentionally skipped family has a written reason in `TASKS.md` or the relevant research note
+
 ### [open] [group:library] Capacity/orbit result API architecture
 - Problem: the public library API should expose one clear algorithm family with nice names: `ehz_capacity` (auto), `ehz_capacity_pruned`, `ehz_capacity_unpruned`, and `ehz_capacity_billiard`. Non-default consumers still need richer algorithm control: all certified candidate orbits, all minimum-action simple orbits within tolerance, near-active witnesses, pruning/solver diagnostics, and recovered primal trajectories. That richer control should come from explicit building blocks, not from a second overlapping family of assembled algorithm entrypoints.
 - Durable design note: `.codex/reference/repo-maintainability/design/hk2017-result-api-plan.md`.
