@@ -542,6 +542,46 @@ fn run_phase3(
     }
 }
 
+#[derive(Debug, Clone, Copy)]
+struct Args {
+    smoke: bool,
+}
+
+fn print_usage() {
+    eprintln!(
+        r#"Usage: hko-second-order [options]
+
+Optional flags:
+  --help, -h          Show this help message and exit.
+  --smoke              Run smoke mode and exit after phase 1 probe."#
+    );
+}
+
+fn usage_error(message: String) -> ! {
+    eprintln!("error: {message}\n");
+    print_usage();
+    std::process::exit(2);
+}
+
+fn parse_args() -> Args {
+    let mut args = Args { smoke: false };
+
+    for arg in std::env::args().skip(1) {
+        match arg.as_str() {
+            "--help" | "-h" => {
+                print_usage();
+                std::process::exit(0);
+            }
+            "--smoke" => {
+                args.smoke = true;
+            }
+            other => usage_error(format!("unknown argument: {other}")),
+        }
+    }
+
+    args
+}
+
 // ============================================================================
 // Main
 // ============================================================================
@@ -550,7 +590,8 @@ fn main() {
     let t0 = Instant::now();
     let base_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
     let out_dir = base_dir.join("second-order");
-    let smoke = std::env::args().any(|a| a == "--smoke");
+    let args = parse_args();
+    let smoke = args.smoke;
 
     println!("═══════════════════════════════════════════════════════════");
     println!("Second-order analysis of flat directions at HKO2024");

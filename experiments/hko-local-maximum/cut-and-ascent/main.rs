@@ -508,6 +508,58 @@ fn dvs_to_array(polytope: &Polytope4D) -> Vec<[f64; 4]> {
         .collect()
 }
 
+#[derive(Debug, Clone, Copy)]
+struct Args {
+    fresh: bool,
+    smoke: bool,
+}
+
+fn print_usage() {
+    eprintln!(
+        r#"Usage: hko-cut-and-ascent [options]
+
+Optional flags:
+  --help, -h          Show this help message and exit.
+  --fresh              Clear and rerun output file before sampling.
+  --smoke              Run one-sample smoke mode."#
+    );
+}
+
+fn usage_error(message: String) -> ! {
+    eprintln!("error: {message}\n");
+    print_usage();
+    std::process::exit(2);
+}
+
+fn parse_args() -> Args {
+    let argv: Vec<String> = std::env::args().collect();
+    let mut args = Args {
+        fresh: false,
+        smoke: false,
+    };
+
+    let mut i = 1;
+    while i < argv.len() {
+        match argv[i].as_str() {
+            "--help" | "-h" => {
+                print_usage();
+                std::process::exit(0);
+            }
+            "--fresh" => {
+                args.fresh = true;
+                i += 1;
+            }
+            "--smoke" => {
+                args.smoke = true;
+                i += 1;
+            }
+            arg => usage_error(format!("unknown argument: {arg}")),
+        }
+    }
+
+    args
+}
+
 // ============================================================================
 // Main
 // ============================================================================
@@ -515,9 +567,9 @@ fn dvs_to_array(polytope: &Polytope4D) -> Vec<[f64; 4]> {
 fn main() {
     let t_global = Instant::now();
     let base = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("cut-and-ascent");
-    let args: Vec<String> = std::env::args().collect();
-    let fresh = args.iter().any(|a| a == "--fresh");
-    let smoke = args.iter().any(|a| a == "--smoke");
+    let args = parse_args();
+    let fresh = args.fresh;
+    let smoke = args.smoke;
     let output_path = if smoke {
         base.join("cut-and-ascent-smoke.jsonl")
     } else {

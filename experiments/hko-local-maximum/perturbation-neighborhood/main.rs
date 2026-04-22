@@ -124,8 +124,32 @@ fn default_smoke_output_path() -> PathBuf {
     dir.join("smoke-pentagon-perturb.jsonl")
 }
 
+fn print_usage() {
+    eprintln!(
+        r#"Usage: hko-perturbation [options]
+
+Optional flags:
+  --help, -h          Show this help message and exit.
+  --n <count>         Number of perturbed samples (default: 100).
+  --eps <f64>         Perturbation magnitude per component (default: 0.01).
+  --seed <u64>        RNG seed (default: 41).
+  --out <path>        Output .jsonl path (default: temp smoke path)."#
+    );
+}
+
+fn usage_error(message: &str) -> ! {
+    eprintln!("error: {message}\n");
+    print_usage();
+    std::process::exit(2);
+}
+
 fn parse_args() -> Args {
     let argv: Vec<String> = std::env::args().collect();
+    if argv.iter().any(|arg| arg == "--help" || arg == "-h") {
+        print_usage();
+        std::process::exit(0);
+    }
+
     let mut n = DEFAULT_N_SAMPLES;
     let mut eps = DEFAULT_EPS;
     let mut seed = DEFAULT_SEED;
@@ -134,37 +158,43 @@ fn parse_args() -> Args {
     let mut i = 1;
     while i < argv.len() {
         let arg = argv[i].as_str();
-        let need_value = |flag: &str| -> &str {
-            argv.get(i + 1)
-                .map(|s| s.as_str())
-                .unwrap_or_else(|| panic!("{flag} requires a value"))
-        };
         match arg {
             "--n" => {
-                n = need_value("--n")
+                let value = argv.get(i + 1).unwrap_or_else(|| usage_error("--n requires a value"));
+                n = value
                     .parse()
-                    .expect("--n must be a non-negative integer");
+                    .unwrap_or_else(|_| usage_error("--n must be a non-negative integer"));
                 i += 2;
             }
             "--eps" => {
-                eps = need_value("--eps")
+                let value = argv
+                    .get(i + 1)
+                    .unwrap_or_else(|| usage_error("--eps requires a value"));
+                eps = value
                     .parse()
-                    .expect("--eps must be a finite f64");
-                assert!(
-                    eps.is_finite() && eps > 0.0,
-                    "--eps must be positive and finite"
-                );
+                    .unwrap_or_else(|_| usage_error("--eps must be a finite f64"));
+                if !eps.is_finite() || eps <= 0.0 {
+                    usage_error("--eps must be positive and finite");
+                }
                 i += 2;
             }
             "--seed" => {
-                seed = need_value("--seed").parse().expect("--seed must be a u64");
+                let value = argv
+                    .get(i + 1)
+                    .unwrap_or_else(|| usage_error("--seed requires a value"));
+                seed = value.parse().unwrap_or_else(|_| usage_error("--seed must be a u64"));
                 i += 2;
             }
             "--out" => {
-                out = Some(PathBuf::from(need_value("--out")));
+                let value = argv
+                    .get(i + 1)
+                    .unwrap_or_else(|| usage_error("--out requires a value"));
+                out = Some(PathBuf::from(value));
                 i += 2;
             }
-            other => panic!("unknown argument: {other}"),
+            other => {
+                usage_error(&format!("unknown argument: {other}"));
+            }
         }
     }
 

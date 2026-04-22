@@ -40,9 +40,10 @@
 
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
-use dev_gradient::{analyze_polytope, enumerate_all_orbits, first_order_test, smoke_mode, smoke_output_dir, write_rows};
+use dev_gradient::{analyze_polytope, enumerate_all_orbits, first_order_test, write_rows};
 use rand_distr::{Distribution, StandardNormal, Uniform};
 use std::fs::File;
+use std::env;
 use std::io::{BufWriter, Write};
 use std::path::PathBuf;
 use std::time::Instant;
@@ -50,6 +51,42 @@ use symplectic::geom::facet_volume::facet_volume_3d;
 use symplectic::random::generate_random_polytopes;
 use symplectic::Polytope4D;
 use nalgebra::Vector4;
+
+// ============================================================================
+// CLI helpers
+// ============================================================================
+
+fn smoke_mode() -> bool {
+    let mut smoke = false;
+    for arg in env::args().skip(1) {
+        match arg.as_str() {
+            "--smoke" => smoke = true,
+            "-h" | "--help" => print_usage_and_exit(),
+            _ => {
+                eprintln!("unknown argument: {arg}");
+                print_usage_and_exit();
+            }
+        }
+    }
+    smoke
+}
+
+fn print_usage_and_exit() -> ! {
+    eprintln!("Usage: cargo run -p dev-gradient --release --bin gradient-edge-cases [--smoke]");
+    eprintln!("  --smoke: run a reduced run into a temporary directory");
+    eprintln!("  -h, --help: show usage");
+    std::process::exit(2);
+}
+
+fn smoke_output_dir(label: &str) -> String {
+    let stamp = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .expect("system clock before UNIX_EPOCH")
+        .as_millis();
+    let dir = std::env::temp_dir().join(format!("{label}-{}-{stamp}", std::process::id()));
+    std::fs::create_dir_all(&dir).expect("create smoke output dir");
+    dir.to_string_lossy().into_owned()
+}
 
 // ============================================================================
 // Constants

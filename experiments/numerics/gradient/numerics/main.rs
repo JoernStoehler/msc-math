@@ -40,6 +40,7 @@
 
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
+use std::env;
 use std::f64::consts::PI;
 use std::fs::File;
 use std::io::{BufWriter, Write};
@@ -48,7 +49,7 @@ use std::time::Instant;
 use symplectic::geom::polygon::random_polygon_2d;
 use symplectic::random::generate_random_polytopes;
 use symplectic::{lagrangian_product, regular_polygon_2d, rotate_polygon_2d};
-use dev_gradient::{analyze_polytope, first_order_test, smoke_mode, smoke_output_dir, write_rows};
+use dev_gradient::{analyze_polytope, first_order_test, write_rows};
 
 // ============================================================================
 // Constants
@@ -282,6 +283,41 @@ fn run_q2(base_dir: &str, cfg: &BasicValidationConfig) {
 }
 
 // ============================================================================
+// CLI helpers
+// ============================================================================
+
+fn smoke_mode() -> bool {
+    let mut smoke = false;
+    for arg in env::args().skip(1) {
+        match arg.as_str() {
+            "--smoke" => smoke = true,
+            "-h" | "--help" => print_usage_and_exit(),
+            _ => {
+                eprintln!("unknown argument: {arg}");
+                print_usage_and_exit();
+            }
+        }
+    }
+    smoke
+}
+
+fn print_usage_and_exit() -> ! {
+    eprintln!("Usage: cargo run -p dev-gradient --release --bin gradient-basic-validation [--smoke]");
+    eprintln!("  --smoke: run a reduced run into a temporary directory");
+    eprintln!("  -h, --help: show usage");
+    std::process::exit(2);
+}
+
+fn smoke_output_dir(label: &str) -> String {
+    let stamp = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .expect("system clock before UNIX_EPOCH")
+        .as_millis();
+    let dir = std::env::temp_dir().join(format!("{label}-{}-{stamp}", std::process::id()));
+    std::fs::create_dir_all(&dir).expect("create smoke output dir");
+    dir.to_string_lossy().into_owned()
+}
+
 // Main
 // ============================================================================
 

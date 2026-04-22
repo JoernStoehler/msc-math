@@ -54,6 +54,7 @@ use rand_chacha::ChaCha8Rng;
 use dev_gradient::{ehz_capacity_safe, enumerate_all_orbits, random_direction, solve_kkt_safe};
 use rand_distr::{Distribution, StandardNormal};
 use serde::Serialize;
+use std::env;
 use std::f64::consts::PI;
 use std::fs::File;
 use std::io::{BufWriter, Write};
@@ -246,7 +247,25 @@ struct SubdiffRow {
 // ============================================================================
 
 fn smoke_mode() -> bool {
-    std::env::args().skip(1).any(|arg| arg == "--smoke")
+    let mut smoke = false;
+    for arg in env::args().skip(1) {
+        match arg.as_str() {
+            "--smoke" => smoke = true,
+            "-h" | "--help" => print_usage_and_exit(),
+            _ => {
+                eprintln!("unknown argument: {arg}");
+                print_usage_and_exit();
+            }
+        }
+    }
+    smoke
+}
+
+fn print_usage_and_exit() -> ! {
+    eprintln!("Usage: cargo run -p dev-gradient --release --bin gradient-subdifferential [--smoke]");
+    eprintln!("  --smoke: run a reduced run into a temporary directory");
+    eprintln!("  -h, --help: show usage");
+    std::process::exit(2);
 }
 
 fn smoke_output_dir(label: &str) -> String {

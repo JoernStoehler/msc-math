@@ -149,10 +149,51 @@ fn v4_to_array(v: &Vector4<f64>) -> [f64; 4] {
     [v[0], v[1], v[2], v[3]]
 }
 
+#[derive(Debug, Clone, Copy)]
+struct Args {
+    smoke: bool,
+}
+
+fn print_usage() {
+    eprintln!(
+        r#"Usage: hko-lagrangian-boundary [options]
+
+Optional flags:
+  --help, -h          Show this help message and exit.
+  --smoke              Run smoke mode with one sample and one epsilon level."#
+    );
+}
+
+fn usage_error(message: String) -> ! {
+    eprintln!("error: {message}\n");
+    print_usage();
+    std::process::exit(2);
+}
+
+fn parse_args() -> Args {
+    let mut args = Args { smoke: false };
+
+    for arg in std::env::args().skip(1) {
+        match arg.as_str() {
+            "--help" | "-h" => {
+                print_usage();
+                std::process::exit(0);
+            }
+            "--smoke" => {
+                args.smoke = true;
+            }
+            other => usage_error(format!("unknown argument: {other}")),
+        }
+    }
+
+    args
+}
+
 fn main() {
     let t0 = Instant::now();
     let mut rng = ChaCha8Rng::seed_from_u64(SEED);
-    let smoke = std::env::args().any(|a| a == "--smoke");
+    let args = parse_args();
+    let smoke = args.smoke;
 
     let base_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("lagrangian-boundary");
     let samples_path = if smoke {
