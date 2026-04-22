@@ -9,8 +9,9 @@
 //!
 //! Phase 1: Compute per-orbit ∇_{a_i} sys in R^40 for all near-optimal orbits,
 //!          build gradient matrix G, SVD → flat directions (null space of G).
-//! Phase 2: For each flat direction d, evaluate sys(HKO + ε·d) at 29 points
-//!          (14 positive ε, 14 negative, base) via finite differences.
+//! Phase 2: For each flat direction d, evaluate sys(HKO + ε·d) on the 28 nonzero
+//!          ±ε points from `EPSILON_GRID`; the base point lives in
+//!          `second-order-base.jsonl`.
 //!
 //! Replaces the broken Phase C LP (subdifferential-lp/phase_c_lp_test.py) with
 //! clean a_i-space computation. The old script reads normals/heights fields that
@@ -18,7 +19,8 @@
 //!
 //! Output Artifacts:
 //!   second-order-base.jsonl   — SVD, flat directions, gradient matrix
-//!   second-order-curves.jsonl — sys(ε) for each flat direction
+//!   second-order-curves.jsonl — sys(±ε) for each flat direction
+//!   second-order-random.jsonl — random normalized coefficient directions in ker(G)
 //!
 //! Mathematical basis: Danskin's theorem gives D_d⁺ sys = min_i (∇sys_i · d).
 //! Flat directions d satisfy ∇sys_i · d = 0 for all active orbits i.
@@ -62,8 +64,8 @@ const EPSILON_GRID: &[f64] = &[
 ];
 
 /// Number of random directions in ker(G) to sample for negative-definiteness check.
-/// 100 random directions on S^{14} (unit sphere in the 15D flat subspace) give high
-/// probability of detecting any positive-curvature direction if one exists.
+/// 100 normalized random coefficient directions give broad coverage of the 15D
+/// flat subspace without needing to persist full curve traces.
 const N_RANDOM_DIRECTIONS: usize = 100;
 
 /// Epsilon values for the random-direction curvature check.
@@ -378,24 +380,24 @@ fn run_phase2(
 // Phase 3: Random directions in ker(G) for negative-definiteness check
 // ============================================================================
 
-/// Sample a random unit vector in the flat subspace by generating random
+/// Sample a random unit vector in the flat subspace by generating bounded random
 /// coefficients in the flat basis and normalizing.
-fn random_flat_direction(flat_basis: &[Vec<f64>], rng: &mut ChaCha8Rng) -> Vec<f64> {
+fn random_flat_direction(flat_basis: &[Vec<f64>], rng: &mut ChaCha8Rng) -> (Vec<f64>, Vec<f64>) {
     let dim = flat_basis[0].len(); // 40
     let n_flat = flat_basis.len(); // 15
 
-    // Random coefficients ~ N(0,1), then normalize
+    // Random coefficients in [-1, 1], then normalize
     let coeffs: Vec<f64> = (0..n_flat).map(|_| rng.gen_range(-1.0..1.0)).collect();
     let norm_coeffs: f64 = coeffs.iter().map(|c| c * c).sum::<f64>().sqrt();
+    let normalized_coeffs: Vec<f64> = coeffs.iter().map(|c| c / norm_coeffs).collect();
 
     let mut direction = vec![0.0; dim];
-    for (i, c) in coeffs.iter().enumerate() {
-        let normalized_c = c / norm_coeffs;
+    for (i, &normalized_c) in normalized_coeffs.iter().enumerate() {
         for j in 0..dim {
             direction[j] += normalized_c * flat_basis[i][j];
         }
     }
-    direction
+    (direction, normalized_coeffs)
 }
 
 /// Compute symmetric curvature ratio at a single epsilon:
@@ -472,18 +474,7 @@ fn run_phase3(
 
     for dir_idx in 0..N_RANDOM_DIRECTIONS {
         let t_dir = Instant::now();
-        // Generate random coefficients
-        let coeffs: Vec<f64> = (0..n_flat).map(|_| rng.gen_range(-1.0..1.0)).collect();
-        let norm_coeffs: f64 = coeffs.iter().map(|c| c * c).sum::<f64>().sqrt();
-        let normalized_coeffs: Vec<f64> = coeffs.iter().map(|c| c / norm_coeffs).collect();
-
-        // Build direction in R^40
-        let mut direction = vec![0.0; dim];
-        for (i, &c) in normalized_coeffs.iter().enumerate() {
-            for j in 0..dim {
-                direction[j] += c * flat_directions[i][j];
-            }
-        }
+        let (direction, normalized_coeffs) = random_flat_direction(flat_directions, &mut rng);
 
         // Compute curvature at each epsilon
         let mut curvatures: Vec<f64> = Vec::new();

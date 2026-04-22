@@ -7,9 +7,11 @@
 //! Output Artifacts: experiments/verification/correctness/correctness.jsonl (47 polytopes, 71 capacity values).
 //!
 //! Architecture:
-//! 1. `cargo run --bin correctness --release` generates 47 polytopes, computes 71 capacities
+//! 1. `cargo run -p dev-capacity-validation --release --bin axioms-correctness` generates
+//!    47 polytopes, computes 71 capacities
 //! 2. Writes to correctness/correctness.jsonl
-//! 3. `cargo test --bin correctness --release` reads dataset and verifies properties
+//! 3. `cargo test -p dev-capacity-validation --bin axioms-correctness --release` reads
+//!    dataset and verifies properties
 //!
 //! Polytope breakdown:
 //! - 10 base polytopes (5 random generic + 5 Lagrangian products)
@@ -31,7 +33,8 @@
 //!
 //! Capacity routing is intentionally explicit in this file because the dataset
 //! compares pruned, unpruned, and billiard outputs on the same verification
-//! fixtures. The root auto wrapper would hide those per-algorithm checks.
+//! fixtures. The crate-level `ehz_capacity` entrypoint would hide those
+//! per-algorithm checks.
 
 use symplectic::random::generate_random_polytopes;
 use symplectic::geom::known_polytopes::{
@@ -302,7 +305,7 @@ mod tests {
         let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
             .join("correctness/correctness.jsonl");
         let file = File::open(&path)
-            .expect("Run `cargo run --bin correctness --release` first");
+            .expect("Run `cargo run -p dev-capacity-validation --release --bin axioms-correctness` first");
         let reader = BufReader::new(file);
         reader.lines()
             .map(|line| {

@@ -6,7 +6,8 @@
 //! Output Artifacts: experiments/hko-local-maximum/lagrangian-boundary/lagrangian-probe.jsonl
 //!
 //! Architecture:
-//! 1. `cargo run --bin lagrangian_probe --release` generates dataset
+//! 1. `cargo run -p exp-hko-local-maximum --release --bin hko-lagrangian-probe`
+//!    generates dataset
 //! 2. Writes to lagrangian-boundary/lagrangian-probe.jsonl
 //! 3. Python script (analyze.py) reads and plots
 //!
@@ -18,8 +19,8 @@
 //! model assumptions, unlike the L∞-box sweep in main.rs which measures
 //! only the average size.
 //!
-//! This binary only needs scalar capacity/sys values, so it uses the root
-//! `symplectic::ehz_capacity` wrapper instead of the billiard-native API.
+//! This binary only needs scalar capacity/sys values, so it uses the crate-level
+//! `symplectic::ehz_capacity` entrypoint instead of the billiard-native API.
 
 use nalgebra::Vector4;
 use rand::SeedableRng;

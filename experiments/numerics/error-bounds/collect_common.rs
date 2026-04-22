@@ -99,7 +99,21 @@ pub fn solve_and_record(
         solvers::solve_projected(&qp)
     }));
 
-    let mut row = InputRow {
+    let (verdict, q, margin, beta) = match result {
+        Ok(sol) => (
+            match sol.verdict {
+                solvers::Verdict::True => "true".to_string(),
+                solvers::Verdict::False => "false".to_string(),
+                solvers::Verdict::Indeterminate => "indeterminate".to_string(),
+            },
+            sol.q,
+            sol.margin,
+            sol.beta,
+        ),
+        Err(_) => ("panic".to_string(), f64::NAN, f64::NAN, Vec::new()),
+    };
+
+    InputRow {
         family: family.to_string(),
         instance,
         m,
@@ -107,34 +121,16 @@ pub fn solve_and_record(
         h: matrix_to_vecs(h),
         c: matrix_to_vecs(c),
         d: d.iter().copied().collect(),
-        verdict: String::new(),
-        q: f64::NAN,
-        margin: f64::NAN,
+        verdict,
+        q,
+        margin,
         norm_h,
         sigma_min_c: smin_c,
-        beta: Vec::new(),
+        beta,
         polytope_id,
         perm: perm_opt,
         facet_count,
-    };
-
-    match result {
-        Ok(sol) => {
-            row.verdict = match sol.verdict {
-                solvers::Verdict::True => "true".to_string(),
-                solvers::Verdict::False => "false".to_string(),
-                solvers::Verdict::Indeterminate => "indeterminate".to_string(),
-            };
-            row.q = sol.q;
-            row.margin = sol.margin;
-            row.beta = sol.beta;
-        }
-        Err(_) => {
-            row.verdict = "panic".to_string();
-        }
     }
-
-    row
 }
 
 /// Write rows to JSONL.

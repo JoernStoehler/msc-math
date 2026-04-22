@@ -29,7 +29,7 @@ pub(crate) const EPS_VOLUME_FLOOR: f64 = 1e-30;
 /// Projects vertices onto a 2D basis in the polygon plane and sorts by atan2 angle.
 /// Returns the original vertices (unsorted) if < 4 vertices or if the polygon
 /// is degenerate (collinear).
-pub fn sort_polygon_vertices(vertices: &[Vector4<f64>]) -> Vec<Vector4<f64>> {
+fn sort_polygon_vertices(vertices: &[Vector4<f64>]) -> Vec<Vector4<f64>> {
     if vertices.len() <= 3 {
         return vertices.to_vec();
     }

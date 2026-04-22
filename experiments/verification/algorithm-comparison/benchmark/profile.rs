@@ -1,13 +1,14 @@
 //! Profiling harness: runs the full systolic ratio pipeline for one polytope.
 //!
-//! Usage: cargo run --release --bin benchmark_profile [F] [iterations]
+//! Usage: cargo run -p dev-algorithm-comparison --release --bin cmp-benchmark-profile [F] [iterations]
 //!   F: facet count (default 9)
 //!   iterations: repeat count for profiler sampling (default 10)
 //!
 //! Designed for use with `cargo flamegraph` or `perf record`.
 //!
-//! The explicit root wrappers are intentional: this profiling harness targets
-//! the pruned HK2017 path directly rather than the root auto dispatcher.
+//! The explicit routing is intentional: this profiling harness targets the
+//! pruned HK2017 path directly rather than the crate-level `ehz_capacity`
+//! entrypoint.
 //!
 //! Input Artifacts: None (generates its profiling fixture internally).
 //! Output Artifacts: None (profiling output is handled by the external profiler).

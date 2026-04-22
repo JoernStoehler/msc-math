@@ -322,6 +322,10 @@ fn evaluate_crossing(
     duals: &[Vector4<f64>],
     direction: &[Vector4<f64>],
     boundary: &BoundaryEvent,
+    polytope_name: &str,
+    direction_type: &str,
+    direction_index: usize,
+    event_type: &str,
 ) -> Option<CrossingRow> {
     match boundary.event {
         EventType::Unbounded | EventType::DualVertexDegen { .. } => return None,
@@ -367,12 +371,12 @@ fn evaluate_crossing(
     let orbit_a_str = perm_to_string(&perm_a);
 
     Some(CrossingRow {
-        polytope_name: String::new(),
+        polytope_name: polytope_name.to_string(),
         facet_count: duals.len(),
-        direction_type: String::new(),
-        direction_index: 0,
+        direction_type: direction_type.to_string(),
+        direction_index,
         t_max: t,
-        event_type: String::new(),
+        event_type: event_type.to_string(),
         eps_used,
         sys_before: sys_b,
         capacity_before: cap_b,
@@ -400,6 +404,10 @@ fn evaluate_gradient_crossing(
     duals: &[Vector4<f64>],
     direction: &[Vector4<f64>],
     boundary: &BoundaryEvent,
+    polytope_name: &str,
+    direction_type: &str,
+    direction_index: usize,
+    event_type: &str,
 ) -> Option<GradientRow> {
     match boundary.event {
         EventType::Unbounded | EventType::DualVertexDegen { .. } => return None,
@@ -470,12 +478,12 @@ fn evaluate_gradient_crossing(
     };
 
     Some(GradientRow {
-        polytope_name: String::new(),
+        polytope_name: polytope_name.to_string(),
         facet_count: duals.len(),
-        direction_type: String::new(),
-        direction_index: 0,
+        direction_type: direction_type.to_string(),
+        direction_index,
         t_max: boundary.t_max,
-        event_type: String::new(),
+        event_type: event_type.to_string(),
         gradient_norm_before: norm_b,
         gradient_dot_direction_before: dd_b,
         gradient_norm_after: norm_a,
@@ -655,12 +663,15 @@ fn main() {
             total_anatomy += 1;
 
             // Crossing evaluation
-            if let Some(mut crossing_row) = evaluate_crossing(duals, &dir.d, &boundary) {
-                crossing_row.polytope_name = name.clone();
-                crossing_row.direction_type = dir.dir_type.clone();
-                crossing_row.direction_index = dir.index;
-                crossing_row.event_type = boundary.event.name().to_string();
-
+            if let Some(crossing_row) = evaluate_crossing(
+                duals,
+                &dir.d,
+                &boundary,
+                name,
+                &dir.dir_type,
+                dir.index,
+                boundary.event.name(),
+            ) {
                 serde_json::to_writer(&mut crossing_writer, &crossing_row).unwrap();
                 writeln!(crossing_writer).unwrap();
                 total_crossing += 1;
@@ -668,12 +679,17 @@ fn main() {
 
             // Gradient crossing
             if RUN_GRADIENT {
-                if let Some(mut grad_row) = evaluate_gradient_crossing(duals, &dir.d, &boundary) {
-                    grad_row.polytope_name = name.clone();
-                    grad_row.direction_type = dir.dir_type.clone();
-                    grad_row.direction_index = dir.index;
-                    grad_row.event_type = boundary.event.name().to_string();
-
+                if let Some(grad_row) =
+                    evaluate_gradient_crossing(
+                        duals,
+                        &dir.d,
+                        &boundary,
+                        name,
+                        &dir.dir_type,
+                        dir.index,
+                        boundary.event.name(),
+                    )
+                {
                     if let Some(ref mut w) = gradient_writer {
                         serde_json::to_writer(&mut *w, &grad_row).unwrap();
                         writeln!(w).unwrap();

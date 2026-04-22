@@ -4,9 +4,11 @@
 //! strategies on the same polytope set.
 //!
 //! Related: research/sys-landscape.md
+//!
+//! Placeholder/stub: this binary is not yet wired into the experiment pipeline.
 //! Input Artifacts: None
 //! Output Artifacts: None
 
 fn main() {
-    eprintln!("strategy-comparison: not yet implemented");
+    eprintln!("strategy-comparison is currently a stub placeholder: not yet implemented");
 }

@@ -1,6 +1,7 @@
 //! Resumable, symmetry-reduced EHZ capacity computation for the 4D crosspolytope.
 //!
-//! Goal: Fill the placeholder capacity in `library/src/geom/known_polytopes.rs`.
+//! Goal: Fill the placeholder capacity in
+//! `crates/symplectic/src/geom/known_polytopes.rs`.
 //! Input Artifacts: Crosspolytope from `known_polytopes::crosspolytope()` (16 facets).
 //! Output Artifacts: `experiments/crosspolytope/main/crosspolytope.jsonl`
 //!

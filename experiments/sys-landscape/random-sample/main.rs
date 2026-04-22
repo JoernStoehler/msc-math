@@ -30,8 +30,9 @@
 //! - `--out <path>`            output JSONL path                      (default: untracked temp)
 //! - `--cache <path>`          cache JSONL path                       (default: untracked temp)
 
-use exp_sys_landscape::{orbit_scalars_from_result, smoke_output_path};
-use num_rational::BigRational;
+use exp_sys_landscape::{
+    orbit_scalars_from_result, rational_vec4_to_strings, smoke_output_path,
+};
 use serde::Serialize;
 use std::collections::HashMap;
 use std::fs::File;
@@ -179,12 +180,6 @@ fn find_by_source<'a>(
     source: &Source,
 ) -> Option<(&'a DualVerticesKey, &'a PolytopeRecord)> {
     db.iter().find(|(_, r)| r.source.as_ref() == Some(source))
-}
-
-fn rational_vec4_to_strings(data: &[[BigRational; 4]]) -> Vec<[String; 4]> {
-    data.iter()
-        .map(|row| std::array::from_fn(|i| format!("{}/{}", row[i].numer(), row[i].denom())))
-        .collect()
 }
 
 fn main() {

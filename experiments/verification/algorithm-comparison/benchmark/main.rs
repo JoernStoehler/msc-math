@@ -6,7 +6,8 @@
 //! Output Artifacts: experiments/verification/algorithm-comparison/benchmark/benchmark.jsonl
 //!
 //! Architecture:
-//! 1. `cargo run --bin benchmark --release` generates benchmark dataset
+//! 1. `cargo run -p dev-algorithm-comparison --release --bin cmp-benchmark` generates
+//!    benchmark dataset
 //! 2. Writes to benchmark/benchmark.jsonl
 //! 3. Python script reads JSONL and fits timing model
 //!
@@ -19,7 +20,8 @@
 //!
 //! Capacity routing is intentionally explicit in this file because the dataset
 //! compares pruned HK2017, unpruned HK2017, and billiard timings on the same
-//! fixtures. The root auto wrapper would hide that per-algorithm comparison.
+//! fixtures. The crate-level `ehz_capacity` entrypoint hides per-algorithm
+//! comparison paths.
 
 use symplectic::{ehz_capacity_billiard, ehz_capacity_pruned, ehz_capacity_unpruned};
 use symplectic::random::generate_random_polytopes;

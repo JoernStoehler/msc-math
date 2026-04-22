@@ -7,7 +7,8 @@
 //!         experiments/hko-local-maximum/lagrangian-boundary/lagrangian-search-levels.jsonl
 //!
 //! Architecture:
-//! 1. `cargo run --bin lagrangian_search --release` generates datasets
+//! 1. `cargo run -p exp-hko-local-maximum --release --bin hko-lagrangian-boundary`
+//!    generates datasets
 //! 2. Writes per-sample data to lagrangian-boundary/lagrangian-search.jsonl
 //! 3. Writes per-level summary to lagrangian-boundary/lagrangian-search-levels.jsonl
 //! 4. Python script analyzes and plots
@@ -16,10 +17,10 @@
 //! - Base: HKO2024 (Lagrangian product of two regular pentagons at θ=18°)
 //! - Perturbation: Uniform[-ε, ε] on the 2 nonzero Lagrangian components of each
 //!   dual vertex (20 independent perturbation coordinates for 10 facets)
-//! - Sweep ε over geometric range: 0.01 to 2.0
+//! - Sweep ε over geometric range: 0.01 to 1.00
 //! - 500 valid samples per ε level via rejection sampling
-//! - Explicit billiard algorithm because the output schema persists bounce counts;
-//!   the root `symplectic::ehz_capacity` wrapper would hide that billiard-native data.
+//! Explicit billiard algorithm because the output schema persists bounce counts;
+//! the crate-level `ehz_capacity` entrypoint would hide that billiard-native data.
 
 use nalgebra::Vector4;
 use rand::Rng;
@@ -43,9 +44,10 @@ const SEED: u64 = 42;
 const SAMPLES_PER_LEVEL: usize = 500;
 
 /// Maximum attempts per epsilon level before moving on.
-/// Worst observed acceptance rate: 5.2% at ε=2.0 (500/9653 in first run).
-/// At ε=1.0: 21.3% (500/2350). 100K attempts gives headroom for ε up to ~2.0.
-/// Re-validate if adding ε > 2.0 or changing perturbation distribution.
+/// Worst observed acceptance rate in the current sweep was 21.3% at ε=1.0
+/// (500/2350 in the first full run). 100K attempts leaves wide headroom for
+/// the current `EPSILON_LEVELS`; re-validate if extending the sweep or changing
+/// the perturbation distribution.
 const MAX_ATTEMPTS_PER_LEVEL: usize = 100_000;
 const SMOKE_MAX_ATTEMPTS_PER_LEVEL: usize = 128;
 

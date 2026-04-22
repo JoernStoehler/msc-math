@@ -36,8 +36,7 @@
 //! - `--out <path>`                 output JSONL path                       (default: untracked temp)
 //! - `--cache <path>`               cache JSONL path                        (default: untracked temp)
 
-use exp_sys_landscape::{orbit_scalars_from_result, smoke_output_path};
-use num_rational::BigRational;
+use exp_sys_landscape::{orbit_scalars_from_result, rational_vec4_to_strings, smoke_output_path};
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use serde::Serialize;
@@ -190,14 +189,8 @@ fn f64_dual_vertices(polytope: &Polytope4D) -> Vec<[f64; 4]> {
         .collect()
 }
 
-fn rational_vec4_to_strings(data: &[[BigRational; 4]]) -> Vec<[String; 4]> {
-    data.iter()
-        .map(|row| std::array::from_fn(|i| format!("{}/{}", row[i].numer(), row[i].denom())))
-        .collect()
-}
-
 fn dual_vertices_rational_strings(polytope: &Polytope4D) -> Vec<[String; 4]> {
-    rational_vec4_to_strings(polytope.dual_vertices())
+    exp_sys_landscape::dual_vertices_rational_strings(polytope)
 }
 
 fn vertices_rational_strings(polytope: &Polytope4D) -> Vec<[String; 4]> {

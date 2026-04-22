@@ -86,6 +86,47 @@ pub struct GeometricOrbit {
 /// Returns `None` if the linear system has no active equations (all dwell times
 /// are zero), which should not happen for valid algorithm output.
 ///
+/// Returns `None` for mismatched `sigma` / `beta` lengths, out-of-range facets,
+/// non-finite or non-positive `beta`, or a non-finite, non-positive action.
+///
+/// [lem:base-point-recovery], [rem:beta-to-tau]
+pub fn recover_and_verify_sigma_beta_action(
+    polytope: &Polytope4D,
+    sigma: &[usize],
+    beta: &[f64],
+    action: f64,
+) -> Option<GeometricOrbit> {
+    if sigma.len() != beta.len() || !action.is_finite() || action <= 0.0 {
+        return None;
+    }
+    if sigma.iter().any(|&facet| facet >= polytope.facet_count()) {
+        return None;
+    }
+    if beta.iter().any(|&entry| !entry.is_finite() || entry <= 0.0) {
+        return None;
+    }
+
+    let orbit = OrbitKktData {
+        sigma: sigma.to_vec(),
+        beta: beta.to_vec(),
+        beta_margin: beta.iter().copied().fold(f64::INFINITY, f64::min),
+        action,
+        action_lower: action,
+        action_upper: action,
+        q: 0.5 / action,
+        q_error_bound: 0.0,
+        mu: None,
+        xi: None,
+        admissibility: crate::algorithms::OrbitAdmissibility::AdmissibleF64,
+    };
+    recover_and_verify(polytope, &orbit)
+}
+
+/// Recover a Reeb orbit from solved orbit/KKT data and verify its validity.
+///
+/// This is the convenience wrapper for callers that already hold an
+/// [`OrbitKktData`] record.
+///
 /// [lem:base-point-recovery], [rem:beta-to-tau]
 pub fn recover_and_verify(
     polytope: &Polytope4D,
@@ -346,6 +387,34 @@ mod tests {
             xi: None,
             admissibility: OrbitAdmissibility::AdmissibleF64,
         }
+    }
+
+    #[test]
+    fn raw_wrapper_rejects_invalid_inputs() {
+        let kp = known_polytopes::simplex();
+        let result = ehz_capacity_pruned(&kp.polytope).expect("simplex capacity");
+        let sigma = result.best_sigma();
+        let beta = result.best_beta();
+        let action = result.capacity();
+
+        let mut bad_sigma = sigma.to_vec();
+        bad_sigma[0] = kp.polytope.facet_count();
+        assert!(
+            recover_and_verify_sigma_beta_action(&kp.polytope, &bad_sigma, beta, action).is_none()
+        );
+
+        let mut bad_beta = beta.to_vec();
+        bad_beta[0] = f64::NAN;
+        assert!(
+            recover_and_verify_sigma_beta_action(&kp.polytope, sigma, &bad_beta, action).is_none()
+        );
+
+        let mut nonpositive_beta = beta.to_vec();
+        nonpositive_beta[0] = 0.0;
+        assert!(
+            recover_and_verify_sigma_beta_action(&kp.polytope, sigma, &nonpositive_beta, action)
+                .is_none()
+        );
     }
 
     /// Run the full recovery + verification pipeline on a known polytope and

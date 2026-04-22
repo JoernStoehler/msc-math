@@ -24,9 +24,9 @@
 use exp_sys_landscape::{
     compute_step_bound, continuation_cache_path, experiment_path, package_root,
     orbit_scalars_from_result, CONTINUATION_EXPERIMENT_DIR, GRADIENT_ASCENT_GENERAL_DIR,
+    dual_vertices_rational_strings,
 };
 use nalgebra::Vector4;
-use num_rational::BigRational;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use rand_distr::{Distribution, StandardNormal};
@@ -580,16 +580,6 @@ fn dvs_to_array(polytope: &Polytope4D) -> Vec<[f64; 4]> {
         .iter()
         .map(|a| [a[0], a[1], a[2], a[3]])
         .collect()
-}
-
-fn rational_vec4_to_strings(data: &[[BigRational; 4]]) -> Vec<[String; 4]> {
-    data.iter()
-        .map(|row| std::array::from_fn(|i| format!("{}/{}", row[i].numer(), row[i].denom())))
-        .collect()
-}
-
-fn dual_vertices_rational_strings(polytope: &Polytope4D) -> Vec<[String; 4]> {
-    rational_vec4_to_strings(polytope.dual_vertices())
 }
 
 fn persist_scalar_fields(polytope: &Polytope4D, vol: f64, cap: f64, db: &mut Db) {

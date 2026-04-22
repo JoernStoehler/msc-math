@@ -7,54 +7,61 @@ use crate::exact::orbit::ExactOrbitKktData;
 use crate::exact::polytope::ExactPolytope4D;
 use algebraic_numbers::OrderedField;
 
+/// Compute the exact dual-vertex capacity gradient `∂c/∂a_k` from direct inputs.
+pub(crate) fn capacity_derivatives_a_exact_raw<F: OrderedField>(
+    beta: &[F],
+    q: &F,
+    mu: &[F; 4],
+    sigma: &[usize],
+    dual_vertices: &[[F; 4]],
+) -> Vec<[F; 4]> {
+    let q_sq = q.clone() * q.clone();
+    let two = F::from_i64(2);
+
+    (0..dual_vertices.len())
+        .map(|k| {
+            let Some(i0) = sigma.iter().position(|&facet| facet == k) else {
+                return std::array::from_fn(|_| F::zero());
+            };
+
+            let mut p: [F; 4] = std::array::from_fn(|_| F::zero());
+            for i in 0..i0 {
+                let dual = &dual_vertices[sigma[i]];
+                for idx in 0..4 {
+                    p[idx] = p[idx].clone() + beta[i].clone() * dual[idx].clone();
+                }
+            }
+
+            let inner: [F; 4] = std::array::from_fn(|idx| {
+                two.clone() * p[idx].clone() + beta[i0].clone() * dual_vertices[k][idx].clone()
+            });
+            let j0_inner = [
+                -inner[2].clone(),
+                -inner[3].clone(),
+                inner[0].clone(),
+                inner[1].clone(),
+            ];
+            let dq_da: [F; 4] = std::array::from_fn(|idx| {
+                beta[i0].clone() * (j0_inner[idx].clone() + mu[idx].clone())
+            });
+            let scale = -(F::one() / (two.clone() * q_sq.clone()));
+            std::array::from_fn(|idx| scale.clone() * dq_da[idx].clone())
+        })
+        .collect()
+}
+
 /// Compute the exact dual-vertex capacity gradient `∂c/∂a_k`.
 pub fn capacity_derivatives_a_exact<F: OrderedField>(
     polytope: &ExactPolytope4D<F>,
     orbit: &ExactOrbitKktData<F>,
 ) -> Vec<[F; 4]> {
-    let q_sq = orbit.q.clone() * orbit.q.clone();
-    let two = F::from_i64(2);
-
-    (0..polytope.facet_count())
-        .map(|k| {
-            let Some(i0) = orbit.sigma.iter().position(|&facet| facet == k) else {
-                return zero_vec();
-            };
-
-            let mut p = zero_vec();
-            for i in 0..i0 {
-                p = add_vec(&p, &scale_vec(orbit.beta[i].clone(), &polytope.dual_vertices()[orbit.sigma[i]]));
-            }
-
-            let inner = add_vec(
-                &scale_vec(two.clone(), &p),
-                &scale_vec(orbit.beta[i0].clone(), &polytope.dual_vertices()[k]),
-            );
-            let dq_da = scale_vec(orbit.beta[i0].clone(), &add_vec(&apply_j0(&inner), &orbit.mu));
-            scale_vec(-(F::one() / (two.clone() * q_sq.clone())), &dq_da)
-        })
-        .collect()
-}
-
-fn zero_vec<F: OrderedField>() -> [F; 4] {
-    std::array::from_fn(|_| F::zero())
-}
-
-fn add_vec<F: OrderedField>(left: &[F; 4], right: &[F; 4]) -> [F; 4] {
-    std::array::from_fn(|idx| left[idx].clone() + right[idx].clone())
-}
-
-fn scale_vec<F: OrderedField>(scalar: F, vector: &[F; 4]) -> [F; 4] {
-    std::array::from_fn(|idx| scalar.clone() * vector[idx].clone())
-}
-
-fn apply_j0<F: OrderedField>(vector: &[F; 4]) -> [F; 4] {
-    [
-        -vector[2].clone(),
-        -vector[3].clone(),
-        vector[0].clone(),
-        vector[1].clone(),
-    ]
+    capacity_derivatives_a_exact_raw(
+        &orbit.beta,
+        &orbit.q,
+        &orbit.mu,
+        &orbit.sigma,
+        polytope.dual_vertices(),
+    )
 }
 
 #[cfg(test)]

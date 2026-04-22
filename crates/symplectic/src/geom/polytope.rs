@@ -289,8 +289,8 @@ impl Polytope4D {
     }
 
     // ── Removed constructors ────────────────────────────────────────────
-    // from_normals_and_heights, from_rationals, from_f64_rounded were thin
-    // wrappers that computed n/h. Callers now inline the division and call
+    // Legacy thin constructors that computed n/h inline were removed. Callers now
+    // compute explicit divisions and call
     // new() or from_f64() directly.
 
     /// Perturb dual vertices to break omega_0 = 0 degeneracies.
@@ -562,9 +562,9 @@ mod tests {
         }
     }
 
-    /// Verify vertex ordering invariant via the rational n/h -> new() construction path.
+    /// Verify vertex ordering invariant via the rational reconstruction path.
     #[test]
-    fn vertex_ordering_via_from_rationals() {
+    fn vertex_ordering_via_rational_reconstruction() {
         use crate::constants::EPS_FACET_INCIDENCE;
         use crate::geom::known_polytopes;
         use crate::geom::rational_arithmetic;
@@ -585,7 +585,7 @@ mod tests {
             assert_eq!(
                 p.vertices_f64().len(),
                 incidence.nrows(),
-                "{} (from_rationals): vertex count mismatch",
+                "{} (rational reconstruction): vertex count mismatch",
                 kp.name
             );
 
@@ -597,7 +597,7 @@ mod tests {
                         let residual = (duals[fi].dot(vertex) - 1.0).abs();
                         assert!(
                             residual < EPS_FACET_INCIDENCE,
-                            "{} (from_rationals): vertex {} on facet {} residual = {:.2e}",
+                            "{} (rational reconstruction): vertex {} on facet {} residual = {:.2e}",
                             kp.name,
                             vi,
                             fi,
@@ -607,7 +607,7 @@ mod tests {
                         let slack = 1.0 - duals[fi].dot(vertex);
                         assert!(
                             slack > EPS_FACET_INCIDENCE,
-                            "{} (from_rationals): vertex {} interior to facet {} slack = {:.2e}",
+                            "{} (rational reconstruction): vertex {} interior to facet {} slack = {:.2e}",
                             kp.name,
                             vi,
                             fi,
@@ -945,9 +945,9 @@ mod tests {
         assert_eq!(p.facet_count(), 8);
     }
 
-    /// Verify from_f64 with n/h dual vertices accepts a valid hypercube.
+    /// Verify `from_f64` with explicit division accepts a valid hypercube.
     #[test]
-    fn from_normals_and_heights_accepted() {
+    fn from_f64_division_accepted() {
         let normals = vec![
             Vector4::x(),
             -Vector4::x(),
