@@ -36,6 +36,9 @@ Current external/admin facts:
   with downloaded MNTF forms under `thesis/submission/forms/`. TODO(Jörn):
   verify the exact Prüfungsamt copy count, form names, USB/CD contents, and
   upload mechanics from the current Ausgabebescheid / checklist.
+- TODO(Jörn): hand in the already-filled Bachelor-/Masterarbeit registration
+  form after Elizabeth agrees/signs; earliest expected date from current state
+  is Monday 2026-04-27.
 - Jörn and Kai want repo preservation outside GitHub so the project is not lost
   if GitHub disappears or Jörn deletes the account. Current named candidate:
   Zenodo, from Kai's mail; see `thesis/submission/README.md` for source links
