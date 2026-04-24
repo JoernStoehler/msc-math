@@ -1,12 +1,12 @@
 <!--
 Purpose: compatibility pointer for the phase-2 finish-mode state surface.
-Context: this note was created first, then promoted to the top-level
-agent-facing map `FINISH.md` so other sessions can find the finish surfaces
-without knowing the research-note name.
+Context: this note was created first, then the active finish/current-state
+surface moved to the top-level `ROADMAP.md` and topic bundles under `tasks/`.
 -->
 
 # Finish Current State
 
-Canonical surface: `FINISH.md`.
+Canonical surface: `ROADMAP.md`.
 
-Do not update this file with new finish-mode state. Update `FINISH.md` instead.
+Do not update this file with new finish-mode state. Update `ROADMAP.md` or the
+relevant `tasks/*.md` bundle instead.

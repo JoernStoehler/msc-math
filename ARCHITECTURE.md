@@ -2,7 +2,8 @@
 Purpose: repo-level component and code-architecture map for humans and agents.
 Context: this file describes the current component structure first. It is not a
 progress tracker or migration plan. For the fact base behind this file, see
-`TASKS.md`, `AGENTS.md`, and the local topic docs under `experiments/**`.
+`ROADMAP.md`, `tasks/*.md`, `AGENTS.md`, and the local topic docs under
+`experiments/**`.
 It answers these recurring questions:
 - which repo areas own which kinds of code and mathematics
 - how `crates/`, `experiments/`, `formal/`, `contracts/`, and `thesis/` relate
@@ -323,9 +324,9 @@ Current documentation split:
 - local `src/lib.rs` headers own package-local intent and local architecture.
 - `formal/` owns developer-facing mathematics and formal labels for
   math-code correspondence.
-- `TASKS.md`, `.codex/reference/repo-maintainability/`, and topic-local
-  `REASONING.md` / `DECISIONS.md` / `NEXT-STEPS.md` notes own active planning,
-  discovery, and open design questions.
+- `ROADMAP.md`, `tasks/*.md`, `.codex/reference/repo-maintainability/`, and
+  topic-local `REASONING.md` / `DECISIONS.md` / `NEXT-STEPS.md` notes own
+  active planning, discovery, and open design questions.
 
 Current architectural fact: repo orientation already exists in several places,
 but before this session there was no dedicated repo-level architecture file.

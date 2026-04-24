@@ -1,6 +1,7 @@
 #!/bin/bash
-# Extract a table-of-contents from TASKS.md with line ranges.
-# Usage: bash scripts/tasks-toc.sh
+# Extract a table-of-contents from a Markdown file with line ranges.
+# Usage: bash scripts/tasks-toc.sh [file]
+# Legacy default is TASKS.md; prefer ROADMAP.md or tasks/*.md for current work.
 # Output: "start-end  heading" for each #/##/### section.
 # Agents: use the line ranges with Read(file, offset=start, limit=end-start+1).
 

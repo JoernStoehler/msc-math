@@ -20,7 +20,7 @@ Use these surfaces in this order:
 3. The current thesis artifact when the wording already exists in `thesis/`.
 4. The cited formal notes, experiment packages, preserved artifacts, and
    research notes that the claim relies on.
-5. `TASKS.md` for known open blockers, pending evidence, or explicit defer/future
+5. `ROADMAP.md` and `tasks/*.md` for known open blockers, pending evidence, or explicit defer/future
    status.
 
 Do not let a current experiment note silently strengthen a thesis claim beyond

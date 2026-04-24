@@ -64,7 +64,7 @@ Before including any finding in the report to Jörn, read the file at the locati
 Verify with priority:
 1. **Cost-benefit recommendations** the subagent made — subagents lack context for cost-benefit judgments about the larger task. Severity ratings (FIX vs FLAG) reflect the subagent's limited view: it may escalate minor issues or downplay significant ones.
 2. **Interpretive conclusions** where the subagent inferred meaning from limited context — e.g., "this lemma is orphaned" (may be used by other modules) or "this reference dangles" (may resolve through `formal/main.tex` or `formal/library/main.tex`).
-3. **Specific claim types:** "dangling reference" → check if it resolves through the relevant formal or thesis build. "Orphaned lemma" → check if used elsewhere or is standalone valid math. "Missing entry" → check `TASKS.md`, `RESULTS.md`, or the relevant research note for a known gap before treating it as newly discovered.
+3. **Specific claim types:** "dangling reference" → check if it resolves through the relevant formal or thesis build. "Orphaned lemma" → check if used elsewhere or is standalone valid math. "Missing entry" → check `ROADMAP.md`, `tasks/*.md`, `RESULTS.md`, or the relevant research note for a known gap before treating it as newly discovered.
 
 A verification subagent can cross-check the combined findings when the task has high blast radius or the first reviewer reports subtle findings.
 
@@ -74,14 +74,14 @@ The Phase 8 report contains only verified findings, not the review/cross-check p
 
 - **Goal alignment:** Re-read the original task prompt. Does the work produced actually serve that goal? Does it make sense for the thesis project roadmap? A misunderstood goal that produces technically correct but wrong-direction work is expensive to discover late.
 - **Process compliance:** Work is on a worktree branch, not `main`. Explicit instructions from the task prompt were followed (branch naming, scope restrictions, etc.).
-- **Project context:** Check TASKS.md — does this work correspond to a tracked task? Is the experiment still active (not superseded by another experiment)?
+- **Project context:** Check `ROADMAP.md` and the relevant `tasks/*.md` bundle. Does this work correspond to tracked work? Is the experiment still active, not superseded by another experiment?
 
-## Phase 6: Update TASKS.md
+## Phase 6: Update roadmap surfaces
 
-- Mark completed tasks as done (move to Completed section with date and one-line summary)
-- Update status and next-steps for tasks affected by this work
-- Add newly discovered tasks
-- If no updates are needed, state that explicitly in the report ("TASKS.md: no changes needed")
+- Mark completed work as done in the relevant task bundle.
+- Update status and next steps for work affected by this branch.
+- Add newly discovered work to the relevant bundle.
+- If no updates are needed, state that explicitly in the report ("roadmap surfaces: no changes needed").
 
 ## Phase 7: Full experiment runs (optional)
 
@@ -97,7 +97,7 @@ Structure:
 2. **Build/test results** — which commands passed, any issues fixed during Phase 1
 3. **Review findings** — verified findings from Phase 4 subagents (after cross-check)
 4. **Needs Jörn** — decisions, unresolved `% [TODO: JÖRN` items, things only Jörn can verify
-5. **TASKS.md changes** — what was updated, or "no changes needed"
+5. **Roadmap changes** — what was updated, or "no changes needed"
 6. If work is incomplete: write a handoff to `handoffs/<name>.md`
 
 ## Merge Conflicts

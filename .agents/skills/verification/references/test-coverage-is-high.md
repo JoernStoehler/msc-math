@@ -15,7 +15,8 @@ Use these surfaces in this order:
    `experiment-conventions`, and `dataset-conventions`.
 3. The concrete code surface under review together with its local tests,
    smoke scripts, and nearby experiment verification packets.
-4. `TASKS.md` for known stale smoke paths, missing tests, or deferred coverage.
+4. `ROADMAP.md` and `tasks/*.md` for known stale smoke paths, missing tests, or
+   deferred coverage.
 
 Checks:
 

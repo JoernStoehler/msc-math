@@ -81,7 +81,7 @@ For a delegation surface that Jörn may copy into new worktree sessions, use num
 ```markdown
 1. **Unit of work**
    - Worktree: `short-branch-name`
-   - Tracked at: `TASKS.md` entry or "untracked cleanup"
+   - Tracked at: `ROADMAP.md` / `tasks/*.md` entry or "untracked cleanup"
    - Scope: files, directories, or question.
    - Context: why this work matters now and what evidence led to it.
    - Why shallow: what makes this likely agent-doable, or where it may become deep.
@@ -109,7 +109,7 @@ Good delegated verification tasks:
 
 - Review a file for clear writing, stale paths, proof gaps, claim/source mismatches, or convention violations.
 - Run a command and report the exact failure or success.
-- Compare a claim against `RESULTS.md`, `TASKS.md`, formal sources, downloaded papers, or generated data.
+- Compare a claim against `RESULTS.md`, `ROADMAP.md`, `tasks/*.md`, formal sources, downloaded papers, or generated data.
 - Inspect a patch for a named risk surface.
 
 The top-level session decides whether the evidence is enough. When reporting verification, name the evidence the top-level session checked and state any residual risk.

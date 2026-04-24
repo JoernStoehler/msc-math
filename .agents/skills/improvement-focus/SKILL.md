@@ -247,7 +247,7 @@ Do not self-upgrade that into a merge-to-`main` step.
 When the round is over:
 
 - delete session-only scratch packet files if the durable knowledge moved into a
-  skill or `TASKS.md`
+  skill, `ROADMAP.md`, or `tasks/*.md`
 - remove merged worktrees
 - delete merged packet branches
 

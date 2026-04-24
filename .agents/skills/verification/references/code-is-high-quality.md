@@ -19,7 +19,8 @@ Use these surfaces in this order:
 3. `ARCHITECTURE.md` for intended component boundaries and API tiers.
 4. The concrete code files, tests, and nearby research/formal notes for the
    surface under review.
-5. `TASKS.md` for open design decisions or explicitly deferred cleanup.
+5. `ROADMAP.md` and `tasks/*.md` for open design decisions or explicitly
+   deferred cleanup.
 
 Checks:
 

@@ -15,7 +15,8 @@ demands it.
 ## Authority Split
 
 - `FINAL-VERIFICATION.md` is the authoritative final finished-state spec.
-- `TASKS.md` owns milestones, sequencing, and ownership.
+- `ROADMAP.md` and `tasks/*.md` own milestones, sequencing, ownership, and
+  cached task knowledge.
 - `RESULTS.md` owns the intended thesis claim surface.
 - `references/*.md` in this skill own reusable operational verification passes.
 

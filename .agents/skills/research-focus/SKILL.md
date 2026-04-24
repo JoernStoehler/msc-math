@@ -27,7 +27,7 @@ State:
 - Jörn-only decisions.
 - Evidence-producing next steps after Jörn chooses the research surface.
 
-Route task graph work to `$project-management-focus`: prioritization, bundling, sequencing, ownership, `TASKS.md` edits, or deciding which agents should take which units.
+Route task graph work to `$project-management-focus`: prioritization, bundling, sequencing, ownership, `ROADMAP.md` / `tasks/*.md` edits, or deciding which agents should take which units.
 
 Use `$subagent-delegation` after the output contract is clear for a bounded evidence-gathering, source-checking, implementation, or review task.
 
@@ -58,5 +58,5 @@ Stop and report back when:
 - The question changed.
 - The method would require a new experiment family, long compute run, or thesis-scope shift.
 - The evidence cannot distinguish the candidate answers.
-- A local result contradicts `RESULTS.md`, `TASKS.md`, formal sources, or committed data.
+- A local result contradicts `RESULTS.md`, `ROADMAP.md`, `tasks/*.md`, formal sources, or committed data.
 - A proof or interpretation depends on a gap that only Jörn can judge.

@@ -33,10 +33,12 @@ Planned deliverables:
 - `papers/<abbreviationYear>/`: Downloaded arXiv paper sources.
 - `RESULTS.md`: Thesis claim surface: what the thesis should say and with what strength.
 - `FINAL-VERIFICATION.md`: Literal thesis-done truth-spec: what must be true for the thesis project to count as finished.
-- `FINISH.md`: Agent-facing finish-mode map: accepted done-state surface,
-  current-state/Jörn-knowledge cache, and refresh rules for the final closeout.
+- `ROADMAP.md`: Agent-facing closeout overview and routing map for
+  `tasks/*.md`.
+- `tasks/`: Topic mini-roadmaps and cached task knowledge.
 - `ARCHITECTURE.md`: Repo-level architecture map: component boundaries, core entities, library subsystems, and persisted-data architecture.
-- `TASKS.md`: Unified project tracker and default home for sequencing, ownership, and intermediate milestones. Run `bash scripts/tasks-toc.sh` for section line ranges.
+- `TASKS.md`: Legacy pointer to `ROADMAP.md` and `tasks/*.md`; do not add new
+  project state there.
 - `scratch/`: Undocumented scratch notes, migration notes, and temporary working material. Do not treat it as current convention text.
 - `scripts/`: Repo helper scripts that are not tied to one runtime environment, including `scripts/dataflow.sh`, which regenerates `DATAFLOW.md` for the experiment artifact-flow audit.
 - `.devcontainer/`: Local devcontainer and Codex web environment documentation.
@@ -89,8 +91,8 @@ Required project instructions live in this root map or in discoverable skills. `
 - Route planning surfaces explicitly:
   `RESULTS.md` = claim surface,
   `FINAL-VERIFICATION.md` = literal thesis-done truth-spec,
-  `FINISH.md` = cached finish-mode map for agents,
-  `TASKS.md` = default home for sequencing and intermediate milestones.
+  `ROADMAP.md` = overview and routing surface,
+  `tasks/*.md` = topic mini-roadmaps and cached task knowledge.
 - Do not put an intermediate milestone such as `writer-ready`, `submission-ready`, or `freeze-ready` into `FINAL-VERIFICATION.md` unless Jörn explicitly wants that milestone to become part of the literal finished-state specification.
 - If an intermediate milestone needs durable multi-session acceptance criteria but is still not part of thesis-done, create a separate planning or milestone file instead of extending `FINAL-VERIFICATION.md` by default.
 - Update the plan after meaningful results. Do not leave stale statuses.
@@ -127,15 +129,11 @@ cd formal/ && latexmk
 cd formal/library/ && latexmk
 ```
 
-## TASKS.md
+## Task Roadmaps
 
-- `##` sections group by theme.
-- `###` items are individual work units.
-- Every `##` and `###` header has a status tag: `[done]`, `[active]`, `[blocked]`, `[open]`, `[Jörn]`, or `[future]`.
-- `[done]` items include a date: `### [done] [2026-04-15] Item title`.
-- `[active]` means exactly one session owns the whole `###` task: the header and its intent, not a literal sub-list of body bullets.
-- Headers carry the key information. Bodies use bullets for decisions, reasons, blockers, or links.
-- Link to logbooks, formal files, or result docs instead of duplicating findings.
+- Start from `ROADMAP.md`, then open the relevant `tasks/*.md` bundle.
+- Follow `tasks/README.md` when editing roadmap or task-bundle files.
+- `TASKS.md` is legacy and should only point to the new surfaces.
 
 ## Text For Agents
 

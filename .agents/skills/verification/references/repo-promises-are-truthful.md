@@ -25,7 +25,8 @@ Use these surfaces in this order:
    component boundaries.
 4. The concrete code paths, scripts, datasets, and commands that the promise
    points to.
-5. `TASKS.md` for known stale-data, rerun, or packaging caveats.
+5. `ROADMAP.md` and `tasks/*.md` for known stale-data, rerun, or packaging
+   caveats.
 
 If the current repo state and the promise disagree, do not silently interpret
 the promise more weakly. Report the mismatch and either weaken the wording or

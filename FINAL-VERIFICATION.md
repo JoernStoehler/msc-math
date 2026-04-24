@@ -26,8 +26,8 @@ execute. The point is coverage, not convenience.
 This file specifies the literal thesis-done gate only. It is not the default
 place for phase gates, workflow milestones, or pre-submit planning targets such
 as `writer-ready`, `submission-ready`, or `freeze-ready`. Put those in
-`TASKS.md` or a separate planning surface unless Jorn explicitly asks for them
-here.
+`ROADMAP.md` / `tasks/*.md` or a separate planning surface unless Jorn
+explicitly asks for them here.
 
 This file is the authoritative final finished-state spec. It does not own the
 day-to-day workflow for readiness checks, thesis-claim audits, reproducibility
@@ -38,7 +38,7 @@ references.
 This file does not replace:
 
 - `RESULTS.md`: what the thesis should claim, and with what strength.
-- `TASKS.md`: ownership, sequencing, and deadline choices.
+- `ROADMAP.md` / `tasks/*.md`: ownership, sequencing, and deadline choices.
 - `formal/`: theorem statements, proof sketches, labels, and math notes.
 - `crates/`: stable reusable Rust crates.
 - `experiments/`: evidence-producing protocols and generated artifacts.
@@ -52,8 +52,8 @@ gate easier to pass.
 Use local context first:
 
 - `RESULTS.md` answers what the thesis should claim and with what strength.
-- `TASKS.md` answers ownership, sequencing, deadline, and stop-condition
-  choices.
+- `ROADMAP.md` / `tasks/*.md` answers ownership, sequencing, deadline, and
+  stop-condition choices.
 - `FINAL-VERIFICATION.md` answers what would make the thesis project finished.
 - The submitted thesis artifact answers what the thesis actually says.
 - The cited formal note, library module, experiment package, or preserved
@@ -1013,9 +1013,10 @@ Sufficient children:
 - T8.2.c [observable] [Jorn] Jorn says the thesis does not read like a dump of
   everything the project touched.
 - T8.2.d [observable] The retained content decisions are traceable to cached
-  value assessments in `TASKS.md`, `RESULTS.md`, thesis notes, or an explicit
-  Jorn decision, including whether each major item is included as thesis spine,
-  Kai-discussed standalone material, supporting evidence, future work, or cut.
+  value assessments in `ROADMAP.md`, `tasks/*.md`, `RESULTS.md`, thesis notes,
+  or an explicit Jorn decision, including whether each major item is included as
+  thesis spine, Kai-discussed standalone material, supporting evidence, future
+  work, or cut.
 
 ### T8.3. The thesis makes clear what the reader can reuse, trust as support, and
 treat as future work.
@@ -1091,8 +1092,9 @@ Sufficient children:
 
 Sufficient children:
 
-- T9.4.a [observable] `TASKS.md` has no `[active]`, `[open]`, `[blocked]`, or
-  `[Jorn]` item that still claims to be direct master-thesis work after archive.
+- T9.4.a [observable] `ROADMAP.md` and `tasks/*.md` have no `[active]`,
+  `[open]`, `[blocked]`, or `[Jorn]` item that still claims to be direct
+  master-thesis work after archive.
 - T9.4.b [observable] Unfinished research, code, writing, publication, or
   cleanup ideas are either completed, cut from thesis scope, or labeled
   `[future]` / follow-up.

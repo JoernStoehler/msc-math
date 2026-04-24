@@ -19,7 +19,7 @@ Use these surfaces in this order:
 4. The concrete verification experiments, their declared inputs/outputs, and
    the nearby research/formal notes that say what those experiments are meant to
    establish or try to refute.
-5. `TASKS.md` for known open validation gaps, stale evidence, or explicitly
+5. `ROADMAP.md` and `tasks/*.md` for known open validation gaps, stale evidence, or explicitly
    deferred stronger falsification passes.
 
 Checks:
