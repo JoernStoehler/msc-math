@@ -8,47 +8,61 @@ Run `bash scripts/tasks-toc.sh` for section index.
 **How thesis success is measured:** `FINAL-VERIFICATION.md`.
 **Priority:** Thesis coherence + experiment quality > code refactors. Code refactors only matter if they unblock thesis content or experiment correctness.
 **Maintenance:** Record decisions and reasons — these can't be derived later. Don't cache derivable state (build status, test counts) — run the command instead.
-**Dependencies:** thesis/ is stale and will be restructured — most thesis work is blocked on restructuring decisions. Work on `crates/symplectic/`, `formal/`, and `experiments/` is independent and can proceed now.
-**Post-Kai scope (2026-04-15):** Kai agreed on 2026-04-14 that the two main result blocks in `RESULTS.md` are sufficient to finish the thesis project. Extra polish mainly decides whether the project also has publication-grade insights others will want in written form. Jörn wants focused polish and agent-pattern trials, not an obligation to cover every remaining surface. Development work is worth doing through about 2026-04-21; after that, stop expanding and prioritize thesis completion, assembly, and submission.
+**Dependencies:** `thesis/` is stale and needs a retained-content structure before broad writing. Work outside `thesis/` is useful now only if it changes retained thesis claims, prevents a false claim, improves reproducibility for cited artifacts, or saves enough Jörn-time to justify the supervision.
+**Post-Kai scope (2026-04-15):** Kai agreed on 2026-04-14 that the two main result blocks in `RESULTS.md` are sufficient to finish the thesis project. Standalone results Kai discussed are worth including, but usually as current-state inclusions rather than new improvement programs.
 
-## Schedule — 18 days to deadline (2026-04-30)
+## Finish Mode — current delta to done (target 2026-05-14)
 
-Rough shape of Jörn's plan as of 2026-04-12. Ordering is by hard dependencies, not priority. Tags in parentheses are `[Jörn]` / `[agent]` / `[both]`.
+Current plan state as of 2026-04-24:
 
-**Binding constraint**: Jörn's planning bandwidth, not agent wall-clock. Agents run fast enough that most task sequences complete within a day; the 18-day span exists because Jörn has to stop and re-plan between sequences. Bundles that minimize Jörn's re-planning cost dominate bundles that maximize agent parallelism.
+- Target: finish the scoped master-thesis project by 2026-05-14. Finishing by 2026-05-07 is plausible but not assumed.
+- No current hard 2026-04-30 deadline is used for planning. Old April schedule rows are historical and superseded by this section.
+- The binding resource is Jörn's 40h/week and especially long contiguous Jörn-time blocks, not Codex subscription budget or agent wall-clock.
+- Agent labor is cheap but not free: each packet must avoid wasting Jörn-time through unclear scope, missing verification, or ad-hoc review burden.
+- Scope-control rule: cool-to-have work is future/follow-up unless it improves the thesis enough to justify the calendar delay and Jörn-time cost. This is a live guardrail because Jörn is easy to nerd-snipe into interesting non-thesis work.
+- Reorientation rule: do not encode large conditional trees. Schedule deliberate reorientation points when new information arrives, and propagate surprises through the plan rather than continuing from stale assumptions.
 
-### Today + tomorrow (2026-04-12 Sun + 2026-04-13 Mon)
-- **Tube algorithm write-up** (Jörn): first sketch a correct rotation formula + proof → unblocks tube benchmark work. Agents can't do useful tube work before this.
-- **Research results strengthening** (both): more experiment ideas, empirical falsification of conclusions, cleaner evidence presentations, extra evidence types even for high-confidence conclusions.
-- **Library documentation/architecture shape decision** (Jörn + agent): pick form (colocated README vs architecture.md vs beefed-up file headers vs just formal library files). Agent runs a docs audit to test whether existing state already covers it.
-- **LICCA Sunday compute window** (agent): massive ascent sampling + HKO2024 neighborhood falsification as large-N experiments.
+Current result scope:
 
-### Tuesday 2026-04-14 — Kai meeting (gate closed)
-- Meeting happened. Kai agreed the two main results are sufficient for the thesis; remaining development/polish is optional upside, not required coverage.
-- Development cutoff: spend at most until about 2026-04-21 on code/experiment polish or AI-work-pattern trials. After that, only development that directly fixes thesis correctness or submission blockers should continue.
-- The planned Kai briefing file was not produced and is now obsolete; preserve the decision above instead of reconstructing the briefing.
+- Thesis spine: HKO2024 local maximality and the hostile sys-search landscape.
+- Standalone results discussed with Kai should appear if they can be included from current evidence with low incremental work: crosspolytope capacity, visualization as negative mathematical exploration, and pentagon-rotation status. Do not improve them beyond current state unless Jörn explicitly says the thesis payoff is worth the delay.
+- LICCA large runs are ready-to-use but not thesis obligations. Reopen them only if Jörn chooses the external action or results are already available with low integration cost; otherwise leave the related claims pending/future or weaken wording.
+- Broad architecture, API, and code-polish programs are future/follow-up unless they fix a false thesis claim, cited reproducibility, or a direct writing blocker.
 
-### Eventually (Wed 2026-04-15 → mid-Apr)
-- **Full math write-up pass** (Jörn-driven two-phase: high-level notes → paragraph structure + flag hard labor). Agents prep scaffolds, run empirical precursors for hard-labor items when possible.
-- **Hand-drawn figures** (Jörn: polar of 2D polytope, 0/1/2/3-facets, fake 3D polytope with Reeb vectors, gamma: R→R^4 decompositions, ...).
-- **3D visualization figure integration** (agent: existing visualization pipeline + thesis figure/write-up integration; Jörn decides what the figures should show).
+Current external/admin facts:
 
-### Polish window (2026-04-15 → about 2026-04-21)
-- **Agent-attacked polish surface:** evidence hygiene, local validation experiments, code/thesis alignment pruning, and bounded AI-work-pattern trials. Goal is not full coverage; goal is to see which remaining surfaces Codex can close without high Jörn load.
-- **Development constraint:** avoid new research branches that need Jörn to interpret before they can be written. Prefer self-verifying outputs: refreshed notes, small validation datasets, figures/tables, and failing/succeeding checks.
+- Final closure means no further direct repo-related master-thesis action remains; the final GitHub archive/read-only action is the last direct repo action.
+- University handin requirements are now indexed in `thesis/submission/README.md`
+  with downloaded MNTF forms under `thesis/submission/forms/`. TODO(Jörn):
+  verify the exact Prüfungsamt copy count, form names, USB/CD contents, and
+  upload mechanics from the current Ausgabebescheid / checklist.
+- Jörn and Kai want repo preservation outside GitHub so the project is not lost
+  if GitHub disappears or Jörn deletes the account. Current named candidate:
+  Zenodo, from Kai's mail; see `thesis/submission/README.md` for source links
+  and the shallow alternatives pass. TODO(Jörn/Kai): choose the actual
+  preservation destination(s) before the final archive step.
+- arXiv upload and outreach mails to Haim-Kislev, Ostrover, and similar
+  researchers are post-Kai-review dissemination candidates. They are not
+  master-thesis closure blockers unless Jörn and Kai explicitly promote one of
+  them into the closure checklist.
+- No defense talk is part of the thesis project.
+- Jörn is the final clarity/usefulness judge in `FINAL-VERIFICATION.md`; Kai and Elizabeth feedback can still mean "not done yet" if they flag a real blocker.
 
-### Post-polish stability (after about 2026-04-21)
-- **SWE polish becomes freeze-only:** code changes should fix correctness, reproducibility, or submission blockers. Defer broad library promotion, performance refactors, and abstractions unless they unblock thesis text.
-- **Figure inventory + QA** (agent after Jörn picks figures per chapter).
+Immediate backchain buckets for the next planning step:
 
-### Finally (by 2026-04-30)
-- Print + upload + handin thesis + repo at university portal. **No defense.**
-- Pre-submission checklist (agent): repo freeze + tag, build reproducibility, bibliography sanity, format compliance.
+- Done-state closure: keep `FINAL-VERIFICATION.md` aligned with archive/no-more-repo-work semantics.
+- Current-state reset: clear stale active ownership, classify open work as mainline thesis / contingent during writing / future-follow-up.
+- Thesis structure and writing: choose retained chapter structure, then write from already-chosen content.
+- Claim-strength freeze: compress HKO, hostile-landscape, numerical appendix, and standalone result wording to what current evidence supports.
+- Reproducibility and artifact truth: verify only cited or promised artifacts; do not chase every historical orphaned dataset unless it affects a retained claim.
+- Final assembly: build PDF, bibliography/cross-reference/proofread checks, print/USB/forms/upload, final repo tag, backup copies, GitHub archive.
 
-### Re-plan triggers
-- **After tube rotation formula + proof land** → wire up tube benchmark harness + run cross-compare against HK2017
-- **After LICCA Sunday runs return** → re-evaluate density / falsification claims
-- **After math write-up scaffold lands** → Jörn breaks hard-labor items into agent-doable sub-tasks
+### Historical April 2026 schedule
+
+The previous 2026-04-12 to 2026-04-30 schedule is superseded. Durable decisions
+from it are preserved above and in the rows below: Kai accepted the two main
+result blocks as thesis-sufficient, optional polish must not expand the thesis
+scope by default, and thesis completion now dominates broad research/code polish.
 
 ### Conventions for LICCA experiments
 Same binary runs locally and on LICCA. The binary takes explicit CLI args (`--n`, `--out`, ...); no `--mode` flag, no Rust-side `if licca {}` branching — all configuration lives in the shell scripts.
@@ -95,15 +109,15 @@ HKO2024 lives in multiple ambient spaces (LP(5,5), LP(6,5), F=10, F=13, convex b
 - Historical single-eps artifact `pentagon-perturb.jsonl`: 101 recorded perturbations all retain sys>1 (min 1.0142, max 1.0472). Current smoke/LICCA pipeline is tracked separately below.
 - `experiments/hko-local-maximum/perturbation-neighborhood/`
 
-### [active] [group:licca] LICCA-scale F=10 neighborhood falsification
+### [future] [group:licca] LICCA-scale F=10 neighborhood falsification
 - Remaining data/evidence refresh packet for the HKO local-maximality numerics surface: scale the perturbation-neighborhood experiment from the current local evidence to 10k+ perturbations with 3 step-size buckets (small/medium/large). Honest falsification attempt. Expected: no sys>HKO (strengthens conjecture). Real outcome: whatever the data says.
-- **Post-Kai priority:** optional publication-grade polish, not required for thesis sufficiency. If LICCA results are back before about 2026-04-21, integrate them; if not, keep the existing local evidence and state the large-scale run as pending/future.
+- **Finish-mode status (2026-04-24):** optional publication-grade polish, not required for thesis sufficiency. The job is ready enough to reopen if Jörn chooses the external LICCA action, but it is not active thesis work by default. If no result is already available with low integration cost, keep the existing local evidence and state the large-scale run as pending/future.
 - **Handoff commit:** `fc7991e6` fixed the LICCA script readiness layer from the data-freshness packet; current checkout uses `experiments/...` package paths, not old `exp-*` deployment paths.
 - **Script readiness state (2026-04-15):** fixed the known `CARGO_TARGET_DIR` binary-path bug by running `"$CARGO_TARGET_DIR/release/hko-perturbation"`; added `job-smoke.sh`; kept build outside production `job.sh` with an executable preflight error that prints the exact `cargo build` command. Before LICCA submission, Jörn runs `cd ~/msc-math && CARGO_TARGET_DIR=/hpc/gpfs2/scratch/u/stoehljo/cargo-target cargo build --release -p exp-hko-local-maximum --bin hko-perturbation`, then `cd experiments/hko-local-maximum/perturbation-neighborhood && mkdir -p logs && sbatch ... job.sh`.
 - **Open LICCA-side check:** confirm that `~/msc-math` on LICCA has the same current repo layout. If it still has an old `~/msc-math/crates/exp-*` deployment copy, update that copy or switch to the current repo layout before submitting.
 - **PM caveat:** the data-freshness packet that produced `fc7991e6` shifted productively into LICCA script fixes and smoke checks; it did not produce the full cross-experiment freshness/rerun matrix. See the open data freshness task below before treating all stale-evidence questions as planned.
-- **Ownership (Jörn override 2026-04-12):** the prior "Owned by licca-bundle agent" / "Post-LICCA follow-up unowned" split is superseded — one session now owns end-to-end (audit → fix → smoke → present scp+sbatch → wait → `analyze.py` → figures → logbook → `RESULTS.md` updates → `/pre-merge` → merge). Previous split was producing failed transfers.
-- Re-plan trigger: after LICCA runs return, re-evaluate density/falsification claims (`TASKS.md:44`).
+- **Ownership:** no live session owns this row after the 2026-04-24 finish-mode reset. If reopened, one session should own the end-to-end path (audit → fix → smoke → present scp+sbatch → wait → `analyze.py` → figures → logbook → `RESULTS.md` updates → `/pre-merge` → merge); the previous split produced failed transfers.
+- Re-plan trigger: after LICCA runs return, re-evaluate density/falsification claims against the finish-mode scope above.
 
 ### [Jörn] [group:hko] Verify h-space proof
 - Danskin + symmetry + Euler homogeneity argument. ~15 min.
@@ -172,7 +186,7 @@ Stronger conjecture: HKO2024 may be (up to perturbation/symplectomorphism) the o
 ### [open] [group:witness-search] Witness oracle instrumentation + benchmark bank
 - Upgrade exact witness search from "best permutation only" to a reusable local-structure oracle: top-`m` / within-gap returns, incumbent warm starts, near-active witness metadata, runtime diagnostics.
 - Bundle the benchmark bank into the same session; do not track it as a separate item.
-- Post-Kai priority: optional AI-work-pattern / publication-polish trial through about 2026-04-21. Do not treat this as required thesis coverage. Stop if the first session does not produce a reusable oracle surface, benchmark report, or clear negative finding without high Jörn interpretation load.
+- Finish-mode status: optional AI-work-pattern / publication-polish trial. Do not treat this as required thesis coverage. Stop if the first session does not produce a reusable oracle surface, benchmark report, or clear negative finding without high Jörn interpretation load.
 - Pointer: `research/sys-landscape.md`
 
 ### [future] [group:witness-search] Witness reuse + safe prefilter calibration
@@ -209,10 +223,10 @@ Stronger conjecture: HKO2024 may be (up to perturbation/symplectomorphism) the o
 - Dense (n, m, theta) sweep. Fit sys(n, m, theta). Does formula predict sys>1 only for 5x5?
 - Partial data in `experiments/sys-landscape/rotated-regular-products/`
 
-### [active] [group:licca] LICCA-scale massive ascent sampling (density probe)
+### [future] [group:licca] LICCA-scale massive ascent sampling (density probe)
 - Scale `gradient-ascent-general/` (10 → 10k+ seeds) and `gradient-ascent-products/` (12 → 10k+ seeds).
 - **Research question:** does the density of sys>1 local maxima in M_F actually support "no new examples"? Current seed counts are too small for a strong density claim.
-- **Post-Kai priority:** optional strengthening of a thesis-sufficient result, not required to finish the thesis. If results are back before about 2026-04-21, integrate them; otherwise weaken density wording and leave the run as pending/future.
+- **Finish-mode status (2026-04-24):** optional strengthening of a thesis-sufficient result, not required to finish the thesis. Reopen only if Jörn chooses the LICCA action or results already exist with low integration cost; otherwise weaken density wording and leave the run as pending/future.
 - **Handoff commit:** same as the F=10 item above, `fc7991e6`; the data-freshness packet landed LICCA script fixes and smoke runners, not a full data-rerun matrix.
 - **Script readiness state (2026-04-15):** fixed the known `CARGO_TARGET_DIR` binary-path bug for both `sys-*` scripts; added local `job-smoke.sh`; kept the 1-second `--time` tripwire, so Jörn must submit production with `sbatch --time=02:00:00 job.sh` after the test-partition dry run. Build commands are `cd ~/msc-math && CARGO_TARGET_DIR=/hpc/gpfs2/scratch/u/stoehljo/cargo-target cargo build --release -p exp-sys-landscape --bin sys-gradient-ascent-general --bin sys-gradient-ascent-products`, followed by `cd experiments/sys-landscape/<experiment> && mkdir -p logs && sbatch ... job.sh`.
 - Each family produces histogram + bucket counts at sys>0.95/0.99/1.00.
@@ -220,7 +234,7 @@ Stronger conjecture: HKO2024 may be (up to perturbation/symplectomorphism) the o
 
 ### [future] [group:licca] Combinatoric-changing step sizes on LICCA
 - Beyond fixed-F ascent — let random walks flip facet combinatorics mid-trajectory.
-- Post-Kai: defer beyond thesis unless Jörn explicitly reopens research development before the 2026-04-21 cutoff. If fixed-F LICCA finds nothing, this remains a future-research next step, not a thesis blocker.
+- Finish-mode status: defer beyond thesis unless Jörn explicitly reopens research development. If fixed-F LICCA finds nothing, this remains a future-research next step, not a thesis blocker.
 
 ### [open] Analytical formula for sys(P_5 x R(theta) P_5)
 - Standalone mathematical result in `RESULTS.md`: explain the shape of the pentagon rotation curve.
@@ -428,12 +442,12 @@ Instrument development. Results promote to `crates/symplectic/`.
 - 14 previously-failing tests now pass (329 pass, 0 fail).
 - Rationale for current state: degenerate orbits are never capacity-achieving, so final capacity comes from well-conditioned orbits with proven low error. The remaining gap is publication/writeup polish rather than a blocker for the two main thesis results.
 - Remaining open surface: Part III (f64 algorithm description), a thesis-facing treatment of the LP null-space search case (39 natural-data violations in cases with near-zero eigenvalues), and the GAP in `cor:taylor-structure` (needs Jörn).
-- Post-Kai priority: publication polish and thesis confidence, not a prerequisite for the two main thesis results. Before about 2026-04-21, agents may close self-verifying pieces such as stale notes/tests; after that, leave explicit caveats or cut proof ambitions rather than opening new solver work.
+- Finish-mode status: publication polish and thesis confidence, not a prerequisite for the two main thesis results. Leave explicit caveats or cut proof ambitions rather than opening new solver work unless Jörn says the thesis payoff is worth the time.
 - `experiments/numerics/error-bounds/`, `research/numerics-error-bounds.md`
 
 ### [open] [group:numerics] Projection solver
 - 5-step algorithm: (1) solve equality constraints → (m-5)-dim affine space, (2) project H → reduced Hessian, (3) eigendecompose → null directions, (4) beta>0 as LP on projected null space, (5) recover multipliers.
-- Basic implementation in `kkt/projection_solver.rs`. The remaining asks here are mathematical rigor and ablation/comparison writeup; treat broad promotion or refactor as defer/future polish unless a bounded local-validation or stale-note cleanup slice becomes useful before about 2026-04-21.
+- Basic implementation in `kkt/projection_solver.rs`. The remaining asks here are mathematical rigor and ablation/comparison writeup; treat broad promotion or refactor as defer/future polish unless a bounded local-validation or stale-note cleanup slice directly supports retained thesis text.
 - Post-Kai: do not let this row reopen a broad solver-development program during thesis closeout.
 - `research/numerics-error-bounds.md`
 
@@ -442,12 +456,12 @@ Instrument development. Results promote to `crates/symplectic/`.
 - Previous branch deleted (tip `7ca81b53` has salvageable design: unified function, Type A/B/C eigenvector classification).
 - Thesis/code tension: thesis proves rank-deficient pairs are redundant (discard); code searches null space for beta>0 on *near*-singular systems (pseudoinverse beta_0 may have beta_i < 0 from noise; null-space shift recovers feasibility without changing Q). Not contradictory but needs explicit documentation.
 - Current blocker for implementation work: Jörn mathematical judgment on whether filtering Type A directions is justified.
-- Post-Kai: documentation of the tension is useful polish; keep implementation unification deferable unless that judgment lands and a bounded session can finish and verify it before about 2026-04-21.
+- Finish-mode status: documentation of the tension is useful polish; keep implementation unification deferable unless Jörn's judgment lands and a bounded session can finish and verify it without delaying thesis closure.
 
 ### [open] [group:numerics] Solver numerical formal writeup
 - Per-module formal files for SVD, condition numbers, LU, eigendecomposition stability.
 - Multiple modules use SVD without shared error analysis. For the thesis-close window, this row is only about the pieces that directly support thesis text or current validation.
-- Post-Kai: defer full per-module numerical formalization after about 2026-04-21 instead of treating it as required numerics closure work.
+- Finish-mode status: defer full per-module numerical formalization instead of treating it as required numerics closure work.
 
 ### [done] [2026-04] Crosspolytope capacity
 - c_EHZ = 4.0 (same as hypercube), sys=0.75. Exhaustive search through m=13.
@@ -490,21 +504,13 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
   - `defer/future`: new LICCA runs unless results are already about to land, tube implementation, pentagon rotation proof, and the full Appendix A redesign / combinatorics-theorem route.
 - Acceptance: the relevant thesis-external packets are classified in `TASKS.md`, and the writer-ready row can then be checked locally from those classifications.
 
-### [active] [group:pm] 2026-04-21 to 2026-04-23 pre-writing packet queue
-- Purpose: use the blocked-on-`thesis/` window for bounded thesis-readiness packets, not new research branches.
-- Integration owner: this session keeps PM + tracker ownership and integrates delegated packet results after verification.
-- Ordered queue:
-  - `P1` keep the writer-ready boundary visible in `TASKS.md` and avoid losing the current recommendation.
-  - `P2` integrate `S1` dataflow/generated-output cleanup if the root checkout does not already contain it; verification `bash scripts/dataflow.sh`.
-  - `P3` run `HKO theorem/evidence/blocker compression`; verification `cd formal && latexmk`, plus the exact-clarke witness check if that packet touches witness-facing docs.
-  - `P4` run `Hostile-landscape retained-claim compression` after `P2`; verification `cd formal && latexmk` if formal files move.
-  - `P5` run `Numerical appendix route freeze`; verification is a tracker + note review check, not a new theorem or code path.
-- Delegation shape:
-  - `P1` main-thread integration with explorer support only.
-  - `P2` is the only currently clean one-agent top-to-bottom execution packet with an existing verification command.
-  - `P3` and `P5` are Jörn-gated prep until the retained claim / route boundary is fixed.
-  - `P4` is best treated as an explorer or small writeup packet after `P2`, not as an immediate top-to-bottom execution packet before the retained claim is named.
-- Stop condition: if a packet opens a new theorem program, new experiment family, or a change to another session's active LICCA ownership, stop and re-plan instead of guessing.
+### [done] [2026-04-24] [group:pm] 2026-04-21 to 2026-04-23 pre-writing packet queue superseded
+- Superseded by the finish-mode reset at the top of this file. The row no longer owns active integration.
+- Durable outcome: the packet queue exposed the right current buckets, but the live queue dates and ownership are stale.
+- Preserved follow-ups:
+  - `HKO theorem/evidence/blocker compression`, `Hostile-landscape retained-claim compression`, and `Numerical appendix route freeze` remain as separate rows below.
+  - `S1` / dataflow cleanup is now part of the broader reproducibility/artifact-truth bucket, not a live prerequisite hidden in this old queue.
+- Stop condition preserved for future packets: if a packet opens a new theorem program, new experiment family, or a change to LICCA ownership, stop and re-plan instead of guessing.
 
 ### [open] [group:writeup] HKO theorem/evidence/blocker compression
 - Goal: compress the HKO material outside `thesis/` into a thesis-safe theorem/evidence/blocker split that matches current exact and numerical artifacts.
@@ -584,7 +590,7 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 
 ### [done] [2026-04-15] [group:writeup] Kai meeting gate closed; briefing obsolete
 - The planned `kai-briefing-2026-04-14.md` was not produced before the meeting. Do not reconstruct it after the fact.
-- Outcome recorded in the schedule section: Kai agreed the two main `RESULTS.md` result blocks are sufficient for thesis completion; optional polish runs only through about 2026-04-21 unless it fixes thesis correctness or submission blockers.
+- Outcome recorded in the finish-mode section: Kai agreed the two main `RESULTS.md` result blocks are sufficient for thesis completion; optional polish is not required unless it fixes thesis correctness, cited reproducibility, or submission blockers.
 
 ### [done] [2026-04-12] Thesis figure consistency check
 - Thesis figure audit: 0 `\includegraphics` refs across 16 `thesis/**/*.tex` files, `thesis/assets/` does not exist. Rerun after experiment writeups and thesis restructuring land.
@@ -603,7 +609,7 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 - Compile per-chapter list of figures with provenance tags (hand-drawn / code-generated / viz-tool / whiteboard photo).
 - Blocked on: Jörn picking which concepts get illustrations and where they go. After those calls exist, agent scope is mechanical inventory.
 
-### [open] [group:submission] Final assembly (checklist-driven, ≤2026-04-30)
+### [open] [group:submission] Final assembly (checklist-driven, target 2026-05-14)
 - Abstract, bibliography check (includes verifying agent-produced bib entry at `thesis/bibliography.bib` line 151), figure quality review, proofreading, print formatting.
 - Pre-submission slice (agent-doable): repo freeze + tag, build reproducibility verification, bibliography citation-to-key integrity, figure presence check, university format compliance if documented anywhere.
 - Submission slice (Jörn): physical print, university portal upload (credentials), handin signatures. **No defense.**
@@ -629,7 +635,7 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
   - `research/crosspolytope.md`: elapsed-time wording reconciled to the committed `1095.1s` JSONL result vs historical `1112.8s` console/table total.
 - `research/hko-local-maximum.md`: stale `~10s per trial` scale-up estimate removed from the live continuation-note surface.
 - Stop condition for this closure bundle was reached. Keep any remaining work on dedicated packets instead of reopening this row into another broad numerics sweep.
-- Post-Kai priority: high-value polish because it protects thesis claims. Before about 2026-04-21, prefer shallow evidence repairs and stale-note fixes; after that, weaken or qualify claims instead of rerunning broad experiments.
+- Finish-mode status: high-value polish because it protects thesis claims. Prefer shallow evidence repairs and stale-note fixes; otherwise weaken or qualify claims instead of rerunning broad experiments.
 
 ### [open] [group:paranoia] Data freshness and rerun matrix
 - This row now records the finished rerun triage surface. The source packet (`/tmp/4.md`) originally asked for a prioritized table of evidence gaps with columns `claim`, `current data`, `missing data`, `local vs LICCA`, `estimated runtime`, `job/script readiness`, and `thesis impact`; the useful intermediate output was the LICCA script-readiness commit `fc7991e6`.
@@ -644,7 +650,7 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 | row | current data | missing data / blocker | local vs LICCA | runtime / readiness | thesis impact | recommendation | deadline bucket |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | all-minimum + orbit recovery | Split local-first packet landed: committed `all-minimum*.jsonl` and `orbit-recovery*.jsonl`, separate design notes, refreshed recovery plot, shared target-pool helper, and the old `orbit-recovery/polytopes.jsonl` mirror is now gone from the active pipeline | no blocker for the current local-first packet; only future question is whether thesis prose should quote any observed multiplicity counts beyond the documented simplex/hypercube witnesses | local-first | local binaries + analyzers exist; `axioms-all-minimum --full` passes 28/28 in ~10.3s and `axioms-orbit-recovery --full` passes 28/28 in ~1.5s; no LICCA script needed | verification/polish task for both minimum-set and geometry-only recovery work is now covered by a committed local packet | do not rerun unless the code changes or Jörn wants a larger stress packet | done for the current thesis-facing local-first scope |
-| perturbation neighborhood | historical `pentagon-perturb.jsonl` kept; smoke/default outputs were moved to untracked `smoke-eps-*.jsonl`; LICCA production files still absent | production-scale 10k-per-bucket run | needs LICCA | `job.sh` + `job-smoke.sh` exist; smoke path now intentionally stays untracked; production script budgets 30 min and only needs the external LICCA repo-layout check | load-bearing for the pending large-N HKO neighborhood falsification claim in `RESULTS.md` | needs LICCA | fix before 2026-04-21 only if LICCA results come back in time; otherwise leave pending/future |
+| perturbation neighborhood | historical `pentagon-perturb.jsonl` kept; smoke/default outputs were moved to untracked `smoke-eps-*.jsonl`; LICCA production files still absent | production-scale 10k-per-bucket run | needs LICCA | `job.sh` + `job-smoke.sh` exist; smoke path now intentionally stays untracked; production script budgets 30 min and only needs the external LICCA repo-layout check | load-bearing only if the thesis keeps a large-N HKO neighborhood falsification claim | needs LICCA | finish-mode default is pending/future unless Jörn chooses the LICCA action or results already exist with low integration cost |
 | convexity | committed `combinatorial-boundaries-convexity.jsonl` has 2800 rows and the design note matches it | none for current thesis wording | local if ever rerun | binary + analyzer exist; no current need to execute | supports the hostile-landscape / non-convex-cell interpretation, but current committed data already covers the claim | do not rerun because it would only move already-synced counts/figures | defer/future |
 | numerics error-bounds note | current binaries/tests exist; stale note wording already fixed | none for the paranoia row; deeper solver work remains a separate numerics task | local if reopened | local commands documented; not a LICCA surface | prose clarity only; not a missing evidence artifact after the checkpoint cleanup | do not rerun because the stale issue was note-only | defer/future |
 | crosspolytope timing | committed `crosspolytope.jsonl` records `1095.1s`; note already labels `1112.8s` as historical console/table output | none for current thesis wording | local if intentionally recomputed | binary exists, but rerun is a long recomputation of an already-established standalone result | standalone established result already in `RESULTS.md`; recomputation risks moving a non-essential timing number | do not rerun because it would move a non-load-bearing timing figure | defer/future |
@@ -654,7 +660,7 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 - Immediate PM consequence from the matrix: only one thesis-facing row still needs action here. Perturbation neighborhood needs the external LICCA submission step. The remaining rows should not absorb another rerun session unless a separate research reason appears.
 - Repo-wide follow-up discovered during pre-merge on 2026-04-16: sweep other experiment binaries for default or `--smoke` code paths that still overwrite production `.jsonl` outputs or production-side cache overlays. Treat that as broader data-hygiene follow-up, not as part of the remaining thesis-facing numerics evidence surface.
 - Stop condition: if the matrix recommends a new large experiment family rather than a rerun of an existing package, stop for Jörn's thesis-priority decision.
-- Post-Kai deadline rule: the matrix should classify rows into `fix before 2026-04-21`, `weaken/reword`, or `defer/future` in addition to local vs LICCA. Do not let the matrix create a new required coverage obligation.
+- Finish-mode rule: classify rows into `mainline thesis`, `weaken/reword`, or `future/follow-up` in addition to local vs LICCA. Do not let the matrix create a new required coverage obligation.
 
 ### [done] [2026-04-12] [group:paranoia] Paranoia: conjectures + interpretations
 - Flag-only audit merged: 42 ranked flags (belief 5 / causal 11 / unhedged 12 / interpretation 13 / conjecture 1).
@@ -669,7 +675,7 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 - qp_assembly dual-vertex: decided — thesis should just use a_i (h=1, a=n). The "equivalence" is trivial: substitute h=1, confirm |n|=1 was never used. Per-proof mechanical substitution.
 - KktResult->Solution bridge: needs investigation — unclear whether this is actually a thesis-code alignment issue.
 - Note: thesis-side propagation (KKT notation, accumulator, qp_assembly) is blocked on thesis restructuring.
-- Post-Kai: use the polish window for pruning and correctness alignment. After about 2026-04-21, only fix items that would make the thesis wrong or unreproducible; leave code-side cleanup as future work.
+- Finish-mode status: fix items that would make the thesis wrong or unreproducible; leave code-side cleanup as future work.
 
 ### [open] [group:pm] Repo maintainability / architecture program
 - Durable planning note: `.codex/reference/repo-maintainability/design/main.md`
@@ -691,7 +697,7 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 - Stop condition: if the note starts implying API or data decisions that Jörn has not reviewed, keep them as options in the note instead of promoting them to tracker facts.
 
 ### [open] [group:library] Experiment-to-library algorithm surface audit
-- Purpose: decide which experiment-grown algorithms are stable enough to promote, wrap, extract to a topic-local helper, or explicitly leave experiment-owned before the 2026-04-21 development cutoff. This is a triage/design task, not a broad refactor permission.
+- Purpose: decide which experiment-grown algorithms are stable enough to promote, wrap, extract to a topic-local helper, or explicitly leave experiment-owned if that decision affects retained thesis text or cited reproducibility. This is a triage/design task, not a broad refactor permission.
 - Evidence surface:
   - Rich HK2017 enumeration appears repeatedly as copied `ehz_capacity_instrumented` / `enumerate_all_orbits` code in HKO, combinatorial-cells, and gradient-validation experiments. This is the highest-value library API gap and is tracked directly by the "Capacity/orbit result API architecture" task.
   - `sys = c^2/(2 vol)` and `d_sys/da` are recomputed in several experiments using library `capacity_derivatives_a` and `volume_derivatives_a`. A small `systolic_ratio` / `sys_derivatives_a` helper could reduce drift, but only after Jörn is comfortable with the derivative lemma status.
@@ -700,7 +706,7 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
   - Projection-solver diagnostics and exact-QP validation are richer in `experiments/numerics/error-bounds/` than in the public library API. The library now has the fixed projection solver and exact KKT solver; stale experiment-local comments/copies should be pruned or relabeled before adding more solver APIs.
   - Experiments already import deep library paths such as `hk2017::permutations`, `hk2017::orbit_recovery`, and `kkt::saddle_point_solver`, so the audit should record which deep paths are intended expert surfaces versus accidental internals that later agents should avoid depending on.
   - Gradient ascent, wiggle/overshoot escape, add-facet/variable-F ascent, rotated-product sweeps, and crosspolytope symmetry reduction are publishable experimental methods or special computations, not general library algorithms for the thesis push.
-- Recommended before about 2026-04-21: do a short design pass for rich capacity/orbit reports; optionally add a tiny `sys` helper if it unblocks validation or write-up; classify repeated helpers as `library`, `topic-local helper`, or `per-binary local`; and clean stale duplicate solver comments if they risk confusing agents. Defer broad migration of ascent/search heuristics, combinatorial-cell APIs, and crosspolytope-specific symmetry code.
+- Finish-mode default: classify repeated helpers only when it unblocks validation, write-up, or agent navigation for retained thesis work. Defer broad migration of ascent/search heuristics, combinatorial-cell APIs, and crosspolytope-specific symmetry code.
 - Acceptance check: a design note or short patch names each candidate as `promote now`, `extract to topic lib`, `experiment helper only`, `document stale copy`, or `future`, records the intended stable import path for anything shared, and gives one verification command per promoted or extracted API. If no code is promoted, close by linking this audit from the broad SWE polish bucket.
 - Stop condition: if a candidate changes mathematical claims, proof obligations, or public solver semantics, stop for Jörn rather than promoting it as polish.
 
@@ -717,7 +723,7 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
   - **All tied or near-minimum sigmas:** HKO sensitivity/second-order work, subdifferential experiments, all-minimum-orbit validation, and witness-oracle work cannot be served by the current one-sigma cache; they need the richer capacity/orbit report API or an experiment-owned extension with a nonzero gap cutoff.
   - **Non-minimum intermediate nodes:** numerical error-bounds, Q-error/inertia, algorithm ablation, and solver benchmarks need per-`(S, sigma)` matrices, solver verdicts, or timing variants. These should stay in custom datasets rather than a shared polytope catalog.
   - **Path-dependent search traces:** gradient-ascent traces, variable-F paths, and LICCA shard outputs are analysis artifacts, not reusable polytope catalogs except for their final polytopes.
-- Recommended before about 2026-04-21: keep extending header coverage so `scripts/dataflow.sh` can audit more producers automatically, and write a short note naming one canonical source for the shared polytope catalog, the allowed consumer paths, and the fields each consumer may trust.
+- Finish-mode default: extend header coverage or cache policy only when it affects cited artifact truth, retained thesis reproducibility, or final archive clarity.
 - Acceptance check: regenerated `DATAFLOW.md` shows no real stale producer/input edge for declared producers and names any `.jsonl` files that should be future-only, mirrored, detached, or regenerated.
 - Stop condition: if an optimization would change committed data values, alter thesis-facing figures, or merge transient search states into a shared cache, stop for Jörn's thesis-priority decision.
 
@@ -754,14 +760,14 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
   - 3 agent-written proofs needing review: `lem:positive-span`, `lem:vertex-enumeration`, `lem:bounded-triples` (`formal/library/geom.tex`).
 - **Low priority** (dev math, not publication path):
   - 11 stubs + 6 gaps in dev-gradient/ and dev-numerical-analysis/.
-- Post-Kai: before about 2026-04-21, agents may close routine verifications or convert stale claims into explicit caveats. After that, do not chase full formal coverage; make remaining unverified blocks visible to thesis writing or cut them from the publication path.
+- Finish-mode status: do not chase full formal coverage; make remaining unverified blocks visible to thesis writing or cut them from the publication path.
 
 ### [open] [group:docs] Geom formal file restructure
 - Jörn partially reviewed Defs 1–13 of `formal/library/geom.tex` (`crates/symplectic/src/geom/review-notes.md`).
 - Consolidate Defs 1-2 (symplectic form). Add Def for HKO2024 + Thm for false Viterbo's conjecture.
 - Clarify H-representation irredundancy. Fix Defs 12-13 (area/volume are algorithms, not definitions).
 - Consider splitting into `math_geometry.tex`, `math_symplectic.tex`, `math_reeb.tex`.
-- Post-Kai: do not perform a broad split unless it directly helps the thesis by 2026-04-21. Prefer narrow corrections to definitions and labels.
+- Finish-mode status: do not perform a broad split unless it directly helps the retained thesis. Prefer narrow corrections to definitions and labels.
 
 ### [open] [group:pm] Pre-freeze thesis-facing simplification round
 - Setup landed on 2026-04-20:
@@ -801,7 +807,7 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 ### [future] [group:polish] SWE polish (post-thesis-draft-stability bucket)
 - Covers: `dev-*/exp-*` stable code → `crates/symplectic/` promotion, test suite completion + perf, documentation gaps, code simplifications (adopt standard patterns, pull in overlooked libraries, abstract/unabstract as helpful).
 - **Do not start broad polish during the thesis push**: rerunning experiments invalidates logbook numbers Jörn is about to write up, and abstraction changes break silent invariants nobody's testing.
-- Post-Kai cutoff: through about 2026-04-21, allow bounded polish that yields a self-verifying artifact. After that, this bucket becomes future work except for correctness, reproducibility, or submission blockers.
+- Finish-mode status: future work except for correctness, retained reproducibility, or submission blockers.
 - Subsumes (or overlaps with) existing `[open] Projection solver`, `[open] Beta-LP unification`, and code-side thesis-alignment items once thesis submission is no longer at risk.
 
 ### [done] [2026-04-07] Citation verification pass

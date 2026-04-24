@@ -125,6 +125,7 @@ Sufficient children:
   labeled as future work or caveated open work.
 - T7. The thesis project has been submitted and closed mechanically.
 - T8. The thesis is useful to its intended audience.
+- T9. No direct repo-related master-thesis work remains.
 
 ## T1 Tree
 
@@ -604,8 +605,10 @@ Sufficient children:
 - T3.1.a [observable] [Kai] Kai reads the mathematical part and says it is
   clear enough to follow the definitions, theorem statements, and argument
   structure.
-- T3.1.gap.a [todo-gap] If Kai is not the intended checker here, name the
-  replacement checker explicitly.
+- T3.1.b [observable] [Jorn] If Kai does not perform a final clarity read before
+  handin, Jorn says the mathematical part is clear enough for the mathematical
+  audience; if Kai does read and gives feedback that means "not done yet", that
+  feedback is resolved or explicitly accepted as outside submitted thesis scope.
 
 ### T3.2. The computational and numerical part is understandable enough for the
 computational audience.
@@ -615,8 +618,11 @@ Sufficient children:
 - T3.2.a [observable] [Elizabeth] Elizabeth reads the computational,
   numerical, and optimization part and says it is clear enough to follow the
   method and experiment logic.
-- T3.2.gap.a [todo-gap] If Elizabeth is not the intended checker here, name
-  the replacement checker explicitly.
+- T3.2.b [observable] [Jorn] If Elizabeth does not perform a final clarity read
+  before handin, Jorn says the computational and numerical part is clear enough
+  for its intended audience; if Elizabeth does read and gives feedback that
+  means "not done yet", that feedback is resolved or explicitly accepted as
+  outside submitted thesis scope.
 
 ### T3.3. The implementation-facing part is understandable enough for a
 technically literate reader.
@@ -923,9 +929,21 @@ Sufficient children:
   required by the university.
 - T7.2.b [observable] Any required form that must live in the thesis artifact
   is present.
-- T7.2.c [observable] Any required printed copies or print-ready files exist.
-- T7.2.gap.a [todo-gap] Name the exact university-side components if they are
-  not yet written down elsewhere.
+- T7.2.c [observable] The final thesis PDF exists in the format required for
+  handin.
+- T7.2.d [observable] The required USB stick contains the final PDF and the
+  repo state required by the university.
+- T7.2.e [observable] The required printed copies or print-ready files exist;
+  the exact count matches the current Prüfungsamt letter or checklist.
+- T7.2.f [observable] Required forms and signatures for the applicable
+  University of Augsburg / MNTF handin path are complete.
+- T7.2.g [observable] Any required portal upload is complete.
+- T7.2.h [observable] No defense talk is required for this thesis handin.
+- T7.2.i [observable] TODO(Jorn): the final handin checklist in
+  `thesis/submission/README.md` records the exact Prüfungsamt copy count, form
+  names, USB/CD contents, and upload mechanics used for the actual submission,
+  using the downloaded MNTF forms under `thesis/submission/forms/` and the
+  current Ausgabebescheid / checklist.
 
 ### T7.3. The repo state accompanying the thesis is identified.
 
@@ -951,6 +969,9 @@ Sufficient children:
   complete.
 - T7.5.b [observable] [Jorn] Jorn says that no further mechanical handin step
   remains.
+- T7.5.c [observable] [Jorn] If Kai, Elizabeth, or another required reader gives
+  feedback that means "not done yet", the corresponding fix is either completed
+  or explicitly accepted as outside the submitted thesis scope.
 
 ## T8 Tree
 
@@ -991,6 +1012,10 @@ Sufficient children:
   that outruns its reader-facing purpose.
 - T8.2.c [observable] [Jorn] Jorn says the thesis does not read like a dump of
   everything the project touched.
+- T8.2.d [observable] The retained content decisions are traceable to cached
+  value assessments in `TASKS.md`, `RESULTS.md`, thesis notes, or an explicit
+  Jorn decision, including whether each major item is included as thesis spine,
+  Kai-discussed standalone material, supporting evidence, future work, or cut.
 
 ### T8.3. The thesis makes clear what the reader can reuse, trust as support, and
 treat as future work.
@@ -1006,11 +1031,103 @@ Sufficient children:
   with a clear sense of what is actionable, what is merely supporting context,
   and what remains open.
 
+## T9 Tree
+
+### T9. No direct repo-related master-thesis work remains.
+
+Intended meaning: the master-thesis project has reached the state after which
+Jorn does not take further direct repo actions for the thesis. Later events such
+as the grade appearing in the university system, later publications, or other
+research groups using the repo are observations or follow-up projects, not part
+of thesis completion.
+
+Sufficient children:
+
+- T9.1. The final repo state is identified.
+- T9.2. The final GitHub state is closed for thesis work.
+- T9.3. Required non-GitHub repo preservation is complete.
+- T9.4. Open repo work is closed, cut, or labeled future/follow-up.
+- T9.5. Final artifacts and caveats are intentional.
+- T9.6. No thesis-scope external action remains after archive.
+
+### T9.1. The final repo state is identified.
+
+Sufficient children:
+
+- T9.1.a [observable] The final commit for the master-thesis repo state is
+  identified.
+- T9.1.b [observable] A final tag or equivalent durable marker points to that
+  commit.
+- T9.1.c [observable] The submitted thesis source/PDF relationship from T7.1 is
+  recorded against that final repo state.
+
+### T9.2. The final GitHub state is closed for thesis work.
+
+Sufficient children:
+
+- T9.2.a [observable] The GitHub repository points at the final thesis repo
+  state from T9.1.
+- T9.2.b [observable] Jorn has archived or otherwise made the GitHub repository
+  read-only for master-thesis work.
+- T9.2.c [observable] The GitHub archive action is treated as the last direct
+  repo-related action of the master-thesis project.
+
+### T9.3. Required non-GitHub repo preservation is complete.
+
+Sufficient children:
+
+- T9.3.a [observable] The university USB stick contains the required repo copy.
+- T9.3.b [observable] The additional repo backup destinations selected by Jorn
+  and Kai are named. Current named candidate from Kai: Zenodo; source links and
+  the shallow alternatives pass live in `thesis/submission/README.md`.
+- T9.3.c [observable] The final repo state from T9.1 has been copied or uploaded
+  to those selected backup destinations.
+- T9.3.d [observable] TODO(Jorn/Kai): the selected non-GitHub backup
+  destinations, and whether the mechanism is Zenodo/GitHub integration, manual
+  upload, OPUS Augsburg, Figshare, or another target, are written down before
+  the final archive step.
+
+### T9.4. Open repo work is closed, cut, or labeled future/follow-up.
+
+Sufficient children:
+
+- T9.4.a [observable] `TASKS.md` has no `[active]`, `[open]`, `[blocked]`, or
+  `[Jorn]` item that still claims to be direct master-thesis work after archive.
+- T9.4.b [observable] Unfinished research, code, writing, publication, or
+  cleanup ideas are either completed, cut from thesis scope, or labeled
+  `[future]` / follow-up.
+- T9.4.c [observable] Cool-to-have work is not kept on the thesis path unless
+  Jorn explicitly says the thesis improvement is worth the calendar delay and
+  Jorn-time cost.
+
+### T9.5. Final artifacts and caveats are intentional.
+
+Sufficient children:
+
+- T9.5.a [observable] LFS-tracked `.jsonl` artifacts in the final state are
+  intentional preserved artifacts, historical records, or future/follow-up
+  material.
+- T9.5.b [observable] Generated figures, tables, and data that the thesis cites
+  are covered by T4 and T5.
+- T9.5.c [observable] Any remaining orphaned, stale, or non-consumed artifacts
+  are not silently used as thesis support.
+- T9.5.d [observable] If the repo promises fresh-clone reproducibility, README,
+  LICENSE, CITATION, release, or public reuse metadata, those promises are true;
+  otherwise those polish items are not required for thesis closure.
+
+### T9.6. No thesis-scope external action remains after archive.
+
+Sufficient children:
+
+- T9.6.a [observable] University handin actions are complete under T7.
+- T9.6.b [observable] [Jorn] Jorn says any later grade-system update, publication
+  work, public-interest response, or continued research is outside the
+  master-thesis project's direct repo-action scope.
+- T9.6.c [observable] arXiv upload and outreach mails to researchers such as
+  Haim-Kislev and Ostrover are either completed before archive or explicitly
+  labeled post-review dissemination/follow-up rather than thesis closure work.
+
 ## TODO(gap) Index
 
-- `T3.1.gap.a`: if Kai is not the intended checker for T3.1, name the
-  replacement checker explicitly.
-- `T3.2.gap.a`: if Elizabeth is not the intended checker for T3.2, name the
-  replacement checker explicitly.
-- `T7.2.gap.a`: name the exact university-side components required for T7.2 if
-  they are not written down elsewhere.
+- No `[todo-gap]` leaves are currently recorded. Inline `TODO(...)` leaves name
+  concrete external facts that Jorn or Kai must fill before final closure.
