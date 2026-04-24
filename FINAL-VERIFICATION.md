@@ -225,9 +225,9 @@ Sufficient children:
 
 Sufficient children:
 
-- T2.1.2.a [observable] An exact `Q(sqrt(5))` certificate exists for the
-  15-dimensional flat-space / symmetry-space comparison, or the theorem
-  statement is weakened so it no longer needs that certificate.
+- T2.1.2.a [observable] An exact certificate over the current HKO coefficient
+  field exists for the 15-dimensional flat-space / symmetry-space comparison,
+  or the theorem statement is weakened so it no longer needs that certificate.
 - T2.1.2.b [observable] [Jorn] Jorn says the available first-order
   certificate or weaker replacement licenses the exact thesis statement.
 
