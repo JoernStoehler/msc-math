@@ -48,6 +48,17 @@ Context: route-freeze surface for proof-vs-validation-vs-caveat decisions.
   This is not automatically contradictory but needs wording if retained.
   Refresh by: reading `research/numerics-error-bounds.md` and projection solver
   code comments.
+- [fresh 2026-04-24] Q-error-bound gap: `[lem:q-error-bound]` is too loose for
+  near-singular KKT matrices. Code comments and ignored regression tests point
+  here for the deferred replacement/tighter-bound work.
+  Refresh by: reading `crates/symplectic/src/kkt/saddle_point_solver.rs`,
+  `crates/symplectic/src/kkt/test_saddle_point_solver.rs`, and
+  `formal/library/geom.tex`.
+- [fresh 2026-04-24] Tube algorithm status: blocked and not re-exported. The
+  rotation-increment formula and thesis/formal TODOs need Jorn math before this
+  can become thesis-relevant.
+  Refresh by: reading `crates/symplectic/src/algorithms/tube/mod.rs` and the
+  tube TODOs in `thesis/`.
 - [fresh 2026-04-24] KKT notation decision: use the code's symmetric convention
   in thesis because eigenvalue decompositions are cleaner.
   Refresh by: checking thesis-code alignment notes.

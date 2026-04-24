@@ -67,5 +67,5 @@ Context: external-clock task bundle for thesis closeout.
 
 ## Pruned / Stale
 
-- [moved 2026-04-24] Finish-mode admin facts moved from legacy `TASKS.md` and
-  `FINISH.md` into this bundle plus `thesis/submission/README.md`.
+- [moved 2026-04-24] Finish-mode admin facts moved from the old tracker and
+  deleted `FINISH.md` into this bundle plus `thesis/submission/README.md`.

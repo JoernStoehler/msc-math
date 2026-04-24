@@ -22,7 +22,8 @@ Context: non-thesis-spine work should stay bounded during finish mode.
   Source: finish-mode reset.
   Why it matters: prevents maintainability work from expanding thesis closeout.
 - [accepted 2026-04-24] `ROADMAP.md` + `tasks/*.md` are the task-navigation
-  layer; `TASKS.md` is legacy.
+  layer; the legacy `TASKS.md` pointer was deleted after stale references were
+  migrated.
   Source: Jorn task-system refactor request.
   Why it matters: future agents should not edit the old mega tracker.
 - [accepted 2026-04-24] Task bundles distinguish Steering Cache, Work Map,

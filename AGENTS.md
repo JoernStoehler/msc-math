@@ -37,8 +37,6 @@ Planned deliverables:
   `tasks/*.md`.
 - `tasks/`: Topic mini-roadmaps and cached task knowledge.
 - `ARCHITECTURE.md`: Repo-level architecture map: component boundaries, core entities, library subsystems, and persisted-data architecture.
-- `TASKS.md`: Legacy pointer to `ROADMAP.md` and `tasks/*.md`; do not add new
-  project state there.
 - `scratch/`: Undocumented scratch notes, migration notes, and temporary working material. Do not treat it as current convention text.
 - `scripts/`: Repo helper scripts that are not tied to one runtime environment, including `scripts/dataflow.sh`, which regenerates `DATAFLOW.md` for the experiment artifact-flow audit.
 - `.devcontainer/`: Local devcontainer and Codex web environment documentation.
@@ -133,7 +131,6 @@ cd formal/library/ && latexmk
 
 - Start from `ROADMAP.md`, then open the relevant `tasks/*.md` bundle.
 - Follow `tasks/README.md` when editing roadmap or task-bundle files.
-- `TASKS.md` is legacy and should only point to the new surfaces.
 
 ## Text For Agents
 

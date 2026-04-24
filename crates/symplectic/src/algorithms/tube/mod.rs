@@ -5,9 +5,9 @@
 //! unverified `[TODO: JÖRN]` markers in the tube section
 //! (`def:tube-data` through `alg:tube`, around lines 307, 375, 533, 597
 //! of `formal/library/algorithms.tex`). `tube_capacity` is not re-exported from
-//! `lib.rs`; callers should use `hk2017::ehz_capacity` instead. Tracked
-//! under TASKS.md `[blocked] [group:tube] Tube rotation formula
-//! implementation` and `[Jörn] [group:tube] tube-algorithm.tex`.
+//! `lib.rs`; callers should use `hk2017::ehz_capacity` instead. Tracked in
+//! `tasks/numerics.md` under the tube benchmark/formula row and in
+//! `tasks/writing.md` for thesis-facing tube TODOs.
 //!
 //! Implements Algorithm [alg:tube] from the thesis: an iterative search that
 //! builds families of Reeb trajectories ("tubes") one facet at a time, pruning
@@ -1339,7 +1339,7 @@ mod tests {
     // ── Cross-validation with HK2017 ──
 
     #[test]
-    #[ignore] // Some polytopes trigger large Q error bounds in hk2017 (see TASKS.md verify-numerics)
+    #[ignore] // Some polytopes trigger large Q error bounds in hk2017 (see tasks/numerics.md)
     fn tube_agrees_with_hk2017_on_all_symplectic() {
         use crate::ehz_capacity;
 

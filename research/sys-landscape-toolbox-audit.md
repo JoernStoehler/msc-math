@@ -120,7 +120,8 @@ Phase 2 should record these items explicitly instead of leaving them implicit:
 
 ## Known Cleanup Facts Already Settled
 
-- `TASKS.md` now uses the current random-generic max `sys=0.739` rather than the stale `0.578`.
+- The roadmap bundle now uses the current random-generic max `sys=0.739`
+  rather than the stale `0.578`; see `tasks/landscape.md`.
 - The feature-pattern packet has refreshed plots, but the repo did not yet have a durable markdown method ledger for that packet.
 - `research/sys-landscape.md` is now explicitly narrative-only for this surface; this file is the intended canonical tool-by-tool ledger.
 

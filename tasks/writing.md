@@ -37,7 +37,7 @@ phase-2 repo/Jorn state maps.
 | item | state | value class | owner/gate | next action | source |
 | --- | --- | --- | --- | --- | --- |
 | Thesis structure | `[Jorn]` | map input | Jorn | Pick retained chapter structure after repo-state map gives concrete content options. | `thesis/`, `FINAL-VERIFICATION.md:T3.4` |
-| Writer-ready boundary | `[Jorn]` | map input | Jorn + agent prep | Classify thesis-external packets as must-finish-before-writing, contingent during writing, or future. | legacy `TASKS.md` writer-ready rows |
+| Writer-ready boundary | `[Jorn]` | map input | Jorn + agent prep | Classify thesis-external packets as must-finish-before-writing, contingent during writing, or future. | migrated tracker history |
 | HKO writeup compression | `[blocked]` | mainline thesis | HKO map | Wait for `tasks/hko.md` theorem/evidence/blocker state. | `RESULTS.md`, `FINAL-VERIFICATION.md:T2.1` |
 | Hostile landscape compression | `[blocked]` | mainline thesis | landscape map | Wait for `tasks/landscape.md` retained-claim state. | `RESULTS.md`, `FINAL-VERIFICATION.md:T2.2` |
 | Numerical appendix route | `[blocked]` | contingent during writing | numerics map | Wait for `tasks/numerics.md` proof-vs-validation-vs-caveat state. | `FINAL-VERIFICATION.md:T2.4` |

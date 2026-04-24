@@ -42,7 +42,8 @@ Freshness rules:
 | `thesis/submission/README.md` | submission/admin forms, source links, and external-clock TODOs |
 | `ARCHITECTURE.md` | repo/code architecture map |
 
-`TASKS.md` is now a legacy pointer. Do not add new project state there.
+The old `TASKS.md` mega-tracker was deleted after migration. Use this roadmap
+and the topic bundles instead.
 
 ## Current Closeout Rule
 
