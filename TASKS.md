@@ -57,8 +57,8 @@ Current external/admin facts:
 Immediate backchain buckets for the next planning step:
 
 - Current-state and Jorn-knowledge migration: fill
-  `research/finish-current-state.md` with repo-state signals and Jorn's implicit
-  project knowledge before selecting content/presentation labor.
+  `FINISH.md` with repo-state signals and Jorn's implicit project knowledge
+  before selecting content/presentation labor.
 - Done-state closure: keep `FINAL-VERIFICATION.md` aligned with archive/no-more-repo-work semantics only when new external facts require it.
 - Current-state reset: clear stale active ownership, classify open work as mainline thesis / contingent during writing / future-follow-up.
 - Thesis structure and writing: choose retained chapter structure, then write from already-chosen content.

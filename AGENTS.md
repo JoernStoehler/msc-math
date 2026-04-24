@@ -33,6 +33,8 @@ Planned deliverables:
 - `papers/<abbreviationYear>/`: Downloaded arXiv paper sources.
 - `RESULTS.md`: Thesis claim surface: what the thesis should say and with what strength.
 - `FINAL-VERIFICATION.md`: Literal thesis-done truth-spec: what must be true for the thesis project to count as finished.
+- `FINISH.md`: Agent-facing finish-mode map: accepted done-state surface,
+  current-state/Jörn-knowledge cache, and refresh rules for the final closeout.
 - `ARCHITECTURE.md`: Repo-level architecture map: component boundaries, core entities, library subsystems, and persisted-data architecture.
 - `TASKS.md`: Unified project tracker and default home for sequencing, ownership, and intermediate milestones. Run `bash scripts/tasks-toc.sh` for section line ranges.
 - `scratch/`: Undocumented scratch notes, migration notes, and temporary working material. Do not treat it as current convention text.
@@ -87,6 +89,7 @@ Required project instructions live in this root map or in discoverable skills. `
 - Route planning surfaces explicitly:
   `RESULTS.md` = claim surface,
   `FINAL-VERIFICATION.md` = literal thesis-done truth-spec,
+  `FINISH.md` = cached finish-mode map for agents,
   `TASKS.md` = default home for sequencing and intermediate milestones.
 - Do not put an intermediate milestone such as `writer-ready`, `submission-ready`, or `freeze-ready` into `FINAL-VERIFICATION.md` unless Jörn explicitly wants that milestone to become part of the literal finished-state specification.
 - If an intermediate milestone needs durable multi-session acceptance criteria but is still not part of thesis-done, create a separate planning or milestone file instead of extending `FINAL-VERIFICATION.md` by default.
