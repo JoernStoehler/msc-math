@@ -15,6 +15,9 @@ Run `bash scripts/tasks-toc.sh` for section index.
 
 Current plan state as of 2026-04-24:
 
+- Phase 1 done-state basis accepted by Jorn on 2026-04-24. Do not keep
+  elaborating the done state by guessing which content or presentation labor is
+  worth doing.
 - Target: finish the scoped master-thesis project by 2026-05-14. Finishing by 2026-05-07 is plausible but not assumed.
 - No current hard 2026-04-30 deadline is used for planning. Old April schedule rows are historical and superseded by this section.
 - The binding resource is Jörn's 40h/week and especially long contiguous Jörn-time blocks, not Codex subscription budget or agent wall-clock.
@@ -53,7 +56,10 @@ Current external/admin facts:
 
 Immediate backchain buckets for the next planning step:
 
-- Done-state closure: keep `FINAL-VERIFICATION.md` aligned with archive/no-more-repo-work semantics.
+- Current-state and Jorn-knowledge migration: fill
+  `research/finish-current-state.md` with repo-state signals and Jorn's implicit
+  project knowledge before selecting content/presentation labor.
+- Done-state closure: keep `FINAL-VERIFICATION.md` aligned with archive/no-more-repo-work semantics only when new external facts require it.
 - Current-state reset: clear stale active ownership, classify open work as mainline thesis / contingent during writing / future-follow-up.
 - Thesis structure and writing: choose retained chapter structure, then write from already-chosen content.
 - Claim-strength freeze: compress HKO, hostile-landscape, numerical appendix, and standalone result wording to what current evidence supports.
