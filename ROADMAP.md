@@ -66,6 +66,7 @@ justify calendar delay and Jorn-time cost.
 | --- | --- | --- |
 | Submission and archive | external-clock actions, forms, Zenodo/arXiv/outreach, final archive | `tasks/submission.md` |
 | Writing | thesis structure, writer-ready boundary, figures, final prose gates | `tasks/writing.md` |
+| Quality baseline | repeatable verification passes for thesis claims, repo promises, code/test surfaces, and final review prep | `tasks/quality.md` |
 | HKO | HKO2024 theorem/evidence/blocker split and exact-Clarke route | `tasks/hko.md` |
 | Hostile landscape | negative sys-search story and data-science evidence | `tasks/landscape.md` |
 | Numerics | numerical appendix, solver/projection/beta-LP state | `tasks/numerics.md` |
