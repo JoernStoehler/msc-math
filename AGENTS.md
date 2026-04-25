@@ -63,7 +63,7 @@ one-hop maps after this always-loaded file.
 | --- | --- |
 | `ROADMAP.md` | orienting on thesis closeout streams, current phase, or where a task belongs |
 | `tasks/README.md` | editing `tasks/*.md` or interpreting task-bundle status/cache conventions |
-| `research/README.md` | looking for interpretation notes, proof-route state, or research-result caches |
+| `research/INDEX.md` | looking for interpretation notes, proof-route state, or research-result caches |
 | `crates/MAP.md` | navigating durable crate boundaries, API tiers, and core entities |
 | `experiments/MAP.md` | navigating experiment topic packages, helper crates, data patterns, and provenance |
 | `tasks/verify-thesis-done.md` | checking the once-run final thesis-done gate |
@@ -108,7 +108,7 @@ one-hop maps after this always-loaded file.
 - For tasks with more than one concrete change or one verification step, keep a plan with objective, dependency, owner, and verification command or review check.
 - Include a quality gate in the plan. Use subagent review when Jörn asks for delegation or the active session instructions allow it; otherwise run a local review against the same checklist.
 - Route planning surfaces explicitly:
-  `research/README.md` and `research/*.md` = thesis story interpretation,
+  `research/INDEX.md` and `research/*.md` = thesis story interpretation,
   proof-route state, and research caches,
   `tasks/verify-thesis-done.md` = once-run final thesis-done gate,
   `ROADMAP.md` = overview and routing surface,
@@ -161,10 +161,6 @@ cd formal/library/ && latexmk
 
 - Start from `ROADMAP.md`, then open the relevant `tasks/*.md` bundle.
 - Follow `tasks/README.md` when editing roadmap or task-bundle files.
-- Use the `roadmap-maintenance` skill for task-graph, sequencing, ownership,
-  and task-bundle maintenance.
-- Use the `research-direction` skill for research framing, proof-route status,
-  and experiment interpretation.
 
 ## Text For Agents
 

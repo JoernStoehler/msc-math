@@ -10,7 +10,7 @@ phase-2 repo/Jorn state maps.
 
 - State: map-input.
 - Last updated: 2026-04-25.
-- Source surfaces: `thesis/`, `research/README.md`, `research/*.md`,
+- Source surfaces: `thesis/`, `research/INDEX.md`, `research/*.md`,
   `tasks/*.md`, `tasks/verify-thesis-done.md`, `ROADMAP.md`.
 - Refresh when: thesis structure, retained claim set, or advisor feedback
   changes.
@@ -43,7 +43,7 @@ phase-2 repo/Jorn state maps.
 | Hostile landscape compression | `[blocked]` | mainline thesis | landscape map | Wait for `tasks/landscape.md` retained-story state. | `research/sys-landscape.md`, `thesis-stories-are-supported.md` |
 | Numerical appendix route | `[blocked]` | contingent during writing | numerics map | Wait for `tasks/numerics.md` proof-vs-validation-vs-caveat state. | `thesis-stories-are-supported.md` |
 | Figures | `[future]` | contingent during writing | thesis structure | Decide after chapter structure names what needs illustration. | `data-and-figures-are-traceable.md` |
-| AI process reflection | `[future]` | contingent during writing | thesis structure | Include only if the final thesis structure has a reader-facing reason to discuss agent contribution, counterfactual impact, or failure modes. | `research/README.md`, `tasks/infrastructure.md` |
+| AI process reflection | `[future]` | contingent during writing | thesis structure | Include only if the final thesis structure has a reader-facing reason to discuss agent contribution, counterfactual impact, or failure modes. | `research/INDEX.md`, `tasks/infrastructure.md` |
 | Final assembly | `[blocked]` | mainline thesis | thesis complete | Build PDF, bibliography/cross-reference/proofread checks, print/USB/forms/upload, final tag/archive. | `tasks/verify-thesis-done.md`, `tasks/submit-thesis.md` |
 
 ## Agent Cache

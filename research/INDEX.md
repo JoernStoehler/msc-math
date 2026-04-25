@@ -3,7 +3,7 @@ Purpose: index and conventions for research interpretation and proof-route notes
 Context: research notes are first-class epistemic artifacts, not task trackers.
 -->
 
-# Research Notes
+# Research Index
 
 ## Role
 
@@ -16,6 +16,20 @@ the relevant research note.
 Research files do not have to mirror `tasks/*.md` filenames. Topic interactions
 in research can differ from task-bundle interactions. Prefer clear names over
 filename isomorphism.
+
+This index is retained synthesis, not a purely regenerable directory listing.
+It aggregates the thesis-facing stories and points to the notes and task
+bundles that own interpretation, value, cost, state, and remaining obligations.
+
+## Map Type And Authority
+
+- Type: convention/index map.
+- Agent question: which research note owns the interpretation or proof-route
+  state for a thesis-facing story?
+- Authority: topic research notes, proof-bearing sources, and accepted
+  Jörn/Kai decisions overrule this index.
+- Non-authority: this file does not own full proof arguments, experiment
+  interpretations, task status, or final thesis-done gates.
 
 ## Writing Rules
 

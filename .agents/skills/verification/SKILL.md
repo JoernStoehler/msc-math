@@ -18,7 +18,7 @@ demands it.
 - `tasks/verify-thesis-done.md` owns the once-run final thesis-done gate.
 - `ROADMAP.md` and `tasks/*.md` own milestones, sequencing, ownership, and
   cached task knowledge.
-- `research/README.md` and `research/*.md` own thesis story interpretation and
+- `research/INDEX.md` and `research/*.md` own thesis story interpretation and
   proof-route state; `tasks/*.md` owns the remaining obligations caused by
   desired thesis stories.
 - `references/*.md` in this skill own reusable operational verification passes,

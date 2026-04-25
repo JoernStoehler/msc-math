@@ -16,7 +16,7 @@ what the thesis relies on it to say.
 1. `tasks/writing.md` for current thesis assembly state.
 2. `thesis/` sources and build/check scripts.
 3. `formal/` sources when theorem, definition, or proof labels are cited.
-4. `research/README.md` and topic research notes for known gaps.
+4. `research/INDEX.md` and topic research notes for known gaps.
 5. Topic task bundles for open proof/writeup obligations.
 
 ## Checks

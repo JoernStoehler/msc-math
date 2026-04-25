@@ -59,12 +59,18 @@ Context: non-thesis-spine work should stay bounded during finish mode.
   Why it matters: agents can combine familiar map, claim-register, assurance,
   and runbook practices when the interaction between files stays low.
 - [accepted 2026-04-25] `RESULTS.md` was a migration cache. Thesis story
-  interpretation now lives in `research/README.md` and `research/*.md`; thesis
+  interpretation now lives in `research/INDEX.md` and `research/*.md`; thesis
   obligations live in `tasks/*.md`.
   Source: Jorn.
   Why it matters: desired claim type/strength is visible through proof,
   interpretation, writeup, verification, and cut/weaken obligations instead of
   a separate label register.
+- [accepted 2026-04-25] `research/README.md` was renamed to
+  `research/INDEX.md` because it is a thesis story index and retained synthesis
+  surface, not a generic directory README.
+  Source: Jorn.
+  Why it matters: the filename now matches the map's purpose without implying
+  that the index is purely regenerable.
 - [accepted 2026-04-25] `DATAFLOW.md` and `scripts/dataflow.sh` were deleted.
   Use targeted grep/local inspection for provenance unless repeated dataflow
   tracing proves that a new cache is worth designing from scratch.
@@ -83,9 +89,9 @@ Context: non-thesis-spine work should stay bounded during finish mode.
 | item | state | value class | owner/gate | next action | source |
 | --- | --- | --- | --- | --- | --- |
 | Task-system migration | `[done]` | map input | current session | Legacy TASKS/FINISH were removed; use ROADMAP and topic bundles. | `tasks/README.md`, `ROADMAP.md` |
-| PM/research convention refactor | `[active]` | map input | current session | Add next-map layer, research index, task outcome conventions, and protocol-style skills. | `AGENTS.md`, `research/README.md`, `.agents/skills/` |
-| Results migration | `[done]` | map input | current session | `RESULTS.md` was deleted after distributing story interpretation and obligations to research/tasks/final verification surfaces. | `research/README.md`, `tasks/*.md`, `tasks/verify-thesis-done.md` |
-| Cache-surface audit | `[active]` | map input | current session or next roadmap session | Finish deciding how top-level and subtree cached maps should be maintained; root `ARCHITECTURE.md` and `DATAFLOW.md` were deleted. | `crates/MAP.md`, `experiments/MAP.md`, `tasks/README.md`, `research/README.md` |
+| PM/research convention refactor | `[done]` | map input | current session | Added next-map layer, research index, task outcome conventions, and protocol-style skills. | `AGENTS.md`, `research/INDEX.md`, `.agents/skills/` |
+| Results migration | `[done]` | map input | current session | `RESULTS.md` was deleted after distributing story interpretation and obligations to research/tasks/final verification surfaces. | `research/INDEX.md`, `tasks/*.md`, `tasks/verify-thesis-done.md` |
+| Cache-surface audit | `[done]` | map input | current session | Deleted stale root/generated maps, split subtree maps, renamed the research story index, and added the cached-map maintenance workflow. | `crates/MAP.md`, `experiments/MAP.md`, `tasks/README.md`, `research/INDEX.md` |
 | Agent-facing architecture/navigation | `[done]` | map input | current session | Split the old root architecture map into subtree `MAP.md` files for crates and experiments. | `crates/MAP.md`, `experiments/MAP.md` |
 | Cached-map workflow skill | `[done]` | map input | current session | Added the protocol skill and used it for the first `crates/MAP.md` / `experiments/MAP.md` refresh. | `.agents/skills/cached-map-maintenance/`, `crates/MAP.md`, `experiments/MAP.md` |
 | Capacity/orbit API architecture | `[future]` | future/follow-up by default | retained claim impact | Do not promote broad APIs unless retained thesis/reproducibility needs it. | `crates/MAP.md`, legacy rows |
@@ -95,13 +101,6 @@ Context: non-thesis-spine work should stay bounded during finish mode.
 
 ## Agent Cache
 
-- [fresh 2026-04-25] Use `.agents/skills/roadmap-maintenance` when editing
-  `ROADMAP.md`, `tasks/*.md`, or migrating old tracker state.
-  Refresh by: reading `tasks/README.md`.
-- [fresh 2026-04-25] Use `.agents/skills/cached-map-maintenance` when editing
-  cached map files. Pair it with roadmap/research/harness skills when the map
-  update crosses into those surfaces.
-  Refresh by: reading the skill description and `SKILL.md`.
 - [fresh 2026-04-25] `crates/MAP.md` and `experiments/MAP.md` replace the old
   root `ARCHITECTURE.md`. They are subtree navigation caches, not task queues
   or public API promises.

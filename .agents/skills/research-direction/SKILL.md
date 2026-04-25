@@ -63,6 +63,6 @@ Stop and report back when:
 - The question changed.
 - The method would require a new experiment family, long compute run, or thesis-scope shift.
 - The evidence cannot distinguish the candidate answers.
-- A local result contradicts `research/README.md`, a topic research note,
+- A local result contradicts `research/INDEX.md`, a topic research note,
   `ROADMAP.md`, `tasks/*.md`, formal sources, or committed data.
 - A proof or interpretation depends on a gap that only Jörn can judge.

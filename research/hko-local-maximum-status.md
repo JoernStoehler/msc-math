@@ -6,7 +6,7 @@ Use it before reading deeper notes or experiment folders.
 
 ## Authoritative Surfaces
 
-- Thesis story index: `research/README.md`
+- Thesis story index: `research/INDEX.md`
 - Work obligations: `tasks/hko.md`
 - Thesis-done gate: `tasks/verify-thesis-done.md`
 - Active/open work items: `tasks/hko.md`
@@ -65,7 +65,7 @@ Use it before reading deeper notes or experiment folders.
 
 ## Reading Order
 
-1. `research/README.md`
+1. `research/INDEX.md`
 2. `tasks/hko.md`
 2. `research/hko-local-maximum-status.md`
 3. `research/hko-local-maximum.md`

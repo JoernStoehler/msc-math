@@ -19,7 +19,7 @@ edited or relied on.
 
 Use these surfaces in this order:
 
-1. `research/README.md`, topic research notes, and `tasks/*.md` for
+1. `research/INDEX.md`, topic research notes, and `tasks/*.md` for
    thesis-facing deliverable and infrastructure obligations.
 2. `tasks/verify-thesis-done.md`, especially the references/provenance and
    repo-promises final gates.

@@ -21,7 +21,7 @@ hostility.
 - [accepted 2026-04-15] Hostile sys-search landscape is part of the thesis
   spine.
   Source: Kai/Jorn state in legacy tracker, now routed through
-  `research/README.md` and this bundle.
+  `research/INDEX.md` and this bundle.
   Why it matters: retained negative-search evidence must be compressed for
   thesis, not treated as optional infrastructure.
 - [accepted 2026-04-24] Standard data-science methods may be used to support

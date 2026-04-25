@@ -20,7 +20,7 @@ Context: main thesis result and potential publication-grade follow-up surface.
 
 - [accepted 2026-04-15] HKO2024 local maximality is part of the thesis spine.
   Source: Kai/Jorn state in legacy tracker, now routed through
-  `research/README.md` and this bundle.
+  `research/INDEX.md` and this bundle.
   Why it matters: HKO compression is mainline thesis work.
 - [accepted 2026-04-24] LICCA large HKO runs are optional publication-grade
   polish, not required for thesis sufficiency unless results already exist with

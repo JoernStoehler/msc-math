@@ -7,7 +7,7 @@ thesis-facing stories and claims are actually supported, overstated,
 incomplete, or missing required caveats.
 
 This packet is useful before the thesis text is final. When the thesis prose is
-still partial, verify retained thesis stories against `research/README.md`,
+still partial, verify retained thesis stories against `research/INDEX.md`,
 topic research notes, and `tasks/*.md` obligations instead of waiting for the
 last writing pass.
 
@@ -15,7 +15,7 @@ last writing pass.
 
 Use these surfaces in this order:
 
-1. `research/README.md` for the thesis story index, plus topic `research/*.md`
+1. `research/INDEX.md` for the thesis story index, plus topic `research/*.md`
    notes for interpretation and proof-route state.
 2. `tasks/verify-thesis-done.md` for final thesis-done semantics and the
    compact final gate that will consume this packet's findings.

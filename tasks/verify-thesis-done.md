@@ -10,7 +10,7 @@ Reusable checks and operationalization details live in the verification skill.
 
 - State: blocked until thesis assembly and topic obligations close.
 - Last updated: 2026-04-25.
-- Source surfaces: `research/README.md`, `tasks/*.md`, `thesis/`,
+- Source surfaces: `research/INDEX.md`, `tasks/*.md`, `thesis/`,
   `.agents/skills/verification/`, `thesis/submission/README.md`.
 - Refresh when: a thesis story, proof obligation, thesis prose, repo promise,
   submission requirement, or archive requirement changes.
@@ -42,7 +42,7 @@ accepts a named caveat as non-blocking for submission.
 
 | gate | required condition | evidence surface |
 | --- | --- | --- |
-| Story obligations closed | Every retained thesis story in `research/README.md` has its proof, interpretation, writeup, verification, and cut/weaken obligations closed or explicitly moved to future/cut in the relevant topic bundle. | `research/README.md`, `tasks/hko.md`, `tasks/landscape.md`, `tasks/numerics.md`, `tasks/writing.md` |
+| Story obligations closed | Every retained thesis story in `research/INDEX.md` has its proof, interpretation, writeup, verification, and cut/weaken obligations closed or explicitly moved to future/cut in the relevant topic bundle. | `research/INDEX.md`, `tasks/hko.md`, `tasks/landscape.md`, `tasks/numerics.md`, `tasks/writing.md` |
 | Thesis artifact ready | The final thesis PDF builds, has no silent placeholders, and has passed the intended readability/proofread review level. | `tasks/writing.md`, `thesis/` |
 | Claim support checked | The reusable thesis-story support pass reports no blocking missing proof, missing evidence, stale interpretation, or uncaveated overclaim. | `.agents/skills/verification/references/thesis-stories-are-supported.md` |
 | References and provenance checked | Bibliography, cross-references, theorem/proof references, figures, tables, experiment artifacts, datasets, and code references resolve at the level the thesis uses them. | `.agents/skills/verification/references/references-resolve.md`, `.agents/skills/verification/references/data-and-figures-are-traceable.md` |
@@ -63,7 +63,7 @@ accepts a named caveat as non-blocking for submission.
 
 - [fresh 2026-04-25] The old `FINAL-VERIFICATION.md` was intentionally
   replaced by this compact final gate plus reusable verification packets.
-  Refresh by: checking `$verification`, `research/README.md`, and topic bundles.
+  Refresh by: checking `$verification`, `research/INDEX.md`, and topic bundles.
 
 ## Pruned / Stale
 

@@ -109,7 +109,7 @@ Good delegated verification tasks:
 
 - Review a file for clear writing, stale paths, proof gaps, claim/source mismatches, or convention violations.
 - Run a command and report the exact failure or success.
-- Compare a claim against `research/README.md`, topic research notes,
+- Compare a claim against `research/INDEX.md`, topic research notes,
   `ROADMAP.md`, `tasks/*.md`, formal sources, downloaded papers, or generated
   data.
 - Inspect a patch for a named risk surface.

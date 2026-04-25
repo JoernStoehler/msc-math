@@ -1,6 +1,6 @@
 ---
 name: cached-map-maintenance
-description: Use when creating, refreshing, pruning, renaming, splitting, deleting, or reviewing cached map files such as AGENTS.md map sections, ROADMAP.md, crates/MAP.md, experiments/MAP.md, tasks/README.md, research/README.md, or future subtree MAP.md files.
+description: Use when creating, refreshing, pruning, renaming, splitting, deleting, or reviewing cached map files such as AGENTS.md map sections, ROADMAP.md, crates/MAP.md, experiments/MAP.md, tasks/README.md, research/INDEX.md, or future subtree MAP.md files.
 ---
 
 # Cached Map Maintenance
@@ -18,7 +18,7 @@ Classify the file by the question it answers for a using agent:
 | always-loaded table of contents | `AGENTS.md` map sections | What repo is this, what invariants apply, and where do I look next? | root instructions plus discoverable skills |
 | global routing map | `ROADMAP.md` | Which closeout stream am I in, and which task bundle starts the work? | `tasks/*.md`, Jörn/Kai/external decisions |
 | subtree navigation cache | `crates/MAP.md`, `experiments/MAP.md`, future subtree `MAP.md` files | Which local subsystem, package, entity, or artifact surface should I inspect first? | code, package manifests, local headers, research/task notes |
-| convention/index map | `tasks/README.md`, `research/README.md` | How do I read or edit this directory, and what does each indexed file own? | accepted conventions plus actual file usage |
+| convention/index map | `tasks/README.md`, `research/INDEX.md` | How do I read or edit this directory, and what does each indexed file own? | accepted conventions, actual file usage, and retained synthesis when the file says so |
 | generated diagnostic | none currently | What did a generator observe? | generator output; delete when grep/local inspection is cheaper |
 
 ## Workflow
