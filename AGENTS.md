@@ -31,14 +31,18 @@ Planned deliverables:
 - `contracts/`: Canonical algorithm correspondence and verification contracts.
 - `thesis/`: Publishable thesis sources. The thesis is self-contained and does not `\input` files from `formal/`, `experiments/`, or `crates/`.
 - `papers/<abbreviationYear>/`: Downloaded arXiv paper sources.
-- `RESULTS.md`: Thesis claim surface: what the thesis should say and with what strength.
+- `RESULTS.md`: Compressed thesis-facing claim and interpretation cache: what
+  the thesis should say and with what strength, pointing outward to research
+  notes and evidence.
 - `FINAL-VERIFICATION.md`: Literal thesis-done truth-spec: what must be true for the thesis project to count as finished.
 - `ROADMAP.md`: Agent-facing closeout overview and routing map for
   `tasks/*.md`.
 - `tasks/`: Topic mini-roadmaps and cached task knowledge.
 - `ARCHITECTURE.md`: Repo-level architecture map: component boundaries, core entities, library subsystems, and persisted-data architecture.
 - `scratch/`: Undocumented scratch notes, migration notes, and temporary working material. Do not treat it as current convention text.
-- `scripts/`: Repo helper scripts that are not tied to one runtime environment, including `scripts/dataflow.sh`, which regenerates `DATAFLOW.md` for the experiment artifact-flow audit.
+- `scripts/`: Repo helper scripts that are not tied to one runtime environment,
+  including `scripts/dataflow.sh`, which regenerates `DATAFLOW.md` for the
+  declared experiment artifact-flow audit when that audit is useful.
 - `.devcontainer/`: Local devcontainer and Codex web environment documentation.
 - `.agents/skills/`: Codex skills. Detailed conventions and workflows live here.
 - `.codex/agents/`: Codex subagent definitions.
@@ -48,6 +52,23 @@ Planned deliverables:
 ## Current Instruction Sources
 
 Required project instructions live in this root map or in discoverable skills. `ARCHITECTURE.md` is a descriptive repo map, not an always-loaded instruction surface. Do not add nested `AGENTS.md` files as required instruction maps; root-launched Codex sessions will not reliably load them.
+
+## Next Map Layer
+
+Read these files when their purpose matches the task. They are the intended
+one-hop maps after this always-loaded file.
+
+| Surface | Read when |
+| --- | --- |
+| `ROADMAP.md` | orienting on thesis closeout streams, current phase, or where a task belongs |
+| `tasks/README.md` | editing `tasks/*.md` or interpreting task-bundle status/cache conventions |
+| `research/README.md` | looking for interpretation notes, proof-route state, or research-result caches |
+| `RESULTS.md` | checking the compressed top-level thesis claim and interpretation cache |
+| `FINAL-VERIFICATION.md` | checking literal archive-ready done gates |
+| `ARCHITECTURE.md` | navigating repo component boundaries and code architecture |
+| `DATAFLOW.md` | checking the generated declared-artifact audit if grep/local inspection is not enough |
+| `tasks/quality.md` | running repeatable quality, claim-support, repo-promise, code, or test passes |
+| `thesis/submission/README.md` | checking university forms, submission mechanics, or preservation actions |
 
 ## General Conventions
 
@@ -87,7 +108,7 @@ Required project instructions live in this root map or in discoverable skills. `
 - For tasks with more than one concrete change or one verification step, keep a plan with objective, dependency, owner, and verification command or review check.
 - Include a quality gate in the plan. Use subagent review when Jörn asks for delegation or the active session instructions allow it; otherwise run a local review against the same checklist.
 - Route planning surfaces explicitly:
-  `RESULTS.md` = claim surface,
+  `RESULTS.md` = compressed thesis claim and interpretation cache,
   `FINAL-VERIFICATION.md` = literal thesis-done truth-spec,
   `ROADMAP.md` = overview and routing surface,
   `tasks/*.md` = topic mini-roadmaps and cached task knowledge.
@@ -99,7 +120,9 @@ Required project instructions live in this root map or in discoverable skills. `
 ## JSONL / LFS Safety
 
 - `.jsonl` files are generated artifacts tracked by Git LFS.
-- Use `scripts/dataflow.sh` to regenerate `DATAFLOW.md`.
+- Use `scripts/dataflow.sh` only when the generated declared-artifact audit is
+  useful for the task; targeted grep/local inspection is fine for small
+  artifact questions.
 
 ## Environment
 
@@ -131,6 +154,10 @@ cd formal/library/ && latexmk
 
 - Start from `ROADMAP.md`, then open the relevant `tasks/*.md` bundle.
 - Follow `tasks/README.md` when editing roadmap or task-bundle files.
+- Use the `roadmap-maintenance` skill for task-graph, sequencing, ownership,
+  and task-bundle maintenance.
+- Use the `research-direction` skill for research framing, proof-route status,
+  and experiment interpretation.
 
 ## Text For Agents
 

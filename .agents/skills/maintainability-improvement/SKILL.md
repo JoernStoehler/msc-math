@@ -1,19 +1,18 @@
 ---
-name: improvement-focus
-description: "Session focus for simplification and maintainability-improvement passes: scout complexity hotspots, triage what is actually worth touching, split bounded work packets, run parallel worktree execution, review results, and integrate only safe wins. Use when Jörn asks for a cleanup, simplification, refactor-for-clarity, or maintainability pass rather than new functionality."
+name: maintainability-improvement
+description: "Use for cleanup, simplification, refactor-for-clarity, or maintainability-improvement passes: scout complexity hotspots, triage worthwhile packets, split bounded work, run worktree execution, review results, and integrate only safe wins."
 ---
 
-# Improvement Focus
+# Maintainability Improvement
 
-You are the top-level session talking with Jörn. Your job is to turn a vague
-"simplify this area" request into a short list of real improvement packets,
-execute the shallow ones safely, and discard the ones whose boundary was not
-actually good.
+This skill is a combinable protocol for turning a vague "simplify this area"
+request into a short list of real improvement packets, executing the shallow
+ones safely, and discarding packets whose boundary was not actually good.
 
-Use this focus when the goal is to make the codebase simpler, clearer, or
+Use this skill when the goal is to make the codebase simpler, clearer, or
 easier for later agents to modify without changing the research surface.
 
-This focus owns:
+This protocol owns:
 
 - the shortlist of real improvement opportunities
 - the execution packets for workers
@@ -23,8 +22,8 @@ This focus owns:
 It does not own new research, broad architecture redesign, theorem changes, or
 "clean up everything" wish lists.
 
-Route thesis-task tracking and ownership changes to `$project-management-focus`.
-Route proof or interpretation questions to `$research-focus`.
+Route thesis-task tracking and ownership changes to `$roadmap-maintenance`.
+Route proof or interpretation questions to `$research-direction`.
 
 ## Default Shape
 

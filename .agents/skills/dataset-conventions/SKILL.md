@@ -23,8 +23,12 @@ This skill covers tracked experiment datasets and artifact declarations. Use it 
 - Use exact repo-relative paths when practical.
 - Use `None` when the file does not own or consume repo artifacts.
 - If one declaration line covers a maintained family, keep the family explicit and machine-readable.
-- `scripts/dataflow.sh` parses these declarations and regenerates `DATAFLOW.md` for the repo's artifact audit.
-- Treat `DATAFLOW.md` as declared artifact ownership plus local timestamp metadata, not as full transitive source provenance.
+- `scripts/dataflow.sh` parses these declarations and regenerates `DATAFLOW.md`
+  for the repo's declared-artifact audit when that generated view is useful.
+- Treat `DATAFLOW.md` as declared artifact ownership plus local timestamp
+  metadata, not as full transitive source provenance or the mandatory answer to
+  every artifact question. Targeted grep/local inspection is fine for small
+  questions.
 
 ## Generated Data Safety
 
@@ -45,7 +49,8 @@ This skill covers tracked experiment datasets and artifact declarations. Use it 
 
 ## Audit Command
 
-Use this when artifact declarations changed or the task is an audit:
+Use this when artifact declarations changed or the task benefits from the
+generated audit:
 
 ```bash
 bash scripts/dataflow.sh

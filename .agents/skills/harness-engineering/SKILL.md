@@ -35,9 +35,15 @@ The harness is:
 - Put "when to use this" trigger text in the skill description, not in `AGENTS.md` and not only in the skill body.
 - Do not maintain a skill inventory or routing table in `AGENTS.md`; skill names and descriptions are already visible through the skill system, and duplicated triggers drift.
 - Do not rely on nested settings or nested `AGENTS.md` files for required project behavior. Root-launched sessions may not load them.
-- Name top-level session-scope skills `*-focus`, not `role-*` or `*-scope`. "Focus" says what the session keeps active and reasons about directly; "role" is vague, and "scope" is overloaded with file/write scopes and sounds like a restriction. Prefer concrete focus names such as `project-management-focus` over abstract labels such as `coordination-focus`.
-- For a focus skill, state the cognitive labor the top-level session owns, the artifact it keeps current, what may move to subagents, and which decisions stay with Jörn.
-- Keep focus skills, workflow skills, and subagent roles separate. Focus skills define what the main session keeps active; workflow skills define reusable procedures inside a focus; subagent roles define separate-context output contracts.
+- Name top-level skills by the protocol or surface they operate on, such as
+  `roadmap-maintenance`, `research-direction`, or
+  `maintainability-improvement`. Avoid names that imply a session must stay in
+  one pure mode; real thesis sessions often combine roadmap, research,
+  verification, and editing work.
+- For a protocol skill, state the labor it supports, the artifact it keeps
+  current, what may move to subagents, and which decisions stay with Jörn.
+- Keep protocol skills and subagent roles separate. Protocol skills define
+  reusable procedures; subagent roles define separate-context output contracts.
 - Write skill bodies positive-first: operating model, action checklist or template, Jörn gates, and stop conditions. Add negative examples only when they prevent an observed or high-cost failure mode.
 - Review skill drafts for actionability. Ask reviewers which sentences would change behavior on a real task, which sentences are dense, and which examples or guardrails are redundant.
 - For convention skills, use a stricter actionability test: each rule should remove a decision, not hand it back to the agent under time pressure.
@@ -56,7 +62,8 @@ The harness is:
 
 1. Confirm Jörn asked for harness edits, not only reflection or normal task work.
 2. Identify whether the change affects always-loaded context, skill routing, skill body procedure, subagent role, or runtime setup.
-3. For a new or renamed focus skill, first state the labor and artifact it owns; choose the name after that sentence is clear.
+3. For a new or renamed protocol skill, first state the labor and artifact it
+   supports; choose the name after that sentence is clear.
 4. Keep a short decision ledger in the conversation before editing: decision, rejected alternative, and affected files.
 5. Remove obsolete text instead of preserving it as another path.
 6. If editing a skill, follow `$skill-creator`: frontmatter has only `name` and `description`; the description carries trigger conditions.

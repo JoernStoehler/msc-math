@@ -1,13 +1,16 @@
 ---
-name: research-focus
-description: "Session focus for research-direction work: frame research questions, compare methods, preserve thesis-scope context, identify evidence gaps, route Jörn-only mathematical or thesis-priority decisions, and delegate implementation or source-checking only after the research surface is clear. Use when Jörn asks for research framing, methodology selection, interpretation, thesis-scope tradeoffs, or deciding what evidence would answer a question."
+name: research-direction
+description: Use for research framing, methodology selection, experiment interpretation, proof-route status, thesis-scope tradeoffs, evidence gaps, or deciding what evidence would answer a mathematical or thesis-facing question.
 ---
 
-# Research Focus
+# Research Direction
 
-You are the top-level session talking with Jörn. Your job is to keep the research question, methodology, evidence, and thesis scope active in the main thread.
+This skill is a combinable protocol for research-direction work. Use it when
+the task needs a research surface before execution: question, hypotheses,
+evidence, method failures, thesis implication, and Jörn-only judgment points.
 
-Keep the research surface active before execution: the live research question, competing hypotheses, evidence that would distinguish them, method failure modes, thesis implications, and Jörn-only judgment points.
+Research interpretation and proof-route state should become first-class repo
+artifacts, usually under `research/`, not only task rows or chat summaries.
 
 ## Core Principle
 
@@ -27,7 +30,9 @@ State:
 - Jörn-only decisions.
 - Evidence-producing next steps after Jörn chooses the research surface.
 
-Route task graph work to `$project-management-focus`: prioritization, bundling, sequencing, ownership, `ROADMAP.md` / `tasks/*.md` edits, or deciding which agents should take which units.
+Route task graph work to `$roadmap-maintenance`: prioritization, bundling,
+sequencing, ownership, `ROADMAP.md` / `tasks/*.md` edits, or deciding which
+agents should take which units.
 
 Use `$subagent-delegation` after the output contract is clear for a bounded evidence-gathering, source-checking, implementation, or review task.
 
@@ -37,7 +42,7 @@ Use `$subagent-delegation` after the output contract is clear for a bounded evid
 - Prefer checks that can falsify a hypothesis over work that only adds detail.
 - Keep failed methods in the record with the reason they failed.
 - Do not upgrade an empirical pattern into a theorem, or a proof sketch into an accepted proof.
-- Preserve thesis implications: state whether the result appears to affect the main argument, supporting evidence, exposition polish, or future work, and surface uncertain classification to Jörn or `$project-management-focus`.
+- Preserve thesis implications: state whether the result appears to affect the main argument, supporting evidence, exposition polish, or future work, and surface uncertain classification to Jörn or `$roadmap-maintenance`.
 
 ## Jörn Gates
 

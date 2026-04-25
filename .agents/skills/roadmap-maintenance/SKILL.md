@@ -1,15 +1,18 @@
 ---
-name: project-management-focus
-description: "Session focus for thesis project management. Use when Jörn asks for task graph cleanup, ROADMAP.md or tasks/*.md maintenance, planning, triage, decomposition, bundling, ownership, dependencies, blocker handling, prioritization surfaces, or deciding how to split work between Jörn and agents."
+name: roadmap-maintenance
+description: Use when editing or reasoning about ROADMAP.md, tasks/*.md, task-bundle conventions, closeout sequencing, task graph cleanup, prioritization, ownership, dependencies, blocker handling, steering caches, or deciding how to split work between Jörn and agents.
 ---
 
-# Project Management Focus
+# Roadmap Maintenance
 
-You are the top-level session talking with Jörn. Your job is to keep the thesis task graph explicit, current, and useful for later agents.
+This skill is a combinable protocol for project-management and roadmap work. It
+does not require the whole session to stay in a pure PM mode. Use it when the
+conversation touches task surfaces, sequencing, ownership, or agent/Jörn
+division of labor.
 
-This focus owns the project-management representation of the work, not the domain result inside a research, formalization, experiment, or writing task. Read those artifacts as needed to classify state, dependencies, blockers, owners, and next actions; delegate or switch focus when the session must produce the domain result itself.
-
-Treat `ROADMAP.md` and `tasks/*.md` as the project-management notebook for agents. Make implicit project state explicit enough that a later session can resume from those files instead of reconstructing chat history.
+`ROADMAP.md` and `tasks/*.md` are the project-management notebook for agents.
+They route work, preserve steering decisions, and cache resume points. They are
+not proof databases, experiment interpretations, or final done authority.
 
 ## Method
 
@@ -22,7 +25,9 @@ Do project management with Jörn, not for Jörn in a hidden plan. Surface only t
 1. Start from `ROADMAP.md`, then open the relevant `tasks/*.md` bundle.
 2. Check repo evidence before asking Jörn: linked files, logs, results, scratch notes, and prior task entries.
 3. Classify each task by status, owner, blocker, dependency, thesis relevance, next action, and acceptance check.
-4. Rewrite the relevant task bundle so a later agent can resume from it: sections carry status and key state; bodies carry decisions, evidence links, blockers, resume points, and verification checks.
+4. Rewrite the relevant task bundle so a later agent can resume from it:
+   sections carry status and key state; bodies carry decisions, evidence links,
+   blockers, resume points, and verification checks.
 5. When the plan is unclear, compare concrete decompositions, bundles, owners, or execution orders and ask Jörn the smallest question that separates the plausible choices.
 6. Default to serial work: plan, execute, and verify `A`, then repeat for `B`. Propose fused `A+B` only when the same evidence, files, and verification check cover both and fusion adds no new design decision.
 7. Compress long findings into a short surface Jörn can skim; expand only when he asks or when detail is needed for a decision.
@@ -54,22 +59,33 @@ When proposing agent execution, add these fields:
 - The verification check.
 - Stop condition.
 
-Load `$subagent-delegation` when drafting a PM surface that may involve explorers, workers, reviewers, serial queues, or parallel work. After Jörn approves the surface, use it to write bounded subagent briefs and integrate results.
+Load `$subagent-delegation` when drafting a surface that may involve explorers,
+workers, reviewers, serial queues, or parallel work. After Jörn approves the
+surface, use it to write bounded subagent briefs and integrate results.
 
 When choosing whether a candidate task is shallow enough to delegate, read `references/delegation-calibration.md` if recent examples would help. It records past work packets whose actual difficulty differed from expectation.
 
 ## Roadmap Rules
 
-- Use the task-bundle status vocabulary in `tasks/README.md`: `[active]`,
-  `[blocked]`, `[Jörn]`, `[external]`, `[map-input]`, `[future]`, `[cut]`,
-  `[done]`, `[stale]`, and `[moved]`.
-- Task bundles use `Steering Cache`, `Work Map`, `Agent Cache`, and `Pruned / Stale` sections from `tasks/README.md`.
+- Read `tasks/README.md` before editing `ROADMAP.md`, `tasks/*.md`, or old
+  tracker migrations.
+- Use the task-bundle status vocabulary from `tasks/README.md`.
+- Task bundles use `Steering Cache`, `Work Map`, `Agent Cache`, and
+  `Pruned / Stale` sections.
+- Classify retained content as steering cache, current work, agent cache, or
+  pruned/stale state.
+- Preserve Jörn/Kai/external decisions that change future work.
+- Prune stale schedules, obsolete ownership, old packet queues, and derivable
+  state.
 - Status must match the actual owner and state.
 - `[active]` means one session owns the whole work-map item.
 - Mark an item `[done]` only when the acceptance check is met or Jörn explicitly closes it.
 - Link to `research/*.md` notes, formal files, result docs, commits, or handoffs instead of duplicating evidence.
 - Preserve why a task is blocked, stale, deferred, or Jörn-owned.
 - Update notes for new evidence, blockers, and resume points. Change a header status or owner only when Jörn assigned or approved that ownership in the current PM surface.
+- Update `ROADMAP.md` only when the global overview changes.
+- If claim strength changes, update or flag `RESULTS.md`.
+- If final done gates change, update or flag `FINAL-VERIFICATION.md`.
 
 ## Jörn Gates
 
@@ -92,3 +108,9 @@ Stop and ask when:
 - `ROADMAP.md` / `tasks/*.md` and repo evidence disagree.
 - The update would change ownership or status for another active session.
 - You cannot state the next safe resume point.
+
+## Checks
+
+- `git diff --check`
+- If an old tracker file is edited or restored, explain why editing
+  `ROADMAP.md` or `tasks/*.md` was not enough.

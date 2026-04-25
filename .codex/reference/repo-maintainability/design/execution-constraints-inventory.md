@@ -21,8 +21,8 @@ Checked:
 
 - `AGENTS.md`
 - `.agents/skills/subagent-delegation/SKILL.md`
-- `.agents/skills/project-management-focus/SKILL.md`
-- current `TASKS.md` planning style and maintainability-program note
+- `.agents/skills/roadmap-maintenance/SKILL.md`
+- current `ROADMAP.md` / `tasks/*.md` planning style and maintainability-program note
 
 Key evidence commands used during this pass:
 

@@ -8,7 +8,7 @@ Context: supports final verification gates for data, builds, and cited outputs.
 ## Status
 
 - State: map-input.
-- Last updated: 2026-04-24.
+- Last updated: 2026-04-25.
 - Source surfaces: `DATAFLOW.md`, `experiments/**`, `RESULTS.md`,
   `FINAL-VERIFICATION.md:T4/T5`, `scripts/dataflow.sh`.
 - Refresh when: retained thesis claims cite artifacts, experiment outputs move,
@@ -38,16 +38,18 @@ Context: supports final verification gates for data, builds, and cited outputs.
 | --- | --- | --- | --- | --- | --- |
 | Data freshness matrix | `[map-input]` | map input | agents | Reclassify remaining rows by retained thesis claim impact. | legacy data-freshness rows |
 | Thesis-facing artifact truth | `[blocked]` | mainline thesis | retained claims | Verify only artifacts cited or promised by thesis text. | `FINAL-VERIFICATION.md:T4/T5` |
-| Dataflow/cache policy | `[map-input]` | contingent during writing | retained claims | Extend headers or cache policy only if cited artifact truth or archive clarity needs it. | `DATAFLOW.md`, `scripts/dataflow.sh` |
+| Dataflow/cache policy | `[map-input]` | contingent during writing | retained claims | Keep or extend generated dataflow only if cited artifact truth, archive clarity, or repeated audits need it; targeted grep/local inspection is fine otherwise. | `DATAFLOW.md`, `scripts/dataflow.sh` |
 | Repo promises | `[blocked]` | mainline thesis | final README/thesis wording | Check fresh-clone/build/repro promises only after wording stabilizes. | `FINAL-VERIFICATION.md:T5` |
 | LICCA returned outputs | `[future]` | future/follow-up | external compute | Keep pending/future unless thesis cites returned data. | legacy LICCA rows |
 
 ## Agent Cache
 
-- [fresh 2026-04-24] `scripts/dataflow.sh` regenerates `DATAFLOW.md` for
-  experiment artifact-flow audits.
-  Refresh by: running the script only when changing declared artifact headers or
-  dataflow documentation.
+- [fresh 2026-04-25] `scripts/dataflow.sh` regenerates `DATAFLOW.md` for
+  declared experiment artifact-flow audits, but it is not mandatory for small
+  artifact questions.
+  Refresh by: running the script only when changing declared artifact headers,
+  dataflow documentation, or a repeated audit that benefits from the generated
+  view.
 - [fresh 2026-04-24] Existing rerun matrix signals: perturbation neighborhood
   needs LICCA only if thesis keeps large-N HKO falsification; convexity,
   crosspolytope timing, numerics notes, and cut-and-ascent timing should not be

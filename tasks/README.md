@@ -16,7 +16,9 @@ Ground truth stays elsewhere:
 
 - `RESULTS.md`: thesis claims and strength.
 - `FINAL-VERIFICATION.md`: final done gates.
-- source files, data files, and research notes: evidence.
+- source files and data files: code/data evidence.
+- `research/*.md`: interpretation, proof-route state, decision history, and
+  negative results.
 - `thesis/submission/README.md`: submission/admin source links.
 
 ## Keep Or Delete
@@ -27,6 +29,19 @@ condition.
 
 Delete stale schedule chatter, obsolete ownership, old packet queues, and
 derivable state. Git history is the archive for old tracker completeness.
+
+## First-Class Task Outcomes
+
+Tasks may produce epistemic artifacts, not only code or prose. Common outcomes:
+
+- write or repair a proof in `formal/` or `thesis/`
+- write an experiment interpretation in `research/`
+- extract or revise a thesis-facing claim in `RESULTS.md`
+- run a verification packet and route each failure to a topic bundle
+- get Jörn approval for theorem-strength proof or interpretation claims
+
+Task rows should link to those artifacts. Do not bury full proofs, experiment
+interpretations, or claim arguments in `tasks/*.md`.
 
 ## Required Sections
 
@@ -83,6 +98,13 @@ Value classes:
 `Steering Cache` is Jorn-expensive or external knowledge: Jorn/Kai decisions,
 advisor context, scope/value judgments, deadlines, university requirements, or
 hard-to-reproduce steering rationale.
+
+Steering entries should state their epistemic status in precise prose when it
+matters. Examples: "Kai suggestion from email, useful external idea, not a
+requirement"; "Jörn thesis-scope judgment, expected to stand unless explicitly
+reopened"; "agent synthesis from repo evidence, cheap to refresh by rerunning
+the linked scan." Avoid terse hard/soft/suggestion labels when those labels
+hide the reason for trusting or reopening the entry.
 
 `Agent Cache` is agent-expensive knowledge: file pointers, known commands,
 failed routes, promising approaches, intermediate calculations, and grep/read

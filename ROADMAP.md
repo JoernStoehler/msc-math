@@ -35,10 +35,11 @@ Freshness rules:
 
 | Surface | Role |
 | --- | --- |
-| `RESULTS.md` | claim surface: what the thesis should say and with what strength |
+| `RESULTS.md` | compressed claim and interpretation cache: what the thesis should say and with what strength |
 | `FINAL-VERIFICATION.md` | final truth-spec: what must be true before archive |
 | `ROADMAP.md` | overview and routing surface for humans and agents |
 | `tasks/*.md` | topic mini-roadmaps and cached decision context |
+| `research/README.md` and `research/*.md` | detailed interpretation, proof-route state, negative results, and research caches |
 | `thesis/submission/README.md` | submission/admin forms, source links, and external-clock TODOs |
 | `ARCHITECTURE.md` | repo/code architecture map |
 
