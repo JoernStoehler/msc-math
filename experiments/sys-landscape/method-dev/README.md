@@ -9,9 +9,10 @@ Current examples:
 - `variable-f-ascent/`
 - `random-sample/`
 - `random-product-sample/`
-- `normalized-dataset/`
-- `feature-*/`
+- `datascience/produce/`
+- `datascience/tables/`
+- `datascience/methods/feature-pattern-search/`
 
-These folders are not moved here yet. The point of this directory is to make the
-intended split explicit while the repo still carries overlapping old and new
-surfaces.
+These folders are not moved here. The point of this directory is to name the
+method-development role while the repo still carries overlapping legacy and
+maintained datascience surfaces.

@@ -11,7 +11,11 @@
 - Stable experimental surface spans five families: random generic polytopes, random Lagrangian products, fixed-F gradient ascent (general and products), fixed-F continuation, and continuation variants that reach `F=11`.
 - `sys-landscape` evidence is bounded at present and currently has no `sys>1` discovery beyond the known isolated pentagon-pentagon rotation geometry.
 - Core dataset contract uses a normalized package shape with `poly_id` and `state_id` split identities, plus lineage metadata (`root_group_id`, `lineage_id`, `parent_state_id`) when present.
-- Current local modeling surface includes `random-sample`, `random-product-sample`, `rejection-calibration`, `rotated-regular-products`, `gradient-ascent-general`, `gradient-ascent-products`, `variable-f-ascent`, `feature-pattern-search`, `normalized-dataset`, and feature extraction binaries.
+- Current local modeling surface includes the legacy experiment families
+  `random-sample`, `random-product-sample`, `rejection-calibration`,
+  `rotated-regular-products`, `gradient-ascent-general`,
+  `gradient-ascent-products`, and `variable-f-ascent`, plus the maintained
+  datascience pipeline under `experiments/sys-landscape/datascience/`.
 
 ## Evidence And Interpretation
 - Random generic polytopes (`random-sample`): 70 rows, max `sys=0.739`, no `sys>1`.
@@ -38,7 +42,8 @@
 
 - Open constraints:
   - Keep local topic work in `experiments/` while algorithmic.
-  - Use additive schema changes where feasible in `normalized-dataset`.
+  - Use additive schema changes where feasible in the maintained datascience
+    table stage under `experiments/sys-landscape/datascience/tables/`.
   - Treat direct continuation replacement as a measured comparison, not a blind rewrite.
 
 ## History
