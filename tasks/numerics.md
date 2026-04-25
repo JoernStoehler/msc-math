@@ -34,11 +34,12 @@ Context: route-freeze surface for proof-vs-validation-vs-caveat decisions.
 
 | item | state | value class | owner/gate | next action | source |
 | --- | --- | --- | --- | --- | --- |
-| Numerical appendix route freeze | `[map-input]` | mainline thesis | agent prep then Jorn | Summarize proof-vs-validation-vs-caveat options for retained numerical claims. | `research/numerics*.md` |
-| Numerical error bounds | `[map-input]` | contingent during writing | retained wording | Fix/caveat only the pieces the thesis cites. | `thesis-stories-are-supported.md` |
-| Projection solver | `[future]` | future/follow-up by default | Jorn math if retained | Record tension between code and thesis; defer broad unification. | legacy projection row |
+| Numerical appendix route freeze | `[map-input]` | mainline thesis | agent prep then Jorn | Decide whether thesis prose describes public f64 wrappers, the stronger exact/guaranteed verification layer, or both with an explicit boundary. | `research/numerics*.md`, `thesis/appendix-numerical.tex`, `crates/symplectic/src/lib.rs`, `crates/symplectic/src/algorithms/orbit_search.rs` |
+| Numerical error bounds | `[map-input]` | contingent during writing | retained wording | Treat as proved exact/Q pieces plus empirical eta checks plus named caveats; fix/caveat only the pieces the thesis cites. | `formal/numerics/error-bounds.tex`, `experiments/numerics/q-error/q_error_output.txt`, `thesis-stories-are-supported.md` |
+| Projection solver | `[future]` | future/follow-up by default | Jorn math if retained | Record tension between code and thesis; defer broad unification. The projected backend is scaffold-only on the shared orbit payload because it lacks the Q-bound contract. | `crates/symplectic/src/algorithms/orbit_search.rs`, legacy projection row |
 | Beta-LP unification | `[future]` | future/follow-up by default | Jorn math if retained | Keep as future unless needed for retained solver explanation. | legacy beta-LP row |
 | Solver formal writeup | `[map-input]` | contingent during writing | retained wording | Avoid full per-module formalization unless thesis text requires it. | `formal/`, `research/numerics-error-bounds.md` |
+| Algorithm/numerics mismatch triage | `[map-input]` | contingent during writing | agents then Jorn for theorem/prose choices | Route `thesis/migration-findings.md` rows 3-11 before relying on existing algorithm boxes or numerical appendix prose: multiplier names, KKT sign convention, Q factor, beta/eigen thresholds, accumulator references, `|S| >= 2`, billiard adjacency pruning, and tube closing-edge status. | `thesis/migration-findings.md`, `thesis/algorithms.tex`, `thesis/appendix-numerical.tex` |
 | Tube benchmark/formula | `[blocked]` | future/follow-up by default | Jorn proof | Do not unblock unless Jorn supplies formula and thesis payoff is worth delay. | `thesis/` TODOs, legacy tube rows |
 
 ## Agent Cache
@@ -65,6 +66,26 @@ Context: route-freeze surface for proof-vs-validation-vs-caveat decisions.
 - [fresh 2026-04-24] a_i replaces `(n,h)` for thesis notation; propagation is
   blocked on thesis restructuring.
   Refresh by: checking `tasks/writing.md` and current thesis notation.
+- [fresh 2026-04-25] `thesis/appendix-numerical.tex` describes a
+  certified/uncertain accumulator, but the public `ehz_capacity*` wrappers call
+  f64-only aggregation by default; stronger guarantee modes exist behind the
+  non-default `aggregate_orbits` path. This must be made explicit if retained
+  in thesis prose.
+  Refresh by: reading `thesis/appendix-numerical.tex` around "Accumulator and
+  Final Answer", `crates/symplectic/src/lib.rs`, and
+  `crates/symplectic/src/algorithms/orbit_search.rs`.
+- [fresh 2026-04-25] Current formal numerics state is not a fully proved
+  numerical solver: `formal/numerics/error-bounds.tex` contains exact per-sigma
+  solver and trinary beta material, plus named gaps around near-threshold beta,
+  empirical constants, and Taylor-cancellation algebra. Q-error experiments
+  support known-polytopes/winner accuracy but do not remove those caveats.
+  Refresh by: reading `formal/numerics/error-bounds.tex` gap comments and
+  `experiments/numerics/q-error/q_error_output.txt`.
+- [fresh 2026-04-25] `thesis/migration-findings.md` rows 3-11 are the
+  algorithm/numerics part of the thesis/code mismatch packet. Most are
+  thesis-side exposition fixes or Jörn wording checks, not solver-development
+  tasks.
+  Refresh by: reading `thesis/migration-findings.md`.
 
 ## Pruned / Stale
 

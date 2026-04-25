@@ -40,11 +40,12 @@ hostility.
 
 | item | state | value class | owner/gate | next action | source |
 | --- | --- | --- | --- | --- | --- |
-| Hostile-landscape retained-claim compression | `[map-input]` | mainline thesis | agent prep then Jorn | Summarize what current evidence supports and where wording must weaken. | `research/sys-landscape.md`, `research/sys-landscape-toolbox-audit.md` |
-| Method-ledger/audit population | `[map-input]` | mainline thesis | agents | Populate current packet evidence into the hostile-landscape audit without opening new methods. | `research/sys-landscape-datascience/` |
-| Remaining method packet status | `[Jorn]` | map input | Jorn | Decide thesis-facing status of method packets after agent summary. | legacy landscape rows |
+| Hostile-landscape retained-claim compression | `[map-input]` | mainline thesis | agent prep then Jorn | Draft the bounded claim surface: current evidence found no new transferable `sys > 1` regime beyond pentagon-pentagon, while seed counts are too small for a density or brute-force-impossibility claim. | `research/sys-landscape.md`, `research/sys-landscape-toolbox-audit.md` |
+| Method-ledger/audit population | `[map-input]` | mainline thesis | agents | Populate current packet evidence plus explicit skipped/deferred standard-toolbox rows into the hostile-landscape audit without opening new methods. | `research/sys-landscape-datascience/`, `research/sys-landscape-toolbox-audit.md` |
+| Remaining method packet status | `[Jorn]` | map input | Jorn | Decide thesis-facing status of `M012` regime classification and `M013` residualized endpoint regression after the artifact-backed audit rows exist. | `research/sys-landscape-datascience/method-ledger.md` |
 | LICCA endpoint refresh | `[future]` | future/follow-up | external compute | Leave pending unless results are already available with low integration cost. | legacy LICCA rows |
-| Pentagon rotation formula | `[future]` | contingent during writing | Jorn/math | Include only status-level current finding unless proof becomes free. | `research/sys-landscape.md` |
+| Visualization negative exploration | `[Jorn]` | contingent during writing | Jorn | Decide during TOC work whether visualization is standalone thesis material or only supporting/future material if figures become useful. | `research/visualization.md`, `research/INDEX.md` |
+| Pentagon rotation formula | `[future]` | contingent during writing | Jorn/math | Include only status-level current finding unless proof/CAS write-up becomes free. | `research/sys-landscape.md`, `formal/sys-landscape/pentagon-rotation-formula.tex` |
 
 ## Agent Cache
 
@@ -59,6 +60,23 @@ hostility.
 - [fresh 2026-04-24] Witness-oracle and reduced-model ideas are future unless
   needed to explain retained claims.
   Refresh by: checking `research/sys-landscape.md` and thesis wording.
+- [fresh 2026-04-25] `research/sys-landscape-datascience/method-ledger.md`
+  already caches attempted methods `M001` through `M013`; `M012` regime
+  classification and `M013` residualized endpoint regression are present but
+  `thesis_use = undecided`.
+  Refresh by: reading the method ledger and checking the cited analyzers under
+  `experiments/sys-landscape/datascience/methods/feature-pattern-search/`.
+- [fresh 2026-04-25] The canonical audit rows are still not populated in
+  `research/sys-landscape-toolbox-audit.md`; that file currently defines the
+  claim boundary, row columns, and method buckets. The next audit pass should
+  turn ledger rows into observation / inference / thesis-use rows.
+  Refresh by: reading `research/sys-landscape-toolbox-audit.md`.
+- [fresh 2026-04-25] Formal sys-landscape notes cite older random-sample JSONL
+  paths. Check those paths only if the formal notes become a thesis or
+  provenance source; do not run a broad data-refresh pass by default.
+  Refresh by: checking `formal/sys-landscape/random-sample.tex`,
+  `formal/sys-landscape/random-product-sample.tex`, and current producer
+  README files.
 
 ## Pruned / Stale
 

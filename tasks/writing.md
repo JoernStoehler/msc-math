@@ -32,13 +32,23 @@ phase-2 repo/Jorn state maps.
   means not done unless resolved or explicitly accepted outside submitted scope.
   Source: `tasks/verify-thesis-done.md`.
   Why it matters: keeps final readability gates actionable.
+- [accepted 2026-04-25] The next thesis-structure artifact should be
+  `thesis/planned-toc.md`, not a task-bundle file. It should be a working
+  thesis table of contents with one-sentence leaf obligations, dependencies,
+  and gaps; task bundles can be updated from it after the content shape
+  stabilizes.
+  Source: Jorn Phase-2 TOC guidance.
+  Why it matters: thesis content knowledge belongs with thesis planning first,
+  while `tasks/*.md` should keep routing and work obligations.
 
 ## Work Map
 
 | item | state | value class | owner/gate | next action | source |
 | --- | --- | --- | --- | --- | --- |
+| Planned thesis TOC | `[Jorn]` | map input | Jorn with agent state answers | Draft `thesis/planned-toc.md` interactively before selecting broad prose work; use it to expose unnatural divisions, missing dependencies, and sections whose content is not yet supported. | `thesis/`, `research/INDEX.md`, `tasks/*.md` |
 | Thesis structure | `[Jorn]` | map input | Jorn | Pick retained chapter structure after repo-state map gives concrete content options. | `thesis/`, `tasks/verify-thesis-done.md` |
 | Writer-ready boundary | `[Jorn]` | map input | Jorn + agent prep | Classify thesis-external packets as must-finish-before-writing, contingent during writing, or future. | migrated tracker history |
+| Thesis/code mismatch packet routing | `[map-input]` | map input | agents | Before using existing algorithm/numerics/tube prose as TOC leaves, route the 15 rows in `thesis/migration-findings.md` to thesis-side fix, code/comment fix, future/cut, or Jörn decision. | `thesis/migration-findings.md`, `tasks/numerics.md`, `tasks/infrastructure.md` |
 | HKO writeup compression | `[blocked]` | mainline thesis | HKO map | Wait for `tasks/hko.md` theorem/evidence/blocker state. | `research/hko-local-maximum.md`, `thesis-stories-are-supported.md` |
 | Hostile landscape compression | `[blocked]` | mainline thesis | landscape map | Wait for `tasks/landscape.md` retained-story state. | `research/sys-landscape.md`, `thesis-stories-are-supported.md` |
 | Numerical appendix route | `[blocked]` | contingent during writing | numerics map | Wait for `tasks/numerics.md` proof-vs-validation-vs-caveat state. | `thesis-stories-are-supported.md` |
@@ -56,6 +66,20 @@ phase-2 repo/Jorn state maps.
 - [fresh 2026-04-24] Figure inventory should wait until thesis structure names
   concepts and chapters; before then it is likely churn.
   Refresh by: checking `thesis/**/*.tex` for `\includegraphics` and `TODO`.
+- [fresh 2026-04-25] Current thesis source is a stale skeleton relative to the
+  closeout maps: `main.tex` has a deferred abstract and TODO introduction,
+  `experiments.tex` is a placeholder, current inputs are algorithms, tube,
+  proofs, experiments, and numerical appendix, and a targeted scan found no
+  current figure/table environments.
+  Refresh by: `rg -n -e '^\\section' -e '^\\subsection' -e '^\\input' -e '^\\appendix' thesis -g '*.tex'`
+  plus targeted reads of `thesis/main.tex` and `thesis/experiments.tex`.
+- [fresh 2026-04-25] `thesis/migration-findings.md` is an unrouted decision
+  packet for thesis/code mismatches. Rows 3-11 mostly affect algorithm/numerics
+  exposition, rows 1 and 12-14 affect tube/code-vs-thesis alignment, row 2 is a
+  label-cross-reference choice, row 15 is a label inventory, and the convention
+  gap belongs under infrastructure/harness follow-up. Route these before thesis
+  prose relies on the affected statements.
+  Refresh by: reading `thesis/migration-findings.md`.
 
 ## Pruned / Stale
 

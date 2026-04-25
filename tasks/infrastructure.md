@@ -97,6 +97,7 @@ Context: non-thesis-spine work should stay bounded during finish mode.
 | Capacity/orbit API architecture | `[future]` | future/follow-up by default | retained claim impact | Do not promote broad APIs unless retained thesis/reproducibility needs it. | `crates/MAP.md`, legacy rows |
 | Experiment-to-library audit | `[future]` | future/follow-up by default | retained claim impact | Classify repeated helpers only when it unblocks validation, writeup, or agent navigation. | legacy library rows |
 | Codex migration/orchestration tests | `[future]` | future/follow-up | Jorn/tooling | Keep separate from thesis closeout unless current agents are blocked. | `.codex/`, legacy rows |
+| Rust convention label/proof wording | `[future]` | future/follow-up by default | harness discussion | Revisit only if invented labels or proof-in-doc-comment drift blocks current agents. The current mismatch packet reports that `rust-conventions` can be read as both "definitions, lemmas, and proofs live as doc comments" and "do not duplicate proofs inline". | `thesis/migration-findings.md`, `.agents/skills/rust-conventions/SKILL.md` |
 | SWE polish | `[future]` | future/follow-up | post-thesis | Defer broad code cleanup until thesis is no longer at risk. | legacy polish rows |
 
 ## Agent Cache

@@ -39,6 +39,7 @@ Context: supports final verification gates for data, builds, and cited outputs.
 | --- | --- | --- | --- | --- | --- |
 | Data freshness matrix | `[map-input]` | map input | agents | Reclassify remaining rows by retained thesis claim impact. | legacy data-freshness rows |
 | Thesis-facing artifact truth | `[blocked]` | mainline thesis | retained claims | Verify only artifacts cited or promised by thesis text. | `data-and-figures-are-traceable.md`, `repo-promises-are-truthful.md` |
+| Verification/orbit-recovery evidence | `[blocked]` | contingent during writing | retained claims | If cited, treat the current 28-polytope / 469-minimum orbit-recovery run as validation evidence, not a theorem-strength proof surface. | `research/verification.md`, `experiments/verification/` |
 | Dataflow/cache policy | `[done]` | map input | current session | Deleted the generated dataflow map and script; use targeted grep/local inspection unless repeated provenance work justifies a new cache design. | `data-and-figures-are-traceable.md`, git history |
 | Repo promises | `[blocked]` | mainline thesis | final README/thesis wording | Check fresh-clone/build/repro promises only after wording stabilizes. | `repo-promises-are-truthful.md` |
 | LICCA returned outputs | `[future]` | future/follow-up | external compute | Keep pending/future unless thesis cites returned data. | legacy LICCA rows |
@@ -59,6 +60,14 @@ Context: supports final verification gates for data, builds, and cited outputs.
 - [fresh 2026-04-24] Smoke outputs should stay untracked/temp unless an
   experiment documents an analyzer path.
   Refresh by: checking `job-smoke.sh` scripts and `.jsonl` status.
+- [fresh 2026-04-25] `research/verification.md` is the current verification
+  summary: canonical all-minimum and orbit-recovery runs cover 28 selected
+  polytopes and 469 trusted minima with full reconstruction success.
+  `research/verification-orbit-recovery.md` still contains historical rewrite
+  planning around a 112-row / one-best-orbit shape and should not be treated as
+  current execution truth without refreshing it.
+  Refresh by: reading both research notes and the current binaries under
+  `experiments/verification/`.
 
 ## Pruned / Stale
 
