@@ -3,13 +3,14 @@ Purpose: submission, preservation, dissemination, and final archive roadmap.
 Context: external-clock task bundle for thesis closeout.
 -->
 
-# Submission Roadmap
+# Submit Thesis Roadmap
 
 ## Status
 
 - State: external clock.
-- Last updated: 2026-04-24.
-- Source surfaces: `FINAL-VERIFICATION.md:T7`, `FINAL-VERIFICATION.md:T9`,
+- Last updated: 2026-04-25.
+- Source surfaces: `tasks/verify-thesis-done.md`,
+  `.agents/skills/verification/references/submission-artifacts-are-complete.md`,
   `thesis/submission/README.md`, `ROADMAP.md`.
 - Refresh when: Prüfungsamt, Kai, Elizabeth, Zenodo, arXiv, or final archive
   facts change.
@@ -19,7 +20,7 @@ Context: external-clock task bundle for thesis closeout.
 - [accepted 2026-04-24] Final closure means no further direct repo-related
   master-thesis action remains; the final GitHub archive/read-only action is
   the last direct repo action.
-  Source: Jorn, `FINAL-VERIFICATION.md:T9`.
+  Source: Jorn, `tasks/verify-thesis-done.md`.
   Why it matters: keeps later publication/research/admin observations out of
   the thesis-project done definition unless explicitly promoted.
 - [external 2026-04-24] The Bachelor-/Masterarbeit registration form is already
@@ -49,10 +50,10 @@ Context: external-clock task bundle for thesis closeout.
 | item | state | value class | owner/gate | next action | source |
 | --- | --- | --- | --- | --- | --- |
 | Registration handin | `[external]` | external clock | Jorn / Elizabeth | Hand in already-filled form after Elizabeth agrees/signs; earliest known date was Monday 2026-04-27. | `thesis/submission/README.md` |
-| Final university checklist | `[Jorn]` | external clock | Jorn | Verify exact Prüfungsamt copy count, forms, USB/CD contents, and upload mechanics from current letter/checklist. | `FINAL-VERIFICATION.md:T7.2` |
-| Non-GitHub preservation | `[Jorn]` | external clock | Jorn/Kai | Choose Zenodo/GitHub integration, manual upload, OPUS Augsburg, Figshare, or another target before final archive. | `FINAL-VERIFICATION.md:T9.3` |
-| Final archive | `[blocked]` | mainline thesis | all final gates | Identify final commit/tag, preserve required copies, then archive/read-only GitHub as last direct repo action. | `FINAL-VERIFICATION.md:T9` |
-| arXiv/outreach | `[future]` | future/follow-up | Jorn/Kai after review | Decide after Kai reviews thesis; keep out of closure unless promoted. | `FINAL-VERIFICATION.md:T9.6` |
+| Final university checklist | `[Jorn]` | external clock | Jorn | Verify exact Prüfungsamt copy count, forms, USB/CD contents, and upload mechanics from current letter/checklist. | `thesis/submission/README.md`, `submission-artifacts-are-complete.md` |
+| Non-GitHub preservation | `[Jorn]` | external clock | Jorn/Kai | Choose Zenodo/GitHub integration, manual upload, OPUS Augsburg, Figshare, or another target before final archive. | `thesis/submission/README.md` |
+| Final archive | `[blocked]` | mainline thesis | thesis-done gate | Identify final commit/tag, preserve required copies, then archive/read-only GitHub as last direct repo action. | `tasks/verify-thesis-done.md` |
+| arXiv/outreach | `[future]` | future/follow-up | Jorn/Kai after review | Decide after Kai reviews thesis; keep out of closure unless promoted. | `thesis/submission/README.md` |
 
 ## Agent Cache
 

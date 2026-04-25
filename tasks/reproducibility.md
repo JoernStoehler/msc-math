@@ -11,7 +11,7 @@ Context: supports final verification gates for data, builds, and cited outputs.
 - Last updated: 2026-04-25.
 - Source surfaces: `DATAFLOW.md`, `experiments/**`, `research/README.md`,
   `research/*.md`,
-  `FINAL-VERIFICATION.md:T4/T5`, `scripts/dataflow.sh`.
+  `tasks/verify-thesis-done.md`, `scripts/dataflow.sh`.
 - Refresh when: retained thesis claims cite artifacts, experiment outputs move,
   or repo promises change.
 
@@ -30,7 +30,7 @@ Context: supports final verification gates for data, builds, and cited outputs.
 - [accepted 2026-04-24] LFS-tracked `.jsonl` artifacts in the final state can be
   intentional preserved artifacts, historical records, or future/follow-up
   material; they must not be silently used as thesis support.
-  Source: `FINAL-VERIFICATION.md:T9.5`.
+  Source: `tasks/verify-thesis-done.md`.
   Why it matters: final archive can contain historical data if claims are clear.
 
 ## Work Map
@@ -38,9 +38,9 @@ Context: supports final verification gates for data, builds, and cited outputs.
 | item | state | value class | owner/gate | next action | source |
 | --- | --- | --- | --- | --- | --- |
 | Data freshness matrix | `[map-input]` | map input | agents | Reclassify remaining rows by retained thesis claim impact. | legacy data-freshness rows |
-| Thesis-facing artifact truth | `[blocked]` | mainline thesis | retained claims | Verify only artifacts cited or promised by thesis text. | `FINAL-VERIFICATION.md:T4/T5` |
+| Thesis-facing artifact truth | `[blocked]` | mainline thesis | retained claims | Verify only artifacts cited or promised by thesis text. | `data-and-figures-are-traceable.md`, `repo-promises-are-truthful.md` |
 | Dataflow/cache policy | `[map-input]` | contingent during writing | retained claims | Keep or extend generated dataflow only if cited artifact truth, archive clarity, or repeated audits need it; targeted grep/local inspection is fine otherwise. | `DATAFLOW.md`, `scripts/dataflow.sh` |
-| Repo promises | `[blocked]` | mainline thesis | final README/thesis wording | Check fresh-clone/build/repro promises only after wording stabilizes. | `FINAL-VERIFICATION.md:T5` |
+| Repo promises | `[blocked]` | mainline thesis | final README/thesis wording | Check fresh-clone/build/repro promises only after wording stabilizes. | `repo-promises-are-truthful.md` |
 | LICCA returned outputs | `[future]` | future/follow-up | external compute | Keep pending/future unless thesis cites returned data. | legacy LICCA rows |
 
 ## Agent Cache

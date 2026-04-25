@@ -8,7 +8,7 @@ Use it before reading deeper notes or experiment folders.
 
 - Thesis story index: `research/README.md`
 - Work obligations: `tasks/hko.md`
-- Thesis-done gate: `FINAL-VERIFICATION.md`
+- Thesis-done gate: `tasks/verify-thesis-done.md`
 - Active/open work items: `tasks/hko.md`
 - Topic research note and interpretation: `research/hko-local-maximum.md`
 - Exact theorem route details: `research/hko-local-maximum-exact-clarke.md`

@@ -47,7 +47,7 @@ obligations.
 | Visualization negative exploration | `visualization.md` | `tasks/landscape.md`, `tasks/writing.md` if included as standalone or supporting material |
 | Pentagon rotation formula | `sys-landscape.md`, future dedicated note if promoted | `tasks/landscape.md`, `tasks/writing.md` if promoted from future work |
 | Numerical and algorithmic method story | `numerics.md`, `numerics-error-bounds.md`, `verification.md`, `verification-orbit-recovery.md` | `tasks/numerics.md`, `tasks/reproducibility.md`, `tasks/writing.md` |
-| Repo/software/process story | `finish-current-state.md`, `verification.md`, `visualization.md`, architecture and submission maps | `tasks/infrastructure.md`, `tasks/reproducibility.md`, `tasks/writing.md`, `tasks/submission.md` |
+| Repo/software/process story | `finish-current-state.md`, `verification.md`, `visualization.md`, architecture and submission maps | `tasks/infrastructure.md`, `tasks/reproducibility.md`, `tasks/writing.md`, `tasks/submit-thesis.md` |
 
 ### Research Note Index
 
@@ -65,7 +65,7 @@ obligations.
 - `tasks/*.md`: routes work, records steering decisions, links here for proof
   and interpretation content, and owns remaining obligations caused by desired
   thesis stories.
-- `FINAL-VERIFICATION.md`: owns final done gates; update or flag it when a
-  research note changes what must be checked before archive.
+- `tasks/verify-thesis-done.md`: owns final done gates; update or flag it when
+  a research note changes what must be checked before declaring the thesis done.
 - `formal/`: owns developer-facing proof text; research notes may explain proof
   route state but should not replace proof-bearing TeX.

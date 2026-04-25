@@ -125,9 +125,10 @@ Implication for later packets:
 
 ### 6. Current Root-Checkout Risk
 
-- Current root checkout already has unrelated changes:
+- Historical root checkout at the time of this inventory already had unrelated
+  changes:
   - modified `TASKS.md`
-  - modified `FINAL-VERIFICATION.md`
+  - modified final-verification surfaces
   - durable `.codex/reference/repo-maintainability/` notes
 
 Implication for later packets:

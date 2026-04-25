@@ -1,10 +1,10 @@
-# Thesis Claims Are Supported
+# Thesis Stories Are Supported
 
 ## Use When
 
 Use this packet when the task is to check whether current or proposed
-thesis-facing claims are actually supported, overstated, incomplete, or missing
-required caveats.
+thesis-facing stories and claims are actually supported, overstated,
+incomplete, or missing required caveats.
 
 This packet is useful before the thesis text is final. When the thesis prose is
 still partial, verify retained thesis stories against `research/README.md`,
@@ -17,8 +17,8 @@ Use these surfaces in this order:
 
 1. `research/README.md` for the thesis story index, plus topic `research/*.md`
    notes for interpretation and proof-route state.
-2. `FINAL-VERIFICATION.md` for final node IDs and thesis-done semantics,
-   especially `T1`, `T2`, `T4`, and `T6`.
+2. `tasks/verify-thesis-done.md` for final thesis-done semantics and the
+   compact final gate that will consume this packet's findings.
 3. The current thesis artifact when the wording already exists in `thesis/`.
 4. The cited formal notes, experiment packages, preserved artifacts, and
    research notes that the claim relies on.
@@ -30,27 +30,30 @@ what the research interpretation, task obligations, or thesis text say.
 
 ## Procedure
 
-1. Name the exact claim block or subsection under review.
-2. List the support the claim would need:
+1. Name the exact story, claim block, or subsection under review.
+2. List the support the story or claim would need:
    - theorem/proof;
    - experiment/data artifact;
    - figure/table/provenance;
    - caveat/future-work wording;
    - repo/reproducibility promise.
-3. Inspect the actual supporting sources and classify each claim as one of:
+3. Inspect the actual supporting sources and classify each story or claim as
+   one of:
    - `supported`
    - `supported only with caveat`
    - `missing support`
    - `future/cut unless support arrives`
    - `Jörn decision needed on claim strength or framing`
-4. Report findings first with file paths, node IDs, and concrete missing pieces.
+4. Report findings first with file paths and concrete missing pieces.
 5. If the support is absent but the honest weaker wording is obvious, propose
    the weaker wording or the needed caveat instead of only saying "not done".
 
 ## Ask Jörn Only For
 
-- choosing between plausible claim strengths when the evidence does not decide;
-- thesis-framing decisions about whether to keep, weaken, or cut a claim;
+- choosing between plausible story or claim strengths when the evidence does
+  not decide;
+- thesis-framing decisions about whether to keep, weaken, or cut a story or
+  claim;
 - mathematical judgment that the available artifacts do not settle.
 
 Do not ask Jörn to do agent work such as locating the cited source, comparing
@@ -61,7 +64,7 @@ missing.
 
 Prefer findings first in severity order. For each finding, say:
 
-- the claim or claim block;
+- the story, claim, or claim block;
 - status;
 - evidence checked;
 - what is missing or what caveat is required;

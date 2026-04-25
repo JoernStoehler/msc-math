@@ -1,29 +1,32 @@
 ---
 name: verification
-description: Verification workflow for final thesis-done checks and ongoing readiness passes. Use when asked whether claims, repo promises, code/data outputs, figures, or experiment surfaces are supported, complete, reproducible, truthful, or ready, or when asked what verification gates exist.
+description: Repeated verification and quality-measurement workflow for thesis stories, repo promises, code/data outputs, figures, experiment surfaces, and cached operational definitions. Use when asked whether a surface is supported, complete, reproducible, truthful, ready, or how to run reusable quality checks.
 ---
 
 # Verification
 
 This skill routes verification work between the repo's authority surfaces.
-The workflows and packets below are jumpstarters for verification work, not
-guarantees that the listed checks suffice, are always the most useful next
+The workflows and packets below are repeated quality-measurement tools and
+cached operational definitions. They are jumpstarters for verification work,
+not guarantees that the listed checks suffice, are always the most useful next
 checks, or rule out an obvious ad-hoc improvement. Use them as the default
 starting point, then tighten, skip, or extend checks when the actual surface
 demands it.
 
 ## Authority Split
 
-- `FINAL-VERIFICATION.md` is the authoritative final finished-state spec.
+- `tasks/verify-thesis-done.md` owns the once-run final thesis-done gate.
 - `ROADMAP.md` and `tasks/*.md` own milestones, sequencing, ownership, and
   cached task knowledge.
 - `research/README.md` and `research/*.md` own thesis story interpretation and
   proof-route state; `tasks/*.md` owns the remaining obligations caused by
   desired thesis stories.
-- `references/*.md` in this skill own reusable operational verification passes.
+- `references/*.md` in this skill own reusable operational verification passes,
+  quality measurements, and cached definitions of what a check means.
 
-Do not promote a pre-final readiness check into `FINAL-VERIFICATION.md` unless
-Jörn explicitly wants it to become part of thesis-done.
+Do not expand `tasks/verify-thesis-done.md` with repeated workflows. Put
+read-many/run-many check procedures here, and let the final gate point to the
+packet that produces the finding.
 
 ## Workflow
 
@@ -32,7 +35,7 @@ Jörn explicitly wants it to become part of thesis-done.
    - a reusable pre-final readiness pass; or
    - current status of an open verification surface.
 2. If the task is about literal thesis/project done conditions, start with
-   `FINAL-VERIFICATION.md`.
+   `tasks/verify-thesis-done.md`.
 3. Otherwise list the available packet files:
    `ls .agents/skills/verification/references`
 4. Packet files in `references/` intentionally use statement-form names such as
@@ -73,43 +76,33 @@ Status labels:
 
 Current coverage:
 
-- `T1` thesis-facing research story surface is included:
-  `use nearest packet` -> `thesis-claims-are-supported.md`
-- `T2` thesis claims have support of the right type and strength:
-  `packet exists` -> `thesis-claims-are-supported.md`
-- `T3` thesis is understandable enough for its audience:
+- thesis-facing research story surface is included:
+  `packet exists` -> `thesis-stories-are-supported.md`
+- thesis claims have support of the right type and strength:
+  `packet exists` -> `thesis-stories-are-supported.md`
+- thesis is understandable enough for its audience:
   `mostly Jörn-only`
-- `T4.1` bibliography resolves:
-  `missing packet`
-- `T4.2` internal thesis cross-references resolve:
-  `missing packet`
-- `T4.3` theorem / definition / proof-source references resolve:
-  `use nearest packet` -> `thesis-claims-are-supported.md`
-- `T4.4` figure and table provenance resolves:
-  `use nearest packet` -> `repo-promises-are-truthful.md`
-- `T4.5` experiment / dataset / code / result-artifact references resolve:
-  `use nearest packet` -> `repo-promises-are-truthful.md`
-- `T4.6` algorithm and method references resolve:
-  `use nearest packet` -> `thesis-claims-are-supported.md`
-- `T5` repo artifact matches thesis promises:
+- bibliography and internal thesis cross-references resolve:
+  `packet exists` -> `references-resolve.md`
+- theorem / definition / proof-source / algorithm references resolve:
+  `packet exists` -> `references-resolve.md`
+- figure, table, dataset, code, and experiment-artifact provenance resolves:
+  `packet exists` -> `data-and-figures-are-traceable.md`
+- repo artifact matches thesis promises:
   `packet exists` -> `repo-promises-are-truthful.md`
-- `T6` unfinished work is cut, caveated, or labeled future:
-  `use nearest packet` -> `thesis-claims-are-supported.md`
-- `T7` submission and mechanical handin are complete:
-  `missing packet`
-- `T8` thesis is useful to its audience:
+- unfinished work is cut, caveated, or labeled future:
+  `packet exists` -> `thesis-stories-are-supported.md`
+- submission artifacts and archive prerequisites are complete:
+  `packet exists` -> `submission-artifacts-are-complete.md`
+- thesis is useful to its audience:
   `mostly Jörn-only`
 
 Near-term packet candidates:
 
-- `data-and-figures-are-reproducible.md`
-  Repeated figure/provenance tasks currently borrow
-  `repo-promises-are-truthful.md`, but the read set is already distinct enough
-  (`DATAFLOW.md`, producer/analyze scripts, figure provenance).
-- `references-resolve.md`
-  Likely useful once the thesis text is less placeholder-heavy.
-- `submission-artifacts-are-complete.md`
-  Likely useful closer to final assembly.
+- Add a dedicated readability/usefulness packet only if agents can define
+  concrete checks that save Jörn time before a human final read.
+- Split `data-and-figures-are-traceable.md` only when thesis figures and
+  tables grow enough that one packet becomes a bad read set.
 
 Non-final adjacent conditions:
 

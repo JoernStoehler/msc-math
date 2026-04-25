@@ -79,7 +79,7 @@ Context: non-thesis-spine work should stay bounded during finish mode.
 | --- | --- | --- | --- | --- | --- |
 | Task-system migration | `[done]` | map input | current session | Legacy TASKS/FINISH were removed; use ROADMAP and topic bundles. | `tasks/README.md`, `ROADMAP.md` |
 | PM/research convention refactor | `[active]` | map input | current session | Add next-map layer, research index, task outcome conventions, and protocol-style skills. | `AGENTS.md`, `research/README.md`, `.agents/skills/` |
-| Results migration | `[done]` | map input | current session | `RESULTS.md` was deleted after distributing story interpretation and obligations to research/tasks/final verification surfaces. | `research/README.md`, `tasks/*.md`, `FINAL-VERIFICATION.md` |
+| Results migration | `[done]` | map input | current session | `RESULTS.md` was deleted after distributing story interpretation and obligations to research/tasks/final verification surfaces. | `research/README.md`, `tasks/*.md`, `tasks/verify-thesis-done.md` |
 | Cache-surface audit | `[active]` | map input | current session or next roadmap session | Decide whether `ARCHITECTURE.md` and `DATAFLOW.md` should be shortened, rewritten by hand, generated, or deprecated. | `ARCHITECTURE.md`, `DATAFLOW.md`, `scripts/dataflow.sh` |
 | Agent-facing architecture/navigation | `[map-input]` | contingent during writing | archive clarity | Keep `ARCHITECTURE.md` current only where it saves agent friction for retained work. | `ARCHITECTURE.md` |
 | Capacity/orbit API architecture | `[future]` | future/follow-up by default | retained claim impact | Do not promote broad APIs unless retained thesis/reproducibility needs it. | `ARCHITECTURE.md`, legacy rows |

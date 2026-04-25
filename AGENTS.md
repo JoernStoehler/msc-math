@@ -31,10 +31,10 @@ Planned deliverables:
 - `contracts/`: Canonical algorithm correspondence and verification contracts.
 - `thesis/`: Publishable thesis sources. The thesis is self-contained and does not `\input` files from `formal/`, `experiments/`, or `crates/`.
 - `papers/<abbreviationYear>/`: Downloaded arXiv paper sources.
-- `FINAL-VERIFICATION.md`: Literal thesis-done truth-spec: what must be true for the thesis project to count as finished.
 - `ROADMAP.md`: Agent-facing closeout overview and routing map for
   `tasks/*.md`.
-- `tasks/`: Topic mini-roadmaps and cached task knowledge.
+- `tasks/`: Topic mini-roadmaps, cached task knowledge, and the compact
+  once-run final thesis-done gate in `tasks/verify-thesis-done.md`.
 - `ARCHITECTURE.md`: Repo-level architecture map: component boundaries, core entities, library subsystems, and persisted-data architecture.
 - `scratch/`: Undocumented scratch notes, migration notes, and temporary working material. Do not treat it as current convention text.
 - `scripts/`: Repo helper scripts that are not tied to one runtime environment,
@@ -60,10 +60,10 @@ one-hop maps after this always-loaded file.
 | `ROADMAP.md` | orienting on thesis closeout streams, current phase, or where a task belongs |
 | `tasks/README.md` | editing `tasks/*.md` or interpreting task-bundle status/cache conventions |
 | `research/README.md` | looking for interpretation notes, proof-route state, or research-result caches |
-| `FINAL-VERIFICATION.md` | checking literal archive-ready done gates |
 | `ARCHITECTURE.md` | navigating repo component boundaries and code architecture |
 | `DATAFLOW.md` | checking the generated declared-artifact audit if grep/local inspection is not enough |
-| `tasks/quality.md` | running repeatable quality, claim-support, repo-promise, code, or test passes |
+| `tasks/verify-thesis-done.md` | checking the once-run final thesis-done gate |
+| `.agents/skills/verification/` | running repeatable quality, claim-support, repo-promise, code, data, or figure passes |
 | `thesis/submission/README.md` | checking university forms, submission mechanics, or preservation actions |
 
 ## General Conventions
@@ -106,11 +106,16 @@ one-hop maps after this always-loaded file.
 - Route planning surfaces explicitly:
   `research/README.md` and `research/*.md` = thesis story interpretation,
   proof-route state, and research caches,
-  `FINAL-VERIFICATION.md` = literal thesis-done truth-spec,
+  `tasks/verify-thesis-done.md` = once-run final thesis-done gate,
   `ROADMAP.md` = overview and routing surface,
   `tasks/*.md` = topic mini-roadmaps and cached task knowledge.
-- Do not put an intermediate milestone such as `writer-ready`, `submission-ready`, or `freeze-ready` into `FINAL-VERIFICATION.md` unless Jörn explicitly wants that milestone to become part of the literal finished-state specification.
-- If an intermediate milestone needs durable multi-session acceptance criteria but is still not part of thesis-done, create a separate planning or milestone file instead of extending `FINAL-VERIFICATION.md` by default.
+- Do not put repeated quality workflows, intermediate milestones, or
+  `writer-ready` / `submission-ready` / `freeze-ready` acceptance detail into
+  `tasks/verify-thesis-done.md`. Put reusable checks in the `verification`
+  skill and topic-specific obligations in `tasks/*.md`.
+- If an intermediate milestone needs durable multi-session acceptance criteria
+  but is still not part of thesis-done, create a separate planning or milestone
+  file instead of extending `tasks/verify-thesis-done.md` by default.
 - Update the plan after meaningful results. Do not leave stale statuses.
 - Before asking Jörn to review a draft, proof sketch, experiment write-up, or conclusion, first run the checks that agents can run: buildability, internal consistency, source attribution, figure/text alignment, claim/data alignment, label/cross-reference resolution, missing tests, and scope drift.
 

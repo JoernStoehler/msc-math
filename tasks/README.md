@@ -14,7 +14,7 @@ without rereading the whole repo or reconstructing chat history.
 
 Ground truth stays elsewhere:
 
-- `FINAL-VERIFICATION.md`: final done gates.
+- `tasks/verify-thesis-done.md`: once-run final thesis-done gates.
 - source files and data files: code/data evidence.
 - `research/*.md`: interpretation, proof-route state, decision history, and
   negative results.

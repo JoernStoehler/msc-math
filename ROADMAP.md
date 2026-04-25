@@ -23,7 +23,7 @@ Freshness rules:
 ## Status
 
 - State: finish-mode roadmap scaffold.
-- Last updated: 2026-04-24.
+- Last updated: 2026-04-25.
 - Target: finish the scoped master-thesis project by 2026-05-14. Finishing by
   2026-05-07 is plausible but not assumed.
 - Phase 1 done-state basis was accepted by Jorn on 2026-04-24, modulo inline
@@ -35,10 +35,11 @@ Freshness rules:
 
 | Surface | Role |
 | --- | --- |
-| `FINAL-VERIFICATION.md` | final truth-spec: what must be true before archive |
+| `tasks/verify-thesis-done.md` | once-run final thesis-done gate |
 | `ROADMAP.md` | overview and routing surface for humans and agents |
 | `tasks/*.md` | topic mini-roadmaps and cached decision context |
 | `research/README.md` and `research/*.md` | thesis story index, detailed interpretation, proof-route state, negative results, and research caches |
+| `.agents/skills/verification/` | reusable quality-measurement packets and operational definitions |
 | `thesis/submission/README.md` | submission/admin forms, source links, and external-clock TODOs |
 | `ARCHITECTURE.md` | repo/code architecture map |
 
@@ -64,9 +65,9 @@ justify calendar delay and Jorn-time cost.
 
 | Bundle | Current role | Start here |
 | --- | --- | --- |
-| Submission and archive | external-clock actions, forms, Zenodo/arXiv/outreach, final archive | `tasks/submission.md` |
+| Verify thesis done | compact final gate run after topic, writing, reproducibility, and repeated verification passes stop finding blockers | `tasks/verify-thesis-done.md` |
+| Submission and archive | external-clock actions, forms, Zenodo/arXiv/outreach, final archive | `tasks/submit-thesis.md` |
 | Writing | thesis structure, writer-ready boundary, figures, final prose gates | `tasks/writing.md` |
-| Quality baseline | repeatable verification passes for thesis claims, repo promises, code/test surfaces, and final review prep | `tasks/quality.md` |
 | HKO | HKO2024 theorem/evidence/blocker split and exact-Clarke route | `tasks/hko.md` |
 | Hostile landscape | negative sys-search story and data-science evidence | `tasks/landscape.md` |
 | Numerics | numerical appendix, solver/projection/beta-LP state | `tasks/numerics.md` |
@@ -81,10 +82,11 @@ justify calendar delay and Jorn-time cost.
    concrete decision surfaces.
 3. Update bundle `Work Map` rows to classify each live item by value class.
 4. Backchain the final three-week execution plan from the filled bundles and
-   `FINAL-VERIFICATION.md`.
+   `tasks/verify-thesis-done.md`.
 
 ## Final Done Surface
 
-The archive-ready condition is in `FINAL-VERIFICATION.md:T9`: no direct
+The thesis-done declaration is in `tasks/verify-thesis-done.md`. The
+submission/archive follow-through is in `tasks/submit-thesis.md`; no direct
 repo-related master-thesis work remains after the final GitHub archive/read-only
 action.

@@ -21,7 +21,8 @@ Use these surfaces in this order:
 
 1. `research/README.md`, topic research notes, and `tasks/*.md` for
    thesis-facing deliverable and infrastructure obligations.
-2. `FINAL-VERIFICATION.md`, especially `T4.5`, `T4.6`, and `T5`.
+2. `tasks/verify-thesis-done.md`, especially the references/provenance and
+   repo-promises final gates.
 3. `AGENTS.md` and `ARCHITECTURE.md` for current repo map and intended durable
    component boundaries.
 4. The concrete code paths, scripts, datasets, and commands that the promise
@@ -54,7 +55,7 @@ name the concrete fix.
    - scope actually checked;
    - prerequisites not encoded in the promise;
    - whether the repo should promise rerun or preserved-artifact wording.
-5. Report findings first with file paths, node IDs, and the concrete mismatch.
+5. Report findings first with file paths and the concrete mismatch.
 
 ## Ask Jörn Only For
 

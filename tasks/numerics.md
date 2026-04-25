@@ -11,7 +11,7 @@ Context: route-freeze surface for proof-vs-validation-vs-caveat decisions.
 - Last updated: 2026-04-25.
 - Source surfaces: `research/numerics.md`,
   `research/numerics-error-bounds.md`, `experiments/numerics/`,
-  `formal/`, `FINAL-VERIFICATION.md:T2.4`.
+  `formal/`, `tasks/verify-thesis-done.md`.
 - Refresh when: numerical appendix route, solver story, or derivative/projection
   claims change.
 
@@ -35,7 +35,7 @@ Context: route-freeze surface for proof-vs-validation-vs-caveat decisions.
 | item | state | value class | owner/gate | next action | source |
 | --- | --- | --- | --- | --- | --- |
 | Numerical appendix route freeze | `[map-input]` | mainline thesis | agent prep then Jorn | Summarize proof-vs-validation-vs-caveat options for retained numerical claims. | `research/numerics*.md` |
-| Numerical error bounds | `[map-input]` | contingent during writing | retained wording | Fix/caveat only the pieces the thesis cites. | `FINAL-VERIFICATION.md:T2.4.3` |
+| Numerical error bounds | `[map-input]` | contingent during writing | retained wording | Fix/caveat only the pieces the thesis cites. | `thesis-stories-are-supported.md` |
 | Projection solver | `[future]` | future/follow-up by default | Jorn math if retained | Record tension between code and thesis; defer broad unification. | legacy projection row |
 | Beta-LP unification | `[future]` | future/follow-up by default | Jorn math if retained | Keep as future unless needed for retained solver explanation. | legacy beta-LP row |
 | Solver formal writeup | `[map-input]` | contingent during writing | retained wording | Avoid full per-module formalization unless thesis text requires it. | `formal/`, `research/numerics-error-bounds.md` |

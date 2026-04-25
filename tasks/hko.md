@@ -12,7 +12,7 @@ Context: main thesis result and potential publication-grade follow-up surface.
 - Source surfaces: `research/hko-local-maximum.md`,
   `research/hko-local-maximum-status.md`,
   `research/hko-local-maximum-exact-clarke.md`,
-  `experiments/hko-local-maximum/`, `FINAL-VERIFICATION.md:T2.1`.
+  `experiments/hko-local-maximum/`, `tasks/verify-thesis-done.md`.
 - Refresh when: exact-Clarke route, HKO theorem wording, or LICCA evidence
   changes.
 
@@ -30,7 +30,7 @@ Context: main thesis result and potential publication-grade follow-up surface.
 - [accepted 2026-04-24] Exact first-order certificate is the preferred stronger
   route if it becomes trusted; otherwise wording can fall back to supported
   numerical/conditional evidence.
-  Source: legacy exact-Clarke row and `FINAL-VERIFICATION.md:T2.1`.
+  Source: legacy exact-Clarke row and `tasks/verify-thesis-done.md`.
   Why it matters: theorem strength depends on certification status.
 
 ## Current Decomposition
@@ -96,7 +96,7 @@ This is the expanded meaning of "HKO is a local maximum" for thesis closeout.
 | item | state | value class | owner/gate | next action | source |
 | --- | --- | --- | --- | --- | --- |
 | HKO theorem/evidence/blocker split | `[done]` | map input | agent | Current decomposition captured in this file; refresh after exact-route or thesis-claim changes. | `research/hko-local-maximum*.md` |
-| Claim statement freeze | `[Jorn]` | mainline thesis | Jorn | Choose final HKO thesis wording obligation: exact `M_10` theorem if Packet 3 closes, or weaker theorem/evidence wording if not. | `research/hko-local-maximum.md`, `FINAL-VERIFICATION.md:T2.1` |
+| Claim statement freeze | `[Jorn]` | mainline thesis | Jorn | Choose final HKO thesis wording obligation: exact `M_10` theorem if Packet 3 closes, or weaker theorem/evidence wording if not. | `research/hko-local-maximum.md`, `tasks/verify-thesis-done.md` |
 | Exact certificate field mismatch | `[active]` | mainline thesis | agent then Jorn | Final gate was generalized on 2026-04-24; propagate quartic `Q(tan(pi/5))` field wording into theorem-facing prose and do not target a `Q(sqrt(5))` certificate. | `research/hko-local-maximum.md`, `research/hko-local-maximum-exact-clarke.md` |
 | Packet 3 representative coverage | `[active]` | mainline thesis or contingent | dedicated exact route sessions | Exactify remaining asymmetric seven-facet representatives and rebuild the witness until the final rank/kernel comparison is visible. | `experiments/hko-local-maximum/exact-clarke/` |
 | Witness contract and verifier | `[active]` | mainline thesis or contingent | dedicated exact route sessions | Emit backend-neutral witness with active rows, ranks, kernel basis, and symmetry inclusion/equality checks; verify with Sage. | `widened-seed-witness.json`, `verify_widened_seed_witness.sage` |
@@ -104,8 +104,8 @@ This is the expanded meaning of "HKO is a local maximum" for thesis closeout.
 | Formal theorem writeup | `[blocked]` | mainline thesis | exact route or weaker claim | After proof/wording route is frozen, write/update the formal and thesis-facing proof route. | `formal/hko-local-maximum/`, `thesis/` |
 | h-space / Danskin proof check | `[Jorn]` | mainline thesis if retained | Jorn | Verify the non-smooth first-order/Danskin argument only if retained in theorem route. | `formal/hko-local-maximum/second-order.tex` |
 | second-order proposition status | `[Jorn]` | contingent during writing | Jorn | Decide whether second-order note is proof route, supporting evidence, or future/cut after exact-route status is clear. | `formal/hko-local-maximum/second-order.tex` |
-| HKO empirical wording | `[blocked]` | contingent during writing | retained thesis text | Word perturbation, facet-splitting, cut-and-ascent, and neighborhood evidence only as strongly as existing artifacts support. | `FINAL-VERIFICATION.md:T2.1.4` |
-| HKO figures/tables | `[blocked]` | contingent during writing | thesis outline | Create or cite only figures/tables that the final HKO section actually uses. | `FINAL-VERIFICATION.md:T2.1.5` |
+| HKO empirical wording | `[blocked]` | contingent during writing | retained thesis text | Word perturbation, facet-splitting, cut-and-ascent, and neighborhood evidence only as strongly as existing artifacts support. | `thesis-stories-are-supported.md`, `data-and-figures-are-traceable.md` |
+| HKO figures/tables | `[blocked]` | contingent during writing | thesis outline | Create or cite only figures/tables that the final HKO section actually uses. | `data-and-figures-are-traceable.md` |
 | higher-F perturbation | `[future]` | future/follow-up | Jorn/external compute | Leave F=12/F=13 validation as pending/future unless cheap results already exist. | `research/hko-local-maximum.md` |
 | LICCA F=10 neighborhood | `[future]` | future/follow-up | Jorn/external compute | Reopen only if Jorn chooses LICCA action or results already returned. | `experiments/hko-local-maximum/perturbation-neighborhood/` |
 
@@ -127,7 +127,7 @@ This is the expanded meaning of "HKO is a local maximum" for thesis closeout.
   `research/hko-local-maximum-exact-clarke.md` "Field Note".
 - [fresh 2026-04-24] Before LICCA submission, the remote repo layout must match
   the current `experiments/...` package layout, not old `crates/exp-*` paths.
-  Refresh by: checking `tasks/submission.md` and current LICCA scripts.
+  Refresh by: checking `tasks/submit-thesis.md` and current LICCA scripts.
 
 ## Pruned / Stale
 

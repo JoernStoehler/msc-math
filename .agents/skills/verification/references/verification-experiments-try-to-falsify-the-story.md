@@ -11,8 +11,8 @@ Starter read set:
 Use these surfaces in this order:
 
 1. `AGENTS.md` for the crate-test versus experiment-validation boundary.
-2. `FINAL-VERIFICATION.md`, especially `T2`, `T5.5`, and the experiment/data
-   interpretation nodes under `T2.5`.
+2. `tasks/verify-thesis-done.md`, especially the claim-support,
+   references/provenance, and repo-promises final gates.
 3. The relevant convention skills, especially `experiment-conventions`,
    `dataset-conventions`, `rust-conventions`, and `formal-math-conventions`
    when the experiment is checking a mathematical implementation claim.

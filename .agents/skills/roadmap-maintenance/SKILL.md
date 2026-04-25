@@ -86,7 +86,7 @@ When choosing whether a candidate task is shallow enough to delegate, read `refe
 - Update `ROADMAP.md` only when the global overview changes.
 - If a research interpretation changes, update or flag the relevant
   `research/*.md` note and topic task bundle.
-- If final done gates change, update or flag `FINAL-VERIFICATION.md`.
+- If final done gates change, update or flag `tasks/verify-thesis-done.md`.
 
 ## Jörn Gates
 

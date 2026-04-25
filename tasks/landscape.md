@@ -12,7 +12,7 @@ hostility.
 - Last updated: 2026-04-25.
 - Source surfaces: `research/sys-landscape.md`,
   `research/sys-landscape-datascience/`, `research/sys-landscape-toolbox-audit.md`,
-  `experiments/sys-landscape/`, `FINAL-VERIFICATION.md:T2.2`.
+  `experiments/sys-landscape/`, `tasks/verify-thesis-done.md`.
 - Refresh when: retained hostile-landscape wording obligations or endpoint datasets
   change.
 
