@@ -31,9 +31,6 @@ Planned deliverables:
 - `contracts/`: Canonical algorithm correspondence and verification contracts.
 - `thesis/`: Publishable thesis sources. The thesis is self-contained and does not `\input` files from `formal/`, `experiments/`, or `crates/`.
 - `papers/<abbreviationYear>/`: Downloaded arXiv paper sources.
-- `RESULTS.md`: Compressed thesis-facing claim and interpretation cache: what
-  the thesis should say and with what strength, pointing outward to research
-  notes and evidence.
 - `FINAL-VERIFICATION.md`: Literal thesis-done truth-spec: what must be true for the thesis project to count as finished.
 - `ROADMAP.md`: Agent-facing closeout overview and routing map for
   `tasks/*.md`.
@@ -63,7 +60,6 @@ one-hop maps after this always-loaded file.
 | `ROADMAP.md` | orienting on thesis closeout streams, current phase, or where a task belongs |
 | `tasks/README.md` | editing `tasks/*.md` or interpreting task-bundle status/cache conventions |
 | `research/README.md` | looking for interpretation notes, proof-route state, or research-result caches |
-| `RESULTS.md` | checking the compressed top-level thesis claim and interpretation cache |
 | `FINAL-VERIFICATION.md` | checking literal archive-ready done gates |
 | `ARCHITECTURE.md` | navigating repo component boundaries and code architecture |
 | `DATAFLOW.md` | checking the generated declared-artifact audit if grep/local inspection is not enough |
@@ -108,7 +104,8 @@ one-hop maps after this always-loaded file.
 - For tasks with more than one concrete change or one verification step, keep a plan with objective, dependency, owner, and verification command or review check.
 - Include a quality gate in the plan. Use subagent review when Jörn asks for delegation or the active session instructions allow it; otherwise run a local review against the same checklist.
 - Route planning surfaces explicitly:
-  `RESULTS.md` = compressed thesis claim and interpretation cache,
+  `research/README.md` and `research/*.md` = thesis story interpretation,
+  proof-route state, and research caches,
   `FINAL-VERIFICATION.md` = literal thesis-done truth-spec,
   `ROADMAP.md` = overview and routing surface,
   `tasks/*.md` = topic mini-roadmaps and cached task knowledge.

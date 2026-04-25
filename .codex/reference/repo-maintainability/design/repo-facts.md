@@ -45,7 +45,8 @@ policy unless the current repo already states that policy explicitly.
   - `thesis/`: self-contained publication sources
   - `papers/`: downloaded paper sources
   - `TASKS.md`: project tracker
-  - `RESULTS.md`: thesis content plan / findings
+  - `research/README.md`, `research/*.md`, and `tasks/*.md`: thesis story
+    interpretation and related work obligations
 - `AGENTS.md` is already the root orientation map and always-loaded instruction
   surface.
 

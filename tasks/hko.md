@@ -8,8 +8,8 @@ Context: main thesis result and potential publication-grade follow-up surface.
 ## Status
 
 - State: map-input.
-- Last updated: 2026-04-24.
-- Source surfaces: `RESULTS.md`, `research/hko-local-maximum.md`,
+- Last updated: 2026-04-25.
+- Source surfaces: `research/hko-local-maximum.md`,
   `research/hko-local-maximum-status.md`,
   `research/hko-local-maximum-exact-clarke.md`,
   `experiments/hko-local-maximum/`, `FINAL-VERIFICATION.md:T2.1`.
@@ -19,7 +19,8 @@ Context: main thesis result and potential publication-grade follow-up surface.
 ## Steering Cache
 
 - [accepted 2026-04-15] HKO2024 local maximality is part of the thesis spine.
-  Source: Kai/Jorn state in `RESULTS.md` and legacy tracker.
+  Source: Kai/Jorn state in legacy tracker, now routed through
+  `research/README.md` and this bundle.
   Why it matters: HKO compression is mainline thesis work.
 - [accepted 2026-04-24] LICCA large HKO runs are optional publication-grade
   polish, not required for thesis sufficiency unless results already exist with
@@ -95,17 +96,17 @@ This is the expanded meaning of "HKO is a local maximum" for thesis closeout.
 | item | state | value class | owner/gate | next action | source |
 | --- | --- | --- | --- | --- | --- |
 | HKO theorem/evidence/blocker split | `[done]` | map input | agent | Current decomposition captured in this file; refresh after exact-route or thesis-claim changes. | `research/hko-local-maximum*.md` |
-| Claim statement freeze | `[Jorn]` | mainline thesis | Jorn | Choose final HKO thesis statement strength: exact `M_10` theorem if Packet 3 closes, or weaker theorem/evidence wording if not. | `RESULTS.md`, `FINAL-VERIFICATION.md:T2.1` |
+| Claim statement freeze | `[Jorn]` | mainline thesis | Jorn | Choose final HKO thesis wording obligation: exact `M_10` theorem if Packet 3 closes, or weaker theorem/evidence wording if not. | `research/hko-local-maximum.md`, `FINAL-VERIFICATION.md:T2.1` |
 | Exact certificate field mismatch | `[active]` | mainline thesis | agent then Jorn | Final gate was generalized on 2026-04-24; propagate quartic `Q(tan(pi/5))` field wording into theorem-facing prose and do not target a `Q(sqrt(5))` certificate. | `research/hko-local-maximum.md`, `research/hko-local-maximum-exact-clarke.md` |
 | Packet 3 representative coverage | `[active]` | mainline thesis or contingent | dedicated exact route sessions | Exactify remaining asymmetric seven-facet representatives and rebuild the witness until the final rank/kernel comparison is visible. | `experiments/hko-local-maximum/exact-clarke/` |
 | Witness contract and verifier | `[active]` | mainline thesis or contingent | dedicated exact route sessions | Emit backend-neutral witness with active rows, ranks, kernel basis, and symmetry inclusion/equality checks; verify with Sage. | `widened-seed-witness.json`, `verify_widened_seed_witness.sage` |
-| Stale `44/10` reconciliation | `[active]` | mainline thesis | agent | Replace or caveat old `44`-orbit / `10`-gradient prose with current `150` minima / `20` subsets / `28` gradient-pattern bookkeeping. | `RESULTS.md`, `formal/hko-local-maximum/gradient-analysis.tex` |
-| Formal theorem writeup | `[blocked]` | mainline thesis | exact route or weaker claim | After claim strength is frozen, write/update the formal and thesis-facing proof route. | `formal/hko-local-maximum/`, `thesis/` |
+| Stale `44/10` reconciliation | `[active]` | mainline thesis | agent | Replace or caveat old `44`-orbit / `10`-gradient prose with current `150` minima / `20` subsets / `28` gradient-pattern bookkeeping. | `research/hko-local-maximum.md`, `formal/hko-local-maximum/gradient-analysis.tex` |
+| Formal theorem writeup | `[blocked]` | mainline thesis | exact route or weaker claim | After proof/wording route is frozen, write/update the formal and thesis-facing proof route. | `formal/hko-local-maximum/`, `thesis/` |
 | h-space / Danskin proof check | `[Jorn]` | mainline thesis if retained | Jorn | Verify the non-smooth first-order/Danskin argument only if retained in theorem route. | `formal/hko-local-maximum/second-order.tex` |
 | second-order proposition status | `[Jorn]` | contingent during writing | Jorn | Decide whether second-order note is proof route, supporting evidence, or future/cut after exact-route status is clear. | `formal/hko-local-maximum/second-order.tex` |
 | HKO empirical wording | `[blocked]` | contingent during writing | retained thesis text | Word perturbation, facet-splitting, cut-and-ascent, and neighborhood evidence only as strongly as existing artifacts support. | `FINAL-VERIFICATION.md:T2.1.4` |
 | HKO figures/tables | `[blocked]` | contingent during writing | thesis outline | Create or cite only figures/tables that the final HKO section actually uses. | `FINAL-VERIFICATION.md:T2.1.5` |
-| higher-F perturbation | `[future]` | future/follow-up | Jorn/external compute | Leave F=12/F=13 validation as pending/future unless cheap results already exist. | `RESULTS.md` |
+| higher-F perturbation | `[future]` | future/follow-up | Jorn/external compute | Leave F=12/F=13 validation as pending/future unless cheap results already exist. | `research/hko-local-maximum.md` |
 | LICCA F=10 neighborhood | `[future]` | future/follow-up | Jorn/external compute | Reopen only if Jorn chooses LICCA action or results already returned. | `experiments/hko-local-maximum/perturbation-neighborhood/` |
 
 ## Agent Cache

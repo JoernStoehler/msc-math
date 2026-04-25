@@ -37,8 +37,10 @@ references.
 
 This file does not replace:
 
-- `RESULTS.md`: what the thesis should claim, and with what strength.
-- `ROADMAP.md` / `tasks/*.md`: ownership, sequencing, and deadline choices.
+- `research/README.md` and `research/*.md`: thesis story interpretation,
+  proof-route state, and research caches.
+- `ROADMAP.md` / `tasks/*.md`: ownership, sequencing, deadline choices, and
+  obligations caused by desired thesis stories.
 - `formal/`: theorem statements, proof sketches, labels, and math notes.
 - `crates/`: stable reusable Rust crates.
 - `experiments/`: evidence-producing protocols and generated artifacts.
@@ -51,9 +53,10 @@ gate easier to pass.
 
 Use local context first:
 
-- `RESULTS.md` answers what the thesis should claim and with what strength.
-- `ROADMAP.md` / `tasks/*.md` answers ownership, sequencing, deadline, and
-  stop-condition choices.
+- `research/README.md` and `research/*.md` answer what the research story and
+  interpretation currently say.
+- `ROADMAP.md` / `tasks/*.md` answers ownership, sequencing, deadline,
+  stop-condition choices, and remaining proof/writeup/verification obligations.
 - `FINAL-VERIFICATION.md` answers what would make the thesis project finished.
 - The submitted thesis artifact answers what the thesis actually says.
 - The cited formal note, library module, experiment package, or preserved
@@ -113,76 +116,75 @@ is worth the intended audience's time.
 
 Sufficient children:
 
-- T1. The thesis contains the thesis-facing result surface from `RESULTS.md`
-  that is still intended for inclusion.
+- T1. The thesis contains the thesis-facing research stories that are still
+  intended for inclusion.
 - T2. Every claim made by the thesis has support of the right type and
   strength.
 - T3. The thesis is understandable enough for its intended audience.
 - T4. Every thesis-facing reference to proofs, code, data, experiments,
   algorithms, figures, and tables resolves to inspectable sources.
 - T5. The repo artifact matches the promises that the thesis makes about it.
-- T6. Work that is not finished is explicitly cut from the claim surface or
-  labeled as future work or caveated open work.
+- T6. Work that is not finished is explicitly cut from the thesis story surface
+  or labeled as future work or caveated open work.
 - T7. The thesis project has been submitted and closed mechanically.
 - T8. The thesis is useful to its intended audience.
 - T9. No direct repo-related master-thesis work remains.
 
 ## T1 Tree
 
-### T1. The thesis contains the thesis-facing result surface from `RESULTS.md`
-that T1.0 treats as included.
+### T1. The thesis contains the thesis-facing research stories that T1.0 treats
+as included.
 
 Sufficient children:
 
-- T1.0. `RESULTS.md` is accepted by Jorn as the current inclusion and
-  exclusion surface for thesis-facing material.
-- T1.1. Every main-result block in `RESULTS.md` that T1.0 treats as included is
-  in the thesis.
-- T1.2. Every supporting item in `RESULTS.md` that a retained thesis claim
-  depends on is in the thesis.
-- T1.3. Every non-required item in `RESULTS.md` that T1.0 treats as included is
-  in the thesis.
+- T1.0. The thesis story index and topic task bundles are accepted by Jorn as
+  the current inclusion and exclusion surface for thesis-facing material.
+- T1.1. Every main thesis story that T1.0 treats as included is in the thesis.
+- T1.2. Every supporting proof, interpretation, experiment, figure, table,
+  appendix, or explanation that a retained thesis story depends on is in the
+  thesis.
+- T1.3. Every optional item that T1.0 treats as included is in the thesis.
 
-### T1.0. `RESULTS.md` is accepted by Jorn as the current inclusion and
-exclusion surface for thesis-facing material.
-
-Sufficient children:
-
-- T1.0.a [observable] [Jorn] Jorn says the current `RESULTS.md` represents what
-  should and should not be included in the thesis-facing result surface, unless
-  a later explicit decision supersedes it.
-
-### T1.1. Every main-result block in `RESULTS.md` that T1.0 treats as included
-is in the thesis.
+### T1.0. The thesis story index and topic task bundles are accepted by Jorn as
+the current inclusion and exclusion surface for thesis-facing material.
 
 Sufficient children:
 
-- T1.1.a [observable] For each `[main result]` entry in `RESULTS.md` that T1.0
-  treats as included, the final thesis contains corresponding thesis material.
-- T1.1.b [observable] [Jorn] Jorn says no included `[main result]` entry from
-  `RESULTS.md` is missing and no included entry is only a placeholder.
+- T1.0.a [observable] [Jorn] Jorn says `research/README.md` plus the relevant
+  `tasks/*.md` bundles represent what should and should not be included in the
+  thesis-facing research story surface, unless a later explicit decision
+  supersedes them.
 
-### T1.2. Every supporting item in `RESULTS.md` that a retained thesis claim
-depends on is in the thesis.
+### T1.1. Every main thesis story that T1.0 treats as included is in the thesis.
 
 Sufficient children:
 
-- T1.2.a [observable] For each retained thesis-facing claim in `RESULTS.md`,
-  any supporting theorem statement, experiment description, figure, table,
-  appendix, or explanation that the thesis text still depends on appears in the
-  thesis or appendices.
-- T1.2.b [observable] [Jorn] Jorn says no retained `RESULTS.md` item depends
+- T1.1.a [observable] For each main story in `research/README.md` and the
+  corresponding task bundle that T1.0 treats as included, the final thesis
+  contains corresponding thesis material.
+- T1.1.b [observable] [Jorn] Jorn says no included main thesis story is missing
+  and no included story is only a placeholder.
+
+### T1.2. Every supporting item that a retained thesis story depends on is in
+the thesis.
+
+Sufficient children:
+
+- T1.2.a [observable] For each retained thesis-facing story, any supporting
+  theorem statement, experiment description, figure, table, appendix, or
+  explanation that the thesis text still depends on appears in the thesis or
+  appendices.
+- T1.2.b [observable] [Jorn] Jorn says no retained thesis-facing story depends
   on support material that is missing from the thesis artifact.
 
-### T1.3. Every non-required item in `RESULTS.md` that T1.0 treats as included
-is in the thesis.
+### T1.3. Every optional item that T1.0 treats as included is in the thesis.
 
 Sufficient children:
 
-- T1.3.a [observable] For each non-main-result item in `RESULTS.md` that T1.0
-  treats as included, corresponding thesis material exists.
-- T1.3.b [observable] [Jorn] Jorn says no included optional `RESULTS.md` item is
-  missing.
+- T1.3.a [observable] For each optional item in `research/README.md`,
+  `tasks/*.md`, or explicit Jorn decisions that T1.0 treats as included,
+  corresponding thesis material exists.
+- T1.3.b [observable] [Jorn] Jorn says no included optional item is missing.
 
 ## T2 Tree
 
@@ -218,8 +220,9 @@ Sufficient children:
   translations, scaling, and symplectic linear maps.
 - T2.1.1.b [observable] The thesis does not claim strict local maximality in
   raw `R^40`.
-- T2.1.1.c [observable] The thesis statement matches the claim strength
-  recorded in `RESULTS.md`.
+- T2.1.1.c [observable] The thesis statement matches the proof and wording
+  obligations recorded in `tasks/hko.md` and the interpretation in
+  `research/hko-local-maximum.md`.
 
 ### T2.1.2. The first-order certificate or weaker replacement matches the claim.
 
@@ -288,7 +291,7 @@ Sufficient children:
 - T2.2.1.a [observable] Every baseline family cited in the hostile-landscape
   story (random generic polytopes, random products, rotated regular products,
   fixed-F ascent, variable-F ascent) has cited data or artifacts in the repo,
-  or is removed from the claim surface.
+  or is removed from the thesis story surface.
 - T2.2.1.b [observable] [Jorn] Jorn says the baseline evidence cited is enough
   for the exact baseline negative-search sentences that remain in the thesis.
 
@@ -652,7 +655,7 @@ Sufficient children:
 
 - T3.4.a [observable] [Jorn] Jorn can look at the table of contents together
   with the introduction and conclusion and tell how the background, methods,
-  experiments, and conclusion support the two main result blocks.
+  experiments, and conclusion support the two main thesis stories.
 - T3.4.b [observable] A `gpt-5.4` high-reasoning agent, prompted as an
   unspoiled reader of the intended type, can read the table of contents
   together with the introduction and conclusion and correctly describe the role
@@ -850,15 +853,15 @@ Sufficient children:
 
 ## T6 Tree
 
-### T6. Work that is not finished is explicitly cut from the claim surface or
-labeled as future work or caveated open work.
+### T6. Work that is not finished is explicitly cut from the thesis story
+surface or labeled as future work or caveated open work.
 
 Sufficient children:
 
 - T6.1. Unfinished main-result-adjacent work is not presented as finished.
 - T6.2. Optional standalone results are integrated only if supported.
 - T6.3. Optional method and process material is integrated only if supported.
-- T6.4. No silent placeholder remains in the submitted claim surface.
+- T6.4. No silent placeholder remains in the submitted thesis story surface.
 
 ### T6.1. Unfinished main-result-adjacent work is not presented as finished.
 
@@ -889,7 +892,7 @@ Sufficient children:
   included only if their support exists; otherwise they are cut or labeled
   future or historical.
 
-### T6.4. No silent placeholder remains in the submitted claim surface.
+### T6.4. No silent placeholder remains in the submitted thesis story surface.
 
 Sufficient children:
 
@@ -1013,10 +1016,10 @@ Sufficient children:
 - T8.2.c [observable] [Jorn] Jorn says the thesis does not read like a dump of
   everything the project touched.
 - T8.2.d [observable] The retained content decisions are traceable to cached
-  value assessments in `ROADMAP.md`, `tasks/*.md`, `RESULTS.md`, thesis notes,
-  or an explicit Jorn decision, including whether each major item is included as
-  thesis spine, Kai-discussed standalone material, supporting evidence, future
-  work, or cut.
+  value assessments in `ROADMAP.md`, `tasks/*.md`, `research/*.md`, thesis
+  notes, or an explicit Jorn decision, including whether each major item is
+  included as thesis spine, Kai-discussed standalone material, supporting
+  evidence, future work, or cut.
 
 ### T8.3. The thesis makes clear what the reader can reuse, trust as support, and
 treat as future work.

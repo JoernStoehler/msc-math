@@ -84,7 +84,8 @@ When choosing whether a candidate task is shallow enough to delegate, read `refe
 - Preserve why a task is blocked, stale, deferred, or Jörn-owned.
 - Update notes for new evidence, blockers, and resume points. Change a header status or owner only when Jörn assigned or approved that ownership in the current PM surface.
 - Update `ROADMAP.md` only when the global overview changes.
-- If claim strength changes, update or flag `RESULTS.md`.
+- If a research interpretation changes, update or flag the relevant
+  `research/*.md` note and topic task bundle.
 - If final done gates change, update or flag `FINAL-VERIFICATION.md`.
 
 ## Jörn Gates

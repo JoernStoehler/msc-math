@@ -9,9 +9,9 @@ phase-2 repo/Jorn state maps.
 ## Status
 
 - State: map-input.
-- Last updated: 2026-04-24.
-- Source surfaces: `thesis/`, `RESULTS.md`, `FINAL-VERIFICATION.md:T1/T3/T8`,
-  `ROADMAP.md`.
+- Last updated: 2026-04-25.
+- Source surfaces: `thesis/`, `research/README.md`, `research/*.md`,
+  `tasks/*.md`, `FINAL-VERIFICATION.md:T1/T3/T8`, `ROADMAP.md`.
 - Refresh when: thesis structure, retained claim set, or advisor feedback
   changes.
 
@@ -22,8 +22,9 @@ phase-2 repo/Jorn state maps.
   Source: Jorn.
   Why it matters: prevents old open writing tasks from driving scope before
   value assessment.
-- [accepted 2026-04-15] Kai accepted the two main `RESULTS.md` result blocks as
-  sufficient for thesis completion.
+- [accepted 2026-04-15] Kai accepted the two main thesis story blocks, HKO local
+  maximality and hostile sys-search landscape, as sufficient for thesis
+  completion.
   Source: Kai meeting state recorded in legacy tracker.
   Why it matters: standalone/polish results do not create default obligations.
 - [accepted 2026-04-24] Jorn is the final clarity/usefulness judge if Kai or
@@ -38,10 +39,11 @@ phase-2 repo/Jorn state maps.
 | --- | --- | --- | --- | --- | --- |
 | Thesis structure | `[Jorn]` | map input | Jorn | Pick retained chapter structure after repo-state map gives concrete content options. | `thesis/`, `FINAL-VERIFICATION.md:T3.4` |
 | Writer-ready boundary | `[Jorn]` | map input | Jorn + agent prep | Classify thesis-external packets as must-finish-before-writing, contingent during writing, or future. | migrated tracker history |
-| HKO writeup compression | `[blocked]` | mainline thesis | HKO map | Wait for `tasks/hko.md` theorem/evidence/blocker state. | `RESULTS.md`, `FINAL-VERIFICATION.md:T2.1` |
-| Hostile landscape compression | `[blocked]` | mainline thesis | landscape map | Wait for `tasks/landscape.md` retained-claim state. | `RESULTS.md`, `FINAL-VERIFICATION.md:T2.2` |
+| HKO writeup compression | `[blocked]` | mainline thesis | HKO map | Wait for `tasks/hko.md` theorem/evidence/blocker state. | `research/hko-local-maximum.md`, `FINAL-VERIFICATION.md:T2.1` |
+| Hostile landscape compression | `[blocked]` | mainline thesis | landscape map | Wait for `tasks/landscape.md` retained-story state. | `research/sys-landscape.md`, `FINAL-VERIFICATION.md:T2.2` |
 | Numerical appendix route | `[blocked]` | contingent during writing | numerics map | Wait for `tasks/numerics.md` proof-vs-validation-vs-caveat state. | `FINAL-VERIFICATION.md:T2.4` |
 | Figures | `[future]` | contingent during writing | thesis structure | Decide after chapter structure names what needs illustration. | `FINAL-VERIFICATION.md:T3.6/T4.4` |
+| AI process reflection | `[future]` | contingent during writing | thesis structure | Include only if the final thesis structure has a reader-facing reason to discuss agent contribution, counterfactual impact, or failure modes. | `research/README.md`, `tasks/infrastructure.md` |
 | Final assembly | `[blocked]` | mainline thesis | thesis complete | Build PDF, bibliography/cross-reference/proofread checks, print/USB/forms/upload, final tag/archive. | `FINAL-VERIFICATION.md:T7` |
 
 ## Agent Cache

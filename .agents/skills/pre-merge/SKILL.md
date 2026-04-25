@@ -64,7 +64,7 @@ Before including any finding in the report to Jörn, read the file at the locati
 Verify with priority:
 1. **Cost-benefit recommendations** the subagent made — subagents lack context for cost-benefit judgments about the larger task. Severity ratings (FIX vs FLAG) reflect the subagent's limited view: it may escalate minor issues or downplay significant ones.
 2. **Interpretive conclusions** where the subagent inferred meaning from limited context — e.g., "this lemma is orphaned" (may be used by other modules) or "this reference dangles" (may resolve through `formal/main.tex` or `formal/library/main.tex`).
-3. **Specific claim types:** "dangling reference" → check if it resolves through the relevant formal or thesis build. "Orphaned lemma" → check if used elsewhere or is standalone valid math. "Missing entry" → check `ROADMAP.md`, `tasks/*.md`, `RESULTS.md`, or the relevant research note for a known gap before treating it as newly discovered.
+3. **Specific claim types:** "dangling reference" -> check if it resolves through the relevant formal or thesis build. "Orphaned lemma" -> check if used elsewhere or is standalone valid math. "Missing entry" -> check `ROADMAP.md`, `tasks/*.md`, `research/README.md`, or the relevant research note for a known gap before treating it as newly discovered.
 
 A verification subagent can cross-check the combined findings when the task has high blast radius or the first reviewer reports subtle findings.
 

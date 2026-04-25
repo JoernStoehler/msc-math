@@ -10,8 +10,8 @@ Context: research notes are first-class epistemic artifacts, not task trackers.
 Files in `research/` record expensive interpretation, proof-route state,
 decision history, negative results, and topic summaries. They are source
 artifacts for thesis planning: `tasks/*.md` should link here instead of
-embedding full reasoning, and `RESULTS.md` should extract thesis-facing claims
-from here when a note changes claim strength.
+embedding full reasoning, and thesis-facing work obligations should point to
+the relevant research note.
 
 Research files do not have to mirror `tasks/*.md` filenames. Topic interactions
 in research can differ from task-bundle interactions. Prefer clear names over
@@ -28,9 +28,28 @@ filename isomorphism.
   interpretation of completed exploratory runs".
 - Say what would refresh or invalidate the note.
 - If a theorem-strength claim depends on the note, link the corresponding
-  `RESULTS.md` entry and the Jörn review or verification gate.
+  task-bundle obligation and the Jörn review or verification gate.
 
 ## Current Index
+
+### Thesis Story Index
+
+This table is the top-level entrypoint for the thesis-facing research stories.
+It is not a separate claim register. The research note owns interpretation; the
+task bundle owns remaining proof, writeup, verification, and cut/weaken
+obligations.
+
+| Thesis story | Interpretation source | Work obligations |
+| --- | --- | --- |
+| HKO2024 local maximality | `hko-local-maximum.md`, `hko-local-maximum-status.md`, `hko-local-maximum-exact-clarke.md` | `tasks/hko.md`, `tasks/writing.md` |
+| Hostile sys-search landscape | `sys-landscape.md`, `sys-landscape-toolbox-audit.md`, `sys-landscape-datascience/` | `tasks/landscape.md`, `tasks/writing.md` |
+| Crosspolytope capacity | `crosspolytope.md` | `tasks/writing.md`, `tasks/reproducibility.md` if thesis cites the computation |
+| Visualization negative exploration | `visualization.md` | `tasks/landscape.md`, `tasks/writing.md` if included as standalone or supporting material |
+| Pentagon rotation formula | `sys-landscape.md`, future dedicated note if promoted | `tasks/landscape.md`, `tasks/writing.md` if promoted from future work |
+| Numerical and algorithmic method story | `numerics.md`, `numerics-error-bounds.md`, `verification.md`, `verification-orbit-recovery.md` | `tasks/numerics.md`, `tasks/reproducibility.md`, `tasks/writing.md` |
+| Repo/software/process story | `finish-current-state.md`, `verification.md`, `visualization.md`, architecture and submission maps | `tasks/infrastructure.md`, `tasks/reproducibility.md`, `tasks/writing.md`, `tasks/submission.md` |
+
+### Research Note Index
 
 | Area | Start here | Role |
 | --- | --- | --- |
@@ -43,10 +62,9 @@ filename isomorphism.
 
 ## Handshake With Other Surfaces
 
-- `tasks/*.md`: routes work and records steering decisions; links here for
-  proof and interpretation content.
-- `RESULTS.md`: owns the compressed thesis-facing claim and interpretation
-  cache; update or flag it when a research note changes what the thesis may say.
+- `tasks/*.md`: routes work, records steering decisions, links here for proof
+  and interpretation content, and owns remaining obligations caused by desired
+  thesis stories.
 - `FINAL-VERIFICATION.md`: owns final done gates; update or flag it when a
   research note changes what must be checked before archive.
 - `formal/`: owns developer-facing proof text; research notes may explain proof

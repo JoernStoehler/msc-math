@@ -55,10 +55,10 @@ Use this template:
   - This was easier than requiring top-level/Jörn coordination. Similar read-only migration coverage matrices can be delegated end-to-end; the top-level session only needs to verify any small `TASKS.md` propagation.
   - The delegate used level 1 subagents from a level 0 session. In hindsight, a top-level session could likely have started this as a level 1 subagent task; the delegate's nested helpers would then have been level 2, still below the nesting cutoff. The task did not rely on level 0 access, did not need Jörn interaction that the top-level session could not handle, and finished in a few minutes.
 
-## 2026-04-15 - RESULTS.md Freshness Audit
+## 2026-04-15 - Legacy `RESULTS.md` Freshness Audit
 
 - Prompt:
-  - `/tmp/2.md`: audit each `RESULTS.md` bullet against local artifacts and identify stale, pending, or contradicted claims.
+  - `/tmp/2.md`: audit each legacy `RESULTS.md` bullet against local artifacts and identify stale, pending, or contradicted claims.
 - Repo state:
   - Main commit before delegation: approximately the same audit window as above; exact start commit should be checked from local history if needed.
   - Worktree or branch: intended `audit-results-freshness`, but the agent ran in `/workspaces/msc-math` on `main`.
@@ -70,7 +70,7 @@ Use this template:
   - Answer/report path: `/tmp/2-answer.md`.
   - Commit(s): `28ac0da2` (`Refresh visualization audit notes`) on `main`.
 - Files changed: `research/visualization.md`, `experiments/visualization/main/main.rs`.
-  - Verification run: delegate reported no `RESULTS.md` changes needed, no contradictions found, and `cargo build -p visualization --release --bin visualization` passing for the stale visualization note.
+  - Verification run: delegate reported no legacy `RESULTS.md` changes needed, no contradictions found, and `cargo build -p visualization --release --bin visualization` passing for the stale visualization note.
 - Outcome:
   - Substantively done, but wrong execution context. The useful patch was small and relevant; the process violated the intended worktree isolation.
 - Calibration takeaway:

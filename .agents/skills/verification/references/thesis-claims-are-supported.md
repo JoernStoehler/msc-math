@@ -7,24 +7,26 @@ thesis-facing claims are actually supported, overstated, incomplete, or missing
 required caveats.
 
 This packet is useful before the thesis text is final. When the thesis prose is
-still partial, verify the retained claim surface against `RESULTS.md` plus the
-current supporting artifacts instead of waiting for the last writing pass.
+still partial, verify retained thesis stories against `research/README.md`,
+topic research notes, and `tasks/*.md` obligations instead of waiting for the
+last writing pass.
 
 ## Authority And Scope
 
 Use these surfaces in this order:
 
-1. `RESULTS.md` for the intended retained claim surface and intended strength.
+1. `research/README.md` for the thesis story index, plus topic `research/*.md`
+   notes for interpretation and proof-route state.
 2. `FINAL-VERIFICATION.md` for final node IDs and thesis-done semantics,
    especially `T1`, `T2`, `T4`, and `T6`.
 3. The current thesis artifact when the wording already exists in `thesis/`.
 4. The cited formal notes, experiment packages, preserved artifacts, and
    research notes that the claim relies on.
-5. `ROADMAP.md` and `tasks/*.md` for known open blockers, pending evidence, or explicit defer/future
-   status.
+5. `ROADMAP.md` and `tasks/*.md` for known open blockers, proof/writeup
+   obligations, pending evidence, or explicit defer/future status.
 
 Do not let a current experiment note silently strengthen a thesis claim beyond
-what `RESULTS.md` or the thesis text says.
+what the research interpretation, task obligations, or thesis text say.
 
 ## Procedure
 

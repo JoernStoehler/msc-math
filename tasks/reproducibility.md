@@ -9,7 +9,8 @@ Context: supports final verification gates for data, builds, and cited outputs.
 
 - State: map-input.
 - Last updated: 2026-04-25.
-- Source surfaces: `DATAFLOW.md`, `experiments/**`, `RESULTS.md`,
+- Source surfaces: `DATAFLOW.md`, `experiments/**`, `research/README.md`,
+  `research/*.md`,
   `FINAL-VERIFICATION.md:T4/T5`, `scripts/dataflow.sh`.
 - Refresh when: retained thesis claims cite artifacts, experiment outputs move,
   or repo promises change.
@@ -54,7 +55,8 @@ Context: supports final verification gates for data, builds, and cited outputs.
   needs LICCA only if thesis keeps large-N HKO falsification; convexity,
   crosspolytope timing, numerics notes, and cut-and-ascent timing should not be
   rerun by default.
-  Refresh by: checking retained claim wording in `RESULTS.md` and thesis text.
+  Refresh by: checking retained story obligations in `tasks/*.md`, research
+  notes, and thesis text.
 - [fresh 2026-04-24] Smoke outputs should stay untracked/temp unless an
   experiment documents an analyzer path.
   Refresh by: checking `job-smoke.sh` scripts and `.jsonl` status.

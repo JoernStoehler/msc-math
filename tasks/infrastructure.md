@@ -33,7 +33,7 @@ Context: non-thesis-spine work should stay bounded during finish mode.
   pruning of stale agent shortcuts.
 - [accepted 2026-04-25] Agent-facing PM should mix common practices rather than
   invent a custom task method: topic roadmap bundles, research interpretation
-  notes, thesis claim register, final verification gates, and toolbox skills.
+  notes, thesis story index, final verification gates, and toolbox skills.
   Source: Jorn/Codex design-space discussion.
   Why it matters: keeps agents close to familiar formats while preserving the
   research-specific epistemic layer.
@@ -58,10 +58,16 @@ Context: non-thesis-spine work should stay bounded during finish mode.
   Source: Jorn.
   Why it matters: agents can combine familiar map, claim-register, assurance,
   and runbook practices when the interaction between files stays low.
-- [open 2026-04-25] `ARCHITECTURE.md`, `RESULTS.md`, and `DATAFLOW.md` should be
-  audited as cache files. `RESULTS.md` may want to become a shorter
-  top-level research/claim entrypoint, and `DATAFLOW.md` may be too generated
-  and noisy for routine use compared with targeted grep/local inspection.
+- [accepted 2026-04-25] `RESULTS.md` was a migration cache. Thesis story
+  interpretation now lives in `research/README.md` and `research/*.md`; thesis
+  obligations live in `tasks/*.md`.
+  Source: Jorn.
+  Why it matters: desired claim type/strength is visible through proof,
+  interpretation, writeup, verification, and cut/weaken obligations instead of
+  a separate label register.
+- [open 2026-04-25] `ARCHITECTURE.md` and `DATAFLOW.md` should still be audited
+  as cache files. `DATAFLOW.md` may be too generated and noisy for routine use
+  compared with targeted grep/local inspection.
   Source: Jorn.
   Why it matters: stale or overlarge cache files become decoys; handwritten
   central cache files can be more standard than generated audits when the
@@ -73,7 +79,8 @@ Context: non-thesis-spine work should stay bounded during finish mode.
 | --- | --- | --- | --- | --- | --- |
 | Task-system migration | `[done]` | map input | current session | Legacy TASKS/FINISH were removed; use ROADMAP and topic bundles. | `tasks/README.md`, `ROADMAP.md` |
 | PM/research convention refactor | `[active]` | map input | current session | Add next-map layer, research index, task outcome conventions, and protocol-style skills. | `AGENTS.md`, `research/README.md`, `.agents/skills/` |
-| Cache-surface audit | `[active]` | map input | current session or next roadmap session | Decide whether `ARCHITECTURE.md`, `RESULTS.md`, and `DATAFLOW.md` should be shortened, renamed, rewritten by hand, generated, or deprecated. | `ARCHITECTURE.md`, `RESULTS.md`, `DATAFLOW.md`, `scripts/dataflow.sh` |
+| Results migration | `[done]` | map input | current session | `RESULTS.md` was deleted after distributing story interpretation and obligations to research/tasks/final verification surfaces. | `research/README.md`, `tasks/*.md`, `FINAL-VERIFICATION.md` |
+| Cache-surface audit | `[active]` | map input | current session or next roadmap session | Decide whether `ARCHITECTURE.md` and `DATAFLOW.md` should be shortened, rewritten by hand, generated, or deprecated. | `ARCHITECTURE.md`, `DATAFLOW.md`, `scripts/dataflow.sh` |
 | Agent-facing architecture/navigation | `[map-input]` | contingent during writing | archive clarity | Keep `ARCHITECTURE.md` current only where it saves agent friction for retained work. | `ARCHITECTURE.md` |
 | Capacity/orbit API architecture | `[future]` | future/follow-up by default | retained claim impact | Do not promote broad APIs unless retained thesis/reproducibility needs it. | `ARCHITECTURE.md`, legacy rows |
 | Experiment-to-library audit | `[future]` | future/follow-up by default | retained claim impact | Classify repeated helpers only when it unblocks validation, writeup, or agent navigation. | legacy library rows |

@@ -1,7 +1,7 @@
 <!--
 Purpose: agent-facing project roadmap for the master-thesis closeout.
 Context: this is the navigation layer for current mini-roadmaps under tasks/.
-It is not the literal done truth-spec, not the thesis claim surface, and not a
+It is not the literal done truth-spec, not the thesis story index, and not a
 complete history of old task rows.
 
 Writing/update rules:
@@ -35,11 +35,10 @@ Freshness rules:
 
 | Surface | Role |
 | --- | --- |
-| `RESULTS.md` | compressed claim and interpretation cache: what the thesis should say and with what strength |
 | `FINAL-VERIFICATION.md` | final truth-spec: what must be true before archive |
 | `ROADMAP.md` | overview and routing surface for humans and agents |
 | `tasks/*.md` | topic mini-roadmaps and cached decision context |
-| `research/README.md` and `research/*.md` | detailed interpretation, proof-route state, negative results, and research caches |
+| `research/README.md` and `research/*.md` | thesis story index, detailed interpretation, proof-route state, negative results, and research caches |
 | `thesis/submission/README.md` | submission/admin forms, source links, and external-clock TODOs |
 | `ARCHITECTURE.md` | repo/code architecture map |
 

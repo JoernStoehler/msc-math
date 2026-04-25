@@ -87,4 +87,5 @@ cargo build --workspace --release
 - Numerical claims cite their source inline: file name, row id, command, or script output.
 - Label speculation as interpretation.
 - Record dead ends with the reason they failed so future agents do not retry them. Prefer a terse `research/*.md` history entry over a long chronological dump.
-- Keep thesis-facing conclusions aligned with `RESULTS.md` and the relevant `formal/` source.
+- Keep thesis-facing conclusions aligned with the relevant `research/` note,
+  `tasks/*.md` obligations, and `formal/` source.

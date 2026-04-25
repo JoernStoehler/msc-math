@@ -8,8 +8,8 @@ Context: route-freeze surface for proof-vs-validation-vs-caveat decisions.
 ## Status
 
 - State: map-input.
-- Last updated: 2026-04-24.
-- Source surfaces: `RESULTS.md`, `research/numerics.md`,
+- Last updated: 2026-04-25.
+- Source surfaces: `research/numerics.md`,
   `research/numerics-error-bounds.md`, `experiments/numerics/`,
   `formal/`, `FINAL-VERIFICATION.md:T2.4`.
 - Refresh when: numerical appendix route, solver story, or derivative/projection

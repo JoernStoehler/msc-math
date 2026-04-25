@@ -14,7 +14,6 @@ without rereading the whole repo or reconstructing chat history.
 
 Ground truth stays elsewhere:
 
-- `RESULTS.md`: thesis claims and strength.
 - `FINAL-VERIFICATION.md`: final done gates.
 - source files and data files: code/data evidence.
 - `research/*.md`: interpretation, proof-route state, decision history, and
@@ -36,7 +35,7 @@ Tasks may produce epistemic artifacts, not only code or prose. Common outcomes:
 
 - write or repair a proof in `formal/` or `thesis/`
 - write an experiment interpretation in `research/`
-- extract or revise a thesis-facing claim in `RESULTS.md`
+- record or revise thesis-facing obligations in a topic bundle
 - run a verification packet and route each failure to a topic bundle
 - get Jörn approval for theorem-strength proof or interpretation claims
 

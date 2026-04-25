@@ -9,18 +9,19 @@ hostility.
 ## Status
 
 - State: map-input.
-- Last updated: 2026-04-24.
-- Source surfaces: `RESULTS.md`, `research/sys-landscape.md`,
+- Last updated: 2026-04-25.
+- Source surfaces: `research/sys-landscape.md`,
   `research/sys-landscape-datascience/`, `research/sys-landscape-toolbox-audit.md`,
   `experiments/sys-landscape/`, `FINAL-VERIFICATION.md:T2.2`.
-- Refresh when: retained hostile-landscape claim strength or endpoint datasets
+- Refresh when: retained hostile-landscape wording obligations or endpoint datasets
   change.
 
 ## Steering Cache
 
 - [accepted 2026-04-15] Hostile sys-search landscape is part of the thesis
   spine.
-  Source: Kai/Jorn state in `RESULTS.md` and legacy tracker.
+  Source: Kai/Jorn state in legacy tracker, now routed through
+  `research/README.md` and this bundle.
   Why it matters: retained negative-search evidence must be compressed for
   thesis, not treated as optional infrastructure.
 - [accepted 2026-04-24] Standard data-science methods may be used to support
@@ -39,11 +40,11 @@ hostility.
 
 | item | state | value class | owner/gate | next action | source |
 | --- | --- | --- | --- | --- | --- |
-| Hostile-landscape retained-claim compression | `[map-input]` | mainline thesis | agent prep then Jorn | Summarize what current evidence supports and where wording must weaken. | `RESULTS.md`, `research/sys-landscape.md` |
+| Hostile-landscape retained-claim compression | `[map-input]` | mainline thesis | agent prep then Jorn | Summarize what current evidence supports and where wording must weaken. | `research/sys-landscape.md`, `research/sys-landscape-toolbox-audit.md` |
 | Method-ledger/audit population | `[map-input]` | mainline thesis | agents | Populate current packet evidence into the hostile-landscape audit without opening new methods. | `research/sys-landscape-datascience/` |
 | Remaining method packet status | `[Jorn]` | map input | Jorn | Decide thesis-facing status of method packets after agent summary. | legacy landscape rows |
 | LICCA endpoint refresh | `[future]` | future/follow-up | external compute | Leave pending unless results are already available with low integration cost. | legacy LICCA rows |
-| Pentagon rotation formula | `[future]` | contingent during writing | Jorn/math | Include only status-level current finding unless proof becomes free. | `RESULTS.md` |
+| Pentagon rotation formula | `[future]` | contingent during writing | Jorn/math | Include only status-level current finding unless proof becomes free. | `research/sys-landscape.md` |
 
 ## Agent Cache
 
@@ -57,7 +58,7 @@ hostility.
   Refresh by: checking `experiments/sys-landscape/rotated-regular-products/`.
 - [fresh 2026-04-24] Witness-oracle and reduced-model ideas are future unless
   needed to explain retained claims.
-  Refresh by: checking `RESULTS.md` claim wording.
+  Refresh by: checking `research/sys-landscape.md` and thesis wording.
 
 ## Pruned / Stale
 

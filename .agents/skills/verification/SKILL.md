@@ -17,7 +17,9 @@ demands it.
 - `FINAL-VERIFICATION.md` is the authoritative final finished-state spec.
 - `ROADMAP.md` and `tasks/*.md` own milestones, sequencing, ownership, and
   cached task knowledge.
-- `RESULTS.md` owns the intended thesis claim surface.
+- `research/README.md` and `research/*.md` own thesis story interpretation and
+  proof-route state; `tasks/*.md` owns the remaining obligations caused by
+  desired thesis stories.
 - `references/*.md` in this skill own reusable operational verification passes.
 
 Do not promote a pre-final readiness check into `FINAL-VERIFICATION.md` unless
@@ -71,7 +73,7 @@ Status labels:
 
 Current coverage:
 
-- `T1` thesis-facing result surface is included:
+- `T1` thesis-facing research story surface is included:
   `use nearest packet` -> `thesis-claims-are-supported.md`
 - `T2` thesis claims have support of the right type and strength:
   `packet exists` -> `thesis-claims-are-supported.md`

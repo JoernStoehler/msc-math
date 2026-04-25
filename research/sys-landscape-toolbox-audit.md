@@ -4,7 +4,7 @@
 
 - Make the hostile-landscape result legible below the headline level.
 - Record, in one place, which "standard toolbox" methods were tried, which were not, and what each method actually licenses.
-- Keep this file as the canonical method ledger for the empirical hostile-landscape claim; use `research/sys-landscape.md` for topic narrative and `RESULTS.md` for compressed thesis claim surface.
+- Keep this file as the canonical method ledger for the empirical hostile-landscape claim; use `research/sys-landscape.md` for topic narrative and `tasks/landscape.md` for thesis-facing obligations.
 
 ## Current Role
 
@@ -129,4 +129,4 @@ Phase 2 should record these items explicitly instead of leaving them implicit:
 
 - Which methods count as part of the thesis-relevant "standard toolbox" and must therefore appear in the ledger even if unused?
 - Should phase 2 populate only methods already backed by committed artifacts, or also include clearly marked skipped rows for methods never implemented?
-- Should phase 3 compress `RESULTS.md` further once this ledger exists, or keep one medium-detail hostile-landscape paragraph there?
+- Should phase 3 compress `research/sys-landscape.md` further once this ledger exists, or keep one medium-detail hostile-landscape paragraph there?

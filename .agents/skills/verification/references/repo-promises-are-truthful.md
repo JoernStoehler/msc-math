@@ -19,7 +19,8 @@ edited or relied on.
 
 Use these surfaces in this order:
 
-1. `RESULTS.md` for thesis-facing deliverable and infrastructure claims.
+1. `research/README.md`, topic research notes, and `tasks/*.md` for
+   thesis-facing deliverable and infrastructure obligations.
 2. `FINAL-VERIFICATION.md`, especially `T4.5`, `T4.6`, and `T5`.
 3. `AGENTS.md` and `ARCHITECTURE.md` for current repo map and intended durable
    component boundaries.

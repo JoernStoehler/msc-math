@@ -11,7 +11,8 @@ at checks that can be rerun and then routed into topic-specific work.
 - State: active repeatable baseline.
 - Last updated: 2026-04-24.
 - Source surfaces: `FINAL-VERIFICATION.md`, `.agents/skills/verification/`,
-  `RESULTS.md`, `ROADMAP.md`, `tasks/*.md`, thesis/build surfaces when present.
+  `research/README.md`, `research/*.md`, `ROADMAP.md`, `tasks/*.md`,
+  thesis/build surfaces when present.
 - Refresh when: a retained thesis claim, promised repo command, figure/table,
   or submission artifact changes.
 
@@ -36,7 +37,7 @@ at checks that can be rerun and then routed into topic-specific work.
 | item | state | value class | owner/gate | next action | source |
 | --- | --- | --- | --- | --- | --- |
 | Repeatable quality pass protocol | `[active]` | mainline thesis | agent | Run the protocol below before Jorn review, final assembly, and archive; split failures into topic bundles. | this file |
-| Thesis claim support pass | `[active]` | mainline thesis | agent then Jorn | Check retained `RESULTS.md` claims against proof/data/source support and mark missing support, caveats, or Jorn-only judgments. | `.agents/skills/verification/references/thesis-claims-are-supported.md`, `FINAL-VERIFICATION.md:T1,T2,T6` |
+| Thesis claim support pass | `[active]` | mainline thesis | agent then Jorn | Check retained thesis stories against proof/data/source support and mark missing support, caveats, or Jorn-only judgments. | `.agents/skills/verification/references/thesis-claims-are-supported.md`, `FINAL-VERIFICATION.md:T1,T2,T6` |
 | Repo promise truth pass | `[active]` | mainline thesis | agent | Check thesis-facing repo promises, command promises, data/figure provenance, and artifact locations against current files. | `.agents/skills/verification/references/repo-promises-are-truthful.md`, `FINAL-VERIFICATION.md:T4,T5` |
 | Code-quality baseline | `[active]` | contingent during writing | agent | Run on crates/experiments that the thesis cites or promises; route failures to `tasks/infrastructure.md`, `tasks/numerics.md`, `tasks/hko.md`, or `tasks/landscape.md`. | `.agents/skills/verification/references/code-is-high-quality.md` |
 | Test-coverage baseline | `[active]` | contingent during writing | agent | Run on theorem-critical and repo-promised surfaces; distinguish missing regression tests from slow validation experiments. | `.agents/skills/verification/references/test-coverage-is-high.md` |
@@ -53,7 +54,7 @@ at checks that can be rerun and then routed into topic-specific work.
   3. Report findings as pass, caveat needed, missing support/stale evidence, or
      Jorn-only judgment.
   4. Patch the relevant `tasks/*.md` bundle for each retained failure, or patch
-     `RESULTS.md` / thesis prose when the correct action is cut/weaken.
+     the research note / thesis prose when the correct action is cut/weaken.
   5. Re-run only checks touched by the patch.
   Refresh by: reading `.agents/skills/verification/SKILL.md`.
 - [fresh 2026-04-24] Missing reusable packets in the verification skill:
