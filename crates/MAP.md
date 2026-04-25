@@ -15,6 +15,17 @@ code/math boundaries. It is descriptive, not a refactor backlog.
 - Refresh when: crate module boundaries, public reexports, persistence
   contracts, or exact/floating representation boundaries change.
 
+## Map Type And Authority
+
+- Type: subtree navigation cache.
+- Agent question: which durable crate, subsystem, entity, or API tier should I
+  inspect first?
+- Authority: crate source files, crate README files, formal labels referenced
+  from code, contracts, and tests overrule this map.
+- Non-authority: this file does not create API stability promises or refactor
+  obligations. Route those through `tasks/infrastructure.md` or the relevant
+  implementation task.
+
 ## Crate Roles
 
 | Crate | Current role | Start here |

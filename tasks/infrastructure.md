@@ -71,6 +71,12 @@ Context: non-thesis-spine work should stay bounded during finish mode.
   Source: Jorn.
   Why it matters: stale or overlarge generated cache files become decoys, and a
   future frequent workflow can rebuild a smaller cache around observed needs.
+- [accepted 2026-04-25] `cached-map-maintenance` owns the generic workflow for
+  creating, refreshing, pruning, splitting, deleting, and reviewing cached map
+  files.
+  Source: Jorn/Codex cached-map discussion.
+  Why it matters: map files can share one familiar update loop while keeping
+  map-type-specific authority and purpose clear.
 
 ## Work Map
 
@@ -81,6 +87,7 @@ Context: non-thesis-spine work should stay bounded during finish mode.
 | Results migration | `[done]` | map input | current session | `RESULTS.md` was deleted after distributing story interpretation and obligations to research/tasks/final verification surfaces. | `research/README.md`, `tasks/*.md`, `tasks/verify-thesis-done.md` |
 | Cache-surface audit | `[active]` | map input | current session or next roadmap session | Finish deciding how top-level and subtree cached maps should be maintained; root `ARCHITECTURE.md` and `DATAFLOW.md` were deleted. | `crates/MAP.md`, `experiments/MAP.md`, `tasks/README.md`, `research/README.md` |
 | Agent-facing architecture/navigation | `[done]` | map input | current session | Split the old root architecture map into subtree `MAP.md` files for crates and experiments. | `crates/MAP.md`, `experiments/MAP.md` |
+| Cached-map workflow skill | `[done]` | map input | current session | Added the protocol skill and used it for the first `crates/MAP.md` / `experiments/MAP.md` refresh. | `.agents/skills/cached-map-maintenance/`, `crates/MAP.md`, `experiments/MAP.md` |
 | Capacity/orbit API architecture | `[future]` | future/follow-up by default | retained claim impact | Do not promote broad APIs unless retained thesis/reproducibility needs it. | `crates/MAP.md`, legacy rows |
 | Experiment-to-library audit | `[future]` | future/follow-up by default | retained claim impact | Classify repeated helpers only when it unblocks validation, writeup, or agent navigation. | legacy library rows |
 | Codex migration/orchestration tests | `[future]` | future/follow-up | Jorn/tooling | Keep separate from thesis closeout unless current agents are blocked. | `.codex/`, legacy rows |
@@ -91,6 +98,10 @@ Context: non-thesis-spine work should stay bounded during finish mode.
 - [fresh 2026-04-25] Use `.agents/skills/roadmap-maintenance` when editing
   `ROADMAP.md`, `tasks/*.md`, or migrating old tracker state.
   Refresh by: reading `tasks/README.md`.
+- [fresh 2026-04-25] Use `.agents/skills/cached-map-maintenance` when editing
+  cached map files. Pair it with roadmap/research/harness skills when the map
+  update crosses into those surfaces.
+  Refresh by: reading the skill description and `SKILL.md`.
 - [fresh 2026-04-25] `crates/MAP.md` and `experiments/MAP.md` replace the old
   root `ARCHITECTURE.md`. They are subtree navigation caches, not task queues
   or public API promises.

@@ -16,6 +16,16 @@ experiment artifact patterns. It is descriptive, not a task tracker.
 - Refresh when: topic packages move, helper-crate boundaries change, artifact
   ownership changes, or retained thesis-facing experiments change.
 
+## Map Type And Authority
+
+- Type: subtree navigation cache.
+- Agent question: which experiment topic package, helper crate, artifact
+  pattern, or provenance surface should I inspect first?
+- Authority: package manifests, experiment entrypoints, local helper crates,
+  retained research interpretation notes, and task bundles overrule this map.
+- Non-authority: this file does not decide thesis claim strength, canonical data
+  ownership, or which future/follow-up experiments should run.
+
 ## Role
 
 `experiments/` contains topic-grouped experiment packages, binaries, analyses,
