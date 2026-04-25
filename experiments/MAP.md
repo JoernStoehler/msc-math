@@ -11,8 +11,8 @@ experiment artifact patterns. It is descriptive, not a task tracker.
 - State: split from the old root `ARCHITECTURE.md`.
 - Last updated: 2026-04-25.
 - Source surfaces: `experiments/**/Cargo.toml`, `experiments/**/src/lib.rs`,
-  experiment entrypoints, `research/*.md`, `tasks/*.md`, and
-  `.agents/skills/experiment-conventions/`.
+  local `README.md` files, experiment entrypoints, `research/*.md`,
+  `tasks/*.md`, and `.agents/skills/experiment-conventions/`.
 - Refresh when: topic packages move, helper-crate boundaries change, artifact
   ownership changes, or retained thesis-facing experiments change.
 
@@ -46,13 +46,16 @@ Current boundary facts:
 
 | Area | Current role | Related task/research surfaces |
 | --- | --- | --- |
-| `experiments/hko-local-maximum/` | HKO local-maximality experiments, exact-Clarke route, perturbation and neighborhood evidence | `tasks/hko.md`, `research/hko-local-maximum*.md` |
-| `experiments/sys-landscape/` | hostile sys-search landscape, product searches, gradient ascent, data-science methods, pentagon rotation formula | `tasks/landscape.md`, `research/sys-landscape*.md` |
-| `experiments/numerics/` | numerical-method validation, exactness comparisons, gradient and error-bound experiments | `tasks/numerics.md`, `research/numerics*.md` |
-| `experiments/verification/` | cross-topic validation experiments and reusable verification evidence | `tasks/reproducibility.md`, `research/verification*.md` |
-| `experiments/combinatorial-cells/` | combinatorial-cell exploration and future/follow-up landscape work | `research/combinatorial-cells.md` |
-| `experiments/crosspolytope/` | crosspolytope computation and checkpointing | `research/crosspolytope.md` |
-| `experiments/visualization/` | visualization outputs and negative-exploration support | `research/visualization.md` |
+| `experiments/hko-local-maximum/` | HKO local-maximality experiments: exact-Clarke route, exact/Sage validation, perturbation, splitting, second-order, cut/ascent, and Lagrangian-boundary evidence | `tasks/hko.md`, `research/hko-local-maximum*.md`, `experiments/hko-local-maximum/README.md` |
+| `experiments/sys-landscape/` | hostile sys-search landscape: random/product searches, gradient ascent, variable-`F` continuation, rotated regular products, rejection calibration, pentagon rotation formula, and datascience pipeline | `tasks/landscape.md`, `research/sys-landscape*.md`, `research/sys-landscape-datascience/` |
+| `experiments/sys-landscape/gradient-ascent-dev/` | method-development helper package for step calibration and strategy comparison | `experiments/sys-landscape/gradient-ascent-dev/src/lib.rs` |
+| `experiments/numerics/` | numerical-method validation, error bounds, algebraic exactness, Sage feasibility, unknown predicates, and KKT diagnostics | `tasks/numerics.md`, `research/numerics*.md` |
+| `experiments/numerics/gradient/` | separate gradient-validation package for first-order derivative checks, edge cases, and subdifferential tests | `tasks/numerics.md`, `research/numerics*.md` |
+| `experiments/verification/` | cross-topic correctness, minimum-set, orbit-recovery, and reusable Sage validation experiments | `tasks/reproducibility.md`, `research/verification*.md`, `experiments/verification/sage/README.md` |
+| `experiments/verification/algorithm-comparison/` | algorithm comparison, ablation, benchmark, and profiling evidence | `research/verification.md` |
+| `experiments/combinatorial-cells/` | combinatorial-cell exploration: boundary characterization, cell widths, convexity, multiple crossings, omega hypothesis, and gradient-discontinuity analysis | `research/combinatorial-cells.md` |
+| `experiments/crosspolytope/` | one-off crosspolytope computation and checkpointing | `research/crosspolytope.md` |
+| `experiments/visualization/` | visualization data/PNG generation and browser rendering assets for negative-exploration support | `research/visualization.md` |
 
 ## Helper Crates
 
@@ -61,24 +64,29 @@ Topic helper crates already exist at:
 - `experiments/combinatorial-cells/src/lib.rs`
 - `experiments/hko-local-maximum/src/lib.rs`
 - `experiments/numerics/gradient/src/lib.rs`
+- `experiments/numerics/src/lib.rs`
+- `experiments/verification/src/lib.rs`
 - `experiments/sys-landscape/src/lib.rs`
+- `experiments/sys-landscape/gradient-ascent-dev/src/lib.rs`
 
 Current observed pattern:
 
 - Topic helper crates are the natural place for shared experiment-local code.
-- Some helper crates are still thin.
 - Some shared logic is still copied across binaries instead of extracted.
 - Extraction is future/follow-up unless it unblocks retained thesis evidence,
   verification, or writing.
 
-Current helper families recorded in earlier discovery:
+Current helper families:
 
 | Helper family | Current shape |
 | --- | --- |
-| step-bound event logic | repeated across sys-landscape and combinatorial-cells; common logic has a shared-home candidate in `experiments/sys-landscape/src/lib.rs` |
-| sys quotient / ascent scaffold | arithmetic repeats across multiple ascent binaries, while backend policy varies per binary |
-| orbit-enumeration wrappers | repeated in numerics binaries while `experiments/numerics/gradient/src/lib.rs` remains mostly empty |
-| solver instrumentation helpers | shared core exists, but result payloads differ enough that the boundary is still open |
+| step-bound event logic | implemented in `experiments/sys-landscape/src/lib.rs` and `experiments/combinatorial-cells/src/lib.rs`; shared durable home is still an open boundary |
+| sys quotient / ascent scaffold | `experiments/sys-landscape/src/lib.rs` and `datasets.rs` hold reusable landscape helpers, while individual binaries still own backend policy |
+| datascience producer/table plumbing | `experiments/sys-landscape/datascience/produce/` writes producer caches; `datascience/tables/` loads/enriches/writes final tables; `datascience/methods/` reads those tables |
+| exact HKO seeds and instrumented searches | `experiments/hko-local-maximum/src/lib.rs` owns exact-bank constants and local instrumented capacity helpers |
+| numerics exactness helpers | `experiments/numerics/src/lib.rs` exposes the algebraic exactness spike under `src/algebraic/` |
+| gradient validation helpers | `experiments/numerics/gradient/src/lib.rs` owns random-direction sampling, first-order row schemas, and small smoke-run helpers |
+| verification target plumbing | `experiments/verification/src/lib.rs` owns target-pool selection, run modes, and shared JSONL writers |
 
 ## Artifact And Data Patterns
 
@@ -89,12 +97,13 @@ Current persisted-data classes:
 | Class | Current meaning |
 | --- | --- |
 | shared polytope catalog rows | reusable polytope records with rational geometry, source, volume, capacity, and best-sigma-style data |
-| mirror catalogs | byte-identical copies of shared catalog content in different experiment areas; no canonical path is settled |
+| historical mirror catalogs | byte-identical copies of shared catalog content in different experiment areas observed in an earlier pass; current research notes give package-local ownership to at least `experiments/combinatorial-cells/polytopes.jsonl` |
 | topic-local transient caches | local caches that store intermediate search states and are not intended as shared catalogs |
+| datascience pipeline caches | maintained producer caches and final tables under `experiments/sys-landscape/datascience/`; see local `produce/`, `tables/`, and `methods/` READMEs |
 | analysis outputs | experiment-owned JSONL files consumed by nearby `analyze.py` scripts |
 | resume artifacts | outputs that also serve as later-run inputs or resume sources |
 
-Current observed shared-catalog mirror cluster from the old architecture pass:
+Historical shared-catalog mirror cluster from the old architecture pass:
 
 | Path | Current observed role |
 | --- | --- |
@@ -104,13 +113,26 @@ Current observed shared-catalog mirror cluster from the old architecture pass:
 
 These three files were byte-identical on 2026-04-16 with SHA-256
 `8679b89763a10bf1380410f288845f03bcdc8e365035aa31235ff00c9cc07363`.
-Byte identity is an observation, not a settled canonical-path policy.
+Byte identity is an observation, not a settled canonical-path policy. Current
+code still reads these paths in some validation surfaces, but current research
+notes also describe `experiments/combinatorial-cells/polytopes.jsonl` as the
+canonical local cache for that package. Do not infer repo-wide canonical
+ownership from either fact without checking the current task or research note.
 
 Local-cache exception:
 
 - `experiments/sys-landscape/variable-f-ascent/cache.jsonl` is intentionally
   local and stores intermediate search states rather than acting as part of the
   shared catalog.
+
+Datascience pipeline exception:
+
+- `experiments/sys-landscape/datascience/produce/shared-cache.jsonl` and
+  `continuation-cache.jsonl` are maintained producer-stage caches for the
+  datascience pipeline, not mirrors of the old root `cache.jsonl`.
+- `experiments/sys-landscape/datascience/tables/` writes
+  `polytope-table.jsonl` and `observation-table.jsonl`; method scripts read
+  those tables as black-box inputs.
 
 ## Provenance Search
 
@@ -131,3 +153,6 @@ Then read the producer entrypoint, nearby analyzer, and relevant research note.
 - Which experiment outputs are thesis evidence, preserved historical records,
   or future/follow-up material?
 - Which cached fields can downstream consumers trust as stable contracts?
+- Should empty or bytecode-only historical directories such as
+  `experiments/sys-landscape/feature-pattern-search/` be removed, ignored, or
+  kept as provenance?
