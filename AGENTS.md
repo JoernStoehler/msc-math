@@ -161,10 +161,6 @@ cd formal/library/ && latexmk
 
 - Start from `ROADMAP.md`, then open the relevant `tasks/*.md` bundle.
 - Follow `tasks/README.md` when editing roadmap or task-bundle files.
-- Use the `cached-map-maintenance` skill when creating, refreshing, pruning,
-  splitting, deleting, or reviewing cached map files such as `crates/MAP.md`,
-  `experiments/MAP.md`, `ROADMAP.md`, `tasks/README.md`, or
-  `research/README.md`.
 - Use the `roadmap-maintenance` skill for task-graph, sequencing, ownership,
   and task-bundle maintenance.
 - Use the `research-direction` skill for research framing, proof-route status,
