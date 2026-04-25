@@ -37,9 +37,7 @@ Planned deliverables:
   once-run final thesis-done gate in `tasks/verify-thesis-done.md`.
 - `ARCHITECTURE.md`: Repo-level architecture map: component boundaries, core entities, library subsystems, and persisted-data architecture.
 - `scratch/`: Undocumented scratch notes, migration notes, and temporary working material. Do not treat it as current convention text.
-- `scripts/`: Repo helper scripts that are not tied to one runtime environment,
-  including `scripts/dataflow.sh`, which regenerates `DATAFLOW.md` for the
-  declared experiment artifact-flow audit when that audit is useful.
+- `scripts/`: Repo helper scripts that are not tied to one runtime environment.
 - `.devcontainer/`: Local devcontainer and Codex web environment documentation.
 - `.agents/skills/`: Codex skills. Detailed conventions and workflows live here.
 - `.codex/agents/`: Codex subagent definitions.
@@ -61,7 +59,6 @@ one-hop maps after this always-loaded file.
 | `tasks/README.md` | editing `tasks/*.md` or interpreting task-bundle status/cache conventions |
 | `research/README.md` | looking for interpretation notes, proof-route state, or research-result caches |
 | `ARCHITECTURE.md` | navigating repo component boundaries and code architecture |
-| `DATAFLOW.md` | checking the generated declared-artifact audit if grep/local inspection is not enough |
 | `tasks/verify-thesis-done.md` | checking the once-run final thesis-done gate |
 | `.agents/skills/verification/` | running repeatable quality, claim-support, repo-promise, code, data, or figure passes |
 | `thesis/submission/README.md` | checking university forms, submission mechanics, or preservation actions |
@@ -122,9 +119,10 @@ one-hop maps after this always-loaded file.
 ## JSONL / LFS Safety
 
 - `.jsonl` files are generated artifacts tracked by Git LFS.
-- Use `scripts/dataflow.sh` only when the generated declared-artifact audit is
-  useful for the task; targeted grep/local inspection is fine for small
-  artifact questions.
+- Trace figure, table, dataset, and experiment-artifact provenance with
+  targeted `rg` and local source inspection. There is no repo-wide generated
+  dataflow map; rebuild one only if repeated provenance work proves it is worth
+  maintaining.
 
 ## Environment
 

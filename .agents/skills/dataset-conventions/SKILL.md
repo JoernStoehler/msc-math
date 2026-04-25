@@ -1,13 +1,13 @@
 ---
 name: dataset-conventions
-description: Dataset conventions for tracked experiment artifacts such as `experiments/**/*.jsonl`, `.csv`, and declared input/output artifact headers. Use when a task creates, refreshes, audits, compares, or validates tracked experiment datasets, checks dataset freshness, or regenerates `DATAFLOW.md`. Load alongside `python-conventions` or `experiment-conventions` when code or analysis changes are also in scope.
+description: Dataset conventions for tracked experiment artifacts such as `experiments/**/*.jsonl`, `.csv`, and declared input/output artifact headers. Use when a task creates, refreshes, audits, compares, or validates tracked experiment datasets, checks dataset freshness, or traces artifact provenance. Load alongside `python-conventions` or `experiment-conventions` when code or analysis changes are also in scope.
 ---
 
 # Dataset Conventions
 
 ## Scope
 
-This skill covers tracked experiment datasets and artifact declarations. Use it when the task is about generated `.jsonl` or `.csv` outputs, dataset ownership, freshness, smoke-output policy, cross-run dataset comparison, validation of tracked outputs, or the `DATAFLOW.md` audit.
+This skill covers tracked experiment datasets and artifact declarations. Use it when the task is about generated `.jsonl` or `.csv` outputs, dataset ownership, freshness, smoke-output policy, cross-run dataset comparison, validation of tracked outputs, or artifact provenance.
 
 ## Before Touching Data
 
@@ -23,12 +23,9 @@ This skill covers tracked experiment datasets and artifact declarations. Use it 
 - Use exact repo-relative paths when practical.
 - Use `None` when the file does not own or consume repo artifacts.
 - If one declaration line covers a maintained family, keep the family explicit and machine-readable.
-- `scripts/dataflow.sh` parses these declarations and regenerates `DATAFLOW.md`
-  for the repo's declared-artifact audit when that generated view is useful.
-- Treat `DATAFLOW.md` as declared artifact ownership plus local timestamp
-  metadata, not as full transitive source provenance or the mandatory answer to
-  every artifact question. Targeted grep/local inspection is fine for small
-  questions.
+- There is no generated repo-wide dataflow map. Trace provenance with targeted
+  `rg` over `Input Artifacts:`, `Output Artifacts:`, artifact filenames, thesis
+  sources, and nearby research notes.
 
 ## Generated Data Safety
 
@@ -47,11 +44,10 @@ This skill covers tracked experiment datasets and artifact declarations. Use it 
 - Label speculation as interpretation.
 - When comparing datasets across runs, state whether differences come from changed code, changed parameters, changed seeds, or a stale-baseline mismatch.
 
-## Audit Command
+## Provenance Search
 
-Use this when artifact declarations changed or the task benefits from the
-generated audit:
+For an artifact, start with targeted search instead of rebuilding a global map:
 
 ```bash
-bash scripts/dataflow.sh
+rg -n "<artifact-name>|Input Artifacts:|Output Artifacts:" experiments thesis research tasks
 ```

@@ -34,7 +34,7 @@ Formal mathematics for experiments lives in `formal/<topic>/*.tex`, not beside `
 4. Load `$rust-conventions` for `main.rs`, `src/lib.rs`, or tests.
 5. Load `$python-conventions` for `analyze.py` or figure/table generation.
 6. Load `$formal-math-conventions` for formal statements, labels, or proof updates.
-7. Load `$dataset-conventions` as well when the task creates or refreshes `.jsonl` or `.csv` outputs, changes `Input Artifacts:` / `Output Artifacts:` declarations, touches `DATAFLOW.md`, compares tracked datasets across runs, or depends on dataset freshness or validation.
+7. Load `$dataset-conventions` as well when the task creates or refreshes `.jsonl` or `.csv` outputs, changes `Input Artifacts:` / `Output Artifacts:` declarations, traces artifact provenance, compares tracked datasets across runs, or depends on dataset freshness or validation.
 
 ## Methodology First
 

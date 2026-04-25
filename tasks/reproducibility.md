@@ -9,9 +9,9 @@ Context: supports final verification gates for data, builds, and cited outputs.
 
 - State: map-input.
 - Last updated: 2026-04-25.
-- Source surfaces: `DATAFLOW.md`, `experiments/**`, `research/README.md`,
-  `research/*.md`,
-  `tasks/verify-thesis-done.md`, `scripts/dataflow.sh`.
+- Source surfaces: `experiments/**`, `research/README.md`, `research/*.md`,
+  `tasks/verify-thesis-done.md`,
+  `.agents/skills/verification/references/data-and-figures-are-traceable.md`.
 - Refresh when: retained thesis claims cite artifacts, experiment outputs move,
   or repo promises change.
 
@@ -39,18 +39,17 @@ Context: supports final verification gates for data, builds, and cited outputs.
 | --- | --- | --- | --- | --- | --- |
 | Data freshness matrix | `[map-input]` | map input | agents | Reclassify remaining rows by retained thesis claim impact. | legacy data-freshness rows |
 | Thesis-facing artifact truth | `[blocked]` | mainline thesis | retained claims | Verify only artifacts cited or promised by thesis text. | `data-and-figures-are-traceable.md`, `repo-promises-are-truthful.md` |
-| Dataflow/cache policy | `[map-input]` | contingent during writing | retained claims | Keep or extend generated dataflow only if cited artifact truth, archive clarity, or repeated audits need it; targeted grep/local inspection is fine otherwise. | `DATAFLOW.md`, `scripts/dataflow.sh` |
+| Dataflow/cache policy | `[done]` | map input | current session | Deleted the generated dataflow map and script; use targeted grep/local inspection unless repeated provenance work justifies a new cache design. | `data-and-figures-are-traceable.md`, git history |
 | Repo promises | `[blocked]` | mainline thesis | final README/thesis wording | Check fresh-clone/build/repro promises only after wording stabilizes. | `repo-promises-are-truthful.md` |
 | LICCA returned outputs | `[future]` | future/follow-up | external compute | Keep pending/future unless thesis cites returned data. | legacy LICCA rows |
 
 ## Agent Cache
 
-- [fresh 2026-04-25] `scripts/dataflow.sh` regenerates `DATAFLOW.md` for
-  declared experiment artifact-flow audits, but it is not mandatory for small
-  artifact questions.
-  Refresh by: running the script only when changing declared artifact headers,
-  dataflow documentation, or a repeated audit that benefits from the generated
-  view.
+- [fresh 2026-04-25] The generated `DATAFLOW.md` / `scripts/dataflow.sh`
+  surface was deleted because its custom parser and global report were more
+  complex than the current thesis-facing provenance workload needs.
+  Refresh by: using targeted `rg` over `Input Artifacts:`, `Output Artifacts:`,
+  filenames, thesis sources, and nearby research notes.
 - [fresh 2026-04-24] Existing rerun matrix signals: perturbation neighborhood
   needs LICCA only if thesis keeps large-N HKO falsification; convexity,
   crosspolytope timing, numerics notes, and cut-and-ascent timing should not be

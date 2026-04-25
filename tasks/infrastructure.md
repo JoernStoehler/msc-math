@@ -65,13 +65,12 @@ Context: non-thesis-spine work should stay bounded during finish mode.
   Why it matters: desired claim type/strength is visible through proof,
   interpretation, writeup, verification, and cut/weaken obligations instead of
   a separate label register.
-- [open 2026-04-25] `ARCHITECTURE.md` and `DATAFLOW.md` should still be audited
-  as cache files. `DATAFLOW.md` may be too generated and noisy for routine use
-  compared with targeted grep/local inspection.
+- [accepted 2026-04-25] `DATAFLOW.md` and `scripts/dataflow.sh` were deleted.
+  Use targeted grep/local inspection for provenance unless repeated dataflow
+  tracing proves that a new cache is worth designing from scratch.
   Source: Jorn.
-  Why it matters: stale or overlarge cache files become decoys; handwritten
-  central cache files can be more standard than generated audits when the
-  generated view is not used.
+  Why it matters: stale or overlarge generated cache files become decoys, and a
+  future frequent workflow can rebuild a smaller cache around observed needs.
 
 ## Work Map
 
@@ -80,7 +79,7 @@ Context: non-thesis-spine work should stay bounded during finish mode.
 | Task-system migration | `[done]` | map input | current session | Legacy TASKS/FINISH were removed; use ROADMAP and topic bundles. | `tasks/README.md`, `ROADMAP.md` |
 | PM/research convention refactor | `[active]` | map input | current session | Add next-map layer, research index, task outcome conventions, and protocol-style skills. | `AGENTS.md`, `research/README.md`, `.agents/skills/` |
 | Results migration | `[done]` | map input | current session | `RESULTS.md` was deleted after distributing story interpretation and obligations to research/tasks/final verification surfaces. | `research/README.md`, `tasks/*.md`, `tasks/verify-thesis-done.md` |
-| Cache-surface audit | `[active]` | map input | current session or next roadmap session | Decide whether `ARCHITECTURE.md` and `DATAFLOW.md` should be shortened, rewritten by hand, generated, or deprecated. | `ARCHITECTURE.md`, `DATAFLOW.md`, `scripts/dataflow.sh` |
+| Cache-surface audit | `[active]` | map input | current session or next roadmap session | Finish deciding how `ARCHITECTURE.md` and other top-level cached maps should be maintained; `DATAFLOW.md` was deleted. | `ARCHITECTURE.md`, `tasks/README.md`, `research/README.md` |
 | Agent-facing architecture/navigation | `[map-input]` | contingent during writing | archive clarity | Keep `ARCHITECTURE.md` current only where it saves agent friction for retained work. | `ARCHITECTURE.md` |
 | Capacity/orbit API architecture | `[future]` | future/follow-up by default | retained claim impact | Do not promote broad APIs unless retained thesis/reproducibility needs it. | `ARCHITECTURE.md`, legacy rows |
 | Experiment-to-library audit | `[future]` | future/follow-up by default | retained claim impact | Classify repeated helpers only when it unblocks validation, writeup, or agent navigation. | legacy library rows |

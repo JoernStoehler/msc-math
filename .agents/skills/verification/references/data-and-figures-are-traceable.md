@@ -17,8 +17,8 @@ source, provenance path, and interpretation that matches what the thesis says.
 3. The relevant `research/*.md` interpretation note.
 4. The producer under `experiments/` and any `Input Artifacts:` /
    `Output Artifacts:` declarations.
-5. `DATAFLOW.md` only when the generated declared-artifact audit is useful;
-   targeted grep/local inspection is enough for small questions.
+5. Targeted `rg` over artifact filenames, `Input Artifacts:`,
+   `Output Artifacts:`, thesis sources, and topic notes.
 
 ## Checks
 
