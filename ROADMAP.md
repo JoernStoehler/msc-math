@@ -41,7 +41,7 @@ Freshness rules:
 | `research/README.md` and `research/*.md` | thesis story index, detailed interpretation, proof-route state, negative results, and research caches |
 | `.agents/skills/verification/` | reusable quality-measurement packets and operational definitions |
 | `thesis/submission/README.md` | submission/admin forms, source links, and external-clock TODOs |
-| `ARCHITECTURE.md` | repo/code architecture map |
+| `crates/MAP.md` and `experiments/MAP.md` | subtree navigation caches for durable code and experiment packages |
 
 The old `TASKS.md` mega-tracker was deleted after migration. Use this roadmap
 and the topic bundles instead.

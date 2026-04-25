@@ -16,7 +16,8 @@ Use these surfaces in this order:
 2. The relevant convention skills, especially `rust-conventions`,
    `python-conventions`, `experiment-conventions`, and
    `formal-math-conventions` when applicable.
-3. `ARCHITECTURE.md` for intended component boundaries and API tiers.
+3. `crates/MAP.md` or `experiments/MAP.md` for intended component boundaries,
+   helper boundaries, and API tiers.
 4. The concrete code files, tests, and nearby research/formal notes for the
    surface under review.
 5. `ROADMAP.md` and `tasks/*.md` for open design decisions or explicitly
@@ -44,7 +45,7 @@ Checks:
 
 5. Boundary honesty:
    - compare public entrypoints, deep imports, and comments against
-     `ARCHITECTURE.md`
+   `crates/MAP.md` or `experiments/MAP.md`
    - flag experiment-only code that reads as stable API, or stable code that
      still reads like a temporary spike
 

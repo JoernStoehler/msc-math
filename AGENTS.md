@@ -35,7 +35,10 @@ Planned deliverables:
   `tasks/*.md`.
 - `tasks/`: Topic mini-roadmaps, cached task knowledge, and the compact
   once-run final thesis-done gate in `tasks/verify-thesis-done.md`.
-- `ARCHITECTURE.md`: Repo-level architecture map: component boundaries, core entities, library subsystems, and persisted-data architecture.
+- `crates/MAP.md`: Durable-crate navigation map: crate roles, subsystem
+  boundaries, core entities, API tiers, and representation boundaries.
+- `experiments/MAP.md`: Experiment navigation map: topic packages, helper
+  crates, artifact patterns, and provenance search.
 - `scratch/`: Undocumented scratch notes, migration notes, and temporary working material. Do not treat it as current convention text.
 - `scripts/`: Repo helper scripts that are not tied to one runtime environment.
 - `.devcontainer/`: Local devcontainer and Codex web environment documentation.
@@ -46,7 +49,10 @@ Planned deliverables:
 
 ## Current Instruction Sources
 
-Required project instructions live in this root map or in discoverable skills. `ARCHITECTURE.md` is a descriptive repo map, not an always-loaded instruction surface. Do not add nested `AGENTS.md` files as required instruction maps; root-launched Codex sessions will not reliably load them.
+Required project instructions live in this root map or in discoverable skills.
+Subtree `MAP.md` files are descriptive navigation caches, not always-loaded
+instruction surfaces. Do not add nested `AGENTS.md` files as required
+instruction maps; root-launched Codex sessions will not reliably load them.
 
 ## Next Map Layer
 
@@ -58,7 +64,8 @@ one-hop maps after this always-loaded file.
 | `ROADMAP.md` | orienting on thesis closeout streams, current phase, or where a task belongs |
 | `tasks/README.md` | editing `tasks/*.md` or interpreting task-bundle status/cache conventions |
 | `research/README.md` | looking for interpretation notes, proof-route state, or research-result caches |
-| `ARCHITECTURE.md` | navigating repo component boundaries and code architecture |
+| `crates/MAP.md` | navigating durable crate boundaries, API tiers, and core entities |
+| `experiments/MAP.md` | navigating experiment topic packages, helper crates, data patterns, and provenance |
 | `tasks/verify-thesis-done.md` | checking the once-run final thesis-done gate |
 | `.agents/skills/verification/` | running repeatable quality, claim-support, repo-promise, code, data, or figure passes |
 | `thesis/submission/README.md` | checking university forms, submission mechanics, or preservation actions |

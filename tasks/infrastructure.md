@@ -10,7 +10,7 @@ Context: non-thesis-spine work should stay bounded during finish mode.
 - State: future by default.
 - Last updated: 2026-04-25.
 - Source surfaces: `AGENTS.md`, `.agents/skills/`, `.codex/`,
-  `ARCHITECTURE.md`, `ROADMAP.md`, `tasks/README.md`.
+  `crates/MAP.md`, `experiments/MAP.md`, `ROADMAP.md`, `tasks/README.md`.
 - Refresh when: agent routing, task-bundle conventions, architecture map, or
   repo-maintenance policy changes.
 
@@ -79,9 +79,9 @@ Context: non-thesis-spine work should stay bounded during finish mode.
 | Task-system migration | `[done]` | map input | current session | Legacy TASKS/FINISH were removed; use ROADMAP and topic bundles. | `tasks/README.md`, `ROADMAP.md` |
 | PM/research convention refactor | `[active]` | map input | current session | Add next-map layer, research index, task outcome conventions, and protocol-style skills. | `AGENTS.md`, `research/README.md`, `.agents/skills/` |
 | Results migration | `[done]` | map input | current session | `RESULTS.md` was deleted after distributing story interpretation and obligations to research/tasks/final verification surfaces. | `research/README.md`, `tasks/*.md`, `tasks/verify-thesis-done.md` |
-| Cache-surface audit | `[active]` | map input | current session or next roadmap session | Finish deciding how `ARCHITECTURE.md` and other top-level cached maps should be maintained; `DATAFLOW.md` was deleted. | `ARCHITECTURE.md`, `tasks/README.md`, `research/README.md` |
-| Agent-facing architecture/navigation | `[map-input]` | contingent during writing | archive clarity | Keep `ARCHITECTURE.md` current only where it saves agent friction for retained work. | `ARCHITECTURE.md` |
-| Capacity/orbit API architecture | `[future]` | future/follow-up by default | retained claim impact | Do not promote broad APIs unless retained thesis/reproducibility needs it. | `ARCHITECTURE.md`, legacy rows |
+| Cache-surface audit | `[active]` | map input | current session or next roadmap session | Finish deciding how top-level and subtree cached maps should be maintained; root `ARCHITECTURE.md` and `DATAFLOW.md` were deleted. | `crates/MAP.md`, `experiments/MAP.md`, `tasks/README.md`, `research/README.md` |
+| Agent-facing architecture/navigation | `[done]` | map input | current session | Split the old root architecture map into subtree `MAP.md` files for crates and experiments. | `crates/MAP.md`, `experiments/MAP.md` |
+| Capacity/orbit API architecture | `[future]` | future/follow-up by default | retained claim impact | Do not promote broad APIs unless retained thesis/reproducibility needs it. | `crates/MAP.md`, legacy rows |
 | Experiment-to-library audit | `[future]` | future/follow-up by default | retained claim impact | Classify repeated helpers only when it unblocks validation, writeup, or agent navigation. | legacy library rows |
 | Codex migration/orchestration tests | `[future]` | future/follow-up | Jorn/tooling | Keep separate from thesis closeout unless current agents are blocked. | `.codex/`, legacy rows |
 | SWE polish | `[future]` | future/follow-up | post-thesis | Defer broad code cleanup until thesis is no longer at risk. | legacy polish rows |
@@ -91,10 +91,11 @@ Context: non-thesis-spine work should stay bounded during finish mode.
 - [fresh 2026-04-25] Use `.agents/skills/roadmap-maintenance` when editing
   `ROADMAP.md`, `tasks/*.md`, or migrating old tracker state.
   Refresh by: reading `tasks/README.md`.
-- [fresh 2026-04-24] `ARCHITECTURE.md` is the model for cached map style:
-  current-state description, update rules, and freshness rules, not a task
-  queue.
-  Refresh by: reading the header of `ARCHITECTURE.md`.
+- [fresh 2026-04-25] `crates/MAP.md` and `experiments/MAP.md` replace the old
+  root `ARCHITECTURE.md`. They are subtree navigation caches, not task queues
+  or public API promises.
+  Refresh by: reading the headers and checking the relevant code/package
+  surfaces.
 - [fresh 2026-04-24] Harness edits should keep `AGENTS.md` short and put
   detailed rules in skills.
   Refresh by: reading `.agents/skills/harness-engineering/SKILL.md`.

@@ -23,8 +23,8 @@ Use these surfaces in this order:
    thesis-facing deliverable and infrastructure obligations.
 2. `tasks/verify-thesis-done.md`, especially the references/provenance and
    repo-promises final gates.
-3. `AGENTS.md` and `ARCHITECTURE.md` for current repo map and intended durable
-   component boundaries.
+3. `AGENTS.md`, `crates/MAP.md`, and `experiments/MAP.md` for current repo maps
+   and intended durable component boundaries.
 4. The concrete code paths, scripts, datasets, and commands that the promise
    points to.
 5. `ROADMAP.md` and `tasks/*.md` for known stale-data, rerun, or packaging
