@@ -34,15 +34,19 @@ $\nabla_h\,\mathrm{sys}$.
 The main findings are:
 the polytope symmetry group has order~50 (all facets equivalent),
 but only a symplectic subgroup of order~10 preserves the orbit structure;
-the 44 near-optimal orbits yield 10~distinct per-orbit gradients
-forming a single orbit under this subgroup;
+the current exact-minimum bookkeeping has 150 exact-action orbits,
+20 distinct visited-facet subsets, and 28 distinct height gradients;
 and the per-orbit gradients have mixed sign
 (positive at visited facets, negative at unvisited ones).
 
 The billiard algorithm
-(Algorithm~\ref{alg:billiard}) finds 364 valid orbits, of which 44
-achieve $c_{\mathrm{EHZ}}(K)$ to machine precision
-(relative gap $< 5 \times 10^{-14}$).
+(Algorithm~\ref{alg:billiard}) originally found 364 valid orbits, of which
+44 achieved $c_{\mathrm{EHZ}}(K)$ to machine precision
+(relative gap $< 5 \times 10^{-14}$).  That older floating-point
+bookkeeping is superseded for active-set counts by the exact-Clarke summary
+`experiments/hko-local-maximum/exact-clarke/numerical-minima-summary.json`,
+which records 150 exact-action orbits, 20 distinct visited-facet subsets,
+and 28 distinct height gradients.
 The sensitivity analysis from
 Section~\ref{sec:sys-optimization} gives
 $\mathrm{sys}(K) \approx 1.04721$, confirming the
@@ -143,18 +147,19 @@ The group $\langle \Delta_{72^\circ},\, \varphi \rangle$ has order~$10$,
 verified by the same enumeration method.
 
 \emph{This group is exactly the orbit symmetry group.}
-Each of the 44 near-optimal orbits visits exactly
-3~$q$-facets and 3~$p$-facets (empirically, all 44 orbits follow this
-pattern).
-Grouping orbits by their visited facet sets $(S_q, S_p)$ yields
-10~groups of 4--5 orbits each, and these 10 groups form a
-\emph{single orbit} under $\langle \Delta_{72^\circ}, \varphi \rangle$.
+The older floating-point gradient-analysis run grouped 44 near-optimal
+orbits into 10 visited-set groups.  Current exact-minimum bookkeeping instead
+records 150 exact-action orbits and 20 distinct visited-facet subsets.
+% TODO: JÖRN/agent exact route -- re-check whether these 20 subsets form one
+% or more orbits under $\langle \Delta_{72^\circ}, \varphi \rangle$ before
+% using this as theorem-facing symmetry prose.
 
 \emph{$C_5^q$ alone does not preserve the orbit structure.}
-Applying $C_5^q$ (rotate $q$-facets only, fix $p$-facets) to any
-group $(S_q, S_p)$ produces a pair $(S_q', S_p)$ that does not
-appear among the 10 groups ---
-checked exhaustively for all~10.
+Applying $C_5^q$ (rotate $q$-facets only, fix $p$-facets) to the older
+10-group floating-point classification produced pairs $(S_q', S_p)$ outside
+that classification.  The corresponding statement for the current 20
+visited-facet subsets remains to be re-checked before it is used as a final
+symmetry claim.
 The Reeb dynamics on a Lagrangian product couple $q$- and
 $p$-coordinates (on a $q$-facet
 the trajectory moves in $L_p$, and vice versa), so a rotation
@@ -164,23 +169,23 @@ in one factor alone changes which facets the orbit visits in
 \subsubsection*{Subdifferential structure}
 
 The systolic ratio is $\mathrm{sys} = c_{\mathrm{EHZ}}^2 / (2\,\mathrm{vol})$.
-Because the 44 near-optimal orbits all achieve $c_{\mathrm{EHZ}}$ up to
-machine precision, each orbit defines its own
+Because the 150 exact-action orbits all achieve the current exact minimum,
+each orbit defines its own
 $\partial\,\mathrm{sys}/\partial h_k$ vector
 (Section~\ref{sec:sys-optimization}),
-and the convex hull of these 44 vectors is contained in the Clarke
+and the convex hull of these 150 vectors is contained in the Clarke
 subdifferential~\cite{Clarke1983} of $\mathrm{sys}$ with respect to
 heights (the convex hull of all limit points of gradients at nearby
 differentiable points).
 
-Among the 44 per-orbit gradient vectors:
+Among the 150 per-orbit height-gradient vectors:
 \begin{itemize}
-\item \textbf{10 are distinct}
-  (each a permutation of three values),
-  forming a single orbit under
-  $\langle \Delta_{72^\circ}, \varphi \rangle$.
+\item \textbf{28 are distinct}
+  in the current exact-Clarke summary.
 \item \textbf{All gradient norms are identical}
-  ($\approx 1.431$, spread $< 2 \times 10^{-13}$).
+  in the older 44-orbit floating-point summary
+  ($\approx 1.431$, spread $< 2 \times 10^{-13}$);
+  re-check this statement before applying it to all 150 current rows.
 \item \textbf{The components have mixed sign:}
   positive at visited facets, negative at unvisited ones.
 \end{itemize}
@@ -233,10 +238,9 @@ characteristic of regular pentagon geometry.
   $\mathrm{sys}$ (both capacity and volume grow, but capacity
   grows faster), while increasing an unvisited height
   decreases $\mathrm{sys}$ (only volume grows).
-  By symmetry (all 10 gradients form one orbit under
-  $\langle \Delta_{72^\circ}, \varphi \rangle$),
-  the average of the 10 distinct per-orbit gradients has all
-  components equal and zero by symmetry (numerical residual $\approx 7 \times 10^{-10}$).
+  The older 10-gradient symmetry-average argument must be re-checked against
+  the current 28-gradient exact-Clarke bookkeeping before it is used in the
+  theorem-facing route.
 
 \item \textbf{One representative facet suffices for Phase~B
   (Section~\ref{sec:omega-obstacle}).}
