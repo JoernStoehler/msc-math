@@ -70,9 +70,9 @@ Required cwd/worktree: <required-cwd>
 Use this worktree for all commands and edits. Do not edit `main` or the root checkout.
 
 If you make tracked edits outside <required-cwd>, revert only your own edits
-when that revert is clearly safe. If you detect pre-existing or ambiguous
-tracked edits outside <required-cwd>, stop and report the exact files before
-continuing.
+when `git diff -- <path>` shows only those edits. If you detect pre-existing or
+ambiguous tracked edits outside <required-cwd>, stop and report the exact files
+before continuing.
 
 You are not alone in the codebase; do not revert or overwrite changes made by others.
 ```
@@ -103,6 +103,8 @@ Use the packet format when proposing several independent tasks, when Jörn is li
 - Wait only when their result is needed for the next step.
 - Verify delegate claims against files, commands, or sources before presenting them as facts.
 - For multiple tasks, default to a serial queue: brief A, integrate and verify A, then brief B. Parallelize only independent subtasks.
+- Keep smoke and review delegates tiny. Use `low` for smoke, path, and narrow
+  claim checks. Use `medium` for ordinary prompt or code review.
 
 ## Verification Labor
 

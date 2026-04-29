@@ -28,24 +28,23 @@ Return these sections:
 
 2. Discoveries
 - use a short list
-- include all worthwhile items you actually found
+- include each finding that has file evidence
 - for each item include: `location`, `evidence`, `epistemic status`
   (`verified`, `inferred`, or `speculative`), and `final confidence` (`high`,
   `medium`, or `low`)
 
 3. Proposals
 - use a short list
-- include all worthwhile items you actually found
+- include one proposal for each discovery that has an action the parent could
+  approve, reject, or hand to a worker
 - for each item include: `proposed simplification`, `discoveries addressed`,
-  `preserve notes` when needed to avoid a bad simplification, and whether it
-  meaningfully widens scope
+  `preserve notes` when needed to avoid a bad simplification, and `scope
+  change` (`none`, `same files`, or `new files/APIs`)
 
 4. Assessment
 - use a short list
 - include only the decision support that helps the parent prioritize
-- for each proposal include: current priority or expected payoff, strongest
-  reason to do it now, strongest reason to defer or reject it, and what extra
-  inspection would most improve confidence
+- for each proposal include: `why now`, `why defer or reject`, and `next check`
 
 5. Post-change validation
 - if a proposal is implemented, list the commands or review checks that would show it worked

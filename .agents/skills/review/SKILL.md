@@ -17,7 +17,9 @@ description: Repo review workflow for changed files, drafts, proofs, claims, fig
    assigned surface and state the partial surface explicitly.
 7. Verify each finding against the cited file or command output before including it.
 
-Use batched reads for independent files. Do not edit files during a review unless the assignment explicitly asks for fixes.
+Use batched reads for independent files. In report-only reviewer roles, do not
+edit files. Outside report-only roles, edit only when the assignment explicitly
+asks for fixes.
 
 ## References
 

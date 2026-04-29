@@ -48,14 +48,9 @@ max_threads = 20
 max_depth = 2
 job_max_runtime_seconds = 3600
 
-# Used for coding tasks.
-# Do not set the active model or reasoning budgets here. Those choices live
-# in ~/.codex/config.toml so the VS Code Codex picker remains the source of
-# truth for this machine.
+# Used for coding tasks. Keep model, reasoning, verbosity, summary, and
+# personality choices out of repo config; they are user-local machine settings.
 [profiles.code]
-model_reasoning_summary = "detailed"
-model_verbosity = "low"
-personality = "pragmatic"
 
 # Force Git subprocesses to stay non-interactive.
 [shell_environment_policy.set]
