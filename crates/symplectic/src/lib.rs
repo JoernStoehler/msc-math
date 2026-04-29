@@ -71,6 +71,13 @@ pub use geom::volume::volume;
 pub use geom::known_polytopes;
 pub use geom::test_utils;
 
+/// Compute the systolic ratio `sys = capacity^2 / (2 * volume)`.
+///
+/// Mathematical correspondence: [def:systolic-ratio]
+pub fn systolic_ratio(capacity: f64, volume: f64) -> f64 {
+    capacity * capacity / (2.0 * volume)
+}
+
 /// Explicit pruned HK2017 frontend on the shared orbit/result surface.
 pub fn ehz_capacity_pruned(polytope: &Polytope4D) -> Result<OrbitSearchResult, OrbitSearchError> {
     let (orbits, iterations) = algorithms::orbit_search::solve_sigma_stream(

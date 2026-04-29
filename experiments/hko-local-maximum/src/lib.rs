@@ -13,8 +13,6 @@ use symplectic::kkt::saddle_point_solver::{
     solve_kkt_for, KktOutcome, EPS_BETA_POSITIVE, EPS_Q_POSITIVE,
 };
 
-pub type TanPiFifthField = Algebraic<TanPiFifth>;
-
 /// Hand-picked exact certification bank seed reused across HKO exact consumers.
 pub const HKO_WINNING_SIGMA: &[usize] = &[1, 8, 7, 3, 4, 5, 9];
 pub const HKO_RANK_DEFICIENT_SIGMA: &[usize] = &[1, 7, 2, 8, 4, 6, 5];
@@ -193,16 +191,18 @@ pub fn ehz_capacity_instrumented(polytope: &Polytope4D) -> Option<InstrumentedOr
 }
 
 /// Exact HKO2024 polytope over `Q[tan(pi/5)]`.
-pub fn exact_hko_polytope() -> ExactPolytope4D<TanPiFifthField> {
-    let z = TanPiFifthField::zero();
-    let one = TanPiFifthField::one();
-    let t = TanPiFifthField::generator();
+pub fn exact_hko_polytope() -> ExactPolytope4D<Algebraic<TanPiFifth>> {
+    let z = Algebraic::<TanPiFifth>::zero();
+    let one = Algebraic::<TanPiFifth>::one();
+    let t = Algebraic::<TanPiFifth>::generator();
     let t2 = t.clone() * t.clone();
     let t3 = t2.clone() * t.clone();
 
-    let a = (TanPiFifthField::one() + t2.clone()) / TanPiFifthField::from_i64(4);
-    let b = (TanPiFifthField::from_i64(7) * t.clone() - t3.clone()) / TanPiFifthField::from_i64(4);
-    let sec36 = (TanPiFifthField::from_i64(3) - t2.clone()) / TanPiFifthField::from_i64(2);
+    let a = (Algebraic::<TanPiFifth>::one() + t2.clone()) / Algebraic::<TanPiFifth>::from_i64(4);
+    let b = (Algebraic::<TanPiFifth>::from_i64(7) * t.clone() - t3.clone())
+        / Algebraic::<TanPiFifth>::from_i64(4);
+    let sec36 =
+        (Algebraic::<TanPiFifth>::from_i64(3) - t2.clone()) / Algebraic::<TanPiFifth>::from_i64(2);
 
     ExactPolytope4D::new(vec![
         [one.clone(), t.clone(), z.clone(), z.clone()],

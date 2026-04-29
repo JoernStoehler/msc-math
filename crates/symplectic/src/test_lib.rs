@@ -36,3 +36,8 @@ fn top_level_capacity_matches_pruned_hk2017_on_non_products() {
         "auto wrapper should preserve the pruned HK2017 minimizer on non-products"
     );
 }
+
+#[test]
+fn systolic_ratio_matches_definition() {
+    assert_eq!(systolic_ratio(3.0, 2.0), 9.0 / 4.0);
+}
