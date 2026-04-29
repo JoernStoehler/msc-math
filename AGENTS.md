@@ -84,6 +84,10 @@ one-hop maps after this always-loaded file.
 - **Jörn's time:** Spend agent time on exploration, verification, and local review before asking Jörn. Ask Jörn only for mathematical judgment, thesis-scope decisions, advisor-facing framing, taste, or external-world actions.
 - **Define the check first:** Before acting, decide what result would prove the task is done. Tool success is not task success.
 - **No status-only handoff:** Before replying, do the next useful step, ask one Jörn-only question, or report a concrete blocker.
+- **Clean up own trash:** Remove generated scratch/build artifacts that are
+  clearly from the current agent's command and not intended deliverables. Do not
+  remove files whose origin or purpose is ambiguous; leave unrelated untracked
+  or dirty work alone.
 
 ## Git Conventions
 
