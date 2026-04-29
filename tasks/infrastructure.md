@@ -94,7 +94,7 @@ Context: non-thesis-spine work should stay bounded during finish mode.
 | Cache-surface audit | `[done]` | map input | current session | Deleted stale root/generated maps, split subtree maps, renamed the research story index, and added the cached-map maintenance workflow. | `crates/MAP.md`, `experiments/MAP.md`, `tasks/README.md`, `research/INDEX.md` |
 | Agent-facing architecture/navigation | `[done]` | map input | current session | Split the old root architecture map into subtree `MAP.md` files for crates and experiments. | `crates/MAP.md`, `experiments/MAP.md` |
 | Cached-map workflow skill | `[done]` | map input | current session | Added the protocol skill and used it for the first `crates/MAP.md` / `experiments/MAP.md` refresh. | `.agents/skills/cached-map-maintenance/`, `crates/MAP.md`, `experiments/MAP.md` |
-| Capacity/orbit API architecture | `[future]` | future/follow-up by default | retained claim impact | Do not promote broad APIs unless retained thesis/reproducibility needs it. | `crates/MAP.md`, legacy rows |
+| Capacity/orbit API architecture | `[future]` | future/follow-up by default | retained claim impact | `Polytope4D` boundary reduction is partly plausible only at the KKT/QP assembly layer; do not promote broad APIs unless retained thesis/reproducibility needs it. | `crates/MAP.md`, `crates/symplectic/src/kkt/qp_assembly.rs`, legacy rows |
 | Experiment-to-library audit | `[future]` | future/follow-up by default | retained claim impact | Classify repeated helpers only when it unblocks validation, writeup, or agent navigation. | legacy library rows |
 | Codex migration/orchestration tests | `[future]` | future/follow-up | Jorn/tooling | Keep separate from thesis closeout unless current agents are blocked. | `.codex/`, legacy rows |
 | Rust convention label/proof wording | `[future]` | future/follow-up by default | harness discussion | Revisit only if invented labels or proof-in-doc-comment drift blocks current agents. The current mismatch packet reports that `rust-conventions` can be read as both "definitions, lemmas, and proofs live as doc comments" and "do not duplicate proofs inline". | `thesis/migration-findings.md`, `.agents/skills/rust-conventions/SKILL.md` |
@@ -107,6 +107,14 @@ Context: non-thesis-spine work should stay bounded during finish mode.
   or public API promises.
   Refresh by: reading the headers and checking the relevant code/package
   surfaces.
+- [fresh 2026-04-29] `Polytope4D` is still justified for geometry, volume,
+  skeleton, root capacity routers, billiard classification, and dataset row
+  construction because those paths use vertices, incidence, adjacency, or
+  construction invariants together.  The low-risk boundary reduction is limited
+  to `crates/symplectic/src/kkt/qp_assembly.rs`: add a helper that builds QP
+  matrices from `&[Vector4<f64>]` plus `perm`, then keep existing
+  `Polytope4D` wrappers.  Moving HK2017 enumeration off `Polytope4D` needs a
+  concrete caller and likely Jörn/math judgment about the input contract.
 - [fresh 2026-04-24] Harness edits should keep `AGENTS.md` short and put
   detailed rules in skills.
   Refresh by: reading `.agents/skills/harness-engineering/SKILL.md`.
