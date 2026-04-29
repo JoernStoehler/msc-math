@@ -54,7 +54,7 @@ pub fn solve_projected(qp: &QP) -> Solution {
     let m = qp.c.ncols();
 
     // Step 1: Solve constraints.
-    let constraint_sol = match constraint_solver::solve_constraints(&qp.c, &qp.d) {
+    let constraint_sol = match constraint_solver::solve_constraints_checked(&qp.c, &qp.d) {
         Ok(sol) => sol,
         Err(_err) => {
             return Solution {

@@ -8,7 +8,7 @@ Context: main thesis result and potential publication-grade follow-up surface.
 ## Status
 
 - State: map-input.
-- Last updated: 2026-04-25.
+- Last updated: 2026-04-29.
 - Source surfaces: `research/hko-local-maximum.md`,
   `research/hko-local-maximum-status.md`,
   `research/hko-local-maximum-exact-clarke.md`,
@@ -60,9 +60,9 @@ This is the expanded meaning of "HKO is a local maximum" for thesis closeout.
   widened until the active-gradient matrix has rank `25`, kernel dimension `15`,
   and kernel equal to the symmetry tangent space.
 - Current exact field is the quartic `Q(tan(pi/5))`, not `Q(sqrt(5))`.
-- `formal/hko-local-maximum/gradient-analysis.tex` still contains old
-  `44`-orbit / `10`-gradient and unverified symmetry prose that conflicts with
-  the current `150` exact minima bookkeeping.
+- `formal/hko-local-maximum/gradient-analysis.tex` now caveats the old
+  `44`-orbit / `10`-gradient prose against the current `150` exact minima
+  bookkeeping; the remaining symmetry question is a theorem-facing TODO.
 - `formal/hko-local-maximum/second-order.tex` is an older route with
   non-smooth-analysis TODOs; it should become supporting evidence unless Jorn
   chooses to repair it as a proof route.

@@ -8,7 +8,7 @@ Context: non-thesis-spine work should stay bounded during finish mode.
 ## Status
 
 - State: future by default.
-- Last updated: 2026-04-25.
+- Last updated: 2026-04-29.
 - Source surfaces: `AGENTS.md`, `.agents/skills/`, `.codex/`,
   `crates/MAP.md`, `experiments/MAP.md`, `ROADMAP.md`, `tasks/README.md`.
 - Refresh when: agent routing, task-bundle conventions, architecture map, or
