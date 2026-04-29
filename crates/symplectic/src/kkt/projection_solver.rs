@@ -55,8 +55,8 @@ pub fn solve_projected(qp: &QP) -> Solution {
 
     // Step 1: Solve constraints.
     let constraint_sol = match constraint_solver::solve_constraints(&qp.c, &qp.d) {
-        Some(sol) => sol,
-        None => {
+        Ok(sol) => sol,
+        Err(_err) => {
             return Solution {
                 verdict: Verdict::False,
                 q: 0.0,
