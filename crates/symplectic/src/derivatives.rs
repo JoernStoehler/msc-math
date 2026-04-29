@@ -135,7 +135,7 @@ fn systolic_ratio_gradient_a_from_parts(
     d_capacity_da: &[Vector4<f64>],
     d_volume_da: &[Vector4<f64>],
 ) -> OrbitGradientA {
-    let sys = capacity * capacity / (2.0 * volume);
+    let sys = crate::systolic_ratio(capacity, volume);
     d_capacity_da
         .iter()
         .zip(d_volume_da.iter())

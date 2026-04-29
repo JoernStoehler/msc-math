@@ -52,9 +52,16 @@ pub struct ConstraintSolution {
     pub rank: usize,
 }
 
+/// Failure reason for solving the linear constraint system Cx = d.
+#[derive(Clone, Debug, PartialEq)]
+pub enum ConstraintSolveError {
+    /// The projected right-hand side does not satisfy Cx = d within tolerance.
+    Inconsistent { residual: f64 },
+}
+
 /// Solve Cx = d via SVD with threshold rank detection.
 ///
-/// Returns `None` if the system is inconsistent (d not in the column space of C).
+/// Returns an error if the system is inconsistent (d not in the column space of C).
 ///
 /// # Algorithm
 ///
@@ -67,7 +74,10 @@ pub struct ConstraintSolution {
 /// # Panics
 ///
 /// Panics if `c.nrows() != d.nrows()` (dimension mismatch).
-pub fn solve_constraints(c: &DMatrix<f64>, d: &DVector<f64>) -> Option<ConstraintSolution> {
+pub fn solve_constraints(
+    c: &DMatrix<f64>,
+    d: &DVector<f64>,
+) -> Result<ConstraintSolution, ConstraintSolveError> {
     let p = c.nrows();
     let m = c.ncols();
     assert_eq!(
@@ -80,7 +90,7 @@ pub fn solve_constraints(c: &DMatrix<f64>, d: &DVector<f64>) -> Option<Constrain
 
     // Edge case: zero-row constraint matrix (no constraints).
     if p == 0 {
-        return Some(ConstraintSolution {
+        return Ok(ConstraintSolution {
             x0: DVector::zeros(m),
             null_basis: DMatrix::identity(m, m),
             rank: 0,
@@ -90,13 +100,13 @@ pub fn solve_constraints(c: &DMatrix<f64>, d: &DVector<f64>) -> Option<Constrain
     // Edge case: zero-column system. Consistent only if d = 0.
     if m == 0 {
         if d.norm() < EPS_CONSISTENCY {
-            return Some(ConstraintSolution {
+            return Ok(ConstraintSolution {
                 x0: DVector::zeros(0),
                 null_basis: DMatrix::zeros(0, 0),
                 rank: 0,
             });
         } else {
-            return None;
+            return Err(ConstraintSolveError::Inconsistent { residual: d.norm() });
         }
     }
 
@@ -140,7 +150,7 @@ pub fn solve_constraints(c: &DMatrix<f64>, d: &DVector<f64>) -> Option<Constrain
     }
     let residual = (d - &d_proj).norm();
     if residual > EPS_CONSISTENCY {
-        return None;
+        return Err(ConstraintSolveError::Inconsistent { residual });
     }
 
     // Step 4: Particular solution (minimum-norm via pseudoinverse).
@@ -168,7 +178,7 @@ pub fn solve_constraints(c: &DMatrix<f64>, d: &DVector<f64>) -> Option<Constrain
         DMatrix::zeros(m, 0)
     };
 
-    Some(ConstraintSolution {
+    Ok(ConstraintSolution {
         x0,
         null_basis,
         rank,
@@ -273,10 +283,12 @@ mod tests {
         ]);
         let d = DVector::from_column_slice(&[2.0, 3.0, 5.0, 0.0]);
 
-        assert!(
-            solve_constraints(&c, &d).is_none(),
-            "expected None for inconsistent system"
-        );
+        match solve_constraints(&c, &d) {
+            Err(ConstraintSolveError::Inconsistent { residual }) => {
+                assert!(residual > EPS_CONSISTENCY);
+            }
+            Ok(_) => panic!("expected inconsistent system"),
+        }
     }
 
     /// Zero RHS: Cx = 0 should give x0 ~ 0 and null basis spanning ker(C).
@@ -349,10 +361,12 @@ mod tests {
         let c = DMatrix::zeros(2, 3);
         let d = DVector::from_column_slice(&[1.0, 0.0]);
 
-        assert!(
-            solve_constraints(&c, &d).is_none(),
-            "expected None: 0*x = [1,0] is inconsistent"
-        );
+        match solve_constraints(&c, &d) {
+            Err(ConstraintSolveError::Inconsistent { residual }) => {
+                assert!(residual > EPS_CONSISTENCY);
+            }
+            Ok(_) => panic!("expected inconsistent 0*x = [1,0] system"),
+        }
     }
 
     // ── Mathematical property tests ──
@@ -380,7 +394,7 @@ mod tests {
 
         for (i, (c, d)) in cases.iter().enumerate() {
             let sol = solve_constraints(c, d)
-                .unwrap_or_else(|| panic!("case {} should be consistent", i));
+                .unwrap_or_else(|_| panic!("case {} should be consistent", i));
             let residual = (c * &sol.x0 - d).norm();
             assert!(
                 residual < 1e-10,
@@ -410,7 +424,7 @@ mod tests {
 
         for (i, c) in cases.iter().enumerate() {
             let d = DVector::zeros(c.nrows());
-            let sol = solve_constraints(c, &d).unwrap_or_else(|| panic!("case {} consistent", i));
+            let sol = solve_constraints(c, &d).unwrap_or_else(|_| panic!("case {} consistent", i));
 
             if sol.null_basis.ncols() == 0 {
                 continue;
@@ -467,7 +481,7 @@ mod tests {
         ];
 
         for (i, (c, d)) in cases.iter().enumerate() {
-            let sol = solve_constraints(c, d).unwrap_or_else(|| panic!("case {} consistent", i));
+            let sol = solve_constraints(c, d).unwrap_or_else(|_| panic!("case {} consistent", i));
             let m = c.ncols();
             assert_eq!(
                 sol.null_basis.ncols(),

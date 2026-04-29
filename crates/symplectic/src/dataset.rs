@@ -8,7 +8,7 @@
 //!
 //! Mathematical correspondence: [def:systolic-ratio]
 
-use crate::geom::polytope::Polytope4D;
+use crate::{geom::polytope::Polytope4D, systolic_ratio};
 use serde::{Deserialize, Serialize};
 
 /// A single polytope row in the main dataset.
@@ -80,7 +80,7 @@ impl PolytopeRow {
             .iter()
             .map(|a| [a[0], a[1], a[2], a[3]])
             .collect();
-        let sys = capacity * capacity / (2.0 * volume);
+        let sys = systolic_ratio(capacity, volume);
         Self {
             source,
             facet_count: polytope.facet_count(),
