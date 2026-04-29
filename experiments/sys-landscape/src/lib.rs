@@ -26,13 +26,12 @@ use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::skeleton::Skeleton;
 use symplectic::geom::symplectic_form::omega0;
 use symplectic::geom::volume::volume;
-use symplectic::{OrbitAdmissibility, OrbitKktData, OrbitSearchResult};
+use symplectic::{systolic_ratio, OrbitAdmissibility, OrbitKktData, OrbitSearchResult};
 
 pub use datasets::{
     continuation_cache_path, experiment_path, package_root, raw_dataset_cache_path,
-    raw_dataset_path, raw_dataset_trace_path, raw_root, CONTINUATION_EXPERIMENT_DIR,
-    GRADIENT_ASCENT_GENERAL_DIR,
-    shared_family_cache_path,
+    raw_dataset_path, raw_dataset_trace_path, raw_root, shared_family_cache_path,
+    CONTINUATION_EXPERIMENT_DIR, GRADIENT_ASCENT_GENERAL_DIR,
 };
 
 // ============================================================================
@@ -296,7 +295,7 @@ pub fn compute_active_sys_state(polytope: &Polytope4D) -> Option<ActiveSysState>
     if vol <= 0.0 {
         return None;
     }
-    let sys = capacity.capacity() * capacity.capacity() / (2.0 * vol);
+    let sys = systolic_ratio(capacity.capacity(), vol);
     sys.is_finite()
         .then_some(ActiveSysState { capacity, vol, sys })
 }
@@ -313,7 +312,7 @@ pub fn compute_sys_from_capacity(
         return None;
     }
     let cap = capacity.capacity();
-    let sys = cap * cap / (2.0 * vol);
+    let sys = systolic_ratio(cap, vol);
     sys.is_finite().then_some(sys)
 }
 
@@ -324,7 +323,7 @@ pub fn compute_sys(polytope: &Polytope4D) -> Option<f64> {
         return None;
     }
     let cap = compute_capacity_result(polytope)?.capacity();
-    let sys = cap * cap / (2.0 * vol);
+    let sys = systolic_ratio(cap, vol);
     sys.is_finite().then_some(sys)
 }
 
