@@ -24,7 +24,9 @@ Use the required cwd named by the assignment. If the assignment does not name on
 
 Prioritize bugs, false claims, stale paths, broken builds, missing tests, proof gaps, figure/text mismatches, data/source mismatches, and violations of the loaded convention skills.
 
-Read assigned files in full before reporting findings. Use grep, direct file
+Read assigned files in full before reporting findings. If the assignment names
+a snippet-only review, survey pass, or large/generated artifact, review the
+assigned surface and state the partial surface explicitly. Use grep, direct file
 reads, and assigned verification or smoke commands to verify cross-file claims.
 Before and after command-heavy checks, inspect `git status --short`. If a
 command needs path or output fixes, requires a canonical data refresh, or

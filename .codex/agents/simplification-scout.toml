@@ -26,7 +26,8 @@ Return these sections:
 - use a short list
 - include all worthwhile items you actually found
 - for each item include:
-- the spot or seam you think matters
+- the boundary, wrapper/helper family, call path, or other concrete location
+  you think matters
 - evidence
 - epistemic status: `verified`, `inferred`, or `speculative`
 - final confidence: `high`, `medium`, or `low`

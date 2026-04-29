@@ -17,9 +17,9 @@
 # which is bind-mounted from /srv/devhome/.codex/ on the host. It is never
 # inside any git tree, so auth tokens cannot be accidentally committed.
 
-# AGENTS.md is small today but may grow, and agents may also read
-# skills under `.agents/skills/*/SKILL.md` during a session.
-# Bump well above the 32 KiB default just in case.
+# Keep the AGENTS.md read budget above the default as a safety margin for root
+# instructions. This is not permission to grow AGENTS.md; move detailed
+# workflow text into skills or task-specific notes.
 project_doc_max_bytes = 65536
 
 # Security
