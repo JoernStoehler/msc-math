@@ -5,7 +5,10 @@ description: Top-level merge-readiness workflow before asking Jörn about integr
 
 # Pre-Merge Workflow
 
-Run all phases in order before telling Jörn work is ready. Every phase runs on every branch — do not skip phases because "no changes in this area." Fix failures before proceeding to the next phase.
+Evaluate all phases in order before telling Jörn work is ready. Run the
+in-scope checks, record empty phases as empty, and record optional phases as
+not needed when their trigger is absent. Fix failures before proceeding to the
+next phase.
 
 ## Phase 1: Build and test
 
@@ -48,12 +51,12 @@ Default review surfaces:
 
 | Surface | Scope | Skills / review references |
 |----------|-------|----------------------------|
-| Rust | Changed `.rs` files | `$rust-conventions`, `review/references/rust.md` |
-| Formal math | Changed `formal/**/*.tex` files and Rust-linked labels | `$formal-math-conventions`, `review/references/formal-math.md` |
-| Claims | Changed result summaries, thesis text, captions, formal commentary | `review/references/claims.md` |
-| Thesis | Changed `thesis/**/*.tex` files | `$thesis-tex-conventions`, `review/references/thesis.md` |
-| Python | Changed `.py` files | `$python-conventions`, `review/references/python.md` |
-| Figures | Changed `analyze.py`, `.png`, or generated figure/table `.tex` files | `review/references/figures.md` |
+| Rust | Changed `.rs` files | `$rust-conventions`, `.agents/skills/review/references/rust.md` |
+| Formal math | Changed `formal/**/*.tex` files and Rust-linked labels | `$formal-math-conventions`, `.agents/skills/review/references/formal-math.md` |
+| Claims | Changed result summaries, thesis text, captions, formal commentary | `.agents/skills/review/references/claims.md` |
+| Thesis | Changed `thesis/**/*.tex` files | `$thesis-tex-conventions`, `.agents/skills/review/references/thesis.md` |
+| Python | Changed `.py` files | `$python-conventions`, `.agents/skills/review/references/python.md` |
+| Figures | Changed `analyze.py`, `.png`, or generated figure/table `.tex` files | `.agents/skills/review/references/figures.md` |
 
 If a surface has no files in scope, record "no files in scope" in the local notes. Do not launch an empty reviewer solely to prove the absence.
 

@@ -27,7 +27,7 @@ Route proof or interpretation questions to `$research-direction`.
 
 ## Default Shape
 
-Prefer this order:
+For multi-packet improvement rounds, prefer this order:
 
 1. Read enough code to find repeated glue or mixed-concern files.
 2. Write down a triaged packet list before spawning workers.
@@ -41,8 +41,9 @@ Prefer this order:
 8. Merge only the kept packets into the feature worktree.
 9. Re-run focused verification on the integration branch.
 
-Parallel worktrees are the default for this focus once the packets are real and
-their write scopes are disjoint.
+Parallel worktrees are the default for multi-packet rounds once the packets are
+real and their write scopes are disjoint. For a narrow cleanup with one obvious
+write scope, use a compact plan with the same verification and review gates.
 
 Do not merge improvement packets directly into `main`. Auto-merge accepted
 packets into the feature branch is fine; final merge to `main` is Jörn-initiated
@@ -79,7 +80,7 @@ Prefer "make later edits cheaper" over "make this diff look clever."
 
 ## Triage Output
 
-Before execution, write two files under `scratch/`:
+Before multi-packet execution, write two files under `scratch/`:
 
 1. `improvement-<date>-packets.md`
 2. `improvement-<date>-worker-context.md`
@@ -95,7 +96,8 @@ For each implementation packet, record:
 1. **Unit of work**
    - Worktree: short branch name.
    - Scope: exact files.
-   - Why now: the concrete simplification seam.
+   - Why now: the specific duplicated logic, mixed-concern boundary, underused
+     helper, or workflow branch being removed.
    - Expected shape: what kind of refactor is allowed.
    - Verification: exact command.
    - Risk: what must stay local or unchanged.
@@ -137,7 +139,8 @@ not silently reinterpret "show Jörn" as informational-only.
 
 ## Worktree Discipline
 
-Create a dedicated integration worktree first, for example:
+For multi-packet rounds, create a dedicated integration worktree first, for
+example:
 
 ```bash
 git worktree add -b improvement-<topic>-exec .codex/worktrees/improvement-<topic>-exec main

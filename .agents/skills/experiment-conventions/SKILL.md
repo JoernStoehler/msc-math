@@ -26,7 +26,12 @@ experiments/
 
 Formal mathematics for experiments lives in `formal/<topic>/*.tex`, not beside `main.rs`.
 
-## Before Editing
+## Before Editing Or Running
+
+For run-only tasks, read the local entrypoint, declared artifacts, and nearby
+execution notes needed to run the command without changing tracked outputs.
+Use the full editing read set below when the task changes code, methodology,
+artifact declarations, or interpretation.
 
 1. Read sibling experiments in the same `experiments/<topic>/` package.
 2. Read the relevant `research/<topic>.md` note and any narrower `research/<topic>-*.md` note when the task involves methodology, current interpretation, or decision history. Read Markdown inside `experiments/` only when it is execution-facing packet documentation.
@@ -60,7 +65,8 @@ When a validation experiment replaces crate fixture coverage, record the boundar
 - Cargo binary names use hyphens, matching existing package style.
 - Shared helpers used by multiple binaries in the same topic belong in `experiments/<topic>/src/lib.rs` only when they are stable semantic primitives or stable shared contracts.
 - Keep case-specific or exploratory helpers in the binary that owns them even when another binary has a structurally similar pipeline.
-- Keep `main.rs` thin once an experiment has more than one semantic stage; route into local modules or `src/lib.rs` instead of letting the entrypoint become the whole experiment.
+- When the split criteria in `$rust-conventions` are met, keep `main.rs` thin
+  by routing stable stages into local modules or `src/lib.rs`.
 - Exploratory behavior stays in `experiments/`; stable approved algorithms migrate to `crates/`.
 - Use semantic experiment paths. Do not reorganize a topic just to make the subtree visually balanced.
 - Durable reusable Sage validation belongs under `experiments/verification/sage/`. Topic-local Sage can stay with its producer until it stabilizes into a reusable comparison surface.

@@ -1,9 +1,15 @@
 <!--
-Purpose: durable data-flow and cache inventory for the repo maintainability / architecture program.
-Context: discovery packet D3. This note records observed producers, consumers, mirror candidates, and transient outputs without changing any committed JSONL values. Canonical-dataset policy stays open.
+Purpose: historical data-flow and cache inventory from the April 2026 repo
+maintainability / architecture program.
+Context: discovery packet D3. Verify all facts against current maps, tasks, and
+code before reuse.
 -->
 
 # Data-Flow And Cache Inventory
+
+> Historical snapshot. Do not treat this note as current instruction or live
+> architecture state; verify facts against current maps, tasks, and code before
+> reuse.
 
 ## Status
 

@@ -1,11 +1,15 @@
 <!--
-Purpose: Packet 2 planning report for the shared capacity/orbit search frontend.
-Context: maps the current common enumerate -> solve -> classify -> track seam
-across hk2017 pruned, hk2017 unpruned, and billiard before the main thread
-uses the current shared orbit-search surface.
+Purpose: historical Packet 2 planning report for the shared capacity/orbit
+search frontend.
+Context: maps an April 2026 seam across hk2017 pruned, hk2017 unpruned, and
+billiard. Verify against current code before reuse.
 -->
 
 # Packet 2 Shared Search Frontend Seam Report
+
+> Historical snapshot. Do not treat this note as current instruction or live
+> architecture state; verify facts against current maps, tasks, and code before
+> reuse.
 
 ## Recommended seam
 

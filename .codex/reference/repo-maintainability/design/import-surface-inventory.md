@@ -1,12 +1,15 @@
 <!--
-Purpose: durable import-surface inventory for the repo maintainability /
+Purpose: historical import-surface inventory for the repo maintainability /
 architecture program.
-Context: discovery packet D1. This note records the current experiment-facing
-library import paths, the evidence used to classify them, and the remaining
-boundary questions that still need a Jörn decision.
+Context: discovery packet D1. Verify all facts and boundary questions against
+current maps, tasks, and code before reuse.
 -->
 
 # Import Surface Inventory
+
+> Historical snapshot. Do not treat this note as current instruction or live
+> architecture state; verify facts against current maps, tasks, and code before
+> reuse.
 
 ## Status
 

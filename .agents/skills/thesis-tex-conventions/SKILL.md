@@ -20,10 +20,11 @@ Every .tex file starts with a `%` block:
 
 No review status in headers — use `% Jörn:` markers in the body.
 
-## Environments
+## Mathematical Environments
 
 Use `\definition`, `\lemma`, `\theorem`, `\proposition`, `\proof`, `\remark`, `\example`.
-No prose outside environments except minimal connective text.
+For mathematical content, keep the statement and setup inside the relevant
+environment except for minimal connective text.
 Calculations as formulas, not English descriptions.
 
 ## Approval status for mathematical content

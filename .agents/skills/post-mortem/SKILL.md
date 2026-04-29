@@ -7,7 +7,9 @@ description: Top-level, Jörn-invoked post-session reflection and blameless posi
 
 Use this skill only in the top-level session. It needs the conversation history and Jörn's framing.
 
-The output is advisory. Do not edit files, create archival notes, update skills, or create commits unless Jörn separately asks for edits in the same turn.
+The output is advisory. Do not edit files, create archival notes, update skills,
+or create commits. If Jörn asks for harness edits after a post-mortem, route
+that work through `$harness-engineering`.
 
 ## Operating model
 

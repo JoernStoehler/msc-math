@@ -1,12 +1,15 @@
 <!--
-Purpose: durable inventory of execution constraints for the repo maintainability
-/ architecture program.
-Context: later work-packet writers should reuse this note instead of
-reconstructing worktree, JSONL/LFS, verification, and delegation rules from
-chat history.
+Purpose: historical inventory of execution constraints for the repo
+maintainability / architecture program.
+Context: verify all facts against current maps, tasks, skills, and code before
+reuse.
 -->
 
 # Execution Constraints Inventory
+
+> Historical snapshot. Do not treat this note as current instruction or live
+> architecture state; verify facts against current maps, tasks, and code before
+> reuse.
 
 ## Status
 

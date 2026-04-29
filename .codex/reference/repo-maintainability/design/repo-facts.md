@@ -1,12 +1,15 @@
 <!--
-Purpose: current-state fact base for the repo maintainability / architecture
+Purpose: historical fact base for the repo maintainability / architecture
 program.
-Context: this file is the first-pass source for later `ARCHITECTURE.md` and
-data-flow docs. It records observed repo facts without proposing target-state
-policy unless the current repo already states that policy explicitly.
+Context: this file records observed repo facts from April 2026. Verify all facts
+against current maps, tasks, and code before reuse.
 -->
 
 # Repo Facts
+
+> Historical snapshot. Do not treat this note as current instruction or live
+> architecture state; verify facts against current maps, tasks, and code before
+> reuse.
 
 ## Status
 

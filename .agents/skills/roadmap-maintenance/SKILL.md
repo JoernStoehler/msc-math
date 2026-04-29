@@ -59,9 +59,10 @@ When proposing agent execution, add these fields:
 - The verification check.
 - Stop condition.
 
-Load `$subagent-delegation` when drafting a surface that may involve explorers,
-workers, reviewers, serial queues, or parallel work. After Jörn approves the
-surface, use it to write bounded subagent briefs and integrate results.
+Load `$subagent-delegation` when the active session permits delegation and the
+drafted surface may involve explorers, workers, reviewers, serial queues, or
+parallel work. After Jörn approves the surface, use it to write bounded
+subagent briefs and integrate results.
 
 When choosing whether a candidate task is shallow enough to delegate, read `references/delegation-calibration.md` if recent examples would help. It records past work packets whose actual difficulty differed from expectation.
 
@@ -82,7 +83,9 @@ When choosing whether a candidate task is shallow enough to delegate, read `refe
 - Mark an item `[done]` only when the acceptance check is met or Jörn explicitly closes it.
 - Link to `research/*.md` notes, formal files, result docs, commits, or handoffs instead of duplicating evidence.
 - Preserve why a task is blocked, stale, deferred, or Jörn-owned.
-- Update notes for new evidence, blockers, and resume points. Change a header status or owner only when Jörn assigned or approved that ownership in the current PM surface.
+- Update notes for new evidence, blockers, and resume points. Change item status
+  when the acceptance check is met or Jörn closes it. Change owner only when
+  Jörn assigned or approved that ownership in the current PM surface.
 - Update `ROADMAP.md` only when the global overview changes.
 - If a research interpretation changes, update or flag the relevant
   `research/*.md` note and topic task bundle.

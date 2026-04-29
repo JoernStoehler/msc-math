@@ -10,9 +10,11 @@ description: Repo review workflow for changed files, drafts, proofs, claims, fig
 1. Read the assignment and identify the changed or named files.
 2. Identify the review surface: committed branch diff (`git diff main...HEAD`), single commit (`git show HEAD`), uncommitted diff (`git diff HEAD`), or the exact named files.
 3. Read `AGENTS.md`.
-4. Load matching convention skills by their descriptions. If the parent prompt names skills, load those first.
+4. Load matching convention skills by their descriptions. If the parent prompt names skills, load those first. For exact-file prompt audits, load only skills that change how those files should be judged.
 5. Load only the review reference files below that match the assignment.
-6. Read target files in full before reporting findings.
+6. Read target files in full before reporting findings. If the assignment names
+   a snippet-only review, survey pass, or large/generated artifact, review the
+   assigned surface and state the partial surface explicitly.
 7. Verify each finding against the cited file or command output before including it.
 
 Use batched reads for independent files. Do not edit files during a review unless the assignment explicitly asks for fixes.

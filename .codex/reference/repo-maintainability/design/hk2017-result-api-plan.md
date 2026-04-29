@@ -1,14 +1,15 @@
 <!--
-Purpose: durable design note for the shared capacity/orbit result surface used
-by hk2017, hk2017_unpruned, and billiard.
-Context: created during the repo-maintainability program after Jörn/top-level
-discussion of the current result layering. This note records what is already
-settled, what remains open, and what later implementation sessions should
-change. It is a design handoff; later status bullets record which pieces of the
-target API have already landed in code.
+Purpose: historical design note for the shared capacity/orbit result surface
+used by hk2017, hk2017_unpruned, and billiard.
+Context: created during the repo-maintainability program. Verify all facts and
+status bullets against current maps, tasks, and code before reuse.
 -->
 
 # Capacity/Orbit Result API Plan
+
+> Historical snapshot. Do not treat this note as current instruction or live
+> architecture state; verify facts against current maps, tasks, and code before
+> reuse.
 
 ## Status
 

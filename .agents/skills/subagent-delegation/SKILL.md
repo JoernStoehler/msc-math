@@ -69,7 +69,10 @@ Required cwd/worktree: <required-cwd>
 
 Use this worktree for all commands and edits. Do not edit `main` or the root checkout.
 
-If you make or detect tracked edits outside <required-cwd>, revert them immediately when that revert is clearly safe. Otherwise stop and report the exact files before continuing.
+If you make tracked edits outside <required-cwd>, revert only your own edits
+when that revert is clearly safe. If you detect pre-existing or ambiguous
+tracked edits outside <required-cwd>, stop and report the exact files before
+continuing.
 
 You are not alone in the codebase; do not revert or overwrite changes made by others.
 ```

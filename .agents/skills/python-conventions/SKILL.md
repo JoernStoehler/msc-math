@@ -9,7 +9,8 @@ description: Python conventions for `experiments/**/analyze.py`, generated figur
 
 Scripts are self-contained: read data → analyze → write output. No `__init__.py`, no shared imports between scripts — except `figure_config.py`.
 
-Shared figure config lives at `experiments/figure_config.py`. Import it:
+Shared figure config lives at `experiments/figure_config.py`. In the standard
+`experiments/<topic>/<experiment>/analyze.py` layout, import it with:
 ```python
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 from figure_config import setup, FIGSIZE_SINGLE

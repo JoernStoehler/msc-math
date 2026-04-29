@@ -1,13 +1,15 @@
 <!--
-Purpose: durable discovery, decision, and execution-planning note for the repo
-maintainability / architecture program.
-Context: created before a broad refactor so later sessions can resume from repo
-state instead of chat history. This file records observed facts, open decisions,
-and candidate work packets. Final decisions should propagate into TASKS.md and
-the committed docs/code they govern.
+Purpose: historical discovery, decision, and execution-planning note for the
+repo maintainability / architecture program.
+Context: created before a broad refactor. Verify all facts, decisions, and
+packets against current maps, tasks, and code before reuse.
 -->
 
 # Repo Maintainability / Architecture Program
+
+> Historical snapshot. Do not treat this note as current instruction or live
+> architecture state; verify facts against current maps, tasks, and code before
+> reuse.
 
 ## Status
 

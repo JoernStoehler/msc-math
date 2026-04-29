@@ -1,11 +1,15 @@
 <!--
-Purpose: question-oriented inventory for repo navigation and orientation docs.
-Context: written from concrete repo files on 2026-04-16 so later sessions can
-see which common "where does this live?" questions are already answered and
-which ones still need a repo-level guide or a Jörn decision.
+Purpose: historical question-oriented inventory for repo navigation and
+orientation docs.
+Context: written from concrete repo files on 2026-04-16. Verify all facts
+against current maps, tasks, and code before reuse.
 -->
 
 # Docs And Navigation Inventory
+
+> Historical snapshot. Do not treat this note as current instruction or live
+> architecture state; verify facts against current maps, tasks, and code before
+> reuse.
 
 ## Status
 

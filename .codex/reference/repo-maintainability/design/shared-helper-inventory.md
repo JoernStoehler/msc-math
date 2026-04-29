@@ -1,13 +1,15 @@
 <!--
-Purpose: discovery packet D2 for the repo maintainability / architecture program.
-Context: records repeated helper logic across experiments so later sessions can
-resume from concrete implementations and copies instead of chat history. This
-note separates observed duplication from the suggested helper home; final moves
-into `crates/symplectic/` or any new public API promise remain reserved for the main
-thread or Jörn.
+Purpose: historical discovery packet D2 for the repo maintainability /
+architecture program.
+Context: records repeated helper logic observed in April 2026. Verify all facts
+against current maps, tasks, and code before reuse.
 -->
 
 # Shared-Helper Inventory
+
+> Historical snapshot. Do not treat this note as current instruction or live
+> architecture state; verify facts against current maps, tasks, and code before
+> reuse.
 
 ## Status
 

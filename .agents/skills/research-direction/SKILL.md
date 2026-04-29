@@ -34,7 +34,9 @@ Route task graph work to `$roadmap-maintenance`: prioritization, bundling,
 sequencing, ownership, `ROADMAP.md` / `tasks/*.md` edits, or deciding which
 agents should take which units.
 
-Use `$subagent-delegation` after the output contract is clear for a bounded evidence-gathering, source-checking, implementation, or review task.
+Use `$subagent-delegation` after the output contract is clear for a bounded
+evidence-gathering, source-checking, implementation, or review task, when the
+active session permits delegation.
 
 ## Method Discipline
 

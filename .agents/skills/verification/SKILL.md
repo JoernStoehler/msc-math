@@ -74,6 +74,9 @@ Status labels:
 - `missing packet`
 - `mostly Jörn-only`
 
+Current coverage is a cached routing aid. Before reporting `packet exists`,
+verify that the named file is present under `.agents/skills/verification/references/`.
+
 Current coverage:
 
 - thesis-facing research story surface is included:
