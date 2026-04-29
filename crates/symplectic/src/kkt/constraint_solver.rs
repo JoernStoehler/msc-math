@@ -74,7 +74,7 @@ pub enum ConstraintSolveError {
 /// # Panics
 ///
 /// Panics if `c.nrows() != d.nrows()` (dimension mismatch).
-pub fn solve_constraints_checked(
+pub fn solve_constraints(
     c: &DMatrix<f64>,
     d: &DVector<f64>,
 ) -> Result<ConstraintSolution, ConstraintSolveError> {
@@ -185,13 +185,6 @@ pub fn solve_constraints_checked(
     })
 }
 
-/// Solve Cx = d via SVD, returning `None` when the system is inconsistent.
-///
-/// Use [`solve_constraints_checked`] when the inconsistency residual matters.
-pub fn solve_constraints(c: &DMatrix<f64>, d: &DVector<f64>) -> Option<ConstraintSolution> {
-    solve_constraints_checked(c, d).ok()
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -290,7 +283,7 @@ mod tests {
         ]);
         let d = DVector::from_column_slice(&[2.0, 3.0, 5.0, 0.0]);
 
-        match solve_constraints_checked(&c, &d) {
+        match solve_constraints(&c, &d) {
             Err(ConstraintSolveError::Inconsistent { residual }) => {
                 assert!(residual > EPS_CONSISTENCY);
             }
@@ -368,7 +361,7 @@ mod tests {
         let c = DMatrix::zeros(2, 3);
         let d = DVector::from_column_slice(&[1.0, 0.0]);
 
-        match solve_constraints_checked(&c, &d) {
+        match solve_constraints(&c, &d) {
             Err(ConstraintSolveError::Inconsistent { residual }) => {
                 assert!(residual > EPS_CONSISTENCY);
             }
@@ -401,7 +394,7 @@ mod tests {
 
         for (i, (c, d)) in cases.iter().enumerate() {
             let sol = solve_constraints(c, d)
-                .unwrap_or_else(|| panic!("case {} should be consistent", i));
+                .unwrap_or_else(|_| panic!("case {} should be consistent", i));
             let residual = (c * &sol.x0 - d).norm();
             assert!(
                 residual < 1e-10,
@@ -431,7 +424,7 @@ mod tests {
 
         for (i, c) in cases.iter().enumerate() {
             let d = DVector::zeros(c.nrows());
-            let sol = solve_constraints(c, &d).unwrap_or_else(|| panic!("case {} consistent", i));
+            let sol = solve_constraints(c, &d).unwrap_or_else(|_| panic!("case {} consistent", i));
 
             if sol.null_basis.ncols() == 0 {
                 continue;
@@ -488,7 +481,7 @@ mod tests {
         ];
 
         for (i, (c, d)) in cases.iter().enumerate() {
-            let sol = solve_constraints(c, d).unwrap_or_else(|| panic!("case {} consistent", i));
+            let sol = solve_constraints(c, d).unwrap_or_else(|_| panic!("case {} consistent", i));
             let m = c.ncols();
             assert_eq!(
                 sol.null_basis.ncols(),
