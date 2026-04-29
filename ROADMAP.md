@@ -23,7 +23,7 @@ Freshness rules:
 ## Status
 
 - State: finish-mode roadmap scaffold.
-- Last updated: 2026-04-25.
+- Last updated: 2026-04-29.
 - Target: finish the scoped master-thesis project by 2026-05-14. Finishing by
   2026-05-07 is plausible but not assumed.
 - Phase 1 done-state basis was accepted by Jorn on 2026-04-24, modulo inline
@@ -69,6 +69,7 @@ justify calendar delay and Jorn-time cost.
 | Submission and archive | external-clock actions, forms, Zenodo/arXiv/outreach, final archive | `tasks/submit-thesis.md` |
 | Writing | thesis structure, writer-ready boundary, figures, final prose gates | `tasks/writing.md` |
 | HKO | HKO2024 theorem/evidence/blocker split and exact-Clarke route | `tasks/hko.md` |
+| Sys first-order | arbitrary-polytope first-order theorem/evaluator gap for `sys` | `tasks/sys-first-order.md` |
 | Hostile landscape | negative sys-search story and data-science evidence | `tasks/landscape.md` |
 | Numerics | numerical appendix, solver/projection/beta-LP state | `tasks/numerics.md` |
 | Reproducibility | data freshness, artifact truth, repo promises | `tasks/reproducibility.md` |

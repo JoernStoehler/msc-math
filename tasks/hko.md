@@ -66,6 +66,9 @@ This is the expanded meaning of "HKO is a local maximum" for thesis closeout.
 - `formal/hko-local-maximum/second-order.tex` is an older route with
   non-smooth-analysis TODOs; it should become supporting evidence unless Jorn
   chooses to repair it as a proof route.
+- The arbitrary-polytope first-order theorem/evaluator gap now lives in
+  `tasks/sys-first-order.md`. Do not use a generic smooth-branch/Danskin
+  theorem as a substitute for that route.
 
 ### Experiment Execution
 
@@ -102,7 +105,7 @@ This is the expanded meaning of "HKO is a local maximum" for thesis closeout.
 | Witness contract and verifier | `[active]` | mainline thesis or contingent | dedicated exact route sessions | Extend the existing backend-neutral witness from partial Packet 3 support to final active rows, ranks, kernel basis, and symmetry inclusion/equality checks; verify with Sage. | `widened-seed-witness.json`, `widened-seed-witness-verification.json`, `verify_widened_seed_witness.sage` |
 | Stale `44/10` reconciliation | `[done]` | map input | agent | Old `44`-orbit / `10`-gradient prose is now caveated against current `150` minima / `20` subsets / `28` gradient-pattern bookkeeping. Remaining symmetry classification is a precise TODO in the formal note, not an uncaveated claim. | `experiments/hko-local-maximum/exact-clarke/numerical-minima-summary.json`, `formal/hko-local-maximum/gradient-analysis.tex` |
 | Formal theorem writeup | `[blocked]` | mainline thesis | exact route or weaker claim | After proof/wording route is frozen, write/update the formal and thesis-facing proof route. | `formal/hko-local-maximum/`, `thesis/` |
-| h-space / Danskin proof check | `[Jorn]` | mainline thesis if retained | Jorn | Verify the non-smooth first-order/Danskin argument only if retained in theorem route. | `formal/hko-local-maximum/second-order.tex` |
+| h-space / Danskin proof check | `[Jorn]` | mainline thesis if retained | Jorn | Verify the non-smooth first-order/Danskin argument only if retained in theorem route; if the route needs arbitrary-polytopes first-order behavior, start from `tasks/sys-first-order.md` rather than a smooth-branch specialization. | `formal/hko-local-maximum/second-order.tex`, `tasks/sys-first-order.md` |
 | second-order proposition status | `[Jorn]` | contingent during writing | Jorn | Decide whether second-order note is proof route, supporting evidence, or future/cut after exact-route status is clear. | `formal/hko-local-maximum/second-order.tex` |
 | HKO empirical wording | `[blocked]` | contingent during writing | retained thesis text | Word perturbation, facet-splitting, cut-and-ascent, and neighborhood evidence only as strongly as existing artifacts support. | `thesis-stories-are-supported.md`, `data-and-figures-are-traceable.md` |
 | HKO figures/tables | `[blocked]` | contingent during writing | thesis outline | Create or cite only figures/tables that the final HKO section actually uses. | `data-and-figures-are-traceable.md` |
