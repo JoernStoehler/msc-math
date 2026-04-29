@@ -100,7 +100,7 @@ This is the expanded meaning of "HKO is a local maximum" for thesis closeout.
 | Exact certificate field mismatch | `[active]` | mainline thesis | agent then Jorn | Final gate was generalized on 2026-04-24; propagate quartic `Q(tan(pi/5))` field wording into theorem-facing prose and do not target a `Q(sqrt(5))` certificate. | `research/hko-local-maximum.md`, `research/hko-local-maximum-exact-clarke.md` |
 | Packet 3 representative coverage | `[active]` | mainline thesis or contingent | dedicated exact route sessions | Exactify the two unresolved asymmetric seven-facet representative classes and rebuild the witness until the final active-gradient rank/kernel comparison is visible. | `experiments/hko-local-maximum/exact-clarke/`, `research/hko-local-maximum-exact-clarke.md` |
 | Witness contract and verifier | `[active]` | mainline thesis or contingent | dedicated exact route sessions | Extend the existing backend-neutral witness from partial Packet 3 support to final active rows, ranks, kernel basis, and symmetry inclusion/equality checks; verify with Sage. | `widened-seed-witness.json`, `widened-seed-witness-verification.json`, `verify_widened_seed_witness.sage` |
-| Stale `44/10` reconciliation | `[active]` | mainline thesis | agent | Replace or caveat old `44`-orbit / `10`-gradient prose with current `150` minima / `20` subsets / `28` gradient-pattern bookkeeping. | `experiments/hko-local-maximum/exact-clarke/numerical-minima-summary.json`, `formal/hko-local-maximum/gradient-analysis.tex` |
+| Stale `44/10` reconciliation | `[done]` | map input | agent | Old `44`-orbit / `10`-gradient prose is now caveated against current `150` minima / `20` subsets / `28` gradient-pattern bookkeeping. Remaining symmetry classification is a precise TODO in the formal note, not an uncaveated claim. | `experiments/hko-local-maximum/exact-clarke/numerical-minima-summary.json`, `formal/hko-local-maximum/gradient-analysis.tex` |
 | Formal theorem writeup | `[blocked]` | mainline thesis | exact route or weaker claim | After proof/wording route is frozen, write/update the formal and thesis-facing proof route. | `formal/hko-local-maximum/`, `thesis/` |
 | h-space / Danskin proof check | `[Jorn]` | mainline thesis if retained | Jorn | Verify the non-smooth first-order/Danskin argument only if retained in theorem route. | `formal/hko-local-maximum/second-order.tex` |
 | second-order proposition status | `[Jorn]` | contingent during writing | Jorn | Decide whether second-order note is proof route, supporting evidence, or future/cut after exact-route status is clear. | `formal/hko-local-maximum/second-order.tex` |
@@ -135,8 +135,11 @@ This is the expanded meaning of "HKO is a local maximum" for thesis closeout.
   Boundary" and "Sage Note".
 - [fresh 2026-04-25] Current exact-minimum bookkeeping is `150` exact action
   orbits, `20` distinct visited subsets, and `28` distinct height gradients.
-  This conflicts with old `formal/hko-local-maximum/gradient-analysis.tex`
-  prose that still says `44` near-optimal orbits and `10` distinct gradients.
+  The stale `44`/`10` prose in
+  `formal/hko-local-maximum/gradient-analysis.tex` has been caveated: old
+  floating-point counts remain only as historical provenance, and current
+  theorem-facing symmetry claims must use or re-check the `150`/`20`/`28`
+  bookkeeping.
   Refresh by: checking `experiments/hko-local-maximum/exact-clarke/numerical-minima-summary.json`
   and the opening of `formal/hko-local-maximum/gradient-analysis.tex`.
 - [fresh 2026-04-24] Before LICCA submission, the remote repo layout must match
