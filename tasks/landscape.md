@@ -161,16 +161,27 @@ Lead loop for one subexperiment:
    close or advance.
 2. Freeze the input dataset for the wave and record command, paths, row counts,
    max `sys`, and `sys > 1` count.
-3. Write a worker packet with the fields below.
+3. Write a worker packet with the fields below. The packet must require an
+   early artifact heartbeat before method work starts.
 4. Delegate once to a worker in an isolated worktree; do not use interactive
    checkpoints as the default control path.
-5. Wait when blocked on the result. If `wait_agent` times out, inspect the
-   worktree, durable report path, scratch output paths, and running processes
-   before deciding whether to message, wait again, or close the worker.
-6. Review the worker's repo-owned artifacts before accepting any claim.
-7. Choose one disposition: merge/promote, reject/trash, leave follow-up branch,
-   `bug-redo`, `future`, `rejected-low-voi`, or `positive-escalate`.
-8. Update the idea ledger, toolbox audit if thesis-facing, and this task bundle
+5. First wait: inspect after a short bounded wait, before the method could
+   reasonably finish. Passing heartbeat means the evidence directory exists and
+   contains either a draft report or a blocker note.
+6. If heartbeat is missing, inspect the worktree and running processes. If there
+   are no files and no relevant process, send one corrective message. If the
+   second inspection still lacks the heartbeat, classify the attempt as
+   `bug-redo` or lead-repair instead of silently waiting.
+7. Result wait: when blocked on the final result, inspect the durable report
+   path, summary path, scratch output paths, and running processes before
+   deciding whether to message, wait again, or close the worker.
+8. Review the worker's repo-owned artifacts before accepting any claim. The
+   worker must have run the declared command and produced report plus summary;
+   code-only output is not a completed worker result.
+9. Choose one disposition: merge/promote, reject/trash, leave follow-up branch,
+   `bug-redo`, `future`, `rejected-low-voi`, `lead-repair`, or
+   `positive-escalate`.
+10. Update the idea ledger, toolbox audit if thesis-facing, and this task bundle
    before starting the next subexperiment.
 
 Required worker-packet fields:
@@ -185,6 +196,9 @@ Required worker-packet fields:
   for scratch, but no terminal verdict may rely only on `/tmp`, chat, or a
   deleted worktree.
 - Maximum local runtime, whether LICCA is out of scope, and stop conditions.
+- Heartbeat requirement: before implementing the full method, create the
+  evidence directory and a draft report or blocker note containing `idea_id`,
+  dataset path, planned command, and current status.
 - Leakage/provenance guards, including grouped or lineage splits where
   prediction is involved.
 - Statistical checks when relevant: baseline/null, fold/bootstrap/permutation
@@ -194,6 +208,10 @@ Required worker-packet fields:
 - Required report sections: command/provenance, observation, inference, verdict,
   evidence strength, implementation trust, caveats, thesis-use proposal, and
   reopen trigger.
+- Required self-run proof: final response and report name the command the worker
+  actually ran, and the evidence directory contains both report and summary.
+  `analyze.py` without generated report/summary is a partial artifact, not a
+  completed spike.
 
 Required result qualifiers:
 
@@ -207,6 +225,20 @@ Required result qualifiers:
   submission`, `future work`, or `Jorn decision needed`.
 - `caveat`: dataset/table snapshot, feature scope, method class, runtime/search
   budget, density limit, complexity limit, and any stale-data or overfit limit.
+
+Disposition vocabulary:
+
+- `merge/promote`: accept the worker output as source truth after review.
+- `reject/trash`: discard because the artifacts do not answer the packet.
+- `follow-up branch`: keep work unmerged because the idea remains promising but
+  incomplete.
+- `bug-redo`: rerun after a named data, code, prompt, or methodology bug is
+  repaired.
+- `lead-repair`: the worker produced useful partial code or analysis, but the
+  lead had to run, repair, or complete required artifacts. The research result
+  may be usable after review; the process result is not a completed worker
+  lifecycle.
+- `positive-escalate`: stop the wave and ask Jorn before more scaling.
 
 Closure rules:
 
@@ -225,11 +257,19 @@ Closure rules:
 - A tried result cannot close the Experiment-validity blocker unless a lead or
   reviewer records that the checks match the verdict and that the wording does
   not overclaim.
+- Code-only output cannot close any blocker. If the lead completes the report or
+  summary, record disposition `lead-repair` and set `implementation_trust` no
+  higher than `medium` unless an independent reviewer accepts the repaired
+  artifact.
 
 Reviewer checklist:
 
 - Evidence path exists in the repo or in a branch intended for merge.
 - Commands/provenance are sufficient for a future agent to rerun or audit.
+- The evidence directory contains the heartbeat file or draft report before
+  final artifacts; if not, the process lesson is recorded.
+- The worker, not only the lead, ran the declared command unless the disposition
+  is explicitly `lead-repair`.
 - Dataset row counts, schema, freshness, max `sys`, and `sys > 1` count match the
   packet or explain the mismatch.
 - Leakage, provenance, grouped splits, and metadata restrictions match the
@@ -315,16 +355,12 @@ Completed stage-3 pilot 2:
 
 Required revision before stage 4:
 
-- Add an early artifact-creation heartbeat to worker packets: before long method
-  work, create the evidence directory and a short draft report or blocker note.
-- Add a timeout branch: if a wait times out and there are no files and no running
-  process, nudge once; if the second inspection still lacks required artifacts,
-  classify the attempt as `bug-redo` or lead-repair rather than silently waiting.
-- Add a lead-repair disposition: if a worker creates useful but incomplete code,
-  the lead may run or repair it, but the pilot/process result must record that
-  the worker did not complete the lifecycle unaided.
-- Do not mark the process stage 4 or run a batch until these revisions are
-  folded into the workflow and checked against the two pilot outcomes.
+- Run one revised-process pilot after the heartbeat, timeout, and lead-repair
+  rules above. The pilot must create its heartbeat before method work, produce
+  report plus summary without lead completion, and let the lead classify it from
+  repo-owned artifacts.
+- Do not mark the process stage 4 or run a batch until that revised pilot either
+  succeeds unaided or exposes a smaller remaining rule change.
 
 ## Work Map
 
