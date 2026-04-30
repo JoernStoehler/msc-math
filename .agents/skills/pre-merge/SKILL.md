@@ -10,6 +10,16 @@ in-scope checks, record empty phases as empty, and record optional phases as
 not needed when their trigger is absent. Fix failures before proceeding to the
 next phase.
 
+For docs-only or harness-only branches, scope the phases to the touched
+surfaces instead of running unrelated Rust, TeX, or experiment checks. A scoped
+run must state the touched surface, the checks that measure that surface, and
+which phases were omitted as irrelevant. Use the full workflow when code,
+formal math, thesis sources, generated data, or experiment behavior changed.
+For prompt/harness-only changes, include `git diff --check`, skill validation
+for touched skill folders, TOML parsing for changed `.codex/*.toml`, and
+targeted stale-reference searches when paths, skill names, or authority surfaces
+changed.
+
 ## Phase 1: Build and test
 
 Run all of these. If a command fails, fix the issue and rerun before proceeding.
@@ -57,6 +67,7 @@ Default review surfaces:
 | Thesis | Changed `thesis/**/*.tex` files | `$thesis-tex-conventions`, `.agents/skills/review/references/thesis.md` |
 | Python | Changed `.py` files | `$python-conventions`, `.agents/skills/review/references/python.md` |
 | Figures | Changed `analyze.py`, `.png`, or generated figure/table `.tex` files | `.agents/skills/review/references/figures.md` |
+| Prompt/harness | Changed `AGENTS.md`, `.agents/skills/**`, `.codex/**`, or agent-facing task packets/handoffs | `$harness-engineering`; `$skill-creator` for skill behavior changes; `$openai-docs` for current OpenAI or Codex behavior claims |
 
 If a surface has no files in scope, record "no files in scope" in the local notes. Do not launch an empty reviewer solely to prove the absence.
 
@@ -76,7 +87,9 @@ The Phase 8 report contains only verified findings, not the review/cross-check p
 ## Phase 5: Sanity check
 
 - **Goal alignment:** Re-read the original task prompt. Does the work produced actually serve that goal? Does it make sense for the thesis project roadmap? A misunderstood goal that produces technically correct but wrong-direction work is expensive to discover late.
-- **Process compliance:** Work is on a worktree branch, not `main`. Explicit instructions from the task prompt were followed (branch naming, scope restrictions, etc.).
+- **Process compliance:** Work is on a worktree branch, or the task explicitly
+  targeted the main checkout / root checkout. Explicit instructions from the
+  task prompt were followed (branch naming, scope restrictions, etc.).
 - **Project context:** Check `ROADMAP.md` and the relevant `tasks/*.md` bundle. Does this work correspond to tracked work? Is the experiment still active, not superseded by another experiment?
 
 ## Phase 6: Update roadmap surfaces

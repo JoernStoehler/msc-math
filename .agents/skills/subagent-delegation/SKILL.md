@@ -1,11 +1,13 @@
 ---
 name: subagent-delegation
-description: "Subagent delegation workflow: proactively move bounded, verifiable side work to explorer/worker/reviewer subagents while keeping the top-level session responsible for integration and verification. Use when a task has independent read-only searches, disjoint implementation slices, review surfaces, or parallel checks; load before spawning or managing multiple subagents."
+description: "Subagent delegation workflow: decide whether and how to move bounded, verifiable side work to explorer/worker/reviewer subagents while the top-level session owns integration and verification. Use when a task has independent read-only searches, disjoint implementation slices, review surfaces, or parallel checks; load before spawning or managing multiple subagents."
 ---
 
 # Subagent Delegation
 
-Use subagents for bounded first-pass labor after the active task or focus surface is clear. The top-level session keeps integration and correctness ownership.
+Use subagents for bounded first-pass labor after the active task or focus
+surface is clear. The top-level session keeps integration and correctness
+ownership.
 
 Treat delegate output as evidence to check. Before presenting a delegate claim as fact, verify it against files, commands, sources, tests, or a bounded review result.
 

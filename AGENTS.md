@@ -177,4 +177,10 @@ Optimize files, comments, and prompts that agents read for these properties, in 
 5. **Actionable:** The reader should know what to do next.
 6. **Simple and concrete:** Prefer familiar patterns, examples, and literal terms.
 
-Vague-word ban: do not use "appropriate", "properly", "ensure", "good", "consider", "reasonable", "necessary", "efficient", or "robust" without saying what observable condition the word means.
+Vague-phrase check: words such as "appropriate", "properly", "ensure",
+"good", "consider", "reasonable", "necessary", "efficient", and "robust"
+often hide missing criteria. Treat them as search triggers, not banned tokens.
+Rewrite only when the phrase has multiple plausible readings that would change
+future agent behavior. Preserve precise project terms when replacing the word
+would change the meaning, and state the observable condition when the word is a
+task criterion.
