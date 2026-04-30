@@ -105,9 +105,10 @@ only on that blocker.
 
 Current known open blockers:
 
-- Evidence blocker: `DS-I004` and `DS-I006` were recorded from scratch worker
-  outputs; their code/report source truth was not preserved in a committed
-  experiment or evidence path.
+- Evidence blocker: `DS-I004` has a source-truth repair commit
+  `dc4f11a5` on branch `ds-pilot1-pca-cluster`, pending merge approval.
+  `DS-I006` was still recorded from scratch worker output; its code/report
+  source truth was not preserved in a committed experiment or evidence path.
 - Thesis-use blocker: `M012` and `M013` still need Jorn's cite/omit/future
   decision.
 
@@ -132,12 +133,12 @@ not ready to run to completion until it reaches stage 5.
    subexperiment updates the dashboard and evidence surfaces as part of the
    process.
 
-Current maturity: stage 2, **Documented enough to test**.
+Current maturity: stage 3, **Tested**.
 
-Do not run a batch of data-science subagents until stage 4 is reached. A single
-pilot is allowed at stage 2 only after Jorn accepts the workflow surface, and
-only if the pilot names which submission blocker it tests and what repo-owned
-source truth it must leave behind.
+Do not run a batch of data-science subagents until stage 4 is reached. The
+tested pilots show the process can produce source-truth artifacts, but the
+harder pilot needed lead intervention before report/summary artifacts existed.
+Fold that lesson into the workflow before scaling.
 
 ### Data-Science Subexperiment Workflow
 
@@ -250,7 +251,7 @@ Stage-advancement checks:
   row's blocker target, required evidence path, current status, review state,
   and next action.
 
-Proposed stage-3 pilot 1 packet:
+Completed stage-3 pilot 1:
 
 - `idea_id`: `DS-I004`.
 - Goal: rerun the PCA / clustering / anomaly scan as a source-truth repair, not
@@ -283,17 +284,47 @@ Proposed stage-3 pilot 1 packet:
 - Scale decision after pilot: do not move to stage 4 until the lead records what
   the pilot taught about packet wording, artifact paths, review cost, and whether
   one-turn delegation produced an auditable result.
+- Result: branch `ds-pilot1-pca-cluster`, commit `dc4f11a5`, created
+  `experiments/sys-landscape/datascience/methods/pca-cluster-spike/` with
+  `analyze.py`, `report.md`, and `summary.json`. Verdict `negative`;
+  `evidence_strength = medium`; `implementation_trust = high`; `thesis_use =
+  supporting/caveat only`.
+- Process lesson: after a timeout the worker initially had no files and no
+  running analysis process; a corrective nudge produced artifacts. The lead
+  verified and committed the artifacts before accepting the result.
 
-Required later pilot before scaling:
+Completed stage-3 pilot 2:
 
-- Run a second pilot after pilot 1 succeeds or fails cleanly.
-- The second pilot must test a harder method experiment or a less pre-shaped row
-  than `DS-I004`.
-- Its goal is to measure whether the workflow still works when the worker must
-  make more local method-design choices, not only reconstruct a known useful
-  spike.
-- Do not mark the process stage 4 or run a batch unless this second-pilot
-  requirement is closed by the pilot result or by an explicit Jorn decision.
+- `idea_id`: `DS-I005`.
+- Goal: test a harder method experiment where the worker had to choose and run a
+  small supervised-alternatives panel under grouped and transfer guards.
+- Result: branch `ds-pilot2-supervised-alts`, commit `c9b7cb77`, created
+  `experiments/sys-landscape/datascience/methods/supervised-alternatives-spike/`
+  with `analyze.py`, `REPORT.md`, and `summary.json`. Verdict `negative`;
+  `evidence_strength = medium`; `implementation_trust = medium`; `thesis_use =
+  supporting/caveat only`.
+- Research observation: lasso, elastic net, histogram gradient boosting, extra
+  trees, and kNN alternatives did not make random-to-endpoint transfer useful;
+  the best claim-bearing transfer result stayed negative (`R^2 ~= -2.8894`).
+  Within-regime fits were positive, and endpoint-vs-random classification still
+  worked from intrinsic numeric features.
+- Process lesson: the worker wrote a substantial `analyze.py` after nudging but
+  did not run it or produce `REPORT.md`/`summary.json`; the lead had to run the
+  script locally to create the review artifacts. This closes the second-pilot
+  test as a useful failure signal, not as a fully successful one-turn lifecycle.
+
+Required revision before stage 4:
+
+- Add an early artifact-creation heartbeat to worker packets: before long method
+  work, create the evidence directory and a short draft report or blocker note.
+- Add a timeout branch: if a wait times out and there are no files and no running
+  process, nudge once; if the second inspection still lacks required artifacts,
+  classify the attempt as `bug-redo` or lead-repair rather than silently waiting.
+- Add a lead-repair disposition: if a worker creates useful but incomplete code,
+  the lead may run or repair it, but the pilot/process result must record that
+  the worker did not complete the lifecycle unaided.
+- Do not mark the process stage 4 or run a batch until these revisions are
+  folded into the workflow and checked against the two pilot outcomes.
 
 ## Work Map
 
