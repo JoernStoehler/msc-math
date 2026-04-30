@@ -31,6 +31,10 @@
 - `taxonomy-statistical-inference.md`: statistical-inference and hypothesis-testing families.
 - `taxonomy-time-series.md`: time-series and sequential-analysis families.
 - `method-ledger.md`: cached index of attempted repo methods and their taxonomy references.
+- `idea-ledger.md`: active idea-exhaustion queue for proposed spikes, rejected
+  ideas, delegation lessons, and the current data-science finish process.
+- `tasks/landscape.md`: task-facing owner of the data-science subexperiment
+  workflow, blocker list, process maturity stage, and scale/no-scale decision.
 
 Current limitation:
 
@@ -42,3 +46,14 @@ Current limitation:
 - Each taxonomy item has a stable ID.
 - Later ledger or audit surfaces should cite those IDs rather than line numbers where possible.
 - If an item needs refinement, prefer adding a child item instead of renaming the existing ID.
+
+## Process Split
+
+- Use `method-ledger.md` to answer which methods are already visible in the repo.
+- Use `idea-ledger.md` to decide what to try, reject, trash, redo, or escalate
+  next.
+- Use `tasks/landscape.md` before launching a worker: it owns the required
+  worker-packet fields, result qualifiers, closure rules, and reviewer
+  checklist.
+- Use `research/sys-landscape-toolbox-audit.md` for thesis-facing method
+  verdicts after the underlying code, data, or spike report has been checked.
