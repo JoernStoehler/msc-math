@@ -1,85 +1,184 @@
 ---
 name: harness-engineering
-description: "Guidance for Jörn-approved edits to this repo's agent harness: `AGENTS.md`, `.agents/skills/**`, `.codex/agents/*.toml`, Codex config notes, onboarding wording, and subagent/review prompts. Use only when Jörn explicitly asks to revise onboarding, convention routing, skills, subagents, prompt behavior, or agent workflow documentation."
+description: "Use when editing or reviewing repo-local material whose purpose is to affect future agent behavior: `AGENTS.md`, `.agents/skills/**`, `.codex/agents/*.toml`, Codex config/reference notes, onboarding wording, subagent/review prompts, task packets, handoffs, and agent-facing roadmap/task instructions."
 ---
 
 # Harness Engineering
 
-## Goal
+## Objective
 
-Edit the agent harness after Jörn has asked for harness edits. If a normal task session exposes a harness issue, propose the change at the end of the session or use `$post-mortem` when Jörn invokes it; do not edit harness files opportunistically.
+This skill guides harness engineering: writing or reviewing prompt material so
+future agents follow the author's intended behavior and achieve the author's
+intended tasks.
 
-When the harness change is really about what "bad complexity" means for
-agent-heavy projects, read
+Use this skill when you intend to change how future agents behave. GPT-5.5
+already knows ordinary code and prose conventions from training; do not use this
+skill for Rust comments, thesis prose, proof drafts, experiment write-ups,
+datasets, or figures unless the edit changes instruction, routing, authority,
+review, handoff, or other steering text.
+
+Prompt material is purely instrumental. It succeeds if future agents succeed at
+their tasks. The prompt itself has no thesis-project value.
+
+## Success Measurement
+
+Direct success is observed when future agents use the prompt material to achieve
+the author's intended task. Before that outcome is observable, use the checks
+below as proxy measurements. They are not necessary or sufficient in general;
+adapt, combine, or skip them based on context, risk-benefit tradeoffs, prior
+prompting attempts, and Jörn's harness-engineering expertise.
+
+### While Writing Prompt Material
+
+- The prompt specifies the intended task or behavior, including how to measure
+  success.
+- The specified success measure is concrete enough for the future agent to
+  operationalize without redefining the objective.
+  - Leave task-local implementation choices to the future agent: which commands
+    to run, which parts of test suites matter, and whether or how to delegate.
+  - Break a criterion down only until GPT-5.5 can specialize it quickly. Do not
+    write every `rg` command when the criterion implies an obvious search.
+- The prompt is clear, specific, and unambiguous where a wrong reading would
+  change the task.
+  - When ambiguity matters and delegation is authorized, ask a fresh non-fork
+    subagent what is hard to understand or act on. Treat that as evidence, not
+    authority.
+  - A grep for words that often appear in vague phrases finds no true positives.
+- The future agent receives a threshold and escape hatch for aborting or
+  rejecting the task if the prompt is too ambiguous to carry out without likely
+  damage.
+- The prompt does not specify a plan or path prematurely.
+  - Once the objective and success measure are explicit, GPT-5.5 can choose an
+    ad-hoc, context-specific path.
+  - Suggestions for a path are stated as non-binding suggestions.
+  - Include enough context for the future agent to tell when suggestions apply
+    and what tradeoffs they make.
+- Binding constraints are specified as part of the objective and are measured for
+  task success.
+  - Include enough context for GPT-5.5 to know where constraints come from and
+    whether they are binding.
+  - Constraints that are known to be necessary are not worded as mere
+    suggestions.
+- Historic context, especially learnings from prior attempts, is recorded as
+  history. Do not promote it to constraints unless the constraint is now known to
+  be necessary, not merely helpful or maybe necessary.
+- The future agent is not asked to both choose or operationalize a complex
+  objective and achieve that objective.
+  - This creates bad feedback loops where agents often pick objectives that are
+    too easy, misunderstood, unproductive, incomplete, or messy.
+  - If pick-and-implement is needed, split it into two stages with success
+    measurement for the "pick" stage in between.
+  - A handoff to a second agent is often cleaner.
+  - If the objective or success criteria are mutable, state which components are
+    open to interpretation and what the interpretation may be based on.
+- The requested final response or deliverable records what was delivered and the
+  success-measurement results, including missing or failed signals.
+- For complex tasks, ask the future agent to reject nonsensical or unproductive
+  objectives, even if they are achievable.
+  - For simple tasks, this pulls in expensive context considerations for little
+    gain.
+  - For complex tasks, the future agent will consider that context anyway while
+    disambiguating the objective, planning, executing, and measuring success.
+- Put stable context before task-specific context when that separation changes
+  how future agents interpret authority or task-local facts.
+- Put dynamic handoff details near the end of a packet when that separates stable
+  instructions from task-local facts.
+
+### After The Future Agent Finishes
+
+- Compare the deliverable against the intended task.
+  - If the future agent provides evidence of success, check that first.
+  - Ask an independent fresh subagent for a summary of the deliverable without
+    knowing the prompt, then compare the summary against your intent rather than
+    only against the prompt.
+  - Rerun the success-measure checks when they are still relevant.
+- For imperfect results, decide between escalation to Jörn or a parent agent,
+  discarding the attempt and starting again with appended learnings, following
+  up with a repair prompt, or accepting the imperfect result with visible
+  residual risk.
+  - Redo the whole prompt only when the learnings are substantial or reveal
+    substantial wrong assumptions in how the prompt was formulated.
+  - When the learning generalizes, recheck other parts of the prompt for similar
+    issues.
+
+## Durable Prompt Material
+
+Durable prompt material includes `AGENTS.md`, `.agents/skills/**`,
+`.codex/agents/*.toml`, `.codex/config.toml`, reusable reference notes, and other
+long-lived text that future agents may treat as instructions.
+
+Durable prompt material has higher stakes and different dynamics than a one-shot
+prompt or handoff:
+
+- It steers repeated future sessions.
+- It adds a maintenance burden and increases complexity of the total harness
+  surface.
+- It can be edited gradually, and many agents provide indirect feedback on it
+  over time.
+- Usually it involves material that is broader, more general, or more
+  multi-purpose in scope, so feedback is less attributable to specific items.
+- It depends on other prompt material, including skill trigger descriptions,
+  subagent role authority, loaded instruction surfaces, and nearby prompts or
+  docs that may contradict the edit.
+
+Durable harness edits require a current Jörn request and final Jörn review before
+the change is treated as durable policy.
+
+Jörn blanket-authorizes task-local prompts and temporary handoffs if their
+failures stay observable, bounded, and reversible.
+
+When replacing the purpose of durable prompt material, replace the old file or
+move it out of the active surface and create a fresh file. Do not mutate an old
+instruction file into a new-purpose file; that adds confusing complexity and
+pulls the replacement toward the old file purpose.
+
+Before deleting, moving, or replacing an active path, inspect
+`git status --short -- <path>`. If the path is dirty, untracked, or ownership is
+unclear, stop and ask Jörn before changing it.
+
+## Required References
+
+Use `$skill-creator` before edits that change a skill's behavior:
+
+- creating, deleting, renaming, or replacing a skill
+- changing a skill `description`
+- adding or removing sections, procedures, validation gates, or trigger logic
+- changing examples when the example teaches a rule
+
+You do not need `$skill-creator` for review-only work, typo fixes, formatting
+that does not change behavior, or stale-path cleanup outside a skill.
+
+Use `$openai-docs` before edits that depend on current OpenAI or Codex behavior:
+
+- GPT-5.5 prompt modernization or model migration
+- model, reasoning effort, verbosity, tool-use, state, compaction, or hosted-tool
+  guidance
+- claims about Codex product behavior or OpenAI recommendations
+
+Fetch https://developers.openai.com/api/docs/guides/latest-model.md and follow
+the current `promptingGuide` and `migrationGuide` links returned there.
+
+Do not copy summaries of OpenAI guidance into repo prompt material. Use the docs
+to shape the edit, then encode the repo-owned convention or role contract.
+
+When the change is about complexity, architecture, or agent-facing readability in
+an agent-heavy project, read
 [`references/agent-project-delta.md`](references/agent-project-delta.md).
-That note is about the delta from ordinary human-team heuristics; do not load
-it for routine harness edits that do not touch simplification, architecture, or
-agent-facing readability.
 
-The harness is:
-- `AGENTS.md`: always-loaded project map and global invariants.
-- `.agents/skills/**`: triggerable convention and workflow bodies.
-- `.codex/agents/*.toml`: narrow subagent role prompts.
-- `.codex/config.toml` and `.codex/reference/**`: Codex CLI configuration and reference material.
-- `.devcontainer/**`: runtime-environment setup for local devcontainer and Codex web sessions.
+Use `$post-mortem` when extracting learnings from a completed session or when
+reaching a milestone, especially when evidence accumulates over multiple
+sessions.
 
-## Further Reading
+## Validation
 
-- OpenAI, "Harness engineering: leveraging Codex in an agent-first world":
-  https://openai.com/index/harness-engineering/
-
-## Design Rules
-
-- Keep `AGENTS.md` short and task-facing. It is always loaded, so every sentence competes with the task context.
-- Put detailed conventions, editing rationale, and workflow procedure in skills.
-- Put "when to use this" trigger text in the skill description, not in `AGENTS.md` and not only in the skill body.
-- Do not maintain a skill inventory or routing table in `AGENTS.md`; skill names and descriptions are already visible through the skill system, and duplicated triggers drift.
-- Do not rely on nested settings or nested `AGENTS.md` files for required project behavior. Root-launched sessions may not load them.
-- Name top-level skills by the protocol or surface they operate on, such as
-  `roadmap-maintenance`, `research-direction`, or
-  `maintainability-improvement`. Avoid names that imply a session must stay in
-  one pure mode; real thesis sessions often combine roadmap, research,
-  verification, and editing work.
-- For a protocol skill, state the labor it supports, the artifact it keeps
-  current, what may move to subagents, and which decisions stay with Jörn.
-- Keep protocol skills and subagent roles separate. Protocol skills define
-  reusable procedures; subagent roles define separate-context output contracts.
-- Write skill bodies positive-first: operating model, action checklist or template, Jörn gates, and stop conditions. Add negative examples only when they prevent an observed or high-cost failure mode.
-- Review skill drafts for actionability. Ask reviewers which sentences would change behavior on a real task, which sentences are dense, and which examples or guardrails are redundant.
-- For convention skills, use a stricter actionability test: each rule should remove a decision, not hand it back to the agent under time pressure.
-- Prefer defaults, bans, narrow explicit exceptions, and observable review checks over open-ended prompts such as `when it pays for itself`, `when it clearly helps`, `strong boundary`, or `likely future tasks`.
-- If a sentence mainly asks the reader to make a fresh design judgment, it belongs in a design memo or review note, not in an operational skill.
-- Pressure-test convention skills against one concrete task. Ask a reviewer or low-effort subagent what action they would take because of each rule, and treat `UNCLEAR` answers as rewrite targets.
-- When a harness decision depends on Codex mechanics, compare Jörn's proposed model with current official OpenAI docs. If they differ, state the difference explicitly and explain whether the docs describe a hard product constraint, a recommendation, or a default that local experience may override.
-- Use one subagent role with loaded checklists when the role is stable and only the review surface changes.
-- Split a subagent only when the role, permissions, or output contract differs.
-- Do not edit harness files during unrelated task work. Harness edits require a direct Jörn request in the current turn.
-- Use `$post-mortem` for advisory reflection requested by Jörn. It suggests changes but does not execute them.
-- When removing stale top-level artifacts, prefer deletion or relocation over adding warnings around them.
-- Before deleting a tracked file or directory, check that git has captured the current state. If the path is untracked or has uncommitted edits, stop and either commit the state first or ask Jörn. Rollback should be possible through git.
-
-## Editing Workflow
-
-1. Confirm Jörn asked for harness edits, not only reflection or normal task work.
-2. Identify whether the change affects always-loaded context, skill routing, skill body procedure, subagent role, or runtime setup.
-3. For a new or renamed protocol skill, first state the labor and artifact it
-   supports; choose the name after that sentence is clear.
-4. Keep a short decision ledger in the conversation before editing: decision, rejected alternative, and affected files.
-5. Remove obsolete text instead of preserving it as another path.
-6. If editing a skill, follow `$skill-creator`: frontmatter has only `name` and `description`; the description carries trigger conditions.
-7. If moving content out of `AGENTS.md`, add it to the skill whose description should trigger for that work.
-8. Check for stale path assumptions with `rg`, especially `crates/`, `.agents/rules`, `math.tex`, `logbook.md`, and old review-agent names.
-9. For convention skills, run one concrete actionability probe before calling the draft done. Use a realistic task and ask, line by line, what action a rushed agent would take. Rewrite every rule that comes back as `UNCLEAR`, vague, or purely philosophical.
-10. For Codex product behavior claims, cite the official OpenAI source or say the claim is based on local observed behavior.
-11. Run validation:
+Run validation for the touched surface:
 
 ```bash
-uv run --with pyyaml python /home/vscode/.codex/skills/.system/skill-creator/scripts/quick_validate.py .agents/skills/<skill-name>
 git diff --check
 ```
 
-## Post-Session Reflection
+For touched skill folders, also run:
 
-`$post-mortem` is explicit-only and advisory. It suggests future harness changes but does not execute them.
-
-Use this skill, not `$post-mortem`, when Jörn asks to actually edit the harness.
+```bash
+uv run --with pyyaml python /home/vscode/.codex/skills/.system/skill-creator/scripts/quick_validate.py .agents/skills/<skill-name>
+```
