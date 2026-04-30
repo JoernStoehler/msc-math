@@ -8,7 +8,7 @@ Context: non-thesis-spine work should stay bounded during finish mode.
 ## Status
 
 - State: future by default.
-- Last updated: 2026-04-29.
+- Last updated: 2026-04-30.
 - Source surfaces: `AGENTS.md`, `.agents/skills/`, `.codex/`,
   `crates/MAP.md`, `experiments/MAP.md`, `ROADMAP.md`, `tasks/README.md`.
 - Refresh when: agent routing, task-bundle conventions, architecture map, or
@@ -94,6 +94,7 @@ Context: non-thesis-spine work should stay bounded during finish mode.
 | Cache-surface audit | `[done]` | map input | current session | Deleted stale root/generated maps, split subtree maps, renamed the research story index, and added the cached-map maintenance workflow. | `crates/MAP.md`, `experiments/MAP.md`, `tasks/README.md`, `research/INDEX.md` |
 | Agent-facing architecture/navigation | `[done]` | map input | current session | Split the old root architecture map into subtree `MAP.md` files for crates and experiments. | `crates/MAP.md`, `experiments/MAP.md` |
 | Cached-map workflow skill | `[done]` | map input | current session | Added the protocol skill and used it for the first `crates/MAP.md` / `experiments/MAP.md` refresh. | `.agents/skills/cached-map-maintenance/`, `crates/MAP.md`, `experiments/MAP.md` |
+| Harness engineering skill revisit | `[future]` | future/follow-up | Jorn + agent review | Around 2026-05-07, reread `.agents/skills/harness-engineering/SKILL.md` after live use and add only harness-engineering practices Jörn remembered or agents encountered. Preserve the skill's objective/success-measurement structure; do not add proxy checks without a remembered/observed failure or official guidance. | `.agents/skills/harness-engineering/SKILL.md` |
 | Capacity/orbit API architecture | `[future]` | future/follow-up by default | retained claim impact | `Polytope4D` boundary reduction is partly plausible only at the KKT/QP assembly layer; do not promote broad APIs unless retained thesis/reproducibility needs it. | `crates/MAP.md`, `crates/symplectic/src/kkt/qp_assembly.rs`, legacy rows |
 | Experiment-to-library audit | `[future]` | future/follow-up by default | retained claim impact | Classify repeated helpers only when it unblocks validation, writeup, or agent navigation. | legacy library rows |
 | Codex migration/orchestration tests | `[future]` | future/follow-up | Jorn/tooling | Keep separate from thesis closeout unless current agents are blocked. | `.codex/`, legacy rows |
