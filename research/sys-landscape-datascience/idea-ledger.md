@@ -125,7 +125,7 @@ canonical refresh.
 | `DS-I004` | PCA / clustering / anomaly scan over current feature blocks | method spike | Existing 282-row table and committed feature JSONL | A non-post-hoc cluster or component rule that suggests where to search, or a bounded negative result | `negative` | Source-truth repair commit `dc4f11a5` on branch `ds-pilot1-pca-cluster` creates `experiments/sys-landscape/datascience/methods/pca-cluster-spike/` with script, report, and summary. Merge pending. |
 | `DS-I005` | Cheap supervised alternatives: lasso, elastic net, boosting, kNN | method spike | Current feature tables only | Whether standard extra models change M011/M012 conclusions under the same grouped split policy | `negative` | Harder pilot commit `c9b7cb77` on branch `ds-pilot2-supervised-alts` creates `experiments/sys-landscape/datascience/methods/supervised-alternatives-spike/`; lead had to run the worker's script to produce report/summary. Merge pending. |
 | `DS-I006` | Null, permutation, and bootstrap uncertainty checks | sanity | Existing M011-M013 outputs | Chance baseline and fold uncertainty for claimed pattern or non-pattern | `negative` | Worker spike found above-null within-regime pockets, but the load-bearing random-to-endpoint transfer still has strongly negative R^2. Evidence was promoted into this ledger and the toolbox audit; scratch worktree discarded rather than merged. |
-| `DS-I007` | Exact-vs-f64 spot checks for mathematical columns | sanity | Sampled rows from table-stage features | Detect whether a column implementation turns a true signal into noise | `future` | Use for columns that become claim-bearing or surprising. |
+| `DS-I007` | Exact-vs-f64 spot checks for mathematical columns | sanity | Sampled rows from table-stage features | Detect whether a column implementation turns a true signal into noise | `negative` | Revised-process pilot commit `b7b59ac5` on branch `ds-pilot3-exact-f64` creates `experiments/sys-landscape/datascience/methods/exact-f64-spot-check/`; sampled checked columns showed only f64-scale drift. |
 | `DS-I008` | Neural networks or deep latent models | method | Current 282-row dataset | Would need overfit controls and enough rows for flexible models | `rejected-low-voi` | Too small and too easy to overfit before thesis closeout; reopen only with much larger data. |
 | `DS-I009` | Bayesian optimization / surrogate-guided search loop | search | Candidate generator plus exact evaluation budget | New high-sys candidates or clear comparison against random/local baselines | `future` | Reopen only with a bounded candidate space and compute budget approved by Jörn. |
 | `DS-I010` | New symplectic/geometric feature columns from informal intuition | column | Table-stage additive columns | Computable definition, sanity check, and expected information gain | `future` | Split each proposed column into its own row before implementation. |
@@ -143,7 +143,8 @@ Record only lessons that change future delegation or spike design.
 | 2026-04-30 | DS-I006 worker spike | The corrected one-turn lifecycle worked: the worker returned a completed status and left a report plus JSON summary for review. | Keep default spike packets one-turn, require durable artifact paths, then inspect artifacts before the explicit terminal decision: merge, trash, or follow-up. |
 | 2026-04-30 | Stage-3 pilot 1 `DS-I004` | Source-truth repair worked after timeout inspection and one corrective nudge. The worker produced script/report/summary, and the lead reran the script and committed `dc4f11a5` on `ds-pilot1-pca-cluster`. | Keep timeout inspection in the lead loop. A timeout with no files and no running process should trigger one corrective message, not indefinite waiting. |
 | 2026-04-30 | Stage-3 pilot 2 `DS-I005` | The harder method pilot exposed a lifecycle failure: after nudging, the worker created a substantial script but did not run it or produce the required report/summary. The lead ran the script and committed `c9b7cb77` on `ds-pilot2-supervised-alts`. | Before stage 4, worker packets need an early artifact heartbeat and a lead-repair disposition so partial code is not mistaken for completed source truth. |
-| 2026-04-30 | Process revision after pilots | The workflow now requires an early artifact heartbeat, a two-inspection timeout rule, worker self-run proof, and explicit `lead-repair` disposition. | Run one revised-process pilot before stage 4. It must demonstrate that a worker can create heartbeat plus final report/summary without lead completion, or else expose the next smaller process failure. |
+| 2026-04-30 | Process revision after pilots | The workflow now requires an early artifact heartbeat, worker self-run proof, explicit `lead-repair` disposition, a normal long wait before inspection, and worker cleanup after disposition. | Heartbeat is a worker-output requirement, not a lead-side polling ritual. Default local-pilot wait is `10` minutes unless the packet says otherwise. |
+| 2026-04-30 | Stage-4 pilot `DS-I007` | Waiting long enough let the worker complete heartbeat, script, report, summary, and self-run proof without lead repair. Manual early heartbeat inspection was unnecessary and likely contributed to overdiagnosing earlier workers as stuck. | Process is revised and settled enough for serial execution. Before scaling, standardize `summary.json` top-level keys and build the row dashboard. |
 
 ## Completed Spike Notes
 
@@ -288,3 +289,45 @@ that the table separates producer regimes, including with non-metadata blocks,
 but this does not identify where to sample for new `sys > 1` rows.
 
 Verdict: `negative`.
+
+### `DS-I007` Exact-vs-f64 Spot Check
+
+Disposition: source-truth branch merged into the integration branch; not merged
+to `main`.
+
+Worker command:
+
+```bash
+uv run --script experiments/sys-landscape/datascience/methods/exact-f64-spot-check/analyze.py --dataset-dir /tmp/sys-ds-pilot1-tables-tH33Hr
+```
+
+Evidence:
+
+- Branch: `ds-pilot3-exact-f64`.
+- Commit: `b7b59ac5`.
+- Report path after merge:
+  `experiments/sys-landscape/datascience/methods/exact-f64-spot-check/report.md`.
+- Summary path after merge:
+  `experiments/sys-landscape/datascience/methods/exact-f64-spot-check/summary.json`.
+
+Observation:
+
+- Input guards passed for `282` polytope rows and `282` observation rows, with
+  max `sys = 0.906316153431123` and zero `sys > 1` rows.
+- The deterministic sample had `14` rows, including top-`sys` rows.
+- Exact rational `dual_vertices_rational` matched stored
+  `dual_vertices_f64` / `dual_vertices_flat_f64` with max coordinate error
+  `0.0` in the sample.
+- Selected f64 geometry scalar recomputation differed by at most `1.776e-15`.
+
+Inference:
+
+The sampled vertex encodings and selected geometry scalar columns are internally
+consistent at f64 scale for the checked rows. This does not check exact
+semantics for volume, capacity, skeleton/ridge, transition, or orbit-search
+quantities.
+
+Verdict: `negative`.
+
+Qualifiers: `evidence_strength = medium`; `implementation_trust = high`;
+`thesis_use = supporting/caveat only`.

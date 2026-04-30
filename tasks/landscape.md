@@ -133,12 +133,12 @@ not ready to run to completion until it reaches stage 5.
    subexperiment updates the dashboard and evidence surfaces as part of the
    process.
 
-Current maturity: stage 3, **Tested**.
+Current maturity: stage 4, **Revised and settled**.
 
-Do not run a batch of data-science subagents until stage 4 is reached. The
-tested pilots show the process can produce source-truth artifacts, but the
-harder pilot needed lead intervention before report/summary artifacts existed.
-Fold that lesson into the workflow before scaling.
+Do not run a batch of data-science subagents until stage 5 is reached. The
+revised process produced a complete DS-I007 pilot after a normal long wait, but
+stage 5 still needs a current before-submission dashboard and standardized
+summary schema for batch review.
 
 ### Data-Science Subexperiment Workflow
 
@@ -165,23 +165,28 @@ Lead loop for one subexperiment:
    early artifact heartbeat before method work starts.
 4. Delegate once to a worker in an isolated worktree; do not use interactive
    checkpoints as the default control path.
-5. First wait: inspect after a short bounded wait, before the method could
-   reasonably finish. Passing heartbeat means the evidence directory exists and
-   contains either a draft report or a blocker note.
-6. If heartbeat is missing, inspect the worktree and running processes. If there
-   are no files and no relevant process, send one corrective message. If the
-   second inspection still lacks the heartbeat, classify the attempt as
-   `bug-redo` or lead-repair instead of silently waiting.
-7. Result wait: when blocked on the final result, inspect the durable report
-   path, summary path, scratch output paths, and running processes before
-   deciding whether to message, wait again, or close the worker.
+5. Wait long enough for the assigned local method spike to finish before
+   inspecting. Default local-pilot wait: `10` minutes unless the packet gives a
+   different expected runtime. Do not manually poll the heartbeat during normal
+   execution; the heartbeat is a worker artifact requirement, not a lead-side
+   progress ritual.
+6. If the long wait times out, inspect the worktree, durable report path,
+   summary path, scratch output paths, and running processes before deciding
+   whether to message, wait again, or close the worker. If there are no files and
+   no relevant process, send at most one corrective message. If the second
+   inspection still lacks required artifacts, classify the attempt as `bug-redo`
+   or lead-repair instead of silently waiting.
+7. Result review: when the worker returns, inspect the durable report and summary
+   before accepting any claim.
 8. Review the worker's repo-owned artifacts before accepting any claim. The
    worker must have run the declared command and produced report plus summary;
    code-only output is not a completed worker result.
 9. Choose one disposition: merge/promote, reject/trash, leave follow-up branch,
    `bug-redo`, `future`, `rejected-low-voi`, `lead-repair`, or
    `positive-escalate`.
-10. Update the idea ledger, toolbox audit if thesis-facing, and this task bundle
+10. Close the worker agent after its result has been accepted, rejected, or
+   recorded as lead-repair.
+11. Update the idea ledger, toolbox audit if thesis-facing, and this task bundle
    before starting the next subexperiment.
 
 Required worker-packet fields:
@@ -212,6 +217,10 @@ Required worker-packet fields:
   actually ran, and the evidence directory contains both report and summary.
   `analyze.py` without generated report/summary is a partial artifact, not a
   completed spike.
+- Required `summary.json` top-level keys: `idea_id`, `verdict`,
+  `evidence_strength`, `implementation_trust`, `thesis_use`, `caveat`,
+  `reopen_trigger`, `dataset_snapshot`, `command_run`, and `key_results`.
+  Nested detail is allowed, but these top-level keys make batch review possible.
 
 Required result qualifiers:
 
@@ -270,6 +279,8 @@ Reviewer checklist:
   final artifacts; if not, the process lesson is recorded.
 - The worker, not only the lead, ran the declared command unless the disposition
   is explicitly `lead-repair`.
+- `summary.json` has the required top-level keys, or the reviewer records the
+  schema mismatch as a process issue before scaling.
 - Dataset row counts, schema, freshness, max `sys`, and `sys > 1` count match the
   packet or explain the mismatch.
 - Leakage, provenance, grouped splits, and metadata restrictions match the
@@ -353,14 +364,35 @@ Completed stage-3 pilot 2:
   script locally to create the review artifacts. This closes the second-pilot
   test as a useful failure signal, not as a fully successful one-turn lifecycle.
 
-Required revision before stage 4:
+Completed revised-process pilot:
 
-- Run one revised-process pilot after the heartbeat, timeout, and lead-repair
-  rules above. The pilot must create its heartbeat before method work, produce
-  report plus summary without lead completion, and let the lead classify it from
-  repo-owned artifacts.
-- Do not mark the process stage 4 or run a batch until that revised pilot either
-  succeeds unaided or exposes a smaller remaining rule change.
+- `idea_id`: `DS-I007`.
+- Goal: test whether the revised workflow produces heartbeat plus final
+  report/summary without lead completion.
+- Result: branch `ds-pilot3-exact-f64`, commit `b7b59ac5`, created
+  `experiments/sys-landscape/datascience/methods/exact-f64-spot-check/` with
+  `analyze.py`, `report.md`, and `summary.json`. Verdict `negative`;
+  `evidence_strength = medium`; `implementation_trust = high`; `thesis_use =
+  supporting/caveat only`.
+- Research observation: sampled rational dual-vertex coordinates matched
+  `dual_vertices_f64` and `dual_vertices_flat_f64`; selected geometry scalar
+  recomputation differed by at most `1.776e-15`.
+- Process lesson: the worker completed cleanly when the lead waited long enough.
+  Manual heartbeat polling is not needed for normal execution and can bias the
+  diagnosis of agent failure. Keep heartbeat as a worker-output requirement, but
+  inspect it only during timeout or review.
+- Remaining pre-scale issue: the pilot's `summary.json` nested verdict
+  qualifiers under `result`; future packets require standard top-level summary
+  keys for batch review.
+
+Required before stage 5:
+
+- Build or update the before-submission dashboard so every open row shows
+  blocker target, required evidence path, current status, review state, and next
+  action.
+- Run at least one small parallel round, not a full batch, after summary-schema
+  standardization if Jorn wants evidence that multiple concurrent workers do not
+  create ambiguous status.
 
 ## Work Map
 
