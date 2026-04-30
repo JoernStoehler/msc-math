@@ -20,8 +20,8 @@ reasons not to continue.
 
 Process authority: `tasks/landscape.md` owns the current data-science
 subexperiment workflow, including worker-packet fields, result qualifiers,
-closure rules, reviewer checklist, and process maturity stage. This ledger owns
-the idea rows and their evidence links.
+closure rules, reviewer checklist, readiness gates, and scale/no-scale decision.
+This ledger owns the idea rows and their evidence links.
 
 ## Current Dataset Snapshot
 
@@ -141,10 +141,10 @@ Record only lessons that change future delegation or spike design.
 | 2026-04-30 | DS-I004 worker spike | One worker could implement and run a complete PCA/clustering spike from the packet, including row guards, non-provenance features, a permutation sanity check, and a readable verdict. | Full-method spikes are feasible when the dataset path, allowed write scope, and verdict vocabulary are explicit. |
 | 2026-04-30 | DS-I004 worker spike | The useful lifecycle is one-turn delegation: choose the experiment, define it, delegate, wait, inspect, then merge, trash, or leave a follow-up. Interactive checkpointing is not the default control path. | Future packets should require durable report/output paths for inspection, not chat-style progress management. |
 | 2026-04-30 | DS-I006 worker spike | The corrected one-turn lifecycle worked: the worker returned a completed status and left a report for review; any JSON sidecar is auxiliary. | Keep default spike packets one-turn, require durable artifact paths, then inspect artifacts before the explicit terminal decision: merge, trash, or follow-up. |
-| 2026-04-30 | Stage-3 pilot 1 `DS-I004` | Source-truth repair worked after timeout inspection and one corrective nudge. The worker produced script/report evidence, and the lead reran the script and committed `dc4f11a5` on `ds-pilot1-pca-cluster`. | Keep timeout inspection in the lead loop. A timeout with no files and no running process should trigger one corrective message, not indefinite waiting. |
-| 2026-04-30 | Stage-3 pilot 2 `DS-I005` | The harder method pilot exposed a lifecycle failure: after nudging, the worker created a substantial script but did not run it or produce the required report. The lead ran the script and committed `c9b7cb77` on `ds-pilot2-supervised-alts`. | Worker packets need an early report/blocker note and a lead-repair disposition so partial code is not mistaken for completed source truth. |
+| 2026-04-30 | Earlier pilot 1 `DS-I004` | Source-truth repair worked after timeout inspection and one corrective nudge. The worker produced script/report evidence, and the lead reran the script and committed `dc4f11a5` on `ds-pilot1-pca-cluster`. | Capability evidence only; this does not validate the reset contract. |
+| 2026-04-30 | Earlier pilot 2 `DS-I005` | The harder method pilot exposed a lifecycle failure: after nudging, the worker created a substantial script but did not run it or produce the required report. The lead ran the script and committed `c9b7cb77` on `ds-pilot2-supervised-alts`. | Worker packets need an early report/blocker note and a lead-repair disposition so partial code is not mistaken for completed source truth. This does not validate the reset contract. |
 | 2026-04-30 | Process revision after pilots | The workflow requires an early report/blocker note, worker self-run proof, explicit `lead-repair` disposition, a normal long wait before inspection, and worker cleanup after disposition. | The early report is a worker-output requirement, not a lead-side polling ritual. Default local-pilot wait is `10` minutes unless the packet says otherwise. |
-| 2026-04-30 | DS-I007 pilot | Waiting long enough let the worker complete early report, script, final report, and self-run proof without lead repair. Manual early-report inspection was unnecessary and likely contributed to overdiagnosing earlier workers as stuck. | Process can work serially, but the required `summary.json` schema was an unjustified abstraction. Restart the contract around `report.md` plus ledger row before claiming scale readiness. |
+| 2026-04-30 | Earlier pilot 3 `DS-I007` | Waiting long enough let the worker complete early report, script, final report, and self-run proof without lead repair. Manual early-report inspection was unnecessary and likely contributed to overdiagnosing earlier workers as stuck. | Process can work serially, but the required `summary.json` schema was an unjustified abstraction. Restart the contract around `report.md` plus ledger row before claiming scale readiness; this pilot is not a reset-contract validation. |
 
 ## Completed Spike Notes
 

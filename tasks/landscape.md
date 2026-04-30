@@ -114,34 +114,35 @@ Current known open blockers:
 
 ## Data-Science Process Maturity
 
-Use this section before scaling to many subagents. The data-science process is
-not ready to run to completion until it reaches stage 5.
+Use this section before scaling to many subagents. Do not infer readiness from
+the number of prior pilots; readiness means the current contract has been
+followed, reviewed, and recorded without inventing new source-truth surfaces.
 
-1. **Proposed**: candidate process exists.
-2. **Documented enough to test**: a pilot agent can follow the process without
-   reconstructing chat.
-3. **Tested**: one or more pilots run through the documented process.
-4. **Revised and settled**: pilot lessons are folded in; this becomes the default
-   process. Reaching this stage requires at least one source-truth/lifecycle
-   pilot and one harder method pilot unless Jorn explicitly closes the second
-   requirement.
-5. **Ready to scale / run to completion**: docs are in the repo, the current
-   blocker table shows open/closed blockers, packet and review templates exist,
-   future lead agents can resume without this chat, and scaling will not create
-   ambiguous scratch.
-6. **Maintained during execution**: each closed, failed, deferred, or bug-redo
-   subexperiment updates the blocker table and evidence surfaces as part of the
-   process.
+Current state: **documented but unpiloted after reset**.
 
-Current maturity: stage 3, **Tested; contract reset in progress**.
+The reset contract is: human-readable `report.md` plus code/command/dataset
+evidence plus ledger row. Machine-readable metadata is optional and cannot be a
+scale blocker unless a repo-owned checker consumes it.
 
-Do not run a batch of data-science subagents until stage 5 is reached. The
-pilots showed that workers can produce useful source-truth artifacts, but the
-process briefly added a required `summary.json` abstraction before any committed
-tool consumed it. Treat that as a process-design error. The reset contract is:
-human-readable `report.md` plus code/command/dataset evidence plus ledger row.
-Machine-readable metadata is optional and cannot be a scale blocker unless a
-repo-owned checker consumes it.
+Readiness gates:
+
+- **Contract documented**: this bundle states the worker packet, report header,
+  review checklist, dispositions, and closure rules. Status: met.
+- **Serial pilot under current contract**: one worker completes a local
+  subexperiment using the reset contract, with no required JSON and no lead
+  completion of the report. Status: open.
+- **Blocker table ready**: the before-submission blocker table shows every open
+  row's blocker target, required evidence path, current status, review state,
+  and next action. Status: open.
+- **Scale-ready**: the serial pilot and blocker table are complete, and future
+  lead agents can launch the next packet without this chat. Status: open.
+- **Parallel-ready**: optional; run one small parallel round only if Jorn wants
+  evidence that concurrent workers do not create ambiguous status.
+
+Do not run a batch of data-science subagents until the scale-ready gate is met.
+Prior pilots are evidence about worker capability and waiting behavior, but they
+do not validate the reset contract because they were run before the contract was
+simplified.
 
 ### Data-Science Subexperiment Workflow
 
@@ -151,8 +152,8 @@ reconstructing chat history.
 
 Authority split:
 
-- This bundle owns the blocker list, process maturity stage, worker/reviewer
-  checklist, and scale/no-scale decision.
+- This bundle owns the blocker list, readiness gates, worker/reviewer checklist,
+  and scale/no-scale decision.
 - `research/sys-landscape-datascience/idea-ledger.md` owns the idea queue,
   per-idea verdicts, evidence links, and process lessons.
 - `research/sys-landscape-toolbox-audit.md` owns thesis-facing method rows after
@@ -289,21 +290,18 @@ Reviewer checklist:
 - Observation, inference, verdict, evidence strength, implementation trust,
   caveat, thesis use, and reopen trigger are all recorded.
 
-Stage-advancement checks:
+Gate checks:
 
-- Stage 2 is reached when this workflow, the worker-packet fields, result
-  qualifiers, closure rules, and reviewer checklist are documented in this
-  bundle and linked from the idea ledger.
-- Stage 3 is reached after one pilot follows the documented workflow and leaves
-  repo-owned evidence, even if the pilot ends as `bug-redo` or rejected.
-- Stage 4 is reached only after pilot lessons are folded back into this
-  workflow, the simplified report-ledger contract has one clean pilot or Jorn
-  explicitly accepts DS-I007 as sufficient evidence, and the next packet can be
-  launched without chat reconstruction.
-- Stage 5 is reached only when the before-submission blocker table shows every
-  open row's blocker target, required evidence path, current status, review
-  state, and next action, and when packet/review templates use the simplified
-  report-ledger contract.
+- Contract documented: met by this workflow, the worker-packet fields, result
+  qualifiers, closure rules, report header, and reviewer checklist.
+- Serial pilot under current contract: open until one worker follows this reset
+  workflow and leaves repo-owned code/command/dataset evidence plus `report.md`
+  and ledger row, even if the verdict is `bug-redo` or rejected.
+- Blocker table ready: open until the before-submission blocker table shows
+  every open row's blocker target, required evidence path, current status,
+  review state, and next action.
+- Scale-ready: open until the serial pilot and blocker table are complete and
+  the next packet can be launched without chat reconstruction.
 
 Minimal report header template:
 
@@ -325,7 +323,7 @@ Evidence paths:
 After the header, the report must separate observations from inferences and name
 the checks used to support the verdict.
 
-Completed stage-3 pilot 1:
+Earlier pilot 1, before the reset contract:
 
 - `idea_id`: `DS-I004`.
 - Goal: rerun the PCA / clustering / anomaly scan as a source-truth repair, not
@@ -354,9 +352,8 @@ Completed stage-3 pilot 1:
 - Reject/trash condition: if the worker leaves only `/tmp` outputs, omits the
   report, cannot reproduce row counts, uses provenance columns for the claimed
   signal, or states a stronger result than the artifacts support.
-- Scale decision after pilot: do not move to stage 4 until the lead records what
-  the pilot taught about packet wording, artifact paths, review cost, and whether
-  one-turn delegation produced an auditable result.
+- Scale decision after pilot: this pilot is capability evidence only. It does
+  not validate the reset contract.
 - Result: branch `ds-pilot1-pca-cluster`, commit `dc4f11a5`, created
   `experiments/sys-landscape/datascience/methods/pca-cluster-spike/` with
   `analyze.py`, `report.md`, and `summary.json`. Verdict `negative`;
@@ -367,7 +364,7 @@ Completed stage-3 pilot 1:
   running analysis process; a corrective nudge produced artifacts. The lead
   verified and committed the artifacts before accepting the result.
 
-Completed stage-3 pilot 2:
+Earlier pilot 2, before the reset contract:
 
 - `idea_id`: `DS-I005`.
 - Goal: test a harder method experiment where the worker had to choose and run a
@@ -387,7 +384,7 @@ Completed stage-3 pilot 2:
   locally to create the review artifact. This closes the second-pilot test as a
   useful failure signal, not as a fully successful one-turn lifecycle.
 
-Completed revised-process pilot:
+Earlier pilot 3, before the reset contract:
 
 - `idea_id`: `DS-I007`.
 - Goal: test whether the revised workflow produces an early report plus final
@@ -409,7 +406,7 @@ Completed revised-process pilot:
   added complexity without closing a thesis blocker. Future packets must require
   `report.md` and ledger updates; machine-readable metadata stays optional.
 
-Required before stage 5:
+Required before scale-ready:
 
 - Build or update the before-submission blocker table so every open row shows
   blocker target, required evidence path, current status, review state, and next
