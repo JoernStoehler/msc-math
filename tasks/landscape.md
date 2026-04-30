@@ -126,19 +126,22 @@ not ready to run to completion until it reaches stage 5.
    pilot and one harder method pilot unless Jorn explicitly closes the second
    requirement.
 5. **Ready to scale / run to completion**: docs are in the repo, the current
-   dashboard shows open/closed blockers, packet and review templates exist,
+   blocker table shows open/closed blockers, packet and review templates exist,
    future lead agents can resume without this chat, and scaling will not create
    ambiguous scratch.
 6. **Maintained during execution**: each closed, failed, deferred, or bug-redo
-   subexperiment updates the dashboard and evidence surfaces as part of the
+   subexperiment updates the blocker table and evidence surfaces as part of the
    process.
 
-Current maturity: stage 4, **Revised and settled**.
+Current maturity: stage 3, **Tested; contract reset in progress**.
 
 Do not run a batch of data-science subagents until stage 5 is reached. The
-revised process produced a complete DS-I007 pilot after a normal long wait, but
-stage 5 still needs a current before-submission dashboard and standardized
-summary schema for batch review.
+pilots showed that workers can produce useful source-truth artifacts, but the
+process briefly added a required `summary.json` abstraction before any committed
+tool consumed it. Treat that as a process-design error. The reset contract is:
+human-readable `report.md` plus code/command/dataset evidence plus ledger row.
+Machine-readable metadata is optional and cannot be a scale blocker unless a
+repo-owned checker consumes it.
 
 ### Data-Science Subexperiment Workflow
 
@@ -161,26 +164,26 @@ Lead loop for one subexperiment:
    close or advance.
 2. Freeze the input dataset for the wave and record command, paths, row counts,
    max `sys`, and `sys > 1` count.
-3. Write a worker packet with the fields below. The packet must require an
-   early artifact heartbeat before method work starts.
+3. Write a worker packet with the fields below. The packet must require an early
+   repo-owned report or blocker note before method work starts.
 4. Delegate once to a worker in an isolated worktree; do not use interactive
    checkpoints as the default control path.
 5. Wait long enough for the assigned local method spike to finish before
    inspecting. Default local-pilot wait: `10` minutes unless the packet gives a
-   different expected runtime. Do not manually poll the heartbeat during normal
-   execution; the heartbeat is a worker artifact requirement, not a lead-side
+   different expected runtime. Do not manually poll the early report during
+   normal execution; it is a worker artifact requirement, not a lead-side
    progress ritual.
 6. If the long wait times out, inspect the worktree, durable report path,
-   summary path, scratch output paths, and running processes before deciding
+   scratch output paths, and running processes before deciding
    whether to message, wait again, or close the worker. If there are no files and
    no relevant process, send at most one corrective message. If the second
    inspection still lacks required artifacts, classify the attempt as `bug-redo`
    or lead-repair instead of silently waiting.
-7. Result review: when the worker returns, inspect the durable report and summary
-   before accepting any claim.
+7. Result review: when the worker returns, inspect the durable report before
+   accepting any claim.
 8. Review the worker's repo-owned artifacts before accepting any claim. The
-   worker must have run the declared command and produced report plus summary;
-   code-only output is not a completed worker result.
+   worker must have run the declared command and produced a report with the
+   required result header; code-only output is not a completed worker result.
 9. Choose one disposition: merge/promote, reject/trash, leave follow-up branch,
    `bug-redo`, `future`, `rejected-low-voi`, `lead-repair`, or
    `positive-escalate`.
@@ -201,26 +204,26 @@ Required worker-packet fields:
   for scratch, but no terminal verdict may rely only on `/tmp`, chat, or a
   deleted worktree.
 - Maximum local runtime, whether LICCA is out of scope, and stop conditions.
-- Heartbeat requirement: before implementing the full method, create the
-  evidence directory and a draft report or blocker note containing `idea_id`,
-  dataset path, planned command, and current status.
+- Early report requirement: before implementing the full method, create the
+  evidence directory and a draft `report.md` or blocker note containing
+  `idea_id`, dataset path, planned command, and current status.
 - Leakage/provenance guards, including grouped or lineage splits where
   prediction is involved.
 - Statistical checks when relevant: baseline/null, fold/bootstrap/permutation
   uncertainty, and finite-sample caveat.
 - Numerical checks when relevant: exact-vs-f64 comparison, tolerance, row/schema
   guards, and stale-data check.
+- Required report header: `idea_id`, blocker target, dataset snapshot, command
+  run, verdict, evidence strength, implementation trust, thesis-use proposal,
+  caveat, reopen trigger, and evidence paths. Use plain Markdown, not JSON.
 - Required report sections: command/provenance, observation, inference, verdict,
-  evidence strength, implementation trust, caveats, thesis-use proposal, and
-  reopen trigger.
+  checks run, caveats, thesis-use proposal, and reopen trigger.
 - Required self-run proof: final response and report name the command the worker
-  actually ran, and the evidence directory contains both report and summary.
-  `analyze.py` without generated report/summary is a partial artifact, not a
-  completed spike.
-- Required `summary.json` top-level keys: `idea_id`, `verdict`,
-  `evidence_strength`, `implementation_trust`, `thesis_use`, `caveat`,
-  `reopen_trigger`, `dataset_snapshot`, `command_run`, and `key_results`.
-  Nested detail is allowed, but these top-level keys make batch review possible.
+  actually ran. `analyze.py` without a generated report is a partial artifact,
+  not a completed spike.
+- Optional machine-readable metadata: create `summary.json` only when a
+  repo-owned checker or follow-up script consumes it. If present, it is
+  auxiliary; the report and ledger row remain the review surface.
 
 Required result qualifiers:
 
@@ -266,21 +269,18 @@ Closure rules:
 - A tried result cannot close the Experiment-validity blocker unless a lead or
   reviewer records that the checks match the verdict and that the wording does
   not overclaim.
-- Code-only output cannot close any blocker. If the lead completes the report or
-  summary, record disposition `lead-repair` and set `implementation_trust` no
-  higher than `medium` unless an independent reviewer accepts the repaired
-  artifact.
+- Code-only output cannot close any blocker. If the lead completes the report,
+  record disposition `lead-repair` and set `implementation_trust` no higher than
+  `medium` unless an independent reviewer accepts the repaired artifact.
 
 Reviewer checklist:
 
 - Evidence path exists in the repo or in a branch intended for merge.
 - Commands/provenance are sufficient for a future agent to rerun or audit.
-- The evidence directory contains the heartbeat file or draft report before
+- The evidence directory contains the early report or blocker note before
   final artifacts; if not, the process lesson is recorded.
 - The worker, not only the lead, ran the declared command unless the disposition
   is explicitly `lead-repair`.
-- `summary.json` has the required top-level keys, or the reviewer records the
-  schema mismatch as a process issue before scaling.
 - Dataset row counts, schema, freshness, max `sys`, and `sys > 1` count match the
   packet or explain the mismatch.
 - Leakage, provenance, grouped splits, and metadata restrictions match the
@@ -297,10 +297,33 @@ Stage-advancement checks:
 - Stage 3 is reached after one pilot follows the documented workflow and leaves
   repo-owned evidence, even if the pilot ends as `bug-redo` or rejected.
 - Stage 4 is reached only after pilot lessons are folded back into this
-  workflow and the next packet can be launched without chat reconstruction.
-- Stage 5 is reached only when the before-submission dashboard shows every open
-  row's blocker target, required evidence path, current status, review state,
-  and next action.
+  workflow, the simplified report-ledger contract has one clean pilot or Jorn
+  explicitly accepts DS-I007 as sufficient evidence, and the next packet can be
+  launched without chat reconstruction.
+- Stage 5 is reached only when the before-submission blocker table shows every
+  open row's blocker target, required evidence path, current status, review
+  state, and next action, and when packet/review templates use the simplified
+  report-ledger contract.
+
+Minimal report header template:
+
+```markdown
+Status: draft | blocked | complete
+Idea ID:
+Blocker target:
+Dataset snapshot: path, producer command, row counts, max sys, sys > 1 count
+Command run:
+Verdict:
+Evidence strength:
+Implementation trust:
+Thesis use:
+Caveat:
+Reopen trigger:
+Evidence paths:
+```
+
+After the header, the report must separate observations from inferences and name
+the checks used to support the verdict.
 
 Completed stage-3 pilot 1:
 
@@ -318,9 +341,8 @@ Completed stage-3 pilot 1:
   less pre-shaped method experiment.
 - Required evidence path:
   `experiments/sys-landscape/datascience/methods/pca-cluster-spike/`.
-- Required artifacts: analysis script, markdown report, machine-readable summary
-  such as `summary.json`, and commands sufficient to rerun against a frozen
-  dataset path.
+- Required artifacts: analysis script, markdown report, and commands sufficient
+  to rerun against a frozen dataset path.
 - Dataset packet: use one frozen temp table rebuilt from committed producer
   caches, and record command, row counts, max `sys`, and `sys > 1` count in the
   report.
@@ -339,7 +361,8 @@ Completed stage-3 pilot 1:
   `experiments/sys-landscape/datascience/methods/pca-cluster-spike/` with
   `analyze.py`, `report.md`, and `summary.json`. Verdict `negative`;
   `evidence_strength = medium`; `implementation_trust = high`; `thesis_use =
-  supporting/caveat only`.
+  supporting/caveat only`. The `summary.json` file is historical auxiliary
+  metadata, not a required future artifact.
 - Process lesson: after a timeout the worker initially had no files and no
   running analysis process; a corrective nudge produced artifacts. The lead
   verified and committed the artifacts before accepting the result.
@@ -360,39 +383,42 @@ Completed stage-3 pilot 2:
   Within-regime fits were positive, and endpoint-vs-random classification still
   worked from intrinsic numeric features.
 - Process lesson: the worker wrote a substantial `analyze.py` after nudging but
-  did not run it or produce `REPORT.md`/`summary.json`; the lead had to run the
-  script locally to create the review artifacts. This closes the second-pilot
-  test as a useful failure signal, not as a fully successful one-turn lifecycle.
+  did not run it or produce the required report; the lead had to run the script
+  locally to create the review artifact. This closes the second-pilot test as a
+  useful failure signal, not as a fully successful one-turn lifecycle.
 
 Completed revised-process pilot:
 
 - `idea_id`: `DS-I007`.
-- Goal: test whether the revised workflow produces heartbeat plus final
-  report/summary without lead completion.
+- Goal: test whether the revised workflow produces an early report plus final
+  report without lead completion.
 - Result: branch `ds-pilot3-exact-f64`, commit `b7b59ac5`, created
   `experiments/sys-landscape/datascience/methods/exact-f64-spot-check/` with
   `analyze.py`, `report.md`, and `summary.json`. Verdict `negative`;
   `evidence_strength = medium`; `implementation_trust = high`; `thesis_use =
-  supporting/caveat only`.
+  supporting/caveat only`. The `summary.json` file is historical auxiliary
+  metadata, not a required future artifact.
 - Research observation: sampled rational dual-vertex coordinates matched
   `dual_vertices_f64` and `dual_vertices_flat_f64`; selected geometry scalar
   recomputation differed by at most `1.776e-15`.
 - Process lesson: the worker completed cleanly when the lead waited long enough.
-  Manual heartbeat polling is not needed for normal execution and can bias the
-  diagnosis of agent failure. Keep heartbeat as a worker-output requirement, but
-  inspect it only during timeout or review.
-- Remaining pre-scale issue: the pilot's `summary.json` nested verdict
-  qualifiers under `result`; future packets require standard top-level summary
-  keys for batch review.
+  Manual early-report polling is not needed for normal execution and can bias
+  the diagnosis of agent failure. Keep the early report as a worker-output
+  requirement, but inspect it only during timeout or review.
+- Process-design correction: requiring `summary.json` without a consuming tool
+  added complexity without closing a thesis blocker. Future packets must require
+  `report.md` and ledger updates; machine-readable metadata stays optional.
 
 Required before stage 5:
 
-- Build or update the before-submission dashboard so every open row shows
+- Build or update the before-submission blocker table so every open row shows
   blocker target, required evidence path, current status, review state, and next
   action.
-- Run at least one small parallel round, not a full batch, after summary-schema
-  standardization if Jorn wants evidence that multiple concurrent workers do not
-  create ambiguous status.
+- Run one simplified-contract pilot, or have Jorn explicitly accept DS-I007 as
+  enough because it already produced code, command, dataset guards, report, and
+  ledger-update evidence.
+- Run at least one small parallel round, not a full batch, if Jorn wants evidence
+  that multiple concurrent workers do not create ambiguous status.
 
 ## Work Map
 

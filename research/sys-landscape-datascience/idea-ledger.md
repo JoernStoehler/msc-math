@@ -120,10 +120,10 @@ canonical refresh.
 | ID | Idea | Type | Scope | Desired evidence | Current verdict | Evidence / next action |
 | --- | --- | --- | --- | --- | --- | --- |
 | `DS-I001` | Feature-block regression with ridge and random forest | method | Existing M011 packet over random and endpoint regimes | Grouped CV, random-to-endpoint transfer, null baseline | `negative` | Cached in `research/sys-landscape-toolbox-audit.md`; reopen if refreshed feature tables transfer to endpoints. |
-| `DS-I002` | Regime classification | method | Existing M012 packet | Whether non-provenance blocks separate endpoint from random better than null and metadata caveats | `future` | Existing script lacks durable summary; decide thesis role after summary and review. |
-| `DS-I003` | Endpoint residualized regression beyond metadata | method | Existing M013 packet | Whether endpoint geometry/orbit/trajectory blocks add grouped-CV signal beyond metadata | `future` | Existing script lacks durable summary; decide thesis role after summary and review. |
-| `DS-I004` | PCA / clustering / anomaly scan over current feature blocks | method spike | Existing 282-row table and committed feature JSONL | A non-post-hoc cluster or component rule that suggests where to search, or a bounded negative result | `negative` | Source-truth repair commit `dc4f11a5` on branch `ds-pilot1-pca-cluster` creates `experiments/sys-landscape/datascience/methods/pca-cluster-spike/` with script, report, and summary. Merge pending. |
-| `DS-I005` | Cheap supervised alternatives: lasso, elastic net, boosting, kNN | method spike | Current feature tables only | Whether standard extra models change M011/M012 conclusions under the same grouped split policy | `negative` | Harder pilot commit `c9b7cb77` on branch `ds-pilot2-supervised-alts` creates `experiments/sys-landscape/datascience/methods/supervised-alternatives-spike/`; lead had to run the worker's script to produce report/summary. Merge pending. |
+| `DS-I002` | Regime classification | method | Existing M012 packet | Whether non-provenance blocks separate endpoint from random better than null and metadata caveats | `future` | Existing script lacks a reviewed report/ledger disposition; decide thesis role after report review. |
+| `DS-I003` | Endpoint residualized regression beyond metadata | method | Existing M013 packet | Whether endpoint geometry/orbit/trajectory blocks add grouped-CV signal beyond metadata | `future` | Existing script lacks a reviewed report/ledger disposition; decide thesis role after report review. |
+| `DS-I004` | PCA / clustering / anomaly scan over current feature blocks | method spike | Existing 282-row table and committed feature JSONL | A non-post-hoc cluster or component rule that suggests where to search, or a bounded negative result | `negative` | Source-truth repair commit `dc4f11a5` on branch `ds-pilot1-pca-cluster` creates `experiments/sys-landscape/datascience/methods/pca-cluster-spike/` with script and report. Merge pending. |
+| `DS-I005` | Cheap supervised alternatives: lasso, elastic net, boosting, kNN | method spike | Current feature tables only | Whether standard extra models change M011/M012 conclusions under the same grouped split policy | `negative` | Harder pilot commit `c9b7cb77` on branch `ds-pilot2-supervised-alts` creates `experiments/sys-landscape/datascience/methods/supervised-alternatives-spike/`; lead had to run the worker's script to produce the report. Merge pending. |
 | `DS-I006` | Null, permutation, and bootstrap uncertainty checks | sanity | Existing M011-M013 outputs | Chance baseline and fold uncertainty for claimed pattern or non-pattern | `negative` | Worker spike found above-null within-regime pockets, but the load-bearing random-to-endpoint transfer still has strongly negative R^2. Evidence was promoted into this ledger and the toolbox audit; scratch worktree discarded rather than merged. |
 | `DS-I007` | Exact-vs-f64 spot checks for mathematical columns | sanity | Sampled rows from table-stage features | Detect whether a column implementation turns a true signal into noise | `negative` | Revised-process pilot commit `b7b59ac5` on branch `ds-pilot3-exact-f64` creates `experiments/sys-landscape/datascience/methods/exact-f64-spot-check/`; sampled checked columns showed only f64-scale drift. |
 | `DS-I008` | Neural networks or deep latent models | method | Current 282-row dataset | Would need overfit controls and enough rows for flexible models | `rejected-low-voi` | Too small and too easy to overfit before thesis closeout; reopen only with much larger data. |
@@ -137,14 +137,14 @@ Record only lessons that change future delegation or spike design.
 | Date | Source | Lesson | Consequence |
 | --- | --- | --- | --- |
 | 2026-04-30 | Initial planning | Table generation from current producer caches is cheap enough for a lead wave setup but not free for every worker. | Build one frozen temp dataset per wave and pass the path to workers. |
-| 2026-04-30 | Initial planning | A useful spike must end in a verdict with evidence, not only a plot or script. | Worker packets require a report path and reviewer-readable summary. |
+| 2026-04-30 | Initial planning | A useful spike must end in a verdict with evidence, not only a plot or script. | Worker packets require a report path with a reviewer-readable result header. |
 | 2026-04-30 | DS-I004 worker spike | One worker could implement and run a complete PCA/clustering spike from the packet, including row guards, non-provenance features, a permutation sanity check, and a readable verdict. | Full-method spikes are feasible when the dataset path, allowed write scope, and verdict vocabulary are explicit. |
 | 2026-04-30 | DS-I004 worker spike | The useful lifecycle is one-turn delegation: choose the experiment, define it, delegate, wait, inspect, then merge, trash, or leave a follow-up. Interactive checkpointing is not the default control path. | Future packets should require durable report/output paths for inspection, not chat-style progress management. |
-| 2026-04-30 | DS-I006 worker spike | The corrected one-turn lifecycle worked: the worker returned a completed status and left a report plus JSON summary for review. | Keep default spike packets one-turn, require durable artifact paths, then inspect artifacts before the explicit terminal decision: merge, trash, or follow-up. |
-| 2026-04-30 | Stage-3 pilot 1 `DS-I004` | Source-truth repair worked after timeout inspection and one corrective nudge. The worker produced script/report/summary, and the lead reran the script and committed `dc4f11a5` on `ds-pilot1-pca-cluster`. | Keep timeout inspection in the lead loop. A timeout with no files and no running process should trigger one corrective message, not indefinite waiting. |
-| 2026-04-30 | Stage-3 pilot 2 `DS-I005` | The harder method pilot exposed a lifecycle failure: after nudging, the worker created a substantial script but did not run it or produce the required report/summary. The lead ran the script and committed `c9b7cb77` on `ds-pilot2-supervised-alts`. | Before stage 4, worker packets need an early artifact heartbeat and a lead-repair disposition so partial code is not mistaken for completed source truth. |
-| 2026-04-30 | Process revision after pilots | The workflow now requires an early artifact heartbeat, worker self-run proof, explicit `lead-repair` disposition, a normal long wait before inspection, and worker cleanup after disposition. | Heartbeat is a worker-output requirement, not a lead-side polling ritual. Default local-pilot wait is `10` minutes unless the packet says otherwise. |
-| 2026-04-30 | Stage-4 pilot `DS-I007` | Waiting long enough let the worker complete heartbeat, script, report, summary, and self-run proof without lead repair. Manual early heartbeat inspection was unnecessary and likely contributed to overdiagnosing earlier workers as stuck. | Process is revised and settled enough for serial execution. Before scaling, standardize `summary.json` top-level keys and build the row dashboard. |
+| 2026-04-30 | DS-I006 worker spike | The corrected one-turn lifecycle worked: the worker returned a completed status and left a report for review; any JSON sidecar is auxiliary. | Keep default spike packets one-turn, require durable artifact paths, then inspect artifacts before the explicit terminal decision: merge, trash, or follow-up. |
+| 2026-04-30 | Stage-3 pilot 1 `DS-I004` | Source-truth repair worked after timeout inspection and one corrective nudge. The worker produced script/report evidence, and the lead reran the script and committed `dc4f11a5` on `ds-pilot1-pca-cluster`. | Keep timeout inspection in the lead loop. A timeout with no files and no running process should trigger one corrective message, not indefinite waiting. |
+| 2026-04-30 | Stage-3 pilot 2 `DS-I005` | The harder method pilot exposed a lifecycle failure: after nudging, the worker created a substantial script but did not run it or produce the required report. The lead ran the script and committed `c9b7cb77` on `ds-pilot2-supervised-alts`. | Worker packets need an early report/blocker note and a lead-repair disposition so partial code is not mistaken for completed source truth. |
+| 2026-04-30 | Process revision after pilots | The workflow requires an early report/blocker note, worker self-run proof, explicit `lead-repair` disposition, a normal long wait before inspection, and worker cleanup after disposition. | The early report is a worker-output requirement, not a lead-side polling ritual. Default local-pilot wait is `10` minutes unless the packet says otherwise. |
+| 2026-04-30 | DS-I007 pilot | Waiting long enough let the worker complete early report, script, final report, and self-run proof without lead repair. Manual early-report inspection was unnecessary and likely contributed to overdiagnosing earlier workers as stuck. | Process can work serially, but the required `summary.json` schema was an unjustified abstraction. Restart the contract around `report.md` plus ledger row before claiming scale readiness. |
 
 ## Completed Spike Notes
 
@@ -164,7 +164,7 @@ Evidence:
 - Commit: `dc4f11a5`.
 - Report path after merge:
   `experiments/sys-landscape/datascience/methods/pca-cluster-spike/report.md`.
-- Summary path after merge:
+- Auxiliary metadata path after merge, not source truth:
   `experiments/sys-landscape/datascience/methods/pca-cluster-spike/summary.json`.
 
 Observation:
@@ -214,7 +214,7 @@ Evidence:
 - Commit: `c9b7cb77`.
 - Report path after merge:
   `experiments/sys-landscape/datascience/methods/supervised-alternatives-spike/REPORT.md`.
-- Summary path after merge:
+- Auxiliary metadata path after merge, not source truth:
   `experiments/sys-landscape/datascience/methods/supervised-alternatives-spike/summary.json`.
 
 Observation:
@@ -307,7 +307,7 @@ Evidence:
 - Commit: `b7b59ac5`.
 - Report path after merge:
   `experiments/sys-landscape/datascience/methods/exact-f64-spot-check/report.md`.
-- Summary path after merge:
+- Auxiliary metadata path after merge, not source truth:
   `experiments/sys-landscape/datascience/methods/exact-f64-spot-check/summary.json`.
 
 Observation:
