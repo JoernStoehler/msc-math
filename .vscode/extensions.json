@@ -4,6 +4,7 @@
 		// "efoerster.texlab",  // disabled with chktex settings above
 		"mathematic.vscode-pdf",
 		"miguelsolorio.symbols",
-		"openai.chatgpt"
+		"openai.chatgpt",
+		"tamasfe.even-better-toml"
 	]
 }

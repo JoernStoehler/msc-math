@@ -1,156 +1,479 @@
 # Planned TOC
 
-This is a quickly written plan for the thesis structure.
-I call it a TOC even though it's not quite that. It's more of a "summary tree" that tries to split into child nodes until I believe every leaf is straightforwardly doable by me.
-The goal is to ensure that way that my plan is feasible (since a sequence of leaf nodes then guarantees that everything is doable, even if it takes time) and optimize the plan conveniently (e.g. order, nesting are revealed, I can rearrange, merge+split until the whole surface is nice).
+Purpose:
+plan what the thesis should look like, while making explicit what is doable and
+what relates to what.
 
-The main things-to-optimize for are
+Target:
+after reading this file, Jorn or an agent should know the intended thesis shape,
+which claims/sections support each other, and which parts are still uncertain
+because of claim strength rather than prose polish.
 
-- time: there isn't a benefit to waste a week just to gain low marginal gain; or, the other way around, if we want to keep our (current) deadline then we need to not waste time inefficiently / need to triage what to do
-- readability: Kai and Elizabeth need to be able to understand what work was done as part of the master thesis
-- completeness: it'd be sad, and kinda weird, to loose results we obtained
-- correctness: it'd be sad, and bad for the grade, if results are wrong, or if the arguments for the results are wrong even if the conclusions are correct
-- proof completeness: stronger than completeness, bc it's about potentially putting in work even now to close proof gaps, instead of just mentioning them (correctness requires to not gloss, completeness to not drop partial proofs)
+Verification gate:
+the file is detailed enough when each leaf section has a clear place, a clear
+claim or role, known proof/data/notation dependencies, and no unresolved
+question of basic writability. If the remaining uncertainty is only page count
+or niceness of exposition, stop expanding that leaf.
 
-Rough guidance: there's basically standard structures, and for good reason, that we follow.
+Non-goal:
+this is not an annotated thesis draft. A thesis can always be expanded in more
+detail; that expansion has no value here once writability and relations are
+clear.
 
-Since we have SO MUCH CONTENT we heavily rely on offering content to be skimmed. In particular, we want to spoiler sections early so that readers can just ignore the detailed arguments if they want to. This also helps readability bc it provides context that helps interpret the details.
+For each prospective section, this file should make clear:
 
-We use handdrawn sketches (e.g. to illustrate definitions and theorems and edge cases) instead of trying to do them professional - it's not worth the time. 
-We use figures (matplotlib mainly) to illustrate results using human visual reasoning (e.g. for statistics).
+- what would be written here?
+- what proof/data/notation does it need?
+- is this leaf too large and should be split?
+- what other parts does this leaf depend on or support?
+- can a mediocre writeup of this leaf damage another part of the thesis?
 
-## TOC (living document)
+Derived agent guidance:
 
-Title: "Probing Viterbo's Conjecture"
+- add detail when it changes placement, dependency, claim strength, or whether
+  the leaf is writable;
+- do not add detail merely because the eventual thesis section could be written
+  in more detail;
+- preserve messy formulas, caveats, and proof sketches when they are the reason
+  a leaf is or is not writable;
+- route execution status, ownership, commands, and final verification gates to
+  `tasks/*.md`, `ROADMAP.md`, or the relevant research note instead.
 
-Abstract: 
-  - standard abstract
-  - probably a long paragraph instead of just 5 sentences
-  - we want to spoil our results here, sort of a 'paper' style
-  - potentially relevant for publication on arxiv
+The main things to optimize for:
 
-1. Introduction
-  - standard introduction style
-  - motivation and context: brief recap of Viterbo's conjecture's origins, attention paid to it, and the surprising counterexample in HKO2024 ; recap of computational approaches (HK2017, CH2021) to look for counterexamples and how they're different from HKO2024 in where they searched; natural idea to develop computational methods to do a large search and apply standard computational methods; highlight recent interest in data-science for pure math to discover connections (albeit not proofs) (e.g. knot theory papers, discussed in the lecture at uni augsburg)
-  - state Viterbo's conjecture
-  - operationalization/narrowing of the topic to be tractable: we focus on polytopes (computable and dense), we focus on the 4D case (bc high dimensions explode in difficulty, see e.g. the paper about NP completeness, and in computational cost), we focus on both generic and non-generic cases (since HKO2024 counterexample is highly non-generic, e.g. lagrangian product with high symmetry) ; we build upon existing computational methods but improve them, and implement them in a high-performance language (rust); we deal properly with numerics (since we want to trust the results) e.g. with interval-arithmetics and exact-arithmetic fallbacks
-  - results/contributions: we find that HKO2024 looks like a local maximum of the systolic ratio in the space of convex bodies (proven for polytopes with 10 facets, ofc up to symmetries of the systolic ratio). We find that hammering with a standard data science book and the LICCA cluster at the problem yields no new counterexamples and no conjectures; theoretical considerations merely yield insights already exploited automatically by local gradient ascent, and so non-local considerations would be needed; 
-  - side result: we flesh out the proof from HK2017 that there always is a simple Reeb orbit with minimum action on a polytope
-  - method result: we developed a high-performance implementation of the computational methods from HK2017, CH2021, in particular we optimized the algorithms by using more of the combinatorial structure of the problem, and we hardened them using numerics, interval arithmetic, exact arithmetic fallbacks
-  - method result: we developed an algorithm for the subgradients, and a gradient ascent method for the non-smooth problem
-  - theory result: we discuss the negative result that standard data science approaches yield nothing besides the local information, in particular we discuss volumes of local maxima and the dimensionality of the search problem as a way to get a prior for why interesting cases are rare to find, and how subsequently data science methods lack enough examples (in particular, have only 1 example) of interesting cases
-  - main result: we prove that HKO2024 is a local maximum in M_10 mod sym
-  - side result: we prove a formula for P_5 x_L R(theta) P_5
-  - side result: we empirically exhaust high-symmetry families of polytopes and find no counterexamples
-  - structure of the thesis is sketched
-  - we refer to the notation appendix for the standard notation we picked from the literature
+- time: do not spend a week for low marginal gain;
+- readability: Kai and Elizabeth need to understand what work was done;
+- completeness: do not silently lose results already obtained;
+- correctness: do not make false or overstrong claims;
+- proof completeness: close proof gaps only when the thesis claim needs them,
+  and otherwise state the gap honestly.
 
-2. Background
-  2.1. Polytopes and their euklidean geometry
-    - VPolytope, HPolytope, correspondence between them
-    - k-faces (for us: closed)
-    - dual polytopes, support and gauge functions
-    - the topological space of convex bodies, the topological space of polytopes
-    - the topological space M_F of polytopes containing the origin in their interior with F irredundant facets, and embedding into an open subset of R^4F via dual vertex coordinates
-    - note on "generic properties", and promise we will introduce finitely many of those throughout the thesis
-  2.2. Smooth symplectic geometry setting
-    - notation J_0, omega_0, lambda_0, Sp(4), action
-    - definition: minimum action of a convex body with smooth boundary
-      - Reeb vector field, Reeb orbits, action of a Reeb orbit, minimum action
-      - cite only: existence of at least one Reeb orbit, existence of a minimum
-    - definition: symplectic capacity axioms
-      - monotonicity (A \embeds into B implies c(A) <= c(B))
-      - conformality (c(lambda A) = lambda^2 c(A))
-      - normalization (c(B^4(1)) = c(Z^4(1)) = pi)
-    - cite only: minimum action is a symplectic capacity, called EHZ capacity
-    - Viterbo's conjecture: for any convex body K, c(K)^2/2/vol(K) <= 1
-    - Cite only: relation/implications, e.g. to whether on convex bodies all capacities coincide, etc
-  2.3. Symplectic geometry on polytopes
-    - main method: polytopes as limits of smooth convex bodies
-    - definition: generalized Reeb orbits on polytopes
-    - theorem (CH2021): K_n -> K wrt Hausdorff, action(gamma_n) bounded => gamma_n has a subsequence converging to a generalized Reeb orbit gamma on K wrt W^1,2 topology
-      - TODO: LOOK UP IF THIS THEOREM WAS STATED IN CH2021
-    - corollary: c_EHZ(K_n) -> c_EHZ(K)
-    - definition: simple Reeb orbits on polytopes
-    - theorem (HK2017): for any polytope, there is a simple Reeb orbit with minimum action
-    - proof: fleshed out in its own, skippable chapter since it uses heavy machinery such as Clarke's dual action principle
+Because there is too much content, sections should spoil their point early.
+Readers should be able to skip detailed arguments after seeing the claim,
+support, and caveat.
 
-3. Methods
-  3.1. HK2017 algorithm
-    - recall the minimum action optimization problem
-    - definition: the HK2017 optimization problem in (sigma,beta)
-    - theorem: it is equivalent to the original problem
-      - UNSURE: whether we can give the proof or still need the Clarke's dual action principle; I think we can give the proof
-      - lemma: shoelace formula for the symplectic action of a piecewise linear curve
-    - theorem/formulas for how to recover gamma from (sigma,beta) and vice-versa
-    - algorithm: the HK2017 solver we developed
-      - input: F dual vertices a
-      - output: a partial permutation sigma: 1..m -> 1..F, and beta \in R^m, s.t. Q(sigma,beta) is a global maximum, when one understands sigma,beta to extend to a full permutation by padding with zeros
-      - loop over all sigma: 1..m -> 1..F partial permutations
-        - solve linear constraints:
-          - variables: beta \in R^m
-          - constraints: sum_i beta_i a_{sigma(i)} = 0, sum_i beta_i = 1
-        - solve, yields a m' dimensional solution space {beta'} (can be empty!)
-        - project quadratic objective:
-          - H(sigma)_ij = omega_0(a_{sigma(i)}, a_{sigma(j)}) * sign(j-i) (symmetric matrix)
-          - Q(sigma,beta) = 1/2 beta^T H(sigma) beta = sum_{i<j} beta_i beta_j omega_0(a_{sigma(i)}, a_{sigma(j)})
-          - project onto the m' constraint space, yields an objective: 
-            Q'(sigma,beta') = 1/2 beta'^T H'(sigma) beta' + b'(sigma)^T beta' + c'(sigma)
-        - if H' is not negative definite, then skip
-        - find the critical point beta'* (which may not exist)
-        - recover beta* by projecting back to the full space
-        - if beta* > 0 and Q(sigma,beta*) > Q_best, then update the best solution
-      - return the best solution found
-    - theorem: the algorithm indeed yields a global maximum
-      - main arguments:
-        - the admissable beta \in C(sigma) sets are compact, and P(1..F) is finite, and Q is continuous, so the maximum is attained
-        - decompose C(sigma) into open faces (including the polytope interior, and the vertices)
-        - the faces are given by setting some of the beta_i to zero; so enumerating partial permutations is the same as enumerating faces
-        - there's now a global maximum with minimum face dimension
-        - since it lies inside the open face, it's a critical point of the projected objective
-        - if H' had a positive eigenvalue, then there'd be a higher Q value nearby
-        - if H' had a zero eigenvalue, then we could follow that direction until we hit the boundary of the face, which would contradict the minimum face dimension
-        - the beta>0 check is needed since there may be critical points outside C(sigma)
-    - improved versions (not explicitly restated):
-      - we can track not just one best solution, but all best solutions
-      - we can track also the semidefinite cases that define >= 1 dimensional families of maxima (sigma,beta)
-      - we can expand the sigma to full permutations via padding
-  3.2. Subgradient algorithm
-    - we want to analyze the local neighborhood of a polytope K
-    - for this we look at the HK2017 optimization problem with fixed sigma
-      A_min(K) = min_sigma A_min(K;sigma) where sigma \in PartialPerm(F)
-      A_min(K;sigma) = min { action(beta;sigma,a) :
-        sum_i beta_i = 1
-        sum_i a_i beta_i = 0
-        action = 1/2Q
-        Q = sum_{i<j} beta_sigma(i) beta_sigma(j) omega_0(a_sigma(i), a_sigma(j))
-        beta is a critical point of the constrained problem
-        the constrained problem is negative definite
-        beta_i > 0
-      } - which can be undefined
-    - considering these equations/conditions with the frame of algebraic geometry tells us
-      - generically, the constraints are maximum rank i.e.
-        rank(1^T \\ a^T) = min(5, |sigma|)
-      - the constrained quadratic problem is negative definite on an open set of polytopes
-      - 
-    
-    in order to describe the behavior of K_n -> K we need closed conditions everywhere, so we need to modify our algorithm:
-      - now use beta_i >= 0 instead of beta_i > 0
-      - now use negative semi-definite as requirement instead of negative definite
-      - record the potentially infinitely many critical points beta for eigenvalue-zero cases
-    - this yields a larger set of minimizers, but importantly now every K_n->K has a converging subsequence
-      sigma_n -> sigma [wlog we just pick a subsequence with sigma_n=sigma]
-      beta_n -> beta [wrt R^|sigma|]
-      sigma,beta is a minimizer for K
-    - main insight: sys(K) is not smooth in the dual vertices a, but we can define a branch for each partial permutation sigma
-      beta(a;sigma) convex subset of R^|sigma|, can be empty
-      the beta have all the same action action(a;sigma) \in R \union {undefined}
-      action_min(a) = min_{sigma} action(a;sigma) \in R
-      Sigma_min(a) = argmin_{sigma} action(a;sigma) \subset PartialPerm(F) , nonempty
-    - the limit behavior (sigma_n,beta_n) -> subsequence -> (sigma,beta) guarantees that Sigma_min(a), beta(a;sigma) are both hemi-continous
-      and action_min(a) is continous
-    - per hemi-continuity, the set of a where action(a;sigma) is defined, is closed; this can also be obtained by realizing the conditions of "beta(a;sigma) is not-empty" are closed
-    - we can also see that "beta(a;sigma) is unique" is a dense open condition, so in particular it's a generic condition
-    - this implies that "beta(a;sigma) has dimension >=2" is a closed condition with dense complement
-    - [Venn-diagram of the conditions and their intersections, or a table, or sth concise for lookup / for verification]
-    - 
+Use hand sketches where they explain definitions, theorems, or edge cases
+faster than polished figures. Use matplotlib-style figures when visual reasoning
+is part of the evidence.
+
+## Title
+
+Probing Viterbo's Conjecture
+
+## Abstract
+
+Write last.
+
+Probably a long paragraph, paper style, with results spoiled:
+
+- Viterbo's conjecture and HKO2024 motivate the project.
+- We study computable polytope models in dimension four.
+- We locally analyze HKO2024.
+- We run bounded computational searches and find no second transferable
+  `sys > 1` regime.
+- We state the algorithmic and numerical trust boundary.
+
+## 1. Introduction
+
+Purpose: make the reader know the problem, the scope, and the contributions.
+
+Content:
+
+- Brief history/context of Viterbo's conjecture.
+- State Viterbo's conjecture.
+- HKO2024 as the surprising counterexample.
+- Computational approaches such as HK2017 and CH2021, and how their search
+  settings differ from HKO2024.
+- Why the thesis narrows to polytopes:
+  computable, dense, and already used in the existing algorithms.
+- Why dimension four:
+  higher dimensions have much worse complexity and computational cost.
+- Why both generic and non-generic cases matter:
+  HKO2024 is highly symmetric/non-generic, but generic random search is still
+  the obvious baseline.
+- Why implementation and numerics matter:
+  a numerical counterexample story is worthless if the solver is not trusted
+  near thresholds.
+
+Contributions to mention:
+
+- HKO2024 looks like a local maximum of the systolic ratio.
+- Strongest desired version:
+  HKO2024 is locally maximal in `M_10` modulo the natural symmetries of `sys`.
+- If the exact certificate is not closed, state the weaker exact-route and
+  numerical evidence honestly.
+- Broad bounded searches, local optimization, continuation, and standard
+  data-science-style probes found no second transferable `sys > 1` regime.
+- We developed a Rust implementation of the HK2017/CH2021-style finite
+  computation and improved it using the combinatorial structure of the problem.
+- We developed subgradient / local-ascent machinery for the nonsmooth problem.
+- We hardened the computations with numerical checks and exact fallbacks where
+  the thesis relies on them.
+- We flesh out proof details around existence of a simple minimum-action Reeb
+  orbit on a polytope.
+- Possible side result:
+  formula/status for `P_5 x_L R(theta) P_5`.
+- Possible side result:
+  high-symmetry-family negative checks.
+
+Writability note:
+
+- The intro can be drafted before all proof details are perfect.
+- The exact final sentence for the HKO result waits until the local-maximum
+  chapter knows whether it is theorem-strength or evidence-strength.
+
+## 2. Background
+
+Purpose: define the objects used later. Prove only what the main text needs.
+
+### 2.1 Polytopes and Euclidean geometry
+
+Content:
+
+- Convex bodies and polytopes in `R^4`.
+- `VPolytope` and `HPolytope`.
+- Correspondence between vertices/facets when needed.
+- Closed `k`-faces.
+- Dual polytopes.
+- Support functions and gauge functions.
+- Space of convex bodies.
+- Space of polytopes.
+- `M_F`: polytopes containing the origin in their interior with `F`
+  irredundant facets.
+- Embedding of `M_F` into an open subset of `R^{4F}` by dual vertex
+  coordinates.
+- Generic properties:
+  introduce only the finite list actually used later.
+
+Writability note:
+
+- This is mostly standard notation and should be writable mediocrely.
+- The `M_F` definition matters later for HKO local maximality, so do not hide it
+  in an appendix.
+
+### 2.2 Smooth symplectic geometry setting
+
+Content:
+
+- Notation `J_0`, `omega_0`, `lambda_0`, `Sp(4)`.
+- Action.
+- Minimum action of a convex body with smooth boundary.
+- Reeb vector field.
+- Reeb orbits.
+- Action of a Reeb orbit.
+- Cite existence of at least one Reeb orbit.
+- Cite existence of a minimum.
+- Symplectic capacity axioms:
+  monotonicity, conformality, normalization.
+- Cite that minimum action is a symplectic capacity, called EHZ capacity.
+- Viterbo's conjecture in the chosen normalization.
+- Brief relation to the capacity-equality story if it helps motivation.
+
+Writability note:
+
+- This section can be mostly definitions plus citations.
+- Do not try to teach all of symplectic geometry.
+
+### 2.3 Symplectic geometry on polytopes
+
+Content:
+
+- Main method:
+  polytopes as limits of smooth convex bodies.
+- Generalized Reeb orbits on polytopes.
+- CH2021-style compactness statement:
+  if `K_n -> K` and the actions are bounded, a subsequence of orbits converges
+  to a generalized Reeb orbit on `K`.
+- TODO:
+  look up the exact CH2021 statement and topology.
+- Corollary or cited fact:
+  EHZ capacity behaves correctly under the relevant polytope limit.
+- Simple Reeb orbits on polytopes.
+- HK2017 theorem:
+  for any polytope, there is a simple Reeb orbit with minimum action.
+
+Writability note:
+
+- The detailed proof of simple-minimizer existence can be long because it uses
+  Clarke dual action principle material.
+- Main text must still state why the finite computation is legitimate.
+- Long functional-analytic proof material can move to an appendix only after
+  the main text states the claim and why it applies here.
+
+## 3. Finite Computation Methods
+
+Purpose: explain the finite optimization problem and the algorithms used later.
+
+### 3.1 HK2017 finite optimization problem
+
+Content:
+
+- Recall the minimum action optimization problem.
+- Define the HK2017 problem in `(sigma,beta)`.
+- State equivalence to the original problem.
+- Include shoelace-style formula for the symplectic action of a piecewise
+  linear curve if this is the clean way to explain the objective.
+- Give formulas for recovering `gamma` from `(sigma,beta)` and conversely.
+
+Candidate problem statement:
+
+- `sigma` is a partial permutation / orbit word.
+- `beta_i >= 0`.
+- Constraints:
+  `sum_i beta_i a_{sigma(i)} = 0`,
+  `sum_i beta_i = 1`.
+- Objective:
+  `Q(sigma,beta) = sum_{i<j} beta_i beta_j
+  omega_0(a_{sigma(i)}, a_{sigma(j)})`,
+  with final factor convention checked against thesis/code notation.
+- Minimum action / capacity is recovered from this objective with the chosen
+  normalization.
+
+Writability note:
+
+- This section needs enough formulas to make later HKO/landscape text readable.
+- It does not need every implementation optimization.
+
+### 3.2 HK2017 solver
+
+Content:
+
+- Input:
+  `F` dual vertices `a_i`.
+- Output:
+  a partial permutation `sigma` and weights `beta`, or all tied best candidates
+  when needed.
+- Enumerate partial permutations / orbit words.
+- For each `sigma`, solve the linear constraints:
+  `sum_i beta_i a_{sigma(i)} = 0`,
+  `sum_i beta_i = 1`.
+- This gives an affine solution space for `beta`, possibly empty.
+- Project the quadratic objective to the constraint space:
+  `Q'(sigma,beta') = 1/2 beta'^T H'(sigma) beta'
+  + b'(sigma)^T beta' + c'(sigma)`.
+- Check negative definiteness, or record semidefinite cases if the retained
+  version needs them.
+- Find the critical point when it exists.
+- Recover `beta` in the original coordinates.
+- Check positivity/admissibility.
+- Update the best solution.
+
+Correctness proof sketch:
+
+- The admissible `beta` sets are compact.
+- There are finitely many `sigma`.
+- The objective is continuous, so a maximum exists.
+- Decompose by faces where some `beta_i = 0`.
+- Choose a maximum on a minimal face.
+- Since it lies inside that face, it is a critical point of the projected
+  objective.
+- If the projected Hessian had a positive eigenvalue, a better nearby point
+  would exist.
+- If it had a zero eigenvalue, one could move to the boundary and contradict
+  minimal face dimension.
+- The positivity check excludes critical points outside the admissible face.
+
+Writability note:
+
+- This proof sketch is probably writable.
+- Check the sign and factor conventions before finalizing formulas.
+
+### 3.3 Implementation variants
+
+Content:
+
+- Track one best solution or all tied best solutions.
+- Track semidefinite cases that define positive-dimensional families of maxima.
+- Expand partial permutations to full permutations by padding with zeros when
+  that is notationally convenient.
+- Use pruning / combinatorial structure where it is needed for performance.
+- State what the Rust implementation returns and what the status/certainty
+  fields mean.
+
+Writability note:
+
+- Keep implementation detail only where it affects correctness,
+  reproducibility, or interpretation of experiment outputs.
+- Align this section with `thesis/migration-findings.md`:
+  multiplier names, KKT signs, `Q` factor, beta/eigen thresholds, accumulator
+  wording, and pruning assumptions.
+
+### 3.4 First-order branches and subgradients
+
+Purpose:
+separate the formal first-order behavior from the practical fact that we can run
+gradient ascent.
+
+Content:
+
+- To analyze a local neighborhood of a polytope `K`, fix `sigma` and look at
+  the corresponding action branch as a function of dual vertices.
+- For fixed `sigma`, define a branch such as `A_min(a;sigma)` when the
+  constrained critical point exists.
+- Generic behavior:
+  the constraint matrix has maximum rank and the constrained quadratic problem
+  has an isolated negative-definite critical point.
+- Open conditions such as `beta_i > 0` and negative definiteness are not enough
+  for describing limits.
+- For limit arguments, use closed replacements:
+  `beta_i >= 0`, negative semidefinite conditions, and possibly sets of
+  critical `beta`.
+- If `K_n -> K`, then after passing to a subsequence,
+  `sigma_n` and `beta_n` should converge to a limiting minimizer.
+- `sys(K)` is not smooth in the dual vertices, but it is controlled by the
+  active branches.
+- Define/describe:
+  `Sigma_min(a)`,
+  active `beta(a;sigma)`,
+  branch action values,
+  and the active subgradients.
+- Expected behavior:
+  active sets and active `beta` sets are semicontinuous in the relevant sense.
+- Generic uniqueness of `beta(a;sigma)` is a dense/open-type statement; higher
+  dimensional `beta` sets are special closed cases.
+
+Writability note:
+
+- This is the section most likely to sprawl.
+- It interacts strongly with HKO local maximality at detail level.
+- It interacts only weakly with the search-landscape narrative.
+- If the proof gets ugly, keep the main conceptual statement here and move
+  routine algebra/case checking to an appendix.
+
+## 4. HKO2024 Local Maximum
+
+Purpose: state and support the strongest honest local-maximality claim.
+
+Content:
+
+- Define the HKO pentagon-pentagon configuration.
+- State its `sys > 1` role.
+- Define the `M_10` local model in dual-vertex coordinates.
+- Explain the natural symmetries of `sys`:
+  translations, scaling, and linear symplectic maps.
+- State that strict local maximality in raw `R^40` is the wrong statement.
+- Desired theorem:
+  HKO2024 is locally maximal in `M_10` modulo the natural symmetries.
+- Exact first-order route:
+  - exact geometry and symmetry tangent space;
+  - active orbit/prototype reduction;
+  - active-gradient rank/kernel certificate.
+- Current caveat:
+  Packet 3 is the blocker if we want theorem-strength wording.
+- Current caveat:
+  exact field is `Q(tan(pi/5))`, not `Q(sqrt(5))`.
+- Current caveat:
+  old `44`-orbit / `10`-gradient language must be replaced or caveated against
+  current `150` exact action orbits, `20` visited subsets, and `28` gradients.
+- Supporting evidence:
+  first-order numerical bookkeeping,
+  second-order samples,
+  perturbation checks,
+  facet-splitting,
+  cut-and-ascent,
+  neighborhood checks.
+
+Writability note:
+
+- This chapter owns the detailed first-order story.
+- If the exact certificate closes, this becomes the main theorem chapter.
+- If it does not close, this chapter still exists as a carefully weakened
+  evidence/exact-route chapter.
+- Do not let gradient-ascent exposition carry the theorem proof.
+
+## 5. Search Landscape
+
+Purpose: state what was searched, what was found, and what this does not prove.
+
+Content:
+
+- Search question:
+  can standard computational methods find another high-`sys` regime?
+- Random generic polytopes.
+- Random Lagrangian products.
+- Fixed-`F` general gradient ascent.
+- Fixed-`F` product ascent.
+- Variable-`F` continuation.
+- Rotated regular products.
+- Pentagon-pentagon as the known positive control.
+- Data-science feature/regression/classifier work if retained.
+- Volumes of local maxima / dimensionality heuristic if it helps explain why
+  interesting cases are rare.
+- Negative interpretation:
+  bounded searches found no second transferable `sys > 1` regime.
+- Caveat:
+  this is not a density theorem.
+- Caveat:
+  this is not an impossibility theorem.
+- Caveat:
+  this is not proof that better nonlocal methods cannot find more examples.
+
+Writability note:
+
+- This chapter mostly does not depend on the HKO proof details.
+- It uses HKO as baseline/control geometry.
+- It does depend on method-ledger/audit status for whatever data-science methods
+  are mentioned.
+
+## 6. Numerics and reproducibility
+
+Purpose: state the trust boundary for computations cited in the thesis.
+
+Content:
+
+- What the default f64 solver computes.
+- What exact or stronger verification paths exist.
+- Which path is used for which thesis claim.
+- KKT/numerical error caveats only where cited.
+- Interval/exact fallback story only as far as the thesis uses it.
+- Orbit recovery evidence if cited.
+- Which datasets and figures are thesis-supporting.
+- Which repo promises are actually made.
+
+Writability note:
+
+- This is not a full numerical-analysis thesis.
+- Do not reopen broad solver development here.
+- Verify only artifacts cited or promised by the final thesis text.
+
+## Appendices
+
+Use appendices for material that is needed for correctness but interrupts the
+main reading path.
+
+Appendix A: notation glossary.
+
+Appendix B: Clarke dual action principle and simple-minimizer proof details.
+
+Appendix C: finite algorithm proof details that are too heavy for Chapter 3.
+
+Appendix D: numerical implementation details.
+
+Appendix E: optional figures / visualization / pentagon-rotation material, only
+if it helps and is cheap.
+
+Appendix rule:
+
+- Main text must keep the claim, key reduction, and reason the result applies.
+- Appendices may hold routine algebra, long case splits, lookup notation, and
+  implementation detail.
+
+## Current cut/default-not-mainline material
+
+- Tube algorithm, unless the missing proof/formula becomes available and worth
+  the time.
+- New LICCA-scale runs, unless results already exist and are cheap to cite.
+- Broad solver unification.
+- New data-science methods.
+- Publication-grade higher-`F` HKO checks.
+
+## Leaf test
+
+For every leaf, first write the four-line version:
+
+1. Claim.
+2. Support.
+3. Caveat.
+4. Pointer to proof, artifact, or appendix.
+
+Only polish notation after this exists.

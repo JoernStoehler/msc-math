@@ -8,8 +8,8 @@
 //! 3. Eigendecompose H', compute critical point alpha = -(H')^+ g.
 //! 4. LP search in null(H') for max-margin beta > 0.
 //!
-//! Sign fix: the library computes alpha0 = (H')^+ g, but stationarity H' alpha + g = 0
-//! requires alpha0 = -(H')^+ g. This module implements the corrected version.
+//! Sign convention: stationarity is H' alpha + g = 0, so alpha0 = -(H')^+ g.
+//! The crate projection solver now uses the same convention via b' = -g.
 //!
 //! Also provides `solve_projected_with_diagnostics()` for perturbation chain validation
 //! and `compute_eta_bound()` for the componentwise beta certification bound [lem:link-beta].
@@ -312,9 +312,8 @@ pub fn find_max_margin(beta0: &DVector<f64>, null_basis: &DMatrix<f64>) -> Margi
 
 /// Solve the QP via constraint projection.
 ///
-/// **Sign fix applied:** The library computes alpha0 = (H')^+ g, but the correct
-/// stationarity condition H' alpha + g = 0 requires alpha0 = -(H')^+ g.
-/// This function implements the corrected version.
+/// Sign convention: stationarity H' alpha + g = 0 requires
+/// alpha0 = -(H')^+ g, equivalently solving H' alpha = -g.
 pub fn solve_projected(qp: &QP) -> Solution {
     let m = qp.c.ncols();
 
@@ -370,7 +369,6 @@ pub fn solve_projected(qp: &QP) -> Solution {
         lambda_max * EPS_EIGEN_THRESHOLD
     };
 
-    // SIGN FIX: alpha0 = -(H')^+ g (negated vs library which computes (H')^+ g).
     // Stationarity condition: H' alpha + g = 0  =>  alpha = -(H')^+ g.
     let mut alpha0 = DVector::zeros(k);
     for i in 0..k {

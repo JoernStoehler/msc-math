@@ -40,6 +40,12 @@ Each packet is now expected to stay narrow with explicit artifact contracts, whi
   cases on current datasets.
 - `sage-feasibility` contributes timing and feasibility quantification without imposing new
   API complexity on Rust crate architecture.
+- 2026-05-01 generic-case pivot: the next numerics proof route should first
+  state and prove the exact generic case using conditions on intermediate
+  variables (`C`, reduced Hessian spectrum, beta margin, Q/action gap, and
+  adjacency/pruning assumptions), then implement the same contract in f64 and
+  measure how diagnostics blow up toward non-generic limits. This supersedes
+  attempts to close all degenerate cases before the generic theorem is clear.
 
 ## Decisions
 
@@ -69,11 +75,15 @@ Each packet is now expected to stay narrow with explicit artifact contracts, whi
 
 ## Next Steps
 
-1. Close remaining error-bound and solver-edge proof gaps in `error-bounds`:
-   - extend the current η-bound discussion to near-null eigendirections in LP correction,
-     remove the `cor:taylor-structure` gap, and encode current empirical violations as guarded assumptions;
-   - edit `formal/numerics/error-bounds.tex` and update `experiments/numerics/error-bounds/tests.rs` as needed;
-   - finish when the bound argument for the LP-shift branch is reflected in both test and formal text.
+1. Close remaining error-bound and solver-edge proof gaps in `error-bounds` by
+   following the generic-case route:
+   - state exact generic preconditions on intermediate solver variables;
+   - prove the exact generic solver contract before broad f64 certification;
+   - align f64 diagnostics/tests with those preconditions and measure
+     non-generic limit behavior as margins approach zero;
+   - finish when retained thesis wording can say either "certified under these
+     stated preconditions" or "f64 diagnostic with exact/empirical validation
+     and named caveats."
    - relevant commands include
      `cargo test -p dev-numerical-analysis --test verify_numerics_tests`.
 2. Decide when to extract `src/algebraic` into a reusable crate:

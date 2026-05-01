@@ -7,9 +7,10 @@
 //! **Step 1 -- Solve constraints.** C beta = d -> particular solution beta0, null-space
 //! basis V. If inconsistent: return False.
 //!
-//! **Step 2 -- Project objective.** Form the reduced Hessian H' = V^T H V and reduced
-//! gradient b' = V^T H beta0. Solve H' alpha = b' via eigendecomposition, partitioning
-//! eigenvalues into retained (|lambda| > threshold) and null (|lambda| <= threshold).
+//! **Step 2 -- Project objective.** Form the reduced Hessian H' = V^T H V and
+//! reduced right-hand side b' = -V^T H beta0. Solve H' alpha = b' via
+//! eigendecomposition, partitioning eigenvalues into retained
+//! (|lambda| > threshold) and null (|lambda| <= threshold).
 //!
 //! **Step 3 -- Compose search space.** The full solution is beta = beta0 + V(alpha0 + W gamma),
 //! where W are the null-space eigenvectors of H'. These directions don't change Q

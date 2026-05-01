@@ -1,8 +1,8 @@
 //! Stage 1 (natural): Enumerate polytope σ-nodes → collected_poly.jsonl.
 //!
 //! For each polytope in the input JSONL, enumerates all subsets S and cyclic
-//! permutations σ, assembles (H, C, d), runs the f64 saddle-point solver,
-//! and saves input matrices + raw solver output (β, λ, etc.).
+//! permutations σ, assembles (H, C, d), runs the f64 projection solver,
+//! and saves input matrices plus solver output such as β, Q, and margin.
 //!
 //! Usage:
 //!   cargo run -p dev-numerical-analysis --release --bin num-collect-poly -- --polytopes /tmp/all_polytopes.jsonl [--max-facets 8]

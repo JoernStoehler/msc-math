@@ -1,8 +1,58 @@
-# Task: Write up KKT solver algorithm specification + correctness proofs in formal/numerics/error-bounds.tex
+# Numerics Error-Bounds Research Note
+
+## 2026-05-01 generic-case pivot
+
+Staleness note: this section preserves the 2026-04-30/2026-05-01
+numerics-strong-route audit and Jorn's follow-up steering. It is a resume cache,
+not proof closure. Refresh it before thesis-facing wording by rereading
+`formal/numerics/error-bounds.tex`, `experiments/numerics/error-bounds/`,
+`crates/symplectic/src/lib.rs`, and
+`crates/symplectic/src/algorithms/orbit_search.rs`.
+
+Current verdict from the read-only route audit: `WEAKENED`. The repo supports a
+truthful story that public capacity wrappers are f64 diagnostics with recorded
+residual/Q information, known-polytope validation, and stronger exact/guaranteed
+aggregation available through non-default APIs. It does not support a claim that
+the public `ehz_capacity*` wrappers are fully certified numerical solvers.
+
+The route should now be generic-case first:
+
+1. Formalize the exact generic per-sigma problem under conditions on
+   intermediate variables: full-rank/well-conditioned `C`, separated reduced
+   Hessian eigenvalues, strict beta margin, a non-small Q/action gap, and the
+   boundary/adjacency assumptions needed by the capacity search.
+2. Implement or isolate the exact generic case so the mathematical contract is
+   visible before f64 thresholds enter.
+3. Implement the f64 version against the same variables and return continuous
+   diagnostics, not hidden binary claims: eigenvalues, singular values, beta
+   margin, residual norms, Q/action intervals, and the precondition margins.
+4. Use the experiment loop to compare f64 methods, fit candidate bound formulas,
+   and reject methods whose error blows up faster than the diagnostics predict.
+5. Treat non-generic polytopes by limits of generic instances that violate one
+   or more conditions. The thesis-safe question is then whether the bound
+   explodes as the condition margin goes to zero, and whether finite precision
+   leaves the local generic neighborhood.
+
+The main alignment issue is unchanged: `formal/numerics/error-bounds.tex` and
+the experiment harness are projection/null-space oriented, but the public
+`ehz_capacity*` wrappers use saddle-point solving plus f64-only aggregation by
+default. A thesis claim can say "certified under the stated generic
+preconditions" only for a route whose code/analyzer checks those preconditions.
+Otherwise the safe wording remains "f64 diagnostic with exact/empirical
+validation and named caveats."
+
+## Current task surface
 
 ## Context
 
-The verify-numerics experiment has proven Q error bounds and empirically validated β > 0 classification across 51K problems (458 polytopes + 15 synthetic families). A discussion on 2026-04-01 with Jörn produced a clean mathematical specification for what the KKT solver should do, separating concerns that the current saddle-point solver conflates. The next step is to formalize this specification in `formal/numerics/error-bounds.tex`, prove correctness of the error bounds within this framework, and iterate on the solver copy in this experiment.
+The verify-numerics experiment produced Q-error evidence and β > 0
+classification evidence across 51K problems (458 polytopes + 15 synthetic
+families). A discussion on 2026-04-01 with Jörn produced a mathematical
+specification for what the KKT solver should do, separating concerns that the
+current saddle-point solver conflates. The 2026-05-01 steering narrows the
+target: first prove and implement the exact generic case, then use f64
+experiments to find a provable numerical route and to describe the blow-up near
+non-generic limits.
 
 ## Scope
 
@@ -16,7 +66,7 @@ The verify-numerics experiment has proven Q error bounds and empirically validat
    - The backward stability bound: ‖r‖ ≤ ‖P_D b‖ + O(ε_mach ‖M‖ ‖x̃‖) (cite Higham 2002 Ch 8, Golub & Van Loan 2013 §8.1)
    - The connection to the capacity algorithm (minimum-length minimum-action orbit passes adjacency, so false negatives on boundary cases don't affect capacity)
 
-3. **Implement the projection solver algorithm** in `projection_solver.rs`, following the specification. Test against the 51K-problem dataset. Compare results with the saddle-point solver.
+3. **Implement the projection solver algorithm** in `projection_solver.rs`, following the specification. Test against the 51K-problem dataset. Compare results with the saddle-point solver when that comparison answers a current contract question.
 
 4. **Iterate** using the autonomous loop: change solver → regenerate → analyze → check violations → repeat.
 
@@ -36,13 +86,51 @@ The verify-numerics experiment has proven Q error bounds and empirically validat
   - `collect_poly.rs` — stage 1 binary for polytope σ-node collection
   - `projection_solver.rs` and `saddle_point_solver.rs` — f64 solver copies
   - `analyze.py` — stage 3 checks (propositions, bounds, β > 0 classification)
-  - `formal/numerics/error-bounds.tex` — proven bounds and solver specification
+  - `formal/numerics/error-bounds.tex` — solver specification, proved pieces,
+    preconditions, and named gaps
   - `research/numerics-error-bounds.md` — full findings and status
   - `testdata/*.jsonl` — committed regression fixtures
 - `library/src/kkt/projection_solver.rs` — reduced-gradient sign fixed in `e56cf161` (2026-04-12), with regression test `reduced_gradient_sign_distinguishes_fix`
 - `library/src/kkt/qp_assembly.rs` — matrix assembly reference
 
 ## Prior findings
+
+### Strong-route audit snapshot (2026-04-30)
+
+The audit answered the solver-contract questions as follows:
+
+- The formal/projection route solves, for fixed sigma,
+  `max Q(beta) = 1/2 beta^T H beta` subject to `C beta = d` and
+  `beta >= 0`. Boundary optima are meant to be covered by shorter sigma data,
+  not by computing every boundary face in the same solve.
+- The experiment route solves the projection/null-space problem: SVD for
+  `C beta = d`, reduced Hessian `H' = V^T H V`, eigensolve on `H'`, and
+  null-direction margin search.
+- The public route still solves the augmented saddle-point KKT matrix for
+  ordinary `ehz_capacity*` wrappers and aggregates with the f64-only path.
+- Trinary predicates include beta positivity/admissibility. Second-order sign,
+  near-null eigendirections, Q/action gaps, and admissibility should be treated
+  as trinary contract surfaces when they affect retained claims.
+- Continuous diagnostics include singular/eigenvalue values, beta margin,
+  residual norms, `sigma_min(C)`, `||H||`, eta values, Q error, and action
+  interval endpoints.
+
+Proof-gap triage from that audit:
+
+- Closed or nearly closed for the projection story: exact per-sigma setup,
+  affine restriction, critical-point structure, boundary/interior split, and
+  the Q first-order residual bound under full-row-rank/interior conditions.
+- Preconditions: separated retained negative eigenvalues, non-small
+  `sigma_min(C)`, interior beta margin, adjacency/boundary-drop link, and
+  explicit use of guarantee aggregation for public certified output.
+- Empirical: eta constants, eigendirection scaling, finite q-error coverage,
+  and kkt-inertia threshold behavior.
+- Must weaken unless repaired: thesis claims that the public wrappers are fully
+  certified, that the projection solver is the public backend, or that the
+  saddle-point residual-correction proof is publication-ready without the
+  named code-side gap.
+- Jorn review questions: boundary-drop/adjacency sufficiency, eta constants,
+  saddle-point residual-correction acceptability, and final thesis wording.
 
 ### Algorithm specification (from 2026-04-01 discussion with Jörn)
 
@@ -61,7 +149,12 @@ The solver takes f64 (H, C, d) and returns:
    - FALSE: max possible β*_j < 0 for some j.
    - INDETERMINATE: can't tell.
 
-4. **Q with error bound:** |Q − Q*| ≤ ‖H‖·‖β‖·‖r‖/σ_min(C) (proven, B3). The bound is insensitive to β uncertainty in low-eigenvalue directions because Q varies as O(λ_i · |δβ_i|²) there — the first-order term vanishes by stationarity + null(C) orthogonality.
+4. **Q with error bound:** Under the stated full-rank/interior assumptions,
+   |Q − Q*| ≤ ‖H‖·‖β‖·‖r‖/σ_min(C). The intended structural explanation is
+   that Q is insensitive to beta uncertainty in low-eigenvalue directions
+   because Q varies as O(λ_i · |δβ_i|²) there; the first-order term vanishes by
+   stationarity + null(C) orthogonality. The Taylor-cancellation algebra remains
+   a named proof gap where `formal/numerics/error-bounds.tex` marks it.
 
 ### Key insight: "continuity of variables"
 
@@ -137,9 +230,13 @@ The capacity algorithm iterates over all subsets S ⊆ {1,...,F} and all cyclic 
 
 **Iteration feedback:** checks.txt violations/ranges, diff from previous run, correlation hunting, coverage gaps, tightness of bounds approaching 1.0, natural vs artificial comparison, independent audit via the generic `reviewer` subagent with `$review` formal-math checks.
 
-## Branch state
+## Current execution state
 
-Worktree at `.claude/worktrees/verify-numerics-q-accuracy`, branch `verify-numerics-q-accuracy`, 12 commits ahead of main. Clean working tree (last commit: `c0b30f9`).
+This note is being refreshed from the assigned worktree
+`/workspaces/msc-math/.codex/worktrees/numerics-strong-route` on branch
+`numerics-strong-route`. Older branch details from
+`.claude/worktrees/verify-numerics-q-accuracy` are historical and should not be
+used as the current cwd or merge state.
 
 To regenerate data:
 ```bash
@@ -155,10 +252,17 @@ cat experiments/verification/correctness/correctness.jsonl experiments/sys-lands
 
 ## Success criteria
 
-1. `formal/numerics/error-bounds.tex` has the solver specification formalized as definitions + lemmas
-2. `formal/numerics/error-bounds.tex` has direction-dependent β error bound proven (or marked GAP with clear statement)
-3. `projection_solver.rs` has projection solver implementation matching the specification
-4. `analyze.py` reports zero violations on proven bounds with the new solver
-5. `research/numerics-error-bounds.md` documents the algorithm design discussion and all findings
-6. Generic `reviewer` subagent finds no blocking formal-math issues
-7. `cargo build -p dev-numerical-analysis --release --bin num-error-bounds --bin num-collect-poly` succeeds
+1. `formal/numerics/error-bounds.tex` states the exact generic solver
+   specification as definitions and lemmas, with each non-generic case either
+   excluded by a precondition or routed to a limit/indeterminate discussion.
+2. `formal/numerics/error-bounds.tex` proves the direction-dependent beta error
+   bound under those generic preconditions, or marks the remaining missing
+   lemma with a clear GAP/Jorn question.
+3. `experiments/numerics/error-bounds/projection_solver.rs` matches the generic
+   specification and returns the diagnostics used by the theorem.
+4. `analyze.py` and/or Rust tests check the same precondition margins and bound
+   formulas that the theorem states.
+5. `research/numerics-error-bounds.md` records the algorithm design discussion,
+   method comparisons, empirical failures, and non-generic limit behavior.
+6. Generic `reviewer` subagent finds no blocking formal-math issues.
+7. `cargo build -p dev-numerical-analysis --release --bin num-error-bounds --bin num-collect-poly` succeeds.

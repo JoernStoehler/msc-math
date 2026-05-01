@@ -111,8 +111,9 @@ const EPS_KKT_RESIDUAL: f64 = 1e-6;
 /// E1 error bound tolerance.
 pub const EPS_E1_BOUND: f64 = 1e-6;
 
-/// Conjectured upper bound on ||H|| / sigma_min(C) for EHZ polytope orbits.
-/// Observed max: 21 across 186 polytope orbits (verify-numerics experiment, 2026-03-30).
+/// Obsolete conjectured upper bound on ||H|| / sigma_min(C) for EHZ polytope orbits.
+/// Later natural-data runs falsified this bound; the dead-code solver keeps the
+/// check only as a record of the old saddle-point route.
 const CONJECTURED_H_OVER_SIGMA_MIN_C: f64 = 100.0;
 
 /// Threshold for filtering Type A eigenvectors in null-space search.
