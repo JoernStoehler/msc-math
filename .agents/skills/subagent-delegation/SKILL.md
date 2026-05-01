@@ -103,6 +103,10 @@ Use the packet format when proposing several independent tasks, when Jörn is li
 - Start sidecar delegates for non-blocking search, review, verification, or disjoint edits.
 - While delegates run, continue useful non-overlapping local work.
 - Wait only when their result is needed for the next step.
+- A `wait_agent` timeout means only that no completed status was returned
+  within that timeout. It does not prove the delegate failed, stopped working,
+  or will never answer. Inspect the assigned worktree or other expected
+  artifacts before classifying the run.
 - Verify delegate claims against files, commands, or sources before presenting them as facts.
 - For multiple tasks, default to a serial queue: brief A, integrate and verify A, then brief B. Parallelize only independent subtasks.
 - Keep smoke and review delegates tiny. Use `low` for smoke, path, and narrow
