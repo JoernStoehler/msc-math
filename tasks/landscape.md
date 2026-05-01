@@ -107,7 +107,7 @@ Current blocker table:
 
 | Row | Blocker target | Required evidence path | Current status | Review state | Next action |
 | --- | --- | --- | --- | --- | --- |
-| `regime-classification` / `M012` | Evidence, experiment-validity, caveat, and thesis-use blockers. | `experiments/sys-landscape/datascience/methods/feature-pattern-search/regime-classification-report.md`, plus any narrow script/output changes needed under the same directory. | Ledger says `future`; existing script exists but lacks reviewed reset-contract report and disposition. | Not reviewed under the reset contract. | Use as the reset-contract serial pilot; decide whether thesis use is `supporting/caveat only`, `omit before submission`, `future work`, or `Jorn decision needed`. |
+| `regime-classification` / `M012` | Closed for evidence, experiment-validity, caveat, and thesis-use blockers. | `experiments/sys-landscape/datascience/methods/feature-pattern-search/regime-classification-report.md`, `regime_classification_summary.md`, `regime_classification_bars.png`, and `analyze_regime_classification.py`. | Ledger says `negative`; thesis use is `supporting/caveat only`. | Lead reviewed on 2026-05-01; worker ran the declared command, lead reran the classifier command, and the report records dataset guards, grouped-CV metrics, provenance caveats, and no actionable search rule. | No before-submission action unless Jorn wants a stronger permutation/bootstrap interval for a thesis-facing caveat. |
 | `endpoint-residualized-regression` / `M013` | Evidence, experiment-validity, caveat, and thesis-use blockers. | `experiments/sys-landscape/datascience/methods/feature-pattern-search/endpoint-residualized-regression-report.md`, plus any narrow script/output changes needed under the same directory. | Ledger says `future`; existing script exists but lacks reviewed reset-contract report and disposition. | Not reviewed under the reset contract. | Run after the serial pilot if the process passes; decide whether residual endpoint signal is claim-bearing, supporting-only, omitted, or future work. |
 | `stat-sanity` | Evidence blocker, and possibly experiment-validity if rerun details cannot be recovered from source truth. | A repo-owned `stat-sanity` report/script path under `experiments/sys-landscape/datascience/methods/`, or an explicit decision to remove it from load-bearing evidence. | Ledger says `negative`, but the only detailed source truth came from scratch worker output and promoted prose. | Prose reviewed enough to update the ledger/audit, but code/report source truth was not committed. | Either rerun/promote the sanity packet into repo-owned source truth or downgrade it to non-load-bearing caveat evidence. |
 | `deep-latent-models` | Coverage and verdict blockers only unless reopened. | Ledger row is enough while verdict remains `rejected-low-VOI`; no experiment artifact is required because no empirical claim is made. | Ledger says `rejected-low-VOI`. | Ledger-level decision recorded; not a tried result. | Keep out of before-submission experiments unless a much larger dataset appears. |
@@ -125,7 +125,7 @@ Use this section before scaling to many subagents. Do not infer readiness from
 the number of prior pilots; readiness means the current contract has been
 followed, reviewed, and recorded without inventing new source-truth surfaces.
 
-Current state: **documented but unpiloted after reset**.
+Current state: **serial pilot completed under the reset contract**.
 
 The reset contract is: human-readable `report.md` plus code/command/dataset
 evidence plus ledger row. Machine-readable metadata is optional and cannot be a
@@ -141,19 +141,28 @@ Readiness gates:
   review checklist, dispositions, and closure rules. Status: met.
 - **Serial pilot under current contract**: one worker completes a local
   subexperiment using the reset contract, with no required JSON and no lead
-  completion of the report. Status: open.
+  completion of the report. Status: met on 2026-05-01 by
+  `regime-classification`; worker commit `be5e5fbb`, integration merge
+  `3785cf9a`.
 - **Blocker table ready**: the before-submission blocker table shows every open
   row's blocker target, required evidence path, current status, review state,
   and next action. Status: met on 2026-05-01.
 - **Scale-ready**: the serial pilot and blocker table are complete, and future
-  lead agents can launch the next packet without this chat. Status: open.
+  lead agents can launch the next packet without this chat. Status: met for the
+  serial queue on 2026-05-01; use v1 subagents with `fork_context=false`.
 - **Parallel-ready**: optional; run one small parallel round only if Jorn wants
   evidence that concurrent workers do not create ambiguous status.
 
-Do not run a batch of data-science subagents until the scale-ready gate is met.
-Prior pilots are evidence about worker capability and waiting behavior, but they
-do not validate the reset contract because they were run before the contract was
-simplified.
+Do not run a parallel batch of data-science subagents until the optional
+parallel-ready gate is met. Prior pilots are evidence about worker capability
+and waiting behavior, but they do not validate the reset contract because they
+were run before the contract was simplified.
+
+Agent-system note from 2026-05-01: the legacy/full-history launch path is not a
+valid test for this workflow. One invalid run amended the integration branch
+instead of executing the packet. The v1 path passed an exact-reply smoke, a
+required-cwd smoke, and the `regime-classification` worker packet when launched
+with `fork_context=false`.
 
 ### Data-Science Subexperiment Workflow
 
@@ -306,14 +315,14 @@ Gate checks:
 
 - Contract documented: met by this workflow, the worker-packet fields, result
   qualifiers, closure rules, report header, and reviewer checklist.
-- Serial pilot under current contract: open until one worker follows this reset
-  workflow and leaves repo-owned code/command/dataset evidence plus `report.md`
-  and ledger row, even if the verdict is `bug-redo` or rejected.
+- Serial pilot under current contract: met on 2026-05-01 by
+  `regime-classification`; the worker left repo-owned code, command and dataset
+  evidence, generated summary/plot, `report.md`, and ledger-update evidence.
 - Blocker table ready: met on 2026-05-01. The table above shows every open
   row's blocker target, required evidence path, current status, review state,
   and next action.
-- Scale-ready: open until the serial pilot and blocker table are complete and
-  the next packet can be launched without chat reconstruction.
+- Scale-ready: met for the serial queue on 2026-05-01. Keep parallel-ready
+  separate.
 
 Minimal report header template:
 
@@ -420,9 +429,9 @@ Earlier pilot 3, before the reset contract:
 
 Required before scale-ready:
 
-- Run one simplified-contract pilot, or have Jorn explicitly accept
-  `exact-f64-spot-check` as enough because it already produced code, command,
-  dataset guards, report, and ledger-update evidence.
+- Serial scale-ready is met by the 2026-05-01 `regime-classification` pilot.
+  The next row can be launched from the packet template without chat
+  reconstruction.
 - Run at least one small parallel round, not a full batch, if Jorn wants evidence
   that multiple concurrent workers do not create ambiguous status.
 
@@ -433,7 +442,7 @@ Required before scale-ready:
 | Hostile-landscape retained-claim compression | `[map-input]` | mainline thesis | agent prep then Jorn | Draft the bounded claim surface: current evidence found no new transferable `sys > 1` regime beyond pentagon-pentagon, while seed counts are too small for a density or brute-force-impossibility claim. | `research/sys-landscape.md`, `research/sys-landscape-toolbox-audit.md` |
 | Method-ledger/audit population | `[map-input]` | mainline thesis | agents | Populate current packet evidence plus explicit skipped/deferred standard-toolbox rows into the hostile-landscape audit without opening new methods. | `research/sys-landscape-datascience/`, `research/sys-landscape-toolbox-audit.md` |
 | Data-science idea exhaustion loop | `[active]` | mainline thesis | lead agent with subagents, Jorn gates | Close the blockers in "Data-Science Submission Blockers"; before running a worker, name which blocker the worker closes and what committed source truth will remain. | `research/sys-landscape-datascience/idea-ledger.md`, `experiments/sys-landscape/datascience/` |
-| Remaining method packet status | `[Jorn]` | map input | Jorn | Decide thesis-facing status of `M012` regime classification and `M013` residualized endpoint regression after the artifact-backed audit rows exist. | `research/sys-landscape-datascience/method-ledger.md` |
+| Remaining method packet status | `[Jorn]` | map input | Jorn | Decide thesis-facing status of `M013` residualized endpoint regression after the artifact-backed audit row exists. `M012` regime classification is now supporting/caveat only. | `research/sys-landscape-datascience/method-ledger.md`, `research/sys-landscape-toolbox-audit.md` |
 | LICCA endpoint refresh | `[future]` | future/follow-up | external compute | Leave pending unless results are already available with low integration cost. | legacy LICCA rows |
 | Visualization negative exploration | `[Jorn]` | contingent during writing | Jorn | Decide during TOC work whether visualization is standalone thesis material or only supporting/future material if figures become useful. | `research/visualization.md`, `research/INDEX.md` |
 | Pentagon rotation formula | `[future]` | contingent during writing | Jorn/math | Include only status-level current finding unless proof/CAS write-up becomes free. | `research/sys-landscape.md`, `formal/sys-landscape/pentagon-rotation-formula.tex` |
@@ -451,17 +460,17 @@ Required before scale-ready:
 - [fresh 2026-04-24] Witness-oracle and reduced-model ideas are future unless
   needed to explain retained claims.
   Refresh by: checking `research/sys-landscape.md` and thesis wording.
-- [fresh 2026-04-25] `research/sys-landscape-datascience/method-ledger.md`
+- [fresh 2026-05-01] `research/sys-landscape-datascience/method-ledger.md`
   already caches attempted methods `M001` through `M013`; `M012` regime
-  classification and `M013` residualized endpoint regression are present but
-  `thesis_use = undecided`.
+  classification is now reviewed as supporting/caveat only, while `M013`
+  residualized endpoint regression still has `thesis_use = undecided`.
   Refresh by: reading the method ledger and checking the cited analyzers under
   `experiments/sys-landscape/datascience/methods/feature-pattern-search/`.
 - [fresh 2026-04-30] `research/sys-landscape-toolbox-audit.md` has Phase-2
   rows for artifact-backed methods and named skipped/deferred families through
   Bayesian optimization. Remaining work is not row population from scratch; it
   is reconciliation with the active idea ledger, summary artifacts, and Jorn's
-  status decisions for M012/M013.
+  status decision for M013.
   Refresh by: reading `research/sys-landscape-toolbox-audit.md`.
 - [fresh 2026-04-30] `research/sys-landscape-datascience/idea-ledger.md`
   owns the active spike queue and finish-by-idea-exhaustion process. Current

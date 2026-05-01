@@ -32,15 +32,23 @@ when those choices stay inside the objective and are recorded in the report.
    question, standard/plausible-method rationale, positive/negative/bug
    meanings, allowed write scope, runtime budget, and stop conditions.
 4. Write one worker packet. Use an isolated worktree and name the required cwd.
-5. Delegate once. Do not use interactive checkpointing as the default control
+5. Delegate once using the v1 subagent path with `fork_context=false`. Do not
+   use full-history forks for worker packets: inherited context can cause the
+   worker to pursue the lead's process task instead of the assigned
+   subexperiment.
+6. Do not use interactive checkpointing as the default control
    path.
-6. Wait the expected runtime before inspecting. Poll early artifacts only after a
+7. Wait the expected runtime before inspecting. Poll early artifacts only after a
    timeout or during review.
-7. Review repo-owned artifacts before accepting any claim.
-8. Choose a disposition: accept/merge, reject/trash, follow-up branch,
+8. Review repo-owned artifacts before accepting any claim.
+9. Choose a disposition: accept/merge, reject/trash, follow-up branch,
    bug-redo, lead-repair, future, low-value rejection, or positive escalation.
-9. Update the ledger/task surfaces before starting the next row. Close the
+10. Update the ledger/task surfaces before starting the next row. Close the
    worker agent after disposition.
+
+After any agent-system change, run two smoke tests before a real worker packet:
+an exact-reply no-context message test, then a required-cwd read-only test. Do
+not launch a research worker until both pass.
 
 ## Source Truth
 

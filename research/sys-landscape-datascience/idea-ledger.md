@@ -123,7 +123,7 @@ canonical refresh.
 | Slug | Idea | Type | Scope | Desired evidence | Current verdict | Evidence / next action |
 | --- | --- | --- | --- | --- | --- | --- |
 | `feature-block-regression` | Feature-block regression with ridge and random forest | method | Existing M011 packet over random and endpoint regimes | Grouped CV, random-to-endpoint transfer, null baseline | `negative` | Cached in `research/sys-landscape-toolbox-audit.md`; reopen if refreshed feature tables transfer to endpoints. |
-| `regime-classification` | Regime classification | method | Existing M012 packet | Whether non-provenance blocks separate endpoint from random better than null and metadata caveats | `future` | Existing script lacks a reviewed report/ledger disposition; decide thesis role after report review. |
+| `regime-classification` | Regime classification | method | Existing M012 packet | Whether non-provenance blocks separate endpoint from random better than null and metadata caveats | `negative` | Reset-contract pilot in `experiments/sys-landscape/datascience/methods/feature-pattern-search/regime-classification-report.md`; use as supporting/caveat only, not as a search rule. |
 | `endpoint-residualized-regression` | Endpoint residualized regression beyond metadata | method | Existing M013 packet | Whether endpoint geometry/orbit/trajectory blocks add grouped-CV signal beyond metadata | `future` | Existing script lacks a reviewed report/ledger disposition; decide thesis role after report review. |
 | `pca-cluster-anomaly` | PCA / clustering / anomaly scan over current feature blocks | method spike | Existing 282-row table and committed feature JSONL | A non-post-hoc cluster or component rule that suggests where to search, or a bounded negative result | `negative` | Main commit `39039550` creates `experiments/sys-landscape/datascience/methods/pca-cluster-spike/` with script and report. |
 | `supervised-alternatives` | Cheap supervised alternatives: lasso, elastic net, boosting, kNN | method spike | Current feature tables only | Whether standard extra models change M011/M012 conclusions under the same grouped split policy | `negative` | Main commit `5e8db378` creates `experiments/sys-landscape/datascience/methods/supervised-alternatives-spike/`; lead had to run the worker's script to produce the report. |
@@ -148,6 +148,56 @@ Record only lessons that change future delegation or spike design.
 | 2026-04-30 | Earlier pilot 2 `supervised-alternatives` | The harder method pilot exposed a lifecycle failure: after nudging, the worker created a substantial script but did not run it or produce the required report. The lead ran the script and committed `c9b7cb77` on `ds-pilot2-supervised-alts`. | Worker packets need an early report/blocker note and a lead-repair disposition so partial code is not mistaken for completed source truth. This does not validate the reset contract. |
 | 2026-04-30 | Process revision after pilots | The workflow requires an early report/blocker note, worker self-run proof, explicit `lead-repair` disposition, a normal long wait before inspection, and worker cleanup after disposition. | The early report is a worker-output requirement, not a lead-side polling ritual. Default local-pilot wait is `10` minutes unless the packet says otherwise. |
 | 2026-04-30 | Earlier pilot 3 `exact-f64-spot-check` | Waiting long enough let the worker complete early report, script, final report, and self-run proof without lead repair. Manual early-report inspection was unnecessary and likely contributed to overdiagnosing earlier workers as stuck. | Process can work serially, but the required `summary.json` schema was an unjustified abstraction. Restart the contract around `report.md` plus ledger row before claiming scale readiness; this pilot is not a reset-contract validation. |
+| 2026-05-01 | `regime-classification` reset pilot | The legacy/full-history agent path failed: one invalid agent amended the integration branch instead of running the packet. The v1 no-context path then passed an exact-reply smoke, a required-cwd smoke, and the full worker packet using `fork_context=false`. | For this workflow, launch workers with v1 `spawn_agent` and `fork_context=false`; first run an exact-reply/cwd smoke after any agent-system change before trusting subagent output. |
+
+### `regime-classification` Regime Classification
+
+Disposition: reset-contract serial pilot accepted and merged to the integration
+branch.
+
+Worker commands:
+
+```bash
+uv run --script experiments/sys-landscape/datascience/methods/feature-pattern-search/analyze.py --dataset-dir /tmp/sys-ds-reset-pilot-tables-VJ6D0P
+uv run --script experiments/sys-landscape/datascience/methods/feature-pattern-search/analyze_regime_classification.py --dataset-dir /tmp/sys-ds-reset-pilot-tables-VJ6D0P
+```
+
+Evidence:
+
+- Branch: `ds-pilot-reset-regime-classification`.
+- Integration commit: `3785cf9a` merges worker commit `be5e5fbb`.
+- Report path:
+  `experiments/sys-landscape/datascience/methods/feature-pattern-search/regime-classification-report.md`.
+- Summary path:
+  `experiments/sys-landscape/datascience/methods/feature-pattern-search/regime_classification_summary.md`.
+
+Observation:
+
+- Input guards passed for `282` polytope rows and `282` observation rows, with
+  max `sys = 0.906316153431123` and zero `sys > 1` rows.
+- Grouped CV used `212` groups over `170` random rows and `112` endpoint rows.
+- Provenance metadata separated regimes perfectly for logistic regression and
+  random forest.
+- Non-provenance geometry/orbit blocks also separated current regimes above the
+  null baseline: best logistic geometry/orbit block was `skeleton`
+  (`balanced_accuracy ~= 0.8728`, `ROC AUC ~= 0.9223`), and best random-forest
+  geometry/orbit block was `face_geometry` (`balanced_accuracy ~= 0.9275`,
+  `ROC AUC ~= 0.9831`).
+- The aggregate `orbit` block was stronger but mixes geometry, combinatorics,
+  and search/KKT availability scalars.
+
+Inference:
+
+Endpoint-produced and random-produced rows are distinguishable in the current
+table, including by non-provenance feature families, but this is not a
+label-free candidate generator. The result does not find a `sys > 1` row and
+does not give an actionable search rule without using endpoint labels, producer
+identity, or post-hoc target inspection.
+
+Verdict: `negative`.
+
+Qualifiers: `evidence_strength = medium`; `implementation_trust = medium`;
+`thesis_use = supporting/caveat only`.
 
 ## Completed Spike Notes
 
