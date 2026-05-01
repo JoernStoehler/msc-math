@@ -17,46 +17,4 @@
 # which is bind-mounted from /srv/devhome/.codex/ on the host. It is never
 # inside any git tree, so auth tokens cannot be accidentally committed.
 
-# Keep the AGENTS.md read budget above the default as a safety margin for root
-# instructions. This is not permission to grow AGENTS.md; move detailed
-# workflow text into skills or task-specific notes.
-project_doc_max_bytes = 65536
-
-# Security
-sandbox_mode = "danger-full-access"
-approval_policy = "on-request"
-web_search = "live"
-
-# We pick a default profile
-profile = "code"
-
-file_opener = "vscode"
-[tui]
-theme = "github"
-terminal_title = ["spinner", "thread"]
-status_line = ["model-with-reasoning", "context-usage", "five-hour-limit"]
-
-[features]
-apps = false
-shell_snapshot = true
-memories = true
-external_migration = true
-
-# Subagents: we allow recursion
-[agents]
-max_threads = 20
-max_depth = 2
-job_max_runtime_seconds = 3600
-
-# Used for coding tasks. Keep model, reasoning, verbosity, summary, and
-# personality choices out of repo config; they are user-local machine settings.
-[profiles.code]
-
-# Force Git subprocesses to stay non-interactive.
-[shell_environment_policy.set]
-GCM_INTERACTIVE = "Never"
-GIT_ASKPASS = "/bin/true"
-GIT_EDITOR = "true"
-GIT_PAGER = "cat"
-GIT_SSH_COMMAND = "ssh -oBatchMode=yes"
-GIT_TERMINAL_PROMPT = "0"
+# (Right now all settings are in ~/.codex/config.toml)
