@@ -9,7 +9,7 @@ hostility.
 ## Status
 
 - State: map-input.
-- Last updated: 2026-04-30.
+- Last updated: 2026-05-01.
 - Source surfaces: `research/sys-landscape.md`,
   `research/sys-landscape-datascience/`, `research/sys-landscape-toolbox-audit.md`,
   `experiments/sys-landscape/`, `tasks/verify-thesis-done.md`.
@@ -103,14 +103,21 @@ only on that blocker.
      omit before submission, or future work. This includes explicit decisions for
      `M012` regime classification and `M013` residualized endpoint regression.
 
-Current known open blockers:
+Current blocker table:
 
-- Evidence blocker: `stat-sanity` was still recorded from scratch worker output; its
-  code/report source truth was not preserved in a committed experiment or
-  evidence path. `pca-cluster-anomaly`, `supervised-alternatives`, and
-  `exact-f64-spot-check` now have repo-owned artifacts on `main`.
-- Thesis-use blocker: `M012` and `M013` still need Jorn's cite/omit/future
-  decision.
+| Row | Blocker target | Required evidence path | Current status | Review state | Next action |
+| --- | --- | --- | --- | --- | --- |
+| `regime-classification` / `M012` | Evidence, experiment-validity, caveat, and thesis-use blockers. | `experiments/sys-landscape/datascience/methods/feature-pattern-search/regime-classification-report.md`, plus any narrow script/output changes needed under the same directory. | Ledger says `future`; existing script exists but lacks reviewed reset-contract report and disposition. | Not reviewed under the reset contract. | Use as the reset-contract serial pilot; decide whether thesis use is `supporting/caveat only`, `omit before submission`, `future work`, or `Jorn decision needed`. |
+| `endpoint-residualized-regression` / `M013` | Evidence, experiment-validity, caveat, and thesis-use blockers. | `experiments/sys-landscape/datascience/methods/feature-pattern-search/endpoint-residualized-regression-report.md`, plus any narrow script/output changes needed under the same directory. | Ledger says `future`; existing script exists but lacks reviewed reset-contract report and disposition. | Not reviewed under the reset contract. | Run after the serial pilot if the process passes; decide whether residual endpoint signal is claim-bearing, supporting-only, omitted, or future work. |
+| `stat-sanity` | Evidence blocker, and possibly experiment-validity if rerun details cannot be recovered from source truth. | A repo-owned `stat-sanity` report/script path under `experiments/sys-landscape/datascience/methods/`, or an explicit decision to remove it from load-bearing evidence. | Ledger says `negative`, but the only detailed source truth came from scratch worker output and promoted prose. | Prose reviewed enough to update the ledger/audit, but code/report source truth was not committed. | Either rerun/promote the sanity packet into repo-owned source truth or downgrade it to non-load-bearing caveat evidence. |
+| `deep-latent-models` | Coverage and verdict blockers only unless reopened. | Ledger row is enough while verdict remains `rejected-low-VOI`; no experiment artifact is required because no empirical claim is made. | Ledger says `rejected-low-VOI`. | Ledger-level decision recorded; not a tried result. | Keep out of before-submission experiments unless a much larger dataset appears. |
+| `surrogate-guided-search` | Coverage and verdict blockers only unless reopened. | Ledger row is enough while verdict remains `future`; no experiment artifact is required because no empirical claim is made. | Ledger says `future`. | Ledger-level decision recorded; not a tried result. | Reopen only with a bounded candidate space and compute budget approved by Jorn. |
+| `geometric-feature-columns` | Coverage and verdict blockers only until split into concrete column rows. | Ledger row is enough while verdict remains `future`; each concrete column needs its own row before implementation. | Ledger says `future`. | Ledger-level decision recorded; not a tried result. | Split proposed columns into separate rows only if a computable definition and expected information gain are supplied. |
+
+Closed rows with repo-owned source truth: `feature-block-regression`,
+`pca-cluster-anomaly`, `supervised-alternatives`, and
+`exact-f64-spot-check`. Recheck them only if their linked evidence paths move or
+the feature-table snapshot changes.
 
 ## Data-Science Process Maturity
 
@@ -137,7 +144,7 @@ Readiness gates:
   completion of the report. Status: open.
 - **Blocker table ready**: the before-submission blocker table shows every open
   row's blocker target, required evidence path, current status, review state,
-  and next action. Status: open.
+  and next action. Status: met on 2026-05-01.
 - **Scale-ready**: the serial pilot and blocker table are complete, and future
   lead agents can launch the next packet without this chat. Status: open.
 - **Parallel-ready**: optional; run one small parallel round only if Jorn wants
@@ -302,9 +309,9 @@ Gate checks:
 - Serial pilot under current contract: open until one worker follows this reset
   workflow and leaves repo-owned code/command/dataset evidence plus `report.md`
   and ledger row, even if the verdict is `bug-redo` or rejected.
-- Blocker table ready: open until the before-submission blocker table shows
-  every open row's blocker target, required evidence path, current status,
-  review state, and next action.
+- Blocker table ready: met on 2026-05-01. The table above shows every open
+  row's blocker target, required evidence path, current status, review state,
+  and next action.
 - Scale-ready: open until the serial pilot and blocker table are complete and
   the next packet can be launched without chat reconstruction.
 
@@ -413,9 +420,6 @@ Earlier pilot 3, before the reset contract:
 
 Required before scale-ready:
 
-- Build or update the before-submission blocker table so every open row shows
-  blocker target, required evidence path, current status, review state, and next
-  action.
 - Run one simplified-contract pilot, or have Jorn explicitly accept
   `exact-f64-spot-check` as enough because it already produced code, command,
   dataset guards, report, and ledger-update evidence.
