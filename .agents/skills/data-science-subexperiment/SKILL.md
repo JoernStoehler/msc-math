@@ -46,9 +46,24 @@ when those choices stay inside the objective and are recorded in the report.
 10. Update the ledger/task surfaces before starting the next row. Close the
    worker agent after disposition.
 
-After any agent-system change, run two smoke tests before a real worker packet:
-an exact-reply no-context message test, then a required-cwd read-only test. Do
-not launch a research worker until both pass.
+After any agent-system change, run two smoke tests before a real worker packet.
+Use `spawn_agent` with `fork_context=false` and no role-specific context unless
+the smoke test says otherwise:
+
+1. Exact-reply smoke:
+   prompt: `Message receipt smoke test. Do not use tools. Reply exactly with
+   this single line and nothing else: RECEIVED_<unique-token>`.
+   Passes only when the completed response is exactly that token.
+2. Required-cwd smoke:
+   prompt names the intended worktree, asks for read-only commands only, and
+   requires exactly `PWD=<pwd output>` and
+   `STATUS=<git status first line>`.
+   Passes only when `PWD` equals the assigned worktree and `STATUS` names the
+   expected branch.
+
+Rerun both smokes after switching agent systems, changing spawn parameters, or
+seeing any worker ignore the packet, wrong cwd, or edit outside its assigned
+worktree. Do not launch a research worker until both pass.
 
 ## Source Truth
 
@@ -89,6 +104,7 @@ The report starts with this Markdown header:
 ```markdown
 Status: draft | blocked | complete
 Idea slug:
+Blocker target:
 Objective:
 Base dataset snapshot:
 Dataset filtering/subsetting:

@@ -376,7 +376,11 @@ def write_summary(normalized_source_label: str, rows: list[JoinedRow], results: 
             "## Interpretation",
             "",
             f"- metadata is the clearest separator, but that block includes regime-linked provenance fields (`dataset`, `family`, `role`, `search_space`, `optimizer`, `backend`), so it is not a pure geometry test.",
-            f"- among non-provenance blocks, logistic regression and random forest both favor `{logistic_best['block']}`.",
+            (
+                f"- among non-provenance blocks, logistic regression and random forest both favor `{logistic_best['block']}`."
+                if logistic_best["block"] == rf_best["block"]
+                else f"- among non-provenance blocks, logistic regression favors `{logistic_best['block']}` and random forest favors `{rf_best['block']}`."
+            ),
             "- compare `provenance_metadata`, `facet_count`, and the geometry/orbit sub-blocks before treating a high score as geometric signal.",
             "- `all` is only a ceiling because it mixes the provenance block with every feature family.",
         ]

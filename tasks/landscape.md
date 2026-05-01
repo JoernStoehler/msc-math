@@ -107,7 +107,7 @@ Current blocker table:
 
 | Row | Blocker target | Required evidence path | Current status | Review state | Next action |
 | --- | --- | --- | --- | --- | --- |
-| `regime-classification` / `M012` | Closed for evidence, experiment-validity, caveat, and thesis-use blockers. | `experiments/sys-landscape/datascience/methods/feature-pattern-search/regime-classification-report.md`, `regime_classification_summary.md`, `regime_classification_bars.png`, and `analyze_regime_classification.py`. | Ledger says `negative`; thesis use is `supporting/caveat only`. | Lead reviewed on 2026-05-01; worker ran the declared command, lead reran the classifier command, and the report records dataset guards, grouped-CV metrics, provenance caveats, and no actionable search rule. | No before-submission action unless Jorn wants a stronger permutation/bootstrap interval for a thesis-facing caveat. |
+| `regime-classification` / `M012` | Closed for evidence, caveat, thesis-use, and serial process blockers; experiment-validity is closed only for a caveated supporting diagnostic, not for claim-bearing finite-sample inference. | `experiments/sys-landscape/datascience/methods/feature-pattern-search/regime-classification-report.md`, `regime_classification_summary.md`, `regime_classification_bars.png`, and `analyze_regime_classification.py`. | Ledger says `negative`; thesis use is `supporting/caveat only`. | Lead reviewed on 2026-05-01; worker ran the declared command, lead reran the classifier command, and the report records dataset guards, grouped-CV point metrics, provenance caveats, missing permutation/bootstrap uncertainty, and no actionable search rule. | No before-submission action unless Jorn wants a stronger permutation/bootstrap interval for a thesis-facing caveat. |
 | `endpoint-residualized-regression` / `M013` | Evidence, experiment-validity, caveat, and thesis-use blockers. | `experiments/sys-landscape/datascience/methods/feature-pattern-search/endpoint-residualized-regression-report.md`, plus any narrow script/output changes needed under the same directory. | Ledger says `future`; existing script exists but lacks reviewed reset-contract report and disposition. | Not reviewed under the reset contract. | Run after the serial pilot if the process passes; decide whether residual endpoint signal is claim-bearing, supporting-only, omitted, or future work. |
 | `stat-sanity` | Evidence blocker, and possibly experiment-validity if rerun details cannot be recovered from source truth. | A repo-owned `stat-sanity` report/script path under `experiments/sys-landscape/datascience/methods/`, or an explicit decision to remove it from load-bearing evidence. | Ledger says `negative`, but the only detailed source truth came from scratch worker output and promoted prose. | Prose reviewed enough to update the ledger/audit, but code/report source truth was not committed. | Either rerun/promote the sanity packet into repo-owned source truth or downgrade it to non-load-bearing caveat evidence. |
 | `deep-latent-models` | Coverage and verdict blockers only unless reopened. | Ledger row is enough while verdict remains `rejected-low-VOI`; no experiment artifact is required because no empirical claim is made. | Ledger says `rejected-low-VOI`. | Ledger-level decision recorded; not a tried result. | Keep out of before-submission experiments unless a much larger dataset appears. |
@@ -317,7 +317,8 @@ Gate checks:
   qualifiers, closure rules, report header, and reviewer checklist.
 - Serial pilot under current contract: met on 2026-05-01 by
   `regime-classification`; the worker left repo-owned code, command and dataset
-  evidence, generated summary/plot, `report.md`, and ledger-update evidence.
+  evidence, generated summary/plot, `regime-classification-report.md`, and
+  ledger-update evidence.
 - Blocker table ready: met on 2026-05-01. The table above shows every open
   row's blocker target, required evidence path, current status, review state,
   and next action.
@@ -461,10 +462,13 @@ Required before scale-ready:
   needed to explain retained claims.
   Refresh by: checking `research/sys-landscape.md` and thesis wording.
 - [fresh 2026-05-01] `research/sys-landscape-datascience/method-ledger.md`
-  already caches attempted methods `M001` through `M013`; `M012` regime
-  classification is now reviewed as supporting/caveat only, while `M013`
-  residualized endpoint regression still has `thesis_use = undecided`.
-  Refresh by: reading the method ledger and checking the cited analyzers under
+  caches attempted methods `M001` through `M013`, but it is not the current
+  thesis-use source for `M012`: the reviewed `M012` supporting/caveat-only
+  state lives in `research/sys-landscape-toolbox-audit.md` and the active idea
+  ledger until the method ledger is refreshed. `M013` residualized endpoint
+  regression still has `thesis_use = undecided`.
+  Refresh by: reading the toolbox audit, the idea ledger, and the cited
+  analyzers under
   `experiments/sys-landscape/datascience/methods/feature-pattern-search/`.
 - [fresh 2026-04-30] `research/sys-landscape-toolbox-audit.md` has Phase-2
   rows for artifact-backed methods and named skipped/deferred families through
