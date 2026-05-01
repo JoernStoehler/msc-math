@@ -21,9 +21,10 @@ reasons not to continue.
 Process authority: `tasks/landscape.md` owns the current data-science
 subexperiment workflow, including worker-packet fields, result qualifiers,
 closure rules, reviewer checklist, readiness gates, and scale/no-scale decision.
-`tasks/landscape-datascience-worker-packets.md` owns the reusable worker-packet
-template and current candidate pilot packet. This ledger owns the idea rows and
-their evidence links.
+`$data-science-subexperiment` owns the reusable worker-packet workflow and
+prompt skeleton. `tasks/landscape-datascience-worker-packets.md` owns the
+current candidate pilot packet. This ledger owns the idea rows and their
+evidence links.
 
 ## Current Dataset Snapshot
 

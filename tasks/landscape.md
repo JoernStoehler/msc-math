@@ -124,7 +124,8 @@ The reset contract is: human-readable `report.md` plus code/command/dataset
 evidence plus ledger row. Machine-readable metadata is optional and cannot be a
 scale blocker unless a repo-owned checker consumes it.
 
-Concrete worker-packet template and the candidate reset-contract pilot live in
+Generic workflow and prompt skeleton live in `$data-science-subexperiment`.
+The current sys-landscape pilot packet lives in
 `tasks/landscape-datascience-worker-packets.md`.
 
 Readiness gates:
