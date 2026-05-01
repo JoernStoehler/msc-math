@@ -101,14 +101,14 @@ only on that blocker.
    - Closed when `research/sys-landscape-toolbox-audit.md` or this bundle marks
      every closed data-science result as cite in thesis, supporting/caveat only,
      omit before submission, or future work. This includes explicit decisions for
-     `M012` regime classification and `M013` residualized endpoint regression.
+     `regime-classification` and `endpoint-residualized-regression`.
 
 Current blocker table:
 
 | Row | Blocker target | Required evidence path | Current status | Review state | Next action |
 | --- | --- | --- | --- | --- | --- |
-| `regime-classification` / `M012` | Closed for evidence, caveat, thesis-use, and serial process blockers; experiment-validity is closed only for a caveated supporting diagnostic, not for claim-bearing finite-sample inference. | `experiments/sys-landscape/datascience/methods/feature-pattern-search/regime-classification-report.md`, `regime_classification_summary.md`, `regime_classification_bars.png`, and `analyze_regime_classification.py`. | Ledger says `negative`; thesis use is `supporting/caveat only`. | Lead reviewed on 2026-05-01; worker ran the declared command, lead reran the classifier command, and the report records dataset guards, grouped-CV point metrics, provenance caveats, missing permutation/bootstrap uncertainty, and no actionable search rule. | No before-submission action unless Jorn wants a stronger permutation/bootstrap interval for a thesis-facing caveat. |
-| `endpoint-residualized-regression` / `M013` | Evidence, experiment-validity, caveat, and thesis-use blockers. | `experiments/sys-landscape/datascience/methods/feature-pattern-search/endpoint-residualized-regression-report.md`, plus any narrow script/output changes needed under the same directory. | Ledger says `future`; existing script exists but lacks reviewed reset-contract report and disposition. | Not reviewed under the reset contract. | Run after the serial pilot if the process passes; decide whether residual endpoint signal is claim-bearing, supporting-only, omitted, or future work. |
+| `regime-classification` | Closed for evidence, caveat, thesis-use, and serial process blockers; experiment-validity is closed only for a caveated supporting diagnostic, not for claim-bearing finite-sample inference. | `experiments/sys-landscape/datascience/methods/feature-pattern-search/regime-classification-report.md`, `regime_classification_summary.md`, `regime_classification_bars.png`, and `analyze_regime_classification.py`. | Ledger says `negative`; thesis use is `supporting/caveat only`. | Lead reviewed on 2026-05-01; worker ran the declared command, lead reran the classifier command, and the report records dataset guards, grouped-CV point metrics, provenance caveats, missing permutation/bootstrap uncertainty, and no actionable search rule. | No before-submission action unless Jorn wants a stronger permutation/bootstrap interval for a thesis-facing caveat. |
+| `endpoint-residualized-regression` | Evidence, experiment-validity, caveat, and thesis-use blockers. | `experiments/sys-landscape/datascience/methods/feature-pattern-search/endpoint-residualized-regression-report.md`, plus any narrow script/output changes needed under the same directory. | Ledger says `future`; existing script exists but lacks reviewed current-contract report and disposition. | Not reviewed under the current report-ledger contract. | Run after the serial pilot if the process passes; decide whether residual endpoint signal is claim-bearing, supporting-only, omitted, or future work. |
 | `stat-sanity` | Evidence blocker, and possibly experiment-validity if rerun details cannot be recovered from source truth. | A repo-owned `stat-sanity` report/script path under `experiments/sys-landscape/datascience/methods/`, or an explicit decision to remove it from load-bearing evidence. | Ledger says `negative`, but the only detailed source truth came from scratch worker output and promoted prose. | Prose reviewed enough to update the ledger/audit, but code/report source truth was not committed. | Either rerun/promote the sanity packet into repo-owned source truth or downgrade it to non-load-bearing caveat evidence. |
 | `deep-latent-models` | Coverage and verdict blockers only unless reopened. | Ledger row is enough while verdict remains `rejected-low-VOI`; no experiment artifact is required because no empirical claim is made. | Ledger says `rejected-low-VOI`. | Ledger-level decision recorded; not a tried result. | Keep out of before-submission experiments unless a much larger dataset appears. |
 | `surrogate-guided-search` | Coverage and verdict blockers only unless reopened. | Ledger row is enough while verdict remains `future`; no experiment artifact is required because no empirical claim is made. | Ledger says `future`. | Ledger-level decision recorded; not a tried result. | Reopen only with a bounded candidate space and compute budget approved by Jorn. |
@@ -443,7 +443,7 @@ Required before scale-ready:
 | Hostile-landscape retained-claim compression | `[map-input]` | mainline thesis | agent prep then Jorn | Draft the bounded claim surface: current evidence found no new transferable `sys > 1` regime beyond pentagon-pentagon, while seed counts are too small for a density or brute-force-impossibility claim. | `research/sys-landscape.md`, `research/sys-landscape-toolbox-audit.md` |
 | Method-ledger/audit population | `[map-input]` | mainline thesis | agents | Populate current packet evidence plus explicit skipped/deferred standard-toolbox rows into the hostile-landscape audit without opening new methods. | `research/sys-landscape-datascience/`, `research/sys-landscape-toolbox-audit.md` |
 | Data-science idea exhaustion loop | `[active]` | mainline thesis | lead agent with subagents, Jorn gates | Close the blockers in "Data-Science Submission Blockers"; before running a worker, name which blocker the worker closes and what committed source truth will remain. | `research/sys-landscape-datascience/idea-ledger.md`, `experiments/sys-landscape/datascience/` |
-| Remaining method packet status | `[Jorn]` | map input | Jorn | Decide thesis-facing status of `M013` residualized endpoint regression after the artifact-backed audit row exists. `M012` regime classification is now supporting/caveat only. | `research/sys-landscape-datascience/method-ledger.md`, `research/sys-landscape-toolbox-audit.md` |
+| Remaining method packet status | `[Jorn]` | map input | Jorn | Decide thesis-facing status of `endpoint-residualized-regression` after the artifact-backed audit row exists. `regime-classification` is now supporting/caveat only. | `research/sys-landscape-datascience/method-ledger.md`, `research/sys-landscape-toolbox-audit.md` |
 | LICCA endpoint refresh | `[future]` | future/follow-up | external compute | Leave pending unless results are already available with low integration cost. | legacy LICCA rows |
 | Visualization negative exploration | `[Jorn]` | contingent during writing | Jorn | Decide during TOC work whether visualization is standalone thesis material or only supporting/future material if figures become useful. | `research/visualization.md`, `research/INDEX.md` |
 | Pentagon rotation formula | `[future]` | contingent during writing | Jorn/math | Include only status-level current finding unless proof/CAS write-up becomes free. | `research/sys-landscape.md`, `formal/sys-landscape/pentagon-rotation-formula.tex` |
@@ -462,11 +462,9 @@ Required before scale-ready:
   needed to explain retained claims.
   Refresh by: checking `research/sys-landscape.md` and thesis wording.
 - [fresh 2026-05-01] `research/sys-landscape-datascience/method-ledger.md`
-  caches attempted methods `M001` through `M013`, but it is not the current
-  thesis-use source for `M012`: the reviewed `M012` supporting/caveat-only
-  state lives in `research/sys-landscape-toolbox-audit.md` and the active idea
-  ledger until the method ledger is refreshed. `M013` residualized endpoint
-  regression still has `thesis_use = undecided`.
+  caches attempted methods with semantic slugs. `regime-classification` is
+  reviewed as supporting/caveat only; `endpoint-residualized-regression` still
+  has `thesis_use = undecided`.
   Refresh by: reading the toolbox audit, the idea ledger, and the cited
   analyzers under
   `experiments/sys-landscape/datascience/methods/feature-pattern-search/`.
@@ -474,7 +472,7 @@ Required before scale-ready:
   rows for artifact-backed methods and named skipped/deferred families through
   Bayesian optimization. Remaining work is not row population from scratch; it
   is reconciliation with the active idea ledger, summary artifacts, and Jorn's
-  status decision for M013.
+  status decision for `endpoint-residualized-regression`.
   Refresh by: reading `research/sys-landscape-toolbox-audit.md`.
 - [fresh 2026-04-30] `research/sys-landscape-datascience/idea-ledger.md`
   owns the active spike queue and finish-by-idea-exhaustion process. Current

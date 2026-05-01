@@ -1,6 +1,6 @@
 Status: complete
-Idea slug: regime-classification / M012
-Blocker target: Evidence, caveat, thesis-use, and serial reset-contract process blockers. Experiment-validity is closed only for a caveated supporting diagnostic, not for a claim-bearing finite-sample inference.
+Idea slug: regime-classification
+Blocker target: Evidence, caveat, thesis-use, and serial report-ledger process blockers. Experiment-validity is closed only for a caveated supporting diagnostic, not for a claim-bearing finite-sample inference.
 Objective: Decide whether endpoint-vs-random regime classification from the current feature tables gives a thesis-usable observation, a caveated supporting-only observation, or a result to omit before submission, while separating provenance/metadata separation from non-provenance geometric or orbit-feature separation.
 Base dataset snapshot: /tmp/sys-ds-reset-pilot-tables-VJ6D0P, produced by `cargo run -p exp-sys-landscape --bin sys-dataset -- --out-dir /tmp/sys-ds-reset-pilot-tables-VJ6D0P`
 Dataset filtering/subsetting: No rows filtered; all 282 observations were used. Endpoint label is `gradient_ascent_general`, `gradient_ascent_products`, or `variable_f_ascent`; random label is `random_sample` or `random_product_sample`. Grouped CV uses `root_group_id` when present, with `source_name`/`lineage_id`/`observation_id` fallback from `common.py`.
