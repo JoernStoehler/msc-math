@@ -70,6 +70,7 @@ obligations.
 | Current finish state | `finish-current-state.md` | repo-state and closeout context |
 | HKO local maximum | `hko-local-maximum.md`, `hko-local-maximum-status.md`, `hko-local-maximum-exact-clarke.md` | HKO proof route, exact-Clarke state, and blockers |
 | Hostile sys landscape | `sys-landscape.md`, `sys-landscape-toolbox-audit.md`, `sys-landscape-datascience/` | negative-search interpretation and data-science method state |
+| Sys first-order local behavior | `sys-first-order-local-behavior.md` | generic smooth case, non-generic active-germ classification, and semialgebraic fallback status |
 | Numerics | `numerics.md`, `numerics-error-bounds.md` | numerical-method status and error-bound interpretation |
 | Verification | `verification.md`, `verification-orbit-recovery.md` | validation evidence and orbit-recovery interpretation |
 | Standalone topics | `crosspolytope.md`, `visualization.md`, `combinatorial-cells.md` | topic-local result interpretation |
