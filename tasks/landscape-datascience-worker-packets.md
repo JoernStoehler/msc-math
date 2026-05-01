@@ -18,7 +18,7 @@ inside the objective. The lead reviews and integrates the result.
 
 Before spawning a worker, fill these fields:
 
-- `idea_id` and copied ledger row.
+- semantic idea slug and copied ledger row.
 - Worktree path and branch name.
 - Fresh base dataset snapshot:
   - path;
@@ -46,7 +46,7 @@ submission is not blocked by untried or untrusted methods.
 Load `$data-science-subexperiment` for the generic workflow and prompt skeleton.
 This file only instantiates that workflow for the current sys-landscape queue.
 
-## Candidate Serial-Pilot Packet: `DS-I002`
+## Candidate Serial-Pilot Packet: `regime-classification`
 
 This is a filled example for the reset-contract pilot. Refresh the dataset path
 and worktree path before use.
@@ -66,7 +66,7 @@ You are not alone in the codebase; do not revert or overwrite changes made by
 others.
 
 Approved surface:
-Reset-contract serial pilot for data-science idea `DS-I002`, regime
+Reset-contract serial pilot for data-science idea `regime-classification`, regime
 classification.
 
 Objective:

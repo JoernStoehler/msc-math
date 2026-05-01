@@ -105,10 +105,10 @@ only on that blocker.
 
 Current known open blockers:
 
-- Evidence blocker: `DS-I004` has a source-truth repair commit
-  `dc4f11a5` on branch `ds-pilot1-pca-cluster`, pending merge approval.
-  `DS-I006` was still recorded from scratch worker output; its code/report
-  source truth was not preserved in a committed experiment or evidence path.
+- Evidence blocker: `stat-sanity` was still recorded from scratch worker output; its
+  code/report source truth was not preserved in a committed experiment or
+  evidence path. `pca-cluster-anomaly`, `supervised-alternatives`, and
+  `exact-f64-spot-check` now have repo-owned artifacts on `main`.
 - Thesis-use blocker: `M012` and `M013` still need Jorn's cite/omit/future
   decision.
 
@@ -165,8 +165,8 @@ Authority split:
 
 Lead loop for one subexperiment:
 
-1. Pick one idea row and name which submission blocker the run is intended to
-   close or advance.
+1. Pick one semantic idea slug and name which submission blocker the run is
+   intended to close or advance.
 2. Freeze the input dataset for the wave and record command, paths, row counts,
    max `sys`, and `sys > 1` count.
 3. Write a worker packet with the fields below. The packet must require an early
@@ -199,7 +199,8 @@ Lead loop for one subexperiment:
 
 Required worker-packet fields:
 
-- `idea_id`, blocker target, and why the row is before-submission or not.
+- semantic idea slug, blocker target, and why the row is before-submission or
+  not.
 - Required cwd/worktree and a first command that prints `pwd`.
 - Frozen dataset path, producer command, expected row counts, expected max
   `sys`, and expected `sys > 1` count.
@@ -211,14 +212,14 @@ Required worker-packet fields:
 - Maximum local runtime, whether LICCA is out of scope, and stop conditions.
 - Early report requirement: before implementing the full method, create the
   evidence directory and a draft `report.md` or blocker note containing
-  `idea_id`, dataset path, planned command, and current status.
+  idea slug, dataset path, planned command, and current status.
 - Leakage/provenance guards, including grouped or lineage splits where
   prediction is involved.
 - Statistical checks when relevant: baseline/null, fold/bootstrap/permutation
   uncertainty, and finite-sample caveat.
 - Numerical checks when relevant: exact-vs-f64 comparison, tolerance, row/schema
   guards, and stale-data check.
-- Required report header: `idea_id`, blocker target, dataset snapshot, command
+- Required report header: idea slug, blocker target, dataset snapshot, command
   run, verdict, evidence strength, implementation trust, thesis-use proposal,
   caveat, reopen trigger, and evidence paths. Use plain Markdown, not JSON.
 - Required report sections: command/provenance, observation, inference, verdict,
@@ -311,7 +312,7 @@ Minimal report header template:
 
 ```markdown
 Status: draft | blocked | complete
-Idea ID:
+Idea slug:
 Blocker target:
 Dataset snapshot: path, producer command, row counts, max sys, sys > 1 count
 Command run:
@@ -329,7 +330,7 @@ the checks used to support the verdict.
 
 Earlier pilot 1, before the reset contract:
 
-- `idea_id`: `DS-I004`.
+- Idea slug: `pca-cluster-anomaly`.
 - Goal: rerun the PCA / clustering / anomaly scan as a source-truth repair, not
   as a new interpretation program.
 - Blocker target: Evidence blocker first; Experiment-validity blocker only if
@@ -358,7 +359,7 @@ Earlier pilot 1, before the reset contract:
   signal, or states a stronger result than the artifacts support.
 - Scale decision after pilot: this pilot is capability evidence only. It does
   not validate the reset contract.
-- Result: branch `ds-pilot1-pca-cluster`, commit `dc4f11a5`, created
+- Result: main commit `39039550` created
   `experiments/sys-landscape/datascience/methods/pca-cluster-spike/` with
   `analyze.py`, `report.md`, and `summary.json`. Verdict `negative`;
   `evidence_strength = medium`; `implementation_trust = high`; `thesis_use =
@@ -370,10 +371,10 @@ Earlier pilot 1, before the reset contract:
 
 Earlier pilot 2, before the reset contract:
 
-- `idea_id`: `DS-I005`.
+- Idea slug: `supervised-alternatives`.
 - Goal: test a harder method experiment where the worker had to choose and run a
   small supervised-alternatives panel under grouped and transfer guards.
-- Result: branch `ds-pilot2-supervised-alts`, commit `c9b7cb77`, created
+- Result: main commit `5e8db378` created
   `experiments/sys-landscape/datascience/methods/supervised-alternatives-spike/`
   with `analyze.py`, `REPORT.md`, and `summary.json`. Verdict `negative`;
   `evidence_strength = medium`; `implementation_trust = medium`; `thesis_use =
@@ -390,10 +391,10 @@ Earlier pilot 2, before the reset contract:
 
 Earlier pilot 3, before the reset contract:
 
-- `idea_id`: `DS-I007`.
+- Idea slug: `exact-f64-spot-check`.
 - Goal: test whether the revised workflow produces an early report plus final
   report without lead completion.
-- Result: branch `ds-pilot3-exact-f64`, commit `b7b59ac5`, created
+- Result: main commit `e8528963` created
   `experiments/sys-landscape/datascience/methods/exact-f64-spot-check/` with
   `analyze.py`, `report.md`, and `summary.json`. Verdict `negative`;
   `evidence_strength = medium`; `implementation_trust = high`; `thesis_use =
@@ -415,9 +416,9 @@ Required before scale-ready:
 - Build or update the before-submission blocker table so every open row shows
   blocker target, required evidence path, current status, review state, and next
   action.
-- Run one simplified-contract pilot, or have Jorn explicitly accept DS-I007 as
-  enough because it already produced code, command, dataset guards, report, and
-  ledger-update evidence.
+- Run one simplified-contract pilot, or have Jorn explicitly accept
+  `exact-f64-spot-check` as enough because it already produced code, command,
+  dataset guards, report, and ledger-update evidence.
 - Run at least one small parallel round, not a full batch, if Jorn wants evidence
   that multiple concurrent workers do not create ambiguous status.
 

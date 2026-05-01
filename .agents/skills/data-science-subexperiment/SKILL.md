@@ -1,6 +1,6 @@
 ---
 name: data-science-subexperiment
-description: "Use when leading, prompting, running, reviewing, or integrating delegated data-science subexperiments with worker agents: turn a ledger or idea row into a bounded objective, delegate execution in a worktree, require report-ledger source truth, classify verdicts, and update process/readiness state."
+description: "Use when leading, prompting, running, reviewing, or integrating delegated data-science subexperiments with worker agents: turn a semantic ledger slug into a bounded objective, delegate execution in a worktree, require report-ledger source truth, classify verdicts, and update process/readiness state."
 ---
 
 # Data-Science Subexperiment
@@ -24,7 +24,7 @@ when those choices stay inside the objective and are recorded in the report.
 
 ## Lead Loop
 
-1. Select one idea row or method row. Do not bundle unrelated methods.
+1. Select one semantic ledger slug or method row. Do not bundle unrelated methods.
 2. Freeze or identify the base dataset snapshot for the wave:
    path, producer command, row counts, max target value, and target-threshold
    count.
@@ -62,7 +62,7 @@ the review surface.
 Every worker packet should include:
 
 - required cwd/worktree and first command that prints `pwd`;
-- selected idea row and lead-written objective;
+- selected semantic idea slug and lead-written objective;
 - why the row matters to the shared experiment group;
 - base dataset snapshot and expected counts;
 - method-local choices the worker may make and must record;
@@ -80,7 +80,7 @@ The report starts with this Markdown header:
 
 ```markdown
 Status: draft | blocked | complete
-Idea ID:
+Idea slug:
 Objective:
 Base dataset snapshot:
 Dataset filtering/subsetting:
@@ -129,7 +129,7 @@ checkout. You are not alone in the codebase; do not revert or overwrite changes
 made by others.
 
 Approved surface:
-<experiment group and selected idea_id>
+<experiment group and selected semantic idea slug>
 
 Objective:
 <lead-written objective>
