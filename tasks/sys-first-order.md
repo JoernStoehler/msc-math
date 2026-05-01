@@ -9,13 +9,15 @@ surface after the 2026-04-29 failed smooth-branch draft.
 ## Status
 
 - State: map-input.
-- Last updated: 2026-04-29.
+- Last updated: 2026-05-01.
 - Source surfaces: `papers/hk2017/EHZ-polytopes.tex`,
   `formal/numerics/gradient/numerics.tex`,
   `formal/numerics/gradient/numerics-subdifferential.tex`,
   `formal/hko-local-maximum/second-order.tex`,
   `formal/library/algorithms.tex`,
-  `formal/numerics/error-bounds.tex`.
+  `formal/numerics/error-bounds.tex`,
+  `research/sys-first-order-local-behavior.md`,
+  `thesis/sys-first-order-regular-case.tex`.
 - Refresh when: an agent proves, refutes, or sharply weakens the
   compute-once first-order evaluator theorem; HKO proof wording starts relying
   on arbitrary-polytope first-order behavior; or an implementation claims exact
@@ -49,13 +51,25 @@ surface after the 2026-04-29 failed smooth-branch draft.
 - [accepted 2026-04-29] Numerical behavior must be separated from real/exact
   claims. `f64` tests can find regressions, diagnose active-set changes, and
   calibrate heuristics, but they do not prove the real first-order theorem.
+- [accepted 2026-05-01] Thesis exposition should start with generic row-chart
+  chambers and add concrete finite nonvanishing assumptions as they are needed.
+  The generic case is open and locally smooth, so it is the readable first
+  story. Non-generic cases should be discussed later as the boundary/singularity
+  chapter: zero dwell times, ties, rank loss, semidefinite tangent forms,
+  repeated or unused listed rows, and branch appearances. Why it matters: the
+  thesis can now write a correct generic section without first solving the full
+  non-generic evaluator theorem.
 
 ## Goal Contract
 
-The next agent's goal is to notice the missing theorem and either fix it or
-report exactly why it cannot be fixed yet. A successful answer must classify
-the theorem status below. A chapter, implementation, or polished proof that
-does not classify the theorem status is not a successful answer.
+The broad theorem has now been classified in
+`research/sys-first-order-local-behavior.md` as `ONLY-HEAVY`: a complete
+compute-once evaluator appears available through semialgebraic/cell-decomposition
+machinery, but that route is too heavy to serve as the first thesis exposition.
+The next thesis-writing agent should not re-litigate that classification before
+writing the generic case. It should instead make the concrete generic
+assumptions explicit, prove the smooth local branch theorem there, and reserve
+the non-generic evaluator discussion for a later boundary chapter.
 
 Accepted theorem statuses:
 
@@ -80,8 +94,9 @@ row is not handled, the verdict is not `PROVED`.
 
 | item | state | value class | owner/gate | next action | source |
 | --- | --- | --- | --- | --- | --- |
-| Theorem feasibility split | `[map-input]` | mainline thesis if HKO proof route depends on it | agents then Jorn math | Decide which theorem surface is actually available: strong active-germ evaluator, heavy semialgebraic cell-decomposition evaluator, or no-go/complexity obstruction. The output must include exact proof obligations, not polished prose. | this file |
-| Closed HK row-chart formalization | `[map-input]` | mainline thesis if theorem route retained | agents | State the closed Haim--Kislev capacity value problem in the row chart, including `beta >= 0`, actual facets versus listed rows, repeated/redundant inequalities, and the normalization between `(n_i,h_i)` and rows `a_i`. | `papers/hk2017/EHZ-polytopes.tex`; `formal/numerics/error-bounds.tex` |
+| Theorem feasibility split | `[done]` | map input | agent | Broad status is `ONLY-HEAVY`; refresh only if a later source gives a readable exact active-germ theorem or a counterexample to the semialgebraic route. | `research/sys-first-order-local-behavior.md` |
+| Generic row-chart thesis section | `[active]` | mainline thesis | agents then Jorn math | Expand the committed draft into thesis-ready prose: define the concrete open dense conditions used so far, keep genericity separate from positivity/maximizer signs, prove local smoothness of feasible generic support maxima, and explain how the gradient of `sys` is computed. | `thesis/sys-first-order-regular-case.tex`; `research/sys-first-order-local-behavior.md` |
+| Closed HK row-chart formalization | `[map-input]` | mainline thesis if theorem route retained | agents | State the closed Haim--Kislev capacity value problem in the row chart, including `beta >= 0`, actual facets versus listed rows, repeated/redundant inequalities, and the normalization between `(n_i,h_i)` and rows `a_i`. | `papers/hk2017/EHZ-polytopes.tex`; `formal/numerics/error-bounds.tex`; `research/sys-first-order-local-behavior.md` |
 | Active-germ evaluator proof attempt | `[blocked]` | mainline thesis if feasible | theorem feasibility split | Try to prove a finite object `D(a)` that stores active closed optimizer/germ data and evaluates every direction `h` without re-solving the original HK problem. Do not insert smooth-branch assumptions as the main proof. | closed HK formalization |
 | Semialgebraic cell-decomposition fallback | `[map-input]` | contingent during writing or future/follow-up | agents then Jorn | Check whether quantifier elimination/cell decomposition gives a mathematically finite compute-once evaluator for `h -> Dsys_a(h)`, and record the complexity cost. This may be true but too large for a readable thesis theorem or usable algorithm. | semialgebraic/Lipschitz proof route |
 | Volume first-order object | `[map-input]` | support for any theorem route | agents | Specify the matching compute-once first-order object for `V(a)=vol(K(a))`, including vertex-combinatorics changes and redundant row behavior. | `formal/library/algorithms.tex`; volume code/formal notes |
@@ -120,6 +135,12 @@ row is not handled, the verdict is not `PROVED`.
 - [fresh 2026-04-29] This task bundle is intended to be self-contained. Do not
   open scratch artifacts to decide the theorem shape unless this file is missing
   a specific fact needed for provenance.
+- [fresh 2026-05-01] Generic/support terminology now used in the thesis draft:
+  `HK-generic row parameter` means simultaneous finite nonvanishing conditions
+  for all listed support/order candidates; `feasible generic support maximum`
+  adds the signs needed for the HK quadratic maximum: positive dwell times,
+  positive `Q`, and negative definite tangent quadratic form. Refresh by reading
+  `thesis/sys-first-order-regular-case.tex`.
 
 ## Pruned / Stale
 

@@ -9,7 +9,7 @@ phase-2 repo/Jorn state maps.
 ## Status
 
 - State: map-input.
-- Last updated: 2026-04-25.
+- Last updated: 2026-05-01.
 - Source surfaces: `thesis/`, `research/INDEX.md`, `research/*.md`,
   `tasks/*.md`, `tasks/verify-thesis-done.md`, `ROADMAP.md`.
 - Refresh when: thesis structure, retained claim set, or advisor feedback
@@ -40,6 +40,12 @@ phase-2 repo/Jorn state maps.
   Source: Jorn Phase-2 TOC guidance.
   Why it matters: thesis content knowledge belongs with thesis planning first,
   while `tasks/*.md` should keep routing and work obligations.
+- [accepted 2026-05-01] For sys first-order material, write the generic case
+  first. Introduce concrete finite open dense assumptions only when a lemma uses
+  them, and put the non-generic/boundary cases in a later discussion chapter.
+  Why it matters: this makes the thesis readable while still preserving the
+  HKO2024 and gradient-ascent motivations for zero dwell times, active ties,
+  rank loss, semidefinite Hessians, and branch changes.
 
 ## Work Map
 
@@ -49,6 +55,7 @@ phase-2 repo/Jorn state maps.
 | Thesis structure | `[Jorn]` | map input | Jorn | Pick retained chapter structure after repo-state map gives concrete content options. | `thesis/`, `tasks/verify-thesis-done.md` |
 | Writer-ready boundary | `[Jorn]` | map input | Jorn + agent prep | Classify thesis-external packets as must-finish-before-writing, contingent during writing, or future. | migrated tracker history |
 | Thesis/code mismatch packet routing | `[map-input]` | map input | agents | Before using existing algorithm/numerics/tube prose as TOC leaves, route the 15 rows in `thesis/migration-findings.md` to thesis-side fix, code/comment fix, future/cut, or Jörn decision. | `thesis/migration-findings.md`, `tasks/numerics.md`, `tasks/infrastructure.md` |
+| Generic sys first-order section | `[active]` | mainline thesis | agents then Jorn math | Expand the committed unapproved draft into a readable generic-case section: list the concrete open dense row-chart assumptions, prove smooth local behavior on those chambers, and defer non-generic active-germ/cell-decomposition behavior to a later boundary chapter. | `thesis/sys-first-order-regular-case.tex`, `research/sys-first-order-local-behavior.md`, `tasks/sys-first-order.md` |
 | HKO writeup compression | `[blocked]` | mainline thesis | HKO map | Wait for `tasks/hko.md` theorem/evidence/blocker state. | `research/hko-local-maximum.md`, `thesis-stories-are-supported.md` |
 | Hostile landscape compression | `[blocked]` | mainline thesis | landscape map | Wait for `tasks/landscape.md` retained-story state. | `research/sys-landscape.md`, `thesis-stories-are-supported.md` |
 | Numerical appendix route | `[blocked]` | contingent during writing | numerics map | Wait for `tasks/numerics.md` proof-vs-validation-vs-caveat state. | `thesis-stories-are-supported.md` |
@@ -80,6 +87,13 @@ phase-2 repo/Jorn state maps.
   gap belongs under infrastructure/harness follow-up. Route these before thesis
   prose relies on the affected statements.
   Refresh by: reading `thesis/migration-findings.md`.
+- [fresh 2026-05-01] `thesis/sys-first-order-regular-case.tex` is a committed
+  unapproved draft for "Generic feasible HK gradients". It already separates
+  HK-generic nonvanishing conditions from feasible generic support maxima. The
+  next writer should preserve that split and add only the concrete genericity
+  assumptions that are actually used by each lemma.
+  Refresh by: `latexmk && ./check-build.sh` in `thesis/` and a reviewer pass
+  against `research/sys-first-order-local-behavior.md`.
 
 ## Pruned / Stale
 
