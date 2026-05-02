@@ -8,7 +8,7 @@ Context: non-thesis-spine work should stay bounded during finish mode.
 ## Status
 
 - State: future by default.
-- Last updated: 2026-04-30.
+- Last updated: 2026-05-02.
 - Source surfaces: `AGENTS.md`, `.agents/skills/`, `.codex/`,
   `crates/MAP.md`, `experiments/MAP.md`, `ROADMAP.md`, `tasks/README.md`.
 - Refresh when: agent routing, task-bundle conventions, architecture map, or
@@ -83,6 +83,36 @@ Context: non-thesis-spine work should stay bounded during finish mode.
   Source: Jorn/Codex cached-map discussion.
   Why it matters: map files can share one familiar update loop while keeping
   map-type-specific authority and purpose clear.
+- [accepted 2026-05-02] The current harness has broad style problems and does
+  not yet specify a canonical harness style.
+  Source: Jorn.
+  Why it matters: without an explicit style baseline, agents can only patch
+  local failures and may keep mixing domain knowledge, procedure knowledge,
+  temporary session state, and durable instructions in inconsistent ways.
+- [accepted 2026-05-02] Several needed harness behavior changes are already
+  salient enough to preserve before the full style cleanup: difficult
+  interactive chat, error recovery after wrong task interpretation, explicit
+  goal-clarification mode, flat data-science packet orchestration, and current
+  GPT-5.5 prompt guidance.
+  Source: Jorn.
+  Why it matters: these are observed or strongly suspected failure modes, not
+  speculative polish. A broad cleanup should not lose them while separating
+  domain artifacts from procedure artifacts.
+- [accepted 2026-05-02] Jörn has concrete ideas about chat communication
+  failure categories and harness style, but those should be combined with
+  external evidence before becoming durable repo style.
+  Source: Jorn.
+  Why it matters: the cleanup needs both local failure taxonomy and outside
+  practice from OpenAI, Anthropic, Google, and related research-engineering
+  sources, especially where default agent behavior differs from the desired
+  repo behavior.
+- [accepted 2026-05-02] Harness modernization must treat GPT-5.5 and current
+  Claude Opus 4.6/4.7 behavior as materially different from earlier GPT and
+  Claude model families.
+  Source: Jorn.
+  Why it matters: prompt-engineering habits that were useful for older models
+  can become misleading defaults; keep model-current guidance and observed
+  behavior separate from inherited prompt folklore.
 
 ## Work Map
 
@@ -94,6 +124,13 @@ Context: non-thesis-spine work should stay bounded during finish mode.
 | Cache-surface audit | `[done]` | map input | current session | Deleted stale root/generated maps, split subtree maps, renamed the research story index, and added the cached-map maintenance workflow. | `crates/MAP.md`, `experiments/MAP.md`, `tasks/README.md`, `research/INDEX.md` |
 | Agent-facing architecture/navigation | `[done]` | map input | current session | Split the old root architecture map into subtree `MAP.md` files for crates and experiments. | `crates/MAP.md`, `experiments/MAP.md` |
 | Cached-map workflow skill | `[done]` | map input | current session | Added the protocol skill and used it for the first `crates/MAP.md` / `experiments/MAP.md` refresh. | `.agents/skills/cached-map-maintenance/`, `crates/MAP.md`, `experiments/MAP.md` |
+| Harness style baseline | `[map-input]` | map input | Jorn + harness discussion | Define the harness style convention before broad cleanup: which artifacts hold domain knowledge, procedure knowledge, temporary session state, durable instructions, and TODO workflow placeholders; then use that convention to decide what to extract, delete, rewrite, or leave alone. | `AGENTS.md`, `.agents/skills/`, `.codex/reference/`, `tasks/README.md` |
+| Harness style external survey | `[done]` | map input | agent research + local review | Created a concise source-backed survey; use it as evidence input for the harness style baseline, chat taxonomy, recovery, goal-clarification, packet orchestration, and current-model modernization work. | `.agents/skills/harness-engineering/references/harness-style-external-survey.md` |
+| Chat communication style taxonomy | `[map-input]` | map input | Jorn + external evidence | Capture Jörn's concrete examples of chat-style failures and candidate repairs, then compare them against outside guidance before writing a durable chat-communication convention. | `AGENTS.md`, `.agents/skills/harness-engineering/`, `.codex/reference/` |
+| Difficult-interaction recovery | `[map-input]` | map input | Jorn + harness discussion | Define how agents should detect that frequent back-and-forth, accumulated errors, or unclear goals have pushed the session outside ordinary non-interactive coding mode; include an abort/restart path that carries forward only useful state when repair is cheaper than continuing. Use the chat-style taxonomy as input. | `AGENTS.md`, `.agents/skills/harness-engineering/`, `.codex/reference/` |
+| Goal-clarification mode | `[map-input]` | map input | Jorn + harness discussion | Define an explicit mode for complex goal clarification where agents do not start implementation, planning-by-inertia, or cleanup until the objective and intended artifact are settled. | `AGENTS.md`, `.agents/skills/harness-engineering/`, `.codex/reference/` |
+| Data-science packet orchestration | `[map-input]` | map input | Jorn + agent review | Extend the existing data-science subexperiment workflow so a lead agent can prepare and manage many flat, similar, independent packets without losing packet boundaries, output contracts, review gates, or integration ownership. | `.agents/skills/data-science-subexperiment/`, `.agents/skills/subagent-delegation/`, `tasks/landscape.md` |
+| Current-model harness prompt modernization | `[map-input]` | map input | Jorn + official-doc check | Audit prompt-engineering assumptions embedded in harness material; replace stale GPT-4 through GPT-5.3 and older-Claude-style advice only where it conflicts with current GPT-5.5, Claude Opus 4.6/4.7, or observed repo failures. | `.agents/skills/harness-engineering/`, `.agents/skills/*/SKILL.md`, `.codex/reference/` |
 | Harness engineering skill revisit | `[future]` | future/follow-up | Jorn + agent review | Around 2026-05-07, reread `.agents/skills/harness-engineering/SKILL.md` after live use and add only harness-engineering practices Jörn remembered or agents encountered. Preserve the skill's objective/success-measurement structure; do not add proxy checks without a remembered/observed failure or official guidance. | `.agents/skills/harness-engineering/SKILL.md` |
 | Capacity/orbit API architecture | `[future]` | future/follow-up by default | retained claim impact | `Polytope4D` boundary reduction is partly plausible only at the KKT/QP assembly layer; do not promote broad APIs unless retained thesis/reproducibility needs it. | `crates/MAP.md`, `crates/symplectic/src/kkt/qp_assembly.rs`, legacy rows |
 | Experiment-to-library audit | `[future]` | future/follow-up by default | retained claim impact | Classify repeated helpers only when it unblocks validation, writeup, or agent navigation. | legacy library rows |
