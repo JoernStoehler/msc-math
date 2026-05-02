@@ -46,6 +46,133 @@ submission is not blocked by untried or untrusted methods.
 Load `$data-science-subexperiment` for the generic workflow and prompt skeleton.
 This file only instantiates that workflow for the current sys-landscape queue.
 
+## Next-Wave Trial Architecture
+
+Use this architecture for the 2026-05-02 Objective A/B wave unless Jorn changes
+the research priority.
+
+Lead setup:
+
+- Build one fresh temp dataset snapshot with
+  `cargo run -p exp-sys-landscape --bin sys-dataset -- --out-dir <tmp>`.
+- Record the dataset path, command, polytope rows, observation rows, max `sys`,
+  and `sys > 1` count in every packet.
+- Use v1 subagents with `fork_context=false` after the exact-reply and
+  required-cwd smokes from `$data-science-subexperiment` pass.
+
+Workspace and folder rule:
+
+- Each worker gets an isolated git worktree and, for new methods, a separate
+  method folder under
+  `experiments/sys-landscape/datascience/methods/<slug>/`.
+- Do not refactor shared helpers during this wave. For new method folders,
+  prefer copying the small loader/check code needed for the local method over
+  creating a shared import surface. If a worker must reuse an existing helper,
+  the report must name that coupling.
+- Use `/tmp` only for scratch inputs or outputs. Terminal verdicts need
+  repo-owned code/report/source truth.
+
+Execution shape:
+
+1. Run `endpoint-residualized-regression` first because it repairs an existing
+   undecided packet.
+2. If that row yields `conjectured-positive`, stop unrelated method work and
+   write a falsification/search packet for the candidate rule.
+3. If it is negative or future-only, run `stat-sanity` source-truth repair or
+   downgrade next.
+4. Optionally run one small parallel probe with at most two independent folders:
+   `svm-supervised-baseline` and `interpretable-tail-rules`.
+5. Stop local scaling when the row needs new polytopes, cluster-scale compute,
+   or a new Jorn-owned feature definition.
+
+Review outcome:
+
+- Content success is either a `positive-escalate`/`conjectured-positive` search
+  rule or a negative result with explicit method, data, runtime, and leakage
+  caveats.
+- Process success is a report-ledger result whose review does not require a new
+  schema, shared helper refactor, or chat reconstruction.
+
+## Next-Wave Packet Deltas
+
+These deltas instantiate the generic worker prompt. The lead still fills the
+worktree path and fresh dataset snapshot.
+
+### `endpoint-residualized-regression`
+
+- Approved surface: source-truth repair/review for the existing
+  `feature-pattern-search/analyze_residual.py` packet.
+- Objective: decide whether endpoint feature blocks add grouped-CV signal beyond
+  metadata strongly enough for a thesis-facing claim, only a caveat, or omission.
+- Allowed write scope:
+  `experiments/sys-landscape/datascience/methods/feature-pattern-search/`,
+  especially `endpoint-residualized-regression-report.md` and any narrow repair
+  to `analyze_residual.py`.
+- Method-local freedom: inspect, run, and narrowly repair the existing analyzer;
+  add baseline/null or fold-uncertainty summaries only if needed for the verdict.
+- Positive meaning: a residual feature pattern gives a concrete label-free
+  sampling/search rule or a falsifiable conjectured-positive follow-up.
+- Negative meaning: endpoint residual signal is absent, too weak, or not
+  transferable/actionable after metadata and grouped split guards.
+- Review check: report records endpoint row counts, group policy, metadata
+  baseline, additive feature metrics, missing uncertainty caveats, and thesis-use
+  proposal.
+
+### `stat-sanity`
+
+- Approved surface: source-truth repair or downgrade for the promoted
+  null/permutation/bootstrap sanity result.
+- Objective: either recreate enough repo-owned script/report evidence to support
+  the current caveated negative sanity claim, or explicitly mark the result
+  non-load-bearing before thesis use.
+- Allowed write scope:
+  `experiments/sys-landscape/datascience/methods/stat-sanity/` and ledger/audit
+  rows after lead review.
+- Method-local freedom: choose the cheapest sanity panel that addresses the
+  load-bearing transfer and regime-classification caveats; do not rebuild a
+  broad statistics program.
+- Positive meaning: only a sanity check exposing a real bug or actionable
+  overlooked signal; otherwise this is a source-truth repair row.
+- Negative meaning: null/permutation/fold evidence still supports only the
+  existing bounded negative/caveat story.
+- Review check: report names the exact previous claim it repairs or downgrades,
+  the commands run, and whether the toolbox audit can keep citing it.
+
+### `svm-supervised-baseline`
+
+- Approved surface: optional omitted-family supervised baseline.
+- Objective: test whether SVM regression/classification changes the current
+  supervised feature-table verdict under the same grouped split and transfer
+  guards as the existing feature-block and supervised-alternatives packets.
+- Allowed write scope:
+  `experiments/sys-landscape/datascience/methods/svm-supervised-baseline/`.
+- Method-local freedom: choose a small linear/RBF SVM panel, scaling, and cheap
+  parameter grid. Avoid broad tuning.
+- Positive meaning: SVMs produce an actionable feature-space rule or materially
+  improve random-to-endpoint transfer beyond existing models.
+- Negative meaning: SVMs do not change the transfer/search-usefulness story.
+- Review check: compare against the existing supervised-alternatives report and
+  state whether the audit row remains an omitted-family caveat or becomes an
+  attempted negative.
+
+### `interpretable-tail-rules`
+
+- Approved surface: optional simple pattern-finding spike.
+- Objective: look for simple, label-free rules over non-provenance features that
+  isolate high-`sys` tails and could guide fresh candidate generation.
+- Allowed write scope:
+  `experiments/sys-landscape/datascience/methods/interpretable-tail-rules/`.
+- Method-local freedom: use shallow trees, one/two-feature thresholds, sparse
+  interactions, or monotone/rule-list scans. Keep the complexity small enough
+  that a human can state the rule in one paragraph.
+- Positive meaning: a rule can be tested on new candidates without using `sys`,
+  endpoint labels, producer identity, or optimizer provenance.
+- Negative meaning: simple interpretable rules either recover known producer
+  structure, overfit the 282-row table, or fail against grouped/null checks.
+- Review check: report separates the discovered rule, leakage guard, null or
+  grouped validation, and whether a follow-up falsification/search packet is
+  warranted.
+
 ## Candidate Serial-Pilot Packet: `regime-classification`
 
 This is a filled example for the reset-contract pilot. Refresh the dataset path

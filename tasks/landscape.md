@@ -9,7 +9,7 @@ hostility.
 ## Status
 
 - State: map-input.
-- Last updated: 2026-05-01.
+- Last updated: 2026-05-02.
 - Source surfaces: `research/sys-landscape.md`,
   `research/sys-landscape-datascience/`, `research/sys-landscape-toolbox-audit.md`,
   `experiments/sys-landscape/`, `tasks/verify-thesis-done.md`.
@@ -41,6 +41,14 @@ hostility.
   with low incremental work.
   Source: finish-mode result scope.
   Why it matters: write as current-state result, not improvement program.
+- [accepted 2026-05-02] The next data-science work should prepare and run a
+  small method wave from current committed tables, not seek new polytopes.
+  LICCA refreshes are valuable only after external cluster results exist and can
+  be merged with low local setup cost.
+  Source: Jorn steering in the 2026-05-02 Objective A/B discussion.
+  Why it matters: local agents should spend time on method coverage, source
+  truth, and workflow simplification rather than widening the data-generation
+  program.
 
 ## Data-Science Submission Blockers
 
@@ -110,6 +118,8 @@ Current blocker table:
 | `regime-classification` | Closed for evidence, caveat, thesis-use, and serial process blockers; experiment-validity is closed only for a caveated supporting diagnostic, not for claim-bearing finite-sample inference. | `experiments/sys-landscape/datascience/methods/feature-pattern-search/regime-classification-report.md`, `regime_classification_summary.md`, `regime_classification_bars.png`, and `analyze_regime_classification.py`. | Ledger says `negative`; thesis use is `supporting/caveat only`. | Lead reviewed on 2026-05-01; worker ran the declared command, lead reran the classifier command, and the report records dataset guards, grouped-CV point metrics, provenance caveats, missing permutation/bootstrap uncertainty, and no actionable search rule. | No before-submission action unless Jorn wants a stronger permutation/bootstrap interval for a thesis-facing caveat. |
 | `endpoint-residualized-regression` | Evidence, experiment-validity, caveat, and thesis-use blockers. | `experiments/sys-landscape/datascience/methods/feature-pattern-search/endpoint-residualized-regression-report.md`, plus any narrow script/output changes needed under the same directory. | Ledger says `future`; existing script exists but lacks reviewed current-contract report and disposition. | Not reviewed under the current report-ledger contract. | Run after the serial pilot if the process passes; decide whether residual endpoint signal is claim-bearing, supporting-only, omitted, or future work. |
 | `stat-sanity` | Evidence blocker, and possibly experiment-validity if rerun details cannot be recovered from source truth. | A repo-owned `stat-sanity` report/script path under `experiments/sys-landscape/datascience/methods/`, or an explicit decision to remove it from load-bearing evidence. | Ledger says `negative`, but the only detailed source truth came from scratch worker output and promoted prose. | Prose reviewed enough to update the ledger/audit, but code/report source truth was not committed. | Either rerun/promote the sanity packet into repo-owned source truth or downgrade it to non-load-bearing caveat evidence. |
+| `svm-supervised-baseline` | Coverage and verdict blockers only unless selected for the next small wave. | A method-local report/script under `experiments/sys-landscape/datascience/methods/svm-supervised-baseline/`, or an explicit deferred/skipped row in the toolbox audit. | Ledger says `future`; audit currently treats SVMs as a skipped omitted-family caveat. | Not attempted in the current repo-owned evidence set. | Run only if the next wave includes a cheap supervised-model parallel probe; otherwise keep as an explicit omitted-family caveat. |
+| `interpretable-tail-rules` | Coverage, verdict, and positive-follow-up blockers if selected. | A method-local report/script under `experiments/sys-landscape/datascience/methods/interpretable-tail-rules/`. | Ledger says `future`; no current artifact. | Not attempted. | Use only as a bounded rule-mining spike: simple thresholds/trees/interactions that either produce a label-free candidate generator or a negative result. |
 | `deep-latent-models` | Coverage and verdict blockers only unless reopened. | Ledger row is enough while verdict remains `rejected-low-VOI`; no experiment artifact is required because no empirical claim is made. | Ledger says `rejected-low-VOI`. | Ledger-level decision recorded; not a tried result. | Keep out of before-submission experiments unless a much larger dataset appears. |
 | `surrogate-guided-search` | Coverage and verdict blockers only unless reopened. | Ledger row is enough while verdict remains `future`; no experiment artifact is required because no empirical claim is made. | Ledger says `future`. | Ledger-level decision recorded; not a tried result. | Reopen only with a bounded candidate space and compute budget approved by Jorn. |
 | `geometric-feature-columns` | Coverage and verdict blockers only until split into concrete column rows. | Ledger row is enough while verdict remains `future`; each concrete column needs its own row before implementation. | Ledger says `future`. | Ledger-level decision recorded; not a tried result. | Split proposed columns into separate rows only if a computable definition and expected information gain are supplied. |
@@ -125,7 +135,8 @@ Use this section before scaling to many subagents. Do not infer readiness from
 the number of prior pilots; readiness means the current contract has been
 followed, reviewed, and recorded without inventing new source-truth surfaces.
 
-Current state: **serial pilot completed under the reset contract**.
+Current state: **serial pilot completed under the reset contract; next-wave
+architecture prepared for Jorn review**.
 
 The reset contract is: human-readable `report.md` plus code/command/dataset
 evidence plus ledger row. Machine-readable metadata is optional and cannot be a
@@ -163,6 +174,40 @@ valid test for this workflow. One invalid run amended the integration branch
 instead of executing the packet. The v1 path passed an exact-reply smoke, a
 required-cwd smoke, and the `regime-classification` worker packet when launched
 with `fork_context=false`.
+
+Next-wave trial architecture:
+
+- Lead builds one fresh temp dataset snapshot and records command, row counts,
+  max `sys`, and `sys > 1` count before any worker starts.
+- Every worker gets both an isolated git worktree and an isolated method folder
+  under `experiments/sys-landscape/datascience/methods/<slug>/`, except
+  narrowly repairing the existing `feature-pattern-search/` packet.
+- Do not refactor shared Python helpers during the wave. For new method
+  folders, copy a small local loader/check template if that keeps the worker
+  independent. Promote shared helpers only after two or more completed reports
+  need the same code and the review cost is lower than copying.
+- Serial dependency first:
+  `endpoint-residualized-regression`, because it closes an existing undecided
+  packet and may affect thesis use. If it yields `conjectured-positive`, follow
+  with a falsification/search packet before launching unrelated negatives.
+- If the serial row is negative or future-only, the next useful source-truth row
+  is `stat-sanity`. The optional small parallel probe is at most two independent
+  workers, `svm-supervised-baseline` and `interpretable-tail-rules`, because
+  they touch disjoint folders and answer distinct method-coverage questions.
+- Stop local scaling when a method needs new polytopes, cluster-scale candidate
+  generation, or a changed thesis-facing research question. Record the exact
+  LICCA or Jorn gate instead of working around the data limit locally.
+
+Process success for the next wave:
+
+- A later lead can launch each selected row from
+  `tasks/landscape-datascience-worker-packets.md` without reconstructing chat.
+- Each worker leaves a report, command, dataset snapshot, and enough code or
+  artifact source truth for lead review.
+- Lead review can classify the row with the existing verdict vocabulary without
+  inventing a new status field or JSON sidecar.
+- The wave either finds a positive/conjectured-positive search rule and stops
+  for Jorn, or closes/downgrades named blockers with explicit caveats.
 
 ### Data-Science Subexperiment Workflow
 
@@ -442,7 +487,7 @@ Required before scale-ready:
 | --- | --- | --- | --- | --- | --- |
 | Hostile-landscape retained-claim compression | `[map-input]` | mainline thesis | agent prep then Jorn | Draft the bounded claim surface: current evidence found no new transferable `sys > 1` regime beyond pentagon-pentagon, while seed counts are too small for a density or brute-force-impossibility claim. | `research/sys-landscape.md`, `research/sys-landscape-toolbox-audit.md` |
 | Method-ledger/audit population | `[map-input]` | mainline thesis | agents | Populate current packet evidence plus explicit skipped/deferred standard-toolbox rows into the hostile-landscape audit without opening new methods. | `research/sys-landscape-datascience/`, `research/sys-landscape-toolbox-audit.md` |
-| Data-science idea exhaustion loop | `[active]` | mainline thesis | lead agent with subagents, Jorn gates | Close the blockers in "Data-Science Submission Blockers"; before running a worker, name which blocker the worker closes and what committed source truth will remain. | `research/sys-landscape-datascience/idea-ledger.md`, `experiments/sys-landscape/datascience/` |
+| Data-science idea exhaustion loop | `[active]` | mainline thesis | lead agent with subagents, Jorn gates | Use the 2026-05-02 next-wave architecture: run `endpoint-residualized-regression` first; then either follow a positive search lead or repair/downgrade `stat-sanity` and optionally run one small parallel probe. | `research/sys-landscape-datascience/idea-ledger.md`, `tasks/landscape-datascience-worker-packets.md`, `experiments/sys-landscape/datascience/` |
 | Remaining method packet status | `[Jorn]` | map input | Jorn | Decide thesis-facing status of `endpoint-residualized-regression` after the artifact-backed audit row exists. `regime-classification` is now supporting/caveat only. | `research/sys-landscape-datascience/method-ledger.md`, `research/sys-landscape-toolbox-audit.md` |
 | LICCA endpoint refresh | `[future]` | future/follow-up | external compute | Leave pending unless results are already available with low integration cost. | legacy LICCA rows |
 | Visualization negative exploration | `[Jorn]` | contingent during writing | Jorn | Decide during TOC work whether visualization is standalone thesis material or only supporting/future material if figures become useful. | `research/visualization.md`, `research/INDEX.md` |

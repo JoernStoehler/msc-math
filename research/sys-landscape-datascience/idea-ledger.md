@@ -127,11 +127,30 @@ canonical refresh.
 | `endpoint-residualized-regression` | Endpoint residualized regression beyond metadata | method | Existing residualized-regression packet | Whether endpoint geometry/orbit/trajectory blocks add grouped-CV signal beyond metadata | `future` | Existing script lacks a reviewed report/ledger disposition; decide thesis role after report review. |
 | `pca-cluster-anomaly` | PCA / clustering / anomaly scan over current feature blocks | method spike | Existing 282-row table and committed feature JSONL | A non-post-hoc cluster or component rule that suggests where to search, or a bounded negative result | `negative` | Main commit `39039550` creates `experiments/sys-landscape/datascience/methods/pca-cluster-spike/` with script and report. |
 | `supervised-alternatives` | Cheap supervised alternatives: lasso, elastic net, boosting, kNN | method spike | Current feature tables only | Whether standard extra models change `feature-block-regression` / `regime-classification` conclusions under the same grouped split policy | `negative` | Main commit `5e8db378` creates `experiments/sys-landscape/datascience/methods/supervised-alternatives-spike/`; lead had to run the worker's script to produce the report. |
-| `stat-sanity` | Null, permutation, and bootstrap uncertainty checks | sanity | Existing feature-block/regime-classification/residualized-regression outputs | Chance baseline and fold uncertainty for claimed pattern or non-pattern | `negative` | Worker spike found above-null within-regime pockets, but the load-bearing random-to-endpoint transfer still has strongly negative R^2. Evidence was promoted into this ledger and the toolbox audit; scratch worktree discarded rather than merged. |
+| `stat-sanity` | Null, permutation, and bootstrap uncertainty checks | sanity | Existing feature-block/regime-classification/residualized-regression outputs | Chance baseline and fold uncertainty for claimed pattern or non-pattern | `negative` | Provisional negative: worker spike found above-null within-regime pockets, but the load-bearing random-to-endpoint transfer still has strongly negative R^2. Evidence was promoted into this ledger and the toolbox audit from scratch output; before thesis use, repair with repo-owned source truth or downgrade to non-load-bearing caveat evidence. |
 | `exact-f64-spot-check` | Exact-vs-f64 spot checks for mathematical columns | sanity | Sampled rows from table-stage features | Detect whether a column implementation turns a true signal into noise | `negative` | Main commit `e8528963` creates `experiments/sys-landscape/datascience/methods/exact-f64-spot-check/`; sampled checked columns showed only f64-scale drift. |
 | `deep-latent-models` | Neural networks or deep latent models | method | Current 282-row dataset | Would need overfit controls and enough rows for flexible models | `rejected-low-voi` | Too small and too easy to overfit before thesis closeout; reopen only with much larger data. |
+| `svm-supervised-baseline` | SVM regression/classification baseline | method spike | Current feature tables only | Whether a standard margin-based model changes the supervised negative-transfer or regime-classification story under the same grouped split policy | `future` | Candidate for one optional small parallel wave. Skip if setup cost is not clearly lower than its thesis value; otherwise write source truth under `experiments/sys-landscape/datascience/methods/svm-supervised-baseline/`. |
+| `interpretable-tail-rules` | Simple threshold/tree/interaction rule mining for high-`sys` tails | method spike | Current feature tables only | A label-free rule that suggests where to search next, or a bounded negative result for simple interpretable pattern classes | `future` | Candidate for one optional small parallel wave. Must not use endpoint labels, producer identity, or target leakage to define the final candidate rule. |
 | `surrogate-guided-search` | Bayesian optimization / surrogate-guided search loop | search | Candidate generator plus exact evaluation budget | New high-sys candidates or clear comparison against random/local baselines | `future` | Reopen only with a bounded candidate space and compute budget approved by Jörn. |
 | `geometric-feature-columns` | New symplectic/geometric feature columns from informal intuition | column | Table-stage additive columns | Computable definition, sanity check, and expected information gain | `future` | Split each proposed column into its own row before implementation. |
+
+## Next Wave Queue
+
+Prepared on 2026-05-02 from the current task state and current committed data.
+This queue is a launch plan, not a claim that the future rows are valuable after
+they run.
+
+| Order | Slug | Shape | Why now | Dependency / stop condition | Expected terminal outcome |
+| --- | --- | --- | --- | --- | --- |
+| 1 | `endpoint-residualized-regression` | Serial repair/review of existing packet | It is the remaining undecided artifact-backed method and can change whether endpoint-side signal is claim-bearing, caveat-only, or omitted. | Stop for `conjectured-positive` if residual features give a concrete search/falsification rule; otherwise classify as negative, future, or omitted. | Reviewed report plus ledger/audit disposition. |
+| 2 | `stat-sanity` | Source-truth repair or downgrade | The prose result currently supports the transfer/caveat story but lacks committed script/report source truth. | If rerun details are not recoverable cheaply, downgrade to non-load-bearing caveat evidence instead of rebuilding a broad statistics program. | Repo-owned report/script or explicit non-load-bearing downgrade. |
+| 3a | `svm-supervised-baseline` | Optional small parallel probe | SVMs are a standard omitted-family caveat and may be cheap because the supervised table machinery already exists. | Run only after the serial row does not produce a positive follow-up. Stop if dependency/setup churn exceeds the value of an omitted-family row. | Negative/supporting report or explicit skipped-low-VOI row. |
+| 3b | `interpretable-tail-rules` | Optional small parallel probe | This is the simplest pattern-finding row that could falsify the pessimistic story by producing a label-free candidate generator. | Run only after the serial row does not produce a positive follow-up. Stop for any actionable rule and hand to a falsification/search packet before adding more unrelated methods. | `conjectured-positive` plus follow-up packet, or a bounded negative for simple rules. |
+
+Wave-level rule: do not seek new polytopes locally. If a row needs a larger
+candidate pool, cluster-scale generation, or a new geometric feature definition,
+record the LICCA/Jörn gate and leave the row `future` or `Jorn decision needed`.
 
 ## Process Lessons
 
@@ -303,8 +322,11 @@ Qualifiers: `evidence_strength = medium`; `implementation_trust = medium`;
 
 ### `stat-sanity` Null / Permutation / Bootstrap Sanity Checks
 
-Disposition: evidence promoted into this ledger and
-`research/sys-landscape-toolbox-audit.md`; scratch worktree discarded.
+Disposition: provisional evidence promoted into this ledger and
+`research/sys-landscape-toolbox-audit.md`; scratch worktree discarded. Treat as
+an open source-truth repair or downgrade before thesis use because the script,
+report, and run outputs are not committed under the current report-ledger
+contract.
 
 Worker command:
 
@@ -342,7 +364,8 @@ because its actual endpoint `R^2` is strongly negative. Classification confirms
 that the table separates producer regimes, including with non-metadata blocks,
 but this does not identify where to sample for new `sys > 1` rows.
 
-Verdict: `negative`.
+Verdict: provisional `negative`; terminal thesis use requires repo-owned
+source-truth repair or downgrade to non-load-bearing caveat evidence.
 
 ### `exact-f64-spot-check` Exact-vs-f64 Spot Check
 
