@@ -161,10 +161,6 @@ the current `promptingGuide` and `migrationGuide` links returned there.
 Do not copy summaries of OpenAI guidance into repo prompt material. Use the docs
 to shape the edit, then encode the repo-owned convention or role contract.
 
-When the change is about complexity, architecture, or agent-facing readability in
-an agent-heavy project, read
-[`references/agent-project-delta.md`](references/agent-project-delta.md).
-
 Use `$post-mortem` when extracting learnings from a completed session or when
 reaching a milestone, especially when evidence accumulates over multiple
 sessions.
