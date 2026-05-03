@@ -7,8 +7,9 @@ description: Draft workspace for redesigning this repo's harness around GPT-5.5;
 
 This skill is mid-migration and is not yet active project policy.
 
-Read [`references/objective.draft.md`](references/objective.draft.md) for the
-current draft material. During this migration, treat old harness material,
+Read [`references/objective.draft.md`](references/objective.draft.md) and
+[`references/migration-plan.draft.md`](references/migration-plan.draft.md) for
+the current draft material. During this migration, treat old harness material,
 including existing `SKILL.md` files, as legacy suggestions to improve rather
 than settled policy. Use the existing `$harness-engineering` skill for active
 harness edits until this draft is promoted.
