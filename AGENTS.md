@@ -16,6 +16,15 @@ Planned deliverables:
 2. Durable Rust crates for symplectic geometry and exact arithmetic: `crates/`
 3. A reproducible experiment pipeline: `experiments/`
 
+Quality objectives for this long-running multi-agent project:
+- Agents should be able to explore the repo quickly, maintain existing work,
+  develop exploratory code rapidly, polish selected results for publication,
+  verify mathematical and implementation correctness, reproduce results and
+  reasoning, track progress, and prioritize research ideas.
+- These objectives are instrumental: structure, comments, maps, datasets, and
+  task notes should make the next agent's work cheaper to inspect, check, and
+  continue.
+
 ## Domain Map
 
 ```text
