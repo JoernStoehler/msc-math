@@ -40,7 +40,7 @@ packet that produces the finding.
    `ls .agents/skills/verification/references`
 4. Packet files in `references/` intentionally use statement-form names such as
    `x-are-y.md`. Treat that as a signal that the file owns a real reusable
-   verification condition, not scratch notes or generic background prose.
+   verification condition, not temporary notes or generic background prose.
 5. If the dedicated packet is missing, use the nearest authority surface and
    state the gap explicitly instead of inventing a new packet in the reply.
 6. Report findings first. Separate:
@@ -122,7 +122,7 @@ For long checklists, do not force one top-to-bottom pass in one burst.
 
 - Split by independent read sets when that is obviously cheaper.
 - Pause at reasoning steps instead of free-associating through the whole list.
-- Write intermediate notes to `/tmp/` or another scratch path when the pass is
+- Write intermediate notes to `/tmp/` when the pass is
   large enough that you would otherwise lose state.
 
 This skill is intended for ongoing verification work during the project, not

@@ -69,7 +69,7 @@ Workspace and folder rule:
   prefer copying the small loader/check code needed for the local method over
   creating a shared import surface. If a worker must reuse an existing helper,
   the report must name that coupling.
-- Use `/tmp` only for scratch inputs or outputs. Terminal verdicts need
+- Use `/tmp` only for temporary inputs or outputs. Terminal verdicts need
   repo-owned code/report/source truth.
 
 Execution shape:

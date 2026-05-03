@@ -84,7 +84,7 @@ enough that an agent can skim it before opening local sources.
   proof that the map was exhaustively verified.
 - If a fact came from a dated migration or snapshot, include the date and say
   what would refresh it.
-- Do not cite scratch files as current authority unless the task explicitly
+- Do not cite temporary files as current authority unless the task explicitly
   promotes them.
 
 ## Coordination

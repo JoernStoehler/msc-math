@@ -80,7 +80,7 @@ Prefer "make later edits cheaper" over "make this diff look clever."
 
 ## Triage Output
 
-Before multi-packet execution, write two files under `scratch/`:
+Before multi-packet execution, write two files under `/tmp/`:
 
 1. `improvement-<date>-packets.md`
 2. `improvement-<date>-worker-context.md`
@@ -248,7 +248,7 @@ Do not self-upgrade that into a merge-to-`main` step.
 
 When the round is over:
 
-- delete session-only scratch packet files if the durable knowledge moved into a
+- delete session-only packet files if the durable knowledge moved into a
   skill, `ROADMAP.md`, or `tasks/*.md`
 - remove merged worktrees
 - delete merged packet branches

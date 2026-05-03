@@ -45,7 +45,7 @@ Use this template:
   - Looked shallow because it was read-only inventory plus path existence checks.
   - Expected failure mode: confusing formal-file coverage with research-note migration coverage, or over-editing `TASKS.md`.
 - Actual output:
-  - Answer/report path: `/tmp/1-answer.md`; detailed ignored scratch report at `.codex/worktrees/audit-research-migration-coverage/scratch/research-migration-coverage.md`.
+  - Answer/report path: `/tmp/1-answer.md`; detailed ignored report stayed in the audit worktree.
   - Commit(s): top-level integration commit `296a6511` changed the stale `TASKS.md` pointer for the deleted `experiments/hko-local-maximum/subdifferential-lp/` path to `research/hko-local-maximum/design/subdifferential-lp.md`.
   - Files changed by top-level integration: `TASKS.md`.
   - Verification run: delegate reported 33/33 live experiment directories covered by research notes, no live `logbook.md` remnants, and only `experiments/verification/algorithm-comparison/profiling/logbook.jsonl` as live logbook-named data.

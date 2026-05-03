@@ -23,7 +23,7 @@ Do project management with Jörn, not for Jörn in a hidden plan. Surface only t
 ## Operating Loop
 
 1. Start from `ROADMAP.md`, then open the relevant `tasks/*.md` bundle.
-2. Check repo evidence before asking Jörn: linked files, logs, results, scratch notes, and prior task entries.
+2. Check repo evidence before asking Jörn: linked files, logs, results, temporary notes, and prior task entries.
 3. Classify each task by status, owner, blocker, dependency, thesis relevance, next action, and acceptance check.
 4. Rewrite the relevant task bundle so a later agent can resume from it:
    sections carry status and key state; bodies carry decisions, evidence links,

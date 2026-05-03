@@ -11,7 +11,7 @@ language, task bundle, or skill.
   is not task success.
 - Before replying, do the next useful step, ask one Jörn-only question, or
   report a concrete blocker. Do not hand off status only.
-- Remove generated scratch/build artifacts that are clearly from the current
+- Remove generated temporary/build artifacts that are clearly from the current
   agent's command and not intended deliverables. Do not remove files whose
   origin or purpose is ambiguous; leave unrelated untracked or dirty work alone.
 

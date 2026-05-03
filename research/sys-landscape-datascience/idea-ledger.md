@@ -114,7 +114,7 @@ Every spike packet should state:
 - stop conditions, especially `sys > 1`, stale dataset mismatch, or an
   implementation bug that invalidates the result.
 
-Workers may write scratch artifacts in their worktree or under `/tmp`, but they
+Workers may write temporary artifacts in their worktree or under `/tmp`, but they
 must not edit tracked `.jsonl` outputs unless the packet explicitly asks for a
 canonical refresh.
 
@@ -127,7 +127,7 @@ canonical refresh.
 | `endpoint-residualized-regression` | Endpoint residualized regression beyond metadata | method | Existing residualized-regression packet | Whether endpoint geometry/orbit/trajectory blocks add grouped-CV signal beyond metadata | `future` | Existing script lacks a reviewed report/ledger disposition; decide thesis role after report review. |
 | `pca-cluster-anomaly` | PCA / clustering / anomaly scan over current feature blocks | method spike | Existing 282-row table and committed feature JSONL | A non-post-hoc cluster or component rule that suggests where to search, or a bounded negative result | `negative` | Main commit `39039550` creates `experiments/sys-landscape/datascience/methods/pca-cluster-spike/` with script and report. |
 | `supervised-alternatives` | Cheap supervised alternatives: lasso, elastic net, boosting, kNN | method spike | Current feature tables only | Whether standard extra models change `feature-block-regression` / `regime-classification` conclusions under the same grouped split policy | `negative` | Main commit `5e8db378` creates `experiments/sys-landscape/datascience/methods/supervised-alternatives-spike/`; lead had to run the worker's script to produce the report. |
-| `stat-sanity` | Null, permutation, and bootstrap uncertainty checks | sanity | Existing feature-block/regime-classification/residualized-regression outputs | Chance baseline and fold uncertainty for claimed pattern or non-pattern | `negative` | Provisional negative: worker spike found above-null within-regime pockets, but the load-bearing random-to-endpoint transfer still has strongly negative R^2. Evidence was promoted into this ledger and the toolbox audit from scratch output; before thesis use, repair with repo-owned source truth or downgrade to non-load-bearing caveat evidence. |
+| `stat-sanity` | Null, permutation, and bootstrap uncertainty checks | sanity | Existing feature-block/regime-classification/residualized-regression outputs | Chance baseline and fold uncertainty for claimed pattern or non-pattern | `negative` | Provisional negative: worker spike found above-null within-regime pockets, but the load-bearing random-to-endpoint transfer still has strongly negative R^2. Evidence was promoted into this ledger and the toolbox audit from temporary output; before thesis use, repair with repo-owned source truth or downgrade to non-load-bearing caveat evidence. |
 | `exact-f64-spot-check` | Exact-vs-f64 spot checks for mathematical columns | sanity | Sampled rows from table-stage features | Detect whether a column implementation turns a true signal into noise | `negative` | Main commit `e8528963` creates `experiments/sys-landscape/datascience/methods/exact-f64-spot-check/`; sampled checked columns showed only f64-scale drift. |
 | `deep-latent-models` | Neural networks or deep latent models | method | Current 282-row dataset | Would need overfit controls and enough rows for flexible models | `rejected-low-voi` | Too small and too easy to overfit before thesis closeout; reopen only with much larger data. |
 | `svm-supervised-baseline` | SVM regression/classification baseline | method spike | Current feature tables only | Whether a standard margin-based model changes the supervised negative-transfer or regime-classification story under the same grouped split policy | `future` | Candidate for one optional small parallel wave. Skip if setup cost is not clearly lower than its thesis value; otherwise write source truth under `experiments/sys-landscape/datascience/methods/svm-supervised-baseline/`. |
@@ -323,7 +323,7 @@ Qualifiers: `evidence_strength = medium`; `implementation_trust = medium`;
 ### `stat-sanity` Null / Permutation / Bootstrap Sanity Checks
 
 Disposition: provisional evidence promoted into this ledger and
-`research/sys-landscape-toolbox-audit.md`; scratch worktree discarded. Treat as
+`research/sys-landscape-toolbox-audit.md`; temporary worktree discarded. Treat as
 an open source-truth repair or downgrade before thesis use because the script,
 report, and run outputs are not committed under the current report-ledger
 contract.

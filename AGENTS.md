@@ -75,6 +75,7 @@ research/
   *.md
   sys-landscape-datascience/
 papers/<abbreviationYear>/
+/tmp/  (outside repo)
 ```
 
 - `thesis/` is publishable and self-contained. It owns or copies publication
@@ -92,6 +93,9 @@ papers/<abbreviationYear>/
 - `research/` contains interpreted analysis, decision history, proof-route
   state, topic summaries, and the `research/INDEX.md` navigation cache.
 - `papers/<abbreviationYear>/` contains downloaded arXiv paper sources.
+- `/tmp/` is the place for ephemeral prompt snippets, one-off reports, and
+  generated artifacts that should not become repo source truth. Promote durable
+  outcomes into the relevant repo surface instead of leaving them in `/tmp/`.
 
 Domain map files:
 - `research/INDEX.md`: interpretation notes, proof-route state, research-result
@@ -133,10 +137,10 @@ tasks/
   *setup*.sh
   *smoke*.sh
   *warmup*.sh
-scratch/
 scripts/
   codex-worktree.sh
   toc.sh
+/tmp/  (outside repo)
 ```
 
 - Use the discoverable skill whose name and description match the task; detailed
@@ -154,7 +158,9 @@ scripts/
   surface.
 - `.devcontainer/` documents and configures the local devcontainer and Codex web
   environment, including setup, smoke, and cache-warmup scripts.
-- `scratch/` is undocumented temporary material, not current convention text.
+- `/tmp/` is the default place for temporary agent prompts, worker packets,
+  draft reports, and artifacts to inspect or show Jörn. Do not rely on `/tmp/`
+  for terminal verdicts or durable project state.
 - `scripts/codex-worktree.sh` creates repo-local Codex worktrees.
 - `scripts/toc.sh` prints Markdown heading ranges for map and instruction
   review.

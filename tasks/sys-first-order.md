@@ -134,8 +134,8 @@ row is not handled, the verdict is not `PROVED`.
   secretly substitutes Hadamard differentiability, smooth branches, ray limits,
   or per-direction optimization for the compute-once evaluator.
 - [fresh 2026-04-29] This task bundle is intended to be self-contained. Do not
-  open scratch artifacts to decide the theorem shape unless this file is missing
-  a specific fact needed for provenance.
+  rely on removed temporary artifacts to decide the theorem shape unless this
+  file is missing a specific fact needed for provenance.
 - [fresh 2026-05-01] Generic/support terminology now used in the thesis draft:
   `HK-generic row parameter` means simultaneous finite nonvanishing conditions
   for all listed support/order candidates; `feasible generic support maximum`
@@ -145,8 +145,8 @@ row is not handled, the verdict is not `PROVED`.
 
 ## Pruned / Stale
 
-- [stale 2026-04-29] Failure provenance only:
-  `scratch/sys-first-order-chapter.pdf` used a `C^2` branch hypothesis as the
-  main theorem. Do not use it as source truth or as the requested chapter. That
-  route assumes away the arbitrary-polytope degeneracies this bundle exists to
+- [stale 2026-04-29] Failure provenance only: the removed temporary
+  `sys-first-order-chapter.pdf` used a `C^2` branch hypothesis as the main
+  theorem. Do not use that route as source truth or as the requested chapter.
+  It assumes away the arbitrary-polytope degeneracies this bundle exists to
   handle.

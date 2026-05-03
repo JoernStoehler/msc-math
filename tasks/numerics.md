@@ -98,11 +98,11 @@ Context: route-freeze surface for proof-vs-validation-vs-caveat decisions.
   tasks.
   Refresh by: reading `thesis/migration-findings.md`.
 - [fresh 2026-05-01; staleness caveat: source/output inspection, not rerun
-  verification] `scratch/numerics-strong-route-state-report.md` records a
-  read-only audit of the strong numerics route. Its verdict was `WEAKENED`:
-  the repo supports a truthful f64 diagnostic plus exact/empirical validation
-  story, but not a claim that public `ehz_capacity*` wrappers are fully
-  certified numerical solvers.
+  verification] A read-only audit of the strong numerics route returned verdict
+  `WEAKENED`: the repo supports a truthful f64 diagnostic plus exact/empirical
+  validation story, but not a claim that public `ehz_capacity*` wrappers are
+  fully certified numerical solvers. The temporary report was removed with the
+  repo-local temporary-file cleanup; refresh from source surfaces instead.
   Refresh by: rerunning the contract audit against `lib.rs`,
   `orbit_search.rs`, `formal/hk2017-qp-core.tex`,
   `formal/hk2017-qp-precision.tex`,
