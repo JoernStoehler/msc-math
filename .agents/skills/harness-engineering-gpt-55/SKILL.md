@@ -13,4 +13,5 @@ the current draft material. During this migration, treat old harness material,
 including existing `SKILL.md` files, as legacy suggestions to improve rather
 than settled policy. The old `$harness-engineering` skill has been deleted; use
 this draft skill, the current chat, and Jörn's current instructions for
-migration work until a fresh target skill is promoted.
+migration work. The fresh `$harness` skill is the first rebuilt target surface
+for active repo-local harness edits.

@@ -117,6 +117,7 @@ files as current policy.
 ```text
 .agents/
   skills/
+    harness/
     harness-engineering-gpt-55/
 .codex/
   worktrees/
@@ -139,9 +140,10 @@ scripts/
 /tmp/  (outside repo)
 ```
 
-- `.agents/skills/harness-engineering-gpt-55/` is the only repo-local skill
-  retained during migration. It contains the migration plan and extractions from
-  the deleted old harness.
+- `.agents/skills/harness/` is the first fresh GPT-5.5 target skill for
+  repo-local agent-facing harness material.
+- `.agents/skills/harness-engineering-gpt-55/` contains migration plans and
+  extractions from the deleted old harness.
 - Old `.agents/skills/*`, `.codex/agents/*`,
   `.codex/reference/harness/*`, `.codex/reference/domain/conventions.md`, and
   `.codex/reference/repo-maintainability/design/*` were deleted as active
