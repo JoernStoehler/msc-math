@@ -103,6 +103,9 @@ Domain map files:
 - `thesis/submission/README.md`: university forms, submission mechanics, and
   preservation actions.
 
+Map and index files are navigation caches over source truth. Their file-local
+HTML comments say how to check or refresh them.
+
 ## Harness Map
 
 ```text
@@ -159,6 +162,9 @@ Harness map files:
 - `tasks/<group>.md`: topic and cross-cutting mini-roadmaps with cached task
   state.
 - `tasks/verify-thesis-done.md`: final thesis-done gate.
+
+Roadmap and task files own work routing, not domain proof or experiment truth.
+Use their file-local comments and `tasks/README.md` for refresh rules.
 
 ## Environment
 
@@ -225,6 +231,15 @@ All conventions serve the long-term quality objectives, the final publication ob
 - track task states, external decisions from Jörn, and results of expensive tests/checks to allow future agents to deem checks unnecessary/unchanged
 - move unnecessary claims into the git history i.e. delete them, since they are expensive to verify
 
+### Chat With Jörn
+- use chat and `/tmp` artifacts to make Jörn's feedback efficient; keep durable
+  repo files optimized for future agents and source truth
+- gather repo evidence and do preliminary reasoning before asking Jörn for decisions
+- ask Jörn for thesis scope, mathematical judgment, advisor-facing framing,
+  taste, external-world actions, and design pivots; do not ask him to do
+  agent-checkable grep, inventory, comparison, or first-pass drafting
+- present long math to Jörn via pdf, not latex source; use chat for short math.
+
 ### Tasks
 - `ROADMAP.md` is an overview of `tasks/`, not a source of truth.
 - `tasks/` documents what remains to be done, but defers to `research/` and the other domain files for domain-specific details. It tracks what needs to be done, with what dependencies.
@@ -252,6 +267,9 @@ All conventions serve the long-term quality objectives, the final publication ob
 - similar to Rust: write plainly, avoid abstraction, be predictable, and so on
 - we mostly script/orchestrate with rust, so imperative style and little typing is fine
 - stick to a "data science" style for rapid development
+- use `Path(__file__).resolve().parent` for paths relative to the script
+- use `experiments/figure_config.py` for figure styling when relevant
+- figure captions should state observations before interpretation
 
 ### LaTeX in formal/
 - agents are the most frequent readers, Jörn reviews for correctness and clarity, not style
@@ -262,6 +280,9 @@ All conventions serve the long-term quality objectives, the final publication ob
 - use comments to track the "why" behind the current definitions/statements/proof methods, don't discuss historical attempts beyond what matters for the current state and for anticipated future work.
 - use grep-able latex labels and reference them
 - be fully rigorous in what conditions and guarantees lemmas claim, and in what inputs and outputs algorithms provide.
+- new agent-written mathematics is unapproved unless it is mechanical or
+  explicitly approved by Jörn
+- don't hardcode theorem numbers; use labels and check references
 
 ### LaTeX in thesis/
 - the audience for which we write is Kai, Elizabeth, and the hypothetical master students who build upon this thesis in the future.
@@ -292,8 +313,42 @@ All conventions serve the long-term quality objectives, the final publication ob
 - the research notes describe what the experiments are for, and interpret their results.
 - sibling experiments should be mostly independent from each other, to faciliate rapid development
 - data is located next to the producer
+- do not patch-edit generated `.jsonl`, `.csv`, or figure outputs; regenerate
+  them or document the needed refresh
+- if tracked generated data changes unexpectedly, stop and report the file and
+  command
 - use script-like python and rust binaries, make the pipeline simple and reproducible and documented
 - for development, provide smoke paths (smoke input data, smoke output data, smoke parameter settings)
 - for large datasets, provide a slurm job script to be run on LICCA
 - shared code is owned by the parent of the experiments that use it
 - we use jsonl for data, because agents can manipulate it easily, and it's flexible enough for the rust row types we have
+
+### Cluster and external execution
+- agents do not have LICCA SSH access; prepare scripts, binaries, resource
+  choices, and retrieval instructions for Jörn instead
+- Jörn submits cluster jobs and retrieves external results unless the files are
+  already present locally
+- resource choices need a short justification
+
+### Using Subagents
+- subagents are for bounded first-pass labor, bounded verification, and
+  independent checks; the top-level session owns integration and final claims
+- delegate output is untrusted evidence until checked
+- every subagent prompt needs a required cwd, scope, ownership, success check,
+  output format, reserved decisions, and stop condition
+- don't prematurely prescribe the approach, focus on the outcome and how to measure success
+- use `gpt-5.3-codex-spark` for super-fast low-intelligence tasks such as text
+  refactoring without a need for scientific understanding or reasoning
+
+### Git, Worktrees, Merging
+- inspect git status before deleting, moving, or replacing active paths in main
+- use worktrees for isolated or parallel overlapping work
+- destructive git operations require explicit approval
+- merge conflicts are resolved by semantic truth and current repo state, not by
+  timestamp, branch side, author, or task ownership
+- merge-to-main requires approval from Jörn, and a thorough review of the branch
+
+### Post Mortem
+- after sessions, reflect on what was necessary for success, and what was wasted effort
+- report a blameless post-mortem in chat, don't follow-up with high-risk actions
+- brainstorm, triage and present potential repo changes that affect future agents positively

@@ -2,6 +2,15 @@
 Purpose: navigation cache for experiment packages and experiment-owned data.
 Context: this map helps agents find topic packages, helper crates, and
 experiment artifact patterns. It is descriptive, not a task tracker.
+
+Map maintenance:
+- Source truth is package manifests, entrypoints, local READMEs, helper crates,
+  generated artifact locations, research notes, and task bundles.
+- To check staleness, compare affected sections against those sources with
+  targeted `rg`, `rg --files`, manifests, and local package headers.
+- To refresh, update navigation and provenance facts; route thesis
+  interpretation to `research/` and task state to `tasks/`.
+- Keep entries short; point to source files instead of duplicating details.
 -->
 
 # Experiments Map

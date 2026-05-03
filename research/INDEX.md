@@ -1,6 +1,15 @@
 <!--
 Purpose: index and conventions for research interpretation and proof-route notes.
 Context: research notes are first-class epistemic artifacts, not task trackers.
+
+Index maintenance:
+- Source truth is topic research notes, proof-bearing sources, experiment
+  outputs, task bundles, and accepted Jörn/Kai decisions.
+- To check staleness, compare affected rows against the referenced research
+  notes and task files; do not treat this index as a proof or task-status owner.
+- To refresh, update synthesis and routing only; keep full reasoning in topic
+  notes and work obligations in `tasks/*.md`.
+- Keep entries short; point to source files instead of duplicating details.
 -->
 
 # Research Index

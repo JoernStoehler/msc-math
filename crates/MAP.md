@@ -2,6 +2,15 @@
 Purpose: navigation cache for durable Rust crates.
 Context: this map helps agents find crate subsystems, public API tiers, and
 code/math boundaries. It is descriptive, not a refactor backlog.
+
+Map maintenance:
+- Source truth is crate source, crate READMEs, manifests, formal labels cited
+  from code, and tests; this file is a cache over those sources.
+- To check staleness, compare affected sections against those source files with
+  targeted `rg`, `rg --files`, manifests, and local module headers.
+- To refresh, update only navigation facts and route API/refactor/task
+  decisions to tasks or implementation files.
+- Keep entries short; point to source files instead of duplicating details.
 -->
 
 # Crates Map
