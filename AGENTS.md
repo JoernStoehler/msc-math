@@ -291,7 +291,7 @@ All conventions serve the long-term quality objectives, the final publication ob
 ### Experiments
 - the research notes describe what the experiments are for, and interpret their results.
 - sibling experiments should be mostly independent from each other, to faciliate rapid development
-- data is owned by the producer, config owned by the consumer
+- data is located next to the producer
 - use script-like python and rust binaries, make the pipeline simple and reproducible and documented
 - for development, provide smoke paths (smoke input data, smoke output data, smoke parameter settings)
 - for large datasets, provide a slurm job script to be run on LICCA
