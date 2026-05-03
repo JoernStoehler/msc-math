@@ -43,8 +43,8 @@ Context: route-freeze surface for proof-vs-validation-vs-caveat decisions.
 | item | state | value class | owner/gate | next action | source |
 | --- | --- | --- | --- | --- | --- |
 | Numerical appendix route freeze | `[map-input]` | mainline thesis | agent prep then Jorn | Decide whether thesis prose describes public f64 wrappers, the stronger exact/guaranteed verification layer, or both with an explicit boundary. | `research/numerics*.md`, `thesis/appendix-numerical.tex`, `crates/symplectic/src/lib.rs`, `crates/symplectic/src/algorithms/orbit_search.rs` |
-| Generic-case solver contract | `[active]` | mainline thesis | agent prep then Jorn math review | Draft the exact generic theorem with conditions on `C`, reduced Hessian eigenvalues, beta margin, Q/action gap, and adjacency/pruning assumptions; then align experiment f64 diagnostics to those variables. | `research/numerics-error-bounds.md`, `formal/hk2017-qp-error-bounds.tex`, `experiments/numerics/error-bounds/` |
-| Numerical error bounds | `[map-input]` | contingent during writing | retained wording | Treat as proved exact/Q pieces plus empirical eta checks plus named caveats; fix/caveat only the pieces the thesis cites. Under the generic route, record each caveat as a generic precondition, non-generic limit behavior, empirical formula, or Jorn review question. | `formal/hk2017-qp-error-bounds.tex`, `experiments/numerics/q-error/q_error_output.txt`, `thesis-stories-are-supported.md` |
+| Generic-case solver contract | `[active]` | mainline thesis | agent prep then Jorn math review | Draft the exact generic theorem with conditions on `C`, reduced Hessian eigenvalues, beta margin, Q/action gap, and adjacency/pruning assumptions; then align experiment f64 diagnostics to those variables. | `research/numerics-error-bounds.md`, `formal/hk2017-qp-core.tex`, `formal/hk2017-qp-precision.tex`, `experiments/numerics/error-bounds/` |
+| Numerical error bounds | `[map-input]` | contingent during writing | retained wording | Treat as proved exact/Q pieces plus empirical eta checks plus named caveats; fix/caveat only the pieces the thesis cites. Under the generic route, record each caveat as a generic precondition, non-generic limit behavior, empirical formula, or Jorn review question. | `formal/hk2017-qp-core.tex`, `formal/hk2017-qp-precision.tex`, `experiments/numerics/q-error/q_error_output.txt`, `thesis-stories-are-supported.md` |
 | Projection solver | `[map-input]` | contingent during writing | Jorn math if retained | Use the projection/null-space solver as the candidate generic-route implementation story. Do not claim it is the public capacity backend until `OrbitSolveBackend::Projected` returns the shared orbit payload and Q-bound contract. | `crates/symplectic/src/algorithms/orbit_search.rs`, `experiments/numerics/error-bounds/projection_solver.rs` |
 | Beta-LP unification | `[future]` | future/follow-up by default | Jorn math if retained | Keep as future unless needed for retained solver explanation. | legacy beta-LP row |
 | Solver formal writeup | `[map-input]` | contingent during writing | retained wording | Avoid full per-module formalization unless thesis text requires it. | `formal/`, `research/numerics-error-bounds.md` |
@@ -84,11 +84,13 @@ Context: route-freeze surface for proof-vs-validation-vs-caveat decisions.
   Final Answer", `crates/symplectic/src/lib.rs`, and
   `crates/symplectic/src/algorithms/orbit_search.rs`.
 - [fresh 2026-04-25] Current formal numerics state is not a fully proved
-  numerical solver: `formal/hk2017-qp-error-bounds.tex` contains exact per-sigma
+  numerical solver: `formal/hk2017-qp-core.tex` and
+  `formal/hk2017-qp-precision.tex` contain exact per-sigma
   solver and trinary beta material, plus named gaps around near-threshold beta,
   empirical constants, and Taylor-cancellation algebra. Q-error experiments
   support known-polytopes/winner accuracy but do not remove those caveats.
-  Refresh by: reading `formal/hk2017-qp-error-bounds.tex` gap comments and
+  Refresh by: reading `formal/hk2017-qp-core.tex` and
+  `formal/hk2017-qp-precision.tex` gap comments and
   `experiments/numerics/q-error/q_error_output.txt`.
 - [fresh 2026-04-25] `thesis/migration-findings.md` rows 3-11 are the
   algorithm/numerics part of the thesis/code mismatch packet. Most are
@@ -102,7 +104,8 @@ Context: route-freeze surface for proof-vs-validation-vs-caveat decisions.
   story, but not a claim that public `ehz_capacity*` wrappers are fully
   certified numerical solvers.
   Refresh by: rerunning the contract audit against `lib.rs`,
-  `orbit_search.rs`, `formal/hk2017-qp-error-bounds.tex`,
+  `orbit_search.rs`, `formal/hk2017-qp-core.tex`,
+  `formal/hk2017-qp-precision.tex`,
   `experiments/numerics/error-bounds/`, `q-error`, and `kkt-inertia` outputs.
 - [fresh 2026-05-01] Current alignment snapshot: formal and experiment
   `error-bounds` surfaces are projection/null-space oriented; public

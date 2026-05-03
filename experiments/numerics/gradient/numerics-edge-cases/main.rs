@@ -26,11 +26,11 @@
 //!
 //! Mathematical correspondence:
 //! - [lem:cap-derivative] (unverified): envelope theorem formula for dc/da_k.
-//!   In formal/capacity-algorithms.tex.
+//!   In formal/capacity-derivatives.tex.
 //! - [lem:vol-derivative] (unverified): chain rule formula for dvol/da_k.
-//!   In formal/capacity-algorithms.tex.
+//!   In formal/capacity-derivatives.tex.
 //! - [prop:capacity-piecewise-smooth] (unverified): piecewise C^inf, generic differentiability.
-//!   In formal/capacity-algorithms.tex.
+//!   In formal/capacity-derivatives.tex.
 //!
 //! Architecture:
 //! 1. `cargo run --release --bin gradient-edge-cases` -> JSONL files

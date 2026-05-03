@@ -390,7 +390,7 @@ Source candidates:
 
 Source candidates:
 - `tasks/numerics.md`
-- `formal/hk2017-qp-error-bounds.tex`
+- `formal/hk2017-qp-core.tex`, `formal/hk2017-qp-precision.tex`
 - `experiments/numerics/q-error/q_error_output.txt`
 - `thesis/appendix-numerical.tex`
 - `crates/symplectic/src/lib.rs`

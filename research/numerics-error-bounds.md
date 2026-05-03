@@ -5,7 +5,7 @@
 Staleness note: this section preserves the 2026-04-30/2026-05-01
 numerics-strong-route audit and Jorn's follow-up steering. It is a resume cache,
 not proof closure. Refresh it before thesis-facing wording by rereading
-`formal/hk2017-qp-error-bounds.tex`, `experiments/numerics/error-bounds/`,
+`formal/hk2017-qp-core.tex`, `formal/hk2017-qp-precision.tex`, `experiments/numerics/error-bounds/`,
 `crates/symplectic/src/lib.rs`, and
 `crates/symplectic/src/algorithms/orbit_search.rs`.
 
@@ -33,7 +33,8 @@ The route should now be generic-case first:
    explodes as the condition margin goes to zero, and whether finite precision
    leaves the local generic neighborhood.
 
-The main alignment issue is unchanged: `formal/hk2017-qp-error-bounds.tex` and
+The main alignment issue is unchanged: `formal/hk2017-qp-core.tex`,
+`formal/hk2017-qp-precision.tex`, and
 the experiment harness are projection/null-space oriented, but the public
 `ehz_capacity*` wrappers use saddle-point solving plus f64-only aggregation by
 default. A thesis claim can say "certified under the stated generic
@@ -58,7 +59,7 @@ non-generic limits.
 
 1. **Track the algorithm design discussion** (the specification below, the vertex-enumeration dead end, the projection solver insight) in this file.
 
-2. **Write `formal/hk2017-qp-error-bounds.tex`** formalizing:
+2. **Write `formal/hk2017-qp-core.tex` and `formal/hk2017-qp-precision.tex`** formalizing:
    - The solver specification (inputs, outputs, trinary classification)
    - The projection solver algorithm (SVD of C → eigendecompose H' → classify → check β → compute Q)
    - Direction-dependent β error bounds (1/|λ_i| amplification in eigenvector directions of H')
@@ -75,7 +76,9 @@ non-generic limits.
 ## Out of scope
 
 - Library promotion (library/src/kkt/ changes) — do after the algorithm is settled.
-- Thesis chapter writing — `formal/hk2017-qp-error-bounds.tex` is the source; thesis copies from it later.
+- Thesis chapter writing — `formal/hk2017-qp-core.tex` and
+  `formal/hk2017-qp-precision.tex` are the source; thesis copies from them
+  later.
 - Merging to main — Jörn gates merges.
 - Rational solver fallback for INDETERMINATE cases — design decision for later.
 
@@ -86,7 +89,7 @@ non-generic limits.
   - `collect_poly.rs` — stage 1 binary for polytope σ-node collection
   - `projection_solver.rs` and `saddle_point_solver.rs` — f64 solver copies
   - `analyze.py` — stage 3 checks (propositions, bounds, β > 0 classification)
-  - `formal/hk2017-qp-error-bounds.tex` — solver specification, proved pieces,
+  - `formal/hk2017-qp-core.tex`, `formal/hk2017-qp-precision.tex` — solver specification, proved pieces,
     preconditions, and named gaps
   - `research/numerics-error-bounds.md` — full findings and status
   - `testdata/*.jsonl` — committed regression fixtures
@@ -154,7 +157,8 @@ The solver takes f64 (H, C, d) and returns:
    that Q is insensitive to beta uncertainty in low-eigenvalue directions
    because Q varies as O(λ_i · |δβ_i|²) there; the first-order term vanishes by
    stationarity + null(C) orthogonality. The Taylor-cancellation algebra remains
-   a named proof gap where `formal/hk2017-qp-error-bounds.tex` marks it.
+   a named proof gap where `formal/hk2017-qp-core.tex` and
+   `formal/hk2017-qp-precision.tex` mark it.
 
 ### Key insight: "continuity of variables"
 
@@ -222,7 +226,7 @@ The capacity algorithm iterates over all subsets S ⊆ {1,...,F} and all cyclic 
 
 ### Scope and iteration guidance
 
-**Agent owns:** All experiment files (`main.rs`, `projection_solver.rs`, `saddle_point_solver.rs`, `collect_poly.rs`, `analyze.py`), `formal/hk2017-qp-error-bounds.tex`, `research/numerics-error-bounds.md`, JSONL data, `tasks/numerics.md` updates, solver algorithm changes.
+**Agent owns:** All experiment files (`main.rs`, `projection_solver.rs`, `saddle_point_solver.rs`, `collect_poly.rs`, `analyze.py`), `formal/hk2017-qp-core.tex`, `formal/hk2017-qp-precision.tex`, `research/numerics-error-bounds.md`, JSONL data, `tasks/numerics.md` updates, solver algorithm changes.
 
 **Needs Jörn:** GAP in cor:taylor-structure proof, mathematical review of new bounds, merge to main, scope decisions.
 
@@ -252,10 +256,10 @@ cat experiments/verification/correctness/correctness.jsonl experiments/sys-lands
 
 ## Success criteria
 
-1. `formal/hk2017-qp-error-bounds.tex` states the exact generic solver
+1. `formal/hk2017-qp-core.tex` and `formal/hk2017-qp-precision.tex` state the exact generic solver
    specification as definitions and lemmas, with each non-generic case either
    excluded by a precondition or routed to a limit/indeterminate discussion.
-2. `formal/hk2017-qp-error-bounds.tex` proves the direction-dependent beta error
+2. `formal/hk2017-qp-core.tex` and `formal/hk2017-qp-precision.tex` prove the direction-dependent beta error
    bound under those generic preconditions, or marks the remaining missing
    lemma with a clear GAP/Jorn question.
 3. `experiments/numerics/error-bounds/projection_solver.rs` matches the generic

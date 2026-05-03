@@ -1,0 +1,102 @@
+% formal/reeb-orbit-recovery.tex — orbit recovery material
+% Sources: thesis/simple-minimizer-existence.tex
+
+\begin{definition}[Simple Reeb orbit]\label{def:simple-reeb-orbit}
+% Source: thesis/simple-minimizer-existence.tex
+A generalized Reeb orbit $\gamma$ on a polytope $K$ is \emph{simple} if
+its velocity is piecewise constant, each constant value is a facet Reeb
+vector $R_i$, and for each facet index $i$ the set
+\[
+  \{ t \in [0,T] : \dot{\gamma}(t) = R_i \}
+\]
+is a single interval, possibly empty.
+\end{definition}
+
+\begin{lemma}[Base point recovery]\label{lem:base-point-recovery}
+% Jörn: math approved (f7d26ea)
+% Source: thesis/simple-minimizer-existence.tex
+% Parameterization: K = {x : a_i^T x ≤ 1}, dual vertices a_i
+Let $K = \{x : \langle a_i, x \rangle \leq 1\}$ be a polytope
+and $(\sigma, \tau, b)$ a simple orbit
+with $m$ active facets
+$S = \{\sigma(k) : \tau_k > 0\}$.
+Define the accumulated displacements
+\[
+  v_0 = 0, \qquad
+  v_k = \sum_{j=1}^{k-1} \tau_j\, R_{\sigma(j)}
+  \quad \text{for } k = 1, \ldots, m.
+\]
+A point $b \in \mathbb{R}^4$ is a valid base point
+(i.e., the orbit $\gamma$ with $\gamma(0) = b$ and
+velocity $R_{\sigma(k)}$ on the $k$-th segment
+is a generalized Reeb orbit on~$\partial K$) if and only if:
+\begin{enumerate}
+\item \emph{On-facet (equality):}
+  for each active $k$,
+  $\langle a_{\sigma(k)},\, b \rangle
+    = 1 - \langle a_{\sigma(k)},\, v_k \rangle$;
+\item \emph{Inside $K$ (inequality):}
+  for each active segment $k$ and all $s \in [0, \tau_k]$,
+  $\langle a_j,\, b + v_k + s\, R_{\sigma(k)} \rangle
+    \leq 1$ for all $j = 1, \ldots, F$.
+\end{enumerate}
+The equality constraints form
+a linear system $A_S\, b = r$ with $m$ equations and $4$~unknowns.
+The set of valid base points is a convex polytope of
+dimension at most $4 - \operatorname{rank}(A_S)$.
+\end{lemma}
+
+\begin{proof}
+\emph{Equality constraints.}
+During the $k$-th segment, the orbit position is
+\[
+  \gamma(t) = b + v_k + (t - t_k)\, R_{\sigma(k)},
+  \quad t \in [t_k,\, t_k + \tau_k],
+\]
+where $t_k = \sum_{j=1}^{k-1} \tau_j$.
+For $\gamma$ to lie on facet $F_{\sigma(k)}$,
+we require $\langle a_{\sigma(k)},\, \gamma(t) \rangle
+= 1$ throughout the segment.
+Since $R_{\sigma(k)}$ is tangent to $F_{\sigma(k)}$
+($\langle a_{\sigma(k)}, R_{\sigma(k)} \rangle = 0$),
+the time-dependent term vanishes:
+\[
+  \langle a_{\sigma(k)},\, \gamma(t) \rangle
+  = \langle a_{\sigma(k)},\, b + v_k \rangle.
+\]
+Hence the on-facet condition for the entire segment
+reduces to a single equation.
+
+\emph{Inequality constraints.}
+The orbit must remain inside~$K$:
+$\langle a_j, \gamma(t) \rangle \leq 1$
+for all $j$ and all~$t$.
+Since $\gamma(t)$ is affine in~$t$ on each segment,
+each inequality is linear in~$s$.
+A linear function on $[0, \tau_k]$ attains its
+maximum at an endpoint, so it suffices to
+check at $s = 0$ and $s = \tau_k$ only.
+
+\emph{Solution structure.}
+The equality constraints are a linear system
+$A_S\, b = r$ in~$b \in \mathbb{R}^4$.
+Its solution set is an affine subspace of
+dimension $4 - \operatorname{rank}(A_S)$.
+The inequality constraints are linear in~$b$,
+so the intersection is a convex polytope.
+\end{proof}
+
+\begin{remark}[Conversion from algorithm output]\label{rem:beta-to-tau}
+% Jörn: math approved (f7d26ea)
+% Source: thesis/simple-minimizer-existence.tex
+% Parameterization: K = {x : a_i^T x ≤ 1}, dual vertices a_i
+Algorithm~\ref{alg:ehz} outputs a permutation~$\sigma$ and
+a vector~$\beta$ with $\beta_i \geq 0$ and
+$\sum_i \beta_i = 1$.
+The dwell times are
+\[
+  \tau_k = T\, \beta_{\sigma(k)},
+\]
+where $T = c_{\mathrm{EHZ}}(K)$ is the capacity
+(the period of the orbit).
+\end{remark}

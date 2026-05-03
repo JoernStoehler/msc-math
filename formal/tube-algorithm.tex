@@ -1,0 +1,274 @@
+% formal/tube-algorithm.tex — tube algorithm material
+% Sources: thesis/tube-algorithm.tex
+
+\begin{unverified}
+\begin{definition}[Symplectic polytope]\label{def:symplectic-polytope}
+% Source: thesis/tube-algorithm.tex
+% Parameterization: K = {x : a_i^T x ≤ 1}, dual vertices a_i
+A \emph{Lagrangian $2$-face} is a $2$-face $F_{ij}$ on which
+$\omega_0|_{T F_{ij}} = 0$, equivalently $\omega_0(a_i, a_j) = 0$.
+A \emph{symplectic polytope} is a polytope $K \subset \mathbb{R}^4$
+that has no Lagrangian $2$-face:
+\[
+  \omega_0(a_i, a_j) \neq 0
+  \qquad \text{for all pairs } (i,j)
+  \text{ such that } F_i \cap F_j \text{ is a $2$-face.}
+\]
+\end{definition}
+\end{unverified}
+
+
+\begin{unverified}
+\begin{definition}[Tube]\label{def:tube}
+% Source: thesis/tube-algorithm.tex
+The \emph{tube} $T(\sigma)$ of a type $\sigma = (\sigma(1), \ldots, \sigma(k))$
+is the set of all pure Reeb trajectories of type $\sigma$:
+\[
+  T(\sigma) \coloneqq \bigl\{
+    \gamma \colon \mathbb{R} \to \partial K
+    : \gamma \text{ is a pure Reeb trajectory of type } \sigma
+  \bigr\}.
+\]
+A pure Reeb trajectory of type $\sigma$ has
+$\dot{\gamma}(t) = R_{\sigma(i)}$ on each interval
+$(t_{i-1}, t_i)$ for $i = 1, \ldots, k$,
+where $F_{\sigma(i)} \to F_{\sigma(i+1)}$ is a directed $2$-face
+for each $i = 1, \ldots, k-1$.
+\end{definition}
+\end{unverified}
+
+
+\begin{unverified}
+\begin{definition}[Tube data structure]\label{def:tube-data}
+% Source: thesis/tube-algorithm.tex
+A tube $T(\sigma)$ is represented by:
+\begin{enumerate}
+\item $\operatorname{Start} \subset F_{\sigma(1)} \cap F_{\sigma(2)}$:
+  closed convex polygon.
+\item $\operatorname{End} \subset F_{\sigma(k-1)} \cap F_{\sigma(k)}$:
+  closed convex polygon.
+\item $\varphi \colon \operatorname{Start} \to \operatorname{End}$:
+  the affine map sending $\gamma(t_1)$ to $\gamma(t_{k-1})$.
+\item $a \colon \operatorname{End} \to \mathbb{R}$:
+  the affine function giving the total elapsed time (= action)
+  of $\gamma|_{[t_1, t_{k-1}]}$.
+\item $\rho \in \mathbb{R}$:
+  the rotation number accumulated on $(t_1, t_{k-1})$.
+\end{enumerate}
+\end{definition}
+\end{unverified}
+
+
+\begin{unverified}
+\begin{definition}[Tube extension]\label{def:tube-extension}
+% Source: thesis/tube-algorithm.tex
+Let $T_k = T(\sigma(1), \ldots, \sigma(k))$ be a tube
+and $\sigma(k+1)$ satisfy $F_{\sigma(k)} \to F_{\sigma(k+1)}$.
+Write $\Phi \coloneqq \Phi_{\sigma(k-1),\sigma(k),\sigma(k+1)}$
+for the step map.
+The extended tube $T(\sigma(1), \ldots, \sigma(k+1))$ has data:
+\begin{align*}
+  \operatorname{End}' &\coloneqq
+    \Phi(\operatorname{End}) \cap \bigl( F_{\sigma(k)} \cap F_{\sigma(k+1)} \bigr), \\
+  \varphi' &\coloneqq \Phi \circ \varphi, \\
+  \operatorname{Start}' &\coloneqq (\varphi')^{-1}(\operatorname{End}'), \\
+  a'(y') &\coloneqq
+    a\bigl(\Phi^{-1}(y')\bigr)
+    + \Delta a_{\sigma(k-1),\sigma(k),\sigma(k+1)}\bigl(\Phi^{-1}(y')\bigr), \\
+  \rho' &\coloneqq \rho + \Delta\rho_{\sigma(k),\sigma(k+1)}.
+\end{align*}
+\end{definition}
+\end{unverified}
+
+
+\begin{unverified}
+\begin{definition}[Rotation increment at a breakpoint]\label{def:rotation-increment}
+% Source: thesis/tube-algorithm.tex
+Let $F_j \to F_l$ be a directed $2$-face.
+The \emph{rotation increment} $\Delta\rho_{jl} \in \mathbb{R}$
+is the contribution to the rotation number at the breakpoint
+where a Reeb trajectory transitions from velocity $R_j$ to $R_l$.
+It is computed from the \emph{transition matrix}
+$\psi_{F_{jl}} \in \operatorname{Sp}(2)$.
+By the theory of CH2021, $\psi_{F_{jl}}$ is positive elliptic
+and $\Delta\rho_{jl} \in (0, \tfrac{1}{2})$.
+\end{definition}
+\end{unverified}
+
+
+\begin{unverified}
+\begin{definition}[Closing a tube]\label{def:tube-close}
+% Source: thesis/tube-algorithm.tex
+Given a tube $T(\sigma(1), \ldots, \sigma(k))$,
+its \emph{closure} is obtained by performing two extension steps:
+appending $\sigma(k+1) = \sigma(1)$ and then $\sigma(k+2) = \sigma(2)$.
+The result is a tube $T(\sigma(1), \ldots, \sigma(k), \sigma(1), \sigma(2))$
+with flow map $\varphi'' \colon \operatorname{Start} \to F_{\sigma(1)} \cap F_{\sigma(2)}$
+and action function $a'' \colon \operatorname{End}'' \to \mathbb{R}$.
+\end{definition}
+\end{unverified}
+
+
+% ── Pruning lemmas ──
+
+\begin{unverified}
+\begin{lemma}[Pruning: empty tube]\label{lem:prune-empty}
+% Source: thesis/tube-algorithm.tex
+If $\operatorname{Start}(\sigma) = \emptyset$ or $\operatorname{End}(\sigma) = \emptyset$,
+then $T(\sigma) = \emptyset$.
+\end{lemma}
+
+\begin{proof}
+A trajectory $\gamma \in T(\sigma)$ satisfies
+$\gamma(t_1) \in \operatorname{Start}(\sigma)$ and
+$\gamma(t_{k-1}) \in \operatorname{End}(\sigma)$ by definition.
+\end{proof}
+\end{unverified}
+
+
+\begin{unverified}
+\begin{lemma}[Pruning: action lower bound]\label{lem:prune-action}
+% Source: thesis/tube-algorithm.tex
+Let $c^* > 0$ be the action of the current best candidate.
+If $\min_{y \in \operatorname{End}} a(y) > c^*$,
+then $T(\sigma)$ contains no minimum-action orbit.
+\end{lemma}
+
+\begin{proof}
+% [TODO: JÖRN - the inequality A(gamma) >= a(gamma(t_{k-1})) asserts that
+%   closing a tube adds non-negative action. This is plausible but not proved here.]
+Every $\gamma \in T(\sigma)$ has
+$A(\gamma) \geq a(\gamma(t_{k-1})) \geq \min_{\operatorname{End}} a > c^*$.
+Since the minimum-action orbit has action $\leq c^*$, it is not in $T(\sigma)$.
+\end{proof}
+\end{unverified}
+
+
+\begin{unverified}
+\begin{lemma}[Pruning: rotation upper bound]\label{lem:prune-rotation}
+% Source: thesis/tube-algorithm.tex
+Let $\rho$ be the rotation number of tube $T(\sigma)$.
+If $\rho \geq 2$, then $T(\sigma)$ contains no minimum-action orbit.
+\end{lemma}
+
+\begin{proof}
+By CH2021, the minimum-action combinatorial Reeb orbit satisfies
+$\rho_{\mathrm{comb}} \leq 2$.
+The closing step adds at least two
+rotation increments, each in $(0, \tfrac{1}{2})$,
+so any closed orbit from $T(\sigma)$ has total rotation
+$> \rho \geq 2$.
+Hence no closed orbit from $T(\sigma)$ satisfies
+$\rho_{\mathrm{comb}} \leq 2$.
+\end{proof}
+\end{unverified}
+
+
+\begin{unverified}
+\begin{lemma}[Pruning: simple orbit]\label{lem:prune-simple}
+% Source: thesis/tube-algorithm.tex
+If $\sigma(i) = \sigma(j)$ for some $1 \leq i < j \leq k$,
+then $T(\sigma)$ contains no minimum-action orbit.
+\end{lemma}
+
+\begin{proof}
+% Citation: HK2017 Theorem 1.5 (simple_loop_theorem).
+The minimum-action generalized Reeb orbit is simple
+(Haim-Kislev~\cite{HK2017}, Theorem~1.5):
+it visits each facet on a connected time interval and does not repeat facets.
+A pure Reeb trajectory of type $\sigma$, when closed,
+visits $F_{\sigma(i)}$ twice if $\sigma(i) = \sigma(j)$.
+Hence no closed orbit from $T(\sigma)$ can be the minimum-action orbit.
+\end{proof}
+\end{unverified}
+
+\begin{unverified}
+\begin{lemma}[Closed orbits as fixed points]\label{lem:fixed-point}
+% Source: thesis/tube-algorithm.tex
+The closed Reeb orbits in the closure of $T(\sigma)$ are in bijection with
+fixed points of $\varphi'' \colon \operatorname{Start}' \to F_{\sigma(1)} \cap F_{\sigma(2)}$:
+\[
+  \gamma \text{ is a closed orbit in } T(\sigma)
+  \;\Longleftrightarrow\;
+  \varphi''(\gamma(t_1)) = \gamma(t_1)
+  \;\text{ and }\;
+  \gamma(t_1) \in \operatorname{Start}'.
+\]
+The action of the closed orbit through the fixed point $x$ is $a''(x)$.
+\end{lemma}
+
+\begin{proof}
+% [TODO: JÖRN - check time index: def:tube-close appends two facets
+%   (sigma(k+1) and sigma(k+2)), so the final time may be t_{k+2}, not t_{k+1}.]
+A pure Reeb trajectory $\gamma \in T(\sigma(1), \ldots, \sigma(k))$
+is closed iff $\gamma(t_{k+1}) = \gamma(t_1)$.
+After closure,
+\[
+  \gamma(t_{k+1}) = \varphi''(\gamma(t_1)),
+\]
+so the periodicity condition is $\varphi''(\gamma(t_1)) = \gamma(t_1)$.
+The action is $a''(\varphi''(\gamma(t_1))) = a''(\gamma(t_1))$.
+\end{proof}
+\end{unverified}
+
+
+\begin{unverified}
+\begin{algorithm}[Tube algorithm]\label{alg:tube}
+% Source: thesis/tube-algorithm.tex
+Computes $c_{\mathrm{EHZ}}(K)$ for a symplectic polytope $K$
+(assuming no Type~2 orbits).
+
+\smallskip\noindent
+% Parameterization: K = {x : a_i^T x ≤ 1}, dual vertices a_i
+\emph{Input:} Dual vertices $a_1, \ldots, a_F$.
+\quad
+\emph{Output:} $c_{\mathrm{EHZ}}(K)$.
+
+\smallskip\noindent
+\textbf{Precomputation.}
+\begin{enumerate}
+\item For each pair $(i,j)$: check if $F_i \cap F_j$ is a $2$-face
+  and compute $\omega_0(a_i, a_j)$. Record directed edges $F_i \to F_j$
+  where $\omega_0(a_i, a_j) > 0$.
+\item For each valid triple $(i,j,l)$ with $F_i \to F_j$ and $F_j \to F_l$:
+  compute the step map $\Phi_{ijl}$,
+  action increment $\Delta a_{ijl}$,
+  and rotation increment $\Delta\rho_{jl}$.
+\end{enumerate}
+
+\smallskip\noindent
+\textbf{Search.}
+Initialize $c^* = +\infty$.
+For each directed edge $(i, j)$ with $F_i \to F_j$,
+initialize tube $T(i, j)$.
+Then recurse: given a tube $T(\sigma(1), \ldots, \sigma(k))$:
+
+\begin{enumerate}
+\item \textbf{Prune.} Discard if any of the following hold:
+  \begin{itemize}
+    \item $\operatorname{Start} = \emptyset$ or $\operatorname{End} = \emptyset$
+      (Lemma~\ref{lem:prune-empty});
+    \item $\min_{y \in \operatorname{End}} a(y) > c^*$
+      (Lemma~\ref{lem:prune-action});
+    \item $\rho \geq 2$ (Lemma~\ref{lem:prune-rotation}).
+  \end{itemize}
+
+\item \textbf{Try closing.}
+  Form the closure
+  (Definition~\ref{def:tube-close}).
+  Find fixed points $x$ of $\varphi''$ in $\operatorname{Start}'$
+  (Lemma~\ref{lem:fixed-point}).
+  For each fixed point $x$, update $c^* \leftarrow \min(c^*, a''(x))$.
+
+\item \textbf{Extend.}
+  For each $l \notin \{\sigma(1), \ldots, \sigma(k)\}$
+  with $F_{\sigma(k)} \to F_l$
+  (Lemma~\ref{lem:prune-simple}):
+  compute $T(\sigma(1), \ldots, \sigma(k), l)$
+  (Definition~\ref{def:tube-extension}) and recurse.
+\end{enumerate}
+
+\noindent
+Return $c^*$.
+\end{algorithm}
+\end{unverified}

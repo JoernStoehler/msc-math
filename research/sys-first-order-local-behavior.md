@@ -21,7 +21,7 @@ algebraic decomposition.
 Evidence read: `tasks/sys-first-order.md`, `tasks/hko.md`,
 `thesis/general-case-algorithm.tex`,
 `thesis/general-case-algorithm-proof.tex`,
-`formal/hk2017-qp-error-bounds.tex`,
+`formal/hk2017-qp-core.tex`, `formal/hk2017-qp-precision.tex`,
 `formal/capacity-smoothness-classification.tex`,
 `formal/capacity-boundary-subdifferential.tex`,
 `formal/hko-local-maximality-conditions.tex`,

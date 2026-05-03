@@ -1,0 +1,167 @@
+% formal/billiard-capacity-algorithm.tex — Lagrangian-product reduction
+% Sources: thesis/lagrangian-product-algorithm.tex,
+%   thesis/lagrangian-product-algorithm-proof.tex
+
+\begin{unverified}
+\begin{lemma}[Facet structure of Lagrangian products]\label{lem:lagrangian-facets}
+% Source: thesis/lagrangian-product-algorithm-proof.tex
+Let $K = K_q \times K_p$ be a Lagrangian product.
+Let $K_q = \{x \in L_q : \langle a_k^q, x \rangle \leq 1\}$
+with dual vertices
+$a_1^q, \ldots, a_{F_q}^q \in L_q$,
+and similarly $K_p$ with dual vertices
+$a_1^p, \ldots, a_{F_p}^p \in L_p$.
+Then $K$ has $F = F_q + F_p$ facets, partitioned into:
+\begin{itemize}
+\item \emph{$q$-facets} with dual vertices $a_i = (a_i^q, 0)$,
+  for $i = 1, \ldots, F_q$;
+\item \emph{$p$-facets} with dual vertices $a_j = (0, a_j^p)$,
+  for $j = 1, \ldots, F_p$.
+\end{itemize}
+Every dual vertex lies entirely in $L_q$ or entirely in $L_p$.
+\end{lemma}
+
+\begin{proof}
+A facet of $K_q \times K_p$ arises from a facet (edge) of
+one factor and the full other factor: either
+$\text{edge}_i(K_q) \times K_p$ or $K_q \times \text{edge}_j(K_p)$.
+The defining constraint $\langle a_i^q, x_q \rangle \leq 1$
+for edge~$i$ of~$K_q$ lifts to
+$\langle (a_i^q, 0),\, x \rangle \leq 1$,
+so the dual vertex is $(a_i^q, 0)$;
+similarly for $p$-facets.
+\end{proof}
+\end{unverified}
+
+
+\begin{unverified}
+\begin{lemma}[Sigma structure for Lagrangian products]\label{lem:sigma-structure}
+% Source: thesis/lagrangian-product-algorithm-proof.tex
+Let $K = K_q \times K_p$ be a Lagrangian product, and let
+$(\sigma, \tau)$ be a simple Reeb orbit on $\partial K$
+with all $\tau_k > 0$.
+Write the cyclic sequence $\sigma$ as a word in the alphabet
+$\{Q, P\}$ by replacing each $q$-facet index with $Q$ and each
+$p$-facet index with $P$.
+Then:
+\begin{enumerate}
+\item[(i)] The word has the form
+  $\bigl([Q \mid QQ]\,[P \mid PP]\bigr)^k$ for some $k \geq 1$:
+  alternating blocks of $q$- and $p$-facets, each block of length
+  one or two.
+
+\item[(ii)] Within each block of length two, the two facets are
+  adjacent in $G_K$
+  (consecutive edges of $K_q$ or $K_p$ sharing a vertex).
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+\textbf{Claim: no three consecutive same-type facets.}\quad
+Suppose for contradiction that $\sigma$ contains three
+consecutive $q$-facets $q_1, q_2, q_3$ (all with $\tau > 0$).
+The Reeb vectors $R_{q_1}, R_{q_2}, R_{q_3}$ all lie in~$L_p$,
+so $q$ is constant throughout the three segments.
+The orbit at the breakpoint between $q_1$ and $q_2$ lies on
+both facets, meaning $\langle a_{q_1}^q, q \rangle = 1$
+and $\langle a_{q_2}^q, q \rangle = 1$: the point $q$
+lies on both edges $1$ and $2$ of~$K_q$, hence at their
+common vertex $v_{12}$.
+Similarly, the breakpoint between $q_2$ and $q_3$ forces $q$
+to lie at vertex $v_{23}$ (intersection of edges $2$ and $3$).
+Since $q$ is constant, $v_{12} = v_{23}$.
+But for a nondegenerate convex polygon, $v_{12}$ and $v_{23}$
+are the two distinct endpoints of edge~$2$: contradiction.
+
+The same argument applies to $p$-facets by symmetry.
+
+\medskip\noindent
+\textbf{Alternation and block structure.}\quad
+Since no three consecutive facets have the same type, each maximal
+run of same-type facets has length one or two.
+% [TODO: JÖRN - alternation argument is imprecise: two adjacent length-1
+%   q-runs would give only 2 consecutive q-facets, not 3. The correct
+%   reason is that adjacent same-type maximal runs would merge.]
+Consecutive runs must alternate between $q$ and $p$.
+In a cyclic sequence, alternation forces equal block counts:
+$k$ blocks of $q$-facets and $k$ blocks of $p$-facets.
+
+\medskip\noindent
+\textbf{Within-block adjacency.}\quad
+Follows directly from the adjacency constraint:
+consecutive facets in $\sigma$ share a breakpoint, hence are
+adjacent in~$G_K$.
+Two same-type adjacent facets correspond to edges sharing a
+vertex in the 2D polygon.
+\end{proof}
+\end{unverified}
+
+
+\begin{unverified}
+\begin{theorem}[Billiard characterization of EHZ capacity]%
+\label{thm:billiard-characterization}
+% Source: thesis/lagrangian-product-algorithm-proof.tex
+% Attribution: Artstein-Avidan \& Ostrover (2014); Rudolf (2022).
+For a Lagrangian product $K = K_q \times K_p$:
+\[
+  c_{\mathrm{EHZ}}(K_q \times K_p)
+  = \min\bigl\{ \ell_{K_p^\circ}(\eta) :
+  \eta \text{ is a closed $K_p$-billiard trajectory in } K_q \bigr\},
+\]
+where $\ell_{K_p^\circ}(\eta) = \sum_i h_{K_p}(\Delta_i)$ is the
+$K_p^\circ$-length and $\Delta_i = x_{i+1} - x_i$ are the edge vectors.
+\end{theorem}
+% Proof: Artstein-Avidan \& Ostrover (2014), Theorem~2.13; Rudolf (2022), Theorem~1.
+% See also HKO2024, Theorem~2.2.
+\end{unverified}
+
+
+\begin{unverified}
+\begin{theorem}[Bounce bound]%
+\label{thm:bounce-bound}
+% Source: thesis/lagrangian-product-algorithm-proof.tex
+% Attribution: Bezdek \& Bezdek (2009); Rudolf (2022).
+For convex polygons $K_q, K_p \subset \mathbb{R}^2$,
+the minimum in Theorem~\ref{thm:billiard-characterization}
+is achieved by a billiard trajectory with at most $3$ bounce points.
+\end{theorem}
+% Proof: Bezdek \& Bezdek (2009), Theorem~1.1 and Lemma~2.4; Rudolf (2022), Theorem~1.
+\end{unverified}
+
+
+\begin{unverified}
+\begin{algorithm}[Billiard capacity]\label{alg:billiard}
+% Source: thesis/lagrangian-product-algorithm.tex
+Computes $c_{\mathrm{EHZ}}(K_q \times K_p)$
+via Theorem~\ref{thm:billiard-characterization}.
+
+\emph{Input:} Lagrangian product $K = K_q \times K_p$ in
+$H$-representation.
+\quad
+\emph{Output:} $c_{\mathrm{EHZ}}(K)$.
+
+\begin{enumerate}
+\item \textbf{Classify} facets into $q$-type and $p$-type
+  (Lemma~\ref{lem:lagrangian-facets}).
+\item \textbf{Build blocks.}
+  For each polygon ($K_q$ and $K_p$), enumerate all
+  \emph{single-facet blocks} (one edge) and
+  \emph{pair blocks} (two adjacent edges, both orderings).
+% [TODO: JÖRN - k=1 is excluded here. The thesis proves this via
+%   lem:k1-infeasible (closure condition forces antiparallel normals
+%   on adjacent edges, impossible for convex polygons). Add citation or
+%   copy the lemma.]
+\item \textbf{Enumerate.}
+  For $k = 2, 3$: for each selection of $k$ non-overlapping
+  $q$-blocks and $k$ non-overlapping $p$-blocks, and each
+  interleaving into the pattern
+  $\bigl([Q \mid QQ]\,[P \mid PP]\bigr)^k$,
+  flatten the blocks into a facet sequence~$\sigma$.
+\item \textbf{Solve and filter.}
+  For each $\sigma$: solve the KKT system,
+  filter by $\beta_i > 0$ and $Q(\beta) > 0$, compute
+  $A(S, \sigma) = \tfrac{1}{2}\, Q(\beta)^{-1}$.
+\item \textbf{Return} $\min A(S, \sigma)$.
+\end{enumerate}
+\end{algorithm}
+\end{unverified}

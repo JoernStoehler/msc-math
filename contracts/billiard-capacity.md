@@ -2,9 +2,9 @@
 
 ## Correspondence Contract
 
-- Formal surface: `formal/capacity-algorithms.tex:\ref{alg:billiard}`,
-  `formal/capacity-algorithms.tex:\ref{thm:billiard-characterization}`,
-  `formal/capacity-algorithms.tex:\ref{thm:bounce-bound}`.
+- Formal surface: `formal/billiard-capacity-algorithm.tex:\ref{alg:billiard}`,
+  `formal/billiard-capacity-algorithm.tex:\ref{thm:billiard-characterization}`,
+  `formal/billiard-capacity-algorithm.tex:\ref{thm:bounce-bound}`.
 - Durable Rust surface: `crates/symplectic/src/algorithms/billiard/`.
 - Independent comparison surface: `experiments/verification/sage/` once the
   reusable validator is promoted there.

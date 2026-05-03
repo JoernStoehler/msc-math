@@ -34,7 +34,7 @@
 //!
 //! Mathematical correspondence:
 //! - [lem:cap-derivative] (unverified): envelope theorem formula for dc/da_k.
-//!   In formal/capacity-algorithms.tex.
+//!   In formal/capacity-derivatives.tex.
 //! - [prop:capacity-smoothness-classification] (unverified): refined decomposition into
 //!   per-orbit feasibility/smoothness and capacity-level min structure.
 //!   In formal/capacity-smoothness-classification.tex.

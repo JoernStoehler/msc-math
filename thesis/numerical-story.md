@@ -210,7 +210,7 @@ For a fixed σ, we solve: maximize Q(β) = ½β^T H β subject to Cβ = d, β �
 
 [Reader needs: H, C, d from Part 0b; the minimum-support consequence (if max is on boundary → DROP)]
 
-### 3a: Notation and general structure (rem:qp-setup in formal/hk2017-qp-error-bounds.tex)
+### 3a: Notation and general structure (rem:qp-setup in formal/hk2017-qp-core.tex)
 
 - Suppress σ-dependence: H = H(σ), C = C(σ)
 - Affine constraint set: A = {β ∈ R^m : Cβ = d}
@@ -241,7 +241,7 @@ For a fixed σ, we solve: maximize Q(β) = ½β^T H β subject to Cβ = d, β �
   - Quadratic in α with Hessian H', linear term g, constant Q(β₀)
   - Setting ∇_α = 0: stationarity condition H'α + g = 0
 
-### 3c: Critical-point classification (prop:critical-points in formal/hk2017-qp-error-bounds.tex)
+### 3c: Critical-point classification (prop:critical-points in formal/hk2017-qp-core.tex)
 
 Three cases for H'α + g = 0:
 
@@ -253,7 +253,7 @@ Three cases for H'α + g = 0:
 3. **H' singular, g ∉ im(H')**: H'α + g = 0 is inconsistent, no critical points on A.
    - Q|_A has no stationary point.
 
-### 3d: Boundary vs. interior maximum (prop:boundary-vs-interior in formal/hk2017-qp-error-bounds.tex)
+### 3d: Boundary vs. interior maximum (prop:boundary-vs-interior in formal/hk2017-qp-core.tex)
 
 **Boundary cases** (F_max ⊆ ∂F, i.e., every maximizer has some β_k = 0):
 
@@ -324,12 +324,12 @@ Given β̃ from the solver, certify whether β* > 0.
   |β̃_i − β*_i| ≤ η_i
   where η_i is a computable bound derived from the perturbation chain (Part 6, Link 5).
 
-- **The bound η_i decomposes into three sources** (eq:beta-error-decomposition in formal/hk2017-qp-error-bounds.tex):
+- **The bound η_i decomposes into three sources** (eq:beta-error-decomposition in formal/hk2017-qp-precision.tex):
   1. **Critical-point shift:** Σ_j |(Vw_j)_i| · |δα_j|, where |δα_j| ≈ ε_mach / |γ_j| (amplification by 1/|γ_j| per eigendirection)
   2. **Null-space rotation:** ‖δV‖ · ‖α*‖ (from perturbation of V)
   3. **Particular-solution shift:** ‖δβ₀‖ (from perturbation of C⁺d)
 
-- **Computable formula** (eq:eta-computable in formal/hk2017-qp-error-bounds.tex):
+- **Computable formula** (eq:eta-computable in formal/hk2017-qp-precision.tex):
   η_i = (Ê_{ΔH'} ‖α̃‖ + Ê_{δg}) · Σ_j |(Ṽw̃_j)_i| / |γ̃_j| + Ê_{δV} ‖α̃‖ + Ê_{δβ₀}
   where:
   - Ê_{ΔH'} = c · ‖H̃‖ · ε_mach / σ̃_min(C)  [from Link 3]
@@ -557,7 +557,7 @@ Collects all (σ, Q̃, verdict) triples from the per-σ solvers and determines c
   - Total capacity error: |c̃ − c*| = |1/(2Q̃) − 1/(2Q*)| ≈ E₁/(2Q*²) for small E₁
 - For **INDETERMINATE** nodes: Q̃ may **overestimate** Q_F(σ) (because β* might not be > 0, so the unconstrained maximum Q(β*) exceeds the constrained maximum on F = A ∩ {β ≥ 0}).
 
-### Lazy INDETERMINATE resolution (rem:trinary-beta in formal/hk2017-qp-error-bounds.tex)
+### Lazy INDETERMINATE resolution (rem:trinary-beta in formal/hk2017-qp-core.tex)
 
 Sort all nodes by Q̃ descending:
 
@@ -652,5 +652,5 @@ Forward references: Parts 4,5 use thresholds from Part 6. Unavoidable: the class
 3. **Constants c₁–c₆** — currently c = m² (empirical safety factor), not derived from first principles
 4. **Degenerate-orbit conjecture** — unproven (that capacity-achieving orbits always have well-conditioned C)
 5. **Transition feasibility lemma** — cited in Part 2 but formal statement+proof lives in formal/ehz-kkt-system.tex (lem:numerical-transition-feasibility); [SCOPE: reproduce vs cite?]
-6. **Part III of formal/hk2017-qp-error-bounds.tex** (formal \begin{algorithm} for the floating-point solver) not written yet
+6. **Floating-point solver algorithm in formal/hk2017-qp-precision.tex** not written yet
 7. **Clarke dual action principle** — deferred from Part 0a; substantial (thesis/clarkedual-action-principle.tex is ~500 lines of Jörn-approved content)
