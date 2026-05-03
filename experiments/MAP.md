@@ -95,13 +95,13 @@ Current helper families:
 
 | Helper family | Current shape |
 | --- | --- |
-| step-bound event logic | implemented in `experiments/sys-landscape/src/lib.rs` and `experiments/combinatorial-cells/src/lib.rs`; shared durable home is still an open boundary |
-| sys quotient / ascent scaffold | `experiments/sys-landscape/src/lib.rs` and `datasets.rs` hold reusable landscape helpers, while individual binaries still own backend policy |
+| step-bound event logic | implemented in `experiments/sys-landscape/src/step_bound.rs` and `experiments/combinatorial-cells/src/boundary_events.rs`; shared durable home is still an open boundary |
+| sys quotient / ascent scaffold | `experiments/sys-landscape/src/ascent.rs` and `datasets.rs` hold reusable landscape helpers, while individual binaries still own backend policy |
 | datascience producer/table plumbing | `experiments/sys-landscape/datascience/produce/` writes producer caches; `datascience/tables/` loads/enriches/writes final tables; `datascience/methods/` reads those tables |
-| exact HKO seeds and instrumented searches | `experiments/hko-local-maximum/src/lib.rs` owns exact-bank constants and local instrumented capacity helpers |
+| exact HKO seeds and instrumented searches | `experiments/hko-local-maximum/src/exact_bank.rs` owns exact-bank constants; `instrumented_search.rs` owns local instrumented capacity helpers |
 | numerics exactness helpers | `experiments/numerics/src/lib.rs` exposes the algebraic exactness spike under `src/algebraic/` |
 | gradient validation helpers | `experiments/numerics/gradient/src/lib.rs` owns random-direction sampling, first-order row schemas, and small smoke-run helpers |
-| verification target plumbing | `experiments/verification/src/lib.rs` owns target-pool selection, run modes, and shared JSONL writers |
+| verification target plumbing | `experiments/verification/src/target_pool.rs` owns target selection; `io.rs` owns run modes and shared JSONL writers |
 
 ## Artifact And Data Patterns
 
