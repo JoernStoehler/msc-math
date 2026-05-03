@@ -1,7 +1,7 @@
 <!--
 Purpose: once-run final gate for declaring the thesis done.
 Context: this file is optimized for repeated reading and one final execution.
-Reusable checks and operationalization details live in the verification skill.
+
 -->
 
 # Verify Thesis Done Roadmap

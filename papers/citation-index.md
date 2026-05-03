@@ -3,7 +3,7 @@
 Verified theorem/section numbers for results cited in `crates/**/math.tex`.
 Agents: read this file instead of re-searching books/papers.
 
-Last updated: 2026-04-07.
+Last updated: 2026-05-03.
 
 ## Source availability
 
@@ -12,11 +12,11 @@ Last updated: 2026-04-07.
 | HK2017 | Haim-Kislev (2017), EHZ-polytopes | `papers/hk2017/EHZ-polytopes.tex` | available, LaTeX source |
 | CH2021 | Cieliebak-Haim-Kislev (2021) | `papers/ch2021/systolic_paper.tex` | available, LaTeX source |
 | HKO2024 | Haim-Kislev-Ostrover (2024) | `papers/hko2024/counterexample.tex` | available, LaTeX source |
-| BBLM2023 | Baracco-Bernardi-Lerario-Mondino | `papers/bblm2023/` | available |
+| BBLM2023 | Baracco-Bernardi-Lerario-Mondino | external PDF only; not stored in repo | not available as repo source |
 | Higham2002 | Higham, "Accuracy and Stability", 2nd ed., SIAM | `papers/Higham_2002.pdf` | local only (.gitignore) |
 | GVL2013 | Golub & Van Loan, "Matrix Computations", 4th ed. | `papers/GVL4_2013.pdf` | local only (.gitignore) |
-| BGL2005 | Benzi-Golub-Liesen, "Saddle point problems" | `papers/BenziGolubLiesen2005.pdf` | available (author-hosted) |
-| CHLS2007 | Cieliebak-Hofer-Latschev-Schlenk, "Quantitative symplectic geometry" | `papers/CHLS2007.pdf` | available (MSRI) |
+| BGL2005 | Benzi-Golub-Liesen, "Saddle point problems" | external PDF only; not stored in repo | available externally (author-hosted) |
+| CHLS2007 | Cieliebak-Hofer-Latschev-Schlenk, "Quantitative symplectic geometry" | external PDF only; not stored in repo | available externally (MSRI) |
 | HoferZehnder1994 | Hofer-Zehnder, "Symplectic Invariants and Hamiltonian Dynamics" | NOT available (Springer paywall) | cite Ch. 2 axioms |
 
 ## Numerical linear algebra

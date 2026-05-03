@@ -21,7 +21,7 @@ Map maintenance:
 - Last updated: 2026-04-25.
 - Source surfaces: `experiments/**/Cargo.toml`, `experiments/**/src/lib.rs`,
   local `README.md` files, experiment entrypoints, `research/*.md`,
-  `tasks/*.md`, and `.agents/skills/experiment-conventions/`.
+  `tasks/*.md`.
 - Refresh when: topic packages move, helper-crate boundaries change, artifact
   ownership changes, or retained thesis-facing experiments change.
 

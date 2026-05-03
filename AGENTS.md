@@ -4,7 +4,7 @@
 
 Master thesis by Jörn Stöhler, University of Augsburg.
 Advisor: Kai Cieliebak. Second advisor: Elizabeth Gaar.
-Deadline: End of April 2026.
+Deadline: End of May 2026.
 Topic: Probing Viterbo's Conjecture.
 
 Planned deliverables:
@@ -139,8 +139,8 @@ scripts/
 /tmp/  (outside repo)
 ```
 
-- `.agents/skills/` contains repo-local skills discoverable by name and
-  description. Do not treat `AGENTS.md` as the complete skill index.
+- `.agents/skills/` contains repo-local skills. Their names and descriptions
+  autoload, so don't track them in `AGENTS.md` redundantly.
 - `.codex/worktrees/` contains repo-local worktrees for isolated Codex sessions.
 - `ROADMAP.md` and `tasks/` route work, cache task state, and describe
   objectives; domain details usually live in `research/` or the relevant domain
@@ -151,14 +151,14 @@ scripts/
   draft reports, and artifacts to inspect or show Jörn. Do not rely on `/tmp/`
   for terminal verdicts or durable project state.
 - `scripts/codex-worktree.sh` creates repo-local Codex worktrees.
-- `scripts/toc.sh` prints the headings with line numbers for a given file. TODO: this could be a single-line bash command tbh if we don't use ranges but just linenumber:linecontent.
+- `scripts/toc.sh` prints Markdown headings with line ranges for a given file.
 - This repo does not use nested `AGENTS.md` instruction maps; use root
   `AGENTS.md`, discoverable skills, and descriptive `MAP.md` files instead.
 
 Harness map files:
 - `ROADMAP.md`: thesis closeout streams, current phase, and task routing.
 - `tasks/README.md`: task-bundle status/cache conventions for editing
-  `tasks/*.md`. TODO: move to a skill.
+  `tasks/*.md`.
 - `tasks/<group>.md`: topic and cross-cutting mini-roadmaps with cached task
   state.
 - `tasks/verify-thesis-done.md`: final thesis-done gate.
@@ -210,9 +210,9 @@ All conventions serve the long-term quality objectives, the final publication ob
 
 **Navigation and Exploration**
 - use long descriptive names for files and folders
-- use predictable code symbols, keywords, latex labels; grep to quickly find definitions and uses
+- use predictable code symbols, keywords, LaTeX labels; grep to quickly find definitions and uses
 - cross-reference other files, avoid unstable line numbers
-- TODO: map regeneration skill
+- use map and index file headers for refresh rules
 
 **Clarity**
 - write plainly, don't use metaphors or analogies
@@ -226,7 +226,7 @@ All conventions serve the long-term quality objectives, the final publication ob
 **Verification and Tracking**
 - link claims to their source of truth, except where obvious
 - record enough arguments and intermediate steps to enable agents to easily check whether some reasoning result is true and detect when the underlying source of truth has changed
-- note that often it's kinda obvious what arguments support a conclusion, and the real work was elevating the hypothesis
+- note that often the supporting arguments are straightforward, and the real work was elevating the hypothesis
 - explicitly track epistemic status of claims, such as empirical versus theoretical evidence, strong versus weak support, potential unknown unknowns i.e. overlooked hypotheses, diverse versus correlated arguments
 - track task states, external decisions from Jörn, and results of expensive tests/checks to allow future agents to deem checks unnecessary/unchanged
 - move unnecessary claims into the git history i.e. delete them, since they are expensive to verify
@@ -238,7 +238,7 @@ All conventions serve the long-term quality objectives, the final publication ob
 - ask Jörn for thesis scope, mathematical judgment, advisor-facing framing,
   taste, external-world actions, and design pivots; do not ask him to do
   agent-checkable grep, inventory, comparison, or first-pass drafting
-- present long math to Jörn via pdf, not latex source; use chat for short math.
+- present long math to Jörn via PDF, not LaTeX source; use chat for short math.
 
 ### Tasks
 - `ROADMAP.md` is an overview of `tasks/`, not a source of truth.
@@ -251,15 +251,15 @@ All conventions serve the long-term quality objectives, the final publication ob
 - functional programming style to avoid bugs from mutable state
 - simple data types and function signatures to avoid complex abstractions
 - explicit error types with `Result<>` instead of ambiguous `Option<>`
-- we must have algorithms we trust, so we must correspond to formalized mathematics. use code comments to reference latex lemmas and their proofs, explain how math and code symbols correspond where not obvious, and track invariants/propositions in code comments where not obvious.
+- we must have algorithms we trust, so we must correspond to formalized mathematics. use code comments to reference LaTeX lemmas and their proofs, explain how math and code symbols correspond where not obvious, and track invariants/propositions in code comments where not obvious.
 - use `clippy` and fast smoke tests that catch various classes of programming bugs
 - use slow correctness test suites that aim to falsify empirically our mathematical work
 - profile and use benchmarks to identify the few hotspots where performance or memory matters at all
 - add regression tests to learn from past bugs
-- don't mix multiple concerns into one function, test, or api
+- don't mix multiple concerns into one function, test, or API
 - don't prematurely abstract, don't prematurely generalize, don't prematurely optimize performance, don't prematurely add features (YAGNI)
 - reduce indirection, define input/output data structures close to the function(s) that use them
-- repo status: don't treat the public api as settled
+- repo status: don't treat the public API as settled
 - duplicate code when the context is genuinely different, abstract only when the contexts are a genuine family and the abstraction is simpler to understand than having multiple specialized versions (anti-DRY)
 - use simple, predictable standard patterns for the job
 
@@ -278,7 +278,7 @@ All conventions serve the long-term quality objectives, the final publication ob
 - the focus is rigorously formalized mathematics that allows us to catch any wrong statements and edge cases.
 - clearly track the verification status of mathematical writing, such as whether Jörn reviewed a formalization or proof, what gaps remain and why those look closeable, whether the proof idea is trusted and notation troubles are the obstacle, whether generic/main cases are trusted and what edge cases cause trouble, and so on
 - use comments to track the "why" behind the current definitions/statements/proof methods, don't discuss historical attempts beyond what matters for the current state and for anticipated future work.
-- use grep-able latex labels and reference them
+- use grep-able LaTeX labels and reference them
 - be fully rigorous in what conditions and guarantees lemmas claim, and in what inputs and outputs algorithms provide.
 - new agent-written mathematics is unapproved unless it is mechanical or
   explicitly approved by Jörn
@@ -289,7 +289,7 @@ All conventions serve the long-term quality objectives, the final publication ob
 - Jörn reviews for correctness, clarity, and presentation style.
 - We target a professional, publication-ready, pure mathematics style when we write about symplectic geometry from a pure mathematician's perspective, and a more applied/data-science style when we write about experiments.
 - Software engineers are not part of the audience, so we don't focus on code.
-- Formatting of figures, including fonts and size and colors, are owned by the python code. Latex simply includes the images/pdfs.
+- Formatting of figures, including fonts and size and colors, are owned by the Python code. LaTeX simply includes the images/PDFs.
 - `thesis/` is self-contained and does not `\input` files from `formal/`, `experiments/`, or `crates/`. We deliberately copy assets into `thesis/` when we need them for publication.
 
 ### Research notes
@@ -298,20 +298,21 @@ All conventions serve the long-term quality objectives, the final publication ob
 - track the epistemic status of claims
 - use `research/INDEX.md` to cache interpreted research results, proof-route state, and topic summaries, and link to the relevant domain files for details
 - split experiments when it becomes hard to achieve multiple purposes/answer multiple questions in one experiment, copy and edit code cheaply
-- track carefully the current prioritized subquestions/subgoals, in particular distinguish exploring the feasability of an idea, strengthening the evidence of a weak result, aiming to falsify, aiming to distinguish between hypotheses, producing evidence that is more legible even though it contains no new/additional information, refactoring/cleaning the experiment for long-term maintainability, and so on. Often multiple subgoals can be pursued at once - but not always all of them.
+- track carefully the current prioritized subquestions/subgoals, in particular distinguish exploring the feasibility of an idea, strengthening the evidence of a weak result, aiming to falsify, aiming to distinguish between hypotheses, producing evidence that is more legible even though it contains no new/additional information, refactoring/cleaning the experiment for long-term maintainability, and so on. Often multiple subgoals can be pursued at once - but not always all of them.
 - experiments should be reproducible from scratch given all related research notes
 - repo state: we now have the main and side results nailed down, and each experiment supports only one line of inquiry
 
 ### Papers
-- prefer latex over markdown over pdf due to friction for agents during reads
-- arxiv offers latex sources
-- transcribe pdfs into markdown, then fix once, so future agents can rely on the more readable format
+- prefer LaTeX over Markdown over PDF due to friction for agents during reads
+- arXiv offers LaTeX sources
+- transcribe short PDFs into Markdown, then fix once
+- for large PDFs, full transcription isn't feasible, so only relevant quotes are extracted
 - we don't edit the sources, at most we add documentation
-- compile latex sources to get the published numbering
+- compile LaTeX sources to get the published numbering
 
 ### Experiments
 - the research notes describe what the experiments are for, and interpret their results.
-- sibling experiments should be mostly independent from each other, to faciliate rapid development
+- sibling experiments should be mostly independent from each other, to facilitate rapid development
 - data is located next to the producer
 - do not patch-edit generated `.jsonl`, `.csv`, or figure outputs; regenerate
   them or document the needed refresh
@@ -319,9 +320,9 @@ All conventions serve the long-term quality objectives, the final publication ob
   command
 - use script-like python and rust binaries, make the pipeline simple and reproducible and documented
 - for development, provide smoke paths (smoke input data, smoke output data, smoke parameter settings)
-- for large datasets, provide a slurm job script to be run on LICCA
+- for large datasets, provide a Slurm job script to be run on LICCA
 - shared code is owned by the parent of the experiments that use it
-- we use jsonl for data, because agents can manipulate it easily, and it's flexible enough for the rust row types we have
+- we use JSONL for data, because agents can manipulate it easily, and it is flexible enough for the Rust row types we have
 
 ### Cluster and external execution
 - agents do not have LICCA SSH access; prepare scripts, binaries, resource
