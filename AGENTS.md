@@ -74,10 +74,6 @@ research/
   INDEX.md
   *.md
   sys-landscape-datascience/
-contracts/
-  README.md
-  registry.toml
-  *.md
 papers/<abbreviationYear>/
 ```
 
@@ -95,8 +91,6 @@ papers/<abbreviationYear>/
   analysis scripts, and artifacts.
 - `research/` contains interpreted analysis, decision history, proof-route
   state, topic summaries, and the `research/INDEX.md` navigation cache.
-- `contracts/` contains canonical algorithm correspondence and verification
-  contracts. It is a documentation/registry surface, not imported runtime code.
 - `papers/<abbreviationYear>/` contains downloaded arXiv paper sources.
 
 Domain map files:

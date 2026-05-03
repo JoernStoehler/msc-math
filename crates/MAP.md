@@ -10,8 +10,8 @@ code/math boundaries. It is descriptive, not a refactor backlog.
 
 - State: split from the old root `ARCHITECTURE.md`.
 - Last updated: 2026-04-25.
-- Source surfaces: `crates/**/src/`, `crates/**/README.md`, `formal/`,
-  `contracts/`, crate manifests, and local crate tests.
+- Source surfaces: `crates/**/src/`, `crates/**/README.md`, `formal/`, crate
+  manifests, and local crate tests.
 - Refresh when: crate module boundaries, public reexports, persistence
   contracts, or exact/floating representation boundaries change.
 
@@ -21,7 +21,7 @@ code/math boundaries. It is descriptive, not a refactor backlog.
 - Agent question: which durable crate, subsystem, entity, or API tier should I
   inspect first?
 - Authority: crate source files, crate README files, formal labels referenced
-  from code, contracts, and tests overrule this map.
+  from code, and tests overrule this map.
 - Non-authority: this file does not create API stability promises or refactor
   obligations. Route those through `tasks/infrastructure.md` or the relevant
   implementation task.

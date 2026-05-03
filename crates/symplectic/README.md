@@ -14,5 +14,4 @@ Local tests are smoke/unit/regression checks only. Larger validation or
 performance suites belong in `experiments/verification/` or experiment-owned
 benchmark directories.
 
-Cross-surface correctness contracts live in `contracts/`. Developer-facing math
-for reusable crate algorithms lives in `formal/`.
+Developer-facing math for reusable crate algorithms lives in `formal/`.
