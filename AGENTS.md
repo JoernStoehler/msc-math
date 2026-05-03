@@ -183,18 +183,27 @@ Supported environments:
 Quick commands:
 
 ```bash
+# Harness and maps
+git diff --check
+bash scripts/toc.sh AGENTS.md MAP_OR_TASK_FILE.md
+
 # Rust crates
 cargo test -p symplectic --release --lib
 cargo clippy -p symplectic --lib -- -D warnings
 cargo test -p symplectic --release -- --ignored
+cargo test -p algebraic-numbers --release --lib
+cargo clippy -p algebraic-numbers --lib -- -D warnings
 
 # Rust workspace and experiments
 cargo build --workspace --release
-cargo build -p exp-<topic> --release
+cargo check -p PACKAGE_NAME
+cargo build -p PACKAGE_NAME --release
 
 # Thesis
 cd thesis/ && latexmk && ./check-build.sh
+perl -ne 'if (/\\newlabel\{LABEL_NAME\}\{\{([^}]*)\}\{([^}]*)\}/) { print "number=$1 page=$2\n" }' thesis/build/main.aux
 
 # Formal math
 cd formal/ && latexmk
+rg -n -A 10 -F '\label{LABEL_NAME}' formal/*.tex
 ```
