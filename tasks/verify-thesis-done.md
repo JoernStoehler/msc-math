@@ -11,7 +11,7 @@ Reusable checks and operationalization details live in the verification skill.
 - State: blocked until thesis assembly and topic obligations close.
 - Last updated: 2026-04-25.
 - Source surfaces: `research/INDEX.md`, `tasks/*.md`, `thesis/`,
-  `.agents/skills/verification/`, `thesis/submission/README.md`.
+  old harness extraction: verification packet candidates, `thesis/submission/README.md`.
 - Refresh when: a thesis story, proof obligation, thesis prose, repo promise,
   submission requirement, or archive requirement changes.
 
@@ -44,9 +44,9 @@ accepts a named caveat as non-blocking for submission.
 | --- | --- | --- |
 | Story obligations closed | Every retained thesis story in `research/INDEX.md` has its proof, interpretation, writeup, verification, and cut/weaken obligations closed or explicitly moved to future/cut in the relevant topic bundle. | `research/INDEX.md`, `tasks/hko.md`, `tasks/landscape.md`, `tasks/numerics.md`, `tasks/writing.md` |
 | Thesis artifact ready | The final thesis PDF builds, has no silent placeholders, and has passed the intended readability/proofread review level. | `tasks/writing.md`, `thesis/` |
-| Claim support checked | The reusable thesis-story support pass reports no blocking missing proof, missing evidence, stale interpretation, or uncaveated overclaim. | `.agents/skills/verification/references/thesis-stories-are-supported.md` |
-| References and provenance checked | Bibliography, cross-references, theorem/proof references, figures, tables, experiment artifacts, datasets, and code references resolve at the level the thesis uses them. | `.agents/skills/verification/references/references-resolve.md`, `.agents/skills/verification/references/data-and-figures-are-traceable.md` |
-| Repo promises checked | Every thesis-facing repo, code, command, reproducibility, and archive promise is true or caveated. | `.agents/skills/verification/references/repo-promises-are-truthful.md`, `tasks/reproducibility.md`, `tasks/infrastructure.md` |
+| Claim support checked | The reusable thesis-story support pass reports no blocking missing proof, missing evidence, stale interpretation, or uncaveated overclaim. | old harness extraction: verification packet candidate `thesis-stories-are-supported.md` |
+| References and provenance checked | Bibliography, cross-references, theorem/proof references, figures, tables, experiment artifacts, datasets, and code references resolve at the level the thesis uses them. | old harness extraction: verification packet candidate `references-resolve.md`, old harness extraction: verification packet candidate `data-and-figures-are-traceable.md` |
+| Repo promises checked | Every thesis-facing repo, code, command, reproducibility, and archive promise is true or caveated. | old harness extraction: verification packet candidate `repo-promises-are-truthful.md`, `tasks/reproducibility.md`, `tasks/infrastructure.md` |
 | External submission prerequisites known | Submission requirements are known enough that no thesis-content work remains hidden behind an administrative unknown. | `tasks/submit-thesis.md`, `thesis/submission/README.md` |
 | Open work classified | Every remaining open row in `tasks/*.md` is either non-thesis future/follow-up, external-clock submission mechanics, or explicitly accepted as non-blocking by Jorn. | `ROADMAP.md`, `tasks/*.md` |
 | Jorn final acceptance | Jorn says the thesis is ready to submit and no remaining thesis-scope work should block submission. | explicit Jorn decision |
@@ -56,17 +56,18 @@ accepts a named caveat as non-blocking for submission.
 | item | state | value class | owner/gate | next action | source |
 | --- | --- | --- | --- | --- | --- |
 | Final thesis-done declaration | `[blocked]` | mainline thesis | Jorn after agent prep | Run this gate only after writing, topic, reproducibility, and verification passes have no blocking findings. | this file |
-| Reusable verification packet coverage | `[active]` | mainline thesis | agents | Keep repeated check definitions in `$verification`; add missing packet files instead of expanding this final gate. | `.agents/skills/verification/` |
+| Reusable verification packet coverage | `[active]` | mainline thesis | agents | Rebuild repeated check definitions from the old verification packet candidates before running this final gate. | old harness extraction: verification packet candidates |
 | Submission handoff | `[blocked]` | external clock | Jorn / agents | Once thesis-done passes, run mechanical submission and archive tasks. | `tasks/submit-thesis.md` |
 
 ## Agent Cache
 
 - [fresh 2026-04-25] The old `FINAL-VERIFICATION.md` was intentionally
   replaced by this compact final gate plus reusable verification packets.
-  Refresh by: checking `$verification`, `research/INDEX.md`, and topic bundles.
+  Refresh by: checking the rebuilt verification surface, `research/INDEX.md`,
+  and topic bundles.
 
 ## Pruned / Stale
 
 - [stale 2026-04-25] Do not recreate the large final truth tree here. If a
   repeated check needs more operational detail, add or edit a verification
-  packet under `.agents/skills/verification/references/`.
+  packet in the future rebuilt verification surface.

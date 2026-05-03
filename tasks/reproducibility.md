@@ -11,7 +11,7 @@ Context: supports final verification gates for data, builds, and cited outputs.
 - Last updated: 2026-04-25.
 - Source surfaces: `experiments/**`, `research/INDEX.md`, `research/*.md`,
   `tasks/verify-thesis-done.md`,
-  `.agents/skills/verification/references/data-and-figures-are-traceable.md`.
+  old harness extraction: verification packet candidate `data-and-figures-are-traceable.md`.
 - Refresh when: retained thesis claims cite artifacts, experiment outputs move,
   or repo promises change.
 

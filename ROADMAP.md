@@ -39,7 +39,7 @@ Freshness rules:
 | `ROADMAP.md` | overview and routing surface for humans and agents |
 | `tasks/*.md` | topic mini-roadmaps and cached decision context |
 | `research/INDEX.md` and `research/*.md` | thesis story index, detailed interpretation, proof-route state, negative results, and research caches |
-| `.agents/skills/verification/` | reusable quality-measurement packets and operational definitions |
+| old harness extraction: verification packet candidates | reusable quality-measurement packets and operational definitions |
 | `thesis/submission/README.md` | submission/admin forms, source links, and external-clock TODOs |
 | `crates/MAP.md` and `experiments/MAP.md` | subtree navigation caches for durable code and experiment packages |
 

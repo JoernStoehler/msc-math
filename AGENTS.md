@@ -2,7 +2,9 @@
 
 This file is the always-loaded repo map. It should help agents find the right
 surface quickly and carry only context that is broadly useful across tasks.
-Detailed workflows and conventions live in skills, topic maps, and task files.
+During the GPT-5.5 harness migration, most old skills and harness references
+have been deleted. Use this map, topic maps, task files, and the migration skill
+until fresh target surfaces are rebuilt.
 
 ## Project Goal
 
@@ -108,21 +110,15 @@ Domain map files:
 
 ## Harness Map
 
-Open the relevant harness reference when a task touches session behavior, Git,
-worktrees, planning, verification, or agent-facing text.
+The old active harness surface was extracted and deleted during the GPT-5.5
+harness migration. Do not look for old skills or `.codex/reference/harness/*`
+files as current policy.
 
 ```text
 .agents/
   skills/
+    harness-engineering-gpt-55/
 .codex/
-  agents/
-  reference/
-    harness/session-rules.md
-    harness/worktrees-and-git.md
-    harness/planning-and-verification.md
-    harness/text-for-agents.md
-    domain/conventions.md
-    repo-maintainability/design/
   worktrees/
 ROADMAP.md
 tasks/
@@ -143,15 +139,14 @@ scripts/
 /tmp/  (outside repo)
 ```
 
-- Use the discoverable skill whose name and description match the task; detailed
-  conventions and validation live in the skill.
-- `.codex/agents/` contains repo-local subagent definitions.
-- `.codex/reference/harness/` contains reusable repo-local harness rules by
-  concern.
-- `.codex/reference/domain/conventions.md` contains broad domain conventions
-  for agents. Language-specific details live in the matching skills.
-- `.codex/reference/repo-maintainability/design/` contains durable
-  maintainability design notes and inventories.
+- `.agents/skills/harness-engineering-gpt-55/` is the only repo-local skill
+  retained during migration. It contains the migration plan and extractions from
+  the deleted old harness.
+- Old `.agents/skills/*`, `.codex/agents/*`,
+  `.codex/reference/harness/*`, `.codex/reference/domain/conventions.md`, and
+  `.codex/reference/repo-maintainability/design/*` were deleted as active
+  surfaces. Use git history only as raw material when rebuilding target
+  surfaces.
 - `.codex/worktrees/` contains repo-local worktrees for isolated Codex sessions.
 - `ROADMAP.md` and `tasks/` route work, cache task state, and describe
   objectives; domain details usually live in `research/` or the relevant domain

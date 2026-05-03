@@ -10,7 +10,7 @@ Context: external-clock task bundle for thesis closeout.
 - State: external clock.
 - Last updated: 2026-04-25.
 - Source surfaces: `tasks/verify-thesis-done.md`,
-  `.agents/skills/verification/references/submission-artifacts-are-complete.md`,
+  old harness extraction: verification packet candidate `submission-artifacts-are-complete.md`,
   `thesis/submission/README.md`, `ROADMAP.md`.
 - Refresh when: Prüfungsamt, Kai, Elizabeth, Zenodo, arXiv, or final archive
   facts change.
