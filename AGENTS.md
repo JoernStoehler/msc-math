@@ -54,54 +54,18 @@ papers/<abbreviationYear>/
   contracts.
 - `papers/<abbreviationYear>/` contains downloaded arXiv paper sources.
 
-One-hop maps:
+Domain one-hop maps:
 
 | Surface | Read when |
 | --- | --- |
-| `ROADMAP.md` | orienting on thesis closeout streams, current phase, or where a task belongs |
-| `tasks/README.md` | editing `tasks/*.md` or interpreting task-bundle status/cache conventions |
 | `research/INDEX.md` | looking for interpretation notes, proof-route state, or research-result caches |
 | `crates/MAP.md` | navigating durable crate boundaries, API tiers, and core entities |
 | `experiments/MAP.md` | navigating experiment topic packages, helper crates, data patterns, and provenance |
-| `tasks/verify-thesis-done.md` | checking the once-run final thesis-done gate |
 | `thesis/submission/README.md` | checking university forms, submission mechanics, or preservation actions |
 
 Subtree `MAP.md` files are descriptive navigation caches, not always-loaded
 instruction surfaces. Do not add nested `AGENTS.md` files as required
 instruction maps; root-launched Codex sessions will not reliably load them.
-
-## Domain Conventions
-
-- **File headers:** Module-level source files start with a short purpose/context
-  comment block. Small leaf files may rely on module docs and clear names.
-  Detailed language-specific header rules live in the relevant convention
-  skills.
-- **Feature lifecycle:** New exploratory code starts in the relevant
-  `experiments/` subtree. Stable, approved algorithms migrate into `crates/`.
-  Validation experiments either become crate tests or remain in `experiments/`.
-- **Test/validation boundary:** Crate tests are fast live checks for developer
-  feedback and ordinary regressions. Slow mathematical validation, edge-case
-  searches, broad random sweeps, and generated evidence datasets live in
-  `experiments/`.
-- **Math-code correspondence:** Rust code cross-references formal mathematics
-  when correctness depends on a formal result. Use labels such as `[lem:label]`,
-  `[thm:label]`, or `[def:label]`; pure orchestration does not need a label. The
-  matching `\label{...}` lives in `formal/*.tex`.
-- **Experiment paths:** Use semantic experiment paths. Do not force balanced
-  subtrees when the semantics are asymmetric.
-- **Research notes:** Put research-state notes, interpreted analysis, decision
-  history, and next-step planning in `research/`. Keep only execution-facing
-  packet docs under `experiments/`.
-- **Data ownership:** Keep generated data with the producer that writes it.
-  Avoid multiple binaries writing to the same tracked output.
-- **Cross-file references:** Comments and notes should reference neighboring
-  surfaces explicitly, e.g. `<file>.tex:\ref{label}`, `<file>.rs:symbol`, or
-  `<file>.sage:symbol`.
-- **JSONL / LFS safety:** `.jsonl` files are generated artifacts tracked by Git
-  LFS. Trace figure, table, dataset, and experiment-artifact provenance with
-  targeted `rg` and local source inspection. There is no repo-wide generated
-  dataflow map; rebuild one only if repeated provenance work proves it is worth
-  maintaining.
 
 ## Harness Map
 
@@ -118,8 +82,13 @@ worktrees, planning, verification, or agent-facing text.
     harness/worktrees-and-git.md
     harness/planning-and-verification.md
     harness/text-for-agents.md
+    domain/conventions.md
     repo-maintainability/design/
   worktrees/
+ROADMAP.md
+tasks/
+  README.md
+  verify-thesis-done.md
 .devcontainer/
 scratch/
 scripts/
@@ -130,12 +99,25 @@ scripts/
 - `.codex/agents/` contains repo-local subagent definitions.
 - `.codex/reference/harness/` contains reusable repo-local harness rules by
   concern.
+- `.codex/reference/domain/conventions.md` contains broad domain conventions
+  for agents. Language-specific details live in the matching skills.
 - `.codex/reference/repo-maintainability/design/` contains durable
   maintainability design notes and inventories.
 - `.codex/worktrees/` contains repo-local worktrees for isolated Codex sessions.
+- `ROADMAP.md` and `tasks/` route work, cache task state, and describe
+  objectives; domain details usually live in `research/` or the relevant domain
+  surface.
 - `.devcontainer/` documents the local devcontainer and Codex web environment.
 - `scratch/` is undocumented temporary material, not current convention text.
 - `scripts/` contains helper scripts not tied to one runtime environment.
+
+Harness one-hop maps:
+
+| Surface | Read when |
+| --- | --- |
+| `ROADMAP.md` | orienting on thesis closeout streams, current phase, or where a task belongs |
+| `tasks/README.md` | editing `tasks/*.md` or interpreting task-bundle status/cache conventions |
+| `tasks/verify-thesis-done.md` | checking the once-run final thesis-done gate |
 
 ## Environment
 
