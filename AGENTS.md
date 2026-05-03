@@ -118,15 +118,7 @@ ROADMAP.md
 tasks/
   README.md
   verify-thesis-done.md
-  hko.md
-  landscape.md
-  landscape-datascience-worker-packets.md
-  numerics.md
-  sys-first-order.md
-  reproducibility.md
-  infrastructure.md
-  writing.md
-  submit-thesis.md
+  <group>.md
 .devcontainer/
   README.md
   codex-cloud.md
@@ -167,11 +159,8 @@ Harness map files:
 - `ROADMAP.md`: thesis closeout streams, current phase, and task routing.
 - `tasks/README.md`: task-bundle status/cache conventions for editing
   `tasks/*.md`.
-- `tasks/hko.md`, `tasks/landscape.md`, `tasks/numerics.md`,
-  `tasks/sys-first-order.md`, and `tasks/reproducibility.md`: topic mini-roadmaps
-  and cached task state.
-- `tasks/infrastructure.md`, `tasks/writing.md`, and `tasks/submit-thesis.md`:
-  cross-cutting infrastructure, thesis writing, and submission work.
+- `tasks/<group>.md`: topic and cross-cutting mini-roadmaps with cached task
+  state.
 - `tasks/verify-thesis-done.md`: compact once-run final thesis-done gate.
 
 ## Environment
