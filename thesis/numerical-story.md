@@ -110,7 +110,7 @@ Reader: thesis advisors (Kai Cieliebak, Elizabeth Gaar) — mathematicians famil
 - For subset S ⊆ {1,...,F}, |S| = m ≥ 2, cyclic permutation σ of S:
   - **Action matrix** H(σ) ∈ R^{m×m}: for i < j, H_ij = H_ji = ω₀(a_σ(i), a_σ(j)); H_ii = 0.
     - H is symmetric by construction (H_ij := ω₀(a_σ(i), a_σ(j)) for i<j, extended symmetrically)
-    - Note: ω₀ is antisymmetric, but H is symmetric because H uses the (i<j) convention: the double sum Σ_{i<j} β_i β_j ω₀(a_σ(i), a_σ(j)) = ½ β^T H β (lem:H-quadratic, proven in formal/library/kkt.tex)
+    - Note: ω₀ is antisymmetric, but H is symmetric because H uses the (i<j) convention: the double sum Σ_{i<j} β_i β_j ω₀(a_σ(i), a_σ(j)) = ½ β^T H β (lem:H-quadratic, proven in formal/ehz-kkt-system.tex)
     - H is indefinite in general (not positive or negative definite) — this is what makes the QP non-trivial
   - **Constraint matrix** C(σ) ∈ R^{5×m}:
     - Rows 0–3: C_{d,k} = a_{σ(k),d} for d=0,...,3 (closure: Σ a_σ(i) β_i = 0 ↔ A^T β = 0)
@@ -121,7 +121,7 @@ Reader: thesis advisors (Kai Cieliebak, Elizabeth Gaar) — mathematicians famil
   - Origin of the constraints:
     - Closure: Reeb orbit closes iff Σ β_i R_σ(i) = 0. Since R_i = 2J₀a_i and J₀ is invertible, this is equivalent to Σ a_σ(i) β_i = 0.
     - Normalization: dwell-time fractions sum to 1: Σ β_i = 1.
-    - See lem:dual-vertex-qp in formal/library/kkt.tex (Jörn-approved) for the complete derivation.
+    - See lem:dual-vertex-qp in formal/ehz-kkt-system.tex (Jörn-approved) for the complete derivation.
 
 - The QP: Q_max = max over (S,σ) of max over β of ½β^T H(σ) β, subject to C(σ)β = d, β ≥ 0
 - c_EHZ(K) = 1/(2 Q_max)
@@ -186,7 +186,7 @@ Depends on: Part 0
 
 Which (σ, S) pairs can be skipped before solving the QP?
 
-- **Adjacency pruning** (lem:numerical-transition-feasibility in formal/library/kkt.tex):
+- **Adjacency pruning** (lem:numerical-transition-feasibility in formal/ehz-kkt-system.tex):
   For a simple Reeb orbit to visit facets σ(i) then σ(i+1) consecutively, there must exist a point on the shared facet boundary where the trajectory can transition. Two conditions are necessary and sufficient:
   - **Condition 1 (symplectic sign):** ω₀(a_σ(i), a_σ(i+1)) ≥ 0
     - Exact from rational arithmetic (a_i ∈ Q⁴)
@@ -200,7 +200,7 @@ Which (σ, S) pairs can be skipped before solving the QP?
 
 - After pruning, remaining (σ, S) pairs are the "candidate orbits" to solve.
 
-[SCOPE: Include the full proof of lem:numerical-transition-feasibility here, or just state and cite? The proof is in formal/library/kkt.tex and is ~90 lines. It's self-contained and geometrically instructive but not on the critical path of the numerical error story.]
+[SCOPE: Include the full proof of lem:numerical-transition-feasibility here, or just state and cite? The proof is in formal/ehz-kkt-system.tex and is ~90 lines. It's self-contained and geometrically instructive but not on the critical path of the numerical error story.]
 
 Depends on: Part 0, Part 1
 
@@ -210,7 +210,7 @@ For a fixed σ, we solve: maximize Q(β) = ½β^T H β subject to Cβ = d, β �
 
 [Reader needs: H, C, d from Part 0b; the minimum-support consequence (if max is on boundary → DROP)]
 
-### 3a: Notation and general structure (rem:qp-setup in formal/numerics/error-bounds.tex)
+### 3a: Notation and general structure (rem:qp-setup in formal/hk2017-qp-error-bounds.tex)
 
 - Suppress σ-dependence: H = H(σ), C = C(σ)
 - Affine constraint set: A = {β ∈ R^m : Cβ = d}
@@ -241,19 +241,19 @@ For a fixed σ, we solve: maximize Q(β) = ½β^T H β subject to Cβ = d, β �
   - Quadratic in α with Hessian H', linear term g, constant Q(β₀)
   - Setting ∇_α = 0: stationarity condition H'α + g = 0
 
-### 3c: Critical-point classification (prop:critical-points in formal/numerics/error-bounds.tex)
+### 3c: Critical-point classification (prop:critical-points in formal/hk2017-qp-error-bounds.tex)
 
 Three cases for H'α + g = 0:
 
 1. **H' invertible** (det H' ≠ 0): unique α* = −(H')⁻¹g, hence β* = β₀ + Vα*.
    - The critical point is unique; it's a maximum iff H' is negative definite.
 2. **H' singular, g ⊥ ker(H')** (i.e., g ∈ im(H')): affine subspace of critical points: α*_part + ker(H').
-   - All critical points give the same Q value (lem:well-defined, proven in formal/library/kkt.tex, Jörn-approved).
+   - All critical points give the same Q value (lem:well-defined, proven in formal/ehz-kkt-system.tex, Jörn-approved).
    - This is the semidefinite case with a flat direction preserving Q.
 3. **H' singular, g ∉ im(H')**: H'α + g = 0 is inconsistent, no critical points on A.
    - Q|_A has no stationary point.
 
-### 3d: Boundary vs. interior maximum (prop:boundary-vs-interior in formal/numerics/error-bounds.tex)
+### 3d: Boundary vs. interior maximum (prop:boundary-vs-interior in formal/hk2017-qp-error-bounds.tex)
 
 **Boundary cases** (F_max ⊆ ∂F, i.e., every maximizer has some β_k = 0):
 
@@ -307,7 +307,7 @@ The floating-point solver must determine the eigenvalue signs of H' — but this
 - **Classification of the per-σ problem:**
   - All γ̃_j < −ε_γ → H' negative definite (certified) → unique interior maximum (case I1, if also β > 0)
   - Some γ̃_j > ε_γ → H' has a positive eigenvalue (certified) → **DROP** (case B1, shorter σ' finds boundary max)
-  - Some γ̃_j ∈ [−ε_γ, ε_γ] → **INDETERMINATE**: proceed as if case I2 (search flat eigendirections for β > 0 via LP, rem:near-null-lp-search in formal/library/kkt.tex)
+  - Some γ̃_j ∈ [−ε_γ, ε_γ] → **INDETERMINATE**: proceed as if case I2 (search flat eigendirections for β > 0 via LP, rem:near-null-lp-search in formal/ehz-kkt-system.tex)
   - No eigenvalue with γ̃_j > ε_γ, but some with |γ̃_j| ≤ ε_γ: could be I2 (semidefinite, flat direction) or B1 (small positive eigenvalue). The LP search handles this.
 
 **Forward reference:** The threshold formula ε_γ = c₅ · ‖H‖ · ε_mach / σ_min(C) is derived in Part 6, Link 4. The derivation traces how rounding errors propagate from the input a_i through C → SVD → V → H' → eigenvalues. The reader needs only the functional form here; the justification is in Part 6.
@@ -324,12 +324,12 @@ Given β̃ from the solver, certify whether β* > 0.
   |β̃_i − β*_i| ≤ η_i
   where η_i is a computable bound derived from the perturbation chain (Part 6, Link 5).
 
-- **The bound η_i decomposes into three sources** (eq:beta-error-decomposition in formal/numerics/error-bounds.tex):
+- **The bound η_i decomposes into three sources** (eq:beta-error-decomposition in formal/hk2017-qp-error-bounds.tex):
   1. **Critical-point shift:** Σ_j |(Vw_j)_i| · |δα_j|, where |δα_j| ≈ ε_mach / |γ_j| (amplification by 1/|γ_j| per eigendirection)
   2. **Null-space rotation:** ‖δV‖ · ‖α*‖ (from perturbation of V)
   3. **Particular-solution shift:** ‖δβ₀‖ (from perturbation of C⁺d)
 
-- **Computable formula** (eq:eta-computable in formal/numerics/error-bounds.tex):
+- **Computable formula** (eq:eta-computable in formal/hk2017-qp-error-bounds.tex):
   η_i = (Ê_{ΔH'} ‖α̃‖ + Ê_{δg}) · Σ_j |(Ṽw̃_j)_i| / |γ̃_j| + Ê_{δV} ‖α̃‖ + Ê_{δβ₀}
   where:
   - Ê_{ΔH'} = c · ‖H̃‖ · ε_mach / σ̃_min(C)  [from Link 3]
@@ -557,7 +557,7 @@ Collects all (σ, Q̃, verdict) triples from the per-σ solvers and determines c
   - Total capacity error: |c̃ − c*| = |1/(2Q̃) − 1/(2Q*)| ≈ E₁/(2Q*²) for small E₁
 - For **INDETERMINATE** nodes: Q̃ may **overestimate** Q_F(σ) (because β* might not be > 0, so the unconstrained maximum Q(β*) exceeds the constrained maximum on F = A ∩ {β ≥ 0}).
 
-### Lazy INDETERMINATE resolution (rem:trinary-beta in formal/numerics/error-bounds.tex)
+### Lazy INDETERMINATE resolution (rem:trinary-beta in formal/hk2017-qp-error-bounds.tex)
 
 Sort all nodes by Q̃ descending:
 
@@ -651,6 +651,6 @@ Forward references: Parts 4,5 use thresholds from Part 6. Unavoidable: the class
 2. **Null-eigenvalue case** — η_i bound doesn't cover LP search for flat eigendirections; 39 violations on natural data
 3. **Constants c₁–c₆** — currently c = m² (empirical safety factor), not derived from first principles
 4. **Degenerate-orbit conjecture** — unproven (that capacity-achieving orbits always have well-conditioned C)
-5. **Transition feasibility lemma** — cited in Part 2 but formal statement+proof lives in formal/library/kkt.tex (lem:numerical-transition-feasibility); [SCOPE: reproduce vs cite?]
-6. **Part III of formal/numerics/error-bounds.tex** (formal \begin{algorithm} for the floating-point solver) not written yet
+5. **Transition feasibility lemma** — cited in Part 2 but formal statement+proof lives in formal/ehz-kkt-system.tex (lem:numerical-transition-feasibility); [SCOPE: reproduce vs cite?]
+6. **Part III of formal/hk2017-qp-error-bounds.tex** (formal \begin{algorithm} for the floating-point solver) not written yet
 7. **Clarke dual action principle** — deferred from Part 0a; substantial (thesis/clarkedual-action-principle.tex is ~500 lines of Jörn-approved content)

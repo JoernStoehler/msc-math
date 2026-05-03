@@ -10,7 +10,7 @@ code/math boundaries. It is descriptive, not a refactor backlog.
 
 - State: split from the old root `ARCHITECTURE.md`.
 - Last updated: 2026-04-25.
-- Source surfaces: `crates/**/src/`, `crates/**/README.md`, `formal/library/`,
+- Source surfaces: `crates/**/src/`, `crates/**/README.md`, `formal/`,
   `contracts/`, crate manifests, and local crate tests.
 - Refresh when: crate module boundaries, public reexports, persistence
   contracts, or exact/floating representation boundaries change.

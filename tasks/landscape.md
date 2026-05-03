@@ -491,7 +491,7 @@ Required before scale-ready:
 | Remaining method packet status | `[Jorn]` | map input | Jorn | Decide thesis-facing status of `endpoint-residualized-regression` after the artifact-backed audit row exists. `regime-classification` is now supporting/caveat only. | `research/sys-landscape-datascience/method-ledger.md`, `research/sys-landscape-toolbox-audit.md` |
 | LICCA endpoint refresh | `[future]` | future/follow-up | external compute | Leave pending unless results are already available with low integration cost. | legacy LICCA rows |
 | Visualization negative exploration | `[Jorn]` | contingent during writing | Jorn | Decide during TOC work whether visualization is standalone thesis material or only supporting/future material if figures become useful. | `research/visualization.md`, `research/INDEX.md` |
-| Pentagon rotation formula | `[future]` | contingent during writing | Jorn/math | Include only status-level current finding unless proof/CAS write-up becomes free. | `research/sys-landscape.md`, `formal/sys-landscape/pentagon-rotation-formula.tex` |
+| Pentagon rotation formula | `[future]` | contingent during writing | Jorn/math | Include only status-level current finding unless proof/CAS write-up becomes free. | `research/sys-landscape.md`, `formal/pentagon-rotation-capacity.tex` |
 
 ## Agent Cache
 
@@ -529,8 +529,8 @@ Required before scale-ready:
 - [fresh 2026-04-25] Formal sys-landscape notes cite older random-sample JSONL
   paths. Check those paths only if the formal notes become a thesis or
   provenance source; do not run a broad data-refresh pass by default.
-  Refresh by: checking `formal/sys-landscape/random-sample.tex`,
-  `formal/sys-landscape/random-product-sample.tex`, and current producer
+  Refresh by: checking `experiments/sys-landscape/random-sample/`,
+  `experiments/sys-landscape/random-product-sample/`, and current producer
   README files.
 
 ## Pruned / Stale

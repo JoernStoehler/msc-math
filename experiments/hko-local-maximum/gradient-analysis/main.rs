@@ -572,8 +572,8 @@ fn run_exact_bank(base_dir: &Path, canonical: bool) {
 // ============================================================================
 // Step bounds computation (experiment-specific: topology-aware step size limits)
 // Same math as [lem:step-bound-incidence] and [lem:step-bound-omega] in
-// formal/combinatorial-cells/boundary-characterization.tex, adapted for (h,n) space.
-// TODO: add [lem:step-bound-hn] to formal/hko-local-maximum/gradient-analysis.tex for the (h,n) variant.
+// formal/combinatorial-boundary-regularity.tex, adapted for (h,n) space.
+// TODO: add [lem:step-bound-hn] to formal/hko-symmetry-gradient-structure.tex for the (h,n) variant.
 // ============================================================================
 
 fn compute_step_bound(polytope: &Polytope4D, direction: &[f64]) -> f64 {

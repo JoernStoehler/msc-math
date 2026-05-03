@@ -24,7 +24,8 @@ experiments/
       *.png, *.tex             # generated figures/tables
 ```
 
-Formal mathematics for experiments lives in `formal/<topic>/*.tex`, not beside `main.rs`.
+Formal mathematics for experiments lives in root-level `formal/*.tex` files
+named by the formal object or proof cluster, not beside `main.rs`.
 
 ## Before Editing Or Running
 
@@ -35,7 +36,7 @@ artifact declarations, or interpretation.
 
 1. Read sibling experiments in the same `experiments/<topic>/` package.
 2. Read the relevant `research/<topic>.md` note and any narrower `research/<topic>-*.md` note when the task involves methodology, current interpretation, or decision history. Read Markdown inside `experiments/` only when it is execution-facing packet documentation.
-3. Read the corresponding `formal/<topic>/*.tex` file when the experiment implements or tests a formal claim.
+3. Grep `formal/*.tex` for the cited label or proof object when the experiment implements or tests a formal claim.
 4. Load `$rust-conventions` for `main.rs`, `src/lib.rs`, or tests.
 5. Load `$python-conventions` for `analyze.py` or figure/table generation.
 6. Load `$formal-math-conventions` for formal statements, labels, or proof updates.

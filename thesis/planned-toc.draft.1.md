@@ -203,7 +203,7 @@ Current state:
   remain unresolved; current widened witness is real but partial.
 
 Must not use stale text blindly:
-- `formal/hko-local-maximum/gradient-analysis.tex` still says `44` orbits and
+- `formal/hko-symmetry-gradient-structure.tex` still says `44` orbits and
   `10` gradients.
 - Current bookkeeping is `150` exact action orbits, `20` visited subsets, and
   `28` distinct height gradients.
@@ -217,7 +217,7 @@ Must not use stale text blindly:
 
 Source candidates:
 - `research/hko-local-maximum.md`
-- `formal/hko-local-maximum/second-order.tex`
+- `formal/hko-local-maximality-conditions.tex`
 - `experiments/hko-local-maximum/`
 
 Jörn decisions:
@@ -390,7 +390,7 @@ Source candidates:
 
 Source candidates:
 - `tasks/numerics.md`
-- `formal/numerics/error-bounds.tex`
+- `formal/hk2017-qp-error-bounds.tex`
 - `experiments/numerics/q-error/q_error_output.txt`
 - `thesis/appendix-numerical.tex`
 - `crates/symplectic/src/lib.rs`

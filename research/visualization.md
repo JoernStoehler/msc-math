@@ -38,7 +38,7 @@ figure outputs and generated JSON inputs used by the figure pipeline.
 ## Evidence And Interpretation
 
 - The generator/output contract above is currently the durable contract for this topic.
-- `formal/visualization/main.tex` references this experiment for write-up context and
+- `research/visualization.md` references this experiment for write-up context and
   empirical grounding.
 - `MAX_ORBITS` and `MAX_FACETS_FOR_ORBIT` are evidence of an intentional data-size
   and browser-feasibility tradeoff.

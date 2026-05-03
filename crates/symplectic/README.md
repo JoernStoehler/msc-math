@@ -15,4 +15,4 @@ performance suites belong in `experiments/verification/` or experiment-owned
 benchmark directories.
 
 Cross-surface correctness contracts live in `contracts/`. Developer-facing math
-for reusable crate algorithms lives in `formal/library/`.
+for reusable crate algorithms lives in `formal/`.

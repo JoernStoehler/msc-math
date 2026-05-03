@@ -2,8 +2,8 @@
 
 ## Correspondence Contract
 
-- Formal surface: `formal/library/algorithms.tex:\ref{alg:ehz}`,
-  `formal/library/kkt.tex:\ref{lem:kkt}`.
+- Formal surface: `formal/capacity-algorithms.tex:\ref{alg:ehz}`,
+  `formal/ehz-kkt-system.tex:\ref{lem:kkt}`.
 - Durable Rust surface: `crates/symplectic/src/algorithms/hk2017/`,
   `crates/symplectic/src/algorithms/orbit_search.rs`.
 - Independent comparison surface: `experiments/verification/sage/` once the

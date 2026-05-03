@@ -20,7 +20,7 @@
 //! Mathematical basis: Danskin's theorem gives D_d⁺ sys = min_i (∇sys_i · d).
 //! Flat directions d satisfy ∇sys_i · d = 0 for all active orbits i.
 //! Second-order analysis: if sys(K + εd) < sys(K) for all ε ≠ 0 and all flat d,
-//! then K is a strict local maximum. See formal/hko-local-maximum/second-order.tex for formal statement.
+//! then K is a strict local maximum. See formal/hko-local-maximality-conditions.tex for formal statement.
 
 mod curvature;
 mod phase1;

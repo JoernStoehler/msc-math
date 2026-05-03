@@ -22,7 +22,7 @@
 //! - Compare against actual capacity change via full ehz_capacity on perturbed polytope
 //! - Records orbit switching (which orbit wins in the perturbed polytope)
 //! - [prop:capacity-smoothness-classification](b): at switching boundaries, D_d c = min_i(nabla A_i . d).
-//!   In formal/numerics/gradient/numerics.tex.
+//!   In formal/capacity-smoothness-classification.tex.
 //!
 //! Methodology (Q5b):
 //! - Use LP(n,n) (regular Lagrangian products) where symmetry forces exact orbit ties
@@ -34,13 +34,13 @@
 //!
 //! Mathematical correspondence:
 //! - [lem:cap-derivative] (unverified): envelope theorem formula for dc/da_k.
-//!   In formal/library/algorithms.tex.
+//!   In formal/capacity-algorithms.tex.
 //! - [prop:capacity-smoothness-classification] (unverified): refined decomposition into
 //!   per-orbit feasibility/smoothness and capacity-level min structure.
-//!   In formal/numerics/gradient/numerics.tex.
+//!   In formal/capacity-smoothness-classification.tex.
 //! - [thm:subdiff-with-appearance] (unverified): direction-filtered subdifferential
 //!   extending the formula to orbits at the feasibility boundary.
-//!   In formal/numerics/gradient/numerics-subdifferential.tex.
+//!   In formal/capacity-boundary-subdifferential.tex.
 //!
 //! Architecture:
 //! 1. `cargo run --release --bin gradient-subdifferential` -> JSONL files

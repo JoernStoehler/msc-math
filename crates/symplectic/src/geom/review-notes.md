@@ -1,9 +1,9 @@
-# formal/library/geom.tex review feedback
+# formal/symplectic-polytope-geometry.tex review feedback
 
 **Source:** Jörn's top-to-bottom review of the former library math PDF (session 2026-03-24).
-Current source: `formal/library/geom.tex`.
+Current source: `formal/symplectic-polytope-geometry.tex`.
 **Branch:** `remove-unit-normals` (worktree `.claude/worktrees/remove-unit-normals/`)
-**Status:** Jörn reviewed Defs 1–13, then stopped. Review incomplete — covers only `formal/library/geom.tex`, not `formal/library/kkt.tex` or `formal/library/algorithms.tex`.
+**Status:** Jörn reviewed Defs 1–13, then stopped. Review incomplete — covers only `formal/symplectic-polytope-geometry.tex`, not `formal/ehz-kkt-system.tex` or `formal/capacity-algorithms.tex`.
 
 ## Jörn's verbatim feedback
 
@@ -61,13 +61,13 @@ Same issue as Def 12.
 
 ### Structural feedback
 
-Maybe it's worth splitting `formal/library/geom.tex` into topic files already here, since we have so much ground to cover. Probably worth to have:
+Maybe it's worth splitting `formal/symplectic-polytope-geometry.tex` into topic files already here, since we have so much ground to cover. Probably worth to have:
 1. Euclidean geometry of polytopes
 2. Symplectic geometry standard setting
 3. Reeb orbits starting with the Reeb vectors on a polytope (not a vector field since there's no unique vector for points on the interior of 0,1,2-faces)
 
 ## Goal
 
-Go through `formal/library/geom.tex` top to bottom, fix everything, and get our math in order. The reviewed PDF had red/orange approval bars — red = unapproved, orange = notation-updated. The goal is to eliminate all red bars by the end.
+Go through `formal/symplectic-polytope-geometry.tex` top to bottom, fix everything, and get our math in order. The reviewed PDF had red/orange approval bars — red = unapproved, orange = notation-updated. The goal is to eliminate all red bars by the end.
 
 Follow-up task (separate session): get the Rust code in order as well.

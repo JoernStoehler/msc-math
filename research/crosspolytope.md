@@ -38,7 +38,7 @@ The current local output is `experiments/crosspolytope/main/crosspolytope.jsonl`
 - `crates/symplectic/src/algorithms/hk2017/tests_literature.rs` contains a fast
   correctness certificate (`crosspolytope_upper_bound`) based on the same
   minimizing orbit.
-- `formal/crosspolytope/main.tex` references this experiment as the empirical
+- `research/crosspolytope.md` references this experiment as the empirical
   source for the result and symmetry discussion.
 
 Scope caveat:

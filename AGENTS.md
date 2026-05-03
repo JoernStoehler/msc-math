@@ -42,8 +42,9 @@ crates/
     *.rs
 formal/
   main.tex
-  library/*.tex
-  <topic>/*.tex
+  preamble.tex
+  bibliography.bib
+  *.tex
 experiments/
   MAP.md
   figure_config.py
@@ -61,6 +62,9 @@ experiments/
   <topic>/<nested-package>/Cargo.toml
   verification/sage/
 research/
+  INDEX.md
+  *.md
+  sys-landscape-datascience/
 contracts/
   README.md
   registry.toml
@@ -72,29 +76,26 @@ papers/<abbreviationYear>/
   assets and does not `\input` files from `formal/`, `experiments/`, or
   `crates/`.
 - `crates/` contains durable Rust crates.
-- `formal/` contains developer-facing mathematics for crates and experiments.
+- `formal/` contains developer-facing mathematics named by formalized objects,
+  theorem clusters, and proof clusters.
 - `experiments/` contains Rust/Python experiment packages. Data and figures live
   next to the experiment that produced them. Entrypoint and analysis filenames
   vary by package; use `experiments/MAP.md` and local manifests before assuming
   `main.rs` or `analyze.py`.
 - `research/` contains interpreted analysis, decision history, proof-route
-  state, and topic summaries.
+  state, topic summaries, and the `research/INDEX.md` navigation cache.
 - `contracts/` contains canonical algorithm correspondence and verification
   contracts. It is a documentation/registry surface, not imported runtime code.
 - `papers/<abbreviationYear>/` contains downloaded arXiv paper sources.
 
-Domain one-hop maps:
-
-| Surface | Read when |
-| --- | --- |
-| `research/INDEX.md` | looking for interpretation notes, proof-route state, or research-result caches |
-| `crates/MAP.md` | navigating durable crate boundaries, API tiers, and core entities |
-| `experiments/MAP.md` | navigating experiment topic packages, helper crates, data patterns, and provenance |
-| `thesis/submission/README.md` | checking university forms, submission mechanics, or preservation actions |
-
-Subtree `MAP.md` files are descriptive navigation caches, not always-loaded
-instruction surfaces. Do not add nested `AGENTS.md` files as required
-instruction maps; root-launched Codex sessions will not reliably load them.
+Domain map files:
+- `research/INDEX.md`: interpretation notes, proof-route state, research-result
+  caches, and topic-summary routing.
+- `crates/MAP.md`: durable crate boundaries, API tiers, and core entities.
+- `experiments/MAP.md`: experiment topic packages, helper crates, data patterns,
+  and provenance.
+- `thesis/submission/README.md`: university forms, submission mechanics, and
+  preservation actions.
 
 ## Harness Map
 
@@ -118,9 +119,27 @@ ROADMAP.md
 tasks/
   README.md
   verify-thesis-done.md
+  hko.md
+  landscape.md
+  landscape-datascience-worker-packets.md
+  numerics.md
+  sys-first-order.md
+  reproducibility.md
+  infrastructure.md
+  writing.md
+  submit-thesis.md
 .devcontainer/
+  README.md
+  codex-cloud.md
+  devcontainer.json
+  Dockerfile
+  *setup*.sh
+  *smoke*.sh
+  *warmup*.sh
 scratch/
 scripts/
+  codex-worktree.sh
+  toc.sh
 ```
 
 - Use the discoverable skill whose name and description match the task; detailed
@@ -136,17 +155,25 @@ scripts/
 - `ROADMAP.md` and `tasks/` route work, cache task state, and describe
   objectives; domain details usually live in `research/` or the relevant domain
   surface.
-- `.devcontainer/` documents the local devcontainer and Codex web environment.
+- `.devcontainer/` documents and configures the local devcontainer and Codex web
+  environment, including setup, smoke, and cache-warmup scripts.
 - `scratch/` is undocumented temporary material, not current convention text.
-- `scripts/` contains helper scripts not tied to one runtime environment.
+- `scripts/codex-worktree.sh` creates repo-local Codex worktrees.
+- `scripts/toc.sh` prints Markdown heading ranges for map and instruction
+  review.
+- This repo does not use nested `AGENTS.md` instruction maps; use root
+  `AGENTS.md`, discoverable skills, and descriptive `MAP.md` files instead.
 
-Harness one-hop maps:
-
-| Surface | Read when |
-| --- | --- |
-| `ROADMAP.md` | orienting on thesis closeout streams, current phase, or where a task belongs |
-| `tasks/README.md` | editing `tasks/*.md` or interpreting task-bundle status/cache conventions |
-| `tasks/verify-thesis-done.md` | checking the once-run final thesis-done gate |
+Harness map files:
+- `ROADMAP.md`: thesis closeout streams, current phase, and task routing.
+- `tasks/README.md`: task-bundle status/cache conventions for editing
+  `tasks/*.md`.
+- `tasks/hko.md`, `tasks/landscape.md`, `tasks/numerics.md`,
+  `tasks/sys-first-order.md`, and `tasks/reproducibility.md`: topic mini-roadmaps
+  and cached task state.
+- `tasks/infrastructure.md`, `tasks/writing.md`, and `tasks/submit-thesis.md`:
+  cross-cutting infrastructure, thesis writing, and submission work.
+- `tasks/verify-thesis-done.md`: compact once-run final thesis-done gate.
 
 ## Environment
 
@@ -173,5 +200,4 @@ cd thesis/ && latexmk && ./check-build.sh
 
 # Formal math
 cd formal/ && latexmk
-cd formal/library/ && latexmk
 ```

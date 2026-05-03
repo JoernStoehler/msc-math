@@ -13,13 +13,15 @@ Current layout:
 - `formal/main.tex`: full formal build.
 - `formal/preamble.tex`: shared theorem environments, packages, and notation helpers.
 - `formal/bibliography.bib`: bibliography for formal builds.
-- `formal/library/*.tex`: mathematics for `crates/symplectic/src/**`.
-- `formal/<topic>/*.tex`: mathematics for experiment and research topics.
+- `formal/*.tex`: content files named by the formal object, theorem cluster, or
+  proof cluster they define, not by the crate or experiment that consumes them.
 
 ## Before Editing
 
-1. Identify the code or experiment artifact the math supports.
-2. Read the matching formal file and nearby files in the same `formal/<topic>/` directory.
+1. Identify the formal label, theorem cluster, or proof object the code or
+   experiment depends on.
+2. Grep for the label or nearby labels, then read the matching root-level
+   `formal/*.tex` file.
 3. For Rust-linked work, also load `$rust-conventions` and grep for the cited labels:
 
 ```bash
@@ -29,7 +31,7 @@ rg -n '\\label\{(lem|thm|def|prop|cor|rem|eq):' formal
 
 ## File Structure
 
-- Content files under `formal/library/` and `formal/<topic>/` do not declare `\documentclass`.
+- Content files under `formal/` do not declare `\documentclass`.
 - Shared notation and environments belong in `formal/preamble.tex`.
 - Keep experiment motivation and empirical interpretation outside formal math unless the statement is a formal definition, lemma, theorem, proposition, proof, or calculation.
 - Use bare graphic filenames in formal content only when the build context sets the graphics path.
@@ -58,7 +60,6 @@ rg -n '\\label\{(lem|thm|def|prop|cor|rem|eq):' formal
 Use the smallest build that covers the changed files:
 
 ```bash
-cd formal/library/ && latexmk
 cd formal/ && latexmk
 ```
 

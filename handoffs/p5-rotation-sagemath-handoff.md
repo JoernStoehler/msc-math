@@ -13,7 +13,7 @@ current mathematical state instead of reconstructing it.
 ## Files To Start From
 
 - `experiments/sys-landscape/pentagon-rotation-formula/`
-- `formal/sys-landscape/pentagon-rotation-formula.tex`
+- `formal/pentagon-rotation-capacity.tex`
 - `experiments/sys-landscape/pentagon-rotation-formula/cas_witnesses.py`
 - `experiments/sys-landscape/pentagon-rotation-formula/main.rs`
 - `experiments/sys-landscape/pentagon-rotation-formula/analyze.py`
@@ -40,7 +40,7 @@ current mathematical state instead of reconstructing it.
 - The midpoint-only family `Q:0-1-3|P:0-1-3` appears as the contraction target
   of that last near-minimum family, but this is only recorded as a logbook
   observation, not a finished formal lemma.
-- The theorem statement in `formal/sys-landscape/pentagon-rotation-formula.tex`
+- The theorem statement in `formal/pentagon-rotation-capacity.tex`
   remains conjectural for exactly that reason.
 
 ## Recommended Next Steps After SageMath Lands
@@ -58,7 +58,7 @@ current mathematical state instead of reconstructing it.
    - decide whether the interior branch needs a full explicit formula or only a
      coarse lower bound above the active `2`-bounce branch.
 4. After the near-minimum families are closed, return to the reduction lemma in
-   `formal/sys-landscape/pentagon-rotation-formula.tex` and decide whether the
+   `formal/pentagon-rotation-capacity.tex` and decide whether the
    rest of the open-interval `3`-bounce signatures can be handled by:
    - a coarse template bound, or
    - a finite descriptor loop in SageMath.

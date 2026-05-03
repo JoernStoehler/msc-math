@@ -21,11 +21,11 @@ algebraic decomposition.
 Evidence read: `tasks/sys-first-order.md`, `tasks/hko.md`,
 `thesis/general-case-algorithm.tex`,
 `thesis/general-case-algorithm-proof.tex`,
-`formal/numerics/error-bounds.tex`,
-`formal/numerics/gradient/numerics.tex`,
-`formal/numerics/gradient/numerics-subdifferential.tex`,
-`formal/hko-local-maximum/second-order.tex`,
-`formal/hko-local-maximum/gradient-analysis.tex`,
+`formal/hk2017-qp-error-bounds.tex`,
+`formal/capacity-smoothness-classification.tex`,
+`formal/capacity-boundary-subdifferential.tex`,
+`formal/hko-local-maximality-conditions.tex`,
+`formal/hko-symmetry-gradient-structure.tex`,
 `research/hko-local-maximum-exact-clarke.md`,
 `research/combinatorial-cells.md`, and `papers/hk2017/EHZ-polytopes.tex`.
 

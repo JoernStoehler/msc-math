@@ -71,10 +71,12 @@ When correctness depends on a formal statement, cite the label in Rust with `[le
 - Do not force labels onto orchestration, obvious plumbing, or experiment wrappers.
 
 Read the matching formal file before editing mathematical algorithm code:
-- `crates/symplectic/src/geom/**` -> `formal/library/geom.tex`
-- `crates/symplectic/src/kkt/**` -> `formal/library/kkt.tex`
-- `crates/symplectic/src/algorithms/**` -> `formal/library/algorithms.tex`
-- `experiments/<topic>/**` -> `formal/<topic>/*.tex` when such a file exists
+- `crates/symplectic/src/geom/**` -> start with `formal/symplectic-polytope-geometry.tex`
+- `crates/symplectic/src/kkt/**` -> start with `formal/ehz-kkt-system.tex`
+- `crates/symplectic/src/algorithms/**` -> start with `formal/capacity-algorithms.tex`
+- `experiments/<topic>/**` -> grep `formal/*.tex` for cited labels or named
+  proof objects; formal files are named by the mathematics, not by experiment
+  directory.
 
 Load `$formal-math-conventions` when editing formal labels or changing a mathematical algorithm.
 

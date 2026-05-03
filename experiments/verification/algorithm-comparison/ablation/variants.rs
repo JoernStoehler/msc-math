@@ -3,7 +3,7 @@
 //! Extracted from the original monolithic `ablation/main.rs`. A1-A3 stay local
 //! so the stable library is not changed mid-experiment, and the A3 transition
 //! checks match the surface formalized in
-//! `formal/verification/algorithm-comparison/ablation.tex`
+//! `formal/search-pruning-correctness.tex`
 //! [lem:transition-feasibility].
 
 //! A0..A3 variant implementations and adjacency/feasibility helpers.

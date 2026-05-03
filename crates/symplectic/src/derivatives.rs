@@ -13,7 +13,7 @@
 //! - ∂vol/∂a_k = −(S_k / |a_k|³) a_k + (S_k / |a_k|) (x̄_k − (1/|a_k|²) a_k · x̄_k · a_k)   [... simplified below]
 //!
 //! Mathematical correspondence: [lem:cap-derivative], [lem:vol-derivative] in
-//! `formal/library/algorithms.tex`.
+//! `formal/capacity-algorithms.tex`.
 
 use crate::algorithms::OrbitKktData;
 use crate::geom::facet_volume::facet_volume_and_centroid_3d_raw;
@@ -352,7 +352,7 @@ mod tests {
     // Proposition: volume_derivatives_a matches finite differences to O(eps²).
     // Capacity derivatives are tested via the FD cross-check on known polytopes.
     // Reference: [lem:cap-derivative], [lem:vol-derivative] in
-    // `formal/library/algorithms.tex`.
+    // `formal/capacity-algorithms.tex`.
     //
     // Strategy: fixture-based (hypercube) + FD cross-validation
 

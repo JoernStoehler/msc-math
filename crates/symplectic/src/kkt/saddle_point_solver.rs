@@ -113,7 +113,7 @@ const EPS_KKT_RESIDUAL: f64 = 1e-6;
 /// is O(eps_mach). Type B vectors have ||v_beta|| = O(1). The gap is ~10 orders
 /// of magnitude — the threshold is robust anywhere in [1e-8, 1e-12].
 ///
-/// See [rem:near-null-lp-search] in `formal/library/kkt.tex` for the full analysis.
+/// See [rem:near-null-lp-search] in `formal/ehz-kkt-system.tex` for the full analysis.
 ///
 /// **Why Type C cannot occur:** From Mv = λv, the constraint rows give
 /// N^T v_beta = λ v_mu and η^T v_beta = λ v_xi. Since ||v|| = 1,

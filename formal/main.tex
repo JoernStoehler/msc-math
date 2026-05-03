@@ -5,9 +5,6 @@
 %
 % Build: `cd formal/ && latexmk` (produces `main.pdf`)
 %
-% Experiment packets use bare filenames for figures. Each section below sets
-% `\graphicspath` to the matching directory under `../experiments/`.
-
 \documentclass{article}
 \input{preamble}
 \usepackage{xcolor}
@@ -31,128 +28,59 @@
 \tableofcontents
 \newpage
 
-\part{Library (\texttt{formal/library/})}
+\part{Foundations and Capacity Algorithms}
 
-\section{Geometry (\texttt{library/geom.tex})}
-\input{library/geom}
+\section{Symplectic Polytope Geometry}
+\input{symplectic-polytope-geometry}
 
-\section{KKT Solver (\texttt{library/kkt.tex})}
-\input{library/kkt}
+\section{EHZ KKT System}
+\input{ehz-kkt-system}
 
-\section{Algorithms (\texttt{library/algorithms.tex})}
+\section{Capacity Algorithms}
 \label{sec:algorithms}
-\input{library/algorithms}
+\input{capacity-algorithms}
 
-\part{HKO Local Maximum}
+\part{Capacity Regularity and Optimization}
 
-\section{Gradient Analysis}
-\graphicspath{{../experiments/hko-local-maximum/gradient-analysis/}}
-\input{hko-local-maximum/gradient-analysis}
+\section{Capacity Smoothness Classification}
+\input{capacity-smoothness-classification}
 
-\section{Pentagon Perturbation}
-\graphicspath{{../experiments/hko-local-maximum/perturbation-neighborhood/}}
-\input{hko-local-maximum/perturbation-neighborhood}
+\section{Capacity Boundary Subdifferential}
+\input{capacity-boundary-subdifferential}
 
-\section{Second-Order Analysis}
-\graphicspath{{../experiments/hko-local-maximum/second-order/}}
-\input{hko-local-maximum/second-order}
+\section{HKO Symmetry and Gradient Structure}
+\input{hko-symmetry-gradient-structure}
 
-\part{Sys Landscape}
+\section{HKO Local Maximality Conditions}
+\input{hko-local-maximality-conditions}
 
-\section{Rotated Regular Products}
-\graphicspath{{../experiments/sys-landscape/rotated-regular-products/}}
-\input{sys-landscape/rotated-regular-products}
+\section{Combinatorial Boundary Regularity}
+\input{combinatorial-boundary-regularity}
 
-\section{Pentagon Rotation Formula}
-\graphicspath{{../experiments/sys-landscape/pentagon-rotation-formula/}}
-\input{sys-landscape/pentagon-rotation-formula}
+\part{Numerical Certification}
 
-\section{Rejection Calibration}
-\graphicspath{{../experiments/sys-landscape/rejection-calibration/}}
-\input{sys-landscape/rejection-calibration}
+\section{HK2017 QP and Error Bounds}
+\input{hk2017-qp-error-bounds}
 
-\section{Random Sample}
-\graphicspath{{../experiments/sys-landscape/random-sample/}}
-\input{sys-landscape/random-sample}
+\section{Admissibility Precision Audit}
+\input{admissibility-precision-audit}
 
-\section{Random Product Sample}
-\label{sec:random-product-sample}
-\graphicspath{{../experiments/sys-landscape/random-product-sample/}}
-\input{sys-landscape/random-product-sample}
+\part{Special Families and Search Correctness}
 
-\part{Combinatorial Cells}
+\section{Lagrangian Product Rotation Symmetry}
+\input{lagrangian-product-rotation-symmetry}
 
-\section{Boundary Characterization}
-\graphicspath{{../experiments/combinatorial-cells/boundary-characterization/}}
-\input{combinatorial-cells/boundary-characterization}
+\section{Pentagon Rotation Capacity}
+\input{pentagon-rotation-capacity}
 
-\section{Cell Widths}
-\graphicspath{{../experiments/combinatorial-cells/cell-widths/}}
-\input{combinatorial-cells/cell-widths}
+\section{Random Polytope Boundedness}
+\input{random-polytope-boundedness}
 
-\section{Convexity}
-\graphicspath{{../experiments/combinatorial-cells/convexity/}}
-\input{combinatorial-cells/convexity}
+\section{Search Pruning Correctness}
+\input{search-pruning-correctness}
 
-\section{Multiple Crossings}
-\graphicspath{{../experiments/combinatorial-cells/multiple-crossings/}}
-\input{combinatorial-cells/multiple-crossings}
-
-\section{Omega Hypothesis}
-\graphicspath{{../experiments/combinatorial-cells/omega-hypothesis/}}
-\input{combinatorial-cells/omega-hypothesis}
-
-\part{Verification and Numerics}
-
-\section{Ablation}
-\graphicspath{{../experiments/verification/algorithm-comparison/ablation/}}
-\input{verification/algorithm-comparison/ablation}
-
-\section{Benchmark}
-\graphicspath{{../experiments/verification/algorithm-comparison/benchmark/}}
-\input{verification/algorithm-comparison/benchmark}
-
-\section{Error Bounds}
-\graphicspath{{../experiments/numerics/error-bounds/}}
-\input{numerics/error-bounds}
-
-\section{Q-Error}
-\graphicspath{{../experiments/numerics/q-error/}}
-\input{numerics/q-error}
-
-\section{KKT Inertia}
-\graphicspath{{../experiments/numerics/kkt-inertia/}}
-\input{numerics/kkt-inertia}
-
-\section{Unknown Predicates}
-\graphicspath{{../experiments/numerics/unknown-predicates/}}
-\input{numerics/unknown-predicates}
-
-\section{Correctness}
-\graphicspath{{../experiments/verification/correctness/}}
-\input{verification/correctness}
-
-\section{Orbit Recovery}
-\graphicspath{{../experiments/verification/orbit-recovery/}}
-\input{verification/orbit-recovery}
-
-\section{Basic Gradient Validation}
-\graphicspath{{../experiments/numerics/gradient/numerics/}}
-\input{numerics/gradient/numerics}
-
-\section{Subdifferential Validation}
-\graphicspath{{../experiments/numerics/gradient/numerics-subdifferential/}}
-\input{numerics/gradient/numerics-subdifferential}
-
-\part{Standalone}
-
-\section{Visualization}
-\graphicspath{{../experiments/visualization/main/}}
-\input{visualization/main}
-
-\section{Crosspolytope}
-\graphicspath{{../experiments/crosspolytope/main/}}
-\input{crosspolytope/main}
+\section{Finite Reeb Orbit Verification}
+\input{finite-reeb-orbit-verification}
 
 \printbibliography
 

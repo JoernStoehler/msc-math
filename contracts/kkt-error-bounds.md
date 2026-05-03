@@ -2,8 +2,7 @@
 
 ## Correspondence Contract
 
-- Formal surface: `formal/numerics/error-bounds.tex`,
-  `formal/numerics/q-error.tex`.
+- Formal surface: `formal/hk2017-qp-error-bounds.tex`.
 - Durable Rust surface: `crates/symplectic/src/kkt/`.
 - Experiment validation surface: `experiments/numerics/error-bounds/`.
 - Independent comparison surface: `experiments/verification/sage/` when a
