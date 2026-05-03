@@ -57,18 +57,18 @@ formal/
 experiments/
   MAP.md
   figure_config.py
-  combinatorial-cells/
-  crosspolytope/
-  hko-local-maximum/
-  numerics/
-  sys-landscape/
-  verification/
-  visualization/
-  <topic>/Cargo.toml
-  <topic>/src/lib.rs
-  <topic>/<experiment>/*.rs
-  <topic>/<experiment>/*.py
-  <topic>/<nested-package>/Cargo.toml
+  <topic>/
+    Cargo.toml
+    src/
+      lib.rs
+      *.rs
+    <experiment>/
+      *.rs
+      *.py
+      *.jsonl
+      figures/
+    <nested-package>/
+      Cargo.toml
   verification/sage/
 research/
   INDEX.md
@@ -87,9 +87,12 @@ papers/<abbreviationYear>/
 - `crates/` contains durable Rust crates.
 - `formal/` contains developer-facing mathematics named by formalized objects,
   theorem clusters, and proof clusters.
-- `experiments/` contains Rust/Python experiment packages. Data and figures live
-  next to the experiment that produced them. Use `experiments/MAP.md` and local
-  manifests to find each package's binaries, analysis scripts, and artifacts.
+- `experiments/` contains Rust/Python experiment packages grouped by topic:
+  `combinatorial-cells/`, `crosspolytope/`, `hko-local-maximum/`,
+  `numerics/`, `sys-landscape/`, `verification/`, and `visualization/`. Data
+  and figures live next to the experiment that produced them. Use
+  `experiments/MAP.md` and local manifests to find each package's binaries,
+  analysis scripts, and artifacts.
 - `research/` contains interpreted analysis, decision history, proof-route
   state, topic summaries, and the `research/INDEX.md` navigation cache.
 - `contracts/` contains canonical algorithm correspondence and verification
