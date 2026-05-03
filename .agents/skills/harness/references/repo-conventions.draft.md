@@ -5,10 +5,10 @@ Working draft for rebuilding repo conventions after the GPT-5.5 harness reset.
 This is not active policy. It tries one structure: abstract instrumental
 objectives first, then surface-specific consequences.
 
-Why this structure: agents often enter with a concrete surface in mind, but the
-reason a convention exists is usually cross-cutting. Keeping the objective near
-the convention should make it easier to improve the convention without turning
-it into unexplained process.
+Why keep objective text near convention bullets: agents often enter with a
+concrete surface in mind, while the reason a convention exists is often
+cross-cutting. Keeping the objective visible should make it easier to improve or
+delete the convention without turning it into unexplained process.
 -->
 
 ## How To Use This Draft
