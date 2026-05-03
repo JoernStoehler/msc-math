@@ -35,6 +35,11 @@ Current boundary facts:
 
 - Experiment code imports `symplectic` directly.
 - New exploratory algorithms start here before any durable crate promotion.
+- Most experiment code is script-like. Helper `.rs` files live beside the
+  binary or in the smallest shared parent directory that contains all binaries
+  using them.
+- `src/` marks a Rust-heavy package or crate-incubator surface. In those
+  packages, `src/lib.rs` should stay a thin index over named modules.
 - Slow validation, broad random sweeps, and generated evidence datasets stay
   here unless they become fast crate tests.
 - Research interpretation belongs in `research/`; execution-facing package
@@ -71,7 +76,17 @@ Topic helper crates already exist at:
 
 Current observed pattern:
 
-- Topic helper crates are the natural place for shared experiment-local code.
+- `experiments/numerics/`, `experiments/numerics/gradient/`, and
+  `experiments/sys-landscape/gradient-ascent-dev/` are Rust-heavy or
+  feature-incubator packages where `src/` is an appropriate package surface.
+- `experiments/combinatorial-cells/`, `experiments/hko-local-maximum/`,
+  `experiments/sys-landscape/`, and `experiments/verification/` expose
+  package-level helpers today; keep `src/lib.rs` as an index and put real code
+  in named modules.
+- Script/workflow packages such as `experiments/crosspolytope/`,
+  `experiments/visualization/`, and
+  `experiments/verification/algorithm-comparison/` should keep helper modules
+  beside the workflow that owns them.
 - Some shared logic is still copied across binaries instead of extracted.
 - Extraction is future/follow-up unless it unblocks retained thesis evidence,
   verification, or writing.

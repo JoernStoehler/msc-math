@@ -16,9 +16,10 @@ experiments/
   figure_config.py
   <topic>/
     Cargo.toml
-    src/lib.rs                 # optional shared helpers for the topic package
+    src/lib.rs                 # optional package/incubator API index
     <experiment>/
       main.rs                  # Rust binary entrypoint
+      *.rs                     # helper modules owned by this experiment
       analyze.py               # optional Python analysis and figures
       *.jsonl, *.csv           # generated data
       *.png, *.tex             # generated figures/tables
@@ -64,8 +65,14 @@ When a validation experiment replaces crate fixture coverage, record the boundar
 - Register binaries in `experiments/<topic>/Cargo.toml`.
 - Binary paths use `experiments/<topic>/<experiment>/main.rs`.
 - Cargo binary names use hyphens, matching existing package style.
-- Shared helpers used by multiple binaries in the same topic belong in `experiments/<topic>/src/lib.rs` only when they are stable semantic primitives or stable shared contracts.
-- Keep case-specific or exploratory helpers in the binary that owns them even when another binary has a structurally similar pipeline.
+- Most experiments are scripts: put helper `.rs` files beside the binary or in
+  the smallest shared parent directory that contains all binaries using them.
+- Use `src/` only when the experiment subtree is Rust-heavy enough to act as a
+  package, or when it incubates code that may later move to `crates/`.
+- When `src/` exists, `src/lib.rs` is an index for named modules. Do not put
+  substantial helper code directly in `src/lib.rs`.
+- Keep case-specific or exploratory helpers in the binary or workflow that owns
+  them even when another binary has a structurally similar pipeline.
 - When the split criteria in `$rust-conventions` are met, keep `main.rs` thin
   by routing stable stages into local modules or `src/lib.rs`.
 - Exploratory behavior stays in `experiments/`; stable approved algorithms migrate to `crates/`.
