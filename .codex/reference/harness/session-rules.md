@@ -27,4 +27,3 @@ Ask Jörn for:
 - advisor-facing framing
 - taste
 - external-world actions
-

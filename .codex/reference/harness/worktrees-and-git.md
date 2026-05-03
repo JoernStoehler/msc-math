@@ -35,4 +35,3 @@ Use this file for repo-local Git and worktree behavior.
 - Git LFS tracks `.jsonl` files through `.gitattributes`.
 - `git add`, `commit`, and `push` work normally.
 - A pre-commit hook blocks non-LFS files larger than 10 MB.
-
