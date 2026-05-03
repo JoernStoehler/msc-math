@@ -20,24 +20,51 @@ Planned deliverables:
 
 ```text
 thesis/
+  main.tex
+  *.tex
+  bibliography.bib
   build/main.pdf
 crates/
+  MAP.md
   symplectic/src/
+    lib.rs
+    **/*.rs
+    **/test_*.rs
   symplectic/benches/
+    *.rs
   algebraic-numbers/src/
+    lib.rs
+    *.rs
+    test_*.rs
   algebraic-numbers/benches/
+    *.rs
   algebraic-numbers/tests/
+    *.rs
 formal/
+  main.tex
   library/*.tex
   <topic>/*.tex
-  main.tex
 experiments/
+  MAP.md
+  figure_config.py
+  combinatorial-cells/
+  crosspolytope/
+  hko-local-maximum/
+  numerics/
+  sys-landscape/
+  verification/
+  visualization/
   <topic>/Cargo.toml
-  <topic>/<experiment>/main.rs
-  <topic>/<experiment>/analyze.py
+  <topic>/src/lib.rs
+  <topic>/<experiment>/*.rs
+  <topic>/<experiment>/*.py
+  <topic>/<nested-package>/Cargo.toml
   verification/sage/
 research/
 contracts/
+  README.md
+  registry.toml
+  *.md
 papers/<abbreviationYear>/
 ```
 
@@ -47,11 +74,13 @@ papers/<abbreviationYear>/
 - `crates/` contains durable Rust crates.
 - `formal/` contains developer-facing mathematics for crates and experiments.
 - `experiments/` contains Rust/Python experiment packages. Data and figures live
-  next to the experiment that produced them.
+  next to the experiment that produced them. Entrypoint and analysis filenames
+  vary by package; use `experiments/MAP.md` and local manifests before assuming
+  `main.rs` or `analyze.py`.
 - `research/` contains interpreted analysis, decision history, proof-route
   state, and topic summaries.
 - `contracts/` contains canonical algorithm correspondence and verification
-  contracts.
+  contracts. It is a documentation/registry surface, not imported runtime code.
 - `papers/<abbreviationYear>/` contains downloaded arXiv paper sources.
 
 Domain one-hop maps:
