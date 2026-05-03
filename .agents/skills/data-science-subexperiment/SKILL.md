@@ -6,10 +6,10 @@ description: "Use when leading, prompting, running, reviewing, or integrating de
 # Data-Science Subexperiment
 
 Use this skill for a lead data-science agent workflow. Combine with
-`$subagent-delegation` before spawning workers, `$harness-engineering` when
-changing prompt material, `$experiment-conventions` / `$python-conventions` for
-experiment code, and `$dataset-conventions` when dataset freshness or generated
-tables matter.
+`$subagent-delegation` before spawning workers, `$harness-engineering-gpt-55`
+when changing prompt material during the GPT-5.5 harness migration,
+`$experiment-conventions` / `$python-conventions` for experiment code, and
+`$dataset-conventions` when dataset freshness or generated tables matter.
 
 ## Core Split
 

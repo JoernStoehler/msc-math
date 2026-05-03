@@ -29,9 +29,10 @@ asks for fixes.
 - Thesis `.tex`: `references/thesis.md`
 - Factual claims against data, code, figures, or bibliography: `references/claims.md`
 - Figure production chain and rendered PNGs: `references/figures.md`
-- Prompt material and harness edits: load `$harness-engineering`. For skill
-  behavior changes, also load `$skill-creator`. For current OpenAI or Codex
-  behavior claims, also load `$openai-docs`.
+- Prompt material and harness edits during migration: load
+  `$harness-engineering-gpt-55`. For skill behavior changes, also load
+  `$skill-creator`. For current OpenAI or Codex behavior claims, also load
+  `$openai-docs`.
 
 ## Refactor Checklist
 

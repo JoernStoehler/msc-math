@@ -8,8 +8,9 @@ description: Top-level, Jörn-invoked post-session reflection and blameless posi
 Use this skill only in the top-level session. It needs the conversation history and Jörn's framing.
 
 The output is advisory. Do not edit files, create archival notes, update skills,
-or create commits. If Jörn asks for harness edits after a post-mortem, route
-that work through `$harness-engineering`.
+or create commits. If Jörn asks for harness edits after a post-mortem during
+the GPT-5.5 harness migration, route that work through
+`$harness-engineering-gpt-55`.
 
 ## Operating model
 

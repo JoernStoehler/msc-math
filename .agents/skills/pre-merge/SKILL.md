@@ -67,7 +67,7 @@ Default review surfaces:
 | Thesis | Changed `thesis/**/*.tex` files | `$thesis-tex-conventions`, `.agents/skills/review/references/thesis.md` |
 | Python | Changed `.py` files | `$python-conventions`, `.agents/skills/review/references/python.md` |
 | Figures | Changed `analyze.py`, `.png`, or generated figure/table `.tex` files | `.agents/skills/review/references/figures.md` |
-| Prompt/harness | Changed `AGENTS.md`, `.agents/skills/**`, `.codex/**`, or agent-facing task packets / temporary handoff notes | `$harness-engineering`; `$skill-creator` for skill behavior changes; `$openai-docs` for current OpenAI or Codex behavior claims |
+| Prompt/harness | Changed `AGENTS.md`, `.agents/skills/**`, `.codex/**`, or agent-facing task packets / temporary handoff notes | `$harness-engineering-gpt-55`; `$skill-creator` for skill behavior changes; `$openai-docs` for current OpenAI or Codex behavior claims |
 
 If a surface has no files in scope, record "no files in scope" in the local notes. Do not launch an empty reviewer solely to prove the absence.
 

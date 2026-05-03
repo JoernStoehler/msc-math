@@ -11,6 +11,6 @@ Read [`references/objective.draft.md`](references/objective.draft.md) and
 [`references/migration-plan.draft.md`](references/migration-plan.draft.md) for
 the current draft material. During this migration, treat old harness material,
 including existing `SKILL.md` files, as legacy suggestions to improve rather
-than settled policy. The old `$harness-engineering` body has been erased; use
+than settled policy. The old `$harness-engineering` skill has been deleted; use
 this draft skill, the current chat, and Jörn's current instructions for
 migration work until a fresh target skill is promoted.

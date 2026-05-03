@@ -93,8 +93,9 @@ enough that an agent can skim it before opening local sources.
   task-bundle conventions.
 - Use `$research-direction` as well when a map change depends on research
   interpretation, proof-route status, or thesis story framing.
-- Use `$harness-engineering` as well when changing `AGENTS.md`, skill routing,
-  or other agent harness behavior.
+- Use `$harness-engineering-gpt-55` as well when changing `AGENTS.md`, skill
+  routing, or other agent harness behavior during the GPT-5.5 harness
+  migration.
 
 ## Stop
 
