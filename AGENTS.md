@@ -79,9 +79,8 @@ papers/<abbreviationYear>/
 - `formal/` contains developer-facing mathematics named by formalized objects,
   theorem clusters, and proof clusters.
 - `experiments/` contains Rust/Python experiment packages. Data and figures live
-  next to the experiment that produced them. Entrypoint and analysis filenames
-  vary by package; use `experiments/MAP.md` and local manifests before assuming
-  `main.rs` or `analyze.py`.
+  next to the experiment that produced them. Use `experiments/MAP.md` and local
+  manifests to find each package's binaries, analysis scripts, and artifacts.
 - `research/` contains interpreted analysis, decision history, proof-route
   state, topic summaries, and the `research/INDEX.md` navigation cache.
 - `contracts/` contains canonical algorithm correspondence and verification
