@@ -37,6 +37,14 @@ compact review packet Jörn can mark up without reading every deleted skill.
   local design choice, not from old process habit.
 - keep: old campaign notes, calibration examples, and provider surveys are
   historical inputs, not active policy.
+- keep: when future-agent output is available, compare it against the intended
+  behavior, not only against the prompt text.
+- keep: treat vague words as search triggers for possible ambiguity, not as
+  banned tokens.
+- keep: inspect git status before deleting, moving, or replacing an active
+  path; stop if ownership is unclear.
+- keep: use current official OpenAI documentation before durable edits that
+  depend on current OpenAI or Codex product behavior.
 - rewrite: future skills should expose objectives, authority, evidence, and
   validation before process. Process should be a starter pattern unless the
   path itself is part of success.
@@ -140,8 +148,9 @@ compact review packet Jörn can mark up without reading every deleted skill.
 
 ### `harness-engineering`
 
-- keep: see `harness-engineering-extract.draft.md`.
-- delete: active skill deleted during this migration.
+- keep: unique candidate bullets from the old `$harness-engineering` extract
+  were folded into the cross-cutting commitments above.
+- delete: active skill and separate extract file deleted during this migration.
 
 ### `maintainability-improvement`
 
