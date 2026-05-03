@@ -52,7 +52,7 @@ Use this template:
 - Outcome:
   - Done. Jörn was not needed for the audit or the tracker propagation.
 - Calibration takeaway:
-  - This was easier than requiring top-level/Jörn coordination. Similar read-only migration coverage matrices can be delegated end-to-end; the top-level session only needs to verify any small `TASKS.md` propagation.
+  - This was easier than requiring top-level/Jörn coordination. Similar read-only migration coverage matrices can be delegated end-to-end; the top-level session only needs to verify any small durable tracker propagation. In the current repo that means `ROADMAP.md` or the relevant `tasks/*.md`, not legacy `TASKS.md`.
   - The delegate used level 1 subagents from a level 0 session. In hindsight, a top-level session could likely have started this as a level 1 subagent task; the delegate's nested helpers would then have been level 2, still below the nesting cutoff. The task did not rely on level 0 access, did not need Jörn interaction that the top-level session could not handle, and finished in a few minutes.
 
 ## 2026-04-15 - Legacy `RESULTS.md` Freshness Audit

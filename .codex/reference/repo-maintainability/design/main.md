@@ -19,7 +19,9 @@ packets against current maps, tasks, and code before reuse.
 - Planning rule: write execution packets incrementally from the approved design
   notes; do not treat the full DAG as fixed before early packets are tested in
   code.
-- Tracker anchor: `TASKS.md` entry "Repo maintainability / architecture program".
+- Historical tracker anchor: legacy `TASKS.md` entry "Repo maintainability /
+  architecture program". Current routing lives in `ROADMAP.md` and the relevant
+  `tasks/*.md` bundle.
 - Deliverable of this phase: a reviewed program note that survives chat
   compactification and can seed later worktree sessions.
 
@@ -49,7 +51,8 @@ These are observed facts as of 2026-04-16, not design decisions.
 
 - Before this session, no top-level `ARCHITECTURE.md` existed.
   Evidence from the initial discovery pass: `rg --files -g 'ARCHITECTURE.md' -g 'README.md'`.
-- Repo orientation is currently split across `AGENTS.md`, `TASKS.md`,
+- Repo orientation in this snapshot was split across `AGENTS.md`, legacy
+  `TASKS.md`,
   `crates/symplectic/src/lib.rs`, `crates/symplectic/src/database.rs`, and per-package
   `experiments/<topic>/src/lib.rs` headers.
 - The simple public library surface in `crates/symplectic/src/lib.rs` re-exports the
@@ -79,11 +82,13 @@ These are observed facts as of 2026-04-16, not design decisions.
   `sha256sum experiments/sys-landscape/cache.jsonl experiments/combinatorial-cells/polytopes.jsonl experiments/verification/orbit-recovery/polytopes.jsonl`
 - `experiments/sys-landscape/variable-f-ascent/cache.jsonl` is intentionally
   local search history rather than a shared canonical catalog.
-  Evidence: current `TASKS.md` data-flow packet.
+  Evidence at the time: legacy `TASKS.md` data-flow packet. Refresh against
+  current `tasks/*.md` bundles before reuse.
 - The library docs audit already concluded that module headers + per-module
   formal files mostly cover library-internal architecture, but not repo-level
   navigation for agents.
-  Evidence: `TASKS.md` item "Library architecture docs audit".
+  Evidence at the time: legacy `TASKS.md` item "Library architecture docs
+  audit".
 
 ## Open Decisions
 
@@ -113,8 +118,8 @@ These are observed facts as of 2026-04-16, not design decisions.
    packets with worktree boundaries.
 6. Implementation/verification sessions: execute the approved packets and
    verify each one locally.
-7. Consolidation: update `ARCHITECTURE.md`, `TASKS.md`, and future-work buckets
-   after the implemented changes settle.
+7. Consolidation: update `ARCHITECTURE.md`, `ROADMAP.md`, relevant
+   `tasks/*.md`, and future-work buckets after the implemented changes settle.
 
 ## Discussion Plan
 
@@ -225,7 +230,7 @@ refactor patches.
 - Note: `.codex/reference/repo-maintainability/design/docs-navigation-inventory.md`
 - Objective: identify which frequently needed questions are already answered by
   existing docs and which require a new repo-level guide.
-- Scope: `AGENTS.md`, `TASKS.md`, `crates/symplectic/src/lib.rs`, `crates/symplectic/src/database.rs`,
+- Scope: `AGENTS.md`, legacy `TASKS.md`, `crates/symplectic/src/lib.rs`, `crates/symplectic/src/database.rs`,
   `experiments/<topic>/src/lib.rs`, and relevant research notes.
 - Expected output: question -> current answer source -> gap -> eventual home
   (`ARCHITECTURE.md`, file header, task packet, or no new doc needed).
@@ -286,7 +291,8 @@ Use this shape when the execution DAG is ready to be written into work packets:
 
 1. **Unit of work**
    - Worktree: short branch name.
-   - Tracked at: `TASKS.md` entry and this program note section.
+   - Tracked at: `ROADMAP.md`, the relevant `tasks/*.md` entry, and this
+     program note section when still useful.
    - Scope: exact files, directories, or question.
    - Context: why this packet exists and which discovery evidence triggered it.
    - Why shallow: what makes the packet agent-doable.
@@ -298,7 +304,7 @@ Use this shape when the execution DAG is ready to be written into work packets:
 ## Progress Log
 
 - 2026-04-16: created this durable planning note.
-- 2026-04-16: seeded the note with the current `TASKS.md` packets, library
+- 2026-04-16: seeded the note with the then-current legacy `TASKS.md` packets, library
   surface scan, deep-import scan, repeated-helper scan, and cache-mirror check.
 - 2026-04-16: wrote D1-D5 as separate file-backed discovery artifacts, using
   subagents for D1-D4 and local integration for D5.

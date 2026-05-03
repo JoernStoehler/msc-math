@@ -17,11 +17,13 @@ against current maps, tasks, and code before reuse.
 - Date: 2026-04-16.
 - Role: source note for later architecture/doc synthesis.
 - Non-goal: do not turn open architecture choices into fake settled facts.
+- Supersession note: `TASKS.md` was live when this file was written. Current
+  task routing lives in `ROADMAP.md` and `tasks/*.md`.
 
 ## Sources
 
 - [AGENTS.md](/workspaces/msc-math/AGENTS.md:1)
-- [TASKS.md](/workspaces/msc-math/TASKS.md:445)
+- Historical tracker at write time: `TASKS.md:445`
 - [crates/symplectic/src/lib.rs](/workspaces/msc-math/crates/symplectic/src/lib.rs:1)
 - [crates/symplectic/src/database.rs](/workspaces/msc-math/crates/symplectic/src/database.rs:1)
 - [experiments/combinatorial-cells/src/lib.rs](/workspaces/msc-math/experiments/combinatorial-cells/src/lib.rs:1)
@@ -47,7 +49,7 @@ against current maps, tasks, and code before reuse.
   - `.codex/reference/repo-maintainability/`: durable repo-maintainability reference notes
   - `thesis/`: self-contained publication sources
   - `papers/`: downloaded paper sources
-  - `TASKS.md`: project tracker
+  - legacy `TASKS.md`: project tracker at the time of this snapshot
   - `research/README.md`, `research/*.md`, and `tasks/*.md`: thesis story
     interpretation and related work obligations
 - `AGENTS.md` is already the root orientation map and always-loaded instruction
@@ -58,7 +60,7 @@ against current maps, tasks, and code before reuse.
 - There was no committed top-level `ARCHITECTURE.md` before this session.
 - Repo orientation is currently split across:
   - `AGENTS.md`
-  - `TASKS.md`
+  - legacy `TASKS.md`
   - `crates/symplectic/src/lib.rs`
   - `crates/symplectic/src/database.rs`
   - per-topic `experiments/<topic>/src/lib.rs` headers
@@ -70,7 +72,8 @@ against current maps, tasks, and code before reuse.
   even when some are still thin.
 - The maintainability program state already lives in
   [main.md](/workspaces/msc-math/.codex/reference/repo-maintainability/design/main.md:1)
-  and [TASKS.md](/workspaces/msc-math/TASKS.md:445).
+  and the tracker surface that was then `TASKS.md`. Refresh against current
+  `ROADMAP.md` and `tasks/*.md` before reuse.
 
 ## Library Surface Facts
 

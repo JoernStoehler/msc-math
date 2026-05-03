@@ -696,7 +696,8 @@ These points are not yet fully settled.
    thin library result type like `EhzResult` just to avoid defining a
    specialized experiment-owned struct.
 6. Update the durable repo docs after the code shape settles:
-   - `TASKS.md` for the tracker state and remaining follow-ups
+   - `ROADMAP.md` or the relevant `tasks/*.md` for tracker state and
+     remaining follow-ups
    - `ARCHITECTURE.md` if the public/result boundary described there changes
    - this note or its successor if implementation choices differ from the
      current design draft

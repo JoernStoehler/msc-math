@@ -130,14 +130,16 @@ Implication for later packets:
 
 - Historical root checkout at the time of this inventory already had unrelated
   changes:
-  - modified `TASKS.md`
+  - modified legacy `TASKS.md`
   - modified final-verification surfaces
   - durable `.codex/reference/repo-maintainability/` notes
 
 Implication for later packets:
 
 - Root-checkout discovery work should stay confined to the new
-  `.codex/reference/repo-maintainability/` area plus the already-touched tracker file.
+  `.codex/reference/repo-maintainability/` area plus the already-touched tracker
+  file. Refresh the tracker path against current `ROADMAP.md` / `tasks/*.md`
+  routing before reusing this historical inventory.
 - Implementation packets that touch shared code should prefer worktrees to
   avoid coupling with this planning state.
 
