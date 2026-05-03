@@ -72,7 +72,6 @@ research/
   *.md
   sys-landscape-datascience/
 papers/<abbreviationYear>/
-/tmp/  (outside repo)
 ```
 
 - `thesis/` is publishable and self-contained. It owns or copies publication
@@ -88,23 +87,27 @@ papers/<abbreviationYear>/
   `experiments/MAP.md` and local manifests to find each package's binaries,
   analysis scripts, and artifacts.
 - `research/` contains interpreted analysis, decision history, proof-route
-  state, topic summaries, and the `research/INDEX.md` navigation cache.
-- `papers/<abbreviationYear>/` contains downloaded arXiv paper sources.
-- `/tmp/` is the place for ephemeral prompt snippets, one-off reports, and
-  generated artifacts that should not become repo source truth. Promote durable
-  outcomes into the relevant repo surface instead of leaving them in `/tmp/`.
+  state, and topic summaries.
+- `papers/<abbreviationYear>/` contains paper sources, companion assets, and
+  paper-specific notes.
 
 Domain map files:
-- `research/INDEX.md`: interpretation notes, proof-route state, research-result
-  caches, and topic-summary routing.
-- `crates/MAP.md`: durable crate boundaries, API tiers, and core entities.
-- `experiments/MAP.md`: experiment topic packages, helper crates, data patterns,
-  and provenance.
+- `research/INDEX.md`: navigation cache for interpretation notes, proof-route
+  state, research-result caches, and topic-summary routing. Topic research
+  notes, proof/data sources, task bundles, and accepted Jörn/Kai decisions
+  overrule it.
+- `crates/MAP.md`: navigation cache for durable crate boundaries, API tiers,
+  and core entities. Crate source, crate READMEs, manifests, cited formal
+  labels, and tests overrule it.
+- `experiments/MAP.md`: navigation cache for experiment topic packages, helper
+  crates, data patterns, and provenance. Package manifests, entrypoints, local
+  READMEs, helper crates, generated artifact locations, research notes, and task
+  bundles overrule it.
 - `thesis/submission/README.md`: university forms, submission mechanics, and
   preservation actions.
 
-Map and index files are navigation caches over source truth. Their file-local
-HTML comments say how to check or refresh them.
+For `MAP.md` files and `research/INDEX.md`, follow the file-local HTML comment
+for source surfaces, staleness checks, and refresh rules.
 
 ## Harness Map
 
@@ -139,12 +142,10 @@ scripts/
 /tmp/  (outside repo)
 ```
 
-- `.agents/skills/` contains repo-local skills. Their names and descriptions
-  autoload, so don't track them in `AGENTS.md` redundantly.
+- `.agents/skills/` is the optional repo-local skill surface. Codex autoloads
+  each skill name and description from its `SKILL.md`, so `AGENTS.md` names the
+  surface but does not duplicate per-skill summaries.
 - `.codex/worktrees/` contains repo-local worktrees for isolated Codex sessions.
-- `ROADMAP.md` and `tasks/` route work, cache task state, and describe
-  objectives; domain details usually live in `research/` or the relevant domain
-  surface.
 - `.devcontainer/` documents and configures the local devcontainer and Codex web
   environment, including setup, smoke, and cache-warmup scripts.
 - `/tmp/` is the default place for temporary agent prompts, worker packets,
@@ -153,18 +154,21 @@ scripts/
 - `scripts/codex-worktree.sh` creates repo-local Codex worktrees.
 - `scripts/toc.sh` prints Markdown headings with line ranges for a given file.
 - This repo does not use nested `AGENTS.md` instruction maps; use root
-  `AGENTS.md`, discoverable skills, and descriptive `MAP.md` files instead.
+  `AGENTS.md`, optional repo-local skills, and descriptive `MAP.md` files
+  instead.
 
 Harness map files:
-- `ROADMAP.md`: thesis closeout streams, current phase, and task routing.
-- `tasks/README.md`: task-bundle status/cache conventions for editing
-  `tasks/*.md`.
-- `tasks/<group>.md`: topic and cross-cutting mini-roadmaps with cached task
-  state.
+- `ROADMAP.md`: overview and routing surface for current task bundles. If it
+  disagrees with a task bundle, trust the task bundle and refresh `ROADMAP.md`.
+- `tasks/README.md`: status labels, cache types, required sections, and editing
+  conventions for `tasks/*.md`.
+- `tasks/<group>.md`: topic and cross-cutting mini-roadmaps. They track
+  remaining work, cached steering, and resume context, and link to domain
+  details instead of owning them.
 - `tasks/verify-thesis-done.md`: final thesis-done gate.
 
-Roadmap and task files own work routing, not domain proof or experiment truth.
-Use their file-local comments and `tasks/README.md` for refresh rules.
+For roadmap and task refresh rules, use `ROADMAP.md`'s file header,
+`tasks/README.md`, and each task bundle's `Status` section.
 
 ## Environment
 
@@ -212,7 +216,6 @@ All conventions serve the long-term quality objectives, the final publication ob
 - use long descriptive names for files and folders
 - use predictable code symbols, keywords, LaTeX labels; grep to quickly find definitions and uses
 - cross-reference other files, avoid unstable line numbers
-- use map and index file headers for refresh rules
 
 **Clarity**
 - write plainly, don't use metaphors or analogies
@@ -241,8 +244,6 @@ All conventions serve the long-term quality objectives, the final publication ob
 - present long math to Jörn via PDF, not LaTeX source; use chat for short math.
 
 ### Tasks
-- `ROADMAP.md` is an overview of `tasks/`, not a source of truth.
-- `tasks/` documents what remains to be done, but defers to `research/` and the other domain files for domain-specific details. It tracks what needs to be done, with what dependencies.
 - write plainly, focus on the outcomes and how to measure success
 - don't prematurely prescribe the method, don't prematurely make decisions, don't prematurely abstract and generalize, don't prematurely define tasks more thoroughly, nor prematurely promote mere ideas to accepted todos.
 - don't invent unnecessary structure, agents just read entire task group files
@@ -296,7 +297,8 @@ All conventions serve the long-term quality objectives, the final publication ob
 - the audience is future agents, and indirectly (via chat) Jörn
 - write plainly, focus on content, make reasoning traceable by providing arguments and intermediate steps instead of just conclusions whenever the elevated hypothesis alone is not obviously true already
 - track the epistemic status of claims
-- use `research/INDEX.md` to cache interpreted research results, proof-route state, and topic summaries, and link to the relevant domain files for details
+- link the relevant index and task surfaces when a research note changes what
+  future agents must find or do
 - split experiments when it becomes hard to achieve multiple purposes/answer multiple questions in one experiment, copy and edit code cheaply
 - track carefully the current prioritized subquestions/subgoals, in particular distinguish exploring the feasibility of an idea, strengthening the evidence of a weak result, aiming to falsify, aiming to distinguish between hypotheses, producing evidence that is more legible even though it contains no new/additional information, refactoring/cleaning the experiment for long-term maintainability, and so on. Often multiple subgoals can be pursued at once - but not always all of them.
 - experiments should be reproducible from scratch given all related research notes
