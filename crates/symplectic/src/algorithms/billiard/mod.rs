@@ -22,6 +22,7 @@ pub mod facet_classification;
 mod kkt_benchmark;
 
 use crate::algorithms::facet_adjacency::{build_transition_matrix, is_feasible_cycle};
+use crate::algorithms::OrbitSearchError;
 use crate::geom::polytope::Polytope4D;
 use block_enumeration::{enumerate_blocks, enumerate_k_bounce_sigmas};
 use facet_classification::classify_facets;
@@ -49,6 +50,8 @@ pub enum BilliardError {
         /// How many facets of this type were found.
         count: usize,
     },
+    /// Orbit search failed after Lagrangian-product classification succeeded.
+    OrbitSearch(OrbitSearchError),
 }
 
 impl std::fmt::Display for BilliardError {
@@ -67,6 +70,9 @@ impl std::fmt::Display for BilliardError {
                     "only {} {}-facets (need at least 3 for a polygon)",
                     count, facet_type
                 )
+            }
+            BilliardError::OrbitSearch(err) => {
+                write!(f, "billiard orbit search failed: {err:?}")
             }
         }
     }

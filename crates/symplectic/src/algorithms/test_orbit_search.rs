@@ -13,8 +13,8 @@ use crate::geom::known_polytopes;
 use crate::geom::lagrangian_product::lagrangian_product;
 use crate::geom::polygon::regular_polygon_2d;
 use crate::geom::polytope::Polytope4D;
-use crate::geom::rational_arithmetic::rat;
-use crate::kkt::rational_solver::solve_kkt_exact;
+use crate::geom::rational_arithmetic::{frac, rat};
+use crate::kkt::rational_solver::{solve_kkt_exact, ExactKktResult};
 
 fn rational_scaled_cube_half() -> Polytope4D {
     let z = rat(0);
@@ -135,5 +135,22 @@ fn minimasafe_accepts_exact_rational_scaled_cube() {
         (result.capacity() - 1.0).abs() < 1e-10,
         "exact rational cube [-1/2,1/2]^4 should have capacity 1.0, got {}",
         result.capacity()
+    );
+}
+
+#[test]
+fn exact_fallback_invariant_rejects_bad_equalities() {
+    let polytope = rational_scaled_cube_half();
+    let sigma = [0, 3, 4, 2, 6];
+    let beta = vec![frac(1, 5); sigma.len()];
+    let exact = ExactKktResult {
+        beta,
+        q_exact: rat(1),
+        q_exact_f64: 1.0,
+    };
+
+    assert!(
+        !exact_kkt_result_satisfies_constraints(&polytope, &sigma, &exact),
+        "positive beta alone must not count as an exact fallback certificate"
     );
 }

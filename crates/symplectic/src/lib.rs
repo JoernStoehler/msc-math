@@ -81,38 +81,49 @@ pub fn systolic_ratio(capacity: f64, volume: f64) -> f64 {
 
 /// Explicit pruned HK2017 frontend on the shared orbit/result surface.
 ///
-/// This root convenience wrapper uses the saddle-point backend and f64-only
-/// aggregation. It does not request exact fallback certification for
-/// indeterminate near-minimum candidates.
+/// This root convenience wrapper uses the saddle-point backend and `MinimaSafe`
+/// aggregation: f64-indeterminate candidates in the minimum-action window are
+/// resolved by exact rational KKT fallback before the result is returned.
 pub fn ehz_capacity_pruned(polytope: &Polytope4D) -> Result<OrbitSearchResult, OrbitSearchError> {
     let (orbits, iterations) = algorithms::orbit_search::solve_sigma_stream(
         polytope,
         OrbitSolveBackend::SaddlePoint,
         |visit| algorithms::hk2017::for_each_sigma_pruned(polytope, visit),
     )?;
-    algorithms::orbit_search::aggregate_orbits_f64_only(0.0, orbits, iterations)
+    algorithms::orbit_search::aggregate_orbits(
+        polytope,
+        orbits,
+        iterations,
+        0.0,
+        OrbitGuaranteeMode::MinimaSafe,
+    )
 }
 
 /// Explicit unpruned HK2017 frontend on the shared orbit/result surface.
 ///
-/// This root convenience wrapper uses the saddle-point backend and f64-only
-/// aggregation. It does not request exact fallback certification for
-/// indeterminate near-minimum candidates.
+/// This root convenience wrapper uses the saddle-point backend and `MinimaSafe`
+/// aggregation: f64-indeterminate candidates in the minimum-action window are
+/// resolved by exact rational KKT fallback before the result is returned.
 pub fn ehz_capacity_unpruned(polytope: &Polytope4D) -> Result<OrbitSearchResult, OrbitSearchError> {
     let (orbits, iterations) = algorithms::orbit_search::solve_sigma_stream(
         polytope,
         OrbitSolveBackend::SaddlePoint,
         |visit| algorithms::hk2017::for_each_sigma_unpruned(polytope, visit),
     )?;
-    algorithms::orbit_search::aggregate_orbits_f64_only(0.0, orbits, iterations)
+    algorithms::orbit_search::aggregate_orbits(
+        polytope,
+        orbits,
+        iterations,
+        0.0,
+        OrbitGuaranteeMode::MinimaSafe,
+    )
 }
 
 /// Explicit billiard frontend on the shared orbit/result surface.
 ///
 /// This root convenience wrapper first checks the Lagrangian-product facet
-/// classification, then uses the saddle-point backend and f64-only aggregation.
-/// It does not request exact fallback certification for indeterminate
-/// near-minimum candidates.
+/// classification, then uses the saddle-point backend and `MinimaSafe`
+/// aggregation.
 pub fn ehz_capacity_billiard(polytope: &Polytope4D) -> Result<OrbitSearchResult, BilliardError> {
     algorithms::billiard::facet_classification::classify_facets(polytope)?;
 
@@ -135,25 +146,17 @@ pub fn ehz_capacity_billiard(polytope: &Polytope4D) -> Result<OrbitSearchResult,
             unreachable!("solve_sigma_stream does not produce NumericalFailure")
         }
         OrbitSearchError::ExactFallbackFailure => {
-            unreachable!("f64-only billiard router never exact-resolves")
+            unreachable!("solve_sigma_stream never exact-resolves")
         }
     })?;
-    algorithms::orbit_search::aggregate_orbits_f64_only(0.0, orbits, iterations).map_err(|err| {
-        match err {
-            OrbitSearchError::UnsupportedBackend => {
-                unreachable!("aggregation does not use backend selection")
-            }
-            OrbitSearchError::NoAdmissibleOrbit => {
-                unreachable!("f64-only aggregation should return a result")
-            }
-            OrbitSearchError::NumericalFailure => {
-                unreachable!("f64-only aggregation does not emit NumericalFailure")
-            }
-            OrbitSearchError::ExactFallbackFailure => {
-                unreachable!("f64-only aggregation never exact-resolves")
-            }
-        }
-    })
+    algorithms::orbit_search::aggregate_orbits(
+        polytope,
+        orbits,
+        iterations,
+        0.0,
+        OrbitGuaranteeMode::MinimaSafe,
+    )
+    .map_err(BilliardError::OrbitSearch)
 }
 
 /// Default capacity wrapper on the shared orbit/result surface.
@@ -162,12 +165,15 @@ pub fn ehz_capacity_billiard(polytope: &Polytope4D) -> Result<OrbitSearchResult,
 /// structure test, and otherwise uses the pruned HK2017 path.
 ///
 /// This is a root convenience wrapper for ordinary experiment code. It returns
-/// the same f64-only `OrbitSearchResult` contract as the selected underlying
-/// wrapper, not an exact certificate.
+/// the same `MinimaSafe` `OrbitSearchResult` contract as the selected
+/// underlying wrapper.
 pub fn ehz_capacity(polytope: &Polytope4D) -> Result<OrbitSearchResult, OrbitSearchError> {
     if algorithms::billiard::facet_classification::classify_facets(polytope).is_ok() {
-        return ehz_capacity_billiard(polytope).map_err(|_| {
-            unreachable!("ehz_capacity only routes to billiard after successful classification")
+        return ehz_capacity_billiard(polytope).map_err(|err| match err {
+            BilliardError::OrbitSearch(err) => err,
+            BilliardError::NotLagrangianProduct { .. } | BilliardError::TooFewFacets { .. } => {
+                unreachable!("ehz_capacity only routes to billiard after successful classification")
+            }
         });
     }
     ehz_capacity_pruned(polytope)

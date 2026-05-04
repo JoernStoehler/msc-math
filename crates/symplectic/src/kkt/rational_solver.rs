@@ -23,7 +23,7 @@
 use crate::geom::rational_arithmetic::{omega0_rational, rational_to_f64};
 use num_bigint::BigInt;
 use num_rational::BigRational;
-use num_traits::{One, Signed, ToPrimitive, Zero};
+use num_traits::{One, Signed, Zero};
 
 /// Result of an exact KKT solve over BigRational.
 ///
@@ -211,16 +211,12 @@ fn gauss_solve_with_null_space(
     let mut current_row = 0;
 
     for col in 0..n {
-        // Find largest-magnitude nonzero entry in this column below current_row.
+        // Find a largest-magnitude nonzero entry in this column below
+        // current_row. Pivot choice affects expression growth, not rank truth:
+        // every zero/nonzero decision below is exact over Q.
         let best_row = (current_row..n)
             .filter(|&r| !aug[r][col].is_zero())
-            .max_by(|&a, &b| {
-                let abs_a = rational_abs_f64(&aug[a][col]);
-                let abs_b = rational_abs_f64(&aug[b][col]);
-                abs_a
-                    .partial_cmp(&abs_b)
-                    .unwrap_or(std::cmp::Ordering::Equal)
-            });
+            .max_by_key(|&r| aug[r][col].abs());
 
         match best_row {
             None => {
@@ -498,15 +494,6 @@ fn compute_q_rational(
             &beta[i] * &beta[j] * omega
         })
         .fold(BigRational::zero(), |acc, x| acc + x)
-}
-
-// ── Helpers ──────────────────────────────────────────────────────────────
-
-/// Approximate absolute value of a BigRational as f64 (for pivot comparison).
-fn rational_abs_f64(r: &BigRational) -> f64 {
-    let n = r.numer().to_f64().unwrap_or(0.0);
-    let d = r.denom().to_f64().unwrap_or(1.0);
-    (n / d).abs()
 }
 
 #[cfg(test)]

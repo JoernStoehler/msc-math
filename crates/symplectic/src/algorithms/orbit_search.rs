@@ -10,8 +10,9 @@
 use crate::geom::polytope::Polytope4D;
 use crate::geom::rational_arithmetic::rational_to_f64;
 use crate::kkt::classify_margin;
-use crate::kkt::rational_solver::solve_kkt_exact;
+use crate::kkt::rational_solver::{solve_kkt_exact, ExactKktResult};
 use crate::kkt::saddle_point_solver::{solve_kkt_for, KktOutcome, KktResult, EPS_Q_POSITIVE};
+use num_traits::{One, Signed, Zero};
 
 /// Admissibility status of a numerically solved orbit candidate.
 ///
@@ -282,6 +283,9 @@ fn exact_orbit_from_sigma(
     old_xi: Option<f64>,
 ) -> Option<OrbitKktData> {
     let exact = solve_kkt_exact(polytope.dual_vertices(), sigma)?;
+    if !exact_kkt_result_satisfies_constraints(polytope, sigma, &exact) {
+        return None;
+    }
     if exact.q_exact_f64 <= EPS_Q_POSITIVE {
         return None;
     }
@@ -304,6 +308,37 @@ fn exact_orbit_from_sigma(
         mu: old_mu,
         xi: old_xi,
         admissibility: OrbitAdmissibility::AdmissibleExact,
+    })
+}
+
+fn exact_kkt_result_satisfies_constraints(
+    polytope: &Polytope4D,
+    sigma: &[usize],
+    exact: &ExactKktResult,
+) -> bool {
+    if exact.beta.len() != sigma.len()
+        || !exact.beta.iter().all(|beta| beta.is_positive())
+        || !exact.q_exact.is_positive()
+    {
+        return false;
+    }
+
+    let beta_sum = exact
+        .beta
+        .iter()
+        .cloned()
+        .fold(num_rational::BigRational::zero(), |acc, beta| acc + beta);
+    if beta_sum != num_rational::BigRational::one() {
+        return false;
+    }
+
+    (0..4).all(|d| {
+        sigma
+            .iter()
+            .zip(exact.beta.iter())
+            .map(|(&facet, beta)| beta * &polytope.dual_vertices()[facet][d])
+            .fold(num_rational::BigRational::zero(), |acc, entry| acc + entry)
+            .is_zero()
     })
 }
 
@@ -557,26 +592,6 @@ pub fn aggregate_orbits(
     if mode == OrbitGuaranteeMode::AllSafe {
         resolve_orbits_for_guarantee(polytope, &mut orbits, mode)?;
     }
-    sort_orbits_by_lower_action(&mut orbits);
-    summarize_orbits(orbits, iterations)
-}
-
-/// Shared unresolved-f64 aggregation seam for the root scalar wrappers.
-///
-/// This keeps the public `ehz_capacity*` family on the f64 search path and
-/// surfaces unresolved intervals instead of forcing exact fallback on
-/// approximate geometries. Non-default callers that want stronger guarantees
-/// use [`aggregate_orbits`] explicitly.
-pub(crate) fn aggregate_orbits_f64_only(
-    gap: f64,
-    mut orbits: Vec<OrbitKktData>,
-    iterations: u64,
-) -> Result<OrbitSearchResult, OrbitSearchError> {
-    if orbits.is_empty() {
-        return Err(OrbitSearchError::NoAdmissibleOrbit);
-    }
-
-    trim_orbits_to_gap(&mut orbits, gap)?;
     sort_orbits_by_lower_action(&mut orbits);
     summarize_orbits(orbits, iterations)
 }
