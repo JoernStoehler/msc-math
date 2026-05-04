@@ -58,8 +58,9 @@ pub use geom::QhullError;
 // Capacity algorithms
 pub use algorithms::billiard::BilliardError;
 pub use algorithms::{
-    GeometricOrbitError, OrbitAdmissibility, OrbitGuaranteeMode, OrbitKktData, OrbitSearchError,
-    OrbitSearchResult, OrbitSolveBackend, OrbitSolveError,
+    CertifiedOrbitKktData, CertifiedOrbitSearchResult, CertifiedOrbitSetMode, GeometricOrbitError,
+    OrbitAdmissibility, OrbitGuaranteeMode, OrbitKktData, OrbitSearchError, OrbitSearchResult,
+    OrbitSolveBackend, OrbitSolveError,
 };
 
 // Geometry utility functions
@@ -119,6 +120,29 @@ pub fn ehz_capacity_unpruned(polytope: &Polytope4D) -> Result<OrbitSearchResult,
     )
 }
 
+/// Explicit pruned HK2017 frontend with exact rational certified output.
+///
+/// The search still uses the saddle-point f64 path and HK2017 pruning. The
+/// result is certified by exact rational KKT fallback according to `mode`.
+pub fn ehz_capacity_pruned_certified(
+    polytope: &Polytope4D,
+    action_gap_exact: num_rational::BigRational,
+    mode: CertifiedOrbitSetMode,
+) -> Result<CertifiedOrbitSearchResult, OrbitSearchError> {
+    let (orbits, iterations) = algorithms::orbit_search::solve_sigma_stream(
+        polytope,
+        OrbitSolveBackend::SaddlePoint,
+        |visit| algorithms::hk2017::for_each_sigma_pruned(polytope, visit),
+    )?;
+    algorithms::orbit_search::aggregate_certified_orbits(
+        polytope,
+        orbits,
+        iterations,
+        action_gap_exact,
+        mode,
+    )
+}
+
 /// Explicit billiard frontend on the shared orbit/result surface.
 ///
 /// This root convenience wrapper first checks the Lagrangian-product facet
@@ -147,6 +171,9 @@ pub fn ehz_capacity_billiard(polytope: &Polytope4D) -> Result<OrbitSearchResult,
         }
         OrbitSearchError::ExactFallbackFailure => {
             unreachable!("solve_sigma_stream never exact-resolves")
+        }
+        OrbitSearchError::InvalidGap => {
+            unreachable!("solve_sigma_stream does not receive an action gap")
         }
     })?;
     algorithms::orbit_search::aggregate_orbits(

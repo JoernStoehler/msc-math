@@ -8,13 +8,14 @@
 //! keep the production module focused on implementation.
 
 use super::*;
-use crate::ehz_capacity_pruned;
 use crate::geom::known_polytopes;
 use crate::geom::lagrangian_product::lagrangian_product;
 use crate::geom::polygon::regular_polygon_2d;
 use crate::geom::polytope::Polytope4D;
 use crate::geom::rational_arithmetic::{frac, rat};
 use crate::kkt::rational_solver::{solve_kkt_exact, ExactKktResult};
+use crate::{ehz_capacity_pruned, ehz_capacity_pruned_certified};
+use num_traits::Zero;
 
 fn rational_scaled_cube_half() -> Polytope4D {
     let z = rat(0);
@@ -153,4 +154,56 @@ fn exact_fallback_invariant_rejects_bad_equalities() {
         !exact_kkt_result_satisfies_constraints(&polytope, &sigma, &exact),
         "positive beta alone must not count as an exact fallback certificate"
     );
+}
+
+#[test]
+fn certified_pruned_wrapper_returns_exact_simplex_minimizers() {
+    let kp = known_polytopes::simplex();
+    let result = ehz_capacity_pruned_certified(
+        &kp.polytope,
+        num_rational::BigRational::zero(),
+        CertifiedOrbitSetMode::MinimizersOnly,
+    )
+    .expect("certified simplex capacity");
+
+    assert_eq!(result.capacity_exact, frac(1, 4));
+    assert_eq!(result.action_gap_exact, num_rational::BigRational::zero());
+    assert!(!result.minimizers.is_empty());
+    assert_eq!(result.orbits, result.minimizers);
+    assert!(result
+        .minimizers
+        .iter()
+        .all(|orbit| orbit.action_exact == result.capacity_exact));
+    assert!(result.exact_resolutions > 0);
+}
+
+#[test]
+fn certified_gap_window_returns_only_exact_orbits_inside_gap() {
+    let kp = known_polytopes::simplex();
+    let gap = frac(1, 4);
+    let (orbits, iterations) =
+        solve_sigma_stream(&kp.polytope, OrbitSolveBackend::SaddlePoint, |visit| {
+            crate::algorithms::hk2017::for_each_sigma_pruned(&kp.polytope, visit)
+        })
+        .expect("simplex sigma stream should solve");
+
+    let result = aggregate_certified_orbits(
+        &kp.polytope,
+        orbits,
+        iterations,
+        gap.clone(),
+        CertifiedOrbitSetMode::GapWindow,
+    )
+    .expect("certified simplex gap window");
+
+    let cutoff = result.capacity_exact.clone() + gap;
+    assert!(!result.orbits.is_empty());
+    assert!(result
+        .orbits
+        .iter()
+        .all(|orbit| orbit.action_exact <= cutoff));
+    assert!(result
+        .minimizers
+        .iter()
+        .all(|orbit| orbit.action_exact == result.capacity_exact));
 }

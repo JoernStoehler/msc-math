@@ -12,6 +12,7 @@ use crate::geom::rational_arithmetic::rational_to_f64;
 use crate::kkt::classify_margin;
 use crate::kkt::rational_solver::{solve_kkt_exact, ExactKktResult};
 use crate::kkt::saddle_point_solver::{solve_kkt_for, KktOutcome, KktResult, EPS_Q_POSITIVE};
+use num_rational::BigRational;
 use num_traits::{One, Signed, Zero};
 
 /// Admissibility status of a numerically solved orbit candidate.
@@ -41,6 +42,16 @@ pub enum OrbitGuaranteeMode {
     /// Resolve every indeterminate candidate that remains in the returned
     /// orbit list.
     AllSafe,
+}
+
+/// Exact orbit-set contract for certified aggregation.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum CertifiedOrbitSetMode {
+    /// Return the exact capacity and all exact minimizers.
+    MinimizersOnly,
+    /// Return the exact capacity, all exact minimizers, and all exact orbits
+    /// whose action lies in `capacity_exact + action_gap_exact`.
+    GapWindow,
 }
 
 /// Primitive numerical backend used to solve one sigma.
@@ -109,6 +120,45 @@ pub struct OrbitSearchResult {
     pub iterations: u64,
 }
 
+/// Exact rational certificate for one admissible sigma.
+#[derive(Clone, Debug, PartialEq)]
+pub struct CertifiedOrbitKktData {
+    /// Cyclic facet sequence σ. Entries are distinct facet indices, not a full
+    /// permutation of `0..F`.
+    pub sigma: Vec<usize>,
+    /// Exact β aligned with σ: `beta_exact[i]` belongs to `sigma[i]`.
+    pub beta_exact: Vec<BigRational>,
+    /// Exact Q value from the rational KKT system.
+    pub q_exact: BigRational,
+    /// Exact action `1 / (2Q)`.
+    pub action_exact: BigRational,
+    /// f64 convenience copy of `action_exact`.
+    pub action: f64,
+}
+
+/// Exact rational result for callers that need a certified orbit set, not only
+/// an interval-safe scalar capacity.
+#[derive(Clone, Debug, PartialEq)]
+pub struct CertifiedOrbitSearchResult {
+    /// Exact capacity, i.e. the minimum exact action among certified candidates.
+    pub capacity_exact: BigRational,
+    /// f64 convenience copy of `capacity_exact`.
+    pub capacity: f64,
+    /// Exact action gap requested by the caller.
+    pub action_gap_exact: BigRational,
+    /// Exact minimizers, sorted by sigma.
+    pub minimizers: Vec<CertifiedOrbitKktData>,
+    /// Returned exact orbit set. In `MinimizersOnly` mode this equals
+    /// `minimizers`; in `GapWindow` mode it contains all certified orbits with
+    /// action at most `capacity_exact + action_gap_exact`.
+    pub orbits: Vec<CertifiedOrbitKktData>,
+    /// Number of sigma candidates examined by the search frontend.
+    pub iterations: u64,
+    /// Number of f64 candidates that required exact KKT resolution while
+    /// certifying this result.
+    pub exact_resolutions: usize,
+}
+
 impl OrbitSearchResult {
     /// Canonical best/minimum orbit used by scalar-style consumers.
     ///
@@ -161,6 +211,8 @@ pub enum OrbitSearchError {
     NumericalFailure,
     /// Exact fallback was required by the active guarantee mode but failed.
     ExactFallbackFailure,
+    /// The caller supplied a negative action gap for a certified orbit set.
+    InvalidGap,
 }
 
 /// Failure classification for solving a single sigma into `OrbitKktData`.
@@ -308,6 +360,30 @@ fn exact_orbit_from_sigma(
         mu: old_mu,
         xi: old_xi,
         admissibility: OrbitAdmissibility::AdmissibleExact,
+    })
+}
+
+fn exact_action_from_q(q_exact: &BigRational) -> BigRational {
+    BigRational::one() / (q_exact.clone() + q_exact.clone())
+}
+
+fn certified_orbit_from_sigma(
+    polytope: &Polytope4D,
+    sigma: &[usize],
+) -> Option<CertifiedOrbitKktData> {
+    let exact = solve_kkt_exact(polytope.dual_vertices(), sigma)?;
+    if !exact_kkt_result_satisfies_constraints(polytope, sigma, &exact) {
+        return None;
+    }
+    let action_exact = exact_action_from_q(&exact.q_exact);
+    let action = rational_to_f64(&action_exact);
+
+    Some(CertifiedOrbitKktData {
+        sigma: sigma.to_vec(),
+        beta_exact: exact.beta,
+        q_exact: exact.q_exact,
+        action_exact,
+        action,
     })
 }
 
@@ -527,6 +603,139 @@ fn summarize_orbits(
         min_action_lower,
         min_action_upper,
         iterations,
+    })
+}
+
+fn conservative_f64_upper_bound(exact: &BigRational) -> f64 {
+    let mut value = rational_to_f64(exact);
+    for _ in 0..8 {
+        value = if value.is_finite() && value >= 0.0 {
+            f64::from_bits(value.to_bits() + 1)
+        } else {
+            value
+        };
+    }
+    value
+}
+
+fn sort_certified_orbits_by_action(orbits: &mut [CertifiedOrbitKktData]) {
+    orbits.sort_by(|a, b| {
+        a.action_exact
+            .cmp(&b.action_exact)
+            .then_with(|| a.sigma.cmp(&b.sigma))
+    });
+}
+
+fn sort_certified_orbits_by_sigma(orbits: &mut [CertifiedOrbitKktData]) {
+    orbits.sort_by(|a, b| a.sigma.cmp(&b.sigma));
+}
+
+/// Aggregate solved orbit candidates into an exact rational orbit-set result.
+///
+/// This is the certified-output orchestrator. It still uses the f64 solver's
+/// action intervals as a prefilter, but every returned orbit and every candidate
+/// that could affect the requested exact result is checked by the rational KKT
+/// fallback before this function returns.
+pub fn aggregate_certified_orbits(
+    polytope: &Polytope4D,
+    mut candidates: Vec<OrbitKktData>,
+    iterations: u64,
+    action_gap_exact: BigRational,
+    mode: CertifiedOrbitSetMode,
+) -> Result<CertifiedOrbitSearchResult, OrbitSearchError> {
+    if candidates.is_empty() {
+        return Err(OrbitSearchError::NoAdmissibleOrbit);
+    }
+    if action_gap_exact.is_negative() {
+        return Err(OrbitSearchError::InvalidGap);
+    }
+
+    sort_orbits_by_lower_action(&mut candidates);
+    let mut certified: Vec<Option<CertifiedOrbitKktData>> = vec![None; candidates.len()];
+    let mut rejected = vec![false; candidates.len()];
+    let mut exact_resolutions = 0usize;
+
+    let mut capacity_exact = None;
+    for (idx, candidate) in candidates.iter().enumerate() {
+        exact_resolutions += 1;
+        match certified_orbit_from_sigma(polytope, &candidate.sigma) {
+            Some(exact_orbit) => {
+                capacity_exact = Some(exact_orbit.action_exact.clone());
+                certified[idx] = Some(exact_orbit);
+                break;
+            }
+            None => rejected[idx] = true,
+        }
+    }
+    let mut capacity_exact = capacity_exact.ok_or(OrbitSearchError::NoAdmissibleOrbit)?;
+
+    let resolution_gap = match mode {
+        CertifiedOrbitSetMode::MinimizersOnly => BigRational::zero(),
+        CertifiedOrbitSetMode::GapWindow => action_gap_exact.clone(),
+    };
+
+    loop {
+        let threshold_exact = capacity_exact.clone() + resolution_gap.clone();
+        let threshold_f64 = conservative_f64_upper_bound(&threshold_exact);
+        let needs_resolution: Vec<usize> = candidates
+            .iter()
+            .enumerate()
+            .filter_map(|(idx, candidate)| {
+                (certified[idx].is_none()
+                    && !rejected[idx]
+                    && candidate.action_lower <= threshold_f64)
+                    .then_some(idx)
+            })
+            .collect();
+
+        if needs_resolution.is_empty() {
+            break;
+        }
+
+        for idx in needs_resolution {
+            exact_resolutions += 1;
+            match certified_orbit_from_sigma(polytope, &candidates[idx].sigma) {
+                Some(exact_orbit) => {
+                    if exact_orbit.action_exact < capacity_exact {
+                        capacity_exact = exact_orbit.action_exact.clone();
+                    }
+                    certified[idx] = Some(exact_orbit);
+                }
+                None => rejected[idx] = true,
+            }
+        }
+    }
+
+    let window_cutoff = capacity_exact.clone() + action_gap_exact.clone();
+    let mut minimizers: Vec<CertifiedOrbitKktData> = certified
+        .iter()
+        .filter_map(|orbit| orbit.as_ref())
+        .filter(|orbit| orbit.action_exact == capacity_exact)
+        .cloned()
+        .collect();
+    if minimizers.is_empty() {
+        return Err(OrbitSearchError::NoAdmissibleOrbit);
+    }
+    sort_certified_orbits_by_sigma(&mut minimizers);
+
+    let mut orbits: Vec<CertifiedOrbitKktData> = match mode {
+        CertifiedOrbitSetMode::MinimizersOnly => minimizers.clone(),
+        CertifiedOrbitSetMode::GapWindow => certified
+            .into_iter()
+            .flatten()
+            .filter(|orbit| orbit.action_exact <= window_cutoff)
+            .collect(),
+    };
+    sort_certified_orbits_by_action(&mut orbits);
+
+    Ok(CertifiedOrbitSearchResult {
+        capacity: rational_to_f64(&capacity_exact),
+        capacity_exact,
+        action_gap_exact,
+        minimizers,
+        orbits,
+        iterations,
+        exact_resolutions,
     })
 }
 

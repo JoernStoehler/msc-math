@@ -43,7 +43,7 @@ experiment safety, validation trust, or durable crate maintainability.
 | Safe experiment command contracts | `[active]` | mainline thesis | agents, Jörn only for retained-output policy | Continue with finer per-binary smoke repairs after package-level contracts for HKO, verification/algorithm-comparison, combinatorial-cells, numerics, and sys-landscape; verification/numerics help exits are being normalized to status 0. | `/tmp/rust-tech-debt-map.md`, `experiments/MAP.md`, `tasks/reproducibility.md` |
 | Verification trust chain | `[active]` | mainline thesis | retained claims | `experiments/verification/README.md` now records the top-level Rust command contract. Decide later which full verification commands are required before broad Rust cleanup; keep path/row diagnostics in verification plumbing. | `research/verification.md`, `experiments/verification/README.md` |
 | `symplectic` API support levels | `[map-input]` | contingent during writing | Jörn for public API/architecture choices | Audit only the paths needed by retained thesis experiments before hiding, promoting, or redesigning public modules. | `crates/MAP.md`, `crates/symplectic/src/lib.rs` |
-| Capacity result semantics | `[active]` | mainline thesis | retained claims, Jörn for thesis-facing contract | Root `ehz_capacity*` wrappers now use `OrbitGuaranteeMode::MinimaSafe`: f64-indeterminate candidates in the minimum-action window are exact-resolved before returning. Keep broader ignored-test/runtime checks explicit before relying on this as the thesis-facing numerical contract. | `tasks/numerics.md`, `crates/symplectic/src/lib.rs`, `crates/symplectic/src/algorithms/orbit_search.rs`, `crates/symplectic/src/kkt/rational_solver.rs` |
+| Capacity result semantics | `[active]` | mainline thesis | retained claims, Jörn for thesis-facing contract | Root `ehz_capacity*` wrappers now use `OrbitGuaranteeMode::MinimaSafe`. `ehz_capacity_pruned_certified` adds an exact rational result path for capacity, minimizers, and an optional action-gap window while reusing f64 search intervals as the prefilter. Next thesis-facing decision: which callers need the ordinary `OrbitSearchResult` contract versus the certified rational contract. | `tasks/numerics.md`, `crates/symplectic/src/lib.rs`, `crates/symplectic/src/algorithms/orbit_search.rs`, `crates/symplectic/src/kkt/rational_solver.rs` |
 | Unsupported projected backend | `[map-input]` | contingent during writing | Jörn if the projected route is retained | `OrbitSolveBackend::Projected` docs now state that the shared `solve_orbit_sigma` surface returns `UnsupportedBackend`. Choose hide or complete only if normal callers need it. | `tasks/numerics.md`, `crates/symplectic/src/algorithms/orbit_search.rs` |
 | Hidden hard failures in fallible APIs | `[active]` | map input | agents | Non-finite `Polytope4D::from_f64` inputs and invalid random-sampling parameters now fail before panic/nontermination boundaries. Continue with minimal reproducers before changing capacity-wrapper error semantics. | `/tmp/rust-tech-debt-map.md`, `crates/symplectic/src/lib.rs`, `crates/symplectic/src/geom/polytope.rs`, `crates/symplectic/src/random.rs` |
 | Runtime invariant checks | `[active]` | mainline thesis | agents | Add exact/runtime validation at trust-boundary handoffs when complexity and compute cost are small. Start with places that turn internal payloads into certified/public results, then broaden only when a concrete failure mode or thesis-facing claim needs it. | `crates/symplectic/src/algorithms/orbit_search.rs`, `crates/symplectic/src/kkt/rational_solver.rs` |
@@ -133,6 +133,19 @@ experiment safety, validation trust, or durable crate maintainability.
   `AdmissibleExact`. `BilliardError` has an `OrbitSearch` variant so the
   billiard wrapper returns aggregation failures instead of panicking after
   successful Lagrangian-product classification.
+- [fresh 2026-05-04] `ehz_capacity_pruned_certified` is the exact rational
+  output path for callers that need certified capacity/minimizers instead of a
+  scalar-style f64 result. It uses the existing f64 saddle-point HK2017 stream
+  for search, exact-resolves the first admissible candidate, then exact-resolves
+  every remaining candidate whose f64 action lower bound can still lie in the
+  requested exact window. `CertifiedOrbitSetMode::MinimizersOnly` returns exact
+  capacity plus all exact minimizers; `GapWindow` also returns exact orbits with
+  action at most `capacity_exact + action_gap_exact`. Criterion smoke profile
+  with `cargo bench -p symplectic --bench profiling capacity -- --warm-up-time
+  0.5 --measurement-time 1.0 --sample-size 10`: ordinary pruned capacity
+  measured about 30 us, 114 us, 438 us, 1.31 ms, 4.77 ms, 15.5 ms, 108 ms for
+  F=5..11; certified minimizers measured about 10.0 ms, 11.9 ms, 15.5 ms, 12.7
+  ms, 28.8 ms, 28.0 ms, 126 ms for F=5..11.
 - [fresh 2026-05-04] Sampled duplicate KKT/projection solver surfaces already
   carry provenance labels: algorithm-comparison ablation keeps a historical KKT
   helper copy for A0..A3 comparability, crosspolytope keeps a historical

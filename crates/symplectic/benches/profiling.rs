@@ -5,18 +5,20 @@
 
 use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion};
 use nalgebra::Vector4;
+use num_rational::BigRational;
+use num_traits::Zero;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 
 use symplectic::algorithms::facet_adjacency::{build_transition_matrix, is_feasible_cycle};
 use symplectic::algorithms::hk2017::combinations;
 use symplectic::algorithms::hk2017::permutations::for_each_cyclic_permutation;
-use symplectic::ehz_capacity_pruned;
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::volume::{volume, volume_qhull};
 use symplectic::kkt::saddle_point_solver::{solve_kkt_for, KktOutcome};
 use symplectic::random::generate_random_polytopes;
 use symplectic::QhullError;
+use symplectic::{ehz_capacity_pruned, ehz_capacity_pruned_certified, CertifiedOrbitSetMode};
 
 // Same seed and height range as
 // experiments/verification/algorithm-comparison/benchmark/main.rs for consistency.
@@ -120,6 +122,24 @@ fn bench_capacity(c: &mut Criterion) {
     group.finish();
 }
 
+fn bench_capacity_certified_minimizers(c: &mut Criterion) {
+    let mut group = c.benchmark_group("capacity_certified_minimizers");
+    group.sample_size(10);
+    for &f in FACET_COUNTS {
+        let polytope = prebuilt_polytope(f);
+        group.bench_with_input(BenchmarkId::from_parameter(f), &f, |b, _| {
+            b.iter(|| {
+                ehz_capacity_pruned_certified(
+                    &polytope,
+                    BigRational::zero(),
+                    CertifiedOrbitSetMode::MinimizersOnly,
+                )
+            });
+        });
+    }
+    group.finish();
+}
+
 fn bench_kkt_single(c: &mut Criterion) {
     let mut group = c.benchmark_group("kkt_single");
     for &f in FACET_COUNTS {
@@ -182,6 +202,7 @@ criterion_group!(
     bench_construction,
     bench_transition_matrix,
     bench_capacity,
+    bench_capacity_certified_minimizers,
     bench_kkt_single,
     bench_pruning_check,
     bench_volume,
