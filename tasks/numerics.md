@@ -62,6 +62,22 @@ Context: route-freeze surface for proof-vs-validation-vs-caveat decisions.
 | Algorithm/numerics mismatch triage | `[map-input]` | contingent during writing | agents then Jorn for theorem/prose choices | Route `thesis/migration-findings.md` rows 3-11 before relying on existing algorithm boxes or numerical appendix prose: multiplier names, KKT sign convention, Q factor, beta/eigen thresholds, accumulator references, `|S| >= 2`, billiard adjacency pruning, and tube closing-edge status. | `thesis/migration-findings.md`, `thesis/algorithms.tex`, `thesis/appendix-numerical.tex` |
 | Tube algorithm import | `[active]` | map input | Jorn proof, agents for routing | Write the current mathematical source from `research/tube-algorithm-raw-jorn-2026-05-04.md`, then rewrite thesis/formal/code surfaces from that source. Old tube thesis/formal/code surfaces are quarantined meanwhile. | `research/tube-algorithm-raw-jorn-2026-05-04.md`, `research/tube-algorithm.md`, `thesis/tube-algorithm.tex`, `formal/tube-algorithm.tex`, `crates/symplectic/src/algorithms/tube/mod.rs`, `thesis/migration-findings.md` rows 1 and 11-14 |
 
+## Tube Algorithm Import Objective
+
+Thesis project success means a defensible May 2026 thesis plus durable
+supporting code and evidence. For the tube algorithm, that success condition is
+not met by an empty implementation point, a raw note, or a stale agent-written
+draft. It is met only if the algorithm becomes a thesis-usable
+mathematical/computational route for computing capacity and the relevant simple
+Reeb orbits, with evidence that the code matches the mathematics.
+
+Therefore the active objective is to import the tube algorithm from Jörn's
+current head/paper formalization into the repo as a current, traceable
+thesis/code/evidence component. This objective is downstream of thesis success
+and upstream of thesis prose, formalization, Rust implementation, and
+validation: those surfaces should be driven from the current mathematical
+source, not from the old quarantined tube files.
+
 ## Tube Algorithm Import Done State
 
 The tube algorithm import is done when all of the following observable project
