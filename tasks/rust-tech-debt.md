@@ -12,7 +12,8 @@ experiment safety, validation trust, or durable crate maintainability.
 - Last updated: 2026-05-04.
 - Source surfaces: `crates/`, `experiments/`, `crates/MAP.md`,
   `experiments/MAP.md`, `research/verification.md`, relevant topic bundles,
-  and `/tmp/rust-tech-debt-map.md` as an untracked exploration input.
+  `/tmp/rust-tech-debt-map.md`, and `/tmp/msc-math-lie-audit.md` as untracked
+  exploration inputs.
 - Refresh when: a Rust cleanup packet changes API support levels, experiment
   command safety, generated-output ownership, validation commands, or the
   interpretation of a retained thesis claim.
@@ -48,6 +49,7 @@ experiment safety, validation trust, or durable crate maintainability.
 | Hidden hard failures in fallible APIs | `[active]` | map input | agents | Non-finite `Polytope4D::from_f64` inputs and invalid random-sampling parameters now fail before panic/nontermination boundaries. Continue with minimal reproducers before changing capacity-wrapper error semantics. | `/tmp/rust-tech-debt-map.md`, `crates/symplectic/src/lib.rs`, `crates/symplectic/src/geom/polytope.rs`, `crates/symplectic/src/random.rs` |
 | Runtime invariant checks | `[active]` | mainline thesis | agents | Add exact/runtime validation at trust-boundary handoffs when complexity and compute cost are small. Start with places that turn internal payloads into certified/public results, then broaden only when a concrete failure mode or thesis-facing claim needs it. | `crates/symplectic/src/algorithms/orbit_search.rs`, `crates/symplectic/src/kkt/rational_solver.rs` |
 | `algebraic-numbers` proof/API map | `[active]` | mainline thesis if exact validation is cited | agents, Jörn for math/proof acceptance | README now records the public surface, serialization contract, invariant-panics, and formal-reference gaps. Next step is formal/task routing only if exact validation becomes thesis-cited. | `crates/algebraic-numbers/README.md`, `crates/MAP.md` |
+| Incomplete lie-audit remediation | `[active]` | mainline thesis | agents, Jörn for mathematical/source-of-truth calls | Treat `/tmp/msc-math-lie-audit.md` as incomplete and weakly validated, not as a complete findings list. Rework it with a code-first pass over exact/certified/ground-truth validation paths, then route every confirmed finding to a fix, caveat, cut, or Jörn decision before using any repo-promise verification gate. | `/tmp/msc-math-lie-audit.md`, `crates/symplectic/src/kkt/rational_solver.rs`, `tasks/verify-thesis-done.md` |
 | Duplicate producer ownership | `[map-input]` | map input | agents, Jörn only for deleting provenance | Label current, historical, frozen-baseline, exploratory, or delete only after checking research/task truth for that package. | `experiments/sys-landscape/`, `experiments/numerics/`, `experiments/verification/algorithm-comparison/` |
 | Solver and exact-arithmetic copies | `[active]` | map input | agents, Jörn only for deletion or API migration | Sampled KKT copies already say they are historical or experiment-local. Next audit should separate reusable exact rational linear algebra from symplectic geometry, either inside a clear crate-local folder or in a small `rational-numbers` crate if multiple modules need the boundary. Leave experiment-local copies duplicated unless a retained task needs migration. | `experiments/verification/algorithm-comparison/ablation/kkt.rs`, `experiments/crosspolytope/main/kkt.rs`, `experiments/numerics/error-bounds/saddle_point_solver.rs`, `experiments/numerics/src/algebraic/`, `crates/symplectic/src/kkt/rational_solver.rs`, `crates/symplectic/src/geom/vertex_enumeration/exact_linalg.rs` |
 | Blocked/stale/provenance code that looks live | `[active]` | map input | agents | Fix sampled stale headers and add grep-able status markers where source truth is already clear; `gradient-ascent-dev` now has a local stub README. Avoid broad deletion without provenance review. | `/tmp/rust-tech-debt-map.md`, topic research notes |
@@ -101,6 +103,13 @@ experiment safety, validation trust, or durable crate maintainability.
   scalar public surface, `canonical_element` serialization contract,
   field-spec validation/invariant-panic boundary, and the remaining formal
   reference gaps.
+- [fresh 2026-05-04] `/tmp/msc-math-lie-audit.md` is explicitly incomplete and
+  weakly validated after it missed the high-severity
+  `crates/symplectic/src/kkt/rational_solver.rs` contract lie: the file
+  advertises exact `BigRational`, ground-truth, and certified Gaussian
+  elimination, but rank and consistency decisions use f64 thresholds. Refresh
+  by doing a code-first audit of exact/certified/ground-truth paths, not by
+  trusting the report or its subagent coverage.
 - [fresh 2026-05-04] `Polytope4D::from_f64` rejects non-finite f64
   coordinates with `ConstructionError::F64Conversion` before calling
   `f64_to_rational`; regression coverage lives in
