@@ -11,11 +11,12 @@
 //! floating-point ambiguity is unacceptable. It is NOT used in the main capacity
 //! enumeration pipeline (too slow for sweeping all permutations).
 //!
-//! **Rank-deficient systems:** When the KKT matrix is rank-deficient (common for
-//! polytopes with axis-aligned normals in symplectic subplanes), Q(beta) is
-//! constant along the null space ([lem:well-defined]). The solver detects rank
-//! deficiency via pivot analysis, extracts null-space basis vectors, and searches
-//! for beta > 0 via Fourier-Motzkin elimination.
+//! **Rank-deficient systems:** When the KKT matrix is exactly rank-deficient
+//! over `Q` (common for polytopes with axis-aligned normals in symplectic
+//! subplanes), Q(beta) is constant along the null space ([lem:well-defined]).
+//! The solver detects exact rank deficiency by exact zero pivots, extracts
+//! null-space basis vectors, and searches for beta > 0 via Fourier-Motzkin
+//! elimination.
 //!
 //! Mathematical correspondence: [lem:kkt], [lem:well-defined]
 
@@ -178,23 +179,6 @@ enum GaussResult {
     },
 }
 
-/// Relative threshold for treating a pivot as zero.
-///
-/// A pivot is treated as zero (column becomes free / null-space direction) if
-/// |pivot| < max_entry_abs * PIVOT_RELATIVE_THRESHOLD, where max_entry_abs
-/// is the largest absolute entry in the original matrix (measured BEFORE
-/// elimination).
-///
-/// This handles the case where f64->rational conversion turns a mathematically
-/// zero eigenvalue into a tiny nonzero rational (~10^-17). For truly exact
-/// BigRational inputs (integer/fraction coordinates), zero pivots are exactly
-/// zero and no threshold is needed.
-///
-/// 1e-12 means ~12 digits lost to cancellation, leaving ~4 digits of signal.
-/// Well-conditioned systems have relative pivots > 1e-6. The HKO pentagon's
-/// rank-deficient node has relative pivot ~1e-17.
-const PIVOT_RELATIVE_THRESHOLD: f64 = 1e-12;
-
 /// Gaussian elimination with partial pivoting and null-space extraction.
 ///
 /// Returns:
@@ -208,14 +192,6 @@ fn gauss_solve_with_null_space(
 ) -> Option<GaussResult> {
     let n = rhs.len();
 
-    // Compute max entry magnitude from the original matrix for threshold calibration.
-    let max_entry_abs: f64 = mat
-        .iter()
-        .flat_map(|row| row.iter())
-        .map(rational_abs_f64)
-        .fold(0.0_f64, f64::max);
-    let threshold = max_entry_abs * PIVOT_RELATIVE_THRESHOLD;
-
     // Augmented matrix [A | b]
     let mut aug: Vec<Vec<BigRational>> = mat
         .iter()
@@ -228,7 +204,8 @@ fn gauss_solve_with_null_space(
         .collect();
 
     // Forward elimination with partial pivoting.
-    // Columns with below-threshold pivots are skipped (treated as free).
+    // Only exact zero columns are treated as free. This function is an exact
+    // solver; using a floating threshold here can create false certificates.
     let mut pivot_positions: Vec<(usize, usize)> = Vec::new();
     let mut free_cols: Vec<usize> = Vec::new();
     let mut current_row = 0;
@@ -248,11 +225,6 @@ fn gauss_solve_with_null_space(
         match best_row {
             None => {
                 // All entries zero — column is free.
-                free_cols.push(col);
-            }
-            Some(best) if rational_abs_f64(&aug[best][col]) <= threshold => {
-                // Best pivot is below threshold — treat as free to avoid
-                // noise amplification from near-zero pivots.
                 free_cols.push(col);
             }
             Some(best) => {
@@ -278,11 +250,9 @@ fn gauss_solve_with_null_space(
 
     let rank = pivot_positions.len();
 
-    // Consistency check: rows below rank should have near-zero RHS.
-    // Floor of 1e-10 avoids false inconsistency from pivot-skip artifacts.
+    // Consistency check: rows below rank must have exactly zero RHS.
     for aug_row in aug.iter().take(n).skip(rank) {
-        let rhs_abs = rational_abs_f64(&aug_row[n]);
-        if rhs_abs > threshold.max(1e-10) {
+        if !aug_row[n].is_zero() {
             return None; // Inconsistent system
         }
     }
@@ -543,6 +513,8 @@ fn rational_abs_f64(r: &BigRational) -> f64 {
 mod tests {
     use super::*;
     use crate::geom::known_polytopes;
+    use crate::geom::lagrangian_product::lagrangian_product;
+    use crate::geom::polygon::regular_polygon_2d;
     use num_traits::{Signed, Zero};
 
     // Tests for rational_solver: exact KKT solve correctness and null-space handling.
@@ -608,15 +580,12 @@ mod tests {
         let _result = solve_kkt_exact(simplex.dual_vertices(), &perm);
     }
 
-    /// Near-singular system (rank-deficient from f64->rational artifacts) is handled
-    /// via null-space search.
+    /// Near-singular f64-rationalized systems do not panic.
     ///
-    /// The HKO pentagon's m=7 permutation [1,7,2,8,4,6,5] produces a KKT system
-    /// with one eigenvalue ~2.8e-17 (below the pivot threshold). The solver detects
-    /// the near-zero pivot, extracts the null space, and searches for beta > 0.
-    ///
-    /// History: Before null-space handling, the solver produced O(10^17)-magnitude
-    /// garbage or rejected the system entirely.
+    /// The HKO pentagon's m=7 permutation [1,7,2,8,4,6,5] is close to a
+    /// rank-deficient algebraic node. The exact rational solver must solve the
+    /// rationalized input it was given, not silently replace small nonzero
+    /// pivots by zero.
     #[test]
     fn near_singular_system_handled() {
         let pentagon = &known_polytopes::hko_pentagon().polytope;
@@ -636,6 +605,24 @@ mod tests {
             }
         }
         // Either outcome (Some with valid beta, or None) is correct.
+    }
+
+    /// Regression: exact fallback must not certify the f64 square-product
+    /// near-boundary sigma by dropping tiny nonzero rational pivots.
+    ///
+    /// With thresholded rank decisions this sigma returned a positive beta and
+    /// action 1.904761904761905, contradicting the cube squeeze bound around
+    /// the algebraic square product. Strict rational pivoting rejects it.
+    #[test]
+    fn f64_square_product_bad_sigma_rejected_by_exact_rank() {
+        let (qn, qh) = regular_polygon_2d(4, 1.0);
+        let (pn, ph) = regular_polygon_2d(4, 1.0);
+        let polytope = lagrangian_product(&qn, &qh, &pn, &ph).expect("square product");
+
+        assert!(
+            solve_kkt_exact(polytope.dual_vertices(), &[0, 3, 4, 2, 6]).is_none(),
+            "exact rank decisions must reject the square-product bad sigma"
+        );
     }
 
     /// Smoke test: hypercube permutations exercise the null-space path without panic.

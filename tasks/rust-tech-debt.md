@@ -43,7 +43,7 @@ experiment safety, validation trust, or durable crate maintainability.
 | Safe experiment command contracts | `[active]` | mainline thesis | agents, Jörn only for retained-output policy | Continue with finer per-binary smoke repairs after package-level contracts for HKO, verification/algorithm-comparison, combinatorial-cells, numerics, and sys-landscape; verification/numerics help exits are being normalized to status 0. | `/tmp/rust-tech-debt-map.md`, `experiments/MAP.md`, `tasks/reproducibility.md` |
 | Verification trust chain | `[active]` | mainline thesis | retained claims | `experiments/verification/README.md` now records the top-level Rust command contract. Decide later which full verification commands are required before broad Rust cleanup; keep path/row diagnostics in verification plumbing. | `research/verification.md`, `experiments/verification/README.md` |
 | `symplectic` API support levels | `[map-input]` | contingent during writing | Jörn for public API/architecture choices | Audit only the paths needed by retained thesis experiments before hiding, promoting, or redesigning public modules. | `crates/MAP.md`, `crates/symplectic/src/lib.rs` |
-| Capacity result semantics | `[map-input]` | contingent during writing | retained claims, Jörn for thesis-facing contract | Root `ehz_capacity*` docs now state the saddle-point/f64-only/no-exact-certificate contract. Decide stronger names/results only if retained thesis usage needs it. | `tasks/numerics.md`, `crates/symplectic/src/lib.rs`, `crates/symplectic/src/algorithms/orbit_search.rs` |
+| Capacity result semantics | `[active]` | mainline thesis | retained claims, Jörn for thesis-facing contract | The false `MinimaSafe` square-product minimum was caused by thresholded rank decisions inside `solve_kkt_exact`. Exact rational fallback now uses exact zero pivots, and regressions cover both the solver-level bad sigma and the high-level `MinimaSafe` square-product capacity. Reconsider switching root `ehz_capacity*` wrappers only after broader verification of this stricter fallback path. | `tasks/numerics.md`, `crates/symplectic/src/lib.rs`, `crates/symplectic/src/algorithms/orbit_search.rs`, `crates/symplectic/src/kkt/rational_solver.rs` |
 | Unsupported projected backend | `[map-input]` | contingent during writing | Jörn if the projected route is retained | `OrbitSolveBackend::Projected` docs now state that the shared `solve_orbit_sigma` surface returns `UnsupportedBackend`. Choose hide or complete only if normal callers need it. | `tasks/numerics.md`, `crates/symplectic/src/algorithms/orbit_search.rs` |
 | Hidden hard failures in fallible APIs | `[active]` | map input | agents | Non-finite `Polytope4D::from_f64` inputs and invalid random-sampling parameters now fail before panic/nontermination boundaries. Continue with minimal reproducers before changing capacity-wrapper error semantics. | `/tmp/rust-tech-debt-map.md`, `crates/symplectic/src/lib.rs`, `crates/symplectic/src/geom/polytope.rs`, `crates/symplectic/src/random.rs` |
 | `algebraic-numbers` proof/API map | `[active]` | mainline thesis if exact validation is cited | agents, Jörn for math/proof acceptance | README now records the public surface, serialization contract, invariant-panics, and formal-reference gaps. Next step is formal/task routing only if exact validation becomes thesis-cited. | `crates/algebraic-numbers/README.md`, `crates/MAP.md` |
@@ -111,10 +111,19 @@ experiment safety, validation trust, or durable crate maintainability.
 - [fresh 2026-05-04] `num-unknown-predicates` no longer reports bare
   `billiard error` panics for lagrangian-product rows; the panic names the
   pentagon or polygon-product row and includes the `BilliardError`.
-- [fresh 2026-05-04] Public docs on root `symplectic::ehz_capacity*`
-  convenience wrappers now state the saddle-point/f64-only/no-exact-certificate
-  contract. `OrbitSolveBackend::Projected` docs state that the shared
-  `solve_orbit_sigma` surface still returns `UnsupportedBackend`.
+- [fresh 2026-05-04] Attempting to switch public root
+  `symplectic::ehz_capacity*` wrappers to `OrbitGuaranteeMode::MinimaSafe`
+  exposed a false exact-fallback certificate. The square product triggered
+  sigma `[0, 3, 4, 2, 6]` with action `1.904761904761905` and converted
+  beta margin about `3.4e-17`. The cause was not an exact rational
+  admissibility proof: `solve_kkt_exact` used a floating relative pivot
+  threshold (`1e-12`) and treated tiny nonzero rational pivots as null-space
+  directions. Strict exact-zero pivoting rejects the sigma. Regression coverage:
+  `f64_square_product_bad_sigma_rejected_by_exact_rank` at the solver level,
+  `minimasafe_does_not_accept_spurious_square_product_minimum` at the result
+  aggregation level, and `minimasafe_accepts_exact_rational_scaled_cube` as an
+  exact rational cube contrast. `OrbitSolveBackend::Projected` docs state that
+  the shared `solve_orbit_sigma` surface still returns `UnsupportedBackend`.
 - [fresh 2026-05-04] Sampled duplicate KKT/projection solver surfaces already
   carry provenance labels: algorithm-comparison ablation keeps a historical KKT
   helper copy for A0..A3 comparability, crosspolytope keeps a historical
