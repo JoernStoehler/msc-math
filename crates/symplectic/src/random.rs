@@ -18,6 +18,22 @@ use rand_distr::{Distribution, StandardNormal, Uniform};
 /// Probability of ||v|| < 1e-10 for 4D standard normal is astronomically small.
 const EPS_NEAR_ZERO: f64 = 1e-10;
 
+fn validate_sampling_parameters(
+    facet_count: usize,
+    h_min: f64,
+    h_max: f64,
+) -> Result<(), ConstructionError> {
+    if facet_count < 5 {
+        return Err(ConstructionError::TooFewFacets(facet_count));
+    }
+    if !h_min.is_finite() || !h_max.is_finite() || h_min <= 0.0 || h_min >= h_max {
+        return Err(ConstructionError::F64Conversion(format!(
+            "random height range must satisfy finite 0 < h_min < h_max, got h_min={h_min}, h_max={h_max}"
+        )));
+    }
+    Ok(())
+}
+
 /// Sample a single random unit vector on S^3 (uniform distribution via Muller's method).
 fn random_unit_s3(rng: &mut ChaCha8Rng) -> Vector4<f64> {
     loop {
@@ -41,7 +57,7 @@ fn random_unit_s3(rng: &mut ChaCha8Rng) -> Vector4<f64> {
 /// # Arguments
 ///
 /// * `facet_count` - Number of halfspaces (must be >= 5)
-/// * `h_min`, `h_max` - Height range (0 < h_min <= h_max)
+/// * `h_min`, `h_max` - Height range (0 < h_min < h_max)
 /// * `rng` - Deterministic random number generator
 pub fn sample_random_polytope(
     facet_count: usize,
@@ -49,6 +65,8 @@ pub fn sample_random_polytope(
     h_max: f64,
     rng: &mut ChaCha8Rng,
 ) -> Result<Polytope4D, ConstructionError> {
+    validate_sampling_parameters(facet_count, h_min, h_max)?;
+
     let h_dist = Uniform::new(h_min, h_max);
 
     let normals: Vec<Vector4<f64>> = (0..facet_count).map(|_| random_unit_s3(rng)).collect();
@@ -88,6 +106,12 @@ pub fn generate_polytope(
 /// Generate random polytopes via rejection sampling.
 ///
 /// Keeps sampling until `count` valid polytopes are found.
+///
+/// # Panics
+///
+/// Panics immediately if `facet_count`, `h_min`, or `h_max` cannot define a
+/// valid sampling distribution. Use [`sample_random_polytope`] for a fallible
+/// one-attempt API.
 pub fn generate_random_polytopes(
     count: usize,
     facet_count: usize,
@@ -95,6 +119,9 @@ pub fn generate_random_polytopes(
     h_max: f64,
     rng: &mut ChaCha8Rng,
 ) -> Vec<Polytope4D> {
+    validate_sampling_parameters(facet_count, h_min, h_max)
+        .expect("invalid random polytope sampling parameters");
+
     let mut accepted = Vec::with_capacity(count);
     while accepted.len() < count {
         if let Ok(p) = sample_random_polytope(facet_count, h_min, h_max, rng) {
@@ -158,6 +185,26 @@ mod tests {
         for p in &polytopes {
             assert_eq!(p.facet_count(), 5);
         }
+    }
+
+    #[test]
+    fn sample_rejects_impossible_facet_count_before_rejection_loop() {
+        let mut rng = ChaCha8Rng::seed_from_u64(123);
+        let err = sample_random_polytope(4, 0.5, 2.0, &mut rng).unwrap_err();
+        assert_eq!(err, ConstructionError::TooFewFacets(4));
+    }
+
+    #[test]
+    fn sample_rejects_invalid_height_range_before_distribution_construction() {
+        let mut rng = ChaCha8Rng::seed_from_u64(123);
+        let err = sample_random_polytope(5, 1.0, 1.0, &mut rng).unwrap_err();
+        assert_eq!(
+            err,
+            ConstructionError::F64Conversion(
+                "random height range must satisfy finite 0 < h_min < h_max, got h_min=1, h_max=1"
+                    .to_string()
+            )
+        );
     }
 
     /// generate_polytope with different attempts produces different RNG streams.
