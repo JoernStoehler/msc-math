@@ -48,7 +48,7 @@ experiment safety, validation trust, or durable crate maintainability.
 | Hidden hard failures in fallible APIs | `[active]` | map input | agents | Non-finite `Polytope4D::from_f64` inputs and invalid random-sampling parameters now fail before panic/nontermination boundaries. Continue with minimal reproducers before changing capacity-wrapper error semantics. | `/tmp/rust-tech-debt-map.md`, `crates/symplectic/src/lib.rs`, `crates/symplectic/src/geom/polytope.rs`, `crates/symplectic/src/random.rs` |
 | `algebraic-numbers` proof/API map | `[active]` | mainline thesis if exact validation is cited | agents, Jörn for math/proof acceptance | README now records the public surface, serialization contract, invariant-panics, and formal-reference gaps. Next step is formal/task routing only if exact validation becomes thesis-cited. | `crates/algebraic-numbers/README.md`, `crates/MAP.md` |
 | Duplicate producer ownership | `[map-input]` | map input | agents, Jörn only for deleting provenance | Label current, historical, frozen-baseline, exploratory, or delete only after checking research/task truth for that package. | `experiments/sys-landscape/`, `experiments/numerics/`, `experiments/verification/algorithm-comparison/` |
-| Solver and exact-arithmetic copies | `[mostly-triaged]` | map input | agents, Jörn only for deletion or API migration | Sampled KKT copies already say they are historical or experiment-local. Leave them duplicated unless a retained task needs migration; do not delete provenance copies during broad cleanup. | `experiments/verification/algorithm-comparison/ablation/kkt.rs`, `experiments/crosspolytope/main/kkt.rs`, `experiments/numerics/error-bounds/saddle_point_solver.rs` |
+| Solver and exact-arithmetic copies | `[mostly-triaged]` | map input | agents, Jörn only for deletion or API migration | Sampled KKT copies already say they are historical or experiment-local. Numerics algebraic-exactness comments now point future migration to `crates/algebraic-numbers` and `crates/symplectic/src/exact`. Leave copies duplicated unless a retained task needs migration. | `experiments/verification/algorithm-comparison/ablation/kkt.rs`, `experiments/crosspolytope/main/kkt.rs`, `experiments/numerics/error-bounds/saddle_point_solver.rs`, `experiments/numerics/src/algebraic/` |
 | Blocked/stale/provenance code that looks live | `[active]` | map input | agents | Fix sampled stale headers and add grep-able status markers where source truth is already clear; avoid broad deletion without provenance review. | `/tmp/rust-tech-debt-map.md`, topic research notes |
 | Local diagnostic text | `[active]` | map input | agents | Improve path/row/error context opportunistically while touching nearby experiment or verification code; `num-unknown-predicates` billiard failures now name the failed row. | `/tmp/rust-tech-debt-map.md`, `experiments/numerics/unknown-predicates/main.rs` |
 | Large mixed-purpose files | `[future]` | future/follow-up by default | architecture decision if reopened | Split only when a concrete retained task is blocked by the mixed purpose. | `/tmp/rust-tech-debt-map.md` |
@@ -117,6 +117,10 @@ experiment safety, validation trust, or durable crate maintainability.
   helper copy for A0..A3 comparability, crosspolytope keeps a historical
   normalized-normal solver for that search, and numerics error-bounds labels
   its saddle-point solver as dead reference code.
+- [fresh 2026-05-04] `experiments/numerics/src/algebraic/` no longer points
+  future migration at stale `library/` paths. Its headers now distinguish the
+  experiment-scoped exact spike from `crates/algebraic-numbers` and
+  `crates/symplectic/src/exact`.
 - [fresh 2026-05-04] `experiments/crosspolytope/main/main.rs` no longer says
   it fills a placeholder capacity. The current source truth is
   `research/crosspolytope.md`: capacity `4.0` is recorded, with explicit

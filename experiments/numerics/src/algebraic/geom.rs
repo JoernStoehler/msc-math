@@ -1,9 +1,9 @@
 //! Exact 4D polytope construction over experiment-owned ordered fields.
 //!
-//! This mirrors the high-level role of `library::geom::polytope::Polytope4D`
-//! but stays experiment-scoped and field-generic. It is intentionally small:
-//! enough for exact HKO-family geometry and rational controls, not a drop-in
-//! library replacement.
+//! This mirrors the high-level role of `symplectic::Polytope4D` but stays
+//! experiment-scoped and field-generic. It is intentionally small: enough for
+//! exact HKO-family geometry and rational controls, not a drop-in replacement
+//! for `crates/symplectic/src/exact`.
 //!
 //! TODO: add [def:...] to formal math for the exact dual-vertex polytope model.
 //! TODO: add [lem:...] to formal math for the exact 4D vertex enumeration and

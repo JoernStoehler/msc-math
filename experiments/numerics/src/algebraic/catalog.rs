@@ -1,8 +1,8 @@
 //! Experiment-owned exact catalog schema for the algebraic exactness spike.
 //!
-//! This deliberately stays separate from `library/src/database.rs`. The spike
-//! persists exact field tags plus canonical basis coefficients without changing
-//! the shared rational cache format.
+//! This deliberately stays separate from `crates/symplectic/src/database.rs`.
+//! The spike persists exact field tags plus canonical basis coefficients
+//! without changing the shared rational cache format.
 
 use super::field::ExactOrderedField;
 use super::named_field::NamedFieldTag;

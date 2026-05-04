@@ -1,8 +1,9 @@
 //! Exact KKT solve over experiment-owned ordered fields.
 //!
-//! This is the experiment analogue of the library rational solver. It solves a
-//! selected sigma exactly, including the rank-deficient/null-space positivity
-//! path, but does not attempt exhaustive exact search across all sigmas.
+//! This is the experiment analogue of `symplectic::kkt::rational_solver` and
+//! `symplectic::exact::orbit`. It solves a selected sigma exactly, including
+//! the rank-deficient/null-space positivity path, but does not attempt
+//! exhaustive exact search across all sigmas.
 //!
 //! TODO: add [lem:...] to formal math for the exact KKT system assembly used
 //! here.

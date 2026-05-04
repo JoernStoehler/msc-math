@@ -6,8 +6,10 @@
 //! - exact KKT solves for selected sigma checks
 //! - experiment-owned exact catalog serialization
 //!
-//! This module is intentionally experiment-scoped. Stable pieces can migrate to
-//! `library/` later if the spike proves useful.
+//! This module is intentionally experiment-scoped. Durable arithmetic now lives
+//! in `crates/algebraic-numbers`, and reusable exact geometry/orbit pieces live
+//! in `crates/symplectic/src/exact`. Keep new migration work pointed at those
+//! crate surfaces, not at a separate experiment helper API.
 
 pub mod catalog;
 pub mod field;
