@@ -45,6 +45,10 @@ module becomes a supported implementation.
   `a_1 cap a_2`; fixed points are solved on that two-face.
 - [accepted 2026-05-04] For thesis/numerics wording, it is acceptable to state
   a stronger input condition than exact mathematics needs.
+- [accepted 2026-05-04] Thesis scope: implementation and empirical validation
+  are still part of the desired complete tube story. Theory-only is not enough
+  for the ideal outcome, but including clean theory without empirics is better
+  than dropping the tube algorithm entirely.
 
 ## Existing Repo Noise
 
@@ -82,6 +86,9 @@ Fill this section first.
 - Thesis role:
    - The Tube Algorithm was developed and discussed with Kai, and it promises to be vastly faster for some polytopes, under the restriction that it uses the generic condition "omega_0(a_i,a_j)!=0" which in particular excludes lagrangian products, and it's unlikely we can get rid of that condition (beyond like, slightly weakening it or sth).
    - So it's just for completeness sake to define it and not loose it, and also it may be great for getting vastly more data (like 10x or sth), plus get additional confidence in correctness [since then rather different approaches yield the same results]
+   - Theory without empirical validation is not enough for the ideal tube
+     story, but clean theory without empirics is still worth including over
+     dropping the algorithm.
 - Experiment/code role:
    - It's a search algorithm that finds the minimum action + all simple Reeb orbits below some action threshold (optionally: it rejects reeb orbits that have too high CZ index to be minimal, but that can be disabled) ; so we have a nice high-level comparable output between Tube and HK2017
    - Conceptually, HK2017 makes use of pruning on a "adjacent" level; Tube prunes on arbitrary order, i.e. it uses the same "Reeb orbit => combinatorics sigma" map, but does not just check whether pairs (sigma_i, sigma_i+1) have any Reeb trajectory at all, but checks arbitrary segments. i.e. it can for example check whether any trajectory goes thorugh a triplet (a,b,c) ; it does so via an intersection-like algorithm i.e. for segments (a_1,...,a_k, a_k+1) and (a_k, a_k+1, ..., a_m) it obtains for each side the set of trajectories that go through the segment, then intersects the two sets to obtain (a_1, ..., a_m) ; closed loops can be detected by taking (a_1, ..., a_k, a_1) and looking for fixed points of the start-end affine map.
