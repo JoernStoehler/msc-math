@@ -46,6 +46,9 @@ pub enum OrbitGuaranteeMode {
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum OrbitSolveBackend {
     /// Constraint-projection/eigendecomposition path.
+    ///
+    /// This choice is currently scaffold-only at the shared
+    /// `solve_orbit_sigma` surface and returns `UnsupportedBackend`.
     Projected,
     /// Augmented saddle-point KKT path.
     SaddlePoint,

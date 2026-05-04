@@ -79,6 +79,10 @@ pub fn systolic_ratio(capacity: f64, volume: f64) -> f64 {
 }
 
 /// Explicit pruned HK2017 frontend on the shared orbit/result surface.
+///
+/// This root convenience wrapper uses the saddle-point backend and f64-only
+/// aggregation. It does not request exact fallback certification for
+/// indeterminate near-minimum candidates.
 pub fn ehz_capacity_pruned(polytope: &Polytope4D) -> Result<OrbitSearchResult, OrbitSearchError> {
     let (orbits, iterations) = algorithms::orbit_search::solve_sigma_stream(
         polytope,
@@ -89,6 +93,10 @@ pub fn ehz_capacity_pruned(polytope: &Polytope4D) -> Result<OrbitSearchResult, O
 }
 
 /// Explicit unpruned HK2017 frontend on the shared orbit/result surface.
+///
+/// This root convenience wrapper uses the saddle-point backend and f64-only
+/// aggregation. It does not request exact fallback certification for
+/// indeterminate near-minimum candidates.
 pub fn ehz_capacity_unpruned(polytope: &Polytope4D) -> Result<OrbitSearchResult, OrbitSearchError> {
     let (orbits, iterations) = algorithms::orbit_search::solve_sigma_stream(
         polytope,
@@ -99,6 +107,11 @@ pub fn ehz_capacity_unpruned(polytope: &Polytope4D) -> Result<OrbitSearchResult,
 }
 
 /// Explicit billiard frontend on the shared orbit/result surface.
+///
+/// This root convenience wrapper first checks the Lagrangian-product facet
+/// classification, then uses the saddle-point backend and f64-only aggregation.
+/// It does not request exact fallback certification for indeterminate
+/// near-minimum candidates.
 pub fn ehz_capacity_billiard(polytope: &Polytope4D) -> Result<OrbitSearchResult, BilliardError> {
     algorithms::billiard::facet_classification::classify_facets(polytope)?;
 
@@ -146,6 +159,10 @@ pub fn ehz_capacity_billiard(polytope: &Polytope4D) -> Result<OrbitSearchResult,
 ///
 /// Uses the billiard algorithm on inputs that pass the Lagrangian-product
 /// structure test, and otherwise uses the pruned HK2017 path.
+///
+/// This is a root convenience wrapper for ordinary experiment code. It returns
+/// the same f64-only `OrbitSearchResult` contract as the selected underlying
+/// wrapper, not an exact certificate.
 pub fn ehz_capacity(polytope: &Polytope4D) -> Result<OrbitSearchResult, OrbitSearchError> {
     if algorithms::billiard::facet_classification::classify_facets(polytope).is_ok() {
         return ehz_capacity_billiard(polytope).map_err(|_| {
