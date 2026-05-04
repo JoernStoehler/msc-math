@@ -15,6 +15,24 @@ Refresh or invalidate this note when Jörn fills the algorithm contract below,
 when the formal TeX file is rewritten from that contract, or when the Rust tube
 module becomes a supported implementation.
 
+## Accepted Clarifications
+
+- [accepted 2026-05-04] The nondegeneracy condition is local to trajectory
+  transitions. The algorithm does not need `omega_0(a_i,a_j) != 0` for every
+  pair of facets. Facet pairs that never occur as a nonempty trajectory
+  transition may have `omega_0(a_i,a_j) = 0`. The intended weaker condition is:
+  whenever the point-intersection relevant to a trajectory transition is
+  nonempty, the corresponding `omega_0(a_i,a_j)` is nonzero.
+- [accepted 2026-05-04] Rotation pruning is not part of the first implementation
+  milestone. The first milestone should write a TODO for rotation and keep the
+  algorithm correct without it. Later implementation can add the
+  Conley-Zehnder/rotation cutoff behind an easy-to-disable flag, because it is
+  control-flow pruning by a scalar number rather than part of the affine tube
+  data.
+- [accepted 2026-05-04] The target output is `capacity` and all simple Reeb
+  orbits below `capacity + threshold`. The action pruning rule is therefore
+  based on `segment_action <= best_action_so_far + threshold`.
+
 ## Existing Repo Noise
 
 Treat these files as downstream or stale until this note says otherwise:
@@ -85,7 +103,9 @@ Describe the precise input class.
 - Ambient space:
 - Polytope representation:
 - Normalization:
-- Genericity or nondegeneracy assumptions:
+- Genericity or nondegeneracy assumptions: required only for actual trajectory
+  transitions. It is acceptable for non-transition facet pairs to have
+  `omega_0(a_i,a_j) = 0`.
 - Lagrangian 2-face assumptions:
 - Type 1 / Type 2 boundary:
 - Required exactness or numerical tolerance:
@@ -94,8 +114,9 @@ Describe the precise input class.
 
 Describe what the algorithm returns and what the return value certifies.
 
-- Returned value:
-- Returned orbit or certificate:
+- Returned value: capacity.
+- Returned orbit or certificate: all simple Reeb orbits with action at most
+  `capacity + threshold`.
 - Failure / undecided modes:
 - Relationship to `c_EHZ(K)`:
 - Relationship to HK2017:
@@ -137,7 +158,9 @@ Use this section to fix notation before the algorithm steps.
 - Range:
 - Additivity statement:
 - CH2021 reference:
-- What remains conjectural or unproved:
+- What remains conjectural or unproved: first implementation milestone should
+  skip rotation pruning and leave this as a TODO. Later implementation can add a
+  scalar cutoff behind a flag.
 
 ### Closing
 
@@ -170,7 +193,8 @@ For each pruning rule, record the exact statement and the proof dependency.
 
 ### Action Lower Bound
 
-- Rule:
+- Rule: prune a segment only when its partial action lower bound is greater
+  than `best_action_so_far + threshold`.
 - Why sound:
 - Required invariant:
 
