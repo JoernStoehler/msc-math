@@ -164,10 +164,10 @@ fn main() {
 fn parse_run_paths(manifest_dir: &Path) -> RunPaths {
     let mode = match parse_run_mode(env::args().skip(1)) {
         Ok(mode) => mode,
-        Err(RunModeArgError::Help) => print_help_and_exit(),
+        Err(RunModeArgError::Help) => print_help_and_exit(0),
         Err(RunModeArgError::Unknown(other)) => {
             eprintln!("unknown argument: {other}");
-            print_help_and_exit();
+            print_help_and_exit(2);
         }
     };
     let summary_path = mode_output_path(
@@ -192,13 +192,13 @@ fn parse_run_paths(manifest_dir: &Path) -> RunPaths {
     }
 }
 
-fn print_help_and_exit() -> ! {
+fn print_help_and_exit(code: i32) -> ! {
     eprintln!(
         "Usage: cargo run -p dev-capacity-validation --release --bin axioms-all-minimum [--full]"
     );
     eprintln!("  default: write untracked smoke outputs for infrastructure checks");
     eprintln!("  --full: refresh the canonical local-first all-minimum dataset");
-    std::process::exit(2);
+    std::process::exit(code);
 }
 
 fn validate_target(target: &Target) -> (AllMinimumSummaryRow, Vec<AllMinimumOrbitRow>) {
