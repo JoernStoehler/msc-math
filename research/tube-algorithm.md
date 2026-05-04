@@ -55,12 +55,12 @@ module becomes a supported implementation.
 Treat these files as downstream or stale until this note says otherwise:
 
 - `thesis/tube-algorithm.tex`: long agent-written thesis draft. It is currently
-  included by `thesis/main.tex`, but it contains many Jörn TODOs and unreviewed
-  claims about rotation, closing, and Type 2 orbits.
+  quarantined and not included by `thesis/main.tex`; it contains many Jörn
+  TODOs and unreviewed claims about rotation, closing, and Type 2 orbits.
 - `formal/tube-algorithm.tex`: compressed formal copy sourced from the thesis
-  draft, wrapped in `unverified` blocks. It is currently included by
-  `formal/main.tex`, but it should not be treated as independent proof-bearing
-  source.
+  draft, wrapped in `unverified` blocks. It is currently quarantined and not
+  included by `formal/main.tex`; it should not be treated as independent
+  proof-bearing source.
 - `crates/symplectic/src/algorithms/tube/mod.rs`: blocked test-only Rust module.
   Its header says the rotation-increment formula is incorrect and
   `tube_capacity` is not re-exported.
@@ -74,8 +74,8 @@ Potential cleanup after this source note is filled:
 1. Delete or replace `thesis/tube-algorithm-notes.md`.
 2. Rewrite `formal/tube-algorithm.tex` from this note, preserving only verified
    statements.
-3. Either remove `thesis/tube-algorithm.tex` from the thesis build while the
-   algorithm is not thesis-ready, or rewrite it from the formal contract.
+3. Rewrite `thesis/tube-algorithm.tex` from the formal contract before
+   re-adding it to the thesis build.
 4. Delete, quarantine, or rebuild the blocked Rust module rather than patching
    around its known-bad rotation formula.
 

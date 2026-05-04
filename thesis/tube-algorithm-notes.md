@@ -1,9 +1,10 @@
 # Task: Implement tube algorithm in Rust
 
 Stale as of 2026-05-04. Do not use this file as the tube-algorithm
-specification or implementation plan. The current fillable source note is
-`research/tube-algorithm.md`; use that note first, then compare old TeX/code
-surfaces only as downstream or conflict material.
+specification or implementation plan. The current raw source is
+`research/tube-algorithm-raw-jorn-2026-05-04.md`; use
+`research/tube-algorithm.md` for routing and accepted clarifications, then
+compare old TeX/code surfaces only as downstream or conflict material.
 
 ## Context
 

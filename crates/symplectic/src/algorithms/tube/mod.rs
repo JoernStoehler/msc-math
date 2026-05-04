@@ -1,14 +1,15 @@
 //! Tube algorithm for EHZ capacity of symplectic polytopes.
 //!
-//! **Status: blocked, do not use.** The rotation-increment formula is
-//! incorrect and the supporting math in `formal/tube-algorithm.tex` contains
-//! unverified `[TODO: JÖRN]` markers in the tube section
-//! (`def:tube-data` through `alg:tube`). `tube_capacity` is not re-exported from
+//! **Status: quarantined old implementation, do not use.** The current import
+//! source is `research/tube-algorithm-raw-jorn-2026-05-04.md` plus the active
+//! tube source note. This module predates that source. The rotation-increment
+//! formula is incorrect and the supporting math in `formal/tube-algorithm.tex`
+//! is a quarantined stale draft. `tube_capacity` is not re-exported from
 //! `lib.rs`; callers should use `hk2017::ehz_capacity` instead. Tracked in
-//! `tasks/numerics.md` under the tube benchmark/formula row and in
-//! `tasks/writing.md` for thesis-facing tube TODOs.
+//! `tasks/numerics.md` under the tube algorithm import row.
 //!
-//! Implements Algorithm [alg:tube] from the thesis: an iterative search that
+//! Historical intent: implement Algorithm [alg:tube] from the old thesis draft:
+//! an iterative search that
 //! builds families of Reeb trajectories ("tubes") one facet at a time, pruning
 //! branches that cannot contain a minimum-action orbit. This is an alternative
 //! to the exhaustive HK2017 enumeration for polytopes whose 2-faces are all

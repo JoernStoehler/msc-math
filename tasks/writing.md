@@ -75,9 +75,11 @@ phase-2 repo/Jorn state maps.
   Refresh by: checking `thesis/**/*.tex` for `\includegraphics` and `TODO`.
 - [fresh 2026-04-25] Current thesis source is a stale skeleton relative to the
   closeout maps: `main.tex` has a deferred abstract and TODO introduction,
-  `experiments.tex` is a placeholder, current inputs are algorithms, tube,
-  proofs, experiments, and numerical appendix, and a targeted scan found no
-  current figure/table environments.
+  `experiments.tex` is a placeholder, current inputs are algorithms,
+  sys-first-order regular case, proofs, experiments, and numerical appendix.
+  The old tube section is quarantined and not input while it is re-imported from
+  Jörn's 2026-05-04 raw source note. A targeted scan found no current
+  figure/table environments.
   Refresh by: `rg -n -e '^\\section' -e '^\\subsection' -e '^\\input' -e '^\\appendix' thesis -g '*.tex'`
   plus targeted reads of `thesis/main.tex` and `thesis/experiments.tex`.
 - [fresh 2026-04-25] `thesis/migration-findings.md` is an unrouted decision

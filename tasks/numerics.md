@@ -8,10 +8,12 @@ Context: route-freeze surface for proof-vs-validation-vs-caveat decisions.
 ## Status
 
 - State: active.
-- Last updated: 2026-05-01.
+- Last updated: 2026-05-04.
 - Source surfaces: `research/numerics.md`,
   `research/numerics-error-bounds.md`, `experiments/numerics/`,
-  `formal/`, `tasks/verify-thesis-done.md`.
+  `formal/`, `tasks/verify-thesis-done.md`,
+  `research/tube-algorithm-raw-jorn-2026-05-04.md`,
+  `research/tube-algorithm.md`.
 - Refresh when: numerical appendix route, solver story, or derivative/projection
   claims change.
 
@@ -38,9 +40,11 @@ Context: route-freeze surface for proof-vs-validation-vs-caveat decisions.
   near-threshold case before the generic theorem, code contract, and empirical
   loop align.
 - [accepted 2026-05-04] The tube algorithm is being re-imported from Jörn's
-  current head/paper formalization. Start from `research/tube-algorithm.md`;
-  treat old thesis/formal/code tube surfaces as downstream or stale until that
-  source note is filled.
+  current head/paper formalization. The raw audited source is
+  `research/tube-algorithm-raw-jorn-2026-05-04.md`; start from
+  `research/tube-algorithm.md` for routing and accepted clarifications. Treat
+  old thesis/formal/code tube surfaces as downstream or stale until the current
+  mathematical source is written.
   Source: Jorn request to start importing the tube algorithm.
   Why it matters: prevents agents from treating the old agent-written tube draft
   or blocked Rust module as the specification.
@@ -56,7 +60,35 @@ Context: route-freeze surface for proof-vs-validation-vs-caveat decisions.
 | Beta-LP unification | `[future]` | future/follow-up by default | Jorn math if retained | Keep as future unless needed for retained solver explanation. | legacy beta-LP row |
 | Solver formal writeup | `[map-input]` | contingent during writing | retained wording | Avoid full per-module formalization unless thesis text requires it. | `formal/`, `research/numerics-error-bounds.md` |
 | Algorithm/numerics mismatch triage | `[map-input]` | contingent during writing | agents then Jorn for theorem/prose choices | Route `thesis/migration-findings.md` rows 3-11 before relying on existing algorithm boxes or numerical appendix prose: multiplier names, KKT sign convention, Q factor, beta/eigen thresholds, accumulator references, `|S| >= 2`, billiard adjacency pruning, and tube closing-edge status. | `thesis/migration-findings.md`, `thesis/algorithms.tex`, `thesis/appendix-numerical.tex` |
-| Tube algorithm import | `[active]` | map input | Jorn proof, agents for routing | Fill `research/tube-algorithm.md` from Jorn's current formalization, then decide whether to rewrite, remove, or quarantine the old thesis/formal/code tube surfaces. | `research/tube-algorithm.md`, `thesis/tube-algorithm.tex`, `formal/tube-algorithm.tex`, `crates/symplectic/src/algorithms/tube/mod.rs`, `thesis/migration-findings.md` rows 1 and 11-14 |
+| Tube algorithm import | `[active]` | map input | Jorn proof, agents for routing | Write the current mathematical source from `research/tube-algorithm-raw-jorn-2026-05-04.md`, then rewrite thesis/formal/code surfaces from that source. Old tube thesis/formal/code surfaces are quarantined meanwhile. | `research/tube-algorithm-raw-jorn-2026-05-04.md`, `research/tube-algorithm.md`, `thesis/tube-algorithm.tex`, `formal/tube-algorithm.tex`, `crates/symplectic/src/algorithms/tube/mod.rs`, `thesis/migration-findings.md` rows 1 and 11-14 |
+
+## Tube Algorithm Import Done State
+
+The tube algorithm import is done when all of the following observable project
+states hold:
+
+1. A current mathematical tube source states the algorithm from
+   `research/tube-algorithm-raw-jorn-2026-05-04.md`: `Tube(k,s,Acut)`,
+   breakpoint order and locations, finite polygon-affine representation,
+   primitive tubes, tube intersection, action restriction, closed-loop fixed
+   points, exhaustive simple-word capacity search, and first-milestone
+   exclusions such as no rotation pruning.
+2. `thesis/` contains a correct tube-algorithm section or an explicit thesis
+   decision to defer or cut it. If included, it matches the current
+   mathematical source and does not claim empirical validation unless that
+   evidence exists.
+3. Rust implements the named objects and operations: primitive constructor,
+   tube intersection, action restriction, closed-loop fixed-point solving,
+   exhaustive simple-word search, and output of `capacity` plus simple Reeb
+   orbits below `capacity + threshold`.
+4. Current evidence shows that the implementation matches the source, covering
+   primitive maps, polygon emptiness, intersection, action restriction, fixed
+   points, and comparison to HK2017 on small eligible examples.
+5. Old thesis/formal/Rust tube files are rewritten, deleted, or explicitly
+   quarantined so they cannot be mistaken for the current algorithm.
+6. Task and index files point to the current mathematical source, thesis
+   position, implementation, and evidence, with only concrete remaining
+   follow-ups.
 
 ## Agent Cache
 
@@ -77,12 +109,13 @@ Context: route-freeze surface for proof-vs-validation-vs-caveat decisions.
   Refresh by: reading `crates/symplectic/src/algorithms/tube/mod.rs` and the
   tube TODOs in `thesis/`.
 - [fresh 2026-05-04] Tube import status: use
-  `research/tube-algorithm.md` as the new fillable source note. Existing
+  `research/tube-algorithm-raw-jorn-2026-05-04.md` as the raw audited source
+  and `research/tube-algorithm.md` as the routing/clarification note. Existing
   `thesis/tube-algorithm.tex`, `formal/tube-algorithm.tex`, and
-  `crates/symplectic/src/algorithms/tube/mod.rs` contain useful conflict
-  inventories but are not trusted as the current algorithm specification.
-  Refresh by: reading `research/tube-algorithm.md` first, then the old surfaces
-  only as comparison material.
+  `crates/symplectic/src/algorithms/tube/mod.rs` are quarantined stale surfaces:
+  they contain useful conflict inventories but are not trusted as the current
+  algorithm specification. Refresh by reading the raw source, then the routing
+  note, then old surfaces only as comparison material.
 - [fresh 2026-04-24] KKT notation decision: use the code's symmetric convention
   in thesis because eigenvalue decompositions are cleaner.
   Refresh by: checking thesis-code alignment notes.
