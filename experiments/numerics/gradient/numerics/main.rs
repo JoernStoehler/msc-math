@@ -291,23 +291,23 @@ fn smoke_mode() -> bool {
     for arg in env::args().skip(1) {
         match arg.as_str() {
             "--smoke" => smoke = true,
-            "-h" | "--help" => print_usage_and_exit(),
+            "-h" | "--help" => print_usage_and_exit(0),
             _ => {
                 eprintln!("unknown argument: {arg}");
-                print_usage_and_exit();
+                print_usage_and_exit(2);
             }
         }
     }
     smoke
 }
 
-fn print_usage_and_exit() -> ! {
+fn print_usage_and_exit(code: i32) -> ! {
     eprintln!(
         "Usage: cargo run -p dev-gradient --release --bin gradient-basic-validation [--smoke]"
     );
     eprintln!("  --smoke: run a reduced run into a temporary directory");
     eprintln!("  -h, --help: show usage");
-    std::process::exit(2);
+    std::process::exit(code);
 }
 
 fn smoke_output_dir(label: &str) -> String {
