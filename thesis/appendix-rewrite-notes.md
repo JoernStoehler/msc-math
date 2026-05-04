@@ -134,7 +134,7 @@ The exploration agent (`a5fe055ee1e528c3e`) searched all thesis .tex files, all 
 1. **No "exact combinatorial structure" assumption exists anywhere.** The combinatorial structure is always inferred numerically.
 2. **No perturbation theorem exists.** The closest thing is the ideas-future.md note.
 3. **Adjacency is computed numerically everywhere** — skeleton.rs, hk2017/mod.rs.
-4. **"Generic" polytopes are discussed only in tube-algorithm.tex** (Type 1 vs Type 2 orbits, CH2021 genericity conjecture). Not related to the combinatorics theorem Jörn wants.
+4. **"Generic" polytopes were discussed only in the deleted old tube draft** (Type 1 vs Type 2 orbits, CH2021 genericity conjecture). Not related to the combinatorics theorem Jörn wants.
 5. **The directed adjacency ω₀ ≥ 0 uses a hard cutoff** — no three-valued handling.
 6. **The β > 0 predicate IS three-valued** in the thesis (appendix-numerical-three-valued.tex:111-151) with proper TRUE/FALSE/UNKNOWN handling.
 7. **The near-singular dismissal is binary** (not three-valued) — dismiss or use β₀. This is by design and correctly described in appendix-numerical-three-valued.tex:153-169.

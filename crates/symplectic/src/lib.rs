@@ -10,9 +10,10 @@
 //!   constructors, named polytopes.
 //! - `kkt` — context-free constrained QP solvers (saddle-point and
 //!   projection variants) + exact rational fallback.
-//! - `algorithms` — EHZ capacity algorithms: `hk2017` (general, exponential),
-//!   `billiard` (Lagrangian products, fast), `tube` (symplectic polytopes,
-//!   blocked — see algorithms/mod.rs).
+//! - `algorithms` — EHZ capacity algorithms: `hk2017` (general, exponential)
+//!   and `billiard` (Lagrangian products, fast). The tube algorithm is being
+//!   re-imported from the current mathematical source before it becomes an
+//!   active implementation.
 //! - `constants` — cross-module numerical tolerance constants.
 //! - `dataset` — JSONL row schemas (`PolytopeRow`, `AcceptanceRow`) for
 //!   dataset generation and acceptance sweeps.

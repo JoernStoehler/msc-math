@@ -4,16 +4,16 @@
 
 Epistemic status: fillable source note for Jörn's current tube-algorithm
 formalization. This file is intended to become the source of truth before we
-rewrite `formal/tube-algorithm.tex`, `thesis/tube-algorithm.tex`, or
-`crates/symplectic/src/algorithms/tube/mod.rs`.
+write any formal TeX, thesis prose, or Rust implementation.
 
 Current state, as of 2026-05-04: the algorithm mostly exists in Jörn's head and
-on paper. Existing repo material is useful for finding old terminology and
-possible implementation hooks, but it is not trusted as a specification.
+on paper. Old repo material was deleted from the active tree because it was not
+trusted as a specification. Use git history only if comparison with the stale
+drafts becomes necessary.
 
 Refresh or invalidate this note when Jörn fills the algorithm contract below,
-when the formal TeX file is rewritten from that contract, or when the Rust tube
-module becomes a supported implementation.
+when a formal TeX file is written from that contract, or when the Rust tube
+implementation becomes supported.
 
 ## Accepted Clarifications
 
@@ -50,34 +50,34 @@ module becomes a supported implementation.
   for the ideal outcome, but including clean theory without empirics is better
   than dropping the tube algorithm entirely.
 
-## Existing Repo Noise
+## Deleted Repo Noise
 
-Treat these files as downstream or stale until this note says otherwise:
+These stale surfaces were removed from the active tree on 2026-05-04. They were
+not trusted as specifications; use git history only if comparison material is
+needed.
 
-- `thesis/tube-algorithm.tex`: long agent-written thesis draft. It is currently
-  quarantined and not included by `thesis/main.tex`; it contains many Jörn
-  TODOs and unreviewed claims about rotation, closing, and Type 2 orbits.
+- `thesis/tube-algorithm.tex`: long agent-written thesis draft. It contained
+  many Jörn TODOs and unreviewed claims about rotation, closing, and Type 2
+  orbits.
 - `formal/tube-algorithm.tex`: compressed formal copy sourced from the thesis
-  draft, wrapped in `unverified` blocks. It is currently quarantined and not
-  included by `formal/main.tex`; it should not be treated as independent
-  proof-bearing source.
+  draft, wrapped in `unverified` blocks. It was not independent proof-bearing
+  source.
 - `crates/symplectic/src/algorithms/tube/mod.rs`: blocked test-only Rust module.
-  Its header says the rotation-increment formula is incorrect and
-  `tube_capacity` is not re-exported.
-- `thesis/tube-algorithm-notes.md`: stale migration task note. It points to
+  Its header said the rotation-increment formula was incorrect and
+  `tube_capacity` was not re-exported.
+- `thesis/tube-algorithm-notes.md`: stale migration task note. It pointed to
   deleted files and old `library/` paths.
 - `thesis/migration-findings.md`: mismatch inventory. Rows 1 and 11-14 are a
   useful checklist for conflicts between old thesis prose and old code.
 
-Potential cleanup after this source note is filled:
+Potential downstream work after this source note is filled:
 
-1. Delete or replace `thesis/tube-algorithm-notes.md`.
-2. Rewrite `formal/tube-algorithm.tex` from this note, preserving only verified
-   statements.
-3. Rewrite `thesis/tube-algorithm.tex` from the formal contract before
-   re-adding it to the thesis build.
-4. Delete, quarantine, or rebuild the blocked Rust module rather than patching
-   around its known-bad rotation formula.
+1. Write a new formal tube-algorithm file from this note, preserving only
+   verified statements.
+2. Write a new thesis tube-algorithm section from the formal contract before
+   adding it to the thesis build.
+3. Build a new Rust tube implementation from the current mathematical source,
+   instead of patching around the known-bad deleted module.
 
 ## Intended Role
 

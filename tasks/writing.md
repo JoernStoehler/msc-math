@@ -77,9 +77,9 @@ phase-2 repo/Jorn state maps.
   closeout maps: `main.tex` has a deferred abstract and TODO introduction,
   `experiments.tex` is a placeholder, current inputs are algorithms,
   sys-first-order regular case, proofs, experiments, and numerical appendix.
-  The old tube section is quarantined and not input while it is re-imported from
-  Jörn's 2026-05-04 raw source note. A targeted scan found no current
-  figure/table environments.
+  The old tube section was deleted from the active tree while the tube
+  algorithm is re-imported from Jörn's 2026-05-04 raw source note. A targeted
+  scan found no current figure/table environments.
   Refresh by: `rg -n -e '^\\section' -e '^\\subsection' -e '^\\input' -e '^\\appendix' thesis -g '*.tex'`
   plus targeted reads of `thesis/main.tex` and `thesis/experiments.tex`.
 - [fresh 2026-04-25] `thesis/migration-findings.md` is an unrouted decision

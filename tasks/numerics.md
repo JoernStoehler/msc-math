@@ -60,7 +60,7 @@ Context: route-freeze surface for proof-vs-validation-vs-caveat decisions.
 | Beta-LP unification | `[future]` | future/follow-up by default | Jorn math if retained | Keep as future unless needed for retained solver explanation. | legacy beta-LP row |
 | Solver formal writeup | `[map-input]` | contingent during writing | retained wording | Avoid full per-module formalization unless thesis text requires it. | `formal/`, `research/numerics-error-bounds.md` |
 | Algorithm/numerics mismatch triage | `[map-input]` | contingent during writing | agents then Jorn for theorem/prose choices | Route `thesis/migration-findings.md` rows 3-11 before relying on existing algorithm boxes or numerical appendix prose: multiplier names, KKT sign convention, Q factor, beta/eigen thresholds, accumulator references, `|S| >= 2`, billiard adjacency pruning, and tube closing-edge status. | `thesis/migration-findings.md`, `thesis/algorithms.tex`, `thesis/appendix-numerical.tex` |
-| Tube algorithm import | `[active]` | map input | Jorn proof, agents for routing | Write the current mathematical source from `research/tube-algorithm-raw-jorn-2026-05-04.md`, then rewrite thesis/formal/code surfaces from that source. Old tube thesis/formal/code surfaces are quarantined meanwhile. | `research/tube-algorithm-raw-jorn-2026-05-04.md`, `research/tube-algorithm.md`, `thesis/tube-algorithm.tex`, `formal/tube-algorithm.tex`, `crates/symplectic/src/algorithms/tube/mod.rs`, `thesis/migration-findings.md` rows 1 and 11-14 |
+| Tube algorithm import | `[active]` | map input | Jorn proof, agents for routing | Write the current mathematical source from `research/tube-algorithm-raw-jorn-2026-05-04.md`, then write new thesis/formal/code surfaces from that source. Old tube thesis/formal/code surfaces were deleted from the active tree; use git history only if comparison is needed. | `research/tube-algorithm-raw-jorn-2026-05-04.md`, `research/tube-algorithm.md`, `thesis/migration-findings.md` rows 1 and 11-14 |
 
 ## Tube Algorithm Import Objective
 
@@ -76,7 +76,7 @@ current head/paper formalization into the repo as a current, traceable
 thesis/code/evidence component. This objective is downstream of thesis success
 and upstream of thesis prose, formalization, Rust implementation, and
 validation: those surfaces should be driven from the current mathematical
-source, not from the old quarantined tube files.
+source, not from the deleted stale tube files.
 
 ## Tube Algorithm Import Done State
 
@@ -100,8 +100,8 @@ states hold:
 4. Current evidence shows that the implementation matches the source, covering
    primitive maps, polygon emptiness, intersection, action restriction, fixed
    points, and comparison to HK2017 on small eligible examples.
-5. Old thesis/formal/Rust tube files are rewritten, deleted, or explicitly
-   quarantined so they cannot be mistaken for the current algorithm.
+5. Old thesis/formal/Rust tube files are absent from the active tree, or else
+   have been rewritten from the current mathematical source.
 6. Task and index files point to the current mathematical source, thesis
    position, implementation, and evidence, with only concrete remaining
    follow-ups.
@@ -119,19 +119,18 @@ states hold:
   Refresh by: reading `crates/symplectic/src/kkt/saddle_point_solver.rs`,
   `crates/symplectic/src/kkt/test_saddle_point_solver.rs`, and
   `formal/symplectic-polytope-geometry.tex`.
-- [fresh 2026-04-24] Tube algorithm status: blocked and not re-exported. The
-  rotation-increment formula and thesis/formal TODOs need Jorn math before this
-  can become thesis-relevant.
-  Refresh by: reading `crates/symplectic/src/algorithms/tube/mod.rs` and the
-  tube TODOs in `thesis/`.
+- [stale 2026-05-04] Pre-import tube algorithm status was blocked and not
+  re-exported. The old thesis/formal/Rust tube surfaces were deleted from the
+  active tree after `research/tube-algorithm-raw-jorn-2026-05-04.md` became the
+  audited source. Refresh by reading the raw source and the current routing
+  note, not the deleted files.
 - [fresh 2026-05-04] Tube import status: use
   `research/tube-algorithm-raw-jorn-2026-05-04.md` as the raw audited source
-  and `research/tube-algorithm.md` as the routing/clarification note. Existing
-  `thesis/tube-algorithm.tex`, `formal/tube-algorithm.tex`, and
-  `crates/symplectic/src/algorithms/tube/mod.rs` are quarantined stale surfaces:
-  they contain useful conflict inventories but are not trusted as the current
-  algorithm specification. Refresh by reading the raw source, then the routing
-  note, then old surfaces only as comparison material.
+  and `research/tube-algorithm.md` as the routing/clarification note. Old
+  thesis/formal/Rust tube surfaces were deleted from the active tree because
+  they were not trusted as the current algorithm specification. Refresh by
+  reading the raw source, then the routing note, then git history only if
+  comparison material is necessary.
 - [fresh 2026-04-24] KKT notation decision: use the code's symmetric convention
   in thesis because eigenvalue decompositions are cleaner.
   Refresh by: checking thesis-code alignment notes.

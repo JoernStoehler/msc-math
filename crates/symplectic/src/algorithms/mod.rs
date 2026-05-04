@@ -1,12 +1,12 @@
 //! EHZ capacity algorithms for 4D convex polytopes.
 //!
-//! Three algorithms:
+//! Active algorithms:
 //! - `hk2017` — general capacity (exponential in #facets).
 //! - `billiard` — Lagrangian product capacity (fast).
-//! - `tube` — symplectic polytope capacity. Implementation exists
-//!   (~1364 LOC) but the rotation-increment formula is incorrect;
-//!   blocked on the `tube-algorithm.tex` writeup. Not re-exported from
-//!   `lib.rs`. **Do not use.**
+//!
+//! The tube algorithm is being re-imported from the current mathematical source
+//! under `research/`; the old private test module was deleted because it was
+//! not a trusted implementation.
 //!
 //! # Correctness invariant
 //!
@@ -26,8 +26,6 @@ pub mod billiard;
 pub mod facet_adjacency;
 pub mod hk2017;
 pub mod orbit_search;
-#[cfg(test)]
-mod tube;
 
 pub use orbit_search::{
     aggregate_orbits, solve_orbit_sigma, GeometricOrbitError, OrbitAdmissibility,
