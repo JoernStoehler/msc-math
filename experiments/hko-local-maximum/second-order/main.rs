@@ -143,7 +143,8 @@ fn main() {
     }
 
     let base_path = out_dir.join("second-order-base.jsonl");
-    let base_file = File::create(&base_path).expect("create base JSONL");
+    let base_file = File::create(&base_path)
+        .unwrap_or_else(|err| panic!("create base JSONL {}: {err}", base_path.display()));
     let mut base_writer = BufWriter::new(base_file);
     serde_json::to_writer(&mut base_writer, &base_row).expect("write base row");
     writeln!(base_writer).expect("newline");
@@ -161,7 +162,8 @@ fn main() {
         let t_phase2 = Instant::now();
 
         let curves_path = out_dir.join("second-order-curves.jsonl");
-        let curves_file = File::create(&curves_path).expect("create curves JSONL");
+        let curves_file = File::create(&curves_path)
+            .unwrap_or_else(|err| panic!("create curves JSONL {}: {err}", curves_path.display()));
         let mut curves_writer = BufWriter::new(curves_file);
 
         run_phase2(
@@ -182,7 +184,8 @@ fn main() {
         let t_phase3 = Instant::now();
 
         let random_path = out_dir.join("second-order-random.jsonl");
-        let random_file = File::create(&random_path).expect("create random JSONL");
+        let random_file = File::create(&random_path)
+            .unwrap_or_else(|err| panic!("create random JSONL {}: {err}", random_path.display()));
         let mut random_writer = BufWriter::new(random_file);
 
         run_phase3(

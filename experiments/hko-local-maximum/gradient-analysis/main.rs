@@ -524,7 +524,8 @@ fn exact_bank_output_path(base_dir: &Path, canonical: bool) -> PathBuf {
 }
 
 fn write_jsonl_rows<T: Serialize>(path: &Path, rows: &[T]) {
-    let file = File::create(path).expect("create JSONL output");
+    let file = File::create(path)
+        .unwrap_or_else(|err| panic!("create JSONL output {}: {err}", path.display()));
     let mut writer = BufWriter::new(file);
     for row in rows {
         serde_json::to_writer(&mut writer, row).expect("write JSONL row");
@@ -1059,7 +1060,8 @@ fn run_phase_a(base_dir: &std::path::Path, smoke: bool) {
 
     // Write sensitivity JSONL
     let sens_path = base_dir.join("gradient-analysis/hko-neighborhood-sensitivity.jsonl");
-    let sens_file = File::create(&sens_path).expect("create sensitivity JSONL");
+    let sens_file = File::create(&sens_path)
+        .unwrap_or_else(|err| panic!("create sensitivity JSONL {}: {err}", sens_path.display()));
     let mut sens_writer = BufWriter::new(sens_file);
 
     let duals_raw: Vec<[f64; 4]> = polytope
@@ -1121,7 +1123,8 @@ fn run_phase_a(base_dir: &std::path::Path, smoke: bool) {
     println!("\n--- Gradient ascent with Armijo backtracking ---");
 
     let ascent_path = base_dir.join("gradient-analysis/hko-neighborhood-ascent.jsonl");
-    let ascent_file = File::create(&ascent_path).expect("create ascent JSONL");
+    let ascent_file = File::create(&ascent_path)
+        .unwrap_or_else(|err| panic!("create ascent JSONL {}: {err}", ascent_path.display()));
     let mut ascent_writer = BufWriter::new(ascent_file);
 
     let mut current =

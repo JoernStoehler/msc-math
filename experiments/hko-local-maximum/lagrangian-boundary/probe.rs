@@ -6,10 +6,12 @@
 //! Output Artifacts: experiments/hko-local-maximum/lagrangian-boundary/lagrangian-probe.jsonl
 //!
 //! Architecture:
-//! 1. `cargo run -p exp-hko-local-maximum --release --bin hko-lagrangian-probe`
-//!    generates dataset
-//! 2. Writes to lagrangian-boundary/lagrangian-probe.jsonl
-//! 3. Python script (analyze.py) reads and plots
+//! 1. `cargo run -p exp-hko-local-maximum --release --bin hko-lagrangian-probe -- --smoke`
+//!    runs one-direction smoke mode.
+//! 2. `cargo run -p exp-hko-local-maximum --release --bin hko-lagrangian-probe`
+//!    generates the full dataset.
+//! 3. Writes to lagrangian-boundary/lagrangian-probe*.jsonl
+//! 4. Python script (analyze.py) reads and plots
 //!
 //! For each random direction u on S^19 (unit sphere in 20D Lagrangian
 //! perturbation space), binary-search for the radius r(u) where sys
@@ -71,6 +73,44 @@ struct ProbeRow {
     success: bool,
     /// Reason for failure, if any.
     failure_reason: String,
+}
+
+#[derive(Debug, Clone, Copy)]
+struct Args {
+    smoke: bool,
+}
+
+fn print_usage() {
+    eprintln!(
+        r#"Usage: hko-lagrangian-probe [options]
+
+Optional flags:
+  --help, -h          Show this help message and exit.
+  --smoke              Run smoke mode with one random direction."#
+    );
+}
+
+fn usage_error(message: String) -> ! {
+    eprintln!("error: {message}\n");
+    print_usage();
+    std::process::exit(2);
+}
+
+fn parse_args() -> Args {
+    let mut args = Args { smoke: false };
+
+    for arg in std::env::args().skip(1) {
+        match arg.as_str() {
+            "--help" | "-h" => {
+                print_usage();
+                std::process::exit(0);
+            }
+            "--smoke" => args.smoke = true,
+            other => usage_error(format!("unknown argument: {other}")),
+        }
+    }
+
+    args
 }
 
 /// Identify which 2D components are nonzero for each dual vertex.
@@ -218,7 +258,8 @@ fn bisect_range(
 fn main() {
     let t0 = Instant::now();
     let mut rng = ChaCha8Rng::seed_from_u64(SEED);
-    let smoke = std::env::args().any(|a| a == "--smoke");
+    let args = parse_args();
+    let smoke = args.smoke;
     let n_directions = if smoke {
         SMOKE_N_DIRECTIONS
     } else {
@@ -234,9 +275,19 @@ fn main() {
 
     println!("Directional boundary probing of sys > 1 region around HKO2024\n");
 
-    std::fs::create_dir_all(&base_dir).expect("create lagrangian-boundary output dir");
+    std::fs::create_dir_all(&base_dir).unwrap_or_else(|err| {
+        panic!(
+            "create lagrangian-boundary output dir {}: {err}",
+            base_dir.display()
+        )
+    });
 
-    let file = File::create(&output_path).expect("failed to create output file");
+    let file = File::create(&output_path).unwrap_or_else(|err| {
+        panic!(
+            "failed to create output file {}: {err}",
+            output_path.display()
+        )
+    });
     let mut writer = BufWriter::new(file);
 
     // Base polytope

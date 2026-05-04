@@ -40,7 +40,7 @@ experiment safety, validation trust, or durable crate maintainability.
 | item | state | value class | owner/gate | next action | source |
 | --- | --- | --- | --- | --- | --- |
 | Broad Rust lint gate | `[done]` | map input | agents | Keep `cargo clippy --workspace --all-targets -- -D warnings` green; use it as a cheap first-pass regression gate for future cleanup packets. | current branch, Clippy output |
-| Safe experiment command contracts | `[active]` | mainline thesis | agents, Jörn only for retained-output policy | Pick one experiment package, classify each binary as smoke/default/full/canonical, and make accidental writes to tracked outputs harder or better documented. | `/tmp/rust-tech-debt-map.md`, `experiments/MAP.md`, `tasks/reproducibility.md` |
+| Safe experiment command contracts | `[active]` | mainline thesis | agents, Jörn only for retained-output policy | Continue package-by-package classification after HKO. Next likely targets: verification/algorithm-comparison or combinatorial-cells producers. | `/tmp/rust-tech-debt-map.md`, `experiments/MAP.md`, `tasks/reproducibility.md` |
 | Verification trust chain | `[active]` | mainline thesis | retained claims | Decide which verification commands are cheap enough to require before broad Rust cleanup; keep path/row diagnostics in verification plumbing. | `research/verification.md`, `experiments/verification/` |
 | `symplectic` API support levels | `[map-input]` | contingent during writing | Jörn for public API/architecture choices | Audit only the paths needed by retained thesis experiments before hiding, promoting, or redesigning public modules. | `crates/MAP.md`, `crates/symplectic/src/lib.rs` |
 | Capacity result semantics | `[map-input]` | contingent during writing | retained claims, Jörn for thesis-facing contract | Decide whether root `ehz_capacity*` wrappers need stronger names/docs/results only after thesis usage is known. | `tasks/numerics.md`, `crates/symplectic/src/algorithms/orbit_search.rs` |
@@ -70,6 +70,12 @@ experiment safety, validation trust, or durable crate maintainability.
   Full mode still writes `facet-splitting/hko-neighborhood-splitting.jsonl`;
   smoke mode writes the separate
   `facet-splitting/hko-neighborhood-splitting-smoke.jsonl`.
+- [fresh 2026-05-04] `experiments/hko-local-maximum/README.md` now records the
+  HKO Rust command contract in one place. It distinguishes smoke/default/full
+  and canonical output modes for all eight HKO binaries.
+- [fresh 2026-05-04] `hko-lagrangian-probe` now rejects unknown arguments and
+  supports `--help`; its `--smoke` mode still writes
+  `lagrangian-boundary/lagrangian-probe-smoke.jsonl`.
 - [fresh 2026-05-04] `experiments/crosspolytope/main/main.rs` no longer says
   it fills a placeholder capacity. The current source truth is
   `research/crosspolytope.md`: capacity `4.0` is recorded, with explicit

@@ -217,7 +217,9 @@ fn main() {
 
     if let Some(parent) = args.out.parent() {
         if !parent.as_os_str().is_empty() {
-            std::fs::create_dir_all(parent).expect("create output directory");
+            std::fs::create_dir_all(parent).unwrap_or_else(|err| {
+                panic!("create output directory {}: {err}", parent.display())
+            });
         }
     }
 
@@ -227,7 +229,8 @@ fn main() {
     println!("  seed: {}", args.seed);
     println!("  out:  {}", args.out.display());
 
-    let file = File::create(&args.out).expect("failed to create output file");
+    let file = File::create(&args.out)
+        .unwrap_or_else(|err| panic!("failed to create output file {}: {err}", args.out.display()));
     let mut writer = BufWriter::new(file);
 
     let base = known_polytopes::hko_pentagon();

@@ -209,12 +209,27 @@ fn main() {
 
     println!("Lagrangian search: dense perturbation sweep around HKO2024\n");
 
-    std::fs::create_dir_all(&base_dir).expect("create lagrangian-boundary output dir");
+    std::fs::create_dir_all(&base_dir).unwrap_or_else(|err| {
+        panic!(
+            "create lagrangian-boundary output dir {}: {err}",
+            base_dir.display()
+        )
+    });
 
-    let samples_file = File::create(&samples_path).expect("failed to create samples file");
+    let samples_file = File::create(&samples_path).unwrap_or_else(|err| {
+        panic!(
+            "failed to create samples file {}: {err}",
+            samples_path.display()
+        )
+    });
     let mut samples_writer = BufWriter::new(samples_file);
 
-    let levels_file = File::create(&levels_path).expect("failed to create levels file");
+    let levels_file = File::create(&levels_path).unwrap_or_else(|err| {
+        panic!(
+            "failed to create levels file {}: {err}",
+            levels_path.display()
+        )
+    });
     let mut levels_writer = BufWriter::new(levels_file);
 
     // Base polytope

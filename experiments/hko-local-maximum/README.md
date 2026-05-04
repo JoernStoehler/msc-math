@@ -32,6 +32,29 @@ Start with `research/hko-local-maximum-status.md` before reading subfolders.
 - `src/`
   Topic-local shared Rust helpers.
 
+## Rust Command Contract
+
+- `hko-gradient-analysis -- --smoke` writes
+  `gradient-analysis/hko-neighborhood-sensitivity-smoke.jsonl`; full mode
+  writes the tracked sensitivity/ascent outputs. `--exact-bank` defaults to
+  smoke output; add `--canonical` only when refreshing the tracked exact bank.
+- `hko-facet-splitting -- --smoke` writes
+  `facet-splitting/hko-neighborhood-splitting-smoke.jsonl`; full mode writes
+  `facet-splitting/hko-neighborhood-splitting.jsonl`.
+- `hko-lagrangian-boundary -- --smoke` writes smoke-level search outputs; full
+  mode writes `lagrangian-search*.jsonl`.
+- `hko-lagrangian-probe -- --smoke` writes
+  `lagrangian-boundary/lagrangian-probe-smoke.jsonl`; full mode writes
+  `lagrangian-boundary/lagrangian-probe.jsonl`.
+- `hko-perturbation` defaults to an untracked temp smoke output. Use `--out`
+  only when intentionally choosing the output path.
+- `hko-second-order -- --smoke` runs the phase-1 probe without writing tracked
+  outputs; full mode writes `second-order/*.jsonl`.
+- `hko-cut-and-ascent -- --smoke` writes `cut-and-ascent-smoke.jsonl`; full mode
+  appends to `cut-and-ascent.jsonl` unless `--fresh` is given.
+- `hko-sage-validation` defaults to smoke input. Use `--canonical` only when
+  refreshing `sage-validation-input.jsonl`.
+
 ## Fast Reading Order
 
 1. `research/hko-local-maximum-status.md`
