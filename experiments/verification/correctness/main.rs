@@ -79,7 +79,29 @@ struct VerificationEntry {
     expected_capacity: Option<f64>, // For literature
 }
 
+fn print_usage() {
+    eprintln!("Usage: cargo run -p dev-capacity-validation --release --bin axioms-correctness");
+    eprintln!("  Refreshes correctness/correctness.jsonl.");
+    eprintln!("  Use cargo test -p dev-capacity-validation --bin axioms-correctness --release to check it.");
+}
+
+fn parse_args() {
+    let args: Vec<String> = std::env::args().skip(1).collect();
+    if args.is_empty() {
+        return;
+    }
+    if args == ["--help"] || args == ["-h"] {
+        print_usage();
+        std::process::exit(0);
+    }
+    eprintln!("unknown argument(s): {}\n", args.join(" "));
+    print_usage();
+    std::process::exit(2);
+}
+
 fn main() {
+    parse_args();
+
     println!("Generating correctness dataset (47 polytopes, 71 capacity values)...\n");
     let mut rng = ChaCha8Rng::seed_from_u64(42);
     let mut entries = Vec::new();

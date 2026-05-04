@@ -137,6 +137,8 @@ experiment safety, validation trust, or durable crate maintainability.
 - [fresh 2026-05-04] `experiments/verification/README.md` records the command
   contract for `axioms-correctness`, `axioms-all-minimum`, and
   `axioms-orbit-recovery`, including which modes refresh tracked JSONL evidence.
+- [fresh 2026-05-04] `axioms-correctness --help` now exits before generating
+  `correctness/correctness.jsonl`; unknown arguments fail before writes.
 - [fresh 2026-05-04] `experiments/crosspolytope/main/main.rs` no longer says
   it fills a placeholder capacity. The current source truth is
   `research/crosspolytope.md`: capacity `4.0` is recorded, with explicit

@@ -9,7 +9,8 @@ remaining task state.
 
 - `axioms-correctness` is a full-output producer. Running it refreshes
   `correctness/correctness.jsonl`. Do not run it as a quick smoke command unless
-  intentionally refreshing that tracked evidence file.
+  intentionally refreshing that tracked evidence file. `--help` prints this
+  contract and exits without writing data.
 - `cargo test -p dev-capacity-validation --bin axioms-correctness --release`
   reads `correctness/correctness.jsonl` and checks the stored proposition rows.
 - `axioms-all-minimum` defaults to smoke mode and writes
