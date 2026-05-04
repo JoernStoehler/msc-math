@@ -32,6 +32,19 @@ module becomes a supported implementation.
 - [accepted 2026-05-04] The target output is `capacity` and all simple Reeb
   orbits below `capacity + threshold`. The action pruning rule is therefore
   based on `segment_action <= best_action_so_far + threshold`.
+- [accepted 2026-05-04] The implementation should use a functional-programming
+  style with modular primitives. Define what a tube is, how to intersect tubes,
+  how to build primitive three-facet tubes `(a_1,a_2,a_3)` describing flow from
+  `a_1 cap a_2` to `a_2 cap a_3` along `R_2 = 2J a_2`, how to detect empty
+  tubes, and how to solve fixed points of closed tubes. The orchestrator is a
+  separate layer that chooses the tube-build order, first to get a good action
+  bound quickly and then to exhaust the full tube set. An empty sub-segment
+  implies every containing tube is empty.
+- [accepted 2026-05-04] A closed tube has combinatorics
+  `(a_1,a_2,...,a_k,a_1,a_2)`. The start and end both live on
+  `a_1 cap a_2`; fixed points are solved on that two-face.
+- [accepted 2026-05-04] For thesis/numerics wording, it is acceptable to state
+  a stronger input condition than exact mathematics needs.
 
 ## Existing Repo Noise
 
@@ -74,7 +87,9 @@ Fill this section first.
    - Conceptually, HK2017 makes use of pruning on a "adjacent" level; Tube prunes on arbitrary order, i.e. it uses the same "Reeb orbit => combinatorics sigma" map, but does not just check whether pairs (sigma_i, sigma_i+1) have any Reeb trajectory at all, but checks arbitrary segments. i.e. it can for example check whether any trajectory goes thorugh a triplet (a,b,c) ; it does so via an intersection-like algorithm i.e. for segments (a_1,...,a_k, a_k+1) and (a_k, a_k+1, ..., a_m) it obtains for each side the set of trajectories that go through the segment, then intersects the two sets to obtain (a_1, ..., a_m) ; closed loops can be detected by taking (a_1, ..., a_k, a_1) and looking for fixed points of the start-end affine map.
    - We encode the set of trajectories that have compatible combinatorics as the convex sets of points on the intersection F_1 \cap F_2 which is part the polytope boundary ; the intersection is for non-redundant representations always something like an empty set, or a 0/1/2-face. So we can just pick any base point and basis of the affine hyperplane H_1 \cap H_2 = { <x, a_1> = 1, <x, a_2> = 1 } [genericity is needed for this to be a 2-dim affine space]. We also encode the affine map from F_1 \cap F_2 to F_k-1 \cap F_k. This graph however is only a function if we exclude polytopes that allow free-moving breakpoints which happens when there's some finite segment along R_1=2Ja_1 on the boundary where both a_1,a_2 are active, which is exactly the condition omega_0(a_1,a_2) = 0. If we assume genericity here, we get that we can flow from 2-hyperplane to 2-hyperplane via an affine map, and we can compose those.
    - Intersection is then simply to compose the two maps, and update/intersect the start&end sets by pushforward/pullback
-   - Closing is then to look for fixed points of the map from F_1 \cap F_k to itself
+   - Closing is then to append `(a_1,a_2)` to obtain a closed tube
+     `(a_1,a_2,...,a_k,a_1,a_2)` and solve fixed points of the resulting map
+     from `F_1 cap F_2` to itself.
    - We can additionally prune by adding an action upper bound (that for example moves with the current best known closed Reeb orbit); the partial action from the point on a_1,a_2 to a_k-1,a_k can be computed and is an affine map in the start/end point again. so intersection with {action(x) <= bound} is again a 2-dim polygon; actions are additive and >=0 for Reeb trajectories.
    - Finally there's also a rotation cutoff from CH2021 we can use , which prunes entire combinatorics [if i understand how the rotation (which then defines the CZ index) is computed] ; basically every 2-face transition has a rotation increment (>=0)
 - Future-work role:
@@ -131,7 +146,8 @@ Use this section to fix notation before the algorithm steps.
 - Directed edges:
 - Edge labels:
 - Source theorem/lemma:
-- Edge cases:
+- Edge cases: non-transition facet pairs may have `omega_0(a_i,a_j) = 0`;
+  only actual transition pairs need the nondegeneracy condition.
 
 ### Tube
 
@@ -141,6 +157,10 @@ Use this section to fix notation before the algorithm steps.
 - Parameterization:
 - Empty-tube condition:
 - Convexity or shape invariant:
+- Primitive constructor: build three-facet tubes `(a_1,a_2,a_3)` encoding flow
+  from `a_1 cap a_2` to `a_2 cap a_3` along `R_2 = 2J a_2`.
+- Intersection operation: combine compatible tubes by intersecting the induced
+  trajectory sets and updating start/end sets through pushforward/pullback.
 
 ### Step Map
 
@@ -164,9 +184,11 @@ Use this section to fix notation before the algorithm steps.
 
 ### Closing
 
-- When closing is attempted:
-- Required closing edges:
-- Fixed-point equation:
+- When closing is attempted: after appending `(a_1,a_2)` to a tube with initial
+  facets `(a_1,a_2)`.
+- Required closing edges: the closed combinatorics are
+  `(a_1,a_2,...,a_k,a_1,a_2)`.
+- Fixed-point equation: solve the start-end map on `a_1 cap a_2`.
 - Candidate orbit validation:
 - Action computation:
 
@@ -175,11 +197,12 @@ Use this section to fix notation before the algorithm steps.
 Write the algorithm as precise steps, not implementation details.
 
 1. Precompute:
-2. Initialize:
-3. Extend:
-4. Prune:
-5. Close:
-6. Select output:
+2. Build primitive tubes:
+3. Intersect/build composite tubes:
+4. Detect empty tubes:
+5. Close and solve fixed points:
+6. Orchestrate search order:
+7. Select output:
 
 ## Pruning Claims
 
@@ -187,7 +210,8 @@ For each pruning rule, record the exact statement and the proof dependency.
 
 ### Empty Tube
 
-- Rule:
+- Rule: if a tube segment is empty, then every larger tube containing that
+  segment is empty.
 - Why sound:
 - Required invariant:
 
@@ -227,7 +251,9 @@ Only fill this after the mathematical contract is stable enough to guide code.
 
 - Target Rust module:
 - Reusable existing code:
-- Data structures:
+- Data structures: prefer modular, functional primitives for tube construction,
+  tube intersection, empty detection, and closed-tube fixed-point solving; keep
+  search heuristics in a separate orchestrator layer.
 - Exact versus f64 split:
 - Unit tests:
 - Comparison tests against HK2017:
