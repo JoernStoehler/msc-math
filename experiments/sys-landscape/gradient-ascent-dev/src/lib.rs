@@ -1,8 +1,9 @@
 //! Gradient ascent method development.
 //!
-//! Instruments for developing the gradient ascent search method: step size
-//! calibration, strategy comparison (overshoot vs wiggle vs noise), convergence
-//! diagnostics. Findings feed back from exp-sys-landscape/ application runs.
+//! Placeholder surface for developing gradient ascent search-method tools:
+//! step-size calibration, strategy comparison, and convergence diagnostics.
+//! The current binaries are stubs; see the local README before treating this
+//! package as an evidence producer.
 //!
 //! Related crates:
 //! - `dev-gradient/` — gradient correctness validation
