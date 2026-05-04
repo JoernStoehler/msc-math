@@ -41,7 +41,7 @@ experiment safety, validation trust, or durable crate maintainability.
 | --- | --- | --- | --- | --- | --- |
 | Broad Rust lint gate | `[done]` | map input | agents | Keep `cargo clippy --workspace --all-targets -- -D warnings` green; use it as a cheap first-pass regression gate for future cleanup packets. | current branch, Clippy output |
 | Safe experiment command contracts | `[active]` | mainline thesis | agents, Jörn only for retained-output policy | Continue with finer per-binary smoke repairs after package-level contracts for HKO, verification/algorithm-comparison, combinatorial-cells, numerics, and sys-landscape; verification/numerics help exits are being normalized to status 0. | `/tmp/rust-tech-debt-map.md`, `experiments/MAP.md`, `tasks/reproducibility.md` |
-| Verification trust chain | `[active]` | mainline thesis | retained claims | Decide which verification commands are cheap enough to require before broad Rust cleanup; keep path/row diagnostics in verification plumbing. | `research/verification.md`, `experiments/verification/` |
+| Verification trust chain | `[active]` | mainline thesis | retained claims | `experiments/verification/README.md` now records the top-level Rust command contract. Decide later which full verification commands are required before broad Rust cleanup; keep path/row diagnostics in verification plumbing. | `research/verification.md`, `experiments/verification/README.md` |
 | `symplectic` API support levels | `[map-input]` | contingent during writing | Jörn for public API/architecture choices | Audit only the paths needed by retained thesis experiments before hiding, promoting, or redesigning public modules. | `crates/MAP.md`, `crates/symplectic/src/lib.rs` |
 | Capacity result semantics | `[map-input]` | contingent during writing | retained claims, Jörn for thesis-facing contract | Root `ehz_capacity*` docs now state the saddle-point/f64-only/no-exact-certificate contract. Decide stronger names/results only if retained thesis usage needs it. | `tasks/numerics.md`, `crates/symplectic/src/lib.rs`, `crates/symplectic/src/algorithms/orbit_search.rs` |
 | Unsupported projected backend | `[map-input]` | contingent during writing | Jörn if the projected route is retained | `OrbitSolveBackend::Projected` docs now state that the shared `solve_orbit_sigma` surface returns `UnsupportedBackend`. Choose hide or complete only if normal callers need it. | `tasks/numerics.md`, `crates/symplectic/src/algorithms/orbit_search.rs` |
@@ -134,6 +134,9 @@ experiment safety, validation trust, or durable crate maintainability.
   `dev_numerics`, `dev_numerics_edge_cases`, and
   `dev_numerics_subdifferential` now exit with status 0 for `--help`.
   Unknown arguments still print usage and exit with status 2.
+- [fresh 2026-05-04] `experiments/verification/README.md` records the command
+  contract for `axioms-correctness`, `axioms-all-minimum`, and
+  `axioms-orbit-recovery`, including which modes refresh tracked JSONL evidence.
 - [fresh 2026-05-04] `experiments/crosspolytope/main/main.rs` no longer says
   it fills a placeholder capacity. The current source truth is
   `research/crosspolytope.md`: capacity `4.0` is recorded, with explicit
