@@ -141,7 +141,7 @@ fn output_path(manifest_dir: &Path, filename: &str, mode: RunMode) -> PathBuf {
     }
 }
 
-fn print_help_and_exit() -> ! {
+fn print_help_and_exit(code: i32) -> ! {
     eprintln!(
         "Usage: cargo run -p dev-numerical-analysis --release --bin num-algebraic-exactness [--canonical]"
     );
@@ -149,7 +149,7 @@ fn print_help_and_exit() -> ! {
         "  default: write untracked smoke outputs under experiments/numerics/algebraic-exactness/"
     );
     eprintln!("  --canonical: refresh the tracked exact-polytopes.jsonl and exact-kkt-comparison.jsonl outputs");
-    std::process::exit(2);
+    std::process::exit(code);
 }
 
 fn normalized_incidence_rows(rows: &[Vec<bool>]) -> Vec<Vec<bool>> {
@@ -207,10 +207,10 @@ fn omega_mismatch_positions(lhs: &[Vec<i8>], rhs: &DMatrix<i8>) -> Vec<(usize, u
 fn main() {
     let mode = match parse_run_mode(env::args().skip(1)) {
         Ok(mode) => mode,
-        Err(RunModeArgError::Help) => print_help_and_exit(),
+        Err(RunModeArgError::Help) => print_help_and_exit(0),
         Err(RunModeArgError::Unknown) => {
             eprintln!("unknown argument");
-            print_help_and_exit();
+            print_help_and_exit(2);
         }
     };
 

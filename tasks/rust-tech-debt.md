@@ -40,7 +40,7 @@ experiment safety, validation trust, or durable crate maintainability.
 | item | state | value class | owner/gate | next action | source |
 | --- | --- | --- | --- | --- | --- |
 | Broad Rust lint gate | `[done]` | map input | agents | Keep `cargo clippy --workspace --all-targets -- -D warnings` green; use it as a cheap first-pass regression gate for future cleanup packets. | current branch, Clippy output |
-| Safe experiment command contracts | `[active]` | mainline thesis | agents, Jörn only for retained-output policy | Continue with finer per-binary smoke repairs after package-level contracts for HKO, verification/algorithm-comparison, combinatorial-cells, numerics, and sys-landscape; all-minimum/orbit-recovery help exits are now normal zero-exit commands. | `/tmp/rust-tech-debt-map.md`, `experiments/MAP.md`, `tasks/reproducibility.md` |
+| Safe experiment command contracts | `[active]` | mainline thesis | agents, Jörn only for retained-output policy | Continue with finer per-binary smoke repairs after package-level contracts for HKO, verification/algorithm-comparison, combinatorial-cells, numerics, and sys-landscape; all-minimum/orbit-recovery/algebraic-exactness help exits are now normal zero-exit commands. | `/tmp/rust-tech-debt-map.md`, `experiments/MAP.md`, `tasks/reproducibility.md` |
 | Verification trust chain | `[active]` | mainline thesis | retained claims | Decide which verification commands are cheap enough to require before broad Rust cleanup; keep path/row diagnostics in verification plumbing. | `research/verification.md`, `experiments/verification/` |
 | `symplectic` API support levels | `[map-input]` | contingent during writing | Jörn for public API/architecture choices | Audit only the paths needed by retained thesis experiments before hiding, promoting, or redesigning public modules. | `crates/MAP.md`, `crates/symplectic/src/lib.rs` |
 | Capacity result semantics | `[map-input]` | contingent during writing | retained claims, Jörn for thesis-facing contract | Root `ehz_capacity*` docs now state the saddle-point/f64-only/no-exact-certificate contract. Decide stronger names/results only if retained thesis usage needs it. | `tasks/numerics.md`, `crates/symplectic/src/lib.rs`, `crates/symplectic/src/algorithms/orbit_search.rs` |
@@ -128,6 +128,8 @@ experiment safety, validation trust, or durable crate maintainability.
 - [fresh 2026-05-04] `axioms-all-minimum --help` and
   `axioms-orbit-recovery --help` now exit with status 0. Unknown arguments
   still print usage and exit with status 2.
+- [fresh 2026-05-04] `num-algebraic-exactness --help` now exits with status
+  0. Unknown arguments still print usage and exit with status 2.
 - [fresh 2026-05-04] `experiments/crosspolytope/main/main.rs` no longer says
   it fills a placeholder capacity. The current source truth is
   `research/crosspolytope.md`: capacity `4.0` is recorded, with explicit
