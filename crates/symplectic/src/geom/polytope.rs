@@ -196,6 +196,14 @@ impl Polytope4D {
         }
 
         for (i, a) in dual_vertices_f64.iter().enumerate() {
+            for c in 0..4 {
+                let value = a[c];
+                if !value.is_finite() {
+                    return Err(ConstructionError::F64Conversion(format!(
+                        "dual vertex[{i}][{c}] is non-finite: {value}"
+                    )));
+                }
+            }
             if a.norm() < EPS_ZERO_NORM {
                 return Err(ConstructionError::ZeroDualVertex(i));
             }

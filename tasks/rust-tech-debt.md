@@ -45,7 +45,7 @@ experiment safety, validation trust, or durable crate maintainability.
 | `symplectic` API support levels | `[map-input]` | contingent during writing | Jörn for public API/architecture choices | Audit only the paths needed by retained thesis experiments before hiding, promoting, or redesigning public modules. | `crates/MAP.md`, `crates/symplectic/src/lib.rs` |
 | Capacity result semantics | `[map-input]` | contingent during writing | retained claims, Jörn for thesis-facing contract | Decide whether root `ehz_capacity*` wrappers need stronger names/docs/results only after thesis usage is known. | `tasks/numerics.md`, `crates/symplectic/src/algorithms/orbit_search.rs` |
 | Unsupported projected backend | `[map-input]` | contingent during writing | Jörn if the projected route is retained | Choose hide, complete, or explicitly-document-unsupported only if normal callers still see it during retained work. | `tasks/numerics.md`, `crates/symplectic/src/algorithms/orbit_search.rs` |
-| Hidden hard failures in fallible APIs | `[active]` | map input | agents | Build minimal reproducers before changing behavior; prioritize panics/nontermination on public `Result` surfaces. | `/tmp/rust-tech-debt-map.md`, `crates/symplectic/src/lib.rs`, `crates/symplectic/src/geom/polytope.rs`, `crates/symplectic/src/random.rs` |
+| Hidden hard failures in fallible APIs | `[active]` | map input | agents | Non-finite `Polytope4D::from_f64` inputs now return `ConstructionError` instead of panicking. Continue with minimal reproducers before changing behavior for random-generation nontermination or capacity-wrapper error semantics. | `/tmp/rust-tech-debt-map.md`, `crates/symplectic/src/lib.rs`, `crates/symplectic/src/geom/polytope.rs`, `crates/symplectic/src/random.rs` |
 | `algebraic-numbers` proof/API map | `[active]` | mainline thesis if exact validation is cited | agents, Jörn for math/proof acceptance | README now records the public surface, serialization contract, invariant-panics, and formal-reference gaps. Next step is formal/task routing only if exact validation becomes thesis-cited. | `crates/algebraic-numbers/README.md`, `crates/MAP.md` |
 | Duplicate producer ownership | `[map-input]` | map input | agents, Jörn only for deleting provenance | Label current, historical, frozen-baseline, exploratory, or delete only after checking research/task truth for that package. | `experiments/sys-landscape/`, `experiments/numerics/`, `experiments/verification/algorithm-comparison/` |
 | Blocked/stale/provenance code that looks live | `[active]` | map input | agents | Fix sampled stale headers and add grep-able status markers where source truth is already clear; avoid broad deletion without provenance review. | `/tmp/rust-tech-debt-map.md`, topic research notes |
@@ -96,6 +96,10 @@ experiment safety, validation trust, or durable crate maintainability.
   scalar public surface, `canonical_element` serialization contract,
   field-spec validation/invariant-panic boundary, and the remaining formal
   reference gaps.
+- [fresh 2026-05-04] `Polytope4D::from_f64` rejects non-finite f64
+  coordinates with `ConstructionError::F64Conversion` before calling
+  `f64_to_rational`; regression coverage lives in
+  `crates/symplectic/src/geom/polytope/tests.rs`.
 - [fresh 2026-05-04] `experiments/crosspolytope/main/main.rs` no longer says
   it fills a placeholder capacity. The current source truth is
   `research/crosspolytope.md`: capacity `4.0` is recorded, with explicit

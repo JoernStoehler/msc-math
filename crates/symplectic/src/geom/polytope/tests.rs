@@ -319,6 +319,17 @@ fn reject_near_zero_halfspace() {
 }
 
 #[test]
+fn reject_non_finite_halfspace_coordinate_without_panicking() {
+    let mut halfspaces = simplex_halfspaces();
+    halfspaces[1][2] = f64::NAN;
+    let err = Polytope4D::from_f64(halfspaces).unwrap_err();
+    assert_eq!(
+        err,
+        ConstructionError::F64Conversion("dual vertex[1][2] is non-finite: NaN".to_string())
+    );
+}
+
+#[test]
 fn reject_duplicate_halfspaces() {
     let halfspaces = vec![
         Vector4::x(),
