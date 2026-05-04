@@ -309,7 +309,7 @@ pub(crate) fn run_crosspolytope_search(
     SearchResult {
         iterations,
         best_certified: best_certified
-            .expect("no certified (S,σ) found — should not happen for valid polytopes"),
+            .unwrap_or_else(|| panic!("no certified (S,σ) found through subset size m = {max_m}")),
         best_uncertain,
         elapsed_secs: prior_elapsed + cap_start.elapsed().as_secs_f64(),
         symmetry_group_order: group.len(),

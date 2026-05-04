@@ -23,7 +23,7 @@ Freshness rules:
 ## Status
 
 - State: finish-mode roadmap scaffold.
-- Last updated: 2026-04-29.
+- Last updated: 2026-05-04.
 - Target: finish the scoped master-thesis project by 2026-05-14. Finishing by
   2026-05-07 is plausible but not assumed.
 - Phase 1 done-state basis was accepted by Jorn on 2026-04-24, modulo inline
@@ -73,6 +73,7 @@ justify calendar delay and Jorn-time cost.
 | Hostile landscape | negative sys-search story and data-science evidence | `tasks/landscape.md` |
 | Numerics | numerical appendix, solver/projection/beta-LP state | `tasks/numerics.md` |
 | Reproducibility | data freshness, artifact truth, repo promises | `tasks/reproducibility.md` |
+| Rust tech debt | Rust cleanup packets that affect agent velocity, experiment safety, validation trust, or durable crate maintainability | `tasks/rust-tech-debt.md` |
 | Infrastructure | agent/harness/repo-maintenance work and future SWE polish | `tasks/infrastructure.md` |
 
 ## Immediate Phase-2 Agenda

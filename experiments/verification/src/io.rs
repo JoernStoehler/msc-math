@@ -60,8 +60,17 @@ pub fn create_jsonl_writer(path: &Path) -> BufWriter<File> {
         path.parent()
             .expect("jsonl output path must have a parent directory"),
     )
-    .expect("failed to create jsonl output directory");
-    BufWriter::new(File::create(path).expect("failed to create jsonl output"))
+    .unwrap_or_else(|err| {
+        panic!(
+            "failed to create jsonl output directory for {}: {err}",
+            path.display()
+        )
+    });
+    BufWriter::new(
+        File::create(path).unwrap_or_else(|err| {
+            panic!("failed to create jsonl output {}: {err}", path.display())
+        }),
+    )
 }
 
 pub fn write_json_line<T: Serialize>(writer: &mut BufWriter<File>, row: &T) {

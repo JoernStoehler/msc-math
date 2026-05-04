@@ -673,7 +673,7 @@ fn run_q5(base_dir: &str, smoke: bool) {
 ///   with O(t^2) remainder from C^2 per-orbit actions.
 /// - Single-orbit residual slope ~ 1 (in directions where orbits disagree on g.d)
 ///   or slope ~ 2 (in directions where they happen to agree).
-
+///
 /// Process one polytope for Q5b: enumerate tied orbits, compute gradients,
 /// test subdiff prediction. Returns number of rows written.
 fn q5b_process_polytope(

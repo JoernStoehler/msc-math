@@ -63,13 +63,22 @@ pub fn target_map(manifest_dir: &Path, mode: RunMode) -> HashMap<String, Target>
 }
 
 fn load_shared_cache(manifest_dir: &Path) -> HashMap<DualVerticesKey, PolytopeRecord> {
+    // These are optional shared-catalog inputs. Missing files load as empty via
+    // `database::load`; conflicts or parse errors should still fail loudly.
     let paths = [
         manifest_dir.join("orbit-recovery/polytopes.jsonl"),
         manifest_dir.join("../combinatorial-cells/polytopes.jsonl"),
         manifest_dir.join("../sys-landscape/cache.jsonl"),
     ];
     let refs = paths.iter().map(PathBuf::as_path).collect::<Vec<_>>();
-    database::load_many(&refs).expect("failed to load shared verification cache surface")
+    database::load_many(&refs).unwrap_or_else(|err| {
+        let path_list = paths
+            .iter()
+            .map(|path| path.display().to_string())
+            .collect::<Vec<_>>()
+            .join(", ");
+        panic!("failed to load shared verification cache surface from [{path_list}]: {err}")
+    })
 }
 
 fn build_known_targets() -> Vec<Target> {
@@ -165,17 +174,34 @@ fn build_lagrangian_product_targets(db: &HashMap<DualVerticesKey, PolytopeRecord
 
 fn build_correctness_targets(manifest_dir: &Path) -> Vec<Target> {
     let path = manifest_dir.join("correctness/correctness.jsonl");
-    let file = File::open(&path).expect("failed to open correctness dataset");
+    let file = File::open(&path).unwrap_or_else(|err| {
+        panic!(
+            "failed to open correctness dataset {}: {err}",
+            path.display()
+        )
+    });
     let reader = BufReader::new(file);
 
     let mut by_group = BTreeMap::<String, CorrectnessRow>::new();
-    for line in reader.lines() {
-        let line = line.expect("failed to read correctness row");
+    for (line_index, line) in reader.lines().enumerate() {
+        let line_number = line_index + 1;
+        let line = line.unwrap_or_else(|err| {
+            panic!(
+                "failed to read correctness row {}:{}: {err}",
+                path.display(),
+                line_number
+            )
+        });
         if line.trim().is_empty() {
             continue;
         }
-        let row: CorrectnessRow =
-            serde_json::from_str(&line).expect("failed to parse correctness row");
+        let row: CorrectnessRow = serde_json::from_str(&line).unwrap_or_else(|err| {
+            panic!(
+                "failed to parse correctness row {}:{}: {err}",
+                path.display(),
+                line_number
+            )
+        });
         if !matches!(
             row.test_group.as_str(),
             "scaled" | "transformed" | "perturbed"
@@ -204,8 +230,13 @@ fn build_correctness_targets(manifest_dir: &Path) -> Vec<Target> {
                 .iter()
                 .map(|coords| Vector4::new(coords[0], coords[1], coords[2], coords[3]))
                 .collect();
-            let polytope = Polytope4D::from_f64(dual_vertices)
-                .unwrap_or_else(|err| panic!("failed to reconstruct {}: {err:?}", row.name));
+            let polytope = Polytope4D::from_f64(dual_vertices).unwrap_or_else(|err| {
+                panic!(
+                    "failed to reconstruct correctness target {} from {}: {err:?}",
+                    row.name,
+                    path.display()
+                )
+            });
             Target {
                 name: row.name,
                 family: format!("correctness_{}", row.test_group),

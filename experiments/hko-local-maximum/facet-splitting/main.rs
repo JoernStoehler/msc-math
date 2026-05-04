@@ -11,8 +11,10 @@
 //! Split from gradient-is-zero/main.rs (Phase B).
 //!
 //! Architecture:
-//! 1. `cargo run --bin hko-facet-splitting --release` generates dataset
-//! 2. Writes hko-neighborhood-splitting.jsonl
+//! 1. `cargo run --bin hko-facet-splitting --release -- --smoke` runs a small
+//!    smoke check and writes `hko-neighborhood-splitting-smoke.jsonl`.
+//! 2. `cargo run --bin hko-facet-splitting --release` generates the full
+//!    dataset and writes `hko-neighborhood-splitting.jsonl`.
 //! 3. Python script (analyze.py) reads JSONL, produces figures
 //!
 //! Methodology: we add a cutting halfspace ⟨n,x⟩ ≤ h_K(n) - ε to create an
@@ -45,9 +47,13 @@ const N_SPLITTING_MIXED: usize = 50;
 
 /// Number of random control directions for facet-splitting.
 const N_SPLITTING_CONTROL: usize = 20;
+const SMOKE_N_SPLITTING_SAMPLES_PER_FACET: usize = 10;
+const SMOKE_N_SPLITTING_MIXED: usize = 1;
+const SMOKE_N_SPLITTING_CONTROL: usize = 1;
 
 /// Small epsilon for facet-splitting (how deep to cut).
 const SPLITTING_EPSILONS: &[f64] = &[1e-3, 1e-4];
+const SMOKE_SPLITTING_EPSILONS: &[f64] = &[1e-3];
 
 // ============================================================================
 // Output schema
@@ -74,6 +80,42 @@ struct SplittingRow {
     d_sys_d_h_new: f64, // ∂sys/∂h_{F+1} — the splitting gradient
     construction_ok: bool,
     time_ms: f64,
+}
+
+#[derive(Debug, Clone, Copy)]
+struct Args {
+    smoke: bool,
+}
+
+fn print_usage() {
+    eprintln!(
+        r#"Usage: hko-facet-splitting [options]
+
+Optional flags:
+  --help, -h          Show this help message and exit.
+  --smoke              Run a small smoke mode and write smoke output."#
+    );
+}
+
+fn usage_error(message: String) -> ! {
+    eprintln!("error: {message}\n");
+    print_usage();
+    std::process::exit(2);
+}
+
+fn parse_args() -> Args {
+    let mut args = Args { smoke: false };
+    for arg in std::env::args().skip(1) {
+        match arg.as_str() {
+            "--help" | "-h" => {
+                print_usage();
+                std::process::exit(0);
+            }
+            "--smoke" => args.smoke = true,
+            _ => usage_error(format!("unknown argument: {arg}")),
+        }
+    }
+    args
 }
 
 // ============================================================================
@@ -160,7 +202,7 @@ fn sample_near_normal(
 // Phase B: Facet-splitting
 // ============================================================================
 
-fn run_phase_b(base_dir: &std::path::Path) {
+fn run_phase_b(base_dir: &std::path::Path, smoke: bool) {
     println!("═══════════════════════════════════════════════════════════");
     println!("Phase B: Facet-splitting (F=11) — test maximality beyond F=10");
     println!("═══════════════════════════════════════════════════════════\n");
@@ -173,12 +215,19 @@ fn run_phase_b(base_dir: &std::path::Path) {
     let vertices = polytope.vertices_f64();
 
     let vol_orig = volume(polytope);
-    let cap_orig = ehz_capacity(polytope).expect("ehz").capacity();
+    let cap_orig = ehz_capacity(polytope)
+        .expect("failed to compute HKO2024 baseline capacity")
+        .capacity();
     let sys_orig = cap_orig * cap_orig / (2.0 * vol_orig);
     println!("HKO2024 baseline: F={f}, sys={sys_orig:.10}");
 
-    let splitting_path = base_dir.join("facet-splitting/hko-neighborhood-splitting.jsonl");
-    let splitting_file = File::create(&splitting_path).expect("create splitting JSONL");
+    let splitting_path = if smoke {
+        base_dir.join("facet-splitting/hko-neighborhood-splitting-smoke.jsonl")
+    } else {
+        base_dir.join("facet-splitting/hko-neighborhood-splitting.jsonl")
+    };
+    let splitting_file = File::create(&splitting_path)
+        .unwrap_or_else(|err| panic!("create splitting JSONL {}: {err}", splitting_path.display()));
     let mut split_writer = BufWriter::new(splitting_file);
 
     let mut rng = ChaCha8Rng::seed_from_u64(123);
@@ -191,18 +240,37 @@ fn run_phase_b(base_dir: &std::path::Path) {
     // - All 5 Q-space normals (facets 0-4) are equivalent under 5-fold rotation
     // - All 5 P-space normals (facets 5-9) are equivalent under 5-fold rotation
     // So we only need 2 representative facets, not 10.
-    let representative_facets = [0usize, 5]; // Q-space rep, P-space rep
-    for &facet_k in &representative_facets {
+    let representative_facets: &[usize] = if smoke { &[0] } else { &[0, 5] }; // Q-space rep, P-space rep
+    let samples_per_facet = if smoke {
+        SMOKE_N_SPLITTING_SAMPLES_PER_FACET
+    } else {
+        N_SPLITTING_SAMPLES_PER_FACET
+    };
+    let mixed_count = if smoke {
+        SMOKE_N_SPLITTING_MIXED
+    } else {
+        N_SPLITTING_MIXED
+    };
+    let control_count = if smoke {
+        SMOKE_N_SPLITTING_CONTROL
+    } else {
+        N_SPLITTING_CONTROL
+    };
+    let epsilons = if smoke {
+        SMOKE_SPLITTING_EPSILONS
+    } else {
+        SPLITTING_EPSILONS
+    };
+    for &facet_k in representative_facets {
         println!(
             "\nFacet {facet_k} (representative): normal = [{:.4}, {:.4}, {:.4}, {:.4}]",
             normals[facet_k][0], normals[facet_k][1], normals[facet_k][2], normals[facet_k][3]
         );
 
-        let samples =
-            sample_near_normal(&normals[facet_k], N_SPLITTING_SAMPLES_PER_FACET, &mut rng);
+        let samples = sample_near_normal(&normals[facet_k], samples_per_facet, &mut rng);
 
         for (dir, angular_offset) in &samples {
-            for &eps in SPLITTING_EPSILONS {
+            for &eps in epsilons {
                 let t_split = Instant::now();
                 total_directions += 1;
 
@@ -307,7 +375,7 @@ fn run_phase_b(base_dir: &std::path::Path) {
 
     // Mixed directions: components in both Q and P space (breaks Lagrangian product structure)
     println!("\n--- Mixed directions (Q+P space) ---");
-    for i in 0..N_SPLITTING_MIXED {
+    for i in 0..mixed_count {
         let t0: f64 = StandardNormal.sample(&mut rng);
         let t1: f64 = StandardNormal.sample(&mut rng);
         let t2: f64 = StandardNormal.sample(&mut rng);
@@ -326,7 +394,7 @@ fn run_phase_b(base_dir: &std::path::Path) {
             .map(|n| n.dot(&dir).clamp(-1.0, 1.0).acos())
             .fold(f64::INFINITY, f64::min);
 
-        for &eps in SPLITTING_EPSILONS {
+        for &eps in epsilons {
             let t_split = Instant::now();
             total_directions += 1;
 
@@ -405,7 +473,7 @@ fn run_phase_b(base_dir: &std::path::Path) {
 
     // Control: random directions far from any facet normal
     println!("\n--- Control: random directions ---");
-    for i in 0..N_SPLITTING_CONTROL {
+    for i in 0..control_count {
         let t0: f64 = StandardNormal.sample(&mut rng);
         let t1: f64 = StandardNormal.sample(&mut rng);
         let t2: f64 = StandardNormal.sample(&mut rng);
@@ -418,7 +486,7 @@ fn run_phase_b(base_dir: &std::path::Path) {
             .map(|n| n.dot(&dir).clamp(-1.0, 1.0).acos())
             .fold(f64::INFINITY, f64::min);
 
-        for &eps in SPLITTING_EPSILONS {
+        for &eps in epsilons {
             let t_split = Instant::now();
             total_directions += 1;
 
@@ -504,11 +572,12 @@ fn run_phase_b(base_dir: &std::path::Path) {
 
 fn main() {
     let t0 = Instant::now();
+    let args = parse_args();
     let base_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
 
     println!("Facet-splitting: HKO2024 maximality test in F=11 space\n");
 
-    run_phase_b(base_dir);
+    run_phase_b(base_dir, args.smoke);
 
     let elapsed = t0.elapsed().as_secs_f64();
     println!("\n═══════════════════════════════════════════════════════════");

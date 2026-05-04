@@ -431,7 +431,7 @@ fn hypercube_accepted() {
 
 #[test]
 fn from_f64_division_accepted() {
-    let normals = vec![
+    let normals = [
         Vector4::x(),
         -Vector4::x(),
         Vector4::y(),
@@ -441,7 +441,7 @@ fn from_f64_division_accepted() {
         Vector4::w(),
         -Vector4::w(),
     ];
-    let heights = vec![1.0; 8];
+    let heights = [1.0; 8];
     let p = Polytope4D::from_f64(
         normals
             .iter()

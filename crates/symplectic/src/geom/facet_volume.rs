@@ -220,10 +220,10 @@ mod tests {
         let duals = polytope.dual_vertices_f64();
         let f = polytope.facet_count();
 
-        for fi in 0..f {
+        for (fi, dual) in duals.iter().enumerate().take(f) {
             let (vol, centroid) = facet_volume_and_centroid_3d(polytope, fi);
             assert!(vol > 0.0, "facet {fi} should have positive volume");
-            let dot = duals[fi].dot(&centroid);
+            let dot = dual.dot(&centroid);
             assert!(
                 (dot - 1.0).abs() < 1e-6,
                 "facet {fi}: centroid not on hyperplane, a·c = {dot}, expected 1.0",

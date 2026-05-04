@@ -307,9 +307,9 @@ mod tests {
         let skel = Skeleton::compute(&kp.polytope);
         let duals = kp.polytope.dual_vertices_f64();
 
-        for fi in 0..duals.len() {
+        for (fi, dual) in duals.iter().enumerate() {
             let centroid = skel.facet_centroid(&kp.polytope, fi);
-            let residual = (duals[fi].dot(&centroid) - 1.0).abs();
+            let residual = (dual.dot(&centroid) - 1.0).abs();
             assert!(
                 residual < 1e-7,
                 "centroid of facet {fi} not on facet: residual {residual}"

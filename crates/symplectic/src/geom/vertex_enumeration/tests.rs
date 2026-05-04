@@ -35,14 +35,14 @@ use std::collections::BTreeSet;
 ///   3: -x_4 <= 1/5   (n = (0,0,0,-1), h = 1/5)
 ///   4: x_1+x_2+x_3+x_4 <= 1   (n = (1,1,1,1), h = 1)
 fn rational_simplex() -> Polytope4D {
-    let normals = vec![
+    let normals = [
         [rat(-1), rat(0), rat(0), rat(0)],
         [rat(0), rat(-1), rat(0), rat(0)],
         [rat(0), rat(0), rat(-1), rat(0)],
         [rat(0), rat(0), rat(0), rat(-1)],
         [rat(1), rat(1), rat(1), rat(1)],
     ];
-    let heights = vec![frac(1, 5), frac(1, 5), frac(1, 5), frac(1, 5), rat(1)];
+    let heights = [frac(1, 5), frac(1, 5), frac(1, 5), frac(1, 5), rat(1)];
     let dual_vertices: Vec<[BigRational; 4]> = normals
         .iter()
         .zip(heights.iter())
@@ -55,7 +55,7 @@ fn rational_simplex() -> Polytope4D {
 ///
 /// 8 facets (+-e_i), 16 vertices (all sign combinations of (1,1,1,1)).
 fn rational_hypercube() -> Polytope4D {
-    let normals = vec![
+    let normals = [
         [rat(1), rat(0), rat(0), rat(0)],
         [rat(-1), rat(0), rat(0), rat(0)],
         [rat(0), rat(1), rat(0), rat(0)],
@@ -65,7 +65,7 @@ fn rational_hypercube() -> Polytope4D {
         [rat(0), rat(0), rat(0), rat(1)],
         [rat(0), rat(0), rat(0), rat(-1)],
     ];
-    let heights = vec![rat(1); 8];
+    let heights: [BigRational; 8] = std::array::from_fn(|_| rat(1));
     let dual_vertices: Vec<[BigRational; 4]> = normals
         .iter()
         .zip(heights.iter())
@@ -733,7 +733,7 @@ fn integer_cramer_exact_coordinates_hypercube() {
     // Facet 2k+1: -e_{k+1} . x <= 1, so vertex on facet 2k+1 has x_{k+1} = -1.
     for (vi, vd) in vds.iter().enumerate() {
         let v = &h.vertices()[vi];
-        for dim in 0..4 {
+        for (dim, coord) in v.iter().enumerate().take(4) {
             let expected = if vd.contains(&(2 * dim)) {
                 rat(1)
             } else {
@@ -744,9 +744,9 @@ fn integer_cramer_exact_coordinates_hypercube() {
                 rat(-1)
             };
             assert_eq!(
-                v[dim], expected,
+                *coord, expected,
                 "vertex {vi}, coordinate {dim}: expected {expected}, got {}",
-                v[dim]
+                coord
             );
         }
     }
@@ -767,9 +767,9 @@ fn integer_cramer_exact_coordinates_simplex() {
 
     for (vi, vd) in vds.iter().enumerate() {
         let v = &s.vertices()[vi];
-        for fi in 0..dual_verts.len() {
+        for (fi, dual) in dual_verts.iter().enumerate() {
             let prod = dot4(
-                &std::array::from_fn(|c| dual_verts[fi][c].clone()),
+                &std::array::from_fn(|c| dual[c].clone()),
                 &std::array::from_fn(|c| v[c].clone()),
             );
             if vd.contains(&fi) {

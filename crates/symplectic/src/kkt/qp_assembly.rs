@@ -523,7 +523,7 @@ mod tests {
     /// Uses axis-aligned normals, making omega_0 values easy to verify by hand.
     fn make_test_polytope() -> Polytope4D {
         use nalgebra::Vector4;
-        let normals = vec![
+        let normals = [
             Vector4::new(1.0, 0.0, 0.0, 0.0),
             Vector4::new(-1.0, 0.0, 0.0, 0.0),
             Vector4::new(0.0, 1.0, 0.0, 0.0),
@@ -533,7 +533,7 @@ mod tests {
             Vector4::new(0.0, 0.0, 0.0, 1.0),
             Vector4::new(0.0, 0.0, 0.0, -1.0),
         ];
-        let heights = vec![1.0; 8];
+        let heights = [1.0; 8];
         Polytope4D::from_f64(
             normals
                 .iter()

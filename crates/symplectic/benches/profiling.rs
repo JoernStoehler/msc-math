@@ -62,14 +62,14 @@ fn find_valid_permutation(polytope: &Polytope4D) -> Vec<usize> {
                 if found.is_some() {
                     return;
                 }
-                if is_feasible_cycle(perm, &adj) {
-                    if matches!(solve_kkt_for(polytope, perm), KktOutcome::Feasible(_)) {
-                        found = Some(perm.to_vec());
-                    }
+                if is_feasible_cycle(perm, &adj)
+                    && matches!(solve_kkt_for(polytope, perm), KktOutcome::Feasible(_))
+                {
+                    found = Some(perm.to_vec());
                 }
             });
-            if found.is_some() {
-                return found.unwrap();
+            if let Some(found) = found {
+                return found;
             }
         }
     }

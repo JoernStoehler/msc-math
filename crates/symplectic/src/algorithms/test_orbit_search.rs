@@ -3,6 +3,7 @@
 //! These tests verify:
 //! - exact fallback upgrades a known admissible winner,
 //! - boundsafe guarantee mode resolves indeterminate minima to exact orbits.
+//!
 //! Behavior is preserved while moving inline tests out of `orbit_search.rs` to
 //! keep the production module focused on implementation.
 
