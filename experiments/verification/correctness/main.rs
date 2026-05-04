@@ -298,12 +298,33 @@ fn main() {
         entries.len(),
         output_path.display()
     );
-    let file = File::create(output_path).expect("create file");
+    let file = File::create(&output_path).unwrap_or_else(|err| {
+        panic!(
+            "failed to create correctness output {}: {err}",
+            output_path.display()
+        )
+    });
     let mut writer = BufWriter::new(file);
     for entry in &entries {
-        serde_json::to_writer(&mut writer, entry).expect("write entry");
-        writeln!(&mut writer).expect("write newline");
+        serde_json::to_writer(&mut writer, entry).unwrap_or_else(|err| {
+            panic!(
+                "failed to serialize correctness row for {}: {err}",
+                output_path.display()
+            )
+        });
+        writeln!(&mut writer).unwrap_or_else(|err| {
+            panic!(
+                "failed to write newline to correctness output {}: {err}",
+                output_path.display()
+            )
+        });
     }
+    writer.flush().unwrap_or_else(|err| {
+        panic!(
+            "failed to flush correctness output {}: {err}",
+            output_path.display()
+        )
+    });
 
     let total_pruned = entries.len();
     let total_unpruned = entries

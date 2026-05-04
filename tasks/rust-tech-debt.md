@@ -50,7 +50,7 @@ experiment safety, validation trust, or durable crate maintainability.
 | Duplicate producer ownership | `[map-input]` | map input | agents, Jörn only for deleting provenance | Label current, historical, frozen-baseline, exploratory, or delete only after checking research/task truth for that package. | `experiments/sys-landscape/`, `experiments/numerics/`, `experiments/verification/algorithm-comparison/` |
 | Solver and exact-arithmetic copies | `[mostly-triaged]` | map input | agents, Jörn only for deletion or API migration | Sampled KKT copies already say they are historical or experiment-local. Numerics algebraic-exactness comments now point future migration to `crates/algebraic-numbers` and `crates/symplectic/src/exact`. Leave copies duplicated unless a retained task needs migration. | `experiments/verification/algorithm-comparison/ablation/kkt.rs`, `experiments/crosspolytope/main/kkt.rs`, `experiments/numerics/error-bounds/saddle_point_solver.rs`, `experiments/numerics/src/algebraic/` |
 | Blocked/stale/provenance code that looks live | `[active]` | map input | agents | Fix sampled stale headers and add grep-able status markers where source truth is already clear; `gradient-ascent-dev` now has a local stub README. Avoid broad deletion without provenance review. | `/tmp/rust-tech-debt-map.md`, topic research notes |
-| Local diagnostic text | `[active]` | map input | agents | Improve path/row/error context opportunistically while touching nearby experiment or verification code; `num-unknown-predicates` billiard failures now name the failed row. | `/tmp/rust-tech-debt-map.md`, `experiments/numerics/unknown-predicates/main.rs` |
+| Local diagnostic text | `[active]` | map input | agents | Improve path/row/error context opportunistically while touching nearby experiment or verification code; `num-unknown-predicates` billiard failures name the failed row and `axioms-correctness` output failures name the path. | `/tmp/rust-tech-debt-map.md`, `experiments/numerics/unknown-predicates/main.rs`, `experiments/verification/correctness/main.rs` |
 | Large mixed-purpose files | `[future]` | future/follow-up by default | architecture decision if reopened | Split only when a concrete retained task is blocked by the mixed purpose. | `/tmp/rust-tech-debt-map.md` |
 
 ## Agent Cache
@@ -139,6 +139,9 @@ experiment safety, validation trust, or durable crate maintainability.
   `axioms-orbit-recovery`, including which modes refresh tracked JSONL evidence.
 - [fresh 2026-05-04] `axioms-correctness --help` now exits before generating
   `correctness/correctness.jsonl`; unknown arguments fail before writes.
+- [fresh 2026-05-04] `axioms-correctness` output creation, row serialization,
+  newline writes, and flush failures now include the target
+  `correctness/correctness.jsonl` path.
 - [fresh 2026-05-04] `experiments/crosspolytope/main/main.rs` no longer says
   it fills a placeholder capacity. The current source truth is
   `research/crosspolytope.md`: capacity `4.0` is recorded, with explicit
