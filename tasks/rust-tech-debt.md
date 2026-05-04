@@ -64,7 +64,7 @@ experiment safety, validation trust, or durable crate maintainability.
   rerunning the command before stacking larger cleanup.
 - [fresh 2026-05-04] `cargo clippy --workspace --all-targets -- -D warnings`
   passed again after the command-contract, provenance, and diagnostics packets
-  through commit `cdbfb484`.
+  through commit `281c38b1`.
 - [fresh 2026-05-04] Verification target-pool shared-cache paths are optional
   candidate inputs: missing paths load as empty through `database::load`.
   Conflicts and parse errors still fail loudly. `target_pool.rs` and `io.rs`
