@@ -70,6 +70,7 @@ obligations.
 | Visualization negative exploration | `visualization.md` | `tasks/landscape.md`, `tasks/writing.md` if included as standalone or supporting material |
 | Pentagon rotation formula | `sys-landscape.md`, future dedicated note if promoted | `tasks/landscape.md`, `tasks/writing.md` if promoted from future work |
 | Numerical and algorithmic method story | `numerics.md`, `numerics-error-bounds.md`, `verification.md`, `verification-orbit-recovery.md` | `tasks/numerics.md`, `tasks/reproducibility.md`, `tasks/writing.md` |
+| Tube algorithm import | `tube-algorithm.md` | `tasks/numerics.md`, `tasks/writing.md` if promoted into thesis text |
 | Repo/software/process story | `finish-current-state.md`, `verification.md`, `visualization.md`, architecture and submission maps | `tasks/infrastructure.md`, `tasks/reproducibility.md`, `tasks/writing.md`, `tasks/submit-thesis.md` |
 
 ### Research Note Index
@@ -81,6 +82,7 @@ obligations.
 | Hostile sys landscape | `sys-landscape.md`, `sys-landscape-toolbox-audit.md`, `sys-landscape-datascience/` | negative-search interpretation and data-science method state |
 | Sys first-order local behavior | `sys-first-order-local-behavior.md` | generic smooth case, non-generic active-germ classification, and semialgebraic fallback status |
 | Numerics | `numerics.md`, `numerics-error-bounds.md` | numerical-method status and error-bound interpretation |
+| Tube algorithm | `tube-algorithm.md` | fillable source note for Jörn's current algorithm formalization before rewriting old TeX or Rust surfaces |
 | Verification | `verification.md`, `verification-orbit-recovery.md` | validation evidence and orbit-recovery interpretation |
 | Standalone topics | `crosspolytope.md`, `visualization.md`, `combinatorial-cells.md` | topic-local result interpretation |
 

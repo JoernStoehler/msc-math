@@ -1,5 +1,10 @@
 # Task: Implement tube algorithm in Rust
 
+Stale as of 2026-05-04. Do not use this file as the tube-algorithm
+specification or implementation plan. The current fillable source note is
+`research/tube-algorithm.md`; use that note first, then compare old TeX/code
+surfaces only as downstream or conflict material.
+
 ## Context
 
 The tube algorithm is an alternative to HK2017 for computing EHZ capacity on symplectic polytopes (no Lagrangian 2-faces). It builds trajectory families ("tubes") incrementally via branch-and-bound, potentially making F > 10 polytope datasets feasible. The spec is written; implementation is placeholder-only.
