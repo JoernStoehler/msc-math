@@ -234,15 +234,6 @@ All conventions serve the long-term quality objectives, the final publication ob
 - track task states, external decisions from Jörn, and results of expensive tests/checks to allow future agents to deem checks unnecessary/unchanged
 - move unnecessary claims into the git history i.e. delete them, since they are expensive to verify
 
-### Chat With Jörn
-- use chat and `/tmp` artifacts to make Jörn's feedback efficient; keep durable
-  repo files optimized for future agents and source truth
-- gather repo evidence and do preliminary reasoning before asking Jörn for decisions
-- ask Jörn for thesis scope, mathematical judgment, advisor-facing framing,
-  taste, external-world actions, and design pivots; do not ask him to do
-  agent-checkable grep, inventory, comparison, or first-pass drafting
-- present long math to Jörn via PDF, not LaTeX source; use chat for short math.
-
 ### Tasks
 - write plainly, focus on the outcomes and how to measure success
 - don't prematurely prescribe the method, don't prematurely make decisions, don't prematurely abstract and generalize, don't prematurely define tasks more thoroughly, nor prematurely promote mere ideas to accepted todos.
@@ -314,6 +305,10 @@ All conventions serve the long-term quality objectives, the final publication ob
 
 ### Experiments
 - the research notes describe what the experiments are for, and interpret their results.
+- `research/` owns experiment design, research purpose, and interpretation;
+  `experiments/` owns execution code, commands, data, reports, and figures.
+  Before interpreting results or planning follow-up experiments, use the
+  relevant research note rather than inferring purpose from experiment artifacts.
 - sibling experiments should be mostly independent from each other, to facilitate rapid development
 - data is located next to the producer
 - do not patch-edit generated `.jsonl`, `.csv`, or figure outputs; regenerate
