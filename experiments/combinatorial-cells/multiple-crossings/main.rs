@@ -300,8 +300,9 @@ fn main() {
     // =========================================================================
 
     let out_dir = base_dir.join("multiple-crossings");
-    let sweep_file = File::create(out_dir.join("combinatorial-boundaries-sweep.jsonl"))
-        .expect("create sweep JSONL");
+    let sweep_path = out_dir.join("combinatorial-boundaries-sweep.jsonl");
+    let sweep_file = File::create(&sweep_path)
+        .unwrap_or_else(|err| panic!("create sweep JSONL {}: {err}", sweep_path.display()));
     let mut sweep_writer = BufWriter::new(sweep_file);
 
     // =========================================================================

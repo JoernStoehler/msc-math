@@ -40,7 +40,7 @@ experiment safety, validation trust, or durable crate maintainability.
 | item | state | value class | owner/gate | next action | source |
 | --- | --- | --- | --- | --- | --- |
 | Broad Rust lint gate | `[done]` | map input | agents | Keep `cargo clippy --workspace --all-targets -- -D warnings` green; use it as a cheap first-pass regression gate for future cleanup packets. | current branch, Clippy output |
-| Safe experiment command contracts | `[active]` | mainline thesis | agents, Jörn only for retained-output policy | Continue package-by-package classification after HKO and verification/algorithm-comparison. Next likely target: combinatorial-cells producers. | `/tmp/rust-tech-debt-map.md`, `experiments/MAP.md`, `tasks/reproducibility.md` |
+| Safe experiment command contracts | `[active]` | mainline thesis | agents, Jörn only for retained-output policy | Continue package-by-package classification after HKO, verification/algorithm-comparison, and combinatorial-cells. Next likely target: numerics or sys-landscape producers. | `/tmp/rust-tech-debt-map.md`, `experiments/MAP.md`, `tasks/reproducibility.md` |
 | Verification trust chain | `[active]` | mainline thesis | retained claims | Decide which verification commands are cheap enough to require before broad Rust cleanup; keep path/row diagnostics in verification plumbing. | `research/verification.md`, `experiments/verification/` |
 | `symplectic` API support levels | `[map-input]` | contingent during writing | Jörn for public API/architecture choices | Audit only the paths needed by retained thesis experiments before hiding, promoting, or redesigning public modules. | `crates/MAP.md`, `crates/symplectic/src/lib.rs` |
 | Capacity result semantics | `[map-input]` | contingent during writing | retained claims, Jörn for thesis-facing contract | Decide whether root `ehz_capacity*` wrappers need stronger names/docs/results only after thesis usage is known. | `tasks/numerics.md`, `crates/symplectic/src/algorithms/orbit_search.rs` |
@@ -81,6 +81,10 @@ experiment safety, validation trust, or durable crate maintainability.
   safety for `cmp-ablation`, `cmp-benchmark`, and `cmp-benchmark-profile`.
   `cmp-ablation --smoke` and `cmp-benchmark --smoke` write separate smoke
   JSONL files; full mode keeps the tracked evidence paths.
+- [fresh 2026-05-04] `experiments/combinatorial-cells/README.md` records that
+  the current binaries are full-output producers without smoke modes. Do not
+  run them as quick command checks unless intentionally refreshing tracked
+  artifacts.
 - [fresh 2026-05-04] `experiments/crosspolytope/main/main.rs` no longer says
   it fills a placeholder capacity. The current source truth is
   `research/crosspolytope.md`: capacity `4.0` is recorded, with explicit

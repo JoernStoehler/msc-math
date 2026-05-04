@@ -547,17 +547,21 @@ fn main() {
 
     let out_dir = base_dir.join("boundary-characterization");
 
-    let anatomy_file = File::create(out_dir.join("combinatorial-boundaries-anatomy.jsonl"))
-        .expect("create anatomy JSONL");
+    let anatomy_path = out_dir.join("combinatorial-boundaries-anatomy.jsonl");
+    let anatomy_file = File::create(&anatomy_path)
+        .unwrap_or_else(|err| panic!("create anatomy JSONL {}: {err}", anatomy_path.display()));
     let mut anatomy_writer = BufWriter::new(anatomy_file);
 
-    let crossing_file = File::create(out_dir.join("combinatorial-boundaries-crossing.jsonl"))
-        .expect("create crossing JSONL");
+    let crossing_path = out_dir.join("combinatorial-boundaries-crossing.jsonl");
+    let crossing_file = File::create(&crossing_path)
+        .unwrap_or_else(|err| panic!("create crossing JSONL {}: {err}", crossing_path.display()));
     let mut crossing_writer = BufWriter::new(crossing_file);
 
     let mut gradient_writer = if RUN_GRADIENT {
-        let f = File::create(out_dir.join("combinatorial-boundaries-gradient.jsonl"))
-            .expect("create gradient JSONL");
+        let gradient_path = out_dir.join("combinatorial-boundaries-gradient.jsonl");
+        let f = File::create(&gradient_path).unwrap_or_else(|err| {
+            panic!("create gradient JSONL {}: {err}", gradient_path.display())
+        });
         Some(BufWriter::new(f))
     } else {
         None

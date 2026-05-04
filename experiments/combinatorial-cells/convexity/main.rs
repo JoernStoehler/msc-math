@@ -244,8 +244,9 @@ fn main() {
     // =========================================================================
 
     let out_dir = base_dir.join("convexity");
-    let convexity_file = File::create(out_dir.join("combinatorial-boundaries-convexity.jsonl"))
-        .expect("create convexity JSONL");
+    let convexity_path = out_dir.join("combinatorial-boundaries-convexity.jsonl");
+    let convexity_file = File::create(&convexity_path)
+        .unwrap_or_else(|err| panic!("create convexity JSONL {}: {err}", convexity_path.display()));
     let mut convexity_writer = BufWriter::new(convexity_file);
 
     // =========================================================================

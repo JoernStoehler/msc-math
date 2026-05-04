@@ -352,8 +352,10 @@ fn process_polytope(
 fn main() {
     let out_dir = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("omega-hypothesis");
     let out_path = out_dir.join("omega-obstacle.jsonl");
-    std::fs::create_dir_all(&out_dir).expect("Failed to create output directory");
-    let file = std::fs::File::create(&out_path).expect("Failed to create output file");
+    std::fs::create_dir_all(&out_dir)
+        .unwrap_or_else(|err| panic!("create output directory {}: {err}", out_dir.display()));
+    let file = std::fs::File::create(&out_path)
+        .unwrap_or_else(|err| panic!("create output file {}: {err}", out_path.display()));
     let mut writer = BufWriter::new(file);
 
     let owned_db_path = Path::new(env!("CARGO_MANIFEST_DIR")).join("polytopes.jsonl");

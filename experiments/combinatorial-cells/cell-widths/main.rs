@@ -173,8 +173,9 @@ fn main() {
     // =========================================================================
 
     let out_dir = base_dir.join("cell-widths");
-    let profiling_file = File::create(out_dir.join("combinatorial-boundaries-profiling.jsonl"))
-        .expect("create profiling JSONL");
+    let profiling_path = out_dir.join("combinatorial-boundaries-profiling.jsonl");
+    let profiling_file = File::create(&profiling_path)
+        .unwrap_or_else(|err| panic!("create profiling JSONL {}: {err}", profiling_path.display()));
     let mut profiling_writer = BufWriter::new(profiling_file);
 
     // =========================================================================
