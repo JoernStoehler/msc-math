@@ -5,6 +5,12 @@
 //! Input Artifacts: None (generates all ablation fixtures internally).
 //! Output Artifacts: experiments/verification/algorithm-comparison/ablation/ablation.jsonl
 //!
+//! Usage:
+//! - `cargo run -p dev-algorithm-comparison --release --bin cmp-ablation -- --smoke`
+//!   runs a small smoke subset and writes `ablation/ablation-smoke.jsonl`.
+//! - `cargo run -p dev-algorithm-comparison --release --bin cmp-ablation`
+//!   runs the full dataset and writes `ablation/ablation.jsonl`.
+//!
 //! A-axis variants: A0 (unpruned), A1 (vertex adjacency),
 //! A2 (directed omega0), A3 (Reeb-flow feasibility).
 //!
@@ -28,12 +34,57 @@ use crate::models::AblationEntry;
 use crate::variants::VARIANTS;
 use std::fs::File;
 use std::io::{BufWriter, Write};
+use std::path::{Path, PathBuf};
 use std::time::Instant;
 
+#[derive(Debug, Clone, Copy)]
+struct Args {
+    smoke: bool,
+}
+
+fn print_usage() {
+    eprintln!(
+        r#"Usage: cmp-ablation [options]
+
+Optional flags:
+  --help, -h          Show this help message and exit.
+  --smoke              Run a small smoke subset and write smoke output."#
+    );
+}
+
+fn usage_error(message: String) -> ! {
+    eprintln!("error: {message}\n");
+    print_usage();
+    std::process::exit(2);
+}
+
+fn parse_args() -> Args {
+    let mut args = Args { smoke: false };
+    for arg in std::env::args().skip(1) {
+        match arg.as_str() {
+            "--help" | "-h" => {
+                print_usage();
+                std::process::exit(0);
+            }
+            "--smoke" => args.smoke = true,
+            other => usage_error(format!("unknown argument: {other}")),
+        }
+    }
+    args
+}
+
+fn output_path(manifest_dir: &Path, smoke: bool) -> PathBuf {
+    if smoke {
+        manifest_dir.join("ablation/ablation-smoke.jsonl")
+    } else {
+        manifest_dir.join("ablation/ablation.jsonl")
+    }
+}
+
 fn main() {
+    let args = parse_args();
     let t0 = Instant::now();
-    let output_path =
-        std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("ablation/ablation.jsonl");
+    let output_path = output_path(std::path::Path::new(env!("CARGO_MANIFEST_DIR")), args.smoke);
 
     println!("Ablation study — A-axis (adjacency pruning)\n");
     println!("Variants: A0 (unpruned), A1 (vertex adj), A2 (directed ω₀), A3 (Reeb feasibility)");
@@ -44,7 +95,10 @@ fn main() {
         crate::models::H_MAX
     );
 
-    let polytopes = build_ablation_polytopes();
+    let mut polytopes = build_ablation_polytopes();
+    if args.smoke {
+        polytopes.truncate(2);
+    }
     let n_polytopes = polytopes.len();
     let n_entries = n_polytopes * VARIANTS.len();
     println!(
@@ -131,7 +185,8 @@ fn main() {
         }
     }
 
-    let file = File::create(&output_path).expect("failed to create ablation.jsonl");
+    let file = File::create(&output_path)
+        .unwrap_or_else(|err| panic!("failed to create {}: {err}", output_path.display()));
     let mut writer = BufWriter::new(file);
     for entry in &entries {
         serde_json::to_writer(&mut writer, entry).expect("failed to serialize entry");

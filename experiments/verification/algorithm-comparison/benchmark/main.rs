@@ -6,9 +6,10 @@
 //! Output Artifacts: experiments/verification/algorithm-comparison/benchmark/benchmark.jsonl
 //!
 //! Architecture:
-//! 1. `cargo run -p dev-algorithm-comparison --release --bin cmp-benchmark` generates
-//!    benchmark dataset
-//! 2. Writes to benchmark/benchmark.jsonl
+//! 1. `cargo run -p dev-algorithm-comparison --release --bin cmp-benchmark -- --smoke`
+//!    runs a small smoke subset and writes `benchmark/benchmark-smoke.jsonl`.
+//! 2. `cargo run -p dev-algorithm-comparison --release --bin cmp-benchmark` generates
+//!    the full benchmark dataset and writes `benchmark/benchmark.jsonl`.
 //! 3. Python script reads JSONL and fits timing model
 //!
 //! Dataset design:
@@ -28,6 +29,7 @@ use rand_chacha::ChaCha8Rng;
 use serde::{Deserialize, Serialize};
 use std::fs::File;
 use std::io::{BufWriter, Write};
+use std::path::{Path, PathBuf};
 use std::time::Instant;
 use symplectic::geom::lagrangian_product::lagrangian_product;
 use symplectic::geom::polygon::random_polygon_2d;
@@ -83,21 +85,78 @@ const LAGRANGIAN_PLAN: &[(usize, usize)] = &[
     (4, 5), // Square × Pentagon (F=9)
     (5, 5), // Pentagon × Pentagon (F=10)
 ];
+const SMOKE_RANDOM_PLAN: &[(usize, usize, bool)] = &[(5, 1, true)];
+const SMOKE_LAGRANGIAN_PLAN: &[(usize, usize)] = &[(3, 3)];
+
+#[derive(Debug, Clone, Copy)]
+struct Args {
+    smoke: bool,
+}
+
+fn print_usage() {
+    eprintln!(
+        r#"Usage: cmp-benchmark [options]
+
+Optional flags:
+  --help, -h          Show this help message and exit.
+  --smoke              Run a small smoke subset and write smoke output."#
+    );
+}
+
+fn usage_error(message: String) -> ! {
+    eprintln!("error: {message}\n");
+    print_usage();
+    std::process::exit(2);
+}
+
+fn parse_args() -> Args {
+    let mut args = Args { smoke: false };
+    for arg in std::env::args().skip(1) {
+        match arg.as_str() {
+            "--help" | "-h" => {
+                print_usage();
+                std::process::exit(0);
+            }
+            "--smoke" => args.smoke = true,
+            other => usage_error(format!("unknown argument: {other}")),
+        }
+    }
+    args
+}
+
+fn output_path(manifest_dir: &Path, smoke: bool) -> PathBuf {
+    if smoke {
+        manifest_dir.join("benchmark/benchmark-smoke.jsonl")
+    } else {
+        manifest_dir.join("benchmark/benchmark.jsonl")
+    }
+}
 
 fn main() {
+    let args = parse_args();
     let t0 = Instant::now();
     let mut rng = ChaCha8Rng::seed_from_u64(SEED);
     let mut entries = Vec::new();
 
     // Construct output path relative to repo root (works from any cwd)
-    let output_path =
-        std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("benchmark/benchmark.jsonl");
+    let output_path = output_path(std::path::Path::new(env!("CARGO_MANIFEST_DIR")), args.smoke);
+    let random_plan = if args.smoke {
+        SMOKE_RANDOM_PLAN
+    } else {
+        RANDOM_PLAN
+    };
+    let lagrangian_plan = if args.smoke {
+        SMOKE_LAGRANGIAN_PLAN
+    } else {
+        LAGRANGIAN_PLAN
+    };
+    let lagrangian_samples = if args.smoke { 1 } else { 2 };
 
     println!("Generating benchmark dataset...\n");
 
     // Part 1: Random polytopes for HK2017 timing model
     println!("Part 1: Random polytopes for HK2017 timing model");
-    for &(f, n, include_unpruned) in RANDOM_PLAN {
+    for &(f, n, include_unpruned) in random_plan {
         print!("  F={f:2}: generating {n:2} polytopes... ");
         let polytopes = generate_random_polytopes(n, f, H_MIN, H_MAX, &mut rng);
 
@@ -146,10 +205,10 @@ fn main() {
 
     // Part 2: Lagrangian products for billiard timing
     println!("\nPart 2: Lagrangian products for billiard vs HK2017 comparison");
-    for &(n, m) in LAGRANGIAN_PLAN {
-        print!("  ({n},{m}): generating 2 samples... ");
+    for &(n, m) in lagrangian_plan {
+        print!("  ({n},{m}): generating {lagrangian_samples} samples... ");
 
-        for i in 0..2 {
+        for i in 0..lagrangian_samples {
             // Generate random Lagrangian product (retry until valid)
             let p = loop {
                 let (qn, qh) = random_polygon_2d(n, H_MIN, H_MAX, &mut rng);
@@ -193,7 +252,12 @@ fn main() {
     }
 
     // Write to JSONL
-    let file = File::create(&output_path).expect("failed to create output file");
+    let file = File::create(&output_path).unwrap_or_else(|err| {
+        panic!(
+            "failed to create output file {}: {err}",
+            output_path.display()
+        )
+    });
     let mut writer = BufWriter::new(file);
 
     for entry in &entries {
