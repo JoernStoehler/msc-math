@@ -244,7 +244,9 @@ fn main() {
             let vol = volume(&polytope);
 
             let start = Instant::now();
-            let result = ehz_capacity_billiard(&polytope).expect("billiard error");
+            let result = ehz_capacity_billiard(&polytope).unwrap_or_else(|err| {
+                panic!("billiard capacity failed for pentagon_5x5_{angle_deg:.0}deg: {err}")
+            });
             let time_ms = start.elapsed().as_secs_f64() * 1000.0;
 
             let min_action = result.capacity();
@@ -305,7 +307,9 @@ fn main() {
             let vol = volume(&polytope);
 
             let start = Instant::now();
-            let result = ehz_capacity_billiard(&polytope).expect("billiard error");
+            let result = ehz_capacity_billiard(&polytope).unwrap_or_else(|err| {
+                panic!("billiard capacity failed for pair_{n1}x{n2}_{angle_deg:.0}deg: {err}")
+            });
             let time_ms = start.elapsed().as_secs_f64() * 1000.0;
 
             let min_action = result.capacity();
