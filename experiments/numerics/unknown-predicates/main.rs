@@ -12,8 +12,10 @@
 //! UNKNOWN admissibility boundary and Phase 2 (high-precision re-solve) is needed.
 //!
 //! Architecture:
-//! 1. `cargo run -p dev-numerical-analysis --release --bin num-unknown-predicates` generates dataset
-//! 2. Writes to unknown-predicates/unknown-predicates.jsonl
+//! 1. `cargo run -p dev-numerical-analysis --release --bin num-unknown-predicates -- --smoke`
+//!    writes `unknown-predicates/unknown-predicates-smoke.jsonl`.
+//! 2. `cargo run -p dev-numerical-analysis --release --bin num-unknown-predicates`
+//!    generates the full dataset and writes `unknown-predicates/unknown-predicates.jsonl`.
 //! 3. Python script reads JSONL, summarizes findings
 
 use rand::SeedableRng;
@@ -21,6 +23,7 @@ use rand_chacha::ChaCha8Rng;
 use serde::Serialize;
 use std::fs::File;
 use std::io::{BufWriter, Write};
+use std::path::{Path, PathBuf};
 use std::time::Instant;
 use symplectic::geom::lagrangian_product::lagrangian_product;
 use symplectic::geom::polygon::{regular_polygon_2d, rotate_polygon_2d};
@@ -44,6 +47,7 @@ const RANDOM_PLAN: &[(usize, usize)] = &[
     (11, 5),
     (12, 5),
 ];
+const SMOKE_RANDOM_PLAN: &[(usize, usize)] = &[(5, 1)];
 
 // ---------------------------------------------------------------------------
 // Lagrangian-products parameters (must match main.rs in lagrangian-products/ exactly)
@@ -65,6 +69,7 @@ const PAIRS: &[(usize, usize)] = &[
     (5, 6),
     (6, 6),
 ];
+const SMOKE_PAIRS: &[(usize, usize)] = &[(3, 3)];
 
 // ---------------------------------------------------------------------------
 // Output schema
@@ -89,12 +94,67 @@ struct Row {
 const BETA_MARGIN_TAU: f64 = 1e-12;
 const ACTION_INTERVAL_TAU: f64 = 1e-12;
 
-fn main() {
-    let t0 = Instant::now();
+#[derive(Debug, Clone, Copy)]
+struct Args {
+    smoke: bool,
+}
 
-    let output_path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("unknown-predicates/unknown-predicates.jsonl");
-    let file = File::create(&output_path).expect("failed to create output file");
+fn print_usage() {
+    eprintln!(
+        r#"Usage: num-unknown-predicates [options]
+
+Optional flags:
+  --help, -h          Show this help message and exit.
+  --smoke              Run a small smoke subset and write smoke output."#
+    );
+}
+
+fn usage_error(message: String) -> ! {
+    eprintln!("error: {message}\n");
+    print_usage();
+    std::process::exit(2);
+}
+
+fn parse_args() -> Args {
+    let mut args = Args { smoke: false };
+    for arg in std::env::args().skip(1) {
+        match arg.as_str() {
+            "--help" | "-h" => {
+                print_usage();
+                std::process::exit(0);
+            }
+            "--smoke" => args.smoke = true,
+            other => usage_error(format!("unknown argument: {other}")),
+        }
+    }
+    args
+}
+
+fn output_path(manifest_dir: &Path, smoke: bool) -> PathBuf {
+    if smoke {
+        manifest_dir.join("unknown-predicates/unknown-predicates-smoke.jsonl")
+    } else {
+        manifest_dir.join("unknown-predicates/unknown-predicates.jsonl")
+    }
+}
+
+fn main() {
+    let args = parse_args();
+    let t0 = Instant::now();
+    let random_plan = if args.smoke {
+        SMOKE_RANDOM_PLAN
+    } else {
+        RANDOM_PLAN
+    };
+    let pair_plan = if args.smoke { SMOKE_PAIRS } else { PAIRS };
+
+    let output_path = output_path(std::path::Path::new(env!("CARGO_MANIFEST_DIR")), args.smoke);
+    let file = File::create(&output_path).unwrap_or_else(|err| {
+        panic!(
+            "failed to create output file {}: {err}",
+            output_path.display()
+        )
+    });
     let mut writer = BufWriter::new(file);
 
     let mut total_rows = 0usize;
@@ -107,7 +167,7 @@ fn main() {
 
     let mut rng = ChaCha8Rng::seed_from_u64(RANDOM_SEED);
 
-    for &(facet_count, n_samples) in RANDOM_PLAN {
+    for &(facet_count, n_samples) in random_plan {
         let polytopes =
             generate_random_polytopes(n_samples, facet_count, RANDOM_H_MIN, RANDOM_H_MAX, &mut rng);
 
@@ -165,7 +225,11 @@ fn main() {
     println!("\n=== Part 2: Lagrangian-products ===\n");
 
     {
-        let steps = ((PENTAGON_END_DEG - PENTAGON_START_DEG) / PENTAGON_STEP_DEG).round() as usize;
+        let steps = if args.smoke {
+            0
+        } else {
+            ((PENTAGON_END_DEG - PENTAGON_START_DEG) / PENTAGON_STEP_DEG).round() as usize
+        };
         let (qn, qh) = regular_polygon_2d(5, 1.0);
         let (pn_base, ph_base) = regular_polygon_2d(5, 1.0);
 
@@ -222,9 +286,12 @@ fn main() {
         println!("  pentagon 5×5: {} angles processed", steps + 1);
     }
 
-    for &(n1, n2) in PAIRS {
+    for &(n1, n2) in pair_plan {
         let end_deg = 180.0 / lcm(n1, n2) as f64;
-        let angles = sweep_angles(0.0, end_deg, PAIR_STEP_DEG);
+        let mut angles = sweep_angles(0.0, end_deg, PAIR_STEP_DEG);
+        if args.smoke {
+            angles.truncate(1);
+        }
 
         let (qn, qh) = regular_polygon_2d(n1, 1.0);
         let (pn_base, ph_base) = regular_polygon_2d(n2, 1.0);
