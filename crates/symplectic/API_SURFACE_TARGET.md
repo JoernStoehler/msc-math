@@ -1,8 +1,9 @@
-# Capacity/Orbit API Surface Target v2
+# Capacity/Orbit API Surface Target v3
 
 Date: 2026-05-04
 Repo context: `/workspaces/msc-math`
-Status: fresh discussion draft, not accepted.
+Status: discussion draft, not accepted; updated after Joern review of the
+capacity-routing shape.
 Guardrail: `crates/symplectic/API_REFACTOR_GOAL.md`.
 
 This is the ambitious final API target, not a migration plan.
@@ -24,8 +25,8 @@ These are part of the target, not optional handoff context.
 - `orbit_window` and exact `action_gap` are absent from core exact capacity
   because grep found no real exact gap-window consumer. Do not restore them
   without a current experiment-support caller.
-- Exact `Billiard` is absent because grep found no exact billiard consumer.
-  Do not add it as symmetry with the f64 enum.
+- Exact billiard capacity is absent because grep found no exact billiard
+  consumer. Do not add it as symmetry with the f64 billiard route.
 - `FacetTopology` is deleted because it had no real invariant/consumer.
   Expose direct matrices only where a real consumer needs matrix-valued data.
 - `kkt_augmented_system_f64` is deliberately not public. The public
@@ -46,38 +47,55 @@ Use these criteria before adding or keeping a symbol:
 1. Real-consumer fit: ordinary capacity callers, custom experiment collectors,
    benchmark/diagnostic collectors, gradient experiments, and geometric orbit
    experiments should each get the surface they actually need.
-2. Low caller burden: ordinary callers name the mathematical/search choice;
-   they do not assemble coupled internal search data.
+2. Low caller burden: ordinary callers use a black-box auto orchestrator or
+   name the exact standard route they want; they do not assemble coupled
+   internal search data.
 3. Mathematical contract first: f64 intervals, exact certification,
    admissibility verdicts, and smart pruned enumeration should be visible where
    they are part of the contract.
 4. No fake abstraction: no wrapper, alias, options bag, or policy enum unless
    it enforces a real invariant or removes real complexity for a real consumer.
 5. Simple Rust surface: prefer slices, direct `DMatrix<...>` in diagnostic
-   helpers, ordinary `Vec` outputs, and flat enum arguments.
+   helpers, ordinary `Vec` outputs, and clear specialized function names.
 6. Performance shape: pruned and billiard enumeration must prune during
    traversal, not enumerate all cyclic subset permutations and filter them.
 7. Scalar split clarity: f64 and exact/algebraic paths are distinct where their
    guarantees differ; `BigRational` is a specialization of the exact path.
 8. Final-surface purity: no migration wrappers, no compatibility layers, and no
    legacy private/internal beta names.
+9. Orchestration clarity: reusable components stay modular, but standard
+   capacity/orbit flows should be zero-flexibility orchestrators with direct
+   names. Do not collapse distinct orchestration flows into one configurable
+   routine merely because they share most steps.
+
+## Orchestration Design Rule
+
+The final API distinguishes modular building blocks from standard
+orchestrators.
+
+Callers that need intermediates, counters, diagnostics, custom solvers, or
+one-off experiment data should compose the modular components directly. Examples
+include counting how many sigmas reached KKT solving, swapping in a projection
+solver, persisting billiard bounce counts, or inlining an experiment-specific
+pipeline whose return type would be awkward as reusable public API.
+
+The crate's standard orchestrators should be simple, explicit pipelines with no
+flexibility knobs. It is acceptable for these public functions to look nearly
+identical when each one has a clear contract and a grep-able name. Shared
+implementation details may live in private helpers, but the public API should
+not squeeze different orchestration flows into one policy enum, options object,
+or generic routine.
+
+The auto capacity route is another standard orchestrator. Its contract is
+black-box: given dual vertices, return a capacity result. It does not expose
+intermediates or promise flexibility. Callers that care what happened internally
+should use an explicit standard route or compose lower-level pieces.
 
 ## Public Core API
 
 These are the polished capacity/orbit entrypoints and result types.
 
 ```rust
-pub enum F64CapacitySearch {
-    Hk2017Unpruned,
-    Hk2017Pruned,
-    Billiard,
-}
-
-pub enum ExactCapacitySearch {
-    Hk2017Unpruned,
-    Hk2017Pruned,
-}
-
 pub enum PredicateVerdict {
     True,
     False,
@@ -108,8 +126,6 @@ pub struct F64CapacityResult {
 impl F64CapacityResult {
     pub fn capacity(&self) -> Option<f64>;
     pub fn best_orbit(&self) -> Option<&F64Orbit>;
-    pub fn best_sigma(&self) -> Option<&[usize]>;
-    pub fn best_beta(&self) -> Option<&[f64]>;
 }
 
 pub struct ExactOrbit<F: OrderedField> {
@@ -126,15 +142,32 @@ pub struct ExactCapacityResult<F: OrderedField> {
     pub minimizers: Vec<ExactOrbit<F>>,
 }
 
-pub fn capacity_f64(
+pub fn capacity_f64_auto(
     dual_vertices: &[[f64; 4]],
-    search: F64CapacitySearch,
     action_gap: f64,
 ) -> Result<F64CapacityResult, CapacityError>;
 
-pub fn capacity_exact<F: OrderedField>(
+pub fn capacity_hk2017_pruned_f64(
+    dual_vertices: &[[f64; 4]],
+    action_gap: f64,
+) -> Result<F64CapacityResult, CapacityError>;
+
+pub fn capacity_hk2017_unpruned_f64(
+    dual_vertices: &[[f64; 4]],
+    action_gap: f64,
+) -> Result<F64CapacityResult, CapacityError>;
+
+pub fn capacity_billiard_f64(
+    dual_vertices: &[[f64; 4]],
+    action_gap: f64,
+) -> Result<F64CapacityResult, CapacityError>;
+
+pub fn capacity_hk2017_pruned_exact<F: OrderedField>(
     dual_vertices: &[[F; 4]],
-    search: ExactCapacitySearch,
+) -> Result<ExactCapacityResult<F>, CapacityError>;
+
+pub fn capacity_hk2017_unpruned_exact<F: OrderedField>(
+    dual_vertices: &[[F; 4]],
 ) -> Result<ExactCapacityResult<F>, CapacityError>;
 
 pub fn solve_orbit_f64(
@@ -155,13 +188,21 @@ min_action.lower = min lower over admissible True or Indeterminate orbits
 min_action.upper = min upper over admissible True orbits
 ```
 
-The search enums name algorithm families only. Auto-routing is not a search
-family. If ordinary consumers still need old convenience routing, it should be
-a separate wrapper or private routing choice with a precise contract.
+The specialized capacity functions are standard orchestrators. They expose no
+knobs beyond the inputs that belong to their mathematical/numerical contract.
+Callers that need custom counters, intermediates, or solver substitution should
+compose experiment-support pieces directly instead of extending these
+orchestrators.
 
-`capacity_exact::<BigRational>` is the rational path. There is no separate
-`capacity_rational` alias unless a real consumer later needs a different
-contract.
+`capacity_f64_auto` is the ordinary black-box route. Its current intended
+contract is: use billiard when the input validates as a Lagrangian product;
+otherwise use pruned HK2017. Domain mismatch may fall back; numerical failure
+after selecting a route is not silently hidden by trying a different route.
+
+`capacity_hk2017_pruned_exact::<BigRational>` and
+`capacity_hk2017_unpruned_exact::<BigRational>` are the rational paths. There
+is no separate `capacity_rational` alias unless a real consumer later needs a
+different contract.
 
 Exact capacity returns the certified exact capacity and exact minimizers. It
 does not expose a gap-window result because the current real consumers do not
@@ -508,14 +549,23 @@ Internal contracts:
 
 Capacity entrypoints:
 
-- Rejected: separate public function for every scalar/search combination, such
-  as `capacity_hk2017_pruned_f64` and `capacity_billiard_exact`.
 - Rejected: a single iterator-only capacity function as the polished entrypoint.
 - Rejected: one shared `CapacitySearch` containing `Billiard` for both f64 and
   exact capacity.
-- Chosen: `capacity_f64` with `F64CapacitySearch`, and `capacity_exact` with
-  `ExactCapacitySearch`. Exact billiard is not exposed without an exact
-  contract.
+- Rejected for now: `F64CapacitySearch` or `ExactCapacitySearch` as public
+  route enums. Grep found current capacity callers choosing a concrete function
+  at the call site, not deciding at runtime and passing algorithm choice around
+  as data.
+- Rejected for now: a builder/options object or route-policy enum for capacity.
+  Those would create a flexible orchestration surface before a real caller needs
+  one.
+- Chosen: specialized standard orchestrators for the accepted routes:
+  `capacity_f64_auto`, `capacity_hk2017_pruned_f64`,
+  `capacity_hk2017_unpruned_f64`, `capacity_billiard_f64`,
+  `capacity_hk2017_pruned_exact`, and `capacity_hk2017_unpruned_exact`.
+  Exact billiard is not exposed without an exact contract.
+- Future condition: add a small route enum only if a real caller needs to store,
+  parse, serialize, or pass the algorithm choice as data.
 
 Search data exposure:
 
@@ -569,14 +619,14 @@ Exact capacity result breadth:
   Current exact consumers use selected one-sigma exact solves, exact gradients,
   and certified minimizer profiling; no real caller needs a public exact
   gap-window result.
-- Chosen: core `capacity_exact` returns exact capacity plus exact minimizers.
-  Gap-window certification stays private/internal until an experiment-support
-  caller exists.
+- Chosen: exact standard orchestrators return exact capacity plus exact
+  minimizers. Gap-window certification stays private/internal until an
+  experiment-support caller exists.
 
 Exact billiard:
 
-- Rejected for now: `ExactCapacitySearch::Billiard`. Grep found no exact
-  consumer for billiard-specific enumeration or bounce metadata.
+- Rejected for now: `capacity_billiard_exact`. Grep found no exact consumer for
+  billiard-specific enumeration or bounce metadata.
 - Chosen: exact consumers use selected exact one-sigma solves, exact gradients,
   and exact HK2017-style capacity/minimizer certification.
 
@@ -584,9 +634,13 @@ F64 capacity result conveniences:
 
 - Rejected: invented `upper_bound_orbit`, `upper_bound_sigma`, and
   `upper_bound_value` names. Real callers overwhelmingly use scalar capacity,
-  best orbit, best sigma, and best beta accessors.
-- Chosen: `capacity`, `best_orbit`, `best_sigma`, and `best_beta` as
-  conveniences over the explicit `min_action` interval and orbit list.
+  best orbit, best sigma, and best beta data.
+- Rejected: `best_sigma` and `best_beta` convenience methods. They are only
+  projections of `best_orbit` and add indirection without owning result
+  semantics.
+- Chosen: keep `capacity` and `best_orbit` only. `best_orbit` owns the
+  result-level choice of which orbit is best; callers that need `sigma` or
+  `beta` use the public fields on the returned `F64Orbit`.
 
 F64 interval representation:
 
@@ -603,15 +657,24 @@ F64 interval representation:
 capacity_from_monolithic_polytope(...)
 capacity_f64_from_monolithic_polytope(...)
 capacity_exact_from_monolithic_polytope(...)
+capacity_f64(dual_vertices, search, action_gap)
+capacity_exact(dual_vertices, search)
+F64CapacitySearch
+ExactCapacitySearch
+F64CapacityRoute
+CapacityRequest
 ehz_capacity(...)
 ehz_capacity_pruned(...)
 ehz_capacity_unpruned(...)
 ehz_capacity_billiard(...)
+capacity_billiard_exact(...)
 RationalCapacityOptions
 ExactCapacityOptions
 F64KktOptions
 OrbitCertificationPolicy
 F64CapacityValue
+F64CapacityResult::best_sigma(...)
+F64CapacityResult::best_beta(...)
 visitor-only sigma enumeration
 billiard_sigmas(split, facet_adjacency, transitions)
 billiard_blocks(...)
@@ -634,7 +697,14 @@ review/acceptance.
 
 Resolved during this pass:
 
-- Exact capacity uses `ExactCapacitySearch` without `Billiard`.
+- Capacity route enums were removed from the target. Standard capacity flows
+  are specialized zero-flexibility orchestrators, and custom flows compose
+  modular experiment-support pieces directly.
+- `capacity_f64_auto` is the ordinary black-box f64 route. It chooses billiard
+  for validated Lagrangian products and otherwise uses pruned HK2017; numerical
+  failure after route selection is not hidden by trying another route.
+- Exact capacity uses specialized HK2017 exact orchestrators without exact
+  billiard.
 - HK sigma streams are public experiment support; matrix/filter/combinatorics
   helpers remain private/internal unless a real diagnostic consumer justifies
   direct exposure.
@@ -651,4 +721,5 @@ Resolved during this pass:
 - `kkt_augmented_system_f64` was moved out of public support. The public
   boundary is `beta_directional_sensitivity_f64`.
 - `F64Interval` stays a plain result struct.
-- F64 result convenience methods now match real scalar/best-orbit callers.
+- F64 result convenience methods are limited to scalar capacity and best-orbit
+  selection; sigma and beta remain direct fields on `F64Orbit`.

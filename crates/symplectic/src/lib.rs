@@ -37,6 +37,7 @@
 //! Mathematical proofs live in per-module `.tex` files under `formal/`.
 
 pub mod algorithms;
+mod capacity_api;
 pub mod constants;
 pub mod database;
 pub mod dataset;
@@ -51,6 +52,7 @@ mod test_lib;
 // ── Re-exports: public API surface ──
 
 // Types
+pub use capacity_api::{CapacityError, F64CapacityResult, F64Interval, F64Orbit, PredicateVerdict};
 pub use geom::polytope::{ConstructionError, Polytope4D};
 pub use geom::skeleton::Skeleton;
 pub use geom::QhullError;
@@ -72,6 +74,9 @@ pub use geom::volume::volume;
 // Geometry utility submodules
 pub use geom::known_polytopes;
 pub use geom::test_utils;
+
+// Capacity API
+pub use capacity_api::capacity_hk2017_unpruned_f64;
 
 /// Compute the systolic ratio `sys = capacity^2 / (2 * volume)`.
 ///
