@@ -9,7 +9,7 @@ phase-2 repo/Jorn state maps.
 ## Status
 
 - State: map-input.
-- Last updated: 2026-05-01.
+- Last updated: 2026-05-05.
 - Source surfaces: `thesis/`, `research/INDEX.md`, `research/*.md`,
   `tasks/*.md`, `tasks/verify-thesis-done.md`, `ROADMAP.md`.
 - Refresh when: thesis structure, retained claim set, or advisor feedback
@@ -46,21 +46,38 @@ phase-2 repo/Jorn state maps.
   Why it matters: this makes the thesis readable while still preserving the
   HKO2024 and gradient-ascent motivations for zero dwell times, active ties,
   rank loss, semidefinite Hessians, and branch changes.
+- [accepted 2026-05-05] Kai and Jorn discussed the working thesis outline now
+  recorded in `thesis/planned-toc.md`.
+  Source: Jorn after Kai meeting.
+  Why it matters: `thesis/planned-toc.md` is now the current thesis-structure
+  surface. Earlier ToC drafts should not drive writing.
+- [accepted 2026-05-05] Many remaining ToC questions are intentionally
+  chapter-local writer-session questions, not global ToC blockers.
+  Source: Jorn.
+  Why it matters: writers should resolve inline questions in
+  `thesis/planned-toc.md` when starting the relevant chapter instead of trying
+  to settle every detail before prose begins.
+- [accepted 2026-05-05] Numerics is interesting to Kai for about one high-level
+  paragraph in the main text; detailed proofs and intermediate bounds belong in
+  the appendix.
+  Source: Jorn after Kai meeting.
+  Why it matters: prevents the numerics appendix from expanding into a main
+  chapter.
 
 ## Work Map
 
 | item | state | value class | owner/gate | next action | source |
 | --- | --- | --- | --- | --- | --- |
-| Planned thesis TOC | `[Jorn]` | map input | Jorn with agent state answers | Draft `thesis/planned-toc.md` interactively before selecting broad prose work; use it to expose unnatural divisions, missing dependencies, and sections whose content is not yet supported. | `thesis/`, `research/INDEX.md`, `tasks/*.md` |
-| Thesis structure | `[Jorn]` | map input | Jorn | Pick retained chapter structure after repo-state map gives concrete content options. | `thesis/`, `tasks/verify-thesis-done.md` |
-| Writer-ready boundary | `[Jorn]` | map input | Jorn + agent prep | Classify thesis-external packets as must-finish-before-writing, contingent during writing, or future. | migrated tracker history |
+| Planned thesis TOC | `[done]` | map input | Jorn with Kai | Use `thesis/planned-toc.md` as the current structure. Resolve its inline `OUTLINE GAP`, `TOC DECISION`, and `WRITER-SESSION QUESTION` comments during the relevant chapter writer sessions. | `thesis/planned-toc.md` |
+| Thesis structure | `[done]` | map input | Jorn/Kai | Keep the meeting-derived structure unless advisor feedback or chapter drafting exposes a real conflict. | `thesis/planned-toc.md`, `tasks/verify-thesis-done.md` |
+| Writer-ready boundary | `[map-input]` | map input | Jorn + chapter writers | For each chapter, start from `thesis/planned-toc.md`; turn its inline questions into the chapter's local write plan before drafting prose. | `thesis/planned-toc.md`, migrated tracker history |
 | Thesis/code mismatch packet routing | `[map-input]` | map input | agents | Before using existing algorithm/numerics/tube prose as TOC leaves, route the 15 rows in `thesis/migration-findings.md` to thesis-side fix, code/comment fix, future/cut, or Jörn decision. | `thesis/migration-findings.md`, `tasks/numerics.md`, `tasks/infrastructure.md` |
 | Generic sys first-order section | `[active]` | mainline thesis | agents then Jorn math | Expand the committed unapproved draft into a readable generic-case section: list the concrete open dense row-chart assumptions, prove smooth local behavior on those chambers, and defer non-generic active-germ/cell-decomposition behavior to a later boundary chapter. | `thesis/sys-first-order-regular-case.tex`, `research/sys-first-order-local-behavior.md`, `tasks/sys-first-order.md` |
-| HKO writeup compression | `[blocked]` | mainline thesis | HKO map | Wait for `tasks/hko.md` theorem/evidence/blocker state. | `research/hko-local-maximum.md`, `thesis-stories-are-supported.md` |
-| Hostile landscape compression | `[blocked]` | mainline thesis | landscape map | Wait for `tasks/landscape.md` retained-story state. | `research/sys-landscape.md`, `thesis-stories-are-supported.md` |
-| Numerical appendix route | `[blocked]` | contingent during writing | numerics map | Wait for `tasks/numerics.md` proof-vs-validation-vs-caveat state. | `thesis-stories-are-supported.md` |
-| Figures | `[future]` | contingent during writing | thesis structure | Decide after chapter structure names what needs illustration. | `data-and-figures-are-traceable.md` |
-| AI process reflection | `[future]` | contingent during writing | thesis structure | Include only if the final thesis structure has a reader-facing reason to discuss agent contribution, counterfactual impact, or failure modes. | `research/INDEX.md`, `tasks/infrastructure.md` |
+| HKO local maximum chapter | `[map-input]` | mainline thesis | chapter writer + Jorn math | Define the decision problem, explain the SageMath computation as chained checked subroutines, decide selected code/data excerpts for main text, and keep full code/data in the repo. | `thesis/planned-toc.md`, `research/hko-local-maximum.md`, `research/hko-local-maximum-exact-clarke.md` |
+| Black-box data-science chapter | `[map-input]` | mainline thesis | landscape branch + chapter writer | When the data-science branch stabilizes, finalize table rows, feature columns, method families, and any positive-result escalation. | `thesis/planned-toc.md`, `tasks/landscape.md`, `research/sys-landscape-toolbox-audit.md` |
+| Numerics main-text paragraph and appendix | `[map-input]` | contingent during writing | numerics map + chapter writer | Keep main text to a high-level paragraph; put exact algebraic fallback, empirical error measurements, proven error bounds, and intermediate constants in the appendix. | `thesis/planned-toc.md`, `tasks/numerics.md` |
+| Figures | `[map-input]` | contingent during writing | chapter writers | Choose figures during the relevant chapter writer sessions; visualization likely gets a short top-level chapter with a small figure spread. | `thesis/planned-toc.md`, `data-and-figures-are-traceable.md` |
+| AI process reflection | `[future]` | contingent during writing | agent-log analysis + Jorn | Decide section length after designing the agent-log analysis; current range is short factual section with figures to a longer discussion of prompts and AI changes over six months. | `thesis/planned-toc.md`, `research/INDEX.md`, `tasks/infrastructure.md` |
 | Final assembly | `[blocked]` | mainline thesis | thesis complete | Build PDF, bibliography/cross-reference/proofread checks, print/USB/forms/upload, final tag/archive. | `tasks/verify-thesis-done.md`, `tasks/submit-thesis.md` |
 
 ## Agent Cache
@@ -96,8 +113,16 @@ phase-2 repo/Jorn state maps.
   assumptions that are actually used by each lemma.
   Refresh by: `latexmk && ./check-build.sh` in `thesis/` and a reviewer pass
   against `research/sys-first-order-local-behavior.md`.
+- [fresh 2026-05-05] `thesis/planned-toc.md` now contains the Kai/Jorn
+  meeting-derived outline plus inline comments for settled decisions, outline
+  gaps, and chapter-local writer-session questions. The old
+  `thesis/planned-toc.draft.1.md` was deleted because git history can recover
+  it if needed.
+  Refresh by: reading `thesis/planned-toc.md`.
 
 ## Pruned / Stale
 
 - [stale 2026-04-24] Old April writing schedule and pre-writing packet queue
   are superseded by finish mode and should not drive task selection.
+- [stale 2026-05-05] Earlier planned-ToC drafts and pre-meeting outline spikes
+  are superseded by `thesis/planned-toc.md`.

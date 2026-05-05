@@ -170,10 +170,15 @@ Placement note:
 the main text must state the result and why it applies. Long proof details can
 move to an appendix if they interrupt the reading path.
 
-## Algorithm Based On HK2017
+## Quadratic Program Algorithm Based On HK2019
 
 Purpose:
 present the first finite algorithmic formulation for the minimizer search.
+<!-- NAMING DECISION: At first use, call this "Quadratic Program Algorithm
+     Based On HK2019". After first use, drop "Based On HK2019" and use the
+     algorithmic name. The bibliography currently also has an `HK2017` entry
+     for the same title; the journal-version GAFA citation is 2019 and should
+     be preferred in reader-facing naming unless a writer chooses otherwise. -->
 
 ### Definition
 
@@ -207,16 +212,19 @@ knobs outside the main reading path.
      known polytopes, HK2017-vs-CH2021 comparison, exact/f64 spot checks,
      orbit recovery, and regression tests for past bugs. -->
 
-## Algorithm Based On CH2021
+## Flow-Graph Algorithm Based On CH2021
 
 Purpose:
 present the second minimizer-search algorithm. This is expected to substitute
 for HK2017 in practical minimizer search once finished.
-<!-- NAMING QUESTION: "Tube algorithm" is probably the better algorithmic
-     picture for the objects we compute and operate with. "Algorithm based on
-     CH2021" is less informative, and CH2021 itself is less sophisticated than
-     the current tube/intersection/search algorithm. Decide final section title
-     after the implementation/source text lands. -->
+<!-- NAMING DECISION: At first use, call this "Flow-Graph Algorithm Based On
+     CH2021". After first use, drop "Based On CH2021" and use the algorithmic
+     name. The separate tube picture may still be useful in the definition,
+     because it describes the objects operated on, but it does not by itself
+     say that the algorithm intersects tubes or chooses which tubes to build. -->
+<!-- WRITER-SESSION QUESTION: After the flow-graph/tube branch lands, decide the
+     final name, what tube objects appear in the exposition, and which proof
+     and test claims are included. -->
 
 ### Definition
 
@@ -273,6 +281,10 @@ where the HKO computation or the thesis claims need them.
      positive dwell times, full-rank constraints, negative-definite reduced
      Hessian, unique active minimizer or finite active set, and fixed face
      combinatorics for volume. -->
+<!-- WRITER-SESSION QUESTION: Decide while writing the chapter which
+     non-generic cases matter for HKO2024. Do not attempt to cover every
+     a-priori possible degeneracy unless it appears in, or is needed for, the
+     HKO argument. -->
 
 ### Correctness
 
@@ -311,17 +323,36 @@ Content:
 
 ### Computation with SageMath
 
-State the exact computation used to prove local maximality:
+Define the decision problem and explain the SageMath computation that decides
+it.
 
-- exact coordinate field;
-- active orbit/row set;
-- active-gradient rank/kernel comparison;
-- equality of flat first-order directions with the symmetry tangent space.
+Content:
+
+- Define the decision problem for local maximality among ten-facet polytopes up
+  to symmetry.
+- Define the chained computational steps/subroutines that decide the problem.
+- Prove each step correct as it is introduced.
+- Mention early that the exact field is `Q[tan(pi/5)] = Q[t]/p(t)` and give the
+  polynomial `p(t)`. SageMath may use `QQbar`, which is a larger exact field;
+  that is acceptable because performance is not the bottleneck here.
+- Include selected Sage/Python code snippets where they make the computation
+  more checkable or concrete.
+- Include selected printed data snippets where they help sanity-check the
+  computation, for example the first few and last few lines of a long printed
+  sigma list.
+- State the active orbit/row set, active-gradient rank/kernel comparison, and
+  equality of flat first-order directions with the symmetry tangent space.
 
 Writing note:
-the main text should explain the conceptual reduction and the result of the
-calculation. Long row lists, generated certificates, and verification details
-belong in the SageMath appendix.
+do not write pseudocode by default. Prefer a chain of defined subroutines or
+checks, each with its own meaning and correctness explanation. Full code and
+full data live in the repo. Passages of code and data may go in the main text
+when they are logically important or useful as sanity checks. Kai should be able
+to treat code snippets visually if he does not want to read them.
+<!-- WRITER-SESSION QUESTION: Decide while writing how much code/data belongs in
+     main text versus appendix versus repo-only. Current leaning: full code and
+     full data in the repo; important code/data passages in main text; appendix
+     only if it improves readability beyond what selected passages already do. -->
 
 ### Empirical tests
 
@@ -363,16 +394,23 @@ State how local ascent was run and what search question this tests.
 Define the table rows used in the data-science attempts:
 random polytopes, products, ascent endpoints, continuation endpoints, and any
 other retained row families.
-<!-- OUTLINE GAP: Finalize the row families from committed artifacts. Do not
-     leave "other retained row families" in the final ToC. -->
+<!-- TOC DECISION: Rows are polytopes. Most rows come from random families and
+     variants of gradient ascent applied to random polytopes; some may come
+     from enumeration instead of randomization. Avoid mixing the non-black-box
+     known HKO2024 `n=1` positive sample into the black-box data-science table,
+     because methods can then memorize that one case without teaching us
+     anything new. -->
+<!-- WRITER-SESSION QUESTION: Finalize row families only when the data-science
+     writer session starts or the branch stabilizes. The set is still dynamic. -->
 
 ### Columns: symplectic invariants and metadata
 
 Define the columns at the level needed to understand the result:
 symplectic quantities, geometric features, orbit data, and metadata.
-<!-- OUTLINE GAP: Name the actual column groups that appear in the thesis table
-     or appendix, especially which metadata columns are caveats rather than
-     geometry. -->
+<!-- TOC DECISION: Columns are features of the polytopes. They include
+     symplectic invariants, geometric/orbit features, and metadata. Metadata
+     columns are useful caveats because a method may learn data provenance
+     rather than geometry. -->
 
 ### Result types
 
@@ -403,9 +441,11 @@ Meaning:
 
 Batch the attempted, failed, and inapplicable methods. Put detailed figures,
 tables, parameters, and method-specific notes in the data-science appendix.
-<!-- OUTLINE GAP: Name the method families in the main text: random sampling,
-     ascent, continuation, regression, classification, clustering/PCA,
-     omitted/deferred families, and any positive or inapplicable rows. -->
+<!-- TOC DECISION: Methods come from the data-science toolboxes we actually use
+     and assign to Codex agents. The full set is still dynamic, so the final
+     method list is needed before writing the table, not for the current ToC. -->
+<!-- WRITER-SESSION QUESTION: Finalize the method list during the data-science
+     chapter writer session. For now, keep the ToC generic. -->
 
 ## Side Result: Products Of Rotated Regular Polygons
 
@@ -424,15 +464,23 @@ Present the empirical curves for tested regular polygon products.
 
 State the formula for the pentagon product if the proof/CAS writeup is ready.
 Otherwise state the current status honestly.
-<!-- OUTLINE GAP: Decide the exact thesis claim: proven formula, Sage-verified
-     formula, empirical curve with conjectural formula, or future-work status. -->
+<!-- TOC DECISION: Final structure: state the formula; define the computable
+     decision problem; prove that the decision problem is equivalent to "the
+     formula is right"; explain how each step was done in SageMath with
+     intermediate hand sanity checks; report the final `True` printed by
+     SageMath. One step is also checked by hand: the formula computes
+     `sys_sigma` for the chosen sigma. The minimum over all sigma is certified
+     by the decision problem, not by a full hand proof. -->
+<!-- WRITER-SESSION QUESTION: Set final wording after the SageMath/proof text is
+     ready. The structure is settled; exact claim phrasing can wait. -->
 
 ### Computation with SageMath
 
 Explain the exact/SageMath computation that supports the pentagon-product
 formula or status.
-<!-- OUTLINE GAP: Name the Sage computation inputs, exact field, checked
-     identities/inequalities, and where the script/certificate is cited. -->
+<!-- TOC DECISION: The SageMath subsection owns the exact inputs, checked
+     identities/inequalities, intermediate sanity checks, and final Boolean
+     result for the pentagon-product decision problem. -->
 
 ## Side Result: Visualization In 3D
 
@@ -440,8 +488,10 @@ Purpose:
 record visualization as mathematical exploration.
 
 Writing note:
-one section is enough. It may fit best in an appendix if the main text is too
-crowded.
+one top-level chapter is acceptable even if it is short: roughly half a page of
+text plus one page of figures. It is unusual, but the material does not
+naturally belong elsewhere. Some figures may also be used elsewhere for
+explanation, but most explanatory illustrations should be hand-drawn sketches.
 
 Content:
 
@@ -457,6 +507,8 @@ Content:
      illustration. -->
 - Which figures are worth showing.
 <!-- OUTLINE GAP: Decide main text vs appendix before figure polishing. -->
+<!-- WRITER-SESSION QUESTION: Choose the figure set during the visualization
+     writer session. This should not block the global ToC. -->
 
 ## Numerics
 
@@ -486,14 +538,19 @@ state what code and data are published and how they support reproducibility.
 Content:
 
 - Repository structure at a high level.
-<!-- OUTLINE GAP: Name the exact promises: source availability only, archived
-     outputs, fresh-clone commands, or reproducible pipeline. -->
+<!-- TOC DECISION: State the live GitHub repository, with the caveat that it may
+     retire in a few years, and the permanent uploads on the chosen archive
+     sites once known. -->
 - Which experiment artifacts support thesis claims.
-<!-- OUTLINE GAP: Link each retained claim to artifact families; avoid a broad
-     repository tour. -->
+<!-- TOC DECISION: State that data is committed, the git history is not pruned
+     and covers roughly half the thesis lifetime, the thesis PDF is rebuildable,
+     and documentation explains how to read and run the repo. -->
 - Which commands or archived outputs are promised.
-<!-- OUTLINE GAP: Decide whether commands are smoke checks, full reruns, or
-     provenance pointers that are not expected to be rerun before reading. -->
+<!-- TOC DECISION: The thesis should not become the run manual. "How to read
+     this" and "how to run this" live in the repo. The repo promises
+     reproducibility via Docker. -->
+<!-- WRITER-SESSION QUESTION: Fill archive-site names and exact reproducibility
+     promise when submission/archive mechanics are known. -->
 
 ## Use Of AI
 
@@ -509,9 +566,12 @@ Content:
 - Applied numerics.
 - Writing.
 - Project management.
-<!-- OUTLINE GAP: For each category, decide whether to state only "AI helped"
-     or give one concrete example and one limitation. Keep this factual and
-     short unless Kai/Jorn want a fuller reflection. -->
+<!-- TOC DECISION: Decide later. A short version may be about four pages with a
+     few statistical figures. A detailed version may be about twelve pages and
+     discuss prompts plus how AI use changed over six months. The agent-log
+     analysis has not been designed yet. -->
+<!-- WRITER-SESSION QUESTION: Decide length and evidence after the agent-log
+     analysis exists. -->
 
 Writing note:
 keep this factual. Do not let it become the main thesis story unless there is a
