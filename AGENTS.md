@@ -263,18 +263,8 @@ All conventions serve the long-term quality objectives, the final publication ob
 - use `experiments/figure_config.py` for figure styling when relevant
 - figure captions should state observations before interpretation
 
-### LaTeX in formal/
-- agents are the most frequent readers, Jörn reviews for correctness and clarity, not style
-- write plainly, be specific, neither over- nor under-inclusive, break down sentences that entangle multiple concerns, avoid vague terms, avoid analogies and metaphors
-- do not invent new terminology, disambiguate terminology with extra adjectives and long names. the agent readers are familiar with most mathematical literature and naming/notation conventions.
-- the focus is rigorously formalized mathematics that allows us to catch any wrong statements and edge cases.
-- clearly track the verification status of mathematical writing, such as whether Jörn reviewed a formalization or proof, what gaps remain and why those look closeable, whether the proof idea is trusted and notation troubles are the obstacle, whether generic/main cases are trusted and what edge cases cause trouble, and so on
-- use comments to track the "why" behind the current definitions/statements/proof methods, don't discuss historical attempts beyond what matters for the current state and for anticipated future work.
-- use grep-able LaTeX labels and reference them
-- be fully rigorous in what conditions and guarantees lemmas claim, and in what inputs and outputs algorithms provide.
-- new agent-written mathematics is unapproved unless it is mechanical or
-  explicitly approved by Jörn
-- don't hardcode theorem numbers; use labels and check references
+### Mathematical writing
+- use `.agents/skills/formal-math-conventions/SKILL.md` for `formal/` and mathematical review conventions
 
 ### LaTeX in thesis/
 - the audience for which we write is Kai, Elizabeth, and the hypothetical master students who build upon this thesis in the future.

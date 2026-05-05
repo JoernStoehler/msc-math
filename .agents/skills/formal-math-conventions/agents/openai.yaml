@@ -1,0 +1,4 @@
+interface:
+  display_name: "Formal Math Conventions"
+  short_description: "Review and write formal math in this repo"
+  default_prompt: "Use $formal-math-conventions to review or edit formal mathematical writing."
