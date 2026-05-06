@@ -212,6 +212,8 @@ All conventions serve the long-term quality objectives, the final publication ob
 
 ### General
 
+- The coordinate convention is `(q1, q2, p1, p2)`.
+
 **Navigation and Exploration**
 - use long descriptive names for files and folders
 - use predictable code symbols, keywords, LaTeX labels; grep to quickly find definitions and uses
