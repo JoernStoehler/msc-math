@@ -35,6 +35,7 @@ description: Use when Codex writes, edits, reviews, or delegates review of mathe
 - They have a high false-negative and false-positive rate, but the true-positives and true-negatives are still useful signals / Bayesian evidence / elevate-to-attention flags. So check the positives they mention to exclude false-positive complaints.
 - Tell the review subagent the review surface, the relevant latex sources, potentially relevant context like rust files or research notes when usefulness is being reviewed, and a prioritization of what aspects you care about most to least. Don't reexplain quality standards, just reference this skill.
 - Ask the subagent to indicate confidence, encourage it to include more positives since we take care of false-positives in a second pass.
+- Review-prompt lessons are recorded in `references/review-prompt-learnings.md`.
 
 ## Prompt Example
 
