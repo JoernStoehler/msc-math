@@ -32,6 +32,12 @@ Start with the requested answer, current status, artifact, or decision request.
 Put reasoning after that only when it names a source, command, artifact,
 decision criterion, or uncertainty that Jörn needs for the next decision.
 
+Make the expected reader action explicit. If you need Jörn to answer, ask a
+direct question. If you need Jörn to do something, make a direct request and say
+why. If you need Jörn to read a longer message or artifact, say what decision,
+check, or correction the reading enables. If no action is needed, say so or
+write the message so it does not imply one.
+
 Do not present early reasoning as a result. If you cannot yet state the answer,
 status, artifact, or decision request, keep iterating in `/tmp` or say what is
 still unfinished.
