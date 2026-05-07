@@ -242,20 +242,9 @@ All conventions serve the long-term quality objectives, the final publication ob
 - don't invent unnecessary structure, agents just read entire task group files
 
 ### Rust Code
-- functional programming style to avoid bugs from mutable state
-- simple data types and function signatures to avoid complex abstractions
-- explicit error types with `Result<>` instead of ambiguous `Option<>`
-- we must have algorithms we trust, so we must correspond to formalized mathematics. use code comments to reference LaTeX lemmas and their proofs, explain how math and code symbols correspond where not obvious, and track invariants/propositions in code comments where not obvious.
-- use `clippy` and fast smoke tests that catch various classes of programming bugs
-- use slow correctness test suites that aim to falsify empirically our mathematical work
-- profile and use benchmarks to identify the few hotspots where performance or memory matters at all
-- add regression tests to learn from past bugs
-- don't mix multiple concerns into one function, test, or API
-- don't prematurely abstract, don't prematurely generalize, don't prematurely optimize performance, don't prematurely add features (YAGNI)
-- reduce indirection, define input/output data structures close to the function(s) that use them
-- repo status: don't treat the public API as settled
-- duplicate code when the context is genuinely different, abstract only when the contexts are a genuine family and the abstraction is simpler to understand than having multiple specialized versions (anti-DRY)
-- use simple, predictable standard patterns for the job
+- use `.agents/skills/rust-conventions/SKILL.md` for Rust code, API, testing,
+  review, and handoff conventions.
+- repo status: don't treat the public API as settled.
 
 ### Python Code
 - similar to Rust: write plainly, avoid abstraction, be predictable, and so on

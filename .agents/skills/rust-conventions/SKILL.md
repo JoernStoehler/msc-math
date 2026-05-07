@@ -1,20 +1,33 @@
+---
+name: rust-conventions
+description: Use when Codex writes, edits, reviews, or delegates Rust work in this repo, especially crates, Rust experiments, API targets, tests, benches, numerical code, or Rust comments that claim mathematical meaning.
+---
+
 # Rust Conventions
 
-## Instrumental Objectives
+This skill owns Rust code, API, testing, review, and handoff conventions.
 
-- Code is read more often than written, so we can invest time into making it easy to read and understand. Gpt-5.5 is the sole reader and writer of code, so we can perfectly match its baseline expectations and knowledge.
-- We want code to correspond to the mathematics, especially the formalisations.
-- We want code to verifiable i.e. there should be traces that help agents check whether code is bug-free and matches the mathematics.
-- We want code to maintainable by many agents across the project lifetime.
-- Editing is cheap, so maintaining two specialized variants of an algorithm as two almost-identical files is often better for project success than maintaining one file with an abstracted and thus more complex code path. The advantages of abstraction only come in when the variants are genuine instances of a larger class, not when they merely share some common aspects or intermediate results.
-- Performance matters only in hotspots, so never even bother stating performance predictions as an argument without profiling first.
-- Coding is cheap, so one can just try different things in parallel and evaluate them afterwards.
+## Instrumental Objectives
+- Rust should help the thesis succeed: mathematically faithful, contract-explicit, verifiable, and maintainable by GPT-5.5.
+- GPT-5.5 is the operational reader and writer. Do not write `.rs` files to teach Kai, Python programmers, Rust beginners, pre-GPT-5.5 agents, or unusually expert Rust-core developers.
+- Code is read more often than written, coding is cheap, and performance matters only in profiled hotspots. Prefer local clarity and concrete variants over byte-saving, speculation, or premature optimization.
+
+## Conventions
+- Prefer simple functional Rust: simple control flow, simple data types, simple signatures, and standard crate patterns such as `Vector4<Scalar>`, `&[Vector4<Scalar>]`, and `Vec<Vec<usize>>`.
+- Do not use wrappers, aliases, traits, or smart constructors that worsen readability. Add them only when they remove real complexity or enforce a context-free invariant.
+- Shape APIs around mathematical operations and experiment workflows. Keep exact, f64, experiment, and helper surfaces separate when contracts differ; duplicate specialized flows when clearer than a shared abstraction.
+- Put context-dependent propositions on producer/consumer function contracts, not on data containers pretending to prove them.
+- Public math/numerics APIs state input/output contracts. Classify important conditions as validated here, assumed after a named validation boundary, valid mathematical non-success, or theorem-backed output guarantee.
+- Use explicit result/outcome enums when callers must distinguish mathematical outcomes; avoid ambiguous `Option`.
+- f64 APIs state approximation, error-bound, indeterminate-result, and heuristic-guess semantics explicitly.
+- Cite formal labels, proof notes, or API targets where math/code correspondence is not obvious. Include reasoning traces and invariants when they improve verification.
+- Put unresolved API decisions in the relevant API target or task file.
 
 ## Suggestions
+- Default to specific orchestrator functions. Use strategy/configuration enums when callers, experiments, provenance, serialization, or reviewability need a named strategy value.
 
-- Use common, well-known rust style and idioms, which gpt-5.5 expects and already familiar with without needing explanations
-- Use descriptive symbol names instead of short-to-type ones, except where you can match mathematical notation without becoming ambiguous.
-- Follow standard best practices for readability, such as code comments about the "why", and flat/simple control flow, wherever the practices transfer from humans to gpt-5.5 as well. Avoid practices that try to minimize total text length that needs to be kept in context, agents have near-unbounded working memory.
-- Follow standard best practices for verifiability, such as writing tests and including reasoning traces that help understand why code is correct, when not obvious. 
-- Use doc-comments to state the input and output contracts of functions, and mention whether they are asserted in the function/in a sub-function, or just assumed and left to the caller.
-
+## Suggested Workflows
+- Spike subagents/worktrees: for uncertain Rust/API shapes, try small concrete variants before theorizing. Prefer parallel subagent or worktree spikes when alternatives are cheap and independent; subagent prompts still need the bounded requirements from `AGENTS.md`. Record the objective and comparison before promoting the result.
+- API proposals: keep unapproved proposals as reviewable diffs or `/tmp` reports. In isolated branches, commits are useful history, not API approval.
+- Tests and refactors: add fast crate tests, `clippy`, and smoke checks for public behavior, numerical helpers, regressions, and router/classifier decisions. Keep slow reusable-crate correctness tests in crate tests; use experiments for slow experiment-workflow suites. During risky refactors, keep old/new behavior comparable until tests and review justify removing the old path. Mark intentionally red or ignored tests with the reason and removal condition.
+- Review and handoff: name exact review surfaces, required cwd, package/crate, files changed, source-of-truth files or labels, contracts touched, verification run, unchecked risks, and decisions reserved for Jörn.
