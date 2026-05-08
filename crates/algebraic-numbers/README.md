@@ -19,6 +19,10 @@ Useful first tests live under `tests/q_sqrt5_*`. The runnable example
 `examples/q_sqrt5_vector.rs` shows the intended ergonomics for
 `nalgebra::Vector4<Algebraic<Sqrt5>>`.
 
+Approach comparisons and rejected designs are recorded in
+`DESIGN_NOTES.md`. Update that file when a non-obvious approach is tried,
+rejected, or deferred.
+
 Design notes:
 
 - `ExactScalar` is explicit opt-in. This prevents types from becoming exact
