@@ -143,6 +143,3 @@ Current tests live under `tests/q_sqrt5_*`. The runnable example
 - no `f64` exact scalar implementation;
 - no nalgebra `RealField`/`ComplexField` implementation;
 - no matrix solve, eigenvalue, or diagonalization layer.
-
-Developer spec, architecture notes, verification commands, and rejected
-alternatives live in `DEVELOPMENT.md`.
