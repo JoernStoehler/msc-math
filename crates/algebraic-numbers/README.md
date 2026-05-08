@@ -19,5 +19,5 @@ Useful first tests live under `tests/q_sqrt5_*`. The runnable example
 `examples/q_sqrt5_vector.rs` shows the intended ergonomics for
 `nalgebra::Vector4<Algebraic<Sqrt5>>`.
 
-Developer contract, verification commands, and rejected alternatives live in
-`DEVELOPMENT.md`.
+Developer spec, architecture notes, verification commands, and rejected
+alternatives live in `DEVELOPMENT.md`.

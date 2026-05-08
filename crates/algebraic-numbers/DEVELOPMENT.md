@@ -2,7 +2,22 @@
 
 This file is for maintainers. The README is for consumers.
 
-## Contract
+## Instrumental Objective
+
+The crate should make exact scalar computations for thesis experiments boring:
+field choices are explicit, equality/order decisions are exact, and ordinary
+Rust/nalgebra syntax works for small vectors. It should not become a general
+computer-algebra system. A reviewer should be able to inspect this crate and
+see why exact code paths do not inherit floating-point tolerance choices.
+
+That backchains to three local objectives:
+
+- exact scalar semantics are explicit and reviewable;
+- the public API is small enough to audit before thesis submission;
+- adding broader algebraic functionality requires a current caller and a local
+  rationale in this file.
+
+## Spec
 
 The crate is complete for the current thesis use if and only if it provides
 exactly these capabilities:
@@ -25,6 +40,29 @@ exactly these capabilities:
 
 The crate must not add capabilities outside that list unless there is a current
 caller or a short note below explaining the scope change.
+
+## Architecture
+
+The public model has three pieces:
+
+- `ExactScalar`: explicit opt-in marker for exact scalar values.
+- `RealAlgebraicField`: static field data for one chosen real root `alpha`.
+- `Algebraic<F>`: rational coefficients in the fixed basis
+  `1, alpha, ..., alpha^(degree - 1)`.
+
+Implementation files are split by responsibility:
+
+- `algebraic_element.rs`: storage, constructors, equality, and ordering shell.
+- `arithmetic_ops.rs`: Rust operator impls and scalar mixing conveniences.
+- `field_specification.rs`: field marker contract and rational intervals.
+- `polynomial_arithmetic.rs`: polynomial reduction and inversion modulo the
+  field polynomial.
+- `sign_ordering.rs`: exact sign decisions by rational interval refinement.
+- `exact_scalar.rs`: explicit exact scalar trait and impls.
+
+This structure is intentionally predictable rather than abstract. A future
+maintainer should be able to edit arithmetic, sign/order, or field contracts
+without reading the whole crate.
 
 ## Semantic Guardrails
 
