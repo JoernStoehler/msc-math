@@ -102,6 +102,8 @@ Planned deliverables:
   files, and final thesis-done checks.
 - `.agents/skills/`: repo-local skill surface.
 - `.codex/agents/`: repo-local subagent templates (optional).
+- Harness files (`AGENTS.md`, `.agents/skills/**`, `.codex/agents/**`) are
+  frozen unless Jörn explicitly asks for a harness edit.
 - `.codex/worktrees/`: isolated worktrees for independent agent sessions.
 - `.devcontainer/`: local devcontainer with documentation.
 - `scripts/`: small repo helper commands.
