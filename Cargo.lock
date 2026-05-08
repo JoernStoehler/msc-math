@@ -15,13 +15,9 @@ dependencies = [
 name = "algebraic-numbers"
 version = "0.1.0"
 dependencies = [
- "criterion",
- "num-bigint",
+ "nalgebra",
  "num-rational",
  "num-traits",
- "proptest",
- "serde",
- "serde_json",
 ]
 
 [[package]]
