@@ -13,7 +13,6 @@ computer-algebra system.
 use algebraic_numbers::{
     Algebraic,
     ExactScalar,
-    RationalInterval,
     RealAlgebraicField,
     Sign,
 };
@@ -22,7 +21,6 @@ use algebraic_numbers::{
 - `ExactScalar`: explicit opt-in trait for exact scalar types.
 - `RealAlgebraicField`: static field specification for one chosen real root.
 - `Algebraic<F>`: element of `Q[alpha]` for the field marker `F`.
-- `RationalInterval`: rational isolating interval for the chosen root.
 - `Sign`: exact sign result, one of `Negative`, `Zero`, `Positive`.
 
 `BigRational` and `Algebraic<F>` implement `ExactScalar`.
@@ -32,7 +30,7 @@ use algebraic_numbers::{
 Define a zero-sized marker and implement `RealAlgebraicField`.
 
 ```rust
-use algebraic_numbers::{Algebraic, RationalInterval, RealAlgebraicField};
+use algebraic_numbers::{Algebraic, RealAlgebraicField};
 use num_rational::BigRational;
 
 enum Sqrt5 {}
@@ -45,9 +43,9 @@ impl RealAlgebraicField for Sqrt5 {
         vec![q(-5), q(0), q(1)]
     }
 
-    fn isolating_interval() -> RationalInterval {
+    fn isolating_interval() -> (BigRational, BigRational) {
         // Select the positive root sqrt(5).
-        RationalInterval::new(q(2), q(3))
+        (q(2), q(3))
     }
 }
 
@@ -62,7 +60,8 @@ Field contract:
 
 - `polynomial()` returns coefficients in low-to-high order.
 - The polynomial must be the monic minimal polynomial of `alpha`.
-- `isolating_interval()` must contain exactly the chosen real root.
+- `isolating_interval()` returns `(lower, upper)` and must contain exactly the
+  chosen real root.
 - Interval endpoints must be rational and must not be roots.
 
 For `sqrt(5)`, the polynomial is `x^2 - 5`, represented as `[-5, 0, 1]`, and
@@ -70,20 +69,20 @@ the isolating interval `(2, 3)` selects the positive root.
 
 ## Constructing Values
 
-`Algebraic<F>::new` takes coefficients in the basis
-`1, alpha, ..., alpha^(degree - 1)`.
+Use `From<i64>` for rational integers and `root()` for the selected real root.
+Use `new([..])` only when coefficient-basis construction is clearer than
+ordinary arithmetic.
 
 ```rust
-fn a(rational: i64, sqrt5_coeff: i64) -> Qsqrt5 {
-    Qsqrt5::new(vec![q(rational), q(sqrt5_coeff)]).unwrap()
-}
+let one_plus_two_sqrt5 = Qsqrt5::from(1) + Qsqrt5::from(2) * Qsqrt5::root();
+let same_value = Qsqrt5::new([q(1), q(2)]);
 
-let alpha = Qsqrt5::alpha();
-let one_plus_two_sqrt5 = a(1, 2);
-let rational = Qsqrt5::from(3);
+assert_eq!(one_plus_two_sqrt5, same_value);
+assert_eq!(Qsqrt5::from(3), Qsqrt5::new([q(3), q(0)]));
 ```
 
-Invalid coefficient-vector length returns `BadDegree`.
+Wrong coefficient-array length panics. It is a constructor bug, not a
+runtime case callers are expected to recover from.
 
 ## Arithmetic And Order
 
@@ -95,19 +94,26 @@ Supported operations on `Algebraic<F>`:
 - unary `-`;
 - `+`, `-`, `*`, `/`;
 - assignment variants such as `+=`, `*=`;
-- scalar mixing with `i64` and `BigRational`.
+- conversion from `i64` and `BigRational`.
 
 Examples:
 
 ```rust
-let alpha = Qsqrt5::alpha();
-
-assert_eq!(alpha.clone() * alpha.clone(), a(5, 0));
-assert_eq!(2 * alpha.clone(), a(0, 2));
-assert_eq!(alpha.clone() * q(3), a(0, 3));
-assert_eq!(q(3) * alpha.clone(), a(0, 3));
-assert_eq!((alpha.clone() - 2).sign(), Sign::Positive);
-assert!(alpha > a(2, 0));
+assert_eq!(Qsqrt5::root() * Qsqrt5::root(), Qsqrt5::from(5));
+assert_eq!(
+    Qsqrt5::from(2) * Qsqrt5::root(),
+    Qsqrt5::new([q(0), q(2)])
+);
+assert_eq!(
+    Qsqrt5::root() * Qsqrt5::from(q(3)),
+    Qsqrt5::new([q(0), q(3)])
+);
+assert_eq!(
+    Qsqrt5::from(q(3)) * Qsqrt5::root(),
+    Qsqrt5::new([q(0), q(3)])
+);
+assert_eq!((Qsqrt5::root() - Qsqrt5::from(2)).sign(), Sign::Positive);
+assert!(Qsqrt5::root() > Qsqrt5::from(2));
 ```
 
 Division by zero panics, matching the current operator API.
@@ -120,20 +126,31 @@ syntax.
 ```rust
 use nalgebra::Vector4;
 
-let alpha = Qsqrt5::alpha();
-let left = Vector4::new(alpha.clone(), a(1, 1), a(2, 0), a(0, -1));
-let right = Vector4::new(2 * alpha, a(4, -1), a(0, 3), a(5, 1));
+let left = Vector4::new(
+    Qsqrt5::root(),
+    Qsqrt5::from(1) + Qsqrt5::root(),
+    Qsqrt5::from(2),
+    -Qsqrt5::root(),
+);
+let right = Vector4::new(
+    Qsqrt5::from(2) * Qsqrt5::root(),
+    Qsqrt5::from(4) - Qsqrt5::root(),
+    Qsqrt5::from(3) * Qsqrt5::root(),
+    Qsqrt5::from(5) + Qsqrt5::root(),
+);
 
 assert_eq!(
     left + right,
-    Vector4::new(a(0, 3), a(5, 0), a(2, 3), a(5, 0))
+    Vector4::new(
+        Qsqrt5::from(3) * Qsqrt5::root(),
+        Qsqrt5::from(5),
+        Qsqrt5::from(2) + Qsqrt5::from(3) * Qsqrt5::root(),
+        Qsqrt5::from(5),
+    )
 );
 ```
 
-Current tests live under `tests/q_sqrt5_*`. The runnable example
-`examples/q_sqrt5_vector.rs` contains the full version of the code above.
-
-## Current Scope Limits
+## Not Provided
 
 - no runtime parent/ring objects;
 - no automatic construction of larger fields;

@@ -1,7 +1,7 @@
 use num_rational::BigRational;
 use num_traits::Zero;
 
-use crate::field_specification::{RationalInterval, RealAlgebraicField};
+use crate::field_specification::RealAlgebraicField;
 use crate::polynomial_arithmetic::polynomial_eval;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -16,7 +16,7 @@ pub(crate) fn sign_at_field_root<F: RealAlgebraicField>(coeffs: &[BigRational]) 
         return Sign::Zero;
     }
 
-    let mut interval = F::isolating_interval();
+    let mut interval = Interval::from_pair(F::isolating_interval());
 
     loop {
         // Two tempting shortcuts are wrong for this crate:
@@ -41,10 +41,36 @@ pub(crate) fn sign_at_field_root<F: RealAlgebraicField>(coeffs: &[BigRational]) 
 
 enum RefinedRoot {
     Exact(BigRational),
-    Interval(RationalInterval),
+    Interval(Interval),
 }
 
-fn refine_root_interval<F: RealAlgebraicField>(interval: &RationalInterval) -> RefinedRoot {
+#[derive(Clone, Debug, Eq, PartialEq)]
+struct Interval {
+    lower: BigRational,
+    upper: BigRational,
+}
+
+impl Interval {
+    fn from_pair((lower, upper): (BigRational, BigRational)) -> Self {
+        assert!(lower < upper);
+        Self { lower, upper }
+    }
+
+    fn with_bounds(lower: BigRational, upper: BigRational) -> Self {
+        assert!(lower <= upper);
+        Self { lower, upper }
+    }
+
+    fn point(value: BigRational) -> Self {
+        Self::with_bounds(value.clone(), value)
+    }
+
+    fn midpoint(&self) -> BigRational {
+        (self.lower.clone() + self.upper.clone()) / BigRational::from_integer(2.into())
+    }
+}
+
+fn refine_root_interval<F: RealAlgebraicField>(interval: &Interval) -> RefinedRoot {
     let polynomial = F::polynomial();
     let midpoint = interval.midpoint();
     let lower_sign = rational_sign(&polynomial_eval(&polynomial, &interval.lower));
@@ -67,24 +93,18 @@ fn refine_root_interval<F: RealAlgebraicField>(interval: &RationalInterval) -> R
     }
 
     if lower_sign != middle_sign {
-        RefinedRoot::Interval(RationalInterval::new(interval.lower.clone(), midpoint))
+        RefinedRoot::Interval(Interval::from_pair((interval.lower.clone(), midpoint)))
     } else {
         assert_ne!(
             middle_sign, upper_sign,
             "interval does not isolate a sign-changing root"
         );
-        RefinedRoot::Interval(RationalInterval::new(midpoint, interval.upper.clone()))
+        RefinedRoot::Interval(Interval::from_pair((midpoint, interval.upper.clone())))
     }
 }
 
-fn polynomial_interval_eval(
-    coeffs: &[BigRational],
-    interval: &RationalInterval,
-) -> RationalInterval {
-    let mut result = RationalInterval {
-        lower: BigRational::zero(),
-        upper: BigRational::zero(),
-    };
+fn polynomial_interval_eval(coeffs: &[BigRational], interval: &Interval) -> Interval {
+    let mut result = Interval::point(BigRational::zero());
 
     for coeff in coeffs.iter().rev() {
         result = interval_mul(&result, interval);
@@ -95,7 +115,7 @@ fn polynomial_interval_eval(
     result
 }
 
-fn interval_mul(left: &RationalInterval, right: &RationalInterval) -> RationalInterval {
+fn interval_mul(left: &Interval, right: &Interval) -> Interval {
     let values = [
         left.lower.clone() * right.lower.clone(),
         left.lower.clone() * right.upper.clone(),
@@ -104,7 +124,7 @@ fn interval_mul(left: &RationalInterval, right: &RationalInterval) -> RationalIn
     ];
     let lower = values.iter().min().expect("array is nonempty").clone();
     let upper = values.iter().max().expect("array is nonempty").clone();
-    RationalInterval { lower, upper }
+    Interval::with_bounds(lower, upper)
 }
 
 fn rational_sign(value: &BigRational) -> Sign {

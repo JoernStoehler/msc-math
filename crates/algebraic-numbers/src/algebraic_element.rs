@@ -18,22 +18,10 @@ pub struct Algebraic<F: RealAlgebraicField> {
     field: PhantomData<F>,
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub struct BadDegree {
-    pub expected: usize,
-    pub actual: usize,
-}
-
 impl<F: RealAlgebraicField> Algebraic<F> {
-    pub fn new(coeffs: Vec<BigRational>) -> Result<Self, BadDegree> {
-        if coeffs.len() != F::DEGREE {
-            return Err(BadDegree {
-                expected: F::DEGREE,
-                actual: coeffs.len(),
-            });
-        }
-
-        Ok(Self::from_coeffs_unchecked(coeffs))
+    pub fn new<const N: usize>(coeffs: [BigRational; N]) -> Self {
+        assert_eq!(N, F::DEGREE);
+        Self::from_coeffs_unchecked(coeffs.into_iter().collect())
     }
 
     pub fn coeffs(&self) -> &[BigRational] {
@@ -46,7 +34,7 @@ impl<F: RealAlgebraicField> Algebraic<F> {
         Self::from_coeffs_unchecked(coeffs)
     }
 
-    pub fn alpha() -> Self {
+    pub fn root() -> Self {
         assert!(F::DEGREE > 1);
         let mut coeffs = vec![BigRational::zero(); F::DEGREE];
         coeffs[1] = BigRational::one();
@@ -101,7 +89,14 @@ impl<F: RealAlgebraicField> PartialOrd for Algebraic<F> {
 
 impl<F: RealAlgebraicField> Ord for Algebraic<F> {
     fn cmp(&self, other: &Self) -> Ordering {
-        match (self.clone() - other.clone()).sign() {
+        let difference = self
+            .coeffs
+            .iter()
+            .zip(&other.coeffs)
+            .map(|(left, right)| left.clone() - right.clone())
+            .collect::<Vec<_>>();
+
+        match sign_at_field_root::<F>(&difference) {
             Sign::Negative => Ordering::Less,
             Sign::Zero => Ordering::Equal,
             Sign::Positive => Ordering::Greater,

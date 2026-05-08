@@ -26,7 +26,7 @@ mod field_specification;
 mod polynomial_arithmetic;
 mod sign_ordering;
 
-pub use algebraic_element::{Algebraic, BadDegree};
+pub use algebraic_element::Algebraic;
 pub use exact_scalar::ExactScalar;
-pub use field_specification::{RationalInterval, RealAlgebraicField};
+pub use field_specification::RealAlgebraicField;
 pub use sign_ordering::Sign;

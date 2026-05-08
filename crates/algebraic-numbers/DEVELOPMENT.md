@@ -37,7 +37,7 @@ if it provides exactly these capabilities:
    - sign;
    - zero and one;
    - negation, addition, subtraction, multiplication, division;
-   - convenient interaction with `i64` and `BigRational`.
+   - conversion from `i64` and `BigRational`.
 5. Ordinary nalgebra container ergonomics, demonstrated by
    `Vector4<Algebraic<Sqrt5>>`.
 
@@ -56,7 +56,7 @@ The public model has three pieces:
 Implementation files are split by responsibility:
 
 - `algebraic_element.rs`: storage, constructors, equality, and ordering shell.
-- `arithmetic_ops.rs`: Rust operator impls and scalar mixing conveniences.
+- `arithmetic_ops.rs`: Rust operator impls and rational conversions.
 - `field_specification.rs`: field marker contract and rational intervals.
 - `polynomial_arithmetic.rs`: polynomial reduction and inversion modulo the
   field polynomial.
@@ -92,7 +92,7 @@ cargo run -p algebraic-numbers --example q_sqrt5_vector
 ```
 
 The `q_sqrt5_*` tests and example witness the current ergonomics target:
-`Vector4<Qsqrt5> + Vector4<Qsqrt5>`, `alpha * alpha == 5`, scalar mixing with
+`Vector4<Qsqrt5> + Vector4<Qsqrt5>`, `root * root == 5`, conversion from
 `i64` and `BigRational`, exact sign/order around `2 < sqrt(5) < 3`, and
 division by a nonzero algebraic value.
 
@@ -135,6 +135,13 @@ allocation matters.
 Rejected. Semantic reason: exactness is a promise, not just a set of operators.
 Explicit impls make it locally checkable why `BigRational` and `Algebraic<F>`
 are accepted while `f64` is not.
+
+### Scalar Operator Mixing
+
+Rejected for now. Ergonomics reason: `Qsqrt5::from(2) * Qsqrt5::root()` is
+longer than `2 * root`, but the explicit conversion keeps arithmetic uniformly
+inside the field type and avoids adding a matrix of integer/rational operator
+impls.
 
 ### `f64` as an Exact Scalar
 
