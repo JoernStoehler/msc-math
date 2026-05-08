@@ -32,7 +32,12 @@ impl<F: RealAlgebraicField> Algebraic<F> {
 
     pub fn root() -> Self {
         let degree = field_degree::<F>();
-        assert!(degree > 1);
+        if degree == 1 {
+            let polynomial = F::polynomial();
+            let root = -polynomial[0].clone();
+            return Self::from_rational(root);
+        }
+
         let mut coeffs = vec![BigRational::zero(); degree];
         coeffs[1] = BigRational::one();
         Self::from_coeffs_unchecked(coeffs)

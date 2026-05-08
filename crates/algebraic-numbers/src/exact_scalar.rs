@@ -9,6 +9,14 @@ use num_traits::{One, Zero};
 /// Implementations are explicit. This avoids accidentally classifying a type as
 /// exact just because it happens to expose arithmetic operators. In particular,
 /// `f64` is intentionally not an `ExactScalar`.
+///
+/// ```compile_fail
+/// use algebraic_numbers::ExactScalar;
+///
+/// fn accepts_exact_scalar<T: ExactScalar>() {}
+///
+/// accepts_exact_scalar::<f64>();
+/// ```
 pub trait ExactScalar:
     Clone
     + Debug

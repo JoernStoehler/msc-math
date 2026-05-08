@@ -22,14 +22,22 @@ fn zero_one_and_assignment_operators_are_available() {
     let mut value = Qsqrt5::zero();
     value += Qsqrt5::one();
     value *= Qsqrt5::from(5);
+    value -= Qsqrt5::from(2);
+    value /= Qsqrt5::from(3);
 
-    assert_eq!(value, a(5, 0));
+    assert_eq!(value, a(1, 0));
 }
 
 #[test]
 #[should_panic(expected = "cannot invert zero")]
 fn division_by_zero_panics() {
     let _ = Qsqrt5::one() / Qsqrt5::zero();
+}
+
+#[test]
+#[should_panic]
+fn wrong_coefficient_array_length_panics() {
+    let _ = Qsqrt5::new([q(0)]);
 }
 
 #[test]
