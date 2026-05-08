@@ -1,14 +1,24 @@
 # algebraic-numbers crate definition
 
-This file is the evaluation checklist for the crate. Each item should add
-distinct information; duplicated requirements make this a worse specification.
+This file is the crate spec. It has two normative parts:
 
-## Definition
+- a feature contract: what the crate must provide;
+- a semantic contract: what must stay true for those features to mean the
+  right thing.
+
+The evidence checks at the end are not the spec. They are executable witnesses
+for the current spec. Each item should add distinct information; duplicated
+requirements make this a worse specification.
+
+## Purpose
 
 `algebraic-numbers` provides exact scalar types for computations in one
 statically specified real algebraic field `Q[alpha]` at a time.
 
-The crate is complete for the current thesis use if and only if it provides:
+## Feature Contract
+
+The crate is complete for the current thesis use if and only if it provides
+exactly these capabilities:
 
 1. `ExactScalar`, an explicit opt-in trait for exact scalar values.
 2. `RealAlgebraicField`, a static field specification with:
@@ -29,9 +39,9 @@ The crate is complete for the current thesis use if and only if it provides:
 The crate must not add capabilities outside that list unless there is a current
 caller or a short `DESIGN_NOTES.md` entry explaining the scope change.
 
-## Semantic Guardrails
+## Semantic Contract
 
-Passing tests is not sufficient if these facts stop being true:
+The feature contract is not satisfied if these facts stop being true:
 
 - `ExactScalar` is explicit opt-in. Do not add a blanket impl.
 - `f64` does not implement `ExactScalar`.
@@ -44,6 +54,9 @@ Passing tests is not sufficient if these facts stop being true:
   approximations or caller-provided tolerances.
 
 ## Evidence Checks
+
+These checks are sufficient smoke evidence for the current feature and semantic
+contracts. They do not replace review of the contracts above.
 
 Run:
 
