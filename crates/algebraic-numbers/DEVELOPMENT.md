@@ -18,6 +18,9 @@ of removed items such as `OrderedField`, `TanPiFifth`, `cmp_field`, and
 `canonical_element` are migration/removal work outside this crate-local API
 slice, not evidence that this crate should restore those surfaces.
 
+Future exact-linear-algebra feature gaps and approach notes live in
+`LINEAR_ALGEBRA_FEATURES.md`.
+
 That backchains to three local objectives:
 
 - exact scalar semantics are explicit and reviewable;
