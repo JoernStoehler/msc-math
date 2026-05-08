@@ -96,6 +96,10 @@ The `q_sqrt5_*` tests and example witness the current ergonomics target:
 `i64` and `BigRational`, exact sign/order around `2 < sqrt(5) < 3`, and
 division by a nonzero algebraic value.
 
+The `kiss_api_style` test is a deliberately small regression guard for repeated
+review feedback. It bans exact strings that previously made the public API or
+consumer examples less KISS.
+
 ## Rejected Or Deferred Approaches
 
 Keep future entries short: compare the accepted approach with the closest
