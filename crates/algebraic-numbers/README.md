@@ -20,8 +20,7 @@ Useful first tests live under `tests/q_sqrt5_*`. The runnable example
 `nalgebra::Vector4<Algebraic<Sqrt5>>`.
 
 Approach comparisons and rejected designs are recorded in
-`DESIGN_NOTES.md`. Update that file when a non-obvious approach is tried,
-rejected, or deferred.
+`DESIGN_NOTES.md`. Update that file for non-obvious choices only.
 
 Design notes:
 
