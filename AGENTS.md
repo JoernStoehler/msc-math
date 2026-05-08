@@ -104,6 +104,8 @@ Planned deliverables:
 - `.codex/agents/`: repo-local subagent templates (optional).
 - Harness files (`AGENTS.md`, `.agents/skills/**`, `.codex/agents/**`) are
   frozen unless Jörn explicitly asks for a harness edit.
+- Final summaries should list review passes performed, including review
+  subagents used or intentionally not used.
 - `.codex/worktrees/`: isolated worktrees for independent agent sessions.
 - `.devcontainer/`: local devcontainer with documentation.
 - `scripts/`: small repo helper commands.
