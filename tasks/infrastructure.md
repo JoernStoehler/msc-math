@@ -7,8 +7,9 @@ Context: non-thesis-spine work should stay bounded during finish mode.
 
 ## Status
 
-- State: future by default.
-- Last updated: 2026-05-03.
+- State: map-input for current harness review-reliability follow-up; future by
+  default otherwise.
+- Last updated: 2026-05-08.
 - Source surfaces: `AGENTS.md`, `.codex/config.toml`, `.agents/skills/`,
   `.codex/agents/`, `crates/MAP.md`, `experiments/MAP.md`, `tasks/MAP.md`,
   `tasks/README.md`.
@@ -147,6 +148,7 @@ Context: non-thesis-spine work should stay bounded during finish mode.
 | Goal-clarification mode | `[future]` | future/follow-up | Jorn + harness discussion | Reopen only if agents still start work before the objective/artifact is settled. Keep any fix in the smallest live surface that changes behavior. | `AGENTS.md` |
 | Data-science packet orchestration | `[map-input]` | map input | Jorn + agent review | Extend the existing data-science subexperiment workflow so a lead agent can prepare and manage many flat, similar, independent packets without losing packet boundaries, output contracts, review gates, or integration ownership. | old harness extraction: data-science and delegation candidates, `tasks/landscape.md` |
 | Current-model harness prompt modernization | `[done]` | map input | current session | GPT-5.5 modernization now means a smaller live surface, not a broad prompt-library migration. Reopen only for current official-doc conflicts or observed model-specific failures. | `AGENTS.md`, `.codex/config.toml` |
+| Review reliability and task-tree tracking | `[map-input]` | map input | Jörn assigns next harness agent | Use the scratch handoff as context for a future harness edit proposal; do not treat it as approval to edit harness files or as trusted reasoning. | `AGENTS.md`, `.agents/skills/rust/SKILL.md`, `/tmp/msc-math-review-reliability-handoff.md` |
 | Harness engineering skill revisit | `[pruned]` | future/follow-up | Jorn + agent review | Do not perform a scheduled reread of deleted skill drafts. Recreate a repo-local skill only from a current repeated workflow or observed failure. | deleted harness migration drafts in git history |
 | Capacity/orbit API architecture | `[future]` | future/follow-up by default | retained claim impact | `Polytope4D` boundary reduction is partly plausible only at the KKT/QP assembly layer; do not promote broad APIs unless retained thesis/reproducibility needs it. | `crates/MAP.md`, `crates/symplectic/src/kkt/qp_assembly.rs`, legacy rows |
 | Experiment-to-library audit | `[future]` | future/follow-up by default | retained claim impact | Classify repeated helpers only when it unblocks validation, writeup, or agent navigation. | legacy library rows |
@@ -177,6 +179,10 @@ Context: non-thesis-spine work should stay bounded during finish mode.
   historical evidence only.
   Refresh by: reading `AGENTS.md`, `.codex/config.toml`, and the relevant
   map/task header before adding a new harness surface.
+- [fresh 2026-05-08] Scratch context for review-reliability and task-tree
+  tracking lives in `/tmp/msc-math-review-reliability-handoff.md`. Treat its
+  reasoning as untrusted; verify concrete observations against live files or
+  fresh review before proposing harness edits.
 
 ## Pruned / Stale
 

@@ -74,7 +74,7 @@ justify calendar delay and Jorn-time cost.
 | Numerics | numerical appendix, solver/projection/beta-LP state | `tasks/numerics.md` |
 | Reproducibility | data freshness, artifact truth, repo promises | `tasks/reproducibility.md` |
 | Rust tech debt | Rust cleanup packets that affect agent velocity, experiment safety, validation trust, or durable crate maintainability | `tasks/rust-tech-debt.md` |
-| Infrastructure | agent/harness/repo-maintenance work and future SWE polish | `tasks/infrastructure.md` |
+| Infrastructure | agent/harness/repo-maintenance work, including current review-reliability/task-tree follow-up, and future SWE polish | `tasks/infrastructure.md` |
 
 ## Immediate Phase-2 Agenda
 
