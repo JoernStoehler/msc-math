@@ -40,6 +40,32 @@ fn row_reduction_and_rank_over_bigrational_are_plain_nalgebra_calls() {
 }
 
 #[test]
+fn row_reduction_swaps_rows_to_use_first_nonzero_pivot() {
+    let matrix = rational_matrix(2, 2, &[0, 1, 2, 3]);
+
+    let reduction = row_reduction(&matrix);
+
+    assert_eq!(reduction.pivot_columns, vec![0, 1]);
+    assert_eq!(reduction.rref, rational_matrix(2, 2, &[1, 0, 0, 1]));
+}
+
+#[test]
+fn kernel_basis_handles_free_column_before_later_pivot() {
+    let matrix = rational_matrix(2, 3, &[0, 1, 2, 0, 2, 4]);
+    let reduction = row_reduction(&matrix);
+    let basis = kernel_basis(&matrix);
+
+    assert_eq!(reduction.pivot_columns, vec![1]);
+    assert_eq!(reduction.rref, rational_matrix(2, 3, &[0, 1, 2, 0, 0, 0]));
+    assert_eq!(basis, rational_matrix(3, 2, &[1, 0, 0, -2, 0, 1]));
+
+    for col in 0..basis.ncols() {
+        let vector = basis.column(col).into_owned();
+        assert_eq!(&matrix * &vector, DVector::zeros(2));
+    }
+}
+
+#[test]
 fn solve_unique_system_returns_consistent_solution_with_empty_kernel() {
     let matrix = rational_matrix(2, 2, &[2, 1, 1, -1]);
     let rhs = rational_vector(&[5, 1]);
@@ -146,11 +172,21 @@ fn negative_definite_bigrational_cases_are_exact() {
         2,
         &[-1, 0, 0, -2]
     )));
+    assert!(is_negative_definite(&rational_matrix(
+        2,
+        2,
+        &[-2, 1, 1, -2]
+    )));
     assert!(is_negative_definite(&DMatrix::<BigRational>::zeros(0, 0)));
     assert!(!is_negative_definite(&rational_matrix(
         2,
         2,
         &[-1, 0, 0, 1]
+    )));
+    assert!(!is_negative_definite(&rational_matrix(
+        2,
+        2,
+        &[-1, 2, 2, -1]
     )));
     assert!(!is_negative_definite(&rational_matrix(
         2,
@@ -162,10 +198,16 @@ fn negative_definite_bigrational_cases_are_exact() {
 #[test]
 fn negative_definite_q_sqrt5_cases_are_exact() {
     let negative = DMatrix::from_row_slice(2, 2, &[a(-3, 1), a(0, 0), a(0, 0), a(-1, 0)]);
+    let non_diagonal_negative =
+        DMatrix::from_row_slice(2, 2, &[a(-4, 1), a(1, 0), a(1, 0), a(-1, 0)]);
     let indefinite = DMatrix::from_row_slice(2, 2, &[a(-1, 0), a(0, 0), a(0, 0), a(0, 1)]);
+    let non_diagonal_indefinite =
+        DMatrix::from_row_slice(2, 2, &[a(-1, 0), a(0, 1), a(0, 1), a(-1, 0)]);
 
     assert!(is_negative_definite(&negative));
+    assert!(is_negative_definite(&non_diagonal_negative));
     assert!(!is_negative_definite(&indefinite));
+    assert!(!is_negative_definite(&non_diagonal_indefinite));
 }
 
 #[test]
