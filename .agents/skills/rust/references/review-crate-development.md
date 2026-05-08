@@ -63,6 +63,12 @@ Look for:
 - a spec that confuses current required scope with durable maintainer rationale:
   missing a real capability, adding an unused capability without rationale, or
   duplicating the same criterion;
+- public API surface that does not beat ordinary Rust syntax, standard-library
+  traits/types, or already-present crate data;
+- duplicate sources of truth in code or docs, unless the duplication saves more
+  reviewer/user labor than it costs;
+- recoverable-error framing for programmer bugs that callers should not recover
+  from;
 - architecture notes that fail to help an agent know where to edit, or that
   re-teach consumer usage better left in README;
 - verification text that names commands but not what each command witnesses, or

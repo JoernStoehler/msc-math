@@ -56,12 +56,19 @@ Look for:
 - starter imports or examples heavier than the main consumer path;
 - technically valid syntax that is awkward, asymmetric, or not what users
   should copy;
+- examples that demonstrate anything other than the intended caller style;
 - local helpers, one-use bindings, `.clone()`, `.unwrap()`, or ownership noise
   that obscure the mathematical expression being demonstrated;
 - README-foregrounded names that expose implementation plumbing instead of
   domain concepts;
+- custom public names, functions, or types where ordinary Rust syntax,
+  standard-library traits/types, or already-present crate data would express the
+  same idea;
 - advertised operations without an example, compile witness, test witness, or
   current caller reason;
+- claims or examples that duplicate a source of truth already present in code,
+  tests, or maintainer docs without making ordinary use easier;
+- recoverable-error-shaped examples for cases that are ordinary programmer bugs;
 - maintainer navigation, internal file maps, test-location notes, or workflow
   detail that belongs in maintainer documentation;
 - scope sections with vague labels instead of concrete missing capabilities.
