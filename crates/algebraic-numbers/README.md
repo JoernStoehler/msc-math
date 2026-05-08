@@ -34,7 +34,6 @@ Define a zero-sized marker and implement `RealAlgebraicField`.
 ```rust
 use algebraic_numbers::{Algebraic, RationalInterval, RealAlgebraicField};
 use num_rational::BigRational;
-use num_traits::{One, Zero};
 
 enum Sqrt5 {}
 
@@ -42,11 +41,7 @@ impl RealAlgebraicField for Sqrt5 {
     const DEGREE: usize = 2;
 
     fn polynomial() -> Vec<BigRational> {
-        vec![
-            BigRational::from_integer((-5).into()),
-            BigRational::zero(),
-            BigRational::one(),
-        ]
+        vec![q(-5), q(0), q(1)]
     }
 
     fn isolating_interval() -> RationalInterval {
