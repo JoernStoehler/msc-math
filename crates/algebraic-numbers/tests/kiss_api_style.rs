@@ -60,6 +60,10 @@ fn public_api_does_not_reintroduce_recent_kiss_violations() {
                 reason:
                     "use explicit Qsqrt5::from(..) conversion instead of scalar operator mixing",
             },
+            Forbidden {
+                needle: "pub enum Sign",
+                reason: "std::cmp::Ordering is the built-in exact trichotomy type",
+            },
         ],
     );
 }

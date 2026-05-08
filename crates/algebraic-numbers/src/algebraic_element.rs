@@ -7,7 +7,7 @@ use num_traits::{One, Zero};
 
 use crate::field_specification::RealAlgebraicField;
 use crate::polynomial_arithmetic::inverse_mod_monic;
-use crate::sign_ordering::{sign_at_field_root, Sign};
+use crate::sign_ordering::sign_at_field_root;
 
 /// Element of the statically chosen real algebraic field `Q[alpha]`.
 ///
@@ -35,10 +35,6 @@ impl<F: RealAlgebraicField> Algebraic<F> {
         let mut coeffs = vec![BigRational::zero(); F::DEGREE];
         coeffs[1] = BigRational::one();
         Self::from_coeffs_unchecked(coeffs)
-    }
-
-    pub fn sign(&self) -> Sign {
-        sign_at_field_root::<F>(&self.coeffs)
     }
 
     pub(crate) fn inverse(&self) -> Self {
@@ -92,10 +88,6 @@ impl<F: RealAlgebraicField> Ord for Algebraic<F> {
             .map(|(left, right)| left.clone() - right.clone())
             .collect::<Vec<_>>();
 
-        match sign_at_field_root::<F>(&difference) {
-            Sign::Negative => Ordering::Less,
-            Sign::Zero => Ordering::Equal,
-            Sign::Positive => Ordering::Greater,
-        }
+        sign_at_field_root::<F>(&difference)
     }
 }

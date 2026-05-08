@@ -1,19 +1,14 @@
+use std::cmp::Ordering;
+
 use num_rational::BigRational;
 use num_traits::Zero;
 
 use crate::field_specification::RealAlgebraicField;
 use crate::polynomial_arithmetic::polynomial_eval;
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-pub enum Sign {
-    Negative,
-    Zero,
-    Positive,
-}
-
-pub(crate) fn sign_at_field_root<F: RealAlgebraicField>(coeffs: &[BigRational]) -> Sign {
+pub(crate) fn sign_at_field_root<F: RealAlgebraicField>(coeffs: &[BigRational]) -> Ordering {
     if coeffs.iter().all(BigRational::is_zero) {
-        return Sign::Zero;
+        return Ordering::Equal;
     }
 
     let mut interval = Interval::from_pair(F::isolating_interval());
@@ -26,14 +21,14 @@ pub(crate) fn sign_at_field_root<F: RealAlgebraicField>(coeffs: &[BigRational]) 
         // proves a strict sign, or until alpha is found as a rational midpoint.
         let value_interval = polynomial_interval_eval(coeffs, &interval);
         if value_interval.lower > BigRational::zero() {
-            return Sign::Positive;
+            return Ordering::Greater;
         }
         if value_interval.upper < BigRational::zero() {
-            return Sign::Negative;
+            return Ordering::Less;
         }
 
         match refine_root_interval::<F>(&interval) {
-            RefinedRoot::Exact(root) => return rational_sign(&polynomial_eval(coeffs, &root)),
+            RefinedRoot::Exact(root) => return rational_ordering(&polynomial_eval(coeffs, &root)),
             RefinedRoot::Interval(next) => interval = next,
         }
     }
@@ -73,22 +68,22 @@ impl Interval {
 fn refine_root_interval<F: RealAlgebraicField>(interval: &Interval) -> RefinedRoot {
     let polynomial = F::polynomial();
     let midpoint = interval.midpoint();
-    let lower_sign = rational_sign(&polynomial_eval(&polynomial, &interval.lower));
-    let middle_sign = rational_sign(&polynomial_eval(&polynomial, &midpoint));
-    let upper_sign = rational_sign(&polynomial_eval(&polynomial, &interval.upper));
+    let lower_sign = rational_ordering(&polynomial_eval(&polynomial, &interval.lower));
+    let middle_sign = rational_ordering(&polynomial_eval(&polynomial, &midpoint));
+    let upper_sign = rational_ordering(&polynomial_eval(&polynomial, &interval.upper));
 
     assert_ne!(
         lower_sign,
-        Sign::Zero,
+        Ordering::Equal,
         "isolating interval endpoint is a root"
     );
     assert_ne!(
         upper_sign,
-        Sign::Zero,
+        Ordering::Equal,
         "isolating interval endpoint is a root"
     );
 
-    if middle_sign == Sign::Zero {
+    if middle_sign == Ordering::Equal {
         return RefinedRoot::Exact(midpoint);
     }
 
@@ -127,12 +122,6 @@ fn interval_mul(left: &Interval, right: &Interval) -> Interval {
     Interval::with_bounds(lower, upper)
 }
 
-fn rational_sign(value: &BigRational) -> Sign {
-    if value < &BigRational::zero() {
-        Sign::Negative
-    } else if value > &BigRational::zero() {
-        Sign::Positive
-    } else {
-        Sign::Zero
-    }
+fn rational_ordering(value: &BigRational) -> Ordering {
+    value.cmp(&BigRational::zero())
 }

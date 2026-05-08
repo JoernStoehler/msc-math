@@ -34,7 +34,6 @@ if it provides exactly these capabilities:
    coefficients in the basis `1, alpha, ..., alpha^(degree - 1)`.
 4. Exact scalar operations on `Algebraic<F>`:
    - equality and ordering;
-   - sign;
    - zero and one;
    - negation, addition, subtraction, multiplication, division;
    - assignment variants for addition, subtraction, multiplication, and
@@ -62,12 +61,12 @@ Implementation files are split by responsibility:
 - `field_specification.rs`: field marker contract and chosen-root endpoints.
 - `polynomial_arithmetic.rs`: polynomial reduction and inversion modulo the
   field polynomial.
-- `sign_ordering.rs`: exact sign decisions by rational interval refinement.
+- `sign_ordering.rs`: exact ordering decisions by rational interval refinement.
 - `exact_scalar.rs`: explicit exact scalar trait and impls.
 
 Design intent: this structure is predictable rather than abstract. The expected
 maintenance path is to start with the file matching the behavior to change:
-arithmetic, sign/order, or field contracts.
+arithmetic, ordering, or field contracts.
 
 ## Semantic Guardrails
 
@@ -80,8 +79,8 @@ The contract is not satisfied if these facts stop being true:
   arithmetic operators.
 - Equality is coefficient equality in the fixed basis, relying on the minimal
   polynomial contract.
-- Ordering and sign are exact; they must not depend on floating-point
-  approximations or caller-provided tolerances.
+- Ordering is exact; it must not depend on floating-point approximations or
+  caller-provided tolerances.
 
 ## Verification
 
@@ -96,8 +95,8 @@ cargo run -p algebraic-numbers --example q_sqrt5_vector
 The `q_sqrt5_*` tests and example witness the current ergonomics target:
 `Vector4<Qsqrt5> + Vector4<Qsqrt5>`, `root * root == 5`, conversion from
 `i64` and `BigRational`, `zero()`, `one()`, assignment operators, exact
-sign/order around `2 < sqrt(5) < 3`, and division by a nonzero algebraic value.
-They also run a fixed grid of Q[sqrt(5)] field-law checks and sign/order checks
+ordering around `2 < sqrt(5) < 3`, and division by a nonzero algebraic value.
+They also run a fixed grid of Q[sqrt(5)] field-law checks and ordering checks
 against rational interval witnesses.
 
 The `kiss_api_style` test is a deliberately small regression guard for repeated
@@ -164,19 +163,19 @@ Rejected. API reason: nalgebra's stronger numeric traits include approximate
 floating-point functionality such as epsilons, ulps, and transcendental
 functions. Current need: nalgebra containers and ordinary arithmetic syntax.
 
-### Float Sign Checks for Ordering
+### Float Evaluation For Ordering
 
 Rejected. Semantic reason: evaluating at an `f64` approximation of `alpha`
 loses exactness. Near-zero cases would require caller-chosen tolerances, which
 is exactly what this crate avoids.
 
 Accepted alternative: refine the rational isolating interval until interval
-evaluation determines the sign.
+evaluation determines the ordering.
 
-### One-Shot Interval Evaluation for Sign
+### One-Shot Interval Evaluation For Ordering
 
-Rejected. Implementation evidence: the current sign code uses a refinement loop
-because the initial interval can contain both signs for the represented
+Rejected. Implementation evidence: the current ordering code uses a refinement
+loop because the initial interval can contain both signs for the represented
 polynomial. Returning indeterminate would leak interval-analysis concerns into
 an exact ordered scalar API.
 

@@ -12,7 +12,6 @@ computer-algebra system.
 - `ExactScalar`: explicit opt-in trait for exact scalar types.
 - `RealAlgebraicField`: static field specification for one chosen real root.
 - `Algebraic<F>`: element of `Q[alpha]` for the field marker `F`.
-- `Sign`: exact sign result, one of `Negative`, `Zero`, `Positive`.
 
 `BigRational` and `Algebraic<F>` implement `ExactScalar`.
 
@@ -80,7 +79,6 @@ runtime case callers are expected to recover from.
 Supported operations on `Algebraic<F>`:
 
 - `==`, `<`, `>`, `Ord`;
-- `sign() -> Sign`;
 - `Zero`, `One`;
 - unary `-`;
 - `+`, `-`, `*`, `/`;
@@ -103,7 +101,7 @@ assert_eq!(
     Qsqrt5::from(q(3)) * Qsqrt5::root(),
     Qsqrt5::new([q(0), q(3)])
 );
-assert_eq!((Qsqrt5::root() - Qsqrt5::from(2)).sign(), Sign::Positive);
+assert!(Qsqrt5::root() - Qsqrt5::from(2) > Qsqrt5::from(0));
 assert!(Qsqrt5::root() > Qsqrt5::from(2));
 ```
 
