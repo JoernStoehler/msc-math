@@ -17,15 +17,22 @@
 //! - no `f64` implementation of [`ExactScalar`];
 //! - no attempt to implement nalgebra's `RealField`/`ComplexField`, whose API is
 //!   shaped around approximate floating-point algorithms;
-//! - no matrix solve/diagonalization layer until an actual caller needs it.
+//! - no diagonalization layer; exact callers should start with rank, solve,
+//!   kernel, and definiteness checks.
 
 mod algebraic_element;
 mod arithmetic_ops;
+mod definiteness;
 mod exact_scalar;
 mod field_specification;
+mod linear_solve;
 mod polynomial_arithmetic;
+mod row_reduction;
 mod sign_ordering;
 
 pub use algebraic_element::Algebraic;
+pub use definiteness::is_negative_definite;
 pub use exact_scalar::ExactScalar;
 pub use field_specification::RealAlgebraicField;
+pub use linear_solve::{kernel_basis, solve_linear_system, LinearSystemSolution};
+pub use row_reduction::{rank, row_reduction, RowReduction};

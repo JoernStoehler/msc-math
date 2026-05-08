@@ -12,6 +12,9 @@ computer-algebra system.
 - `ExactScalar`: explicit opt-in trait for exact scalar types.
 - `RealAlgebraicField`: static field specification for one chosen real root.
 - `Algebraic<F>`: element of `Q[alpha]` for the field marker `F`.
+- `row_reduction`, `rank`, `kernel_basis`, `solve_linear_system`: dense exact
+  linear algebra over nalgebra `DMatrix<T>` / `DVector<T>`.
+- `is_negative_definite`: exact symmetric negative-definite check.
 
 `BigRational` and `Algebraic<F>` implement `ExactScalar`.
 
@@ -108,7 +111,8 @@ Division by zero panics, matching the current operator API.
 ## nalgebra Containers
 
 `Algebraic<F>` is intended to work as a nalgebra scalar for ordinary container
-syntax.
+syntax. Linear-algebra algorithms in this crate use dynamic nalgebra matrices
+and vectors.
 
 ```rust
 use nalgebra::Vector4;
@@ -137,10 +141,48 @@ assert_eq!(
 );
 ```
 
+## Exact Linear Algebra
+
+Use `DMatrix<T>` and `DVector<T>` with `T: ExactScalar`.
+
+```rust
+use algebraic_numbers::{kernel_basis, rank, solve_linear_system, LinearSystemSolution};
+use nalgebra::{DMatrix, DVector};
+
+let matrix = DMatrix::from_row_slice(
+    1,
+    3,
+    &[Qsqrt5::from(1), Qsqrt5::from(1), Qsqrt5::from(1)],
+);
+let rhs = DVector::from_column_slice(&[Qsqrt5::from(3)]);
+
+assert_eq!(rank(&matrix), 1);
+
+match solve_linear_system(&matrix, &rhs) {
+    LinearSystemSolution::Consistent {
+        particular,
+        kernel_basis,
+    } => {
+        assert_eq!(particular.nrows(), 3);
+        assert_eq!(kernel_basis.ncols(), 2);
+    }
+    LinearSystemSolution::Inconsistent => panic!("expected a solution"),
+}
+
+assert_eq!(kernel_basis(&matrix).ncols(), 2);
+```
+
+`solve_linear_system` returns one particular solution plus a kernel basis. An
+empty kernel basis means the solution is unique.
+
+Use `is_negative_definite` for exact symmetric definiteness checks. It panics on
+nonsquare or nonsymmetric inputs.
+
 ## Not Provided
 
 - no runtime parent/ring objects;
 - no automatic construction of larger fields;
 - no `f64` exact scalar implementation;
 - no nalgebra `RealField`/`ComplexField` implementation;
-- no matrix solve, eigenvalue, or diagonalization layer.
+- no public determinant, inverse, full inertia, eigenvalue, or diagonalization
+  layer.

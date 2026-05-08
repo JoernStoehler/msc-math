@@ -1,9 +1,9 @@
 # Exact Linear Algebra Feature Gaps
 
-This note records what is missing after the current scalar-only
-`algebraic-numbers` branch, why it is missing, and what implementation
-approaches look predictable for future agents. It is planning material, not the
-current crate contract.
+This note records what is still missing after the first exact-linear-algebra
+API slice, why it is missing, and what implementation approaches look
+predictable for future agents. It is planning material, not the current crate
+contract.
 
 The goal is a small exact arithmetic and exact linear-algebra crate for
 compile-time-known real algebraic fields. "Small" means low friction for future
@@ -20,12 +20,13 @@ Already present:
 - `RealAlgebraicField` for static field markers.
 - Exact arithmetic, equality, and ordering for `Algebraic<F>`.
 - Ordinary nalgebra container syntax such as `Vector4<Algebraic<Sqrt5>>`.
+- Dense row reduction, rank, solve, kernel basis, and negative-definite checks
+  over nalgebra `DMatrix<T>` / `DVector<T>`.
 
 Not present:
 
-- Matrix algorithms.
-- Row reduction, rank, solve, kernel, determinant, inverse.
-- Symmetric matrix inertia or definiteness.
+- Public determinant or inverse.
+- Full symmetric matrix inertia or semidefinite classification.
 - Eigenvalue decomposition.
 - Runtime construction of new fields.
 
@@ -74,11 +75,11 @@ Use these labels when refining this note. "Not fixed yet" is too ambiguous.
   the cheapest reliable tie-breaker is the first TDD pass rather than more
   planning.
 
-## Missing Feature Stack
+## Remaining Feature Stack
 
 ### Row Reduction
 
-Status: missing.
+Status: present.
 
 Why it matters: row reduction is the reusable primitive for exact rank, solve,
 kernel, determinant/invertibility checks, and many certificate-style tests.
@@ -88,8 +89,7 @@ nonzero checks for pivots. A simple row-echelon form is enough for rank and
 forward elimination; reduced row-echelon form is convenient for kernel and
 solve output. Start with dense matrices.
 
-Decision state: decide with first implementation. The algorithm family is fixed;
-the exact helper names and result structs should come from the first tests.
+Decision state: implemented as `row_reduction(&DMatrix<T>) -> RowReduction<T>`.
 
 Required scalar facts: exact zero and one, negation, addition, subtraction,
 multiplication, and division by a known nonzero pivot.
@@ -112,22 +112,21 @@ Rejected first guesses:
 
 ### Rank
 
-Status: missing.
+Status: present.
 
 Why it matters: rank is used in exact geometry, symmetry checks, degeneracy
 checks, and many "kernel has expected dimension" arguments.
 
-Predictable approach: thin wrapper over row reduction. For dense matrices, row
-rank is enough; column-rank naming should not create a second algorithm.
+Implemented approach: thin wrapper over row reduction.
 
 ### Linear Solve
 
-Status: missing.
+Status: present.
 
 Why it matters: exact KKT, affine constraints, vertex reconstruction, and
 certificate code need exact solutions to `A x = b`.
 
-Decision state: preferred, needs witness.
+Decision state: implemented as `solve_linear_system`.
 
 Predictable approach: augment `A` with `b`, row-reduce, and return an explicit
 outcome:
@@ -160,18 +159,18 @@ linear systems, while `Vector4<T>` remains useful for fixed-dimensional geometry
 Do not add parallel `Vec<Vec<T>>` APIs unless nalgebra ownership or conversion
 friction is observed in tests.
 
-Decision state for matrix shape: preferred, needs witness.
+Decision state for matrix shape: implemented with `DMatrix<T>` and `DVector<T>`.
 
 ### Kernel / Nullspace Basis
 
-Status: missing.
+Status: present.
 
 Why it matters: kernel dimensions and bases appear in symmetry and tangent-space
 checks. A kernel basis is also the natural representation of underdetermined
 solve output.
 
-Predictable approach: compute from reduced row-echelon form. Use free variables
-as basis directions in the standard way. The result should be exact vectors.
+Implemented approach: compute from reduced row-echelon form. Use free variables
+as basis directions in the standard way. The result is exact vectors.
 
 Naming note: `kernel_basis` is more mathematical in this repo than
 `nullspace`, but both terms are standard. Pick one public name and mention the
@@ -179,7 +178,7 @@ other in docs for grepability.
 
 ### Determinant, Invertibility, Matrix Inverse
 
-Status: missing.
+Status: not public.
 
 Why it matters: determinant and inverse are common exact-linear-algebra
 queries, but most near-term callers can use rank/solve instead.
@@ -199,7 +198,8 @@ Priority: lower than rank/solve/kernel.
 
 ### Symmetric Definiteness And Inertia
 
-Status: missing.
+Status: negative-definite predicate present; full inertia and semidefinite
+classification missing.
 
 Why it matters: exact substitutes for numerical eigenvalue classification often
 need to know whether a symmetric matrix is positive/negative definite,
@@ -219,13 +219,10 @@ needs care around zero or indefinite pivots, while principal-minor criteria can
 be expensive for semidefinite classification. Do not add a broad public API
 until the needed outcome shape and algorithm witness are clear.
 
-API pressure: a single `is_negative_definite` predicate may be enough for the
-first caller. If computing full inertia is the simpler internal route, expose
-only the part callers need unless the extra result removes complexity.
+Implemented public need: `is_negative_definite`.
 
-Decision state: preferred public need, unresolved internal algorithm. The public
-need is exact `is_negative_definite`; the algorithm should be chosen by the first
-implementation proof/tests, not by chat preference.
+Decision state for full inertia: defer until a caller needs more than the
+negative-definite predicate.
 
 ### Eigenvalue Decomposition
 
@@ -251,14 +248,10 @@ the design likely needs a separate field-extension story.
 
 ## Near-Term Feature Order
 
-1. Dense row reduction over `ExactScalar`.
-2. Rank from row reduction.
-3. Solve `A x = b` with explicit outcomes.
-4. Kernel basis from reduced row-echelon form.
-5. Negative-definite checks, possibly via inertia, after the basic
-   row-reduction layer is stable.
-6. Determinant/inverse as thin wrappers if a caller asks.
-7. Keep eigendecomposition deferred.
+1. Keep eigendecomposition deferred.
+2. Add public determinant/inverse only if a caller asks.
+3. Add full inertia or semidefinite classification only if a caller needs more
+   than `is_negative_definite`.
 
 ## Evidence To Add With Features
 

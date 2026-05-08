@@ -4,10 +4,10 @@ This file is for maintainers. The README is for consumers.
 
 ## Instrumental Objective
 
-Normative objective: define the small exact scalar API this branch keeps for
-statically chosen real algebraic fields. Required properties: field choices are
-explicit, equality/order decisions are exact, and ordinary Rust/nalgebra syntax
-works for small vectors.
+Normative objective: define a small exact scalar and dense exact linear-algebra
+API for statically chosen real algebraic fields. Required properties: field
+choices are explicit, equality/order decisions are exact, and ordinary
+Rust/nalgebra syntax works for vectors and dynamic matrices.
 
 Scope boundary: this crate is not a general computer-algebra system. The
 evidence target is that the current code and tests let a reviewer check that
@@ -18,7 +18,7 @@ of removed items such as `OrderedField`, `TanPiFifth`, `cmp_field`, and
 `canonical_element` are migration/removal work outside this crate-local API
 slice, not evidence that this crate should restore those surfaces.
 
-Future exact-linear-algebra feature gaps and approach notes live in
+Remaining exact-linear-algebra feature gaps and approach notes live in
 `LINEAR_ALGEBRA_FEATURES.md`.
 
 That backchains to three local objectives:
@@ -47,7 +47,13 @@ only if it provides exactly these capabilities:
      division;
    - conversion from `i64` and `BigRational`.
 5. Ordinary nalgebra container ergonomics, demonstrated by
-   `Vector4<Algebraic<Sqrt5>>`.
+   `Vector4<Algebraic<Sqrt5>>` and `DMatrix<Algebraic<Sqrt5>>`.
+6. Dense exact linear algebra over `DMatrix<T>` and `DVector<T>`:
+   - reduced row-echelon form and rank;
+   - kernel basis;
+   - linear solve as inconsistent or consistent with one particular solution
+     and a kernel basis;
+   - exact negative-definite check for symmetric square matrices.
 
 The crate must not add capabilities outside that list unless there is a current
 caller or a short note below explaining the scope change.
@@ -65,9 +71,12 @@ Implementation files are split by responsibility:
 
 - `algebraic_element.rs`: storage, constructors, equality, and ordering shell.
 - `arithmetic_ops.rs`: Rust operator impls and rational conversions.
+- `definiteness.rs`: exact symmetric negative-definite checks.
 - `field_specification.rs`: field marker contract and chosen-root endpoints.
+- `linear_solve.rs`: solve and kernel-basis APIs.
 - `polynomial_arithmetic.rs`: polynomial reduction and inversion modulo the
   field polynomial.
+- `row_reduction.rs`: exact reduced row-echelon form and rank.
 - `sign_ordering.rs`: exact ordering decisions by rational interval refinement.
 - `exact_scalar.rs`: explicit exact scalar trait and impls.
 
@@ -112,6 +121,12 @@ against rational interval witnesses.
 The `kiss_api_style` test is a deliberately small regression guard for repeated
 review feedback. It bans exact strings that previously made the public API or
 consumer examples less KISS.
+
+The `exact_linear_algebra` test witnesses row reduction, rank, solve, kernel
+basis, negative-definite checks, `DMatrix<BigRational>`, and
+`DMatrix<Algebraic<Sqrt5>>`. Its property tests cover RREF idempotence, rank
+stability under RREF, generated consistent systems, and kernel-vector
+invariants.
 
 ## Rejected Or Deferred Approaches
 
@@ -188,9 +203,10 @@ loop because the initial interval can contain both signs for the represented
 polynomial. Returning indeterminate would leak interval-analysis concerns into
 an exact ordered scalar API.
 
-### Matrix Solve, Diagonalization, and Eigen APIs
+### Public Determinant, Inverse, Full Inertia, Diagonalization, and Eigen APIs
 
-Deferred. Current evidence: no immediate caller in this crate. Mathematical
-risk: diagonalization over `Q[alpha]` may require explicit field extensions,
-which this crate intentionally does not construct. Sequencing judgment: settle
-exact scalar behavior before adding linear algebra algorithms.
+Deferred. Current evidence: the first exact-linear-algebra callers need row
+reduction, rank, solve, kernel, and negative-definite checks. Mathematical risk:
+diagonalization over `Q[alpha]` may require explicit field extensions, which
+this crate intentionally does not construct. Scope judgment: expose more matrix
+algorithms only when a caller needs the result shape.
