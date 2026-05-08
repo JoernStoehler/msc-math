@@ -24,11 +24,7 @@ impl<F: RealAlgebraicField> Algebraic<F> {
         Self::from_coeffs_unchecked(coeffs.into_iter().collect())
     }
 
-    pub fn coeffs(&self) -> &[BigRational] {
-        &self.coeffs
-    }
-
-    pub fn from_rational(rational: BigRational) -> Self {
+    pub(crate) fn from_rational(rational: BigRational) -> Self {
         let mut coeffs = vec![BigRational::zero(); F::DEGREE];
         coeffs[0] = rational;
         Self::from_coeffs_unchecked(coeffs)
@@ -45,7 +41,7 @@ impl<F: RealAlgebraicField> Algebraic<F> {
         sign_at_field_root::<F>(&self.coeffs)
     }
 
-    pub fn inverse(&self) -> Self {
+    pub(crate) fn inverse(&self) -> Self {
         assert!(!self.is_zero(), "cannot invert zero");
         Self::from_coeffs_unchecked(inverse_mod_monic::<F>(&self.coeffs))
     }

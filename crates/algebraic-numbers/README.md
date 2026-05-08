@@ -9,15 +9,6 @@ computer-algebra system.
 
 ## Public API
 
-```rust
-use algebraic_numbers::{
-    Algebraic,
-    ExactScalar,
-    RealAlgebraicField,
-    Sign,
-};
-```
-
 - `ExactScalar`: explicit opt-in trait for exact scalar types.
 - `RealAlgebraicField`: static field specification for one chosen real root.
 - `Algebraic<F>`: element of `Q[alpha]` for the field marker `F`.

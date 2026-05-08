@@ -37,6 +37,8 @@ if it provides exactly these capabilities:
    - sign;
    - zero and one;
    - negation, addition, subtraction, multiplication, division;
+   - assignment variants for addition, subtraction, multiplication, and
+     division;
    - conversion from `i64` and `BigRational`.
 5. Ordinary nalgebra container ergonomics, demonstrated by
    `Vector4<Algebraic<Sqrt5>>`.
@@ -57,7 +59,7 @@ Implementation files are split by responsibility:
 
 - `algebraic_element.rs`: storage, constructors, equality, and ordering shell.
 - `arithmetic_ops.rs`: Rust operator impls and rational conversions.
-- `field_specification.rs`: field marker contract and rational intervals.
+- `field_specification.rs`: field marker contract and chosen-root endpoints.
 - `polynomial_arithmetic.rs`: polynomial reduction and inversion modulo the
   field polynomial.
 - `sign_ordering.rs`: exact sign decisions by rational interval refinement.
@@ -93,8 +95,8 @@ cargo run -p algebraic-numbers --example q_sqrt5_vector
 
 The `q_sqrt5_*` tests and example witness the current ergonomics target:
 `Vector4<Qsqrt5> + Vector4<Qsqrt5>`, `root * root == 5`, conversion from
-`i64` and `BigRational`, exact sign/order around `2 < sqrt(5) < 3`, and
-division by a nonzero algebraic value.
+`i64` and `BigRational`, `zero()`, `one()`, assignment operators, exact
+sign/order around `2 < sqrt(5) < 3`, and division by a nonzero algebraic value.
 
 The `kiss_api_style` test is a deliberately small regression guard for repeated
 review feedback. It bans exact strings that previously made the public API or

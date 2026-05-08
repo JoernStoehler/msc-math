@@ -44,6 +44,18 @@ fn public_api_does_not_reintroduce_recent_kiss_violations() {
                 reason: "the public constructor for the chosen real root is root()",
             },
             Forbidden {
+                needle: "pub fn coeffs",
+                reason: "public API should not expose coefficient storage without a current caller",
+            },
+            Forbidden {
+                needle: "pub fn from_rational",
+                reason: "From<BigRational> is the public rational conversion",
+            },
+            Forbidden {
+                needle: "pub fn inverse",
+                reason: "division is the advertised public operation",
+            },
+            Forbidden {
                 needle: "impl_scalar_ops",
                 reason:
                     "use explicit Qsqrt5::from(..) conversion instead of scalar operator mixing",
