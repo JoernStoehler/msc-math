@@ -20,8 +20,21 @@ Useful first tests live under `tests/q_sqrt5_*`. The runnable example
 `nalgebra::Vector4<Algebraic<Sqrt5>>`.
 
 `SPEC.md` is the normative contract: feature contract and semantic contract.
-`ACCEPTANCE.md` is the executable evidence checklist. `DESIGN_NOTES.md` is
-non-normative rationale for non-obvious choices and rejected alternatives.
+`DESIGN_NOTES.md` is non-normative rationale for non-obvious choices and
+rejected alternatives.
+
+Verification:
+
+```bash
+cargo test -p algebraic-numbers
+cargo clippy -p algebraic-numbers --all-targets -- -D warnings
+cargo run -p algebraic-numbers --example q_sqrt5_vector
+```
+
+The `q_sqrt5_*` tests and example should witness the current ergonomics target:
+`Vector4<Qsqrt5> + Vector4<Qsqrt5>`, `alpha * alpha == 5`, scalar mixing with
+`i64` and `BigRational`, exact sign/order around `2 < sqrt(5) < 3`, and
+division by a nonzero algebraic value.
 
 Design notes:
 

@@ -6,8 +6,8 @@ This file is the normative crate contract. It has two parts:
 - a semantic contract: what must stay true for those features to mean the
   right thing.
 
-Executable checks live in `ACCEPTANCE.md`. Rationale and rejected alternatives
-live in `DESIGN_NOTES.md`.
+Executable checks live in `README.md`. Rationale and rejected alternatives live
+in `DESIGN_NOTES.md`.
 
 ## Purpose
 
