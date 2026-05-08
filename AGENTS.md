@@ -33,6 +33,7 @@ Planned deliverables:
 |   |   `-- tests/*.rs
 |   `-- algebraic-numbers/
 |       |-- README.md
+|       |-- DEVELOPMENT.md
 |       |-- Cargo.toml
 |       |-- src/*.rs
 |       |-- benches/*.rs
@@ -90,6 +91,8 @@ Planned deliverables:
 
 - `AGENTS.md`: root instruction map. This repo does not use nested `AGENTS.md`.
 - `Cargo.toml`, `**/Cargo.toml`: Rust workspace and package manifests.
+- `**/README.md`: consumer-facing entry point for normal use.
+- `**/DEVELOPMENT.md`: maintainer-facing notes for changing internals.
 - `thesis/`: publishable thesis. Self-contained, assets and text are copied
   deliberately instead of linking to `experiments/`, `formal/`, etc.
 - `crates/`: internal Rust crates with stable code shared across experiments.
