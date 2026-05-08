@@ -1,4 +1,4 @@
-# algebraic-numbers crate definition
+# algebraic-numbers spec
 
 This file is the crate spec. It has two normative parts:
 

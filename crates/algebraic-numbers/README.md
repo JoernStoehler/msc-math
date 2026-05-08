@@ -19,9 +19,9 @@ Useful first tests live under `tests/q_sqrt5_*`. The runnable example
 `examples/q_sqrt5_vector.rs` shows the intended ergonomics for
 `nalgebra::Vector4<Algebraic<Sqrt5>>`.
 
-The sufficient and necessary crate definition is in `CRATE_DEFINITION.md`.
-Approach comparisons and rejected designs are recorded in
-`DESIGN_NOTES.md`. Update that file for non-obvious choices only.
+`SPEC.md` is the normative contract: feature contract, semantic contract, and
+evidence checks. `DESIGN_NOTES.md` is non-normative rationale for non-obvious
+choices and rejected alternatives.
 
 Design notes:
 
