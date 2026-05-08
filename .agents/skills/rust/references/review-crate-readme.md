@@ -2,15 +2,9 @@
 
 ## How To Use
 
-Use this reference when reviewing a Rust crate `README.md` before declaring a
-crate or API change done. The actual reusable prompt starts at `## Prompt`.
-
-## Source Status
-
-This prompt preserves the concrete critic shape produced during the
-`crates/algebraic-numbers` README review session in May 2026. It is a Rust
-crate README prompt, not a general documentation theory; adapt it when a crate
-has a different audience or evidence surface.
+Use this reference when reviewing a Rust crate `README.md`, including API
+changes that touched or relied on README guidance. The actual reusable prompt
+starts at `## Prompt`.
 
 ## Prompt
 
@@ -18,9 +12,9 @@ has a different audience or evidence surface.
 
 ## Review Objective
 
-Review a crate README before the worker declares the crate done. The review
-should catch KISS/YAGNI and consumer-ergonomics issues that would otherwise
-force Jörn to switch context after the fact.
+Review a crate README before the worker declares the README-facing part of the
+change done. The review should catch KISS/YAGNI and consumer-ergonomics issues
+that would otherwise force Jörn to switch context after the fact.
 
 ## Artifact Audience
 

@@ -2,16 +2,9 @@
 
 ## How To Use
 
-Use this reference when reviewing a Rust crate `DEVELOPMENT.md` before
-declaring a crate or API change done. The actual reusable prompt starts at
-`## Prompt`.
-
-## Source Status
-
-This prompt preserves the concrete critic shape produced during the
-`crates/algebraic-numbers` DEVELOPMENT review session in May 2026. It is a Rust
-crate maintainer-docs prompt, not a general documentation theory; adapt it when
-a crate has a different audience or evidence surface.
+Use this reference when reviewing a Rust crate `DEVELOPMENT.md`, including API
+changes that touched or relied on DEVELOPMENT guidance. The actual reusable
+prompt starts at `## Prompt`.
 
 ## Prompt
 
@@ -19,10 +12,10 @@ a crate has a different audience or evidence surface.
 
 ## Review Objective
 
-Review a crate DEVELOPMENT.md before the worker declares the crate done. The
-review should catch scope, evidence, and maintainability issues that would
-otherwise make future agents redo context reconstruction or preserve bad API
-decisions.
+Review a crate DEVELOPMENT.md before the worker declares the maintainer-docs
+part of the change done. The review should catch scope, evidence, and
+maintainability issues that would otherwise make future agents redo context
+reconstruction or preserve bad API decisions.
 
 ## Artifact Audience
 
@@ -74,8 +67,10 @@ Look for:
   re-teach consumer usage better left in README;
 - verification text that names commands but not what each command witnesses, or
   claims evidence that tests/examples do not actually provide;
-- rejected/deferred approaches that do not compare against the accepted choice,
-  do not state the reason, or preserve breadcrumbs that are easy to reproduce;
+- rejected/deferred approaches that do not compare against the accepted choice;
+- rejected/deferred approaches that do not state the reason;
+- rejected/deferred approaches whose breadcrumbs do not save future reviewer
+  labor;
 - claims with unclear epistemic status: normative objective, current evidence,
   predicted cost, semantic reason, implementation evidence, and open decision
   should be distinguishable;
