@@ -41,10 +41,12 @@ impl RealAlgebraicField for Sqrt5 {
     const DEGREE: usize = 2;
 
     fn polynomial() -> Vec<BigRational> {
+        // Low-to-high coefficients for t^2 - 5.
         vec![q(-5), q(0), q(1)]
     }
 
     fn isolating_interval() -> RationalInterval {
+        // Select the positive root sqrt(5).
         RationalInterval::new(q(2), q(3))
     }
 }
