@@ -4,23 +4,26 @@ This file is for maintainers. The README is for consumers.
 
 ## Instrumental Objective
 
-The crate should make exact scalar computations for thesis experiments boring:
+Normative objective: support the current thesis need for exact scalar
+computations in statically chosen real algebraic fields. Required properties:
 field choices are explicit, equality/order decisions are exact, and ordinary
-Rust/nalgebra syntax works for small vectors. It should not become a general
-computer-algebra system. A reviewer should be able to inspect this crate and
-see why exact code paths do not inherit floating-point tolerance choices.
+Rust/nalgebra syntax works for small vectors.
+
+Scope boundary: this crate is not a general computer-algebra system. The
+evidence target is that the current code and tests let a reviewer check that
+exact code paths do not inherit floating-point tolerance choices.
 
 That backchains to three local objectives:
 
 - exact scalar semantics are explicit and reviewable;
-- the public API is small enough to audit before thesis submission;
+- the public API remains close to the capability list in the spec below;
 - adding broader algebraic functionality requires a current caller and a local
   rationale in this file.
 
 ## Spec
 
-The crate is complete for the current thesis use if and only if it provides
-exactly these capabilities:
+Normative claim: the crate is complete for the current thesis use if and only
+if it provides exactly these capabilities:
 
 1. `ExactScalar`, an explicit opt-in trait for exact scalar values.
 2. `RealAlgebraicField`, a static field specification with:
@@ -60,9 +63,9 @@ Implementation files are split by responsibility:
 - `sign_ordering.rs`: exact sign decisions by rational interval refinement.
 - `exact_scalar.rs`: explicit exact scalar trait and impls.
 
-This structure is intentionally predictable rather than abstract. A future
-maintainer should be able to edit arithmetic, sign/order, or field contracts
-without reading the whole crate.
+Design intent: this structure is predictable rather than abstract. The expected
+maintenance path is to start with the file matching the behavior to change:
+arithmetic, sign/order, or field contracts.
 
 ## Semantic Guardrails
 
@@ -88,7 +91,7 @@ cargo clippy -p algebraic-numbers --all-targets -- -D warnings
 cargo run -p algebraic-numbers --example q_sqrt5_vector
 ```
 
-The `q_sqrt5_*` tests and example should witness the current ergonomics target:
+The `q_sqrt5_*` tests and example witness the current ergonomics target:
 `Vector4<Qsqrt5> + Vector4<Qsqrt5>`, `alpha * alpha == 5`, scalar mixing with
 `i64` and `BigRational`, exact sign/order around `2 < sqrt(5) < 3`, and
 division by a nonzero algebraic value.
@@ -102,65 +105,69 @@ they add information.
 
 ### Runtime Parent Objects
 
-Rejected for now. We do not need Sage-style runtime field construction. Every
-element would need to carry or reference parent data, which makes ownership,
-equality, and serialization less predictable. Static field markers prevent
-accidental mixing of incompatible fields at compile time.
+Rejected for now. Current evidence: no current test, example, or thesis-facing
+consumer in this crate needs Sage-style runtime field construction. Predicted
+cost: every element would need to carry or reference parent data, which makes
+ownership, equality, and serialization less predictable. Static field markers
+prevent ordinary arithmetic from mixing incompatible fields at compile time.
 
 ### A Single Dynamic `Algebraic` Enum
 
-Rejected for now. Every operation would need dynamic field compatibility
-checks. Values in one known field become less explicit at call sites. This
-crate is for fixed real fields, not arbitrary algebraic number normalization
-across fields.
+Rejected for now. Predicted cost: every operation would need dynamic field
+compatibility checks. Ergonomics evidence: the current Qsqrt5 example is
+explicit with `type Qsqrt5 = Algebraic<Sqrt5>`. Current scope is fixed real
+fields, not arbitrary algebraic number normalization across fields.
 
 ### Associated Const Degree With Fixed-Size Arrays
 
-Deferred. Stable Rust makes `coeffs: [BigRational; F::DEGREE]` awkward because
-associated consts from type parameters cannot be used freely as array lengths.
-The runtime length check is cheap relative to `BigRational` arithmetic and
-polynomial operations. `Algebraic<F>` is simpler than
-`Algebraic<F, const N: usize>`.
+Deferred. Rust limitation: stable Rust does not allow the straightforward
+`coeffs: [BigRational; F::DEGREE]` shape because associated consts from type
+parameters cannot be used freely as array lengths. Predicted cost: the runtime
+length check is cheap relative to `BigRational` arithmetic and polynomial
+operations. Ergonomics judgment: `Algebraic<F>` is simpler than
+`Algebraic<F, const N: usize>` for current callers.
 
 Breadcrumb: this can be revisited if profiling shows coefficient-vector
 allocation matters.
 
 ### Blanket `impl ExactScalar for T where ...`
 
-Rejected. Exactness is a semantic promise, not just a set of operators.
-Explicit impls make it obvious why `BigRational` and `Algebraic<F>` are
-accepted while `f64` is not.
+Rejected. Semantic reason: exactness is a promise, not just a set of operators.
+Explicit impls make it locally checkable why `BigRational` and `Algebraic<F>`
+are accepted while `f64` is not.
 
 ### `f64` as an Exact Scalar
 
-Rejected. Equality and ordering for rounded values do not provide the exact
-decision guarantees expected by exact algorithms. Approximate numeric code
-should use a separate API with explicit tolerances or error bounds.
+Rejected. Semantic reason: equality and ordering for rounded values do not
+provide the exact decision guarantees expected by exact algorithms. Project
+policy: approximate numeric code belongs in a separate API with explicit
+tolerances or error bounds.
 
 ### Implementing nalgebra `RealField` or `ComplexField`
 
-Rejected. nalgebra's stronger numeric traits are shaped around approximate
+Rejected. API reason: nalgebra's stronger numeric traits include approximate
 floating-point functionality such as epsilons, ulps, and transcendental
-functions. We only need nalgebra containers and ordinary arithmetic syntax.
+functions. Current need: nalgebra containers and ordinary arithmetic syntax.
 
 ### Float Sign Checks for Ordering
 
-Rejected. Evaluating at an `f64` approximation of `alpha` loses exactness.
-Near-zero cases would require caller-chosen tolerances, which is exactly what
-this crate avoids.
+Rejected. Semantic reason: evaluating at an `f64` approximation of `alpha`
+loses exactness. Near-zero cases would require caller-chosen tolerances, which
+is exactly what this crate avoids.
 
 Accepted alternative: refine the rational isolating interval until interval
 evaluation determines the sign.
 
 ### One-Shot Interval Evaluation for Sign
 
-Rejected. The implementation needs a refinement loop because the initial
-interval can contain both signs for the represented polynomial. Returning
-indeterminate would leak interval-analysis concerns into an exact ordered
-scalar API.
+Rejected. Implementation evidence: the current sign code uses a refinement loop
+because the initial interval can contain both signs for the represented
+polynomial. Returning indeterminate would leak interval-analysis concerns into
+an exact ordered scalar API.
 
 ### Matrix Solve, Diagonalization, and Eigen APIs
 
-Deferred. No immediate caller. Diagonalization over `Q[alpha]` may require
-explicit field extensions, which this crate intentionally does not construct.
-Exact scalar behavior should settle before adding linear algebra algorithms.
+Deferred. Current evidence: no immediate caller in this crate. Mathematical
+risk: diagonalization over `Q[alpha]` may require explicit field extensions,
+which this crate intentionally does not construct. Sequencing judgment: settle
+exact scalar behavior before adding linear algebra algorithms.
