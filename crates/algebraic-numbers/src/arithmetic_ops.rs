@@ -5,12 +5,12 @@ use num_traits::{One, Zero};
 
 use crate::algebraic_element::Algebraic;
 use crate::exact_scalar::ExactScalar;
-use crate::field_specification::RealAlgebraicField;
+use crate::field_specification::{field_degree, RealAlgebraicField};
 use crate::polynomial_arithmetic::multiply_mod_field;
 
 impl<F: RealAlgebraicField> Zero for Algebraic<F> {
     fn zero() -> Self {
-        Self::from_coeffs_unchecked(vec![BigRational::zero(); F::DEGREE])
+        Self::from_coeffs_unchecked(vec![BigRational::zero(); field_degree::<F>()])
     }
 
     fn is_zero(&self) -> bool {
@@ -20,7 +20,7 @@ impl<F: RealAlgebraicField> Zero for Algebraic<F> {
 
 impl<F: RealAlgebraicField> One for Algebraic<F> {
     fn one() -> Self {
-        let mut coeffs = vec![BigRational::zero(); F::DEGREE];
+        let mut coeffs = vec![BigRational::zero(); field_degree::<F>()];
         coeffs[0] = BigRational::one();
         Self::from_coeffs_unchecked(coeffs)
     }

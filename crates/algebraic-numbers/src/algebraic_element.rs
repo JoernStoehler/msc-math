@@ -5,7 +5,7 @@ use std::marker::PhantomData;
 use num_rational::BigRational;
 use num_traits::{One, Zero};
 
-use crate::field_specification::RealAlgebraicField;
+use crate::field_specification::{field_degree, RealAlgebraicField};
 use crate::polynomial_arithmetic::inverse_mod_monic;
 use crate::sign_ordering::sign_at_field_root;
 
@@ -20,19 +20,20 @@ pub struct Algebraic<F: RealAlgebraicField> {
 
 impl<F: RealAlgebraicField> Algebraic<F> {
     pub fn new<const N: usize>(coeffs: [BigRational; N]) -> Self {
-        assert_eq!(N, F::DEGREE);
+        assert_eq!(N, field_degree::<F>());
         Self::from_coeffs_unchecked(coeffs.into_iter().collect())
     }
 
     pub(crate) fn from_rational(rational: BigRational) -> Self {
-        let mut coeffs = vec![BigRational::zero(); F::DEGREE];
+        let mut coeffs = vec![BigRational::zero(); field_degree::<F>()];
         coeffs[0] = rational;
         Self::from_coeffs_unchecked(coeffs)
     }
 
     pub fn root() -> Self {
-        assert!(F::DEGREE > 1);
-        let mut coeffs = vec![BigRational::zero(); F::DEGREE];
+        let degree = field_degree::<F>();
+        assert!(degree > 1);
+        let mut coeffs = vec![BigRational::zero(); degree];
         coeffs[1] = BigRational::one();
         Self::from_coeffs_unchecked(coeffs)
     }
@@ -43,7 +44,7 @@ impl<F: RealAlgebraicField> Algebraic<F> {
     }
 
     pub(crate) fn from_coeffs_unchecked(coeffs: Vec<BigRational>) -> Self {
-        debug_assert_eq!(coeffs.len(), F::DEGREE);
+        debug_assert_eq!(coeffs.len(), field_degree::<F>());
         Self {
             coeffs,
             field: PhantomData,

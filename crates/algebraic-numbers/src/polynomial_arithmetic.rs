@@ -1,7 +1,7 @@
 use num_rational::BigRational;
 use num_traits::{One, Zero};
 
-use crate::field_specification::RealAlgebraicField;
+use crate::field_specification::{field_degree, RealAlgebraicField};
 
 /// Multiply two field elements represented by coefficient vectors and reduce
 /// modulo the field polynomial.
@@ -9,7 +9,7 @@ pub(crate) fn multiply_mod_field<F: RealAlgebraicField>(
     left: &[BigRational],
     right: &[BigRational],
 ) -> Vec<BigRational> {
-    let degree = F::DEGREE;
+    let degree = field_degree::<F>();
     let mut product = vec![BigRational::zero(); 2 * degree - 1];
 
     for (i, left_coeff) in left.iter().enumerate() {
@@ -66,7 +66,7 @@ pub(crate) fn polynomial_eval(coeffs: &[BigRational], x: &BigRational) -> BigRat
 }
 
 fn reduce_monic<F: RealAlgebraicField>(mut coeffs: Vec<BigRational>) -> Vec<BigRational> {
-    let degree = F::DEGREE;
+    let degree = field_degree::<F>();
     let polynomial = F::polynomial();
 
     assert_eq!(polynomial.len(), degree + 1);

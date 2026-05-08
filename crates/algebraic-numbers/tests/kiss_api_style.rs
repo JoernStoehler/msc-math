@@ -64,6 +64,10 @@ fn public_api_does_not_reintroduce_recent_kiss_violations() {
                 needle: "pub enum Sign",
                 reason: "std::cmp::Ordering is the built-in exact trichotomy type",
             },
+            Forbidden {
+                needle: "const DEGREE",
+                reason: "the polynomial already determines the field degree",
+            },
         ],
     );
 }

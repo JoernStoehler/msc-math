@@ -27,7 +27,6 @@ if it provides exactly these capabilities:
 
 1. `ExactScalar`, an explicit opt-in trait for exact scalar values.
 2. `RealAlgebraicField`, a static field specification with:
-   - a degree;
    - a monic minimal polynomial over `Q`;
    - a rational isolating interval for the chosen real root.
 3. `Algebraic<F>`, an element of that field represented by rational
@@ -125,11 +124,10 @@ compatibility checks. Ergonomics evidence: the current Qsqrt5 example is
 explicit with `type Qsqrt5 = Algebraic<Sqrt5>`. Current scope is fixed real
 fields, not arbitrary algebraic number normalization across fields.
 
-### Associated Const Degree With Fixed-Size Arrays
+### Fixed-Size Coefficient Arrays
 
-Deferred. Rust limitation: stable Rust does not allow the straightforward
-`coeffs: [BigRational; F::DEGREE]` shape because associated consts from type
-parameters cannot be used freely as array lengths. Predicted cost: the runtime
+Deferred. Rust limitation: stable Rust does not allow a straightforward
+`[BigRational; field_degree::<F>()]` storage shape. Predicted cost: the runtime
 length check is cheap relative to `BigRational` arithmetic and polynomial
 operations. Ergonomics judgment: `Algebraic<F>` is simpler than
 `Algebraic<F, const N: usize>` for current callers.
