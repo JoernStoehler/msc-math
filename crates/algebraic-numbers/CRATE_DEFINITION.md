@@ -1,13 +1,14 @@
 # algebraic-numbers crate definition
 
-This crate is in scope if and only if each item below stays true.
+This file is the evaluation checklist for the crate. Each item should add
+distinct information; duplicated requirements make this a worse specification.
 
 ## Definition
 
 `algebraic-numbers` provides exact scalar types for computations in one
 statically specified real algebraic field `Q[alpha]` at a time.
 
-The crate is complete for the current thesis use when it provides:
+The crate is complete for the current thesis use if and only if it provides:
 
 1. `ExactScalar`, an explicit opt-in trait for exact scalar values.
 2. `RealAlgebraicField`, a static field specification with:
@@ -25,41 +26,12 @@ The crate is complete for the current thesis use when it provides:
 5. Ordinary nalgebra container ergonomics, demonstrated by
    `Vector4<Algebraic<Sqrt5>>`.
 
-Anything else is out of scope until a concrete caller needs it.
+The crate must not add capabilities outside that list unless there is a current
+caller or a short `DESIGN_NOTES.md` entry explaining the scope change.
 
-## Non-Goals
+## Semantic Guardrails
 
-The crate must not become:
-
-- a runtime computer-algebra parent/ring system;
-- a system for automatically constructing larger fields;
-- an approximate numeric layer;
-- an `f64` exact-scalar adapter;
-- a nalgebra `RealField`/`ComplexField` implementation;
-- a matrix solve, eigenvalue, or diagonalization crate.
-
-## Actionable Acceptance Checks
-
-A change preserves the crate definition when all applicable checks pass:
-
-```bash
-cargo test -p algebraic-numbers
-cargo clippy -p algebraic-numbers --all-targets -- -D warnings
-cargo run -p algebraic-numbers --example q_sqrt5_vector
-```
-
-The test/example surface must continue to show:
-
-- `Vector4<Qsqrt5> + Vector4<Qsqrt5>`;
-- `alpha * alpha == 5` in `Q[sqrt(5)]`;
-- `2 * alpha`, `alpha * BigRational`, and `BigRational * alpha`;
-- exact sign and ordering around `2 < sqrt(5) < 3`;
-- division by a nonzero `Algebraic<F>`.
-
-## Guardrails Against Gameable Compliance
-
-A change is not acceptable merely because the commands pass. It must also keep
-these semantic facts true:
+Passing tests is not sufficient if these facts stop being true:
 
 - `ExactScalar` is explicit opt-in. Do not add a blanket impl.
 - `f64` does not implement `ExactScalar`.
@@ -70,5 +42,22 @@ these semantic facts true:
   polynomial contract.
 - Ordering and sign are exact; they must not depend on floating-point
   approximations or caller-provided tolerances.
-- Adding a new capability requires either a current caller or a short entry in
-  `DESIGN_NOTES.md` explaining why the scope changed.
+
+## Evidence Checks
+
+Run:
+
+```bash
+cargo test -p algebraic-numbers
+cargo clippy -p algebraic-numbers --all-targets -- -D warnings
+cargo run -p algebraic-numbers --example q_sqrt5_vector
+```
+
+The `q_sqrt5_*` tests and example must cover exactly the current public
+ergonomics target:
+
+- `Vector4<Qsqrt5> + Vector4<Qsqrt5>`;
+- `alpha * alpha == 5` in `Q[sqrt(5)]`;
+- `2 * alpha`, `alpha * BigRational`, and `BigRational * alpha`;
+- exact sign and ordering around `2 < sqrt(5) < 3`;
+- division by a nonzero `Algebraic<F>`.
