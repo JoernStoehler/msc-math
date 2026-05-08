@@ -1,5 +1,5 @@
 ---
-name: rust-conventions
+name: rust
 description: Use when Codex writes, edits, reviews, or delegates Rust work in this repo, especially crates, Rust experiments, API targets, tests, benches, numerical code, or Rust comments that claim mathematical meaning.
 ---
 

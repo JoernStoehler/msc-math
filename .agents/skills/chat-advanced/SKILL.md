@@ -1,5 +1,5 @@
 ---
-name: chat-conventions
+name: chat-advanced
 description: Use when Codex communicates with Jörn in this repo for planning, investigation reports, status updates, postmortems, feedback responses, process proposals, documentation proposals, or decisions about agent behavior. Applies to chat output, not durable repo prose.
 ---
 

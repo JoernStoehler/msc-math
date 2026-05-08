@@ -114,5 +114,5 @@ Interner Vermerk:
   exemplars from the Ausgabebescheid or the "one printed copy fewer + extra CD"
   option.
 - TODO(Jörn): if the university expects a USB stick rather than a CD for the repo
-  or PDF bundle, record that current instruction in `thesis/submission/README.md`
+  or PDF bundle, record that current instruction in `tasks/submit-thesis.md`
   and treat the PDF form's CD wording as historical form wording.

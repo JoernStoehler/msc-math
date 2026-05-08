@@ -1,5 +1,5 @@
 ---
-name: formal-math-conventions
+name: formal-math
 description: Use when Codex writes, edits, reviews, or delegates review of mathematical writing in this repo, especially `formal/*.tex`, research proof notes, theorem statements, proof sketches, verification-status comments, or code comments that claim correspondence with formal mathematics.
 ---
 
@@ -42,7 +42,7 @@ description: Use when Codex writes, edits, reviews, or delegates review of mathe
 ```text
 Required cwd: /workspaces/msc-math
 
-Use $formal-math-conventions to review the pruning-correctness writeup.
+Use $formal-math to review the pruning-correctness writeup.
 
 Review surface:
 - formal/main.tex

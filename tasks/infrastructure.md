@@ -10,7 +10,7 @@ Context: non-thesis-spine work should stay bounded during finish mode.
 - State: future by default.
 - Last updated: 2026-05-03.
 - Source surfaces: `AGENTS.md`, `.codex/config.toml`, `.agents/skills/`,
-  `.codex/agents/`, `crates/MAP.md`, `experiments/MAP.md`, `ROADMAP.md`,
+  `.codex/agents/`, `crates/MAP.md`, `experiments/MAP.md`, `tasks/MAP.md`,
   `tasks/README.md`.
 - Refresh when: agent routing, task-bundle conventions, architecture map, or
   repo-maintenance policy changes.
@@ -22,7 +22,7 @@ Context: non-thesis-spine work should stay bounded during finish mode.
   or a direct writing blocker.
   Source: finish-mode reset.
   Why it matters: prevents maintainability work from expanding thesis closeout.
-- [accepted 2026-04-24] `ROADMAP.md` + `tasks/*.md` are the task-navigation
+- [accepted 2026-04-24] `tasks/MAP.md` + `tasks/*.md` are the task-navigation
   layer; the legacy `TASKS.md` pointer was deleted after stale references were
   migrated.
   Source: Jorn task-system refactor request.
@@ -133,7 +133,7 @@ Context: non-thesis-spine work should stay bounded during finish mode.
 
 | item | state | value class | owner/gate | next action | source |
 | --- | --- | --- | --- | --- | --- |
-| Task-system migration | `[done]` | map input | current session | Legacy TASKS/FINISH were removed; use ROADMAP and topic bundles. | `tasks/README.md`, `ROADMAP.md` |
+| Task-system migration | `[done]` | map input | current session | Legacy TASKS/FINISH were removed; use `tasks/MAP.md` and topic bundles. | `tasks/README.md`, `tasks/MAP.md` |
 | PM/research convention refactor | `[done]` | map input | current session | Added the map/task/research layer and task outcome conventions. Old protocol-skill drafts were deleted during the GPT-5.5 harness shrink; use the live root/map/task surfaces instead. | `AGENTS.md`, `research/INDEX.md`, `tasks/README.md` |
 | Results migration | `[done]` | map input | current session | `RESULTS.md` was deleted after distributing story interpretation and obligations to research/tasks/final verification surfaces. | `research/INDEX.md`, `tasks/*.md`, `tasks/verify-thesis-done.md` |
 | Cache-surface audit | `[done]` | map input | current session | Deleted stale root/generated maps, split subtree maps, renamed the research story index, and added the cached-map maintenance workflow. | `crates/MAP.md`, `experiments/MAP.md`, `tasks/README.md`, `research/INDEX.md` |

@@ -1,6 +1,6 @@
 ---
 name: harness-engineering
-description: Use when Codex edits, reviews, or proposes changes to repo-local harness material such as `AGENTS.md`, `.agents/skills/`, `.codex/`, task-map conventions, subagent prompts, review packets, process guidance, or agent-facing documentation. Not needed for ordinary use of the repo.
+description: Use when Codex edits, reviews, or proposes changes to repo-local harness material such as `AGENTS.md`, `.agents/skills/*/SKILL.md`, `.codex/agents/*.toml`. Not needed for reading and using harness material. Not needed for editing other files.
 ---
 
 # Harness Engineering

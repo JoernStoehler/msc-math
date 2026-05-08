@@ -1,5 +1,5 @@
 <!--
-Purpose: agent-facing project roadmap for the master-thesis closeout.
+Purpose: agent-facing task map for the master-thesis closeout.
 Context: this is the navigation layer for current mini-roadmaps under tasks/.
 It is not the literal done truth-spec, not the thesis story index, and not a
 complete history of old task rows.
@@ -14,18 +14,18 @@ Writing/update rules:
 Freshness rules:
 - update this file when a task bundle changes status or priority
 - update task bundles when source truth changes
-- if ROADMAP.md and a task bundle disagree, trust the bundle and refresh this
+- if this file and a task bundle disagree, trust the bundle and refresh this
   file
 -->
 
-# ROADMAP.md
+# Tasks Map
 
 ## Status
 
 - State: finish-mode roadmap scaffold.
-- Last updated: 2026-05-04.
-- Target: finish the scoped master-thesis project by 2026-05-14. Finishing by
-  2026-05-07 is plausible but not assumed.
+- Last updated: 2026-05-08.
+- Target: finish the scoped master-thesis project by 2026-05-14. The earlier
+  optimistic 2026-05-07 finish date has passed.
 - Phase 1 done-state basis was accepted by Jorn on 2026-04-24, modulo inline
   external TODOs.
 - Phase 2 is current-state and Jorn-knowledge migration before selecting more
@@ -36,15 +36,15 @@ Freshness rules:
 | Surface | Role |
 | --- | --- |
 | `tasks/verify-thesis-done.md` | once-run final thesis-done gate |
-| `ROADMAP.md` | overview and routing surface for humans and agents |
+| `tasks/MAP.md` | task overview and routing surface for humans and agents |
 | `tasks/*.md` | topic mini-roadmaps and cached decision context |
 | `research/INDEX.md` and `research/*.md` | thesis story index, detailed interpretation, proof-route state, negative results, and research caches |
 | old harness extraction: verification packet candidates | reusable quality-measurement packets and operational definitions |
-| `thesis/submission/README.md` | submission/admin forms, source links, and external-clock TODOs |
+| `tasks/submit-thesis.md` | submission/admin forms, source links, and external-clock TODOs |
 | `crates/MAP.md` and `experiments/MAP.md` | subtree navigation caches for durable code and experiment packages |
 
-The old `TASKS.md` mega-tracker was deleted after migration. Use this roadmap
-and the topic bundles instead.
+The old `TASKS.md` mega-tracker was deleted after migration. Use this map and
+the topic bundles instead.
 
 ## Current Closeout Rule
 

@@ -18,7 +18,7 @@ Ground truth stays elsewhere:
 - source files and data files: code/data evidence.
 - `research/*.md`: interpretation, proof-route state, decision history, and
   negative results.
-- `thesis/submission/README.md`: submission/admin source links.
+- `tasks/submit-thesis.md`: submission/admin source links.
 
 ## Keep Or Delete
 

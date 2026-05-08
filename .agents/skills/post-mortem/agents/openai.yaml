@@ -1,0 +1,4 @@
+interface:
+  display_name: "Post Mortem"
+  short_description: "Write useful postmortems for Jörn"
+  default_prompt: "Use $post-mortem to write a concise postmortem for this session."

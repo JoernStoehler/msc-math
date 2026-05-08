@@ -11,7 +11,7 @@ Context: this file is optimized for repeated reading and one final execution.
 - State: blocked until thesis assembly and topic obligations close.
 - Last updated: 2026-04-25.
 - Source surfaces: `research/INDEX.md`, `tasks/*.md`, `thesis/`,
-  old harness extraction: verification packet candidates, `thesis/submission/README.md`.
+  old harness extraction: verification packet candidates, `tasks/submit-thesis.md`.
 - Refresh when: a thesis story, proof obligation, thesis prose, repo promise,
   submission requirement, or archive requirement changes.
 
@@ -47,8 +47,8 @@ accepts a named caveat as non-blocking for submission.
 | Claim support checked | The reusable thesis-story support pass reports no blocking missing proof, missing evidence, stale interpretation, or uncaveated overclaim. | old harness extraction: verification packet candidate `thesis-stories-are-supported.md` |
 | References and provenance checked | Bibliography, cross-references, theorem/proof references, figures, tables, experiment artifacts, datasets, and code references resolve at the level the thesis uses them. | old harness extraction: verification packet candidate `references-resolve.md`, old harness extraction: verification packet candidate `data-and-figures-are-traceable.md` |
 | Repo promises checked | Every thesis-facing repo, code, command, reproducibility, and archive promise is true or caveated. | old harness extraction: verification packet candidate `repo-promises-are-truthful.md`, `tasks/reproducibility.md`, `tasks/infrastructure.md` |
-| External submission prerequisites known | Submission requirements are known enough that no thesis-content work remains hidden behind an administrative unknown. | `tasks/submit-thesis.md`, `thesis/submission/README.md` |
-| Open work classified | Every remaining open row in `tasks/*.md` is either non-thesis future/follow-up, external-clock submission mechanics, or explicitly accepted as non-blocking by Jorn. | `ROADMAP.md`, `tasks/*.md` |
+| External submission prerequisites known | Submission requirements are known enough that no thesis-content work remains hidden behind an administrative unknown. | `tasks/submit-thesis.md`, `tasks/submit-thesis.md` |
+| Open work classified | Every remaining open row in `tasks/*.md` is either non-thesis future/follow-up, external-clock submission mechanics, or explicitly accepted as non-blocking by Jorn. | `tasks/MAP.md`, `tasks/*.md` |
 | Jorn final acceptance | Jorn says the thesis is ready to submit and no remaining thesis-scope work should block submission. | explicit Jorn decision |
 
 ## Work Map

@@ -22,7 +22,7 @@ Derived agent guidance:
 - preserve caveats and proof sketches when they determine what can honestly be
   claimed;
 - put execution status, ownership, commands, and final verification gates in
-  `tasks/*.md`, `ROADMAP.md`, or the relevant research note instead.
+  `tasks/*.md`, `tasks/MAP.md`, or the relevant research note instead.
 
 The main things to optimize for:
 

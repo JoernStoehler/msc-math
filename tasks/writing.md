@@ -11,7 +11,7 @@ phase-2 repo/Jorn state maps.
 - State: map-input.
 - Last updated: 2026-05-05.
 - Source surfaces: `thesis/`, `research/INDEX.md`, `research/*.md`,
-  `tasks/*.md`, `tasks/verify-thesis-done.md`, `ROADMAP.md`.
+  `tasks/*.md`, `tasks/verify-thesis-done.md`, `tasks/MAP.md`.
 - Refresh when: thesis structure, retained claim set, or advisor feedback
   changes.
 

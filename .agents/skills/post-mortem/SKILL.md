@@ -1,5 +1,5 @@
 ---
-name: post-mortem-conventions
+name: post-mortem
 description: Use when Jörn asks for a postmortem, session reflection, lessons learned, avoidable work analysis, or follow-up suggestions after a Codex session.
 ---
 
@@ -47,6 +47,9 @@ generic advice without enough reason to assess it.
   imaginary counterfactuals.
 - Keep observations, interpretations, uncertainty, and suggestions
   distinguishable. Do not turn uncertainty into a neat story.
+- after sessions, reflect on what was necessary for success, and what was wasted effort
+- report a blameless post-mortem in chat, don't follow-up with high-risk actions
+- brainstorm, triage and present potential repo changes that affect future agents positively
 
 Here is a default shape:
 
