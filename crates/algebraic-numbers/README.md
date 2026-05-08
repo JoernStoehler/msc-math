@@ -19,9 +19,9 @@ Useful first tests live under `tests/q_sqrt5_*`. The runnable example
 `examples/q_sqrt5_vector.rs` shows the intended ergonomics for
 `nalgebra::Vector4<Algebraic<Sqrt5>>`.
 
-`SPEC.md` is the normative contract: feature contract, semantic contract, and
-evidence checks. `DESIGN_NOTES.md` is non-normative rationale for non-obvious
-choices and rejected alternatives.
+`SPEC.md` is the normative contract: feature contract and semantic contract.
+`ACCEPTANCE.md` is the executable evidence checklist. `DESIGN_NOTES.md` is
+non-normative rationale for non-obvious choices and rejected alternatives.
 
 Design notes:
 

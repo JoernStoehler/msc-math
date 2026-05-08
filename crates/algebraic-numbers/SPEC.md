@@ -1,14 +1,13 @@
 # algebraic-numbers spec
 
-This file is the crate spec. It has two normative parts:
+This file is the normative crate contract. It has two parts:
 
 - a feature contract: what the crate must provide;
 - a semantic contract: what must stay true for those features to mean the
   right thing.
 
-The evidence checks at the end are not the spec. They are executable witnesses
-for the current spec. Each item should add distinct information; duplicated
-requirements make this a worse specification.
+Executable checks live in `ACCEPTANCE.md`. Rationale and rejected alternatives
+live in `DESIGN_NOTES.md`.
 
 ## Purpose
 
@@ -52,25 +51,3 @@ The feature contract is not satisfied if these facts stop being true:
   polynomial contract.
 - Ordering and sign are exact; they must not depend on floating-point
   approximations or caller-provided tolerances.
-
-## Evidence Checks
-
-These checks are sufficient smoke evidence for the current feature and semantic
-contracts. They do not replace review of the contracts above.
-
-Run:
-
-```bash
-cargo test -p algebraic-numbers
-cargo clippy -p algebraic-numbers --all-targets -- -D warnings
-cargo run -p algebraic-numbers --example q_sqrt5_vector
-```
-
-The `q_sqrt5_*` tests and example must cover exactly the current public
-ergonomics target:
-
-- `Vector4<Qsqrt5> + Vector4<Qsqrt5>`;
-- `alpha * alpha == 5` in `Q[sqrt(5)]`;
-- `2 * alpha`, `alpha * BigRational`, and `BigRational * alpha`;
-- exact sign and ordering around `2 < sqrt(5) < 3`;
-- division by a nonzero `Algebraic<F>`.
