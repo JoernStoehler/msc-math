@@ -60,6 +60,20 @@ Avoid eigendecomposition for now. Exact eigendecomposition needs a field
 extension story, because a symmetric matrix over `Q[alpha]` can have eigenvalues
 outside `Q[alpha]`.
 
+## Decision States
+
+Use these labels when refining this note. "Not fixed yet" is too ambiguous.
+
+- Preferred, needs witness: the current best choice is clear enough to test, but
+  should not become API contract before a compile-time or runtime witness proves
+  it is ergonomic.
+- Defer until observed: a possible problem or optimization is real in principle,
+  but not worth designing for before a caller, large example, or failing test
+  shows it matters.
+- Decide with first implementation: several simple choices are plausible, and
+  the cheapest reliable tie-breaker is the first TDD pass rather than more
+  planning.
+
 ## Missing Feature Stack
 
 ### Row Reduction
@@ -73,6 +87,9 @@ Predictable approach: Gaussian elimination over `ExactScalar`, using exact
 nonzero checks for pivots. A simple row-echelon form is enough for rank and
 forward elimination; reduced row-echelon form is convenient for kernel and
 solve output. Start with dense matrices.
+
+Decision state: decide with first implementation. The algorithm family is fixed;
+the exact helper names and result structs should come from the first tests.
 
 Required scalar facts: exact zero and one, negation, addition, subtraction,
 multiplication, and division by a known nonzero pivot.
@@ -110,6 +127,8 @@ Status: missing.
 Why it matters: exact KKT, affine constraints, vertex reconstruction, and
 certificate code need exact solutions to `A x = b`.
 
+Decision state: preferred, needs witness.
+
 Predictable approach: augment `A` with `b`, row-reduce, and return an explicit
 outcome:
 
@@ -140,6 +159,8 @@ first public algorithm surface. `symplectic/` already uses those for dynamic
 linear systems, while `Vector4<T>` remains useful for fixed-dimensional geometry.
 Do not add parallel `Vec<Vec<T>>` APIs unless nalgebra ownership or conversion
 friction is observed in tests.
+
+Decision state for matrix shape: preferred, needs witness.
 
 ### Kernel / Nullspace Basis
 
@@ -172,6 +193,8 @@ coefficients large. Do not optimize for this before observing a real problem;
 keep the elimination code localized so a later measured fix does not rewrite
 every caller.
 
+Decision state for coefficient growth: defer until observed.
+
 Priority: lower than rank/solve/kernel.
 
 ### Symmetric Definiteness And Inertia
@@ -200,9 +223,16 @@ API pressure: a single `is_negative_definite` predicate may be enough for the
 first caller. If computing full inertia is the simpler internal route, expose
 only the part callers need unless the extra result removes complexity.
 
+Decision state: preferred public need, unresolved internal algorithm. The public
+need is exact `is_negative_definite`; the algorithm should be chosen by the first
+implementation proof/tests, not by chat preference.
+
 ### Eigenvalue Decomposition
 
 Status: intentionally deferred.
+
+Decision state: defer until a concrete caller proves rank, kernel, solve, and
+negative-definite checks are not enough.
 
 Why it matters: numerical KKT solvers use symmetric eigen decomposition, so
 agents may naturally look for an exact replacement.
