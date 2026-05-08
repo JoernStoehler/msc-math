@@ -104,8 +104,6 @@ Planned deliverables:
 - `.codex/agents/`: repo-local subagent templates (optional).
 - Harness files (`AGENTS.md`, `.agents/skills/**`, `.codex/agents/**`) are
   frozen unless Jörn explicitly asks for a harness edit.
-- Final summaries should list review passes performed, including review
-  subagents used or intentionally not used.
 - `.codex/worktrees/`: isolated worktrees for independent agent sessions.
 - `.devcontainer/`: local devcontainer with documentation.
 - `scripts/`: small repo helper commands.
@@ -123,6 +121,11 @@ They are not authoritative sources, and can be regenerated via subagent.
 - `crates/<crate>/MAP.md`: api and architecture.
 - `experiments/MAP.md`: tree of experiments and current status.
 - `thesis/MAP.md`: chapter structure and current status.
+
+## Review
+
+Final summaries should list review passes performed, including review subagents
+used or intentionally not used.
 
 ## Commands
 
