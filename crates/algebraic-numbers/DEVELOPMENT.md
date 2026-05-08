@@ -97,6 +97,8 @@ The `q_sqrt5_*` tests and example witness the current ergonomics target:
 `Vector4<Qsqrt5> + Vector4<Qsqrt5>`, `root * root == 5`, conversion from
 `i64` and `BigRational`, `zero()`, `one()`, assignment operators, exact
 sign/order around `2 < sqrt(5) < 3`, and division by a nonzero algebraic value.
+They also run a fixed grid of Q[sqrt(5)] field-law checks and sign/order checks
+against rational interval witnesses.
 
 The `kiss_api_style` test is a deliberately small regression guard for repeated
 review feedback. It bans exact strings that previously made the public API or

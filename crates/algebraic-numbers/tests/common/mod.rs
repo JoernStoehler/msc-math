@@ -35,3 +35,20 @@ pub fn ar(rational: i64, sqrt5_numer: i64, sqrt5_denom: i64) -> Qsqrt5 {
         BigRational::new(sqrt5_numer.into(), sqrt5_denom.into()),
     ])
 }
+
+pub fn samples() -> Vec<Qsqrt5> {
+    sample_coeffs()
+        .into_iter()
+        .map(|(rational, root_coeff)| a(rational, root_coeff))
+        .collect()
+}
+
+pub fn sample_coeffs() -> Vec<(i64, i64)> {
+    let mut values = Vec::new();
+    for rational in -2..=2 {
+        for root_coeff in -2..=2 {
+            values.push((rational, root_coeff));
+        }
+    }
+    values
+}

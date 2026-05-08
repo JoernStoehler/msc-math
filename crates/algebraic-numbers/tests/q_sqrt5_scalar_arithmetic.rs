@@ -1,6 +1,6 @@
 mod common;
 
-use common::{a, ar, q, Qsqrt5};
+use common::{a, ar, q, samples, Qsqrt5};
 use num_traits::{One, Zero};
 
 #[test]
@@ -24,4 +24,46 @@ fn zero_one_and_assignment_operators_are_available() {
     value *= Qsqrt5::from(5);
 
     assert_eq!(value, a(5, 0));
+}
+
+#[test]
+fn sampled_values_satisfy_field_laws() {
+    let values = samples();
+    let zero = Qsqrt5::zero();
+    let one = Qsqrt5::one();
+
+    for x in &values {
+        assert_eq!(x.clone() + zero.clone(), x.clone());
+        assert_eq!(x.clone() - x.clone(), zero);
+        assert_eq!(x.clone() * one.clone(), x.clone());
+        assert_eq!(x.clone() * zero.clone(), zero);
+
+        if !x.is_zero() {
+            assert_eq!(x.clone() / x.clone(), one);
+            assert_eq!(x.clone() * (one.clone() / x.clone()), one);
+        }
+    }
+
+    for x in &values {
+        for y in &values {
+            assert_eq!(x.clone() + y.clone(), y.clone() + x.clone());
+            assert_eq!(x.clone() * y.clone(), y.clone() * x.clone());
+            assert_eq!((x.clone() + y.clone()) - y.clone(), x.clone());
+
+            for z in &values {
+                assert_eq!(
+                    (x.clone() + y.clone()) + z.clone(),
+                    x.clone() + (y.clone() + z.clone())
+                );
+                assert_eq!(
+                    (x.clone() * y.clone()) * z.clone(),
+                    x.clone() * (y.clone() * z.clone())
+                );
+                assert_eq!(
+                    x.clone() * (y.clone() + z.clone()),
+                    x.clone() * y.clone() + x.clone() * z.clone()
+                );
+            }
+        }
+    }
 }
