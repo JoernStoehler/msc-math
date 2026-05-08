@@ -27,6 +27,12 @@ fn zero_one_and_assignment_operators_are_available() {
 }
 
 #[test]
+#[should_panic(expected = "cannot invert zero")]
+fn division_by_zero_panics() {
+    let _ = Qsqrt5::one() / Qsqrt5::zero();
+}
+
+#[test]
 fn sampled_values_satisfy_field_laws() {
     let values = samples();
     let zero = Qsqrt5::zero();
