@@ -4,14 +4,19 @@ This file is for maintainers. The README is for consumers.
 
 ## Instrumental Objective
 
-Normative objective: support the current thesis need for exact scalar
-computations in statically chosen real algebraic fields. Required properties:
-field choices are explicit, equality/order decisions are exact, and ordinary
-Rust/nalgebra syntax works for small vectors.
+Normative objective: define the small exact scalar API this branch keeps for
+statically chosen real algebraic fields. Required properties: field choices are
+explicit, equality/order decisions are exact, and ordinary Rust/nalgebra syntax
+works for small vectors.
 
 Scope boundary: this crate is not a general computer-algebra system. The
 evidence target is that the current code and tests let a reviewer check that
 exact code paths do not inherit floating-point tolerance choices.
+
+This branch intentionally contracts the older workspace API. Downstream callers
+of removed items such as `OrderedField`, `TanPiFifth`, `cmp_field`, and
+`canonical_element` are migration/removal work outside this crate-local API
+slice, not evidence that this crate should restore those surfaces.
 
 That backchains to three local objectives:
 
@@ -22,8 +27,8 @@ That backchains to three local objectives:
 
 ## Spec
 
-Normative claim: the crate is complete for the current thesis use if and only
-if it provides exactly these capabilities:
+Normative claim: the crate is complete for the current crate-local target if and
+only if it provides exactly these capabilities:
 
 1. `ExactScalar`, an explicit opt-in trait for exact scalar values.
 2. `RealAlgebraicField`, a static field specification with:
@@ -82,6 +87,9 @@ The contract is not satisfied if these facts stop being true:
   caller-provided tolerances.
 
 ## Verification
+
+These commands verify the crate-local API slice. They do not verify workspace
+callers that still import the removed older API.
 
 Run:
 
