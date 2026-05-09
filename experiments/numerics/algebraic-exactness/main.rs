@@ -57,7 +57,7 @@ fn polytope_row<F: CatalogField>(
     }
 }
 
-fn exact_kkt_row<F: CatalogField>(
+fn exact_kkt_row<F: CatalogField + 'static>(
     name: &str,
     sigma_label: &str,
     sigma: &[usize],

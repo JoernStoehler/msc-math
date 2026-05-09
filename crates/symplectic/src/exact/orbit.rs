@@ -107,10 +107,9 @@ fn compute_q_exact<F: ExactScalar>(dual_vertices: &[[F; 4]], sigma: &[usize], be
     let mut sum = F::zero();
     for i in 1..m {
         for j in 0..i {
-            sum = sum
-                + beta[i].clone()
-                    * beta[j].clone()
-                    * omega0(&dual_vertices[sigma[j]], &dual_vertices[sigma[i]]);
+            sum += beta[i].clone()
+                * beta[j].clone()
+                * omega0(&dual_vertices[sigma[j]], &dual_vertices[sigma[i]]);
         }
     }
     sum
@@ -223,7 +222,7 @@ fn find_positive_alpha<F: ExactScalar>(beta0: &[F], null_vecs: &[Vec<F>]) -> Opt
         for bound in bounds {
             let mut residual = bound.rhs.clone();
             for (coeff, assigned) in bound.remaining_coeffs.iter().zip(alpha[..alpha_idx].iter()) {
-                residual = residual - coeff.clone() * assigned.clone();
+                residual -= coeff.clone() * assigned.clone();
             }
             let candidate = residual / bound.divisor.clone();
             if bound.divisor > F::zero() {
@@ -260,7 +259,7 @@ fn find_positive_alpha<F: ExactScalar>(beta0: &[F], null_vecs: &[Vec<F>]) -> Opt
         .map(|row| {
             let mut value = beta0[row].clone();
             for col in 0..k {
-                value = value + alpha[col].clone() * null_vecs[col][row].clone();
+                value += alpha[col].clone() * null_vecs[col][row].clone();
             }
             value
         })

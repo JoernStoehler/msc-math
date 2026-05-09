@@ -3,8 +3,8 @@
 //! Solves the same constrained optimization as the f64 solvers in this module —
 //! max Q(beta) subject to closure + normalization + beta > 0 — but using exact
 //! arithmetic over Q. Input polytopes provide dual vertices y_i = n_i / h_i
-//! in exact rational form; the KKT system is assembled and solved via Gaussian
-//! elimination with null-space handling.
+//! in exact rational form; the KKT system is assembled here and solved by the
+//! shared exact linear solver with null-space handling.
 //!
 //! **Role in the crate:** The exact solver serves as ground truth for validating
 //! the f64 solver's error bounds and for computing exact capacity values when
@@ -14,13 +14,15 @@
 //! **Rank-deficient systems:** When the KKT matrix is exactly rank-deficient
 //! over `Q` (common for polytopes with axis-aligned normals in symplectic
 //! subplanes), Q(beta) is constant along the null space ([lem:well-defined]).
-//! The solver detects exact rank deficiency by exact zero pivots, extracts
-//! null-space basis vectors, and searches for beta > 0 via Fourier-Motzkin
-//! elimination.
+//! The shared exact linear solver detects rank deficiency over `Q` and returns
+//! null-space basis vectors; this module searches for beta > 0 via
+//! Fourier-Motzkin elimination.
 //!
 //! Mathematical correspondence: [lem:kkt], [lem:well-defined]
 
 use crate::geom::rational_arithmetic::{omega0_rational, rational_to_f64};
+use algebraic_numbers::{solve_linear_system, LinearSystemSolution};
+use nalgebra::{DMatrix, DVector};
 use num_bigint::BigInt;
 use num_rational::BigRational;
 use num_traits::{One, Signed, Zero};
@@ -46,7 +48,8 @@ pub struct ExactKktResult {
 ///
 /// Given dual vertices y_i = n_i / h_i (from `Polytope4D::dual_vertices()`) and a
 /// permutation `perm` (the sigma in the thesis), builds the (m+5) x (m+5) KKT
-/// matrix over Q and solves via Gaussian elimination with null-space handling.
+/// matrix over Q and solves via the shared exact linear solver with null-space
+/// handling.
 ///
 /// The dual vertex representation {y_i . x <= 1} has implicit height h_i = 1,
 /// so the eta block of the KKT matrix is all ones. This is mathematically
@@ -68,10 +71,15 @@ pub fn solve_kkt_exact(
     perm: &[usize],
 ) -> Option<ExactKktResult> {
     let m = perm.len();
-    let (mat, rhs) = build_kkt_matrix(dual_vertices, perm);
+    let (matrix, rhs) = build_kkt_matrix(dual_vertices, perm);
 
-    match gauss_solve_with_null_space(&mat, &rhs)? {
-        GaussResult::FullRank(x) => {
+    match solve_linear_system(&matrix, &rhs) {
+        LinearSystemSolution::Inconsistent => None,
+        LinearSystemSolution::Consistent {
+            particular,
+            kernel_basis,
+        } if kernel_basis.ncols() == 0 => {
+            let x: Vec<BigRational> = particular.iter().cloned().collect();
             let beta: Vec<BigRational> = x[..m].to_vec();
             // Check beta > 0; if not, the solution is infeasible.
             if !beta.iter().all(|b| b.is_positive()) {
@@ -85,13 +93,14 @@ pub fn solve_kkt_exact(
                 q_exact_f64,
             })
         }
-        GaussResult::RankDeficient {
+        LinearSystemSolution::Consistent {
             particular,
-            null_space,
+            kernel_basis,
         } => {
-            let beta0: Vec<BigRational> = particular[..m].to_vec();
-            let null_beta: Vec<Vec<BigRational>> =
-                null_space.iter().map(|v| v[..m].to_vec()).collect();
+            let beta0: Vec<BigRational> = particular.iter().take(m).cloned().collect();
+            let null_beta: Vec<Vec<BigRational>> = (0..kernel_basis.ncols())
+                .map(|col| (0..m).map(|row| kernel_basis[(row, col)].clone()).collect())
+                .collect();
 
             // Search null space for beta > 0 (exact via Fourier-Motzkin).
             let beta = find_positive_beta(&beta0, &null_beta)?;
@@ -124,20 +133,20 @@ pub fn solve_kkt_exact(
 fn build_kkt_matrix(
     dual_vertices: &[[BigRational; 4]],
     perm: &[usize],
-) -> (Vec<Vec<BigRational>>, Vec<BigRational>) {
+) -> (DMatrix<BigRational>, DVector<BigRational>) {
     let m = perm.len();
     let size = m + 5;
     let zero = BigRational::zero();
 
-    let mut mat = vec![vec![zero.clone(); size]; size];
-    let mut rhs = vec![zero.clone(); size];
+    let mut mat = DMatrix::from_element(size, size, zero.clone());
+    let mut rhs = DVector::from_element(size, zero);
 
     // H block: H_{ij} = omega_0(y_i, y_j) for i != j, H_{ii} = 0
     for i in 0..m {
         for j in (i + 1)..m {
             let val = omega0_rational(&dual_vertices[perm[i]], &dual_vertices[perm[j]]);
-            mat[i][j] = val.clone();
-            mat[j][i] = val;
+            mat[(i, j)] = val.clone();
+            mat[(j, i)] = val;
         }
     }
 
@@ -145,8 +154,8 @@ fn build_kkt_matrix(
     for i in 0..m {
         for d in 0..4 {
             let val = dual_vertices[perm[i]][d].clone();
-            mat[i][m + d] = val.clone();
-            mat[m + d][i] = val;
+            mat[(i, m + d)] = val.clone();
+            mat[(m + d, i)] = val;
         }
     }
 
@@ -154,159 +163,14 @@ fn build_kkt_matrix(
     let one = BigRational::one();
     #[allow(clippy::needless_range_loop)]
     for i in 0..m {
-        mat[i][m + 4] = one.clone();
-        mat[m + 4][i] = one.clone();
+        mat[(i, m + 4)] = one.clone();
+        mat[(m + 4, i)] = one.clone();
     }
 
     // RHS: [0, ..., 0, 1] — normalization constraint
     rhs[m + 4] = BigRational::one();
 
     (mat, rhs)
-}
-
-// ── Gaussian elimination with null-space extraction ──────────────────────
-
-/// Result of Gaussian elimination: either a unique solution or a particular
-/// solution plus null-space basis vectors.
-enum GaussResult {
-    /// System has full rank — unique solution.
-    FullRank(Vec<BigRational>),
-    /// System is rank-deficient — particular solution (free variables = 0)
-    /// plus basis vectors for the null space.
-    RankDeficient {
-        particular: Vec<BigRational>,
-        null_space: Vec<Vec<BigRational>>,
-    },
-}
-
-/// Gaussian elimination with partial pivoting and null-space extraction.
-///
-/// Returns:
-/// - `None` if the system is inconsistent (no solution exists)
-/// - `GaussResult::FullRank` for unique solutions
-/// - `GaussResult::RankDeficient` for rank-deficient systems with a particular
-///   solution and null-space basis vectors
-fn gauss_solve_with_null_space(
-    mat: &[Vec<BigRational>],
-    rhs: &[BigRational],
-) -> Option<GaussResult> {
-    let n = rhs.len();
-
-    // Augmented matrix [A | b]
-    let mut aug: Vec<Vec<BigRational>> = mat
-        .iter()
-        .enumerate()
-        .map(|(i, row)| {
-            let mut r = row.clone();
-            r.push(rhs[i].clone());
-            r
-        })
-        .collect();
-
-    // Forward elimination with partial pivoting.
-    // Only exact zero columns are treated as free. This function is an exact
-    // solver; using a floating threshold here can create false certificates.
-    let mut pivot_positions: Vec<(usize, usize)> = Vec::new();
-    let mut free_cols: Vec<usize> = Vec::new();
-    let mut current_row = 0;
-
-    for col in 0..n {
-        // Find a largest-magnitude nonzero entry in this column below
-        // current_row. Pivot choice affects expression growth, not rank truth:
-        // every zero/nonzero decision below is exact over Q.
-        let best_row = (current_row..n)
-            .filter(|&r| !aug[r][col].is_zero())
-            .max_by_key(|&r| aug[r][col].abs());
-
-        match best_row {
-            None => {
-                // All entries zero — column is free.
-                free_cols.push(col);
-            }
-            Some(best) => {
-                // Valid pivot — swap to current_row and eliminate below.
-                aug.swap(current_row, best);
-
-                for row in (current_row + 1)..n {
-                    if !aug[row][col].is_zero() {
-                        let factor = &aug[row][col] / &aug[current_row][col];
-                        #[allow(clippy::needless_range_loop)]
-                        for j in col..=n {
-                            let val = &aug[current_row][j] * &factor;
-                            aug[row][j] -= &val;
-                        }
-                    }
-                }
-
-                pivot_positions.push((current_row, col));
-                current_row += 1;
-            }
-        }
-    }
-
-    let rank = pivot_positions.len();
-
-    // Consistency check: rows below rank must have exactly zero RHS.
-    for aug_row in aug.iter().take(n).skip(rank) {
-        if !aug_row[n].is_zero() {
-            return None; // Inconsistent system
-        }
-    }
-
-    if free_cols.is_empty() {
-        // Full rank: unique solution via back substitution.
-        let x = back_substitute(&aug, &pivot_positions, n)?;
-        return Some(GaussResult::FullRank(x));
-    }
-
-    // Rank-deficient: extract particular solution and null space.
-    let x_particular = back_substitute(&aug, &pivot_positions, n)?;
-
-    // Null space: for each free column, set that variable to 1 (all other free
-    // variables to 0) and back-substitute the pivot variables from Ax = 0.
-    let null_space: Vec<Vec<BigRational>> = free_cols
-        .iter()
-        .map(|&free_col| {
-            let mut x = vec![BigRational::zero(); n];
-            x[free_col] = BigRational::one();
-            for &(pivot_row, pivot_col) in pivot_positions.iter().rev() {
-                let mut sum = BigRational::zero();
-                for j in (pivot_col + 1)..n {
-                    sum += &aug[pivot_row][j] * &x[j];
-                }
-                x[pivot_col] = -sum / &aug[pivot_row][pivot_col];
-            }
-            x
-        })
-        .collect();
-
-    Some(GaussResult::RankDeficient {
-        particular: x_particular,
-        null_space,
-    })
-}
-
-/// Back substitution from row echelon form.
-///
-/// Uses the recorded pivot positions to extract the solution. Free variables
-/// (not in pivot_positions) remain at zero.
-fn back_substitute(
-    aug: &[Vec<BigRational>],
-    pivot_positions: &[(usize, usize)],
-    n: usize,
-) -> Option<Vec<BigRational>> {
-    let mut x = vec![BigRational::zero(); n];
-    for &(pivot_row, pivot_col) in pivot_positions.iter().rev() {
-        let mut sum = aug[pivot_row][n].clone(); // RHS entry
-        for j in (pivot_col + 1)..n {
-            sum -= &aug[pivot_row][j] * &x[j];
-        }
-        if aug[pivot_row][pivot_col].is_zero() {
-            return None;
-        }
-        x[pivot_col] = sum / &aug[pivot_row][pivot_col];
-    }
-    Some(x)
 }
 
 // ── Null-space search for beta > 0 (Fourier-Motzkin) ─────────────────────
@@ -515,7 +379,7 @@ mod tests {
     /// Exact KKT solve on the simplex (F=5) returns a solution with nonzero Q.
     ///
     /// Simplex is the smallest polytope (F=5). The identity permutation [0,1,2,3,4]
-    /// exercises Gaussian elimination with a full-rank (10 x 10) system.
+    /// exercises the unique-solution path on a full-rank (10 x 10) system.
     #[test]
     fn simplex_exact_solve() {
         let simplex = &known_polytopes::simplex().polytope;

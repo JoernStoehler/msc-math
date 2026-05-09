@@ -10,6 +10,8 @@
 //! irredundancy checks implemented in this module.
 
 use super::field::{ExactOrderedField, ExactSign};
+use algebraic_numbers::{rank, solve_linear_system, LinearSystemSolution};
+use nalgebra::{DMatrix, DVector};
 use std::collections::BTreeSet;
 
 /// Errors from exact polytope construction.
@@ -24,7 +26,7 @@ pub enum ExactPolytopeError {
 
 /// Experiment-owned exact 4D polytope with exact combinatorics.
 #[derive(Clone, Debug, PartialEq, Eq)]
-pub struct ExactPolytope4D<F: ExactOrderedField> {
+pub struct ExactPolytope4D<F: ExactOrderedField + 'static> {
     dual_vertices: Vec<[F; 4]>,
     vertices: Vec<[F; 4]>,
     incidence: Vec<Vec<bool>>,
@@ -32,7 +34,7 @@ pub struct ExactPolytope4D<F: ExactOrderedField> {
     omega_signs: Vec<Vec<i8>>,
 }
 
-impl<F: ExactOrderedField> ExactPolytope4D<F> {
+impl<F: ExactOrderedField + 'static> ExactPolytope4D<F> {
     /// Construct from exact dual vertices `a_i` for `a_i . x <= 1`.
     pub fn new(dual_vertices: Vec<[F; 4]>) -> Result<Self, ExactPolytopeError> {
         let f = dual_vertices.len();
@@ -184,78 +186,27 @@ fn cross_product_4d<F: ExactOrderedField>(a: &[F; 4], b: &[F; 4], c: &[F; 4]) ->
     [d0, d1, d2, d3]
 }
 
-fn rank_rows<F: ExactOrderedField>(rows: &[Vec<F>], ncols: usize) -> usize {
+fn rank_row_vectors<F: ExactOrderedField + 'static>(rows: &[Vec<F>], ncols: usize) -> usize {
     if rows.is_empty() {
         return 0;
     }
-
-    let mut mat = rows.to_vec();
-    let m = mat.len();
-    let mut rank = 0usize;
-
-    for col in 0..ncols {
-        let Some(pivot_row) = (rank..m).find(|&row| !mat[row][col].is_zero()) else {
-            continue;
-        };
-        mat.swap(rank, pivot_row);
-        let pivot = mat[rank][col].clone();
-
-        for row in 0..m {
-            if row == rank || mat[row][col].is_zero() {
-                continue;
-            }
-            let factor = mat[row][col].clone() / pivot.clone();
-            for j in col..ncols {
-                let correction = factor.clone() * mat[rank][j].clone();
-                mat[row][j] = mat[row][j].clone() - correction;
-            }
-        }
-        rank += 1;
-    }
-
-    rank
+    let matrix = DMatrix::from_fn(rows.len(), ncols, |row, col| rows[row][col].clone());
+    rank(&matrix)
 }
 
-fn solve4<F: ExactOrderedField>(rows: &[[F; 4]; 4], rhs: &[F; 4]) -> Option<[F; 4]> {
-    let mut aug: Vec<Vec<F>> = (0..4)
-        .map(|row| {
-            let mut line: Vec<F> = (0..4).map(|col| rows[row][col].clone()).collect();
-            line.push(rhs[row].clone());
-            line
-        })
-        .collect();
-
-    for col in 0..4 {
-        let pivot_row = (col..4).find(|&row| !aug[row][col].is_zero())?;
-        aug.swap(col, pivot_row);
-        let pivot = aug[col][col].clone();
-        for row in (col + 1)..4 {
-            if aug[row][col].is_zero() {
-                continue;
-            }
-            let factor = aug[row][col].clone() / pivot.clone();
-            for j in col..=4 {
-                let correction = aug[col][j].clone() * factor.clone();
-                aug[row][j] = aug[row][j].clone() - correction;
-            }
-        }
+fn solve4<F: ExactOrderedField + 'static>(rows: &[[F; 4]; 4], rhs: &[F; 4]) -> Option<[F; 4]> {
+    let matrix = DMatrix::from_fn(4, 4, |row, col| rows[row][col].clone());
+    let rhs = DVector::from_fn(4, |row, _| rhs[row].clone());
+    match solve_linear_system(&matrix, &rhs) {
+        LinearSystemSolution::Consistent {
+            particular,
+            kernel_basis,
+        } if kernel_basis.ncols() == 0 => Some(std::array::from_fn(|idx| particular[idx].clone())),
+        _ => None,
     }
-
-    let mut solution = [F::zero(), F::zero(), F::zero(), F::zero()];
-    for row in (0..4).rev() {
-        let mut rhs_val = aug[row][4].clone();
-        for col in (row + 1)..4 {
-            rhs_val = rhs_val - aug[row][col].clone() * solution[col].clone();
-        }
-        if aug[row][row].is_zero() {
-            return None;
-        }
-        solution[row] = rhs_val / aug[row][row].clone();
-    }
-    Some(solution)
 }
 
-fn affine_rank<F: ExactOrderedField>(points: &[[F; 4]]) -> usize {
+fn affine_rank<F: ExactOrderedField + 'static>(points: &[[F; 4]]) -> usize {
     if points.len() <= 1 {
         return 0;
     }
@@ -268,15 +219,17 @@ fn affine_rank<F: ExactOrderedField>(points: &[[F; 4]]) -> usize {
                 .collect()
         })
         .collect();
-    rank_rows(&centered, 4)
+    rank_row_vectors(&centered, 4)
 }
 
-fn check_bounded<F: ExactOrderedField>(dual_vertices: &[[F; 4]]) -> Result<(), ExactPolytopeError> {
+fn check_bounded<F: ExactOrderedField + 'static>(
+    dual_vertices: &[[F; 4]],
+) -> Result<(), ExactPolytopeError> {
     let rows: Vec<Vec<F>> = dual_vertices
         .iter()
         .map(|dual| (0..4).map(|i| dual[i].clone()).collect())
         .collect();
-    if rank_rows(&rows, 4) < 4 {
+    if rank_row_vectors(&rows, 4) < 4 {
         return Err(ExactPolytopeError::Unbounded);
     }
 
@@ -305,7 +258,7 @@ fn check_bounded<F: ExactOrderedField>(dual_vertices: &[[F; 4]]) -> Result<(), E
     Ok(())
 }
 
-fn enumerate_vertices<F: ExactOrderedField>(
+fn enumerate_vertices<F: ExactOrderedField + 'static>(
     dual_vertices: &[[F; 4]],
 ) -> Result<(Vec<[F; 4]>, Vec<BTreeSet<usize>>), ExactPolytopeError> {
     let f = dual_vertices.len();
@@ -365,7 +318,7 @@ fn enumerate_vertices<F: ExactOrderedField>(
     Ok((vertices, descriptors))
 }
 
-fn check_irredundancy<F: ExactOrderedField>(
+fn check_irredundancy<F: ExactOrderedField + 'static>(
     vertices: &[[F; 4]],
     descriptors: &[BTreeSet<usize>],
     facet_count: usize,

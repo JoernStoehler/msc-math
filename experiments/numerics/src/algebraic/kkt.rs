@@ -12,10 +12,12 @@
 
 use super::field::{cmp_field, max_field, min_field, ExactOrderedField};
 use super::geom::omega0;
+use algebraic_numbers::{solve_linear_system, LinearSystemSolution};
+use nalgebra::{DMatrix, DVector};
 
 /// Result of an exact KKT solve over an experiment-owned ordered field.
 #[derive(Clone, Debug, PartialEq)]
-pub struct ExactKktResult<F: ExactOrderedField> {
+pub struct ExactKktResult<F: ExactOrderedField + 'static> {
     /// Exact beta vector, aligned with the supplied sigma.
     pub beta: Vec<F>,
     /// Exact `Q(beta)`.
@@ -25,15 +27,20 @@ pub struct ExactKktResult<F: ExactOrderedField> {
 }
 
 /// Solve the selected KKT system exactly for one sigma.
-pub fn solve_kkt_exact<F: ExactOrderedField>(
+pub fn solve_kkt_exact<F: ExactOrderedField + 'static>(
     dual_vertices: &[[F; 4]],
     sigma: &[usize],
 ) -> Option<ExactKktResult<F>> {
     let m = sigma.len();
     let (matrix, rhs) = build_kkt_matrix(dual_vertices, sigma);
 
-    match gauss_solve_with_null_space(&matrix, &rhs)? {
-        GaussResult::FullRank(solution) => {
+    match solve_linear_system(&matrix, &rhs) {
+        LinearSystemSolution::Inconsistent => None,
+        LinearSystemSolution::Consistent {
+            particular,
+            kernel_basis,
+        } if kernel_basis.ncols() == 0 => {
+            let solution: Vec<F> = particular.iter().cloned().collect();
             let beta = solution[..m].to_vec();
             if !beta.iter().all(ExactOrderedField::is_positive) {
                 return None;
@@ -45,12 +52,14 @@ pub fn solve_kkt_exact<F: ExactOrderedField>(
                 beta,
             })
         }
-        GaussResult::RankDeficient {
+        LinearSystemSolution::Consistent {
             particular,
-            null_space,
+            kernel_basis,
         } => {
-            let beta0 = particular[..m].to_vec();
-            let null_beta: Vec<Vec<F>> = null_space.iter().map(|vec| vec[..m].to_vec()).collect();
+            let beta0: Vec<F> = particular.iter().take(m).cloned().collect();
+            let null_beta: Vec<Vec<F>> = (0..kernel_basis.ncols())
+                .map(|col| (0..m).map(|row| kernel_basis[(row, col)].clone()).collect())
+                .collect();
             let beta = find_positive_beta(&beta0, &null_beta)?;
             let q_exact = compute_q_exact(dual_vertices, sigma, &beta);
             Some(ExactKktResult {
@@ -62,34 +71,34 @@ pub fn solve_kkt_exact<F: ExactOrderedField>(
     }
 }
 
-fn build_kkt_matrix<F: ExactOrderedField>(
+fn build_kkt_matrix<F: ExactOrderedField + 'static>(
     dual_vertices: &[[F; 4]],
     sigma: &[usize],
-) -> (Vec<Vec<F>>, Vec<F>) {
+) -> (DMatrix<F>, DVector<F>) {
     let m = sigma.len();
     let size = m + 5;
-    let mut matrix = vec![vec![F::zero(); size]; size];
-    let mut rhs = vec![F::zero(); size];
+    let mut matrix = DMatrix::from_element(size, size, F::zero());
+    let mut rhs = DVector::from_element(size, F::zero());
 
     for i in 0..m {
         for j in (i + 1)..m {
             let omega = omega0(&dual_vertices[sigma[i]], &dual_vertices[sigma[j]]);
-            matrix[i][j] = omega.clone();
-            matrix[j][i] = omega;
+            matrix[(i, j)] = omega.clone();
+            matrix[(j, i)] = omega;
         }
     }
 
     for i in 0..m {
         for dim in 0..4 {
             let value = dual_vertices[sigma[i]][dim].clone();
-            matrix[i][m + dim] = value.clone();
-            matrix[m + dim][i] = value;
+            matrix[(i, m + dim)] = value.clone();
+            matrix[(m + dim, i)] = value;
         }
     }
 
     for i in 0..m {
-        matrix[i][m + 4] = F::one();
-        matrix[m + 4][i] = F::one();
+        matrix[(i, m + 4)] = F::one();
+        matrix[(m + 4, i)] = F::one();
     }
     rhs[m + 4] = F::one();
 
@@ -112,109 +121,6 @@ fn compute_q_exact<F: ExactOrderedField>(
         }
     }
     sum
-}
-
-enum GaussResult<F: ExactOrderedField> {
-    FullRank(Vec<F>),
-    RankDeficient {
-        particular: Vec<F>,
-        null_space: Vec<Vec<F>>,
-    },
-}
-
-fn gauss_solve_with_null_space<F: ExactOrderedField>(
-    matrix: &[Vec<F>],
-    rhs: &[F],
-) -> Option<GaussResult<F>> {
-    let n = rhs.len();
-    let mut aug: Vec<Vec<F>> = matrix
-        .iter()
-        .enumerate()
-        .map(|(row_idx, row)| {
-            let mut line = row.clone();
-            line.push(rhs[row_idx].clone());
-            line
-        })
-        .collect();
-
-    let mut pivot_positions = Vec::new();
-    let mut free_cols = Vec::new();
-    let mut current_row = 0usize;
-
-    for col in 0..n {
-        match (current_row..n).find(|&row| !aug[row][col].is_zero()) {
-            Some(pivot_row) => {
-                aug.swap(current_row, pivot_row);
-                let pivot = aug[current_row][col].clone();
-                for row in (current_row + 1)..n {
-                    if aug[row][col].is_zero() {
-                        continue;
-                    }
-                    let factor = aug[row][col].clone() / pivot.clone();
-                    for j in col..=n {
-                        let correction = aug[current_row][j].clone() * factor.clone();
-                        aug[row][j] = aug[row][j].clone() - correction;
-                    }
-                }
-                pivot_positions.push((current_row, col));
-                current_row += 1;
-            }
-            None => free_cols.push(col),
-        }
-    }
-
-    let rank = pivot_positions.len();
-    for row in rank..n {
-        if !aug[row][n].is_zero() {
-            return None;
-        }
-    }
-
-    if free_cols.is_empty() {
-        let solution = back_substitute(&aug, &pivot_positions, n)?;
-        return Some(GaussResult::FullRank(solution));
-    }
-
-    let particular = back_substitute(&aug, &pivot_positions, n)?;
-    let null_space: Vec<Vec<F>> = free_cols
-        .iter()
-        .map(|&free_col| {
-            let mut vector = vec![F::zero(); n];
-            vector[free_col] = F::one();
-            for &(pivot_row, pivot_col) in pivot_positions.iter().rev() {
-                let mut sum = F::zero();
-                for j in (pivot_col + 1)..n {
-                    sum = sum + aug[pivot_row][j].clone() * vector[j].clone();
-                }
-                vector[pivot_col] = -sum / aug[pivot_row][pivot_col].clone();
-            }
-            vector
-        })
-        .collect();
-
-    Some(GaussResult::RankDeficient {
-        particular,
-        null_space,
-    })
-}
-
-fn back_substitute<F: ExactOrderedField>(
-    aug: &[Vec<F>],
-    pivot_positions: &[(usize, usize)],
-    n: usize,
-) -> Option<Vec<F>> {
-    let mut solution = vec![F::zero(); n];
-    for &(pivot_row, pivot_col) in pivot_positions.iter().rev() {
-        if aug[pivot_row][pivot_col].is_zero() {
-            return None;
-        }
-        let mut rhs = aug[pivot_row][n].clone();
-        for j in (pivot_col + 1)..n {
-            rhs = rhs - aug[pivot_row][j].clone() * solution[j].clone();
-        }
-        solution[pivot_col] = rhs / aug[pivot_row][pivot_col].clone();
-    }
-    Some(solution)
 }
 
 fn find_positive_beta<F: ExactOrderedField>(beta0: &[F], null_vecs: &[Vec<F>]) -> Option<Vec<F>> {

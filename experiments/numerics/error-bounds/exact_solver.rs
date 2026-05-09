@@ -3,11 +3,14 @@
 //! Solves: max (1/2) beta^T H beta s.t. C beta = d, beta > 0
 //! using BigRational arithmetic (no floating-point rounding).
 //!
-//! Algorithm: Gaussian elimination on the augmented KKT system, then
-//! Fourier-Motzkin elimination to find beta > 0 in the null space.
+//! Algorithm: assemble the augmented KKT system, solve it with the shared exact
+//! linear solver, then use Fourier-Motzkin elimination to find beta > 0 in the
+//! null space.
 //!
 //! Included via `#[path = "exact_solver.rs"] mod exact_solver;` in binaries.
 
+use algebraic_numbers::{solve_linear_system, LinearSystemSolution};
+use nalgebra::{DMatrix, DVector};
 use num_bigint::BigInt;
 use num_rational::BigRational;
 use num_traits::{One, Signed, ToPrimitive, Zero};
@@ -41,26 +44,31 @@ pub fn solve_qp_exact(
     let size = m + p;
 
     let zero = BigRational::zero();
-    let mut mat = vec![vec![zero.clone(); size]; size];
-    let mut rhs = vec![zero.clone(); size];
+    let mut mat = DMatrix::from_element(size, size, zero.clone());
+    let mut rhs = DVector::from_element(size, zero);
 
     for i in 0..m {
         for j in 0..m {
-            mat[i][j] = h[i][j].clone();
+            mat[(i, j)] = h[i][j].clone();
         }
     }
     for i in 0..p {
         for j in 0..m {
-            mat[j][m + i] = c[i][j].clone();
-            mat[m + i][j] = c[i][j].clone();
+            mat[(j, m + i)] = c[i][j].clone();
+            mat[(m + i, j)] = c[i][j].clone();
         }
     }
     for i in 0..p {
         rhs[m + i] = d[i].clone();
     }
 
-    match gauss_solve_with_null_space(&mat, &rhs)? {
-        GaussResult::FullRank(x) => {
+    match solve_linear_system(&mat, &rhs) {
+        LinearSystemSolution::Inconsistent => None,
+        LinearSystemSolution::Consistent {
+            particular,
+            kernel_basis,
+        } if kernel_basis.ncols() == 0 => {
+            let x: Vec<BigRational> = particular.iter().cloned().collect();
             let beta: Vec<BigRational> = x[..m].to_vec();
             let lambda: Vec<BigRational> = x[m..].to_vec();
             if !beta.iter().all(|b| b.is_positive()) {
@@ -75,13 +83,14 @@ pub fn solve_qp_exact(
                 q_exact_f64: q_f64,
             })
         }
-        GaussResult::RankDeficient {
+        LinearSystemSolution::Consistent {
             particular,
-            null_space,
+            kernel_basis,
         } => {
-            let beta0: Vec<BigRational> = particular[..m].to_vec();
-            let null_beta: Vec<Vec<BigRational>> =
-                null_space.iter().map(|v| v[..m].to_vec()).collect();
+            let beta0: Vec<BigRational> = particular.iter().take(m).cloned().collect();
+            let null_beta: Vec<Vec<BigRational>> = (0..kernel_basis.ncols())
+                .map(|col| (0..m).map(|row| kernel_basis[(row, col)].clone()).collect())
+                .collect();
             let beta = find_positive_beta(&beta0, &null_beta)?;
             let lambda = compute_exact_lambda(h, c, &beta);
             let q = compute_q_exact(h, &beta);
@@ -165,187 +174,27 @@ fn compute_exact_lambda(
         }
     }
 
-    let mut a = vec![vec![zero.clone(); p]; p];
+    let mut a = DMatrix::from_element(p, p, zero.clone());
     for i in 0..p {
         for j in 0..p {
             for k in 0..m {
-                a[i][j] += &c[i][k] * &c[j][k];
+                a[(i, j)] += &c[i][k] * &c[j][k];
             }
         }
     }
 
-    let mut aug = vec![vec![zero.clone(); p + 1]; p];
-    for i in 0..p {
-        for j in 0..p {
-            aug[i][j] = a[i][j].clone();
-        }
-        aug[i][p] = rhs[i].clone();
-    }
-
-    for col in 0..p {
-        let pivot_row = (col..p).find(|&r| !aug[r][col].is_zero());
-        let pivot_row = match pivot_row {
-            Some(r) => r,
-            None => return vec![zero; p],
-        };
-        aug.swap(col, pivot_row);
-        let pivot = aug[col][col].clone();
-        for row in (col + 1)..p {
-            let factor = &aug[row][col] / &pivot;
-            for j in col..=p {
-                let val = &aug[col][j] * &factor;
-                aug[row][j] -= val;
-            }
+    let rhs = DVector::from_vec(rhs);
+    if let LinearSystemSolution::Consistent {
+        particular,
+        kernel_basis,
+    } = solve_linear_system(&a, &rhs)
+    {
+        if kernel_basis.ncols() == 0 {
+            return particular.iter().cloned().collect();
         }
     }
 
-    let mut lambda = vec![zero.clone(); p];
-    for col in (0..p).rev() {
-        let mut val = aug[col][p].clone();
-        for j in (col + 1)..p {
-            val -= &aug[col][j] * &lambda[j];
-        }
-        if !aug[col][col].is_zero() {
-            lambda[col] = val / &aug[col][col];
-        }
-    }
-    lambda
-}
-
-// ── Gaussian elimination ──
-
-enum GaussResult {
-    FullRank(Vec<BigRational>),
-    RankDeficient {
-        particular: Vec<BigRational>,
-        null_space: Vec<Vec<BigRational>>,
-    },
-}
-
-const PIVOT_RELATIVE_THRESHOLD: f64 = 1e-12;
-
-fn rational_abs_f64(r: &BigRational) -> f64 {
-    let n = r.numer().to_f64().unwrap_or(0.0);
-    let d = r.denom().to_f64().unwrap_or(1.0);
-    (n / d).abs()
-}
-
-fn gauss_solve_with_null_space(
-    mat: &[Vec<BigRational>],
-    rhs: &[BigRational],
-) -> Option<GaussResult> {
-    let n = rhs.len();
-
-    let max_entry_abs: f64 = mat
-        .iter()
-        .flat_map(|row| row.iter())
-        .map(rational_abs_f64)
-        .fold(0.0_f64, f64::max);
-    let threshold = max_entry_abs * PIVOT_RELATIVE_THRESHOLD;
-
-    let mut aug: Vec<Vec<BigRational>> = mat
-        .iter()
-        .enumerate()
-        .map(|(i, row)| {
-            let mut r = row.clone();
-            r.push(rhs[i].clone());
-            r
-        })
-        .collect();
-
-    let mut pivot_positions: Vec<(usize, usize)> = Vec::new();
-    let mut free_cols: Vec<usize> = Vec::new();
-    let mut current_row = 0;
-
-    for col in 0..n {
-        let best_row = (current_row..n)
-            .filter(|&r| !aug[r][col].is_zero())
-            .max_by(|&a, &b| {
-                rational_abs_f64(&aug[a][col])
-                    .partial_cmp(&rational_abs_f64(&aug[b][col]))
-                    .unwrap_or(std::cmp::Ordering::Equal)
-            });
-
-        match best_row {
-            None => {
-                free_cols.push(col);
-            }
-            Some(best) if rational_abs_f64(&aug[best][col]) <= threshold => {
-                free_cols.push(col);
-            }
-            Some(best) => {
-                aug.swap(current_row, best);
-                for row in (current_row + 1)..n {
-                    if !aug[row][col].is_zero() {
-                        let factor = &aug[row][col] / &aug[current_row][col];
-                        #[allow(clippy::needless_range_loop)]
-                        for j in col..=n {
-                            let val = &aug[current_row][j] * &factor;
-                            aug[row][j] -= &val;
-                        }
-                    }
-                }
-                pivot_positions.push((current_row, col));
-                current_row += 1;
-            }
-        }
-    }
-
-    let rank = pivot_positions.len();
-
-    for aug_row in aug.iter().take(n).skip(rank) {
-        let rhs_abs = rational_abs_f64(&aug_row[n]);
-        if rhs_abs > threshold.max(1e-10) {
-            return None;
-        }
-    }
-
-    if free_cols.is_empty() {
-        let x = back_substitute(&aug, &pivot_positions, n)?;
-        return Some(GaussResult::FullRank(x));
-    }
-
-    let x_particular = back_substitute(&aug, &pivot_positions, n)?;
-
-    let null_space: Vec<Vec<BigRational>> = free_cols
-        .iter()
-        .map(|&free_col| {
-            let mut x = vec![BigRational::zero(); n];
-            x[free_col] = BigRational::one();
-            for &(pivot_row, pivot_col) in pivot_positions.iter().rev() {
-                let mut sum = BigRational::zero();
-                for j in (pivot_col + 1)..n {
-                    sum += &aug[pivot_row][j] * &x[j];
-                }
-                x[pivot_col] = -sum / &aug[pivot_row][pivot_col];
-            }
-            x
-        })
-        .collect();
-
-    Some(GaussResult::RankDeficient {
-        particular: x_particular,
-        null_space,
-    })
-}
-
-fn back_substitute(
-    aug: &[Vec<BigRational>],
-    pivot_positions: &[(usize, usize)],
-    n: usize,
-) -> Option<Vec<BigRational>> {
-    let mut x = vec![BigRational::zero(); n];
-    for &(pivot_row, pivot_col) in pivot_positions.iter().rev() {
-        let mut sum = aug[pivot_row][n].clone();
-        for j in (pivot_col + 1)..n {
-            sum -= &aug[pivot_row][j] * &x[j];
-        }
-        if aug[pivot_row][pivot_col].is_zero() {
-            return None;
-        }
-        x[pivot_col] = sum / &aug[pivot_row][pivot_col];
-    }
-    Some(x)
+    vec![zero; p]
 }
 
 fn find_positive_beta(
