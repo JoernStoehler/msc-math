@@ -18,7 +18,7 @@ Map maintenance:
 ## Status
 
 - State: split from the old root `ARCHITECTURE.md`.
-- Last updated: 2026-04-25.
+- Last updated: 2026-05-09.
 - Source surfaces: `crates/**/src/`, `crates/**/README.md`, `formal/`, crate
   manifests, and local crate tests.
 - Refresh when: crate module boundaries, public reexports, persistence
@@ -40,7 +40,7 @@ Map maintenance:
 | Crate | Current role | Start here |
 | --- | --- | --- |
 | `crates/symplectic/` | main symplectic geometry crate for 4D convex polytopes, capacity algorithms, KKT solvers, persistence helpers, derivatives, sampling, and known polytope constructors | `crates/symplectic/src/lib.rs`, `crates/symplectic/README.md` |
-| `crates/algebraic-numbers/` | ordered arithmetic over real algebraic extensions of `Q`, with tiny linear-algebra and serialization helpers used by exact-validation paths | `crates/algebraic-numbers/src/lib.rs`, `crates/algebraic-numbers/README.md` |
+| `crates/algebraic-numbers/` | exact scalar arithmetic over `Q` and statically chosen real algebraic extensions, plus dense generic exact linear algebra | `crates/algebraic-numbers/src/lib.rs`, `crates/algebraic-numbers/README.md` |
 
 ## Symplectic Subsystems
 
@@ -63,10 +63,9 @@ formula is blocked and it is not a supported experiment entrypoint.
 
 | Subsystem | Current role | Notes |
 | --- | --- | --- |
-| `algebraic` / `spec` / `field` | core scalar API | `Algebraic<S>`, `StaticFieldSpec`, `OrderedField`, `Rational`, and field comparisons |
-| `named_fields` | named field specs | currently exports `TanPiFifth` for HKO pentagon exact work |
-| `linear` | tiny exact linear algebra | `solve_square`, `rank_rows`, and `SolveResult` |
-| `serialize` / `sign` | canonical row serialization and sign classification | used by exact consumers and tests |
+| `algebraic_element` / `field_specification` / `exact_scalar` | core scalar API | `Algebraic<F>`, `RealAlgebraicField`, `ExactScalar`, and canonical coefficient access |
+| `row_reduction` / `linear_solve` / `definiteness` | dense exact linear algebra | `row_reduction`, `rank`, `kernel_basis`, `solve_linear_system`, `LinearSystemSolution`, and `is_negative_definite` |
+| `polynomial_arithmetic` / `sign_ordering` | internal algebraic arithmetic and exact ordering | polynomial reduction, inversion modulo the field polynomial, and rational interval refinement |
 
 ## Navigation Shortcuts
 
@@ -102,7 +101,7 @@ formula is blocked and it is not a supported experiment entrypoint.
 | --- | --- | --- |
 | simple public | short root reexports and preset routers in `crates/symplectic/src/lib.rs` | `symplectic::ehz_capacity`, `symplectic::ehz_capacity_pruned`, `symplectic::ehz_capacity_unpruned`, `symplectic::ehz_capacity_billiard`, `symplectic::OrbitSearchResult`, `symplectic::Polytope4D`, `symplectic::Skeleton`, `symplectic::known_polytopes`, `symplectic::volume`, `symplectic::omega0`, `symplectic::lagrangian_product`, `symplectic::regular_polygon_2d`, `symplectic::rotate_polygon_2d` |
 | expert public | deeper modules and building blocks used by experiments that need non-default control | `symplectic::database`, `symplectic::dataset`, `symplectic::random`, `symplectic::derivatives`, `symplectic::exact`, `symplectic::algorithms::solve_orbit_sigma`, `symplectic::algorithms::aggregate_orbits`, `symplectic::algorithms::hk2017`, `symplectic::algorithms::billiard`, `symplectic::kkt::saddle_point_solver`, `symplectic::algorithms::facet_adjacency` |
-| exact scalar public | root reexports in `crates/algebraic-numbers/src/lib.rs` | `algebraic_numbers::Algebraic`, `algebraic_numbers::OrderedField`, `algebraic_numbers::StaticFieldSpec`, `algebraic_numbers::TanPiFifth`, `algebraic_numbers::solve_square`, `algebraic_numbers::rank_rows`, `algebraic_numbers::canonical_element` |
+| exact scalar public | root reexports in `crates/algebraic-numbers/src/lib.rs` | `algebraic_numbers::Algebraic`, `algebraic_numbers::RealAlgebraicField`, `algebraic_numbers::ExactScalar`, `algebraic_numbers::row_reduction`, `algebraic_numbers::rank`, `algebraic_numbers::kernel_basis`, `algebraic_numbers::solve_linear_system`, `algebraic_numbers::LinearSystemSolution`, `algebraic_numbers::is_negative_definite` |
 | unclear | public paths whose long-term experiment-facing status is not explicit | `symplectic::algorithms::hk2017::orbit_recovery`, `symplectic::algorithms::billiard::facet_classification`, `symplectic::kkt::qp_assembly::build_augmented_system`, `symplectic::geom::qhull` |
 | accidental internal | public-in-practice helpers that experiments currently reach through | `symplectic::algorithms::hk2017::permutations::for_each_cyclic_permutation` |
 

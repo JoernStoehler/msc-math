@@ -1,7 +1,48 @@
 //! Exact HKO local-maximum seed bank and control polytopes.
 
-use algebraic_numbers::{Algebraic, OrderedField, Rational, TanPiFifth};
+use algebraic_numbers::{Algebraic, ExactScalar, RealAlgebraicField};
+use num_rational::BigRational;
+use num_traits::{One, ToPrimitive, Zero};
 use symplectic::exact::ExactPolytope4D;
+
+pub enum TanPiFifth {}
+
+impl RealAlgebraicField for TanPiFifth {
+    fn polynomial() -> Vec<BigRational> {
+        vec![rat(5), rat(0), rat(-10), rat(0), rat(1)]
+    }
+
+    fn isolating_interval() -> (BigRational, BigRational) {
+        (rat(0), rat(1))
+    }
+}
+
+pub type PentagonField = Algebraic<TanPiFifth>;
+
+pub trait HkoExactScalar: ExactScalar {
+    fn to_f64(&self) -> f64;
+    fn canonical_coeffs(&self) -> Vec<BigRational>;
+}
+
+impl HkoExactScalar for BigRational {
+    fn to_f64(&self) -> f64 {
+        ToPrimitive::to_f64(self).expect("HKO exact rational should fit in f64")
+    }
+
+    fn canonical_coeffs(&self) -> Vec<BigRational> {
+        vec![self.clone()]
+    }
+}
+
+impl<F: RealAlgebraicField> HkoExactScalar for Algebraic<F> {
+    fn to_f64(&self) -> f64 {
+        algebraic_to_f64(self)
+    }
+
+    fn canonical_coeffs(&self) -> Vec<BigRational> {
+        self.coefficients().to_vec()
+    }
+}
 
 /// Hand-picked exact certification bank seed reused across HKO exact consumers.
 pub const HKO_WINNING_SIGMA: &[usize] = &[1, 8, 7, 3, 4, 5, 9];
@@ -81,18 +122,16 @@ pub const EXACT_BANK_ENTRIES: &[ExactBankEntry] = &[
 ];
 
 /// Exact HKO2024 polytope over `Q[tan(pi/5)]`.
-pub fn exact_hko_polytope() -> ExactPolytope4D<Algebraic<TanPiFifth>> {
-    let z = Algebraic::<TanPiFifth>::zero();
-    let one = Algebraic::<TanPiFifth>::one();
-    let t = Algebraic::<TanPiFifth>::generator();
+pub fn exact_hko_polytope() -> ExactPolytope4D<PentagonField> {
+    let z = PentagonField::zero();
+    let one = PentagonField::one();
+    let t = PentagonField::root();
     let t2 = t.clone() * t.clone();
     let t3 = t2.clone() * t.clone();
 
-    let a = (Algebraic::<TanPiFifth>::one() + t2.clone()) / Algebraic::<TanPiFifth>::from_i64(4);
-    let b = (Algebraic::<TanPiFifth>::from_i64(7) * t.clone() - t3.clone())
-        / Algebraic::<TanPiFifth>::from_i64(4);
-    let sec36 =
-        (Algebraic::<TanPiFifth>::from_i64(3) - t2.clone()) / Algebraic::<TanPiFifth>::from_i64(2);
+    let a = (PentagonField::one() + t2.clone()) / PentagonField::from(4);
+    let b = (PentagonField::from(7) * t.clone() - t3.clone()) / PentagonField::from(4);
+    let sec36 = (PentagonField::from(3) - t2.clone()) / PentagonField::from(2);
 
     ExactPolytope4D::new(vec![
         [one.clone(), t.clone(), z.clone(), z.clone()],
@@ -110,19 +149,45 @@ pub fn exact_hko_polytope() -> ExactPolytope4D<Algebraic<TanPiFifth>> {
 }
 
 /// Rational simplex control polytope for exact-path sanity checks.
-pub fn exact_simplex_polytope() -> ExactPolytope4D<Rational> {
-    let z = Rational::from_i64(0);
+pub fn exact_simplex_polytope() -> ExactPolytope4D<BigRational> {
+    let z = rat(0);
     ExactPolytope4D::new(vec![
-        [Rational::from_i64(-5), z.clone(), z.clone(), z.clone()],
-        [z.clone(), Rational::from_i64(-5), z.clone(), z.clone()],
-        [z.clone(), z.clone(), Rational::from_i64(-5), z.clone()],
-        [z.clone(), z.clone(), z.clone(), Rational::from_i64(-5)],
-        [
-            Rational::from_i64(5),
-            Rational::from_i64(5),
-            Rational::from_i64(5),
-            Rational::from_i64(5),
-        ],
+        [rat(-5), z.clone(), z.clone(), z.clone()],
+        [z.clone(), rat(-5), z.clone(), z.clone()],
+        [z.clone(), z.clone(), rat(-5), z.clone()],
+        [z.clone(), z.clone(), z.clone(), rat(-5)],
+        [rat(5), rat(5), rat(5), rat(5)],
     ])
     .expect("exact simplex control polytope")
+}
+
+fn rat(n: i64) -> BigRational {
+    BigRational::from_integer(n.into())
+}
+
+fn algebraic_to_f64<F: RealAlgebraicField>(value: &Algebraic<F>) -> f64 {
+    if value.is_zero() {
+        return 0.0;
+    }
+
+    let mut lower = BigRational::from_integer((-1).into());
+    let mut upper = BigRational::from_integer(1.into());
+    while Algebraic::<F>::from(lower.clone()) > value.clone() {
+        lower *= BigRational::from_integer(2.into());
+    }
+    while Algebraic::<F>::from(upper.clone()) < value.clone() {
+        upper *= BigRational::from_integer(2.into());
+    }
+
+    for _ in 0..80 {
+        let midpoint = (lower.clone() + upper.clone()) / BigRational::from_integer(2.into());
+        if Algebraic::<F>::from(midpoint.clone()) <= value.clone() {
+            lower = midpoint;
+        } else {
+            upper = midpoint;
+        }
+    }
+
+    ToPrimitive::to_f64(&((lower + upper) / BigRational::from_integer(2.into())))
+        .expect("bounded algebraic approximation should fit in f64")
 }

@@ -14,7 +14,8 @@
 //! 3. `cargo run -p dev-numerical-analysis --release --bin num-sage-feasibility -- --canonical`
 //!    refreshes `sage-feasibility-input.jsonl`.
 
-use algebraic_numbers::{canonical_element, CanonicalElement, OrderedField};
+use dev_numerical_analysis::algebraic::catalog::ElementRecord;
+use dev_numerical_analysis::algebraic::field::ExactOrderedField;
 use dev_numerical_analysis::algebraic::fixtures::exact_hko_pentagon;
 use nalgebra::Vector4;
 use num_bigint::BigInt;
@@ -67,7 +68,7 @@ struct SageFeasibilityInputRow {
     family: String,
     facet_count: usize,
     exact_field: String,
-    dual_vertices: Vec<Vec<CanonicalElement>>,
+    dual_vertices: Vec<Vec<ElementRecord>>,
     rust_f64_capacity: f64,
     rust_f64_iterations: u64,
     rust_f64_returned_orbit_count: usize,
@@ -93,8 +94,8 @@ fn rat(n: i64) -> BigRational {
     BigRational::from_integer(BigInt::from(n))
 }
 
-fn canonical_vec4<F: OrderedField>(vector: &[F; 4]) -> Vec<CanonicalElement> {
-    vector.iter().map(canonical_element).collect()
+fn canonical_vec4<F: ExactOrderedField>(vector: &[F; 4]) -> Vec<ElementRecord> {
+    vector.iter().map(ElementRecord::from_field).collect()
 }
 
 fn simplex_f5() -> RationalFixture {

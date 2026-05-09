@@ -389,6 +389,7 @@ fn compute_minimum_orbits(polytope: &symplectic::Polytope4D) -> Result<MinimumSe
         OrbitSearchError::ExactFallbackFailure => {
             "aggregate_orbits reported ExactFallbackFailure".to_string()
         }
+        OrbitSearchError::InvalidGap => "aggregate_orbits reported InvalidGap".to_string(),
     })?;
 
     let minimum_orbits = result

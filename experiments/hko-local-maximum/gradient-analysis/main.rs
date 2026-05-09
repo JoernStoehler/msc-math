@@ -30,10 +30,9 @@
 //! (`Hβ + Nμ + ηξ = 0`) instead of re-labeling it into a local asymmetric
 //! variant before derivative consumers use it again.
 
-use algebraic_numbers::OrderedField;
 use exp_hko_local_maximum::{
     ehz_capacity_instrumented, exact_hko_polytope, exact_simplex_polytope, ExactBankEntry,
-    ExactBankTarget, EXACT_BANK_ENTRIES,
+    ExactBankTarget, HkoExactScalar, EXACT_BANK_ENTRIES,
 };
 use nalgebra::{Matrix4, Vector4};
 use serde::Serialize;
@@ -356,7 +355,7 @@ fn max_abs_vector_diff(lhs: &[Vector4<f64>], rhs: &[[f64; 4]]) -> f64 {
         .fold(0.0, f64::max)
 }
 
-fn exact_sigma_diagnostics<F: OrderedField>(
+fn exact_sigma_diagnostics<F: HkoExactScalar + 'static>(
     polytope: &ExactPolytope4D<F>,
     sigma: &[usize],
 ) -> Option<SigmaDiagnostics> {
@@ -365,7 +364,7 @@ fn exact_sigma_diagnostics<F: OrderedField>(
     Some(SigmaDiagnostics {
         q_f64: orbit.q.to_f64(),
         action_f64: orbit.action().to_f64(),
-        beta_f64: orbit.beta.iter().map(OrderedField::to_f64).collect(),
+        beta_f64: orbit.beta.iter().map(HkoExactScalar::to_f64).collect(),
         capacity_gradient_a: gradient
             .iter()
             .map(|grad| std::array::from_fn(|idx| grad[idx].to_f64()))
@@ -488,7 +487,11 @@ fn compute_exact_best_sigma_diagnostics(
         .map(|grad| std::array::from_fn(|idx| grad[idx].to_f64()))
         .collect();
 
-    let exact_beta_f64: Vec<f64> = exact_orbit.beta.iter().map(OrderedField::to_f64).collect();
+    let exact_beta_f64: Vec<f64> = exact_orbit
+        .beta
+        .iter()
+        .map(HkoExactScalar::to_f64)
+        .collect();
     let max_abs_beta_diff_vs_float = exact_beta_f64
         .iter()
         .zip(best_orbit.beta.iter())

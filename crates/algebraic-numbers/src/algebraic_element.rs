@@ -43,6 +43,11 @@ impl<F: RealAlgebraicField> Algebraic<F> {
         Self::from_coeffs_unchecked(coeffs)
     }
 
+    /// Canonical coefficients in the basis `1, alpha, ..., alpha^(degree - 1)`.
+    pub fn coefficients(&self) -> &[BigRational] {
+        &self.coeffs
+    }
+
     pub(crate) fn inverse(&self) -> Self {
         assert!(!self.is_zero(), "cannot invert zero");
         Self::from_coeffs_unchecked(inverse_mod_monic::<F>(&self.coeffs))

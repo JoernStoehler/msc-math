@@ -4,6 +4,7 @@ use super::field::{rat, ExactOrderedField};
 use super::geom::{ExactPolytope4D, ExactPolytopeError};
 use super::pentagon::PentagonField;
 use num_rational::BigRational;
+use num_traits::{One, Zero};
 
 /// A selected HKO sigma that current numerics uses as a capacity-achieving orbit.
 pub const HKO_WINNING_SIGMA: &[usize] = &[1, 8, 7, 3, 4, 5, 9];

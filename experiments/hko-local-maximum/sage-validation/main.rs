@@ -14,9 +14,9 @@
 //! 3. `cargo run -p exp-hko-local-maximum --release --bin hko-sage-validation -- --canonical`
 //!    refreshes `sage-validation-input.jsonl`.
 
-use algebraic_numbers::{canonical_element, CanonicalElement, OrderedField};
 use exp_hko_local_maximum::{
-    exact_hko_polytope, exact_simplex_polytope, ExactBankEntry, ExactBankTarget, EXACT_BANK_ENTRIES,
+    exact_hko_polytope, exact_simplex_polytope, ExactBankEntry, ExactBankTarget, HkoExactScalar,
+    EXACT_BANK_ENTRIES,
 };
 use serde::Serialize;
 use std::fs::File;
@@ -62,6 +62,23 @@ struct SageValidationInputRow {
     rust_capacity_gradient_a: Vec<Vec<CanonicalElement>>,
 }
 
+#[derive(Clone, Debug, Serialize)]
+struct CanonicalElement {
+    coeffs: Vec<String>,
+}
+
+impl CanonicalElement {
+    fn from_field<F: HkoExactScalar>(value: &F) -> Self {
+        Self {
+            coeffs: value
+                .canonical_coeffs()
+                .into_iter()
+                .map(|coeff| format!("{}/{}", coeff.numer(), coeff.denom()))
+                .collect(),
+        }
+    }
+}
+
 fn experiment_dir() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR")).join("sage-validation")
 }
@@ -76,11 +93,11 @@ fn output_path(canonical: bool) -> PathBuf {
     base.join(filename)
 }
 
-fn canonical_vec4<F: OrderedField>(vector: &[F; 4]) -> Vec<CanonicalElement> {
-    vector.iter().map(canonical_element).collect()
+fn canonical_vec4<F: HkoExactScalar>(vector: &[F; 4]) -> Vec<CanonicalElement> {
+    vector.iter().map(CanonicalElement::from_field).collect()
 }
 
-fn build_row<F: OrderedField>(
+fn build_row<F: HkoExactScalar + 'static>(
     entry: &ExactBankEntry,
     polytope: &ExactPolytope4D<F>,
 ) -> SageValidationInputRow {
@@ -100,9 +117,13 @@ fn build_row<F: OrderedField>(
             .map(canonical_vec4)
             .collect(),
         rust_status: "solved".to_string(),
-        rust_q: canonical_element(&orbit.q),
-        rust_action: canonical_element(&orbit.action()),
-        rust_beta: orbit.beta.iter().map(canonical_element).collect(),
+        rust_q: CanonicalElement::from_field(&orbit.q),
+        rust_action: CanonicalElement::from_field(&orbit.action()),
+        rust_beta: orbit
+            .beta
+            .iter()
+            .map(CanonicalElement::from_field)
+            .collect(),
         rust_capacity_gradient_a: gradient.iter().map(canonical_vec4).collect(),
     }
 }

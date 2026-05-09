@@ -8,7 +8,22 @@
 //! TODO: add [lem:...] to formal math for the interval-refinement sign test in
 //! the distinguished real embedding `t = tan(pi/5)`.
 
-use algebraic_numbers::{Algebraic, TanPiFifth};
+use algebraic_numbers::{Algebraic, RealAlgebraicField};
+use num_rational::BigRational;
+
+use super::field::rat;
+
+pub enum TanPiFifth {}
+
+impl RealAlgebraicField for TanPiFifth {
+    fn polynomial() -> Vec<BigRational> {
+        vec![rat(5), rat(0), rat(-10), rat(0), rat(1)]
+    }
+
+    fn isolating_interval() -> (BigRational, BigRational) {
+        (rat(0), rat(1))
+    }
+}
 
 /// Exact pentagon-field element in basis `1, t, t^2, t^3`.
 pub type PentagonField = Algebraic<TanPiFifth>;
@@ -17,6 +32,7 @@ pub type PentagonField = Algebraic<TanPiFifth>;
 mod tests {
     use super::PentagonField;
     use crate::algebraic::field::ExactOrderedField;
+    use num_traits::{One, Zero};
 
     #[test]
     fn generator_satisfies_minimal_polynomial_exactly() {

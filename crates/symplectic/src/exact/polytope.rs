@@ -8,7 +8,9 @@
 //! TODO: add [lem:...] to formal math for the exact 4D vertex enumeration and
 //! irredundancy checks implemented in this module.
 
-use algebraic_numbers::{cmp_field, OrderedField, Sign};
+use algebraic_numbers::{rank, solve_linear_system, ExactScalar, LinearSystemSolution};
+use nalgebra::{DMatrix, DVector};
+use std::cmp::Ordering;
 use std::collections::BTreeSet;
 
 /// Errors from exact polytope construction.
@@ -23,7 +25,7 @@ pub enum ExactPolytopeError {
 
 /// Exact 4D polytope with exact combinatorics.
 #[derive(Clone, Debug, PartialEq, Eq)]
-pub struct ExactPolytope4D<F: OrderedField> {
+pub struct ExactPolytope4D<F: ExactScalar + 'static> {
     dual_vertices: Vec<[F; 4]>,
     vertices: Vec<[F; 4]>,
     incidence: Vec<Vec<bool>>,
@@ -31,7 +33,7 @@ pub struct ExactPolytope4D<F: OrderedField> {
     omega_signs: Vec<Vec<i8>>,
 }
 
-impl<F: OrderedField> ExactPolytope4D<F> {
+impl<F: ExactScalar + 'static> ExactPolytope4D<F> {
     /// Construct from exact dual vertices `a_i` for `a_i . x <= 1`.
     pub fn new(dual_vertices: Vec<[F; 4]>) -> Result<Self, ExactPolytopeError> {
         let f = dual_vertices.len();
@@ -39,7 +41,7 @@ impl<F: OrderedField> ExactPolytope4D<F> {
             return Err(ExactPolytopeError::TooFewFacets(f));
         }
         for (idx, dual) in dual_vertices.iter().enumerate() {
-            if dual.iter().all(OrderedField::is_zero) {
+            if dual.iter().all(|entry| entry.is_zero()) {
                 return Err(ExactPolytopeError::ZeroDualVertex(idx));
             }
         }
@@ -71,10 +73,10 @@ impl<F: OrderedField> ExactPolytope4D<F> {
                         if i == j {
                             0
                         } else {
-                            match omega0(&dual_vertices[i], &dual_vertices[j]).sign() {
-                                Sign::Negative => -1,
-                                Sign::Zero => 0,
-                                Sign::Positive => 1,
+                            match omega0(&dual_vertices[i], &dual_vertices[j]).cmp(&F::zero()) {
+                                Ordering::Less => -1,
+                                Ordering::Equal => 0,
+                                Ordering::Greater => 1,
                             }
                         }
                     })
@@ -117,7 +119,7 @@ impl<F: OrderedField> ExactPolytope4D<F> {
 }
 
 /// Exact 4D dot product.
-pub fn dot4<F: OrderedField>(left: &[F; 4], right: &[F; 4]) -> F {
+pub fn dot4<F: ExactScalar>(left: &[F; 4], right: &[F; 4]) -> F {
     left[0].clone() * right[0].clone()
         + left[1].clone() * right[1].clone()
         + left[2].clone() * right[2].clone()
@@ -125,7 +127,7 @@ pub fn dot4<F: OrderedField>(left: &[F; 4], right: &[F; 4]) -> F {
 }
 
 /// Exact standard symplectic form `omega_0`.
-pub fn omega0<F: OrderedField>(u: &[F; 4], v: &[F; 4]) -> F {
+pub fn omega0<F: ExactScalar>(u: &[F; 4], v: &[F; 4]) -> F {
     u[0].clone() * v[2].clone() - u[2].clone() * v[0].clone() + u[1].clone() * v[3].clone()
         - u[3].clone() * v[1].clone()
 }
@@ -144,7 +146,7 @@ fn combinations4(n: usize) -> Vec<[usize; 4]> {
     result
 }
 
-fn cross_product_4d<F: OrderedField>(a: &[F; 4], b: &[F; 4], c: &[F; 4]) -> [F; 4] {
+fn cross_product_4d<F: ExactScalar>(a: &[F; 4], b: &[F; 4], c: &[F; 4]) -> [F; 4] {
     let bc_01 = b[0].clone() * c[1].clone() - b[1].clone() * c[0].clone();
     let bc_02 = b[0].clone() * c[2].clone() - b[2].clone() * c[0].clone();
     let bc_03 = b[0].clone() * c[3].clone() - b[3].clone() * c[0].clone();
@@ -161,80 +163,19 @@ fn cross_product_4d<F: OrderedField>(a: &[F; 4], b: &[F; 4], c: &[F; 4]) -> [F; 
     [d0, d1, d2, d3]
 }
 
-fn rank_rows<F: OrderedField>(rows: &[Vec<F>], ncols: usize) -> usize {
-    if rows.is_empty() {
-        return 0;
+fn solve4<F: ExactScalar + 'static>(rows: &[[F; 4]; 4], rhs: &[F; 4]) -> Option<[F; 4]> {
+    let matrix = DMatrix::from_fn(4, 4, |row, col| rows[row][col].clone());
+    let rhs = DVector::from_fn(4, |row, _| rhs[row].clone());
+    match solve_linear_system(&matrix, &rhs) {
+        LinearSystemSolution::Consistent {
+            particular,
+            kernel_basis,
+        } if kernel_basis.ncols() == 0 => Some(std::array::from_fn(|idx| particular[idx].clone())),
+        _ => None,
     }
-
-    let mut mat = rows.to_vec();
-    let m = mat.len();
-    let mut rank = 0usize;
-
-    for col in 0..ncols {
-        let Some(pivot_row) = (rank..m).find(|&row| !mat[row][col].is_zero()) else {
-            continue;
-        };
-        mat.swap(rank, pivot_row);
-        let pivot = mat[rank][col].clone();
-
-        for row in 0..m {
-            if row == rank || mat[row][col].is_zero() {
-                continue;
-            }
-            let factor = mat[row][col].clone() / pivot.clone();
-            let pivot_tail: Vec<F> = mat[rank][col..ncols].to_vec();
-            for (offset, entry) in mat[row][col..ncols].iter_mut().enumerate() {
-                let correction = factor.clone() * pivot_tail[offset].clone();
-                *entry = entry.clone() - correction;
-            }
-        }
-        rank += 1;
-    }
-
-    rank
 }
 
-fn solve4<F: OrderedField>(rows: &[[F; 4]; 4], rhs: &[F; 4]) -> Option<[F; 4]> {
-    let mut aug: Vec<Vec<F>> = (0..4)
-        .map(|row| {
-            let mut line: Vec<F> = (0..4).map(|col| rows[row][col].clone()).collect();
-            line.push(rhs[row].clone());
-            line
-        })
-        .collect();
-
-    for col in 0..4 {
-        let pivot_row = (col..4).find(|&row| !aug[row][col].is_zero())?;
-        aug.swap(col, pivot_row);
-        let pivot = aug[col][col].clone();
-        for row in (col + 1)..4 {
-            if aug[row][col].is_zero() {
-                continue;
-            }
-            let factor = aug[row][col].clone() / pivot.clone();
-            let pivot_tail: Vec<F> = aug[col][col..=4].to_vec();
-            for (offset, entry) in aug[row][col..=4].iter_mut().enumerate() {
-                let correction = pivot_tail[offset].clone() * factor.clone();
-                *entry = entry.clone() - correction;
-            }
-        }
-    }
-
-    let mut solution = std::array::from_fn(|_| F::zero());
-    for row in (0..4).rev() {
-        let mut rhs_val = aug[row][4].clone();
-        for col in (row + 1)..4 {
-            rhs_val = rhs_val - aug[row][col].clone() * solution[col].clone();
-        }
-        if aug[row][row].is_zero() {
-            return None;
-        }
-        solution[row] = rhs_val / aug[row][row].clone();
-    }
-    Some(solution)
-}
-
-fn affine_rank<F: OrderedField>(points: &[[F; 4]]) -> usize {
+fn affine_rank<F: ExactScalar + 'static>(points: &[[F; 4]]) -> usize {
     if points.len() <= 1 {
         return 0;
     }
@@ -247,10 +188,13 @@ fn affine_rank<F: OrderedField>(points: &[[F; 4]]) -> usize {
                 .collect()
         })
         .collect();
-    rank_rows(&rows, 4)
+    let matrix = DMatrix::from_fn(rows.len(), 4, |row, col| rows[row][col].clone());
+    rank(&matrix)
 }
 
-fn check_bounded<F: OrderedField>(dual_vertices: &[[F; 4]]) -> Result<(), ExactPolytopeError> {
+fn check_bounded<F: ExactScalar + 'static>(
+    dual_vertices: &[[F; 4]],
+) -> Result<(), ExactPolytopeError> {
     let f = dual_vertices.len();
     for combo in combinations4(f) {
         let normal = cross_product_4d(
@@ -260,12 +204,12 @@ fn check_bounded<F: OrderedField>(dual_vertices: &[[F; 4]]) -> Result<(), ExactP
         );
         for sign in [F::one(), -F::one()] {
             let candidate = std::array::from_fn(|idx| sign.clone() * normal[idx].clone());
-            if candidate.iter().all(OrderedField::is_zero) {
+            if candidate.iter().all(|entry| entry.is_zero()) {
                 continue;
             }
             if dual_vertices
                 .iter()
-                .all(|dual| !cmp_field(&dot4(dual, &candidate), &F::zero()).is_gt())
+                .all(|dual| dot4(dual, &candidate) <= F::zero())
             {
                 return Err(ExactPolytopeError::Unbounded);
             }
@@ -276,7 +220,7 @@ fn check_bounded<F: OrderedField>(dual_vertices: &[[F; 4]]) -> Result<(), ExactP
 
 type VertexDescriptors = Vec<BTreeSet<usize>>;
 
-fn enumerate_vertices<F: OrderedField>(
+fn enumerate_vertices<F: ExactScalar + 'static>(
     dual_vertices: &[[F; 4]],
 ) -> Result<(Vec<[F; 4]>, VertexDescriptors), ExactPolytopeError> {
     let mut vertices = Vec::new();
@@ -292,7 +236,7 @@ fn enumerate_vertices<F: OrderedField>(
         let mut descriptor = BTreeSet::new();
         let mut feasible = true;
         for (facet_idx, dual) in dual_vertices.iter().enumerate() {
-            match cmp_field(&dot4(&vertex, dual), &F::one()) {
+            match dot4(&vertex, dual).cmp(&F::one()) {
                 std::cmp::Ordering::Greater => {
                     feasible = false;
                     break;
@@ -320,7 +264,7 @@ fn enumerate_vertices<F: OrderedField>(
     Ok((vertices, descriptors))
 }
 
-fn check_irredundancy<F: OrderedField>(
+fn check_irredundancy<F: ExactScalar + 'static>(
     vertices: &[[F; 4]],
     descriptors: &[BTreeSet<usize>],
     facet_count: usize,
@@ -343,24 +287,37 @@ fn check_irredundancy<F: OrderedField>(
 #[cfg(test)]
 mod tests {
     use super::{dot4, ExactPolytope4D};
-    use algebraic_numbers::{cmp_field, Algebraic, OrderedField, Rational, TanPiFifth};
+    use algebraic_numbers::{Algebraic, ExactScalar, RealAlgebraicField};
+    use num_rational::BigRational;
+    use num_traits::{One, Zero};
     use std::cmp::Ordering;
+
+    enum TanPiFifth {}
+
+    impl RealAlgebraicField for TanPiFifth {
+        fn polynomial() -> Vec<BigRational> {
+            vec![q(5), q(0), q(-10), q(0), q(1)]
+        }
+
+        fn isolating_interval() -> (BigRational, BigRational) {
+            (q(0), q(1))
+        }
+    }
 
     type TanPiFifthField = Algebraic<TanPiFifth>;
 
-    fn exact_simplex() -> ExactPolytope4D<Rational> {
-        let z = Rational::from_i64(0);
+    fn q(n: i64) -> BigRational {
+        BigRational::from_integer(n.into())
+    }
+
+    fn exact_simplex() -> ExactPolytope4D<BigRational> {
+        let z = BigRational::zero();
         ExactPolytope4D::new(vec![
-            [Rational::from_i64(-5), z.clone(), z.clone(), z.clone()],
-            [z.clone(), Rational::from_i64(-5), z.clone(), z.clone()],
-            [z.clone(), z.clone(), Rational::from_i64(-5), z.clone()],
-            [z.clone(), z.clone(), z.clone(), Rational::from_i64(-5)],
-            [
-                Rational::from_i64(5),
-                Rational::from_i64(5),
-                Rational::from_i64(5),
-                Rational::from_i64(5),
-            ],
+            [q(-5), z.clone(), z.clone(), z.clone()],
+            [z.clone(), q(-5), z.clone(), z.clone()],
+            [z.clone(), z.clone(), q(-5), z.clone()],
+            [z.clone(), z.clone(), z.clone(), q(-5)],
+            [q(5), q(5), q(5), q(5)],
         ])
         .expect("exact simplex")
     }
@@ -368,13 +325,12 @@ mod tests {
     fn exact_hko() -> ExactPolytope4D<TanPiFifthField> {
         let z = TanPiFifthField::zero();
         let one = TanPiFifthField::one();
-        let t = TanPiFifthField::generator();
+        let t = TanPiFifthField::root();
         let t2 = t.clone() * t.clone();
         let t3 = t2.clone() * t.clone();
-        let a = (TanPiFifthField::one() + t2.clone()) / TanPiFifthField::from_i64(4);
-        let b =
-            (TanPiFifthField::from_i64(7) * t.clone() - t3.clone()) / TanPiFifthField::from_i64(4);
-        let sec36 = (TanPiFifthField::from_i64(3) - t2.clone()) / TanPiFifthField::from_i64(2);
+        let a = (TanPiFifthField::one() + t2.clone()) / TanPiFifthField::from(4);
+        let b = (TanPiFifthField::from(7) * t.clone() - t3.clone()) / TanPiFifthField::from(4);
+        let sec36 = (TanPiFifthField::from(3) - t2.clone()) / TanPiFifthField::from(2);
 
         ExactPolytope4D::new(vec![
             [one.clone(), t.clone(), z.clone(), z.clone()],
@@ -391,11 +347,11 @@ mod tests {
         .expect("exact HKO")
     }
 
-    fn assert_self_consistent<F: OrderedField>(polytope: &ExactPolytope4D<F>) {
+    fn assert_self_consistent<F: ExactScalar + 'static>(polytope: &ExactPolytope4D<F>) {
         let one = F::one();
         for (vertex_idx, vertex) in polytope.vertices().iter().enumerate() {
             for (facet_idx, dual) in polytope.dual_vertices().iter().enumerate() {
-                let relation = cmp_field(&dot4(vertex, dual), &one);
+                let relation = dot4(vertex, dual).cmp(&one);
                 if polytope.incidence()[vertex_idx][facet_idx] {
                     assert_eq!(relation, Ordering::Equal);
                 } else {

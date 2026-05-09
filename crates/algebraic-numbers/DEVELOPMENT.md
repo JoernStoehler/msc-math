@@ -46,9 +46,10 @@ only if it provides exactly these capabilities:
    - assignment variants for addition, subtraction, multiplication, and
      division;
    - conversion from `i64` and `BigRational`.
-5. Ordinary nalgebra container ergonomics, demonstrated by
+5. Canonical coefficient access for experiment-owned serialization.
+6. Ordinary nalgebra container ergonomics, demonstrated by
    `Vector4<Algebraic<Sqrt5>>` and `DMatrix<Algebraic<Sqrt5>>`.
-6. Dense exact linear algebra over `DMatrix<T>` and `DVector<T>`:
+7. Dense exact linear algebra over `DMatrix<T>` and `DVector<T>`:
    - reduced row-echelon form and rank;
    - kernel basis;
    - linear solve as inconsistent or consistent with one particular solution
@@ -95,6 +96,8 @@ The contract is not satisfied if these facts stop being true:
   arithmetic operators.
 - Equality is coefficient equality in the fixed basis, relying on the minimal
   polynomial contract.
+- `Algebraic<F>::coefficients()` exposes the fixed-basis representation only;
+  catalog schemas and field labels remain caller-owned.
 - Ordering is exact; it must not depend on floating-point approximations or
   caller-provided tolerances.
 

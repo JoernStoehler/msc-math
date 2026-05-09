@@ -5,10 +5,10 @@
 
 use crate::exact::orbit::ExactOrbitKktData;
 use crate::exact::polytope::ExactPolytope4D;
-use algebraic_numbers::OrderedField;
+use algebraic_numbers::ExactScalar;
 
 /// Compute the exact dual-vertex capacity gradient `∂c/∂a_k` from direct inputs.
-pub(crate) fn capacity_derivatives_a_exact_raw<F: OrderedField>(
+pub(crate) fn capacity_derivatives_a_exact_raw<F: ExactScalar + 'static>(
     beta: &[F],
     q: &F,
     mu: &[F; 4],
@@ -16,7 +16,7 @@ pub(crate) fn capacity_derivatives_a_exact_raw<F: OrderedField>(
     dual_vertices: &[[F; 4]],
 ) -> Vec<[F; 4]> {
     let q_sq = q.clone() * q.clone();
-    let two = F::from_i64(2);
+    let two = F::one() + F::one();
 
     (0..dual_vertices.len())
         .map(|k| {
@@ -51,7 +51,7 @@ pub(crate) fn capacity_derivatives_a_exact_raw<F: OrderedField>(
 }
 
 /// Compute the exact dual-vertex capacity gradient `∂c/∂a_k`.
-pub fn capacity_derivatives_a_exact<F: OrderedField>(
+pub fn capacity_derivatives_a_exact<F: ExactScalar + 'static>(
     polytope: &ExactPolytope4D<F>,
     orbit: &ExactOrbitKktData<F>,
 ) -> Vec<[F; 4]> {
@@ -69,22 +69,26 @@ mod tests {
     use super::capacity_derivatives_a_exact;
     use crate::derivatives::capacity_derivatives_a;
     use crate::exact::{solve_orbit_sigma_exact, ExactPolytope4D};
-    use algebraic_numbers::{OrderedField, Rational};
     use nalgebra::Vector4;
+    use num_rational::BigRational;
+    use num_traits::{ToPrimitive, Zero};
 
-    fn exact_simplex() -> ExactPolytope4D<Rational> {
-        let z = Rational::from_i64(0);
+    fn q(n: i64) -> BigRational {
+        BigRational::from_integer(n.into())
+    }
+
+    fn to_f64(value: &BigRational) -> f64 {
+        value.to_f64().expect("small rational should fit in f64")
+    }
+
+    fn exact_simplex() -> ExactPolytope4D<BigRational> {
+        let z = BigRational::zero();
         ExactPolytope4D::new(vec![
-            [Rational::from_i64(-5), z.clone(), z.clone(), z.clone()],
-            [z.clone(), Rational::from_i64(-5), z.clone(), z.clone()],
-            [z.clone(), z.clone(), Rational::from_i64(-5), z.clone()],
-            [z.clone(), z.clone(), z.clone(), Rational::from_i64(-5)],
-            [
-                Rational::from_i64(5),
-                Rational::from_i64(5),
-                Rational::from_i64(5),
-                Rational::from_i64(5),
-            ],
+            [q(-5), z.clone(), z.clone(), z.clone()],
+            [z.clone(), q(-5), z.clone(), z.clone()],
+            [z.clone(), z.clone(), q(-5), z.clone()],
+            [z.clone(), z.clone(), z.clone(), q(-5)],
+            [q(5), q(5), q(5), q(5)],
         ])
         .expect("exact simplex")
     }
@@ -109,18 +113,18 @@ mod tests {
         let orbit = solve_orbit_sigma_exact(&polytope, &sigma).expect("exact simplex sigma");
         let exact_gradient = capacity_derivatives_a_exact(&polytope, &orbit);
 
-        let beta_f64: Vec<f64> = orbit.beta.iter().map(OrderedField::to_f64).collect();
-        let q_f64 = orbit.q.to_f64();
-        let mu_f64: Vec<f64> = orbit.mu.iter().map(OrderedField::to_f64).collect();
+        let beta_f64: Vec<f64> = orbit.beta.iter().map(to_f64).collect();
+        let q_f64 = to_f64(&orbit.q);
+        let mu_f64: Vec<f64> = orbit.mu.iter().map(to_f64).collect();
         let dual_vertices_f64: Vec<Vector4<f64>> = polytope
             .dual_vertices()
             .iter()
             .map(|dual| {
                 Vector4::new(
-                    dual[0].to_f64(),
-                    dual[1].to_f64(),
-                    dual[2].to_f64(),
-                    dual[3].to_f64(),
+                    to_f64(&dual[0]),
+                    to_f64(&dual[1]),
+                    to_f64(&dual[2]),
+                    to_f64(&dual[3]),
                 )
             })
             .collect();
@@ -130,9 +134,9 @@ mod tests {
         for (exact, float) in exact_gradient.iter().zip(float_gradient.iter()) {
             for idx in 0..4 {
                 assert!(
-                    (exact[idx].to_f64() - float[idx]).abs() < 1.0e-12,
+                    (to_f64(&exact[idx]) - float[idx]).abs() < 1.0e-12,
                     "gradient mismatch at component {idx}: exact={}, float={}",
-                    exact[idx].to_f64(),
+                    to_f64(&exact[idx]),
                     float[idx]
                 );
             }

@@ -12,6 +12,8 @@ computer-algebra system.
 - `ExactScalar`: explicit opt-in trait for exact scalar types.
 - `RealAlgebraicField`: static field specification for one chosen real root.
 - `Algebraic<F>`: element of `Q[alpha]` for the field marker `F`.
+- `Algebraic<F>::coefficients()`: canonical basis coefficients for
+  experiment-owned serialization.
 - `row_reduction`, `rank`, `kernel_basis`, `solve_linear_system`: dense exact
   linear algebra over nalgebra `DMatrix<T>` / `DVector<T>`.
 - `is_negative_definite`: exact symmetric negative-definite check.
@@ -70,6 +72,7 @@ let same_value = Qsqrt5::new([q(1), q(2)]);
 
 assert_eq!(one_plus_two_sqrt5, same_value);
 assert_eq!(Qsqrt5::from(3), Qsqrt5::new([q(3), q(0)]));
+assert_eq!(Qsqrt5::root().coefficients(), &[q(0), q(1)]);
 ```
 
 Wrong coefficient-array length panics. It is a constructor bug, not a

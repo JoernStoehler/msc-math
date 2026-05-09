@@ -40,7 +40,7 @@ impl<F: ExactOrderedField> ExactPolytope4D<F> {
             return Err(ExactPolytopeError::TooFewFacets(f));
         }
         for (idx, dual) in dual_vertices.iter().enumerate() {
-            if dual.iter().all(ExactOrderedField::is_zero) {
+            if dual.iter().all(|entry| entry.is_zero()) {
                 return Err(ExactPolytopeError::ZeroDualVertex(idx));
             }
         }
@@ -286,7 +286,7 @@ fn check_bounded<F: ExactOrderedField>(dual_vertices: &[[F; 4]]) -> Result<(), E
             for k in (j + 1)..f {
                 let normal =
                     cross_product_4d(&dual_vertices[i], &dual_vertices[j], &dual_vertices[k]);
-                if normal.iter().all(ExactOrderedField::is_zero) {
+                if normal.iter().all(|entry| entry.is_zero()) {
                     continue;
                 }
                 let has_pos = (0..f)

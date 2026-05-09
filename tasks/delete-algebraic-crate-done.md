@@ -9,7 +9,7 @@ closeout.
 
 ## Status
 
-- State: active branch gate.
+- State: done pending merge review.
 - Last updated: 2026-05-09.
 - Source surfaces: `tasks/verify-thesis-done.md`, `tasks/numerics.md`,
   `tasks/reproducibility.md`, `tasks/rust-tech-debt.md`,
@@ -122,10 +122,16 @@ Each row must name:
 - migration, deletion, or exception status;
 - verification command or review action.
 
-Use this table shape:
-
 | path or glob | operation | classification | source/reason | status | verification |
 | --- | --- | --- | --- | --- | --- |
+| `crates/algebraic-numbers/` | generic exact scalar arithmetic, exact ordering, canonical coefficients, row reduction, rank, kernel basis, linear solve, negative-definite check | thesis-relevant durable crate | `tasks/rust-tech-debt.md` exact arithmetic replacement branch; `crates/symplectic` and active experiments consume it | new crate API replaces old `OrderedField`/`TanPiFifth`/`canonical_element`/`solve_square` attractor | `cargo test -p algebraic-numbers`; `cargo clippy -p algebraic-numbers --all-targets -- -D warnings` |
+| `crates/symplectic/src/exact/` | exact polytope, one-sigma orbit, and derivative validation over exact scalars | thesis-relevant durable consumer | durable exact-validation support used by theorem-facing paths and branch gate | migrated to `ExactScalar`, `solve_linear_system`, `rank`; domain geometry/KKT logic stays in `symplectic` | `cargo check -p symplectic`; `cargo test -p symplectic --lib exact::` |
+| `experiments/numerics/src/algebraic/` and `experiments/numerics/{algebraic-exactness,sage-feasibility}/` | active numerics exactness spike and Sage-feasibility input generation | thesis-relevant active experiment | `tasks/numerics.md`, `research/numerics.md`, and `experiments/numerics/README.md` keep these as active/contingent numerics evidence | arithmetic uses new crate; experiment-local catalog, field tags, KKT, and geometry remain local domain/workflow code | `cargo check -p dev-numerical-analysis` |
+| `experiments/hko-local-maximum/src/exact_bank.rs`, `gradient-analysis/`, `sage-validation/` | theorem-facing exact row bank, exact diagnostics, and Sage-validation input generation | thesis-relevant active experiment | `experiments/hko-local-maximum/README.md` routes theorem-facing exact work and Sage validation through these paths | migrated from old crate public API to local field marker/helpers over the new crate and `symplectic::exact` | `cargo check -p exp-hko-local-maximum` |
+| `experiments/numerics/src/algebraic/geom.rs`, `experiments/numerics/src/algebraic/kkt.rs` | experiment-owned exact geometry and KKT workflow | accepted exception, thesis-relevant domain code | branch scope says KKT semantics, polytope geometry, capacity/orbit logic, and experiment workflows stay outside the generic crate | not migrated into `algebraic-numbers`; generic scalar conveniences wrap the new crate locally | `cargo check -p dev-numerical-analysis`; code review against scope boundary |
+| `experiments/hko-local-maximum/exact-clarke/*.py` | SymPy exact derivation scripts | thesis-relevant domain scripts, no Rust crate dependency | exact-Clarke route is theorem-facing per `experiments/hko-local-maximum/README.md` | not part of Rust exact-scalar API migration; no old `algebraic-numbers` imports | `rg` review for old Rust API imports |
+| `experiments/verification/all-minimum/main.rs` | verification experiment error mapping | integration fix | workspace check exposed a missing `OrbitSearchError::InvalidGap` match arm | added the missing mapping; unrelated to exact arithmetic but needed for blocker-free workspace integration | `cargo check --workspace` |
+| `crates/symplectic/API_SURFACE_TARGET.md`, `crates/symplectic/API_REFACTOR_GOAL.md` | historical/proposed API sketches mentioning `OrderedField` | future/follow-up documentation | these are API target/proposal notes, not compiled source or current API authority | left as historical terminology; current source and `crates/MAP.md` override for active navigation | `rg` review; no compiled imports |
 
 Rows classified `delete` must be removed before merge. Rows classified
 future/follow-up must be non-thesis-relevant and must not block future agents
@@ -237,10 +243,17 @@ The checklist must not defer success to an open-ended repo-wide audit, to
 checking unrelated thesis artifacts, or to a broad multi-week verification
 project.
 
-Use this table shape:
-
 | check | command or review action | scope | pass condition | covered risk |
 | --- | --- | --- | --- | --- |
+| crate-local tests | `cargo test -p algebraic-numbers` | new generic crate | all tests and doctests pass | scalar arithmetic/order and exact linear algebra regressions |
+| crate-local lint | `cargo clippy -p algebraic-numbers --all-targets -- -D warnings` | new generic crate | no clippy warnings | unsupported public API growth or obvious Rust quality regressions |
+| durable consumer check | `cargo check -p symplectic` | durable symplectic crate | package checks | `symplectic` no longer depends on removed old scalar API |
+| exact durable tests | `cargo test -p symplectic --lib exact::` | `symplectic::exact` | exact module tests pass | migrated exact polytope/orbit/derivative behavior |
+| active numerics check | `cargo check -p dev-numerical-analysis` | numerics experiment package | package checks | active numerics consumers compile without old crate API |
+| HKO package check | `cargo check -p exp-hko-local-maximum` | HKO theorem/evidence package | package checks | theorem-facing exact-bank consumers compile without old crate API |
+| old API import review | `rg -n "use algebraic_numbers::.*(OrderedField|TanPiFifth|canonical_element|CanonicalElement)|algebraic_numbers::(OrderedField|TanPiFifth|canonical_element|CanonicalElement|cmp_field|max_field|min_field|solve_square|rank_rows)" crates experiments -g '!target'` | Rust crates and experiments | no live Rust imports of removed public API remain | old-attractor relapse |
+| workspace integration | `cargo check --workspace` | all Rust workspace packages | workspace checks | cross-package compile drift after migration |
+| navigation/doc review | compare `crates/MAP.md`, `crates/algebraic-numbers/README.md`, `crates/algebraic-numbers/DEVELOPMENT.md`, `tasks/rust-tech-debt.md` | maps and docs | public API names and branch role agree with source | future-agent derailment from stale docs |
 
 ### 8. Workspace Agreement
 
