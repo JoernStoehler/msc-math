@@ -23,7 +23,7 @@ Freshness rules:
 ## Status
 
 - State: finish-mode roadmap scaffold.
-- Last updated: 2026-05-08.
+- Last updated: 2026-05-09.
 - Target: finish the scoped master-thesis project by 2026-05-14. The earlier
   optimistic 2026-05-07 finish date has passed.
 - Phase 1 done-state basis was accepted by Jorn on 2026-04-24, modulo inline
@@ -38,6 +38,7 @@ Freshness rules:
 | `tasks/verify-thesis-done.md` | once-run final thesis-done gate |
 | `tasks/MAP.md` | task overview and routing surface for humans and agents |
 | `tasks/*.md` | topic mini-roadmaps and cached decision context |
+| `tasks/delete-algebraic-crate-done.md` | branch-level done definition for the exact-arithmetic replacement branch |
 | `research/INDEX.md` and `research/*.md` | thesis story index, detailed interpretation, proof-route state, negative results, and research caches |
 | old harness extraction: verification packet candidates | reusable quality-measurement packets and operational definitions |
 | `tasks/submit-thesis.md` | submission/admin forms, source links, and external-clock TODOs |
@@ -73,7 +74,7 @@ justify calendar delay and Jorn-time cost.
 | Hostile landscape | negative sys-search story and data-science evidence | `tasks/landscape.md` |
 | Numerics | numerical appendix, solver/projection/beta-LP state | `tasks/numerics.md` |
 | Reproducibility | data freshness, artifact truth, repo promises | `tasks/reproducibility.md` |
-| Rust tech debt | Rust cleanup packets that affect agent velocity, experiment safety, validation trust, or durable crate maintainability | `tasks/rust-tech-debt.md` |
+| Rust tech debt | Rust cleanup packets that affect agent velocity, experiment safety, validation trust, or durable crate maintainability; exact-arithmetic replacement routes through the branch done gate | `tasks/rust-tech-debt.md`, `tasks/delete-algebraic-crate-done.md` |
 | Infrastructure | agent/harness/repo-maintenance work, including current review-reliability/task-tree follow-up, and future SWE polish | `tasks/infrastructure.md` |
 
 ## Immediate Phase-2 Agenda
