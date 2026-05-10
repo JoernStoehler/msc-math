@@ -91,6 +91,70 @@ true/false/indeterminate abstraction for this slice. A flat output record for
 the `f64` diagnostics is acceptable if a tuple would hide the meaning of the
 payload.
 
+## Next Slice: Full-Dimensional f64 Volume
+
+The next implementation slice should move the ordinary full-dimensional
+`R^4` volume computation out of `symplectic` and into this crate.
+
+Target operation:
+
+```rust,ignore
+pub fn volume_f64(
+    dual_vertices: &[Vector4<f64>],
+    vertices: &[Vector4<f64>],
+) -> Result<VolumeF64, F64GeometryError>;
+```
+
+The exact return type can be adjusted by the implementing agent, but it should
+be operation-specific and flat. The intended shape is:
+
+```rust,ignore
+pub enum VolumeF64 {
+    Decided {
+        volume: f64,
+        volume_abs_error_bound: f64,
+    },
+    Indeterminate {
+        indeterminate_incidence: Vec<IncidenceF64>,
+    },
+}
+```
+
+Contract: `dual_vertices` are normalized facet normals for
+`K = { x in R^4 : <a_i, x> <= 1 }`; `vertices` are the vertices of that same
+full-dimensional bounded polytope. The origin is therefore strictly inside
+`K`. This f64 function validates finite coordinates. A clear contract violation
+such as a vertex lying outside a halfspace by more than the local signed-gap
+bound may panic unless a genuinely recoverable caller use case appears.
+
+Implementation target: copy the existing origin-star triangulation idea from
+`crates/symplectic/src/geom/volume.rs`, but operate only on flat slices. Use
+`dual_vertices` to recover vertex-facet incidence via `<a_i, v> = 1`, then use
+`vertices` for Euclidean determinants. Do not introduce `Polytope4D`, a public
+polytope wrapper, or a qhull dependency.
+
+Approximate incidence must not guess. For each pair `(vertex_index,
+facet_index)`, compute `signed_gap = 1.0 - a_i.dot(v)` and a local
+`signed_gap_abs_error_bound`. If the relation is too close to decide, return
+`VolumeF64::Indeterminate` with the ambiguous relations. If every relation is
+decided, compute the volume and return `Decided`.
+
+The first implementation may set `volume_abs_error_bound` to a conservative
+determinant-arithmetic bound if the calculation is simple. If not, use `0.0`
+only with explicit docs that the field is a placeholder for rounding analysis,
+or omit the field from the initial return type. Do not overclaim a rigorous
+bound.
+
+Fixture tests should cover at least:
+
+- simplex volume `1/24`;
+- hypercube `[-1,1]^4` volume `16`;
+- crosspolytope with vertices `+-2 e_i` volume `32/3`;
+- volume scaling on hypercubes, preferably with a small property test;
+- non-finite input returns `F64GeometryError::NonFiniteCoordinate`;
+- a near-incidence input returns `Indeterminate` instead of deciding from a
+  tolerance guess.
+
 ## Proposed First Migration Slices
 
 1. `polar_vertices_exact(vertices)` plus the validation and helper operations it

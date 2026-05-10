@@ -152,8 +152,10 @@ fixed here:
 - approximate extreme-point/non-redundancy diagnostics for callers that need
   stable non-extreme witnesses or indeterminate witness subsets rather than
   tolerance guesses;
-- full-dimensional volume from a polar pair, using dual vertices for incidence
-  and primal vertices for Euclidean geometry;
+- full-dimensional f64 volume from a polar pair, using dual vertices for
+  incidence and primal vertices for Euclidean geometry. The return should be
+  decided only when vertex-facet incidence is stable in f64; otherwise it
+  should return an operation-specific indeterminate incidence payload;
 - affine-subspace polygon and lower-dimensional volume helpers in ambient
   `R^4`.
 
