@@ -140,6 +140,10 @@ affine solution space with a marked solution. Panic for irrecoverable caller
 bugs such as wrong shapes, violated input contracts, or a detected mismatch
 between the code and its mathematical invariants.
 
+In the current API sketch, the only named recoverable error is non-finite f64
+input. Do not introduce placeholder error types such as `ConvexHullError`,
+`PolarError`, or `VolumeError` until their recoverable cases are known.
+
 Use tuples when each position is obvious at the call site. Use a locally defined
 flat data container when output variables need names. Avoid input wrappers
 unless a pipeline naturally reuses the output type of an earlier function.

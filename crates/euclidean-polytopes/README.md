@@ -76,13 +76,22 @@ pub fn origin_in_interior_of_conv_exact<T: ExactScalar>(points: &[Vector4<T>]) -
 
 pub fn origin_in_interior_of_conv_f64(
     points: &[Vector4<f64>],
-) -> Result<OriginInteriorF64, ConvexHullError>;
+) -> Result<OriginInteriorF64, F64GeometryError>;
 
 pub fn all_points_are_extreme_exact<T: ExactScalar>(points: &[Vector4<T>]) -> bool;
 
 pub fn all_points_are_extreme_f64(
     points: &[Vector4<f64>],
-) -> Result<ExtremalityF64, ConvexHullError>;
+) -> Result<ExtremalityF64, F64GeometryError>;
+
+pub enum F64GeometryError {
+    NonFiniteCoordinate {
+        vector_role: &'static str,
+        vector_index: usize,
+        coordinate_index: usize,
+        value: f64,
+    },
+}
 
 pub enum OriginInteriorF64 {
     True,
@@ -99,7 +108,7 @@ pub struct ExtremalityF64 {
 
 pub fn polar_vertices_exact<T: ExactScalar>(
     vertices: &[Vector4<T>],
-) -> Result<PolarVertexData<T>, PolarError>;
+) -> PolarVertexData<T>;
 
 pub struct PolarVertexData<T> {
     pub vertices: Vec<Vector4<T>>,
@@ -122,17 +131,17 @@ pub struct IncidenceF64 {
 
 pub fn polar_vertices_f64(
     vertices: &[Vector4<f64>],
-) -> Result<PolarVerticesF64, PolarError>;
+) -> Result<PolarVerticesF64, F64GeometryError>;
 
 pub fn full_dimensional_volume_from_polar_pair_exact<T: ExactScalar>(
     dual_vertices: &[Vector4<T>],
     vertices: &[Vector4<T>],
-) -> Result<T, VolumeError>;
+) -> T;
 
 pub fn full_dimensional_volume_from_polar_pair_f64(
     dual_vertices: &[Vector4<f64>],
     vertices: &[Vector4<f64>],
-) -> Result<VolumeF64, VolumeError>;
+) -> Result<VolumeF64, F64GeometryError>;
 
 pub struct VolumeF64 {
     pub volume: f64,
@@ -140,7 +149,7 @@ pub struct VolumeF64 {
     pub indeterminate_incidence: Vec<(usize, usize)>,
 }
 
-pub fn polygon_area_in_affine_plane(vertices: &[Vector4<f64>]) -> Result<f64, VolumeError>;
+pub fn polygon_area_in_affine_plane(vertices: &[Vector4<f64>]) -> Result<f64, F64GeometryError>;
 ```
 
 `polar_vertices_exact(vertices)` assumes the input vertices define a
@@ -179,12 +188,14 @@ Functions should classify preconditions explicitly:
 - programmer bug: panic only for shape mismatches that cannot be recovered from
   sensibly by a thesis caller.
 
-Use `Result` for recoverable errors. Use `Option` only when `None` versus
-`Some(_)` exactly matches the mathematical distinction, such as an empty
-solution set versus an affine solution space with a marked solution. Use tuples
-when each position is obvious at the call site. Define a local flat `struct`
-when output variables need names, especially for multi-output computations like
-`vertices`, `coordinate_error`, and `indeterminate_tuples`.
+Use `Result` for recoverable errors. In the current sketch, the only concrete
+recoverable error is non-finite f64 input, represented by `F64GeometryError`.
+Use `Option` only when `None` versus `Some(_)` exactly matches the mathematical
+distinction, such as an empty solution set versus an affine solution space with
+a marked solution. Use tuples when each position is obvious at the call site.
+Define a local flat `struct` when output variables need names, especially for
+multi-output computations like `vertices`, `coordinate_error`, and
+`indeterminate_tuples`.
 
 Exact combinatorial predicates should use `T: ExactScalar` and return `bool`.
 They may call the corresponding `f64` diagnostic function first and, when it
