@@ -154,13 +154,16 @@ pub fn polar_vertices_f64(vertices: &[Vector4<f64>]) -> Result<PolarVerticesF64,
                 }
 
                 let vertex_index = polar_vertices.len();
-                polar_vertices.push(candidate.vertex);
                 incidence.extend(active_incidence.into_iter().map(|facet| IncidenceF64 {
                     vertex_index,
                     facet_index: facet,
-                    signed_gap: 0.0,
-                    signed_gap_abs_error_bound: candidate.coordinate_abs_error_bound,
+                    signed_gap: 1.0 - vertices[facet].dot(&candidate.vertex),
+                    signed_gap_abs_error_bound: signed_gap_abs_error_bound(
+                        &vertices[facet],
+                        &candidate.vertex,
+                    ),
                 }));
+                polar_vertices.push(candidate.vertex);
             }
         }
     }

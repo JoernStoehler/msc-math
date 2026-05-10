@@ -18,7 +18,7 @@ Map maintenance:
 ## Status
 
 - State: split from the old root `ARCHITECTURE.md`.
-- Last updated: 2026-05-09.
+- Last updated: 2026-05-10.
 - Source surfaces: `crates/**/src/`, `crates/**/README.md`,
   `crates/**/DEVELOPMENT.md`, `formal/`, crate manifests, and local crate
   tests.

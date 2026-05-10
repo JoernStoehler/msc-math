@@ -71,6 +71,31 @@ fn lower_dimensional_polygon_vertices_in_r4_are_all_extreme() {
     assert!(all_points_are_extreme_exact(&points));
 }
 
+#[test]
+fn collinear_midpoint_in_r4_is_not_extreme() {
+    let points = vec![vq([0, 0, 0, 0]), vq([1, 0, 0, 0]), vq([2, 0, 0, 0])];
+
+    assert!(!all_points_are_extreme_exact(&points));
+}
+
+#[test]
+fn planar_square_with_center_or_edge_midpoint_is_not_all_extreme() {
+    let square = vec![
+        vq([0, 0, 0, 0]),
+        vq([2, 0, 0, 0]),
+        vq([2, 2, 0, 0]),
+        vq([0, 2, 0, 0]),
+    ];
+
+    let mut with_center = square.clone();
+    with_center.push(vq([1, 1, 0, 0]));
+    assert!(!all_points_are_extreme_exact(&with_center));
+
+    let mut with_edge_midpoint = square;
+    with_edge_midpoint.push(vq([1, 0, 0, 0]));
+    assert!(!all_points_are_extreme_exact(&with_edge_midpoint));
+}
+
 proptest! {
     #![proptest_config(ProptestConfig::with_cases(32))]
 

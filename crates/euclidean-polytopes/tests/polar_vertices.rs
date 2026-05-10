@@ -207,6 +207,49 @@ fn polar_vertices_f64_reports_near_boundary_tuple_as_indeterminate() {
 }
 
 #[test]
+fn polar_vertices_f64_incidence_reports_local_signed_gap_diagnostics() {
+    let simplex = vec![
+        vq([1, 0, 0, 0]),
+        vq([0, 1, 0, 0]),
+        vq([0, 0, 1, 0]),
+        vq([0, 0, 0, 1]),
+        vq([-1, -1, -1, -1]),
+    ];
+    let points: Vec<Vector4<f64>> = simplex
+        .into_iter()
+        .map(|point| {
+            Vector4::new(
+                point[0].to_f64().unwrap(),
+                point[1].to_f64().unwrap(),
+                point[2].to_f64().unwrap(),
+                point[3].to_f64().unwrap(),
+            )
+        })
+        .collect();
+
+    let PolarVerticesF64 {
+        vertices,
+        incidence,
+        ..
+    } = polar_vertices_f64(&points).expect("finite f64 input");
+
+    assert!(
+        !incidence.is_empty(),
+        "simplex polar should have accepted incidences"
+    );
+    for relation in incidence {
+        let facet = &points[relation.facet_index];
+        let vertex = &vertices[relation.vertex_index];
+
+        assert_eq!(relation.signed_gap, 1.0 - facet.dot(vertex));
+        assert_eq!(
+            relation.signed_gap_abs_error_bound,
+            expected_signed_gap_abs_error_bound(facet, vertex)
+        );
+    }
+}
+
+#[test]
 fn polar_vertices_f64_reports_singular_tuple_without_candidate_vertex() {
     let points = vec![
         vf([1.0, 0.0, 0.0, 0.0]),
@@ -226,4 +269,11 @@ fn polar_vertices_f64_reports_singular_tuple_without_candidate_vertex() {
             .any(|candidate| candidate.vertex.is_none()),
         "singular tuple must not invent an approximate candidate"
     );
+}
+
+fn expected_signed_gap_abs_error_bound(facet: &Vector4<f64>, candidate: &Vector4<f64>) -> f64 {
+    const EPS_MACH: f64 = f64::EPSILON / 2.0;
+    const ERROR_SCALE: f64 = 1.0e4;
+
+    ERROR_SCALE * EPS_MACH * (facet.norm() * candidate.norm() + facet.dot(candidate).abs() + 1.0)
 }

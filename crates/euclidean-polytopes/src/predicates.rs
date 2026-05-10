@@ -169,3 +169,38 @@ fn reduce_witness_by_coordinate_bounds<T: ExactScalar>(
 
     Some(active_indices)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::{all_points_are_extreme_exact, has_nonnegative_barycentric_witness};
+    use nalgebra::Vector4;
+    use num_rational::BigRational;
+
+    type Q = BigRational;
+
+    fn q(n: i64) -> Q {
+        Q::from_integer(n.into())
+    }
+
+    fn vq(entries: [i64; 4]) -> Vector4<Q> {
+        Vector4::new(q(entries[0]), q(entries[1]), q(entries[2]), q(entries[3]))
+    }
+
+    #[test]
+    fn affinely_dependent_witness_is_rejected_but_smaller_witness_decides() {
+        let points = vec![
+            vq([1, 1, 0, 0]),
+            vq([0, 0, 0, 0]),
+            vq([2, 0, 0, 0]),
+            vq([2, 2, 0, 0]),
+            vq([0, 2, 0, 0]),
+        ];
+
+        assert!(!has_nonnegative_barycentric_witness(
+            &points,
+            0,
+            &[1, 2, 3, 4]
+        ));
+        assert!(!all_points_are_extreme_exact(&points));
+    }
+}

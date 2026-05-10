@@ -23,7 +23,7 @@ Freshness rules:
 ## Status
 
 - State: finish-mode roadmap scaffold.
-- Last updated: 2026-05-09.
+- Last updated: 2026-05-10.
 - Target: finish the scoped master-thesis project by 2026-05-14. The earlier
   optimistic 2026-05-07 finish date has passed.
 - Phase 1 done-state basis was accepted by Jorn on 2026-04-24, modulo inline
