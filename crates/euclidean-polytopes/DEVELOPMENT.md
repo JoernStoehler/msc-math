@@ -25,6 +25,9 @@ The implemented packets are in place:
 - `all_points_are_extreme_exact(points) -> bool`;
 - `polar_vertices_exact(vertices) -> PolarVertexData<T>`;
 - `polar_vertices_f64(vertices) -> Result<PolarVerticesF64, F64GeometryError>`;
+- `vertex_facets_from_incidence(incidence) -> Vec<Vec<usize>>`;
+- `edges_from_incidence(incidence) -> Vec<[usize; 2]>`;
+- `two_faces_from_incidence(incidence) -> Vec<TwoFace>`;
 - `volume_f64(dual_vertices, vertices) -> Result<VolumeF64, F64GeometryError>`;
 - `volume_from_incidence_f64(vertices, incidence) -> Result<f64, F64GeometryError>`;
 - `volume_from_incidence_exact(vertices, incidence) -> T`.
@@ -285,6 +288,47 @@ Implemented criteria for this slice:
   divergence-theorem volume reconstruction, non-finite input, shape mismatch,
   out-of-range facet indices, and a symplectic API regression;
 - verification command results are recorded in the branch handoff.
+
+## Implemented Slice: Incidence-Only Face Combinatorics
+
+Ordinary incidence-only face combinatorics now has a public flat surface:
+
+```rust,ignore
+pub struct TwoFace {
+    pub facets: [usize; 2],
+    pub vertices: Vec<usize>,
+}
+
+pub fn vertex_facets_from_incidence(incidence: &DMatrix<bool>) -> Vec<Vec<usize>>;
+
+pub fn edges_from_incidence(incidence: &DMatrix<bool>) -> Vec<[usize; 2]>;
+
+pub fn two_faces_from_incidence(incidence: &DMatrix<bool>) -> Vec<TwoFace>;
+```
+
+The helpers use only `DMatrix<bool>` incidence. They do not inspect coordinates,
+do not recover incidence from f64 signed gaps, and do not order 2-face vertices
+cyclically. Empty matrices return empty results. Edge detection follows the
+current 4D convention: two vertices form an edge when they share at least three
+incident facets. A 2-face is reported when a sorted facet pair has at least
+three common vertices; the returned vertex list is sorted by vertex index.
+
+`symplectic::geom::skeleton::Skeleton` remains a compatibility wrapper. Its
+`compute` method delegates vertex-facet lists, edges, and unordered 2-faces to
+this crate, then applies its existing f64 polygon ordering when converting
+`TwoFace` into the old `Ridge` type. Moving that polygon ordering into a public
+Euclidean API is intentionally deferred to a later polygon/2-face ordering
+slice.
+
+Implemented criteria for this slice:
+
+- public helpers are exported from `euclidean-polytopes` and covered by pure
+  incidence tests for the 4-simplex and 4-cube;
+- tests check deterministic ordering of edge pairs, 2-face facet pairs, and
+  2-face vertex lists;
+- tests cover an incidence matrix with no valid 2-face candidates;
+- `symplectic::geom::skeleton` still exposes `Skeleton` and `Ridge` while
+  delegating incidence-only combinatorics to the Euclidean helpers.
 
 ## Implemented Slice: Incidence-Only 2-Face Ordering
 

@@ -39,7 +39,8 @@ all future context.
 
 The implemented public API currently covers random candidate dual-vertex
 sampling, exact point-set predicates, polar vertex enumeration,
-full-dimensional volume, and known-incidence facet 3-volume in ambient `R^4`:
+incidence-only face combinatorics, full-dimensional volume, and known-incidence
+facet 3-volume in ambient `R^4`:
 
 ```rust,ignore
 use algebraic_numbers::ExactScalar;
@@ -85,6 +86,17 @@ pub struct IndeterminatePolarCandidateF64 {
     pub vertex: Option<Vector4<f64>>,
     pub coordinate_abs_error_bound: f64,
 }
+
+pub struct TwoFace {
+    pub facets: [usize; 2],
+    pub vertices: Vec<usize>,
+}
+
+pub fn vertex_facets_from_incidence(incidence: &DMatrix<bool>) -> Vec<Vec<usize>>;
+
+pub fn edges_from_incidence(incidence: &DMatrix<bool>) -> Vec<[usize; 2]>;
+
+pub fn two_faces_from_incidence(incidence: &DMatrix<bool>) -> Vec<TwoFace>;
 
 pub fn volume_f64(
     dual_vertices: &[Vector4<f64>],
@@ -161,6 +173,15 @@ The `f64` path validates finite coordinates and reports partial vertices plus
 the 4-tuple was singular, higher-dimensional, or unsolved in `f64`; it has
 `Some(vertex)` when `f64` found an approximate candidate but membership or
 duplicate classification was too close to decide.
+
+The incidence-only face helpers accept a plain `DMatrix<bool>` with rows as
+vertices and columns as facets. `vertex_facets_from_incidence` returns sorted
+incident-facet lists. `edges_from_incidence` returns vertex pairs that share at
+least three incident facets. `two_faces_from_incidence` returns facet pairs
+with at least three shared vertices; `TwoFace::vertices` is sorted by vertex
+index and is not polygon-ordered. The temporary
+`symplectic::geom::skeleton::Skeleton` wrapper still performs f64 polygon
+ordering when converting these `TwoFace` values to its existing `Ridge` type.
 
 `volume_f64(dual_vertices, vertices)` computes full-dimensional Euclidean
 volume for `K = { x in R^4 : <a_i, x> <= 1 }`. `dual_vertices` are normalized

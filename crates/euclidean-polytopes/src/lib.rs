@@ -11,6 +11,7 @@
 //! remain in the `symplectic` crate or experiment-owned code.
 
 mod f64_geometry;
+mod faces;
 mod linalg;
 mod polar;
 mod predicates;
@@ -18,6 +19,9 @@ mod random;
 mod volume;
 
 pub use f64_geometry::F64GeometryError;
+pub use faces::{
+    edges_from_incidence, two_faces_from_incidence, vertex_facets_from_incidence, TwoFace,
+};
 pub use polar::{
     polar_vertices_exact, polar_vertices_f64, IncidenceF64, IndeterminatePolarCandidateF64,
     PolarVertexData, PolarVerticesF64,

@@ -13,6 +13,9 @@
 
 use crate::geom::polygon_order::sort_polygon_order;
 use crate::geom::polytope::Polytope4D;
+use euclidean_polytopes::{
+    edges_from_incidence, two_faces_from_incidence, vertex_facets_from_incidence,
+};
 use nalgebra::Vector4;
 
 /// Full combinatorial skeleton of a 4D polytope.
@@ -55,47 +58,17 @@ impl Skeleton {
     /// Fine for our polytopes (V <= 200, F <= 16).
     pub fn compute(polytope: &Polytope4D) -> Self {
         let vertices = polytope.vertices_f64();
-        let f = polytope.facet_count();
         let incidence = polytope.incidence();
-        let v_count = incidence.nrows();
 
-        // Step 1: vertex-facet incidence lists from exact boolean matrix.
-        let vertex_facets: Vec<Vec<usize>> = (0..v_count)
-            .map(|v| (0..f).filter(|&fi| incidence[(v, fi)]).collect())
+        let vertex_facets = vertex_facets_from_incidence(incidence);
+        let edges = edges_from_incidence(incidence);
+        let ridges = two_faces_from_incidence(incidence)
+            .into_iter()
+            .map(|two_face| Ridge {
+                facets: two_face.facets,
+                vertices: sort_polygon_vertices(vertices, &two_face.vertices),
+            })
             .collect();
-
-        // Step 2: edges — vertex pairs sharing >= 3 common facets.
-        // In a simple 4D polytope every vertex is on exactly 4 facets,
-        // so an edge (1-face) requires >= 3 shared facets.
-        let mut edges = Vec::new();
-        for i in 0..v_count {
-            for j in (i + 1)..v_count {
-                let common = count_common_sorted(&vertex_facets[i], &vertex_facets[j]);
-                if common >= 3 {
-                    edges.push([i, j]);
-                }
-            }
-        }
-
-        // Step 3: ridges — facet pairs sharing >= 3 vertices.
-        // A ridge is a 2-face, which in 4D is the intersection of two facets.
-        let mut ridges = Vec::new();
-        for fi in 0..f {
-            for fj in (fi + 1)..f {
-                let ridge_verts: Vec<usize> = (0..v_count)
-                    .filter(|&vi| {
-                        vertex_facets[vi].contains(&fi) && vertex_facets[vi].contains(&fj)
-                    })
-                    .collect();
-                if ridge_verts.len() >= 3 {
-                    let sorted = sort_polygon_vertices(vertices, &ridge_verts);
-                    ridges.push(Ridge {
-                        facets: [fi, fj],
-                        vertices: sorted,
-                    });
-                }
-            }
-        }
 
         Self {
             vertex_facets,
@@ -132,24 +105,6 @@ impl Skeleton {
             .sum::<Vector4<f64>>()
             / facet_verts.len() as f64
     }
-}
-
-/// Count elements common to two sorted slices using merge intersection.
-fn count_common_sorted(a: &[usize], b: &[usize]) -> usize {
-    let mut count = 0;
-    let (mut i, mut j) = (0, 0);
-    while i < a.len() && j < b.len() {
-        match a[i].cmp(&b[j]) {
-            std::cmp::Ordering::Less => i += 1,
-            std::cmp::Ordering::Greater => j += 1,
-            std::cmp::Ordering::Equal => {
-                count += 1;
-                i += 1;
-                j += 1;
-            }
-        }
-    }
-    count
 }
 
 /// Sort vertex indices into convex polygon order within their 2D affine hull.
