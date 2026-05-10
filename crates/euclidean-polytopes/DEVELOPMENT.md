@@ -266,3 +266,12 @@ cargo clippy -p euclidean-polytopes --all-targets -- -D warnings
 cargo test -p symplectic --lib geom::
 cargo check --workspace
 ```
+
+Implementation workflow for the first packet:
+
+- write exact fixture tests before implementing exact helpers;
+- write f64 indeterminate/tolerance-boundary tests before f64 filtering;
+- start with fixture tests, not property tests, until the public API is stable;
+- include tests for simplex/cube/crosspolytope polar duality, redundant input
+  points, bad `0 in int conv` contract panics, exact deduplication, non-finite
+  f64 input, and a near-boundary f64 case that returns indeterminate.

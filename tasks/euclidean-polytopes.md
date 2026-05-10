@@ -82,6 +82,13 @@ modules, which makes non-symplectic helpers harder to reuse and review.
   Why it matters: the first implementation should check/assert the interior
   condition but should not overconstrain polar vertex enumeration with an
   unnecessary non-redundancy precondition.
+- [accepted 2026-05-10] Use TDD for the first implementation slice. Write
+  contract tests for exact fixtures before implementing exact helpers, and
+  write f64 indeterminate/tolerance-boundary tests before implementing f64
+  filtering.
+  Why it matters: this crate exists to prevent tolerance guesses and hidden
+  geometry-contract drift; tests should fail before those mistakes can become
+  accepted implementation behavior.
 
 ## Work Map
 
@@ -100,6 +107,13 @@ The migration task is done when:
 
 - `crates/euclidean-polytopes/` has consumer and maintainer docs matching the
   implemented public API;
+- the first implementation packet is test-driven: exact fixture tests are
+  written before exact implementation, and f64 indeterminate tests are written
+  before f64 filtering;
+- tests cover at least simplex/cube/crosspolytope polar duality, redundant input
+  points, bad `0 in int conv` contract panics, exact deduplication, non-finite
+  f64 input, and a near-boundary f64 case that returns indeterminate instead of
+  guessing;
 - workspace commands pass:
   `cargo test -p euclidean-polytopes`,
   `cargo clippy -p euclidean-polytopes --all-targets -- -D warnings`, and
