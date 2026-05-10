@@ -194,12 +194,36 @@ fn polar_vertices_f64_reports_near_boundary_tuple_as_indeterminate() {
     points.push(vf([1.0 - 1.0e-14, 0.0, 0.0, 0.0]));
 
     let PolarVerticesF64 {
-        indeterminate_tuples,
+        indeterminate_candidates,
         ..
     } = polar_vertices_f64(&points).expect("finite f64 input");
 
     assert!(
-        !indeterminate_tuples.is_empty(),
-        "near-boundary halfspace membership must not be guessed"
+        indeterminate_candidates
+            .iter()
+            .any(|candidate| candidate.vertex.is_some()),
+        "near-boundary halfspace membership must return the approximate candidate"
+    );
+}
+
+#[test]
+fn polar_vertices_f64_reports_singular_tuple_without_candidate_vertex() {
+    let points = vec![
+        vf([1.0, 0.0, 0.0, 0.0]),
+        vf([0.0, 1.0, 0.0, 0.0]),
+        vf([0.0, 0.0, 1.0, 0.0]),
+        vf([0.0, 0.0, 2.0, 0.0]),
+    ];
+
+    let PolarVerticesF64 {
+        indeterminate_candidates,
+        ..
+    } = polar_vertices_f64(&points).expect("finite f64 input");
+
+    assert!(
+        indeterminate_candidates
+            .iter()
+            .any(|candidate| candidate.vertex.is_none()),
+        "singular tuple must not invent an approximate candidate"
     );
 }

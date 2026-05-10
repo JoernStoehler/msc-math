@@ -55,6 +55,39 @@ pub struct PolarVertexData<T> {
     pub vertices: Vec<Vector4<T>>,
     pub incidence: DMatrix<bool>,
 }
+
+pub fn polar_vertices_f64(
+    vertices: &[Vector4<f64>],
+) -> Result<PolarVerticesF64, F64GeometryError>;
+
+pub struct PolarVerticesF64 {
+    pub vertices: Vec<Vector4<f64>>,
+    pub coordinate_abs_error_bound: f64,
+    pub incidence: Vec<IncidenceF64>,
+    pub indeterminate_candidates: Vec<IndeterminatePolarCandidateF64>,
+}
+
+pub struct IncidenceF64 {
+    pub vertex_index: usize,
+    pub facet_index: usize,
+    pub signed_gap: f64,
+    pub signed_gap_abs_error_bound: f64,
+}
+
+pub struct IndeterminatePolarCandidateF64 {
+    pub tuple: [usize; 4],
+    pub vertex: Option<Vector4<f64>>,
+    pub coordinate_abs_error_bound: f64,
+}
+
+pub enum F64GeometryError {
+    NonFiniteCoordinate {
+        vector_role: &'static str,
+        vector_index: usize,
+        coordinate_index: usize,
+        value: f64,
+    },
+}
 ```
 
 `polar_vertices_exact(vertices)` computes vertices of the normalized polar
@@ -63,17 +96,11 @@ pub struct PolarVertexData<T> {
 redundant points only add redundant inequalities. Returned vertices are
 deduplicated by exact equality.
 
-The crate also exposes a minimal diagnostic `f64` polar enumeration:
-
-```rust,ignore
-pub fn polar_vertices_f64(
-    vertices: &[Vector4<f64>],
-) -> Result<PolarVerticesF64, F64GeometryError>;
-```
-
-This path validates finite coordinates and reports partial vertices plus
-`indeterminate_tuples`. It is suitable as an approximate diagnostic surface, not
-as a replacement for exact decisions in near-singular or near-boundary cases.
+The `f64` path validates finite coordinates and reports partial vertices plus
+`indeterminate_candidates`. An indeterminate candidate has `vertex: None` when
+the 4-tuple was singular, higher-dimensional, or unsolved in `f64`; it has
+`Some(vertex)` when `f64` found an approximate candidate but membership or
+duplicate classification was too close to decide.
 
 ## Robust Numeric Split
 
@@ -95,7 +122,7 @@ Avoid a generic result wrapper until repeated call sites prove it helps. A tiny
 global `True`, `False`, `Indeterminate` enum may be useful for bare predicates.
 The default should still be operation-specific diagnostic results with semantic
 field names: `candidate_sets_that_may_contain_zero`, `vertices`,
-`coordinate_abs_error_bound`, `indeterminate_tuples`.
+`coordinate_abs_error_bound`, `indeterminate_candidates`.
 
 For example, vertex enumeration from dual vertices can test most 4-tuples of
 hyperplanes cheaply with `f64`. Near-singular tuples, uncertain duplicate
@@ -105,93 +132,19 @@ resolve those tuples exactly: the intersection is empty/non-unique and not a
 vertex, or it is one point whose halfspace inequalities and duplicate status
 are decided exactly.
 
-## Target API Shape
+## Future API Targets
 
-The initial public API should be close to these mathematical operations:
+The following operations are planned but their signatures are intentionally not
+fixed here:
 
-```rust,ignore
-use algebraic_numbers::ExactScalar;
-use nalgebra::Vector4;
-
-pub fn origin_in_interior_of_conv_exact<T: ExactScalar>(points: &[Vector4<T>]) -> bool;
-
-pub fn origin_in_interior_of_conv_f64(
-    points: &[Vector4<f64>],
-) -> Result<OriginInteriorF64, F64GeometryError>;
-
-pub fn all_points_are_extreme_exact<T: ExactScalar>(points: &[Vector4<T>]) -> bool;
-
-pub fn all_points_are_extreme_f64(
-    points: &[Vector4<f64>],
-) -> Result<ExtremalityF64, F64GeometryError>;
-
-pub enum F64GeometryError {
-    NonFiniteCoordinate {
-        vector_role: &'static str,
-        vector_index: usize,
-        coordinate_index: usize,
-        value: f64,
-    },
-}
-
-pub enum OriginInteriorF64 {
-    True,
-    False,
-    Indeterminate {
-        candidate_sets_that_may_contain_zero: Vec<[usize; 5]>,
-    },
-}
-
-pub struct ExtremalityF64 {
-    pub non_extreme_points: Vec<usize>,
-    pub indeterminate_points: Vec<usize>,
-}
-
-pub fn polar_vertices_exact<T: ExactScalar>(
-    vertices: &[Vector4<T>],
-) -> PolarVertexData<T>;
-
-pub struct PolarVertexData<T> {
-    pub vertices: Vec<Vector4<T>>,
-    pub incidence: nalgebra::DMatrix<bool>,
-}
-
-pub struct PolarVerticesF64 {
-    pub vertices: Vec<Vector4<f64>>,
-    pub coordinate_abs_error_bound: f64,
-    pub incidence: Vec<IncidenceF64>,
-    pub indeterminate_tuples: Vec<[usize; 4]>,
-}
-
-pub struct IncidenceF64 {
-    pub vertex_index: usize,
-    pub facet_index: usize,
-    pub signed_gap: f64,
-    pub signed_gap_abs_error_bound: f64,
-}
-
-pub fn polar_vertices_f64(
-    vertices: &[Vector4<f64>],
-) -> Result<PolarVerticesF64, F64GeometryError>;
-
-pub fn full_dimensional_volume_from_polar_pair_exact<T: ExactScalar>(
-    dual_vertices: &[Vector4<T>],
-    vertices: &[Vector4<T>],
-) -> T;
-
-pub fn full_dimensional_volume_from_polar_pair_f64(
-    dual_vertices: &[Vector4<f64>],
-    vertices: &[Vector4<f64>],
-) -> Result<VolumeF64, F64GeometryError>;
-
-pub struct VolumeF64 {
-    pub volume: f64,
-    pub volume_abs_error_bound: f64,
-    pub indeterminate_incidence: Vec<(usize, usize)>,
-}
-
-pub fn polygon_area_in_affine_plane(vertices: &[Vector4<f64>]) -> Result<f64, F64GeometryError>;
-```
+- approximate origin-interior diagnostics with all candidate 5-sets that may
+  contain zero;
+- exact and approximate extreme-point/non-redundancy predicates for callers
+  that need the stronger input-list contract;
+- full-dimensional volume from a polar pair, using dual vertices for incidence
+  and primal vertices for Euclidean geometry;
+- affine-subspace polygon and lower-dimensional volume helpers in ambient
+  `R^4`.
 
 `polar_vertices_exact(vertices)` assumes `0 in int conv(vertices)`. This
 condition is needed for the normalized polar to be a bounded full-dimensional
@@ -241,7 +194,7 @@ distinction, such as an empty solution set versus an affine solution space with
 a marked solution. Use tuples when each position is obvious at the call site.
 Define a local flat `struct` when output variables need names, especially for
 multi-output computations like `vertices`, `coordinate_abs_error_bound`, and
-`indeterminate_tuples`.
+`indeterminate_candidates`.
 
 Exact combinatorial predicates should use `T: ExactScalar` and return `bool`.
 They may call the corresponding `f64` diagnostic function first and, when it

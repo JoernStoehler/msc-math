@@ -21,18 +21,26 @@ pub struct IncidenceF64 {
     pub signed_gap_abs_error_bound: f64,
 }
 
+/// Approximate candidate whose vertex status cannot be decided in `f64`.
+#[derive(Clone, Debug, PartialEq)]
+pub struct IndeterminatePolarCandidateF64 {
+    pub tuple: [usize; 4],
+    pub vertex: Option<Vector4<f64>>,
+    pub coordinate_abs_error_bound: f64,
+}
+
 /// Diagnostic result for approximate polar vertex enumeration.
 ///
-/// `vertices` is partial when `indeterminate_tuples` is non-empty. A tuple is
-/// indeterminate when the solve is near singular, a halfspace-membership sign is
-/// inside its absolute error bound, or duplicate detection would depend on that
-/// bound.
+/// `vertices` is partial when `indeterminate_candidates` is non-empty. A
+/// candidate is indeterminate when the solve is near singular, a
+/// halfspace-membership sign is inside its absolute error bound, or duplicate
+/// detection would depend on that bound.
 #[derive(Clone, Debug, PartialEq)]
 pub struct PolarVerticesF64 {
     pub vertices: Vec<Vector4<f64>>,
     pub coordinate_abs_error_bound: f64,
     pub incidence: Vec<IncidenceF64>,
-    pub indeterminate_tuples: Vec<[usize; 4]>,
+    pub indeterminate_candidates: Vec<IndeterminatePolarCandidateF64>,
 }
 
 /// Enumerate vertices of `{ y in R^4 : <v_i, y> <= 1 }` exactly.
@@ -90,18 +98,23 @@ pub fn polar_vertices_exact<T: ExactScalar + 'static>(
 /// This diagnostic routine validates finite input and then enumerates 4-tuples
 /// of active inequalities. It does not guess near floating-point boundaries:
 /// tuples with a near-singular solve, uncertain halfspace membership, or
-/// uncertain duplicate classification are reported in `indeterminate_tuples`.
+/// uncertain duplicate classification are reported in
+/// `indeterminate_candidates`.
 pub fn polar_vertices_f64(vertices: &[Vector4<f64>]) -> Result<PolarVerticesF64, F64GeometryError> {
     validate_finite_vectors4("vertices", vertices)?;
 
     let mut polar_vertices = Vec::new();
     let mut incidence = Vec::new();
-    let mut indeterminate_tuples = Vec::new();
+    let mut indeterminate_candidates = Vec::new();
     let mut coordinate_abs_error_bound: f64 = 0.0;
 
     for tuple in combinations4(vertices.len()) {
         let Some(candidate) = solve_tuple_f64(vertices, tuple) else {
-            indeterminate_tuples.push(tuple);
+            indeterminate_candidates.push(IndeterminatePolarCandidateF64 {
+                tuple,
+                vertex: None,
+                coordinate_abs_error_bound: 0.0,
+            });
             continue;
         };
 
@@ -110,7 +123,13 @@ pub fn polar_vertices_f64(vertices: &[Vector4<f64>]) -> Result<PolarVerticesF64,
 
         match classify_candidate_f64(vertices, tuple, &candidate.vertex) {
             CandidateClassification::Rejected => {}
-            CandidateClassification::Indeterminate => indeterminate_tuples.push(tuple),
+            CandidateClassification::Indeterminate => {
+                indeterminate_candidates.push(IndeterminatePolarCandidateF64 {
+                    tuple,
+                    vertex: Some(candidate.vertex),
+                    coordinate_abs_error_bound: candidate.coordinate_abs_error_bound,
+                });
+            }
             CandidateClassification::Accepted(active_incidence) => {
                 if duplicate_is_indeterminate(
                     &polar_vertices,
@@ -119,7 +138,11 @@ pub fn polar_vertices_f64(vertices: &[Vector4<f64>]) -> Result<PolarVerticesF64,
                         .coordinate_abs_error_bound
                         .max(coordinate_abs_error_bound),
                 ) {
-                    indeterminate_tuples.push(tuple);
+                    indeterminate_candidates.push(IndeterminatePolarCandidateF64 {
+                        tuple,
+                        vertex: Some(candidate.vertex),
+                        coordinate_abs_error_bound: candidate.coordinate_abs_error_bound,
+                    });
                     continue;
                 }
 
@@ -146,7 +169,7 @@ pub fn polar_vertices_f64(vertices: &[Vector4<f64>]) -> Result<PolarVerticesF64,
         vertices: polar_vertices,
         coordinate_abs_error_bound,
         incidence,
-        indeterminate_tuples,
+        indeterminate_candidates,
     })
 }
 

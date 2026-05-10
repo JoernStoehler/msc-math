@@ -32,7 +32,10 @@ equality. It deliberately does not require input non-redundancy.
 The `f64` path is intentionally narrower than a full exact replacement. It
 validates finite coordinates, returns well-conditioned accepted candidates, and
 reports near-singular solves, near-boundary halfspace tests, and uncertain
-duplicate decisions as `indeterminate_tuples`.
+duplicate decisions as `indeterminate_candidates`. Each indeterminate candidate
+records the source 4-tuple and either `None` for singular/unsolved tuples or
+`Some(vertex)` for an approximate vertex whose membership or duplicate status
+was not decided in `f64`.
 
 Do not add broad public API only because it is mathematically natural. Add a
 function when a current migration caller needs it or when it removes duplicated
@@ -45,7 +48,7 @@ existing code.
    `origin_in_interior_of_conv`, and a separate exact non-redundancy/
    extreme-point check for callers that need that stronger input-list contract.
 2. `polar_vertices_f64(vertices)` with flat approximate outputs and explicit
-   indeterminate tuple/candidate reporting instead of tolerance guesses.
+   indeterminate candidate reporting instead of tolerance guesses.
 3. Full-dimensional `R^4` volume from `(dual_vertices, vertices)` using
    incidence and the existing origin-star triangulation idea. The `f64` variant
    can be indeterminate if incidence is tolerance-sensitive; the exact variant
