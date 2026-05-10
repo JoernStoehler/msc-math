@@ -126,6 +126,7 @@ modules, which makes non-symplectic helpers harder to reuse and review.
 | Symplectic integration cleanup | `[active]` | mainline thesis | agents | After each migrated slice, keep `symplectic` as the owner of symplectic form, capacity, KKT, omega signs, Reeb-direction transition pruning, and experiment-facing wrappers only. | `crates/symplectic/src/geom/`, `crates/symplectic/src/algorithms/` |
 | Flat capacity/orbit internals | `[implemented migration slice]` | mainline thesis | agents | HK2017 enumeration, saddle-point KKT solving, orbit solving, and orbit aggregation now have flat helper entry points over facet count, transition matrices, f64 dual vertices, and exact dual vertices. Root capacity wrappers assemble flat data once and delegate to those helpers. | `crates/symplectic/src/algorithms/hk2017/enumeration.rs`, `crates/symplectic/src/algorithms/orbit_search.rs`, `crates/symplectic/src/kkt/saddle_point_solver.rs`, `crates/symplectic/src/lib.rs` |
 | Flat KKT assembly boundary | `[implemented migration slice]` | mainline thesis | agents | `build_qp` and `build_augmented_system` `Polytope4D` compatibility wrappers were deleted. KKT assembly callers now pass the ordered dual-vertex slice explicitly to `build_qp_from_dual_vertices` and `build_augmented_system_from_dual_vertices`. | `crates/symplectic/src/kkt/qp_assembly.rs`, `crates/symplectic/src/kkt/test_saddle_point_solver.rs`, `crates/symplectic/src/kkt/projection_solver.rs` |
+| Flat transition and HK2017 enumeration boundary | `[implemented migration slice]` | mainline thesis | agents | `build_transition_matrix(polytope)`, `for_each_sigma_unpruned(polytope, ...)`, and `for_each_sigma_pruned(polytope, ...)` wrappers were deleted. Callers now build transition matrices from explicit facet-intersection and omega-sign matrices, or enumerate from a facet count. | `crates/symplectic/src/algorithms/facet_adjacency.rs`, `crates/symplectic/src/algorithms/hk2017/enumeration.rs`, `crates/symplectic/src/capacity_api.rs` |
 
 ## Done Criteria
 
@@ -212,6 +213,14 @@ The migration task is done when:
   Why it matters: the KKT matrix boundary now matches the math-shaped data
   dependency and cannot silently re-enter `Polytope4D` through compatibility
   wrappers.
+- [implemented 2026-05-10] Flat transition/enumeration migration deleted
+  `build_transition_matrix(polytope)`, `for_each_sigma_pruned(polytope, ...)`,
+  and `for_each_sigma_unpruned(polytope, ...)`. The remaining transition API
+  takes `(facet_intersection_is_nonempty, omega_signs)`, and HK2017 enumeration
+  takes either a flat facet count or a prebuilt transition matrix.
+  Why it matters: pruning now exposes the exact data dependency at the call
+  site instead of hiding Euclidean incidence plus symplectic omega signs behind
+  `Polytope4D`.
 - [fresh 2026-05-10] `Polytope4D` currently mixes ordinary geometry with
   symplectic data: dual vertices, primal vertices, incidence, facet intersection nonemptiness,
   omega signs, and f64 copies. The Euclidean crate should take the ordinary
