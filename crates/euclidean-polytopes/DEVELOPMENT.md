@@ -30,12 +30,15 @@ existing code.
 
 1. Exact affine/rank primitives over `Vector4<T>` where `T: ExactScalar`.
 2. `origin_in_interior_of_conv(points)` for full-dimensional point sets in
-   ambient `R^4`.
+   ambient `R^4`, with exact and `f64`/indeterminate variants.
 3. `all_points_are_extreme(points)` for V-representation non-redundancy.
 4. `polar_vertices(vertices)` by enumerating 4-subsets of supporting
-   constraints `<v_i, y> <= 1`.
+   constraints `<v_i, y> <= 1`, with the exact path allowed to use the `f64`
+   path as a filter and resolve indeterminate tuples exactly.
 5. Full-dimensional `R^4` volume from `(dual_vertices, vertices)` using
-   incidence and the existing origin-star triangulation idea.
+   incidence and the existing origin-star triangulation idea. The `f64` variant
+   can be indeterminate if incidence is tolerance-sensitive; the exact variant
+   should decide incidence exactly and sum exact determinant volumes.
 6. A minimal affine-plane polygon helper for ordered or orderable
    `Vec<Vector4<f64>>` vertices, after checking the first concrete caller.
 
@@ -72,11 +75,34 @@ Reopen only if repeated call sites carry the same `(dual_vertices, vertices,
 incidence)` bundle through several operations and the bundle itself becomes the
 simple expression of the math. Until then, use explicit function contracts.
 
-### Close Call: Exact Versus `f64`
+### Accepted Direction: `f64` Indeterminate, Exact Fallback
 
-Combinatorial decisions should be exact by default. Volume/area can start as
-`f64` because the existing thesis computations and stored data use floating
-volume, and exact Euclidean volume in affine subspaces has no current caller.
+For combinatorial geometry, provide both approximate and exact pathways when
+callers need both.
+
+The approximate pathway returns `f64` data plus an explicit indeterminate
+outcome. It must not silently decide cases where the result depends on a
+near-singular solve, a near-duplicate candidate, or a halfspace membership test
+near the tolerance boundary.
+
+The exact pathway returns exact data. It may use the approximate pathway as a
+fast filter, but every indeterminate branch must be resolved exactly before the
+function returns. In vertex enumeration from dual vertices, a 4-tuple of
+hyperplanes is exactly one of:
+
+- singular or higher-dimensional, hence not a vertex candidate;
+- uniquely intersecting in one point, then membership in all other halfspaces
+  and duplicate equality are exact decisions.
+
+Why it matters: this keeps the hot/common path fast without letting tolerance
+choices become mathematical facts. If the exact fallback becomes hot, profile
+before changing the contract.
+
+### Close Call: Exact Versus `f64` Metric Outputs
+
+Volume/area can start as `f64` because the existing thesis computations and
+stored data use floating volume, and exact Euclidean volume in affine subspaces
+has no current caller.
 
 Why it matters: mixing exact predicates and approximate metrics in one function
 would make contracts harder to audit. Keep exact validation and approximate
@@ -152,4 +178,3 @@ cargo clippy -p euclidean-polytopes --all-targets -- -D warnings
 cargo test -p symplectic --lib geom::
 cargo check --workspace
 ```
-

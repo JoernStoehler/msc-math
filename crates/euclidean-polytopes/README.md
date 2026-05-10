@@ -35,6 +35,27 @@ several coupled outputs, such as vertices plus vertex-facet incidence. Those
 records should be output payloads, not smart constructors that pretend to prove
 all future context.
 
+## Robust Numeric Split
+
+The crate should expose two kinds of geometry APIs when a computation has both
+approximate and exact callers:
+
+- `f64 -> f64 or indeterminate`: fast approximate routines return a determined
+  floating result or an explicit indeterminate outcome. They must not guess when
+  singularity, duplicate-candidate, or halfspace-membership decisions are near a
+  tolerance boundary.
+- `exact -> exact`: exact routines return exact results. They may use the `f64`
+  routine internally as a cheap filter, but every indeterminate case must be
+  resolved by a slow exact calculation before returning.
+
+For example, vertex enumeration from dual vertices can test most 4-tuples of
+hyperplanes cheaply with `f64`. Near-singular tuples, uncertain duplicate
+intersections, and uncertain membership in the other halfspaces should become
+indeterminate in the `f64` API. The exact API may use the same fast path, then
+resolve those tuples exactly: the intersection is empty/non-unique and not a
+vertex, or it is one point whose halfspace inequalities and duplicate status
+are decided exactly.
+
 ## Target API Shape
 
 The initial public API should be close to these mathematical operations:
@@ -43,25 +64,44 @@ The initial public API should be close to these mathematical operations:
 use algebraic_numbers::ExactScalar;
 use nalgebra::Vector4;
 
-pub fn origin_in_interior_of_conv<T: ExactScalar>(points: &[Vector4<T>]) -> bool;
+pub enum FloatDecision<T> {
+    Determined(T),
+    Indeterminate(FloatIndeterminacy),
+}
 
-pub fn all_points_are_extreme<T: ExactScalar>(points: &[Vector4<T>]) -> bool;
+pub fn origin_in_interior_of_conv_exact<T: ExactScalar>(points: &[Vector4<T>]) -> bool;
 
-pub fn polar_vertices<T: ExactScalar>(
+pub fn origin_in_interior_of_conv_f64(points: &[Vector4<f64>]) -> FloatDecision<bool>;
+
+pub fn all_points_are_extreme_exact<T: ExactScalar>(points: &[Vector4<T>]) -> bool;
+
+pub fn all_points_are_extreme_f64(points: &[Vector4<f64>]) -> FloatDecision<bool>;
+
+pub fn polar_vertices_exact<T: ExactScalar>(
     vertices: &[Vector4<T>],
 ) -> Result<PolarVertexData<T>, PolarError>;
 
-pub fn full_dimensional_volume_from_polar_pair(
+pub fn polar_vertices_f64(
+    vertices: &[Vector4<f64>],
+) -> Result<FloatDecision<PolarVertexData<f64>>, PolarError>;
+
+pub fn full_dimensional_volume_from_polar_pair_exact<T: ExactScalar>(
+    dual_vertices: &[Vector4<T>],
+    vertices: &[Vector4<T>],
+) -> Result<T, VolumeError>;
+
+pub fn full_dimensional_volume_from_polar_pair_f64(
     dual_vertices: &[Vector4<f64>],
     vertices: &[Vector4<f64>],
-) -> Result<f64, VolumeError>;
+) -> Result<FloatDecision<f64>, VolumeError>;
 
 pub fn polygon_area_in_affine_plane(vertices: &[Vector4<f64>]) -> Result<f64, VolumeError>;
 ```
 
-`polar_vertices(vertices)` assumes the input vertices define a full-dimensional
-convex polytope with `0` in its interior. The same function computes vertices
-from dual vertices, because polarity is involutive under that contract.
+`polar_vertices_exact(vertices)` assumes the input vertices define a
+full-dimensional convex polytope with `0` in its interior. The same function
+computes vertices from dual vertices, because polarity is involutive under that
+contract.
 
 The full-dimensional volume target should use `dual_vertices` only to recover
 facet incidence (`<a_i, v> = 1`) and use `vertices` for Euclidean geometry. This
@@ -88,8 +128,8 @@ Functions should classify preconditions explicitly:
   sensibly by a thesis caller.
 
 Exact combinatorial predicates should use `T: ExactScalar`. Approximate `f64`
-helpers should stay separate and state their tolerance/error semantics in their
-rustdoc.
+helpers should stay separate and state their tolerance, error, and
+indeterminate semantics in their rustdoc.
 
 ## Non-Goals
 
@@ -99,4 +139,3 @@ rustdoc.
 - no dimension-generic API before there is a caller outside ambient `R^4`;
 - no general computational-geometry framework;
 - no automatic orientation, units, or provenance layer around plain vectors.
-
