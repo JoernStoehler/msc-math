@@ -125,6 +125,7 @@ modules, which makes non-symplectic helpers harder to reuse and review.
 | Affine-subspace polygons and volume | `[active]` | mainline thesis | agents, Jorn only if generic-vs-specific API affects thesis callers | Let the internal Euclidean volume decomposition determine the first affine-subspace helper shape; likely needs 3-face measures of 4-polytopes and polygon area in affine 2-planes of `R^4`. | `crates/euclidean-polytopes/src/volume.rs`, `crates/symplectic/src/geom/polygon.rs` |
 | Symplectic integration cleanup | `[active]` | mainline thesis | agents | After each migrated slice, keep `symplectic` as the owner of symplectic form, capacity, KKT, omega signs, Reeb-direction transition pruning, and experiment-facing wrappers only. | `crates/symplectic/src/geom/`, `crates/symplectic/src/algorithms/` |
 | Flat capacity/orbit internals | `[implemented migration slice]` | mainline thesis | agents | HK2017 enumeration, saddle-point KKT solving, orbit solving, and orbit aggregation now have flat helper entry points over facet count, transition matrices, f64 dual vertices, and exact dual vertices. Root capacity wrappers assemble flat data once and delegate to those helpers. | `crates/symplectic/src/algorithms/hk2017/enumeration.rs`, `crates/symplectic/src/algorithms/orbit_search.rs`, `crates/symplectic/src/kkt/saddle_point_solver.rs`, `crates/symplectic/src/lib.rs` |
+| Flat KKT assembly boundary | `[implemented migration slice]` | mainline thesis | agents | `build_qp` and `build_augmented_system` `Polytope4D` compatibility wrappers were deleted. KKT assembly callers now pass the ordered dual-vertex slice explicitly to `build_qp_from_dual_vertices` and `build_augmented_system_from_dual_vertices`. | `crates/symplectic/src/kkt/qp_assembly.rs`, `crates/symplectic/src/kkt/test_saddle_point_solver.rs`, `crates/symplectic/src/kkt/projection_solver.rs` |
 
 ## Done Criteria
 
@@ -204,6 +205,13 @@ The migration task is done when:
   Why it matters: the remaining `Polytope4D` capacity/KKT wrappers are now
   shallow consumer compatibility entry points, so later slices can migrate
   call sites and delete wrappers without changing solver semantics.
+- [implemented 2026-05-10] Flat KKT assembly migration deleted
+  `build_qp(polytope, perm)` and `build_augmented_system(polytope, perm)`.
+  The remaining assembly API takes dual vertices directly, so callers must make
+  the ordered facet set explicit before constructing QP/KKT matrices.
+  Why it matters: the KKT matrix boundary now matches the math-shaped data
+  dependency and cannot silently re-enter `Polytope4D` through compatibility
+  wrappers.
 - [fresh 2026-05-10] `Polytope4D` currently mixes ordinary geometry with
   symplectic data: dual vertices, primal vertices, incidence, facet intersection nonemptiness,
   omega signs, and f64 copies. The Euclidean crate should take the ordinary
