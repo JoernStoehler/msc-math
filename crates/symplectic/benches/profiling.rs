@@ -10,11 +10,13 @@ use num_traits::Zero;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 
-use symplectic::algorithms::facet_adjacency::{build_transition_matrix, is_feasible_cycle};
+use symplectic::algorithms::facet_adjacency::{
+    build_transition_matrix_from_facet_intersections_and_omega, is_feasible_cycle,
+};
 use symplectic::algorithms::hk2017::combinations;
 use symplectic::algorithms::hk2017::permutations::for_each_cyclic_permutation;
 use symplectic::geom::polytope::Polytope4D;
-use symplectic::kkt::saddle_point_solver::{solve_kkt_for, KktOutcome};
+use symplectic::kkt::saddle_point_solver::{solve_kkt_for_dual_vertices, KktOutcome};
 use symplectic::random::generate_random_polytopes;
 use symplectic::{ehz_capacity_pruned, ehz_capacity_pruned_certified, CertifiedOrbitSetMode};
 
@@ -54,7 +56,11 @@ fn prebuilt_polytope(f: usize) -> Polytope4D {
 /// Find a valid permutation for single-KKT benchmarks.
 fn find_valid_permutation(polytope: &Polytope4D) -> Vec<usize> {
     let f = polytope.facet_count();
-    let transition_is_allowed = build_transition_matrix(polytope);
+    let dual_vertices = polytope.dual_vertices_f64();
+    let transition_is_allowed = build_transition_matrix_from_facet_intersections_and_omega(
+        polytope.facet_intersection_is_nonempty(),
+        polytope.omega_signs(),
+    );
     let mut found: Option<Vec<usize>> = None;
     for m in 2..=f {
         for subset in combinations(f, m) {
@@ -63,7 +69,10 @@ fn find_valid_permutation(polytope: &Polytope4D) -> Vec<usize> {
                     return;
                 }
                 if is_feasible_cycle(perm, &transition_is_allowed)
-                    && matches!(solve_kkt_for(polytope, perm), KktOutcome::Feasible(_))
+                    && matches!(
+                        solve_kkt_for_dual_vertices(dual_vertices, perm),
+                        KktOutcome::Feasible(_)
+                    )
                 {
                     found = Some(perm.to_vec());
                 }
@@ -100,8 +109,15 @@ fn bench_transition_matrix(c: &mut Criterion) {
     let mut group = c.benchmark_group("transition_matrix");
     for &f in FACET_COUNTS {
         let polytope = prebuilt_polytope(f);
+        let facet_intersection_is_nonempty = polytope.facet_intersection_is_nonempty();
+        let omega_signs = polytope.omega_signs();
         group.bench_with_input(BenchmarkId::from_parameter(f), &f, |b, _| {
-            b.iter(|| build_transition_matrix(&polytope));
+            b.iter(|| {
+                build_transition_matrix_from_facet_intersections_and_omega(
+                    facet_intersection_is_nonempty,
+                    omega_signs,
+                )
+            });
         });
     }
     group.finish();
@@ -142,9 +158,10 @@ fn bench_kkt_single(c: &mut Criterion) {
     let mut group = c.benchmark_group("kkt_single");
     for &f in FACET_COUNTS {
         let polytope = prebuilt_polytope(f);
+        let dual_vertices = polytope.dual_vertices_f64();
         let perm = find_valid_permutation(&polytope);
         group.bench_with_input(BenchmarkId::from_parameter(f), &f, |b, _| {
-            b.iter(|| solve_kkt_for(&polytope, &perm));
+            b.iter(|| solve_kkt_for_dual_vertices(dual_vertices, &perm));
         });
     }
     group.finish();
@@ -154,7 +171,10 @@ fn bench_pruning_check(c: &mut Criterion) {
     let mut group = c.benchmark_group("pruning_check");
     for &f in FACET_COUNTS {
         let polytope = prebuilt_polytope(f);
-        let transition_is_allowed = build_transition_matrix(&polytope);
+        let transition_is_allowed = build_transition_matrix_from_facet_intersections_and_omega(
+            polytope.facet_intersection_is_nonempty(),
+            polytope.omega_signs(),
+        );
         // Use a size-3 permutation for the pruning check.
         let perm: Vec<usize> = (0..std::cmp::min(3, f)).collect();
         group.bench_with_input(BenchmarkId::from_parameter(f), &f, |b, _| {

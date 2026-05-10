@@ -5,7 +5,7 @@ use crate::kkt::{solve_kkt, EPS_BETA_POSITIVE, EPS_Q_POSITIVE};
 use nalgebra::{DMatrix, Matrix4, Vector4};
 use std::collections::HashSet;
 use std::time::Instant;
-use symplectic::algorithms::facet_adjacency::build_transition_matrix;
+use symplectic::algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega;
 use symplectic::algorithms::hk2017::combinations;
 use symplectic::geom::polytope::Polytope4D;
 
@@ -186,7 +186,10 @@ pub(crate) fn run_crosspolytope_search(
         println!("WARNING: Rust computation disagrees with analytical result!");
     }
 
-    let transition_is_allowed = build_transition_matrix(polytope);
+    let transition_is_allowed = build_transition_matrix_from_facet_intersections_and_omega(
+        polytope.facet_intersection_is_nonempty(),
+        polytope.omega_signs(),
+    );
     let avg_out_degree: f64 = (0..facet_count)
         .map(|i| {
             (0..facet_count)

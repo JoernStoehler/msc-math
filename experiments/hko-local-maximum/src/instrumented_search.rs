@@ -1,12 +1,14 @@
 //! Instrumented orbit search for HKO local-maximum experiments.
 
-use symplectic::algorithms::facet_adjacency::{build_transition_matrix, is_feasible_cycle};
+use symplectic::algorithms::facet_adjacency::{
+    build_transition_matrix_from_facet_intersections_and_omega, is_feasible_cycle,
+};
 use symplectic::algorithms::hk2017::combinations;
 use symplectic::algorithms::hk2017::permutations::for_each_cyclic_permutation;
 use symplectic::algorithms::{OrbitAdmissibility, OrbitKktData};
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::kkt::saddle_point_solver::{
-    solve_kkt_for, KktOutcome, EPS_BETA_POSITIVE, EPS_Q_POSITIVE,
+    solve_kkt_for_dual_vertices, KktOutcome, EPS_BETA_POSITIVE, EPS_Q_POSITIVE,
 };
 
 #[derive(Debug, Clone)]
@@ -35,7 +37,11 @@ fn action_bounds_from_q(q: f64, q_error_bound: f64) -> (f64, f64) {
 /// validity policy rather than adopting the richer library collector semantics.
 pub fn ehz_capacity_instrumented(polytope: &Polytope4D) -> Option<InstrumentedOrbitSearch> {
     let f = polytope.facet_count();
-    let transition_is_allowed = build_transition_matrix(polytope);
+    let dual_vertices = polytope.dual_vertices_f64();
+    let transition_is_allowed = build_transition_matrix_from_facet_intersections_and_omega(
+        polytope.facet_intersection_is_nonempty(),
+        polytope.omega_signs(),
+    );
 
     let mut orbits: Vec<OrbitKktData> = Vec::new();
     let mut best_uncertain_action: Option<f64> = None;
@@ -49,7 +55,9 @@ pub fn ehz_capacity_instrumented(polytope: &Polytope4D) -> Option<InstrumentedOr
                 }
                 iterations += 1;
 
-                if let KktOutcome::Feasible(kkt_result) = solve_kkt_for(polytope, perm) {
+                if let KktOutcome::Feasible(kkt_result) =
+                    solve_kkt_for_dual_vertices(dual_vertices, perm)
+                {
                     let q_val = kkt_result.q_corrected;
                     if q_val <= EPS_Q_POSITIVE {
                         return;
