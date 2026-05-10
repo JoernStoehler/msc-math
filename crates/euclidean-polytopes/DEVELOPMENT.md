@@ -202,6 +202,65 @@ Verification witnesses for this slice:
   known expected values;
 - required commands for this slice are tracked in the task file.
 
+## Next Slice: Known-Incidence Facet 3-Volume and Centroid
+
+The next migration slice should move ordinary facet 3-volume and centroid
+computation out of `symplectic::geom::facet_volume` for callers that already
+have exact vertex-facet incidence.
+
+Do not recover facet/ridge incidence by checking `|a . v - 1| < EPS` when a
+caller has a `DMatrix<bool>` incidence matrix. `Polytope4D` already stores
+exact incidence, and derivative code should use that data through the
+polytope-level wrapper.
+
+Target helpers:
+
+```rust,ignore
+pub fn facet_volume_from_incidence_f64(
+    vertices: &[Vector4<f64>],
+    incidence: &DMatrix<bool>,
+    facet_index: usize,
+) -> Result<f64, F64GeometryError>;
+
+pub fn facet_volume_and_centroid_from_incidence_f64(
+    vertices: &[Vector4<f64>],
+    incidence: &DMatrix<bool>,
+    facet_index: usize,
+) -> Result<(f64, Vector4<f64>), F64GeometryError>;
+```
+
+The exact signature can be adjusted, but the helpers should stay flat and
+operation-specific. Contract: `incidence[(v, f)]` tells whether `vertices[v]`
+lies on facet `f` for a normalized full-dimensional `R^4` polytope containing
+the origin. The helpers validate finite vertices and assert incidence shape.
+They use the target facet's incident vertices, triangulate each ridge
+`facet_index ∩ neighbor_index`, and compute 3-dimensional tetrahedron volume in
+the facet's affine hyperplane using the ordinary 4D cross product norm.
+
+Then change `symplectic::geom::facet_volume::facet_volume_3d(polytope, facet)`
+and `facet_volume_and_centroid_3d(polytope, facet)` to delegate to the
+Euclidean helpers with `polytope.vertices_f64()` and `polytope.incidence()`.
+Update `volume_derivatives_a` to use the polytope-level centroid helper so it
+benefits from exact incidence. Keep the existing raw dual/vertex functions if
+needed for source compatibility, but they should not be the path used by
+`Polytope4D` callers.
+
+Done criteria for this slice:
+
+- `euclidean-polytopes` exposes known-incidence facet volume and
+  volume-plus-centroid helpers with docs that explain when they are preferable
+  to raw f64 dual/vertex incidence recovery;
+- `symplectic::geom::facet_volume` polytope-level wrappers delegate to the
+  Euclidean helpers while retaining their public API;
+- `volume_derivatives_a` no longer recomputes facet incidence from f64 raw
+  dual/vertex arrays when a `Polytope4D` is available;
+- tests cover hypercube facet volume, centroid-on-facet for known fixtures,
+  divergence-theorem volume reconstruction, non-finite input, shape mismatch,
+  and a symplectic wrapper regression;
+- `cargo test -p euclidean-polytopes`, `cargo test -p symplectic --lib geom::`,
+  `cargo clippy -p euclidean-polytopes --all-targets -- -D warnings`, and
+  `cargo check --workspace` pass.
+
 ## Test Code and Proposition Comments
 
 Tests should make the mathematical proposition visible separately from the
