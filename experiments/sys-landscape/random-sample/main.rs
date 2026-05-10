@@ -30,6 +30,7 @@
 //! - `--out <path>`            output JSONL path                      (default: untracked temp)
 //! - `--cache <path>`          cache JSONL path                       (default: untracked temp)
 
+use exp_sys_landscape::euclidean_volume_f64;
 use exp_sys_landscape::{orbit_scalars_from_result, rational_vec4_to_strings, smoke_output_path};
 use serde::Serialize;
 use std::collections::HashMap;
@@ -39,7 +40,6 @@ use std::path::PathBuf;
 use std::time::Instant;
 use symplectic::database::{load_many, save, DualVerticesKey, PolytopeRecord, SigmaAction, Source};
 use symplectic::ehz_capacity;
-use symplectic::geom::volume::volume_f64;
 use symplectic::random::generate_polytope;
 
 const SEED: u64 = 42;
@@ -297,7 +297,7 @@ fn main() {
             };
 
             let start_vol = Instant::now();
-            let vol = volume_f64(&p);
+            let vol = euclidean_volume_f64(p.vertices(), p.incidence());
             let time_volume_ms = start_vol.elapsed().as_secs_f64() * 1000.0;
 
             let start_cap = Instant::now();

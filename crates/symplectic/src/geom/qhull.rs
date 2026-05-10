@@ -15,7 +15,7 @@ use tempfile::NamedTempFile;
 
 /// Errors from qhull subprocess interaction.
 #[derive(Debug)]
-pub enum QhullError {
+pub(crate) enum QhullError {
     /// Qhull computation failed with diagnostic output.
     ComputationFailed(String),
     /// `qconvex` command not found — install `qhull-bin` package.
@@ -225,5 +225,11 @@ mod test {
             matches!(result, Err(QhullError::OutputParseFailed(_))),
             "non-numeric volume should fail: got {result:?}"
         );
+    }
+
+    #[test]
+    fn compute_volume_returns_zero_for_too_few_vertices() {
+        let vertices = vec![Vector4::zeros(); 4];
+        assert_eq!(compute_volume_qconvex(&vertices).unwrap(), 0.0);
     }
 }

@@ -8,7 +8,7 @@
 Analyze criterion benchmark results for pipeline phase breakdown.
 
 Goal: Show where wall-clock time goes at each facet count (construction vs
-      capacity vs volume), and how the balance shifts as F grows.
+      capacity), and how the balance shifts as F grows.
 Input Artifacts: target/criterion/*/N/new/estimates.json (criterion output)
 Output Artifacts: experiments/verification/algorithm-comparison/benchmark/profiling/phase_breakdown.png
         experiments/verification/algorithm-comparison/benchmark/profiling/micro_benchmarks.png
@@ -35,7 +35,6 @@ CRITERION_DIR = REPO_ROOT / "target" / "criterion"
 GROUPS = {
     "construction": "Construction\n(exact rational)",
     "capacity": "EHZ capacity\n(HK2017 pruned)",
-    "volume": "Volume\n(qhull)",
     "transition_matrix": "Transition matrix",
     "kkt_single": "Single KKT solve",
     "pruning_check": "Pruning check",
@@ -72,18 +71,17 @@ def print_summary_table(data: dict[str, dict[int, float]]) -> None:
     """Print a summary table to stdout."""
     print("\nPhase breakdown (median, seconds):")
     print(f"{'F':>3}", end="")
-    for group in ["construction", "capacity", "volume"]:
+    for group in ["construction", "capacity"]:
         print(f"  {group:>14}", end="")
     print(f"  {'total':>10}  {'construction%':>14}")
 
     for f in FACET_COUNTS:
         c = data["construction"].get(f, 0)
         cap = data["capacity"].get(f, 0)
-        v = data["volume"].get(f, 0)
-        total = c + cap + v
+        total = c + cap
         pct = 100 * c / total if total > 0 else 0
         print(
-            f"{f:3d}  {c:14.6f}  {cap:14.6f}  {v:14.6f}  {total:10.6f}  {pct:13.1f}%"
+            f"{f:3d}  {c:14.6f}  {cap:14.6f}  {total:10.6f}  {pct:13.1f}%"
         )
 
 
@@ -91,10 +89,10 @@ def plot_phase_breakdown(data: dict[str, dict[int, float]]) -> None:
     """Create a two-panel figure: absolute timing (log) and phase proportion."""
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=FIGSIZE_DUAL)
 
-    phases = ["construction", "capacity", "volume"]
-    colors = ["#2196F3", "#FF9800", "#4CAF50"]
-    markers = ["o", "s", "^"]
-    labels = ["Construction", "Capacity", "Volume"]
+    phases = ["construction", "capacity"]
+    colors = ["#2196F3", "#FF9800"]
+    markers = ["o", "s"]
+    labels = ["Construction", "Capacity"]
 
     # Left panel: absolute times (log scale)
     handles = []
@@ -127,7 +125,7 @@ def plot_phase_breakdown(data: dict[str, dict[int, float]]) -> None:
     ax2.set_yticklabels(["0.1", "1", "10", "100"])
 
     # Shared legend between panels
-    fig.legend(handles, labels, loc="lower center", ncol=3,
+    fig.legend(handles, labels, loc="lower center", ncol=2,
                bbox_to_anchor=(0.5, -0.02))
     fig.tight_layout()
     fig.subplots_adjust(bottom=0.18)

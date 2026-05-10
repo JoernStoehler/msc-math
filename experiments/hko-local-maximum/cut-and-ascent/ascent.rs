@@ -7,6 +7,7 @@ use crate::{
     CONVERGENCE_THRESHOLD, EPS, MAX_ESCAPE_ROUNDS, MAX_ITERATIONS, MAX_STEP_SIZE, N_WIGGLES,
     OVERSHOOT_MULTIPLIERS, STEP_FRACTIONS, WIGGLE_STRENGTH,
 };
+use exp_hko_local_maximum::euclidean_volume_f64;
 use nalgebra::{Matrix4, Vector4};
 use rand_chacha::ChaCha8Rng;
 use rand_distr::{Distribution, StandardNormal};
@@ -15,7 +16,6 @@ use symplectic::derivatives::{capacity_derivatives_a_from_kkt_result, volume_der
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::skeleton::Skeleton;
 use symplectic::geom::symplectic_form::omega0;
-use symplectic::geom::volume::volume_f64;
 use symplectic::kkt::saddle_point_solver::solve_kkt_for;
 
 /// Compute the first boundary event along a direction in dual-vertex space.
@@ -137,7 +137,7 @@ fn compute_step_bound(polytope: &Polytope4D, direction: &[Vector4<f64>]) -> f64 
 }
 
 pub(crate) fn compute_sys(polytope: &Polytope4D) -> Option<f64> {
-    let vol = volume_f64(polytope);
+    let vol = euclidean_volume_f64(polytope.vertices(), polytope.incidence());
     if vol <= 0.0 {
         return None;
     }
@@ -190,7 +190,7 @@ fn gradient_ascent_phase(
 
         let (cap, best_perm) = compute_capacity_result(&current)?;
         let kkt = solve_kkt_for(&current, &best_perm).feasible()?;
-        let vol = volume_f64(&current);
+        let vol = euclidean_volume_f64(current.vertices(), current.incidence());
         if vol <= 0.0 {
             return None;
         }

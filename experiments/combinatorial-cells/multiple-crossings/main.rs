@@ -15,6 +15,7 @@
 //! Filter: F <= 10 (HK2017 is exponential in F)
 //! Output Artifacts: experiments/combinatorial-cells/multiple-crossings/combinatorial-boundaries-sweep.jsonl
 
+use exp_combinatorial_cells::euclidean_volume_f64;
 use exp_combinatorial_cells::{
     compute_step_bound_detailed, ehz_capacity_instrumented, name_from_record, EventType,
 };
@@ -30,7 +31,6 @@ use std::time::Instant;
 use symplectic::database;
 use symplectic::derivatives::{capacity_derivatives_a_from_kkt_result, volume_derivatives_a};
 use symplectic::geom::polytope::Polytope4D;
-use symplectic::geom::volume::volume_f64;
 use symplectic::kkt::saddle_point_solver::solve_kkt_for;
 
 // ============================================================================
@@ -140,7 +140,7 @@ fn compute_sys(
     Vec<usize>,
     symplectic::kkt::saddle_point_solver::KktResult,
 )> {
-    let vol = volume_f64(polytope);
+    let vol = euclidean_volume_f64(polytope.vertices(), polytope.incidence());
     if vol <= 0.0 {
         return None;
     }
@@ -323,7 +323,7 @@ fn main() {
 
         let base = (|| {
             let instrumented = ehz_capacity_instrumented(polytope)?;
-            let vol = volume_f64(polytope);
+            let vol = euclidean_volume_f64(polytope.vertices(), polytope.incidence());
             if vol <= 0.0 {
                 return None;
             }

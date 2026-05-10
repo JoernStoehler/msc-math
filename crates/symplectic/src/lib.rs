@@ -6,8 +6,8 @@
 //! # Submodules
 //!
 //! - `geom` — `Polytope4D` central type, symplectic form, exact rational
-//!   vertex enumeration, pure-Rust volume computation, polygon/Lagrangian-product
-//!   constructors, named polytopes.
+//!   vertex enumeration, polygon/Lagrangian-product constructors, named
+//!   polytopes.
 //! - `kkt` — context-free constrained QP solvers (saddle-point and
 //!   projection variants) + exact rational fallback.
 //! - `algorithms` — EHZ capacity algorithms: `hk2017` (general, exponential)
@@ -55,7 +55,6 @@ mod test_lib;
 pub use capacity_api::{CapacityError, F64CapacityResult, F64Interval, F64Orbit, PredicateVerdict};
 pub use geom::polytope::{ConstructionError, Polytope4D};
 pub use geom::skeleton::Skeleton;
-pub use geom::QhullError;
 
 // Capacity algorithms
 pub use algorithms::billiard::BilliardError;
@@ -69,7 +68,6 @@ pub use algorithms::{
 pub use geom::lagrangian_product::lagrangian_product;
 pub use geom::polygon::{regular_polygon_2d, rotate_polygon_2d};
 pub use geom::symplectic_form::omega0;
-pub use geom::volume::volume_f64;
 
 // Geometry utility submodules
 pub use geom::known_polytopes;

@@ -4,6 +4,11 @@
 //! space: random-sample, random-product-sample, gradient-ascent-general,
 //! gradient-ascent-products, rotated-regular-products, rejection-calibration.
 
+use euclidean_polytopes::volume_from_incidence_exact;
+use nalgebra::{DMatrix, Vector4};
+use num_rational::BigRational;
+use num_traits::ToPrimitive;
+
 pub mod ascent;
 pub mod datasets;
 pub mod step_bound;
@@ -23,3 +28,11 @@ pub use datasets::{
 pub use step_bound::{
     compute_step_bound, compute_step_bound_detailed, BoundaryEvent, EventType, MAX_STEP_SIZE,
 };
+
+pub fn euclidean_volume_f64(vertices: &[[BigRational; 4]], incidence: &DMatrix<bool>) -> f64 {
+    let vertices: Vec<Vector4<BigRational>> = vertices
+        .iter()
+        .map(|v| Vector4::new(v[0].clone(), v[1].clone(), v[2].clone(), v[3].clone()))
+        .collect();
+    ToPrimitive::to_f64(&volume_from_incidence_exact(&vertices, incidence)).unwrap_or(f64::NAN)
+}

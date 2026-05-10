@@ -24,6 +24,7 @@
 //! 3. Writes to omega-hypothesis/omega-obstacle.jsonl
 //! 4. Python script reads JSONL, produces figures
 
+use exp_combinatorial_cells::euclidean_volume_f64;
 use nalgebra::Vector4;
 use serde::Serialize;
 use std::collections::HashMap;
@@ -36,7 +37,6 @@ use symplectic::geom::known_polytopes;
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::skeleton::Skeleton;
 use symplectic::geom::symplectic_form::omega0;
-use symplectic::geom::volume::volume_f64;
 use symplectic::kkt::saddle_point_solver::{solve_kkt_for, KktResult};
 use symplectic::random::generate_polytope;
 
@@ -280,7 +280,7 @@ fn process_polytope(
         best_perm = c.best_perm.clone();
     } else {
         // No cache: full EHZ computation
-        vol = volume_f64(polytope);
+        vol = euclidean_volume_f64(polytope.vertices(), polytope.incidence());
         let ehz_result = symplectic::ehz_capacity(polytope).ok()?;
         cap = ehz_result.capacity();
         iterations = ehz_result.iterations;

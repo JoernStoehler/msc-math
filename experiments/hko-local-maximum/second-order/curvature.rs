@@ -1,6 +1,7 @@
 //! Phase 2 and 3 of the HKO second-order experiment: curve probes and random curvature checks.
 
 use crate::{EPSILON_GRID, EPSILON_RANDOM, N_RANDOM_DIRECTIONS, RANDOM_SEED};
+use exp_hko_local_maximum::euclidean_volume_f64;
 use nalgebra::Vector4;
 use rand::Rng as _;
 use rand::SeedableRng;
@@ -11,7 +12,6 @@ use std::io::{BufWriter, Write};
 use std::time::Instant;
 use symplectic::ehz_capacity;
 use symplectic::geom::polytope::Polytope4D;
-use symplectic::geom::volume::volume_f64;
 
 #[derive(Debug, Serialize)]
 struct CurveRow {
@@ -66,7 +66,7 @@ pub(crate) fn curvature_at_epsilon(
             .collect();
         let poly = Polytope4D::from_f64(perturbed).ok()?;
         let cap = ehz_capacity(&poly).ok()?.capacity();
-        let vol = volume_f64(&poly);
+        let vol = euclidean_volume_f64(poly.vertices(), poly.incidence());
         if vol <= 0.0 {
             return None;
         }
@@ -132,7 +132,8 @@ pub(crate) fn run_phase2(
                     }
                 };
 
-                let vol = volume_f64(&perturbed_poly);
+                let vol =
+                    euclidean_volume_f64(perturbed_poly.vertices(), perturbed_poly.incidence());
                 if vol <= 0.0 {
                     n_fail += 1;
                     continue;

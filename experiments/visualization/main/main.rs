@@ -15,13 +15,25 @@ mod models;
 mod orbit_collection;
 mod trajectories;
 
+use euclidean_polytopes::volume_from_incidence_exact;
 use models::{v4_to_array, VizExport, VizRidge};
+use nalgebra::{DMatrix, Vector4};
+use num_rational::BigRational;
+use num_traits::ToPrimitive;
 use std::fs::File;
 use std::io::BufWriter;
 use std::path::Path;
 use symplectic::geom::known_polytopes::{self, KnownPolytope};
 use symplectic::geom::skeleton::Skeleton;
 use trajectories::generate_trajectories;
+
+fn euclidean_volume_f64(vertices: &[[BigRational; 4]], incidence: &DMatrix<bool>) -> f64 {
+    let vertices: Vec<Vector4<BigRational>> = vertices
+        .iter()
+        .map(|v| Vector4::new(v[0].clone(), v[1].clone(), v[2].clone(), v[3].clone()))
+        .collect();
+    ToPrimitive::to_f64(&volume_from_incidence_exact(&vertices, incidence)).unwrap_or(f64::NAN)
+}
 
 /// Look up a known polytope by name. Returns `None` for unknown names.
 fn lookup_known(name: &str) -> Option<&'static KnownPolytope> {
@@ -55,7 +67,7 @@ pub fn export(name: &str, output: &Path) -> Result<(), String> {
     let (trajectories, computed_capacity) = generate_trajectories(polytope, &skeleton);
 
     let capacity = computed_capacity.unwrap_or(kp.capacity);
-    let vol = symplectic::geom::volume::volume_f64(polytope);
+    let vol = euclidean_volume_f64(polytope.vertices(), polytope.incidence());
     let systolic_ratio = if vol > 0.0 {
         capacity * capacity / (2.0 * vol)
     } else {

@@ -5,7 +5,7 @@
 use crate::ehz_capacity_pruned as ehz_capacity;
 use crate::geom::known_polytopes;
 use crate::geom::polytope::Polytope4D;
-use crate::geom::volume::volume_f64;
+use crate::test_lib::euclidean_volume_f64;
 use nalgebra::Vector4;
 
 /// Step size for central finite differences of capacity.
@@ -16,7 +16,7 @@ const FD_EPS_CAP: f64 = 1e-6;
 
 /// Step size for central finite differences of volume.
 ///
-/// Tighter than capacity (volume computation is cheap via qhull).
+/// Tighter than capacity because known-incidence volume is deterministic and cheap.
 const FD_EPS_VOL: f64 = 1e-7;
 
 /// Construct a perturbed polytope: h_k -> h_k + delta, all other heights unchanged.
@@ -41,7 +41,7 @@ fn perturbed_polytope(
 
 /// Compute FD volume derivatives: dvol/dh_k ~ (vol(h+eps*e_k) - vol(h-eps*e_k)) / (2*eps).
 ///
-/// Uses the pure-Rust star triangulation from `geom::volume`.
+/// Uses the Euclidean exact known-incidence star triangulation.
 fn fd_volume_derivatives(normals: &[Vector4<f64>], heights: &[f64]) -> Vec<f64> {
     let f = heights.len();
     (0..f)
@@ -50,8 +50,8 @@ fn fd_volume_derivatives(normals: &[Vector4<f64>], heights: &[f64]) -> Vec<f64> 
                 .expect("perturbed polytope +eps");
             let p_minus = perturbed_polytope(normals, heights, k, -FD_EPS_VOL)
                 .expect("perturbed polytope -eps");
-            let vol_plus = volume_f64(&p_plus);
-            let vol_minus = volume_f64(&p_minus);
+            let vol_plus = euclidean_volume_f64(p_plus.vertices(), p_plus.incidence());
+            let vol_minus = euclidean_volume_f64(p_minus.vertices(), p_minus.incidence());
             (vol_plus - vol_minus) / (2.0 * FD_EPS_VOL)
         })
         .collect()
@@ -125,7 +125,7 @@ fn euler_homogeneity_volume() {
 
     for (name, poly) in &polytopes {
         let (normals, heights) = normals_and_heights(poly);
-        let vol = volume_f64(poly);
+        let vol = euclidean_volume_f64(poly.vertices(), poly.incidence());
 
         let d_vol = fd_volume_derivatives(&normals, &heights);
         let euler_sum: f64 = heights.iter().zip(&d_vol).map(|(h, dv)| h * dv).sum();
@@ -305,7 +305,7 @@ fn fd_sys_height_euler() {
         let (normals, heights) = normals_and_heights(&kp.polytope);
 
         let cap = ehz_capacity(&kp.polytope).expect("capacity").capacity();
-        let vol = volume_f64(&kp.polytope);
+        let vol = euclidean_volume_f64(kp.polytope.vertices(), kp.polytope.incidence());
         let sys = cap * cap / (2.0 * vol);
 
         // FD sys derivatives.
@@ -317,8 +317,8 @@ fn fd_sys_height_euler() {
                     perturbed_polytope(&normals, &heights, k, -FD_EPS_CAP).expect("perturbed -eps");
                 let cap_p = ehz_capacity(&p_plus).expect("cap +eps").capacity();
                 let cap_m = ehz_capacity(&p_minus).expect("cap -eps").capacity();
-                let vol_p = volume_f64(&p_plus);
-                let vol_m = volume_f64(&p_minus);
+                let vol_p = euclidean_volume_f64(p_plus.vertices(), p_plus.incidence());
+                let vol_m = euclidean_volume_f64(p_minus.vertices(), p_minus.incidence());
                 let sys_p = cap_p * cap_p / (2.0 * vol_p);
                 let sys_m = cap_m * cap_m / (2.0 * vol_m);
                 (sys_p - sys_m) / (2.0 * FD_EPS_CAP)

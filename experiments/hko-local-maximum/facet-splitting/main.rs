@@ -24,6 +24,7 @@
 //! when h < h_K(n) it cuts. To make K *larger* we'd need to relax an existing
 //! halfspace, which is already covered by gradient-analysis's (n,h) gradient analysis.
 
+use exp_hko_local_maximum::euclidean_volume_f64;
 use nalgebra::Vector4;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
@@ -35,7 +36,6 @@ use std::time::Instant;
 use symplectic::ehz_capacity;
 use symplectic::geom::known_polytopes;
 use symplectic::geom::polytope::Polytope4D;
-use symplectic::geom::volume::volume_f64;
 
 /// Number of angular samples per representative facet normal for facet-splitting.
 /// HKO2024 = pentagon ×_L pentagon: all Q-space normals equivalent, all P-space equivalent.
@@ -124,7 +124,7 @@ fn parse_args() -> Args {
 
 /// Safely compute sys for a polytope, catching panics from degenerate geometry.
 fn safe_sys(polytope: &Polytope4D) -> Option<(f64, f64, f64)> {
-    let vol = volume_f64(polytope);
+    let vol = euclidean_volume_f64(polytope.vertices(), polytope.incidence());
     if vol <= 0.0 {
         return None;
     }
@@ -214,7 +214,7 @@ fn run_phase_b(base_dir: &std::path::Path, smoke: bool) {
     let normals: Vec<Vector4<f64>> = duals.iter().map(|a| a / a.norm()).collect();
     let vertices = polytope.vertices_f64();
 
-    let vol_orig = volume_f64(polytope);
+    let vol_orig = euclidean_volume_f64(polytope.vertices(), polytope.incidence());
     let cap_orig = ehz_capacity(polytope)
         .expect("failed to compute HKO2024 baseline capacity")
         .capacity();

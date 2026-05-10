@@ -9,7 +9,10 @@
 //! Instrument development: validates that analytical gradients (library derivatives.rs)
 //! match finite-difference approximations across polytope classes and edge cases.
 
-use nalgebra::Vector4;
+use euclidean_polytopes::volume_from_incidence_exact;
+use nalgebra::{DMatrix, Vector4};
+use num_rational::BigRational;
+use num_traits::ToPrimitive;
 use rand_chacha::ChaCha8Rng;
 use rand_distr::{Distribution, StandardNormal};
 use symplectic::algorithms::hk2017::combinations;
@@ -29,6 +32,14 @@ pub const EPS_BETA_CERTIFIED: f64 = 1e-9;
 pub const T_VALUES: &[f64] = &[
     1e-1, 3e-2, 1e-2, 3e-3, 1e-3, 3e-4, 1e-4, 3e-5, 1e-5, 3e-6, 1e-6, 3e-7, 1e-7,
 ];
+
+pub fn euclidean_volume_f64(vertices: &[[BigRational; 4]], incidence: &DMatrix<bool>) -> f64 {
+    let vertices: Vec<Vector4<BigRational>> = vertices
+        .iter()
+        .map(|v| Vector4::new(v[0].clone(), v[1].clone(), v[2].clone(), v[3].clone()))
+        .collect();
+    ToPrimitive::to_f64(&volume_from_incidence_exact(&vertices, incidence)).unwrap_or(f64::NAN)
+}
 
 /// Shared row schema for the first-order gradient harness.
 #[derive(Debug, serde::Serialize)]
@@ -121,7 +132,7 @@ fn sys_derivatives_a(
 pub fn analyze_polytope(polytope: &Polytope4D) -> Option<PolytopeInfo> {
     let ehz = ehz_capacity_safe(polytope)?;
     let cap = ehz.capacity();
-    let vol = symplectic::volume_f64(polytope);
+    let vol = euclidean_volume_f64(polytope.vertices(), polytope.incidence());
     if vol <= 0.0 {
         return None;
     }
@@ -176,7 +187,7 @@ fn compute_perturbed(
         .map(|kkt| 0.5 / kkt.q_corrected);
 
     let vol = {
-        let v = symplectic::volume_f64(&polytope);
+        let v = euclidean_volume_f64(polytope.vertices(), polytope.incidence());
         (v > 0.0).then_some(v)
     };
 

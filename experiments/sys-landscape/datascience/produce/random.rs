@@ -32,6 +32,7 @@
 use exp_sys_landscape::{orbit_scalars_from_result, smoke_output_path};
 use num_rational::BigRational;
 mod rows;
+use exp_sys_landscape::euclidean_volume_f64;
 use rows::RandomSweepRow;
 use std::collections::HashMap;
 use std::fs::File;
@@ -40,7 +41,6 @@ use std::path::PathBuf;
 use std::time::Instant;
 use symplectic::database::{load_many, save, DualVerticesKey, PolytopeRecord, SigmaAction, Source};
 use symplectic::ehz_capacity;
-use symplectic::geom::volume::volume_f64;
 use symplectic::random::generate_polytope;
 
 const SEED: u64 = 42;
@@ -79,9 +79,7 @@ fn parse_args() -> Args {
     parse_args_from(std::env::args())
 }
 
-fn parse_args_from(
-    argv: impl IntoIterator<Item = impl Into<String>>,
-) -> Args {
+fn parse_args_from(argv: impl IntoIterator<Item = impl Into<String>>) -> Args {
     let argv: Vec<String> = argv.into_iter().map(Into::into).collect();
 
     let mut seed = SEED;
@@ -104,9 +102,7 @@ fn parse_args_from(
         };
         match arg {
             "--seed" => {
-                seed = need_value("--seed")
-                    .parse()
-                    .expect("--seed must be a u64");
+                seed = need_value("--seed").parse().expect("--seed must be a u64");
                 i += 2;
             }
             "--samples-per-f" => {
@@ -190,8 +186,8 @@ fn main() {
         }
     }
 
-    let mut db = load_many(&[args.cache.as_path()])
-        .expect("failed to load sys-landscape family cache");
+    let mut db =
+        load_many(&[args.cache.as_path()]).expect("failed to load sys-landscape family cache");
     println!("Loaded family cache: {} entries\n", db.len());
 
     let file = File::create(&args.out).expect("failed to create output file");
@@ -273,7 +269,7 @@ fn main() {
             };
 
             let start_vol = Instant::now();
-            let vol = volume_f64(&p);
+            let vol = euclidean_volume_f64(p.vertices(), p.incidence());
             let time_volume_ms = start_vol.elapsed().as_secs_f64() * 1000.0;
 
             let start_cap = Instant::now();
@@ -329,7 +325,11 @@ fn main() {
     save(&args.cache, &db).expect("failed to save sys-landscape family cache");
 
     println!("\nWrote {total} entries to {}", args.out.display());
-    println!("Cache: {} entries (saved to {})", db.len(), args.cache.display());
+    println!(
+        "Cache: {} entries (saved to {})",
+        db.len(),
+        args.cache.display()
+    );
     println!("Cache hits: {cache_hits}/{total}");
     println!("Total time: {:.1}s", t0.elapsed().as_secs_f64());
 }

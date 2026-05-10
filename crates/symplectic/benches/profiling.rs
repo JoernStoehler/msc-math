@@ -14,10 +14,8 @@ use symplectic::algorithms::facet_adjacency::{build_transition_matrix, is_feasib
 use symplectic::algorithms::hk2017::combinations;
 use symplectic::algorithms::hk2017::permutations::for_each_cyclic_permutation;
 use symplectic::geom::polytope::Polytope4D;
-use symplectic::geom::volume::{volume_f64, volume_qhull};
 use symplectic::kkt::saddle_point_solver::{solve_kkt_for, KktOutcome};
 use symplectic::random::generate_random_polytopes;
-use symplectic::QhullError;
 use symplectic::{ehz_capacity_pruned, ehz_capacity_pruned_certified, CertifiedOrbitSetMode};
 
 // Same seed and height range as
@@ -166,37 +164,6 @@ fn bench_pruning_check(c: &mut Criterion) {
     group.finish();
 }
 
-fn bench_volume(c: &mut Criterion) {
-    let mut group = c.benchmark_group("volume");
-    for &f in FACET_COUNTS {
-        let polytope = prebuilt_polytope(f);
-        group.bench_with_input(BenchmarkId::from_parameter(f), &f, |b, _| {
-            b.iter(|| volume_f64(&polytope));
-        });
-    }
-    group.finish();
-}
-
-fn bench_volume_qhull(c: &mut Criterion) {
-    let mut group = c.benchmark_group("volume_qhull");
-    group.sample_size(10);
-
-    for &f in FACET_COUNTS {
-        let polytope = prebuilt_polytope(f);
-        match volume_qhull(&polytope) {
-            Ok(_) => {
-                group.bench_with_input(BenchmarkId::from_parameter(f), &f, |b, _| {
-                    b.iter(|| volume_qhull(&polytope).expect("qhull benchmark"));
-                });
-            }
-            Err(QhullError::QhullNotInstalled) => break,
-            Err(err) => panic!("qhull benchmark warmup failed for F={f}: {err}"),
-        }
-    }
-
-    group.finish();
-}
-
 criterion_group!(
     benches,
     bench_construction,
@@ -205,7 +172,5 @@ criterion_group!(
     bench_capacity_certified_minimizers,
     bench_kkt_single,
     bench_pruning_check,
-    bench_volume,
-    bench_volume_qhull,
 );
 criterion_main!(benches);

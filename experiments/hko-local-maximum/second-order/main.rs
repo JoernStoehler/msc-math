@@ -26,12 +26,12 @@ mod curvature;
 mod phase1;
 
 use curvature::{curvature_at_epsilon, run_phase2, run_phase3};
+use exp_hko_local_maximum::euclidean_volume_f64;
 use phase1::run_phase1;
 use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::time::Instant;
 use symplectic::geom::known_polytopes;
-use symplectic::geom::volume::volume_f64;
 
 /// Gap threshold for near-optimal orbits.
 pub(crate) const NEAR_OPTIMAL_GAP: f64 = 1e-10;
@@ -106,7 +106,7 @@ fn main() {
     let known = known_polytopes::hko_pentagon();
     let polytope = &known.polytope;
     println!("HKO2024: F={}, known sys≈{:.6}", polytope.facet_count(), {
-        let v = volume_f64(polytope);
+        let v = euclidean_volume_f64(polytope.vertices(), polytope.incidence());
         known.capacity * known.capacity / (2.0 * v)
     });
 
