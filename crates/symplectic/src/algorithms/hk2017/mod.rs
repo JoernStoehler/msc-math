@@ -18,7 +18,10 @@ mod combinatorics;
 mod enumeration;
 
 pub use combinatorics::combinations;
-pub use enumeration::{for_each_sigma_pruned, for_each_sigma_unpruned};
+pub use enumeration::{
+    for_each_sigma_pruned, for_each_sigma_pruned_by_transition, for_each_sigma_unpruned,
+    for_each_sigma_unpruned_facet_count,
+};
 
 #[cfg(test)]
 mod tests_capacity_derivative;

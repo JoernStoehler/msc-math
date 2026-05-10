@@ -44,7 +44,7 @@ fn exact_resolution_upgrades_known_winner() {
     )
     .expect("saddle-point solve should succeed");
 
-    let exact = resolve_orbit_exact(&kp.polytope, &orbit)
+    let exact = resolve_orbit_exact_with_dual_vertices_exact(kp.polytope.dual_vertices(), &orbit)
         .expect("exact fallback should certify the known winner");
 
     assert_eq!(exact.admissibility, OrbitAdmissibility::AdmissibleExact);
@@ -66,8 +66,12 @@ fn boundsafe_resolves_indeterminate_argmin() {
     orbit.admissibility = OrbitAdmissibility::IndeterminateF64;
 
     let mut orbits = vec![orbit];
-    resolve_orbits_for_guarantee(&kp.polytope, &mut orbits, OrbitGuaranteeMode::BoundSafe)
-        .expect("boundsafe resolution should succeed");
+    resolve_orbits_for_guarantee_with_dual_vertices_exact(
+        kp.polytope.dual_vertices(),
+        &mut orbits,
+        OrbitGuaranteeMode::BoundSafe,
+    )
+    .expect("boundsafe resolution should succeed");
 
     assert_eq!(orbits.len(), 1);
     assert_eq!(orbits[0].admissibility, OrbitAdmissibility::AdmissibleExact);
@@ -151,7 +155,11 @@ fn exact_fallback_invariant_rejects_bad_equalities() {
     };
 
     assert!(
-        !exact_kkt_result_satisfies_constraints(&polytope, &sigma, &exact),
+        !exact_kkt_result_satisfies_constraints_with_dual_vertices_exact(
+            polytope.dual_vertices(),
+            &sigma,
+            &exact
+        ),
         "positive beta alone must not count as an exact fallback certificate"
     );
 }

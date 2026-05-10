@@ -11,7 +11,10 @@ use crate::geom::polytope::Polytope4D;
 use crate::geom::rational_arithmetic::rational_to_f64;
 use crate::kkt::classify_margin;
 use crate::kkt::rational_solver::{solve_kkt_exact, ExactKktResult};
-use crate::kkt::saddle_point_solver::{solve_kkt_for, KktOutcome, KktResult, EPS_Q_POSITIVE};
+use crate::kkt::saddle_point_solver::{
+    solve_kkt_for_dual_vertices, KktOutcome, KktResult, EPS_Q_POSITIVE,
+};
+use nalgebra::Vector4;
 use num_rational::BigRational;
 use num_traits::{One, Signed, Zero};
 
@@ -250,6 +253,22 @@ pub fn solve_orbit_sigma(
     sigma: &[usize],
     backend: OrbitSolveBackend,
 ) -> Result<OrbitKktData, OrbitSolveError> {
+    solve_orbit_sigma_with_dual_vertices(polytope.dual_vertices_f64(), sigma, backend)
+}
+
+/// Solve one sigma from flat f64 dual vertices into the shared orbit payload.
+///
+/// Input contract: `sigma` indexes the same ordered facet set as
+/// `dual_vertices`.
+///
+/// The current implementation is only complete for the saddle-point backend.
+/// The projected backend remains scaffold-only until the library projection
+/// path exposes the same `Q`-bound contract required by `OrbitKktData`.
+pub fn solve_orbit_sigma_with_dual_vertices(
+    dual_vertices: &[Vector4<f64>],
+    sigma: &[usize],
+    backend: OrbitSolveBackend,
+) -> Result<OrbitKktData, OrbitSolveError> {
     match backend {
         // TODO(capacity-result-api): Replace this with a real projection-backed
         // orbit payload once `library/src/kkt/projection_solver.rs` exposes the
@@ -258,7 +277,7 @@ pub fn solve_orbit_sigma(
         // decide to support there).
         OrbitSolveBackend::Projected => Err(OrbitSolveError::UnsupportedBackend),
         OrbitSolveBackend::SaddlePoint => {
-            let outcome = solve_kkt_for(polytope, sigma);
+            let outcome = solve_kkt_for_dual_vertices(dual_vertices, sigma);
             solve_saddle_point_sigma(sigma, outcome)
         }
     }
@@ -328,14 +347,18 @@ fn action_bounds_from_q(q: f64, q_error_bound: f64) -> (f64, f64) {
     (action_lower, action_upper)
 }
 
-fn exact_orbit_from_sigma(
-    polytope: &Polytope4D,
+fn exact_orbit_from_sigma_with_dual_vertices_exact(
+    dual_vertices_exact: &[[BigRational; 4]],
     sigma: &[usize],
     old_mu: Option<[f64; 4]>,
     old_xi: Option<f64>,
 ) -> Option<OrbitKktData> {
-    let exact = solve_kkt_exact(polytope.dual_vertices(), sigma)?;
-    if !exact_kkt_result_satisfies_constraints(polytope, sigma, &exact) {
+    let exact = solve_kkt_exact(dual_vertices_exact, sigma)?;
+    if !exact_kkt_result_satisfies_constraints_with_dual_vertices_exact(
+        dual_vertices_exact,
+        sigma,
+        &exact,
+    ) {
         return None;
     }
     if exact.q_exact_f64 <= EPS_Q_POSITIVE {
@@ -367,12 +390,16 @@ fn exact_action_from_q(q_exact: &BigRational) -> BigRational {
     BigRational::one() / (q_exact.clone() + q_exact.clone())
 }
 
-fn certified_orbit_from_sigma(
-    polytope: &Polytope4D,
+fn certified_orbit_from_sigma_with_dual_vertices_exact(
+    dual_vertices_exact: &[[BigRational; 4]],
     sigma: &[usize],
 ) -> Option<CertifiedOrbitKktData> {
-    let exact = solve_kkt_exact(polytope.dual_vertices(), sigma)?;
-    if !exact_kkt_result_satisfies_constraints(polytope, sigma, &exact) {
+    let exact = solve_kkt_exact(dual_vertices_exact, sigma)?;
+    if !exact_kkt_result_satisfies_constraints_with_dual_vertices_exact(
+        dual_vertices_exact,
+        sigma,
+        &exact,
+    ) {
         return None;
     }
     let action_exact = exact_action_from_q(&exact.q_exact);
@@ -387,8 +414,8 @@ fn certified_orbit_from_sigma(
     })
 }
 
-fn exact_kkt_result_satisfies_constraints(
-    polytope: &Polytope4D,
+fn exact_kkt_result_satisfies_constraints_with_dual_vertices_exact(
+    dual_vertices_exact: &[[BigRational; 4]],
     sigma: &[usize],
     exact: &ExactKktResult,
 ) -> bool {
@@ -412,14 +439,22 @@ fn exact_kkt_result_satisfies_constraints(
         sigma
             .iter()
             .zip(exact.beta.iter())
-            .map(|(&facet, beta)| beta * &polytope.dual_vertices()[facet][d])
+            .map(|(&facet, beta)| beta * &dual_vertices_exact[facet][d])
             .fold(num_rational::BigRational::zero(), |acc, entry| acc + entry)
             .is_zero()
     })
 }
 
-fn resolve_orbit_exact(polytope: &Polytope4D, orbit: &OrbitKktData) -> Option<OrbitKktData> {
-    exact_orbit_from_sigma(polytope, &orbit.sigma, orbit.mu, orbit.xi)
+fn resolve_orbit_exact_with_dual_vertices_exact(
+    dual_vertices_exact: &[[BigRational; 4]],
+    orbit: &OrbitKktData,
+) -> Option<OrbitKktData> {
+    exact_orbit_from_sigma_with_dual_vertices_exact(
+        dual_vertices_exact,
+        &orbit.sigma,
+        orbit.mu,
+        orbit.xi,
+    )
 }
 
 fn argmin_action_lower(orbits: &[OrbitKktData]) -> Option<usize> {
@@ -438,8 +473,8 @@ fn argmin_action_upper(orbits: &[OrbitKktData]) -> Option<usize> {
         .map(|(idx, _)| idx)
 }
 
-fn resolve_indices_exact(
-    polytope: &Polytope4D,
+fn resolve_indices_exact_with_dual_vertices_exact(
+    dual_vertices_exact: &[[BigRational; 4]],
     orbits: &mut Vec<OrbitKktData>,
     mut indices: Vec<usize>,
 ) -> Result<(), OrbitSearchError> {
@@ -447,7 +482,8 @@ fn resolve_indices_exact(
     indices.dedup();
 
     for idx in indices.into_iter().rev() {
-        let upgraded = resolve_orbit_exact(polytope, &orbits[idx]);
+        let upgraded =
+            resolve_orbit_exact_with_dual_vertices_exact(dual_vertices_exact, &orbits[idx]);
         match upgraded {
             Some(exact_orbit) => orbits[idx] = exact_orbit,
             None => {
@@ -462,8 +498,8 @@ fn resolve_indices_exact(
     Ok(())
 }
 
-fn resolve_boundsafe(
-    polytope: &Polytope4D,
+fn resolve_boundsafe_with_dual_vertices_exact(
+    dual_vertices_exact: &[[BigRational; 4]],
     orbits: &mut Vec<OrbitKktData>,
 ) -> Result<(), OrbitSearchError> {
     loop {
@@ -482,16 +518,16 @@ fn resolve_boundsafe(
             return Ok(());
         }
 
-        resolve_indices_exact(polytope, orbits, needs_exact)?;
+        resolve_indices_exact_with_dual_vertices_exact(dual_vertices_exact, orbits, needs_exact)?;
     }
 }
 
-fn resolve_minimasafe(
-    polytope: &Polytope4D,
+fn resolve_minimasafe_with_dual_vertices_exact(
+    dual_vertices_exact: &[[BigRational; 4]],
     orbits: &mut Vec<OrbitKktData>,
 ) -> Result<(), OrbitSearchError> {
     loop {
-        resolve_boundsafe(polytope, orbits)?;
+        resolve_boundsafe_with_dual_vertices_exact(dual_vertices_exact, orbits)?;
         let lower = orbits
             .iter()
             .map(|orbit| orbit.action_lower)
@@ -517,12 +553,12 @@ fn resolve_minimasafe(
             return Ok(());
         }
 
-        resolve_indices_exact(polytope, orbits, needs_exact)?;
+        resolve_indices_exact_with_dual_vertices_exact(dual_vertices_exact, orbits, needs_exact)?;
     }
 }
 
-fn resolve_allsafe(
-    polytope: &Polytope4D,
+fn resolve_allsafe_with_dual_vertices_exact(
+    dual_vertices_exact: &[[BigRational; 4]],
     orbits: &mut Vec<OrbitKktData>,
 ) -> Result<(), OrbitSearchError> {
     let needs_exact: Vec<usize> = orbits
@@ -532,11 +568,11 @@ fn resolve_allsafe(
             (orbit.admissibility == OrbitAdmissibility::IndeterminateF64).then_some(idx)
         })
         .collect();
-    resolve_indices_exact(polytope, orbits, needs_exact)
+    resolve_indices_exact_with_dual_vertices_exact(dual_vertices_exact, orbits, needs_exact)
 }
 
-pub(crate) fn resolve_orbits_for_guarantee(
-    polytope: &Polytope4D,
+pub(crate) fn resolve_orbits_for_guarantee_with_dual_vertices_exact(
+    dual_vertices_exact: &[[BigRational; 4]],
     orbits: &mut Vec<OrbitKktData>,
     mode: OrbitGuaranteeMode,
 ) -> Result<(), OrbitSearchError> {
@@ -545,9 +581,15 @@ pub(crate) fn resolve_orbits_for_guarantee(
     }
 
     match mode {
-        OrbitGuaranteeMode::BoundSafe => resolve_boundsafe(polytope, orbits),
-        OrbitGuaranteeMode::MinimaSafe => resolve_minimasafe(polytope, orbits),
-        OrbitGuaranteeMode::AllSafe => resolve_allsafe(polytope, orbits),
+        OrbitGuaranteeMode::BoundSafe => {
+            resolve_boundsafe_with_dual_vertices_exact(dual_vertices_exact, orbits)
+        }
+        OrbitGuaranteeMode::MinimaSafe => {
+            resolve_minimasafe_with_dual_vertices_exact(dual_vertices_exact, orbits)
+        }
+        OrbitGuaranteeMode::AllSafe => {
+            resolve_allsafe_with_dual_vertices_exact(dual_vertices_exact, orbits)
+        }
     }
 }
 
@@ -638,6 +680,28 @@ fn sort_certified_orbits_by_sigma(orbits: &mut [CertifiedOrbitKktData]) {
 /// fallback before this function returns.
 pub fn aggregate_certified_orbits(
     polytope: &Polytope4D,
+    candidates: Vec<OrbitKktData>,
+    iterations: u64,
+    action_gap_exact: BigRational,
+    mode: CertifiedOrbitSetMode,
+) -> Result<CertifiedOrbitSearchResult, OrbitSearchError> {
+    aggregate_certified_orbits_with_dual_vertices_exact(
+        polytope.dual_vertices(),
+        candidates,
+        iterations,
+        action_gap_exact,
+        mode,
+    )
+}
+
+/// Aggregate solved orbit candidates into an exact rational orbit-set result
+/// using flat exact dual vertices for fallback certification.
+///
+/// Input contract: every candidate sigma must index the same ordered facet set
+/// as `dual_vertices_exact`. In the standard f64-then-exact path, candidates
+/// are produced from the matching f64 projection of these exact dual vertices.
+pub fn aggregate_certified_orbits_with_dual_vertices_exact(
+    dual_vertices_exact: &[[BigRational; 4]],
     mut candidates: Vec<OrbitKktData>,
     iterations: u64,
     action_gap_exact: BigRational,
@@ -658,7 +722,10 @@ pub fn aggregate_certified_orbits(
     let mut capacity_exact = None;
     for (idx, candidate) in candidates.iter().enumerate() {
         exact_resolutions += 1;
-        match certified_orbit_from_sigma(polytope, &candidate.sigma) {
+        match certified_orbit_from_sigma_with_dual_vertices_exact(
+            dual_vertices_exact,
+            &candidate.sigma,
+        ) {
             Some(exact_orbit) => {
                 capacity_exact = Some(exact_orbit.action_exact.clone());
                 certified[idx] = Some(exact_orbit);
@@ -694,7 +761,10 @@ pub fn aggregate_certified_orbits(
 
         for idx in needs_resolution {
             exact_resolutions += 1;
-            match certified_orbit_from_sigma(polytope, &candidates[idx].sigma) {
+            match certified_orbit_from_sigma_with_dual_vertices_exact(
+                dual_vertices_exact,
+                &candidates[idx].sigma,
+            ) {
                 Some(exact_orbit) => {
                     if exact_orbit.action_exact < capacity_exact {
                         capacity_exact = exact_orbit.action_exact.clone();
@@ -742,6 +812,14 @@ pub fn aggregate_certified_orbits(
 pub(crate) fn solve_sigma_stream(
     polytope: &Polytope4D,
     backend: OrbitSolveBackend,
+    emit_sigma: impl FnMut(&mut dyn FnMut(&[usize])),
+) -> Result<(Vec<OrbitKktData>, u64), OrbitSearchError> {
+    solve_sigma_stream_with_dual_vertices(polytope.dual_vertices_f64(), backend, emit_sigma)
+}
+
+pub(crate) fn solve_sigma_stream_with_dual_vertices(
+    dual_vertices: &[Vector4<f64>],
+    backend: OrbitSolveBackend,
     mut emit_sigma: impl FnMut(&mut dyn FnMut(&[usize])),
 ) -> Result<(Vec<OrbitKktData>, u64), OrbitSearchError> {
     let mut orbits = Vec::new();
@@ -753,7 +831,7 @@ pub(crate) fn solve_sigma_stream(
             return;
         }
         iterations += 1;
-        match solve_orbit_sigma(polytope, sigma, backend) {
+        match solve_orbit_sigma_with_dual_vertices(dual_vertices, sigma, backend) {
             Ok(orbit) => orbits.push(orbit),
             Err(OrbitSolveError::Inadmissible) => {}
             Err(OrbitSolveError::UnsupportedBackend) => {
@@ -787,6 +865,28 @@ pub(crate) fn solve_sigma_stream(
 /// 3. call this function with the chosen `gap` and `mode`.
 pub fn aggregate_orbits(
     polytope: &Polytope4D,
+    orbits: Vec<OrbitKktData>,
+    iterations: u64,
+    gap: f64,
+    mode: OrbitGuaranteeMode,
+) -> Result<OrbitSearchResult, OrbitSearchError> {
+    aggregate_orbits_with_dual_vertices_exact(
+        polytope.dual_vertices(),
+        orbits,
+        iterations,
+        gap,
+        mode,
+    )
+}
+
+/// Aggregate solved orbit candidates with explicit admissibility guarantees,
+/// using flat exact dual vertices for any exact fallback required by `mode`.
+///
+/// Input contract: every orbit sigma must index the same ordered facet set as
+/// `dual_vertices_exact`. In the standard f64-then-exact path, the orbits are
+/// solved from the matching f64 projection of these exact dual vertices.
+pub fn aggregate_orbits_with_dual_vertices_exact(
+    dual_vertices_exact: &[[BigRational; 4]],
     mut orbits: Vec<OrbitKktData>,
     iterations: u64,
     gap: f64,
@@ -796,10 +896,14 @@ pub fn aggregate_orbits(
         return Err(OrbitSearchError::NoAdmissibleOrbit);
     }
 
-    resolve_orbits_for_guarantee(polytope, &mut orbits, mode)?;
+    resolve_orbits_for_guarantee_with_dual_vertices_exact(dual_vertices_exact, &mut orbits, mode)?;
     trim_orbits_to_gap(&mut orbits, gap)?;
     if mode == OrbitGuaranteeMode::AllSafe {
-        resolve_orbits_for_guarantee(polytope, &mut orbits, mode)?;
+        resolve_orbits_for_guarantee_with_dual_vertices_exact(
+            dual_vertices_exact,
+            &mut orbits,
+            mode,
+        )?;
     }
     sort_orbits_by_lower_action(&mut orbits);
     summarize_orbits(orbits, iterations)

@@ -83,19 +83,35 @@ pub fn systolic_ratio(capacity: f64, volume: f64) -> f64 {
     capacity * capacity / (2.0 * volume)
 }
 
+fn solve_pruned_hk2017_candidates(
+    polytope: &Polytope4D,
+) -> Result<(Vec<OrbitKktData>, u64), OrbitSearchError> {
+    let dual_vertices = polytope.dual_vertices_f64();
+    let transition_is_allowed =
+        algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega(
+            polytope.facet_intersection_is_nonempty(),
+            polytope.omega_signs(),
+        );
+
+    algorithms::orbit_search::solve_sigma_stream_with_dual_vertices(
+        dual_vertices,
+        OrbitSolveBackend::SaddlePoint,
+        |visit| {
+            algorithms::hk2017::for_each_sigma_pruned_by_transition(&transition_is_allowed, visit)
+        },
+    )
+}
+
 /// Explicit pruned HK2017 frontend on the shared orbit/result surface.
 ///
 /// This root convenience wrapper uses the saddle-point backend and `MinimaSafe`
 /// aggregation: f64-indeterminate candidates in the minimum-action window are
 /// resolved by exact rational KKT fallback before the result is returned.
 pub fn ehz_capacity_pruned(polytope: &Polytope4D) -> Result<OrbitSearchResult, OrbitSearchError> {
-    let (orbits, iterations) = algorithms::orbit_search::solve_sigma_stream(
-        polytope,
-        OrbitSolveBackend::SaddlePoint,
-        |visit| algorithms::hk2017::for_each_sigma_pruned(polytope, visit),
-    )?;
-    algorithms::orbit_search::aggregate_orbits(
-        polytope,
+    let dual_vertices_exact = polytope.dual_vertices();
+    let (orbits, iterations) = solve_pruned_hk2017_candidates(polytope)?;
+    algorithms::orbit_search::aggregate_orbits_with_dual_vertices_exact(
+        dual_vertices_exact,
         orbits,
         iterations,
         0.0,
@@ -109,13 +125,16 @@ pub fn ehz_capacity_pruned(polytope: &Polytope4D) -> Result<OrbitSearchResult, O
 /// aggregation: f64-indeterminate candidates in the minimum-action window are
 /// resolved by exact rational KKT fallback before the result is returned.
 pub fn ehz_capacity_unpruned(polytope: &Polytope4D) -> Result<OrbitSearchResult, OrbitSearchError> {
-    let (orbits, iterations) = algorithms::orbit_search::solve_sigma_stream(
-        polytope,
+    let dual_vertices = polytope.dual_vertices_f64();
+    let dual_vertices_exact = polytope.dual_vertices();
+
+    let (orbits, iterations) = algorithms::orbit_search::solve_sigma_stream_with_dual_vertices(
+        dual_vertices,
         OrbitSolveBackend::SaddlePoint,
-        |visit| algorithms::hk2017::for_each_sigma_unpruned(polytope, visit),
+        |visit| algorithms::hk2017::for_each_sigma_unpruned_facet_count(dual_vertices.len(), visit),
     )?;
-    algorithms::orbit_search::aggregate_orbits(
-        polytope,
+    algorithms::orbit_search::aggregate_orbits_with_dual_vertices_exact(
+        dual_vertices_exact,
         orbits,
         iterations,
         0.0,
@@ -132,13 +151,10 @@ pub fn ehz_capacity_pruned_certified(
     action_gap_exact: num_rational::BigRational,
     mode: CertifiedOrbitSetMode,
 ) -> Result<CertifiedOrbitSearchResult, OrbitSearchError> {
-    let (orbits, iterations) = algorithms::orbit_search::solve_sigma_stream(
-        polytope,
-        OrbitSolveBackend::SaddlePoint,
-        |visit| algorithms::hk2017::for_each_sigma_pruned(polytope, visit),
-    )?;
-    algorithms::orbit_search::aggregate_certified_orbits(
-        polytope,
+    let dual_vertices_exact = polytope.dual_vertices();
+    let (orbits, iterations) = solve_pruned_hk2017_candidates(polytope)?;
+    algorithms::orbit_search::aggregate_certified_orbits_with_dual_vertices_exact(
+        dual_vertices_exact,
         orbits,
         iterations,
         action_gap_exact,
@@ -153,9 +169,11 @@ pub fn ehz_capacity_pruned_certified(
 /// aggregation.
 pub fn ehz_capacity_billiard(polytope: &Polytope4D) -> Result<OrbitSearchResult, BilliardError> {
     algorithms::billiard::facet_classification::classify_facets(polytope)?;
+    let dual_vertices = polytope.dual_vertices_f64();
+    let dual_vertices_exact = polytope.dual_vertices();
 
-    let (orbits, iterations) = algorithms::orbit_search::solve_sigma_stream(
-        polytope,
+    let (orbits, iterations) = algorithms::orbit_search::solve_sigma_stream_with_dual_vertices(
+        dual_vertices,
         OrbitSolveBackend::SaddlePoint,
         |visit| {
             algorithms::billiard::for_each_sigma(polytope, visit)
@@ -179,8 +197,8 @@ pub fn ehz_capacity_billiard(polytope: &Polytope4D) -> Result<OrbitSearchResult,
             unreachable!("solve_sigma_stream does not receive an action gap")
         }
     })?;
-    algorithms::orbit_search::aggregate_orbits(
-        polytope,
+    algorithms::orbit_search::aggregate_orbits_with_dual_vertices_exact(
+        dual_vertices_exact,
         orbits,
         iterations,
         0.0,
