@@ -76,7 +76,7 @@ pub fn compute_omega_fields(
     }
     for i in 0..facet_count {
         for j in (i + 1)..facet_count {
-            if polytope.vertex_adjacency()[(i, j)] {
+            if polytope.facet_intersection_is_nonempty()[(i, j)] {
                 adjacent_pair_count += 1;
                 if transition[(i, j)] && transition[(j, i)] {
                     bidirectional_pair_count += 1;

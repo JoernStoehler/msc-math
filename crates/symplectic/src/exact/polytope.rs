@@ -29,7 +29,7 @@ pub struct ExactPolytope4D<F: ExactScalar + 'static> {
     dual_vertices: Vec<[F; 4]>,
     vertices: Vec<[F; 4]>,
     incidence: Vec<Vec<bool>>,
-    vertex_adjacency: Vec<Vec<bool>>,
+    facet_intersection_is_nonempty: Vec<Vec<bool>>,
     omega_signs: Vec<Vec<i8>>,
 }
 
@@ -56,7 +56,7 @@ impl<F: ExactScalar + 'static> ExactPolytope4D<F> {
             .collect();
 
         let vertex_count = vertices.len();
-        let vertex_adjacency: Vec<Vec<bool>> = (0..f)
+        let facet_intersection_is_nonempty: Vec<Vec<bool>> = (0..f)
             .map(|i| {
                 (0..f)
                     .map(|j| {
@@ -88,7 +88,7 @@ impl<F: ExactScalar + 'static> ExactPolytope4D<F> {
             dual_vertices,
             vertices,
             incidence,
-            vertex_adjacency,
+            facet_intersection_is_nonempty,
             omega_signs,
         })
     }
@@ -105,8 +105,8 @@ impl<F: ExactScalar + 'static> ExactPolytope4D<F> {
         &self.incidence
     }
 
-    pub fn vertex_adjacency(&self) -> &[Vec<bool>] {
-        &self.vertex_adjacency
+    pub fn facet_intersection_is_nonempty(&self) -> &[Vec<bool>] {
+        &self.facet_intersection_is_nonempty
     }
 
     pub fn omega_signs(&self) -> &[Vec<i8>] {

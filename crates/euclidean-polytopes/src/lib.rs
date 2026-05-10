@@ -20,11 +20,13 @@ mod volume;
 
 pub use f64_geometry::F64GeometryError;
 pub use faces::{
-    edges_from_incidence, two_faces_from_incidence, vertex_facets_from_incidence, TwoFace,
+    edges_from_vertex_facet_incidence, facet_intersection_is_nonempty_from_vertex_facet_incidence,
+    facet_vertices_from_vertex_facet_incidence, two_faces_from_vertex_facet_incidence,
+    vertex_facets_from_vertex_facet_incidence, TwoFace,
 };
 pub use polar::{
     polar_vertices_exact, polar_vertices_f64, IncidenceF64, IndeterminatePolarCandidateF64,
-    PolarVertexData, PolarVerticesF64,
+    PolarVerticesF64,
 };
 pub use predicates::{all_points_are_extreme_exact, origin_in_interior_of_conv_exact};
 pub use random::sample_random_dual_vertices_f64;

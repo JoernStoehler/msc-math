@@ -23,11 +23,13 @@ The implemented packets are in place:
 - `sample_random_dual_vertices_f64(facet_count, h_min, h_max, rng) -> Vec<Vector4<f64>>`;
 - `origin_in_interior_of_conv_exact(points) -> bool`;
 - `all_points_are_extreme_exact(points) -> bool`;
-- `polar_vertices_exact(vertices) -> PolarVertexData<T>`;
+- `polar_vertices_exact(vertices) -> (Vec<Vector4<T>>, DMatrix<bool>)`;
 - `polar_vertices_f64(vertices) -> Result<PolarVerticesF64, F64GeometryError>`;
-- `vertex_facets_from_incidence(incidence) -> Vec<Vec<usize>>`;
-- `edges_from_incidence(incidence) -> Vec<[usize; 2]>`;
-- `two_faces_from_incidence(incidence) -> Vec<TwoFace>`;
+- `vertex_facets_from_vertex_facet_incidence(vertex_facet_incidence) -> Vec<Vec<usize>>`;
+- `facet_vertices_from_vertex_facet_incidence(vertex_facet_incidence) -> Vec<Vec<usize>>`;
+- `edges_from_vertex_facet_incidence(vertex_facet_incidence) -> Vec<[usize; 2]>`;
+- `two_faces_from_vertex_facet_incidence(vertex_facet_incidence) -> Vec<TwoFace>`;
+- `facet_intersection_is_nonempty_from_vertex_facet_incidence(vertex_facet_incidence) -> DMatrix<bool>`;
 - `volume_f64(dual_vertices, vertices) -> Result<VolumeF64, F64GeometryError>`;
 - `volume_from_incidence_f64(vertices, incidence) -> Result<f64, F64GeometryError>`;
 - `volume_from_incidence_exact(vertices, incidence) -> T`.
@@ -299,11 +301,25 @@ pub struct TwoFace {
     pub vertices: Vec<usize>,
 }
 
-pub fn vertex_facets_from_incidence(incidence: &DMatrix<bool>) -> Vec<Vec<usize>>;
+pub fn vertex_facets_from_vertex_facet_incidence(
+    vertex_facet_incidence: &DMatrix<bool>,
+) -> Vec<Vec<usize>>;
 
-pub fn edges_from_incidence(incidence: &DMatrix<bool>) -> Vec<[usize; 2]>;
+pub fn facet_vertices_from_vertex_facet_incidence(
+    vertex_facet_incidence: &DMatrix<bool>,
+) -> Vec<Vec<usize>>;
 
-pub fn two_faces_from_incidence(incidence: &DMatrix<bool>) -> Vec<TwoFace>;
+pub fn edges_from_vertex_facet_incidence(
+    vertex_facet_incidence: &DMatrix<bool>,
+) -> Vec<[usize; 2]>;
+
+pub fn two_faces_from_vertex_facet_incidence(
+    vertex_facet_incidence: &DMatrix<bool>,
+) -> Vec<TwoFace>;
+
+pub fn facet_intersection_is_nonempty_from_vertex_facet_incidence(
+    vertex_facet_incidence: &DMatrix<bool>,
+) -> DMatrix<bool>;
 ```
 
 The helpers use only `DMatrix<bool>` incidence. They do not inspect coordinates,
@@ -312,6 +328,11 @@ cyclically. Empty matrices return empty results. Edge detection follows the
 current 4D convention: two vertices form an edge when they share at least three
 incident facets. A 2-face is reported when a sorted facet pair has at least
 three common vertices; the returned vertex list is sorted by vertex index.
+`facet_vertices_from_vertex_facet_incidence` transposes the public
+vertex-facet incidence semantics into sorted facet-vertex lists.
+`facet_intersection_is_nonempty_from_vertex_facet_incidence` returns the
+false-diagonal facet-pair matrix where entries mean the two facets share at
+least one vertex, not necessarily a 2-face.
 
 `symplectic::geom::skeleton::Skeleton` remains a compatibility wrapper. Its
 `compute` method delegates vertex-facet lists, edges, and unordered 2-faces to
@@ -534,8 +555,9 @@ operationalization.
 
 2. Exact polarity roundtrip:
    Proposition: for every finite `P subset Q^4`, if `0 in int conv(P)`, then
-   `polar_vertices_exact(polar_vertices_exact(P).vertices).vertices` is the set
-   of extreme points of `conv(P)`.
+   double polar of `P`, computed by binding
+   `(vertices, vertex_facet_incidence) = polar_vertices_exact(P)` and then
+   `polar_vertices_exact(&vertices)`, is the set of extreme points of `conv(P)`.
    Operationalization: start with constructed positive-spanning exact point
    sets, optionally append exact convex-combination redundant points, compute
    the double polar, and compare with an explicit filtering of `P` by
@@ -644,10 +666,11 @@ function is exact or approximate. The suffixes make call sites easier to review.
 
 ### Accepted Direction: Output Records
 
-A small `PolarVertexData<T>`-style output record is acceptable if output
-variables need names, for example vertices and incidence descriptors. Use a
-tuple if each index is obvious. Use a flat local struct if a tuple would make
-the call site harder to read.
+`polar_vertices_exact` returns `(vertices, vertex_facet_incidence)` because the
+two exact outputs are immediate and their index roles are obvious at call
+sites. `polar_vertices_f64` remains a named output record because diagnostic
+fields such as indeterminate candidates and coordinate error bounds need stable
+names.
 
 Why it matters: volume and facet adjacency need incidence. Returning only
 vertices would force recomputation. The record must not become a public

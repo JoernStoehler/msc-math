@@ -56,12 +56,7 @@ pub fn all_points_are_extreme_exact<T: ExactScalar + 'static>(
 
 pub fn polar_vertices_exact<T: ExactScalar + 'static>(
     vertices: &[Vector4<T>],
-) -> PolarVertexData<T>;
-
-pub struct PolarVertexData<T> {
-    pub vertices: Vec<Vector4<T>>,
-    pub incidence: DMatrix<bool>,
-}
+) -> (Vec<Vector4<T>>, DMatrix<bool>);
 
 pub fn polar_vertices_f64(
     vertices: &[Vector4<f64>],
@@ -92,11 +87,25 @@ pub struct TwoFace {
     pub vertices: Vec<usize>,
 }
 
-pub fn vertex_facets_from_incidence(incidence: &DMatrix<bool>) -> Vec<Vec<usize>>;
+pub fn vertex_facets_from_vertex_facet_incidence(
+    vertex_facet_incidence: &DMatrix<bool>,
+) -> Vec<Vec<usize>>;
 
-pub fn edges_from_incidence(incidence: &DMatrix<bool>) -> Vec<[usize; 2]>;
+pub fn facet_vertices_from_vertex_facet_incidence(
+    vertex_facet_incidence: &DMatrix<bool>,
+) -> Vec<Vec<usize>>;
 
-pub fn two_faces_from_incidence(incidence: &DMatrix<bool>) -> Vec<TwoFace>;
+pub fn edges_from_vertex_facet_incidence(
+    vertex_facet_incidence: &DMatrix<bool>,
+) -> Vec<[usize; 2]>;
+
+pub fn two_faces_from_vertex_facet_incidence(
+    vertex_facet_incidence: &DMatrix<bool>,
+) -> Vec<TwoFace>;
+
+pub fn facet_intersection_is_nonempty_from_vertex_facet_incidence(
+    vertex_facet_incidence: &DMatrix<bool>,
+) -> DMatrix<bool>;
 
 pub fn volume_f64(
     dual_vertices: &[Vector4<f64>],
@@ -161,7 +170,10 @@ construct a polytope, validate boundedness, or test non-redundancy.
 `{ y in R^4 : <v_i, y> <= 1 }`. It checks and panics on the required contract
 `0 in int conv(vertices)`. The input does not have to be non-redundant:
 redundant points only add redundant inequalities. Returned vertices are
-deduplicated by exact equality.
+deduplicated by exact equality. It returns `(vertices, vertex_facet_incidence)`;
+rows of the incidence matrix are returned polar vertices and columns are input
+facets. `polar_vertices_f64` remains a diagnostic struct because its
+indeterminate-candidate payload needs named fields.
 
 `all_points_are_extreme_exact(points)` checks the stronger non-redundancy
 contract for a V-representation: every listed point must be an extreme point of
@@ -175,11 +187,15 @@ the 4-tuple was singular, higher-dimensional, or unsolved in `f64`; it has
 duplicate classification was too close to decide.
 
 The incidence-only face helpers accept a plain `DMatrix<bool>` with rows as
-vertices and columns as facets. `vertex_facets_from_incidence` returns sorted
-incident-facet lists. `edges_from_incidence` returns vertex pairs that share at
-least three incident facets. `two_faces_from_incidence` returns facet pairs
-with at least three shared vertices; `TwoFace::vertices` is sorted by vertex
-index and is not polygon-ordered. The temporary
+vertices and columns as facets. `vertex_facets_from_vertex_facet_incidence`
+returns sorted incident-facet lists. `facet_vertices_from_vertex_facet_incidence`
+returns sorted incident-vertex lists per facet. `edges_from_vertex_facet_incidence`
+returns vertex pairs that share at least three incident facets.
+`two_faces_from_vertex_facet_incidence` returns facet pairs with at least three
+shared vertices; `TwoFace::vertices` is sorted by vertex index and is not
+polygon-ordered. `facet_intersection_is_nonempty_from_vertex_facet_incidence`
+returns the `F x F` facet-pair matrix with false diagonal where entry `(i, k)`
+means facets `i` and `k` share at least one vertex. The temporary
 `symplectic::geom::skeleton::Skeleton` wrapper still performs f64 polygon
 ordering when converting these `TwoFace` values to its existing `Ridge` type.
 

@@ -11,7 +11,7 @@ use crate::geom::known_polytopes;
 #[test]
 fn flat_transition_matrix_combines_adjacency_and_nonnegative_omega() {
     #[rustfmt::skip]
-    let vertex_adjacency = DMatrix::from_row_slice(3, 3, &[
+    let facet_intersection_is_nonempty = DMatrix::from_row_slice(3, 3, &[
         false, true,  true,
         true,  false, true,
         true,  true,  false,
@@ -23,8 +23,10 @@ fn flat_transition_matrix_combines_adjacency_and_nonnegative_omega() {
         1, -1,  0,
     ]);
 
-    let directed =
-        build_transition_matrix_from_adjacency_and_omega(&vertex_adjacency, &omega_signs);
+    let directed = build_transition_matrix_from_adjacency_and_omega(
+        &facet_intersection_is_nonempty,
+        &omega_signs,
+    );
 
     #[rustfmt::skip]
     let expected = DMatrix::from_row_slice(3, 3, &[
@@ -36,12 +38,17 @@ fn flat_transition_matrix_combines_adjacency_and_nonnegative_omega() {
 }
 
 #[test]
-#[should_panic(expected = "vertex_adjacency and omega_signs must have the same shape")]
+#[should_panic(
+    expected = "facet_intersection_is_nonempty and omega_signs must have the same shape"
+)]
 fn flat_transition_matrix_rejects_shape_mismatch() {
-    let vertex_adjacency = DMatrix::from_element(2, 2, false);
+    let facet_intersection_is_nonempty = DMatrix::from_element(2, 2, false);
     let omega_signs = DMatrix::from_element(3, 3, 0);
 
-    let _ = build_transition_matrix_from_adjacency_and_omega(&vertex_adjacency, &omega_signs);
+    let _ = build_transition_matrix_from_adjacency_and_omega(
+        &facet_intersection_is_nonempty,
+        &omega_signs,
+    );
 }
 
 /// Simplex (5 facets): every pair of facets shares a vertex (complete graph).
@@ -50,7 +57,7 @@ fn flat_transition_matrix_rejects_shape_mismatch() {
 #[allow(clippy::needless_range_loop)]
 fn simplex_undirected_is_complete() {
     let kp = known_polytopes::simplex();
-    let adj = kp.polytope.vertex_adjacency();
+    let adj = kp.polytope.facet_intersection_is_nonempty();
     let f = kp.polytope.facet_count();
     assert_eq!(f, 5);
 
@@ -71,7 +78,7 @@ fn simplex_undirected_is_complete() {
 #[allow(clippy::needless_range_loop)]
 fn hypercube_undirected_excludes_opposite_facets() {
     let kp = known_polytopes::hypercube();
-    let adj = kp.polytope.vertex_adjacency();
+    let adj = kp.polytope.facet_intersection_is_nonempty();
     let f = kp.polytope.facet_count();
     assert_eq!(f, 8);
 
@@ -90,7 +97,7 @@ fn hypercube_undirected_excludes_opposite_facets() {
 #[allow(clippy::needless_range_loop)]
 fn undirected_adjacency_is_symmetric() {
     for kp in known_polytopes::all_known() {
-        let adj = kp.polytope.vertex_adjacency();
+        let adj = kp.polytope.facet_intersection_is_nonempty();
         let f = kp.polytope.facet_count();
         for i in 0..f {
             for j in 0..f {
@@ -109,7 +116,7 @@ fn undirected_adjacency_is_symmetric() {
 #[test]
 fn directed_is_subset_of_undirected() {
     for kp in known_polytopes::all_known() {
-        let undirected = kp.polytope.vertex_adjacency();
+        let undirected = kp.polytope.facet_intersection_is_nonempty();
         let directed = build_transition_matrix(&kp.polytope);
         let f = kp.polytope.facet_count();
         for i in 0..f {
@@ -159,7 +166,7 @@ fn directed_adjacency_antisymmetry_property() {
 fn directed_prunes_vs_undirected() {
     // The simplex is generic enough that directed should prune some edges
     let kp = known_polytopes::simplex();
-    let undirected = kp.polytope.vertex_adjacency();
+    let undirected = kp.polytope.facet_intersection_is_nonempty();
     let directed = build_transition_matrix(&kp.polytope);
     let count_undirected: usize = undirected.iter().filter(|&&v| v).count();
     let count_directed: usize = directed.iter().filter(|&&v| v).count();
@@ -221,7 +228,7 @@ fn is_feasible_cycle_single_element() {
 fn lagrangian_product_q_q_transitions_bidirectional() {
     let kp = known_polytopes::lagrangian_triangle_product();
     let directed = build_transition_matrix(&kp.polytope);
-    let undirected = kp.polytope.vertex_adjacency();
+    let undirected = kp.polytope.facet_intersection_is_nonempty();
     let omega_signs = kp.polytope.omega_signs();
     let f = kp.polytope.facet_count();
 

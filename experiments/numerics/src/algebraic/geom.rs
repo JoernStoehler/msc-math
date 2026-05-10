@@ -30,7 +30,7 @@ pub struct ExactPolytope4D<F: ExperimentScalar + 'static> {
     dual_vertices: Vec<[F; 4]>,
     vertices: Vec<[F; 4]>,
     incidence: Vec<Vec<bool>>,
-    vertex_adjacency: Vec<Vec<bool>>,
+    facet_intersection_is_nonempty: Vec<Vec<bool>>,
     omega_signs: Vec<Vec<i8>>,
 }
 
@@ -57,7 +57,7 @@ impl<F: ExperimentScalar + 'static> ExactPolytope4D<F> {
             .collect();
 
         let vertex_count = vertices.len();
-        let vertex_adjacency: Vec<Vec<bool>> = (0..f)
+        let facet_intersection_is_nonempty: Vec<Vec<bool>> = (0..f)
             .map(|i| {
                 (0..f)
                     .map(|j| {
@@ -89,7 +89,7 @@ impl<F: ExperimentScalar + 'static> ExactPolytope4D<F> {
             dual_vertices,
             vertices,
             incidence,
-            vertex_adjacency,
+            facet_intersection_is_nonempty,
             omega_signs,
         })
     }
@@ -109,9 +109,9 @@ impl<F: ExperimentScalar + 'static> ExactPolytope4D<F> {
         &self.incidence
     }
 
-    /// Exact facet adjacency via shared vertices.
-    pub fn vertex_adjacency(&self) -> &[Vec<bool>] {
-        &self.vertex_adjacency
+    /// Exact facet-pair nonempty intersection via shared vertices.
+    pub fn facet_intersection_is_nonempty(&self) -> &[Vec<bool>] {
+        &self.facet_intersection_is_nonempty
     }
 
     /// Exact sign of `omega_0(a_i, a_j)`.
@@ -418,9 +418,9 @@ mod tests {
                         polytope.incidence()[vertex][row] && polytope.incidence()[vertex][col]
                     });
                 assert_eq!(
-                    polytope.vertex_adjacency()[row][col],
+                    polytope.facet_intersection_is_nonempty()[row][col],
                     expected_adjacency,
-                    "facet adjacency should agree with shared exact vertices"
+                    "facet-pair nonempty intersection should agree with shared exact vertices"
                 );
                 assert_eq!(
                     polytope.omega_signs()[row][col],

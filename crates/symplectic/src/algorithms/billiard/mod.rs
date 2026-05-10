@@ -99,7 +99,7 @@ pub fn for_each_sigma(
     mut visit: impl FnMut(&[usize]),
 ) -> Result<(), BilliardError> {
     let classification = classify_facets(polytope)?;
-    let adj = polytope.vertex_adjacency();
+    let adj = polytope.facet_intersection_is_nonempty();
     let directed_adj = build_transition_matrix(polytope);
     let q_blocks = enumerate_blocks(&classification.q_indices, adj);
     let p_blocks = enumerate_blocks(&classification.p_indices, adj);

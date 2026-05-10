@@ -306,8 +306,8 @@ fn main() {
     let hko_incidence_match =
         same_incidence(exact_hko.incidence(), library_hko.polytope.incidence());
     let hko_adjacency_match = same_bool_matrix(
-        exact_hko.vertex_adjacency(),
-        library_hko.polytope.vertex_adjacency(),
+        exact_hko.facet_intersection_is_nonempty(),
+        library_hko.polytope.facet_intersection_is_nonempty(),
     );
     let hko_omega_match =
         same_i8_matrix(exact_hko.omega_signs(), library_hko.polytope.omega_signs());

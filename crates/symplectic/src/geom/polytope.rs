@@ -2,9 +2,9 @@
 //!
 //! The central type [`Polytope4D`] represents a bounded, irredundant convex polytope
 //! K = { x in R^4 | a_i^T x <= 1 for all i }, where the a_i are vertices of the
-//! polar body K°. All combinatorial data (vertices, incidence, adjacency, omega signs)
-//! is precomputed exactly over Q at construction time; f64 copies are kept for
-//! numerical algorithms.
+//! polar body K°. All combinatorial data (vertices, incidence, facet-pair
+//! nonempty intersection, omega signs) is precomputed exactly over Q at
+//! construction time; f64 copies are kept for numerical algorithms.
 //!
 //! Mathematical correspondence: [def:polytope-dual], [def:polar-body]
 
@@ -40,13 +40,15 @@ const EPS_ZERO_NORM: f64 = 1e-15;
 /// - All dual vertices a_i are nonzero
 /// - **Bounded**: dual vertices positively span R^4
 /// - **Irredundant**: every facet has incident vertices of affine rank 3
-/// - Vertices, incidence, adjacency, and omega_0 signs are precomputed exactly over Q
+/// - Vertices, incidence, facet-pair nonempty intersection, and omega_0 signs
+///   are precomputed exactly over Q
 ///
 /// # Representations
 ///
-/// Exact rational data (`dual_vertices`, `vertices`, `incidence`, `adjacency`,
-/// `omega_signs`) is the source of truth for all discrete/combinatorial decisions.
-/// The f64 data (`dual_vertices_f64`, `vertices_f64`) is for numerical algorithms.
+/// Exact rational data (`dual_vertices`, `vertices`, `incidence`,
+/// `facet_intersection_is_nonempty`, `omega_signs`) is the source of truth for
+/// all discrete/combinatorial decisions. The f64 data (`dual_vertices_f64`,
+/// `vertices_f64`) is for numerical algorithms.
 #[derive(Clone, Debug)]
 pub struct Polytope4D {
     /// Vertices of the polar body K°: a_i in R^4 \ {0}.
@@ -60,9 +62,9 @@ pub struct Polytope4D {
     /// E[v,f] = true iff vertex v lies on facet f.
     incidence: DMatrix<bool>,
 
-    /// Vertex-sharing adjacency matrix A in {0,1}^{F x F}.
-    /// A[i,k] = true iff facets i and k share at least one vertex.
-    vertex_adjacency: DMatrix<bool>,
+    /// Facet-pair nonempty-intersection matrix in {0,1}^{F x F}.
+    /// Entry `[i,k]` is true iff facets i and k share at least one vertex.
+    facet_intersection_is_nonempty: DMatrix<bool>,
 
     /// Symplectic sign matrix omega in {-1,0,+1}^{F x F}, antisymmetric.
     /// omega[i,k] = sign(omega_0(a_i, a_k)). Zero only for non-generic polytopes.
@@ -234,8 +236,8 @@ impl Polytope4D {
     /// whether a_f · v = 1 (exact rational dot product). This is O(V·F) — much
     /// cheaper than vertex enumeration which is O(C(F,4)).
     ///
-    /// Then calls assemble() to build incidence, omega_signs, vertex_adjacency,
-    /// and f64 copies.
+    /// Then calls assemble() to build incidence, omega_signs,
+    /// facet_intersection_is_nonempty, and f64 copies.
     pub fn from_rational_parts(
         dual_vertices: Vec<[BigRational; 4]>,
         vertices: Vec<[BigRational; 4]>,
@@ -291,7 +293,8 @@ impl Polytope4D {
     /// Returns a new `Polytope4D` whose dual vertices are randomly perturbed
     /// by magnitude ~2^{-perturbation_bits}.
     ///
-    /// Post-condition: all adjacent pairs have omega_0 != 0.
+    /// Post-condition: all facet pairs with nonempty intersection have
+    /// omega_0 != 0.
     pub fn perturbed(
         &self,
         rng: &mut impl rand::Rng,
@@ -313,7 +316,8 @@ impl Polytope4D {
         let f = result.facet_count();
         for i in 0..f {
             for k in (i + 1)..f {
-                if result.vertex_adjacency[(i, k)] && result.omega_signs[(i, k)] == 0 {
+                if result.facet_intersection_is_nonempty[(i, k)] && result.omega_signs[(i, k)] == 0
+                {
                     return Err(ConstructionError::PerturbationFailed);
                 }
             }
@@ -324,8 +328,8 @@ impl Polytope4D {
 
     /// Assemble from pre-computed components (internal).
     ///
-    /// Builds incidence, adjacency, and omega sign matrices from the vertex
-    /// descriptors produced by the rational pipeline.
+    /// Builds incidence, facet-pair nonempty-intersection, and omega sign
+    /// matrices from the vertex descriptors produced by the rational pipeline.
     ///
     /// Omega sign computation uses exact rational arithmetic: [lem:rational-pipeline]
     /// (sign(omega_0(a_i, a_k)) computed over Q to prevent misclassification).
@@ -342,7 +346,7 @@ impl Polytope4D {
         let incidence =
             DMatrix::from_fn(v_count, f_count, |v, f| vertex_descriptors[v].contains(&f));
 
-        let vertex_adjacency = DMatrix::from_fn(f_count, f_count, |i, k| {
+        let facet_intersection_is_nonempty = DMatrix::from_fn(f_count, f_count, |i, k| {
             i != k && (0..v_count).any(|v| incidence[(v, i)] && incidence[(v, k)])
         });
 
@@ -363,7 +367,7 @@ impl Polytope4D {
             dual_vertices,
             vertices,
             incidence,
-            vertex_adjacency,
+            facet_intersection_is_nonempty,
             omega_signs,
             dual_vertices_f64,
             vertices_f64,
@@ -387,11 +391,12 @@ impl Polytope4D {
         &self.incidence
     }
 
-    /// Vertex-sharing adjacency matrix A in {0,1}^{F x F}.
+    /// Facet-pair nonempty-intersection matrix in {0,1}^{F x F}.
     ///
-    /// `vertex_adjacency[(i, k)]` is true iff facets i and k share at least one vertex.
-    pub fn vertex_adjacency(&self) -> &DMatrix<bool> {
-        &self.vertex_adjacency
+    /// `facet_intersection_is_nonempty[(i, k)]` is true iff facets i and k
+    /// share at least one vertex.
+    pub fn facet_intersection_is_nonempty(&self) -> &DMatrix<bool> {
+        &self.facet_intersection_is_nonempty
     }
 
     /// Symplectic sign matrix omega in {-1,0,+1}^{F x F}, antisymmetric.

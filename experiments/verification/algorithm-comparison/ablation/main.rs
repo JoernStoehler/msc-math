@@ -11,7 +11,7 @@
 //! - `cargo run -p dev-algorithm-comparison --release --bin cmp-ablation`
 //!   runs the full dataset and writes `ablation/ablation.jsonl`.
 //!
-//! A-axis variants: A0 (unpruned), A1 (vertex adjacency),
+//! A-axis variants: A0 (unpruned), A1 (facet intersection nonemptiness),
 //! A2 (directed omega0), A3 (Reeb-flow feasibility).
 //!
 //! Convention: The library (`crates/symplectic/`) is stable. New variants are implemented as

@@ -14,7 +14,8 @@
 use crate::geom::polygon_order::sort_polygon_order;
 use crate::geom::polytope::Polytope4D;
 use euclidean_polytopes::{
-    edges_from_incidence, two_faces_from_incidence, vertex_facets_from_incidence,
+    edges_from_vertex_facet_incidence, two_faces_from_vertex_facet_incidence,
+    vertex_facets_from_vertex_facet_incidence,
 };
 use nalgebra::Vector4;
 
@@ -60,9 +61,9 @@ impl Skeleton {
         let vertices = polytope.vertices_f64();
         let incidence = polytope.incidence();
 
-        let vertex_facets = vertex_facets_from_incidence(incidence);
-        let edges = edges_from_incidence(incidence);
-        let ridges = two_faces_from_incidence(incidence)
+        let vertex_facets = vertex_facets_from_vertex_facet_incidence(incidence);
+        let edges = edges_from_vertex_facet_incidence(incidence);
+        let ridges = two_faces_from_vertex_facet_incidence(incidence)
             .into_iter()
             .map(|two_face| Ridge {
                 facets: two_face.facets,

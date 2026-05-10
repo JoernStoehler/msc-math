@@ -5,13 +5,6 @@ use crate::f64_geometry::{signed_gap_abs_error_bound, validate_finite_vectors4, 
 use crate::linalg::{combinations4, dot4_exact, solve4_exact};
 use crate::predicates::origin_in_interior_of_conv_exact;
 
-/// Exact polar vertices and exact vertex-facet incidence.
-#[derive(Clone, Debug, PartialEq)]
-pub struct PolarVertexData<T> {
-    pub vertices: Vec<Vector4<T>>,
-    pub incidence: DMatrix<bool>,
-}
-
 /// Approximate vertex-facet incidence diagnostic.
 #[derive(Clone, Debug, PartialEq)]
 pub struct IncidenceF64 {
@@ -53,7 +46,7 @@ pub struct PolarVerticesF64 {
 /// Panics when the origin-interior contract is violated.
 pub fn polar_vertices_exact<T: ExactScalar + 'static>(
     vertices: &[Vector4<T>],
-) -> PolarVertexData<T> {
+) -> (Vec<Vector4<T>>, DMatrix<bool>) {
     assert!(
         origin_in_interior_of_conv_exact(vertices),
         "polar_vertices_exact requires 0 in int conv(vertices)"
@@ -83,14 +76,12 @@ pub fn polar_vertices_exact<T: ExactScalar + 'static>(
         "origin-interior polar input produced no exact vertices"
     );
 
-    let incidence = DMatrix::from_fn(polar_vertices.len(), vertices.len(), |row, col| {
-        dot4_exact(&vertices[col], &polar_vertices[row]) == one
-    });
+    let vertex_facet_incidence =
+        DMatrix::from_fn(polar_vertices.len(), vertices.len(), |row, col| {
+            dot4_exact(&vertices[col], &polar_vertices[row]) == one
+        });
 
-    PolarVertexData {
-        vertices: polar_vertices,
-        incidence,
-    }
+    (polar_vertices, vertex_facet_incidence)
 }
 
 /// Enumerate well-conditioned polar vertex candidates from `f64` inequalities.

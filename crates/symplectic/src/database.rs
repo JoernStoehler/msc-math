@@ -519,7 +519,10 @@ mod tests {
         assert_eq!(p.facet_count(), p2.facet_count());
         assert_eq!(p.incidence(), p2.incidence());
         assert_eq!(p.omega_signs(), p2.omega_signs());
-        assert_eq!(p.vertex_adjacency(), p2.vertex_adjacency());
+        assert_eq!(
+            p.facet_intersection_is_nonempty(),
+            p2.facet_intersection_is_nonempty()
+        );
     }
 
     /// Verify JSON output uses "numer/denom" strings, not u32 limb arrays.

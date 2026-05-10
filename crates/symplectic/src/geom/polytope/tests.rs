@@ -155,12 +155,12 @@ fn vertex_ordering_via_rational_reconstruction() {
 }
 
 #[test]
-fn adjacency_matrix_symmetric_no_self_loops() {
+fn facet_intersection_matrix_symmetric_no_self_loops() {
     use crate::geom::known_polytopes;
 
     for kp in known_polytopes::all_known() {
         let p = &kp.polytope;
-        let adj = p.vertex_adjacency();
+        let adj = p.facet_intersection_is_nonempty();
         let f = p.facet_count();
 
         for i in 0..f {
@@ -487,8 +487,8 @@ fn from_rational_parts_matches_from_f64() {
     assert_eq!(original.incidence(), reconstructed.incidence());
     assert_eq!(original.omega_signs(), reconstructed.omega_signs());
     assert_eq!(
-        original.vertex_adjacency(),
-        reconstructed.vertex_adjacency()
+        original.facet_intersection_is_nonempty(),
+        reconstructed.facet_intersection_is_nonempty()
     );
 }
 
@@ -507,7 +507,7 @@ fn from_rational_parts_crosspolytope() {
     assert_eq!(original.incidence(), reconstructed.incidence());
     assert_eq!(original.omega_signs(), reconstructed.omega_signs());
     assert_eq!(
-        original.vertex_adjacency(),
-        reconstructed.vertex_adjacency()
+        original.facet_intersection_is_nonempty(),
+        reconstructed.facet_intersection_is_nonempty()
     );
 }

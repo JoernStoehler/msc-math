@@ -83,7 +83,7 @@ fn is_adjacent_cycle(perm: &[usize], adj: &[Vec<bool>]) -> bool {
 }
 
 fn build_directed_adjacency(
-    vertex_adj: &DMatrix<bool>,
+    facet_intersection_is_nonempty: &DMatrix<bool>,
     normals: &[Vector4<f64>],
 ) -> Vec<Vec<bool>> {
     let f = normals.len();
@@ -93,7 +93,7 @@ fn build_directed_adjacency(
             if i == j {
                 continue;
             }
-            if vertex_adj[(i, j)] {
+            if facet_intersection_is_nonempty[(i, j)] {
                 dir_adj[i][j] = omega0(&normals[i], &normals[j]) >= -EPS_DIRECTED;
             }
         }
@@ -185,18 +185,18 @@ fn ehz_capacity_unpruned_a0(polytope: &Polytope4D) -> Option<AblationResult> {
 }
 
 fn ehz_capacity_unpruned_a1(polytope: &Polytope4D) -> Option<AblationResult> {
-    let vertex_adj = dmatrix_to_vec(polytope.vertex_adjacency());
-    ehz_capacity_unpruned_with(polytope, &vertex_adj, solve_kkt_full)
+    let facet_intersection_is_nonempty = dmatrix_to_vec(polytope.facet_intersection_is_nonempty());
+    ehz_capacity_unpruned_with(polytope, &facet_intersection_is_nonempty, solve_kkt_full)
 }
 
 fn ehz_capacity_unpruned_a2(polytope: &Polytope4D) -> Option<AblationResult> {
-    let vertex_adj = polytope.vertex_adjacency();
+    let facet_intersection_is_nonempty = polytope.facet_intersection_is_nonempty();
     let normals: Vec<Vector4<f64>> = polytope
         .dual_vertices_f64()
         .iter()
         .map(|a| a / a.norm())
         .collect();
-    let dir_adj = build_directed_adjacency(vertex_adj, &normals);
+    let dir_adj = build_directed_adjacency(facet_intersection_is_nonempty, &normals);
     ehz_capacity_unpruned_with(polytope, &dir_adj, solve_kkt_full)
 }
 
@@ -338,11 +338,11 @@ fn build_a3_adjacency(
 }
 
 fn ehz_capacity_unpruned_a3(polytope: &Polytope4D) -> Option<AblationResult> {
-    let vertex_adj = polytope.vertex_adjacency();
+    let facet_intersection_is_nonempty = polytope.facet_intersection_is_nonempty();
     let duals = polytope.dual_vertices_f64();
     let normals: Vec<Vector4<f64>> = duals.iter().map(|a| a / a.norm()).collect();
     let heights: Vec<f64> = duals.iter().map(|a| 1.0 / a.norm()).collect();
-    let a2_adj = build_directed_adjacency(vertex_adj, &normals);
+    let a2_adj = build_directed_adjacency(facet_intersection_is_nonempty, &normals);
     let a3_adj = build_a3_adjacency(&a2_adj, &normals, &heights);
     ehz_capacity_unpruned_with(polytope, &a3_adj, solve_kkt_full)
 }

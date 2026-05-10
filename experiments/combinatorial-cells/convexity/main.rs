@@ -185,7 +185,8 @@ fn same_omega(a: &CombinatorialType, b: &CombinatorialType) -> bool {
     a.omega_signs == b.omega_signs
 }
 
-/// Compare transition matrices (vertex adjacency + omega_0 signs -> directed facet graph).
+/// Compare transition matrices:
+/// facet intersection nonemptiness + omega_0 signs -> directed facet graph.
 /// This is what actually determines which Reeb orbits are feasible.
 fn same_transitions(base: &Polytope4D, other: &Polytope4D) -> bool {
     let t1 = build_transition_matrix(base);

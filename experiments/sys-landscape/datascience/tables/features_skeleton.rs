@@ -83,7 +83,7 @@ pub fn compute_skeleton_fields(
     let facet_neighbor_counts = (0..facet_count)
         .map(|facet| {
             (0..facet_count)
-                .filter(|&other| polytope.vertex_adjacency()[(facet, other)])
+                .filter(|&other| polytope.facet_intersection_is_nonempty()[(facet, other)])
                 .count() as f64
         })
         .collect::<Vec<_>>();

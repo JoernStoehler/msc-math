@@ -122,7 +122,7 @@ pub fn compute_orbit_fields(
             if transition[(i, j)] && transition[(j, i)] {
                 cycle_bidirectional_count += 1;
             }
-            if polytope.vertex_adjacency()[(i, j)] {
+            if polytope.facet_intersection_is_nonempty()[(i, j)] {
                 cycle_adjacent_count += 1;
             }
         }

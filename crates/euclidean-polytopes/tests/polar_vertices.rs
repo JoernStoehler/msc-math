@@ -132,12 +132,12 @@ fn dot_q(left: &Vector4<Q>, right: &Vector4<Q>) -> Q {
 }
 
 fn assert_exact_polar_soundness(points: &[Vector4<Q>]) {
-    let polar = polar_vertices_exact(points);
-    assert_eq!(polar.incidence.nrows(), polar.vertices.len());
-    assert_eq!(polar.incidence.ncols(), points.len());
+    let (vertices, vertex_facet_incidence) = polar_vertices_exact(points);
+    assert_eq!(vertex_facet_incidence.nrows(), vertices.len());
+    assert_eq!(vertex_facet_incidence.ncols(), points.len());
 
     let one = q(1);
-    for (vertex_index, polar_vertex) in polar.vertices.iter().enumerate() {
+    for (vertex_index, polar_vertex) in vertices.iter().enumerate() {
         for (facet_index, point) in points.iter().enumerate() {
             let dot = dot_q(point, polar_vertex);
             assert!(
@@ -145,7 +145,7 @@ fn assert_exact_polar_soundness(points: &[Vector4<Q>]) {
                 "polar vertex {vertex_index} violates inequality {facet_index}: {dot}"
             );
             assert_eq!(
-                polar.incidence[(vertex_index, facet_index)],
+                vertex_facet_incidence[(vertex_index, facet_index)],
                 dot == one,
                 "wrong exact incidence at ({vertex_index}, {facet_index})"
             );
@@ -157,10 +157,10 @@ fn assert_exact_polarity_roundtrip(
     points: &[Vector4<Q>],
     expected_extreme_points: Vec<Vector4<Q>>,
 ) {
-    let polar = polar_vertices_exact(points);
-    let double_polar = polar_vertices_exact(&polar.vertices);
+    let (vertices, _) = polar_vertices_exact(points);
+    let (double_polar_vertices, _) = polar_vertices_exact(&vertices);
 
-    assert_exact_set_eq(double_polar.vertices, expected_extreme_points);
+    assert_exact_set_eq(double_polar_vertices, expected_extreme_points);
 }
 
 fn exact_points_to_f64(points: &[Vector4<Q>]) -> Vec<Vector4<f64>> {
@@ -226,12 +226,12 @@ fn origin_in_interior_exact_detects_full_dimensional_positive_span() {
 fn simplex_polar_vertices_are_exact_set() {
     let primal = simplex_vertices_exact();
 
-    let polar = polar_vertices_exact(&primal);
+    let (vertices, vertex_facet_incidence) = polar_vertices_exact(&primal);
 
-    assert_eq!(polar.incidence.nrows(), 5);
-    assert_eq!(polar.incidence.ncols(), 5);
+    assert_eq!(vertex_facet_incidence.nrows(), 5);
+    assert_eq!(vertex_facet_incidence.ncols(), 5);
     assert_exact_set_eq(
-        polar.vertices,
+        vertices,
         vec![
             vq([1, 1, 1, 1]),
             vq([-4, 1, 1, 1]),
@@ -244,16 +244,16 @@ fn simplex_polar_vertices_are_exact_set() {
 
 #[test]
 fn cube_polar_vertices_are_crosspolytope() {
-    let polar = polar_vertices_exact(&cube_vertices_exact());
+    let (vertices, _) = polar_vertices_exact(&cube_vertices_exact());
 
-    assert_exact_set_eq(polar.vertices, crosspolytope_vertices_exact());
+    assert_exact_set_eq(vertices, crosspolytope_vertices_exact());
 }
 
 #[test]
 fn crosspolytope_polar_vertices_are_cube() {
-    let polar = polar_vertices_exact(&crosspolytope_vertices_exact());
+    let (vertices, _) = polar_vertices_exact(&crosspolytope_vertices_exact());
 
-    assert_exact_set_eq(polar.vertices, cube_vertices_exact());
+    assert_exact_set_eq(vertices, cube_vertices_exact());
 }
 
 #[test]
@@ -262,10 +262,10 @@ fn redundant_input_point_does_not_change_exact_polar_vertices() {
     let mut redundant = base.clone();
     redundant.push(vq_frac([(1, 2), (0, 1), (0, 1), (0, 1)]));
 
-    let base_polar = polar_vertices_exact(&base);
-    let redundant_polar = polar_vertices_exact(&redundant);
+    let (base_vertices, _) = polar_vertices_exact(&base);
+    let (redundant_vertices, _) = polar_vertices_exact(&redundant);
 
-    assert_exact_set_eq(redundant_polar.vertices, base_polar.vertices);
+    assert_exact_set_eq(redundant_vertices, base_vertices);
 }
 
 #[test]
@@ -283,9 +283,9 @@ fn polar_vertices_exact_panics_when_origin_is_not_interior() {
 
 #[test]
 fn polar_vertices_exact_deduplicates_non_simple_vertices() {
-    let polar = polar_vertices_exact(&cube_vertices_exact());
+    let (vertices, _) = polar_vertices_exact(&cube_vertices_exact());
 
-    assert_eq!(polar.vertices.len(), 8);
+    assert_eq!(vertices.len(), 8);
 }
 
 /// Proposition: for every finite `P subset Q^4`, if `0 in int conv(P)`, then
@@ -307,8 +307,8 @@ fn exact_polar_vertices_are_feasible_and_incidence_is_exact_on_named_fixtures() 
 }
 
 /// Proposition: for every finite `P subset Q^4`, if `0 in int conv(P)`, then
-/// `polar_vertices_exact(polar_vertices_exact(P).vertices).vertices` is the
-/// set of extreme points of `conv(P)`.
+/// the double polar computed from `polar_vertices_exact(P)` is the set of
+/// extreme points of `conv(P)`.
 ///
 /// Operationalization: check the named simplex, cube, and crosspolytope exact
 /// fixtures, whose listed points are all known extreme points. Cases: 3
@@ -335,7 +335,8 @@ fn exact_polarity_roundtrip_returns_named_fixture_vertices() {
 #[test]
 fn polar_vertices_f64_agrees_with_exact_simplex_without_indeterminate_candidates() {
     let primal = simplex_vertices_exact();
-    let expected = exact_points_to_f64(&polar_vertices_exact(&primal).vertices);
+    let (exact_vertices, _) = polar_vertices_exact(&primal);
+    let expected = exact_points_to_f64(&exact_vertices);
 
     let PolarVerticesF64 {
         vertices,
@@ -363,7 +364,8 @@ fn polar_vertices_f64_agrees_with_exact_simplex_without_indeterminate_candidates
 #[test]
 fn polar_vertices_f64_decided_crosspolytope_vertices_agree_with_exact() {
     let primal = crosspolytope_vertices_exact();
-    let expected = exact_points_to_f64(&polar_vertices_exact(&primal).vertices);
+    let (exact_vertices, _) = polar_vertices_exact(&primal);
+    let expected = exact_points_to_f64(&exact_vertices);
 
     let PolarVerticesF64 { vertices, .. } =
         polar_vertices_f64(&exact_points_to_f64(&primal)).expect("finite f64 input");
@@ -519,8 +521,8 @@ proptest! {
     #![proptest_config(ProptestConfig::with_cases(12))]
 
     /// Proposition: for every finite `P subset Q^4`, if `0 in int conv(P)`, then
-    /// `polar_vertices_exact(polar_vertices_exact(P).vertices).vertices` is the
-    /// set of extreme points of `conv(P)`.
+    /// the double polar computed from `polar_vertices_exact(P)` is the set of
+    /// extreme points of `conv(P)`.
     ///
     /// Operationalization: generate positive-spanning scaled crosspolytopes
     /// `+-s_i e_i` with `s_i in {1,2,3}`, then append up to four exact edge

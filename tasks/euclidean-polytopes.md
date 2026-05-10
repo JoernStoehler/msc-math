@@ -82,6 +82,14 @@ modules, which makes non-symplectic helpers harder to reuse and review.
   Why it matters: the first implementation should check/assert the interior
   condition but should not overconstrain polar vertex enumeration with an
   unnecessary non-redundancy precondition.
+- [implemented 2026-05-10] `polar_vertices_exact(vertices)` now returns
+  `(vertices, vertex_facet_incidence)`. The f64 polar path remains a diagnostic
+  struct because it carries indeterminate candidates and error bounds. The
+  former `vertex_adjacency` name for the facet-pair matrix was misleading:
+  the matrix is now `facet_intersection_is_nonempty`, meaning two facets share
+  at least one vertex, not necessarily a 2-face.
+  Why it matters: the public names now expose the actual incidence semantics,
+  which reduces caller mistakes in capacity and combinatorics code.
 - [accepted 2026-05-10] Use TDD for the first implementation slice. Write
   contract tests for exact fixtures before implementing exact helpers, and
   write f64 indeterminate/tolerance-boundary tests before implementing f64
@@ -109,7 +117,7 @@ modules, which makes non-symplectic helpers harder to reuse and review.
 | Verification property suite | `[implemented first property slice]` | mainline thesis | agents | Keep strengthening theorem-shaped property tests as APIs migrate. Current coverage includes exact polar soundness, exact polarity roundtrip, generated non-redundancy witnesses, f64 simplex/crosspolytope polar agreement, and f64 volume scaling/permutation invariants. The stronger no-indeterminate f64 polar proposition is not yet true for non-simple cube/crosspolytope tuple structures under the current diagnostic contract. | `crates/euclidean-polytopes/DEVELOPMENT.md`, `crates/euclidean-polytopes/tests/` |
 | Known-incidence volume integration | `[implemented migration slice]` | mainline thesis | agents | `volume_from_incidence_f64(vertices, incidence)` is implemented. This was the first symplectic volume migration target before the exact API became the source of truth; keep using known-incidence helpers instead of recomputing incidence through f64 signed gaps. | `crates/euclidean-polytopes/src/volume.rs`, `crates/euclidean-polytopes/DEVELOPMENT.md` |
 | Known-incidence facet 3-volume and centroid | `[implemented migration slice]` | mainline thesis | agents | `facet_volume_from_incidence_f64` and `facet_volume_and_centroid_from_incidence_f64` are implemented in `euclidean-polytopes`. `symplectic::geom::facet_volume` explicit f64 entry points and `volume_derivatives_a` now use exact `Polytope4D` incidence instead of raw f64 facet membership tests. | `crates/euclidean-polytopes/src/volume.rs`, `crates/symplectic/src/geom/facet_volume.rs`, `crates/symplectic/src/derivatives.rs` |
-| Incidence-only face combinatorics | `[implemented migration slice]` | mainline thesis | agents | `vertex_facets_from_incidence`, `edges_from_incidence`, and `two_faces_from_incidence` are public Euclidean helpers over `DMatrix<bool>`. `symplectic::geom::skeleton::Skeleton` delegates incidence-only combinatorics to them and keeps temporary f64 polygon ordering when converting `TwoFace` to `Ridge`. | `crates/euclidean-polytopes/src/faces.rs`, `crates/euclidean-polytopes/tests/faces.rs`, `crates/symplectic/src/geom/skeleton.rs` |
+| Incidence-only face combinatorics | `[implemented migration slice]` | mainline thesis | agents | `vertex_facets_from_vertex_facet_incidence`, `facet_vertices_from_vertex_facet_incidence`, `edges_from_vertex_facet_incidence`, `two_faces_from_vertex_facet_incidence`, and `facet_intersection_is_nonempty_from_vertex_facet_incidence` are public Euclidean helpers over `DMatrix<bool>`. `symplectic::geom::skeleton::Skeleton` delegates incidence-only combinatorics to them and keeps temporary f64 polygon ordering when converting `TwoFace` to `Ridge`. | `crates/euclidean-polytopes/src/faces.rs`, `crates/euclidean-polytopes/tests/faces.rs`, `crates/symplectic/src/geom/skeleton.rs` |
 | Incidence-only 2-face ordering | `[implemented migration slice]` | mainline thesis | agents | Private `order_2face_vertices_from_incidence` orders `facet_i ∩ facet_j` using only the incidence matrix, with empty/1/2-vertex intersections skipped by callers and `>=3` intersections asserted to be a single cycle. Known-incidence f64 volume and facet-volume paths use it before exact volume. | `crates/euclidean-polytopes/DEVELOPMENT.md`, `crates/euclidean-polytopes/src/volume.rs`, `crates/euclidean-polytopes/tests/volume.rs` |
 | Full-dimensional exact volume | `[implemented migration slice]` | mainline thesis | agents | `volume_from_incidence_exact(vertices, incidence) -> T` uses incidence-only 2-face ordering and exact 4-simplex determinant sums. It does not take dual vertices or use f64 in the exact computation. | `crates/euclidean-polytopes/DEVELOPMENT.md`, `crates/euclidean-polytopes/src/volume.rs`, `crates/euclidean-polytopes/tests/volume.rs` |
 | Random dual-vertex candidate sampling | `[implemented migration slice]` | mainline thesis | agents | `sample_random_dual_vertices_f64(facet_count, h_min, h_max, rng)` samples candidate normalized dual vertices in `euclidean-polytopes`. `symplectic::random` keeps rejection sampling through `Polytope4D::from_f64` and keeps master-seed/attempt derivation. | `crates/euclidean-polytopes/src/random.rs`, `crates/euclidean-polytopes/tests/random.rs`, `crates/symplectic/src/random.rs` |
@@ -185,7 +193,7 @@ The migration task is done when:
   `Polytope4D` without changing the transition or KKT semantics in the same
   review packet.
 - [fresh 2026-05-10] `Polytope4D` currently mixes ordinary geometry with
-  symplectic data: dual vertices, primal vertices, incidence, vertex adjacency,
+  symplectic data: dual vertices, primal vertices, incidence, facet intersection nonemptiness,
   omega signs, and f64 copies. The Euclidean crate should take the ordinary
   pieces first; omega signs and capacity-facing adjacency remain symplectic.
 - [fresh 2026-05-10] Existing full-dimensional volume triangulates facets from
@@ -276,12 +284,14 @@ The migration task is done when:
   Why it matters: future agents should not introduce avoidable terminology
   drift while building the exact-volume prerequisites.
 - [implemented 2026-05-10] Public incidence-only face combinatorics moved to
-  `euclidean-polytopes` as `vertex_facets_from_incidence`,
-  `edges_from_incidence`, and `two_faces_from_incidence`. `TwoFace` records a
-  sorted facet pair and sorted vertex-index list, but does not promise polygon
-  order. `symplectic::geom::skeleton::Skeleton` delegates to these helpers and
-  keeps its existing f64 polygon ordering when producing temporary `Ridge`
-  compatibility values.
+  `euclidean-polytopes` as `vertex_facets_from_vertex_facet_incidence`,
+  `facet_vertices_from_vertex_facet_incidence`,
+  `edges_from_vertex_facet_incidence`, `two_faces_from_vertex_facet_incidence`,
+  and `facet_intersection_is_nonempty_from_vertex_facet_incidence`. `TwoFace`
+  records a sorted facet pair and sorted vertex-index list, but does not
+  promise polygon order. `symplectic::geom::skeleton::Skeleton` delegates to
+  these helpers and keeps its existing f64 polygon ordering when producing
+  temporary `Ridge` compatibility values.
   Why it matters: ordinary face combinatorics now has one reusable Euclidean
   owner, while the remaining coordinate-dependent polygon ordering stays behind
   the existing symplectic compatibility boundary until a later slice.

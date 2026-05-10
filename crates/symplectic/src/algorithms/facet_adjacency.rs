@@ -19,7 +19,7 @@ mod tests;
 /// `adj[(i,j)] = true` iff the transition Fᵢ → Fⱼ is feasible.
 ///
 /// Combines two conditions:
-/// 1. Vertex adjacency: Fᵢ ∩ Fⱼ ≠ ∅
+/// 1. Facet intersection nonemptiness: Fᵢ ∩ Fⱼ ≠ ∅
 /// 2. Symplectic sign: ω₀(nᵢ, nⱼ) ≥ 0
 ///
 /// The sign condition uses the exact `omega_signs` matrix from the rational pipeline
@@ -29,16 +29,16 @@ mod tests;
 /// (outward normals divided by height). Since hᵢ, hⱼ > 0, this has the same sign as
 /// `ω₀(nᵢ, nⱼ)`.
 ///
-/// [lem:numerical-transition-feasibility]: F_i -> F_j requires vertex adjacency + omega_0(n_i, n_j) >= 0.
+/// [lem:numerical-transition-feasibility]: F_i -> F_j requires facet intersection nonemptiness + omega_0(n_i, n_j) >= 0.
 /// [cor:adjacency-pruning]: this directed adjacency can prune infeasible permutations.
 pub fn build_transition_matrix_from_adjacency_and_omega(
-    vertex_adjacency: &DMatrix<bool>,
+    facet_intersection_is_nonempty: &DMatrix<bool>,
     omega_signs: &DMatrix<i8>,
 ) -> DMatrix<bool> {
     assert_eq!(
-        vertex_adjacency.nrows(),
-        vertex_adjacency.ncols(),
-        "vertex_adjacency must be square"
+        facet_intersection_is_nonempty.nrows(),
+        facet_intersection_is_nonempty.ncols(),
+        "facet_intersection_is_nonempty must be square"
     );
     assert_eq!(
         omega_signs.nrows(),
@@ -46,23 +46,23 @@ pub fn build_transition_matrix_from_adjacency_and_omega(
         "omega_signs must be square"
     );
     assert_eq!(
-        vertex_adjacency.shape(),
+        facet_intersection_is_nonempty.shape(),
         omega_signs.shape(),
-        "vertex_adjacency and omega_signs must have the same shape"
+        "facet_intersection_is_nonempty and omega_signs must have the same shape"
     );
 
     DMatrix::from_fn(
-        vertex_adjacency.nrows(),
-        vertex_adjacency.ncols(),
-        |i, j| vertex_adjacency[(i, j)] && omega_signs[(i, j)] >= 0,
+        facet_intersection_is_nonempty.nrows(),
+        facet_intersection_is_nonempty.ncols(),
+        |i, j| facet_intersection_is_nonempty[(i, j)] && omega_signs[(i, j)] >= 0,
     )
 }
 
 /// Compatibility wrapper while callers still own `Polytope4D`.
 pub fn build_transition_matrix(polytope: &Polytope4D) -> DMatrix<bool> {
-    let vertex_adj = polytope.vertex_adjacency();
+    let facet_intersection_is_nonempty = polytope.facet_intersection_is_nonempty();
     let omega_signs = polytope.omega_signs();
-    build_transition_matrix_from_adjacency_and_omega(vertex_adj, omega_signs)
+    build_transition_matrix_from_adjacency_and_omega(facet_intersection_is_nonempty, omega_signs)
 }
 
 /// Check if a cyclic permutation forms an adjacent cycle in the given adjacency matrix.
