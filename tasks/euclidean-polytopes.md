@@ -109,6 +109,7 @@ modules, which makes non-symplectic helpers harder to reuse and review.
 | Verification property suite | `[implemented first property slice]` | mainline thesis | agents | Keep strengthening theorem-shaped property tests as APIs migrate. Current coverage includes exact polar soundness, exact polarity roundtrip, generated non-redundancy witnesses, f64 simplex/crosspolytope polar agreement, and f64 volume scaling/permutation invariants. The stronger no-indeterminate f64 polar proposition is not yet true for non-simple cube/crosspolytope tuple structures under the current diagnostic contract. | `crates/euclidean-polytopes/DEVELOPMENT.md`, `crates/euclidean-polytopes/tests/` |
 | Known-incidence volume integration | `[implemented migration slice]` | mainline thesis | agents | `volume_from_incidence_f64(vertices, incidence)` is implemented and `symplectic::geom::volume::volume` delegates to it through exact `Polytope4D` incidence. Keep using this helper for exact-incidence callers instead of recomputing incidence through f64 signed gaps. | `crates/euclidean-polytopes/src/volume.rs`, `crates/symplectic/src/geom/volume.rs`, `crates/euclidean-polytopes/DEVELOPMENT.md` |
 | Known-incidence facet 3-volume and centroid | `[implemented migration slice]` | mainline thesis | agents | `facet_volume_from_incidence_f64` and `facet_volume_and_centroid_from_incidence_f64` are implemented in `euclidean-polytopes`. `symplectic::geom::facet_volume` polytope-level wrappers and `volume_derivatives_a` now use exact `Polytope4D` incidence instead of raw f64 facet membership tests. | `crates/euclidean-polytopes/src/volume.rs`, `crates/symplectic/src/geom/facet_volume.rs`, `crates/symplectic/src/derivatives.rs` |
+| Incidence-only 2-face ordering | `[next migration slice]` | mainline thesis | agents | Add a helper that orders vertices of the 2-face `facet_i ∩ facet_j` using only the incidence matrix, with empty/1/2-vertex intersections skipped by callers and `>=3` intersections asserted to be a single cycle. Use it in known-incidence f64 volume/facet-volume paths before exact volume. | `crates/euclidean-polytopes/DEVELOPMENT.md`, `crates/euclidean-polytopes/src/volume.rs`, `crates/euclidean-polytopes/tests/volume.rs` |
 | Full-dimensional exact volume | `[future slice]` | mainline thesis | agents | After the f64 volume shape is reviewed, add exact volume over `T` without field extensions. | `crates/euclidean-polytopes/DEVELOPMENT.md` |
 | Affine-subspace polygons and volume | `[active]` | mainline thesis | agents, Jorn only if generic-vs-specific API affects thesis callers | Let the internal volume decomposition determine the first affine-subspace helper shape; likely needs 3-face measures of 4-polytopes and polygon area in affine 2-planes of `R^4`. | `crates/symplectic/src/geom/volume.rs`, `crates/symplectic/src/geom/polygon.rs` |
 | Symplectic integration cleanup | `[active]` | mainline thesis | agents | After each migrated slice, keep `symplectic` as the owner of symplectic form, capacity, KKT, omega signs, Reeb-direction adjacency, and experiment-facing wrappers only. | `crates/symplectic/src/geom/`, `crates/symplectic/src/algorithms/` |
@@ -232,11 +233,11 @@ The migration task is done when:
 - [agent synthesis 2026-05-10] The next ordinary-geometry migration should move
   facet 3-volume and centroid computation behind known-incidence Euclidean
   helpers. The exact full-volume slice is real but has a separate design risk:
-  summing exact determinants is easy, while exact ridge-polygon ordering should
+  summing exact determinants is easy, while exact 2-face polygon ordering should
   not be guessed through an unreviewed f64 ordering shortcut.
   Why it matters: facet 3-volume immediately improves derivative code and
   advances affine-subspace volume pressure without locking in the exact
-  polygon-order strategy.
+  2-face ordering strategy.
 - [implemented 2026-05-10] Known-incidence facet 3-volume and centroid
   integration exposes `facet_volume_from_incidence_f64(vertices, incidence,
   facet_index)` and `facet_volume_and_centroid_from_incidence_f64(vertices,
@@ -245,6 +246,12 @@ The migration task is done when:
   the polytope-level centroid helper.
   Why it matters: derivative code no longer weakens exact incidence by
   retesting vertex-facet membership through f64 signed gaps.
+- [Jorn terminology 2026-05-10] Prefer `2-face` over `ridge` in new public
+  docs, APIs, and task text. Old internal code may keep existing terminology
+  until touched, but new Euclidean-facing helper names should use `2face` or
+  `2-face` depending on Rust identifier versus prose context.
+  Why it matters: future agents should not introduce avoidable terminology
+  drift while building the exact-volume prerequisites.
 
 ## Pruned / Stale
 

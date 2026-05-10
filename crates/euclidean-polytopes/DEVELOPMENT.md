@@ -208,7 +208,7 @@ Ordinary facet 3-volume and centroid computation now lives in
 `euclidean-polytopes` for callers that already have exact vertex-facet
 incidence.
 
-Do not recover facet/ridge incidence by checking `|a . v - 1| < EPS` when a
+Do not recover facet/2-face incidence by checking `|a . v - 1| < EPS` when a
 caller has a `DMatrix<bool>` incidence matrix. `Polytope4D` already stores
 exact incidence, and derivative code should use that data through the
 polytope-level wrapper.
@@ -233,7 +233,7 @@ The helpers are flat and operation-specific. Contract: `incidence[(v, f)]`
 tells whether `vertices[v]` lies on facet `f` for a normalized
 full-dimensional `R^4` polytope containing the origin. The helpers validate
 finite vertices and assert incidence row shape and facet-index range. They use
-the target facet's incident vertices, triangulate each ridge
+the target facet's incident vertices, triangulate each 2-face
 `facet_index ∩ neighbor_index`, and compute 3-dimensional tetrahedron volume in
 the facet's affine hyperplane using the ordinary 4D cross product norm.
 
@@ -257,6 +257,57 @@ Implemented criteria for this slice:
   divergence-theorem volume reconstruction, non-finite input, shape mismatch,
   out-of-range facet indices, and a symplectic wrapper regression;
 - verification command results are recorded in the branch handoff.
+
+## Next Slice: Incidence-Only 2-Face Ordering
+
+The next migration slice should add an incidence-only helper for ordering the
+vertices of the 2-face `facet_i ∩ facet_j`. This helper is the combinatorial
+piece needed before exact full-dimensional volume can sum exact determinants
+without using f64 polygon ordering.
+
+Use `2-face` in public docs, task text, and new helper names. Do not introduce
+new public APIs using the term `ridge`; old internal code may keep that name
+until touched.
+
+Target helper shape:
+
+```rust,ignore
+fn order_2face_vertices_from_incidence(
+    incidence: &DMatrix<bool>,
+    facet_i: usize,
+    facet_j: usize,
+) -> Vec<usize>;
+```
+
+The helper may stay private or crate-visible in the first slice if no external
+caller needs it yet. It should use only incidence. It must not inspect
+coordinates or dual vertices.
+
+Edge behavior:
+
+- if `facet_i == facet_j`, panic as caller error;
+- if either facet index is out of range, panic as caller error;
+- if `facet_i ∩ facet_j` contains 0, 1, or 2 vertices, return those vertex
+  indices in deterministic sorted order; callers treat them as not being a
+  polygonal 2-face and skip them;
+- if the intersection contains at least 3 vertices, build the induced graph
+  where two vertices are adjacent when they share some third facet different
+  from `facet_i` and `facet_j`;
+- assert that this induced graph is one cycle, then return that cycle order;
+- do not detect coordinate degeneracy. If incidence gives a valid cycle,
+  determinant summation can handle zero or tiny geometric contribution.
+
+Done criteria for this slice:
+
+- helper tests cover empty, one-point, two-point, triangular, quadrilateral,
+  and higher-vertex 2-face cases from constructed incidence matrices;
+- known fixtures such as simplex, hypercube, crosspolytope, and available
+  non-simple fixtures have their 2-face intersections classified/orderable;
+- known-incidence f64 volume and facet-volume code use this helper instead of
+  f64 coordinate polygon ordering when the helper returns at least 3 vertices;
+- existing f64 volume/facet-volume tests still pass, including qhull and
+  derivative checks;
+- docs/tasks use `2-face` terminology for new work.
 
 ## Test Code and Proposition Comments
 
