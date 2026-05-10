@@ -10,3 +10,4 @@ num-traits.workspace = true
 
 [dev-dependencies]
 num-rational.workspace = true
+proptest.workspace = true

@@ -502,6 +502,7 @@ dependencies = [
  "nalgebra",
  "num-rational",
  "num-traits",
+ "proptest",
 ]
 
 [[package]]

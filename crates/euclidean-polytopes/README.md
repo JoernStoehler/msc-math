@@ -37,17 +37,22 @@ all future context.
 
 ## Implemented API
 
-The first implemented slice is polar vertex enumeration in ambient `R^4`:
+The implemented public API currently covers exact point-set predicates and
+polar vertex enumeration in ambient `R^4`:
 
 ```rust,ignore
 use algebraic_numbers::ExactScalar;
 use nalgebra::{DMatrix, Vector4};
 
-pub fn origin_in_interior_of_conv_exact<T: ExactScalar>(
+pub fn origin_in_interior_of_conv_exact<T: ExactScalar + 'static>(
     points: &[Vector4<T>],
 ) -> bool;
 
-pub fn polar_vertices_exact<T: ExactScalar>(
+pub fn all_points_are_extreme_exact<T: ExactScalar + 'static>(
+    points: &[Vector4<T>],
+) -> bool;
+
+pub fn polar_vertices_exact<T: ExactScalar + 'static>(
     vertices: &[Vector4<T>],
 ) -> PolarVertexData<T>;
 
@@ -96,6 +101,11 @@ pub enum F64GeometryError {
 redundant points only add redundant inequalities. Returned vertices are
 deduplicated by exact equality.
 
+`all_points_are_extreme_exact(points)` checks the stronger non-redundancy
+contract for a V-representation: every listed point must be an extreme point of
+`conv(points)`. It handles lower-dimensional point sets in ambient `R^4`; exact
+duplicate points return `false`.
+
 The `f64` path validates finite coordinates and reports partial vertices plus
 `indeterminate_candidates`. An indeterminate candidate has `vertex: None` when
 the 4-tuple was singular, higher-dimensional, or unsolved in `f64`; it has
@@ -139,12 +149,9 @@ fixed here:
 
 - approximate origin-interior diagnostics with all candidate 5-sets that may
   contain zero;
-- exact and approximate extreme-point/non-redundancy predicates for callers
-  that need the stronger input-list contract. The exact predicate should answer
-  whether every input point is an extremum of `conv(points)`, including
-  lower-dimensional point sets in ambient `R^4`. The approximate predicate
-  should report stable non-extreme witnesses or indeterminate witness subsets
-  rather than guessing from tolerances;
+- approximate extreme-point/non-redundancy diagnostics for callers that need
+  stable non-extreme witnesses or indeterminate witness subsets rather than
+  tolerance guesses;
 - full-dimensional volume from a polar pair, using dual vertices for incidence
   and primal vertices for Euclidean geometry;
 - affine-subspace polygon and lower-dimensional volume helpers in ambient

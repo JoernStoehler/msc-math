@@ -18,9 +18,10 @@ The thesis-facing objective is agent velocity and validation trust:
 
 ## Current State
 
-The first implementation packet is in place:
+The first two implementation packets are in place:
 
 - `origin_in_interior_of_conv_exact(points) -> bool`;
+- `all_points_are_extreme_exact(points) -> bool`;
 - `polar_vertices_exact(vertices) -> PolarVertexData<T>`;
 - `polar_vertices_f64(vertices) -> Result<PolarVerticesF64, F64GeometryError>`.
 
@@ -28,6 +29,13 @@ The exact path is the accepted first reusable slice. It checks the
 origin-interior contract, enumerates 4-tuples of active polar inequalities,
 tests halfspace feasibility exactly, and deduplicates vertices by exact
 equality. It deliberately does not require input non-redundancy.
+
+The exact extreme-point predicate checks V-representation non-redundancy
+separately from polar enumeration. It uses ambient-`R^4` Caratheodory witnesses:
+for each point, it enumerates subsets of at most five other points and solves
+the exact affine barycentric system. A coordinate-bound reduction avoids
+unnecessary exact solves for obvious coordinate-extreme cases. Exact duplicate
+points return `false`; lower-dimensional point sets are valid inputs.
 
 The `f64` path is intentionally narrower than a full exact replacement. It
 validates finite coordinates, returns well-conditioned accepted candidates, and
@@ -41,16 +49,16 @@ Do not add broad public API only because it is mathematically natural. Add a
 function when a current migration caller needs it or when it removes duplicated
 existing code.
 
-## Next Slice: Extreme-Point Predicate
+## Implemented Slice: Extreme-Point Predicate
 
-The next implementation slice should add the point-set non-redundancy check:
-every input point is an extremum of the convex hull of the full input set.
+The point-set non-redundancy check is implemented: every input point is an
+extremum of the convex hull of the full input set.
 
 This is the right next slice before volume because it is small, already named
 as a separate validation boundary, and avoids mixing a basic point-set contract
 with the larger volume decomposition API.
 
-Target exact API:
+Exact API:
 
 ```rust,ignore
 pub fn all_points_are_extreme_exact<T: ExactScalar + 'static>(
@@ -71,13 +79,12 @@ barycentric system exactly, and accept a witness when all barycentric
 coordinates are nonnegative. Keep helper functions local and concrete unless
 they are clearly reused by another public operation.
 
-The matching `f64` diagnostic API should be added in the same slice only if the
-shape stays simple. It should prove `false` as soon as it has a stable
-convex-combination witness for one non-extreme point. It should prove `true`
-only after ruling out every relevant witness subset for every point. Otherwise
-it should return the candidate subsets whose classification is indeterminate,
-grouped by the tested point. Use names such as `barycentric_abs_error_bound`
-instead of `_error`.
+The matching `f64` diagnostic API remains future work. It should prove `false`
+as soon as it has a stable convex-combination witness for one non-extreme
+point. It should prove `true` only after ruling out every relevant witness
+subset for every point. Otherwise it should return the candidate subsets whose
+classification is indeterminate, grouped by the tested point. Use names such as
+`barycentric_abs_error_bound` instead of `_error`.
 
 Do not introduce a public `ExtremePointSet` wrapper or generic
 true/false/indeterminate abstraction for this slice. A flat output record for
