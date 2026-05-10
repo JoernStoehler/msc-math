@@ -1,17 +1,20 @@
-//! 4D polytope volume computation via origin-star triangulation.
+//! 4D polytope volume computation via exact known-incidence triangulation.
 //!
-//! The canonical `volume()` path is pure Rust. It uses the exact vertex-facet
-//! incidence stored on [`Polytope4D`] to triangulate each 3-facet from an
-//! interior facet point, then cones those tetrahedra to the origin. The qhull
-//! subprocess wrapper remains available as `volume_qhull()` for verification
-//! and benchmarking only.
+//! The canonical source of truth is [`volume_exact`]. It converts the exact
+//! vertices stored on [`Polytope4D`] to Euclidean `Vector4<BigRational>` values
+//! and delegates to `euclidean_polytopes::volume_from_incidence_exact` with the
+//! stored exact vertex-facet incidence. The f64 [`volume`] API remains as a
+//! compatibility wrapper around that exact result. The qhull subprocess wrapper
+//! remains available as `volume_qhull()` for verification and benchmarking only.
 //!
 //! Mathematical correspondence: [def:volume], [lem:volume-star-triangulation]
 
 use crate::geom::polytope::Polytope4D;
 use crate::geom::qhull::QhullError;
-use euclidean_polytopes::volume_from_incidence_f64;
+use crate::geom::rational_arithmetic::rational_to_f64;
+use euclidean_polytopes::volume_from_incidence_exact;
 use nalgebra::Vector4;
+use num_rational::BigRational;
 
 /// Volume of a 4-simplex from its 5 vertices.
 ///
@@ -31,18 +34,29 @@ pub fn simplex_volume_5(
     mat.determinant().abs() / 24.0
 }
 
-/// Compute volume of a 4D convex polytope by coning a facet triangulation to `0`.
+/// Compute exact volume of a 4D convex polytope from stored exact incidence.
 ///
 /// Since [`Polytope4D`] is stored in normalized H-representation
 /// `K = {x : a_i^T x <= 1}`, the origin lies strictly in the interior of every
-/// valid polytope. For each 3-facet `F_i`, we triangulate its boundary ridges
-/// from the arithmetic mean of its vertices, producing tetrahedra that fill
-/// `F_i`. Coning those tetrahedra to `0` gives a 4-simplex decomposition of `K`.
+/// valid polytope. This function does not recompute incidence, does not use
+/// dual vertices, and does not convert vertices to f64. It delegates the exact
+/// origin-star triangulation to `euclidean-polytopes`.
+///
+/// Mathematical correspondence: [def:volume], [lem:volume-star-triangulation]
+pub fn volume_exact(polytope: &Polytope4D) -> BigRational {
+    let vertices = vertices_as_vector4_exact(polytope.vertices());
+    volume_from_incidence_exact(&vertices, polytope.incidence())
+}
+
+/// Compute f64 volume of a 4D convex polytope as an exact-to-f64 compatibility wrapper.
+///
+/// Use [`volume_exact`] when exact rational output is needed. This wrapper
+/// exists for existing f64 callers and converts the exact source-of-truth value
+/// with `rational_to_f64`.
 ///
 /// Mathematical correspondence: [def:volume], [lem:volume-star-triangulation]
 pub fn volume(polytope: &Polytope4D) -> f64 {
-    volume_from_incidence_f64(polytope.vertices_f64(), polytope.incidence())
-        .expect("valid Polytope4D has finite f64 vertices and matching incidence")
+    rational_to_f64(&volume_exact(polytope))
 }
 
 /// Compute volume of a 4D convex polytope via qhull triangulation.
@@ -55,12 +69,26 @@ pub fn volume_qhull(polytope: &Polytope4D) -> Result<f64, QhullError> {
     crate::geom::qhull::compute_volume_qconvex(vertices)
 }
 
+fn vertices_as_vector4_exact(vertices: &[[BigRational; 4]]) -> Vec<Vector4<BigRational>> {
+    vertices
+        .iter()
+        .map(|vertex| {
+            Vector4::new(
+                vertex[0].clone(),
+                vertex[1].clone(),
+                vertex[2].clone(),
+                vertex[3].clone(),
+            )
+        })
+        .collect()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
     use crate::geom::known_polytopes;
+    use crate::geom::rational_arithmetic::{frac, rat};
     use crate::geom::test_utils::{crosspolytope, scaled_hypercube};
-    use euclidean_polytopes::volume_from_incidence_f64;
     use nalgebra::Vector4;
 
     // Tests for volume: computation vs known values for standard polytopes.
@@ -115,6 +143,28 @@ mod tests {
         );
     }
 
+    /// Verify exact fixture volumes for the standard rational fixtures.
+    #[test]
+    fn exact_fixture_volumes_match_known_values() {
+        let cases = vec![
+            ("simplex", known_polytopes::simplex(), frac(1, 24)),
+            ("hypercube", known_polytopes::hypercube(), rat(16)),
+            (
+                "crosspolytope",
+                known_polytopes::crosspolytope(),
+                frac(32, 3),
+            ),
+        ];
+
+        for (name, kp, expected) in cases {
+            assert_eq!(
+                volume_exact(&kp.polytope),
+                expected,
+                "{name}: exact volume mismatch"
+            );
+        }
+    }
+
     /// Verify that the 4D crosspolytope has volume 32/3.
     #[test]
     fn crosspolytope_volume() {
@@ -159,22 +209,32 @@ mod tests {
     }
 
     /// Wiring regression: the compatibility wrapper
-    /// `symplectic::geom::volume::volume` delegates to the Euclidean
-    /// known-incidence helper on valid `Polytope4D` fixtures.
+    /// `symplectic::geom::volume::volume_exact` delegates to the Euclidean
+    /// exact known-incidence helper on valid `Polytope4D` fixtures, and
+    /// `volume` is only the f64 compatibility conversion of that exact value.
     ///
     /// Mathematical correctness is covered by the exact-value and qhull tests
     /// above and below; this test protects the cross-crate migration boundary.
     ///
     /// Operationalization: compare all known fixtures, using exact
-    /// `Polytope4D` incidence and f64 vertex copies. Tolerance:
-    /// `max(1e-10, 1e-10 * |volume|)`.
+    /// `Polytope4D` vertices and incidence. Tolerance for the compatibility
+    /// wrapper is `max(1e-10, 1e-10 * |volume|)`.
     #[test]
     fn volume_wrapper_matches_euclidean_known_incidence_helper() {
         for kp in known_polytopes::all_known() {
+            let wrapper_exact = volume_exact(&kp.polytope);
+            let euclidean_exact = volume_from_incidence_exact(
+                &vertices_as_vector4_exact(kp.polytope.vertices()),
+                kp.polytope.incidence(),
+            );
+            assert_eq!(
+                wrapper_exact, euclidean_exact,
+                "{}: exact wrapper differs from Euclidean exact helper",
+                kp.name
+            );
+
             let wrapper_volume = volume(&kp.polytope);
-            let euclidean_volume =
-                volume_from_incidence_f64(kp.polytope.vertices_f64(), kp.polytope.incidence())
-                    .expect("valid Polytope4D fixture");
+            let euclidean_volume = rational_to_f64(&euclidean_exact);
             let allowed_error = 1.0e-10_f64.max(1.0e-10 * euclidean_volume.abs());
 
             assert!(

@@ -67,9 +67,7 @@ pub(crate) fn omega0_rational(u: &[BigRational; 4], v: &[BigRational; 4]) -> Big
 /// numerators/denominators, this produces the nearest f64 approximation.
 pub(crate) fn rational_to_f64(r: &BigRational) -> f64 {
     use num_traits::ToPrimitive;
-    let numer: f64 = r.numer().to_f64().unwrap_or(f64::NAN);
-    let denom: f64 = r.denom().to_f64().unwrap_or(f64::NAN);
-    numer / denom
+    r.to_f64().unwrap_or(f64::NAN)
 }
 
 /// Lossless conversion from f64 to exact BigRational.
@@ -192,6 +190,17 @@ mod tests {
         assert_eq!(f64_to_rational(0.25), frac(1, 4));
         assert_eq!(f64_to_rational(2.0), rat(2));
         assert_eq!(f64_to_rational(1024.0), rat(1024));
+    }
+
+    /// Proposition: rational_to_f64 converts finite ratios even when the
+    /// numerator and denominator are too large to convert independently.
+    #[test]
+    fn rational_to_f64_large_finite_ratio() {
+        let numer = (BigInt::from(3) << 1200usize) + BigInt::from(1);
+        let denom = (BigInt::from(1) << 1199usize) + BigInt::from(1);
+        let value = rational_to_f64(&BigRational::new(numer, denom));
+
+        assert_eq!(value, 6.0);
     }
 
     // ── Sign classification ──────────────────────────────────────────────────

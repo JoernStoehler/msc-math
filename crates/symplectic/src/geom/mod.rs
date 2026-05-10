@@ -4,7 +4,7 @@
 //! - `polytope` — `Polytope4D`, the central convex body type
 //! - `skeleton` — face lattice (edges, ridges) of a polytope
 //! - `symplectic_form` — standard symplectic form omega_0 and J_0
-//! - `volume` — pure-Rust 4D volume computation plus qhull cross-check helper
+//! - `volume` — exact 4D volume wrapper plus qhull cross-check helper
 //! - `polygon` — 2D convex polygon constructors
 //! - `lagrangian_product` — Lagrangian products from two 2D polygons
 //! - `cross_product_4d` — 4D cross product (vector perpendicular to three vectors)
