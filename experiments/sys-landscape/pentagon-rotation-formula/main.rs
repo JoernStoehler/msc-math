@@ -35,8 +35,8 @@ use symplectic::algorithms::billiard::facet_classification::{
 };
 use symplectic::algorithms::billiard::{bounce_count_from_sigma, for_each_sigma};
 use symplectic::algorithms::{
-    aggregate_orbits, solve_orbit_sigma, OrbitGuaranteeMode, OrbitSearchError, OrbitSolveBackend,
-    OrbitSolveError,
+    aggregate_orbits_with_dual_vertices_exact, solve_orbit_sigma_with_dual_vertices,
+    OrbitGuaranteeMode, OrbitSearchError, OrbitSolveBackend, OrbitSolveError,
 };
 use symplectic::geom::lagrangian_product::lagrangian_product;
 use symplectic::geom::polygon::{polygon_area, regular_polygon_2d, rotate_polygon_2d};
@@ -273,6 +273,8 @@ fn admissibility_name(admissibility: OrbitAdmissibility) -> &'static str {
 fn collect_minima_safe_billiard_result(
     polytope: &symplectic::Polytope4D,
 ) -> Result<symplectic::OrbitSearchResult, OrbitSearchError> {
+    let dual_vertices = polytope.dual_vertices_f64();
+    let dual_vertices_exact = polytope.dual_vertices();
     let mut orbits = Vec::new();
     let mut iterations = 0u64;
     let mut fatal_error: Option<OrbitSearchError> = None;
@@ -282,7 +284,11 @@ fn collect_minima_safe_billiard_result(
             return;
         }
         iterations += 1;
-        match solve_orbit_sigma(polytope, sigma, OrbitSolveBackend::SaddlePoint) {
+        match solve_orbit_sigma_with_dual_vertices(
+            dual_vertices,
+            sigma,
+            OrbitSolveBackend::SaddlePoint,
+        ) {
             Ok(orbit) => orbits.push(orbit),
             Err(OrbitSolveError::Inadmissible) => {}
             Err(OrbitSolveError::UnsupportedBackend) => {
@@ -298,8 +304,8 @@ fn collect_minima_safe_billiard_result(
     if let Some(err) = fatal_error {
         return Err(err);
     }
-    aggregate_orbits(
-        polytope,
+    aggregate_orbits_with_dual_vertices_exact(
+        dual_vertices_exact,
         orbits,
         iterations,
         0.0,
@@ -310,6 +316,7 @@ fn collect_minima_safe_billiard_result(
 fn collect_admissible_three_bounce_orbits(
     polytope: &symplectic::Polytope4D,
 ) -> Result<(usize, Vec<OrbitKktData>), OrbitSearchError> {
+    let dual_vertices = polytope.dual_vertices_f64();
     let mut sigmas_examined = 0usize;
     let mut orbits = Vec::new();
     let mut fatal_error: Option<OrbitSearchError> = None;
@@ -326,7 +333,11 @@ fn collect_admissible_three_bounce_orbits(
         }
 
         sigmas_examined += 1;
-        match solve_orbit_sigma(polytope, sigma, OrbitSolveBackend::SaddlePoint) {
+        match solve_orbit_sigma_with_dual_vertices(
+            dual_vertices,
+            sigma,
+            OrbitSolveBackend::SaddlePoint,
+        ) {
             Ok(orbit) => {
                 if matches!(
                     orbit.admissibility,

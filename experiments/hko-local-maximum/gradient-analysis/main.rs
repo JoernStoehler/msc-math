@@ -41,7 +41,9 @@ use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::path::{Path, PathBuf};
 use std::time::Instant;
-use symplectic::algorithms::{solve_orbit_sigma, OrbitKktData, OrbitSolveBackend, OrbitSolveError};
+use symplectic::algorithms::{
+    solve_orbit_sigma_with_dual_vertices, OrbitKktData, OrbitSolveBackend, OrbitSolveError,
+};
 use symplectic::derivatives::{capacity_derivatives_a_from_orbit, volume_derivatives_a};
 use symplectic::ehz_capacity;
 use symplectic::exact::{capacity_derivatives_a_exact, solve_orbit_sigma_exact, ExactPolytope4D};
@@ -384,7 +386,11 @@ fn float_sigma_diagnostics(
     polytope: &Polytope4D,
     sigma: &[usize],
 ) -> Result<SigmaDiagnostics, OrbitSolveError> {
-    let orbit = solve_orbit_sigma(polytope, sigma, OrbitSolveBackend::SaddlePoint)?;
+    let orbit = solve_orbit_sigma_with_dual_vertices(
+        polytope.dual_vertices_f64(),
+        sigma,
+        OrbitSolveBackend::SaddlePoint,
+    )?;
     let gradient = capacity_derivatives_a_from_orbit(polytope, &orbit)
         .expect("gradient-analysis float orbit payload carries closure multipliers");
     Ok(SigmaDiagnostics {

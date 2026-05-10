@@ -138,10 +138,10 @@ states hold:
   blocked on thesis restructuring.
   Refresh by: checking `tasks/writing.md` and current thesis notation.
 - [fresh 2026-04-25] `thesis/appendix-numerical.tex` describes a
-  certified/uncertain accumulator, but the public `ehz_capacity*` wrappers call
-  f64-only aggregation by default; stronger guarantee modes exist behind the
-  non-default `aggregate_orbits` path. This must be made explicit if retained
-  in thesis prose.
+  certified/uncertain accumulator. The public `ehz_capacity*` wrappers now use
+  `OrbitGuaranteeMode::MinimaSafe`; non-default guarantee controls exist behind
+  the `aggregate_orbits_with_dual_vertices_exact` path. This must be made
+  explicit if retained in thesis prose.
   Refresh by: reading `thesis/appendix-numerical.tex` around "Accumulator and
   Final Answer", `crates/symplectic/src/lib.rs`, and
   `crates/symplectic/src/algorithms/orbit_search.rs`.
@@ -170,10 +170,11 @@ states hold:
   `formal/hk2017-qp-precision.tex`,
   `experiments/numerics/error-bounds/`, `q-error`, and `kkt-inertia` outputs.
 - [fresh 2026-05-01] Current alignment snapshot: formal and experiment
-  `error-bounds` surfaces are projection/null-space oriented; public
-  `ehz_capacity*` wrappers still use saddle-point solving plus f64-only
-  aggregation by default; stronger exact/guaranteed aggregation is available
-  only through explicit non-default `aggregate_orbits` modes.
+  `error-bounds` surfaces are projection/null-space oriented, while public
+  `ehz_capacity*` wrappers use saddle-point solving plus `MinimaSafe`
+  aggregation by default. Exact rational certified output is available through
+  `ehz_capacity_pruned_certified`; explicit non-default guarantee control is
+  available through `aggregate_orbits_with_dual_vertices_exact`.
   Refresh by: checking `crates/symplectic/src/lib.rs` wrapper calls and
   `crates/symplectic/src/algorithms/orbit_search.rs` aggregation modes.
 - [fresh 2026-05-01] Generic route resume point: first define exact generic

@@ -28,8 +28,8 @@ pub mod hk2017;
 pub mod orbit_search;
 
 pub use orbit_search::{
-    aggregate_certified_orbits, aggregate_orbits, solve_orbit_sigma, CertifiedOrbitKktData,
-    CertifiedOrbitSearchResult, CertifiedOrbitSetMode, GeometricOrbitError, OrbitAdmissibility,
-    OrbitGuaranteeMode, OrbitKktData, OrbitSearchError, OrbitSearchResult, OrbitSolveBackend,
-    OrbitSolveError,
+    aggregate_certified_orbits_with_dual_vertices_exact, aggregate_orbits_with_dual_vertices_exact,
+    solve_orbit_sigma_with_dual_vertices, CertifiedOrbitKktData, CertifiedOrbitSearchResult,
+    CertifiedOrbitSetMode, GeometricOrbitError, OrbitAdmissibility, OrbitGuaranteeMode,
+    OrbitKktData, OrbitSearchError, OrbitSearchResult, OrbitSolveBackend, OrbitSolveError,
 };

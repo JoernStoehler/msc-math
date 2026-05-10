@@ -53,8 +53,9 @@ Canonical all-minimum and orbit-recovery runs reported:
    - `all-minimum` computes minima from shared-cache sources and validates by action.
    - `orbit-recovery` ignores non-essential trusted-row payload fields and depends on schema/version alignment.
 4. Keep exact arithmetic and tolerance assumptions explicit:
-   - `OrbitGuaranteeMode::MinimaSafe`, `solve_orbit_sigma`, and `ehz_capacity` agreement checks
-     are the minimum reproducible seam across implementations.
+   - `OrbitGuaranteeMode::MinimaSafe`,
+     `solve_orbit_sigma_with_dual_vertices`, and `ehz_capacity` agreement
+     checks are the minimum reproducible cross-implementation check surface.
    - Runtime tolerances are empirical stability tolerances, not absolute proof margins.
 5. Do not recreate legacy `research/**` directories inside `experiments/`; tracking should be through notes only, with local notes currently taking precedence.
 

@@ -37,8 +37,9 @@ fn rational_scaled_cube_half() -> Polytope4D {
 fn exact_resolution_upgrades_known_winner() {
     let kp = known_polytopes::simplex();
     let result = ehz_capacity_pruned(&kp.polytope).expect("ehz_capacity should succeed");
-    let orbit = solve_orbit_sigma(
-        &kp.polytope,
+    let dual_vertices = kp.polytope.dual_vertices_f64();
+    let orbit = solve_orbit_sigma_with_dual_vertices(
+        dual_vertices,
         result.best_sigma(),
         OrbitSolveBackend::SaddlePoint,
     )
@@ -57,8 +58,9 @@ fn exact_resolution_upgrades_known_winner() {
 fn boundsafe_resolves_indeterminate_argmin() {
     let kp = known_polytopes::simplex();
     let result = ehz_capacity_pruned(&kp.polytope).expect("ehz_capacity should succeed");
-    let mut orbit = solve_orbit_sigma(
-        &kp.polytope,
+    let dual_vertices = kp.polytope.dual_vertices_f64();
+    let mut orbit = solve_orbit_sigma_with_dual_vertices(
+        dual_vertices,
         result.best_sigma(),
         OrbitSolveBackend::SaddlePoint,
     )
@@ -86,16 +88,21 @@ fn minimasafe_does_not_accept_spurious_square_product_minimum() {
     let (qn, qh) = regular_polygon_2d(4, 1.0);
     let (pn, ph) = regular_polygon_2d(4, 1.0);
     let polytope = lagrangian_product(&qn, &qh, &pn, &ph).expect("square product");
+    let dual_vertices = polytope.dual_vertices_f64();
+    let dual_vertices_exact = polytope.dual_vertices();
 
-    let (orbits, iterations) =
-        solve_sigma_stream(&polytope, OrbitSolveBackend::SaddlePoint, |visit| {
+    let (orbits, iterations) = solve_sigma_stream_with_dual_vertices(
+        dual_vertices,
+        OrbitSolveBackend::SaddlePoint,
+        |visit| {
             let facet_count = polytope.facet_count();
             crate::algorithms::hk2017::for_each_sigma_unpruned_facet_count(facet_count, visit)
-        })
-        .expect("square product sigma stream should solve");
+        },
+    )
+    .expect("square product sigma stream should solve");
 
-    let result = aggregate_orbits(
-        &polytope,
+    let result = aggregate_orbits_with_dual_vertices_exact(
+        dual_vertices_exact,
         orbits,
         iterations,
         0.0,
@@ -117,20 +124,25 @@ fn minimasafe_does_not_accept_spurious_square_product_minimum() {
 #[test]
 fn minimasafe_accepts_exact_rational_scaled_cube() {
     let polytope = rational_scaled_cube_half();
+    let dual_vertices = polytope.dual_vertices_f64();
+    let dual_vertices_exact = polytope.dual_vertices();
     assert!(
         solve_kkt_exact(polytope.dual_vertices(), &[0, 3, 4, 2, 6]).is_none(),
         "the square-product bad sigma must be boundary/inadmissible on the exact rational cube"
     );
 
-    let (orbits, iterations) =
-        solve_sigma_stream(&polytope, OrbitSolveBackend::SaddlePoint, |visit| {
+    let (orbits, iterations) = solve_sigma_stream_with_dual_vertices(
+        dual_vertices,
+        OrbitSolveBackend::SaddlePoint,
+        |visit| {
             let facet_count = polytope.facet_count();
             crate::algorithms::hk2017::for_each_sigma_unpruned_facet_count(facet_count, visit)
-        })
-        .expect("exact rational cube sigma stream should solve");
+        },
+    )
+    .expect("exact rational cube sigma stream should solve");
 
-    let result = aggregate_orbits(
-        &polytope,
+    let result = aggregate_orbits_with_dual_vertices_exact(
+        dual_vertices_exact,
         orbits,
         iterations,
         0.0,
@@ -191,8 +203,10 @@ fn certified_pruned_wrapper_returns_exact_simplex_minimizers() {
 fn certified_gap_window_returns_only_exact_orbits_inside_gap() {
     let kp = known_polytopes::simplex();
     let gap = frac(1, 4);
+    let dual_vertices = kp.polytope.dual_vertices_f64();
+    let dual_vertices_exact = kp.polytope.dual_vertices();
     let (orbits, iterations) =
-        solve_sigma_stream(&kp.polytope, OrbitSolveBackend::SaddlePoint, |visit| {
+        solve_sigma_stream_with_dual_vertices(dual_vertices, OrbitSolveBackend::SaddlePoint, |visit| {
             let transition_is_allowed = crate::algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega(
                 kp.polytope.facet_intersection_is_nonempty(),
                 kp.polytope.omega_signs(),
@@ -204,8 +218,8 @@ fn certified_gap_window_returns_only_exact_orbits_inside_gap() {
         })
         .expect("simplex sigma stream should solve");
 
-    let result = aggregate_certified_orbits(
-        &kp.polytope,
+    let result = aggregate_certified_orbits_with_dual_vertices_exact(
+        dual_vertices_exact,
         orbits,
         iterations,
         gap.clone(),

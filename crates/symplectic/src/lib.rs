@@ -188,13 +188,13 @@ pub fn ehz_capacity_billiard(polytope: &Polytope4D) -> Result<OrbitSearchResult,
             unreachable!("f64-only aggregation should return a result")
         }
         OrbitSearchError::NumericalFailure => {
-            unreachable!("solve_sigma_stream does not produce NumericalFailure")
+            unreachable!("solve_sigma_stream_with_dual_vertices does not produce NumericalFailure")
         }
         OrbitSearchError::ExactFallbackFailure => {
-            unreachable!("solve_sigma_stream never exact-resolves")
+            unreachable!("solve_sigma_stream_with_dual_vertices never exact-resolves")
         }
         OrbitSearchError::InvalidGap => {
-            unreachable!("solve_sigma_stream does not receive an action gap")
+            unreachable!("solve_sigma_stream_with_dual_vertices does not receive an action gap")
         }
     })?;
     algorithms::orbit_search::aggregate_orbits_with_dual_vertices_exact(

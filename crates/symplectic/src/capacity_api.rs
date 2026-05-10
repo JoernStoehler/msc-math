@@ -3,7 +3,9 @@
 //! This module holds the new dual-vertex based capacity API while the old
 //! `Polytope4D`-anchored root wrappers are being migrated.
 
-use crate::algorithms::orbit_search::solve_sigma_stream;
+use crate::algorithms::orbit_search::{
+    aggregate_orbits_with_dual_vertices_exact, solve_sigma_stream_with_dual_vertices,
+};
 use crate::algorithms::{OrbitAdmissibility, OrbitGuaranteeMode, OrbitSearchError};
 use crate::geom::polytope::{ConstructionError, Polytope4D};
 use nalgebra::Vector4;
@@ -169,16 +171,18 @@ pub fn capacity_hk2017_unpruned_f64(
     }
 
     let polytope = polytope_from_dual_vertices_f64(dual_vertices)?;
-    let (orbits, iterations) = solve_sigma_stream(
-        &polytope,
+    let dual_vertices_f64 = polytope.dual_vertices_f64();
+    let dual_vertices_exact = polytope.dual_vertices();
+    let (orbits, iterations) = solve_sigma_stream_with_dual_vertices(
+        dual_vertices_f64,
         crate::algorithms::OrbitSolveBackend::SaddlePoint,
         |visit| {
             let facet_count = polytope.facet_count();
             crate::algorithms::hk2017::for_each_sigma_unpruned_facet_count(facet_count, visit)
         },
     )?;
-    let result = crate::algorithms::orbit_search::aggregate_orbits(
-        &polytope,
+    let result = aggregate_orbits_with_dual_vertices_exact(
+        dual_vertices_exact,
         orbits,
         iterations,
         action_gap,

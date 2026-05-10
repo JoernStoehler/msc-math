@@ -3,9 +3,10 @@
 //! Split from mod.rs to keep the module router focused on architecture.
 
 use super::*;
-use crate::algorithms::orbit_search::solve_sigma_stream;
+use crate::algorithms::orbit_search::solve_sigma_stream_with_dual_vertices;
 use crate::algorithms::{
-    aggregate_orbits, OrbitGuaranteeMode, OrbitSearchError, OrbitSolveBackend,
+    aggregate_orbits_with_dual_vertices_exact, OrbitGuaranteeMode, OrbitSearchError,
+    OrbitSolveBackend,
 };
 use crate::geom::known_polytopes;
 use crate::kkt::saddle_point_solver::solve_kkt_for_dual_vertices;
@@ -99,8 +100,10 @@ fn symplectic_triangle_square_capacity() {
 #[test]
 fn simplex_orbit_aggregation() {
     let kp = known_polytopes::simplex();
+    let dual_vertices = kp.polytope.dual_vertices_f64();
+    let dual_vertices_exact = kp.polytope.dual_vertices();
     let (orbits, iterations) =
-        solve_sigma_stream(&kp.polytope, OrbitSolveBackend::SaddlePoint, |visit| {
+        solve_sigma_stream_with_dual_vertices(dual_vertices, OrbitSolveBackend::SaddlePoint, |visit| {
             let transition_is_allowed = crate::algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega(
                 kp.polytope.facet_intersection_is_nonempty(),
                 kp.polytope.omega_signs(),
@@ -108,8 +111,8 @@ fn simplex_orbit_aggregation() {
             for_each_sigma_pruned_by_transition(&transition_is_allowed, visit)
         })
         .expect("sigma solve stream should succeed on simplex");
-    let result = aggregate_orbits(
-        &kp.polytope,
+    let result = aggregate_orbits_with_dual_vertices_exact(
+        dual_vertices_exact,
         orbits,
         iterations,
         0.0,
@@ -138,13 +141,17 @@ fn simplex_orbit_aggregation() {
 #[test]
 fn simplex_projected_backend_unsupported() {
     let kp = known_polytopes::simplex();
-    let err = solve_sigma_stream(&kp.polytope, OrbitSolveBackend::Projected, |visit| {
+    let err = solve_sigma_stream_with_dual_vertices(
+        kp.polytope.dual_vertices_f64(),
+        OrbitSolveBackend::Projected,
+        |visit| {
         let transition_is_allowed = crate::algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega(
             kp.polytope.facet_intersection_is_nonempty(),
             kp.polytope.omega_signs(),
         );
         for_each_sigma_pruned_by_transition(&transition_is_allowed, visit)
-    })
+        },
+    )
     .expect_err("projected backend is not wired into the shared collector yet");
     assert_eq!(err, OrbitSearchError::UnsupportedBackend);
 }

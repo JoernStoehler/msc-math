@@ -59,14 +59,17 @@ fn triangle_square_capacity() {
 #[test]
 fn triangle_product_orbit_aggregation() {
     let kp = known_polytopes::lagrangian_triangle_product();
-    let (orbits, iterations) = crate::algorithms::orbit_search::solve_sigma_stream(
-        &kp.polytope,
-        crate::algorithms::OrbitSolveBackend::SaddlePoint,
-        |visit| for_each_sigma(&kp.polytope, visit).expect("valid Lagrangian product"),
-    )
-    .expect("billiard sigma solve stream should succeed");
-    let result = crate::algorithms::aggregate_orbits(
-        &kp.polytope,
+    let dual_vertices = kp.polytope.dual_vertices_f64();
+    let dual_vertices_exact = kp.polytope.dual_vertices();
+    let (orbits, iterations) =
+        crate::algorithms::orbit_search::solve_sigma_stream_with_dual_vertices(
+            dual_vertices,
+            crate::algorithms::OrbitSolveBackend::SaddlePoint,
+            |visit| for_each_sigma(&kp.polytope, visit).expect("valid Lagrangian product"),
+        )
+        .expect("billiard sigma solve stream should succeed");
+    let result = crate::algorithms::aggregate_orbits_with_dual_vertices_exact(
+        dual_vertices_exact,
         orbits,
         iterations,
         0.0,

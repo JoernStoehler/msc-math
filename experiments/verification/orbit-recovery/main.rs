@@ -23,7 +23,9 @@ use std::io::{BufRead, BufReader, Write};
 use std::path::{Path, PathBuf};
 use std::time::Instant;
 use symplectic::algorithms::hk2017::orbit_recovery::{recover_and_verify, GeometricOrbit};
-use symplectic::algorithms::{solve_orbit_sigma, OrbitKktData, OrbitSolveBackend, OrbitSolveError};
+use symplectic::algorithms::{
+    solve_orbit_sigma_with_dual_vertices, OrbitKktData, OrbitSolveBackend, OrbitSolveError,
+};
 
 #[derive(Debug, Clone, Deserialize)]
 struct TrustedOrbitRow {
@@ -291,9 +293,14 @@ fn validate_target(
     let mut details = Vec::new();
     let t_rebuild = Instant::now();
     let mut rebuilt_orbits = Vec::<(TrustedOrbitRow, OrbitKktData)>::new();
+    let dual_vertices = target.polytope.dual_vertices_f64();
 
     for row in rows {
-        match solve_orbit_sigma(&target.polytope, &row.sigma, OrbitSolveBackend::SaddlePoint) {
+        match solve_orbit_sigma_with_dual_vertices(
+            dual_vertices,
+            &row.sigma,
+            OrbitSolveBackend::SaddlePoint,
+        ) {
             Ok(orbit) => rebuilt_orbits.push((row, orbit)),
             Err(err) => {
                 summary.failed_solves += 1;

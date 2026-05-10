@@ -22,8 +22,9 @@ use std::path::{Path, PathBuf};
 use std::time::Instant;
 use symplectic::algorithms::hk2017::for_each_sigma_pruned_by_transition;
 use symplectic::algorithms::{
-    aggregate_orbits, solve_orbit_sigma, OrbitAdmissibility, OrbitGuaranteeMode, OrbitKktData,
-    OrbitSearchError, OrbitSolveBackend, OrbitSolveError,
+    aggregate_orbits_with_dual_vertices_exact, solve_orbit_sigma_with_dual_vertices,
+    OrbitAdmissibility, OrbitGuaranteeMode, OrbitKktData, OrbitSearchError, OrbitSolveBackend,
+    OrbitSolveError,
 };
 use symplectic::ehz_capacity;
 
@@ -346,6 +347,8 @@ fn validate_target(target: &Target) -> (AllMinimumSummaryRow, Vec<AllMinimumOrbi
 }
 
 fn compute_minimum_orbits(polytope: &symplectic::Polytope4D) -> Result<MinimumSetResult, String> {
+    let dual_vertices = polytope.dual_vertices_f64();
+    let dual_vertices_exact = polytope.dual_vertices();
     let mut orbits = Vec::<OrbitKktData>::new();
     let mut iterations = 0u64;
     let mut fatal_error = None::<String>;
@@ -362,14 +365,23 @@ fn compute_minimum_orbits(polytope: &symplectic::Polytope4D) -> Result<MinimumSe
             return;
         }
         iterations += 1;
-        match solve_orbit_sigma(polytope, sigma, OrbitSolveBackend::SaddlePoint) {
+        match solve_orbit_sigma_with_dual_vertices(
+            dual_vertices,
+            sigma,
+            OrbitSolveBackend::SaddlePoint,
+        ) {
             Ok(orbit) => orbits.push(orbit),
             Err(OrbitSolveError::Inadmissible) => {}
             Err(OrbitSolveError::UnsupportedBackend) => {
-                fatal_error = Some("solve_orbit_sigma returned UnsupportedBackend".to_string())
+                fatal_error = Some(
+                    "solve_orbit_sigma_with_dual_vertices returned UnsupportedBackend".to_string(),
+                )
             }
             Err(OrbitSolveError::NumericalFailure) => {
-                fatal_error = Some(format!("solve_orbit_sigma failed on sigma {:?}", sigma))
+                fatal_error = Some(format!(
+                    "solve_orbit_sigma_with_dual_vertices failed on sigma {:?}",
+                    sigma
+                ))
             }
         }
     });
@@ -378,8 +390,8 @@ fn compute_minimum_orbits(polytope: &symplectic::Polytope4D) -> Result<MinimumSe
         return Err(err);
     }
 
-    let result = aggregate_orbits(
-        polytope,
+    let result = aggregate_orbits_with_dual_vertices_exact(
+        dual_vertices_exact,
         orbits,
         iterations,
         MINIMUM_ACTION_GAP_TOL,
@@ -388,15 +400,17 @@ fn compute_minimum_orbits(polytope: &symplectic::Polytope4D) -> Result<MinimumSe
     .map_err(|err| match err {
         OrbitSearchError::NoAdmissibleOrbit => "no admissible orbit remained".to_string(),
         OrbitSearchError::UnsupportedBackend => {
-            "aggregate_orbits reported UnsupportedBackend".to_string()
+            "aggregate_orbits_with_dual_vertices_exact reported UnsupportedBackend".to_string()
         }
         OrbitSearchError::NumericalFailure => {
-            "aggregate_orbits reported NumericalFailure".to_string()
+            "aggregate_orbits_with_dual_vertices_exact reported NumericalFailure".to_string()
         }
         OrbitSearchError::ExactFallbackFailure => {
-            "aggregate_orbits reported ExactFallbackFailure".to_string()
+            "aggregate_orbits_with_dual_vertices_exact reported ExactFallbackFailure".to_string()
         }
-        OrbitSearchError::InvalidGap => "aggregate_orbits reported InvalidGap".to_string(),
+        OrbitSearchError::InvalidGap => {
+            "aggregate_orbits_with_dual_vertices_exact reported InvalidGap".to_string()
+        }
     })?;
 
     let minimum_orbits = result
@@ -409,7 +423,9 @@ fn compute_minimum_orbits(polytope: &symplectic::Polytope4D) -> Result<MinimumSe
         .iter()
         .map(|orbit| orbit.action)
         .max_by(f64::total_cmp)
-        .expect("aggregate_orbits should return at least one minimum orbit");
+        .expect(
+            "aggregate_orbits_with_dual_vertices_exact should return at least one minimum orbit",
+        );
 
     Ok(MinimumSetResult {
         orbits: minimum_orbits,

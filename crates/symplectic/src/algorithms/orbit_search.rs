@@ -7,7 +7,6 @@
 //! - search-level guarantees and backend choice
 //! - search/recovery error classification
 
-use crate::geom::polytope::Polytope4D;
 use crate::geom::rational_arithmetic::rational_to_f64;
 use crate::kkt::classify_margin;
 use crate::kkt::rational_solver::{solve_kkt_exact, ExactKktResult};
@@ -62,8 +61,8 @@ pub enum CertifiedOrbitSetMode {
 pub enum OrbitSolveBackend {
     /// Constraint-projection/eigendecomposition path.
     ///
-    /// This choice is currently scaffold-only at the shared
-    /// `solve_orbit_sigma` surface and returns `UnsupportedBackend`.
+    /// This choice is currently scaffold-only at the shared orbit-payload
+    /// solve surface and returns `UnsupportedBackend`.
     Projected,
     /// Augmented saddle-point KKT path.
     SaddlePoint,
@@ -241,19 +240,6 @@ pub enum GeometricOrbitError {
     LinearSolveFailure,
     /// A geometric orbit was produced, but the verification checks failed.
     VerificationFailed,
-}
-
-/// Solve one sigma into the shared orbit payload.
-///
-/// The current implementation is only complete for the saddle-point backend.
-/// The projected backend remains scaffold-only until the library projection
-/// path exposes the same `Q`-bound contract required by `OrbitKktData`.
-pub fn solve_orbit_sigma(
-    polytope: &Polytope4D,
-    sigma: &[usize],
-    backend: OrbitSolveBackend,
-) -> Result<OrbitKktData, OrbitSolveError> {
-    solve_orbit_sigma_with_dual_vertices(polytope.dual_vertices_f64(), sigma, backend)
 }
 
 /// Solve one sigma from flat f64 dual vertices into the shared orbit payload.
@@ -672,28 +658,6 @@ fn sort_certified_orbits_by_sigma(orbits: &mut [CertifiedOrbitKktData]) {
     orbits.sort_by(|a, b| a.sigma.cmp(&b.sigma));
 }
 
-/// Aggregate solved orbit candidates into an exact rational orbit-set result.
-///
-/// This is the certified-output orchestrator. It still uses the f64 solver's
-/// action intervals as a prefilter, but every returned orbit and every candidate
-/// that could affect the requested exact result is checked by the rational KKT
-/// fallback before this function returns.
-pub fn aggregate_certified_orbits(
-    polytope: &Polytope4D,
-    candidates: Vec<OrbitKktData>,
-    iterations: u64,
-    action_gap_exact: BigRational,
-    mode: CertifiedOrbitSetMode,
-) -> Result<CertifiedOrbitSearchResult, OrbitSearchError> {
-    aggregate_certified_orbits_with_dual_vertices_exact(
-        polytope.dual_vertices(),
-        candidates,
-        iterations,
-        action_gap_exact,
-        mode,
-    )
-}
-
 /// Aggregate solved orbit candidates into an exact rational orbit-set result
 /// using flat exact dual vertices for fallback certification.
 ///
@@ -809,14 +773,6 @@ pub fn aggregate_certified_orbits_with_dual_vertices_exact(
     })
 }
 
-pub(crate) fn solve_sigma_stream(
-    polytope: &Polytope4D,
-    backend: OrbitSolveBackend,
-    emit_sigma: impl FnMut(&mut dyn FnMut(&[usize])),
-) -> Result<(Vec<OrbitKktData>, u64), OrbitSearchError> {
-    solve_sigma_stream_with_dual_vertices(polytope.dual_vertices_f64(), backend, emit_sigma)
-}
-
 pub(crate) fn solve_sigma_stream_with_dual_vertices(
     dual_vertices: &[Vector4<f64>],
     backend: OrbitSolveBackend,
@@ -861,26 +817,9 @@ pub(crate) fn solve_sigma_stream_with_dual_vertices(
 /// stronger guarantee than the ordinary `ehz_capacity*` routers should:
 ///
 /// 1. enumerate sigma candidates with the algorithm-specific traversal helper,
-/// 2. solve them with [`solve_orbit_sigma`],
-/// 3. call this function with the chosen `gap` and `mode`.
-pub fn aggregate_orbits(
-    polytope: &Polytope4D,
-    orbits: Vec<OrbitKktData>,
-    iterations: u64,
-    gap: f64,
-    mode: OrbitGuaranteeMode,
-) -> Result<OrbitSearchResult, OrbitSearchError> {
-    aggregate_orbits_with_dual_vertices_exact(
-        polytope.dual_vertices(),
-        orbits,
-        iterations,
-        gap,
-        mode,
-    )
-}
-
-/// Aggregate solved orbit candidates with explicit admissibility guarantees,
-/// using flat exact dual vertices for any exact fallback required by `mode`.
+/// 2. solve them with [`solve_orbit_sigma_with_dual_vertices`],
+/// 3. call this function with flat exact dual vertices for the exact fallback
+///    required by `mode`.
 ///
 /// Input contract: every orbit sigma must index the same ordered facet set as
 /// `dual_vertices_exact`. In the standard f64-then-exact path, the orbits are
