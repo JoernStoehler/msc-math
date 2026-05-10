@@ -24,5 +24,5 @@ pub use polar::{
 pub use predicates::{all_points_are_extreme_exact, origin_in_interior_of_conv_exact};
 pub use volume::{
     facet_volume_and_centroid_from_incidence_f64, facet_volume_from_incidence_f64, volume_f64,
-    volume_from_incidence_f64, VolumeF64,
+    volume_from_incidence_exact, volume_from_incidence_f64, VolumeF64,
 };

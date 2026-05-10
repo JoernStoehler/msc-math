@@ -38,8 +38,8 @@ all future context.
 ## Implemented API
 
 The implemented public API currently covers exact point-set predicates, polar
-vertex enumeration, full-dimensional `f64` volume, and known-incidence facet
-3-volume in ambient `R^4`:
+vertex enumeration, full-dimensional volume, and known-incidence facet 3-volume
+in ambient `R^4`:
 
 ```rust,ignore
 use algebraic_numbers::ExactScalar;
@@ -95,6 +95,11 @@ pub fn volume_from_incidence_f64(
     vertices: &[Vector4<f64>],
     incidence: &DMatrix<bool>,
 ) -> Result<f64, F64GeometryError>;
+
+pub fn volume_from_incidence_exact<T: ExactScalar + 'static>(
+    vertices: &[Vector4<T>],
+    incidence: &DMatrix<bool>,
+) -> T;
 
 pub fn facet_volume_from_incidence_f64(
     vertices: &[Vector4<f64>],
@@ -163,12 +168,19 @@ full-dimensional decomposition assumptions are caller contracts and panic on
 violation. This path is preferred over `volume_f64` for exact-incidence callers,
 because it does not recompute combinatorics from f64 signed gaps.
 
+`volume_from_incidence_exact(vertices, incidence)` computes the same
+full-dimensional `R^4` volume over `T: ExactScalar`. It uses only the vertices
+and known incidence: facet centroids are exact arithmetic means, polygonal
+2-face vertices are ordered from incidence, and each origin-coned 4-simplex
+contributes `abs(det) / 24`. The function does not take dual vertices and does
+not use f64 arithmetic.
+
 `facet_volume_from_incidence_f64(vertices, incidence, facet_index)` and
 `facet_volume_and_centroid_from_incidence_f64(vertices, incidence, facet_index)`
 compute ordinary 3D facet volume, and optionally the volume-weighted facet
 centroid, from the same known vertex-facet incidence convention. They validate
 finite vertex coordinates, assert incidence row shape and facet-index range,
-and do not recover ridge membership from f64 signed gaps. These helpers are the
+and do not recover 2-face membership from f64 signed gaps. These helpers are the
 preferred path for exact-incidence callers such as `symplectic::Polytope4D`.
 
 ## Robust Numeric Split
@@ -211,8 +223,6 @@ fixed here:
 - approximate extreme-point/non-redundancy diagnostics for callers that need
   stable non-extreme witnesses or indeterminate witness subsets rather than
   tolerance guesses;
-- exact full-dimensional volume over the exact scalar type, using the reviewed
-  f64 volume helpers as approximate counterparts;
 - affine-subspace polygon and lower-dimensional volume helpers in ambient
   `R^4`.
 
@@ -239,10 +249,10 @@ flat `Vec<IncidenceF64>`-style relation list if it needs values such as
 `signed_gap`, `signed_gap_abs_error_bound`, or candidate indices.
 
 Lower-dimensional volume is a design target because the full-dimensional volume
-implementation naturally decomposes into facet and ridge measures. The expected
+implementation naturally decomposes into facet and 2-face measures. The expected
 need now has known-incidence 3-faces of 4-polytopes covered; remaining likely
-needs include polygons in affine 2-planes of `R^4`, especially planes cut out
-by equations such as `<x, a> = 1`. The migration should still add the smallest
+needs include polygons in affine 2-planes of `R^4`, especially planes cut out by
+equations such as `<x, a> = 1`. The migration should still add the smallest
 function that the volume decomposition needs, not a general polytope-measure
 framework.
 

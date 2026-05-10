@@ -25,7 +25,8 @@ The implemented packets are in place:
 - `polar_vertices_exact(vertices) -> PolarVertexData<T>`;
 - `polar_vertices_f64(vertices) -> Result<PolarVerticesF64, F64GeometryError>`;
 - `volume_f64(dual_vertices, vertices) -> Result<VolumeF64, F64GeometryError>`;
-- `volume_from_incidence_f64(vertices, incidence) -> Result<f64, F64GeometryError>`.
+- `volume_from_incidence_f64(vertices, incidence) -> Result<f64, F64GeometryError>`;
+- `volume_from_incidence_exact(vertices, incidence) -> T`.
 
 The exact path is the accepted first reusable slice. It checks the
 origin-interior contract, enumerates 4-tuples of active polar inequalities,
@@ -308,10 +309,10 @@ Implemented criteria for this slice:
   derivative checks;
 - docs/tasks use `2-face` terminology for new work.
 
-## Next Slice: Exact Full-Dimensional Volume From Known Incidence
+## Implemented Slice: Exact Full-Dimensional Volume From Known Incidence
 
-The next migration slice should add exact full-dimensional `R^4` volume from
-vertices and known incidence:
+Exact full-dimensional `R^4` volume from vertices and known incidence is
+implemented:
 
 ```rust,ignore
 pub fn volume_from_incidence_exact<T: ExactScalar + 'static>(
@@ -320,17 +321,17 @@ pub fn volume_from_incidence_exact<T: ExactScalar + 'static>(
 ) -> T;
 ```
 
-Do not take dual vertices unless the implementation genuinely needs them. The
-determinant triangulation needs only vertices and incidence. The contract is
-that `incidence[(v, f)]` matches the vertices, the columns are the boundary
-facets of a full-dimensional 4-polytope, and `0` lies in the interior so coning
-facets to `0` decomposes the polytope.
+The helper does not take dual vertices. The determinant triangulation needs
+only vertices and incidence. The contract is that `incidence[(v, f)]` matches
+the vertices, the columns are the boundary facets of a full-dimensional
+4-polytope, and `0` lies in the interior so coning facets to `0` decomposes the
+polytope.
 
-The implementation should reuse incidence-only 2-face ordering, triangulate
-each facet from its vertex mean, cone each triangle to `0`, and sum exact
-4-simplex volumes as `abs(det) / 24`. The result stays in `T`; do not compute
-lower-dimensional Euclidean areas or distances that introduce square-root
-intermediates.
+The implementation reuses incidence-only 2-face ordering, triangulates each
+facet from its exact vertex mean, cones each triangle to `0`, and sums exact
+4-simplex volumes as `abs(det) / 24`. The result stays in `T`; it does not
+compute lower-dimensional Euclidean areas or distances that introduce
+square-root intermediates.
 
 Validated/asserted here:
 
@@ -347,15 +348,15 @@ Not validated here:
 - existence or ordering of dual vertices;
 - `0 in int(K)`.
 
-Done criteria for this slice:
+Implemented criteria for this slice:
 
 - public exact helper is exported and documented in `README.md`;
 - exact tests cover simplex, hypercube, crosspolytope, shape panic, and a
   generated/scaled rational box property where the exact result is known;
-- f64 known-incidence tests still compare against the exact result on rational
-  fixtures where useful;
-- no f64 code is used by the exact computation;
-- `cargo test -p euclidean-polytopes`, clippy, and workspace check pass.
+- f64 known-incidence tests compare against the exact result on rational
+  fixtures;
+- code review confirms the exact computation uses no f64 arithmetic;
+- required verification commands are listed in `tasks/euclidean-polytopes.md`.
 
 ## Test Code and Proposition Comments
 
@@ -481,10 +482,9 @@ operationalization.
    indeterminate candidate reporting instead of tolerance guesses.
 3. Full-dimensional `R^4` volume from `(dual_vertices, vertices)` using
    incidence and the existing origin-star triangulation idea. The `f64` variant
-   can be indeterminate if incidence is tolerance-sensitive; the exact variant
-   should decide incidence exactly and sum exact determinant volumes. Implement
-   the `f64` path first, but keep exact volume as a real target rather than
-   future/YAGNI speculation.
+   can be indeterminate if incidence is tolerance-sensitive. The known-
+   incidence exact variant sums exact determinant volumes without dual
+   vertices.
 4. A minimal affine-plane polygon helper for ordered or orderable
    `Vec<Vector4<f64>>` vertices, driven by the internal needs of the volume
    decomposition rather than only by external consumers asking for area.

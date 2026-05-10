@@ -1,9 +1,11 @@
-//! Full-dimensional `R^4` volume for normalized polar pairs.
+//! Full-dimensional `R^4` volume for normalized polar pairs and known incidence.
 //!
-//! This module keeps the operation flat: callers pass dual facet normals and
-//! primal vertices directly. The duals determine vertex-facet incidence, and
-//! the primal vertices determine Euclidean determinant geometry.
+//! This module keeps the operation flat. Callers with a normalized polar pair
+//! pass dual facet normals and primal vertices directly; callers with reliable
+//! combinatorial data pass primal vertices and vertex-facet incidence directly.
+//! In both cases, primal vertices determine Euclidean determinant geometry.
 
+use algebraic_numbers::ExactScalar;
 use nalgebra::{DMatrix, Matrix4, Vector4};
 
 use crate::f64_geometry::{signed_gap_abs_error_bound, validate_finite_vectors4, F64GeometryError};
@@ -118,12 +120,47 @@ pub fn volume_from_incidence_f64(
     ))
 }
 
+/// Compute exact full-dimensional Euclidean volume from known vertex-facet incidence.
+///
+/// Contract assumptions: `incidence[(v, f)]` is true exactly when
+/// `vertices[v]` lies on facet `f` of a normalized full-dimensional `R^4`
+/// polytope containing the origin. The incidence matrix must have one row per
+/// vertex and one column per facet.
+///
+/// This helper does not take dual vertices and does not recover incidence. It
+/// triangulates each facet from the exact arithmetic mean of its incident
+/// vertices, orders every polygonal 2-face from incidence only, cones the
+/// resulting tetrahedra to the origin, and sums exact determinant volumes.
+///
+/// Shape mismatches and violated full-dimensional decomposition assumptions
+/// panic as programmer errors.
+pub fn volume_from_incidence_exact<T: ExactScalar + 'static>(
+    vertices: &[Vector4<T>],
+    incidence: &DMatrix<bool>,
+) -> T {
+    assert_eq!(
+        incidence.nrows(),
+        vertices.len(),
+        "volume_from_incidence_exact requires incidence rows to match vertices length"
+    );
+    assert!(
+        vertices.len() >= 5,
+        "volume_from_incidence_exact requires at least five vertices for a full-dimensional R^4 polytope"
+    );
+    assert!(
+        incidence.ncols() >= 5,
+        "volume_from_incidence_exact requires at least five facets for a full-dimensional bounded R^4 polytope"
+    );
+
+    origin_star_volume_exact(vertices, incidence, "volume_from_incidence_exact")
+}
+
 /// Compute the ordinary 3D Euclidean volume of one facet from known incidence.
 ///
 /// Use this helper when a caller already has reliable combinatorial incidence,
 /// for example from an exact construction. Unlike [`volume_f64`] and the legacy
-/// raw symplectic facet helpers, this function does not recover facet or ridge
-/// incidence from floating-point signed gaps.
+/// raw symplectic facet helpers, this function does not recover facet or
+/// 2-face incidence from floating-point signed gaps.
 ///
 /// Validated here: every vertex coordinate is finite. Contract assumptions:
 /// `incidence[(v, f)]` is true exactly when `vertices[v]` lies on facet `f` of
@@ -322,6 +359,53 @@ fn origin_star_volume(vertices: &[Vector4<f64>], incidence: &DMatrix<bool>, call
     total
 }
 
+fn origin_star_volume_exact<T: ExactScalar + 'static>(
+    vertices: &[Vector4<T>],
+    incidence: &DMatrix<bool>,
+    caller: &str,
+) -> T {
+    let facet_vertices = facet_vertices_from_incidence(incidence);
+
+    for (facet_index, indices) in facet_vertices.iter().enumerate() {
+        assert!(
+            indices.len() >= 4,
+            "{caller} full-dimensional facet {facet_index} has fewer than four vertices"
+        );
+    }
+
+    let facet_centroids: Vec<Vector4<T>> = facet_vertices
+        .iter()
+        .map(|indices| mean_vertex_exact(vertices, indices))
+        .collect();
+
+    let mut total = T::zero();
+    for (facet_index, facet_centroid) in facet_centroids.iter().enumerate() {
+        for neighbor_index in 0..incidence.ncols() {
+            if facet_index == neighbor_index {
+                continue;
+            }
+
+            let ordered =
+                order_2face_vertices_from_incidence(incidence, facet_index, neighbor_index);
+            if ordered.len() < 3 {
+                continue;
+            }
+
+            for k in 1..ordered.len() - 1 {
+                total += simplex_volume_5_exact(
+                    &Vector4::zeros(),
+                    facet_centroid,
+                    &vertices[ordered[0]],
+                    &vertices[ordered[k]],
+                    &vertices[ordered[k + 1]],
+                );
+            }
+        }
+    }
+
+    total
+}
+
 fn simplex_volume_5(
     v0: Vector4<f64>,
     v1: Vector4<f64>,
@@ -333,6 +417,71 @@ fn simplex_volume_5(
         .determinant()
         .abs()
         / 24.0
+}
+
+fn simplex_volume_5_exact<T: ExactScalar>(
+    v0: &Vector4<T>,
+    v1: &Vector4<T>,
+    v2: &Vector4<T>,
+    v3: &Vector4<T>,
+    v4: &Vector4<T>,
+) -> T {
+    abs_exact(det4_exact(&[
+        vector_sub_exact(v1, v0),
+        vector_sub_exact(v2, v0),
+        vector_sub_exact(v3, v0),
+        vector_sub_exact(v4, v0),
+    ])) / exact_from_usize(24)
+}
+
+fn det4_exact<T: ExactScalar>(columns: &[Vector4<T>; 4]) -> T {
+    let m = |row: usize, col: usize| columns[col][row].clone();
+
+    let minor0 = det3_exact([
+        [m(1, 1), m(1, 2), m(1, 3)],
+        [m(2, 1), m(2, 2), m(2, 3)],
+        [m(3, 1), m(3, 2), m(3, 3)],
+    ]);
+    let minor1 = det3_exact([
+        [m(1, 0), m(1, 2), m(1, 3)],
+        [m(2, 0), m(2, 2), m(2, 3)],
+        [m(3, 0), m(3, 2), m(3, 3)],
+    ]);
+    let minor2 = det3_exact([
+        [m(1, 0), m(1, 1), m(1, 3)],
+        [m(2, 0), m(2, 1), m(2, 3)],
+        [m(3, 0), m(3, 1), m(3, 3)],
+    ]);
+    let minor3 = det3_exact([
+        [m(1, 0), m(1, 1), m(1, 2)],
+        [m(2, 0), m(2, 1), m(2, 2)],
+        [m(3, 0), m(3, 1), m(3, 2)],
+    ]);
+
+    m(0, 0) * minor0 - m(0, 1) * minor1 + m(0, 2) * minor2 - m(0, 3) * minor3
+}
+
+fn det3_exact<T: ExactScalar>(m: [[T; 3]; 3]) -> T {
+    m[0][0].clone() * (m[1][1].clone() * m[2][2].clone() - m[1][2].clone() * m[2][1].clone())
+        - m[0][1].clone() * (m[1][0].clone() * m[2][2].clone() - m[1][2].clone() * m[2][0].clone())
+        + m[0][2].clone() * (m[1][0].clone() * m[2][1].clone() - m[1][1].clone() * m[2][0].clone())
+}
+
+fn vector_sub_exact<T: ExactScalar>(left: &Vector4<T>, right: &Vector4<T>) -> Vector4<T> {
+    Vector4::new(
+        left[0].clone() - right[0].clone(),
+        left[1].clone() - right[1].clone(),
+        left[2].clone() - right[2].clone(),
+        left[3].clone() - right[3].clone(),
+    )
+}
+
+fn abs_exact<T: ExactScalar>(value: T) -> T {
+    if value < T::zero() {
+        -value
+    } else {
+        value
+    }
 }
 
 fn cross_product_4d(a: Vector4<f64>, b: Vector4<f64>, c: Vector4<f64>) -> Vector4<f64> {
@@ -357,6 +506,25 @@ fn mean_vertex(vertices: &[Vector4<f64>], indices: &[usize]) -> Vector4<f64> {
         .map(|&idx| vertices[idx])
         .sum::<Vector4<f64>>()
         / indices.len() as f64
+}
+
+fn mean_vertex_exact<T: ExactScalar + 'static>(
+    vertices: &[Vector4<T>],
+    indices: &[usize],
+) -> Vector4<T> {
+    let mut sum = Vector4::zeros();
+    for &idx in indices {
+        sum += vertices[idx].clone();
+    }
+    sum / exact_from_usize::<T>(indices.len())
+}
+
+fn exact_from_usize<T: ExactScalar>(value: usize) -> T {
+    let mut result = T::zero();
+    for _ in 0..value {
+        result += T::one();
+    }
+    result
 }
 
 fn order_2face_vertices_from_incidence(

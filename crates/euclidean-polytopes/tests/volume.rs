@@ -1,12 +1,47 @@
 use euclidean_polytopes::{
     facet_volume_and_centroid_from_incidence_f64, facet_volume_from_incidence_f64, volume_f64,
-    volume_from_incidence_f64, F64GeometryError, VolumeF64,
+    volume_from_incidence_exact, volume_from_incidence_f64, F64GeometryError, VolumeF64,
 };
 use nalgebra::{DMatrix, Vector4};
+use num_rational::BigRational;
+use num_traits::ToPrimitive;
 use proptest::prelude::*;
+
+type Q = BigRational;
 
 fn vf(entries: [f64; 4]) -> Vector4<f64> {
     Vector4::new(entries[0], entries[1], entries[2], entries[3])
+}
+
+fn q(n: i64) -> Q {
+    Q::from_integer(n.into())
+}
+
+fn qr(numerator: i64, denominator: i64) -> Q {
+    Q::new(numerator.into(), denominator.into())
+}
+
+fn vq(entries: [Q; 4]) -> Vector4<Q> {
+    Vector4::new(
+        entries[0].clone(),
+        entries[1].clone(),
+        entries[2].clone(),
+        entries[3].clone(),
+    )
+}
+
+fn exact_points_to_f64(points: &[Vector4<Q>]) -> Vec<Vector4<f64>> {
+    points
+        .iter()
+        .map(|point| {
+            vf([
+                point[0].to_f64().unwrap(),
+                point[1].to_f64().unwrap(),
+                point[2].to_f64().unwrap(),
+                point[3].to_f64().unwrap(),
+            ])
+        })
+        .collect()
 }
 
 fn centered_simplex() -> (Vec<Vector4<f64>>, Vec<Vector4<f64>>) {
@@ -26,6 +61,16 @@ fn centered_simplex() -> (Vec<Vector4<f64>>, Vec<Vector4<f64>>) {
     ];
 
     (dual_vertices, vertices)
+}
+
+fn centered_simplex_exact() -> Vec<Vector4<Q>> {
+    vec![
+        vq([qr(-1, 5), qr(-1, 5), qr(-1, 5), qr(-1, 5)]),
+        vq([qr(4, 5), qr(-1, 5), qr(-1, 5), qr(-1, 5)]),
+        vq([qr(-1, 5), qr(4, 5), qr(-1, 5), qr(-1, 5)]),
+        vq([qr(-1, 5), qr(-1, 5), qr(4, 5), qr(-1, 5)]),
+        vq([qr(-1, 5), qr(-1, 5), qr(-1, 5), qr(4, 5)]),
+    ]
 }
 
 fn centered_simplex_incidence() -> DMatrix<bool> {
@@ -68,6 +113,33 @@ fn hypercube(scale: f64) -> (Vec<Vector4<f64>>, Vec<Vector4<f64>>) {
     (dual_vertices, vertices)
 }
 
+fn rational_box(scales: [Q; 4]) -> Vec<Vector4<Q>> {
+    let mut vertices = Vec::new();
+    for x0 in [-scales[0].clone(), scales[0].clone()] {
+        for x1 in [-scales[1].clone(), scales[1].clone()] {
+            for x2 in [-scales[2].clone(), scales[2].clone()] {
+                for x3 in [-scales[3].clone(), scales[3].clone()] {
+                    vertices.push(vq([x0.clone(), x1.clone(), x2.clone(), x3.clone()]));
+                }
+            }
+        }
+    }
+    vertices
+}
+
+fn rational_box_incidence(vertices: &[Vector4<Q>], scales: &[Q; 4]) -> DMatrix<bool> {
+    DMatrix::from_fn(vertices.len(), 8, |vertex_index, facet_index| {
+        let coordinate_index = facet_index / 2;
+        let positive_facet = facet_index % 2 == 0;
+        let coordinate = &vertices[vertex_index][coordinate_index];
+        if positive_facet {
+            coordinate == &scales[coordinate_index]
+        } else {
+            coordinate == &-scales[coordinate_index].clone()
+        }
+    })
+}
+
 fn hypercube_incidence(vertices: &[Vector4<f64>], scale: f64) -> DMatrix<bool> {
     DMatrix::from_fn(vertices.len(), 8, |vertex_index, facet_index| {
         let coordinate_index = facet_index / 2;
@@ -107,6 +179,19 @@ fn crosspolytope_radius_2() -> (Vec<Vector4<f64>>, Vec<Vector4<f64>>) {
     (dual_vertices, vertices)
 }
 
+fn crosspolytope_radius_2_exact() -> Vec<Vector4<Q>> {
+    vec![
+        vq([q(2), q(0), q(0), q(0)]),
+        vq([q(-2), q(0), q(0), q(0)]),
+        vq([q(0), q(2), q(0), q(0)]),
+        vq([q(0), q(-2), q(0), q(0)]),
+        vq([q(0), q(0), q(2), q(0)]),
+        vq([q(0), q(0), q(-2), q(0)]),
+        vq([q(0), q(0), q(0), q(2)]),
+        vq([q(0), q(0), q(0), q(-2)]),
+    ]
+}
+
 fn crosspolytope_radius_2_incidence() -> DMatrix<bool> {
     DMatrix::from_fn(8, 16, |vertex_index, facet_index| {
         let coordinate_index = vertex_index / 2;
@@ -127,6 +212,10 @@ fn decided_volume(dual_vertices: &[Vector4<f64>], vertices: &[Vector4<f64>]) -> 
 
 fn known_incidence_volume(vertices: &[Vector4<f64>], incidence: &DMatrix<bool>) -> f64 {
     volume_from_incidence_f64(vertices, incidence).expect("finite input")
+}
+
+fn exact_known_incidence_volume(vertices: &[Vector4<Q>], incidence: &DMatrix<bool>) -> Q {
+    volume_from_incidence_exact(vertices, incidence)
 }
 
 fn assert_close(actual: f64, expected: f64, tolerance: f64) {
@@ -225,6 +314,71 @@ fn known_incidence_volume_matches_fixture_values() {
         32.0 / 3.0,
         1.0e-10,
     );
+}
+
+/// Proposition: exact known vertex-facet incidence determines the ordinary
+/// full-dimensional Euclidean volume by determinant triangulation over the
+/// exact scalar field.
+///
+/// Operationalization: use explicit BigRational incidence fixtures for the
+/// centered simplex, `[-1,1]^4`, and the radius-2 crosspolytope.
+#[test]
+fn exact_known_incidence_volume_matches_fixture_values() {
+    assert_eq!(
+        exact_known_incidence_volume(&centered_simplex_exact(), &centered_simplex_incidence()),
+        qr(1, 24),
+    );
+
+    let scales = [q(1), q(1), q(1), q(1)];
+    let box_vertices = rational_box(scales.clone());
+    assert_eq!(
+        exact_known_incidence_volume(
+            &box_vertices,
+            &rational_box_incidence(&box_vertices, &scales)
+        ),
+        q(16),
+    );
+
+    assert_eq!(
+        exact_known_incidence_volume(
+            &crosspolytope_radius_2_exact(),
+            &crosspolytope_radius_2_incidence()
+        ),
+        qr(32, 3),
+    );
+}
+
+/// Proposition: on rational fixtures whose f64 coordinates are exactly
+/// representable or well-conditioned, the f64 known-incidence volume agrees
+/// with the exact known-incidence determinant sum after conversion to f64.
+///
+/// Operationalization: compare the centered simplex, `[-1,1]^4`, and the
+/// radius-2 crosspolytope. Tolerance is scale-aware and matches the existing
+/// f64 fixture checks.
+#[test]
+fn known_incidence_f64_agrees_with_exact_on_rational_fixtures() {
+    for (exact_vertices, incidence) in [
+        (centered_simplex_exact(), centered_simplex_incidence()),
+        {
+            let scales = [q(1), q(1), q(1), q(1)];
+            let vertices = rational_box(scales.clone());
+            let incidence = rational_box_incidence(&vertices, &scales);
+            (vertices, incidence)
+        },
+        (
+            crosspolytope_radius_2_exact(),
+            crosspolytope_radius_2_incidence(),
+        ),
+    ] {
+        let exact_volume = exact_known_incidence_volume(&exact_vertices, &incidence)
+            .to_f64()
+            .unwrap();
+        let f64_vertices = exact_points_to_f64(&exact_vertices);
+        let f64_volume = known_incidence_volume(&f64_vertices, &incidence);
+        let allowed_error = 1.0e-10_f64.max(1.0e-10 * exact_volume.abs());
+
+        assert_close(f64_volume, exact_volume, allowed_error);
+    }
 }
 
 /// Proposition: exact vertex-facet incidence is sufficient to compute the
@@ -370,6 +524,36 @@ fn recovered_and_known_incidence_volume_paths_agree() {
 
 proptest! {
     #![proptest_config(ProptestConfig::with_cases(16))]
+
+    /// Proposition: for every axis-aligned rational box
+    /// `[-s_0,s_0] x ... x [-s_3,s_3]` with positive scales, exact
+    /// known-incidence volume is `16 * s_0 * s_1 * s_2 * s_3`.
+    ///
+    /// Operationalization: generate four scales
+    /// `s_i = numerator_i / denominator_i` with terms in `1..=8`. The
+    /// incidence matrix is constructed directly from the generated box
+    /// vertices. Cases: 16 generated examples.
+    #[test]
+    fn exact_known_incidence_rational_box_volume_is_product_of_side_lengths(
+        n0 in 1_i64..=8, d0 in 1_i64..=8,
+        n1 in 1_i64..=8, d1 in 1_i64..=8,
+        n2 in 1_i64..=8, d2 in 1_i64..=8,
+        n3 in 1_i64..=8, d3 in 1_i64..=8,
+    ) {
+        let scales = [qr(n0, d0), qr(n1, d1), qr(n2, d2), qr(n3, d3)];
+        let vertices = rational_box(scales.clone());
+        let incidence = rational_box_incidence(&vertices, &scales);
+        let expected = q(16)
+            * scales[0].clone()
+            * scales[1].clone()
+            * scales[2].clone()
+            * scales[3].clone();
+
+        prop_assert_eq!(
+            volume_from_incidence_exact(&vertices, &incidence),
+            expected,
+        );
+    }
 
     /// Proposition: for every full-dimensional normalized polar pair
     /// `(K^circ, K)` with stable f64 incidence, `volume_f64` scales by `s^4`
@@ -530,6 +714,18 @@ fn known_incidence_shape_mismatch_panics() {
     let incidence = DMatrix::from_element(vertices.len() + 1, 8, false);
 
     let _ = volume_from_incidence_f64(&vertices, &incidence);
+}
+
+#[test]
+#[should_panic(
+    expected = "volume_from_incidence_exact requires incidence rows to match vertices length"
+)]
+fn exact_known_incidence_shape_mismatch_panics() {
+    let scales = [q(1), q(1), q(1), q(1)];
+    let vertices = rational_box(scales);
+    let incidence = DMatrix::from_element(vertices.len() + 1, 8, false);
+
+    let _ = volume_from_incidence_exact(&vertices, &incidence);
 }
 
 #[test]
