@@ -202,18 +202,18 @@ Verification witnesses for this slice:
   known expected values;
 - required commands for this slice are tracked in the task file.
 
-## Next Slice: Known-Incidence Facet 3-Volume and Centroid
+## Implemented Slice: Known-Incidence Facet 3-Volume and Centroid
 
-The next migration slice should move ordinary facet 3-volume and centroid
-computation out of `symplectic::geom::facet_volume` for callers that already
-have exact vertex-facet incidence.
+Ordinary facet 3-volume and centroid computation now lives in
+`euclidean-polytopes` for callers that already have exact vertex-facet
+incidence.
 
 Do not recover facet/ridge incidence by checking `|a . v - 1| < EPS` when a
 caller has a `DMatrix<bool>` incidence matrix. `Polytope4D` already stores
 exact incidence, and derivative code should use that data through the
 polytope-level wrapper.
 
-Target helpers:
+Implemented helpers:
 
 ```rust,ignore
 pub fn facet_volume_from_incidence_f64(
@@ -229,23 +229,22 @@ pub fn facet_volume_and_centroid_from_incidence_f64(
 ) -> Result<(f64, Vector4<f64>), F64GeometryError>;
 ```
 
-The exact signature can be adjusted, but the helpers should stay flat and
-operation-specific. Contract: `incidence[(v, f)]` tells whether `vertices[v]`
-lies on facet `f` for a normalized full-dimensional `R^4` polytope containing
-the origin. The helpers validate finite vertices and assert incidence shape.
-They use the target facet's incident vertices, triangulate each ridge
+The helpers are flat and operation-specific. Contract: `incidence[(v, f)]`
+tells whether `vertices[v]` lies on facet `f` for a normalized
+full-dimensional `R^4` polytope containing the origin. The helpers validate
+finite vertices and assert incidence row shape and facet-index range. They use
+the target facet's incident vertices, triangulate each ridge
 `facet_index ∩ neighbor_index`, and compute 3-dimensional tetrahedron volume in
 the facet's affine hyperplane using the ordinary 4D cross product norm.
 
-Then change `symplectic::geom::facet_volume::facet_volume_3d(polytope, facet)`
-and `facet_volume_and_centroid_3d(polytope, facet)` to delegate to the
-Euclidean helpers with `polytope.vertices_f64()` and `polytope.incidence()`.
-Update `volume_derivatives_a` to use the polytope-level centroid helper so it
-benefits from exact incidence. Keep the existing raw dual/vertex functions if
-needed for source compatibility, but they should not be the path used by
-`Polytope4D` callers.
+`symplectic::geom::facet_volume::facet_volume_3d(polytope, facet)` and
+`facet_volume_and_centroid_3d(polytope, facet)` delegate to the Euclidean
+helpers with `polytope.vertices_f64()` and `polytope.incidence()`.
+`volume_derivatives_a` uses the polytope-level centroid helper and therefore
+benefits from exact incidence. The raw dual/vertex functions remain for source
+compatibility when callers lack incidence.
 
-Done criteria for this slice:
+Implemented criteria for this slice:
 
 - `euclidean-polytopes` exposes known-incidence facet volume and
   volume-plus-centroid helpers with docs that explain when they are preferable
@@ -256,10 +255,8 @@ Done criteria for this slice:
   dual/vertex arrays when a `Polytope4D` is available;
 - tests cover hypercube facet volume, centroid-on-facet for known fixtures,
   divergence-theorem volume reconstruction, non-finite input, shape mismatch,
-  and a symplectic wrapper regression;
-- `cargo test -p euclidean-polytopes`, `cargo test -p symplectic --lib geom::`,
-  `cargo clippy -p euclidean-polytopes --all-targets -- -D warnings`, and
-  `cargo check --workspace` pass.
+  out-of-range facet indices, and a symplectic wrapper regression;
+- verification command results are recorded in the branch handoff.
 
 ## Test Code and Proposition Comments
 
@@ -557,8 +554,9 @@ examples, and migration without solving a current problem.
 
 Affine-subspace volume is primarily determined by the internal decomposition of
 `volume()`, not only by external consumers asking for a volume function. The
-known need includes 3-faces of 4-polytopes and likely polygons in affine
-2-planes of `R^4`, with faces cut out by equations like `<x, a> = 1`.
+known-incidence 3-face need is covered by the facet-volume helpers. The
+remaining likely need is polygons in affine 2-planes of `R^4`, with faces cut
+out by equations like `<x, a> = 1`.
 
 Decision that can still wait: whether the implementation should expose one
 generic `affine_volume(vertices)` or a few concrete helpers such as

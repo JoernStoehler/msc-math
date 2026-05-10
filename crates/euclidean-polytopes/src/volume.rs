@@ -9,6 +9,13 @@ use nalgebra::{DMatrix, Matrix4, Vector4};
 use crate::f64_geometry::{signed_gap_abs_error_bound, validate_finite_vectors4, F64GeometryError};
 use crate::polar::IncidenceF64;
 
+/// Floor for meaningful facet 3-volume in centroid division.
+///
+/// This matches the legacy symplectic facet-volume behavior. A facet whose
+/// accumulated tetrahedron volume is below this floor is reported as zero with
+/// the zero centroid instead of dividing by a numerically meaningless total.
+const EPS_FACET_VOLUME_FLOOR: f64 = 1e-30;
+
 /// Diagnostic result for approximate full-dimensional `R^4` volume.
 ///
 /// `Decided` currently reports only the computed `f64` volume. It deliberately
@@ -110,6 +117,109 @@ pub fn volume_from_incidence_f64(
         &facet_vertices,
         "volume_from_incidence_f64",
     ))
+}
+
+/// Compute the ordinary 3D Euclidean volume of one facet from known incidence.
+///
+/// Use this helper when a caller already has reliable combinatorial incidence,
+/// for example from an exact construction. Unlike [`volume_f64`] and the legacy
+/// raw symplectic facet helpers, this function does not recover facet or ridge
+/// incidence from floating-point signed gaps.
+///
+/// Validated here: every vertex coordinate is finite. Contract assumptions:
+/// `incidence[(v, f)]` is true exactly when `vertices[v]` lies on facet `f` of
+/// a normalized full-dimensional `R^4` polytope containing the origin. The
+/// incidence matrix must have one row per vertex. `facet_index` must be a valid
+/// incidence column.
+///
+/// Shape mismatches, out-of-range facet indices, and violated decomposition
+/// assumptions panic as programmer errors. A facet with fewer than four incident
+/// vertices has zero reported volume.
+pub fn facet_volume_from_incidence_f64(
+    vertices: &[Vector4<f64>],
+    incidence: &DMatrix<bool>,
+    facet_index: usize,
+) -> Result<f64, F64GeometryError> {
+    let (total_volume, _) =
+        facet_volume_centroid_sum_from_incidence(vertices, incidence, facet_index)?;
+    Ok(total_volume)
+}
+
+/// Compute one facet's ordinary 3D volume and volume-weighted centroid.
+///
+/// The facet is decomposed by taking the arithmetic mean of its incident
+/// vertices as apex, ordering each ridge polygon
+/// `facet_index ∩ neighbor_index` in its affine plane, and summing tetrahedron
+/// 3-volumes via the ordinary `R^4` cross-product norm divided by `6`.
+///
+/// The centroid is the volume-weighted average of tetrahedron centroids. If the
+/// accumulated volume is below the local facet-volume floor, this returns
+/// `(0.0, Vector4::zeros())`.
+pub fn facet_volume_and_centroid_from_incidence_f64(
+    vertices: &[Vector4<f64>],
+    incidence: &DMatrix<bool>,
+    facet_index: usize,
+) -> Result<(f64, Vector4<f64>), F64GeometryError> {
+    let (total_volume, weighted_centroid) =
+        facet_volume_centroid_sum_from_incidence(vertices, incidence, facet_index)?;
+
+    if total_volume > EPS_FACET_VOLUME_FLOOR {
+        Ok((total_volume, weighted_centroid / total_volume))
+    } else {
+        Ok((0.0, Vector4::zeros()))
+    }
+}
+
+fn facet_volume_centroid_sum_from_incidence(
+    vertices: &[Vector4<f64>],
+    incidence: &DMatrix<bool>,
+    facet_index: usize,
+) -> Result<(f64, Vector4<f64>), F64GeometryError> {
+    assert_eq!(
+        incidence.nrows(),
+        vertices.len(),
+        "known-incidence facet helpers require incidence rows to match vertices length"
+    );
+    assert!(
+        facet_index < incidence.ncols(),
+        "known-incidence facet helpers require facet_index to be a valid incidence column"
+    );
+    validate_finite_vectors4("vertices", vertices)?;
+
+    let facet_vertices = facet_vertices_from_incidence(incidence);
+    let target_vertices = &facet_vertices[facet_index];
+    if target_vertices.len() < 4 {
+        return Ok((0.0, Vector4::zeros()));
+    }
+
+    let apex = mean_vertex(vertices, target_vertices);
+    let mut total_volume = 0.0;
+    let mut weighted_centroid = Vector4::zeros();
+
+    for (neighbor_index, neighbor_vertices) in facet_vertices.iter().enumerate() {
+        if neighbor_index == facet_index {
+            continue;
+        }
+
+        let ridge = intersect_sorted(target_vertices, neighbor_vertices);
+        if ridge.len() < 3 {
+            continue;
+        }
+
+        let ordered = order_polygon_vertex_indices(vertices, &ridge);
+        for k in 1..ordered.len() - 1 {
+            let a = vertices[ordered[0]];
+            let b = vertices[ordered[k]];
+            let c = vertices[ordered[k + 1]];
+            let tetrahedron_volume = cross_product_4d(a - apex, b - apex, c - apex).norm() / 6.0;
+            let tetrahedron_centroid = (apex + a + b + c) / 4.0;
+
+            total_volume += tetrahedron_volume;
+            weighted_centroid += tetrahedron_volume * tetrahedron_centroid;
+        }
+    }
+
+    Ok((total_volume, weighted_centroid))
 }
 
 #[derive(Clone, Debug)]
@@ -230,6 +340,22 @@ fn simplex_volume_5(
         .determinant()
         .abs()
         / 24.0
+}
+
+fn cross_product_4d(a: Vector4<f64>, b: Vector4<f64>, c: Vector4<f64>) -> Vector4<f64> {
+    let bc_01 = b[0] * c[1] - b[1] * c[0];
+    let bc_02 = b[0] * c[2] - b[2] * c[0];
+    let bc_03 = b[0] * c[3] - b[3] * c[0];
+    let bc_12 = b[1] * c[2] - b[2] * c[1];
+    let bc_13 = b[1] * c[3] - b[3] * c[1];
+    let bc_23 = b[2] * c[3] - b[3] * c[2];
+
+    Vector4::new(
+        a[1] * bc_23 - a[2] * bc_13 + a[3] * bc_12,
+        -(a[0] * bc_23 - a[2] * bc_03 + a[3] * bc_02),
+        a[0] * bc_13 - a[1] * bc_03 + a[3] * bc_01,
+        -(a[0] * bc_12 - a[1] * bc_02 + a[2] * bc_01),
+    )
 }
 
 fn mean_vertex(vertices: &[Vector4<f64>], indices: &[usize]) -> Vector4<f64> {

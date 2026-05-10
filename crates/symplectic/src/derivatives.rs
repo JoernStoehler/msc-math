@@ -16,7 +16,7 @@
 //! `formal/capacity-derivatives.tex`.
 
 use crate::algorithms::OrbitKktData;
-use crate::geom::facet_volume::facet_volume_and_centroid_3d_raw;
+use crate::geom::facet_volume::facet_volume_and_centroid_3d;
 use crate::geom::polytope::Polytope4D;
 use crate::geom::symplectic_form::j4;
 use crate::geom::volume::volume;
@@ -212,7 +212,6 @@ pub fn sys_subgradients_a(
 ///   ∂n_k/∂a_k = (I − n_k n_k^T) / |a_k|
 pub fn volume_derivatives_a(polytope: &Polytope4D) -> OrbitGradientA {
     let duals = polytope.dual_vertices_f64();
-    let vertices = polytope.vertices_f64();
     let f = polytope.facet_count();
 
     (0..f)
@@ -222,7 +221,7 @@ pub fn volume_derivatives_a(polytope: &Polytope4D) -> OrbitGradientA {
             let n = a / a_norm;
             let h = 1.0 / a_norm;
 
-            let (s_k, centroid_k) = facet_volume_and_centroid_3d_raw(duals, vertices, k);
+            let (s_k, centroid_k) = facet_volume_and_centroid_3d(polytope, k);
             if s_k < crate::geom::facet_volume::EPS_VOLUME_FLOOR {
                 return Vector4::zeros();
             }

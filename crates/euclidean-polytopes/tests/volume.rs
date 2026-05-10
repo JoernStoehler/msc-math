@@ -1,4 +1,7 @@
-use euclidean_polytopes::{volume_f64, volume_from_incidence_f64, F64GeometryError, VolumeF64};
+use euclidean_polytopes::{
+    facet_volume_and_centroid_from_incidence_f64, facet_volume_from_incidence_f64, volume_f64,
+    volume_from_incidence_f64, F64GeometryError, VolumeF64,
+};
 use nalgebra::{DMatrix, Vector4};
 use proptest::prelude::*;
 
@@ -133,6 +136,13 @@ fn assert_close(actual: f64, expected: f64, tolerance: f64) {
     );
 }
 
+fn assert_vector_close(actual: Vector4<f64>, expected: Vector4<f64>, tolerance: f64) {
+    assert!(
+        (actual - expected).norm() <= tolerance,
+        "got {actual:?}, expected {expected:?}"
+    );
+}
+
 fn permute_by_stride<T: Clone>(values: &[T], stride: usize) -> Vec<T> {
     assert_eq!(
         gcd(values.len(), stride),
@@ -215,6 +225,123 @@ fn known_incidence_volume_matches_fixture_values() {
         32.0 / 3.0,
         1.0e-10,
     );
+}
+
+/// Proposition: exact vertex-facet incidence is sufficient to compute the
+/// ordinary 3D volume of a facet without recovering incidence from f64 signed
+/// gaps.
+///
+/// Operationalization: every facet of `[-1,1]^4` is a 3-cube with volume `8`.
+#[test]
+fn known_incidence_hypercube_facet_volume_is_8() {
+    let (_, vertices) = hypercube(1.0);
+    let incidence = hypercube_incidence(&vertices, 1.0);
+
+    for facet_index in 0..incidence.ncols() {
+        let volume = facet_volume_from_incidence_f64(&vertices, &incidence, facet_index)
+            .expect("finite input");
+        assert_close(volume, 8.0, 1.0e-10);
+    }
+}
+
+#[test]
+fn known_incidence_hypercube_facet_centroids_are_face_centers() {
+    let (_, vertices) = hypercube(1.0);
+    let incidence = hypercube_incidence(&vertices, 1.0);
+
+    for facet_index in 0..incidence.ncols() {
+        let (volume, centroid) =
+            facet_volume_and_centroid_from_incidence_f64(&vertices, &incidence, facet_index)
+                .expect("finite input");
+        let coordinate_index = facet_index / 2;
+        let expected_sign = if facet_index % 2 == 0 { 1.0 } else { -1.0 };
+        let mut expected = Vector4::zeros();
+        expected[coordinate_index] = expected_sign;
+
+        assert_close(volume, 8.0, 1.0e-10);
+        assert_vector_close(centroid, expected, 1.0e-12);
+    }
+}
+
+#[test]
+fn known_incidence_volume_only_does_not_apply_centroid_floor() {
+    let epsilon = 1.0e-31;
+    let vertices = vec![
+        vf([0.0, 0.0, 0.0, 0.0]),
+        vf([1.0, 0.0, 0.0, 0.0]),
+        vf([0.0, 1.0, 0.0, 0.0]),
+        vf([1.0, 1.0, epsilon, 0.0]),
+        vf([0.0, 0.0, 0.0, 1.0]),
+    ];
+    let incidence = DMatrix::from_fn(5, 5, |vertex_index, facet_index| {
+        if facet_index == 0 {
+            vertex_index < 4
+        } else if vertex_index < 4 {
+            vertex_index != facet_index - 1
+        } else {
+            true
+        }
+    });
+
+    let volume = facet_volume_from_incidence_f64(&vertices, &incidence, 0).expect("finite input");
+    let (centroid_volume, centroid) =
+        facet_volume_and_centroid_from_incidence_f64(&vertices, &incidence, 0)
+            .expect("finite input");
+
+    assert_close(volume, epsilon / 6.0, 1.0e-40);
+    assert_eq!(centroid_volume, 0.0);
+    assert_eq!(centroid, Vector4::zeros());
+}
+
+#[test]
+fn known_incidence_crosspolytope_facet_centroids_lie_on_facets() {
+    let (dual_vertices, vertices) = crosspolytope_radius_2();
+    let incidence = crosspolytope_radius_2_incidence();
+
+    for (facet_index, dual) in dual_vertices.iter().enumerate() {
+        let (volume, centroid) =
+            facet_volume_and_centroid_from_incidence_f64(&vertices, &incidence, facet_index)
+                .expect("finite input");
+
+        assert!(
+            volume > 0.0,
+            "facet {facet_index} should have positive volume"
+        );
+        assert_close(dual.dot(&centroid), 1.0, 1.0e-10);
+    }
+}
+
+/// Proposition: facet 3-volumes and known-incidence full 4-volume satisfy the
+/// normalized support-function divergence theorem
+/// `vol(K) = (1/4) sum_i S_i / ||a_i||`.
+#[test]
+fn known_incidence_facet_volumes_reconstruct_full_volume() {
+    for (dual_vertices, vertices, incidence) in [
+        {
+            let (dual_vertices, vertices) = hypercube(1.0);
+            let incidence = hypercube_incidence(&vertices, 1.0);
+            (dual_vertices, vertices, incidence)
+        },
+        {
+            let (dual_vertices, vertices) = crosspolytope_radius_2();
+            (dual_vertices, vertices, crosspolytope_radius_2_incidence())
+        },
+    ] {
+        let volume =
+            volume_from_incidence_f64(&vertices, &incidence).expect("known-incidence volume");
+        let volume_from_facets = (0..incidence.ncols())
+            .map(|facet_index| {
+                let facet_volume =
+                    facet_volume_from_incidence_f64(&vertices, &incidence, facet_index)
+                        .expect("known-incidence facet volume");
+                facet_volume / dual_vertices[facet_index].norm()
+            })
+            .sum::<f64>()
+            / 4.0;
+
+        let allowed_error = 1.0e-10_f64.max(1.0e-10 * volume.abs());
+        assert_close(volume_from_facets, volume, allowed_error);
+    }
 }
 
 #[test]
@@ -372,6 +499,29 @@ fn known_incidence_non_finite_input_returns_geometry_error() {
 }
 
 #[test]
+fn known_incidence_facet_non_finite_input_returns_geometry_error() {
+    let (_, mut vertices) = hypercube(1.0);
+    vertices[3][2] = f64::NAN;
+    let incidence = hypercube_incidence(&vertices, 1.0);
+
+    let error = facet_volume_from_incidence_f64(&vertices, &incidence, 0)
+        .expect_err("non-finite coordinate");
+
+    assert!(
+        matches!(
+            error,
+            F64GeometryError::NonFiniteCoordinate {
+                vector_role: "vertices",
+                vector_index: 3,
+                coordinate_index: 2,
+                value,
+            } if value.is_nan()
+        ),
+        "unexpected error: {error:?}"
+    );
+}
+
+#[test]
 #[should_panic(
     expected = "volume_from_incidence_f64 requires incidence rows to match vertices length"
 )]
@@ -380,6 +530,28 @@ fn known_incidence_shape_mismatch_panics() {
     let incidence = DMatrix::from_element(vertices.len() + 1, 8, false);
 
     let _ = volume_from_incidence_f64(&vertices, &incidence);
+}
+
+#[test]
+#[should_panic(
+    expected = "known-incidence facet helpers require incidence rows to match vertices length"
+)]
+fn known_incidence_facet_shape_mismatch_panics() {
+    let (_, vertices) = hypercube(1.0);
+    let incidence = DMatrix::from_element(vertices.len() + 1, 8, false);
+
+    let _ = facet_volume_from_incidence_f64(&vertices, &incidence, 0);
+}
+
+#[test]
+#[should_panic(
+    expected = "known-incidence facet helpers require facet_index to be a valid incidence column"
+)]
+fn known_incidence_facet_out_of_range_panics() {
+    let (_, vertices) = hypercube(1.0);
+    let incidence = hypercube_incidence(&vertices, 1.0);
+
+    let _ = facet_volume_from_incidence_f64(&vertices, &incidence, incidence.ncols());
 }
 
 #[test]

@@ -38,7 +38,8 @@ all future context.
 ## Implemented API
 
 The implemented public API currently covers exact point-set predicates, polar
-vertex enumeration, and full-dimensional `f64` volume in ambient `R^4`:
+vertex enumeration, full-dimensional `f64` volume, and known-incidence facet
+3-volume in ambient `R^4`:
 
 ```rust,ignore
 use algebraic_numbers::ExactScalar;
@@ -95,6 +96,18 @@ pub fn volume_from_incidence_f64(
     incidence: &DMatrix<bool>,
 ) -> Result<f64, F64GeometryError>;
 
+pub fn facet_volume_from_incidence_f64(
+    vertices: &[Vector4<f64>],
+    incidence: &DMatrix<bool>,
+    facet_index: usize,
+) -> Result<f64, F64GeometryError>;
+
+pub fn facet_volume_and_centroid_from_incidence_f64(
+    vertices: &[Vector4<f64>],
+    incidence: &DMatrix<bool>,
+    facet_index: usize,
+) -> Result<(f64, Vector4<f64>), F64GeometryError>;
+
 pub enum VolumeF64 {
     Decided {
         volume: f64,
@@ -149,6 +162,14 @@ The helper validates finite vertex coordinates. Incidence row/column shape and
 full-dimensional decomposition assumptions are caller contracts and panic on
 violation. This path is preferred over `volume_f64` for exact-incidence callers,
 because it does not recompute combinatorics from f64 signed gaps.
+
+`facet_volume_from_incidence_f64(vertices, incidence, facet_index)` and
+`facet_volume_and_centroid_from_incidence_f64(vertices, incidence, facet_index)`
+compute ordinary 3D facet volume, and optionally the volume-weighted facet
+centroid, from the same known vertex-facet incidence convention. They validate
+finite vertex coordinates, assert incidence row shape and facet-index range,
+and do not recover ridge membership from f64 signed gaps. These helpers are the
+preferred path for exact-incidence callers such as `symplectic::Polytope4D`.
 
 ## Robust Numeric Split
 
@@ -219,10 +240,11 @@ flat `Vec<IncidenceF64>`-style relation list if it needs values such as
 
 Lower-dimensional volume is a design target because the full-dimensional volume
 implementation naturally decomposes into facet and ridge measures. The expected
-need includes 3-faces of 4-polytopes and polygons in affine 2-planes of `R^4`,
-especially planes cut out by equations such as `<x, a> = 1`. The migration
-should still add the smallest function that the volume decomposition needs, not
-a general polytope-measure framework.
+need now has known-incidence 3-faces of 4-polytopes covered; remaining likely
+needs include polygons in affine 2-planes of `R^4`, especially planes cut out
+by equations such as `<x, a> = 1`. The migration should still add the smallest
+function that the volume decomposition needs, not a general polytope-measure
+framework.
 
 ## Contracts
 

@@ -13,6 +13,9 @@
 use crate::geom::cross_product_4d::cross_product_4d;
 use crate::geom::polygon_order::sort_polygon_order;
 use crate::geom::polytope::Polytope4D;
+use euclidean_polytopes::{
+    facet_volume_and_centroid_from_incidence_f64, facet_volume_from_incidence_f64,
+};
 use nalgebra::Vector4;
 
 /// Tolerance for vertex-on-facet incidence test: |a·v − 1| < EPS.
@@ -48,10 +51,8 @@ fn sort_polygon_vertices(vertices: &[Vector4<f64>]) -> Vec<Vector4<f64>> {
 ///
 /// Used for volume derivatives: ∂vol(K)/∂a_k uses facet_volume_3d(K, k).
 pub fn facet_volume_3d(polytope: &Polytope4D, facet_idx: usize) -> f64 {
-    let duals = polytope.dual_vertices_f64();
-    let vertices = polytope.vertices_f64();
-
-    facet_volume_3d_raw(duals, vertices, facet_idx)
+    facet_volume_from_incidence_f64(polytope.vertices_f64(), polytope.incidence(), facet_idx)
+        .expect("valid Polytope4D has finite f64 vertices and matching incidence")
 }
 
 /// Compute the 3D volume and area-weighted centroid of facet `facet_idx`.
@@ -63,10 +64,12 @@ pub fn facet_volume_and_centroid_3d(
     polytope: &Polytope4D,
     facet_idx: usize,
 ) -> (f64, Vector4<f64>) {
-    let duals = polytope.dual_vertices_f64();
-    let vertices = polytope.vertices_f64();
-
-    facet_volume_and_centroid_3d_raw(duals, vertices, facet_idx)
+    facet_volume_and_centroid_from_incidence_f64(
+        polytope.vertices_f64(),
+        polytope.incidence(),
+        facet_idx,
+    )
+    .expect("valid Polytope4D has finite f64 vertices and matching incidence")
 }
 
 /// Raw version of `facet_volume_3d` operating on slices.
@@ -165,6 +168,7 @@ fn for_each_facet_ridge_triangle(
 mod tests {
     use super::*;
     use crate::geom::known_polytopes;
+    use euclidean_polytopes::facet_volume_and_centroid_from_incidence_f64;
 
     // Tests for facet volume: per-facet 3D volumes of 4D polytope facets.
     //
@@ -252,5 +256,43 @@ mod tests {
             (vol_from_facets - vol_qhull).abs() / vol_qhull < 1e-4,
             "facet sum = {vol_from_facets}, qhull = {vol_qhull}"
         );
+    }
+
+    /// Wiring regression: the polytope-level facet wrapper delegates through
+    /// the Euclidean known-incidence helper on valid `Polytope4D` fixtures.
+    ///
+    /// Mathematical correctness is covered by the exact-value and divergence
+    /// tests above; this test protects the cross-crate migration boundary.
+    #[test]
+    fn facet_wrapper_matches_euclidean_known_incidence_helper() {
+        for kp in known_polytopes::all_known() {
+            let polytope = &kp.polytope;
+            for facet_index in 0..polytope.facet_count() {
+                let wrapper = facet_volume_and_centroid_3d(polytope, facet_index);
+                let euclidean = facet_volume_and_centroid_from_incidence_f64(
+                    polytope.vertices_f64(),
+                    polytope.incidence(),
+                    facet_index,
+                )
+                .expect("valid Polytope4D fixture");
+                let volume_error = (wrapper.0 - euclidean.0).abs();
+                let centroid_error = (wrapper.1 - euclidean.1).norm();
+
+                assert!(
+                    volume_error <= 1.0e-10_f64.max(1.0e-10 * euclidean.0.abs()),
+                    "{} facet {facet_index}: wrapper volume = {}, euclidean volume = {}",
+                    kp.name,
+                    wrapper.0,
+                    euclidean.0
+                );
+                assert!(
+                    centroid_error <= 1.0e-10,
+                    "{} facet {facet_index}: wrapper centroid = {:?}, euclidean centroid = {:?}",
+                    kp.name,
+                    wrapper.1,
+                    euclidean.1
+                );
+            }
+        }
     }
 }
