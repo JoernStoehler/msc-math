@@ -74,6 +74,7 @@ justify calendar delay and Jorn-time cost.
 | Hostile landscape | negative sys-search story and data-science evidence | `tasks/landscape.md` |
 | Numerics | numerical appendix, solver/projection/beta-LP state | `tasks/numerics.md` |
 | Reproducibility | data freshness, artifact truth, repo promises | `tasks/reproducibility.md` |
+| Euclidean polytopes | migration plan for ordinary convex-polytope geometry currently entangled with symplectic code | `tasks/euclidean-polytopes.md` |
 | Rust tech debt | Rust cleanup packets that affect agent velocity, experiment safety, validation trust, or durable crate maintainability | `tasks/rust-tech-debt.md` |
 | Infrastructure | agent/harness/repo-maintenance work, including current review-reliability/task-tree follow-up, and future SWE polish | `tasks/infrastructure.md` |
 

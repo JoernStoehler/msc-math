@@ -495,6 +495,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "euclidean-polytopes"
+version = "0.1.0"
+dependencies = [
+ "algebraic-numbers",
+ "nalgebra",
+ "num-traits",
+]
+
+[[package]]
 name = "exp-combinatorial-cells"
 version = "0.1.0"
 dependencies = [

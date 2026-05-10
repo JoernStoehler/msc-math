@@ -19,8 +19,9 @@ Map maintenance:
 
 - State: split from the old root `ARCHITECTURE.md`.
 - Last updated: 2026-05-09.
-- Source surfaces: `crates/**/src/`, `crates/**/README.md`, `formal/`, crate
-  manifests, and local crate tests.
+- Source surfaces: `crates/**/src/`, `crates/**/README.md`,
+  `crates/**/DEVELOPMENT.md`, `formal/`, crate manifests, and local crate
+  tests.
 - Refresh when: crate module boundaries, public reexports, persistence
   contracts, or exact/floating representation boundaries change.
 
@@ -41,6 +42,7 @@ Map maintenance:
 | --- | --- | --- |
 | `crates/symplectic/` | main symplectic geometry crate for 4D convex polytopes, capacity algorithms, KKT solvers, persistence helpers, derivatives, sampling, and known polytope constructors | `crates/symplectic/src/lib.rs`, `crates/symplectic/README.md` |
 | `crates/algebraic-numbers/` | exact scalar arithmetic over `Q` and statically chosen real algebraic extensions, plus dense generic exact linear algebra | `crates/algebraic-numbers/src/lib.rs`, `crates/algebraic-numbers/README.md` |
+| `crates/euclidean-polytopes/` | scaffolded target crate for ordinary convex-polytope geometry in ambient `R^4`; intended to receive non-symplectic geometry currently living under `symplectic::geom` | `crates/euclidean-polytopes/README.md`, `crates/euclidean-polytopes/DEVELOPMENT.md`, `tasks/euclidean-polytopes.md` |
 
 ## Symplectic Subsystems
 
@@ -102,6 +104,7 @@ formula is blocked and it is not a supported experiment entrypoint.
 | simple public | short root reexports and preset routers in `crates/symplectic/src/lib.rs` | `symplectic::ehz_capacity`, `symplectic::ehz_capacity_pruned`, `symplectic::ehz_capacity_unpruned`, `symplectic::ehz_capacity_billiard`, `symplectic::OrbitSearchResult`, `symplectic::Polytope4D`, `symplectic::Skeleton`, `symplectic::known_polytopes`, `symplectic::volume`, `symplectic::omega0`, `symplectic::lagrangian_product`, `symplectic::regular_polygon_2d`, `symplectic::rotate_polygon_2d` |
 | expert public | deeper modules and building blocks used by experiments that need non-default control | `symplectic::database`, `symplectic::dataset`, `symplectic::random`, `symplectic::derivatives`, `symplectic::exact`, `symplectic::algorithms::solve_orbit_sigma`, `symplectic::algorithms::aggregate_orbits`, `symplectic::algorithms::hk2017`, `symplectic::algorithms::billiard`, `symplectic::kkt::saddle_point_solver`, `symplectic::algorithms::facet_adjacency` |
 | exact scalar public | root reexports in `crates/algebraic-numbers/src/lib.rs` | `algebraic_numbers::Algebraic`, `algebraic_numbers::RealAlgebraicField`, `algebraic_numbers::ExactScalar`, `algebraic_numbers::row_reduction`, `algebraic_numbers::rank`, `algebraic_numbers::kernel_basis`, `algebraic_numbers::solve_linear_system`, `algebraic_numbers::LinearSystemSolution`, `algebraic_numbers::is_negative_definite` |
+| Euclidean polytopes target | currently docs-only scaffold; proposed public surface is flat functions over `Vector4<T>` for ordinary convex geometry | `crates/euclidean-polytopes/README.md`, `crates/euclidean-polytopes/DEVELOPMENT.md` |
 | unclear | public paths whose long-term experiment-facing status is not explicit | `symplectic::algorithms::hk2017::orbit_recovery`, `symplectic::algorithms::billiard::facet_classification`, `symplectic::kkt::qp_assembly::build_augmented_system`, `symplectic::geom::qhull` |
 | accidental internal | public-in-practice helpers that experiments currently reach through | `symplectic::algorithms::hk2017::permutations::for_each_cyclic_permutation` |
 

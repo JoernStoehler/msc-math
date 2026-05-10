@@ -2,6 +2,7 @@
 members = [
     "crates/symplectic",
     "crates/algebraic-numbers",
+    "crates/euclidean-polytopes",
     "experiments/hko-local-maximum",
     "experiments/sys-landscape",
     "experiments/sys-landscape/gradient-ascent-dev",
@@ -32,6 +33,7 @@ tempfile = "3"
 wait-timeout = "0.2"
 good_lp = { version = "1.15", default-features = false, features = ["clarabel"] }
 algebraic-numbers = { path = "crates/algebraic-numbers" }
+euclidean-polytopes = { path = "crates/euclidean-polytopes" }
 proptest = "1"
 rstest = "0.23"
 approx = "0.5"
