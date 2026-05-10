@@ -104,6 +104,7 @@ modules, which makes non-symplectic helpers harder to reuse and review.
 | Crate scaffold and API target | `[active]` | mainline thesis | agents, Jorn for API taste close calls | Review `README.md` and `DEVELOPMENT.md`; decide whether the flat-input/no-public-wrapper direction is accepted for the first migration. | `crates/euclidean-polytopes/README.md`, `crates/euclidean-polytopes/DEVELOPMENT.md` |
 | Robust floating/exact architecture | `[active]` | mainline thesis | agents | Define flat approximate return shapes with semantic names, `_abs_error_bound` fields, and operation-specific indeterminate diagnostics. Exact predicates return `bool` and may resolve f64 indeterminate diagnostic candidates exactly. | `crates/euclidean-polytopes/README.md`, `crates/euclidean-polytopes/DEVELOPMENT.md` |
 | Polar vertex enumeration plus validation dependencies | `[implemented first slice]` | mainline thesis | agents | Review and integrate current `euclidean-polytopes` public API into callers when a migration packet needs it. Exact polar enumeration and exact origin-in-interior are implemented; the current `f64` path is diagnostic and reports indeterminate candidates instead of guessing. | `crates/euclidean-polytopes/src/polar.rs`, `crates/euclidean-polytopes/src/predicates.rs`, `crates/euclidean-polytopes/tests/polar_vertices.rs` |
+| Extreme-point / non-redundant point-set predicate | `[next slice]` | mainline thesis | agents | Implement `all_points_are_extreme_exact(points)` for arbitrary point sets in ambient `R^4`; add the matching f64 diagnostic only if its return shape stays flat and useful. Use fixture tests first, then property tests for generated convex combinations. | `crates/euclidean-polytopes/DEVELOPMENT.md` |
 | Full-dimensional volume | `[active]` | mainline thesis | agents | Factor ordinary `R^4` volume away from `Polytope4D`; implement f64 volume first, keep exact volume as a real target, and expose f64 indeterminate incidence entries when incidence is tolerance-sensitive. | `crates/symplectic/src/geom/volume.rs` |
 | Affine-subspace polygons and volume | `[active]` | mainline thesis | agents, Jorn only if generic-vs-specific API affects thesis callers | Let the internal volume decomposition determine the first affine-subspace helper shape; likely needs 3-face measures of 4-polytopes and polygon area in affine 2-planes of `R^4`. | `crates/symplectic/src/geom/volume.rs`, `crates/symplectic/src/geom/polygon.rs` |
 | Symplectic integration cleanup | `[active]` | mainline thesis | agents | After each migrated slice, keep `symplectic` as the owner of symplectic form, capacity, KKT, omega signs, Reeb-direction adjacency, and experiment-facing wrappers only. | `crates/symplectic/src/geom/`, `crates/symplectic/src/algorithms/` |
@@ -121,6 +122,13 @@ The migration task is done when:
   points, bad `0 in int conv` contract panics, exact deduplication, non-finite
   f64 input, and a near-boundary f64 case that returns indeterminate instead of
   guessing;
+- the extreme-point predicate slice has fixture tests for simplex/cube vertices
+  returning `true`, exact duplicates returning `false`, an interior point in a
+  simplex returning `false`, and lower-dimensional polygon vertices in `R^4`
+  returning `true`;
+- the same slice has at least one property test that constructs a point as a
+  convex combination of generated exact points and checks that adding it makes
+  `all_points_are_extreme_exact` return `false`;
 - workspace commands pass:
   `cargo test -p euclidean-polytopes`,
   `cargo clippy -p euclidean-polytopes --all-targets -- -D warnings`, and

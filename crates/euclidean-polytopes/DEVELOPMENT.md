@@ -41,6 +41,49 @@ Do not add broad public API only because it is mathematically natural. Add a
 function when a current migration caller needs it or when it removes duplicated
 existing code.
 
+## Next Slice: Extreme-Point Predicate
+
+The next implementation slice should add the point-set non-redundancy check:
+every input point is an extremum of the convex hull of the full input set.
+
+This is the right next slice before volume because it is small, already named
+as a separate validation boundary, and avoids mixing a basic point-set contract
+with the larger volume decomposition API.
+
+Target exact API:
+
+```rust,ignore
+pub fn all_points_are_extreme_exact<T: ExactScalar + 'static>(
+    points: &[Vector4<T>],
+) -> bool;
+```
+
+Definition: return `true` iff for every index `i`, `points[i]` is not contained
+in `conv(points without i)`. Duplicate exact points make the answer `false`.
+The predicate should work for lower-dimensional point sets as well as
+full-dimensional point sets in ambient `R^4`; for example, the vertices of a
+polygon in an affine plane of `R^4` can all be extreme.
+
+Use Caratheodory in ambient `R^4`: if `points[i]` lies in the convex hull of
+the other points, there is a witness subset of at most five other points. The
+exact implementation can enumerate subsets of size `1..=5`, solve the affine
+barycentric system exactly, and accept a witness when all barycentric
+coordinates are nonnegative. Keep helper functions local and concrete unless
+they are clearly reused by another public operation.
+
+The matching `f64` diagnostic API should be added in the same slice only if the
+shape stays simple. It should prove `false` as soon as it has a stable
+convex-combination witness for one non-extreme point. It should prove `true`
+only after ruling out every relevant witness subset for every point. Otherwise
+it should return the candidate subsets whose classification is indeterminate,
+grouped by the tested point. Use names such as `barycentric_abs_error_bound`
+instead of `_error`.
+
+Do not introduce a public `ExtremePointSet` wrapper or generic
+true/false/indeterminate abstraction for this slice. A flat output record for
+the `f64` diagnostics is acceptable if a tuple would hide the meaning of the
+payload.
+
 ## Proposed First Migration Slices
 
 1. `polar_vertices_exact(vertices)` plus the validation and helper operations it

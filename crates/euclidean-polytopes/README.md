@@ -140,7 +140,11 @@ fixed here:
 - approximate origin-interior diagnostics with all candidate 5-sets that may
   contain zero;
 - exact and approximate extreme-point/non-redundancy predicates for callers
-  that need the stronger input-list contract;
+  that need the stronger input-list contract. The exact predicate should answer
+  whether every input point is an extremum of `conv(points)`, including
+  lower-dimensional point sets in ambient `R^4`. The approximate predicate
+  should report stable non-extreme witnesses or indeterminate witness subsets
+  rather than guessing from tolerances;
 - full-dimensional volume from a polar pair, using dual vertices for incidence
   and primal vertices for Euclidean geometry;
 - affine-subspace polygon and lower-dimensional volume helpers in ambient
