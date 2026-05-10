@@ -31,10 +31,11 @@ use exp_sys_landscape::{
 use nalgebra::Vector4;
 use num_rational::BigRational;
 mod rows;
-use rows::{GradientAscentRow, ResultRow};
+use exp_sys_landscape::euclidean_volume_f64;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use rand_distr::{Distribution, StandardNormal};
+use rows::{GradientAscentRow, ResultRow};
 use std::collections::{HashMap, HashSet};
 use std::fs::{File, OpenOptions};
 use std::io::{BufRead, BufReader, BufWriter, Write};
@@ -44,7 +45,6 @@ use symplectic::database::{load, save, DualVerticesKey, PolytopeRecord, SigmaAct
 use symplectic::derivatives::{capacity_derivatives_a_from_kkt_result, volume_derivatives_a};
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::skeleton::Skeleton;
-use symplectic::geom::volume::volume_f64;
 use symplectic::kkt::saddle_point_solver::solve_kkt_for;
 use symplectic::random::sample_random_polytope;
 
@@ -143,7 +143,7 @@ const EPS: f64 = 1e-15;
 // ============================================================================
 
 fn compute_sys(polytope: &Polytope4D, db: &mut Db) -> Option<f64> {
-    let vol = volume_f64(polytope);
+    let vol = euclidean_volume_f64(polytope.vertices(), polytope.incidence());
     if vol <= 0.0 {
         return None;
     }
@@ -262,7 +262,7 @@ fn gradient_ascent_phase_limited(
 
         let (cap, best_perm) = compute_capacity_result(&current, db)?;
         let kkt = solve_kkt_for(&current, &best_perm).feasible()?;
-        let vol = volume_f64(&current);
+        let vol = euclidean_volume_f64(current.vertices(), current.incidence());
         if vol <= 0.0 {
             return None;
         }

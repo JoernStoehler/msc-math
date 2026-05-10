@@ -22,6 +22,7 @@
 //! Explicit billiard algorithm because the output schema persists bounce counts;
 //! the crate-level `ehz_capacity` entrypoint would hide that billiard-native data.
 
+use exp_hko_local_maximum::euclidean_volume_f64;
 use nalgebra::Vector4;
 use rand::Rng;
 use rand::SeedableRng;
@@ -35,7 +36,6 @@ use symplectic::algorithms::billiard::facet_classification::classify_facets;
 use symplectic::ehz_capacity_billiard;
 use symplectic::geom::known_polytopes;
 use symplectic::geom::polytope::Polytope4D;
-use symplectic::geom::volume::volume_f64;
 
 const SEED: u64 = 42;
 
@@ -239,7 +239,7 @@ fn main() {
     let indices = lagrangian_component_indices(&base_duals);
 
     // Compute and write base row (epsilon = 0)
-    let base_vol = volume_f64(base_polytope);
+    let base_vol = euclidean_volume_f64(base_polytope.vertices(), base_polytope.incidence());
     let base_billiard =
         ehz_capacity_billiard(base_polytope).expect("billiard classification failed");
     let base_cap = base_billiard.capacity();
@@ -316,7 +316,7 @@ fn main() {
             let billiard =
                 ehz_capacity_billiard(&polytope).expect("classification already succeeded");
 
-            let vol = volume_f64(&polytope);
+            let vol = euclidean_volume_f64(polytope.vertices(), polytope.incidence());
             if vol <= 0.0 {
                 continue;
             }

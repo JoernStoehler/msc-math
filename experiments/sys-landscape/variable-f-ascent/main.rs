@@ -21,10 +21,11 @@
 //! Output Artifacts: variable-f-ascent/variable-f-ascent.jsonl
 //!         variable-f-ascent/cache.jsonl
 
+use exp_sys_landscape::euclidean_volume_f64;
 use exp_sys_landscape::{
-    compute_step_bound, continuation_cache_path, experiment_path, package_root,
-    orbit_scalars_from_result, CONTINUATION_EXPERIMENT_DIR, GRADIENT_ASCENT_GENERAL_DIR,
-    dual_vertices_rational_strings,
+    compute_step_bound, continuation_cache_path, dual_vertices_rational_strings, experiment_path,
+    orbit_scalars_from_result, package_root, CONTINUATION_EXPERIMENT_DIR,
+    GRADIENT_ASCENT_GENERAL_DIR,
 };
 use nalgebra::Vector4;
 use rand::SeedableRng;
@@ -40,7 +41,6 @@ use symplectic::database::{load, save, DualVerticesKey, PolytopeRecord, SigmaAct
 use symplectic::derivatives::{capacity_derivatives_a_from_kkt_result, volume_derivatives_a};
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::skeleton::Skeleton;
-use symplectic::geom::volume::volume_f64;
 use symplectic::kkt::saddle_point_solver::solve_kkt_for;
 use symplectic::random::sample_random_polytope;
 
@@ -193,7 +193,7 @@ struct GradientAscentRow {
 // ============================================================================
 
 fn compute_sys(polytope: &Polytope4D, db: &mut Db) -> Option<f64> {
-    let vol = volume_f64(polytope);
+    let vol = euclidean_volume_f64(polytope.vertices(), polytope.incidence());
     if vol <= 0.0 {
         return None;
     }
@@ -312,7 +312,7 @@ fn gradient_ascent_phase_limited(
 
         let (cap, best_perm) = compute_capacity_result(&current, db)?;
         let kkt = solve_kkt_for(&current, &best_perm).feasible()?;
-        let vol = volume_f64(&current);
+        let vol = euclidean_volume_f64(current.vertices(), current.incidence());
         if vol <= 0.0 {
             return None;
         }
@@ -794,7 +794,10 @@ fn main() {
         let (smoke_output_path, smoke_cache_path) = smoke_paths();
         (out_path.unwrap_or(smoke_output_path), smoke_cache_path)
     } else {
-        (out_path.unwrap_or(default_output_path), continuation_cache_path())
+        (
+            out_path.unwrap_or(default_output_path),
+            continuation_cache_path(),
+        )
     };
 
     let completed = if smoke {

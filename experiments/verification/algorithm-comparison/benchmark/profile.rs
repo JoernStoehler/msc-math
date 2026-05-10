@@ -13,17 +13,28 @@
 //! Input Artifacts: None (generates its profiling fixture internally).
 //! Output Artifacts: None (profiling output is handled by the external profiler).
 
-use nalgebra::Vector4;
+use euclidean_polytopes::volume_from_incidence_exact;
+use nalgebra::{DMatrix, Vector4};
+use num_rational::BigRational;
+use num_traits::ToPrimitive;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use symplectic::ehz_capacity_pruned;
-use symplectic::geom::volume::volume_f64;
+use symplectic::geom::polytope::Polytope4D;
 use symplectic::random::generate_random_polytopes;
 
 // Same seed and height range as experiments/verification/algorithm-comparison/benchmark/main.rs for consistency.
 const SEED: u64 = 42;
 const H_MIN: f64 = 0.5;
 const H_MAX: f64 = 2.0;
+
+fn euclidean_volume_f64(vertices: &[[BigRational; 4]], incidence: &DMatrix<bool>) -> f64 {
+    let vertices: Vec<Vector4<BigRational>> = vertices
+        .iter()
+        .map(|v| Vector4::new(v[0].clone(), v[1].clone(), v[2].clone(), v[3].clone()))
+        .collect();
+    ToPrimitive::to_f64(&volume_from_incidence_exact(&vertices, incidence)).unwrap_or(f64::NAN)
+}
 
 fn main() {
     let args: Vec<String> = std::env::args().collect();
@@ -39,14 +50,13 @@ fn main() {
 
     for i in 0..iterations {
         // Phase 1: Construction (rational vertex enum, incidence, adjacency, omega signs)
-        let p = symplectic::geom::polytope::Polytope4D::from_f64(dual_vertices.clone())
-            .expect("construction failed");
+        let p = Polytope4D::from_f64(dual_vertices.clone()).expect("construction failed");
 
         // Phase 2: Capacity (enumeration, pruning, KKT solve, accumulation)
         let cap_result = ehz_capacity_pruned(&p).expect("capacity failed");
 
         // Phase 3: Volume (pure-Rust origin-star triangulation)
-        let vol = volume_f64(&p);
+        let vol = euclidean_volume_f64(p.vertices(), p.incidence());
 
         // Phase 4: Systolic ratio
         let sys = cap_result.capacity().powi(2) / (2.0 * vol);

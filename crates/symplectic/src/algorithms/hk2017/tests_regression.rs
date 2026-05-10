@@ -242,7 +242,7 @@ fn eigen_gap_ratio_44_theta43() {
 #[ignore] // ~37s debug, ~0.5s release
 fn pentagon_capacity() {
     use crate::geom::known_polytopes;
-    use crate::geom::volume::volume_f64;
+    use crate::test_lib::euclidean_volume_f64;
 
     let kp = known_polytopes::hko_pentagon();
     let result = ehz_capacity_pruned(&kp.polytope).expect("pentagon capacity");
@@ -255,7 +255,7 @@ fn pentagon_capacity() {
     );
 
     // Verify sys > 1 (counterexample property).
-    let vol = volume_f64(&kp.polytope);
+    let vol = euclidean_volume_f64(kp.polytope.vertices(), kp.polytope.incidence());
     let sys = result.capacity() * result.capacity() / (2.0 * vol);
     eprintln!(
         "Pentagon: capacity={:.6}, volume={:.6}, sys={:.6}",

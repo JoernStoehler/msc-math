@@ -18,6 +18,7 @@
 //!         experiments/combinatorial-cells/boundary-characterization/combinatorial-boundaries-crossing.jsonl,
 //!         experiments/combinatorial-cells/boundary-characterization/combinatorial-boundaries-gradient.jsonl
 
+use exp_combinatorial_cells::euclidean_volume_f64;
 use exp_combinatorial_cells::{
     compute_step_bound_detailed, construct_at_t, ehz_capacity_instrumented, name_from_record,
     source_dataset_from_record, BoundaryEvent, EventType,
@@ -35,7 +36,6 @@ use symplectic::database;
 use symplectic::derivatives::{capacity_derivatives_a_from_kkt_result, volume_derivatives_a};
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::skeleton::Skeleton;
-use symplectic::geom::volume::volume_f64;
 use symplectic::kkt::saddle_point_solver::solve_kkt_for;
 
 // ============================================================================
@@ -279,7 +279,7 @@ fn compute_sys(
     Vec<usize>,
     symplectic::kkt::saddle_point_solver::KktResult,
 )> {
-    let vol = volume_f64(polytope);
+    let vol = euclidean_volume_f64(polytope.vertices(), polytope.incidence());
     if vol <= 0.0 {
         return None;
     }
@@ -587,7 +587,7 @@ fn main() {
 
         let base = (|| {
             let instrumented = ehz_capacity_instrumented(polytope)?;
-            let vol = volume_f64(polytope);
+            let vol = euclidean_volume_f64(polytope.vertices(), polytope.incidence());
             if vol <= 0.0 {
                 return None;
             }

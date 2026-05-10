@@ -52,7 +52,7 @@ pub fn lagrangian_product(
 mod tests {
     use super::*;
     use crate::geom::polygon::{polygon_area, regular_polygon_2d, rotate_polygon_2d};
-    use crate::geom::volume::volume_f64;
+    use crate::test_lib::euclidean_volume_f64;
     use std::f64::consts::PI;
 
     // Tests for lagrangian_product: facet count, Q/P classification, volume.
@@ -100,7 +100,7 @@ mod tests {
             let (pn, ph) = regular_polygon_2d(n2, 1.0);
             let polytope = lagrangian_product(&qn, &qh, &pn, &ph).unwrap();
 
-            let vol4 = volume_f64(&polytope);
+            let vol4 = euclidean_volume_f64(polytope.vertices(), polytope.incidence());
             let area_q = polygon_area(&qn, &qh).unwrap();
             let area_p = polygon_area(&pn, &ph).unwrap();
             let expected = area_q * area_p;
@@ -129,8 +129,8 @@ mod tests {
         assert_eq!(our_polytope.facet_count(), hko.polytope.facet_count());
 
         // Same volume
-        let our_vol = volume_f64(&our_polytope);
-        let hko_vol = volume_f64(&hko.polytope);
+        let our_vol = euclidean_volume_f64(our_polytope.vertices(), our_polytope.incidence());
+        let hko_vol = euclidean_volume_f64(hko.polytope.vertices(), hko.polytope.incidence());
         let rel_err = (our_vol - hko_vol).abs() / hko_vol;
         assert!(
             rel_err < 1e-6,
@@ -152,7 +152,7 @@ mod tests {
         for &theta in &angles {
             let (rpn, rph) = rotate_polygon_2d(&pn, &ph, theta);
             let polytope = lagrangian_product(&qn, &qh, &rpn, &rph).unwrap();
-            let vol = volume_f64(&polytope);
+            let vol = euclidean_volume_f64(polytope.vertices(), polytope.incidence());
             let rel_err = (vol - expected_vol).abs() / expected_vol;
             assert!(
                 rel_err < 1e-6,

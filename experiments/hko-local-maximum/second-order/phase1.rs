@@ -2,12 +2,12 @@
 
 use crate::{NEAR_OPTIMAL_GAP, SVD_RANK_THRESHOLD};
 use exp_hko_local_maximum::ehz_capacity_instrumented;
+use exp_hko_local_maximum::euclidean_volume_f64;
 use nalgebra::{DMatrix, Vector4};
 use serde::Serialize;
 use symplectic::algorithms::OrbitKktData;
 use symplectic::derivatives::{capacity_derivatives_a_from_orbit, volume_derivatives_a};
 use symplectic::geom::polytope::Polytope4D;
-use symplectic::geom::volume::volume_f64;
 
 #[derive(Debug, Serialize)]
 pub(crate) struct BaseRow {
@@ -57,7 +57,7 @@ pub(crate) fn run_phase1(polytope: &Polytope4D) -> (BaseRow, Vec<Vec<f64>>) {
     let facet_count = polytope.facet_count();
     let dim = facet_count * 4;
 
-    let vol = volume_f64(polytope);
+    let vol = euclidean_volume_f64(polytope.vertices(), polytope.incidence());
     let instr = ehz_capacity_instrumented(polytope).expect("no valid orbits");
     let cap = instr.capacity;
     let sys = cap * cap / (2.0 * vol);

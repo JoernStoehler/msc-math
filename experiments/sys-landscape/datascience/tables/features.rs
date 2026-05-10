@@ -19,16 +19,16 @@ mod features_skeleton;
 
 use crate::load_caches::LoadedPolytopeRow;
 use crate::rows::PolytopeTableRow;
+use exp_sys_landscape::euclidean_volume_f64;
 use symplectic::ehz_capacity;
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::skeleton::Skeleton;
-use symplectic::geom::volume::volume_f64;
 
 fn enrich_row(row: &LoadedPolytopeRow) -> PolytopeTableRow {
     let (dual_vectors, dual_vertex_fields) = features_dual_vertices::dual_vertices_f64(row);
     let polytope: Polytope4D = Polytope4D::from_f64(dual_vectors.clone())
         .unwrap_or_else(|e| panic!("reconstruct {}: {e}", row.poly_id));
-    let polytope_volume = volume_f64(&polytope);
+    let polytope_volume = euclidean_volume_f64(polytope.vertices(), polytope.incidence());
     let actual_capacity = if row.capacity > 0.0 {
         row.capacity
     } else {
@@ -49,7 +49,8 @@ fn enrich_row(row: &LoadedPolytopeRow) -> PolytopeTableRow {
     let skeleton = Skeleton::compute(&polytope);
     let vertices = polytope.vertices_f64();
     let duals = polytope.dual_vertices_f64();
-    let skeleton_fields = features_skeleton::compute_skeleton_fields(&polytope, &skeleton, facet_count);
+    let skeleton_fields =
+        features_skeleton::compute_skeleton_fields(&polytope, &skeleton, facet_count);
     let face_geometry_fields = features_face_geometry::compute_face_geometry_fields(
         &polytope,
         &skeleton,
@@ -58,8 +59,11 @@ fn enrich_row(row: &LoadedPolytopeRow) -> PolytopeTableRow {
         linear_scale,
         facet_scale,
     );
-    let face_symplectic_fields =
-        features_face_symplectic::compute_face_symplectic_fields(&skeleton, &vertices, volume_scale);
+    let face_symplectic_fields = features_face_symplectic::compute_face_symplectic_fields(
+        &skeleton,
+        &vertices,
+        volume_scale,
+    );
     let omega_fields = features_omega::compute_omega_fields(
         &polytope,
         &skeleton,
@@ -154,10 +158,14 @@ fn enrich_row(row: &LoadedPolytopeRow) -> PolytopeTableRow {
         ridge_symp_area_volnorm_max: face_symplectic_fields.ridge_symp_area_volnorm_max,
         ridge_symp_area_volnorm_sum: face_symplectic_fields.ridge_symp_area_volnorm_sum,
         ridge_symp_area_volnorm_max_share: face_symplectic_fields.ridge_symp_area_volnorm_max_share,
-        ridge_symp_area_volnorm_zero_fraction: face_symplectic_fields.ridge_symp_area_volnorm_zero_fraction,
-        ridge_symp_area_volnorm_le_1em3_fraction: face_symplectic_fields.ridge_symp_area_volnorm_le_1em3_fraction,
-        ridge_symp_area_volnorm_le_1em2_fraction: face_symplectic_fields.ridge_symp_area_volnorm_le_1em2_fraction,
-        ridge_symp_area_volnorm_le_1em1_fraction: face_symplectic_fields.ridge_symp_area_volnorm_le_1em1_fraction,
+        ridge_symp_area_volnorm_zero_fraction: face_symplectic_fields
+            .ridge_symp_area_volnorm_zero_fraction,
+        ridge_symp_area_volnorm_le_1em3_fraction: face_symplectic_fields
+            .ridge_symp_area_volnorm_le_1em3_fraction,
+        ridge_symp_area_volnorm_le_1em2_fraction: face_symplectic_fields
+            .ridge_symp_area_volnorm_le_1em2_fraction,
+        ridge_symp_area_volnorm_le_1em1_fraction: face_symplectic_fields
+            .ridge_symp_area_volnorm_le_1em1_fraction,
         allpair_abs_omega_vol1_mean: omega_fields.allpair_abs_omega_vol1_mean,
         allpair_abs_omega_vol1_std: omega_fields.allpair_abs_omega_vol1_std,
         allpair_abs_omega_vol1_min: omega_fields.allpair_abs_omega_vol1_min,

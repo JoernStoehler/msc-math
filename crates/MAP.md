@@ -101,11 +101,11 @@ formula is blocked and it is not a supported experiment entrypoint.
 
 | Tier | Current meaning | Examples |
 | --- | --- | --- |
-| simple public | short root reexports and preset routers in `crates/symplectic/src/lib.rs` | `symplectic::ehz_capacity`, `symplectic::ehz_capacity_pruned`, `symplectic::ehz_capacity_unpruned`, `symplectic::ehz_capacity_billiard`, `symplectic::OrbitSearchResult`, `symplectic::Polytope4D`, `symplectic::Skeleton`, `symplectic::known_polytopes`, `symplectic::volume_f64`, `symplectic::omega0`, `symplectic::lagrangian_product`, `symplectic::regular_polygon_2d`, `symplectic::rotate_polygon_2d` |
+| simple public | short root reexports and preset routers in `crates/symplectic/src/lib.rs` | `symplectic::ehz_capacity`, `symplectic::ehz_capacity_pruned`, `symplectic::ehz_capacity_unpruned`, `symplectic::ehz_capacity_billiard`, `symplectic::OrbitSearchResult`, `symplectic::Polytope4D`, `symplectic::Skeleton`, `symplectic::known_polytopes`, `symplectic::omega0`, `symplectic::lagrangian_product`, `symplectic::regular_polygon_2d`, `symplectic::rotate_polygon_2d` |
 | expert public | deeper modules and building blocks used by experiments that need non-default control | `symplectic::database`, `symplectic::dataset`, `symplectic::random`, `symplectic::derivatives`, `symplectic::exact`, `symplectic::algorithms::solve_orbit_sigma`, `symplectic::algorithms::aggregate_orbits`, `symplectic::algorithms::hk2017`, `symplectic::algorithms::billiard`, `symplectic::kkt::saddle_point_solver`, `symplectic::algorithms::facet_adjacency` |
 | exact scalar public | root reexports in `crates/algebraic-numbers/src/lib.rs` | `algebraic_numbers::Algebraic`, `algebraic_numbers::RealAlgebraicField`, `algebraic_numbers::ExactScalar`, `algebraic_numbers::row_reduction`, `algebraic_numbers::rank`, `algebraic_numbers::kernel_basis`, `algebraic_numbers::solve_linear_system`, `algebraic_numbers::LinearSystemSolution`, `algebraic_numbers::is_negative_definite` |
 | Euclidean polytopes target | flat functions over `Vector4<T>`; implemented slices include `origin_in_interior_of_conv_exact`, `all_points_are_extreme_exact`, `polar_vertices_exact`, `polar_vertices_f64`, `volume_f64`, `volume_from_incidence_f64`, exact incidence, incidence-only 2-face ordering for volume decomposition, and f64 indeterminate diagnostics | `crates/euclidean-polytopes/README.md`, `crates/euclidean-polytopes/DEVELOPMENT.md` |
-| unclear | public paths whose long-term experiment-facing status is not explicit | `symplectic::algorithms::hk2017::orbit_recovery`, `symplectic::algorithms::billiard::facet_classification`, `symplectic::kkt::qp_assembly::build_augmented_system`, `symplectic::geom::qhull` |
+| unclear | public paths whose long-term experiment-facing status is not explicit | `symplectic::algorithms::hk2017::orbit_recovery`, `symplectic::algorithms::billiard::facet_classification`, `symplectic::kkt::qp_assembly::build_augmented_system` |
 | accidental internal | public-in-practice helpers that experiments currently reach through | `symplectic::algorithms::hk2017::permutations::for_each_cyclic_permutation` |
 
 The practical experiment-facing library surface is larger than the short root
@@ -117,7 +117,8 @@ thesis claim, verification task, or writing blocker needs it.
 - Defining polytope geometry is stored and keyed in rational form in
   `PolytopeRecord`.
 - Many algorithmic computations run in `f64`, including normal-path capacity
-  algorithms, orbit recovery, derivatives, and qhull-backed volume.
+  algorithms, orbit recovery, derivatives, and persisted volume fields.
+  Ordinary Euclidean volume computation is owned by `euclidean-polytopes`.
 - `kkt::rational_solver` and `exact` modules are exact-validation tracks, not
   the main capacity hot path.
 - Persisted records cross this boundary: rational geometry plus optional

@@ -14,14 +14,16 @@ mod checkpoint;
 mod kkt;
 mod search;
 
-use nalgebra::Vector4;
+use euclidean_polytopes::volume_from_incidence_exact;
+use nalgebra::{DMatrix, Vector4};
+use num_rational::BigRational;
+use num_traits::ToPrimitive;
 use serde::Serialize;
 use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::path::PathBuf;
 use std::time::Instant;
 use symplectic::geom::known_polytopes;
-use symplectic::geom::volume::volume_f64;
 
 #[derive(Debug, Serialize)]
 struct CrosspolytopeResult {
@@ -43,6 +45,14 @@ struct CrosspolytopeResult {
     search_complete_through_m: usize,
 }
 
+fn euclidean_volume_f64(vertices: &[[BigRational; 4]], incidence: &DMatrix<bool>) -> f64 {
+    let vertices: Vec<Vector4<BigRational>> = vertices
+        .iter()
+        .map(|v| Vector4::new(v[0].clone(), v[1].clone(), v[2].clone(), v[3].clone()))
+        .collect();
+    ToPrimitive::to_f64(&volume_from_incidence_exact(&vertices, incidence)).unwrap_or(f64::NAN)
+}
+
 fn main() {
     let t0 = Instant::now();
 
@@ -55,7 +65,7 @@ fn main() {
     println!("Crosspolytope: {facet_count} facets");
 
     let start_vol = Instant::now();
-    let vol = volume_f64(polytope);
+    let vol = euclidean_volume_f64(polytope.vertices(), polytope.incidence());
     let time_volume_ms = start_vol.elapsed().as_secs_f64() * 1000.0;
     println!("Volume: {vol:.10} ({time_volume_ms:.1} ms)");
 

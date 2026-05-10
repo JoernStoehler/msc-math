@@ -24,6 +24,7 @@
 //! - The 3-bounce branch dump is the empirical surface for the open proof
 //!   obligation [lem:pentagon-rotation-three-bounce].
 
+use exp_sys_landscape::euclidean_volume_f64;
 use serde::Serialize;
 use std::env;
 use std::fs::File;
@@ -39,7 +40,6 @@ use symplectic::algorithms::{
 };
 use symplectic::geom::lagrangian_product::lagrangian_product;
 use symplectic::geom::polygon::{polygon_area, regular_polygon_2d, rotate_polygon_2d};
-use symplectic::geom::volume::volume_f64;
 use symplectic::{OrbitAdmissibility, OrbitKktData};
 
 const START_DEG: f64 = 0.0;
@@ -121,7 +121,7 @@ fn main() {
             lagrangian_product(&qn, &qh, &pn, &ph).expect("pentagon product construction failed");
         let classification =
             classify_facets(&polytope).expect("pentagon product should classify as a product");
-        let vol = volume_f64(&polytope);
+        let vol = euclidean_volume_f64(polytope.vertices(), polytope.incidence());
         match cli.mode {
             SweepMode::Minima => {
                 let result = collect_minima_safe_billiard_result(&polytope)

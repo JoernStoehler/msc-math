@@ -40,6 +40,7 @@ use num_rational::BigRational;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 mod rows;
+use exp_sys_landscape::euclidean_volume_f64;
 use rows::RandomProductRow;
 use std::collections::HashMap;
 use std::fs::File;
@@ -52,7 +53,6 @@ use symplectic::ehz_capacity_billiard;
 use symplectic::geom::lagrangian_product::lagrangian_product;
 use symplectic::geom::polygon::random_polygon_2d;
 use symplectic::geom::polytope::Polytope4D;
-use symplectic::geom::volume::volume_f64;
 
 const SEED: u64 = 42;
 const H_MIN: f64 = 0.8;
@@ -92,14 +92,16 @@ fn parse_args() -> Args {
     parse_args_from(std::env::args())
 }
 
-fn parse_args_from(
-    argv: impl IntoIterator<Item = impl Into<String>>,
-) -> Args {
+fn parse_args_from(argv: impl IntoIterator<Item = impl Into<String>>) -> Args {
     let argv: Vec<String> = argv.into_iter().map(Into::into).collect();
 
     let mut seed = SEED;
     let mut samples_per_bucket = SAMPLES_PER_BUCKET;
-    let mut max_sides = PAIRS.iter().map(|(_, m)| *m).max().expect("pair list non-empty");
+    let mut max_sides = PAIRS
+        .iter()
+        .map(|(_, m)| *m)
+        .max()
+        .expect("pair list non-empty");
     let mut out = None;
     let mut cache = None;
 
@@ -113,9 +115,7 @@ fn parse_args_from(
         };
         match arg {
             "--seed" => {
-                seed = need_value("--seed")
-                    .parse()
-                    .expect("--seed must be a u64");
+                seed = need_value("--seed").parse().expect("--seed must be a u64");
                 i += 2;
             }
             "--samples-per-bucket" => {
@@ -153,7 +153,8 @@ fn parse_args_from(
 }
 
 fn included_pairs(max_sides: usize) -> Vec<(usize, usize)> {
-    PAIRS.iter()
+    PAIRS
+        .iter()
         .copied()
         .filter(|(k, m)| *k <= max_sides && *m <= max_sides)
         .collect()
@@ -203,8 +204,7 @@ fn main() {
     }
 
     let mut db: HashMap<DualVerticesKey, PolytopeRecord> =
-        load_many(&[args.cache.as_path()])
-            .expect("failed to load sys-landscape family cache");
+        load_many(&[args.cache.as_path()]).expect("failed to load sys-landscape family cache");
     println!("Loaded family cache: {} entries\n", db.len());
 
     let file = File::create(&args.out).expect("failed to create output file");
@@ -214,10 +214,7 @@ fn main() {
     let mut cache_hits = 0usize;
 
     for (k, m) in pairs {
-        println!(
-            "Bucket ({k},{m}) with {} samples",
-            args.samples_per_bucket
-        );
+        println!("Bucket ({k},{m}) with {} samples", args.samples_per_bucket);
 
         let mut accepted = 0usize;
         while accepted < args.samples_per_bucket {
@@ -283,7 +280,7 @@ fn main() {
             // Cache miss: compute the specialized billiard result because this
             // dataset records billiard-native iterations and bounce counts.
             let start_vol = Instant::now();
-            let vol = volume_f64(&polytope);
+            let vol = euclidean_volume_f64(polytope.vertices(), polytope.incidence());
             let time_volume_ms = start_vol.elapsed().as_secs_f64() * 1000.0;
 
             let start_cap = Instant::now();
@@ -350,7 +347,11 @@ fn main() {
     save(&args.cache, &db).expect("failed to save sys-landscape family cache");
 
     println!("\nWrote {total} entries to {}", args.out.display());
-    println!("Cache: {} entries (saved to {})", db.len(), args.cache.display());
+    println!(
+        "Cache: {} entries (saved to {})",
+        db.len(),
+        args.cache.display()
+    );
     println!("Cache hits: {cache_hits}/{total}");
     println!("Total time: {:.1}s", t0.elapsed().as_secs_f64());
 }

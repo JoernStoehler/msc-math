@@ -56,7 +56,7 @@ mod tests {
     // Reference: [def:volume] (per-facet specialization)
     //
     // Strategy: fixture-based (hypercube: exact volumes known;
-    //   crosspolytope: divergence-theorem cross-check with qhull)
+    //   crosspolytope: divergence-theorem cross-check with exact Euclidean volume)
 
     /// Each facet of [-1,1]^4 is a cube [-1,1]^3 with volume 8.
     #[test]
@@ -87,11 +87,12 @@ mod tests {
             .sum::<f64>()
             / 4.0;
 
-        let vol_qhull = crate::geom::volume::volume_qhull(polytope).expect("qhull volume");
+        let polytope_volume =
+            crate::test_lib::euclidean_volume_f64(polytope.vertices(), polytope.incidence());
 
         assert!(
-            (vol_from_facets - vol_qhull).abs() / vol_qhull < 1e-6,
-            "facet sum = {vol_from_facets}, qhull = {vol_qhull}"
+            (vol_from_facets - polytope_volume).abs() / polytope_volume < 1e-6,
+            "facet sum = {vol_from_facets}, polytope volume = {polytope_volume}"
         );
     }
 
@@ -125,14 +126,15 @@ mod tests {
             .sum::<f64>()
             / 4.0;
 
-        let vol_qhull = crate::geom::volume::volume_qhull(polytope).expect("qhull volume");
+        let polytope_volume =
+            crate::test_lib::euclidean_volume_f64(polytope.vertices(), polytope.incidence());
 
         // Looser than hypercube (1e-6) because the crosspolytope has 16 facets
         // with non-axis-aligned normals, producing more triangulation error in
-        // both our 2-face decomposition and qhull.
+        // the f64 2-face decomposition.
         assert!(
-            (vol_from_facets - vol_qhull).abs() / vol_qhull < 1e-4,
-            "facet sum = {vol_from_facets}, qhull = {vol_qhull}"
+            (vol_from_facets - polytope_volume).abs() / polytope_volume < 1e-4,
+            "facet sum = {vol_from_facets}, polytope volume = {polytope_volume}"
         );
     }
 

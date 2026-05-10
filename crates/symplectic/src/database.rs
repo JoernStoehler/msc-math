@@ -39,7 +39,7 @@
 //!     });
 //!     if record.capacity.is_none() {
 //!         let cap = ehz_capacity(polytope);
-//!         let vol = volume_f64(polytope);
+//!         let vol = my_experiment_volume_f64(polytope);
 //!         *record = record.clone().with_computed_fields(vol, 0.0, cap, 0.0);
 //!     }
 //!     // Use record.capacity, record.sigmas, etc.

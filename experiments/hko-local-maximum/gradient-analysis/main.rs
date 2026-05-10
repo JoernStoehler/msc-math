@@ -30,6 +30,7 @@
 //! (`Hβ + Nμ + ηξ = 0`) instead of re-labeling it into a local asymmetric
 //! variant before derivative consumers use it again.
 
+use exp_hko_local_maximum::euclidean_volume_f64;
 use exp_hko_local_maximum::{
     ehz_capacity_instrumented, exact_hko_polytope, exact_simplex_polytope, ExactBankEntry,
     ExactBankTarget, HkoExactScalar, EXACT_BANK_ENTRIES,
@@ -47,7 +48,6 @@ use symplectic::exact::{capacity_derivatives_a_exact, solve_orbit_sigma_exact, E
 use symplectic::geom::known_polytopes;
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::skeleton::Skeleton;
-use symplectic::geom::volume::volume_f64;
 use symplectic::omega0;
 
 /// Gap threshold for near-optimal orbits: collect orbits within δ of best.
@@ -764,7 +764,7 @@ fn compute_step_bound_hn(polytope: &Polytope4D, g_h: &[f64], g_n: &[Vector4<f64>
 
 /// Safely compute sys for a polytope, catching panics from degenerate geometry.
 fn safe_sys(polytope: &Polytope4D) -> Option<(f64, f64, f64)> {
-    let vol = volume_f64(polytope);
+    let vol = euclidean_volume_f64(polytope.vertices(), polytope.incidence());
     if vol <= 0.0 {
         return None;
     }
@@ -933,7 +933,7 @@ fn run_phase_a(base_dir: &std::path::Path, smoke: bool) {
     );
 
     let cap = instrumented.capacity;
-    let vol = volume_f64(polytope);
+    let vol = euclidean_volume_f64(polytope.vertices(), polytope.incidence());
     let sys = cap * cap / (2.0 * vol);
     println!("  Volume: {vol:.10}");
     println!("  Sys: {sys:.10}");
@@ -1148,7 +1148,7 @@ fn run_phase_a(base_dir: &std::path::Path, smoke: bool) {
             }
         };
         let cap = instr.capacity;
-        let vol = volume_f64(&current);
+        let vol = euclidean_volume_f64(current.vertices(), current.incidence());
         let sys_now = cap * cap / (2.0 * vol);
         let best_orbit = &instr.orbits[0];
 

@@ -18,10 +18,12 @@
 use crate::algorithms::OrbitKktData;
 use crate::geom::facet_volume::facet_volume_and_centroid_3d_f64;
 use crate::geom::polytope::Polytope4D;
+use crate::geom::rational_arithmetic::rational_to_f64;
 use crate::geom::symplectic_form::j4;
-use crate::geom::volume::volume_f64;
 use crate::kkt::saddle_point_solver::KktResult;
-use nalgebra::Vector4;
+use euclidean_polytopes::volume_from_incidence_exact;
+use nalgebra::{DMatrix, Vector4};
+use num_rational::BigRational;
 
 /// Gradient of one orbit/capacity-like quantity with respect to all dual
 /// vertices `a_k`.
@@ -33,6 +35,17 @@ pub type ClarkeSubdiffA = Vec<OrbitGradientA>;
 /// Facet-volume floor below which the volume derivative treats a facet as
 /// degenerate and returns the zero contribution.
 const VOLUME_DERIVATIVE_FACET_VOLUME_FLOOR: f64 = 1e-30;
+
+fn volume_from_exact_incidence_f64(
+    vertices: &[[BigRational; 4]],
+    incidence: &DMatrix<bool>,
+) -> f64 {
+    let vertices: Vec<Vector4<BigRational>> = vertices
+        .iter()
+        .map(|v| Vector4::new(v[0].clone(), v[1].clone(), v[2].clone(), v[3].clone()))
+        .collect();
+    rational_to_f64(&volume_from_incidence_exact(&vertices, incidence))
+}
 
 /// Failure modes for derivative helpers layered above the low-level primitive.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -157,7 +170,7 @@ pub fn sys_gradient_a_from_kkt_result(
     kkt: &KktResult,
 ) -> OrbitGradientA {
     let capacity = 1.0 / (2.0 * kkt.q_corrected);
-    let volume = volume_f64(polytope);
+    let volume = volume_from_exact_incidence_f64(polytope.vertices(), polytope.incidence());
     let d_capacity_da = capacity_derivatives_a_from_kkt_result(polytope, sigma, kkt);
     let d_volume_da = volume_derivatives_a(polytope);
 
@@ -174,7 +187,7 @@ pub fn sys_gradient_a_from_orbit(
 ) -> Result<OrbitGradientA, DerivativeError> {
     let mu = orbit.mu.ok_or(DerivativeError::MissingClosureMultiplier)?;
     let capacity = 1.0 / (2.0 * orbit.q);
-    let volume = volume_f64(polytope);
+    let volume = volume_from_exact_incidence_f64(polytope.vertices(), polytope.incidence());
     let d_capacity_da = capacity_derivatives_a(
         &orbit.beta,
         orbit.q,
@@ -347,7 +360,6 @@ mod tests {
     use super::*;
     use crate::algorithms::OrbitAdmissibility;
     use crate::geom::known_polytopes;
-    use crate::geom::volume::volume_f64;
     use crate::kkt::saddle_point_solver::solve_kkt_for;
 
     // Tests for derivatives: analytical capacity and volume derivatives.
@@ -370,7 +382,7 @@ mod tests {
         let eps = 1e-6;
         let fd = volume_derivatives_a_fd(duals, eps, |a| {
             let p = Polytope4D::from_f64(a.to_vec()).ok()?;
-            Some(volume_f64(&p))
+            Some(volume_from_exact_incidence_f64(p.vertices(), p.incidence()))
         });
 
         for k in 0..polytope.facet_count() {
@@ -451,7 +463,7 @@ mod tests {
             .expect("best simplex orbit should re-solve");
 
         let capacity = 1.0 / (2.0 * kkt.q_corrected);
-        let volume = volume_f64(polytope);
+        let volume = volume_from_exact_incidence_f64(polytope.vertices(), polytope.incidence());
         let d_capacity_da = capacity_derivatives_a_from_kkt_result(polytope, &sigma, &kkt);
         let d_volume_da = volume_derivatives_a(polytope);
         let direct =
