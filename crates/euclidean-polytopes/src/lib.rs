@@ -1,9 +1,9 @@
 //! Euclidean convex-polytope helpers for thesis Rust code.
 //!
 //! The current public surface starts with exact point-set predicates and exact
-//! polar vertex enumeration. Approximate `f64` polar enumeration is diagnostic:
-//! it returns partial vertices and approximate indeterminate candidates instead
-//! of deciding near a floating-point boundary.
+//! polar vertex enumeration. Approximate `f64` polar enumeration and volume are
+//! diagnostic: they return operation-specific indeterminate payloads instead of
+//! deciding near a floating-point boundary.
 //!
 //! Scope boundary: this crate is for ordinary Euclidean convex geometry in
 //! ambient `R^4`, including lower-dimensional polytopes in affine subspaces of
@@ -14,6 +14,7 @@ mod f64_geometry;
 mod linalg;
 mod polar;
 mod predicates;
+mod volume;
 
 pub use f64_geometry::F64GeometryError;
 pub use polar::{
@@ -21,3 +22,4 @@ pub use polar::{
     PolarVertexData, PolarVerticesF64,
 };
 pub use predicates::{all_points_are_extreme_exact, origin_in_interior_of_conv_exact};
+pub use volume::{volume_f64, VolumeF64};

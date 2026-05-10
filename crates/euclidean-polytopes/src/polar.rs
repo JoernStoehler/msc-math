@@ -1,7 +1,7 @@
 use algebraic_numbers::ExactScalar;
 use nalgebra::{DMatrix, Matrix4, Vector4};
 
-use crate::f64_geometry::{validate_finite_vectors4, F64GeometryError};
+use crate::f64_geometry::{signed_gap_abs_error_bound, validate_finite_vectors4, F64GeometryError};
 use crate::linalg::{combinations4, dot4_exact, solve4_exact};
 use crate::predicates::origin_in_interior_of_conv_exact;
 
@@ -12,7 +12,7 @@ pub struct PolarVertexData<T> {
     pub incidence: DMatrix<bool>,
 }
 
-/// Approximate incidence relation for an accepted `f64` vertex.
+/// Approximate vertex-facet incidence diagnostic.
 #[derive(Clone, Debug, PartialEq)]
 pub struct IncidenceF64 {
     pub vertex_index: usize,
@@ -278,13 +278,6 @@ fn classify_candidate_f64(
 
     active.sort_unstable();
     CandidateClassification::Accepted(active)
-}
-
-fn signed_gap_abs_error_bound(facet: &Vector4<f64>, candidate: &Vector4<f64>) -> f64 {
-    const EPS_MACH: f64 = f64::EPSILON / 2.0;
-    const ERROR_SCALE: f64 = 1.0e4;
-
-    ERROR_SCALE * EPS_MACH * (facet.norm() * candidate.norm() + facet.dot(candidate).abs() + 1.0)
 }
 
 fn duplicate_is_indeterminate(

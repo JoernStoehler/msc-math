@@ -37,8 +37,8 @@ all future context.
 
 ## Implemented API
 
-The implemented public API currently covers exact point-set predicates and
-polar vertex enumeration in ambient `R^4`:
+The implemented public API currently covers exact point-set predicates, polar
+vertex enumeration, and full-dimensional `f64` volume in ambient `R^4`:
 
 ```rust,ignore
 use algebraic_numbers::ExactScalar;
@@ -85,6 +85,20 @@ pub struct IndeterminatePolarCandidateF64 {
     pub coordinate_abs_error_bound: f64,
 }
 
+pub fn volume_f64(
+    dual_vertices: &[Vector4<f64>],
+    vertices: &[Vector4<f64>],
+) -> Result<VolumeF64, F64GeometryError>;
+
+pub enum VolumeF64 {
+    Decided {
+        volume: f64,
+    },
+    Indeterminate {
+        indeterminate_incidence: Vec<IncidenceF64>,
+    },
+}
+
 pub enum F64GeometryError {
     NonFiniteCoordinate {
         vector_role: &'static str,
@@ -111,6 +125,16 @@ The `f64` path validates finite coordinates and reports partial vertices plus
 the 4-tuple was singular, higher-dimensional, or unsolved in `f64`; it has
 `Some(vertex)` when `f64` found an approximate candidate but membership or
 duplicate classification was too close to decide.
+
+`volume_f64(dual_vertices, vertices)` computes full-dimensional Euclidean
+volume for `K = { x in R^4 : <a_i, x> <= 1 }`. `dual_vertices` are normalized
+facet normals, and `vertices` are the primal vertices of the same polytope. The
+function uses dual vertices only to recover vertex-facet incidence and uses
+primal vertices for determinant geometry. It validates finite coordinates,
+returns `VolumeF64::Indeterminate` when any incidence relation is too close to
+decide in `f64`, and panics when a provided vertex clearly violates a provided
+halfspace. The decided payload intentionally has no `volume_abs_error_bound`
+yet; this slice bounds incidence decisions, not the full determinant sum.
 
 ## Robust Numeric Split
 
@@ -152,10 +176,8 @@ fixed here:
 - approximate extreme-point/non-redundancy diagnostics for callers that need
   stable non-extreme witnesses or indeterminate witness subsets rather than
   tolerance guesses;
-- full-dimensional f64 volume from a polar pair, using dual vertices for
-  incidence and primal vertices for Euclidean geometry. The return should be
-  decided only when vertex-facet incidence is stable in f64; otherwise it
-  should return an operation-specific indeterminate incidence payload;
+- exact full-dimensional volume over the exact scalar type, using the reviewed
+  `volume_f64` shape as the approximate counterpart;
 - affine-subspace polygon and lower-dimensional volume helpers in ambient
   `R^4`.
 

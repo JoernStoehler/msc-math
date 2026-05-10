@@ -105,7 +105,7 @@ modules, which makes non-symplectic helpers harder to reuse and review.
 | Robust floating/exact architecture | `[active]` | mainline thesis | agents | Define flat approximate return shapes with semantic names, `_abs_error_bound` fields, and operation-specific indeterminate diagnostics. Exact predicates return `bool` and may resolve f64 indeterminate diagnostic candidates exactly. | `crates/euclidean-polytopes/README.md`, `crates/euclidean-polytopes/DEVELOPMENT.md` |
 | Polar vertex enumeration plus validation dependencies | `[implemented first slice]` | mainline thesis | agents | Review and integrate current `euclidean-polytopes` public API into callers when a migration packet needs it. Exact polar enumeration and exact origin-in-interior are implemented; the current `f64` path is diagnostic and reports indeterminate candidates instead of guessing. | `crates/euclidean-polytopes/src/polar.rs`, `crates/euclidean-polytopes/src/predicates.rs`, `crates/euclidean-polytopes/tests/polar_vertices.rs` |
 | Extreme-point / non-redundant point-set predicate | `[implemented exact slice]` | mainline thesis | agents | Exact predicate is implemented and covered by fixture/property tests. Add the matching f64 diagnostic later only if its return shape stays flat and useful. | `crates/euclidean-polytopes/src/predicates.rs`, `crates/euclidean-polytopes/tests/extreme_points.rs`, `crates/euclidean-polytopes/DEVELOPMENT.md` |
-| Full-dimensional f64 volume | `[next slice]` | mainline thesis | agents | Implement flat `volume_f64(dual_vertices, vertices)` in `euclidean-polytopes`, using dual vertices for incidence and vertices for determinant geometry. Return an operation-specific indeterminate payload when f64 incidence is tolerance-sensitive. | `crates/euclidean-polytopes/DEVELOPMENT.md`, `crates/symplectic/src/geom/volume.rs` |
+| Full-dimensional f64 volume | `[implemented f64 slice]` | mainline thesis | agents | Review and integrate `volume_f64(dual_vertices, vertices)` into callers when a migration packet needs it. The API uses dual vertices for incidence, primal vertices for determinant geometry, and an operation-specific indeterminate payload when f64 incidence is tolerance-sensitive. | `crates/euclidean-polytopes/src/volume.rs`, `crates/euclidean-polytopes/tests/volume.rs`, `crates/euclidean-polytopes/DEVELOPMENT.md` |
 | Full-dimensional exact volume | `[future slice]` | mainline thesis | agents | After the f64 volume shape is reviewed, add exact volume over `T` without field extensions. | `crates/euclidean-polytopes/DEVELOPMENT.md` |
 | Affine-subspace polygons and volume | `[active]` | mainline thesis | agents, Jorn only if generic-vs-specific API affects thesis callers | Let the internal volume decomposition determine the first affine-subspace helper shape; likely needs 3-face measures of 4-polytopes and polygon area in affine 2-planes of `R^4`. | `crates/symplectic/src/geom/volume.rs`, `crates/symplectic/src/geom/polygon.rs` |
 | Symplectic integration cleanup | `[active]` | mainline thesis | agents | After each migrated slice, keep `symplectic` as the owner of symplectic form, capacity, KKT, omega signs, Reeb-direction adjacency, and experiment-facing wrappers only. | `crates/symplectic/src/geom/`, `crates/symplectic/src/algorithms/` |
@@ -179,6 +179,13 @@ The migration task is done when:
   non-redundancy in ambient `R^4`, including lower-dimensional point sets, by
   exact Caratheodory/barycentric witness enumeration. Duplicate exact points
   return `false`. The f64 diagnostic variant is still future work.
+- [implemented 2026-05-10] The f64 full-dimensional volume slice exposes
+  `volume_f64(dual_vertices, vertices)`. It validates finite input, decides
+  vertex-facet incidence from local signed-gap diagnostics, returns
+  `VolumeF64::Indeterminate` for near-incidence relations, and computes decided
+  volume by origin-star triangulation using primal vertices for determinants.
+  The decided payload intentionally omits a volume error bound until a credible
+  determinant-sum rounding analysis exists.
 
 ## Pruned / Stale
 

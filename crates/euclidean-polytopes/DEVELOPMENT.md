@@ -18,12 +18,13 @@ The thesis-facing objective is agent velocity and validation trust:
 
 ## Current State
 
-The first two implementation packets are in place:
+The implemented packets are in place:
 
 - `origin_in_interior_of_conv_exact(points) -> bool`;
 - `all_points_are_extreme_exact(points) -> bool`;
 - `polar_vertices_exact(vertices) -> PolarVertexData<T>`;
-- `polar_vertices_f64(vertices) -> Result<PolarVerticesF64, F64GeometryError>`.
+- `polar_vertices_f64(vertices) -> Result<PolarVerticesF64, F64GeometryError>`;
+- `volume_f64(dual_vertices, vertices) -> Result<VolumeF64, F64GeometryError>`.
 
 The exact path is the accepted first reusable slice. It checks the
 origin-interior contract, enumerates 4-tuples of active polar inequalities,
@@ -45,6 +46,14 @@ records the source 4-tuple and either `None` for singular/unsolved tuples or
 `Some(vertex)` for an approximate vertex whose membership or duplicate status
 was not decided in `f64`.
 
+The f64 volume path computes full-dimensional `R^4` Euclidean volume from a
+normalized polar pair. It uses dual vertices only for incidence and primal
+vertices for determinant geometry. Incidence is decided only when each local
+signed-gap relation is stable in `f64`; otherwise the function returns
+`VolumeF64::Indeterminate { indeterminate_incidence }`. The decided payload
+currently reports only `volume`, deliberately omitting a volume error bound
+until a credible determinant-sum rounding analysis is implemented.
+
 Do not add broad public API only because it is mathematically natural. Add a
 function when a current migration caller needs it or when it removes duplicated
 existing code.
@@ -54,9 +63,8 @@ existing code.
 The point-set non-redundancy check is implemented: every input point is an
 extremum of the convex hull of the full input set.
 
-This is the right next slice before volume because it is small, already named
-as a separate validation boundary, and avoids mixing a basic point-set contract
-with the larger volume decomposition API.
+This slice stayed separate from volume because it is a basic point-set contract
+and the volume API has a larger decomposition contract.
 
 Exact API:
 
@@ -91,12 +99,10 @@ true/false/indeterminate abstraction for this slice. A flat output record for
 the `f64` diagnostics is acceptable if a tuple would hide the meaning of the
 payload.
 
-## Next Slice: Full-Dimensional f64 Volume
+## Implemented Slice: Full-Dimensional f64 Volume
 
-The next implementation slice should move the ordinary full-dimensional
-`R^4` volume computation out of `symplectic` and into this crate.
-
-Target operation:
+The ordinary full-dimensional `R^4` volume computation now has a flat f64 entry
+point in this crate:
 
 ```rust,ignore
 pub fn volume_f64(
@@ -105,14 +111,10 @@ pub fn volume_f64(
 ) -> Result<VolumeF64, F64GeometryError>;
 ```
 
-The exact return type can be adjusted by the implementing agent, but it should
-be operation-specific and flat. The intended shape is:
-
 ```rust,ignore
 pub enum VolumeF64 {
     Decided {
         volume: f64,
-        volume_abs_error_bound: f64,
     },
     Indeterminate {
         indeterminate_incidence: Vec<IncidenceF64>,
@@ -127,11 +129,11 @@ full-dimensional bounded polytope. The origin is therefore strictly inside
 such as a vertex lying outside a halfspace by more than the local signed-gap
 bound may panic unless a genuinely recoverable caller use case appears.
 
-Implementation target: copy the existing origin-star triangulation idea from
-`crates/symplectic/src/geom/volume.rs`, but operate only on flat slices. Use
-`dual_vertices` to recover vertex-facet incidence via `<a_i, v> = 1`, then use
-`vertices` for Euclidean determinants. Do not introduce `Polytope4D`, a public
-polytope wrapper, or a qhull dependency.
+The implementation copies the existing origin-star triangulation idea from
+`crates/symplectic/src/geom/volume.rs`, but operates only on flat slices. It
+uses `dual_vertices` to recover vertex-facet incidence via `<a_i, v> = 1`, then
+uses `vertices` for Euclidean determinants. It does not introduce
+`Polytope4D`, a public polytope wrapper, or a qhull dependency.
 
 Approximate incidence must not guess. For each pair `(vertex_index,
 facet_index)`, compute `signed_gap = 1.0 - a_i.dot(v)` and a local
@@ -139,18 +141,15 @@ facet_index)`, compute `signed_gap = 1.0 - a_i.dot(v)` and a local
 `VolumeF64::Indeterminate` with the ambiguous relations. If every relation is
 decided, compute the volume and return `Decided`.
 
-The first implementation may set `volume_abs_error_bound` to a conservative
-determinant-arithmetic bound if the calculation is simple. If not, use `0.0`
-only with explicit docs that the field is a placeholder for rounding analysis,
-or omit the field from the initial return type. Do not overclaim a rigorous
-bound.
+The first implementation omits `volume_abs_error_bound`. It would be misleading
+to expose `0.0` or a placeholder as a rigorous determinant-arithmetic bound.
 
-Fixture tests should cover at least:
+Fixture tests cover:
 
 - simplex volume `1/24`;
 - hypercube `[-1,1]^4` volume `16`;
 - crosspolytope with vertices `+-2 e_i` volume `32/3`;
-- volume scaling on hypercubes, preferably with a small property test;
+- volume scaling on hypercubes with a small property test;
 - non-finite input returns `F64GeometryError::NonFiniteCoordinate`;
 - a near-incidence input returns `Indeterminate` instead of deciding from a
   tolerance guess.
