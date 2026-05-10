@@ -1,7 +1,7 @@
 //! Symplectic-form and transition-graph feature columns.
 
 use nalgebra::DMatrix;
-use symplectic::algorithms::facet_adjacency::build_transition_matrix;
+use symplectic::algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega;
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::skeleton::Skeleton;
 use symplectic::geom::symplectic_form::omega0;
@@ -59,7 +59,12 @@ pub fn compute_omega_fields(
         .iter()
         .filter(|ridge| polytope.omega_signs()[(ridge.facets[0], ridge.facets[1])] == 0)
         .count();
-    let transition = build_transition_matrix(polytope);
+    let facet_intersection_is_nonempty = polytope.facet_intersection_is_nonempty();
+    let omega_signs = polytope.omega_signs();
+    let transition = build_transition_matrix_from_facet_intersections_and_omega(
+        &facet_intersection_is_nonempty,
+        &omega_signs,
+    );
     let mut transition_true_count = 0usize;
     let mut facet_intersection_pair_count = 0usize;
     let mut bidirectional_pair_count = 0usize;
@@ -76,7 +81,7 @@ pub fn compute_omega_fields(
     }
     for i in 0..facet_count {
         for j in (i + 1)..facet_count {
-            if polytope.facet_intersection_is_nonempty()[(i, j)] {
+            if facet_intersection_is_nonempty[(i, j)] {
                 facet_intersection_pair_count += 1;
                 if transition[(i, j)] && transition[(j, i)] {
                     bidirectional_pair_count += 1;

@@ -126,7 +126,11 @@ fn facet_intersection_is_symmetric() {
 fn directed_transition_is_subset_of_facet_intersection() {
     for kp in known_polytopes::all_known() {
         let facet_intersection_is_nonempty = kp.polytope.facet_intersection_is_nonempty();
-        let directed = build_transition_matrix(&kp.polytope);
+        let omega_signs = kp.polytope.omega_signs();
+        let directed = build_transition_matrix_from_facet_intersections_and_omega(
+            &facet_intersection_is_nonempty,
+            &omega_signs,
+        );
         let f = kp.polytope.facet_count();
         for i in 0..f {
             for j in 0..f {
@@ -148,7 +152,12 @@ fn directed_transition_is_subset_of_facet_intersection() {
 #[test]
 fn directed_transition_antisymmetry_property() {
     for kp in known_polytopes::all_known() {
-        let directed = build_transition_matrix(&kp.polytope);
+        let facet_intersection_is_nonempty = kp.polytope.facet_intersection_is_nonempty();
+        let omega_signs = kp.polytope.omega_signs();
+        let directed = build_transition_matrix_from_facet_intersections_and_omega(
+            &facet_intersection_is_nonempty,
+            &omega_signs,
+        );
         let omega_signs = kp.polytope.omega_signs();
         let f = kp.polytope.facet_count();
         for i in 0..f {
@@ -176,7 +185,11 @@ fn directed_transition_prunes_vs_facet_intersection() {
     // The simplex is generic enough that directed should prune some edges
     let kp = known_polytopes::simplex();
     let facet_intersection_is_nonempty = kp.polytope.facet_intersection_is_nonempty();
-    let directed = build_transition_matrix(&kp.polytope);
+    let omega_signs = kp.polytope.omega_signs();
+    let directed = build_transition_matrix_from_facet_intersections_and_omega(
+        &facet_intersection_is_nonempty,
+        &omega_signs,
+    );
     let count_facet_intersections: usize = facet_intersection_is_nonempty
         .iter()
         .filter(|&&v| v)
@@ -239,9 +252,12 @@ fn is_feasible_cycle_single_element() {
 #[test]
 fn lagrangian_product_q_q_transitions_bidirectional() {
     let kp = known_polytopes::lagrangian_triangle_product();
-    let directed = build_transition_matrix(&kp.polytope);
     let facet_intersection_is_nonempty = kp.polytope.facet_intersection_is_nonempty();
     let omega_signs = kp.polytope.omega_signs();
+    let directed = build_transition_matrix_from_facet_intersections_and_omega(
+        &facet_intersection_is_nonempty,
+        &omega_signs,
+    );
     let f = kp.polytope.facet_count();
 
     // For pairs where omega_signs == 0 and facets intersect,

@@ -89,7 +89,8 @@ fn minimasafe_does_not_accept_spurious_square_product_minimum() {
 
     let (orbits, iterations) =
         solve_sigma_stream(&polytope, OrbitSolveBackend::SaddlePoint, |visit| {
-            crate::algorithms::hk2017::for_each_sigma_unpruned(&polytope, visit)
+            let facet_count = polytope.facet_count();
+            crate::algorithms::hk2017::for_each_sigma_unpruned_facet_count(facet_count, visit)
         })
         .expect("square product sigma stream should solve");
 
@@ -123,7 +124,8 @@ fn minimasafe_accepts_exact_rational_scaled_cube() {
 
     let (orbits, iterations) =
         solve_sigma_stream(&polytope, OrbitSolveBackend::SaddlePoint, |visit| {
-            crate::algorithms::hk2017::for_each_sigma_unpruned(&polytope, visit)
+            let facet_count = polytope.facet_count();
+            crate::algorithms::hk2017::for_each_sigma_unpruned_facet_count(facet_count, visit)
         })
         .expect("exact rational cube sigma stream should solve");
 
@@ -191,7 +193,14 @@ fn certified_gap_window_returns_only_exact_orbits_inside_gap() {
     let gap = frac(1, 4);
     let (orbits, iterations) =
         solve_sigma_stream(&kp.polytope, OrbitSolveBackend::SaddlePoint, |visit| {
-            crate::algorithms::hk2017::for_each_sigma_pruned(&kp.polytope, visit)
+            let transition_is_allowed = crate::algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega(
+                kp.polytope.facet_intersection_is_nonempty(),
+                kp.polytope.omega_signs(),
+            );
+            crate::algorithms::hk2017::for_each_sigma_pruned_by_transition(
+                &transition_is_allowed,
+                visit,
+            )
         })
         .expect("simplex sigma stream should solve");
 

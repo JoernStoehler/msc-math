@@ -21,7 +21,9 @@ pub mod facet_classification;
 #[cfg(test)]
 mod kkt_benchmark;
 
-use crate::algorithms::facet_adjacency::{build_transition_matrix, is_feasible_cycle};
+use crate::algorithms::facet_adjacency::{
+    build_transition_matrix_from_facet_intersections_and_omega, is_feasible_cycle,
+};
 use crate::algorithms::OrbitSearchError;
 use crate::geom::polytope::Polytope4D;
 use block_enumeration::{enumerate_blocks, enumerate_k_bounce_sigmas};
@@ -100,7 +102,11 @@ pub fn for_each_sigma(
 ) -> Result<(), BilliardError> {
     let classification = classify_facets(polytope)?;
     let facet_intersection_is_nonempty = polytope.facet_intersection_is_nonempty();
-    let transition_is_allowed = build_transition_matrix(polytope);
+    let omega_signs = polytope.omega_signs();
+    let transition_is_allowed = build_transition_matrix_from_facet_intersections_and_omega(
+        facet_intersection_is_nonempty,
+        omega_signs,
+    );
     let q_blocks = enumerate_blocks(&classification.q_indices, facet_intersection_is_nonempty);
     let p_blocks = enumerate_blocks(&classification.p_indices, facet_intersection_is_nonempty);
 

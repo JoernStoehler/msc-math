@@ -28,7 +28,7 @@ use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::path::Path;
 use std::time::Instant;
-use symplectic::algorithms::facet_adjacency::build_transition_matrix;
+use symplectic::algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega;
 use symplectic::database;
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::skeleton::Skeleton;
@@ -189,8 +189,18 @@ fn same_omega(a: &CombinatorialType, b: &CombinatorialType) -> bool {
 /// facet intersection nonemptiness + omega_0 signs -> directed facet graph.
 /// This is what actually determines which Reeb orbits are feasible.
 fn same_transitions(base: &Polytope4D, other: &Polytope4D) -> bool {
-    let t1 = build_transition_matrix(base);
-    let t2 = build_transition_matrix(other);
+    let base_facet_intersection_is_nonempty = base.facet_intersection_is_nonempty();
+    let base_omega_signs = base.omega_signs();
+    let t1 = build_transition_matrix_from_facet_intersections_and_omega(
+        &base_facet_intersection_is_nonempty,
+        &base_omega_signs,
+    );
+    let other_facet_intersection_is_nonempty = other.facet_intersection_is_nonempty();
+    let other_omega_signs = other.omega_signs();
+    let t2 = build_transition_matrix_from_facet_intersections_and_omega(
+        &other_facet_intersection_is_nonempty,
+        &other_omega_signs,
+    );
     t1 == t2
 }
 

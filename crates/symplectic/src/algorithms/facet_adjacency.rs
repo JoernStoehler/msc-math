@@ -9,7 +9,6 @@
 //!
 //! Mathematical correspondence: [lem:numerical-transition-feasibility], [cor:adjacency-pruning]
 
-use crate::geom::polytope::Polytope4D;
 use nalgebra::DMatrix;
 
 #[cfg(test)]
@@ -55,16 +54,6 @@ pub fn build_transition_matrix_from_facet_intersections_and_omega(
         facet_intersection_is_nonempty.nrows(),
         facet_intersection_is_nonempty.ncols(),
         |i, j| facet_intersection_is_nonempty[(i, j)] && omega_signs[(i, j)] >= 0,
-    )
-}
-
-/// Build the directed transition matrix from a `Polytope4D`.
-pub fn build_transition_matrix(polytope: &Polytope4D) -> DMatrix<bool> {
-    let facet_intersection_is_nonempty = polytope.facet_intersection_is_nonempty();
-    let omega_signs = polytope.omega_signs();
-    build_transition_matrix_from_facet_intersections_and_omega(
-        facet_intersection_is_nonempty,
-        omega_signs,
     )
 }
 

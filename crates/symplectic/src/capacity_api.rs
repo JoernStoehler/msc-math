@@ -172,7 +172,10 @@ pub fn capacity_hk2017_unpruned_f64(
     let (orbits, iterations) = solve_sigma_stream(
         &polytope,
         crate::algorithms::OrbitSolveBackend::SaddlePoint,
-        |visit| crate::algorithms::hk2017::for_each_sigma_unpruned(&polytope, visit),
+        |visit| {
+            let facet_count = polytope.facet_count();
+            crate::algorithms::hk2017::for_each_sigma_unpruned_facet_count(facet_count, visit)
+        },
     )?;
     let result = crate::algorithms::orbit_search::aggregate_orbits(
         &polytope,

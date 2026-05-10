@@ -101,7 +101,11 @@ fn simplex_orbit_aggregation() {
     let kp = known_polytopes::simplex();
     let (orbits, iterations) =
         solve_sigma_stream(&kp.polytope, OrbitSolveBackend::SaddlePoint, |visit| {
-            for_each_sigma_pruned(&kp.polytope, visit)
+            let transition_is_allowed = crate::algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega(
+                kp.polytope.facet_intersection_is_nonempty(),
+                kp.polytope.omega_signs(),
+            );
+            for_each_sigma_pruned_by_transition(&transition_is_allowed, visit)
         })
         .expect("sigma solve stream should succeed on simplex");
     let result = aggregate_orbits(
@@ -135,7 +139,11 @@ fn simplex_orbit_aggregation() {
 fn simplex_projected_backend_unsupported() {
     let kp = known_polytopes::simplex();
     let err = solve_sigma_stream(&kp.polytope, OrbitSolveBackend::Projected, |visit| {
-        for_each_sigma_pruned(&kp.polytope, visit)
+        let transition_is_allowed = crate::algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega(
+            kp.polytope.facet_intersection_is_nonempty(),
+            kp.polytope.omega_signs(),
+        );
+        for_each_sigma_pruned_by_transition(&transition_is_allowed, visit)
     })
     .expect_err("projected backend is not wired into the shared collector yet");
     assert_eq!(err, OrbitSearchError::UnsupportedBackend);

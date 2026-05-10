@@ -20,7 +20,7 @@ use std::env;
 use std::io::Write;
 use std::path::{Path, PathBuf};
 use std::time::Instant;
-use symplectic::algorithms::hk2017::for_each_sigma_pruned;
+use symplectic::algorithms::hk2017::for_each_sigma_pruned_by_transition;
 use symplectic::algorithms::{
     aggregate_orbits, solve_orbit_sigma, OrbitAdmissibility, OrbitGuaranteeMode, OrbitKktData,
     OrbitSearchError, OrbitSolveBackend, OrbitSolveError,
@@ -350,7 +350,14 @@ fn compute_minimum_orbits(polytope: &symplectic::Polytope4D) -> Result<MinimumSe
     let mut iterations = 0u64;
     let mut fatal_error = None::<String>;
 
-    for_each_sigma_pruned(polytope, |sigma| {
+    let facet_intersection_is_nonempty = polytope.facet_intersection_is_nonempty();
+    let omega_signs = polytope.omega_signs();
+    let transition_is_allowed = symplectic::algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega(
+        &facet_intersection_is_nonempty,
+        &omega_signs,
+    );
+
+    for_each_sigma_pruned_by_transition(&transition_is_allowed, |sigma| {
         if fatal_error.is_some() {
             return;
         }
