@@ -177,7 +177,7 @@ mod tests {
     // Strategy: fixture-based on known polytopes (hypercube), verifying
     // matrix dimensions, symmetry of H, constraint structure, and known values.
 
-    // ── build_qp tests ──
+    // ── build_qp_from_dual_vertices tests ──
 
     #[test]
     #[should_panic(expected = "permutation index 8 out of bounds for 8 dual vertices")]
@@ -336,7 +336,7 @@ mod tests {
         );
     }
 
-    // ── build_augmented_system tests ──
+    // ── build_augmented_system_from_dual_vertices tests ──
 
     /// Augmented system has size (m+5) x (m+5).
     #[test]
