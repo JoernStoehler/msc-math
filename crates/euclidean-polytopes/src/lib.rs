@@ -22,4 +22,4 @@ pub use polar::{
     PolarVertexData, PolarVerticesF64,
 };
 pub use predicates::{all_points_are_extreme_exact, origin_in_interior_of_conv_exact};
-pub use volume::{volume_f64, VolumeF64};
+pub use volume::{volume_f64, volume_from_incidence_f64, VolumeF64};

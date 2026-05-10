@@ -1,5 +1,5 @@
-use euclidean_polytopes::{volume_f64, F64GeometryError, VolumeF64};
-use nalgebra::Vector4;
+use euclidean_polytopes::{volume_f64, volume_from_incidence_f64, F64GeometryError, VolumeF64};
+use nalgebra::{DMatrix, Vector4};
 use proptest::prelude::*;
 
 fn vf(entries: [f64; 4]) -> Vector4<f64> {
@@ -23,6 +23,20 @@ fn centered_simplex() -> (Vec<Vector4<f64>>, Vec<Vector4<f64>>) {
     ];
 
     (dual_vertices, vertices)
+}
+
+fn centered_simplex_incidence() -> DMatrix<bool> {
+    DMatrix::from_row_slice(
+        5,
+        5,
+        &[
+            false, true, true, true, true, //
+            true, false, true, true, true, //
+            true, true, false, true, true, //
+            true, true, true, false, true, //
+            true, true, true, true, false,
+        ],
+    )
 }
 
 fn hypercube(scale: f64) -> (Vec<Vector4<f64>>, Vec<Vector4<f64>>) {
@@ -51,6 +65,19 @@ fn hypercube(scale: f64) -> (Vec<Vector4<f64>>, Vec<Vector4<f64>>) {
     (dual_vertices, vertices)
 }
 
+fn hypercube_incidence(vertices: &[Vector4<f64>], scale: f64) -> DMatrix<bool> {
+    DMatrix::from_fn(vertices.len(), 8, |vertex_index, facet_index| {
+        let coordinate_index = facet_index / 2;
+        let positive_facet = facet_index % 2 == 0;
+        let coordinate = vertices[vertex_index][coordinate_index];
+        if positive_facet {
+            coordinate == scale
+        } else {
+            coordinate == -scale
+        }
+    })
+}
+
 fn crosspolytope_radius_2() -> (Vec<Vector4<f64>>, Vec<Vector4<f64>>) {
     let mut dual_vertices = Vec::new();
     for s0 in [-0.5, 0.5] {
@@ -77,6 +104,15 @@ fn crosspolytope_radius_2() -> (Vec<Vector4<f64>>, Vec<Vector4<f64>>) {
     (dual_vertices, vertices)
 }
 
+fn crosspolytope_radius_2_incidence() -> DMatrix<bool> {
+    DMatrix::from_fn(8, 16, |vertex_index, facet_index| {
+        let coordinate_index = vertex_index / 2;
+        let positive_vertex = vertex_index % 2 == 0;
+        let facet_sign_bit = (facet_index >> (3 - coordinate_index)) & 1;
+        positive_vertex == (facet_sign_bit == 1)
+    })
+}
+
 fn decided_volume(dual_vertices: &[Vector4<f64>], vertices: &[Vector4<f64>]) -> f64 {
     match volume_f64(dual_vertices, vertices).expect("finite input") {
         VolumeF64::Decided { volume } => volume,
@@ -84,6 +120,10 @@ fn decided_volume(dual_vertices: &[Vector4<f64>], vertices: &[Vector4<f64>]) -> 
             indeterminate_incidence,
         } => panic!("expected decided volume, got {indeterminate_incidence:?}"),
     }
+}
+
+fn known_incidence_volume(vertices: &[Vector4<f64>], incidence: &DMatrix<bool>) -> f64 {
+    volume_from_incidence_f64(vertices, incidence).expect("finite input")
 }
 
 fn assert_close(actual: f64, expected: f64, tolerance: f64) {
@@ -140,6 +180,65 @@ fn crosspolytope_radius_2_volume_is_32_over_3() {
         32.0 / 3.0,
         1.0e-10,
     );
+}
+
+/// Proposition: if exact vertex-facet incidence is already known for a
+/// normalized full-dimensional 4-polytope containing `0`, the known-incidence
+/// helper computes the ordinary Euclidean volume without f64 incidence
+/// recovery.
+///
+/// Operationalization: use explicit incidence matrices for the centered
+/// simplex, the hypercube `[-1,1]^4`, and the radius-2 crosspolytope.
+/// Tolerances match the existing f64 determinant-sum checks.
+#[test]
+fn known_incidence_volume_matches_fixture_values() {
+    let (_, simplex_vertices) = centered_simplex();
+    assert_close(
+        known_incidence_volume(&simplex_vertices, &centered_simplex_incidence()),
+        1.0 / 24.0,
+        1.0e-12,
+    );
+
+    let (_, hypercube_vertices) = hypercube(1.0);
+    assert_close(
+        known_incidence_volume(
+            &hypercube_vertices,
+            &hypercube_incidence(&hypercube_vertices, 1.0),
+        ),
+        16.0,
+        1.0e-10,
+    );
+
+    let (_, crosspolytope_vertices) = crosspolytope_radius_2();
+    assert_close(
+        known_incidence_volume(&crosspolytope_vertices, &crosspolytope_radius_2_incidence()),
+        32.0 / 3.0,
+        1.0e-10,
+    );
+}
+
+#[test]
+fn recovered_and_known_incidence_volume_paths_agree() {
+    for (dual_vertices, vertices, incidence) in [
+        {
+            let (dual_vertices, vertices) = centered_simplex();
+            (dual_vertices, vertices, centered_simplex_incidence())
+        },
+        {
+            let (dual_vertices, vertices) = hypercube(1.0);
+            let incidence = hypercube_incidence(&vertices, 1.0);
+            (dual_vertices, vertices, incidence)
+        },
+        {
+            let (dual_vertices, vertices) = crosspolytope_radius_2();
+            (dual_vertices, vertices, crosspolytope_radius_2_incidence())
+        },
+    ] {
+        let recovered_volume = decided_volume(&dual_vertices, &vertices);
+        let known_volume = known_incidence_volume(&vertices, &incidence);
+        let allowed_error = 1.0e-10_f64.max(1.0e-10 * known_volume.abs());
+        assert_close(recovered_volume, known_volume, allowed_error);
+    }
 }
 
 proptest! {
@@ -247,6 +346,40 @@ fn non_finite_input_returns_geometry_error() {
         ),
         "unexpected error: {error:?}"
     );
+}
+
+#[test]
+fn known_incidence_non_finite_input_returns_geometry_error() {
+    let (_, mut vertices) = hypercube(1.0);
+    vertices[3][2] = f64::NAN;
+    let incidence = hypercube_incidence(&vertices, 1.0);
+
+    let error =
+        volume_from_incidence_f64(&vertices, &incidence).expect_err("non-finite coordinate");
+
+    assert!(
+        matches!(
+            error,
+            F64GeometryError::NonFiniteCoordinate {
+                vector_role: "vertices",
+                vector_index: 3,
+                coordinate_index: 2,
+                value,
+            } if value.is_nan()
+        ),
+        "unexpected error: {error:?}"
+    );
+}
+
+#[test]
+#[should_panic(
+    expected = "volume_from_incidence_f64 requires incidence rows to match vertices length"
+)]
+fn known_incidence_shape_mismatch_panics() {
+    let (_, vertices) = hypercube(1.0);
+    let incidence = DMatrix::from_element(vertices.len() + 1, 8, false);
+
+    let _ = volume_from_incidence_f64(&vertices, &incidence);
 }
 
 #[test]

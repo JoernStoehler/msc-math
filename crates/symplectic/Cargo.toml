@@ -19,6 +19,7 @@ good_lp.workspace = true
 num-integer.workspace = true
 blake3.workspace = true
 algebraic-numbers.workspace = true
+euclidean-polytopes.workspace = true
 
 [dev-dependencies]
 proptest.workspace = true

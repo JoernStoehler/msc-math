@@ -90,6 +90,11 @@ pub fn volume_f64(
     vertices: &[Vector4<f64>],
 ) -> Result<VolumeF64, F64GeometryError>;
 
+pub fn volume_from_incidence_f64(
+    vertices: &[Vector4<f64>],
+    incidence: &DMatrix<bool>,
+) -> Result<f64, F64GeometryError>;
+
 pub enum VolumeF64 {
     Decided {
         volume: f64,
@@ -136,6 +141,15 @@ decide in `f64`, and panics when a provided vertex clearly violates a provided
 halfspace. The decided payload intentionally has no `volume_abs_error_bound`
 yet; this slice bounds incidence decisions, not the full determinant sum.
 
+`volume_from_incidence_f64(vertices, incidence)` computes the same ordinary
+full-dimensional `R^4` volume when the caller already has reliable
+vertex-facet incidence. `incidence[(v, f)]` must mean that `vertices[v]` lies
+on facet `f` of a normalized full-dimensional polytope containing the origin.
+The helper validates finite vertex coordinates. Incidence row/column shape and
+full-dimensional decomposition assumptions are caller contracts and panic on
+violation. This path is preferred over `volume_f64` for exact-incidence callers,
+because it does not recompute combinatorics from f64 signed gaps.
+
 ## Robust Numeric Split
 
 The crate should expose two kinds of geometry APIs when a computation has both
@@ -177,7 +191,7 @@ fixed here:
   stable non-extreme witnesses or indeterminate witness subsets rather than
   tolerance guesses;
 - exact full-dimensional volume over the exact scalar type, using the reviewed
-  `volume_f64` shape as the approximate counterpart;
+  f64 volume helpers as approximate counterparts;
 - affine-subspace polygon and lower-dimensional volume helpers in ambient
   `R^4`.
 
@@ -191,15 +205,16 @@ to correspond to a non-redundant polar facet. The same function computes
 vertices from dual vertices, because polarity is involutive under the
 `0 in int conv` contract.
 
-The full-dimensional volume target should use `dual_vertices` only to recover
-facet incidence (`<a_i, v> = 1`) and use `vertices` for Euclidean geometry. This
-keeps the call close to the math and avoids constructing a symplectic
-`Polytope4D` only to ask an ordinary volume question.
+The full-dimensional f64 volume helpers keep incidence recovery separate from
+determinant geometry. `volume_f64` uses `dual_vertices` only to recover facet
+incidence (`<a_i, v> = 1`) and uses `vertices` for Euclidean geometry.
+`volume_from_incidence_f64` skips that recovery step when callers already have
+known incidence.
 
-Exact incidence can use `DMatrix<bool>` or another plain boolean matrix shape.
-Approximate incidence should not be forced into a boolean matrix when each
-relation can be true, false, or indeterminate with diagnostics. Prefer a flat
-`Vec<IncidenceF64>`-style relation list if it needs values such as
+Exact known incidence uses a plain `DMatrix<bool>` in the current volume
+helper. Approximate incidence should not be forced into a boolean matrix when
+each relation can be true, false, or indeterminate with diagnostics. Prefer a
+flat `Vec<IncidenceF64>`-style relation list if it needs values such as
 `signed_gap`, `signed_gap_abs_error_bound`, or candidate indices.
 
 Lower-dimensional volume is a design target because the full-dimensional volume

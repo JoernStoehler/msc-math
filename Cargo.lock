@@ -1427,6 +1427,7 @@ dependencies = [
  "approx",
  "blake3",
  "criterion",
+ "euclidean-polytopes",
  "good_lp",
  "nalgebra",
  "num-bigint",

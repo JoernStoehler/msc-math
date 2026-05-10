@@ -4,7 +4,7 @@
 //! primal vertices directly. The duals determine vertex-facet incidence, and
 //! the primal vertices determine Euclidean determinant geometry.
 
-use nalgebra::{Matrix4, Vector4};
+use nalgebra::{DMatrix, Matrix4, Vector4};
 
 use crate::f64_geometry::{signed_gap_abs_error_bound, validate_finite_vectors4, F64GeometryError};
 use crate::polar::IncidenceF64;
@@ -67,8 +67,49 @@ pub fn volume_f64(
         });
     }
 
-    let volume = origin_star_volume(vertices, &incidence.facet_vertices);
+    let volume = origin_star_volume(vertices, &incidence.facet_vertices, "volume_f64");
     Ok(VolumeF64::Decided { volume })
+}
+
+/// Compute full-dimensional Euclidean volume from known vertex-facet incidence.
+///
+/// Use this helper when a caller already has reliable combinatorial incidence,
+/// for example from an exact construction. Unlike [`volume_f64`], this function
+/// does not recover incidence from floating-point signed gaps.
+///
+/// Validated here: every vertex coordinate is finite. Contract assumptions:
+/// `incidence[(v, f)]` is true exactly when `vertices[v]` lies on facet `f` of
+/// a normalized full-dimensional `R^4` polytope containing the origin. The
+/// incidence matrix must have one row per vertex and one column per facet.
+///
+/// Shape mismatches and violated full-dimensional decomposition assumptions
+/// panic as programmer errors.
+pub fn volume_from_incidence_f64(
+    vertices: &[Vector4<f64>],
+    incidence: &DMatrix<bool>,
+) -> Result<f64, F64GeometryError> {
+    assert_eq!(
+        incidence.nrows(),
+        vertices.len(),
+        "volume_from_incidence_f64 requires incidence rows to match vertices length"
+    );
+    validate_finite_vectors4("vertices", vertices)?;
+
+    assert!(
+        vertices.len() >= 5,
+        "volume_from_incidence_f64 requires at least five vertices for a full-dimensional R^4 polytope"
+    );
+    assert!(
+        incidence.ncols() >= 5,
+        "volume_from_incidence_f64 requires at least five facets for a full-dimensional bounded R^4 polytope"
+    );
+
+    let facet_vertices = facet_vertices_from_incidence(incidence);
+    Ok(origin_star_volume(
+        vertices,
+        &facet_vertices,
+        "volume_from_incidence_f64",
+    ))
 }
 
 #[derive(Clone, Debug)]
@@ -120,11 +161,25 @@ fn decide_incidence_f64(
     }
 }
 
-fn origin_star_volume(vertices: &[Vector4<f64>], facet_vertices: &[Vec<usize>]) -> f64 {
+fn facet_vertices_from_incidence(incidence: &DMatrix<bool>) -> Vec<Vec<usize>> {
+    (0..incidence.ncols())
+        .map(|facet_index| {
+            (0..incidence.nrows())
+                .filter(|&vertex_index| incidence[(vertex_index, facet_index)])
+                .collect()
+        })
+        .collect()
+}
+
+fn origin_star_volume(
+    vertices: &[Vector4<f64>],
+    facet_vertices: &[Vec<usize>],
+    caller: &str,
+) -> f64 {
     for (facet_index, indices) in facet_vertices.iter().enumerate() {
         assert!(
             indices.len() >= 4,
-            "volume_f64 full-dimensional facet {facet_index} has fewer than four vertices"
+            "{caller} full-dimensional facet {facet_index} has fewer than four vertices"
         );
     }
 
@@ -209,7 +264,7 @@ fn order_polygon_vertex_indices(all_vertices: &[Vector4<f64>], indices: &[usize]
 
     let ridge_vertices: Vec<Vector4<f64>> = indices.iter().map(|&idx| all_vertices[idx]).collect();
     let Some(order) = sort_polygon_order(&ridge_vertices) else {
-        panic!("volume_f64 could not order a nondegenerate ridge polygon");
+        panic!("volume computation could not order a nondegenerate ridge polygon");
     };
     order
         .into_iter()

@@ -8,9 +8,9 @@
 //!
 //! Mathematical correspondence: [def:volume], [lem:volume-star-triangulation]
 
-use crate::geom::polygon_order::sort_polygon_order;
 use crate::geom::polytope::Polytope4D;
 use crate::geom::qhull::QhullError;
+use euclidean_polytopes::volume_from_incidence_f64;
 use nalgebra::Vector4;
 
 /// Volume of a 4-simplex from its 5 vertices.
@@ -41,45 +41,8 @@ pub fn simplex_volume_5(
 ///
 /// Mathematical correspondence: [def:volume], [lem:volume-star-triangulation]
 pub fn volume(polytope: &Polytope4D) -> f64 {
-    let vertices = polytope.vertices_f64();
-    if vertices.len() < 5 {
-        return 0.0;
-    }
-
-    let facet_vertices = facet_vertex_indices(polytope);
-    let facet_centroids: Vec<Vector4<f64>> = facet_vertices
-        .iter()
-        .map(|indices| mean_vertex(vertices, indices))
-        .collect();
-    let adjacency = polytope.vertex_adjacency();
-
-    let mut total = 0.0;
-    for fi in 0..polytope.facet_count() {
-        for fj in 0..polytope.facet_count() {
-            if fi == fj || !adjacency[(fi, fj)] {
-                continue;
-            }
-
-            let ridge = intersect_sorted(&facet_vertices[fi], &facet_vertices[fj]);
-            if ridge.len() < 3 {
-                continue;
-            }
-
-            let ordered = order_polygon_vertex_indices(vertices, &ridge);
-            let facet_center = facet_centroids[fi];
-            for k in 1..ordered.len() - 1 {
-                total += simplex_volume_5(
-                    Vector4::zeros(),
-                    facet_center,
-                    vertices[ordered[0]],
-                    vertices[ordered[k]],
-                    vertices[ordered[k + 1]],
-                );
-            }
-        }
-    }
-
-    total
+    volume_from_incidence_f64(polytope.vertices_f64(), polytope.incidence())
+        .expect("valid Polytope4D has finite f64 vertices and matching incidence")
 }
 
 /// Compute volume of a 4D convex polytope via qhull triangulation.
@@ -92,61 +55,12 @@ pub fn volume_qhull(polytope: &Polytope4D) -> Result<f64, QhullError> {
     crate::geom::qhull::compute_volume_qconvex(vertices)
 }
 
-fn facet_vertex_indices(polytope: &Polytope4D) -> Vec<Vec<usize>> {
-    let incidence = polytope.incidence();
-    let vertex_count = incidence.nrows();
-
-    (0..polytope.facet_count())
-        .map(|fi| {
-            (0..vertex_count)
-                .filter(|&vi| incidence[(vi, fi)])
-                .collect::<Vec<_>>()
-        })
-        .collect()
-}
-
-fn mean_vertex(vertices: &[Vector4<f64>], indices: &[usize]) -> Vector4<f64> {
-    debug_assert!(
-        !indices.is_empty(),
-        "valid Polytope4D facets should have at least one incident vertex"
-    );
-    indices.iter().map(|&vi| vertices[vi]).sum::<Vector4<f64>>() / indices.len() as f64
-}
-
-fn intersect_sorted(lhs: &[usize], rhs: &[usize]) -> Vec<usize> {
-    let mut out = Vec::new();
-    let (mut i, mut j) = (0, 0);
-    while i < lhs.len() && j < rhs.len() {
-        match lhs[i].cmp(&rhs[j]) {
-            std::cmp::Ordering::Less => i += 1,
-            std::cmp::Ordering::Greater => j += 1,
-            std::cmp::Ordering::Equal => {
-                out.push(lhs[i]);
-                i += 1;
-                j += 1;
-            }
-        }
-    }
-    out
-}
-
-fn order_polygon_vertex_indices(all_vertices: &[Vector4<f64>], indices: &[usize]) -> Vec<usize> {
-    if indices.len() <= 2 {
-        return indices.to_vec();
-    }
-
-    let ridge_vertices: Vec<Vector4<f64>> = indices.iter().map(|&i| all_vertices[i]).collect();
-    match sort_polygon_order(&ridge_vertices) {
-        Some(order) => order.into_iter().map(|pos| indices[pos]).collect(),
-        None => indices.to_vec(),
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
     use crate::geom::known_polytopes;
     use crate::geom::test_utils::{crosspolytope, scaled_hypercube};
+    use euclidean_polytopes::volume_from_incidence_f64;
     use nalgebra::Vector4;
 
     // Tests for volume: computation vs known values for standard polytopes.
@@ -239,6 +153,33 @@ mod tests {
             assert!(
                 vol > 0.0,
                 "{}: volume should be positive, got {vol}",
+                kp.name
+            );
+        }
+    }
+
+    /// Wiring regression: the compatibility wrapper
+    /// `symplectic::geom::volume::volume` delegates to the Euclidean
+    /// known-incidence helper on valid `Polytope4D` fixtures.
+    ///
+    /// Mathematical correctness is covered by the exact-value and qhull tests
+    /// above and below; this test protects the cross-crate migration boundary.
+    ///
+    /// Operationalization: compare all known fixtures, using exact
+    /// `Polytope4D` incidence and f64 vertex copies. Tolerance:
+    /// `max(1e-10, 1e-10 * |volume|)`.
+    #[test]
+    fn volume_wrapper_matches_euclidean_known_incidence_helper() {
+        for kp in known_polytopes::all_known() {
+            let wrapper_volume = volume(&kp.polytope);
+            let euclidean_volume =
+                volume_from_incidence_f64(kp.polytope.vertices_f64(), kp.polytope.incidence())
+                    .expect("valid Polytope4D fixture");
+            let allowed_error = 1.0e-10_f64.max(1.0e-10 * euclidean_volume.abs());
+
+            assert!(
+                (wrapper_volume - euclidean_volume).abs() <= allowed_error,
+                "{}: wrapper volume = {wrapper_volume}, euclidean volume = {euclidean_volume}",
                 kp.name
             );
         }

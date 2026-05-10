@@ -24,7 +24,8 @@ The implemented packets are in place:
 - `all_points_are_extreme_exact(points) -> bool`;
 - `polar_vertices_exact(vertices) -> PolarVertexData<T>`;
 - `polar_vertices_f64(vertices) -> Result<PolarVerticesF64, F64GeometryError>`;
-- `volume_f64(dual_vertices, vertices) -> Result<VolumeF64, F64GeometryError>`.
+- `volume_f64(dual_vertices, vertices) -> Result<VolumeF64, F64GeometryError>`;
+- `volume_from_incidence_f64(vertices, incidence) -> Result<f64, F64GeometryError>`.
 
 The exact path is the accepted first reusable slice. It checks the
 origin-interior contract, enumerates 4-tuples of active polar inequalities,
@@ -46,10 +47,12 @@ records the source 4-tuple and either `None` for singular/unsolved tuples or
 `Some(vertex)` for an approximate vertex whose membership or duplicate status
 was not decided in `f64`.
 
-The f64 volume path computes full-dimensional `R^4` Euclidean volume from a
-normalized polar pair. It uses dual vertices only for incidence and primal
-vertices for determinant geometry. Incidence is decided only when each local
-signed-gap relation is stable in `f64`; otherwise the function returns
+The f64 volume path computes full-dimensional `R^4` Euclidean volume. It has
+two public entry points over the same origin-star implementation:
+`volume_f64` recovers incidence from a normalized polar pair, and
+`volume_from_incidence_f64` accepts already-known boolean incidence. The
+recovered-incidence path decides each local signed-gap relation only when it is
+stable in `f64`; otherwise it returns
 `VolumeF64::Indeterminate { indeterminate_incidence }`. The decided payload
 currently reports only `volume`, deliberately omitting a volume error bound
 until a credible determinant-sum rounding analysis is implemented.
@@ -154,19 +157,20 @@ Fixture tests cover:
 - a near-incidence input returns `Indeterminate` instead of deciding from a
   tolerance guess.
 
-## Next Slice: Known-Incidence Volume and Symplectic Integration
+## Implemented Slice: Known-Incidence Volume and Symplectic Integration
 
-The next migration slice should let `symplectic::geom::volume::volume` delegate
-ordinary volume computation to this crate without throwing away exact incidence
-already known by `Polytope4D`.
+This migration slice lets `symplectic::geom::volume::volume` delegate ordinary
+volume computation to this crate without throwing away exact incidence already
+known by `Polytope4D`.
 
-Do not route `symplectic` through `volume_f64(dual_vertices, vertices)`: that
-function intentionally recovers incidence from f64 signed gaps and can return
-`Indeterminate` for near-boundary relations. `Polytope4D` already stores an
-exact boolean vertex-facet incidence matrix. Recomputing that incidence in f64
-would be less reliable than the existing symplectic path.
+`symplectic` is intentionally not routed through
+`volume_f64(dual_vertices, vertices)`: that function recovers incidence from
+f64 signed gaps and can return `Indeterminate` for near-boundary relations.
+`Polytope4D` already stores an exact boolean vertex-facet incidence matrix.
+Recomputing that incidence in f64 would be less reliable than the existing
+symplectic path.
 
-Target helper:
+Implemented helper:
 
 ```rust,ignore
 pub fn volume_from_incidence_f64(
@@ -175,32 +179,28 @@ pub fn volume_from_incidence_f64(
 ) -> Result<f64, F64GeometryError>;
 ```
 
-The exact signature can be adjusted, but the helper should stay flat and
-operation-specific. Contract: `incidence[(v, f)]` tells whether `vertices[v]`
-lies on facet `f` for a normalized full-dimensional `R^4` polytope containing
-the origin. The helper validates finite vertices and incidence shape, then uses
-the same origin-star triangulation as `volume_f64`. Shape mismatches should
-panic as caller bugs.
+Contract: `incidence[(v, f)]` tells whether `vertices[v]` lies on facet `f`
+for a normalized full-dimensional `R^4` polytope containing the origin. The
+helper validates finite vertices and asserts that incidence row count matches
+the vertex count. Facet count, vertex count, and every facet having enough
+vertices for the full-dimensional origin-star decomposition are caller
+contracts and panic as programmer errors.
 
-Then change `symplectic::geom::volume::volume(polytope)` to call the Euclidean
-helper with `polytope.vertices_f64()` and `polytope.incidence()`. Keep
-`volume_qhull` in `symplectic` as a validation/backend helper. Remove duplicate
-private triangulation helpers from `symplectic::geom::volume` if they are no
-longer used, except for tests that still need a local simplex-volume fixture.
+`symplectic::geom::volume::volume(polytope)` now calls the Euclidean helper
+with `polytope.vertices_f64()` and `polytope.incidence()`. `volume_qhull`
+remains in `symplectic` as a validation/backend helper, and the public
+`simplex_volume_5` fixture helper remains available. Private duplicate
+origin-star helpers were removed from `symplectic::geom::volume`.
 
-Done criteria for this slice:
+Verification witnesses for this slice:
 
-- `euclidean-polytopes` exposes a known-incidence volume helper with docs that
-  explain when it is preferable to `volume_f64`;
-- `volume_f64` reuses the same internal origin-star implementation after it has
-  recovered decided incidence;
-- `symplectic::geom::volume::volume` delegates to the Euclidean helper and
-  retains its public API;
-- tests compare the migrated symplectic wrapper with `euclidean-polytopes` on
-  known `Polytope4D` fixtures;
-- `cargo test -p euclidean-polytopes`, `cargo test -p symplectic --lib geom::`,
-  `cargo clippy -p euclidean-polytopes --all-targets -- -D warnings`, and
-  `cargo check --workspace` pass.
+- `euclidean-polytopes` tests cover simplex, hypercube, crosspolytope,
+  recovered-vs-known incidence agreement, non-finite input, and incidence row
+  mismatch panic;
+- `symplectic` tests compare the compatibility wrapper with
+  `euclidean-polytopes` on all known `Polytope4D` fixtures while preserving
+  known expected values;
+- required commands for this slice are tracked in the task file.
 
 ## Test Code and Proposition Comments
 
@@ -308,12 +308,13 @@ operationalization.
    add a permutation-invariance test for vertex and facet order.
 
 7. Symplectic migration regression:
-   Proposition: for existing `Polytope4D` fixtures, the old symplectic volume
-   wrapper and the new `euclidean-polytopes::volume_f64` agree.
-   Operationalization: in `symplectic`, call `volume_f64` on
-   `polytope.dual_vertices_f64()` and `polytope.vertices_f64()` for known
-   fixtures, then compare with the existing `geom::volume::volume` until the
-   wrapper is migrated.
+   Proposition: for existing `Polytope4D` fixtures, the migrated symplectic
+   volume wrapper preserves known ordinary volume values.
+   Operationalization: the current `symplectic` fixture tests check exact
+   simplex, hypercube, and crosspolytope values, keep the qhull cross-check
+   when qhull is installed, and include a wiring regression that compares the
+   wrapper with `volume_from_incidence_f64(polytope.vertices_f64(),
+   polytope.incidence())`.
 
 ## Proposed First Migration Slices
 
