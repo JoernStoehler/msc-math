@@ -358,6 +358,48 @@ Implemented criteria for this slice:
 - code review confirms the exact computation uses no f64 arithmetic;
 - required verification commands are listed in `tasks/euclidean-polytopes.md`.
 
+## Next Slice: Symplectic Volume Uses Exact Known Incidence
+
+The next migration slice should make `symplectic::geom::volume` use
+`volume_from_incidence_exact` as the source of truth for `Polytope4D`.
+
+Target shape in `symplectic`:
+
+```rust,ignore
+pub fn volume_exact(polytope: &Polytope4D) -> BigRational;
+
+pub fn volume(polytope: &Polytope4D) -> f64 {
+    rational_to_f64(&volume_exact(polytope))
+}
+```
+
+The exact wrapper should convert `Polytope4D::vertices()` from
+`&[[BigRational; 4]]` to `Vec<Vector4<BigRational>>`, pass
+`polytope.incidence()` directly, and delegate to
+`euclidean_polytopes::volume_from_incidence_exact`. Do not recompute incidence,
+do not pass dual vertices, and do not use `vertices_f64()` in the exact path.
+
+The existing `volume(&Polytope4D) -> f64` API should remain available for
+callers that expect f64. Its implementation should become an exact-to-f64
+compatibility wrapper, not a second determinant implementation. Keep
+`simplex_volume_5` and `volume_qhull` available for existing tests and
+validation backends.
+
+Done criteria for this slice:
+
+- `symplectic::geom::volume::volume_exact` is public and documented;
+- `volume` delegates through `volume_exact` and `rational_to_f64`;
+- existing symplectic volume tests still pass;
+- add exact fixture tests for simplex, hypercube, and crosspolytope values;
+- update the wiring regression so it compares the wrapper with exact
+  Euclidean known-incidence volume, not the f64 Euclidean helper;
+- docs/tasks record that symplectic full-dimensional volume is now an exact
+  Euclidean wrapper plus f64 compatibility output;
+- `cargo test -p symplectic --lib geom::volume`,
+  `cargo test -p symplectic --lib geom::`, `cargo test -p euclidean-polytopes`,
+  `cargo clippy -p symplectic --lib -- -D warnings`, and
+  `cargo check --workspace` pass.
+
 ## Test Code and Proposition Comments
 
 Tests should make the mathematical proposition visible separately from the

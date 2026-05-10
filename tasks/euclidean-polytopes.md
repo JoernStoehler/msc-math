@@ -111,6 +111,7 @@ modules, which makes non-symplectic helpers harder to reuse and review.
 | Known-incidence facet 3-volume and centroid | `[implemented migration slice]` | mainline thesis | agents | `facet_volume_from_incidence_f64` and `facet_volume_and_centroid_from_incidence_f64` are implemented in `euclidean-polytopes`. `symplectic::geom::facet_volume` polytope-level wrappers and `volume_derivatives_a` now use exact `Polytope4D` incidence instead of raw f64 facet membership tests. | `crates/euclidean-polytopes/src/volume.rs`, `crates/symplectic/src/geom/facet_volume.rs`, `crates/symplectic/src/derivatives.rs` |
 | Incidence-only 2-face ordering | `[implemented migration slice]` | mainline thesis | agents | Private `order_2face_vertices_from_incidence` orders `facet_i ∩ facet_j` using only the incidence matrix, with empty/1/2-vertex intersections skipped by callers and `>=3` intersections asserted to be a single cycle. Known-incidence f64 volume and facet-volume paths use it before exact volume. | `crates/euclidean-polytopes/DEVELOPMENT.md`, `crates/euclidean-polytopes/src/volume.rs`, `crates/euclidean-polytopes/tests/volume.rs` |
 | Full-dimensional exact volume | `[implemented migration slice]` | mainline thesis | agents | `volume_from_incidence_exact(vertices, incidence) -> T` uses incidence-only 2-face ordering and exact 4-simplex determinant sums. It does not take dual vertices or use f64 in the exact computation. | `crates/euclidean-polytopes/DEVELOPMENT.md`, `crates/euclidean-polytopes/src/volume.rs`, `crates/euclidean-polytopes/tests/volume.rs` |
+| Symplectic exact volume wrapper | `[next migration slice]` | mainline thesis | agents | Add `symplectic::geom::volume::volume_exact(&Polytope4D) -> BigRational` delegating to `euclidean_polytopes::volume_from_incidence_exact`, and make the existing f64 `volume` wrapper convert that exact result. | `crates/euclidean-polytopes/DEVELOPMENT.md`, `crates/symplectic/src/geom/volume.rs` |
 | Affine-subspace polygons and volume | `[active]` | mainline thesis | agents, Jorn only if generic-vs-specific API affects thesis callers | Let the internal volume decomposition determine the first affine-subspace helper shape; likely needs 3-face measures of 4-polytopes and polygon area in affine 2-planes of `R^4`. | `crates/symplectic/src/geom/volume.rs`, `crates/symplectic/src/geom/polygon.rs` |
 | Symplectic integration cleanup | `[active]` | mainline thesis | agents | After each migrated slice, keep `symplectic` as the owner of symplectic form, capacity, KKT, omega signs, Reeb-direction adjacency, and experiment-facing wrappers only. | `crates/symplectic/src/geom/`, `crates/symplectic/src/algorithms/` |
 
@@ -152,6 +153,9 @@ The migration task is done when:
 - exact known-incidence volume is implemented with determinant sums over
   `T: ExactScalar`, exported, documented, and covered by rational fixture and
   property tests;
+- symplectic full-dimensional volume exposes an exact wrapper over
+  `euclidean-polytopes` and keeps its f64 API as exact-to-f64 compatibility
+  output;
 - workspace commands pass:
   `cargo test -p euclidean-polytopes`,
   `cargo test -p symplectic --lib geom::`,
@@ -275,6 +279,14 @@ The migration task is done when:
   Why it matters: exact volume now has the same flat known-incidence surface as
   the f64 migration helper, without recomputing incidence or introducing f64
   arithmetic.
+- [agent synthesis 2026-05-10] The next symplectic volume cleanup should make
+  `volume(&Polytope4D)` an exact-to-f64 compatibility wrapper around a new
+  `volume_exact(&Polytope4D) -> BigRational`, with both paths delegating to
+  `euclidean_polytopes::volume_from_incidence_exact` and exact
+  `Polytope4D::incidence()`.
+  Why it matters: `Polytope4D` already stores exact vertices and incidence, so
+  full-dimensional volume no longer needs to route through f64 determinant
+  arithmetic unless the caller specifically asks for f64 output.
 
 ## Pruned / Stale
 
