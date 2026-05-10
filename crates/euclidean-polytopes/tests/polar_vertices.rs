@@ -5,6 +5,7 @@ use euclidean_polytopes::{
 use nalgebra::Vector4;
 use num_rational::BigRational;
 use num_traits::ToPrimitive;
+use proptest::prelude::*;
 
 type Q = BigRational;
 
@@ -27,6 +28,16 @@ fn vq_frac(entries: [(i64, i64); 4]) -> Vector4<Q> {
 
 fn vf(entries: [f64; 4]) -> Vector4<f64> {
     Vector4::new(entries[0], entries[1], entries[2], entries[3])
+}
+
+fn simplex_vertices_exact() -> Vec<Vector4<Q>> {
+    vec![
+        vq([1, 0, 0, 0]),
+        vq([0, 1, 0, 0]),
+        vq([0, 0, 1, 0]),
+        vq([0, 0, 0, 1]),
+        vq([-1, -1, -1, -1]),
+    ]
 }
 
 fn assert_exact_set_eq(mut actual: Vec<Vector4<Q>>, mut expected: Vec<Vector4<Q>>) {
@@ -72,6 +83,131 @@ fn cube_vertices_exact() -> Vec<Vector4<Q>> {
     vertices
 }
 
+fn scaled_crosspolytope_vertices_exact(scales: [i64; 4]) -> Vec<Vector4<Q>> {
+    let mut vertices = Vec::new();
+    for axis in 0..4 {
+        for sign in [-1, 1] {
+            let mut point = Vector4::new(q(0), q(0), q(0), q(0));
+            point[axis] = q(sign * scales[axis]);
+            vertices.push(point);
+        }
+    }
+    vertices
+}
+
+fn positive_spanning_points_with_redundant_edge_points(
+    scales: [i64; 4],
+    extra_codes: &[u8],
+) -> (Vec<Vector4<Q>>, Vec<Vector4<Q>>) {
+    let extreme_points = scaled_crosspolytope_vertices_exact(scales);
+    let mut points = extreme_points.clone();
+    for &code in extra_codes {
+        points.push(redundant_crosspolytope_edge_point(scales, code));
+    }
+
+    (points, extreme_points)
+}
+
+fn redundant_crosspolytope_edge_point(scales: [i64; 4], code: u8) -> Vector4<Q> {
+    let first_axis = (code & 0b0000_0011) as usize;
+    let mut second_axis = ((code >> 2) & 0b0000_0011) as usize;
+    if second_axis == first_axis {
+        second_axis = (second_axis + 1) % 4;
+    }
+
+    let first_sign = if code & 0b0001_0000 == 0 { 1 } else { -1 };
+    let second_sign = if code & 0b0010_0000 == 0 { 1 } else { -1 };
+    let two = q(2);
+    let mut point = Vector4::new(q(0), q(0), q(0), q(0));
+    point[first_axis] = q(first_sign * scales[first_axis]) / two.clone();
+    point[second_axis] = q(second_sign * scales[second_axis]) / two;
+    point
+}
+
+fn dot_q(left: &Vector4<Q>, right: &Vector4<Q>) -> Q {
+    left[0].clone() * right[0].clone()
+        + left[1].clone() * right[1].clone()
+        + left[2].clone() * right[2].clone()
+        + left[3].clone() * right[3].clone()
+}
+
+fn assert_exact_polar_soundness(points: &[Vector4<Q>]) {
+    let polar = polar_vertices_exact(points);
+    assert_eq!(polar.incidence.nrows(), polar.vertices.len());
+    assert_eq!(polar.incidence.ncols(), points.len());
+
+    let one = q(1);
+    for (vertex_index, polar_vertex) in polar.vertices.iter().enumerate() {
+        for (facet_index, point) in points.iter().enumerate() {
+            let dot = dot_q(point, polar_vertex);
+            assert!(
+                dot <= one,
+                "polar vertex {vertex_index} violates inequality {facet_index}: {dot}"
+            );
+            assert_eq!(
+                polar.incidence[(vertex_index, facet_index)],
+                dot == one,
+                "wrong exact incidence at ({vertex_index}, {facet_index})"
+            );
+        }
+    }
+}
+
+fn assert_exact_polarity_roundtrip(
+    points: &[Vector4<Q>],
+    expected_extreme_points: Vec<Vector4<Q>>,
+) {
+    let polar = polar_vertices_exact(points);
+    let double_polar = polar_vertices_exact(&polar.vertices);
+
+    assert_exact_set_eq(double_polar.vertices, expected_extreme_points);
+}
+
+fn exact_points_to_f64(points: &[Vector4<Q>]) -> Vec<Vector4<f64>> {
+    points
+        .iter()
+        .map(|point| {
+            Vector4::new(
+                point[0].to_f64().unwrap(),
+                point[1].to_f64().unwrap(),
+                point[2].to_f64().unwrap(),
+                point[3].to_f64().unwrap(),
+            )
+        })
+        .collect()
+}
+
+fn assert_f64_set_close(actual: &[Vector4<f64>], expected: &[Vector4<f64>], tolerance: f64) {
+    assert_eq!(
+        actual.len(),
+        expected.len(),
+        "actual vertices: {actual:?}; expected vertices: {expected:?}"
+    );
+
+    let mut matched = vec![false; actual.len()];
+    for expected_vertex in expected {
+        let Some(actual_index) = actual
+            .iter()
+            .enumerate()
+            .position(|(index, actual_vertex)| {
+                !matched[index]
+                    && max_abs_coordinate_difference(actual_vertex, expected_vertex) <= tolerance
+            })
+        else {
+            panic!(
+                "no f64 vertex within {tolerance} of {expected_vertex:?}; actual vertices: {actual:?}"
+            );
+        };
+        matched[actual_index] = true;
+    }
+}
+
+fn max_abs_coordinate_difference(left: &Vector4<f64>, right: &Vector4<f64>) -> f64 {
+    (0..4)
+        .map(|coordinate| (left[coordinate] - right[coordinate]).abs())
+        .fold(0.0, f64::max)
+}
+
 #[test]
 fn origin_in_interior_exact_detects_full_dimensional_positive_span() {
     assert!(origin_in_interior_of_conv_exact(
@@ -88,13 +224,7 @@ fn origin_in_interior_exact_detects_full_dimensional_positive_span() {
 
 #[test]
 fn simplex_polar_vertices_are_exact_set() {
-    let primal = vec![
-        vq([1, 0, 0, 0]),
-        vq([0, 1, 0, 0]),
-        vq([0, 0, 1, 0]),
-        vq([0, 0, 0, 1]),
-        vq([-1, -1, -1, -1]),
-    ];
+    let primal = simplex_vertices_exact();
 
     let polar = polar_vertices_exact(&primal);
 
@@ -156,6 +286,89 @@ fn polar_vertices_exact_deduplicates_non_simple_vertices() {
     let polar = polar_vertices_exact(&cube_vertices_exact());
 
     assert_eq!(polar.vertices.len(), 8);
+}
+
+/// Proposition: for every finite `P subset Q^4`, if `0 in int conv(P)`, then
+/// every `y` returned by `polar_vertices_exact(P)` satisfies `<p, y> <= 1`
+/// for all `p in P`, and the returned incidence matrix is exactly
+/// `(<p_j, y_i> == 1)`.
+///
+/// Operationalization: check the named simplex, cube, and crosspolytope exact
+/// fixtures. Cases: 3 deterministic fixtures. Tolerance: none, exact `Q`.
+#[test]
+fn exact_polar_vertices_are_feasible_and_incidence_is_exact_on_named_fixtures() {
+    for points in [
+        simplex_vertices_exact(),
+        cube_vertices_exact(),
+        crosspolytope_vertices_exact(),
+    ] {
+        assert_exact_polar_soundness(&points);
+    }
+}
+
+/// Proposition: for every finite `P subset Q^4`, if `0 in int conv(P)`, then
+/// `polar_vertices_exact(polar_vertices_exact(P).vertices).vertices` is the
+/// set of extreme points of `conv(P)`.
+///
+/// Operationalization: check the named simplex, cube, and crosspolytope exact
+/// fixtures, whose listed points are all known extreme points. Cases: 3
+/// deterministic fixtures. Tolerance: none, exact `Q`.
+#[test]
+fn exact_polarity_roundtrip_returns_named_fixture_vertices() {
+    for points in [
+        simplex_vertices_exact(),
+        cube_vertices_exact(),
+        crosspolytope_vertices_exact(),
+    ] {
+        assert_exact_polarity_roundtrip(&points, points.clone());
+    }
+}
+
+/// Proposition: for exact fixtures whose f64 coordinates are well-conditioned
+/// and whose active/incidence gaps are stable in `f64`, `polar_vertices_f64`
+/// returns no indeterminate candidates and agrees with `polar_vertices_exact`
+/// after exact-to-f64 conversion.
+///
+/// Operationalization: check the centered simplex fixture, where each polar
+/// vertex is simple and every inactive signed gap is integral. Cases: 1
+/// deterministic fixture. Tolerance: `1e-10` max coordinate error.
+#[test]
+fn polar_vertices_f64_agrees_with_exact_simplex_without_indeterminate_candidates() {
+    let primal = simplex_vertices_exact();
+    let expected = exact_points_to_f64(&polar_vertices_exact(&primal).vertices);
+
+    let PolarVerticesF64 {
+        vertices,
+        indeterminate_candidates,
+        ..
+    } = polar_vertices_f64(&exact_points_to_f64(&primal)).expect("finite f64 input");
+
+    assert!(
+        indeterminate_candidates.is_empty(),
+        "simplex fixture should be decided: {indeterminate_candidates:?}"
+    );
+    assert_f64_set_close(&vertices, &expected, 1.0e-10);
+}
+
+/// Proposition: for exact fixtures whose f64 coordinates are well-conditioned
+/// and whose accepted candidate gaps are stable in `f64`, every decided
+/// `polar_vertices_f64` vertex agrees with `polar_vertices_exact` after
+/// conversion.
+///
+/// Operationalization: check the crosspolytope fixture. This fixture has
+/// stable simple polar vertices but also singular 4-tuples; the current
+/// diagnostic API reports those singular tuples as indeterminate instead of
+/// silently skipping them. Cases: 1 deterministic fixture. Tolerance: `1e-10`
+/// max coordinate error.
+#[test]
+fn polar_vertices_f64_decided_crosspolytope_vertices_agree_with_exact() {
+    let primal = crosspolytope_vertices_exact();
+    let expected = exact_points_to_f64(&polar_vertices_exact(&primal).vertices);
+
+    let PolarVerticesF64 { vertices, .. } =
+        polar_vertices_f64(&exact_points_to_f64(&primal)).expect("finite f64 input");
+
+    assert_f64_set_close(&vertices, &expected, 1.0e-10);
 }
 
 #[test]
@@ -276,4 +489,55 @@ fn expected_signed_gap_abs_error_bound(facet: &Vector4<f64>, candidate: &Vector4
     const ERROR_SCALE: f64 = 1.0e4;
 
     ERROR_SCALE * EPS_MACH * (facet.norm() * candidate.norm() + facet.dot(candidate).abs() + 1.0)
+}
+
+proptest! {
+    #![proptest_config(ProptestConfig::with_cases(32))]
+
+    /// Proposition: for every finite `P subset Q^4`, if `0 in int conv(P)`, then
+    /// every `y` returned by `polar_vertices_exact(P)` satisfies `<p, y> <= 1`
+    /// for all `p in P`, and the returned incidence matrix is exactly
+    /// `(<p_j, y_i> == 1)`.
+    ///
+    /// Operationalization: generate positive-spanning scaled crosspolytopes
+    /// `+-s_i e_i` with `s_i in {1,2,3}`, then append up to four exact edge
+    /// midpoints selected by `u8` codes. No discard rule: every generated sample
+    /// has `0 in int conv(P)`. Cases: 32. Tolerance: none, exact `Q`.
+    #[test]
+    fn generated_positive_spanning_exact_polar_is_sound(
+        scales in [1_i64..=3, 1_i64..=3, 1_i64..=3, 1_i64..=3],
+        extra_codes in proptest::collection::vec(0_u8..64, 0..=4),
+    ) {
+        let (points, _) = positive_spanning_points_with_redundant_edge_points(scales, &extra_codes);
+
+        prop_assert!(origin_in_interior_of_conv_exact(&points));
+        assert_exact_polar_soundness(&points);
+    }
+}
+
+proptest! {
+    #![proptest_config(ProptestConfig::with_cases(12))]
+
+    /// Proposition: for every finite `P subset Q^4`, if `0 in int conv(P)`, then
+    /// `polar_vertices_exact(polar_vertices_exact(P).vertices).vertices` is the
+    /// set of extreme points of `conv(P)`.
+    ///
+    /// Operationalization: generate positive-spanning scaled crosspolytopes
+    /// `+-s_i e_i` with `s_i in {1,2,3}`, then append up to four exact edge
+    /// midpoints selected by `u8` codes. The expected extreme set is the original
+    /// `+-s_i e_i` vertex set. No discard rule: every generated sample has
+    /// `0 in int conv(P)`. Cases: 12, because exact double-polar enumeration
+    /// is the expensive property in this crate test suite. Tolerance: none,
+    /// exact `Q`.
+    #[test]
+    fn generated_exact_polarity_roundtrip_discards_redundant_edge_points(
+        scales in [1_i64..=3, 1_i64..=3, 1_i64..=3, 1_i64..=3],
+        extra_codes in proptest::collection::vec(0_u8..64, 0..=4),
+    ) {
+        let (points, expected_extreme_points) =
+            positive_spanning_points_with_redundant_edge_points(scales, &extra_codes);
+
+        prop_assert!(origin_in_interior_of_conv_exact(&points));
+        assert_exact_polarity_roundtrip(&points, expected_extreme_points);
+    }
 }

@@ -106,7 +106,7 @@ modules, which makes non-symplectic helpers harder to reuse and review.
 | Polar vertex enumeration plus validation dependencies | `[implemented first slice]` | mainline thesis | agents | Review and integrate current `euclidean-polytopes` public API into callers when a migration packet needs it. Exact polar enumeration and exact origin-in-interior are implemented; the current `f64` path is diagnostic and reports indeterminate candidates instead of guessing. | `crates/euclidean-polytopes/src/polar.rs`, `crates/euclidean-polytopes/src/predicates.rs`, `crates/euclidean-polytopes/tests/polar_vertices.rs` |
 | Extreme-point / non-redundant point-set predicate | `[implemented exact slice]` | mainline thesis | agents | Exact predicate is implemented and covered by fixture/property tests. Add the matching f64 diagnostic later only if its return shape stays flat and useful. | `crates/euclidean-polytopes/src/predicates.rs`, `crates/euclidean-polytopes/tests/extreme_points.rs`, `crates/euclidean-polytopes/DEVELOPMENT.md` |
 | Full-dimensional f64 volume | `[implemented f64 slice]` | mainline thesis | agents | Review and integrate `volume_f64(dual_vertices, vertices)` into callers when a migration packet needs it. The API uses dual vertices for incidence, primal vertices for determinant geometry, and an operation-specific indeterminate payload when f64 incidence is tolerance-sensitive. | `crates/euclidean-polytopes/src/volume.rs`, `crates/euclidean-polytopes/tests/volume.rs`, `crates/euclidean-polytopes/DEVELOPMENT.md` |
-| Verification property suite | `[next test slice]` | mainline thesis | agents | Add theorem-shaped property tests with comments separating universal propositions from fixture/generator operationalization. Start with exact polar soundness, polarity roundtrip, f64 exact-agreement fixtures, and volume permutation/scaling invariants. | `crates/euclidean-polytopes/DEVELOPMENT.md`, `crates/euclidean-polytopes/tests/` |
+| Verification property suite | `[implemented first property slice]` | mainline thesis | agents | Keep strengthening theorem-shaped property tests as APIs migrate. Current coverage includes exact polar soundness, exact polarity roundtrip, generated non-redundancy witnesses, f64 simplex/crosspolytope polar agreement, and f64 volume scaling/permutation invariants. The stronger no-indeterminate f64 polar proposition is not yet true for non-simple cube/crosspolytope tuple structures under the current diagnostic contract. | `crates/euclidean-polytopes/DEVELOPMENT.md`, `crates/euclidean-polytopes/tests/` |
 | Full-dimensional exact volume | `[future slice]` | mainline thesis | agents | After the f64 volume shape is reviewed, add exact volume over `T` without field extensions. | `crates/euclidean-polytopes/DEVELOPMENT.md` |
 | Affine-subspace polygons and volume | `[active]` | mainline thesis | agents, Jorn only if generic-vs-specific API affects thesis callers | Let the internal volume decomposition determine the first affine-subspace helper shape; likely needs 3-face measures of 4-polytopes and polygon area in affine 2-planes of `R^4`. | `crates/symplectic/src/geom/volume.rs`, `crates/symplectic/src/geom/polygon.rs` |
 | Symplectic integration cleanup | `[active]` | mainline thesis | agents | After each migrated slice, keep `symplectic` as the owner of symplectic form, capacity, KKT, omega signs, Reeb-direction adjacency, and experiment-facing wrappers only. | `crates/symplectic/src/geom/`, `crates/symplectic/src/algorithms/` |
@@ -200,6 +200,14 @@ The migration task is done when:
   `[-3, 3]^4`, discard with `prop_assume!`, and run 32 cases." Use
   constructed generators when the precondition is too rare for discard-based
   testing.
+- [implemented 2026-05-10] The first verification-property slice adds
+  theorem-shaped integration tests for exact polar soundness, exact polarity
+  roundtrip with redundant edge points, generated exact non-redundancy positive
+  and negative cases, f64 polar agreement on the currently decidable simplex
+  and crosspolytope fixtures, and f64 volume rational-scaling/permutation
+  invariants. The symplectic migration regression remains future work because
+  adding it now would introduce a new `symplectic` -> `euclidean-polytopes`
+  test dependency before the caller migration packet.
 
 ## Pruned / Stale
 

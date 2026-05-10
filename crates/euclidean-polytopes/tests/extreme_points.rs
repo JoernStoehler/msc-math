@@ -37,6 +37,30 @@ fn cube_vertices_exact() -> Vec<Vector4<Q>> {
     vertices
 }
 
+fn axis_aligned_simplex_vertices(scales: [i64; 4]) -> Vec<Vector4<Q>> {
+    let mut vertices = vec![vq([0, 0, 0, 0])];
+    for axis in 0..4 {
+        let mut point = Vector4::new(q(0), q(0), q(0), q(0));
+        point[axis] = q(scales[axis]);
+        vertices.push(point);
+    }
+    vertices
+}
+
+fn axis_aligned_box_vertices(scales: [i64; 4]) -> Vec<Vector4<Q>> {
+    let mut vertices = Vec::new();
+    for x0 in [-scales[0], scales[0]] {
+        for x1 in [-scales[1], scales[1]] {
+            for x2 in [-scales[2], scales[2]] {
+                for x3 in [-scales[3], scales[3]] {
+                    vertices.push(vq([x0, x1, x2, x3]));
+                }
+            }
+        }
+    }
+    vertices
+}
+
 #[test]
 fn simplex_and_cube_vertices_are_all_extreme() {
     assert!(all_points_are_extreme_exact(&simplex_vertices_exact()));
@@ -97,8 +121,38 @@ fn planar_square_with_center_or_edge_midpoint_is_not_all_extreme() {
 }
 
 proptest! {
+    #![proptest_config(ProptestConfig::with_cases(8))]
+
+    /// Proposition: for every affinely independent 4-simplex vertex set and
+    /// every centrally symmetric full-dimensional box vertex set in `Q^4`,
+    /// every listed point is an extreme point of its convex hull.
+    ///
+    /// Operationalization: generate axis-aligned simplex vertices
+    /// `{0, s_i e_i}` and axis-aligned boxes `prod_i [-s_i, s_i]` with
+    /// `s_i in {1,2,3,4}`. No discard rule. Cases: 8, because exact
+    /// non-redundancy over 16 box vertices is the expensive branch here.
+    /// Tolerance: none,
+    /// exact `Q`.
+    #[test]
+    fn generated_axis_aligned_simplices_and_boxes_are_nonredundant(
+        scales in [1_i64..=4, 1_i64..=4, 1_i64..=4, 1_i64..=4],
+    ) {
+        prop_assert!(all_points_are_extreme_exact(&axis_aligned_simplex_vertices(scales)));
+        prop_assert!(all_points_are_extreme_exact(&axis_aligned_box_vertices(scales)));
+    }
+}
+
+proptest! {
     #![proptest_config(ProptestConfig::with_cases(32))]
 
+    /// Proposition: for every finite `P subset Q^4` and every `x in conv(P)`,
+    /// not all points in `P union {x}` are extreme.
+    ///
+    /// Operationalization: generate five points in `[-3,3]^4` and append their
+    /// fixed positive rational convex combination with weights
+    /// `(1,2,3,4,5)/15`. No discard rule; degenerate inputs only make the
+    /// non-extremality conclusion easier. Cases: 32. Tolerance: none, exact
+    /// `Q`.
     #[test]
     fn generated_convex_combination_is_not_extreme(entries in proptest::collection::vec(-3_i64..=3, 20)) {
         let points = entries
@@ -120,5 +174,30 @@ proptest! {
         with_combination.push(convex_combination);
 
         prop_assert!(!all_points_are_extreme_exact(&with_combination));
+    }
+
+    /// Proposition: for every non-empty segment in `Q^4`, the midpoint is not
+    /// an extreme point of the three-point set consisting of the two endpoints
+    /// and the midpoint.
+    ///
+    /// Operationalization: generate endpoints as `a` and `a + 2d` with
+    /// `a,d in [-3,3]^4`, append `a + d`, and discard only `d = 0` so the
+    /// fixture is a genuine segment rather than a duplicate-point case.
+    /// Cases: 32. Tolerance: none, exact `Q`.
+    #[test]
+    fn generated_segment_midpoint_is_not_extreme(
+        start_entries in [-3_i64..=3, -3_i64..=3, -3_i64..=3, -3_i64..=3],
+        direction_entries in [-3_i64..=3, -3_i64..=3, -3_i64..=3, -3_i64..=3],
+    ) {
+        prop_assume!(direction_entries != [0, 0, 0, 0]);
+
+        let start = vq(start_entries);
+        let direction = vq(direction_entries);
+        let midpoint = start.clone() + direction.clone();
+        let endpoint = start + direction.clone() + direction;
+
+        let points = vec![vq(start_entries), endpoint, midpoint];
+
+        prop_assert!(!all_points_are_extreme_exact(&points));
     }
 }

@@ -93,6 +93,26 @@ fn assert_close(actual: f64, expected: f64, tolerance: f64) {
     );
 }
 
+fn permute_by_stride<T: Clone>(values: &[T], stride: usize) -> Vec<T> {
+    assert_eq!(
+        gcd(values.len(), stride),
+        1,
+        "stride must define a full permutation"
+    );
+    (0..values.len())
+        .map(|index| values[(index * stride) % values.len()].clone())
+        .collect()
+}
+
+fn gcd(mut left: usize, mut right: usize) -> usize {
+    while right != 0 {
+        let remainder = left % right;
+        left = right;
+        right = remainder;
+    }
+    left
+}
+
 #[test]
 fn simplex_volume_is_one_over_24() {
     let (dual_vertices, vertices) = centered_simplex();
@@ -125,6 +145,41 @@ fn crosspolytope_radius_2_volume_is_32_over_3() {
 proptest! {
     #![proptest_config(ProptestConfig::with_cases(16))]
 
+    /// Proposition: for every full-dimensional normalized polar pair
+    /// `(K^circ, K)` with stable f64 incidence, `volume_f64` scales by `s^4`
+    /// under `vertices -> s vertices` and
+    /// `dual_vertices -> dual_vertices / s`.
+    ///
+    /// Operationalization: generate hypercubes `[-s,s]^4` with rational
+    /// `s = numerator / denominator`, where both terms lie in `1..=16`.
+    /// No discard rule. Cases: 16. Tolerance:
+    /// `max(1e-10, 1e-10 * |16*s^4|)`.
+    #[test]
+    fn hypercube_volume_scales_by_fourth_power_for_rational_scales(
+        numerator in 1_u32..=16,
+        denominator in 1_u32..=16,
+    ) {
+        let scale = f64::from(numerator) / f64::from(denominator);
+        let (dual_vertices, vertices) = hypercube(scale);
+
+        let volume = decided_volume(&dual_vertices, &vertices);
+        let expected = 16.0 * scale.powi(4);
+        let allowed_error = 1.0e-10_f64.max(1.0e-10 * expected.abs());
+        prop_assert!(
+            (volume - expected).abs() <= allowed_error,
+            "scale={scale}, volume={volume}, expected={expected}, allowed_error={allowed_error}"
+        );
+    }
+
+    /// Proposition: for every full-dimensional normalized polar pair
+    /// `(K^circ, K)` with stable f64 incidence, `volume_f64` scales by `s^4`
+    /// under `vertices -> s vertices` and
+    /// `dual_vertices -> dual_vertices / s`.
+    ///
+    /// Operationalization: generate hypercubes `[-2^k,2^k]^4` for
+    /// `k in {-4,...,4}`. No discard rule. Cases: 16 generated examples
+    /// sampled from 9 scales. Tolerance:
+    /// `max(1e-12, 1e-12 * |16*2^(4k)|)`.
     #[test]
     fn hypercube_volume_scales_by_fourth_power(exponent in -4_i32..=4) {
         let scale = 2.0_f64.powi(exponent);
@@ -137,6 +192,26 @@ proptest! {
             (volume - expected).abs() <= allowed_error,
             "scale={scale}, volume={volume}, expected={expected}, allowed_error={allowed_error}"
         );
+    }
+}
+
+/// Proposition: for every full-dimensional normalized polar pair with stable
+/// f64 incidence, `volume_f64` is invariant under permutation of the facet
+/// list and under permutation of the vertex list.
+///
+/// Operationalization: check the hypercube and crosspolytope fixtures, using
+/// fixed coprime-stride permutations of facets and vertices. Cases: 2
+/// deterministic fixtures. Tolerance: `max(1e-10, 1e-10 * |volume|)`.
+#[test]
+fn volume_is_invariant_under_vertex_and_facet_permutation() {
+    for (dual_vertices, vertices) in [hypercube(1.0), crosspolytope_radius_2()] {
+        let volume = decided_volume(&dual_vertices, &vertices);
+        let permuted_dual_vertices = permute_by_stride(&dual_vertices, 3);
+        let permuted_vertices = permute_by_stride(&vertices, 5);
+        let permuted_volume = decided_volume(&permuted_dual_vertices, &permuted_vertices);
+        let allowed_error = 1.0e-10_f64.max(1.0e-10 * volume.abs());
+
+        assert_close(permuted_volume, volume, allowed_error);
     }
 }
 
