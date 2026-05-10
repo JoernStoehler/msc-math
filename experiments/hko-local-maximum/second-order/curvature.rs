@@ -11,7 +11,7 @@ use std::io::{BufWriter, Write};
 use std::time::Instant;
 use symplectic::ehz_capacity;
 use symplectic::geom::polytope::Polytope4D;
-use symplectic::geom::volume::volume;
+use symplectic::geom::volume::volume_f64;
 
 #[derive(Debug, Serialize)]
 struct CurveRow {
@@ -66,7 +66,7 @@ pub(crate) fn curvature_at_epsilon(
             .collect();
         let poly = Polytope4D::from_f64(perturbed).ok()?;
         let cap = ehz_capacity(&poly).ok()?.capacity();
-        let vol = volume(&poly);
+        let vol = volume_f64(&poly);
         if vol <= 0.0 {
             return None;
         }
@@ -132,7 +132,7 @@ pub(crate) fn run_phase2(
                     }
                 };
 
-                let vol = volume(&perturbed_poly);
+                let vol = volume_f64(&perturbed_poly);
                 if vol <= 0.0 {
                     n_fail += 1;
                     continue;

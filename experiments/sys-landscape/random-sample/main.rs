@@ -39,7 +39,7 @@ use std::path::PathBuf;
 use std::time::Instant;
 use symplectic::database::{load_many, save, DualVerticesKey, PolytopeRecord, SigmaAction, Source};
 use symplectic::ehz_capacity;
-use symplectic::geom::volume::volume;
+use symplectic::geom::volume::volume_f64;
 use symplectic::random::generate_polytope;
 
 const SEED: u64 = 42;
@@ -297,7 +297,7 @@ fn main() {
             };
 
             let start_vol = Instant::now();
-            let vol = volume(&p);
+            let vol = volume_f64(&p);
             let time_volume_ms = start_vol.elapsed().as_secs_f64() * 1000.0;
 
             let start_cap = Instant::now();

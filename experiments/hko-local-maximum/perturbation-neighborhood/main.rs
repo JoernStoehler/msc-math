@@ -30,7 +30,7 @@ use std::time::{Instant, SystemTime, UNIX_EPOCH};
 use symplectic::ehz_capacity;
 use symplectic::geom::known_polytopes;
 use symplectic::geom::polytope::Polytope4D;
-use symplectic::geom::volume::volume;
+use symplectic::geom::volume::volume_f64;
 
 const DEFAULT_SEED: u64 = 41;
 const DEFAULT_N_SAMPLES: usize = 100;
@@ -239,7 +239,7 @@ fn main() {
     let n_facets = base_duals.len();
 
     let start_vol = Instant::now();
-    let base_vol = volume(base_polytope);
+    let base_vol = volume_f64(base_polytope);
     let base_time_volume_ms = start_vol.elapsed().as_secs_f64() * 1000.0;
 
     let start_cap = Instant::now();
@@ -284,7 +284,7 @@ fn main() {
         };
 
         let start_vol = Instant::now();
-        let vol = volume(&perturbed.polytope);
+        let vol = volume_f64(&perturbed.polytope);
         let time_volume_ms = start_vol.elapsed().as_secs_f64() * 1000.0;
 
         let start_cap = Instant::now();

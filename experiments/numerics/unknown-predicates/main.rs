@@ -27,7 +27,7 @@ use std::path::{Path, PathBuf};
 use std::time::Instant;
 use symplectic::geom::lagrangian_product::lagrangian_product;
 use symplectic::geom::polygon::{regular_polygon_2d, rotate_polygon_2d};
-use symplectic::geom::volume::volume;
+use symplectic::geom::volume::volume_f64;
 use symplectic::random::generate_random_polytopes;
 use symplectic::{ehz_capacity_billiard, ehz_capacity_pruned};
 
@@ -172,7 +172,7 @@ fn main() {
             generate_random_polytopes(n_samples, facet_count, RANDOM_H_MIN, RANDOM_H_MAX, &mut rng);
 
         for (i, p) in polytopes.iter().enumerate() {
-            let vol = volume(p);
+            let vol = volume_f64(p);
 
             let start = Instant::now();
             let result = ehz_capacity_pruned(p).expect("ehz_capacity_pruned failed");
@@ -241,7 +241,7 @@ fn main() {
             let polytope = lagrangian_product(&qn, &qh, &pn, &ph)
                 .expect("pentagon product construction failed");
 
-            let vol = volume(&polytope);
+            let vol = volume_f64(&polytope);
 
             let start = Instant::now();
             let result = ehz_capacity_billiard(&polytope).unwrap_or_else(|err| {
@@ -304,7 +304,7 @@ fn main() {
             let polytope = lagrangian_product(&qn, &qh, &pn, &ph)
                 .expect("polygon product construction failed");
 
-            let vol = volume(&polytope);
+            let vol = volume_f64(&polytope);
 
             let start = Instant::now();
             let result = ehz_capacity_billiard(&polytope).unwrap_or_else(|err| {

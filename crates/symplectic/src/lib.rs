@@ -69,7 +69,7 @@ pub use algorithms::{
 pub use geom::lagrangian_product::lagrangian_product;
 pub use geom::polygon::{regular_polygon_2d, rotate_polygon_2d};
 pub use geom::symplectic_form::omega0;
-pub use geom::volume::volume;
+pub use geom::volume::volume_f64;
 
 // Geometry utility submodules
 pub use geom::known_polytopes;

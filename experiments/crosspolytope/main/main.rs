@@ -21,7 +21,7 @@ use std::io::{BufWriter, Write};
 use std::path::PathBuf;
 use std::time::Instant;
 use symplectic::geom::known_polytopes;
-use symplectic::geom::volume::volume;
+use symplectic::geom::volume::volume_f64;
 
 #[derive(Debug, Serialize)]
 struct CrosspolytopeResult {
@@ -55,7 +55,7 @@ fn main() {
     println!("Crosspolytope: {facet_count} facets");
 
     let start_vol = Instant::now();
-    let vol = volume(polytope);
+    let vol = volume_f64(polytope);
     let time_volume_ms = start_vol.elapsed().as_secs_f64() * 1000.0;
     println!("Volume: {vol:.10} ({time_volume_ms:.1} ms)");
 

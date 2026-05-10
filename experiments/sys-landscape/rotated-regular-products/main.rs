@@ -28,7 +28,7 @@ use symplectic::algorithms::billiard::bounce_count_from_sigma;
 use symplectic::ehz_capacity_billiard;
 use symplectic::geom::lagrangian_product::lagrangian_product;
 use symplectic::geom::polygon::{polygon_area, regular_polygon_2d, rotate_polygon_2d};
-use symplectic::geom::volume::volume;
+use symplectic::geom::volume::volume_f64;
 
 const PENTAGON_START_DEG: f64 = 0.0;
 const PENTAGON_END_DEG: f64 = 36.0;
@@ -110,7 +110,7 @@ fn generate_heptagon_7x7() {
         let polytope =
             lagrangian_product(&qn, &qh, &pn, &ph).expect("heptagon product construction failed");
 
-        let vol = volume(&polytope);
+        let vol = volume_f64(&polytope);
 
         let start = Instant::now();
         let result =
@@ -180,7 +180,7 @@ fn generate_pentagon_5x5() {
         let polytope =
             lagrangian_product(&qn, &qh, &pn, &ph).expect("pentagon product construction failed");
 
-        let vol = volume(&polytope);
+        let vol = volume_f64(&polytope);
 
         let start = Instant::now();
         let result =
@@ -250,7 +250,7 @@ fn generate_polygon_pairs() {
             let polytope = lagrangian_product(&qn, &qh, &pn, &ph)
                 .expect("polygon product construction failed");
 
-            let vol = volume(&polytope);
+            let vol = volume_f64(&polytope);
 
             let start = Instant::now();
             let result = ehz_capacity_billiard(&polytope)

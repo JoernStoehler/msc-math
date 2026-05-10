@@ -1,56 +1,26 @@
 //! Per-facet volume and centroid computation for 4D polytopes.
 //!
-//! Provides 3D volumes of individual facets (3-polytopes embedded in R^4)
-//! by decomposing each facet into tetrahedra via ridge triangulation.
-//! Used by derivative computation: ∂vol/∂a_k uses facet_volume_3d(k).
-//!
-//! **Algorithm:** For each facet F_i, collect vertices on F_i, then for each
-//! ridge F_i ∩ F_j, triangulate the ridge polygon and form tetrahedra with
-//! the facet centroid as apex. Sum tetrahedron volumes via the 4D cross product.
+//! Provides 3D volumes of individual facets (3-polytopes embedded in R^4).
+//! The maintained implementation lives in `euclidean-polytopes`; this module
+//! keeps only explicit f64 `Polytope4D` entry points for symplectic derivative
+//! code.
 //!
 //! Mathematical correspondence: [def:volume] (per-facet specialization)
 
-use crate::geom::cross_product_4d::cross_product_4d;
-use crate::geom::polygon_order::sort_polygon_order;
 use crate::geom::polytope::Polytope4D;
 use euclidean_polytopes::{
     facet_volume_and_centroid_from_incidence_f64, facet_volume_from_incidence_f64,
 };
 use nalgebra::Vector4;
 
-/// Tolerance for vertex-on-facet incidence test: |a·v − 1| < EPS.
-const EPS_FACET_INCIDENCE: f64 = 1e-8;
-
-/// Floor for meaningful facet volume. Facets with total volume below this
-/// are treated as degenerate (zero volume, zero centroid). Prevents
-/// division by near-zero in centroid computation. Value is far below
-/// any real facet volume (O(0.01)–O(100)) but above f64 underflow.
-pub(crate) const EPS_VOLUME_FLOOR: f64 = 1e-30;
-
-/// Sort vertices of a convex polygon embedded in R^4 by angle around their centroid.
-///
-/// Projects vertices onto a 2D basis in the polygon plane and sorts by atan2 angle.
-/// Returns the original vertices (unsorted) if < 4 vertices or if the polygon
-/// is degenerate (collinear).
-fn sort_polygon_vertices(vertices: &[Vector4<f64>]) -> Vec<Vector4<f64>> {
-    if vertices.len() <= 3 {
-        return vertices.to_vec();
-    }
-
-    match sort_polygon_order(vertices) {
-        Some(order) => order.into_iter().map(|idx| vertices[idx]).collect(),
-        None => vertices.to_vec(),
-    }
-}
-
 /// Compute the 3D volume of facet `facet_idx` of a polytope.
 ///
 /// Decomposes the facet into tetrahedra by choosing the facet centroid as apex
-/// and triangulating each ridge (2-face = intersection of two facets).
+/// and triangulating each 2-face (intersection of two facets).
 /// Returns 0.0 if the facet has fewer than 4 vertices.
 ///
-/// Used for volume derivatives: ∂vol(K)/∂a_k uses facet_volume_3d(K, k).
-pub fn facet_volume_3d(polytope: &Polytope4D, facet_idx: usize) -> f64 {
+/// Used for volume derivatives: ∂vol(K)/∂a_k uses facet_volume_3d_f64(K, k).
+pub fn facet_volume_3d_f64(polytope: &Polytope4D, facet_idx: usize) -> f64 {
     facet_volume_from_incidence_f64(polytope.vertices_f64(), polytope.incidence(), facet_idx)
         .expect("valid Polytope4D has finite f64 vertices and matching incidence")
 }
@@ -60,7 +30,7 @@ pub fn facet_volume_3d(polytope: &Polytope4D, facet_idx: usize) -> f64 {
 /// Returns (volume, centroid). The centroid is the volume-weighted average
 /// of the tetrahedra centroids. Returns (0.0, zero vector) if the facet
 /// has fewer than 4 vertices.
-pub fn facet_volume_and_centroid_3d(
+pub fn facet_volume_and_centroid_3d_f64(
     polytope: &Polytope4D,
     facet_idx: usize,
 ) -> (f64, Vector4<f64>) {
@@ -72,98 +42,6 @@ pub fn facet_volume_and_centroid_3d(
     .expect("valid Polytope4D has finite f64 vertices and matching incidence")
 }
 
-/// Raw version of `facet_volume_3d` operating on slices.
-///
-/// Provided for experiments that already have dual vertices/vertices extracted.
-pub fn facet_volume_3d_raw(
-    dual_vertices: &[Vector4<f64>],
-    vertices: &[Vector4<f64>],
-    fi: usize,
-) -> f64 {
-    let facet_verts: Vec<Vector4<f64>> = vertices
-        .iter()
-        .filter(|v| (dual_vertices[fi].dot(v) - 1.0).abs() < EPS_FACET_INCIDENCE)
-        .cloned()
-        .collect();
-
-    if facet_verts.len() < 4 {
-        return 0.0;
-    }
-
-    let mut total = 0.0;
-
-    for_each_facet_ridge_triangle(dual_vertices, &facet_verts, fi, |apex, a, b, c| {
-        total += cross_product_4d(a - apex, b - apex, c - apex).norm() / 6.0;
-    });
-
-    total
-}
-
-/// Raw version of `facet_volume_and_centroid_3d` operating on slices.
-///
-/// Provided for experiments that already have dual vertices/vertices extracted.
-pub fn facet_volume_and_centroid_3d_raw(
-    dual_vertices: &[Vector4<f64>],
-    vertices: &[Vector4<f64>],
-    fi: usize,
-) -> (f64, Vector4<f64>) {
-    let facet_verts: Vec<Vector4<f64>> = vertices
-        .iter()
-        .filter(|v| (dual_vertices[fi].dot(v) - 1.0).abs() < EPS_FACET_INCIDENCE)
-        .cloned()
-        .collect();
-
-    if facet_verts.len() < 4 {
-        return (0.0, Vector4::zeros());
-    }
-
-    let mut total_vol = 0.0;
-    let mut weighted_centroid = Vector4::zeros();
-
-    for_each_facet_ridge_triangle(dual_vertices, &facet_verts, fi, |apex, a, b, c| {
-        let tet_vol = cross_product_4d(a - apex, b - apex, c - apex).norm() / 6.0;
-        let tet_centroid = (apex + a + b + c) / 4.0;
-        total_vol += tet_vol;
-        weighted_centroid += tet_vol * tet_centroid;
-    });
-
-    if total_vol > EPS_VOLUME_FLOOR {
-        (total_vol, weighted_centroid / total_vol)
-    } else {
-        (0.0, Vector4::zeros())
-    }
-}
-
-/// Visit each tetrahedron in the triangle fan induced by the facet's ridges.
-fn for_each_facet_ridge_triangle(
-    dual_vertices: &[Vector4<f64>],
-    facet_verts: &[Vector4<f64>],
-    fi: usize,
-    mut visit: impl FnMut(Vector4<f64>, Vector4<f64>, Vector4<f64>, Vector4<f64>),
-) {
-    let apex = facet_verts.iter().copied().sum::<Vector4<f64>>() / facet_verts.len() as f64;
-
-    for (fj, a_j) in dual_vertices.iter().enumerate() {
-        if fj == fi {
-            continue;
-        }
-        let ridge_verts: Vec<Vector4<f64>> = facet_verts
-            .iter()
-            .filter(|v| (a_j.dot(v) - 1.0).abs() < EPS_FACET_INCIDENCE)
-            .cloned()
-            .collect();
-
-        if ridge_verts.len() < 3 {
-            continue;
-        }
-
-        let sorted = sort_polygon_vertices(&ridge_verts);
-        for k in 1..sorted.len() - 1 {
-            visit(apex, sorted[0], sorted[k], sorted[k + 1]);
-        }
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -172,7 +50,7 @@ mod tests {
 
     // Tests for facet volume: per-facet 3D volumes of 4D polytope facets.
     //
-    // Proposition: facet_volume_3d computes correct 3D volumes for facets of
+    // Proposition: facet_volume_3d_f64 computes correct 3D volumes for facets of
     // known polytopes. For the hypercube [-1,1]^4, each facet is a cube [-1,1]^3
     // with volume 8.
     // Reference: [def:volume] (per-facet specialization)
@@ -188,7 +66,7 @@ mod tests {
         assert_eq!(f, 8, "hypercube should have 8 facets");
 
         for fi in 0..f {
-            let vol = facet_volume_3d(polytope, fi);
+            let vol = facet_volume_3d_f64(polytope, fi);
             assert!(
                 (vol - 8.0).abs() < 1e-6,
                 "facet {fi}: volume = {vol}, expected 8.0"
@@ -205,7 +83,7 @@ mod tests {
         let f = polytope.facet_count();
 
         let vol_from_facets: f64 = (0..f)
-            .map(|fi| facet_volume_3d(polytope, fi) * (1.0 / duals[fi].norm()))
+            .map(|fi| facet_volume_3d_f64(polytope, fi) * (1.0 / duals[fi].norm()))
             .sum::<f64>()
             / 4.0;
 
@@ -225,7 +103,7 @@ mod tests {
         let f = polytope.facet_count();
 
         for (fi, dual) in duals.iter().enumerate().take(f) {
-            let (vol, centroid) = facet_volume_and_centroid_3d(polytope, fi);
+            let (vol, centroid) = facet_volume_and_centroid_3d_f64(polytope, fi);
             assert!(vol > 0.0, "facet {fi} should have positive volume");
             let dot = dual.dot(&centroid);
             assert!(
@@ -243,7 +121,7 @@ mod tests {
         let f = polytope.facet_count();
 
         let vol_from_facets: f64 = (0..f)
-            .map(|fi| facet_volume_3d(polytope, fi) * (1.0 / duals[fi].norm()))
+            .map(|fi| facet_volume_3d_f64(polytope, fi) * (1.0 / duals[fi].norm()))
             .sum::<f64>()
             / 4.0;
 
@@ -251,45 +129,45 @@ mod tests {
 
         // Looser than hypercube (1e-6) because the crosspolytope has 16 facets
         // with non-axis-aligned normals, producing more triangulation error in
-        // both our ridge-based decomposition and qhull.
+        // both our 2-face decomposition and qhull.
         assert!(
             (vol_from_facets - vol_qhull).abs() / vol_qhull < 1e-4,
             "facet sum = {vol_from_facets}, qhull = {vol_qhull}"
         );
     }
 
-    /// Wiring regression: the polytope-level facet wrapper delegates through
+    /// Wiring regression: the polytope-level facet API delegates through
     /// the Euclidean known-incidence helper on valid `Polytope4D` fixtures.
     ///
     /// Mathematical correctness is covered by the exact-value and divergence
     /// tests above; this test protects the cross-crate migration boundary.
     #[test]
-    fn facet_wrapper_matches_euclidean_known_incidence_helper() {
+    fn facet_api_matches_euclidean_known_incidence_helper() {
         for kp in known_polytopes::all_known() {
             let polytope = &kp.polytope;
             for facet_index in 0..polytope.facet_count() {
-                let wrapper = facet_volume_and_centroid_3d(polytope, facet_index);
+                let symplectic_value = facet_volume_and_centroid_3d_f64(polytope, facet_index);
                 let euclidean = facet_volume_and_centroid_from_incidence_f64(
                     polytope.vertices_f64(),
                     polytope.incidence(),
                     facet_index,
                 )
                 .expect("valid Polytope4D fixture");
-                let volume_error = (wrapper.0 - euclidean.0).abs();
-                let centroid_error = (wrapper.1 - euclidean.1).norm();
+                let volume_error = (symplectic_value.0 - euclidean.0).abs();
+                let centroid_error = (symplectic_value.1 - euclidean.1).norm();
 
                 assert!(
                     volume_error <= 1.0e-10_f64.max(1.0e-10 * euclidean.0.abs()),
-                    "{} facet {facet_index}: wrapper volume = {}, euclidean volume = {}",
+                    "{} facet {facet_index}: symplectic volume = {}, euclidean volume = {}",
                     kp.name,
-                    wrapper.0,
+                    symplectic_value.0,
                     euclidean.0
                 );
                 assert!(
                     centroid_error <= 1.0e-10,
-                    "{} facet {facet_index}: wrapper centroid = {:?}, euclidean centroid = {:?}",
+                    "{} facet {facet_index}: symplectic centroid = {:?}, euclidean centroid = {:?}",
                     kp.name,
-                    wrapper.1,
+                    symplectic_value.1,
                     euclidean.1
                 );
             }

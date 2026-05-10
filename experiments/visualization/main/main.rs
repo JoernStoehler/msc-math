@@ -55,7 +55,7 @@ pub fn export(name: &str, output: &Path) -> Result<(), String> {
     let (trajectories, computed_capacity) = generate_trajectories(polytope, &skeleton);
 
     let capacity = computed_capacity.unwrap_or(kp.capacity);
-    let vol = symplectic::geom::volume::volume(polytope);
+    let vol = symplectic::geom::volume::volume_f64(polytope);
     let systolic_ratio = if vol > 0.0 {
         capacity * capacity / (2.0 * vol)
     } else {

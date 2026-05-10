@@ -21,7 +21,7 @@
 //! - Sample random directions d in R^{4F} (unit vectors via Muller's method)
 //! - Sweep perturbation size t geometrically from 1e-1 to 1e-7
 //! - For capacity: solve_kkt_for with the base orbit on the perturbed polytope
-//! - For volume: volume() of the perturbed polytope
+//! - For volume: volume_f64() of the perturbed polytope
 //! - For sys = c^2/(2*vol): derived from perturbed cap and vol
 //!
 //! Mathematical correspondence:
@@ -48,7 +48,7 @@ use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::path::PathBuf;
 use std::time::Instant;
-use symplectic::geom::facet_volume::facet_volume_3d;
+use symplectic::geom::facet_volume::facet_volume_3d_f64;
 use symplectic::random::generate_random_polytopes;
 use symplectic::Polytope4D;
 
@@ -340,7 +340,7 @@ fn run_q4(base_dir: &str, cfg: &EdgeCasesConfig) {
             };
 
             let min_fv = (0..augmented.facet_count())
-                .map(|k| facet_volume_3d(&augmented, k))
+                .map(|k| facet_volume_3d_f64(&augmented, k))
                 .filter(|&fv| fv > 0.0)
                 .fold(f64::INFINITY, f64::min);
 

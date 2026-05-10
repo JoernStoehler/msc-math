@@ -35,7 +35,7 @@ use std::time::Instant;
 use symplectic::ehz_capacity;
 use symplectic::geom::known_polytopes;
 use symplectic::geom::polytope::Polytope4D;
-use symplectic::geom::volume::volume;
+use symplectic::geom::volume::volume_f64;
 
 const SEED: u64 = 43;
 
@@ -156,7 +156,7 @@ fn eval_sys_at_ray(
 
     let polytope = Polytope4D::from_f64(perturbed).ok()?;
     let ehz = ehz_capacity(&polytope).ok()?;
-    let vol = volume(&polytope);
+    let vol = volume_f64(&polytope);
     if vol <= 0.0 {
         return None;
     }
@@ -298,7 +298,7 @@ fn main() {
     let d = base_duals.len() * 2; // 20D perturbation space
 
     // Verify base sys
-    let base_vol = volume(base_polytope);
+    let base_vol = volume_f64(base_polytope);
     let base_ehz = ehz_capacity(base_polytope).expect("capacity unavailable");
     let base_sys = base_ehz.capacity().powi(2) / (2.0 * base_vol);
     println!("Base sys = {base_sys:.6} (should be ~1.047)");

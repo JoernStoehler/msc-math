@@ -22,13 +22,13 @@ use crate::rows::PolytopeTableRow;
 use symplectic::ehz_capacity;
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::skeleton::Skeleton;
-use symplectic::geom::volume::volume;
+use symplectic::geom::volume::volume_f64;
 
 fn enrich_row(row: &LoadedPolytopeRow) -> PolytopeTableRow {
     let (dual_vectors, dual_vertex_fields) = features_dual_vertices::dual_vertices_f64(row);
     let polytope: Polytope4D = Polytope4D::from_f64(dual_vectors.clone())
         .unwrap_or_else(|e| panic!("reconstruct {}: {e}", row.poly_id));
-    let polytope_volume = volume(&polytope);
+    let polytope_volume = volume_f64(&polytope);
     let actual_capacity = if row.capacity > 0.0 {
         row.capacity
     } else {

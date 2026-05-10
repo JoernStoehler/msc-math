@@ -30,7 +30,7 @@ use std::time::Instant;
 use symplectic::database;
 use symplectic::derivatives::{capacity_derivatives_a_from_kkt_result, volume_derivatives_a};
 use symplectic::geom::polytope::Polytope4D;
-use symplectic::geom::volume::volume;
+use symplectic::geom::volume::volume_f64;
 use symplectic::kkt::saddle_point_solver::solve_kkt_for;
 
 // ============================================================================
@@ -140,7 +140,7 @@ fn compute_sys(
     Vec<usize>,
     symplectic::kkt::saddle_point_solver::KktResult,
 )> {
-    let vol = volume(polytope);
+    let vol = volume_f64(polytope);
     if vol <= 0.0 {
         return None;
     }
@@ -323,7 +323,7 @@ fn main() {
 
         let base = (|| {
             let instrumented = ehz_capacity_instrumented(polytope)?;
-            let vol = volume(polytope);
+            let vol = volume_f64(polytope);
             if vol <= 0.0 {
                 return None;
             }

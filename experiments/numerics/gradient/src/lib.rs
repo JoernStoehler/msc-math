@@ -121,7 +121,7 @@ fn sys_derivatives_a(
 pub fn analyze_polytope(polytope: &Polytope4D) -> Option<PolytopeInfo> {
     let ehz = ehz_capacity_safe(polytope)?;
     let cap = ehz.capacity();
-    let vol = symplectic::volume(polytope);
+    let vol = symplectic::volume_f64(polytope);
     if vol <= 0.0 {
         return None;
     }
@@ -176,7 +176,7 @@ fn compute_perturbed(
         .map(|kkt| 0.5 / kkt.q_corrected);
 
     let vol = {
-        let v = symplectic::volume(&polytope);
+        let v = symplectic::volume_f64(&polytope);
         (v > 0.0).then_some(v)
     };
 

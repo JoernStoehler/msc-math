@@ -51,7 +51,7 @@ use symplectic::ehz_capacity_billiard;
 use symplectic::geom::lagrangian_product::lagrangian_product;
 use symplectic::geom::polygon::random_polygon_2d;
 use symplectic::geom::polytope::Polytope4D;
-use symplectic::geom::volume::volume;
+use symplectic::geom::volume::volume_f64;
 
 const SEED: u64 = 42;
 const H_MIN: f64 = 0.8;
@@ -312,7 +312,7 @@ fn main() {
             // Cache miss: compute the specialized billiard result because this
             // dataset records billiard-native iterations and bounce counts.
             let start_vol = Instant::now();
-            let vol = volume(&polytope);
+            let vol = volume_f64(&polytope);
             let time_volume_ms = start_vol.elapsed().as_secs_f64() * 1000.0;
 
             let start_cap = Instant::now();

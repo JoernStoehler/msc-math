@@ -14,7 +14,7 @@ use symplectic::algorithms::facet_adjacency::{build_transition_matrix, is_feasib
 use symplectic::algorithms::hk2017::combinations;
 use symplectic::algorithms::hk2017::permutations::for_each_cyclic_permutation;
 use symplectic::geom::polytope::Polytope4D;
-use symplectic::geom::volume::{volume, volume_qhull};
+use symplectic::geom::volume::{volume_f64, volume_qhull};
 use symplectic::kkt::saddle_point_solver::{solve_kkt_for, KktOutcome};
 use symplectic::random::generate_random_polytopes;
 use symplectic::QhullError;
@@ -171,7 +171,7 @@ fn bench_volume(c: &mut Criterion) {
     for &f in FACET_COUNTS {
         let polytope = prebuilt_polytope(f);
         group.bench_with_input(BenchmarkId::from_parameter(f), &f, |b, _| {
-            b.iter(|| volume(&polytope));
+            b.iter(|| volume_f64(&polytope));
         });
     }
     group.finish();

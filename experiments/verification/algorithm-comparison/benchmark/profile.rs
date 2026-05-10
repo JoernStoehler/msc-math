@@ -17,7 +17,7 @@ use nalgebra::Vector4;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use symplectic::ehz_capacity_pruned;
-use symplectic::geom::volume::volume;
+use symplectic::geom::volume::volume_f64;
 use symplectic::random::generate_random_polytopes;
 
 // Same seed and height range as experiments/verification/algorithm-comparison/benchmark/main.rs for consistency.
@@ -46,7 +46,7 @@ fn main() {
         let cap_result = ehz_capacity_pruned(&p).expect("capacity failed");
 
         // Phase 3: Volume (pure-Rust origin-star triangulation)
-        let vol = volume(&p);
+        let vol = volume_f64(&p);
 
         // Phase 4: Systolic ratio
         let sys = cap_result.capacity().powi(2) / (2.0 * vol);

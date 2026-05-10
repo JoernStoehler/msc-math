@@ -15,7 +15,7 @@ use symplectic::derivatives::{capacity_derivatives_a_from_kkt_result, volume_der
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::skeleton::Skeleton;
 use symplectic::geom::symplectic_form::omega0;
-use symplectic::geom::volume::volume;
+use symplectic::geom::volume::volume_f64;
 use symplectic::kkt::saddle_point_solver::solve_kkt_for;
 
 /// Compute the first boundary event along a direction in dual-vertex space.
@@ -137,7 +137,7 @@ fn compute_step_bound(polytope: &Polytope4D, direction: &[Vector4<f64>]) -> f64 
 }
 
 pub(crate) fn compute_sys(polytope: &Polytope4D) -> Option<f64> {
-    let vol = volume(polytope);
+    let vol = volume_f64(polytope);
     if vol <= 0.0 {
         return None;
     }
@@ -190,7 +190,7 @@ fn gradient_ascent_phase(
 
         let (cap, best_perm) = compute_capacity_result(&current)?;
         let kkt = solve_kkt_for(&current, &best_perm).feasible()?;
-        let vol = volume(&current);
+        let vol = volume_f64(&current);
         if vol <= 0.0 {
             return None;
         }

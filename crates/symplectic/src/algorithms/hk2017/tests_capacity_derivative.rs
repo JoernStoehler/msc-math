@@ -5,7 +5,7 @@
 use crate::ehz_capacity_pruned as ehz_capacity;
 use crate::geom::known_polytopes;
 use crate::geom::polytope::Polytope4D;
-use crate::geom::volume::volume;
+use crate::geom::volume::volume_f64;
 use nalgebra::Vector4;
 
 /// Step size for central finite differences of capacity.
@@ -50,8 +50,8 @@ fn fd_volume_derivatives(normals: &[Vector4<f64>], heights: &[f64]) -> Vec<f64> 
                 .expect("perturbed polytope +eps");
             let p_minus = perturbed_polytope(normals, heights, k, -FD_EPS_VOL)
                 .expect("perturbed polytope -eps");
-            let vol_plus = volume(&p_plus);
-            let vol_minus = volume(&p_minus);
+            let vol_plus = volume_f64(&p_plus);
+            let vol_minus = volume_f64(&p_minus);
             (vol_plus - vol_minus) / (2.0 * FD_EPS_VOL)
         })
         .collect()
@@ -125,7 +125,7 @@ fn euler_homogeneity_volume() {
 
     for (name, poly) in &polytopes {
         let (normals, heights) = normals_and_heights(poly);
-        let vol = volume(poly);
+        let vol = volume_f64(poly);
 
         let d_vol = fd_volume_derivatives(&normals, &heights);
         let euler_sum: f64 = heights.iter().zip(&d_vol).map(|(h, dv)| h * dv).sum();
@@ -305,7 +305,7 @@ fn fd_sys_height_euler() {
         let (normals, heights) = normals_and_heights(&kp.polytope);
 
         let cap = ehz_capacity(&kp.polytope).expect("capacity").capacity();
-        let vol = volume(&kp.polytope);
+        let vol = volume_f64(&kp.polytope);
         let sys = cap * cap / (2.0 * vol);
 
         // FD sys derivatives.
@@ -317,8 +317,8 @@ fn fd_sys_height_euler() {
                     perturbed_polytope(&normals, &heights, k, -FD_EPS_CAP).expect("perturbed -eps");
                 let cap_p = ehz_capacity(&p_plus).expect("cap +eps").capacity();
                 let cap_m = ehz_capacity(&p_minus).expect("cap -eps").capacity();
-                let vol_p = volume(&p_plus);
-                let vol_m = volume(&p_minus);
+                let vol_p = volume_f64(&p_plus);
+                let vol_m = volume_f64(&p_minus);
                 let sys_p = cap_p * cap_p / (2.0 * vol_p);
                 let sys_m = cap_m * cap_m / (2.0 * vol_m);
                 (sys_p - sys_m) / (2.0 * FD_EPS_CAP)
