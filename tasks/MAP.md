@@ -39,6 +39,7 @@ Freshness rules:
 | `tasks/MAP.md` | task overview and routing surface for humans and agents |
 | `tasks/*.md` | topic mini-roadmaps and cached decision context |
 | `tasks/delete-algebraic-crate-done.md` | branch-level done definition for the exact-arithmetic replacement branch |
+| `tasks/delete-algebraic-crate-review-2026-05-10.md` | merge-readiness review report for the exact-arithmetic replacement branch |
 | `research/INDEX.md` and `research/*.md` | thesis story index, detailed interpretation, proof-route state, negative results, and research caches |
 | old harness extraction: verification packet candidates | reusable quality-measurement packets and operational definitions |
 | `tasks/submit-thesis.md` | submission/admin forms, source links, and external-clock TODOs |
