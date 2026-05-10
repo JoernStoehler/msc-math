@@ -124,6 +124,7 @@ modules, which makes non-symplectic helpers harder to reuse and review.
 | Symplectic exact/f64 volume API | `[deleted after migration]` | mainline thesis | agents | The public `symplectic::geom::volume` module was removed after callers migrated to `euclidean_polytopes::volume_from_incidence_exact` plus local exact-to-f64 helpers. | `crates/euclidean-polytopes/DEVELOPMENT.md`, `crates/symplectic/src/derivatives.rs`, `experiments/*/src/lib.rs` |
 | Affine-subspace polygons and volume | `[active]` | mainline thesis | agents, Jorn only if generic-vs-specific API affects thesis callers | Let the internal Euclidean volume decomposition determine the first affine-subspace helper shape; likely needs 3-face measures of 4-polytopes and polygon area in affine 2-planes of `R^4`. | `crates/euclidean-polytopes/src/volume.rs`, `crates/symplectic/src/geom/polygon.rs` |
 | Symplectic integration cleanup | `[active]` | mainline thesis | agents | After each migrated slice, keep `symplectic` as the owner of symplectic form, capacity, KKT, omega signs, Reeb-direction transition pruning, and experiment-facing wrappers only. | `crates/symplectic/src/geom/`, `crates/symplectic/src/algorithms/` |
+| Flat capacity/orbit internals | `[implemented migration slice]` | mainline thesis | agents | HK2017 enumeration, saddle-point KKT solving, orbit solving, and orbit aggregation now have flat helper entry points over facet count, transition matrices, f64 dual vertices, and exact dual vertices. Root capacity wrappers assemble flat data once and delegate to those helpers. | `crates/symplectic/src/algorithms/hk2017/enumeration.rs`, `crates/symplectic/src/algorithms/orbit_search.rs`, `crates/symplectic/src/kkt/saddle_point_solver.rs`, `crates/symplectic/src/lib.rs` |
 
 ## Done Criteria
 
@@ -192,6 +193,17 @@ The migration task is done when:
   Why it matters: capacity-facing code can now migrate call sites away from
   `Polytope4D` without changing the transition or KKT semantics in the same
   review packet.
+- [implemented 2026-05-10] Flat capacity/orbit internals now include
+  `for_each_sigma_unpruned_facet_count`,
+  `for_each_sigma_pruned_by_transition`,
+  `solve_kkt_for_dual_vertices`,
+  `solve_orbit_sigma_with_dual_vertices`,
+  `solve_sigma_stream_with_dual_vertices`, and flat exact-dual aggregation
+  helpers. Exact fallback helpers require the same ordered facet set as the
+  f64 candidate generator.
+  Why it matters: the remaining `Polytope4D` capacity/KKT wrappers are now
+  shallow consumer compatibility entry points, so later slices can migrate
+  call sites and delete wrappers without changing solver semantics.
 - [fresh 2026-05-10] `Polytope4D` currently mixes ordinary geometry with
   symplectic data: dual vertices, primal vertices, incidence, facet intersection nonemptiness,
   omega signs, and f64 copies. The Euclidean crate should take the ordinary
