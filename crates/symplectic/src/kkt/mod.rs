@@ -4,7 +4,7 @@
 //!
 //! The KKT module is context-independent: it operates on abstract matrices (C, d, H)
 //! without knowing they come from symplectic geometry. Assembly of (C, d, H) from
-//! polytope geometry lives in `qp_assembly`.
+//! dual vertices lives in `qp_assembly`.
 //!
 //! Mathematical correspondence: [lem:kkt], [lem:q-error-bound]
 //!
@@ -25,7 +25,7 @@
 //!
 //! ## Submodules
 //!
-//! - `qp_assembly` — Polytope4D + permutation -> QP matrices or augmented system
+//! - `qp_assembly` — dual vertices + permutation -> QP matrices or augmented system
 //! - `saddle_point_solver` — (m+5)x(m+5) eigendecomposition solver (main path)
 //! - `constraint_solver` — Solve Cx=d for particular solution + null space basis via SVD
 //! - `beta_feasibility` — Max-margin LP search for beta>0 in affine solution set

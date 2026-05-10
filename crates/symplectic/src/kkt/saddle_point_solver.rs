@@ -1,7 +1,7 @@
 //! Eigendecomposition-based KKT solver for the (m+5)x(m+5) saddle-point system.
 //!
 //! Solves the augmented KKT system M x = b where M is the symmetric saddle-point
-//! matrix assembled by `qp_assembly::build_augmented_system`. The solution vector
+//! matrix assembled by `qp_assembly::build_augmented_system_from_dual_vertices`. The solution vector
 //! x = [beta; mu; xi] yields dwell times beta, Lagrange multipliers mu (closure)
 //! and xi (normalization).
 //!

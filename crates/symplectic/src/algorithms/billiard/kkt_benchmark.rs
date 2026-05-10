@@ -14,7 +14,7 @@
 //
 // This module is only compiled during `cfg(test)` builds.
 use crate::geom::known_polytopes;
-use crate::kkt::qp_assembly::build_augmented_system;
+use crate::kkt::qp_assembly::build_augmented_system_from_dual_vertices;
 use crate::kkt::saddle_point_solver::{
     solve_kkt_for, KktOutcome, EPS_BETA_POSITIVE, EPS_Q_POSITIVE,
 };
@@ -90,7 +90,7 @@ fn bench_kkt_eigen() {
 /// Phase-by-phase profiling of eigendecomposition KKT solver.
 ///
 /// Breaks down the solver into timed phases to identify bottlenecks:
-///   1. Matrix construction (`build_augmented_system`)
+///   1. Matrix construction (`build_augmented_system_from_dual_vertices`)
 ///   2. Eigendecomposition (`symmetric_eigen`)
 ///   3. Rank detection + pseudoinverse
 ///   4. Residual check
@@ -101,6 +101,7 @@ fn bench_kkt_eigen() {
 #[ignore] // profiling test, run manually with --release --nocapture --ignored
 fn bench_kkt_eigen_profile() {
     let (polytope, sigmas) = pentagon_sigmas();
+    let dual_vertices = polytope.dual_vertices_f64();
     let n_sigmas = sigmas.len();
 
     eprintln!("Profiling eigendecomposition phases on {n_sigmas} pentagon sigmas...\n");
@@ -121,7 +122,7 @@ fn bench_kkt_eigen_profile() {
 
         // Phase 1: Build KKT matrix.
         let t0 = Instant::now();
-        let (kkt, rhs) = build_augmented_system(&polytope, sigma);
+        let (kkt, rhs) = build_augmented_system_from_dual_vertices(dual_vertices, sigma);
         t_build += t0.elapsed().as_secs_f64();
 
         // Phase 2: Eigendecomposition.

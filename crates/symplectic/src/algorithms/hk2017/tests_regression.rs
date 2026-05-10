@@ -4,7 +4,7 @@
 
 use crate::geom::lagrangian_product::lagrangian_product;
 use crate::geom::polygon::{regular_polygon_2d, rotate_polygon_2d};
-use crate::kkt::qp_assembly::build_augmented_system;
+use crate::kkt::qp_assembly::build_augmented_system_from_dual_vertices;
 use crate::{ehz_capacity_pruned, ehz_capacity_unpruned};
 
 // ── KKT null space fix regressions ──
@@ -137,7 +137,8 @@ fn eigen_gap_ratio_44_degenerate() {
 
     // The optimal orbit at theta=0 uses facets [0,4,2,6] (alternating q/p).
     let perm = vec![0, 4, 2, 6];
-    let (kkt, _rhs) = build_augmented_system(&polytope, &perm);
+    let dual_vertices = polytope.dual_vertices_f64();
+    let (kkt, _rhs) = build_augmented_system_from_dual_vertices(dual_vertices, &perm);
     let eigen = kkt.symmetric_eigen();
     let size = perm.len() + 5; // 9
 
@@ -194,7 +195,8 @@ fn eigen_gap_ratio_44_theta43() {
     let m = perm.len();
     let size = m + 5; // 11
 
-    let (kkt, _rhs) = build_augmented_system(&polytope, &perm);
+    let dual_vertices = polytope.dual_vertices_f64();
+    let (kkt, _rhs) = build_augmented_system_from_dual_vertices(dual_vertices, &perm);
     let eigen = kkt.symmetric_eigen();
 
     let mut abs_eigenvalues: Vec<f64> = eigen.eigenvalues.iter().map(|&ev| ev.abs()).collect();

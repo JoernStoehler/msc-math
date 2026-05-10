@@ -6,7 +6,7 @@
 //! - edge cases and numerical degeneracies,
 //! - constraint residual checks for returned feasible candidates.
 
-use super::qp_assembly::build_augmented_system;
+use super::qp_assembly::build_augmented_system_from_dual_vertices;
 use super::saddle_point_solver::*;
 use crate::geom::known_polytopes;
 use nalgebra::{DMatrix, DVector};
@@ -42,6 +42,7 @@ fn assert_approx(a: f64, b: f64, tol: f64, msg: &str) {
 /// for larger ones.
 fn find_best_q_exhaustive(polytope: &crate::geom::polytope::Polytope4D) -> (f64, bool) {
     let f = polytope.facet_count();
+    let dual_vertices = polytope.dual_vertices_f64();
     let mut best_q = 0.0f64;
     let mut found = false;
 
@@ -54,7 +55,7 @@ fn find_best_q_exhaustive(polytope: &crate::geom::polytope::Polytope4D) -> (f64,
             loop {
                 let mut perm = vec![subset[0]];
                 perm.extend_from_slice(&rest);
-                let (kkt, rhs) = build_augmented_system(polytope, &perm);
+                let (kkt, rhs) = build_augmented_system_from_dual_vertices(dual_vertices, &perm);
                 if let KktOutcome::Feasible(result) = solve_saddle_point(&kkt, &rhs) {
                     if result.beta.iter().all(|&b| b > EPS_BETA_POSITIVE)
                         && result.q_corrected > EPS_Q_POSITIVE
@@ -170,7 +171,8 @@ fn solve_kkt_for_matches_direct() {
     let perm = vec![0, 1, 2];
 
     let result_direct = {
-        let (kkt, rhs) = build_augmented_system(polytope, &perm);
+        let dual_vertices = polytope.dual_vertices_f64();
+        let (kkt, rhs) = build_augmented_system_from_dual_vertices(dual_vertices, &perm);
         solve_saddle_point(&kkt, &rhs)
     };
 
@@ -198,13 +200,14 @@ fn solve_kkt_for_matches_direct() {
 fn q_error_bound_nonnegative_and_small() {
     let simplex = known_polytopes::simplex();
     let polytope = &simplex.polytope;
+    let dual_vertices = polytope.dual_vertices_f64();
     let f = polytope.facet_count();
 
     let mut checked = 0;
     for size in 2..=f.min(6) {
         for_each_combination(f, size, &mut |subset| {
             let perm = subset.to_vec();
-            let (kkt, rhs) = build_augmented_system(polytope, &perm);
+            let (kkt, rhs) = build_augmented_system_from_dual_vertices(dual_vertices, &perm);
             if let KktOutcome::Feasible(result) = solve_saddle_point(&kkt, &rhs) {
                 assert!(
                     result.q_error_bound >= 0.0,
@@ -234,7 +237,8 @@ fn inertia_sums_to_size() {
     let simplex = known_polytopes::simplex();
     let polytope = &simplex.polytope;
     let perm = vec![0, 1, 2];
-    let (kkt, rhs) = build_augmented_system(polytope, &perm);
+    let dual_vertices = polytope.dual_vertices_f64();
+    let (kkt, rhs) = build_augmented_system_from_dual_vertices(dual_vertices, &perm);
 
     if let KktOutcome::Feasible(result) = solve_saddle_point(&kkt, &rhs) {
         let m = perm.len();
@@ -280,7 +284,8 @@ fn two_facet_permutation() {
     let simplex = known_polytopes::simplex();
     let polytope = &simplex.polytope;
     let perm = vec![0, 1];
-    let (kkt, rhs) = build_augmented_system(polytope, &perm);
+    let dual_vertices = polytope.dual_vertices_f64();
+    let (kkt, rhs) = build_augmented_system_from_dual_vertices(dual_vertices, &perm);
 
     // May or may not find a solution. Just verify no panic.
     let _result = solve_saddle_point(&kkt, &rhs);
@@ -374,13 +379,14 @@ fn perturbed_lp44_ehz_capacity_no_panic() {
 fn normalization_constraint_satisfied() {
     let simplex = known_polytopes::simplex();
     let polytope = &simplex.polytope;
+    let dual_vertices = polytope.dual_vertices_f64();
     let f = polytope.facet_count();
 
     let mut checked = 0;
     for size in 2..=f.min(6) {
         for_each_combination(f, size, &mut |subset| {
             let perm = subset.to_vec();
-            let (kkt, rhs) = build_augmented_system(polytope, &perm);
+            let (kkt, rhs) = build_augmented_system_from_dual_vertices(dual_vertices, &perm);
             if let KktOutcome::Feasible(result) = solve_saddle_point(&kkt, &rhs) {
                 let sum_beta: f64 = result.beta.iter().sum();
                 assert!(
@@ -408,7 +414,7 @@ fn closure_constraint_satisfied() {
     for size in 2..=f.min(6) {
         for_each_combination(f, size, &mut |subset| {
             let perm = subset.to_vec();
-            let (kkt, rhs) = build_augmented_system(polytope, &perm);
+            let (kkt, rhs) = build_augmented_system_from_dual_vertices(dual_verts, &perm);
             if let KktOutcome::Feasible(result) = solve_saddle_point(&kkt, &rhs) {
                 #[allow(clippy::needless_range_loop)]
                 for d in 0..4 {

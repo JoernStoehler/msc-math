@@ -67,7 +67,7 @@ use symplectic::derivatives::{
     directional_derivative_a,
 };
 use symplectic::geom::symplectic_form::omega0;
-use symplectic::kkt::qp_assembly::build_augmented_system;
+use symplectic::kkt::qp_assembly::build_augmented_system_from_dual_vertices;
 use symplectic::kkt::saddle_point_solver::{KktResult, EPS_Q_POSITIVE};
 use symplectic::random::generate_random_polytopes;
 use symplectic::Polytope4D;
@@ -318,7 +318,8 @@ fn beta_directional_sensitivity(
     // rhs[m + 4] = 0 already
 
     // Build M and solve M.w = -rhs via eigendecomposition
-    let (kkt_matrix, _) = build_augmented_system(polytope, perm);
+    let dual_vertices = polytope.dual_vertices_f64();
+    let (kkt_matrix, _) = build_augmented_system_from_dual_vertices(dual_vertices, perm);
     let eig = kkt_matrix.symmetric_eigen();
 
     // Pseudoinverse threshold: same as saddle_point_solver's EIGEN_CONDITION_TAU (1e-3)

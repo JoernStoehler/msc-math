@@ -60,7 +60,7 @@ def build_H_matrix(perm, normals):
 
     H_{ij} = H_{ji} = ω₀(n_{σ(i)}, n_{σ(j)}) for i < j, H_{ii} = 0.
     This is symmetric despite ω₀ being antisymmetric — the convention
-    matches the Rust KKT augmented system (build_augmented_system).
+    matches the Rust KKT augmented system (build_augmented_system_from_dual_vertices).
     The quadratic form Q(β) = (1/2) β^T H β = Σ_{i<j} β_i β_j ω₀(n_{σ(i)}, n_{σ(j)}).
     """
     m = len(perm)

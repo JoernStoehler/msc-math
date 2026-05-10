@@ -1,18 +1,17 @@
 //! Flat dual-vertex data + permutation -> QP matrices or augmented KKT system.
 //!
-//! Bridges geometry data to the solver's abstract matrix inputs. Existing
-//! `Polytope4D` wrappers remain during migration, but the assembly boundary
-//! only needs dual vertices and a permutation. Two assembly modes:
+//! Bridges geometry data to the solver's abstract matrix inputs. The assembly
+//! boundary only needs dual vertices and a permutation. Two assembly modes:
 //!
-//! - `build_qp`: assembles the QP struct {C, d, H} using dual vertices directly.
-//!   Used by the projection solver path.
-//! - `build_augmented_system`: assembles the (m+5)x(m+5) saddle-point system
-//!   using normals and heights. Used by the eigendecomposition solver path.
+//! - `build_qp_from_dual_vertices`: assembles the QP struct {C, d, H} using
+//!   dual vertices directly. Used by the projection solver path.
+//! - `build_augmented_system_from_dual_vertices`: assembles the (m+5)x(m+5)
+//!   saddle-point system using dual vertices directly. Used by the
+//!   eigendecomposition solver path.
 //!
 //! Mathematical correspondence: [lem:kkt]
 
 use super::QP;
-use crate::geom::polytope::Polytope4D;
 use crate::geom::symplectic_form::omega0;
 use nalgebra::{DMatrix, DVector, Vector4};
 
@@ -86,12 +85,6 @@ pub fn build_qp_from_dual_vertices(dual_vertices: &[Vector4<f64>], perm: &[usize
     QP { c, d, h }
 }
 
-/// Compatibility wrapper while callers still own `Polytope4D`.
-pub fn build_qp(polytope: &Polytope4D, perm: &[usize]) -> QP {
-    let dual_vertices = polytope.dual_vertices_f64();
-    build_qp_from_dual_vertices(dual_vertices, perm)
-}
-
 /// Assemble the augmented (m+5)x(m+5) KKT system from dual vertices and a permutation.
 ///
 /// Builds the symmetric saddle-point matrix M and right-hand side b:
@@ -158,15 +151,6 @@ pub fn build_augmented_system_from_dual_vertices(
     (kkt, rhs)
 }
 
-/// Compatibility wrapper while callers still own `Polytope4D`.
-pub fn build_augmented_system(
-    polytope: &Polytope4D,
-    perm: &[usize],
-) -> (DMatrix<f64>, DVector<f64>) {
-    let dual_vertices = polytope.dual_vertices_f64();
-    build_augmented_system_from_dual_vertices(dual_vertices, perm)
-}
-
 fn assert_permutation_indices_in_bounds(dual_vertices: &[Vector4<f64>], perm: &[usize]) {
     for &facet_idx in perm {
         assert!(
@@ -183,32 +167,17 @@ mod tests {
     use crate::geom::polytope::Polytope4D;
     use crate::geom::symplectic_form::omega0;
 
-    // Tests for qp_assembly: QP and augmented system construction from polytope geometry.
+    // Tests for qp_assembly: QP and augmented system construction from dual vertices.
     //
-    // Proposition: build_qp and build_augmented_system correctly encode the KKT
-    // constraints (closure, normalization) and objective (symplectic action) for
-    // a given polytope and facet permutation.
+    // Proposition: build_qp_from_dual_vertices and build_augmented_system_from_dual_vertices
+    // correctly encode the KKT constraints (closure, normalization) and objective
+    // (symplectic action) for given dual vertices and facet permutation.
     // Reference: [lem:kkt]
     //
     // Strategy: fixture-based on known polytopes (hypercube), verifying
     // matrix dimensions, symmetry of H, constraint structure, and known values.
 
     // ── build_qp tests ──
-
-    /// Flat dual-vertex assembly matches the temporary Polytope4D wrapper.
-    #[test]
-    fn flat_qp_matches_polytope_wrapper() {
-        let polytope = make_test_polytope();
-        let dual_vertices = polytope.dual_vertices_f64();
-        let perm: Vec<usize> = vec![0, 2, 4, 6];
-
-        let flat = build_qp_from_dual_vertices(dual_vertices, &perm);
-        let wrapped = build_qp(&polytope, &perm);
-
-        assert_eq!(flat.c, wrapped.c);
-        assert_eq!(flat.d, wrapped.d);
-        assert_eq!(flat.h, wrapped.h);
-    }
 
     #[test]
     #[should_panic(expected = "permutation index 8 out of bounds for 8 dual vertices")]
@@ -222,12 +191,13 @@ mod tests {
     #[test]
     fn qp_dimensions_match_permutation() {
         let polytope = make_test_polytope();
+        let dual_vertices = polytope.dual_vertices_f64();
         let n = polytope.facet_count();
         // Use first 3 facets as a short permutation
         let perm: Vec<usize> = (0..3.min(n)).collect();
         let m = perm.len();
 
-        let qp = build_qp(&polytope, &perm);
+        let qp = build_qp_from_dual_vertices(dual_vertices, &perm);
 
         assert_eq!(
             qp.c.nrows(),
@@ -244,11 +214,12 @@ mod tests {
     #[test]
     fn qp_h_is_symmetric() {
         let polytope = make_test_polytope();
+        let dual_vertices = polytope.dual_vertices_f64();
         let n = polytope.facet_count();
         let perm: Vec<usize> = (0..n).collect();
         let m = perm.len();
 
-        let qp = build_qp(&polytope, &perm);
+        let qp = build_qp_from_dual_vertices(dual_vertices, &perm);
 
         for i in 0..m {
             for j in 0..m {
@@ -270,10 +241,11 @@ mod tests {
     #[test]
     fn qp_h_diagonal_is_zero() {
         let polytope = make_test_polytope();
+        let dual_vertices = polytope.dual_vertices_f64();
         let n = polytope.facet_count();
         let perm: Vec<usize> = (0..n).collect();
 
-        let qp = build_qp(&polytope, &perm);
+        let qp = build_qp_from_dual_vertices(dual_vertices, &perm);
 
         for i in 0..perm.len() {
             assert!(
@@ -293,7 +265,7 @@ mod tests {
         let n = polytope.facet_count();
         let perm: Vec<usize> = (0..n).collect();
 
-        let qp = build_qp(&polytope, &perm);
+        let qp = build_qp_from_dual_vertices(dual_verts, &perm);
 
         for i in 0..perm.len() {
             for j in (i + 1)..perm.len() {
@@ -320,7 +292,7 @@ mod tests {
         let n = polytope.facet_count();
         let perm: Vec<usize> = (0..n).collect();
 
-        let qp = build_qp(&polytope, &perm);
+        let qp = build_qp_from_dual_vertices(dual_verts, &perm);
 
         for (col, &facet_idx) in perm.iter().enumerate() {
             let a = &dual_verts[facet_idx];
@@ -349,9 +321,10 @@ mod tests {
     #[test]
     fn qp_rhs_vector() {
         let polytope = make_test_polytope();
+        let dual_vertices = polytope.dual_vertices_f64();
         let perm: Vec<usize> = (0..3.min(polytope.facet_count())).collect();
 
-        let qp = build_qp(&polytope, &perm);
+        let qp = build_qp_from_dual_vertices(dual_vertices, &perm);
 
         for d in 0..4 {
             assert!(qp.d[d].abs() < 1e-15, "d[{}]={} should be 0", d, qp.d[d]);
@@ -365,30 +338,17 @@ mod tests {
 
     // ── build_augmented_system tests ──
 
-    /// Flat dual-vertex KKT assembly matches the temporary Polytope4D wrapper.
-    #[test]
-    fn flat_augmented_system_matches_polytope_wrapper() {
-        let polytope = make_test_polytope();
-        let dual_vertices = polytope.dual_vertices_f64();
-        let perm: Vec<usize> = vec![1, 3, 5, 7];
-
-        let (flat_kkt, flat_rhs) = build_augmented_system_from_dual_vertices(dual_vertices, &perm);
-        let (wrapped_kkt, wrapped_rhs) = build_augmented_system(&polytope, &perm);
-
-        assert_eq!(flat_kkt, wrapped_kkt);
-        assert_eq!(flat_rhs, wrapped_rhs);
-    }
-
     /// Augmented system has size (m+5) x (m+5).
     #[test]
     fn augmented_system_dimensions() {
         let polytope = make_test_polytope();
+        let dual_vertices = polytope.dual_vertices_f64();
         let n = polytope.facet_count();
         let perm: Vec<usize> = (0..3.min(n)).collect();
         let m = perm.len();
         let size = m + 5;
 
-        let (kkt, rhs) = build_augmented_system(&polytope, &perm);
+        let (kkt, rhs) = build_augmented_system_from_dual_vertices(dual_vertices, &perm);
 
         assert_eq!(kkt.nrows(), size);
         assert_eq!(kkt.ncols(), size);
@@ -399,10 +359,11 @@ mod tests {
     #[test]
     fn augmented_system_is_symmetric() {
         let polytope = make_test_polytope();
+        let dual_vertices = polytope.dual_vertices_f64();
         let n = polytope.facet_count();
         let perm: Vec<usize> = (0..n).collect();
 
-        let (kkt, _) = build_augmented_system(&polytope, &perm);
+        let (kkt, _) = build_augmented_system_from_dual_vertices(dual_vertices, &perm);
         let size = kkt.nrows();
 
         for i in 0..size {
@@ -431,7 +392,7 @@ mod tests {
         let perm: Vec<usize> = (0..n).collect();
         let m = perm.len();
 
-        let (kkt, rhs) = build_augmented_system(&polytope, &perm);
+        let (kkt, rhs) = build_augmented_system_from_dual_vertices(dual_verts, &perm);
 
         // Check H block (top-left m x m): omega_0 between permuted dual vertices.
         for i in 0..m {
@@ -515,8 +476,8 @@ mod tests {
         );
     }
 
-    /// Permutation reordering: build_qp with permuted indices should produce
-    /// different H entries when the permutation changes.
+    /// Permutation reordering: flat QP assembly with permuted indices should
+    /// produce different H entries when the permutation changes.
     #[test]
     fn permutation_reorders_matrices() {
         let polytope = make_test_polytope();
@@ -528,11 +489,11 @@ mod tests {
         let perm_identity: Vec<usize> = (0..3).collect();
         let perm_reversed: Vec<usize> = vec![2, 1, 0];
 
-        let qp_id = build_qp(&polytope, &perm_identity);
-        let qp_rev = build_qp(&polytope, &perm_reversed);
+        let dual_verts = polytope.dual_vertices_f64();
+        let qp_id = build_qp_from_dual_vertices(dual_verts, &perm_identity);
+        let qp_rev = build_qp_from_dual_vertices(dual_verts, &perm_reversed);
 
         // H[0,1] with identity uses facets (0,1); with reversed uses facets (2,1).
-        let dual_verts = polytope.dual_vertices_f64();
         let expected_id_01 = omega0(&dual_verts[0], &dual_verts[1]);
         let expected_rev_01 = omega0(&dual_verts[2], &dual_verts[1]);
 
@@ -552,10 +513,11 @@ mod tests {
     #[test]
     fn hypercube_augmented_h_sparsity() {
         let polytope = make_test_polytope();
+        let dual_vertices = polytope.dual_vertices_f64();
         let n = polytope.facet_count();
         let perm: Vec<usize> = (0..n).collect();
 
-        let (kkt, _) = build_augmented_system(&polytope, &perm);
+        let (kkt, _) = build_augmented_system_from_dual_vertices(dual_vertices, &perm);
 
         // Count non-zero entries in the H block (m x m).
         // For axis-aligned normals, omega_0(e_i, e_j) != 0 only for
