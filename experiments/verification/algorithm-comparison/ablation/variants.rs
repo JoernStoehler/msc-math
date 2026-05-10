@@ -6,7 +6,7 @@
 //! `formal/search-pruning-correctness.tex`
 //! [lem:transition-feasibility].
 
-//! A0..A3 variant implementations and adjacency/feasibility helpers.
+//! A0..A3 variant implementations and transition-feasibility helpers.
 //!
 //! The code stays experiment-local because it compares historical and proposed
 //! pruning strategies side by side instead of defining one durable crate API.
@@ -70,42 +70,42 @@ fn heap_perms_buf(buf: &mut [usize], offset: usize, k: usize, callback: &mut imp
     }
 }
 
-fn dmatrix_to_vec(adj: &DMatrix<bool>) -> Vec<Vec<bool>> {
-    let f = adj.nrows();
+fn bool_matrix_to_rows(matrix: &DMatrix<bool>) -> Vec<Vec<bool>> {
+    let f = matrix.nrows();
     (0..f)
-        .map(|i| (0..f).map(|j| adj[(i, j)]).collect())
+        .map(|i| (0..f).map(|j| matrix[(i, j)]).collect())
         .collect()
 }
 
-fn is_adjacent_cycle(perm: &[usize], adj: &[Vec<bool>]) -> bool {
+fn is_allowed_transition_cycle(perm: &[usize], transition_is_allowed: &[Vec<bool>]) -> bool {
     let m = perm.len();
-    (0..m).all(|k| adj[perm[k]][perm[(k + 1) % m]])
+    (0..m).all(|k| transition_is_allowed[perm[k]][perm[(k + 1) % m]])
 }
 
-fn build_directed_adjacency(
+fn build_omega_directed_transition_matrix(
     facet_intersection_is_nonempty: &DMatrix<bool>,
     normals: &[Vector4<f64>],
 ) -> Vec<Vec<bool>> {
     let f = normals.len();
-    let mut dir_adj = vec![vec![false; f]; f];
+    let mut transition_is_allowed = vec![vec![false; f]; f];
     for i in 0..f {
         for j in 0..f {
             if i == j {
                 continue;
             }
             if facet_intersection_is_nonempty[(i, j)] {
-                dir_adj[i][j] = omega0(&normals[i], &normals[j]) >= -EPS_DIRECTED;
+                transition_is_allowed[i][j] = omega0(&normals[i], &normals[j]) >= -EPS_DIRECTED;
             }
         }
     }
-    dir_adj
+    transition_is_allowed
 }
 
 type Candidate = (f64, Vec<usize>, Vec<usize>, Vec<f64>);
 
 fn ehz_capacity_unpruned_with(
     polytope: &Polytope4D,
-    adj: &[Vec<bool>],
+    transition_is_allowed: &[Vec<bool>],
     solver: fn(&[Vector4<f64>], &[f64], &[usize]) -> Option<(Vec<f64>, f64)>,
 ) -> Option<AblationResult> {
     let f = polytope.facet_count();
@@ -120,7 +120,7 @@ fn ehz_capacity_unpruned_with(
     for m in 2..=f {
         for subset in combinations(f, m) {
             for_each_cyclic_permutation(&subset, &mut |perm| {
-                if !is_adjacent_cycle(perm, adj) {
+                if !is_allowed_transition_cycle(perm, transition_is_allowed) {
                     return;
                 }
                 iterations += 1;
@@ -185,7 +185,8 @@ fn ehz_capacity_unpruned_a0(polytope: &Polytope4D) -> Option<AblationResult> {
 }
 
 fn ehz_capacity_unpruned_a1(polytope: &Polytope4D) -> Option<AblationResult> {
-    let facet_intersection_is_nonempty = dmatrix_to_vec(polytope.facet_intersection_is_nonempty());
+    let facet_intersection_is_nonempty =
+        bool_matrix_to_rows(polytope.facet_intersection_is_nonempty());
     ehz_capacity_unpruned_with(polytope, &facet_intersection_is_nonempty, solve_kkt_full)
 }
 
@@ -196,8 +197,9 @@ fn ehz_capacity_unpruned_a2(polytope: &Polytope4D) -> Option<AblationResult> {
         .iter()
         .map(|a| a / a.norm())
         .collect();
-    let dir_adj = build_directed_adjacency(facet_intersection_is_nonempty, &normals);
-    ehz_capacity_unpruned_with(polytope, &dir_adj, solve_kkt_full)
+    let transition_is_allowed =
+        build_omega_directed_transition_matrix(facet_intersection_is_nonempty, &normals);
+    ehz_capacity_unpruned_with(polytope, &transition_is_allowed, solve_kkt_full)
 }
 
 fn fourier_motzkin_2d_feasible(constraints: &[(f64, f64, f64)]) -> bool {
@@ -319,22 +321,23 @@ fn is_physical_transition_feasible(
     fourier_motzkin_2d_feasible(&constraints)
 }
 
-fn build_a3_adjacency(
-    a2_adj: &[Vec<bool>],
+fn build_reeb_feasible_transition_matrix(
+    omega_directed_transition_is_allowed: &[Vec<bool>],
     normals: &[Vector4<f64>],
     heights: &[f64],
 ) -> Vec<Vec<bool>> {
     let f = normals.len();
-    let mut a3_adj = vec![vec![false; f]; f];
+    let mut reeb_feasible_transition_is_allowed = vec![vec![false; f]; f];
     for i in 0..f {
         for j in 0..f {
-            if i == j || !a2_adj[i][j] {
+            if i == j || !omega_directed_transition_is_allowed[i][j] {
                 continue;
             }
-            a3_adj[i][j] = is_physical_transition_feasible(normals, heights, i, j);
+            reeb_feasible_transition_is_allowed[i][j] =
+                is_physical_transition_feasible(normals, heights, i, j);
         }
     }
-    a3_adj
+    reeb_feasible_transition_is_allowed
 }
 
 fn ehz_capacity_unpruned_a3(polytope: &Polytope4D) -> Option<AblationResult> {
@@ -342,9 +345,18 @@ fn ehz_capacity_unpruned_a3(polytope: &Polytope4D) -> Option<AblationResult> {
     let duals = polytope.dual_vertices_f64();
     let normals: Vec<Vector4<f64>> = duals.iter().map(|a| a / a.norm()).collect();
     let heights: Vec<f64> = duals.iter().map(|a| 1.0 / a.norm()).collect();
-    let a2_adj = build_directed_adjacency(facet_intersection_is_nonempty, &normals);
-    let a3_adj = build_a3_adjacency(&a2_adj, &normals, &heights);
-    ehz_capacity_unpruned_with(polytope, &a3_adj, solve_kkt_full)
+    let omega_directed_transition_is_allowed =
+        build_omega_directed_transition_matrix(facet_intersection_is_nonempty, &normals);
+    let reeb_feasible_transition_is_allowed = build_reeb_feasible_transition_matrix(
+        &omega_directed_transition_is_allowed,
+        &normals,
+        &heights,
+    );
+    ehz_capacity_unpruned_with(
+        polytope,
+        &reeb_feasible_transition_is_allowed,
+        solve_kkt_full,
+    )
 }
 
 pub const VARIANTS: &[Variant] = &[
@@ -353,7 +365,7 @@ pub const VARIANTS: &[Variant] = &[
         run: ehz_capacity_unpruned_a0,
     },
     Variant {
-        name: "a1_vertex_adj",
+        name: "a1_facet_intersection",
         run: ehz_capacity_unpruned_a1,
     },
     Variant {

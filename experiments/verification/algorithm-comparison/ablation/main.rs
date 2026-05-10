@@ -86,8 +86,10 @@ fn main() {
     let t0 = Instant::now();
     let output_path = output_path(std::path::Path::new(env!("CARGO_MANIFEST_DIR")), args.smoke);
 
-    println!("Ablation study — A-axis (adjacency pruning)\n");
-    println!("Variants: A0 (unpruned), A1 (vertex adj), A2 (directed ω₀), A3 (Reeb feasibility)");
+    println!("Ablation study — A-axis (transition pruning)\n");
+    println!(
+        "Variants: A0 (unpruned), A1 (facet intersection), A2 (directed ω₀), A3 (Reeb feasibility)"
+    );
     println!(
         "Seed: {}, h ∈ [{}, {}]\n",
         crate::models::SEED,

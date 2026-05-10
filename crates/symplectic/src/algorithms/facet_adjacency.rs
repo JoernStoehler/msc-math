@@ -1,9 +1,9 @@
-//! Directed (ω₀-aware) facet adjacency and cycle checks.
+//! Directed (omega_0-aware) transition matrices and cycle checks.
 //!
-//! Undirected facet adjacency and omega signs are computed by geometry/exact
-//! validation code. This module adds the symplectic sign condition
-//! ω₀(nᵢ, nⱼ) ≥ 0 to produce directed adjacency, and provides cycle-checking
-//! utilities.
+//! Facet-intersection nonemptiness and omega signs are computed by
+//! geometry/exact validation code. This module adds the symplectic sign
+//! condition `omega_0(n_i, n_j) >= 0` to produce the directed transition
+//! relation used by HK2017 pruning and billiard enumeration.
 //!
 //! Used by hk2017 and billiard algorithms for pruning infeasible permutations.
 //!
@@ -15,8 +15,8 @@ use nalgebra::DMatrix;
 #[cfg(test)]
 mod tests;
 
-/// Directed facet adjacency in the physical Reeb direction from flat inputs:
-/// `adj[(i,j)] = true` iff the transition Fᵢ → Fⱼ is feasible.
+/// Directed transition feasibility in the physical Reeb direction from flat inputs:
+/// `transition_is_allowed[(i,j)] = true` iff the transition F_i -> F_j is feasible.
 ///
 /// Combines two conditions:
 /// 1. Facet intersection nonemptiness: Fᵢ ∩ Fⱼ ≠ ∅
@@ -30,8 +30,8 @@ mod tests;
 /// `ω₀(nᵢ, nⱼ)`.
 ///
 /// [lem:numerical-transition-feasibility]: F_i -> F_j requires facet intersection nonemptiness + omega_0(n_i, n_j) >= 0.
-/// [cor:adjacency-pruning]: this directed adjacency can prune infeasible permutations.
-pub fn build_transition_matrix_from_adjacency_and_omega(
+/// [cor:adjacency-pruning]: this directed transition relation can prune infeasible permutations.
+pub fn build_transition_matrix_from_facet_intersections_and_omega(
     facet_intersection_is_nonempty: &DMatrix<bool>,
     omega_signs: &DMatrix<i8>,
 ) -> DMatrix<bool> {
@@ -58,21 +58,23 @@ pub fn build_transition_matrix_from_adjacency_and_omega(
     )
 }
 
-/// Compatibility wrapper while callers still own `Polytope4D`.
+/// Build the directed transition matrix from a `Polytope4D`.
 pub fn build_transition_matrix(polytope: &Polytope4D) -> DMatrix<bool> {
     let facet_intersection_is_nonempty = polytope.facet_intersection_is_nonempty();
     let omega_signs = polytope.omega_signs();
-    build_transition_matrix_from_adjacency_and_omega(facet_intersection_is_nonempty, omega_signs)
+    build_transition_matrix_from_facet_intersections_and_omega(
+        facet_intersection_is_nonempty,
+        omega_signs,
+    )
 }
 
-/// Check if a cyclic permutation forms an adjacent cycle in the given adjacency matrix.
+/// Check if a cyclic permutation forms a feasible cycle in the given transition matrix.
 ///
-/// Returns true iff every consecutive pair `(perm[k], perm[k+1 mod m])` is adjacent.
-/// Works with both undirected and directed adjacency matrices.
-pub fn is_feasible_cycle(perm: &[usize], adj: &DMatrix<bool>) -> bool {
+/// Returns true iff every consecutive pair `(perm[k], perm[k+1 mod m])` is allowed.
+pub fn is_feasible_cycle(perm: &[usize], transition_is_allowed: &DMatrix<bool>) -> bool {
     let m = perm.len();
     if m == 0 {
         return true;
     }
-    (0..m).all(|k| adj[(perm[k], perm[(k + 1) % m])])
+    (0..m).all(|k| transition_is_allowed[(perm[k], perm[(k + 1) % m])])
 }

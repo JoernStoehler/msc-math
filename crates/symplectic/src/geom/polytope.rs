@@ -177,7 +177,7 @@ impl Polytope4D {
     /// Construct from exact rational dual vertices a_i in R^4 \ {0}.
     ///
     /// Each dual vertex defines a halfspace a_i^T x <= 1. Runs the exact
-    /// rational pipeline: vertex enumeration, incidence, adjacency, omega signs.
+    /// rational pipeline: vertex enumeration, incidence, facet intersections, omega signs.
     pub fn new(dual_vertices: Vec<[BigRational; 4]>) -> Result<Self, ConstructionError> {
         Self::build(dual_vertices, None)
     }

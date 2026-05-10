@@ -65,7 +65,7 @@ fn lagrangian_triangle_product_capacity() {
 
 /// Verify pruned EHZ capacity of the Lagrangian triangle x square product (7 facets).
 ///
-/// Tests that adjacency pruning correctly handles product structure.
+/// Tests that transition pruning correctly handles product structure.
 /// Expected: capacity = 1.5 (optimal orbit uses 3 triangle facets and 2 square facets).
 #[test]
 fn triangle_square_capacity() {

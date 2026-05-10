@@ -35,7 +35,7 @@ fn action_bounds_from_q(q: f64, q_error_bound: f64) -> (f64, f64) {
 /// validity policy rather than adopting the richer library collector semantics.
 pub fn ehz_capacity_instrumented(polytope: &Polytope4D) -> Option<InstrumentedOrbitSearch> {
     let f = polytope.facet_count();
-    let adj = build_transition_matrix(polytope);
+    let transition_is_allowed = build_transition_matrix(polytope);
 
     let mut orbits: Vec<OrbitKktData> = Vec::new();
     let mut best_uncertain_action: Option<f64> = None;
@@ -44,7 +44,7 @@ pub fn ehz_capacity_instrumented(polytope: &Polytope4D) -> Option<InstrumentedOr
     for m in 2..=f {
         for subset in combinations(f, m) {
             for_each_cyclic_permutation(&subset, &mut |perm| {
-                if !is_feasible_cycle(perm, &adj) {
+                if !is_feasible_cycle(perm, &transition_is_allowed) {
                     return;
                 }
                 iterations += 1;

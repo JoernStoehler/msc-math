@@ -10,7 +10,7 @@
 //!
 //! Mathematical correspondence: [lem:sigma-structure], [alg:billiard]
 
-/// A block in a k-bounce orbit: either a single facet or an ordered adjacent pair.
+/// A block in a k-bounce orbit: either a single facet or an ordered intersecting facet pair.
 ///
 /// Single blocks correspond to edge interiors of a polygon, pair blocks to vertices.
 /// [lem:sigma-structure]: each "bounce" consists of one or two consecutive facets
@@ -19,7 +19,7 @@
 pub enum Block {
     /// Single facet (edge interior of the polygon).
     Single(usize),
-    /// Ordered pair of adjacent facets (vertex of the polygon).
+    /// Ordered pair of intersecting facets (vertex of the polygon).
     /// The two facets appear in this order in sigma.
     Pair(usize, usize),
 }
@@ -60,12 +60,15 @@ impl Block {
 ///
 /// A block is either:
 /// - A single facet index (always valid)
-/// - An ordered pair (i, j) where i and j are adjacent
+/// - An ordered pair (i, j) where facets i and j intersect
 ///
 /// For pair blocks, both orderings (i, j) and (j, i) are generated.
 ///
 /// [lem:sigma-structure]: blocks correspond to the bounce structure of billiard trajectories.
-pub fn enumerate_blocks(facet_indices: &[usize], adj: &nalgebra::DMatrix<bool>) -> Vec<Block> {
+pub fn enumerate_blocks(
+    facet_indices: &[usize],
+    facet_intersection_is_nonempty: &nalgebra::DMatrix<bool>,
+) -> Vec<Block> {
     let mut blocks = Vec::new();
 
     // Single-facet blocks.
@@ -73,10 +76,10 @@ pub fn enumerate_blocks(facet_indices: &[usize], adj: &nalgebra::DMatrix<bool>) 
         blocks.push(Block::Single(i));
     }
 
-    // Pair blocks: both orderings of each adjacent pair.
+    // Pair blocks: both orderings of each intersecting facet pair.
     for (a, &i) in facet_indices.iter().enumerate() {
         for &j in &facet_indices[a + 1..] {
-            if adj[(i, j)] {
+            if facet_intersection_is_nonempty[(i, j)] {
                 blocks.push(Block::Pair(i, j));
                 blocks.push(Block::Pair(j, i));
             }

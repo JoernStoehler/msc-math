@@ -99,14 +99,14 @@ pub fn for_each_sigma(
     mut visit: impl FnMut(&[usize]),
 ) -> Result<(), BilliardError> {
     let classification = classify_facets(polytope)?;
-    let adj = polytope.facet_intersection_is_nonempty();
-    let directed_adj = build_transition_matrix(polytope);
-    let q_blocks = enumerate_blocks(&classification.q_indices, adj);
-    let p_blocks = enumerate_blocks(&classification.p_indices, adj);
+    let facet_intersection_is_nonempty = polytope.facet_intersection_is_nonempty();
+    let transition_is_allowed = build_transition_matrix(polytope);
+    let q_blocks = enumerate_blocks(&classification.q_indices, facet_intersection_is_nonempty);
+    let p_blocks = enumerate_blocks(&classification.p_indices, facet_intersection_is_nonempty);
 
     for k in 2..=3 {
         enumerate_k_bounce_sigmas(k, &q_blocks, &p_blocks, |sigma| {
-            if !is_feasible_cycle(sigma, &directed_adj) {
+            if !is_feasible_cycle(sigma, &transition_is_allowed) {
                 return;
             }
             visit(sigma);

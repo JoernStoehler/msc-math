@@ -123,7 +123,7 @@ modules, which makes non-symplectic helpers harder to reuse and review.
 | Random dual-vertex candidate sampling | `[implemented migration slice]` | mainline thesis | agents | `sample_random_dual_vertices_f64(facet_count, h_min, h_max, rng)` samples candidate normalized dual vertices in `euclidean-polytopes`. `symplectic::random` keeps rejection sampling through `Polytope4D::from_f64` and keeps master-seed/attempt derivation. | `crates/euclidean-polytopes/src/random.rs`, `crates/euclidean-polytopes/tests/random.rs`, `crates/symplectic/src/random.rs` |
 | Symplectic exact/f64 volume API | `[deleted after migration]` | mainline thesis | agents | The public `symplectic::geom::volume` module was removed after callers migrated to `euclidean_polytopes::volume_from_incidence_exact` plus local exact-to-f64 helpers. | `crates/euclidean-polytopes/DEVELOPMENT.md`, `crates/symplectic/src/derivatives.rs`, `experiments/*/src/lib.rs` |
 | Affine-subspace polygons and volume | `[active]` | mainline thesis | agents, Jorn only if generic-vs-specific API affects thesis callers | Let the internal Euclidean volume decomposition determine the first affine-subspace helper shape; likely needs 3-face measures of 4-polytopes and polygon area in affine 2-planes of `R^4`. | `crates/euclidean-polytopes/src/volume.rs`, `crates/symplectic/src/geom/polygon.rs` |
-| Symplectic integration cleanup | `[active]` | mainline thesis | agents | After each migrated slice, keep `symplectic` as the owner of symplectic form, capacity, KKT, omega signs, Reeb-direction adjacency, and experiment-facing wrappers only. | `crates/symplectic/src/geom/`, `crates/symplectic/src/algorithms/` |
+| Symplectic integration cleanup | `[active]` | mainline thesis | agents | After each migrated slice, keep `symplectic` as the owner of symplectic form, capacity, KKT, omega signs, Reeb-direction transition pruning, and experiment-facing wrappers only. | `crates/symplectic/src/geom/`, `crates/symplectic/src/algorithms/` |
 
 ## Done Criteria
 
@@ -195,7 +195,7 @@ The migration task is done when:
 - [fresh 2026-05-10] `Polytope4D` currently mixes ordinary geometry with
   symplectic data: dual vertices, primal vertices, incidence, facet intersection nonemptiness,
   omega signs, and f64 copies. The Euclidean crate should take the ordinary
-  pieces first; omega signs and capacity-facing adjacency remain symplectic.
+  pieces first; omega signs and capacity-facing transition pruning remain symplectic.
 - [fresh 2026-05-10] Existing full-dimensional volume triangulates facets from
   their centroid and cones to the origin. That relies on normalized
   H-representation `a_i . x <= 1`, hence `0` is inside every valid full

@@ -18,8 +18,8 @@
 //! coexist rather than being consolidated.
 //!
 //! Shared utilities:
-//! - `facet_adjacency` — undirected and directed (ω₀-aware) facet
-//!   adjacency matrices for permutation pruning.
+//! - `facet_adjacency` — facet-intersection and directed (omega_0-aware)
+//!   transition matrices for permutation pruning.
 //! - `orbit_search` — shared result-layer types for HK2017-family frontends.
 
 pub mod billiard;

@@ -180,7 +180,8 @@ fn enrich_row(row: &LoadedPolytopeRow) -> PolytopeTableRow {
         ridge_abs_omega_vol1_le_1em2_fraction: omega_fields.ridge_abs_omega_vol1_le_1em2_fraction,
         ridge_abs_omega_vol1_le_1em1_fraction: omega_fields.ridge_abs_omega_vol1_le_1em1_fraction,
         transition_density: omega_fields.transition_density,
-        transition_bidirectional_fraction: omega_fields.transition_bidirectional_fraction,
+        transition_bidirectional_given_facet_intersection_fraction: omega_fields
+            .transition_bidirectional_given_facet_intersection_fraction,
         transition_out_degree_mean: omega_fields.transition_out_degree_mean,
         transition_out_degree_std: omega_fields.transition_out_degree_std,
         transition_out_degree_min: omega_fields.transition_out_degree_min,
@@ -204,7 +205,8 @@ fn enrich_row(row: &LoadedPolytopeRow) -> PolytopeTableRow {
         orbit_cycle_zero_fraction: orbit_fields.orbit_cycle_zero_fraction,
         orbit_cycle_transition_fraction: orbit_fields.orbit_cycle_transition_fraction,
         orbit_cycle_bidirectional_fraction: orbit_fields.orbit_cycle_bidirectional_fraction,
-        orbit_cycle_adjacent_fraction: orbit_fields.orbit_cycle_adjacent_fraction,
+        orbit_cycle_facet_intersection_fraction: orbit_fields
+            .orbit_cycle_facet_intersection_fraction,
         orbit_selected_out_degree_mean: orbit_fields.orbit_selected_out_degree_mean,
         orbit_selected_out_degree_std: orbit_fields.orbit_selected_out_degree_std,
         orbit_selected_out_degree_min: orbit_fields.orbit_selected_out_degree_min,

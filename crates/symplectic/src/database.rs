@@ -290,7 +290,7 @@ impl PolytopeRecord {
 
     /// Reconstruct Polytope4D from cached rational data.
     /// Recomputes vertex_descriptors via O(V·F) rational dot products,
-    /// then runs assemble() for incidence/omega/adjacency/f64 copies.
+    /// then runs assemble() for incidence/omega/facet-intersection/f64 copies.
     /// Does NOT re-run vertex enumeration (the expensive O(C(F,4)) step).
     pub fn to_polytope(&self) -> Result<Polytope4D, ConstructionError> {
         Polytope4D::from_rational_parts(

@@ -24,7 +24,7 @@ pub struct OmegaFields {
     pub ridge_abs_omega_vol1_le_1em2_fraction: f64,
     pub ridge_abs_omega_vol1_le_1em1_fraction: f64,
     pub transition_density: f64,
-    pub transition_bidirectional_fraction: f64,
+    pub transition_bidirectional_given_facet_intersection_fraction: f64,
     pub transition_out_degree_mean: f64,
     pub transition_out_degree_std: f64,
     pub transition_out_degree_min: f64,
@@ -61,7 +61,7 @@ pub fn compute_omega_fields(
         .count();
     let transition = build_transition_matrix(polytope);
     let mut transition_true_count = 0usize;
-    let mut adjacent_pair_count = 0usize;
+    let mut facet_intersection_pair_count = 0usize;
     let mut bidirectional_pair_count = 0usize;
     let mut out_degrees = Vec::new();
     for i in 0..facet_count {
@@ -77,7 +77,7 @@ pub fn compute_omega_fields(
     for i in 0..facet_count {
         for j in (i + 1)..facet_count {
             if polytope.facet_intersection_is_nonempty()[(i, j)] {
-                adjacent_pair_count += 1;
+                facet_intersection_pair_count += 1;
                 if transition[(i, j)] && transition[(j, i)] {
                     bidirectional_pair_count += 1;
                 }
@@ -91,10 +91,18 @@ pub fn compute_omega_fields(
         allpair_abs_omega_vol1_min,
         allpair_abs_omega_vol1_max,
     ) = stats_or_zero(&allpair_abs_omegas);
-    let (ridge_abs_omega_vol1_mean, ridge_abs_omega_vol1_std, ridge_abs_omega_vol1_min, ridge_abs_omega_vol1_max) =
-        stats_or_zero(&ridge_abs_omegas);
-    let (transition_out_degree_mean, transition_out_degree_std, transition_out_degree_min, transition_out_degree_max) =
-        stats_or_zero(&out_degrees);
+    let (
+        ridge_abs_omega_vol1_mean,
+        ridge_abs_omega_vol1_std,
+        ridge_abs_omega_vol1_min,
+        ridge_abs_omega_vol1_max,
+    ) = stats_or_zero(&ridge_abs_omegas);
+    let (
+        transition_out_degree_mean,
+        transition_out_degree_std,
+        transition_out_degree_min,
+        transition_out_degree_max,
+    ) = stats_or_zero(&out_degrees);
     let total_pairs = (facet_count * (facet_count - 1) / 2) as f64;
 
     OmegaFields {
@@ -125,8 +133,10 @@ pub fn compute_omega_fields(
         } else {
             0.0
         },
-        transition_bidirectional_fraction: if adjacent_pair_count > 0 {
-            bidirectional_pair_count as f64 / adjacent_pair_count as f64
+        transition_bidirectional_given_facet_intersection_fraction: if facet_intersection_pair_count
+            > 0
+        {
+            bidirectional_pair_count as f64 / facet_intersection_pair_count as f64
         } else {
             0.0
         },

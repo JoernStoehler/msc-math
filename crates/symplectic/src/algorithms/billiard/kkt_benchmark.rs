@@ -32,9 +32,9 @@ fn pentagon_sigmas() -> (crate::geom::polytope::Polytope4D, Vec<Vec<usize>>) {
     let polytope = kp.polytope.clone();
 
     let classification = classify_facets(&polytope).unwrap();
-    let adj = polytope.facet_intersection_is_nonempty();
-    let q_blocks = enumerate_blocks(&classification.q_indices, adj);
-    let p_blocks = enumerate_blocks(&classification.p_indices, adj);
+    let facet_intersection_is_nonempty = polytope.facet_intersection_is_nonempty();
+    let q_blocks = enumerate_blocks(&classification.q_indices, facet_intersection_is_nonempty);
+    let p_blocks = enumerate_blocks(&classification.p_indices, facet_intersection_is_nonempty);
 
     let mut sigmas = Vec::new();
     for k in 2..=3 {

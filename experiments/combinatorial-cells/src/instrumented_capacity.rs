@@ -26,13 +26,13 @@ pub struct InstrumentedCapacitySummary {
 /// the total valid-orbit count and the best/second-best action gap.
 pub fn ehz_capacity_instrumented(polytope: &Polytope4D) -> Option<InstrumentedCapacitySummary> {
     let f = polytope.facet_count();
-    let adj = build_transition_matrix(polytope);
+    let transition_is_allowed = build_transition_matrix(polytope);
     let mut orbits: Vec<(f64, Vec<usize>)> = Vec::new();
 
     for m in 2..=f {
         for subset in combinations(f, m) {
             for_each_cyclic_permutation(&subset, &mut |perm| {
-                if !is_feasible_cycle(perm, &adj) {
+                if !is_feasible_cycle(perm, &transition_is_allowed) {
                     return;
                 }
 

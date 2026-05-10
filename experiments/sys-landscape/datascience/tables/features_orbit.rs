@@ -28,7 +28,7 @@ pub struct OrbitFields {
     pub orbit_cycle_zero_fraction: f64,
     pub orbit_cycle_transition_fraction: f64,
     pub orbit_cycle_bidirectional_fraction: f64,
-    pub orbit_cycle_adjacent_fraction: f64,
+    pub orbit_cycle_facet_intersection_fraction: f64,
     pub orbit_selected_out_degree_mean: f64,
     pub orbit_selected_out_degree_std: f64,
     pub orbit_selected_out_degree_min: f64,
@@ -66,7 +66,7 @@ fn zero_orbit_fields() -> OrbitFields {
         orbit_cycle_zero_fraction: 0.0,
         orbit_cycle_transition_fraction: 0.0,
         orbit_cycle_bidirectional_fraction: 0.0,
-        orbit_cycle_adjacent_fraction: 0.0,
+        orbit_cycle_facet_intersection_fraction: 0.0,
         orbit_selected_out_degree_mean: 0.0,
         orbit_selected_out_degree_std: 0.0,
         orbit_selected_out_degree_min: 0.0,
@@ -98,16 +98,23 @@ pub fn compute_orbit_fields(
         return zero_orbit_fields();
     };
     let perm = &best_sigma.perm;
-    let selected_norms = perm.iter().map(|&facet| duals[facet].norm()).collect::<Vec<_>>();
+    let selected_norms = perm
+        .iter()
+        .map(|&facet| duals[facet].norm())
+        .collect::<Vec<_>>();
     let selected_out_degrees = perm
         .iter()
-        .map(|&facet| (0..facet_count).filter(|&other| transition[(facet, other)]).count() as f64)
+        .map(|&facet| {
+            (0..facet_count)
+                .filter(|&other| transition[(facet, other)])
+                .count() as f64
+        })
         .collect::<Vec<_>>();
     let mut cycle_abs_omegas = Vec::new();
     let mut cycle_zero_count = 0usize;
     let mut cycle_transition_count = 0usize;
     let mut cycle_bidirectional_count = 0usize;
-    let mut cycle_adjacent_count = 0usize;
+    let mut cycle_facet_intersection_count = 0usize;
     if perm.len() >= 2 {
         for idx in 0..perm.len() {
             let i = perm[idx];
@@ -123,16 +130,28 @@ pub fn compute_orbit_fields(
                 cycle_bidirectional_count += 1;
             }
             if polytope.facet_intersection_is_nonempty()[(i, j)] {
-                cycle_adjacent_count += 1;
+                cycle_facet_intersection_count += 1;
             }
         }
     }
-    let (orbit_selected_norm_mean, orbit_selected_norm_std, orbit_selected_norm_min, orbit_selected_norm_max) =
-        stats_or_zero(&selected_norms);
-    let (orbit_cycle_abs_omega_mean, orbit_cycle_abs_omega_std, orbit_cycle_abs_omega_min, orbit_cycle_abs_omega_max) =
-        stats_or_zero(&cycle_abs_omegas);
-    let (orbit_selected_out_degree_mean, orbit_selected_out_degree_std, orbit_selected_out_degree_min, orbit_selected_out_degree_max) =
-        stats_or_zero(&selected_out_degrees);
+    let (
+        orbit_selected_norm_mean,
+        orbit_selected_norm_std,
+        orbit_selected_norm_min,
+        orbit_selected_norm_max,
+    ) = stats_or_zero(&selected_norms);
+    let (
+        orbit_cycle_abs_omega_mean,
+        orbit_cycle_abs_omega_std,
+        orbit_cycle_abs_omega_min,
+        orbit_cycle_abs_omega_max,
+    ) = stats_or_zero(&cycle_abs_omegas);
+    let (
+        orbit_selected_out_degree_mean,
+        orbit_selected_out_degree_std,
+        orbit_selected_out_degree_min,
+        orbit_selected_out_degree_max,
+    ) = stats_or_zero(&selected_out_degrees);
     let orbit_scalars = row.orbit_scalars.clone();
     let orbit_search_scalar_available = orbit_scalars
         .as_ref()
@@ -160,7 +179,11 @@ pub fn compute_orbit_fields(
         orbit_cycle_abs_omega_le_1e3_fraction: fraction_at_most(&cycle_abs_omegas, 1e-3),
         orbit_cycle_abs_omega_le_1e2_fraction: fraction_at_most(&cycle_abs_omegas, 1e-2),
         orbit_cycle_abs_omega_le_1e1_fraction: fraction_at_most(&cycle_abs_omegas, 1e-1),
-        orbit_cycle_zero_fraction: if cycle_len > 0.0 { cycle_zero_count as f64 / cycle_len } else { 0.0 },
+        orbit_cycle_zero_fraction: if cycle_len > 0.0 {
+            cycle_zero_count as f64 / cycle_len
+        } else {
+            0.0
+        },
         orbit_cycle_transition_fraction: if cycle_len > 0.0 {
             cycle_transition_count as f64 / cycle_len
         } else {
@@ -171,8 +194,8 @@ pub fn compute_orbit_fields(
         } else {
             0.0
         },
-        orbit_cycle_adjacent_fraction: if cycle_len > 0.0 {
-            cycle_adjacent_count as f64 / cycle_len
+        orbit_cycle_facet_intersection_fraction: if cycle_len > 0.0 {
+            cycle_facet_intersection_count as f64 / cycle_len
         } else {
             0.0
         },
@@ -181,7 +204,11 @@ pub fn compute_orbit_fields(
         orbit_selected_out_degree_min,
         orbit_selected_out_degree_max,
         orbit_kkt_available: if orbit_scalars.is_some() { 1.0 } else { 0.0 },
-        orbit_search_scalar_available: if orbit_search_scalar_available { 1.0 } else { 0.0 },
+        orbit_search_scalar_available: if orbit_search_scalar_available {
+            1.0
+        } else {
+            0.0
+        },
         orbit_result_iterations_log1p: orbit_scalars
             .as_ref()
             .map(|scalars| (scalars.iterations as f64).ln_1p())
@@ -190,17 +217,41 @@ pub fn compute_orbit_fields(
             .as_ref()
             .map(|scalars| scalars.returned_orbit_count as f64)
             .unwrap_or(0.0),
-        orbit_best_beta_margin: orbit_scalars.as_ref().map(|scalars| scalars.best_beta_margin).unwrap_or(0.0),
-        orbit_best_q_error_bound: orbit_scalars.as_ref().map(|scalars| scalars.best_q_error_bound).unwrap_or(0.0),
-        orbit_best_has_mu: orbit_scalars.as_ref().map(|scalars| if scalars.best_has_mu { 1.0 } else { 0.0 }).unwrap_or(0.0),
-        orbit_best_has_xi: orbit_scalars.as_ref().map(|scalars| if scalars.best_has_xi { 1.0 } else { 0.0 }).unwrap_or(0.0),
+        orbit_best_beta_margin: orbit_scalars
+            .as_ref()
+            .map(|scalars| scalars.best_beta_margin)
+            .unwrap_or(0.0),
+        orbit_best_q_error_bound: orbit_scalars
+            .as_ref()
+            .map(|scalars| scalars.best_q_error_bound)
+            .unwrap_or(0.0),
+        orbit_best_has_mu: orbit_scalars
+            .as_ref()
+            .map(|scalars| if scalars.best_has_mu { 1.0 } else { 0.0 })
+            .unwrap_or(0.0),
+        orbit_best_has_xi: orbit_scalars
+            .as_ref()
+            .map(|scalars| if scalars.best_has_xi { 1.0 } else { 0.0 })
+            .unwrap_or(0.0),
         orbit_best_is_admissible_exact: orbit_scalars
             .as_ref()
-            .map(|scalars| if scalars.best_is_admissible_exact { 1.0 } else { 0.0 })
+            .map(|scalars| {
+                if scalars.best_is_admissible_exact {
+                    1.0
+                } else {
+                    0.0
+                }
+            })
             .unwrap_or(0.0),
         orbit_best_is_indeterminate_f64: orbit_scalars
             .as_ref()
-            .map(|scalars| if scalars.best_is_indeterminate_f64 { 1.0 } else { 0.0 })
+            .map(|scalars| {
+                if scalars.best_is_indeterminate_f64 {
+                    1.0
+                } else {
+                    0.0
+                }
+            })
             .unwrap_or(0.0),
     }
 }

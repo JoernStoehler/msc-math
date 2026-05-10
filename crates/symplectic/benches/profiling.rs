@@ -54,7 +54,7 @@ fn prebuilt_polytope(f: usize) -> Polytope4D {
 /// Find a valid permutation for single-KKT benchmarks.
 fn find_valid_permutation(polytope: &Polytope4D) -> Vec<usize> {
     let f = polytope.facet_count();
-    let adj = build_transition_matrix(polytope);
+    let transition_is_allowed = build_transition_matrix(polytope);
     let mut found: Option<Vec<usize>> = None;
     for m in 2..=f {
         for subset in combinations(f, m) {
@@ -62,7 +62,7 @@ fn find_valid_permutation(polytope: &Polytope4D) -> Vec<usize> {
                 if found.is_some() {
                     return;
                 }
-                if is_feasible_cycle(perm, &adj)
+                if is_feasible_cycle(perm, &transition_is_allowed)
                     && matches!(solve_kkt_for(polytope, perm), KktOutcome::Feasible(_))
                 {
                     found = Some(perm.to_vec());
@@ -154,11 +154,11 @@ fn bench_pruning_check(c: &mut Criterion) {
     let mut group = c.benchmark_group("pruning_check");
     for &f in FACET_COUNTS {
         let polytope = prebuilt_polytope(f);
-        let adj = build_transition_matrix(&polytope);
+        let transition_is_allowed = build_transition_matrix(&polytope);
         // Use a size-3 permutation for the pruning check.
         let perm: Vec<usize> = (0..std::cmp::min(3, f)).collect();
         group.bench_with_input(BenchmarkId::from_parameter(f), &f, |b, _| {
-            b.iter(|| is_feasible_cycle(&perm, &adj));
+            b.iter(|| is_feasible_cycle(&perm, &transition_is_allowed));
         });
     }
     group.finish();

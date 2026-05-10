@@ -67,8 +67,11 @@ def non_overlapping_selections(blocks: list[tuple[int, ...]], k: int) -> list[tu
     return selections
 
 
-def feasible_cycle(sigma: list[int], directed_adj: list[list[bool]]) -> bool:
-    return all(directed_adj[sigma[idx]][sigma[(idx + 1) % len(sigma)]] for idx in range(len(sigma)))
+def feasible_cycle(sigma: list[int], directed_transition_is_allowed: list[list[bool]]) -> bool:
+    return all(
+        directed_transition_is_allowed[sigma[idx]][sigma[(idx + 1) % len(sigma)]]
+        for idx in range(len(sigma))
+    )
 
 
 def build_counts() -> dict[str, object]:
@@ -76,29 +79,29 @@ def build_counts() -> dict[str, object]:
     dual_vertices = [tuple(vertex) for vertex in row["dual_vertices"]]
 
     # HKO is a pentagon x pentagon Lagrangian product with q-facets 0..4 and
-    # p-facets 5..9. Undirected adjacency is pentagon adjacency within each
-    # block plus complete q/p incidence.
+    # p-facets 5..9. Facet-intersection nonemptiness is pentagon incidence
+    # within each block plus complete q/p incidence.
     facet_count = len(dual_vertices)
-    vertex_adj = [[False] * facet_count for _ in range(facet_count)]
+    facet_intersection_is_nonempty = [[False] * facet_count for _ in range(facet_count)]
     for index in range(5):
         next_index = (index + 1) % 5
-        vertex_adj[index][next_index] = True
-        vertex_adj[next_index][index] = True
+        facet_intersection_is_nonempty[index][next_index] = True
+        facet_intersection_is_nonempty[next_index][index] = True
     for index in range(5, 10):
         next_index = 5 + ((index - 5 + 1) % 5)
-        vertex_adj[index][next_index] = True
-        vertex_adj[next_index][index] = True
+        facet_intersection_is_nonempty[index][next_index] = True
+        facet_intersection_is_nonempty[next_index][index] = True
     for q_index in range(5):
         for p_index in range(5, 10):
-            vertex_adj[q_index][p_index] = True
-            vertex_adj[p_index][q_index] = True
+            facet_intersection_is_nonempty[q_index][p_index] = True
+            facet_intersection_is_nonempty[p_index][q_index] = True
 
-    directed_adj = [[False] * facet_count for _ in range(facet_count)]
+    directed_transition_is_allowed = [[False] * facet_count for _ in range(facet_count)]
     for lhs in range(facet_count):
         for rhs in range(facet_count):
-            directed_adj[lhs][rhs] = (
+            directed_transition_is_allowed[lhs][rhs] = (
                 lhs != rhs
-                and vertex_adj[lhs][rhs]
+                and facet_intersection_is_nonempty[lhs][rhs]
                 and sign(omega(dual_vertices[lhs], dual_vertices[rhs])) >= 0
             )
 
@@ -137,7 +140,7 @@ def build_counts() -> dict[str, object]:
                         for round_index in range(1, k):
                             sigma.extend(q_selection[1 + q_perm[round_index - 1]])
                             sigma.extend(p_selection[p_perm[round_index]])
-                        if feasible_cycle(sigma, directed_adj):
+                        if feasible_cycle(sigma, directed_transition_is_allowed):
                             directed_feasible += 1
 
         k_payload[str(k)] = {

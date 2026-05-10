@@ -1,4 +1,4 @@
-//! Symmetry reduction and adjacent-permutation DFS for the crosspolytope search.
+//! Symmetry reduction and transition-pruned permutation DFS for the crosspolytope search.
 
 use crate::checkpoint::{load_checkpoint, save_checkpoint, CandidateSer, Checkpoint};
 use crate::kkt::{solve_kkt, EPS_BETA_POSITIVE, EPS_Q_POSITIVE};
@@ -27,9 +27,9 @@ pub(crate) struct SearchResult {
     pub(crate) search_complete_through_m: usize,
 }
 
-fn for_each_adjacent_cyclic_permutation(
+fn for_each_transition_allowed_cyclic_permutation(
     elements: &[usize],
-    adj: &DMatrix<bool>,
+    transition_is_allowed: &DMatrix<bool>,
     callback: &mut impl FnMut(&[usize]),
 ) {
     let m = elements.len();
@@ -47,13 +47,21 @@ fn for_each_adjacent_cyclic_permutation(
     perm.push(first);
     let mut used = vec![false; rest.len()];
 
-    dfs_adjacent(&rest, &mut used, adj, first, &mut perm, m, callback);
+    dfs_transition_allowed(
+        &rest,
+        &mut used,
+        transition_is_allowed,
+        first,
+        &mut perm,
+        m,
+        callback,
+    );
 }
 
-fn dfs_adjacent(
+fn dfs_transition_allowed(
     candidates: &[usize],
     used: &mut [bool],
-    adj: &DMatrix<bool>,
+    transition_is_allowed: &DMatrix<bool>,
     first: usize,
     perm: &mut Vec<usize>,
     total: usize,
@@ -62,19 +70,27 @@ fn dfs_adjacent(
     let prev = *perm.last().unwrap();
 
     if perm.len() == total {
-        if adj[(prev, first)] {
+        if transition_is_allowed[(prev, first)] {
             callback(perm);
         }
         return;
     }
 
     for (i, &elem) in candidates.iter().enumerate() {
-        if used[i] || !adj[(prev, elem)] {
+        if used[i] || !transition_is_allowed[(prev, elem)] {
             continue;
         }
         used[i] = true;
         perm.push(elem);
-        dfs_adjacent(candidates, used, adj, first, perm, total, callback);
+        dfs_transition_allowed(
+            candidates,
+            used,
+            transition_is_allowed,
+            first,
+            perm,
+            total,
+            callback,
+        );
         perm.pop();
         used[i] = false;
     }
@@ -170,13 +186,17 @@ pub(crate) fn run_crosspolytope_search(
         println!("WARNING: Rust computation disagrees with analytical result!");
     }
 
-    let adj = build_transition_matrix(polytope);
+    let transition_is_allowed = build_transition_matrix(polytope);
     let avg_out_degree: f64 = (0..facet_count)
-        .map(|i| (0..facet_count).filter(|&j| adj[(i, j)] && i != j).count() as f64)
+        .map(|i| {
+            (0..facet_count)
+                .filter(|&j| transition_is_allowed[(i, j)] && i != j)
+                .count() as f64
+        })
         .sum::<f64>()
         / facet_count as f64;
     println!(
-        "\nDirected adjacency: avg out-degree = {avg_out_degree:.1} (of {} possible)",
+        "\nDirected transition matrix: avg out-degree = {avg_out_degree:.1} (of {} possible)",
         facet_count - 1
     );
 
@@ -252,38 +272,45 @@ pub(crate) fn run_crosspolytope_search(
         let mut m_kkt_solutions = 0u64;
 
         for subset in &canonical_subsets {
-            for_each_adjacent_cyclic_permutation(subset, &adj, &mut |perm| {
-                iterations += 1;
-                m_iterations += 1;
+            for_each_transition_allowed_cyclic_permutation(
+                subset,
+                &transition_is_allowed,
+                &mut |perm| {
+                    iterations += 1;
+                    m_iterations += 1;
 
-                if let Some((beta, q_val)) = solve_kkt(normals, heights, perm) {
-                    if q_val <= EPS_Q_POSITIVE {
-                        return;
-                    }
-                    m_kkt_solutions += 1;
-                    let beta_min = beta.iter().cloned().fold(f64::INFINITY, f64::min);
-                    let action = 0.5 / q_val;
+                    if let Some((beta, q_val)) = solve_kkt(normals, heights, perm) {
+                        if q_val <= EPS_Q_POSITIVE {
+                            return;
+                        }
+                        m_kkt_solutions += 1;
+                        let beta_min = beta.iter().cloned().fold(f64::INFINITY, f64::min);
+                        let action = 0.5 / q_val;
 
-                    if beta_min > EPS_BETA_POSITIVE {
-                        let update = best_certified.as_ref().is_none_or(|b| action < b.0);
-                        if update {
-                            best_certified =
-                                Some((action, subset.clone(), perm.to_vec(), beta.clone()));
+                        if beta_min > EPS_BETA_POSITIVE {
+                            let update = best_certified.as_ref().is_none_or(|b| action < b.0);
+                            if update {
+                                best_certified =
+                                    Some((action, subset.clone(), perm.to_vec(), beta.clone()));
+                            }
+                        }
+
+                        if beta_min > -EPS_BETA_POSITIVE {
+                            let update = best_uncertain.as_ref().is_none_or(|b| action < b.0);
+                            if update {
+                                best_uncertain =
+                                    Some((action, subset.clone(), perm.to_vec(), beta));
+                            }
                         }
                     }
-
-                    if beta_min > -EPS_BETA_POSITIVE {
-                        let update = best_uncertain.as_ref().is_none_or(|b| action < b.0);
-                        if update {
-                            best_uncertain = Some((action, subset.clone(), perm.to_vec(), beta));
-                        }
-                    }
-                }
-            });
+                },
+            );
         }
 
         let m_elapsed = m_start.elapsed().as_secs_f64();
-        println!("adj_perms={m_iterations:8}, kkt_solutions={m_kkt_solutions:6}, {m_elapsed:.2}s");
+        println!(
+            "transition_perms={m_iterations:8}, kkt_solutions={m_kkt_solutions:6}, {m_elapsed:.2}s"
+        );
 
         let total_elapsed = prior_elapsed + cap_start.elapsed().as_secs_f64();
         let cp = Checkpoint {

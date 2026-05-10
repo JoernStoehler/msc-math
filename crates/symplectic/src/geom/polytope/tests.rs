@@ -4,7 +4,7 @@ use nalgebra::Vector4;
 // Tests for polytope: construction, accessors, and invariants.
 //
 // Proposition: Polytope4D construction validates inputs (nonzero, non-duplicate,
-// bounded, irredundant) and produces consistent incidence/adjacency/omega data.
+// bounded, irredundant) and produces consistent incidence/facet-intersection/omega data.
 // Reference: [def:polytope-dual], [def:polar-body]
 //
 // Strategy: fixture-based (simplex, hypercube, known polytopes)
@@ -160,16 +160,21 @@ fn facet_intersection_matrix_symmetric_no_self_loops() {
 
     for kp in known_polytopes::all_known() {
         let p = &kp.polytope;
-        let adj = p.facet_intersection_is_nonempty();
+        let facet_intersection_is_nonempty = p.facet_intersection_is_nonempty();
         let f = p.facet_count();
 
         for i in 0..f {
-            assert!(!adj[(i, i)], "{}: facet {} is self-adjacent", kp.name, i);
+            assert!(
+                !facet_intersection_is_nonempty[(i, i)],
+                "{}: facet {} has a true diagonal entry",
+                kp.name,
+                i
+            );
             for j in (i + 1)..f {
                 assert_eq!(
-                    adj[(i, j)],
-                    adj[(j, i)],
-                    "{}: adjacency not symmetric at ({}, {})",
+                    facet_intersection_is_nonempty[(i, j)],
+                    facet_intersection_is_nonempty[(j, i)],
+                    "{}: facet-intersection matrix not symmetric at ({}, {})",
                     kp.name,
                     i,
                     j
