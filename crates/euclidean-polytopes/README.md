@@ -40,13 +40,20 @@ all future context.
 The crate should expose two kinds of geometry APIs when a computation has both
 approximate and exact callers:
 
-- `f64 -> f64 or indeterminate`: fast approximate routines return a determined
-  floating result or an explicit indeterminate outcome. They must not guess when
-  singularity, duplicate-candidate, or halfspace-membership decisions are near a
-  tolerance boundary.
+- `f64 -> f64 plus error bounds or indeterminate`: fast approximate routines
+  return ordinary floating values with explicit error bounds whenever that is
+  the natural shape. A consumer that needs a sign decision checks, for example,
+  `x - x_error > 0`, `x + x_error < 0`, and otherwise treats the result as
+  indeterminate. The API must not guess when singularity, duplicate-candidate,
+  or halfspace-membership decisions are near a tolerance boundary.
 - `exact -> exact`: exact routines return exact results. They may use the `f64`
   routine internally as a cheap filter, but every indeterminate case must be
   resolved by a slow exact calculation before returning.
+
+Avoid a generic result wrapper until repeated call sites prove it helps. A tiny
+global `True`, `False`, `Indeterminate` enum may be useful for bare predicates,
+but most functions should prefer flat, standard Rust types with semantic names:
+`value`, `value_error`, `vertices`, `coordinate_error`, `indeterminate_tuples`.
 
 For example, vertex enumeration from dual vertices can test most 4-tuples of
 hyperplanes cheaply with `f64`. Near-singular tuples, uncertain duplicate
@@ -64,26 +71,42 @@ The initial public API should be close to these mathematical operations:
 use algebraic_numbers::ExactScalar;
 use nalgebra::Vector4;
 
-pub enum FloatDecision<T> {
-    Determined(T),
-    Indeterminate(FloatIndeterminacy),
-}
-
 pub fn origin_in_interior_of_conv_exact<T: ExactScalar>(points: &[Vector4<T>]) -> bool;
 
-pub fn origin_in_interior_of_conv_f64(points: &[Vector4<f64>]) -> FloatDecision<bool>;
+pub fn origin_in_interior_of_conv_f64(
+    points: &[Vector4<f64>],
+) -> Result<InteriorMarginF64, ConvexHullError>;
 
 pub fn all_points_are_extreme_exact<T: ExactScalar>(points: &[Vector4<T>]) -> bool;
 
-pub fn all_points_are_extreme_f64(points: &[Vector4<f64>]) -> FloatDecision<bool>;
+pub fn all_points_are_extreme_f64(
+    points: &[Vector4<f64>],
+) -> Result<ExtremalityMarginsF64, ConvexHullError>;
+
+pub struct InteriorMarginF64 {
+    pub signed_margin: f64,
+    pub signed_margin_error: f64,
+}
+
+pub struct ExtremalityMarginsF64 {
+    pub point_margins: Vec<f64>,
+    pub point_margin_errors: Vec<f64>,
+    pub indeterminate_points: Vec<usize>,
+}
 
 pub fn polar_vertices_exact<T: ExactScalar>(
     vertices: &[Vector4<T>],
 ) -> Result<PolarVertexData<T>, PolarError>;
 
+pub struct PolarVerticesF64 {
+    pub vertices: Vec<Vector4<f64>>,
+    pub coordinate_error: f64,
+    pub indeterminate_tuples: Vec<[usize; 4]>,
+}
+
 pub fn polar_vertices_f64(
     vertices: &[Vector4<f64>],
-) -> Result<FloatDecision<PolarVertexData<f64>>, PolarError>;
+) -> Result<PolarVerticesF64, PolarError>;
 
 pub fn full_dimensional_volume_from_polar_pair_exact<T: ExactScalar>(
     dual_vertices: &[Vector4<T>],
@@ -93,7 +116,13 @@ pub fn full_dimensional_volume_from_polar_pair_exact<T: ExactScalar>(
 pub fn full_dimensional_volume_from_polar_pair_f64(
     dual_vertices: &[Vector4<f64>],
     vertices: &[Vector4<f64>],
-) -> Result<FloatDecision<f64>, VolumeError>;
+) -> Result<VolumeF64, VolumeError>;
+
+pub struct VolumeF64 {
+    pub volume: f64,
+    pub volume_error: f64,
+    pub indeterminate_incidence: Vec<(usize, usize)>,
+}
 
 pub fn polygon_area_in_affine_plane(vertices: &[Vector4<f64>]) -> Result<f64, VolumeError>;
 ```
@@ -126,6 +155,13 @@ Functions should classify preconditions explicitly:
   valid point set but does not satisfy the requested predicate;
 - programmer bug: panic only for shape mismatches that cannot be recovered from
   sensibly by a thesis caller.
+
+Use `Result` for recoverable errors. Use `Option` only when `None` versus
+`Some(_)` exactly matches the mathematical distinction, such as an empty
+solution set versus an affine solution space with a marked solution. Use tuples
+when each position is obvious at the call site. Define a local flat `struct`
+when output variables need names, especially for multi-output computations like
+`vertices`, `coordinate_error`, and `indeterminate_tuples`.
 
 Exact combinatorial predicates should use `T: ExactScalar`. Approximate `f64`
 helpers should stay separate and state their tolerance, error, and

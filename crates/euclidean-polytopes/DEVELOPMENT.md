@@ -28,44 +28,56 @@ existing code.
 
 ## Proposed First Migration Slices
 
-1. Exact affine/rank primitives over `Vector4<T>` where `T: ExactScalar`.
-2. `origin_in_interior_of_conv(points)` for full-dimensional point sets in
-   ambient `R^4`, with exact and `f64`/indeterminate variants.
-3. `all_points_are_extreme(points)` for V-representation non-redundancy.
-4. `polar_vertices(vertices)` by enumerating 4-subsets of supporting
-   constraints `<v_i, y> <= 1`, with the exact path allowed to use the `f64`
-   path as a filter and resolve indeterminate tuples exactly.
-5. Full-dimensional `R^4` volume from `(dual_vertices, vertices)` using
+1. `polar_vertices_exact(vertices)` plus the validation and helper operations it
+   needs. This includes exact affine/rank primitives over `Vector4<T>`, exact
+   `origin_in_interior_of_conv`, and exact non-redundancy/extreme-point checks
+   if the polar-vertices contract needs them.
+2. `polar_vertices_f64(vertices)` with flat approximate outputs and explicit
+   indeterminate tuple/candidate reporting instead of tolerance guesses.
+3. Full-dimensional `R^4` volume from `(dual_vertices, vertices)` using
    incidence and the existing origin-star triangulation idea. The `f64` variant
    can be indeterminate if incidence is tolerance-sensitive; the exact variant
    should decide incidence exactly and sum exact determinant volumes.
-6. A minimal affine-plane polygon helper for ordered or orderable
+4. A minimal affine-plane polygon helper for ordered or orderable
    `Vec<Vector4<f64>>` vertices, after checking the first concrete caller.
 
-Each slice should be separately reviewable and keep `symplectic` compiling.
-Prefer moving tests with the code, then adding one cross-crate regression in
-`symplectic` to prove the old behavior still reaches the new helper.
+The first implementation slice is intentionally not just a tiny predicate. It
+should deliver polar vertex enumeration and whatever validation it needs so the
+API is reviewed in a real caller-shaped context. Each later slice should still
+be separately reviewable and keep `symplectic` compiling. Prefer moving tests
+with the code, then adding one cross-crate regression in `symplectic` to prove
+the old behavior still reaches the new helper.
 
 ## API Review Notes
 
 ### Accepted Direction: Flat Inputs
 
-Use `&[Vector4<T>]`, `Vec<Vector4<T>>`, and plain result records. Do not create
+Use `&[Vector4<T>]`, `Vec<Vector4<T>>`, tuples when positional meaning is
+obvious, and local flat result records when outputs need names. Do not create
 aliases such as `DualVertices4<T>`.
 
 Reason: current callers already speak in lists of dual vertices, facets, and
 vertices. A wrapper would mostly hide context-specific contracts that vary by
 operation.
 
-### Close Call: Output Records
+### Accepted Direction: Exact Naming
 
-A small `PolarVertexData<T>`-style output record is acceptable if it contains
-several inseparable outputs, for example vertices and incidence descriptors.
+Use descriptive `_exact` and `_f64` suffixes when both pathways exist.
+
+Reason: fresh agents do not reliably infer whether an unqualified geometry
+function is exact or approximate. The suffixes make call sites easier to review.
+
+### Accepted Direction: Output Records
+
+A small `PolarVertexData<T>`-style output record is acceptable if output
+variables need names, for example vertices and incidence descriptors. Use a
+tuple if each index is obvious. Use a flat local struct if a tuple would make
+the call site harder to read.
 
 Why it matters: volume and facet adjacency need incidence. Returning only
-vertices would force recomputation. Returning a tuple would be less readable at
-call sites. The record must not become a public invariant wrapper unless future
-callers repeatedly pass the same certified bundle through many operations.
+vertices would force recomputation. The record must not become a public
+invariant wrapper unless future callers repeatedly pass the same certified
+bundle through many operations.
 
 ### Close Call: Full `Polytope` Type
 
@@ -80,8 +92,14 @@ simple expression of the math. Until then, use explicit function contracts.
 For combinatorial geometry, provide both approximate and exact pathways when
 callers need both.
 
-The approximate pathway returns `f64` data plus an explicit indeterminate
-outcome. It must not silently decide cases where the result depends on a
+The approximate pathway returns ordinary `f64` data with semantic names and
+error bounds when that is the natural shape. For sign-like consumers, the usual
+pattern is `x - x_error > 0`, `x + x_error < 0`, else indeterminate. A tiny
+`True`/`False`/`Indeterminate` helper may be useful for bare predicates, but do
+not introduce a generic wrapper for all approximate results before repeated call
+sites prove it helps.
+
+Approximate code must not silently decide cases where the result depends on a
 near-singular solve, a near-duplicate candidate, or a halfspace membership test
 near the tolerance boundary.
 
@@ -97,6 +115,18 @@ hyperplanes is exactly one of:
 Why it matters: this keeps the hot/common path fast without letting tolerance
 choices become mathematical facts. If the exact fallback becomes hot, profile
 before changing the contract.
+
+### Accepted Direction: Result, Option, Panic, Tuple, Struct
+
+Use `Result` for recoverable errors. Use `Option` only when the mathematical
+distinction is exactly `None` versus `Some`, for example no solution versus an
+affine solution space with a marked solution. Panic for irrecoverable caller
+bugs such as wrong shapes, violated input contracts, or a detected mismatch
+between the code and its mathematical invariants.
+
+Use tuples when each position is obvious at the call site. Use a locally defined
+flat data container when output variables need names. Avoid input wrappers
+unless a pipeline naturally reuses the output type of an earlier function.
 
 ### Close Call: Exact Versus `f64` Metric Outputs
 
