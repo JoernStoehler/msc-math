@@ -103,7 +103,7 @@ modules, which makes non-symplectic helpers harder to reuse and review.
 | --- | --- | --- | --- | --- | --- |
 | Crate scaffold and API target | `[active]` | mainline thesis | agents, Jorn for API taste close calls | Review `README.md` and `DEVELOPMENT.md`; decide whether the flat-input/no-public-wrapper direction is accepted for the first migration. | `crates/euclidean-polytopes/README.md`, `crates/euclidean-polytopes/DEVELOPMENT.md` |
 | Robust floating/exact architecture | `[active]` | mainline thesis | agents | Define flat approximate return shapes with semantic names, `_abs_error_bound` fields, and operation-specific indeterminate diagnostics. Exact predicates return `bool` and may resolve f64 indeterminate diagnostic candidates exactly. | `crates/euclidean-polytopes/README.md`, `crates/euclidean-polytopes/DEVELOPMENT.md` |
-| Polar vertex enumeration plus validation dependencies | `[active]` | mainline thesis | agents | Implement `polar_vertices_exact(vertices)` and everything it needs, including exact origin-in-interior. Keep non-redundancy/extreme-point checks separate unless a caller needs that stronger contract. Add an `f64` path that reports indeterminate tuples/candidates instead of guessing. | `crates/symplectic/src/geom/vertex_enumeration/`, `crates/algebraic-numbers/` |
+| Polar vertex enumeration plus validation dependencies | `[implemented first slice]` | mainline thesis | agents | Review and integrate current `euclidean-polytopes` public API into callers when a migration packet needs it. Exact polar enumeration and exact origin-in-interior are implemented; the current `f64` path is diagnostic and reports indeterminate tuples instead of guessing. | `crates/euclidean-polytopes/src/polar.rs`, `crates/euclidean-polytopes/src/predicates.rs`, `crates/euclidean-polytopes/tests/polar_vertices.rs` |
 | Full-dimensional volume | `[active]` | mainline thesis | agents | Factor ordinary `R^4` volume away from `Polytope4D`; implement f64 volume first, keep exact volume as a real target, and expose f64 indeterminate incidence entries when incidence is tolerance-sensitive. | `crates/symplectic/src/geom/volume.rs` |
 | Affine-subspace polygons and volume | `[active]` | mainline thesis | agents, Jorn only if generic-vs-specific API affects thesis callers | Let the internal volume decomposition determine the first affine-subspace helper shape; likely needs 3-face measures of 4-polytopes and polygon area in affine 2-planes of `R^4`. | `crates/symplectic/src/geom/volume.rs`, `crates/symplectic/src/geom/polygon.rs` |
 | Symplectic integration cleanup | `[active]` | mainline thesis | agents | After each migrated slice, keep `symplectic` as the owner of symplectic form, capacity, KKT, omega signs, Reeb-direction adjacency, and experiment-facing wrappers only. | `crates/symplectic/src/geom/`, `crates/symplectic/src/algorithms/` |
@@ -156,6 +156,12 @@ The migration task is done when:
   `f64` prefilter before exact rational checks. The new architecture should make
   that pattern explicit: approximate callers see error bounds or indeterminate
   candidates, exact callers get a final exact answer after fallback.
+- [implemented 2026-05-10] The first `euclidean-polytopes` slice now exposes
+  exact origin-interior and exact polar vertex enumeration over
+  `Vector4<T: ExactScalar>`. The exact polar path checks `0 in int conv`, accepts
+  redundant input inequalities, returns exact incidence, and deduplicates by
+  exact equality. The initial `f64` polar path is diagnostic-only: finite input
+  validation plus partial vertices and indeterminate 4-tuples.
 
 ## Pruned / Stale
 

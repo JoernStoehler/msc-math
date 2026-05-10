@@ -500,6 +500,7 @@ version = "0.1.0"
 dependencies = [
  "algebraic-numbers",
  "nalgebra",
+ "num-rational",
  "num-traits",
 ]
 

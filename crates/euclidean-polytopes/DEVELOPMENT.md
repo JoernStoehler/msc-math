@@ -18,9 +18,21 @@ The thesis-facing objective is agent velocity and validation trust:
 
 ## Current State
 
-The crate is scaffolded but intentionally has no public functions yet. The next
-implementation packet should migrate one small slice from existing code, add
-tests, and then update this file with the accepted API.
+The first implementation packet is in place:
+
+- `origin_in_interior_of_conv_exact(points) -> bool`;
+- `polar_vertices_exact(vertices) -> PolarVertexData<T>`;
+- `polar_vertices_f64(vertices) -> Result<PolarVerticesF64, F64GeometryError>`.
+
+The exact path is the accepted first reusable slice. It checks the
+origin-interior contract, enumerates 4-tuples of active polar inequalities,
+tests halfspace feasibility exactly, and deduplicates vertices by exact
+equality. It deliberately does not require input non-redundancy.
+
+The `f64` path is intentionally narrower than a full exact replacement. It
+validates finite coordinates, returns well-conditioned accepted candidates, and
+reports near-singular solves, near-boundary halfspace tests, and uncertain
+duplicate decisions as `indeterminate_tuples`.
 
 Do not add broad public API only because it is mathematically natural. Add a
 function when a current migration caller needs it or when it removes duplicated

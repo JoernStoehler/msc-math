@@ -35,6 +35,46 @@ several coupled outputs, such as vertices plus vertex-facet incidence. Those
 records should be output payloads, not smart constructors that pretend to prove
 all future context.
 
+## Implemented API
+
+The first implemented slice is polar vertex enumeration in ambient `R^4`:
+
+```rust,ignore
+use algebraic_numbers::ExactScalar;
+use nalgebra::{DMatrix, Vector4};
+
+pub fn origin_in_interior_of_conv_exact<T: ExactScalar>(
+    points: &[Vector4<T>],
+) -> bool;
+
+pub fn polar_vertices_exact<T: ExactScalar>(
+    vertices: &[Vector4<T>],
+) -> PolarVertexData<T>;
+
+pub struct PolarVertexData<T> {
+    pub vertices: Vec<Vector4<T>>,
+    pub incidence: DMatrix<bool>,
+}
+```
+
+`polar_vertices_exact(vertices)` computes vertices of the normalized polar
+`{ y in R^4 : <v_i, y> <= 1 }`. It checks and panics on the required contract
+`0 in int conv(vertices)`. The input does not have to be non-redundant:
+redundant points only add redundant inequalities. Returned vertices are
+deduplicated by exact equality.
+
+The crate also exposes a minimal diagnostic `f64` polar enumeration:
+
+```rust,ignore
+pub fn polar_vertices_f64(
+    vertices: &[Vector4<f64>],
+) -> Result<PolarVerticesF64, F64GeometryError>;
+```
+
+This path validates finite coordinates and reports partial vertices plus
+`indeterminate_tuples`. It is suitable as an approximate diagnostic surface, not
+as a replacement for exact decisions in near-singular or near-boundary cases.
+
 ## Robust Numeric Split
 
 The crate should expose two kinds of geometry APIs when a computation has both
