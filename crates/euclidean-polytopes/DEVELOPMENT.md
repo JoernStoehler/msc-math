@@ -308,6 +308,55 @@ Implemented criteria for this slice:
   derivative checks;
 - docs/tasks use `2-face` terminology for new work.
 
+## Next Slice: Exact Full-Dimensional Volume From Known Incidence
+
+The next migration slice should add exact full-dimensional `R^4` volume from
+vertices and known incidence:
+
+```rust,ignore
+pub fn volume_from_incidence_exact<T: ExactScalar + 'static>(
+    vertices: &[Vector4<T>],
+    incidence: &DMatrix<bool>,
+) -> T;
+```
+
+Do not take dual vertices unless the implementation genuinely needs them. The
+determinant triangulation needs only vertices and incidence. The contract is
+that `incidence[(v, f)]` matches the vertices, the columns are the boundary
+facets of a full-dimensional 4-polytope, and `0` lies in the interior so coning
+facets to `0` decomposes the polytope.
+
+The implementation should reuse incidence-only 2-face ordering, triangulate
+each facet from its vertex mean, cone each triangle to `0`, and sum exact
+4-simplex volumes as `abs(det) / 24`. The result stays in `T`; do not compute
+lower-dimensional Euclidean areas or distances that introduce square-root
+intermediates.
+
+Validated/asserted here:
+
+- incidence row count equals `vertices.len()`;
+- at least five vertices and five facets for full-dimensional 4-volume;
+- every facet used by the volume decomposition has at least four incident
+  vertices;
+- every polygonal 2-face has a valid incidence cycle through the existing
+  helper.
+
+Not validated here:
+
+- global geometric consistency between coordinates and incidence;
+- existence or ordering of dual vertices;
+- `0 in int(K)`.
+
+Done criteria for this slice:
+
+- public exact helper is exported and documented in `README.md`;
+- exact tests cover simplex, hypercube, crosspolytope, shape panic, and a
+  generated/scaled rational box property where the exact result is known;
+- f64 known-incidence tests still compare against the exact result on rational
+  fixtures where useful;
+- no f64 code is used by the exact computation;
+- `cargo test -p euclidean-polytopes`, clippy, and workspace check pass.
+
 ## Test Code and Proposition Comments
 
 Tests should make the mathematical proposition visible separately from the
