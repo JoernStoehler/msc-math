@@ -31,7 +31,7 @@ use std::time::Instant;
 use symplectic::database;
 use symplectic::derivatives::{capacity_derivatives_a_from_kkt_result, volume_derivatives_a};
 use symplectic::geom::polytope::Polytope4D;
-use symplectic::kkt::saddle_point_solver::solve_kkt_for;
+use symplectic::kkt::saddle_point_solver::solve_kkt_for_dual_vertices;
 
 // ============================================================================
 // Configuration
@@ -153,7 +153,8 @@ fn compute_sys(
     }
 
     let perm = ehz.best_sigma().to_vec();
-    let kkt = solve_kkt_for(polytope, &perm).feasible()?;
+    let dual_vertices = polytope.dual_vertices_f64();
+    let kkt = solve_kkt_for_dual_vertices(dual_vertices, &perm).feasible()?;
     let sys = cap * cap / (2.0 * vol);
 
     if sys.is_finite() {
@@ -330,7 +331,8 @@ fn main() {
             let cap = instrumented.capacity;
             let sys = cap * cap / (2.0 * vol);
             let perm = instrumented.best_permutation;
-            let kkt = solve_kkt_for(polytope, &perm).feasible()?;
+            let dual_vertices = polytope.dual_vertices_f64();
+            let kkt = solve_kkt_for_dual_vertices(dual_vertices, &perm).feasible()?;
             Some((cap, vol, sys, perm, kkt))
         })();
 

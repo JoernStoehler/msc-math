@@ -41,7 +41,7 @@ use symplectic::database::{load, save, DualVerticesKey, PolytopeRecord, SigmaAct
 use symplectic::derivatives::{capacity_derivatives_a_from_kkt_result, volume_derivatives_a};
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::skeleton::Skeleton;
-use symplectic::kkt::saddle_point_solver::solve_kkt_for;
+use symplectic::kkt::saddle_point_solver::solve_kkt_for_dual_vertices;
 use symplectic::random::sample_random_polytope;
 
 type Db = HashMap<DualVerticesKey, PolytopeRecord>;
@@ -311,7 +311,8 @@ fn gradient_ascent_phase_limited(
         }
 
         let (cap, best_perm) = compute_capacity_result(&current, db)?;
-        let kkt = solve_kkt_for(&current, &best_perm).feasible()?;
+        let dual_vertices = current.dual_vertices_f64();
+        let kkt = solve_kkt_for_dual_vertices(dual_vertices, &best_perm).feasible()?;
         let vol = euclidean_volume_f64(current.vertices(), current.incidence());
         if vol <= 0.0 {
             return None;

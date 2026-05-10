@@ -14,7 +14,7 @@
 //!
 //! - `saddle_point_solver` — solves the (m+5)x(m+5) augmented KKT system
 //!   via eigendecomposition. Default path used by `hk2017` and `billiard`
-//!   (see `solve_kkt_for`).
+//!   (see `solve_kkt_for_dual_vertices`).
 //! - `projection_solver` — projects onto `ker(C)`, reduces to the k-dim
 //!   Hessian `H' = V^T H V`, then runs a max-margin search. Used when the
 //!   saddle-point path needs a cross-check or when beta>0 feasibility is

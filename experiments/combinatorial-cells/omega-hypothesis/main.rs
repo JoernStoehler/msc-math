@@ -37,7 +37,7 @@ use symplectic::geom::known_polytopes;
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::skeleton::Skeleton;
 use symplectic::geom::symplectic_form::omega0;
-use symplectic::kkt::saddle_point_solver::{solve_kkt_for, KktResult};
+use symplectic::kkt::saddle_point_solver::{solve_kkt_for_dual_vertices, KktResult};
 use symplectic::random::generate_polytope;
 
 // ============================================================================
@@ -291,7 +291,8 @@ fn process_polytope(
     let time_ms = t0.elapsed().as_secs_f64() * 1000.0;
 
     // Single-perm KKT solve for beta (cheap, ~0.01ms)
-    let kkt_result = solve_kkt_for(polytope, &best_perm).feasible()?;
+    let dual_vertices = polytope.dual_vertices_f64();
+    let kkt_result = solve_kkt_for_dual_vertices(dual_vertices, &best_perm).feasible()?;
     let best_beta = &kkt_result.beta;
 
     // Phase A: omega features

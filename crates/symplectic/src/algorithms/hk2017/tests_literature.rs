@@ -8,7 +8,7 @@ use crate::algorithms::{
     aggregate_orbits, OrbitGuaranteeMode, OrbitSearchError, OrbitSolveBackend,
 };
 use crate::geom::known_polytopes;
-use crate::kkt::saddle_point_solver::solve_kkt_for;
+use crate::kkt::saddle_point_solver::solve_kkt_for_dual_vertices;
 use crate::{ehz_capacity_pruned, ehz_capacity_unpruned};
 
 // ── Smoke tests: direct capacity computation on small polytopes ──
@@ -171,7 +171,8 @@ fn crosspolytope_upper_bound() {
 
     // Solve KKT for the known minimizing permutation [0, 12, 15, 3].
     let perm = [0usize, 12, 15, 3];
-    let outcome = solve_kkt_for(&kp.polytope, &perm);
+    let dual_vertices = kp.polytope.dual_vertices_f64();
+    let outcome = solve_kkt_for_dual_vertices(dual_vertices, &perm);
 
     let kkt_result = match outcome {
         KktOutcome::Feasible(r) => r,

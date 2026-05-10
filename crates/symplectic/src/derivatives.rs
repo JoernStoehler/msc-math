@@ -360,7 +360,7 @@ mod tests {
     use super::*;
     use crate::algorithms::OrbitAdmissibility;
     use crate::geom::known_polytopes;
-    use crate::kkt::saddle_point_solver::solve_kkt_for;
+    use crate::kkt::saddle_point_solver::solve_kkt_for_dual_vertices;
 
     // Tests for derivatives: analytical capacity and volume derivatives.
     //
@@ -398,8 +398,8 @@ mod tests {
         }
     }
 
-    /// The KKT-result convenience helper should agree with the primitive
-    /// derivative routine on the same saddle-point data.
+    /// The flat dual-vertex solver should agree with the primitive derivative
+    /// routine on the same saddle-point data.
     #[test]
     fn capacity_derivatives_from_kkt_result_matches_primitive() {
         let kp = known_polytopes::simplex();
@@ -408,7 +408,7 @@ mod tests {
             .expect("simplex should have a certified best orbit")
             .best_sigma()
             .to_vec();
-        let kkt = solve_kkt_for(polytope, &sigma)
+        let kkt = solve_kkt_for_dual_vertices(polytope.dual_vertices_f64(), &sigma)
             .feasible()
             .expect("best simplex orbit should re-solve");
 
@@ -448,7 +448,7 @@ mod tests {
         assert_eq!(err, DerivativeError::MissingClosureMultiplier);
     }
 
-    /// The KKT-result convenience helper should agree with the quotient-rule
+    /// The flat dual-vertex solver should agree with the quotient-rule
     /// combination of capacity and volume gradients.
     #[test]
     fn sys_gradient_a_from_kkt_result_matches_formula() {
@@ -458,7 +458,7 @@ mod tests {
             .expect("simplex should have a certified best orbit")
             .best_sigma()
             .to_vec();
-        let kkt = solve_kkt_for(polytope, &sigma)
+        let kkt = solve_kkt_for_dual_vertices(polytope.dual_vertices_f64(), &sigma)
             .feasible()
             .expect("best simplex orbit should re-solve");
 
@@ -580,10 +580,10 @@ mod tests {
                 am[k][d] -= eps;
                 let pp = Polytope4D::from_f64(ap).unwrap();
                 let pm = Polytope4D::from_f64(am).unwrap();
-                let qp = solve_kkt_for(&pp, &best_perm)
+                let qp = solve_kkt_for_dual_vertices(pp.dual_vertices_f64(), &best_perm)
                     .feasible()
                     .map(|r| r.q_corrected);
-                let qm = solve_kkt_for(&pm, &best_perm)
+                let qm = solve_kkt_for_dual_vertices(pm.dual_vertices_f64(), &best_perm)
                     .feasible()
                     .map(|r| r.q_corrected);
                 let fd_kd = match (qp, qm) {
@@ -609,9 +609,9 @@ mod tests {
         let ehz = crate::ehz_capacity_pruned(polytope)
             .expect("ehz_capacity should find an orbit on test polytopes");
         let perm = ehz.best_sigma().to_vec();
-        let kkt = solve_kkt_for(polytope, &perm)
+        let kkt = solve_kkt_for_dual_vertices(polytope.dual_vertices_f64(), &perm)
             .feasible()
-            .expect("solve_kkt_for should succeed on the best permutation");
+            .expect("flat KKT solve should succeed on the best permutation");
         (kkt.q_corrected, kkt.beta, perm, kkt.mu, kkt.xi)
     }
 }

@@ -20,7 +20,7 @@
 //! - For each polytope, compute base values and analytical gradients
 //! - Sample random directions d in R^{4F} (unit vectors via Muller's method)
 //! - Sweep perturbation size t geometrically from 1e-1 to 1e-7
-//! - For capacity: solve_kkt_for with the base orbit on the perturbed polytope
+//! - For capacity: flat dual-vertex KKT solve with the base orbit on the perturbed polytope
 //! - For volume: euclidean_volume_f64() of the perturbed polytope
 //! - For sys = c^2/(2*vol): derived from perturbed cap and vol
 //!

@@ -13,7 +13,7 @@
 //! Q5b: Exact switching boundaries -- subdifferential at symmetric/degenerate polytopes
 //!
 //! Split from gradient-validation/main.rs. Q5/Q5b use full ehz_capacity on
-//! perturbed polytopes (unlike Q1-Q4 which use fixed-orbit solve_kkt_for).
+//! perturbed polytopes (unlike Q1-Q4 which use fixed-orbit flat KKT solves).
 //!
 //! Methodology (Q5):
 //! - Enumerate all certified orbits within generous action gap of the best

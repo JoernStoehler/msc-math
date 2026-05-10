@@ -3,7 +3,7 @@
 //! Split from mod.rs to keep module routing and docs short.
 
 use crate::geom::polytope::Polytope4D;
-use crate::kkt::saddle_point_solver::solve_kkt_for;
+use crate::kkt::saddle_point_solver::solve_kkt_for_dual_vertices;
 use nalgebra::Vector4;
 
 /// KKT solver on minimal 2-facet system (two opposite facets).
@@ -97,7 +97,8 @@ fn solve_kkt_two_facets() {
     };
 
     // If construction succeeded (unlikely for 2 facets), test via standard API.
-    let r = solve_kkt_for(&polytope, &perm)
+    let dual_vertices = polytope.dual_vertices_f64();
+    let r = solve_kkt_for_dual_vertices(dual_vertices, &perm)
         .feasible()
         .expect("two-facet system should solve");
     assert_eq!(r.beta.len(), 2);

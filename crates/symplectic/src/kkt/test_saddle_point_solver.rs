@@ -2,7 +2,7 @@
 //!
 //! These tests validate the eigendecomposition-based KKT solve on:
 //! - known polytopes with expected capacities,
-//! - direct assembly-vs-convenience consistency,
+//! - direct assembly-vs-flat-solver consistency,
 //! - edge cases and numerical degeneracies,
 //! - constraint residual checks for returned feasible candidates.
 
@@ -163,22 +163,22 @@ fn lagrangian_triangle_product_finds_valid_solution() {
     );
 }
 
-/// Convenience wrapper: verify it returns the same as direct assembly + solve.
+/// Flat dual-vertex solver should match direct assembly + solve.
 #[test]
-fn solve_kkt_for_matches_direct() {
+fn solve_kkt_for_dual_vertices_matches_direct() {
     let simplex = known_polytopes::simplex();
     let polytope = &simplex.polytope;
     let perm = vec![0, 1, 2];
+    let dual_vertices = polytope.dual_vertices_f64();
 
     let result_direct = {
-        let dual_vertices = polytope.dual_vertices_f64();
         let (kkt, rhs) = build_augmented_system_from_dual_vertices(dual_vertices, &perm);
         solve_saddle_point(&kkt, &rhs)
     };
 
-    let result_convenience = solve_kkt_for(polytope, &perm);
+    let result_dual = solve_kkt_for_dual_vertices(dual_vertices, &perm);
 
-    match (result_direct, result_convenience) {
+    match (result_direct, result_dual) {
         (KktOutcome::Feasible(d), KktOutcome::Feasible(c)) => {
             assert_approx(d.q_corrected, c.q_corrected, 1e-12, "Q should match");
             assert_eq!(d.beta.len(), c.beta.len());
@@ -187,7 +187,7 @@ fn solve_kkt_for_matches_direct() {
             }
         }
         (KktOutcome::Feasible(_), _) | (_, KktOutcome::Feasible(_)) => {
-            panic!("direct and convenience should agree on feasibility");
+            panic!("direct and dual-vertex solve should agree on feasibility");
         }
         _ => {} // both non-feasible: acceptable
     }
@@ -325,7 +325,7 @@ fn perturbed_lp44_degenerate_orbit() {
     // At the symmetric point this orbit has β = 0.25. Under perturbation,
     // the KKT eigenvalues shift from null to small-but-retained, making
     // the Q error bound vacuous.
-    let outcome = solve_kkt_for(&perturbed_poly, &[1, 5, 3, 7]);
+    let outcome = solve_kkt_for_dual_vertices(perturbed_poly.dual_vertices_f64(), &[1, 5, 3, 7]);
     // The degenerate orbit should NOT be feasible on the perturbed polytope.
     assert!(
         !matches!(outcome, KktOutcome::Feasible(_)),

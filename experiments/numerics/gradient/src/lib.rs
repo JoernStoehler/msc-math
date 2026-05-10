@@ -20,7 +20,9 @@ use symplectic::algorithms::hk2017::permutations::for_each_cyclic_permutation;
 use symplectic::derivatives::{
     capacity_derivatives_a_from_kkt_result, directional_derivative_a, volume_derivatives_a,
 };
-use symplectic::kkt::saddle_point_solver::{solve_kkt_for, KktResult, EPS_Q_POSITIVE};
+use symplectic::kkt::saddle_point_solver::{
+    solve_kkt_for_dual_vertices, KktResult, EPS_Q_POSITIVE,
+};
 use symplectic::{ehz_capacity, OrbitSearchResult, Polytope4D};
 
 /// Shared strict beta-threshold for certified-orbit enumeration in the gradient package.
@@ -107,7 +109,7 @@ pub fn ehz_capacity_safe(polytope: &Polytope4D) -> Option<OrbitSearchResult> {
 }
 
 pub fn solve_kkt_safe(polytope: &Polytope4D, perm: &[usize]) -> Option<KktResult> {
-    solve_kkt_for(polytope, perm).feasible()
+    solve_kkt_for_dual_vertices(polytope.dual_vertices_f64(), perm).feasible()
 }
 
 /// Compute dsys/da_k via quotient rule: sys = c^2/(2*vol).
@@ -158,7 +160,8 @@ struct PerturbedValues {
 
 /// Compute cap, vol, sys at perturbed dual vertices `a + t*d`.
 ///
-/// Capacity uses `solve_kkt_for` with the base orbit on the perturbed polytope.
+/// Capacity uses the flat dual-vertex KKT solver with the base orbit on the
+/// perturbed polytope.
 fn compute_perturbed(
     base_duals: &[Vector4<f64>],
     direction: &[Vector4<f64>],

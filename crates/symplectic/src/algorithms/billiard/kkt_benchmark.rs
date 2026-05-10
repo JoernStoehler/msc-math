@@ -16,7 +16,7 @@
 use crate::geom::known_polytopes;
 use crate::kkt::qp_assembly::build_augmented_system_from_dual_vertices;
 use crate::kkt::saddle_point_solver::{
-    solve_kkt_for, KktOutcome, EPS_BETA_POSITIVE, EPS_Q_POSITIVE,
+    solve_kkt_for_dual_vertices, KktOutcome, EPS_BETA_POSITIVE, EPS_Q_POSITIVE,
 };
 use nalgebra::DVector;
 use std::time::Instant;
@@ -47,7 +47,7 @@ fn pentagon_sigmas() -> (crate::geom::polytope::Polytope4D, Vec<Vec<usize>>) {
 
 /// Benchmark eigendecomposition-based KKT solver on the HKO pentagon.
 ///
-/// Times `solve_kkt_for` on all billiard sigma sequences. Reports total time,
+/// Times `solve_kkt_for_dual_vertices` on all billiard sigma sequences. Reports total time,
 /// valid solution count, and best capacity.
 ///
 /// **Why release mode:** needs many KKT solves for stable timing.
@@ -56,6 +56,7 @@ fn pentagon_sigmas() -> (crate::geom::polytope::Polytope4D, Vec<Vec<usize>>) {
 #[ignore] // profiling test, run manually with --release --nocapture --ignored
 fn bench_kkt_eigen() {
     let (polytope, sigmas) = pentagon_sigmas();
+    let dual_vertices = polytope.dual_vertices_f64();
 
     eprintln!("Total sigmas to test: {}", sigmas.len());
 
@@ -63,7 +64,7 @@ fn bench_kkt_eigen() {
     let mut valid_count = 0u64;
     let mut best_capacity = f64::INFINITY;
     for sigma in &sigmas {
-        if let KktOutcome::Feasible(result) = solve_kkt_for(&polytope, sigma) {
+        if let KktOutcome::Feasible(result) = solve_kkt_for_dual_vertices(dual_vertices, sigma) {
             if result.beta.iter().all(|&b| b > EPS_BETA_POSITIVE)
                 && result.q_corrected > EPS_Q_POSITIVE
             {

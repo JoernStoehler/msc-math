@@ -25,7 +25,6 @@
 use super::beta_feasibility;
 use super::qp_assembly::build_augmented_system_from_dual_vertices;
 use super::EPS_EIGEN_FLOOR;
-use crate::geom::polytope::Polytope4D;
 use crate::geom::symplectic_form::omega0;
 use nalgebra::{DMatrix, DVector, Vector4};
 
@@ -296,17 +295,6 @@ pub fn solve_saddle_point(kkt_matrix: &DMatrix<f64>, rhs: &DVector<f64>) -> KktO
     // If Tier 2 also fails (None), the solver couldn't classify this orbit.
     try_pseudoinverse_with_threshold(kkt_matrix, rhs, m, &eigen_info, strict_threshold)
         .unwrap_or(KktOutcome::Infeasible)
-}
-
-/// Convenience: solve KKT for a polytope and permutation in one call.
-///
-/// Temporary `Polytope4D` wrapper that delegates to
-/// [`solve_kkt_for_dual_vertices`].
-///
-/// [lem:kkt]: assembles and solves the augmented KKT system for a (polytope, permutation) pair.
-pub fn solve_kkt_for(polytope: &Polytope4D, perm: &[usize]) -> KktOutcome {
-    let dual_vertices = polytope.dual_vertices_f64();
-    solve_kkt_for_dual_vertices(dual_vertices, perm)
 }
 
 /// Convenience: solve KKT from flat dual vertices and a permutation in one call.
