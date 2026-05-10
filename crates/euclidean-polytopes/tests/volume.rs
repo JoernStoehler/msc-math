@@ -152,8 +152,9 @@ proptest! {
     ///
     /// Operationalization: generate hypercubes `[-s,s]^4` with rational
     /// `s = numerator / denominator`, where both terms lie in `1..=16`.
-    /// No discard rule. Cases: 16. Tolerance:
-    /// `max(1e-10, 1e-10 * |16*s^4|)`.
+    /// Discard generated scales whose active products are not stable enough
+    /// for `volume_f64` to decide incidence. Cases: 16 accepted examples.
+    /// Tolerance: `max(1e-10, 1e-10 * |16*s^4|)`.
     #[test]
     fn hypercube_volume_scales_by_fourth_power_for_rational_scales(
         numerator in 1_u32..=16,
@@ -162,7 +163,13 @@ proptest! {
         let scale = f64::from(numerator) / f64::from(denominator);
         let (dual_vertices, vertices) = hypercube(scale);
 
-        let volume = decided_volume(&dual_vertices, &vertices);
+        let volume = match volume_f64(&dual_vertices, &vertices).expect("finite input") {
+            VolumeF64::Decided { volume } => volume,
+            VolumeF64::Indeterminate { .. } => {
+                prop_assume!(false);
+                unreachable!("prop_assume stops this generated case")
+            }
+        };
         let expected = 16.0 * scale.powi(4);
         let allowed_error = 1.0e-10_f64.max(1.0e-10 * expected.abs());
         prop_assert!(
@@ -208,10 +215,16 @@ fn volume_is_invariant_under_vertex_and_facet_permutation() {
         let volume = decided_volume(&dual_vertices, &vertices);
         let permuted_dual_vertices = permute_by_stride(&dual_vertices, 3);
         let permuted_vertices = permute_by_stride(&vertices, 5);
-        let permuted_volume = decided_volume(&permuted_dual_vertices, &permuted_vertices);
         let allowed_error = 1.0e-10_f64.max(1.0e-10 * volume.abs());
 
-        assert_close(permuted_volume, volume, allowed_error);
+        let facet_permuted_volume = decided_volume(&permuted_dual_vertices, &vertices);
+        assert_close(facet_permuted_volume, volume, allowed_error);
+
+        let vertex_permuted_volume = decided_volume(&dual_vertices, &permuted_vertices);
+        assert_close(vertex_permuted_volume, volume, allowed_error);
+
+        let combined_permuted_volume = decided_volume(&permuted_dual_vertices, &permuted_vertices);
+        assert_close(combined_permuted_volume, volume, allowed_error);
     }
 }
 

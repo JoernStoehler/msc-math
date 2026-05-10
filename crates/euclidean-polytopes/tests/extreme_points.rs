@@ -145,8 +145,9 @@ proptest! {
 proptest! {
     #![proptest_config(ProptestConfig::with_cases(32))]
 
-    /// Proposition: for every finite `P subset Q^4` and every `x in conv(P)`,
-    /// not all points in `P union {x}` are extreme.
+    /// Proposition: for every finite input list `P` in `Q^4` and every
+    /// `x in conv(P)`, the list obtained by appending `x` to `P` is not all
+    /// extreme.
     ///
     /// Operationalization: generate five points in `[-3,3]^4` and append their
     /// fixed positive rational convex combination with weights
