@@ -225,14 +225,14 @@ fn read_jsonl<T: DeserializeOwned>(path: &Path) -> Vec<T> {
         .lines()
         .enumerate()
         .filter_map(|(line_idx, line)| {
-            let line = line.unwrap_or_else(|e| panic!("read {} line {}: {e}", path.display(), line_idx + 1));
+            let line = line
+                .unwrap_or_else(|e| panic!("read {} line {}: {e}", path.display(), line_idx + 1));
             if line.trim().is_empty() {
                 None
             } else {
-                Some(
-                    serde_json::from_str::<T>(&line)
-                        .unwrap_or_else(|e| panic!("parse {} line {}: {e}", path.display(), line_idx + 1)),
-                )
+                Some(serde_json::from_str::<T>(&line).unwrap_or_else(|e| {
+                    panic!("parse {} line {}: {e}", path.display(), line_idx + 1)
+                }))
             }
         })
         .collect()
@@ -272,7 +272,8 @@ fn orbit_payloads(paths: &DatasetPaths) -> HashMap<String, OrbitPayload> {
     let db = load_many(&cache_paths).expect("load producer caches");
     let mut out = HashMap::new();
     for (_key, record) in db {
-        let poly_id = poly_id_from_dual_vertices(&rational_vec4_to_strings(&record.dual_vertices_rational));
+        let poly_id =
+            poly_id_from_dual_vertices(&rational_vec4_to_strings(&record.dual_vertices_rational));
         let sigma_gap_cutoff = sigma_gap_cutoff(&record);
         out.insert(
             poly_id,
@@ -469,9 +470,9 @@ fn load_random_product_rows(
 }
 
 fn trace_events_by_name(path: &Path) -> HashMap<String, Vec<TraceEvent>> {
-    read_jsonl_if_exists::<TraceRow>(path)
-        .into_iter()
-        .fold(HashMap::<String, Vec<TraceEvent>>::new(), |mut acc, row| {
+    read_jsonl_if_exists::<TraceRow>(path).into_iter().fold(
+        HashMap::<String, Vec<TraceEvent>>::new(),
+        |mut acc, row| {
             acc.entry(row.name.clone()).or_default().push(TraceEvent {
                 phase: row.phase,
                 iteration: row.iteration,
@@ -484,7 +485,8 @@ fn trace_events_by_name(path: &Path) -> HashMap<String, Vec<TraceEvent>> {
                 gradient_norm: row.gradient_norm,
             });
             acc
-        })
+        },
+    )
 }
 
 fn load_ascent_rows(

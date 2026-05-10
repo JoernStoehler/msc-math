@@ -152,6 +152,7 @@ git diff --check
 bash scripts/toc.sh AGENTS.md MAP_OR_TASK_FILE.md
 
 # Rust crates
+cargo fmt --check
 cargo test -p symplectic --release --lib
 cargo clippy -p symplectic --lib -- -D warnings
 cargo test -p symplectic --release -- --ignored

@@ -55,9 +55,14 @@ pub fn compute_geometry_fields(dual_vertices: &[[f64; 4]], volume_value: f64) ->
         .iter()
         .map(|vertex| vertex.iter().map(|coord| coord * coord).sum::<f64>().sqrt())
         .collect::<Vec<_>>();
-    let centroid: [f64; 4] =
-        std::array::from_fn(|i| scaled.iter().map(|vertex| vertex[i]).sum::<f64>() / scaled.len() as f64);
-    let centroid_norm = centroid.iter().map(|coord| coord * coord).sum::<f64>().sqrt();
+    let centroid: [f64; 4] = std::array::from_fn(|i| {
+        scaled.iter().map(|vertex| vertex[i]).sum::<f64>() / scaled.len() as f64
+    });
+    let centroid_norm = centroid
+        .iter()
+        .map(|coord| coord * coord)
+        .sum::<f64>()
+        .sqrt();
     let coord_std: [f64; 4] = std::array::from_fn(|i| {
         let mean = centroid[i];
         let var = scaled

@@ -39,8 +39,12 @@ pub fn compute_face_geometry_fields(
         .collect::<Vec<_>>();
     let (edge_length_vol1_mean, edge_length_vol1_std, edge_length_vol1_min, edge_length_vol1_max) =
         stats_or_zero(&edge_lengths);
-    let (facet_volume_vol1_mean, facet_volume_vol1_std, facet_volume_vol1_min, facet_volume_vol1_max) =
-        stats_or_zero(&facet_volumes);
+    let (
+        facet_volume_vol1_mean,
+        facet_volume_vol1_std,
+        facet_volume_vol1_min,
+        facet_volume_vol1_max,
+    ) = stats_or_zero(&facet_volumes);
 
     FaceGeometryFields {
         edge_length_vol1_mean,
