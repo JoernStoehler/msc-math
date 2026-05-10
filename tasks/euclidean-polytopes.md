@@ -89,6 +89,13 @@ modules, which makes non-symplectic helpers harder to reuse and review.
   Why it matters: this crate exists to prevent tolerance guesses and hidden
   geometry-contract drift; tests should fail before those mistakes can become
   accepted implementation behavior.
+- [Jorn reminder 2026-05-10] Workspace property-testing crates are available.
+  Use them after fixture contract tests are in place for generated invariants
+  such as polarity roundtrips, exact/f64 agreement on well-conditioned inputs,
+  and volume scaling.
+  Why it matters: property tests are useful here, but they should strengthen
+  rather than replace the explicit fixture tests that define the first API
+  contracts.
 
 ## Work Map
 

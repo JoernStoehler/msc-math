@@ -272,6 +272,9 @@ Implementation workflow for the first packet:
 - write exact fixture tests before implementing exact helpers;
 - write f64 indeterminate/tolerance-boundary tests before f64 filtering;
 - start with fixture tests, not property tests, until the public API is stable;
+- use the workspace property-testing crates after fixture contracts are in
+  place, especially for invariants such as polarity roundtrips, exact/f64
+  agreement on well-conditioned generated inputs, and volume scaling;
 - include tests for simplex/cube/crosspolytope polar duality, redundant input
   points, bad `0 in int conv` contract panics, exact deduplication, non-finite
   f64 input, and a near-boundary f64 case that returns indeterminate.
