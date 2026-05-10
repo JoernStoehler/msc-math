@@ -154,6 +154,54 @@ Fixture tests cover:
 - a near-incidence input returns `Indeterminate` instead of deciding from a
   tolerance guess.
 
+## Next Slice: Known-Incidence Volume and Symplectic Integration
+
+The next migration slice should let `symplectic::geom::volume::volume` delegate
+ordinary volume computation to this crate without throwing away exact incidence
+already known by `Polytope4D`.
+
+Do not route `symplectic` through `volume_f64(dual_vertices, vertices)`: that
+function intentionally recovers incidence from f64 signed gaps and can return
+`Indeterminate` for near-boundary relations. `Polytope4D` already stores an
+exact boolean vertex-facet incidence matrix. Recomputing that incidence in f64
+would be less reliable than the existing symplectic path.
+
+Target helper:
+
+```rust,ignore
+pub fn volume_from_incidence_f64(
+    vertices: &[Vector4<f64>],
+    incidence: &DMatrix<bool>,
+) -> Result<f64, F64GeometryError>;
+```
+
+The exact signature can be adjusted, but the helper should stay flat and
+operation-specific. Contract: `incidence[(v, f)]` tells whether `vertices[v]`
+lies on facet `f` for a normalized full-dimensional `R^4` polytope containing
+the origin. The helper validates finite vertices and incidence shape, then uses
+the same origin-star triangulation as `volume_f64`. Shape mismatches should
+panic as caller bugs.
+
+Then change `symplectic::geom::volume::volume(polytope)` to call the Euclidean
+helper with `polytope.vertices_f64()` and `polytope.incidence()`. Keep
+`volume_qhull` in `symplectic` as a validation/backend helper. Remove duplicate
+private triangulation helpers from `symplectic::geom::volume` if they are no
+longer used, except for tests that still need a local simplex-volume fixture.
+
+Done criteria for this slice:
+
+- `euclidean-polytopes` exposes a known-incidence volume helper with docs that
+  explain when it is preferable to `volume_f64`;
+- `volume_f64` reuses the same internal origin-star implementation after it has
+  recovered decided incidence;
+- `symplectic::geom::volume::volume` delegates to the Euclidean helper and
+  retains its public API;
+- tests compare the migrated symplectic wrapper with `euclidean-polytopes` on
+  known `Polytope4D` fixtures;
+- `cargo test -p euclidean-polytopes`, `cargo test -p symplectic --lib geom::`,
+  `cargo clippy -p euclidean-polytopes --all-targets -- -D warnings`, and
+  `cargo check --workspace` pass.
+
 ## Test Code and Proposition Comments
 
 Tests should make the mathematical proposition visible separately from the

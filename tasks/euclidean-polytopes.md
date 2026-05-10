@@ -107,6 +107,7 @@ modules, which makes non-symplectic helpers harder to reuse and review.
 | Extreme-point / non-redundant point-set predicate | `[implemented exact slice]` | mainline thesis | agents | Exact predicate is implemented and covered by fixture/property tests. Add the matching f64 diagnostic later only if its return shape stays flat and useful. | `crates/euclidean-polytopes/src/predicates.rs`, `crates/euclidean-polytopes/tests/extreme_points.rs`, `crates/euclidean-polytopes/DEVELOPMENT.md` |
 | Full-dimensional f64 volume | `[implemented f64 slice]` | mainline thesis | agents | Review and integrate `volume_f64(dual_vertices, vertices)` into callers when a migration packet needs it. The API uses dual vertices for incidence, primal vertices for determinant geometry, and an operation-specific indeterminate payload when f64 incidence is tolerance-sensitive. | `crates/euclidean-polytopes/src/volume.rs`, `crates/euclidean-polytopes/tests/volume.rs`, `crates/euclidean-polytopes/DEVELOPMENT.md` |
 | Verification property suite | `[implemented first property slice]` | mainline thesis | agents | Keep strengthening theorem-shaped property tests as APIs migrate. Current coverage includes exact polar soundness, exact polarity roundtrip, generated non-redundancy witnesses, f64 simplex/crosspolytope polar agreement, and f64 volume scaling/permutation invariants. The stronger no-indeterminate f64 polar proposition is not yet true for non-simple cube/crosspolytope tuple structures under the current diagnostic contract. | `crates/euclidean-polytopes/DEVELOPMENT.md`, `crates/euclidean-polytopes/tests/` |
+| Known-incidence volume integration | `[next migration slice]` | mainline thesis | agents | Add a Euclidean volume helper from known boolean incidence, then migrate `symplectic::geom::volume::volume` to delegate to it instead of duplicating ordinary origin-star triangulation. Do not recompute exact `Polytope4D` incidence through f64 signed gaps. | `crates/euclidean-polytopes/DEVELOPMENT.md`, `crates/symplectic/src/geom/volume.rs` |
 | Full-dimensional exact volume | `[future slice]` | mainline thesis | agents | After the f64 volume shape is reviewed, add exact volume over `T` without field extensions. | `crates/euclidean-polytopes/DEVELOPMENT.md` |
 | Affine-subspace polygons and volume | `[active]` | mainline thesis | agents, Jorn only if generic-vs-specific API affects thesis callers | Let the internal volume decomposition determine the first affine-subspace helper shape; likely needs 3-face measures of 4-polytopes and polygon area in affine 2-planes of `R^4`. | `crates/symplectic/src/geom/volume.rs`, `crates/symplectic/src/geom/polygon.rs` |
 | Symplectic integration cleanup | `[active]` | mainline thesis | agents | After each migrated slice, keep `symplectic` as the owner of symplectic form, capacity, KKT, omega signs, Reeb-direction adjacency, and experiment-facing wrappers only. | `crates/symplectic/src/geom/`, `crates/symplectic/src/algorithms/` |
@@ -140,6 +141,9 @@ The migration task is done when:
 - the verification suite covers exact polar soundness, polarity roundtrip,
   f64/exact agreement on well-conditioned fixtures, and volume scaling plus
   permutation invariance before broad caller migration;
+- symplectic volume delegates to `euclidean-polytopes` through a known-incidence
+  helper rather than recomputing exact `Polytope4D` incidence from f64 signed
+  gaps;
 - workspace commands pass:
   `cargo test -p euclidean-polytopes`,
   `cargo clippy -p euclidean-polytopes --all-targets -- -D warnings`, and
@@ -208,6 +212,11 @@ The migration task is done when:
   invariants. The symplectic migration regression remains future work because
   adding it now would introduce a new `symplectic` -> `euclidean-polytopes`
   test dependency before the caller migration packet.
+- [agent synthesis 2026-05-10] The first symplectic volume migration should use
+  known exact incidence from `Polytope4D`, not `volume_f64` incidence recovery.
+  Why it matters: `volume_f64` is designed for callers that only have dual and
+  primal vertices in f64; `Polytope4D` already has exact incidence, so
+  recomputing it through f64 signed gaps would weaken the old path.
 
 ## Pruned / Stale
 
