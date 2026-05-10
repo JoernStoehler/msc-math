@@ -154,6 +154,119 @@ Fixture tests cover:
 - a near-incidence input returns `Indeterminate` instead of deciding from a
   tolerance guess.
 
+## Test Code and Proposition Comments
+
+Tests should make the mathematical proposition visible separately from the
+sampling or fixture strategy.
+
+Use this shape for property tests:
+
+```rust,ignore
+/// Proposition: for all point sets P in Q^4, if phi(P), then psi(P).
+///
+/// Operationalization: generate rational point sets with coordinates in
+/// [-3, 3], discard samples that do not satisfy phi(P), and check psi(P).
+/// Cases: 32 generated examples plus named fixtures in nearby tests.
+#[test]
+fn descriptive_property_name() { ... }
+```
+
+The proposition line should be the strongest theorem-shaped claim the test is
+trying to exercise. The operationalization line should state the actual sample
+space, discard rule, case count, tolerance, and any fixture names. Do not hide
+a theorem inside the implementation details of the generator.
+
+For `proptest`, use `prop_assume!(phi(sample))` only when `phi` is common
+enough that rejects stay low. If the precondition is rare, write a generator
+that constructs valid samples directly. For example, use paired points
+`+-v_i` to force `0 in int conv(P)`, then add random redundant points.
+
+Good test code in this crate:
+
+- uses small local fixture constructors with mathematical names, such as
+  `hypercube(scale)`, `crosspolytope_radius_2()`, or
+  `positive_spanning_points()`;
+- checks public APIs first and private helpers only for subtle regression
+  reasons that cannot be observed cleanly through the public API;
+- compares exact outputs as sets when the mathematical result is unordered;
+- makes tolerance choices explicit and scale-aware for f64 metric tests;
+- tests f64 indeterminate branches with near-boundary examples, not only the
+  decided path;
+- states when a test is a fixture smoke check rather than evidence for a broad
+  theorem;
+- avoids random tests whose generator mostly proves input validation instead of
+  the intended geometry.
+
+Avoid comments that merely restate Rust code. Useful comments record the
+mathematical object, the contract being exercised, why a sample is an edge
+case, or why a tolerance is justified.
+
+## Verification Property Backlog
+
+These are the next high-value tests to add before broad caller migration.
+Each item separates the theorem-shaped claim from one practical
+operationalization.
+
+1. Exact polar soundness:
+   Proposition: for every finite `P subset Q^4`, if `0 in int conv(P)`, then
+   every `y` returned by `polar_vertices_exact(P)` satisfies
+   `<p, y> <= 1` for all `p in P`, and the returned incidence matrix is exactly
+   `(<p_j, y_i> == 1)`.
+   Operationalization: generate rational point sets in `[-3, 3]^4`; either use
+   `prop_assume!(origin_in_interior_of_conv_exact(&points))` or construct
+   positive-spanning sets from `+-v_i`; assert feasibility and incidence for
+   32 cases plus simplex, cube, and crosspolytope fixtures.
+
+2. Exact polarity roundtrip:
+   Proposition: for every finite `P subset Q^4`, if `0 in int conv(P)`, then
+   `polar_vertices_exact(polar_vertices_exact(P).vertices).vertices` is the set
+   of extreme points of `conv(P)`.
+   Operationalization: start with constructed positive-spanning exact point
+   sets, optionally append exact convex-combination redundant points, compute
+   the double polar, and compare with an explicit filtering of `P` by
+   `all_points_are_extreme_exact`/single-point removal logic. Keep case counts
+   modest until performance is measured.
+
+3. Exact non-redundancy positive cases:
+   Proposition: for every affinely independent simplex vertex set and every
+   centrally symmetric box vertex set, every listed point is extreme.
+   Operationalization: generate small random unimodular or axis-aligned
+   rational transforms where exact coordinates stay small; assert
+   `all_points_are_extreme_exact`.
+
+4. Exact non-redundancy negative cases:
+   Proposition: for every finite `P subset Q^4` and every
+   `x in conv(P)`, not all points in `P union {x}` are extreme.
+   Operationalization: the existing generated convex-combination test covers
+   one 5-point witness shape. Extend it with lower-dimensional witnesses and
+   duplicate/edge/face interior witnesses.
+
+5. f64 polar agreement on well-conditioned exact fixtures:
+   Proposition: for exact fixtures whose f64 coordinates are well-conditioned
+   and whose incidence gaps are far from zero, `polar_vertices_f64` returns no
+   indeterminate candidates and agrees with `polar_vertices_exact` after
+   conversion within a stated tolerance.
+   Operationalization: start with simplex, cube, and crosspolytope. Later add
+   generated positive-spanning integer sets filtered by a conservative minimum
+   gap and condition-number threshold.
+
+6. f64 volume invariants:
+   Proposition: for full-dimensional normalized polar pairs with stable f64
+   incidence, `volume_f64` returns the Euclidean volume; volume scales by
+   `s^4` under `vertices -> s vertices` and
+   `dual_vertices -> dual_vertices / s`.
+   Operationalization: the current hypercube scaling property covers powers of
+   two. Extend to random rational scale factors with scale-aware tolerance, and
+   add a permutation-invariance test for vertex and facet order.
+
+7. Symplectic migration regression:
+   Proposition: for existing `Polytope4D` fixtures, the old symplectic volume
+   wrapper and the new `euclidean-polytopes::volume_f64` agree.
+   Operationalization: in `symplectic`, call `volume_f64` on
+   `polytope.dual_vertices_f64()` and `polytope.vertices_f64()` for known
+   fixtures, then compare with the existing `geom::volume::volume` until the
+   wrapper is migrated.
+
 ## Proposed First Migration Slices
 
 1. `polar_vertices_exact(vertices)` plus the validation and helper operations it
