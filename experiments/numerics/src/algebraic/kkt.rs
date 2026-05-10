@@ -1,4 +1,4 @@
-//! Exact KKT solve over experiment-owned ordered fields.
+//! Exact KKT solve over experiment-owned reporting scalars.
 //!
 //! This is the experiment analogue of `symplectic::kkt::rational_solver` and
 //! `symplectic::exact::orbit`. It solves a selected sigma exactly, including
@@ -10,14 +10,14 @@
 //! TODO: add [lem:...] to formal math for the rank-deficient exact positivity
 //! search path used here.
 
-use super::field::{cmp_field, max_field, min_field, ExactOrderedField};
+use super::field::{is_strictly_negative, is_strictly_positive, ExperimentScalar};
 use super::geom::omega0;
 use algebraic_numbers::{solve_linear_system, LinearSystemSolution};
 use nalgebra::{DMatrix, DVector};
 
-/// Result of an exact KKT solve over an experiment-owned ordered field.
+/// Result of an exact KKT solve over an experiment-owned exact scalar.
 #[derive(Clone, Debug, PartialEq)]
-pub struct ExactKktResult<F: ExactOrderedField + 'static> {
+pub struct ExactKktResult<F: ExperimentScalar + 'static> {
     /// Exact beta vector, aligned with the supplied sigma.
     pub beta: Vec<F>,
     /// Exact `Q(beta)`.
@@ -27,7 +27,7 @@ pub struct ExactKktResult<F: ExactOrderedField + 'static> {
 }
 
 /// Solve the selected KKT system exactly for one sigma.
-pub fn solve_kkt_exact<F: ExactOrderedField + 'static>(
+pub fn solve_kkt_exact<F: ExperimentScalar + 'static>(
     dual_vertices: &[[F; 4]],
     sigma: &[usize],
 ) -> Option<ExactKktResult<F>> {
@@ -42,7 +42,7 @@ pub fn solve_kkt_exact<F: ExactOrderedField + 'static>(
         } if kernel_basis.ncols() == 0 => {
             let solution: Vec<F> = particular.iter().cloned().collect();
             let beta = solution[..m].to_vec();
-            if !beta.iter().all(ExactOrderedField::is_positive) {
+            if !beta.iter().all(is_strictly_positive) {
                 return None;
             }
             let q_exact = compute_q_exact(dual_vertices, sigma, &beta);
@@ -71,7 +71,7 @@ pub fn solve_kkt_exact<F: ExactOrderedField + 'static>(
     }
 }
 
-fn build_kkt_matrix<F: ExactOrderedField + 'static>(
+fn build_kkt_matrix<F: ExperimentScalar + 'static>(
     dual_vertices: &[[F; 4]],
     sigma: &[usize],
 ) -> (DMatrix<F>, DVector<F>) {
@@ -105,7 +105,7 @@ fn build_kkt_matrix<F: ExactOrderedField + 'static>(
     (matrix, rhs)
 }
 
-fn compute_q_exact<F: ExactOrderedField>(
+fn compute_q_exact<F: ExperimentScalar>(
     dual_vertices: &[[F; 4]],
     sigma: &[usize],
     beta: &[F],
@@ -123,7 +123,7 @@ fn compute_q_exact<F: ExactOrderedField>(
     sum
 }
 
-fn find_positive_beta<F: ExactOrderedField>(beta0: &[F], null_vecs: &[Vec<F>]) -> Option<Vec<F>> {
+fn find_positive_beta<F: ExperimentScalar>(beta0: &[F], null_vecs: &[Vec<F>]) -> Option<Vec<F>> {
     let m = beta0.len();
     let k = null_vecs.len();
 
@@ -136,7 +136,7 @@ fn find_positive_beta<F: ExactOrderedField>(beta0: &[F], null_vecs: &[Vec<F>]) -
         })
         .collect();
 
-    struct Bound<F: ExactOrderedField> {
+    struct Bound<F: ExperimentScalar> {
         remaining_coeffs: Vec<F>,
         rhs: F,
         divisor: F,
@@ -152,9 +152,9 @@ fn find_positive_beta<F: ExactOrderedField>(beta0: &[F], null_vecs: &[Vec<F>]) -
 
         for constraint in &constraints {
             let coeff = &constraint.0[elim_idx];
-            if coeff.is_positive() {
+            if is_strictly_positive(coeff) {
                 positive.push(constraint);
-            } else if coeff.is_negative() {
+            } else if is_strictly_negative(coeff) {
                 negative.push(constraint);
             } else {
                 let mut new_coeffs = constraint.0.clone();
@@ -198,12 +198,12 @@ fn find_positive_beta<F: ExactOrderedField>(beta0: &[F], null_vecs: &[Vec<F>]) -
             coeffs.is_empty(),
             "final Fourier-Motzkin stage should eliminate all variables"
         );
-        if !rhs.is_negative() {
+        if !is_strictly_negative(rhs) {
             return None;
         }
     }
 
-    let two = F::from_i64(2);
+    let two = F::one() + F::one();
     let mut alpha = vec![F::zero(); k];
 
     for assign_var in 0..k {
@@ -217,14 +217,14 @@ fn find_positive_beta<F: ExactOrderedField>(beta0: &[F], null_vecs: &[Vec<F>]) -
                 numerator = numerator - coeff.clone() * alpha[idx].clone();
             }
             let value = numerator / bound.divisor.clone();
-            if bound.divisor.is_positive() {
+            if is_strictly_positive(&bound.divisor) {
                 lower = Some(match lower.take() {
-                    Some(old) => max_field(old, value),
+                    Some(old) => old.max(value),
                     None => value,
                 });
             } else {
                 upper = Some(match upper.take() {
-                    Some(old) => min_field(old, value),
+                    Some(old) => old.min(value),
                     None => value,
                 });
             }
@@ -232,10 +232,7 @@ fn find_positive_beta<F: ExactOrderedField>(beta0: &[F], null_vecs: &[Vec<F>]) -
 
         alpha[assign_var] = match (lower, upper) {
             (Some(lo), Some(hi)) => {
-                assert!(
-                    cmp_field(&lo, &hi).is_lt(),
-                    "strict bounds should leave a non-empty interval"
-                );
+                assert!(lo < hi, "strict bounds should leave a non-empty interval");
                 (lo + hi) / two.clone()
             }
             (Some(lo), None) => lo + F::one(),
@@ -254,7 +251,7 @@ fn find_positive_beta<F: ExactOrderedField>(beta0: &[F], null_vecs: &[Vec<F>]) -
         })
         .collect();
 
-    assert!(beta.iter().all(ExactOrderedField::is_positive));
+    assert!(beta.iter().all(is_strictly_positive));
     Some(beta)
 }
 
@@ -320,7 +317,7 @@ mod tests {
             .expect("exact hko winning sigma");
 
         assert!(result.q_exact_f64 > 0.14);
-        assert!(result.beta.iter().all(ExactOrderedField::is_positive));
+        assert!(result.beta.iter().all(is_strictly_positive));
         let action_f64 = 1.0 / (2.0 * result.q_exact_f64);
         assert_close(
             action_f64,
@@ -337,7 +334,7 @@ mod tests {
             .expect("exact hko rank-deficient sigma");
 
         assert!(result.q_exact_f64 > 0.0);
-        assert!(result.beta.iter().all(ExactOrderedField::is_positive));
+        assert!(result.beta.iter().all(is_strictly_positive));
         let action_f64 = 1.0 / (2.0 * result.q_exact_f64);
         assert_close(
             action_f64,

@@ -31,40 +31,40 @@ pub type PentagonField = Algebraic<TanPiFifth>;
 #[cfg(test)]
 mod tests {
     use super::PentagonField;
-    use crate::algebraic::field::ExactOrderedField;
+    use crate::algebraic::field::{frac, is_strictly_negative, is_strictly_positive};
     use num_traits::{One, Zero};
 
     #[test]
     fn generator_satisfies_minimal_polynomial_exactly() {
-        let t = PentagonField::generator();
+        let t = PentagonField::root();
         let poly = t.clone() * t.clone() * t.clone() * t.clone()
-            - PentagonField::from_i64(10) * t.clone() * t.clone()
-            + PentagonField::from_i64(5);
+            - PentagonField::from(10) * t.clone() * t.clone()
+            + PentagonField::from(5);
         assert_eq!(poly, PentagonField::zero());
     }
 
     #[test]
     fn multiplication_reduces_to_canonical_basis() {
-        let t = PentagonField::generator();
+        let t = PentagonField::root();
         let lhs = t.clone() * t.clone() * t.clone() * t.clone();
-        let rhs = PentagonField::from_i64(10) * t.clone() * t - PentagonField::from_i64(5);
+        let rhs = PentagonField::from(10) * t.clone() * t - PentagonField::from(5);
         assert_eq!(lhs, rhs);
     }
 
     #[test]
     fn sign_classification_resolves_nonzero_elements() {
-        let t = PentagonField::generator();
-        let sec = (PentagonField::from_i64(3) - t.clone() * t.clone()) / PentagonField::from_i64(2);
+        let t = PentagonField::root();
+        let sec = (PentagonField::from(3) - t.clone() * t.clone()) / PentagonField::from(2);
 
-        assert!(t.is_positive());
-        assert!(sec.is_positive());
-        assert!(PentagonField::from_i64(-1).is_negative());
+        assert!(is_strictly_positive(&t));
+        assert!(is_strictly_positive(&sec));
+        assert!(is_strictly_negative(&PentagonField::from(-1)));
     }
 
     #[test]
     fn sec36_formula_squares_to_one_plus_t_squared() {
-        let t = PentagonField::generator();
-        let sec = (PentagonField::from_i64(3) - t.clone() * t.clone()) / PentagonField::from_i64(2);
+        let t = PentagonField::root();
+        let sec = (PentagonField::from(3) - t.clone() * t.clone()) / PentagonField::from(2);
         let lhs = sec.clone() * sec;
         let rhs = PentagonField::one() + t.clone() * t;
         assert_eq!(lhs, rhs);
@@ -72,8 +72,8 @@ mod tests {
 
     #[test]
     fn inverse_recovers_one() {
-        let t = PentagonField::generator();
-        let elem = PentagonField::from_i64(1) + PentagonField::from_frac(1, 2) * t;
+        let t = PentagonField::root();
+        let elem = PentagonField::from(1) + PentagonField::from(frac(1, 2)) * t;
         let inv = PentagonField::one() / elem.clone();
         assert_eq!(elem * inv, PentagonField::one());
     }

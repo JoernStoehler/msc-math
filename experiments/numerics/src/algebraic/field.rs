@@ -20,43 +20,18 @@ pub enum ExactSign {
     Positive,
 }
 
-/// Experiment-local scalar conveniences kept out of the durable crate API.
-pub trait ExactOrderedField: ExactScalar {
-    fn from_i64(value: i64) -> Self;
-    fn from_frac(numer: i64, denom: i64) -> Self;
-    fn generator() -> Self {
-        panic!("this scalar backend has no distinguished generator")
-    }
-    fn canonical_coeffs(&self) -> Vec<BigRational>;
+/// Experiment scalar extras kept out of the durable crate API.
+///
+/// `algebraic-numbers` owns exact arithmetic and ordering. This trait only adds
+/// reporting operations that this experiment needs for JSONL records and
+/// f64-side diagnostics.
+pub trait ExperimentScalar: ExactScalar {
+    fn canonical_coefficients(&self) -> Vec<BigRational>;
     fn to_f64(&self) -> f64;
-
-    fn sign(&self) -> ExactSign {
-        match self.cmp(&Self::zero()) {
-            Ordering::Less => ExactSign::Negative,
-            Ordering::Equal => ExactSign::Zero,
-            Ordering::Greater => ExactSign::Positive,
-        }
-    }
-
-    fn is_positive(&self) -> bool {
-        self > &Self::zero()
-    }
-
-    fn is_negative(&self) -> bool {
-        self < &Self::zero()
-    }
 }
 
-impl ExactOrderedField for BigRational {
-    fn from_i64(value: i64) -> Self {
-        rat(value)
-    }
-
-    fn from_frac(numer: i64, denom: i64) -> Self {
-        frac(numer, denom)
-    }
-
-    fn canonical_coeffs(&self) -> Vec<BigRational> {
+impl ExperimentScalar for BigRational {
+    fn canonical_coefficients(&self) -> Vec<BigRational> {
         vec![self.clone()]
     }
 
@@ -65,20 +40,8 @@ impl ExactOrderedField for BigRational {
     }
 }
 
-impl<F: RealAlgebraicField> ExactOrderedField for Algebraic<F> {
-    fn from_i64(value: i64) -> Self {
-        Self::from(value)
-    }
-
-    fn from_frac(numer: i64, denom: i64) -> Self {
-        Self::from(frac(numer, denom))
-    }
-
-    fn generator() -> Self {
-        Self::root()
-    }
-
-    fn canonical_coeffs(&self) -> Vec<BigRational> {
+impl<F: RealAlgebraicField> ExperimentScalar for Algebraic<F> {
+    fn canonical_coefficients(&self) -> Vec<BigRational> {
         self.coefficients().to_vec()
     }
 
@@ -87,20 +50,24 @@ impl<F: RealAlgebraicField> ExactOrderedField for Algebraic<F> {
     }
 }
 
-pub fn cmp_field<F: ExactOrderedField>(left: &F, right: &F) -> Ordering {
-    left.cmp(right)
+pub fn sign_of<F: ExactScalar>(value: &F) -> ExactSign {
+    match value.cmp(&F::zero()) {
+        Ordering::Less => ExactSign::Negative,
+        Ordering::Equal => ExactSign::Zero,
+        Ordering::Greater => ExactSign::Positive,
+    }
 }
 
-pub fn max_field<F: ExactOrderedField>(left: F, right: F) -> F {
-    left.max(right)
+pub fn is_strictly_positive<F: ExactScalar>(value: &F) -> bool {
+    value > &F::zero()
 }
 
-pub fn min_field<F: ExactOrderedField>(left: F, right: F) -> F {
-    left.min(right)
+pub fn is_strictly_negative<F: ExactScalar>(value: &F) -> bool {
+    value < &F::zero()
 }
 
 /// Experiment-owned catalog metadata attached to supported scalar backends.
-pub trait CatalogField: ExactOrderedField {
+pub trait CatalogField: ExperimentScalar {
     /// Row-level exact field tag used by the experiment-owned exact catalog.
     fn field_tag() -> NamedFieldTag;
 }

@@ -35,8 +35,8 @@ Planned deliverables:
 |       |-- README.md
 |       |-- DEVELOPMENT.md
 |       |-- Cargo.toml
+|       |-- examples/*.rs
 |       |-- src/*.rs
-|       |-- benches/*.rs
 |       `-- tests/*.rs
 |-- formal/
 |   |-- main.tex
@@ -65,6 +65,7 @@ Planned deliverables:
 |   |-- submit-thesis/
 |   |   |-- *.md
 |   |   `-- *.pdf
+|   |-- references/*.md
 |   |-- submit-thesis.md
 |   |-- verify-thesis-done.md
 |   `-- <group>.md
@@ -149,8 +150,8 @@ bash scripts/toc.sh AGENTS.md MAP_OR_TASK_FILE.md
 cargo test -p symplectic --release --lib
 cargo clippy -p symplectic --lib -- -D warnings
 cargo test -p symplectic --release -- --ignored
-cargo test -p algebraic-numbers --release --lib
-cargo clippy -p algebraic-numbers --lib -- -D warnings
+cargo test -p algebraic-numbers --release
+cargo clippy -p algebraic-numbers --all-targets -- -D warnings
 
 # Rust workspace and experiments
 cargo build --workspace --release

@@ -15,7 +15,7 @@
 //!    refreshes `sage-feasibility-input.jsonl`.
 
 use dev_numerical_analysis::algebraic::catalog::ElementRecord;
-use dev_numerical_analysis::algebraic::field::ExactOrderedField;
+use dev_numerical_analysis::algebraic::field::ExperimentScalar;
 use dev_numerical_analysis::algebraic::fixtures::exact_hko_pentagon;
 use nalgebra::Vector4;
 use num_bigint::BigInt;
@@ -94,7 +94,7 @@ fn rat(n: i64) -> BigRational {
     BigRational::from_integer(BigInt::from(n))
 }
 
-fn canonical_vec4<F: ExactOrderedField>(vector: &[F; 4]) -> Vec<ElementRecord> {
+fn canonical_vec4<F: ExperimentScalar>(vector: &[F; 4]) -> Vec<ElementRecord> {
     vector.iter().map(ElementRecord::from_field).collect()
 }
 

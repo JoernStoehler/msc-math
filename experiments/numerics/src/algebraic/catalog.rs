@@ -4,7 +4,7 @@
 //! The spike persists exact field tags plus canonical basis coefficients
 //! without changing the shared rational cache format.
 
-use super::field::ExactOrderedField;
+use super::field::ExperimentScalar;
 use super::named_field::NamedFieldTag;
 use serde::Serialize;
 
@@ -16,10 +16,10 @@ pub struct ElementRecord {
 
 impl ElementRecord {
     /// Serialize one exact field element by its canonical coefficient vector.
-    pub fn from_field<F: ExactOrderedField>(value: &F) -> Self {
+    pub fn from_field<F: ExperimentScalar>(value: &F) -> Self {
         Self {
             coeffs: value
-                .canonical_coeffs()
+                .canonical_coefficients()
                 .into_iter()
                 .map(|coeff| format!("{}/{}", coeff.numer(), coeff.denom()))
                 .collect(),

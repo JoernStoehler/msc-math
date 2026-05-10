@@ -10,7 +10,7 @@
 use dev_numerical_analysis::algebraic::catalog::{
     ElementRecord, ExactKktComparisonRow, ExactPolytopeCatalogRow,
 };
-use dev_numerical_analysis::algebraic::field::{CatalogField, ExactOrderedField};
+use dev_numerical_analysis::algebraic::field::{CatalogField, ExperimentScalar};
 use dev_numerical_analysis::algebraic::fixtures::{
     exact_hko_pentagon, exact_hypercube, exact_simplex, hko_capacity_formula_f64,
     HKO_RANK_DEFICIENT_SIGMA, HKO_WINNING_SIGMA,
@@ -75,7 +75,7 @@ fn exact_kkt_row<F: CatalogField + 'static>(
         q_exact: ElementRecord::from_field(&exact.q_exact),
         q_exact_f64: exact.q_exact_f64,
         action_exact_f64,
-        beta_f64: exact.beta.iter().map(ExactOrderedField::to_f64).collect(),
+        beta_f64: exact.beta.iter().map(ExperimentScalar::to_f64).collect(),
         reference_source: reference_source.to_string(),
         reference_q_f64,
         abs_diff_vs_reference: reference_q_f64.map(|value| (exact.q_exact_f64 - value).abs()),

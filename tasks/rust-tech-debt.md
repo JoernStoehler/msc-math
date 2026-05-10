@@ -12,8 +12,7 @@ experiment safety, validation trust, or durable crate maintainability.
 - Last updated: 2026-05-09.
 - Source surfaces: `crates/`, `experiments/`, `crates/MAP.md`,
   `experiments/MAP.md`, `research/verification.md`, relevant topic bundles,
-  `/tmp/rust-tech-debt-map.md`, and `/tmp/msc-math-lie-audit.md` as untracked
-  exploration inputs.
+  and tracked reports under `tasks/references/`.
 - Refresh when: a Rust cleanup packet changes API support levels, experiment
   command safety, generated-output ownership, validation commands, or the
   interpretation of a retained thesis claim.
@@ -25,8 +24,9 @@ experiment safety, validation trust, or durable crate maintainability.
   questions are: which command is safe, which output is canonical, which API is
   supported, which duplicate owns current data, which blocked code can be
   ignored, and which validation command protects a refactor.
-  Source: `/tmp/rust-tech-debt-map.md`, spot-checked against `crates/MAP.md`,
-  `experiments/MAP.md`, `research/verification.md`, and `tasks/*.md`.
+  Source: summarized from a scratch exploration report and spot-checked against
+  `crates/MAP.md`, `experiments/MAP.md`, `research/verification.md`, and
+  `tasks/*.md`.
   Why it matters: cleanup should proceed by independent packets unless a packet
   proves that an architecture decision is now worth Jörn's time.
 - [accepted 2026-05-04] Consult Jörn for high-risk architecture/API/data-shape
@@ -36,8 +36,8 @@ experiment safety, validation trust, or durable crate maintainability.
   Why it matters: keeps scarce decision time for choices that are expensive to
   unwind.
 - [accepted 2026-05-09] Branch `delete-algebraic-crate` is the exact arithmetic
-  replacement branch, not literal directory deletion. Its branch-level done
-  definition is `tasks/delete-algebraic-crate-done.md`.
+  replacement branch, not literal directory deletion. The merged reference
+  record is `tasks/references/exact-arithmetic-replacement-2026-05-10.md`.
   Source: Jörn chat clarification and branch DoD session on 2026-05-09.
   Why it matters: future agents must judge the branch by thesis usefulness,
   consumer adoption, generic/domain separation, and bounded verification cost,
@@ -48,26 +48,26 @@ experiment safety, validation trust, or durable crate maintainability.
 | item | state | value class | owner/gate | next action | source |
 | --- | --- | --- | --- | --- | --- |
 | Broad Rust lint gate | `[done]` | map input | agents | Keep `cargo clippy --workspace --all-targets -- -D warnings` green; use it as a cheap first-pass regression gate for future cleanup packets. | current branch, Clippy output |
-| Safe experiment command contracts | `[active]` | mainline thesis | agents, Jörn only for retained-output policy | Continue with finer per-binary smoke repairs after package-level contracts for HKO, verification/algorithm-comparison, combinatorial-cells, numerics, and sys-landscape; verification/numerics help exits are being normalized to status 0. | `/tmp/rust-tech-debt-map.md`, `experiments/MAP.md`, `tasks/reproducibility.md` |
+| Safe experiment command contracts | `[active]` | mainline thesis | agents, Jörn only for retained-output policy | Continue with finer per-binary smoke repairs after package-level contracts for HKO, verification/algorithm-comparison, combinatorial-cells, numerics, and sys-landscape; verification/numerics help exits are being normalized to status 0. | `experiments/MAP.md`, `tasks/reproducibility.md` |
 | Verification trust chain | `[active]` | mainline thesis | retained claims | `experiments/verification/README.md` now records the top-level Rust command contract. Decide later which full verification commands are required before broad Rust cleanup; keep path/row diagnostics in verification plumbing. | `research/verification.md`, `experiments/verification/README.md` |
 | `symplectic` API support levels | `[map-input]` | contingent during writing | Jörn for public API/architecture choices | Audit only the paths needed by retained thesis experiments before hiding, promoting, or redesigning public modules. | `crates/MAP.md`, `crates/symplectic/src/lib.rs` |
 | Capacity result semantics | `[active]` | mainline thesis | retained claims, Jörn for thesis-facing contract | Root `ehz_capacity*` wrappers now use `OrbitGuaranteeMode::MinimaSafe`. `ehz_capacity_pruned_certified` adds an exact rational result path for capacity, minimizers, and an optional action-gap window while reusing f64 search intervals as the prefilter. Next thesis-facing decision: which callers need the ordinary `OrbitSearchResult` contract versus the certified rational contract. | `tasks/numerics.md`, `crates/symplectic/src/lib.rs`, `crates/symplectic/src/algorithms/orbit_search.rs`, `crates/symplectic/src/kkt/rational_solver.rs` |
 | Unsupported projected backend | `[map-input]` | contingent during writing | Jörn if the projected route is retained | `OrbitSolveBackend::Projected` docs now state that the shared `solve_orbit_sigma` surface returns `UnsupportedBackend`. Choose hide or complete only if normal callers need it. | `tasks/numerics.md`, `crates/symplectic/src/algorithms/orbit_search.rs` |
-| Hidden hard failures in fallible APIs | `[active]` | map input | agents | Non-finite `Polytope4D::from_f64` inputs and invalid random-sampling parameters now fail before panic/nontermination boundaries. Continue with minimal reproducers before changing capacity-wrapper error semantics. | `/tmp/rust-tech-debt-map.md`, `crates/symplectic/src/lib.rs`, `crates/symplectic/src/geom/polytope.rs`, `crates/symplectic/src/random.rs` |
+| Hidden hard failures in fallible APIs | `[active]` | map input | agents | Non-finite `Polytope4D::from_f64` inputs and invalid random-sampling parameters now fail before panic/nontermination boundaries. Continue with minimal reproducers before changing capacity-wrapper error semantics. | `crates/symplectic/src/lib.rs`, `crates/symplectic/src/geom/polytope.rs`, `crates/symplectic/src/random.rs` |
 | Runtime invariant checks | `[active]` | mainline thesis | agents | Add exact/runtime validation at trust-boundary handoffs when complexity and compute cost are small. Start with places that turn internal payloads into certified/public results, then broaden only when a concrete failure mode or thesis-facing claim needs it. | `crates/symplectic/src/algorithms/orbit_search.rs`, `crates/symplectic/src/kkt/rational_solver.rs` |
-| Exact arithmetic replacement branch | `[done]` | mainline thesis if exact validation is cited or exact-code ambiguity blocks main-branch task sessions | agents, Jörn for merge approval and math/proof acceptance | Branch `delete-algebraic-crate` now has a filled inventory and checklist, migrated thesis-relevant Rust consumers off the old public API, and keeps domain geometry/KKT/workflow code outside the generic crate. | `tasks/delete-algebraic-crate-done.md`, `crates/algebraic-numbers/README.md`, `crates/algebraic-numbers/DEVELOPMENT.md`, `research/numerics.md`, `crates/MAP.md` |
-| Incomplete lie-audit remediation | `[active]` | mainline thesis | agents, Jörn for mathematical/source-of-truth calls | Treat `/tmp/msc-math-lie-audit.md` as incomplete and weakly validated, not as a complete findings list. Rework it with a code-first pass over exact/certified/ground-truth validation paths, then route every confirmed finding to a fix, caveat, cut, or Jörn decision before using any repo-promise verification gate. | `/tmp/msc-math-lie-audit.md`, `crates/symplectic/src/kkt/rational_solver.rs`, `tasks/verify-thesis-done.md` |
+| Exact arithmetic replacement | `[done]` | mainline thesis if exact validation is cited or exact-code ambiguity blocks main-branch task sessions | agents, Jörn for math/proof acceptance | The former `delete-algebraic-crate` branch was merged into main. It migrated thesis-relevant Rust consumers off the old public API and keeps domain geometry/KKT/workflow code outside the generic crate. | `tasks/references/exact-arithmetic-replacement-2026-05-10.md`, `crates/algebraic-numbers/README.md`, `crates/algebraic-numbers/DEVELOPMENT.md`, `research/numerics.md`, `crates/MAP.md` |
+| Incomplete lie-audit remediation | `[active]` | mainline thesis | agents, Jörn for mathematical/source-of-truth calls | Rework exact/certified/ground-truth validation paths with a code-first pass, then route every confirmed finding to a fix, caveat, cut, or Jörn decision before using any repo-promise verification gate. | `crates/symplectic/src/kkt/rational_solver.rs`, `tasks/verify-thesis-done.md` |
 | Duplicate producer ownership | `[map-input]` | map input | agents, Jörn only for deleting provenance | Label current, historical, frozen-baseline, exploratory, or delete only after checking research/task truth for that package. | `experiments/sys-landscape/`, `experiments/numerics/`, `experiments/verification/algorithm-comparison/` |
-| Solver and exact-arithmetic copies | `[active]` | map input | agents, Jörn only for deletion/provenance decisions | Route reusable generic exact arithmetic and exact linear algebra through `tasks/delete-algebraic-crate-done.md`. Keep KKT, symplectic geometry, capacity/orbit logic, and experiment workflows in their domain crates or experiments. Experiment-local and historical copies need explicit classification in the branch inventory before merge. | `tasks/delete-algebraic-crate-done.md`, `experiments/verification/algorithm-comparison/ablation/kkt.rs`, `experiments/crosspolytope/main/kkt.rs`, `experiments/numerics/error-bounds/saddle_point_solver.rs`, `experiments/numerics/src/algebraic/`, `crates/symplectic/src/kkt/rational_solver.rs`, `crates/symplectic/src/geom/vertex_enumeration/exact_linalg.rs` |
-| Blocked/stale/provenance code that looks live | `[active]` | map input | agents | Fix sampled stale headers and add grep-able status markers where source truth is already clear; `gradient-ascent-dev` now has a local stub README. Avoid broad deletion without provenance review. | `/tmp/rust-tech-debt-map.md`, topic research notes |
-| Local diagnostic text | `[active]` | map input | agents | Improve path/row/error context opportunistically while touching nearby experiment or verification code; `num-unknown-predicates` billiard failures name the failed row and `axioms-correctness` output failures name the path. | `/tmp/rust-tech-debt-map.md`, `experiments/numerics/unknown-predicates/main.rs`, `experiments/verification/correctness/main.rs` |
-| Large mixed-purpose files | `[future]` | future/follow-up by default | architecture decision if reopened | Split only when a concrete retained task is blocked by the mixed purpose. | `/tmp/rust-tech-debt-map.md` |
+| Solver and exact-arithmetic copies | `[active]` | map input | agents, Jörn only for deletion/provenance decisions | Route reusable generic exact arithmetic and exact linear algebra through `crates/algebraic-numbers/`. Keep KKT, symplectic geometry, capacity/orbit logic, and experiment workflows in their domain crates or experiments. Classify experiment-local and historical copies in their owning topic before deleting them. | `tasks/references/exact-arithmetic-replacement-2026-05-10.md`, `experiments/verification/algorithm-comparison/ablation/kkt.rs`, `experiments/crosspolytope/main/kkt.rs`, `experiments/numerics/error-bounds/saddle_point_solver.rs`, `experiments/numerics/src/algebraic/`, `crates/symplectic/src/kkt/rational_solver.rs`, `crates/symplectic/src/geom/vertex_enumeration/exact_linalg.rs` |
+| Blocked/stale/provenance code that looks live | `[active]` | map input | agents | Fix sampled stale headers and add grep-able status markers where source truth is already clear; `gradient-ascent-dev` now has a local stub README. Avoid broad deletion without provenance review. | topic research notes |
+| Local diagnostic text | `[active]` | map input | agents | Improve path/row/error context opportunistically while touching nearby experiment or verification code; `num-unknown-predicates` billiard failures name the failed row and `axioms-correctness` output failures name the path. | `experiments/numerics/unknown-predicates/main.rs`, `experiments/verification/correctness/main.rs` |
+| Large mixed-purpose files | `[future]` | future/follow-up by default | architecture decision if reopened | Split only when a concrete retained task is blocked by the mixed purpose. | `crates/MAP.md`, `experiments/MAP.md` |
 
 ## Agent Cache
 
-- [fresh 2026-05-04] `/tmp/rust-tech-debt-map.md` is an exploration report, not
-  tracked truth and not a cleanup plan. Recheck cited files before editing.
-  It is useful for cluster names, evidence anchors, and binary inventory.
+- [fresh 2026-05-10] Scratch reports are not durable source surfaces for this
+  roadmap. If a past scratch report matters, use only the claim summarized in a
+  tracked task/reference file and refresh it against live source before editing.
 - [fresh 2026-05-04] `cargo clippy --workspace --all-targets -- -D warnings`
   passed on branch `rust-tech-debt-cleanup` after mechanical lint fixes in
   Rust tests, benches, and one numerics-gradient doc comment. Refresh by
@@ -110,13 +110,11 @@ experiment safety, validation trust, or durable crate maintainability.
   scalar public surface, `canonical_element` serialization contract,
   field-spec validation/invariant-panic boundary, and the remaining formal
   reference gaps.
-- [fresh 2026-05-04] `/tmp/msc-math-lie-audit.md` is explicitly incomplete and
-  weakly validated after it missed the high-severity
-  `crates/symplectic/src/kkt/rational_solver.rs` contract lie: the file
-  advertises exact `BigRational`, ground-truth, and certified Gaussian
-  elimination, but rank and consistency decisions use f64 thresholds. Refresh
-  by doing a code-first audit of exact/certified/ground-truth paths, not by
-  trusting the report or its subagent coverage.
+- [fresh 2026-05-04] A previous scratch lie-audit was incomplete and weakly
+  validated after it missed a high-severity
+  `crates/symplectic/src/kkt/rational_solver.rs` contract mismatch. Refresh by
+  doing a code-first audit of exact/certified/ground-truth paths, not by
+  trusting old scratch report coverage.
 - [fresh 2026-05-04] `Polytope4D::from_f64` rejects non-finite f64
   coordinates with `ConstructionError::F64Conversion` before calling
   `f64_to_rational`; regression coverage lives in

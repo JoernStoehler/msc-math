@@ -1,6 +1,6 @@
 //! Exact algebraic and rational control fixtures used by the spike.
 
-use super::field::{rat, ExactOrderedField};
+use super::field::rat;
 use super::geom::{ExactPolytope4D, ExactPolytopeError};
 use super::pentagon::PentagonField;
 use num_rational::BigRational;
@@ -43,13 +43,13 @@ pub fn exact_hypercube() -> Result<ExactPolytope4D<BigRational>, ExactPolytopeEr
 pub fn exact_hko_pentagon() -> Result<ExactPolytope4D<PentagonField>, ExactPolytopeError> {
     let z = PentagonField::zero();
     let one = PentagonField::one();
-    let t = PentagonField::generator();
+    let t = PentagonField::root();
     let t2 = t.clone() * t.clone();
     let t3 = t2.clone() * t.clone();
 
-    let a = (PentagonField::one() + t2.clone()) / PentagonField::from_i64(4);
-    let b = (PentagonField::from_i64(7) * t.clone() - t3.clone()) / PentagonField::from_i64(4);
-    let sec36 = (PentagonField::from_i64(3) - t2.clone()) / PentagonField::from_i64(2);
+    let a = (PentagonField::one() + t2.clone()) / PentagonField::from(4);
+    let b = (PentagonField::from(7) * t.clone() - t3.clone()) / PentagonField::from(4);
+    let sec36 = (PentagonField::from(3) - t2.clone()) / PentagonField::from(2);
 
     ExactPolytope4D::new(vec![
         [one.clone(), t.clone(), z.clone(), z.clone()],

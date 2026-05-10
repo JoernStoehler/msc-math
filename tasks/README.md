@@ -20,6 +20,11 @@ Ground truth stays elsewhere:
   negative results.
 - `tasks/submit-thesis.md`: submission/admin source links.
 
+Supporting reference reports may live in `tasks/references/*.md` when they are
+useful to cite from a task bundle but are not themselves a live topic roadmap.
+Examples include completed merge reviews, one-off audits, and consolidated
+branch records. Keep active work state in `tasks/<topic>.md`.
+
 ## Keep Or Delete
 
 Keep a fact only if it changes a future decision, prevents a likely agent
@@ -111,3 +116,7 @@ shortcuts. It can be deleted if stale, but saves agent time when fresh.
 
 Every `Steering Cache` entry should say why it matters. Every `Agent Cache`
 entry should say how to refresh it or what invalidates it.
+
+Do not use `/tmp` files as durable source surfaces. If a scratch report changes
+future task decisions, copy or summarize the relevant result into a tracked
+task, reference, research, or experiment file and cite that tracked file.
