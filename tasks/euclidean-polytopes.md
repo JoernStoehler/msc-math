@@ -175,6 +175,13 @@ The migration task is done when:
 
 ## Agent Cache
 
+- [implemented 2026-05-10] First flat symplectic assembly slice added
+  transition-matrix and KKT/QP helpers over ordinary matrices, dual vertices,
+  and permutations, while keeping temporary `Polytope4D` wrappers as delegating
+  compatibility entry points.
+  Why it matters: capacity-facing code can now migrate call sites away from
+  `Polytope4D` without changing the transition or KKT semantics in the same
+  review packet.
 - [fresh 2026-05-10] `Polytope4D` currently mixes ordinary geometry with
   symplectic data: dual vertices, primal vertices, incidence, vertex adjacency,
   omega signs, and f64 copies. The Euclidean crate should take the ordinary

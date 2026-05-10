@@ -1,7 +1,8 @@
-//! Polytope4D + permutation -> QP matrices or augmented KKT system.
+//! Flat dual-vertex data + permutation -> QP matrices or augmented KKT system.
 //!
-//! Bridges geometry (dual vertices, normals, heights) to the solver's abstract
-//! matrix inputs. Two assembly modes:
+//! Bridges geometry data to the solver's abstract matrix inputs. Existing
+//! `Polytope4D` wrappers remain during migration, but the assembly boundary
+//! only needs dual vertices and a permutation. Two assembly modes:
 //!
 //! - `build_qp`: assembles the QP struct {C, d, H} using dual vertices directly.
 //!   Used by the projection solver path.
@@ -13,13 +14,12 @@
 use super::QP;
 use crate::geom::polytope::Polytope4D;
 use crate::geom::symplectic_form::omega0;
-use nalgebra::{DMatrix, DVector};
+use nalgebra::{DMatrix, DVector, Vector4};
 
-/// Assemble the QP {C, d, H} from a polytope and cyclic permutation.
+/// Assemble the QP {C, d, H} from dual vertices and a cyclic permutation.
 ///
-/// Given a polytope K = {x : a_i^T x <= 1} with dual vertices a_i and a
-/// permutation sigma of m facet
-/// indices, assembles:
+/// Given dual vertices a_i of K = {x : a_i^T x <= 1} and a permutation sigma
+/// of m facet indices, assembles:
 ///
 /// - **C** (5 x m): closure constraints (sum a_{sigma(i)} beta_i = 0, four rows)
 ///   plus normalization (sum beta_i = 1, one row). Note: when using dual vertices
@@ -38,12 +38,13 @@ use nalgebra::{DMatrix, DVector};
 /// parameterization.
 ///
 /// # Panics
-/// - If any index in `perm` is out of bounds for the polytope's facets.
+/// - If any index in `perm` is out of bounds for `dual_vertices`.
 ///
 /// [lem:kkt]: KKT optimality conditions characterize the EHZ capacity optimum.
-pub fn build_qp(polytope: &Polytope4D, perm: &[usize]) -> QP {
+pub fn build_qp_from_dual_vertices(dual_vertices: &[Vector4<f64>], perm: &[usize]) -> QP {
+    assert_permutation_indices_in_bounds(dual_vertices, perm);
+
     let m = perm.len();
-    let dual_verts = polytope.dual_vertices_f64();
 
     // Constraint matrix C (5 x m):
     // Rows 0..3: closure constraint sum_i a_{sigma(i)} beta_i = 0 (per coordinate)
@@ -60,7 +61,7 @@ pub fn build_qp(polytope: &Polytope4D, perm: &[usize]) -> QP {
     // EHZ symplectic action directly from dual vertices, without factoring a_i = h_i n_i.
     let mut c = DMatrix::zeros(5, m);
     for (col, &facet_idx) in perm.iter().enumerate() {
-        let a = &dual_verts[facet_idx];
+        let a = &dual_vertices[facet_idx];
         for d in 0..4 {
             c[(d, col)] = a[d];
         }
@@ -76,7 +77,7 @@ pub fn build_qp(polytope: &Polytope4D, perm: &[usize]) -> QP {
     let mut h = DMatrix::zeros(m, m);
     for i in 0..m {
         for j in (i + 1)..m {
-            let val = omega0(&dual_verts[perm[i]], &dual_verts[perm[j]]);
+            let val = omega0(&dual_vertices[perm[i]], &dual_vertices[perm[j]]);
             h[(i, j)] = val;
             h[(j, i)] = val;
         }
@@ -85,7 +86,13 @@ pub fn build_qp(polytope: &Polytope4D, perm: &[usize]) -> QP {
     QP { c, d, h }
 }
 
-/// Assemble the augmented (m+5)x(m+5) KKT system from a polytope and permutation.
+/// Compatibility wrapper while callers still own `Polytope4D`.
+pub fn build_qp(polytope: &Polytope4D, perm: &[usize]) -> QP {
+    let dual_vertices = polytope.dual_vertices_f64();
+    build_qp_from_dual_vertices(dual_vertices, perm)
+}
+
+/// Assemble the augmented (m+5)x(m+5) KKT system from dual vertices and a permutation.
 ///
 /// Builds the symmetric saddle-point matrix M and right-hand side b:
 ///
@@ -105,16 +112,17 @@ pub fn build_qp(polytope: &Polytope4D, perm: &[usize]) -> QP {
 /// Symmetry enables eigendecomposition M = V Lambda V^T.
 ///
 /// # Panics
-/// - If any index in `perm` is out of bounds for the polytope's facets.
+/// - If any index in `perm` is out of bounds for `dual_vertices`.
 ///
 /// [lem:kkt]: the augmented saddle-point system encodes stationarity + closure + normalization.
-pub fn build_augmented_system(
-    polytope: &Polytope4D,
+pub fn build_augmented_system_from_dual_vertices(
+    dual_vertices: &[Vector4<f64>],
     perm: &[usize],
 ) -> (DMatrix<f64>, DVector<f64>) {
+    assert_permutation_indices_in_bounds(dual_vertices, perm);
+
     let m = perm.len();
     let size = m + 5;
-    let dual_verts = polytope.dual_vertices_f64();
 
     let mut kkt = DMatrix::zeros(size, size);
     let mut rhs = DVector::zeros(size);
@@ -123,7 +131,7 @@ pub fn build_augmented_system(
     // H_{ij} = omega_0(a_{sigma(i)}, a_{sigma(j)}) for i != j, H_{ii} = 0.
     for i in 0..m {
         for j in (i + 1)..m {
-            let val = omega0(&dual_verts[perm[i]], &dual_verts[perm[j]]);
+            let val = omega0(&dual_vertices[perm[i]], &dual_vertices[perm[j]]);
             kkt[(i, j)] = val;
             kkt[(j, i)] = val;
         }
@@ -132,7 +140,7 @@ pub fn build_augmented_system(
     // Off-diagonal blocks: A (m x 4) and A^T (4 x m) — placed symmetrically.
     for i in 0..m {
         for d in 0..4 {
-            let a = dual_verts[perm[i]][d];
+            let a = dual_vertices[perm[i]][d];
             kkt[(i, m + d)] = a;
             kkt[(m + d, i)] = a;
         }
@@ -148,6 +156,25 @@ pub fn build_augmented_system(
     rhs[m + 4] = 1.0;
 
     (kkt, rhs)
+}
+
+/// Compatibility wrapper while callers still own `Polytope4D`.
+pub fn build_augmented_system(
+    polytope: &Polytope4D,
+    perm: &[usize],
+) -> (DMatrix<f64>, DVector<f64>) {
+    let dual_vertices = polytope.dual_vertices_f64();
+    build_augmented_system_from_dual_vertices(dual_vertices, perm)
+}
+
+fn assert_permutation_indices_in_bounds(dual_vertices: &[Vector4<f64>], perm: &[usize]) {
+    for &facet_idx in perm {
+        assert!(
+            facet_idx < dual_vertices.len(),
+            "permutation index {facet_idx} out of bounds for {} dual vertices",
+            dual_vertices.len()
+        );
+    }
 }
 
 #[cfg(test)]
@@ -167,6 +194,29 @@ mod tests {
     // matrix dimensions, symmetry of H, constraint structure, and known values.
 
     // ── build_qp tests ──
+
+    /// Flat dual-vertex assembly matches the temporary Polytope4D wrapper.
+    #[test]
+    fn flat_qp_matches_polytope_wrapper() {
+        let polytope = make_test_polytope();
+        let dual_vertices = polytope.dual_vertices_f64();
+        let perm: Vec<usize> = vec![0, 2, 4, 6];
+
+        let flat = build_qp_from_dual_vertices(dual_vertices, &perm);
+        let wrapped = build_qp(&polytope, &perm);
+
+        assert_eq!(flat.c, wrapped.c);
+        assert_eq!(flat.d, wrapped.d);
+        assert_eq!(flat.h, wrapped.h);
+    }
+
+    #[test]
+    #[should_panic(expected = "permutation index 8 out of bounds for 8 dual vertices")]
+    fn flat_qp_rejects_out_of_bounds_permutation_index() {
+        let polytope = make_test_polytope();
+        let dual_vertices = polytope.dual_vertices_f64();
+        let _ = build_qp_from_dual_vertices(dual_vertices, &[0, 8]);
+    }
 
     /// Verify QP dimensions match the permutation length.
     #[test]
@@ -314,6 +364,20 @@ mod tests {
     }
 
     // ── build_augmented_system tests ──
+
+    /// Flat dual-vertex KKT assembly matches the temporary Polytope4D wrapper.
+    #[test]
+    fn flat_augmented_system_matches_polytope_wrapper() {
+        let polytope = make_test_polytope();
+        let dual_vertices = polytope.dual_vertices_f64();
+        let perm: Vec<usize> = vec![1, 3, 5, 7];
+
+        let (flat_kkt, flat_rhs) = build_augmented_system_from_dual_vertices(dual_vertices, &perm);
+        let (wrapped_kkt, wrapped_rhs) = build_augmented_system(&polytope, &perm);
+
+        assert_eq!(flat_kkt, wrapped_kkt);
+        assert_eq!(flat_rhs, wrapped_rhs);
+    }
 
     /// Augmented system has size (m+5) x (m+5).
     #[test]

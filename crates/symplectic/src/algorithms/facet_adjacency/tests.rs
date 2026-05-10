@@ -8,6 +8,42 @@ use crate::geom::known_polytopes;
 //
 // Strategy: fixture-based on simplex, hypercube, and Lagrangian products.
 
+#[test]
+fn flat_transition_matrix_combines_adjacency_and_nonnegative_omega() {
+    #[rustfmt::skip]
+    let vertex_adjacency = DMatrix::from_row_slice(3, 3, &[
+        false, true,  true,
+        true,  false, true,
+        true,  true,  false,
+    ]);
+    #[rustfmt::skip]
+    let omega_signs = DMatrix::from_row_slice(3, 3, &[
+        0,  1, -1,
+       -1,  0,  0,
+        1, -1,  0,
+    ]);
+
+    let directed =
+        build_transition_matrix_from_adjacency_and_omega(&vertex_adjacency, &omega_signs);
+
+    #[rustfmt::skip]
+    let expected = DMatrix::from_row_slice(3, 3, &[
+        false, true,  false,
+        false, false, true,
+        true,  false, false,
+    ]);
+    assert_eq!(directed, expected);
+}
+
+#[test]
+#[should_panic(expected = "vertex_adjacency and omega_signs must have the same shape")]
+fn flat_transition_matrix_rejects_shape_mismatch() {
+    let vertex_adjacency = DMatrix::from_element(2, 2, false);
+    let omega_signs = DMatrix::from_element(3, 3, 0);
+
+    let _ = build_transition_matrix_from_adjacency_and_omega(&vertex_adjacency, &omega_signs);
+}
+
 /// Simplex (5 facets): every pair of facets shares a vertex (complete graph).
 /// Undirected adjacency should be all-true except diagonal.
 #[test]
