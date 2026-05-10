@@ -131,7 +131,12 @@ proptest! {
         let (dual_vertices, vertices) = hypercube(scale);
 
         let volume = decided_volume(&dual_vertices, &vertices);
-        prop_assert!((volume - 16.0 * scale.powi(4)).abs() < 1.0e-9);
+        let expected = 16.0 * scale.powi(4);
+        let allowed_error = 1.0e-12_f64.max(1.0e-12 * expected.abs());
+        prop_assert!(
+            (volume - expected).abs() <= allowed_error,
+            "scale={scale}, volume={volume}, expected={expected}, allowed_error={allowed_error}"
+        );
     }
 }
 
