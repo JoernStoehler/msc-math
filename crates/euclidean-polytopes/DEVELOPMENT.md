@@ -30,8 +30,8 @@ existing code.
 
 1. `polar_vertices_exact(vertices)` plus the validation and helper operations it
    needs. This includes exact affine/rank primitives over `Vector4<T>`, exact
-   `origin_in_interior_of_conv`, and exact non-redundancy/extreme-point checks
-   if the polar-vertices contract needs them.
+   `origin_in_interior_of_conv`, and a separate exact non-redundancy/
+   extreme-point check for callers that need that stronger input-list contract.
 2. `polar_vertices_f64(vertices)` with flat approximate outputs and explicit
    indeterminate tuple/candidate reporting instead of tolerance guesses.
 3. Full-dimensional `R^4` volume from `(dual_vertices, vertices)` using
@@ -50,6 +50,22 @@ API is reviewed in a real caller-shaped context. Each later slice should still
 be separately reviewable and keep `symplectic` compiling. Prefer moving tests
 with the code, then adding one cross-crate regression in `symplectic` to prove
 the old behavior still reaches the new helper.
+
+## Module Structure
+
+Use single-concern files and modules. Prefer a module per mathematical
+operation family, with exact and f64 variants close enough to compare when they
+implement the same algorithm. For example, `volume.rs` should own Euclidean
+volume over both exact and f64 pathways unless implementation size proves that
+`volume_exact.rs` and `volume_f64.rs` are easier to read and maintain.
+
+The initial likely files are:
+
+- `predicates.rs`: origin-interior and extremality predicates;
+- `polar.rs`: polar vertex enumeration and incidence data;
+- `volume.rs`: full-dimensional and affine-subspace Euclidean volume;
+- `f64_geometry.rs`: shared f64 input validation and small diagnostic structs,
+  only if repeated code makes a shared file simpler than local structs.
 
 ## API Review Notes
 
@@ -102,12 +118,12 @@ callers need both.
 
 The approximate pathway returns ordinary `f64` data with semantic names and
 error bounds when that is the natural shape. For sign-like consumers, the usual
-pattern is `x - x_error > 0`, `x + x_error < 0`, else indeterminate. A tiny
-`True`/`False`/`Indeterminate` helper may be useful for bare predicates. Prefer
-operation-specific diagnostic results when the indeterminate case has useful
-payload, for example candidate sets of five vertices that may contain zero.
-Do not introduce a generic wrapper for all approximate results before repeated
-call sites prove it helps.
+pattern is `x - x_abs_error_bound > 0`, `x + x_abs_error_bound < 0`, else
+indeterminate. A tiny `True`/`False`/`Indeterminate` helper may be useful for
+bare predicates. Prefer operation-specific diagnostic results when the
+indeterminate case has useful payload, for example candidate sets of five
+vertices that may contain zero. Do not introduce a generic wrapper for all
+approximate results before repeated call sites prove it helps.
 
 Approximate code must not silently decide cases where the result depends on a
 near-singular solve, a near-duplicate candidate, or a halfspace membership test
@@ -132,6 +148,11 @@ it should check the diagnostic candidates exactly until the answer is known.
 For `origin_in_interior_of_conv_exact`, one expected f64 diagnostic payload is
 the candidate 5-point simplex sets that may contain zero.
 
+For `origin_in_interior_of_conv_f64`, a false diagnostic needs enough evidence
+to rule out all candidate 5-point simplex sets. Therefore the indeterminate
+case should list all candidate sets that may contain zero, not just the first
+one. Revisit only if memory or runtime measurements show this can blow up.
+
 ### Accepted Direction: Result, Option, Panic, Tuple, Struct
 
 Use `Result` for recoverable errors. Use `Option` only when the mathematical
@@ -147,6 +168,22 @@ input. Do not introduce placeholder error types such as `ConvexHullError`,
 Use tuples when each position is obvious at the call site. Use a locally defined
 flat data container when output variables need names. Avoid input wrappers
 unless a pipeline naturally reuses the output type of an earlier function.
+
+Name error bounds as `_abs_error_bound` for absolute error bounds and
+`_rel_error_bound` for relative error bounds. Avoid `_error`, which is
+ambiguous between a numeric bound and a failure/diagnostic.
+
+### Accepted Direction: Polar Preconditions
+
+`polar_vertices_exact(vertices)` needs `0 in int conv(vertices)` for the
+normalized polar to be bounded and full-dimensional. Check/assert this in the
+first implementation; optimize later only if profiling shows it matters.
+
+The input list does not need to be non-redundant to compute the polar vertices:
+a non-extreme input point produces a redundant polar inequality. Keep
+`all_points_are_extreme_exact` as a separate check for callers that need the
+input list itself to be exactly the extrema or need each input to correspond to
+a non-redundant polar facet.
 
 ### Accepted Direction: Exact Versus `f64` Metric Outputs
 

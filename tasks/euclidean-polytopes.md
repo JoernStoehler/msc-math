@@ -38,12 +38,12 @@ modules, which makes non-symplectic helpers harder to reuse and review.
   floating paths, but near-singular 4-tuples, duplicate candidates, and
   halfspace-boundary cases must not be guessed by tolerance.
 - [Jorn API guidance 2026-05-10] Avoid premature abstractions. Prefer flat
-  standard types with semantic names, such as `x` and `x_error`, over wrappers
-  that fresh agents must learn. Use `_exact` and `_f64` suffixes when both
-  pathways exist. Use `Result` for recoverable errors, `Option` only for exact
-  mathematical `None`/`Some` distinctions, panics for irrecoverable contract or
-  invariant violations, tuples when positions are obvious, and local flat
-  structs when output variables need names.
+  standard types with semantic names, such as `x` and `x_abs_error_bound`, over
+  wrappers that fresh agents must learn. Use `_exact` and `_f64` suffixes when
+  both pathways exist. Use `Result` for recoverable errors, `Option` only for
+  exact mathematical `None`/`Some` distinctions, panics for irrecoverable
+  contract or invariant violations, tuples when positions are obvious, and
+  local flat structs when output variables need names.
   Why it matters: the crate should map to the math at call sites without
   wrapping/unwrapping overhead or hidden positional input contracts.
 - [Jorn decisions 2026-05-10] f64 volume should be implemented before exact
@@ -63,14 +63,33 @@ modules, which makes non-symplectic helpers harder to reuse and review.
   diagnostics.
   Why it matters: do not overfit exact and approximate incidence to the same
   storage shape when their semantics differ.
+- [Jorn decisions 2026-05-10] Exact volume over field `T` should stay in `T`;
+  no field extensions are expected for exact polytope volume. f64 origin
+  interior diagnostics should list all candidate 5-sets that may contain zero,
+  because proving `false` needs ruling them all out. Code should use
+  single-concern files/modules such as `volume.rs`, with exact and f64 variants
+  colocated when that makes comparison and maintenance easier.
+  Why it matters: these choices prevent future agents from weakening exact
+  volume, truncating f64 diagnostics prematurely, or splitting code by numeric
+  representation before it improves readability.
+- [agent synthesis 2026-05-10] `polar_vertices_exact(vertices)` needs
+  `0 in int conv(vertices)` for the normalized polar to be bounded and
+  full-dimensional. It does not need `vertices` to be non-redundant to compute
+  the polar vertices; redundant input points become redundant polar
+  inequalities. Non-redundancy remains a separate check for callers that need
+  every input point to be an extremum or every input to define a non-redundant
+  polar facet.
+  Why it matters: the first implementation should check/assert the interior
+  condition but should not overconstrain polar vertex enumeration with an
+  unnecessary non-redundancy precondition.
 
 ## Work Map
 
 | item | state | value class | owner/gate | next action | source |
 | --- | --- | --- | --- | --- | --- |
 | Crate scaffold and API target | `[active]` | mainline thesis | agents, Jorn for API taste close calls | Review `README.md` and `DEVELOPMENT.md`; decide whether the flat-input/no-public-wrapper direction is accepted for the first migration. | `crates/euclidean-polytopes/README.md`, `crates/euclidean-polytopes/DEVELOPMENT.md` |
-| Robust floating/exact architecture | `[active]` | mainline thesis | agents | Define flat approximate return shapes with semantic names, error bounds, and operation-specific indeterminate diagnostics. Exact predicates return `bool` and may resolve f64 indeterminate diagnostic candidates exactly. | `crates/euclidean-polytopes/README.md`, `crates/euclidean-polytopes/DEVELOPMENT.md` |
-| Polar vertex enumeration plus validation dependencies | `[active]` | mainline thesis | agents | Implement `polar_vertices_exact(vertices)` and everything it needs, including exact origin-in-interior and non-redundancy/extreme-point checks if those are required by the algorithm contract; add an `f64` path that reports indeterminate tuples/candidates instead of guessing. | `crates/symplectic/src/geom/vertex_enumeration/`, `crates/algebraic-numbers/` |
+| Robust floating/exact architecture | `[active]` | mainline thesis | agents | Define flat approximate return shapes with semantic names, `_abs_error_bound` fields, and operation-specific indeterminate diagnostics. Exact predicates return `bool` and may resolve f64 indeterminate diagnostic candidates exactly. | `crates/euclidean-polytopes/README.md`, `crates/euclidean-polytopes/DEVELOPMENT.md` |
+| Polar vertex enumeration plus validation dependencies | `[active]` | mainline thesis | agents | Implement `polar_vertices_exact(vertices)` and everything it needs, including exact origin-in-interior. Keep non-redundancy/extreme-point checks separate unless a caller needs that stronger contract. Add an `f64` path that reports indeterminate tuples/candidates instead of guessing. | `crates/symplectic/src/geom/vertex_enumeration/`, `crates/algebraic-numbers/` |
 | Full-dimensional volume | `[active]` | mainline thesis | agents | Factor ordinary `R^4` volume away from `Polytope4D`; implement f64 volume first, keep exact volume as a real target, and expose f64 indeterminate incidence entries when incidence is tolerance-sensitive. | `crates/symplectic/src/geom/volume.rs` |
 | Affine-subspace polygons and volume | `[active]` | mainline thesis | agents, Jorn only if generic-vs-specific API affects thesis callers | Let the internal volume decomposition determine the first affine-subspace helper shape; likely needs 3-face measures of 4-polytopes and polygon area in affine 2-planes of `R^4`. | `crates/symplectic/src/geom/volume.rs`, `crates/symplectic/src/geom/polygon.rs` |
 | Symplectic integration cleanup | `[active]` | mainline thesis | agents | After each migrated slice, keep `symplectic` as the owner of symplectic form, capacity, KKT, omega signs, Reeb-direction adjacency, and experiment-facing wrappers only. | `crates/symplectic/src/geom/`, `crates/symplectic/src/algorithms/` |
