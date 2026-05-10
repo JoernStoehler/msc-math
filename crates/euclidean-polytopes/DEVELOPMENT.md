@@ -82,6 +82,11 @@ vertices would force recomputation. The record must not become a public
 invariant wrapper unless future callers repeatedly pass the same certified
 bundle through many operations.
 
+Exact incidence can be a `DMatrix<bool>` or a `Vec<Vec<bool>>`, whichever makes
+the implementation and callers simpler. Approximate incidence should use a flat
+relation shape if each vertex/facet relation can carry true/false/indeterminate
+diagnostics, such as a signed gap and error bound.
+
 ### Close Call: Full `Polytope` Type
 
 No public polytope type in the first migration.

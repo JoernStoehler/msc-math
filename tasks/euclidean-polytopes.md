@@ -57,6 +57,12 @@ modules, which makes non-symplectic helpers harder to reuse and review.
   Why it matters: future agents should not cut exact volume from the target,
   over-index on consumer-facing API shape for affine volume, or make exact
   predicates return diagnostic wrappers.
+- [Jorn API nit 2026-05-10] Exact incidence can probably be stored as
+  `DMatrix<bool>` or `Vec<Vec<bool>>`. Approximate incidence may need a flat
+  relation list if each relation is true, false, or indeterminate with
+  diagnostics.
+  Why it matters: do not overfit exact and approximate incidence to the same
+  storage shape when their semantics differ.
 
 ## Work Map
 

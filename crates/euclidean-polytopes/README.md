@@ -101,10 +101,23 @@ pub fn polar_vertices_exact<T: ExactScalar>(
     vertices: &[Vector4<T>],
 ) -> Result<PolarVertexData<T>, PolarError>;
 
+pub struct PolarVertexData<T> {
+    pub vertices: Vec<Vector4<T>>,
+    pub incidence: nalgebra::DMatrix<bool>,
+}
+
 pub struct PolarVerticesF64 {
     pub vertices: Vec<Vector4<f64>>,
     pub coordinate_error: f64,
+    pub incidence: Vec<IncidenceF64>,
     pub indeterminate_tuples: Vec<[usize; 4]>,
+}
+
+pub struct IncidenceF64 {
+    pub vertex_index: usize,
+    pub facet_index: usize,
+    pub signed_gap: f64,
+    pub signed_gap_error: f64,
 }
 
 pub fn polar_vertices_f64(
@@ -139,6 +152,12 @@ The full-dimensional volume target should use `dual_vertices` only to recover
 facet incidence (`<a_i, v> = 1`) and use `vertices` for Euclidean geometry. This
 keeps the call close to the math and avoids constructing a symplectic
 `Polytope4D` only to ask an ordinary volume question.
+
+Exact incidence can use `DMatrix<bool>` or another plain boolean matrix shape.
+Approximate incidence should not be forced into a boolean matrix when each
+relation can be true, false, or indeterminate with diagnostics. Prefer a flat
+`Vec<IncidenceF64>`-style relation list if it needs values such as
+`signed_gap`, `signed_gap_error`, or candidate indices.
 
 Lower-dimensional volume is a design target because the full-dimensional volume
 implementation naturally decomposes into facet and ridge measures. The expected
