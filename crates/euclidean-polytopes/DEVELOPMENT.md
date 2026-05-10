@@ -20,6 +20,7 @@ The thesis-facing objective is agent velocity and validation trust:
 
 The implemented packets are in place:
 
+- `sample_random_dual_vertices_f64(facet_count, h_min, h_max, rng) -> Vec<Vector4<f64>>`;
 - `origin_in_interior_of_conv_exact(points) -> bool`;
 - `all_points_are_extreme_exact(points) -> bool`;
 - `polar_vertices_exact(vertices) -> PolarVertexData<T>`;
@@ -61,6 +62,28 @@ until a credible determinant-sum rounding analysis is implemented.
 Do not add broad public API only because it is mathematically natural. Add a
 function when a current migration caller needs it or when it removes duplicated
 existing code.
+
+## Implemented Slice: Random Dual-Vertex Candidate Sampling
+
+Ordinary Euclidean random sampling of candidate normalized dual vertices lives
+in this crate:
+
+```rust,ignore
+pub fn sample_random_dual_vertices_f64<R: rand::Rng + ?Sized>(
+    facet_count: usize,
+    h_min: f64,
+    h_max: f64,
+    rng: &mut R,
+) -> Vec<Vector4<f64>>;
+```
+
+The helper samples independent unit normals on `S^3` and heights in
+`[h_min, h_max)`, returning `a_i = n_i / h_i` for normalized halfspaces
+`<a_i, x> <= 1`. It asserts the programmer contract `facet_count >= 5` and
+finite `0 < h_min < h_max`. It deliberately does not construct `Polytope4D`,
+validate boundedness, validate non-redundancy, or own rejection sampling.
+`symplectic::random` remains the temporary `Polytope4D::from_f64` validation
+wrapper and keeps `generate_polytope(master_seed, attempt)` seed derivation.
 
 ## Implemented Slice: Extreme-Point Predicate
 

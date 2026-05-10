@@ -9,14 +9,9 @@
 //! normal directions (Haar measure on S^3) with independent height scaling.
 
 use crate::geom::polytope::{ConstructionError, Polytope4D};
-use nalgebra::Vector4;
+use euclidean_polytopes::sample_random_dual_vertices_f64;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
-use rand_distr::{Distribution, StandardNormal, Uniform};
-
-/// Rejection threshold for near-zero vectors when sampling on S^3.
-/// Probability of ||v|| < 1e-10 for 4D standard normal is astronomically small.
-const EPS_NEAR_ZERO: f64 = 1e-10;
 
 fn validate_sampling_parameters(
     facet_count: usize,
@@ -32,21 +27,6 @@ fn validate_sampling_parameters(
         )));
     }
     Ok(())
-}
-
-/// Sample a single random unit vector on S^3 (uniform distribution via Muller's method).
-fn random_unit_s3(rng: &mut ChaCha8Rng) -> Vector4<f64> {
-    loop {
-        let x: f64 = StandardNormal.sample(rng);
-        let y: f64 = StandardNormal.sample(rng);
-        let z: f64 = StandardNormal.sample(rng);
-        let w: f64 = StandardNormal.sample(rng);
-        let v = Vector4::new(x, y, z, w);
-        let norm = v.norm();
-        if norm > EPS_NEAR_ZERO {
-            return v / norm;
-        }
-    }
 }
 
 /// Attempt to sample a single valid polytope.
@@ -67,19 +47,8 @@ pub fn sample_random_polytope(
 ) -> Result<Polytope4D, ConstructionError> {
     validate_sampling_parameters(facet_count, h_min, h_max)?;
 
-    let h_dist = Uniform::new(h_min, h_max);
-
-    let normals: Vec<Vector4<f64>> = (0..facet_count).map(|_| random_unit_s3(rng)).collect();
-    let heights: Vec<f64> = (0..facet_count).map(|_| h_dist.sample(rng)).collect();
-
-    // Convert (normal, height) to dual vertex: a_i = n_i / h_i
-    let halfspaces: Vec<Vector4<f64>> = normals
-        .iter()
-        .zip(heights.iter())
-        .map(|(n, &h)| n / h)
-        .collect();
-
-    Polytope4D::from_f64(halfspaces)
+    let dual_vertices = sample_random_dual_vertices_f64(facet_count, h_min, h_max, rng);
+    Polytope4D::from_f64(dual_vertices)
 }
 
 /// Generate a single polytope attempt with an independent seed.

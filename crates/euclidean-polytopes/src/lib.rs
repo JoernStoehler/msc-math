@@ -14,6 +14,7 @@ mod f64_geometry;
 mod linalg;
 mod polar;
 mod predicates;
+mod random;
 mod volume;
 
 pub use f64_geometry::F64GeometryError;
@@ -22,6 +23,7 @@ pub use polar::{
     PolarVertexData, PolarVerticesF64,
 };
 pub use predicates::{all_points_are_extreme_exact, origin_in_interior_of_conv_exact};
+pub use random::sample_random_dual_vertices_f64;
 pub use volume::{
     facet_volume_and_centroid_from_incidence_f64, facet_volume_from_incidence_f64, volume_f64,
     volume_from_incidence_exact, volume_from_incidence_f64, VolumeF64,

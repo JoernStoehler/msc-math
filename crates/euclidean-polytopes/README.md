@@ -37,9 +37,9 @@ all future context.
 
 ## Implemented API
 
-The implemented public API currently covers exact point-set predicates, polar
-vertex enumeration, full-dimensional volume, and known-incidence facet 3-volume
-in ambient `R^4`:
+The implemented public API currently covers random candidate dual-vertex
+sampling, exact point-set predicates, polar vertex enumeration,
+full-dimensional volume, and known-incidence facet 3-volume in ambient `R^4`:
 
 ```rust,ignore
 use algebraic_numbers::ExactScalar;
@@ -130,7 +130,20 @@ pub enum F64GeometryError {
         value: f64,
     },
 }
+
+pub fn sample_random_dual_vertices_f64<R: rand::Rng + ?Sized>(
+    facet_count: usize,
+    h_min: f64,
+    h_max: f64,
+    rng: &mut R,
+) -> Vec<Vector4<f64>>;
 ```
+
+`sample_random_dual_vertices_f64(facet_count, h_min, h_max, rng)` samples
+candidate normalized dual vertices `a_i = n_i / h_i`, with unit normals `n_i`
+uniform on `S^3` and independent heights `h_i` uniform in `[h_min, h_max)`.
+It asserts `facet_count >= 5` and finite `0 < h_min < h_max`. It does not
+construct a polytope, validate boundedness, or test non-redundancy.
 
 `polar_vertices_exact(vertices)` computes vertices of the normalized polar
 `{ y in R^4 : <v_i, y> <= 1 }`. It checks and panics on the required contract

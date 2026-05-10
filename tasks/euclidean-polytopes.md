@@ -111,6 +111,7 @@ modules, which makes non-symplectic helpers harder to reuse and review.
 | Known-incidence facet 3-volume and centroid | `[implemented migration slice]` | mainline thesis | agents | `facet_volume_from_incidence_f64` and `facet_volume_and_centroid_from_incidence_f64` are implemented in `euclidean-polytopes`. `symplectic::geom::facet_volume` explicit f64 entry points and `volume_derivatives_a` now use exact `Polytope4D` incidence instead of raw f64 facet membership tests. | `crates/euclidean-polytopes/src/volume.rs`, `crates/symplectic/src/geom/facet_volume.rs`, `crates/symplectic/src/derivatives.rs` |
 | Incidence-only 2-face ordering | `[implemented migration slice]` | mainline thesis | agents | Private `order_2face_vertices_from_incidence` orders `facet_i ∩ facet_j` using only the incidence matrix, with empty/1/2-vertex intersections skipped by callers and `>=3` intersections asserted to be a single cycle. Known-incidence f64 volume and facet-volume paths use it before exact volume. | `crates/euclidean-polytopes/DEVELOPMENT.md`, `crates/euclidean-polytopes/src/volume.rs`, `crates/euclidean-polytopes/tests/volume.rs` |
 | Full-dimensional exact volume | `[implemented migration slice]` | mainline thesis | agents | `volume_from_incidence_exact(vertices, incidence) -> T` uses incidence-only 2-face ordering and exact 4-simplex determinant sums. It does not take dual vertices or use f64 in the exact computation. | `crates/euclidean-polytopes/DEVELOPMENT.md`, `crates/euclidean-polytopes/src/volume.rs`, `crates/euclidean-polytopes/tests/volume.rs` |
+| Random dual-vertex candidate sampling | `[implemented migration slice]` | mainline thesis | agents | `sample_random_dual_vertices_f64(facet_count, h_min, h_max, rng)` samples candidate normalized dual vertices in `euclidean-polytopes`. `symplectic::random` keeps rejection sampling through `Polytope4D::from_f64` and keeps master-seed/attempt derivation. | `crates/euclidean-polytopes/src/random.rs`, `crates/euclidean-polytopes/tests/random.rs`, `crates/symplectic/src/random.rs` |
 | Symplectic exact/f64 volume API | `[deleted after migration]` | mainline thesis | agents | The public `symplectic::geom::volume` module was removed after callers migrated to `euclidean_polytopes::volume_from_incidence_exact` plus local exact-to-f64 helpers. | `crates/euclidean-polytopes/DEVELOPMENT.md`, `crates/symplectic/src/derivatives.rs`, `experiments/*/src/lib.rs` |
 | Affine-subspace polygons and volume | `[active]` | mainline thesis | agents, Jorn only if generic-vs-specific API affects thesis callers | Let the internal Euclidean volume decomposition determine the first affine-subspace helper shape; likely needs 3-face measures of 4-polytopes and polygon area in affine 2-planes of `R^4`. | `crates/euclidean-polytopes/src/volume.rs`, `crates/symplectic/src/geom/polygon.rs` |
 | Symplectic integration cleanup | `[active]` | mainline thesis | agents | After each migrated slice, keep `symplectic` as the owner of symplectic form, capacity, KKT, omega signs, Reeb-direction adjacency, and experiment-facing wrappers only. | `crates/symplectic/src/geom/`, `crates/symplectic/src/algorithms/` |
@@ -260,6 +261,13 @@ The migration task is done when:
   calls the polytope-level centroid helper.
   Why it matters: derivative code no longer weakens exact incidence by
   retesting vertex-facet membership through f64 signed gaps.
+- [implemented 2026-05-10] Ordinary random candidate dual-vertex sampling moved
+  to `euclidean-polytopes` as `sample_random_dual_vertices_f64`. The function
+  returns only `Vec<Vector4<f64>>` candidates and asserts the sampling contract.
+  `symplectic::random` still owns `Polytope4D` validation/rejection and
+  deterministic seed derivation for generated attempts.
+  Why it matters: Euclidean sampling is reusable without making the Euclidean
+  crate own symplectic validation or experiment-facing rejection loops.
 - [Jorn terminology 2026-05-10] Prefer `2-face` over `ridge` in new public
   docs, APIs, and task text. Old internal code may keep existing terminology
   until touched, but new Euclidean-facing helper names should use `2face` or
