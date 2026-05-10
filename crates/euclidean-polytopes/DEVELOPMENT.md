@@ -258,9 +258,9 @@ Implemented criteria for this slice:
   out-of-range facet indices, and a symplectic wrapper regression;
 - verification command results are recorded in the branch handoff.
 
-## Next Slice: Incidence-Only 2-Face Ordering
+## Implemented Slice: Incidence-Only 2-Face Ordering
 
-The next migration slice should add an incidence-only helper for ordering the
+This migration slice added an incidence-only helper for ordering the
 vertices of the 2-face `facet_i ∩ facet_j`. This helper is the combinatorial
 piece needed before exact full-dimensional volume can sum exact determinants
 without using f64 polygon ordering.
@@ -279,9 +279,8 @@ fn order_2face_vertices_from_incidence(
 ) -> Vec<usize>;
 ```
 
-The helper may stay private or crate-visible in the first slice if no external
-caller needs it yet. It should use only incidence. It must not inspect
-coordinates or dual vertices.
+The helper is private because no external caller needs it yet. It uses only
+incidence and does not inspect coordinates or dual vertices.
 
 Edge behavior:
 
@@ -297,7 +296,7 @@ Edge behavior:
 - do not detect coordinate degeneracy. If incidence gives a valid cycle,
   determinant summation can handle zero or tiny geometric contribution.
 
-Done criteria for this slice:
+Implemented criteria for this slice:
 
 - helper tests cover empty, one-point, two-point, triangular, quadrilateral,
   and higher-vertex 2-face cases from constructed incidence matrices;

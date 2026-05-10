@@ -49,8 +49,8 @@ pub enum VolumeF64 {
 /// - every remaining relation is returned in `VolumeF64::Indeterminate`.
 ///
 /// Once incidence is decided, the implementation triangulates each 3-facet
-/// from its vertex centroid, triangulates each ridge polygon by angle ordering
-/// in its affine plane, and cones each tetrahedron to the origin.
+/// from its vertex centroid, orders each 2-face from incidence only, and cones
+/// each tetrahedron to the origin.
 pub fn volume_f64(
     dual_vertices: &[Vector4<f64>],
     vertices: &[Vector4<f64>],
@@ -74,7 +74,7 @@ pub fn volume_f64(
         });
     }
 
-    let volume = origin_star_volume(vertices, &incidence.facet_vertices, "volume_f64");
+    let volume = origin_star_volume(vertices, &incidence.incidence, "volume_f64");
     Ok(VolumeF64::Decided { volume })
 }
 
@@ -111,10 +111,9 @@ pub fn volume_from_incidence_f64(
         "volume_from_incidence_f64 requires at least five facets for a full-dimensional bounded R^4 polytope"
     );
 
-    let facet_vertices = facet_vertices_from_incidence(incidence);
     Ok(origin_star_volume(
         vertices,
-        &facet_vertices,
+        incidence,
         "volume_from_incidence_f64",
     ))
 }
@@ -148,9 +147,9 @@ pub fn facet_volume_from_incidence_f64(
 /// Compute one facet's ordinary 3D volume and volume-weighted centroid.
 ///
 /// The facet is decomposed by taking the arithmetic mean of its incident
-/// vertices as apex, ordering each ridge polygon
-/// `facet_index ∩ neighbor_index` in its affine plane, and summing tetrahedron
-/// 3-volumes via the ordinary `R^4` cross-product norm divided by `6`.
+/// vertices as apex, ordering each 2-face `facet_index ∩ neighbor_index` from
+/// incidence only, and summing tetrahedron 3-volumes via the ordinary `R^4`
+/// cross-product norm divided by `6`.
 ///
 /// The centroid is the volume-weighted average of tetrahedron centroids. If the
 /// accumulated volume is below the local facet-volume floor, this returns
@@ -196,17 +195,16 @@ fn facet_volume_centroid_sum_from_incidence(
     let mut total_volume = 0.0;
     let mut weighted_centroid = Vector4::zeros();
 
-    for (neighbor_index, neighbor_vertices) in facet_vertices.iter().enumerate() {
+    for neighbor_index in 0..incidence.ncols() {
         if neighbor_index == facet_index {
             continue;
         }
 
-        let ridge = intersect_sorted(target_vertices, neighbor_vertices);
-        if ridge.len() < 3 {
+        let ordered = order_2face_vertices_from_incidence(incidence, facet_index, neighbor_index);
+        if ordered.len() < 3 {
             continue;
         }
 
-        let ordered = order_polygon_vertex_indices(vertices, &ridge);
         for k in 1..ordered.len() - 1 {
             let a = vertices[ordered[0]];
             let b = vertices[ordered[k]];
@@ -224,7 +222,7 @@ fn facet_volume_centroid_sum_from_incidence(
 
 #[derive(Clone, Debug)]
 struct DecidedIncidence {
-    facet_vertices: Vec<Vec<usize>>,
+    incidence: DMatrix<bool>,
     indeterminate: Vec<IncidenceF64>,
 }
 
@@ -232,7 +230,7 @@ fn decide_incidence_f64(
     dual_vertices: &[Vector4<f64>],
     vertices: &[Vector4<f64>],
 ) -> DecidedIncidence {
-    let mut facet_vertices = vec![Vec::new(); dual_vertices.len()];
+    let mut incidence = DMatrix::from_element(vertices.len(), dual_vertices.len(), false);
     let mut indeterminate = Vec::new();
 
     for (vertex_index, vertex) in vertices.iter().enumerate() {
@@ -245,7 +243,7 @@ fn decide_incidence_f64(
             );
 
             if signed_gap == 0.0 {
-                facet_vertices[facet_index].push(vertex_index);
+                incidence[(vertex_index, facet_index)] = true;
             } else if signed_gap > signed_gap_abs_error_bound {
                 continue;
             } else if signed_gap < -signed_gap_abs_error_bound {
@@ -266,7 +264,7 @@ fn decide_incidence_f64(
     }
 
     DecidedIncidence {
-        facet_vertices,
+        incidence,
         indeterminate,
     }
 }
@@ -281,11 +279,9 @@ fn facet_vertices_from_incidence(incidence: &DMatrix<bool>) -> Vec<Vec<usize>> {
         .collect()
 }
 
-fn origin_star_volume(
-    vertices: &[Vector4<f64>],
-    facet_vertices: &[Vec<usize>],
-    caller: &str,
-) -> f64 {
+fn origin_star_volume(vertices: &[Vector4<f64>], incidence: &DMatrix<bool>, caller: &str) -> f64 {
+    let facet_vertices = facet_vertices_from_incidence(incidence);
+
     for (facet_index, indices) in facet_vertices.iter().enumerate() {
         assert!(
             indices.len() >= 4,
@@ -299,25 +295,22 @@ fn origin_star_volume(
         .collect();
 
     let mut total = 0.0;
-    for facet_index in 0..facet_vertices.len() {
-        for neighbor_index in 0..facet_vertices.len() {
+    for (facet_index, facet_centroid) in facet_centroids.iter().enumerate() {
+        for neighbor_index in 0..incidence.ncols() {
             if facet_index == neighbor_index {
                 continue;
             }
 
-            let ridge = intersect_sorted(
-                &facet_vertices[facet_index],
-                &facet_vertices[neighbor_index],
-            );
-            if ridge.len() < 3 {
+            let ordered =
+                order_2face_vertices_from_incidence(incidence, facet_index, neighbor_index);
+            if ordered.len() < 3 {
                 continue;
             }
 
-            let ordered = order_polygon_vertex_indices(vertices, &ridge);
             for k in 1..ordered.len() - 1 {
                 total += simplex_volume_5(
                     Vector4::zeros(),
-                    facet_centroids[facet_index],
+                    *facet_centroid,
                     vertices[ordered[0]],
                     vertices[ordered[k]],
                     vertices[ordered[k + 1]],
@@ -366,70 +359,310 @@ fn mean_vertex(vertices: &[Vector4<f64>], indices: &[usize]) -> Vector4<f64> {
         / indices.len() as f64
 }
 
-fn intersect_sorted(lhs: &[usize], rhs: &[usize]) -> Vec<usize> {
-    let mut out = Vec::new();
-    let (mut i, mut j) = (0, 0);
-    while i < lhs.len() && j < rhs.len() {
-        match lhs[i].cmp(&rhs[j]) {
-            std::cmp::Ordering::Less => i += 1,
-            std::cmp::Ordering::Greater => j += 1,
-            std::cmp::Ordering::Equal => {
-                out.push(lhs[i]);
-                i += 1;
-                j += 1;
+fn order_2face_vertices_from_incidence(
+    incidence: &DMatrix<bool>,
+    facet_i: usize,
+    facet_j: usize,
+) -> Vec<usize> {
+    assert_ne!(
+        facet_i, facet_j,
+        "order_2face_vertices_from_incidence requires two distinct facets"
+    );
+    assert!(
+        facet_i < incidence.ncols(),
+        "order_2face_vertices_from_incidence requires facet_i to be a valid incidence column"
+    );
+    assert!(
+        facet_j < incidence.ncols(),
+        "order_2face_vertices_from_incidence requires facet_j to be a valid incidence column"
+    );
+
+    let shared_vertices: Vec<usize> = (0..incidence.nrows())
+        .filter(|&vertex_index| {
+            incidence[(vertex_index, facet_i)] && incidence[(vertex_index, facet_j)]
+        })
+        .collect();
+    if shared_vertices.len() <= 2 {
+        return shared_vertices;
+    }
+
+    let mut neighbors = vec![Vec::new(); shared_vertices.len()];
+    for left_position in 0..shared_vertices.len() {
+        for right_position in left_position + 1..shared_vertices.len() {
+            let left_vertex = shared_vertices[left_position];
+            let right_vertex = shared_vertices[right_position];
+            if share_third_facet(incidence, left_vertex, right_vertex, facet_i, facet_j) {
+                neighbors[left_position].push(right_position);
+                neighbors[right_position].push(left_position);
             }
         }
     }
-    out
-}
 
-fn order_polygon_vertex_indices(all_vertices: &[Vector4<f64>], indices: &[usize]) -> Vec<usize> {
-    if indices.len() <= 2 {
-        return indices.to_vec();
+    for (position, vertex_neighbors) in neighbors.iter().enumerate() {
+        assert_eq!(
+            vertex_neighbors.len(),
+            2,
+            "order_2face_vertices_from_incidence requires every polygonal 2-face vertex to have degree 2; vertex {} has degree {}",
+            shared_vertices[position],
+            vertex_neighbors.len()
+        );
     }
 
-    let ridge_vertices: Vec<Vector4<f64>> = indices.iter().map(|&idx| all_vertices[idx]).collect();
-    let Some(order) = sort_polygon_order(&ridge_vertices) else {
-        panic!("volume computation could not order a nondegenerate ridge polygon");
-    };
-    order
+    let mut order_positions = vec![0];
+    let mut previous_position = 0;
+    let mut current_position = neighbors[0][0];
+    while current_position != 0 {
+        assert!(
+            !order_positions.contains(&current_position),
+            "order_2face_vertices_from_incidence requires the induced graph to be one cycle"
+        );
+        order_positions.push(current_position);
+
+        let current_neighbors = &neighbors[current_position];
+        let next_position = if current_neighbors[0] == previous_position {
+            current_neighbors[1]
+        } else {
+            current_neighbors[0]
+        };
+        previous_position = current_position;
+        current_position = next_position;
+    }
+
+    assert_eq!(
+        order_positions.len(),
+        shared_vertices.len(),
+        "order_2face_vertices_from_incidence requires the induced graph to be one cycle"
+    );
+
+    order_positions
         .into_iter()
-        .map(|position| indices[position])
+        .map(|position| shared_vertices[position])
         .collect()
 }
 
-fn sort_polygon_order(vertices: &[Vector4<f64>]) -> Option<Vec<usize>> {
-    const EPS_BASIS_DEGENERATE: f64 = 1e-12;
-    const EPS_COLLINEAR: f64 = 1e-10;
+fn share_third_facet(
+    incidence: &DMatrix<bool>,
+    left_vertex: usize,
+    right_vertex: usize,
+    facet_i: usize,
+    facet_j: usize,
+) -> bool {
+    (0..incidence.ncols()).any(|facet_index| {
+        facet_index != facet_i
+            && facet_index != facet_j
+            && incidence[(left_vertex, facet_index)]
+            && incidence[(right_vertex, facet_index)]
+    })
+}
 
-    if vertices.len() < 3 {
-        return Some((0..vertices.len()).collect());
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn incidence_from_rows(row_facets: &[&[usize]], facet_count: usize) -> DMatrix<bool> {
+        DMatrix::from_fn(
+            row_facets.len(),
+            facet_count,
+            |vertex_index, facet_index| row_facets[vertex_index].contains(&facet_index),
+        )
     }
 
-    let centroid = vertices.iter().copied().sum::<Vector4<f64>>() / vertices.len() as f64;
-    let d1_raw = vertices[0] - centroid;
-    let d1_norm = d1_raw.norm();
-    if d1_norm < EPS_BASIS_DEGENERATE {
-        return None;
+    #[test]
+    fn order_2face_vertices_returns_empty_intersection() {
+        let incidence = incidence_from_rows(&[&[0], &[1], &[2]], 4);
+
+        assert_eq!(order_2face_vertices_from_incidence(&incidence, 0, 1), []);
     }
-    let d1 = d1_raw / d1_norm;
 
-    let d2 = vertices.iter().skip(1).find_map(|vertex| {
-        let relative = *vertex - centroid;
-        let projection = relative - d1 * relative.dot(&d1);
-        (projection.norm() > EPS_COLLINEAR).then(|| projection.normalize())
-    })?;
+    #[test]
+    fn order_2face_vertices_returns_one_point_intersection() {
+        let incidence = incidence_from_rows(&[&[0, 1], &[0], &[1]], 3);
 
-    let mut indexed: Vec<(f64, usize)> = vertices
-        .iter()
-        .enumerate()
-        .map(|(index, vertex)| {
-            let relative = *vertex - centroid;
-            let angle = relative.dot(&d2).atan2(relative.dot(&d1));
-            (angle, index)
+        assert_eq!(order_2face_vertices_from_incidence(&incidence, 0, 1), [0]);
+    }
+
+    #[test]
+    fn order_2face_vertices_returns_two_point_intersection_in_sorted_order() {
+        let incidence = incidence_from_rows(&[&[0, 1, 3], &[0], &[0, 1, 2], &[1]], 4);
+
+        assert_eq!(
+            order_2face_vertices_from_incidence(&incidence, 0, 1),
+            [0, 2]
+        );
+    }
+
+    #[test]
+    fn order_2face_vertices_orders_triangle_from_incidence() {
+        let incidence = incidence_from_rows(&[&[0, 1, 2, 4], &[0, 1, 2, 3], &[0, 1, 3, 4]], 5);
+
+        assert_eq!(
+            order_2face_vertices_from_incidence(&incidence, 0, 1),
+            [0, 1, 2]
+        );
+    }
+
+    #[test]
+    fn order_2face_vertices_orders_quadrilateral_from_incidence() {
+        let incidence = incidence_from_rows(
+            &[&[0, 1, 2, 5], &[0, 1, 2, 3], &[0, 1, 3, 4], &[0, 1, 4, 5]],
+            6,
+        );
+
+        assert_eq!(
+            order_2face_vertices_from_incidence(&incidence, 0, 1),
+            [0, 1, 2, 3]
+        );
+    }
+
+    #[test]
+    fn order_2face_vertices_orders_higher_vertex_polygon_from_incidence() {
+        let incidence = incidence_from_rows(
+            &[
+                &[0, 1, 2, 6],
+                &[0, 1, 2, 3],
+                &[0, 1, 3, 4],
+                &[0, 1, 4, 5],
+                &[0, 1, 5, 6],
+            ],
+            7,
+        );
+
+        assert_eq!(
+            order_2face_vertices_from_incidence(&incidence, 0, 1),
+            [0, 1, 2, 3, 4]
+        );
+    }
+
+    #[test]
+    #[should_panic(expected = "requires two distinct facets")]
+    fn order_2face_vertices_panics_for_same_facet() {
+        let incidence = incidence_from_rows(&[&[0, 1]], 2);
+
+        let _ = order_2face_vertices_from_incidence(&incidence, 0, 0);
+    }
+
+    #[test]
+    #[should_panic(expected = "requires facet_j to be a valid incidence column")]
+    fn order_2face_vertices_panics_for_out_of_range_facet() {
+        let incidence = incidence_from_rows(&[&[0, 1]], 2);
+
+        let _ = order_2face_vertices_from_incidence(&incidence, 0, 2);
+    }
+
+    #[test]
+    #[should_panic(expected = "requires the induced graph to be one cycle")]
+    fn order_2face_vertices_panics_when_degree_two_graph_is_disconnected() {
+        let incidence = incidence_from_rows(
+            &[
+                &[0, 1, 2, 4],
+                &[0, 1, 2, 3],
+                &[0, 1, 3, 4],
+                &[0, 1, 5, 7],
+                &[0, 1, 5, 6],
+                &[0, 1, 6, 7],
+            ],
+            8,
+        );
+
+        let _ = order_2face_vertices_from_incidence(&incidence, 0, 1);
+    }
+
+    #[test]
+    #[should_panic(expected = "to have degree 2")]
+    fn order_2face_vertices_panics_when_polygonal_graph_has_wrong_degree() {
+        let incidence = incidence_from_rows(&[&[0, 1, 2], &[0, 1, 2, 3], &[0, 1, 3]], 4);
+
+        let _ = order_2face_vertices_from_incidence(&incidence, 0, 1);
+    }
+
+    #[test]
+    fn known_fixture_polygonal_2face_intersections_are_orderable() {
+        let fixtures = [
+            centered_simplex_incidence(),
+            hypercube_incidence(),
+            crosspolytope_incidence(),
+            diagonal_cut_hypercube_incidence(),
+        ];
+
+        for incidence in fixtures {
+            assert_polygonal_2face_intersections_are_orderable(&incidence);
+        }
+    }
+
+    fn assert_polygonal_2face_intersections_are_orderable(incidence: &DMatrix<bool>) {
+        for facet_i in 0..incidence.ncols() {
+            for facet_j in facet_i + 1..incidence.ncols() {
+                let shared_vertices: Vec<usize> = (0..incidence.nrows())
+                    .filter(|&vertex_index| {
+                        incidence[(vertex_index, facet_i)] && incidence[(vertex_index, facet_j)]
+                    })
+                    .collect();
+                if shared_vertices.len() < 3 {
+                    continue;
+                }
+
+                let ordered = order_2face_vertices_from_incidence(incidence, facet_i, facet_j);
+                let mut sorted_ordered = ordered.clone();
+                sorted_ordered.sort_unstable();
+                assert_eq!(sorted_ordered, shared_vertices);
+            }
+        }
+    }
+
+    fn centered_simplex_incidence() -> DMatrix<bool> {
+        DMatrix::from_row_slice(
+            5,
+            5,
+            &[
+                false, true, true, true, true, //
+                true, false, true, true, true, //
+                true, true, false, true, true, //
+                true, true, true, false, true, //
+                true, true, true, true, false,
+            ],
+        )
+    }
+
+    fn hypercube_incidence() -> DMatrix<bool> {
+        DMatrix::from_fn(16, 8, |vertex_index, facet_index| {
+            let coordinate_index = facet_index / 2;
+            let positive_facet = facet_index % 2 == 0;
+            let positive_vertex = ((vertex_index >> coordinate_index) & 1) == 1;
+            positive_vertex == positive_facet
         })
-        .collect();
+    }
 
-    indexed.sort_by(|left, right| left.0.partial_cmp(&right.0).unwrap());
-    Some(indexed.into_iter().map(|(_, index)| index).collect())
+    fn crosspolytope_incidence() -> DMatrix<bool> {
+        DMatrix::from_fn(8, 16, |vertex_index, facet_index| {
+            let coordinate_index = vertex_index / 2;
+            let positive_vertex = vertex_index % 2 == 0;
+            let facet_sign_bit = (facet_index >> (3 - coordinate_index)) & 1;
+            positive_vertex == (facet_sign_bit == 1)
+        })
+    }
+
+    fn diagonal_cut_hypercube_incidence() -> DMatrix<bool> {
+        let vertices: Vec<[i32; 4]> = [-1, 1]
+            .into_iter()
+            .flat_map(|x0| {
+                [-1, 1].into_iter().flat_map(move |x1| {
+                    [-1, 1]
+                        .into_iter()
+                        .flat_map(move |x2| [-1, 1].into_iter().map(move |x3| [x0, x1, x2, x3]))
+                })
+            })
+            .filter(|vertex| vertex.iter().sum::<i32>() <= 2)
+            .collect();
+
+        DMatrix::from_fn(vertices.len(), 9, |vertex_index, facet_index| {
+            let vertex = vertices[vertex_index];
+            if facet_index < 8 {
+                let coordinate_index = facet_index / 2;
+                let positive_facet = facet_index % 2 == 0;
+                vertex[coordinate_index] == if positive_facet { 1 } else { -1 }
+            } else {
+                vertex.iter().sum::<i32>() == 2
+            }
+        })
+    }
 }
