@@ -127,6 +127,7 @@ modules, which makes non-symplectic helpers harder to reuse and review.
 | Flat capacity/orbit internals | `[implemented migration slice]` | mainline thesis | agents | HK2017 enumeration, saddle-point KKT solving, orbit solving, and orbit aggregation now have flat helper entry points over facet count, transition matrices, f64 dual vertices, and exact dual vertices. Root capacity wrappers assemble flat data once and delegate to those helpers. | `crates/symplectic/src/algorithms/hk2017/enumeration.rs`, `crates/symplectic/src/algorithms/orbit_search.rs`, `crates/symplectic/src/kkt/saddle_point_solver.rs`, `crates/symplectic/src/lib.rs` |
 | Flat KKT assembly boundary | `[implemented migration slice]` | mainline thesis | agents | `build_qp` and `build_augmented_system` `Polytope4D` compatibility wrappers were deleted. KKT assembly callers now pass the ordered dual-vertex slice explicitly to `build_qp_from_dual_vertices` and `build_augmented_system_from_dual_vertices`. | `crates/symplectic/src/kkt/qp_assembly.rs`, `crates/symplectic/src/kkt/test_saddle_point_solver.rs`, `crates/symplectic/src/kkt/projection_solver.rs` |
 | Flat transition and HK2017 enumeration boundary | `[implemented migration slice]` | mainline thesis | agents | `build_transition_matrix(polytope)`, `for_each_sigma_unpruned(polytope, ...)`, and `for_each_sigma_pruned(polytope, ...)` wrappers were deleted. Callers now build transition matrices from explicit facet-intersection and omega-sign matrices, or enumerate from a facet count. | `crates/symplectic/src/algorithms/facet_adjacency.rs`, `crates/symplectic/src/algorithms/hk2017/enumeration.rs`, `crates/symplectic/src/capacity_api.rs` |
+| Flat KKT solve boundary | `[implemented migration slice]` | mainline thesis | agents | `solve_kkt_for(polytope, perm)` was deleted. Callers now pass the ordered dual-vertex slice explicitly to `solve_kkt_for_dual_vertices`, including derivative finite-difference paths and experiment ascent loops. | `crates/symplectic/src/kkt/saddle_point_solver.rs`, `crates/symplectic/src/derivatives.rs`, `experiments/numerics/gradient/src/lib.rs` |
 
 ## Done Criteria
 
@@ -221,6 +222,13 @@ The migration task is done when:
   Why it matters: pruning now exposes the exact data dependency at the call
   site instead of hiding Euclidean incidence plus symplectic omega signs behind
   `Polytope4D`.
+- [implemented 2026-05-10] Flat KKT solve migration deleted
+  `solve_kkt_for(polytope, perm)`. Derivative tests, ascent experiments, and
+  KKT regression tests now call `solve_kkt_for_dual_vertices` with the
+  dual-vertex slice from the same polytope that produced the permutation.
+  Why it matters: saddle-point solving is now a flat dual-vertex operation, so
+  the remaining `Polytope4D` capacity wrappers are orbit/result orchestration
+  rather than hidden KKT matrix dependencies.
 - [fresh 2026-05-10] `Polytope4D` currently mixes ordinary geometry with
   symplectic data: dual vertices, primal vertices, incidence, facet intersection nonemptiness,
   omega signs, and f64 copies. The Euclidean crate should take the ordinary
