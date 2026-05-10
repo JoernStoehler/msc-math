@@ -51,9 +51,10 @@ approximate and exact callers:
   resolved by a slow exact calculation before returning.
 
 Avoid a generic result wrapper until repeated call sites prove it helps. A tiny
-global `True`, `False`, `Indeterminate` enum may be useful for bare predicates,
-but most functions should prefer flat, standard Rust types with semantic names:
-`value`, `value_error`, `vertices`, `coordinate_error`, `indeterminate_tuples`.
+global `True`, `False`, `Indeterminate` enum may be useful for bare predicates.
+The default should still be operation-specific diagnostic results with semantic
+field names: `candidate_sets_that_may_contain_zero`, `vertices`,
+`coordinate_error`, `indeterminate_tuples`.
 
 For example, vertex enumeration from dual vertices can test most 4-tuples of
 hyperplanes cheaply with `f64`. Near-singular tuples, uncertain duplicate
@@ -75,22 +76,24 @@ pub fn origin_in_interior_of_conv_exact<T: ExactScalar>(points: &[Vector4<T>]) -
 
 pub fn origin_in_interior_of_conv_f64(
     points: &[Vector4<f64>],
-) -> Result<InteriorMarginF64, ConvexHullError>;
+) -> Result<OriginInteriorF64, ConvexHullError>;
 
 pub fn all_points_are_extreme_exact<T: ExactScalar>(points: &[Vector4<T>]) -> bool;
 
 pub fn all_points_are_extreme_f64(
     points: &[Vector4<f64>],
-) -> Result<ExtremalityMarginsF64, ConvexHullError>;
+) -> Result<ExtremalityF64, ConvexHullError>;
 
-pub struct InteriorMarginF64 {
-    pub signed_margin: f64,
-    pub signed_margin_error: f64,
+pub enum OriginInteriorF64 {
+    True,
+    False,
+    Indeterminate {
+        candidate_sets_that_may_contain_zero: Vec<[usize; 5]>,
+    },
 }
 
-pub struct ExtremalityMarginsF64 {
-    pub point_margins: Vec<f64>,
-    pub point_margin_errors: Vec<f64>,
+pub struct ExtremalityF64 {
+    pub non_extreme_points: Vec<usize>,
     pub indeterminate_points: Vec<usize>,
 }
 
@@ -137,11 +140,12 @@ facet incidence (`<a_i, v> = 1`) and use `vertices` for Euclidean geometry. This
 keeps the call close to the math and avoids constructing a symplectic
 `Polytope4D` only to ask an ordinary volume question.
 
-Lower-dimensional volume is still a design target, not an accepted signature.
-The expected need is area/perimeter/length for polytopes in affine subspaces of
-`R^4`, especially polygons in planes cut out by equations such as
-`<x, a> = 1`. The migration should add the smallest function that current
-callers need, not a general polytope-measure framework.
+Lower-dimensional volume is a design target because the full-dimensional volume
+implementation naturally decomposes into facet and ridge measures. The expected
+need includes 3-faces of 4-polytopes and polygons in affine 2-planes of `R^4`,
+especially planes cut out by equations such as `<x, a> = 1`. The migration
+should still add the smallest function that the volume decomposition needs, not
+a general polytope-measure framework.
 
 ## Contracts
 
@@ -163,9 +167,11 @@ when each position is obvious at the call site. Define a local flat `struct`
 when output variables need names, especially for multi-output computations like
 `vertices`, `coordinate_error`, and `indeterminate_tuples`.
 
-Exact combinatorial predicates should use `T: ExactScalar`. Approximate `f64`
-helpers should stay separate and state their tolerance, error, and
-indeterminate semantics in their rustdoc.
+Exact combinatorial predicates should use `T: ExactScalar` and return `bool`.
+They may call the corresponding `f64` diagnostic function first and, when it
+returns an indeterminate case, check the listed candidates exactly until the
+answer is decided. Approximate `f64` helpers should stay separate and state
+their tolerance, error, and indeterminate semantics in their rustdoc.
 
 ## Non-Goals
 

@@ -37,9 +37,12 @@ existing code.
 3. Full-dimensional `R^4` volume from `(dual_vertices, vertices)` using
    incidence and the existing origin-star triangulation idea. The `f64` variant
    can be indeterminate if incidence is tolerance-sensitive; the exact variant
-   should decide incidence exactly and sum exact determinant volumes.
+   should decide incidence exactly and sum exact determinant volumes. Implement
+   the `f64` path first, but keep exact volume as a real target rather than
+   future/YAGNI speculation.
 4. A minimal affine-plane polygon helper for ordered or orderable
-   `Vec<Vector4<f64>>` vertices, after checking the first concrete caller.
+   `Vec<Vector4<f64>>` vertices, driven by the internal needs of the volume
+   decomposition rather than only by external consumers asking for area.
 
 The first implementation slice is intentionally not just a tiny predicate. It
 should deliver polar vertex enumeration and whatever validation it needs so the
@@ -95,9 +98,11 @@ callers need both.
 The approximate pathway returns ordinary `f64` data with semantic names and
 error bounds when that is the natural shape. For sign-like consumers, the usual
 pattern is `x - x_error > 0`, `x + x_error < 0`, else indeterminate. A tiny
-`True`/`False`/`Indeterminate` helper may be useful for bare predicates, but do
-not introduce a generic wrapper for all approximate results before repeated call
-sites prove it helps.
+`True`/`False`/`Indeterminate` helper may be useful for bare predicates. Prefer
+operation-specific diagnostic results when the indeterminate case has useful
+payload, for example candidate sets of five vertices that may contain zero.
+Do not introduce a generic wrapper for all approximate results before repeated
+call sites prove it helps.
 
 Approximate code must not silently decide cases where the result depends on a
 near-singular solve, a near-duplicate candidate, or a halfspace membership test
@@ -116,6 +121,12 @@ Why it matters: this keeps the hot/common path fast without letting tolerance
 choices become mathematical facts. If the exact fallback becomes hot, profile
 before changing the contract.
 
+For exact predicates specifically, return `bool`. The exact implementation may
+call the `f64` diagnostic predicate first. If the f64 result is indeterminate,
+it should check the diagnostic candidates exactly until the answer is known.
+For `origin_in_interior_of_conv_exact`, one expected f64 diagnostic payload is
+the candidate 5-point simplex sets that may contain zero.
+
 ### Accepted Direction: Result, Option, Panic, Tuple, Struct
 
 Use `Result` for recoverable errors. Use `Option` only when the mathematical
@@ -128,11 +139,11 @@ Use tuples when each position is obvious at the call site. Use a locally defined
 flat data container when output variables need names. Avoid input wrappers
 unless a pipeline naturally reuses the output type of an earlier function.
 
-### Close Call: Exact Versus `f64` Metric Outputs
+### Accepted Direction: Exact Versus `f64` Metric Outputs
 
-Volume/area can start as `f64` because the existing thesis computations and
-stored data use floating volume, and exact Euclidean volume in affine subspaces
-has no current caller.
+Implement f64 volume first because existing thesis computations and stored data
+use floating volume. Exact volume is still a real target, not a YAGNI violation:
+the crate needs both f64 and exact geometry pathways eventually.
 
 Why it matters: mixing exact predicates and approximate metrics in one function
 would make contracts harder to audit. Keep exact validation and approximate
@@ -147,16 +158,17 @@ Reopen if a current thesis caller needs the same operation in another ambient
 dimension. Const-generic dimensions would complicate determinants, rank helpers,
 examples, and migration without solving a current problem.
 
-### High-Uncertainty Area: Affine-Subspace Volume
+### Accepted Direction: Affine-Subspace Volume Pressure
 
-The concrete need is not fully pinned down. We likely need polygons in affine
-2-planes of `R^4`, and possibly 1-, 2-, 3-, and 4-dimensional measures for
-faces cut out by equations like `<x, a> = 1`.
+Affine-subspace volume is primarily determined by the internal decomposition of
+`volume()`, not only by external consumers asking for a volume function. The
+known need includes 3-faces of 4-polytopes and likely polygons in affine
+2-planes of `R^4`, with faces cut out by equations like `<x, a> = 1`.
 
-Decision that should wait: whether to expose one generic
-`affine_volume(vertices)` or a few concrete helpers such as
-`polygon_area_in_affine_plane`. This matters because a generic function needs a
-convex-hull/triangulation policy in each affine dimension, while the polygon
+Decision that can still wait: whether the implementation should expose one
+generic `affine_volume(vertices)` or a few concrete helpers such as
+`polygon_area_in_affine_plane`. This matters because a generic function needs
+a convex-hull/triangulation policy in each affine dimension, while the polygon
 case can stay much simpler and easier to verify.
 
 ### Rejected For Now: LP Solver Dependency

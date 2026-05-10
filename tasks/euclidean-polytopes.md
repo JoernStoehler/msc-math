@@ -46,16 +46,27 @@ modules, which makes non-symplectic helpers harder to reuse and review.
   structs when output variables need names.
   Why it matters: the crate should map to the math at call sites without
   wrapping/unwrapping overhead or hidden positional input contracts.
+- [Jorn decisions 2026-05-10] f64 volume should be implemented before exact
+  volume, but exact volume is a real eventual need and not a YAGNI violation.
+  Affine-subspace volume follows naturally from the internal volume
+  implementation, especially for 3-faces of a 4-polytope, so it should be
+  shaped by that decomposition rather than only by external consumers. Exact
+  predicates return `bool`; f64 predicates return diagnostic true/false/
+  indeterminate outputs, for example candidate sets of five vertices that may
+  contain zero.
+  Why it matters: future agents should not cut exact volume from the target,
+  over-index on consumer-facing API shape for affine volume, or make exact
+  predicates return diagnostic wrappers.
 
 ## Work Map
 
 | item | state | value class | owner/gate | next action | source |
 | --- | --- | --- | --- | --- | --- |
 | Crate scaffold and API target | `[active]` | mainline thesis | agents, Jorn for API taste close calls | Review `README.md` and `DEVELOPMENT.md`; decide whether the flat-input/no-public-wrapper direction is accepted for the first migration. | `crates/euclidean-polytopes/README.md`, `crates/euclidean-polytopes/DEVELOPMENT.md` |
-| Robust floating/exact architecture | `[active]` | mainline thesis | agents | Define flat approximate return shapes with semantic names and error bounds; use a tiny true/false/indeterminate helper only for bare predicates if repeated call sites justify it. Exact routines must resolve all indeterminate cases. | `crates/euclidean-polytopes/README.md`, `crates/euclidean-polytopes/DEVELOPMENT.md` |
+| Robust floating/exact architecture | `[active]` | mainline thesis | agents | Define flat approximate return shapes with semantic names, error bounds, and operation-specific indeterminate diagnostics. Exact predicates return `bool` and may resolve f64 indeterminate diagnostic candidates exactly. | `crates/euclidean-polytopes/README.md`, `crates/euclidean-polytopes/DEVELOPMENT.md` |
 | Polar vertex enumeration plus validation dependencies | `[active]` | mainline thesis | agents | Implement `polar_vertices_exact(vertices)` and everything it needs, including exact origin-in-interior and non-redundancy/extreme-point checks if those are required by the algorithm contract; add an `f64` path that reports indeterminate tuples/candidates instead of guessing. | `crates/symplectic/src/geom/vertex_enumeration/`, `crates/algebraic-numbers/` |
-| Full-dimensional volume | `[active]` | mainline thesis | agents | Factor ordinary `R^4` volume away from `Polytope4D`; expose `f64` volume with an error bound and indeterminate incidence entries when incidence is tolerance-sensitive, and exact volume as exact incidence plus exact determinant summation. | `crates/symplectic/src/geom/volume.rs` |
-| Affine-subspace polygons and volume | `[map-input]` | contingent during writing | Jorn if generic-vs-specific API affects thesis callers | Identify first concrete caller for polygons in affine 2-planes of `R^4`; choose either a targeted polygon area helper or a broader affine-volume function only after that caller is known. | `crates/symplectic/src/geom/polygon.rs`, future experiment callers |
+| Full-dimensional volume | `[active]` | mainline thesis | agents | Factor ordinary `R^4` volume away from `Polytope4D`; implement f64 volume first, keep exact volume as a real target, and expose f64 indeterminate incidence entries when incidence is tolerance-sensitive. | `crates/symplectic/src/geom/volume.rs` |
+| Affine-subspace polygons and volume | `[active]` | mainline thesis | agents, Jorn only if generic-vs-specific API affects thesis callers | Let the internal volume decomposition determine the first affine-subspace helper shape; likely needs 3-face measures of 4-polytopes and polygon area in affine 2-planes of `R^4`. | `crates/symplectic/src/geom/volume.rs`, `crates/symplectic/src/geom/polygon.rs` |
 | Symplectic integration cleanup | `[active]` | mainline thesis | agents | After each migrated slice, keep `symplectic` as the owner of symplectic form, capacity, KKT, omega signs, Reeb-direction adjacency, and experiment-facing wrappers only. | `crates/symplectic/src/geom/`, `crates/symplectic/src/algorithms/` |
 
 ## Done Criteria
@@ -74,6 +85,8 @@ The migration task is done when:
   notes;
 - `f64` combinatorial APIs expose error bounds or indeterminate outcomes, and
   exact APIs resolve those outcomes before returning exact data;
+- exact predicate APIs return `bool`, with diagnostics confined to f64 helper
+  APIs or error types;
 - API review has confirmed that no alias, wrapper, trait, or generic result
   abstraction was added without repeated current callers or a clear
   simplification;
@@ -90,8 +103,9 @@ The migration task is done when:
   H-representation `a_i . x <= 1`, hence `0` is inside every valid full
   polytope.
 - [fresh 2026-05-10] The lower-dimensional volume requirement is underspecified
-  enough that a generic `affine_volume` API would be premature. Start with the
-  first concrete polygon/face caller.
+  enough that a generic `affine_volume` API may still be premature. Do not
+  treat it as merely consumer-driven: the existing volume implementation itself
+  creates pressure for 3-face and affine-polygon measures.
 - [fresh 2026-05-10] Existing `symplectic` vertex enumeration already uses an
   `f64` prefilter before exact rational checks. The new architecture should make
   that pattern explicit: approximate callers see error bounds or indeterminate
