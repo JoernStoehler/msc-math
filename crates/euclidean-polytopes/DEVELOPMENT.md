@@ -70,10 +70,10 @@ pub fn sample_random_dual_vertices_f64<R: rand::Rng + ?Sized>(
 The helper samples independent unit normals on `S^3` and heights in
 `[h_min, h_max)`, returning `a_i = n_i / h_i` for normalized halfspaces
 `<a_i, x> <= 1`. It asserts the programmer contract `facet_count >= 5` and
-finite `0 < h_min < h_max`. It deliberately does not construct `Polytope4D`,
-validate boundedness, validate non-redundancy, or own rejection sampling.
-`symplectic::random` remains the temporary `Polytope4D::from_f64` validation
-wrapper and keeps `generate_polytope(master_seed, attempt)` seed derivation.
+finite `0 < h_min < h_max`. It deliberately does not validate boundedness,
+validate non-redundancy, or own rejection sampling. `symplectic::random`
+keeps the rejection loop and master-seed/attempt derivation, and validates
+candidate dual vertices through the flat rational vertex-enumeration pipeline.
 
 ## Implemented Slice: Extreme-Point Predicate
 
@@ -128,11 +128,10 @@ pub fn volume_from_incidence_f64(
 ) -> Result<f64, F64GeometryError>;
 ```
 
-The implementation copies the existing origin-star triangulation idea from
-`crates/symplectic/src/geom/volume.rs`, but operates only on flat slices. It
-uses `vertices` for Euclidean determinants and uses `incidence[(v, f)]` only
-for facet and 2-face combinatorics. It does not introduce `Polytope4D`, a
-public polytope wrapper, or a qhull dependency.
+The implementation uses origin-star triangulation over flat slices. It uses
+`vertices` for Euclidean determinants and uses `incidence[(v, f)]` only for
+facet and 2-face combinatorics. It does not introduce a shared polytope
+wrapper or a qhull dependency.
 
 Fixture tests cover:
 
@@ -145,17 +144,17 @@ Fixture tests cover:
 ## Implemented Slice: Known-Incidence Volume and Symplectic Integration
 
 This migration slice first let symplectic ordinary volume computation delegate
-to this crate without throwing away exact incidence already known by
-`Polytope4D`. A later cleanup deleted the public
-`symplectic::geom::volume` module. Current `Polytope4D` callers use
+to this crate without throwing away exact incidence already known by the
+fixture/database geometry. A later cleanup deleted the public
+`symplectic::geom::volume` module. Current callers use
 `euclidean_polytopes::volume_from_incidence_exact` directly, usually through
 small package-local helpers when several experiment binaries need the same
 exact-to-f64 projection.
 
 `symplectic` is intentionally not routed through approximate incidence
-recovery. `Polytope4D` already stores an exact boolean vertex-facet incidence
-matrix. Recomputing that incidence in f64 would be less reliable than the
-existing symplectic path.
+recovery when exact boolean vertex-facet incidence is already available.
+Recomputing that incidence in f64 would be less reliable than the stored
+fixture/database path.
 
 Implemented helper:
 
@@ -184,7 +183,7 @@ Verification witnesses for this slice:
 - `euclidean-polytopes` tests cover simplex, hypercube, crosspolytope,
   non-finite input, and incidence row mismatch panic;
 - `symplectic` tests and experiment helpers call the Euclidean exact
-  known-incidence helper directly for `Polytope4D` volume projections;
+  known-incidence helper directly for exact-to-f64 volume projections;
 - required commands for this slice are tracked in the task file.
 
 ## Implemented Slice: Known-Incidence Facet 3-Volume and Centroid
@@ -194,9 +193,8 @@ Ordinary facet 3-volume and centroid computation now lives in
 incidence.
 
 Do not recover facet/2-face incidence by checking `|a . v - 1| < EPS` when a
-caller has a `DMatrix<bool>` incidence matrix. `Polytope4D` already stores
-exact incidence, and derivative code should use that data through the
-polytope-level f64 entry point.
+caller has a `DMatrix<bool>` incidence matrix. Derivative code should use
+stored exact incidence from fixtures or experiment-local geometry caches.
 
 Implemented helpers:
 
@@ -222,23 +220,20 @@ the target facet's incident vertices, triangulate each 2-face
 `facet_index ∩ neighbor_index`, and compute 3-dimensional tetrahedron volume in
 the facet's affine hyperplane using the ordinary 4D cross product norm.
 
-`symplectic::geom::facet_volume::facet_volume_3d_f64(polytope, facet)` and
-`facet_volume_and_centroid_3d_f64(polytope, facet)` delegate to the Euclidean
-helpers with `polytope.vertices_f64()` and `polytope.incidence()`.
-`volume_derivatives_a` uses the polytope-level centroid helper and therefore
-benefits from exact incidence. The raw dual/vertex helpers were removed; callers
-that already have vertices and incidence should call `euclidean-polytopes`
-directly.
+`symplectic::geom::facet_volume` now reexports the flat Euclidean helpers.
+`volume_derivatives_a` takes `dual_vertices`, `vertices`, and
+`vertex_facet_incidence` explicitly and therefore benefits from exact
+incidence supplied by fixtures or experiment-local geometry caches.
 
 Implemented criteria for this slice:
 
 - `euclidean-polytopes` exposes known-incidence facet volume and
   volume-plus-centroid helpers with docs that explain when they are preferable
   to raw f64 dual/vertex incidence recovery;
-- `symplectic::geom::facet_volume` exposes explicit f64 polytope-level entry
-  points that delegate to the Euclidean helpers;
+- `symplectic::geom::facet_volume` exposes the flat Euclidean helpers through
+  the symplectic namespace;
 - `volume_derivatives_a` no longer recomputes facet incidence from f64 raw
-  dual/vertex arrays when a `Polytope4D` is available;
+  dual/vertex arrays when exact incidence is available;
 - tests cover hypercube facet volume, centroid-on-facet for known fixtures,
   divergence-theorem volume reconstruction, non-finite input, shape mismatch,
   out-of-range facet indices, and a symplectic API regression;
@@ -287,12 +282,9 @@ vertex-facet incidence semantics into sorted facet-vertex lists.
 false-diagonal facet-pair matrix where entries mean the two facets share at
 least one vertex, not necessarily a 2-face.
 
-`symplectic::geom::skeleton::Skeleton` remains a compatibility wrapper. Its
-`compute` method delegates vertex-facet lists, edges, and unordered 2-faces to
-this crate, then applies its existing f64 polygon ordering when converting
-`TwoFace` into the old `Ridge` type. Moving that polygon ordering into a public
-Euclidean API is intentionally deferred to a later polygon/2-face ordering
-slice.
+The old shared skeleton wrapper was deleted during the flat migration. Current
+callers use the incidence helpers directly or keep experiment-local feature
+names for persisted datasets.
 
 Implemented criteria for this slice:
 
@@ -301,8 +293,8 @@ Implemented criteria for this slice:
 - tests check deterministic ordering of edge pairs, 2-face facet pairs, and
   2-face vertex lists;
 - tests cover an incidence matrix with no valid 2-face candidates;
-- `symplectic::geom::skeleton` still exposes `Skeleton` and `Ridge` while
-  delegating incidence-only combinatorics to the Euclidean helpers.
+- symplectic and experiment callers use flat incidence helpers or local
+  dataset/feature names instead of a shared skeleton wrapper.
 
 ## Implemented Slice: Incidence-Only 2-Face Ordering
 
@@ -407,18 +399,13 @@ Implemented criteria for this slice:
 
 The symplectic migration slice made the now-deleted
 `symplectic::geom::volume` module use `volume_from_incidence_exact` as the
-source of truth for `Polytope4D`.
+source of truth. Do not recompute incidence, do not pass dual vertices, and do
+not use f64 vertices in exact volume paths.
 
-The migrated exact API converted `Polytope4D::vertices()` from
-`&[[BigRational; 4]]` to `Vec<Vector4<BigRational>>`, passed
-`polytope.incidence()` directly, and delegated to
-`euclidean_polytopes::volume_from_incidence_exact`. Do not recompute incidence,
-do not pass dual vertices, and do not use `vertices_f64()` in the exact path.
-
-That historical `volume_f64(&Polytope4D) -> f64` API was an explicit f64
+That historical f64 volume API was an explicit f64
 projection for callers that expected f64. The follow-up cleanup removed it from
 `symplectic`; callers now import `euclidean-polytopes` directly and keep any
-`Polytope4D` conversion helper local to the package or test module.
+exact-to-f64 projection helper local to the package or test module.
 
 Implemented criteria for this slice:
 
@@ -532,13 +519,11 @@ operationalization.
    vertices/facets.
 
 6. Symplectic migration regression:
-   Proposition: for existing `Polytope4D` fixtures, the migrated symplectic
-   volume wrapper preserves known ordinary volume values.
-   Operationalization: the current `symplectic` fixture tests check exact
-   simplex, hypercube, and crosspolytope values, keep the qhull cross-check
-   when qhull is installed, and include a wiring regression that compares
-   `volume_exact` with `volume_from_incidence_exact` on exact
-   `Polytope4D::vertices()` and `Polytope4D::incidence()`.
+   Proposition: for known symplectic fixtures, flat known-incidence volume
+   preserves known ordinary volume values.
+   Operationalization: current tests check simplex, hypercube, and
+   crosspolytope values and compare symplectic fixture data with
+   `volume_from_incidence_exact`.
 
 ## Proposed First Migration Slices
 

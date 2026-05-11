@@ -153,11 +153,10 @@ returns sorted incident-vertex lists per facet. `edges_from_vertex_facet_inciden
 returns vertex pairs that share at least three incident facets.
 `two_faces_from_vertex_facet_incidence` returns facet pairs with at least three
 shared vertices; `TwoFace::vertices` is sorted by vertex index and is not
-polygon-ordered. `facet_intersection_is_nonempty_from_vertex_facet_incidence`
+polygon-ordered. The known-incidence volume helpers perform the polygon
+ordering they need internally. `facet_intersection_is_nonempty_from_vertex_facet_incidence`
 returns the `F x F` facet-pair matrix with false diagonal where entry `(i, k)`
-means facets `i` and `k` share at least one vertex. The temporary
-`symplectic::geom::skeleton::Skeleton` wrapper still performs f64 polygon
-ordering when converting these `TwoFace` values to its existing `Ridge` type.
+means facets `i` and `k` share at least one vertex.
 
 `volume_from_incidence_f64(vertices, incidence)` computes the same ordinary
 full-dimensional `R^4` volume when the caller already has reliable
@@ -282,8 +281,7 @@ their tolerance, error, and indeterminate semantics in their rustdoc.
 ## Non-Goals
 
 - no symplectic form or capacity API;
-- no public `Polytope4D` replacement before call sites prove it removes real
-  complexity;
+- no shared polytope wrapper before call sites prove it removes real complexity;
 - no dimension-generic API before there is a caller outside ambient `R^4`;
 - no general computational-geometry framework;
 - no automatic orientation, units, or provenance layer around plain vectors.

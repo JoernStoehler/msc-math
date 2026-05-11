@@ -150,7 +150,7 @@ Context: non-thesis-spine work should stay bounded during finish mode.
 | Current-model harness prompt modernization | `[done]` | map input | current session | GPT-5.5 modernization now means a smaller live surface, not a broad prompt-library migration. Reopen only for current official-doc conflicts or observed model-specific failures. | `AGENTS.md`, `.codex/config.toml` |
 | Review reliability and task-tree tracking | `[map-input]` | map input | Jörn assigns next harness agent | Use only tracked observations or freshly verified live files for a future harness edit proposal; do not treat scratch handoffs as approval to edit harness files or as trusted reasoning. | `AGENTS.md`, `.agents/skills/rust/SKILL.md` |
 | Harness engineering skill revisit | `[pruned]` | future/follow-up | Jorn + agent review | Do not perform a scheduled reread of deleted skill drafts. Recreate a repo-local skill only from a current repeated workflow or observed failure. | deleted harness migration drafts in git history |
-| Capacity/orbit API architecture | `[future]` | future/follow-up by default | retained claim impact | `Polytope4D` boundary reduction is partly plausible only at the KKT/QP assembly layer; do not promote broad APIs unless retained thesis/reproducibility needs it. | `crates/MAP.md`, `crates/symplectic/src/kkt/qp_assembly.rs`, legacy rows |
+| Capacity/orbit API architecture | `[future]` | future/follow-up by default | retained claim impact | The flat migration deleted the shared geometry wrapper and exposed explicit KKT/orbit data dependencies. Do not promote broader APIs unless retained thesis/reproducibility needs them. | `crates/MAP.md`, `crates/symplectic/src/kkt/qp_assembly.rs`, `crates/symplectic/src/algorithms/orbit_search.rs` |
 | Experiment-to-library audit | `[future]` | future/follow-up by default | retained claim impact | Classify repeated helpers only when it unblocks validation, writeup, or agent navigation. | legacy library rows |
 | Codex migration/orchestration tests | `[future]` | future/follow-up | Jorn/tooling | Keep separate from thesis closeout unless current agents are blocked. | `.codex/`, legacy rows |
 | Rust convention label/proof wording | `[future]` | future/follow-up by default | harness discussion | Revisit only if invented labels or proof-in-doc-comment drift blocks current agents. The current mismatch packet reports that `rust-conventions` can be read as both "definitions, lemmas, and proofs live as doc comments" and "do not duplicate proofs inline". | `thesis/migration-findings.md`, old harness extraction: Rust convention candidate |
@@ -163,14 +163,11 @@ Context: non-thesis-spine work should stay bounded during finish mode.
   or public API promises.
   Refresh by: reading the headers and checking the relevant code/package
   surfaces.
-- [fresh 2026-04-29] `Polytope4D` is still justified for geometry, volume,
-  skeleton, root capacity routers, billiard classification, and dataset row
-  construction because those paths use vertices, incidence, adjacency, or
-  construction invariants together.  The low-risk boundary reduction is limited
-  to `crates/symplectic/src/kkt/qp_assembly.rs`: add a helper that builds QP
-  matrices from `&[Vector4<f64>]` plus `perm`, then keep existing
-  `Polytope4D` wrappers.  Moving HK2017 enumeration off `Polytope4D` needs a
-  concrete caller and likely Jörn/math judgment about the input contract.
+- [updated 2026-05-11] The old claim that `Polytope4D` was justified for
+  geometry, volume, skeleton, root capacity routers, billiard classification,
+  and dataset row construction is obsolete. The current architecture passes
+  flat geometry fields explicitly and keeps reusable ordinary convex geometry
+  in `euclidean-polytopes`.
 - [fresh 2026-05-03] Current harness surface is deliberately compact:
   `AGENTS.md` for durable root instructions, map/task headers for local
   refresh rules, `.codex/config.toml` for shared Codex config, and empty

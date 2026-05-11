@@ -492,9 +492,9 @@ pub fn systolic_ratio(capacity: f64, volume: f64) -> f64;
 Geometry notes:
 
 - Full-dimensional ordinary volume belongs in `euclidean-polytopes`.
-  Symplectic callers that need `Polytope4D` volume should convert exact
-  vertices to `Vector4<BigRational>` locally and call
-  `volume_from_incidence_exact`.
+  Symplectic callers should pass exact vertices and vertex-facet incidence
+  directly to `volume_from_incidence_exact`, with any exact-to-f64 projection
+  kept local to the caller.
 - `facet_volume_f64` should derive topology internally or use a validated
   geometry handle. It should not require callers to pass correlated
   incidence/adjacency matrices.
