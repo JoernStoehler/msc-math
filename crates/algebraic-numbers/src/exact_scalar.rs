@@ -2,7 +2,7 @@ use std::fmt::Debug;
 use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
 
 use num_rational::BigRational;
-use num_traits::{One, Zero};
+use num_traits::{One, ToPrimitive, Zero};
 
 /// Exact scalar coefficients for algebra and exact linear-algebra code.
 ///
@@ -34,6 +34,16 @@ pub trait ExactScalar:
     + Div<Output = Self>
     + DivAssign
 {
+    /// Optional lossy f64 approximation for exact algorithms that can use
+    /// floating-point arithmetic to dismiss impossible candidates before exact
+    /// fallback. Returning `None` keeps the caller on the exact-only path.
+    fn to_f64_approx(&self) -> Option<f64> {
+        None
+    }
 }
 
-impl ExactScalar for BigRational {}
+impl ExactScalar for BigRational {
+    fn to_f64_approx(&self) -> Option<f64> {
+        self.to_f64()
+    }
+}
