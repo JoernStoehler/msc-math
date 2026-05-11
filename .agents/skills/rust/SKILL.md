@@ -18,6 +18,7 @@ This skill owns Rust code, API, testing, review, and handoff conventions.
   data structures or invariant-enforcing smart constructors are all acceptable tools to help a fresh GPT-5.5 reader
   understand the declaration and call sites. Prefer definitions near the functions that produce or consume them, prefer
   descriptive variable names and common types, and avoid abstractions that misleadingly imply invariants they do not enforce.
+- For observability, use ordinary `tracing` spans/events in hot production code with subscribers in profile binaries. Keep tracing opt-in, ignorable, and out of return types and stdout data paths such as JSONL.
 - Shape APIs around mathematical operations and experiment workflows. Keep exact, f64, experiment, and helper surfaces separate when contracts differ; duplicate specialized flows when clearer than a shared abstraction.
 - Put context-dependent propositions on producer/consumer function contracts, not on data containers pretending to prove them.
 - Public math/numerics APIs state input/output contracts. Classify important conditions as validated here, assumed after a named validation boundary, valid mathematical non-success, or theorem-backed output guarantee.

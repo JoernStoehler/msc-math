@@ -175,6 +175,9 @@ cargo build --workspace --release
 cargo check -p PACKAGE_NAME
 cargo build -p PACKAGE_NAME --release
 
+# Profiling
+cargo run -p symplectic --release --bin profile-pruned-hk2017 -- --facet-counts 8 --samples 3 --jsonl
+
 # Thesis
 cd thesis/ && latexmk && ./check-build.sh
 perl -ne 'if (/\\newlabel\{LABEL_NAME\}\{\{([^}]*)\}\{([^}]*)\}/) { print "number=$1 page=$2\n" }' thesis/build/main.aux
