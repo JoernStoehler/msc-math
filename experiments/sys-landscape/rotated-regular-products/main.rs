@@ -21,15 +21,15 @@
 use exp_sys_landscape::capacity_billiard;
 use exp_sys_landscape::euclidean_volume_f64;
 use exp_sys_landscape::experiment_path;
+use exp_sys_landscape::SysLandscapePolytopeCache;
 use serde::Serialize;
 use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::path::PathBuf;
 use std::time::Instant;
 use symplectic::algorithms::billiard::bounce_count_from_sigma_for_facets;
-use symplectic::geom::lagrangian_product::lagrangian_product;
+use symplectic::classify_facets_from_dual_vertices;
 use symplectic::geom::polygon::{polygon_area, regular_polygon_2d, rotate_polygon_2d};
-use symplectic::{classify_facets_from_dual_vertices, Polytope4D};
 
 const PENTAGON_START_DEG: f64 = 0.0;
 const PENTAGON_END_DEG: f64 = 36.0;
@@ -52,8 +52,8 @@ const PAIRS: &[(usize, usize)] = &[
     (6, 6),
 ];
 
-fn bounce_count(polytope: &Polytope4D, sigma: &[usize]) -> Option<usize> {
-    let classification = classify_facets_from_dual_vertices(polytope.dual_vertices_f64()).ok()?;
+fn bounce_count(polytope: &SysLandscapePolytopeCache, sigma: &[usize]) -> Option<usize> {
+    let classification = classify_facets_from_dual_vertices(&polytope.dual_vertices_f64).ok()?;
     bounce_count_from_sigma_for_facets(&classification.q_indices, &classification.p_indices, sigma)
 }
 
@@ -113,14 +113,19 @@ fn generate_heptagon_7x7() {
         let theta = angle_deg.to_radians();
 
         let (pn, ph) = rotate_polygon_2d(&pn_base, &ph_base, theta);
-        let polytope =
-            lagrangian_product(&qn, &qh, &pn, &ph).expect("heptagon product construction failed");
+        let polytope = SysLandscapePolytopeCache::from_lagrangian_product(&qn, &qh, &pn, &ph)
+            .expect("heptagon product construction failed");
 
-        let vol = euclidean_volume_f64(polytope.vertices(), polytope.incidence());
+        let vol = euclidean_volume_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
 
         let start = Instant::now();
-        let result =
-            capacity_billiard(&polytope).expect("billiard should accept Lagrangian product");
+        let result = capacity_billiard(
+            &polytope.dual_vertices_f64,
+            &polytope.dual_vertices,
+            &polytope.facet_intersection_is_nonempty,
+            &polytope.omega_signs,
+        )
+        .expect("billiard should accept Lagrangian product");
         let time_ms = start.elapsed().as_secs_f64() * 1000.0;
 
         let cap = result.capacity();
@@ -181,14 +186,19 @@ fn generate_pentagon_5x5() {
         let theta = angle_deg.to_radians();
 
         let (pn, ph) = rotate_polygon_2d(&pn_base, &ph_base, theta);
-        let polytope =
-            lagrangian_product(&qn, &qh, &pn, &ph).expect("pentagon product construction failed");
+        let polytope = SysLandscapePolytopeCache::from_lagrangian_product(&qn, &qh, &pn, &ph)
+            .expect("pentagon product construction failed");
 
-        let vol = euclidean_volume_f64(polytope.vertices(), polytope.incidence());
+        let vol = euclidean_volume_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
 
         let start = Instant::now();
-        let result =
-            capacity_billiard(&polytope).expect("billiard should accept Lagrangian product");
+        let result = capacity_billiard(
+            &polytope.dual_vertices_f64,
+            &polytope.dual_vertices,
+            &polytope.facet_intersection_is_nonempty,
+            &polytope.omega_signs,
+        )
+        .expect("billiard should accept Lagrangian product");
         let time_ms = start.elapsed().as_secs_f64() * 1000.0;
 
         let cap = result.capacity();
@@ -249,14 +259,19 @@ fn generate_polygon_pairs() {
         for (i, angle_deg) in angles.iter().enumerate() {
             let theta = angle_deg.to_radians();
             let (pn, ph) = rotate_polygon_2d(&pn_base, &ph_base, theta);
-            let polytope = lagrangian_product(&qn, &qh, &pn, &ph)
+            let polytope = SysLandscapePolytopeCache::from_lagrangian_product(&qn, &qh, &pn, &ph)
                 .expect("polygon product construction failed");
 
-            let vol = euclidean_volume_f64(polytope.vertices(), polytope.incidence());
+            let vol = euclidean_volume_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
 
             let start = Instant::now();
-            let result =
-                capacity_billiard(&polytope).expect("billiard should accept Lagrangian product");
+            let result = capacity_billiard(
+                &polytope.dual_vertices_f64,
+                &polytope.dual_vertices,
+                &polytope.facet_intersection_is_nonempty,
+                &polytope.omega_signs,
+            )
+            .expect("billiard should accept Lagrangian product");
             let time_ms = start.elapsed().as_secs_f64() * 1000.0;
 
             let cap = result.capacity();

@@ -33,6 +33,7 @@ use nalgebra::Vector4;
 use num_rational::BigRational;
 mod rows;
 use exp_sys_landscape::euclidean_volume_f64;
+use exp_sys_landscape::SysLandscapePolytopeCache;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use rand_distr::{Distribution, StandardNormal};
@@ -44,9 +45,7 @@ use std::path::PathBuf;
 use std::time::{Instant, SystemTime, UNIX_EPOCH};
 use symplectic::database::{load, save, DualVerticesKey, PolytopeRecord, SigmaAction};
 use symplectic::derivatives::{capacity_derivatives_a_from_kkt_result, volume_derivatives_a};
-use symplectic::geom::polytope::Polytope4D;
 use symplectic::kkt::saddle_point_solver::solve_kkt_for_dual_vertices;
-use symplectic::random::sample_random_polytope;
 
 type Db = HashMap<DualVerticesKey, PolytopeRecord>;
 
@@ -80,7 +79,7 @@ const H_MAX: f64 = 1.2;
 /// 1e-3 used in facet-splitting experiment (SPLITTING_EPSILONS range
 /// [1e-3, 1e-4]). Chosen as upper end: small enough that the (F+1)-polytope
 /// is close to the F-polytope; large enough that the new facet is robustly
-/// non-redundant at f64 precision. If changed, verify that Polytope4D
+/// non-redundant at f64 precision. If changed, verify that SysLandscapePolytopeCache
 /// construction doesn't produce RedundantFacet errors at smaller ε.
 const FACET_EPSILON: f64 = 1e-3;
 
@@ -115,7 +114,7 @@ const N_WIGGLES: usize = 5;
 /// `research/sys-landscape.md`.
 /// If changed: much smaller (e.g. 0.01) reduces boundary-crossing probability and escape
 /// effectiveness. Much larger (e.g. 0.2) risks producing degenerate polytopes
-/// (Polytope4D::from_f64 failure) or landing too far from the current optimum.
+/// (SysLandscapePolytopeCache::from_f64_dual_vertices failure) or landing too far from the current optimum.
 const WIGGLE_STRENGTH: f64 = 0.05;
 
 /// Maximum rounds of escape attempts after convergence.
@@ -142,8 +141,8 @@ const EPS: f64 = 1e-15;
 // Gradient step in a-space (copied from gradient-ascent-general)
 // ============================================================================
 
-fn compute_sys(polytope: &Polytope4D, db: &mut Db) -> Option<f64> {
-    let vol = euclidean_volume_f64(polytope.vertices(), polytope.incidence());
+fn compute_sys(polytope: &SysLandscapePolytopeCache, db: &mut Db) -> Option<f64> {
+    let vol = euclidean_volume_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
     if vol <= 0.0 {
         return None;
     }
@@ -158,29 +157,33 @@ fn try_step_a(
     direction: &[Vector4<f64>],
     t: f64,
     db: &mut Db,
-) -> Option<(Polytope4D, f64)> {
+) -> Option<(SysLandscapePolytopeCache, f64)> {
     let new_duals: Vec<Vector4<f64>> = duals
         .iter()
         .zip(direction)
         .map(|(a, d)| a + t * d)
         .collect();
-    let polytope = Polytope4D::from_f64(new_duals).ok()?;
+    let polytope = SysLandscapePolytopeCache::from_f64_dual_vertices(new_duals)?;
     let sys = compute_sys(&polytope, db)?;
     Some((polytope, sys))
 }
 
-fn compute_capacity(polytope: &Polytope4D, db: &mut Db) -> Option<f64> {
-    let key: DualVerticesKey = polytope.dual_vertices().to_vec();
+fn compute_capacity(polytope: &SysLandscapePolytopeCache, db: &mut Db) -> Option<f64> {
+    let key: DualVerticesKey = polytope.dual_vertices.to_vec();
     if let Some(record) = db.get(&key) {
         if let Some(cap) = record.capacity {
             return Some(cap);
         }
     }
-    let r = exp_sys_landscape::capacity_auto(polytope).ok()?;
+    let r = exp_sys_landscape::capacity_auto(
+        &polytope.dual_vertices_f64,
+        &polytope.dual_vertices,
+        &polytope.facet_intersection_is_nonempty,
+        &polytope.omega_signs,
+    )
+    .ok()?;
     let cap = r.capacity();
-    let record = db
-        .entry(key)
-        .or_insert_with(|| PolytopeRecord::from_polytope(polytope));
+    let record = db.entry(key).or_insert_with(|| polytope.to_record());
     record.capacity = Some(cap);
     if record.capacity_err.is_none() {
         record.capacity_err = Some(0.0);
@@ -188,8 +191,11 @@ fn compute_capacity(polytope: &Polytope4D, db: &mut Db) -> Option<f64> {
     Some(cap)
 }
 
-fn compute_capacity_result(polytope: &Polytope4D, db: &mut Db) -> Option<(f64, Vec<usize>)> {
-    let key: DualVerticesKey = polytope.dual_vertices().to_vec();
+fn compute_capacity_result(
+    polytope: &SysLandscapePolytopeCache,
+    db: &mut Db,
+) -> Option<(f64, Vec<usize>)> {
+    let key: DualVerticesKey = polytope.dual_vertices.to_vec();
     // Check cache: need both capacity and best permutation
     if let Some(record) = db.get(&key) {
         if let (Some(cap), Some(sigmas)) = (record.capacity, record.sigmas.as_ref()) {
@@ -198,12 +204,16 @@ fn compute_capacity_result(polytope: &Polytope4D, db: &mut Db) -> Option<(f64, V
             }
         }
     }
-    let r = exp_sys_landscape::capacity_auto(polytope).ok()?;
+    let r = exp_sys_landscape::capacity_auto(
+        &polytope.dual_vertices_f64,
+        &polytope.dual_vertices,
+        &polytope.facet_intersection_is_nonempty,
+        &polytope.omega_signs,
+    )
+    .ok()?;
     let cap = r.capacity();
     let perm = r.best_sigma().to_vec();
-    let record = db
-        .entry(key)
-        .or_insert_with(|| PolytopeRecord::from_polytope(polytope));
+    let record = db.entry(key).or_insert_with(|| polytope.to_record());
     record.capacity = Some(cap);
     if record.capacity_err.is_none() {
         record.capacity_err = Some(0.0);
@@ -226,7 +236,7 @@ fn compute_capacity_result(polytope: &Polytope4D, db: &mut Db) -> Option<(f64, V
 // ============================================================================
 
 struct AscentResult {
-    final_polytope: Polytope4D,
+    final_polytope: SysLandscapePolytopeCache,
     final_sys: f64,
     n_iters: usize,
     n_phases: usize,
@@ -236,22 +246,23 @@ struct AscentResult {
 /// Gradient: d(sys)/d(a_k) = (cap * d(cap)/d(a_k) - sys * d(vol)/d(a_k)) / vol
 // TODO: add [lem:sys-sensitivity] to formal math (see gradient-correctness experiment)
 fn gradient_ascent_phase(
-    start: &Polytope4D,
+    start: &SysLandscapePolytopeCache,
     t0: Instant,
     budget: f64,
     db: &mut Db,
-) -> Option<(Polytope4D, f64, usize)> {
+) -> Option<(SysLandscapePolytopeCache, f64, usize)> {
     gradient_ascent_phase_limited(start, t0, budget, db, MAX_ITERATIONS)
 }
 
 fn gradient_ascent_phase_limited(
-    start: &Polytope4D,
+    start: &SysLandscapePolytopeCache,
     t0: Instant,
     budget: f64,
     db: &mut Db,
     max_iterations: usize,
-) -> Option<(Polytope4D, f64, usize)> {
-    let mut current = Polytope4D::from_f64(start.dual_vertices_f64().to_vec()).ok()?;
+) -> Option<(SysLandscapePolytopeCache, f64, usize)> {
+    let mut current =
+        SysLandscapePolytopeCache::from_f64_dual_vertices(start.dual_vertices_f64.to_vec())?;
     let mut current_sys = compute_sys(&current, db)?;
     let mut n_iters = 0usize;
 
@@ -261,17 +272,21 @@ fn gradient_ascent_phase_limited(
         }
 
         let (cap, best_perm) = compute_capacity_result(&current, db)?;
-        let dual_vertices = current.dual_vertices_f64();
+        let dual_vertices = &current.dual_vertices_f64;
         let kkt = solve_kkt_for_dual_vertices(dual_vertices, &best_perm).feasible()?;
-        let vol = euclidean_volume_f64(current.vertices(), current.incidence());
+        let vol = euclidean_volume_f64(&current.vertices, &current.vertex_facet_incidence);
         if vol <= 0.0 {
             return None;
         }
         let sys = cap * cap / (2.0 * vol);
-        let duals = current.dual_vertices_f64();
+        let duals = &current.dual_vertices_f64;
 
-        let d_vol_a =
-            volume_derivatives_a(duals, current.vertices_f64(), current.incidence()).ok()?;
+        let d_vol_a = volume_derivatives_a(
+            duals,
+            &current.vertices_f64,
+            &current.vertex_facet_incidence,
+        )
+        .ok()?;
         let d_cap_a = capacity_derivatives_a_from_kkt_result(duals, &best_perm, &kkt);
         let d_sys_a: Vec<Vector4<f64>> = d_vol_a
             .iter()
@@ -289,7 +304,7 @@ fn gradient_ascent_phase_limited(
             break;
         }
 
-        let mut best: Option<(Polytope4D, f64)> = None;
+        let mut best: Option<(SysLandscapePolytopeCache, f64)> = None;
 
         for &frac in STEP_FRACTIONS {
             let t = frac * t_max;
@@ -328,8 +343,11 @@ fn gradient_ascent_phase_limited(
     Some((current, current_sys, n_iters))
 }
 
-fn wiggle(polytope: &Polytope4D, rng: &mut ChaCha8Rng) -> Option<Polytope4D> {
-    let duals = polytope.dual_vertices_f64();
+fn wiggle(
+    polytope: &SysLandscapePolytopeCache,
+    rng: &mut ChaCha8Rng,
+) -> Option<SysLandscapePolytopeCache> {
+    let duals = &polytope.dual_vertices_f64;
     let new_duals: Vec<Vector4<f64>> = duals
         .iter()
         .map(|a| {
@@ -339,12 +357,12 @@ fn wiggle(polytope: &Polytope4D, rng: &mut ChaCha8Rng) -> Option<Polytope4D> {
             })
         })
         .collect();
-    Polytope4D::from_f64(new_duals).ok()
+    SysLandscapePolytopeCache::from_f64_dual_vertices(new_duals)
 }
 
 /// Full gradient ascent: initial phase + escape rounds.
 fn full_ascent(
-    start: &Polytope4D,
+    start: &SysLandscapePolytopeCache,
     rng: &mut ChaCha8Rng,
     budget: f64,
     db: &mut Db,
@@ -361,7 +379,7 @@ fn full_ascent(
 }
 
 fn full_ascent_limited(
-    start: &Polytope4D,
+    start: &SysLandscapePolytopeCache,
     rng: &mut ChaCha8Rng,
     budget: f64,
     db: &mut Db,
@@ -424,8 +442,12 @@ fn full_ascent_limited(
 ///
 /// Pattern from facet-splitting/main.rs.
 // TODO: add [lem:facet-addition] to formal math (dual vertex ↔ halfspace correspondence)
-fn add_facet(polytope: &Polytope4D, direction: &Vector4<f64>, epsilon: f64) -> Option<Polytope4D> {
-    let vertices = polytope.vertices_f64();
+fn add_facet(
+    polytope: &SysLandscapePolytopeCache,
+    direction: &Vector4<f64>,
+    epsilon: f64,
+) -> Option<SysLandscapePolytopeCache> {
+    let vertices = &polytope.vertices_f64;
     let h_k_n = vertices
         .iter()
         .map(|v| direction.dot(v))
@@ -434,9 +456,9 @@ fn add_facet(polytope: &Polytope4D, direction: &Vector4<f64>, epsilon: f64) -> O
     if new_h <= 0.0 {
         return None;
     }
-    let mut new_duals: Vec<Vector4<f64>> = polytope.dual_vertices_f64().to_vec();
+    let mut new_duals: Vec<Vector4<f64>> = polytope.dual_vertices_f64.to_vec();
     new_duals.push(direction / new_h);
-    Polytope4D::from_f64(new_duals).ok()
+    SysLandscapePolytopeCache::from_f64_dual_vertices(new_duals)
 }
 
 /// Sample a random unit direction in R^4.
@@ -453,10 +475,10 @@ fn random_direction(rng: &mut ChaCha8Rng) -> Vector4<f64> {
 
 /// Check whether the last facet (index F) is still non-redundant.
 /// A facet is "active" if it has at least one incident vertex.
-fn last_facet_active(polytope: &Polytope4D) -> bool {
+fn last_facet_active(polytope: &SysLandscapePolytopeCache) -> bool {
     let f = polytope.facet_count();
     let last_idx = f - 1;
-    vertex_facets_from_vertex_facet_incidence(polytope.incidence())
+    vertex_facets_from_vertex_facet_incidence(&polytope.vertex_facet_incidence)
         .iter()
         .any(|facets| facets.contains(&last_idx))
 }
@@ -465,7 +487,7 @@ fn last_facet_active(polytope: &Polytope4D) -> bool {
 // Loading F=10 local maxima from gradient-ascent-general
 // ============================================================================
 
-fn load_local_maxima(path: &std::path::Path) -> Vec<(String, f64, Polytope4D)> {
+fn load_local_maxima(path: &std::path::Path) -> Vec<(String, f64, SysLandscapePolytopeCache)> {
     let mut results = Vec::new();
     let file = match File::open(path) {
         Ok(f) => f,
@@ -489,7 +511,7 @@ fn load_local_maxima(path: &std::path::Path) -> Vec<(String, f64, Polytope4D)> {
                 .iter()
                 .map(|a| Vector4::new(a[0], a[1], a[2], a[3]))
                 .collect();
-            if let Ok(p) = Polytope4D::from_f64(duals) {
+            if let Some(p) = SysLandscapePolytopeCache::from_f64_dual_vertices(duals) {
                 results.push((row.name, row.final_sys, p));
             }
         }
@@ -524,9 +546,9 @@ fn load_completed_names(path: &std::path::Path) -> HashSet<String> {
 // Helpers
 // ============================================================================
 
-fn dvs_to_array(polytope: &Polytope4D) -> Vec<[f64; 4]> {
+fn dvs_to_array(polytope: &SysLandscapePolytopeCache) -> Vec<[f64; 4]> {
     polytope
-        .dual_vertices_f64()
+        .dual_vertices_f64
         .iter()
         .map(|a| [a[0], a[1], a[2], a[3]])
         .collect()
@@ -538,15 +560,13 @@ fn rational_vec4_to_strings(data: &[[BigRational; 4]]) -> Vec<[String; 4]> {
         .collect()
 }
 
-fn dual_vertices_rational_strings(polytope: &Polytope4D) -> Vec<[String; 4]> {
-    rational_vec4_to_strings(polytope.dual_vertices())
+fn dual_vertices_rational_strings(polytope: &SysLandscapePolytopeCache) -> Vec<[String; 4]> {
+    rational_vec4_to_strings(&polytope.dual_vertices)
 }
 
-fn persist_scalar_fields(polytope: &Polytope4D, vol: f64, cap: f64, db: &mut Db) {
-    let key: DualVerticesKey = polytope.dual_vertices().to_vec();
-    let record = db
-        .entry(key)
-        .or_insert_with(|| PolytopeRecord::from_polytope(polytope));
+fn persist_scalar_fields(polytope: &SysLandscapePolytopeCache, vol: f64, cap: f64, db: &mut Db) {
+    let key: DualVerticesKey = polytope.dual_vertices.to_vec();
+    let record = db.entry(key).or_insert_with(|| polytope.to_record());
     if record.volume.is_none() {
         record.volume = Some(vol);
     }
@@ -612,7 +632,9 @@ fn smoke_run(
             println!("Smoke mode: no local maxima found, sampling a random F=10 polytope.");
             let mut sampled = None;
             for _ in 0..100 {
-                if let Ok(p) = sample_random_polytope(FACET_COUNT, H_MIN, H_MAX, rng) {
+                if let Some(p) =
+                    SysLandscapePolytopeCache::sample_random(FACET_COUNT, H_MIN, H_MAX, rng)
+                {
                     sampled = Some(p);
                     break;
                 }
@@ -908,7 +930,7 @@ fn main() {
     println!("=== RQ2: Four-way comparison ===\n");
 
     // Generate F=10 starting polytopes
-    let mut rq2_starts: Vec<(String, Polytope4D)> = Vec::new();
+    let mut rq2_starts: Vec<(String, SysLandscapePolytopeCache)> = Vec::new();
     let mut attempts = 0usize;
     while rq2_starts.len() < N_SEEDS_RQ2 {
         attempts += 1;
@@ -916,7 +938,9 @@ fn main() {
             eprintln!("WARNING: gave up generating F=10 polytopes after {attempts} attempts");
             break;
         }
-        if let Ok(p) = sample_random_polytope(FACET_COUNT, H_MIN, H_MAX, &mut rng) {
+        if let Some(p) =
+            SysLandscapePolytopeCache::sample_random(FACET_COUNT, H_MIN, H_MAX, &mut rng)
+        {
             let name = format!("rq2_seed{}", rq2_starts.len());
             rq2_starts.push((name, p));
         }
@@ -924,7 +948,7 @@ fn main() {
     println!("Generated {} F=10 starting polytopes.\n", rq2_starts.len());
 
     // Generate F=11 random polytopes for Path C (same count)
-    let mut rq2_f11_random: Vec<(String, Polytope4D)> = Vec::new();
+    let mut rq2_f11_random: Vec<(String, SysLandscapePolytopeCache)> = Vec::new();
     attempts = 0;
     while rq2_f11_random.len() < N_SEEDS_RQ2 {
         attempts += 1;
@@ -932,7 +956,9 @@ fn main() {
             eprintln!("WARNING: gave up generating F=11 polytopes after {attempts} attempts");
             break;
         }
-        if let Ok(p) = sample_random_polytope(FACET_COUNT + 1, H_MIN, H_MAX, &mut rng) {
+        if let Some(p) =
+            SysLandscapePolytopeCache::sample_random(FACET_COUNT + 1, H_MIN, H_MAX, &mut rng)
+        {
             let name = format!("rq2_seed{}", rq2_f11_random.len());
             rq2_f11_random.push((name, p));
         }
@@ -957,7 +983,7 @@ fn main() {
         // polytope. With a warm cache.jsonl, capacity lookups are all hits and
         // this takes <1s per seed (~10s total for 10 seeds).
         let path_a_name = format!("{seed_name}_pathA_f10");
-        let mut path_a_result: Option<(Polytope4D, f64)> = None;
+        let mut path_a_result: Option<(SysLandscapePolytopeCache, f64)> = None;
         {
             let t0 = Instant::now();
             match full_ascent(start_polytope, &mut rng, TRIAL_TIME_BUDGET_SECS, &mut db) {

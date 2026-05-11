@@ -6,13 +6,13 @@
 //! Output Artifacts: experiments/sys-landscape/rejection-calibration/acceptance.jsonl (acceptance rates per config).
 
 use exp_sys_landscape::experiment_path;
+use exp_sys_landscape::SysLandscapePolytopeCache;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::time::Instant;
 use symplectic::dataset::AcceptanceRow;
-use symplectic::random::sample_random_polytope;
 
 /// Hardcoded sweep grid.
 const FACET_COUNTS: &[usize] = &[5, 6, 7, 8, 9, 10];
@@ -31,7 +31,8 @@ pub fn run_sweep(n_attempts: usize, seed: u64) -> Vec<AcceptanceRow> {
 
             for _ in 0..n_attempts {
                 let start = Instant::now();
-                let accepted = sample_random_polytope(f, h_min, h_max, &mut rng).is_ok();
+                let accepted =
+                    SysLandscapePolytopeCache::sample_random(f, h_min, h_max, &mut rng).is_some();
                 let elapsed_us = start.elapsed().as_micros();
 
                 if accepted {

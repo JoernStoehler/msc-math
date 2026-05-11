@@ -25,19 +25,26 @@ use euclidean_polytopes::{
 };
 use exp_sys_landscape::capacity_auto;
 use exp_sys_landscape::euclidean_volume_f64;
-use symplectic::geom::polytope::Polytope4D;
+use exp_sys_landscape::SysLandscapePolytopeCache;
 
 fn enrich_row(row: &LoadedPolytopeRow) -> PolytopeTableRow {
     let (dual_vectors, dual_vertex_fields) = features_dual_vertices::dual_vertices_f64(row);
-    let polytope: Polytope4D = Polytope4D::from_f64(dual_vectors.clone())
-        .unwrap_or_else(|e| panic!("reconstruct {}: {e}", row.poly_id));
-    let polytope_volume = euclidean_volume_f64(polytope.vertices(), polytope.incidence());
+    let polytope: SysLandscapePolytopeCache =
+        SysLandscapePolytopeCache::from_f64_dual_vertices(dual_vectors.clone())
+            .unwrap_or_else(|| panic!("reconstruct {}", row.poly_id));
+    let polytope_volume =
+        euclidean_volume_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
     let actual_capacity = if row.capacity > 0.0 {
         row.capacity
     } else {
-        capacity_auto(&polytope)
-            .unwrap_or_else(|e| panic!("capacity {}: {:?}", row.poly_id, e))
-            .capacity()
+        capacity_auto(
+            &polytope.dual_vertices_f64,
+            &polytope.dual_vertices,
+            &polytope.facet_intersection_is_nonempty,
+            &polytope.omega_signs,
+        )
+        .unwrap_or_else(|e| panic!("capacity {}: {:?}", row.poly_id, e))
+        .capacity()
     };
     let sys_value = actual_capacity * actual_capacity / (2.0 * polytope_volume);
     let facet_count = polytope.facet_count();
@@ -49,12 +56,12 @@ fn enrich_row(row: &LoadedPolytopeRow) -> PolytopeTableRow {
     let facet_scale = polytope_volume.powf(0.75);
     let omega_scale = polytope_volume.sqrt();
     let volume_scale = polytope_volume.sqrt();
-    let incidence = polytope.incidence();
+    let incidence = &polytope.vertex_facet_incidence;
     let vertex_facets = vertex_facets_from_vertex_facet_incidence(incidence);
     let edges = edges_from_vertex_facet_incidence(incidence);
     let two_faces = two_faces_from_vertex_facet_incidence(incidence);
-    let vertices = polytope.vertices_f64();
-    let duals = polytope.dual_vertices_f64();
+    let vertices = &polytope.vertices_f64;
+    let duals = &polytope.dual_vertices_f64;
     let skeleton_fields =
         features_skeleton::compute_skeleton_fields(&polytope, &vertex_facets, &edges, &two_faces);
     let face_geometry_fields = features_face_geometry::compute_face_geometry_fields(

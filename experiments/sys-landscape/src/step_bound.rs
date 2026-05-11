@@ -1,10 +1,10 @@
 //! Step-bound event detection for dual-vertex ascent directions.
 
+use crate::SysLandscapePolytopeCache;
 use euclidean_polytopes::{
     two_faces_from_vertex_facet_incidence, vertex_facets_from_vertex_facet_incidence,
 };
 use nalgebra::{Matrix4, Vector4};
-use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::symplectic_form::omega0;
 
 /// Maximum step size cap (prevents infinite steps when no combinatorial bound exists).
@@ -59,13 +59,13 @@ pub struct BoundaryEvent {
 /// substantial share of first boundary events, so the old
 /// `compute_step_bound_a` missed an important failure mode.
 pub fn compute_step_bound_detailed(
-    polytope: &Polytope4D,
+    polytope: &SysLandscapePolytopeCache,
     direction: &[Vector4<f64>],
 ) -> BoundaryEvent {
-    let duals = polytope.dual_vertices_f64();
-    let vertices = polytope.vertices_f64();
+    let duals = &polytope.dual_vertices_f64;
+    let vertices = &polytope.vertices_f64;
     let f = polytope.facet_count();
-    let incidence = polytope.incidence();
+    let incidence = &polytope.vertex_facet_incidence;
     let vertex_facets_by_vertex = vertex_facets_from_vertex_facet_incidence(incidence);
     let two_faces = two_faces_from_vertex_facet_incidence(incidence);
 
@@ -217,6 +217,6 @@ pub fn compute_step_bound_detailed(
 /// Drop-in replacement for the old `compute_step_bound_a`. Callers that only need
 /// the scalar step bound use this; callers that need to classify boundary events
 /// use `compute_step_bound_detailed` directly.
-pub fn compute_step_bound(polytope: &Polytope4D, direction: &[Vector4<f64>]) -> f64 {
+pub fn compute_step_bound(polytope: &SysLandscapePolytopeCache, direction: &[Vector4<f64>]) -> f64 {
     compute_step_bound_detailed(polytope, direction).t_max
 }
