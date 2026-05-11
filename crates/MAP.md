@@ -78,7 +78,7 @@ formula is blocked and it is not a supported experiment entrypoint.
 | one orbit candidate / KKT solve | `crates/symplectic/src/kkt/` |
 | capacity computation | `crates/symplectic/src/algorithms/` |
 | recovered primal orbit / trajectory | `crates/symplectic/src/algorithms/hk2017/orbit_recovery.rs` |
-| skeletons / face adjacency | `crates/euclidean-polytopes/src/skeleton.rs`, `crates/symplectic/src/algorithms/facet_adjacency.rs` |
+| skeletons / face adjacency | `crates/euclidean-polytopes/src/faces.rs`, `crates/symplectic/src/algorithms/facet_adjacency.rs` |
 | derivatives with respect to dual vertices | `crates/symplectic/src/derivatives.rs` |
 | JSONL polytope records and stored rows | `crates/symplectic/src/database.rs`, `crates/symplectic/src/dataset.rs` |
 | exact one-sigma validation kernels | `crates/symplectic/src/exact/` |
@@ -89,12 +89,12 @@ formula is blocked and it is not a supported experiment entrypoint.
 | Entity | Current role | Main surface |
 | --- | --- | --- |
 | flat known-polytope fields | reusable fixture geometry as `dual_vertices`, `vertices`, `vertex_facet_incidence`, `facet_intersection_is_nonempty`, `omega_signs`, and f64 copies | `crates/symplectic/src/geom/known_polytopes.rs` |
-| `Skeleton` / face helpers | Euclidean face data derived from vertex-facet incidence | `crates/euclidean-polytopes/src/skeleton.rs` |
+| face helpers | Euclidean face data derived from vertex-facet incidence | `crates/euclidean-polytopes/src/faces.rs` |
 | `OrbitSearchResult` | shared capacity/orbit search result returned by explicit capacity aggregation paths; contains orbit list plus `min_action` bounds and iterations | `crates/symplectic/src/algorithms/orbit_search.rs`, `crates/symplectic/src/lib.rs` |
 | `OrbitKktData` | one solved orbit payload: `sigma`, `beta`, action interval, `q`, optional multipliers, admissibility | `crates/symplectic/src/algorithms/orbit_search.rs` |
 | `GeometricOrbit` | recovered geometric trajectory/orbit data derived from an `OrbitKktData` payload | `crates/symplectic/src/algorithms/hk2017/orbit_recovery.rs` |
 | `PolytopeRecord` | persisted JSONL row with rational geometry and optional computed summaries | `crates/symplectic/src/database.rs` |
-| `ExactPolytope4D` / `ExactOrbitKktData` | exact ordered-field payloads for one-sigma validation | `crates/symplectic/src/exact/` |
+| `ExactVerticesWithIncidence` / `ExactOrbitKktData` | exact ordered-field payloads for polar vertices, incidence, and one-sigma validation | `crates/symplectic/src/exact/` |
 | `Algebraic<S>` | scalar element over a compile-time real algebraic field specification | `crates/algebraic-numbers/src/lib.rs` |
 
 ## API Tiers
