@@ -20,7 +20,11 @@
 //! The explicit root wrapper below is intentional: this diagnostic validates
 //! the current pruned general HK2017/KKT pipeline and its Q-side error story,
 //! not the root auto-dispatch wrapper.
-use dev_numerical_analysis::{capacity_pruned_hk2017, NumericsPolytopeCache};
+#[path = "../src/flat_polytope.rs"]
+mod flat_polytope;
+
+use crate::flat_polytope::NumericsPolytopeCache;
+use dev_numerical_analysis::capacity_pruned_hk2017;
 use nalgebra::{DMatrix, DVector, Vector4};
 use symplectic::geom::known_polytopes;
 use symplectic::geom::symplectic_form::omega0;
@@ -313,7 +317,13 @@ struct ExactResult {
 
 /// Compare numerical Q̃ against exact Q for the winning (S,σ) of a polytope.
 fn exact_comparison(polytope: &NumericsPolytopeCache) -> Option<ExactResult> {
-    let result = capacity_pruned_hk2017(polytope).ok()?;
+    let result = capacity_pruned_hk2017(
+        &polytope.dual_vertices,
+        &polytope.dual_vertices_f64,
+        &polytope.facet_intersection_is_nonempty,
+        &polytope.omega_signs,
+    )
+    .ok()?;
     let perm = result.best_sigma();
     let m = perm.len();
     let size = m + 5;
@@ -389,13 +399,13 @@ fn exact_comparison(polytope: &NumericsPolytopeCache) -> Option<ExactResult> {
 fn main() {
     let polytopes: Vec<(&str, NumericsPolytopeCache)> = known_polytopes::all_known()
         .into_iter()
-        .filter(|kp| kp.polytope.facet_count() <= 10)
+        .filter(|kp| kp.dual_vertices.len() <= 10)
         .map(|kp| {
             (
                 kp.name,
                 NumericsPolytopeCache::from_rational_parts(
-                    kp.polytope.dual_vertices().to_vec(),
-                    kp.polytope.vertices().to_vec(),
+                    kp.dual_vertices.clone(),
+                    kp.vertices.clone(),
                 )
                 .expect("known polytope cache"),
             )

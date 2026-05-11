@@ -24,9 +24,12 @@
 //! when h < h_K(n) it cuts. To make K *larger* we'd need to relax an existing
 //! halfspace, which is already covered by gradient-analysis's (n,h) gradient analysis.
 
+#[path = "../src/flat_polytope.rs"]
+mod flat_polytope;
+
+use crate::flat_polytope::HkoPolytopeCache;
 use exp_hko_local_maximum::capacity_auto;
 use exp_hko_local_maximum::euclidean_volume_f64;
-use exp_hko_local_maximum::HkoPolytopeCache;
 use nalgebra::Vector4;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
@@ -128,10 +131,15 @@ fn safe_sys(polytope: &HkoPolytopeCache) -> Option<(f64, f64, f64)> {
     if vol <= 0.0 {
         return None;
     }
-    let cap = capacity_auto(polytope)
-        .ok()
-        .map(|r| r.capacity())
-        .unwrap_or(f64::NAN);
+    let cap = capacity_auto(
+        &polytope.dual_vertices,
+        &polytope.dual_vertices_f64,
+        &polytope.facet_intersection_is_nonempty,
+        &polytope.omega_signs,
+    )
+    .ok()
+    .map(|r| r.capacity())
+    .unwrap_or(f64::NAN);
     if !cap.is_finite() {
         return None;
     }
@@ -208,20 +216,23 @@ fn run_phase_b(base_dir: &std::path::Path, smoke: bool) {
     println!("═══════════════════════════════════════════════════════════\n");
 
     let known = known_polytopes::hko_pentagon();
-    let polytope = HkoPolytopeCache::from_rational_parts(
-        known.polytope.dual_vertices().to_vec(),
-        known.polytope.vertices().to_vec(),
-    )
-    .expect("HKO cache");
+    let polytope =
+        HkoPolytopeCache::from_rational_parts(known.dual_vertices.clone(), known.vertices.clone())
+            .expect("HKO cache");
     let f = polytope.facet_count();
     let duals = &polytope.dual_vertices_f64;
     let normals: Vec<Vector4<f64>> = duals.iter().map(|a| a / a.norm()).collect();
     let vertices = &polytope.vertices_f64;
 
     let vol_orig = euclidean_volume_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
-    let cap_orig = capacity_auto(&polytope)
-        .expect("failed to compute HKO2024 baseline capacity")
-        .capacity();
+    let cap_orig = capacity_auto(
+        &polytope.dual_vertices,
+        &polytope.dual_vertices_f64,
+        &polytope.facet_intersection_is_nonempty,
+        &polytope.omega_signs,
+    )
+    .expect("failed to compute HKO2024 baseline capacity")
+    .capacity();
     let sys_orig = cap_orig * cap_orig / (2.0 * vol_orig);
     println!("HKO2024 baseline: F={f}, sys={sys_orig:.10}");
 
@@ -302,7 +313,13 @@ fn run_phase_b(base_dir: &std::path::Path, smoke: bool) {
                         let delta = split_sys - sys_orig;
 
                         // Use library ehz_capacity for orbit info (cheaper than instrumented)
-                        let lib_result = capacity_auto(&split_poly).ok();
+                        let lib_result = capacity_auto(
+                            &split_poly.dual_vertices,
+                            &split_poly.dual_vertices_f64,
+                            &split_poly.facet_intersection_is_nonempty,
+                            &split_poly.omega_signs,
+                        )
+                        .ok();
                         let n_valid = 0; // not computed (instrumented too expensive for F=11)
                         let best_sub = lib_result
                             .as_ref()
@@ -421,7 +438,13 @@ fn run_phase_b(base_dir: &std::path::Path, smoke: bool) {
                 };
                 let delta = split_sys - sys_orig;
 
-                let lib_result = capacity_auto(&split_poly).ok();
+                let lib_result = capacity_auto(
+                    &split_poly.dual_vertices,
+                    &split_poly.dual_vertices_f64,
+                    &split_poly.facet_intersection_is_nonempty,
+                    &split_poly.omega_signs,
+                )
+                .ok();
                 let n_valid = 0;
                 let best_sub = lib_result
                     .as_ref()
@@ -513,7 +536,13 @@ fn run_phase_b(base_dir: &std::path::Path, smoke: bool) {
                 };
                 let delta = split_sys - sys_orig;
 
-                let lib_result = capacity_auto(&split_poly).ok();
+                let lib_result = capacity_auto(
+                    &split_poly.dual_vertices,
+                    &split_poly.dual_vertices_f64,
+                    &split_poly.facet_intersection_is_nonempty,
+                    &split_poly.omega_signs,
+                )
+                .ok();
                 let n_valid = 0;
                 let best_sub = lib_result
                     .as_ref()

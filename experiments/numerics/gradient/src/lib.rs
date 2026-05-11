@@ -29,9 +29,9 @@ use symplectic::{
     OrbitSearchError, OrbitSearchResult,
 };
 
-pub mod flat_polytope;
+mod flat_polytope;
 
-pub use flat_polytope::GradientPolytopeCache;
+use flat_polytope::GradientPolytopeCache;
 
 /// Shared strict beta-threshold for certified-orbit enumeration in the gradient package.
 ///
@@ -52,17 +52,20 @@ pub fn euclidean_volume_f64(vertices: &[[BigRational; 4]], incidence: &DMatrix<b
 }
 
 pub fn capacity_pruned_hk2017(
-    polytope: &GradientPolytopeCache,
+    dual_vertices: &[[BigRational; 4]],
+    dual_vertices_f64: &[Vector4<f64>],
+    facet_intersection_is_nonempty: &DMatrix<bool>,
+    omega_signs: &DMatrix<i8>,
 ) -> Result<OrbitSearchResult, OrbitSearchError> {
     let transition_is_allowed =
         symplectic::algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega(
-            &polytope.facet_intersection_is_nonempty,
-            &polytope.omega_signs,
+            facet_intersection_is_nonempty,
+            omega_signs,
         );
     let (orbits, iterations) =
-        solve_pruned_hk2017_candidates(&polytope.dual_vertices_f64, &transition_is_allowed)?;
+        solve_pruned_hk2017_candidates(dual_vertices_f64, &transition_is_allowed)?;
     aggregate_orbits_with_dual_vertices_exact(
-        &polytope.dual_vertices,
+        dual_vertices,
         orbits,
         iterations,
         0.0,
@@ -71,24 +74,27 @@ pub fn capacity_pruned_hk2017(
 }
 
 pub fn capacity_billiard(
-    polytope: &GradientPolytopeCache,
+    dual_vertices: &[[BigRational; 4]],
+    dual_vertices_f64: &[Vector4<f64>],
+    facet_intersection_is_nonempty: &DMatrix<bool>,
+    omega_signs: &DMatrix<i8>,
 ) -> Result<OrbitSearchResult, BilliardError> {
-    let classification = classify_facets_from_dual_vertices(&polytope.dual_vertices_f64)?;
+    let classification = classify_facets_from_dual_vertices(dual_vertices_f64)?;
     let transition_is_allowed =
         symplectic::algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega(
-            &polytope.facet_intersection_is_nonempty,
-            &polytope.omega_signs,
+            facet_intersection_is_nonempty,
+            omega_signs,
         );
     let (orbits, iterations) = solve_billiard_candidates(
-        &polytope.dual_vertices_f64,
+        dual_vertices_f64,
         &classification.q_indices,
         &classification.p_indices,
-        &polytope.facet_intersection_is_nonempty,
+        facet_intersection_is_nonempty,
         &transition_is_allowed,
     )
     .map_err(BilliardError::OrbitSearch)?;
     aggregate_orbits_with_dual_vertices_exact(
-        &polytope.dual_vertices,
+        dual_vertices,
         orbits,
         iterations,
         0.0,
@@ -98,10 +104,19 @@ pub fn capacity_billiard(
 }
 
 pub fn capacity_auto(
-    polytope: &GradientPolytopeCache,
+    dual_vertices: &[[BigRational; 4]],
+    dual_vertices_f64: &[Vector4<f64>],
+    facet_intersection_is_nonempty: &DMatrix<bool>,
+    omega_signs: &DMatrix<i8>,
 ) -> Result<OrbitSearchResult, OrbitSearchError> {
-    if classify_facets_from_dual_vertices(&polytope.dual_vertices_f64).is_ok() {
-        return capacity_billiard(polytope).map_err(|err| match err {
+    if classify_facets_from_dual_vertices(dual_vertices_f64).is_ok() {
+        return capacity_billiard(
+            dual_vertices,
+            dual_vertices_f64,
+            facet_intersection_is_nonempty,
+            omega_signs,
+        )
+        .map_err(|err| match err {
             BilliardError::OrbitSearch(err) => err,
             BilliardError::NotLagrangianProduct { .. } | BilliardError::TooFewFacets { .. } => {
                 unreachable!("classification was checked immediately before billiard routing")
@@ -109,7 +124,12 @@ pub fn capacity_auto(
         });
     }
 
-    capacity_pruned_hk2017(polytope)
+    capacity_pruned_hk2017(
+        dual_vertices,
+        dual_vertices_f64,
+        facet_intersection_is_nonempty,
+        omega_signs,
+    )
 }
 
 /// Shared row schema for the first-order gradient harness.
@@ -144,7 +164,11 @@ pub struct PredictionRow {
 
 /// Polytope with precomputed base values and KKT solution.
 pub struct PolytopeInfo {
-    pub polytope: GradientPolytopeCache,
+    pub dual_vertices: Vec<[BigRational; 4]>,
+    pub vertices: Vec<[BigRational; 4]>,
+    pub dual_vertices_f64: Vec<Vector4<f64>>,
+    pub vertices_f64: Vec<Vector4<f64>>,
+    pub vertex_facet_incidence: DMatrix<bool>,
     pub cap: f64,
     pub vol: f64,
     pub sys: f64,
@@ -173,12 +197,23 @@ pub fn random_direction(f: usize, rng: &mut ChaCha8Rng) -> Vec<Vector4<f64>> {
     dir
 }
 
-pub fn ehz_capacity_safe(polytope: &GradientPolytopeCache) -> Option<OrbitSearchResult> {
-    capacity_auto(polytope).ok()
+pub fn ehz_capacity_safe(
+    dual_vertices: &[[BigRational; 4]],
+    dual_vertices_f64: &[Vector4<f64>],
+    facet_intersection_is_nonempty: &DMatrix<bool>,
+    omega_signs: &DMatrix<i8>,
+) -> Option<OrbitSearchResult> {
+    capacity_auto(
+        dual_vertices,
+        dual_vertices_f64,
+        facet_intersection_is_nonempty,
+        omega_signs,
+    )
+    .ok()
 }
 
-pub fn solve_kkt_safe(polytope: &GradientPolytopeCache, perm: &[usize]) -> Option<KktResult> {
-    solve_kkt_for_dual_vertices(&polytope.dual_vertices_f64, perm).feasible()
+pub fn solve_kkt_safe(dual_vertices_f64: &[Vector4<f64>], perm: &[usize]) -> Option<KktResult> {
+    solve_kkt_for_dual_vertices(dual_vertices_f64, perm).feasible()
 }
 
 /// Compute dsys/da_k via quotient rule: sys = c^2/(2*vol).
@@ -200,18 +235,35 @@ fn sys_derivatives_a(
 }
 
 /// Compute capacity, volume, sys, and KKT for a polytope's best orbit.
-pub fn analyze_polytope(polytope: &GradientPolytopeCache) -> Option<PolytopeInfo> {
-    let ehz = ehz_capacity_safe(polytope)?;
+pub fn analyze_polytope(
+    dual_vertices: &[[BigRational; 4]],
+    vertices: &[[BigRational; 4]],
+    dual_vertices_f64: &[Vector4<f64>],
+    vertices_f64: &[Vector4<f64>],
+    vertex_facet_incidence: &DMatrix<bool>,
+    facet_intersection_is_nonempty: &DMatrix<bool>,
+    omega_signs: &DMatrix<i8>,
+) -> Option<PolytopeInfo> {
+    let ehz = ehz_capacity_safe(
+        dual_vertices,
+        dual_vertices_f64,
+        facet_intersection_is_nonempty,
+        omega_signs,
+    )?;
     let cap = ehz.capacity();
-    let vol = euclidean_volume_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
+    let vol = euclidean_volume_f64(vertices, vertex_facet_incidence);
     if vol <= 0.0 {
         return None;
     }
     let sys = cap * cap / (2.0 * vol);
     let best_perm = ehz.best_sigma().to_vec();
-    let kkt = solve_kkt_safe(polytope, &best_perm)?;
+    let kkt = solve_kkt_safe(dual_vertices_f64, &best_perm)?;
     Some(PolytopeInfo {
-        polytope: polytope.clone(),
+        dual_vertices: dual_vertices.to_vec(),
+        vertices: vertices.to_vec(),
+        dual_vertices_f64: dual_vertices_f64.to_vec(),
+        vertices_f64: vertices_f64.to_vec(),
+        vertex_facet_incidence: vertex_facet_incidence.clone(),
         cap,
         vol,
         sys,
@@ -254,7 +306,7 @@ fn compute_perturbed(
         }
     };
 
-    let cap = solve_kkt_safe(&polytope, base_perm)
+    let cap = solve_kkt_safe(&polytope.dual_vertices_f64, base_perm)
         .filter(|kkt| kkt.q_corrected > EPS_Q_POSITIVE && kkt.beta.iter().all(|&b| b > 0.0))
         .map(|kkt| 0.5 / kkt.q_corrected);
 
@@ -287,17 +339,13 @@ pub fn first_order_test(
     barely_cutting_delta: Option<f64>,
     min_facet_volume: Option<f64>,
 ) -> Vec<PredictionRow> {
-    let duals = &info.polytope.dual_vertices_f64;
+    let duals = &info.dual_vertices_f64;
     let f = duals.len();
 
     // Analytical gradients for all three targets.
     let g_cap = capacity_derivatives_a_from_kkt_result(duals, &info.best_perm, &info.kkt);
-    let g_vol = volume_derivatives_a(
-        duals,
-        &info.polytope.vertices_f64,
-        &info.polytope.vertex_facet_incidence,
-    )
-    .expect("gradient validation polytope has valid finite geometry");
+    let g_vol = volume_derivatives_a(duals, &info.vertices_f64, &info.vertex_facet_incidence)
+        .expect("gradient validation polytope has valid finite geometry");
     let g_sys = sys_derivatives_a(&g_cap, &g_vol, info.cap, info.vol, info.sys);
 
     let targets: [(&str, f64, &[Vector4<f64>]); 3] = [
@@ -387,14 +435,16 @@ pub fn smoke_output_dir(label: &str) -> String {
 
 /// Enumerate all certified orbits for a polytope (strict: beta > EPS, Q > EPS).
 /// Returns `(action, sigma, kkt_result)` sorted by action ascending.
-pub fn enumerate_all_orbits(polytope: &GradientPolytopeCache) -> Vec<(f64, Vec<usize>, KktResult)> {
-    let f = polytope.facet_count();
+pub fn enumerate_all_orbits(
+    dual_vertices_f64: &[Vector4<f64>],
+) -> Vec<(f64, Vec<usize>, KktResult)> {
+    let f = dual_vertices_f64.len();
     let mut orbits = Vec::new();
 
     for m in 2..=f {
         for subset in combinations(f, m) {
             for_each_cyclic_permutation(&subset, &mut |perm| {
-                if let Some(kkt) = solve_kkt_safe(polytope, perm) {
+                if let Some(kkt) = solve_kkt_safe(dual_vertices_f64, perm) {
                     let min_beta = kkt.beta.iter().copied().fold(f64::INFINITY, f64::min);
                     if min_beta > EPS_BETA_CERTIFIED && kkt.q_corrected > EPS_Q_POSITIVE {
                         let action = 0.5 / kkt.q_corrected;

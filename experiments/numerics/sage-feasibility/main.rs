@@ -14,10 +14,14 @@
 //! 3. `cargo run -p dev-numerical-analysis --release --bin num-sage-feasibility -- --canonical`
 //!    refreshes `sage-feasibility-input.jsonl`.
 
+#[path = "../src/flat_polytope.rs"]
+mod flat_polytope;
+
+use crate::flat_polytope::NumericsPolytopeCache;
 use dev_numerical_analysis::algebraic::catalog::ElementRecord;
 use dev_numerical_analysis::algebraic::field::ExperimentScalar;
 use dev_numerical_analysis::algebraic::fixtures::exact_hko_pentagon;
-use dev_numerical_analysis::{capacity_unpruned_hk2017, NumericsPolytopeCache};
+use dev_numerical_analysis::capacity_unpruned_hk2017;
 use nalgebra::Vector4;
 use num_bigint::BigInt;
 use num_rational::BigRational;
@@ -181,7 +185,8 @@ fn canonical_rational_bank(canonical: bool) -> Vec<RationalFixture> {
 
 fn rust_unpruned_baseline(polytope: &NumericsPolytopeCache) -> (f64, u64, usize, Vec<usize>, f64) {
     let start = Instant::now();
-    let result = capacity_unpruned_hk2017(polytope).expect("Rust unpruned baseline must succeed");
+    let result = capacity_unpruned_hk2017(&polytope.dual_vertices, &polytope.dual_vertices_f64)
+        .expect("Rust unpruned baseline must succeed");
     let wall_time_ms = start.elapsed().as_secs_f64() * 1000.0;
     (
         result.capacity(),
@@ -213,9 +218,8 @@ fn rational_row(fixture: RationalFixture) -> SageFeasibilityInputRow {
 }
 
 fn hko_row() -> SageFeasibilityInputRow {
-    let exact_hko = exact_hko_pentagon().expect("exact HKO fixture");
+    let exact_hko = exact_hko_pentagon();
     let f64_dual_vertices: Vec<_> = exact_hko
-        .dual_vertices()
         .iter()
         .map(|dual| {
             Vector4::new(
@@ -234,13 +238,9 @@ fn hko_row() -> SageFeasibilityInputRow {
     SageFeasibilityInputRow {
         polytope: "hko_pentagon_exact_f10".to_string(),
         family: "algebraic_hko".to_string(),
-        facet_count: exact_hko.facet_count(),
+        facet_count: exact_hko.len(),
         exact_field: "q_tan_pi_fifth".to_string(),
-        dual_vertices: exact_hko
-            .dual_vertices()
-            .iter()
-            .map(canonical_vec4)
-            .collect(),
+        dual_vertices: exact_hko.iter().map(canonical_vec4).collect(),
         rust_f64_capacity: capacity,
         rust_f64_iterations: iterations,
         rust_f64_returned_orbit_count: returned_orbit_count,
@@ -370,7 +370,7 @@ mod tests {
 
     #[test]
     fn hko_row_is_algebraic_f10() {
-        let exact_hko = exact_hko_pentagon().expect("exact HKO fixture");
-        assert_eq!(exact_hko.facet_count(), 10);
+        let exact_hko = exact_hko_pentagon();
+        assert_eq!(exact_hko.len(), 10);
     }
 }

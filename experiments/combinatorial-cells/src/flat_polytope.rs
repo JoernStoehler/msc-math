@@ -9,18 +9,18 @@ use symplectic::exact::omega_signs_exact;
 use symplectic::geom::rational_arithmetic::f64_to_rational;
 
 #[derive(Clone, Debug)]
-pub struct CellPolytopeCache {
-    pub dual_vertices: Vec<[BigRational; 4]>,
-    pub vertices: Vec<[BigRational; 4]>,
-    pub dual_vertices_f64: Vec<Vector4<f64>>,
-    pub vertices_f64: Vec<Vector4<f64>>,
-    pub vertex_facet_incidence: DMatrix<bool>,
-    pub facet_intersection_is_nonempty: DMatrix<bool>,
-    pub omega_signs: DMatrix<i8>,
+pub(crate) struct CellPolytopeCache {
+    pub(crate) dual_vertices: Vec<[BigRational; 4]>,
+    pub(crate) vertices: Vec<[BigRational; 4]>,
+    pub(crate) dual_vertices_f64: Vec<Vector4<f64>>,
+    pub(crate) vertices_f64: Vec<Vector4<f64>>,
+    pub(crate) vertex_facet_incidence: DMatrix<bool>,
+    pub(crate) facet_intersection_is_nonempty: DMatrix<bool>,
+    pub(crate) omega_signs: DMatrix<i8>,
 }
 
 impl CellPolytopeCache {
-    pub fn from_f64(dual_vertices_f64: Vec<Vector4<f64>>) -> Option<Self> {
+    pub(crate) fn from_f64(dual_vertices_f64: Vec<Vector4<f64>>) -> Option<Self> {
         if !dual_vertices_f64_are_valid(&dual_vertices_f64) {
             return None;
         }
@@ -32,7 +32,7 @@ impl CellPolytopeCache {
         Self::new(dual_vertices, Some(dual_vertices_f64))
     }
 
-    pub fn new(
+    pub(crate) fn new(
         dual_vertices: Vec<[BigRational; 4]>,
         dual_vertices_f64: Option<Vec<Vector4<f64>>>,
     ) -> Option<Self> {
@@ -67,7 +67,7 @@ impl CellPolytopeCache {
         })
     }
 
-    pub fn from_rational_parts(
+    pub(crate) fn from_rational_parts(
         dual_vertices: Vec<[BigRational; 4]>,
         vertices: Vec<[BigRational; 4]>,
     ) -> Option<Self> {
@@ -101,12 +101,12 @@ impl CellPolytopeCache {
         })
     }
 
-    pub fn facet_count(&self) -> usize {
+    pub(crate) fn facet_count(&self) -> usize {
         self.dual_vertices.len()
     }
 }
 
-pub fn rational_arrays_to_vectors(data: &[[BigRational; 4]]) -> Vec<Vector4<BigRational>> {
+pub(crate) fn rational_arrays_to_vectors(data: &[[BigRational; 4]]) -> Vec<Vector4<BigRational>> {
     data.iter()
         .map(|row| {
             Vector4::new(

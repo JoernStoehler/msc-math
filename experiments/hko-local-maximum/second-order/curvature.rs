@@ -1,9 +1,9 @@
 //! Phase 2 and 3 of the HKO second-order experiment: curve probes and random curvature checks.
 
+use crate::flat_polytope::HkoPolytopeCache;
 use crate::{EPSILON_GRID, EPSILON_RANDOM, N_RANDOM_DIRECTIONS, RANDOM_SEED};
 use exp_hko_local_maximum::capacity_auto;
 use exp_hko_local_maximum::euclidean_volume_f64;
-use exp_hko_local_maximum::HkoPolytopeCache;
 use nalgebra::Vector4;
 use rand::Rng as _;
 use rand::SeedableRng;
@@ -65,7 +65,14 @@ pub(crate) fn curvature_at_epsilon(
             })
             .collect();
         let poly = HkoPolytopeCache::from_f64(perturbed)?;
-        let cap = capacity_auto(&poly).ok()?.capacity();
+        let cap = capacity_auto(
+            &poly.dual_vertices,
+            &poly.dual_vertices_f64,
+            &poly.facet_intersection_is_nonempty,
+            &poly.omega_signs,
+        )
+        .ok()?
+        .capacity();
         let vol = euclidean_volume_f64(&poly.vertices, &poly.vertex_facet_incidence);
         if vol <= 0.0 {
             return None;
@@ -124,7 +131,12 @@ pub(crate) fn run_phase2(
                     }
                 };
 
-                let cap = match capacity_auto(&perturbed_poly) {
+                let cap = match capacity_auto(
+                    &perturbed_poly.dual_vertices,
+                    &perturbed_poly.dual_vertices_f64,
+                    &perturbed_poly.facet_intersection_is_nonempty,
+                    &perturbed_poly.omega_signs,
+                ) {
                     Ok(r) => r.capacity(),
                     Err(_) => {
                         n_fail += 1;

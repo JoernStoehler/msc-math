@@ -22,11 +22,15 @@
 //! Second-order analysis: if sys(K + εd) < sys(K) for all ε ≠ 0 and all flat d,
 //! then K is a strict local maximum. See formal/hko-local-maximality-conditions.tex for formal statement.
 
+#[path = "../src/flat_polytope.rs"]
+mod flat_polytope;
+
 mod curvature;
 mod phase1;
 
+use crate::flat_polytope::HkoPolytopeCache;
 use curvature::{curvature_at_epsilon, run_phase2, run_phase3};
-use exp_hko_local_maximum::{euclidean_volume_f64, HkoPolytopeCache};
+use exp_hko_local_maximum::euclidean_volume_f64;
 use phase1::run_phase1;
 use std::fs::File;
 use std::io::{BufWriter, Write};
@@ -104,11 +108,9 @@ fn main() {
     println!("═══════════════════════════════════════════════════════════\n");
 
     let known = known_polytopes::hko_pentagon();
-    let polytope = HkoPolytopeCache::from_rational_parts(
-        known.polytope.dual_vertices().to_vec(),
-        known.polytope.vertices().to_vec(),
-    )
-    .expect("HKO cache");
+    let polytope =
+        HkoPolytopeCache::from_rational_parts(known.dual_vertices.clone(), known.vertices.clone())
+            .expect("HKO cache");
     println!("HKO2024: F={}, known sys≈{:.6}", polytope.facet_count(), {
         let v = euclidean_volume_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
         known.capacity * known.capacity / (2.0 * v)

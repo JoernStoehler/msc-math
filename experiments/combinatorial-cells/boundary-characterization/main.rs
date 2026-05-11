@@ -20,9 +20,12 @@
 
 use euclidean_polytopes::vertex_facets_from_vertex_facet_incidence;
 use exp_combinatorial_cells::euclidean_volume_f64;
-use exp_combinatorial_cells::CellPolytopeCache;
+#[path = "../src/flat_polytope.rs"]
+mod flat_polytope;
+
+use crate::flat_polytope::CellPolytopeCache;
 use exp_combinatorial_cells::{
-    compute_step_bound_detailed, construct_at_t, ehz_capacity_instrumented, name_from_record,
+    compute_step_bound_detailed, ehz_capacity_instrumented, name_from_record,
     source_dataset_from_record, BoundaryEvent, EventType,
 };
 use nalgebra::Vector4;
@@ -44,6 +47,19 @@ use symplectic::kkt::saddle_point_solver::solve_kkt_for_dual_vertices;
 
 /// Maximum facet count to process (HK2017 cost is exponential).
 const MAX_FACET_COUNT: usize = 10;
+
+fn construct_at_t(
+    duals: &[Vector4<f64>],
+    direction: &[Vector4<f64>],
+    t: f64,
+) -> Option<CellPolytopeCache> {
+    let new_duals: Vec<Vector4<f64>> = duals
+        .iter()
+        .zip(direction.iter())
+        .map(|(a, d)| a + t * d)
+        .collect();
+    CellPolytopeCache::from_f64(new_duals)
+}
 
 /// Number of dense random directions for global probes.
 const N_GLOBAL_DENSE: usize = 5;
@@ -289,7 +305,13 @@ fn compute_sys(
         return None;
     }
 
-    let ehz = exp_combinatorial_cells::capacity_auto(polytope).ok()?;
+    let ehz = exp_combinatorial_cells::capacity_auto(
+        &polytope.dual_vertices,
+        &polytope.dual_vertices_f64,
+        &polytope.facet_intersection_is_nonempty,
+        &polytope.omega_signs,
+    )
+    .ok()?;
 
     let cap = ehz.capacity();
     if !cap.is_finite() || cap <= 0.0 {
@@ -528,7 +550,10 @@ fn main() {
         if f > MAX_FACET_COUNT {
             continue;
         }
-        let p = match exp_combinatorial_cells::cache_from_record(record) {
+        let p = match CellPolytopeCache::from_rational_parts(
+            record.dual_vertices_rational.clone(),
+            record.vertices_rational.clone(),
+        ) {
             Some(p) => p,
             None => {
                 eprintln!("  db entry {idx}: reconstruction failed");
@@ -593,7 +618,11 @@ fn main() {
         // =====================================================================
 
         let base = (|| {
-            let instrumented = ehz_capacity_instrumented(polytope)?;
+            let instrumented = ehz_capacity_instrumented(
+                &polytope.dual_vertices_f64,
+                &polytope.facet_intersection_is_nonempty,
+                &polytope.omega_signs,
+            )?;
             let vol = euclidean_volume_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
             if vol <= 0.0 {
                 return None;
@@ -633,8 +662,14 @@ fn main() {
         for dir in &global_dirs {
             let t_dir = Instant::now();
 
-            let boundary =
-                compute_step_bound_detailed(polytope, &dir.d, EPS_NUMERICAL_ZERO, MAX_STEP_SIZE);
+            let boundary = compute_step_bound_detailed(
+                &polytope.dual_vertices_f64,
+                &polytope.vertices_f64,
+                &polytope.vertex_facet_incidence,
+                &dir.d,
+                EPS_NUMERICAL_ZERO,
+                MAX_STEP_SIZE,
+            );
 
             let (ev_vertex, ev_facet_new, ev_facet_pair, ev_facet_degen) = match &boundary.event {
                 EventType::IncidenceFlip {

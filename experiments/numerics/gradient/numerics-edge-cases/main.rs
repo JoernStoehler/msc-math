@@ -38,9 +38,14 @@
 //!
 //! Self-contained: generates all polytopes internally.
 
+#[path = "../src/flat_polytope.rs"]
+mod flat_polytope;
+
+use crate::flat_polytope::GradientPolytopeCache;
 use dev_gradient::{
-    analyze_polytope, enumerate_all_orbits, first_order_test, write_rows, GradientPolytopeCache,
+    analyze_polytope, enumerate_all_orbits, first_order_test, write_rows, PolytopeInfo,
 };
+use euclidean_polytopes::sample_random_dual_vertices_f64;
 use nalgebra::Vector4;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
@@ -51,7 +56,6 @@ use std::io::{BufWriter, Write};
 use std::path::PathBuf;
 use std::time::Instant;
 use symplectic::geom::facet_volume::facet_volume_from_incidence_f64;
-use symplectic::random::generate_random_polytopes;
 
 // ============================================================================
 // CLI helpers
@@ -77,6 +81,18 @@ fn print_usage_and_exit(code: i32) -> ! {
     eprintln!("  --smoke: run a reduced run into a temporary directory");
     eprintln!("  -h, --help: show usage");
     std::process::exit(code);
+}
+
+fn analyze_cached_polytope(cache: &GradientPolytopeCache) -> Option<PolytopeInfo> {
+    analyze_polytope(
+        &cache.dual_vertices,
+        &cache.vertices,
+        &cache.dual_vertices_f64,
+        &cache.vertices_f64,
+        &cache.vertex_facet_incidence,
+        &cache.facet_intersection_is_nonempty,
+        &cache.omega_signs,
+    )
 }
 
 fn smoke_output_dir(label: &str) -> String {
@@ -179,6 +195,23 @@ fn edge_cases_config(smoke: bool) -> EdgeCasesConfig {
     }
 }
 
+fn sample_random_cache_batch(
+    count: usize,
+    facet_count: usize,
+    h_min: f64,
+    h_max: f64,
+    rng: &mut ChaCha8Rng,
+) -> Vec<GradientPolytopeCache> {
+    let mut accepted = Vec::with_capacity(count);
+    while accepted.len() < count {
+        let dual_vertices_f64 = sample_random_dual_vertices_f64(facet_count, h_min, h_max, rng);
+        if let Some(cache) = GradientPolytopeCache::from_f64(dual_vertices_f64) {
+            accepted.push(cache);
+        }
+    }
+    accepted
+}
+
 // ============================================================================
 // Phase-specific helpers
 // ============================================================================
@@ -247,20 +280,15 @@ fn run_q3(base_dir: &str, cfg: &EdgeCasesConfig) {
     println!("  Q3: Generating candidates (F={})...", f_count);
 
     while generated < cfg.q3_max_candidates && bin_counts.iter().any(|&c| c < cfg.q3_per_bin) {
-        let polytopes = generate_random_polytopes(cfg.q3_batch_size, f_count, 0.5, 2.0, &mut rng);
+        let polytopes = sample_random_cache_batch(cfg.q3_batch_size, f_count, 0.5, 2.0, &mut rng);
 
-        for polytope in &polytopes {
-            let cache = GradientPolytopeCache::from_rational_parts(
-                polytope.dual_vertices().to_vec(),
-                polytope.vertices().to_vec(),
-            )
-            .expect("random polytope cache");
+        for cache in &polytopes {
             generated += 1;
             if bin_counts.iter().all(|&c| c >= cfg.q3_per_bin) {
                 break;
             }
 
-            let orbits = enumerate_all_orbits(&cache);
+            let orbits = enumerate_all_orbits(&cache.dual_vertices_f64);
             if orbits.len() < 2 {
                 continue;
             }
@@ -277,7 +305,7 @@ fn run_q3(base_dir: &str, cfg: &EdgeCasesConfig) {
                 _ => continue,
             };
 
-            let info = match analyze_polytope(&cache) {
+            let info = match analyze_cached_polytope(&cache) {
                 Some(info) => info,
                 None => continue,
             };
@@ -325,14 +353,9 @@ fn run_q4(base_dir: &str, cfg: &EdgeCasesConfig) {
 
     let mut rng = ChaCha8Rng::seed_from_u64(SEED_BASE + 400);
     let f_count = cfg.q4_f_count;
-    let base_polytopes = generate_random_polytopes(cfg.q4_base_count, f_count, 0.5, 2.0, &mut rng);
+    let base_polytopes = sample_random_cache_batch(cfg.q4_base_count, f_count, 0.5, 2.0, &mut rng);
 
-    for (i, base) in base_polytopes.iter().enumerate() {
-        let base_cache = GradientPolytopeCache::from_rational_parts(
-            base.dual_vertices().to_vec(),
-            base.vertices().to_vec(),
-        )
-        .expect("base polytope cache");
+    for (i, base_cache) in base_polytopes.iter().enumerate() {
         for &delta in cfg.q4_deltas {
             let augmented = match add_barely_cutting_facet(&base_cache, delta, &mut rng) {
                 Some(p) => p,
@@ -342,7 +365,7 @@ fn run_q4(base_dir: &str, cfg: &EdgeCasesConfig) {
                 }
             };
 
-            let info = match analyze_polytope(&augmented) {
+            let info = match analyze_cached_polytope(&augmented) {
                 Some(info) => info,
                 None => {
                     eprintln!("  Q4: base {} delta={:.0e} — capacity failed", i, delta);

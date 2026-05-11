@@ -1,6 +1,5 @@
 //! Boundary event detection for dual-vertex step probes.
 
-use crate::CellPolytopeCache;
 use euclidean_polytopes::{
     two_faces_from_vertex_facet_incidence, vertex_facets_from_vertex_facet_incidence,
 };
@@ -49,15 +48,14 @@ pub struct BoundaryEvent {
 /// The caller supplies the numerical thresholds so experiment-local epsilon policy
 /// stays local to the binary that is reporting the row.
 pub fn compute_step_bound_detailed(
-    polytope: &CellPolytopeCache,
+    duals: &[Vector4<f64>],
+    vertices: &[Vector4<f64>],
+    incidence: &nalgebra::DMatrix<bool>,
     direction: &[Vector4<f64>],
     eps_numerical_zero: f64,
     max_step_size: f64,
 ) -> BoundaryEvent {
-    let duals = &polytope.dual_vertices_f64;
-    let vertices = &polytope.vertices_f64;
-    let f = polytope.facet_count();
-    let incidence = &polytope.vertex_facet_incidence;
+    let f = duals.len();
     let vertex_facets_by_vertex = vertex_facets_from_vertex_facet_incidence(incidence);
     let two_faces = two_faces_from_vertex_facet_incidence(incidence);
 

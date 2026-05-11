@@ -13,7 +13,8 @@
 
 use crate::geom::polytope::Polytope4D;
 use crate::geom::rational_arithmetic::{frac, rat};
-use nalgebra::Vector4;
+use nalgebra::{DMatrix, Vector4};
+use num_rational::BigRational;
 use std::f64::consts::PI;
 use std::sync::LazyLock;
 
@@ -22,12 +23,47 @@ use std::sync::LazyLock;
 pub struct KnownPolytope {
     /// The polytope instance.
     pub polytope: Polytope4D,
+    /// Dual vertices a_i, vertices of the polar body K°.
+    pub dual_vertices: Vec<[BigRational; 4]>,
+    /// Exact rational vertices of K.
+    pub vertices: Vec<[BigRational; 4]>,
+    /// Dual vertices a_i as f64 vectors.
+    pub dual_vertices_f64: Vec<Vector4<f64>>,
+    /// Vertices of K rounded to f64.
+    pub vertices_f64: Vec<Vector4<f64>>,
+    /// Vertex-facet incidence matrix.
+    pub incidence: DMatrix<bool>,
+    /// Facet-pair nonempty-intersection matrix.
+    pub facet_intersection_is_nonempty: DMatrix<bool>,
+    /// Symplectic sign matrix omega in {-1,0,+1}^{F x F}.
+    pub omega_signs: DMatrix<i8>,
     /// Known EHZ capacity value.
     pub capacity: f64,
     /// Short human-readable name.
     pub name: &'static str,
     /// Literature reference for the capacity value.
     pub source: &'static str,
+}
+
+fn known_polytope(
+    polytope: Polytope4D,
+    capacity: f64,
+    name: &'static str,
+    source: &'static str,
+) -> KnownPolytope {
+    KnownPolytope {
+        dual_vertices: polytope.dual_vertices().to_vec(),
+        vertices: polytope.vertices().to_vec(),
+        dual_vertices_f64: polytope.dual_vertices_f64().to_vec(),
+        vertices_f64: polytope.vertices_f64().to_vec(),
+        incidence: polytope.incidence().clone(),
+        facet_intersection_is_nonempty: polytope.facet_intersection_is_nonempty().clone(),
+        omega_signs: polytope.omega_signs().clone(),
+        polytope,
+        capacity,
+        name,
+        source,
+    }
 }
 
 /// All known polytopes with verified or computed capacity values.
@@ -85,12 +121,12 @@ pub fn simplex() -> &'static KnownPolytope {
             [rat(5), rat(5), rat(5), rat(5)],
         ];
 
-        KnownPolytope {
-            polytope: Polytope4D::new(dual_vertices).expect("simplex construction"),
-            capacity: 0.25,
-            name: "simplex",
-            source: "Y. Nir thesis 2013",
-        }
+        known_polytope(
+            Polytope4D::new(dual_vertices).expect("simplex construction"),
+            0.25,
+            "simplex",
+            "Y. Nir thesis 2013",
+        )
     });
     &INSTANCE
 }
@@ -116,12 +152,12 @@ pub fn hypercube() -> &'static KnownPolytope {
             [z.clone(), z.clone(), z.clone(), rat(-1)],
         ];
 
-        KnownPolytope {
-            polytope: Polytope4D::new(dual_vertices).expect("hypercube construction"),
-            capacity: 4.0,
-            name: "hypercube",
-            source: "HK2019 Ex 4.6",
-        }
+        known_polytope(
+            Polytope4D::new(dual_vertices).expect("hypercube construction"),
+            4.0,
+            "hypercube",
+            "HK2019 Ex 4.6",
+        )
     });
     &INSTANCE
 }
@@ -146,12 +182,12 @@ pub fn crosspolytope() -> &'static KnownPolytope {
             }
         }
 
-        KnownPolytope {
-            polytope: Polytope4D::new(dual_vertices).expect("crosspolytope construction"),
-            capacity: 4.0,
-            name: "crosspolytope",
-            source: "computed (no literature value)",
-        }
+        known_polytope(
+            Polytope4D::new(dual_vertices).expect("crosspolytope construction"),
+            4.0,
+            "crosspolytope",
+            "computed (no literature value)",
+        )
     });
     &INSTANCE
 }
@@ -200,12 +236,12 @@ pub fn hko_pentagon() -> &'static KnownPolytope {
             .collect();
         let capacity = 2.0 * (PI / 10.0).cos() * (1.0 + (PI / 5.0).cos());
 
-        KnownPolytope {
-            polytope: Polytope4D::from_f64(halfspaces).expect("HKO pentagon construction"),
+        known_polytope(
+            Polytope4D::from_f64(halfspaces).expect("HKO pentagon construction"),
             capacity,
-            name: "hko_pentagon",
-            source: "HK-O 2024 Prop 1.4",
-        }
+            "hko_pentagon",
+            "HK-O 2024 Prop 1.4",
+        )
     });
     &INSTANCE
 }
@@ -234,13 +270,12 @@ pub fn lagrangian_triangle_product() -> &'static KnownPolytope {
             )
             .collect();
 
-        KnownPolytope {
-            polytope: Polytope4D::from_f64(halfspaces)
-                .expect("lagrangian triangle product construction"),
-            capacity: 1.5,
-            name: "lagrangian_triangle_product",
-            source: "LP verification (HK2017 algorithm + billiard)",
-        }
+        known_polytope(
+            Polytope4D::from_f64(halfspaces).expect("lagrangian triangle product construction"),
+            1.5,
+            "lagrangian_triangle_product",
+            "LP verification (HK2017 algorithm + billiard)",
+        )
     });
     &INSTANCE
 }
@@ -275,13 +310,12 @@ pub fn symplectic_triangle_product() -> &'static KnownPolytope {
 
         let area_tri = 3.0 * 3.0_f64.sqrt() / 4.0;
 
-        KnownPolytope {
-            polytope: Polytope4D::from_f64(halfspaces)
-                .expect("symplectic triangle product construction"),
-            capacity: area_tri,
-            name: "symplectic_triangle_product",
-            source: "Symplectic product formula ([prop:capacity-symplectic-product])",
-        }
+        known_polytope(
+            Polytope4D::from_f64(halfspaces).expect("symplectic triangle product construction"),
+            area_tri,
+            "symplectic_triangle_product",
+            "Symplectic product formula ([prop:capacity-symplectic-product])",
+        )
     });
     &INSTANCE
 }
@@ -310,13 +344,12 @@ pub fn lagrangian_triangle_square() -> &'static KnownPolytope {
 
         let halfspaces: Vec<Vector4<f64>> = triangle_halfspaces.chain(square_halfspaces).collect();
 
-        KnownPolytope {
-            polytope: Polytope4D::from_f64(halfspaces)
-                .expect("Lagrangian triangle x square construction"),
-            capacity: 1.5,
-            name: "lagrangian_tri_sq",
-            source: "HK2017 algorithm + billiard verification",
-        }
+        known_polytope(
+            Polytope4D::from_f64(halfspaces).expect("Lagrangian triangle x square construction"),
+            1.5,
+            "lagrangian_tri_sq",
+            "HK2017 algorithm + billiard verification",
+        )
     });
     &INSTANCE
 }
@@ -352,13 +385,12 @@ pub fn symplectic_triangle_square() -> &'static KnownPolytope {
         let area_tri = 3.0 * 3.0_f64.sqrt() / 4.0;
         let area_sq = 1.0;
 
-        KnownPolytope {
-            polytope: Polytope4D::from_f64(halfspaces)
-                .expect("symplectic triangle x square construction"),
-            capacity: area_tri.min(area_sq),
-            name: "symplectic_tri_sq",
-            source: "Symplectic product formula ([prop:capacity-symplectic-product])",
-        }
+        known_polytope(
+            Polytope4D::from_f64(halfspaces).expect("symplectic triangle x square construction"),
+            area_tri.min(area_sq),
+            "symplectic_tri_sq",
+            "Symplectic product formula ([prop:capacity-symplectic-product])",
+        )
     });
     &INSTANCE
 }

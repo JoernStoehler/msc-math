@@ -26,7 +26,10 @@
 
 use euclidean_polytopes::{two_faces_from_vertex_facet_incidence, TwoFace};
 use exp_combinatorial_cells::euclidean_volume_f64;
-use exp_combinatorial_cells::CellPolytopeCache;
+#[path = "../src/flat_polytope.rs"]
+mod flat_polytope;
+
+use crate::flat_polytope::CellPolytopeCache;
 use nalgebra::Vector4;
 use serde::Serialize;
 use std::collections::HashMap;
@@ -47,6 +50,21 @@ use symplectic::random::generate_polytope;
 const SEED: u64 = 42;
 const H_MIN: f64 = 0.8;
 const H_MAX: f64 = 1.2;
+
+fn record_from_cache(polytope: &CellPolytopeCache) -> PolytopeRecord {
+    PolytopeRecord {
+        dual_vertices_rational: polytope.dual_vertices.clone(),
+        vertices_rational: polytope.vertices.clone(),
+        source: None,
+        volume: None,
+        volume_err: None,
+        capacity: None,
+        capacity_err: None,
+        sigma_gap_cutoff: None,
+        sigmas: None,
+        orbit_scalars: None,
+    }
+}
 
 /// (facet_count, n_samples) pairs for random polytope generation.
 const SAMPLING_PLAN: &[(usize, usize)] =
@@ -286,7 +304,13 @@ fn process_polytope(
     } else {
         // No cache: full EHZ computation
         vol = euclidean_volume_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
-        let ehz_result = exp_combinatorial_cells::capacity_auto(polytope).ok()?;
+        let ehz_result = exp_combinatorial_cells::capacity_auto(
+            &polytope.dual_vertices,
+            &polytope.dual_vertices_f64,
+            &polytope.facet_intersection_is_nonempty,
+            &polytope.omega_signs,
+        )
+        .ok()?;
         cap = ehz_result.capacity();
         iterations = ehz_result.iterations;
         best_perm = ehz_result.best_sigma().to_vec();
@@ -394,8 +418,11 @@ fn main() {
 
             // Source-based lookup
             let (polytope, cached) = if let Some((_, record)) = find_by_source(&db, &source_tag) {
-                let p = exp_combinatorial_cells::cache_from_record(record)
-                    .expect("failed to reconstruct polytope from database");
+                let p = CellPolytopeCache::from_rational_parts(
+                    record.dual_vertices_rational.clone(),
+                    record.vertices_rational.clone(),
+                )
+                .expect("failed to reconstruct polytope from database");
                 let c = cached_capacity_from_record(record);
                 if c.is_some() {
                     hits_this_f += 1;
@@ -428,7 +455,7 @@ fn main() {
                     // Insert into database if not already there
                     let key: DualVerticesKey = polytope.dual_vertices.clone();
                     if !db.contains_key(&key) {
-                        let mut record = exp_combinatorial_cells::record_from_cache(&polytope);
+                        let mut record = record_from_cache(&polytope);
                         record.source = Some(source_tag);
                         record = record.with_computed_fields(row.volume, 0.0, row.capacity, 0.0);
                         record = record.with_sigmas(
@@ -468,19 +495,16 @@ fn main() {
         let hko = known_polytopes::hko_pentagon();
         let mut list = vec![(
             "hko_pentagon".to_string(),
-            CellPolytopeCache::from_rational_parts(
-                hko.polytope.dual_vertices().to_vec(),
-                hko.polytope.vertices().to_vec(),
-            )
-            .expect("known HKO polytope cache"),
+            CellPolytopeCache::from_rational_parts(hko.dual_vertices.clone(), hko.vertices.clone())
+                .expect("known HKO polytope cache"),
         )];
         for kp in &[known_polytopes::simplex(), known_polytopes::hypercube()] {
-            if kp.polytope.facet_count() <= 10 {
+            if kp.dual_vertices.len() <= 10 {
                 list.push((
                     kp.name.to_string(),
                     CellPolytopeCache::from_rational_parts(
-                        kp.polytope.dual_vertices().to_vec(),
-                        kp.polytope.vertices().to_vec(),
+                        kp.dual_vertices.clone(),
+                        kp.vertices.clone(),
                     )
                     .expect("known polytope cache"),
                 ));
@@ -488,7 +512,7 @@ fn main() {
                 eprintln!(
                     "SKIP: {} (F={} > 10, too expensive for HK2017)",
                     kp.name,
-                    kp.polytope.facet_count()
+                    kp.dual_vertices.len()
                 );
             }
         }
@@ -505,7 +529,7 @@ fn main() {
                 writeln!(writer).unwrap();
 
                 if !db.contains_key(&key) {
-                    let mut record = exp_combinatorial_cells::record_from_cache(polytope);
+                    let mut record = record_from_cache(polytope);
                     record.source = Some(Source::Known { name: name.clone() });
                     record = record.with_computed_fields(row.volume, 0.0, row.capacity, 0.0);
                     record = record.with_sigmas(

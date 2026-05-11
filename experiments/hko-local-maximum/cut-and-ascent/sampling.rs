@@ -1,7 +1,7 @@
 //! Facet sampling, resume helpers, and small experiment-local utilities.
 
+use crate::flat_polytope::HkoPolytopeCache;
 use euclidean_polytopes::vertex_facets_from_vertex_facet_incidence;
-use exp_hko_local_maximum::HkoPolytopeCache;
 use nalgebra::Vector4;
 use rand_chacha::ChaCha8Rng;
 use rand_distr::{Distribution, StandardNormal};

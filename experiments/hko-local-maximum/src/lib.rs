@@ -11,7 +11,6 @@ use symplectic::{
 };
 
 pub mod exact_bank;
-pub mod flat_polytope;
 pub mod instrumented_search;
 
 pub use exact_bank::{
@@ -19,7 +18,6 @@ pub use exact_bank::{
     HkoExactScalar, EXACT_BANK_ENTRIES, HKO_FLOAT_WINNING_SIGMA, HKO_NEAR_OPTIMAL_SIGMA_A,
     HKO_NEAR_OPTIMAL_SIGMA_B, HKO_RANK_DEFICIENT_SIGMA, HKO_WINNING_SIGMA, SIMPLEX_CONTROL_SIGMA,
 };
-pub use flat_polytope::HkoPolytopeCache;
 pub use instrumented_search::{ehz_capacity_instrumented, InstrumentedOrbitSearch};
 
 pub fn euclidean_volume_f64(vertices: &[[BigRational; 4]], incidence: &DMatrix<bool>) -> f64 {
@@ -31,17 +29,20 @@ pub fn euclidean_volume_f64(vertices: &[[BigRational; 4]], incidence: &DMatrix<b
 }
 
 pub fn capacity_pruned_hk2017(
-    polytope: &HkoPolytopeCache,
+    dual_vertices: &[[BigRational; 4]],
+    dual_vertices_f64: &[Vector4<f64>],
+    facet_intersection_is_nonempty: &DMatrix<bool>,
+    omega_signs: &DMatrix<i8>,
 ) -> Result<OrbitSearchResult, OrbitSearchError> {
     let transition_is_allowed =
         symplectic::algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega(
-            &polytope.facet_intersection_is_nonempty,
-            &polytope.omega_signs,
+            facet_intersection_is_nonempty,
+            omega_signs,
         );
     let (orbits, iterations) =
-        solve_pruned_hk2017_candidates(&polytope.dual_vertices_f64, &transition_is_allowed)?;
+        solve_pruned_hk2017_candidates(dual_vertices_f64, &transition_is_allowed)?;
     aggregate_orbits_with_dual_vertices_exact(
-        &polytope.dual_vertices,
+        dual_vertices,
         orbits,
         iterations,
         0.0,
@@ -49,23 +50,28 @@ pub fn capacity_pruned_hk2017(
     )
 }
 
-pub fn capacity_billiard(polytope: &HkoPolytopeCache) -> Result<OrbitSearchResult, BilliardError> {
-    let classification = classify_facets_from_dual_vertices(&polytope.dual_vertices_f64)?;
+pub fn capacity_billiard(
+    dual_vertices: &[[BigRational; 4]],
+    dual_vertices_f64: &[Vector4<f64>],
+    facet_intersection_is_nonempty: &DMatrix<bool>,
+    omega_signs: &DMatrix<i8>,
+) -> Result<OrbitSearchResult, BilliardError> {
+    let classification = classify_facets_from_dual_vertices(dual_vertices_f64)?;
     let transition_is_allowed =
         symplectic::algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega(
-            &polytope.facet_intersection_is_nonempty,
-            &polytope.omega_signs,
+            facet_intersection_is_nonempty,
+            omega_signs,
         );
     let (orbits, iterations) = solve_billiard_candidates(
-        &polytope.dual_vertices_f64,
+        dual_vertices_f64,
         &classification.q_indices,
         &classification.p_indices,
-        &polytope.facet_intersection_is_nonempty,
+        facet_intersection_is_nonempty,
         &transition_is_allowed,
     )
     .map_err(BilliardError::OrbitSearch)?;
     aggregate_orbits_with_dual_vertices_exact(
-        &polytope.dual_vertices,
+        dual_vertices,
         orbits,
         iterations,
         0.0,
@@ -74,9 +80,20 @@ pub fn capacity_billiard(polytope: &HkoPolytopeCache) -> Result<OrbitSearchResul
     .map_err(BilliardError::OrbitSearch)
 }
 
-pub fn capacity_auto(polytope: &HkoPolytopeCache) -> Result<OrbitSearchResult, OrbitSearchError> {
-    if classify_facets_from_dual_vertices(&polytope.dual_vertices_f64).is_ok() {
-        return capacity_billiard(polytope).map_err(|err| match err {
+pub fn capacity_auto(
+    dual_vertices: &[[BigRational; 4]],
+    dual_vertices_f64: &[Vector4<f64>],
+    facet_intersection_is_nonempty: &DMatrix<bool>,
+    omega_signs: &DMatrix<i8>,
+) -> Result<OrbitSearchResult, OrbitSearchError> {
+    if classify_facets_from_dual_vertices(dual_vertices_f64).is_ok() {
+        return capacity_billiard(
+            dual_vertices,
+            dual_vertices_f64,
+            facet_intersection_is_nonempty,
+            omega_signs,
+        )
+        .map_err(|err| match err {
             BilliardError::OrbitSearch(err) => err,
             BilliardError::NotLagrangianProduct { .. } | BilliardError::TooFewFacets { .. } => {
                 unreachable!("classification was checked immediately before billiard routing")
@@ -84,5 +101,10 @@ pub fn capacity_auto(polytope: &HkoPolytopeCache) -> Result<OrbitSearchResult, O
         });
     }
 
-    capacity_pruned_hk2017(polytope)
+    capacity_pruned_hk2017(
+        dual_vertices,
+        dual_vertices_f64,
+        facet_intersection_is_nonempty,
+        omega_signs,
+    )
 }

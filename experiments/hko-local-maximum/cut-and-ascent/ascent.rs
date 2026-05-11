@@ -3,6 +3,7 @@
 //! These stay experiment-local because they preserve the current experiment's
 //! search policy rather than defining a durable library API.
 
+use crate::flat_polytope::HkoPolytopeCache;
 use crate::{
     CONVERGENCE_THRESHOLD, EPS, MAX_ESCAPE_ROUNDS, MAX_ITERATIONS, MAX_STEP_SIZE, N_WIGGLES,
     OVERSHOOT_MULTIPLIERS, STEP_FRACTIONS, WIGGLE_STRENGTH,
@@ -11,7 +12,6 @@ use euclidean_polytopes::{
     two_faces_from_vertex_facet_incidence, vertex_facets_from_vertex_facet_incidence,
 };
 use exp_hko_local_maximum::euclidean_volume_f64;
-use exp_hko_local_maximum::HkoPolytopeCache;
 use nalgebra::{Matrix4, Vector4};
 use rand_chacha::ChaCha8Rng;
 use rand_distr::{Distribution, StandardNormal};
@@ -166,13 +166,24 @@ fn try_step_a(
 }
 
 fn compute_capacity(polytope: &HkoPolytopeCache) -> Option<f64> {
-    exp_hko_local_maximum::capacity_auto(polytope)
-        .ok()
-        .map(|r| r.capacity())
+    exp_hko_local_maximum::capacity_auto(
+        &polytope.dual_vertices,
+        &polytope.dual_vertices_f64,
+        &polytope.facet_intersection_is_nonempty,
+        &polytope.omega_signs,
+    )
+    .ok()
+    .map(|r| r.capacity())
 }
 
 fn compute_capacity_result(polytope: &HkoPolytopeCache) -> Option<(f64, Vec<usize>)> {
-    let r = exp_hko_local_maximum::capacity_auto(polytope).ok()?;
+    let r = exp_hko_local_maximum::capacity_auto(
+        &polytope.dual_vertices,
+        &polytope.dual_vertices_f64,
+        &polytope.facet_intersection_is_nonempty,
+        &polytope.omega_signs,
+    )
+    .ok()?;
     Some((r.capacity(), r.best_sigma().to_vec()))
 }
 

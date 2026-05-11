@@ -22,121 +22,63 @@ pub enum AlgebraicPolytopeError {
     RedundantFacet(usize),
 }
 
-/// Experiment-owned algebraic 4D polytope with exact combinatorics.
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub struct AlgebraicPolytopeCache<F: ExperimentScalar + 'static> {
-    dual_vertices: Vec<[F; 4]>,
-    vertices: Vec<[F; 4]>,
-    incidence: Vec<Vec<bool>>,
-    facet_intersection_is_nonempty: Vec<Vec<bool>>,
-    omega_signs: Vec<Vec<i8>>,
-}
-
-impl<F: ExperimentScalar + 'static> AlgebraicPolytopeCache<F> {
-    /// Construct from exact dual vertices `a_i` for `a_i . x <= 1`.
-    pub fn new(dual_vertices: Vec<[F; 4]>) -> Result<Self, AlgebraicPolytopeError> {
-        let f = dual_vertices.len();
-        if f < 5 {
-            return Err(AlgebraicPolytopeError::TooFewFacets(f));
+/// Construct exact primal vertices and pairwise fields from dual vertices
+/// `a_i` for `a_i . x <= 1`.
+pub fn exact_polytope_fields<F: ExperimentScalar + 'static>(
+    dual_vertices: &[[F; 4]],
+) -> Result<(Vec<[F; 4]>, Vec<Vec<bool>>, Vec<Vec<bool>>, Vec<Vec<i8>>), AlgebraicPolytopeError> {
+    let f = dual_vertices.len();
+    if f < 5 {
+        return Err(AlgebraicPolytopeError::TooFewFacets(f));
+    }
+    for (idx, dual) in dual_vertices.iter().enumerate() {
+        if dual.iter().all(|entry| entry.is_zero()) {
+            return Err(AlgebraicPolytopeError::ZeroDualVertex(idx));
         }
-        for (idx, dual) in dual_vertices.iter().enumerate() {
-            if dual.iter().all(|entry| entry.is_zero()) {
-                return Err(AlgebraicPolytopeError::ZeroDualVertex(idx));
-            }
-        }
+    }
 
-        check_bounded(&dual_vertices)?;
-        let (vertices, descriptors) = enumerate_vertices(&dual_vertices)?;
-        check_irredundancy(&vertices, &descriptors, f)?;
+    check_bounded(dual_vertices)?;
+    let (vertices, descriptors) = enumerate_vertices(dual_vertices)?;
+    check_irredundancy(&vertices, &descriptors, f)?;
 
-        let incidence: Vec<Vec<bool>> = descriptors
-            .iter()
-            .map(|incident| (0..f).map(|facet| incident.contains(&facet)).collect())
-            .collect();
+    let incidence: Vec<Vec<bool>> = descriptors
+        .iter()
+        .map(|incident| (0..f).map(|facet| incident.contains(&facet)).collect())
+        .collect();
 
-        let vertex_count = vertices.len();
-        let facet_intersection_is_nonempty: Vec<Vec<bool>> = (0..f)
-            .map(|i| {
-                (0..f)
-                    .map(|j| {
-                        i != j && (0..vertex_count).any(|v| incidence[v][i] && incidence[v][j])
-                    })
-                    .collect()
-            })
-            .collect();
-
-        let omega_signs: Vec<Vec<i8>> = (0..f)
-            .map(|i| {
-                (0..f)
-                    .map(|j| {
-                        if i == j {
-                            0
-                        } else {
-                            match sign_of(&omega0(&dual_vertices[i], &dual_vertices[j])) {
-                                ExactSign::Negative => -1,
-                                ExactSign::Zero => 0,
-                                ExactSign::Positive => 1,
-                            }
-                        }
-                    })
-                    .collect()
-            })
-            .collect();
-
-        Ok(Self {
-            dual_vertices,
-            vertices,
-            incidence,
-            facet_intersection_is_nonempty,
-            omega_signs,
+    let vertex_count = vertices.len();
+    let facet_intersection_is_nonempty: Vec<Vec<bool>> = (0..f)
+        .map(|i| {
+            (0..f)
+                .map(|j| i != j && (0..vertex_count).any(|v| incidence[v][i] && incidence[v][j]))
+                .collect()
         })
-    }
+        .collect();
 
-    /// Dual vertices in exact coordinates.
-    pub fn dual_vertices(&self) -> &[[F; 4]] {
-        &self.dual_vertices
-    }
+    let omega_signs: Vec<Vec<i8>> = (0..f)
+        .map(|i| {
+            (0..f)
+                .map(|j| {
+                    if i == j {
+                        0
+                    } else {
+                        match sign_of(&omega0(&dual_vertices[i], &dual_vertices[j])) {
+                            ExactSign::Negative => -1,
+                            ExactSign::Zero => 0,
+                            ExactSign::Positive => 1,
+                        }
+                    }
+                })
+                .collect()
+        })
+        .collect();
 
-    /// Primal vertices in exact coordinates.
-    pub fn vertices(&self) -> &[[F; 4]] {
-        &self.vertices
-    }
-
-    /// Exact vertex-facet incidence.
-    pub fn incidence(&self) -> &[Vec<bool>] {
-        &self.incidence
-    }
-
-    /// Exact facet-pair nonempty intersection via shared vertices.
-    pub fn facet_intersection_is_nonempty(&self) -> &[Vec<bool>] {
-        &self.facet_intersection_is_nonempty
-    }
-
-    /// Exact sign of `omega_0(a_i, a_j)`.
-    pub fn omega_signs(&self) -> &[Vec<i8>] {
-        &self.omega_signs
-    }
-
-    /// Facet count.
-    pub fn facet_count(&self) -> usize {
-        self.dual_vertices.len()
-    }
-
-    /// Best-effort `f64` dual-vertex approximation for comparisons/reporting.
-    pub fn dual_vertices_f64(&self) -> Vec<[f64; 4]> {
-        self.dual_vertices
-            .iter()
-            .map(|dual| std::array::from_fn(|i| dual[i].to_f64()))
-            .collect()
-    }
-
-    /// Best-effort `f64` primal-vertex approximation for comparisons/reporting.
-    pub fn vertices_f64(&self) -> Vec<[f64; 4]> {
-        self.vertices
-            .iter()
-            .map(|vertex| std::array::from_fn(|i| vertex[i].to_f64()))
-            .collect()
-    }
+    Ok((
+        vertices,
+        incidence,
+        facet_intersection_is_nonempty,
+        omega_signs,
+    ))
 }
 
 /// Exact 4D dot product.
@@ -374,16 +316,20 @@ mod tests {
     }
 
     fn assert_exact_polytope_self_consistent<F: ExperimentScalar>(
-        polytope: &super::AlgebraicPolytopeCache<F>,
+        dual_vertices: &[[F; 4]],
+        vertices: &[[F; 4]],
+        incidence: &[Vec<bool>],
+        facet_intersection_is_nonempty: &[Vec<bool>],
+        omega_signs: &[Vec<i8>],
     ) {
         let one = F::one();
 
-        for (vertex_idx, vertex) in polytope.vertices().iter().enumerate() {
+        for (vertex_idx, vertex) in vertices.iter().enumerate() {
             let mut incident_count = 0usize;
-            for (facet_idx, dual) in polytope.dual_vertices().iter().enumerate() {
+            for (facet_idx, dual) in dual_vertices.iter().enumerate() {
                 let value = dot4(vertex, dual);
                 let relation = value.cmp(&one);
-                if polytope.incidence()[vertex_idx][facet_idx] {
+                if incidence[vertex_idx][facet_idx] {
                     incident_count += 1;
                     assert_eq!(
                         relation,
@@ -404,25 +350,20 @@ mod tests {
             );
         }
 
-        for row in 0..polytope.facet_count() {
-            assert_eq!(
-                polytope.omega_signs()[row][row],
-                0,
-                "omega diagonal should vanish"
-            );
-            for col in 0..polytope.facet_count() {
+        let facet_count = dual_vertices.len();
+        let vertex_count = vertices.len();
+        for row in 0..facet_count {
+            assert_eq!(omega_signs[row][row], 0, "omega diagonal should vanish");
+            for col in 0..facet_count {
                 let expected_adjacency = row != col
-                    && (0..polytope.vertices().len()).any(|vertex| {
-                        polytope.incidence()[vertex][row] && polytope.incidence()[vertex][col]
-                    });
+                    && (0..vertex_count)
+                        .any(|vertex| incidence[vertex][row] && incidence[vertex][col]);
                 assert_eq!(
-                    polytope.facet_intersection_is_nonempty()[row][col],
-                    expected_adjacency,
+                    facet_intersection_is_nonempty[row][col], expected_adjacency,
                     "facet-pair nonempty intersection should agree with shared exact vertices"
                 );
                 assert_eq!(
-                    polytope.omega_signs()[row][col],
-                    -polytope.omega_signs()[col][row],
+                    omega_signs[row][col], -omega_signs[col][row],
                     "omega sign matrix should be antisymmetric"
                 );
             }
@@ -431,59 +372,70 @@ mod tests {
 
     #[test]
     fn simplex_geometry_matches_rational_control() {
-        let exact = exact_simplex().expect("exact simplex");
+        let dual_vertices = exact_simplex();
+        let (vertices, incidence, facet_intersection_is_nonempty, omega_signs) =
+            super::exact_polytope_fields(&dual_vertices).expect("exact simplex");
         let library = known_polytopes::simplex();
 
-        assert_eq!(exact.facet_count(), library.polytope.facet_count());
-        assert_eq!(exact.vertices().len(), library.polytope.vertices().len());
-        assert!(same_incidence(
-            exact.incidence(),
-            library.polytope.incidence()
-        ));
-        assert_exact_polytope_self_consistent(&exact);
+        assert_eq!(dual_vertices.len(), library.dual_vertices.len());
+        assert_eq!(vertices.len(), library.vertices.len());
+        assert!(same_incidence(&incidence, &library.incidence));
+        assert_exact_polytope_self_consistent(
+            &dual_vertices,
+            &vertices,
+            &incidence,
+            &facet_intersection_is_nonempty,
+            &omega_signs,
+        );
     }
 
     #[test]
     fn hypercube_geometry_matches_rational_control() {
-        let exact = exact_hypercube().expect("exact hypercube");
+        let dual_vertices = exact_hypercube();
+        let (vertices, incidence, facet_intersection_is_nonempty, omega_signs) =
+            super::exact_polytope_fields(&dual_vertices).expect("exact hypercube");
         let library = known_polytopes::hypercube();
 
-        assert_eq!(exact.vertices().len(), library.polytope.vertices().len());
-        assert!(same_incidence(
-            exact.incidence(),
-            library.polytope.incidence()
-        ));
-        assert_exact_polytope_self_consistent(&exact);
+        assert_eq!(vertices.len(), library.vertices.len());
+        assert!(same_incidence(&incidence, &library.incidence));
+        assert_exact_polytope_self_consistent(
+            &dual_vertices,
+            &vertices,
+            &incidence,
+            &facet_intersection_is_nonempty,
+            &omega_signs,
+        );
     }
 
     #[test]
     fn hko_exact_geometry_is_self_consistent_and_detects_known_zero_pairs() {
-        let exact = exact_hko_pentagon().expect("exact hko");
+        let dual_vertices = exact_hko_pentagon();
+        let (vertices, incidence, facet_intersection_is_nonempty, omega_signs) =
+            super::exact_polytope_fields(&dual_vertices).expect("exact hko");
 
-        assert_eq!(exact.facet_count(), 10);
-        assert_eq!(exact.vertices().len(), 25);
-        assert_exact_polytope_self_consistent(&exact);
+        assert_eq!(dual_vertices.len(), 10);
+        assert_eq!(vertices.len(), 25);
+        assert_exact_polytope_self_consistent(
+            &dual_vertices,
+            &vertices,
+            &incidence,
+            &facet_intersection_is_nonempty,
+            &omega_signs,
+        );
 
         for &(i, j) in &[(1usize, 6usize), (3usize, 8usize), (4usize, 9usize)] {
-            assert_eq!(
-                exact.omega_signs()[i][j],
-                0,
-                "known exact HKO zero pair ({i}, {j})"
-            );
-            assert_eq!(
-                exact.omega_signs()[j][i],
-                0,
-                "known exact HKO zero pair ({j}, {i})"
-            );
+            assert_eq!(omega_signs[i][j], 0, "known exact HKO zero pair ({i}, {j})");
+            assert_eq!(omega_signs[j][i], 0, "known exact HKO zero pair ({j}, {i})");
         }
     }
 
     #[test]
     fn hko_vs_dyadic_combinatorics_stays_diagnostic_only() {
-        let exact = exact_hko_pentagon().expect("exact hko");
+        let dual_vertices = exact_hko_pentagon();
+        let (vertices, _, _, _) = super::exact_polytope_fields(&dual_vertices).expect("exact hko");
         let library = known_polytopes::hko_pentagon();
 
-        assert_eq!(exact.facet_count(), library.polytope.facet_count());
-        assert_eq!(exact.vertices().len(), library.polytope.vertices().len());
+        assert_eq!(dual_vertices.len(), library.dual_vertices.len());
+        assert_eq!(vertices.len(), library.vertices.len());
     }
 }

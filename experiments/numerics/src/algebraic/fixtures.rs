@@ -1,7 +1,6 @@
 //! Exact algebraic and rational control fixtures used by the spike.
 
 use super::field::rat;
-use super::geom::{AlgebraicPolytopeCache, AlgebraicPolytopeError};
 use super::pentagon::PentagonField;
 use num_rational::BigRational;
 use num_traits::{One, Zero};
@@ -13,21 +12,21 @@ pub const HKO_WINNING_SIGMA: &[usize] = &[1, 8, 7, 3, 4, 5, 9];
 pub const HKO_RANK_DEFICIENT_SIGMA: &[usize] = &[1, 7, 2, 8, 4, 6, 5];
 
 /// Exact simplex control in `Q`.
-pub fn exact_simplex() -> Result<AlgebraicPolytopeCache<BigRational>, AlgebraicPolytopeError> {
+pub fn exact_simplex() -> Vec<[BigRational; 4]> {
     let z = rat(0);
-    AlgebraicPolytopeCache::new(vec![
+    vec![
         [rat(-5), z.clone(), z.clone(), z.clone()],
         [z.clone(), rat(-5), z.clone(), z.clone()],
         [z.clone(), z.clone(), rat(-5), z.clone()],
         [z.clone(), z.clone(), z.clone(), rat(-5)],
         [rat(5), rat(5), rat(5), rat(5)],
-    ])
+    ]
 }
 
 /// Exact hypercube control in `Q`.
-pub fn exact_hypercube() -> Result<AlgebraicPolytopeCache<BigRational>, AlgebraicPolytopeError> {
+pub fn exact_hypercube() -> Vec<[BigRational; 4]> {
     let z = rat(0);
-    AlgebraicPolytopeCache::new(vec![
+    vec![
         [rat(1), z.clone(), z.clone(), z.clone()],
         [rat(-1), z.clone(), z.clone(), z.clone()],
         [z.clone(), rat(1), z.clone(), z.clone()],
@@ -36,12 +35,11 @@ pub fn exact_hypercube() -> Result<AlgebraicPolytopeCache<BigRational>, Algebrai
         [z.clone(), z.clone(), rat(-1), z.clone()],
         [z.clone(), z.clone(), z.clone(), rat(1)],
         [z.clone(), z.clone(), z.clone(), rat(-1)],
-    ])
+    ]
 }
 
 /// Exact HKO pentagon counterexample in `Q[tan(pi/5)]`.
-pub fn exact_hko_pentagon() -> Result<AlgebraicPolytopeCache<PentagonField>, AlgebraicPolytopeError>
-{
+pub fn exact_hko_pentagon() -> Vec<[PentagonField; 4]> {
     let z = PentagonField::zero();
     let one = PentagonField::one();
     let t = PentagonField::root();
@@ -52,7 +50,7 @@ pub fn exact_hko_pentagon() -> Result<AlgebraicPolytopeCache<PentagonField>, Alg
     let b = (PentagonField::from(7) * t.clone() - t3.clone()) / PentagonField::from(4);
     let sec36 = (PentagonField::from(3) - t2.clone()) / PentagonField::from(2);
 
-    AlgebraicPolytopeCache::new(vec![
+    vec![
         [one.clone(), t.clone(), z.clone(), z.clone()],
         [-a.clone(), b.clone(), z.clone(), z.clone()],
         [-sec36.clone(), z.clone(), z.clone(), z.clone()],
@@ -63,7 +61,7 @@ pub fn exact_hko_pentagon() -> Result<AlgebraicPolytopeCache<PentagonField>, Alg
         [z.clone(), z.clone(), z.clone(), sec36.clone()],
         [z.clone(), z.clone(), -b, a],
         [z.clone(), z.clone(), -t, -one],
-    ])
+    ]
 }
 
 /// Expected HKO capacity formula evaluated in `f64` for reporting checks.

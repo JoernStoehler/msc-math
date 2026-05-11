@@ -16,7 +16,10 @@
 //! Filter: F <= 10 (HK2017 is exponential in F)
 //! Output Artifacts: experiments/combinatorial-cells/cell-widths/combinatorial-boundaries-profiling.jsonl
 
-use exp_combinatorial_cells::CellPolytopeCache;
+#[path = "../src/flat_polytope.rs"]
+mod flat_polytope;
+
+use crate::flat_polytope::CellPolytopeCache;
 use exp_combinatorial_cells::{
     compute_step_bound_detailed, ehz_capacity_instrumented, name_from_record,
 };
@@ -149,7 +152,10 @@ fn main() {
         if f > MAX_FACET_COUNT {
             continue;
         }
-        let p = match exp_combinatorial_cells::cache_from_record(record) {
+        let p = match CellPolytopeCache::from_rational_parts(
+            record.dual_vertices_rational.clone(),
+            record.vertices_rational.clone(),
+        ) {
             Some(p) => p,
             None => {
                 eprintln!("  db entry {idx}: reconstruction failed");
@@ -193,7 +199,11 @@ fn main() {
         // Base computation: instrumented EHZ for orbit membership
         // =====================================================================
 
-        let (perm,) = match ehz_capacity_instrumented(polytope) {
+        let (perm,) = match ehz_capacity_instrumented(
+            &polytope.dual_vertices_f64,
+            &polytope.facet_intersection_is_nonempty,
+            &polytope.omega_signs,
+        ) {
             Some(instrumented) => (instrumented.best_permutation,),
             None => {
                 n_skipped += 1;
@@ -211,8 +221,14 @@ fn main() {
         let facet_dirs = build_facet_directions(f, &mut rng);
 
         for dir in &facet_dirs {
-            let boundary =
-                compute_step_bound_detailed(polytope, &dir.d, EPS_NUMERICAL_ZERO, MAX_STEP_SIZE);
+            let boundary = compute_step_bound_detailed(
+                &polytope.dual_vertices_f64,
+                &polytope.vertices_f64,
+                &polytope.vertex_facet_incidence,
+                &dir.d,
+                EPS_NUMERICAL_ZERO,
+                MAX_STEP_SIZE,
+            );
             let k = dir.facet_index.unwrap();
 
             let row = ProfilingRow {

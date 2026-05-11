@@ -19,9 +19,12 @@
 use euclidean_polytopes::{
     two_faces_from_vertex_facet_incidence, vertex_facets_from_vertex_facet_incidence,
 };
-use exp_combinatorial_cells::CellPolytopeCache;
+#[path = "../src/flat_polytope.rs"]
+mod flat_polytope;
+
+use crate::flat_polytope::CellPolytopeCache;
 use exp_combinatorial_cells::{
-    compute_step_bound_detailed, construct_at_t, ehz_capacity_instrumented, name_from_record,
+    compute_step_bound_detailed, ehz_capacity_instrumented, name_from_record,
 };
 use nalgebra::Vector4;
 use rand::SeedableRng;
@@ -42,6 +45,19 @@ use symplectic::geom::symplectic_form::omega0;
 
 /// Maximum facet count to process (HK2017 cost is exponential).
 const MAX_FACET_COUNT: usize = 10;
+
+fn construct_at_t(
+    duals: &[Vector4<f64>],
+    direction: &[Vector4<f64>],
+    t: f64,
+) -> Option<CellPolytopeCache> {
+    let new_duals: Vec<Vector4<f64>> = duals
+        .iter()
+        .zip(direction.iter())
+        .map(|(a, d)| a + t * d)
+        .collect();
+    CellPolytopeCache::from_f64(new_duals)
+}
 
 /// Number of random S^3 directions per facet for boundary probing.
 /// 10 directions in R^4 give reasonable coverage of S^3.
@@ -233,7 +249,10 @@ fn main() {
         if f > MAX_FACET_COUNT {
             continue;
         }
-        let p = match exp_combinatorial_cells::cache_from_record(record) {
+        let p = match CellPolytopeCache::from_rational_parts(
+            record.dual_vertices_rational.clone(),
+            record.vertices_rational.clone(),
+        ) {
             Some(p) => p,
             None => {
                 eprintln!("  db entry {idx}: reconstruction failed");
@@ -280,7 +299,11 @@ fn main() {
         // to ensure polytope is valid for EHZ-based experiments.)
         // =====================================================================
 
-        let _perm = match ehz_capacity_instrumented(polytope) {
+        let _perm = match ehz_capacity_instrumented(
+            &polytope.dual_vertices_f64,
+            &polytope.facet_intersection_is_nonempty,
+            &polytope.omega_signs,
+        ) {
             Some(instrumented) => instrumented.best_permutation,
             None => {
                 n_skipped += 1;
@@ -307,8 +330,14 @@ fn main() {
         let mut probes: Vec<FacetProbe> = Vec::new();
 
         for dir in &facet_dirs {
-            let boundary =
-                compute_step_bound_detailed(polytope, &dir.d, EPS_NUMERICAL_ZERO, MAX_STEP_SIZE);
+            let boundary = compute_step_bound_detailed(
+                &polytope.dual_vertices_f64,
+                &polytope.vertices_f64,
+                &polytope.vertex_facet_incidence,
+                &dir.d,
+                EPS_NUMERICAL_ZERO,
+                MAX_STEP_SIZE,
+            );
             let k = dir.facet_index.unwrap();
 
             // Store for convexity testing (skip unbounded)

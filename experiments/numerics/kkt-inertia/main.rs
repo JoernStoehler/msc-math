@@ -21,7 +21,10 @@
 //!
 //! Input Artifacts: None (enumerates known polytopes from the library).
 //! Output Artifacts: None (prints diagnostic summary tables to stdout).
-use dev_numerical_analysis::NumericsPolytopeCache;
+#[path = "../src/flat_polytope.rs"]
+mod flat_polytope;
+
+use crate::flat_polytope::NumericsPolytopeCache;
 use nalgebra::{DMatrix, DVector, Vector4};
 use symplectic::geom::known_polytopes;
 use symplectic::geom::symplectic_form::omega0;
@@ -348,13 +351,13 @@ fn eigenvalue_diagnostics(
 fn main() {
     let polytopes: Vec<(&str, NumericsPolytopeCache)> = known_polytopes::all_known()
         .into_iter()
-        .filter(|kp| kp.polytope.facet_count() <= 10)
+        .filter(|kp| kp.dual_vertices.len() <= 10)
         .map(|kp| {
             (
                 kp.name,
                 NumericsPolytopeCache::from_rational_parts(
-                    kp.polytope.dual_vertices().to_vec(),
-                    kp.polytope.vertices().to_vec(),
+                    kp.dual_vertices.clone(),
+                    kp.vertices.clone(),
                 )
                 .expect("known polytope cache"),
             )

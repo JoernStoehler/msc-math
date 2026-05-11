@@ -22,7 +22,10 @@
 //! Explicit billiard algorithm because the output schema persists bounce counts;
 //! the crate-level `ehz_capacity` entrypoint would hide that billiard-native data.
 
-use exp_hko_local_maximum::HkoPolytopeCache;
+#[path = "../src/flat_polytope.rs"]
+mod flat_polytope;
+
+use crate::flat_polytope::HkoPolytopeCache;
 use exp_hko_local_maximum::{capacity_billiard, euclidean_volume_f64};
 use nalgebra::Vector4;
 use rand::Rng;
@@ -233,11 +236,9 @@ fn main() {
 
     // Base polytope
     let base = known_polytopes::hko_pentagon();
-    let base_polytope = HkoPolytopeCache::from_rational_parts(
-        base.polytope.dual_vertices().to_vec(),
-        base.polytope.vertices().to_vec(),
-    )
-    .expect("HKO base cache");
+    let base_polytope =
+        HkoPolytopeCache::from_rational_parts(base.dual_vertices.clone(), base.vertices.clone())
+            .expect("HKO base cache");
     let base_duals: Vec<Vector4<f64>> = base_polytope.dual_vertices_f64.to_vec();
     let indices = lagrangian_component_indices(&base_duals);
 
@@ -246,7 +247,13 @@ fn main() {
         &base_polytope.vertices,
         &base_polytope.vertex_facet_incidence,
     );
-    let base_billiard = capacity_billiard(&base_polytope).expect("billiard classification failed");
+    let base_billiard = capacity_billiard(
+        &base_polytope.dual_vertices,
+        &base_polytope.dual_vertices_f64,
+        &base_polytope.facet_intersection_is_nonempty,
+        &base_polytope.omega_signs,
+    )
+    .expect("billiard classification failed");
     let base_classification = classify_facets_from_dual_vertices(&base_polytope.dual_vertices_f64)
         .expect("base polytope should classify as Lagrangian product");
     let base_cap = base_billiard.capacity();
@@ -325,7 +332,13 @@ fn main() {
 
             // Keep the explicit billiard call here because `SampleRow` stores
             // `bounces`, which is only available from the billiard-native API.
-            let billiard = capacity_billiard(&polytope).expect("classification already succeeded");
+            let billiard = capacity_billiard(
+                &polytope.dual_vertices,
+                &polytope.dual_vertices_f64,
+                &polytope.facet_intersection_is_nonempty,
+                &polytope.omega_signs,
+            )
+            .expect("classification already succeeded");
 
             let vol = euclidean_volume_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
             if vol <= 0.0 {

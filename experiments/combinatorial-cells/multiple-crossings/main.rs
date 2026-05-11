@@ -16,7 +16,10 @@
 //! Output Artifacts: experiments/combinatorial-cells/multiple-crossings/combinatorial-boundaries-sweep.jsonl
 
 use exp_combinatorial_cells::euclidean_volume_f64;
-use exp_combinatorial_cells::CellPolytopeCache;
+#[path = "../src/flat_polytope.rs"]
+mod flat_polytope;
+
+use crate::flat_polytope::CellPolytopeCache;
 use exp_combinatorial_cells::{
     compute_step_bound_detailed, ehz_capacity_instrumented, name_from_record, EventType,
 };
@@ -150,7 +153,13 @@ fn compute_sys(
         return None;
     }
 
-    let ehz = exp_combinatorial_cells::capacity_auto(polytope).ok()?;
+    let ehz = exp_combinatorial_cells::capacity_auto(
+        &polytope.dual_vertices,
+        &polytope.dual_vertices_f64,
+        &polytope.facet_intersection_is_nonempty,
+        &polytope.omega_signs,
+    )
+    .ok()?;
 
     let cap = ehz.capacity();
     if !cap.is_finite() || cap <= 0.0 {
@@ -204,8 +213,14 @@ fn multi_boundary_sweep(
         };
 
         // Find next boundary
-        let boundary =
-            compute_step_bound_detailed(&poly, direction, EPS_NUMERICAL_ZERO, MAX_STEP_SIZE);
+        let boundary = compute_step_bound_detailed(
+            &poly.dual_vertices_f64,
+            &poly.vertices_f64,
+            &poly.vertex_facet_incidence,
+            direction,
+            EPS_NUMERICAL_ZERO,
+            MAX_STEP_SIZE,
+        );
 
         if matches!(boundary.event, EventType::Unbounded) {
             break;
@@ -281,7 +296,10 @@ fn main() {
         if f > MAX_FACET_COUNT {
             continue;
         }
-        let p = match exp_combinatorial_cells::cache_from_record(record) {
+        let p = match CellPolytopeCache::from_rational_parts(
+            record.dual_vertices_rational.clone(),
+            record.vertices_rational.clone(),
+        ) {
             Some(p) => p,
             None => {
                 eprintln!("  db entry {idx}: reconstruction failed");
@@ -327,7 +345,11 @@ fn main() {
         // =====================================================================
 
         let base = (|| {
-            let instrumented = ehz_capacity_instrumented(polytope)?;
+            let instrumented = ehz_capacity_instrumented(
+                &polytope.dual_vertices_f64,
+                &polytope.facet_intersection_is_nonempty,
+                &polytope.omega_signs,
+            )?;
             let vol = euclidean_volume_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
             if vol <= 0.0 {
                 return None;

@@ -13,11 +13,14 @@
 //! Input Artifacts: None (starts from the hardcoded HKO2024 polytope).
 //! Output Artifacts: cut-and-ascent/cut-and-ascent.jsonl
 
+#[path = "../src/flat_polytope.rs"]
+mod flat_polytope;
+
 mod ascent;
 mod sampling;
 
+use crate::flat_polytope::HkoPolytopeCache;
 use ascent::{compute_sys, full_ascent};
-use exp_hko_local_maximum::HkoPolytopeCache;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use sampling::{
@@ -193,11 +196,9 @@ fn main() {
     };
 
     let hko = known_polytopes::hko_pentagon();
-    let hko_polytope = HkoPolytopeCache::from_rational_parts(
-        hko.polytope.dual_vertices().to_vec(),
-        hko.polytope.vertices().to_vec(),
-    )
-    .expect("HKO base cache");
+    let hko_polytope =
+        HkoPolytopeCache::from_rational_parts(hko.dual_vertices.clone(), hko.vertices.clone())
+            .expect("HKO base cache");
     let hko_sys = compute_sys(&hko_polytope).expect("HKO2024 sys");
     println!(
         "HKO2024: sys={hko_sys:.6}, F={}\n",

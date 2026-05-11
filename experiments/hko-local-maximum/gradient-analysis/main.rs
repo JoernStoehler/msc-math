@@ -30,10 +30,13 @@
 //! (`Hβ + Nμ + ηξ = 0`) instead of re-labeling it into a local asymmetric
 //! variant before derivative consumers use it again.
 
+#[path = "../src/flat_polytope.rs"]
+mod flat_polytope;
+
+use crate::flat_polytope::HkoPolytopeCache;
 use euclidean_polytopes::{
     two_faces_from_vertex_facet_incidence, vertex_facets_from_vertex_facet_incidence,
 };
-use exp_hko_local_maximum::HkoPolytopeCache;
 use exp_hko_local_maximum::{
     capacity_auto, ehz_capacity_instrumented, euclidean_volume_f64, exact_hko_dual_vertices,
     exact_simplex_dual_vertices, ExactBankEntry, ExactBankTarget, HkoExactScalar,
@@ -406,8 +409,8 @@ fn build_exact_bank_row(entry: &ExactBankEntry) -> ExactCertificationBankRow {
             let exact = exact_sigma_diagnostics(&exact_hko_dual_vertices(), entry.sigma);
             let known = known_polytopes::hko_pentagon();
             let cache = HkoPolytopeCache::from_rational_parts(
-                known.polytope.dual_vertices().to_vec(),
-                known.polytope.vertices().to_vec(),
+                known.dual_vertices.clone(),
+                known.vertices.clone(),
             )
             .expect("HKO cache");
             let float = float_sigma_diagnostics(&cache, entry.sigma);
@@ -429,8 +432,8 @@ fn build_exact_bank_row(entry: &ExactBankEntry) -> ExactCertificationBankRow {
             let exact = exact_sigma_diagnostics(&exact_simplex_dual_vertices(), entry.sigma);
             let known = known_polytopes::simplex();
             let cache = HkoPolytopeCache::from_rational_parts(
-                known.polytope.dual_vertices().to_vec(),
-                known.polytope.vertices().to_vec(),
+                known.dual_vertices.clone(),
+                known.vertices.clone(),
             )
             .expect("simplex cache");
             let float = float_sigma_diagnostics(&cache, entry.sigma);
@@ -788,10 +791,15 @@ fn safe_sys(polytope: &HkoPolytopeCache) -> Option<(f64, f64, f64)> {
     if vol <= 0.0 {
         return None;
     }
-    let cap = capacity_auto(polytope)
-        .ok()
-        .map(|r| r.capacity())
-        .unwrap_or(f64::NAN);
+    let cap = capacity_auto(
+        &polytope.dual_vertices,
+        &polytope.dual_vertices_f64,
+        &polytope.facet_intersection_is_nonempty,
+        &polytope.omega_signs,
+    )
+    .ok()
+    .map(|r| r.capacity())
+    .unwrap_or(f64::NAN);
     if !cap.is_finite() {
         return None;
     }
@@ -919,16 +927,20 @@ fn run_phase_a(base_dir: &std::path::Path, smoke: bool) {
 
     // Load HKO2024
     let known = known_polytopes::hko_pentagon();
-    let polytope = HkoPolytopeCache::from_rational_parts(
-        known.polytope.dual_vertices().to_vec(),
-        known.polytope.vertices().to_vec(),
-    )
-    .expect("HKO cache");
+    let polytope =
+        HkoPolytopeCache::from_rational_parts(known.dual_vertices.clone(), known.vertices.clone())
+            .expect("HKO cache");
     let f = polytope.facet_count();
     println!("HKO2024: F={f}, known capacity={:.6}", known.capacity);
 
     // Cross-check with library
-    let lib_result = capacity_auto(&polytope).expect("library capacity computation failed");
+    let lib_result = capacity_auto(
+        &polytope.dual_vertices,
+        &polytope.dual_vertices_f64,
+        &polytope.facet_intersection_is_nonempty,
+        &polytope.omega_signs,
+    )
+    .expect("library capacity computation failed");
     println!(
         "  Library capacity: {:.10} (diff from known: {:.2e})",
         lib_result.capacity(),
@@ -938,7 +950,12 @@ fn run_phase_a(base_dir: &std::path::Path, smoke: bool) {
     // Instrumented HK2017
     println!("\nRunning instrumented HK2017...");
     let t_instr = Instant::now();
-    let instrumented = ehz_capacity_instrumented(&polytope).expect("no valid orbits for HKO2024");
+    let instrumented = ehz_capacity_instrumented(
+        &polytope.dual_vertices_f64,
+        &polytope.facet_intersection_is_nonempty,
+        &polytope.omega_signs,
+    )
+    .expect("no valid orbits for HKO2024");
     let time_instrumented_ms = t_instr.elapsed().as_secs_f64() * 1000.0;
 
     // Cross-check
@@ -1162,7 +1179,11 @@ fn run_phase_a(base_dir: &std::path::Path, smoke: bool) {
         let t_iter = Instant::now();
 
         // Recompute instrumented capacity
-        let instr = match ehz_capacity_instrumented(&current) {
+        let instr = match ehz_capacity_instrumented(
+            &current.dual_vertices_f64,
+            &current.facet_intersection_is_nonempty,
+            &current.omega_signs,
+        ) {
             Some(r) => r,
             None => {
                 println!("  Iter {iter}: no valid orbits, stopping");
@@ -1261,7 +1282,11 @@ fn run_phase_a(base_dir: &std::path::Path, smoke: bool) {
         let time_ms = t_iter.elapsed().as_secs_f64() * 1000.0;
 
         // Near-optimal orbit count at new point
-        let new_instr = ehz_capacity_instrumented(&new_poly);
+        let new_instr = ehz_capacity_instrumented(
+            &new_poly.dual_vertices_f64,
+            &new_poly.facet_intersection_is_nonempty,
+            &new_poly.omega_signs,
+        );
         let n_near = new_instr
             .as_ref()
             .map(|r| {
@@ -1363,10 +1388,10 @@ mod tests {
         build_exact_bank_row, exact_bank_output_path, CliOptions, ExactBankEntry, ExactBankTarget,
         EXACT_BANK_ENTRIES, NEAR_OPTIMAL_GAP,
     };
+    use crate::flat_polytope::HkoPolytopeCache;
     use exp_hko_local_maximum::{
-        ehz_capacity_instrumented, HkoPolytopeCache, HKO_FLOAT_WINNING_SIGMA,
-        HKO_NEAR_OPTIMAL_SIGMA_A, HKO_NEAR_OPTIMAL_SIGMA_B, HKO_WINNING_SIGMA,
-        SIMPLEX_CONTROL_SIGMA,
+        ehz_capacity_instrumented, HKO_FLOAT_WINNING_SIGMA, HKO_NEAR_OPTIMAL_SIGMA_A,
+        HKO_NEAR_OPTIMAL_SIGMA_B, HKO_WINNING_SIGMA, SIMPLEX_CONTROL_SIGMA,
     };
     use std::path::Path;
     use symplectic::geom::known_polytopes;
@@ -1448,11 +1473,16 @@ mod tests {
     fn hko_bank_labels_match_current_instrumented_roles() {
         let known = known_polytopes::hko_pentagon();
         let cache = HkoPolytopeCache::from_rational_parts(
-            known.polytope.dual_vertices().to_vec(),
-            known.polytope.vertices().to_vec(),
+            known.dual_vertices.clone(),
+            known.vertices.clone(),
         )
         .expect("HKO cache");
-        let instrumented = ehz_capacity_instrumented(&cache).expect("instrumented HKO capacity");
+        let instrumented = ehz_capacity_instrumented(
+            &cache.dual_vertices_f64,
+            &cache.facet_intersection_is_nonempty,
+            &cache.omega_signs,
+        )
+        .expect("instrumented HKO capacity");
         let best_action = instrumented.orbits[0].action;
         let near_optimal_sigmas: Vec<Vec<usize>> = instrumented
             .orbits
