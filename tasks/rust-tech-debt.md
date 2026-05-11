@@ -121,10 +121,10 @@ experiment safety, validation trust, or durable crate maintainability.
   `f64_to_rational`; regression coverage lives in
   `crates/symplectic/src/geom/vertex_enumeration/tests.rs` and
   `crates/symplectic/src/random.rs`.
-- [fresh 2026-05-04] `sample_random_polytope` validates `facet_count` and the
-  height interval before constructing a `Uniform` distribution. The legacy
-  `generate_random_polytopes` wrapper now checks the same preconditions before
-  entering its fill loop.
+- [fresh 2026-05-04, updated 2026-05-11] `sample_random_dual_vertices`
+  validates `facet_count` and the height interval before constructing a
+  `Uniform` distribution. `generate_random_dual_vertices` checks the same
+  preconditions before entering its fill loop.
 - [fresh 2026-05-04] `num-unknown-predicates` no longer reports bare
   `billiard error` panics for lagrangian-product rows; the panic names the
   pentagon or polygon-product row and includes the `BilliardError`.
