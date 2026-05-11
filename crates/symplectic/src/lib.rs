@@ -1,13 +1,12 @@
-//! Symplectic geometry library for convex polytopes in R^4.
+//! Symplectic geometry library for convex-polytopal data in R^4.
 //!
 //! Computes the Ekeland-Hofer-Zehnder capacity c_EHZ(K) via exhaustive
 //! enumeration of closed Reeb orbits.
 //!
 //! # Submodules
 //!
-//! - `geom` — `Polytope4D` central type, symplectic form, exact rational
-//!   vertex enumeration, polygon/Lagrangian-product constructors, named
-//!   polytopes.
+//! - `geom` — symplectic form, exact rational vertex enumeration,
+//!   polygon/Lagrangian-product constructors, and named flat polytope fixtures.
 //! - `kkt` — context-free constrained QP solvers (saddle-point and
 //!   projection variants) + exact rational fallback.
 //! - `algorithms` — EHZ capacity algorithms: `hk2017` (general, exponential)
@@ -19,7 +18,8 @@
 //!   dataset generation and acceptance sweeps.
 //! - `derivatives` — analytical ∂c/∂a and ∂vol/∂a w.r.t. dual vertices,
 //!   for gradient-based experiments.
-//! - `random` — seeded rejection sampling of random polytopes (Haar on S^3).
+//! - `random` — seeded rejection sampling of accepted random dual vertices
+//!   (Haar on S^3).
 //!
 //! # Module dependency graph
 //!
@@ -31,8 +31,8 @@
 //!
 //! `kkt` is deliberately context-free: it operates on abstract matrices
 //! (C, d, H) without knowing they come from symplectic geometry. Assembly
-//! of QP inputs from `Polytope4D` lives in `kkt::qp_assembly`, which is
-//! the one place that crosses the `geom` ↔ `kkt` boundary.
+//! of QP inputs from flat dual-vertex data lives in `kkt::qp_assembly`, which
+//! is the one place that crosses the `geom` ↔ `kkt` boundary.
 //!
 //! Mathematical proofs live in per-module `.tex` files under `formal/`.
 
@@ -51,7 +51,7 @@ mod test_lib;
 // ── Re-exports: public API surface ──
 
 // Types
-pub use geom::polytope::{ConstructionError, Polytope4D};
+pub use geom::polytope::ConstructionError;
 
 // Capacity algorithms
 pub use algorithms::billiard::{
@@ -74,6 +74,9 @@ pub use geom::symplectic_form::omega0;
 // Geometry utility submodules
 pub use geom::known_polytopes;
 pub use geom::test_utils;
+
+#[cfg(test)]
+use geom::polytope::Polytope4D;
 
 /// Compute the systolic ratio `sys = capacity^2 / (2 * volume)`.
 ///

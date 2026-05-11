@@ -55,7 +55,10 @@ fn capacity_scales_quadratically() {
     let kp = known_polytopes::hypercube();
     let unit_cap = ehz_capacity_unpruned(&kp.polytope).unwrap().capacity();
 
-    let scaled_cube = crate::geom::test_utils::scaled_hypercube(scale);
+    let scaled_cube = crate::geom::polytope::Polytope4D::from_f64(
+        crate::geom::test_utils::scaled_hypercube_dual_vertices_f64(scale),
+    )
+    .expect("scaled hypercube");
     let scaled_cap = ehz_capacity_unpruned(&scaled_cube).unwrap().capacity();
 
     let expected = unit_cap * scale * scale;

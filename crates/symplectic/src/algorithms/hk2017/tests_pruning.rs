@@ -76,18 +76,21 @@ fn pruned_matches_unpruned() {
 #[test]
 #[ignore]
 fn pruned_matches_unpruned_random() {
-    use crate::random::generate_random_polytopes;
+    use crate::geom::polytope::Polytope4D;
+    use crate::random::generate_random_dual_vertices;
     use rand::SeedableRng;
     use rand_chacha::ChaCha8Rng;
 
     for facet_count in 5..=8 {
         for seed in 0..4u64 {
             let mut rng = ChaCha8Rng::seed_from_u64(seed);
-            let polytopes = generate_random_polytopes(1, facet_count, 0.5, 2.0, &mut rng);
+            let dual_vertices_sets =
+                generate_random_dual_vertices(1, facet_count, 0.5, 2.0, &mut rng);
 
-            if let Some(p) = polytopes.first() {
-                let unpruned = ehz_capacity_unpruned(p).unwrap();
-                let pruned = ehz_capacity_pruned(p).unwrap();
+            if let Some(dual_vertices) = dual_vertices_sets.first() {
+                let polytope = Polytope4D::from_f64(dual_vertices.clone()).unwrap();
+                let unpruned = ehz_capacity_unpruned(&polytope).unwrap();
+                let pruned = ehz_capacity_pruned(&polytope).unwrap();
 
                 assert!(
                     (unpruned.capacity() - pruned.capacity()).abs() < 1e-6,
