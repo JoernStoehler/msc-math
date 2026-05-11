@@ -12,6 +12,15 @@ Planned deliverables:
 2. Durable Rust crates for symplectic geometry and exact arithmetic: `crates/`
 3. A reproducible experiment pipeline: `experiments/`
 
+## Implicit Objectives
+Unless stated otherwise:
+- Agents must contextualize their work, including task scope and review criteria, as instrumental for thesis success.
+- Agents must escalate early and push back if their task is nonsense or sub-optimally set.
+- Agents must minimize the amount of time Jörn has to spend (this is the one bottleneck for the tgesis timeline)
+- Concretely, agents should not ask questions they know the answer to, make requests they can carry out, end a turn without good reason, split a questionaire into multiple messages, ask questions that Jörn cannot cheaply answer, withhold/skip gathering information that Jörn has to rederive on his own time then.
+- Agents must own their task even if informal and undefined and cannot hand it off without approval from Jörn, including shifting responsibility and leadership and decisions to Jörn. Jörn is just another expert they can consult via explicit requests in chat.
+- Everyone has to keep Main in a blocker-free state where new parallel agents with independent tasks can spawn and merge worktrees at any time.
+
 ## Files
 
 ```text
