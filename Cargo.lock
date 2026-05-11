@@ -381,6 +381,7 @@ dependencies = [
 name = "dev-algorithm-comparison"
 version = "0.1.0"
 dependencies = [
+ "dev-capacity-validation",
  "euclidean-polytopes",
  "good_lp",
  "nalgebra",

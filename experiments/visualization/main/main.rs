@@ -96,24 +96,23 @@ pub fn export(name: &str, output: &Path) -> Result<(), String> {
         format!("Unknown polytope '{name}'. Available: {}", names.join(", "))
     })?;
 
-    let polytope = &kp.polytope;
-    let incidence = polytope.incidence();
-    let vertices = polytope.vertices_f64();
+    let incidence = &kp.vertex_facet_incidence;
+    let vertices = &kp.vertices_f64;
     let edges = edges_from_vertex_facet_incidence(incidence);
     let two_faces = two_faces_from_vertex_facet_incidence(incidence);
     let vertex_facets = vertex_facets_from_vertex_facet_incidence(incidence);
 
-    let reeb_vectors: Vec<[f64; 4]> = polytope
-        .dual_vertices_f64()
+    let reeb_vectors: Vec<[f64; 4]> = kp
+        .dual_vertices_f64
         .iter()
         .map(|a| v4_to_array(&symplectic::geom::reeb_trajectory::reeb_direction(a)))
         .collect();
 
     eprintln!("Computing orbits for {}...", kp.name);
-    let (trajectories, computed_capacity) = generate_trajectories(polytope);
+    let (trajectories, computed_capacity) = generate_trajectories(kp);
 
     let capacity = computed_capacity.unwrap_or(kp.capacity);
-    let vol = euclidean_volume_f64(polytope.vertices(), polytope.incidence());
+    let vol = euclidean_volume_f64(&kp.vertices, incidence);
     let systolic_ratio = if vol > 0.0 {
         capacity * capacity / (2.0 * vol)
     } else {
@@ -124,15 +123,11 @@ pub fn export(name: &str, output: &Path) -> Result<(), String> {
         name: kp.name.to_string(),
         source: kp.source.to_string(),
         capacity,
-        facet_count: polytope.facet_count(),
+        facet_count: kp.facet_count(),
         vertex_count: vertices.len(),
         edge_count: edges.len(),
         two_face_count: two_faces.len(),
-        dual_vertices: polytope
-            .dual_vertices_f64()
-            .iter()
-            .map(v4_to_array)
-            .collect(),
+        dual_vertices: kp.dual_vertices_f64.iter().map(v4_to_array).collect(),
         reeb_vectors,
         vertices: vertices.iter().map(v4_to_array).collect(),
         edges,

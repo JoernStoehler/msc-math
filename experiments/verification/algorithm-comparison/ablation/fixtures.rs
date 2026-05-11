@@ -11,16 +11,27 @@
 //! durable library surface.
 
 use crate::models::{AblationFixture, H_MAX, H_MIN, N_PER_GROUP, SEED};
+use dev_capacity_validation::VerificationPolytopeCache;
 use nalgebra::Vector4;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use symplectic::geom::known_polytopes;
-use symplectic::geom::lagrangian_product::lagrangian_product;
 use symplectic::geom::polygon::{random_polygon_2d, regular_polygon_2d};
-use symplectic::geom::polytope::Polytope4D;
-use symplectic::random::generate_random_polytopes;
+use symplectic::random::generate_random_dual_vertices;
 
-fn make_bipyramid(normals_3d: &[[f64; 3]], heights_3d: &[f64], apex_height: f64) -> Polytope4D {
+fn cache_from_dual_vertices(
+    dual_vertices: Vec<Vector4<f64>>,
+    label: &str,
+) -> VerificationPolytopeCache {
+    VerificationPolytopeCache::from_f64_dual_vertices(dual_vertices)
+        .unwrap_or_else(|| panic!("{label} construction"))
+}
+
+fn make_bipyramid(
+    normals_3d: &[[f64; 3]],
+    heights_3d: &[f64],
+    apex_height: f64,
+) -> VerificationPolytopeCache {
     let k = normals_3d.len();
     let mut normals = Vec::with_capacity(2 * k);
     let mut heights = Vec::with_capacity(2 * k);
@@ -38,17 +49,17 @@ fn make_bipyramid(normals_3d: &[[f64; 3]], heights_3d: &[f64], apex_height: f64)
         heights.push(h / norm4);
     }
 
-    Polytope4D::from_f64(
+    cache_from_dual_vertices(
         normals
             .iter()
             .zip(heights.iter())
             .map(|(n, &h)| n / h)
             .collect(),
+        "bipyramid",
     )
-    .expect("bipyramid construction")
 }
 
-fn make_cut_simplex(cut_slope: f64) -> Polytope4D {
+fn make_cut_simplex(cut_slope: f64) -> VerificationPolytopeCache {
     // This is the cut-simplex family discussed in
     // formal/search-pruning-correctness.tex:\ref{ex:a3-prunes}.
     let s19 = 19.0_f64.sqrt();
@@ -62,14 +73,14 @@ fn make_cut_simplex(cut_slope: f64) -> Polytope4D {
         Vector4::new(1.0, cut_slope, 0.0, 0.0) / norm,
     ];
     let heights = vec![2.0 / s19, 2.0 / s19, 2.0 / s19, 2.0 / s19, 1.0, 2.0 / norm];
-    Polytope4D::from_f64(
+    cache_from_dual_vertices(
         normals
             .iter()
             .zip(heights.iter())
             .map(|(n, &h)| n / h)
             .collect(),
+        "cut simplex",
     )
-    .expect("cut simplex construction")
 }
 
 pub fn build_ablation_polytopes() -> Vec<AblationFixture> {
@@ -78,12 +89,12 @@ pub fn build_ablation_polytopes() -> Vec<AblationFixture> {
 
     println!("Part 1: Random generic polytopes (F=5..10, {N_PER_GROUP} each)...");
     for f in [5usize, 6, 7, 8, 9, 10] {
-        let ps = generate_random_polytopes(N_PER_GROUP, f, H_MIN, H_MAX, &mut rng);
+        let ps = generate_random_dual_vertices(N_PER_GROUP, f, H_MIN, H_MAX, &mut rng);
         for (i, p) in ps.into_iter().enumerate() {
             polytopes.push(AblationFixture {
                 name: format!("random_F{f}_{i}"),
                 group: "random_generic".to_string(),
-                polytope: p,
+                polytope: cache_from_dual_vertices(p, "random polytope"),
                 expected_capacity: None,
             });
         }
@@ -96,7 +107,9 @@ pub fn build_ablation_polytopes() -> Vec<AblationFixture> {
             let p = loop {
                 let (qn, qh) = random_polygon_2d(n, H_MIN, H_MAX, &mut rng);
                 let (pn, ph) = random_polygon_2d(m, H_MIN, H_MAX, &mut rng);
-                if let Ok(poly) = lagrangian_product(&qn, &qh, &pn, &ph) {
+                if let Some(poly) =
+                    VerificationPolytopeCache::from_lagrangian_product(&qn, &qh, &pn, &ph)
+                {
                     break poly;
                 }
             };
@@ -115,7 +128,8 @@ pub fn build_ablation_polytopes() -> Vec<AblationFixture> {
     {
         let (qn, qh) = regular_polygon_2d(3, 1.0);
         let (pn, ph) = regular_polygon_2d(4, 1.0);
-        let p = lagrangian_product(&qn, &qh, &pn, &ph).expect("(3,4) construction");
+        let p = VerificationPolytopeCache::from_lagrangian_product(&qn, &qh, &pn, &ph)
+            .expect("(3,4) construction");
         let expected = 3.0 * std::f64::consts::SQRT_2 / 2.0;
         polytopes.push(AblationFixture {
             name: "regression_34_theta0".to_string(),
@@ -129,7 +143,8 @@ pub fn build_ablation_polytopes() -> Vec<AblationFixture> {
     {
         let (qn, qh) = regular_polygon_2d(4, 1.0);
         let (pn, ph) = regular_polygon_2d(4, 1.0);
-        let p = lagrangian_product(&qn, &qh, &pn, &ph).expect("(4,4) construction");
+        let p = VerificationPolytopeCache::from_lagrangian_product(&qn, &qh, &pn, &ph)
+            .expect("(4,4) construction");
         polytopes.push(AblationFixture {
             name: "regression_44_theta0".to_string(),
             group: "regression".to_string(),
@@ -143,13 +158,17 @@ pub fn build_ablation_polytopes() -> Vec<AblationFixture> {
         let kp = known_polytopes::hypercube();
         println!(
             "  hypercube:  F={}, expected {}",
-            kp.polytope.facet_count(),
+            kp.facet_count(),
             kp.capacity
         );
         polytopes.push(AblationFixture {
             name: "regression_hypercube".to_string(),
             group: "regression".to_string(),
-            polytope: kp.polytope.clone(),
+            polytope: VerificationPolytopeCache::from_rational_parts(
+                kp.dual_vertices.clone(),
+                kp.vertices.clone(),
+            )
+            .expect("hypercube construction"),
             expected_capacity: Some(kp.capacity),
         });
     }
