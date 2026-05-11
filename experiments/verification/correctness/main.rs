@@ -199,8 +199,9 @@ fn main() {
     ];
 
     for kp in literature {
-        let polytope = VerificationPolytopeCache::from_f64_dual_vertices(
-            kp.polytope.dual_vertices_f64().to_vec(),
+        let polytope = VerificationPolytopeCache::from_rational_parts(
+            kp.dual_vertices.clone(),
+            kp.vertices.clone(),
         )
         .expect("known literature polytope should reconstruct");
         let pruned = capacity_pruned(&polytope);

@@ -89,8 +89,9 @@ fn build_known_targets() -> Vec<Target> {
             name: kp.name.to_string(),
             family: "known".to_string(),
             source_kind: "known_polytopes".to_string(),
-            polytope: VerificationPolytopeCache::from_f64_dual_vertices(
-                kp.polytope.dual_vertices_f64().to_vec(),
+            polytope: VerificationPolytopeCache::from_rational_parts(
+                kp.dual_vertices.clone(),
+                kp.vertices.clone(),
             )
             .expect("known target should reconstruct"),
             expected_min_orbit_count: expected_min_orbit_count(kp.name),
