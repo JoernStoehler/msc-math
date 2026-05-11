@@ -193,8 +193,8 @@ fn crosspolytope_upper_bound() {
         admissibility: crate::algorithms::OrbitAdmissibility::AdmissibleF64,
     };
 
-    let geometric_orbit =
-        recover_and_verify(&kp.polytope, &orbit).expect("geometric orbit recovery failed");
+    let geometric_orbit = recover_and_verify(kp.polytope.dual_vertices_f64(), &orbit)
+        .expect("geometric orbit recovery failed");
 
     assert!(
         geometric_orbit.closure_error < 1e-8,

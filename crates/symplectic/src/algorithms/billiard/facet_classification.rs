@@ -11,8 +11,6 @@
 //! Mathematical correspondence: [lem:lagrangian-facets]
 
 use super::BilliardError;
-#[cfg(test)]
-use crate::geom::polytope::Polytope4D;
 use nalgebra::Vector4;
 
 /// Tolerance for classifying facet dual vertices as q-type or p-type.
@@ -170,10 +168,12 @@ pub fn classify_facets_from_dual_vertices(
     })
 }
 
-/// Classify facets of a constructed polytope.
+/// Classify facets from the ordered facet-dual list.
 #[cfg(test)]
-pub(crate) fn classify_facets(polytope: &Polytope4D) -> Result<FacetClassification, BilliardError> {
-    classify_facets_from_dual_vertices(polytope.dual_vertices_f64())
+pub(crate) fn classify_facets(
+    dual_vertices: &[Vector4<f64>],
+) -> Result<FacetClassification, BilliardError> {
+    classify_facets_from_dual_vertices(dual_vertices)
 }
 
 #[cfg(test)]
@@ -184,7 +184,7 @@ mod tests {
     #[test]
     fn mask_dual_direction_preserves_allowed_components() {
         let kp = known_polytopes::lagrangian_triangle_product();
-        let classification = classify_facets(&kp.polytope)
+        let classification = classify_facets(kp.polytope.dual_vertices_f64())
             .expect("triangle product should classify as a Lagrangian product");
         let direction: Vec<Vector4<f64>> = (0..kp.polytope.facet_count())
             .map(|i| {

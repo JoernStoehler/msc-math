@@ -29,7 +29,6 @@
 //! Mathematical correspondence: [lem:base-point-recovery], [rem:beta-to-tau]
 
 use crate::algorithms::OrbitKktData;
-use crate::geom::polytope::Polytope4D;
 use crate::geom::symplectic_form::omega0;
 use nalgebra::{DMatrix, DVector, Vector4};
 
@@ -91,7 +90,7 @@ pub struct GeometricOrbit {
 ///
 /// [lem:base-point-recovery], [rem:beta-to-tau]
 pub fn recover_and_verify_sigma_beta_action(
-    polytope: &Polytope4D,
+    dual_vertices: &[Vector4<f64>],
     sigma: &[usize],
     beta: &[f64],
     action: f64,
@@ -99,7 +98,7 @@ pub fn recover_and_verify_sigma_beta_action(
     if sigma.len() != beta.len() || !action.is_finite() || action <= 0.0 {
         return None;
     }
-    if sigma.iter().any(|&facet| facet >= polytope.facet_count()) {
+    if sigma.iter().any(|&facet| facet >= dual_vertices.len()) {
         return None;
     }
     if beta.iter().any(|&entry| !entry.is_finite() || entry <= 0.0) {
@@ -119,7 +118,7 @@ pub fn recover_and_verify_sigma_beta_action(
         xi: None,
         admissibility: crate::algorithms::OrbitAdmissibility::AdmissibleF64,
     };
-    recover_and_verify(polytope, &orbit)
+    recover_and_verify(dual_vertices, &orbit)
 }
 
 /// Recover a Reeb orbit from solved orbit/KKT data and verify its validity.
@@ -128,8 +127,11 @@ pub fn recover_and_verify_sigma_beta_action(
 /// [`OrbitKktData`] record.
 ///
 /// [lem:base-point-recovery], [rem:beta-to-tau]
-pub fn recover_and_verify(polytope: &Polytope4D, orbit: &OrbitKktData) -> Option<GeometricOrbit> {
-    let duals = polytope.dual_vertices_f64();
+pub fn recover_and_verify(
+    dual_vertices: &[Vector4<f64>],
+    orbit: &OrbitKktData,
+) -> Option<GeometricOrbit> {
+    let duals = dual_vertices;
     let sigma = &orbit.sigma;
     let beta = &orbit.beta;
     let capacity = orbit.action;
@@ -379,20 +381,28 @@ mod tests {
 
         let mut bad_sigma = sigma.to_vec();
         bad_sigma[0] = kp.polytope.facet_count();
-        assert!(
-            recover_and_verify_sigma_beta_action(&kp.polytope, &bad_sigma, beta, action).is_none()
-        );
+        assert!(recover_and_verify_sigma_beta_action(
+            kp.polytope.dual_vertices_f64(),
+            &bad_sigma,
+            beta,
+            action,
+        )
+        .is_none());
 
         let mut bad_beta = beta.to_vec();
         bad_beta[0] = f64::NAN;
-        assert!(
-            recover_and_verify_sigma_beta_action(&kp.polytope, sigma, &bad_beta, action).is_none()
-        );
+        assert!(recover_and_verify_sigma_beta_action(
+            kp.polytope.dual_vertices_f64(),
+            sigma,
+            &bad_beta,
+            action,
+        )
+        .is_none());
 
         let mut nonpositive_beta = beta.to_vec();
         nonpositive_beta[0] = 0.0;
         assert!(recover_and_verify_sigma_beta_action(
-            &kp.polytope,
+            kp.polytope.dual_vertices_f64(),
             sigma,
             &nonpositive_beta,
             action
@@ -402,18 +412,20 @@ mod tests {
 
     /// Run the full recovery + verification pipeline on a known polytope and
     /// check all error metrics against tolerances.
-    fn test_recovery(name: &str, polytope: &Polytope4D, expected_capacity: f64) {
-        let result = ehz_capacity_pruned(polytope).unwrap_or_else(|_| {
+    fn test_recovery(name: &str, kp: &crate::geom::known_polytopes::KnownPolytope) {
+        let dual_vertices = kp.polytope.dual_vertices_f64();
+        let result = ehz_capacity_pruned(&kp.polytope).unwrap_or_else(|_| {
             panic!("{name}: capacity computation failed");
         });
         assert!(
-            (result.capacity() - expected_capacity).abs() < 1e-4,
-            "{name}: capacity mismatch: got {}, expected {expected_capacity}",
-            result.capacity()
+            (result.capacity() - kp.capacity).abs() < 1e-4,
+            "{name}: capacity mismatch: got {}, expected {}",
+            result.capacity(),
+            kp.capacity
         );
 
         let orbit = best_orbit_payload(&result);
-        let recovery = recover_and_verify(polytope, &orbit).unwrap_or_else(|| {
+        let recovery = recover_and_verify(dual_vertices, &orbit).unwrap_or_else(|| {
             panic!("{name}: orbit recovery failed");
         });
 
@@ -473,12 +485,11 @@ mod tests {
     }
 
     /// Helper to verify on-facet property: each breakpoint k lies on facet sigma(k).
-    fn check_on_facet(name: &str, polytope: &Polytope4D, result: &OrbitSearchResult) {
-        let duals = polytope.dual_vertices_f64();
+    fn check_on_facet(name: &str, duals: &[Vector4<f64>], result: &OrbitSearchResult) {
         let orbit = best_orbit_payload(result);
         let sigma = &orbit.sigma;
 
-        let recovery = recover_and_verify(polytope, &orbit).unwrap();
+        let recovery = recover_and_verify(duals, &orbit).unwrap();
 
         // For each active segment k (dwell_times[k] > 0), breakpoint[k] should lie
         // on facet sigma(k): <a_{sigma(k)}, breakpoint[k]> ~ 1.
@@ -504,7 +515,7 @@ mod tests {
     #[test]
     fn simplex_recovery() {
         let kp = known_polytopes::simplex();
-        test_recovery("simplex", &kp.polytope, kp.capacity);
+        test_recovery("simplex", kp);
     }
 
     /// On-facet check for the simplex.
@@ -512,7 +523,7 @@ mod tests {
     fn simplex_on_facet() {
         let kp = known_polytopes::simplex();
         let result = ehz_capacity_pruned(&kp.polytope).unwrap();
-        check_on_facet("simplex", &kp.polytope, &result);
+        check_on_facet("simplex", kp.polytope.dual_vertices_f64(), &result);
     }
 
     /// Recover orbit for the hypercube (F=8).
@@ -522,7 +533,7 @@ mod tests {
     #[test]
     fn hypercube_recovery() {
         let kp = known_polytopes::hypercube();
-        test_recovery("hypercube", &kp.polytope, kp.capacity);
+        test_recovery("hypercube", kp);
     }
 
     // crosspolytope orbit recovery is tested in crosspolytope_upper_bound()
@@ -537,7 +548,7 @@ mod tests {
     #[test]
     fn hko_pentagon_recovery() {
         let kp = known_polytopes::hko_pentagon();
-        test_recovery("hko_pentagon", &kp.polytope, kp.capacity);
+        test_recovery("hko_pentagon", kp);
     }
 
     /// Recover orbit for a Lagrangian triangle product (F=7).
@@ -546,7 +557,7 @@ mod tests {
     #[test]
     fn lagrangian_triangle_product_recovery() {
         let kp = known_polytopes::lagrangian_triangle_product();
-        test_recovery("lagrangian_triangle_product", &kp.polytope, kp.capacity);
+        test_recovery("lagrangian_triangle_product", kp);
     }
 
     /// Recover orbit for a symplectic triangle product (F=7).
@@ -555,7 +566,7 @@ mod tests {
     #[test]
     fn symplectic_triangle_product_recovery() {
         let kp = known_polytopes::symplectic_triangle_product();
-        test_recovery("symplectic_triangle_product", &kp.polytope, kp.capacity);
+        test_recovery("symplectic_triangle_product", kp);
     }
 
     /// Recover orbit for a Lagrangian triangle-square product (F=7).
@@ -564,7 +575,7 @@ mod tests {
     #[test]
     fn lagrangian_triangle_square_recovery() {
         let kp = known_polytopes::lagrangian_triangle_square();
-        test_recovery("lagrangian_triangle_square", &kp.polytope, kp.capacity);
+        test_recovery("lagrangian_triangle_square", kp);
     }
 
     /// Recover orbit for a symplectic triangle-square product (F=7).
@@ -573,7 +584,7 @@ mod tests {
     #[test]
     fn symplectic_triangle_square_recovery() {
         let kp = known_polytopes::symplectic_triangle_square();
-        test_recovery("symplectic_triangle_square", &kp.polytope, kp.capacity);
+        test_recovery("symplectic_triangle_square", kp);
     }
 
     /// Verify that dwell times are non-negative for all known polytopes.
@@ -589,7 +600,7 @@ mod tests {
             }
             let result = ehz_capacity_pruned(&kp.polytope).unwrap();
             let orbit = best_orbit_payload(&result);
-            let recovery = recover_and_verify(&kp.polytope, &orbit).unwrap();
+            let recovery = recover_and_verify(kp.polytope.dual_vertices_f64(), &orbit).unwrap();
 
             for (k, &tau) in recovery.dwell_times.iter().enumerate() {
                 assert!(
@@ -613,7 +624,7 @@ mod tests {
             }
             let result = ehz_capacity_pruned(&kp.polytope).unwrap();
             let orbit = best_orbit_payload(&result);
-            let recovery = recover_and_verify(&kp.polytope, &orbit).unwrap();
+            let recovery = recover_and_verify(kp.polytope.dual_vertices_f64(), &orbit).unwrap();
 
             assert_eq!(
                 recovery.breakpoints.len(),
@@ -639,8 +650,10 @@ mod tests {
 
         let orbit_pruned = best_orbit_payload(&result_pruned);
         let orbit_unpruned = best_orbit_payload(&result_unpruned);
-        let recovery_pruned = recover_and_verify(&kp.polytope, &orbit_pruned).unwrap();
-        let recovery_unpruned = recover_and_verify(&kp.polytope, &orbit_unpruned).unwrap();
+        let recovery_pruned =
+            recover_and_verify(kp.polytope.dual_vertices_f64(), &orbit_pruned).unwrap();
+        let recovery_unpruned =
+            recover_and_verify(kp.polytope.dual_vertices_f64(), &orbit_unpruned).unwrap();
 
         // Both should have valid orbits.
         assert!(recovery_pruned.closure_error < TOL);

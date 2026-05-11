@@ -4,8 +4,86 @@
 
 use crate::geom::lagrangian_product::lagrangian_product;
 use crate::geom::polygon::{regular_polygon_2d, rotate_polygon_2d};
+use crate::geom::rational_arithmetic::f64_to_rational;
 use crate::kkt::qp_assembly::build_augmented_system_from_dual_vertices;
-use crate::{ehz_capacity_pruned, ehz_capacity_unpruned};
+use crate::{algorithms, ehz_capacity_pruned};
+use nalgebra::Vector4;
+use num_rational::BigRational;
+
+fn exact_dual_vertex_arrays(dual_vertices: &[Vector4<f64>]) -> Vec<[BigRational; 4]> {
+    dual_vertices
+        .iter()
+        .map(|a| {
+            [
+                f64_to_rational(a[0]),
+                f64_to_rational(a[1]),
+                f64_to_rational(a[2]),
+                f64_to_rational(a[3]),
+            ]
+        })
+        .collect()
+}
+
+fn unpruned_capacity(dual_vertices: &[Vector4<f64>]) -> algorithms::OrbitSearchResult {
+    let (orbits, iterations) =
+        algorithms::hk2017::solve_unpruned_hk2017_candidates(dual_vertices).expect("candidates");
+    let exact_dual_vertices = exact_dual_vertex_arrays(dual_vertices);
+    algorithms::aggregate_orbits_with_dual_vertices_exact(
+        &exact_dual_vertices,
+        orbits,
+        iterations,
+        0.0,
+        algorithms::OrbitGuaranteeMode::BoundSafe,
+    )
+    .expect("aggregate")
+}
+
+fn billiard_capacity(dual_vertices: &[Vector4<f64>]) -> algorithms::OrbitSearchResult {
+    let exact_dual_vectors: Vec<Vector4<BigRational>> = dual_vertices
+        .iter()
+        .map(|a| {
+            Vector4::new(
+                f64_to_rational(a[0]),
+                f64_to_rational(a[1]),
+                f64_to_rational(a[2]),
+                f64_to_rational(a[3]),
+            )
+        })
+        .collect();
+    let vertices_with_incidence =
+        crate::exact::exact_vertices_with_incidence(&exact_dual_vectors).expect("exact vertices");
+    let facet_intersection_is_nonempty = crate::exact::facet_intersection_is_nonempty_exact(
+        &vertices_with_incidence.vertex_facet_incidence,
+    );
+    let omega_signs = crate::exact::omega_signs_exact(&exact_dual_vectors);
+    let transition_is_allowed =
+        algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega(
+            &facet_intersection_is_nonempty,
+            &omega_signs,
+        );
+    let classification =
+        algorithms::billiard::facet_classification::classify_facets_from_dual_vertices(
+            dual_vertices,
+        )
+        .expect("Lagrangian product classification");
+    let (orbits, iterations) = algorithms::billiard::solve_billiard_candidates(
+        dual_vertices,
+        &classification.q_indices,
+        &classification.p_indices,
+        &facet_intersection_is_nonempty,
+        &transition_is_allowed,
+    )
+    .expect("billiard candidates");
+    let exact_dual_vertices = exact_dual_vertex_arrays(dual_vertices);
+    algorithms::aggregate_orbits_with_dual_vertices_exact(
+        &exact_dual_vertices,
+        orbits,
+        iterations,
+        0.0,
+        algorithms::OrbitGuaranteeMode::BoundSafe,
+    )
+    .expect("aggregate")
+}
 
 // ── KKT null space fix regressions ──
 //
@@ -23,9 +101,9 @@ use crate::{ehz_capacity_pruned, ehz_capacity_unpruned};
 fn kkt_nullspace_square_square_zero() {
     let (qn, qh) = regular_polygon_2d(4, 1.0);
     let (pn, ph) = regular_polygon_2d(4, 1.0);
-    let polytope = lagrangian_product(&qn, &qh, &pn, &ph).unwrap();
+    let dual_vertices = lagrangian_product(&qn, &qh, &pn, &ph).unwrap();
 
-    let result = ehz_capacity_unpruned(&polytope).expect("(4,4) at theta=0 should have capacity");
+    let result = unpruned_capacity(&dual_vertices);
     assert!(
         (result.capacity() - 2.0).abs() < 1e-6,
         "(4,4) at theta=0: got {}, expected 2.0",
@@ -46,10 +124,9 @@ fn kkt_nullspace_square_square_near_zero() {
     let (qn, qh) = regular_polygon_2d(4, 1.0);
     let (pn_base, ph_base) = regular_polygon_2d(4, 1.0);
     let (pn, ph) = rotate_polygon_2d(&pn_base, &ph_base, theta);
-    let polytope = lagrangian_product(&qn, &qh, &pn, &ph).unwrap();
+    let dual_vertices = lagrangian_product(&qn, &qh, &pn, &ph).unwrap();
 
-    let result =
-        ehz_capacity_unpruned(&polytope).expect("(4,4) at theta=0.125 should have capacity");
+    let result = unpruned_capacity(&dual_vertices);
     // Capacity should be continuous near theta=0 -> close to 2.0.
     assert!(
         (result.capacity() - 2.0).abs() < 0.01,
@@ -68,12 +145,10 @@ fn kkt_nullspace_square_square_45deg() {
     let (qn, qh) = regular_polygon_2d(4, 1.0);
     let (pn_base, ph_base) = regular_polygon_2d(4, 1.0);
     let (pn, ph) = rotate_polygon_2d(&pn_base, &ph_base, theta);
-    let polytope = lagrangian_product(&qn, &qh, &pn, &ph).unwrap();
+    let dual_vertices = lagrangian_product(&qn, &qh, &pn, &ph).unwrap();
 
-    let result_hk =
-        ehz_capacity_unpruned(&polytope).expect("(4,4) at theta=45: HK2017 should have capacity");
-    let result_bil =
-        crate::ehz_capacity_billiard(&polytope).expect("billiard should have capacity");
+    let result_hk = unpruned_capacity(&dual_vertices);
+    let result_bil = billiard_capacity(&dual_vertices);
 
     let sqrt2_times2 = 2.0 * std::f64::consts::SQRT_2;
     assert!(
@@ -102,10 +177,9 @@ fn kkt_nullspace_square_square_45deg() {
 fn kkt_nullspace_triangle_square_zero() {
     let (qn, qh) = regular_polygon_2d(3, 1.0);
     let (pn, ph) = regular_polygon_2d(4, 1.0);
-    let polytope = lagrangian_product(&qn, &qh, &pn, &ph).unwrap();
+    let dual_vertices = lagrangian_product(&qn, &qh, &pn, &ph).unwrap();
 
-    let result = ehz_capacity_unpruned(&polytope)
-        .expect("(3,4) at theta=0 should now return Some after null space fix");
+    let result = unpruned_capacity(&dual_vertices);
 
     let expected = 3.0 * std::f64::consts::SQRT_2 / 2.0; // 3*sqrt(2)/2 ~ 2.121
     assert!(
@@ -133,12 +207,11 @@ fn kkt_nullspace_triangle_square_zero() {
 fn eigen_gap_ratio_44_degenerate() {
     let (qn, qh) = regular_polygon_2d(4, 1.0);
     let (pn, ph) = regular_polygon_2d(4, 1.0);
-    let polytope = lagrangian_product(&qn, &qh, &pn, &ph).unwrap();
+    let dual_vertices = lagrangian_product(&qn, &qh, &pn, &ph).unwrap();
 
     // The optimal orbit at theta=0 uses facets [0,4,2,6] (alternating q/p).
     let perm = vec![0, 4, 2, 6];
-    let dual_vertices = polytope.dual_vertices_f64();
-    let (kkt, _rhs) = build_augmented_system_from_dual_vertices(dual_vertices, &perm);
+    let (kkt, _rhs) = build_augmented_system_from_dual_vertices(&dual_vertices, &perm);
     let eigen = kkt.symmetric_eigen();
     let size = perm.len() + 5; // 9
 
@@ -189,14 +262,13 @@ fn eigen_gap_ratio_44_theta43() {
     let (qn, qh) = regular_polygon_2d(4, 1.0);
     let (pn_base, ph_base) = regular_polygon_2d(4, 1.0);
     let (pn, ph) = rotate_polygon_2d(&pn_base, &ph_base, theta);
-    let polytope = lagrangian_product(&qn, &qh, &pn, &ph).unwrap();
+    let dual_vertices = lagrangian_product(&qn, &qh, &pn, &ph).unwrap();
 
     let perm = vec![1, 0, 6, 3, 2, 4];
     let m = perm.len();
     let size = m + 5; // 11
 
-    let dual_vertices = polytope.dual_vertices_f64();
-    let (kkt, _rhs) = build_augmented_system_from_dual_vertices(dual_vertices, &perm);
+    let (kkt, _rhs) = build_augmented_system_from_dual_vertices(&dual_vertices, &perm);
     let eigen = kkt.symmetric_eigen();
 
     let mut abs_eigenvalues: Vec<f64> = eigen.eigenvalues.iter().map(|&ev| ev.abs()).collect();

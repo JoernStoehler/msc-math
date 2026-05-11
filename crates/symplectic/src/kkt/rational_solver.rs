@@ -46,7 +46,7 @@ pub struct ExactKktResult {
 
 /// Solve the KKT system exactly for a single (S, sigma) combinatorics.
 ///
-/// Given dual vertices y_i = n_i / h_i (from `Polytope4D::dual_vertices()`) and a
+/// Given exact rational dual vertices y_i = n_i / h_i and a
 /// permutation `perm` (the sigma in the thesis), builds the (m+5) x (m+5) KKT
 /// matrix over Q and solves via the shared exact linear solver with null-space
 /// handling.
@@ -366,7 +366,23 @@ mod tests {
     use crate::geom::known_polytopes;
     use crate::geom::lagrangian_product::lagrangian_product;
     use crate::geom::polygon::regular_polygon_2d;
+    use crate::geom::rational_arithmetic::f64_to_rational;
+    use nalgebra::Vector4;
     use num_traits::{Signed, Zero};
+
+    fn exact_dual_vertex_arrays(dual_vertices: &[Vector4<f64>]) -> Vec<[BigRational; 4]> {
+        dual_vertices
+            .iter()
+            .map(|a| {
+                [
+                    f64_to_rational(a[0]),
+                    f64_to_rational(a[1]),
+                    f64_to_rational(a[2]),
+                    f64_to_rational(a[3]),
+                ]
+            })
+            .collect()
+    }
 
     // Tests for rational_solver: exact KKT solve correctness and null-space handling.
     //
@@ -468,10 +484,11 @@ mod tests {
     fn f64_square_product_bad_sigma_rejected_by_exact_rank() {
         let (qn, qh) = regular_polygon_2d(4, 1.0);
         let (pn, ph) = regular_polygon_2d(4, 1.0);
-        let polytope = lagrangian_product(&qn, &qh, &pn, &ph).expect("square product");
+        let dual_vertices = lagrangian_product(&qn, &qh, &pn, &ph).expect("square product");
+        let dual_vertices_exact = exact_dual_vertex_arrays(&dual_vertices);
 
         assert!(
-            solve_kkt_exact(polytope.dual_vertices(), &[0, 3, 4, 2, 6]).is_none(),
+            solve_kkt_exact(&dual_vertices_exact, &[0, 3, 4, 2, 6]).is_none(),
             "exact rank decisions must reject the square-product bad sigma"
         );
     }

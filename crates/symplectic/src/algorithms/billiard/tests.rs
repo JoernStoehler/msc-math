@@ -1,23 +1,70 @@
 use super::*;
-use crate::ehz_capacity_billiard;
 use crate::geom::known_polytopes;
+use nalgebra::{DMatrix, Vector4};
+use num_rational::BigRational;
 
 fn billiard_result(
     name: &str,
-    polytope: &crate::geom::polytope::Polytope4D,
+    dual_vertices: &[Vector4<f64>],
+    dual_vertices_exact: &[[BigRational; 4]],
+    facet_intersection_is_nonempty: &DMatrix<bool>,
+    omega_signs: &DMatrix<i8>,
 ) -> crate::algorithms::OrbitSearchResult {
-    ehz_capacity_billiard(polytope)
-        .unwrap_or_else(|e| panic!("{name}: ehz_capacity_billiard returned error: {e:?}"))
+    let classification =
+        facet_classification::classify_facets(dual_vertices).expect("valid Lagrangian product");
+    let transition_is_allowed = crate::algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega(
+        facet_intersection_is_nonempty,
+        omega_signs,
+    );
+    let (orbits, iterations) = solve_billiard_candidates(
+        dual_vertices,
+        &classification.q_indices,
+        &classification.p_indices,
+        facet_intersection_is_nonempty,
+        &transition_is_allowed,
+    )
+    .unwrap_or_else(|e| panic!("{name}: solve_billiard_candidates returned error: {e:?}"));
+
+    crate::algorithms::aggregate_orbits_with_dual_vertices_exact(
+        dual_vertices_exact,
+        orbits,
+        iterations,
+        0.0,
+        crate::algorithms::OrbitGuaranteeMode::BoundSafe,
+    )
+    .unwrap_or_else(|e| panic!("{name}: billiard aggregation returned error: {e:?}"))
+}
+
+fn billiard_result_from_known(
+    name: &str,
+    kp: &crate::geom::known_polytopes::KnownPolytope,
+) -> crate::algorithms::OrbitSearchResult {
+    billiard_result(
+        name,
+        kp.polytope.dual_vertices_f64(),
+        kp.polytope.dual_vertices(),
+        kp.polytope.facet_intersection_is_nonempty(),
+        kp.polytope.omega_signs(),
+    )
 }
 
 /// Helper: assert billiard capacity matches expected value within tolerance.
 fn assert_capacity(
     name: &str,
-    polytope: &crate::geom::polytope::Polytope4D,
+    dual_vertices: &[Vector4<f64>],
+    dual_vertices_exact: &[[BigRational; 4]],
+    facet_intersection_is_nonempty: &DMatrix<bool>,
+    omega_signs: &DMatrix<i8>,
     expected: f64,
     tol: f64,
 ) {
-    let result = billiard_result(name, polytope);
+    let result = billiard_result(
+        name,
+        dual_vertices,
+        dual_vertices_exact,
+        facet_intersection_is_nonempty,
+        omega_signs,
+    );
     let diff = (result.capacity() - expected).abs();
     assert!(
         diff < tol,
@@ -38,21 +85,45 @@ fn assert_capacity(
 #[test]
 fn hypercube_capacity() {
     let kp = known_polytopes::hypercube();
-    assert_capacity("hypercube", &kp.polytope, 4.0, 1e-8);
+    assert_capacity(
+        "hypercube",
+        kp.polytope.dual_vertices_f64(),
+        kp.polytope.dual_vertices(),
+        kp.polytope.facet_intersection_is_nonempty(),
+        kp.polytope.omega_signs(),
+        4.0,
+        1e-8,
+    );
 }
 
 /// Verify billiard capacity of the Lagrangian triangle product matches the known value (1.5).
 #[test]
 fn triangle_product_capacity() {
     let kp = known_polytopes::lagrangian_triangle_product();
-    assert_capacity("triangle_product", &kp.polytope, 1.5, 1e-8);
+    assert_capacity(
+        "triangle_product",
+        kp.polytope.dual_vertices_f64(),
+        kp.polytope.dual_vertices(),
+        kp.polytope.facet_intersection_is_nonempty(),
+        kp.polytope.omega_signs(),
+        1.5,
+        1e-8,
+    );
 }
 
 /// Verify billiard capacity of the Lagrangian triangle-square product matches the known value (1.5).
 #[test]
 fn triangle_square_capacity() {
     let kp = known_polytopes::lagrangian_triangle_square();
-    assert_capacity("triangle_square", &kp.polytope, 1.5, 1e-8);
+    assert_capacity(
+        "triangle_square",
+        kp.polytope.dual_vertices_f64(),
+        kp.polytope.dual_vertices(),
+        kp.polytope.facet_intersection_is_nonempty(),
+        kp.polytope.omega_signs(),
+        1.5,
+        1e-8,
+    );
 }
 
 /// Smoke-test the richer billiard collector on a known Lagrangian product.
@@ -62,7 +133,7 @@ fn triangle_product_orbit_aggregation() {
     let dual_vertices = kp.polytope.dual_vertices_f64();
     let dual_vertices_exact = kp.polytope.dual_vertices();
     let classification =
-        facet_classification::classify_facets(&kp.polytope).expect("valid Lagrangian product");
+        facet_classification::classify_facets(dual_vertices).expect("valid Lagrangian product");
     let transition_is_allowed = crate::algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega(
         kp.polytope.facet_intersection_is_nonempty(),
         kp.polytope.omega_signs(),
@@ -100,7 +171,15 @@ fn hko_pentagon_capacity() {
     let kp = known_polytopes::hko_pentagon();
     let expected =
         2.0 * (std::f64::consts::PI / 10.0).cos() * (1.0 + (std::f64::consts::PI / 5.0).cos());
-    assert_capacity("hko_pentagon", &kp.polytope, expected, 1e-6);
+    assert_capacity(
+        "hko_pentagon",
+        kp.polytope.dual_vertices_f64(),
+        kp.polytope.dual_vertices(),
+        kp.polytope.facet_intersection_is_nonempty(),
+        kp.polytope.omega_signs(),
+        expected,
+        1e-6,
+    );
 }
 
 // ============================================================
@@ -112,7 +191,7 @@ fn hko_pentagon_capacity() {
 #[ignore] // runs hk2017 live -- release-only cross-algorithm check
 fn agrees_with_hk2017_hypercube() {
     let kp = known_polytopes::hypercube();
-    let billiard = billiard_result("hypercube", &kp.polytope);
+    let billiard = billiard_result_from_known("hypercube", kp);
     let hk = crate::ehz_capacity_pruned(&kp.polytope).unwrap();
     let diff = (billiard.capacity() - hk.capacity()).abs();
     assert!(
@@ -129,7 +208,7 @@ fn agrees_with_hk2017_hypercube() {
 #[ignore] // runs hk2017 live -- release-only cross-algorithm check
 fn agrees_with_hk2017_triangle_product() {
     let kp = known_polytopes::lagrangian_triangle_product();
-    let billiard = billiard_result("triangle_product", &kp.polytope);
+    let billiard = billiard_result_from_known("triangle_product", kp);
     let hk = crate::ehz_capacity_pruned(&kp.polytope).unwrap();
     let diff = (billiard.capacity() - hk.capacity()).abs();
     assert!(
@@ -146,7 +225,7 @@ fn agrees_with_hk2017_triangle_product() {
 #[ignore] // runs hk2017 live -- release-only cross-algorithm check
 fn agrees_with_hk2017_triangle_square() {
     let kp = known_polytopes::lagrangian_triangle_square();
-    let billiard = billiard_result("triangle_square", &kp.polytope);
+    let billiard = billiard_result_from_known("triangle_square", kp);
     let hk = crate::ehz_capacity_pruned(&kp.polytope).unwrap();
     let diff = (billiard.capacity() - hk.capacity()).abs();
     assert!(
@@ -165,7 +244,7 @@ fn agrees_with_hk2017_triangle_square() {
 #[ignore] // hk2017 on 10-facet pentagon takes ~60s; verified against known value instead
 fn agrees_with_hk2017_hko_pentagon() {
     let kp = known_polytopes::hko_pentagon();
-    let billiard = billiard_result("hko_pentagon", &kp.polytope);
+    let billiard = billiard_result_from_known("hko_pentagon", kp);
     let hk = crate::ehz_capacity_pruned(&kp.polytope).unwrap();
     let diff = (billiard.capacity() - hk.capacity()).abs();
     assert!(
@@ -185,7 +264,12 @@ fn agrees_with_hk2017_hko_pentagon() {
 #[test]
 fn rejects_non_lagrangian_product() {
     let kp = known_polytopes::simplex();
-    let result = for_each_sigma(&kp.polytope, |_| {});
+    let result = for_each_sigma(
+        kp.polytope.dual_vertices_f64(),
+        kp.polytope.facet_intersection_is_nonempty(),
+        kp.polytope.omega_signs(),
+        |_| {},
+    );
     assert!(
         result.is_err(),
         "simplex should not be a Lagrangian product"
@@ -197,7 +281,12 @@ fn rejects_non_lagrangian_product() {
 #[test]
 fn rejects_symplectic_triangle_product() {
     let kp = known_polytopes::symplectic_triangle_product();
-    let result = for_each_sigma(&kp.polytope, |_| {});
+    let result = for_each_sigma(
+        kp.polytope.dual_vertices_f64(),
+        kp.polytope.facet_intersection_is_nonempty(),
+        kp.polytope.omega_signs(),
+        |_| {},
+    );
     assert!(
         result.is_err(),
         "symplectic triangle product should not be a Lagrangian product"
@@ -215,7 +304,7 @@ fn rejects_symplectic_triangle_product() {
 #[ignore] // 50k KKT solves -- slow in debug, run with --release --ignored
 fn billiard_iterations_polynomial() {
     let kp = known_polytopes::hko_pentagon();
-    let result = billiard_result("hko_pentagon", &kp.polytope);
+    let result = billiard_result_from_known("hko_pentagon", kp);
     // For 5+5 facets, expect on the order of 100k iterations.
     // If it exceeds 1M, something is wrong.
     assert!(
@@ -229,10 +318,10 @@ fn billiard_iterations_polynomial() {
 /// billiard-domain polytope.
 fn assert_result_properties(
     name: &str,
-    polytope: &crate::geom::polytope::Polytope4D,
+    dual_vertices: &[Vector4<f64>],
     result: &crate::algorithms::OrbitSearchResult,
 ) {
-    let bounce_count = bounce_count_from_sigma(polytope, result.best_sigma())
+    let bounce_count = bounce_count_from_sigma(dual_vertices, result.best_sigma())
         .expect("test polytope should be Lagrangian product")
         .expect("winning sigma should have valid billiard block structure");
     assert!(
@@ -257,9 +346,9 @@ fn assert_result_properties(
 /// Lagrangian products.
 #[test]
 fn result_properties() {
-    for (name, polytope) in lagrangian_test_cases_fast() {
-        let result = billiard_result(name, &polytope);
-        assert_result_properties(name, &polytope, &result);
+    for (name, kp) in lagrangian_test_cases_fast() {
+        let result = billiard_result_from_known(name, kp);
+        assert_result_properties(name, kp.polytope.dual_vertices_f64(), &result);
     }
 }
 
@@ -271,25 +360,24 @@ fn result_properties() {
 #[ignore] // 50k KKT solves -- slow in debug, run with --release --ignored
 fn result_properties_pentagon() {
     let kp = known_polytopes::hko_pentagon();
-    let result = billiard_result("hko_pentagon", &kp.polytope);
-    assert_result_properties("hko_pentagon", &kp.polytope, &result);
+    let result = billiard_result_from_known("hko_pentagon", kp);
+    assert_result_properties("hko_pentagon", kp.polytope.dual_vertices_f64(), &result);
 }
 
 /// Small Lagrangian products: fast in both debug and release.
-fn lagrangian_test_cases_fast() -> Vec<(&'static str, crate::geom::polytope::Polytope4D)> {
+fn lagrangian_test_cases_fast() -> Vec<(
+    &'static str,
+    &'static crate::geom::known_polytopes::KnownPolytope,
+)> {
     vec![
-        ("hypercube", known_polytopes::hypercube().polytope.clone()),
+        ("hypercube", known_polytopes::hypercube()),
         (
             "triangle_product",
-            known_polytopes::lagrangian_triangle_product()
-                .polytope
-                .clone(),
+            known_polytopes::lagrangian_triangle_product(),
         ),
         (
             "triangle_square",
-            known_polytopes::lagrangian_triangle_square()
-                .polytope
-                .clone(),
+            known_polytopes::lagrangian_triangle_square(),
         ),
     ]
 }

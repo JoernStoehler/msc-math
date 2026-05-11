@@ -169,7 +169,8 @@ pub(crate) fn ehz_capacity_pruned_certified(
 pub(crate) fn ehz_capacity_billiard(
     polytope: &Polytope4D,
 ) -> Result<OrbitSearchResult, BilliardError> {
-    let classification = algorithms::billiard::facet_classification::classify_facets(polytope)?;
+    let classification =
+        algorithms::billiard::facet_classification::classify_facets(polytope.dual_vertices_f64())?;
     let dual_vertices = polytope.dual_vertices_f64();
     let dual_vertices_exact = polytope.dual_vertices();
     let transition_is_allowed = transition_matrix_for_polytope(polytope);
@@ -212,7 +213,9 @@ pub(crate) fn ehz_capacity_billiard(
 /// candidate frontends plus explicit aggregation.
 #[cfg(test)]
 pub(crate) fn ehz_capacity(polytope: &Polytope4D) -> Result<OrbitSearchResult, OrbitSearchError> {
-    if algorithms::billiard::facet_classification::classify_facets(polytope).is_ok() {
+    if algorithms::billiard::facet_classification::classify_facets(polytope.dual_vertices_f64())
+        .is_ok()
+    {
         return ehz_capacity_billiard(polytope).map_err(|err| match err {
             BilliardError::OrbitSearch(err) => err,
             BilliardError::NotLagrangianProduct { .. } | BilliardError::TooFewFacets { .. } => {

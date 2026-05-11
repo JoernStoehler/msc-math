@@ -12,10 +12,26 @@ use crate::geom::known_polytopes;
 use crate::geom::lagrangian_product::lagrangian_product;
 use crate::geom::polygon::regular_polygon_2d;
 use crate::geom::polytope::Polytope4D;
-use crate::geom::rational_arithmetic::{frac, rat};
+use crate::geom::rational_arithmetic::{f64_to_rational, frac, rat};
 use crate::kkt::rational_solver::{solve_kkt_exact, ExactKktResult};
 use crate::{ehz_capacity_pruned, ehz_capacity_pruned_certified};
 use num_traits::Zero;
+
+fn exact_dual_vertex_arrays(
+    dual_vertices: &[nalgebra::Vector4<f64>],
+) -> Vec<[num_rational::BigRational; 4]> {
+    dual_vertices
+        .iter()
+        .map(|a| {
+            [
+                f64_to_rational(a[0]),
+                f64_to_rational(a[1]),
+                f64_to_rational(a[2]),
+                f64_to_rational(a[3]),
+            ]
+        })
+        .collect()
+}
 
 fn rational_scaled_cube_half() -> Polytope4D {
     let z = rat(0);
@@ -79,18 +95,17 @@ fn minimasafe_does_not_accept_spurious_square_product_minimum() {
     // capacity below the cube squeeze bound.
     let (qn, qh) = regular_polygon_2d(4, 1.0);
     let (pn, ph) = regular_polygon_2d(4, 1.0);
-    let polytope = lagrangian_product(&qn, &qh, &pn, &ph).expect("square product");
-    let dual_vertices = polytope.dual_vertices_f64();
-    let dual_vertices_exact = polytope.dual_vertices();
+    let dual_vertices = lagrangian_product(&qn, &qh, &pn, &ph).expect("square product");
+    let dual_vertices_exact = exact_dual_vertex_arrays(&dual_vertices);
 
-    let (orbits, iterations) = solve_sigma_stream_with_dual_vertices(dual_vertices, |visit| {
-        let facet_count = polytope.facet_count();
+    let (orbits, iterations) = solve_sigma_stream_with_dual_vertices(&dual_vertices, |visit| {
+        let facet_count = dual_vertices.len();
         crate::algorithms::hk2017::for_each_sigma_unpruned_facet_count(facet_count, visit)
     })
     .expect("square product sigma stream should solve");
 
     let result = aggregate_orbits_with_dual_vertices_exact(
-        dual_vertices_exact,
+        &dual_vertices_exact,
         orbits,
         iterations,
         0.0,
