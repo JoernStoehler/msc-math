@@ -19,6 +19,40 @@ use crate::geom::rational_arithmetic::f64_to_rational;
 use nalgebra::{Vector2, Vector4};
 use num_rational::BigRational;
 
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum LagrangianProductError {
+    MismatchedInputLengths {
+        factor: &'static str,
+        normals: usize,
+        heights: usize,
+    },
+    NonFiniteNormal {
+        factor: &'static str,
+        index: usize,
+        coordinate: usize,
+    },
+    NonFiniteHeight {
+        factor: &'static str,
+        index: usize,
+    },
+    NonPositiveHeight {
+        factor: &'static str,
+        index: usize,
+    },
+    DegenerateDualVertex(usize),
+    DuplicateDualVertices {
+        i: usize,
+        j: usize,
+    },
+    Exact(ExactPolytopeError),
+}
+
+impl From<ExactPolytopeError> for LagrangianProductError {
+    fn from(error: ExactPolytopeError) -> Self {
+        Self::Exact(error)
+    }
+}
+
 /// Build a 4D Lagrangian product from two 2D polygons.
 ///
 /// `q_normals`/`q_heights`: polygon P in q-space (q_1, q_2).
@@ -33,7 +67,10 @@ pub fn lagrangian_product(
     q_heights: &[f64],
     p_normals: &[Vector2<f64>],
     p_heights: &[f64],
-) -> Result<Vec<Vector4<f64>>, ExactPolytopeError> {
+) -> Result<Vec<Vector4<f64>>, LagrangianProductError> {
+    validate_polygon_factor("q", q_normals, q_heights)?;
+    validate_polygon_factor("p", p_normals, p_heights)?;
+
     // Dual vertex representation: a_i = n_i / h_i, embedded in 4D
     let halfspaces: Vec<Vector4<f64>> = q_normals
         .iter()
@@ -47,9 +84,75 @@ pub fn lagrangian_product(
         )
         .collect();
 
+    validate_dual_vertices_f64(&halfspaces)?;
+
     let exact_dual_vertices = dual_vertices_f64_to_exact(&halfspaces);
     exact_vertices_with_incidence(&exact_dual_vertices)?;
     Ok(halfspaces)
+}
+
+fn validate_polygon_factor(
+    factor: &'static str,
+    normals: &[Vector2<f64>],
+    heights: &[f64],
+) -> Result<(), LagrangianProductError> {
+    if normals.len() != heights.len() {
+        return Err(LagrangianProductError::MismatchedInputLengths {
+            factor,
+            normals: normals.len(),
+            heights: heights.len(),
+        });
+    }
+    for (index, normal) in normals.iter().enumerate() {
+        for coordinate in 0..2 {
+            if !normal[coordinate].is_finite() {
+                return Err(LagrangianProductError::NonFiniteNormal {
+                    factor,
+                    index,
+                    coordinate,
+                });
+            }
+        }
+    }
+    for (index, height) in heights.iter().enumerate() {
+        if !height.is_finite() {
+            return Err(LagrangianProductError::NonFiniteHeight { factor, index });
+        }
+        if *height <= 0.0 {
+            return Err(LagrangianProductError::NonPositiveHeight { factor, index });
+        }
+    }
+    Ok(())
+}
+
+fn validate_dual_vertices_f64(
+    dual_vertices: &[Vector4<f64>],
+) -> Result<(), LagrangianProductError> {
+    for (i, dual_vertex) in dual_vertices.iter().enumerate() {
+        for coordinate in 0..4 {
+            if !dual_vertex[coordinate].is_finite() {
+                return Err(LagrangianProductError::NonFiniteNormal {
+                    factor: "dual",
+                    index: i,
+                    coordinate,
+                });
+            }
+        }
+        if dual_vertex.norm() < 1e-15 {
+            return Err(LagrangianProductError::DegenerateDualVertex(i));
+        }
+    }
+
+    for i in 0..dual_vertices.len() {
+        for j in (i + 1)..dual_vertices.len() {
+            let max_norm = dual_vertices[i].norm().max(dual_vertices[j].norm());
+            if (dual_vertices[i] - dual_vertices[j]).norm() < 1e-8 * max_norm {
+                return Err(LagrangianProductError::DuplicateDualVertices { i, j });
+            }
+        }
+    }
+
+    Ok(())
 }
 
 fn dual_vertices_f64_to_exact(dual_vertices: &[Vector4<f64>]) -> Vec<Vector4<BigRational>> {
@@ -216,7 +319,10 @@ mod tests {
         let pn = vec![Vector2::new(1.0, 0.0)];
         let ph = vec![1.0];
         let err = lagrangian_product(&qn, &qh, &pn, &ph).unwrap_err();
-        assert_eq!(err, ExactPolytopeError::TooFewFacets(4));
+        assert_eq!(
+            err,
+            LagrangianProductError::Exact(ExactPolytopeError::TooFewFacets(4))
+        );
     }
 
     /// Verify lagrangian_product rejects unbounded p-factor (too few p-normals).
@@ -228,7 +334,66 @@ mod tests {
         let pn = vec![Vector2::new(1.0, 0.0), Vector2::new(0.0, 1.0)];
         let ph = vec![1.0, 1.0];
         let err = lagrangian_product(&qn, &qh, &pn, &ph).unwrap_err();
-        assert_eq!(err, ExactPolytopeError::Unbounded);
+        assert_eq!(
+            err,
+            LagrangianProductError::Exact(ExactPolytopeError::Unbounded)
+        );
+    }
+
+    #[test]
+    fn rejects_mismatched_polygon_input_lengths() {
+        let (qn, qh) = regular_polygon_2d(3, 1.0);
+        let (pn, mut ph) = regular_polygon_2d(3, 1.0);
+        ph.pop();
+
+        let err = lagrangian_product(&qn, &qh, &pn, &ph).unwrap_err();
+        assert_eq!(
+            err,
+            LagrangianProductError::MismatchedInputLengths {
+                factor: "p",
+                normals: 3,
+                heights: 2
+            }
+        );
+    }
+
+    #[test]
+    fn rejects_nonpositive_and_nonfinite_heights_before_exact_conversion() {
+        let (qn, qh) = regular_polygon_2d(3, 1.0);
+        let (pn, mut ph) = regular_polygon_2d(3, 1.0);
+        ph[0] = 0.0;
+        let err = lagrangian_product(&qn, &qh, &pn, &ph).unwrap_err();
+        assert_eq!(
+            err,
+            LagrangianProductError::NonPositiveHeight {
+                factor: "p",
+                index: 0
+            }
+        );
+
+        ph[0] = f64::NAN;
+        let err = lagrangian_product(&qn, &qh, &pn, &ph).unwrap_err();
+        assert_eq!(
+            err,
+            LagrangianProductError::NonFiniteHeight {
+                factor: "p",
+                index: 0
+            }
+        );
+    }
+
+    #[test]
+    fn rejects_duplicate_lagrangian_product_facets() {
+        let (mut qn, mut qh) = regular_polygon_2d(3, 1.0);
+        let (pn, ph) = regular_polygon_2d(3, 1.0);
+        qn[1] = qn[0];
+        qh[1] = qh[0];
+
+        let err = lagrangian_product(&qn, &qh, &pn, &ph).unwrap_err();
+        assert_eq!(
+            err,
+            LagrangianProductError::DuplicateDualVertices { i: 0, j: 1 }
+        );
     }
 
     /// Q-type facets have dual vertices in the q-plane (components [0,1] nonzero, [2,3] zero).

@@ -1,6 +1,6 @@
 use euclidean_polytopes::{
-    facet_intersection_is_nonempty_from_vertex_facet_incidence, origin_in_interior_of_conv_exact,
-    polar_vertices_exact,
+    all_points_are_extreme_exact, facet_intersection_is_nonempty_from_vertex_facet_incidence,
+    origin_in_interior_of_conv_exact, polar_vertices_exact,
 };
 use nalgebra::{DMatrix, Vector4};
 use num_rational::BigRational;
@@ -44,6 +44,9 @@ impl HkoPolytopeCache {
         if !origin_in_interior_of_conv_exact(&dual_vertex_vectors) {
             return None;
         }
+        if !all_points_are_extreme_exact(&dual_vertex_vectors) {
+            return None;
+        }
 
         let polar = polar_vertices_exact(&dual_vertex_vectors);
         let vertices = rational_vectors_to_arrays(&polar.vertices);
@@ -76,6 +79,13 @@ impl HkoPolytopeCache {
         }
 
         let dual_vertex_vectors = rational_arrays_to_vectors(&dual_vertices);
+        if !origin_in_interior_of_conv_exact(&dual_vertex_vectors) {
+            return None;
+        }
+        if !all_points_are_extreme_exact(&dual_vertex_vectors) {
+            return None;
+        }
+
         let vertex_vectors = rational_arrays_to_vectors(&vertices);
         let vertex_facet_incidence = DMatrix::from_fn(
             vertex_vectors.len(),
@@ -157,4 +167,52 @@ fn dual_vertices_f64_are_valid(dual_vertices: &[Vector4<f64>]) -> bool {
         }
     }
     true
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use symplectic::geom::rational_arithmetic::rat;
+
+    fn q(n: i64) -> BigRational {
+        rat(n)
+    }
+
+    fn unit_cube_dual_vertices() -> Vec<[BigRational; 4]> {
+        vec![
+            [q(1), q(0), q(0), q(0)],
+            [q(-1), q(0), q(0), q(0)],
+            [q(0), q(1), q(0), q(0)],
+            [q(0), q(-1), q(0), q(0)],
+            [q(0), q(0), q(1), q(0)],
+            [q(0), q(0), q(-1), q(0)],
+            [q(0), q(0), q(0), q(1)],
+            [q(0), q(0), q(0), q(-1)],
+        ]
+    }
+
+    #[test]
+    fn rejects_redundant_exact_dual_vertex() {
+        let mut dual_vertices = unit_cube_dual_vertices();
+        dual_vertices.push([q(1) / q(2), q(1) / q(2), q(0), q(0)]);
+
+        assert!(HkoPolytopeCache::new(dual_vertices, None).is_none());
+    }
+
+    #[test]
+    fn rejects_redundant_f64_dual_vertex() {
+        let dual_vertices_f64 = vec![
+            Vector4::new(1.0, 0.0, 0.0, 0.0),
+            Vector4::new(-1.0, 0.0, 0.0, 0.0),
+            Vector4::new(0.0, 1.0, 0.0, 0.0),
+            Vector4::new(0.0, -1.0, 0.0, 0.0),
+            Vector4::new(0.0, 0.0, 1.0, 0.0),
+            Vector4::new(0.0, 0.0, -1.0, 0.0),
+            Vector4::new(0.0, 0.0, 0.0, 1.0),
+            Vector4::new(0.0, 0.0, 0.0, -1.0),
+            Vector4::new(0.5, 0.5, 0.0, 0.0),
+        ];
+
+        assert!(HkoPolytopeCache::from_f64(dual_vertices_f64).is_none());
+    }
 }

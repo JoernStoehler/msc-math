@@ -67,7 +67,7 @@ pub use algorithms::{
 };
 
 // Geometry utility functions
-pub use geom::lagrangian_product::lagrangian_product;
+pub use geom::lagrangian_product::{lagrangian_product, LagrangianProductError};
 pub use geom::polygon::{regular_polygon_2d, rotate_polygon_2d};
 pub use geom::symplectic_form::omega0;
 
