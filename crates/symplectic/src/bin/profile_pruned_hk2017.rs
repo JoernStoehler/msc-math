@@ -1,6 +1,6 @@
 use euclidean_polytopes::{
-    facet_intersection_is_nonempty_from_vertex_facet_incidence,
-    polar_vertices_exact_rational_assuming_origin_interior, PolarVerticesExact,
+    facet_intersection_is_nonempty_from_vertex_facet_incidence, polar_vertices_exact_rational,
+    PolarVerticesExact,
 };
 use nalgebra::{DMatrix, Vector4};
 use num_rational::BigRational;
@@ -243,7 +243,7 @@ fn build_flat_geometry(dual_vertices: &[Vector4<f64>]) -> FlatGeometry {
     let PolarVerticesExact {
         vertices,
         vertex_facet_incidence,
-    } = polar_vertices_exact_rational_assuming_origin_interior(&dual_vertices_exact_vectors);
+    } = polar_vertices_exact_rational(&dual_vertices_exact_vectors);
     let facet_intersection_is_nonempty =
         facet_intersection_is_nonempty_from_vertex_facet_incidence(&vertex_facet_incidence);
     let omega_signs = omega_signs_exact(&dual_vertices_exact_vectors);

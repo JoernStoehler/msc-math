@@ -1,7 +1,9 @@
 use algebraic_numbers::{rank, solve_linear_system, ExactScalar, LinearSystemSolution};
-use nalgebra::{DMatrix, DVector, Vector4};
+use nalgebra::{DMatrix, DVector, Matrix5, Vector4, Vector5};
 
-use crate::linalg::{combinations3, cross_product_4d_exact, dot4_exact, is_zero_vector_exact};
+use crate::linalg::{
+    combinations3, combinations5, cross_product_4d_exact, dot4_exact, is_zero_vector_exact,
+};
 
 /// Return whether `0` lies in the interior of `conv(points)` in ambient `R^4`.
 ///
@@ -10,6 +12,12 @@ use crate::linalg::{combinations3, cross_product_4d_exact, dot4_exact, is_zero_v
 pub fn origin_in_interior_of_conv_exact<T: ExactScalar + 'static>(points: &[Vector4<T>]) -> bool {
     if points.len() < 5 {
         return false;
+    }
+
+    if let Some(witness_indices) = f64_origin_simplex_witness(points) {
+        if exact_origin_simplex_witness(points, &witness_indices) {
+            return true;
+        }
     }
 
     let matrix = DMatrix::from_fn(points.len(), 4, |row, col| points[row][col].clone());
@@ -37,6 +45,66 @@ pub fn origin_in_interior_of_conv_exact<T: ExactScalar + 'static>(points: &[Vect
     }
 
     true
+}
+
+fn f64_origin_simplex_witness<T: ExactScalar>(points: &[Vector4<T>]) -> Option<[usize; 5]> {
+    const MIN_BARYCENTRIC_WEIGHT: f64 = 1e-8;
+
+    let points_f64 = points
+        .iter()
+        .map(|point| {
+            let coordinates: [f64; 4] =
+                std::array::from_fn(|coordinate| point[coordinate].round_to_f64());
+            coordinates
+                .iter()
+                .all(|coordinate| coordinate.is_finite())
+                .then_some(coordinates)
+        })
+        .collect::<Option<Vec<_>>>()?;
+
+    for indices in combinations5(points.len()) {
+        let matrix = Matrix5::from_fn(|row, col| {
+            if row < 4 {
+                points_f64[indices[col]][row]
+            } else {
+                1.0
+            }
+        });
+        let rhs = Vector5::new(0.0, 0.0, 0.0, 0.0, 1.0);
+        let Some(weights) = matrix.lu().solve(&rhs) else {
+            continue;
+        };
+        if weights
+            .iter()
+            .all(|weight| weight.is_finite() && *weight > MIN_BARYCENTRIC_WEIGHT)
+        {
+            return Some(indices);
+        }
+    }
+
+    None
+}
+
+fn exact_origin_simplex_witness<T: ExactScalar + 'static>(
+    points: &[Vector4<T>],
+    indices: &[usize; 5],
+) -> bool {
+    let matrix = DMatrix::from_fn(5, 5, |row, col| {
+        if row < 4 {
+            points[indices[col]][row].clone()
+        } else {
+            T::one()
+        }
+    });
+    let rhs = DVector::from_fn(5, |row, _| if row < 4 { T::zero() } else { T::one() });
+
+    match solve_linear_system(&matrix, &rhs) {
+        LinearSystemSolution::Consistent {
+            particular,
+            kernel_basis,
+        } if kernel_basis.ncols() == 0 => particular.iter().all(|weight| weight > &T::zero()),
+        _ => false,
+    }
 }
 
 /// Return whether every input point is an extreme point of `conv(points)`.
