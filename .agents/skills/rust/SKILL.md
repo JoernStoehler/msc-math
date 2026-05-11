@@ -13,8 +13,11 @@ This skill owns Rust code, API, testing, review, and handoff conventions.
 - Code is read more often than written, coding is cheap, and performance matters only in profiled hotspots. Prefer local clarity and concrete variants over byte-saving, speculation, or premature optimization.
 
 ## Conventions
-- Prefer simple functional Rust: simple control flow, simple data types, simple signatures, and standard crate patterns such as `Vector4<Scalar>`, `&[Vector4<Scalar>]`, and `Vec<Vec<usize>>`.
-- Do not use wrappers, aliases, traits, or smart constructors that worsen readability. Add them only when they remove real complexity or enforce a context-free invariant.
+- Prefer simple functional Rust: simple control flow, simple data types, simple signatures, and standard crate patterns such as `Vector4<f64>`, `&[Vector4<f64>]`, and `Vec<Vec<usize>>`.
+- Choose Rust representations by local readability. Standard types, aliases, tuples, structs, wrapper structs, traits,
+  data structures or invariant-enforcing smart constructors are all acceptable tools to help a fresh GPT-5.5 reader
+  understand the declaration and call sites. Prefer definitions near the functions that produce or consume them, prefer
+  descriptive variable names and common types, and avoid abstractions that misleadingly imply invariants they do not enforce.
 - Shape APIs around mathematical operations and experiment workflows. Keep exact, f64, experiment, and helper surfaces separate when contracts differ; duplicate specialized flows when clearer than a shared abstraction.
 - Put context-dependent propositions on producer/consumer function contracts, not on data containers pretending to prove them.
 - Public math/numerics APIs state input/output contracts. Classify important conditions as validated here, assumed after a named validation boundary, valid mathematical non-success, or theorem-backed output guarantee.
