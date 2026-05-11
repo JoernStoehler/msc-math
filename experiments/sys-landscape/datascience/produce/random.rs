@@ -12,8 +12,8 @@
 //! 2. Canonical refreshes pass explicit repo-owned paths, e.g.
 //!    `--out experiments/sys-landscape/datascience/produce/random.jsonl`
 //!    and `--cache experiments/sys-landscape/datascience/produce/shared-cache.jsonl`.
-//! 3. Polytopes are generated via `generate_polytope` (blake3 per-attempt seeding)
-//!    and cached in the sys-landscape family cache. Re-runs skip generation + capacity.
+//! 3. Random dual vertices are generated with blake3 per-attempt seeding and
+//!    cached in the sys-landscape family cache. Re-runs skip generation + capacity.
 //! 4. Canonical runs write to `datascience/produce/random.jsonl`.
 //!
 //! Dataset design:

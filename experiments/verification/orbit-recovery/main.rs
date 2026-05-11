@@ -16,7 +16,6 @@ use dev_capacity_validation::{
     write_json_line, RunMode, RunModeArgError, Target, VerificationPolytopeCache, ACTION_TOL,
     GEOMETRY_TOL,
 };
-use nalgebra::{DMatrix, DVector, Vector4};
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, HashMap};
 use std::env;
@@ -24,169 +23,8 @@ use std::fs::File;
 use std::io::{BufRead, BufReader, Write};
 use std::path::{Path, PathBuf};
 use std::time::Instant;
+use symplectic::algorithms::hk2017::orbit_recovery::{recover_and_verify, GeometricOrbit};
 use symplectic::algorithms::{solve_orbit_sigma_saddle_point, OrbitKktData, OrbitSolveError};
-use symplectic::geom::reeb_trajectory::reeb_direction;
-use symplectic::omega0;
-
-#[derive(Clone, Debug)]
-struct GeometricOrbit {
-    breakpoints: Vec<Vector4<f64>>,
-    dwell_times: Vec<f64>,
-    max_violation: f64,
-    action: f64,
-    closure_error: f64,
-    solution_dim: usize,
-}
-
-fn max_violation_for(
-    base_point: &Vector4<f64>,
-    displacements: &[Vector4<f64>],
-    dual_vertices: &[Vector4<f64>],
-) -> f64 {
-    displacements
-        .iter()
-        .flat_map(|v| {
-            let p = base_point + v;
-            dual_vertices.iter().map(move |a| a.dot(&p) - 1.0)
-        })
-        .fold(f64::NEG_INFINITY, f64::max)
-}
-
-fn optimize_in_null_space(
-    b0: Vector4<f64>,
-    null_vecs: &[Vector4<f64>],
-    displacements: &[Vector4<f64>],
-    dual_vertices: &[Vector4<f64>],
-) -> Vector4<f64> {
-    if null_vecs.is_empty() {
-        return b0;
-    }
-
-    let mut alphas = vec![0.0_f64; null_vecs.len()];
-    for _ in 0..20 {
-        for dim in 0..null_vecs.len() {
-            let candidate = |a: f64| -> Vector4<f64> {
-                let mut b = b0;
-                for (i, d) in null_vecs.iter().enumerate() {
-                    let ai = if i == dim { a } else { alphas[i] };
-                    b += ai * d;
-                }
-                b
-            };
-
-            let mut lo = -100.0_f64;
-            let mut hi = 100.0_f64;
-            for _ in 0..100 {
-                let m1 = lo + (hi - lo) / 3.0;
-                let m2 = hi - (hi - lo) / 3.0;
-                let v1 = max_violation_for(&candidate(m1), displacements, dual_vertices);
-                let v2 = max_violation_for(&candidate(m2), displacements, dual_vertices);
-                if v1 < v2 {
-                    hi = m2;
-                } else {
-                    lo = m1;
-                }
-            }
-
-            alphas[dim] = (lo + hi) / 2.0;
-        }
-    }
-
-    let mut b = b0;
-    for (i, d) in null_vecs.iter().enumerate() {
-        b += alphas[i] * d;
-    }
-    b
-}
-
-fn recover_orbit_from_flat_duals(
-    dual_vertices: &[Vector4<f64>],
-    orbit: &OrbitKktData,
-) -> Option<GeometricOrbit> {
-    let sigma = &orbit.sigma;
-    let beta = &orbit.beta;
-    let action = orbit.action;
-    if sigma.len() != beta.len() || !action.is_finite() || action <= 0.0 {
-        return None;
-    }
-    if sigma.iter().any(|&facet| facet >= dual_vertices.len()) {
-        return None;
-    }
-    if beta.iter().any(|&entry| !entry.is_finite() || entry <= 0.0) {
-        return None;
-    }
-
-    let m = sigma.len();
-    let dwell_times: Vec<f64> = (0..m).map(|k| action * beta[k]).collect();
-    let reeb_vectors: Vec<Vector4<f64>> = sigma
-        .iter()
-        .map(|&facet| reeb_direction(&dual_vertices[facet]) * 2.0)
-        .collect();
-
-    let mut displacements = Vec::with_capacity(m + 1);
-    displacements.push(Vector4::zeros());
-    for k in 0..m {
-        displacements.push(displacements[k] + dwell_times[k] * reeb_vectors[k]);
-    }
-
-    let active: Vec<usize> = (0..m).filter(|&k| dwell_times[k] > 0.0).collect();
-    if active.is_empty() {
-        return None;
-    }
-
-    let rows = active.len().max(4);
-    let mut mat = DMatrix::<f64>::zeros(rows, 4);
-    let mut rhs = DVector::<f64>::zeros(rows);
-    for (row, &k) in active.iter().enumerate() {
-        let a = &dual_vertices[sigma[k]];
-        for col in 0..4 {
-            mat[(row, col)] = a[col];
-        }
-        rhs[row] = 1.0 - a.dot(&displacements[k]);
-    }
-
-    let svd = mat.svd(true, true);
-    let tol = 1e-10 * svd.singular_values[0].max(1.0);
-    let rank = svd.singular_values.iter().filter(|&&s| s > tol).count();
-    let solution_dim = 4 - rank;
-
-    let b_vec = svd.solve(&rhs, tol).ok()?;
-    let mut base_point = Vector4::new(b_vec[0], b_vec[1], b_vec[2], b_vec[3]);
-
-    if solution_dim > 0 {
-        if let Some(v_mat) = &svd.v_t {
-            let null_vecs: Vec<Vector4<f64>> = (rank..4)
-                .map(|i| Vector4::new(v_mat[(i, 0)], v_mat[(i, 1)], v_mat[(i, 2)], v_mat[(i, 3)]))
-                .collect();
-            base_point =
-                optimize_in_null_space(base_point, &null_vecs, &displacements, dual_vertices);
-        }
-    }
-
-    let breakpoints: Vec<Vector4<f64>> = (0..=m).map(|k| base_point + displacements[k]).collect();
-    let max_violation = breakpoints
-        .iter()
-        .flat_map(|p| dual_vertices.iter().map(move |a| a.dot(p) - 1.0))
-        .fold(f64::NEG_INFINITY, f64::max);
-    let closure_error = (breakpoints[m] - breakpoints[0]).norm();
-
-    let mut action_sum = 0.0;
-    for i in 1..m {
-        for j in 0..i {
-            action_sum +=
-                dwell_times[j] * dwell_times[i] * omega0(&reeb_vectors[j], &reeb_vectors[i]);
-        }
-    }
-
-    Some(GeometricOrbit {
-        breakpoints,
-        dwell_times,
-        max_violation,
-        action: action_sum / 2.0,
-        closure_error,
-        solution_dim,
-    })
-}
 
 #[derive(Debug, Clone, Deserialize)]
 struct TrustedOrbitRow {
@@ -423,7 +261,7 @@ fn validate_target(
         name: target.name.clone(),
         family: target.family.clone(),
         source_kind: target.source_kind.clone(),
-        facet_count: target.polytope.facet_count(),
+        facet_count: target.geometry.facet_count(),
         status: "failed".to_string(),
         failure_stage: None,
         failure_reasons: Vec::new(),
@@ -454,7 +292,7 @@ fn validate_target(
     let mut details = Vec::new();
     let t_rebuild = Instant::now();
     let mut rebuilt_orbits = Vec::<(TrustedOrbitRow, OrbitKktData)>::new();
-    let dual_vertices = &target.polytope.dual_vertices_f64;
+    let dual_vertices = &target.geometry.dual_vertices_f64;
 
     for row in rows {
         match solve_orbit_sigma_saddle_point(dual_vertices, &row.sigma) {
@@ -618,12 +456,12 @@ fn recover_trusted_orbit(
         passes_geometric_checks: None,
     };
 
-    let recovery = match recover_orbit_from_flat_duals(&target.polytope.dual_vertices_f64, &orbit) {
+    let recovery = match recover_and_verify(&target.geometry.dual_vertices_f64, &orbit) {
         Some(recovery) => recovery,
         None => return detail,
     };
 
-    let on_facet_error = compute_on_facet_error(&target.polytope, &orbit.sigma, &recovery);
+    let on_facet_error = compute_on_facet_error(&target.geometry, &orbit.sigma, &recovery);
     let action_error = (recovery.action - orbit.action).abs();
     let passes = recovery.closure_error < GEOMETRY_TOL
         && on_facet_error < GEOMETRY_TOL

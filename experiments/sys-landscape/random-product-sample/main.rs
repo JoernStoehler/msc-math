@@ -26,7 +26,7 @@
 //!   wrapper would drop required output fields.
 //!
 //! Note: Uses shared RNG (no blake3 per-attempt seeding) because there is no
-//! generate_polytope equivalent for Lagrangian products. Database lookup is
+//! source-tagged single-attempt generator for Lagrangian products. Database lookup is
 //! key-based (BigRational dual vertices), not Source-based.
 //!
 //! CLI (all optional):

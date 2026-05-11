@@ -13,17 +13,22 @@
 //! Input Artifacts: None (generates its profiling fixture internally).
 //! Output Artifacts: None (profiling output is handled by the external profiler).
 
-use dev_capacity_validation::{
-    capacity_pruned_hk2017 as cache_capacity_pruned_hk2017, VerificationPolytopeCache,
-};
+use euclidean_polytopes::sample_random_dual_vertices_f64;
 use euclidean_polytopes::volume_from_incidence_exact;
 use nalgebra::{DMatrix, Vector4};
 use num_rational::BigRational;
 use num_traits::ToPrimitive;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
-use symplectic::random::generate_random_dual_vertices;
-use symplectic::{OrbitSearchError, OrbitSearchResult};
+use symplectic::{
+    aggregate_orbits_with_dual_vertices_exact, solve_pruned_hk2017_candidates, OrbitGuaranteeMode,
+    OrbitSearchError, OrbitSearchResult,
+};
+
+#[path = "../flat_polytope.rs"]
+mod flat_polytope;
+
+use flat_polytope::FlatPolytopeCache;
 
 // Same seed and height range as experiments/verification/algorithm-comparison/benchmark/main.rs for consistency.
 const SEED: u64 = 42;
@@ -39,13 +44,21 @@ fn euclidean_volume_f64(vertices: &[[BigRational; 4]], incidence: &DMatrix<bool>
 }
 
 fn capacity_pruned_hk2017(
-    polytope: &VerificationPolytopeCache,
+    polytope: &FlatPolytopeCache,
 ) -> Result<OrbitSearchResult, OrbitSearchError> {
-    cache_capacity_pruned_hk2017(
-        &polytope.dual_vertices_f64,
+    let transition_is_allowed =
+        symplectic::algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega(
+            &polytope.facet_intersection_is_nonempty,
+            &polytope.omega_signs,
+        );
+    let (orbits, iterations) =
+        solve_pruned_hk2017_candidates(&polytope.dual_vertices_f64, &transition_is_allowed)?;
+    aggregate_orbits_with_dual_vertices_exact(
         &polytope.dual_vertices,
-        &polytope.facet_intersection_is_nonempty,
-        &polytope.omega_signs,
+        orbits,
+        iterations,
+        0.0,
+        OrbitGuaranteeMode::MinimaSafe,
     )
 }
 
@@ -59,14 +72,11 @@ fn main() {
     // Generate dual vertices once (not profiled).
     let mut rng = ChaCha8Rng::seed_from_u64(SEED);
     let dual_vertices: Vec<Vector4<f64>> =
-        generate_random_dual_vertices(1, f, H_MIN, H_MAX, &mut rng)
-            .into_iter()
-            .next()
-            .expect("random dual-vertex sample");
+        sample_random_dual_vertices_f64(f, H_MIN, H_MAX, &mut rng);
 
     for i in 0..iterations {
         // Phase 1: Construction (rational vertex enum, incidence, adjacency, omega signs)
-        let p = VerificationPolytopeCache::from_f64_dual_vertices(dual_vertices.clone())
+        let p = FlatPolytopeCache::from_f64_dual_vertices(dual_vertices.clone())
             .expect("construction failed");
 
         // Phase 2: Capacity (enumeration, pruning, KKT solve, accumulation)

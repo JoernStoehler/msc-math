@@ -109,10 +109,16 @@ pub fn export(name: &str, output: &Path) -> Result<(), String> {
         .collect();
 
     eprintln!("Computing orbits for {}...", kp.name);
-    let (trajectories, computed_capacity) = generate_trajectories(kp);
+    let (trajectories, computed_capacity) = generate_trajectories(
+        &kp.dual_vertices_f64,
+        &kp.vertices_f64,
+        &kp.vertex_facet_incidence,
+        &kp.facet_intersection_is_nonempty,
+        &kp.omega_signs,
+    );
 
     let capacity = computed_capacity.unwrap_or(kp.capacity);
-    let vol = euclidean_volume_f64(&kp.vertices, incidence);
+    let vol = euclidean_volume_f64(&kp.vertices, &kp.vertex_facet_incidence);
     let systolic_ratio = if vol > 0.0 {
         capacity * capacity / (2.0 * vol)
     } else {

@@ -12,8 +12,8 @@
 //! 2. Canonical refreshes pass explicit repo-owned paths, e.g.
 //!    `--out experiments/sys-landscape/random-sample/random-sweep.jsonl`
 //!    and `--cache experiments/sys-landscape/cache.jsonl`.
-//! 3. Polytopes are generated via `generate_polytope` (blake3 per-attempt seeding)
-//!    and cached in the sys-landscape family cache. Re-runs skip generation + capacity.
+//! 3. Random dual vertices are generated with blake3 per-attempt seeding and
+//!    cached in the sys-landscape family cache. Re-runs skip generation + capacity.
 //! 4. Canonical runs write to `random-sample/random-sweep.jsonl`
 //! 5. Python script plots sys vs F
 //!

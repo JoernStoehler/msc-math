@@ -3,8 +3,9 @@
 //! Extracted from the original monolithic `ablation/main.rs` to keep the JSONL
 //! row schema and fixed dataset parameters unchanged across the module split.
 
-use dev_capacity_validation::VerificationPolytopeCache;
 use serde::{Deserialize, Serialize};
+
+use crate::flat_polytope::FlatPolytopeCache;
 
 pub const SEED: u64 = 42;
 pub const H_MIN: f64 = 0.5;
@@ -39,7 +40,7 @@ pub struct AblationResult {
     pub best_subset: Vec<usize>,
 }
 
-pub type VariantRunner = fn(&VerificationPolytopeCache) -> Option<AblationResult>;
+pub type VariantRunner = fn(&FlatPolytopeCache) -> Option<AblationResult>;
 
 pub struct Variant {
     pub name: &'static str,
@@ -49,6 +50,6 @@ pub struct Variant {
 pub struct AblationFixture {
     pub name: String,
     pub group: String,
-    pub polytope: VerificationPolytopeCache,
+    pub geometry: FlatPolytopeCache,
     pub expected_capacity: Option<f64>,
 }

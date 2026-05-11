@@ -3,10 +3,9 @@
 use crate::models::{v4_to_array, VizSegment, VizTrajectory};
 use crate::orbit_collection::{collect_all_orbits, CollectedOrbit};
 use euclidean_polytopes::facet_vertices_from_vertex_facet_incidence;
-use nalgebra::{DMatrix, DVector, Vector4};
-use symplectic::geom::known_polytopes::KnownPolytope;
-use symplectic::geom::reeb_trajectory::{reeb_direction, ReebSegment, ReebTrajectory};
-use symplectic::omega0;
+use nalgebra::{DMatrix, Vector4};
+use symplectic::algorithms::hk2017::orbit_recovery::recover_and_verify_sigma_beta_action;
+use symplectic::geom::reeb_trajectory;
 
 /// Maximum number of orbits to export per polytope.
 const MAX_ORBITS: usize = 20;
@@ -17,256 +16,14 @@ const DISPLACEMENT_EPS: f64 = 0.02;
 /// Max facet count for orbit computation.
 const MAX_FACETS_FOR_ORBIT: usize = 12;
 
-const EPS_FACET_INCIDENCE: f64 = symplectic::constants::EPS_FACET_INCIDENCE;
-const EPS_DENOM: f64 = 1e-10;
-
-struct RecoveredOrbit {
-    breakpoints: Vec<Vector4<f64>>,
-    max_violation: f64,
-    action: f64,
-    closure_error: f64,
-}
-
-fn max_violation_for(
-    base_point: &Vector4<f64>,
-    displacements: &[Vector4<f64>],
-    dual_vertices: &[Vector4<f64>],
-) -> f64 {
-    displacements
-        .iter()
-        .flat_map(|v| {
-            let p = base_point + v;
-            dual_vertices.iter().map(move |a| a.dot(&p) - 1.0)
-        })
-        .fold(f64::NEG_INFINITY, f64::max)
-}
-
-fn optimize_in_null_space(
-    b0: Vector4<f64>,
-    null_vecs: &[Vector4<f64>],
-    displacements: &[Vector4<f64>],
-    dual_vertices: &[Vector4<f64>],
-) -> Vector4<f64> {
-    if null_vecs.is_empty() {
-        return b0;
-    }
-
-    let mut alphas = vec![0.0_f64; null_vecs.len()];
-    for _ in 0..20 {
-        for dim in 0..null_vecs.len() {
-            let candidate = |a: f64| -> Vector4<f64> {
-                let mut b = b0;
-                for (i, d) in null_vecs.iter().enumerate() {
-                    let ai = if i == dim { a } else { alphas[i] };
-                    b += ai * d;
-                }
-                b
-            };
-
-            let mut lo = -100.0_f64;
-            let mut hi = 100.0_f64;
-            for _ in 0..100 {
-                let m1 = lo + (hi - lo) / 3.0;
-                let m2 = hi - (hi - lo) / 3.0;
-                let v1 = max_violation_for(&candidate(m1), displacements, dual_vertices);
-                let v2 = max_violation_for(&candidate(m2), displacements, dual_vertices);
-                if v1 < v2 {
-                    hi = m2;
-                } else {
-                    lo = m1;
-                }
-            }
-
-            alphas[dim] = (lo + hi) / 2.0;
-        }
-    }
-
-    let mut b = b0;
-    for (i, d) in null_vecs.iter().enumerate() {
-        b += alphas[i] * d;
-    }
-    b
-}
-
-fn recover_sigma_beta_action(
-    dual_vertices: &[Vector4<f64>],
-    sigma: &[usize],
-    beta: &[f64],
-    action: f64,
-) -> Option<RecoveredOrbit> {
-    if sigma.len() != beta.len() || !action.is_finite() || action <= 0.0 {
-        return None;
-    }
-    if sigma.iter().any(|&facet| facet >= dual_vertices.len()) {
-        return None;
-    }
-    if beta.iter().any(|&entry| !entry.is_finite() || entry <= 0.0) {
-        return None;
-    }
-
-    let m = sigma.len();
-    let dwell_times: Vec<f64> = (0..m).map(|k| action * beta[k]).collect();
-    let reeb_vectors: Vec<Vector4<f64>> = sigma
-        .iter()
-        .map(|&facet| reeb_direction(&dual_vertices[facet]) * 2.0)
-        .collect();
-
-    let mut displacements = Vec::with_capacity(m + 1);
-    displacements.push(Vector4::zeros());
-    for k in 0..m {
-        displacements.push(displacements[k] + dwell_times[k] * reeb_vectors[k]);
-    }
-
-    let active: Vec<usize> = (0..m).filter(|&k| dwell_times[k] > 0.0).collect();
-    if active.is_empty() {
-        return None;
-    }
-
-    let rows = active.len().max(4);
-    let mut mat = DMatrix::<f64>::zeros(rows, 4);
-    let mut rhs = DVector::<f64>::zeros(rows);
-    for (row, &k) in active.iter().enumerate() {
-        let a = &dual_vertices[sigma[k]];
-        for col in 0..4 {
-            mat[(row, col)] = a[col];
-        }
-        rhs[row] = 1.0 - a.dot(&displacements[k]);
-    }
-
-    let svd = mat.svd(true, true);
-    let tol = 1e-10 * svd.singular_values[0].max(1.0);
-    let rank = svd.singular_values.iter().filter(|&&s| s > tol).count();
-    let solution_dim = 4 - rank;
-
-    let b_vec = svd.solve(&rhs, tol).ok()?;
-    let mut base_point = Vector4::new(b_vec[0], b_vec[1], b_vec[2], b_vec[3]);
-
-    if solution_dim > 0 {
-        if let Some(v_mat) = &svd.v_t {
-            let null_vecs: Vec<Vector4<f64>> = (rank..4)
-                .map(|i| Vector4::new(v_mat[(i, 0)], v_mat[(i, 1)], v_mat[(i, 2)], v_mat[(i, 3)]))
-                .collect();
-            base_point =
-                optimize_in_null_space(base_point, &null_vecs, &displacements, dual_vertices);
-        }
-    }
-
-    let breakpoints: Vec<Vector4<f64>> = (0..=m).map(|k| base_point + displacements[k]).collect();
-    let max_violation = breakpoints
-        .iter()
-        .flat_map(|p| dual_vertices.iter().map(move |a| a.dot(p) - 1.0))
-        .fold(f64::NEG_INFINITY, f64::max);
-    let closure_error = (breakpoints[m] - breakpoints[0]).norm();
-
-    let mut action_sum = 0.0;
-    for i in 1..m {
-        for j in 0..i {
-            action_sum +=
-                dwell_times[j] * dwell_times[i] * omega0(&reeb_vectors[j], &reeb_vectors[i]);
-        }
-    }
-
-    Some(RecoveredOrbit {
-        breakpoints,
-        max_violation,
-        action: action_sum / 2.0,
-        closure_error,
-    })
-}
-
-fn simulate_with_dual_vertices(
-    dual_vertices: &[Vector4<f64>],
-    start_point: Vector4<f64>,
-    start_facet: usize,
-    max_segments: usize,
-    closure_tol: f64,
-) -> ReebTrajectory {
-    let n_facets = dual_vertices.len();
-    let mut segments = Vec::new();
-    let mut current_point = start_point;
-    let mut current_facet = start_facet;
-    let mut closed = false;
-
-    for _ in 0..max_segments {
-        for _ in 0..n_facets {
-            let r = reeb_direction(&dual_vertices[current_facet]);
-            let mut best_immediate = None;
-            let mut best_denom = 0.0_f64;
-            for (fj, a_j) in dual_vertices.iter().enumerate() {
-                if fj == current_facet {
-                    continue;
-                }
-                let residual = a_j.dot(&current_point) - 1.0;
-                let denom = a_j.dot(&r);
-                if residual.abs() < EPS_FACET_INCIDENCE && denom > EPS_DENOM && denom > best_denom {
-                    best_denom = denom;
-                    best_immediate = Some(fj);
-                }
-            }
-            if let Some(fj) = best_immediate {
-                current_facet = fj;
-            } else {
-                break;
-            }
-        }
-
-        let reeb = reeb_direction(&dual_vertices[current_facet]);
-        let mut best_t = f64::INFINITY;
-        let mut next_facet = current_facet;
-
-        for (fj, a_j) in dual_vertices.iter().enumerate() {
-            if fj == current_facet {
-                continue;
-            }
-            let denom = a_j.dot(&reeb);
-            if denom.abs() < EPS_DENOM {
-                continue;
-            }
-            let t = (1.0 - a_j.dot(&current_point)) / denom;
-            if t > EPS_FACET_INCIDENCE && t < best_t {
-                best_t = t;
-                next_facet = fj;
-            }
-        }
-
-        if best_t == f64::INFINITY || next_facet == current_facet {
-            break;
-        }
-
-        let end_point = current_point + best_t * reeb;
-        let valid = dual_vertices
-            .iter()
-            .all(|a_k| a_k.dot(&end_point) - 1.0 <= EPS_FACET_INCIDENCE * 100.0);
-        if !valid {
-            break;
-        }
-
-        segments.push(ReebSegment {
-            start: current_point,
-            end: end_point,
-            facet: current_facet,
-        });
-
-        if segments.len() >= 2 && (end_point - start_point).norm() < closure_tol {
-            closed = true;
-            break;
-        }
-
-        current_point = end_point;
-        current_facet = next_facet;
-    }
-
-    ReebTrajectory { segments, closed }
-}
-
 /// Recover a Reeb orbit and convert it to a visualization trajectory.
 fn orbit_to_viz_trajectory(
-    polytope: &KnownPolytope,
+    dual_vertices: &[Vector4<f64>],
     orbit: &CollectedOrbit,
     label: String,
 ) -> Option<VizTrajectory> {
-    let recovery = recover_sigma_beta_action(
-        &polytope.dual_vertices_f64,
+    let recovery = recover_and_verify_sigma_beta_action(
+        dual_vertices,
         &orbit.permutation,
         &orbit.beta,
         orbit.action,
@@ -340,11 +97,11 @@ fn two_face_displacement_directions(
 
 /// Generate displaced trajectories by perturbing the base point of an orbit.
 fn generate_displaced_trajectories(
-    polytope: &KnownPolytope,
+    dual_vertices: &[Vector4<f64>],
     orbit: &CollectedOrbit,
 ) -> Vec<VizTrajectory> {
-    let recovery = match recover_sigma_beta_action(
-        &polytope.dual_vertices_f64,
+    let recovery = match recover_and_verify_sigma_beta_action(
+        dual_vertices,
         &orbit.permutation,
         &orbit.beta,
         orbit.action,
@@ -356,8 +113,7 @@ fn generate_displaced_trajectories(
     let perm = &orbit.permutation;
     let start_facet = perm[0];
     let last_facet = perm[perm.len() - 1];
-    let directions =
-        two_face_displacement_directions(&polytope.dual_vertices_f64, start_facet, last_facet);
+    let directions = two_face_displacement_directions(dual_vertices, start_facet, last_facet);
     eprintln!(
         "  Two-face F_{} ∩ F_{}: {} displacement direction(s)",
         start_facet,
@@ -369,8 +125,8 @@ fn generate_displaced_trajectories(
     let mut trajectories = Vec::new();
     for (i, disp) in directions.iter().enumerate() {
         let mut displaced_start = recovery.breakpoints[0] + DISPLACEMENT_EPS * disp;
-        let mut traj = simulate_with_dual_vertices(
-            &polytope.dual_vertices_f64,
+        let mut traj = reeb_trajectory::simulate_with(
+            dual_vertices,
             displaced_start,
             start_facet,
             max_segments,
@@ -378,8 +134,8 @@ fn generate_displaced_trajectories(
         );
         if traj.segments.is_empty() {
             displaced_start = recovery.breakpoints[0] - DISPLACEMENT_EPS * disp;
-            traj = simulate_with_dual_vertices(
-                &polytope.dual_vertices_f64,
+            traj = reeb_trajectory::simulate_with(
+                dual_vertices,
                 displaced_start,
                 start_facet,
                 max_segments,
@@ -414,12 +170,14 @@ fn generate_displaced_trajectories(
 }
 
 /// Fallback: generate a single forward-simulated trajectory.
-fn generate_placeholder_trajectory(polytope: &KnownPolytope) -> Vec<VizTrajectory> {
-    let vertices = &polytope.vertices_f64;
-    let facet_vertices =
-        facet_vertices_from_vertex_facet_incidence(&polytope.vertex_facet_incidence);
+fn generate_placeholder_trajectory(
+    dual_vertices: &[Vector4<f64>],
+    vertices: &[Vector4<f64>],
+    vertex_facet_incidence: &DMatrix<bool>,
+) -> Vec<VizTrajectory> {
+    let facet_vertices = facet_vertices_from_vertex_facet_incidence(vertex_facet_incidence);
 
-    for fi in 0..polytope.facet_count() {
+    for fi in 0..dual_vertices.len() {
         if facet_vertices[fi].is_empty() {
             continue;
         }
@@ -428,8 +186,7 @@ fn generate_placeholder_trajectory(polytope: &KnownPolytope) -> Vec<VizTrajector
             .map(|&vertex_index| vertices[vertex_index])
             .sum::<Vector4<f64>>()
             / facet_vertices[fi].len() as f64;
-        let traj =
-            simulate_with_dual_vertices(&polytope.dual_vertices_f64, centroid, fi, 100, 1e-6);
+        let traj = reeb_trajectory::simulate_with(dual_vertices, centroid, fi, 100, 1e-6);
 
         if !traj.segments.is_empty() {
             return vec![VizTrajectory {
@@ -453,19 +210,31 @@ fn generate_placeholder_trajectory(polytope: &KnownPolytope) -> Vec<VizTrajector
 }
 
 /// Generate all trajectories for a polytope and return them with the computed capacity.
-pub(crate) fn generate_trajectories(polytope: &KnownPolytope) -> (Vec<VizTrajectory>, Option<f64>) {
-    if polytope.facet_count() > MAX_FACETS_FOR_ORBIT {
+pub(crate) fn generate_trajectories(
+    dual_vertices: &[Vector4<f64>],
+    vertices: &[Vector4<f64>],
+    vertex_facet_incidence: &DMatrix<bool>,
+    facet_intersection_is_nonempty: &DMatrix<bool>,
+    omega_signs: &DMatrix<i8>,
+) -> (Vec<VizTrajectory>, Option<f64>) {
+    if dual_vertices.len() > MAX_FACETS_FOR_ORBIT {
         eprintln!(
             "  Skipping orbit computation (F={}, too many facets). Using placeholder.",
-            polytope.facet_count()
+            dual_vertices.len()
         );
-        return (generate_placeholder_trajectory(polytope), None);
+        return (
+            generate_placeholder_trajectory(dual_vertices, vertices, vertex_facet_incidence),
+            None,
+        );
     }
 
-    let all_orbits = collect_all_orbits(polytope);
+    let all_orbits = collect_all_orbits(dual_vertices, facet_intersection_is_nonempty, omega_signs);
     if all_orbits.is_empty() {
         eprintln!("  No valid orbits found. Using placeholder.");
-        return (generate_placeholder_trajectory(polytope), None);
+        return (
+            generate_placeholder_trajectory(dual_vertices, vertices, vertex_facet_incidence),
+            None,
+        );
     }
 
     let min_action = all_orbits[0].action;
@@ -503,17 +272,41 @@ pub(crate) fn generate_trajectories(polytope: &KnownPolytope) -> (Vec<VizTraject
             format!("orbit #{} (action={:.4})", i + 1, orbit.action)
         };
 
-        if let Some(traj) = orbit_to_viz_trajectory(polytope, orbit, label) {
-            if is_min && min_action_count == 1 {
-                trajectories.extend(generate_displaced_trajectories(polytope, orbit));
+        match orbit_to_viz_trajectory(dual_vertices, orbit, label.clone()) {
+            Some(traj) => {
+                eprintln!(
+                    "  {} → {} segments, facets {:?}",
+                    label,
+                    traj.segments.len(),
+                    orbit.permutation
+                );
+                trajectories.push(traj);
             }
-            trajectories.push(traj);
+            None => {
+                eprintln!("  {} → recovery failed, skipping", label);
+            }
+        }
+    }
+
+    if let Some(first_orbit) = all_orbits.first() {
+        let displaced = generate_displaced_trajectories(dual_vertices, first_orbit);
+        for d in displaced {
+            eprintln!(
+                "  {} → {} segments, closed={}",
+                d.label,
+                d.segments.len(),
+                d.closed
+            );
+            trajectories.push(d);
         }
     }
 
     if trajectories.is_empty() {
-        eprintln!("  Orbit recovery failed for all orbits. Using placeholder.");
-        return (generate_placeholder_trajectory(polytope), None);
+        eprintln!("  All orbit recoveries failed. Using placeholder.");
+        return (
+            generate_placeholder_trajectory(dual_vertices, vertices, vertex_facet_incidence),
+            Some(min_action),
+        );
     }
 
     (trajectories, Some(min_action))

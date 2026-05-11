@@ -206,7 +206,7 @@ fn validate_target(target: &Target) -> (AllMinimumSummaryRow, Vec<AllMinimumOrbi
         name: target.name.clone(),
         family: target.family.clone(),
         source_kind: target.source_kind.clone(),
-        facet_count: target.polytope.facet_count(),
+        facet_count: target.geometry.facet_count(),
         status: "failed".to_string(),
         failure_stage: None,
         failure_reasons: Vec::new(),
@@ -232,7 +232,7 @@ fn validate_target(target: &Target) -> (AllMinimumSummaryRow, Vec<AllMinimumOrbi
     };
 
     let t_minimum = Instant::now();
-    let minimum_result = match compute_minimum_orbits(&target.polytope) {
+    let minimum_result = match compute_minimum_orbits(&target.geometry) {
         Ok(result) => {
             summary.time_minimum_set_ms = Some(t_minimum.elapsed().as_secs_f64() * 1000.0);
             result
@@ -295,10 +295,10 @@ fn validate_target(target: &Target) -> (AllMinimumSummaryRow, Vec<AllMinimumOrbi
 
     let t_scalar = Instant::now();
     match capacity_auto(
-        &target.polytope.dual_vertices_f64,
-        &target.polytope.dual_vertices,
-        &target.polytope.facet_intersection_is_nonempty,
-        &target.polytope.omega_signs,
+        &target.geometry.dual_vertices_f64,
+        &target.geometry.dual_vertices,
+        &target.geometry.facet_intersection_is_nonempty,
+        &target.geometry.omega_signs,
     ) {
         Ok(result) => {
             let scalar_capacity = result.capacity();
