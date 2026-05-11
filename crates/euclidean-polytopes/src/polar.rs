@@ -8,7 +8,7 @@ use std::time::Instant;
 use tracing::{info, info_span};
 
 use crate::linalg::{combinations4, dot4_exact, solve4_exact};
-use crate::predicates::origin_in_interior_of_conv_exact;
+use crate::predicates::origin_in_interior_of_conv_f64_first_for_polar_validation;
 
 /// Exact vertices of a normalized polar polytope and their input-facet incidence.
 #[derive(Clone, Debug, PartialEq)]
@@ -24,7 +24,8 @@ pub struct PolarVerticesExact<T: ExactScalar + 'static> {
 /// to be non-redundant; redundant points add redundant inequalities and do not
 /// change the returned exact vertex set.
 ///
-/// Panics when the origin-interior contract is violated.
+/// Panics when validation rejects the origin-interior contract. Validation uses
+/// f64-decided true/false cases and exact fallback for f64-indeterminate cases.
 pub fn polar_vertices_exact<T: ExactScalar + 'static>(
     vertices: &[Vector4<T>],
 ) -> PolarVerticesExact<T> {
@@ -32,7 +33,7 @@ pub fn polar_vertices_exact<T: ExactScalar + 'static>(
     let _span_guard = span.enter();
 
     let validation_start = Instant::now();
-    let origin_is_interior = origin_in_interior_of_conv_exact(vertices);
+    let origin_is_interior = origin_in_interior_of_conv_f64_first_for_polar_validation(vertices);
     let validation_ms = ms(validation_start);
     assert!(
         origin_is_interior,
@@ -169,8 +170,9 @@ fn polar_vertices_exact_generic_impl<T: ExactScalar + 'static>(
 /// Enumerate BigRational polar vertices with the checked origin-interior API.
 ///
 /// This is the rational-specific counterpart of [`polar_vertices_exact`]. It
-/// keeps the same checked precondition and panic behavior, then uses the
-/// integer-scaled determinant/gap path instead of generic exact linear solves.
+/// keeps the same f64-first checked precondition and panic behavior, then uses
+/// the integer-scaled determinant/gap path instead of generic exact linear
+/// solves.
 pub fn polar_vertices_exact_rational(
     vertices: &[Vector4<BigRational>],
 ) -> PolarVerticesExact<BigRational> {
@@ -178,7 +180,7 @@ pub fn polar_vertices_exact_rational(
     let _span_guard = span.enter();
 
     let validation_start = Instant::now();
-    let origin_is_interior = origin_in_interior_of_conv_exact(vertices);
+    let origin_is_interior = origin_in_interior_of_conv_f64_first_for_polar_validation(vertices);
     let validation_ms = ms(validation_start);
     assert!(
         origin_is_interior,

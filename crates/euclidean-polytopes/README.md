@@ -134,12 +134,13 @@ It asserts `facet_count >= 5` and finite `0 < h_min < h_max`. It does not
 construct a polytope, validate boundedness, or test non-redundancy.
 
 `polar_vertices_exact(vertices)` computes vertices of the normalized polar
-`{ y in R^4 : <v_i, y> <= 1 }`. It checks and panics on the required contract
-`0 in int conv(vertices)`. The input does not have to be non-redundant:
-redundant points only add redundant inequalities. Returned vertices are
-deduplicated by exact equality. It returns `PolarVerticesExact { vertices,
-vertex_facet_incidence }`; rows of the incidence matrix are returned polar
-vertices and columns are input facets.
+`{ y in R^4 : <v_i, y> <= 1 }`. It validates the required contract
+`0 in int conv(vertices)` with f64-decided true/false cases and exact fallback
+for f64-indeterminate cases, then panics when validation rejects the input. The
+input does not have to be non-redundant: redundant points only add redundant
+inequalities. Returned vertices are deduplicated by exact equality. It returns
+`PolarVerticesExact { vertices, vertex_facet_incidence }`; rows of the
+incidence matrix are returned polar vertices and columns are input facets.
 
 `all_points_are_extreme_exact(points)` checks the stronger non-redundancy
 contract for a V-representation: every listed point must be an extreme point of

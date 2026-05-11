@@ -14,12 +14,67 @@ pub fn origin_in_interior_of_conv_exact<T: ExactScalar + 'static>(points: &[Vect
         return false;
     }
 
-    if let Some(witness_indices) = f64_origin_simplex_witness(points) {
-        if exact_origin_simplex_witness(points, &witness_indices) {
-            return true;
-        }
+    if let Some(true_or_unknown) = origin_in_interior_of_conv_exact_from_f64_candidates(points) {
+        return true_or_unknown;
     }
 
+    origin_in_interior_of_conv_exact_slow(points)
+}
+
+/// Validation predicate for checked polar APIs.
+///
+/// This accepts f64-decided `true`/`false` cases under the local margin
+/// contract, and uses exact work only for f64-indeterminate inputs. Keep
+/// [`origin_in_interior_of_conv_exact`] exact; this helper is a polar validation
+/// policy, not a reusable exact predicate.
+pub(crate) fn origin_in_interior_of_conv_f64_first_for_polar_validation<
+    T: ExactScalar + 'static,
+>(
+    points: &[Vector4<T>],
+) -> bool {
+    if points.len() < 5 {
+        return false;
+    }
+
+    let Some(points_f64) = round_points_to_f64(points) else {
+        return origin_in_interior_of_conv_exact_slow(points);
+    };
+
+    match origin_in_interior_of_conv_f64(&points_f64) {
+        OriginInteriorF64::True(_) => true,
+        OriginInteriorF64::False => false,
+        OriginInteriorF64::Indeterminate(witnesses_to_check) => {
+            for witness_indices in witnesses_to_check {
+                if exact_origin_simplex_witness(points, &witness_indices) {
+                    return true;
+                }
+            }
+            origin_in_interior_of_conv_exact_slow(points)
+        }
+    }
+}
+
+fn origin_in_interior_of_conv_exact_from_f64_candidates<T: ExactScalar + 'static>(
+    points: &[Vector4<T>],
+) -> Option<bool> {
+    let points_f64 = round_points_to_f64(points)?;
+    match origin_in_interior_of_conv_f64(&points_f64) {
+        OriginInteriorF64::True(witness_indices) => {
+            exact_origin_simplex_witness(points, &witness_indices).then_some(true)
+        }
+        OriginInteriorF64::False => None,
+        OriginInteriorF64::Indeterminate(witnesses_to_check) => {
+            for witness_indices in witnesses_to_check {
+                if exact_origin_simplex_witness(points, &witness_indices) {
+                    return Some(true);
+                }
+            }
+            None
+        }
+    }
+}
+
+fn origin_in_interior_of_conv_exact_slow<T: ExactScalar + 'static>(points: &[Vector4<T>]) -> bool {
     let matrix = DMatrix::from_fn(points.len(), 4, |row, col| points[row][col].clone());
     if rank(&matrix) < 4 {
         return false;
@@ -47,10 +102,15 @@ pub fn origin_in_interior_of_conv_exact<T: ExactScalar + 'static>(points: &[Vect
     true
 }
 
-fn f64_origin_simplex_witness<T: ExactScalar>(points: &[Vector4<T>]) -> Option<[usize; 5]> {
-    const MIN_BARYCENTRIC_WEIGHT: f64 = 1e-8;
+#[derive(Clone, Debug, PartialEq)]
+enum OriginInteriorF64 {
+    True([usize; 5]),
+    False,
+    Indeterminate(Vec<[usize; 5]>),
+}
 
-    let points_f64 = points
+fn round_points_to_f64<T: ExactScalar>(points: &[Vector4<T>]) -> Option<Vec<[f64; 4]>> {
+    points
         .iter()
         .map(|point| {
             let coordinates: [f64; 4] =
@@ -60,29 +120,53 @@ fn f64_origin_simplex_witness<T: ExactScalar>(points: &[Vector4<T>]) -> Option<[
                 .all(|coordinate| coordinate.is_finite())
                 .then_some(coordinates)
         })
-        .collect::<Option<Vec<_>>>()?;
+        .collect()
+}
 
+fn origin_in_interior_of_conv_f64(points: &[[f64; 4]]) -> OriginInteriorF64 {
+    const MIN_BARYCENTRIC_WEIGHT: f64 = 1e-8;
+
+    if points.len() < 5 {
+        return OriginInteriorF64::False;
+    }
+
+    let mut witnesses_to_check = Vec::new();
     for indices in combinations5(points.len()) {
         let matrix = Matrix5::from_fn(|row, col| {
             if row < 4 {
-                points_f64[indices[col]][row]
+                points[indices[col]][row]
             } else {
                 1.0
             }
         });
         let rhs = Vector5::new(0.0, 0.0, 0.0, 0.0, 1.0);
         let Some(weights) = matrix.lu().solve(&rhs) else {
+            witnesses_to_check.push(indices);
             continue;
         };
+        if weights.iter().any(|weight| !weight.is_finite()) {
+            witnesses_to_check.push(indices);
+            continue;
+        }
         if weights
             .iter()
-            .all(|weight| weight.is_finite() && *weight > MIN_BARYCENTRIC_WEIGHT)
+            .all(|weight| *weight > MIN_BARYCENTRIC_WEIGHT)
         {
-            return Some(indices);
+            return OriginInteriorF64::True(indices);
+        }
+        if weights
+            .iter()
+            .all(|weight| *weight >= -MIN_BARYCENTRIC_WEIGHT)
+        {
+            witnesses_to_check.push(indices);
         }
     }
 
-    None
+    if witnesses_to_check.is_empty() {
+        OriginInteriorF64::False
+    } else {
+        OriginInteriorF64::Indeterminate(witnesses_to_check)
+    }
 }
 
 fn exact_origin_simplex_witness<T: ExactScalar + 'static>(
@@ -240,7 +324,11 @@ fn reduce_witness_by_coordinate_bounds<T: ExactScalar>(
 
 #[cfg(test)]
 mod tests {
-    use super::{all_points_are_extreme_exact, has_nonnegative_barycentric_witness};
+    use super::{
+        all_points_are_extreme_exact, has_nonnegative_barycentric_witness,
+        origin_in_interior_of_conv_exact, origin_in_interior_of_conv_f64,
+        origin_in_interior_of_conv_f64_first_for_polar_validation, OriginInteriorF64,
+    };
     use nalgebra::Vector4;
     use num_rational::BigRational;
 
@@ -252,6 +340,124 @@ mod tests {
 
     fn vq(entries: [i64; 4]) -> Vector4<Q> {
         Vector4::new(q(entries[0]), q(entries[1]), q(entries[2]), q(entries[3]))
+    }
+
+    #[test]
+    fn f64_origin_diagnostic_separates_simplex_witness_from_indeterminate() {
+        let too_few_points = [
+            [1.0, 0.0, 0.0, 0.0],
+            [0.0, 1.0, 0.0, 0.0],
+            [0.0, 0.0, 1.0, 0.0],
+            [0.0, 0.0, 0.0, 1.0],
+        ];
+        assert_eq!(
+            origin_in_interior_of_conv_f64(&too_few_points),
+            OriginInteriorF64::False
+        );
+
+        let simplex = [
+            [1.0, 0.0, 0.0, 0.0],
+            [0.0, 1.0, 0.0, 0.0],
+            [0.0, 0.0, 1.0, 0.0],
+            [0.0, 0.0, 0.0, 1.0],
+            [-1.0, -1.0, -1.0, -1.0],
+        ];
+        assert!(matches!(
+            origin_in_interior_of_conv_f64(&simplex),
+            OriginInteriorF64::True([0, 1, 2, 3, 4])
+        ));
+
+        let origin_on_boundary = [
+            [0.0, 0.0, 0.0, 0.0],
+            [1.0, 0.0, 0.0, 0.0],
+            [0.0, 1.0, 0.0, 0.0],
+            [0.0, 0.0, 1.0, 0.0],
+            [0.0, 0.0, 0.0, 1.0],
+        ];
+        assert!(matches!(
+            origin_in_interior_of_conv_f64(&origin_on_boundary),
+            OriginInteriorF64::Indeterminate(witnesses) if !witnesses.is_empty()
+        ));
+
+        let robustly_outside = [
+            [1.0, 0.0, 0.0, 0.0],
+            [0.0, 1.0, 0.0, 0.0],
+            [0.0, 0.0, 1.0, 0.0],
+            [0.0, 0.0, 0.0, 1.0],
+            [1.0, 1.0, 1.0, 1.0],
+        ];
+        assert_eq!(
+            origin_in_interior_of_conv_f64(&robustly_outside),
+            OriginInteriorF64::False
+        );
+
+        let crosspolytope = [
+            [1.0, 0.0, 0.0, 0.0],
+            [-1.0, 0.0, 0.0, 0.0],
+            [0.0, 1.0, 0.0, 0.0],
+            [0.0, -1.0, 0.0, 0.0],
+            [0.0, 0.0, 1.0, 0.0],
+            [0.0, 0.0, -1.0, 0.0],
+            [0.0, 0.0, 0.0, 1.0],
+            [0.0, 0.0, 0.0, -1.0],
+        ];
+        assert!(matches!(
+            origin_in_interior_of_conv_f64(&crosspolytope),
+            OriginInteriorF64::Indeterminate(witnesses) if !witnesses.is_empty()
+        ));
+    }
+
+    #[test]
+    fn origin_validation_accepts_f64_decisions_but_exact_predicate_stays_exact() {
+        let simplex = vec![
+            vq([1, 0, 0, 0]),
+            vq([0, 1, 0, 0]),
+            vq([0, 0, 1, 0]),
+            vq([0, 0, 0, 1]),
+            vq([-1, -1, -1, -1]),
+        ];
+        assert!(origin_in_interior_of_conv_f64_first_for_polar_validation(
+            &simplex
+        ));
+
+        let outside = vec![
+            vq([1, 0, 0, 0]),
+            vq([0, 1, 0, 0]),
+            vq([0, 0, 1, 0]),
+            vq([0, 0, 0, 1]),
+            vq([1, 1, 1, 1]),
+        ];
+        assert!(!origin_in_interior_of_conv_f64_first_for_polar_validation(
+            &outside
+        ));
+        assert!(!origin_in_interior_of_conv_exact(&outside));
+
+        let origin_on_boundary = vec![
+            vq([0, 0, 0, 0]),
+            vq([1, 0, 0, 0]),
+            vq([0, 1, 0, 0]),
+            vq([0, 0, 1, 0]),
+            vq([0, 0, 0, 1]),
+        ];
+        assert!(!origin_in_interior_of_conv_f64_first_for_polar_validation(
+            &origin_on_boundary
+        ));
+        assert!(!origin_in_interior_of_conv_exact(&origin_on_boundary));
+
+        let crosspolytope = vec![
+            vq([1, 0, 0, 0]),
+            vq([-1, 0, 0, 0]),
+            vq([0, 1, 0, 0]),
+            vq([0, -1, 0, 0]),
+            vq([0, 0, 1, 0]),
+            vq([0, 0, -1, 0]),
+            vq([0, 0, 0, 1]),
+            vq([0, 0, 0, -1]),
+        ];
+        assert!(origin_in_interior_of_conv_f64_first_for_polar_validation(
+            &crosspolytope
+        ));
+        assert!(origin_in_interior_of_conv_exact(&crosspolytope));
     }
 
     #[test]

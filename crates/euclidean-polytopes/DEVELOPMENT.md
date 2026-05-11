@@ -637,10 +637,15 @@ choices become mathematical facts. If the exact fallback becomes hot, profile
 before changing the contract.
 
 For exact predicates specifically, return `bool`. The exact implementation may
-call the `f64` diagnostic predicate first. If the f64 result is indeterminate,
-it should check the diagnostic candidates exactly until the answer is known.
-For `origin_in_interior_of_conv_exact`, one expected f64 diagnostic payload is
-the candidate 5-point simplex sets that may contain zero.
+call the `f64` diagnostic predicate first as a witness generator, but
+`origin_in_interior_of_conv_exact` keeps exact semantics: f64-decided cases do
+not become exact facts unless exact work confirms them or the slow exact
+positive-spanning test decides the answer.
+
+The checked polar APIs use a different internal policy for validation:
+f64-decided true/false cases are accepted, and only f64-indeterminate cases
+fall back to exact checks. Keep that policy behind the polar-validation helper,
+not in the reusable exact predicate.
 
 For `origin_in_interior_of_conv_f64`, a false diagnostic needs enough evidence
 to rule out all candidate 5-point simplex sets. Therefore the indeterminate
