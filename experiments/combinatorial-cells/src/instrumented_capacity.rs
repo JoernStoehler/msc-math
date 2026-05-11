@@ -1,11 +1,11 @@
 //! Instrumented capacity helper for combinatorial-cell experiments.
 
+use nalgebra::{DMatrix, Vector4};
 use symplectic::algorithms::facet_adjacency::{
     build_transition_matrix_from_facet_intersections_and_omega, is_feasible_cycle,
 };
 use symplectic::algorithms::hk2017::combinations;
 use symplectic::algorithms::hk2017::permutations::for_each_cyclic_permutation;
-use symplectic::geom::polytope::Polytope4D;
 use symplectic::kkt::saddle_point_solver::{
     solve_kkt_for_dual_vertices, KktOutcome, EPS_BETA_POSITIVE, EPS_Q_POSITIVE,
 };
@@ -26,12 +26,15 @@ pub struct InstrumentedCapacitySummary {
 
 /// Enumerate all valid HK2017 orbits, then return the best action/permutation plus
 /// the total valid-orbit count and the best/second-best action gap.
-pub fn ehz_capacity_instrumented(polytope: &Polytope4D) -> Option<InstrumentedCapacitySummary> {
-    let f = polytope.facet_count();
-    let dual_vertices = polytope.dual_vertices_f64();
+pub fn ehz_capacity_instrumented(
+    dual_vertices: &[Vector4<f64>],
+    facet_intersection_is_nonempty: &DMatrix<bool>,
+    omega_signs: &DMatrix<i8>,
+) -> Option<InstrumentedCapacitySummary> {
+    let f = dual_vertices.len();
     let transition_is_allowed = build_transition_matrix_from_facet_intersections_and_omega(
-        polytope.facet_intersection_is_nonempty(),
-        polytope.omega_signs(),
+        facet_intersection_is_nonempty,
+        omega_signs,
     );
     let mut orbits: Vec<(f64, Vec<usize>)> = Vec::new();
 

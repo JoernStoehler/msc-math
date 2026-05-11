@@ -19,8 +19,12 @@
 use euclidean_polytopes::{
     two_faces_from_vertex_facet_incidence, vertex_facets_from_vertex_facet_incidence,
 };
+#[path = "../src/flat_polytope.rs"]
+mod flat_polytope;
+
+use crate::flat_polytope::CellPolytopeCache;
 use exp_combinatorial_cells::{
-    compute_step_bound_detailed, construct_at_t, ehz_capacity_instrumented, name_from_record,
+    compute_step_bound_detailed, ehz_capacity_instrumented, name_from_record,
 };
 use nalgebra::Vector4;
 use rand::SeedableRng;
@@ -33,7 +37,6 @@ use std::path::Path;
 use std::time::Instant;
 use symplectic::algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega;
 use symplectic::database;
-use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::symplectic_form::omega0;
 
 // ============================================================================
@@ -42,6 +45,19 @@ use symplectic::geom::symplectic_form::omega0;
 
 /// Maximum facet count to process (HK2017 cost is exponential).
 const MAX_FACET_COUNT: usize = 10;
+
+fn construct_at_t(
+    duals: &[Vector4<f64>],
+    direction: &[Vector4<f64>],
+    t: f64,
+) -> Option<CellPolytopeCache> {
+    let new_duals: Vec<Vector4<f64>> = duals
+        .iter()
+        .zip(direction.iter())
+        .map(|(a, d)| a + t * d)
+        .collect();
+    CellPolytopeCache::from_f64(new_duals)
+}
 
 /// Number of random S^3 directions per facet for boundary probing.
 /// 10 directions in R^4 give reasonable coverage of S^3.
@@ -146,10 +162,11 @@ struct CombinatorialType {
     omega_signs: Vec<(usize, usize, bool)>,
 }
 
-fn combinatorial_type(polytope: &Polytope4D) -> CombinatorialType {
-    let vertex_facets_by_vertex = vertex_facets_from_vertex_facet_incidence(polytope.incidence());
-    let two_faces = two_faces_from_vertex_facet_incidence(polytope.incidence());
-    let duals = polytope.dual_vertices_f64();
+fn combinatorial_type(polytope: &CellPolytopeCache) -> CombinatorialType {
+    let vertex_facets_by_vertex =
+        vertex_facets_from_vertex_facet_incidence(&polytope.vertex_facet_incidence);
+    let two_faces = two_faces_from_vertex_facet_incidence(&polytope.vertex_facet_incidence);
+    let duals = &polytope.dual_vertices_f64;
 
     let mut vf: Vec<Vec<usize>> = vertex_facets_by_vertex
         .iter()
@@ -189,15 +206,15 @@ fn same_omega(a: &CombinatorialType, b: &CombinatorialType) -> bool {
 /// Compare transition matrices:
 /// facet intersection nonemptiness + omega_0 signs -> directed facet graph.
 /// This is what actually determines which Reeb orbits are feasible.
-fn same_transitions(base: &Polytope4D, other: &Polytope4D) -> bool {
-    let base_facet_intersection_is_nonempty = base.facet_intersection_is_nonempty();
-    let base_omega_signs = base.omega_signs();
+fn same_transitions(base: &CellPolytopeCache, other: &CellPolytopeCache) -> bool {
+    let base_facet_intersection_is_nonempty = &base.facet_intersection_is_nonempty;
+    let base_omega_signs = &base.omega_signs;
     let t1 = build_transition_matrix_from_facet_intersections_and_omega(
         &base_facet_intersection_is_nonempty,
         &base_omega_signs,
     );
-    let other_facet_intersection_is_nonempty = other.facet_intersection_is_nonempty();
-    let other_omega_signs = other.omega_signs();
+    let other_facet_intersection_is_nonempty = &other.facet_intersection_is_nonempty;
+    let other_omega_signs = &other.omega_signs;
     let t2 = build_transition_matrix_from_facet_intersections_and_omega(
         &other_facet_intersection_is_nonempty,
         &other_omega_signs,
@@ -225,17 +242,20 @@ fn main() {
     let owned_db_path = Path::new(env!("CARGO_MANIFEST_DIR")).join("polytopes.jsonl");
     let db = database::load_many(&[owned_db_path.as_path()]).expect("failed to load database");
 
-    let mut polytopes: Vec<(String, Polytope4D)> = Vec::new();
+    let mut polytopes: Vec<(String, CellPolytopeCache)> = Vec::new();
 
     for (idx, (_, record)) in db.iter().enumerate() {
         let f = record.dual_vertices_rational.len();
         if f > MAX_FACET_COUNT {
             continue;
         }
-        let p = match record.to_polytope() {
-            Ok(p) => p,
-            Err(e) => {
-                eprintln!("  db entry {idx}: reconstruction failed: {e}");
+        let p = match CellPolytopeCache::from_rational_parts(
+            record.dual_vertices_rational.clone(),
+            record.vertices_rational.clone(),
+        ) {
+            Some(p) => p,
+            None => {
+                eprintln!("  db entry {idx}: reconstruction failed");
                 continue;
             }
         };
@@ -271,7 +291,7 @@ fn main() {
     for (idx, (name, polytope)) in polytopes.iter().enumerate() {
         let t_poly = Instant::now();
         let f = polytope.facet_count();
-        let duals = polytope.dual_vertices_f64();
+        let duals = &polytope.dual_vertices_f64;
 
         // =====================================================================
         // Base computation: need orbit membership for consistent output schema
@@ -279,7 +299,11 @@ fn main() {
         // to ensure polytope is valid for EHZ-based experiments.)
         // =====================================================================
 
-        let _perm = match ehz_capacity_instrumented(polytope) {
+        let _perm = match ehz_capacity_instrumented(
+            &polytope.dual_vertices_f64,
+            &polytope.facet_intersection_is_nonempty,
+            &polytope.omega_signs,
+        ) {
             Some(instrumented) => instrumented.best_permutation,
             None => {
                 n_skipped += 1;
@@ -306,8 +330,14 @@ fn main() {
         let mut probes: Vec<FacetProbe> = Vec::new();
 
         for dir in &facet_dirs {
-            let boundary =
-                compute_step_bound_detailed(polytope, &dir.d, EPS_NUMERICAL_ZERO, MAX_STEP_SIZE);
+            let boundary = compute_step_bound_detailed(
+                &polytope.dual_vertices_f64,
+                &polytope.vertices_f64,
+                &polytope.vertex_facet_incidence,
+                &dir.d,
+                EPS_NUMERICAL_ZERO,
+                MAX_STEP_SIZE,
+            );
             let k = dir.facet_index.unwrap();
 
             // Store for convexity testing (skip unbounded)

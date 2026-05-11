@@ -22,9 +22,13 @@
 //! Second-order analysis: if sys(K + εd) < sys(K) for all ε ≠ 0 and all flat d,
 //! then K is a strict local maximum. See formal/hko-local-maximality-conditions.tex for formal statement.
 
+#[path = "../src/flat_polytope.rs"]
+mod flat_polytope;
+
 mod curvature;
 mod phase1;
 
+use crate::flat_polytope::HkoPolytopeCache;
 use curvature::{curvature_at_epsilon, run_phase2, run_phase3};
 use exp_hko_local_maximum::euclidean_volume_f64;
 use phase1::run_phase1;
@@ -104,15 +108,17 @@ fn main() {
     println!("═══════════════════════════════════════════════════════════\n");
 
     let known = known_polytopes::hko_pentagon();
-    let polytope = &known.polytope;
+    let polytope =
+        HkoPolytopeCache::from_rational_parts(known.dual_vertices.clone(), known.vertices.clone())
+            .expect("HKO cache");
     println!("HKO2024: F={}, known sys≈{:.6}", polytope.facet_count(), {
-        let v = euclidean_volume_f64(polytope.vertices(), polytope.incidence());
+        let v = euclidean_volume_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
         known.capacity * known.capacity / (2.0 * v)
     });
 
     println!("\n--- Phase 1: Gradient matrix and flat directions ---");
     let t_phase1 = Instant::now();
-    let (mut base_row, flat_directions) = run_phase1(polytope);
+    let (mut base_row, flat_directions) = run_phase1(&polytope);
     base_row.time_phase1_ms = t_phase1.elapsed().as_secs_f64() * 1000.0;
     println!("  Phase 1 time: {:.0}ms", base_row.time_phase1_ms);
 
@@ -130,7 +136,7 @@ fn main() {
     if args.smoke {
         if let Some(direction) = flat_directions.first() {
             let eps = EPSILON_GRID[0];
-            let curv = curvature_at_epsilon(polytope, direction, eps, base_row.sys_base)
+            let curv = curvature_at_epsilon(&polytope, direction, eps, base_row.sys_base)
                 .expect("smoke curvature probe failed");
             println!("  Smoke curvature at ε={eps:.1e}: {curv:.6e}");
         } else {
@@ -167,7 +173,7 @@ fn main() {
         let mut curves_writer = BufWriter::new(curves_file);
 
         run_phase2(
-            polytope,
+            &polytope,
             base_row.sys_base,
             &flat_directions,
             &mut curves_writer,
@@ -189,7 +195,7 @@ fn main() {
         let mut random_writer = BufWriter::new(random_file);
 
         run_phase3(
-            polytope,
+            &polytope,
             base_row.sys_base,
             &flat_directions,
             &mut random_writer,

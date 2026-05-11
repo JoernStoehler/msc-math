@@ -95,8 +95,6 @@ pub enum ConstructionError {
     RedundantFacet(usize),
     /// Exact-to-f64 conversion produced degenerate result.
     F64Conversion(String),
-    /// Perturbation failed to break all omega_0 = 0 degeneracies.
-    PerturbationFailed,
 }
 
 impl std::fmt::Display for ConstructionError {
@@ -116,12 +114,6 @@ impl std::fmt::Display for ConstructionError {
             Self::NoVertices => write!(f, "no vertices found (inconsistent halfspaces)"),
             Self::RedundantFacet(i) => write!(f, "facet {i} is redundant"),
             Self::F64Conversion(msg) => write!(f, "f64 conversion failed: {msg}"),
-            Self::PerturbationFailed => {
-                write!(
-                    f,
-                    "perturbation failed to break all omega_0 = 0 (astronomically unlikely)"
-                )
-            }
         }
     }
 }

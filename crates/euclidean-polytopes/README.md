@@ -180,7 +180,8 @@ compute ordinary 3D facet volume, and optionally the volume-weighted facet
 centroid, from the same known vertex-facet incidence convention. They validate
 finite vertex coordinates, assert incidence row shape and facet-index range,
 and do not recover 2-face membership from f64 signed gaps. These helpers are the
-preferred path for exact-incidence callers such as `symplectic::Polytope4D`.
+preferred path for callers that already have exact vertex-facet incidence, such
+as symplectic known fixtures or experiment-local geometry caches.
 
 ## Robust Numeric Split
 

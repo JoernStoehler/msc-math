@@ -18,7 +18,7 @@ Map maintenance:
 ## Status
 
 - State: split from the old root `ARCHITECTURE.md`.
-- Last updated: 2026-05-10.
+- Last updated: 2026-05-11.
 - Source surfaces: `crates/**/src/`, `crates/**/README.md`,
   `crates/**/DEVELOPMENT.md`, `formal/`, crate manifests, and local crate
   tests.
@@ -48,7 +48,7 @@ Map maintenance:
 
 | Subsystem | Current role | Notes |
 | --- | --- | --- |
-| `geom` | single-polytope geometry layer | owns `Polytope4D`, exact/rational geometry utilities, symplectic form helpers, volume/facet helpers, constructors, and related geometry routines |
+| `geom` | geometry helper layer | owns private `Polytope4D` construction/validation internals, exact/rational geometry utilities, symplectic form helpers, known flat fixtures, and related geometry routines |
 | `kkt` | context-free constrained-QP solver layer | operates on abstract matrices `(C, d, H)`; `qp_assembly` crosses from polytope geometry into solver inputs |
 | `algorithms` | symplectic/capacity algorithm layer | owns HK2017, billiard, shared capacity-accumulator logic, and related pruning/combinatorics |
 | `database` / `dataset` | persistence/schema support layer | owns JSONL storage helpers and row schemas; callers choose paths |
@@ -78,7 +78,7 @@ formula is blocked and it is not a supported experiment entrypoint.
 | one orbit candidate / KKT solve | `crates/symplectic/src/kkt/` |
 | capacity computation | `crates/symplectic/src/algorithms/` |
 | recovered primal orbit / trajectory | `crates/symplectic/src/algorithms/hk2017/orbit_recovery.rs` |
-| skeletons / face adjacency | `crates/symplectic/src/geom/skeleton.rs`, `crates/symplectic/src/algorithms/facet_adjacency.rs` |
+| skeletons / face adjacency | `crates/euclidean-polytopes/src/skeleton.rs`, `crates/symplectic/src/algorithms/facet_adjacency.rs` |
 | derivatives with respect to dual vertices | `crates/symplectic/src/derivatives.rs` |
 | JSONL polytope records and stored rows | `crates/symplectic/src/database.rs`, `crates/symplectic/src/dataset.rs` |
 | exact one-sigma validation kernels | `crates/symplectic/src/exact/` |
@@ -88,9 +88,9 @@ formula is blocked and it is not a supported experiment entrypoint.
 
 | Entity | Current role | Main surface |
 | --- | --- | --- |
-| `Polytope4D` | central polytope object for geometry and algorithms | `crates/symplectic/src/lib.rs`, `crates/symplectic/src/geom/` |
-| `Skeleton` | face-lattice / adjacency data for polytope geometry and orbit pruning | `crates/symplectic/src/geom/skeleton.rs`, `crates/symplectic/src/lib.rs` |
-| `OrbitSearchResult` | shared capacity/orbit search result returned by the root capacity family; contains orbit list plus `min_action` bounds and iterations | `crates/symplectic/src/algorithms/orbit_search.rs`, `crates/symplectic/src/lib.rs` |
+| flat known-polytope fields | reusable fixture geometry as `dual_vertices`, `vertices`, `vertex_facet_incidence`, `facet_intersection_is_nonempty`, `omega_signs`, and f64 copies | `crates/symplectic/src/geom/known_polytopes.rs` |
+| `Skeleton` / face helpers | Euclidean face data derived from vertex-facet incidence | `crates/euclidean-polytopes/src/skeleton.rs` |
+| `OrbitSearchResult` | shared capacity/orbit search result returned by explicit capacity aggregation paths; contains orbit list plus `min_action` bounds and iterations | `crates/symplectic/src/algorithms/orbit_search.rs`, `crates/symplectic/src/lib.rs` |
 | `OrbitKktData` | one solved orbit payload: `sigma`, `beta`, action interval, `q`, optional multipliers, admissibility | `crates/symplectic/src/algorithms/orbit_search.rs` |
 | `GeometricOrbit` | recovered geometric trajectory/orbit data derived from an `OrbitKktData` payload | `crates/symplectic/src/algorithms/hk2017/orbit_recovery.rs` |
 | `PolytopeRecord` | persisted JSONL row with rational geometry and optional computed summaries | `crates/symplectic/src/database.rs` |
@@ -101,8 +101,8 @@ formula is blocked and it is not a supported experiment entrypoint.
 
 | Tier | Current meaning | Examples |
 | --- | --- | --- |
-| simple public | short root reexports and preset routers in `crates/symplectic/src/lib.rs` | `symplectic::ehz_capacity`, `symplectic::ehz_capacity_pruned`, `symplectic::ehz_capacity_unpruned`, `symplectic::ehz_capacity_billiard`, `symplectic::OrbitSearchResult`, `symplectic::Polytope4D`, `symplectic::Skeleton`, `symplectic::known_polytopes`, `symplectic::omega0`, `symplectic::lagrangian_product`, `symplectic::regular_polygon_2d`, `symplectic::rotate_polygon_2d` |
-| expert public | deeper modules and building blocks used by experiments that need non-default control | `symplectic::database`, `symplectic::dataset`, `symplectic::random`, `symplectic::derivatives`, `symplectic::exact`, `symplectic::algorithms::solve_orbit_sigma_with_dual_vertices`, `symplectic::algorithms::aggregate_orbits_with_dual_vertices_exact`, `symplectic::algorithms::hk2017`, `symplectic::algorithms::billiard`, `symplectic::kkt::saddle_point_solver`, `symplectic::algorithms::facet_adjacency` |
+| simple public | short root reexports and ordinary geometry helpers in `crates/symplectic/src/lib.rs` | `symplectic::OrbitSearchResult`, `symplectic::known_polytopes`, `symplectic::omega0`, `symplectic::lagrangian_product`, `symplectic::regular_polygon_2d`, `symplectic::rotate_polygon_2d`, `symplectic::classify_facets_from_dual_vertices`, `symplectic::solve_pruned_hk2017_candidates`, `symplectic::solve_unpruned_hk2017_candidates`, `symplectic::solve_billiard_candidates` |
+| expert public | deeper modules and building blocks used by experiments that need non-default control | `symplectic::database`, `symplectic::dataset`, `symplectic::random`, `symplectic::derivatives`, `symplectic::exact`, `symplectic::algorithms::aggregate_orbits_with_dual_vertices_exact`, `symplectic::algorithms::hk2017`, `symplectic::algorithms::billiard`, `symplectic::kkt::saddle_point_solver`, `symplectic::algorithms::facet_adjacency` |
 | exact scalar public | root reexports in `crates/algebraic-numbers/src/lib.rs` | `algebraic_numbers::Algebraic`, `algebraic_numbers::RealAlgebraicField`, `algebraic_numbers::ExactScalar`, `algebraic_numbers::row_reduction`, `algebraic_numbers::rank`, `algebraic_numbers::kernel_basis`, `algebraic_numbers::solve_linear_system`, `algebraic_numbers::LinearSystemSolution`, `algebraic_numbers::is_negative_definite` |
 | Euclidean polytopes target | flat functions over `Vector4<T>`; implemented slices include `origin_in_interior_of_conv_exact`, `all_points_are_extreme_exact`, `polar_vertices_exact` returning `(vertices, vertex_facet_incidence)`, `polar_vertices_f64`, `volume_f64`, `volume_from_incidence_f64`, exact incidence, incidence-only 2-face ordering for volume decomposition, facet-pair nonempty-intersection helpers, and f64 indeterminate diagnostics | `crates/euclidean-polytopes/README.md`, `crates/euclidean-polytopes/DEVELOPMENT.md` |
 | unclear | public paths whose long-term experiment-facing status is not explicit | `symplectic::algorithms::hk2017::orbit_recovery`, `symplectic::algorithms::billiard::facet_classification`, `symplectic::kkt::qp_assembly::build_augmented_system_from_dual_vertices` |
@@ -127,6 +127,9 @@ thesis claim, verification task, or writing blocker needs it.
 ## Open Edges
 
 - Which deep public paths should remain supported experiment-facing imports?
+- Which experiment-local caches should remain local after the `Polytope4D`
+  migration finishes, and which repeated helper should move into a durable
+  crate function?
 - Which repeated helpers belong in topic helper crates versus
   `crates/symplectic/`?
 - Which reusable stored fields should downstream consumers be allowed to trust

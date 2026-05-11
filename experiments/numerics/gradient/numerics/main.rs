@@ -38,7 +38,12 @@
 //!
 //! Self-contained: generates all polytopes internally.
 
-use dev_gradient::{analyze_polytope, first_order_test, write_rows};
+#[path = "../src/flat_polytope.rs"]
+mod flat_polytope;
+
+use crate::flat_polytope::GradientPolytopeCache;
+use dev_gradient::{analyze_polytope, first_order_test, write_rows, PolytopeInfo};
+use euclidean_polytopes::sample_random_dual_vertices_f64;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use std::env;
@@ -48,7 +53,6 @@ use std::io::{BufWriter, Write};
 use std::path::PathBuf;
 use std::time::Instant;
 use symplectic::geom::polygon::random_polygon_2d;
-use symplectic::random::generate_random_polytopes;
 use symplectic::{lagrangian_product, regular_polygon_2d, rotate_polygon_2d};
 
 // ============================================================================
@@ -92,6 +96,18 @@ struct BasicValidationConfig {
     n_dirs: usize,
 }
 
+fn analyze_cached_polytope(cache: &GradientPolytopeCache) -> Option<PolytopeInfo> {
+    analyze_polytope(
+        &cache.dual_vertices,
+        &cache.vertices,
+        &cache.dual_vertices_f64,
+        &cache.vertices_f64,
+        &cache.vertex_facet_incidence,
+        &cache.facet_intersection_is_nonempty,
+        &cache.omega_signs,
+    )
+}
+
 fn basic_validation_config(smoke: bool) -> BasicValidationConfig {
     if smoke {
         BasicValidationConfig {
@@ -116,6 +132,23 @@ fn basic_validation_config(smoke: bool) -> BasicValidationConfig {
     }
 }
 
+fn sample_random_cache_batch(
+    count: usize,
+    facet_count: usize,
+    h_min: f64,
+    h_max: f64,
+    rng: &mut ChaCha8Rng,
+) -> Vec<GradientPolytopeCache> {
+    let mut accepted = Vec::with_capacity(count);
+    while accepted.len() < count {
+        let dual_vertices_f64 = sample_random_dual_vertices_f64(facet_count, h_min, h_max, rng);
+        if let Some(cache) = GradientPolytopeCache::from_f64(dual_vertices_f64) {
+            accepted.push(cache);
+        }
+    }
+    accepted
+}
+
 // ============================================================================
 // Phases
 // ============================================================================
@@ -129,10 +162,10 @@ fn run_q1(base_dir: &str, cfg: &BasicValidationConfig) {
     for &f_count in cfg.q1_facet_counts {
         let mut rng = ChaCha8Rng::seed_from_u64(SEED_BASE + f_count as u64);
         let polytopes =
-            generate_random_polytopes(cfg.q1_polytopes_per_f, f_count, 0.5, 2.0, &mut rng);
+            sample_random_cache_batch(cfg.q1_polytopes_per_f, f_count, 0.5, 2.0, &mut rng);
 
-        for (i, polytope) in polytopes.iter().enumerate() {
-            let info = match analyze_polytope(polytope) {
+        for (i, cache) in polytopes.iter().enumerate() {
+            let info = match analyze_cached_polytope(cache) {
                 Some(info) => info,
                 None => {
                     eprintln!("  Q1: F={} polytope {} — failed, skipping", f_count, i);
@@ -185,9 +218,10 @@ fn run_q2(base_dir: &str, cfg: &BasicValidationConfig) {
         let (qn, qh) = regular_polygon_2d(n1, 1.0);
         let (pn, ph) = regular_polygon_2d(n2, 1.0);
         let polytope = lagrangian_product(&qn, &qh, &pn, &ph).expect("regular LP");
+        let cache = GradientPolytopeCache::from_f64(polytope).expect("regular LP cache");
         let id = format!("lp_regular_{}_{}", n1, n2);
 
-        if let Some(info) = analyze_polytope(&polytope) {
+        if let Some(info) = analyze_cached_polytope(&cache) {
             let rows = first_order_test(
                 &info,
                 "q2",
@@ -216,9 +250,10 @@ fn run_q2(base_dir: &str, cfg: &BasicValidationConfig) {
             let (pn, ph) = regular_polygon_2d(n2, 1.0);
             let (pn_rot, ph_rot) = rotate_polygon_2d(&pn, &ph, theta);
             let polytope = lagrangian_product(&qn, &qh, &pn_rot, &ph_rot).expect("rotated LP");
+            let cache = GradientPolytopeCache::from_f64(polytope).expect("rotated LP cache");
             let id = format!("lp_rotated_{}_{}_{}", n1, n2, ai);
 
-            if let Some(info) = analyze_polytope(&polytope) {
+            if let Some(info) = analyze_cached_polytope(&cache) {
                 let rows = first_order_test(
                     &info,
                     "q2",
@@ -256,9 +291,10 @@ fn run_q2(base_dir: &str, cfg: &BasicValidationConfig) {
                     continue;
                 }
             };
+            let cache = GradientPolytopeCache::from_f64(polytope).expect("random LP cache");
             let id = format!("lp_random_{}_{}_{:02}", n1, n2, j);
 
-            if let Some(info) = analyze_polytope(&polytope) {
+            if let Some(info) = analyze_cached_polytope(&cache) {
                 let rows = first_order_test(
                     &info,
                     "q2",
