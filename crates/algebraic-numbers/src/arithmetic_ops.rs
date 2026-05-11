@@ -6,7 +6,7 @@ use num_traits::{One, Zero};
 use crate::algebraic_element::Algebraic;
 use crate::exact_scalar::{round_rational_to_f64, ExactScalar};
 use crate::field_specification::{field_degree, RealAlgebraicField};
-use crate::polynomial_arithmetic::{multiply_mod_field, polynomial_eval};
+use crate::polynomial_arithmetic::multiply_mod_field;
 
 impl<F: RealAlgebraicField> Zero for Algebraic<F> {
     fn zero() -> Self {
@@ -120,7 +120,7 @@ impl<F: RealAlgebraicField> From<i64> for Algebraic<F> {
 
 impl<F: RealAlgebraicField> ExactScalar for Algebraic<F> {
     fn round_to_f64(&self) -> f64 {
-        let root = field_root_approximation::<F>();
+        let root = F::root_f64();
         self.coeffs.iter().rev().fold(0.0, |value, coeff| {
             value.mul_add(root, round_rational_to_f64(coeff))
         })
@@ -129,31 +129,4 @@ impl<F: RealAlgebraicField> ExactScalar for Algebraic<F> {
 
 fn multiply<F: RealAlgebraicField>(left: Algebraic<F>, right: Algebraic<F>) -> Algebraic<F> {
     Algebraic::from_coeffs_unchecked(multiply_mod_field::<F>(&left.coeffs, &right.coeffs))
-}
-
-fn field_root_approximation<F: RealAlgebraicField>() -> f64 {
-    let polynomial = F::polynomial();
-    let (mut lower, mut upper) = F::isolating_interval();
-
-    for _ in 0..80 {
-        let midpoint = (lower.clone() + upper.clone()) / BigRational::from_integer(2.into());
-        let midpoint_value = polynomial_eval(&polynomial, &midpoint);
-        if midpoint_value.is_zero() {
-            return round_rational_to_f64(&midpoint);
-        }
-
-        let lower_value = polynomial_eval(&polynomial, &lower);
-        if same_strict_sign(&lower_value, &midpoint_value) {
-            lower = midpoint;
-        } else {
-            upper = midpoint;
-        }
-    }
-
-    round_rational_to_f64(&((lower + upper) / BigRational::from_integer(2.into())))
-}
-
-fn same_strict_sign(left: &BigRational, right: &BigRational) -> bool {
-    (left < &BigRational::zero() && right < &BigRational::zero())
-        || (left > &BigRational::zero() && right > &BigRational::zero())
 }
