@@ -24,6 +24,11 @@
 //! fixtures. The crate-level `ehz_capacity` entrypoint hides per-algorithm
 //! comparison paths.
 
+use dev_capacity_validation::{
+    capacity_billiard as cache_capacity_billiard,
+    capacity_pruned_hk2017 as cache_capacity_pruned_hk2017,
+    capacity_unpruned_hk2017 as cache_capacity_unpruned_hk2017, VerificationPolytopeCache,
+};
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use serde::{Deserialize, Serialize};
@@ -31,15 +36,9 @@ use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::path::{Path, PathBuf};
 use std::time::Instant;
-use symplectic::geom::lagrangian_product::lagrangian_product;
 use symplectic::geom::polygon::random_polygon_2d;
-use symplectic::geom::polytope::Polytope4D;
-use symplectic::random::generate_random_polytopes;
-use symplectic::{
-    aggregate_orbits_with_dual_vertices_exact, classify_facets_from_dual_vertices,
-    solve_billiard_candidates, solve_pruned_hk2017_candidates, solve_unpruned_hk2017_candidates,
-    BilliardError, OrbitGuaranteeMode, OrbitSearchError, OrbitSearchResult,
-};
+use symplectic::random::generate_random_dual_vertices;
+use symplectic::{BilliardError, OrbitSearchError, OrbitSearchResult};
 
 const SEED: u64 = 42;
 const H_MIN: f64 = 0.5;
@@ -93,56 +92,39 @@ const LAGRANGIAN_PLAN: &[(usize, usize)] = &[
 const SMOKE_RANDOM_PLAN: &[(usize, usize, bool)] = &[(5, 1, true)];
 const SMOKE_LAGRANGIAN_PLAN: &[(usize, usize)] = &[(3, 3)];
 
-fn transition_matrix(polytope: &Polytope4D) -> nalgebra::DMatrix<bool> {
-    symplectic::algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega(
-        polytope.facet_intersection_is_nonempty(),
-        polytope.omega_signs(),
+fn cache_from_dual_vertices(
+    dual_vertices: Vec<nalgebra::Vector4<f64>>,
+) -> VerificationPolytopeCache {
+    VerificationPolytopeCache::from_f64_dual_vertices(dual_vertices)
+        .expect("accepted random dual vertices should reconstruct")
+}
+
+fn capacity_pruned_hk2017(
+    polytope: &VerificationPolytopeCache,
+) -> Result<OrbitSearchResult, OrbitSearchError> {
+    cache_capacity_pruned_hk2017(
+        &polytope.dual_vertices_f64,
+        &polytope.dual_vertices,
+        &polytope.facet_intersection_is_nonempty,
+        &polytope.omega_signs,
     )
 }
 
-fn capacity_pruned_hk2017(polytope: &Polytope4D) -> Result<OrbitSearchResult, OrbitSearchError> {
-    let transition_is_allowed = transition_matrix(polytope);
-    let (orbits, iterations) =
-        solve_pruned_hk2017_candidates(polytope.dual_vertices_f64(), &transition_is_allowed)?;
-    aggregate_orbits_with_dual_vertices_exact(
-        polytope.dual_vertices(),
-        orbits,
-        iterations,
-        0.0,
-        OrbitGuaranteeMode::MinimaSafe,
-    )
+fn capacity_unpruned_hk2017(
+    polytope: &VerificationPolytopeCache,
+) -> Result<OrbitSearchResult, OrbitSearchError> {
+    cache_capacity_unpruned_hk2017(&polytope.dual_vertices_f64, &polytope.dual_vertices)
 }
 
-fn capacity_unpruned_hk2017(polytope: &Polytope4D) -> Result<OrbitSearchResult, OrbitSearchError> {
-    let (orbits, iterations) = solve_unpruned_hk2017_candidates(polytope.dual_vertices_f64())?;
-    aggregate_orbits_with_dual_vertices_exact(
-        polytope.dual_vertices(),
-        orbits,
-        iterations,
-        0.0,
-        OrbitGuaranteeMode::MinimaSafe,
+fn capacity_billiard(
+    polytope: &VerificationPolytopeCache,
+) -> Result<OrbitSearchResult, BilliardError> {
+    cache_capacity_billiard(
+        &polytope.dual_vertices_f64,
+        &polytope.dual_vertices,
+        &polytope.facet_intersection_is_nonempty,
+        &polytope.omega_signs,
     )
-}
-
-fn capacity_billiard(polytope: &Polytope4D) -> Result<OrbitSearchResult, BilliardError> {
-    let classification = classify_facets_from_dual_vertices(polytope.dual_vertices_f64())?;
-    let transition_is_allowed = transition_matrix(polytope);
-    let (orbits, iterations) = solve_billiard_candidates(
-        polytope.dual_vertices_f64(),
-        &classification.q_indices,
-        &classification.p_indices,
-        polytope.facet_intersection_is_nonempty(),
-        &transition_is_allowed,
-    )
-    .map_err(BilliardError::OrbitSearch)?;
-    aggregate_orbits_with_dual_vertices_exact(
-        polytope.dual_vertices(),
-        orbits,
-        iterations,
-        0.0,
-        OrbitGuaranteeMode::MinimaSafe,
-    )
-    .map_err(BilliardError::OrbitSearch)
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -215,7 +197,10 @@ fn main() {
     println!("Part 1: Random polytopes for HK2017 timing model");
     for &(f, n, include_unpruned) in random_plan {
         print!("  F={f:2}: generating {n:2} polytopes... ");
-        let polytopes = generate_random_polytopes(n, f, H_MIN, H_MAX, &mut rng);
+        let polytopes = generate_random_dual_vertices(n, f, H_MIN, H_MAX, &mut rng)
+            .into_iter()
+            .map(cache_from_dual_vertices)
+            .collect::<Vec<_>>();
 
         for (i, p) in polytopes.iter().enumerate() {
             // Pruned (always)
@@ -242,7 +227,7 @@ fn main() {
                 group: "random".to_string(),
                 facet_count: p.facet_count(),
                 dual_vertices: p
-                    .dual_vertices_f64()
+                    .dual_vertices_f64
                     .iter()
                     .map(|a| [a[0], a[1], a[2], a[3]])
                     .collect(),
@@ -270,7 +255,9 @@ fn main() {
             let p = loop {
                 let (qn, qh) = random_polygon_2d(n, H_MIN, H_MAX, &mut rng);
                 let (pn, ph) = random_polygon_2d(m, H_MIN, H_MAX, &mut rng);
-                if let Ok(polytope) = lagrangian_product(&qn, &qh, &pn, &ph) {
+                if let Some(polytope) =
+                    VerificationPolytopeCache::from_lagrangian_product(&qn, &qh, &pn, &ph)
+                {
                     break polytope;
                 }
             };
@@ -290,7 +277,7 @@ fn main() {
                 group: "lagrangian".to_string(),
                 facet_count: p.facet_count(),
                 dual_vertices: p
-                    .dual_vertices_f64()
+                    .dual_vertices_f64
                     .iter()
                     .map(|a| [a[0], a[1], a[2], a[3]])
                     .collect(),

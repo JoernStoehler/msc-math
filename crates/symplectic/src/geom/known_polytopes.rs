@@ -1,10 +1,10 @@
-//! Named polytope constructors with known EHZ capacity values from the literature.
+//! Named flat polytope fixtures with known EHZ capacity values from the literature.
 //!
 //! Single source of truth for polytope definitions and their known capacity values.
 //! Used by: test utilities, dataset generation, and capacity validation
 //! (`hk2017` smoke tests and verification experiments).
 //!
-//! Each polytope is constructed once (on first access) and cached via `LazyLock`.
+//! Each fixture is constructed once (on first access) and cached via `LazyLock`.
 //! Constructors return `&'static KnownPolytope` — zero-cost after first call.
 //!
 //! Coordinates: (q_1, q_2, p_1, p_2). See `symplectic_form` module for J_0 and omega_0.
@@ -18,25 +18,26 @@ use num_rational::BigRational;
 use std::f64::consts::PI;
 use std::sync::LazyLock;
 
-/// A polytope with a known capacity value and source reference.
+/// A named polytope fixture with a known capacity value and source reference.
 #[derive(Clone, Debug)]
 pub struct KnownPolytope {
-    /// The polytope instance.
-    pub polytope: Polytope4D,
-    /// Dual vertices a_i, vertices of the polar body K°.
+    /// Temporary in-crate unit-test bridge while algorithm tests migrate to flat fixtures.
+    #[cfg(test)]
+    pub(crate) polytope: Polytope4D,
+    /// Exact rational dual vertices `a_i`; halfspace `i` is `<a_i, x> <= 1`.
     pub dual_vertices: Vec<[BigRational; 4]>,
-    /// Exact rational vertices of K.
+    /// Exact rational vertices of the primal body.
     pub vertices: Vec<[BigRational; 4]>,
-    /// Dual vertices a_i as f64 vectors.
-    pub dual_vertices_f64: Vec<Vector4<f64>>,
-    /// Vertices of K rounded to f64.
-    pub vertices_f64: Vec<Vector4<f64>>,
     /// Vertex-facet incidence matrix.
-    pub incidence: DMatrix<bool>,
+    pub vertex_facet_incidence: DMatrix<bool>,
     /// Facet-pair nonempty-intersection matrix.
     pub facet_intersection_is_nonempty: DMatrix<bool>,
-    /// Symplectic sign matrix omega in {-1,0,+1}^{F x F}.
+    /// Exact sign matrix of `omega_0(a_i, a_j)`.
     pub omega_signs: DMatrix<i8>,
+    /// Dual vertices as f64 vectors for numerical algorithms.
+    pub dual_vertices_f64: Vec<Vector4<f64>>,
+    /// Primal vertices rounded to f64.
+    pub vertices_f64: Vec<Vector4<f64>>,
     /// Known EHZ capacity value.
     pub capacity: f64,
     /// Short human-readable name.
@@ -45,30 +46,41 @@ pub struct KnownPolytope {
     pub source: &'static str,
 }
 
-fn known_polytope(
-    polytope: Polytope4D,
-    capacity: f64,
-    name: &'static str,
-    source: &'static str,
-) -> KnownPolytope {
-    KnownPolytope {
-        dual_vertices: polytope.dual_vertices().to_vec(),
-        vertices: polytope.vertices().to_vec(),
-        dual_vertices_f64: polytope.dual_vertices_f64().to_vec(),
-        vertices_f64: polytope.vertices_f64().to_vec(),
-        incidence: polytope.incidence().clone(),
-        facet_intersection_is_nonempty: polytope.facet_intersection_is_nonempty().clone(),
-        omega_signs: polytope.omega_signs().clone(),
-        polytope,
-        capacity,
-        name,
-        source,
+impl KnownPolytope {
+    fn from_private_polytope(
+        polytope: Polytope4D,
+        capacity: f64,
+        name: &'static str,
+        source: &'static str,
+    ) -> Self {
+        #[cfg(test)]
+        let test_polytope = polytope.clone();
+
+        Self {
+            #[cfg(test)]
+            polytope: test_polytope,
+            dual_vertices: polytope.dual_vertices().to_vec(),
+            vertices: polytope.vertices().to_vec(),
+            vertex_facet_incidence: polytope.incidence().clone(),
+            facet_intersection_is_nonempty: polytope.facet_intersection_is_nonempty().clone(),
+            omega_signs: polytope.omega_signs().clone(),
+            dual_vertices_f64: polytope.dual_vertices_f64().to_vec(),
+            vertices_f64: polytope.vertices_f64().to_vec(),
+            capacity,
+            name,
+            source,
+        }
+    }
+
+    /// Number of facets in this fixture.
+    pub fn facet_count(&self) -> usize {
+        self.dual_vertices.len()
     }
 }
 
-/// All known polytopes with verified or computed capacity values.
+/// All known fixtures with verified or computed capacity values.
 ///
-/// Returns references to the cached singletons. Each polytope is constructed
+/// Returns references to the cached singletons. Each fixture is constructed
 /// on first access (via its individual constructor) and never again.
 pub fn all_known() -> Vec<&'static KnownPolytope> {
     vec![
@@ -121,7 +133,7 @@ pub fn simplex() -> &'static KnownPolytope {
             [rat(5), rat(5), rat(5), rat(5)],
         ];
 
-        known_polytope(
+        KnownPolytope::from_private_polytope(
             Polytope4D::new(dual_vertices).expect("simplex construction"),
             0.25,
             "simplex",
@@ -152,7 +164,7 @@ pub fn hypercube() -> &'static KnownPolytope {
             [z.clone(), z.clone(), z.clone(), rat(-1)],
         ];
 
-        known_polytope(
+        KnownPolytope::from_private_polytope(
             Polytope4D::new(dual_vertices).expect("hypercube construction"),
             4.0,
             "hypercube",
@@ -182,7 +194,7 @@ pub fn crosspolytope() -> &'static KnownPolytope {
             }
         }
 
-        known_polytope(
+        KnownPolytope::from_private_polytope(
             Polytope4D::new(dual_vertices).expect("crosspolytope construction"),
             4.0,
             "crosspolytope",
@@ -236,7 +248,7 @@ pub fn hko_pentagon() -> &'static KnownPolytope {
             .collect();
         let capacity = 2.0 * (PI / 10.0).cos() * (1.0 + (PI / 5.0).cos());
 
-        known_polytope(
+        KnownPolytope::from_private_polytope(
             Polytope4D::from_f64(halfspaces).expect("HKO pentagon construction"),
             capacity,
             "hko_pentagon",
@@ -270,7 +282,7 @@ pub fn lagrangian_triangle_product() -> &'static KnownPolytope {
             )
             .collect();
 
-        known_polytope(
+        KnownPolytope::from_private_polytope(
             Polytope4D::from_f64(halfspaces).expect("lagrangian triangle product construction"),
             1.5,
             "lagrangian_triangle_product",
@@ -310,7 +322,7 @@ pub fn symplectic_triangle_product() -> &'static KnownPolytope {
 
         let area_tri = 3.0 * 3.0_f64.sqrt() / 4.0;
 
-        known_polytope(
+        KnownPolytope::from_private_polytope(
             Polytope4D::from_f64(halfspaces).expect("symplectic triangle product construction"),
             area_tri,
             "symplectic_triangle_product",
@@ -344,7 +356,7 @@ pub fn lagrangian_triangle_square() -> &'static KnownPolytope {
 
         let halfspaces: Vec<Vector4<f64>> = triangle_halfspaces.chain(square_halfspaces).collect();
 
-        known_polytope(
+        KnownPolytope::from_private_polytope(
             Polytope4D::from_f64(halfspaces).expect("Lagrangian triangle x square construction"),
             1.5,
             "lagrangian_tri_sq",
@@ -385,7 +397,7 @@ pub fn symplectic_triangle_square() -> &'static KnownPolytope {
         let area_tri = 3.0 * 3.0_f64.sqrt() / 4.0;
         let area_sq = 1.0;
 
-        known_polytope(
+        KnownPolytope::from_private_polytope(
             Polytope4D::from_f64(halfspaces).expect("symplectic triangle x square construction"),
             area_tri.min(area_sq),
             "symplectic_tri_sq",
@@ -404,52 +416,52 @@ mod tests {
     fn all_known_polytopes_valid() {
         for kp in all_known() {
             assert!(
-                kp.polytope.facet_count() >= 5,
+                kp.facet_count() >= 5,
                 "{}: too few facets ({})",
                 kp.name,
-                kp.polytope.facet_count()
+                kp.facet_count()
             );
         }
     }
 
     #[test]
     fn simplex_has_5_facets() {
-        assert_eq!(simplex().polytope.facet_count(), 5);
+        assert_eq!(simplex().facet_count(), 5);
     }
 
     #[test]
     fn hypercube_has_8_facets() {
-        assert_eq!(hypercube().polytope.facet_count(), 8);
+        assert_eq!(hypercube().facet_count(), 8);
     }
 
     #[test]
     fn crosspolytope_has_16_facets() {
-        assert_eq!(crosspolytope().polytope.facet_count(), 16);
+        assert_eq!(crosspolytope().facet_count(), 16);
     }
 
     #[test]
     fn hko_pentagon_has_10_facets() {
-        assert_eq!(hko_pentagon().polytope.facet_count(), 10);
+        assert_eq!(hko_pentagon().facet_count(), 10);
     }
 
     #[test]
     fn lagrangian_triangle_product_has_6_facets() {
-        assert_eq!(lagrangian_triangle_product().polytope.facet_count(), 6);
+        assert_eq!(lagrangian_triangle_product().facet_count(), 6);
     }
 
     #[test]
     fn symplectic_triangle_product_has_6_facets() {
-        assert_eq!(symplectic_triangle_product().polytope.facet_count(), 6);
+        assert_eq!(symplectic_triangle_product().facet_count(), 6);
     }
 
     #[test]
     fn lagrangian_tri_sq_has_7_facets() {
-        assert_eq!(lagrangian_triangle_square().polytope.facet_count(), 7);
+        assert_eq!(lagrangian_triangle_square().facet_count(), 7);
     }
 
     #[test]
     fn symplectic_tri_sq_has_7_facets() {
-        assert_eq!(symplectic_triangle_square().polytope.facet_count(), 7);
+        assert_eq!(symplectic_triangle_square().facet_count(), 7);
     }
 
     #[test]

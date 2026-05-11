@@ -1,7 +1,6 @@
-//! Geometry primitives and convex polytope types for R^4.
+//! Geometry primitives and flat convex-polytope data helpers for R^4.
 //!
 //! Submodules:
-//! - `polytope` — `Polytope4D`, the central convex body type
 //! - `symplectic_form` — standard symplectic form omega_0 and J_0
 //! - `polygon` — 2D convex polygon constructors
 //! - `lagrangian_product` — Lagrangian products from two 2D polygons
@@ -12,15 +11,15 @@
 //! - `vertex_enumeration` — exact vertex enumeration over Q
 //! - `qhull` — test-only qhull subprocess wrapper for volume cross-checks
 //! - `reeb_trajectory` — piecewise-linear Reeb flow simulation
-//! - `known_polytopes` — named polytope constructors with known EHZ capacity values
-//! - `test_utils` — test-only polytope constructors
+//! - `known_polytopes` — named flat fixtures with known EHZ capacity values
+//! - `test_utils` — test-only flat fixture helpers
 
 pub mod cross_product_4d;
 pub mod facet_volume;
 pub mod known_polytopes;
 pub mod lagrangian_product;
 pub mod polygon;
-pub mod polytope;
+pub(crate) mod polytope;
 #[cfg(test)]
 mod qhull;
 pub mod rational_arithmetic;

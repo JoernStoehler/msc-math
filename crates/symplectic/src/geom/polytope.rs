@@ -95,8 +95,6 @@ pub enum ConstructionError {
     RedundantFacet(usize),
     /// Exact-to-f64 conversion produced degenerate result.
     F64Conversion(String),
-    /// Perturbation failed to break all omega_0 = 0 degeneracies.
-    PerturbationFailed,
 }
 
 impl std::fmt::Display for ConstructionError {
@@ -116,12 +114,6 @@ impl std::fmt::Display for ConstructionError {
             Self::NoVertices => write!(f, "no vertices found (inconsistent halfspaces)"),
             Self::RedundantFacet(i) => write!(f, "facet {i} is redundant"),
             Self::F64Conversion(msg) => write!(f, "f64 conversion failed: {msg}"),
-            Self::PerturbationFailed => {
-                write!(
-                    f,
-                    "perturbation failed to break all omega_0 = 0 (astronomically unlikely)"
-                )
-            }
         }
     }
 }
@@ -238,6 +230,7 @@ impl Polytope4D {
     ///
     /// Then calls assemble() to build incidence, omega_signs,
     /// facet_intersection_is_nonempty, and f64 copies.
+    #[cfg(test)]
     pub fn from_rational_parts(
         dual_vertices: Vec<[BigRational; 4]>,
         vertices: Vec<[BigRational; 4]>,
@@ -286,44 +279,6 @@ impl Polytope4D {
             dual_vertices_f64,
             vertices_f64,
         ))
-    }
-
-    /// Perturb dual vertices to break omega_0 = 0 degeneracies.
-    ///
-    /// Returns a new `Polytope4D` whose dual vertices are randomly perturbed
-    /// by magnitude ~2^{-perturbation_bits}.
-    ///
-    /// Post-condition: all facet pairs with nonempty intersection have
-    /// omega_0 != 0.
-    pub fn perturbed(
-        &self,
-        rng: &mut impl rand::Rng,
-        perturbation_bits: u32,
-    ) -> Result<Self, ConstructionError> {
-        let perturbed: Vec<[BigRational; 4]> = self
-            .dual_vertices
-            .iter()
-            .map(|y| {
-                std::array::from_fn(|c| {
-                    &y[c]
-                        + super::rational_arithmetic::random_small_rational(rng, perturbation_bits)
-                })
-            })
-            .collect();
-
-        let result = Self::new(perturbed)?;
-
-        let f = result.facet_count();
-        for i in 0..f {
-            for k in (i + 1)..f {
-                if result.facet_intersection_is_nonempty[(i, k)] && result.omega_signs[(i, k)] == 0
-                {
-                    return Err(ConstructionError::PerturbationFailed);
-                }
-            }
-        }
-
-        Ok(result)
     }
 
     /// Assemble from pre-computed components (internal).
@@ -420,6 +375,7 @@ impl Polytope4D {
     }
 
     /// Number of facets F.
+    #[cfg(test)]
     pub fn facet_count(&self) -> usize {
         self.dual_vertices.len()
     }

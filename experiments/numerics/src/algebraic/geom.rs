@@ -379,7 +379,7 @@ mod tests {
 
         assert_eq!(dual_vertices.len(), library.dual_vertices.len());
         assert_eq!(vertices.len(), library.vertices.len());
-        assert!(same_incidence(&incidence, &library.incidence));
+        assert!(same_incidence(&incidence, &library.vertex_facet_incidence));
         assert_exact_polytope_self_consistent(
             &dual_vertices,
             &vertices,
@@ -397,7 +397,7 @@ mod tests {
         let library = known_polytopes::hypercube();
 
         assert_eq!(vertices.len(), library.vertices.len());
-        assert!(same_incidence(&incidence, &library.incidence));
+        assert!(same_incidence(&incidence, &library.vertex_facet_incidence));
         assert_exact_polytope_self_consistent(
             &dual_vertices,
             &vertices,

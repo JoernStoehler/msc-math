@@ -115,7 +115,7 @@ fn main() {
     for fixture in &polytopes {
         let duals_raw: Vec<[f64; 4]> = fixture
             .polytope
-            .dual_vertices_f64()
+            .dual_vertices_f64
             .iter()
             .map(|a| [a[0], a[1], a[2], a[3]])
             .collect();

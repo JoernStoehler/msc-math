@@ -4,10 +4,12 @@
 
 use super::*;
 use crate::algorithms::orbit_search::solve_sigma_stream_with_dual_vertices;
+use crate::algorithms::test_helpers::{
+    billiard_capacity_for_fixture, pruned_capacity_for_fixture, unpruned_capacity_for_fixture,
+};
 use crate::algorithms::{aggregate_orbits_with_dual_vertices_exact, OrbitGuaranteeMode};
 use crate::geom::known_polytopes;
 use crate::kkt::saddle_point_solver::solve_kkt_for_dual_vertices;
-use crate::{ehz_capacity_pruned, ehz_capacity_unpruned};
 
 // ── Smoke tests: direct capacity computation on small polytopes ──
 
@@ -19,7 +21,7 @@ use crate::{ehz_capacity_pruned, ehz_capacity_unpruned};
 #[test]
 fn simplex_capacity() {
     let kp = known_polytopes::simplex();
-    let result = ehz_capacity_unpruned(&kp.polytope).expect("simplex should have capacity");
+    let result = unpruned_capacity_for_fixture(kp).expect("simplex should have capacity");
     assert!(
         (result.capacity() - kp.capacity).abs() < 1e-6,
         "simplex capacity: got {}, expected {}",
@@ -35,7 +37,7 @@ fn simplex_capacity() {
 #[test]
 fn hypercube_capacity() {
     let kp = known_polytopes::hypercube();
-    let result = ehz_capacity_unpruned(&kp.polytope).expect("hypercube should have capacity");
+    let result = unpruned_capacity_for_fixture(kp).expect("hypercube should have capacity");
     assert!(
         (result.capacity() - kp.capacity).abs() < 1e-6,
         "hypercube capacity: got {}, expected {}",
@@ -51,7 +53,7 @@ fn hypercube_capacity() {
 #[test]
 fn lagrangian_triangle_product_capacity() {
     let kp = known_polytopes::lagrangian_triangle_product();
-    let result = ehz_capacity_unpruned(&kp.polytope)
+    let result = unpruned_capacity_for_fixture(kp)
         .expect("lagrangian triangle product should have capacity");
     assert!(
         (result.capacity() - kp.capacity).abs() < 1e-6,
@@ -68,7 +70,7 @@ fn lagrangian_triangle_product_capacity() {
 #[test]
 fn triangle_square_capacity() {
     let kp = known_polytopes::lagrangian_triangle_square();
-    let result = ehz_capacity_pruned(&kp.polytope).expect("Lagrangian triangle x square capacity");
+    let result = pruned_capacity_for_fixture(kp).expect("Lagrangian triangle x square capacity");
     assert!(
         (result.capacity() - kp.capacity).abs() < 1e-6,
         "Lagrangian triangle x square: got {}, expected {}",
@@ -84,7 +86,7 @@ fn triangle_square_capacity() {
 #[test]
 fn symplectic_triangle_square_capacity() {
     let kp = known_polytopes::symplectic_triangle_square();
-    let result = ehz_capacity_pruned(&kp.polytope).expect("symplectic triangle x square capacity");
+    let result = pruned_capacity_for_fixture(kp).expect("symplectic triangle x square capacity");
     assert!(
         (result.capacity() - kp.capacity).abs() < 1e-6,
         "symplectic triangle x square: got {}, expected {} (min formula)",
@@ -97,12 +99,12 @@ fn symplectic_triangle_square_capacity() {
 #[test]
 fn simplex_orbit_aggregation() {
     let kp = known_polytopes::simplex();
-    let dual_vertices = kp.polytope.dual_vertices_f64();
-    let dual_vertices_exact = kp.polytope.dual_vertices();
+    let dual_vertices = &kp.dual_vertices_f64;
+    let dual_vertices_exact = &kp.dual_vertices;
     let (orbits, iterations) = solve_sigma_stream_with_dual_vertices(dual_vertices, |visit| {
             let transition_is_allowed = crate::algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega(
-                kp.polytope.facet_intersection_is_nonempty(),
-                kp.polytope.omega_signs(),
+                &kp.facet_intersection_is_nonempty,
+                &kp.omega_signs,
             );
             for_each_sigma_pruned_by_transition(&transition_is_allowed, visit)
     })
@@ -155,7 +157,7 @@ fn crosspolytope_upper_bound() {
 
     // Solve KKT for the known minimizing permutation [0, 12, 15, 3].
     let perm = [0usize, 12, 15, 3];
-    let dual_vertices = kp.polytope.dual_vertices_f64();
+    let dual_vertices = &kp.dual_vertices_f64;
     let outcome = solve_kkt_for_dual_vertices(dual_vertices, &perm);
 
     let kkt_result = match outcome {
@@ -194,7 +196,7 @@ fn crosspolytope_upper_bound() {
     };
 
     let geometric_orbit =
-        recover_and_verify(&kp.polytope, &orbit).expect("geometric orbit recovery failed");
+        recover_and_verify(&kp.dual_vertices_f64, &orbit).expect("geometric orbit recovery failed");
 
     assert!(
         geometric_orbit.closure_error < 1e-8,
@@ -228,9 +230,8 @@ fn billiard_agrees_with_hk2017_on_small_lagrangian_products() {
         known_polytopes::lagrangian_triangle_product(),
         known_polytopes::lagrangian_triangle_square(),
     ] {
-        let hk = ehz_capacity_pruned(&kp.polytope).expect("HK2017 capacity");
-        let billiard =
-            crate::ehz_capacity_billiard(&kp.polytope).expect("billiard should have capacity");
+        let hk = pruned_capacity_for_fixture(kp).expect("HK2017 capacity");
+        let billiard = billiard_capacity_for_fixture(kp);
         let rel_err = (hk.capacity() - billiard.capacity()).abs() / billiard.capacity();
         assert!(
             rel_err < 1e-6,

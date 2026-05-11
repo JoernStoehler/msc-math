@@ -64,7 +64,7 @@ fn main() {
     println!("Crosspolytope: {facet_count} facets");
 
     let start_vol = Instant::now();
-    let vol = euclidean_volume_f64(&kp.vertices, &kp.incidence);
+    let vol = euclidean_volume_f64(&kp.vertices, &kp.vertex_facet_incidence);
     let time_volume_ms = start_vol.elapsed().as_secs_f64() * 1000.0;
     println!("Volume: {vol:.10} ({time_volume_ms:.1} ms)");
 

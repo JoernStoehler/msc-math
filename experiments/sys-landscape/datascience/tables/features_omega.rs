@@ -1,9 +1,9 @@
 //! Symplectic-form and transition-graph feature columns.
 
 use euclidean_polytopes::TwoFace;
+use exp_sys_landscape::SysLandscapePolytopeCache;
 use nalgebra::DMatrix;
 use symplectic::algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega;
-use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::symplectic_form::omega0;
 
 use super::features_helpers::{fraction_at_most, stats_or_zero};
@@ -32,7 +32,7 @@ pub struct OmegaFields {
 }
 
 pub fn compute_omega_fields(
-    polytope: &Polytope4D,
+    polytope: &SysLandscapePolytopeCache,
     two_faces: &[TwoFace],
     duals: &[nalgebra::Vector4<f64>],
     facet_count: usize,
@@ -43,7 +43,7 @@ pub fn compute_omega_fields(
     for i in 0..facet_count {
         for j in (i + 1)..facet_count {
             let value = omega0(&duals[i], &duals[j]).abs() * omega_scale;
-            if polytope.omega_signs()[(i, j)] == 0 {
+            if polytope.omega_signs[(i, j)] == 0 {
                 allpair_zero_count += 1;
             }
             allpair_abs_omegas.push(value);
@@ -57,13 +57,13 @@ pub fn compute_omega_fields(
         .collect::<Vec<_>>();
     let ridge_zero_count = two_faces
         .iter()
-        .filter(|two_face| polytope.omega_signs()[(two_face.facets[0], two_face.facets[1])] == 0)
+        .filter(|two_face| polytope.omega_signs[(two_face.facets[0], two_face.facets[1])] == 0)
         .count();
-    let facet_intersection_is_nonempty = polytope.facet_intersection_is_nonempty();
-    let omega_signs = polytope.omega_signs();
+    let facet_intersection_is_nonempty = &polytope.facet_intersection_is_nonempty;
+    let omega_signs = &polytope.omega_signs;
     let transition = build_transition_matrix_from_facet_intersections_and_omega(
-        &facet_intersection_is_nonempty,
-        &omega_signs,
+        facet_intersection_is_nonempty,
+        omega_signs,
     );
     let mut transition_true_count = 0usize;
     let mut facet_intersection_pair_count = 0usize;

@@ -346,7 +346,7 @@ fn main() {
         .expect("winning hko row")
         .action_exact_f64;
     let expected_capacity = hko_capacity_formula_f64();
-    let hko_incidence_match = same_incidence(&hko_incidence, &library_hko.incidence);
+    let hko_incidence_match = same_incidence(&hko_incidence, &library_hko.vertex_facet_incidence);
     let hko_adjacency_match =
         same_bool_matrix(&hko_adjacency, &library_hko.facet_intersection_is_nonempty);
     let hko_omega_match = same_i8_matrix(&hko_omega_signs, &library_hko.omega_signs);

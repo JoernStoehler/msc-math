@@ -218,11 +218,7 @@ fn run_q2(base_dir: &str, cfg: &BasicValidationConfig) {
         let (qn, qh) = regular_polygon_2d(n1, 1.0);
         let (pn, ph) = regular_polygon_2d(n2, 1.0);
         let polytope = lagrangian_product(&qn, &qh, &pn, &ph).expect("regular LP");
-        let cache = GradientPolytopeCache::from_rational_parts(
-            polytope.dual_vertices().to_vec(),
-            polytope.vertices().to_vec(),
-        )
-        .expect("regular LP cache");
+        let cache = GradientPolytopeCache::from_f64(polytope).expect("regular LP cache");
         let id = format!("lp_regular_{}_{}", n1, n2);
 
         if let Some(info) = analyze_cached_polytope(&cache) {
@@ -254,11 +250,7 @@ fn run_q2(base_dir: &str, cfg: &BasicValidationConfig) {
             let (pn, ph) = regular_polygon_2d(n2, 1.0);
             let (pn_rot, ph_rot) = rotate_polygon_2d(&pn, &ph, theta);
             let polytope = lagrangian_product(&qn, &qh, &pn_rot, &ph_rot).expect("rotated LP");
-            let cache = GradientPolytopeCache::from_rational_parts(
-                polytope.dual_vertices().to_vec(),
-                polytope.vertices().to_vec(),
-            )
-            .expect("rotated LP cache");
+            let cache = GradientPolytopeCache::from_f64(polytope).expect("rotated LP cache");
             let id = format!("lp_rotated_{}_{}_{}", n1, n2, ai);
 
             if let Some(info) = analyze_cached_polytope(&cache) {
@@ -299,11 +291,7 @@ fn run_q2(base_dir: &str, cfg: &BasicValidationConfig) {
                     continue;
                 }
             };
-            let cache = GradientPolytopeCache::from_rational_parts(
-                polytope.dual_vertices().to_vec(),
-                polytope.vertices().to_vec(),
-            )
-            .expect("random LP cache");
+            let cache = GradientPolytopeCache::from_f64(polytope).expect("random LP cache");
             let id = format!("lp_random_{}_{}_{:02}", n1, n2, j);
 
             if let Some(info) = analyze_cached_polytope(&cache) {

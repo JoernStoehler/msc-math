@@ -26,8 +26,6 @@ use crate::algorithms::facet_adjacency::build_transition_matrix_from_facet_inter
 use crate::algorithms::facet_adjacency::is_feasible_cycle;
 use crate::algorithms::orbit_search::solve_sigma_stream_with_dual_vertices;
 use crate::algorithms::{OrbitKktData, OrbitSearchError};
-#[cfg(test)]
-use crate::geom::polytope::Polytope4D;
 use block_enumeration::{enumerate_blocks, enumerate_k_bounce_sigmas};
 #[cfg(test)]
 use facet_classification::classify_facets;
@@ -93,10 +91,10 @@ impl std::error::Error for BilliardError {}
 /// block of length 1 or 2, returns `Ok(None)`.
 #[cfg(test)]
 pub(crate) fn bounce_count_from_sigma(
-    polytope: &Polytope4D,
+    dual_vertices: &[Vector4<f64>],
     sigma: &[usize],
 ) -> Result<Option<usize>, BilliardError> {
-    let classification = classify_facets(polytope)?;
+    let classification = classify_facets(dual_vertices)?;
     Ok(classification.bounce_count_for_sigma(sigma))
 }
 
@@ -106,8 +104,7 @@ pub(crate) fn bounce_count_from_sigma(
 /// index lists for the same ordered facet set as `sigma`.
 ///
 /// Public because branch-analysis experiments need to classify already-solved
-/// orbits and filtered sigma streams without rebuilding a `Polytope4D`-based
-/// billiard wrapper.
+/// orbits and filtered sigma streams from flat facet data.
 pub fn bounce_count_from_sigma_for_facets(
     q_facet_indices: &[usize],
     p_facet_indices: &[usize],
@@ -197,15 +194,15 @@ pub fn solve_billiard_candidates(
     })
 }
 
-/// Visit every billiard sigma for a valid Lagrangian product polytope.
+/// Visit every billiard sigma for a valid flat Lagrangian-product facet set.
 #[cfg(test)]
 pub(crate) fn for_each_sigma(
-    polytope: &Polytope4D,
+    dual_vertices: &[Vector4<f64>],
+    facet_intersection_is_nonempty: &DMatrix<bool>,
+    omega_signs: &DMatrix<i8>,
     visit: impl FnMut(&[usize]),
 ) -> Result<(), BilliardError> {
-    let classification = classify_facets(polytope)?;
-    let facet_intersection_is_nonempty = polytope.facet_intersection_is_nonempty();
-    let omega_signs = polytope.omega_signs();
+    let classification = classify_facets(dual_vertices)?;
     let transition_is_allowed = build_transition_matrix_from_facet_intersections_and_omega(
         facet_intersection_is_nonempty,
         omega_signs,

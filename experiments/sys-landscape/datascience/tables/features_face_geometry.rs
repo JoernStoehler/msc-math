@@ -1,8 +1,8 @@
 //! Edge-length and facet-volume feature columns.
 
+use exp_sys_landscape::SysLandscapePolytopeCache;
 use nalgebra::Vector4;
 use symplectic::geom::facet_volume::facet_volume_from_incidence_f64;
-use symplectic::geom::polytope::Polytope4D;
 
 use super::features_helpers::{max_share, stats_or_zero};
 
@@ -21,7 +21,7 @@ pub struct FaceGeometryFields {
 }
 
 pub fn compute_face_geometry_fields(
-    polytope: &Polytope4D,
+    polytope: &SysLandscapePolytopeCache,
     edges: &[[usize; 2]],
     vertices: &[Vector4<f64>],
     facet_count: usize,
@@ -34,8 +34,12 @@ pub fn compute_face_geometry_fields(
         .collect::<Vec<_>>();
     let facet_volumes = (0..facet_count)
         .map(|facet| {
-            facet_volume_from_incidence_f64(polytope.vertices_f64(), polytope.incidence(), facet)
-                .expect("dataset polytope has valid finite geometry")
+            facet_volume_from_incidence_f64(
+                &polytope.vertices_f64,
+                &polytope.vertex_facet_incidence,
+                facet,
+            )
+            .expect("dataset polytope has valid finite geometry")
                 / facet_scale
         })
         .collect::<Vec<_>>();

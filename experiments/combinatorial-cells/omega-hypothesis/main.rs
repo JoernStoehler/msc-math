@@ -41,7 +41,7 @@ use symplectic::derivatives::{capacity_derivatives_a_from_kkt_result, volume_der
 use symplectic::geom::known_polytopes;
 use symplectic::geom::symplectic_form::omega0;
 use symplectic::kkt::saddle_point_solver::{solve_kkt_for_dual_vertices, KktResult};
-use symplectic::random::generate_polytope;
+use symplectic::random::generate_dual_vertices;
 
 // ============================================================================
 // Configuration
@@ -400,7 +400,7 @@ fn main() {
     eprintln!("=== Omega-obstacle experiment ===");
     eprintln!("Output: {}", out_path.display());
 
-    // Random polytopes via generate_polytope (blake3 per-attempt seeding)
+    // Random dual vertices via blake3 per-attempt seeding.
     let mut attempt: u64 = 0;
     for &(f, n) in SAMPLING_PLAN {
         let t0 = Instant::now();
@@ -430,13 +430,10 @@ fn main() {
                 (p, c)
             } else {
                 // Generate new polytope
-                match generate_polytope(f, H_MIN, H_MAX, SEED, attempt) {
-                    Ok(p) => (
-                        CellPolytopeCache::from_rational_parts(
-                            p.dual_vertices().to_vec(),
-                            p.vertices().to_vec(),
-                        )
-                        .expect("generated polytope cache"),
+                match generate_dual_vertices(f, H_MIN, H_MAX, SEED, attempt) {
+                    Ok(dual_vertices) => (
+                        CellPolytopeCache::from_f64(dual_vertices)
+                            .expect("generated polytope cache"),
                         None,
                     ),
                     Err(_) => {

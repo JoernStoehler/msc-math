@@ -1023,11 +1023,7 @@ fn run_q5b(base_dir: &str, smoke: bool) {
         let (qn, qh) = regular_polygon_2d(n, 1.0);
         let (pn, ph) = regular_polygon_2d(n, 1.0);
         let polytope = lagrangian_product(&qn, &qh, &pn, &ph).expect("regular LP");
-        let polytope = GradientPolytopeCache::from_rational_parts(
-            polytope.dual_vertices().to_vec(),
-            polytope.vertices().to_vec(),
-        )
-        .expect("regular LP cache");
+        let polytope = GradientPolytopeCache::from_f64(polytope).expect("regular LP cache");
         let n_dirs = if smoke {
             q5b_n_dirs
         } else if polytope.facet_count() <= 8 {

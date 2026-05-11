@@ -21,8 +21,8 @@
 //! - [`save(path, &HashMap)`] — atomic write (tmp file + rename)
 //!
 //! **Record methods:**
-//! - [`PolytopeRecord::from_polytope(&Polytope4D)`] — create from constructed polytope
-//! - [`.to_polytope()`] → `Polytope4D` — reconstruct via `from_rational_parts` (skips vertex enumeration)
+//! - [`PolytopeRecord::from_dual_vertices_and_vertices`] — create from explicit rational geometry
+//! - [`.dual_vertices_and_vertices()`] — clone explicit rational geometry for consumers
 //! - [`.with_computed_fields(volume, volume_err, capacity, capacity_err)`] — add capacity/volume
 //! - [`.with_sigmas(sigmas, gap_cutoff)`] — add sigma list
 //! - [`.key()`] → `DualVerticesKey` — extract the HashMap key
@@ -32,14 +32,14 @@
 //! ```rust,ignore
 //! let mut db = database::load(&db_path)?;
 //!
-//! for polytope in &my_polytopes {
-//!     let key = polytope.dual_vertices().to_vec();
+//! for (dual_vertices, vertices) in &my_flat_polytopes {
+//!     let key = dual_vertices.clone();
 //!     let record = db.entry(key).or_insert_with(|| {
-//!         PolytopeRecord::from_polytope(polytope)
+//!         PolytopeRecord::from_dual_vertices_and_vertices(dual_vertices.clone(), vertices.clone())
 //!     });
 //!     if record.capacity.is_none() {
-//!         let cap = ehz_capacity(polytope);
-//!         let vol = my_experiment_volume_f64(polytope);
+//!         let cap = my_experiment_capacity(dual_vertices);
+//!         let vol = my_experiment_volume_f64(dual_vertices, vertices);
 //!         *record = record.clone().with_computed_fields(vol, 0.0, cap, 0.0);
 //!     }
 //!     // Use record.capacity, record.sigmas, etc.
@@ -54,7 +54,6 @@
 //! `"numerator/denominator"` strings (e.g. `"3/7"`, `"-1/2"`) for human
 //! readability and `jq`/Python compatibility.
 
-use crate::{ConstructionError, Polytope4D};
 use num_rational::BigRational;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
@@ -242,12 +241,14 @@ impl std::error::Error for MergeError {
 }
 
 impl PolytopeRecord {
-    /// Build from a constructed Polytope4D. Stores rational dual vertices
-    /// and rational vertices (cached to avoid re-running vertex enumeration).
-    pub fn from_polytope(p: &Polytope4D) -> PolytopeRecord {
+    /// Build from explicit rational dual vertices and rational primal vertices.
+    pub fn from_dual_vertices_and_vertices(
+        dual_vertices_rational: Vec<[BigRational; 4]>,
+        vertices_rational: Vec<[BigRational; 4]>,
+    ) -> PolytopeRecord {
         PolytopeRecord {
-            dual_vertices_rational: p.dual_vertices().to_vec(),
-            vertices_rational: p.vertices().to_vec(),
+            dual_vertices_rational,
+            vertices_rational,
             source: None,
             volume: None,
             volume_err: None,
@@ -288,12 +289,9 @@ impl PolytopeRecord {
         self
     }
 
-    /// Reconstruct Polytope4D from cached rational data.
-    /// Recomputes vertex_descriptors via O(V·F) rational dot products,
-    /// then runs assemble() for incidence/omega/facet-intersection/f64 copies.
-    /// Does NOT re-run vertex enumeration (the expensive O(C(F,4)) step).
-    pub fn to_polytope(&self) -> Result<Polytope4D, ConstructionError> {
-        Polytope4D::from_rational_parts(
+    /// Clone the explicit rational geometry stored in this record.
+    pub fn dual_vertices_and_vertices(&self) -> (Vec<[BigRational; 4]>, Vec<[BigRational; 4]>) {
+        (
             self.dual_vertices_rational.clone(),
             self.vertices_rational.clone(),
         )
@@ -492,6 +490,7 @@ pub fn save(path: &Path, db: &HashMap<DualVerticesKey, PolytopeRecord>) -> io::R
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::geom::polytope::Polytope4D;
     use nalgebra::Vector4;
     use num_bigint::BigInt;
 
@@ -507,14 +506,18 @@ mod tests {
         Polytope4D::from_f64(halfspaces).unwrap()
     }
 
-    /// Round-trip: Polytope4D → PolytopeRecord → JSON → PolytopeRecord → Polytope4D
+    /// Round-trip: rational geometry -> PolytopeRecord -> JSON -> rational geometry.
     #[test]
-    fn round_trip_polytope_json_polytope() {
+    fn round_trip_rational_geometry_json() {
         let p = test_polytope();
-        let record = PolytopeRecord::from_polytope(&p);
+        let record = PolytopeRecord::from_dual_vertices_and_vertices(
+            p.dual_vertices().to_vec(),
+            p.vertices().to_vec(),
+        );
         let json = serde_json::to_string(&record).unwrap();
         let record2: PolytopeRecord = serde_json::from_str(&json).unwrap();
-        let p2 = record2.to_polytope().unwrap();
+        let (dual_vertices, vertices) = record2.dual_vertices_and_vertices();
+        let p2 = Polytope4D::from_rational_parts(dual_vertices, vertices).unwrap();
 
         assert_eq!(p.facet_count(), p2.facet_count());
         assert_eq!(p.incidence(), p2.incidence());
@@ -529,7 +532,10 @@ mod tests {
     #[test]
     fn json_format_human_readable() {
         let p = test_polytope();
-        let record = PolytopeRecord::from_polytope(&p);
+        let record = PolytopeRecord::from_dual_vertices_and_vertices(
+            p.dual_vertices().to_vec(),
+            p.vertices().to_vec(),
+        );
         let json = serde_json::to_string_pretty(&record).unwrap();
 
         // The first dual vertex is (1, 0, 0, 0) from f64,
@@ -549,7 +555,11 @@ mod tests {
     #[test]
     fn save_load_round_trip() {
         let p = test_polytope();
-        let record = PolytopeRecord::from_polytope(&p).with_computed_fields(1.23, 0.01, 4.56, 0.02);
+        let record = PolytopeRecord::from_dual_vertices_and_vertices(
+            p.dual_vertices().to_vec(),
+            p.vertices().to_vec(),
+        )
+        .with_computed_fields(1.23, 0.01, 4.56, 0.02);
 
         let mut db = HashMap::new();
         db.insert(record.key(), record);
@@ -581,7 +591,10 @@ mod tests {
         let p = test_polytope();
 
         // Stage 1: just rational data
-        let record = PolytopeRecord::from_polytope(&p);
+        let record = PolytopeRecord::from_dual_vertices_and_vertices(
+            p.dual_vertices().to_vec(),
+            p.vertices().to_vec(),
+        );
         assert!(record.volume.is_none());
         assert!(record.sigmas.is_none());
 
@@ -648,7 +661,10 @@ mod tests {
     fn load_many_merges_missing_fields() {
         let p = test_polytope();
         let key = p.dual_vertices().to_vec();
-        let base = PolytopeRecord::from_polytope(&p);
+        let base = PolytopeRecord::from_dual_vertices_and_vertices(
+            p.dual_vertices().to_vec(),
+            p.vertices().to_vec(),
+        );
         let mut enriched = base.clone();
         enriched.capacity = Some(4.5);
 
@@ -675,7 +691,10 @@ mod tests {
         let p = test_polytope();
         let key = p.dual_vertices().to_vec();
 
-        let mut left = PolytopeRecord::from_polytope(&p);
+        let mut left = PolytopeRecord::from_dual_vertices_and_vertices(
+            p.dual_vertices().to_vec(),
+            p.vertices().to_vec(),
+        );
         left.capacity = Some(4.5);
         let mut right = left.clone();
         right.capacity = Some(5.5);

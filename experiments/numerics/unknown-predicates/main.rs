@@ -266,11 +266,7 @@ fn main() {
             let (pn, ph) = rotate_polygon_2d(&pn_base, &ph_base, theta);
             let polytope = lagrangian_product(&qn, &qh, &pn, &ph)
                 .expect("pentagon product construction failed");
-            let cache = NumericsPolytopeCache::from_rational_parts(
-                polytope.dual_vertices().to_vec(),
-                polytope.vertices().to_vec(),
-            )
-            .expect("pentagon product cache");
+            let cache = NumericsPolytopeCache::from_f64(polytope).expect("pentagon product cache");
 
             let vol = euclidean_volume_f64(&cache.vertices, &cache.vertex_facet_incidence);
 
@@ -340,11 +336,7 @@ fn main() {
             let (pn, ph) = rotate_polygon_2d(&pn_base, &ph_base, theta);
             let polytope = lagrangian_product(&qn, &qh, &pn, &ph)
                 .expect("polygon product construction failed");
-            let cache = NumericsPolytopeCache::from_rational_parts(
-                polytope.dual_vertices().to_vec(),
-                polytope.vertices().to_vec(),
-            )
-            .expect("polygon product cache");
+            let cache = NumericsPolytopeCache::from_f64(polytope).expect("polygon product cache");
 
             let vol = euclidean_volume_f64(&cache.vertices, &cache.vertex_facet_incidence);
 

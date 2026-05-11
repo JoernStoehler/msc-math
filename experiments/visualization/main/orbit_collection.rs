@@ -5,7 +5,7 @@
 
 use symplectic::algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega;
 use symplectic::algorithms::hk2017::for_each_sigma_pruned_by_transition;
-use symplectic::geom::polytope::Polytope4D;
+use symplectic::geom::known_polytopes::KnownPolytope;
 use symplectic::kkt::saddle_point_solver::{
     solve_kkt_for_dual_vertices, KktOutcome, EPS_BETA_POSITIVE, EPS_Q_POSITIVE,
 };
@@ -18,11 +18,11 @@ pub(crate) struct CollectedOrbit {
 }
 
 /// Collect all certified Reeb orbits for the polytope, sorted by action.
-pub(crate) fn collect_all_orbits(polytope: &Polytope4D) -> Vec<CollectedOrbit> {
-    let dual_vertices = polytope.dual_vertices_f64();
+pub(crate) fn collect_all_orbits(polytope: &KnownPolytope) -> Vec<CollectedOrbit> {
+    let dual_vertices = &polytope.dual_vertices_f64;
     let transition_is_allowed = build_transition_matrix_from_facet_intersections_and_omega(
-        polytope.facet_intersection_is_nonempty(),
-        polytope.omega_signs(),
+        &polytope.facet_intersection_is_nonempty,
+        &polytope.omega_signs,
     );
     let mut orbits: Vec<CollectedOrbit> = Vec::new();
 

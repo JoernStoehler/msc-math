@@ -1,7 +1,7 @@
 //! Sigma-local orbit and KKT-derived feature columns.
 
+use exp_sys_landscape::SysLandscapePolytopeCache;
 use nalgebra::Vector4;
-use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::symplectic_form::omega0;
 
 use crate::load_caches::LoadedPolytopeRow;
@@ -86,7 +86,7 @@ fn zero_orbit_fields() -> OrbitFields {
 
 pub fn compute_orbit_fields(
     row: &LoadedPolytopeRow,
-    polytope: &Polytope4D,
+    polytope: &SysLandscapePolytopeCache,
     duals: &[Vector4<f64>],
     facet_count: usize,
     transition: &nalgebra::DMatrix<bool>,
@@ -120,7 +120,7 @@ pub fn compute_orbit_fields(
             let i = perm[idx];
             let j = perm[(idx + 1) % perm.len()];
             cycle_abs_omegas.push(omega0(&duals[i], &duals[j]).abs());
-            if polytope.omega_signs()[(i, j)] == 0 {
+            if polytope.omega_signs[(i, j)] == 0 {
                 cycle_zero_count += 1;
             }
             if transition[(i, j)] {
@@ -129,7 +129,7 @@ pub fn compute_orbit_fields(
             if transition[(i, j)] && transition[(j, i)] {
                 cycle_bidirectional_count += 1;
             }
-            if polytope.facet_intersection_is_nonempty()[(i, j)] {
+            if polytope.facet_intersection_is_nonempty[(i, j)] {
                 cycle_facet_intersection_count += 1;
             }
         }

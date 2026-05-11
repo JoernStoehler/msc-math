@@ -8,7 +8,8 @@
 //!
 //! Mathematical correspondence: [def:systolic-ratio]
 
-use crate::{geom::polytope::Polytope4D, systolic_ratio};
+use crate::systolic_ratio;
+use nalgebra::Vector4;
 use serde::{Deserialize, Serialize};
 
 /// A single polytope row in the main dataset.
@@ -61,12 +62,12 @@ pub struct PolytopeRow {
 }
 
 impl PolytopeRow {
-    /// Build a row from a polytope and its computed values.
+    /// Build a row from f64 dual vertices and computed values.
     ///
     /// Computes the systolic ratio sys = capacity^2 / (2 * volume).
     #[allow(clippy::too_many_arguments)]
-    pub fn from_polytope(
-        polytope: &Polytope4D,
+    pub fn from_dual_vertices(
+        dual_vertices: &[Vector4<f64>],
         source: String,
         volume: f64,
         capacity: f64,
@@ -75,15 +76,15 @@ impl PolytopeRow {
         time_capacity_ms: f64,
         time_creation_ms: f64,
     ) -> Self {
-        let dual_vertices: Vec<[f64; 4]> = polytope
-            .dual_vertices_f64()
+        let dual_vertices: Vec<[f64; 4]> = dual_vertices
             .iter()
             .map(|a| [a[0], a[1], a[2], a[3]])
             .collect();
         let sys = systolic_ratio(capacity, volume);
+        let facet_count = dual_vertices.len();
         Self {
             source,
-            facet_count: polytope.facet_count(),
+            facet_count,
             dual_vertices,
             volume,
             capacity,
@@ -128,8 +129,6 @@ pub struct AcceptanceRow {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::geom::polytope::Polytope4D;
-    use nalgebra::Vector4;
 
     // Tests for dataset: serialization roundtrip for JSONL row types.
     //
@@ -138,9 +137,9 @@ mod tests {
     //
     // Strategy: fixture-based on hypercube and synthetic acceptance data.
 
-    /// Build a dummy hypercube for testing (8 facets, unit halfspaces).
-    fn dummy_polytope() -> Polytope4D {
-        let normals = vec![
+    /// Build dummy hypercube f64 dual vertices for testing (8 facets).
+    fn dummy_dual_vertices() -> Vec<Vector4<f64>> {
+        vec![
             Vector4::x(),
             -Vector4::x(),
             Vector4::y(),
@@ -149,15 +148,23 @@ mod tests {
             -Vector4::z(),
             Vector4::w(),
             -Vector4::w(),
-        ];
-        Polytope4D::from_f64(normals).unwrap()
+        ]
     }
 
     /// Verify PolytopeRow serializes to JSON and deserializes back without data loss.
     #[test]
     fn polytope_row_round_trip() {
-        let p = dummy_polytope();
-        let row = PolytopeRow::from_polytope(&p, "test".into(), 2.0, 3.0, 0, 1.0, 1.5, 0.1);
+        let dual_vertices = dummy_dual_vertices();
+        let row = PolytopeRow::from_dual_vertices(
+            &dual_vertices,
+            "test".into(),
+            2.0,
+            3.0,
+            0,
+            1.0,
+            1.5,
+            0.1,
+        );
 
         let json = serde_json::to_string(&row).unwrap();
         let parsed: PolytopeRow = serde_json::from_str(&json).unwrap();
@@ -171,8 +178,17 @@ mod tests {
     /// Verify sys = c^2 / (2*vol) is computed correctly from capacity and volume.
     #[test]
     fn sys_computation() {
-        let p = dummy_polytope();
-        let row = PolytopeRow::from_polytope(&p, "test".into(), 2.0, 3.0, 0, 0.0, 0.0, 0.0);
+        let dual_vertices = dummy_dual_vertices();
+        let row = PolytopeRow::from_dual_vertices(
+            &dual_vertices,
+            "test".into(),
+            2.0,
+            3.0,
+            0,
+            0.0,
+            0.0,
+            0.0,
+        );
         // sys = 3^2 / (2 * 2) = 9/4 = 2.25
         assert!((row.sys - 2.25).abs() < 1e-12);
     }
@@ -203,8 +219,17 @@ mod tests {
     /// Verify serialized JSON output contains no embedded newlines (valid JSONL).
     #[test]
     fn jsonl_format_no_newlines() {
-        let p = dummy_polytope();
-        let row = PolytopeRow::from_polytope(&p, "test".into(), 1.0, 1.0, 0, 0.0, 0.0, 0.0);
+        let dual_vertices = dummy_dual_vertices();
+        let row = PolytopeRow::from_dual_vertices(
+            &dual_vertices,
+            "test".into(),
+            1.0,
+            1.0,
+            0,
+            0.0,
+            0.0,
+            0.0,
+        );
         let json = serde_json::to_string(&row).unwrap();
         assert!(!json.contains('\n'), "JSONL line must not contain newlines");
     }
