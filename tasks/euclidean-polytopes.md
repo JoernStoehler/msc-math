@@ -8,8 +8,8 @@ modules, which makes non-symplectic helpers harder to reuse and review.
 
 ## Status
 
-- State: active.
-- Last updated: 2026-05-10.
+- State: branch-close review.
+- Last updated: 2026-05-11.
 - Source surfaces: `crates/euclidean-polytopes/`,
   `crates/symplectic/src/geom/`, `crates/MAP.md`, `tasks/rust-tech-debt.md`.
 - Refresh when: a geometry helper moves between crates, a public API decision
@@ -109,8 +109,8 @@ modules, which makes non-symplectic helpers harder to reuse and review.
 
 | item | state | value class | owner/gate | next action | source |
 | --- | --- | --- | --- | --- | --- |
-| Crate scaffold and API target | `[active]` | mainline thesis | agents, Jorn for API taste close calls | Review `README.md` and `DEVELOPMENT.md`; decide whether the flat-input/no-public-wrapper direction is accepted for the first migration. | `crates/euclidean-polytopes/README.md`, `crates/euclidean-polytopes/DEVELOPMENT.md` |
-| Robust floating/exact architecture | `[active]` | mainline thesis | agents | Define flat approximate return shapes with semantic names, `_abs_error_bound` fields, and operation-specific indeterminate diagnostics. Exact predicates return `bool` and may resolve f64 indeterminate diagnostic candidates exactly. | `crates/euclidean-polytopes/README.md`, `crates/euclidean-polytopes/DEVELOPMENT.md` |
+| Crate scaffold and API target | `[implemented for branch]` | mainline thesis | agents | Keep `README.md` and `DEVELOPMENT.md` synchronized when the public API changes. The flat-input/no-public-wrapper direction is accepted for this branch. | `crates/euclidean-polytopes/README.md`, `crates/euclidean-polytopes/DEVELOPMENT.md` |
+| Robust floating/exact architecture | `[implemented first architecture]` | mainline thesis | agents | Exact APIs return exact answers; f64 APIs expose diagnostics or known-incidence f64 computations. Add new f64 diagnostic return shapes only with a real caller and explicit indeterminate semantics. | `crates/euclidean-polytopes/README.md`, `crates/euclidean-polytopes/DEVELOPMENT.md` |
 | Polar vertex enumeration plus validation dependencies | `[implemented first slice]` | mainline thesis | agents | Review and integrate current `euclidean-polytopes` public API into callers when a migration packet needs it. Exact polar enumeration and exact origin-in-interior are implemented; the current `f64` path is diagnostic and reports indeterminate candidates instead of guessing. | `crates/euclidean-polytopes/src/polar.rs`, `crates/euclidean-polytopes/src/predicates.rs`, `crates/euclidean-polytopes/tests/polar_vertices.rs` |
 | Extreme-point / non-redundant point-set predicate | `[implemented exact slice]` | mainline thesis | agents | Exact predicate is implemented and covered by fixture/property tests. Add the matching f64 diagnostic later only if its return shape stays flat and useful. | `crates/euclidean-polytopes/src/predicates.rs`, `crates/euclidean-polytopes/tests/extreme_points.rs`, `crates/euclidean-polytopes/DEVELOPMENT.md` |
 | Full-dimensional known-incidence f64 volume | `[implemented migration slice]` | mainline thesis | agents | `volume_from_incidence_f64(vertices, incidence)` is implemented for callers that already have reliable incidence. A dual-vertices-plus-f64-vertices incidence-recovery API is not currently public; add one only with a real caller and explicit indeterminate semantics. | `crates/euclidean-polytopes/src/volume.rs`, `crates/euclidean-polytopes/tests/volume.rs`, `crates/euclidean-polytopes/DEVELOPMENT.md` |
@@ -122,71 +122,58 @@ modules, which makes non-symplectic helpers harder to reuse and review.
 | Full-dimensional exact volume | `[implemented migration slice]` | mainline thesis | agents | `volume_from_incidence_exact(vertices, incidence) -> T` uses incidence-only 2-face ordering and exact 4-simplex determinant sums. It does not take dual vertices or use f64 in the exact computation. | `crates/euclidean-polytopes/DEVELOPMENT.md`, `crates/euclidean-polytopes/src/volume.rs`, `crates/euclidean-polytopes/tests/volume.rs` |
 | Random dual-vertex candidate sampling | `[implemented migration slice]` | mainline thesis | agents | `sample_random_dual_vertices_f64(facet_count, h_min, h_max, rng)` samples candidate normalized dual vertices in `euclidean-polytopes`. `symplectic::random` keeps rejection sampling and master-seed/attempt derivation, validating candidates through the flat rational vertex-enumeration pipeline. | `crates/euclidean-polytopes/src/random.rs`, `crates/euclidean-polytopes/tests/random.rs`, `crates/symplectic/src/random.rs` |
 | Symplectic exact/f64 volume API | `[deleted after migration]` | mainline thesis | agents | The public `symplectic::geom::volume` module was removed after callers migrated to `euclidean_polytopes::volume_from_incidence_exact` plus local exact-to-f64 helpers. | `crates/euclidean-polytopes/DEVELOPMENT.md`, `crates/symplectic/src/derivatives.rs`, `experiments/*/src/lib.rs` |
-| Affine-subspace polygons and volume | `[active]` | mainline thesis | agents, Jorn only if generic-vs-specific API affects thesis callers | Let the internal Euclidean volume decomposition determine the first affine-subspace helper shape; likely needs 3-face measures of 4-polytopes and polygon area in affine 2-planes of `R^4`. | `crates/euclidean-polytopes/src/volume.rs`, `crates/symplectic/src/geom/polygon.rs` |
-| Symplectic integration cleanup | `[active]` | mainline thesis | agents | After each migrated slice, keep `symplectic` as the owner of symplectic form, capacity, KKT, omega signs, Reeb-direction transition pruning, and experiment-facing wrappers only. | `crates/symplectic/src/geom/`, `crates/symplectic/src/algorithms/` |
+| Affine-subspace polygons and volume | `[future]` | mainline thesis | agents, Jorn only if generic-vs-specific API affects thesis callers | Do not block this branch. Let the internal Euclidean volume decomposition determine the first affine-subspace helper shape when a thesis caller needs it. | `crates/euclidean-polytopes/src/volume.rs`, `crates/symplectic/src/geom/polygon.rs` |
+| Symplectic integration cleanup | `[implemented for branch]` | mainline thesis | agents | `symplectic` now keeps symplectic form, capacity, KKT, omega signs, Reeb-direction transition pruning, derivatives, persistence, and fixture/workflow code. Reusable ordinary geometry lives in `euclidean-polytopes` except thin namespace reexports. | `crates/symplectic/src/geom/`, `crates/symplectic/src/algorithms/` |
 | Flat capacity/orbit internals | `[implemented migration slice]` | mainline thesis | agents | HK2017 enumeration, saddle-point KKT solving, orbit solving, and orbit aggregation now have flat helper entry points over facet count, transition matrices, f64 dual vertices, and exact dual vertices. Root capacity wrappers assemble flat data once and delegate to those helpers. | `crates/symplectic/src/algorithms/hk2017/enumeration.rs`, `crates/symplectic/src/algorithms/orbit_search.rs`, `crates/symplectic/src/kkt/saddle_point_solver.rs`, `crates/symplectic/src/lib.rs` |
 | Flat KKT assembly boundary | `[implemented migration slice]` | mainline thesis | agents | Old shared-wrapper `build_qp` and `build_augmented_system` compatibility entry points were deleted. KKT assembly callers now pass the ordered dual-vertex slice explicitly to `build_qp_from_dual_vertices` and `build_augmented_system_from_dual_vertices`. | `crates/symplectic/src/kkt/qp_assembly.rs`, `crates/symplectic/src/kkt/test_saddle_point_solver.rs`, `crates/symplectic/src/kkt/projection_solver.rs` |
 | Flat transition and HK2017 enumeration boundary | `[implemented migration slice]` | mainline thesis | agents | `build_transition_matrix(polytope)`, `for_each_sigma_unpruned(polytope, ...)`, and `for_each_sigma_pruned(polytope, ...)` wrappers were deleted. Callers now build transition matrices from explicit facet-intersection and omega-sign matrices, or enumerate from a facet count. | `crates/symplectic/src/algorithms/facet_adjacency.rs`, `crates/symplectic/src/algorithms/hk2017/enumeration.rs`, `crates/symplectic/src/capacity_api.rs` |
 | Flat KKT solve boundary | `[implemented migration slice]` | mainline thesis | agents | `solve_kkt_for(polytope, perm)` was deleted. Callers now pass the ordered dual-vertex slice explicitly to `solve_kkt_for_dual_vertices`, including derivative finite-difference paths and experiment ascent loops. | `crates/symplectic/src/kkt/saddle_point_solver.rs`, `crates/symplectic/src/derivatives.rs`, `experiments/numerics/gradient/src/lib.rs` |
 | Flat orbit/result boundary | `[implemented migration slice]` | mainline thesis | agents | Old shared-wrapper `solve_orbit_sigma`, `solve_sigma_stream`, `aggregate_orbits`, and `aggregate_certified_orbits` entry points were deleted. Callers now pass f64 dual vertices for orbit solving and exact dual vertices for exact fallback aggregation. | `crates/symplectic/src/algorithms/orbit_search.rs`, `crates/symplectic/src/algorithms/mod.rs`, `experiments/verification/all-minimum/main.rs` |
 
-## Done Criteria
+## Branch-Close Criteria
 
-The migration task is done when:
+This branch is ready to merge when:
 
 - `crates/euclidean-polytopes/` has consumer and maintainer docs matching the
   implemented public API;
-- the first implementation packet is test-driven: exact fixture tests are
-  written before exact implementation, and f64 indeterminate tests are written
-  before f64 filtering;
-- tests cover at least simplex/cube/crosspolytope polar duality, redundant input
-  points, bad `0 in int conv` contract panics, exact deduplication, non-finite
-  f64 input, and a near-boundary f64 case that returns indeterminate instead of
-  guessing;
-- the extreme-point predicate slice has fixture tests for simplex/cube vertices
-  returning `true`, exact duplicates returning `false`, an interior point in a
-  simplex returning `false`, and lower-dimensional polygon vertices in `R^4`
-  returning `true`;
-- the same slice has at least one property test that constructs a point as a
-  convex combination of generated exact points and checks that adding it makes
-  `all_points_are_extreme_exact` return `false`;
-- the f64 volume slice has fixture tests for simplex, hypercube, and
-  crosspolytope volume, a scaling test or property test, non-finite input, and
-  an incidence-boundary case that returns indeterminate instead of guessing;
+- exact origin-interior, exact extreme-point, exact polar, diagnostic f64 polar,
+  known-incidence f64 volume, known-incidence exact volume, facet-volume,
+  incidence-derived face helpers, and random dual-vertex sampling are covered by
+  fixture or property tests;
 - property-test comments separate theorem-shaped propositions from the actual
   operationalization: generator, precondition/discard rule, case count,
   fixtures, and f64 tolerance;
-- the verification suite covers exact polar soundness, polarity roundtrip,
-  f64/exact agreement on well-conditioned fixtures, and volume scaling plus
-  permutation invariance before broad caller migration;
-- symplectic and experiment volume delegates to `euclidean-polytopes` through
-  known-incidence helpers rather than recomputing incidence from f64 signed
-  gaps;
-- symplectic facet 3-volume and centroid f64 entry points delegate to
-  `euclidean-polytopes` through known-incidence helpers rather than
-  recomputing incidence from f64 facet-membership tolerances;
-- exact known-incidence volume is implemented with determinant sums over
-  `T: ExactScalar`, exported, documented, and covered by rational fixture and
-  property tests;
-- symplectic full-dimensional volume exposes an exact entry point over
-  `euclidean-polytopes` and an explicit exact-to-f64 projection;
-- workspace commands pass:
-  `cargo test -p euclidean-polytopes`,
-  `cargo test -p symplectic --lib geom::`,
-  `cargo clippy -p euclidean-polytopes --all-targets -- -D warnings`, and
-  `cargo check --workspace`;
+- symplectic and experiment volume/facet-volume callers delegate to
+  `euclidean-polytopes` through known-incidence helpers rather than recomputing
+  incidence from f64 signed gaps;
 - `symplectic` no longer owns reusable ordinary convex-geometry algorithms
   except thin namespace reexports or symplectic-specific fixture/workflow code;
+- shared `Polytope4D` and old KKT/orbit/transition compatibility entry points
+  are deleted from live source, with remaining mentions only in historical or
+  rejection docs;
 - existing symplectic behavior is preserved by tests or explicit migration
   notes;
-- `f64` combinatorial APIs expose error bounds or indeterminate outcomes, and
-  exact APIs resolve those outcomes before returning exact data;
 - exact predicate APIs return `bool`, with diagnostics confined to f64 helper
   APIs or error types;
 - API review has confirmed that no alias, wrapper, trait, or generic result
   abstraction was added without repeated current callers or a clear
   simplification;
-- `crates/MAP.md`, this task, and affected crate docs are updated.
+- `crates/MAP.md`, this task, and affected crate docs are updated;
+- final branch checks pass:
+  `cargo test -p euclidean-polytopes`,
+  `cargo clippy -p euclidean-polytopes --all-targets -- -D warnings`,
+  `cargo test -p symplectic --release --lib`,
+  `cargo clippy -p symplectic --all-targets -- -D warnings`,
+  and `cargo check --workspace`.
+
+Deferred, not branch-blocking:
+
+- affine-subspace polygon and volume helpers in ambient `R^4`;
+- f64 diagnostic extreme-point or incidence-recovery APIs without a current
+  caller;
+- stronger cleanup of deep expert-public symplectic import paths;
+- standardizing experiment-local cache contracts beyond the migrations needed
+  to delete shared wrappers.
 
 ## Agent Cache
 
