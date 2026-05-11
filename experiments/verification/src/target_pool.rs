@@ -29,7 +29,7 @@ pub struct Target {
     pub name: String,
     pub family: String,
     pub source_kind: String,
-    pub polytope: VerificationPolytopeCache,
+    pub geometry: VerificationPolytopeCache,
     pub expected_min_orbit_count: Option<usize>,
 }
 
@@ -89,8 +89,9 @@ fn build_known_targets() -> Vec<Target> {
             name: kp.name.to_string(),
             family: "known".to_string(),
             source_kind: "known_polytopes".to_string(),
-            polytope: VerificationPolytopeCache::from_f64_dual_vertices(
-                kp.polytope.dual_vertices_f64().to_vec(),
+            geometry: VerificationPolytopeCache::from_rational_parts(
+                kp.dual_vertices.clone(),
+                kp.vertices.clone(),
             )
             .expect("known target should reconstruct"),
             expected_min_orbit_count: expected_min_orbit_count(kp.name),
@@ -115,7 +116,7 @@ fn build_random_targets(db: &HashMap<DualVerticesKey, PolytopeRecord>) -> Vec<Ta
             name: format!("random_F{facet_count_target}_seeded"),
             family: "random".to_string(),
             source_kind: "shared_cache_random_stratum".to_string(),
-            polytope: VerificationPolytopeCache::from_rational_parts(
+            geometry: VerificationPolytopeCache::from_rational_parts(
                 record.dual_vertices_rational.clone(),
                 record.vertices_rational.clone(),
             )
@@ -155,7 +156,7 @@ fn build_lagrangian_product_targets(db: &HashMap<DualVerticesKey, PolytopeRecord
             name: format!("lagrangian_product_{n1}x{n2}"),
             family: "lagrangian_product".to_string(),
             source_kind: "shared_cache_pair_stratum".to_string(),
-            polytope: VerificationPolytopeCache::from_rational_parts(
+            geometry: VerificationPolytopeCache::from_rational_parts(
                 record.dual_vertices_rational.clone(),
                 record.vertices_rational.clone(),
             )
@@ -249,7 +250,7 @@ fn build_correctness_targets(manifest_dir: &Path) -> Vec<Target> {
                 name: row.name,
                 family: format!("correctness_{}", row.test_group),
                 source_kind: "correctness_dataset".to_string(),
-                polytope,
+                geometry: polytope,
                 expected_min_orbit_count: None,
             }
         })
@@ -261,7 +262,7 @@ fn dedupe_targets(targets: Vec<Target>) -> Vec<Target> {
     let mut deduped = Vec::new();
 
     for target in targets {
-        let key = target.polytope.dual_vertices.to_vec();
+        let key = target.geometry.dual_vertices.to_vec();
         if seen.insert(key) {
             deduped.push(target);
         }

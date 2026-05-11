@@ -25,6 +25,8 @@
 //! for apples-to-apples comparison. Correctness is validated by agreement with A0.
 
 mod fixtures;
+#[path = "../flat_polytope.rs"]
+mod flat_polytope;
 mod kkt;
 mod models;
 mod variants;
@@ -114,17 +116,17 @@ fn main() {
 
     for fixture in &polytopes {
         let duals_raw: Vec<[f64; 4]> = fixture
-            .polytope
-            .dual_vertices_f64()
+            .geometry
+            .dual_vertices_f64
             .iter()
             .map(|a| [a[0], a[1], a[2], a[3]])
             .collect();
-        let facet_count = fixture.polytope.facet_count();
+        let facet_count = fixture.geometry.facet_count();
         let mut capacities: Vec<(String, f64)> = Vec::new();
 
         for variant in VARIANTS {
             let t_start = Instant::now();
-            let result = (variant.run)(&fixture.polytope);
+            let result = (variant.run)(&fixture.geometry);
             let time_ms = t_start.elapsed().as_secs_f64() * 1000.0;
 
             match result {

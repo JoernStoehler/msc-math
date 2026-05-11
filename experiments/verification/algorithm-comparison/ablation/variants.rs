@@ -11,12 +11,12 @@
 //! The code stays experiment-local because it compares historical and proposed
 //! pruning strategies side by side instead of defining one durable crate API.
 
+use crate::flat_polytope::FlatPolytopeCache;
 use crate::kkt::{
     omega0, solve_kkt_full, EPS_BETA_POSITIVE, EPS_DIRECTED, EPS_FACET_INCIDENCE, EPS_Q_POSITIVE,
 };
 use crate::models::{AblationCapacityResult, AblationResult, Variant};
 use nalgebra::{DMatrix, Vector4};
-use symplectic::geom::polytope::Polytope4D;
 use symplectic::{
     aggregate_orbits_with_dual_vertices_exact, solve_unpruned_hk2017_candidates, OrbitGuaranteeMode,
 };
@@ -106,12 +106,12 @@ fn build_omega_directed_transition_matrix(
 type Candidate = (f64, Vec<usize>, Vec<usize>, Vec<f64>);
 
 fn ehz_capacity_unpruned_with(
-    polytope: &Polytope4D,
+    polytope: &FlatPolytopeCache,
     transition_is_allowed: &[Vec<bool>],
     solver: fn(&[Vector4<f64>], &[f64], &[usize]) -> Option<(Vec<f64>, f64)>,
 ) -> Option<AblationResult> {
     let f = polytope.facet_count();
-    let duals = polytope.dual_vertices_f64();
+    let duals = &polytope.dual_vertices_f64;
     let normals: Vec<Vector4<f64>> = duals.iter().map(|a| a / a.norm()).collect();
     let heights: Vec<f64> = duals.iter().map(|a| 1.0 / a.norm()).collect();
 
@@ -167,11 +167,11 @@ fn ehz_capacity_unpruned_with(
     })
 }
 
-fn ehz_capacity_unpruned_a0(polytope: &Polytope4D) -> Option<AblationResult> {
+fn ehz_capacity_unpruned_a0(polytope: &FlatPolytopeCache) -> Option<AblationResult> {
     let (orbits, iterations) =
-        solve_unpruned_hk2017_candidates(polytope.dual_vertices_f64()).ok()?;
+        solve_unpruned_hk2017_candidates(&polytope.dual_vertices_f64).ok()?;
     aggregate_orbits_with_dual_vertices_exact(
-        polytope.dual_vertices(),
+        &polytope.dual_vertices,
         orbits,
         iterations,
         0.0,
@@ -194,16 +194,16 @@ fn ehz_capacity_unpruned_a0(polytope: &Polytope4D) -> Option<AblationResult> {
     })
 }
 
-fn ehz_capacity_unpruned_a1(polytope: &Polytope4D) -> Option<AblationResult> {
+fn ehz_capacity_unpruned_a1(polytope: &FlatPolytopeCache) -> Option<AblationResult> {
     let facet_intersection_is_nonempty =
-        bool_matrix_to_rows(polytope.facet_intersection_is_nonempty());
+        bool_matrix_to_rows(&polytope.facet_intersection_is_nonempty);
     ehz_capacity_unpruned_with(polytope, &facet_intersection_is_nonempty, solve_kkt_full)
 }
 
-fn ehz_capacity_unpruned_a2(polytope: &Polytope4D) -> Option<AblationResult> {
-    let facet_intersection_is_nonempty = polytope.facet_intersection_is_nonempty();
+fn ehz_capacity_unpruned_a2(polytope: &FlatPolytopeCache) -> Option<AblationResult> {
+    let facet_intersection_is_nonempty = &polytope.facet_intersection_is_nonempty;
     let normals: Vec<Vector4<f64>> = polytope
-        .dual_vertices_f64()
+        .dual_vertices_f64
         .iter()
         .map(|a| a / a.norm())
         .collect();
@@ -350,9 +350,9 @@ fn build_reeb_feasible_transition_matrix(
     reeb_feasible_transition_is_allowed
 }
 
-fn ehz_capacity_unpruned_a3(polytope: &Polytope4D) -> Option<AblationResult> {
-    let facet_intersection_is_nonempty = polytope.facet_intersection_is_nonempty();
-    let duals = polytope.dual_vertices_f64();
+fn ehz_capacity_unpruned_a3(polytope: &FlatPolytopeCache) -> Option<AblationResult> {
+    let facet_intersection_is_nonempty = &polytope.facet_intersection_is_nonempty;
+    let duals = &polytope.dual_vertices_f64;
     let normals: Vec<Vector4<f64>> = duals.iter().map(|a| a / a.norm()).collect();
     let heights: Vec<f64> = duals.iter().map(|a| 1.0 / a.norm()).collect();
     let omega_directed_transition_is_allowed =

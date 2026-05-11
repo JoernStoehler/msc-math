@@ -261,7 +261,7 @@ fn validate_target(
         name: target.name.clone(),
         family: target.family.clone(),
         source_kind: target.source_kind.clone(),
-        facet_count: target.polytope.facet_count(),
+        facet_count: target.geometry.facet_count(),
         status: "failed".to_string(),
         failure_stage: None,
         failure_reasons: Vec::new(),
@@ -292,7 +292,7 @@ fn validate_target(
     let mut details = Vec::new();
     let t_rebuild = Instant::now();
     let mut rebuilt_orbits = Vec::<(TrustedOrbitRow, OrbitKktData)>::new();
-    let dual_vertices = &target.polytope.dual_vertices_f64;
+    let dual_vertices = &target.geometry.dual_vertices_f64;
 
     for row in rows {
         match solve_orbit_sigma_saddle_point(dual_vertices, &row.sigma) {
@@ -456,17 +456,12 @@ fn recover_trusted_orbit(
         passes_geometric_checks: None,
     };
 
-    let recovery_polytope = symplectic::Polytope4D::from_rational_parts(
-        target.polytope.dual_vertices.clone(),
-        target.polytope.vertices.clone(),
-    )
-    .expect("target cache should reconstruct for legacy orbit recovery");
-    let recovery = match recover_and_verify(&recovery_polytope, &orbit) {
+    let recovery = match recover_and_verify(&target.geometry.dual_vertices_f64, &orbit) {
         Some(recovery) => recovery,
         None => return detail,
     };
 
-    let on_facet_error = compute_on_facet_error(&target.polytope, &orbit.sigma, &recovery);
+    let on_facet_error = compute_on_facet_error(&target.geometry, &orbit.sigma, &recovery);
     let action_error = (recovery.action - orbit.action).abs();
     let passes = recovery.closure_error < GEOMETRY_TOL
         && on_facet_error < GEOMETRY_TOL
