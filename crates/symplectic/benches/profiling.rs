@@ -4,7 +4,11 @@
 //! to produce a phase breakdown and enable regression detection.
 
 use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion};
-use nalgebra::Vector4;
+use euclidean_polytopes::{
+    facet_intersection_is_nonempty_from_vertex_facet_incidence, polar_vertices_exact,
+    PolarVerticesExact,
+};
+use nalgebra::{DMatrix, Vector4};
 use num_rational::BigRational;
 use num_traits::Zero;
 use rand::SeedableRng;
@@ -15,9 +19,10 @@ use symplectic::algorithms::facet_adjacency::{
 };
 use symplectic::algorithms::hk2017::combinations;
 use symplectic::algorithms::hk2017::permutations::for_each_cyclic_permutation;
-use symplectic::geom::polytope::Polytope4D;
+use symplectic::exact::omega_signs_exact;
+use symplectic::geom::rational_arithmetic::f64_to_rational;
 use symplectic::kkt::saddle_point_solver::{solve_kkt_for_dual_vertices, KktOutcome};
-use symplectic::random::generate_random_polytopes;
+use symplectic::random::generate_random_dual_vertices;
 use symplectic::{
     aggregate_certified_orbits_with_dual_vertices_exact, aggregate_orbits_with_dual_vertices_exact,
     solve_pruned_hk2017_candidates, CertifiedOrbitSearchResult, CertifiedOrbitSetMode,
@@ -34,38 +39,79 @@ const H_MAX: f64 = 2.0;
 /// capacity completes in <200ms (F=12 takes ~2s, too slow for criterion warmup).
 const FACET_COUNTS: &[usize] = &[5, 6, 7, 8, 9, 10, 11];
 
+struct BenchGeometry {
+    dual_vertices: Vec<Vector4<f64>>,
+    dual_vertices_exact: Vec<[BigRational; 4]>,
+    facet_intersection_is_nonempty: DMatrix<bool>,
+    omega_signs: DMatrix<i8>,
+}
+
+fn rational_array_to_vector(values: &[BigRational; 4]) -> Vector4<BigRational> {
+    Vector4::new(
+        values[0].clone(),
+        values[1].clone(),
+        values[2].clone(),
+        values[3].clone(),
+    )
+}
+
+fn construct_flat_geometry(dual_vertices: Vec<Vector4<f64>>) -> BenchGeometry {
+    let dual_vertices_exact: Vec<[BigRational; 4]> = dual_vertices
+        .iter()
+        .map(|vertex| std::array::from_fn(|coordinate| f64_to_rational(vertex[coordinate])))
+        .collect();
+    let dual_vertices_exact_vectors: Vec<Vector4<BigRational>> = dual_vertices_exact
+        .iter()
+        .map(rational_array_to_vector)
+        .collect();
+
+    let PolarVerticesExact {
+        vertex_facet_incidence,
+        ..
+    } = polar_vertices_exact(&dual_vertices_exact_vectors);
+    let facet_intersection_is_nonempty =
+        facet_intersection_is_nonempty_from_vertex_facet_incidence(&vertex_facet_incidence);
+    let omega_signs = omega_signs_exact(&dual_vertices_exact_vectors);
+
+    BenchGeometry {
+        dual_vertices,
+        dual_vertices_exact,
+        facet_intersection_is_nonempty,
+        omega_signs,
+    }
+}
+
 /// Pre-generate raw normals/heights for each facet count (for construction benchmarks).
 fn raw_inputs(f: usize) -> (Vec<Vector4<f64>>, Vec<f64>) {
     let mut rng = ChaCha8Rng::seed_from_u64(SEED);
-    let polytopes = generate_random_polytopes(1, f, H_MIN, H_MAX, &mut rng);
-    let duals = polytopes[0].dual_vertices_f64();
-    let normals = duals.iter().map(|a| a / a.norm()).collect();
-    let heights = duals.iter().map(|a| 1.0 / a.norm()).collect();
+    let dual_vertices_sets = generate_random_dual_vertices(1, f, H_MIN, H_MAX, &mut rng);
+    let dual_vertices = &dual_vertices_sets[0];
+    let normals = dual_vertices.iter().map(|a| a / a.norm()).collect();
+    let heights = dual_vertices.iter().map(|a| 1.0 / a.norm()).collect();
     (normals, heights)
 }
 
-/// Pre-construct a polytope for capacity/volume benchmarks.
-fn prebuilt_polytope(f: usize) -> Polytope4D {
+/// Pre-construct flat geometry for capacity/volume benchmarks.
+fn prebuilt_geometry(f: usize) -> BenchGeometry {
     let (normals, heights) = raw_inputs(f);
-    Polytope4D::from_f64(
+    construct_flat_geometry(
         normals
             .iter()
             .zip(heights.iter())
             .map(|(n, &h)| n / h)
             .collect(),
     )
-    .expect("construction failed")
 }
 
-fn capacity_pruned_hk2017(polytope: &Polytope4D) -> Result<OrbitSearchResult, OrbitSearchError> {
+fn capacity_pruned_hk2017(geometry: &BenchGeometry) -> Result<OrbitSearchResult, OrbitSearchError> {
     let transition_is_allowed = build_transition_matrix_from_facet_intersections_and_omega(
-        polytope.facet_intersection_is_nonempty(),
-        polytope.omega_signs(),
+        &geometry.facet_intersection_is_nonempty,
+        &geometry.omega_signs,
     );
     let (orbits, iterations) =
-        solve_pruned_hk2017_candidates(polytope.dual_vertices_f64(), &transition_is_allowed)?;
+        solve_pruned_hk2017_candidates(&geometry.dual_vertices, &transition_is_allowed)?;
     aggregate_orbits_with_dual_vertices_exact(
-        polytope.dual_vertices(),
+        &geometry.dual_vertices_exact,
         orbits,
         iterations,
         0.0,
@@ -74,18 +120,18 @@ fn capacity_pruned_hk2017(polytope: &Polytope4D) -> Result<OrbitSearchResult, Or
 }
 
 fn capacity_pruned_hk2017_certified(
-    polytope: &Polytope4D,
+    geometry: &BenchGeometry,
     action_gap_exact: BigRational,
     mode: CertifiedOrbitSetMode,
 ) -> Result<CertifiedOrbitSearchResult, OrbitSearchError> {
     let transition_is_allowed = build_transition_matrix_from_facet_intersections_and_omega(
-        polytope.facet_intersection_is_nonempty(),
-        polytope.omega_signs(),
+        &geometry.facet_intersection_is_nonempty,
+        &geometry.omega_signs,
     );
     let (orbits, iterations) =
-        solve_pruned_hk2017_candidates(polytope.dual_vertices_f64(), &transition_is_allowed)?;
+        solve_pruned_hk2017_candidates(&geometry.dual_vertices, &transition_is_allowed)?;
     aggregate_certified_orbits_with_dual_vertices_exact(
-        polytope.dual_vertices(),
+        &geometry.dual_vertices_exact,
         orbits,
         iterations,
         action_gap_exact,
@@ -94,12 +140,12 @@ fn capacity_pruned_hk2017_certified(
 }
 
 /// Find a valid permutation for single-KKT benchmarks.
-fn find_valid_permutation(polytope: &Polytope4D) -> Vec<usize> {
-    let f = polytope.facet_count();
-    let dual_vertices = polytope.dual_vertices_f64();
+fn find_valid_permutation(geometry: &BenchGeometry) -> Vec<usize> {
+    let f = geometry.dual_vertices.len();
+    let dual_vertices = &geometry.dual_vertices;
     let transition_is_allowed = build_transition_matrix_from_facet_intersections_and_omega(
-        polytope.facet_intersection_is_nonempty(),
-        polytope.omega_signs(),
+        &geometry.facet_intersection_is_nonempty,
+        &geometry.omega_signs,
     );
     let mut found: Option<Vec<usize>> = None;
     for m in 2..=f {
@@ -131,14 +177,13 @@ fn bench_construction(c: &mut Criterion) {
         let (normals, heights) = raw_inputs(f);
         group.bench_with_input(BenchmarkId::from_parameter(f), &f, |b, _| {
             b.iter(|| {
-                Polytope4D::from_f64(
+                construct_flat_geometry(
                     normals
                         .iter()
                         .zip(heights.iter())
                         .map(|(n, &h)| n / h)
                         .collect(),
                 )
-                .expect("construction failed")
             });
         });
     }
@@ -148,9 +193,9 @@ fn bench_construction(c: &mut Criterion) {
 fn bench_transition_matrix(c: &mut Criterion) {
     let mut group = c.benchmark_group("transition_matrix");
     for &f in FACET_COUNTS {
-        let polytope = prebuilt_polytope(f);
-        let facet_intersection_is_nonempty = polytope.facet_intersection_is_nonempty();
-        let omega_signs = polytope.omega_signs();
+        let geometry = prebuilt_geometry(f);
+        let facet_intersection_is_nonempty = &geometry.facet_intersection_is_nonempty;
+        let omega_signs = &geometry.omega_signs;
         group.bench_with_input(BenchmarkId::from_parameter(f), &f, |b, _| {
             b.iter(|| {
                 build_transition_matrix_from_facet_intersections_and_omega(
@@ -168,9 +213,9 @@ fn bench_capacity(c: &mut Criterion) {
     // F=11 takes ~170ms per call; limit measurement time.
     group.sample_size(10);
     for &f in FACET_COUNTS {
-        let polytope = prebuilt_polytope(f);
+        let geometry = prebuilt_geometry(f);
         group.bench_with_input(BenchmarkId::from_parameter(f), &f, |b, _| {
-            b.iter(|| capacity_pruned_hk2017(&polytope));
+            b.iter(|| capacity_pruned_hk2017(&geometry));
         });
     }
     group.finish();
@@ -180,11 +225,11 @@ fn bench_capacity_certified_minimizers(c: &mut Criterion) {
     let mut group = c.benchmark_group("capacity_certified_minimizers");
     group.sample_size(10);
     for &f in FACET_COUNTS {
-        let polytope = prebuilt_polytope(f);
+        let geometry = prebuilt_geometry(f);
         group.bench_with_input(BenchmarkId::from_parameter(f), &f, |b, _| {
             b.iter(|| {
                 capacity_pruned_hk2017_certified(
-                    &polytope,
+                    &geometry,
                     BigRational::zero(),
                     CertifiedOrbitSetMode::MinimizersOnly,
                 )
@@ -197,9 +242,9 @@ fn bench_capacity_certified_minimizers(c: &mut Criterion) {
 fn bench_kkt_single(c: &mut Criterion) {
     let mut group = c.benchmark_group("kkt_single");
     for &f in FACET_COUNTS {
-        let polytope = prebuilt_polytope(f);
-        let dual_vertices = polytope.dual_vertices_f64();
-        let perm = find_valid_permutation(&polytope);
+        let geometry = prebuilt_geometry(f);
+        let dual_vertices = &geometry.dual_vertices;
+        let perm = find_valid_permutation(&geometry);
         group.bench_with_input(BenchmarkId::from_parameter(f), &f, |b, _| {
             b.iter(|| solve_kkt_for_dual_vertices(dual_vertices, &perm));
         });
@@ -210,10 +255,10 @@ fn bench_kkt_single(c: &mut Criterion) {
 fn bench_pruning_check(c: &mut Criterion) {
     let mut group = c.benchmark_group("pruning_check");
     for &f in FACET_COUNTS {
-        let polytope = prebuilt_polytope(f);
+        let geometry = prebuilt_geometry(f);
         let transition_is_allowed = build_transition_matrix_from_facet_intersections_and_omega(
-            polytope.facet_intersection_is_nonempty(),
-            polytope.omega_signs(),
+            &geometry.facet_intersection_is_nonempty,
+            &geometry.omega_signs,
         );
         // Use a size-3 permutation for the pruning check.
         let perm: Vec<usize> = (0..std::cmp::min(3, f)).collect();
