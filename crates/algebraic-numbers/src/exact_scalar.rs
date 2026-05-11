@@ -34,16 +34,23 @@ pub trait ExactScalar:
     + Div<Output = Self>
     + DivAssign
 {
-    /// Optional lossy f64 approximation for exact algorithms that can use
-    /// floating-point arithmetic to dismiss impossible candidates before exact
-    /// fallback. Returning `None` keeps the caller on the exact-only path.
-    fn to_f64_approx(&self) -> Option<f64> {
-        None
-    }
+    /// Lossy IEEE-754 rounding for exact algorithms that can use f64
+    /// arithmetic to dismiss impossible candidates before exact fallback.
+    fn round_to_f64(&self) -> f64;
 }
 
 impl ExactScalar for BigRational {
-    fn to_f64_approx(&self) -> Option<f64> {
-        self.to_f64()
+    fn round_to_f64(&self) -> f64 {
+        round_rational_to_f64(self)
     }
+}
+
+pub(crate) fn round_rational_to_f64(value: &BigRational) -> f64 {
+    value.to_f64().unwrap_or_else(|| {
+        if value < &BigRational::zero() {
+            f64::NEG_INFINITY
+        } else {
+            f64::INFINITY
+        }
+    })
 }

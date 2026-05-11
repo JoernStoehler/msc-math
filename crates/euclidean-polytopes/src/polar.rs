@@ -73,14 +73,11 @@ fn f64_prefilter_vertices<T: ExactScalar>(vertices: &[Vector4<T>]) -> Option<Vec
     vertices
         .iter()
         .map(|vertex| {
-            let coordinates = std::array::from_fn(|coordinate| vertex[coordinate].to_f64_approx());
-            match coordinates {
-                [Some(x0), Some(x1), Some(x2), Some(x3)]
-                    if x0.is_finite() && x1.is_finite() && x2.is_finite() && x3.is_finite() =>
-                {
-                    Some([x0, x1, x2, x3])
-                }
-                _ => None,
+            let coordinates = std::array::from_fn(|coordinate| vertex[coordinate].round_to_f64());
+            if coordinates.iter().all(|coordinate| coordinate.is_finite()) {
+                Some(coordinates)
+            } else {
+                None
             }
         })
         .collect()
