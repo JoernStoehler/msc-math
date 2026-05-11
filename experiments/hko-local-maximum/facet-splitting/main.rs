@@ -26,6 +26,7 @@
 
 use exp_hko_local_maximum::capacity_auto;
 use exp_hko_local_maximum::euclidean_volume_f64;
+use exp_hko_local_maximum::HkoPolytopeCache;
 use nalgebra::Vector4;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
@@ -35,7 +36,6 @@ use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::time::Instant;
 use symplectic::geom::known_polytopes;
-use symplectic::geom::polytope::Polytope4D;
 
 /// Number of angular samples per representative facet normal for facet-splitting.
 /// HKO2024 = pentagon ×_L pentagon: all Q-space normals equivalent, all P-space equivalent.
@@ -123,8 +123,8 @@ fn parse_args() -> Args {
 // ============================================================================
 
 /// Safely compute sys for a polytope, catching panics from degenerate geometry.
-fn safe_sys(polytope: &Polytope4D) -> Option<(f64, f64, f64)> {
-    let vol = euclidean_volume_f64(polytope.vertices(), polytope.incidence());
+fn safe_sys(polytope: &HkoPolytopeCache) -> Option<(f64, f64, f64)> {
+    let vol = euclidean_volume_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
     if vol <= 0.0 {
         return None;
     }
@@ -208,14 +208,18 @@ fn run_phase_b(base_dir: &std::path::Path, smoke: bool) {
     println!("═══════════════════════════════════════════════════════════\n");
 
     let known = known_polytopes::hko_pentagon();
-    let polytope = &known.polytope;
+    let polytope = HkoPolytopeCache::from_rational_parts(
+        known.polytope.dual_vertices().to_vec(),
+        known.polytope.vertices().to_vec(),
+    )
+    .expect("HKO cache");
     let f = polytope.facet_count();
-    let duals = polytope.dual_vertices_f64();
+    let duals = &polytope.dual_vertices_f64;
     let normals: Vec<Vector4<f64>> = duals.iter().map(|a| a / a.norm()).collect();
-    let vertices = polytope.vertices_f64();
+    let vertices = &polytope.vertices_f64;
 
-    let vol_orig = euclidean_volume_f64(polytope.vertices(), polytope.incidence());
-    let cap_orig = capacity_auto(polytope)
+    let vol_orig = euclidean_volume_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
+    let cap_orig = capacity_auto(&polytope)
         .expect("failed to compute HKO2024 baseline capacity")
         .capacity();
     let sys_orig = cap_orig * cap_orig / (2.0 * vol_orig);
@@ -289,8 +293,8 @@ fn run_phase_b(base_dir: &std::path::Path, smoke: bool) {
                 let mut new_duals: Vec<Vector4<f64>> = duals.to_vec();
                 new_duals.push(dir / new_h);
 
-                match Polytope4D::from_f64(new_duals) {
-                    Ok(split_poly) => {
+                match HkoPolytopeCache::from_f64(new_duals) {
+                    Some(split_poly) => {
                         let (split_sys, split_vol, split_cap) = match safe_sys(&split_poly) {
                             Some(v) => v,
                             None => continue,
@@ -339,7 +343,7 @@ fn run_phase_b(base_dir: &std::path::Path, smoke: bool) {
                         serde_json::to_writer(&mut split_writer, &row).expect("write splitting");
                         writeln!(split_writer).expect("newline");
                     }
-                    Err(_) => {
+                    None => {
                         // Construction failed (degenerate geometry at small eps)
                         let row = SplittingRow {
                             source_facet: facet_k,
@@ -410,7 +414,7 @@ fn run_phase_b(base_dir: &std::path::Path, smoke: bool) {
             let mut new_duals: Vec<Vector4<f64>> = duals.to_vec();
             new_duals.push(dir / new_h);
 
-            if let Ok(split_poly) = Polytope4D::from_f64(new_duals) {
+            if let Some(split_poly) = HkoPolytopeCache::from_f64(new_duals) {
                 let (split_sys, split_vol, split_cap) = match safe_sys(&split_poly) {
                     Some(v) => v,
                     None => continue,
@@ -502,7 +506,7 @@ fn run_phase_b(base_dir: &std::path::Path, smoke: bool) {
             let mut new_duals2: Vec<Vector4<f64>> = duals.to_vec();
             new_duals2.push(dir / new_h);
 
-            if let Ok(split_poly) = Polytope4D::from_f64(new_duals2) {
+            if let Some(split_poly) = HkoPolytopeCache::from_f64(new_duals2) {
                 let (split_sys, split_vol, split_cap) = match safe_sys(&split_poly) {
                     Some(v) => v,
                     None => continue,

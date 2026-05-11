@@ -21,9 +21,9 @@
 //!
 //! Input Artifacts: None (enumerates known polytopes from the library).
 //! Output Artifacts: None (prints diagnostic summary tables to stdout).
+use dev_numerical_analysis::NumericsPolytopeCache;
 use nalgebra::{DMatrix, DVector, Vector4};
 use symplectic::geom::known_polytopes;
-use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::symplectic_form::omega0;
 
 // ── Local KKT enumeration helpers ──
@@ -346,10 +346,19 @@ fn eigenvalue_diagnostics(
 }
 
 fn main() {
-    let polytopes: Vec<(&str, Polytope4D)> = known_polytopes::all_known()
+    let polytopes: Vec<(&str, NumericsPolytopeCache)> = known_polytopes::all_known()
         .into_iter()
         .filter(|kp| kp.polytope.facet_count() <= 10)
-        .map(|kp| (kp.name, kp.polytope.clone()))
+        .map(|kp| {
+            (
+                kp.name,
+                NumericsPolytopeCache::from_rational_parts(
+                    kp.polytope.dual_vertices().to_vec(),
+                    kp.polytope.vertices().to_vec(),
+                )
+                .expect("known polytope cache"),
+            )
+        })
         .collect();
 
     println!("=== KKT Inertia Experiment ===\n");
@@ -370,7 +379,7 @@ fn main() {
 
     for (name, polytope) in &polytopes {
         let f = polytope.facet_count();
-        let duals = polytope.dual_vertices_f64();
+        let duals = &polytope.dual_vertices_f64;
         let normals: Vec<Vector4<f64>> = duals.iter().map(|a| a / a.norm()).collect();
         let heights: Vec<f64> = duals.iter().map(|a| 1.0 / a.norm()).collect();
 
@@ -434,7 +443,7 @@ fn main() {
 
     for (name, polytope) in &polytopes {
         let f = polytope.facet_count();
-        let duals = polytope.dual_vertices_f64();
+        let duals = &polytope.dual_vertices_f64;
         let normals: Vec<Vector4<f64>> = duals.iter().map(|a| a / a.norm()).collect();
         let heights: Vec<f64> = duals.iter().map(|a| 1.0 / a.norm()).collect();
         let mut total = 0u64;

@@ -22,6 +22,7 @@
 //! Explicit billiard algorithm because the output schema persists bounce counts;
 //! the crate-level `ehz_capacity` entrypoint would hide that billiard-native data.
 
+use exp_hko_local_maximum::HkoPolytopeCache;
 use exp_hko_local_maximum::{capacity_billiard, euclidean_volume_f64};
 use nalgebra::Vector4;
 use rand::Rng;
@@ -34,7 +35,6 @@ use std::time::Instant;
 use symplectic::algorithms::billiard::bounce_count_from_sigma_for_facets;
 use symplectic::classify_facets_from_dual_vertices;
 use symplectic::geom::known_polytopes;
-use symplectic::geom::polytope::Polytope4D;
 
 const SEED: u64 = 42;
 
@@ -233,14 +233,21 @@ fn main() {
 
     // Base polytope
     let base = known_polytopes::hko_pentagon();
-    let base_polytope = &base.polytope;
-    let base_duals: Vec<Vector4<f64>> = base_polytope.dual_vertices_f64().to_vec();
+    let base_polytope = HkoPolytopeCache::from_rational_parts(
+        base.polytope.dual_vertices().to_vec(),
+        base.polytope.vertices().to_vec(),
+    )
+    .expect("HKO base cache");
+    let base_duals: Vec<Vector4<f64>> = base_polytope.dual_vertices_f64.to_vec();
     let indices = lagrangian_component_indices(&base_duals);
 
     // Compute and write base row (epsilon = 0)
-    let base_vol = euclidean_volume_f64(base_polytope.vertices(), base_polytope.incidence());
-    let base_billiard = capacity_billiard(base_polytope).expect("billiard classification failed");
-    let base_classification = classify_facets_from_dual_vertices(base_polytope.dual_vertices_f64())
+    let base_vol = euclidean_volume_f64(
+        &base_polytope.vertices,
+        &base_polytope.vertex_facet_incidence,
+    );
+    let base_billiard = capacity_billiard(&base_polytope).expect("billiard classification failed");
+    let base_classification = classify_facets_from_dual_vertices(&base_polytope.dual_vertices_f64)
         .expect("base polytope should classify as Lagrangian product");
     let base_cap = base_billiard.capacity();
     let base_sys = base_cap * base_cap / (2.0 * base_vol);
@@ -306,12 +313,12 @@ fn main() {
                 perturb_lagrangian(&base_duals, &indices, eps, &mut rng);
 
             // Try to construct a valid polytope
-            let polytope = match Polytope4D::from_f64(perturbed_duals.clone()) {
-                Ok(p) => p,
-                Err(_) => continue,
+            let polytope = match HkoPolytopeCache::from_f64(perturbed_duals.clone()) {
+                Some(p) => p,
+                None => continue,
             };
             let classification =
-                match classify_facets_from_dual_vertices(polytope.dual_vertices_f64()) {
+                match classify_facets_from_dual_vertices(&polytope.dual_vertices_f64) {
                     Ok(classification) => classification,
                     Err(_) => continue,
                 };
@@ -320,7 +327,7 @@ fn main() {
             // `bounces`, which is only available from the billiard-native API.
             let billiard = capacity_billiard(&polytope).expect("classification already succeeded");
 
-            let vol = euclidean_volume_f64(polytope.vertices(), polytope.incidence());
+            let vol = euclidean_volume_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
             if vol <= 0.0 {
                 continue;
             }

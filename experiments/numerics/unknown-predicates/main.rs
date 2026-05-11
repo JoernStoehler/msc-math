@@ -18,7 +18,9 @@
 //!    generates the full dataset and writes `unknown-predicates/unknown-predicates.jsonl`.
 //! 3. Python script reads JSONL, summarizes findings
 
-use dev_numerical_analysis::{capacity_billiard, capacity_pruned_hk2017, euclidean_volume_f64};
+use dev_numerical_analysis::{
+    capacity_billiard, capacity_pruned_hk2017, euclidean_volume_f64, NumericsPolytopeCache,
+};
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use serde::Serialize;
@@ -171,10 +173,15 @@ fn main() {
             generate_random_polytopes(n_samples, facet_count, RANDOM_H_MIN, RANDOM_H_MAX, &mut rng);
 
         for (i, p) in polytopes.iter().enumerate() {
-            let vol = euclidean_volume_f64(p.vertices(), p.incidence());
+            let cache = NumericsPolytopeCache::from_rational_parts(
+                p.dual_vertices().to_vec(),
+                p.vertices().to_vec(),
+            )
+            .expect("random polytope cache");
+            let vol = euclidean_volume_f64(&cache.vertices, &cache.vertex_facet_incidence);
 
             let start = Instant::now();
-            let result = capacity_pruned_hk2017(p).expect("ehz_capacity_pruned failed");
+            let result = capacity_pruned_hk2017(&cache).expect("ehz_capacity_pruned failed");
             let time_ms = start.elapsed().as_secs_f64() * 1000.0;
 
             let beta_min = result
@@ -239,11 +246,16 @@ fn main() {
             let (pn, ph) = rotate_polygon_2d(&pn_base, &ph_base, theta);
             let polytope = lagrangian_product(&qn, &qh, &pn, &ph)
                 .expect("pentagon product construction failed");
+            let cache = NumericsPolytopeCache::from_rational_parts(
+                polytope.dual_vertices().to_vec(),
+                polytope.vertices().to_vec(),
+            )
+            .expect("pentagon product cache");
 
-            let vol = euclidean_volume_f64(polytope.vertices(), polytope.incidence());
+            let vol = euclidean_volume_f64(&cache.vertices, &cache.vertex_facet_incidence);
 
             let start = Instant::now();
-            let result = capacity_billiard(&polytope).unwrap_or_else(|err| {
+            let result = capacity_billiard(&cache).unwrap_or_else(|err| {
                 panic!("billiard capacity failed for pentagon_5x5_{angle_deg:.0}deg: {err}")
             });
             let time_ms = start.elapsed().as_secs_f64() * 1000.0;
@@ -302,11 +314,16 @@ fn main() {
             let (pn, ph) = rotate_polygon_2d(&pn_base, &ph_base, theta);
             let polytope = lagrangian_product(&qn, &qh, &pn, &ph)
                 .expect("polygon product construction failed");
+            let cache = NumericsPolytopeCache::from_rational_parts(
+                polytope.dual_vertices().to_vec(),
+                polytope.vertices().to_vec(),
+            )
+            .expect("polygon product cache");
 
-            let vol = euclidean_volume_f64(polytope.vertices(), polytope.incidence());
+            let vol = euclidean_volume_f64(&cache.vertices, &cache.vertex_facet_incidence);
 
             let start = Instant::now();
-            let result = capacity_billiard(&polytope).unwrap_or_else(|err| {
+            let result = capacity_billiard(&cache).unwrap_or_else(|err| {
                 panic!("billiard capacity failed for pair_{n1}x{n2}_{angle_deg:.0}deg: {err}")
             });
             let time_ms = start.elapsed().as_secs_f64() * 1000.0;

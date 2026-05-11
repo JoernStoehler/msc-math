@@ -16,6 +16,7 @@
 //! Filter: F <= 10 (HK2017 is exponential in F)
 //! Output Artifacts: experiments/combinatorial-cells/cell-widths/combinatorial-boundaries-profiling.jsonl
 
+use exp_combinatorial_cells::CellPolytopeCache;
 use exp_combinatorial_cells::{
     compute_step_bound_detailed, ehz_capacity_instrumented, name_from_record,
 };
@@ -29,7 +30,6 @@ use std::io::{BufWriter, Write};
 use std::path::Path;
 use std::time::Instant;
 use symplectic::database;
-use symplectic::geom::polytope::Polytope4D;
 
 // ============================================================================
 // Configuration
@@ -142,17 +142,17 @@ fn main() {
     let owned_db_path = Path::new(env!("CARGO_MANIFEST_DIR")).join("polytopes.jsonl");
     let db = database::load_many(&[owned_db_path.as_path()]).expect("failed to load database");
 
-    let mut polytopes: Vec<(String, Polytope4D)> = Vec::new();
+    let mut polytopes: Vec<(String, CellPolytopeCache)> = Vec::new();
 
     for (idx, (_, record)) in db.iter().enumerate() {
         let f = record.dual_vertices_rational.len();
         if f > MAX_FACET_COUNT {
             continue;
         }
-        let p = match record.to_polytope() {
-            Ok(p) => p,
-            Err(e) => {
-                eprintln!("  db entry {idx}: reconstruction failed: {e}");
+        let p = match exp_combinatorial_cells::cache_from_record(record) {
+            Some(p) => p,
+            None => {
+                eprintln!("  db entry {idx}: reconstruction failed");
                 continue;
             }
         };

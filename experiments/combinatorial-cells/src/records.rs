@@ -1,8 +1,8 @@
 //! Record naming and polytope reconstruction helpers.
 
+use crate::CellPolytopeCache;
 use nalgebra::Vector4;
 use symplectic::database::{PolytopeRecord, Source};
-use symplectic::geom::polytope::Polytope4D;
 
 /// Derive a human-readable name from a database record's `Source`.
 pub fn name_from_record(record: &PolytopeRecord, index: usize) -> String {
@@ -37,11 +37,33 @@ pub fn construct_at_t(
     duals: &[Vector4<f64>],
     direction: &[Vector4<f64>],
     t: f64,
-) -> Option<Polytope4D> {
+) -> Option<CellPolytopeCache> {
     let new_duals: Vec<Vector4<f64>> = duals
         .iter()
         .zip(direction.iter())
         .map(|(a, d)| a + t * d)
         .collect();
-    Polytope4D::from_f64(new_duals).ok()
+    CellPolytopeCache::from_f64(new_duals)
+}
+
+pub fn cache_from_record(record: &PolytopeRecord) -> Option<CellPolytopeCache> {
+    CellPolytopeCache::from_rational_parts(
+        record.dual_vertices_rational.clone(),
+        record.vertices_rational.clone(),
+    )
+}
+
+pub fn record_from_cache(polytope: &CellPolytopeCache) -> PolytopeRecord {
+    PolytopeRecord {
+        dual_vertices_rational: polytope.dual_vertices.clone(),
+        vertices_rational: polytope.vertices.clone(),
+        source: None,
+        volume: None,
+        volume_err: None,
+        capacity: None,
+        capacity_err: None,
+        sigma_gap_cutoff: None,
+        sigmas: None,
+        orbit_scalars: None,
+    }
 }

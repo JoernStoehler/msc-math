@@ -19,6 +19,7 @@
 use euclidean_polytopes::{
     two_faces_from_vertex_facet_incidence, vertex_facets_from_vertex_facet_incidence,
 };
+use exp_combinatorial_cells::CellPolytopeCache;
 use exp_combinatorial_cells::{
     compute_step_bound_detailed, construct_at_t, ehz_capacity_instrumented, name_from_record,
 };
@@ -33,7 +34,6 @@ use std::path::Path;
 use std::time::Instant;
 use symplectic::algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega;
 use symplectic::database;
-use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::symplectic_form::omega0;
 
 // ============================================================================
@@ -146,10 +146,11 @@ struct CombinatorialType {
     omega_signs: Vec<(usize, usize, bool)>,
 }
 
-fn combinatorial_type(polytope: &Polytope4D) -> CombinatorialType {
-    let vertex_facets_by_vertex = vertex_facets_from_vertex_facet_incidence(polytope.incidence());
-    let two_faces = two_faces_from_vertex_facet_incidence(polytope.incidence());
-    let duals = polytope.dual_vertices_f64();
+fn combinatorial_type(polytope: &CellPolytopeCache) -> CombinatorialType {
+    let vertex_facets_by_vertex =
+        vertex_facets_from_vertex_facet_incidence(&polytope.vertex_facet_incidence);
+    let two_faces = two_faces_from_vertex_facet_incidence(&polytope.vertex_facet_incidence);
+    let duals = &polytope.dual_vertices_f64;
 
     let mut vf: Vec<Vec<usize>> = vertex_facets_by_vertex
         .iter()
@@ -189,15 +190,15 @@ fn same_omega(a: &CombinatorialType, b: &CombinatorialType) -> bool {
 /// Compare transition matrices:
 /// facet intersection nonemptiness + omega_0 signs -> directed facet graph.
 /// This is what actually determines which Reeb orbits are feasible.
-fn same_transitions(base: &Polytope4D, other: &Polytope4D) -> bool {
-    let base_facet_intersection_is_nonempty = base.facet_intersection_is_nonempty();
-    let base_omega_signs = base.omega_signs();
+fn same_transitions(base: &CellPolytopeCache, other: &CellPolytopeCache) -> bool {
+    let base_facet_intersection_is_nonempty = &base.facet_intersection_is_nonempty;
+    let base_omega_signs = &base.omega_signs;
     let t1 = build_transition_matrix_from_facet_intersections_and_omega(
         &base_facet_intersection_is_nonempty,
         &base_omega_signs,
     );
-    let other_facet_intersection_is_nonempty = other.facet_intersection_is_nonempty();
-    let other_omega_signs = other.omega_signs();
+    let other_facet_intersection_is_nonempty = &other.facet_intersection_is_nonempty;
+    let other_omega_signs = &other.omega_signs;
     let t2 = build_transition_matrix_from_facet_intersections_and_omega(
         &other_facet_intersection_is_nonempty,
         &other_omega_signs,
@@ -225,17 +226,17 @@ fn main() {
     let owned_db_path = Path::new(env!("CARGO_MANIFEST_DIR")).join("polytopes.jsonl");
     let db = database::load_many(&[owned_db_path.as_path()]).expect("failed to load database");
 
-    let mut polytopes: Vec<(String, Polytope4D)> = Vec::new();
+    let mut polytopes: Vec<(String, CellPolytopeCache)> = Vec::new();
 
     for (idx, (_, record)) in db.iter().enumerate() {
         let f = record.dual_vertices_rational.len();
         if f > MAX_FACET_COUNT {
             continue;
         }
-        let p = match record.to_polytope() {
-            Ok(p) => p,
-            Err(e) => {
-                eprintln!("  db entry {idx}: reconstruction failed: {e}");
+        let p = match exp_combinatorial_cells::cache_from_record(record) {
+            Some(p) => p,
+            None => {
+                eprintln!("  db entry {idx}: reconstruction failed");
                 continue;
             }
         };
@@ -271,7 +272,7 @@ fn main() {
     for (idx, (name, polytope)) in polytopes.iter().enumerate() {
         let t_poly = Instant::now();
         let f = polytope.facet_count();
-        let duals = polytope.dual_vertices_f64();
+        let duals = &polytope.dual_vertices_f64;
 
         // =====================================================================
         // Base computation: need orbit membership for consistent output schema

@@ -48,6 +48,7 @@
 //!
 //! Self-contained: generates all polytopes internally.
 
+use dev_gradient::GradientPolytopeCache;
 use dev_gradient::{ehz_capacity_safe, enumerate_all_orbits, random_direction, solve_kkt_safe};
 use nalgebra::{DVector, Vector4};
 use rand::SeedableRng;
@@ -70,7 +71,6 @@ use symplectic::geom::symplectic_form::omega0;
 use symplectic::kkt::qp_assembly::build_augmented_system_from_dual_vertices;
 use symplectic::kkt::saddle_point_solver::{KktResult, EPS_Q_POSITIVE};
 use symplectic::random::generate_random_polytopes;
-use symplectic::Polytope4D;
 use symplectic::{lagrangian_product, regular_polygon_2d};
 
 // ============================================================================
@@ -291,7 +291,7 @@ fn smoke_output_dir(label: &str) -> String {
 ///   (dM.x_0)[m+4] = 0,
 /// where D = Sigma_l beta_l . d_{sigma(l)} (using closure constraint A^T beta = 0).
 fn beta_directional_sensitivity(
-    polytope: &Polytope4D,
+    polytope: &GradientPolytopeCache,
     perm: &[usize],
     kkt: &KktResult,
     duals: &[Vector4<f64>],
@@ -318,7 +318,7 @@ fn beta_directional_sensitivity(
     // rhs[m + 4] = 0 already
 
     // Build M and solve M.w = -rhs via eigendecomposition
-    let dual_vertices = polytope.dual_vertices_f64();
+    let dual_vertices = &polytope.dual_vertices_f64;
     let (kkt_matrix, _) = build_augmented_system_from_dual_vertices(dual_vertices, perm);
     let eig = kkt_matrix.symmetric_eigen();
 
@@ -351,12 +351,14 @@ fn beta_directional_sensitivity(
 /// numerical tolerance). Orbits with beta_k ~ 0 are feasible on the boundary
 /// of the orbit's feasibility region -- they represent orbits that are about
 /// to appear/disappear and contribute to the Clarke subdifferential.
-fn enumerate_all_orbits_inclusive(polytope: &Polytope4D) -> Vec<(f64, Vec<usize>, KktResult)> {
+fn enumerate_all_orbits_inclusive(
+    polytope: &GradientPolytopeCache,
+) -> Vec<(f64, Vec<usize>, KktResult)> {
     enumerate_orbits_inner(polytope, -EPS_BETA_CERTIFIED)
 }
 
 fn enumerate_orbits_inner(
-    polytope: &Polytope4D,
+    polytope: &GradientPolytopeCache,
     beta_threshold: f64,
 ) -> Vec<(f64, Vec<usize>, KktResult)> {
     let f = polytope.facet_count();
@@ -416,7 +418,12 @@ fn run_q5(base_dir: &str, smoke: bool) {
             generate_random_polytopes(if smoke { 1 } else { 5 }, f_count, 0.5, 2.0, &mut bench_rng);
         let t0 = Instant::now();
         for p in &bench_polys {
-            ehz_capacity_safe(p);
+            let cache = GradientPolytopeCache::from_rational_parts(
+                p.dual_vertices().to_vec(),
+                p.vertices().to_vec(),
+            )
+            .expect("benchmark polytope cache");
+            ehz_capacity_safe(&cache);
         }
         let bench_ms = t0.elapsed().as_secs_f64() * 1000.0 / bench_polys.len() as f64;
         println!(
@@ -430,7 +437,7 @@ fn run_q5(base_dir: &str, smoke: bool) {
         let mut generated = 0;
 
         struct PolytopeWithOrbits {
-            polytope: Polytope4D,
+            polytope: GradientPolytopeCache,
             orbits: Vec<(f64, Vec<usize>, KktResult)>,
             gap: f64,
         }
@@ -446,6 +453,11 @@ fn run_q5(base_dir: &str, smoke: bool) {
                 generate_random_polytopes(if smoke { 2 } else { 10 }, f_count, 0.5, 2.0, &mut rng);
 
             for polytope in &polytopes {
+                let cache = GradientPolytopeCache::from_rational_parts(
+                    polytope.dual_vertices().to_vec(),
+                    polytope.vertices().to_vec(),
+                )
+                .expect("random polytope cache");
                 generated += 1;
                 if bin_counts.iter().all(|&c| c >= q5_per_bin) {
                     break;
@@ -453,7 +465,7 @@ fn run_q5(base_dir: &str, smoke: bool) {
 
                 // Use enumerate_all_orbits for binning (need second-best action).
                 // Then filter to gap threshold for storage.
-                let all_orbits = enumerate_all_orbits(polytope);
+                let all_orbits = enumerate_all_orbits(&cache);
                 if all_orbits.len() < 2 {
                     continue;
                 }
@@ -477,7 +489,7 @@ fn run_q5(base_dir: &str, smoke: bool) {
                     .collect();
 
                 polytope_data.push(PolytopeWithOrbits {
-                    polytope: polytope.clone(),
+                    polytope: cache,
                     orbits: filtered,
                     gap,
                 });
@@ -507,7 +519,7 @@ fn run_q5(base_dir: &str, smoke: bool) {
         let mut dir_rng = ChaCha8Rng::seed_from_u64(SEED_BASE + 600 + f_count as u64);
 
         for (pi, pd) in polytope_data.iter().enumerate() {
-            let duals = pd.polytope.dual_vertices_f64();
+            let duals = &pd.polytope.dual_vertices_f64;
             let best_perm = &pd.orbits[0].1;
             let best_kkt = &pd.orbits[0].2;
             let c_base = pd.orbits[0].0; // capacity = action of best orbit
@@ -519,7 +531,7 @@ fn run_q5(base_dir: &str, smoke: bool) {
                 .iter()
                 .map(|(_action, perm, kkt)| {
                     capacity_derivatives_a_from_kkt_result(
-                        pd.polytope.dual_vertices_f64(),
+                        &pd.polytope.dual_vertices_f64,
                         perm,
                         kkt,
                     )
@@ -567,9 +579,10 @@ fn run_q5(base_dir: &str, smoke: bool) {
                         .map(|(a, d)| a + t * d)
                         .collect();
 
-                    let perturbed_polytope = match Polytope4D::from_f64(perturbed_duals) {
-                        Ok(p) => p,
-                        Err(_) => continue,
+                    let perturbed_polytope = match GradientPolytopeCache::from_f64(perturbed_duals)
+                    {
+                        Some(p) => p,
+                        None => continue,
                     };
 
                     // Full ehz_capacity on perturbed polytope -- the key difference from Q1-Q4
@@ -682,14 +695,14 @@ fn run_q5(base_dir: &str, smoke: bool) {
 /// Process one polytope for Q5b: enumerate tied orbits, compute gradients,
 /// test subdiff prediction. Returns number of rows written.
 fn q5b_process_polytope(
-    polytope: &Polytope4D,
+    polytope: &GradientPolytopeCache,
     id: &str,
     n_dirs: usize,
     rng: &mut ChaCha8Rng,
     writer: &mut BufWriter<File>,
 ) -> usize {
     let f_count = polytope.facet_count();
-    let duals = polytope.dual_vertices_f64();
+    let duals = &polytope.dual_vertices_f64;
 
     // Inclusive enumeration: beta >= 0 (picks up boundary orbits with beta_k = 0).
     // [thm:subdiff-with-appearance] needs these to compute the direction-filtered subdiff.
@@ -746,7 +759,7 @@ fn q5b_process_polytope(
     let orbit_grads: Vec<Vec<Vector4<f64>>> = tied_orbits
         .iter()
         .map(|(_action, perm, kkt)| {
-            capacity_derivatives_a_from_kkt_result(polytope.dual_vertices_f64(), perm, kkt)
+            capacity_derivatives_a_from_kkt_result(&polytope.dual_vertices_f64, perm, kkt)
         })
         .collect();
     let interior_orbit_grads: Vec<Vec<Vector4<f64>>> = orbit_grads
@@ -852,9 +865,9 @@ fn q5b_process_polytope(
                 .map(|(a, d)| a + t * d)
                 .collect();
 
-            let perturbed_polytope = match Polytope4D::from_f64(perturbed_duals) {
-                Ok(p) => p,
-                Err(_) => continue,
+            let perturbed_polytope = match GradientPolytopeCache::from_f64(perturbed_duals) {
+                Some(p) => p,
+                None => continue,
             };
 
             let perturbed_ehz = match ehz_capacity_safe(&perturbed_polytope) {
@@ -880,12 +893,12 @@ fn q5b_process_polytope(
             // Op 2: augmented subdiff -- include appearing orbit's gradient
             // computed at the perturbed point where it IS feasible.
             let (aug_gd, aug_pred, aug_res, aug_log_res) = if orbit_switched {
-                let perturbed_duals_vec = perturbed_polytope.dual_vertices_f64();
+                let perturbed_duals_vec = &perturbed_polytope.dual_vertices_f64;
                 let appearing_grad =
                     solve_kkt_safe(&perturbed_polytope, perturbed_perm).map(|kkt| {
                         let _ = perturbed_duals_vec;
                         capacity_derivatives_a_from_kkt_result(
-                            perturbed_polytope.dual_vertices_f64(),
+                            &perturbed_polytope.dual_vertices_f64,
                             perturbed_perm,
                             &kkt,
                         )
@@ -987,6 +1000,11 @@ fn run_q5b(base_dir: &str, smoke: bool) {
         let (qn, qh) = regular_polygon_2d(n, 1.0);
         let (pn, ph) = regular_polygon_2d(n, 1.0);
         let polytope = lagrangian_product(&qn, &qh, &pn, &ph).expect("regular LP");
+        let polytope = GradientPolytopeCache::from_rational_parts(
+            polytope.dual_vertices().to_vec(),
+            polytope.vertices().to_vec(),
+        )
+        .expect("regular LP cache");
         let n_dirs = if smoke {
             q5b_n_dirs
         } else if polytope.facet_count() <= 8 {
@@ -1001,30 +1019,35 @@ fn run_q5b(base_dir: &str, smoke: bool) {
     // -- Part 2: hko2024 (Viterbo counterexample, rotated LP(5,5)) --
     if !smoke || SMOKE_Q5B_INCLUDE_HKO {
         let kp = symplectic::known_polytopes::hko_pentagon();
+        let cache = GradientPolytopeCache::from_rational_parts(
+            kp.polytope.dual_vertices().to_vec(),
+            kp.polytope.vertices().to_vec(),
+        )
+        .expect("HKO cache");
         // F=10, expensive -- use 5 directions like LP(5,5)
-        total_rows += q5b_process_polytope(&kp.polytope, "q5b_hko2024", 5, &mut rng, &mut writer);
+        total_rows += q5b_process_polytope(&cache, "q5b_hko2024", 5, &mut rng, &mut writer);
     }
 
     // -- Part 3: Non-product polytopes (simplex, hypercube) --
     if !smoke || SMOKE_Q5B_INCLUDE_SIMPLEX {
         let kp = symplectic::known_polytopes::simplex();
-        total_rows += q5b_process_polytope(
-            &kp.polytope,
-            "q5b_simplex",
-            q5b_n_dirs,
-            &mut rng,
-            &mut writer,
-        );
+        let cache = GradientPolytopeCache::from_rational_parts(
+            kp.polytope.dual_vertices().to_vec(),
+            kp.polytope.vertices().to_vec(),
+        )
+        .expect("simplex cache");
+        total_rows +=
+            q5b_process_polytope(&cache, "q5b_simplex", q5b_n_dirs, &mut rng, &mut writer);
     }
     if !smoke || SMOKE_Q5B_INCLUDE_HYPERCUBE {
         let kp = symplectic::known_polytopes::hypercube();
-        total_rows += q5b_process_polytope(
-            &kp.polytope,
-            "q5b_hypercube",
-            q5b_n_dirs,
-            &mut rng,
-            &mut writer,
-        );
+        let cache = GradientPolytopeCache::from_rational_parts(
+            kp.polytope.dual_vertices().to_vec(),
+            kp.polytope.vertices().to_vec(),
+        )
+        .expect("hypercube cache");
+        total_rows +=
+            q5b_process_polytope(&cache, "q5b_hypercube", q5b_n_dirs, &mut rng, &mut writer);
     }
 
     // -- Part 4: G-orbit polytopes --
@@ -1090,9 +1113,9 @@ fn run_q5b(base_dir: &str, smoke: bool) {
                     }
                 }
 
-                let polytope = match Polytope4D::from_f64(duals) {
-                    Ok(p) => p,
-                    Err(_) => continue, // Unbounded, degenerate, etc.
+                let polytope = match GradientPolytopeCache::from_f64(duals) {
+                    Some(p) => p,
+                    None => continue, // Unbounded, degenerate, etc.
                 };
 
                 let id = format!("q5b_gorbit_n{}_{:02}", order, attempt);

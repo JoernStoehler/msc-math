@@ -1,9 +1,7 @@
-//! Exact 4D polytope construction over experiment-owned reporting scalars.
+//! Algebraic 4D polytope construction over experiment-owned reporting scalars.
 //!
-//! This mirrors the high-level role of `symplectic::Polytope4D` but stays
-//! experiment-scoped and field-generic. It is intentionally small: enough for
-//! exact HKO-family geometry and rational controls, not a drop-in replacement
-//! for `crates/symplectic/src/exact`.
+//! This stays experiment-scoped and field-generic: enough for exact HKO-family
+//! geometry and rational controls, not a reusable geometry API.
 //!
 //! TODO: add [def:...] to formal math for the exact dual-vertex polytope model.
 //! TODO: add [lem:...] to formal math for the exact 4D vertex enumeration and
@@ -14,9 +12,9 @@ use algebraic_numbers::{rank, solve_linear_system, LinearSystemSolution};
 use nalgebra::{DMatrix, DVector};
 use std::collections::BTreeSet;
 
-/// Errors from exact polytope construction.
+/// Errors from algebraic polytope construction.
 #[derive(Clone, Debug, PartialEq, Eq)]
-pub enum ExactPolytopeError {
+pub enum AlgebraicPolytopeError {
     TooFewFacets(usize),
     ZeroDualVertex(usize),
     Unbounded,
@@ -24,9 +22,9 @@ pub enum ExactPolytopeError {
     RedundantFacet(usize),
 }
 
-/// Experiment-owned exact 4D polytope with exact combinatorics.
+/// Experiment-owned algebraic 4D polytope with exact combinatorics.
 #[derive(Clone, Debug, PartialEq, Eq)]
-pub struct ExactPolytope4D<F: ExperimentScalar + 'static> {
+pub struct AlgebraicPolytopeCache<F: ExperimentScalar + 'static> {
     dual_vertices: Vec<[F; 4]>,
     vertices: Vec<[F; 4]>,
     incidence: Vec<Vec<bool>>,
@@ -34,16 +32,16 @@ pub struct ExactPolytope4D<F: ExperimentScalar + 'static> {
     omega_signs: Vec<Vec<i8>>,
 }
 
-impl<F: ExperimentScalar + 'static> ExactPolytope4D<F> {
+impl<F: ExperimentScalar + 'static> AlgebraicPolytopeCache<F> {
     /// Construct from exact dual vertices `a_i` for `a_i . x <= 1`.
-    pub fn new(dual_vertices: Vec<[F; 4]>) -> Result<Self, ExactPolytopeError> {
+    pub fn new(dual_vertices: Vec<[F; 4]>) -> Result<Self, AlgebraicPolytopeError> {
         let f = dual_vertices.len();
         if f < 5 {
-            return Err(ExactPolytopeError::TooFewFacets(f));
+            return Err(AlgebraicPolytopeError::TooFewFacets(f));
         }
         for (idx, dual) in dual_vertices.iter().enumerate() {
             if dual.iter().all(|entry| entry.is_zero()) {
-                return Err(ExactPolytopeError::ZeroDualVertex(idx));
+                return Err(AlgebraicPolytopeError::ZeroDualVertex(idx));
             }
         }
 
@@ -224,13 +222,13 @@ fn affine_rank<F: ExperimentScalar + 'static>(points: &[[F; 4]]) -> usize {
 
 fn check_bounded<F: ExperimentScalar + 'static>(
     dual_vertices: &[[F; 4]],
-) -> Result<(), ExactPolytopeError> {
+) -> Result<(), AlgebraicPolytopeError> {
     let rows: Vec<Vec<F>> = dual_vertices
         .iter()
         .map(|dual| (0..4).map(|i| dual[i].clone()).collect())
         .collect();
     if rank_row_vectors(&rows, 4) < 4 {
-        return Err(ExactPolytopeError::Unbounded);
+        return Err(AlgebraicPolytopeError::Unbounded);
     }
 
     let f = dual_vertices.len();
@@ -249,7 +247,7 @@ fn check_bounded<F: ExperimentScalar + 'static>(
                     .filter(|&idx| idx != i && idx != j && idx != k)
                     .any(|idx| dot4(&dual_vertices[idx], &normal) < F::zero());
                 if !has_pos || !has_neg {
-                    return Err(ExactPolytopeError::Unbounded);
+                    return Err(AlgebraicPolytopeError::Unbounded);
                 }
             }
         }
@@ -260,7 +258,7 @@ fn check_bounded<F: ExperimentScalar + 'static>(
 
 fn enumerate_vertices<F: ExperimentScalar + 'static>(
     dual_vertices: &[[F; 4]],
-) -> Result<(Vec<[F; 4]>, Vec<BTreeSet<usize>>), ExactPolytopeError> {
+) -> Result<(Vec<[F; 4]>, Vec<BTreeSet<usize>>), AlgebraicPolytopeError> {
     let f = dual_vertices.len();
     let rhs = [F::one(), F::one(), F::one(), F::one()];
 
@@ -312,7 +310,7 @@ fn enumerate_vertices<F: ExperimentScalar + 'static>(
     }
 
     if vertices.is_empty() {
-        return Err(ExactPolytopeError::NoVertices);
+        return Err(AlgebraicPolytopeError::NoVertices);
     }
 
     Ok((vertices, descriptors))
@@ -322,7 +320,7 @@ fn check_irredundancy<F: ExperimentScalar + 'static>(
     vertices: &[[F; 4]],
     descriptors: &[BTreeSet<usize>],
     facet_count: usize,
-) -> Result<(), ExactPolytopeError> {
+) -> Result<(), AlgebraicPolytopeError> {
     for facet in 0..facet_count {
         let incident: Vec<[F; 4]> = descriptors
             .iter()
@@ -332,7 +330,7 @@ fn check_irredundancy<F: ExperimentScalar + 'static>(
             .collect();
 
         if incident.is_empty() || affine_rank(&incident) < 3 {
-            return Err(ExactPolytopeError::RedundantFacet(facet));
+            return Err(AlgebraicPolytopeError::RedundantFacet(facet));
         }
     }
     Ok(())
@@ -376,7 +374,7 @@ mod tests {
     }
 
     fn assert_exact_polytope_self_consistent<F: ExperimentScalar>(
-        polytope: &super::ExactPolytope4D<F>,
+        polytope: &super::AlgebraicPolytopeCache<F>,
     ) {
         let one = F::one();
 

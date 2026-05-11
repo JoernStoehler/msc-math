@@ -20,6 +20,7 @@
 
 use euclidean_polytopes::vertex_facets_from_vertex_facet_incidence;
 use exp_combinatorial_cells::euclidean_volume_f64;
+use exp_combinatorial_cells::CellPolytopeCache;
 use exp_combinatorial_cells::{
     compute_step_bound_detailed, construct_at_t, ehz_capacity_instrumented, name_from_record,
     source_dataset_from_record, BoundaryEvent, EventType,
@@ -35,7 +36,6 @@ use std::path::Path;
 use std::time::Instant;
 use symplectic::database;
 use symplectic::derivatives::{capacity_derivatives_a_from_kkt_result, volume_derivatives_a};
-use symplectic::geom::polytope::Polytope4D;
 use symplectic::kkt::saddle_point_solver::solve_kkt_for_dual_vertices;
 
 // ============================================================================
@@ -251,7 +251,7 @@ fn build_global_directions(
 /// sys = c^2/(2V), so by the quotient rule:
 ///   d(sys)/d(a_k) = (c * dc/d(a_k) - sys * dV/d(a_k)) / V
 fn compute_sys_gradient_a(
-    polytope: &Polytope4D,
+    polytope: &CellPolytopeCache,
     vol: f64,
     cap: f64,
     sys: f64,
@@ -259,12 +259,12 @@ fn compute_sys_gradient_a(
     perm: &[usize],
 ) -> Vec<Vector4<f64>> {
     let d_vol_a = volume_derivatives_a(
-        polytope.dual_vertices_f64(),
-        polytope.vertices_f64(),
-        polytope.incidence(),
+        &polytope.dual_vertices_f64,
+        &polytope.vertices_f64,
+        &polytope.vertex_facet_incidence,
     )
     .expect("combinatorial-cell polytope has valid finite geometry");
-    let d_cap_a = capacity_derivatives_a_from_kkt_result(polytope.dual_vertices_f64(), perm, kkt);
+    let d_cap_a = capacity_derivatives_a_from_kkt_result(&polytope.dual_vertices_f64, perm, kkt);
 
     d_vol_a
         .iter()
@@ -276,7 +276,7 @@ fn compute_sys_gradient_a(
 /// Compute sys for a polytope using the default root capacity wrapper.
 /// Returns (sys, capacity, volume, best_perm, kkt).
 fn compute_sys(
-    polytope: &Polytope4D,
+    polytope: &CellPolytopeCache,
 ) -> Option<(
     f64,
     f64,
@@ -284,7 +284,7 @@ fn compute_sys(
     Vec<usize>,
     symplectic::kkt::saddle_point_solver::KktResult,
 )> {
-    let vol = euclidean_volume_f64(polytope.vertices(), polytope.incidence());
+    let vol = euclidean_volume_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
     if vol <= 0.0 {
         return None;
     }
@@ -297,7 +297,7 @@ fn compute_sys(
     }
 
     let perm = ehz.best_sigma().to_vec();
-    let kkt = solve_kkt_for_dual_vertices(polytope.dual_vertices_f64(), &perm).feasible()?;
+    let kkt = solve_kkt_for_dual_vertices(&polytope.dual_vertices_f64, &perm).feasible()?;
     let sys = cap * cap / (2.0 * vol);
 
     if sys.is_finite() {
@@ -346,7 +346,7 @@ fn evaluate_crossing(
     let poly_before = construct_at_t(duals, direction, t - eps_before)?;
     let (sys_b, cap_b, vol_b, perm_b, _) = compute_sys(&poly_before)?;
     let vertex_count_before =
-        vertex_facets_from_vertex_facet_incidence(poly_before.incidence()).len();
+        vertex_facets_from_vertex_facet_incidence(&poly_before.vertex_facet_incidence).len();
 
     let mut eps_used = 0.0;
     let mut sys_a = f64::NAN;
@@ -365,7 +365,9 @@ fn evaluate_crossing(
                 cap_a = c;
                 vol_a = v;
                 perm_a = p;
-                vc_after = vertex_facets_from_vertex_facet_incidence(poly_after.incidence()).len();
+                vc_after =
+                    vertex_facets_from_vertex_facet_incidence(&poly_after.vertex_facet_incidence)
+                        .len();
                 construction_ok = true;
                 break;
             }
@@ -519,17 +521,17 @@ fn main() {
     let owned_db_path = Path::new(env!("CARGO_MANIFEST_DIR")).join("polytopes.jsonl");
     let db = database::load_many(&[owned_db_path.as_path()]).expect("failed to load database");
 
-    let mut polytopes: Vec<(String, String, Polytope4D)> = Vec::new();
+    let mut polytopes: Vec<(String, String, CellPolytopeCache)> = Vec::new();
 
     for (idx, (_, record)) in db.iter().enumerate() {
         let f = record.dual_vertices_rational.len();
         if f > MAX_FACET_COUNT {
             continue;
         }
-        let p = match record.to_polytope() {
-            Ok(p) => p,
-            Err(e) => {
-                eprintln!("  db entry {idx}: reconstruction failed: {e}");
+        let p = match exp_combinatorial_cells::cache_from_record(record) {
+            Some(p) => p,
+            None => {
+                eprintln!("  db entry {idx}: reconstruction failed");
                 continue;
             }
         };
@@ -584,7 +586,7 @@ fn main() {
     for (idx, (name, source, polytope)) in polytopes.iter().enumerate() {
         let t_poly = Instant::now();
         let f = polytope.facet_count();
-        let duals = polytope.dual_vertices_f64();
+        let duals = &polytope.dual_vertices_f64;
 
         // =====================================================================
         // Base computation: instrumented EHZ for orbit gap + gradient
@@ -592,7 +594,7 @@ fn main() {
 
         let base = (|| {
             let instrumented = ehz_capacity_instrumented(polytope)?;
-            let vol = euclidean_volume_f64(polytope.vertices(), polytope.incidence());
+            let vol = euclidean_volume_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
             if vol <= 0.0 {
                 return None;
             }
@@ -601,7 +603,7 @@ fn main() {
             let perm = instrumented.best_permutation;
             let orbit_gap = instrumented.orbit_gap;
             let n_valid_orbits = instrumented.n_valid_orbits;
-            let dual_vertices = polytope.dual_vertices_f64();
+            let dual_vertices = &polytope.dual_vertices_f64;
             let kkt = solve_kkt_for_dual_vertices(dual_vertices, &perm).feasible()?;
             Some((cap, vol, sys, perm, orbit_gap, n_valid_orbits, kkt))
         })();
@@ -617,7 +619,7 @@ fn main() {
         let d_sys_a = compute_sys_gradient_a(polytope, vol, cap, sys, &kkt, &perm);
 
         let vertex_facets_by_vertex =
-            vertex_facets_from_vertex_facet_incidence(polytope.incidence());
+            vertex_facets_from_vertex_facet_incidence(&polytope.vertex_facet_incidence);
         let vertex_count = vertex_facets_by_vertex.len();
         let all_simple = vertex_facets_by_vertex.iter().all(|vf| vf.len() == 4);
         let orbit_str = perm_to_string(&perm);

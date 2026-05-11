@@ -38,7 +38,9 @@
 //!
 //! Self-contained: generates all polytopes internally.
 
-use dev_gradient::{analyze_polytope, enumerate_all_orbits, first_order_test, write_rows};
+use dev_gradient::{
+    analyze_polytope, enumerate_all_orbits, first_order_test, write_rows, GradientPolytopeCache,
+};
 use nalgebra::Vector4;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
@@ -50,7 +52,6 @@ use std::path::PathBuf;
 use std::time::Instant;
 use symplectic::geom::facet_volume::facet_volume_from_incidence_f64;
 use symplectic::random::generate_random_polytopes;
-use symplectic::Polytope4D;
 
 // ============================================================================
 // CLI helpers
@@ -115,7 +116,7 @@ const Q3_PER_BIN: usize = 20;
 const Q4_BASE_COUNT: usize = 10;
 
 /// Q4: barely-cutting delta values. Range 1e-1 to 1e-5 spans from "substantial cut"
-/// to "facet volume near zero". Below 1e-5, Polytope4D::from_f64 may reject as
+/// to "facet volume near zero". Below 1e-5, local flat reconstruction may reject as
 /// degenerate.
 const Q4_DELTAS: &[f64] = &[1e-1, 1e-2, 1e-3, 1e-4, 1e-5];
 
@@ -201,12 +202,12 @@ fn random_unit_s3(rng: &mut ChaCha8Rng) -> Vector4<f64> {
 /// The new halfspace passes delta inside the vertex. Returns None if
 /// construction fails after 50 attempts.
 fn add_barely_cutting_facet(
-    polytope: &Polytope4D,
+    polytope: &GradientPolytopeCache,
     delta: f64,
     rng: &mut ChaCha8Rng,
-) -> Option<Polytope4D> {
-    let vertices = polytope.vertices_f64();
-    let duals = polytope.dual_vertices_f64();
+) -> Option<GradientPolytopeCache> {
+    let vertices = &polytope.vertices_f64;
+    let duals = &polytope.dual_vertices_f64;
 
     // 50 attempts: success rate ~80% at delta>=1e-3, ~50% at delta=1e-5 (v1 data).
     for _ in 0..50 {
@@ -221,7 +222,7 @@ fn add_barely_cutting_facet(
         let a_new = n / h;
         let mut new_duals = duals.to_vec();
         new_duals.push(a_new);
-        if let Ok(p) = Polytope4D::from_f64(new_duals) {
+        if let Some(p) = GradientPolytopeCache::from_f64(new_duals) {
             return Some(p);
         }
     }
@@ -249,12 +250,17 @@ fn run_q3(base_dir: &str, cfg: &EdgeCasesConfig) {
         let polytopes = generate_random_polytopes(cfg.q3_batch_size, f_count, 0.5, 2.0, &mut rng);
 
         for polytope in &polytopes {
+            let cache = GradientPolytopeCache::from_rational_parts(
+                polytope.dual_vertices().to_vec(),
+                polytope.vertices().to_vec(),
+            )
+            .expect("random polytope cache");
             generated += 1;
             if bin_counts.iter().all(|&c| c >= cfg.q3_per_bin) {
                 break;
             }
 
-            let orbits = enumerate_all_orbits(polytope);
+            let orbits = enumerate_all_orbits(&cache);
             if orbits.len() < 2 {
                 continue;
             }
@@ -271,7 +277,7 @@ fn run_q3(base_dir: &str, cfg: &EdgeCasesConfig) {
                 _ => continue,
             };
 
-            let info = match analyze_polytope(polytope) {
+            let info = match analyze_polytope(&cache) {
                 Some(info) => info,
                 None => continue,
             };
@@ -322,8 +328,13 @@ fn run_q4(base_dir: &str, cfg: &EdgeCasesConfig) {
     let base_polytopes = generate_random_polytopes(cfg.q4_base_count, f_count, 0.5, 2.0, &mut rng);
 
     for (i, base) in base_polytopes.iter().enumerate() {
+        let base_cache = GradientPolytopeCache::from_rational_parts(
+            base.dual_vertices().to_vec(),
+            base.vertices().to_vec(),
+        )
+        .expect("base polytope cache");
         for &delta in cfg.q4_deltas {
-            let augmented = match add_barely_cutting_facet(base, delta, &mut rng) {
+            let augmented = match add_barely_cutting_facet(&base_cache, delta, &mut rng) {
                 Some(p) => p,
                 None => {
                     eprintln!("  Q4: base {} delta={:.0e} — construction failed", i, delta);
@@ -342,8 +353,8 @@ fn run_q4(base_dir: &str, cfg: &EdgeCasesConfig) {
             let min_fv = (0..augmented.facet_count())
                 .map(|k| {
                     facet_volume_from_incidence_f64(
-                        augmented.vertices_f64(),
-                        augmented.incidence(),
+                        &augmented.vertices_f64,
+                        &augmented.vertex_facet_incidence,
                         k,
                     )
                     .expect("augmented polytope has valid finite geometry")

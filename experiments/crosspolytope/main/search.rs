@@ -7,7 +7,6 @@ use std::collections::HashSet;
 use std::time::Instant;
 use symplectic::algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega;
 use symplectic::algorithms::hk2017::combinations;
-use symplectic::geom::polytope::Polytope4D;
 
 /// Search subset sizes `m = 2..=13`.
 ///
@@ -171,11 +170,12 @@ fn canonical_subset(subset: &[usize], group: &[[usize; 16]]) -> Vec<usize> {
 }
 
 pub(crate) fn run_crosspolytope_search(
-    polytope: &Polytope4D,
+    facet_intersection_is_nonempty: &DMatrix<bool>,
+    omega_signs: &DMatrix<i8>,
     normals: &[Vector4<f64>],
     heights: &[f64],
 ) -> SearchResult {
-    let facet_count = polytope.facet_count();
+    let facet_count = normals.len();
 
     println!("\nComputing symplectic symmetry group...");
     let group = compute_symplectic_hyperoctahedral(normals);
@@ -187,8 +187,8 @@ pub(crate) fn run_crosspolytope_search(
     }
 
     let transition_is_allowed = build_transition_matrix_from_facet_intersections_and_omega(
-        polytope.facet_intersection_is_nonempty(),
-        polytope.omega_signs(),
+        facet_intersection_is_nonempty,
+        omega_signs,
     );
     let avg_out_degree: f64 = (0..facet_count)
         .map(|i| {

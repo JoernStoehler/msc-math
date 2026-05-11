@@ -69,7 +69,12 @@ fn main() {
     let time_volume_ms = start_vol.elapsed().as_secs_f64() * 1000.0;
     println!("Volume: {vol:.10} ({time_volume_ms:.1} ms)");
 
-    let search = search::run_crosspolytope_search(polytope, &normals, &heights);
+    let search = search::run_crosspolytope_search(
+        polytope.facet_intersection_is_nonempty(),
+        polytope.omega_signs(),
+        &normals,
+        &heights,
+    );
     let time_capacity_ms = search.elapsed_secs * 1000.0;
 
     let certified = search.best_certified;

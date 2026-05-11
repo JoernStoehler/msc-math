@@ -3,6 +3,7 @@
 use crate::{EPSILON_GRID, EPSILON_RANDOM, N_RANDOM_DIRECTIONS, RANDOM_SEED};
 use exp_hko_local_maximum::capacity_auto;
 use exp_hko_local_maximum::euclidean_volume_f64;
+use exp_hko_local_maximum::HkoPolytopeCache;
 use nalgebra::Vector4;
 use rand::Rng as _;
 use rand::SeedableRng;
@@ -11,7 +12,6 @@ use serde::Serialize;
 use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::time::Instant;
-use symplectic::geom::polytope::Polytope4D;
 
 #[derive(Debug, Serialize)]
 struct CurveRow {
@@ -43,12 +43,12 @@ fn random_flat_direction(flat_basis: &[Vec<f64>], rng: &mut ChaCha8Rng) -> (Vec<
 }
 
 pub(crate) fn curvature_at_epsilon(
-    polytope: &Polytope4D,
+    polytope: &HkoPolytopeCache,
     direction: &[f64],
     eps: f64,
     sys_base: f64,
 ) -> Option<f64> {
-    let duals = polytope.dual_vertices_f64();
+    let duals = &polytope.dual_vertices_f64;
     let facet_count = polytope.facet_count();
 
     let eval = |sign: f64| -> Option<f64> {
@@ -64,9 +64,9 @@ pub(crate) fn curvature_at_epsilon(
                 duals[k] + e * d_k
             })
             .collect();
-        let poly = Polytope4D::from_f64(perturbed).ok()?;
+        let poly = HkoPolytopeCache::from_f64(perturbed)?;
         let cap = capacity_auto(&poly).ok()?.capacity();
-        let vol = euclidean_volume_f64(poly.vertices(), poly.incidence());
+        let vol = euclidean_volume_f64(&poly.vertices, &poly.vertex_facet_incidence);
         if vol <= 0.0 {
             return None;
         }
@@ -79,12 +79,12 @@ pub(crate) fn curvature_at_epsilon(
 }
 
 pub(crate) fn run_phase2(
-    polytope: &Polytope4D,
+    polytope: &HkoPolytopeCache,
     sys_base: f64,
     flat_directions: &[Vec<f64>],
     writer: &mut BufWriter<File>,
 ) {
-    let duals = polytope.dual_vertices_f64();
+    let duals = &polytope.dual_vertices_f64;
     let facet_count = polytope.facet_count();
 
     println!(
@@ -116,9 +116,9 @@ pub(crate) fn run_phase2(
                     })
                     .collect();
 
-                let perturbed_poly = match Polytope4D::from_f64(perturbed) {
-                    Ok(p) => p,
-                    Err(_) => {
+                let perturbed_poly = match HkoPolytopeCache::from_f64(perturbed) {
+                    Some(p) => p,
+                    None => {
                         n_fail += 1;
                         continue;
                     }
@@ -132,8 +132,10 @@ pub(crate) fn run_phase2(
                     }
                 };
 
-                let vol =
-                    euclidean_volume_f64(perturbed_poly.vertices(), perturbed_poly.incidence());
+                let vol = euclidean_volume_f64(
+                    &perturbed_poly.vertices,
+                    &perturbed_poly.vertex_facet_incidence,
+                );
                 if vol <= 0.0 {
                     n_fail += 1;
                     continue;
@@ -172,7 +174,7 @@ struct RandomDirectionRow {
 }
 
 pub(crate) fn run_phase3(
-    polytope: &Polytope4D,
+    polytope: &HkoPolytopeCache,
     sys_base: f64,
     flat_directions: &[Vec<f64>],
     writer: &mut BufWriter<File>,

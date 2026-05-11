@@ -1,6 +1,6 @@
 //! Algebraic exactness spike for HKO-style polytopes.
 //!
-//! Goal: construct selected exact polytopes and exact KKT rows over an
+//! Goal: construct selected algebraic polytopes and exact KKT rows over an
 //! algebraic extension of `Q`, then compare them against the current dyadic
 //! library path without changing the library core.
 //!
@@ -15,9 +15,9 @@ use dev_numerical_analysis::algebraic::fixtures::{
     exact_hko_pentagon, exact_hypercube, exact_simplex, hko_capacity_formula_f64,
     HKO_RANK_DEFICIENT_SIGMA, HKO_WINNING_SIGMA,
 };
-use dev_numerical_analysis::algebraic::geom::ExactPolytope4D;
+use dev_numerical_analysis::algebraic::geom::AlgebraicPolytopeCache;
 use dev_numerical_analysis::algebraic::kkt::solve_kkt_exact;
-use dev_numerical_analysis::capacity_pruned_hk2017;
+use dev_numerical_analysis::{capacity_pruned_hk2017, NumericsPolytopeCache};
 use nalgebra::DMatrix;
 use serde::Serialize;
 use std::env;
@@ -29,7 +29,7 @@ use symplectic::kkt::rational_solver as library_rational_solver;
 
 fn polytope_row<F: CatalogField>(
     name: &str,
-    polytope: &ExactPolytope4D<F>,
+    polytope: &AlgebraicPolytopeCache<F>,
 ) -> ExactPolytopeCatalogRow {
     let field = F::field_tag();
     ExactPolytopeCatalogRow {
@@ -230,8 +230,12 @@ fn main() {
     write_jsonl(&polytope_output_path, &polytope_rows);
 
     let library_simplex = known_polytopes::simplex();
-    let simplex_best =
-        capacity_pruned_hk2017(&library_simplex.polytope).expect("library simplex capacity");
+    let simplex_cache = NumericsPolytopeCache::from_rational_parts(
+        library_simplex.polytope.dual_vertices().to_vec(),
+        library_simplex.polytope.vertices().to_vec(),
+    )
+    .expect("simplex cache");
+    let simplex_best = capacity_pruned_hk2017(&simplex_cache).expect("library simplex capacity");
     let simplex_reference = library_rational_solver::solve_kkt_exact(
         library_simplex.polytope.dual_vertices(),
         simplex_best.best_sigma(),
@@ -239,8 +243,13 @@ fn main() {
     .expect("library simplex rational sigma");
 
     let library_hypercube = known_polytopes::hypercube();
+    let hypercube_cache = NumericsPolytopeCache::from_rational_parts(
+        library_hypercube.polytope.dual_vertices().to_vec(),
+        library_hypercube.polytope.vertices().to_vec(),
+    )
+    .expect("hypercube cache");
     let hypercube_best =
-        capacity_pruned_hk2017(&library_hypercube.polytope).expect("library hypercube capacity");
+        capacity_pruned_hk2017(&hypercube_cache).expect("library hypercube capacity");
     let hypercube_reference = library_rational_solver::solve_kkt_exact(
         library_hypercube.polytope.dual_vertices(),
         hypercube_best.best_sigma(),

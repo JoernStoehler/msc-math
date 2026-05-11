@@ -38,7 +38,7 @@
 //!
 //! Self-contained: generates all polytopes internally.
 
-use dev_gradient::{analyze_polytope, first_order_test, write_rows};
+use dev_gradient::{analyze_polytope, first_order_test, write_rows, GradientPolytopeCache};
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use std::env;
@@ -132,7 +132,12 @@ fn run_q1(base_dir: &str, cfg: &BasicValidationConfig) {
             generate_random_polytopes(cfg.q1_polytopes_per_f, f_count, 0.5, 2.0, &mut rng);
 
         for (i, polytope) in polytopes.iter().enumerate() {
-            let info = match analyze_polytope(polytope) {
+            let cache = GradientPolytopeCache::from_rational_parts(
+                polytope.dual_vertices().to_vec(),
+                polytope.vertices().to_vec(),
+            )
+            .expect("random polytope cache");
+            let info = match analyze_polytope(&cache) {
                 Some(info) => info,
                 None => {
                     eprintln!("  Q1: F={} polytope {} — failed, skipping", f_count, i);
@@ -185,9 +190,14 @@ fn run_q2(base_dir: &str, cfg: &BasicValidationConfig) {
         let (qn, qh) = regular_polygon_2d(n1, 1.0);
         let (pn, ph) = regular_polygon_2d(n2, 1.0);
         let polytope = lagrangian_product(&qn, &qh, &pn, &ph).expect("regular LP");
+        let cache = GradientPolytopeCache::from_rational_parts(
+            polytope.dual_vertices().to_vec(),
+            polytope.vertices().to_vec(),
+        )
+        .expect("regular LP cache");
         let id = format!("lp_regular_{}_{}", n1, n2);
 
-        if let Some(info) = analyze_polytope(&polytope) {
+        if let Some(info) = analyze_polytope(&cache) {
             let rows = first_order_test(
                 &info,
                 "q2",
@@ -216,9 +226,14 @@ fn run_q2(base_dir: &str, cfg: &BasicValidationConfig) {
             let (pn, ph) = regular_polygon_2d(n2, 1.0);
             let (pn_rot, ph_rot) = rotate_polygon_2d(&pn, &ph, theta);
             let polytope = lagrangian_product(&qn, &qh, &pn_rot, &ph_rot).expect("rotated LP");
+            let cache = GradientPolytopeCache::from_rational_parts(
+                polytope.dual_vertices().to_vec(),
+                polytope.vertices().to_vec(),
+            )
+            .expect("rotated LP cache");
             let id = format!("lp_rotated_{}_{}_{}", n1, n2, ai);
 
-            if let Some(info) = analyze_polytope(&polytope) {
+            if let Some(info) = analyze_polytope(&cache) {
                 let rows = first_order_test(
                     &info,
                     "q2",
@@ -256,9 +271,14 @@ fn run_q2(base_dir: &str, cfg: &BasicValidationConfig) {
                     continue;
                 }
             };
+            let cache = GradientPolytopeCache::from_rational_parts(
+                polytope.dual_vertices().to_vec(),
+                polytope.vertices().to_vec(),
+            )
+            .expect("random LP cache");
             let id = format!("lp_random_{}_{}_{:02}", n1, n2, j);
 
-            if let Some(info) = analyze_polytope(&polytope) {
+            if let Some(info) = analyze_polytope(&cache) {
                 let rows = first_order_test(
                     &info,
                     "q2",

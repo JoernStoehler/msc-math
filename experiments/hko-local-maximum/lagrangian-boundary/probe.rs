@@ -26,6 +26,7 @@
 
 use exp_hko_local_maximum::capacity_auto;
 use exp_hko_local_maximum::euclidean_volume_f64;
+use exp_hko_local_maximum::HkoPolytopeCache;
 use nalgebra::Vector4;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
@@ -35,7 +36,6 @@ use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::time::Instant;
 use symplectic::geom::known_polytopes;
-use symplectic::geom::polytope::Polytope4D;
 
 const SEED: u64 = 43;
 
@@ -154,9 +154,9 @@ fn eval_sys_at_ray(
         perturbed.push(v);
     }
 
-    let polytope = Polytope4D::from_f64(perturbed).ok()?;
+    let polytope = HkoPolytopeCache::from_f64(perturbed)?;
     let ehz = capacity_auto(&polytope).ok()?;
-    let vol = euclidean_volume_f64(polytope.vertices(), polytope.incidence());
+    let vol = euclidean_volume_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
     if vol <= 0.0 {
         return None;
     }
@@ -292,14 +292,21 @@ fn main() {
 
     // Base polytope
     let base = known_polytopes::hko_pentagon();
-    let base_polytope = &base.polytope;
-    let base_duals: Vec<Vector4<f64>> = base_polytope.dual_vertices_f64().to_vec();
+    let base_polytope = HkoPolytopeCache::from_rational_parts(
+        base.polytope.dual_vertices().to_vec(),
+        base.polytope.vertices().to_vec(),
+    )
+    .expect("HKO base cache");
+    let base_duals: Vec<Vector4<f64>> = base_polytope.dual_vertices_f64.to_vec();
     let indices = lagrangian_component_indices(&base_duals);
     let d = base_duals.len() * 2; // 20D perturbation space
 
     // Verify base sys
-    let base_vol = euclidean_volume_f64(base_polytope.vertices(), base_polytope.incidence());
-    let base_ehz = capacity_auto(base_polytope).expect("capacity unavailable");
+    let base_vol = euclidean_volume_f64(
+        &base_polytope.vertices,
+        &base_polytope.vertex_facet_incidence,
+    );
+    let base_ehz = capacity_auto(&base_polytope).expect("capacity unavailable");
     let base_sys = base_ehz.capacity().powi(2) / (2.0 * base_vol);
     println!("Base sys = {base_sys:.6} (should be ~1.047)");
     println!("Probing {n_directions} random directions...\n");

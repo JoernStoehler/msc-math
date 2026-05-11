@@ -17,6 +17,7 @@ mod ascent;
 mod sampling;
 
 use ascent::{compute_sys, full_ascent};
+use exp_hko_local_maximum::HkoPolytopeCache;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use sampling::{
@@ -40,7 +41,7 @@ const SMOKE_N_PLACEMENTS: usize = 1;
 
 /// Depth parameter for facet addition: a_{F+1} = n / (h_K(n) - ε).
 /// 1e-3 used in facet-splitting experiment (SPLITTING_EPSILONS range
-/// [1e-3, 1e-4]). If changed, verify Polytope4D construction doesn't
+/// [1e-3, 1e-4]). If changed, verify HkoPolytopeCache construction doesn't
 /// produce RedundantFacet errors at smaller ε.
 const FACET_EPSILON: f64 = 1e-3;
 
@@ -192,8 +193,12 @@ fn main() {
     };
 
     let hko = known_polytopes::hko_pentagon();
-    let hko_polytope = &hko.polytope;
-    let hko_sys = compute_sys(hko_polytope).expect("HKO2024 sys");
+    let hko_polytope = HkoPolytopeCache::from_rational_parts(
+        hko.polytope.dual_vertices().to_vec(),
+        hko.polytope.vertices().to_vec(),
+    )
+    .expect("HKO base cache");
+    let hko_sys = compute_sys(&hko_polytope).expect("HKO2024 sys");
     println!(
         "HKO2024: sys={hko_sys:.6}, F={}\n",
         hko_polytope.facet_count()
@@ -215,7 +220,7 @@ fn main() {
         let t0 = Instant::now();
         let dir = random_direction(&mut rng);
 
-        let f11_polytope = match add_facet(hko_polytope, &dir, FACET_EPSILON) {
+        let f11_polytope = match add_facet(&hko_polytope, &dir, FACET_EPSILON) {
             Some(p) => p,
             None => {
                 println!("[{trial_name}] facet addition failed");

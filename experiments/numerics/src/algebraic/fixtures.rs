@@ -1,7 +1,7 @@
 //! Exact algebraic and rational control fixtures used by the spike.
 
 use super::field::rat;
-use super::geom::{ExactPolytope4D, ExactPolytopeError};
+use super::geom::{AlgebraicPolytopeCache, AlgebraicPolytopeError};
 use super::pentagon::PentagonField;
 use num_rational::BigRational;
 use num_traits::{One, Zero};
@@ -13,9 +13,9 @@ pub const HKO_WINNING_SIGMA: &[usize] = &[1, 8, 7, 3, 4, 5, 9];
 pub const HKO_RANK_DEFICIENT_SIGMA: &[usize] = &[1, 7, 2, 8, 4, 6, 5];
 
 /// Exact simplex control in `Q`.
-pub fn exact_simplex() -> Result<ExactPolytope4D<BigRational>, ExactPolytopeError> {
+pub fn exact_simplex() -> Result<AlgebraicPolytopeCache<BigRational>, AlgebraicPolytopeError> {
     let z = rat(0);
-    ExactPolytope4D::new(vec![
+    AlgebraicPolytopeCache::new(vec![
         [rat(-5), z.clone(), z.clone(), z.clone()],
         [z.clone(), rat(-5), z.clone(), z.clone()],
         [z.clone(), z.clone(), rat(-5), z.clone()],
@@ -25,9 +25,9 @@ pub fn exact_simplex() -> Result<ExactPolytope4D<BigRational>, ExactPolytopeErro
 }
 
 /// Exact hypercube control in `Q`.
-pub fn exact_hypercube() -> Result<ExactPolytope4D<BigRational>, ExactPolytopeError> {
+pub fn exact_hypercube() -> Result<AlgebraicPolytopeCache<BigRational>, AlgebraicPolytopeError> {
     let z = rat(0);
-    ExactPolytope4D::new(vec![
+    AlgebraicPolytopeCache::new(vec![
         [rat(1), z.clone(), z.clone(), z.clone()],
         [rat(-1), z.clone(), z.clone(), z.clone()],
         [z.clone(), rat(1), z.clone(), z.clone()],
@@ -40,7 +40,8 @@ pub fn exact_hypercube() -> Result<ExactPolytope4D<BigRational>, ExactPolytopeEr
 }
 
 /// Exact HKO pentagon counterexample in `Q[tan(pi/5)]`.
-pub fn exact_hko_pentagon() -> Result<ExactPolytope4D<PentagonField>, ExactPolytopeError> {
+pub fn exact_hko_pentagon() -> Result<AlgebraicPolytopeCache<PentagonField>, AlgebraicPolytopeError>
+{
     let z = PentagonField::zero();
     let one = PentagonField::one();
     let t = PentagonField::root();
@@ -51,7 +52,7 @@ pub fn exact_hko_pentagon() -> Result<ExactPolytope4D<PentagonField>, ExactPolyt
     let b = (PentagonField::from(7) * t.clone() - t3.clone()) / PentagonField::from(4);
     let sec36 = (PentagonField::from(3) - t2.clone()) / PentagonField::from(2);
 
-    ExactPolytope4D::new(vec![
+    AlgebraicPolytopeCache::new(vec![
         [one.clone(), t.clone(), z.clone(), z.clone()],
         [-a.clone(), b.clone(), z.clone(), z.clone()],
         [-sec36.clone(), z.clone(), z.clone(), z.clone()],
