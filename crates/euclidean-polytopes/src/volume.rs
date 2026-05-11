@@ -1,9 +1,11 @@
-//! Full-dimensional `R^4` volume for normalized polar pairs and known incidence.
+//! Full-dimensional `R^4` volume and facet 3-volume from known incidence.
 //!
-//! This module keeps the operation flat. Callers with a normalized polar pair
-//! pass dual facet normals and primal vertices directly; callers with reliable
-//! combinatorial data pass primal vertices and vertex-facet incidence directly.
-//! In both cases, primal vertices determine Euclidean determinant geometry.
+//! This module keeps the operation flat. Callers pass primal vertices and a
+//! reliable vertex-facet incidence matrix directly. The f64 and exact
+//! full-volume helpers share the same incidence convention, and the f64
+//! facet-volume helpers use that incidence for facet and 2-face combinatorics.
+//! These APIs do not recover incidence from dual facet normals or approximate
+//! signed gaps.
 
 use algebraic_numbers::ExactScalar;
 use nalgebra::{DMatrix, Matrix4, Vector4};
