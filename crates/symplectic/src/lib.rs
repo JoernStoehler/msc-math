@@ -51,7 +51,7 @@ mod test_lib;
 // ── Re-exports: public API surface ──
 
 // Types
-pub use geom::polytope::ConstructionError;
+pub use geom::vertex_enumeration::ConstructionError;
 
 // Capacity algorithms
 pub use algorithms::billiard::{

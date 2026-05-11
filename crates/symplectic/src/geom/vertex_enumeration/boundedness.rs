@@ -11,7 +11,7 @@ use super::exact_linalg::rank_over_q;
 #[cfg(test)]
 use super::exact_linalg::test_support::{cross_product_4d_rational, dot4};
 use super::exact_linalg::{cross_product_4d_int, dot4_int, rank_int};
-use crate::geom::polytope::ConstructionError;
+use super::ConstructionError;
 
 /// f64 pre-filter for a single triple in the bounded check.
 pub(super) fn bounded_triple_f64_confirms(

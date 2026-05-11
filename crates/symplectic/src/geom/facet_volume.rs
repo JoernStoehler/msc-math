@@ -2,7 +2,7 @@
 //!
 //! The maintained implementation lives in `euclidean-polytopes`. This module
 //! exposes the same flat helpers through the symplectic geometry namespace
-//! without rebuilding `Polytope4D`-shaped compatibility wrappers.
+//! without rebuilding shared compatibility wrappers.
 //!
 //! Mathematical correspondence: [def:volume] (per-facet specialization)
 
@@ -28,14 +28,17 @@ mod tests {
     /// Each facet of [-1,1]^4 is a cube [-1,1]^3 with volume 8.
     #[test]
     fn hypercube_facet_volumes() {
-        let polytope = &known_polytopes::hypercube().polytope;
-        let f = polytope.facet_count();
+        let fixture = known_polytopes::hypercube();
+        let f = fixture.facet_count();
         assert_eq!(f, 8, "hypercube should have 8 facets");
 
         for fi in 0..f {
-            let vol =
-                facet_volume_from_incidence_f64(polytope.vertices_f64(), polytope.incidence(), fi)
-                    .expect("valid known polytope fixture");
+            let vol = facet_volume_from_incidence_f64(
+                &fixture.vertices_f64,
+                &fixture.vertex_facet_incidence,
+                fi,
+            )
+            .expect("valid known polytope fixture");
             assert!(
                 (vol - 8.0).abs() < 1e-6,
                 "facet {fi}: volume = {vol}, expected 8.0"
@@ -47,21 +50,27 @@ mod tests {
     /// h_i = 1/|a_i|. For [-1,1]^4: h_i = 1, sum = 8 * (8.0 * 1.0) / 4 = 16.0.
     #[test]
     fn facet_volume_sum_equals_polytope_volume() {
-        let polytope = &known_polytopes::hypercube().polytope;
-        let duals = polytope.dual_vertices_f64();
-        let f = polytope.facet_count();
+        let fixture = known_polytopes::hypercube();
+        let duals = &fixture.dual_vertices_f64;
+        let f = fixture.facet_count();
 
         let vol_from_facets: f64 = (0..f)
             .map(|fi| {
-                facet_volume_from_incidence_f64(polytope.vertices_f64(), polytope.incidence(), fi)
-                    .expect("valid known polytope fixture")
+                facet_volume_from_incidence_f64(
+                    &fixture.vertices_f64,
+                    &fixture.vertex_facet_incidence,
+                    fi,
+                )
+                .expect("valid known polytope fixture")
                     * (1.0 / duals[fi].norm())
             })
             .sum::<f64>()
             / 4.0;
 
-        let polytope_volume =
-            crate::test_lib::euclidean_volume_f64(polytope.vertices(), polytope.incidence());
+        let polytope_volume = crate::test_lib::euclidean_volume_f64(
+            &fixture.vertices,
+            &fixture.vertex_facet_incidence,
+        );
 
         assert!(
             (vol_from_facets - polytope_volume).abs() / polytope_volume < 1e-6,
@@ -72,14 +81,14 @@ mod tests {
     /// Facet volume and centroid: centroid should lie on the facet hyperplane.
     #[test]
     fn facet_centroid_on_hyperplane() {
-        let polytope = &known_polytopes::hypercube().polytope;
-        let duals = polytope.dual_vertices_f64();
-        let f = polytope.facet_count();
+        let fixture = known_polytopes::hypercube();
+        let duals = &fixture.dual_vertices_f64;
+        let f = fixture.facet_count();
 
         for (fi, dual) in duals.iter().enumerate().take(f) {
             let (vol, centroid) = facet_volume_and_centroid_from_incidence_f64(
-                polytope.vertices_f64(),
-                polytope.incidence(),
+                &fixture.vertices_f64,
+                &fixture.vertex_facet_incidence,
                 fi,
             )
             .expect("valid known polytope fixture");
@@ -95,21 +104,27 @@ mod tests {
     /// Cross-validate facet volumes with a non-cubic polytope.
     #[test]
     fn crosspolytope_facet_volume_sum() {
-        let polytope = &known_polytopes::crosspolytope().polytope;
-        let duals = polytope.dual_vertices_f64();
-        let f = polytope.facet_count();
+        let fixture = known_polytopes::crosspolytope();
+        let duals = &fixture.dual_vertices_f64;
+        let f = fixture.facet_count();
 
         let vol_from_facets: f64 = (0..f)
             .map(|fi| {
-                facet_volume_from_incidence_f64(polytope.vertices_f64(), polytope.incidence(), fi)
-                    .expect("valid known polytope fixture")
+                facet_volume_from_incidence_f64(
+                    &fixture.vertices_f64,
+                    &fixture.vertex_facet_incidence,
+                    fi,
+                )
+                .expect("valid known polytope fixture")
                     * (1.0 / duals[fi].norm())
             })
             .sum::<f64>()
             / 4.0;
 
-        let polytope_volume =
-            crate::test_lib::euclidean_volume_f64(polytope.vertices(), polytope.incidence());
+        let polytope_volume = crate::test_lib::euclidean_volume_f64(
+            &fixture.vertices,
+            &fixture.vertex_facet_incidence,
+        );
 
         // Looser than hypercube (1e-6) because the crosspolytope has 16 facets
         // with non-axis-aligned normals, producing more triangulation error in
@@ -125,20 +140,19 @@ mod tests {
     #[test]
     fn facet_api_matches_euclidean_known_incidence_helper() {
         for kp in known_polytopes::all_known() {
-            let polytope = &kp.polytope;
-            for facet_index in 0..polytope.facet_count() {
+            for facet_index in 0..kp.facet_count() {
                 let symplectic_value = facet_volume_and_centroid_from_incidence_f64(
-                    polytope.vertices_f64(),
-                    polytope.incidence(),
+                    &kp.vertices_f64,
+                    &kp.vertex_facet_incidence,
                     facet_index,
                 )
-                .expect("valid Polytope4D fixture");
+                .expect("valid flat known-polytope fixture");
                 let euclidean = euclidean_polytopes::facet_volume_and_centroid_from_incidence_f64(
-                    polytope.vertices_f64(),
-                    polytope.incidence(),
+                    &kp.vertices_f64,
+                    &kp.vertex_facet_incidence,
                     facet_index,
                 )
-                .expect("valid Polytope4D fixture");
+                .expect("valid flat known-polytope fixture");
                 let volume_error = (symplectic_value.0 - euclidean.0).abs();
                 let centroid_error = (symplectic_value.1 - euclidean.1).norm();
 
