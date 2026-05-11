@@ -181,11 +181,24 @@ pub fn systolic_ratio_gradient_a(
 ///   ∂vol/∂n_k = −S_k(x̄_k − h_k n_k) (tangent centroid)
 ///   ∂h_k/∂a_k = −a_k / |a_k|³
 ///   ∂n_k/∂a_k = (I − n_k n_k^T) / |a_k|
+///
+/// Flat input contract:
+/// - `dual_vertices[k]` is the nonzero finite dual normal `a_k` of facet `k`;
+/// - `vertices` are finite primal vertices of the same normalized polytope;
+/// - `vertex_facet_incidence[(v, k)]` is true exactly when `vertices[v]` lies on
+///   facet `k`;
+/// - incidence rows match `vertices`, and incidence columns match
+///   `dual_vertices`.
+///
+/// Checked here: finite dual coordinates return `F64GeometryError` on failure,
+/// incidence shape mismatches panic as programmer errors, and zero or
+/// numerically overflowed dual-normal norms panic as caller-contract violations.
 pub fn volume_derivatives_a(
     dual_vertices: &[Vector4<f64>],
     vertices: &[Vector4<f64>],
     vertex_facet_incidence: &DMatrix<bool>,
 ) -> Result<Vec<Vector4<f64>>, F64GeometryError> {
+    validate_finite_dual_vertices(dual_vertices)?;
     assert_eq!(
         vertex_facet_incidence.nrows(),
         vertices.len(),
@@ -200,6 +213,14 @@ pub fn volume_derivatives_a(
     let mut derivatives = Vec::with_capacity(dual_vertices.len());
     for (k, a) in dual_vertices.iter().enumerate() {
         let a_norm = a.norm();
+        assert!(
+            a_norm > 0.0,
+            "volume_derivatives_a requires nonzero dual_vertices[{k}]"
+        );
+        assert!(
+            a_norm.is_finite(),
+            "volume_derivatives_a requires dual_vertices[{k}] to have finite norm"
+        );
         let n = a / a_norm;
         let h = 1.0 / a_norm;
 
@@ -228,6 +249,24 @@ pub fn volume_derivatives_a(
     }
 
     Ok(derivatives)
+}
+
+fn validate_finite_dual_vertices(dual_vertices: &[Vector4<f64>]) -> Result<(), F64GeometryError> {
+    for (vector_index, vector) in dual_vertices.iter().enumerate() {
+        for coordinate_index in 0..4 {
+            let value = vector[coordinate_index];
+            if !value.is_finite() {
+                return Err(F64GeometryError::NonFiniteCoordinate {
+                    vector_role: "dual_vertices",
+                    vector_index,
+                    coordinate_index,
+                    value,
+                });
+            }
+        }
+    }
+
+    Ok(())
 }
 
 /// Assemble the per-orbit capacity gradients for a Clarke-subdifferential.
@@ -380,6 +419,37 @@ mod tests {
                 fd[k]
             );
         }
+    }
+
+    #[test]
+    fn volume_derivatives_a_rejects_nonfinite_dual_vertex() {
+        let kp = known_polytopes::hypercube();
+        let polytope = &kp.polytope;
+        let mut duals = polytope.dual_vertices_f64().to_vec();
+        duals[2][3] = f64::NAN;
+
+        let err = volume_derivatives_a(&duals, polytope.vertices_f64(), polytope.incidence())
+            .expect_err("nonfinite dual coordinates should be reported explicitly");
+        match err {
+            F64GeometryError::NonFiniteCoordinate {
+                vector_role: "dual_vertices",
+                vector_index: 2,
+                coordinate_index: 3,
+                value,
+            } => assert!(value.is_nan()),
+            other => panic!("unexpected error: {other:?}"),
+        }
+    }
+
+    #[test]
+    #[should_panic(expected = "volume_derivatives_a requires nonzero dual_vertices[0]")]
+    fn volume_derivatives_a_asserts_nonzero_dual_vertex() {
+        let kp = known_polytopes::hypercube();
+        let polytope = &kp.polytope;
+        let mut duals = polytope.dual_vertices_f64().to_vec();
+        duals[0] = Vector4::zeros();
+
+        let _ = volume_derivatives_a(&duals, polytope.vertices_f64(), polytope.incidence());
     }
 
     /// The flat dual-vertex solver should agree with the primitive derivative
