@@ -83,11 +83,11 @@ modules, which makes non-symplectic helpers harder to reuse and review.
   condition but should not overconstrain polar vertex enumeration with an
   unnecessary non-redundancy precondition.
 - [implemented 2026-05-10] `polar_vertices_exact(vertices)` now returns
-  `(vertices, vertex_facet_incidence)`. The f64 polar path remains a diagnostic
-  struct because it carries indeterminate candidates and error bounds. The
-  former `vertex_adjacency` name for the facet-pair matrix was misleading:
-  the matrix is now `facet_intersection_is_nonempty`, meaning two facets share
-  at least one vertex, not necessarily a 2-face.
+  `(vertices, vertex_facet_incidence)`. The earlier public f64 diagnostic polar
+  sketch was removed after API review found no current non-test caller. The
+  former `vertex_adjacency` name for the facet-pair matrix was misleading: the
+  matrix is now `facet_intersection_is_nonempty`, meaning two facets share at
+  least one vertex, not necessarily a 2-face.
   Why it matters: the public names now expose the actual incidence semantics,
   which reduces caller mistakes in capacity and combinatorics code.
 - [accepted 2026-05-10] Use TDD for the first implementation slice. Write
@@ -111,10 +111,10 @@ modules, which makes non-symplectic helpers harder to reuse and review.
 | --- | --- | --- | --- | --- | --- |
 | Crate scaffold and API target | `[implemented for branch]` | mainline thesis | agents | Keep `README.md` and `DEVELOPMENT.md` synchronized when the public API changes. The flat-input/no-public-wrapper direction is accepted for this branch. | `crates/euclidean-polytopes/README.md`, `crates/euclidean-polytopes/DEVELOPMENT.md` |
 | Robust floating/exact architecture | `[implemented first architecture]` | mainline thesis | agents | Exact APIs return exact answers; f64 APIs expose diagnostics or known-incidence f64 computations. Add new f64 diagnostic return shapes only with a real caller and explicit indeterminate semantics. | `crates/euclidean-polytopes/README.md`, `crates/euclidean-polytopes/DEVELOPMENT.md` |
-| Polar vertex enumeration plus validation dependencies | `[implemented first slice]` | mainline thesis | agents | Review and integrate current `euclidean-polytopes` public API into callers when a migration packet needs it. Exact polar enumeration and exact origin-in-interior are implemented; the current `f64` path is diagnostic and reports indeterminate candidates instead of guessing. | `crates/euclidean-polytopes/src/polar.rs`, `crates/euclidean-polytopes/src/predicates.rs`, `crates/euclidean-polytopes/tests/polar_vertices.rs` |
+| Polar vertex enumeration plus validation dependencies | `[implemented exact slice]` | mainline thesis | agents | Exact polar enumeration and exact origin-in-interior are implemented. The earlier public f64 diagnostic polar sketch was removed because no current non-test caller needed it. | `crates/euclidean-polytopes/src/polar.rs`, `crates/euclidean-polytopes/src/predicates.rs`, `crates/euclidean-polytopes/tests/polar_vertices.rs` |
 | Extreme-point / non-redundant point-set predicate | `[implemented exact slice]` | mainline thesis | agents | Exact predicate is implemented and covered by fixture/property tests. Add the matching f64 diagnostic later only if its return shape stays flat and useful. | `crates/euclidean-polytopes/src/predicates.rs`, `crates/euclidean-polytopes/tests/extreme_points.rs`, `crates/euclidean-polytopes/DEVELOPMENT.md` |
 | Full-dimensional known-incidence f64 volume | `[implemented migration slice]` | mainline thesis | agents | `volume_from_incidence_f64(vertices, incidence)` is implemented for callers that already have reliable incidence. A dual-vertices-plus-f64-vertices incidence-recovery API is not currently public; add one only with a real caller and explicit indeterminate semantics. | `crates/euclidean-polytopes/src/volume.rs`, `crates/euclidean-polytopes/tests/volume.rs`, `crates/euclidean-polytopes/DEVELOPMENT.md` |
-| Verification property suite | `[implemented first property slice]` | mainline thesis | agents | Keep strengthening theorem-shaped property tests as APIs migrate. Current coverage includes exact polar soundness, exact polarity roundtrip, generated non-redundancy witnesses, f64 simplex/crosspolytope polar agreement, and f64 volume scaling/permutation invariants. The stronger no-indeterminate f64 polar proposition is not yet true for non-simple cube/crosspolytope tuple structures under the current diagnostic contract. | `crates/euclidean-polytopes/DEVELOPMENT.md`, `crates/euclidean-polytopes/tests/` |
+| Verification property suite | `[implemented first property slice]` | mainline thesis | agents | Keep strengthening theorem-shaped property tests as APIs migrate. Current coverage includes exact polar soundness, exact polarity roundtrip, generated non-redundancy witnesses, exact/f64 known-incidence volume agreement, and f64 volume scaling/permutation invariants. Public f64 diagnostic polar properties are future work only if that API returns. | `crates/euclidean-polytopes/DEVELOPMENT.md`, `crates/euclidean-polytopes/tests/` |
 | Known-incidence volume integration | `[implemented migration slice]` | mainline thesis | agents | `volume_from_incidence_f64(vertices, incidence)` is implemented. This was the first symplectic volume migration target before the exact API became the source of truth; keep using known-incidence helpers instead of recomputing incidence through f64 signed gaps. | `crates/euclidean-polytopes/src/volume.rs`, `crates/euclidean-polytopes/DEVELOPMENT.md` |
 | Known-incidence facet 3-volume and centroid | `[implemented migration slice]` | mainline thesis | agents | `facet_volume_from_incidence_f64` and `facet_volume_and_centroid_from_incidence_f64` are implemented in `euclidean-polytopes`. `symplectic::geom::facet_volume` reexports these flat helpers, and `volume_derivatives_a` now takes exact incidence explicitly instead of retesting f64 facet membership. | `crates/euclidean-polytopes/src/volume.rs`, `crates/symplectic/src/geom/facet_volume.rs`, `crates/symplectic/src/derivatives.rs` |
 | Incidence-only face combinatorics | `[implemented migration slice]` | mainline thesis | agents | `vertex_facets_from_vertex_facet_incidence`, `facet_vertices_from_vertex_facet_incidence`, `edges_from_vertex_facet_incidence`, `two_faces_from_vertex_facet_incidence`, and `facet_intersection_is_nonempty_from_vertex_facet_incidence` are public Euclidean helpers over `DMatrix<bool>`. Shared symplectic skeleton wrappers were deleted; remaining dataset code uses local feature names. | `crates/euclidean-polytopes/src/faces.rs`, `crates/euclidean-polytopes/tests/faces.rs`, `experiments/sys-landscape/datascience/tables/features_skeleton.rs` |
@@ -136,10 +136,10 @@ This branch is ready to merge when:
 
 - `crates/euclidean-polytopes/` has consumer and maintainer docs matching the
   implemented public API;
-- exact origin-interior, exact extreme-point, exact polar, diagnostic f64 polar,
-  known-incidence f64 volume, known-incidence exact volume, facet-volume,
-  incidence-derived face helpers, and random dual-vertex sampling are covered by
-  fixture or property tests;
+- exact origin-interior, exact extreme-point, exact polar, known-incidence f64
+  volume, known-incidence exact volume, facet-volume, incidence-derived face
+  helpers, and random dual-vertex sampling are covered by fixture or property
+  tests;
 - property-test comments separate theorem-shaped propositions from the actual
   operationalization: generator, precondition/discard rule, case count,
   fixtures, and f64 tolerance;
@@ -263,11 +263,10 @@ Deferred, not branch-blocking:
 - [implemented 2026-05-10] The first verification-property slice adds
   theorem-shaped integration tests for exact polar soundness, exact polarity
   roundtrip with redundant edge points, generated exact non-redundancy positive
-  and negative cases, f64 polar agreement on the currently decidable simplex
-  and crosspolytope fixtures, and f64 volume rational-scaling/permutation
-  invariants. At that point, the symplectic migration regression was deferred
-  until the caller migration packet introduced the `symplectic` ->
-  `euclidean-polytopes` dependency.
+  and negative cases, exact/f64 known-incidence volume agreement, and f64
+  volume rational-scaling/permutation invariants. At that point, the symplectic
+  migration regression was deferred until the caller migration packet
+  introduced the `symplectic` -> `euclidean-polytopes` dependency.
 - [agent synthesis 2026-05-10] The first symplectic volume migration should use
   known exact incidence, not f64 incidence recovery.
   Why it matters: f64 incidence recovery is designed for callers that only have
