@@ -35,7 +35,7 @@ impl<F: ExactScalar + 'static> ExactOrbitKktData<F> {
 ///
 /// Mathematical non-success:
 /// - returns `None` when the selected exact KKT system is inconsistent or has
-///   no solution with strictly positive beta entries.
+///   no solution with strictly positive beta entries and strictly positive `q`.
 pub fn solve_orbit_sigma_exact<F: ExactScalar + 'static>(
     dual_vertices: &[Vector4<F>],
     sigma: &[usize],
@@ -70,6 +70,9 @@ pub fn solve_orbit_sigma_exact<F: ExactScalar + 'static>(
     );
     let xi = solution[m + 4].clone();
     let q = compute_q_exact(dual_vertices, sigma, &beta);
+    if q <= F::zero() {
+        return None;
+    }
 
     Some(ExactOrbitKktData {
         sigma: sigma.to_vec(),

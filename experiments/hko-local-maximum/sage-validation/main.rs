@@ -15,14 +15,15 @@
 //!    refreshes `sage-validation-input.jsonl`.
 
 use exp_hko_local_maximum::{
-    exact_hko_polytope, exact_simplex_polytope, ExactBankEntry, ExactBankTarget, HkoExactScalar,
-    EXACT_BANK_ENTRIES,
+    exact_hko_dual_vertices, exact_simplex_dual_vertices, ExactBankEntry, ExactBankTarget,
+    HkoExactScalar, EXACT_BANK_ENTRIES,
 };
+use nalgebra::Vector4;
 use serde::Serialize;
 use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::path::{Path, PathBuf};
-use symplectic::exact::{capacity_derivatives_a_exact, solve_orbit_sigma_exact, ExactPolytope4D};
+use symplectic::exact::{capacity_derivatives_a_exact_from_orbit, solve_orbit_sigma_exact};
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 struct CliOptions {
@@ -93,17 +94,17 @@ fn output_path(canonical: bool) -> PathBuf {
     base.join(filename)
 }
 
-fn canonical_vec4<F: HkoExactScalar>(vector: &[F; 4]) -> Vec<CanonicalElement> {
+fn canonical_vec4<F: HkoExactScalar>(vector: &Vector4<F>) -> Vec<CanonicalElement> {
     vector.iter().map(CanonicalElement::from_field).collect()
 }
 
 fn build_row<F: HkoExactScalar + 'static>(
     entry: &ExactBankEntry,
-    polytope: &ExactPolytope4D<F>,
+    dual_vertices: &[Vector4<F>],
 ) -> SageValidationInputRow {
-    let orbit = solve_orbit_sigma_exact(polytope, entry.sigma)
+    let orbit = solve_orbit_sigma_exact(dual_vertices, entry.sigma)
         .expect("selected Sage-validation sigma must solve exactly");
-    let gradient = capacity_derivatives_a_exact(polytope, &orbit);
+    let gradient = capacity_derivatives_a_exact_from_orbit(dual_vertices, &orbit);
 
     SageValidationInputRow {
         row_name: entry.row_name.to_string(),
@@ -111,11 +112,7 @@ fn build_row<F: HkoExactScalar + 'static>(
         exact_field: entry.target.exact_field().to_string(),
         sigma_label: entry.sigma_label.to_string(),
         sigma: entry.sigma.to_vec(),
-        dual_vertices: polytope
-            .dual_vertices()
-            .iter()
-            .map(canonical_vec4)
-            .collect(),
+        dual_vertices: dual_vertices.iter().map(canonical_vec4).collect(),
         rust_status: "solved".to_string(),
         rust_q: CanonicalElement::from_field(&orbit.q),
         rust_action: CanonicalElement::from_field(&orbit.action()),
@@ -129,8 +126,8 @@ fn build_row<F: HkoExactScalar + 'static>(
 }
 
 fn build_rows() -> Vec<SageValidationInputRow> {
-    let exact_hko = exact_hko_polytope();
-    let exact_simplex = exact_simplex_polytope();
+    let exact_hko = exact_hko_dual_vertices();
+    let exact_simplex = exact_simplex_dual_vertices();
 
     EXACT_BANK_ENTRIES
         .iter()

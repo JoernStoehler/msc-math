@@ -32,8 +32,8 @@
 
 use exp_hko_local_maximum::euclidean_volume_f64;
 use exp_hko_local_maximum::{
-    ehz_capacity_instrumented, exact_hko_polytope, exact_simplex_polytope, ExactBankEntry,
-    ExactBankTarget, HkoExactScalar, EXACT_BANK_ENTRIES,
+    ehz_capacity_instrumented, exact_hko_dual_vertices, exact_simplex_dual_vertices,
+    ExactBankEntry, ExactBankTarget, HkoExactScalar, EXACT_BANK_ENTRIES,
 };
 use nalgebra::{Matrix4, Vector4};
 use serde::Serialize;
@@ -46,7 +46,7 @@ use symplectic::algorithms::{
 };
 use symplectic::derivatives::{capacity_derivatives_a_from_orbit, volume_derivatives_a};
 use symplectic::ehz_capacity;
-use symplectic::exact::{capacity_derivatives_a_exact, solve_orbit_sigma_exact, ExactPolytope4D};
+use symplectic::exact::{capacity_derivatives_a_exact_from_orbit, solve_orbit_sigma_exact};
 use symplectic::geom::known_polytopes;
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::skeleton::Skeleton;
@@ -358,11 +358,11 @@ fn max_abs_vector_diff(lhs: &[Vector4<f64>], rhs: &[[f64; 4]]) -> f64 {
 }
 
 fn exact_sigma_diagnostics<F: HkoExactScalar + 'static>(
-    polytope: &ExactPolytope4D<F>,
+    dual_vertices: &[Vector4<F>],
     sigma: &[usize],
 ) -> Option<SigmaDiagnostics> {
-    let orbit = solve_orbit_sigma_exact(polytope, sigma)?;
-    let gradient = capacity_derivatives_a_exact(polytope, &orbit);
+    let orbit = solve_orbit_sigma_exact(dual_vertices, sigma)?;
+    let gradient = capacity_derivatives_a_exact_from_orbit(dual_vertices, &orbit);
     Some(SigmaDiagnostics {
         q_f64: orbit.q.to_f64(),
         action_f64: orbit.action().to_f64(),
@@ -404,7 +404,7 @@ fn float_sigma_diagnostics(
 fn build_exact_bank_row(entry: &ExactBankEntry) -> ExactCertificationBankRow {
     let (exact_status, exact_row, float_status, float_row) = match entry.target {
         ExactBankTarget::HkoPentagon => {
-            let exact = exact_sigma_diagnostics(&exact_hko_polytope(), entry.sigma);
+            let exact = exact_sigma_diagnostics(&exact_hko_dual_vertices(), entry.sigma);
             let float =
                 float_sigma_diagnostics(&known_polytopes::hko_pentagon().polytope, entry.sigma);
             (
@@ -422,7 +422,7 @@ fn build_exact_bank_row(entry: &ExactBankEntry) -> ExactCertificationBankRow {
             )
         }
         ExactBankTarget::SimplexControl => {
-            let exact = exact_sigma_diagnostics(&exact_simplex_polytope(), entry.sigma);
+            let exact = exact_sigma_diagnostics(&exact_simplex_dual_vertices(), entry.sigma);
             let float = float_sigma_diagnostics(&known_polytopes::simplex().polytope, entry.sigma);
             (
                 if exact.is_some() {
@@ -485,9 +485,10 @@ fn compute_exact_best_sigma_diagnostics(
     best_orbit: &OrbitKktData,
     float_d_cap_a: &[Vector4<f64>],
 ) -> Option<ExactBestSigmaDiagnostics> {
-    let exact_polytope = exact_hko_polytope();
-    let exact_orbit = solve_orbit_sigma_exact(&exact_polytope, &best_orbit.sigma)?;
-    let exact_capacity_gradient = capacity_derivatives_a_exact(&exact_polytope, &exact_orbit);
+    let exact_dual_vertices = exact_hko_dual_vertices();
+    let exact_orbit = solve_orbit_sigma_exact(&exact_dual_vertices, &best_orbit.sigma)?;
+    let exact_capacity_gradient =
+        capacity_derivatives_a_exact_from_orbit(&exact_dual_vertices, &exact_orbit);
     let exact_capacity_gradient_f64: Vec<[f64; 4]> = exact_capacity_gradient
         .iter()
         .map(|grad| std::array::from_fn(|idx| grad[idx].to_f64()))

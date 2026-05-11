@@ -12,6 +12,7 @@ use nalgebra::Vector4;
 /// Caller contract:
 /// - `sigma` is a partial permutation of facet indices into `dual_vertices`;
 /// - `beta.len() == sigma.len()`;
+/// - `q > 0`;
 /// - `mu` and `q` come from the same one-sigma exact KKT solution.
 pub fn capacity_derivatives_a_exact<F: ExactScalar + 'static>(
     beta: &[F],
@@ -22,6 +23,7 @@ pub fn capacity_derivatives_a_exact<F: ExactScalar + 'static>(
 ) -> Vec<Vector4<F>> {
     assert_eq!(beta.len(), sigma.len());
     assert!(is_partial_permutation(sigma, dual_vertices.len()));
+    assert!(q > &F::zero());
 
     let q_sq = q.clone() * q.clone();
     let two = F::one() + F::one();
