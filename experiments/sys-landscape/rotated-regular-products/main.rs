@@ -16,8 +16,9 @@
 //!
 //! Capacity algorithm: explicit billiard. These outputs intentionally keep the
 //! specialized algorithm because the JSONL rows report billiard-native
-//! `iterations` and `bounces`, which the root `symplectic::ehz_capacity`
+//! `iterations` and `bounces`, which the auto-routed capacity helper
 //! wrapper does not expose.
+use exp_sys_landscape::capacity_billiard;
 use exp_sys_landscape::euclidean_volume_f64;
 use exp_sys_landscape::experiment_path;
 use serde::Serialize;
@@ -25,10 +26,10 @@ use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::path::PathBuf;
 use std::time::Instant;
-use symplectic::algorithms::billiard::bounce_count_from_sigma;
-use symplectic::ehz_capacity_billiard;
+use symplectic::algorithms::billiard::bounce_count_from_sigma_for_facets;
 use symplectic::geom::lagrangian_product::lagrangian_product;
 use symplectic::geom::polygon::{polygon_area, regular_polygon_2d, rotate_polygon_2d};
+use symplectic::{classify_facets_from_dual_vertices, Polytope4D};
 
 const PENTAGON_START_DEG: f64 = 0.0;
 const PENTAGON_END_DEG: f64 = 36.0;
@@ -50,6 +51,11 @@ const PAIRS: &[(usize, usize)] = &[
     (5, 6),
     (6, 6),
 ];
+
+fn bounce_count(polytope: &Polytope4D, sigma: &[usize]) -> Option<usize> {
+    let classification = classify_facets_from_dual_vertices(polytope.dual_vertices_f64()).ok()?;
+    bounce_count_from_sigma_for_facets(&classification.q_indices, &classification.p_indices, sigma)
+}
 
 #[derive(Debug, Serialize)]
 struct SweepRow {
@@ -114,14 +120,12 @@ fn generate_heptagon_7x7() {
 
         let start = Instant::now();
         let result =
-            ehz_capacity_billiard(&polytope).expect("billiard should accept Lagrangian product");
+            capacity_billiard(&polytope).expect("billiard should accept Lagrangian product");
         let time_ms = start.elapsed().as_secs_f64() * 1000.0;
 
         let cap = result.capacity();
         let sys = cap * cap / (2.0 * vol); // [def:systolic-ratio]: sys = c_EHZ^2 / (2 vol)
-        let Some(bounces) = bounce_count_from_sigma(&polytope, result.best_sigma())
-            .expect("billiard classification failed")
-        else {
+        let Some(bounces) = bounce_count(&polytope, result.best_sigma()) else {
             continue;
         };
 
@@ -184,14 +188,12 @@ fn generate_pentagon_5x5() {
 
         let start = Instant::now();
         let result =
-            ehz_capacity_billiard(&polytope).expect("billiard should accept Lagrangian product");
+            capacity_billiard(&polytope).expect("billiard should accept Lagrangian product");
         let time_ms = start.elapsed().as_secs_f64() * 1000.0;
 
         let cap = result.capacity();
         let sys = cap * cap / (2.0 * vol); // [def:systolic-ratio]: sys = c_EHZ^2 / (2 vol)
-        let Some(bounces) = bounce_count_from_sigma(&polytope, result.best_sigma())
-            .expect("billiard classification failed")
-        else {
+        let Some(bounces) = bounce_count(&polytope, result.best_sigma()) else {
             continue;
         };
 
@@ -253,15 +255,13 @@ fn generate_polygon_pairs() {
             let vol = euclidean_volume_f64(polytope.vertices(), polytope.incidence());
 
             let start = Instant::now();
-            let result = ehz_capacity_billiard(&polytope)
-                .expect("billiard should accept Lagrangian product");
+            let result =
+                capacity_billiard(&polytope).expect("billiard should accept Lagrangian product");
             let time_ms = start.elapsed().as_secs_f64() * 1000.0;
 
             let cap = result.capacity();
             let sys = cap * cap / (2.0 * vol); // [def:systolic-ratio]: sys = c_EHZ^2 / (2 vol)
-            let Some(bounces) = bounce_count_from_sigma(&polytope, result.best_sigma())
-                .expect("billiard classification failed")
-            else {
+            let Some(bounces) = bounce_count(&polytope, result.best_sigma()) else {
                 continue;
             };
 

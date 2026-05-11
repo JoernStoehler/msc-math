@@ -289,7 +289,7 @@ fn compute_sys(
         return None;
     }
 
-    let ehz = symplectic::ehz_capacity(polytope).ok()?;
+    let ehz = exp_combinatorial_cells::capacity_auto(polytope).ok()?;
 
     let cap = ehz.capacity();
     if !cap.is_finite() || cap <= 0.0 {

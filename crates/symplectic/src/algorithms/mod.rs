@@ -29,7 +29,7 @@ pub mod orbit_search;
 
 pub use orbit_search::{
     aggregate_certified_orbits_with_dual_vertices_exact, aggregate_orbits_with_dual_vertices_exact,
-    solve_orbit_sigma_with_dual_vertices, CertifiedOrbitKktData, CertifiedOrbitSearchResult,
+    solve_orbit_sigma_saddle_point, CertifiedOrbitKktData, CertifiedOrbitSearchResult,
     CertifiedOrbitSetMode, GeometricOrbitError, OrbitAdmissibility, OrbitGuaranteeMode,
-    OrbitKktData, OrbitSearchError, OrbitSearchResult, OrbitSolveBackend, OrbitSolveError,
+    OrbitKktData, OrbitSearchError, OrbitSearchResult, OrbitSolveError,
 };

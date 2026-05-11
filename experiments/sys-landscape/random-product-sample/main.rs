@@ -22,7 +22,7 @@
 //! - 10 samples per bucket
 //! - Height range h in [0.8, 1.2]
 //! - Explicit billiard reporting: this dataset writes billiard-native
-//!   `iterations` and `bounces`, so the root `symplectic::ehz_capacity`
+//!   `iterations` and `bounces`, so the auto-routed capacity helper
 //!   wrapper would drop required output fields.
 //!
 //! Note: Uses shared RNG (no blake3 per-attempt seeding) because there is no
@@ -36,6 +36,7 @@
 //! - `--out <path>`                 output JSONL path                       (default: untracked temp)
 //! - `--cache <path>`               cache JSONL path                        (default: untracked temp)
 
+use exp_sys_landscape::capacity_billiard;
 use exp_sys_landscape::euclidean_volume_f64;
 use exp_sys_landscape::{orbit_scalars_from_result, rational_vec4_to_strings, smoke_output_path};
 use rand::SeedableRng;
@@ -46,9 +47,9 @@ use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::path::PathBuf;
 use std::time::Instant;
-use symplectic::algorithms::billiard::bounce_count_from_sigma;
+use symplectic::algorithms::billiard::bounce_count_from_sigma_for_facets;
+use symplectic::classify_facets_from_dual_vertices;
 use symplectic::database::{load_many, save, DualVerticesKey, PolytopeRecord, SigmaAction, Source};
-use symplectic::ehz_capacity_billiard;
 use symplectic::geom::lagrangian_product::lagrangian_product;
 use symplectic::geom::polygon::random_polygon_2d;
 use symplectic::geom::polytope::Polytope4D;
@@ -70,6 +71,11 @@ const PAIRS: &[(usize, usize)] = &[
     (5, 6),
     (6, 6),
 ];
+
+fn bounce_count(polytope: &Polytope4D, sigma: &[usize]) -> Option<usize> {
+    let classification = classify_facets_from_dual_vertices(polytope.dual_vertices_f64()).ok()?;
+    bounce_count_from_sigma_for_facets(&classification.q_indices, &classification.p_indices, sigma)
+}
 
 struct Args {
     seed: u64,
@@ -274,7 +280,7 @@ fn main() {
                     });
                 }
                 if record.orbit_scalars.is_none() {
-                    let result = ehz_capacity_billiard(&polytope)
+                    let result = capacity_billiard(&polytope)
                         .expect("billiard should accept cached Lagrangian product");
                     record.orbit_scalars = Some(orbit_scalars_from_result(&result));
                 }
@@ -316,15 +322,13 @@ fn main() {
             let time_volume_ms = start_vol.elapsed().as_secs_f64() * 1000.0;
 
             let start_cap = Instant::now();
-            let result = ehz_capacity_billiard(&polytope)
-                .expect("billiard should accept Lagrangian product");
+            let result =
+                capacity_billiard(&polytope).expect("billiard should accept Lagrangian product");
             let time_capacity_ms = start_cap.elapsed().as_secs_f64() * 1000.0;
 
             let cap = result.capacity();
             let sys = cap * cap / (2.0 * vol);
-            let Some(bounces) = bounce_count_from_sigma(&polytope, result.best_sigma())
-                .expect("billiard classification failed")
-            else {
+            let Some(bounces) = bounce_count(&polytope, result.best_sigma()) else {
                 continue;
             };
 

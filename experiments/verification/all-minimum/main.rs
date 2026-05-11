@@ -11,8 +11,9 @@
 //!                   experiments/verification/all-minimum/smoke-all-minimum-orbits.jsonl
 
 use dev_capacity_validation::{
-    build_target_pool, create_jsonl_writer, mode_output_path, parse_run_mode, run_mode_label,
-    write_json_line, RunMode, RunModeArgError, Target, MINIMUM_ACTION_GAP_TOL, SCALAR_TOL,
+    build_target_pool, capacity_auto, create_jsonl_writer, mode_output_path, parse_run_mode,
+    run_mode_label, write_json_line, RunMode, RunModeArgError, Target, MINIMUM_ACTION_GAP_TOL,
+    SCALAR_TOL,
 };
 use serde::Serialize;
 use std::collections::BTreeMap;
@@ -20,13 +21,11 @@ use std::env;
 use std::io::Write;
 use std::path::{Path, PathBuf};
 use std::time::Instant;
-use symplectic::algorithms::hk2017::for_each_sigma_pruned_by_transition;
 use symplectic::algorithms::{
-    aggregate_orbits_with_dual_vertices_exact, solve_orbit_sigma_with_dual_vertices,
-    OrbitAdmissibility, OrbitGuaranteeMode, OrbitKktData, OrbitSearchError, OrbitSolveBackend,
-    OrbitSolveError,
+    aggregate_orbits_with_dual_vertices_exact, OrbitAdmissibility, OrbitGuaranteeMode,
+    OrbitKktData, OrbitSearchError,
 };
-use symplectic::ehz_capacity;
+use symplectic::solve_pruned_hk2017_candidates;
 
 struct MinimumSetResult {
     orbits: Vec<OrbitKktData>,
@@ -295,7 +294,7 @@ fn validate_target(target: &Target) -> (AllMinimumSummaryRow, Vec<AllMinimumOrbi
         .collect::<Vec<_>>();
 
     let t_scalar = Instant::now();
-    match ehz_capacity(&target.polytope) {
+    match capacity_auto(&target.polytope) {
         Ok(result) => {
             let scalar_capacity = result.capacity();
             let scalar_error = (minimum_result.min_action - scalar_capacity).abs();
@@ -349,9 +348,6 @@ fn validate_target(target: &Target) -> (AllMinimumSummaryRow, Vec<AllMinimumOrbi
 fn compute_minimum_orbits(polytope: &symplectic::Polytope4D) -> Result<MinimumSetResult, String> {
     let dual_vertices = polytope.dual_vertices_f64();
     let dual_vertices_exact = polytope.dual_vertices();
-    let mut orbits = Vec::<OrbitKktData>::new();
-    let mut iterations = 0u64;
-    let mut fatal_error = None::<String>;
 
     let facet_intersection_is_nonempty = polytope.facet_intersection_is_nonempty();
     let omega_signs = polytope.omega_signs();
@@ -360,35 +356,10 @@ fn compute_minimum_orbits(polytope: &symplectic::Polytope4D) -> Result<MinimumSe
         &omega_signs,
     );
 
-    for_each_sigma_pruned_by_transition(&transition_is_allowed, |sigma| {
-        if fatal_error.is_some() {
-            return;
-        }
-        iterations += 1;
-        match solve_orbit_sigma_with_dual_vertices(
-            dual_vertices,
-            sigma,
-            OrbitSolveBackend::SaddlePoint,
-        ) {
-            Ok(orbit) => orbits.push(orbit),
-            Err(OrbitSolveError::Inadmissible) => {}
-            Err(OrbitSolveError::UnsupportedBackend) => {
-                fatal_error = Some(
-                    "solve_orbit_sigma_with_dual_vertices returned UnsupportedBackend".to_string(),
-                )
-            }
-            Err(OrbitSolveError::NumericalFailure) => {
-                fatal_error = Some(format!(
-                    "solve_orbit_sigma_with_dual_vertices failed on sigma {:?}",
-                    sigma
-                ))
-            }
-        }
-    });
-
-    if let Some(err) = fatal_error {
-        return Err(err);
-    }
+    let (orbits, iterations) =
+        solve_pruned_hk2017_candidates(dual_vertices, &transition_is_allowed).map_err(|err| {
+            format!("solve_pruned_hk2017_candidates failed before aggregation: {err:?}")
+        })?;
 
     let result = aggregate_orbits_with_dual_vertices_exact(
         dual_vertices_exact,
@@ -399,9 +370,6 @@ fn compute_minimum_orbits(polytope: &symplectic::Polytope4D) -> Result<MinimumSe
     )
     .map_err(|err| match err {
         OrbitSearchError::NoAdmissibleOrbit => "no admissible orbit remained".to_string(),
-        OrbitSearchError::UnsupportedBackend => {
-            "aggregate_orbits_with_dual_vertices_exact reported UnsupportedBackend".to_string()
-        }
         OrbitSearchError::NumericalFailure => {
             "aggregate_orbits_with_dual_vertices_exact reported NumericalFailure".to_string()
         }

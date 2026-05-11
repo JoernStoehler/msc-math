@@ -17,6 +17,7 @@
 use dev_numerical_analysis::algebraic::catalog::ElementRecord;
 use dev_numerical_analysis::algebraic::field::ExperimentScalar;
 use dev_numerical_analysis::algebraic::fixtures::exact_hko_pentagon;
+use dev_numerical_analysis::capacity_unpruned_hk2017;
 use nalgebra::Vector4;
 use num_bigint::BigInt;
 use num_rational::BigRational;
@@ -25,7 +26,6 @@ use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::path::{Path, PathBuf};
 use std::time::Instant;
-use symplectic::ehz_capacity_unpruned;
 use symplectic::geom::polytope::Polytope4D;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -182,7 +182,7 @@ fn canonical_rational_bank(canonical: bool) -> Vec<RationalFixture> {
 
 fn rust_unpruned_baseline(polytope: &Polytope4D) -> (f64, u64, usize, Vec<usize>, f64) {
     let start = Instant::now();
-    let result = ehz_capacity_unpruned(polytope).expect("Rust unpruned baseline must succeed");
+    let result = capacity_unpruned_hk2017(polytope).expect("Rust unpruned baseline must succeed");
     let wall_time_ms = start.elapsed().as_secs_f64() * 1000.0;
     (
         result.capacity(),

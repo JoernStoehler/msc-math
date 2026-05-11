@@ -16,8 +16,10 @@ use crate::kkt::{
 };
 use crate::models::{AblationCapacityResult, AblationResult, Variant};
 use nalgebra::{DMatrix, Vector4};
-use symplectic::ehz_capacity_unpruned;
 use symplectic::geom::polytope::Polytope4D;
+use symplectic::{
+    aggregate_orbits_with_dual_vertices_exact, solve_unpruned_hk2017_candidates, OrbitGuaranteeMode,
+};
 
 fn combinations(n: usize, k: usize) -> Vec<Vec<usize>> {
     let mut result = Vec::new();
@@ -166,22 +168,30 @@ fn ehz_capacity_unpruned_with(
 }
 
 fn ehz_capacity_unpruned_a0(polytope: &Polytope4D) -> Option<AblationResult> {
-    ehz_capacity_unpruned(polytope)
-        .ok()
-        .map(|result| AblationResult {
-            result: AblationCapacityResult {
-                capacity: result.capacity(),
-                capacity_uncertain: result
-                    .orbits
-                    .iter()
-                    .map(|orbit| orbit.action)
-                    .fold(f64::INFINITY, f64::min),
-                best_permutation: result.best_sigma().to_vec(),
-                best_beta: result.best_beta().to_vec(),
-                iterations: result.iterations,
-            },
-            best_subset: result.best_subset(),
-        })
+    let (orbits, iterations) =
+        solve_unpruned_hk2017_candidates(polytope.dual_vertices_f64()).ok()?;
+    aggregate_orbits_with_dual_vertices_exact(
+        polytope.dual_vertices(),
+        orbits,
+        iterations,
+        0.0,
+        OrbitGuaranteeMode::MinimaSafe,
+    )
+    .ok()
+    .map(|result| AblationResult {
+        result: AblationCapacityResult {
+            capacity: result.capacity(),
+            capacity_uncertain: result
+                .orbits
+                .iter()
+                .map(|orbit| orbit.action)
+                .fold(f64::INFINITY, f64::min),
+            best_permutation: result.best_sigma().to_vec(),
+            best_beta: result.best_beta().to_vec(),
+            iterations: result.iterations,
+        },
+        best_subset: result.best_subset(),
+    })
 }
 
 fn ehz_capacity_unpruned_a1(polytope: &Polytope4D) -> Option<AblationResult> {

@@ -61,13 +61,20 @@ fn triangle_product_orbit_aggregation() {
     let kp = known_polytopes::lagrangian_triangle_product();
     let dual_vertices = kp.polytope.dual_vertices_f64();
     let dual_vertices_exact = kp.polytope.dual_vertices();
-    let (orbits, iterations) =
-        crate::algorithms::orbit_search::solve_sigma_stream_with_dual_vertices(
-            dual_vertices,
-            crate::algorithms::OrbitSolveBackend::SaddlePoint,
-            |visit| for_each_sigma(&kp.polytope, visit).expect("valid Lagrangian product"),
-        )
-        .expect("billiard sigma solve stream should succeed");
+    let classification =
+        facet_classification::classify_facets(&kp.polytope).expect("valid Lagrangian product");
+    let transition_is_allowed = crate::algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega(
+        kp.polytope.facet_intersection_is_nonempty(),
+        kp.polytope.omega_signs(),
+    );
+    let (orbits, iterations) = solve_billiard_candidates(
+        dual_vertices,
+        &classification.q_indices,
+        &classification.p_indices,
+        kp.polytope.facet_intersection_is_nonempty(),
+        &transition_is_allowed,
+    )
+    .expect("billiard sigma solve stream should succeed");
     let result = crate::algorithms::aggregate_orbits_with_dual_vertices_exact(
         dual_vertices_exact,
         orbits,

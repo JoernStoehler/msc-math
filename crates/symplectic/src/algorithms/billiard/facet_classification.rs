@@ -11,6 +11,7 @@
 //! Mathematical correspondence: [lem:lagrangian-facets]
 
 use super::BilliardError;
+#[cfg(test)]
 use crate::geom::polytope::Polytope4D;
 use nalgebra::Vector4;
 
@@ -116,18 +117,21 @@ impl FacetClassification {
     }
 }
 
-/// Classify facets of a polytope into q-type and p-type.
+/// Classify flat dual vertices into q-type and p-type facets.
 ///
-/// Returns error if any facet normal is neither purely q-type nor purely p-type,
-/// or if there are fewer than 3 facets of either type.
+/// Input contract: `dual_vertices` is the ordered facet-dual list for the same
+/// Lagrangian-product polytope that later billiard enumeration will solve.
+/// Returns error if any facet normal is neither purely q-type nor purely
+/// p-type, or if there are fewer than 3 facets of either type.
 ///
 /// [lem:lagrangian-facets]: classification criterion for Lagrangian product facets.
-pub fn classify_facets(polytope: &Polytope4D) -> Result<FacetClassification, BilliardError> {
-    let duals = polytope.dual_vertices_f64();
+pub fn classify_facets_from_dual_vertices(
+    dual_vertices: &[Vector4<f64>],
+) -> Result<FacetClassification, BilliardError> {
     let mut q_indices = Vec::new();
     let mut p_indices = Vec::new();
 
-    for (i, a) in duals.iter().enumerate() {
+    for (i, a) in dual_vertices.iter().enumerate() {
         let norm_sq = a[0] * a[0] + a[1] * a[1] + a[2] * a[2] + a[3] * a[3];
         let q_norm_sq = a[0] * a[0] + a[1] * a[1];
         let p_norm_sq = a[2] * a[2] + a[3] * a[3];
@@ -164,6 +168,12 @@ pub fn classify_facets(polytope: &Polytope4D) -> Result<FacetClassification, Bil
         q_indices,
         p_indices,
     })
+}
+
+/// Classify facets of a constructed polytope.
+#[cfg(test)]
+pub(crate) fn classify_facets(polytope: &Polytope4D) -> Result<FacetClassification, BilliardError> {
+    classify_facets_from_dual_vertices(polytope.dual_vertices_f64())
 }
 
 #[cfg(test)]

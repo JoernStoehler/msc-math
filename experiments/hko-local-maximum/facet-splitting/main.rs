@@ -24,6 +24,7 @@
 //! when h < h_K(n) it cuts. To make K *larger* we'd need to relax an existing
 //! halfspace, which is already covered by gradient-analysis's (n,h) gradient analysis.
 
+use exp_hko_local_maximum::capacity_auto;
 use exp_hko_local_maximum::euclidean_volume_f64;
 use nalgebra::Vector4;
 use rand::SeedableRng;
@@ -33,7 +34,6 @@ use serde::Serialize;
 use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::time::Instant;
-use symplectic::ehz_capacity;
 use symplectic::geom::known_polytopes;
 use symplectic::geom::polytope::Polytope4D;
 
@@ -128,7 +128,7 @@ fn safe_sys(polytope: &Polytope4D) -> Option<(f64, f64, f64)> {
     if vol <= 0.0 {
         return None;
     }
-    let cap = ehz_capacity(polytope)
+    let cap = capacity_auto(polytope)
         .ok()
         .map(|r| r.capacity())
         .unwrap_or(f64::NAN);
@@ -215,7 +215,7 @@ fn run_phase_b(base_dir: &std::path::Path, smoke: bool) {
     let vertices = polytope.vertices_f64();
 
     let vol_orig = euclidean_volume_f64(polytope.vertices(), polytope.incidence());
-    let cap_orig = ehz_capacity(polytope)
+    let cap_orig = capacity_auto(polytope)
         .expect("failed to compute HKO2024 baseline capacity")
         .capacity();
     let sys_orig = cap_orig * cap_orig / (2.0 * vol_orig);
@@ -298,7 +298,7 @@ fn run_phase_b(base_dir: &std::path::Path, smoke: bool) {
                         let delta = split_sys - sys_orig;
 
                         // Use library ehz_capacity for orbit info (cheaper than instrumented)
-                        let lib_result = ehz_capacity(&split_poly).ok();
+                        let lib_result = capacity_auto(&split_poly).ok();
                         let n_valid = 0; // not computed (instrumented too expensive for F=11)
                         let best_sub = lib_result
                             .as_ref()
@@ -417,7 +417,7 @@ fn run_phase_b(base_dir: &std::path::Path, smoke: bool) {
                 };
                 let delta = split_sys - sys_orig;
 
-                let lib_result = ehz_capacity(&split_poly).ok();
+                let lib_result = capacity_auto(&split_poly).ok();
                 let n_valid = 0;
                 let best_sub = lib_result
                     .as_ref()
@@ -509,7 +509,7 @@ fn run_phase_b(base_dir: &std::path::Path, smoke: bool) {
                 };
                 let delta = split_sys - sys_orig;
 
-                let lib_result = ehz_capacity(&split_poly).ok();
+                let lib_result = capacity_auto(&split_poly).ok();
                 let n_valid = 0;
                 let best_sub = lib_result
                     .as_ref()

@@ -5,7 +5,7 @@
 //! Input Artifacts: Crosspolytope from `known_polytopes::crosspolytope()` (16 facets).
 //! Output Artifacts: `experiments/crosspolytope/main/crosspolytope.jsonl`
 //!
-//! Three optimizations over the library's `ehz_capacity()`:
+//! Three optimizations over the library capacity search:
 //! 1. backtracking permutation search
 //! 2. symmetry reduction
 //! 3. checkpointing

@@ -4,7 +4,7 @@
 //! `hk2017_unpruned`, and `billiard` frontends. It deliberately separates:
 //!
 //! - orbit payload data (`OrbitKktData`)
-//! - search-level guarantees and backend choice
+//! - search-level guarantees
 //! - search/recovery error classification
 
 use crate::geom::rational_arithmetic::rational_to_f64;
@@ -54,18 +54,6 @@ pub enum CertifiedOrbitSetMode {
     /// Return the exact capacity, all exact minimizers, and all exact orbits
     /// whose action lies in `capacity_exact + action_gap_exact`.
     GapWindow,
-}
-
-/// Primitive numerical backend used to solve one sigma.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum OrbitSolveBackend {
-    /// Constraint-projection/eigendecomposition path.
-    ///
-    /// This choice is currently scaffold-only at the shared orbit-payload
-    /// solve surface and returns `UnsupportedBackend`.
-    Projected,
-    /// Augmented saddle-point KKT path.
-    SaddlePoint,
 }
 
 /// Solved orbit payload used by all capacity frontends.
@@ -205,9 +193,6 @@ impl OrbitSearchResult {
 pub enum OrbitSearchError {
     /// No admissible orbit remained after filtering and requested fallback.
     NoAdmissibleOrbit,
-    /// The requested backend is not yet supported at the shared collector
-    /// surface.
-    UnsupportedBackend,
     /// The numerical backend failed before the requested guarantee could be
     /// established.
     NumericalFailure,
@@ -220,9 +205,6 @@ pub enum OrbitSearchError {
 /// Failure classification for solving a single sigma into `OrbitKktData`.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum OrbitSolveError {
-    /// The chosen backend is not yet wired into the guaranteed orbit payload
-    /// surface.
-    UnsupportedBackend,
     /// The sigma is certified non-admissible or has non-competitive `Q <= 0`.
     Inadmissible,
     /// The numerical backend failed to produce the payload required by
@@ -247,26 +229,12 @@ pub enum GeometricOrbitError {
 /// Input contract: `sigma` indexes the same ordered facet set as
 /// `dual_vertices`.
 ///
-/// The current implementation is only complete for the saddle-point backend.
-/// The projected backend remains scaffold-only until the library projection
-/// path exposes the same `Q`-bound contract required by `OrbitKktData`.
-pub fn solve_orbit_sigma_with_dual_vertices(
+pub fn solve_orbit_sigma_saddle_point(
     dual_vertices: &[Vector4<f64>],
     sigma: &[usize],
-    backend: OrbitSolveBackend,
 ) -> Result<OrbitKktData, OrbitSolveError> {
-    match backend {
-        // TODO(capacity-result-api): Replace this with a real projection-backed
-        // orbit payload once `library/src/kkt/projection_solver.rs` exposes the
-        // Q-bound contract needed by `OrbitKktData` (`q_error_bound`,
-        // interval-aware action fields, and any multiplier reconstruction we
-        // decide to support there).
-        OrbitSolveBackend::Projected => Err(OrbitSolveError::UnsupportedBackend),
-        OrbitSolveBackend::SaddlePoint => {
-            let outcome = solve_kkt_for_dual_vertices(dual_vertices, sigma);
-            solve_saddle_point_sigma(sigma, outcome)
-        }
-    }
+    let outcome = solve_kkt_for_dual_vertices(dual_vertices, sigma);
+    solve_saddle_point_sigma(sigma, outcome)
 }
 
 fn solve_saddle_point_sigma(
@@ -775,7 +743,6 @@ pub fn aggregate_certified_orbits_with_dual_vertices_exact(
 
 pub(crate) fn solve_sigma_stream_with_dual_vertices(
     dual_vertices: &[Vector4<f64>],
-    backend: OrbitSolveBackend,
     mut emit_sigma: impl FnMut(&mut dyn FnMut(&[usize])),
 ) -> Result<(Vec<OrbitKktData>, u64), OrbitSearchError> {
     let mut orbits = Vec::new();
@@ -787,12 +754,9 @@ pub(crate) fn solve_sigma_stream_with_dual_vertices(
             return;
         }
         iterations += 1;
-        match solve_orbit_sigma_with_dual_vertices(dual_vertices, sigma, backend) {
+        match solve_orbit_sigma_saddle_point(dual_vertices, sigma) {
             Ok(orbit) => orbits.push(orbit),
             Err(OrbitSolveError::Inadmissible) => {}
-            Err(OrbitSolveError::UnsupportedBackend) => {
-                fatal_error = Some(OrbitSearchError::UnsupportedBackend);
-            }
             Err(OrbitSolveError::NumericalFailure) => {
                 fatal_error = Some(OrbitSearchError::NumericalFailure);
             }
@@ -817,7 +781,7 @@ pub(crate) fn solve_sigma_stream_with_dual_vertices(
 /// stronger guarantee than the ordinary `ehz_capacity*` routers should:
 ///
 /// 1. enumerate sigma candidates with the algorithm-specific traversal helper,
-/// 2. solve them with [`solve_orbit_sigma_with_dual_vertices`],
+/// 2. solve them with [`solve_orbit_sigma_saddle_point`],
 /// 3. call this function with flat exact dual vertices for the exact fallback
 ///    required by `mode`.
 ///

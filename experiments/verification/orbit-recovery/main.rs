@@ -23,9 +23,7 @@ use std::io::{BufRead, BufReader, Write};
 use std::path::{Path, PathBuf};
 use std::time::Instant;
 use symplectic::algorithms::hk2017::orbit_recovery::{recover_and_verify, GeometricOrbit};
-use symplectic::algorithms::{
-    solve_orbit_sigma_with_dual_vertices, OrbitKktData, OrbitSolveBackend, OrbitSolveError,
-};
+use symplectic::algorithms::{solve_orbit_sigma_saddle_point, OrbitKktData, OrbitSolveError};
 
 #[derive(Debug, Clone, Deserialize)]
 struct TrustedOrbitRow {
@@ -296,11 +294,7 @@ fn validate_target(
     let dual_vertices = target.polytope.dual_vertices_f64();
 
     for row in rows {
-        match solve_orbit_sigma_with_dual_vertices(
-            dual_vertices,
-            &row.sigma,
-            OrbitSolveBackend::SaddlePoint,
-        ) {
+        match solve_orbit_sigma_saddle_point(dual_vertices, &row.sigma) {
             Ok(orbit) => rebuilt_orbits.push((row, orbit)),
             Err(err) => {
                 summary.failed_solves += 1;
@@ -494,7 +488,6 @@ fn recover_trusted_orbit(
 
 fn solve_status(err: OrbitSolveError) -> &'static str {
     match err {
-        OrbitSolveError::UnsupportedBackend => "solve_unsupported_backend",
         OrbitSolveError::Inadmissible => "solve_inadmissible",
         OrbitSolveError::NumericalFailure => "solve_numerical_failure",
     }

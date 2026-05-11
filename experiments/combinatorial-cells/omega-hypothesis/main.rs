@@ -286,7 +286,7 @@ fn process_polytope(
     } else {
         // No cache: full EHZ computation
         vol = euclidean_volume_f64(polytope.vertices(), polytope.incidence());
-        let ehz_result = symplectic::ehz_capacity(polytope).ok()?;
+        let ehz_result = exp_combinatorial_cells::capacity_auto(polytope).ok()?;
         cap = ehz_result.capacity();
         iterations = ehz_result.iterations;
         best_perm = ehz_result.best_sigma().to_vec();
