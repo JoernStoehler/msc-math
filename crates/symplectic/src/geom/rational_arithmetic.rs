@@ -114,17 +114,6 @@ pub fn f64_to_rational(x: f64) -> BigRational {
     }
 }
 
-/// Generate a random rational number with magnitude < 2^{-bits}.
-///
-/// Uses uniform random numerator in [-2^32, 2^32) and denominator 2^{bits+32}.
-/// This produces exact rationals k / 2^{bits+32} for random k, with bounded
-/// denominator size. Used for perturbation of degenerate polytopes.
-pub(super) fn random_small_rational(rng: &mut impl rand::Rng, bits: u32) -> BigRational {
-    let numer: i64 = rng.gen_range(-(1i64 << 32)..(1i64 << 32));
-    let denom = BigInt::from(1u64) << (bits as u64 + 32);
-    BigRational::new(BigInt::from(numer), denom)
-}
-
 /// Create a BigRational from an integer.
 pub fn rat(n: i64) -> BigRational {
     BigRational::from(BigInt::from(n))
@@ -251,24 +240,6 @@ mod tests {
                 rational_to_f64(&rational_result),
                 f64_result,
                 "omega0({u_arr:?}, {v_arr:?}): rational={rational_result}, f64={f64_result}"
-            );
-        }
-    }
-
-    // ── random_small_rational ────────────────────────────────────────────────
-
-    /// Proposition: random_small_rational produces values with magnitude < 2^{-bits}.
-    #[test]
-    fn random_small_rational_bounded() {
-        use rand::SeedableRng;
-        let mut rng = rand_chacha::ChaCha8Rng::seed_from_u64(42);
-        for _ in 0..100 {
-            let r = random_small_rational(&mut rng, 64);
-            let val = rational_to_f64(&r);
-            // 2^{-64} is about 5.4e-20; values should be well below that
-            assert!(
-                val.abs() < 1e-9,
-                "random_small_rational(64) produced {val}, expected < 1e-9"
             );
         }
     }

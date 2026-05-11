@@ -3,8 +3,11 @@
 //! Split from mod.rs to isolate pruning behavior checks.
 
 use super::*;
+use crate::algorithms::test_helpers::{
+    pruned_capacity_for_dual_vertices, pruned_capacity_for_fixture,
+    unpruned_capacity_for_dual_vertices, unpruned_capacity_for_fixture,
+};
 use crate::geom::known_polytopes;
-use crate::{ehz_capacity_pruned, ehz_capacity_unpruned};
 
 // ── Combinatorics utility ──
 
@@ -28,8 +31,8 @@ fn combinations_basic() {
 #[test]
 fn pruned_matches_unpruned_simplex() {
     let kp = known_polytopes::simplex();
-    let result_unpruned = ehz_capacity_unpruned(&kp.polytope).expect("unpruned capacity");
-    let result_pruned = ehz_capacity_pruned(&kp.polytope).expect("pruned capacity");
+    let result_unpruned = unpruned_capacity_for_fixture(kp).expect("unpruned capacity");
+    let result_pruned = pruned_capacity_for_fixture(kp).expect("pruned capacity");
     assert!(
         (result_unpruned.capacity() - result_pruned.capacity()).abs() < 1e-6,
         "simplex: pruned and unpruned capacities differ"
@@ -47,8 +50,8 @@ fn pruned_matches_unpruned_simplex() {
 #[ignore] // ~16s debug, ~0.2s release
 fn pruned_matches_unpruned() {
     let kp = known_polytopes::hypercube();
-    let result_unpruned = ehz_capacity_unpruned(&kp.polytope).expect("unpruned capacity");
-    let result_pruned = ehz_capacity_pruned(&kp.polytope).expect("pruned capacity");
+    let result_unpruned = unpruned_capacity_for_fixture(kp).expect("unpruned capacity");
+    let result_pruned = pruned_capacity_for_fixture(kp).expect("pruned capacity");
 
     assert!(
         (result_unpruned.capacity() - result_pruned.capacity()).abs() < 1e-6,
@@ -76,7 +79,6 @@ fn pruned_matches_unpruned() {
 #[test]
 #[ignore]
 fn pruned_matches_unpruned_random() {
-    use crate::geom::polytope::Polytope4D;
     use crate::random::generate_random_dual_vertices;
     use rand::SeedableRng;
     use rand_chacha::ChaCha8Rng;
@@ -88,9 +90,8 @@ fn pruned_matches_unpruned_random() {
                 generate_random_dual_vertices(1, facet_count, 0.5, 2.0, &mut rng);
 
             if let Some(dual_vertices) = dual_vertices_sets.first() {
-                let polytope = Polytope4D::from_f64(dual_vertices.clone()).unwrap();
-                let unpruned = ehz_capacity_unpruned(&polytope).unwrap();
-                let pruned = ehz_capacity_pruned(&polytope).unwrap();
+                let unpruned = unpruned_capacity_for_dual_vertices(dual_vertices).unwrap();
+                let pruned = pruned_capacity_for_dual_vertices(dual_vertices).unwrap();
 
                 assert!(
                     (unpruned.capacity() - pruned.capacity()).abs() < 1e-6,

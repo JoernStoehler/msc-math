@@ -2,8 +2,9 @@
 //!
 //! Split from mod.rs to keep module routing and docs short.
 
-use crate::ehz_capacity_unpruned;
-use crate::geom::polytope::Polytope4D;
+use crate::algorithms::test_helpers::{
+    unpruned_capacity_for_dual_vertices, unpruned_capacity_for_fixture,
+};
 use nalgebra::Matrix4;
 
 // ── Symplectomorphism invariance ──
@@ -18,12 +19,12 @@ fn capacity_symplectomorphism_invariance_simplex() {
     let kp = crate::geom::known_polytopes::simplex();
     let theta = 0.37_f64;
     let m = rotate_q1_p1(theta);
-    let transformed = apply_symplectic_linear_map(&kp.polytope, &m);
+    let transformed = apply_symplectic_linear_map(&kp.dual_vertices_f64, &m);
 
-    let base_cap = ehz_capacity_unpruned(&kp.polytope)
+    let base_cap = unpruned_capacity_for_fixture(kp)
         .expect("simplex capacity")
         .capacity();
-    let transformed_cap = ehz_capacity_unpruned(&transformed)
+    let transformed_cap = unpruned_capacity_for_dual_vertices(&transformed)
         .expect("transformed simplex capacity")
         .capacity();
     let relative_error = ((transformed_cap - base_cap) / base_cap).abs();
@@ -42,17 +43,13 @@ fn rotate_q1_p1(theta: f64) -> Matrix4<f64> {
     )
 }
 
-fn apply_symplectic_linear_map(polytope: &Polytope4D, m: &Matrix4<f64>) -> Polytope4D {
+fn apply_symplectic_linear_map(
+    dual_vertices: &[nalgebra::Vector4<f64>],
+    m: &Matrix4<f64>,
+) -> Vec<nalgebra::Vector4<f64>> {
     let m_inv_t = m
         .transpose()
         .try_inverse()
         .expect("symplectic map should be invertible");
-    Polytope4D::from_f64(
-        polytope
-            .dual_vertices_f64()
-            .iter()
-            .map(|a| m_inv_t * a)
-            .collect(),
-    )
-    .expect("transformed polytope")
+    dual_vertices.iter().map(|a| m_inv_t * a).collect()
 }
