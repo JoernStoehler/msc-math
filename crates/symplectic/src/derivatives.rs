@@ -16,36 +16,14 @@
 //! `formal/capacity-derivatives.tex`.
 
 use crate::algorithms::OrbitKktData;
-use crate::geom::facet_volume::facet_volume_and_centroid_3d_f64;
-use crate::geom::polytope::Polytope4D;
-use crate::geom::rational_arithmetic::rational_to_f64;
 use crate::geom::symplectic_form::j4;
 use crate::kkt::saddle_point_solver::KktResult;
-use euclidean_polytopes::volume_from_incidence_exact;
+use euclidean_polytopes::{facet_volume_and_centroid_from_incidence_f64, F64GeometryError};
 use nalgebra::{DMatrix, Vector4};
-use num_rational::BigRational;
-
-/// Gradient of one orbit/capacity-like quantity with respect to all dual
-/// vertices `a_k`.
-pub type OrbitGradientA = Vec<Vector4<f64>>;
-
-/// Primitive Clarke-subdifferential representation: one gradient per orbit.
-pub type ClarkeSubdiffA = Vec<OrbitGradientA>;
 
 /// Facet-volume floor below which the volume derivative treats a facet as
 /// degenerate and returns the zero contribution.
 const VOLUME_DERIVATIVE_FACET_VOLUME_FLOOR: f64 = 1e-30;
-
-fn volume_from_exact_incidence_f64(
-    vertices: &[[BigRational; 4]],
-    incidence: &DMatrix<bool>,
-) -> f64 {
-    let vertices: Vec<Vector4<BigRational>> = vertices
-        .iter()
-        .map(|v| Vector4::new(v[0].clone(), v[1].clone(), v[2].clone(), v[3].clone()))
-        .collect();
-    rational_to_f64(&volume_from_incidence_exact(&vertices, incidence))
-}
 
 /// Failure modes for derivative helpers layered above the low-level primitive.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -72,15 +50,34 @@ pub enum DerivativeError {
 /// - `beta`: dwell-time coefficients from KktResult
 /// - `q`: Q value from KktResult.q_corrected
 /// - `mu`: closure multiplier (4 components) from KktResult.mu
-/// - `perm`: cyclic facet permutation σ
+/// - `sigma`: cyclic facet sequence σ; entries must be valid distinct facet indices
 /// - `dual_vertices`: dual vertices a_i for all facets
 pub fn capacity_derivatives_a(
     beta: &[f64],
     q: f64,
     mu: &[f64],
-    perm: &[usize],
+    sigma: &[usize],
     dual_vertices: &[Vector4<f64>],
-) -> OrbitGradientA {
+) -> Vec<Vector4<f64>> {
+    assert_eq!(
+        beta.len(),
+        sigma.len(),
+        "capacity_derivatives_a requires beta and sigma to have matching lengths"
+    );
+    assert_eq!(
+        mu.len(),
+        4,
+        "capacity_derivatives_a requires a 4-component closure multiplier"
+    );
+    assert!(
+        sigma.iter().all(|&facet| facet < dual_vertices.len()),
+        "capacity_derivatives_a requires sigma entries to be valid facet indices"
+    );
+    assert!(
+        entries_are_distinct(sigma),
+        "capacity_derivatives_a requires sigma entries to be distinct"
+    );
+
     let q_sq = q * q;
     let facet_count = dual_vertices.len();
     let j0 = j4();
@@ -88,7 +85,7 @@ pub fn capacity_derivatives_a(
 
     (0..facet_count)
         .map(|k| {
-            let i0 = match perm.iter().position(|&f| f == k) {
+            let i0 = match sigma.iter().position(|&f| f == k) {
                 Some(pos) => pos,
                 None => return Vector4::zeros(),
             };
@@ -96,7 +93,7 @@ pub fn capacity_derivatives_a(
             // P_{i₀} = Σ_{j < i₀} β_j · a_{σ(j)}
             let mut p = Vector4::zeros();
             for i in 0..i0 {
-                p += beta[i] * dual_vertices[perm[i]];
+                p += beta[i] * dual_vertices[sigma[i]];
             }
 
             // ∂Q*/∂a_k = β_{i₀} · [J₀(2P + β_{i₀} a_k) + μ]
@@ -110,22 +107,27 @@ pub fn capacity_derivatives_a(
         .collect()
 }
 
+fn entries_are_distinct(indices: &[usize]) -> bool {
+    for i in 0..indices.len() {
+        for j in i + 1..indices.len() {
+            if indices[i] == indices[j] {
+                return false;
+            }
+        }
+    }
+    true
+}
+
 /// Compute ∂c/∂a_k for one saddle-point KKT solve and one sigma.
 ///
 /// This helper captures the common current experiment boundary:
-/// `(polytope, sigma, KktResult) -> gradient`.
+/// `(dual_vertices, sigma, KktResult) -> gradient`.
 pub fn capacity_derivatives_a_from_kkt_result(
-    polytope: &Polytope4D,
+    dual_vertices: &[Vector4<f64>],
     sigma: &[usize],
     kkt: &KktResult,
-) -> OrbitGradientA {
-    capacity_derivatives_a(
-        &kkt.beta,
-        kkt.q_corrected,
-        &kkt.mu,
-        sigma,
-        polytope.dual_vertices_f64(),
-    )
+) -> Vec<Vector4<f64>> {
+    capacity_derivatives_a(&kkt.beta, kkt.q_corrected, &kkt.mu, sigma, dual_vertices)
 }
 
 /// Compute ∂c/∂a_k from the shared orbit payload.
@@ -133,87 +135,39 @@ pub fn capacity_derivatives_a_from_kkt_result(
 /// Returns an explicit error when the chosen orbit payload/backend does not
 /// carry the closure multiplier required by the current derivative formula.
 pub fn capacity_derivatives_a_from_orbit(
-    polytope: &Polytope4D,
+    dual_vertices: &[Vector4<f64>],
     orbit: &OrbitKktData,
-) -> Result<OrbitGradientA, DerivativeError> {
+) -> Result<Vec<Vector4<f64>>, DerivativeError> {
     let mu = orbit.mu.ok_or(DerivativeError::MissingClosureMultiplier)?;
     Ok(capacity_derivatives_a(
         &orbit.beta,
         orbit.q,
         &mu,
         &orbit.sigma,
-        polytope.dual_vertices_f64(),
+        dual_vertices,
     ))
 }
 
-fn systolic_ratio_gradient_a_from_parts(
+/// Combine capacity and volume gradients into the systolic-ratio gradient.
+///
+/// Uses the quotient rule for `sys = c^2 / (2V)`.
+pub fn systolic_ratio_gradient_a(
     capacity: f64,
     volume: f64,
     d_capacity_da: &[Vector4<f64>],
     d_volume_da: &[Vector4<f64>],
-) -> OrbitGradientA {
+) -> Vec<Vector4<f64>> {
+    assert_eq!(
+        d_capacity_da.len(),
+        d_volume_da.len(),
+        "systolic_ratio_gradient_a requires capacity and volume gradients with matching facet counts"
+    );
+
     let sys = crate::systolic_ratio(capacity, volume);
     d_capacity_da
         .iter()
         .zip(d_volume_da.iter())
         .map(|(dc, dv)| (capacity / volume) * dc - (sys / volume) * dv)
-        .collect()
-}
-
-/// Compute ∂sys/∂a_k for all facets k = 0..f.
-///
-/// Uses the quotient rule for `sys = c^2 / (2V)` and combines the existing
-/// capacity and volume dual-vertex gradients.
-pub fn sys_gradient_a_from_kkt_result(
-    polytope: &Polytope4D,
-    sigma: &[usize],
-    kkt: &KktResult,
-) -> OrbitGradientA {
-    let capacity = 1.0 / (2.0 * kkt.q_corrected);
-    let volume = volume_from_exact_incidence_f64(polytope.vertices(), polytope.incidence());
-    let d_capacity_da = capacity_derivatives_a_from_kkt_result(polytope, sigma, kkt);
-    let d_volume_da = volume_derivatives_a(polytope);
-
-    systolic_ratio_gradient_a_from_parts(capacity, volume, &d_capacity_da, &d_volume_da)
-}
-
-/// Compute ∂sys/∂a_k from the shared orbit payload.
-///
-/// Returns an explicit error when the chosen orbit payload/backend does not
-/// carry the closure multiplier required by the current derivative formula.
-pub fn sys_gradient_a_from_orbit(
-    polytope: &Polytope4D,
-    orbit: &OrbitKktData,
-) -> Result<OrbitGradientA, DerivativeError> {
-    let mu = orbit.mu.ok_or(DerivativeError::MissingClosureMultiplier)?;
-    let capacity = 1.0 / (2.0 * orbit.q);
-    let volume = volume_from_exact_incidence_f64(polytope.vertices(), polytope.incidence());
-    let d_capacity_da = capacity_derivatives_a(
-        &orbit.beta,
-        orbit.q,
-        &mu,
-        &orbit.sigma,
-        polytope.dual_vertices_f64(),
-    );
-    let d_volume_da = volume_derivatives_a(polytope);
-
-    Ok(systolic_ratio_gradient_a_from_parts(
-        capacity,
-        volume,
-        &d_capacity_da,
-        &d_volume_da,
-    ))
-}
-
-/// Assemble the per-orbit systolic-ratio gradients for a primitive
-/// Clarke-subdifferential representation.
-pub fn sys_subgradients_a(
-    polytope: &Polytope4D,
-    orbits: &[OrbitKktData],
-) -> Result<ClarkeSubdiffA, DerivativeError> {
-    orbits
-        .iter()
-        .map(|orbit| sys_gradient_a_from_orbit(polytope, orbit))
         .collect()
 }
 
@@ -227,49 +181,63 @@ pub fn sys_subgradients_a(
 ///   ∂vol/∂n_k = −S_k(x̄_k − h_k n_k) (tangent centroid)
 ///   ∂h_k/∂a_k = −a_k / |a_k|³
 ///   ∂n_k/∂a_k = (I − n_k n_k^T) / |a_k|
-pub fn volume_derivatives_a(polytope: &Polytope4D) -> OrbitGradientA {
-    let duals = polytope.dual_vertices_f64();
-    let f = polytope.facet_count();
+pub fn volume_derivatives_a(
+    dual_vertices: &[Vector4<f64>],
+    vertices: &[Vector4<f64>],
+    vertex_facet_incidence: &DMatrix<bool>,
+) -> Result<Vec<Vector4<f64>>, F64GeometryError> {
+    assert_eq!(
+        vertex_facet_incidence.nrows(),
+        vertices.len(),
+        "volume_derivatives_a requires incidence rows to match vertices length"
+    );
+    assert_eq!(
+        vertex_facet_incidence.ncols(),
+        dual_vertices.len(),
+        "volume_derivatives_a requires incidence columns to match dual_vertices length"
+    );
 
-    (0..f)
-        .map(|k| {
-            let a = &duals[k];
-            let a_norm = a.norm();
-            let n = a / a_norm;
-            let h = 1.0 / a_norm;
+    let mut derivatives = Vec::with_capacity(dual_vertices.len());
+    for (k, a) in dual_vertices.iter().enumerate() {
+        let a_norm = a.norm();
+        let n = a / a_norm;
+        let h = 1.0 / a_norm;
 
-            let (s_k, centroid_k) = facet_volume_and_centroid_3d_f64(polytope, k);
-            if s_k < VOLUME_DERIVATIVE_FACET_VOLUME_FLOOR {
-                return Vector4::zeros();
-            }
+        let (s_k, centroid_k) =
+            facet_volume_and_centroid_from_incidence_f64(vertices, vertex_facet_incidence, k)?;
+        if s_k < VOLUME_DERIVATIVE_FACET_VOLUME_FLOOR {
+            derivatives.push(Vector4::zeros());
+            continue;
+        }
 
-            // ∂vol/∂h_k = S_k
-            // ∂h_k/∂a_k = −a / |a|³
-            let dvol_dh = s_k;
-            let dh_da = -a / (a_norm * a_norm * a_norm);
+        // ∂vol/∂h_k = S_k
+        // ∂h_k/∂a_k = −a / |a|³
+        let dvol_dh = s_k;
+        let dh_da = -a / (a_norm * a_norm * a_norm);
 
-            // ∂vol/∂n_k = −S_k(x̄_k − h n_k)  (tangent component, already ⊥ n_k)
-            let tangent_centroid = centroid_k - h * n;
-            let dvol_dn = -s_k * tangent_centroid;
+        // ∂vol/∂n_k = −S_k(x̄_k − h n_k)  (tangent component, already ⊥ n_k)
+        let tangent_centroid = centroid_k - h * n;
+        let dvol_dn = -s_k * tangent_centroid;
 
-            // ∂n_k/∂a_k = (I − n n^T) / |a|
-            // So (∂vol/∂n_k)^T (∂n_k/∂a_k) = (I − n n^T) dvol_dn / |a|
-            // Since dvol_dn ⊥ n, the projection is identity: (I − n n^T) dvol_dn = dvol_dn
-            let dn_contribution = dvol_dn / a_norm;
+        // ∂n_k/∂a_k = (I − n n^T) / |a|
+        // So (∂vol/∂n_k)^T (∂n_k/∂a_k) = (I − n n^T) dvol_dn / |a|
+        // Since dvol_dn ⊥ n, the projection is identity: (I − n n^T) dvol_dn = dvol_dn
+        let dn_contribution = dvol_dn / a_norm;
 
-            dvol_dh * dh_da + dn_contribution
-        })
-        .collect()
+        derivatives.push(dvol_dh * dh_da + dn_contribution);
+    }
+
+    Ok(derivatives)
 }
 
 /// Assemble the per-orbit capacity gradients for a Clarke-subdifferential.
 pub fn capacity_subgradients_a(
-    polytope: &Polytope4D,
+    dual_vertices: &[Vector4<f64>],
     orbits: &[OrbitKktData],
-) -> Result<ClarkeSubdiffA, DerivativeError> {
+) -> Result<Vec<Vec<Vector4<f64>>>, DerivativeError> {
     orbits
         .iter()
-        .map(|orbit| capacity_derivatives_a_from_orbit(polytope, orbit))
+        .map(|orbit| capacity_derivatives_a_from_orbit(dual_vertices, orbit))
         .collect()
 }
 
@@ -284,7 +252,7 @@ pub fn directional_derivative_a(grad: &[Vector4<f64>], direction: &[Vector4<f64>
 
 /// Clarke directional derivative `min_i <g_i, d>` for a primitive gradient set.
 pub fn clarke_directional_derivative_a(
-    subdiff: &ClarkeSubdiffA,
+    subdiff: &[Vec<Vector4<f64>>],
     direction: &[Vector4<f64>],
 ) -> Result<f64, DerivativeError> {
     subdiff
@@ -360,7 +328,22 @@ mod tests {
     use super::*;
     use crate::algorithms::OrbitAdmissibility;
     use crate::geom::known_polytopes;
+    use crate::geom::polytope::Polytope4D;
+    use crate::geom::rational_arithmetic::rational_to_f64;
     use crate::kkt::saddle_point_solver::solve_kkt_for_dual_vertices;
+    use euclidean_polytopes::volume_from_incidence_exact;
+    use num_rational::BigRational;
+
+    fn volume_from_exact_incidence_f64(
+        vertices: &[[BigRational; 4]],
+        incidence: &DMatrix<bool>,
+    ) -> f64 {
+        let vertices: Vec<Vector4<BigRational>> = vertices
+            .iter()
+            .map(|v| Vector4::new(v[0].clone(), v[1].clone(), v[2].clone(), v[3].clone()))
+            .collect();
+        rational_to_f64(&volume_from_incidence_exact(&vertices, incidence))
+    }
 
     // Tests for derivatives: analytical capacity and volume derivatives.
     //
@@ -378,7 +361,8 @@ mod tests {
         let polytope = &kp.polytope;
         let duals = polytope.dual_vertices_f64();
 
-        let analytical = volume_derivatives_a(polytope);
+        let analytical = volume_derivatives_a(duals, polytope.vertices_f64(), polytope.incidence())
+            .expect("valid known polytope fixture");
         let eps = 1e-6;
         let fd = volume_derivatives_a_fd(duals, eps, |a| {
             let p = Polytope4D::from_f64(a.to_vec()).ok()?;
@@ -419,7 +403,8 @@ mod tests {
             &sigma,
             polytope.dual_vertices_f64(),
         );
-        let wrapped = capacity_derivatives_a_from_kkt_result(polytope, &sigma, &kkt);
+        let wrapped =
+            capacity_derivatives_a_from_kkt_result(polytope.dual_vertices_f64(), &sigma, &kkt);
 
         assert_eq!(wrapped, direct);
     }
@@ -428,7 +413,6 @@ mod tests {
     /// available on the chosen backend/path.
     #[test]
     fn capacity_derivatives_from_orbit_requires_mu() {
-        let kp = known_polytopes::simplex();
         let orbit = OrbitKktData {
             sigma: vec![0, 1],
             beta: vec![0.5, 0.5],
@@ -443,15 +427,15 @@ mod tests {
             admissibility: OrbitAdmissibility::AdmissibleF64,
         };
 
-        let err = capacity_derivatives_a_from_orbit(&kp.polytope, &orbit)
+        let dual_vertices = vec![Vector4::zeros(), Vector4::zeros()];
+        let err = capacity_derivatives_a_from_orbit(&dual_vertices, &orbit)
             .expect_err("orbit without mu should fail explicitly");
         assert_eq!(err, DerivativeError::MissingClosureMultiplier);
     }
 
-    /// The flat dual-vertex solver should agree with the quotient-rule
-    /// combination of capacity and volume gradients.
+    /// The systolic-ratio combiner should agree with the quotient rule formula.
     #[test]
-    fn sys_gradient_a_from_kkt_result_matches_formula() {
+    fn systolic_ratio_gradient_a_matches_formula() {
         let kp = known_polytopes::simplex();
         let polytope = &kp.polytope;
         let sigma = crate::ehz_capacity_pruned(polytope)
@@ -464,26 +448,35 @@ mod tests {
 
         let capacity = 1.0 / (2.0 * kkt.q_corrected);
         let volume = volume_from_exact_incidence_f64(polytope.vertices(), polytope.incidence());
-        let d_capacity_da = capacity_derivatives_a_from_kkt_result(polytope, &sigma, &kkt);
-        let d_volume_da = volume_derivatives_a(polytope);
-        let direct =
-            systolic_ratio_gradient_a_from_parts(capacity, volume, &d_capacity_da, &d_volume_da);
-        let wrapped = sys_gradient_a_from_kkt_result(polytope, &sigma, &kkt);
+        let d_capacity_da =
+            capacity_derivatives_a_from_kkt_result(polytope.dual_vertices_f64(), &sigma, &kkt);
+        let d_volume_da = volume_derivatives_a(
+            polytope.dual_vertices_f64(),
+            polytope.vertices_f64(),
+            polytope.incidence(),
+        )
+        .expect("valid known polytope fixture");
+        let combined = systolic_ratio_gradient_a(capacity, volume, &d_capacity_da, &d_volume_da);
 
-        for (k, (lhs, rhs)) in wrapped.iter().zip(direct.iter()).enumerate() {
-            let err = (lhs - rhs).norm();
+        for (k, (combined_k, (dc, dv))) in combined
+            .iter()
+            .zip(d_capacity_da.iter().zip(d_volume_da.iter()))
+            .enumerate()
+        {
+            let sys = crate::systolic_ratio(capacity, volume);
+            let direct = (capacity / volume) * dc - (sys / volume) * dv;
+            let err = (combined_k - direct).norm();
             assert!(
                 err < 1e-12,
-                "facet {k}: wrapped={lhs:?}, direct={rhs:?}, err={err}"
+                "facet {k}: combined={combined_k:?}, direct={direct:?}, err={err}"
             );
         }
     }
 
-    /// Orbit-payload helper should fail explicitly when multiplier data is not
-    /// available on the chosen backend/path.
+    /// Capacity subgradient assembly should fail explicitly when any orbit
+    /// payload misses the multiplier needed by the derivative formula.
     #[test]
-    fn sys_gradient_a_from_orbit_requires_mu() {
-        let kp = known_polytopes::simplex();
+    fn capacity_subgradients_a_requires_mu() {
         let orbit = OrbitKktData {
             sigma: vec![0, 1],
             beta: vec![0.5, 0.5],
@@ -498,31 +491,8 @@ mod tests {
             admissibility: OrbitAdmissibility::AdmissibleF64,
         };
 
-        let err = sys_gradient_a_from_orbit(&kp.polytope, &orbit)
-            .expect_err("orbit without mu should fail explicitly");
-        assert_eq!(err, DerivativeError::MissingClosureMultiplier);
-    }
-
-    /// Systolic-ratio subgradient assembly should fail explicitly when any
-    /// orbit payload misses the multiplier needed by the derivative formula.
-    #[test]
-    fn sys_subgradients_a_requires_mu() {
-        let kp = known_polytopes::simplex();
-        let orbit = OrbitKktData {
-            sigma: vec![0, 1],
-            beta: vec![0.5, 0.5],
-            beta_margin: 0.5,
-            action: 1.0,
-            action_lower: 1.0,
-            action_upper: 1.0,
-            q: 0.5,
-            q_error_bound: 0.0,
-            mu: None,
-            xi: None,
-            admissibility: OrbitAdmissibility::AdmissibleF64,
-        };
-
-        let err = sys_subgradients_a(&kp.polytope, &[orbit])
+        let dual_vertices = vec![Vector4::zeros(), Vector4::zeros()];
+        let err = capacity_subgradients_a(&dual_vertices, &[orbit])
             .expect_err("orbit without mu should fail explicitly");
         assert_eq!(err, DerivativeError::MissingClosureMultiplier);
     }
