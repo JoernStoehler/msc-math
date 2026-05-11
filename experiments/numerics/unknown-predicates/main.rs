@@ -18,7 +18,7 @@
 //!    generates the full dataset and writes `unknown-predicates/unknown-predicates.jsonl`.
 //! 3. Python script reads JSONL, summarizes findings
 
-use dev_numerical_analysis::euclidean_volume_f64;
+use dev_numerical_analysis::{capacity_billiard, capacity_pruned_hk2017, euclidean_volume_f64};
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use serde::Serialize;
@@ -29,7 +29,6 @@ use std::time::Instant;
 use symplectic::geom::lagrangian_product::lagrangian_product;
 use symplectic::geom::polygon::{regular_polygon_2d, rotate_polygon_2d};
 use symplectic::random::generate_random_polytopes;
-use symplectic::{ehz_capacity_billiard, ehz_capacity_pruned};
 
 // ---------------------------------------------------------------------------
 // Random-sweep parameters (must match random_sweep.rs exactly)
@@ -175,7 +174,7 @@ fn main() {
             let vol = euclidean_volume_f64(p.vertices(), p.incidence());
 
             let start = Instant::now();
-            let result = ehz_capacity_pruned(p).expect("ehz_capacity_pruned failed");
+            let result = capacity_pruned_hk2017(p).expect("ehz_capacity_pruned failed");
             let time_ms = start.elapsed().as_secs_f64() * 1000.0;
 
             let beta_min = result
@@ -244,7 +243,7 @@ fn main() {
             let vol = euclidean_volume_f64(polytope.vertices(), polytope.incidence());
 
             let start = Instant::now();
-            let result = ehz_capacity_billiard(&polytope).unwrap_or_else(|err| {
+            let result = capacity_billiard(&polytope).unwrap_or_else(|err| {
                 panic!("billiard capacity failed for pentagon_5x5_{angle_deg:.0}deg: {err}")
             });
             let time_ms = start.elapsed().as_secs_f64() * 1000.0;
@@ -307,7 +306,7 @@ fn main() {
             let vol = euclidean_volume_f64(polytope.vertices(), polytope.incidence());
 
             let start = Instant::now();
-            let result = ehz_capacity_billiard(&polytope).unwrap_or_else(|err| {
+            let result = capacity_billiard(&polytope).unwrap_or_else(|err| {
                 panic!("billiard capacity failed for pair_{n1}x{n2}_{angle_deg:.0}deg: {err}")
             });
             let time_ms = start.elapsed().as_secs_f64() * 1000.0;

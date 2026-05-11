@@ -93,7 +93,7 @@ pub fn compute_sys(polytope: &Polytope4D) -> Option<f64> {
 
 /// Compute the active-orbit capacity result.
 pub fn compute_capacity_result(polytope: &Polytope4D) -> Option<OrbitSearchResult> {
-    symplectic::ehz_capacity(polytope).ok()
+    crate::capacity_auto(polytope).ok()
 }
 
 pub fn orbit_scalars_from_result(result: &OrbitSearchResult) -> OrbitScalars {
@@ -751,7 +751,7 @@ pub fn finalize_ascent_output(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use symplectic::algorithms::billiard::facet_classification::classify_facets;
+    use symplectic::classify_facets_from_dual_vertices;
     use symplectic::geom::known_polytopes;
 
     #[test]
@@ -833,7 +833,7 @@ mod tests {
     #[test]
     fn maximin_direction_respects_lp_coordinate_bounds() {
         let kp = known_polytopes::lagrangian_triangle_product();
-        let classification = classify_facets(&kp.polytope)
+        let classification = classify_facets_from_dual_vertices(kp.polytope.dual_vertices_f64())
             .expect("triangle product should classify as a Lagrangian product");
         let facet_count = kp.polytope.facet_count();
         let q_idx = classification.q_indices[0];

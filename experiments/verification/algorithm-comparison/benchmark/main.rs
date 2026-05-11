@@ -33,8 +33,13 @@ use std::path::{Path, PathBuf};
 use std::time::Instant;
 use symplectic::geom::lagrangian_product::lagrangian_product;
 use symplectic::geom::polygon::random_polygon_2d;
+use symplectic::geom::polytope::Polytope4D;
 use symplectic::random::generate_random_polytopes;
-use symplectic::{ehz_capacity_billiard, ehz_capacity_pruned, ehz_capacity_unpruned};
+use symplectic::{
+    aggregate_orbits_with_dual_vertices_exact, classify_facets_from_dual_vertices,
+    solve_billiard_candidates, solve_pruned_hk2017_candidates, solve_unpruned_hk2017_candidates,
+    BilliardError, OrbitGuaranteeMode, OrbitSearchError, OrbitSearchResult,
+};
 
 const SEED: u64 = 42;
 const H_MIN: f64 = 0.5;
@@ -87,6 +92,58 @@ const LAGRANGIAN_PLAN: &[(usize, usize)] = &[
 ];
 const SMOKE_RANDOM_PLAN: &[(usize, usize, bool)] = &[(5, 1, true)];
 const SMOKE_LAGRANGIAN_PLAN: &[(usize, usize)] = &[(3, 3)];
+
+fn transition_matrix(polytope: &Polytope4D) -> nalgebra::DMatrix<bool> {
+    symplectic::algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega(
+        polytope.facet_intersection_is_nonempty(),
+        polytope.omega_signs(),
+    )
+}
+
+fn capacity_pruned_hk2017(polytope: &Polytope4D) -> Result<OrbitSearchResult, OrbitSearchError> {
+    let transition_is_allowed = transition_matrix(polytope);
+    let (orbits, iterations) =
+        solve_pruned_hk2017_candidates(polytope.dual_vertices_f64(), &transition_is_allowed)?;
+    aggregate_orbits_with_dual_vertices_exact(
+        polytope.dual_vertices(),
+        orbits,
+        iterations,
+        0.0,
+        OrbitGuaranteeMode::MinimaSafe,
+    )
+}
+
+fn capacity_unpruned_hk2017(polytope: &Polytope4D) -> Result<OrbitSearchResult, OrbitSearchError> {
+    let (orbits, iterations) = solve_unpruned_hk2017_candidates(polytope.dual_vertices_f64())?;
+    aggregate_orbits_with_dual_vertices_exact(
+        polytope.dual_vertices(),
+        orbits,
+        iterations,
+        0.0,
+        OrbitGuaranteeMode::MinimaSafe,
+    )
+}
+
+fn capacity_billiard(polytope: &Polytope4D) -> Result<OrbitSearchResult, BilliardError> {
+    let classification = classify_facets_from_dual_vertices(polytope.dual_vertices_f64())?;
+    let transition_is_allowed = transition_matrix(polytope);
+    let (orbits, iterations) = solve_billiard_candidates(
+        polytope.dual_vertices_f64(),
+        &classification.q_indices,
+        &classification.p_indices,
+        polytope.facet_intersection_is_nonempty(),
+        &transition_is_allowed,
+    )
+    .map_err(BilliardError::OrbitSearch)?;
+    aggregate_orbits_with_dual_vertices_exact(
+        polytope.dual_vertices(),
+        orbits,
+        iterations,
+        0.0,
+        OrbitGuaranteeMode::MinimaSafe,
+    )
+    .map_err(BilliardError::OrbitSearch)
+}
 
 #[derive(Debug, Clone, Copy)]
 struct Args {
@@ -163,13 +220,13 @@ fn main() {
         for (i, p) in polytopes.iter().enumerate() {
             // Pruned (always)
             let t_start = Instant::now();
-            let result_pruned = ehz_capacity_pruned(p).expect("pruned failed");
+            let result_pruned = capacity_pruned_hk2017(p).expect("pruned failed");
             let time_pruned_ms = t_start.elapsed().as_secs_f64() * 1000.0;
 
             // Unpruned (only if F <= 7)
             let (time_unpruned_ms, capacity_unpruned, iterations_unpruned) = if include_unpruned {
                 let t_start = Instant::now();
-                let result = ehz_capacity_unpruned(p).expect("unpruned failed");
+                let result = capacity_unpruned_hk2017(p).expect("unpruned failed");
                 let time_ms = t_start.elapsed().as_secs_f64() * 1000.0;
                 (
                     Some(time_ms),
@@ -220,12 +277,12 @@ fn main() {
 
             // Pruned
             let t_start = Instant::now();
-            let result_pruned = ehz_capacity_pruned(&p).expect("pruned failed");
+            let result_pruned = capacity_pruned_hk2017(&p).expect("pruned failed");
             let time_pruned_ms = t_start.elapsed().as_secs_f64() * 1000.0;
 
             // Billiard
             let t_start = Instant::now();
-            let result_billiard = ehz_capacity_billiard(&p).expect("billiard failed");
+            let result_billiard = capacity_billiard(&p).expect("billiard failed");
             let time_billiard_ms = t_start.elapsed().as_secs_f64() * 1000.0;
 
             entries.push(BenchmarkEntry {

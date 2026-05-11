@@ -18,7 +18,11 @@ use symplectic::algorithms::hk2017::permutations::for_each_cyclic_permutation;
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::kkt::saddle_point_solver::{solve_kkt_for_dual_vertices, KktOutcome};
 use symplectic::random::generate_random_polytopes;
-use symplectic::{ehz_capacity_pruned, ehz_capacity_pruned_certified, CertifiedOrbitSetMode};
+use symplectic::{
+    aggregate_certified_orbits_with_dual_vertices_exact, aggregate_orbits_with_dual_vertices_exact,
+    solve_pruned_hk2017_candidates, CertifiedOrbitSearchResult, CertifiedOrbitSetMode,
+    OrbitGuaranteeMode, OrbitSearchError, OrbitSearchResult,
+};
 
 // Same seed and height range as
 // experiments/verification/algorithm-comparison/benchmark/main.rs for consistency.
@@ -51,6 +55,42 @@ fn prebuilt_polytope(f: usize) -> Polytope4D {
             .collect(),
     )
     .expect("construction failed")
+}
+
+fn capacity_pruned_hk2017(polytope: &Polytope4D) -> Result<OrbitSearchResult, OrbitSearchError> {
+    let transition_is_allowed = build_transition_matrix_from_facet_intersections_and_omega(
+        polytope.facet_intersection_is_nonempty(),
+        polytope.omega_signs(),
+    );
+    let (orbits, iterations) =
+        solve_pruned_hk2017_candidates(polytope.dual_vertices_f64(), &transition_is_allowed)?;
+    aggregate_orbits_with_dual_vertices_exact(
+        polytope.dual_vertices(),
+        orbits,
+        iterations,
+        0.0,
+        OrbitGuaranteeMode::MinimaSafe,
+    )
+}
+
+fn capacity_pruned_hk2017_certified(
+    polytope: &Polytope4D,
+    action_gap_exact: BigRational,
+    mode: CertifiedOrbitSetMode,
+) -> Result<CertifiedOrbitSearchResult, OrbitSearchError> {
+    let transition_is_allowed = build_transition_matrix_from_facet_intersections_and_omega(
+        polytope.facet_intersection_is_nonempty(),
+        polytope.omega_signs(),
+    );
+    let (orbits, iterations) =
+        solve_pruned_hk2017_candidates(polytope.dual_vertices_f64(), &transition_is_allowed)?;
+    aggregate_certified_orbits_with_dual_vertices_exact(
+        polytope.dual_vertices(),
+        orbits,
+        iterations,
+        action_gap_exact,
+        mode,
+    )
 }
 
 /// Find a valid permutation for single-KKT benchmarks.
@@ -130,7 +170,7 @@ fn bench_capacity(c: &mut Criterion) {
     for &f in FACET_COUNTS {
         let polytope = prebuilt_polytope(f);
         group.bench_with_input(BenchmarkId::from_parameter(f), &f, |b, _| {
-            b.iter(|| ehz_capacity_pruned(&polytope));
+            b.iter(|| capacity_pruned_hk2017(&polytope));
         });
     }
     group.finish();
@@ -143,7 +183,7 @@ fn bench_capacity_certified_minimizers(c: &mut Criterion) {
         let polytope = prebuilt_polytope(f);
         group.bench_with_input(BenchmarkId::from_parameter(f), &f, |b, _| {
             b.iter(|| {
-                ehz_capacity_pruned_certified(
+                capacity_pruned_hk2017_certified(
                     &polytope,
                     BigRational::zero(),
                     CertifiedOrbitSetMode::MinimizersOnly,

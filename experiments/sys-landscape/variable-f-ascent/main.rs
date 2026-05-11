@@ -226,7 +226,7 @@ fn compute_capacity(polytope: &Polytope4D, db: &mut Db) -> Option<f64> {
             return Some(cap);
         }
     }
-    let r = symplectic::ehz_capacity(polytope).ok()?;
+    let r = exp_sys_landscape::capacity_auto(polytope).ok()?;
     let cap = r.capacity();
     let record = db
         .entry(key)
@@ -248,7 +248,7 @@ fn compute_capacity_result(polytope: &Polytope4D, db: &mut Db) -> Option<(f64, V
             }
         }
     }
-    let r = symplectic::ehz_capacity(polytope).ok()?;
+    let r = exp_sys_landscape::capacity_auto(polytope).ok()?;
     let cap = r.capacity();
     let perm = r.best_sigma().to_vec();
     let record = db

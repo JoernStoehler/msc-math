@@ -50,9 +50,8 @@ use rand_distr::{Distribution, StandardNormal};
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
 use std::time::Instant;
-use symplectic::algorithms::billiard::facet_classification::{
-    classify_facets, FacetClassification,
-};
+use symplectic::algorithms::billiard::facet_classification::FacetClassification;
+use symplectic::classify_facets_from_dual_vertices;
 use symplectic::database::{load_many, save, DualVerticesKey, PolytopeRecord, SigmaAction};
 use symplectic::geom::lagrangian_product::lagrangian_product;
 use symplectic::geom::polygon::random_polygon_2d;
@@ -506,7 +505,8 @@ fn main() {
             insert_polytope_to_db(&mut db, &polytope);
         }
 
-        let class = classify_facets(&polytope).expect("should classify as Lagrangian");
+        let class = classify_facets_from_dual_vertices(polytope.dual_vertices_f64())
+            .expect("should classify as Lagrangian");
 
         let name = format!("products_{i}");
         let result = process_seed(

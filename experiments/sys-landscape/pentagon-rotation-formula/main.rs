@@ -30,17 +30,19 @@ use std::env;
 use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::path::PathBuf;
-use symplectic::algorithms::billiard::facet_classification::{
-    classify_facets, FacetClassification,
+use symplectic::algorithms::billiard::facet_classification::FacetClassification;
+use symplectic::algorithms::billiard::{
+    bounce_count_from_sigma_for_facets, for_each_sigma_from_facets,
 };
-use symplectic::algorithms::billiard::{bounce_count_from_sigma, for_each_sigma};
 use symplectic::algorithms::{
-    aggregate_orbits_with_dual_vertices_exact, solve_orbit_sigma_with_dual_vertices,
-    OrbitGuaranteeMode, OrbitSearchError, OrbitSolveBackend, OrbitSolveError,
+    aggregate_orbits_with_dual_vertices_exact, solve_orbit_sigma_saddle_point, OrbitGuaranteeMode,
+    OrbitSearchError, OrbitSolveError,
 };
 use symplectic::geom::lagrangian_product::lagrangian_product;
 use symplectic::geom::polygon::{polygon_area, regular_polygon_2d, rotate_polygon_2d};
-use symplectic::{OrbitAdmissibility, OrbitKktData};
+use symplectic::{
+    classify_facets_from_dual_vertices, solve_billiard_candidates, OrbitAdmissibility, OrbitKktData,
+};
 
 const START_DEG: f64 = 0.0;
 const END_DEG: f64 = 36.0;
@@ -119,8 +121,8 @@ fn main() {
         let (pn, ph) = rotate_polygon_2d(&pn_base, &ph_base, theta);
         let polytope =
             lagrangian_product(&qn, &qh, &pn, &ph).expect("pentagon product construction failed");
-        let classification =
-            classify_facets(&polytope).expect("pentagon product should classify as a product");
+        let classification = classify_facets_from_dual_vertices(polytope.dual_vertices_f64())
+            .expect("pentagon product should classify as a product");
         let vol = euclidean_volume_f64(polytope.vertices(), polytope.incidence());
         match cli.mode {
             SweepMode::Minima => {
@@ -270,40 +272,27 @@ fn admissibility_name(admissibility: OrbitAdmissibility) -> &'static str {
     }
 }
 
+fn transition_matrix(polytope: &symplectic::Polytope4D) -> nalgebra::DMatrix<bool> {
+    symplectic::algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega(
+        polytope.facet_intersection_is_nonempty(),
+        polytope.omega_signs(),
+    )
+}
+
 fn collect_minima_safe_billiard_result(
     polytope: &symplectic::Polytope4D,
 ) -> Result<symplectic::OrbitSearchResult, OrbitSearchError> {
-    let dual_vertices = polytope.dual_vertices_f64();
+    let classification = classify_facets_from_dual_vertices(polytope.dual_vertices_f64())
+        .expect("valid pentagon family should classify as Lagrangian product");
     let dual_vertices_exact = polytope.dual_vertices();
-    let mut orbits = Vec::new();
-    let mut iterations = 0u64;
-    let mut fatal_error: Option<OrbitSearchError> = None;
-
-    for_each_sigma(polytope, |sigma| {
-        if fatal_error.is_some() {
-            return;
-        }
-        iterations += 1;
-        match solve_orbit_sigma_with_dual_vertices(
-            dual_vertices,
-            sigma,
-            OrbitSolveBackend::SaddlePoint,
-        ) {
-            Ok(orbit) => orbits.push(orbit),
-            Err(OrbitSolveError::Inadmissible) => {}
-            Err(OrbitSolveError::UnsupportedBackend) => {
-                fatal_error = Some(OrbitSearchError::UnsupportedBackend);
-            }
-            Err(OrbitSolveError::NumericalFailure) => {
-                fatal_error = Some(OrbitSearchError::NumericalFailure);
-            }
-        }
-    })
-    .expect("valid pentagon family should enumerate billiard sigmas");
-
-    if let Some(err) = fatal_error {
-        return Err(err);
-    }
+    let transition_is_allowed = transition_matrix(polytope);
+    let (orbits, iterations) = solve_billiard_candidates(
+        polytope.dual_vertices_f64(),
+        &classification.q_indices,
+        &classification.p_indices,
+        polytope.facet_intersection_is_nonempty(),
+        &transition_is_allowed,
+    )?;
     aggregate_orbits_with_dual_vertices_exact(
         dual_vertices_exact,
         orbits,
@@ -317,45 +306,49 @@ fn collect_admissible_three_bounce_orbits(
     polytope: &symplectic::Polytope4D,
 ) -> Result<(usize, Vec<OrbitKktData>), OrbitSearchError> {
     let dual_vertices = polytope.dual_vertices_f64();
+    let classification = classify_facets_from_dual_vertices(dual_vertices)
+        .expect("valid pentagon family should classify as Lagrangian product");
+    let transition_is_allowed = transition_matrix(polytope);
     let mut sigmas_examined = 0usize;
     let mut orbits = Vec::new();
     let mut fatal_error: Option<OrbitSearchError> = None;
 
-    for_each_sigma(polytope, |sigma| {
-        if fatal_error.is_some() {
-            return;
-        }
+    for_each_sigma_from_facets(
+        &classification.q_indices,
+        &classification.p_indices,
+        polytope.facet_intersection_is_nonempty(),
+        &transition_is_allowed,
+        |sigma| {
+            if fatal_error.is_some() {
+                return;
+            }
 
-        let bounce_count = bounce_count_from_sigma(polytope, sigma)
-            .expect("enumerated sigma should carry a valid bounce count");
-        if bounce_count != Some(3) {
-            return;
-        }
+            let bounce_count = bounce_count_from_sigma_for_facets(
+                &classification.q_indices,
+                &classification.p_indices,
+                sigma,
+            );
+            if bounce_count != Some(3) {
+                return;
+            }
 
-        sigmas_examined += 1;
-        match solve_orbit_sigma_with_dual_vertices(
-            dual_vertices,
-            sigma,
-            OrbitSolveBackend::SaddlePoint,
-        ) {
-            Ok(orbit) => {
-                if matches!(
-                    orbit.admissibility,
-                    OrbitAdmissibility::AdmissibleF64 | OrbitAdmissibility::AdmissibleExact
-                ) {
-                    orbits.push(orbit);
+            sigmas_examined += 1;
+            match solve_orbit_sigma_saddle_point(dual_vertices, sigma) {
+                Ok(orbit) => {
+                    if matches!(
+                        orbit.admissibility,
+                        OrbitAdmissibility::AdmissibleF64 | OrbitAdmissibility::AdmissibleExact
+                    ) {
+                        orbits.push(orbit);
+                    }
+                }
+                Err(OrbitSolveError::Inadmissible) => {}
+                Err(OrbitSolveError::NumericalFailure) => {
+                    fatal_error = Some(OrbitSearchError::NumericalFailure);
                 }
             }
-            Err(OrbitSolveError::Inadmissible) => {}
-            Err(OrbitSolveError::UnsupportedBackend) => {
-                fatal_error = Some(OrbitSearchError::UnsupportedBackend);
-            }
-            Err(OrbitSolveError::NumericalFailure) => {
-                fatal_error = Some(OrbitSearchError::NumericalFailure);
-            }
-        }
-    })
-    .expect("valid pentagon family should enumerate billiard sigmas");
+        },
+    );
 
     if let Some(err) = fatal_error {
         return Err(err);
@@ -380,8 +373,11 @@ fn orbit_dump(
         q: orbit.q,
         q_error_bound: orbit.q_error_bound,
         admissibility: admissibility_name(orbit.admissibility).to_string(),
-        bounces: bounce_count_from_sigma(polytope, &orbit.sigma)
-            .expect("bounce-count classification should succeed"),
+        bounces: bounce_count_from_sigma_for_facets(
+            &classification.q_indices,
+            &classification.p_indices,
+            &orbit.sigma,
+        ),
         q_blocks,
         p_blocks,
     }

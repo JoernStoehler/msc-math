@@ -36,6 +36,9 @@
 //! fixtures. The crate-level `ehz_capacity` entrypoint would hide those
 //! per-algorithm checks.
 
+use dev_capacity_validation::{
+    capacity_billiard, capacity_pruned_hk2017, capacity_unpruned_hk2017,
+};
 use nalgebra::Matrix4;
 use rand::{Rng, SeedableRng};
 use rand_chacha::ChaCha8Rng;
@@ -43,7 +46,7 @@ use rand_distr::StandardNormal;
 use serde::{Deserialize, Serialize};
 use std::fs::File;
 use std::io::{BufWriter, Write};
-use symplectic::algorithms::billiard::facet_classification::classify_facets;
+use symplectic::classify_facets_from_dual_vertices;
 use symplectic::geom::known_polytopes::{
     hko_pentagon, hypercube, lagrangian_triangle_product, lagrangian_triangle_square, simplex,
     symplectic_triangle_product, symplectic_triangle_square,
@@ -52,14 +55,13 @@ use symplectic::geom::lagrangian_product::lagrangian_product;
 use symplectic::geom::polygon::random_polygon_2d;
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::random::generate_random_polytopes;
-use symplectic::{ehz_capacity_billiard, ehz_capacity_pruned, ehz_capacity_unpruned};
 
 fn maybe_billiard_capacity(polytope: &Polytope4D) -> Option<f64> {
-    if classify_facets(polytope).is_err() {
+    if classify_facets_from_dual_vertices(polytope.dual_vertices_f64()).is_err() {
         return None;
     }
     Some(
-        ehz_capacity_billiard(polytope)
+        capacity_billiard(polytope)
             .expect("classification already succeeded")
             .capacity(),
     )
@@ -129,8 +131,8 @@ fn main() {
 
     // Compute capacities for base polytopes (10 pruned + 10 unpruned + 5 billiard)
     for (i, p) in base_polytopes.iter().enumerate() {
-        let pruned = ehz_capacity_pruned(p).expect("pruned").capacity();
-        let unpruned = ehz_capacity_unpruned(p).expect("unpruned").capacity();
+        let pruned = capacity_pruned_hk2017(p).expect("pruned").capacity();
+        let unpruned = capacity_unpruned_hk2017(p).expect("unpruned").capacity();
         let billiard = if i >= 5 {
             maybe_billiard_capacity(p)
         } else {
@@ -169,7 +171,7 @@ fn main() {
     ];
 
     for kp in literature {
-        let pruned = ehz_capacity_pruned(&kp.polytope)
+        let pruned = capacity_pruned_hk2017(&kp.polytope)
             .expect("pruned")
             .capacity();
         let billiard = maybe_billiard_capacity(&kp.polytope);
@@ -202,7 +204,7 @@ fn main() {
             Polytope4D::from_f64(p.dual_vertices_f64().iter().map(|a| a / alpha).collect())
                 .expect("scaled");
 
-        let pruned = ehz_capacity_pruned(&scaled).expect("pruned").capacity();
+        let pruned = capacity_pruned_hk2017(&scaled).expect("pruned").capacity();
         let billiard = if i >= 5 {
             maybe_billiard_capacity(&scaled)
         } else {
@@ -233,7 +235,7 @@ fn main() {
     for (i, p) in base_polytopes.iter().enumerate() {
         let m = random_sp4_matrix(&mut rng);
         let transformed = apply_symplectomorphism(p, &m);
-        let pruned = ehz_capacity_pruned(&transformed)
+        let pruned = capacity_pruned_hk2017(&transformed)
             .expect("pruned")
             .capacity();
 
@@ -271,7 +273,9 @@ fn main() {
                 .collect(),
         )
         .expect("perturbed");
-        let pruned = ehz_capacity_pruned(&perturbed).expect("pruned").capacity();
+        let pruned = capacity_pruned_hk2017(&perturbed)
+            .expect("pruned")
+            .capacity();
 
         entries.push(VerificationEntry {
             name: format!("perturbed_{}", i),

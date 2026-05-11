@@ -19,9 +19,12 @@ use num_rational::BigRational;
 use num_traits::ToPrimitive;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
-use symplectic::ehz_capacity_pruned;
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::random::generate_random_polytopes;
+use symplectic::{
+    aggregate_orbits_with_dual_vertices_exact, solve_pruned_hk2017_candidates, OrbitGuaranteeMode,
+    OrbitSearchError, OrbitSearchResult,
+};
 
 // Same seed and height range as experiments/verification/algorithm-comparison/benchmark/main.rs for consistency.
 const SEED: u64 = 42;
@@ -34,6 +37,23 @@ fn euclidean_volume_f64(vertices: &[[BigRational; 4]], incidence: &DMatrix<bool>
         .map(|v| Vector4::new(v[0].clone(), v[1].clone(), v[2].clone(), v[3].clone()))
         .collect();
     ToPrimitive::to_f64(&volume_from_incidence_exact(&vertices, incidence)).unwrap_or(f64::NAN)
+}
+
+fn capacity_pruned_hk2017(polytope: &Polytope4D) -> Result<OrbitSearchResult, OrbitSearchError> {
+    let transition_is_allowed =
+        symplectic::algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega(
+            polytope.facet_intersection_is_nonempty(),
+            polytope.omega_signs(),
+        );
+    let (orbits, iterations) =
+        solve_pruned_hk2017_candidates(polytope.dual_vertices_f64(), &transition_is_allowed)?;
+    aggregate_orbits_with_dual_vertices_exact(
+        polytope.dual_vertices(),
+        orbits,
+        iterations,
+        0.0,
+        OrbitGuaranteeMode::MinimaSafe,
+    )
 }
 
 fn main() {
@@ -53,7 +73,7 @@ fn main() {
         let p = Polytope4D::from_f64(dual_vertices.clone()).expect("construction failed");
 
         // Phase 2: Capacity (enumeration, pruning, KKT solve, accumulation)
-        let cap_result = ehz_capacity_pruned(&p).expect("capacity failed");
+        let cap_result = capacity_pruned_hk2017(&p).expect("capacity failed");
 
         // Phase 3: Volume (pure-Rust origin-star triangulation)
         let vol = euclidean_volume_f64(p.vertices(), p.incidence());

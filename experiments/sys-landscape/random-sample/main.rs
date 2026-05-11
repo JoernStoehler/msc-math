@@ -20,7 +20,7 @@
 //! Dataset design:
 //! - Random polytopes with facet counts F=5..12
 //! - Height range h in [0.8, 1.2]
-//! - Default root capacity wrapper (`symplectic::ehz_capacity`), which
+//! - Default auto-routed capacity helper, which
 //!   auto-routes Lagrangian products to billiard and other inputs to pruned HK2017
 //!
 //! CLI (all optional):
@@ -30,6 +30,7 @@
 //! - `--out <path>`            output JSONL path                      (default: untracked temp)
 //! - `--cache <path>`          cache JSONL path                       (default: untracked temp)
 
+use exp_sys_landscape::capacity_auto;
 use exp_sys_landscape::euclidean_volume_f64;
 use exp_sys_landscape::{orbit_scalars_from_result, rational_vec4_to_strings, smoke_output_path};
 use serde::Serialize;
@@ -39,7 +40,6 @@ use std::io::{BufWriter, Write};
 use std::path::PathBuf;
 use std::time::Instant;
 use symplectic::database::{load_many, save, DualVerticesKey, PolytopeRecord, SigmaAction, Source};
-use symplectic::ehz_capacity;
 use symplectic::random::generate_polytope;
 
 const SEED: u64 = 42;
@@ -248,7 +248,8 @@ fn main() {
                     .to_polytope()
                     .expect("failed to reconstruct polytope from database");
                 if record.orbit_scalars.is_none() {
-                    let ehz = ehz_capacity(&p).expect("capacity recomputation failed on cache hit");
+                    let ehz =
+                        capacity_auto(&p).expect("capacity recomputation failed on cache hit");
                     record.orbit_scalars = Some(orbit_scalars_from_result(&ehz));
                 }
                 let vol = record.volume.expect("cached record missing volume");
@@ -301,7 +302,7 @@ fn main() {
             let time_volume_ms = start_vol.elapsed().as_secs_f64() * 1000.0;
 
             let start_cap = Instant::now();
-            let ehz = ehz_capacity(&p).expect("capacity computation failed");
+            let ehz = capacity_auto(&p).expect("capacity computation failed");
             let time_capacity_ms = start_cap.elapsed().as_secs_f64() * 1000.0;
 
             let cap = ehz.capacity();

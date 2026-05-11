@@ -22,7 +22,7 @@
 //! Explicit billiard algorithm because the output schema persists bounce counts;
 //! the crate-level `ehz_capacity` entrypoint would hide that billiard-native data.
 
-use exp_hko_local_maximum::euclidean_volume_f64;
+use exp_hko_local_maximum::{capacity_billiard, euclidean_volume_f64};
 use nalgebra::Vector4;
 use rand::Rng;
 use rand::SeedableRng;
@@ -31,9 +31,8 @@ use serde::Serialize;
 use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::time::Instant;
-use symplectic::algorithms::billiard::bounce_count_from_sigma;
-use symplectic::algorithms::billiard::facet_classification::classify_facets;
-use symplectic::ehz_capacity_billiard;
+use symplectic::algorithms::billiard::bounce_count_from_sigma_for_facets;
+use symplectic::classify_facets_from_dual_vertices;
 use symplectic::geom::known_polytopes;
 use symplectic::geom::polytope::Polytope4D;
 
@@ -240,13 +239,17 @@ fn main() {
 
     // Compute and write base row (epsilon = 0)
     let base_vol = euclidean_volume_f64(base_polytope.vertices(), base_polytope.incidence());
-    let base_billiard =
-        ehz_capacity_billiard(base_polytope).expect("billiard classification failed");
+    let base_billiard = capacity_billiard(base_polytope).expect("billiard classification failed");
+    let base_classification = classify_facets_from_dual_vertices(base_polytope.dual_vertices_f64())
+        .expect("base polytope should classify as Lagrangian product");
     let base_cap = base_billiard.capacity();
     let base_sys = base_cap * base_cap / (2.0 * base_vol);
-    let base_bounces = bounce_count_from_sigma(base_polytope, base_billiard.best_sigma())
-        .expect("bounce count classification failed")
-        .expect("bounce count returned None");
+    let base_bounces = bounce_count_from_sigma_for_facets(
+        &base_classification.q_indices,
+        &base_classification.p_indices,
+        base_billiard.best_sigma(),
+    )
+    .expect("bounce count returned None");
 
     println!(
         "Base: sys = {:.6}, cap = {:.6}, vol = {:.6}\n",
@@ -307,23 +310,28 @@ fn main() {
                 Ok(p) => p,
                 Err(_) => continue,
             };
-            if classify_facets(&polytope).is_err() {
-                continue;
-            }
+            let classification =
+                match classify_facets_from_dual_vertices(polytope.dual_vertices_f64()) {
+                    Ok(classification) => classification,
+                    Err(_) => continue,
+                };
 
             // Keep the explicit billiard call here because `SampleRow` stores
             // `bounces`, which is only available from the billiard-native API.
-            let billiard =
-                ehz_capacity_billiard(&polytope).expect("classification already succeeded");
+            let billiard = capacity_billiard(&polytope).expect("classification already succeeded");
 
             let vol = euclidean_volume_f64(polytope.vertices(), polytope.incidence());
             if vol <= 0.0 {
                 continue;
             }
 
-            let bounces = match bounce_count_from_sigma(&polytope, billiard.best_sigma()) {
-                Ok(Some(k)) => k,
-                _ => continue,
+            let bounces = match bounce_count_from_sigma_for_facets(
+                &classification.q_indices,
+                &classification.p_indices,
+                billiard.best_sigma(),
+            ) {
+                Some(k) => k,
+                None => continue,
             };
             let cap = billiard.capacity();
             let sys = cap * cap / (2.0 * vol);

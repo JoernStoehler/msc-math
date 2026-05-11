@@ -91,11 +91,11 @@ fn transition_matrix_for_polytope(polytope: &Polytope4D) -> nalgebra::DMatrix<bo
     )
 }
 
-/// Explicit pruned HK2017 frontend on the shared orbit/result surface.
+/// Temporary test-only pruned HK2017 helper on the shared orbit/result surface.
 ///
-/// This root convenience wrapper uses the saddle-point backend and `MinimaSafe`
-/// aggregation: f64-indeterminate candidates in the minimum-action window are
-/// resolved by exact rational KKT fallback before the result is returned.
+/// This is intentionally not public API. It keeps legacy in-crate regression
+/// tests focused while experiment and crate consumers migrate to flat
+/// candidate frontends plus explicit aggregation.
 #[cfg(test)]
 pub(crate) fn ehz_capacity_pruned(
     polytope: &Polytope4D,
@@ -114,11 +114,11 @@ pub(crate) fn ehz_capacity_pruned(
     )
 }
 
-/// Explicit unpruned HK2017 frontend on the shared orbit/result surface.
+/// Temporary test-only unpruned HK2017 helper on the shared orbit/result surface.
 ///
-/// This root convenience wrapper uses the saddle-point backend and `MinimaSafe`
-/// aggregation: f64-indeterminate candidates in the minimum-action window are
-/// resolved by exact rational KKT fallback before the result is returned.
+/// This is intentionally not public API. It keeps legacy in-crate regression
+/// tests focused while experiment and crate consumers migrate to flat
+/// candidate frontends plus explicit aggregation.
 #[cfg(test)]
 pub(crate) fn ehz_capacity_unpruned(
     polytope: &Polytope4D,
@@ -136,10 +136,11 @@ pub(crate) fn ehz_capacity_unpruned(
     )
 }
 
-/// Explicit pruned HK2017 frontend with exact rational certified output.
+/// Temporary test-only pruned HK2017 helper with exact rational certified output.
 ///
-/// The search still uses the saddle-point f64 path and HK2017 pruning. The
-/// result is certified by exact rational KKT fallback according to `mode`.
+/// This is intentionally not public API. It keeps legacy in-crate regression
+/// tests focused while experiment and crate consumers migrate to flat
+/// candidate frontends plus explicit aggregation.
 #[cfg(test)]
 pub(crate) fn ehz_capacity_pruned_certified(
     polytope: &Polytope4D,
@@ -160,11 +161,11 @@ pub(crate) fn ehz_capacity_pruned_certified(
     )
 }
 
-/// Explicit billiard frontend on the shared orbit/result surface.
+/// Temporary test-only billiard helper on the shared orbit/result surface.
 ///
-/// This root convenience wrapper first checks the Lagrangian-product facet
-/// classification, then uses the saddle-point backend and `MinimaSafe`
-/// aggregation.
+/// This is intentionally not public API. It keeps legacy in-crate regression
+/// tests focused while experiment and crate consumers migrate to flat
+/// candidate frontends plus explicit aggregation.
 #[cfg(test)]
 pub(crate) fn ehz_capacity_billiard(
     polytope: &Polytope4D,
@@ -205,14 +206,11 @@ pub(crate) fn ehz_capacity_billiard(
     .map_err(BilliardError::OrbitSearch)
 }
 
-/// Default capacity wrapper on the shared orbit/result surface.
+/// Temporary test-only auto-routing capacity helper.
 ///
-/// Uses the billiard algorithm on inputs that pass the Lagrangian-product
-/// structure test, and otherwise uses the pruned HK2017 path.
-///
-/// This is a root convenience wrapper for ordinary experiment code. It returns
-/// the same `MinimaSafe` `OrbitSearchResult` contract as the selected
-/// underlying wrapper.
+/// This is intentionally not public API. It keeps legacy in-crate regression
+/// tests focused while experiment and crate consumers migrate to flat
+/// candidate frontends plus explicit aggregation.
 #[cfg(test)]
 pub(crate) fn ehz_capacity(polytope: &Polytope4D) -> Result<OrbitSearchResult, OrbitSearchError> {
     if algorithms::billiard::facet_classification::classify_facets(polytope).is_ok() {

@@ -20,8 +20,8 @@
 //! The explicit root wrapper below is intentional: this diagnostic validates
 //! the current pruned general HK2017/KKT pipeline and its Q-side error story,
 //! not the root auto-dispatch wrapper.
+use dev_numerical_analysis::capacity_pruned_hk2017;
 use nalgebra::{DMatrix, DVector, Vector4};
-use symplectic::ehz_capacity_pruned;
 use symplectic::geom::known_polytopes;
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::symplectic_form::omega0;
@@ -314,7 +314,7 @@ struct ExactResult {
 
 /// Compare numerical Q̃ against exact Q for the winning (S,σ) of a polytope.
 fn exact_comparison(polytope: &Polytope4D) -> Option<ExactResult> {
-    let result = ehz_capacity_pruned(polytope).ok()?;
+    let result = capacity_pruned_hk2017(polytope).ok()?;
     let perm = result.best_sigma();
     let m = perm.len();
     let size = m + 5;

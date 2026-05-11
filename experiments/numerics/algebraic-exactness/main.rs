@@ -17,13 +17,13 @@ use dev_numerical_analysis::algebraic::fixtures::{
 };
 use dev_numerical_analysis::algebraic::geom::ExactPolytope4D;
 use dev_numerical_analysis::algebraic::kkt::solve_kkt_exact;
+use dev_numerical_analysis::capacity_pruned_hk2017;
 use nalgebra::DMatrix;
 use serde::Serialize;
 use std::env;
 use std::fs::{self, File};
 use std::io::{BufWriter, Write};
 use std::path::{Path, PathBuf};
-use symplectic::ehz_capacity_pruned;
 use symplectic::geom::known_polytopes;
 use symplectic::kkt::rational_solver as library_rational_solver;
 
@@ -231,7 +231,7 @@ fn main() {
 
     let library_simplex = known_polytopes::simplex();
     let simplex_best =
-        ehz_capacity_pruned(&library_simplex.polytope).expect("library simplex capacity");
+        capacity_pruned_hk2017(&library_simplex.polytope).expect("library simplex capacity");
     let simplex_reference = library_rational_solver::solve_kkt_exact(
         library_simplex.polytope.dual_vertices(),
         simplex_best.best_sigma(),
@@ -240,7 +240,7 @@ fn main() {
 
     let library_hypercube = known_polytopes::hypercube();
     let hypercube_best =
-        ehz_capacity_pruned(&library_hypercube.polytope).expect("library hypercube capacity");
+        capacity_pruned_hk2017(&library_hypercube.polytope).expect("library hypercube capacity");
     let hypercube_reference = library_rational_solver::solve_kkt_exact(
         library_hypercube.polytope.dual_vertices(),
         hypercube_best.best_sigma(),

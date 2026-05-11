@@ -162,13 +162,13 @@ fn try_step_a(
 }
 
 fn compute_capacity(polytope: &Polytope4D) -> Option<f64> {
-    symplectic::ehz_capacity(polytope)
+    exp_hko_local_maximum::capacity_auto(polytope)
         .ok()
         .map(|r| r.capacity())
 }
 
 fn compute_capacity_result(polytope: &Polytope4D) -> Option<(f64, Vec<usize>)> {
-    let r = symplectic::ehz_capacity(polytope).ok()?;
+    let r = exp_hko_local_maximum::capacity_auto(polytope).ok()?;
     Some((r.capacity(), r.best_sigma().to_vec()))
 }
 

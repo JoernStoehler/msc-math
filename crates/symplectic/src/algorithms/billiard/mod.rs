@@ -104,6 +104,10 @@ pub(crate) fn bounce_count_from_sigma(
 ///
 /// Input contract: `q_facet_indices` and `p_facet_indices` are disjoint facet
 /// index lists for the same ordered facet set as `sigma`.
+///
+/// Public because branch-analysis experiments need to classify already-solved
+/// orbits and filtered sigma streams without rebuilding a `Polytope4D`-based
+/// billiard wrapper.
 pub fn bounce_count_from_sigma_for_facets(
     q_facet_indices: &[usize],
     p_facet_indices: &[usize],
@@ -120,6 +124,10 @@ pub fn bounce_count_from_sigma_for_facets(
 ///
 /// Input contract: q/p facet indices refer to the same ordered facet set as
 /// `facet_intersection_is_nonempty` and `transition_is_allowed`.
+///
+/// Public because some experiments inspect or filter the billiard candidate
+/// stream before solving, while [`solve_billiard_candidates`] is the ordinary
+/// solve-all frontend.
 pub fn for_each_sigma_from_facets(
     q_facet_indices: &[usize],
     p_facet_indices: &[usize],

@@ -30,10 +30,9 @@
 //! (`Hβ + Nμ + ηξ = 0`) instead of re-labeling it into a local asymmetric
 //! variant before derivative consumers use it again.
 
-use exp_hko_local_maximum::euclidean_volume_f64;
 use exp_hko_local_maximum::{
-    ehz_capacity_instrumented, exact_hko_polytope, exact_simplex_polytope, ExactBankEntry,
-    ExactBankTarget, HkoExactScalar, EXACT_BANK_ENTRIES,
+    capacity_auto, ehz_capacity_instrumented, euclidean_volume_f64, exact_hko_polytope,
+    exact_simplex_polytope, ExactBankEntry, ExactBankTarget, HkoExactScalar, EXACT_BANK_ENTRIES,
 };
 use nalgebra::{Matrix4, Vector4};
 use serde::Serialize;
@@ -41,11 +40,8 @@ use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::path::{Path, PathBuf};
 use std::time::Instant;
-use symplectic::algorithms::{
-    solve_orbit_sigma_with_dual_vertices, OrbitKktData, OrbitSolveBackend, OrbitSolveError,
-};
+use symplectic::algorithms::{solve_orbit_sigma_saddle_point, OrbitKktData, OrbitSolveError};
 use symplectic::derivatives::{capacity_derivatives_a_from_orbit, volume_derivatives_a};
-use symplectic::ehz_capacity;
 use symplectic::exact::{capacity_derivatives_a_exact, solve_orbit_sigma_exact, ExactPolytope4D};
 use symplectic::geom::known_polytopes;
 use symplectic::geom::polytope::Polytope4D;
@@ -376,7 +372,6 @@ fn exact_sigma_diagnostics<F: HkoExactScalar + 'static>(
 
 fn float_status_label(error: &OrbitSolveError) -> &'static str {
     match error {
-        OrbitSolveError::UnsupportedBackend => "unsupported_backend",
         OrbitSolveError::Inadmissible => "inadmissible",
         OrbitSolveError::NumericalFailure => "numerical_failure",
     }
@@ -386,11 +381,7 @@ fn float_sigma_diagnostics(
     polytope: &Polytope4D,
     sigma: &[usize],
 ) -> Result<SigmaDiagnostics, OrbitSolveError> {
-    let orbit = solve_orbit_sigma_with_dual_vertices(
-        polytope.dual_vertices_f64(),
-        sigma,
-        OrbitSolveBackend::SaddlePoint,
-    )?;
+    let orbit = solve_orbit_sigma_saddle_point(polytope.dual_vertices_f64(), sigma)?;
     let gradient = capacity_derivatives_a_from_orbit(polytope, &orbit)
         .expect("gradient-analysis float orbit payload carries closure multipliers");
     Ok(SigmaDiagnostics {
@@ -774,7 +765,7 @@ fn safe_sys(polytope: &Polytope4D) -> Option<(f64, f64, f64)> {
     if vol <= 0.0 {
         return None;
     }
-    let cap = ehz_capacity(polytope)
+    let cap = capacity_auto(polytope)
         .ok()
         .map(|r| r.capacity())
         .unwrap_or(f64::NAN);
@@ -912,7 +903,7 @@ fn run_phase_a(base_dir: &std::path::Path, smoke: bool) {
     println!("HKO2024: F={f}, known capacity={:.6}", known.capacity);
 
     // Cross-check with library
-    let lib_result = ehz_capacity(polytope).expect("library ehz_capacity failed");
+    let lib_result = capacity_auto(polytope).expect("library capacity computation failed");
     println!(
         "  Library capacity: {:.10} (diff from known: {:.2e})",
         lib_result.capacity(),
