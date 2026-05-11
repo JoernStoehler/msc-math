@@ -122,9 +122,10 @@ ENV PATH="$HOME/.cargo/bin:$HOME/.local/bin:/usr/local:$PATH"
 # Install Rust (rustup + basic components) in this devcontainer image.
 # We install rustfmt/clippy here so they're available without additional setup.
 RUN curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain 1.94.0 \
-    && "$HOME/.cargo/bin/rustup" component add rustfmt clippy rust-analyzer || true
+    && "$HOME/.cargo/bin/rustup" component add rustfmt clippy rust-analyzer llvm-tools-preview
 
-# Cargo tools: nextest (per-test timing/parallel)
+# Cargo tools: nextest (per-test timing/parallel), llvm-cov (source coverage)
 RUN curl -LsSf https://get.nexte.st/latest/linux | tar zxf - -C "$HOME/.cargo/bin"
+RUN "$HOME/.cargo/bin/cargo" install cargo-llvm-cov --version 0.8.6 --locked
 
 WORKDIR /workspaces/msc-math
