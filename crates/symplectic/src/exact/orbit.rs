@@ -8,9 +8,9 @@
 //! TODO: add [lem:well-defined] to formal math for the rank-deficient exact
 //! positivity search path used here.
 
-use crate::exact::polytope::{omega0, ExactPolytope4D};
+use crate::exact::polytope::omega0;
 use algebraic_numbers::{solve_linear_system, ExactScalar, LinearSystemSolution};
-use nalgebra::{DMatrix, DVector};
+use nalgebra::{DMatrix, DVector, Vector4};
 
 /// Exact one-sigma orbit payload.
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -18,7 +18,7 @@ pub struct ExactOrbitKktData<F: ExactScalar + 'static> {
     pub sigma: Vec<usize>,
     pub beta: Vec<F>,
     pub q: F,
-    pub mu: [F; 4],
+    pub mu: Vector4<F>,
     pub xi: F,
 }
 
@@ -29,12 +29,21 @@ impl<F: ExactScalar + 'static> ExactOrbitKktData<F> {
 }
 
 /// Solve the selected KKT system exactly for one sigma.
+///
+/// Caller contract:
+/// - `sigma` is a partial permutation of facet indices into `dual_vertices`.
+///
+/// Mathematical non-success:
+/// - returns `None` when the selected exact KKT system is inconsistent or has
+///   no solution with strictly positive beta entries and strictly positive `q`.
 pub fn solve_orbit_sigma_exact<F: ExactScalar + 'static>(
-    polytope: &ExactPolytope4D<F>,
+    dual_vertices: &[Vector4<F>],
     sigma: &[usize],
 ) -> Option<ExactOrbitKktData<F>> {
+    assert!(is_partial_permutation(sigma, dual_vertices.len()));
+
     let m = sigma.len();
-    let (matrix, rhs) = build_kkt_matrix(polytope.dual_vertices(), sigma);
+    let (matrix, rhs) = build_kkt_matrix(dual_vertices, sigma);
 
     let solution = match solve_linear_system(&matrix, &rhs) {
         LinearSystemSolution::Inconsistent => return None,
@@ -53,9 +62,17 @@ pub fn solve_orbit_sigma_exact<F: ExactScalar + 'static>(
         return None;
     }
 
-    let mu = std::array::from_fn(|idx| solution[m + idx].clone());
+    let mu = Vector4::new(
+        solution[m].clone(),
+        solution[m + 1].clone(),
+        solution[m + 2].clone(),
+        solution[m + 3].clone(),
+    );
     let xi = solution[m + 4].clone();
-    let q = compute_q_exact(polytope.dual_vertices(), sigma, &beta);
+    let q = compute_q_exact(dual_vertices, sigma, &beta);
+    if q <= F::zero() {
+        return None;
+    }
 
     Some(ExactOrbitKktData {
         sigma: sigma.to_vec(),
@@ -66,8 +83,19 @@ pub fn solve_orbit_sigma_exact<F: ExactScalar + 'static>(
     })
 }
 
+fn is_partial_permutation(indices: &[usize], upper_bound: usize) -> bool {
+    let mut seen = vec![false; upper_bound];
+    for &index in indices {
+        if index >= upper_bound || seen[index] {
+            return false;
+        }
+        seen[index] = true;
+    }
+    true
+}
+
 fn build_kkt_matrix<F: ExactScalar + 'static>(
-    dual_vertices: &[[F; 4]],
+    dual_vertices: &[Vector4<F>],
     sigma: &[usize],
 ) -> (DMatrix<F>, DVector<F>) {
     let m = sigma.len();
@@ -102,7 +130,7 @@ fn build_kkt_matrix<F: ExactScalar + 'static>(
     (matrix, rhs)
 }
 
-fn compute_q_exact<F: ExactScalar>(dual_vertices: &[[F; 4]], sigma: &[usize], beta: &[F]) -> F {
+fn compute_q_exact<F: ExactScalar>(dual_vertices: &[Vector4<F>], sigma: &[usize], beta: &[F]) -> F {
     let m = beta.len();
     let mut sum = F::zero();
     for i in 1..m {
@@ -275,8 +303,8 @@ fn find_positive_alpha<F: ExactScalar>(beta0: &[F], null_vecs: &[Vec<F>]) -> Opt
 #[cfg(test)]
 mod tests {
     use super::solve_orbit_sigma_exact;
-    use crate::exact::polytope::ExactPolytope4D;
     use algebraic_numbers::{Algebraic, RealAlgebraicField};
+    use nalgebra::Vector4;
     use num_rational::BigRational;
     use num_traits::{One, Zero};
 
@@ -298,19 +326,18 @@ mod tests {
         BigRational::from_integer(n.into())
     }
 
-    fn exact_simplex() -> ExactPolytope4D<BigRational> {
+    fn exact_simplex_dual_vertices() -> Vec<Vector4<BigRational>> {
         let z = BigRational::zero();
-        ExactPolytope4D::new(vec![
-            [q(-5), z.clone(), z.clone(), z.clone()],
-            [z.clone(), q(-5), z.clone(), z.clone()],
-            [z.clone(), z.clone(), q(-5), z.clone()],
-            [z.clone(), z.clone(), z.clone(), q(-5)],
-            [q(5), q(5), q(5), q(5)],
-        ])
-        .expect("exact simplex")
+        vec![
+            Vector4::new(q(-5), z.clone(), z.clone(), z.clone()),
+            Vector4::new(z.clone(), q(-5), z.clone(), z.clone()),
+            Vector4::new(z.clone(), z.clone(), q(-5), z.clone()),
+            Vector4::new(z.clone(), z.clone(), z.clone(), q(-5)),
+            Vector4::new(q(5), q(5), q(5), q(5)),
+        ]
     }
 
-    fn exact_hko() -> ExactPolytope4D<TanPiFifthField> {
+    fn exact_hko_dual_vertices() -> Vec<Vector4<TanPiFifthField>> {
         let z = TanPiFifthField::zero();
         let one = TanPiFifthField::one();
         let t = TanPiFifthField::root();
@@ -320,35 +347,34 @@ mod tests {
         let b = (TanPiFifthField::from(7) * t.clone() - t3.clone()) / TanPiFifthField::from(4);
         let sec36 = (TanPiFifthField::from(3) - t2.clone()) / TanPiFifthField::from(2);
 
-        ExactPolytope4D::new(vec![
-            [one.clone(), t.clone(), z.clone(), z.clone()],
-            [-a.clone(), b.clone(), z.clone(), z.clone()],
-            [-sec36.clone(), z.clone(), z.clone(), z.clone()],
-            [-a.clone(), -b.clone(), z.clone(), z.clone()],
-            [one.clone(), -t.clone(), z.clone(), z.clone()],
-            [z.clone(), z.clone(), t.clone(), -one.clone()],
-            [z.clone(), z.clone(), b.clone(), a.clone()],
-            [z.clone(), z.clone(), z.clone(), sec36.clone()],
-            [z.clone(), z.clone(), -b, a],
-            [z.clone(), z.clone(), -t, -one],
-        ])
-        .expect("exact HKO")
+        vec![
+            Vector4::new(one.clone(), t.clone(), z.clone(), z.clone()),
+            Vector4::new(-a.clone(), b.clone(), z.clone(), z.clone()),
+            Vector4::new(-sec36.clone(), z.clone(), z.clone(), z.clone()),
+            Vector4::new(-a.clone(), -b.clone(), z.clone(), z.clone()),
+            Vector4::new(one.clone(), -t.clone(), z.clone(), z.clone()),
+            Vector4::new(z.clone(), z.clone(), t.clone(), -one.clone()),
+            Vector4::new(z.clone(), z.clone(), b.clone(), a.clone()),
+            Vector4::new(z.clone(), z.clone(), z.clone(), sec36.clone()),
+            Vector4::new(z.clone(), z.clone(), -b, a),
+            Vector4::new(z.clone(), z.clone(), -t, -one),
+        ]
     }
 
     #[test]
     fn simplex_sigma_solves_exactly() {
-        let polytope = exact_simplex();
+        let dual_vertices = exact_simplex_dual_vertices();
         let sigma = [0usize, 1, 2, 3, 4];
-        let orbit = solve_orbit_sigma_exact(&polytope, &sigma).expect("exact simplex sigma");
+        let orbit = solve_orbit_sigma_exact(&dual_vertices, &sigma).expect("exact simplex sigma");
         assert!(orbit.beta.iter().all(|entry| entry > &BigRational::zero()));
         assert_eq!(orbit.action(), BigRational::new(1.into(), 4.into()));
     }
 
     #[test]
     fn hko_winning_sigma_solves_exactly() {
-        let polytope = exact_hko();
+        let dual_vertices = exact_hko_dual_vertices();
         let sigma = [1usize, 8, 7, 3, 4, 5, 9];
-        let orbit = solve_orbit_sigma_exact(&polytope, &sigma).expect("exact HKO sigma");
+        let orbit = solve_orbit_sigma_exact(&dual_vertices, &sigma).expect("exact HKO sigma");
         assert!(orbit
             .beta
             .iter()
