@@ -1,9 +1,9 @@
 //! Exact HKO local-maximum seed bank and control polytopes.
 
 use algebraic_numbers::{Algebraic, ExactScalar, RealAlgebraicField};
+use nalgebra::Vector4;
 use num_rational::BigRational;
 use num_traits::{One, ToPrimitive, Zero};
-use symplectic::exact::ExactPolytope4D;
 
 pub enum TanPiFifth {}
 
@@ -121,8 +121,8 @@ pub const EXACT_BANK_ENTRIES: &[ExactBankEntry] = &[
     },
 ];
 
-/// Exact HKO2024 polytope over `Q[tan(pi/5)]`.
-pub fn exact_hko_polytope() -> ExactPolytope4D<PentagonField> {
+/// Exact HKO2024 dual vertices over `Q[tan(pi/5)]`.
+pub fn exact_hko_dual_vertices() -> Vec<Vector4<PentagonField>> {
     let z = PentagonField::zero();
     let one = PentagonField::one();
     let t = PentagonField::root();
@@ -133,32 +133,30 @@ pub fn exact_hko_polytope() -> ExactPolytope4D<PentagonField> {
     let b = (PentagonField::from(7) * t.clone() - t3.clone()) / PentagonField::from(4);
     let sec36 = (PentagonField::from(3) - t2.clone()) / PentagonField::from(2);
 
-    ExactPolytope4D::new(vec![
-        [one.clone(), t.clone(), z.clone(), z.clone()],
-        [-a.clone(), b.clone(), z.clone(), z.clone()],
-        [-sec36.clone(), z.clone(), z.clone(), z.clone()],
-        [-a.clone(), -b.clone(), z.clone(), z.clone()],
-        [one.clone(), -t.clone(), z.clone(), z.clone()],
-        [z.clone(), z.clone(), t.clone(), -one.clone()],
-        [z.clone(), z.clone(), b.clone(), a.clone()],
-        [z.clone(), z.clone(), z.clone(), sec36.clone()],
-        [z.clone(), z.clone(), -b, a],
-        [z.clone(), z.clone(), -t, -one],
-    ])
-    .expect("exact HKO pentagon polytope")
+    vec![
+        Vector4::new(one.clone(), t.clone(), z.clone(), z.clone()),
+        Vector4::new(-a.clone(), b.clone(), z.clone(), z.clone()),
+        Vector4::new(-sec36.clone(), z.clone(), z.clone(), z.clone()),
+        Vector4::new(-a.clone(), -b.clone(), z.clone(), z.clone()),
+        Vector4::new(one.clone(), -t.clone(), z.clone(), z.clone()),
+        Vector4::new(z.clone(), z.clone(), t.clone(), -one.clone()),
+        Vector4::new(z.clone(), z.clone(), b.clone(), a.clone()),
+        Vector4::new(z.clone(), z.clone(), z.clone(), sec36.clone()),
+        Vector4::new(z.clone(), z.clone(), -b, a),
+        Vector4::new(z.clone(), z.clone(), -t, -one),
+    ]
 }
 
-/// Rational simplex control polytope for exact-path sanity checks.
-pub fn exact_simplex_polytope() -> ExactPolytope4D<BigRational> {
+/// Rational simplex control dual vertices for exact-path sanity checks.
+pub fn exact_simplex_dual_vertices() -> Vec<Vector4<BigRational>> {
     let z = rat(0);
-    ExactPolytope4D::new(vec![
-        [rat(-5), z.clone(), z.clone(), z.clone()],
-        [z.clone(), rat(-5), z.clone(), z.clone()],
-        [z.clone(), z.clone(), rat(-5), z.clone()],
-        [z.clone(), z.clone(), z.clone(), rat(-5)],
-        [rat(5), rat(5), rat(5), rat(5)],
-    ])
-    .expect("exact simplex control polytope")
+    vec![
+        Vector4::new(rat(-5), z.clone(), z.clone(), z.clone()),
+        Vector4::new(z.clone(), rat(-5), z.clone(), z.clone()),
+        Vector4::new(z.clone(), z.clone(), rat(-5), z.clone()),
+        Vector4::new(z.clone(), z.clone(), z.clone(), rat(-5)),
+        Vector4::new(rat(5), rat(5), rat(5), rat(5)),
+    ]
 }
 
 fn rat(n: i64) -> BigRational {
