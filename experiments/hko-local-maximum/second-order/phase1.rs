@@ -1,5 +1,6 @@
 //! Phase 1 of the HKO second-order experiment: gradients, SVD, and flat directions.
 
+use crate::flat_polytope::HkoPolytopeCache;
 use crate::{NEAR_OPTIMAL_GAP, SVD_RANK_THRESHOLD};
 use exp_hko_local_maximum::ehz_capacity_instrumented;
 use exp_hko_local_maximum::euclidean_volume_f64;
@@ -7,7 +8,6 @@ use nalgebra::{DMatrix, Vector4};
 use serde::Serialize;
 use symplectic::algorithms::OrbitKktData;
 use symplectic::derivatives::{capacity_derivatives_a_from_orbit, volume_derivatives_a};
-use symplectic::geom::polytope::Polytope4D;
 
 #[derive(Debug, Serialize)]
 pub(crate) struct BaseRow {
@@ -28,14 +28,14 @@ pub(crate) struct BaseRow {
 
 /// Compute ∇_{a_i} sys for a single orbit, returned as Vec<Vector4>.
 fn orbit_sys_gradient_a(
-    polytope: &Polytope4D,
+    polytope: &HkoPolytopeCache,
     orbit: &OrbitKktData,
     vol: f64,
     cap: f64,
     sys: f64,
     d_vol_a: &[Vector4<f64>],
 ) -> Vec<Vector4<f64>> {
-    let d_cap_a = capacity_derivatives_a_from_orbit(polytope.dual_vertices_f64(), orbit)
+    let d_cap_a = capacity_derivatives_a_from_orbit(&polytope.dual_vertices_f64, orbit)
         .expect("second-order stores orbit payloads with closure multipliers");
 
     d_vol_a
@@ -53,12 +53,17 @@ fn unflatten_to_arrays(flat: &[f64]) -> Vec<[f64; 4]> {
     flat.chunks(4).map(|c| [c[0], c[1], c[2], c[3]]).collect()
 }
 
-pub(crate) fn run_phase1(polytope: &Polytope4D) -> (BaseRow, Vec<Vec<f64>>) {
+pub(crate) fn run_phase1(polytope: &HkoPolytopeCache) -> (BaseRow, Vec<Vec<f64>>) {
     let facet_count = polytope.facet_count();
     let dim = facet_count * 4;
 
-    let vol = euclidean_volume_f64(polytope.vertices(), polytope.incidence());
-    let instr = ehz_capacity_instrumented(polytope).expect("no valid orbits");
+    let vol = euclidean_volume_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
+    let instr = ehz_capacity_instrumented(
+        &polytope.dual_vertices_f64,
+        &polytope.facet_intersection_is_nonempty,
+        &polytope.omega_signs,
+    )
+    .expect("no valid orbits");
     let cap = instr.capacity;
     let sys = cap * cap / (2.0 * vol);
 
@@ -84,9 +89,9 @@ pub(crate) fn run_phase1(polytope: &Polytope4D) -> (BaseRow, Vec<Vec<f64>>) {
     }
 
     let d_vol_a = volume_derivatives_a(
-        polytope.dual_vertices_f64(),
-        polytope.vertices_f64(),
-        polytope.incidence(),
+        &polytope.dual_vertices_f64,
+        &polytope.vertices_f64,
+        &polytope.vertex_facet_incidence,
     )
     .expect("second-order base polytope has valid finite geometry");
 
@@ -149,7 +154,7 @@ pub(crate) fn run_phase1(polytope: &Polytope4D) -> (BaseRow, Vec<Vec<f64>>) {
     }
 
     let duals_raw: Vec<[f64; 4]> = polytope
-        .dual_vertices_f64()
+        .dual_vertices_f64
         .iter()
         .map(|a| [a[0], a[1], a[2], a[3]])
         .collect();

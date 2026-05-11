@@ -14,6 +14,10 @@
 //! 3. `cargo run -p dev-numerical-analysis --release --bin num-sage-feasibility -- --canonical`
 //!    refreshes `sage-feasibility-input.jsonl`.
 
+#[path = "../src/flat_polytope.rs"]
+mod flat_polytope;
+
+use crate::flat_polytope::NumericsPolytopeCache;
 use dev_numerical_analysis::algebraic::catalog::ElementRecord;
 use dev_numerical_analysis::algebraic::field::ExperimentScalar;
 use dev_numerical_analysis::algebraic::fixtures::exact_hko_pentagon;
@@ -26,7 +30,6 @@ use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::path::{Path, PathBuf};
 use std::time::Instant;
-use symplectic::geom::polytope::Polytope4D;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 struct CliOptions {
@@ -180,9 +183,10 @@ fn canonical_rational_bank(canonical: bool) -> Vec<RationalFixture> {
     fixtures
 }
 
-fn rust_unpruned_baseline(polytope: &Polytope4D) -> (f64, u64, usize, Vec<usize>, f64) {
+fn rust_unpruned_baseline(polytope: &NumericsPolytopeCache) -> (f64, u64, usize, Vec<usize>, f64) {
     let start = Instant::now();
-    let result = capacity_unpruned_hk2017(polytope).expect("Rust unpruned baseline must succeed");
+    let result = capacity_unpruned_hk2017(&polytope.dual_vertices, &polytope.dual_vertices_f64)
+        .expect("Rust unpruned baseline must succeed");
     let wall_time_ms = start.elapsed().as_secs_f64() * 1000.0;
     (
         result.capacity(),
@@ -194,8 +198,8 @@ fn rust_unpruned_baseline(polytope: &Polytope4D) -> (f64, u64, usize, Vec<usize>
 }
 
 fn rational_row(fixture: RationalFixture) -> SageFeasibilityInputRow {
-    let polytope = Polytope4D::new(fixture.dual_vertices.clone())
-        .unwrap_or_else(|error| panic!("{} construction failed: {error:?}", fixture.name));
+    let polytope = NumericsPolytopeCache::new(fixture.dual_vertices.clone(), None)
+        .unwrap_or_else(|| panic!("{} construction failed", fixture.name));
     let (capacity, iterations, returned_orbit_count, best_sigma, wall_time_ms) =
         rust_unpruned_baseline(&polytope);
 
@@ -214,9 +218,8 @@ fn rational_row(fixture: RationalFixture) -> SageFeasibilityInputRow {
 }
 
 fn hko_row() -> SageFeasibilityInputRow {
-    let exact_hko = exact_hko_pentagon().expect("exact HKO fixture");
+    let exact_hko = exact_hko_pentagon();
     let f64_dual_vertices: Vec<_> = exact_hko
-        .dual_vertices()
         .iter()
         .map(|dual| {
             Vector4::new(
@@ -227,21 +230,17 @@ fn hko_row() -> SageFeasibilityInputRow {
             )
         })
         .collect();
-    let rust_polytope =
-        Polytope4D::from_f64(f64_dual_vertices).expect("Rust HKO f64 benchmark polytope");
+    let rust_polytope = NumericsPolytopeCache::from_f64(f64_dual_vertices)
+        .expect("Rust HKO f64 benchmark polytope");
     let (capacity, iterations, returned_orbit_count, best_sigma, wall_time_ms) =
         rust_unpruned_baseline(&rust_polytope);
 
     SageFeasibilityInputRow {
         polytope: "hko_pentagon_exact_f10".to_string(),
         family: "algebraic_hko".to_string(),
-        facet_count: exact_hko.facet_count(),
+        facet_count: exact_hko.len(),
         exact_field: "q_tan_pi_fifth".to_string(),
-        dual_vertices: exact_hko
-            .dual_vertices()
-            .iter()
-            .map(canonical_vec4)
-            .collect(),
+        dual_vertices: exact_hko.iter().map(canonical_vec4).collect(),
         rust_f64_capacity: capacity,
         rust_f64_iterations: iterations,
         rust_f64_returned_orbit_count: returned_orbit_count,
@@ -298,10 +297,10 @@ mod tests {
     use super::{
         bank_size, cut_hypercube_f9, cut_simplex_f6, double_cut_hypercube_f10,
         double_cut_simplex_f7, experiment_dir, hypercube_f8, output_path, simplex_f5, CliOptions,
+        NumericsPolytopeCache,
     };
     use dev_numerical_analysis::algebraic::fixtures::exact_hko_pentagon;
     use std::path::{Path, PathBuf};
-    use symplectic::geom::polytope::Polytope4D;
 
     #[test]
     fn cli_options_accept_smoke_and_canonical() {
@@ -357,8 +356,8 @@ mod tests {
         ];
 
         for (fixture, expected_facets) in cases {
-            let polytope = Polytope4D::new(fixture.dual_vertices)
-                .unwrap_or_else(|error| panic!("{} should construct: {error:?}", fixture.name));
+            let polytope = NumericsPolytopeCache::new(fixture.dual_vertices, None)
+                .unwrap_or_else(|| panic!("{} should construct", fixture.name));
             assert_eq!(polytope.facet_count(), expected_facets, "{}", fixture.name);
         }
     }
@@ -371,7 +370,7 @@ mod tests {
 
     #[test]
     fn hko_row_is_algebraic_f10() {
-        let exact_hko = exact_hko_pentagon().expect("exact HKO fixture");
-        assert_eq!(exact_hko.facet_count(), 10);
+        let exact_hko = exact_hko_pentagon();
+        assert_eq!(exact_hko.len(), 10);
     }
 }

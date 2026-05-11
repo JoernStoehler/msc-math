@@ -262,7 +262,8 @@ mod tests {
         exact_hko_pentagon, exact_hypercube, exact_simplex, hko_capacity_formula_f64,
         HKO_RANK_DEFICIENT_SIGMA, HKO_WINNING_SIGMA,
     };
-    use dev_numerical_analysis::capacity_pruned_hk2017;
+    use crate::capacity_pruned_hk2017;
+    use crate::flat_polytope::NumericsPolytopeCache;
     use symplectic::geom::known_polytopes;
     use symplectic::kkt::rational_solver as library_rational_solver;
 
@@ -276,17 +277,25 @@ mod tests {
 
     #[test]
     fn simplex_best_sigma_matches_library_rational_solver() {
-        let exact = exact_simplex().expect("exact simplex");
+        let exact = exact_simplex();
         let library = known_polytopes::simplex();
-        let best = capacity_pruned_hk2017(&library.polytope).expect("library simplex capacity");
-
-        let exact_result =
-            solve_kkt_exact(exact.dual_vertices(), best.best_sigma()).expect("exact simplex sigma");
-        let library_result = library_rational_solver::solve_kkt_exact(
-            library.polytope.dual_vertices(),
-            best.best_sigma(),
+        let cache = NumericsPolytopeCache::from_rational_parts(
+            library.dual_vertices.clone(),
+            library.vertices.clone(),
         )
-        .expect("library rational simplex sigma");
+        .expect("simplex cache");
+        let best = capacity_pruned_hk2017(
+            &cache.dual_vertices,
+            &cache.dual_vertices_f64,
+            &cache.facet_intersection_is_nonempty,
+            &cache.omega_signs,
+        )
+        .expect("library simplex capacity");
+
+        let exact_result = solve_kkt_exact(&exact, best.best_sigma()).expect("exact simplex sigma");
+        let library_result =
+            library_rational_solver::solve_kkt_exact(&library.dual_vertices, best.best_sigma())
+                .expect("library rational simplex sigma");
 
         assert_eq!(exact_result.q_exact, library_result.q_exact);
         assert_eq!(exact_result.beta, library_result.beta);
@@ -294,17 +303,26 @@ mod tests {
 
     #[test]
     fn hypercube_best_sigma_matches_library_rational_solver() {
-        let exact = exact_hypercube().expect("exact hypercube");
+        let exact = exact_hypercube();
         let library = known_polytopes::hypercube();
-        let best = capacity_pruned_hk2017(&library.polytope).expect("library hypercube capacity");
-
-        let exact_result = solve_kkt_exact(exact.dual_vertices(), best.best_sigma())
-            .expect("exact hypercube sigma");
-        let library_result = library_rational_solver::solve_kkt_exact(
-            library.polytope.dual_vertices(),
-            best.best_sigma(),
+        let cache = NumericsPolytopeCache::from_rational_parts(
+            library.dual_vertices.clone(),
+            library.vertices.clone(),
         )
-        .expect("library rational hypercube sigma");
+        .expect("hypercube cache");
+        let best = capacity_pruned_hk2017(
+            &cache.dual_vertices,
+            &cache.dual_vertices_f64,
+            &cache.facet_intersection_is_nonempty,
+            &cache.omega_signs,
+        )
+        .expect("library hypercube capacity");
+
+        let exact_result =
+            solve_kkt_exact(&exact, best.best_sigma()).expect("exact hypercube sigma");
+        let library_result =
+            library_rational_solver::solve_kkt_exact(&library.dual_vertices, best.best_sigma())
+                .expect("library rational hypercube sigma");
 
         assert_eq!(exact_result.q_exact, library_result.q_exact);
         assert_eq!(exact_result.beta, library_result.beta);
@@ -312,9 +330,8 @@ mod tests {
 
     #[test]
     fn hko_selected_winning_sigma_matches_closed_formula() {
-        let exact = exact_hko_pentagon().expect("exact hko");
-        let result = solve_kkt_exact(exact.dual_vertices(), HKO_WINNING_SIGMA)
-            .expect("exact hko winning sigma");
+        let exact = exact_hko_pentagon();
+        let result = solve_kkt_exact(&exact, HKO_WINNING_SIGMA).expect("exact hko winning sigma");
 
         assert!(result.q_exact_f64 > 0.14);
         assert!(result.beta.iter().all(is_strictly_positive));
@@ -329,8 +346,8 @@ mod tests {
 
     #[test]
     fn hko_rank_deficient_sigma_matches_closed_formula() {
-        let exact = exact_hko_pentagon().expect("exact hko");
-        let result = solve_kkt_exact(exact.dual_vertices(), HKO_RANK_DEFICIENT_SIGMA)
+        let exact = exact_hko_pentagon();
+        let result = solve_kkt_exact(&exact, HKO_RANK_DEFICIENT_SIGMA)
             .expect("exact hko rank-deficient sigma");
 
         assert!(result.q_exact_f64 > 0.0);

@@ -57,19 +57,23 @@ fn main() {
     let t0 = Instant::now();
 
     let kp = known_polytopes::crosspolytope();
-    let polytope = &kp.polytope;
-    let facet_count = polytope.facet_count();
-    let duals = polytope.dual_vertices_f64();
+    let facet_count = kp.dual_vertices.len();
+    let duals = &kp.dual_vertices_f64;
     let normals: Vec<Vector4<f64>> = duals.iter().map(|a| a / a.norm()).collect();
     let heights: Vec<f64> = duals.iter().map(|a| 1.0 / a.norm()).collect();
     println!("Crosspolytope: {facet_count} facets");
 
     let start_vol = Instant::now();
-    let vol = euclidean_volume_f64(polytope.vertices(), polytope.incidence());
+    let vol = euclidean_volume_f64(&kp.vertices, &kp.vertex_facet_incidence);
     let time_volume_ms = start_vol.elapsed().as_secs_f64() * 1000.0;
     println!("Volume: {vol:.10} ({time_volume_ms:.1} ms)");
 
-    let search = search::run_crosspolytope_search(polytope, &normals, &heights);
+    let search = search::run_crosspolytope_search(
+        &kp.facet_intersection_is_nonempty,
+        &kp.omega_signs,
+        &normals,
+        &heights,
+    );
     let time_capacity_ms = search.elapsed_secs * 1000.0;
 
     let certified = search.best_certified;

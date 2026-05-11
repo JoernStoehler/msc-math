@@ -24,6 +24,10 @@
 //! when h < h_K(n) it cuts. To make K *larger* we'd need to relax an existing
 //! halfspace, which is already covered by gradient-analysis's (n,h) gradient analysis.
 
+#[path = "../src/flat_polytope.rs"]
+mod flat_polytope;
+
+use crate::flat_polytope::HkoPolytopeCache;
 use exp_hko_local_maximum::capacity_auto;
 use exp_hko_local_maximum::euclidean_volume_f64;
 use nalgebra::Vector4;
@@ -35,7 +39,6 @@ use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::time::Instant;
 use symplectic::geom::known_polytopes;
-use symplectic::geom::polytope::Polytope4D;
 
 /// Number of angular samples per representative facet normal for facet-splitting.
 /// HKO2024 = pentagon ×_L pentagon: all Q-space normals equivalent, all P-space equivalent.
@@ -123,15 +126,20 @@ fn parse_args() -> Args {
 // ============================================================================
 
 /// Safely compute sys for a polytope, catching panics from degenerate geometry.
-fn safe_sys(polytope: &Polytope4D) -> Option<(f64, f64, f64)> {
-    let vol = euclidean_volume_f64(polytope.vertices(), polytope.incidence());
+fn safe_sys(polytope: &HkoPolytopeCache) -> Option<(f64, f64, f64)> {
+    let vol = euclidean_volume_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
     if vol <= 0.0 {
         return None;
     }
-    let cap = capacity_auto(polytope)
-        .ok()
-        .map(|r| r.capacity())
-        .unwrap_or(f64::NAN);
+    let cap = capacity_auto(
+        &polytope.dual_vertices,
+        &polytope.dual_vertices_f64,
+        &polytope.facet_intersection_is_nonempty,
+        &polytope.omega_signs,
+    )
+    .ok()
+    .map(|r| r.capacity())
+    .unwrap_or(f64::NAN);
     if !cap.is_finite() {
         return None;
     }
@@ -208,16 +216,23 @@ fn run_phase_b(base_dir: &std::path::Path, smoke: bool) {
     println!("═══════════════════════════════════════════════════════════\n");
 
     let known = known_polytopes::hko_pentagon();
-    let polytope = &known.polytope;
+    let polytope =
+        HkoPolytopeCache::from_rational_parts(known.dual_vertices.clone(), known.vertices.clone())
+            .expect("HKO cache");
     let f = polytope.facet_count();
-    let duals = polytope.dual_vertices_f64();
+    let duals = &polytope.dual_vertices_f64;
     let normals: Vec<Vector4<f64>> = duals.iter().map(|a| a / a.norm()).collect();
-    let vertices = polytope.vertices_f64();
+    let vertices = &polytope.vertices_f64;
 
-    let vol_orig = euclidean_volume_f64(polytope.vertices(), polytope.incidence());
-    let cap_orig = capacity_auto(polytope)
-        .expect("failed to compute HKO2024 baseline capacity")
-        .capacity();
+    let vol_orig = euclidean_volume_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
+    let cap_orig = capacity_auto(
+        &polytope.dual_vertices,
+        &polytope.dual_vertices_f64,
+        &polytope.facet_intersection_is_nonempty,
+        &polytope.omega_signs,
+    )
+    .expect("failed to compute HKO2024 baseline capacity")
+    .capacity();
     let sys_orig = cap_orig * cap_orig / (2.0 * vol_orig);
     println!("HKO2024 baseline: F={f}, sys={sys_orig:.10}");
 
@@ -289,8 +304,8 @@ fn run_phase_b(base_dir: &std::path::Path, smoke: bool) {
                 let mut new_duals: Vec<Vector4<f64>> = duals.to_vec();
                 new_duals.push(dir / new_h);
 
-                match Polytope4D::from_f64(new_duals) {
-                    Ok(split_poly) => {
+                match HkoPolytopeCache::from_f64(new_duals) {
+                    Some(split_poly) => {
                         let (split_sys, split_vol, split_cap) = match safe_sys(&split_poly) {
                             Some(v) => v,
                             None => continue,
@@ -298,7 +313,13 @@ fn run_phase_b(base_dir: &std::path::Path, smoke: bool) {
                         let delta = split_sys - sys_orig;
 
                         // Use library ehz_capacity for orbit info (cheaper than instrumented)
-                        let lib_result = capacity_auto(&split_poly).ok();
+                        let lib_result = capacity_auto(
+                            &split_poly.dual_vertices,
+                            &split_poly.dual_vertices_f64,
+                            &split_poly.facet_intersection_is_nonempty,
+                            &split_poly.omega_signs,
+                        )
+                        .ok();
                         let n_valid = 0; // not computed (instrumented too expensive for F=11)
                         let best_sub = lib_result
                             .as_ref()
@@ -339,7 +360,7 @@ fn run_phase_b(base_dir: &std::path::Path, smoke: bool) {
                         serde_json::to_writer(&mut split_writer, &row).expect("write splitting");
                         writeln!(split_writer).expect("newline");
                     }
-                    Err(_) => {
+                    None => {
                         // Construction failed (degenerate geometry at small eps)
                         let row = SplittingRow {
                             source_facet: facet_k,
@@ -410,14 +431,20 @@ fn run_phase_b(base_dir: &std::path::Path, smoke: bool) {
             let mut new_duals: Vec<Vector4<f64>> = duals.to_vec();
             new_duals.push(dir / new_h);
 
-            if let Ok(split_poly) = Polytope4D::from_f64(new_duals) {
+            if let Some(split_poly) = HkoPolytopeCache::from_f64(new_duals) {
                 let (split_sys, split_vol, split_cap) = match safe_sys(&split_poly) {
                     Some(v) => v,
                     None => continue,
                 };
                 let delta = split_sys - sys_orig;
 
-                let lib_result = capacity_auto(&split_poly).ok();
+                let lib_result = capacity_auto(
+                    &split_poly.dual_vertices,
+                    &split_poly.dual_vertices_f64,
+                    &split_poly.facet_intersection_is_nonempty,
+                    &split_poly.omega_signs,
+                )
+                .ok();
                 let n_valid = 0;
                 let best_sub = lib_result
                     .as_ref()
@@ -502,14 +529,20 @@ fn run_phase_b(base_dir: &std::path::Path, smoke: bool) {
             let mut new_duals2: Vec<Vector4<f64>> = duals.to_vec();
             new_duals2.push(dir / new_h);
 
-            if let Ok(split_poly) = Polytope4D::from_f64(new_duals2) {
+            if let Some(split_poly) = HkoPolytopeCache::from_f64(new_duals2) {
                 let (split_sys, split_vol, split_cap) = match safe_sys(&split_poly) {
                     Some(v) => v,
                     None => continue,
                 };
                 let delta = split_sys - sys_orig;
 
-                let lib_result = capacity_auto(&split_poly).ok();
+                let lib_result = capacity_auto(
+                    &split_poly.dual_vertices,
+                    &split_poly.dual_vertices_f64,
+                    &split_poly.facet_intersection_is_nonempty,
+                    &split_poly.omega_signs,
+                )
+                .ok();
                 let n_valid = 0;
                 let best_sub = lib_result
                     .as_ref()

@@ -18,7 +18,12 @@
 //!    generates the full dataset and writes `unknown-predicates/unknown-predicates.jsonl`.
 //! 3. Python script reads JSONL, summarizes findings
 
+#[path = "../src/flat_polytope.rs"]
+mod flat_polytope;
+
+use crate::flat_polytope::NumericsPolytopeCache;
 use dev_numerical_analysis::{capacity_billiard, capacity_pruned_hk2017, euclidean_volume_f64};
+use euclidean_polytopes::sample_random_dual_vertices_f64;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use serde::Serialize;
@@ -28,7 +33,6 @@ use std::path::{Path, PathBuf};
 use std::time::Instant;
 use symplectic::geom::lagrangian_product::lagrangian_product;
 use symplectic::geom::polygon::{regular_polygon_2d, rotate_polygon_2d};
-use symplectic::random::generate_random_polytopes;
 
 // ---------------------------------------------------------------------------
 // Random-sweep parameters (must match random_sweep.rs exactly)
@@ -137,6 +141,23 @@ fn output_path(manifest_dir: &Path, smoke: bool) -> PathBuf {
     }
 }
 
+fn sample_random_cache_batch(
+    count: usize,
+    facet_count: usize,
+    h_min: f64,
+    h_max: f64,
+    rng: &mut ChaCha8Rng,
+) -> Vec<NumericsPolytopeCache> {
+    let mut accepted = Vec::with_capacity(count);
+    while accepted.len() < count {
+        let dual_vertices_f64 = sample_random_dual_vertices_f64(facet_count, h_min, h_max, rng);
+        if let Some(cache) = NumericsPolytopeCache::from_f64(dual_vertices_f64) {
+            accepted.push(cache);
+        }
+    }
+    accepted
+}
+
 fn main() {
     let args = parse_args();
     let t0 = Instant::now();
@@ -168,13 +189,19 @@ fn main() {
 
     for &(facet_count, n_samples) in random_plan {
         let polytopes =
-            generate_random_polytopes(n_samples, facet_count, RANDOM_H_MIN, RANDOM_H_MAX, &mut rng);
+            sample_random_cache_batch(n_samples, facet_count, RANDOM_H_MIN, RANDOM_H_MAX, &mut rng);
 
-        for (i, p) in polytopes.iter().enumerate() {
-            let vol = euclidean_volume_f64(p.vertices(), p.incidence());
+        for (i, cache) in polytopes.iter().enumerate() {
+            let vol = euclidean_volume_f64(&cache.vertices, &cache.vertex_facet_incidence);
 
             let start = Instant::now();
-            let result = capacity_pruned_hk2017(p).expect("ehz_capacity_pruned failed");
+            let result = capacity_pruned_hk2017(
+                &cache.dual_vertices,
+                &cache.dual_vertices_f64,
+                &cache.facet_intersection_is_nonempty,
+                &cache.omega_signs,
+            )
+            .expect("ehz_capacity_pruned failed");
             let time_ms = start.elapsed().as_secs_f64() * 1000.0;
 
             let beta_min = result
@@ -239,11 +266,18 @@ fn main() {
             let (pn, ph) = rotate_polygon_2d(&pn_base, &ph_base, theta);
             let polytope = lagrangian_product(&qn, &qh, &pn, &ph)
                 .expect("pentagon product construction failed");
+            let cache = NumericsPolytopeCache::from_f64(polytope).expect("pentagon product cache");
 
-            let vol = euclidean_volume_f64(polytope.vertices(), polytope.incidence());
+            let vol = euclidean_volume_f64(&cache.vertices, &cache.vertex_facet_incidence);
 
             let start = Instant::now();
-            let result = capacity_billiard(&polytope).unwrap_or_else(|err| {
+            let result = capacity_billiard(
+                &cache.dual_vertices,
+                &cache.dual_vertices_f64,
+                &cache.facet_intersection_is_nonempty,
+                &cache.omega_signs,
+            )
+            .unwrap_or_else(|err| {
                 panic!("billiard capacity failed for pentagon_5x5_{angle_deg:.0}deg: {err}")
             });
             let time_ms = start.elapsed().as_secs_f64() * 1000.0;
@@ -302,11 +336,18 @@ fn main() {
             let (pn, ph) = rotate_polygon_2d(&pn_base, &ph_base, theta);
             let polytope = lagrangian_product(&qn, &qh, &pn, &ph)
                 .expect("polygon product construction failed");
+            let cache = NumericsPolytopeCache::from_f64(polytope).expect("polygon product cache");
 
-            let vol = euclidean_volume_f64(polytope.vertices(), polytope.incidence());
+            let vol = euclidean_volume_f64(&cache.vertices, &cache.vertex_facet_incidence);
 
             let start = Instant::now();
-            let result = capacity_billiard(&polytope).unwrap_or_else(|err| {
+            let result = capacity_billiard(
+                &cache.dual_vertices,
+                &cache.dual_vertices_f64,
+                &cache.facet_intersection_is_nonempty,
+                &cache.omega_signs,
+            )
+            .unwrap_or_else(|err| {
                 panic!("billiard capacity failed for pair_{n1}x{n2}_{angle_deg:.0}deg: {err}")
             });
             let time_ms = start.elapsed().as_secs_f64() * 1000.0;

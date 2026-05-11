@@ -26,6 +26,10 @@
 
 use euclidean_polytopes::{two_faces_from_vertex_facet_incidence, TwoFace};
 use exp_combinatorial_cells::euclidean_volume_f64;
+#[path = "../src/flat_polytope.rs"]
+mod flat_polytope;
+
+use crate::flat_polytope::CellPolytopeCache;
 use nalgebra::Vector4;
 use serde::Serialize;
 use std::collections::HashMap;
@@ -35,10 +39,9 @@ use std::time::Instant;
 use symplectic::database::{self, DualVerticesKey, PolytopeRecord, SigmaAction, Source};
 use symplectic::derivatives::{capacity_derivatives_a_from_kkt_result, volume_derivatives_a};
 use symplectic::geom::known_polytopes;
-use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::symplectic_form::omega0;
 use symplectic::kkt::saddle_point_solver::{solve_kkt_for_dual_vertices, KktResult};
-use symplectic::random::generate_polytope;
+use symplectic::random::generate_dual_vertices;
 
 // ============================================================================
 // Configuration
@@ -47,6 +50,21 @@ use symplectic::random::generate_polytope;
 const SEED: u64 = 42;
 const H_MIN: f64 = 0.8;
 const H_MAX: f64 = 1.2;
+
+fn record_from_cache(polytope: &CellPolytopeCache) -> PolytopeRecord {
+    PolytopeRecord {
+        dual_vertices_rational: polytope.dual_vertices.clone(),
+        vertices_rational: polytope.vertices.clone(),
+        source: None,
+        volume: None,
+        volume_err: None,
+        capacity: None,
+        capacity_err: None,
+        sigma_gap_cutoff: None,
+        sigmas: None,
+        orbit_scalars: None,
+    }
+}
 
 /// (facet_count, n_samples) pairs for random polytope generation.
 const SAMPLING_PLAN: &[(usize, usize)] =
@@ -110,7 +128,7 @@ fn j0_apply(v: &Vector4<f64>) -> Vector4<f64> {
 /// Full ∇_{n_k} sys via chain rule: d(sys)/d(n_k) = (1/V)[c·dc/dn_k - sys·dV/dn_k].
 #[allow(clippy::too_many_arguments)]
 fn compute_d_sys_a(
-    polytope: &Polytope4D,
+    polytope: &CellPolytopeCache,
     vol: f64,
     cap: f64,
     sys: f64,
@@ -118,13 +136,13 @@ fn compute_d_sys_a(
     kkt_result: &KktResult,
 ) -> Vec<Vector4<f64>> {
     let d_vol_a = volume_derivatives_a(
-        polytope.dual_vertices_f64(),
-        polytope.vertices_f64(),
-        polytope.incidence(),
+        &polytope.dual_vertices_f64,
+        &polytope.vertices_f64,
+        &polytope.vertex_facet_incidence,
     )
     .expect("combinatorial-cell polytope has valid finite geometry");
     let d_cap_a =
-        capacity_derivatives_a_from_kkt_result(polytope.dual_vertices_f64(), best_perm, kkt_result);
+        capacity_derivatives_a_from_kkt_result(&polytope.dual_vertices_f64, best_perm, kkt_result);
 
     d_vol_a
         .iter()
@@ -136,11 +154,11 @@ fn compute_d_sys_a(
 /// Omega features: ω₀(n_i, n_j) for adjacent two-faces and orbit transitions.
 /// Uses normals (unit dual vertices) for ω₀ computation.
 fn compute_omega_features(
-    polytope: &Polytope4D,
+    polytope: &CellPolytopeCache,
     two_faces: &[TwoFace],
     orbit_facets: &[usize],
 ) -> (Vec<[f64; 3]>, Vec<f64>) {
-    let duals = polytope.dual_vertices_f64();
+    let duals = &polytope.dual_vertices_f64;
     let normals: Vec<Vector4<f64>> = duals.iter().map(|a| a / a.norm()).collect();
 
     // Two-face omegas: for each 2-face shared by facets i, j with i < j.
@@ -179,13 +197,13 @@ fn omega_gradient_on_tangent(n_k: &Vector4<f64>, n_i: &Vector4<f64>) -> Vector4<
 
 /// Gradient dot products for all adjacent two-face facet pairs.
 fn compute_gradient_dots(
-    polytope: &Polytope4D,
+    polytope: &CellPolytopeCache,
     two_faces: &[TwoFace],
     d_sys_a: &[Vector4<f64>],
     orbit_facets: &[usize],
 ) -> Vec<GradientDot> {
     let normals: Vec<Vector4<f64>> = polytope
-        .dual_vertices_f64()
+        .dual_vertices_f64
         .iter()
         .map(|a| a / a.norm())
         .collect();
@@ -266,12 +284,12 @@ fn cached_capacity_from_record(record: &PolytopeRecord) -> Option<CachedCapacity
 /// If `cached` is Some, skip full EHZ and use cached capacity + permutation.
 /// Still runs single-perm KKT solve for beta (needed for gradient computation).
 fn process_polytope(
-    polytope: &Polytope4D,
+    polytope: &CellPolytopeCache,
     source: &str,
     cached: Option<&CachedCapacity>,
 ) -> Option<OmegaRow> {
     let f = polytope.facet_count();
-    let duals = polytope.dual_vertices_f64();
+    let duals = &polytope.dual_vertices_f64;
 
     let t0 = Instant::now();
 
@@ -285,8 +303,14 @@ fn process_polytope(
         best_perm = c.best_perm.clone();
     } else {
         // No cache: full EHZ computation
-        vol = euclidean_volume_f64(polytope.vertices(), polytope.incidence());
-        let ehz_result = exp_combinatorial_cells::capacity_auto(polytope).ok()?;
+        vol = euclidean_volume_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
+        let ehz_result = exp_combinatorial_cells::capacity_auto(
+            &polytope.dual_vertices,
+            &polytope.dual_vertices_f64,
+            &polytope.facet_intersection_is_nonempty,
+            &polytope.omega_signs,
+        )
+        .ok()?;
         cap = ehz_result.capacity();
         iterations = ehz_result.iterations;
         best_perm = ehz_result.best_sigma().to_vec();
@@ -296,12 +320,12 @@ fn process_polytope(
     let time_ms = t0.elapsed().as_secs_f64() * 1000.0;
 
     // Single-perm KKT solve for beta (cheap, ~0.01ms)
-    let dual_vertices = polytope.dual_vertices_f64();
+    let dual_vertices = &polytope.dual_vertices_f64;
     let kkt_result = solve_kkt_for_dual_vertices(dual_vertices, &best_perm).feasible()?;
     let best_beta = &kkt_result.beta;
 
     // Phase A: omega features
-    let two_faces = two_faces_from_vertex_facet_incidence(polytope.incidence());
+    let two_faces = two_faces_from_vertex_facet_incidence(&polytope.vertex_facet_incidence);
     let (ridge_omegas, orbit_omegas) = compute_omega_features(polytope, &two_faces, &best_perm);
 
     let orbit_omega_min = orbit_omegas.iter().cloned().fold(f64::INFINITY, f64::min);
@@ -376,7 +400,7 @@ fn main() {
     eprintln!("=== Omega-obstacle experiment ===");
     eprintln!("Output: {}", out_path.display());
 
-    // Random polytopes via generate_polytope (blake3 per-attempt seeding)
+    // Random dual vertices via blake3 per-attempt seeding.
     let mut attempt: u64 = 0;
     for &(f, n) in SAMPLING_PLAN {
         let t0 = Instant::now();
@@ -394,9 +418,11 @@ fn main() {
 
             // Source-based lookup
             let (polytope, cached) = if let Some((_, record)) = find_by_source(&db, &source_tag) {
-                let p = record
-                    .to_polytope()
-                    .expect("failed to reconstruct polytope from database");
+                let p = CellPolytopeCache::from_rational_parts(
+                    record.dual_vertices_rational.clone(),
+                    record.vertices_rational.clone(),
+                )
+                .expect("failed to reconstruct polytope from database");
                 let c = cached_capacity_from_record(record);
                 if c.is_some() {
                     hits_this_f += 1;
@@ -404,8 +430,12 @@ fn main() {
                 (p, c)
             } else {
                 // Generate new polytope
-                match generate_polytope(f, H_MIN, H_MAX, SEED, attempt) {
-                    Ok(p) => (p, None),
+                match generate_dual_vertices(f, H_MIN, H_MAX, SEED, attempt) {
+                    Ok(dual_vertices) => (
+                        CellPolytopeCache::from_f64(dual_vertices)
+                            .expect("generated polytope cache"),
+                        None,
+                    ),
                     Err(_) => {
                         attempt += 1;
                         continue; // rejection sampling
@@ -420,9 +450,9 @@ fn main() {
                     writeln!(writer).unwrap();
 
                     // Insert into database if not already there
-                    let key: DualVerticesKey = polytope.dual_vertices().to_vec();
+                    let key: DualVerticesKey = polytope.dual_vertices.clone();
                     if !db.contains_key(&key) {
-                        let mut record = PolytopeRecord::from_polytope(&polytope);
+                        let mut record = record_from_cache(&polytope);
                         record.source = Some(source_tag);
                         record = record.with_computed_fields(row.volume, 0.0, row.capacity, 0.0);
                         record = record.with_sigmas(
@@ -458,17 +488,28 @@ fn main() {
     }
 
     // Known polytopes (HKO pentagon, simplex, hypercube)
-    let known_polytopes_list: Vec<(String, Polytope4D)> = {
+    let known_polytopes_list: Vec<(String, CellPolytopeCache)> = {
         let hko = known_polytopes::hko_pentagon();
-        let mut list = vec![("hko_pentagon".to_string(), hko.polytope.clone())];
+        let mut list = vec![(
+            "hko_pentagon".to_string(),
+            CellPolytopeCache::from_rational_parts(hko.dual_vertices.clone(), hko.vertices.clone())
+                .expect("known HKO polytope cache"),
+        )];
         for kp in &[known_polytopes::simplex(), known_polytopes::hypercube()] {
-            if kp.polytope.facet_count() <= 10 {
-                list.push((kp.name.to_string(), kp.polytope.clone()));
+            if kp.dual_vertices.len() <= 10 {
+                list.push((
+                    kp.name.to_string(),
+                    CellPolytopeCache::from_rational_parts(
+                        kp.dual_vertices.clone(),
+                        kp.vertices.clone(),
+                    )
+                    .expect("known polytope cache"),
+                ));
             } else {
                 eprintln!(
                     "SKIP: {} (F={} > 10, too expensive for HK2017)",
                     kp.name,
-                    kp.polytope.facet_count()
+                    kp.dual_vertices.len()
                 );
             }
         }
@@ -476,7 +517,7 @@ fn main() {
     };
 
     for (name, polytope) in &known_polytopes_list {
-        let key: DualVerticesKey = polytope.dual_vertices().to_vec();
+        let key: DualVerticesKey = polytope.dual_vertices.clone();
         let cached = db.get(&key).and_then(cached_capacity_from_record);
 
         match process_polytope(polytope, name, cached.as_ref()) {
@@ -485,7 +526,7 @@ fn main() {
                 writeln!(writer).unwrap();
 
                 if !db.contains_key(&key) {
-                    let mut record = PolytopeRecord::from_polytope(polytope);
+                    let mut record = record_from_cache(polytope);
                     record.source = Some(Source::Known { name: name.clone() });
                     record = record.with_computed_fields(row.volume, 0.0, row.capacity, 0.0);
                     record = record.with_sigmas(

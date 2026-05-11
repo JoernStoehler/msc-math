@@ -1,5 +1,6 @@
 //! Facet sampling, resume helpers, and small experiment-local utilities.
 
+use crate::flat_polytope::HkoPolytopeCache;
 use euclidean_polytopes::vertex_facets_from_vertex_facet_incidence;
 use nalgebra::Vector4;
 use rand_chacha::ChaCha8Rng;
@@ -8,18 +9,17 @@ use std::collections::HashSet;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::path::Path;
-use symplectic::geom::polytope::Polytope4D;
 
 /// Add a barely-non-redundant facet to a polytope.
 ///
 /// New dual vertex: a_{F+1} = n / (h_K(n) - ε) where h_K(n) = max_v ⟨n,v⟩.
 // TODO: add [lem:facet-addition] to formal math (dual vertex ↔ halfspace correspondence)
 pub(crate) fn add_facet(
-    polytope: &Polytope4D,
+    polytope: &HkoPolytopeCache,
     direction: &Vector4<f64>,
     epsilon: f64,
-) -> Option<Polytope4D> {
-    let vertices = polytope.vertices_f64();
+) -> Option<HkoPolytopeCache> {
+    let vertices = &polytope.vertices_f64;
     let h_k_n = vertices
         .iter()
         .map(|v| direction.dot(v))
@@ -28,9 +28,9 @@ pub(crate) fn add_facet(
     if new_h <= 0.0 {
         return None;
     }
-    let mut new_duals: Vec<Vector4<f64>> = polytope.dual_vertices_f64().to_vec();
+    let mut new_duals: Vec<Vector4<f64>> = polytope.dual_vertices_f64.to_vec();
     new_duals.push(direction / new_h);
-    Polytope4D::from_f64(new_duals).ok()
+    HkoPolytopeCache::from_f64(new_duals)
 }
 
 pub(crate) fn random_direction(rng: &mut ChaCha8Rng) -> Vector4<f64> {
@@ -41,9 +41,9 @@ pub(crate) fn random_direction(rng: &mut ChaCha8Rng) -> Vector4<f64> {
     Vector4::new(x, y, z, w).normalize()
 }
 
-pub(crate) fn last_facet_active(polytope: &Polytope4D) -> bool {
+pub(crate) fn last_facet_active(polytope: &HkoPolytopeCache) -> bool {
     let last_idx = polytope.facet_count() - 1;
-    vertex_facets_from_vertex_facet_incidence(polytope.incidence())
+    vertex_facets_from_vertex_facet_incidence(&polytope.vertex_facet_incidence)
         .iter()
         .any(|facets| facets.contains(&last_idx))
 }
@@ -67,9 +67,9 @@ pub(crate) fn load_completed_names(path: &Path) -> HashSet<String> {
     names
 }
 
-pub(crate) fn dvs_to_array(polytope: &Polytope4D) -> Vec<[f64; 4]> {
+pub(crate) fn dvs_to_array(polytope: &HkoPolytopeCache) -> Vec<[f64; 4]> {
     polytope
-        .dual_vertices_f64()
+        .dual_vertices_f64
         .iter()
         .map(|a| [a[0], a[1], a[2], a[3]])
         .collect()
