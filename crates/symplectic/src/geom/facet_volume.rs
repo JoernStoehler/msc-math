@@ -2,7 +2,7 @@
 //!
 //! The maintained implementation lives in `euclidean-polytopes`. This module
 //! exposes the same flat helpers through the symplectic geometry namespace
-//! without rebuilding shared compatibility wrappers.
+//! without rebuilding a shared polytope container.
 //!
 //! Mathematical correspondence: [def:volume] (per-facet specialization)
 

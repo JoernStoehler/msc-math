@@ -48,7 +48,7 @@ Map maintenance:
 
 | Subsystem | Current role | Notes |
 | --- | --- | --- |
-| `geom` | geometry helper layer | owns private `Polytope4D` construction/validation internals, exact/rational geometry utilities, symplectic form helpers, known flat fixtures, and related geometry routines |
+| `geom` | geometry helper layer | owns flat dual-vertex validation, exact/rational geometry utilities, symplectic form helpers, known flat fixtures, and related geometry routines |
 | `kkt` | context-free constrained-QP solver layer | operates on abstract matrices `(C, d, H)`; `qp_assembly` crosses from polytope geometry into solver inputs |
 | `algorithms` | symplectic/capacity algorithm layer | owns HK2017, billiard, shared capacity-accumulator logic, and related pruning/combinatorics |
 | `database` / `dataset` | persistence/schema support layer | owns JSONL storage helpers and row schemas; callers choose paths |
@@ -127,8 +127,8 @@ thesis claim, verification task, or writing blocker needs it.
 ## Open Edges
 
 - Which deep public paths should remain supported experiment-facing imports?
-- Which experiment-local caches should remain local after the `Polytope4D`
-  migration finishes, and which repeated helper should move into a durable
+- Which experiment-local caches should remain local now that shared polytope
+  containers are gone, and which repeated helper should move into a durable
   crate function?
 - Which repeated helpers belong in topic helper crates versus
   `crates/symplectic/`?

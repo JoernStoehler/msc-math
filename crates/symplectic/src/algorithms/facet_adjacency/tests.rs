@@ -128,8 +128,8 @@ fn directed_transition_is_subset_of_facet_intersection() {
         let facet_intersection_is_nonempty = &kp.facet_intersection_is_nonempty;
         let omega_signs = &kp.omega_signs;
         let directed = build_transition_matrix_from_facet_intersections_and_omega(
-            &facet_intersection_is_nonempty,
-            &omega_signs,
+            facet_intersection_is_nonempty,
+            omega_signs,
         );
         let f = kp.facet_count();
         for i in 0..f {
@@ -155,8 +155,8 @@ fn directed_transition_antisymmetry_property() {
         let facet_intersection_is_nonempty = &kp.facet_intersection_is_nonempty;
         let omega_signs = &kp.omega_signs;
         let directed = build_transition_matrix_from_facet_intersections_and_omega(
-            &facet_intersection_is_nonempty,
-            &omega_signs,
+            facet_intersection_is_nonempty,
+            omega_signs,
         );
         let omega_signs = &kp.omega_signs;
         let f = kp.facet_count();
@@ -187,8 +187,8 @@ fn directed_transition_prunes_vs_facet_intersection() {
     let facet_intersection_is_nonempty = &kp.facet_intersection_is_nonempty;
     let omega_signs = &kp.omega_signs;
     let directed = build_transition_matrix_from_facet_intersections_and_omega(
-        &facet_intersection_is_nonempty,
-        &omega_signs,
+        facet_intersection_is_nonempty,
+        omega_signs,
     );
     let count_facet_intersections: usize = facet_intersection_is_nonempty
         .iter()
@@ -255,8 +255,8 @@ fn lagrangian_product_q_q_transitions_bidirectional() {
     let facet_intersection_is_nonempty = &kp.facet_intersection_is_nonempty;
     let omega_signs = &kp.omega_signs;
     let directed = build_transition_matrix_from_facet_intersections_and_omega(
-        &facet_intersection_is_nonempty,
-        &omega_signs,
+        facet_intersection_is_nonempty,
+        omega_signs,
     );
     let f = kp.facet_count();
 

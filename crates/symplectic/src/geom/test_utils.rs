@@ -1,7 +1,7 @@
 //! Test-only flat polytope data constructors and helpers.
 //!
-//! Convenience wrappers around `known_polytopes`. For capacity values and
-//! literature references, use `known_polytopes` directly.
+//! Short fixture accessors for tests. For capacity values and literature
+//! references, use `known_polytopes` directly.
 //!
 //! Coordinates: (q_1, q_2, p_1, p_2). See `symplectic_form` module for J_0 and omega_0.
 
