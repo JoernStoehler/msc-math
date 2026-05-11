@@ -7,8 +7,8 @@ use symplectic::{
 #[test]
 fn unpruned_hk2017_candidates_aggregate_from_flat_dual_vertices() {
     let kp = known_polytopes::simplex();
-    let dual_vertices = kp.polytope.dual_vertices_f64();
-    let dual_vertices_exact = kp.polytope.dual_vertices();
+    let dual_vertices = &kp.dual_vertices_f64;
+    let dual_vertices_exact = &kp.dual_vertices;
 
     let (orbits, iterations) =
         solve_unpruned_hk2017_candidates(dual_vertices).expect("simplex candidates");
@@ -33,11 +33,11 @@ fn unpruned_hk2017_candidates_aggregate_from_flat_dual_vertices() {
 #[test]
 fn pruned_hk2017_candidates_use_explicit_transition_matrix() {
     let kp = known_polytopes::simplex();
-    let dual_vertices = kp.polytope.dual_vertices_f64();
+    let dual_vertices = &kp.dual_vertices_f64;
     let transition_is_allowed =
         symplectic::algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega(
-            kp.polytope.facet_intersection_is_nonempty(),
-            kp.polytope.omega_signs(),
+            &kp.facet_intersection_is_nonempty,
+            &kp.omega_signs,
         );
 
     let (orbits, iterations) =
@@ -54,11 +54,11 @@ fn pruned_hk2017_candidates_use_explicit_transition_matrix() {
 #[test]
 fn single_sigma_saddle_point_solver_is_concrete() {
     let kp = known_polytopes::simplex();
-    let dual_vertices = kp.polytope.dual_vertices_f64();
+    let dual_vertices = &kp.dual_vertices_f64;
     let transition_is_allowed =
         symplectic::algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega(
-            kp.polytope.facet_intersection_is_nonempty(),
-            kp.polytope.omega_signs(),
+            &kp.facet_intersection_is_nonempty,
+            &kp.omega_signs,
         );
     let (orbits, _) = solve_pruned_hk2017_candidates(dual_vertices, &transition_is_allowed)
         .expect("pruned simplex candidates");
@@ -79,5 +79,5 @@ fn pruned_hk2017_candidates_reject_mismatched_transition_matrix() {
     let kp = known_polytopes::simplex();
     let bad_transition = DMatrix::from_element(1, 1, true);
 
-    let _ = solve_pruned_hk2017_candidates(kp.polytope.dual_vertices_f64(), &bad_transition);
+    let _ = solve_pruned_hk2017_candidates(&kp.dual_vertices_f64, &bad_transition);
 }
