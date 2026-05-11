@@ -363,6 +363,7 @@ fn compute_q_rational(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::algorithms::test_helpers::pruned_capacity_for_fixture;
     use crate::geom::known_polytopes;
     use crate::geom::lagrangian_product::lagrangian_product;
     use crate::geom::polygon::regular_polygon_2d;
@@ -398,10 +399,10 @@ mod tests {
     /// exercises the unique-solution path on a full-rank (10 x 10) system.
     #[test]
     fn simplex_exact_solve() {
-        let simplex = &known_polytopes::simplex().polytope;
+        let simplex = &known_polytopes::simplex();
 
         let perm: Vec<usize> = (0..5).collect();
-        let result = solve_kkt_exact(simplex.dual_vertices(), &perm);
+        let result = solve_kkt_exact(&simplex.dual_vertices, &perm);
         assert!(result.is_some(), "Simplex KKT system should be solvable");
 
         let r = result.unwrap();
@@ -423,12 +424,12 @@ mod tests {
     /// Exercises rank-deficient code paths.
     #[test]
     fn hypercube_exact_solve() {
-        let hypercube = &known_polytopes::hypercube().polytope;
+        let hypercube = &known_polytopes::hypercube();
 
         // Try a 4-facet subset. The hypercube's axis-aligned normals mean omega_0(y_i, y_j) = 0
         // for many pairs. Q can be zero even with nonzero beta.
         let perm = vec![0, 1, 2, 3];
-        if let Some(r) = solve_kkt_exact(hypercube.dual_vertices(), &perm) {
+        if let Some(r) = solve_kkt_exact(&hypercube.dual_vertices, &perm) {
             assert!(r.q_exact_f64.is_finite(), "Q_exact_f64 should be finite");
         }
         // Both Some and None are valid — no panic is the key invariant.
@@ -440,11 +441,11 @@ mod tests {
     /// return None, not panic on under- or over-determined systems.
     #[test]
     fn short_permutation_no_panic() {
-        let simplex = &known_polytopes::simplex().polytope;
+        let simplex = &known_polytopes::simplex();
 
         let perm = vec![0, 1];
         // Whether this returns Some or None depends on the system — both are valid.
-        let _result = solve_kkt_exact(simplex.dual_vertices(), &perm);
+        let _result = solve_kkt_exact(&simplex.dual_vertices, &perm);
     }
 
     /// Near-singular f64-rationalized systems do not panic.
@@ -455,10 +456,10 @@ mod tests {
     /// pivots by zero.
     #[test]
     fn near_singular_system_handled() {
-        let pentagon = &known_polytopes::hko_pentagon().polytope;
+        let pentagon = &known_polytopes::hko_pentagon();
 
         let perm = vec![1, 7, 2, 8, 4, 6, 5];
-        let result = solve_kkt_exact(pentagon.dual_vertices(), &perm);
+        let result = solve_kkt_exact(&pentagon.dual_vertices, &perm);
 
         if let Some(r) = result {
             assert!(r.q_exact_f64.is_finite(), "Q_exact_f64 should be finite");
@@ -500,7 +501,7 @@ mod tests {
     /// Fourier-Motzkin search.
     #[test]
     fn hypercube_null_space_smoke() {
-        let hypercube = &known_polytopes::hypercube().polytope;
+        let hypercube = &known_polytopes::hypercube();
 
         let perms = vec![
             vec![0, 1, 2, 3, 4],
@@ -509,7 +510,7 @@ mod tests {
         ];
 
         for perm in &perms {
-            let result = solve_kkt_exact(hypercube.dual_vertices(), perm);
+            let result = solve_kkt_exact(&hypercube.dual_vertices, perm);
             if let Some(r) = result {
                 assert!(
                     r.q_exact_f64.is_finite(),
@@ -528,10 +529,9 @@ mod tests {
     #[test]
     fn simplex_exact_vs_numerical() {
         let simplex = crate::geom::known_polytopes::simplex();
-        let result =
-            crate::ehz_capacity_pruned(&simplex.polytope).expect("simplex should have capacity");
+        let result = pruned_capacity_for_fixture(simplex).expect("simplex should have capacity");
         let perm = result.best_sigma();
-        if let Some(exact) = solve_kkt_exact(simplex.polytope.dual_vertices(), perm) {
+        if let Some(exact) = solve_kkt_exact(&simplex.dual_vertices, perm) {
             let q_exact = exact.q_exact_f64;
             assert!(q_exact > 0.0, "exact Q should be positive, got {q_exact}");
         }
@@ -545,10 +545,10 @@ mod tests {
     fn exact_agrees_on_known_polytopes() {
         use crate::geom::known_polytopes;
         for kp in [known_polytopes::simplex(), known_polytopes::hypercube()] {
-            let result = crate::ehz_capacity_pruned(&kp.polytope)
-                .expect("known polytope should have capacity");
+            let result =
+                pruned_capacity_for_fixture(kp).expect("known polytope should have capacity");
             let perm = result.best_sigma();
-            if let Some(exact) = solve_kkt_exact(kp.polytope.dual_vertices(), perm) {
+            if let Some(exact) = solve_kkt_exact(&kp.dual_vertices, perm) {
                 assert!(exact.q_exact_f64 > 0.0, "exact Q should be positive");
             }
         }
@@ -558,10 +558,9 @@ mod tests {
     #[test]
     fn winning_beta_positive_exact() {
         let simplex = crate::geom::known_polytopes::simplex();
-        let result =
-            crate::ehz_capacity_pruned(&simplex.polytope).expect("simplex should have capacity");
+        let result = pruned_capacity_for_fixture(simplex).expect("simplex should have capacity");
         let perm = result.best_sigma();
-        if let Some(exact) = solve_kkt_exact(simplex.polytope.dual_vertices(), perm) {
+        if let Some(exact) = solve_kkt_exact(&simplex.dual_vertices, perm) {
             assert!(
                 exact.beta.iter().all(|b| b.is_positive()),
                 "all exact beta should be strictly positive on winning node"

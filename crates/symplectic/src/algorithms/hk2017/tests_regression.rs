@@ -6,7 +6,7 @@ use crate::geom::lagrangian_product::lagrangian_product;
 use crate::geom::polygon::{regular_polygon_2d, rotate_polygon_2d};
 use crate::geom::rational_arithmetic::f64_to_rational;
 use crate::kkt::qp_assembly::build_augmented_system_from_dual_vertices;
-use crate::{algorithms, ehz_capacity_pruned};
+use crate::{algorithms, algorithms::test_helpers::pruned_capacity_for_fixture};
 use nalgebra::Vector4;
 use num_rational::BigRational;
 
@@ -319,7 +319,7 @@ fn pentagon_capacity() {
     use crate::test_lib::euclidean_volume_f64;
 
     let kp = known_polytopes::hko_pentagon();
-    let result = ehz_capacity_pruned(&kp.polytope).expect("pentagon capacity");
+    let result = pruned_capacity_for_fixture(kp).expect("pentagon capacity");
 
     assert!(
         (result.capacity() - kp.capacity).abs() < 1e-6,
@@ -329,7 +329,7 @@ fn pentagon_capacity() {
     );
 
     // Verify sys > 1 (counterexample property).
-    let vol = euclidean_volume_f64(kp.polytope.vertices(), kp.polytope.incidence());
+    let vol = euclidean_volume_f64(&kp.vertices, &kp.vertex_facet_incidence);
     let sys = result.capacity() * result.capacity() / (2.0 * vol);
     eprintln!(
         "Pentagon: capacity={:.6}, volume={:.6}, sys={:.6}",

@@ -3,7 +3,6 @@ use super::exact_linalg::integer_scale_dual_vertices;
 use super::exact_linalg::rank_over_q;
 use super::exact_linalg::test_support::{cross_product_4d_rational, det4, dot4, solve4};
 use super::irredundancy::affine_rank_rational;
-use crate::geom::polytope::Polytope4D;
 use crate::geom::rational_arithmetic::{frac, rat};
 use num_bigint::BigInt;
 use num_rational::BigRational;
@@ -23,6 +22,32 @@ use std::collections::BTreeSet;
 
 // ── Test fixtures ──────────────────────────────────────────────────────
 
+struct RationalPolytopeFixture {
+    dual_vertices: Vec<[BigRational; 4]>,
+    vertices: Vec<[BigRational; 4]>,
+    vertex_descriptors: Vec<BTreeSet<usize>>,
+}
+
+impl RationalPolytopeFixture {
+    fn new(dual_vertices: Vec<[BigRational; 4]>) -> Self {
+        let (vertices, vertex_descriptors) =
+            super::construct_rational_pipeline(&dual_vertices).expect("rational construction");
+        Self {
+            dual_vertices,
+            vertices,
+            vertex_descriptors,
+        }
+    }
+
+    fn vertices(&self) -> &[[BigRational; 4]] {
+        &self.vertices
+    }
+
+    fn dual_vertices(&self) -> &[[BigRational; 4]] {
+        &self.dual_vertices
+    }
+}
+
 /// Build a rational 4-simplex with exact rational coordinates.
 ///
 /// Simplex with vertices at (-1/5)*1 + (9/5)*e_i for i=1..4, plus (-1/5)*1.
@@ -34,7 +59,7 @@ use std::collections::BTreeSet;
 ///   2: -x_3 <= 1/5   (n = (0,0,-1,0), h = 1/5)
 ///   3: -x_4 <= 1/5   (n = (0,0,0,-1), h = 1/5)
 ///   4: x_1+x_2+x_3+x_4 <= 1   (n = (1,1,1,1), h = 1)
-fn rational_simplex() -> Polytope4D {
+fn rational_simplex() -> RationalPolytopeFixture {
     let normals = [
         [rat(-1), rat(0), rat(0), rat(0)],
         [rat(0), rat(-1), rat(0), rat(0)],
@@ -48,13 +73,13 @@ fn rational_simplex() -> Polytope4D {
         .zip(heights.iter())
         .map(|(n, h)| std::array::from_fn(|c| &n[c] / h))
         .collect();
-    Polytope4D::new(dual_vertices).expect("simplex construction")
+    RationalPolytopeFixture::new(dual_vertices)
 }
 
 /// Build a rational hypercube [-1, 1]^4 with exact integer coordinates.
 ///
 /// 8 facets (+-e_i), 16 vertices (all sign combinations of (1,1,1,1)).
-fn rational_hypercube() -> Polytope4D {
+fn rational_hypercube() -> RationalPolytopeFixture {
     let normals = [
         [rat(1), rat(0), rat(0), rat(0)],
         [rat(-1), rat(0), rat(0), rat(0)],
@@ -71,21 +96,12 @@ fn rational_hypercube() -> Polytope4D {
         .zip(heights.iter())
         .map(|(n, h)| std::array::from_fn(|c| &n[c] / h))
         .collect();
-    Polytope4D::new(dual_vertices).expect("hypercube construction")
+    RationalPolytopeFixture::new(dual_vertices)
 }
 
 /// Extract vertex descriptors (sets of incident facet indices) from incidence matrix.
-fn vertex_descriptors_from_incidence(p: &Polytope4D) -> Vec<BTreeSet<usize>> {
-    let inc = p.incidence();
-    let v_count = p.vertices().len();
-    let f_count = p.facet_count();
-    (0..v_count)
-        .map(|vi| {
-            (0..f_count)
-                .filter(|&fi| inc[(vi, fi)])
-                .collect::<BTreeSet<usize>>()
-        })
-        .collect()
+fn vertex_descriptors_from_incidence(p: &RationalPolytopeFixture) -> Vec<BTreeSet<usize>> {
+    p.vertex_descriptors.clone()
 }
 
 // ── Simplex vertex structure ────────────────────────────────────────────
@@ -255,7 +271,7 @@ fn non_simple_polytope_vertex_enumeration() {
         .zip(heights.iter())
         .map(|(n, h)| std::array::from_fn(|c| &n[c] / h))
         .collect();
-    let p = Polytope4D::new(dual_vertices).expect("non-simple polytope should succeed");
+    let p = RationalPolytopeFixture::new(dual_vertices);
 
     let vds = vertex_descriptors_from_incidence(&p);
     assert_eq!(vds.len(), 15, "cut hypercube should have 15 vertices");
@@ -496,7 +512,7 @@ fn highly_non_simple_vertex_on_6_facets() {
         .zip(heights.iter())
         .map(|(n, h)| std::array::from_fn(|c| &n[c] / h))
         .collect();
-    let p = Polytope4D::new(dual_vertices).expect("doubly-cut hypercube should succeed");
+    let p = RationalPolytopeFixture::new(dual_vertices);
 
     let vds = vertex_descriptors_from_incidence(&p);
 
@@ -571,7 +587,7 @@ fn large_coordinate_dual_vertices() {
         "dual vertex coordinates should be large, max = {max_coord}"
     );
 
-    let p = Polytope4D::new(dual_vertices).expect("large-coordinate simplex should succeed");
+    let p = RationalPolytopeFixture::new(dual_vertices);
     assert_eq!(
         p.vertices().len(),
         5,
@@ -619,7 +635,7 @@ fn small_coordinate_dual_vertices() {
         .map(|(n, h)| std::array::from_fn(|c| &(&n[c] / h) * &scale))
         .collect();
 
-    let p = Polytope4D::new(dual_vertices).expect("small-coordinate simplex should succeed");
+    let p = RationalPolytopeFixture::new(dual_vertices);
     assert_eq!(
         p.vertices().len(),
         5,
@@ -667,8 +683,7 @@ fn exact_rational_non_power_of_two_denominators() {
         [frac(7, 2), frac(7, 2), frac(7, 2), frac(7, 2)],
     ];
 
-    let p = Polytope4D::new(dual_vertices.clone())
-        .expect("non-power-of-2 denominator simplex should succeed");
+    let p = RationalPolytopeFixture::new(dual_vertices.clone());
     assert_eq!(p.vertices().len(), 5, "simplex should have 5 vertices");
 
     // Verify common denominator handles the lcm(1,1,1,1,2) = 2 correctly

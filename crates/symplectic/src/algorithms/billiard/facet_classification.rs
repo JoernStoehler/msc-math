@@ -184,9 +184,9 @@ mod tests {
     #[test]
     fn mask_dual_direction_preserves_allowed_components() {
         let kp = known_polytopes::lagrangian_triangle_product();
-        let classification = classify_facets(kp.polytope.dual_vertices_f64())
+        let classification = classify_facets(&kp.dual_vertices_f64)
             .expect("triangle product should classify as a Lagrangian product");
-        let direction: Vec<Vector4<f64>> = (0..kp.polytope.facet_count())
+        let direction: Vec<Vector4<f64>> = (0..kp.facet_count())
             .map(|i| {
                 Vector4::new(
                     i as f64 + 1.0,

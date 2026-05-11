@@ -2,7 +2,9 @@
 //!
 //! Split from mod.rs to keep module routing and docs short.
 
-use crate::ehz_capacity_unpruned;
+use crate::algorithms::test_helpers::{
+    unpruned_capacity_for_dual_vertices, unpruned_capacity_for_fixture,
+};
 
 // ── Direct computation ──
 
@@ -14,19 +16,12 @@ use crate::ehz_capacity_unpruned;
 fn capacity_conformality_simplex() {
     let scale = 1.7;
     let kp = crate::geom::known_polytopes::simplex();
-    let scaled = crate::geom::polytope::Polytope4D::from_f64(
-        kp.polytope
-            .dual_vertices_f64()
-            .iter()
-            .map(|a| a / scale)
-            .collect(),
-    )
-    .expect("scaled simplex");
+    let scaled: Vec<_> = kp.dual_vertices_f64.iter().map(|a| a / scale).collect();
 
-    let base_cap = ehz_capacity_unpruned(&kp.polytope)
+    let base_cap = unpruned_capacity_for_fixture(kp)
         .expect("simplex capacity")
         .capacity();
-    let scaled_cap = ehz_capacity_unpruned(&scaled)
+    let scaled_cap = unpruned_capacity_for_dual_vertices(&scaled)
         .expect("scaled simplex capacity")
         .capacity();
     let expected = scale * scale * base_cap;
@@ -53,13 +48,12 @@ fn capacity_scales_quadratically() {
     let scale = std::f64::consts::E;
 
     let kp = known_polytopes::hypercube();
-    let unit_cap = ehz_capacity_unpruned(&kp.polytope).unwrap().capacity();
+    let unit_cap = unpruned_capacity_for_fixture(kp).unwrap().capacity();
 
-    let scaled_cube = crate::geom::polytope::Polytope4D::from_f64(
-        crate::geom::test_utils::scaled_hypercube_dual_vertices_f64(scale),
-    )
-    .expect("scaled hypercube");
-    let scaled_cap = ehz_capacity_unpruned(&scaled_cube).unwrap().capacity();
+    let scaled_cube = crate::geom::test_utils::scaled_hypercube_dual_vertices_f64(scale);
+    let scaled_cap = unpruned_capacity_for_dual_vertices(&scaled_cube)
+        .unwrap()
+        .capacity();
 
     let expected = unit_cap * scale * scale;
     let relative_error = ((scaled_cap - expected) / expected).abs();

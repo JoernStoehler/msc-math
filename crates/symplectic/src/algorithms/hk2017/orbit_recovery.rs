@@ -329,9 +329,11 @@ fn optimize_in_null_space(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::algorithms::test_helpers::{
+        pruned_capacity_for_fixture, unpruned_capacity_for_fixture,
+    };
     use crate::algorithms::{OrbitAdmissibility, OrbitKktData, OrbitSearchResult};
     use crate::geom::known_polytopes;
-    use crate::{ehz_capacity_pruned, ehz_capacity_unpruned};
 
     // Tests for orbit_recovery: base point recovery and orbit verification.
     //
@@ -374,15 +376,15 @@ mod tests {
     #[test]
     fn raw_wrapper_rejects_invalid_inputs() {
         let kp = known_polytopes::simplex();
-        let result = ehz_capacity_pruned(&kp.polytope).expect("simplex capacity");
+        let result = pruned_capacity_for_fixture(kp).expect("simplex capacity");
         let sigma = result.best_sigma();
         let beta = result.best_beta();
         let action = result.capacity();
 
         let mut bad_sigma = sigma.to_vec();
-        bad_sigma[0] = kp.polytope.facet_count();
+        bad_sigma[0] = kp.facet_count();
         assert!(recover_and_verify_sigma_beta_action(
-            kp.polytope.dual_vertices_f64(),
+            &kp.dual_vertices_f64,
             &bad_sigma,
             beta,
             action,
@@ -392,7 +394,7 @@ mod tests {
         let mut bad_beta = beta.to_vec();
         bad_beta[0] = f64::NAN;
         assert!(recover_and_verify_sigma_beta_action(
-            kp.polytope.dual_vertices_f64(),
+            &kp.dual_vertices_f64,
             sigma,
             &bad_beta,
             action,
@@ -402,7 +404,7 @@ mod tests {
         let mut nonpositive_beta = beta.to_vec();
         nonpositive_beta[0] = 0.0;
         assert!(recover_and_verify_sigma_beta_action(
-            kp.polytope.dual_vertices_f64(),
+            &kp.dual_vertices_f64,
             sigma,
             &nonpositive_beta,
             action
@@ -413,8 +415,8 @@ mod tests {
     /// Run the full recovery + verification pipeline on a known polytope and
     /// check all error metrics against tolerances.
     fn test_recovery(name: &str, kp: &crate::geom::known_polytopes::KnownPolytope) {
-        let dual_vertices = kp.polytope.dual_vertices_f64();
-        let result = ehz_capacity_pruned(&kp.polytope).unwrap_or_else(|_| {
+        let dual_vertices = &kp.dual_vertices_f64;
+        let result = pruned_capacity_for_fixture(kp).unwrap_or_else(|_| {
             panic!("{name}: capacity computation failed");
         });
         assert!(
@@ -522,8 +524,8 @@ mod tests {
     #[test]
     fn simplex_on_facet() {
         let kp = known_polytopes::simplex();
-        let result = ehz_capacity_pruned(&kp.polytope).unwrap();
-        check_on_facet("simplex", kp.polytope.dual_vertices_f64(), &result);
+        let result = pruned_capacity_for_fixture(kp).unwrap();
+        check_on_facet("simplex", &kp.dual_vertices_f64, &result);
     }
 
     /// Recover orbit for the hypercube (F=8).
@@ -538,8 +540,8 @@ mod tests {
 
     // crosspolytope orbit recovery is tested in crosspolytope_upper_bound()
     // (hk2017/mod.rs) via a direct KKT solve on the known permutation, avoiding
-    // the ehz_capacity() call that test_recovery() would require (F=16 is
-    // infeasible for the library's unpruned/pruned algorithm).
+    // the flat pruned-capacity search that test_recovery() would require
+    // (F=16 is infeasible for the library's unpruned/pruned algorithm).
 
     /// Recover orbit for the HKO pentagon (F=10).
     ///
@@ -595,12 +597,12 @@ mod tests {
     #[test]
     fn dwell_times_positive() {
         for kp in known_polytopes::all_known() {
-            if kp.polytope.facet_count() > 10 {
+            if kp.facet_count() > 10 {
                 continue;
             }
-            let result = ehz_capacity_pruned(&kp.polytope).unwrap();
+            let result = pruned_capacity_for_fixture(kp).unwrap();
             let orbit = best_orbit_payload(&result);
-            let recovery = recover_and_verify(kp.polytope.dual_vertices_f64(), &orbit).unwrap();
+            let recovery = recover_and_verify(&kp.dual_vertices_f64, &orbit).unwrap();
 
             for (k, &tau) in recovery.dwell_times.iter().enumerate() {
                 assert!(
@@ -619,12 +621,12 @@ mod tests {
     #[test]
     fn breakpoint_count_consistency() {
         for kp in known_polytopes::all_known() {
-            if kp.polytope.facet_count() > 10 {
+            if kp.facet_count() > 10 {
                 continue;
             }
-            let result = ehz_capacity_pruned(&kp.polytope).unwrap();
+            let result = pruned_capacity_for_fixture(kp).unwrap();
             let orbit = best_orbit_payload(&result);
-            let recovery = recover_and_verify(kp.polytope.dual_vertices_f64(), &orbit).unwrap();
+            let recovery = recover_and_verify(&kp.dual_vertices_f64, &orbit).unwrap();
 
             assert_eq!(
                 recovery.breakpoints.len(),
@@ -645,15 +647,13 @@ mod tests {
     fn unpruned_recovery_consistent() {
         let kp = known_polytopes::simplex();
 
-        let result_pruned = ehz_capacity_pruned(&kp.polytope).unwrap();
-        let result_unpruned = ehz_capacity_unpruned(&kp.polytope).unwrap();
+        let result_pruned = pruned_capacity_for_fixture(kp).unwrap();
+        let result_unpruned = unpruned_capacity_for_fixture(kp).unwrap();
 
         let orbit_pruned = best_orbit_payload(&result_pruned);
         let orbit_unpruned = best_orbit_payload(&result_unpruned);
-        let recovery_pruned =
-            recover_and_verify(kp.polytope.dual_vertices_f64(), &orbit_pruned).unwrap();
-        let recovery_unpruned =
-            recover_and_verify(kp.polytope.dual_vertices_f64(), &orbit_unpruned).unwrap();
+        let recovery_pruned = recover_and_verify(&kp.dual_vertices_f64, &orbit_pruned).unwrap();
+        let recovery_unpruned = recover_and_verify(&kp.dual_vertices_f64, &orbit_unpruned).unwrap();
 
         // Both should have valid orbits.
         assert!(recovery_pruned.closure_error < TOL);
