@@ -54,7 +54,6 @@ mod test_lib;
 // Types
 pub use capacity_api::{CapacityError, F64CapacityResult, F64Interval, F64Orbit, PredicateVerdict};
 pub use geom::polytope::{ConstructionError, Polytope4D};
-pub use geom::skeleton::Skeleton;
 
 // Capacity algorithms
 pub use algorithms::billiard::BilliardError;

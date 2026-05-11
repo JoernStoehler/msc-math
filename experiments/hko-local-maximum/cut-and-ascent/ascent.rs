@@ -7,6 +7,9 @@ use crate::{
     CONVERGENCE_THRESHOLD, EPS, MAX_ESCAPE_ROUNDS, MAX_ITERATIONS, MAX_STEP_SIZE, N_WIGGLES,
     OVERSHOOT_MULTIPLIERS, STEP_FRACTIONS, WIGGLE_STRENGTH,
 };
+use euclidean_polytopes::{
+    two_faces_from_vertex_facet_incidence, vertex_facets_from_vertex_facet_incidence,
+};
 use exp_hko_local_maximum::euclidean_volume_f64;
 use nalgebra::{Matrix4, Vector4};
 use rand_chacha::ChaCha8Rng;
@@ -14,7 +17,6 @@ use rand_distr::{Distribution, StandardNormal};
 use std::time::Instant;
 use symplectic::derivatives::{capacity_derivatives_a_from_kkt_result, volume_derivatives_a};
 use symplectic::geom::polytope::Polytope4D;
-use symplectic::geom::skeleton::Skeleton;
 use symplectic::geom::symplectic_form::omega0;
 use symplectic::kkt::saddle_point_solver::solve_kkt_for_dual_vertices;
 
@@ -26,11 +28,13 @@ fn compute_step_bound(polytope: &Polytope4D, direction: &[Vector4<f64>]) -> f64 
     let duals = polytope.dual_vertices_f64();
     let vertices = polytope.vertices_f64();
     let facet_count = polytope.facet_count();
-    let skeleton = Skeleton::compute(polytope);
+    let incidence = polytope.incidence();
+    let vertex_facets_by_vertex = vertex_facets_from_vertex_facet_incidence(incidence);
+    let two_faces = two_faces_from_vertex_facet_incidence(incidence);
 
     let mut t_max = f64::INFINITY;
 
-    for (vi, vertex_facets) in skeleton.vertex_facets.iter().enumerate() {
+    for (vi, vertex_facets) in vertex_facets_by_vertex.iter().enumerate() {
         let v = &vertices[vi];
 
         if vertex_facets.len() == 4 {
@@ -86,9 +90,9 @@ fn compute_step_bound(polytope: &Polytope4D, direction: &[Vector4<f64>]) -> f64 
         }
     }
 
-    for ridge in &skeleton.ridges {
-        let i = ridge.facets[0];
-        let j = ridge.facets[1];
+    for two_face in &two_faces {
+        let i = two_face.facets[0];
+        let j = two_face.facets[1];
         let c = omega0(&duals[i], &duals[j]);
         let b = omega0(&direction[i], &duals[j]) + omega0(&duals[i], &direction[j]);
         let a_coeff = omega0(&direction[i], &direction[j]);

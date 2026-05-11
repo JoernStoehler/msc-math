@@ -16,6 +16,9 @@
 //! Filter: F <= 10 (HK2017 is exponential in F)
 //! Output Artifacts: experiments/combinatorial-cells/convexity/combinatorial-boundaries-convexity.jsonl
 
+use euclidean_polytopes::{
+    two_faces_from_vertex_facet_incidence, vertex_facets_from_vertex_facet_incidence,
+};
 use exp_combinatorial_cells::{
     compute_step_bound_detailed, construct_at_t, ehz_capacity_instrumented, name_from_record,
 };
@@ -31,7 +34,6 @@ use std::time::Instant;
 use symplectic::algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega;
 use symplectic::database;
 use symplectic::geom::polytope::Polytope4D;
-use symplectic::geom::skeleton::Skeleton;
 use symplectic::geom::symplectic_form::omega0;
 
 // ============================================================================
@@ -140,16 +142,16 @@ fn build_facet_directions(f: usize, rng: &mut ChaCha8Rng) -> Vec<Direction> {
 struct CombinatorialType {
     /// Sorted list of sorted vertex-facet incidence vectors.
     vertex_facets: Vec<Vec<usize>>,
-    /// Sorted list of (facet_i, facet_j, sign_positive) for ridge-adjacent pairs.
+    /// Sorted list of (facet_i, facet_j, sign_positive) for two-face-adjacent pairs.
     omega_signs: Vec<(usize, usize, bool)>,
 }
 
 fn combinatorial_type(polytope: &Polytope4D) -> CombinatorialType {
-    let skeleton = Skeleton::compute(polytope);
+    let vertex_facets_by_vertex = vertex_facets_from_vertex_facet_incidence(polytope.incidence());
+    let two_faces = two_faces_from_vertex_facet_incidence(polytope.incidence());
     let duals = polytope.dual_vertices_f64();
 
-    let mut vf: Vec<Vec<usize>> = skeleton
-        .vertex_facets
+    let mut vf: Vec<Vec<usize>> = vertex_facets_by_vertex
         .iter()
         .map(|facets| {
             let mut f = facets.clone();
@@ -159,12 +161,11 @@ fn combinatorial_type(polytope: &Polytope4D) -> CombinatorialType {
         .collect();
     vf.sort();
 
-    let mut omega_signs: Vec<(usize, usize, bool)> = skeleton
-        .ridges
+    let mut omega_signs: Vec<(usize, usize, bool)> = two_faces
         .iter()
-        .map(|r| {
-            let i = r.facets[0].min(r.facets[1]);
-            let j = r.facets[0].max(r.facets[1]);
+        .map(|two_face| {
+            let i = two_face.facets[0].min(two_face.facets[1]);
+            let j = two_face.facets[0].max(two_face.facets[1]);
             let sign = omega0(&duals[i], &duals[j]) >= 0.0;
             (i, j, sign)
         })

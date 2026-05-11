@@ -1,9 +1,9 @@
 //! Symplectic-form and transition-graph feature columns.
 
+use euclidean_polytopes::TwoFace;
 use nalgebra::DMatrix;
 use symplectic::algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega;
 use symplectic::geom::polytope::Polytope4D;
-use symplectic::geom::skeleton::Skeleton;
 use symplectic::geom::symplectic_form::omega0;
 
 use super::features_helpers::{fraction_at_most, stats_or_zero};
@@ -33,7 +33,7 @@ pub struct OmegaFields {
 
 pub fn compute_omega_fields(
     polytope: &Polytope4D,
-    skeleton: &Skeleton,
+    two_faces: &[TwoFace],
     duals: &[nalgebra::Vector4<f64>],
     facet_count: usize,
     omega_scale: f64,
@@ -49,15 +49,15 @@ pub fn compute_omega_fields(
             allpair_abs_omegas.push(value);
         }
     }
-    let ridge_abs_omegas = skeleton
-        .ridges
+    let ridge_abs_omegas = two_faces
         .iter()
-        .map(|ridge| omega0(&duals[ridge.facets[0]], &duals[ridge.facets[1]]).abs() * omega_scale)
+        .map(|two_face| {
+            omega0(&duals[two_face.facets[0]], &duals[two_face.facets[1]]).abs() * omega_scale
+        })
         .collect::<Vec<_>>();
-    let ridge_zero_count = skeleton
-        .ridges
+    let ridge_zero_count = two_faces
         .iter()
-        .filter(|ridge| polytope.omega_signs()[(ridge.facets[0], ridge.facets[1])] == 0)
+        .filter(|two_face| polytope.omega_signs()[(two_face.facets[0], two_face.facets[1])] == 0)
         .count();
     let facet_intersection_is_nonempty = polytope.facet_intersection_is_nonempty();
     let omega_signs = polytope.omega_signs();
@@ -125,10 +125,10 @@ pub fn compute_omega_fields(
         ridge_abs_omega_vol1_std,
         ridge_abs_omega_vol1_min,
         ridge_abs_omega_vol1_max,
-        ridge_zero_fraction: if skeleton.ridges.is_empty() {
+        ridge_zero_fraction: if two_faces.is_empty() {
             0.0
         } else {
-            ridge_zero_count as f64 / skeleton.ridges.len() as f64
+            ridge_zero_count as f64 / two_faces.len() as f64
         },
         ridge_abs_omega_vol1_le_1em3_fraction: fraction_at_most(&ridge_abs_omegas, 1e-3),
         ridge_abs_omega_vol1_le_1em2_fraction: fraction_at_most(&ridge_abs_omegas, 1e-2),

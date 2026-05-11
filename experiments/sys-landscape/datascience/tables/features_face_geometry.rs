@@ -3,7 +3,6 @@
 use nalgebra::Vector4;
 use symplectic::geom::facet_volume::facet_volume_3d_f64;
 use symplectic::geom::polytope::Polytope4D;
-use symplectic::geom::skeleton::Skeleton;
 
 use super::features_helpers::{max_share, stats_or_zero};
 
@@ -23,14 +22,13 @@ pub struct FaceGeometryFields {
 
 pub fn compute_face_geometry_fields(
     polytope: &Polytope4D,
-    skeleton: &Skeleton,
+    edges: &[[usize; 2]],
     vertices: &[Vector4<f64>],
     facet_count: usize,
     linear_scale: f64,
     facet_scale: f64,
 ) -> FaceGeometryFields {
-    let edge_lengths = skeleton
-        .edges
+    let edge_lengths = edges
         .iter()
         .map(|edge| (vertices[edge[0]] - vertices[edge[1]]).norm() / linear_scale)
         .collect::<Vec<_>>();

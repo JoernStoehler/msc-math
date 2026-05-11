@@ -19,10 +19,13 @@ mod features_skeleton;
 
 use crate::load_caches::LoadedPolytopeRow;
 use crate::rows::PolytopeTableRow;
+use euclidean_polytopes::{
+    edges_from_vertex_facet_incidence, two_faces_from_vertex_facet_incidence,
+    vertex_facets_from_vertex_facet_incidence,
+};
 use exp_sys_landscape::euclidean_volume_f64;
 use symplectic::ehz_capacity;
 use symplectic::geom::polytope::Polytope4D;
-use symplectic::geom::skeleton::Skeleton;
 
 fn enrich_row(row: &LoadedPolytopeRow) -> PolytopeTableRow {
     let (dual_vectors, dual_vertex_fields) = features_dual_vertices::dual_vertices_f64(row);
@@ -46,27 +49,30 @@ fn enrich_row(row: &LoadedPolytopeRow) -> PolytopeTableRow {
     let facet_scale = polytope_volume.powf(0.75);
     let omega_scale = polytope_volume.sqrt();
     let volume_scale = polytope_volume.sqrt();
-    let skeleton = Skeleton::compute(&polytope);
+    let incidence = polytope.incidence();
+    let vertex_facets = vertex_facets_from_vertex_facet_incidence(incidence);
+    let edges = edges_from_vertex_facet_incidence(incidence);
+    let two_faces = two_faces_from_vertex_facet_incidence(incidence);
     let vertices = polytope.vertices_f64();
     let duals = polytope.dual_vertices_f64();
     let skeleton_fields =
-        features_skeleton::compute_skeleton_fields(&polytope, &skeleton, facet_count);
+        features_skeleton::compute_skeleton_fields(&polytope, &vertex_facets, &edges, &two_faces);
     let face_geometry_fields = features_face_geometry::compute_face_geometry_fields(
         &polytope,
-        &skeleton,
+        &edges,
         &vertices,
         facet_count,
         linear_scale,
         facet_scale,
     );
     let face_symplectic_fields = features_face_symplectic::compute_face_symplectic_fields(
-        &skeleton,
+        &two_faces,
         &vertices,
         volume_scale,
     );
     let omega_fields = features_omega::compute_omega_fields(
         &polytope,
-        &skeleton,
+        &two_faces,
         &duals,
         facet_count,
         omega_scale,
