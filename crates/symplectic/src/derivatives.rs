@@ -365,10 +365,11 @@ pub fn volume_derivatives_a_fd(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::algorithms::test_helpers::pruned_capacity_for_fixture;
     use crate::algorithms::OrbitAdmissibility;
+    use crate::exact::exact_vertices_with_incidence;
     use crate::geom::known_polytopes;
-    use crate::geom::polytope::Polytope4D;
-    use crate::geom::rational_arithmetic::rational_to_f64;
+    use crate::geom::rational_arithmetic::{f64_to_rational, rational_to_f64};
     use crate::kkt::saddle_point_solver::solve_kkt_for_dual_vertices;
     use euclidean_polytopes::volume_from_incidence_exact;
     use num_rational::BigRational;
@@ -384,6 +385,31 @@ mod tests {
         rational_to_f64(&volume_from_incidence_exact(&vertices, incidence))
     }
 
+    fn exact_vectors_from_dual_vertices_f64(
+        dual_vertices: &[Vector4<f64>],
+    ) -> Vec<Vector4<BigRational>> {
+        dual_vertices
+            .iter()
+            .map(|a| {
+                Vector4::new(
+                    f64_to_rational(a[0]),
+                    f64_to_rational(a[1]),
+                    f64_to_rational(a[2]),
+                    f64_to_rational(a[3]),
+                )
+            })
+            .collect()
+    }
+
+    fn volume_from_dual_vertices_f64(dual_vertices: &[Vector4<f64>]) -> Option<f64> {
+        let exact_dual_vertices = exact_vectors_from_dual_vertices_f64(dual_vertices);
+        let vertices_with_incidence = exact_vertices_with_incidence(&exact_dual_vertices).ok()?;
+        Some(rational_to_f64(&volume_from_incidence_exact(
+            &vertices_with_incidence.vertices,
+            &vertices_with_incidence.vertex_facet_incidence,
+        )))
+    }
+
     // Tests for derivatives: analytical capacity and volume derivatives.
     //
     // Proposition: volume_derivatives_a matches finite differences to O(eps²).
@@ -397,18 +423,14 @@ mod tests {
     #[test]
     fn volume_derivatives_a_matches_fd() {
         let kp = known_polytopes::hypercube();
-        let polytope = &kp.polytope;
-        let duals = polytope.dual_vertices_f64();
+        let duals = &kp.dual_vertices_f64;
 
-        let analytical = volume_derivatives_a(duals, polytope.vertices_f64(), polytope.incidence())
+        let analytical = volume_derivatives_a(duals, &kp.vertices_f64, &kp.vertex_facet_incidence)
             .expect("valid known polytope fixture");
         let eps = 1e-6;
-        let fd = volume_derivatives_a_fd(duals, eps, |a| {
-            let p = Polytope4D::from_f64(a.to_vec()).ok()?;
-            Some(volume_from_exact_incidence_f64(p.vertices(), p.incidence()))
-        });
+        let fd = volume_derivatives_a_fd(duals, eps, volume_from_dual_vertices_f64);
 
-        for k in 0..polytope.facet_count() {
+        for k in 0..kp.facet_count() {
             let err = (analytical[k] - fd[k]).norm();
             let scale = analytical[k].norm().max(fd[k].norm()).max(1e-10);
             let rel_err = err / scale;
@@ -424,11 +446,10 @@ mod tests {
     #[test]
     fn volume_derivatives_a_rejects_nonfinite_dual_vertex() {
         let kp = known_polytopes::hypercube();
-        let polytope = &kp.polytope;
-        let mut duals = polytope.dual_vertices_f64().to_vec();
+        let mut duals = kp.dual_vertices_f64.clone();
         duals[2][3] = f64::NAN;
 
-        let err = volume_derivatives_a(&duals, polytope.vertices_f64(), polytope.incidence())
+        let err = volume_derivatives_a(&duals, &kp.vertices_f64, &kp.vertex_facet_incidence)
             .expect_err("nonfinite dual coordinates should be reported explicitly");
         match err {
             F64GeometryError::NonFiniteCoordinate {
@@ -445,11 +466,10 @@ mod tests {
     #[should_panic(expected = "volume_derivatives_a requires nonzero dual_vertices[0]")]
     fn volume_derivatives_a_asserts_nonzero_dual_vertex() {
         let kp = known_polytopes::hypercube();
-        let polytope = &kp.polytope;
-        let mut duals = polytope.dual_vertices_f64().to_vec();
+        let mut duals = kp.dual_vertices_f64.clone();
         duals[0] = Vector4::zeros();
 
-        let _ = volume_derivatives_a(&duals, polytope.vertices_f64(), polytope.incidence());
+        let _ = volume_derivatives_a(&duals, &kp.vertices_f64, &kp.vertex_facet_incidence);
     }
 
     /// The flat dual-vertex solver should agree with the primitive derivative
@@ -457,12 +477,11 @@ mod tests {
     #[test]
     fn capacity_derivatives_from_kkt_result_matches_primitive() {
         let kp = known_polytopes::simplex();
-        let polytope = &kp.polytope;
-        let sigma = crate::ehz_capacity_pruned(polytope)
+        let sigma = pruned_capacity_for_fixture(kp)
             .expect("simplex should have a certified best orbit")
             .best_sigma()
             .to_vec();
-        let kkt = solve_kkt_for_dual_vertices(polytope.dual_vertices_f64(), &sigma)
+        let kkt = solve_kkt_for_dual_vertices(&kp.dual_vertices_f64, &sigma)
             .feasible()
             .expect("best simplex orbit should re-solve");
 
@@ -471,10 +490,9 @@ mod tests {
             kkt.q_corrected,
             &kkt.mu,
             &sigma,
-            polytope.dual_vertices_f64(),
+            &kp.dual_vertices_f64,
         );
-        let wrapped =
-            capacity_derivatives_a_from_kkt_result(polytope.dual_vertices_f64(), &sigma, &kkt);
+        let wrapped = capacity_derivatives_a_from_kkt_result(&kp.dual_vertices_f64, &sigma, &kkt);
 
         assert_eq!(wrapped, direct);
     }
@@ -507,23 +525,22 @@ mod tests {
     #[test]
     fn systolic_ratio_gradient_a_matches_formula() {
         let kp = known_polytopes::simplex();
-        let polytope = &kp.polytope;
-        let sigma = crate::ehz_capacity_pruned(polytope)
+        let sigma = pruned_capacity_for_fixture(kp)
             .expect("simplex should have a certified best orbit")
             .best_sigma()
             .to_vec();
-        let kkt = solve_kkt_for_dual_vertices(polytope.dual_vertices_f64(), &sigma)
+        let kkt = solve_kkt_for_dual_vertices(&kp.dual_vertices_f64, &sigma)
             .feasible()
             .expect("best simplex orbit should re-solve");
 
         let capacity = 1.0 / (2.0 * kkt.q_corrected);
-        let volume = volume_from_exact_incidence_f64(polytope.vertices(), polytope.incidence());
+        let volume = volume_from_exact_incidence_f64(&kp.vertices, &kp.vertex_facet_incidence);
         let d_capacity_da =
-            capacity_derivatives_a_from_kkt_result(polytope.dual_vertices_f64(), &sigma, &kkt);
+            capacity_derivatives_a_from_kkt_result(&kp.dual_vertices_f64, &sigma, &kkt);
         let d_volume_da = volume_derivatives_a(
-            polytope.dual_vertices_f64(),
-            polytope.vertices_f64(),
-            polytope.incidence(),
+            &kp.dual_vertices_f64,
+            &kp.vertices_f64,
+            &kp.vertex_facet_incidence,
         )
         .expect("valid known polytope fixture");
         let combined = systolic_ratio_gradient_a(capacity, volume, &d_capacity_da, &d_volume_da);
@@ -587,16 +604,15 @@ mod tests {
     #[ignore] // Calls ehz_capacity on F=8 hypercube. Fast in release, slow in debug.
     fn capacity_derivatives_a_on_hypercube() {
         let kp = known_polytopes::hypercube();
-        let polytope = &kp.polytope;
 
-        let (best_q, best_beta, best_perm, best_mu, _best_xi) = find_best_orbit(polytope);
+        let (best_q, best_beta, best_perm, best_mu, _best_xi) = find_best_orbit(kp);
 
         assert!(
             best_q > 1e-10,
             "find_best_orbit should find a valid orbit on the hypercube"
         );
 
-        let duals = polytope.dual_vertices_f64();
+        let duals = &kp.dual_vertices_f64;
         let analytical = capacity_derivatives_a(&best_beta, best_q, &best_mu, &best_perm, duals);
 
         let eps = 1e-6;
@@ -608,7 +624,7 @@ mod tests {
             "expected >= 2 non-zero capacity derivatives, got {nonzero_count}"
         );
 
-        for k in 0..polytope.facet_count() {
+        for k in 0..kp.facet_count() {
             if analytical[k].norm() < 1e-12 {
                 continue; // Facet not in orbit
             }
@@ -618,12 +634,10 @@ mod tests {
                 let mut am = duals.to_vec();
                 ap[k][d] += eps;
                 am[k][d] -= eps;
-                let pp = Polytope4D::from_f64(ap).unwrap();
-                let pm = Polytope4D::from_f64(am).unwrap();
-                let qp = solve_kkt_for_dual_vertices(pp.dual_vertices_f64(), &best_perm)
+                let qp = solve_kkt_for_dual_vertices(&ap, &best_perm)
                     .feasible()
                     .map(|r| r.q_corrected);
-                let qm = solve_kkt_for_dual_vertices(pm.dual_vertices_f64(), &best_perm)
+                let qm = solve_kkt_for_dual_vertices(&am, &best_perm)
                     .feasible()
                     .map(|r| r.q_corrected);
                 let fd_kd = match (qp, qm) {
@@ -644,12 +658,14 @@ mod tests {
         }
     }
 
-    /// Helper: find the best orbit for a polytope via library capacity + KKT re-solve.
-    fn find_best_orbit(polytope: &Polytope4D) -> (f64, Vec<f64>, Vec<usize>, Vec<f64>, f64) {
-        let ehz = crate::ehz_capacity_pruned(polytope)
+    /// Helper: find the best orbit for a fixture via flat capacity + KKT re-solve.
+    fn find_best_orbit(
+        fixture: &crate::geom::known_polytopes::KnownPolytope,
+    ) -> (f64, Vec<f64>, Vec<usize>, Vec<f64>, f64) {
+        let ehz = pruned_capacity_for_fixture(fixture)
             .expect("ehz_capacity should find an orbit on test polytopes");
         let perm = ehz.best_sigma().to_vec();
-        let kkt = solve_kkt_for_dual_vertices(polytope.dual_vertices_f64(), &perm)
+        let kkt = solve_kkt_for_dual_vertices(&fixture.dual_vertices_f64, &perm)
             .feasible()
             .expect("flat KKT solve should succeed on the best permutation");
         (kkt.q_corrected, kkt.beta, perm, kkt.mu, kkt.xi)

@@ -1,13 +1,12 @@
-//! Symplectic geometry library for convex polytopes in R^4.
+//! Symplectic geometry library for convex-polytopal data in R^4.
 //!
 //! Computes the Ekeland-Hofer-Zehnder capacity c_EHZ(K) via exhaustive
 //! enumeration of closed Reeb orbits.
 //!
 //! # Submodules
 //!
-//! - `geom` — `Polytope4D` central type, symplectic form, exact rational
-//!   vertex enumeration, polygon/Lagrangian-product constructors, named
-//!   polytopes.
+//! - `geom` — symplectic form, exact rational vertex enumeration,
+//!   polygon/Lagrangian-product constructors, and named flat polytope fixtures.
 //! - `kkt` — context-free constrained QP solvers (saddle-point and
 //!   projection variants) + exact rational fallback.
 //! - `algorithms` — EHZ capacity algorithms: `hk2017` (general, exponential)
@@ -19,7 +18,8 @@
 //!   dataset generation and acceptance sweeps.
 //! - `derivatives` — analytical ∂c/∂a and ∂vol/∂a w.r.t. dual vertices,
 //!   for gradient-based experiments.
-//! - `random` — seeded rejection sampling of random polytopes (Haar on S^3).
+//! - `random` — seeded rejection sampling of accepted random dual vertices
+//!   (Haar on S^3).
 //!
 //! # Module dependency graph
 //!
@@ -31,8 +31,8 @@
 //!
 //! `kkt` is deliberately context-free: it operates on abstract matrices
 //! (C, d, H) without knowing they come from symplectic geometry. Assembly
-//! of QP inputs from `Polytope4D` lives in `kkt::qp_assembly`, which is
-//! the one place that crosses the `geom` ↔ `kkt` boundary.
+//! of QP inputs from flat dual-vertex data lives in `kkt::qp_assembly`, which
+//! is the one place that crosses the `geom` ↔ `kkt` boundary.
 //!
 //! Mathematical proofs live in per-module `.tex` files under `formal/`.
 
@@ -51,7 +51,7 @@ mod test_lib;
 // ── Re-exports: public API surface ──
 
 // Types
-pub use geom::polytope::{ConstructionError, Polytope4D};
+pub use geom::polytope::ConstructionError;
 
 // Capacity algorithms
 pub use algorithms::billiard::{
@@ -80,145 +80,4 @@ pub use geom::test_utils;
 /// Mathematical correspondence: [def:systolic-ratio]
 pub fn systolic_ratio(capacity: f64, volume: f64) -> f64 {
     capacity * capacity / (2.0 * volume)
-}
-
-#[cfg(test)]
-fn transition_matrix_for_polytope(polytope: &Polytope4D) -> nalgebra::DMatrix<bool> {
-    algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega(
-        polytope.facet_intersection_is_nonempty(),
-        polytope.omega_signs(),
-    )
-}
-
-/// Temporary test-only pruned HK2017 helper on the shared orbit/result surface.
-///
-/// This is intentionally not public API. It keeps legacy in-crate regression
-/// tests focused while experiment and crate consumers migrate to flat
-/// candidate frontends plus explicit aggregation.
-#[cfg(test)]
-pub(crate) fn ehz_capacity_pruned(
-    polytope: &Polytope4D,
-) -> Result<OrbitSearchResult, OrbitSearchError> {
-    let dual_vertices = polytope.dual_vertices_f64();
-    let dual_vertices_exact = polytope.dual_vertices();
-    let transition_is_allowed = transition_matrix_for_polytope(polytope);
-    let (orbits, iterations) =
-        algorithms::hk2017::solve_pruned_hk2017_candidates(dual_vertices, &transition_is_allowed)?;
-    algorithms::orbit_search::aggregate_orbits_with_dual_vertices_exact(
-        dual_vertices_exact,
-        orbits,
-        iterations,
-        0.0,
-        OrbitGuaranteeMode::MinimaSafe,
-    )
-}
-
-/// Temporary test-only unpruned HK2017 helper on the shared orbit/result surface.
-///
-/// This is intentionally not public API. It keeps legacy in-crate regression
-/// tests focused while experiment and crate consumers migrate to flat
-/// candidate frontends plus explicit aggregation.
-#[cfg(test)]
-pub(crate) fn ehz_capacity_unpruned(
-    polytope: &Polytope4D,
-) -> Result<OrbitSearchResult, OrbitSearchError> {
-    let dual_vertices = polytope.dual_vertices_f64();
-    let dual_vertices_exact = polytope.dual_vertices();
-
-    let (orbits, iterations) = algorithms::hk2017::solve_unpruned_hk2017_candidates(dual_vertices)?;
-    algorithms::orbit_search::aggregate_orbits_with_dual_vertices_exact(
-        dual_vertices_exact,
-        orbits,
-        iterations,
-        0.0,
-        OrbitGuaranteeMode::MinimaSafe,
-    )
-}
-
-/// Temporary test-only pruned HK2017 helper with exact rational certified output.
-///
-/// This is intentionally not public API. It keeps legacy in-crate regression
-/// tests focused while experiment and crate consumers migrate to flat
-/// candidate frontends plus explicit aggregation.
-#[cfg(test)]
-pub(crate) fn ehz_capacity_pruned_certified(
-    polytope: &Polytope4D,
-    action_gap_exact: num_rational::BigRational,
-    mode: CertifiedOrbitSetMode,
-) -> Result<CertifiedOrbitSearchResult, OrbitSearchError> {
-    let dual_vertices = polytope.dual_vertices_f64();
-    let dual_vertices_exact = polytope.dual_vertices();
-    let transition_is_allowed = transition_matrix_for_polytope(polytope);
-    let (orbits, iterations) =
-        algorithms::hk2017::solve_pruned_hk2017_candidates(dual_vertices, &transition_is_allowed)?;
-    algorithms::orbit_search::aggregate_certified_orbits_with_dual_vertices_exact(
-        dual_vertices_exact,
-        orbits,
-        iterations,
-        action_gap_exact,
-        mode,
-    )
-}
-
-/// Temporary test-only billiard helper on the shared orbit/result surface.
-///
-/// This is intentionally not public API. It keeps legacy in-crate regression
-/// tests focused while experiment and crate consumers migrate to flat
-/// candidate frontends plus explicit aggregation.
-#[cfg(test)]
-pub(crate) fn ehz_capacity_billiard(
-    polytope: &Polytope4D,
-) -> Result<OrbitSearchResult, BilliardError> {
-    let classification = algorithms::billiard::facet_classification::classify_facets(polytope)?;
-    let dual_vertices = polytope.dual_vertices_f64();
-    let dual_vertices_exact = polytope.dual_vertices();
-    let transition_is_allowed = transition_matrix_for_polytope(polytope);
-
-    let (orbits, iterations) = algorithms::billiard::solve_billiard_candidates(
-        dual_vertices,
-        &classification.q_indices,
-        &classification.p_indices,
-        polytope.facet_intersection_is_nonempty(),
-        &transition_is_allowed,
-    )
-    .map_err(|err| match err {
-        OrbitSearchError::NoAdmissibleOrbit => {
-            unreachable!("f64-only aggregation should return a result")
-        }
-        OrbitSearchError::NumericalFailure => {
-            unreachable!("solve_sigma_stream_with_dual_vertices does not produce NumericalFailure")
-        }
-        OrbitSearchError::ExactFallbackFailure => {
-            unreachable!("solve_sigma_stream_with_dual_vertices never exact-resolves")
-        }
-        OrbitSearchError::InvalidGap => {
-            unreachable!("solve_sigma_stream_with_dual_vertices does not receive an action gap")
-        }
-    })?;
-    algorithms::orbit_search::aggregate_orbits_with_dual_vertices_exact(
-        dual_vertices_exact,
-        orbits,
-        iterations,
-        0.0,
-        OrbitGuaranteeMode::MinimaSafe,
-    )
-    .map_err(BilliardError::OrbitSearch)
-}
-
-/// Temporary test-only auto-routing capacity helper.
-///
-/// This is intentionally not public API. It keeps legacy in-crate regression
-/// tests focused while experiment and crate consumers migrate to flat
-/// candidate frontends plus explicit aggregation.
-#[cfg(test)]
-pub(crate) fn ehz_capacity(polytope: &Polytope4D) -> Result<OrbitSearchResult, OrbitSearchError> {
-    if algorithms::billiard::facet_classification::classify_facets(polytope).is_ok() {
-        return ehz_capacity_billiard(polytope).map_err(|err| match err {
-            BilliardError::OrbitSearch(err) => err,
-            BilliardError::NotLagrangianProduct { .. } | BilliardError::TooFewFacets { .. } => {
-                unreachable!("ehz_capacity only routes to billiard after successful classification")
-            }
-        });
-    }
-    ehz_capacity_pruned(polytope)
 }
