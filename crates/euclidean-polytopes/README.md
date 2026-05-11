@@ -54,33 +54,14 @@ pub fn all_points_are_extreme_exact<T: ExactScalar + 'static>(
     points: &[Vector4<T>],
 ) -> bool;
 
+pub struct PolarVerticesExact<T: ExactScalar + 'static> {
+    pub vertices: Vec<Vector4<T>>,
+    pub vertex_facet_incidence: DMatrix<bool>,
+}
+
 pub fn polar_vertices_exact<T: ExactScalar + 'static>(
     vertices: &[Vector4<T>],
-) -> (Vec<Vector4<T>>, DMatrix<bool>);
-
-pub fn polar_vertices_f64(
-    vertices: &[Vector4<f64>],
-) -> Result<PolarVerticesF64, F64GeometryError>;
-
-pub struct PolarVerticesF64 {
-    pub vertices: Vec<Vector4<f64>>,
-    pub coordinate_abs_error_bound: f64,
-    pub incidence: Vec<IncidenceF64>,
-    pub indeterminate_candidates: Vec<IndeterminatePolarCandidateF64>,
-}
-
-pub struct IncidenceF64 {
-    pub vertex_index: usize,
-    pub facet_index: usize,
-    pub signed_gap: f64,
-    pub signed_gap_abs_error_bound: f64,
-}
-
-pub struct IndeterminatePolarCandidateF64 {
-    pub tuple: [usize; 4],
-    pub vertex: Option<Vector4<f64>>,
-    pub coordinate_abs_error_bound: f64,
-}
+) -> PolarVerticesExact<T>;
 
 pub struct TwoFace {
     pub facets: [usize; 2],
@@ -107,11 +88,6 @@ pub fn facet_intersection_is_nonempty_from_vertex_facet_incidence(
     vertex_facet_incidence: &DMatrix<bool>,
 ) -> DMatrix<bool>;
 
-pub fn volume_f64(
-    dual_vertices: &[Vector4<f64>],
-    vertices: &[Vector4<f64>],
-) -> Result<VolumeF64, F64GeometryError>;
-
 pub fn volume_from_incidence_f64(
     vertices: &[Vector4<f64>],
     incidence: &DMatrix<bool>,
@@ -133,15 +109,6 @@ pub fn facet_volume_and_centroid_from_incidence_f64(
     incidence: &DMatrix<bool>,
     facet_index: usize,
 ) -> Result<(f64, Vector4<f64>), F64GeometryError>;
-
-pub enum VolumeF64 {
-    Decided {
-        volume: f64,
-    },
-    Indeterminate {
-        indeterminate_incidence: Vec<IncidenceF64>,
-    },
-}
 
 pub enum F64GeometryError {
     NonFiniteCoordinate {
@@ -170,21 +137,14 @@ construct a polytope, validate boundedness, or test non-redundancy.
 `{ y in R^4 : <v_i, y> <= 1 }`. It checks and panics on the required contract
 `0 in int conv(vertices)`. The input does not have to be non-redundant:
 redundant points only add redundant inequalities. Returned vertices are
-deduplicated by exact equality. It returns `(vertices, vertex_facet_incidence)`;
-rows of the incidence matrix are returned polar vertices and columns are input
-facets. `polar_vertices_f64` remains a diagnostic struct because its
-indeterminate-candidate payload needs named fields.
+deduplicated by exact equality. It returns `PolarVerticesExact { vertices,
+vertex_facet_incidence }`; rows of the incidence matrix are returned polar
+vertices and columns are input facets.
 
 `all_points_are_extreme_exact(points)` checks the stronger non-redundancy
 contract for a V-representation: every listed point must be an extreme point of
 `conv(points)`. It handles lower-dimensional point sets in ambient `R^4`; exact
 duplicate points return `false`.
-
-The `f64` path validates finite coordinates and reports partial vertices plus
-`indeterminate_candidates`. An indeterminate candidate has `vertex: None` when
-the 4-tuple was singular, higher-dimensional, or unsolved in `f64`; it has
-`Some(vertex)` when `f64` found an approximate candidate but membership or
-duplicate classification was too close to decide.
 
 The incidence-only face helpers accept a plain `DMatrix<bool>` with rows as
 vertices and columns as facets. `vertex_facets_from_vertex_facet_incidence`
@@ -199,24 +159,13 @@ means facets `i` and `k` share at least one vertex. The temporary
 `symplectic::geom::skeleton::Skeleton` wrapper still performs f64 polygon
 ordering when converting these `TwoFace` values to its existing `Ridge` type.
 
-`volume_f64(dual_vertices, vertices)` computes full-dimensional Euclidean
-volume for `K = { x in R^4 : <a_i, x> <= 1 }`. `dual_vertices` are normalized
-facet normals, and `vertices` are the primal vertices of the same polytope. The
-function uses dual vertices only to recover vertex-facet incidence and uses
-primal vertices for determinant geometry. It validates finite coordinates,
-returns `VolumeF64::Indeterminate` when any incidence relation is too close to
-decide in `f64`, and panics when a provided vertex clearly violates a provided
-halfspace. The decided payload intentionally has no `volume_abs_error_bound`
-yet; this slice bounds incidence decisions, not the full determinant sum.
-
 `volume_from_incidence_f64(vertices, incidence)` computes the same ordinary
 full-dimensional `R^4` volume when the caller already has reliable
 vertex-facet incidence. `incidence[(v, f)]` must mean that `vertices[v]` lies
 on facet `f` of a normalized full-dimensional polytope containing the origin.
 The helper validates finite vertex coordinates. Incidence row/column shape and
 full-dimensional decomposition assumptions are caller contracts and panic on
-violation. This path is preferred over `volume_f64` for exact-incidence callers,
-because it does not recompute combinatorics from f64 signed gaps.
+violation. It does not recompute combinatorics from f64 signed gaps.
 
 `volume_from_incidence_exact(vertices, incidence)` computes the same
 full-dimensional `R^4` volume over `T: ExactScalar`. It uses only the vertices
@@ -252,16 +201,13 @@ approximate and exact callers:
 Avoid a generic result wrapper until repeated call sites prove it helps. A tiny
 global `True`, `False`, `Indeterminate` enum may be useful for bare predicates.
 The default should still be operation-specific diagnostic results with semantic
-field names: `candidate_sets_that_may_contain_zero`, `vertices`,
-`coordinate_abs_error_bound`, `indeterminate_candidates`.
+field names when such a public diagnostic API has a real caller.
 
 For example, vertex enumeration from dual vertices can test most 4-tuples of
-hyperplanes cheaply with `f64`. Near-singular tuples, uncertain duplicate
-intersections, and uncertain membership in the other halfspaces should become
-indeterminate in the `f64` API. The exact API may use the same fast path, then
-resolve those tuples exactly: the intersection is empty/non-unique and not a
-vertex, or it is one point whose halfspace inequalities and duplicate status
-are decided exactly.
+hyperplanes cheaply with a private or experiment-owned `f64` filter. The exact
+API may use such a fast path only if every uncertain tuple is resolved exactly:
+the intersection is empty/non-unique and not a vertex, or it is one point whose
+halfspace inequalities and duplicate status are decided exactly.
 
 ## Future API Targets
 
@@ -286,16 +232,15 @@ to correspond to a non-redundant polar facet. The same function computes
 vertices from dual vertices, because polarity is involutive under the
 `0 in int conv` contract.
 
-The full-dimensional f64 volume helpers keep incidence recovery separate from
-determinant geometry. `volume_f64` uses `dual_vertices` only to recover facet
-incidence (`<a_i, v> = 1`) and uses `vertices` for Euclidean geometry.
-`volume_from_incidence_f64` skips that recovery step when callers already have
-known incidence.
+The full-dimensional f64 volume helper takes known incidence. Callers that
+recover incidence from approximate signed gaps should own that diagnostic
+policy locally; `volume_from_incidence_f64` uses only `vertices` for Euclidean
+determinant geometry.
 
 Exact known incidence uses a plain `DMatrix<bool>` in the current volume
 helper. Approximate incidence should not be forced into a boolean matrix when
 each relation can be true, false, or indeterminate with diagnostics. Prefer a
-flat `Vec<IncidenceF64>`-style relation list if it needs values such as
+flat relation list if it needs values such as
 `signed_gap`, `signed_gap_abs_error_bound`, or candidate indices.
 
 Lower-dimensional volume is a design target because the full-dimensional volume
@@ -325,8 +270,7 @@ Use `Option` only when `None` versus `Some(_)` exactly matches the mathematical
 distinction, such as an empty solution set versus an affine solution space with
 a marked solution. Use tuples when each position is obvious at the call site.
 Define a local flat `struct` when output variables need names, especially for
-multi-output computations like `vertices`, `coordinate_abs_error_bound`, and
-`indeterminate_candidates`.
+multi-output computations like `vertices` and `vertex_facet_incidence`.
 
 Exact combinatorial predicates should use `T: ExactScalar` and return `bool`.
 They may call the corresponding `f64` diagnostic function first and, when it

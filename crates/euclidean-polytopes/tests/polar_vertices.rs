@@ -1,10 +1,8 @@
 use euclidean_polytopes::{
-    origin_in_interior_of_conv_exact, polar_vertices_exact, polar_vertices_f64, F64GeometryError,
-    PolarVerticesF64,
+    origin_in_interior_of_conv_exact, polar_vertices_exact, PolarVerticesExact,
 };
 use nalgebra::Vector4;
 use num_rational::BigRational;
-use num_traits::ToPrimitive;
 use proptest::prelude::*;
 
 type Q = BigRational;
@@ -24,10 +22,6 @@ fn vq_frac(entries: [(i64, i64); 4]) -> Vector4<Q> {
         Q::new(entries[2].0.into(), entries[2].1.into()),
         Q::new(entries[3].0.into(), entries[3].1.into()),
     )
-}
-
-fn vf(entries: [f64; 4]) -> Vector4<f64> {
-    Vector4::new(entries[0], entries[1], entries[2], entries[3])
 }
 
 fn simplex_vertices_exact() -> Vec<Vector4<Q>> {
@@ -132,7 +126,10 @@ fn dot_q(left: &Vector4<Q>, right: &Vector4<Q>) -> Q {
 }
 
 fn assert_exact_polar_soundness(points: &[Vector4<Q>]) {
-    let (vertices, vertex_facet_incidence) = polar_vertices_exact(points);
+    let PolarVerticesExact {
+        vertices,
+        vertex_facet_incidence,
+    } = polar_vertices_exact(points);
     assert_eq!(vertex_facet_incidence.nrows(), vertices.len());
     assert_eq!(vertex_facet_incidence.ncols(), points.len());
 
@@ -157,55 +154,13 @@ fn assert_exact_polarity_roundtrip(
     points: &[Vector4<Q>],
     expected_extreme_points: Vec<Vector4<Q>>,
 ) {
-    let (vertices, _) = polar_vertices_exact(points);
-    let (double_polar_vertices, _) = polar_vertices_exact(&vertices);
+    let PolarVerticesExact { vertices, .. } = polar_vertices_exact(points);
+    let PolarVerticesExact {
+        vertices: double_polar_vertices,
+        ..
+    } = polar_vertices_exact(&vertices);
 
     assert_exact_set_eq(double_polar_vertices, expected_extreme_points);
-}
-
-fn exact_points_to_f64(points: &[Vector4<Q>]) -> Vec<Vector4<f64>> {
-    points
-        .iter()
-        .map(|point| {
-            Vector4::new(
-                point[0].to_f64().unwrap(),
-                point[1].to_f64().unwrap(),
-                point[2].to_f64().unwrap(),
-                point[3].to_f64().unwrap(),
-            )
-        })
-        .collect()
-}
-
-fn assert_f64_set_close(actual: &[Vector4<f64>], expected: &[Vector4<f64>], tolerance: f64) {
-    assert_eq!(
-        actual.len(),
-        expected.len(),
-        "actual vertices: {actual:?}; expected vertices: {expected:?}"
-    );
-
-    let mut matched = vec![false; actual.len()];
-    for expected_vertex in expected {
-        let Some(actual_index) = actual
-            .iter()
-            .enumerate()
-            .position(|(index, actual_vertex)| {
-                !matched[index]
-                    && max_abs_coordinate_difference(actual_vertex, expected_vertex) <= tolerance
-            })
-        else {
-            panic!(
-                "no f64 vertex within {tolerance} of {expected_vertex:?}; actual vertices: {actual:?}"
-            );
-        };
-        matched[actual_index] = true;
-    }
-}
-
-fn max_abs_coordinate_difference(left: &Vector4<f64>, right: &Vector4<f64>) -> f64 {
-    (0..4)
-        .map(|coordinate| (left[coordinate] - right[coordinate]).abs())
-        .fold(0.0, f64::max)
 }
 
 #[test]
@@ -226,7 +181,10 @@ fn origin_in_interior_exact_detects_full_dimensional_positive_span() {
 fn simplex_polar_vertices_are_exact_set() {
     let primal = simplex_vertices_exact();
 
-    let (vertices, vertex_facet_incidence) = polar_vertices_exact(&primal);
+    let PolarVerticesExact {
+        vertices,
+        vertex_facet_incidence,
+    } = polar_vertices_exact(&primal);
 
     assert_eq!(vertex_facet_incidence.nrows(), 5);
     assert_eq!(vertex_facet_incidence.ncols(), 5);
@@ -244,14 +202,14 @@ fn simplex_polar_vertices_are_exact_set() {
 
 #[test]
 fn cube_polar_vertices_are_crosspolytope() {
-    let (vertices, _) = polar_vertices_exact(&cube_vertices_exact());
+    let PolarVerticesExact { vertices, .. } = polar_vertices_exact(&cube_vertices_exact());
 
     assert_exact_set_eq(vertices, crosspolytope_vertices_exact());
 }
 
 #[test]
 fn crosspolytope_polar_vertices_are_cube() {
-    let (vertices, _) = polar_vertices_exact(&crosspolytope_vertices_exact());
+    let PolarVerticesExact { vertices, .. } = polar_vertices_exact(&crosspolytope_vertices_exact());
 
     assert_exact_set_eq(vertices, cube_vertices_exact());
 }
@@ -262,8 +220,14 @@ fn redundant_input_point_does_not_change_exact_polar_vertices() {
     let mut redundant = base.clone();
     redundant.push(vq_frac([(1, 2), (0, 1), (0, 1), (0, 1)]));
 
-    let (base_vertices, _) = polar_vertices_exact(&base);
-    let (redundant_vertices, _) = polar_vertices_exact(&redundant);
+    let PolarVerticesExact {
+        vertices: base_vertices,
+        ..
+    } = polar_vertices_exact(&base);
+    let PolarVerticesExact {
+        vertices: redundant_vertices,
+        ..
+    } = polar_vertices_exact(&redundant);
 
     assert_exact_set_eq(redundant_vertices, base_vertices);
 }
@@ -283,7 +247,7 @@ fn polar_vertices_exact_panics_when_origin_is_not_interior() {
 
 #[test]
 fn polar_vertices_exact_deduplicates_non_simple_vertices() {
-    let (vertices, _) = polar_vertices_exact(&cube_vertices_exact());
+    let PolarVerticesExact { vertices, .. } = polar_vertices_exact(&cube_vertices_exact());
 
     assert_eq!(vertices.len(), 8);
 }
@@ -322,175 +286,6 @@ fn exact_polarity_roundtrip_returns_named_fixture_vertices() {
     ] {
         assert_exact_polarity_roundtrip(&points, points.clone());
     }
-}
-
-/// Proposition: for exact fixtures whose f64 coordinates are well-conditioned
-/// and whose active/incidence gaps are stable in `f64`, `polar_vertices_f64`
-/// returns no indeterminate candidates and agrees with `polar_vertices_exact`
-/// after exact-to-f64 conversion.
-///
-/// Operationalization: check the centered simplex fixture, where each polar
-/// vertex is simple and every inactive signed gap is integral. Cases: 1
-/// deterministic fixture. Tolerance: `1e-10` max coordinate error.
-#[test]
-fn polar_vertices_f64_agrees_with_exact_simplex_without_indeterminate_candidates() {
-    let primal = simplex_vertices_exact();
-    let (exact_vertices, _) = polar_vertices_exact(&primal);
-    let expected = exact_points_to_f64(&exact_vertices);
-
-    let PolarVerticesF64 {
-        vertices,
-        indeterminate_candidates,
-        ..
-    } = polar_vertices_f64(&exact_points_to_f64(&primal)).expect("finite f64 input");
-
-    assert!(
-        indeterminate_candidates.is_empty(),
-        "simplex fixture should be decided: {indeterminate_candidates:?}"
-    );
-    assert_f64_set_close(&vertices, &expected, 1.0e-10);
-}
-
-/// Proposition: for exact fixtures whose f64 coordinates are well-conditioned
-/// and whose accepted candidate gaps are stable in `f64`, every decided
-/// `polar_vertices_f64` vertex agrees with `polar_vertices_exact` after
-/// conversion.
-///
-/// Operationalization: check the crosspolytope fixture. This fixture has
-/// stable simple polar vertices but also singular 4-tuples; the current
-/// diagnostic API reports those singular tuples as indeterminate instead of
-/// silently skipping them. Cases: 1 deterministic fixture. Tolerance: `1e-10`
-/// max coordinate error.
-#[test]
-fn polar_vertices_f64_decided_crosspolytope_vertices_agree_with_exact() {
-    let primal = crosspolytope_vertices_exact();
-    let (exact_vertices, _) = polar_vertices_exact(&primal);
-    let expected = exact_points_to_f64(&exact_vertices);
-
-    let PolarVerticesF64 { vertices, .. } =
-        polar_vertices_f64(&exact_points_to_f64(&primal)).expect("finite f64 input");
-
-    assert_f64_set_close(&vertices, &expected, 1.0e-10);
-}
-
-#[test]
-fn polar_vertices_f64_rejects_non_finite_input() {
-    let points = vec![vf([1.0, 0.0, 0.0, 0.0]), vf([f64::NAN, 1.0, 0.0, 0.0])];
-
-    let error = polar_vertices_f64(&points).expect_err("non-finite coordinate");
-
-    assert!(
-        matches!(
-            error,
-            F64GeometryError::NonFiniteCoordinate {
-                vector_role: "vertices",
-                vector_index: 1,
-                coordinate_index: 0,
-                value,
-            } if value.is_nan()
-        ),
-        "unexpected error: {error:?}"
-    );
-}
-
-#[test]
-fn polar_vertices_f64_reports_near_boundary_tuple_as_indeterminate() {
-    let mut points: Vec<Vector4<f64>> = crosspolytope_vertices_exact()
-        .into_iter()
-        .map(|point| {
-            Vector4::new(
-                point[0].to_f64().unwrap(),
-                point[1].to_f64().unwrap(),
-                point[2].to_f64().unwrap(),
-                point[3].to_f64().unwrap(),
-            )
-        })
-        .collect();
-    points.push(vf([1.0 - 1.0e-14, 0.0, 0.0, 0.0]));
-
-    let PolarVerticesF64 {
-        indeterminate_candidates,
-        ..
-    } = polar_vertices_f64(&points).expect("finite f64 input");
-
-    assert!(
-        indeterminate_candidates
-            .iter()
-            .any(|candidate| candidate.vertex.is_some()),
-        "near-boundary halfspace membership must return the approximate candidate"
-    );
-}
-
-#[test]
-fn polar_vertices_f64_incidence_reports_local_signed_gap_diagnostics() {
-    let simplex = vec![
-        vq([1, 0, 0, 0]),
-        vq([0, 1, 0, 0]),
-        vq([0, 0, 1, 0]),
-        vq([0, 0, 0, 1]),
-        vq([-1, -1, -1, -1]),
-    ];
-    let points: Vec<Vector4<f64>> = simplex
-        .into_iter()
-        .map(|point| {
-            Vector4::new(
-                point[0].to_f64().unwrap(),
-                point[1].to_f64().unwrap(),
-                point[2].to_f64().unwrap(),
-                point[3].to_f64().unwrap(),
-            )
-        })
-        .collect();
-
-    let PolarVerticesF64 {
-        vertices,
-        incidence,
-        ..
-    } = polar_vertices_f64(&points).expect("finite f64 input");
-
-    assert!(
-        !incidence.is_empty(),
-        "simplex polar should have accepted incidences"
-    );
-    for relation in incidence {
-        let facet = &points[relation.facet_index];
-        let vertex = &vertices[relation.vertex_index];
-
-        assert_eq!(relation.signed_gap, 1.0 - facet.dot(vertex));
-        assert_eq!(
-            relation.signed_gap_abs_error_bound,
-            expected_signed_gap_abs_error_bound(facet, vertex)
-        );
-    }
-}
-
-#[test]
-fn polar_vertices_f64_reports_singular_tuple_without_candidate_vertex() {
-    let points = vec![
-        vf([1.0, 0.0, 0.0, 0.0]),
-        vf([0.0, 1.0, 0.0, 0.0]),
-        vf([0.0, 0.0, 1.0, 0.0]),
-        vf([0.0, 0.0, 2.0, 0.0]),
-    ];
-
-    let PolarVerticesF64 {
-        indeterminate_candidates,
-        ..
-    } = polar_vertices_f64(&points).expect("finite f64 input");
-
-    assert!(
-        indeterminate_candidates
-            .iter()
-            .any(|candidate| candidate.vertex.is_none()),
-        "singular tuple must not invent an approximate candidate"
-    );
-}
-
-fn expected_signed_gap_abs_error_bound(facet: &Vector4<f64>, candidate: &Vector4<f64>) -> f64 {
-    const EPS_MACH: f64 = f64::EPSILON / 2.0;
-    const ERROR_SCALE: f64 = 1.0e4;
-
-    ERROR_SCALE * EPS_MACH * (facet.norm() * candidate.norm() + facet.dot(candidate).abs() + 1.0)
 }
 
 proptest! {

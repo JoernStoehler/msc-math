@@ -1,9 +1,9 @@
 //! Euclidean convex-polytope helpers for thesis Rust code.
 //!
 //! The current public surface starts with exact point-set predicates and exact
-//! polar vertex enumeration. Approximate `f64` polar enumeration and volume are
-//! diagnostic: they return operation-specific indeterminate payloads instead of
-//! deciding near a floating-point boundary.
+//! polar vertex enumeration. Approximate `f64` helpers are retained only for
+//! known-incidence volume and facet-volume computations used by operational
+//! callers.
 //!
 //! Scope boundary: this crate is for ordinary Euclidean convex geometry in
 //! ambient `R^4`, including lower-dimensional polytopes in affine subspaces of
@@ -24,13 +24,10 @@ pub use faces::{
     facet_vertices_from_vertex_facet_incidence, two_faces_from_vertex_facet_incidence,
     vertex_facets_from_vertex_facet_incidence, TwoFace,
 };
-pub use polar::{
-    polar_vertices_exact, polar_vertices_f64, IncidenceF64, IndeterminatePolarCandidateF64,
-    PolarVerticesF64,
-};
+pub use polar::{polar_vertices_exact, PolarVerticesExact};
 pub use predicates::{all_points_are_extreme_exact, origin_in_interior_of_conv_exact};
 pub use random::sample_random_dual_vertices_f64;
 pub use volume::{
-    facet_volume_and_centroid_from_incidence_f64, facet_volume_from_incidence_f64, volume_f64,
-    volume_from_incidence_exact, volume_from_incidence_f64, VolumeF64,
+    facet_volume_and_centroid_from_incidence_f64, facet_volume_from_incidence_f64,
+    volume_from_incidence_exact, volume_from_incidence_f64,
 };
