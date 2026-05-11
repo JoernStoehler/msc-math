@@ -4,10 +4,7 @@
 
 use super::*;
 use crate::algorithms::orbit_search::solve_sigma_stream_with_dual_vertices;
-use crate::algorithms::{
-    aggregate_orbits_with_dual_vertices_exact, OrbitGuaranteeMode, OrbitSearchError,
-    OrbitSolveBackend,
-};
+use crate::algorithms::{aggregate_orbits_with_dual_vertices_exact, OrbitGuaranteeMode};
 use crate::geom::known_polytopes;
 use crate::kkt::saddle_point_solver::solve_kkt_for_dual_vertices;
 use crate::{ehz_capacity_pruned, ehz_capacity_unpruned};
@@ -102,14 +99,13 @@ fn simplex_orbit_aggregation() {
     let kp = known_polytopes::simplex();
     let dual_vertices = kp.polytope.dual_vertices_f64();
     let dual_vertices_exact = kp.polytope.dual_vertices();
-    let (orbits, iterations) =
-        solve_sigma_stream_with_dual_vertices(dual_vertices, OrbitSolveBackend::SaddlePoint, |visit| {
+    let (orbits, iterations) = solve_sigma_stream_with_dual_vertices(dual_vertices, |visit| {
             let transition_is_allowed = crate::algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega(
                 kp.polytope.facet_intersection_is_nonempty(),
                 kp.polytope.omega_signs(),
             );
             for_each_sigma_pruned_by_transition(&transition_is_allowed, visit)
-        })
+    })
         .expect("sigma solve stream should succeed on simplex");
     let result = aggregate_orbits_with_dual_vertices_exact(
         dual_vertices_exact,
@@ -135,25 +131,6 @@ fn simplex_orbit_aggregation() {
             .all(|orbit| orbit.action_lower <= result.min_action_upper),
         "gap=0 collector should only retain orbits that can still hit the minimum upper bound"
     );
-}
-
-/// Unsupported backends should fail explicitly rather than silently degrading.
-#[test]
-fn simplex_projected_backend_unsupported() {
-    let kp = known_polytopes::simplex();
-    let err = solve_sigma_stream_with_dual_vertices(
-        kp.polytope.dual_vertices_f64(),
-        OrbitSolveBackend::Projected,
-        |visit| {
-        let transition_is_allowed = crate::algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega(
-            kp.polytope.facet_intersection_is_nonempty(),
-            kp.polytope.omega_signs(),
-        );
-        for_each_sigma_pruned_by_transition(&transition_is_allowed, visit)
-        },
-    )
-    .expect_err("projected backend is not wired into the shared collector yet");
-    assert_eq!(err, OrbitSearchError::UnsupportedBackend);
 }
 
 /// Verify the known minimizing orbit of the 4D crosspolytope gives action = 4.0.

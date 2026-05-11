@@ -37,7 +37,6 @@
 //! Mathematical proofs live in per-module `.tex` files under `formal/`.
 
 pub mod algorithms;
-mod capacity_api;
 pub mod constants;
 pub mod database;
 pub mod dataset;
@@ -52,16 +51,20 @@ mod test_lib;
 // ── Re-exports: public API surface ──
 
 // Types
-pub use capacity_api::{CapacityError, F64CapacityResult, F64Interval, F64Orbit, PredicateVerdict};
 pub use geom::polytope::{ConstructionError, Polytope4D};
 pub use geom::skeleton::Skeleton;
 
 // Capacity algorithms
-pub use algorithms::billiard::BilliardError;
+pub use algorithms::billiard::{
+    facet_classification::classify_facets_from_dual_vertices, solve_billiard_candidates,
+    BilliardError,
+};
+pub use algorithms::hk2017::{solve_pruned_hk2017_candidates, solve_unpruned_hk2017_candidates};
 pub use algorithms::{
-    CertifiedOrbitKktData, CertifiedOrbitSearchResult, CertifiedOrbitSetMode, GeometricOrbitError,
-    OrbitAdmissibility, OrbitGuaranteeMode, OrbitKktData, OrbitSearchError, OrbitSearchResult,
-    OrbitSolveBackend, OrbitSolveError,
+    aggregate_certified_orbits_with_dual_vertices_exact, aggregate_orbits_with_dual_vertices_exact,
+    solve_orbit_sigma_saddle_point, CertifiedOrbitKktData, CertifiedOrbitSearchResult,
+    CertifiedOrbitSetMode, GeometricOrbitError, OrbitAdmissibility, OrbitGuaranteeMode,
+    OrbitKktData, OrbitSearchError, OrbitSearchResult, OrbitSolveError,
 };
 
 // Geometry utility functions
@@ -73,9 +76,6 @@ pub use geom::symplectic_form::omega0;
 pub use geom::known_polytopes;
 pub use geom::test_utils;
 
-// Capacity API
-pub use capacity_api::capacity_hk2017_unpruned_f64;
-
 /// Compute the systolic ratio `sys = capacity^2 / (2 * volume)`.
 ///
 /// Mathematical correspondence: [def:systolic-ratio]
@@ -83,22 +83,11 @@ pub fn systolic_ratio(capacity: f64, volume: f64) -> f64 {
     capacity * capacity / (2.0 * volume)
 }
 
-fn solve_pruned_hk2017_candidates(
-    polytope: &Polytope4D,
-) -> Result<(Vec<OrbitKktData>, u64), OrbitSearchError> {
-    let dual_vertices = polytope.dual_vertices_f64();
-    let transition_is_allowed =
-        algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega(
-            polytope.facet_intersection_is_nonempty(),
-            polytope.omega_signs(),
-        );
-
-    algorithms::orbit_search::solve_sigma_stream_with_dual_vertices(
-        dual_vertices,
-        OrbitSolveBackend::SaddlePoint,
-        |visit| {
-            algorithms::hk2017::for_each_sigma_pruned_by_transition(&transition_is_allowed, visit)
-        },
+#[cfg(test)]
+fn transition_matrix_for_polytope(polytope: &Polytope4D) -> nalgebra::DMatrix<bool> {
+    algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega(
+        polytope.facet_intersection_is_nonempty(),
+        polytope.omega_signs(),
     )
 }
 
@@ -107,9 +96,15 @@ fn solve_pruned_hk2017_candidates(
 /// This root convenience wrapper uses the saddle-point backend and `MinimaSafe`
 /// aggregation: f64-indeterminate candidates in the minimum-action window are
 /// resolved by exact rational KKT fallback before the result is returned.
-pub fn ehz_capacity_pruned(polytope: &Polytope4D) -> Result<OrbitSearchResult, OrbitSearchError> {
+#[cfg(test)]
+pub(crate) fn ehz_capacity_pruned(
+    polytope: &Polytope4D,
+) -> Result<OrbitSearchResult, OrbitSearchError> {
+    let dual_vertices = polytope.dual_vertices_f64();
     let dual_vertices_exact = polytope.dual_vertices();
-    let (orbits, iterations) = solve_pruned_hk2017_candidates(polytope)?;
+    let transition_is_allowed = transition_matrix_for_polytope(polytope);
+    let (orbits, iterations) =
+        algorithms::hk2017::solve_pruned_hk2017_candidates(dual_vertices, &transition_is_allowed)?;
     algorithms::orbit_search::aggregate_orbits_with_dual_vertices_exact(
         dual_vertices_exact,
         orbits,
@@ -124,15 +119,14 @@ pub fn ehz_capacity_pruned(polytope: &Polytope4D) -> Result<OrbitSearchResult, O
 /// This root convenience wrapper uses the saddle-point backend and `MinimaSafe`
 /// aggregation: f64-indeterminate candidates in the minimum-action window are
 /// resolved by exact rational KKT fallback before the result is returned.
-pub fn ehz_capacity_unpruned(polytope: &Polytope4D) -> Result<OrbitSearchResult, OrbitSearchError> {
+#[cfg(test)]
+pub(crate) fn ehz_capacity_unpruned(
+    polytope: &Polytope4D,
+) -> Result<OrbitSearchResult, OrbitSearchError> {
     let dual_vertices = polytope.dual_vertices_f64();
     let dual_vertices_exact = polytope.dual_vertices();
 
-    let (orbits, iterations) = algorithms::orbit_search::solve_sigma_stream_with_dual_vertices(
-        dual_vertices,
-        OrbitSolveBackend::SaddlePoint,
-        |visit| algorithms::hk2017::for_each_sigma_unpruned_facet_count(dual_vertices.len(), visit),
-    )?;
+    let (orbits, iterations) = algorithms::hk2017::solve_unpruned_hk2017_candidates(dual_vertices)?;
     algorithms::orbit_search::aggregate_orbits_with_dual_vertices_exact(
         dual_vertices_exact,
         orbits,
@@ -146,13 +140,17 @@ pub fn ehz_capacity_unpruned(polytope: &Polytope4D) -> Result<OrbitSearchResult,
 ///
 /// The search still uses the saddle-point f64 path and HK2017 pruning. The
 /// result is certified by exact rational KKT fallback according to `mode`.
-pub fn ehz_capacity_pruned_certified(
+#[cfg(test)]
+pub(crate) fn ehz_capacity_pruned_certified(
     polytope: &Polytope4D,
     action_gap_exact: num_rational::BigRational,
     mode: CertifiedOrbitSetMode,
 ) -> Result<CertifiedOrbitSearchResult, OrbitSearchError> {
+    let dual_vertices = polytope.dual_vertices_f64();
     let dual_vertices_exact = polytope.dual_vertices();
-    let (orbits, iterations) = solve_pruned_hk2017_candidates(polytope)?;
+    let transition_is_allowed = transition_matrix_for_polytope(polytope);
+    let (orbits, iterations) =
+        algorithms::hk2017::solve_pruned_hk2017_candidates(dual_vertices, &transition_is_allowed)?;
     algorithms::orbit_search::aggregate_certified_orbits_with_dual_vertices_exact(
         dual_vertices_exact,
         orbits,
@@ -167,23 +165,23 @@ pub fn ehz_capacity_pruned_certified(
 /// This root convenience wrapper first checks the Lagrangian-product facet
 /// classification, then uses the saddle-point backend and `MinimaSafe`
 /// aggregation.
-pub fn ehz_capacity_billiard(polytope: &Polytope4D) -> Result<OrbitSearchResult, BilliardError> {
-    algorithms::billiard::facet_classification::classify_facets(polytope)?;
+#[cfg(test)]
+pub(crate) fn ehz_capacity_billiard(
+    polytope: &Polytope4D,
+) -> Result<OrbitSearchResult, BilliardError> {
+    let classification = algorithms::billiard::facet_classification::classify_facets(polytope)?;
     let dual_vertices = polytope.dual_vertices_f64();
     let dual_vertices_exact = polytope.dual_vertices();
+    let transition_is_allowed = transition_matrix_for_polytope(polytope);
 
-    let (orbits, iterations) = algorithms::orbit_search::solve_sigma_stream_with_dual_vertices(
+    let (orbits, iterations) = algorithms::billiard::solve_billiard_candidates(
         dual_vertices,
-        OrbitSolveBackend::SaddlePoint,
-        |visit| {
-            algorithms::billiard::for_each_sigma(polytope, visit)
-                .expect("classify_facets already succeeded")
-        },
+        &classification.q_indices,
+        &classification.p_indices,
+        polytope.facet_intersection_is_nonempty(),
+        &transition_is_allowed,
     )
     .map_err(|err| match err {
-        OrbitSearchError::UnsupportedBackend => {
-            unreachable!("router hardcodes saddle-point backend")
-        }
         OrbitSearchError::NoAdmissibleOrbit => {
             unreachable!("f64-only aggregation should return a result")
         }
@@ -215,7 +213,8 @@ pub fn ehz_capacity_billiard(polytope: &Polytope4D) -> Result<OrbitSearchResult,
 /// This is a root convenience wrapper for ordinary experiment code. It returns
 /// the same `MinimaSafe` `OrbitSearchResult` contract as the selected
 /// underlying wrapper.
-pub fn ehz_capacity(polytope: &Polytope4D) -> Result<OrbitSearchResult, OrbitSearchError> {
+#[cfg(test)]
+pub(crate) fn ehz_capacity(polytope: &Polytope4D) -> Result<OrbitSearchResult, OrbitSearchError> {
     if algorithms::billiard::facet_classification::classify_facets(polytope).is_ok() {
         return ehz_capacity_billiard(polytope).map_err(|err| match err {
             BilliardError::OrbitSearch(err) => err,
