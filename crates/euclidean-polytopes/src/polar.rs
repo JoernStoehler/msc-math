@@ -1,5 +1,7 @@
 use algebraic_numbers::ExactScalar;
 use nalgebra::{DMatrix, Vector4};
+use std::time::Instant;
+use tracing::{info, info_span};
 
 use crate::linalg::{combinations4, dot4_exact, solve4_exact};
 use crate::predicates::origin_in_interior_of_conv_exact;
@@ -22,51 +24,116 @@ pub struct PolarVerticesExact<T: ExactScalar + 'static> {
 pub fn polar_vertices_exact<T: ExactScalar + 'static>(
     vertices: &[Vector4<T>],
 ) -> PolarVerticesExact<T> {
+    let span = info_span!("polar_vertices_exact", input_points = vertices.len());
+    let _span_guard = span.enter();
+
+    let validation_start = Instant::now();
+    let origin_is_interior = origin_in_interior_of_conv_exact(vertices);
+    let validation_ms = ms(validation_start);
     assert!(
-        origin_in_interior_of_conv_exact(vertices),
+        origin_is_interior,
         "polar_vertices_exact requires 0 in int conv(vertices)"
     );
 
     let one = T::one();
     let rhs = Vector4::new(one.clone(), one.clone(), one.clone(), one.clone());
     let vertices_f64 = f64_prefilter_vertices(vertices);
+    let tuples = combinations4(vertices.len());
+    let candidate_4sets = tuples.len();
     let mut polar_vertices = Vec::new();
 
-    for tuple in combinations4(vertices.len()) {
+    let mut f64_prefilter_rejected = 0usize;
+    let mut exact_solve_attempts = 0usize;
+    let mut singular_exact_solves = 0usize;
+    let mut exact_feasibility_checks = 0usize;
+    let mut feasible_candidates = 0usize;
+    let mut duplicate_exact_comparisons = 0usize;
+    let mut duplicate_candidates = 0usize;
+
+    let enumeration_start = Instant::now();
+    for tuple in tuples {
         if let Some(vertices_f64) = &vertices_f64 {
             if f64_prefilter_rejects(vertices_f64, &tuple) {
+                f64_prefilter_rejected += 1;
                 continue;
             }
         }
 
+        exact_solve_attempts += 1;
         let rows = tuple.map(|idx| vertices[idx].clone());
         let Some(candidate) = solve4_exact(&rows, &rhs) else {
+            singular_exact_solves += 1;
             continue;
         };
 
-        if vertices
-            .iter()
-            .all(|vertex| dot4_exact(vertex, &candidate) <= one)
-            && !polar_vertices.iter().any(|known| known == &candidate)
-        {
+        let mut is_feasible = true;
+        for vertex in vertices {
+            exact_feasibility_checks += 1;
+            if dot4_exact(vertex, &candidate) > one {
+                is_feasible = false;
+                break;
+            }
+        }
+        if !is_feasible {
+            continue;
+        }
+        feasible_candidates += 1;
+
+        let mut is_duplicate = false;
+        for known in &polar_vertices {
+            duplicate_exact_comparisons += 1;
+            if known == &candidate {
+                is_duplicate = true;
+                break;
+            }
+        }
+        if is_duplicate {
+            duplicate_candidates += 1;
+        } else {
             polar_vertices.push(candidate);
         }
     }
+    let enumeration_ms = ms(enumeration_start);
 
     assert!(
         !polar_vertices.is_empty(),
         "origin-interior polar input produced no exact vertices"
     );
 
+    let incidence_start = Instant::now();
     let vertex_facet_incidence =
         DMatrix::from_fn(polar_vertices.len(), vertices.len(), |row, col| {
             dot4_exact(&vertices[col], &polar_vertices[row]) == one
         });
+    let incidence_ms = ms(incidence_start);
+
+    info!(
+        validation_ms,
+        enumeration_ms,
+        incidence_ms,
+        input_points = vertices.len(),
+        candidate_4sets,
+        f64_prefilter_rejected,
+        exact_solve_attempts,
+        singular_exact_solves,
+        exact_feasibility_checks,
+        feasible_candidates,
+        duplicate_exact_comparisons,
+        duplicate_candidates,
+        returned_vertices = polar_vertices.len(),
+        incidence_rows = vertex_facet_incidence.nrows(),
+        incidence_cols = vertex_facet_incidence.ncols(),
+        "polar vertex enumeration"
+    );
 
     PolarVerticesExact {
         vertices: polar_vertices,
         vertex_facet_incidence,
     }
+}
+
+fn ms(start: Instant) -> f64 {
+    start.elapsed().as_secs_f64() * 1000.0
 }
 
 fn f64_prefilter_vertices<T: ExactScalar>(vertices: &[Vector4<T>]) -> Option<Vec<[f64; 4]>> {

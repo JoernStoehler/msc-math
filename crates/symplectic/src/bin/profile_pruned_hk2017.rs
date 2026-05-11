@@ -29,6 +29,7 @@ struct Config {
     h_min: f64,
     h_max: f64,
     jsonl: bool,
+    trace: bool,
 }
 
 #[derive(Serialize)]
@@ -91,6 +92,9 @@ fn main() -> ExitCode {
 fn run() -> Result<(), String> {
     let config = parse_args(env::args().skip(1))?;
     validate_config(&config)?;
+    if config.trace {
+        init_tracing()?;
+    }
 
     for &facet_count in &config.facet_counts {
         for sample in 0..config.samples {
@@ -308,6 +312,7 @@ fn parse_args(args: impl Iterator<Item = String>) -> Result<Config, String> {
         h_min: DEFAULT_H_MIN,
         h_max: DEFAULT_H_MAX,
         jsonl: false,
+        trace: false,
     };
 
     let mut args = args.peekable();
@@ -351,6 +356,12 @@ fn parse_args(args: impl Iterator<Item = String>) -> Result<Config, String> {
                     return Err("--jsonl does not take a value".to_owned());
                 }
                 config.jsonl = true;
+            }
+            "--trace" => {
+                if inline_value.is_some() {
+                    return Err("--trace does not take a value".to_owned());
+                }
+                config.trace = true;
             }
             "--help" | "-h" => {
                 print_usage();
@@ -436,6 +447,15 @@ fn ms(duration: Duration) -> f64 {
     duration.as_secs_f64() * 1000.0
 }
 
+fn init_tracing() -> Result<(), String> {
+    tracing_subscriber::fmt()
+        .with_writer(std::io::stderr)
+        .with_target(false)
+        .compact()
+        .try_init()
+        .map_err(|error| format!("initialize tracing subscriber: {error}"))
+}
+
 fn print_usage() {
     println!("{}", usage());
 }
@@ -450,5 +470,6 @@ Options:\n\
   --seed N             Master seed for deterministic fixture attempts [default: 42]\n\
   --h-min X            Random fixture minimum support height [default: 0.5]\n\
   --h-max X            Random fixture maximum support height [default: 2.0]\n\
-  --jsonl              Emit one compact JSON object per row"
+  --jsonl              Emit one compact JSON object per row\n\
+  --trace              Emit opt-in tracing diagnostics to stderr"
 }
