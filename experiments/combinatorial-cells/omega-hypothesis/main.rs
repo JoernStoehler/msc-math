@@ -117,8 +117,14 @@ fn compute_d_sys_a(
     best_perm: &[usize],
     kkt_result: &KktResult,
 ) -> Vec<Vector4<f64>> {
-    let d_vol_a = volume_derivatives_a(polytope);
-    let d_cap_a = capacity_derivatives_a_from_kkt_result(polytope, best_perm, kkt_result);
+    let d_vol_a = volume_derivatives_a(
+        polytope.dual_vertices_f64(),
+        polytope.vertices_f64(),
+        polytope.incidence(),
+    )
+    .expect("combinatorial-cell polytope has valid finite geometry");
+    let d_cap_a =
+        capacity_derivatives_a_from_kkt_result(polytope.dual_vertices_f64(), best_perm, kkt_result);
 
     d_vol_a
         .iter()

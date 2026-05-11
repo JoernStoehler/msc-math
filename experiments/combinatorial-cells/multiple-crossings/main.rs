@@ -119,8 +119,13 @@ fn compute_sys_gradient_a(
     kkt: &symplectic::kkt::saddle_point_solver::KktResult,
     perm: &[usize],
 ) -> Vec<Vector4<f64>> {
-    let d_vol_a = volume_derivatives_a(polytope);
-    let d_cap_a = capacity_derivatives_a_from_kkt_result(polytope, perm, kkt);
+    let d_vol_a = volume_derivatives_a(
+        polytope.dual_vertices_f64(),
+        polytope.vertices_f64(),
+        polytope.incidence(),
+    )
+    .expect("combinatorial-cell polytope has valid finite geometry");
+    let d_cap_a = capacity_derivatives_a_from_kkt_result(polytope.dual_vertices_f64(), perm, kkt);
 
     d_vol_a
         .iter()

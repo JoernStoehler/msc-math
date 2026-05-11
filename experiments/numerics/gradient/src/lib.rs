@@ -222,8 +222,13 @@ pub fn first_order_test(
     let f = duals.len();
 
     // Analytical gradients for all three targets.
-    let g_cap = capacity_derivatives_a_from_kkt_result(&info.polytope, &info.best_perm, &info.kkt);
-    let g_vol = volume_derivatives_a(&info.polytope);
+    let g_cap = capacity_derivatives_a_from_kkt_result(duals, &info.best_perm, &info.kkt);
+    let g_vol = volume_derivatives_a(
+        duals,
+        info.polytope.vertices_f64(),
+        info.polytope.incidence(),
+    )
+    .expect("gradient validation polytope has valid finite geometry");
     let g_sys = sys_derivatives_a(&g_cap, &g_vol, info.cap, info.vol, info.sys);
 
     let targets: [(&str, f64, &[Vector4<f64>]); 3] = [

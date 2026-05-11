@@ -320,8 +320,9 @@ fn gradient_ascent_phase_limited(
         let sys = cap * cap / (2.0 * vol);
         let duals = current.dual_vertices_f64();
 
-        let d_vol_a = volume_derivatives_a(&current);
-        let d_cap_a = capacity_derivatives_a_from_kkt_result(&current, &best_perm, &kkt);
+        let d_vol_a =
+            volume_derivatives_a(duals, current.vertices_f64(), current.incidence()).ok()?;
+        let d_cap_a = capacity_derivatives_a_from_kkt_result(duals, &best_perm, &kkt);
         let d_sys_a: Vec<Vector4<f64>> = d_vol_a
             .iter()
             .zip(d_cap_a.iter())

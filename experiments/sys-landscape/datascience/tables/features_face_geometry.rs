@@ -1,7 +1,7 @@
 //! Edge-length and facet-volume feature columns.
 
 use nalgebra::Vector4;
-use symplectic::geom::facet_volume::facet_volume_3d_f64;
+use symplectic::geom::facet_volume::facet_volume_from_incidence_f64;
 use symplectic::geom::polytope::Polytope4D;
 
 use super::features_helpers::{max_share, stats_or_zero};
@@ -33,7 +33,11 @@ pub fn compute_face_geometry_fields(
         .map(|edge| (vertices[edge[0]] - vertices[edge[1]]).norm() / linear_scale)
         .collect::<Vec<_>>();
     let facet_volumes = (0..facet_count)
-        .map(|facet| facet_volume_3d_f64(polytope, facet) / facet_scale)
+        .map(|facet| {
+            facet_volume_from_incidence_f64(polytope.vertices_f64(), polytope.incidence(), facet)
+                .expect("dataset polytope has valid finite geometry")
+                / facet_scale
+        })
         .collect::<Vec<_>>();
     let (edge_length_vol1_mean, edge_length_vol1_std, edge_length_vol1_min, edge_length_vol1_max) =
         stats_or_zero(&edge_lengths);

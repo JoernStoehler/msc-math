@@ -14,7 +14,8 @@ use std::sync::{Arc, Mutex};
 use symplectic::algorithms::billiard::facet_classification::FacetClassification;
 use symplectic::database::{OrbitScalars, PolytopeRecord};
 use symplectic::derivatives::{
-    clarke_directional_derivative_a, sys_subgradients_a, ClarkeSubdiffA,
+    capacity_subgradients_a, clarke_directional_derivative_a, systolic_ratio_gradient_a,
+    volume_derivatives_a,
 };
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::{systolic_ratio, OrbitAdmissibility, OrbitKktData, OrbitSearchResult};
@@ -144,7 +145,7 @@ fn coordinate_bounds(flat_idx: usize, mode: AscentMode<'_>) -> (f64, f64) {
 }
 
 fn maximin_subgradient_direction(
-    subdiff: &ClarkeSubdiffA,
+    subdiff: &[Vec<Vector4<f64>>],
     facet_count: usize,
     mode: AscentMode<'_>,
 ) -> Option<Vec<Vector4<f64>>> {
@@ -217,7 +218,25 @@ pub fn ascent_direction(
         .into_iter()
         .cloned()
         .collect();
-    let subdiff = sys_subgradients_a(polytope, &active_orbits).ok()?;
+    let d_volume_da = volume_derivatives_a(
+        polytope.dual_vertices_f64(),
+        polytope.vertices_f64(),
+        polytope.incidence(),
+    )
+    .ok()?;
+    let d_capacity_da =
+        capacity_subgradients_a(polytope.dual_vertices_f64(), &active_orbits).ok()?;
+    let subdiff: Vec<Vec<Vector4<f64>>> = d_capacity_da
+        .iter()
+        .map(|capacity_gradient| {
+            systolic_ratio_gradient_a(
+                state.capacity.capacity(),
+                state.vol,
+                capacity_gradient,
+                &d_volume_da,
+            )
+        })
+        .collect();
     match subdiff.as_slice() {
         [] => None,
         [single] => {

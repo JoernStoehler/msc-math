@@ -518,7 +518,11 @@ fn run_q5(base_dir: &str, smoke: bool) {
                 .orbits
                 .iter()
                 .map(|(_action, perm, kkt)| {
-                    capacity_derivatives_a_from_kkt_result(&pd.polytope, perm, kkt)
+                    capacity_derivatives_a_from_kkt_result(
+                        pd.polytope.dual_vertices_f64(),
+                        perm,
+                        kkt,
+                    )
                 })
                 .collect();
 
@@ -741,7 +745,9 @@ fn q5b_process_polytope(
     // Compute gradients for ALL tied orbits (interior + boundary).
     let orbit_grads: Vec<Vec<Vector4<f64>>> = tied_orbits
         .iter()
-        .map(|(_action, perm, kkt)| capacity_derivatives_a_from_kkt_result(polytope, perm, kkt))
+        .map(|(_action, perm, kkt)| {
+            capacity_derivatives_a_from_kkt_result(polytope.dual_vertices_f64(), perm, kkt)
+        })
         .collect();
     let interior_orbit_grads: Vec<Vec<Vector4<f64>>> = orbit_grads
         .iter()
@@ -879,7 +885,7 @@ fn q5b_process_polytope(
                     solve_kkt_safe(&perturbed_polytope, perturbed_perm).map(|kkt| {
                         let _ = perturbed_duals_vec;
                         capacity_derivatives_a_from_kkt_result(
-                            &perturbed_polytope,
+                            perturbed_polytope.dual_vertices_f64(),
                             perturbed_perm,
                             &kkt,
                         )

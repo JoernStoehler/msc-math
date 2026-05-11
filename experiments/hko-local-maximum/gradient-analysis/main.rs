@@ -266,8 +266,13 @@ fn compute_sensitivity(
     let duals = polytope.dual_vertices_f64();
     let f = duals.len();
 
-    let d_vol_a = volume_derivatives_a(polytope);
-    let d_cap_a = capacity_derivatives_a_from_orbit(polytope, orbit)
+    let d_vol_a = volume_derivatives_a(
+        polytope.dual_vertices_f64(),
+        polytope.vertices_f64(),
+        polytope.incidence(),
+    )
+    .expect("gradient-analysis polytope has valid finite geometry");
+    let d_cap_a = capacity_derivatives_a_from_orbit(polytope.dual_vertices_f64(), orbit)
         .expect("gradient-analysis stores orbit payloads with closure multipliers");
 
     let d_sys_a: Vec<Vector4<f64>> = d_vol_a
@@ -393,7 +398,7 @@ fn float_sigma_diagnostics(
         sigma,
         OrbitSolveBackend::SaddlePoint,
     )?;
-    let gradient = capacity_derivatives_a_from_orbit(polytope, &orbit)
+    let gradient = capacity_derivatives_a_from_orbit(polytope.dual_vertices_f64(), &orbit)
         .expect("gradient-analysis float orbit payload carries closure multipliers");
     Ok(SigmaDiagnostics {
         q_f64: orbit.q,

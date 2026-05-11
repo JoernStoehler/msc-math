@@ -35,7 +35,7 @@ fn orbit_sys_gradient_a(
     sys: f64,
     d_vol_a: &[Vector4<f64>],
 ) -> Vec<Vector4<f64>> {
-    let d_cap_a = capacity_derivatives_a_from_orbit(polytope, orbit)
+    let d_cap_a = capacity_derivatives_a_from_orbit(polytope.dual_vertices_f64(), orbit)
         .expect("second-order stores orbit payloads with closure multipliers");
 
     d_vol_a
@@ -83,7 +83,12 @@ pub(crate) fn run_phase1(polytope: &Polytope4D) -> (BaseRow, Vec<Vec<f64>>) {
         println!("  Worst near-optimal gap: {gap:.2e}");
     }
 
-    let d_vol_a = volume_derivatives_a(polytope);
+    let d_vol_a = volume_derivatives_a(
+        polytope.dual_vertices_f64(),
+        polytope.vertices_f64(),
+        polytope.incidence(),
+    )
+    .expect("second-order base polytope has valid finite geometry");
 
     let mut gradient_rows: Vec<Vec<f64>> = Vec::with_capacity(near_optimal.len());
     let mut gradient_matrix_arrays: Vec<Vec<[f64; 4]>> = Vec::with_capacity(near_optimal.len());
