@@ -508,6 +508,8 @@ version = "0.1.0"
 dependencies = [
  "algebraic-numbers",
  "nalgebra",
+ "num-bigint",
+ "num-integer",
  "num-rational",
  "num-traits",
  "proptest",

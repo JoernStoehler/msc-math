@@ -7,7 +7,8 @@
 
 use euclidean_polytopes::{
     all_points_are_extreme_exact, facet_intersection_is_nonempty_from_vertex_facet_incidence,
-    origin_in_interior_of_conv_exact, polar_vertices_exact, sample_random_dual_vertices_f64,
+    origin_in_interior_of_conv_exact, polar_vertices_exact_rational_assuming_origin_interior,
+    sample_random_dual_vertices_f64,
 };
 use nalgebra::{DMatrix, Vector2, Vector4};
 use num_rational::BigRational;
@@ -50,7 +51,7 @@ impl SysLandscapePolytopeCache {
             return None;
         }
 
-        let polar = polar_vertices_exact(&dual_vectors);
+        let polar = polar_vertices_exact_rational_assuming_origin_interior(&dual_vectors);
         let vertices = arrays_from_vectors(&polar.vertices);
         Some(Self::assemble(
             dual_vertices,
