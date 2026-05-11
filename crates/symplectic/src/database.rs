@@ -490,12 +490,26 @@ pub fn save(path: &Path, db: &HashMap<DualVerticesKey, PolytopeRecord>) -> io::R
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::geom::polytope::Polytope4D;
+    use crate::geom::vertex_enumeration::{
+        construct_rational_pipeline, facet_intersection_is_nonempty_from_incidence,
+        omega_signs_from_rational_dual_vertices, rationalize_f64_dual_vertices,
+        vertex_facet_incidence_from_descriptors,
+    };
+    use nalgebra::DMatrix;
     use nalgebra::Vector4;
     use num_bigint::BigInt;
 
-    /// Helper: build a simple polytope for testing.
-    fn test_polytope() -> Polytope4D {
+    #[derive(Clone)]
+    struct TestGeometry {
+        dual_vertices: Vec<[BigRational; 4]>,
+        vertices: Vec<[BigRational; 4]>,
+        vertex_facet_incidence: DMatrix<bool>,
+        facet_intersection_is_nonempty: DMatrix<bool>,
+        omega_signs: DMatrix<i8>,
+    }
+
+    /// Helper: build simple flat rational geometry for testing.
+    fn test_geometry() -> TestGeometry {
         let halfspaces = vec![
             Vector4::new(1.0, 0.0, 0.0, 0.0),
             Vector4::new(0.0, 1.0, 0.0, 0.0),
@@ -503,38 +517,58 @@ mod tests {
             Vector4::new(0.0, 0.0, 0.0, 1.0),
             -Vector4::new(1.0, 1.0, 1.0, 1.0).normalize(),
         ];
-        Polytope4D::from_f64(halfspaces).unwrap()
+        let dual_vertices = rationalize_f64_dual_vertices(&halfspaces).unwrap();
+        let (vertices, vertex_descriptors) = construct_rational_pipeline(&dual_vertices).unwrap();
+        let vertex_facet_incidence =
+            vertex_facet_incidence_from_descriptors(&vertex_descriptors, dual_vertices.len());
+        let facet_intersection_is_nonempty =
+            facet_intersection_is_nonempty_from_incidence(&vertex_facet_incidence);
+        let omega_signs = omega_signs_from_rational_dual_vertices(&dual_vertices);
+
+        TestGeometry {
+            dual_vertices,
+            vertices,
+            vertex_facet_incidence,
+            facet_intersection_is_nonempty,
+            omega_signs,
+        }
     }
 
     /// Round-trip: rational geometry -> PolytopeRecord -> JSON -> rational geometry.
     #[test]
     fn round_trip_rational_geometry_json() {
-        let p = test_polytope();
+        let geometry = test_geometry();
         let record = PolytopeRecord::from_dual_vertices_and_vertices(
-            p.dual_vertices().to_vec(),
-            p.vertices().to_vec(),
+            geometry.dual_vertices.clone(),
+            geometry.vertices.clone(),
         );
         let json = serde_json::to_string(&record).unwrap();
         let record2: PolytopeRecord = serde_json::from_str(&json).unwrap();
         let (dual_vertices, vertices) = record2.dual_vertices_and_vertices();
-        let p2 = Polytope4D::from_rational_parts(dual_vertices, vertices).unwrap();
+        let (_, vertex_descriptors) = construct_rational_pipeline(&dual_vertices).unwrap();
+        let vertex_facet_incidence =
+            vertex_facet_incidence_from_descriptors(&vertex_descriptors, dual_vertices.len());
 
-        assert_eq!(p.facet_count(), p2.facet_count());
-        assert_eq!(p.incidence(), p2.incidence());
-        assert_eq!(p.omega_signs(), p2.omega_signs());
+        assert_eq!(geometry.dual_vertices, dual_vertices);
+        assert_eq!(geometry.vertices, vertices);
+        assert_eq!(geometry.vertex_facet_incidence, vertex_facet_incidence);
         assert_eq!(
-            p.facet_intersection_is_nonempty(),
-            p2.facet_intersection_is_nonempty()
+            geometry.omega_signs,
+            omega_signs_from_rational_dual_vertices(&dual_vertices)
+        );
+        assert_eq!(
+            geometry.facet_intersection_is_nonempty,
+            facet_intersection_is_nonempty_from_incidence(&vertex_facet_incidence)
         );
     }
 
     /// Verify JSON output uses "numer/denom" strings, not u32 limb arrays.
     #[test]
     fn json_format_human_readable() {
-        let p = test_polytope();
+        let geometry = test_geometry();
         let record = PolytopeRecord::from_dual_vertices_and_vertices(
-            p.dual_vertices().to_vec(),
-            p.vertices().to_vec(),
+            geometry.dual_vertices,
+            geometry.vertices,
         );
         let json = serde_json::to_string_pretty(&record).unwrap();
 
@@ -554,10 +588,10 @@ mod tests {
     /// save() then load() round-trips the HashMap exactly.
     #[test]
     fn save_load_round_trip() {
-        let p = test_polytope();
+        let geometry = test_geometry();
         let record = PolytopeRecord::from_dual_vertices_and_vertices(
-            p.dual_vertices().to_vec(),
-            p.vertices().to_vec(),
+            geometry.dual_vertices,
+            geometry.vertices,
         )
         .with_computed_fields(1.23, 0.01, 4.56, 0.02);
 
@@ -588,12 +622,12 @@ mod tests {
     /// then adding computed fields and re-serializing works.
     #[test]
     fn progressive_fill() {
-        let p = test_polytope();
+        let geometry = test_geometry();
 
         // Stage 1: just rational data
         let record = PolytopeRecord::from_dual_vertices_and_vertices(
-            p.dual_vertices().to_vec(),
-            p.vertices().to_vec(),
+            geometry.dual_vertices,
+            geometry.vertices,
         );
         assert!(record.volume.is_none());
         assert!(record.sigmas.is_none());
@@ -659,11 +693,11 @@ mod tests {
     /// load_many() fills missing fields from later files.
     #[test]
     fn load_many_merges_missing_fields() {
-        let p = test_polytope();
-        let key = p.dual_vertices().to_vec();
+        let geometry = test_geometry();
+        let key = geometry.dual_vertices.clone();
         let base = PolytopeRecord::from_dual_vertices_and_vertices(
-            p.dual_vertices().to_vec(),
-            p.vertices().to_vec(),
+            geometry.dual_vertices,
+            geometry.vertices,
         );
         let mut enriched = base.clone();
         enriched.capacity = Some(4.5);
@@ -688,12 +722,12 @@ mod tests {
     /// load_many() fails loudly when two files disagree on a concrete field.
     #[test]
     fn load_many_rejects_conflicting_fields() {
-        let p = test_polytope();
-        let key = p.dual_vertices().to_vec();
+        let geometry = test_geometry();
+        let key = geometry.dual_vertices.clone();
 
         let mut left = PolytopeRecord::from_dual_vertices_and_vertices(
-            p.dual_vertices().to_vec(),
-            p.vertices().to_vec(),
+            geometry.dual_vertices,
+            geometry.vertices,
         );
         left.capacity = Some(4.5);
         let mut right = left.clone();

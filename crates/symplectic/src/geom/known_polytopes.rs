@@ -11,8 +11,13 @@
 //!
 //! Mathematical correspondence: [def:ehz-capacity], [thm:hko-counterexample]
 
-use crate::geom::polytope::Polytope4D;
 use crate::geom::rational_arithmetic::{frac, rat};
+use crate::geom::vertex_enumeration::{
+    construct_rational_pipeline, dual_vertices_f64_from_rational,
+    facet_intersection_is_nonempty_from_incidence, omega_signs_from_rational_dual_vertices,
+    rational_vertices_to_f64, rationalize_f64_dual_vertices,
+    vertex_facet_incidence_from_descriptors, ConstructionError,
+};
 use nalgebra::{DMatrix, Vector4};
 use num_rational::BigRational;
 use std::f64::consts::PI;
@@ -21,9 +26,6 @@ use std::sync::LazyLock;
 /// A named polytope fixture with a known capacity value and source reference.
 #[derive(Clone, Debug)]
 pub struct KnownPolytope {
-    /// Temporary in-crate unit-test bridge while algorithm tests migrate to flat fixtures.
-    #[cfg(test)]
-    pub(crate) polytope: Polytope4D,
     /// Exact rational dual vertices `a_i`; halfspace `i` is `<a_i, x> <= 1`.
     pub dual_vertices: Vec<[BigRational; 4]>,
     /// Exact rational vertices of the primal body.
@@ -47,29 +49,53 @@ pub struct KnownPolytope {
 }
 
 impl KnownPolytope {
-    fn from_private_polytope(
-        polytope: Polytope4D,
+    fn from_exact_dual_vertices(
+        dual_vertices: Vec<[BigRational; 4]>,
         capacity: f64,
         name: &'static str,
         source: &'static str,
-    ) -> Self {
-        #[cfg(test)]
-        let test_polytope = polytope.clone();
+    ) -> Result<Self, ConstructionError> {
+        let dual_vertices_f64 = dual_vertices_f64_from_rational(&dual_vertices)?;
+        Self::from_validated_dual_vertices(dual_vertices, dual_vertices_f64, capacity, name, source)
+    }
 
-        Self {
-            #[cfg(test)]
-            polytope: test_polytope,
-            dual_vertices: polytope.dual_vertices().to_vec(),
-            vertices: polytope.vertices().to_vec(),
-            vertex_facet_incidence: polytope.incidence().clone(),
-            facet_intersection_is_nonempty: polytope.facet_intersection_is_nonempty().clone(),
-            omega_signs: polytope.omega_signs().clone(),
-            dual_vertices_f64: polytope.dual_vertices_f64().to_vec(),
-            vertices_f64: polytope.vertices_f64().to_vec(),
+    fn from_f64_dual_vertices(
+        dual_vertices_f64: Vec<Vector4<f64>>,
+        capacity: f64,
+        name: &'static str,
+        source: &'static str,
+    ) -> Result<Self, ConstructionError> {
+        let dual_vertices = rationalize_f64_dual_vertices(&dual_vertices_f64)?;
+        Self::from_validated_dual_vertices(dual_vertices, dual_vertices_f64, capacity, name, source)
+    }
+
+    fn from_validated_dual_vertices(
+        dual_vertices: Vec<[BigRational; 4]>,
+        dual_vertices_f64: Vec<Vector4<f64>>,
+        capacity: f64,
+        name: &'static str,
+        source: &'static str,
+    ) -> Result<Self, ConstructionError> {
+        let (vertices, vertex_descriptors) = construct_rational_pipeline(&dual_vertices)?;
+        let vertex_facet_incidence =
+            vertex_facet_incidence_from_descriptors(&vertex_descriptors, dual_vertices.len());
+        let facet_intersection_is_nonempty =
+            facet_intersection_is_nonempty_from_incidence(&vertex_facet_incidence);
+        let omega_signs = omega_signs_from_rational_dual_vertices(&dual_vertices);
+        let vertices_f64 = rational_vertices_to_f64(&vertices);
+
+        Ok(Self {
+            dual_vertices,
+            vertices,
+            vertex_facet_incidence,
+            facet_intersection_is_nonempty,
+            omega_signs,
+            dual_vertices_f64,
+            vertices_f64,
             capacity,
             name,
             source,
-        }
+        })
     }
 
     /// Number of facets in this fixture.
@@ -133,12 +159,13 @@ pub fn simplex() -> &'static KnownPolytope {
             [rat(5), rat(5), rat(5), rat(5)],
         ];
 
-        KnownPolytope::from_private_polytope(
-            Polytope4D::new(dual_vertices).expect("simplex construction"),
+        KnownPolytope::from_exact_dual_vertices(
+            dual_vertices,
             0.25,
             "simplex",
             "Y. Nir thesis 2013",
         )
+        .expect("simplex construction")
     });
     &INSTANCE
 }
@@ -164,12 +191,8 @@ pub fn hypercube() -> &'static KnownPolytope {
             [z.clone(), z.clone(), z.clone(), rat(-1)],
         ];
 
-        KnownPolytope::from_private_polytope(
-            Polytope4D::new(dual_vertices).expect("hypercube construction"),
-            4.0,
-            "hypercube",
-            "HK2019 Ex 4.6",
-        )
+        KnownPolytope::from_exact_dual_vertices(dual_vertices, 4.0, "hypercube", "HK2019 Ex 4.6")
+            .expect("hypercube construction")
     });
     &INSTANCE
 }
@@ -194,12 +217,13 @@ pub fn crosspolytope() -> &'static KnownPolytope {
             }
         }
 
-        KnownPolytope::from_private_polytope(
-            Polytope4D::new(dual_vertices).expect("crosspolytope construction"),
+        KnownPolytope::from_exact_dual_vertices(
+            dual_vertices,
             4.0,
             "crosspolytope",
             "computed (no literature value)",
         )
+        .expect("crosspolytope construction")
     });
     &INSTANCE
 }
@@ -248,12 +272,13 @@ pub fn hko_pentagon() -> &'static KnownPolytope {
             .collect();
         let capacity = 2.0 * (PI / 10.0).cos() * (1.0 + (PI / 5.0).cos());
 
-        KnownPolytope::from_private_polytope(
-            Polytope4D::from_f64(halfspaces).expect("HKO pentagon construction"),
+        KnownPolytope::from_f64_dual_vertices(
+            halfspaces,
             capacity,
             "hko_pentagon",
             "HK-O 2024 Prop 1.4",
         )
+        .expect("HKO pentagon construction")
     });
     &INSTANCE
 }
@@ -282,12 +307,13 @@ pub fn lagrangian_triangle_product() -> &'static KnownPolytope {
             )
             .collect();
 
-        KnownPolytope::from_private_polytope(
-            Polytope4D::from_f64(halfspaces).expect("lagrangian triangle product construction"),
+        KnownPolytope::from_f64_dual_vertices(
+            halfspaces,
             1.5,
             "lagrangian_triangle_product",
             "LP verification (HK2017 algorithm + billiard)",
         )
+        .expect("lagrangian triangle product construction")
     });
     &INSTANCE
 }
@@ -322,12 +348,13 @@ pub fn symplectic_triangle_product() -> &'static KnownPolytope {
 
         let area_tri = 3.0 * 3.0_f64.sqrt() / 4.0;
 
-        KnownPolytope::from_private_polytope(
-            Polytope4D::from_f64(halfspaces).expect("symplectic triangle product construction"),
+        KnownPolytope::from_f64_dual_vertices(
+            halfspaces,
             area_tri,
             "symplectic_triangle_product",
             "Symplectic product formula ([prop:capacity-symplectic-product])",
         )
+        .expect("symplectic triangle product construction")
     });
     &INSTANCE
 }
@@ -356,12 +383,13 @@ pub fn lagrangian_triangle_square() -> &'static KnownPolytope {
 
         let halfspaces: Vec<Vector4<f64>> = triangle_halfspaces.chain(square_halfspaces).collect();
 
-        KnownPolytope::from_private_polytope(
-            Polytope4D::from_f64(halfspaces).expect("Lagrangian triangle x square construction"),
+        KnownPolytope::from_f64_dual_vertices(
+            halfspaces,
             1.5,
             "lagrangian_tri_sq",
             "HK2017 algorithm + billiard verification",
         )
+        .expect("Lagrangian triangle x square construction")
     });
     &INSTANCE
 }
@@ -397,12 +425,13 @@ pub fn symplectic_triangle_square() -> &'static KnownPolytope {
         let area_tri = 3.0 * 3.0_f64.sqrt() / 4.0;
         let area_sq = 1.0;
 
-        KnownPolytope::from_private_polytope(
-            Polytope4D::from_f64(halfspaces).expect("symplectic triangle x square construction"),
+        KnownPolytope::from_f64_dual_vertices(
+            halfspaces,
             area_tri.min(area_sq),
             "symplectic_tri_sq",
             "Symplectic product formula ([prop:capacity-symplectic-product])",
         )
+        .expect("symplectic triangle x square construction")
     });
     &INSTANCE
 }

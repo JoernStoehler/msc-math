@@ -8,7 +8,9 @@
 //! Mathematical correspondence: the sampling distribution is uniform over
 //! normal directions (Haar measure on S^3) with independent height scaling.
 
-use crate::geom::polytope::{ConstructionError, Polytope4D};
+use crate::geom::vertex_enumeration::{
+    construct_rational_pipeline, rationalize_f64_dual_vertices, ConstructionError,
+};
 use euclidean_polytopes::sample_random_dual_vertices_f64;
 use nalgebra::Vector4;
 use rand::SeedableRng;
@@ -49,8 +51,14 @@ pub fn sample_random_dual_vertices(
     validate_sampling_parameters(facet_count, h_min, h_max)?;
 
     let dual_vertices = sample_random_dual_vertices_f64(facet_count, h_min, h_max, rng);
-    Polytope4D::from_f64(dual_vertices.clone())?;
+    validate_f64_dual_vertices(&dual_vertices)?;
     Ok(dual_vertices)
+}
+
+fn validate_f64_dual_vertices(dual_vertices: &[Vector4<f64>]) -> Result<(), ConstructionError> {
+    let rational_dual_vertices = rationalize_f64_dual_vertices(dual_vertices)?;
+    construct_rational_pipeline(&rational_dual_vertices)?;
+    Ok(())
 }
 
 /// Generate a single accepted dual-vertex attempt with an independent seed.
@@ -235,7 +243,7 @@ mod tests {
                 let result = sample_random_dual_vertices(facet_count, 0.5, 2.0, &mut rng);
 
                 if let Ok(dual_vertices) = result {
-                    let revalidated = Polytope4D::from_f64(dual_vertices);
+                    let revalidated = validate_f64_dual_vertices(&dual_vertices);
                     prop_assert!(
                         revalidated.is_ok(),
                         "accepted dual vertices failed revalidation: {:?}",

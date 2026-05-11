@@ -19,7 +19,6 @@ pub mod facet_volume;
 pub mod known_polytopes;
 pub mod lagrangian_product;
 pub mod polygon;
-pub(crate) mod polytope;
 #[cfg(test)]
 mod qhull;
 pub mod rational_arithmetic;

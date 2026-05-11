@@ -12,7 +12,7 @@ use num_traits::{Signed, Zero};
 use super::boundedness::check_bounded_f64_first;
 use super::exact_linalg::{det4_int, dot4_int, integer_scale_dual_vertices};
 use super::irredundancy::check_irredundancy_f64_first;
-use crate::geom::polytope::ConstructionError;
+use super::ConstructionError;
 
 fn combinations4(n: usize) -> Vec<[usize; 4]> {
     let mut result = Vec::new();

@@ -6,7 +6,7 @@
 //! Coordinates: (q_1, q_2, p_1, p_2). See `symplectic_form` module for J_0 and omega_0.
 
 use crate::geom::known_polytopes::KnownPolytope;
-use crate::geom::polytope::Polytope4D;
+use crate::geom::vertex_enumeration::{construct_rational_pipeline, rationalize_f64_dual_vertices};
 use nalgebra::Vector4;
 use rand::Rng;
 use rand_distr::StandardNormal;
@@ -82,7 +82,10 @@ pub fn random_bounded_dual_vertices_f64(
             })
             .collect();
 
-        if Polytope4D::from_f64(halfspaces.clone()).is_ok() {
+        let accepted = rationalize_f64_dual_vertices(&halfspaces)
+            .and_then(|dual_vertices| construct_rational_pipeline(&dual_vertices).map(|_| ()))
+            .is_ok();
+        if accepted {
             return halfspaces;
         }
     }
