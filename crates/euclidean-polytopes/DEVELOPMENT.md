@@ -23,14 +23,12 @@ The implemented packets are in place:
 - `sample_random_dual_vertices_f64(facet_count, h_min, h_max, rng) -> Vec<Vector4<f64>>`;
 - `origin_in_interior_of_conv_exact(points) -> bool`;
 - `all_points_are_extreme_exact(points) -> bool`;
-- `polar_vertices_exact(vertices) -> (Vec<Vector4<T>>, DMatrix<bool>)`;
-- `polar_vertices_f64(vertices) -> Result<PolarVerticesF64, F64GeometryError>`;
+- `polar_vertices_exact(vertices) -> PolarVerticesExact<T>`;
 - `vertex_facets_from_vertex_facet_incidence(vertex_facet_incidence) -> Vec<Vec<usize>>`;
 - `facet_vertices_from_vertex_facet_incidence(vertex_facet_incidence) -> Vec<Vec<usize>>`;
 - `edges_from_vertex_facet_incidence(vertex_facet_incidence) -> Vec<[usize; 2]>`;
 - `two_faces_from_vertex_facet_incidence(vertex_facet_incidence) -> Vec<TwoFace>`;
 - `facet_intersection_is_nonempty_from_vertex_facet_incidence(vertex_facet_incidence) -> DMatrix<bool>`;
-- `volume_f64(dual_vertices, vertices) -> Result<VolumeF64, F64GeometryError>`;
 - `volume_from_incidence_f64(vertices, incidence) -> Result<f64, F64GeometryError>`;
 - `volume_from_incidence_exact(vertices, incidence) -> T`.
 
@@ -46,23 +44,10 @@ the exact affine barycentric system. A coordinate-bound reduction avoids
 unnecessary exact solves for obvious coordinate-extreme cases. Exact duplicate
 points return `false`; lower-dimensional point sets are valid inputs.
 
-The `f64` path is intentionally narrower than a full exact replacement. It
-validates finite coordinates, returns well-conditioned accepted candidates, and
-reports near-singular solves, near-boundary halfspace tests, and uncertain
-duplicate decisions as `indeterminate_candidates`. Each indeterminate candidate
-records the source 4-tuple and either `None` for singular/unsolved tuples or
-`Some(vertex)` for an approximate vertex whose membership or duplicate status
-was not decided in `f64`.
-
-The f64 volume path computes full-dimensional `R^4` Euclidean volume. It has
-two public entry points over the same origin-star implementation:
-`volume_f64` recovers incidence from a normalized polar pair, and
-`volume_from_incidence_f64` accepts already-known boolean incidence. The
-recovered-incidence path decides each local signed-gap relation only when it is
-stable in `f64`; otherwise it returns
-`VolumeF64::Indeterminate { indeterminate_incidence }`. The decided payload
-currently reports only `volume_f64`, deliberately omitting a volume error bound
-until a credible determinant-sum rounding analysis is implemented.
+Public `f64` diagnostic APIs were removed when the target migration found no
+non-test callers. The retained `f64` volume helpers require already-known
+boolean incidence, validate finite coordinates, and do not decide incidence
+from approximate signed gaps.
 
 Do not add broad public API only because it is mathematically natural. Add a
 function when a current migration caller needs it or when it removes duplicated
@@ -131,60 +116,31 @@ true/false/indeterminate abstraction for this slice. A flat output record for
 the `f64` diagnostics is acceptable if a tuple would hide the meaning of the
 payload.
 
-## Implemented Slice: Full-Dimensional f64 Volume
+## Implemented Slice: Known-Incidence f64 Volume
 
-The ordinary full-dimensional `R^4` volume computation now has a flat f64 entry
-point in this crate:
+The ordinary full-dimensional `R^4` volume computation has a flat f64 entry
+point for callers that already have reliable vertex-facet incidence:
 
 ```rust,ignore
-pub fn volume_f64(
-    dual_vertices: &[Vector4<f64>],
+pub fn volume_from_incidence_f64(
     vertices: &[Vector4<f64>],
-) -> Result<VolumeF64, F64GeometryError>;
+    incidence: &DMatrix<bool>,
+) -> Result<f64, F64GeometryError>;
 ```
-
-```rust,ignore
-pub enum VolumeF64 {
-    Decided {
-        volume: f64,
-    },
-    Indeterminate {
-        indeterminate_incidence: Vec<IncidenceF64>,
-    },
-}
-```
-
-Contract: `dual_vertices` are normalized facet normals for
-`K = { x in R^4 : <a_i, x> <= 1 }`; `vertices` are the vertices of that same
-full-dimensional bounded polytope. The origin is therefore strictly inside
-`K`. This f64 function validates finite coordinates. A clear contract violation
-such as a vertex lying outside a halfspace by more than the local signed-gap
-bound may panic unless a genuinely recoverable caller use case appears.
 
 The implementation copies the existing origin-star triangulation idea from
 `crates/symplectic/src/geom/volume.rs`, but operates only on flat slices. It
-uses `dual_vertices` to recover vertex-facet incidence via `<a_i, v> = 1`, then
-uses `vertices` for Euclidean determinants. It does not introduce
-`Polytope4D`, a public polytope wrapper, or a qhull dependency.
-
-Approximate incidence must not guess. For each pair `(vertex_index,
-facet_index)`, compute `signed_gap = 1.0 - a_i.dot(v)` and a local
-`signed_gap_abs_error_bound`. If the relation is too close to decide, return
-`VolumeF64::Indeterminate` with the ambiguous relations. If every relation is
-decided, compute the volume and return `Decided`.
-
-The first implementation omits `volume_abs_error_bound`. It would be misleading
-to expose `0.0` or a placeholder as a rigorous determinant-arithmetic bound.
+uses `vertices` for Euclidean determinants and uses `incidence[(v, f)]` only
+for facet and 2-face combinatorics. It does not introduce `Polytope4D`, a
+public polytope wrapper, or a qhull dependency.
 
 Fixture tests cover:
 
 - simplex volume `1/24`;
 - hypercube `[-1,1]^4` volume `16`;
 - crosspolytope with vertices `+-2 e_i` volume `32/3`;
-- volume scaling on hypercubes with a small property test;
 - non-finite input returns `F64GeometryError::NonFiniteCoordinate`;
-- a near-incidence input returns `Indeterminate` instead of deciding from a
-  tolerance guess.
+- incidence row mismatch panics.
 
 ## Implemented Slice: Known-Incidence Volume and Symplectic Integration
 
@@ -196,12 +152,10 @@ to this crate without throwing away exact incidence already known by
 small package-local helpers when several experiment binaries need the same
 exact-to-f64 projection.
 
-`symplectic` is intentionally not routed through
-`volume_f64(dual_vertices, vertices)`: that function recovers incidence from
-f64 signed gaps and can return `Indeterminate` for near-boundary relations.
-`Polytope4D` already stores an exact boolean vertex-facet incidence matrix.
-Recomputing that incidence in f64 would be less reliable than the existing
-symplectic path.
+`symplectic` is intentionally not routed through approximate incidence
+recovery. `Polytope4D` already stores an exact boolean vertex-facet incidence
+matrix. Recomputing that incidence in f64 would be less reliable than the
+existing symplectic path.
 
 Implemented helper:
 
@@ -228,8 +182,7 @@ as a private test helper under `symplectic`.
 Verification witnesses for this slice:
 
 - `euclidean-polytopes` tests cover simplex, hypercube, crosspolytope,
-  recovered-vs-known incidence agreement, non-finite input, and incidence row
-  mismatch panic;
+  non-finite input, and incidence row mismatch panic;
 - `symplectic` tests and experiment helpers call the Euclidean exact
   known-incidence helper directly for `Polytope4D` volume projections;
 - required commands for this slice are tracked in the task file.
@@ -456,19 +409,9 @@ The symplectic migration slice made the now-deleted
 `symplectic::geom::volume` module use `volume_from_incidence_exact` as the
 source of truth for `Polytope4D`.
 
-Target shape in `symplectic`:
-
-```rust,ignore
-pub fn volume_exact(polytope: &Polytope4D) -> BigRational;
-
-pub fn volume_f64(polytope: &Polytope4D) -> f64 {
-    rational_to_f64(&volume_exact(polytope))
-}
-```
-
-The exact API converts `Polytope4D::vertices()` from
-`&[[BigRational; 4]]` to `Vec<Vector4<BigRational>>`, pass
-`polytope.incidence()` directly, and delegate to
+The migrated exact API converted `Polytope4D::vertices()` from
+`&[[BigRational; 4]]` to `Vec<Vector4<BigRational>>`, passed
+`polytope.incidence()` directly, and delegated to
 `euclidean_polytopes::volume_from_incidence_exact`. Do not recompute incidence,
 do not pass dual vertices, and do not use `vertices_f64()` in the exact path.
 
@@ -526,8 +469,8 @@ Good test code in this crate:
   reasons that cannot be observed cleanly through the public API;
 - compares exact outputs as sets when the mathematical result is unordered;
 - makes tolerance choices explicit and scale-aware for f64 metric tests;
-- tests f64 indeterminate branches with near-boundary examples, not only the
-  decided path;
+- tests public f64 helper validation and shape contracts where approximate
+  helpers remain public;
 - states when a test is a fixture smoke check rather than evidence for a broad
   theorem;
 - avoids random tests whose generator mostly proves input validation instead of
@@ -556,8 +499,9 @@ operationalization.
 2. Exact polarity roundtrip:
    Proposition: for every finite `P subset Q^4`, if `0 in int conv(P)`, then
    double polar of `P`, computed by binding
-   `(vertices, vertex_facet_incidence) = polar_vertices_exact(P)` and then
-   `polar_vertices_exact(&vertices)`, is the set of extreme points of `conv(P)`.
+   `PolarVerticesExact { vertices, vertex_facet_incidence } =
+   polar_vertices_exact(P)` and then `polar_vertices_exact(&vertices)`, is the
+   set of extreme points of `conv(P)`.
    Operationalization: start with constructed positive-spanning exact point
    sets, optionally append exact convex-combination redundant points, compute
    the double polar, and compare with an explicit filtering of `P` by
@@ -578,25 +522,16 @@ operationalization.
    one 5-point witness shape. Extend it with lower-dimensional witnesses and
    duplicate/edge/face interior witnesses.
 
-5. f64 polar agreement on well-conditioned exact fixtures:
-   Proposition: for exact fixtures whose f64 coordinates are well-conditioned
-   and whose incidence gaps are far from zero, `polar_vertices_f64` returns no
-   indeterminate candidates and agrees with `polar_vertices_exact` after
-   conversion within a stated tolerance.
-   Operationalization: start with simplex, cube, and crosspolytope. Later add
-   generated positive-spanning integer sets filtered by a conservative minimum
-   gap and condition-number threshold.
-
-6. f64 volume invariants:
-   Proposition: for full-dimensional normalized polar pairs with stable f64
-   incidence, `volume_f64` returns the Euclidean volume; volume scales by
-   `s^4` under `vertices -> s vertices` and
-   `dual_vertices -> dual_vertices / s`.
+5. Known-incidence f64 volume invariants:
+   Proposition: for full-dimensional polytopes with reliable boolean incidence,
+   `volume_from_incidence_f64` returns the Euclidean volume and scales by `s^4`
+   under `vertices -> s vertices`.
    Operationalization: the current hypercube scaling property covers powers of
-   two. Extend to random rational scale factors with scale-aware tolerance, and
-   add a permutation-invariance test for vertex and facet order.
+   two and rational scale factors with scale-aware tolerance. A future
+   permutation-invariance test should permute incidence rows/columns along with
+   vertices/facets.
 
-7. Symplectic migration regression:
+6. Symplectic migration regression:
    Proposition: for existing `Polytope4D` fixtures, the migrated symplectic
    volume wrapper preserves known ordinary volume values.
    Operationalization: the current `symplectic` fixture tests check exact
@@ -611,13 +546,10 @@ operationalization.
    needs. This includes exact affine/rank primitives over `Vector4<T>`, exact
    `origin_in_interior_of_conv`, and a separate exact non-redundancy/
    extreme-point check for callers that need that stronger input-list contract.
-2. `polar_vertices_f64(vertices)` with flat approximate outputs and explicit
-   indeterminate candidate reporting instead of tolerance guesses.
-3. Full-dimensional `R^4` volume from `(dual_vertices, vertices)` using
-   incidence and the existing origin-star triangulation idea. The `f64` variant
-   can be indeterminate if incidence is tolerance-sensitive. The known-
-   incidence exact variant sums exact determinant volumes without dual
-   vertices.
+2. Known-incidence full-dimensional `R^4` volume using the existing origin-star
+   triangulation idea. The retained f64 and exact variants both take vertices
+   plus boolean incidence and do not recover incidence from approximate signed
+   gaps.
 4. A minimal affine-plane polygon helper for ordered or orderable
    `Vec<Vector4<f64>>` vertices, driven by the internal needs of the volume
    decomposition rather than only by external consumers asking for area.
@@ -666,11 +598,9 @@ function is exact or approximate. The suffixes make call sites easier to review.
 
 ### Accepted Direction: Output Records
 
-`polar_vertices_exact` returns `(vertices, vertex_facet_incidence)` because the
-two exact outputs are immediate and their index roles are obvious at call
-sites. `polar_vertices_f64` remains a named output record because diagnostic
-fields such as indeterminate candidates and coordinate error bounds need stable
-names.
+`polar_vertices_exact` returns `PolarVerticesExact { vertices,
+vertex_facet_incidence }` because the two exact outputs are central and their
+index roles must remain visible at call sites.
 
 Why it matters: volume and facet adjacency need incidence. Returning only
 vertices would force recomputation. The record must not become a public
@@ -692,8 +622,8 @@ simple expression of the math. Until then, use explicit function contracts.
 
 ### Accepted Direction: `f64` Indeterminate, Exact Fallback
 
-For combinatorial geometry, provide both approximate and exact pathways when
-callers need both.
+For combinatorial geometry, provide both approximate and exact pathways only
+when callers need both.
 
 The approximate pathway returns ordinary `f64` data with semantic names and
 error bounds when that is the natural shape. For sign-like consumers, the usual

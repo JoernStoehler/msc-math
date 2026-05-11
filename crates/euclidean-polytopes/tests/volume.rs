@@ -1,6 +1,6 @@
 use euclidean_polytopes::{
-    facet_volume_and_centroid_from_incidence_f64, facet_volume_from_incidence_f64, volume_f64,
-    volume_from_incidence_exact, volume_from_incidence_f64, F64GeometryError, VolumeF64,
+    facet_volume_and_centroid_from_incidence_f64, facet_volume_from_incidence_f64,
+    volume_from_incidence_exact, volume_from_incidence_f64, F64GeometryError,
 };
 use nalgebra::{DMatrix, Vector4};
 use num_rational::BigRational;
@@ -201,15 +201,6 @@ fn crosspolytope_radius_2_incidence() -> DMatrix<bool> {
     })
 }
 
-fn decided_volume(dual_vertices: &[Vector4<f64>], vertices: &[Vector4<f64>]) -> f64 {
-    match volume_f64(dual_vertices, vertices).expect("finite input") {
-        VolumeF64::Decided { volume } => volume,
-        VolumeF64::Indeterminate {
-            indeterminate_incidence,
-        } => panic!("expected decided volume, got {indeterminate_incidence:?}"),
-    }
-}
-
 fn known_incidence_volume(vertices: &[Vector4<f64>], incidence: &DMatrix<bool>) -> f64 {
     volume_from_incidence_f64(vertices, incidence).expect("finite input")
 }
@@ -229,55 +220,6 @@ fn assert_vector_close(actual: Vector4<f64>, expected: Vector4<f64>, tolerance: 
     assert!(
         (actual - expected).norm() <= tolerance,
         "got {actual:?}, expected {expected:?}"
-    );
-}
-
-fn permute_by_stride<T: Clone>(values: &[T], stride: usize) -> Vec<T> {
-    assert_eq!(
-        gcd(values.len(), stride),
-        1,
-        "stride must define a full permutation"
-    );
-    (0..values.len())
-        .map(|index| values[(index * stride) % values.len()].clone())
-        .collect()
-}
-
-fn gcd(mut left: usize, mut right: usize) -> usize {
-    while right != 0 {
-        let remainder = left % right;
-        left = right;
-        right = remainder;
-    }
-    left
-}
-
-#[test]
-fn simplex_volume_is_one_over_24() {
-    let (dual_vertices, vertices) = centered_simplex();
-
-    assert_close(
-        decided_volume(&dual_vertices, &vertices),
-        1.0 / 24.0,
-        1.0e-12,
-    );
-}
-
-#[test]
-fn hypercube_volume_is_16() {
-    let (dual_vertices, vertices) = hypercube(1.0);
-
-    assert_close(decided_volume(&dual_vertices, &vertices), 16.0, 1.0e-10);
-}
-
-#[test]
-fn crosspolytope_radius_2_volume_is_32_over_3() {
-    let (dual_vertices, vertices) = crosspolytope_radius_2();
-
-    assert_close(
-        decided_volume(&dual_vertices, &vertices),
-        32.0 / 3.0,
-        1.0e-10,
     );
 }
 
@@ -498,30 +440,6 @@ fn known_incidence_facet_volumes_reconstruct_full_volume() {
     }
 }
 
-#[test]
-fn recovered_and_known_incidence_volume_paths_agree() {
-    for (dual_vertices, vertices, incidence) in [
-        {
-            let (dual_vertices, vertices) = centered_simplex();
-            (dual_vertices, vertices, centered_simplex_incidence())
-        },
-        {
-            let (dual_vertices, vertices) = hypercube(1.0);
-            let incidence = hypercube_incidence(&vertices, 1.0);
-            (dual_vertices, vertices, incidence)
-        },
-        {
-            let (dual_vertices, vertices) = crosspolytope_radius_2();
-            (dual_vertices, vertices, crosspolytope_radius_2_incidence())
-        },
-    ] {
-        let recovered_volume = decided_volume(&dual_vertices, &vertices);
-        let known_volume = known_incidence_volume(&vertices, &incidence);
-        let allowed_error = 1.0e-10_f64.max(1.0e-10 * known_volume.abs());
-        assert_close(recovered_volume, known_volume, allowed_error);
-    }
-}
-
 proptest! {
     #![proptest_config(ProptestConfig::with_cases(16))]
 
@@ -555,31 +473,24 @@ proptest! {
         );
     }
 
-    /// Proposition: for every full-dimensional normalized polar pair
-    /// `(K^circ, K)` with stable f64 incidence, `volume_f64` scales by `s^4`
-    /// under `vertices -> s vertices` and
-    /// `dual_vertices -> dual_vertices / s`.
+    /// Proposition: for every axis-aligned box with known incidence,
+    /// `volume_from_incidence_f64` scales by `s^4` under
+    /// `vertices -> s vertices`.
     ///
     /// Operationalization: generate hypercubes `[-s,s]^4` with rational
     /// `s = numerator / denominator`, where both terms lie in `1..=16`.
-    /// Discard generated scales whose active products are not stable enough
-    /// for `volume_f64` to decide incidence. Cases: 16 accepted examples.
-    /// Tolerance: `max(1e-10, 1e-10 * |16*s^4|)`.
+    /// Cases: 16 generated examples. Tolerance:
+    /// `max(1e-10, 1e-10 * |16*s^4|)`.
     #[test]
-    fn hypercube_volume_scales_by_fourth_power_for_rational_scales(
+    fn known_incidence_hypercube_volume_scales_by_fourth_power_for_rational_scales(
         numerator in 1_u32..=16,
         denominator in 1_u32..=16,
     ) {
         let scale = f64::from(numerator) / f64::from(denominator);
-        let (dual_vertices, vertices) = hypercube(scale);
+        let (_, vertices) = hypercube(scale);
+        let incidence = hypercube_incidence(&vertices, scale);
 
-        let volume = match volume_f64(&dual_vertices, &vertices).expect("finite input") {
-            VolumeF64::Decided { volume } => volume,
-            VolumeF64::Indeterminate { .. } => {
-                prop_assume!(false);
-                unreachable!("prop_assume stops this generated case")
-            }
-        };
+        let volume = volume_from_incidence_f64(&vertices, &incidence).expect("finite input");
         let expected = 16.0 * scale.powi(4);
         let allowed_error = 1.0e-10_f64.max(1.0e-10 * expected.abs());
         prop_assert!(
@@ -588,21 +499,21 @@ proptest! {
         );
     }
 
-    /// Proposition: for every full-dimensional normalized polar pair
-    /// `(K^circ, K)` with stable f64 incidence, `volume_f64` scales by `s^4`
-    /// under `vertices -> s vertices` and
-    /// `dual_vertices -> dual_vertices / s`.
+    /// Proposition: for every axis-aligned box with known incidence,
+    /// `volume_from_incidence_f64` scales by `s^4` under
+    /// `vertices -> s vertices`.
     ///
     /// Operationalization: generate hypercubes `[-2^k,2^k]^4` for
     /// `k in {-4,...,4}`. No discard rule. Cases: 16 generated examples
     /// sampled from 9 scales. Tolerance:
     /// `max(1e-12, 1e-12 * |16*2^(4k)|)`.
     #[test]
-    fn hypercube_volume_scales_by_fourth_power(exponent in -4_i32..=4) {
+    fn known_incidence_hypercube_volume_scales_by_fourth_power(exponent in -4_i32..=4) {
         let scale = 2.0_f64.powi(exponent);
-        let (dual_vertices, vertices) = hypercube(scale);
+        let (_, vertices) = hypercube(scale);
+        let incidence = hypercube_incidence(&vertices, scale);
 
-        let volume = decided_volume(&dual_vertices, &vertices);
+        let volume = volume_from_incidence_f64(&vertices, &incidence).expect("finite input");
         let expected = 16.0 * scale.powi(4);
         let allowed_error = 1.0e-12_f64.max(1.0e-12 * expected.abs());
         prop_assert!(
@@ -610,53 +521,6 @@ proptest! {
             "scale={scale}, volume={volume}, expected={expected}, allowed_error={allowed_error}"
         );
     }
-}
-
-/// Proposition: for every full-dimensional normalized polar pair with stable
-/// f64 incidence, `volume_f64` is invariant under permutation of the facet
-/// list and under permutation of the vertex list.
-///
-/// Operationalization: check the hypercube and crosspolytope fixtures, using
-/// fixed coprime-stride permutations of facets and vertices. Cases: 2
-/// deterministic fixtures. Tolerance: `max(1e-10, 1e-10 * |volume|)`.
-#[test]
-fn volume_is_invariant_under_vertex_and_facet_permutation() {
-    for (dual_vertices, vertices) in [hypercube(1.0), crosspolytope_radius_2()] {
-        let volume = decided_volume(&dual_vertices, &vertices);
-        let permuted_dual_vertices = permute_by_stride(&dual_vertices, 3);
-        let permuted_vertices = permute_by_stride(&vertices, 5);
-        let allowed_error = 1.0e-10_f64.max(1.0e-10 * volume.abs());
-
-        let facet_permuted_volume = decided_volume(&permuted_dual_vertices, &vertices);
-        assert_close(facet_permuted_volume, volume, allowed_error);
-
-        let vertex_permuted_volume = decided_volume(&dual_vertices, &permuted_vertices);
-        assert_close(vertex_permuted_volume, volume, allowed_error);
-
-        let combined_permuted_volume = decided_volume(&permuted_dual_vertices, &permuted_vertices);
-        assert_close(combined_permuted_volume, volume, allowed_error);
-    }
-}
-
-#[test]
-fn non_finite_input_returns_geometry_error() {
-    let (dual_vertices, mut vertices) = hypercube(1.0);
-    vertices[3][2] = f64::NAN;
-
-    let error = volume_f64(&dual_vertices, &vertices).expect_err("non-finite coordinate");
-
-    assert!(
-        matches!(
-            error,
-            F64GeometryError::NonFiniteCoordinate {
-                vector_role: "vertices",
-                vector_index: 3,
-                coordinate_index: 2,
-                value,
-            } if value.is_nan()
-        ),
-        "unexpected error: {error:?}"
-    );
 }
 
 #[test]
@@ -748,29 +612,4 @@ fn known_incidence_facet_out_of_range_panics() {
     let incidence = hypercube_incidence(&vertices, 1.0);
 
     let _ = facet_volume_from_incidence_f64(&vertices, &incidence, incidence.ncols());
-}
-
-#[test]
-fn near_incidence_returns_indeterminate_instead_of_guessing() {
-    let (dual_vertices, mut vertices) = hypercube(1.0);
-    vertices[0][0] += 1.0e-14;
-
-    let result = volume_f64(&dual_vertices, &vertices).expect("finite input");
-
-    let VolumeF64::Indeterminate {
-        indeterminate_incidence,
-    } = result
-    else {
-        panic!("near-boundary incidence should not be decided");
-    };
-
-    assert!(
-        indeterminate_incidence
-            .iter()
-            .any(|relation| relation.vertex_index == 0
-                && relation.facet_index == 1
-                && relation.signed_gap > 0.0
-                && relation.signed_gap <= relation.signed_gap_abs_error_bound),
-        "missing expected ambiguous relation: {indeterminate_incidence:?}"
-    );
 }

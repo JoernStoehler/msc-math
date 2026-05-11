@@ -8,8 +8,7 @@
 use algebraic_numbers::ExactScalar;
 use nalgebra::{DMatrix, Matrix4, Vector4};
 
-use crate::f64_geometry::{signed_gap_abs_error_bound, validate_finite_vectors4, F64GeometryError};
-use crate::polar::IncidenceF64;
+use crate::f64_geometry::{validate_finite_vectors4, F64GeometryError};
 
 /// Floor for meaningful facet 3-volume in centroid division.
 ///
@@ -18,73 +17,11 @@ use crate::polar::IncidenceF64;
 /// the zero centroid instead of dividing by a numerically meaningless total.
 const EPS_FACET_VOLUME_FLOOR: f64 = 1e-30;
 
-/// Diagnostic result for approximate full-dimensional `R^4` volume.
-///
-/// `Decided` currently reports only the computed `f64` volume. It deliberately
-/// does not expose a `volume_abs_error_bound`, because this first slice only
-/// bounds the incidence decisions and does not yet carry a rigorous rounding
-/// analysis through the determinant sum.
-#[derive(Clone, Debug, PartialEq)]
-pub enum VolumeF64 {
-    Decided {
-        volume: f64,
-    },
-    Indeterminate {
-        indeterminate_incidence: Vec<IncidenceF64>,
-    },
-}
-
-/// Compute full-dimensional Euclidean volume from normalized dual and primal vertices.
-///
-/// Contract: `dual_vertices` are the normalized facet normals of
-/// `K = { x in R^4 : <a_i, x> <= 1 }`, and `vertices` are exactly the primal
-/// vertices of the same bounded full-dimensional polytope. The origin is then
-/// strictly inside `K`.
-///
-/// This function validates finite coordinates. It recovers incidence from
-/// `signed_gap = 1 - <a_i, v>` without tolerance guessing:
-///
-/// - `signed_gap == 0.0` is accepted as an exact `f64` active relation;
-/// - `signed_gap > signed_gap_abs_error_bound` is accepted as non-incidence;
-/// - `signed_gap < -signed_gap_abs_error_bound` panics as a caller contract
-///   violation, because a provided vertex lies outside a provided halfspace;
-/// - every remaining relation is returned in `VolumeF64::Indeterminate`.
-///
-/// Once incidence is decided, the implementation triangulates each 3-facet
-/// from its vertex centroid, orders each 2-face from incidence only, and cones
-/// each tetrahedron to the origin.
-pub fn volume_f64(
-    dual_vertices: &[Vector4<f64>],
-    vertices: &[Vector4<f64>],
-) -> Result<VolumeF64, F64GeometryError> {
-    validate_finite_vectors4("dual_vertices", dual_vertices)?;
-    validate_finite_vectors4("vertices", vertices)?;
-
-    assert!(
-        dual_vertices.len() >= 5,
-        "volume_f64 requires at least five facets for a full-dimensional bounded R^4 polytope"
-    );
-    assert!(
-        vertices.len() >= 5,
-        "volume_f64 requires at least five vertices for a full-dimensional R^4 polytope"
-    );
-
-    let incidence = decide_incidence_f64(dual_vertices, vertices);
-    if !incidence.indeterminate.is_empty() {
-        return Ok(VolumeF64::Indeterminate {
-            indeterminate_incidence: incidence.indeterminate,
-        });
-    }
-
-    let volume = origin_star_volume(vertices, &incidence.incidence, "volume_f64");
-    Ok(VolumeF64::Decided { volume })
-}
-
 /// Compute full-dimensional Euclidean volume from known vertex-facet incidence.
 ///
 /// Use this helper when a caller already has reliable combinatorial incidence,
-/// for example from an exact construction. Unlike [`volume_f64`], this function
-/// does not recover incidence from floating-point signed gaps.
+/// for example from an exact construction. This function does not recover
+/// incidence from floating-point signed gaps.
 ///
 /// Validated here: every vertex coordinate is finite. Contract assumptions:
 /// `incidence[(v, f)]` is true exactly when `vertices[v]` lies on facet `f` of
@@ -158,9 +95,9 @@ pub fn volume_from_incidence_exact<T: ExactScalar + 'static>(
 /// Compute the ordinary 3D Euclidean volume of one facet from known incidence.
 ///
 /// Use this helper when a caller already has reliable combinatorial incidence,
-/// for example from an exact construction. Unlike [`volume_f64`] and the legacy
-/// raw symplectic facet helpers, this function does not recover facet or
-/// 2-face incidence from floating-point signed gaps.
+/// for example from an exact construction. Unlike legacy raw symplectic facet
+/// helpers, this function does not recover facet or 2-face incidence from
+/// floating-point signed gaps.
 ///
 /// Validated here: every vertex coordinate is finite. Contract assumptions:
 /// `incidence[(v, f)]` is true exactly when `vertices[v]` lies on facet `f` of
@@ -255,55 +192,6 @@ fn facet_volume_centroid_sum_from_incidence(
     }
 
     Ok((total_volume, weighted_centroid))
-}
-
-#[derive(Clone, Debug)]
-struct DecidedIncidence {
-    incidence: DMatrix<bool>,
-    indeterminate: Vec<IncidenceF64>,
-}
-
-fn decide_incidence_f64(
-    dual_vertices: &[Vector4<f64>],
-    vertices: &[Vector4<f64>],
-) -> DecidedIncidence {
-    let mut incidence = DMatrix::from_element(vertices.len(), dual_vertices.len(), false);
-    let mut indeterminate = Vec::new();
-
-    for (vertex_index, vertex) in vertices.iter().enumerate() {
-        for (facet_index, facet) in dual_vertices.iter().enumerate() {
-            let signed_gap = 1.0 - facet.dot(vertex);
-            let signed_gap_abs_error_bound = signed_gap_abs_error_bound(facet, vertex);
-            assert!(
-                signed_gap.is_finite() && signed_gap_abs_error_bound.is_finite(),
-                "volume_f64 incidence arithmetic produced a non-finite diagnostic"
-            );
-
-            if signed_gap == 0.0 {
-                incidence[(vertex_index, facet_index)] = true;
-            } else if signed_gap > signed_gap_abs_error_bound {
-                continue;
-            } else if signed_gap < -signed_gap_abs_error_bound {
-                panic!(
-                    "volume_f64 contract violation: vertex {vertex_index} lies outside facet \
-                     {facet_index} by signed_gap {signed_gap} with local abs error bound \
-                     {signed_gap_abs_error_bound}"
-                );
-            } else {
-                indeterminate.push(IncidenceF64 {
-                    vertex_index,
-                    facet_index,
-                    signed_gap,
-                    signed_gap_abs_error_bound,
-                });
-            }
-        }
-    }
-
-    DecidedIncidence {
-        incidence,
-        indeterminate,
-    }
 }
 
 fn facet_vertices_from_incidence(incidence: &DMatrix<bool>) -> Vec<Vec<usize>> {
