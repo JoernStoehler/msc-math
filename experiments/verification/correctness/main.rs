@@ -37,7 +37,7 @@
 //! per-algorithm checks.
 
 use dev_capacity_validation::{
-    capacity_billiard, capacity_pruned_hk2017, capacity_unpruned_hk2017,
+    capacity_billiard, capacity_pruned_hk2017, capacity_unpruned_hk2017, VerificationPolytopeCache,
 };
 use nalgebra::Matrix4;
 use rand::{Rng, SeedableRng};
@@ -51,20 +51,47 @@ use symplectic::geom::known_polytopes::{
     hko_pentagon, hypercube, lagrangian_triangle_product, lagrangian_triangle_square, simplex,
     symplectic_triangle_product, symplectic_triangle_square,
 };
-use symplectic::geom::lagrangian_product::lagrangian_product;
 use symplectic::geom::polygon::random_polygon_2d;
-use symplectic::geom::polytope::Polytope4D;
-use symplectic::random::generate_random_polytopes;
 
-fn maybe_billiard_capacity(polytope: &Polytope4D) -> Option<f64> {
-    if classify_facets_from_dual_vertices(polytope.dual_vertices_f64()).is_err() {
+fn capacity_pruned(polytope: &VerificationPolytopeCache) -> f64 {
+    capacity_pruned_hk2017(
+        &polytope.dual_vertices_f64,
+        &polytope.dual_vertices,
+        &polytope.facet_intersection_is_nonempty,
+        &polytope.omega_signs,
+    )
+    .expect("pruned")
+    .capacity()
+}
+
+fn capacity_unpruned(polytope: &VerificationPolytopeCache) -> f64 {
+    capacity_unpruned_hk2017(&polytope.dual_vertices_f64, &polytope.dual_vertices)
+        .expect("unpruned")
+        .capacity()
+}
+
+fn maybe_billiard_capacity(polytope: &VerificationPolytopeCache) -> Option<f64> {
+    if classify_facets_from_dual_vertices(&polytope.dual_vertices_f64).is_err() {
         return None;
     }
     Some(
-        capacity_billiard(polytope)
-            .expect("classification already succeeded")
-            .capacity(),
+        capacity_billiard(
+            &polytope.dual_vertices_f64,
+            &polytope.dual_vertices,
+            &polytope.facet_intersection_is_nonempty,
+            &polytope.omega_signs,
+        )
+        .expect("classification already succeeded")
+        .capacity(),
     )
+}
+
+fn dual_vertices_row(polytope: &VerificationPolytopeCache) -> Vec<[f64; 4]> {
+    polytope
+        .dual_vertices_f64
+        .iter()
+        .map(|a| [a[0], a[1], a[2], a[3]])
+        .collect()
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -114,13 +141,18 @@ fn main() {
 
     // Test 1: Generate 10 base polytopes (5 random generic + 5 Lagrangian products)
     println!("Test 1: Generating 10 base polytopes (5 generic + 5 Lagrangian)...");
-    let base_generic = generate_random_polytopes(5, 5, 0.5, 2.0, &mut rng);
+    let mut base_generic = Vec::new();
+    while base_generic.len() < 5 {
+        if let Some(p) = VerificationPolytopeCache::sample_random(5, 0.5, 2.0, &mut rng) {
+            base_generic.push(p);
+        }
+    }
 
     let mut base_lagrangian = Vec::new();
     while base_lagrangian.len() < 5 {
         let (qn, qh) = random_polygon_2d(3, 0.5, 2.0, &mut rng);
         let (pn, ph) = random_polygon_2d(4, 0.5, 2.0, &mut rng);
-        if let Ok(p) = lagrangian_product(&qn, &qh, &pn, &ph) {
+        if let Some(p) = VerificationPolytopeCache::from_lagrangian_product(&qn, &qh, &pn, &ph) {
             base_lagrangian.push(p);
         }
     }
@@ -131,8 +163,8 @@ fn main() {
 
     // Compute capacities for base polytopes (10 pruned + 10 unpruned + 5 billiard)
     for (i, p) in base_polytopes.iter().enumerate() {
-        let pruned = capacity_pruned_hk2017(p).expect("pruned").capacity();
-        let unpruned = capacity_unpruned_hk2017(p).expect("unpruned").capacity();
+        let pruned = capacity_pruned(p);
+        let unpruned = capacity_unpruned(p);
         let billiard = if i >= 5 {
             maybe_billiard_capacity(p)
         } else {
@@ -144,11 +176,7 @@ fn main() {
             test_group: "base".to_string(),
             base_index: None,
             facet_count: p.facet_count(),
-            dual_vertices: p
-                .dual_vertices_f64()
-                .iter()
-                .map(|a| [a[0], a[1], a[2], a[3]])
-                .collect(),
+            dual_vertices: dual_vertices_row(p),
             capacity_pruned: pruned,
             capacity_unpruned: Some(unpruned),
             capacity_billiard: billiard,
@@ -171,22 +199,19 @@ fn main() {
     ];
 
     for kp in literature {
-        let pruned = capacity_pruned_hk2017(&kp.polytope)
-            .expect("pruned")
-            .capacity();
-        let billiard = maybe_billiard_capacity(&kp.polytope);
+        let polytope = VerificationPolytopeCache::from_f64_dual_vertices(
+            kp.polytope.dual_vertices_f64().to_vec(),
+        )
+        .expect("known literature polytope should reconstruct");
+        let pruned = capacity_pruned(&polytope);
+        let billiard = maybe_billiard_capacity(&polytope);
 
         entries.push(VerificationEntry {
             name: kp.name.to_string(),
             test_group: "literature".to_string(),
             base_index: None,
-            facet_count: kp.polytope.facet_count(),
-            dual_vertices: kp
-                .polytope
-                .dual_vertices_f64()
-                .iter()
-                .map(|a| [a[0], a[1], a[2], a[3]])
-                .collect(),
+            facet_count: polytope.facet_count(),
+            dual_vertices: dual_vertices_row(&polytope),
             capacity_pruned: pruned,
             capacity_unpruned: None,
             capacity_billiard: billiard,
@@ -200,11 +225,12 @@ fn main() {
     println!("Test 3: Generating 10 scaled polytopes (reusing base)...");
     for (i, p) in base_polytopes.iter().enumerate() {
         let alpha: f64 = rng.gen_range(0.5..2.0);
-        let scaled =
-            Polytope4D::from_f64(p.dual_vertices_f64().iter().map(|a| a / alpha).collect())
-                .expect("scaled");
+        let scaled = VerificationPolytopeCache::from_f64_dual_vertices(
+            p.dual_vertices_f64.iter().map(|a| a / alpha).collect(),
+        )
+        .expect("scaled");
 
-        let pruned = capacity_pruned_hk2017(&scaled).expect("pruned").capacity();
+        let pruned = capacity_pruned(&scaled);
         let billiard = if i >= 5 {
             maybe_billiard_capacity(&scaled)
         } else {
@@ -216,11 +242,7 @@ fn main() {
             test_group: "scaled".to_string(),
             base_index: Some(i),
             facet_count: scaled.facet_count(),
-            dual_vertices: scaled
-                .dual_vertices_f64()
-                .iter()
-                .map(|a| [a[0], a[1], a[2], a[3]])
-                .collect(),
+            dual_vertices: dual_vertices_row(&scaled),
             capacity_pruned: pruned,
             capacity_unpruned: None,
             capacity_billiard: billiard,
@@ -235,20 +257,14 @@ fn main() {
     for (i, p) in base_polytopes.iter().enumerate() {
         let m = random_sp4_matrix(&mut rng);
         let transformed = apply_symplectomorphism(p, &m);
-        let pruned = capacity_pruned_hk2017(&transformed)
-            .expect("pruned")
-            .capacity();
+        let pruned = capacity_pruned(&transformed);
 
         entries.push(VerificationEntry {
             name: format!("transformed_{}", i),
             test_group: "transformed".to_string(),
             base_index: Some(i),
             facet_count: transformed.facet_count(),
-            dual_vertices: transformed
-                .dual_vertices_f64()
-                .iter()
-                .map(|a| [a[0], a[1], a[2], a[3]])
-                .collect(),
+            dual_vertices: dual_vertices_row(&transformed),
             capacity_pruned: pruned,
             capacity_unpruned: None,
             capacity_billiard: None,
@@ -262,8 +278,8 @@ fn main() {
     println!("Test 5: Generating 10 perturbed polytopes (reusing base)...");
     for (i, p) in base_polytopes.iter().enumerate() {
         let epsilon = 0.01;
-        let perturbed = Polytope4D::from_f64(
-            p.dual_vertices_f64()
+        let perturbed = VerificationPolytopeCache::from_f64_dual_vertices(
+            p.dual_vertices_f64
                 .iter()
                 .map(|a| {
                     // Perturb height h_i → h_i * (1 + ε·δ), so a_i → a_i / (1 + ε·δ)
@@ -273,20 +289,14 @@ fn main() {
                 .collect(),
         )
         .expect("perturbed");
-        let pruned = capacity_pruned_hk2017(&perturbed)
-            .expect("pruned")
-            .capacity();
+        let pruned = capacity_pruned(&perturbed);
 
         entries.push(VerificationEntry {
             name: format!("perturbed_{}", i),
             test_group: "perturbed".to_string(),
             base_index: Some(i),
             facet_count: perturbed.facet_count(),
-            dual_vertices: perturbed
-                .dual_vertices_f64()
-                .iter()
-                .map(|a| [a[0], a[1], a[2], a[3]])
-                .collect(),
+            dual_vertices: dual_vertices_row(&perturbed),
             capacity_pruned: pruned,
             capacity_unpruned: None,
             capacity_billiard: None,
@@ -351,11 +361,14 @@ fn main() {
     );
 }
 
-fn apply_symplectomorphism(p: &Polytope4D, m: &Matrix4<f64>) -> Polytope4D {
+fn apply_symplectomorphism(
+    p: &VerificationPolytopeCache,
+    m: &Matrix4<f64>,
+) -> VerificationPolytopeCache {
     // For symplectomorphism M: a' = M^{-T} a
     let m_inv_t = m.transpose().try_inverse().expect("invertible");
-    let new_duals: Vec<_> = p.dual_vertices_f64().iter().map(|a| m_inv_t * a).collect();
-    Polytope4D::from_f64(new_duals).expect("transformed")
+    let new_duals: Vec<_> = p.dual_vertices_f64.iter().map(|a| m_inv_t * a).collect();
+    VerificationPolytopeCache::from_f64_dual_vertices(new_duals).expect("transformed")
 }
 
 fn random_sp4_matrix(rng: &mut impl Rng) -> Matrix4<f64> {
@@ -570,14 +583,14 @@ mod tests {
                 let k1 = &dataset[i];
                 let k2 = &dataset[j];
 
-                let p1 = Polytope4D::from_f64(
+                let p1 = VerificationPolytopeCache::from_f64_dual_vertices(
                     k1.dual_vertices
                         .iter()
                         .map(|a| Vector4::from_row_slice(a))
                         .collect(),
                 )
                 .expect("p1");
-                let p2 = Polytope4D::from_f64(
+                let p2 = VerificationPolytopeCache::from_f64_dual_vertices(
                     k2.dual_vertices
                         .iter()
                         .map(|a| Vector4::from_row_slice(a))
@@ -588,8 +601,8 @@ mod tests {
                 // Containment check: a · v ≤ 1 for all dual vertices a of K2
                 // α_max = min over v,a of 1 / (a · v) when a · v > 0
                 let mut alpha_max = f64::INFINITY;
-                for v in p1.vertices_f64() {
-                    for a in p2.dual_vertices_f64() {
+                for v in &p1.vertices_f64 {
+                    for a in &p2.dual_vertices_f64 {
                         let dot = a.dot(v);
                         if dot > 1e-10 {
                             alpha_max = alpha_max.min(1.0 / dot);

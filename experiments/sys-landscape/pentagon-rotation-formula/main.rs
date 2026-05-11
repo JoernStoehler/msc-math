@@ -24,7 +24,7 @@
 //! - The 3-bounce branch dump is the empirical surface for the open proof
 //!   obligation [lem:pentagon-rotation-three-bounce].
 
-use exp_sys_landscape::euclidean_volume_f64;
+use exp_sys_landscape::{euclidean_volume_f64, SysLandscapePolytopeCache};
 use serde::Serialize;
 use std::env;
 use std::fs::File;
@@ -38,7 +38,6 @@ use symplectic::algorithms::{
     aggregate_orbits_with_dual_vertices_exact, solve_orbit_sigma_saddle_point, OrbitGuaranteeMode,
     OrbitSearchError, OrbitSolveError,
 };
-use symplectic::geom::lagrangian_product::lagrangian_product;
 use symplectic::geom::polygon::{polygon_area, regular_polygon_2d, rotate_polygon_2d};
 use symplectic::{
     classify_facets_from_dual_vertices, solve_billiard_candidates, OrbitAdmissibility, OrbitKktData,
@@ -119,11 +118,11 @@ fn main() {
     for angle_deg in sweep_angles(START_DEG, END_DEG, STEP_DEG) {
         let theta = angle_deg.to_radians();
         let (pn, ph) = rotate_polygon_2d(&pn_base, &ph_base, theta);
-        let polytope =
-            lagrangian_product(&qn, &qh, &pn, &ph).expect("pentagon product construction failed");
-        let classification = classify_facets_from_dual_vertices(polytope.dual_vertices_f64())
+        let polytope = SysLandscapePolytopeCache::from_lagrangian_product(&qn, &qh, &pn, &ph)
+            .expect("pentagon product construction failed");
+        let classification = classify_facets_from_dual_vertices(&polytope.dual_vertices_f64)
             .expect("pentagon product should classify as a product");
-        let vol = euclidean_volume_f64(polytope.vertices(), polytope.incidence());
+        let vol = euclidean_volume_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
         match cli.mode {
             SweepMode::Minima => {
                 let result = collect_minima_safe_billiard_result(&polytope)
@@ -272,25 +271,25 @@ fn admissibility_name(admissibility: OrbitAdmissibility) -> &'static str {
     }
 }
 
-fn transition_matrix(polytope: &symplectic::Polytope4D) -> nalgebra::DMatrix<bool> {
+fn transition_matrix(polytope: &SysLandscapePolytopeCache) -> nalgebra::DMatrix<bool> {
     symplectic::algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega(
-        polytope.facet_intersection_is_nonempty(),
-        polytope.omega_signs(),
+        &polytope.facet_intersection_is_nonempty,
+        &polytope.omega_signs,
     )
 }
 
 fn collect_minima_safe_billiard_result(
-    polytope: &symplectic::Polytope4D,
+    polytope: &SysLandscapePolytopeCache,
 ) -> Result<symplectic::OrbitSearchResult, OrbitSearchError> {
-    let classification = classify_facets_from_dual_vertices(polytope.dual_vertices_f64())
+    let classification = classify_facets_from_dual_vertices(&polytope.dual_vertices_f64)
         .expect("valid pentagon family should classify as Lagrangian product");
-    let dual_vertices_exact = polytope.dual_vertices();
+    let dual_vertices_exact = &polytope.dual_vertices;
     let transition_is_allowed = transition_matrix(polytope);
     let (orbits, iterations) = solve_billiard_candidates(
-        polytope.dual_vertices_f64(),
+        &polytope.dual_vertices_f64,
         &classification.q_indices,
         &classification.p_indices,
-        polytope.facet_intersection_is_nonempty(),
+        &polytope.facet_intersection_is_nonempty,
         &transition_is_allowed,
     )?;
     aggregate_orbits_with_dual_vertices_exact(
@@ -303,9 +302,9 @@ fn collect_minima_safe_billiard_result(
 }
 
 fn collect_admissible_three_bounce_orbits(
-    polytope: &symplectic::Polytope4D,
+    polytope: &SysLandscapePolytopeCache,
 ) -> Result<(usize, Vec<OrbitKktData>), OrbitSearchError> {
-    let dual_vertices = polytope.dual_vertices_f64();
+    let dual_vertices = &polytope.dual_vertices_f64;
     let classification = classify_facets_from_dual_vertices(dual_vertices)
         .expect("valid pentagon family should classify as Lagrangian product");
     let transition_is_allowed = transition_matrix(polytope);
@@ -316,7 +315,7 @@ fn collect_admissible_three_bounce_orbits(
     for_each_sigma_from_facets(
         &classification.q_indices,
         &classification.p_indices,
-        polytope.facet_intersection_is_nonempty(),
+        &polytope.facet_intersection_is_nonempty,
         &transition_is_allowed,
         |sigma| {
             if fatal_error.is_some() {
@@ -358,7 +357,7 @@ fn collect_admissible_three_bounce_orbits(
 
 fn orbit_dump(
     classification: &FacetClassification,
-    polytope: &symplectic::Polytope4D,
+    polytope: &exp_sys_landscape::SysLandscapePolytopeCache,
     orbit: &OrbitKktData,
 ) -> OrbitDump {
     let (q_blocks, p_blocks) = parse_sigma_blocks(classification, &orbit.sigma);

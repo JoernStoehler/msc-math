@@ -12,8 +12,8 @@
 
 use dev_capacity_validation::{
     build_target_pool, capacity_auto, create_jsonl_writer, mode_output_path, parse_run_mode,
-    run_mode_label, write_json_line, RunMode, RunModeArgError, Target, MINIMUM_ACTION_GAP_TOL,
-    SCALAR_TOL,
+    run_mode_label, write_json_line, RunMode, RunModeArgError, Target, VerificationPolytopeCache,
+    MINIMUM_ACTION_GAP_TOL, SCALAR_TOL,
 };
 use serde::Serialize;
 use std::collections::BTreeMap;
@@ -294,7 +294,12 @@ fn validate_target(target: &Target) -> (AllMinimumSummaryRow, Vec<AllMinimumOrbi
         .collect::<Vec<_>>();
 
     let t_scalar = Instant::now();
-    match capacity_auto(&target.polytope) {
+    match capacity_auto(
+        &target.polytope.dual_vertices_f64,
+        &target.polytope.dual_vertices,
+        &target.polytope.facet_intersection_is_nonempty,
+        &target.polytope.omega_signs,
+    ) {
         Ok(result) => {
             let scalar_capacity = result.capacity();
             let scalar_error = (minimum_result.min_action - scalar_capacity).abs();
@@ -345,12 +350,14 @@ fn validate_target(target: &Target) -> (AllMinimumSummaryRow, Vec<AllMinimumOrbi
     (summary, detail_rows)
 }
 
-fn compute_minimum_orbits(polytope: &symplectic::Polytope4D) -> Result<MinimumSetResult, String> {
-    let dual_vertices = polytope.dual_vertices_f64();
-    let dual_vertices_exact = polytope.dual_vertices();
+fn compute_minimum_orbits(
+    polytope: &VerificationPolytopeCache,
+) -> Result<MinimumSetResult, String> {
+    let dual_vertices = &polytope.dual_vertices_f64;
+    let dual_vertices_exact = &polytope.dual_vertices;
 
-    let facet_intersection_is_nonempty = polytope.facet_intersection_is_nonempty();
-    let omega_signs = polytope.omega_signs();
+    let facet_intersection_is_nonempty = &polytope.facet_intersection_is_nonempty;
+    let omega_signs = &polytope.omega_signs;
     let transition_is_allowed = symplectic::algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega(
         &facet_intersection_is_nonempty,
         &omega_signs,

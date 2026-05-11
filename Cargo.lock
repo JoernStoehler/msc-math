@@ -399,6 +399,7 @@ dependencies = [
 name = "dev-capacity-validation"
 version = "0.1.0"
 dependencies = [
+ "euclidean-polytopes",
  "good_lp",
  "nalgebra",
  "num-bigint",

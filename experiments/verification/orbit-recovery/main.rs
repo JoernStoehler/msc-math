@@ -13,7 +13,8 @@
 
 use dev_capacity_validation::{
     create_jsonl_writer, mode_output_path, parse_run_mode, run_mode_label, target_map,
-    write_json_line, RunMode, RunModeArgError, Target, ACTION_TOL, GEOMETRY_TOL,
+    write_json_line, RunMode, RunModeArgError, Target, VerificationPolytopeCache, ACTION_TOL,
+    GEOMETRY_TOL,
 };
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, HashMap};
@@ -291,7 +292,7 @@ fn validate_target(
     let mut details = Vec::new();
     let t_rebuild = Instant::now();
     let mut rebuilt_orbits = Vec::<(TrustedOrbitRow, OrbitKktData)>::new();
-    let dual_vertices = target.polytope.dual_vertices_f64();
+    let dual_vertices = &target.polytope.dual_vertices_f64;
 
     for row in rows {
         match solve_orbit_sigma_saddle_point(dual_vertices, &row.sigma) {
@@ -455,7 +456,12 @@ fn recover_trusted_orbit(
         passes_geometric_checks: None,
     };
 
-    let recovery = match recover_and_verify(&target.polytope, &orbit) {
+    let recovery_polytope = symplectic::Polytope4D::from_rational_parts(
+        target.polytope.dual_vertices.clone(),
+        target.polytope.vertices.clone(),
+    )
+    .expect("target cache should reconstruct for legacy orbit recovery");
+    let recovery = match recover_and_verify(&recovery_polytope, &orbit) {
         Some(recovery) => recovery,
         None => return detail,
     };
@@ -494,11 +500,11 @@ fn solve_status(err: OrbitSolveError) -> &'static str {
 }
 
 fn compute_on_facet_error(
-    polytope: &symplectic::Polytope4D,
+    polytope: &VerificationPolytopeCache,
     sigma: &[usize],
     recovery: &GeometricOrbit,
 ) -> f64 {
-    let duals = polytope.dual_vertices_f64();
+    let duals = &polytope.dual_vertices_f64;
     (0..sigma.len())
         .filter(|&k| recovery.dwell_times[k] > 0.0)
         .map(|k| {

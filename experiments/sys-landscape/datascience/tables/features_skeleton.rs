@@ -1,7 +1,7 @@
 //! Face-combinatorics feature columns.
 
 use euclidean_polytopes::TwoFace;
-use symplectic::geom::polytope::Polytope4D;
+use exp_sys_landscape::SysLandscapePolytopeCache;
 
 use super::features_helpers::stats_or_zero;
 
@@ -35,13 +35,13 @@ pub struct SkeletonFields {
 }
 
 pub fn compute_skeleton_fields(
-    polytope: &Polytope4D,
+    polytope: &SysLandscapePolytopeCache,
     vertex_facets: &[Vec<usize>],
     edges: &[[usize; 2]],
     two_faces: &[TwoFace],
 ) -> SkeletonFields {
     let facet_count = polytope.facet_count();
-    let vertex_count = polytope.vertices().len();
+    let vertex_count = polytope.vertices.len();
     let edge_count = edges.len();
     let ridge_count = two_faces.len();
     let vertex_incident_facets = vertex_facets
@@ -83,7 +83,7 @@ pub fn compute_skeleton_fields(
     let facet_neighbor_counts = (0..facet_count)
         .map(|facet| {
             (0..facet_count)
-                .filter(|&other| polytope.facet_intersection_is_nonempty()[(facet, other)])
+                .filter(|&other| polytope.facet_intersection_is_nonempty[(facet, other)])
                 .count() as f64
         })
         .collect::<Vec<_>>();
