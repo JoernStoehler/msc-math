@@ -21,6 +21,7 @@
 //! Output Artifacts: variable-f-ascent/variable-f-ascent.jsonl
 //!         variable-f-ascent/cache.jsonl
 
+use euclidean_polytopes::vertex_facets_from_vertex_facet_incidence;
 use exp_sys_landscape::euclidean_volume_f64;
 use exp_sys_landscape::{
     compute_step_bound, continuation_cache_path, dual_vertices_rational_strings, experiment_path,
@@ -40,7 +41,6 @@ use std::time::{Instant, SystemTime, UNIX_EPOCH};
 use symplectic::database::{load, save, DualVerticesKey, PolytopeRecord, SigmaAction};
 use symplectic::derivatives::{capacity_derivatives_a_from_kkt_result, volume_derivatives_a};
 use symplectic::geom::polytope::Polytope4D;
-use symplectic::geom::skeleton::Skeleton;
 use symplectic::kkt::saddle_point_solver::solve_kkt_for_dual_vertices;
 use symplectic::random::sample_random_polytope;
 
@@ -505,9 +505,7 @@ fn random_direction(rng: &mut ChaCha8Rng) -> Vector4<f64> {
 fn last_facet_active(polytope: &Polytope4D) -> bool {
     let f = polytope.facet_count();
     let last_idx = f - 1;
-    let skeleton = Skeleton::compute(polytope);
-    skeleton
-        .vertex_facets
+    vertex_facets_from_vertex_facet_incidence(polytope.incidence())
         .iter()
         .any(|facets| facets.contains(&last_idx))
 }

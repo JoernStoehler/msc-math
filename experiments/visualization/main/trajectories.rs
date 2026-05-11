@@ -2,11 +2,11 @@
 
 use crate::models::{v4_to_array, VizSegment, VizTrajectory};
 use crate::orbit_collection::{collect_all_orbits, CollectedOrbit};
+use euclidean_polytopes::facet_vertices_from_vertex_facet_incidence;
 use nalgebra::Vector4;
 use symplectic::algorithms::hk2017::orbit_recovery::recover_and_verify_sigma_beta_action;
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::reeb_trajectory;
-use symplectic::geom::skeleton::Skeleton;
 
 /// Maximum number of orbits to export per polytope.
 const MAX_ORBITS: usize = 20;
@@ -62,8 +62,8 @@ fn orbit_to_viz_trajectory(
     })
 }
 
-/// Compute an orthonormal basis for the tangent space of the starting ridge.
-fn ridge_displacement_directions(
+/// Compute an orthonormal basis for the tangent space of the starting two-face.
+fn two_face_displacement_directions(
     polytope: &Polytope4D,
     first_facet: usize,
     last_facet: usize,
@@ -101,7 +101,6 @@ fn ridge_displacement_directions(
 fn generate_displaced_trajectories(
     polytope: &Polytope4D,
     orbit: &CollectedOrbit,
-    skeleton: &Skeleton,
 ) -> Vec<VizTrajectory> {
     let recovery = match recover_and_verify_sigma_beta_action(
         polytope,
@@ -116,15 +115,13 @@ fn generate_displaced_trajectories(
     let perm = &orbit.permutation;
     let start_facet = perm[0];
     let last_facet = perm[perm.len() - 1];
-    let directions = ridge_displacement_directions(polytope, start_facet, last_facet);
+    let directions = two_face_displacement_directions(polytope, start_facet, last_facet);
     eprintln!(
-        "  Ridge F_{} ∩ F_{}: {} displacement direction(s)",
+        "  Two-face F_{} ∩ F_{}: {} displacement direction(s)",
         start_facet,
         last_facet,
         directions.len()
     );
-
-    let _ = skeleton;
 
     let max_segments = orbit.permutation.len();
     let mut trajectories = Vec::new();
@@ -175,12 +172,19 @@ fn generate_displaced_trajectories(
 }
 
 /// Fallback: generate a single forward-simulated trajectory.
-fn generate_placeholder_trajectory(
-    polytope: &Polytope4D,
-    skeleton: &Skeleton,
-) -> Vec<VizTrajectory> {
+fn generate_placeholder_trajectory(polytope: &Polytope4D) -> Vec<VizTrajectory> {
+    let vertices = polytope.vertices_f64();
+    let facet_vertices = facet_vertices_from_vertex_facet_incidence(polytope.incidence());
+
     for fi in 0..polytope.facet_count() {
-        let centroid = skeleton.facet_centroid(polytope, fi);
+        if facet_vertices[fi].is_empty() {
+            continue;
+        }
+        let centroid = facet_vertices[fi]
+            .iter()
+            .map(|&vertex_index| vertices[vertex_index])
+            .sum::<Vector4<f64>>()
+            / facet_vertices[fi].len() as f64;
         let traj = reeb_trajectory::simulate_with(polytope, centroid, fi, 100, 1e-6);
 
         if !traj.segments.is_empty() {
@@ -205,22 +209,19 @@ fn generate_placeholder_trajectory(
 }
 
 /// Generate all trajectories for a polytope and return them with the computed capacity.
-pub(crate) fn generate_trajectories(
-    polytope: &Polytope4D,
-    skeleton: &Skeleton,
-) -> (Vec<VizTrajectory>, Option<f64>) {
+pub(crate) fn generate_trajectories(polytope: &Polytope4D) -> (Vec<VizTrajectory>, Option<f64>) {
     if polytope.facet_count() > MAX_FACETS_FOR_ORBIT {
         eprintln!(
             "  Skipping orbit computation (F={}, too many facets). Using placeholder.",
             polytope.facet_count()
         );
-        return (generate_placeholder_trajectory(polytope, skeleton), None);
+        return (generate_placeholder_trajectory(polytope), None);
     }
 
     let all_orbits = collect_all_orbits(polytope);
     if all_orbits.is_empty() {
         eprintln!("  No valid orbits found. Using placeholder.");
-        return (generate_placeholder_trajectory(polytope, skeleton), None);
+        return (generate_placeholder_trajectory(polytope), None);
     }
 
     let min_action = all_orbits[0].action;
@@ -275,7 +276,7 @@ pub(crate) fn generate_trajectories(
     }
 
     if let Some(first_orbit) = all_orbits.first() {
-        let displaced = generate_displaced_trajectories(polytope, first_orbit, skeleton);
+        let displaced = generate_displaced_trajectories(polytope, first_orbit);
         for d in displaced {
             eprintln!(
                 "  {} → {} segments, closed={}",
@@ -289,10 +290,7 @@ pub(crate) fn generate_trajectories(
 
     if trajectories.is_empty() {
         eprintln!("  All orbit recoveries failed. Using placeholder.");
-        return (
-            generate_placeholder_trajectory(polytope, skeleton),
-            Some(min_action),
-        );
+        return (generate_placeholder_trajectory(polytope), Some(min_action));
     }
 
     (trajectories, Some(min_action))

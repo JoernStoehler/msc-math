@@ -18,6 +18,7 @@
 //!         experiments/combinatorial-cells/boundary-characterization/combinatorial-boundaries-crossing.jsonl,
 //!         experiments/combinatorial-cells/boundary-characterization/combinatorial-boundaries-gradient.jsonl
 
+use euclidean_polytopes::vertex_facets_from_vertex_facet_incidence;
 use exp_combinatorial_cells::euclidean_volume_f64;
 use exp_combinatorial_cells::{
     compute_step_bound_detailed, construct_at_t, ehz_capacity_instrumented, name_from_record,
@@ -35,7 +36,6 @@ use std::time::Instant;
 use symplectic::database;
 use symplectic::derivatives::{capacity_derivatives_a_from_kkt_result, volume_derivatives_a};
 use symplectic::geom::polytope::Polytope4D;
-use symplectic::geom::skeleton::Skeleton;
 use symplectic::kkt::saddle_point_solver::solve_kkt_for_dual_vertices;
 
 // ============================================================================
@@ -340,7 +340,8 @@ fn evaluate_crossing(
     let eps_before = (BEFORE_EPS_FRACTION * t).max(EPS_FLOOR);
     let poly_before = construct_at_t(duals, direction, t - eps_before)?;
     let (sys_b, cap_b, vol_b, perm_b, _) = compute_sys(&poly_before)?;
-    let skel_before = Skeleton::compute(&poly_before);
+    let vertex_count_before =
+        vertex_facets_from_vertex_facet_incidence(poly_before.incidence()).len();
 
     let mut eps_used = 0.0;
     let mut sys_a = f64::NAN;
@@ -354,13 +355,12 @@ fn evaluate_crossing(
         let eps = (frac * t).max(EPS_FLOOR);
         if let Some(poly_after) = construct_at_t(duals, direction, t + eps) {
             if let Some((s, c, v, p, _)) = compute_sys(&poly_after) {
-                let skel_after = Skeleton::compute(&poly_after);
                 eps_used = eps;
                 sys_a = s;
                 cap_a = c;
                 vol_a = v;
                 perm_a = p;
-                vc_after = skel_after.vertex_facets.len();
+                vc_after = vertex_facets_from_vertex_facet_incidence(poly_after.incidence()).len();
                 construction_ok = true;
                 break;
             }
@@ -382,7 +382,7 @@ fn evaluate_crossing(
         capacity_before: cap_b,
         volume_before: vol_b,
         orbit_before: orbit_b_str.clone(),
-        vertex_count_before: skel_before.vertex_facets.len(),
+        vertex_count_before,
         sys_after: sys_a,
         capacity_after: cap_a,
         volume_after: vol_a,
@@ -391,7 +391,7 @@ fn evaluate_crossing(
         construction_ok_after: construction_ok,
         delta_sys: sys_a - sys_b,
         orbit_changed: orbit_b_str != orbit_a_str,
-        vertex_count_changed: skel_before.vertex_facets.len() != vc_after,
+        vertex_count_changed: vertex_count_before != vc_after,
     })
 }
 
@@ -611,9 +611,10 @@ fn main() {
 
         let d_sys_a = compute_sys_gradient_a(polytope, vol, cap, sys, &kkt, &perm);
 
-        let skeleton = Skeleton::compute(polytope);
-        let vertex_count = skeleton.vertex_facets.len();
-        let all_simple = skeleton.vertex_facets.iter().all(|vf| vf.len() == 4);
+        let vertex_facets_by_vertex =
+            vertex_facets_from_vertex_facet_incidence(polytope.incidence());
+        let vertex_count = vertex_facets_by_vertex.len();
+        let all_simple = vertex_facets_by_vertex.iter().all(|vf| vf.len() == 4);
         let orbit_str = perm_to_string(&perm);
 
         // =====================================================================

@@ -1,5 +1,6 @@
 //! Facet sampling, resume helpers, and small experiment-local utilities.
 
+use euclidean_polytopes::vertex_facets_from_vertex_facet_incidence;
 use nalgebra::Vector4;
 use rand_chacha::ChaCha8Rng;
 use rand_distr::{Distribution, StandardNormal};
@@ -8,7 +9,6 @@ use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::path::Path;
 use symplectic::geom::polytope::Polytope4D;
-use symplectic::geom::skeleton::Skeleton;
 
 /// Add a barely-non-redundant facet to a polytope.
 ///
@@ -43,9 +43,7 @@ pub(crate) fn random_direction(rng: &mut ChaCha8Rng) -> Vector4<f64> {
 
 pub(crate) fn last_facet_active(polytope: &Polytope4D) -> bool {
     let last_idx = polytope.facet_count() - 1;
-    let skeleton = Skeleton::compute(polytope);
-    skeleton
-        .vertex_facets
+    vertex_facets_from_vertex_facet_incidence(polytope.incidence())
         .iter()
         .any(|facets| facets.contains(&last_idx))
 }

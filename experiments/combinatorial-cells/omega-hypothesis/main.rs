@@ -4,7 +4,7 @@
 //! Mechanism: Q(β) = Σ β_i β_j ω₀(...), capacity = 1/(2·max Q), sys = c²/(2V).
 //! Small ω contributions → smaller Q → larger capacity → potentially larger sys.
 //!
-//! Phase A (observational): For each polytope, compute ω₀ for all ridge-adjacent pairs
+//! Phase A (observational): For each polytope, compute ω₀ for all adjacent two-face pairs
 //! and for orbit transitions. Plot min|ω| vs sys.
 //!
 //! Phase B (gradient): Compute ⟨∇_{n_k} sys, ∇_{n_k} ω(n_k, n_i)⟩ analytically.
@@ -24,6 +24,7 @@
 //! 3. Writes to omega-hypothesis/omega-obstacle.jsonl
 //! 4. Python script reads JSONL, produces figures
 
+use euclidean_polytopes::{two_faces_from_vertex_facet_incidence, TwoFace};
 use exp_combinatorial_cells::euclidean_volume_f64;
 use nalgebra::Vector4;
 use serde::Serialize;
@@ -35,7 +36,6 @@ use symplectic::database::{self, DualVerticesKey, PolytopeRecord, SigmaAction, S
 use symplectic::derivatives::{capacity_derivatives_a_from_kkt_result, volume_derivatives_a};
 use symplectic::geom::known_polytopes;
 use symplectic::geom::polytope::Polytope4D;
-use symplectic::geom::skeleton::Skeleton;
 use symplectic::geom::symplectic_form::omega0;
 use symplectic::kkt::saddle_point_solver::{solve_kkt_for_dual_vertices, KktResult};
 use symplectic::random::generate_polytope;
@@ -127,23 +127,22 @@ fn compute_d_sys_a(
         .collect()
 }
 
-/// Omega features: ω₀(n_i, n_j) for skeleton ridges and orbit transitions.
+/// Omega features: ω₀(n_i, n_j) for adjacent two-faces and orbit transitions.
 /// Uses normals (unit dual vertices) for ω₀ computation.
 fn compute_omega_features(
     polytope: &Polytope4D,
-    skeleton: &Skeleton,
+    two_faces: &[TwoFace],
     orbit_facets: &[usize],
 ) -> (Vec<[f64; 3]>, Vec<f64>) {
     let duals = polytope.dual_vertices_f64();
     let normals: Vec<Vector4<f64>> = duals.iter().map(|a| a / a.norm()).collect();
 
-    // Ridge omegas: for each ridge (2-face shared by facets i, j with i < j)
-    let ridge_omegas: Vec<[f64; 3]> = skeleton
-        .ridges
+    // Two-face omegas: for each 2-face shared by facets i, j with i < j.
+    let ridge_omegas: Vec<[f64; 3]> = two_faces
         .iter()
-        .map(|r| {
-            let i = r.facets[0];
-            let j = r.facets[1];
+        .map(|two_face| {
+            let i = two_face.facets[0];
+            let j = two_face.facets[1];
             let w = omega0(&normals[i], &normals[j]);
             [i as f64, j as f64, w]
         })
@@ -172,10 +171,10 @@ fn omega_gradient_on_tangent(n_k: &Vector4<f64>, n_i: &Vector4<f64>) -> Vector4<
     neg_j0_ni - neg_j0_ni.dot(n_k) * n_k
 }
 
-/// Gradient dot products for all (facet, ridge-neighbor) pairs.
+/// Gradient dot products for all adjacent two-face facet pairs.
 fn compute_gradient_dots(
     polytope: &Polytope4D,
-    skeleton: &Skeleton,
+    two_faces: &[TwoFace],
     d_sys_a: &[Vector4<f64>],
     orbit_facets: &[usize],
 ) -> Vec<GradientDot> {
@@ -186,12 +185,12 @@ fn compute_gradient_dots(
         .collect();
     let orbit_set: std::collections::HashSet<usize> = orbit_facets.iter().copied().collect();
 
-    // Build ridge-neighbor lookup: for each facet k, list of neighbors
+    // Build two-face neighbor lookup: for each facet k, list of neighbors.
     let f = polytope.facet_count();
     let mut neighbors: Vec<Vec<usize>> = vec![Vec::new(); f];
-    for ridge in &skeleton.ridges {
-        let i = ridge.facets[0];
-        let j = ridge.facets[1];
+    for two_face in two_faces {
+        let i = two_face.facets[0];
+        let j = two_face.facets[1];
         neighbors[i].push(j);
         neighbors[j].push(i);
     }
@@ -296,8 +295,8 @@ fn process_polytope(
     let best_beta = &kkt_result.beta;
 
     // Phase A: omega features
-    let skeleton = Skeleton::compute(polytope);
-    let (ridge_omegas, orbit_omegas) = compute_omega_features(polytope, &skeleton, &best_perm);
+    let two_faces = two_faces_from_vertex_facet_incidence(polytope.incidence());
+    let (ridge_omegas, orbit_omegas) = compute_omega_features(polytope, &two_faces, &best_perm);
 
     let orbit_omega_min = orbit_omegas.iter().cloned().fold(f64::INFINITY, f64::min);
     let orbit_omega_mean = if orbit_omegas.is_empty() {
@@ -326,7 +325,7 @@ fn process_polytope(
 
     // Phase B: gradient dots (using library derivative functions with dual vertex parameterization)
     let d_sys_a = compute_d_sys_a(polytope, vol, cap, sys, &best_perm, &kkt_result);
-    let gradient_dots = compute_gradient_dots(polytope, &skeleton, &d_sys_a, &best_perm);
+    let gradient_dots = compute_gradient_dots(polytope, &two_faces, &d_sys_a, &best_perm);
 
     Some(OmegaRow {
         source: source.to_string(),
@@ -345,7 +344,7 @@ fn process_polytope(
         orbit_omega_mean,
         ridge_omegas,
         ridge_omega_abs_min,
-        n_ridges: skeleton.ridges.len(),
+        n_ridges: two_faces.len(),
         gradient_dots,
     })
 }

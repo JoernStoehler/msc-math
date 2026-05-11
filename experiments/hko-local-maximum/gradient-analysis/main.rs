@@ -30,6 +30,9 @@
 //! (`Hβ + Nμ + ηξ = 0`) instead of re-labeling it into a local asymmetric
 //! variant before derivative consumers use it again.
 
+use euclidean_polytopes::{
+    two_faces_from_vertex_facet_incidence, vertex_facets_from_vertex_facet_incidence,
+};
 use exp_hko_local_maximum::euclidean_volume_f64;
 use exp_hko_local_maximum::{
     ehz_capacity_instrumented, exact_hko_dual_vertices, exact_simplex_dual_vertices,
@@ -49,7 +52,6 @@ use symplectic::ehz_capacity;
 use symplectic::exact::{capacity_derivatives_a_exact_from_orbit, solve_orbit_sigma_exact};
 use symplectic::geom::known_polytopes;
 use symplectic::geom::polytope::Polytope4D;
-use symplectic::geom::skeleton::Skeleton;
 use symplectic::omega0;
 
 /// Gap threshold for near-optimal orbits: collect orbits within δ of best.
@@ -593,11 +595,11 @@ fn compute_step_bound(polytope: &Polytope4D, direction: &[f64]) -> f64 {
     let heights: Vec<f64> = duals.iter().map(|a| 1.0 / a.norm()).collect();
     let vertices = polytope.vertices_f64();
     let f = polytope.facet_count();
-    let skeleton = Skeleton::compute(polytope);
+    let vertex_facets_by_vertex = vertex_facets_from_vertex_facet_incidence(polytope.incidence());
 
     let mut t_max = f64::INFINITY;
 
-    for (vi, vertex_facets) in skeleton.vertex_facets.iter().enumerate() {
+    for (vi, vertex_facets) in vertex_facets_by_vertex.iter().enumerate() {
         let v = &vertices[vi];
 
         if vertex_facets.len() == 4 {
@@ -678,11 +680,13 @@ fn compute_step_bound_hn(polytope: &Polytope4D, g_h: &[f64], g_n: &[Vector4<f64>
     let heights: Vec<f64> = duals.iter().map(|a| 1.0 / a.norm()).collect();
     let vertices = polytope.vertices_f64();
     let f = polytope.facet_count();
-    let skeleton = Skeleton::compute(polytope);
+    let incidence = polytope.incidence();
+    let vertex_facets_by_vertex = vertex_facets_from_vertex_facet_incidence(incidence);
+    let two_faces = two_faces_from_vertex_facet_incidence(incidence);
 
     let mut t_max = f64::INFINITY;
 
-    for (vi, vertex_facets) in skeleton.vertex_facets.iter().enumerate() {
+    for (vi, vertex_facets) in vertex_facets_by_vertex.iter().enumerate() {
         let v = &vertices[vi];
 
         if vertex_facets.len() == 4 {
@@ -748,10 +752,10 @@ fn compute_step_bound_hn(polytope: &Polytope4D, g_h: &[f64], g_n: &[Vector4<f64>
         }
     }
 
-    // ω₀ sign preservation for ridge-adjacent pairs
-    for ridge in &skeleton.ridges {
-        let i = ridge.facets[0];
-        let j = ridge.facets[1];
+    // ω₀ sign preservation for adjacent two-face facet pairs.
+    for two_face in &two_faces {
+        let i = two_face.facets[0];
+        let j = two_face.facets[1];
         let omega_ij = omega0(&normals[i], &normals[j]);
         let d_omega = omega0(&g_n[i], &normals[j]) + omega0(&normals[i], &g_n[j]);
         if omega_ij.abs() > EPS_NUMERICAL_ZERO && d_omega.abs() > EPS_NUMERICAL_ZERO {

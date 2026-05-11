@@ -121,7 +121,7 @@ pub fn simulate(
 ///
 /// Take the smallest positive t among all facets j != i.
 ///
-/// **Ridge-point handling:** When the current point sits on the boundary
+/// **Two-face point handling:** When the current point sits on the boundary
 /// of another facet F_j (a_j . x ~ 1) and the Reeb direction pushes
 /// through it (a_j . d > 0), the trajectory cannot proceed on the current
 /// facet. It immediately transitions to F_j (zero-length segment).
@@ -233,8 +233,8 @@ pub fn simulate_with(
 mod tests {
     use super::*;
     use crate::geom::known_polytopes;
-    use crate::geom::skeleton::Skeleton;
     use crate::geom::symplectic_form::j4;
+    use euclidean_polytopes::facet_vertices_from_vertex_facet_incidence;
 
     // Tests for reeb_trajectory: piecewise-linear Reeb flow simulation.
     //
@@ -244,6 +244,18 @@ mod tests {
     //
     // Strategy: fixture-based on known polytopes (simplex, hypercube, cross-polytope,
     // Lagrangian products). Tests verify direction, continuity, containment.
+
+    fn facet_centroid(polytope: &Polytope4D, facet: usize) -> Vector4<f64> {
+        let vertices = polytope.vertices_f64();
+        let facet_vertices =
+            facet_vertices_from_vertex_facet_incidence(polytope.incidence())[facet].clone();
+
+        facet_vertices
+            .iter()
+            .map(|&vertex_index| vertices[vertex_index])
+            .sum::<Vector4<f64>>()
+            / facet_vertices.len() as f64
+    }
 
     /// J_0 (a, b, c, d) = (-c, -d, a, b) for standard basis vectors.
     #[test]
@@ -316,8 +328,7 @@ mod tests {
     #[test]
     fn hypercube_trajectory_visits_multiple_facets() {
         let kp = known_polytopes::hypercube();
-        let skel = Skeleton::compute(&kp.polytope);
-        let start = skel.facet_centroid(&kp.polytope, 0);
+        let start = facet_centroid(&kp.polytope, 0);
 
         // Verify start is on facet 0.
         let residual = (kp.polytope.dual_vertices_f64()[0].dot(&start) - 1.0).abs();
@@ -356,8 +367,7 @@ mod tests {
     #[test]
     fn segments_follow_reeb_direction() {
         let kp = known_polytopes::hypercube();
-        let skel = Skeleton::compute(&kp.polytope);
-        let start = skel.facet_centroid(&kp.polytope, 0);
+        let start = facet_centroid(&kp.polytope, 0);
         let traj = simulate_with(&kp.polytope, start, 0, 20, 1e-6);
 
         let duals = kp.polytope.dual_vertices_f64();
@@ -380,8 +390,7 @@ mod tests {
     #[test]
     fn simplex_trajectory_produces_segments() {
         let kp = known_polytopes::simplex();
-        let skel = Skeleton::compute(&kp.polytope);
-        let start = skel.facet_centroid(&kp.polytope, 0);
+        let start = facet_centroid(&kp.polytope, 0);
         let traj = simulate(&kp.polytope, start, 0);
 
         assert!(
@@ -411,10 +420,9 @@ mod tests {
 
         for (name, kp) in &polytopes {
             let duals = kp.polytope.dual_vertices_f64();
-            let skel = Skeleton::compute(&kp.polytope);
 
             for facet in 0..duals.len() {
-                let start = skel.facet_centroid(&kp.polytope, facet);
+                let start = facet_centroid(&kp.polytope, facet);
                 let traj = simulate_with(&kp.polytope, start, facet, 100, 1e-6);
 
                 for (si, seg) in traj.segments.iter().enumerate() {
@@ -453,8 +461,7 @@ mod tests {
     #[test]
     fn simulate_defaults_match_explicit() {
         let kp = known_polytopes::hypercube();
-        let skel = Skeleton::compute(&kp.polytope);
-        let start = skel.facet_centroid(&kp.polytope, 0);
+        let start = facet_centroid(&kp.polytope, 0);
 
         let traj_default = simulate(&kp.polytope, start, 0);
         let traj_explicit = simulate_with(

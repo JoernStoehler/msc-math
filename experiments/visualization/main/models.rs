@@ -12,7 +12,8 @@ pub struct VizExport {
     pub facet_count: usize,
     pub vertex_count: usize,
     pub edge_count: usize,
-    pub ridge_count: usize,
+    #[serde(rename = "ridge_count")]
+    pub two_face_count: usize,
     /// Dual vertices a_i where K = {x : a_i^T x <= 1}, each `[a₁, a₂, a₃, a₄]`.
     pub dual_vertices: Vec<[f64; 4]>,
     /// Reeb flow directions per facet: `reeb_vectors[i] = J₀ · a_i`.
@@ -21,8 +22,9 @@ pub struct VizExport {
     pub vertices: Vec<[f64; 4]>,
     /// Edges as pairs of vertex indices.
     pub edges: Vec<[usize; 2]>,
-    /// 2-faces (ridges).
-    pub ridges: Vec<VizRidge>,
+    /// 2-faces.
+    #[serde(rename = "ridges")]
+    pub two_faces: Vec<VizTwoFace>,
     /// Per-vertex facet incidence.
     pub vertex_facets: Vec<Vec<usize>>,
     /// Reeb trajectories: recovered orbits and displaced variants.
@@ -34,7 +36,7 @@ pub struct VizExport {
 }
 
 #[derive(Serialize)]
-pub struct VizRidge {
+pub struct VizTwoFace {
     pub facets: [usize; 2],
     pub vertices: Vec<usize>,
 }
