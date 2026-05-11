@@ -4,7 +4,7 @@
 //!
 //! The KKT module is context-independent: it operates on abstract matrices (C, d, H)
 //! without knowing they come from symplectic geometry. Assembly of (C, d, H) from
-//! polytope geometry lives in `qp_assembly`.
+//! dual vertices lives in `qp_assembly`.
 //!
 //! Mathematical correspondence: [lem:kkt], [lem:q-error-bound]
 //!
@@ -14,7 +14,7 @@
 //!
 //! - `saddle_point_solver` — solves the (m+5)x(m+5) augmented KKT system
 //!   via eigendecomposition. Default path used by `hk2017` and `billiard`
-//!   (see `solve_kkt_for`).
+//!   (see `solve_kkt_for_dual_vertices`).
 //! - `projection_solver` — projects onto `ker(C)`, reduces to the k-dim
 //!   Hessian `H' = V^T H V`, then runs a max-margin search. Used when the
 //!   saddle-point path needs a cross-check or when beta>0 feasibility is
@@ -25,7 +25,7 @@
 //!
 //! ## Submodules
 //!
-//! - `qp_assembly` — Polytope4D + permutation -> QP matrices or augmented system
+//! - `qp_assembly` — dual vertices + permutation -> QP matrices or augmented system
 //! - `saddle_point_solver` — (m+5)x(m+5) eigendecomposition solver (main path)
 //! - `constraint_solver` — Solve Cx=d for particular solution + null space basis via SVD
 //! - `beta_feasibility` — Max-margin LP search for beta>0 in affine solution set

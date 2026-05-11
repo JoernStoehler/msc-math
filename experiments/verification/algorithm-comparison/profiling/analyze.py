@@ -49,7 +49,7 @@ CANDIDATE_SLOW_TESTS = [
     "algorithms::hk2017::tests_conformality::capacity_conformality_simplex",
     "algorithms::hk2017::tests_symplectic_invariance::capacity_symplectomorphism_invariance_simplex",
     "algorithms::hk2017::tests_pruning::pruned_matches_unpruned_simplex",
-    "geom::volume::tests::proptests::volume_scales_with_fourth_power",
+    "derivatives::tests::volume_derivatives_a_matches_fd",
     "random::tests::proptests::random_polytopes_pass_validation",
 ]
 

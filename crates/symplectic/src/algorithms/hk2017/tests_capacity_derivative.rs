@@ -2,10 +2,14 @@
 //!
 //! Split from mod.rs to keep module routing and docs short.
 
-use crate::ehz_capacity_pruned as ehz_capacity;
+use crate::algorithms::test_helpers::{
+    pruned_capacity_for_dual_vertices, pruned_capacity_for_fixture,
+};
+use crate::exact::exact_vertices_with_incidence;
 use crate::geom::known_polytopes;
-use crate::geom::polytope::Polytope4D;
-use crate::geom::volume::volume;
+use crate::geom::rational_arithmetic::{f64_to_rational, rational_to_f64};
+use crate::test_lib::euclidean_volume_f64;
+use euclidean_polytopes::volume_from_incidence_exact;
 use nalgebra::Vector4;
 
 /// Step size for central finite differences of capacity.
@@ -16,42 +20,65 @@ const FD_EPS_CAP: f64 = 1e-6;
 
 /// Step size for central finite differences of volume.
 ///
-/// Tighter than capacity (volume computation is cheap via qhull).
+/// Tighter than capacity because known-incidence volume is deterministic and cheap.
 const FD_EPS_VOL: f64 = 1e-7;
 
 /// Construct a perturbed polytope: h_k -> h_k + delta, all other heights unchanged.
 ///
 /// Returns `None` if construction fails (should not happen for small perturbations
 /// of valid polytopes).
-fn perturbed_polytope(
+fn perturbed_dual_vertices(
     normals: &[Vector4<f64>],
     heights: &[f64],
     facet: usize,
     delta: f64,
-) -> Option<Polytope4D> {
+) -> Vec<Vector4<f64>> {
     let mut h = heights.to_vec();
     h[facet] += delta;
-    let halfspaces: Vec<Vector4<f64>> = normals
+    normals
         .iter()
         .zip(h.iter())
         .map(|(n, &hi)| n / hi)
-        .collect();
-    Polytope4D::from_f64(halfspaces).ok()
+        .collect()
+}
+
+fn exact_vectors_from_dual_vertices_f64(
+    dual_vertices: &[Vector4<f64>],
+) -> Vec<Vector4<num_rational::BigRational>> {
+    dual_vertices
+        .iter()
+        .map(|a| {
+            Vector4::new(
+                f64_to_rational(a[0]),
+                f64_to_rational(a[1]),
+                f64_to_rational(a[2]),
+                f64_to_rational(a[3]),
+            )
+        })
+        .collect()
+}
+
+fn volume_for_dual_vertices(dual_vertices: &[Vector4<f64>]) -> f64 {
+    let exact_dual_vertices = exact_vectors_from_dual_vertices_f64(dual_vertices);
+    let vertices_with_incidence =
+        exact_vertices_with_incidence(&exact_dual_vertices).expect("perturbed vertices");
+    rational_to_f64(&volume_from_incidence_exact(
+        &vertices_with_incidence.vertices,
+        &vertices_with_incidence.vertex_facet_incidence,
+    ))
 }
 
 /// Compute FD volume derivatives: dvol/dh_k ~ (vol(h+eps*e_k) - vol(h-eps*e_k)) / (2*eps).
 ///
-/// Uses the pure-Rust star triangulation from `geom::volume`.
+/// Uses the Euclidean exact known-incidence star triangulation.
 fn fd_volume_derivatives(normals: &[Vector4<f64>], heights: &[f64]) -> Vec<f64> {
     let f = heights.len();
     (0..f)
         .map(|k| {
-            let p_plus = perturbed_polytope(normals, heights, k, FD_EPS_VOL)
-                .expect("perturbed polytope +eps");
-            let p_minus = perturbed_polytope(normals, heights, k, -FD_EPS_VOL)
-                .expect("perturbed polytope -eps");
-            let vol_plus = volume(&p_plus);
-            let vol_minus = volume(&p_minus);
+            let p_plus = perturbed_dual_vertices(normals, heights, k, FD_EPS_VOL);
+            let p_minus = perturbed_dual_vertices(normals, heights, k, -FD_EPS_VOL);
+            let vol_plus = volume_for_dual_vertices(&p_plus);
+            let vol_minus = volume_for_dual_vertices(&p_minus);
             (vol_plus - vol_minus) / (2.0 * FD_EPS_VOL)
         })
         .collect()
@@ -65,12 +92,14 @@ fn fd_capacity_derivatives(normals: &[Vector4<f64>], heights: &[f64]) -> Vec<f64
     let f = heights.len();
     (0..f)
         .map(|k| {
-            let p_plus = perturbed_polytope(normals, heights, k, FD_EPS_CAP)
-                .expect("perturbed polytope +eps");
-            let p_minus = perturbed_polytope(normals, heights, k, -FD_EPS_CAP)
-                .expect("perturbed polytope -eps");
-            let cap_plus = ehz_capacity(&p_plus).expect("capacity +eps").capacity();
-            let cap_minus = ehz_capacity(&p_minus).expect("capacity -eps").capacity();
+            let p_plus = perturbed_dual_vertices(normals, heights, k, FD_EPS_CAP);
+            let p_minus = perturbed_dual_vertices(normals, heights, k, -FD_EPS_CAP);
+            let cap_plus = pruned_capacity_for_dual_vertices(&p_plus)
+                .expect("capacity +eps")
+                .capacity();
+            let cap_minus = pruned_capacity_for_dual_vertices(&p_minus)
+                .expect("capacity -eps")
+                .capacity();
             (cap_plus - cap_minus) / (2.0 * FD_EPS_CAP)
         })
         .collect()
@@ -81,10 +110,9 @@ fn fd_capacity_derivatives(normals: &[Vector4<f64>], heights: &[f64]) -> Vec<f64
 /// Extract unit normals and heights from dual vertices: n_i = a_i/||a_i||, h_i = 1/||a_i||.
 ///
 /// Used by FD tests that perturb heights to verify Euler homogeneity identities.
-fn normals_and_heights(polytope: &Polytope4D) -> (Vec<Vector4<f64>>, Vec<f64>) {
-    let duals = polytope.dual_vertices_f64();
-    let normals: Vec<Vector4<f64>> = duals.iter().map(|a| a / a.norm()).collect();
-    let heights: Vec<f64> = duals.iter().map(|a| 1.0 / a.norm()).collect();
+fn normals_and_heights(dual_vertices: &[Vector4<f64>]) -> (Vec<Vector4<f64>>, Vec<f64>) {
+    let normals: Vec<Vector4<f64>> = dual_vertices.iter().map(|a| a / a.norm()).collect();
+    let heights: Vec<f64> = dual_vertices.iter().map(|a| 1.0 / a.norm()).collect();
     (normals, heights)
 }
 
@@ -96,7 +124,7 @@ fn normals_and_heights(polytope: &Polytope4D) -> (Vec<Vector4<f64>>, Vec<f64>) {
 #[test]
 fn fd_capacity_height_simplex() {
     let kp = known_polytopes::simplex();
-    let (normals, heights) = normals_and_heights(&kp.polytope);
+    let (normals, heights) = normals_and_heights(&kp.dual_vertices_f64);
 
     let d_cap = fd_capacity_derivatives(&normals, &heights);
 
@@ -118,14 +146,14 @@ fn fd_capacity_height_simplex() {
 ///
 #[test]
 fn euler_homogeneity_volume() {
-    let polytopes: Vec<(&str, Polytope4D)> = vec![
-        ("simplex", known_polytopes::simplex().polytope.clone()),
-        ("hypercube", known_polytopes::hypercube().polytope.clone()),
+    let polytopes = vec![
+        ("simplex", known_polytopes::simplex()),
+        ("hypercube", known_polytopes::hypercube()),
     ];
 
-    for (name, poly) in &polytopes {
-        let (normals, heights) = normals_and_heights(poly);
-        let vol = volume(poly);
+    for (name, kp) in &polytopes {
+        let (normals, heights) = normals_and_heights(&kp.dual_vertices_f64);
+        let vol = euclidean_volume_f64(&kp.vertices, &kp.vertex_facet_incidence);
 
         let d_vol = fd_volume_derivatives(&normals, &heights);
         let euler_sum: f64 = heights.iter().zip(&d_vol).map(|(h, dv)| h * dv).sum();
@@ -147,7 +175,7 @@ fn euler_homogeneity_volume() {
 #[test]
 fn capacity_monotone_simplex() {
     let kp = known_polytopes::simplex();
-    let (normals, heights) = normals_and_heights(&kp.polytope);
+    let (normals, heights) = normals_and_heights(&kp.dual_vertices_f64);
 
     let d_cap = fd_capacity_derivatives(&normals, &heights);
 
@@ -170,21 +198,16 @@ fn capacity_monotone_simplex() {
 #[ignore]
 fn fd_capacity_height_known_polytopes() {
     let polytopes = vec![
-        ("hypercube", known_polytopes::hypercube().polytope.clone()),
+        ("hypercube", known_polytopes::hypercube()),
         (
             "lagrangian_tri",
-            known_polytopes::lagrangian_triangle_product()
-                .polytope
-                .clone(),
+            known_polytopes::lagrangian_triangle_product(),
         ),
-        (
-            "hko_pentagon",
-            known_polytopes::hko_pentagon().polytope.clone(),
-        ),
+        ("hko_pentagon", known_polytopes::hko_pentagon()),
     ];
 
-    for (name, poly) in &polytopes {
-        let (normals, heights) = normals_and_heights(poly);
+    for (name, kp) in &polytopes {
+        let (normals, heights) = normals_and_heights(&kp.dual_vertices_f64);
 
         let d_cap = fd_capacity_derivatives(&normals, &heights);
 
@@ -227,8 +250,10 @@ fn euler_homogeneity_capacity() {
     ];
 
     for (name, kp) in &polytopes {
-        let (normals, heights) = normals_and_heights(&kp.polytope);
-        let cap = ehz_capacity(&kp.polytope).expect("capacity").capacity();
+        let (normals, heights) = normals_and_heights(&kp.dual_vertices_f64);
+        let cap = pruned_capacity_for_fixture(kp)
+            .expect("capacity")
+            .capacity();
 
         let d_cap = fd_capacity_derivatives(&normals, &heights);
         let euler_sum: f64 = heights.iter().zip(&d_cap).map(|(h, dc)| h * dc).sum();
@@ -257,21 +282,16 @@ fn euler_homogeneity_capacity() {
 #[ignore]
 fn capacity_monotone_known_polytopes() {
     let polytopes = vec![
-        ("hypercube", known_polytopes::hypercube().polytope.clone()),
+        ("hypercube", known_polytopes::hypercube()),
         (
             "lagrangian_tri",
-            known_polytopes::lagrangian_triangle_product()
-                .polytope
-                .clone(),
+            known_polytopes::lagrangian_triangle_product(),
         ),
-        (
-            "hko_pentagon",
-            known_polytopes::hko_pentagon().polytope.clone(),
-        ),
+        ("hko_pentagon", known_polytopes::hko_pentagon()),
     ];
 
-    for (name, poly) in &polytopes {
-        let (normals, heights) = normals_and_heights(poly);
+    for (name, kp) in &polytopes {
+        let (normals, heights) = normals_and_heights(&kp.dual_vertices_f64);
 
         let d_cap = fd_capacity_derivatives(&normals, &heights);
 
@@ -302,23 +322,27 @@ fn fd_sys_height_euler() {
     ];
 
     for (name, kp) in &polytopes {
-        let (normals, heights) = normals_and_heights(&kp.polytope);
+        let (normals, heights) = normals_and_heights(&kp.dual_vertices_f64);
 
-        let cap = ehz_capacity(&kp.polytope).expect("capacity").capacity();
-        let vol = volume(&kp.polytope);
+        let cap = pruned_capacity_for_fixture(kp)
+            .expect("capacity")
+            .capacity();
+        let vol = euclidean_volume_f64(&kp.vertices, &kp.vertex_facet_incidence);
         let sys = cap * cap / (2.0 * vol);
 
         // FD sys derivatives.
         let d_sys: Vec<f64> = (0..heights.len())
             .map(|k| {
-                let p_plus =
-                    perturbed_polytope(&normals, &heights, k, FD_EPS_CAP).expect("perturbed +eps");
-                let p_minus =
-                    perturbed_polytope(&normals, &heights, k, -FD_EPS_CAP).expect("perturbed -eps");
-                let cap_p = ehz_capacity(&p_plus).expect("cap +eps").capacity();
-                let cap_m = ehz_capacity(&p_minus).expect("cap -eps").capacity();
-                let vol_p = volume(&p_plus);
-                let vol_m = volume(&p_minus);
+                let p_plus = perturbed_dual_vertices(&normals, &heights, k, FD_EPS_CAP);
+                let p_minus = perturbed_dual_vertices(&normals, &heights, k, -FD_EPS_CAP);
+                let cap_p = pruned_capacity_for_dual_vertices(&p_plus)
+                    .expect("cap +eps")
+                    .capacity();
+                let cap_m = pruned_capacity_for_dual_vertices(&p_minus)
+                    .expect("cap -eps")
+                    .capacity();
+                let vol_p = volume_for_dual_vertices(&p_plus);
+                let vol_m = volume_for_dual_vertices(&p_minus);
                 let sys_p = cap_p * cap_p / (2.0 * vol_p);
                 let sys_m = cap_m * cap_m / (2.0 * vol_m);
                 (sys_p - sys_m) / (2.0 * FD_EPS_CAP)

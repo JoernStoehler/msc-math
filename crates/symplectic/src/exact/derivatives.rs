@@ -4,27 +4,37 @@
 //! version of the dual-vertex capacity gradient formula.
 
 use crate::exact::orbit::ExactOrbitKktData;
-use crate::exact::polytope::ExactPolytope4D;
 use algebraic_numbers::ExactScalar;
+use nalgebra::Vector4;
 
 /// Compute the exact dual-vertex capacity gradient `∂c/∂a_k` from direct inputs.
-pub(crate) fn capacity_derivatives_a_exact_raw<F: ExactScalar + 'static>(
+///
+/// Caller contract:
+/// - `sigma` is a partial permutation of facet indices into `dual_vertices`;
+/// - `beta.len() == sigma.len()`;
+/// - `q > 0`;
+/// - `mu` and `q` come from the same one-sigma exact KKT solution.
+pub fn capacity_derivatives_a_exact<F: ExactScalar + 'static>(
     beta: &[F],
     q: &F,
-    mu: &[F; 4],
+    mu: &Vector4<F>,
     sigma: &[usize],
-    dual_vertices: &[[F; 4]],
-) -> Vec<[F; 4]> {
+    dual_vertices: &[Vector4<F>],
+) -> Vec<Vector4<F>> {
+    assert_eq!(beta.len(), sigma.len());
+    assert!(is_partial_permutation(sigma, dual_vertices.len()));
+    assert!(q > &F::zero());
+
     let q_sq = q.clone() * q.clone();
     let two = F::one() + F::one();
 
     (0..dual_vertices.len())
         .map(|k| {
             let Some(i0) = sigma.iter().position(|&facet| facet == k) else {
-                return std::array::from_fn(|_| F::zero());
+                return Vector4::new(F::zero(), F::zero(), F::zero(), F::zero());
             };
 
-            let mut p: [F; 4] = std::array::from_fn(|_| F::zero());
+            let mut p = Vector4::new(F::zero(), F::zero(), F::zero(), F::zero());
             for i in 0..i0 {
                 let dual = &dual_vertices[sigma[i]];
                 for idx in 0..4 {
@@ -32,43 +42,65 @@ pub(crate) fn capacity_derivatives_a_exact_raw<F: ExactScalar + 'static>(
                 }
             }
 
-            let inner: [F; 4] = std::array::from_fn(|idx| {
-                two.clone() * p[idx].clone() + beta[i0].clone() * dual_vertices[k][idx].clone()
-            });
-            let j0_inner = [
+            let inner = Vector4::new(
+                two.clone() * p[0].clone() + beta[i0].clone() * dual_vertices[k][0].clone(),
+                two.clone() * p[1].clone() + beta[i0].clone() * dual_vertices[k][1].clone(),
+                two.clone() * p[2].clone() + beta[i0].clone() * dual_vertices[k][2].clone(),
+                two.clone() * p[3].clone() + beta[i0].clone() * dual_vertices[k][3].clone(),
+            );
+            let j0_inner = Vector4::new(
                 -inner[2].clone(),
                 -inner[3].clone(),
                 inner[0].clone(),
                 inner[1].clone(),
-            ];
-            let dq_da: [F; 4] = std::array::from_fn(|idx| {
-                beta[i0].clone() * (j0_inner[idx].clone() + mu[idx].clone())
-            });
+            );
+            let dq_da = Vector4::new(
+                beta[i0].clone() * (j0_inner[0].clone() + mu[0].clone()),
+                beta[i0].clone() * (j0_inner[1].clone() + mu[1].clone()),
+                beta[i0].clone() * (j0_inner[2].clone() + mu[2].clone()),
+                beta[i0].clone() * (j0_inner[3].clone() + mu[3].clone()),
+            );
             let scale = -(F::one() / (two.clone() * q_sq.clone()));
-            std::array::from_fn(|idx| scale.clone() * dq_da[idx].clone())
+            Vector4::new(
+                scale.clone() * dq_da[0].clone(),
+                scale.clone() * dq_da[1].clone(),
+                scale.clone() * dq_da[2].clone(),
+                scale.clone() * dq_da[3].clone(),
+            )
         })
         .collect()
 }
 
-/// Compute the exact dual-vertex capacity gradient `∂c/∂a_k`.
-pub fn capacity_derivatives_a_exact<F: ExactScalar + 'static>(
-    polytope: &ExactPolytope4D<F>,
+fn is_partial_permutation(indices: &[usize], upper_bound: usize) -> bool {
+    let mut seen = vec![false; upper_bound];
+    for &index in indices {
+        if index >= upper_bound || seen[index] {
+            return false;
+        }
+        seen[index] = true;
+    }
+    true
+}
+
+/// Compute the exact dual-vertex capacity gradient from a solved exact orbit.
+pub fn capacity_derivatives_a_exact_from_orbit<F: ExactScalar + 'static>(
+    dual_vertices: &[Vector4<F>],
     orbit: &ExactOrbitKktData<F>,
-) -> Vec<[F; 4]> {
-    capacity_derivatives_a_exact_raw(
+) -> Vec<Vector4<F>> {
+    capacity_derivatives_a_exact(
         &orbit.beta,
         &orbit.q,
         &orbit.mu,
         &orbit.sigma,
-        polytope.dual_vertices(),
+        dual_vertices,
     )
 }
 
 #[cfg(test)]
 mod tests {
-    use super::capacity_derivatives_a_exact;
+    use super::capacity_derivatives_a_exact_from_orbit;
     use crate::derivatives::capacity_derivatives_a;
-    use crate::exact::{solve_orbit_sigma_exact, ExactPolytope4D};
+    use crate::exact::solve_orbit_sigma_exact;
     use nalgebra::Vector4;
     use num_rational::BigRational;
     use num_traits::{ToPrimitive, Zero};
@@ -81,26 +113,25 @@ mod tests {
         value.to_f64().expect("small rational should fit in f64")
     }
 
-    fn exact_simplex() -> ExactPolytope4D<BigRational> {
+    fn exact_simplex_dual_vertices() -> Vec<Vector4<BigRational>> {
         let z = BigRational::zero();
-        ExactPolytope4D::new(vec![
-            [q(-5), z.clone(), z.clone(), z.clone()],
-            [z.clone(), q(-5), z.clone(), z.clone()],
-            [z.clone(), z.clone(), q(-5), z.clone()],
-            [z.clone(), z.clone(), z.clone(), q(-5)],
-            [q(5), q(5), q(5), q(5)],
-        ])
-        .expect("exact simplex")
+        vec![
+            Vector4::new(q(-5), z.clone(), z.clone(), z.clone()),
+            Vector4::new(z.clone(), q(-5), z.clone(), z.clone()),
+            Vector4::new(z.clone(), z.clone(), q(-5), z.clone()),
+            Vector4::new(z.clone(), z.clone(), z.clone(), q(-5)),
+            Vector4::new(q(5), q(5), q(5), q(5)),
+        ]
     }
 
     #[test]
     fn simplex_gradient_is_nonzero_on_active_facets() {
-        let polytope = exact_simplex();
+        let dual_vertices = exact_simplex_dual_vertices();
         let sigma = [0usize, 1, 2, 3, 4];
-        let orbit = solve_orbit_sigma_exact(&polytope, &sigma).expect("exact simplex sigma");
-        let gradient = capacity_derivatives_a_exact(&polytope, &orbit);
+        let orbit = solve_orbit_sigma_exact(&dual_vertices, &sigma).expect("exact simplex sigma");
+        let gradient = capacity_derivatives_a_exact_from_orbit(&dual_vertices, &orbit);
 
-        assert_eq!(gradient.len(), polytope.facet_count());
+        assert_eq!(gradient.len(), dual_vertices.len());
         assert!(gradient
             .iter()
             .any(|vec| vec.iter().any(|entry| !entry.is_zero())));
@@ -108,16 +139,15 @@ mod tests {
 
     #[test]
     fn simplex_exact_gradient_matches_f64_formula() {
-        let polytope = exact_simplex();
+        let dual_vertices = exact_simplex_dual_vertices();
         let sigma = [0usize, 1, 2, 3, 4];
-        let orbit = solve_orbit_sigma_exact(&polytope, &sigma).expect("exact simplex sigma");
-        let exact_gradient = capacity_derivatives_a_exact(&polytope, &orbit);
+        let orbit = solve_orbit_sigma_exact(&dual_vertices, &sigma).expect("exact simplex sigma");
+        let exact_gradient = capacity_derivatives_a_exact_from_orbit(&dual_vertices, &orbit);
 
         let beta_f64: Vec<f64> = orbit.beta.iter().map(to_f64).collect();
         let q_f64 = to_f64(&orbit.q);
         let mu_f64: Vec<f64> = orbit.mu.iter().map(to_f64).collect();
-        let dual_vertices_f64: Vec<Vector4<f64>> = polytope
-            .dual_vertices()
+        let dual_vertices_f64: Vec<Vector4<f64>> = dual_vertices
             .iter()
             .map(|dual| {
                 Vector4::new(

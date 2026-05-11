@@ -3,34 +3,38 @@
 //! These stay experiment-local because they preserve the current experiment's
 //! search policy rather than defining a durable library API.
 
+use crate::flat_polytope::HkoPolytopeCache;
 use crate::{
     CONVERGENCE_THRESHOLD, EPS, MAX_ESCAPE_ROUNDS, MAX_ITERATIONS, MAX_STEP_SIZE, N_WIGGLES,
     OVERSHOOT_MULTIPLIERS, STEP_FRACTIONS, WIGGLE_STRENGTH,
 };
+use euclidean_polytopes::{
+    two_faces_from_vertex_facet_incidence, vertex_facets_from_vertex_facet_incidence,
+};
+use exp_hko_local_maximum::euclidean_volume_f64;
 use nalgebra::{Matrix4, Vector4};
 use rand_chacha::ChaCha8Rng;
 use rand_distr::{Distribution, StandardNormal};
 use std::time::Instant;
 use symplectic::derivatives::{capacity_derivatives_a_from_kkt_result, volume_derivatives_a};
-use symplectic::geom::polytope::Polytope4D;
-use symplectic::geom::skeleton::Skeleton;
 use symplectic::geom::symplectic_form::omega0;
-use symplectic::geom::volume::volume;
-use symplectic::kkt::saddle_point_solver::solve_kkt_for;
+use symplectic::kkt::saddle_point_solver::solve_kkt_for_dual_vertices;
 
 /// Compute the first boundary event along a direction in dual-vertex space.
 ///
 /// [lem:step-bound-incidence] incidence flip detection,
 /// [lem:step-bound-omega] omega_0 flip detection.
-fn compute_step_bound(polytope: &Polytope4D, direction: &[Vector4<f64>]) -> f64 {
-    let duals = polytope.dual_vertices_f64();
-    let vertices = polytope.vertices_f64();
+fn compute_step_bound(polytope: &HkoPolytopeCache, direction: &[Vector4<f64>]) -> f64 {
+    let duals = &polytope.dual_vertices_f64;
+    let vertices = &polytope.vertices_f64;
     let facet_count = polytope.facet_count();
-    let skeleton = Skeleton::compute(polytope);
+    let incidence = &polytope.vertex_facet_incidence;
+    let vertex_facets_by_vertex = vertex_facets_from_vertex_facet_incidence(incidence);
+    let two_faces = two_faces_from_vertex_facet_incidence(incidence);
 
     let mut t_max = f64::INFINITY;
 
-    for (vi, vertex_facets) in skeleton.vertex_facets.iter().enumerate() {
+    for (vi, vertex_facets) in vertex_facets_by_vertex.iter().enumerate() {
         let v = &vertices[vi];
 
         if vertex_facets.len() == 4 {
@@ -86,9 +90,9 @@ fn compute_step_bound(polytope: &Polytope4D, direction: &[Vector4<f64>]) -> f64 
         }
     }
 
-    for ridge in &skeleton.ridges {
-        let i = ridge.facets[0];
-        let j = ridge.facets[1];
+    for two_face in &two_faces {
+        let i = two_face.facets[0];
+        let j = two_face.facets[1];
         let c = omega0(&duals[i], &duals[j]);
         let b = omega0(&direction[i], &duals[j]) + omega0(&duals[i], &direction[j]);
         let a_coeff = omega0(&direction[i], &direction[j]);
@@ -136,8 +140,8 @@ fn compute_step_bound(polytope: &Polytope4D, direction: &[Vector4<f64>]) -> f64 
     t_max.min(MAX_STEP_SIZE)
 }
 
-pub(crate) fn compute_sys(polytope: &Polytope4D) -> Option<f64> {
-    let vol = volume(polytope);
+pub(crate) fn compute_sys(polytope: &HkoPolytopeCache) -> Option<f64> {
+    let vol = euclidean_volume_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
     if vol <= 0.0 {
         return None;
     }
@@ -150,36 +154,47 @@ fn try_step_a(
     duals: &[Vector4<f64>],
     direction: &[Vector4<f64>],
     t: f64,
-) -> Option<(Polytope4D, f64)> {
+) -> Option<(HkoPolytopeCache, f64)> {
     let new_duals: Vec<Vector4<f64>> = duals
         .iter()
         .zip(direction)
         .map(|(a, d)| a + t * d)
         .collect();
-    let polytope = Polytope4D::from_f64(new_duals).ok()?;
+    let polytope = HkoPolytopeCache::from_f64(new_duals)?;
     let sys = compute_sys(&polytope)?;
     Some((polytope, sys))
 }
 
-fn compute_capacity(polytope: &Polytope4D) -> Option<f64> {
-    symplectic::ehz_capacity(polytope)
-        .ok()
-        .map(|r| r.capacity())
+fn compute_capacity(polytope: &HkoPolytopeCache) -> Option<f64> {
+    exp_hko_local_maximum::capacity_auto(
+        &polytope.dual_vertices,
+        &polytope.dual_vertices_f64,
+        &polytope.facet_intersection_is_nonempty,
+        &polytope.omega_signs,
+    )
+    .ok()
+    .map(|r| r.capacity())
 }
 
-fn compute_capacity_result(polytope: &Polytope4D) -> Option<(f64, Vec<usize>)> {
-    let r = symplectic::ehz_capacity(polytope).ok()?;
+fn compute_capacity_result(polytope: &HkoPolytopeCache) -> Option<(f64, Vec<usize>)> {
+    let r = exp_hko_local_maximum::capacity_auto(
+        &polytope.dual_vertices,
+        &polytope.dual_vertices_f64,
+        &polytope.facet_intersection_is_nonempty,
+        &polytope.omega_signs,
+    )
+    .ok()?;
     Some((r.capacity(), r.best_sigma().to_vec()))
 }
 
 /// Single gradient ascent phase: iterate until convergence or budget.
 // TODO: add [lem:sys-sensitivity] to formal math (see gradient-correctness experiment)
 fn gradient_ascent_phase(
-    start: &Polytope4D,
+    start: &HkoPolytopeCache,
     t0: Instant,
     budget: f64,
-) -> Option<(Polytope4D, f64, usize)> {
-    let mut current = Polytope4D::from_f64(start.dual_vertices_f64().to_vec()).ok()?;
+) -> Option<(HkoPolytopeCache, f64, usize)> {
+    let mut current = HkoPolytopeCache::from_f64(start.dual_vertices_f64.to_vec())?;
     let mut current_sys = compute_sys(&current)?;
     let mut n_iters = 0usize;
 
@@ -189,16 +204,22 @@ fn gradient_ascent_phase(
         }
 
         let (cap, best_perm) = compute_capacity_result(&current)?;
-        let kkt = solve_kkt_for(&current, &best_perm).feasible()?;
-        let vol = volume(&current);
+        let dual_vertices = &current.dual_vertices_f64;
+        let kkt = solve_kkt_for_dual_vertices(dual_vertices, &best_perm).feasible()?;
+        let vol = euclidean_volume_f64(&current.vertices, &current.vertex_facet_incidence);
         if vol <= 0.0 {
             return None;
         }
         let sys = cap * cap / (2.0 * vol);
-        let duals = current.dual_vertices_f64();
+        let duals = &current.dual_vertices_f64;
 
-        let d_vol_a = volume_derivatives_a(&current);
-        let d_cap_a = capacity_derivatives_a_from_kkt_result(&current, &best_perm, &kkt);
+        let d_vol_a = volume_derivatives_a(
+            duals,
+            &current.vertices_f64,
+            &current.vertex_facet_incidence,
+        )
+        .ok()?;
+        let d_cap_a = capacity_derivatives_a_from_kkt_result(duals, &best_perm, &kkt);
         let d_sys_a: Vec<Vector4<f64>> = d_vol_a
             .iter()
             .zip(d_cap_a.iter())
@@ -215,7 +236,7 @@ fn gradient_ascent_phase(
             break;
         }
 
-        let mut best: Option<(Polytope4D, f64)> = None;
+        let mut best: Option<(HkoPolytopeCache, f64)> = None;
 
         for &frac in STEP_FRACTIONS {
             let t = frac * t_max;
@@ -254,8 +275,8 @@ fn gradient_ascent_phase(
     Some((current, current_sys, n_iters))
 }
 
-fn wiggle(polytope: &Polytope4D, rng: &mut ChaCha8Rng) -> Option<Polytope4D> {
-    let duals = polytope.dual_vertices_f64();
+fn wiggle(polytope: &HkoPolytopeCache, rng: &mut ChaCha8Rng) -> Option<HkoPolytopeCache> {
+    let duals = &polytope.dual_vertices_f64;
     let new_duals: Vec<Vector4<f64>> = duals
         .iter()
         .map(|a| {
@@ -265,18 +286,18 @@ fn wiggle(polytope: &Polytope4D, rng: &mut ChaCha8Rng) -> Option<Polytope4D> {
             })
         })
         .collect();
-    Polytope4D::from_f64(new_duals).ok()
+    HkoPolytopeCache::from_f64(new_duals)
 }
 
 pub(crate) struct AscentResult {
-    pub(crate) final_polytope: Polytope4D,
+    pub(crate) final_polytope: HkoPolytopeCache,
     pub(crate) final_sys: f64,
     pub(crate) n_iters: usize,
     pub(crate) n_phases: usize,
 }
 
 pub(crate) fn full_ascent(
-    start: &Polytope4D,
+    start: &HkoPolytopeCache,
     rng: &mut ChaCha8Rng,
     budget: f64,
 ) -> Option<AscentResult> {

@@ -1,0 +1,16 @@
+[package]
+name = "euclidean-polytopes"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+algebraic-numbers.workspace = true
+nalgebra.workspace = true
+num-traits.workspace = true
+rand.workspace = true
+rand_distr.workspace = true
+
+[dev-dependencies]
+num-rational.workspace = true
+proptest.workspace = true
+rand_chacha.workspace = true

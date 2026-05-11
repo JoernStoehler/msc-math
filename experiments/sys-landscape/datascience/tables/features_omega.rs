@@ -1,9 +1,9 @@
 //! Symplectic-form and transition-graph feature columns.
 
+use euclidean_polytopes::TwoFace;
+use exp_sys_landscape::SysLandscapePolytopeCache;
 use nalgebra::DMatrix;
-use symplectic::algorithms::facet_adjacency::build_transition_matrix;
-use symplectic::geom::polytope::Polytope4D;
-use symplectic::geom::skeleton::Skeleton;
+use symplectic::algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega;
 use symplectic::geom::symplectic_form::omega0;
 
 use super::features_helpers::{fraction_at_most, stats_or_zero};
@@ -24,7 +24,7 @@ pub struct OmegaFields {
     pub ridge_abs_omega_vol1_le_1em2_fraction: f64,
     pub ridge_abs_omega_vol1_le_1em1_fraction: f64,
     pub transition_density: f64,
-    pub transition_bidirectional_fraction: f64,
+    pub transition_bidirectional_given_facet_intersection_fraction: f64,
     pub transition_out_degree_mean: f64,
     pub transition_out_degree_std: f64,
     pub transition_out_degree_min: f64,
@@ -32,8 +32,8 @@ pub struct OmegaFields {
 }
 
 pub fn compute_omega_fields(
-    polytope: &Polytope4D,
-    skeleton: &Skeleton,
+    polytope: &SysLandscapePolytopeCache,
+    two_faces: &[TwoFace],
     duals: &[nalgebra::Vector4<f64>],
     facet_count: usize,
     omega_scale: f64,
@@ -43,25 +43,30 @@ pub fn compute_omega_fields(
     for i in 0..facet_count {
         for j in (i + 1)..facet_count {
             let value = omega0(&duals[i], &duals[j]).abs() * omega_scale;
-            if polytope.omega_signs()[(i, j)] == 0 {
+            if polytope.omega_signs[(i, j)] == 0 {
                 allpair_zero_count += 1;
             }
             allpair_abs_omegas.push(value);
         }
     }
-    let ridge_abs_omegas = skeleton
-        .ridges
+    let ridge_abs_omegas = two_faces
         .iter()
-        .map(|ridge| omega0(&duals[ridge.facets[0]], &duals[ridge.facets[1]]).abs() * omega_scale)
+        .map(|two_face| {
+            omega0(&duals[two_face.facets[0]], &duals[two_face.facets[1]]).abs() * omega_scale
+        })
         .collect::<Vec<_>>();
-    let ridge_zero_count = skeleton
-        .ridges
+    let ridge_zero_count = two_faces
         .iter()
-        .filter(|ridge| polytope.omega_signs()[(ridge.facets[0], ridge.facets[1])] == 0)
+        .filter(|two_face| polytope.omega_signs[(two_face.facets[0], two_face.facets[1])] == 0)
         .count();
-    let transition = build_transition_matrix(polytope);
+    let facet_intersection_is_nonempty = &polytope.facet_intersection_is_nonempty;
+    let omega_signs = &polytope.omega_signs;
+    let transition = build_transition_matrix_from_facet_intersections_and_omega(
+        facet_intersection_is_nonempty,
+        omega_signs,
+    );
     let mut transition_true_count = 0usize;
-    let mut adjacent_pair_count = 0usize;
+    let mut facet_intersection_pair_count = 0usize;
     let mut bidirectional_pair_count = 0usize;
     let mut out_degrees = Vec::new();
     for i in 0..facet_count {
@@ -76,8 +81,8 @@ pub fn compute_omega_fields(
     }
     for i in 0..facet_count {
         for j in (i + 1)..facet_count {
-            if polytope.vertex_adjacency()[(i, j)] {
-                adjacent_pair_count += 1;
+            if facet_intersection_is_nonempty[(i, j)] {
+                facet_intersection_pair_count += 1;
                 if transition[(i, j)] && transition[(j, i)] {
                     bidirectional_pair_count += 1;
                 }
@@ -91,10 +96,18 @@ pub fn compute_omega_fields(
         allpair_abs_omega_vol1_min,
         allpair_abs_omega_vol1_max,
     ) = stats_or_zero(&allpair_abs_omegas);
-    let (ridge_abs_omega_vol1_mean, ridge_abs_omega_vol1_std, ridge_abs_omega_vol1_min, ridge_abs_omega_vol1_max) =
-        stats_or_zero(&ridge_abs_omegas);
-    let (transition_out_degree_mean, transition_out_degree_std, transition_out_degree_min, transition_out_degree_max) =
-        stats_or_zero(&out_degrees);
+    let (
+        ridge_abs_omega_vol1_mean,
+        ridge_abs_omega_vol1_std,
+        ridge_abs_omega_vol1_min,
+        ridge_abs_omega_vol1_max,
+    ) = stats_or_zero(&ridge_abs_omegas);
+    let (
+        transition_out_degree_mean,
+        transition_out_degree_std,
+        transition_out_degree_min,
+        transition_out_degree_max,
+    ) = stats_or_zero(&out_degrees);
     let total_pairs = (facet_count * (facet_count - 1) / 2) as f64;
 
     OmegaFields {
@@ -112,10 +125,10 @@ pub fn compute_omega_fields(
         ridge_abs_omega_vol1_std,
         ridge_abs_omega_vol1_min,
         ridge_abs_omega_vol1_max,
-        ridge_zero_fraction: if skeleton.ridges.is_empty() {
+        ridge_zero_fraction: if two_faces.is_empty() {
             0.0
         } else {
-            ridge_zero_count as f64 / skeleton.ridges.len() as f64
+            ridge_zero_count as f64 / two_faces.len() as f64
         },
         ridge_abs_omega_vol1_le_1em3_fraction: fraction_at_most(&ridge_abs_omegas, 1e-3),
         ridge_abs_omega_vol1_le_1em2_fraction: fraction_at_most(&ridge_abs_omegas, 1e-2),
@@ -125,8 +138,10 @@ pub fn compute_omega_fields(
         } else {
             0.0
         },
-        transition_bidirectional_fraction: if adjacent_pair_count > 0 {
-            bidirectional_pair_count as f64 / adjacent_pair_count as f64
+        transition_bidirectional_given_facet_intersection_fraction: if facet_intersection_pair_count
+            > 0
+        {
+            bidirectional_pair_count as f64 / facet_intersection_pair_count as f64
         } else {
             0.0
         },

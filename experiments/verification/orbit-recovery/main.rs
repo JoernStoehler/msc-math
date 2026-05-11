@@ -13,7 +13,8 @@
 
 use dev_capacity_validation::{
     create_jsonl_writer, mode_output_path, parse_run_mode, run_mode_label, target_map,
-    write_json_line, RunMode, RunModeArgError, Target, ACTION_TOL, GEOMETRY_TOL,
+    write_json_line, RunMode, RunModeArgError, Target, VerificationPolytopeCache, ACTION_TOL,
+    GEOMETRY_TOL,
 };
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, HashMap};
@@ -23,7 +24,7 @@ use std::io::{BufRead, BufReader, Write};
 use std::path::{Path, PathBuf};
 use std::time::Instant;
 use symplectic::algorithms::hk2017::orbit_recovery::{recover_and_verify, GeometricOrbit};
-use symplectic::algorithms::{solve_orbit_sigma, OrbitKktData, OrbitSolveBackend, OrbitSolveError};
+use symplectic::algorithms::{solve_orbit_sigma_saddle_point, OrbitKktData, OrbitSolveError};
 
 #[derive(Debug, Clone, Deserialize)]
 struct TrustedOrbitRow {
@@ -260,7 +261,7 @@ fn validate_target(
         name: target.name.clone(),
         family: target.family.clone(),
         source_kind: target.source_kind.clone(),
-        facet_count: target.polytope.facet_count(),
+        facet_count: target.geometry.facet_count(),
         status: "failed".to_string(),
         failure_stage: None,
         failure_reasons: Vec::new(),
@@ -291,9 +292,10 @@ fn validate_target(
     let mut details = Vec::new();
     let t_rebuild = Instant::now();
     let mut rebuilt_orbits = Vec::<(TrustedOrbitRow, OrbitKktData)>::new();
+    let dual_vertices = &target.geometry.dual_vertices_f64;
 
     for row in rows {
-        match solve_orbit_sigma(&target.polytope, &row.sigma, OrbitSolveBackend::SaddlePoint) {
+        match solve_orbit_sigma_saddle_point(dual_vertices, &row.sigma) {
             Ok(orbit) => rebuilt_orbits.push((row, orbit)),
             Err(err) => {
                 summary.failed_solves += 1;
@@ -454,12 +456,12 @@ fn recover_trusted_orbit(
         passes_geometric_checks: None,
     };
 
-    let recovery = match recover_and_verify(&target.polytope, &orbit) {
+    let recovery = match recover_and_verify(&target.geometry.dual_vertices_f64, &orbit) {
         Some(recovery) => recovery,
         None => return detail,
     };
 
-    let on_facet_error = compute_on_facet_error(&target.polytope, &orbit.sigma, &recovery);
+    let on_facet_error = compute_on_facet_error(&target.geometry, &orbit.sigma, &recovery);
     let action_error = (recovery.action - orbit.action).abs();
     let passes = recovery.closure_error < GEOMETRY_TOL
         && on_facet_error < GEOMETRY_TOL
@@ -487,18 +489,17 @@ fn recover_trusted_orbit(
 
 fn solve_status(err: OrbitSolveError) -> &'static str {
     match err {
-        OrbitSolveError::UnsupportedBackend => "solve_unsupported_backend",
         OrbitSolveError::Inadmissible => "solve_inadmissible",
         OrbitSolveError::NumericalFailure => "solve_numerical_failure",
     }
 }
 
 fn compute_on_facet_error(
-    polytope: &symplectic::Polytope4D,
+    polytope: &VerificationPolytopeCache,
     sigma: &[usize],
     recovery: &GeometricOrbit,
 ) -> f64 {
-    let duals = polytope.dual_vertices_f64();
+    let duals = &polytope.dual_vertices_f64;
     (0..sigma.len())
         .filter(|&k| recovery.dwell_times[k] > 0.0)
         .map(|k| {

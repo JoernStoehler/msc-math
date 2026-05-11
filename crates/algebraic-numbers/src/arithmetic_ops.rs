@@ -4,7 +4,7 @@ use num_rational::BigRational;
 use num_traits::{One, Zero};
 
 use crate::algebraic_element::Algebraic;
-use crate::exact_scalar::ExactScalar;
+use crate::exact_scalar::{round_rational_to_f64, ExactScalar};
 use crate::field_specification::{field_degree, RealAlgebraicField};
 use crate::polynomial_arithmetic::multiply_mod_field;
 
@@ -118,7 +118,14 @@ impl<F: RealAlgebraicField> From<i64> for Algebraic<F> {
     }
 }
 
-impl<F: RealAlgebraicField> ExactScalar for Algebraic<F> {}
+impl<F: RealAlgebraicField> ExactScalar for Algebraic<F> {
+    fn round_to_f64(&self) -> f64 {
+        let root = F::root_f64();
+        self.coeffs.iter().rev().fold(0.0, |value, coeff| {
+            value.mul_add(root, round_rational_to_f64(coeff))
+        })
+    }
+}
 
 fn multiply<F: RealAlgebraicField>(left: Algebraic<F>, right: Algebraic<F>) -> Algebraic<F> {
     Algebraic::from_coeffs_unchecked(multiply_mod_field::<F>(&left.coeffs, &right.coeffs))

@@ -21,11 +21,11 @@
 //! - 10 samples per bucket
 //! - Height range h in [0.8, 1.2]
 //! - Explicit billiard reporting: this dataset writes billiard-native
-//!   `iterations` and `bounces`, so the root `symplectic::ehz_capacity`
+//!   `iterations` and `bounces`, so the auto-routed capacity helper
 //!   wrapper would drop required output fields.
 //!
 //! Note: Uses shared RNG (no blake3 per-attempt seeding) because there is no
-//! generate_polytope equivalent for Lagrangian products. Database lookup is
+//! source-tagged single-attempt generator for Lagrangian products. Database lookup is
 //! key-based (BigRational dual vertices), not Source-based.
 //!
 //! CLI (all optional):
@@ -40,19 +40,19 @@ use num_rational::BigRational;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 mod rows;
+use exp_sys_landscape::capacity_billiard;
+use exp_sys_landscape::euclidean_volume_f64;
+use exp_sys_landscape::SysLandscapePolytopeCache;
 use rows::RandomProductRow;
 use std::collections::HashMap;
 use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::path::PathBuf;
 use std::time::Instant;
-use symplectic::algorithms::billiard::bounce_count_from_sigma;
+use symplectic::algorithms::billiard::bounce_count_from_sigma_for_facets;
+use symplectic::classify_facets_from_dual_vertices;
 use symplectic::database::{load_many, save, DualVerticesKey, PolytopeRecord, SigmaAction, Source};
-use symplectic::ehz_capacity_billiard;
-use symplectic::geom::lagrangian_product::lagrangian_product;
 use symplectic::geom::polygon::random_polygon_2d;
-use symplectic::geom::polytope::Polytope4D;
-use symplectic::geom::volume::volume;
 
 const SEED: u64 = 42;
 const H_MIN: f64 = 0.8;
@@ -71,6 +71,11 @@ const PAIRS: &[(usize, usize)] = &[
     (5, 6),
     (6, 6),
 ];
+
+fn bounce_count(polytope: &SysLandscapePolytopeCache, sigma: &[usize]) -> Option<usize> {
+    let classification = classify_facets_from_dual_vertices(&polytope.dual_vertices_f64).ok()?;
+    bounce_count_from_sigma_for_facets(&classification.q_indices, &classification.p_indices, sigma)
+}
 
 struct Args {
     seed: u64,
@@ -92,14 +97,16 @@ fn parse_args() -> Args {
     parse_args_from(std::env::args())
 }
 
-fn parse_args_from(
-    argv: impl IntoIterator<Item = impl Into<String>>,
-) -> Args {
+fn parse_args_from(argv: impl IntoIterator<Item = impl Into<String>>) -> Args {
     let argv: Vec<String> = argv.into_iter().map(Into::into).collect();
 
     let mut seed = SEED;
     let mut samples_per_bucket = SAMPLES_PER_BUCKET;
-    let mut max_sides = PAIRS.iter().map(|(_, m)| *m).max().expect("pair list non-empty");
+    let mut max_sides = PAIRS
+        .iter()
+        .map(|(_, m)| *m)
+        .max()
+        .expect("pair list non-empty");
     let mut out = None;
     let mut cache = None;
 
@@ -113,9 +120,7 @@ fn parse_args_from(
         };
         match arg {
             "--seed" => {
-                seed = need_value("--seed")
-                    .parse()
-                    .expect("--seed must be a u64");
+                seed = need_value("--seed").parse().expect("--seed must be a u64");
                 i += 2;
             }
             "--samples-per-bucket" => {
@@ -153,15 +158,16 @@ fn parse_args_from(
 }
 
 fn included_pairs(max_sides: usize) -> Vec<(usize, usize)> {
-    PAIRS.iter()
+    PAIRS
+        .iter()
         .copied()
         .filter(|(k, m)| *k <= max_sides && *m <= max_sides)
         .collect()
 }
 
-fn f64_dual_vertices(polytope: &Polytope4D) -> Vec<[f64; 4]> {
+fn f64_dual_vertices(polytope: &SysLandscapePolytopeCache) -> Vec<[f64; 4]> {
     polytope
-        .dual_vertices_f64()
+        .dual_vertices_f64
         .iter()
         .map(|a| [a[0], a[1], a[2], a[3]])
         .collect()
@@ -173,12 +179,12 @@ fn rational_vec4_to_strings(data: &[[BigRational; 4]]) -> Vec<[String; 4]> {
         .collect()
 }
 
-fn dual_vertices_rational_strings(polytope: &Polytope4D) -> Vec<[String; 4]> {
-    rational_vec4_to_strings(polytope.dual_vertices())
+fn dual_vertices_rational_strings(polytope: &SysLandscapePolytopeCache) -> Vec<[String; 4]> {
+    rational_vec4_to_strings(&polytope.dual_vertices)
 }
 
-fn vertices_rational_strings(polytope: &Polytope4D) -> Vec<[String; 4]> {
-    rational_vec4_to_strings(polytope.vertices())
+fn vertices_rational_strings(polytope: &SysLandscapePolytopeCache) -> Vec<[String; 4]> {
+    rational_vec4_to_strings(&polytope.vertices)
 }
 
 fn main() {
@@ -203,8 +209,7 @@ fn main() {
     }
 
     let mut db: HashMap<DualVerticesKey, PolytopeRecord> =
-        load_many(&[args.cache.as_path()])
-            .expect("failed to load sys-landscape family cache");
+        load_many(&[args.cache.as_path()]).expect("failed to load sys-landscape family cache");
     println!("Loaded family cache: {} entries\n", db.len());
 
     let file = File::create(&args.out).expect("failed to create output file");
@@ -214,10 +219,7 @@ fn main() {
     let mut cache_hits = 0usize;
 
     for (k, m) in pairs {
-        println!(
-            "Bucket ({k},{m}) with {} samples",
-            args.samples_per_bucket
-        );
+        println!("Bucket ({k},{m}) with {} samples", args.samples_per_bucket);
 
         let mut accepted = 0usize;
         while accepted < args.samples_per_bucket {
@@ -225,12 +227,13 @@ fn main() {
             let (qn, qh) = random_polygon_2d(k, H_MIN, H_MAX, &mut rng);
             let (pn, ph) = random_polygon_2d(m, H_MIN, H_MAX, &mut rng);
 
-            let polytope = match lagrangian_product(&qn, &qh, &pn, &ph) {
-                Ok(p) => p,
-                Err(_) => continue,
-            };
+            let polytope =
+                match SysLandscapePolytopeCache::from_lagrangian_product(&qn, &qh, &pn, &ph) {
+                    Some(p) => p,
+                    None => continue,
+                };
 
-            let key: DualVerticesKey = polytope.dual_vertices().to_vec();
+            let key: DualVerticesKey = polytope.dual_vertices.to_vec();
 
             // Key-based lookup: check if this exact polytope is already cached
             if let Some(record) = db.get_mut(&key) {
@@ -245,8 +248,13 @@ fn main() {
                     });
                 }
                 if record.orbit_scalars.is_none() {
-                    let result = ehz_capacity_billiard(&polytope)
-                        .expect("billiard should accept cached Lagrangian product");
+                    let result = capacity_billiard(
+                        &polytope.dual_vertices_f64,
+                        &polytope.dual_vertices,
+                        &polytope.facet_intersection_is_nonempty,
+                        &polytope.omega_signs,
+                    )
+                    .expect("billiard should accept cached Lagrangian product");
                     record.orbit_scalars = Some(orbit_scalars_from_result(&result));
                 }
                 if let (Some(vol), Some(cap)) = (record.volume, record.capacity) {
@@ -283,24 +291,27 @@ fn main() {
             // Cache miss: compute the specialized billiard result because this
             // dataset records billiard-native iterations and bounce counts.
             let start_vol = Instant::now();
-            let vol = volume(&polytope);
+            let vol = euclidean_volume_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
             let time_volume_ms = start_vol.elapsed().as_secs_f64() * 1000.0;
 
             let start_cap = Instant::now();
-            let result = ehz_capacity_billiard(&polytope)
-                .expect("billiard should accept Lagrangian product");
+            let result = capacity_billiard(
+                &polytope.dual_vertices_f64,
+                &polytope.dual_vertices,
+                &polytope.facet_intersection_is_nonempty,
+                &polytope.omega_signs,
+            )
+            .expect("billiard should accept Lagrangian product");
             let time_capacity_ms = start_cap.elapsed().as_secs_f64() * 1000.0;
 
             let cap = result.capacity();
             let sys = cap * cap / (2.0 * vol);
-            let Some(bounces) = bounce_count_from_sigma(&polytope, result.best_sigma())
-                .expect("billiard classification failed")
-            else {
+            let Some(bounces) = bounce_count(&polytope, result.best_sigma()) else {
                 continue;
             };
 
             // Insert into database
-            let mut record = PolytopeRecord::from_polytope(&polytope);
+            let mut record = polytope.to_record();
             record.source = Some(Source::LagrangianProduct {
                 n1: k,
                 n2: m,
@@ -350,7 +361,11 @@ fn main() {
     save(&args.cache, &db).expect("failed to save sys-landscape family cache");
 
     println!("\nWrote {total} entries to {}", args.out.display());
-    println!("Cache: {} entries (saved to {})", db.len(), args.cache.display());
+    println!(
+        "Cache: {} entries (saved to {})",
+        db.len(),
+        args.cache.display()
+    );
     println!("Cache hits: {cache_hits}/{total}");
     println!("Total time: {:.1}s", t0.elapsed().as_secs_f64());
 }

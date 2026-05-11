@@ -36,12 +36,13 @@
 //! resume plumbing lives in `exp_sys_landscape::{parse_ascent_args,
 //! open_ascent_writers, run_parallel_seeds, ...}`.
 
+use exp_sys_landscape::SysLandscapePolytopeCache;
 use exp_sys_landscape::{
     apply_dual_step, ascent_direction, compute_active_sys_state, compute_step_bound, compute_sys,
-    shared_family_cache_path,
     dual_vertices_rational_strings, finalize_ascent_output, open_ascent_writers,
-    orbit_scalars_from_result, parse_ascent_args, run_parallel_seeds, smoke_output_path,
-    trace_path_for, AscentArgs, AscentMode, SeedResult, SummaryRow, TraceRow, MAX_STEP_SIZE,
+    orbit_scalars_from_result, parse_ascent_args, run_parallel_seeds, shared_family_cache_path,
+    smoke_output_path, trace_path_for, AscentArgs, AscentMode, SeedResult, SummaryRow, TraceRow,
+    MAX_STEP_SIZE,
 };
 use nalgebra::Vector4;
 use rand::SeedableRng;
@@ -50,13 +51,10 @@ use rand_distr::{Distribution, StandardNormal};
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
 use std::time::Instant;
-use symplectic::algorithms::billiard::facet_classification::{
-    classify_facets, FacetClassification,
-};
+use symplectic::algorithms::billiard::facet_classification::FacetClassification;
+use symplectic::classify_facets_from_dual_vertices;
 use symplectic::database::{load_many, save, DualVerticesKey, PolytopeRecord, SigmaAction};
-use symplectic::geom::lagrangian_product::lagrangian_product;
 use symplectic::geom::polygon::random_polygon_2d;
-use symplectic::geom::polytope::Polytope4D;
 
 // ============================================================================
 // Configuration
@@ -103,7 +101,7 @@ const N_WIGGLES: usize = 5;
 /// `research/sys-landscape.md`.
 /// If changed: much smaller (e.g. 0.01) reduces boundary-crossing probability and escape
 /// effectiveness. Much larger (e.g. 0.2) risks producing degenerate polytopes
-/// (Polytope4D::from_f64 failure) or landing too far from the current optimum.
+/// (SysLandscapePolytopeCache::from_f64_dual_vertices failure) or landing too far from the current optimum.
 const WIGGLE_STRENGTH: f64 = 0.05;
 
 /// Maximum rounds of escape attempts after convergence.
@@ -126,7 +124,7 @@ const EPS: f64 = 1e-15;
 // ============================================================================
 
 struct AscentResult {
-    final_polytope: Polytope4D,
+    final_polytope: SysLandscapePolytopeCache,
     final_sys: f64,
     n_iters: usize,
     n_overshoot_improvements: usize,
@@ -144,12 +142,13 @@ struct AscentResult {
 fn gradient_ascent(
     name: &str,
     phase: usize,
-    start: &Polytope4D,
+    start: &SysLandscapePolytopeCache,
     lagrangian_class: &FacetClassification,
     t0: Instant,
     budget: f64,
 ) -> Option<AscentResult> {
-    let mut current = Polytope4D::from_f64(start.dual_vertices_f64().to_vec()).ok()?;
+    let mut current =
+        SysLandscapePolytopeCache::from_f64_dual_vertices(start.dual_vertices_f64.to_vec())?;
 
     let sys_init = compute_sys(&current)?;
 
@@ -166,7 +165,7 @@ fn gradient_ascent(
         // 1. Shared local state
         let state = compute_active_sys_state(&current)?;
         let sys = state.sys;
-        let duals = current.dual_vertices_f64();
+        let duals = &current.dual_vertices_f64;
 
         // 2. Ascent direction with explicit LP-preserving coordinate bounds.
         let d_sys_a = ascent_direction(
@@ -189,7 +188,7 @@ fn gradient_ascent(
         }
 
         // 4. Line search: within-bound + overshoot
-        let mut best: Option<(Polytope4D, f64, String, f64, f64)> = None;
+        let mut best: Option<(SysLandscapePolytopeCache, f64, String, f64, f64)> = None;
 
         for &frac in STEP_FRACTIONS {
             let t = frac * t_max;
@@ -259,8 +258,11 @@ fn gradient_ascent(
 
 /// Perturb dual vertices by Gaussian noise to escape local optimum.
 /// Returns None if the perturbed dual vertices don't form a valid polytope.
-fn wiggle(polytope: &Polytope4D, rng: &mut ChaCha8Rng) -> Option<Polytope4D> {
-    let duals = polytope.dual_vertices_f64();
+fn wiggle(
+    polytope: &SysLandscapePolytopeCache,
+    rng: &mut ChaCha8Rng,
+) -> Option<SysLandscapePolytopeCache> {
+    let duals = &polytope.dual_vertices_f64;
     let new_duals: Vec<Vector4<f64>> = duals
         .iter()
         .map(|a| {
@@ -270,7 +272,7 @@ fn wiggle(polytope: &Polytope4D, rng: &mut ChaCha8Rng) -> Option<Polytope4D> {
             })
         })
         .collect();
-    Polytope4D::from_f64(new_duals).ok()
+    SysLandscapePolytopeCache::from_f64_dual_vertices(new_duals)
 }
 
 // ============================================================================
@@ -281,7 +283,7 @@ fn process_seed(
     name: &str,
     seed_index: usize,
     polytope_type: &str,
-    polytope: &Polytope4D,
+    polytope: &SysLandscapePolytopeCache,
     lagrangian_class: &FacetClassification,
     seed_time_budget_secs: f64,
     rng: &mut ChaCha8Rng,
@@ -291,7 +293,8 @@ fn process_seed(
 
     let starting_sys = compute_sys(polytope)?;
 
-    let mut best_polytope = Polytope4D::from_f64(polytope.dual_vertices_f64().to_vec()).ok()?;
+    let mut best_polytope =
+        SysLandscapePolytopeCache::from_f64_dual_vertices(polytope.dual_vertices_f64.to_vec())?;
     let mut best_sys = starting_sys;
     let mut n_phases = 0usize;
     let mut n_iters_total = 0usize;
@@ -357,7 +360,7 @@ fn process_seed(
     let total_time_ms = t0.elapsed().as_secs_f64() * 1000.0;
     let final_state = compute_active_sys_state(&best_polytope)?;
     let final_capacity = final_state.capacity.capacity();
-    let mut final_record = PolytopeRecord::from_polytope(&best_polytope);
+    let mut final_record = best_polytope.to_record();
     final_record = final_record.with_computed_fields(final_state.vol, 0.0, final_capacity, 0.0);
     final_record = final_record.with_sigmas(
         vec![SigmaAction {
@@ -371,7 +374,7 @@ fn process_seed(
     let starting_dual_vertices_rational = dual_vertices_rational_strings(polytope);
     let final_dual_vertices_rational = dual_vertices_rational_strings(&best_polytope);
     let final_dvs: Vec<[f64; 4]> = best_polytope
-        .dual_vertices_f64()
+        .dual_vertices_f64
         .iter()
         .map(|a| [a[0], a[1], a[2], a[3]])
         .collect();
@@ -407,7 +410,10 @@ fn process_seed(
 /// stream. Bucket (q_f, p_f) is determined by `i mod LAGRANGIAN_SPLITS.len()`,
 /// so contiguous index ranges are evenly spread across buckets (10k total ->
 /// ~3333 per bucket for a 3-way split).
-fn generate_for_seed(i: usize, rng: &mut ChaCha8Rng) -> Option<(String, Polytope4D)> {
+fn generate_for_seed(
+    i: usize,
+    rng: &mut ChaCha8Rng,
+) -> Option<(String, SysLandscapePolytopeCache)> {
     let bucket_idx = i % LAGRANGIAN_SPLITS.len();
     let (q_f, p_f) = LAGRANGIAN_SPLITS[bucket_idx];
     let bucket_name = format!("lagrangian_{q_f}x{p_f}");
@@ -415,7 +421,7 @@ fn generate_for_seed(i: usize, rng: &mut ChaCha8Rng) -> Option<(String, Polytope
     for _ in 0..MAX_POLYTOPE_ATTEMPTS {
         let (qn, qh) = random_polygon_2d(q_f, H_MIN, H_MAX, rng);
         let (pn, ph) = random_polygon_2d(p_f, H_MIN, H_MAX, rng);
-        if let Ok(p) = lagrangian_product(&qn, &qh, &pn, &ph) {
+        if let Some(p) = SysLandscapePolytopeCache::from_lagrangian_product(&qn, &qh, &pn, &ph) {
             return Some((bucket_name, p));
         }
     }
@@ -428,12 +434,15 @@ fn generate_for_seed(i: usize, rng: &mut ChaCha8Rng) -> Option<(String, Polytope
 
 /// Insert a polytope into the database if not already present.
 /// Stores rational geometry for future vertex-enumeration-free reconstruction.
-fn insert_polytope_to_db(db: &mut HashMap<DualVerticesKey, PolytopeRecord>, polytope: &Polytope4D) {
-    let key: DualVerticesKey = polytope.dual_vertices().to_vec();
+fn insert_polytope_to_db(
+    db: &mut HashMap<DualVerticesKey, PolytopeRecord>,
+    polytope: &SysLandscapePolytopeCache,
+) {
+    let key: DualVerticesKey = polytope.dual_vertices.to_vec();
     if db.contains_key(&key) {
         return;
     }
-    let record = PolytopeRecord::from_polytope(polytope);
+    let record = polytope.to_record();
     db.insert(key, record);
 }
 
@@ -506,7 +515,8 @@ fn main() {
             insert_polytope_to_db(&mut db, &polytope);
         }
 
-        let class = classify_facets(&polytope).expect("should classify as Lagrangian");
+        let class = classify_facets_from_dual_vertices(&polytope.dual_vertices_f64)
+            .expect("should classify as Lagrangian");
 
         let name = format!("products_{i}");
         let result = process_seed(

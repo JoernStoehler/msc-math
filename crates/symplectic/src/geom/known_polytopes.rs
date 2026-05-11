@@ -1,27 +1,45 @@
-//! Named polytope constructors with known EHZ capacity values from the literature.
+//! Named flat polytope fixtures with known EHZ capacity values from the literature.
 //!
 //! Single source of truth for polytope definitions and their known capacity values.
 //! Used by: test utilities, dataset generation, and capacity validation
 //! (`hk2017` smoke tests and verification experiments).
 //!
-//! Each polytope is constructed once (on first access) and cached via `LazyLock`.
+//! Each fixture is constructed once (on first access) and cached via `LazyLock`.
 //! Constructors return `&'static KnownPolytope` — zero-cost after first call.
 //!
 //! Coordinates: (q_1, q_2, p_1, p_2). See `symplectic_form` module for J_0 and omega_0.
 //!
 //! Mathematical correspondence: [def:ehz-capacity], [thm:hko-counterexample]
 
-use crate::geom::polytope::Polytope4D;
 use crate::geom::rational_arithmetic::{frac, rat};
-use nalgebra::Vector4;
+use crate::geom::vertex_enumeration::{
+    construct_rational_pipeline, dual_vertices_f64_from_rational,
+    facet_intersection_is_nonempty_from_incidence, omega_signs_from_rational_dual_vertices,
+    rational_vertices_to_f64, rationalize_f64_dual_vertices,
+    vertex_facet_incidence_from_descriptors, ConstructionError,
+};
+use nalgebra::{DMatrix, Vector4};
+use num_rational::BigRational;
 use std::f64::consts::PI;
 use std::sync::LazyLock;
 
-/// A polytope with a known capacity value and source reference.
+/// A named polytope fixture with a known capacity value and source reference.
 #[derive(Clone, Debug)]
 pub struct KnownPolytope {
-    /// The polytope instance.
-    pub polytope: Polytope4D,
+    /// Exact rational dual vertices `a_i`; halfspace `i` is `<a_i, x> <= 1`.
+    pub dual_vertices: Vec<[BigRational; 4]>,
+    /// Exact rational vertices of the primal body.
+    pub vertices: Vec<[BigRational; 4]>,
+    /// Vertex-facet incidence matrix.
+    pub vertex_facet_incidence: DMatrix<bool>,
+    /// Facet-pair nonempty-intersection matrix.
+    pub facet_intersection_is_nonempty: DMatrix<bool>,
+    /// Exact sign matrix of `omega_0(a_i, a_j)`.
+    pub omega_signs: DMatrix<i8>,
+    /// Dual vertices as f64 vectors for numerical algorithms.
+    pub dual_vertices_f64: Vec<Vector4<f64>>,
+    /// Primal vertices rounded to f64.
+    pub vertices_f64: Vec<Vector4<f64>>,
     /// Known EHZ capacity value.
     pub capacity: f64,
     /// Short human-readable name.
@@ -30,9 +48,65 @@ pub struct KnownPolytope {
     pub source: &'static str,
 }
 
-/// All known polytopes with verified or computed capacity values.
+impl KnownPolytope {
+    fn from_exact_dual_vertices(
+        dual_vertices: Vec<[BigRational; 4]>,
+        capacity: f64,
+        name: &'static str,
+        source: &'static str,
+    ) -> Result<Self, ConstructionError> {
+        let dual_vertices_f64 = dual_vertices_f64_from_rational(&dual_vertices)?;
+        Self::from_validated_dual_vertices(dual_vertices, dual_vertices_f64, capacity, name, source)
+    }
+
+    fn from_f64_dual_vertices(
+        dual_vertices_f64: Vec<Vector4<f64>>,
+        capacity: f64,
+        name: &'static str,
+        source: &'static str,
+    ) -> Result<Self, ConstructionError> {
+        let dual_vertices = rationalize_f64_dual_vertices(&dual_vertices_f64)?;
+        Self::from_validated_dual_vertices(dual_vertices, dual_vertices_f64, capacity, name, source)
+    }
+
+    fn from_validated_dual_vertices(
+        dual_vertices: Vec<[BigRational; 4]>,
+        dual_vertices_f64: Vec<Vector4<f64>>,
+        capacity: f64,
+        name: &'static str,
+        source: &'static str,
+    ) -> Result<Self, ConstructionError> {
+        let (vertices, vertex_descriptors) = construct_rational_pipeline(&dual_vertices)?;
+        let vertex_facet_incidence =
+            vertex_facet_incidence_from_descriptors(&vertex_descriptors, dual_vertices.len());
+        let facet_intersection_is_nonempty =
+            facet_intersection_is_nonempty_from_incidence(&vertex_facet_incidence);
+        let omega_signs = omega_signs_from_rational_dual_vertices(&dual_vertices);
+        let vertices_f64 = rational_vertices_to_f64(&vertices);
+
+        Ok(Self {
+            dual_vertices,
+            vertices,
+            vertex_facet_incidence,
+            facet_intersection_is_nonempty,
+            omega_signs,
+            dual_vertices_f64,
+            vertices_f64,
+            capacity,
+            name,
+            source,
+        })
+    }
+
+    /// Number of facets in this fixture.
+    pub fn facet_count(&self) -> usize {
+        self.dual_vertices.len()
+    }
+}
+
+/// All known fixtures with verified or computed capacity values.
 ///
-/// Returns references to the cached singletons. Each polytope is constructed
+/// Returns references to the cached singletons. Each fixture is constructed
 /// on first access (via its individual constructor) and never again.
 pub fn all_known() -> Vec<&'static KnownPolytope> {
     vec![
@@ -85,12 +159,13 @@ pub fn simplex() -> &'static KnownPolytope {
             [rat(5), rat(5), rat(5), rat(5)],
         ];
 
-        KnownPolytope {
-            polytope: Polytope4D::new(dual_vertices).expect("simplex construction"),
-            capacity: 0.25,
-            name: "simplex",
-            source: "Y. Nir thesis 2013",
-        }
+        KnownPolytope::from_exact_dual_vertices(
+            dual_vertices,
+            0.25,
+            "simplex",
+            "Y. Nir thesis 2013",
+        )
+        .expect("simplex construction")
     });
     &INSTANCE
 }
@@ -116,12 +191,8 @@ pub fn hypercube() -> &'static KnownPolytope {
             [z.clone(), z.clone(), z.clone(), rat(-1)],
         ];
 
-        KnownPolytope {
-            polytope: Polytope4D::new(dual_vertices).expect("hypercube construction"),
-            capacity: 4.0,
-            name: "hypercube",
-            source: "HK2019 Ex 4.6",
-        }
+        KnownPolytope::from_exact_dual_vertices(dual_vertices, 4.0, "hypercube", "HK2019 Ex 4.6")
+            .expect("hypercube construction")
     });
     &INSTANCE
 }
@@ -146,12 +217,13 @@ pub fn crosspolytope() -> &'static KnownPolytope {
             }
         }
 
-        KnownPolytope {
-            polytope: Polytope4D::new(dual_vertices).expect("crosspolytope construction"),
-            capacity: 4.0,
-            name: "crosspolytope",
-            source: "computed (no literature value)",
-        }
+        KnownPolytope::from_exact_dual_vertices(
+            dual_vertices,
+            4.0,
+            "crosspolytope",
+            "computed (no literature value)",
+        )
+        .expect("crosspolytope construction")
     });
     &INSTANCE
 }
@@ -200,12 +272,13 @@ pub fn hko_pentagon() -> &'static KnownPolytope {
             .collect();
         let capacity = 2.0 * (PI / 10.0).cos() * (1.0 + (PI / 5.0).cos());
 
-        KnownPolytope {
-            polytope: Polytope4D::from_f64(halfspaces).expect("HKO pentagon construction"),
+        KnownPolytope::from_f64_dual_vertices(
+            halfspaces,
             capacity,
-            name: "hko_pentagon",
-            source: "HK-O 2024 Prop 1.4",
-        }
+            "hko_pentagon",
+            "HK-O 2024 Prop 1.4",
+        )
+        .expect("HKO pentagon construction")
     });
     &INSTANCE
 }
@@ -234,13 +307,13 @@ pub fn lagrangian_triangle_product() -> &'static KnownPolytope {
             )
             .collect();
 
-        KnownPolytope {
-            polytope: Polytope4D::from_f64(halfspaces)
-                .expect("lagrangian triangle product construction"),
-            capacity: 1.5,
-            name: "lagrangian_triangle_product",
-            source: "LP verification (HK2017 algorithm + billiard)",
-        }
+        KnownPolytope::from_f64_dual_vertices(
+            halfspaces,
+            1.5,
+            "lagrangian_triangle_product",
+            "LP verification (HK2017 algorithm + billiard)",
+        )
+        .expect("lagrangian triangle product construction")
     });
     &INSTANCE
 }
@@ -275,13 +348,13 @@ pub fn symplectic_triangle_product() -> &'static KnownPolytope {
 
         let area_tri = 3.0 * 3.0_f64.sqrt() / 4.0;
 
-        KnownPolytope {
-            polytope: Polytope4D::from_f64(halfspaces)
-                .expect("symplectic triangle product construction"),
-            capacity: area_tri,
-            name: "symplectic_triangle_product",
-            source: "Symplectic product formula ([prop:capacity-symplectic-product])",
-        }
+        KnownPolytope::from_f64_dual_vertices(
+            halfspaces,
+            area_tri,
+            "symplectic_triangle_product",
+            "Symplectic product formula ([prop:capacity-symplectic-product])",
+        )
+        .expect("symplectic triangle product construction")
     });
     &INSTANCE
 }
@@ -310,13 +383,13 @@ pub fn lagrangian_triangle_square() -> &'static KnownPolytope {
 
         let halfspaces: Vec<Vector4<f64>> = triangle_halfspaces.chain(square_halfspaces).collect();
 
-        KnownPolytope {
-            polytope: Polytope4D::from_f64(halfspaces)
-                .expect("Lagrangian triangle x square construction"),
-            capacity: 1.5,
-            name: "lagrangian_tri_sq",
-            source: "HK2017 algorithm + billiard verification",
-        }
+        KnownPolytope::from_f64_dual_vertices(
+            halfspaces,
+            1.5,
+            "lagrangian_tri_sq",
+            "HK2017 algorithm + billiard verification",
+        )
+        .expect("Lagrangian triangle x square construction")
     });
     &INSTANCE
 }
@@ -352,13 +425,13 @@ pub fn symplectic_triangle_square() -> &'static KnownPolytope {
         let area_tri = 3.0 * 3.0_f64.sqrt() / 4.0;
         let area_sq = 1.0;
 
-        KnownPolytope {
-            polytope: Polytope4D::from_f64(halfspaces)
-                .expect("symplectic triangle x square construction"),
-            capacity: area_tri.min(area_sq),
-            name: "symplectic_tri_sq",
-            source: "Symplectic product formula ([prop:capacity-symplectic-product])",
-        }
+        KnownPolytope::from_f64_dual_vertices(
+            halfspaces,
+            area_tri.min(area_sq),
+            "symplectic_tri_sq",
+            "Symplectic product formula ([prop:capacity-symplectic-product])",
+        )
+        .expect("symplectic triangle x square construction")
     });
     &INSTANCE
 }
@@ -372,52 +445,52 @@ mod tests {
     fn all_known_polytopes_valid() {
         for kp in all_known() {
             assert!(
-                kp.polytope.facet_count() >= 5,
+                kp.facet_count() >= 5,
                 "{}: too few facets ({})",
                 kp.name,
-                kp.polytope.facet_count()
+                kp.facet_count()
             );
         }
     }
 
     #[test]
     fn simplex_has_5_facets() {
-        assert_eq!(simplex().polytope.facet_count(), 5);
+        assert_eq!(simplex().facet_count(), 5);
     }
 
     #[test]
     fn hypercube_has_8_facets() {
-        assert_eq!(hypercube().polytope.facet_count(), 8);
+        assert_eq!(hypercube().facet_count(), 8);
     }
 
     #[test]
     fn crosspolytope_has_16_facets() {
-        assert_eq!(crosspolytope().polytope.facet_count(), 16);
+        assert_eq!(crosspolytope().facet_count(), 16);
     }
 
     #[test]
     fn hko_pentagon_has_10_facets() {
-        assert_eq!(hko_pentagon().polytope.facet_count(), 10);
+        assert_eq!(hko_pentagon().facet_count(), 10);
     }
 
     #[test]
     fn lagrangian_triangle_product_has_6_facets() {
-        assert_eq!(lagrangian_triangle_product().polytope.facet_count(), 6);
+        assert_eq!(lagrangian_triangle_product().facet_count(), 6);
     }
 
     #[test]
     fn symplectic_triangle_product_has_6_facets() {
-        assert_eq!(symplectic_triangle_product().polytope.facet_count(), 6);
+        assert_eq!(symplectic_triangle_product().facet_count(), 6);
     }
 
     #[test]
     fn lagrangian_tri_sq_has_7_facets() {
-        assert_eq!(lagrangian_triangle_square().polytope.facet_count(), 7);
+        assert_eq!(lagrangian_triangle_square().facet_count(), 7);
     }
 
     #[test]
     fn symplectic_tri_sq_has_7_facets() {
-        assert_eq!(symplectic_triangle_square().polytope.facet_count(), 7);
+        assert_eq!(symplectic_triangle_square().facet_count(), 7);
     }
 
     #[test]

@@ -1,9 +1,8 @@
 //! Edge-length and facet-volume feature columns.
 
+use exp_sys_landscape::SysLandscapePolytopeCache;
 use nalgebra::Vector4;
-use symplectic::geom::facet_volume::facet_volume_3d;
-use symplectic::geom::polytope::Polytope4D;
-use symplectic::geom::skeleton::Skeleton;
+use symplectic::geom::facet_volume::facet_volume_from_incidence_f64;
 
 use super::features_helpers::{max_share, stats_or_zero};
 
@@ -22,25 +21,36 @@ pub struct FaceGeometryFields {
 }
 
 pub fn compute_face_geometry_fields(
-    polytope: &Polytope4D,
-    skeleton: &Skeleton,
+    polytope: &SysLandscapePolytopeCache,
+    edges: &[[usize; 2]],
     vertices: &[Vector4<f64>],
     facet_count: usize,
     linear_scale: f64,
     facet_scale: f64,
 ) -> FaceGeometryFields {
-    let edge_lengths = skeleton
-        .edges
+    let edge_lengths = edges
         .iter()
         .map(|edge| (vertices[edge[0]] - vertices[edge[1]]).norm() / linear_scale)
         .collect::<Vec<_>>();
     let facet_volumes = (0..facet_count)
-        .map(|facet| facet_volume_3d(polytope, facet) / facet_scale)
+        .map(|facet| {
+            facet_volume_from_incidence_f64(
+                &polytope.vertices_f64,
+                &polytope.vertex_facet_incidence,
+                facet,
+            )
+            .expect("dataset polytope has valid finite geometry")
+                / facet_scale
+        })
         .collect::<Vec<_>>();
     let (edge_length_vol1_mean, edge_length_vol1_std, edge_length_vol1_min, edge_length_vol1_max) =
         stats_or_zero(&edge_lengths);
-    let (facet_volume_vol1_mean, facet_volume_vol1_std, facet_volume_vol1_min, facet_volume_vol1_max) =
-        stats_or_zero(&facet_volumes);
+    let (
+        facet_volume_vol1_mean,
+        facet_volume_vol1_std,
+        facet_volume_vol1_min,
+        facet_volume_vol1_max,
+    ) = stats_or_zero(&facet_volumes);
 
     FaceGeometryFields {
         edge_length_vol1_mean,

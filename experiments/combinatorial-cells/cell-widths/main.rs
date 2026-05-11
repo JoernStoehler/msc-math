@@ -16,6 +16,10 @@
 //! Filter: F <= 10 (HK2017 is exponential in F)
 //! Output Artifacts: experiments/combinatorial-cells/cell-widths/combinatorial-boundaries-profiling.jsonl
 
+#[path = "../src/flat_polytope.rs"]
+mod flat_polytope;
+
+use crate::flat_polytope::CellPolytopeCache;
 use exp_combinatorial_cells::{
     compute_step_bound_detailed, ehz_capacity_instrumented, name_from_record,
 };
@@ -29,7 +33,6 @@ use std::io::{BufWriter, Write};
 use std::path::Path;
 use std::time::Instant;
 use symplectic::database;
-use symplectic::geom::polytope::Polytope4D;
 
 // ============================================================================
 // Configuration
@@ -142,17 +145,20 @@ fn main() {
     let owned_db_path = Path::new(env!("CARGO_MANIFEST_DIR")).join("polytopes.jsonl");
     let db = database::load_many(&[owned_db_path.as_path()]).expect("failed to load database");
 
-    let mut polytopes: Vec<(String, Polytope4D)> = Vec::new();
+    let mut polytopes: Vec<(String, CellPolytopeCache)> = Vec::new();
 
     for (idx, (_, record)) in db.iter().enumerate() {
         let f = record.dual_vertices_rational.len();
         if f > MAX_FACET_COUNT {
             continue;
         }
-        let p = match record.to_polytope() {
-            Ok(p) => p,
-            Err(e) => {
-                eprintln!("  db entry {idx}: reconstruction failed: {e}");
+        let p = match CellPolytopeCache::from_rational_parts(
+            record.dual_vertices_rational.clone(),
+            record.vertices_rational.clone(),
+        ) {
+            Some(p) => p,
+            None => {
+                eprintln!("  db entry {idx}: reconstruction failed");
                 continue;
             }
         };
@@ -193,7 +199,11 @@ fn main() {
         // Base computation: instrumented EHZ for orbit membership
         // =====================================================================
 
-        let (perm,) = match ehz_capacity_instrumented(polytope) {
+        let (perm,) = match ehz_capacity_instrumented(
+            &polytope.dual_vertices_f64,
+            &polytope.facet_intersection_is_nonempty,
+            &polytope.omega_signs,
+        ) {
             Some(instrumented) => (instrumented.best_permutation,),
             None => {
                 n_skipped += 1;
@@ -211,8 +221,14 @@ fn main() {
         let facet_dirs = build_facet_directions(f, &mut rng);
 
         for dir in &facet_dirs {
-            let boundary =
-                compute_step_bound_detailed(polytope, &dir.d, EPS_NUMERICAL_ZERO, MAX_STEP_SIZE);
+            let boundary = compute_step_bound_detailed(
+                &polytope.dual_vertices_f64,
+                &polytope.vertices_f64,
+                &polytope.vertex_facet_incidence,
+                &dir.d,
+                EPS_NUMERICAL_ZERO,
+                MAX_STEP_SIZE,
+            );
             let k = dir.facet_index.unwrap();
 
             let row = ProfilingRow {

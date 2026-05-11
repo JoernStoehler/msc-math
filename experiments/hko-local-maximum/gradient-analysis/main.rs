@@ -30,9 +30,17 @@
 //! (`Hβ + Nμ + ηξ = 0`) instead of re-labeling it into a local asymmetric
 //! variant before derivative consumers use it again.
 
+#[path = "../src/flat_polytope.rs"]
+mod flat_polytope;
+
+use crate::flat_polytope::HkoPolytopeCache;
+use euclidean_polytopes::{
+    two_faces_from_vertex_facet_incidence, vertex_facets_from_vertex_facet_incidence,
+};
 use exp_hko_local_maximum::{
-    ehz_capacity_instrumented, exact_hko_polytope, exact_simplex_polytope, ExactBankEntry,
-    ExactBankTarget, HkoExactScalar, EXACT_BANK_ENTRIES,
+    capacity_auto, ehz_capacity_instrumented, euclidean_volume_f64, exact_hko_dual_vertices,
+    exact_simplex_dual_vertices, ExactBankEntry, ExactBankTarget, HkoExactScalar,
+    EXACT_BANK_ENTRIES,
 };
 use nalgebra::{Matrix4, Vector4};
 use serde::Serialize;
@@ -40,14 +48,10 @@ use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::path::{Path, PathBuf};
 use std::time::Instant;
-use symplectic::algorithms::{solve_orbit_sigma, OrbitKktData, OrbitSolveBackend, OrbitSolveError};
+use symplectic::algorithms::{solve_orbit_sigma_saddle_point, OrbitKktData, OrbitSolveError};
 use symplectic::derivatives::{capacity_derivatives_a_from_orbit, volume_derivatives_a};
-use symplectic::ehz_capacity;
-use symplectic::exact::{capacity_derivatives_a_exact, solve_orbit_sigma_exact, ExactPolytope4D};
+use symplectic::exact::{capacity_derivatives_a_exact_from_orbit, solve_orbit_sigma_exact};
 use symplectic::geom::known_polytopes;
-use symplectic::geom::polytope::Polytope4D;
-use symplectic::geom::skeleton::Skeleton;
-use symplectic::geom::volume::volume;
 use symplectic::omega0;
 
 /// Gap threshold for near-optimal orbits: collect orbits within δ of best.
@@ -253,17 +257,22 @@ struct SensitivityResult {
 }
 
 fn compute_sensitivity(
-    polytope: &Polytope4D,
+    polytope: &HkoPolytopeCache,
     vol: f64,
     cap: f64,
     sys: f64,
     orbit: &OrbitKktData,
 ) -> SensitivityResult {
-    let duals = polytope.dual_vertices_f64();
+    let duals = &polytope.dual_vertices_f64;
     let f = duals.len();
 
-    let d_vol_a = volume_derivatives_a(polytope);
-    let d_cap_a = capacity_derivatives_a_from_orbit(polytope, orbit)
+    let d_vol_a = volume_derivatives_a(
+        &polytope.dual_vertices_f64,
+        &polytope.vertices_f64,
+        &polytope.vertex_facet_incidence,
+    )
+    .expect("gradient-analysis polytope has valid finite geometry");
+    let d_cap_a = capacity_derivatives_a_from_orbit(&polytope.dual_vertices_f64, orbit)
         .expect("gradient-analysis stores orbit payloads with closure multipliers");
 
     let d_sys_a: Vec<Vector4<f64>> = d_vol_a
@@ -356,11 +365,11 @@ fn max_abs_vector_diff(lhs: &[Vector4<f64>], rhs: &[[f64; 4]]) -> f64 {
 }
 
 fn exact_sigma_diagnostics<F: HkoExactScalar + 'static>(
-    polytope: &ExactPolytope4D<F>,
+    dual_vertices: &[Vector4<F>],
     sigma: &[usize],
 ) -> Option<SigmaDiagnostics> {
-    let orbit = solve_orbit_sigma_exact(polytope, sigma)?;
-    let gradient = capacity_derivatives_a_exact(polytope, &orbit);
+    let orbit = solve_orbit_sigma_exact(dual_vertices, sigma)?;
+    let gradient = capacity_derivatives_a_exact_from_orbit(dual_vertices, &orbit);
     Some(SigmaDiagnostics {
         q_f64: orbit.q.to_f64(),
         action_f64: orbit.action().to_f64(),
@@ -374,18 +383,17 @@ fn exact_sigma_diagnostics<F: HkoExactScalar + 'static>(
 
 fn float_status_label(error: &OrbitSolveError) -> &'static str {
     match error {
-        OrbitSolveError::UnsupportedBackend => "unsupported_backend",
         OrbitSolveError::Inadmissible => "inadmissible",
         OrbitSolveError::NumericalFailure => "numerical_failure",
     }
 }
 
 fn float_sigma_diagnostics(
-    polytope: &Polytope4D,
+    polytope: &HkoPolytopeCache,
     sigma: &[usize],
 ) -> Result<SigmaDiagnostics, OrbitSolveError> {
-    let orbit = solve_orbit_sigma(polytope, sigma, OrbitSolveBackend::SaddlePoint)?;
-    let gradient = capacity_derivatives_a_from_orbit(polytope, &orbit)
+    let orbit = solve_orbit_sigma_saddle_point(&polytope.dual_vertices_f64, sigma)?;
+    let gradient = capacity_derivatives_a_from_orbit(&polytope.dual_vertices_f64, &orbit)
         .expect("gradient-analysis float orbit payload carries closure multipliers");
     Ok(SigmaDiagnostics {
         q_f64: orbit.q,
@@ -398,9 +406,14 @@ fn float_sigma_diagnostics(
 fn build_exact_bank_row(entry: &ExactBankEntry) -> ExactCertificationBankRow {
     let (exact_status, exact_row, float_status, float_row) = match entry.target {
         ExactBankTarget::HkoPentagon => {
-            let exact = exact_sigma_diagnostics(&exact_hko_polytope(), entry.sigma);
-            let float =
-                float_sigma_diagnostics(&known_polytopes::hko_pentagon().polytope, entry.sigma);
+            let exact = exact_sigma_diagnostics(&exact_hko_dual_vertices(), entry.sigma);
+            let known = known_polytopes::hko_pentagon();
+            let cache = HkoPolytopeCache::from_rational_parts(
+                known.dual_vertices.clone(),
+                known.vertices.clone(),
+            )
+            .expect("HKO cache");
+            let float = float_sigma_diagnostics(&cache, entry.sigma);
             (
                 if exact.is_some() {
                     "solved".to_string()
@@ -416,8 +429,14 @@ fn build_exact_bank_row(entry: &ExactBankEntry) -> ExactCertificationBankRow {
             )
         }
         ExactBankTarget::SimplexControl => {
-            let exact = exact_sigma_diagnostics(&exact_simplex_polytope(), entry.sigma);
-            let float = float_sigma_diagnostics(&known_polytopes::simplex().polytope, entry.sigma);
+            let exact = exact_sigma_diagnostics(&exact_simplex_dual_vertices(), entry.sigma);
+            let known = known_polytopes::simplex();
+            let cache = HkoPolytopeCache::from_rational_parts(
+                known.dual_vertices.clone(),
+                known.vertices.clone(),
+            )
+            .expect("simplex cache");
+            let float = float_sigma_diagnostics(&cache, entry.sigma);
             (
                 if exact.is_some() {
                     "solved".to_string()
@@ -479,9 +498,10 @@ fn compute_exact_best_sigma_diagnostics(
     best_orbit: &OrbitKktData,
     float_d_cap_a: &[Vector4<f64>],
 ) -> Option<ExactBestSigmaDiagnostics> {
-    let exact_polytope = exact_hko_polytope();
-    let exact_orbit = solve_orbit_sigma_exact(&exact_polytope, &best_orbit.sigma)?;
-    let exact_capacity_gradient = capacity_derivatives_a_exact(&exact_polytope, &exact_orbit);
+    let exact_dual_vertices = exact_hko_dual_vertices();
+    let exact_orbit = solve_orbit_sigma_exact(&exact_dual_vertices, &best_orbit.sigma)?;
+    let exact_capacity_gradient =
+        capacity_derivatives_a_exact_from_orbit(&exact_dual_vertices, &exact_orbit);
     let exact_capacity_gradient_f64: Vec<[f64; 4]> = exact_capacity_gradient
         .iter()
         .map(|grad| std::array::from_fn(|idx| grad[idx].to_f64()))
@@ -580,17 +600,18 @@ fn run_exact_bank(base_dir: &Path, canonical: bool) {
 // TODO: add [lem:step-bound-hn] to formal/hko-symmetry-gradient-structure.tex for the (h,n) variant.
 // ============================================================================
 
-fn compute_step_bound(polytope: &Polytope4D, direction: &[f64]) -> f64 {
-    let duals = polytope.dual_vertices_f64();
+fn compute_step_bound(polytope: &HkoPolytopeCache, direction: &[f64]) -> f64 {
+    let duals = &polytope.dual_vertices_f64;
     let normals: Vec<Vector4<f64>> = duals.iter().map(|a| a / a.norm()).collect();
     let heights: Vec<f64> = duals.iter().map(|a| 1.0 / a.norm()).collect();
-    let vertices = polytope.vertices_f64();
+    let vertices = &polytope.vertices_f64;
     let f = polytope.facet_count();
-    let skeleton = Skeleton::compute(polytope);
+    let vertex_facets_by_vertex =
+        vertex_facets_from_vertex_facet_incidence(&polytope.vertex_facet_incidence);
 
     let mut t_max = f64::INFINITY;
 
-    for (vi, vertex_facets) in skeleton.vertex_facets.iter().enumerate() {
+    for (vi, vertex_facets) in vertex_facets_by_vertex.iter().enumerate() {
         let v = &vertices[vi];
 
         if vertex_facets.len() == 4 {
@@ -665,17 +686,19 @@ fn compute_step_bound(polytope: &Polytope4D, direction: &[f64]) -> f64 {
     t_max.min(MAX_STEP_SIZE)
 }
 
-fn compute_step_bound_hn(polytope: &Polytope4D, g_h: &[f64], g_n: &[Vector4<f64>]) -> f64 {
-    let duals = polytope.dual_vertices_f64();
+fn compute_step_bound_hn(polytope: &HkoPolytopeCache, g_h: &[f64], g_n: &[Vector4<f64>]) -> f64 {
+    let duals = &polytope.dual_vertices_f64;
     let normals: Vec<Vector4<f64>> = duals.iter().map(|a| a / a.norm()).collect();
     let heights: Vec<f64> = duals.iter().map(|a| 1.0 / a.norm()).collect();
-    let vertices = polytope.vertices_f64();
+    let vertices = &polytope.vertices_f64;
     let f = polytope.facet_count();
-    let skeleton = Skeleton::compute(polytope);
+    let incidence = &polytope.vertex_facet_incidence;
+    let vertex_facets_by_vertex = vertex_facets_from_vertex_facet_incidence(incidence);
+    let two_faces = two_faces_from_vertex_facet_incidence(incidence);
 
     let mut t_max = f64::INFINITY;
 
-    for (vi, vertex_facets) in skeleton.vertex_facets.iter().enumerate() {
+    for (vi, vertex_facets) in vertex_facets_by_vertex.iter().enumerate() {
         let v = &vertices[vi];
 
         if vertex_facets.len() == 4 {
@@ -741,10 +764,10 @@ fn compute_step_bound_hn(polytope: &Polytope4D, g_h: &[f64], g_n: &[Vector4<f64>
         }
     }
 
-    // ω₀ sign preservation for ridge-adjacent pairs
-    for ridge in &skeleton.ridges {
-        let i = ridge.facets[0];
-        let j = ridge.facets[1];
+    // ω₀ sign preservation for adjacent two-face facet pairs.
+    for two_face in &two_faces {
+        let i = two_face.facets[0];
+        let j = two_face.facets[1];
         let omega_ij = omega0(&normals[i], &normals[j]);
         let d_omega = omega0(&g_n[i], &normals[j]) + omega0(&normals[i], &g_n[j]);
         if omega_ij.abs() > EPS_NUMERICAL_ZERO && d_omega.abs() > EPS_NUMERICAL_ZERO {
@@ -763,15 +786,20 @@ fn compute_step_bound_hn(polytope: &Polytope4D, g_h: &[f64], g_n: &[Vector4<f64>
 // ============================================================================
 
 /// Safely compute sys for a polytope, catching panics from degenerate geometry.
-fn safe_sys(polytope: &Polytope4D) -> Option<(f64, f64, f64)> {
-    let vol = volume(polytope);
+fn safe_sys(polytope: &HkoPolytopeCache) -> Option<(f64, f64, f64)> {
+    let vol = euclidean_volume_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
     if vol <= 0.0 {
         return None;
     }
-    let cap = ehz_capacity(polytope)
-        .ok()
-        .map(|r| r.capacity())
-        .unwrap_or(f64::NAN);
+    let cap = capacity_auto(
+        &polytope.dual_vertices,
+        &polytope.dual_vertices_f64,
+        &polytope.facet_intersection_is_nonempty,
+        &polytope.omega_signs,
+    )
+    .ok()
+    .map(|r| r.capacity())
+    .unwrap_or(f64::NAN);
     if !cap.is_finite() {
         return None;
     }
@@ -788,18 +816,17 @@ fn try_step_h(
     heights: &[f64],
     direction: &[f64],
     t: f64,
-) -> Option<(Polytope4D, f64, f64, f64)> {
+) -> Option<(HkoPolytopeCache, f64, f64, f64)> {
     let f = normals.len();
     let new_heights: Vec<f64> = (0..f).map(|k| heights[k] + t * direction[k]).collect();
 
-    let new_polytope = Polytope4D::from_f64(
+    let new_polytope = HkoPolytopeCache::from_f64(
         normals
             .iter()
             .zip(new_heights.iter())
             .map(|(n, &h)| n / h)
             .collect(),
-    )
-    .ok()?;
+    )?;
     let (sys, vol, cap) = safe_sys(&new_polytope)?;
     Some((new_polytope, sys, vol, cap))
 }
@@ -810,7 +837,7 @@ fn try_step_hn(
     g_h: &[f64],
     g_n: &[Vector4<f64>],
     t: f64,
-) -> Option<(Polytope4D, f64, f64, f64)> {
+) -> Option<(HkoPolytopeCache, f64, f64, f64)> {
     let f = normals.len();
     let new_heights: Vec<f64> = (0..f).map(|k| heights[k] + t * g_h[k]).collect();
     let new_normals: Vec<Vector4<f64>> = (0..f)
@@ -820,14 +847,13 @@ fn try_step_hn(
         })
         .collect();
 
-    let new_polytope = Polytope4D::from_f64(
+    let new_polytope = HkoPolytopeCache::from_f64(
         new_normals
             .iter()
             .zip(new_heights.iter())
             .map(|(n, &h)| n / h)
             .collect(),
-    )
-    .ok()?;
+    )?;
     let (sys, vol, cap) = safe_sys(&new_polytope)?;
     Some((new_polytope, sys, vol, cap))
 }
@@ -839,12 +865,12 @@ fn try_step_hn(
 /// Armijo backtracking line search for height-only steps.
 /// Returns (polytope, sys, vol, cap, t_actual) or None if no improvement.
 fn armijo_step_h(
-    polytope: &Polytope4D,
+    polytope: &HkoPolytopeCache,
     d_sys_h: &[f64],
     t_max: f64,
     current_sys: f64,
-) -> Option<(Polytope4D, f64, f64, f64, f64)> {
-    let duals = polytope.dual_vertices_f64();
+) -> Option<(HkoPolytopeCache, f64, f64, f64, f64)> {
+    let duals = &polytope.dual_vertices_f64;
     let normals: Vec<Vector4<f64>> = duals.iter().map(|a| a / a.norm()).collect();
     let heights: Vec<f64> = duals.iter().map(|a| 1.0 / a.norm()).collect();
     let grad_dot_dir: f64 = d_sys_h.iter().map(|x| x * x).sum(); // ∇f · d = |∇f|² (ascending)
@@ -864,13 +890,13 @@ fn armijo_step_h(
 
 /// Armijo backtracking line search for (h,n) steps.
 fn armijo_step_hn(
-    polytope: &Polytope4D,
+    polytope: &HkoPolytopeCache,
     d_sys_h: &[f64],
     d_sys_n: &[Vector4<f64>],
     t_max: f64,
     current_sys: f64,
-) -> Option<(Polytope4D, f64, f64, f64, f64)> {
-    let duals = polytope.dual_vertices_f64();
+) -> Option<(HkoPolytopeCache, f64, f64, f64, f64)> {
+    let duals = &polytope.dual_vertices_f64;
     let normals: Vec<Vector4<f64>> = duals.iter().map(|a| a / a.norm()).collect();
     let heights: Vec<f64> = duals.iter().map(|a| 1.0 / a.norm()).collect();
     let grad_dot_dir: f64 = d_sys_h.iter().map(|x| x * x).sum::<f64>()
@@ -901,12 +927,20 @@ fn run_phase_a(base_dir: &std::path::Path, smoke: bool) {
 
     // Load HKO2024
     let known = known_polytopes::hko_pentagon();
-    let polytope = &known.polytope;
+    let polytope =
+        HkoPolytopeCache::from_rational_parts(known.dual_vertices.clone(), known.vertices.clone())
+            .expect("HKO cache");
     let f = polytope.facet_count();
     println!("HKO2024: F={f}, known capacity={:.6}", known.capacity);
 
     // Cross-check with library
-    let lib_result = ehz_capacity(polytope).expect("library ehz_capacity failed");
+    let lib_result = capacity_auto(
+        &polytope.dual_vertices,
+        &polytope.dual_vertices_f64,
+        &polytope.facet_intersection_is_nonempty,
+        &polytope.omega_signs,
+    )
+    .expect("library capacity computation failed");
     println!(
         "  Library capacity: {:.10} (diff from known: {:.2e})",
         lib_result.capacity(),
@@ -916,7 +950,12 @@ fn run_phase_a(base_dir: &std::path::Path, smoke: bool) {
     // Instrumented HK2017
     println!("\nRunning instrumented HK2017...");
     let t_instr = Instant::now();
-    let instrumented = ehz_capacity_instrumented(polytope).expect("no valid orbits for HKO2024");
+    let instrumented = ehz_capacity_instrumented(
+        &polytope.dual_vertices_f64,
+        &polytope.facet_intersection_is_nonempty,
+        &polytope.omega_signs,
+    )
+    .expect("no valid orbits for HKO2024");
     let time_instrumented_ms = t_instr.elapsed().as_secs_f64() * 1000.0;
 
     // Cross-check
@@ -933,7 +972,7 @@ fn run_phase_a(base_dir: &std::path::Path, smoke: bool) {
     );
 
     let cap = instrumented.capacity;
-    let vol = volume(polytope);
+    let vol = euclidean_volume_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
     let sys = cap * cap / (2.0 * vol);
     println!("  Volume: {vol:.10}");
     println!("  Sys: {sys:.10}");
@@ -984,7 +1023,7 @@ fn run_phase_a(base_dir: &std::path::Path, smoke: bool) {
     println!("\n--- Sensitivity (best orbit) ---");
     let t_sens = Instant::now();
     let best_orbit = &instrumented.orbits[0];
-    let sensitivity = compute_sensitivity(polytope, vol, cap, sys, best_orbit);
+    let sensitivity = compute_sensitivity(&polytope, vol, cap, sys, best_orbit);
     let exact_best_sigma = compute_exact_best_sigma_diagnostics(best_orbit, &sensitivity.d_cap_a);
     let time_sensitivity_ms = t_sens.elapsed().as_secs_f64() * 1000.0;
 
@@ -1027,12 +1066,12 @@ fn run_phase_a(base_dir: &std::path::Path, smoke: bool) {
 
     // Step bounds
     let t_max_h = if sensitivity.gradient_norm_h > EPS_NUMERICAL_ZERO {
-        compute_step_bound(polytope, &sensitivity.d_sys_h)
+        compute_step_bound(&polytope, &sensitivity.d_sys_h)
     } else {
         0.0
     };
     let t_max_hn = if sensitivity.gradient_norm_hn > EPS_NUMERICAL_ZERO {
-        compute_step_bound_hn(polytope, &sensitivity.d_sys_h, &sensitivity.d_sys_n)
+        compute_step_bound_hn(&polytope, &sensitivity.d_sys_h, &sensitivity.d_sys_n)
     } else {
         0.0
     };
@@ -1045,7 +1084,7 @@ fn run_phase_a(base_dir: &std::path::Path, smoke: bool) {
     let mut per_orbit_gradient_norm_h: Vec<f64> = Vec::new();
 
     for (i, orbit) in near_optimal.iter().enumerate() {
-        let orbit_sens = compute_sensitivity(polytope, vol, cap, sys, orbit);
+        let orbit_sens = compute_sensitivity(&polytope, vol, cap, sys, orbit);
         let norm = orbit_sens.gradient_norm_h;
         println!(
             "  Orbit #{}: |∇sys_h| = {:.6e}, d_sys_h = {:?}",
@@ -1068,7 +1107,7 @@ fn run_phase_a(base_dir: &std::path::Path, smoke: bool) {
     let mut sens_writer = BufWriter::new(sens_file);
 
     let duals_raw: Vec<[f64; 4]> = polytope
-        .dual_vertices_f64()
+        .dual_vertices_f64
         .iter()
         .map(|a| [a[0], a[1], a[2], a[3]])
         .collect();
@@ -1130,8 +1169,8 @@ fn run_phase_a(base_dir: &std::path::Path, smoke: bool) {
         .unwrap_or_else(|err| panic!("create ascent JSONL {}: {err}", ascent_path.display()));
     let mut ascent_writer = BufWriter::new(ascent_file);
 
-    let mut current =
-        Polytope4D::from_f64(polytope.dual_vertices_f64().to_vec()).expect("reconstruct HKO2024");
+    let mut current = HkoPolytopeCache::from_f64(polytope.dual_vertices_f64.to_vec())
+        .expect("reconstruct HKO2024");
     let mut current_sys = sys;
     let mut prev_subset = subset_of_sigma(&instrumented.orbits[0].sigma);
     let mut prev_perm = instrumented.orbits[0].sigma.clone();
@@ -1140,7 +1179,11 @@ fn run_phase_a(base_dir: &std::path::Path, smoke: bool) {
         let t_iter = Instant::now();
 
         // Recompute instrumented capacity
-        let instr = match ehz_capacity_instrumented(&current) {
+        let instr = match ehz_capacity_instrumented(
+            &current.dual_vertices_f64,
+            &current.facet_intersection_is_nonempty,
+            &current.omega_signs,
+        ) {
             Some(r) => r,
             None => {
                 println!("  Iter {iter}: no valid orbits, stopping");
@@ -1148,7 +1191,7 @@ fn run_phase_a(base_dir: &std::path::Path, smoke: bool) {
             }
         };
         let cap = instr.capacity;
-        let vol = volume(&current);
+        let vol = euclidean_volume_f64(&current.vertices, &current.vertex_facet_incidence);
         let sys_now = cap * cap / (2.0 * vol);
         let best_orbit = &instr.orbits[0];
 
@@ -1223,7 +1266,7 @@ fn run_phase_a(base_dir: &std::path::Path, smoke: bool) {
                         gradient_norm_h: sens.gradient_norm_h,
                         gradient_norm_hn: sens.gradient_norm_hn,
                         dual_vertices: current
-                            .dual_vertices_f64()
+                            .dual_vertices_f64
                             .iter()
                             .map(|a| [a[0], a[1], a[2], a[3]])
                             .collect(),
@@ -1239,7 +1282,11 @@ fn run_phase_a(base_dir: &std::path::Path, smoke: bool) {
         let time_ms = t_iter.elapsed().as_secs_f64() * 1000.0;
 
         // Near-optimal orbit count at new point
-        let new_instr = ehz_capacity_instrumented(&new_poly);
+        let new_instr = ehz_capacity_instrumented(
+            &new_poly.dual_vertices_f64,
+            &new_poly.facet_intersection_is_nonempty,
+            &new_poly.omega_signs,
+        );
         let n_near = new_instr
             .as_ref()
             .map(|r| {
@@ -1283,7 +1330,7 @@ fn run_phase_a(base_dir: &std::path::Path, smoke: bool) {
             gradient_norm_h: sens.gradient_norm_h,
             gradient_norm_hn: sens.gradient_norm_hn,
             dual_vertices: new_poly
-                .dual_vertices_f64()
+                .dual_vertices_f64
                 .iter()
                 .map(|a| [a[0], a[1], a[2], a[3]])
                 .collect(),
@@ -1341,6 +1388,7 @@ mod tests {
         build_exact_bank_row, exact_bank_output_path, CliOptions, ExactBankEntry, ExactBankTarget,
         EXACT_BANK_ENTRIES, NEAR_OPTIMAL_GAP,
     };
+    use crate::flat_polytope::HkoPolytopeCache;
     use exp_hko_local_maximum::{
         ehz_capacity_instrumented, HKO_FLOAT_WINNING_SIGMA, HKO_NEAR_OPTIMAL_SIGMA_A,
         HKO_NEAR_OPTIMAL_SIGMA_B, HKO_WINNING_SIGMA, SIMPLEX_CONTROL_SIGMA,
@@ -1424,8 +1472,17 @@ mod tests {
     #[test]
     fn hko_bank_labels_match_current_instrumented_roles() {
         let known = known_polytopes::hko_pentagon();
-        let instrumented =
-            ehz_capacity_instrumented(&known.polytope).expect("instrumented HKO capacity");
+        let cache = HkoPolytopeCache::from_rational_parts(
+            known.dual_vertices.clone(),
+            known.vertices.clone(),
+        )
+        .expect("HKO cache");
+        let instrumented = ehz_capacity_instrumented(
+            &cache.dual_vertices_f64,
+            &cache.facet_intersection_is_nonempty,
+            &cache.omega_signs,
+        )
+        .expect("instrumented HKO capacity");
         let best_action = instrumented.orbits[0].action;
         let near_optimal_sigmas: Vec<Vec<usize>> = instrumented
             .orbits

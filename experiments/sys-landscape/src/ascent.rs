@@ -1,5 +1,6 @@
 //! Shared ascent, row, and writer helpers for sys-landscape experiments.
 
+use crate::{euclidean_volume_f64, SysLandscapePolytopeCache};
 use good_lp::{constraint, default_solver, variable, variables, Expression, Solution, SolverModel};
 use nalgebra::Vector4;
 use num_rational::BigRational;
@@ -13,10 +14,9 @@ use std::sync::{Arc, Mutex};
 use symplectic::algorithms::billiard::facet_classification::FacetClassification;
 use symplectic::database::{OrbitScalars, PolytopeRecord};
 use symplectic::derivatives::{
-    clarke_directional_derivative_a, sys_subgradients_a, ClarkeSubdiffA,
+    capacity_subgradients_a, clarke_directional_derivative_a, systolic_ratio_gradient_a,
+    volume_derivatives_a,
 };
-use symplectic::geom::polytope::Polytope4D;
-use symplectic::geom::volume::volume;
 use symplectic::{systolic_ratio, OrbitAdmissibility, OrbitKktData, OrbitSearchResult};
 
 /// Numerical zero threshold for gradient checks.
@@ -53,9 +53,9 @@ pub enum AscentMode<'a> {
 }
 
 /// Compute the active-orbit local state for one polytope.
-pub fn compute_active_sys_state(polytope: &Polytope4D) -> Option<ActiveSysState> {
+pub fn compute_active_sys_state(polytope: &SysLandscapePolytopeCache) -> Option<ActiveSysState> {
     let capacity = compute_capacity_result(polytope)?;
-    let vol = volume(polytope);
+    let vol = euclidean_volume_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
     if vol <= 0.0 {
         return None;
     }
@@ -68,10 +68,10 @@ pub fn compute_active_sys_state(polytope: &Polytope4D) -> Option<ActiveSysState>
 ///
 /// `capacity` must come from the same `polytope`.
 pub fn compute_sys_from_capacity(
-    polytope: &Polytope4D,
+    polytope: &SysLandscapePolytopeCache,
     capacity: &OrbitSearchResult,
 ) -> Option<f64> {
-    let vol = volume(polytope);
+    let vol = euclidean_volume_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
     if vol <= 0.0 {
         return None;
     }
@@ -81,8 +81,8 @@ pub fn compute_sys_from_capacity(
 }
 
 /// Compute sys = c_EHZ(K)^2 / (2 vol(K)) for a polytope using HK2017.
-pub fn compute_sys(polytope: &Polytope4D) -> Option<f64> {
-    let vol = volume(polytope);
+pub fn compute_sys(polytope: &SysLandscapePolytopeCache) -> Option<f64> {
+    let vol = euclidean_volume_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
     if vol <= 0.0 {
         return None;
     }
@@ -92,8 +92,14 @@ pub fn compute_sys(polytope: &Polytope4D) -> Option<f64> {
 }
 
 /// Compute the active-orbit capacity result.
-pub fn compute_capacity_result(polytope: &Polytope4D) -> Option<OrbitSearchResult> {
-    symplectic::ehz_capacity(polytope).ok()
+pub fn compute_capacity_result(polytope: &SysLandscapePolytopeCache) -> Option<OrbitSearchResult> {
+    crate::capacity_auto(
+        &polytope.dual_vertices_f64,
+        &polytope.dual_vertices,
+        &polytope.facet_intersection_is_nonempty,
+        &polytope.omega_signs,
+    )
+    .ok()
 }
 
 pub fn orbit_scalars_from_result(result: &OrbitSearchResult) -> OrbitScalars {
@@ -144,7 +150,7 @@ fn coordinate_bounds(flat_idx: usize, mode: AscentMode<'_>) -> (f64, f64) {
 }
 
 fn maximin_subgradient_direction(
-    subdiff: &ClarkeSubdiffA,
+    subdiff: &[Vec<Vector4<f64>>],
     facet_count: usize,
     mode: AscentMode<'_>,
 ) -> Option<Vec<Vector4<f64>>> {
@@ -209,7 +215,7 @@ fn admissible_active_orbits(result: &OrbitSearchResult) -> Vec<&OrbitKktData> {
 /// satisfying `max_d min_i <∇sys_i, d>` under box bounds on the ambient
 /// coordinates.
 pub fn ascent_direction(
-    polytope: &Polytope4D,
+    polytope: &SysLandscapePolytopeCache,
     state: &ActiveSysState,
     mode: AscentMode<'_>,
 ) -> Option<Vec<Vector4<f64>>> {
@@ -217,7 +223,25 @@ pub fn ascent_direction(
         .into_iter()
         .cloned()
         .collect();
-    let subdiff = sys_subgradients_a(polytope, &active_orbits).ok()?;
+    let d_volume_da = volume_derivatives_a(
+        &polytope.dual_vertices_f64,
+        &polytope.vertices_f64,
+        &polytope.vertex_facet_incidence,
+    )
+    .ok()?;
+    let d_capacity_da =
+        capacity_subgradients_a(&polytope.dual_vertices_f64, &active_orbits).ok()?;
+    let subdiff: Vec<Vec<Vector4<f64>>> = d_capacity_da
+        .iter()
+        .map(|capacity_gradient| {
+            systolic_ratio_gradient_a(
+                state.capacity.capacity(),
+                state.vol,
+                capacity_gradient,
+                &d_volume_da,
+            )
+        })
+        .collect();
     match subdiff.as_slice() {
         [] => None,
         [single] => {
@@ -236,13 +260,13 @@ pub fn apply_dual_step(
     duals: &[Vector4<f64>],
     direction: &[Vector4<f64>],
     t: f64,
-) -> Option<(Polytope4D, f64)> {
+) -> Option<(SysLandscapePolytopeCache, f64)> {
     let new_duals: Vec<Vector4<f64>> = duals
         .iter()
         .zip(direction)
         .map(|(a, d)| a + t * d)
         .collect();
-    let polytope = Polytope4D::from_f64(new_duals).ok()?;
+    let polytope = SysLandscapePolytopeCache::from_f64_dual_vertices(new_duals)?;
     let sys = compute_sys(&polytope)?;
     Some((polytope, sys))
 }
@@ -253,8 +277,8 @@ pub fn rational_vec4_to_strings(data: &[[BigRational; 4]]) -> Vec<[String; 4]> {
         .collect()
 }
 
-pub fn dual_vertices_rational_strings(polytope: &Polytope4D) -> Vec<[String; 4]> {
-    rational_vec4_to_strings(polytope.dual_vertices())
+pub fn dual_vertices_rational_strings(polytope: &SysLandscapePolytopeCache) -> Vec<[String; 4]> {
+    rational_vec4_to_strings(&polytope.dual_vertices)
 }
 
 // ============================================================================
@@ -329,7 +353,7 @@ pub struct TraceRow {
 pub struct SeedResult {
     pub summary: SummaryRow,
     pub trace: Vec<TraceRow>,
-    pub final_polytope: Polytope4D,
+    pub final_polytope: SysLandscapePolytopeCache,
     pub final_record: PolytopeRecord,
 }
 
@@ -751,17 +775,24 @@ pub fn finalize_ascent_output(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use symplectic::algorithms::billiard::facet_classification::classify_facets;
-    use symplectic::geom::known_polytopes;
+    use symplectic::classify_facets_from_dual_vertices;
+    use symplectic::geom::polygon::regular_polygon_2d;
+
+    fn triangle_product_cache() -> SysLandscapePolytopeCache {
+        let (qn, qh) = regular_polygon_2d(3, 1.0);
+        let (pn, ph) = regular_polygon_2d(3, 1.0);
+        SysLandscapePolytopeCache::from_lagrangian_product(&qn, &qh, &pn, &ph)
+            .expect("triangle product should construct")
+    }
 
     #[test]
     fn compute_sys_from_capacity_matches_compute_sys() {
-        let kp = known_polytopes::lagrangian_triangle_product();
-        let capacity = compute_capacity_result(&kp.polytope)
+        let polytope = triangle_product_cache();
+        let capacity = compute_capacity_result(&polytope)
             .expect("known polytope should have a capacity result");
-        let cached = compute_sys_from_capacity(&kp.polytope, &capacity)
+        let cached = compute_sys_from_capacity(&polytope, &capacity)
             .expect("cached capacity result should produce sys");
-        let direct = compute_sys(&kp.polytope).expect("known polytope should produce sys");
+        let direct = compute_sys(&polytope).expect("known polytope should produce sys");
 
         assert!(
             (cached - direct).abs() < 1e-12,
@@ -832,10 +863,10 @@ mod tests {
 
     #[test]
     fn maximin_direction_respects_lp_coordinate_bounds() {
-        let kp = known_polytopes::lagrangian_triangle_product();
-        let classification = classify_facets(&kp.polytope)
+        let polytope = triangle_product_cache();
+        let classification = classify_facets_from_dual_vertices(&polytope.dual_vertices_f64)
             .expect("triangle product should classify as a Lagrangian product");
-        let facet_count = kp.polytope.facet_count();
+        let facet_count = polytope.facet_count();
         let q_idx = classification.q_indices[0];
         let p_idx = classification.p_indices[0];
 

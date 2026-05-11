@@ -43,6 +43,7 @@ workspace = true
 
 [dependencies]
 symplectic.workspace = true
+euclidean-polytopes.workspace = true
 nalgebra.workspace = true
 serde.workspace = true
 serde_json.workspace = true

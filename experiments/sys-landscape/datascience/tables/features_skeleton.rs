@@ -1,7 +1,7 @@
-//! Skeleton-combinatorics feature columns.
+//! Face-combinatorics feature columns.
 
-use symplectic::geom::polytope::Polytope4D;
-use symplectic::geom::skeleton::Skeleton;
+use euclidean_polytopes::TwoFace;
+use exp_sys_landscape::SysLandscapePolytopeCache;
 
 use super::features_helpers::stats_or_zero;
 
@@ -35,15 +35,16 @@ pub struct SkeletonFields {
 }
 
 pub fn compute_skeleton_fields(
-    polytope: &Polytope4D,
-    skeleton: &Skeleton,
-    facet_count: usize,
+    polytope: &SysLandscapePolytopeCache,
+    vertex_facets: &[Vec<usize>],
+    edges: &[[usize; 2]],
+    two_faces: &[TwoFace],
 ) -> SkeletonFields {
-    let vertex_count = polytope.vertices().len();
-    let edge_count = skeleton.edges.len();
-    let ridge_count = skeleton.ridges.len();
-    let vertex_incident_facets = skeleton
-        .vertex_facets
+    let facet_count = polytope.facet_count();
+    let vertex_count = polytope.vertices.len();
+    let edge_count = edges.len();
+    let ridge_count = two_faces.len();
+    let vertex_incident_facets = vertex_facets
         .iter()
         .map(|facets| facets.len() as f64)
         .collect::<Vec<_>>();
@@ -57,7 +58,7 @@ pub fn compute_skeleton_fields(
         simple_vertices as f64 / vertex_count as f64
     };
     let mut vertex_degrees = vec![0usize; vertex_count];
-    for edge in &skeleton.edges {
+    for edge in edges {
         vertex_degrees[edge[0]] += 1;
         vertex_degrees[edge[1]] += 1;
     }
@@ -65,13 +66,12 @@ pub fn compute_skeleton_fields(
         .into_iter()
         .map(|degree| degree as f64)
         .collect::<Vec<_>>();
-    let ridge_sizes = skeleton
-        .ridges
+    let ridge_sizes = two_faces
         .iter()
-        .map(|ridge| ridge.vertices.len() as f64)
+        .map(|two_face| two_face.vertices.len() as f64)
         .collect::<Vec<_>>();
     let mut facet_vertex_counts = vec![0usize; facet_count];
-    for facets in &skeleton.vertex_facets {
+    for facets in vertex_facets {
         for &facet in facets {
             facet_vertex_counts[facet] += 1;
         }
@@ -83,7 +83,7 @@ pub fn compute_skeleton_fields(
     let facet_neighbor_counts = (0..facet_count)
         .map(|facet| {
             (0..facet_count)
-                .filter(|&other| polytope.vertex_adjacency()[(facet, other)])
+                .filter(|&other| polytope.facet_intersection_is_nonempty[(facet, other)])
                 .count() as f64
         })
         .collect::<Vec<_>>();

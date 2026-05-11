@@ -12,14 +12,14 @@
 //! 2. Canonical refreshes pass explicit repo-owned paths, e.g.
 //!    `--out experiments/sys-landscape/datascience/produce/random.jsonl`
 //!    and `--cache experiments/sys-landscape/datascience/produce/shared-cache.jsonl`.
-//! 3. Polytopes are generated via `generate_polytope` (blake3 per-attempt seeding)
-//!    and cached in the sys-landscape family cache. Re-runs skip generation + capacity.
+//! 3. Random dual vertices are generated with blake3 per-attempt seeding and
+//!    cached in the sys-landscape family cache. Re-runs skip generation + capacity.
 //! 4. Canonical runs write to `datascience/produce/random.jsonl`.
 //!
 //! Dataset design:
 //! - Random polytopes with facet counts F=5..12
 //! - Height range h in [0.8, 1.2]
-//! - Default root capacity wrapper (`symplectic::ehz_capacity`), which
+//! - Default auto-routed capacity helper, which
 //!   auto-routes Lagrangian products to billiard and other inputs to pruned HK2017
 //!
 //! CLI (all optional):
@@ -29,9 +29,11 @@
 //! - `--out <path>`            output JSONL path                      (default: untracked temp)
 //! - `--cache <path>`          cache JSONL path                       (default: untracked temp)
 
-use exp_sys_landscape::{orbit_scalars_from_result, smoke_output_path};
+use exp_sys_landscape::{orbit_scalars_from_result, smoke_output_path, SysLandscapePolytopeCache};
 use num_rational::BigRational;
 mod rows;
+use exp_sys_landscape::capacity_auto;
+use exp_sys_landscape::euclidean_volume_f64;
 use rows::RandomSweepRow;
 use std::collections::HashMap;
 use std::fs::File;
@@ -39,9 +41,6 @@ use std::io::{BufWriter, Write};
 use std::path::PathBuf;
 use std::time::Instant;
 use symplectic::database::{load_many, save, DualVerticesKey, PolytopeRecord, SigmaAction, Source};
-use symplectic::ehz_capacity;
-use symplectic::geom::volume::volume;
-use symplectic::random::generate_polytope;
 
 const SEED: u64 = 42;
 const H_MIN: f64 = 0.8;
@@ -79,9 +78,7 @@ fn parse_args() -> Args {
     parse_args_from(std::env::args())
 }
 
-fn parse_args_from(
-    argv: impl IntoIterator<Item = impl Into<String>>,
-) -> Args {
+fn parse_args_from(argv: impl IntoIterator<Item = impl Into<String>>) -> Args {
     let argv: Vec<String> = argv.into_iter().map(Into::into).collect();
 
     let mut seed = SEED;
@@ -104,9 +101,7 @@ fn parse_args_from(
         };
         match arg {
             "--seed" => {
-                seed = need_value("--seed")
-                    .parse()
-                    .expect("--seed must be a u64");
+                seed = need_value("--seed").parse().expect("--seed must be a u64");
                 i += 2;
             }
             "--samples-per-f" => {
@@ -190,8 +185,8 @@ fn main() {
         }
     }
 
-    let mut db = load_many(&[args.cache.as_path()])
-        .expect("failed to load sys-landscape family cache");
+    let mut db =
+        load_many(&[args.cache.as_path()]).expect("failed to load sys-landscape family cache");
     println!("Loaded family cache: {} entries\n", db.len());
 
     let file = File::create(&args.out).expect("failed to create output file");
@@ -220,11 +215,19 @@ fn main() {
                     .get_mut(&key)
                     .expect("source lookup key should remain valid in the cache");
                 // Cache hit: reconstruct polytope from rational data (skip vertex enumeration)
-                let p = record
-                    .to_polytope()
-                    .expect("failed to reconstruct polytope from database");
+                let p = SysLandscapePolytopeCache::from_rational_parts(
+                    record.dual_vertices_rational.clone(),
+                    record.vertices_rational.clone(),
+                )
+                .expect("failed to reconstruct polytope from database");
                 if record.orbit_scalars.is_none() {
-                    let ehz = ehz_capacity(&p).expect("capacity recomputation failed on cache hit");
+                    let ehz = capacity_auto(
+                        &p.dual_vertices_f64,
+                        &p.dual_vertices,
+                        &p.facet_intersection_is_nonempty,
+                        &p.omega_signs,
+                    )
+                    .expect("capacity recomputation failed on cache hit");
                     record.orbit_scalars = Some(orbit_scalars_from_result(&ehz));
                 }
                 let vol = record.volume.expect("cached record missing volume");
@@ -235,7 +238,7 @@ fn main() {
                     name: format!("random_F{facet_count}_{accepted}"),
                     facet_count,
                     dual_vertices: p
-                        .dual_vertices_f64()
+                        .dual_vertices_f64
                         .iter()
                         .map(|a| [a[0], a[1], a[2], a[3]])
                         .collect(),
@@ -263,9 +266,15 @@ fn main() {
             }
 
             // Cache miss: generate polytope
-            let p = match generate_polytope(facet_count, H_MIN, H_MAX, args.seed, attempt) {
-                Ok(p) => p,
-                Err(_) => {
+            let p = match SysLandscapePolytopeCache::generate_random(
+                facet_count,
+                H_MIN,
+                H_MAX,
+                args.seed,
+                attempt,
+            ) {
+                Some(p) => p,
+                None => {
                     // Rejection: this (seed, attempt) doesn't produce a valid polytope
                     attempt += 1;
                     continue;
@@ -273,18 +282,24 @@ fn main() {
             };
 
             let start_vol = Instant::now();
-            let vol = volume(&p);
+            let vol = euclidean_volume_f64(&p.vertices, &p.vertex_facet_incidence);
             let time_volume_ms = start_vol.elapsed().as_secs_f64() * 1000.0;
 
             let start_cap = Instant::now();
-            let ehz = ehz_capacity(&p).expect("capacity computation failed");
+            let ehz = capacity_auto(
+                &p.dual_vertices_f64,
+                &p.dual_vertices,
+                &p.facet_intersection_is_nonempty,
+                &p.omega_signs,
+            )
+            .expect("capacity computation failed");
             let time_capacity_ms = start_cap.elapsed().as_secs_f64() * 1000.0;
 
             let cap = ehz.capacity();
             let sys = cap * cap / (2.0 * vol);
 
             // Insert into database
-            let mut record = PolytopeRecord::from_polytope(&p);
+            let mut record = p.to_record();
             record.source = Some(source);
             record = record.with_computed_fields(vol, 0.0, cap, 0.0);
             record = record.with_sigmas(
@@ -301,12 +316,12 @@ fn main() {
                 name: format!("random_F{facet_count}_{accepted}"),
                 facet_count,
                 dual_vertices: p
-                    .dual_vertices_f64()
+                    .dual_vertices_f64
                     .iter()
                     .map(|a| [a[0], a[1], a[2], a[3]])
                     .collect(),
-                dual_vertices_rational: rational_vec4_to_strings(p.dual_vertices()),
-                vertices_rational: rational_vec4_to_strings(p.vertices()),
+                dual_vertices_rational: rational_vec4_to_strings(&p.dual_vertices),
+                vertices_rational: rational_vec4_to_strings(&p.vertices),
                 h_min: H_MIN,
                 h_max: H_MAX,
                 volume: vol,
@@ -329,7 +344,11 @@ fn main() {
     save(&args.cache, &db).expect("failed to save sys-landscape family cache");
 
     println!("\nWrote {total} entries to {}", args.out.display());
-    println!("Cache: {} entries (saved to {})", db.len(), args.cache.display());
+    println!(
+        "Cache: {} entries (saved to {})",
+        db.len(),
+        args.cache.display()
+    );
     println!("Cache hits: {cache_hits}/{total}");
     println!("Total time: {:.1}s", t0.elapsed().as_secs_f64());
 }

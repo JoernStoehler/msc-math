@@ -1,67 +1,119 @@
 use super::*;
 use crate::geom::known_polytopes;
 
-// Tests for facet_adjacency: directed adjacency and cycle checks.
+// Tests for facet_adjacency: directed transition feasibility and cycle checks.
 //
-// Proposition: Directed adjacency correctly combines vertex-sharing and omega_0-sign conditions.
+// Proposition: directed transition feasibility correctly combines facet
+// intersection nonemptiness and omega_0-sign conditions.
 // Reference: [lem:numerical-transition-feasibility], [cor:adjacency-pruning]
 //
 // Strategy: fixture-based on simplex, hypercube, and Lagrangian products.
 
+#[test]
+fn flat_transition_matrix_combines_facet_intersection_and_nonnegative_omega() {
+    #[rustfmt::skip]
+    let facet_intersection_is_nonempty = DMatrix::from_row_slice(3, 3, &[
+        false, true,  true,
+        true,  false, true,
+        true,  true,  false,
+    ]);
+    #[rustfmt::skip]
+    let omega_signs = DMatrix::from_row_slice(3, 3, &[
+        0,  1, -1,
+       -1,  0,  0,
+        1, -1,  0,
+    ]);
+
+    let directed = build_transition_matrix_from_facet_intersections_and_omega(
+        &facet_intersection_is_nonempty,
+        &omega_signs,
+    );
+
+    #[rustfmt::skip]
+    let expected = DMatrix::from_row_slice(3, 3, &[
+        false, true,  false,
+        false, false, true,
+        true,  false, false,
+    ]);
+    assert_eq!(directed, expected);
+}
+
+#[test]
+#[should_panic(
+    expected = "facet_intersection_is_nonempty and omega_signs must have the same shape"
+)]
+fn flat_transition_matrix_rejects_shape_mismatch() {
+    let facet_intersection_is_nonempty = DMatrix::from_element(2, 2, false);
+    let omega_signs = DMatrix::from_element(3, 3, 0);
+
+    let _ = build_transition_matrix_from_facet_intersections_and_omega(
+        &facet_intersection_is_nonempty,
+        &omega_signs,
+    );
+}
+
 /// Simplex (5 facets): every pair of facets shares a vertex (complete graph).
-/// Undirected adjacency should be all-true except diagonal.
+/// Facet-intersection nonemptiness should be all-true except diagonal.
 #[test]
 #[allow(clippy::needless_range_loop)]
-fn simplex_undirected_is_complete() {
+fn simplex_facet_intersection_is_complete() {
     let kp = known_polytopes::simplex();
-    let adj = kp.polytope.vertex_adjacency();
-    let f = kp.polytope.facet_count();
+    let facet_intersection_is_nonempty = &kp.facet_intersection_is_nonempty;
+    let f = kp.facet_count();
     assert_eq!(f, 5);
 
     for i in 0..f {
         for j in 0..f {
             if i == j {
-                assert!(!adj[(i, j)], "diagonal should be false");
+                assert!(
+                    !facet_intersection_is_nonempty[(i, j)],
+                    "diagonal should be false"
+                );
             } else {
-                assert!(adj[(i, j)], "simplex facets {i} and {j} should be adjacent");
+                assert!(
+                    facet_intersection_is_nonempty[(i, j)],
+                    "simplex facets {i} and {j} should intersect"
+                );
             }
         }
     }
 }
 
-/// Hypercube (8 facets in 4D): opposite facets are not adjacent.
-/// Each facet should be adjacent to exactly 6 others (all except itself and its opposite).
+/// Hypercube (8 facets in 4D): opposite facets do not intersect.
+/// Each facet should intersect exactly 6 others (all except itself and its opposite).
 #[test]
 #[allow(clippy::needless_range_loop)]
-fn hypercube_undirected_excludes_opposite_facets() {
+fn hypercube_facet_intersection_excludes_opposite_facets() {
     let kp = known_polytopes::hypercube();
-    let adj = kp.polytope.vertex_adjacency();
-    let f = kp.polytope.facet_count();
+    let facet_intersection_is_nonempty = &kp.facet_intersection_is_nonempty;
+    let f = kp.facet_count();
     assert_eq!(f, 8);
 
     for i in 0..f {
-        let neighbor_count: usize = (0..f).filter(|&j| adj[(i, j)]).count();
+        let intersecting_facet_count: usize = (0..f)
+            .filter(|&j| facet_intersection_is_nonempty[(i, j)])
+            .count();
         // In a 4D hypercube, each facet (a 3D cube) shares vertices with 6 of 7 other facets.
         assert_eq!(
-            neighbor_count, 6,
-            "facet {i} should have 6 neighbors, got {neighbor_count}"
+            intersecting_facet_count, 6,
+            "facet {i} should intersect 6 other facets, got {intersecting_facet_count}"
         );
     }
 }
 
-/// Undirected adjacency is symmetric: adj[(i,j)] == adj[(j,i)].
+/// Facet-intersection nonemptiness is symmetric.
 #[test]
 #[allow(clippy::needless_range_loop)]
-fn undirected_adjacency_is_symmetric() {
+fn facet_intersection_is_symmetric() {
     for kp in known_polytopes::all_known() {
-        let adj = kp.polytope.vertex_adjacency();
-        let f = kp.polytope.facet_count();
+        let facet_intersection_is_nonempty = &kp.facet_intersection_is_nonempty;
+        let f = kp.facet_count();
         for i in 0..f {
             for j in 0..f {
                 assert_eq!(
-                    adj[(i, j)],
-                    adj[(j, i)],
-                    "asymmetric undirected adjacency at ({i},{j}) for {}",
+                    facet_intersection_is_nonempty[(i, j)],
+                    facet_intersection_is_nonempty[(j, i)],
+                    "asymmetric facet intersection at ({i},{j}) for {}",
                     kp.name
                 );
             }
@@ -69,19 +121,23 @@ fn undirected_adjacency_is_symmetric() {
     }
 }
 
-/// Directed adjacency is a subset of undirected: if directed[(i,j)], then undirected[(i,j)].
+/// Directed transition feasibility is a subset of facet-intersection nonemptiness.
 #[test]
-fn directed_is_subset_of_undirected() {
+fn directed_transition_is_subset_of_facet_intersection() {
     for kp in known_polytopes::all_known() {
-        let undirected = kp.polytope.vertex_adjacency();
-        let directed = build_transition_matrix(&kp.polytope);
-        let f = kp.polytope.facet_count();
+        let facet_intersection_is_nonempty = &kp.facet_intersection_is_nonempty;
+        let omega_signs = &kp.omega_signs;
+        let directed = build_transition_matrix_from_facet_intersections_and_omega(
+            facet_intersection_is_nonempty,
+            omega_signs,
+        );
+        let f = kp.facet_count();
         for i in 0..f {
             for j in 0..f {
                 if directed[(i, j)] {
                     assert!(
-                        undirected[(i, j)],
-                        "directed[{i}][{j}] true but undirected false for {}",
+                        facet_intersection_is_nonempty[(i, j)],
+                        "directed transition ({i},{j}) true but facets do not intersect for {}",
                         kp.name
                     );
                 }
@@ -90,15 +146,20 @@ fn directed_is_subset_of_undirected() {
     }
 }
 
-/// Directed adjacency is NOT symmetric in general (omega_0 is antisymmetric).
+/// Directed transition feasibility is NOT symmetric in general (omega_0 is antisymmetric).
 /// If omega_0(n_i, n_j) > 0, then omega_0(n_j, n_i) < 0, so directed[(i,j)] and directed[(j,i)]
 /// cannot both be true unless omega_0(n_i, n_j) = 0.
 #[test]
-fn directed_adjacency_antisymmetry_property() {
+fn directed_transition_antisymmetry_property() {
     for kp in known_polytopes::all_known() {
-        let directed = build_transition_matrix(&kp.polytope);
-        let omega_signs = kp.polytope.omega_signs();
-        let f = kp.polytope.facet_count();
+        let facet_intersection_is_nonempty = &kp.facet_intersection_is_nonempty;
+        let omega_signs = &kp.omega_signs;
+        let directed = build_transition_matrix_from_facet_intersections_and_omega(
+            facet_intersection_is_nonempty,
+            omega_signs,
+        );
+        let omega_signs = &kp.omega_signs;
+        let f = kp.facet_count();
         for i in 0..f {
             for j in (i + 1)..f {
                 if directed[(i, j)] && directed[(j, i)] {
@@ -116,38 +177,45 @@ fn directed_adjacency_antisymmetry_property() {
     }
 }
 
-/// Directed adjacency strictly prunes compared to undirected on generic polytopes.
+/// Directed transition feasibility strictly prunes compared to facet intersection on generic polytopes.
 /// For polytopes where omega_0 signs are nonzero (generic case), directed should have
-/// strictly fewer true entries than undirected.
+/// strictly fewer true entries than facet-intersection nonemptiness.
 #[test]
-fn directed_prunes_vs_undirected() {
+fn directed_transition_prunes_vs_facet_intersection() {
     // The simplex is generic enough that directed should prune some edges
     let kp = known_polytopes::simplex();
-    let undirected = kp.polytope.vertex_adjacency();
-    let directed = build_transition_matrix(&kp.polytope);
-    let count_undirected: usize = undirected.iter().filter(|&&v| v).count();
+    let facet_intersection_is_nonempty = &kp.facet_intersection_is_nonempty;
+    let omega_signs = &kp.omega_signs;
+    let directed = build_transition_matrix_from_facet_intersections_and_omega(
+        facet_intersection_is_nonempty,
+        omega_signs,
+    );
+    let count_facet_intersections: usize = facet_intersection_is_nonempty
+        .iter()
+        .filter(|&&v| v)
+        .count();
     let count_directed: usize = directed.iter().filter(|&&v| v).count();
 
     assert!(
-        count_directed < count_undirected,
-        "directed ({count_directed}) should have fewer edges than undirected ({count_undirected})"
+        count_directed < count_facet_intersections,
+        "directed ({count_directed}) should have fewer entries than facet intersections ({count_facet_intersections})"
     );
 }
 
-/// is_feasible_cycle: a valid cycle on a complete adjacency graph always returns true.
+/// is_feasible_cycle: a valid cycle on a complete transition graph always returns true.
 #[test]
 fn is_feasible_cycle_complete_graph() {
     // 4-facet complete graph (all true except diagonal)
-    let adj = DMatrix::from_fn(4, 4, |i, j| i != j);
-    assert!(is_feasible_cycle(&[0, 1, 2, 3], &adj));
-    assert!(is_feasible_cycle(&[3, 2, 1, 0], &adj));
-    assert!(is_feasible_cycle(&[0, 2, 1, 3], &adj));
+    let transition_is_allowed = DMatrix::from_fn(4, 4, |i, j| i != j);
+    assert!(is_feasible_cycle(&[0, 1, 2, 3], &transition_is_allowed));
+    assert!(is_feasible_cycle(&[3, 2, 1, 0], &transition_is_allowed));
+    assert!(is_feasible_cycle(&[0, 2, 1, 3], &transition_is_allowed));
 }
 
 /// is_feasible_cycle: returns false when a transition is missing.
 #[test]
 fn is_feasible_cycle_missing_edge() {
-    // 4 facets, but 0->2 is not adjacent
+    // 4 facets, but 0->2 is not allowed.
     #[rustfmt::skip]
     let data = vec![
         false, true, false, true,
@@ -155,48 +223,51 @@ fn is_feasible_cycle_missing_edge() {
         false, true, false, true,
         true, true, true, false,
     ];
-    let adj = DMatrix::from_row_slice(4, 4, &data);
+    let transition_is_allowed = DMatrix::from_row_slice(4, 4, &data);
     // 0->2 missing, so [0,2,1,3] should fail at the 0->2 step
-    assert!(!is_feasible_cycle(&[0, 2, 1, 3], &adj));
+    assert!(!is_feasible_cycle(&[0, 2, 1, 3], &transition_is_allowed));
     // But [0,1,2,3] should work: 0->1 ok, 1->2 ok, 2->3 ok, 3->0 ok
-    assert!(is_feasible_cycle(&[0, 1, 2, 3], &adj));
+    assert!(is_feasible_cycle(&[0, 1, 2, 3], &transition_is_allowed));
 }
 
-/// is_feasible_cycle: empty permutation is trivially adjacent.
+/// is_feasible_cycle: empty permutation is accepted.
 #[test]
 fn is_feasible_cycle_empty() {
-    let adj = DMatrix::from_element(0, 0, false);
-    assert!(is_feasible_cycle(&[], &adj));
+    let transition_is_allowed = DMatrix::from_element(0, 0, false);
+    assert!(is_feasible_cycle(&[], &transition_is_allowed));
 }
 
-/// is_feasible_cycle: single-element permutation is trivially adjacent.
+/// is_feasible_cycle: single-element permutation checks the diagonal entry.
 #[test]
 fn is_feasible_cycle_single_element() {
-    let adj = DMatrix::from_element(1, 1, false);
-    // Single element: checks adj[(0,0)] which is false.
-    assert!(!is_feasible_cycle(&[0], &adj));
+    let transition_is_allowed = DMatrix::from_element(1, 1, false);
+    // Single element: checks transition_is_allowed[(0,0)] which is false.
+    assert!(!is_feasible_cycle(&[0], &transition_is_allowed));
 }
 
-/// Lagrangian product: directed adjacency respects the Q/P facet structure.
+/// Lagrangian product: directed transition feasibility respects the Q/P facet structure.
 /// Q-type facets have normals in the (q1,q2,0,0) subspace and P-type in (0,0,p1,p2).
 /// omega_0 between two Q-type normals is 0 (both in Lagrangian subspace), similarly for P-type.
 /// omega_0 between a Q-type and P-type normal is generically nonzero.
 #[test]
 fn lagrangian_product_q_q_transitions_bidirectional() {
     let kp = known_polytopes::lagrangian_triangle_product();
-    let directed = build_transition_matrix(&kp.polytope);
-    let undirected = kp.polytope.vertex_adjacency();
-    let omega_signs = kp.polytope.omega_signs();
-    let f = kp.polytope.facet_count();
+    let facet_intersection_is_nonempty = &kp.facet_intersection_is_nonempty;
+    let omega_signs = &kp.omega_signs;
+    let directed = build_transition_matrix_from_facet_intersections_and_omega(
+        facet_intersection_is_nonempty,
+        omega_signs,
+    );
+    let f = kp.facet_count();
 
-    // For pairs where omega_signs == 0 and undirected adjacent,
+    // For pairs where omega_signs == 0 and facets intersect,
     // both directions should be allowed in the directed matrix.
     for i in 0..f {
         for j in 0..f {
-            if undirected[(i, j)] && omega_signs[(i, j)] == 0 {
+            if facet_intersection_is_nonempty[(i, j)] && omega_signs[(i, j)] == 0 {
                 assert!(
                     directed[(i, j)] && directed[(j, i)],
-                    "omega_0=0 pair ({i},{j}) should be bidirectional in directed adjacency"
+                    "omega_0=0 pair ({i},{j}) should be bidirectional in directed transition matrix"
                 );
             }
         }

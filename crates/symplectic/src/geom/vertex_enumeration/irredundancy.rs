@@ -7,7 +7,7 @@ use std::collections::BTreeSet;
 use num_rational::BigRational;
 
 use super::exact_linalg::rank_over_q;
-use crate::geom::polytope::ConstructionError;
+use super::ConstructionError;
 
 /// Compute affine rank of rational points in R^4.
 pub(super) fn affine_rank_rational(points: &[[BigRational; 4]]) -> usize {

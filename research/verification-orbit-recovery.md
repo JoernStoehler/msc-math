@@ -145,7 +145,7 @@ Per target row:
 - `polytope`,
 - `capacity`,
 - `best_permutation`,
-- recomputed `beta` from `solve_kkt_for(polytope, best_permutation)`.
+- recomputed `beta` from `solve_kkt_for_dual_vertices(dual_vertices, best_permutation)`.
 
 Authoritative reused fields on a cache hit:
 

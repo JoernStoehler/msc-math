@@ -1,8 +1,9 @@
 //! Boundary event detection for dual-vertex step probes.
 
+use euclidean_polytopes::{
+    two_faces_from_vertex_facet_incidence, vertex_facets_from_vertex_facet_incidence,
+};
 use nalgebra::{Matrix4, Vector4};
-use symplectic::geom::polytope::Polytope4D;
-use symplectic::geom::skeleton::Skeleton;
 use symplectic::geom::symplectic_form::omega0;
 
 /// Classifies the next combinatorial boundary encountered along a direction.
@@ -13,7 +14,7 @@ pub enum EventType {
         vertex_index: usize,
         new_facet: usize,
     },
-    /// sign(omega_0(a_i, a_j)) changes for ridge-adjacent facets i, j.
+    /// sign(omega_0(a_i, a_j)) changes for facets adjacent along a two-face.
     OmegaFlip { facet_i: usize, facet_j: usize },
     /// |a_k + t*d_k| -> 0 (dual vertex degenerates).
     DualVertexDegen { facet: usize },
@@ -42,27 +43,28 @@ pub struct BoundaryEvent {
 
 /// Compute the first boundary event along a direction in dual-vertex space.
 /// [lem:step-bound-incidence] incidence flip detection.
-/// [lem:step-bound-omega] omega_0 sign-flip detection for ridge-adjacent facets.
+/// [lem:step-bound-omega] omega_0 sign-flip detection for two-face-adjacent facets.
 ///
 /// The caller supplies the numerical thresholds so experiment-local epsilon policy
 /// stays local to the binary that is reporting the row.
 pub fn compute_step_bound_detailed(
-    polytope: &Polytope4D,
+    duals: &[Vector4<f64>],
+    vertices: &[Vector4<f64>],
+    incidence: &nalgebra::DMatrix<bool>,
     direction: &[Vector4<f64>],
     eps_numerical_zero: f64,
     max_step_size: f64,
 ) -> BoundaryEvent {
-    let duals = polytope.dual_vertices_f64();
-    let vertices = polytope.vertices_f64();
-    let f = polytope.facet_count();
-    let skeleton = Skeleton::compute(polytope);
+    let f = duals.len();
+    let vertex_facets_by_vertex = vertex_facets_from_vertex_facet_incidence(incidence);
+    let two_faces = two_faces_from_vertex_facet_incidence(incidence);
 
     let mut best = BoundaryEvent {
         t_max: f64::INFINITY,
         event: EventType::Unbounded,
     };
 
-    for (vi, vertex_facets) in skeleton.vertex_facets.iter().enumerate() {
+    for (vi, vertex_facets) in vertex_facets_by_vertex.iter().enumerate() {
         let v = &vertices[vi];
 
         if vertex_facets.len() == 4 {
@@ -131,9 +133,9 @@ pub fn compute_step_bound_detailed(
         }
     }
 
-    for ridge in &skeleton.ridges {
-        let i = ridge.facets[0];
-        let j = ridge.facets[1];
+    for two_face in &two_faces {
+        let i = two_face.facets[0];
+        let j = two_face.facets[1];
         let c = omega0(&duals[i], &duals[j]);
         let b = omega0(&direction[i], &duals[j]) + omega0(&duals[i], &direction[j]);
         let a_coeff = omega0(&direction[i], &direction[j]);

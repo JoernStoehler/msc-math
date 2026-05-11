@@ -56,7 +56,7 @@ Context: route-freeze surface for proof-vs-validation-vs-caveat decisions.
 | Numerical appendix route freeze | `[map-input]` | mainline thesis | agent prep then Jorn | Decide whether thesis prose describes public f64 wrappers, the stronger exact/guaranteed verification layer, or both with an explicit boundary. | `research/numerics*.md`, `thesis/appendix-numerical.tex`, `crates/symplectic/src/lib.rs`, `crates/symplectic/src/algorithms/orbit_search.rs` |
 | Generic-case solver contract | `[active]` | mainline thesis | agent prep then Jorn math review | Draft the exact generic theorem with conditions on `C`, reduced Hessian eigenvalues, beta margin, Q/action gap, and adjacency/pruning assumptions; then align experiment f64 diagnostics to those variables. | `research/numerics-error-bounds.md`, `formal/hk2017-qp-core.tex`, `formal/hk2017-qp-precision.tex`, `experiments/numerics/error-bounds/` |
 | Numerical error bounds | `[map-input]` | contingent during writing | retained wording | Treat as proved exact/Q pieces plus empirical eta checks plus named caveats; fix/caveat only the pieces the thesis cites. Under the generic route, record each caveat as a generic precondition, non-generic limit behavior, empirical formula, or Jorn review question. | `formal/hk2017-qp-core.tex`, `formal/hk2017-qp-precision.tex`, `experiments/numerics/q-error/q_error_output.txt`, `thesis-stories-are-supported.md` |
-| Projection solver | `[map-input]` | contingent during writing | Jorn math if retained | Use the projection/null-space solver as the candidate generic-route implementation story. Do not claim it is the public capacity backend until `OrbitSolveBackend::Projected` returns the shared orbit payload and Q-bound contract. | `crates/symplectic/src/algorithms/orbit_search.rs`, `experiments/numerics/error-bounds/projection_solver.rs` |
+| Projection solver | `[map-input]` | contingent during writing | Jorn math if retained | Use the projection/null-space solver as the candidate generic-route implementation story only if the thesis needs it. The old `OrbitSolveBackend::Projected` strategy surface was deleted; any revived route should be a flat solver with shared orbit payload and Q-bound contract. | `crates/symplectic/src/algorithms/orbit_search.rs`, `experiments/numerics/error-bounds/projection_solver.rs` |
 | Beta-LP unification | `[future]` | future/follow-up by default | Jorn math if retained | Keep as future unless needed for retained solver explanation. | legacy beta-LP row |
 | Solver formal writeup | `[map-input]` | contingent during writing | retained wording | Avoid full per-module formalization unless thesis text requires it. | `formal/`, `research/numerics-error-bounds.md` |
 | Algorithm/numerics mismatch triage | `[map-input]` | contingent during writing | agents then Jorn for theorem/prose choices | Route `thesis/migration-findings.md` rows 3-11 before relying on existing algorithm boxes or numerical appendix prose: multiplier names, KKT sign convention, Q factor, beta/eigen thresholds, accumulator references, `|S| >= 2`, billiard adjacency pruning, and tube closing-edge status. | `thesis/migration-findings.md`, `thesis/algorithms.tex`, `thesis/appendix-numerical.tex` |
@@ -138,10 +138,10 @@ states hold:
   blocked on thesis restructuring.
   Refresh by: checking `tasks/writing.md` and current thesis notation.
 - [fresh 2026-04-25] `thesis/appendix-numerical.tex` describes a
-  certified/uncertain accumulator, but the public `ehz_capacity*` wrappers call
-  f64-only aggregation by default; stronger guarantee modes exist behind the
-  non-default `aggregate_orbits` path. This must be made explicit if retained
-  in thesis prose.
+  certified/uncertain accumulator. The public `ehz_capacity*` wrappers now use
+  `OrbitGuaranteeMode::MinimaSafe`; non-default guarantee controls exist behind
+  the `aggregate_orbits_with_dual_vertices_exact` path. This must be made
+  explicit if retained in thesis prose.
   Refresh by: reading `thesis/appendix-numerical.tex` around "Accumulator and
   Final Answer", `crates/symplectic/src/lib.rs`, and
   `crates/symplectic/src/algorithms/orbit_search.rs`.
@@ -170,10 +170,11 @@ states hold:
   `formal/hk2017-qp-precision.tex`,
   `experiments/numerics/error-bounds/`, `q-error`, and `kkt-inertia` outputs.
 - [fresh 2026-05-01] Current alignment snapshot: formal and experiment
-  `error-bounds` surfaces are projection/null-space oriented; public
-  `ehz_capacity*` wrappers still use saddle-point solving plus f64-only
-  aggregation by default; stronger exact/guaranteed aggregation is available
-  only through explicit non-default `aggregate_orbits` modes.
+  `error-bounds` surfaces are projection/null-space oriented, while public
+  `ehz_capacity*` wrappers use saddle-point solving plus `MinimaSafe`
+  aggregation by default. Exact rational certified output is available through
+  `ehz_capacity_pruned_certified`; explicit non-default guarantee control is
+  available through `aggregate_orbits_with_dual_vertices_exact`.
   Refresh by: checking `crates/symplectic/src/lib.rs` wrapper calls and
   `crates/symplectic/src/algorithms/orbit_search.rs` aggregation modes.
 - [fresh 2026-05-01] Generic route resume point: first define exact generic

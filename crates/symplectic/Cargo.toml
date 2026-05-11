@@ -19,6 +19,7 @@ good_lp.workspace = true
 num-integer.workspace = true
 blake3.workspace = true
 algebraic-numbers.workspace = true
+euclidean-polytopes.workspace = true
 
 [dev-dependencies]
 proptest.workspace = true
@@ -29,3 +30,7 @@ criterion.workspace = true
 [[bench]]
 name = "profiling"
 harness = false
+
+[[bin]]
+name = "profile-pruned-hk2017"
+path = "src/bin/profile_pruned_hk2017.rs"

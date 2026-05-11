@@ -2,8 +2,6 @@
 //!
 //! Split from mod.rs to keep module routing and docs short.
 
-use crate::geom::polytope::Polytope4D;
-use crate::kkt::saddle_point_solver::solve_kkt_for;
 use nalgebra::Vector4;
 
 /// KKT solver on minimal 2-facet system (two opposite facets).
@@ -16,94 +14,42 @@ use nalgebra::Vector4;
 #[test]
 fn solve_kkt_two_facets() {
     let normals = [Vector4::x(), -Vector4::x()];
-    let heights = [1.0, 1.0];
     let perm = [0, 1];
+    let m = perm.len();
+    let n_dim = 4;
+    let size = m + n_dim + 1;
+    let mut kkt_mat = nalgebra::DMatrix::zeros(size, size);
+    let mut rhs = nalgebra::DVector::zeros(size);
 
-    // Two opposite facets don't form a valid bounded polytope (need >=5 for R^4).
-    // Use the augmented system directly to test the solver on this minimal input.
-    let polytope = match Polytope4D::from_f64(
-        normals
-            .iter()
-            .zip(heights.iter())
-            .map(|(n, &h)| n / h)
-            .collect(),
-    ) {
-        Ok(p) => p,
-        Err(_) => {
-            // Expected: 2 facets is too few for a bounded polytope in R^4.
-            // Test the augmented system assembly + solver directly.
-            // This exercises the solver's handling of small systems.
-            eprintln!("2-facet polytope rejected (expected); testing augmented system directly");
-
-            // Build the augmented system manually from normals/heights.
-            // The augmented system is valid for any facet count, even if the
-            // polytope is not bounded.
-            let m = perm.len();
-            let n_dim = 4;
-            let size = m + n_dim + 1; // m + 4 + 1 = 7
-            let mut kkt_mat = nalgebra::DMatrix::zeros(size, size);
-            let mut rhs = nalgebra::DVector::zeros(size);
-
-            // H block (m x m): H_ij = omega_0(n_sigma(i), n_sigma(j))
-            for i in 0..m {
-                for j in 0..m {
-                    let ni = &normals[perm[i]];
-                    let nj = &normals[perm[j]];
-                    kkt_mat[(i, j)] = crate::geom::symplectic_form::omega0(ni, nj);
-                }
-            }
-
-            // N block: closure constraints
-            for i in 0..m {
-                let n = &normals[perm[i]];
-                for k in 0..n_dim {
-                    kkt_mat[(i, m + k)] = n[k];
-                    kkt_mat[(m + k, i)] = n[k];
-                }
-            }
-
-            // eta block: normalization
-            for i in 0..m {
-                kkt_mat[(i, m + n_dim)] = 1.0;
-                kkt_mat[(m + n_dim, i)] = 1.0;
-            }
-
-            rhs[m + n_dim] = 1.0;
-
-            let result = crate::kkt::saddle_point_solver::solve_saddle_point(&kkt_mat, &rhs);
-
-            if let crate::kkt::saddle_point_solver::KktOutcome::Feasible(r) = &result {
-                assert_eq!(r.beta.len(), 2);
-                // beta_1 ~ beta_2 ~ 0.5
-                assert!(
-                    (r.beta[0] - 0.5).abs() < 1e-6,
-                    "beta_1 should be ~0.5, got {}",
-                    r.beta[0]
-                );
-                assert!(
-                    (r.beta[1] - 0.5).abs() < 1e-6,
-                    "beta_2 should be ~0.5, got {}",
-                    r.beta[1]
-                );
-                // Q = 0 (parallel normals have omega_0 = 0)
-                assert!(
-                    r.q_corrected.abs() < 1e-10,
-                    "Q should be ~0 for parallel normals, got {}",
-                    r.q_corrected
-                );
-            }
-            return;
+    for i in 0..m {
+        for j in 0..m {
+            let ni = &normals[perm[i]];
+            let nj = &normals[perm[j]];
+            kkt_mat[(i, j)] = crate::geom::symplectic_form::omega0(ni, nj);
         }
-    };
+    }
 
-    // If construction succeeded (unlikely for 2 facets), test via standard API.
-    let r = solve_kkt_for(&polytope, &perm)
-        .feasible()
-        .expect("two-facet system should solve");
-    assert_eq!(r.beta.len(), 2);
-    assert!((r.beta[0] - 0.5).abs() < 1e-6);
-    assert!((r.beta[1] - 0.5).abs() < 1e-6);
-    assert!(r.q_corrected.abs() < 1e-10);
+    for i in 0..m {
+        let n = &normals[perm[i]];
+        for k in 0..n_dim {
+            kkt_mat[(i, m + k)] = n[k];
+            kkt_mat[(m + k, i)] = n[k];
+        }
+    }
+
+    for i in 0..m {
+        kkt_mat[(i, m + n_dim)] = 1.0;
+        kkt_mat[(m + n_dim, i)] = 1.0;
+    }
+    rhs[m + n_dim] = 1.0;
+
+    let result = crate::kkt::saddle_point_solver::solve_saddle_point(&kkt_mat, &rhs);
+    if let crate::kkt::saddle_point_solver::KktOutcome::Feasible(r) = &result {
+        assert_eq!(r.beta.len(), 2);
+        assert!((r.beta[0] - 0.5).abs() < 1e-6);
+        assert!((r.beta[1] - 0.5).abs() < 1e-6);
+        assert!(r.q_corrected.abs() < 1e-10);
+    }
 }
 
 /// KKT solver on 4-facet symplectic square.

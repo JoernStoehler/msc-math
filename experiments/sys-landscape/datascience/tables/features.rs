@@ -19,22 +19,32 @@ mod features_skeleton;
 
 use crate::load_caches::LoadedPolytopeRow;
 use crate::rows::PolytopeTableRow;
-use symplectic::ehz_capacity;
-use symplectic::geom::polytope::Polytope4D;
-use symplectic::geom::skeleton::Skeleton;
-use symplectic::geom::volume::volume;
+use euclidean_polytopes::{
+    edges_from_vertex_facet_incidence, two_faces_from_vertex_facet_incidence,
+    vertex_facets_from_vertex_facet_incidence,
+};
+use exp_sys_landscape::capacity_auto;
+use exp_sys_landscape::euclidean_volume_f64;
+use exp_sys_landscape::SysLandscapePolytopeCache;
 
 fn enrich_row(row: &LoadedPolytopeRow) -> PolytopeTableRow {
     let (dual_vectors, dual_vertex_fields) = features_dual_vertices::dual_vertices_f64(row);
-    let polytope: Polytope4D = Polytope4D::from_f64(dual_vectors.clone())
-        .unwrap_or_else(|e| panic!("reconstruct {}: {e}", row.poly_id));
-    let polytope_volume = volume(&polytope);
+    let polytope: SysLandscapePolytopeCache =
+        SysLandscapePolytopeCache::from_f64_dual_vertices(dual_vectors.clone())
+            .unwrap_or_else(|| panic!("reconstruct {}", row.poly_id));
+    let polytope_volume =
+        euclidean_volume_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
     let actual_capacity = if row.capacity > 0.0 {
         row.capacity
     } else {
-        ehz_capacity(&polytope)
-            .unwrap_or_else(|e| panic!("capacity {}: {:?}", row.poly_id, e))
-            .capacity()
+        capacity_auto(
+            &polytope.dual_vertices_f64,
+            &polytope.dual_vertices,
+            &polytope.facet_intersection_is_nonempty,
+            &polytope.omega_signs,
+        )
+        .unwrap_or_else(|e| panic!("capacity {}: {:?}", row.poly_id, e))
+        .capacity()
     };
     let sys_value = actual_capacity * actual_capacity / (2.0 * polytope_volume);
     let facet_count = polytope.facet_count();
@@ -46,23 +56,30 @@ fn enrich_row(row: &LoadedPolytopeRow) -> PolytopeTableRow {
     let facet_scale = polytope_volume.powf(0.75);
     let omega_scale = polytope_volume.sqrt();
     let volume_scale = polytope_volume.sqrt();
-    let skeleton = Skeleton::compute(&polytope);
-    let vertices = polytope.vertices_f64();
-    let duals = polytope.dual_vertices_f64();
-    let skeleton_fields = features_skeleton::compute_skeleton_fields(&polytope, &skeleton, facet_count);
+    let incidence = &polytope.vertex_facet_incidence;
+    let vertex_facets = vertex_facets_from_vertex_facet_incidence(incidence);
+    let edges = edges_from_vertex_facet_incidence(incidence);
+    let two_faces = two_faces_from_vertex_facet_incidence(incidence);
+    let vertices = &polytope.vertices_f64;
+    let duals = &polytope.dual_vertices_f64;
+    let skeleton_fields =
+        features_skeleton::compute_skeleton_fields(&polytope, &vertex_facets, &edges, &two_faces);
     let face_geometry_fields = features_face_geometry::compute_face_geometry_fields(
         &polytope,
-        &skeleton,
+        &edges,
         &vertices,
         facet_count,
         linear_scale,
         facet_scale,
     );
-    let face_symplectic_fields =
-        features_face_symplectic::compute_face_symplectic_fields(&skeleton, &vertices, volume_scale);
+    let face_symplectic_fields = features_face_symplectic::compute_face_symplectic_fields(
+        &two_faces,
+        &vertices,
+        volume_scale,
+    );
     let omega_fields = features_omega::compute_omega_fields(
         &polytope,
-        &skeleton,
+        &two_faces,
         &duals,
         facet_count,
         omega_scale,
@@ -154,10 +171,14 @@ fn enrich_row(row: &LoadedPolytopeRow) -> PolytopeTableRow {
         ridge_symp_area_volnorm_max: face_symplectic_fields.ridge_symp_area_volnorm_max,
         ridge_symp_area_volnorm_sum: face_symplectic_fields.ridge_symp_area_volnorm_sum,
         ridge_symp_area_volnorm_max_share: face_symplectic_fields.ridge_symp_area_volnorm_max_share,
-        ridge_symp_area_volnorm_zero_fraction: face_symplectic_fields.ridge_symp_area_volnorm_zero_fraction,
-        ridge_symp_area_volnorm_le_1em3_fraction: face_symplectic_fields.ridge_symp_area_volnorm_le_1em3_fraction,
-        ridge_symp_area_volnorm_le_1em2_fraction: face_symplectic_fields.ridge_symp_area_volnorm_le_1em2_fraction,
-        ridge_symp_area_volnorm_le_1em1_fraction: face_symplectic_fields.ridge_symp_area_volnorm_le_1em1_fraction,
+        ridge_symp_area_volnorm_zero_fraction: face_symplectic_fields
+            .ridge_symp_area_volnorm_zero_fraction,
+        ridge_symp_area_volnorm_le_1em3_fraction: face_symplectic_fields
+            .ridge_symp_area_volnorm_le_1em3_fraction,
+        ridge_symp_area_volnorm_le_1em2_fraction: face_symplectic_fields
+            .ridge_symp_area_volnorm_le_1em2_fraction,
+        ridge_symp_area_volnorm_le_1em1_fraction: face_symplectic_fields
+            .ridge_symp_area_volnorm_le_1em1_fraction,
         allpair_abs_omega_vol1_mean: omega_fields.allpair_abs_omega_vol1_mean,
         allpair_abs_omega_vol1_std: omega_fields.allpair_abs_omega_vol1_std,
         allpair_abs_omega_vol1_min: omega_fields.allpair_abs_omega_vol1_min,
@@ -172,7 +193,8 @@ fn enrich_row(row: &LoadedPolytopeRow) -> PolytopeTableRow {
         ridge_abs_omega_vol1_le_1em2_fraction: omega_fields.ridge_abs_omega_vol1_le_1em2_fraction,
         ridge_abs_omega_vol1_le_1em1_fraction: omega_fields.ridge_abs_omega_vol1_le_1em1_fraction,
         transition_density: omega_fields.transition_density,
-        transition_bidirectional_fraction: omega_fields.transition_bidirectional_fraction,
+        transition_bidirectional_given_facet_intersection_fraction: omega_fields
+            .transition_bidirectional_given_facet_intersection_fraction,
         transition_out_degree_mean: omega_fields.transition_out_degree_mean,
         transition_out_degree_std: omega_fields.transition_out_degree_std,
         transition_out_degree_min: omega_fields.transition_out_degree_min,
@@ -196,7 +218,8 @@ fn enrich_row(row: &LoadedPolytopeRow) -> PolytopeTableRow {
         orbit_cycle_zero_fraction: orbit_fields.orbit_cycle_zero_fraction,
         orbit_cycle_transition_fraction: orbit_fields.orbit_cycle_transition_fraction,
         orbit_cycle_bidirectional_fraction: orbit_fields.orbit_cycle_bidirectional_fraction,
-        orbit_cycle_adjacent_fraction: orbit_fields.orbit_cycle_adjacent_fraction,
+        orbit_cycle_facet_intersection_fraction: orbit_fields
+            .orbit_cycle_facet_intersection_fraction,
         orbit_selected_out_degree_mean: orbit_fields.orbit_selected_out_degree_mean,
         orbit_selected_out_degree_std: orbit_fields.orbit_selected_out_degree_std,
         orbit_selected_out_degree_min: orbit_fields.orbit_selected_out_degree_min,

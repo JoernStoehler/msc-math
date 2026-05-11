@@ -5,7 +5,7 @@
 //! Input Artifacts: Crosspolytope from `known_polytopes::crosspolytope()` (16 facets).
 //! Output Artifacts: `experiments/crosspolytope/main/crosspolytope.jsonl`
 //!
-//! Three optimizations over the library's `ehz_capacity()`:
+//! Three optimizations over the library capacity search:
 //! 1. backtracking permutation search
 //! 2. symmetry reduction
 //! 3. checkpointing
@@ -14,14 +14,16 @@ mod checkpoint;
 mod kkt;
 mod search;
 
-use nalgebra::Vector4;
+use euclidean_polytopes::volume_from_incidence_exact;
+use nalgebra::{DMatrix, Vector4};
+use num_rational::BigRational;
+use num_traits::ToPrimitive;
 use serde::Serialize;
 use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::path::PathBuf;
 use std::time::Instant;
 use symplectic::geom::known_polytopes;
-use symplectic::geom::volume::volume;
 
 #[derive(Debug, Serialize)]
 struct CrosspolytopeResult {
@@ -43,23 +45,35 @@ struct CrosspolytopeResult {
     search_complete_through_m: usize,
 }
 
+fn euclidean_volume_f64(vertices: &[[BigRational; 4]], incidence: &DMatrix<bool>) -> f64 {
+    let vertices: Vec<Vector4<BigRational>> = vertices
+        .iter()
+        .map(|v| Vector4::new(v[0].clone(), v[1].clone(), v[2].clone(), v[3].clone()))
+        .collect();
+    ToPrimitive::to_f64(&volume_from_incidence_exact(&vertices, incidence)).unwrap_or(f64::NAN)
+}
+
 fn main() {
     let t0 = Instant::now();
 
     let kp = known_polytopes::crosspolytope();
-    let polytope = &kp.polytope;
-    let facet_count = polytope.facet_count();
-    let duals = polytope.dual_vertices_f64();
+    let facet_count = kp.dual_vertices.len();
+    let duals = &kp.dual_vertices_f64;
     let normals: Vec<Vector4<f64>> = duals.iter().map(|a| a / a.norm()).collect();
     let heights: Vec<f64> = duals.iter().map(|a| 1.0 / a.norm()).collect();
     println!("Crosspolytope: {facet_count} facets");
 
     let start_vol = Instant::now();
-    let vol = volume(polytope);
+    let vol = euclidean_volume_f64(&kp.vertices, &kp.vertex_facet_incidence);
     let time_volume_ms = start_vol.elapsed().as_secs_f64() * 1000.0;
     println!("Volume: {vol:.10} ({time_volume_ms:.1} ms)");
 
-    let search = search::run_crosspolytope_search(polytope, &normals, &heights);
+    let search = search::run_crosspolytope_search(
+        &kp.facet_intersection_is_nonempty,
+        &kp.omega_signs,
+        &normals,
+        &heights,
+    );
     let time_capacity_ms = search.elapsed_secs * 1000.0;
 
     let certified = search.best_certified;

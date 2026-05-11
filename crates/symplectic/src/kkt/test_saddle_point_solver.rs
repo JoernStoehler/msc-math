@@ -2,11 +2,11 @@
 //!
 //! These tests validate the eigendecomposition-based KKT solve on:
 //! - known polytopes with expected capacities,
-//! - direct assembly-vs-convenience consistency,
+//! - direct assembly-vs-flat-solver consistency,
 //! - edge cases and numerical degeneracies,
 //! - constraint residual checks for returned feasible candidates.
 
-use super::qp_assembly::build_augmented_system;
+use super::qp_assembly::build_augmented_system_from_dual_vertices;
 use super::saddle_point_solver::*;
 use crate::geom::known_polytopes;
 use nalgebra::{DMatrix, DVector};
@@ -40,8 +40,8 @@ fn assert_approx(a: f64, b: f64, tol: f64, msg: &str) {
 /// For each subset of m facets, tries all m!/m = (m-1)! distinct cyclic orderings.
 /// This is feasible for small polytopes (f <= 8) but combinatorially expensive
 /// for larger ones.
-fn find_best_q_exhaustive(polytope: &crate::geom::polytope::Polytope4D) -> (f64, bool) {
-    let f = polytope.facet_count();
+fn find_best_q_exhaustive(dual_vertices: &[nalgebra::Vector4<f64>]) -> (f64, bool) {
+    let f = dual_vertices.len();
     let mut best_q = 0.0f64;
     let mut found = false;
 
@@ -54,7 +54,7 @@ fn find_best_q_exhaustive(polytope: &crate::geom::polytope::Polytope4D) -> (f64,
             loop {
                 let mut perm = vec![subset[0]];
                 perm.extend_from_slice(&rest);
-                let (kkt, rhs) = build_augmented_system(polytope, &perm);
+                let (kkt, rhs) = build_augmented_system_from_dual_vertices(dual_vertices, &perm);
                 if let KktOutcome::Feasible(result) = solve_saddle_point(&kkt, &rhs) {
                     if result.beta.iter().all(|&b| b > EPS_BETA_POSITIVE)
                         && result.q_corrected > EPS_Q_POSITIVE
@@ -131,7 +131,7 @@ fn for_each_combination(n: usize, k: usize, f: &mut impl FnMut(&[usize])) {
 #[test]
 fn simplex_capacity_via_exhaustive_search() {
     let simplex = known_polytopes::simplex();
-    let (best_q, found) = find_best_q_exhaustive(&simplex.polytope);
+    let (best_q, found) = find_best_q_exhaustive(&simplex.dual_vertices_f64);
 
     assert!(found, "should find at least one valid candidate on simplex");
     let capacity = 0.5 / best_q;
@@ -147,7 +147,7 @@ fn simplex_capacity_via_exhaustive_search() {
 #[test]
 fn lagrangian_triangle_product_finds_valid_solution() {
     let tri_prod = known_polytopes::lagrangian_triangle_product();
-    let (best_q, found) = find_best_q_exhaustive(&tri_prod.polytope);
+    let (best_q, found) = find_best_q_exhaustive(&tri_prod.dual_vertices_f64);
 
     assert!(
         found,
@@ -162,21 +162,21 @@ fn lagrangian_triangle_product_finds_valid_solution() {
     );
 }
 
-/// Convenience wrapper: verify it returns the same as direct assembly + solve.
+/// Flat dual-vertex solver should match direct assembly + solve.
 #[test]
-fn solve_kkt_for_matches_direct() {
+fn solve_kkt_for_dual_vertices_matches_direct() {
     let simplex = known_polytopes::simplex();
-    let polytope = &simplex.polytope;
     let perm = vec![0, 1, 2];
+    let dual_vertices = &simplex.dual_vertices_f64;
 
     let result_direct = {
-        let (kkt, rhs) = build_augmented_system(polytope, &perm);
+        let (kkt, rhs) = build_augmented_system_from_dual_vertices(dual_vertices, &perm);
         solve_saddle_point(&kkt, &rhs)
     };
 
-    let result_convenience = solve_kkt_for(polytope, &perm);
+    let result_dual = solve_kkt_for_dual_vertices(dual_vertices, &perm);
 
-    match (result_direct, result_convenience) {
+    match (result_direct, result_dual) {
         (KktOutcome::Feasible(d), KktOutcome::Feasible(c)) => {
             assert_approx(d.q_corrected, c.q_corrected, 1e-12, "Q should match");
             assert_eq!(d.beta.len(), c.beta.len());
@@ -185,7 +185,7 @@ fn solve_kkt_for_matches_direct() {
             }
         }
         (KktOutcome::Feasible(_), _) | (_, KktOutcome::Feasible(_)) => {
-            panic!("direct and convenience should agree on feasibility");
+            panic!("direct and dual-vertex solve should agree on feasibility");
         }
         _ => {} // both non-feasible: acceptable
     }
@@ -197,14 +197,14 @@ fn solve_kkt_for_matches_direct() {
 #[test]
 fn q_error_bound_nonnegative_and_small() {
     let simplex = known_polytopes::simplex();
-    let polytope = &simplex.polytope;
-    let f = polytope.facet_count();
+    let dual_vertices = &simplex.dual_vertices_f64;
+    let f = simplex.facet_count();
 
     let mut checked = 0;
     for size in 2..=f.min(6) {
         for_each_combination(f, size, &mut |subset| {
             let perm = subset.to_vec();
-            let (kkt, rhs) = build_augmented_system(polytope, &perm);
+            let (kkt, rhs) = build_augmented_system_from_dual_vertices(dual_vertices, &perm);
             if let KktOutcome::Feasible(result) = solve_saddle_point(&kkt, &rhs) {
                 assert!(
                     result.q_error_bound >= 0.0,
@@ -232,9 +232,9 @@ fn q_error_bound_nonnegative_and_small() {
 #[test]
 fn inertia_sums_to_size() {
     let simplex = known_polytopes::simplex();
-    let polytope = &simplex.polytope;
     let perm = vec![0, 1, 2];
-    let (kkt, rhs) = build_augmented_system(polytope, &perm);
+    let dual_vertices = &simplex.dual_vertices_f64;
+    let (kkt, rhs) = build_augmented_system_from_dual_vertices(dual_vertices, &perm);
 
     if let KktOutcome::Feasible(result) = solve_saddle_point(&kkt, &rhs) {
         let m = perm.len();
@@ -278,9 +278,9 @@ fn identity_matrix_trivial_solve() {
 #[test]
 fn two_facet_permutation() {
     let simplex = known_polytopes::simplex();
-    let polytope = &simplex.polytope;
     let perm = vec![0, 1];
-    let (kkt, rhs) = build_augmented_system(polytope, &perm);
+    let dual_vertices = &simplex.dual_vertices_f64;
+    let (kkt, rhs) = build_augmented_system_from_dual_vertices(dual_vertices, &perm);
 
     // May or may not find a solution. Just verify no panic.
     let _result = solve_saddle_point(&kkt, &rhs);
@@ -297,8 +297,7 @@ fn two_facet_permutation() {
 fn perturbed_lp44_degenerate_orbit() {
     use crate::{lagrangian_product, regular_polygon_2d};
     let (qn, qh) = regular_polygon_2d(4, 1.0);
-    let polytope = lagrangian_product(&qn, &qh, &qn, &qh).expect("regular LP(4,4)");
-    let duals = polytope.dual_vertices_f64();
+    let duals = lagrangian_product(&qn, &qh, &qn, &qh).expect("regular LP(4,4)");
     // Small perturbation breaking the square symmetry
     // Small perturbation breaking square symmetry.
     let perturbed: Vec<nalgebra::Vector4<f64>> = duals
@@ -314,13 +313,11 @@ fn perturbed_lp44_degenerate_orbit() {
             )
         })
         .collect();
-    let perturbed_poly =
-        crate::geom::polytope::Polytope4D::from_f64(perturbed).expect("perturbed LP(4,4)");
     // Solve KKT directly for the degenerate 4-facet orbit [1,5,3,7].
     // At the symmetric point this orbit has β = 0.25. Under perturbation,
     // the KKT eigenvalues shift from null to small-but-retained, making
     // the Q error bound vacuous.
-    let outcome = solve_kkt_for(&perturbed_poly, &[1, 5, 3, 7]);
+    let outcome = solve_kkt_for_dual_vertices(&perturbed, &[1, 5, 3, 7]);
     // The degenerate orbit should NOT be feasible on the perturbed polytope.
     assert!(
         !matches!(outcome, KktOutcome::Feasible(_)),
@@ -342,8 +339,7 @@ fn perturbed_lp44_degenerate_orbit() {
 fn perturbed_lp44_ehz_capacity_no_panic() {
     use crate::{lagrangian_product, regular_polygon_2d};
     let (qn, qh) = regular_polygon_2d(4, 1.0);
-    let polytope = lagrangian_product(&qn, &qh, &qn, &qh).expect("LP(4,4)");
-    let duals = polytope.dual_vertices_f64();
+    let duals = lagrangian_product(&qn, &qh, &qn, &qh).expect("LP(4,4)");
     // Fixed perturbation that breaks square symmetry.
     // Uses the exact dual vertices rather than RNG for stability.
     let perturbed: Vec<nalgebra::Vector4<f64>> = duals
@@ -359,11 +355,10 @@ fn perturbed_lp44_ehz_capacity_no_panic() {
             )
         })
         .collect();
-    let pp = crate::geom::polytope::Polytope4D::from_f64(perturbed).expect("perturbed LP(4,4)");
-    let result = crate::ehz_capacity_pruned(&pp);
+    let result = crate::algorithms::hk2017::solve_unpruned_hk2017_candidates(&perturbed);
     assert!(
         result.is_ok(),
-        "ehz_capacity should succeed on perturbed LP(4,4)"
+        "flat HK2017 candidate solve should succeed on perturbed LP(4,4)"
     );
 }
 
@@ -373,14 +368,14 @@ fn perturbed_lp44_ehz_capacity_no_panic() {
 #[test]
 fn normalization_constraint_satisfied() {
     let simplex = known_polytopes::simplex();
-    let polytope = &simplex.polytope;
-    let f = polytope.facet_count();
+    let dual_vertices = &simplex.dual_vertices_f64;
+    let f = simplex.facet_count();
 
     let mut checked = 0;
     for size in 2..=f.min(6) {
         for_each_combination(f, size, &mut |subset| {
             let perm = subset.to_vec();
-            let (kkt, rhs) = build_augmented_system(polytope, &perm);
+            let (kkt, rhs) = build_augmented_system_from_dual_vertices(dual_vertices, &perm);
             if let KktOutcome::Feasible(result) = solve_saddle_point(&kkt, &rhs) {
                 let sum_beta: f64 = result.beta.iter().sum();
                 assert!(
@@ -400,15 +395,14 @@ fn normalization_constraint_satisfied() {
 #[test]
 fn closure_constraint_satisfied() {
     let simplex = known_polytopes::simplex();
-    let polytope = &simplex.polytope;
-    let f = polytope.facet_count();
-    let dual_verts = polytope.dual_vertices_f64();
+    let f = simplex.facet_count();
+    let dual_verts = &simplex.dual_vertices_f64;
 
     let mut checked = 0;
     for size in 2..=f.min(6) {
         for_each_combination(f, size, &mut |subset| {
             let perm = subset.to_vec();
-            let (kkt, rhs) = build_augmented_system(polytope, &perm);
+            let (kkt, rhs) = build_augmented_system_from_dual_vertices(dual_verts, &perm);
             if let KktOutcome::Feasible(result) = solve_saddle_point(&kkt, &rhs) {
                 #[allow(clippy::needless_range_loop)]
                 for d in 0..4 {

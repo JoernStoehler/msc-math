@@ -12,6 +12,9 @@ workspace = true
 
 [dependencies]
 symplectic.workspace = true
+euclidean-polytopes.workspace = true
 nalgebra.workspace = true
+num-rational.workspace = true
+num-traits.workspace = true
 serde.workspace = true
 serde_json.workspace = true

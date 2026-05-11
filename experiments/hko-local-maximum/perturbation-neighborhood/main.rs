@@ -18,6 +18,12 @@
 //! Row identity across eps buckets is `(eps, name)` - `name` alone is not unique
 //! between files generated at different eps. Analysis code must group by eps first.
 
+use exp_hko_local_maximum::capacity_auto;
+use exp_hko_local_maximum::euclidean_volume_f64;
+#[path = "../src/flat_polytope.rs"]
+mod flat_polytope;
+
+use crate::flat_polytope::HkoPolytopeCache;
 use nalgebra::Vector4;
 use rand::Rng;
 use rand::SeedableRng;
@@ -27,10 +33,7 @@ use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::path::PathBuf;
 use std::time::{Instant, SystemTime, UNIX_EPOCH};
-use symplectic::ehz_capacity;
 use symplectic::geom::known_polytopes;
-use symplectic::geom::polytope::Polytope4D;
-use symplectic::geom::volume::volume;
 
 const DEFAULT_SEED: u64 = 41;
 const DEFAULT_N_SAMPLES: usize = 100;
@@ -56,7 +59,7 @@ struct PentagonPerturbRow {
 }
 
 struct PerturbedPolytope {
-    polytope: Polytope4D,
+    cache: HkoPolytopeCache,
     dual_vertices: Vec<Vector4<f64>>,
     delta_dual_vertices: Vec<Vector4<f64>>,
 }
@@ -91,10 +94,10 @@ fn try_perturb(
 ) -> Option<PerturbedPolytope> {
     let (dual_vertices, delta_dual_vertices) = jitter_dual_vertices(base_duals, rng, eps);
 
-    let polytope = Polytope4D::from_f64(dual_vertices.clone()).ok()?;
+    let cache = HkoPolytopeCache::from_f64(dual_vertices.clone())?;
 
     Some(PerturbedPolytope {
-        polytope,
+        cache,
         dual_vertices,
         delta_dual_vertices,
     })
@@ -234,16 +237,27 @@ fn main() {
     let mut writer = BufWriter::new(file);
 
     let base = known_polytopes::hko_pentagon();
-    let base_polytope = &base.polytope;
-    let base_duals: Vec<Vector4<f64>> = base_polytope.dual_vertices_f64().to_vec();
+    let base_polytope =
+        HkoPolytopeCache::from_rational_parts(base.dual_vertices.clone(), base.vertices.clone())
+            .expect("HKO base cache");
+    let base_duals: Vec<Vector4<f64>> = base_polytope.dual_vertices_f64.to_vec();
     let n_facets = base_duals.len();
 
     let start_vol = Instant::now();
-    let base_vol = volume(base_polytope);
+    let base_vol = euclidean_volume_f64(
+        &base_polytope.vertices,
+        &base_polytope.vertex_facet_incidence,
+    );
     let base_time_volume_ms = start_vol.elapsed().as_secs_f64() * 1000.0;
 
     let start_cap = Instant::now();
-    let base_result = ehz_capacity(base_polytope).expect("capacity computation failed");
+    let base_result = capacity_auto(
+        &base_polytope.dual_vertices,
+        &base_polytope.dual_vertices_f64,
+        &base_polytope.facet_intersection_is_nonempty,
+        &base_polytope.omega_signs,
+    )
+    .expect("capacity computation failed");
     let base_time_capacity_ms = start_cap.elapsed().as_secs_f64() * 1000.0;
 
     let base_sys = base_result.capacity() * base_result.capacity() / (2.0 * base_vol);
@@ -284,11 +298,20 @@ fn main() {
         };
 
         let start_vol = Instant::now();
-        let vol = volume(&perturbed.polytope);
+        let vol = euclidean_volume_f64(
+            &perturbed.cache.vertices,
+            &perturbed.cache.vertex_facet_incidence,
+        );
         let time_volume_ms = start_vol.elapsed().as_secs_f64() * 1000.0;
 
         let start_cap = Instant::now();
-        let result = ehz_capacity(&perturbed.polytope).expect("capacity computation failed");
+        let result = capacity_auto(
+            &perturbed.cache.dual_vertices,
+            &perturbed.cache.dual_vertices_f64,
+            &perturbed.cache.facet_intersection_is_nonempty,
+            &perturbed.cache.omega_signs,
+        )
+        .expect("capacity computation failed");
         let time_capacity_ms = start_cap.elapsed().as_secs_f64() * 1000.0;
 
         let cap = result.capacity();

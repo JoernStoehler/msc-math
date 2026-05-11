@@ -435,11 +435,6 @@ pub fn project_vertices_f64<F: OrderedField>(vertices: &[[F; 4]]) -> Vec<[f64; 4
 pub fn omega0_f64(left: &[f64; 4], right: &[f64; 4]) -> f64;
 pub fn omega0_exact<F: OrderedField>(left: &[F; 4], right: &[F; 4]) -> F;
 
-pub fn volume_f64(
-    dual_vertices: &[[f64; 4]],
-    primal_vertices: &[[f64; 4]],
-) -> Result<f64, GeometryError>;
-
 pub fn facet_volume_f64(
     dual_vertices: &[[f64; 4]],
     primal_vertices: &[[f64; 4]],
@@ -496,9 +491,13 @@ pub fn systolic_ratio(capacity: f64, volume: f64) -> f64;
 
 Geometry notes:
 
-- `volume_f64` and `facet_volume_f64` should derive topology internally or use
-  a validated geometry handle. They should not require callers to pass
-  correlated incidence/adjacency matrices.
+- Full-dimensional ordinary volume belongs in `euclidean-polytopes`.
+  Symplectic callers should pass exact vertices and vertex-facet incidence
+  directly to `volume_from_incidence_exact`, with any exact-to-f64 projection
+  kept local to the caller.
+- `facet_volume_f64` should derive topology internally or use a validated
+  geometry handle. It should not require callers to pass correlated
+  incidence/adjacency matrices.
 - `lagrangian_product` is fallible because input polygons/heights can be
   invalid.
 - `rotate_polygon_2d` returns heights unchanged because current product

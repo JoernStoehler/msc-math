@@ -1,0 +1,218 @@
+use euclidean_polytopes::{
+    all_points_are_extreme_exact, facet_intersection_is_nonempty_from_vertex_facet_incidence,
+    origin_in_interior_of_conv_exact, polar_vertices_exact,
+};
+use nalgebra::{DMatrix, Vector4};
+use num_rational::BigRational;
+use num_traits::{One, ToPrimitive};
+use symplectic::exact::omega_signs_exact;
+use symplectic::geom::rational_arithmetic::f64_to_rational;
+
+#[derive(Clone, Debug)]
+pub(crate) struct HkoPolytopeCache {
+    pub(crate) dual_vertices: Vec<[BigRational; 4]>,
+    pub(crate) vertices: Vec<[BigRational; 4]>,
+    pub(crate) dual_vertices_f64: Vec<Vector4<f64>>,
+    pub(crate) vertices_f64: Vec<Vector4<f64>>,
+    pub(crate) vertex_facet_incidence: DMatrix<bool>,
+    pub(crate) facet_intersection_is_nonempty: DMatrix<bool>,
+    pub(crate) omega_signs: DMatrix<i8>,
+}
+
+impl HkoPolytopeCache {
+    pub(crate) fn from_f64(dual_vertices_f64: Vec<Vector4<f64>>) -> Option<Self> {
+        if !dual_vertices_f64_are_valid(&dual_vertices_f64) {
+            return None;
+        }
+
+        let dual_vertices: Vec<[BigRational; 4]> = dual_vertices_f64
+            .iter()
+            .map(|a| std::array::from_fn(|c| f64_to_rational(a[c])))
+            .collect();
+        Self::new(dual_vertices, Some(dual_vertices_f64))
+    }
+
+    pub(crate) fn new(
+        dual_vertices: Vec<[BigRational; 4]>,
+        dual_vertices_f64: Option<Vec<Vector4<f64>>>,
+    ) -> Option<Self> {
+        if dual_vertices.len() < 5 {
+            return None;
+        }
+
+        let dual_vertex_vectors = rational_arrays_to_vectors(&dual_vertices);
+        if !origin_in_interior_of_conv_exact(&dual_vertex_vectors) {
+            return None;
+        }
+        if !all_points_are_extreme_exact(&dual_vertex_vectors) {
+            return None;
+        }
+
+        let polar = polar_vertices_exact(&dual_vertex_vectors);
+        let vertices = rational_vectors_to_arrays(&polar.vertices);
+        let vertices_f64 = rational_vectors_to_f64(&polar.vertices);
+        let facet_intersection_is_nonempty =
+            facet_intersection_is_nonempty_from_vertex_facet_incidence(
+                &polar.vertex_facet_incidence,
+            );
+        let omega_signs = omega_signs_exact(&dual_vertex_vectors);
+        let dual_vertices_f64 =
+            dual_vertices_f64.unwrap_or_else(|| rational_vectors_to_f64(&dual_vertex_vectors));
+
+        Some(Self {
+            dual_vertices,
+            vertices,
+            dual_vertices_f64,
+            vertices_f64,
+            vertex_facet_incidence: polar.vertex_facet_incidence,
+            facet_intersection_is_nonempty,
+            omega_signs,
+        })
+    }
+
+    pub(crate) fn from_rational_parts(
+        dual_vertices: Vec<[BigRational; 4]>,
+        vertices: Vec<[BigRational; 4]>,
+    ) -> Option<Self> {
+        if dual_vertices.len() < 5 || vertices.is_empty() {
+            return None;
+        }
+
+        let dual_vertex_vectors = rational_arrays_to_vectors(&dual_vertices);
+        if !origin_in_interior_of_conv_exact(&dual_vertex_vectors) {
+            return None;
+        }
+        if !all_points_are_extreme_exact(&dual_vertex_vectors) {
+            return None;
+        }
+
+        let vertex_vectors = rational_arrays_to_vectors(&vertices);
+        let vertex_facet_incidence = DMatrix::from_fn(
+            vertex_vectors.len(),
+            dual_vertices.len(),
+            |vertex, facet| {
+                dual_vertex_vectors[facet].dot(&vertex_vectors[vertex]) == BigRational::one()
+            },
+        );
+        let facet_intersection_is_nonempty =
+            facet_intersection_is_nonempty_from_vertex_facet_incidence(&vertex_facet_incidence);
+        let omega_signs = omega_signs_exact(&dual_vertex_vectors);
+        let dual_vertices_f64 = rational_vectors_to_f64(&dual_vertex_vectors);
+        let vertices_f64 = rational_vectors_to_f64(&vertex_vectors);
+
+        Some(Self {
+            dual_vertices,
+            vertices,
+            dual_vertices_f64,
+            vertices_f64,
+            vertex_facet_incidence,
+            facet_intersection_is_nonempty,
+            omega_signs,
+        })
+    }
+
+    pub(crate) fn facet_count(&self) -> usize {
+        self.dual_vertices.len()
+    }
+}
+
+pub(crate) fn rational_arrays_to_vectors(data: &[[BigRational; 4]]) -> Vec<Vector4<BigRational>> {
+    data.iter()
+        .map(|row| {
+            Vector4::new(
+                row[0].clone(),
+                row[1].clone(),
+                row[2].clone(),
+                row[3].clone(),
+            )
+        })
+        .collect()
+}
+
+fn rational_vectors_to_arrays(data: &[Vector4<BigRational>]) -> Vec<[BigRational; 4]> {
+    data.iter()
+        .map(|v| [v[0].clone(), v[1].clone(), v[2].clone(), v[3].clone()])
+        .collect()
+}
+
+fn rational_vectors_to_f64(data: &[Vector4<BigRational>]) -> Vec<Vector4<f64>> {
+    data.iter()
+        .map(|v| {
+            Vector4::new(
+                v[0].to_f64().unwrap_or(f64::NAN),
+                v[1].to_f64().unwrap_or(f64::NAN),
+                v[2].to_f64().unwrap_or(f64::NAN),
+                v[3].to_f64().unwrap_or(f64::NAN),
+            )
+        })
+        .collect()
+}
+
+fn dual_vertices_f64_are_valid(dual_vertices: &[Vector4<f64>]) -> bool {
+    if dual_vertices.len() < 5 {
+        return false;
+    }
+    if dual_vertices
+        .iter()
+        .any(|a| !a.iter().all(|value| value.is_finite()) || a.norm() < 1e-15)
+    {
+        return false;
+    }
+    for i in 0..dual_vertices.len() {
+        for j in (i + 1)..dual_vertices.len() {
+            let max_norm = dual_vertices[i].norm().max(dual_vertices[j].norm());
+            if (dual_vertices[i] - dual_vertices[j]).norm() < 1e-8 * max_norm {
+                return false;
+            }
+        }
+    }
+    true
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use symplectic::geom::rational_arithmetic::rat;
+
+    fn q(n: i64) -> BigRational {
+        rat(n)
+    }
+
+    fn unit_cube_dual_vertices() -> Vec<[BigRational; 4]> {
+        vec![
+            [q(1), q(0), q(0), q(0)],
+            [q(-1), q(0), q(0), q(0)],
+            [q(0), q(1), q(0), q(0)],
+            [q(0), q(-1), q(0), q(0)],
+            [q(0), q(0), q(1), q(0)],
+            [q(0), q(0), q(-1), q(0)],
+            [q(0), q(0), q(0), q(1)],
+            [q(0), q(0), q(0), q(-1)],
+        ]
+    }
+
+    #[test]
+    fn rejects_redundant_exact_dual_vertex() {
+        let mut dual_vertices = unit_cube_dual_vertices();
+        dual_vertices.push([q(1) / q(2), q(1) / q(2), q(0), q(0)]);
+
+        assert!(HkoPolytopeCache::new(dual_vertices, None).is_none());
+    }
+
+    #[test]
+    fn rejects_redundant_f64_dual_vertex() {
+        let dual_vertices_f64 = vec![
+            Vector4::new(1.0, 0.0, 0.0, 0.0),
+            Vector4::new(-1.0, 0.0, 0.0, 0.0),
+            Vector4::new(0.0, 1.0, 0.0, 0.0),
+            Vector4::new(0.0, -1.0, 0.0, 0.0),
+            Vector4::new(0.0, 0.0, 1.0, 0.0),
+            Vector4::new(0.0, 0.0, -1.0, 0.0),
+            Vector4::new(0.0, 0.0, 0.0, 1.0),
+            Vector4::new(0.0, 0.0, 0.0, -1.0),
+            Vector4::new(0.5, 0.5, 0.0, 0.0),
+        ];
+
+        assert!(HkoPolytopeCache::from_f64(dual_vertices_f64).is_none());
+    }
+}

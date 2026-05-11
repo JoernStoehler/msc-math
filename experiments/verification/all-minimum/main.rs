@@ -11,8 +11,9 @@
 //!                   experiments/verification/all-minimum/smoke-all-minimum-orbits.jsonl
 
 use dev_capacity_validation::{
-    build_target_pool, create_jsonl_writer, mode_output_path, parse_run_mode, run_mode_label,
-    write_json_line, RunMode, RunModeArgError, Target, MINIMUM_ACTION_GAP_TOL, SCALAR_TOL,
+    build_target_pool, capacity_auto, create_jsonl_writer, mode_output_path, parse_run_mode,
+    run_mode_label, write_json_line, RunMode, RunModeArgError, Target, VerificationPolytopeCache,
+    MINIMUM_ACTION_GAP_TOL, SCALAR_TOL,
 };
 use serde::Serialize;
 use std::collections::BTreeMap;
@@ -20,12 +21,11 @@ use std::env;
 use std::io::Write;
 use std::path::{Path, PathBuf};
 use std::time::Instant;
-use symplectic::algorithms::hk2017::for_each_sigma_pruned;
 use symplectic::algorithms::{
-    aggregate_orbits, solve_orbit_sigma, OrbitAdmissibility, OrbitGuaranteeMode, OrbitKktData,
-    OrbitSearchError, OrbitSolveBackend, OrbitSolveError,
+    aggregate_orbits_with_dual_vertices_exact, OrbitAdmissibility, OrbitGuaranteeMode,
+    OrbitKktData, OrbitSearchError,
 };
-use symplectic::ehz_capacity;
+use symplectic::solve_pruned_hk2017_candidates;
 
 struct MinimumSetResult {
     orbits: Vec<OrbitKktData>,
@@ -206,7 +206,7 @@ fn validate_target(target: &Target) -> (AllMinimumSummaryRow, Vec<AllMinimumOrbi
         name: target.name.clone(),
         family: target.family.clone(),
         source_kind: target.source_kind.clone(),
-        facet_count: target.polytope.facet_count(),
+        facet_count: target.geometry.facet_count(),
         status: "failed".to_string(),
         failure_stage: None,
         failure_reasons: Vec::new(),
@@ -232,7 +232,7 @@ fn validate_target(target: &Target) -> (AllMinimumSummaryRow, Vec<AllMinimumOrbi
     };
 
     let t_minimum = Instant::now();
-    let minimum_result = match compute_minimum_orbits(&target.polytope) {
+    let minimum_result = match compute_minimum_orbits(&target.geometry) {
         Ok(result) => {
             summary.time_minimum_set_ms = Some(t_minimum.elapsed().as_secs_f64() * 1000.0);
             result
@@ -294,7 +294,12 @@ fn validate_target(target: &Target) -> (AllMinimumSummaryRow, Vec<AllMinimumOrbi
         .collect::<Vec<_>>();
 
     let t_scalar = Instant::now();
-    match ehz_capacity(&target.polytope) {
+    match capacity_auto(
+        &target.geometry.dual_vertices_f64,
+        &target.geometry.dual_vertices,
+        &target.geometry.facet_intersection_is_nonempty,
+        &target.geometry.omega_signs,
+    ) {
         Ok(result) => {
             let scalar_capacity = result.capacity();
             let scalar_error = (minimum_result.min_action - scalar_capacity).abs();
@@ -345,34 +350,26 @@ fn validate_target(target: &Target) -> (AllMinimumSummaryRow, Vec<AllMinimumOrbi
     (summary, detail_rows)
 }
 
-fn compute_minimum_orbits(polytope: &symplectic::Polytope4D) -> Result<MinimumSetResult, String> {
-    let mut orbits = Vec::<OrbitKktData>::new();
-    let mut iterations = 0u64;
-    let mut fatal_error = None::<String>;
+fn compute_minimum_orbits(
+    polytope: &VerificationPolytopeCache,
+) -> Result<MinimumSetResult, String> {
+    let dual_vertices = &polytope.dual_vertices_f64;
+    let dual_vertices_exact = &polytope.dual_vertices;
 
-    for_each_sigma_pruned(polytope, |sigma| {
-        if fatal_error.is_some() {
-            return;
-        }
-        iterations += 1;
-        match solve_orbit_sigma(polytope, sigma, OrbitSolveBackend::SaddlePoint) {
-            Ok(orbit) => orbits.push(orbit),
-            Err(OrbitSolveError::Inadmissible) => {}
-            Err(OrbitSolveError::UnsupportedBackend) => {
-                fatal_error = Some("solve_orbit_sigma returned UnsupportedBackend".to_string())
-            }
-            Err(OrbitSolveError::NumericalFailure) => {
-                fatal_error = Some(format!("solve_orbit_sigma failed on sigma {:?}", sigma))
-            }
-        }
-    });
+    let facet_intersection_is_nonempty = &polytope.facet_intersection_is_nonempty;
+    let omega_signs = &polytope.omega_signs;
+    let transition_is_allowed = symplectic::algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega(
+        &facet_intersection_is_nonempty,
+        &omega_signs,
+    );
 
-    if let Some(err) = fatal_error {
-        return Err(err);
-    }
+    let (orbits, iterations) =
+        solve_pruned_hk2017_candidates(dual_vertices, &transition_is_allowed).map_err(|err| {
+            format!("solve_pruned_hk2017_candidates failed before aggregation: {err:?}")
+        })?;
 
-    let result = aggregate_orbits(
-        polytope,
+    let result = aggregate_orbits_with_dual_vertices_exact(
+        dual_vertices_exact,
         orbits,
         iterations,
         MINIMUM_ACTION_GAP_TOL,
@@ -380,16 +377,15 @@ fn compute_minimum_orbits(polytope: &symplectic::Polytope4D) -> Result<MinimumSe
     )
     .map_err(|err| match err {
         OrbitSearchError::NoAdmissibleOrbit => "no admissible orbit remained".to_string(),
-        OrbitSearchError::UnsupportedBackend => {
-            "aggregate_orbits reported UnsupportedBackend".to_string()
-        }
         OrbitSearchError::NumericalFailure => {
-            "aggregate_orbits reported NumericalFailure".to_string()
+            "aggregate_orbits_with_dual_vertices_exact reported NumericalFailure".to_string()
         }
         OrbitSearchError::ExactFallbackFailure => {
-            "aggregate_orbits reported ExactFallbackFailure".to_string()
+            "aggregate_orbits_with_dual_vertices_exact reported ExactFallbackFailure".to_string()
         }
-        OrbitSearchError::InvalidGap => "aggregate_orbits reported InvalidGap".to_string(),
+        OrbitSearchError::InvalidGap => {
+            "aggregate_orbits_with_dual_vertices_exact reported InvalidGap".to_string()
+        }
     })?;
 
     let minimum_orbits = result
@@ -402,7 +398,9 @@ fn compute_minimum_orbits(polytope: &symplectic::Polytope4D) -> Result<MinimumSe
         .iter()
         .map(|orbit| orbit.action)
         .max_by(f64::total_cmp)
-        .expect("aggregate_orbits should return at least one minimum orbit");
+        .expect(
+            "aggregate_orbits_with_dual_vertices_exact should return at least one minimum orbit",
+        );
 
     Ok(MinimumSetResult {
         orbits: minimum_orbits,

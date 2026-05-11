@@ -108,13 +108,22 @@ fn enrich_trace(row: &LoadedObservationRow, events: &[TraceEvent]) -> Observatio
         .count();
     let overshoot_count = overshoot_15_count + overshoot_2_count + overshoot_3_count;
 
-    let t_fractions = sorted.iter().map(|event| event.t_fraction).collect::<Vec<_>>();
-    let t_actuals = sorted.iter().map(|event| event.t_actual).collect::<Vec<_>>();
+    let t_fractions = sorted
+        .iter()
+        .map(|event| event.t_fraction)
+        .collect::<Vec<_>>();
+    let t_actuals = sorted
+        .iter()
+        .map(|event| event.t_actual)
+        .collect::<Vec<_>>();
     let gradient_norms = sorted
         .iter()
         .map(|event| event.gradient_norm)
         .collect::<Vec<_>>();
-    let deltas = sorted.iter().map(|event| event.delta_sys).collect::<Vec<_>>();
+    let deltas = sorted
+        .iter()
+        .map(|event| event.delta_sys)
+        .collect::<Vec<_>>();
     let efficiencies = sorted
         .iter()
         .map(|event| event.delta_sys / (event.t_actual * event.gradient_norm).max(1e-12))

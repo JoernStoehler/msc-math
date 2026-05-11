@@ -67,9 +67,7 @@ pub(crate) fn omega0_rational(u: &[BigRational; 4], v: &[BigRational; 4]) -> Big
 /// numerators/denominators, this produces the nearest f64 approximation.
 pub(crate) fn rational_to_f64(r: &BigRational) -> f64 {
     use num_traits::ToPrimitive;
-    let numer: f64 = r.numer().to_f64().unwrap_or(f64::NAN);
-    let denom: f64 = r.denom().to_f64().unwrap_or(f64::NAN);
-    numer / denom
+    r.to_f64().unwrap_or(f64::NAN)
 }
 
 /// Lossless conversion from f64 to exact BigRational.
@@ -114,17 +112,6 @@ pub fn f64_to_rational(x: f64) -> BigRational {
         let scale = BigInt::from(1u64) << ((-e) as u64);
         BigRational::new(numer, scale)
     }
-}
-
-/// Generate a random rational number with magnitude < 2^{-bits}.
-///
-/// Uses uniform random numerator in [-2^32, 2^32) and denominator 2^{bits+32}.
-/// This produces exact rationals k / 2^{bits+32} for random k, with bounded
-/// denominator size. Used for perturbation of degenerate polytopes.
-pub(super) fn random_small_rational(rng: &mut impl rand::Rng, bits: u32) -> BigRational {
-    let numer: i64 = rng.gen_range(-(1i64 << 32)..(1i64 << 32));
-    let denom = BigInt::from(1u64) << (bits as u64 + 32);
-    BigRational::new(BigInt::from(numer), denom)
 }
 
 /// Create a BigRational from an integer.
@@ -194,6 +181,17 @@ mod tests {
         assert_eq!(f64_to_rational(1024.0), rat(1024));
     }
 
+    /// Proposition: rational_to_f64 converts finite ratios even when the
+    /// numerator and denominator are too large to convert independently.
+    #[test]
+    fn rational_to_f64_large_finite_ratio() {
+        let numer = (BigInt::from(3) << 1200usize) + BigInt::from(1);
+        let denom = (BigInt::from(1) << 1199usize) + BigInt::from(1);
+        let value = rational_to_f64(&BigRational::new(numer, denom));
+
+        assert_eq!(value, 6.0);
+    }
+
     // ── Sign classification ──────────────────────────────────────────────────
 
     /// Proposition: Sign::of correctly classifies positive, negative, and zero.
@@ -242,24 +240,6 @@ mod tests {
                 rational_to_f64(&rational_result),
                 f64_result,
                 "omega0({u_arr:?}, {v_arr:?}): rational={rational_result}, f64={f64_result}"
-            );
-        }
-    }
-
-    // ── random_small_rational ────────────────────────────────────────────────
-
-    /// Proposition: random_small_rational produces values with magnitude < 2^{-bits}.
-    #[test]
-    fn random_small_rational_bounded() {
-        use rand::SeedableRng;
-        let mut rng = rand_chacha::ChaCha8Rng::seed_from_u64(42);
-        for _ in 0..100 {
-            let r = random_small_rational(&mut rng, 64);
-            let val = rational_to_f64(&r);
-            // 2^{-64} is about 5.4e-20; values should be well below that
-            assert!(
-                val.abs() < 1e-9,
-                "random_small_rational(64) produced {val}, expected < 1e-9"
             );
         }
     }

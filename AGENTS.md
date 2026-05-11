@@ -40,13 +40,18 @@ Unless stated otherwise:
 |   |   |-- src/**/*.rs
 |   |   |-- benches/*.rs
 |   |   `-- tests/*.rs
-|   `-- algebraic-numbers/
+|   |-- algebraic-numbers/
+|   |   |-- README.md
+|   |   |-- DEVELOPMENT.md
+|   |   |-- Cargo.toml
+|   |   |-- examples/*.rs
+|   |   |-- src/*.rs
+|   |   `-- tests/*.rs
+|   `-- euclidean-polytopes/
 |       |-- README.md
 |       |-- DEVELOPMENT.md
 |       |-- Cargo.toml
-|       |-- examples/*.rs
-|       |-- src/*.rs
-|       `-- tests/*.rs
+|       `-- src/*.rs
 |-- formal/
 |   |-- main.tex
 |   |-- preamble.tex
@@ -156,11 +161,14 @@ git diff --check
 bash scripts/toc.sh AGENTS.md MAP_OR_TASK_FILE.md
 
 # Rust crates
+cargo fmt --check
 cargo test -p symplectic --release --lib
 cargo clippy -p symplectic --lib -- -D warnings
 cargo test -p symplectic --release -- --ignored
 cargo test -p algebraic-numbers --release
 cargo clippy -p algebraic-numbers --all-targets -- -D warnings
+cargo test -p euclidean-polytopes
+cargo clippy -p euclidean-polytopes --all-targets -- -D warnings
 
 # Rust workspace and experiments
 cargo build --workspace --release

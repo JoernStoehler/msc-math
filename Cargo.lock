@@ -296,7 +296,10 @@ checksum = "d0a5c400df2834b80a4c3327b3aad3a4c4cd4de0629063962b03235697506a28"
 name = "crosspolytope"
 version = "0.1.0"
 dependencies = [
+ "euclidean-polytopes",
  "nalgebra",
+ "num-rational",
+ "num-traits",
  "serde",
  "serde_json",
  "symplectic",
@@ -378,6 +381,8 @@ dependencies = [
 name = "dev-algorithm-comparison"
 version = "0.1.0"
 dependencies = [
+ "dev-capacity-validation",
+ "euclidean-polytopes",
  "good_lp",
  "nalgebra",
  "num-bigint",
@@ -395,6 +400,7 @@ dependencies = [
 name = "dev-capacity-validation"
 version = "0.1.0"
 dependencies = [
+ "euclidean-polytopes",
  "good_lp",
  "nalgebra",
  "num-bigint",
@@ -412,6 +418,7 @@ dependencies = [
 name = "dev-gradient"
 version = "0.1.0"
 dependencies = [
+ "euclidean-polytopes",
  "good_lp",
  "nalgebra",
  "num-bigint",
@@ -447,6 +454,7 @@ name = "dev-numerical-analysis"
 version = "0.1.0"
 dependencies = [
  "algebraic-numbers",
+ "euclidean-polytopes",
  "good_lp",
  "nalgebra",
  "num-bigint",
@@ -495,9 +503,24 @@ dependencies = [
 ]
 
 [[package]]
+name = "euclidean-polytopes"
+version = "0.1.0"
+dependencies = [
+ "algebraic-numbers",
+ "nalgebra",
+ "num-rational",
+ "num-traits",
+ "proptest",
+ "rand 0.8.5",
+ "rand_chacha 0.3.1",
+ "rand_distr",
+]
+
+[[package]]
 name = "exp-combinatorial-cells"
 version = "0.1.0"
 dependencies = [
+ "euclidean-polytopes",
  "good_lp",
  "nalgebra",
  "num-bigint",
@@ -516,6 +539,7 @@ name = "exp-hko-local-maximum"
 version = "0.1.0"
 dependencies = [
  "algebraic-numbers",
+ "euclidean-polytopes",
  "good_lp",
  "nalgebra",
  "num-bigint",
@@ -534,6 +558,7 @@ name = "exp-sys-landscape"
 version = "0.1.0"
 dependencies = [
  "blake3",
+ "euclidean-polytopes",
  "good_lp",
  "nalgebra",
  "num-bigint",
@@ -1416,6 +1441,7 @@ dependencies = [
  "approx",
  "blake3",
  "criterion",
+ "euclidean-polytopes",
  "good_lp",
  "nalgebra",
  "num-bigint",
@@ -1556,7 +1582,10 @@ checksum = "ebc1c04c71510c7f702b52b7c350734c9ff1295c464a03335b00bb84fc54f853"
 name = "visualization"
 version = "0.1.0"
 dependencies = [
+ "euclidean-polytopes",
  "nalgebra",
+ "num-rational",
+ "num-traits",
  "serde",
  "serde_json",
  "symplectic",

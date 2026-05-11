@@ -14,9 +14,9 @@
 //
 // This module is only compiled during `cfg(test)` builds.
 use crate::geom::known_polytopes;
-use crate::kkt::qp_assembly::build_augmented_system;
+use crate::kkt::qp_assembly::build_augmented_system_from_dual_vertices;
 use crate::kkt::saddle_point_solver::{
-    solve_kkt_for, KktOutcome, EPS_BETA_POSITIVE, EPS_Q_POSITIVE,
+    solve_kkt_for_dual_vertices, KktOutcome, EPS_BETA_POSITIVE, EPS_Q_POSITIVE,
 };
 use nalgebra::DVector;
 use std::time::Instant;
@@ -26,15 +26,19 @@ use super::facet_classification::classify_facets;
 
 /// Collect all billiard sigma sequences for the HKO pentagon.
 ///
-/// Returns the polytope and the sigma sequences as owned vectors.
-fn pentagon_sigmas() -> (crate::geom::polytope::Polytope4D, Vec<Vec<usize>>) {
+/// Returns the dual vertices and the sigma sequences as owned vectors.
+fn pentagon_sigmas() -> (Vec<nalgebra::Vector4<f64>>, Vec<Vec<usize>>) {
     let kp = known_polytopes::hko_pentagon();
-    let polytope = kp.polytope.clone();
 
-    let classification = classify_facets(&polytope).unwrap();
-    let adj = polytope.vertex_adjacency();
-    let q_blocks = enumerate_blocks(&classification.q_indices, adj);
-    let p_blocks = enumerate_blocks(&classification.p_indices, adj);
+    let classification = classify_facets(&kp.dual_vertices_f64).unwrap();
+    let q_blocks = enumerate_blocks(
+        &classification.q_indices,
+        &kp.facet_intersection_is_nonempty,
+    );
+    let p_blocks = enumerate_blocks(
+        &classification.p_indices,
+        &kp.facet_intersection_is_nonempty,
+    );
 
     let mut sigmas = Vec::new();
     for k in 2..=3 {
@@ -42,12 +46,12 @@ fn pentagon_sigmas() -> (crate::geom::polytope::Polytope4D, Vec<Vec<usize>>) {
             sigmas.push(sigma.to_vec());
         });
     }
-    (polytope, sigmas)
+    (kp.dual_vertices_f64.clone(), sigmas)
 }
 
 /// Benchmark eigendecomposition-based KKT solver on the HKO pentagon.
 ///
-/// Times `solve_kkt_for` on all billiard sigma sequences. Reports total time,
+/// Times `solve_kkt_for_dual_vertices` on all billiard sigma sequences. Reports total time,
 /// valid solution count, and best capacity.
 ///
 /// **Why release mode:** needs many KKT solves for stable timing.
@@ -55,7 +59,7 @@ fn pentagon_sigmas() -> (crate::geom::polytope::Polytope4D, Vec<Vec<usize>>) {
 #[test]
 #[ignore] // profiling test, run manually with --release --nocapture --ignored
 fn bench_kkt_eigen() {
-    let (polytope, sigmas) = pentagon_sigmas();
+    let (dual_vertices, sigmas) = pentagon_sigmas();
 
     eprintln!("Total sigmas to test: {}", sigmas.len());
 
@@ -63,7 +67,7 @@ fn bench_kkt_eigen() {
     let mut valid_count = 0u64;
     let mut best_capacity = f64::INFINITY;
     for sigma in &sigmas {
-        if let KktOutcome::Feasible(result) = solve_kkt_for(&polytope, sigma) {
+        if let KktOutcome::Feasible(result) = solve_kkt_for_dual_vertices(&dual_vertices, sigma) {
             if result.beta.iter().all(|&b| b > EPS_BETA_POSITIVE)
                 && result.q_corrected > EPS_Q_POSITIVE
             {
@@ -90,7 +94,7 @@ fn bench_kkt_eigen() {
 /// Phase-by-phase profiling of eigendecomposition KKT solver.
 ///
 /// Breaks down the solver into timed phases to identify bottlenecks:
-///   1. Matrix construction (`build_augmented_system`)
+///   1. Matrix construction (`build_augmented_system_from_dual_vertices`)
 ///   2. Eigendecomposition (`symmetric_eigen`)
 ///   3. Rank detection + pseudoinverse
 ///   4. Residual check
@@ -100,7 +104,7 @@ fn bench_kkt_eigen() {
 #[test]
 #[ignore] // profiling test, run manually with --release --nocapture --ignored
 fn bench_kkt_eigen_profile() {
-    let (polytope, sigmas) = pentagon_sigmas();
+    let (dual_vertices, sigmas) = pentagon_sigmas();
     let n_sigmas = sigmas.len();
 
     eprintln!("Profiling eigendecomposition phases on {n_sigmas} pentagon sigmas...\n");
@@ -121,7 +125,7 @@ fn bench_kkt_eigen_profile() {
 
         // Phase 1: Build KKT matrix.
         let t0 = Instant::now();
-        let (kkt, rhs) = build_augmented_system(&polytope, sigma);
+        let (kkt, rhs) = build_augmented_system_from_dual_vertices(&dual_vertices, sigma);
         t_build += t0.elapsed().as_secs_f64();
 
         // Phase 2: Eigendecomposition.

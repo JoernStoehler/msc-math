@@ -48,12 +48,14 @@ experiment safety, validation trust, or durable crate maintainability.
 | item | state | value class | owner/gate | next action | source |
 | --- | --- | --- | --- | --- | --- |
 | Broad Rust lint gate | `[done]` | map input | agents | Keep `cargo clippy --workspace --all-targets -- -D warnings` green; use it as a cheap first-pass regression gate for future cleanup packets. | current branch, Clippy output |
+| Tracing/instrumentation surface | `[future]` | future/follow-up | agents, Jörn only for architecture if the first concrete setup is invasive | Do not tackle on the Euclidean-polytopes migration branch. Future setup should prefer `tracing` spans/events in production code plus profile-binary subscribers over returning instrumentation through function signatures. Start with coarse release-build spans for random fixture generation, exact geometry/polar vertices, transition construction, sigma enumeration, KKT solving, and aggregation; add counters only where branch counts answer a concrete profiling question. | 2026-05-11 profiling discussion, `crates/symplectic/DEVELOPMENT.md`, `crates/symplectic/src/bin/profile_pruned_hk2017.rs` |
 | Safe experiment command contracts | `[active]` | mainline thesis | agents, Jörn only for retained-output policy | Continue with finer per-binary smoke repairs after package-level contracts for HKO, verification/algorithm-comparison, combinatorial-cells, numerics, and sys-landscape; verification/numerics help exits are being normalized to status 0. | `experiments/MAP.md`, `tasks/reproducibility.md` |
 | Verification trust chain | `[active]` | mainline thesis | retained claims | `experiments/verification/README.md` now records the top-level Rust command contract. Decide later which full verification commands are required before broad Rust cleanup; keep path/row diagnostics in verification plumbing. | `research/verification.md`, `experiments/verification/README.md` |
 | `symplectic` API support levels | `[map-input]` | contingent during writing | Jörn for public API/architecture choices | Audit only the paths needed by retained thesis experiments before hiding, promoting, or redesigning public modules. | `crates/MAP.md`, `crates/symplectic/src/lib.rs` |
+| Euclidean polytope crate migration | `[active]` | mainline thesis | agents, Jörn for API close calls | Use the dedicated roadmap for ordinary convex-geometry extraction; keep this row as Rust-tech-debt routing, not as the detailed task state. | `tasks/euclidean-polytopes.md`, `crates/euclidean-polytopes/README.md`, `crates/euclidean-polytopes/DEVELOPMENT.md` |
 | Capacity result semantics | `[active]` | mainline thesis | retained claims, Jörn for thesis-facing contract | Root `ehz_capacity*` wrappers now use `OrbitGuaranteeMode::MinimaSafe`. `ehz_capacity_pruned_certified` adds an exact rational result path for capacity, minimizers, and an optional action-gap window while reusing f64 search intervals as the prefilter. Next thesis-facing decision: which callers need the ordinary `OrbitSearchResult` contract versus the certified rational contract. | `tasks/numerics.md`, `crates/symplectic/src/lib.rs`, `crates/symplectic/src/algorithms/orbit_search.rs`, `crates/symplectic/src/kkt/rational_solver.rs` |
-| Unsupported projected backend | `[map-input]` | contingent during writing | Jörn if the projected route is retained | `OrbitSolveBackend::Projected` docs now state that the shared `solve_orbit_sigma` surface returns `UnsupportedBackend`. Choose hide or complete only if normal callers need it. | `tasks/numerics.md`, `crates/symplectic/src/algorithms/orbit_search.rs` |
-| Hidden hard failures in fallible APIs | `[active]` | map input | agents | Non-finite `Polytope4D::from_f64` inputs and invalid random-sampling parameters now fail before panic/nontermination boundaries. Continue with minimal reproducers before changing capacity-wrapper error semantics. | `crates/symplectic/src/lib.rs`, `crates/symplectic/src/geom/polytope.rs`, `crates/symplectic/src/random.rs` |
+| Unsupported projected backend | `[retired from current API]` | contingent during writing | Jörn if a projected route is reintroduced | The old backend strategy surface was deleted during flat orbit migration. Reintroduce a projected route only as a real flat solver function with current callers and Q-bound contracts. | `tasks/numerics.md`, `crates/symplectic/src/algorithms/orbit_search.rs` |
+| Hidden hard failures in fallible APIs | `[active]` | map input | agents | Non-finite f64 dual vertices and invalid random-sampling parameters now fail before panic/nontermination boundaries through the flat vertex-enumeration/random APIs. Continue with minimal reproducers before changing capacity-wrapper error semantics. | `crates/symplectic/src/lib.rs`, `crates/symplectic/src/geom/vertex_enumeration/mod.rs`, `crates/symplectic/src/random.rs` |
 | Runtime invariant checks | `[active]` | mainline thesis | agents | Add exact/runtime validation at trust-boundary handoffs when complexity and compute cost are small. Start with places that turn internal payloads into certified/public results, then broaden only when a concrete failure mode or thesis-facing claim needs it. | `crates/symplectic/src/algorithms/orbit_search.rs`, `crates/symplectic/src/kkt/rational_solver.rs` |
 | Exact arithmetic replacement | `[done]` | mainline thesis if exact validation is cited or exact-code ambiguity blocks main-branch task sessions | agents, Jörn for math/proof acceptance | The former `delete-algebraic-crate` branch was merged into main. It migrated thesis-relevant Rust consumers off the old public API and keeps domain geometry/KKT/workflow code outside the generic crate. | `tasks/references/exact-arithmetic-replacement-2026-05-10.md`, `crates/algebraic-numbers/README.md`, `crates/algebraic-numbers/DEVELOPMENT.md`, `research/numerics.md`, `crates/MAP.md` |
 | Incomplete lie-audit remediation | `[active]` | mainline thesis | agents, Jörn for mathematical/source-of-truth calls | Rework exact/certified/ground-truth validation paths with a code-first pass, then route every confirmed finding to a fix, caveat, cut, or Jörn decision before using any repo-promise verification gate. | `crates/symplectic/src/kkt/rational_solver.rs`, `tasks/verify-thesis-done.md` |
@@ -115,14 +117,15 @@ experiment safety, validation trust, or durable crate maintainability.
   `crates/symplectic/src/kkt/rational_solver.rs` contract mismatch. Refresh by
   doing a code-first audit of exact/certified/ground-truth paths, not by
   trusting old scratch report coverage.
-- [fresh 2026-05-04] `Polytope4D::from_f64` rejects non-finite f64
+- [updated 2026-05-11] `rationalize_f64_dual_vertices` rejects non-finite f64
   coordinates with `ConstructionError::F64Conversion` before calling
   `f64_to_rational`; regression coverage lives in
-  `crates/symplectic/src/geom/polytope/tests.rs`.
-- [fresh 2026-05-04] `sample_random_polytope` validates `facet_count` and the
-  height interval before constructing a `Uniform` distribution. The legacy
-  `generate_random_polytopes` wrapper now checks the same preconditions before
-  entering its fill loop.
+  `crates/symplectic/src/geom/vertex_enumeration/tests.rs` and
+  `crates/symplectic/src/random.rs`.
+- [fresh 2026-05-04, updated 2026-05-11] `sample_random_dual_vertices`
+  validates `facet_count` and the height interval before constructing a
+  `Uniform` distribution. `generate_random_dual_vertices` checks the same
+  preconditions before entering its fill loop.
 - [fresh 2026-05-04] `num-unknown-predicates` no longer reports bare
   `billiard error` panics for lagrangian-product rows; the panic names the
   pentagon or polygon-product row and includes the `BilliardError`.
@@ -137,8 +140,8 @@ experiment safety, validation trust, or durable crate maintainability.
   `f64_square_product_bad_sigma_rejected_by_exact_rank` at the solver level,
   `minimasafe_does_not_accept_spurious_square_product_minimum` at the result
   aggregation level, and `minimasafe_accepts_exact_rational_scaled_cube` as an
-  exact rational cube contrast. `OrbitSolveBackend::Projected` docs state that
-  the shared `solve_orbit_sigma` surface still returns `UnsupportedBackend`.
+  exact rational cube contrast. The old `OrbitSolveBackend` surface has since
+  been deleted from the current flat API.
 - [fresh 2026-05-04] Root `symplectic::ehz_capacity*` wrappers now use
   `OrbitGuaranteeMode::MinimaSafe` instead of f64-only aggregation. Exact
   fallback output is revalidated at the result boundary: beta length,

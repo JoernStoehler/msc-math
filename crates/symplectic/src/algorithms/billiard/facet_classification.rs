@@ -11,7 +11,6 @@
 //! Mathematical correspondence: [lem:lagrangian-facets]
 
 use super::BilliardError;
-use crate::geom::polytope::Polytope4D;
 use nalgebra::Vector4;
 
 /// Tolerance for classifying facet dual vertices as q-type or p-type.
@@ -116,18 +115,21 @@ impl FacetClassification {
     }
 }
 
-/// Classify facets of a polytope into q-type and p-type.
+/// Classify flat dual vertices into q-type and p-type facets.
 ///
-/// Returns error if any facet normal is neither purely q-type nor purely p-type,
-/// or if there are fewer than 3 facets of either type.
+/// Input contract: `dual_vertices` is the ordered facet-dual list for the same
+/// Lagrangian-product polytope that later billiard enumeration will solve.
+/// Returns error if any facet normal is neither purely q-type nor purely
+/// p-type, or if there are fewer than 3 facets of either type.
 ///
 /// [lem:lagrangian-facets]: classification criterion for Lagrangian product facets.
-pub fn classify_facets(polytope: &Polytope4D) -> Result<FacetClassification, BilliardError> {
-    let duals = polytope.dual_vertices_f64();
+pub fn classify_facets_from_dual_vertices(
+    dual_vertices: &[Vector4<f64>],
+) -> Result<FacetClassification, BilliardError> {
     let mut q_indices = Vec::new();
     let mut p_indices = Vec::new();
 
-    for (i, a) in duals.iter().enumerate() {
+    for (i, a) in dual_vertices.iter().enumerate() {
         let norm_sq = a[0] * a[0] + a[1] * a[1] + a[2] * a[2] + a[3] * a[3];
         let q_norm_sq = a[0] * a[0] + a[1] * a[1];
         let p_norm_sq = a[2] * a[2] + a[3] * a[3];
@@ -166,6 +168,14 @@ pub fn classify_facets(polytope: &Polytope4D) -> Result<FacetClassification, Bil
     })
 }
 
+/// Classify facets from the ordered facet-dual list.
+#[cfg(test)]
+pub(crate) fn classify_facets(
+    dual_vertices: &[Vector4<f64>],
+) -> Result<FacetClassification, BilliardError> {
+    classify_facets_from_dual_vertices(dual_vertices)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -174,9 +184,9 @@ mod tests {
     #[test]
     fn mask_dual_direction_preserves_allowed_components() {
         let kp = known_polytopes::lagrangian_triangle_product();
-        let classification = classify_facets(&kp.polytope)
+        let classification = classify_facets(&kp.dual_vertices_f64)
             .expect("triangle product should classify as a Lagrangian product");
-        let direction: Vec<Vector4<f64>> = (0..kp.polytope.facet_count())
+        let direction: Vec<Vector4<f64>> = (0..kp.facet_count())
             .map(|i| {
                 Vector4::new(
                     i as f64 + 1.0,

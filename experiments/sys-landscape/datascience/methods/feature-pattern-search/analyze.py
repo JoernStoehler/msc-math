@@ -102,7 +102,7 @@ ORBIT_COMBINATORICS_KEYS = [
     "orbit_cycle_zero_fraction",
     "orbit_cycle_transition_fraction",
     "orbit_cycle_bidirectional_fraction",
-    "orbit_cycle_adjacent_fraction",
+    "orbit_cycle_facet_intersection_fraction",
 ]
 ORBIT_GEOMETRY_KEYS = [
     "orbit_selected_norm_mean",

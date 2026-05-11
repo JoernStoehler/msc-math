@@ -1,7 +1,7 @@
 //! Eigendecomposition-based KKT solver for the (m+5)x(m+5) saddle-point system.
 //!
 //! Solves the augmented KKT system M x = b where M is the symmetric saddle-point
-//! matrix assembled by `qp_assembly::build_augmented_system`. The solution vector
+//! matrix assembled by `qp_assembly::build_augmented_system_from_dual_vertices`. The solution vector
 //! x = [beta; mu; xi] yields dwell times beta, Lagrange multipliers mu (closure)
 //! and xi (normalization).
 //!
@@ -23,9 +23,8 @@
 //! Mathematical correspondence: [lem:kkt], [lem:q-error-bound]
 
 use super::beta_feasibility;
-use super::qp_assembly::build_augmented_system;
+use super::qp_assembly::build_augmented_system_from_dual_vertices;
 use super::EPS_EIGEN_FLOOR;
-use crate::geom::polytope::Polytope4D;
 use crate::geom::symplectic_form::omega0;
 use nalgebra::{DMatrix, DVector, Vector4};
 
@@ -298,14 +297,15 @@ pub fn solve_saddle_point(kkt_matrix: &DMatrix<f64>, rhs: &DVector<f64>) -> KktO
         .unwrap_or(KktOutcome::Infeasible)
 }
 
-/// Convenience: solve KKT for a polytope and permutation in one call.
+/// Convenience: solve KKT from flat dual vertices and a permutation in one call.
 ///
-/// Assembles the augmented system from `qp_assembly::build_augmented_system`,
-/// then calls `solve_saddle_point`.
+/// Assembles the augmented system from
+/// `qp_assembly::build_augmented_system_from_dual_vertices`, then calls
+/// `solve_saddle_point`.
 ///
-/// [lem:kkt]: assembles and solves the augmented KKT system for a (polytope, permutation) pair.
-pub fn solve_kkt_for(polytope: &Polytope4D, perm: &[usize]) -> KktOutcome {
-    let (kkt, rhs) = build_augmented_system(polytope, perm);
+/// [lem:kkt]: assembles and solves the augmented KKT system for a dual-vertex/permutation pair.
+pub fn solve_kkt_for_dual_vertices(dual_vertices: &[Vector4<f64>], perm: &[usize]) -> KktOutcome {
+    let (kkt, rhs) = build_augmented_system_from_dual_vertices(dual_vertices, perm);
     solve_saddle_point(&kkt, &rhs)
 }
 

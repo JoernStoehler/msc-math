@@ -20,10 +20,13 @@
 //! The explicit root wrapper below is intentional: this diagnostic validates
 //! the current pruned general HK2017/KKT pipeline and its Q-side error story,
 //! not the root auto-dispatch wrapper.
+#[path = "../src/flat_polytope.rs"]
+mod flat_polytope;
+
+use crate::flat_polytope::NumericsPolytopeCache;
+use dev_numerical_analysis::capacity_pruned_hk2017;
 use nalgebra::{DMatrix, DVector, Vector4};
-use symplectic::ehz_capacity_pruned;
 use symplectic::geom::known_polytopes;
-use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::symplectic_form::omega0;
 use symplectic::kkt::rational_solver as kkt_rational;
 
@@ -189,9 +192,9 @@ struct SweepResult {
 }
 
 /// Sweep ALL (S,σ) pairs for a polytope and assert error bounds.
-fn error_bound_sweep(polytope: &Polytope4D) -> SweepResult {
+fn error_bound_sweep(polytope: &NumericsPolytopeCache) -> SweepResult {
     let f = polytope.facet_count();
-    let duals = polytope.dual_vertices_f64();
+    let duals = &polytope.dual_vertices_f64;
     let normals: Vec<Vector4<f64>> = duals.iter().map(|a| a / a.norm()).collect();
     let heights: Vec<f64> = duals.iter().map(|a| 1.0 / a.norm()).collect();
 
@@ -313,18 +316,24 @@ struct ExactResult {
 }
 
 /// Compare numerical Q̃ against exact Q for the winning (S,σ) of a polytope.
-fn exact_comparison(polytope: &Polytope4D) -> Option<ExactResult> {
-    let result = ehz_capacity_pruned(polytope).ok()?;
+fn exact_comparison(polytope: &NumericsPolytopeCache) -> Option<ExactResult> {
+    let result = capacity_pruned_hk2017(
+        &polytope.dual_vertices,
+        &polytope.dual_vertices_f64,
+        &polytope.facet_intersection_is_nonempty,
+        &polytope.omega_signs,
+    )
+    .ok()?;
     let perm = result.best_sigma();
     let m = perm.len();
     let size = m + 5;
 
-    let duals = polytope.dual_vertices_f64();
+    let duals = &polytope.dual_vertices_f64;
     let normals: Vec<Vector4<f64>> = duals.iter().map(|a| a / a.norm()).collect();
     let heights: Vec<f64> = duals.iter().map(|a| 1.0 / a.norm()).collect();
 
     // Solve the KKT system exactly via the library's rational solver.
-    let exact_result = kkt_rational::solve_kkt_exact(polytope.dual_vertices(), perm)?;
+    let exact_result = kkt_rational::solve_kkt_exact(&polytope.dual_vertices, perm)?;
     let q_exact_f64 = exact_result.q_exact_f64;
 
     // Compute numerical Q̃ and E (using the eigendecomposition path)
@@ -388,10 +397,19 @@ fn exact_comparison(polytope: &Polytope4D) -> Option<ExactResult> {
 // ── Main ────────────────────────────────────────────────────────────────
 
 fn main() {
-    let polytopes: Vec<(&str, Polytope4D)> = known_polytopes::all_known()
+    let polytopes: Vec<(&str, NumericsPolytopeCache)> = known_polytopes::all_known()
         .into_iter()
-        .filter(|kp| kp.polytope.facet_count() <= 10)
-        .map(|kp| (kp.name, kp.polytope.clone()))
+        .filter(|kp| kp.dual_vertices.len() <= 10)
+        .map(|kp| {
+            (
+                kp.name,
+                NumericsPolytopeCache::from_rational_parts(
+                    kp.dual_vertices.clone(),
+                    kp.vertices.clone(),
+                )
+                .expect("known polytope cache"),
+            )
+        })
         .collect();
 
     println!("=== Q Error Bound Experiment ===\n");

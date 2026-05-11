@@ -23,7 +23,7 @@ Freshness rules:
 ## Status
 
 - State: finish-mode roadmap scaffold.
-- Last updated: 2026-05-09.
+- Last updated: 2026-05-10.
 - Target: finish the scoped master-thesis project by 2026-05-14. The earlier
   optimistic 2026-05-07 finish date has passed.
 - Phase 1 done-state basis was accepted by Jorn on 2026-04-24, modulo inline
@@ -74,6 +74,7 @@ justify calendar delay and Jorn-time cost.
 | Hostile landscape | negative sys-search story and data-science evidence | `tasks/landscape.md` |
 | Numerics | numerical appendix, solver/projection/beta-LP state | `tasks/numerics.md` |
 | Reproducibility | data freshness, artifact truth, repo promises | `tasks/reproducibility.md` |
+| Euclidean polytopes | migration plan for ordinary convex-polytope geometry currently entangled with symplectic code; exact polar, exact extreme-point, known-incidence volume, known-incidence facet-volume, and incidence-only 2-face ordering slices are implemented in `crates/euclidean-polytopes/` | `tasks/euclidean-polytopes.md` |
 | Rust tech debt | Rust cleanup packets that affect agent velocity, experiment safety, validation trust, or durable crate maintainability | `tasks/rust-tech-debt.md` |
 | Infrastructure | agent/harness/repo-maintenance work, including current review-reliability/task-tree follow-up, and future SWE polish | `tasks/infrastructure.md` |
 

@@ -22,8 +22,14 @@
 //! only the average size.
 //!
 //! This binary only needs scalar capacity/sys values, so it uses the crate-level
-//! `symplectic::ehz_capacity` entrypoint instead of the billiard-native API.
+//! auto-routed capacity helper instead of the billiard-native API.
 
+#[path = "../src/flat_polytope.rs"]
+mod flat_polytope;
+
+use crate::flat_polytope::HkoPolytopeCache;
+use exp_hko_local_maximum::capacity_auto;
+use exp_hko_local_maximum::euclidean_volume_f64;
 use nalgebra::Vector4;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
@@ -32,10 +38,7 @@ use serde::Serialize;
 use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::time::Instant;
-use symplectic::ehz_capacity;
 use symplectic::geom::known_polytopes;
-use symplectic::geom::polytope::Polytope4D;
-use symplectic::geom::volume::volume;
 
 const SEED: u64 = 43;
 
@@ -154,9 +157,15 @@ fn eval_sys_at_ray(
         perturbed.push(v);
     }
 
-    let polytope = Polytope4D::from_f64(perturbed).ok()?;
-    let ehz = ehz_capacity(&polytope).ok()?;
-    let vol = volume(&polytope);
+    let polytope = HkoPolytopeCache::from_f64(perturbed)?;
+    let ehz = capacity_auto(
+        &polytope.dual_vertices,
+        &polytope.dual_vertices_f64,
+        &polytope.facet_intersection_is_nonempty,
+        &polytope.omega_signs,
+    )
+    .ok()?;
+    let vol = euclidean_volume_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
     if vol <= 0.0 {
         return None;
     }
@@ -292,14 +301,25 @@ fn main() {
 
     // Base polytope
     let base = known_polytopes::hko_pentagon();
-    let base_polytope = &base.polytope;
-    let base_duals: Vec<Vector4<f64>> = base_polytope.dual_vertices_f64().to_vec();
+    let base_polytope =
+        HkoPolytopeCache::from_rational_parts(base.dual_vertices.clone(), base.vertices.clone())
+            .expect("HKO base cache");
+    let base_duals: Vec<Vector4<f64>> = base_polytope.dual_vertices_f64.to_vec();
     let indices = lagrangian_component_indices(&base_duals);
     let d = base_duals.len() * 2; // 20D perturbation space
 
     // Verify base sys
-    let base_vol = volume(base_polytope);
-    let base_ehz = ehz_capacity(base_polytope).expect("capacity unavailable");
+    let base_vol = euclidean_volume_f64(
+        &base_polytope.vertices,
+        &base_polytope.vertex_facet_incidence,
+    );
+    let base_ehz = capacity_auto(
+        &base_polytope.dual_vertices,
+        &base_polytope.dual_vertices_f64,
+        &base_polytope.facet_intersection_is_nonempty,
+        &base_polytope.omega_signs,
+    )
+    .expect("capacity unavailable");
     let base_sys = base_ehz.capacity().powi(2) / (2.0 * base_vol);
     println!("Base sys = {base_sys:.6} (should be ~1.047)");
     println!("Probing {n_directions} random directions...\n");

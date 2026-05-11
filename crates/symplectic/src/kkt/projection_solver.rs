@@ -166,7 +166,7 @@ fn q_value_from_dvec(h: &DMatrix<f64>, beta: &DVector<f64>) -> f64 {
 
 #[cfg(test)]
 mod tests {
-    use super::super::qp_assembly::build_qp;
+    use super::super::qp_assembly::build_qp_from_dual_vertices;
     use super::super::{Verdict, QP};
     use super::*;
     use crate::geom::known_polytopes;
@@ -489,15 +489,15 @@ mod tests {
     #[test]
     fn projection_finds_positive_q_on_simplex() {
         let simplex = known_polytopes::simplex();
-        let polytope = &simplex.polytope;
-        let f = polytope.facet_count();
+        let dual_vertices = &simplex.dual_vertices_f64;
+        let f = simplex.facet_count();
 
         let mut found = false;
         // Try subset sizes 2 to min(f, 5)
         for size in 2..=f.min(5) {
             for_each_combination(f, size, &mut |subset| {
                 let perm = subset.to_vec();
-                let qp = build_qp(polytope, &perm);
+                let qp = build_qp_from_dual_vertices(dual_vertices, &perm);
                 let sol = solve_projected(&qp);
                 if sol.verdict == Verdict::True && sol.q > 1e-6 {
                     found = true;
@@ -529,14 +529,14 @@ mod tests {
         }
     }
 
-    /// Projection solver result is consistent with build_qp assembly.
+    /// Projection solver result is consistent with flat QP assembly.
     #[test]
     fn projection_qp_assembly_consistency() {
         let simplex = known_polytopes::simplex();
-        let polytope = &simplex.polytope;
+        let dual_vertices = &simplex.dual_vertices_f64;
         let perm = vec![0, 1, 2];
 
-        let qp = build_qp(polytope, &perm);
+        let qp = build_qp_from_dual_vertices(dual_vertices, &perm);
         let sol = solve_projected(&qp);
 
         if sol.verdict != Verdict::False {

@@ -20,6 +20,8 @@ workspace = true
 
 [dependencies]
 symplectic.workspace = true
+euclidean-polytopes.workspace = true
+dev-capacity-validation = { path = ".." }
 nalgebra.workspace = true
 serde.workspace = true
 serde_json.workspace = true

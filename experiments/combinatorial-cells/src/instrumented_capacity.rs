@@ -1,11 +1,13 @@
 //! Instrumented capacity helper for combinatorial-cell experiments.
 
-use symplectic::algorithms::facet_adjacency::{build_transition_matrix, is_feasible_cycle};
+use nalgebra::{DMatrix, Vector4};
+use symplectic::algorithms::facet_adjacency::{
+    build_transition_matrix_from_facet_intersections_and_omega, is_feasible_cycle,
+};
 use symplectic::algorithms::hk2017::combinations;
 use symplectic::algorithms::hk2017::permutations::for_each_cyclic_permutation;
-use symplectic::geom::polytope::Polytope4D;
 use symplectic::kkt::saddle_point_solver::{
-    solve_kkt_for, KktOutcome, EPS_BETA_POSITIVE, EPS_Q_POSITIVE,
+    solve_kkt_for_dual_vertices, KktOutcome, EPS_BETA_POSITIVE, EPS_Q_POSITIVE,
 };
 
 /// Shared "all valid orbit" summary used by several combinatorial-cells binaries.
@@ -24,19 +26,28 @@ pub struct InstrumentedCapacitySummary {
 
 /// Enumerate all valid HK2017 orbits, then return the best action/permutation plus
 /// the total valid-orbit count and the best/second-best action gap.
-pub fn ehz_capacity_instrumented(polytope: &Polytope4D) -> Option<InstrumentedCapacitySummary> {
-    let f = polytope.facet_count();
-    let adj = build_transition_matrix(polytope);
+pub fn ehz_capacity_instrumented(
+    dual_vertices: &[Vector4<f64>],
+    facet_intersection_is_nonempty: &DMatrix<bool>,
+    omega_signs: &DMatrix<i8>,
+) -> Option<InstrumentedCapacitySummary> {
+    let f = dual_vertices.len();
+    let transition_is_allowed = build_transition_matrix_from_facet_intersections_and_omega(
+        facet_intersection_is_nonempty,
+        omega_signs,
+    );
     let mut orbits: Vec<(f64, Vec<usize>)> = Vec::new();
 
     for m in 2..=f {
         for subset in combinations(f, m) {
             for_each_cyclic_permutation(&subset, &mut |perm| {
-                if !is_feasible_cycle(perm, &adj) {
+                if !is_feasible_cycle(perm, &transition_is_allowed) {
                     return;
                 }
 
-                if let KktOutcome::Feasible(kkt_result) = solve_kkt_for(polytope, perm) {
+                if let KktOutcome::Feasible(kkt_result) =
+                    solve_kkt_for_dual_vertices(dual_vertices, perm)
+                {
                     let q_val = kkt_result.q_corrected;
                     if q_val <= EPS_Q_POSITIVE {
                         return;

@@ -21,11 +21,15 @@ pub mod facet_classification;
 #[cfg(test)]
 mod kkt_benchmark;
 
-use crate::algorithms::facet_adjacency::{build_transition_matrix, is_feasible_cycle};
-use crate::algorithms::OrbitSearchError;
-use crate::geom::polytope::Polytope4D;
+#[cfg(test)]
+use crate::algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega;
+use crate::algorithms::facet_adjacency::is_feasible_cycle;
+use crate::algorithms::orbit_search::solve_sigma_stream_with_dual_vertices;
+use crate::algorithms::{OrbitKktData, OrbitSearchError};
 use block_enumeration::{enumerate_blocks, enumerate_k_bounce_sigmas};
+#[cfg(test)]
 use facet_classification::classify_facets;
+use nalgebra::{DMatrix, Vector4};
 
 #[cfg(test)]
 mod tests;
@@ -85,33 +89,132 @@ impl std::error::Error for BilliardError {}
 /// The polytope must be a valid Lagrangian product. If `sigma` does not match
 /// the alternating billiard block structure `Q_1 P_1 ... Q_k P_k` with each
 /// block of length 1 or 2, returns `Ok(None)`.
-pub fn bounce_count_from_sigma(
-    polytope: &Polytope4D,
+#[cfg(test)]
+pub(crate) fn bounce_count_from_sigma(
+    dual_vertices: &[Vector4<f64>],
     sigma: &[usize],
 ) -> Result<Option<usize>, BilliardError> {
-    let classification = classify_facets(polytope)?;
+    let classification = classify_facets(dual_vertices)?;
     Ok(classification.bounce_count_for_sigma(sigma))
 }
 
-/// Visit every billiard sigma for a valid Lagrangian product polytope.
-pub fn for_each_sigma(
-    polytope: &Polytope4D,
+/// Returns the billiard bounce count `k` encoded by `sigma`.
+///
+/// Input contract: `q_facet_indices` and `p_facet_indices` are disjoint facet
+/// index lists for the same ordered facet set as `sigma`.
+///
+/// Public because branch-analysis experiments need to classify already-solved
+/// orbits and filtered sigma streams from flat facet data.
+pub fn bounce_count_from_sigma_for_facets(
+    q_facet_indices: &[usize],
+    p_facet_indices: &[usize],
+    sigma: &[usize],
+) -> Option<usize> {
+    facet_classification::FacetClassification {
+        q_indices: q_facet_indices.to_vec(),
+        p_indices: p_facet_indices.to_vec(),
+    }
+    .bounce_count_for_sigma(sigma)
+}
+
+/// Visit every billiard sigma for flat Lagrangian-product facet data.
+///
+/// Input contract: q/p facet indices refer to the same ordered facet set as
+/// `facet_intersection_is_nonempty` and `transition_is_allowed`.
+///
+/// Public because some experiments inspect or filter the billiard candidate
+/// stream before solving, while [`solve_billiard_candidates`] is the ordinary
+/// solve-all frontend.
+pub fn for_each_sigma_from_facets(
+    q_facet_indices: &[usize],
+    p_facet_indices: &[usize],
+    facet_intersection_is_nonempty: &DMatrix<bool>,
+    transition_is_allowed: &DMatrix<bool>,
     mut visit: impl FnMut(&[usize]),
-) -> Result<(), BilliardError> {
-    let classification = classify_facets(polytope)?;
-    let adj = polytope.vertex_adjacency();
-    let directed_adj = build_transition_matrix(polytope);
-    let q_blocks = enumerate_blocks(&classification.q_indices, adj);
-    let p_blocks = enumerate_blocks(&classification.p_indices, adj);
+) {
+    assert_eq!(
+        facet_intersection_is_nonempty.shape(),
+        transition_is_allowed.shape(),
+        "facet_intersection_is_nonempty and transition_is_allowed must have the same shape"
+    );
+    let facet_count = facet_intersection_is_nonempty.nrows();
+    assert_eq!(
+        facet_intersection_is_nonempty.ncols(),
+        facet_count,
+        "facet_intersection_is_nonempty must be square"
+    );
+    assert!(
+        q_facet_indices
+            .iter()
+            .chain(p_facet_indices.iter())
+            .all(|&facet| facet < facet_count),
+        "q_facet_indices and p_facet_indices must index the facet matrices"
+    );
+
+    let q_blocks = enumerate_blocks(q_facet_indices, facet_intersection_is_nonempty);
+    let p_blocks = enumerate_blocks(p_facet_indices, facet_intersection_is_nonempty);
 
     for k in 2..=3 {
         enumerate_k_bounce_sigmas(k, &q_blocks, &p_blocks, |sigma| {
-            if !is_feasible_cycle(sigma, &directed_adj) {
+            if !is_feasible_cycle(sigma, transition_is_allowed) {
                 return;
             }
             visit(sigma);
         });
     }
+}
+
+/// Solve every billiard candidate from flat Lagrangian-product data.
+///
+/// Input contract: all inputs use the same facet ordering. q/p facet indices
+/// are the Lagrangian product classification, `facet_intersection_is_nonempty`
+/// is the undirected facet-incidence relation, and `transition_is_allowed` is
+/// the directed omega-aware transition relation.
+pub fn solve_billiard_candidates(
+    dual_vertices: &[Vector4<f64>],
+    q_facet_indices: &[usize],
+    p_facet_indices: &[usize],
+    facet_intersection_is_nonempty: &DMatrix<bool>,
+    transition_is_allowed: &DMatrix<bool>,
+) -> Result<(Vec<OrbitKktData>, u64), OrbitSearchError> {
+    assert_eq!(
+        transition_is_allowed.shape(),
+        (dual_vertices.len(), dual_vertices.len()),
+        "transition_is_allowed must be square with one row/column per dual vertex"
+    );
+
+    solve_sigma_stream_with_dual_vertices(dual_vertices, |visit| {
+        for_each_sigma_from_facets(
+            q_facet_indices,
+            p_facet_indices,
+            facet_intersection_is_nonempty,
+            transition_is_allowed,
+            visit,
+        )
+    })
+}
+
+/// Visit every billiard sigma for a valid flat Lagrangian-product facet set.
+#[cfg(test)]
+pub(crate) fn for_each_sigma(
+    dual_vertices: &[Vector4<f64>],
+    facet_intersection_is_nonempty: &DMatrix<bool>,
+    omega_signs: &DMatrix<i8>,
+    visit: impl FnMut(&[usize]),
+) -> Result<(), BilliardError> {
+    let classification = classify_facets(dual_vertices)?;
+    let transition_is_allowed = build_transition_matrix_from_facet_intersections_and_omega(
+        facet_intersection_is_nonempty,
+        omega_signs,
+    );
+
+    for_each_sigma_from_facets(
+        &classification.q_indices,
+        &classification.p_indices,
+        facet_intersection_is_nonempty,
+        &transition_is_allowed,
+        visit,
+    );
 
     Ok(())
 }

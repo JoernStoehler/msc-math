@@ -10,7 +10,8 @@ pub fn rational_to_f64(value: &BigRational) -> f64 {
 }
 
 pub fn parse_rational(token: &str) -> BigRational {
-    token.parse()
+    token
+        .parse()
         .unwrap_or_else(|e| panic!("parse rational {token}: {e}"))
 }
 

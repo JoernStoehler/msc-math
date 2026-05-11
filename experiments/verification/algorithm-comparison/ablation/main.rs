@@ -11,7 +11,7 @@
 //! - `cargo run -p dev-algorithm-comparison --release --bin cmp-ablation`
 //!   runs the full dataset and writes `ablation/ablation.jsonl`.
 //!
-//! A-axis variants: A0 (unpruned), A1 (vertex adjacency),
+//! A-axis variants: A0 (unpruned), A1 (facet intersection nonemptiness),
 //! A2 (directed omega0), A3 (Reeb-flow feasibility).
 //!
 //! Convention: The library (`crates/symplectic/`) is stable. New variants are implemented as
@@ -25,6 +25,8 @@
 //! for apples-to-apples comparison. Correctness is validated by agreement with A0.
 
 mod fixtures;
+#[path = "../flat_polytope.rs"]
+mod flat_polytope;
 mod kkt;
 mod models;
 mod variants;
@@ -86,8 +88,10 @@ fn main() {
     let t0 = Instant::now();
     let output_path = output_path(std::path::Path::new(env!("CARGO_MANIFEST_DIR")), args.smoke);
 
-    println!("Ablation study — A-axis (adjacency pruning)\n");
-    println!("Variants: A0 (unpruned), A1 (vertex adj), A2 (directed ω₀), A3 (Reeb feasibility)");
+    println!("Ablation study — A-axis (transition pruning)\n");
+    println!(
+        "Variants: A0 (unpruned), A1 (facet intersection), A2 (directed ω₀), A3 (Reeb feasibility)"
+    );
     println!(
         "Seed: {}, h ∈ [{}, {}]\n",
         crate::models::SEED,
@@ -112,17 +116,17 @@ fn main() {
 
     for fixture in &polytopes {
         let duals_raw: Vec<[f64; 4]> = fixture
-            .polytope
-            .dual_vertices_f64()
+            .geometry
+            .dual_vertices_f64
             .iter()
             .map(|a| [a[0], a[1], a[2], a[3]])
             .collect();
-        let facet_count = fixture.polytope.facet_count();
+        let facet_count = fixture.geometry.facet_count();
         let mut capacities: Vec<(String, f64)> = Vec::new();
 
         for variant in VARIANTS {
             let t_start = Instant::now();
-            let result = (variant.run)(&fixture.polytope);
+            let result = (variant.run)(&fixture.geometry);
             let time_ms = t_start.elapsed().as_secs_f64() * 1000.0;
 
             match result {

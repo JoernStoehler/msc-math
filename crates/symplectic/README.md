@@ -3,7 +3,8 @@
 Durable Rust crate for symplectic geometry on 4D convex polytopes.
 
 Main code areas:
-- `src/geom/`: polytope geometry, symplectic form helpers, volume, skeletons
+- `src/geom/`: flat polytope fixtures, dual-vertex validation, symplectic
+  form helpers, and Euclidean geometry reexports used by symplectic algorithms
 - `src/kkt/`: context-free KKT/QP solve machinery
 - `src/algorithms/`: HK2017, billiard, and tube algorithm surfaces
 - `src/exact/`: exact single-orbit kernels over ordered fields

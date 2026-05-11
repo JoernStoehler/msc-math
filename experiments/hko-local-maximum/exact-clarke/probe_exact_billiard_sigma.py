@@ -93,24 +93,28 @@ def directed_feasible_sigmas() -> list[list[int]]:
     duals = exact_hko_duals()
 
     facet_count = len(duals)
-    vertex_adj = [[False] * facet_count for _ in range(facet_count)]
+    facet_intersection_is_nonempty = [[False] * facet_count for _ in range(facet_count)]
     for index in range(5):
         next_index = (index + 1) % 5
-        vertex_adj[index][next_index] = True
-        vertex_adj[next_index][index] = True
+        facet_intersection_is_nonempty[index][next_index] = True
+        facet_intersection_is_nonempty[next_index][index] = True
     for index in range(5, 10):
         next_index = 5 + ((index - 5 + 1) % 5)
-        vertex_adj[index][next_index] = True
-        vertex_adj[next_index][index] = True
+        facet_intersection_is_nonempty[index][next_index] = True
+        facet_intersection_is_nonempty[next_index][index] = True
     for q_index in range(5):
         for p_index in range(5, 10):
-            vertex_adj[q_index][p_index] = True
-            vertex_adj[p_index][q_index] = True
+            facet_intersection_is_nonempty[q_index][p_index] = True
+            facet_intersection_is_nonempty[p_index][q_index] = True
 
-    directed_adj = [[False] * facet_count for _ in range(facet_count)]
+    directed_transition_is_allowed = [[False] * facet_count for _ in range(facet_count)]
     for lhs in range(facet_count):
         for rhs in range(facet_count):
-            directed_adj[lhs][rhs] = lhs != rhs and vertex_adj[lhs][rhs] and sign(omega(duals[lhs], duals[rhs])) >= 0
+            directed_transition_is_allowed[lhs][rhs] = (
+                lhs != rhs
+                and facet_intersection_is_nonempty[lhs][rhs]
+                and sign(omega(duals[lhs], duals[rhs])) >= 0
+            )
 
     q_blocks = [(idx,) for idx in range(5)]
     p_blocks = [(idx,) for idx in range(5, 10)]
@@ -136,7 +140,9 @@ def directed_feasible_sigmas() -> list[list[int]]:
                             sigma.extend(q_selection[1 + q_perm[round_index - 1]])
                             sigma.extend(p_selection[p_perm[round_index]])
                         if all(
-                            directed_adj[sigma[idx]][sigma[(idx + 1) % len(sigma)]]
+                            directed_transition_is_allowed[sigma[idx]][
+                                sigma[(idx + 1) % len(sigma)]
+                            ]
                             for idx in range(len(sigma))
                         ):
                             sigmas.append(sigma)
