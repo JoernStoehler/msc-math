@@ -489,9 +489,8 @@ mod tests {
     #[test]
     fn projection_finds_positive_q_on_simplex() {
         let simplex = known_polytopes::simplex();
-        let polytope = &simplex.polytope;
-        let dual_vertices = polytope.dual_vertices_f64();
-        let f = polytope.facet_count();
+        let dual_vertices = &simplex.dual_vertices_f64;
+        let f = simplex.facet_count();
 
         let mut found = false;
         // Try subset sizes 2 to min(f, 5)
@@ -534,8 +533,7 @@ mod tests {
     #[test]
     fn projection_qp_assembly_consistency() {
         let simplex = known_polytopes::simplex();
-        let polytope = &simplex.polytope;
-        let dual_vertices = polytope.dual_vertices_f64();
+        let dual_vertices = &simplex.dual_vertices_f64;
         let perm = vec![0, 1, 2];
 
         let qp = build_qp_from_dual_vertices(dual_vertices, &perm);

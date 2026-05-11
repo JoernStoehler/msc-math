@@ -238,6 +238,7 @@ impl Polytope4D {
     ///
     /// Then calls assemble() to build incidence, omega_signs,
     /// facet_intersection_is_nonempty, and f64 copies.
+    #[cfg(test)]
     pub fn from_rational_parts(
         dual_vertices: Vec<[BigRational; 4]>,
         vertices: Vec<[BigRational; 4]>,
@@ -295,6 +296,7 @@ impl Polytope4D {
     ///
     /// Post-condition: all facet pairs with nonempty intersection have
     /// omega_0 != 0.
+    #[cfg(test)]
     pub fn perturbed(
         &self,
         rng: &mut impl rand::Rng,
@@ -420,6 +422,7 @@ impl Polytope4D {
     }
 
     /// Number of facets F.
+    #[cfg(test)]
     pub fn facet_count(&self) -> usize {
         self.dual_vertices.len()
     }

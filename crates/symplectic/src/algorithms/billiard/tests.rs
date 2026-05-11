@@ -1,4 +1,5 @@
 use super::*;
+use crate::algorithms::test_helpers::pruned_capacity_for_fixture;
 use crate::geom::known_polytopes;
 use nalgebra::{DMatrix, Vector4};
 use num_rational::BigRational;
@@ -41,10 +42,10 @@ fn billiard_result_from_known(
 ) -> crate::algorithms::OrbitSearchResult {
     billiard_result(
         name,
-        kp.polytope.dual_vertices_f64(),
-        kp.polytope.dual_vertices(),
-        kp.polytope.facet_intersection_is_nonempty(),
-        kp.polytope.omega_signs(),
+        &kp.dual_vertices_f64,
+        &kp.dual_vertices,
+        &kp.facet_intersection_is_nonempty,
+        &kp.omega_signs,
     )
 }
 
@@ -87,10 +88,10 @@ fn hypercube_capacity() {
     let kp = known_polytopes::hypercube();
     assert_capacity(
         "hypercube",
-        kp.polytope.dual_vertices_f64(),
-        kp.polytope.dual_vertices(),
-        kp.polytope.facet_intersection_is_nonempty(),
-        kp.polytope.omega_signs(),
+        &kp.dual_vertices_f64,
+        &kp.dual_vertices,
+        &kp.facet_intersection_is_nonempty,
+        &kp.omega_signs,
         4.0,
         1e-8,
     );
@@ -102,10 +103,10 @@ fn triangle_product_capacity() {
     let kp = known_polytopes::lagrangian_triangle_product();
     assert_capacity(
         "triangle_product",
-        kp.polytope.dual_vertices_f64(),
-        kp.polytope.dual_vertices(),
-        kp.polytope.facet_intersection_is_nonempty(),
-        kp.polytope.omega_signs(),
+        &kp.dual_vertices_f64,
+        &kp.dual_vertices,
+        &kp.facet_intersection_is_nonempty,
+        &kp.omega_signs,
         1.5,
         1e-8,
     );
@@ -117,10 +118,10 @@ fn triangle_square_capacity() {
     let kp = known_polytopes::lagrangian_triangle_square();
     assert_capacity(
         "triangle_square",
-        kp.polytope.dual_vertices_f64(),
-        kp.polytope.dual_vertices(),
-        kp.polytope.facet_intersection_is_nonempty(),
-        kp.polytope.omega_signs(),
+        &kp.dual_vertices_f64,
+        &kp.dual_vertices,
+        &kp.facet_intersection_is_nonempty,
+        &kp.omega_signs,
         1.5,
         1e-8,
     );
@@ -130,19 +131,19 @@ fn triangle_square_capacity() {
 #[test]
 fn triangle_product_orbit_aggregation() {
     let kp = known_polytopes::lagrangian_triangle_product();
-    let dual_vertices = kp.polytope.dual_vertices_f64();
-    let dual_vertices_exact = kp.polytope.dual_vertices();
+    let dual_vertices = &kp.dual_vertices_f64;
+    let dual_vertices_exact = &kp.dual_vertices;
     let classification =
         facet_classification::classify_facets(dual_vertices).expect("valid Lagrangian product");
     let transition_is_allowed = crate::algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega(
-        kp.polytope.facet_intersection_is_nonempty(),
-        kp.polytope.omega_signs(),
+        &kp.facet_intersection_is_nonempty,
+        &kp.omega_signs,
     );
     let (orbits, iterations) = solve_billiard_candidates(
         dual_vertices,
         &classification.q_indices,
         &classification.p_indices,
-        kp.polytope.facet_intersection_is_nonempty(),
+        &kp.facet_intersection_is_nonempty,
         &transition_is_allowed,
     )
     .expect("billiard sigma solve stream should succeed");
@@ -173,10 +174,10 @@ fn hko_pentagon_capacity() {
         2.0 * (std::f64::consts::PI / 10.0).cos() * (1.0 + (std::f64::consts::PI / 5.0).cos());
     assert_capacity(
         "hko_pentagon",
-        kp.polytope.dual_vertices_f64(),
-        kp.polytope.dual_vertices(),
-        kp.polytope.facet_intersection_is_nonempty(),
-        kp.polytope.omega_signs(),
+        &kp.dual_vertices_f64,
+        &kp.dual_vertices,
+        &kp.facet_intersection_is_nonempty,
+        &kp.omega_signs,
         expected,
         1e-6,
     );
@@ -192,7 +193,7 @@ fn hko_pentagon_capacity() {
 fn agrees_with_hk2017_hypercube() {
     let kp = known_polytopes::hypercube();
     let billiard = billiard_result_from_known("hypercube", kp);
-    let hk = crate::ehz_capacity_pruned(&kp.polytope).unwrap();
+    let hk = pruned_capacity_for_fixture(kp).unwrap();
     let diff = (billiard.capacity() - hk.capacity()).abs();
     assert!(
         diff < 1e-8,
@@ -209,7 +210,7 @@ fn agrees_with_hk2017_hypercube() {
 fn agrees_with_hk2017_triangle_product() {
     let kp = known_polytopes::lagrangian_triangle_product();
     let billiard = billiard_result_from_known("triangle_product", kp);
-    let hk = crate::ehz_capacity_pruned(&kp.polytope).unwrap();
+    let hk = pruned_capacity_for_fixture(kp).unwrap();
     let diff = (billiard.capacity() - hk.capacity()).abs();
     assert!(
         diff < 1e-8,
@@ -226,7 +227,7 @@ fn agrees_with_hk2017_triangle_product() {
 fn agrees_with_hk2017_triangle_square() {
     let kp = known_polytopes::lagrangian_triangle_square();
     let billiard = billiard_result_from_known("triangle_square", kp);
-    let hk = crate::ehz_capacity_pruned(&kp.polytope).unwrap();
+    let hk = pruned_capacity_for_fixture(kp).unwrap();
     let diff = (billiard.capacity() - hk.capacity()).abs();
     assert!(
         diff < 1e-8,
@@ -245,7 +246,7 @@ fn agrees_with_hk2017_triangle_square() {
 fn agrees_with_hk2017_hko_pentagon() {
     let kp = known_polytopes::hko_pentagon();
     let billiard = billiard_result_from_known("hko_pentagon", kp);
-    let hk = crate::ehz_capacity_pruned(&kp.polytope).unwrap();
+    let hk = pruned_capacity_for_fixture(kp).unwrap();
     let diff = (billiard.capacity() - hk.capacity()).abs();
     assert!(
         diff < 1e-8,
@@ -265,9 +266,9 @@ fn agrees_with_hk2017_hko_pentagon() {
 fn rejects_non_lagrangian_product() {
     let kp = known_polytopes::simplex();
     let result = for_each_sigma(
-        kp.polytope.dual_vertices_f64(),
-        kp.polytope.facet_intersection_is_nonempty(),
-        kp.polytope.omega_signs(),
+        &kp.dual_vertices_f64,
+        &kp.facet_intersection_is_nonempty,
+        &kp.omega_signs,
         |_| {},
     );
     assert!(
@@ -282,9 +283,9 @@ fn rejects_non_lagrangian_product() {
 fn rejects_symplectic_triangle_product() {
     let kp = known_polytopes::symplectic_triangle_product();
     let result = for_each_sigma(
-        kp.polytope.dual_vertices_f64(),
-        kp.polytope.facet_intersection_is_nonempty(),
-        kp.polytope.omega_signs(),
+        &kp.dual_vertices_f64,
+        &kp.facet_intersection_is_nonempty,
+        &kp.omega_signs,
         |_| {},
     );
     assert!(
@@ -348,7 +349,7 @@ fn assert_result_properties(
 fn result_properties() {
     for (name, kp) in lagrangian_test_cases_fast() {
         let result = billiard_result_from_known(name, kp);
-        assert_result_properties(name, kp.polytope.dual_vertices_f64(), &result);
+        assert_result_properties(name, &kp.dual_vertices_f64, &result);
     }
 }
 
@@ -361,7 +362,7 @@ fn result_properties() {
 fn result_properties_pentagon() {
     let kp = known_polytopes::hko_pentagon();
     let result = billiard_result_from_known("hko_pentagon", kp);
-    assert_result_properties("hko_pentagon", kp.polytope.dual_vertices_f64(), &result);
+    assert_result_properties("hko_pentagon", &kp.dual_vertices_f64, &result);
 }
 
 /// Small Lagrangian products: fast in both debug and release.

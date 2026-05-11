@@ -119,6 +119,7 @@ pub fn f64_to_rational(x: f64) -> BigRational {
 /// Uses uniform random numerator in [-2^32, 2^32) and denominator 2^{bits+32}.
 /// This produces exact rationals k / 2^{bits+32} for random k, with bounded
 /// denominator size. Used for perturbation of degenerate polytopes.
+#[cfg(test)]
 pub(super) fn random_small_rational(rng: &mut impl rand::Rng, bits: u32) -> BigRational {
     let numer: i64 = rng.gen_range(-(1i64 << 32)..(1i64 << 32));
     let denom = BigInt::from(1u64) << (bits as u64 + 32);

@@ -164,18 +164,17 @@ mod tests {
         let hko = crate::geom::known_polytopes::hko_pentagon();
 
         // Same facet count
-        assert_eq!(our_dual_vertices.len(), hko.polytope.facet_count());
+        assert_eq!(our_dual_vertices.len(), hko.facet_count());
 
         // Same volume
         let (our_vertices, our_incidence) = exact_vertices_and_incidence(&our_dual_vertices);
         let our_vol = euclidean_volume_f64(&our_vertices, &our_incidence);
         let hko_vertices: Vec<Vector4<BigRational>> = hko
-            .polytope
-            .vertices()
+            .vertices
             .iter()
             .map(|v| Vector4::new(v[0].clone(), v[1].clone(), v[2].clone(), v[3].clone()))
             .collect();
-        let hko_vol = euclidean_volume_f64(&hko_vertices, hko.polytope.incidence());
+        let hko_vol = euclidean_volume_f64(&hko_vertices, &hko.vertex_facet_incidence);
         let rel_err = (our_vol - hko_vol).abs() / hko_vol;
         assert!(
             rel_err < 1e-6,

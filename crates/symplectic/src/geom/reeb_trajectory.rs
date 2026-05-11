@@ -331,13 +331,13 @@ mod tests {
     #[test]
     fn hypercube_trajectory_visits_multiple_facets() {
         let kp = known_polytopes::hypercube();
-        let start = facet_centroid(kp.polytope.vertices_f64(), kp.polytope.incidence(), 0);
+        let start = facet_centroid(&kp.vertices_f64, &kp.vertex_facet_incidence, 0);
 
         // Verify start is on facet 0.
-        let residual = (kp.polytope.dual_vertices_f64()[0].dot(&start) - 1.0).abs();
+        let residual = (&kp.dual_vertices_f64[0].dot(&start) - 1.0).abs();
         assert!(residual < 1e-7, "start not on facet 0: residual {residual}");
 
-        let traj = simulate(kp.polytope.dual_vertices_f64(), start, 0);
+        let traj = simulate(&kp.dual_vertices_f64, start, 0);
 
         assert!(
             traj.segments.len() >= 2,
@@ -352,7 +352,7 @@ mod tests {
         }
 
         // Each segment lies on its claimed facet.
-        let duals = kp.polytope.dual_vertices_f64();
+        let duals = &kp.dual_vertices_f64;
         for seg in &traj.segments {
             let a = &duals[seg.facet];
             let start_res = (a.dot(&seg.start) - 1.0).abs();
@@ -370,10 +370,10 @@ mod tests {
     #[test]
     fn segments_follow_reeb_direction() {
         let kp = known_polytopes::hypercube();
-        let start = facet_centroid(kp.polytope.vertices_f64(), kp.polytope.incidence(), 0);
-        let traj = simulate_with(kp.polytope.dual_vertices_f64(), start, 0, 20, 1e-6);
+        let start = facet_centroid(&kp.vertices_f64, &kp.vertex_facet_incidence, 0);
+        let traj = simulate_with(&kp.dual_vertices_f64, start, 0, 20, 1e-6);
 
-        let duals = kp.polytope.dual_vertices_f64();
+        let duals = &kp.dual_vertices_f64;
         for seg in &traj.segments {
             let direction = seg.end - seg.start;
             if direction.norm() < 1e-12 {
@@ -393,8 +393,8 @@ mod tests {
     #[test]
     fn simplex_trajectory_produces_segments() {
         let kp = known_polytopes::simplex();
-        let start = facet_centroid(kp.polytope.vertices_f64(), kp.polytope.incidence(), 0);
-        let traj = simulate(kp.polytope.dual_vertices_f64(), start, 0);
+        let start = facet_centroid(&kp.vertices_f64, &kp.vertex_facet_incidence, 0);
+        let traj = simulate(&kp.dual_vertices_f64, start, 0);
 
         assert!(
             !traj.segments.is_empty(),
@@ -422,12 +422,11 @@ mod tests {
         ];
 
         for (name, kp) in &polytopes {
-            let duals = kp.polytope.dual_vertices_f64();
+            let duals = &kp.dual_vertices_f64;
 
             for facet in 0..duals.len() {
-                let start =
-                    facet_centroid(kp.polytope.vertices_f64(), kp.polytope.incidence(), facet);
-                let traj = simulate_with(kp.polytope.dual_vertices_f64(), start, facet, 100, 1e-6);
+                let start = facet_centroid(&kp.vertices_f64, &kp.vertex_facet_incidence, facet);
+                let traj = simulate_with(&kp.dual_vertices_f64, start, facet, 100, 1e-6);
 
                 for (si, seg) in traj.segments.iter().enumerate() {
                     for (label, pt) in [("start", &seg.start), ("end", &seg.end)] {
@@ -465,11 +464,11 @@ mod tests {
     #[test]
     fn simulate_defaults_match_explicit() {
         let kp = known_polytopes::hypercube();
-        let start = facet_centroid(kp.polytope.vertices_f64(), kp.polytope.incidence(), 0);
+        let start = facet_centroid(&kp.vertices_f64, &kp.vertex_facet_incidence, 0);
 
-        let traj_default = simulate(kp.polytope.dual_vertices_f64(), start, 0);
+        let traj_default = simulate(&kp.dual_vertices_f64, start, 0);
         let traj_explicit = simulate_with(
-            kp.polytope.dual_vertices_f64(),
+            &kp.dual_vertices_f64,
             start,
             0,
             DEFAULT_MAX_SEGMENTS,

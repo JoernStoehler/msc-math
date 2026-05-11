@@ -131,7 +131,7 @@ fn for_each_combination(n: usize, k: usize, f: &mut impl FnMut(&[usize])) {
 #[test]
 fn simplex_capacity_via_exhaustive_search() {
     let simplex = known_polytopes::simplex();
-    let (best_q, found) = find_best_q_exhaustive(simplex.polytope.dual_vertices_f64());
+    let (best_q, found) = find_best_q_exhaustive(&simplex.dual_vertices_f64);
 
     assert!(found, "should find at least one valid candidate on simplex");
     let capacity = 0.5 / best_q;
@@ -147,7 +147,7 @@ fn simplex_capacity_via_exhaustive_search() {
 #[test]
 fn lagrangian_triangle_product_finds_valid_solution() {
     let tri_prod = known_polytopes::lagrangian_triangle_product();
-    let (best_q, found) = find_best_q_exhaustive(tri_prod.polytope.dual_vertices_f64());
+    let (best_q, found) = find_best_q_exhaustive(&tri_prod.dual_vertices_f64);
 
     assert!(
         found,
@@ -166,9 +166,8 @@ fn lagrangian_triangle_product_finds_valid_solution() {
 #[test]
 fn solve_kkt_for_dual_vertices_matches_direct() {
     let simplex = known_polytopes::simplex();
-    let polytope = &simplex.polytope;
     let perm = vec![0, 1, 2];
-    let dual_vertices = polytope.dual_vertices_f64();
+    let dual_vertices = &simplex.dual_vertices_f64;
 
     let result_direct = {
         let (kkt, rhs) = build_augmented_system_from_dual_vertices(dual_vertices, &perm);
@@ -198,9 +197,8 @@ fn solve_kkt_for_dual_vertices_matches_direct() {
 #[test]
 fn q_error_bound_nonnegative_and_small() {
     let simplex = known_polytopes::simplex();
-    let polytope = &simplex.polytope;
-    let dual_vertices = polytope.dual_vertices_f64();
-    let f = polytope.facet_count();
+    let dual_vertices = &simplex.dual_vertices_f64;
+    let f = simplex.facet_count();
 
     let mut checked = 0;
     for size in 2..=f.min(6) {
@@ -234,9 +232,8 @@ fn q_error_bound_nonnegative_and_small() {
 #[test]
 fn inertia_sums_to_size() {
     let simplex = known_polytopes::simplex();
-    let polytope = &simplex.polytope;
     let perm = vec![0, 1, 2];
-    let dual_vertices = polytope.dual_vertices_f64();
+    let dual_vertices = &simplex.dual_vertices_f64;
     let (kkt, rhs) = build_augmented_system_from_dual_vertices(dual_vertices, &perm);
 
     if let KktOutcome::Feasible(result) = solve_saddle_point(&kkt, &rhs) {
@@ -281,9 +278,8 @@ fn identity_matrix_trivial_solve() {
 #[test]
 fn two_facet_permutation() {
     let simplex = known_polytopes::simplex();
-    let polytope = &simplex.polytope;
     let perm = vec![0, 1];
-    let dual_vertices = polytope.dual_vertices_f64();
+    let dual_vertices = &simplex.dual_vertices_f64;
     let (kkt, rhs) = build_augmented_system_from_dual_vertices(dual_vertices, &perm);
 
     // May or may not find a solution. Just verify no panic.
@@ -372,9 +368,8 @@ fn perturbed_lp44_ehz_capacity_no_panic() {
 #[test]
 fn normalization_constraint_satisfied() {
     let simplex = known_polytopes::simplex();
-    let polytope = &simplex.polytope;
-    let dual_vertices = polytope.dual_vertices_f64();
-    let f = polytope.facet_count();
+    let dual_vertices = &simplex.dual_vertices_f64;
+    let f = simplex.facet_count();
 
     let mut checked = 0;
     for size in 2..=f.min(6) {
@@ -400,9 +395,8 @@ fn normalization_constraint_satisfied() {
 #[test]
 fn closure_constraint_satisfied() {
     let simplex = known_polytopes::simplex();
-    let polytope = &simplex.polytope;
-    let f = polytope.facet_count();
-    let dual_verts = polytope.dual_vertices_f64();
+    let f = simplex.facet_count();
+    let dual_verts = &simplex.dual_vertices_f64;
 
     let mut checked = 0;
     for size in 2..=f.min(6) {
