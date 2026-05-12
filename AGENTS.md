@@ -175,6 +175,9 @@ cargo build --workspace --release
 cargo check -p PACKAGE_NAME
 cargo build -p PACKAGE_NAME --release
 
+# Python experiments
+uv run --script PYTHON_SCRIPT.py
+
 # Profiling
 cargo run -p symplectic --release --bin profile-pruned-hk2017 -- --facet-counts 8 --samples 3 --jsonl
 
