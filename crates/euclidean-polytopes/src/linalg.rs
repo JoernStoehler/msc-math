@@ -27,22 +27,6 @@ pub(crate) fn combinations4(n: usize) -> Vec<[usize; 4]> {
     result
 }
 
-pub(crate) fn combinations5(n: usize) -> Vec<[usize; 5]> {
-    let mut result = Vec::new();
-    for i in 0..n {
-        for j in (i + 1)..n {
-            for k in (j + 1)..n {
-                for l in (k + 1)..n {
-                    for m in (l + 1)..n {
-                        result.push([i, j, k, l, m]);
-                    }
-                }
-            }
-        }
-    }
-    result
-}
-
 pub(crate) fn dot4_exact<T: ExactScalar>(left: &Vector4<T>, right: &Vector4<T>) -> T {
     left[0].clone() * right[0].clone()
         + left[1].clone() * right[1].clone()

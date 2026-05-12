@@ -29,6 +29,8 @@ The implemented packets are in place:
 - `edges_from_vertex_facet_incidence(vertex_facet_incidence) -> Vec<[usize; 2]>`;
 - `two_faces_from_vertex_facet_incidence(vertex_facet_incidence) -> Vec<TwoFace>`;
 - `facet_intersection_is_nonempty_from_vertex_facet_incidence(vertex_facet_incidence) -> DMatrix<bool>`;
+- `orient4_sign_f64(rows) -> CertifiedSign`;
+- `origin_in_interior_of_conv_f64(points) -> OriginInteriorF64`;
 - `volume_from_incidence_f64(vertices, incidence) -> Result<f64, F64GeometryError>`;
 - `volume_from_incidence_exact(vertices, incidence) -> T`.
 
@@ -44,10 +46,12 @@ the exact affine barycentric system. A coordinate-bound reduction avoids
 unnecessary exact solves for obvious coordinate-extreme cases. Exact duplicate
 points return `false`; lower-dimensional point sets are valid inputs.
 
-Public `f64` diagnostic APIs were removed when the target migration found no
-non-test callers. The retained `f64` volume helpers require already-known
-boolean incidence, validate finite coordinates, and do not decide incidence
-from approximate signed gaps.
+Public `f64` diagnostics are limited to theorem-backed sign/interior filters
+with explicit indeterminate outcomes. They certify statements about the exact
+real values represented by f64 inputs, not separate exact rationals rounded to
+f64. The retained `f64` volume helpers require already-known boolean
+incidence, validate finite coordinates, and do not decide incidence from
+approximate signed gaps.
 
 Do not add broad public API only because it is mathematically natural. Add a
 function when a current migration caller needs it or when it removes duplicated
@@ -637,20 +641,19 @@ choices become mathematical facts. If the exact fallback becomes hot, profile
 before changing the contract.
 
 For exact predicates specifically, return `bool`. The exact implementation may
-call the `f64` diagnostic predicate first as a witness generator, but
-`origin_in_interior_of_conv_exact` keeps exact semantics: f64-decided cases do
-not become exact facts unless exact work confirms them or the slow exact
-positive-spanning test decides the answer.
+call an `f64` diagnostic predicate first only when the diagnostic has a proved
+error bound for the exact f64 inputs and every indeterminate branch is resolved
+exactly before the exact function returns.
 
-The checked polar APIs use a different internal policy for validation:
-f64-decided true/false cases are accepted, and only f64-indeterminate cases
-fall back to exact checks. Keep that policy behind the polar-validation helper,
-not in the reusable exact predicate.
+The checked polar APIs currently validate the origin-interior contract exactly.
+The BigRational path uses integer-scaled determinant/gap arithmetic for the hot
+case; it does not use a 5-set f64 precheck or an unproved f64 rejection filter.
 
-For `origin_in_interior_of_conv_f64`, a false diagnostic needs enough evidence
-to rule out all candidate 5-point simplex sets. Therefore the indeterminate
-case should list all candidate sets that may contain zero, not just the first
-one. Revisit only if memory or runtime measurements show this can blow up.
+For `origin_in_interior_of_conv_f64`, keep the diagnostic as the triple-normal
+separation filter proved in `formal/f64-orientation-sign-filters.tex`.
+`True` means every triple was certified nonseparating, `False` means one
+triple was certified separating, and `Indeterminate` carries no claim. Do not
+replace it with static margins or a 5-set barycentric heuristic.
 
 ### Accepted Direction: Result, Option, Panic, Tuple, Struct
 

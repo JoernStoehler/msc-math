@@ -1,0 +1,104 @@
+% formal/rational-integer-scaling -- exact integer scaling for rational polytope predicates
+%
+% Labels defined here:
+%   lem:rational-common-denominator-signs,
+%   lem:integer-scaled-origin-interior-test,
+%   lem:integer-scaled-polar-candidates,
+%   lem:integer-scaled-feasibility-gap
+%
+% Status: mechanical agent-written proof note, unapproved by Jorn. It records
+% the proof obligation used by the BigRational specializations in
+% crates/euclidean-polytopes/src/predicates.rs and
+% crates/euclidean-polytopes/src/polar.rs.
+
+\subsection{Common-denominator scaling}
+
+Let $v_1,\ldots,v_N \in \mathbb{Q}^4$.  Choose a positive integer $D$
+such that $p_i := Dv_i \in \mathbb{Z}^4$ for all $i$.
+
+\begin{lemma}[Common-denominator scaling preserves signs]
+\label{lem:rational-common-denominator-signs}
+For every $x \in \mathbb{Q}^4$ and every integer $D > 0$,
+\[
+  \operatorname{sign}\langle v_i,x\rangle
+  =
+  \operatorname{sign}\langle Dv_i,x\rangle .
+\]
+Moreover, for any three indices $i,j,k$, the $4$-dimensional cross product
+normal satisfies
+\[
+  n(Dv_i,Dv_j,Dv_k) = D^3 n(v_i,v_j,v_k),
+\]
+so its dot products against scaled points satisfy
+\[
+  \langle Dv_\ell,n(Dv_i,Dv_j,Dv_k)\rangle
+  =
+  D^4\langle v_\ell,n(v_i,v_j,v_k)\rangle .
+\]
+\end{lemma}
+
+\begin{proof}
+The first identity is multiplication by the positive scalar $D$.  The cross
+product formula is trilinear in its three arguments, hence contributes a factor
+$D^3$.  The final identity adds the fourth factor $D$ from the tested point.
+All factors are positive, so signs are unchanged.
+\end{proof}
+
+\begin{lemma}[Integer-scaled origin-interior test]
+\label{lem:integer-scaled-origin-interior-test}
+The rational triple-normal positive-spanning test for
+$0 \in \operatorname{int}\operatorname{conv}\{v_i\}$ returns the same answer
+after replacing all $v_i$ by $p_i = Dv_i$.
+\end{lemma}
+
+\begin{proof}
+The rank precondition is unchanged by multiplication by the invertible scalar
+$D$.  For every tested triple, Lemma~\ref{lem:rational-common-denominator-signs}
+shows that the normal is zero before scaling if and only if it is zero after
+scaling, and that every point-normal dot-product sign is unchanged.  Therefore
+each separating-triple clause has the same truth value in the rational and
+integer-scaled tests.
+\end{proof}
+
+\begin{lemma}[Integer-scaled polar candidates]
+\label{lem:integer-scaled-polar-candidates}
+Let $A$ be the $4 \times 4$ rational matrix with rows $v_{i_1},\ldots,v_{i_4}$,
+and let $P = DA$.  If $\det P \neq 0$, then the exact solution of
+$Ay=\one$ is recovered by solving $Pz=D\one$ and setting $y=z$.
+Equivalently, Cramer's rule may be evaluated over integers using $P$ and the
+right-hand side $D\one$.
+\end{lemma}
+
+\begin{proof}
+Since $P=DA$, the equation $Ay=\one$ is equivalent to $Py=D\one$.  Cramer's
+rule for $Py=D\one$ uses only integer determinants.  The common denominator in
+the Rust implementation is exactly this positive scalar $D$, so determinant
+zeros are the exact rational ones, not rounded approximations.
+\end{proof}
+
+\begin{lemma}[Integer-scaled feasibility and incidence gap]
+\label{lem:integer-scaled-feasibility-gap}
+Let $v=p/D$ with $p\in\mathbb{Z}^4$ and $D>0$.  Let a rational candidate be
+stored as $y=n/d$, where $n\in\mathbb{Z}^4$ and $d>0$.  Then
+\[
+  G(p,n,d,D) := Dd-\langle p,n\rangle
+\]
+has the same sign as $1-\langle v,y\rangle$.  In particular,
+$G(p,n,d,D) > 0$ is exact strict feasibility for that row,
+$G(p,n,d,D) = 0$ is exact incidence, and $G(p,n,d,D) < 0$ is exact violation
+of the half-space inequality $\langle v,y\rangle \le 1$.
+\end{lemma}
+
+\begin{proof}
+By substituting $v=p/D$ and $y=n/d$,
+\[
+  1-\langle v,y\rangle
+  =
+  1-\frac{\langle p,n\rangle}{Dd}
+  =
+  \frac{Dd-\langle p,n\rangle}{Dd}.
+\]
+The denominator $Dd$ is positive, so the numerator and the rational gap have
+the same sign.  The three sign cases are exactly the half-space interior,
+boundary, and exterior cases.
+\end{proof}

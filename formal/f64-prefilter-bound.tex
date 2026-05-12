@@ -8,7 +8,10 @@
 %   eq:prefilter-fwd, eq:prefilter-fwd2
 %
 % Source: /tmp/prefilter-bound-simple.tex (Jörn + agent session)
-% Status: Jörn is finalizing; will be updated when final version arrives.
+% Status: inactive for exact polar enumeration. The former generic exact polar
+%   rejection prefilter was removed from Rust because this proof is still
+%   unverified. Keep this note only as design material for a future, separately
+%   reviewed f64 diagnostic API.
 %
 % ====================================================================
 % f64 pre-filter for vertex enumeration
@@ -217,7 +220,8 @@ Then
   \cdot \|\hat{y}\| \cdot \|\hat{v}\|
 \]
 with $C = 10^4$ for $n = 4$
-(a tighter accounting gives $C < 1400$; see Remark~\ref{rem:prefilter-constants}).
+(a tighter accounting gives $C \le 5376$; see
+Remark~\ref{rem:prefilter-constants}).
 \end{proposition}
 \end{unverified}
 

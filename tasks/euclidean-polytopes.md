@@ -63,12 +63,13 @@ modules, which makes non-symplectic helpers harder to reuse and review.
   diagnostics.
   Why it matters: do not overfit exact and approximate incidence to the same
   storage shape when their semantics differ.
-- [Jorn decisions 2026-05-10] Exact volume over field `T` should stay in `T`;
-  no field extensions are expected for exact polytope volume. f64 origin
-  interior diagnostics should list all candidate 5-sets that may contain zero,
-  because proving `false` needs ruling them all out. Code should use
-  single-concern files/modules such as `volume.rs`, with exact and f64 variants
-  colocated when that makes comparison and maintenance easier.
+- [Jorn decisions 2026-05-10; updated 2026-05-12] Exact volume over field `T`
+  should stay in `T`; no field extensions are expected for exact polytope
+  volume. f64 origin-interior diagnostics must return only proved decisions;
+  the current accepted diagnostic shape is the triple-normal separation filter,
+  not a 5-set barycentric heuristic. Code should use single-concern
+  files/modules such as `volume.rs`, with exact and f64 variants colocated when
+  that makes comparison and maintenance easier.
   Why it matters: these choices prevent future agents from weakening exact
   volume, truncating f64 diagnostics prematurely, or splitting code by numeric
   representation before it improves readability.
@@ -112,7 +113,7 @@ modules, which makes non-symplectic helpers harder to reuse and review.
 | Crate scaffold and API target | `[merged]` | mainline thesis | agents | Keep `README.md` and `DEVELOPMENT.md` synchronized when the public API changes. The flat-input/no-public-wrapper direction is accepted for the merged crate. | `crates/euclidean-polytopes/README.md`, `crates/euclidean-polytopes/DEVELOPMENT.md` |
 | Robust floating/exact architecture | `[implemented first architecture]` | mainline thesis | agents | Exact APIs return exact answers; f64 APIs expose diagnostics or known-incidence f64 computations. Add new f64 diagnostic return shapes only with a real caller and explicit indeterminate semantics. | `crates/euclidean-polytopes/README.md`, `crates/euclidean-polytopes/DEVELOPMENT.md` |
 | Polar vertex enumeration plus validation dependencies | `[implemented exact slice]` | mainline thesis | agents | Exact polar enumeration and exact origin-in-interior are implemented. The earlier public f64 diagnostic polar sketch was removed because no current non-test caller needed it. | `crates/euclidean-polytopes/src/polar.rs`, `crates/euclidean-polytopes/src/predicates.rs`, `crates/euclidean-polytopes/tests/polar_vertices.rs` |
-| Polar vertex enumeration performance | `[implemented first optimization]` | mainline thesis | agents, Jörn only for further API/contract changes | Branch `tracing-perf-integration` added opt-in tracing, optimized checked polar validation with f64-decided true/false cases plus exact fallback for indeterminate cases, then promoted the winning polar spike: BigRational integer-scaled determinant/gap enumeration. Random F=8 pruned HK2017 profile improved from exact geometry avg `40.407ms` and total avg `42.968ms` to exact geometry avg `4.718ms` and total avg `7.226ms` over 20 deterministic checked samples, with deterministic outputs unchanged. Remaining follow-ups are only if larger-F or heterogeneous-denominator profiles show new bottlenecks. | `/tmp/msc-math-tracing-perf-2026-05-11/spike-comparison.md`, `/tmp/msc-math-tracing-perf-2026-05-11/polar-validation-f64-decides-f8-s20-trace.jsonl`, `crates/symplectic/src/bin/profile_pruned_hk2017.rs`, `crates/euclidean-polytopes/src/polar.rs`, `crates/euclidean-polytopes/src/predicates.rs` |
+| Polar vertex enumeration performance | `[implemented first optimization]` | mainline thesis | agents, Jörn only for further API/contract changes | Branch `tracing-perf-integration` added opt-in tracing, restored checked polar origin validation, removed the unverified generic exact f64 rejection prefilter, and promoted the winning exact optimization: BigRational common-denominator integer scaling for the origin-interior assertion plus polar determinant/gap enumeration. The production exact path no longer uses f64 or 5-set decisions. Random F=8 pruned HK2017 profile improved from exact geometry avg `40.407ms` and total avg `42.968ms` to exact geometry avg `4.438ms` and total avg `7.079ms` over 20 deterministic checked samples, with deterministic outputs unchanged. The formal note records that positive common-denominator scaling preserves rank, triple-normal signs, Cramer candidates, feasibility signs, and incidence equalities. Remaining follow-ups are only if larger-F or heterogeneous-denominator profiles show new bottlenecks. | `/tmp/msc-math-tracing-perf-2026-05-11/spike-comparison.md`, `/tmp/msc-math-tracing-perf-2026-05-12/final-post-review-f8-s20-trace.jsonl`, `formal/rational-integer-scaling.tex`, `crates/symplectic/src/bin/profile_pruned_hk2017.rs`, `crates/euclidean-polytopes/src/polar.rs`, `crates/euclidean-polytopes/src/predicates.rs` |
 | Extreme-point / non-redundant point-set predicate | `[implemented exact slice]` | mainline thesis | agents | Exact predicate is implemented and covered by fixture/property tests. Add the matching f64 diagnostic later only if its return shape stays flat and useful. | `crates/euclidean-polytopes/src/predicates.rs`, `crates/euclidean-polytopes/tests/extreme_points.rs`, `crates/euclidean-polytopes/DEVELOPMENT.md` |
 | Full-dimensional known-incidence f64 volume | `[implemented migration slice]` | mainline thesis | agents | `volume_from_incidence_f64(vertices, incidence)` is implemented for callers that already have reliable incidence. A dual-vertices-plus-f64-vertices incidence-recovery API is not currently public; add one only with a real caller and explicit indeterminate semantics. | `crates/euclidean-polytopes/src/volume.rs`, `crates/euclidean-polytopes/tests/volume.rs`, `crates/euclidean-polytopes/DEVELOPMENT.md` |
 | Verification property suite | `[implemented first property slice]` | mainline thesis | agents | Keep strengthening theorem-shaped property tests as APIs migrate. Current coverage includes exact polar soundness, exact polarity roundtrip, generated non-redundancy witnesses, exact/f64 known-incidence volume agreement, and f64 volume scaling/permutation invariants. Public f64 diagnostic polar properties are future work only if that API returns. | `crates/euclidean-polytopes/DEVELOPMENT.md`, `crates/euclidean-polytopes/tests/` |
@@ -245,8 +246,9 @@ Deferred follow-ups:
   exact origin-interior and exact polar vertex enumeration over
   `Vector4<T: ExactScalar>`. The exact polar path checks `0 in int conv`, accepts
   redundant input inequalities, returns exact incidence, and deduplicates by
-  exact equality. The initial `f64` polar path is diagnostic-only: finite input
-  validation plus partial vertices and indeterminate 4-tuples.
+  exact equality. The later performance pass removed the initial unproved f64
+  polar prefilter; current f64 diagnostics are theorem-backed predicate filters
+  with explicit indeterminate outcomes.
 - [implemented 2026-05-10] The exact extreme-point slice exposes
   `all_points_are_extreme_exact(points)`. It decides V-representation
   non-redundancy in ambient `R^4`, including lower-dimensional point sets, by

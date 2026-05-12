@@ -1,9 +1,9 @@
 //! Euclidean convex-polytope helpers for thesis Rust code.
 //!
 //! The current public surface starts with exact point-set predicates and exact
-//! polar vertex enumeration. Approximate `f64` helpers are retained only for
-//! known-incidence volume and facet-volume computations used by operational
-//! callers.
+//! polar vertex enumeration. Approximate `f64` helpers are diagnostic filters
+//! with explicit indeterminate outcomes, or known-incidence volume and
+//! facet-volume computations used by operational callers.
 //!
 //! Scope boundary: this crate is for ordinary Euclidean convex geometry in
 //! ambient `R^4`, including lower-dimensional polytopes in affine subspaces of
@@ -29,7 +29,10 @@ pub use polar::{
     polar_vertices_exact_rational, polar_vertices_exact_rational_assuming_origin_interior,
     PolarVerticesExact,
 };
-pub use predicates::{all_points_are_extreme_exact, origin_in_interior_of_conv_exact};
+pub use predicates::{
+    all_points_are_extreme_exact, orient4_sign_f64, origin_in_interior_of_conv_exact,
+    origin_in_interior_of_conv_f64, CertifiedSign, OriginInteriorF64,
+};
 pub use random::sample_random_dual_vertices_f64;
 pub use volume::{
     facet_volume_and_centroid_from_incidence_f64, facet_volume_from_incidence_f64,
