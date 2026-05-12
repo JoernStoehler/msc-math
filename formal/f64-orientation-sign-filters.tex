@@ -1,0 +1,216 @@
+% formal/f64-orientation-sign-filters -- f64 error bounds for 4D orientation predicates
+%
+% Labels defined here:
+%   def:f64-orient-gamma,
+%   lem:f64-orient-product-error,
+%   lem:f64-orient-det-error,
+%   prop:f64-orient4-sign-filter,
+%   alg:f64-origin-interior-triple-filter
+%
+% Status: agent-written proof note, unapproved by Jorn. The proof covers exact
+% f64 inputs interpreted as real numbers. It does not justify using rounded f64
+% values as proxies for separate exact rational inputs.
+
+\providecommand{\fl}{\operatorname{fl}}
+
+\subsection{f64 orientation sign filters}
+
+The primitive covered here is
+\[
+  \texttt{orient4\_sign\_f64}(M)
+  \in \{\textsc{positive},\textsc{negative},\textsc{indeterminate}\}
+\]
+for a finite f64 matrix $M\in\mathbb{F}^{4\times4}$, interpreted as an exact
+real matrix.  The certified outputs mean
+\[
+  \textsc{positive}\Rightarrow \det(M)>0,\qquad
+  \textsc{negative}\Rightarrow \det(M)<0.
+\]
+\textsc{Indeterminate} makes no claim.
+
+\begin{definition}[Floating point error notation]\label{def:f64-orient-gamma}
+Let $u=2^{-53}$ and $\gamma_k=ku/(1-ku)$ for $ku<1$.
+We use the standard model
+\[
+  \fl(x\circ y)=(x\circ y)(1+\delta),\qquad |\delta|\le u,
+\]
+for $\circ\in\{+,-,\times\}$ only when the operation returns a finite normal f64
+number or exact zero.  The Rust diagnostic returns \textsc{indeterminate} if an
+input or intermediate value is non-finite or a nonzero subnormal.  If a
+multiplication of two nonzero values rounds to zero, it also returns
+\textsc{indeterminate}.  If an addition rounds to zero, the Rust code accepts
+it only when the two f64 summands are exact negatives, so the real result of
+that f64 addition is also zero.
+\end{definition}
+
+\begin{lemma}[Four-factor product]\label{lem:f64-orient-product-error}
+Let $p=x_1x_2x_3x_4$ and compute
+\[
+  \hat p=\fl(\fl(\fl(x_1x_2)x_3)x_4).
+\]
+Under Definition~\ref{def:f64-orient-gamma},
+\[
+  \hat p=p(1+\theta_3),\qquad |\theta_3|\le\gamma_3.
+\]
+\end{lemma}
+
+\begin{proof}
+Compose the three multiplication roundoff factors and use the standard
+$\gamma$-calculus bound.
+\end{proof}
+
+\begin{lemma}[Leibniz determinant error]\label{lem:f64-orient-det-error}
+Let
+\[
+  \det(M)=\sum_{\pi\in S_4}\operatorname{sgn}(\pi)
+    \prod_{i=0}^3 M_{i,\pi(i)}
+\]
+and let $\widehat{\det}$ be computed by evaluating the 24 four-factor products
+as in Lemma~\ref{lem:f64-orient-product-error}, applying the signs exactly, and
+summing the signed terms sequentially.  Let
+\[
+  P(M)=\sum_{\pi\in S_4}\prod_{i=0}^3 |M_{i,\pi(i)}|.
+\]
+Then
+\[
+  |\det(M)-\widehat{\det}|\le\gamma_{26}P(M).
+\]
+\end{lemma}
+
+\begin{proof}
+Each product contributes at most $\gamma_3$ relative error.  Sequentially
+summing 24 signed terms contributes at most $\gamma_{23}$.  Composition gives
+$\gamma_{3+23}=\gamma_{26}$.  Taking absolute values over the 24 exact product
+magnitudes gives the stated bound; cancellation in the determinant does not
+affect the bound because $P(M)$ is an absolute sum.
+\end{proof}
+
+\begin{proposition}[Computable sign filter]\label{prop:f64-orient4-sign-filter}
+The Rust implementation also computes $\widehat P$, the sequential f64 sum of
+the 24 rounded absolute products.  It then sets
+\[
+  \widehat E =
+    \max\{\,\operatorname{nextUp}(\fl(\fl(16\gamma_{26})\widehat P)),
+      \,\mathrm{minNormal}\,\}
+\]
+when $\widehat P>0$, and $\widehat E=0$ when $\widehat P=0$.  If the computation
+of $\widehat E$ overflows or is NaN, including the final upward step, the result
+is \textsc{indeterminate}.
+
+For all non-indeterminate executions,
+\[
+  |\det(M)-\widehat{\det}| \le \widehat E.
+\]
+Therefore the decisions
+\[
+\begin{array}{rcl}
+  \widehat{\det}>\widehat E &\Rightarrow& \textsc{positive},\\
+  \widehat{\det}<-\widehat E &\Rightarrow& \textsc{negative},\\
+  |\widehat{\det}|\le \widehat E &\Rightarrow& \textsc{indeterminate}
+\end{array}
+\]
+are sound.
+\end{proposition}
+
+\begin{proof}
+By Lemma~\ref{lem:f64-orient-product-error}, every exact absolute product is at
+most its rounded product divided by $1-\gamma_3$.  For the absolute-product
+sum, all summands are nonnegative.  In a non-indeterminate execution each
+positive intermediate sum is normal; a zero sum can occur only when all rounded
+absolute products seen so far are zero.  Therefore the standard summation bound
+applies to the nonzero case, and the zero case has $P(M)=\widehat P=0$ because
+nonzero products are not allowed to round to zero.  In the nonzero case, the
+exact sum of the rounded absolute products is at most
+$\widehat P/(1-\gamma_{23})$.  Hence
+\[
+  P(M)\le \frac{\widehat P}{(1-\gamma_3)(1-\gamma_{23})}.
+\]
+The computed value of $\gamma_{26}$ is formed from $26u/(1-26u)$ by one
+multiplication, one subtraction, and one division.  In a non-indeterminate
+execution it is therefore at least $(1-\gamma_3)\gamma_{26}$.  The two
+multiplications forming $16\widehat\gamma_{26}\widehat P$ introduce at worst
+another factor $(1-u)^2$ before the final rounded normal value is formed.
+The implementation then applies one upward successor step, so the returned
+normal bound is at least
+\[
+  16(1-\gamma_3)(1-u)^2\gamma_{26}\widehat P .
+\]
+It suffices to compare this with the previous bound for $P(M)$.  For
+$u=2^{-53}$,
+\[
+  16(1-\gamma_3)^2(1-u)^2(1-\gamma_{23}) > 15,
+\]
+because $\gamma_3<4u$ and $\gamma_{23}<24u$.  Consequently the factor 16
+dominates the use of $\widehat P$ in place of $P(M)$ and the final ordinary f64
+roundings; the upward successor is extra padding and is not needed for the
+displayed inequality.  If the rounded product for the bound is zero or subnormal, the
+implementation returns $\mathrm{minNormal}$; in that branch the mathematical
+product above is below the normal range, so the replacement is still
+conservative.  Thus $\widehat E\ge\gamma_{26}P(M)$.  The sign implications
+follow from
+$\det(M)\in[\widehat{\det}-\widehat E,\widehat{\det}+\widehat E]$.
+\end{proof}
+
+\begin{algorithm}[Origin-interior triple-normal f64 filter]
+\label{alg:f64-origin-interior-triple-filter}
+For each triple $(i,j,k)$ and each non-triple point $\ell$, classify
+\[
+  \det(a_i,a_j,a_k,a_\ell),
+\]
+which is the sign of $a_\ell$ against the triple normal, up to the fixed
+cross-product sign convention.
+
+For a fixed triple:
+\begin{itemize}
+\item if some non-triple point is certified positive and some non-triple point
+  is certified negative, the triple is certified nonseparating;
+\item if every non-triple point is certified positive, the triple certifies
+  $0\notin\operatorname{int}\operatorname{conv}\{a_1,\ldots,a_N\}$;
+\item if every non-triple point is certified negative, the triple certifies
+  $0\notin\operatorname{int}\operatorname{conv}\{a_1,\ldots,a_N\}$;
+\item otherwise the triple is indeterminate.
+\end{itemize}
+The whole filter returns certified \textsc{false} as soon as a separating
+triple is certified, certified \textsc{true} only when every triple is
+certified nonseparating, and \textsc{indeterminate} otherwise.
+\end{algorithm}
+
+\begin{proof}[Soundness]
+Every non-indeterminate sign is exact by
+Proposition~\ref{prop:f64-orient4-sign-filter}.  A triple with certified signs
+on both sides is not separating.  A triple with all non-triple points certified
+strictly on the same side gives a nonzero normal whose hyperplane through the
+origin supports all points on one side, so the origin is not interior.  All
+other cases return \textsc{indeterminate}.
+
+It remains to justify the certified \textsc{true} case.  Suppose, contrapositively,
+that $0$ is not in the interior of $K=\operatorname{conv}\{a_1,\ldots,a_N\}$.
+By the finite-dimensional separating hyperplane theorem, the cone
+\[
+  C=\{n\in\mathbb R^4:\langle n,a_i\rangle\ge 0\text{ for all }i\}
+\]
+contains a nonzero vector.  If the input has rank less than four, every
+$4\times4$ determinant formed from input rows is zero, so every triple-normal
+sign test is indeterminate and the algorithm cannot return \textsc{true}.
+
+Assume therefore that the input points span $\mathbb R^4$.  Then
+$C\cap(-C)=\{0\}$, so $C$ is a pointed polyhedral cone.  Choose an extreme ray
+$\mathbb R_{\ge0}n$ of $C$.  For a pointed cone in $\mathbb R^4$, the active
+constraints at an extreme ray span a codimension-one subspace: otherwise their
+orthogonal complement inside $\mathbb R^4$ would have dimension at least two,
+and the ray direction could be perturbed in two opposite directions while
+remaining in all active constraints, contradicting extremality.  Hence there
+are three linearly independent input points
+$a_i,a_j,a_k$ with
+\[
+  \langle n,a_i\rangle=\langle n,a_j\rangle=\langle n,a_k\rangle=0.
+\]
+The corresponding triple normal is a nonzero scalar multiple of $n$.  Since
+$n\in C$, all remaining input points lie in the same closed halfspace for that
+triple normal.  Thus their exact determinant signs cannot include both a
+strict positive and a strict negative sign.  The algorithm can certify a triple
+as nonseparating only by certifying strict signs on both sides, so this triple
+is not certified nonseparating.  Therefore a run that certifies every triple as
+nonseparating has no separating hyperplane through the origin, and so
+$0\in\operatorname{int}K$.
+\end{proof}

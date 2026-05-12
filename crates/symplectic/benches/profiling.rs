@@ -5,7 +5,7 @@
 
 use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion};
 use euclidean_polytopes::{
-    facet_intersection_is_nonempty_from_vertex_facet_incidence, polar_vertices_exact,
+    facet_intersection_is_nonempty_from_vertex_facet_incidence, polar_vertices_exact_rational,
     PolarVerticesExact,
 };
 use nalgebra::{DMatrix, Vector4};
@@ -68,7 +68,7 @@ fn construct_flat_geometry(dual_vertices: Vec<Vector4<f64>>) -> BenchGeometry {
     let PolarVerticesExact {
         vertex_facet_incidence,
         ..
-    } = polar_vertices_exact(&dual_vertices_exact_vectors);
+    } = polar_vertices_exact_rational(&dual_vertices_exact_vectors);
     let facet_intersection_is_nonempty =
         facet_intersection_is_nonempty_from_vertex_facet_incidence(&vertex_facet_incidence);
     let omega_signs = omega_signs_exact(&dual_vertices_exact_vectors);

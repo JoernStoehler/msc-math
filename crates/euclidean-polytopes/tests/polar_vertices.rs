@@ -1,5 +1,6 @@
 use euclidean_polytopes::{
-    origin_in_interior_of_conv_exact, polar_vertices_exact, PolarVerticesExact,
+    origin_in_interior_of_conv_exact, polar_vertices_exact,
+    polar_vertices_exact_rational_assuming_origin_interior, PolarVerticesExact,
 };
 use nalgebra::Vector4;
 use num_rational::BigRational;
@@ -38,6 +39,29 @@ fn assert_exact_set_eq(mut actual: Vec<Vector4<Q>>, mut expected: Vec<Vector4<Q>
     actual.sort_by(vector_cmp);
     expected.sort_by(vector_cmp);
     assert_eq!(actual, expected);
+}
+
+fn assert_polar_outputs_eq(actual: PolarVerticesExact<Q>, expected: PolarVerticesExact<Q>) {
+    fn sorted_rows(output: PolarVerticesExact<Q>) -> Vec<(Vector4<Q>, Vec<bool>)> {
+        let PolarVerticesExact {
+            vertices,
+            vertex_facet_incidence,
+        } = output;
+        let mut rows: Vec<_> = vertices
+            .into_iter()
+            .enumerate()
+            .map(|(row, vertex)| {
+                let incidence = (0..vertex_facet_incidence.ncols())
+                    .map(|col| vertex_facet_incidence[(row, col)])
+                    .collect();
+                (vertex, incidence)
+            })
+            .collect();
+        rows.sort_by(|left, right| vector_cmp(&left.0, &right.0));
+        rows
+    }
+
+    assert_eq!(sorted_rows(actual), sorted_rows(expected));
 }
 
 fn vector_cmp(left: &Vector4<Q>, right: &Vector4<Q>) -> std::cmp::Ordering {
@@ -233,6 +257,20 @@ fn redundant_input_point_does_not_change_exact_polar_vertices() {
 }
 
 #[test]
+fn rational_integer_scaled_path_matches_generic_checked_polar_on_named_fixtures() {
+    for points in [
+        simplex_vertices_exact(),
+        cube_vertices_exact(),
+        crosspolytope_vertices_exact(),
+    ] {
+        let generic = polar_vertices_exact(&points);
+        let integer_scaled = polar_vertices_exact_rational_assuming_origin_interior(&points);
+
+        assert_polar_outputs_eq(integer_scaled, generic);
+    }
+}
+
+#[test]
 #[should_panic(expected = "polar_vertices_exact requires 0 in int conv(vertices)")]
 fn polar_vertices_exact_panics_when_origin_is_not_interior() {
     let points = vec![
@@ -243,6 +281,19 @@ fn polar_vertices_exact_panics_when_origin_is_not_interior() {
     ];
 
     let _ = polar_vertices_exact(&points);
+}
+
+#[test]
+#[should_panic(expected = "polar_vertices_exact_rational requires 0 in int conv(vertices)")]
+fn polar_vertices_exact_rational_panics_when_origin_is_not_interior() {
+    let points = vec![
+        vq([1, 0, 0, 0]),
+        vq([0, 1, 0, 0]),
+        vq([0, 0, 1, 0]),
+        vq([0, 0, 0, 1]),
+    ];
+
+    let _ = euclidean_polytopes::polar_vertices_exact_rational(&points);
 }
 
 #[test]

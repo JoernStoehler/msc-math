@@ -1,6 +1,6 @@
 use euclidean_polytopes::{
     all_points_are_extreme_exact, facet_intersection_is_nonempty_from_vertex_facet_incidence,
-    origin_in_interior_of_conv_exact, polar_vertices_exact,
+    origin_in_interior_of_conv_exact, polar_vertices_exact_rational_assuming_origin_interior,
 };
 use nalgebra::{DMatrix, Vector4};
 use num_rational::BigRational;
@@ -48,7 +48,7 @@ impl HkoPolytopeCache {
             return None;
         }
 
-        let polar = polar_vertices_exact(&dual_vertex_vectors);
+        let polar = polar_vertices_exact_rational_assuming_origin_interior(&dual_vertex_vectors);
         let vertices = rational_vectors_to_arrays(&polar.vertices);
         let vertices_f64 = rational_vectors_to_f64(&polar.vertices);
         let facet_intersection_is_nonempty =

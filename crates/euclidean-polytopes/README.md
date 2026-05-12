@@ -54,6 +54,22 @@ pub fn all_points_are_extreme_exact<T: ExactScalar + 'static>(
     points: &[Vector4<T>],
 ) -> bool;
 
+pub enum CertifiedSign {
+    Positive,
+    Negative,
+    Indeterminate,
+}
+
+pub fn orient4_sign_f64(rows: [Vector4<f64>; 4]) -> CertifiedSign;
+
+pub enum OriginInteriorF64 {
+    True,
+    False,
+    Indeterminate,
+}
+
+pub fn origin_in_interior_of_conv_f64(points: &[Vector4<f64>]) -> OriginInteriorF64;
+
 pub struct PolarVerticesExact<T: ExactScalar + 'static> {
     pub vertices: Vec<Vector4<T>>,
     pub vertex_facet_incidence: DMatrix<bool>,
@@ -134,12 +150,20 @@ It asserts `facet_count >= 5` and finite `0 < h_min < h_max`. It does not
 construct a polytope, validate boundedness, or test non-redundancy.
 
 `polar_vertices_exact(vertices)` computes vertices of the normalized polar
-`{ y in R^4 : <v_i, y> <= 1 }`. It checks and panics on the required contract
-`0 in int conv(vertices)`. The input does not have to be non-redundant:
-redundant points only add redundant inequalities. Returned vertices are
-deduplicated by exact equality. It returns `PolarVerticesExact { vertices,
-vertex_facet_incidence }`; rows of the incidence matrix are returned polar
-vertices and columns are input facets.
+`{ y in R^4 : <v_i, y> <= 1 }`. It validates the required contract
+`0 in int conv(vertices)` exactly, then panics when validation rejects the
+input. The input does not have to be non-redundant: redundant points only add
+redundant inequalities. Returned vertices are deduplicated by exact equality.
+It returns `PolarVerticesExact { vertices, vertex_facet_incidence }`; rows of
+the incidence matrix are returned polar vertices and columns are input facets.
+
+`orient4_sign_f64(rows)` is a diagnostic sign filter for exact real values
+represented by normal finite or zero f64 inputs. `Positive` and `Negative`
+certify the exact determinant sign using the error bound in
+`formal/f64-orientation-sign-filters.tex`; `Indeterminate` makes no claim.
+`origin_in_interior_of_conv_f64(points)` applies that sign filter to
+triple-normal separation tests and returns only certified `True`/`False`
+answers, otherwise `Indeterminate`.
 
 `all_points_are_extreme_exact(points)` checks the stronger non-redundancy
 contract for a V-representation: every listed point must be an extreme point of
@@ -214,8 +238,6 @@ halfspace inequalities and duplicate status are decided exactly.
 The following operations are planned but their signatures are intentionally not
 fixed here:
 
-- approximate origin-interior diagnostics with all candidate 5-sets that may
-  contain zero;
 - approximate extreme-point/non-redundancy diagnostics for callers that need
   stable non-extreme witnesses or indeterminate witness subsets rather than
   tolerance guesses;
@@ -273,10 +295,11 @@ Define a local flat `struct` when output variables need names, especially for
 multi-output computations like `vertices` and `vertex_facet_incidence`.
 
 Exact combinatorial predicates should use `T: ExactScalar` and return `bool`.
-They may call the corresponding `f64` diagnostic function first and, when it
-returns an indeterminate case, check the listed candidates exactly until the
-answer is decided. Approximate `f64` helpers should stay separate and state
-their tolerance, error, and indeterminate semantics in their rustdoc.
+They may call a corresponding `f64` diagnostic function first only when the f64
+inputs are themselves the exact mathematical inputs or when the rounding error
+from another representation is separately bounded. Approximate `f64` helpers
+should stay separate and state their error-bound and indeterminate semantics in
+their rustdoc.
 
 ## Non-Goals
 
