@@ -101,9 +101,9 @@ standard user cache tree that cached containers preserve.
 The setup script also precompiles the Rust validation and experiment build
 paths used by web tasks:
 
-- library release test artifacts via `cargo test --release --lib --no-run`
-- library debug test artifacts via `cargo test --lib --no-run`
-- library clippy artifacts via `cargo clippy --lib --no-deps -- -D warnings`
+- symplectic release test artifacts via `cargo test -p symplectic --release --lib --no-run`
+- symplectic debug test artifacts via `cargo test -p symplectic --lib --no-run`
+- symplectic clippy artifacts via `cargo clippy -p symplectic --lib --no-deps -- -D warnings`
 - workspace release binaries via `cargo build --workspace --release --bins`
 - workspace debug binaries via `cargo build --workspace --bins`
 

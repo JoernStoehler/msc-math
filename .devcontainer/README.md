@@ -28,7 +28,7 @@ historical cloud prefix.
 
 Version policy in this container:
 - pinned for reproducibility: base image, Rust toolchain, Node.js package version, `uv`, Miniforge, SageMath
-- intentionally latest on rebuild: `code-tunnel`, Codex CLI, Claude Code
+- intentionally latest on recreate: `code-tunnel`, Codex CLI, Claude Code
 
 ### Access paths
 
@@ -112,7 +112,7 @@ Access methods (see Architecture section above):
 
 ## Bind mounts
 
-Persistent state survives container rebuilds via bind mounts from `/srv/devhome/` on the host:
+Persistent state survives container rebuilds via bind mounts from `/srv/devhome/` on the host and the named Docker volume listed below:
 
 | Host path | Container path | Purpose |
 |-----------|---------------|---------|
@@ -120,8 +120,10 @@ Persistent state survives container rebuilds via bind mounts from `/srv/devhome/
 | `/srv/devhome/.config/gh` | `~/.config/gh` | GitHub CLI auth |
 | `/srv/devhome/.cache/uv` | `~/.cache/uv` | Python dependency cache |
 | `/srv/devhome/.texlive2023` | `~/.texlive2023` | TeX cache |
+| `/srv/devhome/.texmf-var` | `~/.texmf-var` | TeX user generated files |
+| `/srv/devhome/.texmf-config` | `~/.texmf-config` | TeX user config |
 | `/srv/devhome/.bash_history_dir` | `~/.bash_history_dir` | Shell history |
-| `/srv/devhome/.vscode-cli` | `~/.vscode-cli` | VS Code tunnel auth |
+| Docker volume `msc-math-vscode` | `~/.vscode` | VS Code tunnel auth/state |
 
 ## Resource limits
 
@@ -139,6 +141,87 @@ bash .devcontainer/host-devcontainer-rebuild.sh
 This rebuilds the image and recreates the container. Bind-mounted state
 (`/srv/devhome/`) persists. Container-local state (installed packages not in
 the Dockerfile) is lost.
+
+## Maintenance Decisions
+
+### Before changing this environment
+
+Treat this devcontainer as shared infrastructure, not a scratch setup.
+
+Before editing `devcontainer.json`, `Dockerfile`, `post-create.sh`, or host
+scripts:
+
+- recover intent from this README, `.devcontainer/codex-cloud.md`, git history,
+  and the repo commands in `AGENTS.md`;
+- identify whether the change affects image rebuild cost, post-create runtime,
+  host filesystem state, Docker volumes, credentials, cache behavior, or tools
+  agents rely on;
+- compare at least the no-change option, Dockerfile option, post-create option,
+  host-bind option, and Docker-volume option when persistence or freshness is
+  involved;
+- do not remove or weaken existing setup behavior unless its reason is known or
+  the change is explicitly accepted after documenting the risk;
+- document accepted tradeoffs here, including rejected alternatives when the
+  wrong alternative would be tempting to future agents.
+
+### VS Code tunnel refresh
+
+`code-tunnel` is installed in the Dockerfile and refreshed again in
+`post-create.sh`.
+
+Reason:
+
+- the Dockerfile uses the VS Code "latest" URL, but Docker can reuse the cached
+  image layer and therefore keep an old `code-tunnel` binary;
+- forcing a Docker cache bust before the `code-tunnel` layer would also
+  invalidate later heavy layers such as Node, Sage, Rust, and cargo tools;
+- `postCreateCommand` runs when the container is recreated, so refreshing
+  `/usr/local/bin/code-tunnel` there updates the tunnel CLI without rebuilding
+  TeX/Sage/Rust layers.
+
+Cost:
+
+- each recreate downloads the VS Code CLI tarball once;
+- if that download fails, post-create fails loudly instead of silently keeping a
+  stale tunnel binary.
+
+The host rebuild script prints `code-tunnel --version` after recreate so the
+update is visible in the rebuild log.
+
+### Cache persistence
+
+Do not add new `/srv/devhome` host paths or Docker volumes just to preserve
+ordinary rebuild caches such as Cargo registry, npm cache, pre-commit hook
+envs, or Matplotlib cache.
+
+Reason:
+
+- those caches are convenience state, not valuable auth/runtime state;
+- extra host paths or Docker volumes add hidden state that future agents must
+  understand, clean up, and debug;
+- local Cargo build artifacts already persist in the repo-local ignored
+  `target/` directory unless the workspace itself is deleted;
+- Codex web has a separate documented `CARGO_TARGET_DIR` policy because its
+  checkout/cache behavior is different from the local devcontainer.
+
+Current persistence is intentionally limited to auth/runtime state and caches
+that were already part of the host contract: Claude, Codex, GitHub CLI, uv,
+TeX user trees, bash history, and the existing VS Code state volume.
+
+### Codex web Rust validation target
+
+The Codex web warmup and smoke scripts target the current `symplectic` package
+from the workspace root.
+
+Reason:
+
+- older scripts referred to `${ROOT_DIR}/library`, which no longer exists after
+  the repo layout migration;
+- `.devcontainer/codex-cloud.md` already describes the Rust validation path as
+  `crates/symplectic` and the qhull dependency as
+  `crates/symplectic/src/geom/qhull.rs`;
+- using `cargo ... -p symplectic` from the workspace root avoids depending on a
+  particular crate directory layout.
 
 ## SageMath In The Local Devcontainer
 

@@ -12,7 +12,7 @@ Ensures the devcontainer is running, then starts the tunnel.
 
 Requires:
   - devcontainer CLI (npm i -g @devcontainers/cli)
-  - code-tunnel binary in the container (baked into image)
+  - code-tunnel binary in the container (baked into image, refreshed by post-create.sh)
 
 Environment:
   CODE_TUNNEL_BIN  Path to code-tunnel binary (default: /usr/local/bin/code-tunnel)

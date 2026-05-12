@@ -32,4 +32,7 @@ devcontainer build --workspace-folder "${REPO_ROOT}" --config "${CONFIG_FILE}" "
 echo "[host-devcontainer-rebuild] Starting devcontainer (replacing existing container if present)..."
 devcontainer up --workspace-folder "${REPO_ROOT}" --config "${CONFIG_FILE}" --remove-existing-container
 
+echo "[host-devcontainer-rebuild] code-tunnel version after rebuild:"
+devcontainer exec --workspace-folder "${REPO_ROOT}" --config "${CONFIG_FILE}" -- code-tunnel --version || true
+
 echo "[host-devcontainer-rebuild] Devcontainer rebuild complete."

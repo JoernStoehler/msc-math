@@ -72,7 +72,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     trash-cli \
     && rm -rf /var/lib/apt/lists/*
 
-# VS Code tunnel CLI (bake into image to avoid slow postCreate download)
+# VS Code tunnel CLI. post-create.sh refreshes this on container recreate
+# because this Docker layer can be cached even when the "latest" URL changes.
 RUN set -eux; \
     tmpdir="$(mktemp -d)"; \
     curl -fsSL "https://update.code.visualstudio.com/latest/cli-linux-x64/stable" -o "$tmpdir/vscode-cli.tar.gz"; \

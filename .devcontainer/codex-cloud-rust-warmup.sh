@@ -46,22 +46,22 @@ mkdir -p "${CARGO_TARGET_DIR}"
 
 echo "[codex-cloud-rust-warmup] Cargo target dir: ${CARGO_TARGET_DIR}"
 
-echo "[codex-cloud-rust-warmup] Warming Rust release test artifacts..."
+echo "[codex-cloud-rust-warmup] Warming symplectic release test artifacts..."
 (
-  cd "${ROOT_DIR}/library"
-  cargo test --release --lib --no-run
+  cd "${ROOT_DIR}"
+  cargo test -p symplectic --release --lib --no-run
 )
 
-echo "[codex-cloud-rust-warmup] Warming Rust debug test artifacts..."
+echo "[codex-cloud-rust-warmup] Warming symplectic debug test artifacts..."
 (
-  cd "${ROOT_DIR}/library"
-  cargo test --lib --no-run
+  cd "${ROOT_DIR}"
+  cargo test -p symplectic --lib --no-run
 )
 
-echo "[codex-cloud-rust-warmup] Warming Rust clippy artifacts..."
+echo "[codex-cloud-rust-warmup] Warming symplectic clippy artifacts..."
 (
-  cd "${ROOT_DIR}/library"
-  cargo clippy --lib --no-deps -- -D warnings
+  cd "${ROOT_DIR}"
+  cargo clippy -p symplectic --lib --no-deps -- -D warnings
 )
 
 echo "[codex-cloud-rust-warmup] Warming workspace release binaries..."

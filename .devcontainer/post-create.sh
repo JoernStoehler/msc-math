@@ -18,6 +18,16 @@ sudo chown -R "${USER}:${USER}" \
 # Fix ownership of Docker volume mounts (created as root by default)
 sudo chown "${USER}:${USER}" "${HOME}/.vscode" 2>/dev/null || true
 
+# Refresh VS Code tunnel CLI on every container recreate. The Dockerfile also
+# bakes a copy into the image, but that layer can be cached across rebuilds.
+tmpdir="$(mktemp -d)"
+trap 'rm -rf "$tmpdir"' EXIT
+curl -fsSL "https://update.code.visualstudio.com/latest/cli-linux-x64/stable" -o "$tmpdir/vscode-cli.tar.gz"
+tar -xzf "$tmpdir/vscode-cli.tar.gz" -C "$tmpdir"
+sudo install -m 0755 "$tmpdir/code" /usr/local/bin/code-tunnel
+rm -rf "$tmpdir"
+trap - EXIT
+
 # Configure npm paths and install global packages
 if command -v npm >/dev/null 2>&1; then
   mkdir -p "${HOME}/.local/bin" "${HOME}/.cache/npm"

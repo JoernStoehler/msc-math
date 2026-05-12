@@ -84,16 +84,16 @@ fi
 echo "[codex-cloud-smoke] Verifying Git LFS..."
 git lfs version >/dev/null
 
-echo "[codex-cloud-smoke] Running library tests..."
+echo "[codex-cloud-smoke] Running symplectic library tests..."
 (
-  cd "${ROOT_DIR}/library"
-  cargo test --release --lib
+  cd "${ROOT_DIR}"
+  cargo test -p symplectic --release --lib
 )
 
-echo "[codex-cloud-smoke] Running library clippy..."
+echo "[codex-cloud-smoke] Running symplectic library clippy..."
 (
-  cd "${ROOT_DIR}/library"
-  cargo clippy --lib -- -D warnings
+  cd "${ROOT_DIR}"
+  cargo clippy -p symplectic --lib -- -D warnings
 )
 
 echo "[codex-cloud-smoke] Building representative experiment binary..."
