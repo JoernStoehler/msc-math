@@ -9,7 +9,7 @@ phase-2 repo/Jorn state maps.
 ## Status
 
 - State: map-input.
-- Last updated: 2026-05-05.
+- Last updated: 2026-05-14.
 - Source surfaces: `thesis/`, `research/INDEX.md`, `research/*.md`,
   `tasks/*.md`, `tasks/verify-thesis-done.md`, `tasks/MAP.md`.
 - Refresh when: thesis structure, retained claim set, or advisor feedback
@@ -63,6 +63,14 @@ phase-2 repo/Jorn state maps.
   Source: Jorn after Kai meeting.
   Why it matters: prevents the numerics appendix from expanding into a main
   chapter.
+- [accepted 2026-05-14] Remaining work should be structured writeup-first, then
+  maintenance follows from the settled writeup surfaces.
+  Source: Jorn.
+  Why it matters: code cleanup, exact-path polish, f64-path polish, tests,
+  profiling, and documentation should serve the thesis claims that remain after
+  writing, not reopen broad trust or performance programs. The current
+  numerical target is trusted enough to rerun experiments properly; stronger
+  certification is retained only where the thesis text depends on it.
 
 ## Work Map
 
@@ -70,6 +78,7 @@ phase-2 repo/Jorn state maps.
 | --- | --- | --- | --- | --- | --- |
 | Planned thesis TOC | `[done]` | map input | Jorn with Kai | Use `thesis/planned-toc.md` as the current structure. Resolve its inline `OUTLINE GAP`, `TOC DECISION`, and `WRITER-SESSION QUESTION` comments during the relevant chapter writer sessions. | `thesis/planned-toc.md` |
 | Thesis structure | `[done]` | map input | Jorn/Kai | Keep the meeting-derived structure unless advisor feedback or chapter drafting exposes a real conflict. | `thesis/planned-toc.md`, `tasks/verify-thesis-done.md` |
+| Writeup-first closeout sequence | `[active]` | mainline thesis | agents then Jorn review | Draft the algorithm/method contract first: dual-vertex validity and vertex enumeration; exact arithmetic philosophy; f64/trinary/indeterminate philosophy; test/evidence philosophy; capacity algorithm from valid dual vertices. After that, route code maintenance only for mismatches with the settled writeup. | `thesis/planned-toc.md`, `tasks/numerics.md`, `thesis/migration-findings.md` |
 | Writer-ready boundary | `[map-input]` | map input | Jorn + chapter writers | For each chapter, start from `thesis/planned-toc.md`; turn its inline questions into the chapter's local write plan before drafting prose. | `thesis/planned-toc.md`, migrated tracker history |
 | Thesis/code mismatch packet routing | `[map-input]` | map input | agents | Before using existing algorithm/numerics/tube prose as TOC leaves, route the 15 rows in `thesis/migration-findings.md` to thesis-side fix, code/comment fix, future/cut, or Jörn decision. | `thesis/migration-findings.md`, `tasks/numerics.md`, `tasks/infrastructure.md` |
 | Generic sys first-order section | `[active]` | mainline thesis | agents then Jorn math | Expand the committed unapproved draft into a readable generic-case section: list the concrete open dense row-chart assumptions, prove smooth local behavior on those chambers, and defer non-generic active-germ/cell-decomposition behavior to a later boundary chapter. | `thesis/sys-first-order-regular-case.tex`, `research/sys-first-order-local-behavior.md`, `tasks/sys-first-order.md` |

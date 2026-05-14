@@ -92,6 +92,14 @@ Content:
 - polytopes in `R^4`
 - duality between convex hulls of finite sets and bounded intersections of half-spaces
 - polytopes containing zero: the dual polytope with dual vertices
+- validity checks for a proposed finite dual-row set:
+  `{a_k}` must be exactly the extremal points of `conv {a_k}`, and
+  the intersection `{x : <a_k,x> <= 1}` is bounded exactly when
+  `0 in int conv {a_k}`.
+- algorithmic construction of the primal vertex set from valid dual vertices.
+  Incidence of a primal vertex with a facet is then the defining equality
+  `<a_i,x> = 1`; precomputing incidence is useful for later algorithms but is
+  not a separate mathematical assumption.
 - support and gauge functions
 - the face lattice, names
 - Convex bodies, Convex smooth bodies, Hausdorff distance
@@ -187,6 +195,11 @@ objective, and reconstruction of the orbit.
 <!-- OUTLINE GAP: Spell out the problem in the ToC: sigma/orbit word, beta
      constraints, quadratic objective including normalization/factor convention,
      admissibility conditions, and orbit reconstruction formula. -->
+The input contract should be explicit: the dual rows are already checked to be
+extremal and bounded in the sense of the polytope preliminaries. The capacity
+algorithm may use the computed primal vertex set and vertex--facet incidence
+for feasibility and pruning, but mathematical correctness is the HK2019
+finite-search statement plus the preceding validity checks.
 
 ### Correctness
 
@@ -203,6 +216,10 @@ or for understanding later experiments.
 <!-- OUTLINE GAP: Name the optimizations to discuss. Candidate list:
      partial-word enumeration, pruning/admissibility checks, KKT solve,
      repeated/tied minimizer handling, and accumulator/certainty status. -->
+Separate correctness from implementation speed: incidence tables, cached
+symplectic products, ordered candidate generation, tracing, profiling, and
+benchmarking explain why the experiments can be run, not why the theorem is
+true.
 
 ### Empirical tests
 
@@ -211,6 +228,11 @@ knobs outside the main reading path.
 <!-- OUTLINE GAP: Name the test families and what each is supposed to catch:
      known polytopes, HK2017-vs-CH2021 comparison, exact/f64 spot checks,
      orbit recovery, and regression tests for past bugs. -->
+State the testing philosophy once: whenever a believed statement is precise
+enough to be formalized and cheap enough to exercise, write it as an automated
+test. Typical patterns are known examples, finite sampled families, randomized
+polytopes satisfying a predicate, exact-vs-f64 comparisons, and regression
+tests for previously found bugs.
 
 ## Flow-Graph Algorithm Based On CH2021
 
@@ -521,14 +543,32 @@ not more. Detailed proofs and intermediate bounds belong in the appendix.
 
 Content:
 
-- Exact algebraic fallback.
-- Empirical error measurements.
-- Proven error bounds.
+- Exact arithmetic path: rational or algebraic data is used to implement the
+  mathematically meaningful helper operations slowly but without numerical
+  error. These helpers are separated so that later computations can reuse them
+  instead of re-encoding the same mathematics.
+- Floating-point fast path: the same mathematical algorithms are mapped to
+  `f64` linear algebra where this is practical, but discontinuous predicates
+  are treated as trinary `true`, `false`, or `indeterminate` decisions with
+  error margins.
+- Error handling boundary: `indeterminate` means the numerical evidence is not
+  strong enough to decide the mathematical predicate. This is distinct from
+  invalid input errors and from unrecovered assertion failures.
+- Logical use of indeterminate values: use cancellations such as
+  `false and indeterminate = false`, and simplify searches only from decided
+  values. Do not claim a relational abstract interpreter; relations such as
+  two individually indeterminate predicates whose disjunction is forced true
+  are outside the current method unless a retained proof adds them.
+- Empirical error measurements and exact comparisons, especially where the f64
+  path is used to rerun experiments.
+- Proven error bounds only at the strength needed by retained thesis claims.
 
 Writing note:
 do not mix numerical-analysis language into symplectic definitions or exact
 algorithm proofs. Treat numerics as a later support layer after the exact
-mathematical computation story.
+mathematical computation story. The current goal is trusted enough numerics to
+rerun the experiments properly; stronger numerical certification should be
+written and implemented only when the settled thesis text needs it.
 
 ## Published Code And Data
 
@@ -549,6 +589,11 @@ Content:
 <!-- TOC DECISION: The thesis should not become the run manual. "How to read
      this" and "how to run this" live in the repo. The repo promises
      reproducibility via Docker. -->
+- Maintenance philosophy: code clarity wins by default; optimize only when
+  tracing, profiling, benchmarking, or final consumers show that performance is
+  material for a retained thesis computation. Maintenance after writeup should
+  repair thesis/code mismatches, missing tests, reproducibility gaps, and
+  profiling evidence that matters for the final experiments.
 <!-- WRITER-SESSION QUESTION: Fill archive-site names and exact reproducibility
      promise when submission/archive mechanics are known. -->
 
