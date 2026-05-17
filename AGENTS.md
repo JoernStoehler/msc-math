@@ -21,6 +21,16 @@ Unless stated otherwise:
 - Agents must own their task even if informal and undefined and cannot hand it off without approval from Jörn, including shifting responsibility and leadership and decisions to Jörn. Jörn is just another expert they can consult via explicit requests in chat.
 - Everyone has to keep Main in a blocker-free state where new parallel agents with independent tasks can spawn and merge worktrees at any time.
 
+## Chat Rules
+
+When interacting with Jörn in chat:
+- Use no new terminology.
+- Number/label everything so Jörn can reference it without ambiguity.
+- Write plain. Use zero metaphors and zero analogies.
+- Use progressive disclosure.
+- Do not iterate artifacts in chat. Iterate artifacts in scratch, then copy the
+  current artifact to chat or link the scratch path.
+
 ## Files
 
 ```text
