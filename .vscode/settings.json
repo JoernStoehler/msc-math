@@ -27,6 +27,9 @@
 	"claudeCode.useCtrlEnterToSend": true,
 	"workbench.editor.wrapTabs": true,
 	"workbench.editor.showTabs": "multiple",
+	"workbench.colorCustomizations": {
+		"sideBar.background": "#FFFFFF"
+	},
 	"editor.tokenColorCustomizations": {
 		"comments": "#008000",
 		"textMateRules": [
