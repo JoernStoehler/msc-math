@@ -68,6 +68,7 @@ justify calendar delay and Jorn-time cost.
 | --- | --- | --- |
 | Verify thesis done | compact final gate run after topic, writing, reproducibility, and repeated verification passes stop finding blockers | `tasks/verify-thesis-done.md` |
 | Submission and archive | external-clock actions, forms, Zenodo/arXiv/outreach, final archive | `tasks/submit-thesis.md` |
+| Codex capability | project-local capability evidence, failure modes, and planning controls for assigning work to GPT-5.5/Codex agents | `tasks/codex-capability.md` |
 | Writing | thesis structure, writer-ready boundary, figures, final prose gates | `tasks/writing.md` |
 | HKO | HKO2024 theorem/evidence/blocker split and exact-Clarke route | `tasks/hko.md` |
 | Sys first-order | arbitrary-polytope first-order theorem/evaluator gap for `sys` | `tasks/sys-first-order.md` |
