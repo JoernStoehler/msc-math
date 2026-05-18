@@ -30,6 +30,8 @@ When interacting with Jörn in chat:
 - Use progressive disclosure.
 - Do not iterate artifacts in chat. Iterate artifacts in scratch, then copy the
   current artifact to chat or link the scratch path.
+- Final summaries should list review passes performed, including review
+  subagents used or intentionally not used.
 
 ## Files
 
@@ -105,8 +107,8 @@ When interacting with Jörn in chat:
 |   `-- scripts/
 |-- .codex/
 |   |-- agents/<agent>.toml
-|   |-- config.toml
-|   `-- worktrees/
+|   `-- config.toml
+|-- .worktrees/
 |-- .devcontainer/
 |   |-- README.md
 |   |-- codex-cloud.md
@@ -114,7 +116,6 @@ When interacting with Jörn in chat:
 |   |-- Dockerfile
 |   `-- *.sh
 |-- scripts/
-|   |-- codex-worktree.sh
 |   `-- toc.sh
 `-- /tmp/  (outside repo)
 ```
@@ -139,7 +140,9 @@ When interacting with Jörn in chat:
 - `.codex/agents/`: repo-local subagent templates (optional).
 - Harness files (`AGENTS.md`, `.agents/skills/**`, `.codex/agents/**`) are
   frozen unless Jörn explicitly asks for a harness edit.
-- `.codex/worktrees/`: isolated worktrees for independent agent sessions.
+- `.worktrees/`: ignored local worktrees for independent agent sessions. Use
+  the command recipe below to create them. Use `$git-worktrees-merge` for
+  branch, cleanup, merge-readiness, or conflict work.
 - `.devcontainer/`: local devcontainer with documentation.
 - `scripts/`: small repo helper commands.
 - `/tmp/`: scratch space for subagent prompts, iterative drafts, and
@@ -157,12 +160,7 @@ They are not authoritative sources, and can be regenerated via subagent.
 - `experiments/MAP.md`: tree of experiments and current status.
 - `thesis/MAP.md`: chapter structure and current status.
 
-## Review
-
-Final summaries should list review passes performed, including review subagents
-used or intentionally not used.
-
-## Commands
+## Environments
 
 Supported environments:
 - Local devcontainer at `/workspaces/msc-math`: full baseline environment with
@@ -170,12 +168,17 @@ Supported environments:
 - Codex web environment: lower-complexity environment for web sessions. See
   `.devcontainer/codex-cloud.md`; TeX is intentionally out of scope there.
 
-Quick commands:
+## Commands
 
 ```bash
 # Harness and maps
 git diff --check
 bash scripts/toc.sh AGENTS.md MAP_OR_TASK_FILE.md
+
+# Local worktrees
+git worktree add .worktrees/NAME BRANCH
+cd .worktrees/NAME && git lfs checkout
+# Run targeted `git lfs pull --include PATH` only when a required LFS object is missing.
 
 # Rust crates
 cargo fmt --check
