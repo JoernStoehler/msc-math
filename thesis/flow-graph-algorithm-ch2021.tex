@@ -1,0 +1,53 @@
+% Scaffold copied from thesis/planned-toc.md.
+% This file intentionally contains headings and local TODO/context comments only.
+% Old thesis prose lives in thesis/legacy/ as source material.
+
+\section{Flow-Graph Algorithm Based On CH2021}\label{sec:flow-graph-algorithm-ch2021}
+%
+% Purpose:
+% present the second minimizer-search algorithm. This is expected to substitute
+% for HK2017 in practical minimizer search once finished.
+% <!-- NAMING DECISION: At first use, call this "Flow-Graph Algorithm Based On
+%      CH2021". After first use, drop "Based On CH2021" and use the algorithmic
+%      name. The separate tube picture may still be useful in the definition,
+%      because it describes the objects operated on, but it does not by itself
+%      say that the algorithm intersects tubes or chooses which tubes to build. -->
+% <!-- WRITER-SESSION QUESTION: After the flow-graph/tube branch lands, decide the
+%      final name, what tube objects appear in the exposition, and which proof
+%      and test claims are included. -->
+%
+\subsection{Definition}\label{subsec:flow-graph-algorithm-ch2021-definition}
+%
+% Define the algorithm in the current thesis notation.
+% <!-- OUTLINE GAP: Replace this with the concrete CH2021/tube objects:
+%      input polytope, face graph, tube, primitive tube, tube intersection,
+%      action restriction, closed-loop fixed points, and output orbit/capacity. -->
+%
+% Writing note:
+% use the current mathematical source for the tube/CH2021-style algorithm, not
+% stale old thesis text.
+%
+\subsection{Correctness}\label{subsec:flow-graph-algorithm-ch2021-correctness}
+%
+% Prove the algorithm computes the same target as the HK2017 formulation under
+% the stated assumptions.
+% <!-- OUTLINE GAP: Name the assumptions and proof steps: exhaustive simple-word
+%      search, pruning claims used or not used, fixed-point solving, and
+%      comparison with the generalized Reeb orbit definition. -->
+%
+\subsection{Performance optimization}\label{subsec:flow-graph-algorithm-ch2021-performance-optimization}
+%
+% Explain the performance improvements that make the algorithm useful in the
+% thesis computations.
+% <!-- OUTLINE GAP: Name the concrete improvements once the implementation is
+%      finished: what is asymptotically or practically avoided compared to
+%      HK2017, and which pruning/search choices are actually used. -->
+%
+\subsection{Empirical tests}\label{subsec:flow-graph-algorithm-ch2021-empirical-tests}
+%
+% State comparison tests against HK2017 and any targeted tests for the algorithm's
+% own objects.
+% <!-- OUTLINE GAP: Name expected tests: primitive maps, empty intersections,
+%      action restriction, fixed points, small examples against HK2017, and any
+%      HKO/regular-polygon cases used in the thesis. -->
+%

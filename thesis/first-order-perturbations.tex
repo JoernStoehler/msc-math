@@ -1,0 +1,46 @@
+% Scaffold copied from thesis/planned-toc.md.
+% This file intentionally contains headings and local TODO/context comments only.
+% Old thesis prose lives in thesis/legacy/ as source material.
+
+\section{Algorithm For First-Order Perturbations}\label{sec:first-order-perturbations}
+%
+% Purpose:
+% explain how local perturbations of a polytope are evaluated for gradient-like
+% search and for the HKO2024 local-maximum computation.
+%
+\subsection{Definition}\label{subsec:first-order-perturbations-definition}
+%
+% Define the first-order objects in the notation used by the rest of the thesis.
+% <!-- OUTLINE GAP: Name the objects: row-coordinate perturbation h, active
+%      orbit/word set, branch action, beta derivative or subgradient, volume
+%      derivative, and derivative of sys. -->
+%
+% Writing note:
+% introduce the generic case first because it is readable. Handle edge cases only
+% where the HKO computation or the thesis claims need them.
+% <!-- OUTLINE GAP: Decide the exact generic hypotheses to list here:
+%      positive dwell times, full-rank constraints, negative-definite reduced
+%      Hessian, unique active minimizer or finite active set, and fixed face
+%      combinatorics for volume. -->
+% <!-- WRITER-SESSION QUESTION: Decide while writing the chapter which
+%      non-generic cases matter for HKO2024. Do not attempt to cover every
+%      a-priori possible degeneracy unless it appears in, or is needed for, the
+%      HKO argument. -->
+%
+\subsection{Correctness}\label{subsec:first-order-perturbations-correctness}
+%
+% Prove the generic case cleanly. Add non-generic cases afterward as needed for
+% HKO2024 or for honest caveats.
+% <!-- OUTLINE GAP: Split into theorem statements: differentiability of one
+%      branch, derivative formula for capacity/action, derivative formula for
+%      volume, derivative/subgradient statement for sys, and separate caveat for
+%      ties or semidefinite cases. -->
+%
+\subsection{Empirical tests}\label{subsec:first-order-perturbations-empirical-tests}
+%
+% State the numerical checks that the implementation behaves as expected on the
+% examples used in the thesis.
+% <!-- OUTLINE GAP: Name the checks: finite-difference agreement, active-set
+%      stability, comparison to ascent behavior, and HKO-specific row/rank
+%      bookkeeping. -->
+%

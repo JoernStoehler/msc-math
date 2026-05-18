@@ -10,8 +10,8 @@
 %   lem:numerical-transition-feasibility (formal/ehz-kkt-system.tex),
 %   lem:q-error-bound (formal/ehz-kkt-system.tex)
 %
-% Sources: thesis/general-case-algorithm.tex,
-%   thesis/pruned-general-case-algorithm.tex
+% Sources: thesis/legacy/general-case-algorithm.tex,
+%   thesis/legacy/pruned-general-case-algorithm.tex
 
 % input by formal/main.tex — do not add \documentclass or \begin{document}
 
@@ -21,7 +21,7 @@
 
 \begin{algorithm}[EHZ capacity]\label{alg:ehz}
 % Jörn: text approved (06a976c)
-% Source: thesis/general-case-algorithm.tex
+% Source: thesis/legacy/general-case-algorithm.tex
 % Parameterization: K = {x : a_i^T x ≤ 1}, dual vertices a_i
 Computes $c_{\mathrm{EHZ}}(K)$ via exhaustive enumeration.
 
@@ -74,7 +74,7 @@ $c_{\mathrm{EHZ}}(K) = \bigl(\max_{S,\sigma} \beta^\top H \beta\bigr)^{-1}$.
 
 \begin{corollary}[Adjacency pruning]\label{cor:adjacency-pruning}
 % Jörn: text approved (0839595)
-% Source: thesis/pruned-general-case-algorithm.tex
+% Source: thesis/legacy/pruned-general-case-algorithm.tex
 In Algorithm~\ref{alg:ehz}, discard any
 $(S, \sigma)$ for which some consecutive pair
 $\sigma(k), \sigma(k{+}1)$ (cyclically) satisfies

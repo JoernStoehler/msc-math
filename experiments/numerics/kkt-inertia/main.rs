@@ -8,7 +8,7 @@
 //! KKT matrix inertia experiment.
 //!
 //! Validates Lemma lem:kkt-inertia (Inertia of the KKT matrix) from
-//! thesis/appendix-numerical.tex. The lemma states:
+//! thesis/legacy/appendix-numerical.tex. The lemma states:
 //!   n_+(M) = n_+(H|_T) + p,  n_0(M) = n_0(H|_T) + (5 - p),  n_-(M) = n_-(H|_T) + p
 //! where M is the KKT matrix, H|_T is the restricted Hessian on the tangent
 //! space T = ker(A), and p = rank(A).

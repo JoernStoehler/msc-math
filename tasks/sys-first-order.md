@@ -9,7 +9,7 @@ surface after the 2026-04-29 failed smooth-branch draft.
 ## Status
 
 - State: map-input.
-- Last updated: 2026-05-01.
+- Last updated: 2026-05-18.
 - Source surfaces: `papers/hk2017/EHZ-polytopes.tex`,
   `formal/capacity-smoothness-classification.tex`,
   `formal/capacity-boundary-subdifferential.tex`,
@@ -18,7 +18,8 @@ surface after the 2026-04-29 failed smooth-branch draft.
   `formal/hk2017-qp-core.tex`,
   `formal/hk2017-qp-precision.tex`,
   `research/sys-first-order-local-behavior.md`,
-  `thesis/sys-first-order-regular-case.tex`.
+  `thesis/first-order-perturbations.tex`,
+  `thesis/legacy/sys-first-order-regular-case.tex`.
 - Refresh when: an agent proves, refutes, or sharply weakens the
   compute-once first-order evaluator theorem; HKO proof wording starts relying
   on arbitrary-polytope first-order behavior; or an implementation claims exact
@@ -96,7 +97,7 @@ row is not handled, the verdict is not `PROVED`.
 | item | state | value class | owner/gate | next action | source |
 | --- | --- | --- | --- | --- | --- |
 | Theorem feasibility split | `[done]` | map input | agent | Broad status is `ONLY-HEAVY`; refresh only if a later source gives a readable exact active-germ theorem or a counterexample to the semialgebraic route. | `research/sys-first-order-local-behavior.md` |
-| Generic row-chart thesis section | `[active]` | mainline thesis | agents then Jorn math | Expand the committed draft into thesis-ready prose: define the concrete open dense conditions used so far, keep genericity separate from positivity/maximizer signs, prove local smoothness of feasible generic support maxima, and explain how the gradient of `sys` is computed. | `thesis/sys-first-order-regular-case.tex`; `research/sys-first-order-local-behavior.md` |
+| Generic row-chart thesis section | `[active]` | mainline thesis | agents then Jorn math | Expand the committed draft into thesis-ready prose: define the concrete open dense conditions used so far, keep genericity separate from positivity/maximizer signs, prove local smoothness of feasible generic support maxima, and explain how the gradient of `sys` is computed. | `thesis/first-order-perturbations.tex`; `thesis/legacy/sys-first-order-regular-case.tex`; `research/sys-first-order-local-behavior.md` |
 | Closed HK row-chart formalization | `[map-input]` | mainline thesis if theorem route retained | agents | State the closed Haim--Kislev capacity value problem in the row chart, including `beta >= 0`, actual facets versus listed rows, repeated/redundant inequalities, and the normalization between `(n_i,h_i)` and rows `a_i`. | `papers/hk2017/EHZ-polytopes.tex`; `formal/hk2017-qp-core.tex`; `formal/hk2017-qp-precision.tex`; `research/sys-first-order-local-behavior.md` |
 | Active-germ evaluator proof attempt | `[blocked]` | mainline thesis if feasible | theorem feasibility split | Try to prove a finite object `D(a)` that stores active closed optimizer/germ data and evaluates every direction `h` without re-solving the original HK problem. Do not insert smooth-branch assumptions as the main proof. | closed HK formalization |
 | Semialgebraic cell-decomposition fallback | `[map-input]` | contingent during writing or future/follow-up | agents then Jorn | Check whether quantifier elimination/cell decomposition gives a mathematically finite compute-once evaluator for `h -> Dsys_a(h)`, and record the complexity cost. This may be true but too large for a readable thesis theorem or usable algorithm. | semialgebraic/Lipschitz proof route |
@@ -141,7 +142,8 @@ row is not handled, the verdict is not `PROVED`.
   for all listed support/order candidates; `feasible generic support maximum`
   adds the signs needed for the HK quadratic maximum: positive dwell times,
   positive `Q`, and negative definite tangent quadratic form. Refresh by reading
-  `thesis/sys-first-order-regular-case.tex`.
+  `thesis/first-order-perturbations.tex` and
+  `thesis/legacy/sys-first-order-regular-case.tex`.
 
 ## Pruned / Stale
 

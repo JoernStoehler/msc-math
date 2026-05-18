@@ -40,8 +40,13 @@ When interacting with Jörn in chat:
 |-- thesis/
 |   |-- main.tex
 |   |-- *.tex
+|   |-- MAP.md
+|   |-- DEVELOPMENT.md
 |   |-- bibliography.bib
 |   |-- build/main.pdf
+|   `-- legacy/
+|       |-- README.md
+|       `-- *
 |-- crates/
 |   |-- MAP.md
 |   |-- symplectic/
@@ -120,6 +125,8 @@ When interacting with Jörn in chat:
 - `**/DEVELOPMENT.md`: maintainer-facing notes for changing internals.
 - `thesis/`: publishable thesis. Self-contained, assets and text are copied
   deliberately instead of linking to `experiments/`, `formal/`, etc.
+  `thesis/main.tex` inputs the active thesis scaffold. `thesis/legacy/`
+  contains source material only, not active thesis text.
 - `crates/`: internal Rust crates with stable code shared across experiments.
 - `formal/`: formalization and proofs for development, not for publication.
 - `experiments/`: Rust/Python experiment packages. Execution code, data,

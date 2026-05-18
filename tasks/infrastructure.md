@@ -9,7 +9,7 @@ Context: non-thesis-spine work should stay bounded during finish mode.
 
 - State: map-input for current harness review-reliability follow-up; future by
   default otherwise.
-- Last updated: 2026-05-08.
+- Last updated: 2026-05-18.
 - Source surfaces: `AGENTS.md`, `.codex/config.toml`, `.agents/skills/`,
   `.codex/agents/`, `crates/MAP.md`, `experiments/MAP.md`, `tasks/MAP.md`,
   `tasks/README.md`.
@@ -153,7 +153,7 @@ Context: non-thesis-spine work should stay bounded during finish mode.
 | Capacity/orbit API architecture | `[future]` | future/follow-up by default | retained claim impact | The flat migration deleted the shared geometry wrapper and exposed explicit KKT/orbit data dependencies. Do not promote broader APIs unless retained thesis/reproducibility needs them. | `crates/MAP.md`, `crates/symplectic/src/kkt/qp_assembly.rs`, `crates/symplectic/src/algorithms/orbit_search.rs` |
 | Experiment-to-library audit | `[future]` | future/follow-up by default | retained claim impact | Classify repeated helpers only when it unblocks validation, writeup, or agent navigation. | legacy library rows |
 | Codex migration/orchestration tests | `[future]` | future/follow-up | Jorn/tooling | Keep separate from thesis closeout unless current agents are blocked. | `.codex/`, legacy rows |
-| Rust convention label/proof wording | `[future]` | future/follow-up by default | harness discussion | Revisit only if invented labels or proof-in-doc-comment drift blocks current agents. The current mismatch packet reports that `rust-conventions` can be read as both "definitions, lemmas, and proofs live as doc comments" and "do not duplicate proofs inline". | `thesis/migration-findings.md`, old harness extraction: Rust convention candidate |
+| Rust convention label/proof wording | `[future]` | future/follow-up by default | harness discussion | Revisit only if invented labels or proof-in-doc-comment drift blocks current agents. The legacy-era mismatch inventory reports that `rust-conventions` can be read as both "definitions, lemmas, and proofs live as doc comments" and "do not duplicate proofs inline". | `thesis/legacy/migration-findings.md`, old harness extraction: Rust convention candidate |
 | SWE polish | `[future]` | future/follow-up | post-thesis | Defer broad code cleanup until thesis is no longer at risk. | legacy polish rows |
 
 ## Agent Cache
