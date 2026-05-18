@@ -1,0 +1,85 @@
+% Scaffold copied from thesis/planned-toc.md.
+% This file intentionally contains headings and local TODO/context comments only.
+% Old thesis prose lives in thesis/legacy/ as source material.
+
+\section{Black-Box Data-Science Tools Are Insufficient}\label{sec:black-box-datascience}
+%
+% Purpose:
+% state the negative search result: the attempted black-box and standard
+% data-science methods did not produce a second transferable high-`sys` regime.
+%
+% Writing note:
+% negative results can be stated in batches because many rows have the same
+% conclusion. The main text can use a table or bullet list.
+%
+\subsection{Algorithm for random polytopes}\label{subsec:black-box-datascience-algorithm-for-random-polytopes}
+%
+% State how random polytopes were generated and what search question this tests.
+% <!-- OUTLINE GAP: Name the generator, parameters, row counts, retained facets,
+%      normalization, and exact negative claim licensed by this sample. -->
+%
+\subsection{Algorithm for gradient ascent}\label{subsec:black-box-datascience-algorithm-for-gradient-ascent}
+%
+% State how local ascent was run and what search question this tests.
+% <!-- OUTLINE GAP: Name fixed-F/product/continuation variants, seed counts,
+%      stopping rules, escape logic, and whether the claim is only local-search
+%      negative evidence. -->
+%
+\subsection{Rows: polytopes}\label{subsec:black-box-datascience-rows-polytopes}
+%
+% Define the table rows used in the data-science attempts:
+% random polytopes, products, ascent endpoints, continuation endpoints, and any
+% other retained row families.
+% <!-- TOC DECISION: Rows are polytopes. Most rows come from random families and
+%      variants of gradient ascent applied to random polytopes; some may come
+%      from enumeration instead of randomization. Avoid mixing the non-black-box
+%      known HKO2024 `n=1` positive sample into the black-box data-science table,
+%      because methods can then memorize that one case without teaching us
+%      anything new. -->
+% <!-- WRITER-SESSION QUESTION: Finalize row families only when the data-science
+%      writer session starts or the branch stabilizes. The set is still dynamic. -->
+%
+\subsection{Columns: symplectic invariants and metadata}\label{subsec:black-box-datascience-columns-symplectic-invariants-and-metadata}
+%
+% Define the columns at the level needed to understand the result:
+% symplectic quantities, geometric features, orbit data, and metadata.
+% <!-- TOC DECISION: Columns are features of the polytopes. They include
+%      symplectic invariants, geometric/orbit features, and metadata. Metadata
+%      columns are useful caveats because a method may learn data provenance
+%      rather than geometry. -->
+%
+\subsection{Result types}\label{subsec:black-box-datascience-result-types}
+%
+% Use these result types in the main table or bullet list:
+%
+% - inapplicable;
+% - failed;
+% - negative;
+% - positive.
+%
+% Meaning:
+%
+% - `inapplicable`: the method does not meaningfully apply to the available data
+%   or search question.
+% - `failed`: the method could not be implemented cheaply enough, scaled enough,
+%   or supplied with enough data for a thesis-facing result.
+% - `negative`: the method ran and did not produce a useful search rule or new
+%   transferable high-`sys` regime.
+% - `positive`: the method produced a useful signal or candidate. Use only where
+%   the evidence actually supports this.
+% <!-- TOC DECISION: If a real positive result appears, report it honestly and
+%      escalate to Jorn. It may falsify the current "insufficient" main result
+%      and justify spending about another week to follow up toward a better
+%      result. Also filter obvious false positives, e.g. a model finding signal
+%      because `sys` was regressed against `sys`. -->
+%
+\subsection{Methods: data-science toolbox}\label{subsec:black-box-datascience-methods-data-science-toolbox}
+%
+% Batch the attempted, failed, and inapplicable methods. Put detailed figures,
+% tables, parameters, and method-specific notes in the data-science appendix.
+% <!-- TOC DECISION: Methods come from the data-science toolboxes we actually use
+%      and assign to Codex agents. The full set is still dynamic, so the final
+%      method list is needed before writing the table, not for the current ToC. -->
+% <!-- WRITER-SESSION QUESTION: Finalize the method list during the data-science
+%      chapter writer session. For now, keep the ToC generic. -->
+%

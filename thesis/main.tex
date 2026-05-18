@@ -1,7 +1,29 @@
-% main.tex — top-level thesis document
+% main.tex -- top-level thesis document
 %
-% Sources: none (structural file only)
-% Structure: preamble, title, abstract, TOC, chapter inputs
+% Sources: thesis/planned-toc.md was converted into the active scaffold.
+% Structure: preamble, title, abstract, TOC, planned section inputs.
+%
+% The active thesis is currently a scaffold. Most input files may contain only
+% headings, labels, and TODO/context comments. Old thesis prose that is no
+% longer input here lives in thesis/legacy/ as source material only.
+%
+% Writing targets:
+% - optimize for time, readability for Kai and Elizabeth, completeness of
+%   obtained results, correctness, and proof completeness where retained claims
+%   need it;
+% - spoil each section's point early so readers can see the claim, support,
+%   and caveat before reading details;
+% - keep execution status, ownership, commands, and final verification gates in
+%   tasks or research notes rather than in this structural file.
+%
+% Section planning test:
+% 1. Claim.
+% 2. Support.
+% 3. Caveat.
+% 4. Pointer to proof, artifact, or appendix.
+% This is a check, not a required format. Notation, orientation, summary
+% tables, soft intuition, and appendix reference material may need a
+% purpose/dependency/placement check instead.
 
 \documentclass[a4paper,12pt]{article}
 
@@ -42,32 +64,30 @@
 \maketitle
 
 \begin{abstract}
-\textit{(Deferred until experimental results are complete.)}
+\input{abstract}
 \end{abstract}
 
 \tableofcontents
 
-\section{Introduction}
-% [TODO: JÖRN - write introduction.
-%   Should cover: mathematical context, Viterbo's conjecture statement,
-%   HK2017 theorem, our computational approach, thesis structure overview.]
-
-\input{algorithms}
-
-% Draft, unapproved: generic-feasible first-order HK/sys section for review.
-\input{sys-first-order-regular-case}
-
-% No tube-algorithm section is currently included. Any future section should be
-% written from research/tube-algorithm-raw-jorn-2026-05-04.md and the current
-% source note.
-
-\input{proofs}
-
-\input{experiments}
+\input{introduction}
+\input{preliminaries}
+\input{generalized-reeb-orbits-polytopes}
+\input{quadratic-program-algorithm-hk2019}
+\input{flow-graph-algorithm-ch2021}
+\input{first-order-perturbations}
+\input{hko-local-maximum}
+\input{black-box-datascience}
+\input{rotated-regular-polygons}
+\input{visualization-3d}
+\input{numerics}
+\input{published-code-data}
+\input{use-of-ai}
+\input{conclusion}
 
 \appendix
-\input{appendix-numerical}
-\input{appendix-notation}
+\input{appendix-datascience-results}
+\input{appendix-numerics-proofs}
+\input{appendix-sagemath-computations}
 
 \FloatBarrier
 \printbibliography

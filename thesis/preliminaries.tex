@@ -1,0 +1,66 @@
+% Scaffold copied from thesis/planned-toc.md.
+% This file intentionally contains headings and local TODO/context comments only.
+% Old thesis prose lives in thesis/legacy/ as source material.
+
+\section{Preliminaries}\label{sec:preliminaries}
+%
+% Purpose:
+% - define the mathematical objects needed by later chapters.
+% - show the simple, robust way to think about the domain, not hacks.
+% - collapse notation and conventions that the literature isn't consistent about.
+%
+\subsection{Polytopes}\label{subsec:preliminaries-polytopes}
+%
+% Content:
+%
+% - polytopes in `R^4`
+% - duality between convex hulls of finite sets and bounded intersections of half-spaces
+% - polytopes containing zero: the dual polytope with dual vertices
+% - validity checks for a proposed finite dual-row set:
+%   `{a_k}` must be exactly the extremal points of `conv {a_k}`, and
+%   the intersection `{x : <a_k,x> <= 1}` is bounded exactly when
+%   `0 in int conv {a_k}`.
+% - algorithmic construction of the primal vertex set from valid dual vertices.
+%   Incidence of a primal vertex with a facet is then the defining equality
+%   `<a_i,x> = 1`; precomputing incidence is useful for later algorithms but is
+%   not a separate mathematical assumption.
+% - support and gauge functions
+% - the face lattice, names
+% - Convex bodies, Convex smooth bodies, Hausdorff distance
+% - The topological space of polytopes with a fixed number of facets.
+% - Example: HKO2024 as a ten-facet polytope.
+% - Algorithm: Volume of a polytope
+%
+\subsection{Smooth Symplectic Geometry}\label{subsec:preliminaries-smooth-symplectic-geometry}
+%
+% Content:
+%
+% - Standard symplectic structure and notation on `R^4`.
+% - Reeb vector fields for smooth convex bodies.
+% - Reeb trajectories and Reeb orbits.
+% - Action of a curve.
+% - Minimum action
+% - Cited without proof: existence of a Reeb orbit, existence of a minimum action
+% - Symplectic capacities.
+% - Cited without proof: Minimum action is a symplectic capacity.
+% - Viterbo's conjecture for smooth convex bodies.
+% - Continuity argument via scaling and Hausdorff distance.
+%
+\subsection{Clarke dual action principle}\label{subsec:preliminaries-clarke-dual-action-principle}
+%
+% Content:
+%
+% - State the principle at the level needed for the thesis.
+% <!-- TOC DECISION: Include the fleshed-out polished proof here. This is not just
+%      motivational background. The section should name the function space,
+%      action functional, minimizer/existence statement, and the conclusion used
+%      later for polytopes. -->
+% - Use it to justify the later finite computation story.
+% <!-- OUTLINE GAP: Say which later step it justifies: existence of a
+%      minimum-action orbit, reduction to a closed curve/action minimization
+%      problem, or the HK2017 finite optimization problem. -->
+% - Keep functional-analytic details only where they are needed for correctness.
+% <!-- TOC DECISION: Because the polished proof already exists, do not hide all
+%      functional-analytic details by default. Decide only how to pace the proof
+%      so it remains readable. -->
+%
