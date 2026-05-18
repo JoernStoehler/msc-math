@@ -530,3 +530,25 @@ or about how-to-write (A LOT of guide books memorized) -- but the issue is
 whether bad habits override gpt55's capabilities and lead to corner-cutting /
 slop / hallucinations / under- and overconfident claims / bad prioritization /
 etc
+
+## Follow-Up Process Answer On Writing Task Surfaces
+
+### Q1. Should task files keep tracking chapter work at all, or should thesis/*.tex TODOs become the only routing surface for writing tasks unless complexity forces a map layer back in?
+
+Jörn answer:
+
+i will probably use .tex files as the root surface, but tasks/*.md files can
+exist in addition and e.g. point at .tex or be pointed at by .tex ; reason: i
+don't want to squeeze everything into one format that may not be suitable.
+tasks/*.md for example is way nicer wrt colocating similar items in a tigher
+document, and wrt deviating from thesis prose style (agents soemtimes struggle
+to basically write 3 different styles in one file, switching between on a per
+paragraph / sentence basis). But the ultimate flow of motivation is thesis
+success => thesis state + thesis TODOs => work that needs to be done in the
+thesis, and in the rest of the repo, and externally (e.g. some TODO in some
+.tex file should mention that the thesis has to be submitted eventually).
+[$project-quality](/workspaces/msc-math/.agents/skills/project-quality/SKILL.md)
+is another thing that sort of tracks process knowledge, as does DEVELOPMENT.md,
+which isn't like a once-done task but augments many of the tasks by providing
+context and learnings and a default background with which to interpret the raw
+task descriptions

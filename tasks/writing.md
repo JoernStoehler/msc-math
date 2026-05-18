@@ -128,6 +128,14 @@ is source material under thesis/legacy/.
   live in `thesis/DEVELOPMENT.md`.
   Refresh by: reading `thesis/MAP.md`, `thesis/main.tex`, and the relevant
   scaffold file.
+- [fresh 2026-05-18] For writing work, `.tex` files are expected to be the root
+  surface, but `tasks/*.md` files may still track chapter work when they are the
+  clearer format. The direction of motivation is thesis success, then thesis
+  state and thesis TODOs, then work needed in the thesis, the rest of the repo,
+  or externally. `thesis/DEVELOPMENT.md` and `$project-quality` provide
+  background for interpreting raw task descriptions.
+  Refresh by: reading `thesis/DEVELOPMENT.md` section
+  "Follow-Up Process Answer On Writing Task Surfaces".
 
 ## Pruned / Stale
 
