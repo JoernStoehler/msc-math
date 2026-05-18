@@ -1,0 +1,4 @@
+interface:
+  display_name: "Clarify In Chat"
+  short_description: "Turn vague sessions into verifiable targets"
+  default_prompt: "Use $clarify-in-chat to turn this vague session into a verifiable target."
