@@ -8,7 +8,7 @@ Context: route-freeze surface for proof-vs-validation-vs-caveat decisions.
 ## Status
 
 - State: active.
-- Last updated: 2026-05-14.
+- Last updated: 2026-05-18.
 - Source surfaces: `research/numerics.md`,
   `research/numerics-error-bounds.md`, `experiments/numerics/`,
   `formal/`, `tasks/verify-thesis-done.md`,
@@ -67,8 +67,8 @@ Context: route-freeze surface for proof-vs-validation-vs-caveat decisions.
 | Projection solver | `[map-input]` | contingent during writing | Jorn math if retained | Use the projection/null-space solver as the candidate generic-route implementation story only if the thesis needs it. The old `OrbitSolveBackend::Projected` strategy surface was deleted; any revived route should be a flat solver with shared orbit payload and Q-bound contract. | `crates/symplectic/src/algorithms/orbit_search.rs`, `experiments/numerics/error-bounds/projection_solver.rs` |
 | Beta-LP unification | `[future]` | future/follow-up by default | Jorn math if retained | Keep as future unless needed for retained solver explanation. | legacy beta-LP row |
 | Solver formal writeup | `[map-input]` | contingent during writing | retained wording | Avoid full per-module formalization unless thesis text requires it. | `formal/`, `research/numerics-error-bounds.md` |
-| Algorithm/numerics mismatch triage | `[map-input]` | contingent during writing | agents then Jorn for theorem/prose choices | Route `thesis/legacy/migration-findings.md` rows 3-11 before relying on existing algorithm boxes or numerical appendix prose: multiplier names, KKT sign convention, Q factor, beta/eigen thresholds, accumulator references, `|S| >= 2`, billiard adjacency pruning, and tube closing-edge status. | `thesis/legacy/migration-findings.md`, `thesis/legacy/algorithms.tex`, `thesis/legacy/appendix-numerical.tex` |
-| Tube algorithm import | `[active]` | map input | Jorn proof, agents for routing | Write the current mathematical source from `research/tube-algorithm-raw-jorn-2026-05-04.md`, then write new thesis/formal/code surfaces from that source. Old tube thesis/formal/code surfaces were deleted from the active tree; use git history only if comparison is needed. | `research/tube-algorithm-raw-jorn-2026-05-04.md`, `research/tube-algorithm.md`, `thesis/legacy/migration-findings.md` rows 1 and 11-14 |
+| Algorithm/numerics mismatch triage | `[map-input]` | contingent during writing | agents then Jorn for theorem/prose choices | Route `thesis/migration-findings.md` rows 3-11 before relying on existing algorithm boxes or numerical appendix prose: multiplier names, KKT sign convention, Q factor, beta/eigen thresholds, accumulator references, `|S| >= 2`, billiard adjacency pruning, and tube closing-edge status. | `thesis/migration-findings.md`, `thesis/legacy/algorithms.tex`, `thesis/legacy/appendix-numerical.tex` |
+| Tube algorithm import | `[active]` | map input | Jorn proof, agents for routing | Write the current mathematical source from `research/tube-algorithm-raw-jorn-2026-05-04.md`, then write new thesis/formal/code surfaces from that source. Old tube thesis/formal/code surfaces were deleted from the active tree; use git history only if comparison is needed. | `research/tube-algorithm-raw-jorn-2026-05-04.md`, `research/tube-algorithm.md`, `thesis/migration-findings.md` rows 1 and 11-14 |
 
 ## Tube Algorithm Import Objective
 
@@ -163,12 +163,12 @@ states hold:
   Refresh by: reading `formal/hk2017-qp-core.tex` and
   `formal/hk2017-qp-precision.tex` gap comments and
   `experiments/numerics/q-error/q_error_output.txt`.
-- [fresh 2026-04-25, moved 2026-05-18] `thesis/legacy/migration-findings.md`
+- [fresh 2026-04-25, retained 2026-05-18] `thesis/migration-findings.md`
   rows 3-11 are the
   algorithm/numerics part of the thesis/code mismatch packet. Most are
   thesis-side exposition fixes or Jörn wording checks, not solver-development
   tasks.
-  Refresh by: reading `thesis/legacy/migration-findings.md`.
+  Refresh by: reading `thesis/migration-findings.md`.
 - [fresh 2026-05-01; staleness caveat: source/output inspection, not rerun
   verification] A read-only audit of the strong numerics route returned verdict
   `WEAKENED`: the repo supports a truthful f64 diagnostic plus exact/empirical

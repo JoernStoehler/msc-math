@@ -1,7 +1,7 @@
 <!--
 Purpose: thesis writing, structure, figures, and reader-facing closeout roadmap.
-Context: current thesis sources are stale; value decisions should wait for the
-phase-2 repo/Jorn state maps.
+Context: active thesis scaffold converted from the planned TOC; old thesis prose
+is source material under thesis/legacy/.
 -->
 
 # Writing Roadmap
@@ -9,7 +9,7 @@ phase-2 repo/Jorn state maps.
 ## Status
 
 - State: map-input.
-- Last updated: 2026-05-14.
+- Last updated: 2026-05-18.
 - Source surfaces: `thesis/`, `research/INDEX.md`, `research/*.md`,
   `tasks/*.md`, `tasks/verify-thesis-done.md`, `tasks/MAP.md`.
 - Refresh when: thesis structure, retained claim set, or advisor feedback
@@ -78,9 +78,9 @@ phase-2 repo/Jorn state maps.
 | --- | --- | --- | --- | --- | --- |
 | Planned thesis scaffold | `[done]` | map input | Jorn with Kai, agent conversion | Use the active scaffold files input by `thesis/main.tex` as the current structure. Resolve copied `OUTLINE GAP`, `TOC DECISION`, and `WRITER-SESSION QUESTION` comments during the relevant chapter writer sessions. | `thesis/main.tex`, `thesis/MAP.md`, `thesis/DEVELOPMENT.md` |
 | Thesis structure | `[done]` | map input | Jorn/Kai | Keep the meeting-derived structure unless advisor feedback or chapter drafting exposes a real conflict. | `thesis/main.tex`, `tasks/verify-thesis-done.md` |
-| Writeup-first closeout sequence | `[active]` | mainline thesis | agents then Jorn review | Draft the algorithm/method contract first: dual-vertex validity and vertex enumeration; exact arithmetic philosophy; f64/trinary/indeterminate philosophy; test/evidence philosophy; capacity algorithm from valid dual vertices. After that, route code maintenance only for mismatches with the settled writeup. | `thesis/quadratic-program-algorithm-hk2019.tex`, `thesis/numerics.tex`, `tasks/numerics.md`, `thesis/legacy/migration-findings.md` |
+| Writeup-first closeout sequence | `[active]` | mainline thesis | agents then Jorn review | Draft the algorithm/method contract first: dual-vertex validity and vertex enumeration; exact arithmetic philosophy; f64/trinary/indeterminate philosophy; test/evidence philosophy; capacity algorithm from valid dual vertices. After that, route code maintenance only for mismatches with the settled writeup. | `thesis/quadratic-program-algorithm-hk2019.tex`, `thesis/numerics.tex`, `tasks/numerics.md`, `thesis/migration-findings.md` |
 | Writer-ready boundary | `[map-input]` | map input | Jorn + chapter writers | For each chapter, start from its active scaffold file; turn local comments into the chapter's local write plan before drafting prose. | `thesis/main.tex`, `thesis/MAP.md`, migrated tracker history |
-| Thesis/code mismatch packet routing | `[map-input]` | map input | agents | Before using existing algorithm/numerics/tube prose as scaffold source material, route the 15 rows in `thesis/legacy/migration-findings.md` to thesis-side fix, code/comment fix, future/cut, or Jörn decision. | `thesis/legacy/migration-findings.md`, `tasks/numerics.md`, `tasks/infrastructure.md` |
+| Thesis/code mismatch packet routing | `[map-input]` | map input | agents | Before using existing algorithm/numerics/tube prose as scaffold source material, route the 15 rows in `thesis/migration-findings.md` to thesis-side fix, code/comment fix, future/cut, or Jörn decision. | `thesis/migration-findings.md`, `tasks/numerics.md`, `tasks/infrastructure.md` |
 | Generic sys first-order section | `[active]` | mainline thesis | agents then Jorn math | Expand the committed unapproved draft into a readable generic-case section: list the concrete open dense row-chart assumptions, prove smooth local behavior on those chambers, and defer non-generic active-germ/cell-decomposition behavior to a later boundary chapter. | `thesis/first-order-perturbations.tex`, `thesis/legacy/sys-first-order-regular-case.tex`, `research/sys-first-order-local-behavior.md`, `tasks/sys-first-order.md` |
 | HKO local maximum chapter | `[map-input]` | mainline thesis | chapter writer + Jorn math | Define the decision problem, explain the SageMath computation as chained checked subroutines, decide selected code/data excerpts for main text, and keep full code/data in the repo. | `thesis/hko-local-maximum.tex`, `research/hko-local-maximum.md`, `research/hko-local-maximum-exact-clarke.md` |
 | Black-box data-science chapter | `[map-input]` | mainline thesis | landscape branch + chapter writer | When the data-science branch stabilizes, finalize table rows, feature columns, method families, and any positive-result escalation. | `thesis/black-box-datascience.tex`, `tasks/landscape.md`, `research/sys-landscape-toolbox-audit.md` |
@@ -106,14 +106,14 @@ phase-2 repo/Jorn state maps.
   Refresh by: `rg -n -e '^\\section' -e '^\\subsection' -e '^\\input' -e '^\\appendix' thesis -g '*.tex'`
   plus targeted reads of `thesis/main.tex`, `thesis/MAP.md`, and
   `thesis/DEVELOPMENT.md`.
-- [fresh 2026-04-25, moved 2026-05-18] `thesis/legacy/migration-findings.md`
+- [fresh 2026-04-25, retained 2026-05-18] `thesis/migration-findings.md`
   is an unrouted decision
   packet for thesis/code mismatches. Rows 3-11 mostly affect algorithm/numerics
   exposition, rows 1 and 12-14 affect tube/code-vs-thesis alignment, row 2 is a
   label-cross-reference choice, row 15 is a label inventory, and the convention
   gap belongs under infrastructure/harness follow-up. Route these before thesis
   prose relies on the affected statements.
-  Refresh by: reading `thesis/legacy/migration-findings.md`.
+  Refresh by: reading `thesis/migration-findings.md`.
 - [fresh 2026-05-01, moved 2026-05-18]
   `thesis/legacy/sys-first-order-regular-case.tex` is a committed unapproved
   draft for "Generic feasible HK gradients". It already separates HK-generic

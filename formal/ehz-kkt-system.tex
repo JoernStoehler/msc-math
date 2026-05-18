@@ -7,9 +7,9 @@
 %   lem:numerical-transition-feasibility, lem:q-error-bound,
 %   rem:near-null-lp-search
 %
-% Sources: thesis/general-case-algorithm.tex,
-%   thesis/general-case-algorithm-proof.tex,
-%   thesis/appendix-numerical.tex
+% Sources: thesis/legacy/general-case-algorithm.tex,
+%   thesis/legacy/general-case-algorithm-proof.tex,
+%   thesis/legacy/appendix-numerical.tex
 %
 % Notation: A = dual-vertex matrix, H = action matrix,
 %   beta = dwell-time weights, mu = Lagrange multiplier (closure),
@@ -31,7 +31,7 @@
 %   [ A^T  0    0 ] [ mu   ] = [ 0 ]
 %   [ 1^T  0    0 ] [ xi   ]   [ 1 ]
 %
-% See thesis/general-case-algorithm.tex, Algorithm [alg:ehz].
+% See thesis/legacy/general-case-algorithm.tex, Algorithm [alg:ehz].
 
 
 \begin{notationupdated}
@@ -219,7 +219,7 @@ $\|n_i\| = 1$ is never assumed.
 \begin{unverified}
 \begin{lemma}[Transition feasibility]%
 \label{lem:numerical-transition-feasibility}
-% Source: thesis/appendix-numerical.tex
+% Source: thesis/legacy/appendix-numerical.tex
 Let $K \subset \mathbb{R}^4$ be a convex polytope with
 facets $F_1, \ldots, F_m$ and dual vertices~$a_k$.
 A \emph{transition} $F_i \to F_j$ is a segment of a
@@ -311,7 +311,7 @@ $F_i \to F_j$.
 \begin{unverified}
 \begin{lemma}[$Q$ error bound from KKT residual]%
 \label{lem:q-error-bound}
-% Source: thesis/appendix-numerical.tex
+% Source: thesis/legacy/appendix-numerical.tex
 Let $M$ be the symmetric KKT matrix
 with smallest eigenvalue magnitude
 $|\lambda_{\min}| = \min_j |\lambda_j| > 0$,

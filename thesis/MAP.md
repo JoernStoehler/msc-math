@@ -34,12 +34,36 @@ Status: navigation cache for the active thesis scaffold.
 
 - `DEVELOPMENT.md`: maintainer-facing notes about the scaffold conversion and
   process discussion that produced it.
+- `migration-findings.md`: live thesis/code mismatch packet. Route affected
+  rows before relying on old algorithm, numerics, or tube prose.
 
 ## Legacy Source Material
 
 - `legacy/README.md`: explains the status of legacy thesis files.
 - `legacy/*`: old thesis prose and thesis-local notes. These files are source
   material only and are not input by `main.tex`.
+
+## Legacy Source Hints
+
+- `legacy/algorithms.tex`, `legacy/general-case-algorithm.tex`,
+  `legacy/pruned-general-case-algorithm.tex`, and
+  `legacy/lagrangian-product-algorithm.tex`: likely source material for
+  `quadratic-program-algorithm-hk2019.tex` and related algorithm TODOs.
+- `legacy/proofs.tex`, `legacy/basic-definitions.tex`,
+  `legacy/clarkedual-action-principle.tex`,
+  `legacy/simple-minimizer-existence.tex`,
+  `legacy/general-case-algorithm-proof.tex`, and
+  `legacy/pruned-general-case-algorithm.tex`: likely source material for
+  `preliminaries.tex`, `generalized-reeb-orbits-polytopes.tex`,
+  `quadratic-program-algorithm-hk2019.tex`, and
+  `appendix-numerics-proofs.tex`.
+- `legacy/appendix-numerical.tex` and `legacy/numerical-story.md`: likely
+  source material for `numerics.tex` and `appendix-numerics-proofs.tex`.
+- `legacy/experiments.tex`: likely source material for
+  `black-box-datascience.tex`, `rotated-regular-polygons.tex`, and
+  `visualization-3d.tex`.
+- `legacy/sys-first-order-regular-case.tex`: likely source material for
+  `first-order-perturbations.tex`.
 
 ## Removed Source
 

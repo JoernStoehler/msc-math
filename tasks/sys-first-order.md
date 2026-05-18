@@ -9,7 +9,7 @@ surface after the 2026-04-29 failed smooth-branch draft.
 ## Status
 
 - State: map-input.
-- Last updated: 2026-05-01.
+- Last updated: 2026-05-18.
 - Source surfaces: `papers/hk2017/EHZ-polytopes.tex`,
   `formal/capacity-smoothness-classification.tex`,
   `formal/capacity-boundary-subdifferential.tex`,
