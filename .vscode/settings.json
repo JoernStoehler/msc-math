@@ -27,6 +27,22 @@
 	"claudeCode.useCtrlEnterToSend": true,
 	"workbench.editor.wrapTabs": true,
 	"workbench.editor.showTabs": "multiple",
+	"editor.tokenColorCustomizations": {
+		"comments": "#008000",
+		"textMateRules": [
+			{
+				"scope": [
+					"comment.block.html.markdown",
+					"text.html.markdown comment.block.html",
+					"punctuation.definition.comment.markdown"
+				],
+				"settings": {
+					"foreground": "#008000",
+					"fontStyle": ""
+				}
+			}
+		]
+	},
 	"claudeCode.useTerminal": false,
 	"accessibility.signals.terminalBell": {
 		"sound": "on"
