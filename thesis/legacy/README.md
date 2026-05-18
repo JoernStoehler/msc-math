@@ -16,6 +16,6 @@ The active thesis scaffold lives in the `.tex` files directly under
 `thesis/`. Those files may intentionally contain only headings, labels, and
 local TODO/context comments.
 
-The live thesis/code mismatch packet is `thesis/migration-findings.md`, not a
-legacy file. It should be routed before relying on affected old algorithm,
-numerics, or tube prose.
+`migration-findings.md` is a legacy-era thesis/code mismatch inventory. It may
+still be useful before importing old algorithm, numerics, or tube prose, but it
+needs revalidation before driving current work.

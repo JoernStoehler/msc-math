@@ -34,8 +34,6 @@ Status: navigation cache for the active thesis scaffold.
 
 - `DEVELOPMENT.md`: maintainer-facing notes about the scaffold conversion and
   process discussion that produced it.
-- `migration-findings.md`: live thesis/code mismatch packet. Route affected
-  rows before relying on old algorithm, numerics, or tube prose.
 
 ## Legacy Source Material
 
@@ -64,6 +62,9 @@ Status: navigation cache for the active thesis scaffold.
   `visualization-3d.tex`.
 - `legacy/sys-first-order-regular-case.tex`: likely source material for
   `first-order-perturbations.tex`.
+- `legacy/migration-findings.md`: legacy-era thesis/code mismatch inventory.
+  Revalidate relevant rows before relying on affected old algorithm, numerics,
+  or tube prose.
 
 ## Removed Source
 

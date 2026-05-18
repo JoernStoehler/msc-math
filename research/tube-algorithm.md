@@ -67,8 +67,9 @@ needed.
   `tube_capacity` was not re-exported.
 - `thesis/tube-algorithm-notes.md`: stale migration task note. It pointed to
   deleted files and old `library/` paths.
-- `thesis/migration-findings.md`: live mismatch inventory. Rows 1 and 11-14 are a
-  useful checklist for conflicts between old thesis prose and old code.
+- `thesis/legacy/migration-findings.md`: legacy-era mismatch inventory. Rows 1
+  and 11-14 may still be useful as a checklist for conflicts between old thesis
+  prose and old code, but need revalidation before driving current work.
 
 Potential downstream work after this source note is filled:
 

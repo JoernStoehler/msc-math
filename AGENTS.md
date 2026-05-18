@@ -42,7 +42,6 @@ When interacting with Jörn in chat:
 |   |-- *.tex
 |   |-- MAP.md
 |   |-- DEVELOPMENT.md
-|   |-- migration-findings.md
 |   |-- bibliography.bib
 |   |-- build/main.pdf
 |   `-- legacy/
