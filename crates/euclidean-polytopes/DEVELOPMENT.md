@@ -758,7 +758,6 @@ For the scaffold:
 
 ```bash
 cargo check -p euclidean-polytopes
-bash scripts/toc.sh crates/euclidean-polytopes/README.md crates/euclidean-polytopes/DEVELOPMENT.md tasks/euclidean-polytopes.md crates/MAP.md tasks/MAP.md
 ```
 
 For the first implementation packet, add:

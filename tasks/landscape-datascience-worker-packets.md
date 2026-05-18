@@ -179,12 +179,12 @@ This is a filled example for the reset-contract pilot. Refresh the dataset path
 and worktree path before use.
 
 ```text
-Required cwd/worktree: /workspaces/msc-math/.codex/worktrees/ds-pilot-reset-regime-classification
+Required cwd/worktree: /workspaces/msc-math/.worktrees/ds-pilot-reset-regime-classification
 
 Use this worktree for all commands and edits. Do not edit `main` or the root
 checkout.
 
-If you make tracked edits outside /workspaces/msc-math/.codex/worktrees/ds-pilot-reset-regime-classification,
+If you make tracked edits outside /workspaces/msc-math/.worktrees/ds-pilot-reset-regime-classification,
 revert only your own edits when `git diff -- <path>` shows only those edits. If
 you detect pre-existing or ambiguous tracked edits outside that worktree, stop
 and report the exact files before continuing.

@@ -116,7 +116,6 @@ When interacting with Jörn in chat:
 |   |-- Dockerfile
 |   `-- *.sh
 |-- scripts/
-|   `-- toc.sh
 `-- /tmp/  (outside repo)
 ```
 
@@ -140,9 +139,7 @@ When interacting with Jörn in chat:
 - `.codex/agents/`: repo-local subagent templates (optional).
 - Harness files (`AGENTS.md`, `.agents/skills/**`, `.codex/agents/**`) are
   frozen unless Jörn explicitly asks for a harness edit.
-- `.worktrees/`: ignored local worktrees for independent agent sessions. Use
-  the command recipe below to create them. Use `$git-worktrees-merge` for
-  branch, cleanup, merge-readiness, or conflict work.
+- `.worktrees/`: ignored local worktrees for independent agent sessions.
 - `.devcontainer/`: local devcontainer with documentation.
 - `scripts/`: small repo helper commands.
 - `/tmp/`: scratch space for subagent prompts, iterative drafts, and
@@ -171,43 +168,40 @@ Supported environments:
 ## Commands
 
 ```bash
-# Harness and maps
-git diff --check
-bash scripts/toc.sh AGENTS.md MAP_OR_TASK_FILE.md
+# Create local worktree
+git status --short
+git worktree add .worktrees/lemma-cleanup lemma-cleanup
+cd .worktrees/lemma-cleanup
+git lfs checkout
+git lfs pull --include path/to/file.jsonl # only if a required object is missing
 
-# Local worktrees
-git worktree add .worktrees/NAME BRANCH
-cd .worktrees/NAME && git lfs checkout
-# Run targeted `git lfs pull --include PATH` only when a required LFS object is missing.
+# Merge after branch review and with Jörn's approval
+cd /workspaces/msc-math
+git merge --ff-only lemma-cleanup
+git worktree remove .worktrees/lemma-cleanup
 
 # Rust crates
 cargo fmt --check
 cargo test -p symplectic --release --lib
-cargo clippy -p symplectic --lib -- -D warnings
-cargo test -p symplectic --release -- --ignored
 cargo test -p algebraic-numbers --release
-cargo clippy -p algebraic-numbers --all-targets -- -D warnings
 cargo test -p euclidean-polytopes
 cargo clippy -p euclidean-polytopes --all-targets -- -D warnings
 
 # Rust workspace and experiments
 cargo build --workspace --release
-cargo check -p PACKAGE_NAME
-cargo build -p PACKAGE_NAME --release
+cargo check -p sys-landscape
 
-# python
+# Python
 # `python` is absent on Ubuntu 24.04; `python3` lacks undeclared packages.
 uv run --with pyyaml --script /home/vscode/.codex/skills/.system/skill-creator/scripts/quick_validate.py .agents/skills/clarify-in-chat
-uv run --script PYTHON_SCRIPT.py # PEP 723 inline dependencies
+uv run --script experiments/sys-landscape/random-sample/analyze.py # PEP 723 inline dependencies
 
 # Profiling
 cargo run -p symplectic --release --bin profile-pruned-hk2017 -- --facet-counts 8 --samples 3 --jsonl
 
 # Thesis
-cd thesis/ && latexmk && ./check-build.sh
-perl -ne 'if (/\\newlabel\{LABEL_NAME\}\{\{([^}]*)\}\{([^}]*)\}/) { print "number=$1 page=$2\n" }' thesis/build/main.aux
+cd thesis/ && latexmk && ./check-build.sh # output: `thesis/build/main.pdf`
 
 # Formal math
 cd formal/ && latexmk
-rg -n -A 10 -F '\label{LABEL_NAME}' formal/*.tex
 ```

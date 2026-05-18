@@ -76,7 +76,7 @@ package-lock.json
 
 # Local nested agent worktrees
 .claude/worktrees/
-.codex/worktrees/
+.worktrees/
 
 # Local persisted agent state
 .codex/persisted/

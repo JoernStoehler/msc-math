@@ -237,7 +237,7 @@ The capacity algorithm iterates over all subsets S ⊆ {1,...,F} and all cyclic 
 ## Current execution state
 
 This note is being refreshed from the assigned worktree
-`/workspaces/msc-math/.codex/worktrees/numerics-strong-route` on branch
+`/workspaces/msc-math/.worktrees/numerics-strong-route` on branch
 `numerics-strong-route`. Older branch details from
 `.claude/worktrees/verify-numerics-q-accuracy` are historical and should not be
 used as the current cwd or merge state.
