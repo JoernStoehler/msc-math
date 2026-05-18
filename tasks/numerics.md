@@ -145,12 +145,12 @@ states hold:
 - [fresh 2026-04-24] a_i replaces `(n,h)` for thesis notation; propagation is
   blocked on thesis restructuring.
   Refresh by: checking `tasks/writing.md` and current thesis notation.
-- [fresh 2026-04-25, moved 2026-05-18] `thesis/legacy/appendix-numerical.tex`
-  describes a
+- [legacy-era 2026-04-25, moved 2026-05-18]
+  `thesis/legacy/appendix-numerical.tex` appears to describe a
   certified/uncertain accumulator. The public `ehz_capacity*` wrappers now use
   `OrbitGuaranteeMode::MinimaSafe`; non-default guarantee controls exist behind
-  the `aggregate_orbits_with_dual_vertices_exact` path. This must be made
-  explicit if retained in thesis prose.
+  the `aggregate_orbits_with_dual_vertices_exact` path. Revalidate this before
+  retaining it in thesis prose.
   Refresh by: reading `thesis/legacy/appendix-numerical.tex` around
   "Accumulator and Final Answer", `crates/symplectic/src/lib.rs`, and
   `crates/symplectic/src/algorithms/orbit_search.rs`.

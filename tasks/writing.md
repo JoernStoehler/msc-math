@@ -114,12 +114,13 @@ is source material under thesis/legacy/.
   gap belongs under infrastructure/harness follow-up. Revalidate relevant rows
   before thesis prose relies on affected old statements.
   Refresh by: reading `thesis/legacy/migration-findings.md`.
-- [fresh 2026-05-01, moved 2026-05-18]
+- [legacy-era 2026-05-01, moved 2026-05-18]
   `thesis/legacy/sys-first-order-regular-case.tex` is a committed unapproved
-  draft for "Generic feasible HK gradients". It already separates HK-generic
-  nonvanishing conditions from feasible generic support maxima. The next writer
-  should preserve that split and add only the concrete genericity assumptions
-  that are actually used by each lemma.
+  source draft for "Generic feasible HK gradients". It appears to separate
+  HK-generic nonvanishing conditions from feasible generic support maxima. The
+  next writer should revalidate that split against
+  `research/sys-first-order-local-behavior.md` and add only the concrete
+  genericity assumptions that are actually used by each lemma.
   Refresh by: `latexmk && ./check-build.sh` in `thesis/` and a reviewer pass
   against `research/sys-first-order-local-behavior.md`.
 - [fresh 2026-05-18] `thesis/planned-toc.md` was converted into the active
