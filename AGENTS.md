@@ -185,8 +185,10 @@ cargo build --workspace --release
 cargo check -p PACKAGE_NAME
 cargo build -p PACKAGE_NAME --release
 
-# Python experiments
-uv run --script PYTHON_SCRIPT.py
+# python
+# `python` is absent on Ubuntu 24.04; `python3` lacks undeclared packages.
+uv run --with pyyaml --script /home/vscode/.codex/skills/.system/skill-creator/scripts/quick_validate.py .agents/skills/clarify-in-chat
+uv run --script PYTHON_SCRIPT.py # PEP 723 inline dependencies
 
 # Profiling
 cargo run -p symplectic --release --bin profile-pruned-hk2017 -- --facet-counts 8 --samples 3 --jsonl
