@@ -22,7 +22,7 @@ Update rules:
 - Last updated: 2026-05-18.
 - Source surfaces: this chat, `tasks/sys-first-order.md`,
   `tasks/verify-thesis-done.md`, `tasks/writing.md`,
-  `/tmp/chatgpt-deepresearch-2026-05-18.md` pending integration.
+  compact summary of `/tmp/chatgpt-deepresearch-2026-05-18.md`.
 - Refresh when: a Codex session succeeds or fails in a way that changes task
   assignment, review burden, or thesis-closeout risk.
 
@@ -310,10 +310,149 @@ External, harness, and failure-control ratings:
 
 External report note:
 
-- `/tmp/chatgpt-deepresearch-2026-05-18.md` exists and contains the ChatGPT Pro
-  deep-research report. Jorn suggests not reading or integrating it while this
-  capability-rating discussion is midstream. It is in German for unknown
-  reasons.
+- `/tmp/chatgpt-deepresearch-2026-05-18.md` contained the ChatGPT Pro
+  deep-research report. It was read on 2026-05-18 after the first capability
+  register checkpoint commit. It is not treated as calibration evidence for the
+  point ratings. Its useful role is external corroboration that other public
+  evidence points in the same direction as Jorn's experience: stronger agents
+  still need checks, long delegation can silently fail, confidence is not an
+  approval signal, clarification helps, process compliance matters, and large
+  instruction files can hurt.
+
+### 2026-05-18 Handoff Modes And Strategies
+
+Source type: `Jorn raw note`, lightly formatted from chat.
+
+Handoff modes and prompt-writing moves Jorn uses:
+
+- Type to a new Codex agent what Jorn wants, and append automatic afterthoughts
+  such as "use a worktree", "review your result", or "ask questions upfront
+  now".
+- Go one meta level up: ask Codex agent A to write a prompt for task X, while
+  Jorn gestures at X and tells A to look up context and ask questions until X
+  is nailed down. Then Jorn may copy-paste the prompt without reading it. Jorn
+  is not sure whether this is currently true in this repo, or whether agents
+  are told how to write prompts.
+- Start typing the task and realize that Codex does not know how to verify the
+  output. Then think about what to say to make the output verifiable by
+  GPT-5.5, and add that as decision information.
+- If the task cannot straightforwardly be made verifiable, update expectations
+  for whether the task is doable now.
+- First add more context into the repo so all agents know it, instead of only
+  the current agent knowing it.
+- Or expand the task so that adding the context durably to the repo is part of
+  the task, besides doing the main task.
+- Give rough numbers or predictions about what happens under different choices.
+  Sometimes this appears sloppily as "suggestion: do X", "suggestion: Y looks
+  instrumentally useful", or "suggestion: a good solution must have Z
+  (necessary implication of success) though it is not sufficient".
+- Ask the agent in turn 1 not to do the task, but only to plan and report back.
+  Jorn toggles plan mode to prevent writes. This is a robust signal for the
+  agent to not spend turn 1 implementing anything, though it can sometimes
+  confuse the agent into doing no research or reading.
+- Inject the phrase "explore first" when Jorn wants to make sure the agent does
+  not give a plan based on zero thinking.
+- Evaluate the plan for whether it has a good verification list. If not, reject
+  it and say so. Example instruction: figure out a better way to verify that
+  the task is completed as a packet, useful to thesis success, add more checks
+  where current checks are not robust to misinterpretation, and clarify the
+  verification gate by being more specific, less overspecific, motivating it,
+  or providing breadcrumbs for why the verification predicts thesis success.
+- Do not withhold information. If Jorn has already found a better gate, he
+  types it up so Codex can figure out the same idea better or more fully.
+- Sometimes kick off a prompt, see whether Codex makes progress or thinks about
+  the right things, and abort/retry with more effort if not.
+- Sometimes wait for the final result to verify it personally. This often
+  gives Jorn ideas for how to verify work is useful and what to look for.
+- Reorder or split tasks when Jorn predicts Codex will mix concerns. Example:
+  if "design tests that are semantically meaningful wrt thesis success",
+  "write tests", "pass tests", and "write code" all happen together, Codex may
+  edit a failing test so it passes on bad code because semantic meaningfulness
+  is not active at that moment.
+- For this kind of phase separation and directionality, review subagents can be
+  useful when they explicitly evaluate one direction. Example: original context
+  plus all evolutions of the test design plus current tests -> are the tests
+  semantically meaningful?
+- Or explicitly say "suggestion: do X then Y in that order to prevent
+  confusion".
+- Sometimes Jorn already knows what to do. Because typing in chat is often
+  faster, he gives Codex the action sequence at a level where verification is
+  trivial for him or the agent. Examples: delete unused worktrees, remove false
+  claims from file X.
+- Postpone tasks if Jorn notices he cannot do them quickly right now. The
+  value-minus-cost shifts, and another task may become more important to start
+  first even though both tasks remain worth doing eventually.
+- Throw away the task idea entirely and later replace it with other tasks that
+  make the original idea obsolete.
+
+Notes on beyond-high strategies:
+
+- Jorn says there is usually not much that can automate high-effort or
+  extra-high-effort prompt engineering. If there is a feedback signal, that
+  usually means the verifier is doable for GPT-5.5, and that usually means the
+  task itself is doable for GPT-5.5.
+- Jorn cannot delegate "figuring out a task" by adding more meta-layers of
+  "figure out..." on top.
+- The useful modes are usually:
+  - direct task
+  - review another agent's work, with independence often useful
+  - extract Jorn's knowledge conversationally about what task X really is and
+    write it up in a format Jorn can reference when prompting an agent to do
+    the task
+- In that conversational extraction mode, the agent does small help tasks such
+  as exploring the codebase, reporting back what is already available to agents
+  as context knowledge, pointing out ambiguity, or generating many ideas so
+  Jorn can select one. This is synchronous high-frequency discussion, not an
+  asynchronous task.
+
+Notes on low-odds or not-worth-reporting work:
+
+- Jorn wants the framing not as a hard "never attempt", but as: the success
+  odds for some subtask classes or labor types are so low, and verification is
+  so noisy or complex, that agents should not even report back attempts they
+  made to Jorn because that would waste his time.
+- Directly taking an experiment and writing polished prose is usually a waste
+  of time because there are too many hallucinations and the writing structure
+  is too bad to incrementally reach good polished prose. Even after arbitrarily
+  many GPT-5.5 reviews, a reviewer may eventually find zero errors while Kai
+  and Jorn still find many. Jorn says this should be tried again for better
+  accuracy/confidence in the dismissal and success ratio.
+- Rescuing derailed sessions is barely ever worth it compared with retrying
+  with extracted learnings, corrected errors, and closed gaps in the prompt.
+- Final thesis scope requires too much context that is not in the repo yet to
+  be decided by an agent. Luckily it is mostly settled, so agents hopefully do
+  not need to revisit it except for details.
+
+Useful outputs when Codex fails and detects failure:
+
+- Report partial progress that was made.
+- Explore, reason about, then explain blockers and why the agent did not find
+  a way around or through them.
+- Record rejected alternative routes and reasoning.
+- Produce a reproducible counterexample or blocker so other agents can assess
+  the situation more quickly and avoid overlooking the blocker.
+- Extract learnings and progress that accelerates the next agent.
+- Usually do not pass code or mathematical writing 1:1 to the next attempt.
+  Compress the learning instead, because this erases non-substantial aspects
+  such as errors in the old code. A next agent may otherwise anchor too much on
+  the old solution or misinterpret it as good enough. Example: "the old code
+  compiles, so I should incrementally change it to pass the tests" versus "the
+  old agent learned that enumeration is the trickiest part; I should pay more
+  attention to it and develop a new algorithm, since the failing tests show the
+  old code did not work for enumeration."
+- Use progressive disclosure. It is hard to anticipate what Jorn benefits from
+  reading, so the output should not omit potentially relevant things and should
+  not force Jorn to read irrelevant things. It should let him skip.
+- A complete scratch report that is copied or linked in chat gives the agent a
+  more verifiable goal: completeness for what may be relevant is easier than
+  writing only what is definitely relevant. This appears to improve the
+  deliverable itself, because more reasoning and error-catching happens on the
+  right parts.
+- Jorn has not inspected action traces or intermediate report versions, but has
+  noticed that progressive disclosure does more than reduce follow-up
+  questions. Follow-up questions sometimes reveal that an agent had no clue or
+  cut corners, while progressive disclosure often means the agent has thought
+  more completely.
 
 ## Processed Jorn Experience Notes
 
@@ -602,7 +741,8 @@ in a separate layer and only with caveats.
 ## Provisional Capability Profile
 
 This table is intentionally conservative. It should be revised when the
-deep-research result and more project-local evidence are added.
+Jorn ratings, external evidence, and future project-local evidence change the
+task assignment decision.
 
 | Task pattern | Current answer | Source strength | Deadline use | Required controls |
 | --- | --- | --- | --- | --- |
@@ -633,8 +773,6 @@ Before proposing or executing thesis-closeout work, an agent should:
 
 ## Open Inputs
 
-- ChatGPT Pro deep-research result on GPT-5.5/Codex capability, regressions,
-  calibration, sycophancy, help-seeking, and agentic benchmarks.
 - More Jorn aggregate observations if they become available cheaply.
 - Repo-local session evidence when a future session clearly succeeds or fails
   in a way that should change planning.
