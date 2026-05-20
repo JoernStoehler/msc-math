@@ -39,6 +39,7 @@ When interacting with Jörn in chat:
 .
 |-- AGENTS.md
 |-- Cargo.toml
+|-- CAPABILITY_CLAIM_MAP.md
 |-- thesis/
 |   |-- main.tex
 |   |-- *.tex
@@ -120,6 +121,9 @@ When interacting with Jörn in chat:
 ```
 
 - `AGENTS.md`: root instruction map. This repo does not use nested `AGENTS.md`.
+- `CAPABILITY_CLAIM_MAP.md`: non-authoritative cache of high-level repo-capability
+  claims, their scope, support, caveats, and refresh triggers. Source files,
+  tests, data, research notes, task bundles, and thesis text overrule it.
 - `Cargo.toml`, `**/Cargo.toml`: Rust workspace and package manifests.
 - `**/README.md`: consumer-facing entry point for normal use.
 - `**/DEVELOPMENT.md`: maintainer-facing notes for changing internals.
@@ -151,6 +155,9 @@ The `MAP.md` files are navigation caches. They index, summarize and
 structure the folder content for quick navigation.
 They are not authoritative sources, and can be regenerated via subagent.
 
+- `CAPABILITY_CLAIM_MAP.md`: high-level repo-capability claim cache. It is not a folder
+  inventory. Use it for "what can this repo currently rely on?" questions and
+  refresh affected rows from source truth when source behavior changes.
 - `tasks/MAP.md`: dependency map of upcoming tasks and current status.
 - `research/INDEX.md`: research questions and current status.
 - `crates/<crate>/MAP.md`: api and architecture.

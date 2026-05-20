@@ -43,6 +43,7 @@ Freshness rules:
 | old harness extraction: verification packet candidates | reusable quality-measurement packets and operational definitions |
 | `tasks/submit-thesis.md` | submission/admin forms, source links, and external-clock TODOs |
 | `crates/MAP.md` and `experiments/MAP.md` | subtree navigation caches for durable code and experiment packages |
+| `CAPABILITY_CLAIM_MAP.md` | non-authoritative cache of high-level repo-capability claims, scope, support, caveats, and refresh triggers |
 
 The old `TASKS.md` mega-tracker was deleted after migration. Use this map and
 the topic bundles instead.
