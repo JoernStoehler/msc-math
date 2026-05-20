@@ -143,8 +143,10 @@ claim.
     - `crates/symplectic/README.md`
     - `crates/MAP.md`
     - `crates/symplectic/src/lib.rs`
+    - `crates/symplectic/src/algorithms/orbit_search.rs`
     - `crates/symplectic/src/algorithms/`
     - `crates/symplectic/src/kkt/`
+    - `crates/symplectic/src/kkt/rational_solver.rs`
     - `crates/symplectic/src/exact/`
     - `crates/symplectic/src/derivatives.rs`
     - `crates/symplectic/src/random.rs`
@@ -201,7 +203,9 @@ claim.
     producers, and tracked-evidence refresh commands where known.
   - Files:
     - `experiments/verification/README.md`
+    - `experiments/verification/algorithm-comparison/README.md`
     - `experiments/sys-landscape/README.md`
+    - `experiments/sys-landscape/datascience/produce/README.md`
     - `experiments/hko-local-maximum/README.md`
     - `experiments/numerics/README.md`
     - `experiments/combinatorial-cells/README.md`
@@ -222,7 +226,10 @@ claim.
     bounded negative/search-usefulness claims.
   - Files:
     - `experiments/sys-landscape/datascience/tables/README.md`
+    - `experiments/sys-landscape/datascience/tables/main.rs`
     - `experiments/sys-landscape/datascience/methods/README.md`
+    - `experiments/sys-landscape/datascience/produce/README.md`
+    - `experiments/sys-landscape/datascience/smoke-pipeline.sh`
     - `research/sys-landscape-toolbox-audit.md`
     - `research/sys-landscape-datascience/idea-ledger.md`
     - `research/sys-landscape-datascience/method-ledger.md`
@@ -266,12 +273,16 @@ claim.
   - Nuance:
     - supporting experiments cannot replace the missing exact rank/kernel
       certificate for theorem-strength wording.
-    - stale field or orbit-count language should be refreshed against current
-      exact-Clarke notes before use.
+    - current theorem-facing field wording uses the quartic
+      `Q(tan(pi/5))`; older `Q(sqrt(5))` certificate wording is stale.
+    - old `44`-orbit / `10`-gradient prose has been caveated against the
+      current `150` exact action orbits / `20` visited subsets / `28`
+      gradient-pattern bookkeeping, but theorem-facing symmetry claims still
+      need the exact-Clarke route.
   - Refresh when:
     - exact-Clarke witness coverage changes
     - HKO theorem wording is frozen or weakened
-    - stale orbit-count or field wording is repaired
+    - field wording or exact-minimum bookkeeping changes
     - new LICCA/HKO evidence is promoted
     - thesis HKO chapter starts relying on a stronger claim
 
@@ -395,8 +406,12 @@ claim.
   - Files:
     - `research/visualization.md`
     - `experiments/visualization/main/main.rs`
+    - `experiments/visualization/main/models.rs`
+    - `experiments/visualization/main/orbit_collection.rs`
+    - `experiments/visualization/main/trajectories.rs`
     - `experiments/visualization/main/viz/`
-    - tracked PNG and JSON/data assets under `experiments/visualization/main/`
+    - `experiments/visualization/main/viz/data/`
+    - tracked PNG assets under `experiments/visualization/main/`
     - `thesis/visualization-3d.tex` if retained
   - The Rust generator writes geometry, combinatorics, trajectory payloads, and
     summary values.
@@ -515,17 +530,17 @@ claim.
 ## Refresh Recipe
 
 - List claim headings and marked rows:
-  - `rg -n "^- (\\(|We can|We have)" CAPABILITY_CLAIM_MAP.md`
+  - `rg -n "^(- We|  - \()" CAPABILITY_CLAIM_MAP.md`
 - Check navigation/source surfaces:
-  - `rg --files | rg '(^|/)(README|DEVELOPMENT|MAP|INDEX)\\.md$|Cargo\\.toml$'`
+  - `rg --files | rg '(^|/)(README|DEVELOPMENT|MAP|INDEX)\.md$|Cargo\.toml$'`
 - Check experiment entrypoints:
-  - `find experiments -type f \( -name README.md -o -name '*.rs' -o -name '*.py' \) | sort`
+  - `rg --files experiments | rg '(^|/)(README\.md|Cargo\.toml|[^/]+\.(rs|py))$'`
 - Check durable crate implementation and tests:
-  - `find crates -maxdepth 4 -type f \( -name '*.rs' -o -name README.md -o -name DEVELOPMENT.md -o -name '*FEATURES*.md' \) | sort`
+  - `rg --files crates | rg '(^|/)(README\.md|DEVELOPMENT\.md|.*FEATURES.*\.md|[^/]+\.rs)$'`
 - Compare thesis stories and task bundles:
   - `sed -n '1,220p' research/INDEX.md`
   - `sed -n '1,180p' tasks/MAP.md`
 - Search targeted status surfaces for drift:
-  - `rg -n "Epistemic status|Status:|\\[blocked\\]|\\[active\\]|\\[done\\]" tasks research -g '*.md'`
+  - `rg -n "Epistemic status|Status:|\[blocked\]|\[active\]|\[done\]" tasks research -g '*.md'`
   - `rg -n -e 'begin\{unverified\}' -e 'TODO: JÖRN' -e 'Status:' formal -g '*.tex'`
   - `rg -n "full-output|tracked evidence|smoke|canonical|--full" experiments -g README.md`
