@@ -65,6 +65,26 @@ Invalidate if:
   evidence;
 - administrative facts reveal a hidden thesis-content prerequisite.
 
+Near-term independent starts:
+
+- Hostile landscape: resolve `endpoint-residualized-regression` enough to give
+  it a reviewed disposition. Start from the Hostile Landscape Route below and
+  write any executable prompt or scratch report in `/tmp`.
+- Thesis scaffold: identify the next 1-3 active thesis sections to draft or
+  audit. Start from `thesis/main.tex`, `thesis/MAP.md`, active `thesis/*.tex`
+  files, `current-state.md`, and this file. Stop with retained claims, source
+  surfaces, likely blockers, and whether each next step is agent-suitable or
+  Jörn-only.
+
+Defer:
+
+- HKO claim-wording audit until theorem-strength wording is ready for focused
+  review or HKO text starts changing.
+- Numerics retained-claim audit until numerics text is retained enough to
+  decide exact/f64 caveats.
+- Repo promise/provenance audit until enough thesis text exists to know which
+  code/data/command promises are retained.
+
 ## HKO Route
 
 Status: active while HKO remains retained thesis spine.
