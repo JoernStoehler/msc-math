@@ -23,3 +23,9 @@ Current consumers:
 The current dataset inputs are:
 - `polytope-table.jsonl`
 - `observation-table.jsonl`
+
+Committed reports may mention `/tmp/...` dataset snapshots used during a
+method run. Treat those paths as provenance for the run, not durable source
+data. Before relying on a report for stronger thesis wording, either use the
+producer command recorded in the report to regenerate the snapshot or compare
+against the current tables.
