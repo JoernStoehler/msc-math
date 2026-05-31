@@ -8,7 +8,8 @@ Context: this is supporting material for `tasks/current-state.md` and
 
 ## Status
 
-- Latest commit checked: `269fb7b1`.
+- Commands listed below were run through commit `269fb7b1`; later commits
+  updated only status/cache documentation from those results.
 - Working tree before checks: clean.
 - Working tree after checks: clean.
 - No tracked data, figures, thesis build artifacts, or canonical experiment
@@ -113,4 +114,4 @@ Rust/experiment smoke:
 - Full artifact-refreshing producers were not run.
 - LICCA/Slurm, profiling, web/admin, and current university source checks were
   not run.
-- Normal verification commands outside the core crate/API set were not run.
+- Commands not listed above were not run in this pass.
