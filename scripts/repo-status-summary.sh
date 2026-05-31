@@ -44,25 +44,36 @@ else
 fi
 echo
 
+CHECK_AFFECTING_PATHS="$(
+  git diff --name-only "$VERIFIED_COMMIT"..HEAD -- \
+    '*.rs' \
+    '**/Cargo.toml' \
+    'Cargo.toml' \
+    'Cargo.lock' \
+    'experiments/**/*.jsonl' \
+    'experiments/**/*.png' \
+    'experiments/**/*.tex' \
+    'thesis/**/*.tex' \
+    'thesis/bibliography.bib' \
+    'formal/**/*.tex' \
+    'formal/bibliography.bib' \
+    '.devcontainer/**' \
+    'scripts/**' \
+    ':(exclude)scripts/repo-status-summary.sh'
+)"
+
+echo "Check-affecting changed paths:"
+if [[ -n "$CHECK_AFFECTING_PATHS" ]]; then
+  printf '%s\n' "$CHECK_AFFECTING_PATHS"
+else
+  echo "none"
+fi
+echo
+
 echo "Refresh guidance:"
 if [[ -n "$(git status --short)" ]]; then
   echo "Working tree is not clean. Inspect uncommitted changes before relying on old results."
-elif git diff --quiet "$VERIFIED_COMMIT"..HEAD -- \
-  '*.rs' \
-  '**/Cargo.toml' \
-  'Cargo.toml' \
-  'Cargo.lock' \
-  'experiments/**/*.jsonl' \
-  'experiments/**/*.png' \
-  'experiments/**/*.tex' \
-  'thesis/**/*.tex' \
-  'thesis/bibliography.bib' \
-  'formal/**/*.tex' \
-  'formal/bibliography.bib' \
-  '.devcontainer/**' \
-  'scripts/**' \
-  ':(exclude)scripts/repo-status-summary.sh'
-then
+elif [[ -z "$CHECK_AFFECTING_PATHS" ]]; then
   echo "No code, data, build-contract, thesis, formal, or other script path changed since the referenced checks."
   echo "For stronger claims, read $STATUS_FILE and rerun affected checks."
 else
