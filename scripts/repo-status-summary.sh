@@ -22,6 +22,18 @@ CHECK_PATHS=(
   ':(exclude)scripts/repo-status-summary.sh'
   ':(exclude)scripts/README.md'
 )
+ORIENTATION_PATHS=(
+  'AGENTS.md'
+  'CAPABILITY_CLAIM_MAP.md'
+  'tasks/*.md'
+  'tasks/**/*.md'
+  'research/INDEX.md'
+  'experiments/MAP.md'
+  'crates/MAP.md'
+  'thesis/MAP.md'
+  'scripts/README.md'
+  'scripts/repo-status-summary.sh'
+)
 
 if [[ -z "$STATUS_FILE" ]]; then
   STATUS_FILE="$(
@@ -81,6 +93,18 @@ UNCOMMITTED_CHECK_AFFECTING_PATHS="$(
   } | sort -u
 )"
 
+ORIENTATION_AFFECTING_PATHS="$(
+  git diff --name-only "$VERIFIED_COMMIT"..HEAD -- "${ORIENTATION_PATHS[@]}"
+)"
+
+UNCOMMITTED_ORIENTATION_AFFECTING_PATHS="$(
+  {
+    git diff --name-only -- "${ORIENTATION_PATHS[@]}"
+    git diff --cached --name-only -- "${ORIENTATION_PATHS[@]}"
+    git ls-files --others --exclude-standard -- "${ORIENTATION_PATHS[@]}"
+  } | sort -u
+)"
+
 echo "Check-affecting changed paths:"
 if [[ -n "$CHECK_AFFECTING_PATHS" ]]; then
   printf '%s\n' "$CHECK_AFFECTING_PATHS"
@@ -97,6 +121,22 @@ else
 fi
 echo
 
+echo "Orientation-affecting changed paths:"
+if [[ -n "$ORIENTATION_AFFECTING_PATHS" ]]; then
+  printf '%s\n' "$ORIENTATION_AFFECTING_PATHS"
+else
+  echo "none"
+fi
+echo
+
+echo "Uncommitted orientation-affecting paths:"
+if [[ -n "$UNCOMMITTED_ORIENTATION_AFFECTING_PATHS" ]]; then
+  printf '%s\n' "$UNCOMMITTED_ORIENTATION_AFFECTING_PATHS"
+else
+  echo "none"
+fi
+echo
+
 echo "Refresh guidance:"
 if [[ -n "$UNCOMMITTED_CHECK_AFFECTING_PATHS" ]]; then
   echo "Working tree has uncommitted check-affecting paths. Inspect them before relying on old results."
@@ -105,6 +145,9 @@ elif [[ -n "$(git status --short)" ]]; then
   echo "For stronger claims, inspect git status and read $STATUS_FILE."
 elif [[ -z "$CHECK_AFFECTING_PATHS" ]]; then
   echo "No code, data, build-contract, thesis, formal, or other script path changed since the referenced checks."
+  if [[ -n "$ORIENTATION_AFFECTING_PATHS" ]]; then
+    echo "Task, map, or helper guidance changed since then; read the listed orientation-affecting paths for current next-work routing."
+  fi
   echo "For stronger claims, read $STATUS_FILE and rerun affected checks."
 else
   echo "Potentially check-affecting paths changed since the referenced checks."
