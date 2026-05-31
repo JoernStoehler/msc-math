@@ -108,6 +108,16 @@ source files.
   Refresh when: exact scalar API, linear algebra API, or exact validation claims
   change.
 
+- Core Rust smoke and selected core verification passed on 2026-05-31.
+  Source: `tasks/references/repo-status-smoke-and-core-2026-05-31.md`.
+  Scope: formatting, workspace check, algebraic-numbers tests/clippy/example,
+  euclidean-polytopes tests/clippy, symplectic release lib tests, public
+  capacity API tests, selected validation correctness test, and compile/no-run
+  checks listed in the reference. This does not refresh tracked experiment
+  datasets or prove thesis claims.
+  Refresh when: core code changes, crate APIs change, validation evidence is
+  promoted, or a future agent needs stronger status than the listed checks.
+
 - Exact/certified validation has a known audit risk.
   Source truth: `crates/symplectic/src/kkt/rational_solver.rs`,
   `crates/symplectic/src/algorithms/orbit_search.rs`, current tests and
