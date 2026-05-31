@@ -5,6 +5,22 @@ ROOT="$(git rev-parse --show-toplevel)"
 cd "$ROOT"
 
 STATUS_FILE="tasks/references/repo-status-smoke-and-core-2026-05-31.md"
+CHECK_PATHS=(
+  '*.rs'
+  '**/Cargo.toml'
+  'Cargo.toml'
+  'Cargo.lock'
+  'experiments/**/*.jsonl'
+  'experiments/**/*.png'
+  'experiments/**/*.tex'
+  'thesis/**/*.tex'
+  'thesis/bibliography.bib'
+  'formal/**/*.tex'
+  'formal/bibliography.bib'
+  '.devcontainer/**'
+  'scripts/**'
+  ':(exclude)scripts/repo-status-summary.sh'
+)
 
 if [[ ! -f "$STATUS_FILE" ]]; then
   echo "status file missing: $STATUS_FILE" >&2
@@ -45,21 +61,15 @@ fi
 echo
 
 CHECK_AFFECTING_PATHS="$(
-  git diff --name-only "$VERIFIED_COMMIT"..HEAD -- \
-    '*.rs' \
-    '**/Cargo.toml' \
-    'Cargo.toml' \
-    'Cargo.lock' \
-    'experiments/**/*.jsonl' \
-    'experiments/**/*.png' \
-    'experiments/**/*.tex' \
-    'thesis/**/*.tex' \
-    'thesis/bibliography.bib' \
-    'formal/**/*.tex' \
-    'formal/bibliography.bib' \
-    '.devcontainer/**' \
-    'scripts/**' \
-    ':(exclude)scripts/repo-status-summary.sh'
+  git diff --name-only "$VERIFIED_COMMIT"..HEAD -- "${CHECK_PATHS[@]}"
+)"
+
+UNCOMMITTED_CHECK_AFFECTING_PATHS="$(
+  {
+    git diff --name-only -- "${CHECK_PATHS[@]}"
+    git diff --cached --name-only -- "${CHECK_PATHS[@]}"
+    git ls-files --others --exclude-standard -- "${CHECK_PATHS[@]}"
+  } | sort -u
 )"
 
 echo "Check-affecting changed paths:"
@@ -70,9 +80,20 @@ else
 fi
 echo
 
+echo "Uncommitted check-affecting paths:"
+if [[ -n "$UNCOMMITTED_CHECK_AFFECTING_PATHS" ]]; then
+  printf '%s\n' "$UNCOMMITTED_CHECK_AFFECTING_PATHS"
+else
+  echo "none"
+fi
+echo
+
 echo "Refresh guidance:"
-if [[ -n "$(git status --short)" ]]; then
-  echo "Working tree is not clean. Inspect uncommitted changes before relying on old results."
+if [[ -n "$UNCOMMITTED_CHECK_AFFECTING_PATHS" ]]; then
+  echo "Working tree has uncommitted check-affecting paths. Inspect them before relying on old results."
+elif [[ -n "$(git status --short)" ]]; then
+  echo "Working tree is not clean, but no uncommitted check-affecting path is detected by this helper."
+  echo "For stronger claims, inspect git status and read $STATUS_FILE."
 elif [[ -z "$CHECK_AFFECTING_PATHS" ]]; then
   echo "No code, data, build-contract, thesis, formal, or other script path changed since the referenced checks."
   echo "For stronger claims, read $STATUS_FILE and rerun affected checks."
