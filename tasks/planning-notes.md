@@ -67,14 +67,20 @@ Invalidate if:
 
 Near-term independent starts:
 
-- Hostile landscape: resolve `endpoint-residualized-regression` enough to give
-  it a reviewed disposition. Start from the Hostile Landscape Route below and
-  write any executable prompt or scratch report in `/tmp`.
-- Thesis scaffold: identify the next 1-3 active thesis sections to draft or
-  audit. Start from `thesis/main.tex`, `thesis/MAP.md`, active `thesis/*.tex`
-  files, `current-state.md`, and this file. Stop with retained claims, source
-  surfaces, likely blockers, and whether each next step is agent-suitable or
-  Jörn-only.
+- Hostile landscape: decide whether to repair or cut
+  `endpoint-residualized-regression`. The 2026-05-31 disposition note found a
+  source-contract bug and no durable report, so the row is not thesis-bearing
+  now. If repaired, keep the repair narrow and then update the ledgers. If cut,
+  record the cut/future verdict and do not cite it in thesis-facing evidence.
+- Hostile landscape after that decision: repair/downgrade `stat-sanity`, then
+  draft or audit `thesis/black-box-datascience.tex` plus
+  `thesis/appendix-datascience-results.tex` using only settled rows.
+- Thesis writing: `thesis/first-order-perturbations.tex` is agent-suitable for
+  a generic row-chart draft with explicit non-generic caveats. Do not accept
+  theorem-strength arbitrary-polytope or HKO wording there.
+- Thesis scope audit: `thesis/flow-graph-algorithm-ch2021.tex` is audit-only
+  until Jörn decides whether a theory/status section is worth retaining without
+  implementation or empirical validation.
 
 Defer:
 
@@ -147,13 +153,14 @@ Route:
 
 - Use bounded idea exhaustion, not open-ended method invention.
 - Every thesis-affecting tried result needs repo-owned evidence and caveats.
-- Run or resolve `endpoint-residualized-regression` first. This overrides the
-  old ledger row's `future` status for the narrow purpose of resolving the
-  existing artifact; thesis use still depends on the reviewed report and
-  ledger/audit disposition.
-- If it gives a conjectured-positive, stop unrelated method work and write a
-  falsification/search packet.
-- If negative or future-only, repair/downgrade `stat-sanity`.
+- `endpoint-residualized-regression` has a 2026-05-31 disposition note:
+  current artifacts are not thesis-bearing because the analyzer does not enforce
+  endpoint-only loading and no durable report exists. Repair it narrowly before
+  thesis use, or cut/future it by Jörn decision.
+- If a repaired residual result gives a conjectured-positive, stop unrelated
+  method work and write a falsification/search packet.
+- If repaired and terminally negative/caveat-only, or if cut/futured, then
+  repair/downgrade `stat-sanity`.
 - Optional small parallel probe: at most `svm-supervised-baseline` and
   `interpretable-tail-rules`.
 - Stop for Jörn if a method needs new polytopes, cluster-scale compute, or a new
@@ -162,9 +169,10 @@ Route:
 Stop condition:
 
 - Stop the current data-science closeout when `endpoint-residualized-regression`
-  has a reviewed disposition, `stat-sanity` is either repaired or downgraded,
-  no conjectured-positive lead is unresolved, and the toolbox audit states
-  thesis-use/caveats for methods the thesis still mentions.
+  is repaired with a terminal verdict or explicitly cut/futured, `stat-sanity`
+  is either repaired or downgraded, no conjectured-positive lead is unresolved,
+  and the toolbox audit states thesis-use/caveats for methods the thesis still
+  mentions.
 
 Closure summary:
 

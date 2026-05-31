@@ -63,6 +63,10 @@ source files.
   High-risk fact: tried thesis-affecting results need repo-owned evidence,
   checks appropriate to their verdict, explicit caveats, and thesis-use
   disposition.
+  Current blocker: `endpoint-residualized-regression` is not thesis-bearing as
+  is. Its analyzer does not enforce the documented endpoint-only surface and no
+  durable markdown report exists; see
+  `research/sys-landscape-datascience/endpoint-residualized-regression-disposition-2026-05-31.md`.
   Refresh when: retained hostile-landscape wording or endpoint datasets change.
 
 - Sys first-order generic row-chart writing is active.
