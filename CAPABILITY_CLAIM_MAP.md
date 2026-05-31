@@ -453,6 +453,9 @@ claim.
     automatically publication-ready theorem truth.
   - Many sections are explicitly unverified or contain Jörn-review TODOs.
     - `rg -n -e 'begin\{unverified\}' -e 'TODO: JÖRN' -e 'Status:' formal -g '*.tex'`
+  - The current formal build passed on 2026-05-31.
+    - `cd formal/ && latexmk`
+    - Evidence: `tasks/references/repo-status-smoke-and-core-2026-05-31.md`
   - Use local status comments and `unverified` environments before citing a
     formal note as support for thesis or code claims.
   - Refresh when:
@@ -476,6 +479,9 @@ claim.
     `formal/`, or `crates/`.
   - Publication assets and final wording must be copied, cited, or summarized
     deliberately inside `thesis/`.
+  - The current thesis build passed on 2026-05-31.
+    - `cd thesis/ && latexmk && ./check-build.sh`
+    - Evidence: `tasks/references/repo-status-smoke-and-core-2026-05-31.md`
   - Refresh when:
     - `thesis/main.tex` input structure changes
     - retained claim set changes
