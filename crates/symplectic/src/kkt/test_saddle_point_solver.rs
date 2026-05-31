@@ -291,7 +291,8 @@ fn two_facet_permutation() {
 /// Perturbed LP(4,4) triggers the Q-error-bound panic on degenerate 4-facet orbits.
 /// The KKT matrix eigenvalues shift from null (at the symmetric point) to small-but-
 /// retained (at the perturbed point), making |λ_min| tiny and the error bound vacuous.
-/// This is a regression test: when the deferred q-error-bound work in tasks/numerics.md is
+/// This is a regression test: when the deferred q-error-bound work in
+/// tasks/planning-notes.md is
 /// resolved, this test should be updated to expect the new behavior.
 #[test]
 fn perturbed_lp44_degenerate_orbit() {

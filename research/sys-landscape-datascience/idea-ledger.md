@@ -18,13 +18,11 @@ The method ledger records methods already visible in the repo. This file records
 the broader queue of proposed ideas, spike attempts, process lessons, and
 reasons not to continue.
 
-Process authority: `tasks/landscape.md` owns the current data-science
-subexperiment workflow, including worker-packet fields, result qualifiers,
-closure rules, reviewer checklist, readiness gates, and scale/no-scale decision.
-`$data-science-subexperiment` owns the reusable worker-packet workflow and
-prompt skeleton. `tasks/landscape-datascience-worker-packets.md` owns the
-current candidate pilot packet. This ledger owns the idea rows and their
-evidence links.
+Process authority: `tasks/planning-notes.md` owns current data-science
+route choices, readiness gates, and scale/no-scale decisions.
+`research/sys-landscape-datascience/worker-procedure.md` owns the reusable
+worker-packet procedure. This ledger owns the idea rows and their evidence
+links.
 
 ## Current Dataset Snapshot
 
@@ -75,14 +73,16 @@ Use exactly one terminal verdict per semantic idea slug.
 - `rejected-low-voi`: the idea is standard or plausible, but current cost,
   ambiguity, or implementation risk is too high for expected information.
 - `future`: useful after thesis closeout or after a named prerequisite changes.
+- `current-review`: existing artifact or idea must be reviewed or resolved by
+  the current task route before its thesis role is classified.
 - `bug-redo`: the spike exposed a data, code, prompt, or methodology bug; fix the
   bug before interpreting the method result.
 
 ## Spike Contract
 
-See `tasks/landscape.md` for the current binding workflow. The notes below are
-retained as the local shape of one-turn worker delegation and should be read
-through that task-bundle workflow.
+See `tasks/planning-notes.md` for current route choices and
+`research/sys-landscape-datascience/worker-procedure.md` for the reusable
+worker procedure. The notes below are retained as local delegation context.
 
 Use one-turn worker delegation by default:
 
@@ -124,7 +124,7 @@ canonical refresh.
 | --- | --- | --- | --- | --- | --- | --- |
 | `feature-block-regression` | Feature-block regression with ridge and random forest | method | Existing feature-block packet over random and endpoint regimes | Grouped CV, random-to-endpoint transfer, null baseline | `negative` | Cached in `research/sys-landscape-toolbox-audit.md`; reopen if refreshed feature tables transfer to endpoints. |
 | `regime-classification` | Regime classification | method | Existing regime-classification packet | Whether non-provenance blocks separate endpoint from random better than null and metadata caveats | `negative` | Current-contract pilot in `experiments/sys-landscape/datascience/methods/feature-pattern-search/regime-classification-report.md`; use as supporting/caveat only, not as a search rule. |
-| `endpoint-residualized-regression` | Endpoint residualized regression beyond metadata | method | Existing residualized-regression packet | Whether endpoint geometry/orbit/trajectory blocks add grouped-CV signal beyond metadata | `future` | Existing script lacks a reviewed report/ledger disposition; decide thesis role after report review. |
+| `endpoint-residualized-regression` | Endpoint residualized regression beyond metadata | method | Existing residualized-regression packet | Whether endpoint geometry/orbit/trajectory blocks add grouped-CV signal beyond metadata | `current-review` | Current route in `tasks/planning-notes.md` says to run or resolve this existing artifact first; decide thesis role after reviewed report plus ledger/audit disposition. |
 | `pca-cluster-anomaly` | PCA / clustering / anomaly scan over current feature blocks | method spike | Existing 282-row table and committed feature JSONL | A non-post-hoc cluster or component rule that suggests where to search, or a bounded negative result | `negative` | Main commit `39039550` creates `experiments/sys-landscape/datascience/methods/pca-cluster-spike/` with script and report. |
 | `supervised-alternatives` | Cheap supervised alternatives: lasso, elastic net, boosting, kNN | method spike | Current feature tables only | Whether standard extra models change `feature-block-regression` / `regime-classification` conclusions under the same grouped split policy | `negative` | Main commit `5e8db378` creates `experiments/sys-landscape/datascience/methods/supervised-alternatives-spike/`; lead had to run the worker's script to produce the report. |
 | `stat-sanity` | Null, permutation, and bootstrap uncertainty checks | sanity | Existing feature-block/regime-classification/residualized-regression outputs | Chance baseline and fold uncertainty for claimed pattern or non-pattern | `negative` | Provisional negative: worker spike found above-null within-regime pockets, but the load-bearing random-to-endpoint transfer still has strongly negative R^2. Evidence was promoted into this ledger and the toolbox audit from temporary output; before thesis use, repair with repo-owned source truth or downgrade to non-load-bearing caveat evidence. |

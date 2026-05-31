@@ -92,15 +92,15 @@ When interacting with Jörn in chat:
 |   `-- sys-landscape-datascience/
 |-- papers/<abbreviationYear>/
 |-- tasks/
-|   |-- MAP.md
 |   |-- README.md
+|   |-- definition-of-success.md
+|   |-- current-state.md
+|   |-- planning-notes.md
 |   |-- submit-thesis/
+|   |   |-- README.md
 |   |   |-- *.md
 |   |   `-- *.pdf
 |   |-- references/*.md
-|   |-- submit-thesis.md
-|   |-- verify-thesis-done.md
-|   `-- <group>.md
 |-- .agents/skills/<skill>/
 |   |-- SKILL.md
 |   |-- agents/openai.yaml
@@ -123,7 +123,7 @@ When interacting with Jörn in chat:
 - `AGENTS.md`: root instruction map. This repo does not use nested `AGENTS.md`.
 - `CAPABILITY_CLAIM_MAP.md`: non-authoritative cache of high-level repo-capability
   claims, their scope, support, caveats, and refresh triggers. Source files,
-  tests, data, research notes, task bundles, and thesis text overrule it.
+  tests, data, research notes, task progress files, and thesis text overrule it.
 - `Cargo.toml`, `**/Cargo.toml`: Rust workspace and package manifests.
 - `**/README.md`: consumer-facing entry point for normal use.
 - `**/DEVELOPMENT.md`: maintainer-facing notes for changing internals.
@@ -137,8 +137,8 @@ When interacting with Jörn in chat:
   reports, and figures are next to their producer.
 - `research/`: notes with ideas, design, interpretations for development.
 - `papers/<abbreviationYear>/`: raw sources of cited papers.
-- `tasks/`: durable task tracking, current steering, submission/admin source
-  files, and final thesis-done checks.
+- `tasks/`: live task model, current steering, submission/admin source files,
+  and final thesis-done checks. Start at `tasks/README.md`.
 - `.agents/skills/`: repo-local skill surface.
 - `.codex/agents/`: repo-local subagent templates (optional).
 - Harness files (`AGENTS.md`, `.agents/skills/**`, `.codex/agents/**`) are
@@ -158,7 +158,6 @@ They are not authoritative sources, and can be regenerated via subagent.
 - `CAPABILITY_CLAIM_MAP.md`: high-level repo-capability claim cache. It is not a folder
   inventory. Use it for "what can this repo currently rely on?" questions and
   refresh affected rows from source truth when source behavior changes.
-- `tasks/MAP.md`: dependency map of upcoming tasks and current status.
 - `research/INDEX.md`: research questions and current status.
 - `crates/<crate>/MAP.md`: api and architecture.
 - `experiments/MAP.md`: tree of experiments and current status.

@@ -378,7 +378,7 @@ fn try_pseudoinverse_with_threshold(
     // This makes E large for near-singular M, which correctly exposes that the lemma's
     // bound is too loose. The solver panics on basic polytopes (simplex, hypercube, etc.)
     // because the bound is wrong — the actual Q is accurate but the bound says otherwise.
-    // See tasks/numerics.md q-error-bound notes: the lemma needs replacing with a tighter bound.
+    // See tasks/planning-notes.md q-error-bound notes: the lemma needs replacing with a tighter bound.
     let abs_lambda_min = eigenvalues
         .iter()
         .map(|e| e.abs())
@@ -613,7 +613,7 @@ fn finalize_result(
     //
     // The q_error_bound and q_correction values are stored in KktResult for
     // auditing. Gap: need proven error bound or algorithm change before
-    // publication. Tracked in tasks/numerics.md.
+    // publication. Tracked in tasks/planning-notes.md.
 
     KktOutcome::Feasible(KktResult {
         beta: beta.to_vec(),

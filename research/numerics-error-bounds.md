@@ -226,7 +226,7 @@ The capacity algorithm iterates over all subsets S ⊆ {1,...,F} and all cyclic 
 
 ### Scope and iteration guidance
 
-**Agent owns:** All experiment files (`main.rs`, `projection_solver.rs`, `saddle_point_solver.rs`, `collect_poly.rs`, `analyze.py`), `formal/hk2017-qp-core.tex`, `formal/hk2017-qp-precision.tex`, `research/numerics-error-bounds.md`, JSONL data, `tasks/numerics.md` updates, solver algorithm changes.
+**Agent owns:** All experiment files (`main.rs`, `projection_solver.rs`, `saddle_point_solver.rs`, `collect_poly.rs`, `analyze.py`), `formal/hk2017-qp-core.tex`, `formal/hk2017-qp-precision.tex`, `research/numerics-error-bounds.md`, JSONL data, `tasks/planning-notes.md` updates, solver algorithm changes.
 
 **Needs Jörn:** GAP in cor:taylor-structure proof, mathematical review of new bounds, merge to main, scope decisions.
 

@@ -16,4 +16,5 @@ They are exposed in two manifests:
 
 They write no artifacts and are not current evidence producers. Use
 `experiments/sys-landscape/README.md` for the root command contract and
-`research/sys-landscape.md` or `tasks/landscape.md` for experiment purpose.
+`research/sys-landscape.md` or `tasks/planning-notes.md` for experiment
+purpose.

@@ -2,8 +2,8 @@
 
 This package owns local Rust validation commands for capacity algorithms,
 minimum-orbit result semantics, and geometric orbit recovery. Use
-`research/verification.md` and `tasks/reproducibility.md` for interpretation and
-remaining task state.
+`research/verification.md`, `tasks/current-state.md`, and
+`tasks/planning-notes.md` for interpretation and remaining task state.
 
 ## Rust Command Contract
 

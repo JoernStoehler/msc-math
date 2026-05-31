@@ -9,7 +9,7 @@ Map maintenance:
 - To check staleness, compare affected sections against those source files with
   targeted `rg`, `rg --files`, manifests, and local module headers.
 - To refresh, update only navigation facts and route API/refactor/task
-  decisions to tasks or implementation files.
+  decisions to `tasks/planning-notes.md` or implementation files.
 - Keep entries short; point to source files instead of duplicating details.
 -->
 
@@ -33,7 +33,7 @@ Map maintenance:
 - Authority: crate source files, crate README files, formal labels referenced
   from code, and tests overrule this map.
 - Non-authority: this file does not create API stability promises or refactor
-  obligations. Route those through `tasks/infrastructure.md` or the relevant
+  obligations. Route those through `tasks/planning-notes.md` or the relevant
   implementation task.
 
 ## Crate Roles
@@ -42,7 +42,7 @@ Map maintenance:
 | --- | --- | --- |
 | `crates/symplectic/` | main symplectic geometry crate for 4D convex polytopes, capacity algorithms, KKT solvers, persistence helpers, derivatives, sampling, and known polytope constructors | `crates/symplectic/src/lib.rs`, `crates/symplectic/README.md` |
 | `crates/algebraic-numbers/` | exact scalar arithmetic over `Q` and statically chosen real algebraic extensions, plus dense generic exact linear algebra | `crates/algebraic-numbers/src/lib.rs`, `crates/algebraic-numbers/README.md` |
-| `crates/euclidean-polytopes/` | ordinary convex-polytope geometry in ambient `R^4`; currently owns exact origin-interior, exact extreme-point, exact polar vertex enumeration, incidence-derived face helpers, known-incidence f64/exact volume, known-incidence facet 3-volume, random dual-vertex candidate sampling, and incidence-only 2-face ordering inside volume decomposition | `crates/euclidean-polytopes/README.md`, `crates/euclidean-polytopes/DEVELOPMENT.md`, `tasks/euclidean-polytopes.md` |
+| `crates/euclidean-polytopes/` | ordinary convex-polytope geometry in ambient `R^4`; currently owns exact origin-interior, exact extreme-point, exact polar vertex enumeration, incidence-derived face helpers, known-incidence f64/exact volume, known-incidence facet 3-volume, random dual-vertex candidate sampling, and incidence-only 2-face ordering inside volume decomposition | `crates/euclidean-polytopes/README.md`, `crates/euclidean-polytopes/DEVELOPMENT.md`, `tasks/current-state.md`, `tasks/planning-notes.md` |
 
 ## Symplectic Subsystems
 

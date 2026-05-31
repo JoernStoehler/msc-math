@@ -5,7 +5,7 @@ experiment artifact patterns. It is descriptive, not a task tracker.
 
 Map maintenance:
 - Source truth is package manifests, entrypoints, local READMEs, helper crates,
-  generated artifact locations, research notes, and task bundles.
+  generated artifact locations, research notes, and task progress files.
 - To check staleness, compare affected sections against those sources with
   targeted `rg`, `rg --files`, manifests, and local package headers.
 - To refresh, update navigation and provenance facts; route thesis
@@ -20,8 +20,8 @@ Map maintenance:
 - State: split from the old root `ARCHITECTURE.md`.
 - Last updated: 2026-04-25.
 - Source surfaces: `experiments/**/Cargo.toml`, `experiments/**/src/lib.rs`,
-  local `README.md` files, experiment entrypoints, `research/*.md`,
-  `tasks/*.md`.
+  local `README.md` files, experiment entrypoints, `research/*.md`, and the
+  task progress files.
 - Refresh when: topic packages move, helper-crate boundaries change, artifact
   ownership changes, or retained thesis-facing experiments change.
 
@@ -31,7 +31,8 @@ Map maintenance:
 - Agent question: which experiment topic package, helper crate, artifact
   pattern, or provenance surface should I inspect first?
 - Authority: package manifests, experiment entrypoints, local helper crates,
-  retained research interpretation notes, and task bundles overrule this map.
+  retained research interpretation notes, and task progress files overrule this
+  map.
 - Non-authority: this file does not decide thesis claim strength, canonical data
   ownership, or which future/follow-up experiments should run.
 
@@ -60,12 +61,12 @@ Current boundary facts:
 
 | Area | Current role | Related task/research surfaces |
 | --- | --- | --- |
-| `experiments/hko-local-maximum/` | HKO local-maximality experiments: exact-Clarke route, exact/Sage validation, perturbation, splitting, second-order, cut/ascent, and Lagrangian-boundary evidence | `tasks/hko.md`, `research/hko-local-maximum*.md`, `experiments/hko-local-maximum/README.md` |
-| `experiments/sys-landscape/` | hostile sys-search landscape: random/product searches, gradient ascent, variable-`F` continuation, rotated regular products, rejection calibration, pentagon rotation formula, and datascience pipeline | `tasks/landscape.md`, `research/sys-landscape*.md`, `research/sys-landscape-datascience/` |
+| `experiments/hko-local-maximum/` | HKO local-maximality experiments: exact-Clarke route, exact/Sage validation, perturbation, splitting, second-order, cut/ascent, and Lagrangian-boundary evidence | `tasks/current-state.md`, `tasks/planning-notes.md`, `research/hko-local-maximum*.md`, `experiments/hko-local-maximum/README.md` |
+| `experiments/sys-landscape/` | hostile sys-search landscape: random/product searches, gradient ascent, variable-`F` continuation, rotated regular products, rejection calibration, pentagon rotation formula, and datascience pipeline | `tasks/current-state.md`, `tasks/planning-notes.md`, `research/sys-landscape*.md`, `research/sys-landscape-datascience/` |
 | `experiments/sys-landscape/gradient-ascent-dev/` | method-development helper package for step calibration and strategy comparison | `experiments/sys-landscape/gradient-ascent-dev/src/lib.rs` |
-| `experiments/numerics/` | numerical-method validation, error bounds, algebraic exactness, Sage feasibility, unknown predicates, and KKT diagnostics | `tasks/numerics.md`, `research/numerics*.md` |
-| `experiments/numerics/gradient/` | separate gradient-validation package for first-order derivative checks, edge cases, and subdifferential tests | `tasks/numerics.md`, `research/numerics*.md` |
-| `experiments/verification/` | cross-topic correctness, minimum-set, orbit-recovery, and reusable Sage validation experiments | `tasks/reproducibility.md`, `research/verification*.md`, `experiments/verification/sage/README.md` |
+| `experiments/numerics/` | numerical-method validation, error bounds, algebraic exactness, Sage feasibility, unknown predicates, and KKT diagnostics | `tasks/current-state.md`, `tasks/planning-notes.md`, `research/numerics*.md` |
+| `experiments/numerics/gradient/` | separate gradient-validation package for first-order derivative checks, edge cases, and subdifferential tests | `tasks/current-state.md`, `tasks/planning-notes.md`, `research/numerics*.md` |
+| `experiments/verification/` | cross-topic correctness, minimum-set, orbit-recovery, and reusable Sage validation experiments | `tasks/current-state.md`, `tasks/planning-notes.md`, `research/verification*.md`, `experiments/verification/sage/README.md` |
 | `experiments/verification/algorithm-comparison/` | algorithm comparison, ablation, benchmark, and profiling evidence | `research/verification.md` |
 | `experiments/combinatorial-cells/` | combinatorial-cell exploration: boundary characterization, cell widths, convexity, multiple crossings, omega hypothesis, and gradient-discontinuity analysis | `research/combinatorial-cells.md` |
 | `experiments/crosspolytope/` | one-off crosspolytope computation and checkpointing | `research/crosspolytope.md` |

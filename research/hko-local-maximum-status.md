@@ -7,9 +7,10 @@ Use it before reading deeper notes or experiment folders.
 ## Authoritative Surfaces
 
 - Thesis story index: `research/INDEX.md`
-- Work obligations: `tasks/hko.md`
-- Thesis-done gate: `tasks/verify-thesis-done.md`
-- Active/open work items: `tasks/hko.md`
+- Work obligations: `tasks/definition-of-success.md`,
+  `tasks/current-state.md`, `tasks/planning-notes.md`
+- Thesis-done gate: `tasks/definition-of-success.md`
+- Active/open work items: `tasks/planning-notes.md`
 - Topic research note and interpretation: `research/hko-local-maximum.md`
 - Exact theorem route details: `research/hko-local-maximum-exact-clarke.md`
 - Current experiment layout: `experiments/hko-local-maximum/README.md`
@@ -66,7 +67,7 @@ Use it before reading deeper notes or experiment folders.
 ## Reading Order
 
 1. `research/INDEX.md`
-2. `tasks/hko.md`
+2. `tasks/planning-notes.md`
 2. `research/hko-local-maximum-status.md`
 3. `research/hko-local-maximum.md`
 4. `research/hko-local-maximum-exact-clarke.md`

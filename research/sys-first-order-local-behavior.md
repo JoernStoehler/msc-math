@@ -1,6 +1,6 @@
 <!--
 Purpose: classify the local first-order behavior object needed for sys in a fixed row chart.
-Context: draft research note for tasks/sys-first-order.md; no task status change is implied.
+Context: draft research note for `tasks/planning-notes.md`; no task status change is implied.
 -->
 
 # Sys First-Order Local Behavior
@@ -18,7 +18,7 @@ of Tarski-Seidenberg quantifier elimination, semialgebraic curve selection,
 Puiseux/monotonicity for one-variable semialgebraic germs, and cylindrical
 algebraic decomposition.
 
-Evidence read: `tasks/sys-first-order.md`, `tasks/hko.md`,
+Evidence read: historical task notes for sys first-order and HKO,
 `thesis/legacy/general-case-algorithm.tex`,
 `thesis/legacy/general-case-algorithm-proof.tex`,
 `formal/hk2017-qp-core.tex`, `formal/hk2017-qp-precision.tex`,
@@ -199,7 +199,7 @@ HKO is not a shortcut around this theory. It is a hard instance of it.
 Current HKO evidence has many active orbits, symmetry quotients, exact
 representative rows, endpoint/midpoint families, and unresolved seven-facet
 representative classes. The formal HKO second-order route uses a
-smooth/min-envelope argument that the task bundle already rejects as a
+smooth/min-envelope argument that the task progress files already reject as a
 substitute for arbitrary closed-value behavior. The gradient-analysis note
 also records that current bookkeeping has 150 exact-action orbits, 20 visited
 facet subsets, and 28 distinct gradient patterns, so the active surface is not

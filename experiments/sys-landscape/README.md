@@ -1,8 +1,8 @@
 # Sys-Landscape
 
 This package owns hostile-landscape search experiments and the maintained
-datascience pipeline interpreted in `research/sys-landscape.md` and
-`tasks/landscape.md`.
+datascience pipeline interpreted in `research/sys-landscape.md`,
+`tasks/current-state.md`, and `tasks/planning-notes.md`.
 
 ## Rust Command Contract
 

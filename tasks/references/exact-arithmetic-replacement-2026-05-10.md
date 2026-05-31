@@ -1,7 +1,7 @@
 <!--
 Purpose: reference record for the exact-arithmetic replacement refactor.
-Context: this is supporting material for `tasks/rust-tech-debt.md`, not a live
-task bundle and not an active checklist.
+Context: this is supporting material for `tasks/current-state.md` and
+`tasks/planning-notes.md`, not a live task file and not an active checklist.
 -->
 
 # Exact Arithmetic Replacement 2026-05-10
@@ -17,8 +17,9 @@ This refactor was not literal deletion of `crates/algebraic-numbers/`. It
 replaced the old exact-arithmetic API/design attractor with a smaller exact
 scalar and dense exact-linear-algebra crate.
 
-The live tracking row is in `tasks/rust-tech-debt.md`. The current source truth
-is the code plus `crates/algebraic-numbers/README.md`,
+Current task summaries are in `tasks/current-state.md` and
+`tasks/planning-notes.md`. The current source truth is the code plus
+`crates/algebraic-numbers/README.md`,
 `crates/algebraic-numbers/DEVELOPMENT.md`, and `crates/MAP.md`.
 
 ## Outcome

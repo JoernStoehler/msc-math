@@ -397,7 +397,8 @@ Implemented criteria for this slice:
 - f64 known-incidence tests compare against the exact result on rational
   fixtures;
 - code review confirms the exact computation uses no f64 arithmetic;
-- required verification commands are listed in `tasks/euclidean-polytopes.md`.
+- required verification commands are listed in `tasks/current-state.md` or
+  `tasks/planning-notes.md`.
 
 ## Implemented Slice: Symplectic Volume Uses Exact Known Incidence
 
