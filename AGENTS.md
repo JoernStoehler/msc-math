@@ -195,7 +195,7 @@ cargo clippy -p euclidean-polytopes --all-targets -- -D warnings
 
 # Rust workspace and experiments
 cargo build --workspace --release
-cargo check -p sys-landscape
+cargo check -p exp-sys-landscape
 
 # Python
 # `python` is absent on Ubuntu 24.04; `python3` lacks undeclared packages.

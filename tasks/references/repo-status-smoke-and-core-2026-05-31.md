@@ -20,6 +20,7 @@ Source reports:
 - `/tmp/repo-status-smoke-navigation.md`
 - `/tmp/repo-status-smoke-rust-experiments.md`
 - `/tmp/repo-status-core-verification.md`
+- `/tmp/repo-status-workspace-experiment-verification.md`
 
 ## Passed Smoke Checks
 
@@ -59,6 +60,17 @@ Rust/experiment smoke:
 - `cargo test -p symplectic --release --test public_capacity_api` passed:
   `4` passed, `0` failed.
 
+## Passed Workspace And Experiment Compile Verification
+
+- `cargo build --workspace --release` passed in about `1m09s`.
+- Planned command `cargo check -p sys-landscape` failed because the package name
+  is stale. The package is `exp-sys-landscape`.
+- `cargo check -p exp-sys-landscape` passed.
+- `cargo test -p exp-combinatorial-cells --all-targets` passed.
+- `cargo clippy -p exp-combinatorial-cells --all-targets` passed.
+- `AGENTS.md` was updated from `cargo check -p sys-landscape` to
+  `cargo check -p exp-sys-landscape`.
+
 ## Warnings
 
 - `dev-capacity-validation` correctness tests pass but are not cheap;
@@ -71,6 +83,8 @@ Rust/experiment smoke:
 - `experiments/sys-landscape/datascience/README.md` does not exist. The
   maintained entry points are `produce/README.md`, `tables/README.md`,
   `methods/README.md`, and `smoke-pipeline.sh`.
+- The old `cargo check -p sys-landscape` command was stale and failed; use
+  `cargo check -p exp-sys-landscape`.
 
 ## Cache Consequences
 
@@ -83,6 +97,8 @@ Rust/experiment smoke:
   euclidean-polytopes ordinary geometry, symplectic release-lib behavior,
   public capacity API shape, selected validation command safety, and command
   contract caution.
+- `AGENTS.md` command documentation needed and received the package-name fix for
+  sys-landscape checking.
 
 ## Not Checked
 
