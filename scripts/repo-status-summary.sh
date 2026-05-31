@@ -33,6 +33,8 @@ CHECK_PATHS=(
 )
 ORIENTATION_PATHS=(
   'AGENTS.md'
+  '.agents/skills/**'
+  '.codex/agents/**'
   'CAPABILITY_CLAIM_MAP.md'
   'tasks/*.md'
   'tasks/**/*.md'

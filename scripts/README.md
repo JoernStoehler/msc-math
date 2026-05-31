@@ -12,7 +12,8 @@ It reports:
 - working-tree cleanliness;
 - changed paths since the dated verification reference;
 - changed or uncommitted paths that are likely to affect old test/build results;
-- changed or uncommitted paths that affect task, map, or helper orientation;
+- changed or uncommitted paths that affect task, map, harness, or helper
+  orientation;
 - the tracked-data freshness caveat;
 - Git LFS payload presence.
 
