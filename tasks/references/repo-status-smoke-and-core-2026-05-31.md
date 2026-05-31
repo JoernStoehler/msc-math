@@ -8,7 +8,7 @@ Context: this is supporting material for `tasks/current-state.md` and
 
 ## Status
 
-- Commit checked: `2a2fc41a`.
+- Latest commit checked: `269fb7b1`.
 - Working tree before checks: clean.
 - Working tree after checks: clean.
 - No tracked data, figures, thesis build artifacts, or canonical experiment
@@ -21,6 +21,7 @@ Source reports:
 - `/tmp/repo-status-smoke-rust-experiments.md`
 - `/tmp/repo-status-core-verification.md`
 - `/tmp/repo-status-workspace-experiment-verification.md`
+- `/tmp/repo-status-latex-verification.md`
 
 ## Passed Smoke Checks
 
@@ -71,6 +72,13 @@ Rust/experiment smoke:
 - `AGENTS.md` was updated from `cargo check -p sys-landscape` to
   `cargo check -p exp-sys-landscape`.
 
+## Passed LaTeX Build Verification
+
+- `cd formal/ && latexmk` passed; `formal/main.pdf` was already up to date.
+- `cd thesis/ && latexmk && ./check-build.sh` passed; `thesis/build/main.pdf`
+  was already up to date and `check-build.sh` reported `Build clean`.
+- The working tree remained clean after both checks.
+
 ## Warnings
 
 - `dev-capacity-validation` correctness tests pass but are not cheap;
@@ -105,5 +113,4 @@ Rust/experiment smoke:
 - Full artifact-refreshing producers were not run.
 - LICCA/Slurm, profiling, web/admin, and current university source checks were
   not run.
-- `formal/` and `thesis/` LaTeX builds were not run in this pass.
 - Normal verification commands outside the core crate/API set were not run.
