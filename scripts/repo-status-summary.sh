@@ -84,3 +84,24 @@ echo
 echo "Data freshness:"
 echo "The referenced checks did not refresh tracked datasets, figures, or generated experiment reports."
 echo "Use the Artifact-Refresh Boundary section in $STATUS_FILE before treating generated artifacts as fresh."
+echo
+
+echo "LFS payloads:"
+if git lfs version >/dev/null 2>&1; then
+  LFS_LIST="$(git lfs ls-files)"
+  if [[ -z "$LFS_LIST" ]]; then
+    echo "no LFS-tracked files reported"
+  else
+    LFS_TOTAL="$(printf '%s\n' "$LFS_LIST" | awk 'NF {count++} END {print count + 0}')"
+    LFS_PRESENT="$(printf '%s\n' "$LFS_LIST" | awk '$2 == "*" {count++} END {print count + 0}')"
+    LFS_MISSING="$(printf '%s\n' "$LFS_LIST" | awk '$2 == "-" {count++} END {print count + 0}')"
+    echo "$LFS_PRESENT present, $LFS_MISSING missing, $LFS_TOTAL tracked"
+    if [[ "$LFS_MISSING" != "0" ]]; then
+      printf '%s\n' "$LFS_LIST" |
+        awk '$2 == "-" {for (i = 3; i <= NF; i++) printf "%s%s", $i, (i == NF ? ORS : OFS)}'
+      echo "Run targeted git lfs pull only for files needed by the task."
+    fi
+  fi
+else
+  echo "git lfs is not available in this environment"
+fi
