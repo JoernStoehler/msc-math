@@ -38,7 +38,13 @@ Compiled from 4 review agents. Each item needs Jörn's decision on which side to
 
 14. **Tube action function**: Thesis gives exact affine formula. Code uses affine fit via least squares. Approximation error affects `[lem:prune-action]` correctness.
 
-15. **18 cross-ref labels invented by agents**: See `/tmp/review-target-completeness.md` for the full list. Most are plausible definitions/lemmas that should exist but don't have `\label{}` in the thesis yet.
+15. **Cross-ref labels invented by agents**: Earlier review claimed 18
+    invented or unsupported labels, but the scratch file with the full list
+    (`/tmp/review-target-completeness.md`) is gone. Treat this item as a
+    non-self-contained warning, not as evidence for a specific count. Before
+    using legacy algorithm prose or code comments that cite thesis labels,
+    rerun a targeted cross-reference audit against the active thesis and legacy
+    source files.
 
 ## Convention gap that caused these issues
 
