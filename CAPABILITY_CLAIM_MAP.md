@@ -208,6 +208,7 @@ claim.
     - `experiments/verification/algorithm-comparison/README.md`
     - `experiments/sys-landscape/README.md`
     - `experiments/sys-landscape/datascience/produce/README.md`
+    - `experiments/hko-local-maximum/exact-clarke/README.md`
     - `experiments/hko-local-maximum/README.md`
     - `experiments/numerics/README.md`
     - `experiments/combinatorial-cells/README.md`
