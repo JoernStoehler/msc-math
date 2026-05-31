@@ -127,3 +127,32 @@ Rust/experiment smoke:
 - LICCA/Slurm, profiling, web/admin, and current university source checks were
   not run.
 - Commands not listed above were not run in this pass.
+
+## Artifact-Refresh Boundary
+
+The checks above show that selected commands/builds pass. They do not prove
+that tracked datasets, figures, or generated experiment reports are fresh.
+
+Before treating tracked generated artifacts as refreshed, start from the local
+README or source header that owns the producer. The high-risk refresh areas are:
+
+- `experiments/verification/`: tracked correctness, all-minimum, orbit-recovery,
+  and algorithm-comparison evidence;
+- `experiments/hko-local-maximum/`: canonical HKO gradient/Sage evidence and
+  exact-Clarke JSON artifacts;
+- `experiments/sys-landscape/`: random/product/ascent/continuation datasets,
+  datascience producer caches, tables, method reports, and full-output search
+  artifacts;
+- `experiments/numerics/`: canonical exactness, Sage feasibility,
+  unknown-predicate, collection, and error-bound artifacts;
+- `experiments/combinatorial-cells/`: producer binaries that write tracked
+  evidence and currently have no smoke modes;
+- `experiments/crosspolytope/` and `experiments/visualization/`: inspect local
+  entrypoints before running because they are likely artifact producers;
+- `tasks/submit-thesis/`: official forms and web/admin facts require current
+  source checks close to final submission.
+
+If one of these areas changes, update the owning research note or experiment
+README first, then update `tasks/current-state.md` and/or
+`CAPABILITY_CLAIM_MAP.md` only if near-term thesis routing or reusable repo
+capability changed.
