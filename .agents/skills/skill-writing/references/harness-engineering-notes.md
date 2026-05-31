@@ -1,9 +1,9 @@
----
-name: harness-engineering
-description: Use when Codex edits, reviews, or proposes changes to repo-local harness material such as `AGENTS.md`, `.agents/skills/*/SKILL.md`, `.codex/agents/*.toml`. Not needed for reading and using harness material. Not needed for editing other files.
----
+# Harness Engineering Notes
 
-# Harness Engineering
+Status: archived reference notes moved from the former live
+`harness-engineering` skill. This file is not an active skill and should not be
+loaded by default. Use the live `skill-writing` skill first; read this file
+only when a concrete skill-writing preflight or review is still unclear.
 
 For projects that make use of massive numbers of AI agents, a lot of tradeoffs shift away from standard projects, towards ensuring that agents can work more effectively, with less human oversight or instruction. Harness Engineering is the new name for picking conventions, writing material, and refactoring projects to be more useable by agents.
 This skill conveys a bunch of instrumental objectives that increase agent autonomy across long chains of agents, and breaks them into heuristics that can be applied to the repository without having to first observe agent behavior over a long time to assess the ground-truth agent success/effectiveness in the project.

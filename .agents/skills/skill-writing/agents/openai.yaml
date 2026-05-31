@@ -1,0 +1,4 @@
+interface:
+  display_name: "Skill Writing"
+  short_description: "Draft repo-local skills"
+  default_prompt: "Use $skill-writing and $skill-creator to draft or review a repo-local skill."

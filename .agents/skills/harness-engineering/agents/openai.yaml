@@ -1,4 +1,0 @@
-interface:
-  display_name: "Harness Engineering"
-  short_description: "Edit agent-facing repo harness"
-  default_prompt: "Use $harness-engineering to review a proposed change to repo-local agent instructions."
