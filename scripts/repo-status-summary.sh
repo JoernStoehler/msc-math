@@ -5,6 +5,28 @@ ROOT="$(git rev-parse --show-toplevel)"
 cd "$ROOT"
 
 STATUS_FILE="${1:-}"
+
+usage() {
+  cat <<'EOF'
+Usage: scripts/repo-status-summary.sh [tasks/references/repo-status-*.md]
+
+Read-only orientation helper. It compares current HEAD and working tree state
+against a dated repo-status reference, reports check-affecting and
+orientation-affecting changed paths, repeats the generated-data freshness
+caveat, and summarizes Git LFS payload presence.
+
+With no argument, uses the newest tasks/references/repo-status-*.md file by
+filename.
+EOF
+}
+
+case "$STATUS_FILE" in
+  -h|--help)
+    usage
+    exit 0
+    ;;
+esac
+
 CHECK_PATHS=(
   '*.rs'
   '**/Cargo.toml'
