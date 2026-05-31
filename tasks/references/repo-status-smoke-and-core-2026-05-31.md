@@ -8,8 +8,10 @@ Context: this is supporting material for `tasks/current-state.md` and
 
 ## Status
 
-- Commands listed below were run through commit `269fb7b1`; later commits
-  updated only status/cache documentation from those results.
+- Commands listed below were run through commit `269fb7b1`.
+- Commits after `269fb7b1` are not covered by these command results unless they
+  only change documentation or caches. Check `git log` and rerun affected
+  checks after code, data, artifact, or build-contract changes.
 - Working tree before checks: clean.
 - Working tree after checks: clean.
 - No tracked data, figures, thesis build artifacts, or canonical experiment
