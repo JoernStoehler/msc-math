@@ -17,7 +17,13 @@ Context: this is supporting material for `tasks/current-state.md` and
 - No tracked data, figures, thesis build artifacts, or canonical experiment
   outputs were intentionally refreshed.
 
-Source reports:
+Durable evidence retained here:
+
+- the command list and pass/fail results below;
+- explicit caveats about checks that were skipped, stopped, or too expensive;
+- cache consequences for future map/current-state refreshes.
+
+Scratch reports used during the pass:
 
 - `/tmp/repo-status-refresh-plan.md`
 - `/tmp/repo-status-smoke-navigation.md`
@@ -25,6 +31,10 @@ Source reports:
 - `/tmp/repo-status-core-verification.md`
 - `/tmp/repo-status-workspace-experiment-verification.md`
 - `/tmp/repo-status-latex-verification.md`
+
+The `/tmp` reports are not durable project state. They are listed only so a
+current session can inspect local scratch if it still exists; this file is the
+durable summary.
 
 ## Passed Smoke Checks
 
