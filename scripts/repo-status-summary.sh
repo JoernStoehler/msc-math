@@ -4,7 +4,7 @@ set -euo pipefail
 ROOT="$(git rev-parse --show-toplevel)"
 cd "$ROOT"
 
-STATUS_FILE="tasks/references/repo-status-smoke-and-core-2026-05-31.md"
+STATUS_FILE="${1:-}"
 CHECK_PATHS=(
   '*.rs'
   '**/Cargo.toml'
@@ -22,6 +22,14 @@ CHECK_PATHS=(
   ':(exclude)scripts/repo-status-summary.sh'
   ':(exclude)scripts/README.md'
 )
+
+if [[ -z "$STATUS_FILE" ]]; then
+  STATUS_FILE="$(
+    find tasks/references -maxdepth 1 -type f -name 'repo-status-*.md' -print |
+      sort |
+      tail -n 1
+  )"
+fi
 
 if [[ ! -f "$STATUS_FILE" ]]; then
   echo "status file missing: $STATUS_FILE" >&2
