@@ -10,8 +10,11 @@ Context: this is supporting material for `tasks/current-state.md` and
 
 - Commands listed below were run through commit `269fb7b1`.
 - Commits after `269fb7b1` are not covered by these command results unless they
-  only change documentation or caches. Check `git log` and rerun affected
-  checks after code, data, artifact, or build-contract changes.
+  only change documentation, caches, or read-only status helpers. Check
+  `git log` and rerun affected checks after code, data, artifact, or
+  build-contract changes.
+- For a quick current-`HEAD` applicability summary, run
+  `scripts/repo-status-summary.sh`.
 - Working tree before checks: clean.
 - Working tree after checks: clean.
 - No tracked data, figures, thesis build artifacts, or canonical experiment
