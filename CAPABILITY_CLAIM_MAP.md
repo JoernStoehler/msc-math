@@ -551,6 +551,8 @@ claim.
 
 ## Refresh Recipe
 
+- Check current `HEAD` against the latest dated verification cache:
+  - `scripts/repo-status-summary.sh`
 - List claim headings and marked rows:
   - `rg -n "^(- We|  - \()" CAPABILITY_CLAIM_MAP.md`
 - Check navigation/source surfaces:
