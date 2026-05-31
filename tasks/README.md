@@ -49,6 +49,13 @@ only changed success/state/reasoning survives in repo.
 -->
 Prompt handoffs and executable worker packets go in `/tmp`.
 
+Roadmap reasoning does not go in `/tmp`. If a future packet, packet ordering,
+cost/value argument, stop condition, or cut/repair decision should be visible
+to many later agents, record the durable part in `planning-notes.md`. Use
+`/tmp` only when a packet is ready to be handed to one deliberately spawned
+fresh agent, or for that agent's scratch report before durable consequences are
+copied back to source files.
+
 <!--
 Migration-review note: agents otherwise append progress logs and recreate a
 tracker. Cost: some work leaves no task-file trace. Benefit: durable files stay

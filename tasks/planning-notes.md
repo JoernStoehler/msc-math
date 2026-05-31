@@ -19,7 +19,12 @@ stop conditions. Before turning a route bullet into work, name the thesis/source
 surface it can change and the stop condition that prevents open-ended work.
 
 Before using a note, reread its source surfaces and the relevant
-`current-state.md` row. Write executable fresh-session prompts in `/tmp`.
+`current-state.md` row.
+
+Keep packet reasoning here while packets are being discussed, ordered, cut,
+deferred, or scoped. Write `/tmp` material only for targeted one-use
+consumption: an executable fresh-session prompt, or a scratch report from that
+fresh agent before durable consequences are copied back to source files.
 
 Route-note statuses:
 
