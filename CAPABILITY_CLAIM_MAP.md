@@ -217,6 +217,9 @@ claim.
     quick command validation.
   - (partial) command-contract normalization is uneven. Some packages have
     full-output producers without smoke modes.
+  - (partial) The sys-landscape datascience `smoke-pipeline.sh` is temp-output
+    safe but not cheap; use it as integration smoke, not as a quick command
+    check.
   - Refresh when:
     - binary CLI behavior changes
     - tracked output paths change

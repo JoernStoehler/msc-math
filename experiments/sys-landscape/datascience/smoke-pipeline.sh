@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Low-friction end-to-end smoke run for the sys-landscape produce -> tables ->
-# methods surface. All outputs go to a temp directory.
+# methods surface. All outputs go to a temp directory. This is integration
+# smoke, not a cheap command check; continuation smoke can take minutes.
 
 set -euo pipefail
 

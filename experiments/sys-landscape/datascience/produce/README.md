@@ -40,9 +40,16 @@ this directory is the maintained producer surface for the datascience pipeline.
 
 Use [smoke-pipeline.sh](../smoke-pipeline.sh) to exercise the full low-friction
 surface on temporary outputs:
+
 - producer binaries write under a temp `produce/` directory;
 - `sys-dataset --produce-dir <tmp/produce>` consumes the current canonical smoke stems
   from that directory and writes the shared dataset outputs;
 - `sys-dataset-ascent` and `sys-dataset-ascent-product` run with a small
   `--seed-time-budget-secs` override;
 - no tracked `.jsonl` files are touched.
+
+Runtime caveat: this is integration smoke, not a cheap command check. On
+2026-05-31, the temp-output path was safe, but the script was stopped after
+about two minutes while `sys-dataset-continuation --smoke` was still running.
+Use `--help`, compile checks, or narrower producer smoke commands for fast
+validation.

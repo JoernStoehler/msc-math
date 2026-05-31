@@ -20,3 +20,6 @@ Code ownership:
 
 Smoke path:
 - [smoke-pipeline.sh](../smoke-pipeline.sh)
+
+This path writes only to temporary directories, but it can still take minutes;
+use it as integration smoke, not as a cheap command check.
