@@ -14,7 +14,7 @@ It reports:
 - changed or uncommitted paths that are likely to affect old test/build results;
 - changed or uncommitted paths that affect task, map, harness, or helper
   orientation;
-- the tracked-data freshness caveat;
+- the tracked-data freshness caveat and high-risk artifact-refresh areas;
 - Git LFS payload presence.
 
 Use it before asking whether old test/build results still apply:

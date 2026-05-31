@@ -13,7 +13,8 @@ Usage: scripts/repo-status-summary.sh [tasks/references/repo-status-*.md]
 Read-only orientation helper. It compares current HEAD and working tree state
 against a dated repo-status reference, reports check-affecting and
 orientation-affecting changed paths, repeats the generated-data freshness
-caveat, and summarizes Git LFS payload presence.
+caveat and high-risk artifact-refresh areas, and summarizes Git LFS payload
+presence.
 
 With no argument, uses the newest tasks/references/repo-status-*.md file by
 filename.
@@ -59,6 +60,7 @@ CHECK_PATHS=(
 )
 ORIENTATION_PATHS=(
   'AGENTS.md'
+  '.gitignore'
   '.agents/skills/**'
   '.codex/agents/**'
   'CAPABILITY_CLAIM_MAP.md'
@@ -194,6 +196,14 @@ echo
 echo "Data freshness:"
 echo "The referenced checks did not refresh tracked datasets, figures, or generated experiment reports."
 echo "Use the Artifact-Refresh Boundary section in $STATUS_FILE before treating generated artifacts as fresh."
+echo "High-risk refresh areas:"
+echo "- experiments/verification/"
+echo "- experiments/hko-local-maximum/"
+echo "- experiments/sys-landscape/"
+echo "- experiments/numerics/"
+echo "- experiments/combinatorial-cells/"
+echo "- experiments/crosspolytope/ and experiments/visualization/"
+echo "- tasks/submit-thesis/"
 echo
 
 echo "LFS payloads:"
