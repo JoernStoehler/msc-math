@@ -20,6 +20,7 @@ CHECK_PATHS=(
   '.devcontainer/**'
   'scripts/**'
   ':(exclude)scripts/repo-status-summary.sh'
+  ':(exclude)scripts/README.md'
 )
 
 if [[ ! -f "$STATUS_FILE" ]]; then
