@@ -41,6 +41,7 @@ CHECK_PATHS=(
   'experiments/**/*.html'
   'experiments/**/*.txt'
   'experiments/**/*.tex'
+  'experiments/**/*.py'
   'thesis/**/*.tex'
   'thesis/bibliography.bib'
   'thesis/.latexmkrc'
