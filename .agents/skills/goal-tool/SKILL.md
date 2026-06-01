@@ -21,6 +21,7 @@ description: Use before creating, updating, checkpointing, or completing `/goal`
 - The charter preserves the real objective and the context needed for interpretation and properly marks epistemic status to not confuse necessary constraints with strongly expected properties with mere guesses.
 - The charter fleshes out stopping conditions that are robust to interpretation drift, which can come from the pressure to finish quickly or from boisterous overconfidence.
 - The charter does not try to plan ahead-of-time or break down the goal into easier checks or constrain the process by which the goal is achieved, instead it focuses on making the real objective explicit and robust. During execution / separately from charter-writing the agent will explore and plan and implement on the fly. The `/goal` loop just has to ensure that the agent does not hand in a failing deliverable without realizing it.
+- Part of robustness is to clarify that subagent or programmatic review steps need to actually pass, as otherwise agents often cut corners and merely amend the deliverable after a failing review step without re-running the review, and thereby they miss new or overlooked issues and fail the objective.
 
 - Example of a `/goal` snippet:
   ```text
