@@ -19,6 +19,11 @@ verbatim response files preserve the raw answers used to create this file:
 - `tasks/references/jorn-fast-falsehood-scan-batch4-response-2026-06-01.md`
 - `tasks/references/jorn-fast-falsehood-scan-batch5-response-2026-06-02.md`
 
+Session log:
+- thread id: `019e8451-792d-7c60-b2e7-dd3c9524bfea`
+- local transcript:
+  `/home/vscode/.codex/sessions/2026/06/01/rollout-2026-06-01T17-53-12-019e8451-792d-7c60-b2e7-dd3c9524bfea.jsonl`
+
 The file is grouped by interaction/topic between items to make it easier for
 Jörn to check for gaps and contradictions. Epistemic confidence, source,
 related reasoning, and use limits are provided in prose when useful, to keep
