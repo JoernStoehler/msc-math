@@ -22,12 +22,13 @@ maintenance low. The numbers are stable and can be out of order.
 
 ## Thesis Submission
 
+1. 9.6.2026 is a good deadline for sending the finished PDF to Kai.
+
 2. Official submission facts need to be refreshed from current MNTF sources
    before relying on 2026-04-24 downloaded forms or old deadline text.
 
-3. The repo-recorded registration/admin state is stale. The repo had said the
-   registration form was filled and signed by Kai, awaiting Elizabeth/Jörn
-   external action.
+3. Elizabeth approved the registration form. The pending action is to hand in
+   the registration note to the `Prüfungsamt`.
 
 4. The `Einsichtnahme Dritter` choice is a Jörn decision unless a current
    official rule makes it mandatory. Jörn said this decision costs him about
@@ -38,6 +39,9 @@ maintenance low. The numbers are stable and can be out of order.
 
 6. Zenodo is the leading non-GitHub preservation candidate because Kai named
    it. arXiv/outreach are post-Kai-review unless promoted.
+
+7. Stale deadline/admin notes should be removed or corrected when found. The
+   repo should not keep old deadline notes as live planning context.
 
 ## Thesis Scope And Results
 
@@ -133,6 +137,10 @@ maintenance low. The numbers are stable and can be out of order.
     before row closure. If a positive/conjectured-positive pattern appears, the
     thesis should honestly reflect that.
 
+35. The reproducibility target is that somebody can execute a flow around two
+    years from now and reproduce the thesis results, ideally down to generating
+    the final PDF.
+
 ## Thesis Writing And Prose
 
 40. All models Jörn tried write very badly by default for thesis prose:
@@ -206,6 +214,11 @@ maintenance low. The numbers are stable and can be out of order.
 
 70. Agents will see Kai/Elizabeth feedback through Jörn's commented
     interpretation and notes, not raw advisor feedback.
+
+70.1. Jörn does not know whether there is Kai/Elizabeth feedback missing from
+      the repo, because he does not know what feedback is currently recorded in
+      the repo. Agents should inspect the repo-recorded feedback context before
+      asking a narrower question.
 
 71. Jörn has long-term memories of the project, chats with other agents, and
     external discussions with Kai that agents cannot inspect from the repo.
