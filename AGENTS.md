@@ -38,6 +38,7 @@ When interacting with Jörn in chat:
 ```text
 .
 |-- AGENTS.md
+|-- FACTSHEET.md
 |-- Cargo.toml
 |-- CAPABILITY_CLAIM_MAP.md
 |-- thesis/
@@ -121,6 +122,9 @@ When interacting with Jörn in chat:
 ```
 
 - `AGENTS.md`: root instruction map. This repo does not use nested `AGENTS.md`.
+- `FACTSHEET.md`: Jörn-confirmed project facts. Use it for project context
+  that agents can rely on without re-asking or second-guessing unless newer
+  Jörn/Kai/source truth contradicts it.
 - `CAPABILITY_CLAIM_MAP.md`: non-authoritative cache of high-level repo-capability
   claims, their scope, support, caveats, and refresh triggers. Source files,
   tests, data, research notes, task progress files, and thesis text overrule it.
