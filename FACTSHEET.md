@@ -10,16 +10,7 @@ often inaccurate or uncalibrated because of oversimplification during write-up,
 misunderstandings from limited context, and limited time-to-think for Codex
 agents.
 
-The fact sheet was created by questioning Jörn in multiple batches. The
-verbatim response files preserve the raw answers used to create this file:
-
-- `tasks/references/jorn-fast-falsehood-scan-response-2026-06-01.md`
-- `tasks/references/jorn-fast-falsehood-scan-batch2-response-2026-06-01.md`
-- `tasks/references/jorn-fast-falsehood-scan-batch3-response-2026-06-01.md`
-- `tasks/references/jorn-fast-falsehood-scan-batch4-response-2026-06-01.md`
-- `tasks/references/jorn-fast-falsehood-scan-batch5-response-2026-06-02.md`
-
-Session log:
+The fact sheet was created by questioning Jörn in session:
 - thread id: `019e8451-792d-7c60-b2e7-dd3c9524bfea`
 - local transcript:
   `/home/vscode/.codex/sessions/2026/06/01/rollout-2026-06-01T17-53-12-019e8451-792d-7c60-b2e7-dd3c9524bfea.jsonl`
