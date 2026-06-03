@@ -41,6 +41,11 @@ maintenance low. The numbers are stable and can be out of order.
 7. Stale deadline/admin notes should be removed or corrected when found. The
    repo should not keep old deadline notes as live planning context.
 
+7.1. Current planned final review flow: once Jörn is satisfied with the thesis,
+     he sends the final version to Kai, receives feedback, incorporates that
+     feedback, and then hands in the thesis without showing Kai another full
+     version.
+
 ## Thesis Scope And Results
 
 8. The thesis has to cover the following content areas. Treat this as a scope
@@ -121,6 +126,10 @@ maintenance low. The numbers are stable and can be out of order.
     from the standard repertoire where feasible. If a known applicable method
     is not executed, explicitly record that it was skipped because of time,
     cost, and low promise at a glance, or record the actual reason.
+
+31.1. The data-science "standard repertoire" means the known data-science
+      method/tool repertoire, on the order of 100 methods/tools. It does not
+      mean proving exhaustion over every possible data-science method.
 
 32. A sudden positive or conjectured-positive data-science lead does not
     automatically force full follow-up before submission. It may be escalated
