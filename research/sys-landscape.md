@@ -24,7 +24,11 @@
 - Fixed-F Lagrangian product ascent (`gradient-ascent-products`): 12 seeds, max `sys=0.8727`, no `sys>1`.
 - Variable-`F` continuation (`variable-f-ascent`): 90 trials incl. random-seed RQ2 and 10 RQ1 local maxima starts; gains from `F=10` to `F=11` are common but still below `1`.
 - Regular polygon probes (`rotated-regular-products`, `pentagon-rotation-formula`): confirmed `sys>1` at `theta=18 deg`; no further tested regular-family violation is known.
-- Interpretation stays with hostile-landscape framing: bounded search and continuation improve local endpoints but have not surfaced a second transferable `sys>1` regime.
+- Interpretation stays with hostile-landscape framing: bounded search and
+  continuation improve some recorded endpoint rows, but the closed method table
+  records no new source of `sys > 1` examples and no candidate-proposer for
+  finding one, beyond examples already explained by the HKO2024 construction
+  and its symplectic images or controlled perturbations.
 
 ## Decisions
 - Keep normalized, joinable dataset normalization (`poly_id` + `state_id`) as the stable ingestion contract. Avoid one-table redesign that would break provenance and force rewrites.
@@ -50,7 +54,10 @@
 - A single-trajectory baseline established in `gradient-ascent-general`, `gradient-ascent-products`, and `variable-f-ascent`, plus calibrated random baselines and rotated-product checks.
 - The dominant unresolved experimental objective is structured witness-guided continuation: replace naive random-F increase with controlled local-structure re-use.
 - Exact-evaluated rows now support reduced-model prefilter comparison, with attention focused on exact-call reduction, hit rate, and safe rejection (`U_A(K)<1`).
-- Feature-pattern experiments now include geometric and orbit trajectory blocks over canonicalized packets and show that cheap random-regime signal does not transfer cleanly to endpoints.
+- Feature-pattern experiments now include geometric and orbit trajectory blocks
+  over canonicalized packets. They show within-table and within-random
+  associations, but no random-to-endpoint prediction test has produced a
+  candidate-proposer.
 - A direct continuation successor has been identified as witness-guided `F+1` continuation, benchmarked against existing `variable-f-ascent` and HKO-style `cut-and-ascent` baselines.
 
 ## Next Steps
@@ -59,4 +66,4 @@
 - Add reduced-model descent loop as first warm replacement candidate, with exact-check fallback on candidate acceptance.
 - Add witness-guided `F+1` continuation with lifted parent witnesses in child runs; do not restart witness state from scratch.
 - Respect blocking conditions: instrumentation must be explicit before comparisons are considered complete, and continuation changes are blocked until fixed-seed benchmarks are running.
-- Stop conditions: stop witness-guided continuation if exact-call reduction or safe pruning does not improve on the fixed benchmark bank; retain exact-failing outcomes as negative evidence.
+- Stop conditions: stop witness-guided continuation if exact-call reduction or safe pruning does not improve on the fixed benchmark bank; retain exact-failing outcomes as no-improvement evidence.

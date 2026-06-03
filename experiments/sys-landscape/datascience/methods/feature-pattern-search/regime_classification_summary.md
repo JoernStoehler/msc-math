@@ -88,5 +88,5 @@ Reported metrics are out-of-fold accuracy, balanced accuracy, and ROC AUC. Split
 
 - metadata is the clearest separator, but that block includes regime-linked provenance fields (`dataset`, `family`, `role`, `search_space`, `optimizer`, `backend`), so it is not a pure geometry test.
 - among non-provenance blocks, logistic regression and random forest both favor `orbit`.
-- compare `provenance_metadata`, `facet_count`, and the geometry/orbit sub-blocks before treating a high score as geometric signal.
+- compare `provenance_metadata`, `facet_count`, and the geometry/orbit sub-blocks before treating a high score as geometric association.
 - `all` is only a ceiling because it mixes the provenance block with every feature family.

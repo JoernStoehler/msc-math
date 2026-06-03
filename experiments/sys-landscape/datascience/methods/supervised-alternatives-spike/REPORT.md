@@ -21,12 +21,14 @@
 
 Observation: the claim-bearing matrix uses numeric scalar columns from `polytope-table.jsonl`.
 It excludes `sys`, capacity, raw vertex/sigma arrays, ids, and observation provenance.
-The `metadata_caveat` block is reported only as a provenance comparison, not as a geometry-based search heuristic.
+The `metadata_caveat` block is reported only as a provenance comparison, not as
+a geometry-based candidate-proposer.
 
 - regression panel: `elastic_net, extra_trees, hist_gradient_boosting, knn, lasso`
 - classification panel: `extra_trees, knn`
 - claim-bearing feature counts: `intrinsic_no_orbit_search=113`, `intrinsic_numeric=123`
-- split policy: grouped CV by root/lineage/source fields; random-to-endpoint transfer trains on random rows and scores endpoint rows.
+- split policy: grouped CV by root/lineage/source fields; random-to-endpoint
+  prediction trains on random rows and scores endpoint rows.
 
 ## Observations
 
@@ -89,15 +91,18 @@ Endpoint-vs-random classification:
 
 ## Inference
 
-The cheap supervised alternatives do not change the M011 search-usefulness story under the load-bearing random-to-endpoint surface. The best claim-bearing random-to-endpoint `R^2` remains negative, even when flexible tree and kNN alternatives are allowed. Within-regime fits can be positive, but they do not transfer from random samples to endpoint rows.
+The cheap supervised alternatives do not change the M011 no-candidate-proposer story under the load-bearing random-to-endpoint prediction surface. The best claim-bearing random-to-endpoint `R^2` remains negative, even when flexible tree and kNN alternatives are allowed. Within-random and within-endpoint fits can be positive, but they do not give positive random-to-endpoint prediction.
 
-For the M012-style regime question, non-provenance numeric polytope features can still separate endpoint and random regimes. That is a table/regime observation, not a generator rule for finding new high-`sys` candidates; the metadata/provenance baseline is kept only as a caveat comparison.
+For the M012-style endpoint-vs-random question, non-provenance numeric polytope features can still separate endpoint rows and random rows. That is a table observation, not a rule for proposing new high-`sys` candidates; the metadata/provenance baseline is kept only as a caveat comparison.
 
 ## Verdict
 
-- verdict: `negative`
+- verdict: `no-search-output`
 - evidence_strength: `medium`
 - implementation_trust: `medium`
 - thesis_use: `supporting/caveat only`
 - caveat: Frozen 282-row table only; feature matrix excludes target/capacity, raw arrays, ids, and observation provenance for claim-bearing blocks; the `intrinsic_numeric` block still includes cached orbit-search scalar features, so `intrinsic_no_orbit_search` is the cleaner geometry-side sensitivity. The method panel is small and cheap.
-- reopen trigger: Reopen if refreshed tables add materially more random/endpoint rows, if new non-provenance features make random-to-endpoint R^2 nonnegative under grouped transfer, or if a reviewer finds a leakage bug in the feature exclusion or group policy.
+- reopen trigger: Reopen if refreshed tables add materially more random/endpoint
+  rows, if new non-provenance features make random-to-endpoint R^2 nonnegative
+  under grouped prediction, or if a reviewer finds a leakage bug in the feature
+  exclusion or group policy.

@@ -30,6 +30,14 @@
   - `redo-before-thesis`
   - `undecided`
 
+## Wording Rule
+
+Use `candidate-proposer` for a reproducible rule that proposes candidate
+polytopes or rows before their `sys` values are evaluated. For data-science
+rows, the rule must not use endpoint labels, producer identity, optimizer
+provenance, or post-hoc inspection of `sys`. Avoid vague shorthand such as
+`transferable`, `signal`, or `pattern` in verdict cells.
+
 ## Columns
 
 | Slug | Method | Concrete variant | Taxonomy refs | Search surface / data | Repo evidence | repo_state | thesis_use | Notes |
@@ -59,15 +67,15 @@ Interpretation rules:
 | `fixed-f-gradient-ascent-products` | local optimization | fixed-`F` gradient ascent from random starts (products) | `NUMOPT-GRADIENT`, `NUMOPT-LINESEARCH`, `NUMOPT-INIT-MULTISTART` | endpoint search over product family at fixed `F` | `experiments/sys-landscape/gradient-ascent-products/`, `research/sys-landscape.md` | `attempted` | `main-evidence` | Product-side analogue of `fixed-f-gradient-ascent-general`. |
 | `variable-f-continuation` | continuation / local search | variable-`F` continuation | `NUMOPT-INIT-CONTINUATION`, `CONT-PARAM-PREDCORR`, `CONT-HOMOTOPY-SOLUTION` | continuation from fixed-`F` endpoints into `F+1` states | `experiments/sys-landscape/variable-f-ascent/`, `research/sys-landscape.md` | `attempted` | `main-evidence` | Improves some local maxima but still stays below `sys = 1` in current runs. |
 | `hko-local-perturbation-neighborhood` | HKO-local search | perturbation neighborhood around HKO2024 |  | HKO-local packet, not generic global search | `experiments/hko-local-maximum/perturbation-neighborhood/` | `attempted` | `supporting-only` | Supports local/HKO-neighborhood interpretation, not the generic-search headline by itself. |
-| `omega-scalar-hypothesis` | scalar hypothesis testing | omega hypothesis correlation check | `STAT-CORR-SPEARMAN` | scalar geometry heuristic on landscape packets | `experiments/combinatorial-cells/omega-hypothesis/`, `tasks/planning-notes.md` | `attempted` | `supporting-only` | Negative heuristic check rather than a main search method. |
-| `visual-exploration` | visual exploration | 3D projection / picture inspection | `EDA-VIS-PROJECTION`, `EDA-VIS-SCATTER` | exploratory geometry and dynamics views | `research/visualization.md`, `tasks/planning-notes.md` | `attempted` | `supporting-only` | Negative exploratory result; useful as communication and failed-pattern evidence. |
-| `feature-block-regression` | supervised regression | feature-block regression with ridge and random forest | `ISLR-REG-RIDGE`, `ISLR-TREE-RF`, `ESL-SEL-RIDGE`, `ESL-TREE-RF` | tabular feature blocks over random and endpoint regimes | `experiments/sys-landscape/datascience/methods/feature-pattern-search/analyze.py`, `research/sys-landscape.md`, `tasks/planning-notes.md` | `attempted` | `main-evidence` | Current repo summary treats the negative transfer result as claim-bearing. |
-| `regime-classification` | supervised classification | regime classification with logistic regression and random forest | `ISLR-CLS-LOGIT`, `ISLR-TREE-RF`, `ESL-LIN-CLS`, `ESL-TREE-RF` | grouped tabular regime-separation task | `experiments/sys-landscape/datascience/methods/feature-pattern-search/analyze_regime_classification.py`; `experiments/sys-landscape/datascience/methods/feature-pattern-search/regime-classification-report.md`; `experiments/sys-landscape/datascience/methods/feature-pattern-search/regime_classification_summary.md` | `attempted` | `supporting-only` | Current report marks this negative as a caveated diagnostic: regimes separate under grouped CV, but the result is not a label-free search rule. |
+| `omega-scalar-hypothesis` | scalar hypothesis testing | omega hypothesis correlation check | `STAT-CORR-SPEARMAN` | scalar geometry check on landscape packets | `experiments/combinatorial-cells/omega-hypothesis/`, `tasks/planning-notes.md` | `attempted` | `supporting-only` | Scalar check rather than a main search method; no current candidate-proposer. |
+| `visual-exploration` | visual exploration | 3D projection / picture inspection | `EDA-VIS-PROJECTION`, `EDA-VIS-SCATTER` | exploratory geometry and dynamics views | `research/visualization.md`, `tasks/planning-notes.md` | `attempted` | `supporting-only` | Exploratory result; useful as communication and as evidence that picture inspection produced no candidate-proposer. |
+| `feature-block-regression` | supervised regression | feature-block regression with ridge and random forest | `ISLR-REG-RIDGE`, `ISLR-TREE-RF`, `ESL-SEL-RIDGE`, `ESL-TREE-RF` | tabular feature blocks over random and endpoint rows | `experiments/sys-landscape/datascience/methods/feature-pattern-search/analyze.py`, `research/sys-landscape.md`, `tasks/planning-notes.md` | `attempted` | `main-evidence` | Current repo summary treats the no-candidate-proposer random-to-endpoint prediction result as claim-bearing. |
+| `regime-classification` | supervised classification | endpoint-vs-random classification with logistic regression and random forest | `ISLR-CLS-LOGIT`, `ISLR-TREE-RF`, `ESL-LIN-CLS`, `ESL-TREE-RF` | grouped tabular endpoint-vs-random task | `experiments/sys-landscape/datascience/methods/feature-pattern-search/analyze_regime_classification.py`; `experiments/sys-landscape/datascience/methods/feature-pattern-search/regime-classification-report.md`; `experiments/sys-landscape/datascience/methods/feature-pattern-search/regime_classification_summary.md` | `attempted` | `supporting-only` | Current report marks this as a caveated diagnostic: endpoint rows and random rows separate under grouped CV, but the result is not a candidate-proposer. |
 | `endpoint-residualized-regression` | residualized regression check | endpoint residual analysis beyond metadata | `ISLR-REG-RIDGE`, `ISLR-TREE-RF`, `ESL-SEL-RIDGE`, `ESL-TREE-RF`, `EDA-VIS-RESIDUAL` | endpoint-only tabular packet after metadata baseline subtraction | `experiments/sys-landscape/datascience/methods/feature-pattern-search/analyze_residual.py`; `research/sys-landscape-datascience/endpoint-residualized-regression-disposition-2026-05-31.md` | `attempted` | `redo-before-thesis` | Current analyzer does not enforce endpoint-only loading and has no durable report; repair narrowly or cut from thesis-facing evidence. |
 
 ## Planned Use In Phase 2
 
-- Add skipped and inapplicable rows by mapping frozen taxonomy IDs into this file.
+- Add skipped and not-applicable rows by mapping frozen taxonomy IDs into this file.
 - Add more explicit `redo-before-thesis` uses where a repo method exists but should not yet be cited.
 - Keep row additions cheap; prefer adding rows here over caching state back into taxonomy files.
 - Add additional frozen external taxonomies for exploratory data analysis and trajectory-analysis families if those method families should be represented outside the learning/optimization taxonomies.

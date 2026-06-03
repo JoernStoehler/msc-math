@@ -274,9 +274,9 @@ Guidance:
   `thesis/hko-local-maximum.tex` theorem wording or weaken that wording
   honestly.
 - For hostile landscape, complete the method table to row states with
-  source-owned evidence, caveats, and thesis-use verdicts: inapplicable to our
-  setting, failure on our side and not worth further work, no useful pattern
-  found, meaningful pattern found, or positive/conjectured-positive requiring
+  source-owned evidence, caveats, and thesis-use verdicts: not applicable to
+  this data/search interface, failure on our side and not worth further work,
+  no candidate-proposer, candidate-proposer, or validated new row requiring
   follow-up.
 - For numerics, state the exact/f64/indeterminate contract needed for retained
   experiments and prose; do not create a public-solver certification program
@@ -403,9 +403,9 @@ Guidance:
   treating it as a serial gate after one other row.
 - Candidate omitted/unfinished rows such as `svm-supervised-baseline` and
   `interpretable-tail-rules` should be evaluated by the same value/cost and
-  thesis-table standard: inapplicable, our-side failure and not worth further
-  work, no useful pattern, meaningful pattern, or positive/conjectured-positive
-  follow-up.
+  thesis-table standard: not applicable to this data/search interface,
+  our-side failure and not worth further work, no candidate-proposer, a
+  candidate-proposer, or a validated new row.
 - If any row gives a meaningful pattern, conjectured-positive, or actual
   positive result, stop unrelated method churn and write the follow-up or
   escalation packet.
@@ -415,11 +415,11 @@ Guidance:
 Stop condition:
 
 - Stop the current data-science closeout when the method table rows needed by
-  the thesis have terminal states, no conjectured-positive lead is unresolved,
-  and the toolbox audit states thesis-use/caveats for methods the thesis still
-  mentions. Rows may end as inapplicable, our-side failure and not worth further
-  work, no useful pattern, meaningful pattern, or positive/conjectured-positive
-  follow-up.
+  the thesis have terminal states, no candidate-proposer or validated new row is
+  unresolved, and the toolbox audit states thesis-use/caveats for methods the
+  thesis still mentions. Rows may end as not applicable to this data/search
+  interface, our-side failure and not worth further work, no candidate-proposer,
+  candidate-proposer, or validated new row.
 
 Closure summary:
 
@@ -427,7 +427,7 @@ Closure summary:
   experiment-validity, caveat, and thesis-use.
 - Tried results affecting thesis wording need repo-owned evidence, verdict-fit
   checks, caveats, and thesis-use disposition.
-- Positive-escalate or conjectured-positive results stop unrelated method work
+- Candidate-proposer or validated-new-row results stop unrelated method work
   until Jörn or a falsification/search packet resolves the lead.
 - Concrete one-use worker prompts may go in `/tmp`; multi-day table/control
   material should live in a durable research or thesis-adjacent file.

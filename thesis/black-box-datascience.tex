@@ -5,25 +5,27 @@
 \section[Main Result: Data-Science Search]{Main Result:\\Black-Box Data-Science\\Tools Are Insufficient}\label{sec:black-box-datascience}
 %
 % Purpose:
-% state the negative search result: the attempted black-box and standard
-% data-science methods did not produce a second transferable high-`sys` regime.
+% state the method-table result: the closed method table records no new source
+% of `sys > 1` examples and no candidate-proposer for finding one, beyond
+% examples already explained by the HKO2024 construction and its symplectic
+% images or controlled perturbations.
 %
 % Writing note:
-% negative results can be stated in batches because many rows have the same
-% conclusion. The main text can use a table or bullet list.
+% rows with no candidate-proposer can be stated in batches because many rows
+% have the same conclusion. The main text can use a table or bullet list.
 %
 \subsection{Algorithm for random polytopes}\label{subsec:black-box-datascience-algorithm-for-random-polytopes}
 %
 % State how random polytopes were generated and what search question this tests.
 % <!-- OUTLINE GAP: Name the generator, parameters, row counts, retained facets,
-%      normalization, and exact negative claim licensed by this sample. -->
+%      normalization, and exact no-new-row claim licensed by this sample. -->
 %
 \subsection{Algorithm for gradient ascent}\label{subsec:black-box-datascience-algorithm-for-gradient-ascent}
 %
 % State how local ascent was run and what search question this tests.
 % <!-- OUTLINE GAP: Name fixed-F/product/continuation variants, seed counts,
 %      stopping rules, escape logic, and whether the claim is only local-search
-%      negative evidence. -->
+%      local-search-only evidence. -->
 %
 \subsection{Rows: polytopes}\label{subsec:black-box-datascience-rows-polytopes}
 %
@@ -52,31 +54,39 @@
 %
 % Use these result types in the main table or bullet list:
 %
-% - inapplicable;
-% - failed;
-% - negative;
-% - positive.
+% - not applicable to this data/search interface;
+% - not run within the stated bound;
+% - implementation bug; no method verdict;
+% - ran with no candidate-proposer and no new validated row;
+% - candidate-proposer;
+% - validated candidate.
 %
 % Meaning:
 %
-% - `inapplicable`: the method does not meaningfully apply to the available data
-%   or search question.
-% - `failed`: the method could not be implemented cheaply enough, scaled enough,
-%   or supplied with enough data for a thesis-facing result.
-% - `negative`: the method ran and did not produce a useful search rule or new
-%   transferable high-`sys` regime.
-% - `positive`: the method produced a useful signal or candidate. Use only where
-%   the evidence actually supports this.
+% - `not applicable`: the method does not fit the available data or search
+%   interface.
+% - `not run within the stated bound`: the method was not completed because
+%   implementation, runtime, or data requirements exceeded the stated thesis
+%   bound.
+% - `implementation bug; no method verdict`: a run artifact exists but is not
+%   interpretable as method evidence.
+% - `ran with no candidate-proposer and no new validated row`: the method ran but
+%   recorded neither a candidate-proposer nor a validated new `sys > 1` row.
+% - `candidate-proposer`: a reproducible rule proposes candidate polytopes or
+%   rows before their `sys` values are evaluated. For data-science rows, it must
+%   not use endpoint labels, producer identity, optimizer provenance, or post-hoc
+%   inspection of `sys`.
+% - `validated candidate`: a run produced a new row with verified `sys > 1`.
 % <!-- TOC DECISION: If a real positive result appears, report it honestly and
 %      escalate to Jorn. It may falsify the current "insufficient" main result
 %      and justify spending about another week to follow up toward a better
-%      result. Also filter obvious false positives, e.g. a model finding signal
-%      because `sys` was regressed against `sys`. -->
+%      result. Also filter obvious false positives, e.g. a model finding a
+%      within-table association because `sys` was regressed against `sys`. -->
 %
 \subsection{Methods: data-science toolbox}\label{subsec:black-box-datascience-methods-data-science-toolbox}
 %
-% Batch the attempted, failed, and inapplicable methods. Put detailed figures,
-% tables, parameters, and method-specific notes in the data-science appendix.
+% Batch the attempted methods by verdict. Put detailed figures, tables,
+% parameters, and method-specific notes in the data-science appendix.
 % <!-- TOC DECISION: Methods come from the data-science toolboxes we actually use
 %      and assign to Codex agents. The full set is still dynamic, so the final
 %      method list is needed before writing the table, not for the current ToC. -->

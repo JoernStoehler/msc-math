@@ -159,6 +159,14 @@ maintenance low. The numbers are stable and can be out of order.
       closed at thesis level. The exact datasets, sizes, and producer commands
       belong in the relevant experiment/research files, not in this fact sheet.
 
+34.2. Jörn accepted the following data-science result wording on 2026-06-03 as
+      the working replacement for vague phrases such as "transferable regime"
+      or "useful general search rule":
+      "The closed method table records no new source of `sys > 1` examples and
+      no candidate-proposer for finding one, beyond examples that are already
+      explained by the HKO2024 construction and its symplectic images or
+      controlled perturbations."
+
 35. The reproducibility target is that somebody can execute a flow around two
     years from now and reproduce the thesis results, ideally down to generating
     the final PDF.

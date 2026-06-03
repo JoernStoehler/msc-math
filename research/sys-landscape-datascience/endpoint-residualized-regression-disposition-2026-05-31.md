@@ -14,14 +14,14 @@ Current thesis role:
 
 - not thesis-bearing;
 - not a main hostile-landscape claim;
-- not a conjectured-positive search lead;
+- not a candidate-proposer;
 - at most a future/caveat row until repaired or cut.
 
 ## Source-Backed Findings
 
 - `research/sys-landscape-toolbox-audit.md` already marked the row unresolved:
   no current-contract report had been reviewed, and current artifacts were not
-  enough for a terminal negative or thesis-facing claim.
+  enough for a terminal no-search-output or thesis-facing claim.
 - `research/sys-landscape-datascience/idea-ledger.md` marked the row
   `current-review`.
 - `research/sys-landscape-datascience/method-ledger.md` marked thesis use
@@ -40,9 +40,9 @@ Current thesis role:
 ## Scratch-Only Check
 
 A scratch diagnostic on an existing `/tmp` dataset snapshot suggested that some
-endpoint feature blocks may add grouped-CV signal beyond metadata. This is not
-durable source truth and does not by itself give a label-free search rule, a
-new `sys > 1` row, or a conjectured-positive follow-up.
+endpoint feature blocks may add grouped-CV association beyond metadata. This is
+not durable source truth and does not by itself give a candidate-proposer, a new
+`sys > 1` row, or a follow-up search packet.
 
 Use this only as motivation for the repair-or-cut decision, not as thesis
 evidence.
@@ -61,7 +61,7 @@ If Jörn keeps the row, the narrow repair is:
 
 If Jörn cuts the row, do not cite this packet in thesis-facing evidence. Mark it
 future or omitted with the reason: current analyzer contract bug and no
-actionable search rule.
+candidate-proposer.
 
 ## Open Decision
 

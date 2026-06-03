@@ -57,7 +57,7 @@ ledger/audit files.
 - Dispositions: merge/promote, reject/trash, follow-up branch, bug-redo, future,
   rejected-low-VOI, lead-repair, positive-escalate.
 - Code-only output does not close a blocker.
-- A negative result with low implementation trust does not close a
+- A no-search-output result with low implementation trust does not close a
   before-submission blocker.
 - A positive-escalate result stops the wave and goes to Jörn before more
   scaling.

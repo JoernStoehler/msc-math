@@ -94,7 +94,7 @@ Inference caveat: this does not prove exactness of derived scalar semantics. The
 
 ## Verdict
 
-- verdict: `negative`
+- verdict: `supporting sanity check`
 - evidence_strength: `medium`
 - implementation_trust: `high`
 - thesis_use: `supporting/caveat only`

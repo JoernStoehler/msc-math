@@ -1,16 +1,18 @@
 Status: complete
 Idea slug: regime-classification
 Blocker target: Evidence, caveat, thesis-use, and serial report-ledger process blockers. Experiment-validity is closed only for a caveated supporting diagnostic, not for a claim-bearing finite-sample inference.
-Objective: Decide whether endpoint-vs-random regime classification from the current feature tables gives a thesis-usable observation, a caveated supporting-only observation, or a result to omit before submission, while separating provenance/metadata separation from non-provenance geometric or orbit-feature separation.
+Objective: Decide whether endpoint-vs-random classification from the current feature tables gives a thesis-usable observation, a caveated supporting-only observation, or a result to omit before submission, while separating provenance/metadata separation from non-provenance geometric or orbit-feature separation.
 Base dataset snapshot: /tmp/sys-ds-reset-pilot-tables-VJ6D0P, produced by `cargo run -p exp-sys-landscape --bin sys-dataset -- --out-dir /tmp/sys-ds-reset-pilot-tables-VJ6D0P`
 Dataset filtering/subsetting: No rows filtered; all 282 observations were used. Endpoint label is `gradient_ascent_general`, `gradient_ascent_products`, or `variable_f_ascent`; random label is `random_sample` or `random_product_sample`. Grouped CV uses `root_group_id` when present, with `source_name`/`lineage_id`/`observation_id` fallback from `common.py`.
 Command run: `uv run --script experiments/sys-landscape/datascience/methods/feature-pattern-search/analyze.py --dataset-dir /tmp/sys-ds-reset-pilot-tables-VJ6D0P`; `uv run --script experiments/sys-landscape/datascience/methods/feature-pattern-search/analyze_regime_classification.py --dataset-dir /tmp/sys-ds-reset-pilot-tables-VJ6D0P`
-Verdict: negative
+Verdict: no-search-output
 Evidence strength: Moderate diagnostic evidence only. Grouped-CV metrics are far above null for both metadata and non-provenance geometric/orbit blocks, but the result is a regime-separation diagnostic, not a target-case search rule.
 Implementation trust: Medium. Dataset guards and feature row counts match the reset packet, the script now writes a markdown summary, and grouped CV blocks direct duplicate-lineage leakage; no permutation or independent fresh-table replication was run.
 Thesis/project use: supporting/caveat only
-Caveat: The clearest separation is provenance metadata, and even non-provenance separation distinguishes how the current dataset was generated rather than giving a direct recipe for finding `sys > 1` examples.
-Reopen trigger: Reopen if a fresh/larger table changes the dataset guards, contains any `sys > 1` row, or someone proposes a generator-side sampling rule derived without endpoint labels, dataset identity, optimizer provenance, or post-hoc target inspection.
+Caveat: The clearest separation is provenance metadata, and even
+non-provenance separation distinguishes how the current dataset was generated
+rather than giving a candidate-proposer for finding `sys > 1` examples.
+Reopen trigger: Reopen if a fresh/larger table changes the dataset guards, contains any `sys > 1` row, or someone proposes a sampling rule derived before inspecting endpoint labels, dataset identity, optimizer provenance, or post-hoc target information.
 Evidence paths: `experiments/sys-landscape/datascience/methods/feature-pattern-search/analyze_regime_classification.py`; `experiments/sys-landscape/datascience/methods/feature-pattern-search/regime_classification_summary.md`; `experiments/sys-landscape/datascience/methods/feature-pattern-search/regime_classification_bars.png`
 
 ## Command/Provenance
@@ -56,7 +58,7 @@ Mixed procedure/orbit blocks need caveats:
 
 The claim-bearing observation uses both metadata and non-provenance features, but with different epistemic status. Metadata proves the producer/regime labels are encoded in the table. Non-provenance geometric and orbit-adjacent blocks show that endpoint-produced and random-produced samples occupy distinguishable regions of the current feature table under grouped CV.
 
-That observation is not by itself a thesis-usable positive result. It does not find a `sys > 1` row, and it does not give a direct rule for sampling target cases without using labels, producer identity, or post-hoc knowledge that a region was endpoint-heavy. Under the packet verdict meanings, this is `negative`: useful as a caveat/supporting diagnostic if the thesis discusses dataset-regime differences, but not an escalation or a conjectured-positive search rule.
+That observation is not by itself a thesis-usable positive result. It does not find a `sys > 1` row, and it does not give a direct rule for sampling target cases before inspecting labels, producer identity, optimizer provenance, or post-hoc knowledge that a region was endpoint-heavy. Under the packet verdict meanings, this is `no-search-output`: useful as a caveat/supporting diagnostic if the thesis discusses endpoint-vs-random differences, but not an escalation or a candidate-proposer.
 
 ## Checks Run
 
@@ -73,13 +75,13 @@ That observation is not by itself a thesis-usable positive result. It does not f
 - The metadata block intentionally includes variables that define or nearly define regime provenance. Treat its perfect score as a leakage/provenance demonstration, not as geometry.
 - Grouped CV reduces duplicate-lineage leakage but does not create an independent external validation set.
 - The sample is small and imbalanced by source: `112` endpoint rows versus `170` random rows, with endpoint rows dominated by `variable_f_ascent=90`.
-- The non-provenance feature signal can still reflect producer selection effects: endpoints are outputs of ascent procedures, random rows are not.
+- The non-provenance feature association can still reflect producer selection effects: endpoints are outputs of ascent procedures, random rows are not.
 - No permutation test, bootstrap interval, or fresh producer rerun was performed in this 10-minute local-budget packet.
 - No causal or constructive rule was extracted from the fitted classifiers.
 
 ## Thesis-Use Proposal
 
-Use as `supporting/caveat only`. A cautious thesis sentence could say that the current endpoint and random regimes are easily distinguished by provenance metadata and also separable by several geometric/orbit feature families under grouped CV; therefore cross-regime comparisons should not be interpreted as iid sampling from one feature distribution. Do not cite this as evidence for a target-search method before submission unless a separate generator-side rule is created and tested.
+Use as `supporting/caveat only`. A cautious thesis sentence could say that the current endpoint rows and random rows are easily distinguished by provenance metadata and also separable by several geometric/orbit feature families under grouped CV; therefore comparisons between these row sources should not be interpreted as iid sampling from one feature distribution. Do not cite this as evidence for a target-search method before submission unless a separate candidate-proposer is created and tested.
 
 ## Reopen Trigger
 
@@ -92,4 +94,10 @@ Reopen if any of these happen:
 
 ## Actionable Target-Case Search
 
-This result does not give an actionable way to search for target cases. It tells us that the current endpoint and random rows are classifiable, and it highlights candidate descriptors such as face geometry, omega summaries, skeleton counts, and the mixed orbit packet. It does not specify a label-free sampling region or optimization objective that should produce higher `sys`, so it remains supporting/caveat evidence rather than a positive search rule.
+This result does not give a candidate-proposer for target cases. It tells us
+that the current endpoint and random rows are classifiable, and it highlights
+candidate descriptors such as face geometry, omega summaries, skeleton counts,
+and the mixed orbit packet. It does not specify a sampling region or
+optimization objective before inspecting `sys`, endpoint labels, producer
+identity, or optimizer provenance, so it remains supporting/caveat evidence
+rather than a candidate-proposer.

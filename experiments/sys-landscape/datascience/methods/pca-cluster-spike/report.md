@@ -41,16 +41,16 @@
 
 ## Inference
 
-The PCA/clustering/anomaly methods see structure in the frozen table, but the fitted structure is not by itself a non-post-hoc candidate generator. The strongest PCA diagnostic is a correlation with `sys`, which is an audit statistic rather than a usable generator rule. The silhouette-selected cluster split is broad rather than a targeted high-`sys` rule; higher-k clusters with stronger high-`sys` concentration are endpoint/dataset-heavy when inspected after fitting. The anomaly rule does not enrich for high `sys` relative to the rest of the table. A positive follow-up would need to turn intrinsic feature loadings or cluster geometry into a sampling rule before looking at `sys` or endpoint provenance.
+The PCA/clustering/anomaly methods see structure in the frozen table, but the fitted structure is not by itself a candidate-proposer. The strongest PCA diagnostic is a correlation with `sys`, which is an audit statistic rather than a sampling rule. The silhouette-selected cluster split is broad rather than a targeted high-`sys` rule; higher-k clusters with stronger high-`sys` concentration are endpoint/dataset-heavy when inspected after fitting. The anomaly rule does not enrich for high `sys` relative to the rest of the table. A positive follow-up would need to turn intrinsic feature loadings or cluster geometry into a sampling rule specified before inspecting `sys`, endpoint labels, dataset identity, or optimizer provenance.
 
 ## Verdict
 
-- `verdict`: `negative`
+- `verdict`: `no-search-output`
 - `evidence_strength`: `medium`
 - `implementation_trust`: `high`
 - `thesis_use`: `supporting/caveat only`
 - `caveat`: This is a 282-row frozen table scan over nonconstant intrinsic numeric polytope features; it excludes observation provenance and capacity/search witness columns, and it tests only PCA, KMeans k=2..8, and IsolationForest at 10 percent contamination.
-- `reopen_trigger`: Reopen if a larger or fresher table adds sys > 1, changes the row guards, or a generator-side rule is proposed that can sample a feature-space region without using sys, endpoint labels, dataset identity, or optimizer provenance.
+- `reopen_trigger`: Reopen if a larger or fresher table adds sys > 1, changes the row guards, or a sampling rule is proposed that can sample a feature-space region before inspecting sys, endpoint labels, dataset identity, or optimizer provenance.
 
 ## Reproducibility
 
