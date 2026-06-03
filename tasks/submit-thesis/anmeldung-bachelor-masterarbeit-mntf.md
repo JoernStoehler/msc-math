@@ -102,5 +102,5 @@ Unterschrift:
 ## Thesis project notes
 
 - Jörn reports that this form is already filled out and has Kai's signature.
-- TODO(Jörn): hand this in once Elizabeth agrees/signs. Earliest expected date:
-  Monday 2026-04-27.
+- Jörn confirmed that Elizabeth approved it. Pending action: hand in the note
+  to the `Prüfungsamt`.

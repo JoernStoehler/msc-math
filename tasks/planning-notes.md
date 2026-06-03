@@ -57,11 +57,10 @@ Planning hygiene:
   dependencies, and failure modes.
 - Do not ask abstract deadline/review questions such as "what is the actual
   target?" or "are there constraints?" when repo/admin sources can be checked
-  first. As of 2026-06-01, `AGENTS.md` still says "Deadline: End of May 2026",
-  so planners must refresh concrete submission timing instead of treating the
-  calendar as normal. Treat the target as "as soon as defensible" only after
-  known admin dates/forms/review facts are extracted from source files, and
-  surface any missing concrete facts as risks or focused questions.
+  first. Jörn confirmed that 9.6.2026 is a good deadline for sending the
+  finished PDF to Kai. Official submission facts still need a current-source
+  refresh before final handin; surface any missing concrete facts as risks or
+  focused questions.
 - Prefer deliverables, purposes, and milestones over process descriptions.
 - Surface possible nonsense explicitly. If a recommendation depends on a weak
   assumption, a guessed cost/value tradeoff, missing source check, unsupported

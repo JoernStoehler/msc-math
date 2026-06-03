@@ -1,5 +1,3 @@
-WIP: Jörn is currently reviewing and correcting this fact sheet.
-
 # Jörn-Confirmed Project Facts
 
 This is a central location of facts that Jörn has confirmed. It exists so

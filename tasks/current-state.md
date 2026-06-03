@@ -182,8 +182,9 @@ source files.
   Refresh by: read `tasks/submit-thesis/README.md` and recheck the official
   MNTF page before final handin.
 
-- Registration form was recorded as filled and signed by Kai, awaiting
-  Elizabeth/Jörn external action.
+- Registration form was recorded as filled and signed by Kai. Jörn confirmed
+  that Elizabeth approved it; the pending action is to hand in the note to the
+  `Prüfungsamt`.
   Refresh by: checking official forms and current Jörn/Kai/Elizabeth decisions.
 
 - Zenodo is the leading non-GitHub preservation candidate because Kai named it.
