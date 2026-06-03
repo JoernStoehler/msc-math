@@ -126,6 +126,10 @@ Source pointers:
   "Scope Boundary", "Sage Note", and "Packet 2 Note".
 - `research/hko-local-maximum-proof-route-note.md`, especially the one-sided
   branch-certificate principle and candidate Sage decision problem.
+- `research/hko-local-maximum-proof-route-note.md`, sections
+  "Singular-KKT Obstruction" and "Padded-Endpoint Alternative", for the
+  thesis-facing reason why the witness has to use singular positive-beta
+  seven-facet branches.
 - `experiments/hko-local-maximum/exact-clarke/widened-seed-witness.json`.
 - `experiments/hko-local-maximum/exact-clarke/widened-seed-witness-verification.json`.
 
@@ -139,6 +143,12 @@ Missing:
 - Completeness check for the active row set used by the theorem-facing
   decision problem.
 - Exact treatment of remaining asymmetric seven-facet representatives.
+
+Thesis-use note:
+- Spend at least one sentence explaining why singular cases appear in the
+  witness: the nonsingular active branches cover only rank `23` of the
+  `25`-dimensional quotient slice, while the smooth padded-once diagnostic
+  found no nonsingular minimum-action replacement rows.
 
 ### 4. Empirical Confirmation
 

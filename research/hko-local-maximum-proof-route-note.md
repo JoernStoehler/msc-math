@@ -174,6 +174,15 @@ Consequence:
 
 This is the main mathematical obstruction after the 2026-06-03 diagnostic.
 
+Thesis-facing takeaway to preserve:
+
+```text
+The witness is forced to use singular positive-beta seven-facet branches
+because the nonsingular active branches cover only rank 23 of the
+25-dimensional quotient slice; the later padded-once diagnostic did not find a
+nonsingular minimum-action workaround.
+```
+
 ## 7. Why Padded-Zero Branches Look Less Urgent
 
 The current optimistic point is that all `150` rows used in the numerical
@@ -310,6 +319,11 @@ The simple nonsingular padded-once alternative currently has no surviving
 rows. The family-relevant padded words appear to be singular, not nonsingular
 smooth equality branches.
 ```
+
+This supports the thesis-facing explanation in Section 6: the singular rows
+are not merely a bookkeeping complication, but currently appear to be the rows
+that supply the two quotient-slice directions missing from the smooth-only
+witness.
 
 ## 11. Candidate Sage Decision Problem
 
