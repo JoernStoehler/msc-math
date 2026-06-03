@@ -271,7 +271,9 @@ maintenance low. The numbers are stable and can be out of order.
 70.1. Jörn does not know whether there is Kai/Elizabeth feedback missing from
       the repo, because he does not know what feedback is currently recorded in
       the repo. Agents should inspect the repo-recorded feedback context before
-      asking a narrower question.
+      asking a narrower question. A 2026-06-03 scan found no obvious current
+      unprocessed Kai/Elizabeth blocker in the inspected repo surfaces; see
+      `tasks/references/advisor-feedback-context-2026-06-03.md`.
 
 71. Jörn has long-term memories of the project, chats with other agents, and
     external discussions with Kai that agents cannot inspect from the repo.
