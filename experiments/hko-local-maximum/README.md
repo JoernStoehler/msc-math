@@ -26,6 +26,10 @@ Start with `research/hko-local-maximum-status.md` before reading subfolders.
 - `sage-validation/`
   Sage cross-checks for existing exact row-bank artifacts; not the final
   theorem certificate by itself.
+- `active-branch-diagnostic/`
+  Rust diagnostic for branches active at HKO2024, their `D_a sys` rows, the
+  symmetry tangent directions, and numerical slice/cone checks. This is
+  theorem-route triage, not the final certificate.
 - `subdifferential-lp/`
   Historical or inactive route from the older `(n,h)` parameterization. Read
   only when reconstructing provenance.
@@ -54,6 +58,12 @@ Start with `research/hko-local-maximum-status.md` before reading subfolders.
   appends to `cut-and-ascent.jsonl` unless `--fresh` is given.
 - `hko-sage-validation` defaults to smoke input. Use `--canonical` only when
   refreshing `sage-validation-input.jsonl`.
+- `hko-active-branch-diagnostic` writes an ignored smoke JSON by default and
+  exact-checks no branches unless `--exact-limit N` or `--all-exact` is passed.
+  Use `--canonical` only when intentionally refreshing the tracked diagnostic
+  artifact. Each f64 active branch row includes `kkt_f64.singular`; theorem
+  use of `d_sys_flat_f64` as a smooth-gradient witness should ignore singular
+  KKT rows unless a separate nonsmooth or family-gradient argument is supplied.
 
 ## Fast Reading Order
 

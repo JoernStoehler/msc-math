@@ -4,6 +4,11 @@ Status entrypoint:
 `research/hko-local-maximum-status.md` is the fastest summary of current claim
 strength, proof-route status, and authoritative surfaces.
 
+Current proof-route checkpoint:
+`research/hko-local-maximum-proof-route-note.md` preserves the 2026-06-03
+selected-branch certificate idea, current `150`-row f64 diagnostic evidence,
+and the singular-KKT obstruction.
+
 ## Scope
 
 This note is the consolidated research-facing record for `hko-local-maximum`.
@@ -23,6 +28,10 @@ It combines the former topic note set while keeping experiment artifacts under
   - Packet 3 is the current blocker. Exact seed expansion still needs
     additional symmetry-inequivalent representatives before final active-gradient
     coverage reaches `rank(G)=25` with kernel matching the symmetry tangent space.
+  - A newer proof-route checkpoint records a possible one-sided
+    selected-branch certificate: all `150` f64 positive active rows cover the
+    `25`-dimensional slice numerically, but `106` of those rows have singular
+    KKT matrices and still need exact singular-family justification.
   - Sigma-word combinatorics are still: `50,400` raw, `6,240` directed-feasible,
     `717` valid KKT orbits, and `150` exact minima.
 - Numerical evidence track:
@@ -86,6 +95,12 @@ It combines the former topic note set while keeping experiment artifacts under
 
 - Primary: close exact Packet 3 by extending representative-seed coverage to final
   rank-equal active matrix and completing witness-vs-symmetry comparison.
+- Immediate proof-route question: develop a theorem-valid treatment of the
+  singular seven-facet, positive-beta active rows. The 2026-06-03
+  padded-extension diagnostic found no nonsingular minimum-action padded-once
+  rows, so the simple nonsingular padded alternative currently has no
+  surviving rows. The smooth-only row set is still short by two slice
+  dimensions.
 - Required stop condition:
   - produce witness bundle with `rank(active_grad_G)=25`;
   - `dim(ker(G))=15`;

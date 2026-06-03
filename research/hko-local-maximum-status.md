@@ -13,6 +13,8 @@ Use it before reading deeper notes or experiment folders.
 - Active/open work items: `tasks/planning-notes.md`
 - Topic research note and interpretation: `research/hko-local-maximum.md`
 - Exact theorem route details: `research/hko-local-maximum-exact-clarke.md`
+- Current proof-route checkpoint:
+  `research/hko-local-maximum-proof-route-note.md`
 - Current experiment layout: `experiments/hko-local-maximum/README.md`
 
 ## Current Repo Claim
@@ -41,6 +43,12 @@ Use it before reading deeper notes or experiment folders.
 - Current exact witness status:
   the widened representative-row witness passes its present Sage checks, but it
   is still a partial witness surface rather than the final theorem certificate.
+- Current proof-route checkpoint:
+  `research/hko-local-maximum-proof-route-note.md` records the 2026-06-03
+  one-sided selected-branch certificate idea, the `150`-row f64 diagnostic, and
+  the singular-KKT obstruction. Its padded-extension diagnostic found no
+  nonsingular minimum-action padded-once rows, so the next route must handle
+  singular positive-beta seven-facet rows or find a different certificate.
 
 ## Supporting Evidence
 
@@ -58,6 +66,8 @@ Use it before reading deeper notes or experiment folders.
 
 - close the exact active-row / active-orbit coverage needed for the final
   rank/kernel certificate
+- develop an exact one-sided branch-gradient or family-gradient treatment for
+  the singular positive-beta seven-facet active rows
 - reconcile stale `44/10` language with the current `150`-orbit bookkeeping
   surface
 - propagate the final theorem story into `formal/` and `thesis/`
@@ -68,7 +78,8 @@ Use it before reading deeper notes or experiment folders.
 
 1. `research/INDEX.md`
 2. `tasks/planning-notes.md`
-2. `research/hko-local-maximum-status.md`
-3. `research/hko-local-maximum.md`
-4. `research/hko-local-maximum-exact-clarke.md`
-5. `experiments/hko-local-maximum/README.md`
+3. `research/hko-local-maximum-status.md`
+4. `research/hko-local-maximum.md`
+5. `research/hko-local-maximum-proof-route-note.md`
+6. `research/hko-local-maximum-exact-clarke.md`
+7. `experiments/hko-local-maximum/README.md`

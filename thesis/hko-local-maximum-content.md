@@ -95,6 +95,8 @@ Source pointers:
   "Current Proof Route".
 - `research/hko-local-maximum.md`, sections "Current State", "Decisions", and
   "Next Steps".
+- `research/hko-local-maximum-proof-route-note.md` for the 2026-06-03
+  selected-branch proof checkpoint and singular-KKT obstruction.
 - `tasks/current-state.md`, HKO local maximality row.
 
 Missing:
@@ -122,6 +124,8 @@ Current checked partial witness facts:
 Source pointers:
 - `research/hko-local-maximum-exact-clarke.md`, sections "Status",
   "Scope Boundary", "Sage Note", and "Packet 2 Note".
+- `research/hko-local-maximum-proof-route-note.md`, especially the one-sided
+  branch-certificate principle and candidate Sage decision problem.
 - `experiments/hko-local-maximum/exact-clarke/widened-seed-witness.json`.
 - `experiments/hko-local-maximum/exact-clarke/widened-seed-witness-verification.json`.
 
@@ -211,7 +215,8 @@ Missing:
    local maximality.
    Source pointers: `formal/hko-local-maximality-conditions.tex`;
    `formal/hko-symmetry-gradient-structure.tex`;
-   `research/sys-first-order-local-behavior.md`.
+   `research/sys-first-order-local-behavior.md`;
+   `research/hko-local-maximum-proof-route-note.md`.
 
 4. Decide empirical-support inclusion.
    Source pointers: `research/hko-local-maximum.md`;

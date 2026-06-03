@@ -38,6 +38,10 @@ path = "cut-and-ascent/main.rs"
 name = "hko-sage-validation"
 path = "sage-validation/main.rs"
 
+[[bin]]
+name = "hko-active-branch-diagnostic"
+path = "active-branch-diagnostic/main.rs"
+
 [lints]
 workspace = true
 
