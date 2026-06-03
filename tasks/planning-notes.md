@@ -93,27 +93,6 @@ Planning hygiene:
   external/Jörn judgments, stale checks, and confidence or evidence strength
   when they affect work ordering or thesis claims.
 
-<!--
-Review status:
-This top planning guidance and
-`tasks/references/planning-agent-memory-2026-06-01.md` were committed once
-before their own review rule was applied. After commit `22b14128`, three
-independent read-only reviews checked sanity, reasoning/completeness, and
-style/epistemics. This note records the amend that addresses their
-needs-amend findings; it is not an endorsement of every downstream work-ordering
-judgment as source truth.
-
-Migration-review note: live-test this file by asking a fresh agent what
-"working hypothesis" means here, what next object-level thesis task it would
-choose, what work it would defer, where it would stop for Jörn/Kai, and whether
-the file supports cost/value reasoning. The 2026-05-31 test passed for the old
-"route" wording: the fresh agent understood the file as decision guidance
-rather than source truth or an executable queue, picked a
-thesis-success-changing next task, deferred broad solver polish, and identified
-Jörn/Kai stop points. Keep this file healthy by checking that future agents
-still infer concrete source surfaces, stop conditions, and anti-busywork guards
-from it.
--->
 Current working hypotheses for ordering and constraining work. Not source truth.
 Not an executable queue.
 

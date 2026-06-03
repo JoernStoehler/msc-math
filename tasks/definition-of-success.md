@@ -91,18 +91,6 @@ broad solver formalization is not a default requirement.
 
 ## Final Acceptance Gate
 
-<!--
-Migration-review note: live-test this definition by asking a fresh agent, without
-executing the review, what concrete checks it would run before asking Jörn for
-final acceptance. A good answer should derive checks from current thesis text
-and source truth, including retained claims/stories, HKO, hostile landscape,
-sys first-order dependencies, numerics/code claims, provenance/references, repo
-promises, PDF build/readability, submission/admin state, and Jörn/Kai-only
-decisions. A bad answer treats this file as a standalone checklist, performs
-only a cheap TODO/stale-link skim, or asks Jörn for acceptance before preparing
-evidence and named caveats. This comment exists because no separate live
-repeated-check procedure is retained.
--->
 Jörn can declare the thesis done when all conditions below hold, or when Jörn
 explicitly accepts a named caveat as non-blocking for submission.
 
