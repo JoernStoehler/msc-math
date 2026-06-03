@@ -8,12 +8,14 @@ Live task files:
 
 Dated references:
 
-- `references/*.md` stores source-scan caches, dated reports, migration notes,
-  and repeated-feedback records.
+- `references/*.md` stores only dated material whose expected future value is
+  high enough to justify future reading and staleness costs.
 - Dated references are not the live planning layer and are not source truth.
-- Use them to avoid redoing known source scans or retyping repeated feedback,
-  then refresh affected claims from source files and the live task files before
-  executing work or making stronger claims.
+- Prefer deleting or not committing transient planning reports after extracting
+  durable consequences. Git history is the normal quarantine.
+- Use retained dated references only to avoid expensive rederivation or
+  repeated Jörn feedback, then refresh affected claims from source files and the
+  live task files before executing work or making stronger claims.
 
 <!--
 Migration-review note: keeping stale topic files in the live tree is cheaper

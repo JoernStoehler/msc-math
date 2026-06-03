@@ -242,6 +242,9 @@ maintenance low. The numbers are stable and can be out of order.
     cost; if available agent work would consume more total Jörn time than it
     saves, it is better to have no active agent for that work.
 
+50.1. For quick cost/value BOTECs, Jörn said that `$1` per Jörn minute feels
+      roughly right as an estimate or intuition.
+
 51. Agents can lessen the workload for Jörn/Kai by finding, flagging, and
     sometimes fixing errors, but they cannot replace Jörn/Kai acceptance where
     acceptance is required.
@@ -259,6 +262,13 @@ maintenance low. The numbers are stable and can be out of order.
     Ending a session early is acceptable when it records the current state,
     what changed in scope, and the concrete next step; it is not a reason to
     abandon ownership silently.
+
+54.1. Recording reasoning has often incurred large cost, while rederiving it
+      has often incurred little cost. Once a plan is settled or discussed with
+      Jörn, preserve only the durable consequences that will matter later:
+      Jörn-confirmed facts, current-state changes, planning-note changes, or
+      source-file rewrites. If the settled task is worked on immediately,
+      preserving the transient reasoning in the repo may be unnecessary.
 
 56. Standard tasks such as fixing LaTeX errors, exploring the repo, gathering
     relevant files, or producing a quick source report are reliable from very
