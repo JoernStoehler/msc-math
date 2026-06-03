@@ -52,32 +52,42 @@ maintenance low. The numbers are stable and can be out of order.
    fact; exact theorem and prose wording still comes from the thesis and source
    files.
 
-   8.1. HKO local result.
+   8.1. HKO local result: prove or honestly state the local-maximality result
+   at the support strength actually achieved.
 
-   8.2. Pentagon product result.
+   8.2. Pentagon product result: present the rotated-regular-polygon/pentagon
+   product result as a side result.
 
-   8.3. Search/data-science result.
+   8.3. Search/data-science result: present the standard-method search story
+   and its final negative, positive, or caveated outcome.
 
-   8.4. Generalized Reeb orbit and HK2019 finite-computation foundation.
+   8.4. Generalized Reeb orbit and HK2019 finite-computation foundation: give
+   the mathematical setup that makes the computations meaningful.
 
-   8.5. First-order perturbation method.
+   8.5. First-order perturbation method: explain the local-variation method
+   used by the HKO and search stories.
 
-   8.6. Numerics/exactness story.
+   8.6. Numerics/exactness story: explain where exact arithmetic, f64
+   numerics, indeterminate decisions, and SageMath verification enter.
 
-   8.7. Code/data/reproducibility story.
+   8.7. Code/data/reproducibility story: explain what code/data support the
+   thesis and how the claimed results can be reproduced.
 
-   8.8. Use-of-AI disclosure.
+   8.8. Use-of-AI disclosure: disclose AI use at the level Jörn decides.
 
-   8.9. Visualization as exploration.
+   8.9. Visualization as exploration: include 3d visualization as exploratory
+   support, not as a central result.
 
-   8.10. CH2021/flow-graph/tube algorithm story.
+   8.10. CH2021/flow-graph/tube algorithm story: present the retained
+   algorithmic story at the support level available.
 
-   8.11. Preliminaries needed for readability.
+   8.11. Preliminaries needed for readability: include only the background
+   needed to make the retained results readable.
 
-9. The thesis has multiple results going in different directions and answering
-   different research questions, so it makes no sense to force them into one
-   uniform story beyond roughly "we tried to find something interesting and we
-   did".
+9. The thesis contains multiple results that answer different research
+   questions. They should not be forced into a single tight narrative; the
+   shared frame is that the project probed Viterbo's conjecture from several
+   computational, experimental, and proof-by-computation directions.
 
 10. The pentagon/rotated regular polygon story is a thesis result, but it is a
     side result and not among the first things Jörn would immediately name or
@@ -86,9 +96,10 @@ maintenance low. The numbers are stable and can be out of order.
 11. The 3d visualization is a side result that generates nice pictures and
     helps a bit with imagining what a 4d polytope looks like.
 
-12. Tube/CH2021 is a retained content area. Its thesis role still has to be
-    matched to the support available in the relevant thesis/research/source
-    files.
+12. Tube/CH2021 is a retained content area, but it is unfinished right now and
+    will change before thesis completion. The thesis needs the final
+    Tube/CH2021 role to match the support available in the relevant thesis,
+    research, and source files.
 
 ## HKO Proof Support
 
@@ -144,7 +155,9 @@ maintenance low. The numbers are stable and can be out of order.
     before row closure. If a positive/conjectured-positive pattern appears, the
     thesis should honestly reflect that.
 
-34.1. More data will be needed for the data-science experiments.
+34.1. More data will be needed before the data-science story can be considered
+      closed at thesis level. The exact datasets, sizes, and producer commands
+      belong in the relevant experiment/research files, not in this fact sheet.
 
 35. The reproducibility target is that somebody can execute a flow around two
     years from now and reproduce the thesis results, ideally down to generating
@@ -176,14 +189,16 @@ maintenance low. The numbers are stable and can be out of order.
       and experiment outputs to thesis figures and the final PDF. This includes
       copy steps such as commands that copy generated figures into `thesis/`.
 
-38.2. The obvious long-horizon reproduction route is to use the devcontainer
-      or documented local environment and run even long executables there when
-      practical, because reproduction matters more than performance. The
-      reproducibility playbook should also say how the original runs were done
-      on LICCA, because that may no longer be possible two years later and most
-      researchers do not have LICCA access. The playbook should record timings
-      for each step on the original machine, with machine specs, for example
-      "this step took about 5 minutes" or "this step took about 30 seconds".
+38.2. The obvious long-horizon reproduction route is the devcontainer or a
+      documented local environment. When practical, run even long executables
+      there, because reproduction matters more than performance.
+
+38.3. The reproducibility playbook should also document how the original runs
+      were done on LICCA. LICCA access may no longer be possible two years
+      later, and most researchers do not have LICCA access.
+
+38.4. The reproducibility playbook should record approximate timings for each
+      step on the original machine, together with machine specs.
 
 39. Git and Git LFS are useful for worktrees, checkouts, and partial reruns
     without paying for full reruns of expensive computations. For full
@@ -221,9 +236,11 @@ maintenance low. The numbers are stable and can be out of order.
 ## Agent Work And Planning
 
 50. Agents should minimize Jörn's total time. Do not replace this with proxies
-    such as minimizing reading time, typing time, thinking time, context
-    switching time, waiting time, review time, number of interruptions, or
-    message length.
+    or partial summands such as minimizing reading time, typing time, thinking
+    time, context switching time, waiting time, review time, number of
+    interruptions, or message length. Task-definition cost is part of task
+    cost; if available agent work would consume more total Jörn time than it
+    saves, it is better to have no active agent for that work.
 
 51. Agents can lessen the workload for Jörn/Kai by finding, flagging, and
     sometimes fixing errors, but they cannot replace Jörn/Kai acceptance where
@@ -232,15 +249,16 @@ maintenance low. The numbers are stable and can be out of order.
 52. There is no stable one-size process for thesis work. Prose, notes, code,
     review, experiments, and parallel agents should be chosen case by case.
 
-53. Source transfer and new reasoning should usually be separated when mixing
-    them would make review harder. Jörn said mixing them often ends in
-    confusion and errors that are hard to recover from except rollbacks.
+53. Do not combine source transfer with new reasoning when that would make
+    review harder. For example, first copy or summarize what a source says,
+    then separately argue what follows from it. Jörn said mixing these steps
+    often causes confusion and errors that are hard to recover from except by
+    rollback.
 
-54. Long tasks often get broken down into multiple sessions during the work:
-    they are re-scoped and ended prematurely once size becomes clear.
-
-55. Reusable review/task formats have been worthwhile in the past, but not
-    always.
+54. Long tasks often need to be re-scoped once their real size becomes clear.
+    Ending a session early is acceptable when it records the current state,
+    what changed in scope, and the concrete next step; it is not a reason to
+    abandon ownership silently.
 
 56. Standard tasks such as fixing LaTeX errors, exploring the repo, gathering
     relevant files, or producing a quick source report are reliable from very
@@ -254,10 +272,6 @@ maintenance low. The numbers are stable and can be out of order.
 58. Do not introduce rigid labels, YAML, tags, or companion tables before they
     solve a real problem. Start with prose and grep unless structure clearly
     reduces total Jörn time or prevents likely errors.
-
-59. Useful agent work should reduce total Jörn time. Task-definition cost is
-    part of task cost; if available agent work would consume more total Jörn
-    time than it saves, it is better to have no active agent for that work.
 
 60. Unless there is newer evidence, the main advisor-facing problem is still
     that the thesis is incomplete, not a specific subtle objection from Kai or
