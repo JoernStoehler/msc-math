@@ -2,24 +2,23 @@
 
 Date: 2026-05-31.
 
-Purpose: record the review result for the `endpoint-residualized-regression`
-row. This is a disposition note, not a repaired experiment report.
+Purpose: record the review result and later repair result for the
+`endpoint-residualized-regression` row. The durable repaired report is
+`experiments/sys-landscape/datascience/methods/feature-pattern-search/feature_pattern_search_residual_summary.md`.
 
 ## Disposition
 
-Recommendation: repair narrowly before thesis use, or cut the row from
-thesis-facing evidence.
+Final status after 2026-06-03 repair: `no-search-output`.
 
 Current thesis role:
 
-- not thesis-bearing;
 - not a main hostile-landscape claim;
 - not a candidate-proposer;
-- at most a future/caveat row until repaired or cut.
+- supporting/caveat evidence only.
 
-## Source-Backed Findings
+## Pre-Repair Findings
 
-- `research/sys-landscape-toolbox-audit.md` already marked the row unresolved:
+- `research/sys-landscape-toolbox-audit.md` marked the row unresolved:
   no current-contract report had been reviewed, and current artifacts were not
   enough for a terminal no-search-output or thesis-facing claim.
 - `research/sys-landscape-datascience/idea-ledger.md` marked the row
@@ -27,43 +26,40 @@ Current thesis role:
 - `research/sys-landscape-datascience/method-ledger.md` marked thesis use
   `undecided`.
 - `experiments/sys-landscape/datascience/methods/feature-pattern-search/analyze_residual.py`
-  documents an endpoint-only residual packet, but its current `main()` calls
+  documented an endpoint-only residual packet, but its `main()` called
   `load_joined_rows(dataset_dir)` instead of
   `load_joined_rows(dataset_dir, endpoint_only=True)`.
 - `experiments/sys-landscape/datascience/methods/feature-pattern-search/common.py`
-  supports endpoint filtering via the `endpoint_only` argument.
-- Therefore the committed residual plot is not reliable source truth for the
-  stated endpoint-only question.
-- `analyze_residual.py` defines `write_summary(...)`, but current `main()` does
-  not call it, and no durable residual markdown report is committed.
+  already supported endpoint filtering via the `endpoint_only` argument.
+- `analyze_residual.py` defined `write_summary(...)`, but `main()` did not call
+  it, and no durable residual markdown report was committed.
 
-## Scratch-Only Check
+## Repair Result
 
-A scratch diagnostic on an existing `/tmp` dataset snapshot suggested that some
-endpoint feature blocks may add grouped-CV association beyond metadata. This is
-not durable source truth and does not by itself give a candidate-proposer, a new
-`sys > 1` row, or a follow-up search packet.
+The 2026-06-03 repair made `analyze_residual.py` enforce endpoint-only loading
+via `load_joined_rows(dataset_dir, endpoint_only=True)` and write
+`feature_pattern_search_residual_summary.md`.
 
-Use this only as motivation for the repair-or-cut decision, not as thesis
-evidence.
+The repaired run used `/tmp/sys-ds-reset-pilot-tables-VJ6D0P` and recorded:
 
-## Repair Scope
+- `112` endpoint rows;
+- `5` grouped endpoint folds;
+- endpoint datasets `gradient_ascent_general`, `gradient_ascent_products`, and
+  `variable_f_ascent`.
 
-If Jörn keeps the row, the narrow repair is:
+Several blocks add endpoint-only grouped-CV association beyond metadata. The
+strongest ridge block is `face_symplectic` with metadata `R^2 = -0.0159`,
+combined `R^2 = 0.4065`, and residual `R^2 = 0.4158`. The strongest random
+forest block is `all_non_metadata` with metadata `R^2 = -0.0079`, combined
+`R^2 = 0.3225`, and residual `R^2 = 0.3278`.
 
-- make `analyze_residual.py` enforce endpoint-only loading;
-- write a durable report beside the analyzer;
-- record input data provenance, row counts, grouped split policy, metrics,
-  caveats, verdict, thesis-use proposal, and reopen trigger;
-- regenerate `feature_pattern_search_residual.png` after the script is fixed;
-- update the idea ledger, method ledger, and toolbox audit with the terminal
-  verdict.
+Interpretation: this is an endpoint-side table association, not a
+candidate-proposer. It does not produce a validated new `sys > 1` row and does
+not give a rule for proposing fresh candidates before inspecting `sys`, endpoint
+labels, producer identity, optimizer provenance, or HKO2024-derived status.
 
-If Jörn cuts the row, do not cite this packet in thesis-facing evidence. Mark it
-future or omitted with the reason: current analyzer contract bug and no
-candidate-proposer.
+## Reopen Trigger
 
-## Open Decision
-
-Jörn decision needed: repair this as a caveat-style endpoint diagnostic, or cut
-it from thesis-facing evidence and leave it as future work.
+Reopen if the endpoint dataset changes, if the feature packet is regenerated
+with different row guards, or if someone derives a candidate-proposer that does
+not use forbidden inputs.

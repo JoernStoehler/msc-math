@@ -311,8 +311,9 @@ Near-term independent starts:
 - Hostile landscape: turn the method universe into row packets and drive
   unresolved rows to terminal states with source-owned evidence and
   thesis-use verdicts that can survive focused review.
-  `endpoint-residualized-regression` and `stat-sanity` are important unresolved
-  rows, not the whole ordering.
+  `endpoint-residualized-regression` is now terminal supporting/caveat
+  `no-search-output`; `stat-sanity` is downgraded to non-load-bearing caveat
+  evidence.
 - Thesis writing: `thesis/first-order-perturbations.tex` is agent-suitable for
   a generic row-chart draft with explicit non-generic caveats. Do not accept
   theorem-strength arbitrary-polytope or HKO wording there.
@@ -394,13 +395,13 @@ Guidance:
 - Treat the method table as the deliverable, not any single row. Drive rows
   that the thesis relies on to a terminal state with evidence and adversarially
   defensible interpretation.
-- `endpoint-residualized-regression` has a 2026-05-31 disposition note:
-  current artifacts are not thesis-bearing because the analyzer does not enforce
-  endpoint-only loading and no durable report exists. It is an important
-  unresolved row, but not the whole work ordering.
-- `stat-sanity` is likewise an important unresolved support row; repair,
-  downgrade, or classify it as part of the full-table closeout instead of
-  treating it as a serial gate after one other row.
+- `endpoint-residualized-regression` was repaired on 2026-06-03. It is now a
+  supporting/caveat `no-search-output` row: endpoint-side associations exist,
+  but no candidate-proposer and no validated new `sys > 1` row were recorded.
+- `stat-sanity` was downgraded on 2026-06-03 to non-load-bearing caveat
+  evidence because only scratch output exists. Do not quote its numerical
+  null/permutation results in thesis text unless a repo-owned method packet is
+  added later.
 - Candidate omitted/unfinished rows such as `svm-supervised-baseline` and
   `interpretable-tail-rules` should be evaluated by the same value/cost and
   thesis-table standard: not applicable to this data/search interface,

@@ -73,10 +73,12 @@ source files.
   High-risk fact: tried thesis-affecting results need repo-owned evidence,
   checks appropriate to their verdict, explicit caveats, and thesis-use
   disposition.
-  Current blocker: `endpoint-residualized-regression` is not thesis-bearing as
-  is. Its analyzer does not enforce the documented endpoint-only surface and no
-  durable markdown report exists; see
-  `research/sys-landscape-datascience/endpoint-residualized-regression-disposition-2026-05-31.md`.
+  Current state: `endpoint-residualized-regression` was repaired on 2026-06-03
+  and is now supporting/caveat evidence only. `stat-sanity` was downgraded to
+  non-load-bearing caveat evidence because its only source truth is scratch
+  output. See
+  `research/sys-landscape-datascience/endpoint-residualized-regression-disposition-2026-05-31.md`
+  and `research/sys-landscape-datascience/idea-ledger.md`.
   Refresh when: retained hostile-landscape wording or endpoint datasets change.
 
 - Sys first-order generic row-chart writing is active.

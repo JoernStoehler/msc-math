@@ -22,6 +22,7 @@ Input Artifacts:
     `--dataset-dir`
 Output Artifacts:
   - experiments/sys-landscape/datascience/methods/feature-pattern-search/feature_pattern_search_residual.png
+  - experiments/sys-landscape/datascience/methods/feature-pattern-search/feature_pattern_search_residual_summary.md
 """
 
 import argparse
@@ -45,6 +46,7 @@ setup()
 
 EXPERIMENT_DIR = Path(__file__).resolve().parent
 RESIDUAL_PNG = EXPERIMENT_DIR / "feature_pattern_search_residual.png"
+RESIDUAL_REPORT = EXPERIMENT_DIR / "feature_pattern_search_residual_summary.md"
 
 MODEL_SPECS = [("ridge", "Ridge"), ("rf", "Random forest")]
 TESTED_BLOCKS = [
@@ -259,6 +261,21 @@ def write_summary(rows: list[JoinedRow], results: dict[str, dict[str, dict[str, 
             )
         lines.append("")
 
+    lines.extend(
+        [
+            "## Verdict",
+            "",
+            "This endpoint-only residual check records endpoint-side association beyond metadata, not a candidate-proposer.",
+            "It does not produce a validated new `sys > 1` row and does not give a rule for proposing fresh candidates before inspecting `sys`, endpoint labels, producer identity, optimizer provenance, or HKO2024-derived status.",
+            "Use it as supporting/caveat evidence only.",
+            "",
+            "Packet verdict: `no-search-output`.",
+            "",
+        ]
+    )
+
+    RESIDUAL_REPORT.write_text("\n".join(lines), encoding="utf-8")
+
 def plot_residual_deltas(results: dict[str, dict[str, dict[str, float]]]) -> None:
     x = np.arange(len(TESTED_BLOCKS))
     width = 0.35
@@ -292,7 +309,7 @@ def main() -> None:
         dataset_dir.mkdir(parents=True, exist_ok=True)
         refresh_dataset(dataset_dir)
 
-    rows = load_joined_rows(dataset_dir)
+    rows = load_joined_rows(dataset_dir, endpoint_only=True)
     if not rows:
         raise RuntimeError("no endpoint rows were loaded")
 
@@ -303,8 +320,10 @@ def main() -> None:
             results[model_name][block] = evaluate_additive_cv(rows, block, model_name)
 
     plot_residual_deltas(results)
+    write_summary(rows, results)
 
     print(f"Saved {RESIDUAL_PNG}")
+    print(f"Saved {RESIDUAL_REPORT}")
 
 
 if __name__ == "__main__":
