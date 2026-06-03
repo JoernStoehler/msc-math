@@ -137,9 +137,46 @@ maintenance low. The numbers are stable and can be out of order.
     before row closure. If a positive/conjectured-positive pattern appears, the
     thesis should honestly reflect that.
 
+34.1. More data will be needed for the data-science experiments.
+
 35. The reproducibility target is that somebody can execute a flow around two
     years from now and reproduce the thesis results, ideally down to generating
     the final PDF.
+
+36. The reproducibility flow should prefer regenerating claimed-reproducible
+    artifacts from source over preserving them as opaque outputs. A plausible
+    verification pattern is to delete claimed-reproducible artifacts, such as
+    the thesis PDF, dataset JSONL files, or figure PNGs, then rerun the
+    documented producer pipeline. Exact artifact classes still need final
+    checking.
+
+37. Byte-identical reproduction is the ideal regression signal. Ideally, after
+    deleting and rerunning reproducible artifacts, `git diff` is empty because
+    the pipeline reproduced outputs byte-for-byte. Some artifacts may need an
+    accepted non-byte-identical comparison because of architecture, toolchain,
+    or execution-environment differences, such as LICCA versus a local machine.
+
+37.1. The long-horizon reproducibility instructions should name which
+      artifacts are expected to reproduce byte-for-byte and which only
+      reproduce up to an accepted comparison.
+
+38. The full reproduction pipeline may be slow. The intended user-facing shape
+    is still simple: to verify that output `X` is the output of producer `F`,
+    delete `X` and rerun `F` from a single instruction file. That instruction
+    file may reference scripts such as Slurm jobs.
+
+38.1. The final reproducibility flow should include the route from source code
+      and experiment outputs to thesis figures and the final PDF. This includes
+      copy steps such as commands that copy generated figures into `thesis/`.
+
+39. Git and Git LFS are useful for worktrees, checkouts, and partial reruns
+    without paying for full reruns of expensive computations. For full
+    reproducibility, tracking outputs is not what matters; the producer flow
+    and its verification matter.
+
+39.1. Expensive experiment outputs should not automatically be treated as data
+      that must be preserved instead of regenerated. Saved data can still be
+      useful as a regression test, depending on the artifact.
 
 ## Thesis Writing And Prose
 
@@ -236,6 +273,9 @@ maintenance low. The numbers are stable and can be out of order.
     promise, agents should surface the conflict immediately rather than
     silently choosing a workaround.
 
+75. There is no concrete fast-review arrangement with Kai. Current planning
+    should not assume Kai can review large material immediately.
+
 ## Planning Artifacts And Source Truth
 
 80. The two large dated route/control reports were not read by Jörn. Do not
@@ -245,3 +285,20 @@ maintenance low. The numbers are stable and can be out of order.
     and Codex-written planning surfaces should not be promoted beyond their
     actual support. Source files and verbatim Jörn responses overrule agent
     summaries.
+
+82. Facts should stay in their canonical owner file when that location is easy
+    to find, predictable, expected, and robust enough. Facts belong in
+    `FACTSHEET.md` when agents keep overlooking the other location, when the
+    other location is too fragile under maintenance, when no good owner exists,
+    or when related information belongs together and has no single
+    discoverable robust home.
+
+83. Jörn-confirmed current-state facts may belong in `FACTSHEET.md` when they
+    are important. If staleness is a concern, mark the item with
+    `[potentially stale]` instead of excluding it merely because it may become
+    stale.
+
+84. GPT-5.5 agents sometimes make wrong inferences. `FACTSHEET.md` can
+    therefore include Jörn-confirmed facts that help agents avoid recurring
+    wrong inferences or repeated bad questions, even when those facts seem too
+    basic to mention.
