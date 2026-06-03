@@ -21,6 +21,23 @@ thesis-local tasks, ask agents where text needs fleshing out, and decide ad hoc
 whether Jörn writes, an agent attempts work, or an agent only gathers
 information.
 
+## Section-Local Content Companions
+
+Some thesis sections may have a nearby `*-content.md` companion file. These
+files gather section-local result packets, source pointers, evidence status,
+missing non-writing work, fallback branches, and review gates before final prose
+is written.
+
+Treat these files as writeup-gathering notes, not source truth. They should
+state their own status, purpose, overruled-by sources, lifecycle, and update
+rule. Prefer source pointers and explicit `needs source` markers over dangling
+claims. Keeping the header local to each companion is intentional; it avoids
+indirection and lets each file have its own lifecycle.
+
+Use a companion file when it reduces source scatter or prevents a section from
+losing thesis-facing content. Do not create one merely to record transient
+reasoning that is cheaper to rederive.
+
 ## Questionnaire And Answers From The Design Session
 
 ### QJ1. Minimum thesis story

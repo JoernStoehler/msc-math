@@ -15,6 +15,9 @@ Status: navigation cache for the active thesis scaffold.
 - `flow-graph-algorithm-ch2021.tex`: CH2021 flow-graph algorithm scaffold.
 - `first-order-perturbations.tex`: first-order perturbation scaffold.
 - `hko-local-maximum.tex`: HKO local-maximum main-result scaffold.
+- `hko-local-maximum-content.md`: section-local content-gathering notes for
+  the HKO result packet. Not source truth; use its source pointers before
+  relying on claims.
 - `black-box-datascience.tex`: data-science search-result scaffold.
 - `rotated-regular-polygons.tex`: rotated regular polygon side-result
   scaffold.
@@ -34,6 +37,8 @@ Status: navigation cache for the active thesis scaffold.
 
 - `DEVELOPMENT.md`: maintainer-facing notes about the scaffold conversion and
   process discussion that produced it.
+- Section-local `*-content.md` files, when present, are writeup-gathering
+  companions for nearby `.tex` files. They are not source truth.
 
 ## Legacy Source Material
 
