@@ -24,28 +24,31 @@ route choices, readiness gates, and scale/no-scale decisions.
 worker-packet procedure. This ledger owns the idea rows and their evidence
 links.
 
-## Current Dataset Snapshot
+## Current Batch Dataset
 
-Observed on 2026-04-30 from the committed producer caches:
+Observed on 2026-06-03 from the committed producer caches:
 
-- Command:
-  `cargo run -p exp-sys-landscape --bin sys-dataset -- --out-dir /tmp/sys-ds-plan-tables`
+- Build command:
+  `experiments/sys-landscape/datascience/build-current-dataset.sh`
 - Output tables:
-  `/tmp/sys-ds-plan-tables/polytope-table.jsonl` and
-  `/tmp/sys-ds-plan-tables/observation-table.jsonl`
+  `experiments/sys-landscape/datascience/batches/2026-06-03-current/dataset/polytope-table.jsonl`
+  and
+  `experiments/sys-landscape/datascience/batches/2026-06-03-current/dataset/observation-table.jsonl`
+- Fingerprint:
+  `experiments/sys-landscape/datascience/batches/2026-06-03-current/FINGERPRINT.md`
 - Row counts:
   `282` polytope rows and `282` observation rows.
 - Observation counts:
   `70` random generic, `100` random product, `10` general ascent,
   `12` product ascent, `90` variable-F continuation.
 - Table width:
-  `133` polytope-table fields and `47` observation-table fields.
+  `135` polytope-table fields and `53` observation-table fields.
 - Current maximum in the rebuilt table:
   `sys ~= 0.906316153431123`, with `0` rows satisfying `sys > 1`.
 
-This is a planning snapshot, not a maintained artifact. A spike wave should
-build one fresh temp snapshot, record its command and counts, and pass that
-snapshot path to all workers in the wave.
+This is a maintained batch artifact. A method wave should select one shared
+batch dataset, cite its fingerprint, and pass that dataset path to all workers
+in the wave.
 
 ## Roles
 
@@ -117,9 +120,9 @@ Every spike packet should state:
 - stop conditions, especially `sys > 1`, stale dataset mismatch, or an
   implementation bug that invalidates the result.
 
-Workers may write temporary artifacts in their worktree or under `/tmp`, but they
-must not edit tracked `.jsonl` outputs unless the packet explicitly asks for a
-canonical refresh.
+Workers may write temporary artifacts in their worktree or under `/tmp`, but
+their dataset source should be the shared batch path unless the packet
+explicitly asks for a canonical refresh.
 
 ## Initial Idea Queue
 
@@ -162,7 +165,8 @@ Record only lessons that change future delegation or spike design.
 
 | Date | Source | Lesson | Consequence |
 | --- | --- | --- | --- |
-| 2026-04-30 | Initial planning | Table generation from current producer caches is cheap enough for a lead wave setup but not free for every worker. | Build one frozen temp dataset per wave and pass the path to workers. |
+| 2026-04-30 | Initial planning | Table generation from current producer caches is cheap enough for a lead wave setup but not free for every worker. | Historical rule: build one frozen temp dataset per wave and pass the path to workers. Superseded by the retained batch rule below. |
+| 2026-06-03 | Pipeline maintenance | The old temp-dataset rule made method inputs hard to share across worktrees and easy to lose after a session. | Supersede it with a retained batch dataset under `experiments/sys-landscape/datascience/batches/`, plus `FINGERPRINT.md` for reports and review. |
 | 2026-04-30 | Initial planning | A useful spike must end in a verdict with evidence, not only a plot or script. | Worker packets require a report path with a reviewer-readable result header. |
 | 2026-04-30 | `pca-cluster-anomaly` worker spike | One worker could implement and run a complete PCA/clustering spike from the packet, including row guards, non-provenance features, a permutation sanity check, and a readable verdict. | Full-method spikes are feasible when the dataset path, allowed write scope, and verdict vocabulary are explicit. |
 | 2026-04-30 | `pca-cluster-anomaly` worker spike | The useful lifecycle is one-turn delegation: choose the experiment, define it, delegate, wait, inspect, then merge, trash, or leave a follow-up. Interactive checkpointing is not the default control path. | Future packets should require durable report/output paths for inspection, not chat-style progress management. |

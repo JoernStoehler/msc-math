@@ -100,6 +100,38 @@ pub struct DatasetPaths {
     pub out_dir: PathBuf,
 }
 
+fn print_help(program: &str) {
+    println!(
+        "\
+Build sys-landscape datascience tables from producer caches.
+
+Usage:
+  {program} --out-dir <dataset-dir> [options]
+
+Method-wave output:
+  experiments/sys-landscape/datascience/batches/<batch>/dataset
+
+Options:
+  --produce-dir <dir>              Read canonical producer filenames from <dir>
+  --random <path>                  Override random.jsonl
+  --random-product <path>          Override random-product.jsonl
+  --ascent <path>                  Override ascent.jsonl
+  --ascent-trace <path>            Override ascent-trace.jsonl
+  --ascent-product <path>          Override ascent-product.jsonl
+  --ascent-product-trace <path>    Override ascent-product-trace.jsonl
+  --continuation <path>            Override continuation.jsonl
+  --shared-cache <path>            Override shared-cache.jsonl
+  --continuation-cache <path>      Override continuation-cache.jsonl
+  --out-dir <dataset-dir>          Output directory for polytope/observation tables
+  --help                           Show this help
+
+If --out-dir is omitted, this command writes to a temporary smoke directory.
+Use that only for one-off scratch. For method batches, use an owned path under
+experiments/sys-landscape/datascience/batches/.
+"
+    );
+}
+
 fn smoke_output_dir() -> PathBuf {
     let stamp = SystemTime::now()
         .duration_since(UNIX_EPOCH)
@@ -140,6 +172,10 @@ pub fn parse_args() -> DatasetPaths {
     let mut out_dir = defaults.out_dir;
 
     let args: Vec<String> = std::env::args().collect();
+    if args.iter().any(|arg| arg == "--help" || arg == "-h") {
+        print_help(args.first().map(String::as_str).unwrap_or("sys-dataset"));
+        std::process::exit(0);
+    }
     let mut i = 1usize;
     while i < args.len() {
         let flag = args[i].as_str();

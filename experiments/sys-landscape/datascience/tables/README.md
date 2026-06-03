@@ -11,6 +11,19 @@ Current outputs:
 - `polytope-table.jsonl`
 - `observation-table.jsonl`
 
+For method waves, the table output should live under a shared batch path such
+as:
+
+```text
+experiments/sys-landscape/datascience/batches/2026-06-03-current/dataset/
+```
+
+Build the current batch dataset with:
+
+```bash
+experiments/sys-landscape/datascience/build-current-dataset.sh
+```
+
 Code ownership:
 - `main.rs` orchestrates `load -> enrich -> write`
 - `load_caches.rs` reads producer files and merges them into unified rows
