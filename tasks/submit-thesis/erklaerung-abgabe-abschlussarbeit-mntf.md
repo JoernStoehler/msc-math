@@ -110,10 +110,10 @@ Interner Vermerk:
 
 ## Thesis project notes
 
-- TODO(Jörn): verify whether the final handin uses the standard number of
-  exemplars from the Ausgabebescheid or the "one printed copy fewer + extra CD"
-  option.
-- TODO(Jörn): if the university expects a USB stick rather than a CD for the repo
-  or PDF bundle, record that current instruction in
+- TODO(source-refresh): verify whether the final handin uses the standard
+  number of exemplars from the Ausgabebescheid or the "one printed copy fewer +
+  extra CD" option.
+- TODO(source-refresh): if the university expects a USB stick rather than a CD
+  for the repo or PDF bundle, record that current instruction in
   `tasks/submit-thesis/README.md` and treat the PDF form's CD wording as
   historical form wording.

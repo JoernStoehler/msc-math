@@ -80,7 +80,7 @@ bitte den Antrag auf Erstellung des Zeugnisses im Prüfungsamt ein.
 
 ## Thesis project notes
 
-- TODO(Jörn): use the written Bescheid / attached Merkblatt to verify the exact
-  number of required printed copies for final handin.
-- TODO(Jörn): verify whether the Mathematics master thesis requires any
-  colloquium step; current project assumption is no defense talk.
+- TODO(source-refresh): use the written Bescheid / attached Merkblatt to verify
+  the exact number of required printed copies for final handin.
+- TODO(source-refresh): verify whether the Mathematics master thesis requires
+  any colloquium step; current project assumption is no defense talk.

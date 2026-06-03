@@ -167,6 +167,15 @@ maintenance low. The numbers are stable and can be out of order.
       and experiment outputs to thesis figures and the final PDF. This includes
       copy steps such as commands that copy generated figures into `thesis/`.
 
+38.2. The obvious long-horizon reproduction route is to use the devcontainer
+      or documented local environment and run even long executables there when
+      practical, because reproduction matters more than performance. The
+      reproducibility playbook should also say how the original runs were done
+      on LICCA, because that may no longer be possible two years later and most
+      researchers do not have LICCA access. The playbook should record timings
+      for each step on the original machine, with machine specs, for example
+      "this step took about 5 minutes" or "this step took about 30 seconds".
+
 39. Git and Git LFS are useful for worktrees, checkouts, and partial reruns
     without paying for full reruns of expensive computations. For full
     reproducibility, tracking outputs is not what matters; the producer flow
