@@ -6,6 +6,13 @@ queue. Not a thesis-success plan.
 Purpose: preserve the non-obvious lessons from the failed planning session on
 2026-06-01 without bloating `tasks/planning-notes.md`.
 
+Related recurring-feedback reference:
+`tasks/references/recurring-agent-feedback-2026-06-01.md` records broader
+Jörn feedback about review targets, stopping conditions, focused questions,
+evidence strength, and avoiding local closure. Read it for planning or
+multi-step thesis-success work where Jörn would otherwise need to repeat those
+instructions in chat.
+
 <!--
 Why this exists:
 The session failure was not that one prompt was bad. The failure was that a

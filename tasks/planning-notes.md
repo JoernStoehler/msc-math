@@ -241,6 +241,33 @@ hostile table work, and TeX drafting may overlap once the minimal
 section-control artifact has enough source-backed material for the affected
 section.
 
+Current central-section control state, 2026-06-01:
+
+- Durable control packet:
+  `tasks/references/central-claim-control-packet-2026-06-01.md`.
+- Scope: `thesis/abstract.tex`, `thesis/introduction.tex`,
+  `thesis/hko-local-maximum.tex`, `thesis/black-box-datascience.tex`, and
+  `thesis/conclusion.tex`.
+- Use: start HKO blocker, hostile method-table closeout, central TeX drafting,
+  rotated-regular-polygons wording, or supporting-section status packets from
+  that durable file. Do not use the older `/tmp` copy as project state.
+- Status: reviewed for obvious gaps by subagent `Beauvoir`; review fixes were
+  applied. It is still a dated control packet, not source truth. Refresh
+  affected rows from source files before treating them as current claim state.
+
+Current remaining-work route report, 2026-06-01:
+
+- Durable planning report:
+  `tasks/references/remaining-work-route-to-submission-2026-06-01.md`.
+- Use: select and explain the current route from scaffold/source state to
+  defensible submission, especially the ranked Route Packets 0-6.
+- Status: reviewed for omissions/hazards, reasoning/completeness, and
+  clarity/epistemics by three read-only subagents; accepted findings were
+  applied. It is still a dated planning report, not the live planning layer and
+  not source truth. Use it as a source-scan cache and route-shape reference;
+  refresh source files and this file's active guidance before executing packet
+  order.
+
 1. Minimal section-control artifact: durable side-by-side working material for
    the next active thesis section or tightly coupled section group. Include only
    the central story outline, section claims, support sources, caveats,

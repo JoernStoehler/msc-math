@@ -33,6 +33,16 @@ source files.
   writing-task notes, plus `research/INDEX.md`.
   Refresh when: Jörn/Kai changes scope or retained thesis claims change.
 
+- Jörn stated on 2026-06-01 that the following thesis content areas are all
+  must-have and should not be re-asked/reclassified in the next weeks:
+  HKO local result; pentagon product result; search/data-science result;
+  generalized Reeb orbit and HK2019 finite-computation foundation;
+  first-order perturbation method; numerics/exactness story;
+  code/data/reproducibility story; use-of-AI disclosure; visualization as
+  exploration; CH2021/flow-graph/tube algorithm story; and preliminaries needed
+  to make those readable. See `FACTSHEET.md` item 8 for clarified descriptions.
+  Refresh when: Jörn explicitly changes the thesis content scope.
+
 ## Research Stories
 
 - `research/INDEX.md` is the thesis story index.

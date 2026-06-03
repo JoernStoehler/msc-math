@@ -6,6 +6,15 @@ Live task files:
 - `current-state.md`: current state, source paths, refresh triggers.
 - `planning-notes.md`: route choices, rejected routes, invalidation triggers.
 
+Dated references:
+
+- `references/*.md` stores source-scan caches, dated reports, migration notes,
+  and repeated-feedback records.
+- Dated references are not the live planning layer and are not source truth.
+- Use them to avoid redoing known source scans or retyping repeated feedback,
+  then refresh affected claims from source files and the live task files before
+  executing work or making stronger claims.
+
 <!--
 Migration-review note: keeping stale topic files in the live tree is cheaper
 than deletion short-term, but it risks recreating a second task layer. Benefit
