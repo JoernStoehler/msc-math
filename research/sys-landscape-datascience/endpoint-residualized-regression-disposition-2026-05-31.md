@@ -2,19 +2,19 @@
 
 Date: 2026-05-31.
 
-Purpose: record the review result and later repair result for the
-`endpoint-residualized-regression` row. The durable repaired report is
+Purpose: record the pre-LICCA review result and later repair result for the
+`endpoint-residualized-regression` row. The repaired report path is
 `experiments/sys-landscape/datascience/methods/feature-pattern-search/feature_pattern_search_residual_summary.md`.
 
 ## Disposition
 
-Final status after 2026-06-03 repair: `no-search-output`.
+Pre-LICCA final status after 2026-06-03 repair: `no-search-output`.
 
-Current thesis role:
+Current thesis role after the LICCA dataset refresh:
 
-- not a main hostile-landscape claim;
-- not a candidate-proposer;
-- supporting/caveat evidence only.
+- pre-LICCA source material only;
+- redo or record a terminal state from the current retained dataset before
+  thesis use.
 
 ## Pre-Repair Findings
 
@@ -40,15 +40,16 @@ The 2026-06-03 repair made `analyze_residual.py` enforce endpoint-only loading
 via `load_joined_rows(dataset_dir, endpoint_only=True)` and write
 `feature_pattern_search_residual_summary.md`.
 
-The report was refreshed on 2026-06-04 from
-`experiments/sys-landscape/datascience/dataset`.
-Current rerun command:
+The report was refreshed on 2026-06-04 from the old retained `282`-row dataset
+at `experiments/sys-landscape/datascience/dataset`. It is not current LICCA
+evidence.
+Pre-LICCA rerun command:
 
 ```bash
 uv run --script experiments/sys-landscape/datascience/methods/feature-pattern-search/analyze_residual.py --dataset-dir experiments/sys-landscape/datascience/dataset
 ```
 
-The current report records:
+The pre-LICCA report records:
 
 - `112` endpoint rows;
 - `5` grouped endpoint folds;
@@ -68,6 +69,5 @@ labels, producer identity, optimizer provenance, or HKO2024-derived status.
 
 ## Reopen Trigger
 
-Reopen if the endpoint dataset changes, if the feature packet is regenerated
-with different row guards, or if someone derives a candidate-proposer that does
-not use forbidden inputs.
+Reopen by rerunning or reclassifying this row on the current retained dataset,
+or if someone derives a candidate-proposer that does not use forbidden inputs.

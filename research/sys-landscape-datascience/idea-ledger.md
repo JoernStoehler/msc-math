@@ -26,7 +26,7 @@ links.
 
 ## Current Dataset
 
-Observed on 2026-06-03 from the committed producer caches:
+Current retained dataset after the LICCA refresh:
 
 - Build command:
   `experiments/sys-landscape/datascience/build-dataset.sh`
@@ -37,14 +37,14 @@ Observed on 2026-06-03 from the committed producer caches:
 - Dataset checks, when needed:
   `uv run --script experiments/sys-landscape/datascience/fingerprint-dataset.py experiments/sys-landscape/datascience/dataset`
 - Row counts:
-  `282` polytope rows and `282` observation rows.
+  `8445` polytope rows and `8445` observation rows.
 - Observation counts:
-  `70` random generic, `100` random product, `10` general ascent,
-  `12` product ascent, `90` variable-F continuation.
+  `4096` gradient-ascent general, `4089` gradient-ascent products, `100`
+  random product, `70` random generic, and `90` variable-F continuation.
 - Table width:
   `135` polytope-table fields and `53` observation-table fields.
 - Current maximum in the rebuilt table:
-  `sys ~= 0.906316153431123`, with `0` rows satisfying `sys > 1`.
+  `sys ~= 0.9750768559799221`, with `0` rows satisfying `sys > 1`.
 
 This is a maintained dataset artifact. A method wave should cite its
 fingerprint and pass that dataset path to all workers in the wave.
@@ -128,14 +128,14 @@ explicitly asks for a canonical refresh.
 
 | Slug | Idea | Type | Scope | Desired evidence | Current verdict | Evidence / next action |
 | --- | --- | --- | --- | --- | --- | --- |
-| `feature-block-regression` | Feature-block regression with ridge and random forest | method | Existing feature-block packet over random and endpoint rows | Grouped CV, random-to-endpoint prediction, null baseline | `no-search-output` | Cached in `research/sys-landscape-toolbox-audit.md`; reopen if refreshed feature tables predict endpoint rows well enough to define a candidate-proposer. |
-| `regime-classification` | Endpoint-vs-random classification | method | Existing endpoint-vs-random classification packet | Whether non-provenance blocks separate endpoint rows from random rows better than null and metadata caveats | `no-search-output` | Current-contract pilot in `experiments/sys-landscape/datascience/methods/feature-pattern-search/regime-classification-report.md`; use as supporting/caveat only, not as a candidate-proposer. |
-| `endpoint-residualized-regression` | Endpoint residualized regression beyond metadata | method | Existing residualized-regression packet | Whether endpoint geometry/orbit/trajectory blocks add endpoint-only grouped-CV association beyond metadata | `no-search-output` | Repaired on 2026-06-03. Durable report: `experiments/sys-landscape/datascience/methods/feature-pattern-search/feature_pattern_search_residual_summary.md`. Endpoint-side associations exist, but the row gives no candidate-proposer and no validated new `sys > 1` row. Use as supporting/caveat only. |
-| `pca-cluster-anomaly` | PCA / clustering / anomaly scan over current feature blocks | method spike | Existing 282-row table and committed feature JSONL | A cluster or component rule specified before inspecting `sys`, or a bounded no-search-output result | `no-search-output` | Main commit `39039550` creates `experiments/sys-landscape/datascience/methods/pca-cluster-spike/` with script and report. |
-| `supervised-alternatives` | Cheap supervised alternatives: lasso, elastic net, boosting, kNN | method spike | Current feature tables only | Whether standard extra models change `feature-block-regression` / endpoint-vs-random classification conclusions under the same grouped split policy | `no-search-output` | Main commit `5e8db378` creates `experiments/sys-landscape/datascience/methods/supervised-alternatives-spike/`; lead had to run the worker's script to produce the report. |
+| `feature-block-regression` | Feature-block regression with ridge and random forest | method | Existing feature-block packet over random and endpoint rows | Grouped CV, random-to-endpoint prediction, null baseline | `current-review` | Pre-LICCA reports are not current evidence for the retained `8445`-row dataset. Redo or record a terminal method-table state from the current dataset. |
+| `regime-classification` | Endpoint-vs-random classification | method | Existing endpoint-vs-random classification packet | Whether non-provenance blocks separate endpoint rows from random rows better than null and metadata caveats | `current-review` | Pre-LICCA report is supporting/caveat source material only. Redo or record a terminal state from the current dataset before thesis use. |
+| `endpoint-residualized-regression` | Endpoint residualized regression beyond metadata | method | Existing residualized-regression packet | Whether endpoint geometry/orbit/trajectory blocks add endpoint-only grouped-CV association beyond metadata | `current-review` | Pre-LICCA repaired report is supporting/caveat source material only. Redo or record a terminal state from the current dataset before thesis use. |
+| `pca-cluster-anomaly` | PCA / clustering / anomaly scan over current feature blocks | method spike | Current retained table and committed feature JSONL | A cluster or component rule specified before inspecting `sys`, or a bounded no-search-output result | `current-review` | Existing report is pre-LICCA source material. Redo or record a terminal state from the current dataset if this toolbox row remains thesis-relevant. |
+| `supervised-alternatives` | Cheap supervised alternatives: lasso, elastic net, boosting, kNN | method spike | Current feature tables only | Whether standard extra models change `feature-block-regression` / endpoint-vs-random classification conclusions under the same grouped split policy | `current-review` | Existing report is pre-LICCA source material. Redo or record a terminal state from the current dataset if this toolbox row remains thesis-relevant. |
 | `stat-sanity` | Null, permutation, and bootstrap uncertainty checks | sanity | Existing feature-block / endpoint-vs-random classification / residualized-regression outputs | Chance baseline and fold uncertainty for claimed associations or no-search-output results | `future` | Downgraded on 2026-06-03 because the only available source truth is scratch output in `/tmp/ds-stat-sanity-spike/summary.json`, not a committed script/report. The scratch check may be used only as non-load-bearing caveat context unless a repo-owned method packet is added later. |
-| `exact-f64-spot-check` | Exact-vs-f64 spot checks for mathematical columns | sanity | Sampled rows from table-stage features | Detect whether a column implementation turns a true association into noise | `no-search-output` | Main commit `e8528963` creates `experiments/sys-landscape/datascience/methods/exact-f64-spot-check/`; sampled checked columns showed only f64-scale drift. |
-| `deep-latent-models` | Neural networks or deep latent models | method | Current 282-row dataset | Would need overfit controls and enough rows for flexible models | `rejected-low-voi` | Too small and too easy to overfit before thesis closeout; reopen only with much larger data. |
+| `exact-f64-spot-check` | Exact-vs-f64 spot checks for mathematical columns | sanity | Sampled rows from table-stage features | Detect whether a column implementation turns a true association into noise | `current-review` | Existing report is pre-LICCA source material. Redo or record a terminal state from the current dataset if this sanity row remains thesis-relevant. |
+| `deep-latent-models` | Neural networks or deep latent models | method | Current retained dataset | Would need overfit controls and enough rows for flexible models | `future` | The LICCA dataset removes the old "too small" reason as a standalone argument. Reassess value, implementation cost, and review cost before classifying. |
 | `svm-supervised-baseline` | SVM regression/classification baseline | method spike | Current feature tables only | Whether a standard margin-based model changes the supervised random-to-endpoint prediction or endpoint-vs-random classification story under the same grouped split policy | `future` | Candidate for one optional small parallel wave. Skip if setup cost is not clearly lower than its thesis value; otherwise write source truth under `experiments/sys-landscape/datascience/methods/svm-supervised-baseline/`. |
 | `interpretable-tail-rules` | Simple threshold/tree/interaction rule mining for high-`sys` tails | method spike | Current feature tables only | A candidate-proposer that suggests where to search next before inspecting forbidden inputs, or a bounded no-search-output result for simple interpretable rule classes | `future` | Candidate for one optional small parallel wave. Must not use endpoint labels, producer identity, or target leakage to define the final candidate rule. |
 | `surrogate-guided-search` | Bayesian optimization / surrogate-guided search loop | search | Candidate-proposer plus exact evaluation budget | New high-sys candidates or clear comparison against random/local baselines | `future` | Reopen only with a bounded candidate space and compute budget approved by Jörn. |
@@ -179,9 +179,10 @@ Record only lessons that change future delegation or spike design.
 
 ### `regime-classification` Regime Classification
 
-Disposition: report refreshed on 2026-06-04 from the retained dataset.
+Pre-LICCA disposition: report refreshed on 2026-06-04 from the old retained
+`282`-row dataset. This note is source material, not current LICCA evidence.
 
-Current rerun commands:
+Pre-LICCA rerun commands:
 
 ```bash
 uv run --script experiments/sys-landscape/datascience/methods/feature-pattern-search/analyze.py --dataset-dir experiments/sys-landscape/datascience/dataset
@@ -192,9 +193,9 @@ Evidence:
 
 - Historical branch: `ds-pilot-reset-regime-classification`.
 - Historical integration commit: `3785cf9a` merges worker commit `be5e5fbb`.
-- Current report path:
+- Report path:
   `experiments/sys-landscape/datascience/methods/feature-pattern-search/regime-classification-report.md`.
-- Current summary path:
+- Summary path:
   `experiments/sys-landscape/datascience/methods/feature-pattern-search/regime_classification_summary.md`.
 
 Observation:
@@ -229,10 +230,11 @@ Qualifiers: `evidence_strength = medium`; `implementation_trust = medium`;
 
 ### `pca-cluster-anomaly` PCA / Clustering / Anomaly Scan
 
-Disposition: source-truth report refreshed on 2026-06-04 from the retained
-dataset.
+Pre-LICCA disposition: source-truth report refreshed on 2026-06-04 from the old
+retained `282`-row dataset. This note is source material, not current LICCA
+evidence.
 
-Current rerun command:
+Pre-LICCA rerun command:
 
 ```bash
 uv run --script experiments/sys-landscape/datascience/methods/pca-cluster-spike/analyze.py --dataset-dir experiments/sys-landscape/datascience/dataset --out-dir experiments/sys-landscape/datascience/methods/pca-cluster-spike
@@ -242,7 +244,7 @@ Evidence:
 
 - Historical branch: `ds-pilot1-pca-cluster`.
 - Original main commit: `39039550`.
-- Current report path:
+- Report path:
   `experiments/sys-landscape/datascience/methods/pca-cluster-spike/report.md`.
 - Historical auxiliary metadata sidecar was removed on 2026-06-04 because the
   report is source truth and no current consumer needs the JSON.
@@ -279,11 +281,12 @@ Qualifiers: `evidence_strength = medium`; `implementation_trust = high`;
 
 ### `supervised-alternatives` Cheap Supervised Alternatives
 
-Disposition: source-truth report refreshed on 2026-06-04 from the retained
-dataset. Historical process result was a partial worker failure repaired by the
+Pre-LICCA disposition: source-truth report refreshed on 2026-06-04 from the old
+retained `282`-row dataset. This note is source material, not current LICCA
+evidence. Historical process result was a partial worker failure repaired by the
 lead.
 
-Current rerun command:
+Pre-LICCA rerun command:
 
 ```bash
 uv run --script experiments/sys-landscape/datascience/methods/supervised-alternatives-spike/analyze.py --dataset-dir experiments/sys-landscape/datascience/dataset --permutations 20
@@ -293,7 +296,7 @@ Evidence:
 
 - Historical branch: `ds-pilot2-supervised-alts`.
 - Original main commit: `5e8db378`.
-- Current report path:
+- Report path:
   `experiments/sys-landscape/datascience/methods/supervised-alternatives-spike/REPORT.md`.
 - Historical auxiliary metadata sidecar was removed on 2026-06-04 because the
   report is source truth and no current consumer needs the JSON.
@@ -383,10 +386,11 @@ the toolbox audit rather than these scratch numbers.
 
 ### `exact-f64-spot-check` Exact-vs-f64 Spot Check
 
-Disposition: source-truth report refreshed on 2026-06-04 from the retained
-dataset.
+Pre-LICCA disposition: source-truth report refreshed on 2026-06-04 from the old
+retained `282`-row dataset. This note is source material, not current LICCA
+evidence.
 
-Current rerun command:
+Pre-LICCA rerun command:
 
 ```bash
 uv run --script experiments/sys-landscape/datascience/methods/exact-f64-spot-check/analyze.py --dataset-dir experiments/sys-landscape/datascience/dataset
@@ -396,7 +400,7 @@ Evidence:
 
 - Historical branch: `ds-pilot3-exact-f64`.
 - Original main commit: `e8528963`.
-- Current report path:
+- Report path:
   `experiments/sys-landscape/datascience/methods/exact-f64-spot-check/report.md`.
 - Historical auxiliary metadata sidecar was removed on 2026-06-04 because the
   report is source truth and no current consumer needs the JSON.

@@ -37,16 +37,23 @@ Build or refresh these files from the current committed producer caches with:
 experiments/sys-landscape/datascience/build-dataset.sh
 ```
 
-Observed on 2026-06-03 in the devcontainer:
+Current retained dataset fingerprint:
 
-- release build already warm: about `5m11s` wall time;
-- first release run in a fresh worktree also paid about `38s` compile time;
-- output size: about `2.5M`;
-- output rows: `282` polytope rows and `282` observation rows.
+- polytope rows: `8445`
+- observation rows: `8445`
+- max `sys`: `0.9750768559799221`
+- `sys > 1` rows: `0`
+- source counts:
+  - `gradient_ascent_general`: `4096`
+  - `gradient_ascent_products`: `4089`
+  - `random_product_sample`: `100`
+  - `random_sample`: `70`
+  - `variable_f_ascent`: `90`
 
-Because the final tables are small and `*.jsonl` is tracked through Git LFS in
-this repo, committing the retained dataset is reasonable. The expensive artifact
-is the producer cache stage, especially `produce/continuation-cache.jsonl`.
+For the current dataset runtime and hashes, see `dataset/README.md`.
+Because the final tables are tracked through Git LFS in this repo, committing
+the retained dataset is reasonable. The expensive artifacts are the producer
+cache stage files under `produce/`.
 
 Use `git log -- experiments/sys-landscape/datascience/dataset/` and file mtimes
 for timing/provenance questions. Use `fingerprint-dataset.py` only when a report
@@ -111,8 +118,10 @@ or review needs explicit row counts, hashes, max `sys`, or `sys > 1` count.
 - `dataset/` is the active shared input for methods.
 - `methods/<slug>/` owns method-local code, reports, figures, and local
   exploratory features.
-- Historical reports may cite `/tmp` dataset paths. Treat those paths as
-  provenance for that old run, not as current source truth.
+- Historical reports may cite `/tmp` dataset paths or old dataset fingerprints.
+  Treat those as provenance for that old run, not as current source truth.
+  Report filenames that represent a current method result should be replaced
+  from current data rather than preserving old report contents in place.
 - Do not patch-edit generated JSONL tables. Regenerate them with the recorded
   command and review the diff.
 
