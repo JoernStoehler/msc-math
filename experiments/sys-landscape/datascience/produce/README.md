@@ -73,21 +73,15 @@ validation.
 
 ## LICCA Fixed-F Ascent Shards
 
-Use the `licca-ascent-*.slurm.sh` Slurm wrappers on the
+Use the `licca-ascent-*.slurm.sh` Slurm scripts on the
 `licca-datascience-datasets` branch to scale fixed-F ascent without shared
-output races. Submit the wrappers directly; do not pass production settings as
-`sbatch` flags.
+output races. Submit these scripts directly; do not pass production settings as
+`sbatch` flags. Each Slurm script is self-contained and includes its resources,
+seed range, output path, resume rule, and exact Rust command.
 
 The script writes one summary JSONL and one derived `*-trace.jsonl` per Slurm
 array task. Defaults skip existing committed seed ranges: general starts at
 `n-start=10`, and product starts at `n-start=12`.
-
-Shared implementation:
-
-- [_licca-ascent-runner.sh](_licca-ascent-runner.sh): common runner; do not
-  submit directly.
-
-Direct-submit wrappers:
 
 - [licca-ascent-smoke-general.slurm.sh](licca-ascent-smoke-general.slurm.sh): one
   `test`-partition general shard with `2` seeds.
