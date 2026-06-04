@@ -25,6 +25,16 @@ Current committed producer artifacts:
 - `shared-cache.jsonl`
 - `continuation-cache.jsonl`
 
+LICCA shard outputs for this branch should live under:
+
+```text
+licca-shards/general/
+licca-shards/product/
+```
+
+These shard files are producer-stage artifacts. Review and merge them into the
+canonical producer files before rebuilding `../dataset/`.
+
 ## Producer binaries
 
 - `sys-dataset-random` writes `random.jsonl` and updates `shared-cache.jsonl`.
@@ -60,3 +70,50 @@ Runtime caveat: this is integration smoke, not a cheap command check. On
 about two minutes while `sys-dataset-continuation --smoke` was still running.
 Use `--help`, compile checks, or narrower producer smoke commands for fast
 validation.
+
+## LICCA Fixed-F Ascent Shards
+
+Use [licca-ascent-array.sh](licca-ascent-array.sh) on the
+`licca-datascience-datasets` branch to scale fixed-F ascent without shared
+output races.
+
+The script writes one summary JSONL and one derived `*-trace.jsonl` per Slurm
+array task. Defaults skip existing committed seed ranges: general starts at
+`n-start=10`, and product starts at `n-start=12`.
+
+Build the binaries on LICCA first:
+
+```bash
+cd "$HOME/msc-math"
+export CARGO_TARGET_DIR=/hpc/gpfs2/scratch/u/stoehljo/cargo-target
+cargo build --release -p exp-sys-landscape \
+  --bin sys-dataset-ascent \
+  --bin sys-dataset-ascent-product
+```
+
+Smoke-submit one small shard per kind:
+
+```bash
+cd "$HOME/msc-math/experiments/sys-landscape/datascience/produce"
+sbatch -p test --time=00:10:00 --array=0-0 \
+  --export=ALL,KIND=general,SEEDS_PER_SHARD=2,SEED_TIME_BUDGET_SECS=30 \
+  licca-ascent-array.sh
+sbatch -p test --time=00:10:00 --array=0-0 \
+  --export=ALL,KIND=product,SEEDS_PER_SHARD=2,SEED_TIME_BUDGET_SECS=30 \
+  licca-ascent-array.sh
+```
+
+After reviewing smoke logs, a conservative first production wave is:
+
+```bash
+cd "$HOME/msc-math/experiments/sys-landscape/datascience/produce"
+sbatch --time=02:00:00 --array=0-9 \
+  --export=ALL,KIND=general,SEEDS_PER_SHARD=50 \
+  licca-ascent-array.sh
+sbatch --time=02:00:00 --array=0-9 \
+  --export=ALL,KIND=product,SEEDS_PER_SHARD=50 \
+  licca-ascent-array.sh
+```
+
+This requests `500` new general seeds and `500` new product seeds. Increase
+`--array` after the first wave only if logs and output guards look clean.
