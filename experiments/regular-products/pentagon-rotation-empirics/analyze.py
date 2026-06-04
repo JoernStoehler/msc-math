@@ -8,18 +8,22 @@
 Goal: summarize the pentagon-rotation minima surface and render the sigma-level
 branch plots needed for the 3-bounce exclusion.
 Input Artifacts:
-  - preferred smoke minima run: experiments/sys-landscape/pentagon-rotation-formula/smoke-theta-sweep.jsonl
-  - canonical minima refresh: experiments/sys-landscape/pentagon-rotation-formula/theta-sweep.jsonl
-  - preferred smoke branch run: experiments/sys-landscape/pentagon-rotation-formula/smoke-three-bounce-branches.jsonl
-  - canonical branch refresh: experiments/sys-landscape/pentagon-rotation-formula/three-bounce-branches.jsonl
+  - committed minima sweep: experiments/regular-products/pentagon-rotation-empirics/theta-sweep.jsonl
+  - optional smoke minima run: experiments/regular-products/pentagon-rotation-empirics/smoke-theta-sweep.jsonl
+  - optional branch run: experiments/regular-products/pentagon-rotation-empirics/three-bounce-branches.jsonl
+  - optional smoke branch run: experiments/regular-products/pentagon-rotation-empirics/smoke-three-bounce-branches.jsonl
 Output Artifacts:
-  - experiments/sys-landscape/pentagon-rotation-formula/three_bounce_branch_actions.png
-  - experiments/sys-landscape/pentagon-rotation-formula/signature_state_table_full.png
-  - experiments/sys-landscape/pentagon-rotation-formula/signature_state_table_competitive.png
-  - experiments/sys-landscape/pentagon-rotation-formula/labeled_pentagons_theta.png
-  - experiments/sys-landscape/pentagon-rotation-formula/trajectory_projections_theta14.png
-  - experiments/sys-landscape/pentagon-rotation-formula/trajectory_projections_theta14_affine.png
-  - experiments/sys-landscape/pentagon-rotation-formula/signature_legend.txt
+  - experiments/regular-products/pentagon-rotation-empirics/three_bounce_branch_actions.png
+  - experiments/regular-products/pentagon-rotation-empirics/signature_state_table_full.png
+  - experiments/regular-products/pentagon-rotation-empirics/signature_state_table_competitive.png
+  - experiments/regular-products/pentagon-rotation-empirics/labeled_pentagons_theta.png
+  - experiments/regular-products/pentagon-rotation-empirics/trajectory_projections_theta14.png
+  - experiments/regular-products/pentagon-rotation-empirics/trajectory_projections_theta14_affine.png
+  - experiments/regular-products/pentagon-rotation-empirics/signature_legend.txt
+Related Viewer Artifacts:
+  - producer: experiments/regular-products/pentagon-rotation-empirics/build_interactive_orbit_viewer.py
+  - dataset: experiments/regular-products/pentagon-rotation-empirics/minimum_orbit_projection_dataset.jsonl
+  - html: experiments/regular-products/pentagon-rotation-empirics/minimum_orbit_projection_viewer.html
 """
 
 import json
@@ -1176,12 +1180,12 @@ def main() -> None:
         print(f"ERROR: data file not found: {missing}", file=sys.stderr)
         if missing == branch_data_path():
             print(
-                "Run: cargo run -p exp-sys-landscape --release --bin sys-pentagon-rotation-formula -- --three-bounce-branches",
+                "Run: cargo run -p exp-regular-products --release --bin regular-pentagon-rotation-empirics -- --three-bounce-branches",
                 file=sys.stderr,
             )
         else:
             print(
-                "Run: cargo run -p exp-sys-landscape --release --bin sys-pentagon-rotation-formula",
+                "Run: cargo run -p exp-regular-products --release --bin regular-pentagon-rotation-empirics",
                 file=sys.stderr,
             )
         sys.exit(1)

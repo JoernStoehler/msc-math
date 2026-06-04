@@ -88,10 +88,10 @@ This is exact (no approximation).
 \subsection{Continuity of the systolic ratio}
 \label{sec:sys-continuity}
 
-% [TODO: JÖRN - review the polytope-specific mechanism below and decide whether
-% the direct argument or the citation of general c_EHZ continuity is better for
-% the thesis. The direct argument gives lower semicontinuity; full continuity
-% may require the general theory.]
+% For thesis use, prefer Approach 1 below: Hausdorff continuity of the EHZ
+% capacity. The direct polytope-specific mechanism is retained only to explain
+% why the tempting finite-combinatorics argument does not by itself prove full
+% continuity. Local source pointer for wording: papers/ch2021/s1_introduction_and_main_results.tex.
 
 \begin{proposition}[Continuity of $\operatorname{sys}$ at combinatorial boundaries]%
 \label{prop:sys-continuous}
@@ -111,9 +111,11 @@ It suffices to show $c_{\mathrm{EHZ}}(K(t))$ is continuous.
 The EHZ capacity is continuous on the space of convex bodies with the Hausdorff
 metric~\cite{HoferZehnder1994}. Since $t \mapsto K(t)$ is Hausdorff-continuous,
 $c_{\mathrm{EHZ}}(K(t))$ is continuous.
-% [TODO: JÖRN - citation is \cite{HoferZehnder1994}, Ch. 2 (monotonicity axiom A1).
+% [Citation note: \cite{HoferZehnder1994}, Ch. 2 (monotonicity axiom A1).
 %   No numbered theorem — continuity follows from: K_n → K implies c(K_n) → c(K) via squeezing.
 %   Polytopes covered directly by the axiom (no approximation needed).
+%   CH2021 states this extension explicitly in the introduction; see
+%   papers/ch2021/s1_introduction_and_main_results.tex.
 %   For explicit discussion: Cieliebak-Hofer-Latschev-Schlenk (2007), MSRI Publ. vol. 54.
 %   Additional refs: McDuff--Salamon (1998), Exercise~12.7 (cited in HK2017 proof of Thm~1.8);
 %   Artstein-Avidan \& Ostrover (2014), Prop~2.7 for non-smooth extension to polytopes.]

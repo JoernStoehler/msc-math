@@ -4,17 +4,19 @@
 % Viterbo counterexamples in the space of Lagrangian products.
 %
 % Sources:
-%   - Generated data: experiments/sys-landscape/rotated-regular-products/lagrangian-products-5x5.jsonl
-%     and experiments/sys-landscape/rotated-regular-products/lagrangian-products-<n>x<m>-6deg.jsonl
+%   - Generated data:
+%     experiments/regular-products/rotated-regular-products/lagrangian-products-5x5.jsonl
+%     and
+%     experiments/regular-products/rotated-regular-products/lagrangian-products-<n>x<m>-6deg.jsonl
 %   - HK-O 2024 counterexample: Haim-Kislev & Ostrover, Annals 2024
 %   - Symmetry analysis: agent-written, Jörn-confirmed direction
 %
 % Structure:
 %   - Mathematical setup (Lagrangian products, rotation parameter)
-%   - Symmetry lemma (fundamental domain)
+%   - Symmetry lemmas (rotation/reflection domain and factor-swap mirror)
 %
 % Empirical content (sweep descriptions, figures, observations) lives in
-% experiments/sys-landscape/rotated-regular-products/.
+% experiments/regular-products/rotated-regular-products/.
 
 \subsection{Lagrangian Products of Rotated Polygons}
 \label{sec:lagrangian-products}
@@ -48,7 +50,6 @@ Since rotating both factors by the same angle~$\varphi$ is a symplectic
 transformation~$\operatorname{diag}(R(\varphi), R(\varphi)) \in \mathrm{Sp}(4)$,
 only the \emph{relative} rotation between the factors affects~$\mathrm{sys}$.
 
-\begin{unverified}
 \begin{lemma}[Fundamental domain for rotation sweeps]
 \label{lem:rotation-fundamental-domain}
 Let~$P$ be a regular $n$-gon and~$Q$ a regular $m$-gon, both centered at the
@@ -56,7 +57,6 @@ origin. Then~$\mathrm{sys}(P \times_L Q_\theta)$ depends on~$\theta$ only
 through its equivalence class in~$[0, \pi/\operatorname{lcm}(n,m)]$.
 \end{lemma}
 
-% [TODO: JÖRN - verify lemma proof below]
 \begin{proof}
 \emph{Periodicity.}
 The block-diagonal matrix~$M_\varphi = \operatorname{diag}(R(\varphi),
@@ -81,9 +81,30 @@ Together: $\mathrm{sys}(\theta)$ has period~$2\pi/\operatorname{lcm}(n,m)$ and
 satisfies~$\mathrm{sys}(\theta) = \mathrm{sys}(-\theta)$, so the fundamental
 domain is~$[0, \pi/\operatorname{lcm}(n,m)]$.
 \end{proof}
-\end{unverified}
 
-% Factor swap: N = -J_0 is symplectic, maps P x_L Q to Q x_L (-P).
-% For centrally symmetric polygons, swapping factors preserves sys.
-% For odd polygons, -P = R(π)P so the swap also rotates one factor by 180°.
-% (Jörn verified 2025-02-14.)
+\begin{lemma}[Factor-swap mirror for equal odd regular polygons]
+\label{lem:odd-regular-factor-swap-mirror}
+Let~$P$ be a centered regular odd $n$-gon. Then
+\[
+  \mathrm{sys}(P \times_L R(\theta)P)
+  =
+  \mathrm{sys}(P \times_L R(\pi/n-\theta)P).
+\]
+For~$n=5$, this reduces the domain~$[0,\pi/5]$ from
+Lemma~\ref{lem:rotation-fundamental-domain} to~$[0,\pi/10]$.
+\end{lemma}
+
+\begin{proof}
+The map~$N=-J_0$ is symplectic and sends~$(q,p)$ to~$(p,-q)$.
+Therefore it maps~$P \times_L R(\theta)P$ to
+$R(\theta)P \times_L (-P)$. Next apply the simultaneous rotation
+$\operatorname{diag}(R(-\theta),R(-\theta))$, which is symplectic. The image is
+\[
+  P \times_L R(-\theta)(-P).
+\]
+Since~$P$ is a centered regular odd $n$-gon, one has
+$-P=R(\pi)P=R(\pi/n)P$, where the last equality uses the
+$2\pi/n$ rotational symmetry of~$P$. Hence the image is
+$P \times_L R(\pi/n-\theta)P$. Symplectic invariance of
+$\mathrm{sys}$ gives the claimed equality.
+\end{proof}

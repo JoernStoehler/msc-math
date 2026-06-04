@@ -10,7 +10,7 @@ Last updated: 2026-05-03.
 | Key | Source | Location | Status |
 |-----|--------|----------|--------|
 | HK2017 | Haim-Kislev (2017), EHZ-polytopes | `papers/hk2017/EHZ-polytopes.tex` | available, LaTeX source |
-| CH2021 | Cieliebak-Haim-Kislev (2021) | `papers/ch2021/systolic_paper.tex` | available, LaTeX source |
+| CH2021 | Chaidez-Hutchings (2021), "Computing Reeb dynamics on 4d convex polytopes" | `papers/ch2021/systolic_paper.tex` | available, LaTeX source |
 | HKO2024 | Haim-Kislev-Ostrover (2024) | `papers/hko2024/counterexample.tex` | available, LaTeX source |
 | BBLM2023 | Baracco-Bernardi-Lerario-Mondino | external PDF only; not stored in repo | not available as repo source |
 | Higham2002 | Higham, "Accuracy and Stability", 2nd ed., SIAM | `papers/Higham_2002.pdf` | local only (.gitignore) |

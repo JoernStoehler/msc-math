@@ -557,6 +557,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "exp-regular-products"
+version = "0.1.0"
+dependencies = [
+ "euclidean-polytopes",
+ "nalgebra",
+ "num-rational",
+ "num-traits",
+ "serde",
+ "serde_json",
+ "symplectic",
+]
+
+[[package]]
 name = "exp-sys-landscape"
 version = "0.1.0"
 dependencies = [

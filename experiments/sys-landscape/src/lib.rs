@@ -2,7 +2,7 @@
 //!
 //! Experiments studying the systolic ratio as a global function on polytope
 //! space: random-sample, random-product-sample, gradient-ascent-general,
-//! gradient-ascent-products, rotated-regular-products, rejection-calibration.
+//! gradient-ascent-products, and rejection-calibration.
 
 use euclidean_polytopes::volume_from_incidence_exact;
 use nalgebra::{DMatrix, Vector4};

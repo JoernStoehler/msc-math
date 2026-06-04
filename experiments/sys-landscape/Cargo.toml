@@ -7,10 +7,6 @@ edition = "2021"
 path = "src/lib.rs"
 
 [[bin]]
-name = "sys-rotated-regular-products"
-path = "rotated-regular-products/main.rs"
-
-[[bin]]
 name = "sys-gradient-ascent-general"
 path = "gradient-ascent-general/main.rs"
 
@@ -41,10 +37,6 @@ path = "gradient-ascent-dev/step-calibration/main.rs"
 [[bin]]
 name = "sys-strategy-comparison"
 path = "gradient-ascent-dev/strategy-comparison/main.rs"
-
-[[bin]]
-name = "sys-pentagon-rotation-formula"
-path = "pentagon-rotation-formula/main.rs"
 
 [[bin]]
 name = "sys-dataset-random"

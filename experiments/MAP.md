@@ -62,7 +62,8 @@ Current boundary facts:
 | Area | Current role | Related task/research surfaces |
 | --- | --- | --- |
 | `experiments/hko-local-maximum/` | HKO local-maximality experiments: exact-Clarke route, exact/Sage validation, perturbation, splitting, second-order, cut/ascent, and Lagrangian-boundary evidence | `tasks/current-state.md`, `tasks/planning-notes.md`, `research/hko-local-maximum*.md`, `experiments/hko-local-maximum/README.md` |
-| `experiments/sys-landscape/` | hostile sys-search landscape: random/product searches, gradient ascent, variable-`F` continuation, rotated regular products, rejection calibration, pentagon rotation formula, and datascience pipeline | `tasks/current-state.md`, `tasks/planning-notes.md`, `research/sys-landscape*.md`, `research/sys-landscape-datascience/` |
+| `experiments/sys-landscape/` | hostile sys-search landscape: random/product searches, gradient ascent, variable-`F` continuation, rejection calibration, and datascience pipeline | `tasks/current-state.md`, `tasks/planning-notes.md`, `research/sys-landscape*.md`, `research/sys-landscape-datascience/` |
+| `experiments/regular-products/` | regular polygon product side result: broad rotated-product sweeps, pentagon empirical figures/viewer, and exact pentagon formula proof packet | `experiments/regular-products/README.md`, `thesis/rotated-regular-polygons-content.md` |
 | `experiments/sys-landscape/gradient-ascent-dev/` | method-development helper package for step calibration and strategy comparison | `experiments/sys-landscape/gradient-ascent-dev/src/lib.rs` |
 | `experiments/numerics/` | numerical-method validation, error bounds, algebraic exactness, Sage feasibility, unknown predicates, and KKT diagnostics | `tasks/current-state.md`, `tasks/planning-notes.md`, `research/numerics*.md` |
 | `experiments/numerics/gradient/` | separate gradient-validation package for first-order derivative checks, edge cases, and subdifferential tests | `tasks/current-state.md`, `tasks/planning-notes.md`, `research/numerics*.md` |
@@ -79,6 +80,7 @@ Topic helper crates already exist at:
 - `experiments/combinatorial-cells/src/lib.rs`
 - `experiments/hko-local-maximum/src/lib.rs`
 - `experiments/numerics/gradient/src/lib.rs`
+- `experiments/regular-products/src/lib.rs`
 - `experiments/numerics/src/lib.rs`
 - `experiments/verification/src/lib.rs`
 - `experiments/sys-landscape/src/lib.rs`

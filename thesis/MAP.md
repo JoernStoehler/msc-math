@@ -21,6 +21,10 @@ Status: navigation cache for the active thesis scaffold.
 - `black-box-datascience.tex`: data-science search-result scaffold.
 - `rotated-regular-polygons.tex`: rotated regular polygon side-result
   scaffold.
+- `rotated-regular-polygons-content.md`: section-local content-gathering notes
+  for the rotated regular polygon side result, especially the pentagon
+  executable proof packet. Not source truth; use its source pointers before
+  relying on claims.
 - `visualization-3d.tex`: visualization side-result scaffold.
 - `numerics.tex`: high-level numerics scaffold.
 - `published-code-data.tex`: published code and data scaffold.

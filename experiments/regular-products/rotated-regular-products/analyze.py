@@ -8,11 +8,11 @@
 Plot systolic ratio curves for pentagon 5x5 and regular polygon pairs.
 
 Goal: Visualize sys(theta) for the 5x5 pentagon sweep and selected n-gon x m-gon pairs.
-Input Artifacts: experiments/sys-landscape/rotated-regular-products/lagrangian-products-5x5.jsonl,
-       experiments/sys-landscape/rotated-regular-products/lagrangian-products-<n>x<m>-6deg.jsonl
-Output Artifacts: experiments/sys-landscape/rotated-regular-products/lagrangian_products_5x5.png,
-        experiments/sys-landscape/rotated-regular-products/lagrangian_products_7x7.png,
-        experiments/sys-landscape/rotated-regular-products/lagrangian_products_polygon_pairs.png
+Input Artifacts: experiments/regular-products/rotated-regular-products/lagrangian-products-5x5.jsonl,
+       experiments/regular-products/rotated-regular-products/lagrangian-products-<n>x<m>-6deg.jsonl
+Output Artifacts: experiments/regular-products/rotated-regular-products/lagrangian_products_5x5.png,
+        experiments/regular-products/rotated-regular-products/lagrangian_products_7x7.png,
+        experiments/regular-products/rotated-regular-products/lagrangian_products_polygon_pairs.png
 """
 import json
 import sys
@@ -48,7 +48,7 @@ def load_jsonl(path: Path) -> list[dict]:
     """Load JSONL file into list of dicts."""
     if not path.exists():
         print(f"ERROR: data file not found: {path}", file=sys.stderr)
-        print("Run: cargo run --bin lagrangian_products --release", file=sys.stderr)
+        print("Run: cargo run -p exp-regular-products --release --bin regular-rotated-products", file=sys.stderr)
         sys.exit(1)
     with open(path) as f:
         return [json.loads(line) for line in f if line.strip()]

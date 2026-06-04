@@ -15,11 +15,9 @@ datascience pipeline interpreted in `research/sys-landscape.md`,
 - `sys-variable-f-ascent --smoke` writes temp smoke output/cache paths. Full
   mode writes `variable-f-ascent/variable-f-ascent.jsonl` and
   `variable-f-ascent/cache.jsonl`.
-- `sys-pentagon-rotation-formula` defaults to smoke output names. Use
-  `--canonical` only when refreshing tracked formula artifacts.
-- `sys-rotated-regular-products` and `sys-rejection-calibration` are full-output
-  producers without smoke modes; do not run them as quick command checks unless
-  intentionally refreshing tracked artifacts.
+- `sys-rejection-calibration` is a full-output producer without a smoke mode; do
+  not run it as a quick command check unless intentionally refreshing tracked
+  artifacts.
 - `sys-step-calibration` and `sys-strategy-comparison` are development stubs and
   write no artifacts.
 - `sys-dataset-*` producer commands are documented in

@@ -5,10 +5,10 @@
 //! be classified without depending on older experiment outputs.
 //! Input Artifacts: None
 //! Output Artifacts:
-//!   - default smoke run: experiments/sys-landscape/pentagon-rotation-formula/smoke-theta-sweep.jsonl
-//!   - canonical refresh with `--canonical`: experiments/sys-landscape/pentagon-rotation-formula/theta-sweep.jsonl
-//!   - branch smoke run with `--three-bounce-branches`: experiments/sys-landscape/pentagon-rotation-formula/smoke-three-bounce-branches.jsonl
-//!   - canonical branch refresh with `--three-bounce-branches --canonical`: experiments/sys-landscape/pentagon-rotation-formula/three-bounce-branches.jsonl
+//!   - default smoke run: experiments/regular-products/pentagon-rotation-empirics/smoke-theta-sweep.jsonl
+//!   - canonical refresh with `--canonical`: experiments/regular-products/pentagon-rotation-empirics/theta-sweep.jsonl
+//!   - branch smoke run with `--three-bounce-branches`: experiments/regular-products/pentagon-rotation-empirics/smoke-three-bounce-branches.jsonl
+//!   - canonical branch refresh with `--three-bounce-branches --canonical`: experiments/regular-products/pentagon-rotation-empirics/three-bounce-branches.jsonl
 //!
 //! Architecture:
 //! 1. Build the regular pentagon product family over the fundamental domain.
@@ -24,7 +24,7 @@
 //! - The 3-bounce branch dump is the empirical surface for the open proof
 //!   obligation [lem:pentagon-rotation-three-bounce].
 
-use exp_sys_landscape::{euclidean_volume_f64, SysLandscapePolytopeCache};
+use exp_regular_products::{euclidean_volume_f64, ProductPolytopeCache};
 use serde::Serialize;
 use std::env;
 use std::fs::File;
@@ -118,7 +118,7 @@ fn main() {
     for angle_deg in sweep_angles(START_DEG, END_DEG, STEP_DEG) {
         let theta = angle_deg.to_radians();
         let (pn, ph) = rotate_polygon_2d(&pn_base, &ph_base, theta);
-        let polytope = SysLandscapePolytopeCache::from_lagrangian_product(&qn, &qh, &pn, &ph)
+        let polytope = ProductPolytopeCache::from_lagrangian_product(&qn, &qh, &pn, &ph)
             .expect("pentagon product construction failed");
         let classification = classify_facets_from_dual_vertices(&polytope.dual_vertices_f64)
             .expect("pentagon product should classify as a product");
@@ -196,7 +196,7 @@ fn output_file_name(mode: SweepMode, canonical: bool) -> &'static str {
 
 fn output_path(mode: SweepMode, canonical: bool) -> PathBuf {
     std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("pentagon-rotation-formula")
+        .join("pentagon-rotation-empirics")
         .join(output_file_name(mode, canonical))
 }
 
@@ -214,7 +214,7 @@ fn parse_cli() -> Cli {
         match arg.as_str() {
             "-h" | "--help" => {
                 eprintln!(
-                    "Usage: cargo run -p exp-sys-landscape --release --bin sys-pentagon-rotation-formula -- [--canonical] [--three-bounce-branches]"
+                    "Usage: cargo run -p exp-regular-products --release --bin regular-pentagon-rotation-empirics -- [--canonical] [--three-bounce-branches]"
                 );
                 eprintln!(
                     "  --canonical             Write canonical file names instead of smoke names."
@@ -271,7 +271,7 @@ fn admissibility_name(admissibility: OrbitAdmissibility) -> &'static str {
     }
 }
 
-fn transition_matrix(polytope: &SysLandscapePolytopeCache) -> nalgebra::DMatrix<bool> {
+fn transition_matrix(polytope: &ProductPolytopeCache) -> nalgebra::DMatrix<bool> {
     symplectic::algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega(
         &polytope.facet_intersection_is_nonempty,
         &polytope.omega_signs,
@@ -279,7 +279,7 @@ fn transition_matrix(polytope: &SysLandscapePolytopeCache) -> nalgebra::DMatrix<
 }
 
 fn collect_minima_safe_billiard_result(
-    polytope: &SysLandscapePolytopeCache,
+    polytope: &ProductPolytopeCache,
 ) -> Result<symplectic::OrbitSearchResult, OrbitSearchError> {
     let classification = classify_facets_from_dual_vertices(&polytope.dual_vertices_f64)
         .expect("valid pentagon family should classify as Lagrangian product");
@@ -302,7 +302,7 @@ fn collect_minima_safe_billiard_result(
 }
 
 fn collect_admissible_three_bounce_orbits(
-    polytope: &SysLandscapePolytopeCache,
+    polytope: &ProductPolytopeCache,
 ) -> Result<(usize, Vec<OrbitKktData>), OrbitSearchError> {
     let dual_vertices = &polytope.dual_vertices_f64;
     let classification = classify_facets_from_dual_vertices(dual_vertices)
@@ -357,7 +357,7 @@ fn collect_admissible_three_bounce_orbits(
 
 fn orbit_dump(
     classification: &FacetClassification,
-    polytope: &exp_sys_landscape::SysLandscapePolytopeCache,
+    polytope: &exp_regular_products::ProductPolytopeCache,
     orbit: &OrbitKktData,
 ) -> OrbitDump {
     let (q_blocks, p_blocks) = parse_sigma_blocks(classification, &orbit.sigma);

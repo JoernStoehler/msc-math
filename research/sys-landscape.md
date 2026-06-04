@@ -13,9 +13,11 @@
 - Core dataset contract uses a normalized package shape with `poly_id` and `state_id` split identities, plus lineage metadata (`root_group_id`, `lineage_id`, `parent_state_id`) when present.
 - Current local modeling surface includes the legacy experiment families
   `random-sample`, `random-product-sample`, `rejection-calibration`,
-  `rotated-regular-products`, `gradient-ascent-general`,
-  `gradient-ascent-products`, and `variable-f-ascent`, plus the maintained
-  datascience pipeline under `experiments/sys-landscape/datascience/`.
+  `gradient-ascent-general`, `gradient-ascent-products`, and
+  `variable-f-ascent`, plus the maintained datascience pipeline under
+  `experiments/sys-landscape/datascience/`.
+- Regular polygon products moved to the independent side-result package
+  `experiments/regular-products/`.
 
 ## Evidence And Interpretation
 - Random generic polytopes (`random-sample`): 70 rows, max `sys=0.739`, no `sys>1`.
@@ -23,7 +25,6 @@
 - Fixed-F general ascent (`gradient-ascent-general`): 10 seeds, max `sys=0.9030`, no `sys>1`; all seeds used escape logic.
 - Fixed-F Lagrangian product ascent (`gradient-ascent-products`): 12 seeds, max `sys=0.8727`, no `sys>1`.
 - Variable-`F` continuation (`variable-f-ascent`): 90 trials incl. random-seed RQ2 and 10 RQ1 local maxima starts; gains from `F=10` to `F=11` are common but still below `1`.
-- Regular polygon probes (`rotated-regular-products`, `pentagon-rotation-formula`): confirmed `sys>1` at `theta=18 deg`; no further tested regular-family violation is known.
 - Interpretation stays with hostile-landscape framing: bounded search and
   continuation improve some recorded endpoint rows, but the closed method table
   records no new source of `sys > 1` examples and no candidate-proposer for

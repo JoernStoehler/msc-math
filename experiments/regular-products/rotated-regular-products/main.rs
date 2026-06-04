@@ -3,12 +3,12 @@
 //! Goal: Sweep rotated regular polygon pairs and record systolic-ratio curves
 //! for fine and coarse angle grids.
 //! Input Artifacts: None (constructs all polygon pairs internally).
-//! Output Artifacts: experiments/sys-landscape/rotated-regular-products/lagrangian-products-5x5.jsonl
-//!         experiments/sys-landscape/rotated-regular-products/lagrangian-products-7x7.jsonl
-//!         experiments/sys-landscape/rotated-regular-products/lagrangian-products-{3x3,3x4,3x5,3x6,4x4,4x5,4x6,5x5,5x6,6x6}-6deg.jsonl
+//! Output Artifacts: experiments/regular-products/rotated-regular-products/lagrangian-products-5x5.jsonl
+//!         experiments/regular-products/rotated-regular-products/lagrangian-products-7x7.jsonl
+//!         experiments/regular-products/rotated-regular-products/lagrangian-products-{3x3,3x4,3x5,3x6,4x4,4x5,4x6,5x5,5x6,6x6}-6deg.jsonl
 //!
 //! Architecture:
-//! 1. `cargo run -p exp-sys-landscape --release --bin sys-rotated-regular-products`
+//! 1. `cargo run -p exp-regular-products --release --bin regular-rotated-products`
 //!    generates fine sweeps (pentagon 5x5, heptagon 7x7) and coarse polygon pair sweeps.
 //! 2. Writes to rotated-regular-products/lagrangian-products-5x5.jsonl,
 //!    rotated-regular-products/lagrangian-products-7x7.jsonl, and
@@ -18,11 +18,12 @@
 //! specialized algorithm because the JSONL rows report billiard-native
 //! `iterations` and `bounces`, which the auto-routed capacity helper
 //! wrapper does not expose.
-use exp_sys_landscape::capacity_billiard;
-use exp_sys_landscape::euclidean_volume_f64;
-use exp_sys_landscape::experiment_path;
-use exp_sys_landscape::SysLandscapePolytopeCache;
+use exp_regular_products::capacity_billiard;
+use exp_regular_products::euclidean_volume_f64;
+use exp_regular_products::experiment_path;
+use exp_regular_products::ProductPolytopeCache;
 use serde::Serialize;
+use std::env;
 use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::path::PathBuf;
@@ -52,7 +53,7 @@ const PAIRS: &[(usize, usize)] = &[
     (6, 6),
 ];
 
-fn bounce_count(polytope: &SysLandscapePolytopeCache, sigma: &[usize]) -> Option<usize> {
+fn bounce_count(polytope: &ProductPolytopeCache, sigma: &[usize]) -> Option<usize> {
     let classification = classify_facets_from_dual_vertices(&polytope.dual_vertices_f64).ok()?;
     bounce_count_from_sigma_for_facets(&classification.q_indices, &classification.p_indices, sigma)
 }
@@ -76,9 +77,26 @@ struct SweepRow {
 }
 
 fn main() {
+    parse_cli();
     generate_pentagon_5x5();
     generate_heptagon_7x7();
     generate_polygon_pairs();
+}
+
+fn parse_cli() {
+    let mut args = env::args().skip(1);
+    while let Some(arg) = args.next() {
+        match arg.as_str() {
+            "-h" | "--help" => {
+                eprintln!(
+                    "Usage: cargo run -p exp-regular-products --release --bin regular-rotated-products"
+                );
+                eprintln!("Generates broad regular-product sweep JSONL files.");
+                std::process::exit(0);
+            }
+            _ => panic!("unknown argument: {arg}"),
+        }
+    }
 }
 
 fn experiment_output_path(file_name: &str) -> PathBuf {
@@ -113,7 +131,7 @@ fn generate_heptagon_7x7() {
         let theta = angle_deg.to_radians();
 
         let (pn, ph) = rotate_polygon_2d(&pn_base, &ph_base, theta);
-        let polytope = SysLandscapePolytopeCache::from_lagrangian_product(&qn, &qh, &pn, &ph)
+        let polytope = ProductPolytopeCache::from_lagrangian_product(&qn, &qh, &pn, &ph)
             .expect("heptagon product construction failed");
 
         let vol = euclidean_volume_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
@@ -186,7 +204,7 @@ fn generate_pentagon_5x5() {
         let theta = angle_deg.to_radians();
 
         let (pn, ph) = rotate_polygon_2d(&pn_base, &ph_base, theta);
-        let polytope = SysLandscapePolytopeCache::from_lagrangian_product(&qn, &qh, &pn, &ph)
+        let polytope = ProductPolytopeCache::from_lagrangian_product(&qn, &qh, &pn, &ph)
             .expect("pentagon product construction failed");
 
         let vol = euclidean_volume_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
@@ -259,7 +277,7 @@ fn generate_polygon_pairs() {
         for (i, angle_deg) in angles.iter().enumerate() {
             let theta = angle_deg.to_radians();
             let (pn, ph) = rotate_polygon_2d(&pn_base, &ph_base, theta);
-            let polytope = SysLandscapePolytopeCache::from_lagrangian_product(&qn, &qh, &pn, &ph)
+            let polytope = ProductPolytopeCache::from_lagrangian_product(&qn, &qh, &pn, &ph)
                 .expect("polygon product construction failed");
 
             let vol = euclidean_volume_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
