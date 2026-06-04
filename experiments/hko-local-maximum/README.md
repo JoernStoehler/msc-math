@@ -65,14 +65,15 @@ migration. Git history is the archive for that broken `(n,h)` Phase C attempt;
   when refreshing `theorem/row-bank-validation/row-bank-validation-input.jsonl`.
 - `hko-active-branch-diagnostic` writes an ignored smoke JSON by default and
   exact-checks no branches unless `--exact-limit N` or `--all-exact` is passed.
-  Use `--canonical` only when intentionally refreshing the tracked diagnostic
-  artifact. Each f64 active branch row includes `kkt_f64.singular`; theorem
-  use of `d_sys_flat_f64` from singular KKT rows requires a separate theorem
-  argument. The `singular_constraint_sections` block records the numerical
-  and exact closure/normalization minor check for the current feasible-section
-  route. The `feasible_section_rows` block computes the f64 derivative rows of
-  the resulting explicit feasible beta sections and reruns the slice/cone
-  checks.
+  Use `--canonical` only when intentionally refreshing a theorem-facing
+  diagnostic source for downstream generation. Current diagnostic JSONs in this
+  folder are local ignored artifacts, not tracked proof objects. Each f64
+  active branch row includes `kkt_f64.singular`; theorem use of `d_sys_flat_f64`
+  from singular KKT rows requires a separate theorem argument. The
+  `singular_constraint_sections` block records the numerical and exact
+  closure/normalization minor check for the current feasible-section route. The
+  `feasible_section_rows` block computes the f64 derivative rows of the
+  resulting explicit feasible beta sections and reruns the slice/cone checks.
 - `hko-feasible-section-certificate --canonical --input <diagnostic.json>` writes
   `theorem/feasible-section-certificate/candidate-certificate.json` from the
   active-branch diagnostic. The explicit `--input` is required because current
