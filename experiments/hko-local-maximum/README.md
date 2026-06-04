@@ -73,10 +73,12 @@ migration. Git history is the archive for that broken `(n,h)` Phase C attempt;
   route. The `feasible_section_rows` block computes the f64 derivative rows of
   the resulting explicit feasible beta sections and reruns the slice/cone
   checks.
-- `hko-feasible-section-certificate --canonical` writes
+- `hko-feasible-section-certificate --canonical --input <diagnostic.json>` writes
   `theorem/feasible-section-certificate/candidate-certificate.json` from the
-  active-branch diagnostic. The Sage constructor/verifier in that folder then
-  produces and checks the exact 26-row feasible-section certificate.
+  active-branch diagnostic. The explicit `--input` is required because current
+  diagnostic sources are ignored local artifacts. The Sage constructor/verifier
+  in that folder then produces and checks the exact 26-row feasible-section
+  certificate.
 
 ## Fast Reading Order
 
