@@ -9,6 +9,9 @@
 %   verifies the finite row/rank/convex-combination proposition. This formal
 %   file still needs line-check against that verifier before the unverified
 %   frame is removed.
+%   AGENT LINE-CHECK 2026-06-04: quotient step made explicit via an inverse
+%   function theorem lemma. Keep unverified until Jörn reviews the mathematical
+%   text after this line-check.
 %
 % Purpose:
 %   Replace the singular-KKT-gradient route by explicit feasible HK2017
@@ -29,7 +32,8 @@ as an upper bound for the capacity.
 \begin{lemma}[HKO capacity normalization used by the certificate]
 \label{lem:hko-capacity-normalization}
 Let $K_{\mathrm{HKO}}=K\times T$ be the Lagrangian product of the two
-unit regular pentagons used in~\cite[Proposition~1.4]{HaimKislevOstrover2024}.
+regular pentagons with circumradius~$1$ used in
+\cite[Proposition~1.4]{HaimKislevOstrover2024}.
 Let
 \[
   t=\tan(\pi/5),
@@ -110,8 +114,9 @@ Let
   a_0=(a_1,\ldots,a_{10})\in(\mathbb R^4)^{10}
 \]
 be the HKO dual-vertex list in the coordinate order $(q_1,q_2,p_1,p_2)$.
-In the full ten-facet dual-vertex chart, the derivative of the
-four-dimensional volume at~$a_0$ has the form
+In the local full ten-facet dual-vertex chart with the same simple face
+combinatorics as~$a_0$, the derivative of the four-dimensional volume
+at~$a_0$ has the form
 \[
   DV(a_0)[h_1,\ldots,h_{10}]
   =
@@ -125,14 +130,31 @@ product form.
 \end{lemma}
 
 \begin{proof}
-For a simple polytope written as $a_i\cdot x\leq1$, the first variation of
-volume under a perturbation of the $k$th dual vertex is
+For a simple polytope written as $a_i\cdot x\leq1$, perturb only the
+$k$th dual vertex, replacing $a_k$ by $a_k+\epsilon h_k$.  A point
+$x\in F_k$ on the old facet satisfies
+\[
+  (a_k+\epsilon h_k)\cdot
+  \left(x+\epsilon u(x)\frac{a_k}{\|a_k\|}\right)
+  =
+  1+O(\epsilon^2).
+\]
+Since $a_k\cdot x=1$, this gives
+\[
+  u(x)=-\frac{\langle h_k,x\rangle}{\|a_k\|}.
+\]
+The first variation of volume is the integral of this normal velocity over
+the facet.  Therefore the contribution of the $k$th facet is
 \[
   -\,\frac{\operatorname{vol}_3(F_k)}{\|a_k\|}
   \langle h_k,\bar x_k\rangle,
 \]
 where $F_k$ is the corresponding facet and $\bar x_k$ is its Euclidean
-centroid.  At the HKO point, each facet is the product of an edge of one
+centroid.  The other facets give no first-order contribution in this
+single-facet variation.  Summing the single-facet contributions gives the
+general first variation, by linearity of the derivative.
+
+At the HKO point, each facet is the product of an edge of one
 regular pentagon with the other regular pentagon.  Its centroid lies on the
 normal line and is
 \[
@@ -486,6 +508,41 @@ The positive convex relation restricts from~$W^*$ to~$S^*$, and positivity
 and the normalization $\sum_i\lambda_i=1$ are unchanged.
 \end{proof}
 
+\begin{lemma}[Transverse symmetry slice]
+\label{lem:hko-transverse-symmetry-slice}
+Let~$W$ be a finite-dimensional real vector space, let~$G$ be a Lie group
+acting smoothly near~$a_0\in W$, and let~$f$ be invariant under this action.
+Let~$T\subset W$ be the image of the derivative of the orbit map
+$g\mapsto g\cdot a_0$ at the identity.  Suppose that
+\[
+  \dim T=\dim G
+\]
+and let~$S\subset W$ be a linear complement to~$T$.  If~$a_0$ is a strict
+local maximum of~$f$ on the affine slice~$a_0+S$, then~$a_0$ is a strict
+local maximum of~$f$ modulo the local~$G$-action: every point sufficiently
+near~$a_0$ is locally $G$-equivalent to a point of~$a_0+S$, and the only
+nearby slice point with value~$f(a_0)$ is~$a_0$ itself.
+\end{lemma}
+
+\begin{proof}
+Consider
+\[
+  \Phi\colon G\times S\to W,
+  \qquad
+  \Phi(g,s)=g\cdot(a_0+s).
+\]
+The derivative of~$\Phi$ at~$(e,0)$ has image~$T+S=W$.  Because
+$\dim T=\dim G$ and $W=T\oplus S$, this derivative is an isomorphism.
+The inverse function theorem gives neighborhoods on which~$\Phi$ is a
+diffeomorphism onto a neighborhood of~$a_0$ in~$W$.  Thus every nearby point
+has the form $g\cdot(a_0+s)$ with~$s$ small.
+
+By invariance, $f(g\cdot(a_0+s))=f(a_0+s)$.  The strict slice maximum gives
+$f(a_0+s)<f(a_0)$ for every sufficiently small nonzero~$s\in S$.  If
+$s=0$, the point lies on the local symmetry orbit of~$a_0$ and has the same
+value by invariance.  This is exactly the claimed quotient-local maximum.
+\end{proof}
+
 \begin{corollary}[HKO quotient-local certificate template]
 \label{cor:hko-feasible-branch-quotient-template}
 Let~$W=(\mathbb R^4)^{10}$ be the ten-facet dual-vertex chart, and let~$S$
@@ -509,10 +566,27 @@ Proposition~\ref{prop:hko-feasible-branch-slice-local-max}, applied to the
 function $s\mapsto\operatorname{sys}(K(a_0+s))$ on~$S$ at~$s=0$.  Hence HKO
 is a strict local maximum of the systolic ratio on the affine slice~$a_0+S$.
 
-If, in addition, the local chart is quotiented by the above symmetry action
-and the systolic ratio is invariant along the corresponding symmetry orbits,
-then this slice statement gives the desired quotient-local maximum in the
-ten-facet dual-vertex model.
+The local symmetry action on the dual vertices is the following.  A
+translation by~$y$ sends
+\[
+  a_i\mapsto \frac{a_i}{1+\langle a_i,y\rangle},
+\]
+a positive scaling by~$\rho$ sends $a_i\mapsto \rho^{-1}a_i$, and a linear
+symplectic map~$M$ sends $a_i\mapsto M^{-T}a_i$.  These transformations
+preserve the systolic ratio.  Differentiating at $y=0$, $\rho=1$, and
+$M=I+\epsilon X$ gives the tangent directions
+\[
+  h_i=-\langle a_i,y\rangle a_i,
+  \qquad
+  h_i=-a_i,
+  \qquad
+  h_i=-X^Ta_i
+\]
+for translations, scaling, and $X\in\mathfrak{sp}(4,\mathbb R)$,
+respectively.  These are exactly the columns whose rank Sage verifies to
+be~$15$.  Therefore
+Lemma~\ref{lem:hko-transverse-symmetry-slice} applies and the slice statement
+gives the desired quotient-local maximum in the ten-facet dual-vertex model.
 \end{corollary}
 
 \end{unverified}
