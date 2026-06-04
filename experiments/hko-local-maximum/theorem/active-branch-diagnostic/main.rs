@@ -163,6 +163,51 @@ struct F64ActiveBranchRow {
     projected_d_sys_norm_f64: f64,
 }
 
+#[derive(Debug, Serialize)]
+struct SingularSectionRow {
+    sigma: Vec<usize>,
+    sigma_len: usize,
+    closure_normalization_rank_f64: usize,
+    closure_normalization_rank_exact: usize,
+    has_full_rank_constraint_minor_f64: bool,
+    has_full_rank_constraint_minor_exact: bool,
+    first_full_rank_minor_columns: Option<Vec<usize>>,
+    first_full_rank_minor_columns_exact: Option<Vec<usize>>,
+    first_full_rank_minor_det_abs_f64: Option<f64>,
+    fixed_beta_indices: Option<Vec<usize>>,
+    fixed_beta_values_f64: Option<Vec<f64>>,
+    local_section_row_source: String,
+    d_sys_flat_f64: Vec<f64>,
+    projected_d_sys_norm_f64: f64,
+}
+
+#[derive(Debug, Serialize)]
+struct FeasibleSectionRow {
+    sigma: Vec<usize>,
+    sigma_len: usize,
+    source_kkt_singular_f64: bool,
+    closure_normalization_rank_f64: usize,
+    closure_normalization_rank_exact: usize,
+    has_full_rank_constraint_minor_f64: bool,
+    has_full_rank_constraint_minor_exact: bool,
+    minor_columns: Option<Vec<usize>>,
+    minor_columns_exact: Option<Vec<usize>>,
+    fixed_beta_indices: Option<Vec<usize>>,
+    fixed_beta_values_f64: Option<Vec<f64>>,
+    beta_f64: Vec<f64>,
+    beta_min_f64: f64,
+    q_f64: Option<f64>,
+    action_f64: Option<f64>,
+    action_diff_vs_generated_min_f64: Option<f64>,
+    d_beta_flat_f64: Option<Vec<f64>>,
+    d_action_flat_f64: Option<Vec<f64>>,
+    d_sys_flat_f64: Option<Vec<f64>>,
+    projected_d_sys_norm_f64: Option<f64>,
+    max_abs_d_action_delta_vs_kkt_row_f64: Option<f64>,
+    max_abs_d_sys_delta_vs_kkt_row_f64: Option<f64>,
+    row_source: String,
+}
+
 #[derive(Clone, Debug, Serialize)]
 struct PaddedExtensionSource {
     parent_sigma: Vec<usize>,
@@ -278,6 +323,24 @@ struct DiagnosticSummary {
     f64_all_active_convex_hull_zero: ConvexHullZeroSummary,
     f64_nonsingular_active_projected_rank: MatrixRankSummary,
     f64_nonsingular_active_convex_hull_zero: ConvexHullZeroSummary,
+    singular_constraint_section_candidate_count: usize,
+    singular_constraint_section_full_rank_count: usize,
+    singular_constraint_section_full_rank_exact_count: usize,
+    singular_constraint_section_projected_rank: MatrixRankSummary,
+    singular_constraint_section_convex_hull_zero: ConvexHullZeroSummary,
+    nonsingular_plus_singular_constraint_section_projected_rank: MatrixRankSummary,
+    nonsingular_plus_singular_constraint_section_convex_hull_zero: ConvexHullZeroSummary,
+    feasible_section_candidate_count: usize,
+    feasible_section_full_rank_exact_count: usize,
+    feasible_section_action_max_abs_diff_vs_generated_min_f64: Option<f64>,
+    feasible_section_max_abs_d_action_delta_vs_kkt_row_f64: Option<f64>,
+    feasible_section_max_abs_d_sys_delta_vs_kkt_row_f64: Option<f64>,
+    feasible_section_projected_rank: MatrixRankSummary,
+    feasible_section_convex_hull_zero: ConvexHullZeroSummary,
+    feasible_section_singular_projected_rank: MatrixRankSummary,
+    feasible_section_singular_convex_hull_zero: ConvexHullZeroSummary,
+    feasible_section_nonsingular_projected_rank: MatrixRankSummary,
+    feasible_section_nonsingular_convex_hull_zero: ConvexHullZeroSummary,
     padded_extension_unique_count: usize,
     padded_extension_source_count: usize,
     padded_extension_nonsingular_count: usize,
@@ -300,6 +363,8 @@ struct DiagnosticOutput {
     summary: DiagnosticSummary,
     symmetry_generators: Vec<SymmetryGeneratorRow>,
     f64_active_branches: Vec<F64ActiveBranchRow>,
+    singular_constraint_sections: Vec<SingularSectionRow>,
+    feasible_section_rows: Vec<FeasibleSectionRow>,
     padded_extensions: Vec<PaddedExtensionRow>,
     exact_checked_branches: Vec<BranchRow>,
 }
@@ -945,6 +1010,379 @@ fn build_f64_active_branch_rows(
         .collect()
 }
 
+fn closure_normalization_matrix_f64(
+    dual_vertices: &[Vector4<f64>],
+    sigma: &[usize],
+) -> DMatrix<f64> {
+    DMatrix::from_fn(5, sigma.len(), |row, col| {
+        if row < 4 {
+            dual_vertices[sigma[col]][row]
+        } else {
+            1.0
+        }
+    })
+}
+
+fn closure_normalization_matrix_exact(
+    dual_vertices: &[Vector4<PentagonField>],
+    sigma: &[usize],
+) -> DMatrix<PentagonField> {
+    DMatrix::from_fn(5, sigma.len(), |row, col| {
+        if row < 4 {
+            dual_vertices[sigma[col]][row].clone()
+        } else {
+            PentagonField::one()
+        }
+    })
+}
+
+fn full_rank_minor_from_columns(
+    matrix: &DMatrix<f64>,
+    columns: &[usize],
+) -> Option<(Vec<usize>, f64)> {
+    let minor = DMatrix::from_fn(matrix.nrows(), columns.len(), |row, col| {
+        matrix[(row, columns[col])]
+    });
+    if numerical_rank_summary(&minor).rank == columns.len() {
+        Some((columns.to_vec(), minor.determinant().abs()))
+    } else {
+        None
+    }
+}
+
+fn first_full_rank_constraint_minor_f64(matrix: &DMatrix<f64>) -> Option<(Vec<usize>, f64)> {
+    if matrix.nrows() != 5 || matrix.ncols() < 5 {
+        return None;
+    }
+
+    let ncols = matrix.ncols();
+    for c0 in 0..ncols - 4 {
+        for c1 in c0 + 1..ncols - 3 {
+            for c2 in c1 + 1..ncols - 2 {
+                for c3 in c2 + 1..ncols - 1 {
+                    for c4 in c3 + 1..ncols {
+                        let columns = [c0, c1, c2, c3, c4];
+                        if let Some(full_rank) = full_rank_minor_from_columns(matrix, &columns) {
+                            return Some(full_rank);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    None
+}
+
+fn first_full_rank_constraint_minor_exact(matrix: &DMatrix<PentagonField>) -> Option<Vec<usize>> {
+    if matrix.nrows() != 5 || matrix.ncols() < 5 {
+        return None;
+    }
+
+    let ncols = matrix.ncols();
+    for c0 in 0..ncols - 4 {
+        for c1 in c0 + 1..ncols - 3 {
+            for c2 in c1 + 1..ncols - 2 {
+                for c3 in c2 + 1..ncols - 1 {
+                    for c4 in c3 + 1..ncols {
+                        let columns = [c0, c1, c2, c3, c4];
+                        let minor =
+                            DMatrix::from_fn(5, 5, |row, col| matrix[(row, columns[col])].clone());
+                        if rank(&minor) == 5 {
+                            return Some(columns.to_vec());
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    None
+}
+
+fn complement_indices(len: usize, indices: &[usize]) -> Vec<usize> {
+    (0..len).filter(|idx| !indices.contains(idx)).collect()
+}
+
+fn build_singular_constraint_section_rows(
+    active_rows: &[F64ActiveBranchRow],
+    slice_basis_f64: &DMatrix<f64>,
+    dual_vertices_f64: &[Vector4<f64>],
+    exact_dual_vertices: &[Vector4<PentagonField>],
+) -> Vec<SingularSectionRow> {
+    active_rows
+        .iter()
+        .filter(|row| row.kkt_f64.singular)
+        .map(|row| {
+            let constraint_matrix =
+                closure_normalization_matrix_f64(dual_vertices_f64, &row.sigma);
+            let constraint_rank = numerical_rank_summary(&constraint_matrix).rank;
+            let first_minor = first_full_rank_constraint_minor_f64(&constraint_matrix);
+            let exact_constraint_matrix =
+                closure_normalization_matrix_exact(exact_dual_vertices, &row.sigma);
+            let exact_constraint_rank = rank(&exact_constraint_matrix);
+            let first_minor_exact =
+                first_full_rank_constraint_minor_exact(&exact_constraint_matrix);
+            let (minor_columns, minor_det, fixed_indices, fixed_values) =
+                if let Some((minor_columns, minor_det)) = first_minor {
+                    let fixed_indices = complement_indices(row.sigma_len, &minor_columns);
+                    let fixed_values = fixed_indices
+                        .iter()
+                        .map(|&idx| row.beta_f64[idx])
+                        .collect();
+                    (
+                        Some(minor_columns),
+                        Some(minor_det),
+                        Some(fixed_indices),
+                        Some(fixed_values),
+                    )
+                } else {
+                    (None, None, None, None)
+                };
+
+            SingularSectionRow {
+                sigma: row.sigma.clone(),
+                sigma_len: row.sigma_len,
+                closure_normalization_rank_f64: constraint_rank,
+                closure_normalization_rank_exact: exact_constraint_rank,
+                has_full_rank_constraint_minor_f64: minor_columns.is_some(),
+                has_full_rank_constraint_minor_exact: first_minor_exact.is_some(),
+                first_full_rank_minor_columns: minor_columns,
+                first_full_rank_minor_columns_exact: first_minor_exact,
+                first_full_rank_minor_det_abs_f64: minor_det,
+                fixed_beta_indices: fixed_indices,
+                fixed_beta_values_f64: fixed_values,
+                local_section_row_source: "existing f64 KKT/instrumented D_sys row; the constraint-minor check only tests that closure and normalization admit a local beta section after fixing the non-minor beta coordinates. It does not prove this row is the derivative of that section.".to_string(),
+                d_sys_flat_f64: row.d_sys_flat_f64.clone(),
+                projected_d_sys_norm_f64: row.projected_d_sys_norm_f64,
+            }
+        })
+        .collect()
+}
+
+fn max_abs_delta(lhs: &[f64], rhs: &[f64]) -> Option<f64> {
+    (lhs.len() == rhs.len()).then(|| {
+        lhs.iter()
+            .zip(rhs.iter())
+            .map(|(left, right)| (left - right).abs())
+            .fold(0.0, f64::max)
+    })
+}
+
+fn max_abs_option(values: impl IntoIterator<Item = Option<f64>>) -> Option<f64> {
+    values.into_iter().flatten().map(f64::abs).reduce(f64::max)
+}
+
+fn unit_vector4(coord: usize) -> Vector4<f64> {
+    let mut unit = Vector4::zeros();
+    unit[coord] = 1.0;
+    unit
+}
+
+fn feasible_section_d_beta_flat_f64(
+    dual_vertices: &[Vector4<f64>],
+    sigma: &[usize],
+    beta: &[f64],
+    minor_columns: &[usize],
+) -> Option<Vec<f64>> {
+    let ambient_dimension = dual_vertices.len() * 4;
+    let constraint_matrix = closure_normalization_matrix_f64(dual_vertices, sigma);
+    let constraint_minor = DMatrix::from_fn(5, 5, |row, col| {
+        constraint_matrix[(row, minor_columns[col])]
+    });
+    let lu = constraint_minor.lu();
+    let mut d_beta_flat = vec![0.0; beta.len() * ambient_dimension];
+
+    for flat_idx in 0..ambient_dimension {
+        let facet = flat_idx / 4;
+        let coord = flat_idx % 4;
+        let mut rhs = DVector::zeros(5);
+        if let Some(sigma_idx) = sigma.iter().position(|&sigma_facet| sigma_facet == facet) {
+            rhs[coord] = -beta[sigma_idx];
+        }
+
+        let beta_minor_prime = lu.solve(&rhs)?;
+        for (minor_idx, &beta_idx) in minor_columns.iter().enumerate() {
+            d_beta_flat[beta_idx * ambient_dimension + flat_idx] = beta_minor_prime[minor_idx];
+        }
+    }
+
+    Some(d_beta_flat)
+}
+
+fn d_q_for_direction_f64(
+    dual_vertices: &[Vector4<f64>],
+    sigma: &[usize],
+    beta: &[f64],
+    d_beta_flat: &[f64],
+    flat_idx: usize,
+) -> f64 {
+    let ambient_dimension = dual_vertices.len() * 4;
+    let facet = flat_idx / 4;
+    let coord = flat_idx % 4;
+    let unit = unit_vector4(coord);
+    let mut d_q = 0.0;
+
+    for i in 1..sigma.len() {
+        for j in 0..i {
+            let beta_i_prime = d_beta_flat[i * ambient_dimension + flat_idx];
+            let beta_j_prime = d_beta_flat[j * ambient_dimension + flat_idx];
+            let a_i = &dual_vertices[sigma[i]];
+            let a_j = &dual_vertices[sigma[j]];
+            let omega = omega0_f64(a_j, a_i);
+
+            d_q += (beta_i_prime * beta[j] + beta[i] * beta_j_prime) * omega;
+            if sigma[j] == facet {
+                d_q += beta[i] * beta[j] * omega0_f64(&unit, a_i);
+            }
+            if sigma[i] == facet {
+                d_q += beta[i] * beta[j] * omega0_f64(a_j, &unit);
+            }
+        }
+    }
+
+    d_q
+}
+
+fn feasible_section_d_action_flat_f64(
+    dual_vertices: &[Vector4<f64>],
+    sigma: &[usize],
+    beta: &[f64],
+    q: f64,
+    d_beta_flat: &[f64],
+) -> Vec<f64> {
+    let q_sq = q * q;
+    (0..dual_vertices.len() * 4)
+        .map(|flat_idx| {
+            let d_q = d_q_for_direction_f64(dual_vertices, sigma, beta, d_beta_flat, flat_idx);
+            -d_q / (2.0 * q_sq)
+        })
+        .collect()
+}
+
+fn build_feasible_section_rows(
+    active_rows: &[F64ActiveBranchRow],
+    generated_min_action: f64,
+    volume: f64,
+    d_volume: &[Vector4<f64>],
+    slice_basis_f64: &DMatrix<f64>,
+    dual_vertices_f64: &[Vector4<f64>],
+    exact_dual_vertices: &[Vector4<PentagonField>],
+) -> Vec<FeasibleSectionRow> {
+    active_rows
+        .iter()
+        .map(|row| {
+            let constraint_matrix =
+                closure_normalization_matrix_f64(dual_vertices_f64, &row.sigma);
+            let constraint_rank = numerical_rank_summary(&constraint_matrix).rank;
+            let first_minor = first_full_rank_constraint_minor_f64(&constraint_matrix);
+            let exact_constraint_matrix =
+                closure_normalization_matrix_exact(exact_dual_vertices, &row.sigma);
+            let exact_constraint_rank = rank(&exact_constraint_matrix);
+            let first_minor_exact =
+                first_full_rank_constraint_minor_exact(&exact_constraint_matrix);
+
+            let (minor_columns, minor_det, fixed_indices, fixed_values) =
+                if let Some((minor_columns, minor_det)) = first_minor {
+                    let fixed_indices = complement_indices(row.sigma_len, &minor_columns);
+                    let fixed_values = fixed_indices
+                        .iter()
+                        .map(|&idx| row.beta_f64[idx])
+                        .collect();
+                    (
+                        Some(minor_columns),
+                        Some(minor_det),
+                        Some(fixed_indices),
+                        Some(fixed_values),
+                    )
+                } else {
+                    (None, None, None, None)
+                };
+
+            let q = q_from_beta_f64(dual_vertices_f64, &row.sigma, &row.beta_f64);
+            let action = action_from_q(q);
+            let action_diff = action.map(|value| value - generated_min_action);
+            let (d_beta_flat, d_action_flat, d_sys_flat, projected_norm) =
+                if let (Some(minor_columns), Some(action)) = (&minor_columns, action) {
+                    if let Some(d_beta_flat) = feasible_section_d_beta_flat_f64(
+                        dual_vertices_f64,
+                        &row.sigma,
+                        &row.beta_f64,
+                        minor_columns,
+                    ) {
+                        let d_action_flat = feasible_section_d_action_flat_f64(
+                            dual_vertices_f64,
+                            &row.sigma,
+                            &row.beta_f64,
+                            q,
+                            &d_beta_flat,
+                        );
+                        let d_action_vectors: Vec<Vector4<f64>> = d_action_flat
+                            .chunks_exact(4)
+                            .map(|chunk| Vector4::new(chunk[0], chunk[1], chunk[2], chunk[3]))
+                            .collect();
+                        let d_sys =
+                            systolic_ratio_gradient_a(action, volume, &d_action_vectors, d_volume);
+                        let d_sys_flat = flatten_f64(&d_sys);
+                        let projected =
+                            project_rows_to_slice(std::slice::from_ref(&d_sys_flat), slice_basis_f64);
+                        let projected_row: Vec<f64> = (0..projected.ncols())
+                            .map(|col| projected[(0, col)])
+                            .collect();
+                        (
+                            Some(d_beta_flat),
+                            Some(d_action_flat),
+                            Some(d_sys_flat),
+                            Some(row_norm(&projected_row)),
+                        )
+                    } else {
+                        (None, None, None, None)
+                    }
+                } else {
+                    (None, None, None, None)
+                };
+
+            let max_abs_d_action_delta_vs_kkt_row_f64 = d_action_flat
+                .as_ref()
+                .and_then(|d_action| max_abs_delta(d_action, &row.d_action_flat_f64));
+            let max_abs_d_sys_delta_vs_kkt_row_f64 = d_sys_flat
+                .as_ref()
+                .and_then(|d_sys| max_abs_delta(d_sys, &row.d_sys_flat_f64));
+            let has_full_rank_constraint_minor_f64 = minor_columns.is_some();
+            let row_source = format!(
+                "f64 feasible-section row from minor {:?}; beta_J is fixed at beta0_J. This is the explicit upper-branch row from formal lem:hko-feasible-section-upper-branch, not a nearby optimizer row. f64 minor determinant abs: {:?}.",
+                minor_columns, minor_det
+            );
+
+            FeasibleSectionRow {
+                sigma: row.sigma.clone(),
+                sigma_len: row.sigma_len,
+                source_kkt_singular_f64: row.kkt_f64.singular,
+                closure_normalization_rank_f64: constraint_rank,
+                closure_normalization_rank_exact: exact_constraint_rank,
+                has_full_rank_constraint_minor_f64,
+                has_full_rank_constraint_minor_exact: first_minor_exact.is_some(),
+                minor_columns,
+                minor_columns_exact: first_minor_exact,
+                fixed_beta_indices: fixed_indices,
+                fixed_beta_values_f64: fixed_values,
+                beta_f64: row.beta_f64.clone(),
+                beta_min_f64: row.beta_min_f64,
+                q_f64: Some(q),
+                action_f64: action,
+                action_diff_vs_generated_min_f64: action_diff,
+                d_beta_flat_f64: d_beta_flat,
+                d_action_flat_f64: d_action_flat,
+                d_sys_flat_f64: d_sys_flat,
+                projected_d_sys_norm_f64: projected_norm,
+                max_abs_d_action_delta_vs_kkt_row_f64,
+                max_abs_d_sys_delta_vs_kkt_row_f64,
+                row_source,
+            }
+        })
+        .collect()
+}
+
 fn canonical_cyclic_sigma(sigma: &[usize]) -> Vec<usize> {
     let mut best = sigma.to_vec();
     for shift in 1..sigma.len() {
@@ -1278,6 +1716,21 @@ fn main() {
         &slice_basis_f64,
         &known.dual_vertices_f64,
     );
+    let singular_constraint_section_rows = build_singular_constraint_section_rows(
+        &f64_active_branch_rows,
+        &slice_basis_f64,
+        &known.dual_vertices_f64,
+        &exact_dual_vertices,
+    );
+    let feasible_section_rows = build_feasible_section_rows(
+        &f64_active_branch_rows,
+        generated_min_action,
+        volume,
+        &d_volume,
+        &slice_basis_f64,
+        &known.dual_vertices_f64,
+        &exact_dual_vertices,
+    );
     let padded_extension_rows = build_padded_extension_rows(
         &f64_active_branch_rows,
         generated_min_action,
@@ -1305,6 +1758,29 @@ fn main() {
         .filter(|row| !row.kkt_f64.singular)
         .map(|row| row.d_sys_flat_f64.clone())
         .collect();
+    let singular_constraint_section_full_rank_rows: Vec<Vec<f64>> =
+        singular_constraint_section_rows
+            .iter()
+            .filter(|row| row.has_full_rank_constraint_minor_exact)
+            .map(|row| row.d_sys_flat_f64.clone())
+            .collect();
+    let mut nonsingular_plus_singular_constraint_section_rows = f64_nonsingular_active_rows.clone();
+    nonsingular_plus_singular_constraint_section_rows
+        .extend(singular_constraint_section_full_rank_rows.iter().cloned());
+    let feasible_section_all_rows: Vec<Vec<f64>> = feasible_section_rows
+        .iter()
+        .filter_map(|row| row.d_sys_flat_f64.clone())
+        .collect();
+    let feasible_section_singular_rows: Vec<Vec<f64>> = feasible_section_rows
+        .iter()
+        .filter(|row| row.source_kkt_singular_f64)
+        .filter_map(|row| row.d_sys_flat_f64.clone())
+        .collect();
+    let feasible_section_nonsingular_rows: Vec<Vec<f64>> = feasible_section_rows
+        .iter()
+        .filter(|row| !row.source_kkt_singular_f64)
+        .filter_map(|row| row.d_sys_flat_f64.clone())
+        .collect();
     let padded_nonsingular_min_action_padded_once_rows: Vec<Vec<f64>> = padded_extension_rows
         .iter()
         .filter(|row| row.is_nonsingular_min_action_padded_once)
@@ -1318,6 +1794,20 @@ fn main() {
     let f64_all_active_projected = project_rows_to_slice(&f64_all_active_rows, &slice_basis_f64);
     let f64_nonsingular_active_projected =
         project_rows_to_slice(&f64_nonsingular_active_rows, &slice_basis_f64);
+    let singular_constraint_section_projected = project_rows_to_slice(
+        &singular_constraint_section_full_rank_rows,
+        &slice_basis_f64,
+    );
+    let nonsingular_plus_singular_constraint_section_projected = project_rows_to_slice(
+        &nonsingular_plus_singular_constraint_section_rows,
+        &slice_basis_f64,
+    );
+    let feasible_section_projected =
+        project_rows_to_slice(&feasible_section_all_rows, &slice_basis_f64);
+    let feasible_section_singular_projected =
+        project_rows_to_slice(&feasible_section_singular_rows, &slice_basis_f64);
+    let feasible_section_nonsingular_projected =
+        project_rows_to_slice(&feasible_section_nonsingular_rows, &slice_basis_f64);
     let padded_nonsingular_min_action_padded_once_projected = project_rows_to_slice(
         &padded_nonsingular_min_action_padded_once_rows,
         &slice_basis_f64,
@@ -1329,6 +1819,15 @@ fn main() {
     let f64_all_active_projected_rank = numerical_rank_summary(&f64_all_active_projected);
     let f64_nonsingular_active_projected_rank =
         numerical_rank_summary(&f64_nonsingular_active_projected);
+    let singular_constraint_section_projected_rank =
+        numerical_rank_summary(&singular_constraint_section_projected);
+    let nonsingular_plus_singular_constraint_section_projected_rank =
+        numerical_rank_summary(&nonsingular_plus_singular_constraint_section_projected);
+    let feasible_section_projected_rank = numerical_rank_summary(&feasible_section_projected);
+    let feasible_section_singular_projected_rank =
+        numerical_rank_summary(&feasible_section_singular_projected);
+    let feasible_section_nonsingular_projected_rank =
+        numerical_rank_summary(&feasible_section_nonsingular_projected);
     let padded_extension_nonsingular_min_action_padded_once_projected_rank =
         numerical_rank_summary(&padded_nonsingular_min_action_padded_once_projected);
     let exact_smooth_projected_rank = numerical_rank_summary(&exact_smooth_projected);
@@ -1336,6 +1835,15 @@ fn main() {
     let f64_all_active_convex_hull_zero = convex_hull_zero_summary(&f64_all_active_projected);
     let f64_nonsingular_active_convex_hull_zero =
         convex_hull_zero_summary(&f64_nonsingular_active_projected);
+    let singular_constraint_section_convex_hull_zero =
+        convex_hull_zero_summary(&singular_constraint_section_projected);
+    let nonsingular_plus_singular_constraint_section_convex_hull_zero =
+        convex_hull_zero_summary(&nonsingular_plus_singular_constraint_section_projected);
+    let feasible_section_convex_hull_zero = convex_hull_zero_summary(&feasible_section_projected);
+    let feasible_section_singular_convex_hull_zero =
+        convex_hull_zero_summary(&feasible_section_singular_projected);
+    let feasible_section_nonsingular_convex_hull_zero =
+        convex_hull_zero_summary(&feasible_section_nonsingular_projected);
     let padded_extension_nonsingular_min_action_padded_once_convex_hull_zero =
         convex_hull_zero_summary(&padded_nonsingular_min_action_padded_once_projected);
     let exact_smooth_convex_hull_zero = convex_hull_zero_summary(&exact_smooth_projected);
@@ -1374,6 +1882,35 @@ fn main() {
         .iter()
         .filter(|row| row.kkt_f64.singular)
         .count();
+    let singular_constraint_section_candidate_count = singular_constraint_section_rows.len();
+    let singular_constraint_section_full_rank_count = singular_constraint_section_rows
+        .iter()
+        .filter(|row| row.has_full_rank_constraint_minor_f64)
+        .count();
+    let singular_constraint_section_full_rank_exact_count = singular_constraint_section_rows
+        .iter()
+        .filter(|row| row.has_full_rank_constraint_minor_exact)
+        .count();
+    let feasible_section_candidate_count = feasible_section_rows.len();
+    let feasible_section_full_rank_exact_count = feasible_section_rows
+        .iter()
+        .filter(|row| row.has_full_rank_constraint_minor_exact)
+        .count();
+    let feasible_section_action_max_abs_diff_vs_generated_min_f64 = max_abs_option(
+        feasible_section_rows
+            .iter()
+            .map(|row| row.action_diff_vs_generated_min_f64),
+    );
+    let feasible_section_max_abs_d_action_delta_vs_kkt_row_f64 = max_abs_option(
+        feasible_section_rows
+            .iter()
+            .map(|row| row.max_abs_d_action_delta_vs_kkt_row_f64),
+    );
+    let feasible_section_max_abs_d_sys_delta_vs_kkt_row_f64 = max_abs_option(
+        feasible_section_rows
+            .iter()
+            .map(|row| row.max_abs_d_sys_delta_vs_kkt_row_f64),
+    );
     let padded_extension_source_count = padded_extension_rows
         .iter()
         .map(|row| row.source_count)
@@ -1413,6 +1950,24 @@ fn main() {
         f64_all_active_convex_hull_zero,
         f64_nonsingular_active_projected_rank,
         f64_nonsingular_active_convex_hull_zero,
+        singular_constraint_section_candidate_count,
+        singular_constraint_section_full_rank_count,
+        singular_constraint_section_full_rank_exact_count,
+        singular_constraint_section_projected_rank,
+        singular_constraint_section_convex_hull_zero,
+        nonsingular_plus_singular_constraint_section_projected_rank,
+        nonsingular_plus_singular_constraint_section_convex_hull_zero,
+        feasible_section_candidate_count,
+        feasible_section_full_rank_exact_count,
+        feasible_section_action_max_abs_diff_vs_generated_min_f64,
+        feasible_section_max_abs_d_action_delta_vs_kkt_row_f64,
+        feasible_section_max_abs_d_sys_delta_vs_kkt_row_f64,
+        feasible_section_projected_rank,
+        feasible_section_convex_hull_zero,
+        feasible_section_singular_projected_rank,
+        feasible_section_singular_convex_hull_zero,
+        feasible_section_nonsingular_projected_rank,
+        feasible_section_nonsingular_convex_hull_zero,
         padded_extension_unique_count: padded_extension_rows.len(),
         padded_extension_source_count,
         padded_extension_nonsingular_count,
@@ -1432,17 +1987,20 @@ fn main() {
             format!("f64 KKT singularity uses SVD rank threshold {NUMERICAL_RANK_RTOL:e} times the largest singular value, with a floor at scale 1."),
             format!("Padded-extension rows insert one missing facet into nonsingular six-facet active rows and quotient only by cyclic rotation. A kept padded row has nonsingular f64 KKT, one beta coordinate with |beta| <= {PADDED_BETA_ZERO_TOL:e}, no beta < -{PADDED_BETA_ZERO_TOL:e}, and minimum action within the active tolerance."),
             "Padded-extension gradients are equality-branch gradients. They do not by themselves give full halfplanes for theorem use; a final certificate must also impose the one-sided beta-zero activation condition for the inserted coordinate.".to_string(),
+            "Singular constraint-section rows check exact and f64 rank of closure plus normalization constraints. The separate feasible-section rows compute beta'(a0) from a chosen minor/fixed-coordinate section and then differentiate that explicit upper branch.".to_string(),
             "Convex-hull and projected-rank checks are numerical triage signals; final theorem use still needs Sage verification. Singular-KKT rows should not be used as smooth-gradient theorem witnesses without a separate nonsmooth/subfamily argument.".to_string(),
         ],
     };
 
     let output = DiagnosticOutput {
-        diagnostic_version: 1,
+        diagnostic_version: 2,
         theorem_use: "High-VoI Rust diagnostic for the HKO M_10 local-maximum route: generate active branch candidates, D_a sys rows, KKT singularity flags, symmetry directions, and numerical quotient-cone checks before building the final Sage certificate.".to_string(),
         output_mode: if options.canonical { "canonical" } else { "smoke" }.to_string(),
         summary,
         symmetry_generators,
         f64_active_branches: f64_active_branch_rows,
+        singular_constraint_sections: singular_constraint_section_rows,
+        feasible_section_rows,
         padded_extensions: padded_extension_rows,
         exact_checked_branches: exact_branch_rows,
     };
@@ -1490,6 +2048,68 @@ fn main() {
         output.summary.slice_dimension_exact
     );
     println!(
+        "  singular constraint-section full-rank f64: {} / {}",
+        output.summary.singular_constraint_section_full_rank_count,
+        output.summary.singular_constraint_section_candidate_count
+    );
+    println!(
+        "  singular constraint-section full-rank exact: {} / {}",
+        output
+            .summary
+            .singular_constraint_section_full_rank_exact_count,
+        output.summary.singular_constraint_section_candidate_count
+    );
+    println!(
+        "  singular constraint-section projected D_sys rank: {} / {}",
+        output
+            .summary
+            .singular_constraint_section_projected_rank
+            .rank,
+        output.summary.slice_dimension_exact
+    );
+    println!(
+        "  nonsingular + singular constraint-section projected D_sys rank: {} / {}",
+        output
+            .summary
+            .nonsingular_plus_singular_constraint_section_projected_rank
+            .rank,
+        output.summary.slice_dimension_exact
+    );
+    println!(
+        "  feasible-section full-rank exact: {} / {}",
+        output.summary.feasible_section_full_rank_exact_count,
+        output.summary.feasible_section_candidate_count
+    );
+    println!(
+        "  feasible-section projected D_sys rank: {} / {}",
+        output.summary.feasible_section_projected_rank.rank, output.summary.slice_dimension_exact
+    );
+    println!(
+        "  feasible-section singular projected D_sys rank: {} / {}",
+        output.summary.feasible_section_singular_projected_rank.rank,
+        output.summary.slice_dimension_exact
+    );
+    println!(
+        "  feasible-section nonsingular projected D_sys rank: {} / {}",
+        output
+            .summary
+            .feasible_section_nonsingular_projected_rank
+            .rank,
+        output.summary.slice_dimension_exact
+    );
+    println!(
+        "  feasible-section max |action-min|: {:?}",
+        output
+            .summary
+            .feasible_section_action_max_abs_diff_vs_generated_min_f64
+    );
+    println!(
+        "  feasible-section max |D_sys - KKT D_sys|: {:?}",
+        output
+            .summary
+            .feasible_section_max_abs_d_sys_delta_vs_kkt_row_f64
+    );
+    println!(
         "  exact smooth projected D_sys rank: {} / {}",
         output.summary.exact_smooth_projected_rank.rank, output.summary.slice_dimension_exact
     );
@@ -1507,6 +2127,17 @@ fn main() {
             .summary
             .f64_nonsingular_active_convex_hull_zero
             .feasible
+    );
+    println!(
+        "  nonsingular + singular constraint-section zero-in-conv feasible: {}",
+        output
+            .summary
+            .nonsingular_plus_singular_constraint_section_convex_hull_zero
+            .feasible
+    );
+    println!(
+        "  feasible-section zero-in-conv feasible: {}",
+        output.summary.feasible_section_convex_hull_zero.feasible
     );
     println!(
         "  padded extensions: {} unique from {} insertions",

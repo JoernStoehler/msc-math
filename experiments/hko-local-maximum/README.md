@@ -66,16 +66,22 @@ migration. Git history is the archive for that broken `(n,h)` Phase C attempt;
   exact-checks no branches unless `--exact-limit N` or `--all-exact` is passed.
   Use `--canonical` only when intentionally refreshing the tracked diagnostic
   artifact. Each f64 active branch row includes `kkt_f64.singular`; theorem
-  use of `d_sys_flat_f64` as a smooth-gradient witness should ignore singular
-  KKT rows unless a separate nonsmooth or family-gradient argument is supplied.
+  use of `d_sys_flat_f64` from singular KKT rows requires a separate theorem
+  argument. The `singular_constraint_sections` block records the numerical
+  and exact closure/normalization minor check for the current feasible-section
+  route. The `feasible_section_rows` block computes the f64 derivative rows of
+  the resulting explicit feasible beta sections and reruns the slice/cone
+  checks; theorem use still requires exact Sage verification.
 
 ## Fast Reading Order
 
 1. `research/hko-local-maximum-status.md`
 2. `research/hko-local-maximum.md`
-3. `research/hko-local-maximum-proof-route-note.md`
-4. `theorem/README.md`
-5. `empirical/README.md` if the question is about supporting evidence
+3. `research/hko-local-maximum-proof-control-packet.md` if the question is
+   what to do next for the theorem route
+4. `research/hko-local-maximum-proof-route-note.md`
+5. `theorem/README.md`
+6. `empirical/README.md` if the question is about supporting evidence
 
 ## Rule Of Thumb
 

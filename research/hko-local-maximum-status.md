@@ -12,6 +12,8 @@ Use it before reading deeper notes or experiment folders.
 - Thesis-done gate: `tasks/definition-of-success.md`
 - Active/open work items: `tasks/planning-notes.md`
 - Topic research note and interpretation: `research/hko-local-maximum.md`
+- Current proof-control packet:
+  `research/hko-local-maximum-proof-control-packet.md`
 - Exact theorem route details: `research/hko-local-maximum-exact-witness.md`
 - Current proof-route checkpoint:
   `research/hko-local-maximum-proof-route-note.md`
@@ -47,8 +49,16 @@ Use it before reading deeper notes or experiment folders.
   `research/hko-local-maximum-proof-route-note.md` records the 2026-06-03
   one-sided selected-branch certificate idea, the `150`-row f64 diagnostic, and
   the singular-KKT obstruction. Its padded-extension diagnostic found no
-  nonsingular minimum-action padded-once rows, so the next route must handle
-  singular positive-beta seven-facet rows or find a different certificate.
+  nonsingular minimum-action padded-once rows. The current route handles the
+  needed singular positive-beta seven-facet rows by trying to replace
+  KKT-derived rows with explicit feasible-section upper-branch rows. The f64
+  feasible-section diagnostic now preserves rank `25` and the positive
+  convex-hull witness; exact Sage verification is the next blocker.
+- Current proof-control packet:
+  `research/hko-local-maximum-proof-control-packet.md` records the theorem
+  target, sufficient Sage decision problem, proof tree, feasible-section
+  interpretation task, success and failure conditions, and Packet 2/3
+  boundaries.
 
 ## Supporting Evidence
 
@@ -65,8 +75,8 @@ Use it before reading deeper notes or experiment folders.
 
 - close the exact active-row / active-orbit coverage needed for the final
   rank/kernel certificate
-- develop an exact one-sided branch-gradient or family-gradient treatment for
-  the singular positive-beta seven-facet active rows
+- verify exact feasible-section upper-branch rows and their cone certificate
+  in Sage for the selected positive-beta active rows
 - reconcile stale `44/10` language with the current `150`-orbit bookkeeping
   surface
 - propagate the final theorem story into `formal/` and `thesis/`
@@ -78,7 +88,8 @@ Use it before reading deeper notes or experiment folders.
 1. `research/INDEX.md`
 2. `tasks/planning-notes.md`
 3. `research/hko-local-maximum-status.md`
-4. `research/hko-local-maximum.md`
-5. `research/hko-local-maximum-proof-route-note.md`
-6. `research/hko-local-maximum-exact-witness.md`
-7. `experiments/hko-local-maximum/README.md`
+4. `research/hko-local-maximum-proof-control-packet.md`
+5. `research/hko-local-maximum.md`
+6. `research/hko-local-maximum-proof-route-note.md`
+7. `research/hko-local-maximum-exact-witness.md`
+8. `experiments/hko-local-maximum/README.md`

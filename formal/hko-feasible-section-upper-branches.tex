@@ -1,0 +1,345 @@
+% formal/hko-feasible-section-upper-branches.tex -- input by formal/main.tex
+%
+% Review status:
+%   JORN ROUTE REVIEW: accepted on 2026-06-04 as enough to proceed, without
+%   1:1 writing review. Keep the unverified frame until the detailed proof text
+%   has been line-checked.
+%
+% Purpose:
+%   Replace the singular-KKT-gradient route by explicit feasible HK2017
+%   beta sections. The beta sections need not be optimizing or KKT-critical
+%   for nearby parameters; they are used only to give upper branches for sys.
+
+\begin{unverified}
+
+\subsection{Feasible HK2017 beta sections as upper branches}
+\label{sec:hko-feasible-section-upper-branches}
+
+This section records a sufficient first-order certificate for the HKO
+local-maximum route.  It is deliberately weaker than a local formula for the
+capacity.  For each selected word~$\sigma$, it constructs a feasible
+HK2017 beta section~$\beta_\sigma(a)$ and uses the corresponding action only
+as an upper bound for the capacity.
+
+Let
+\[
+  a=(a_1,\ldots,a_F)\in(\mathbb R^4)^F
+\]
+be the dual-vertex parameter, and let
+\[
+  K(a)=\{x\in\mathbb R^4: a_i\cdot x\leq 1,\ i=1,\ldots,F\}.
+\]
+We work in a fixed local chart in which~$K(a)$ remains a convex body and the
+volume function~$V(a)=\operatorname{vol}(K(a))$ is smooth.
+
+For a partial cyclic word
+\[
+  \sigma=(\sigma_1,\ldots,\sigma_m),
+\]
+write
+\[
+  C_\sigma(a)=
+  \begin{pmatrix}
+    a_{\sigma_1} & \cdots & a_{\sigma_m}\\
+    1            & \cdots & 1
+  \end{pmatrix}
+  \in\mathbb R^{5\times m},
+  \qquad
+  e=(0,0,0,0,1)^T.
+\]
+Thus the HK2017 closure and normalization constraints are
+\[
+  C_\sigma(a)\beta=e,\qquad \beta\geq 0.
+\]
+Let $Q_\sigma(a,\beta)$ denote the HK2017 quadratic objective for this word,
+as in Definition~\ref{def:hk2017-problem}.  When
+$Q_\sigma(a,\beta)>0$, set
+\[
+  A_\sigma(a,\beta)=\frac{1}{2Q_\sigma(a,\beta)}.
+\]
+
+\begin{lemma}[Feasible-section upper branch]
+\label{lem:hko-feasible-section-upper-branch}
+Fix~$a_0$ and a word~$\sigma=(\sigma_1,\ldots,\sigma_m)$.
+Assume that the following data are given:
+\begin{enumerate}
+  \item a vector~$\beta_0\in\mathbb R^m$ with $(\beta_0)_i>0$ for all~$i$;
+  \item the feasibility equation~$C_\sigma(a_0)\beta_0=e$;
+  \item a subset~$I\subset\{1,\ldots,m\}$ with~$|I|=5$ such that
+    the $5\times5$ matrix~$C_\sigma(a_0)_I$ is invertible;
+  \item the complementary subset~$J=\{1,\ldots,m\}\setminus I$;
+  \item $Q_\sigma(a_0,\beta_0)>0$ and~$V(a_0)>0$.
+\end{enumerate}
+Define, for~$a$ near~$a_0$,
+\begin{equation}
+\label{eq:hko-feasible-section-beta}
+  \beta_J(a)=(\beta_0)_J,\qquad
+  \beta_I(a)=C_\sigma(a)_I^{-1}\bigl(e-C_\sigma(a)_J(\beta_0)_J\bigr).
+\end{equation}
+Then, after shrinking the neighborhood of~$a_0$ if necessary:
+\begin{enumerate}
+  \item $\beta(a)$ is smooth and~$\beta(a_0)=\beta_0$;
+  \item $C_\sigma(a)\beta(a)=e$;
+  \item $\beta_i(a)>0$ for all~$i$;
+  \item $Q_\sigma(a,\beta(a))>0$.
+\end{enumerate}
+Consequently
+\[
+  U_\sigma(a)
+  :=
+  \frac{A_\sigma(a,\beta(a))^2}{2V(a)}
+\]
+is smooth near~$a_0$ and satisfies
+\[
+  \operatorname{sys}(K(a))\leq U_\sigma(a).
+\]
+If in addition
+\[
+  A_\sigma(a_0,\beta_0)=c_{\mathrm{EHZ}}(K(a_0)),
+\]
+then
+\[
+  U_\sigma(a_0)=\operatorname{sys}(K(a_0)).
+\]
+\end{lemma}
+
+\begin{proof}
+The inverse in~\eqref{eq:hko-feasible-section-beta} exists for all~$a$ in a
+small neighborhood of~$a_0$, because invertibility is an open condition.
+The formula is therefore smooth and gives~$\beta(a_0)=\beta_0$ by the
+feasibility equation at~$a_0$.
+
+By construction,
+\[
+  C_\sigma(a)_I\beta_I(a)+C_\sigma(a)_J\beta_J(a)=e,
+\]
+so $C_\sigma(a)\beta(a)=e$.  Since~$\beta_0>0$, positivity persists after
+shrinking the neighborhood.  Since~$Q_\sigma(a_0,\beta_0)>0$ and
+$Q_\sigma$ is smooth, $Q_\sigma(a,\beta(a))>0$ after shrinking again.
+
+For each~$a$ in this neighborhood, the pair~$(\sigma,\beta(a))$ is feasible
+for the HK2017 problem.  Hence
+\[
+  Q_{\max}(a)\geq Q_\sigma(a,\beta(a)).
+\]
+By Definition~\ref{def:hk2017-problem},
+\[
+  c_{\mathrm{EHZ}}(K(a))
+  =\frac{1}{2Q_{\max}(a)}
+  \leq
+  \frac{1}{2Q_\sigma(a,\beta(a))}
+  =
+  A_\sigma(a,\beta(a)).
+\]
+Since $V(a)>0$ after shrinking the neighborhood,
+\[
+  \operatorname{sys}(K(a))
+  =
+  \frac{c_{\mathrm{EHZ}}(K(a))^2}{2V(a)}
+  \leq
+  \frac{A_\sigma(a,\beta(a))^2}{2V(a)}
+  =
+  U_\sigma(a).
+\]
+If $A_\sigma(a_0,\beta_0)=c_{\mathrm{EHZ}}(K(a_0))$, the last inequality is
+an equality at~$a_0$.
+\end{proof}
+
+\begin{remark}[Derivative data for Sage]
+\label{rem:hko-feasible-section-derivative-data}
+The derivative of the feasible section is determined by linear equations.
+For a parameter direction~$h=(h_1,\ldots,h_F)\in(\mathbb R^4)^F$,
+\[
+  D\beta_J(a_0)[h]=0,
+\]
+and differentiating~$C_\sigma(a)\beta(a)=e$ gives
+\begin{equation}
+\label{eq:hko-feasible-section-dbeta}
+  C_\sigma(a_0)_I\,D\beta_I(a_0)[h]
+  =
+  -\,DC_\sigma(a_0)[h]\,\beta_0.
+\end{equation}
+Here the $i$th column of~$DC_\sigma(a_0)[h]$ is~$(h_{\sigma_i},0)^T$.
+Thus Sage may either compute~$D\beta(a_0)$ from
+\eqref{eq:hko-feasible-section-dbeta}, or verify an explicit exact linear map
+$h\mapsto D\beta(a_0)[h]$ satisfying~\eqref{eq:hko-feasible-section-dbeta}.
+
+If
+\[
+  Q(a)=Q_\sigma(a,\beta(a)),\qquad
+  A(a)=\frac{1}{2Q(a)},\qquad
+  U(a)=\frac{A(a)^2}{2V(a)},
+\]
+then
+\[
+  DA(a_0)[h]=-\frac{DQ(a_0)[h]}{2Q(a_0)^2},
+\]
+and
+\[
+  DU(a_0)[h]
+  =
+  \frac{A(a_0)}{V(a_0)}\,DA(a_0)[h]
+  -
+  \frac{A(a_0)^2}{2V(a_0)^2}\,DV(a_0)[h].
+\]
+This is the row that the feasible-section certificate should use.  It need
+not agree with the KKT-derived row printed by the current f64 diagnostic.
+\end{remark}
+
+\subsection{Upper directional derivatives from selected upper branches}
+\label{sec:hko-upper-directional-derivatives}
+
+\begin{lemma}[Upper branch directional inequality]
+\label{lem:hko-upper-branch-directional-inequality}
+Let~$E$ be a finite-dimensional real vector space, let~$a_0\in E$, and let
+$f$ be a function defined near~$a_0$.  Let~$\mathcal S$ be finite.  Suppose
+that for every~$\sigma\in\mathcal S$ there is a smooth function~$U_\sigma$
+near~$a_0$ such that
+\[
+  f(a)\leq U_\sigma(a)
+  \quad\text{near }a_0,
+  \qquad
+  f(a_0)=U_\sigma(a_0).
+\]
+Then for every~$h\in E$,
+\[
+  D^+f(a_0;h)
+  \leq
+  \min_{\sigma\in\mathcal S}DU_\sigma(a_0)[h],
+\]
+where
+\[
+  D^+f(a_0;h)
+  =
+  \limsup_{t\to0^+}\frac{f(a_0+th)-f(a_0)}{t}.
+\]
+\end{lemma}
+
+\begin{proof}
+Fix~$\sigma\in\mathcal S$.  For all sufficiently small~$t>0$,
+\[
+  \frac{f(a_0+th)-f(a_0)}{t}
+  \leq
+  \frac{U_\sigma(a_0+th)-U_\sigma(a_0)}{t}.
+\]
+Taking~$\limsup_{t\to0^+}$ and using smoothness of~$U_\sigma$ gives
+\[
+  D^+f(a_0;h)\leq DU_\sigma(a_0)[h].
+\]
+This holds for every~$\sigma$, so taking the minimum over the finite set
+proves the claim.
+\end{proof}
+
+\begin{lemma}[Positive convex certificate gives a uniform negative margin]
+\label{lem:hko-positive-convex-certificate-margin}
+Let~$E$ be a finite-dimensional real inner product space and let
+$r_1,\ldots,r_N\in E^*$ be linear functionals.  Suppose there are
+coefficients~$\lambda_i>0$ with
+\[
+  \sum_{i=1}^N\lambda_i=1,\qquad
+  \sum_{i=1}^N\lambda_i r_i=0,
+\]
+and suppose that~$r_1,\ldots,r_N$ span~$E^*$.  Then there exists~$\eta>0$
+such that for every~$h\in E$ with~$\|h\|=1$,
+\[
+  \min_i r_i(h)\leq -\eta.
+\]
+\end{lemma}
+
+\begin{proof}
+First we show that for every nonzero~$h$, at least one~$r_i(h)$ is strictly
+negative.  If all~$r_i(h)\geq0$, then
+\[
+  0=\sum_i\lambda_i r_i(h)
+\]
+with all~$\lambda_i>0$, so every~$r_i(h)=0$.  Since the~$r_i$ span~$E^*$,
+this forces every linear functional on~$E$ to vanish on~$h$, hence~$h=0$.
+Thus no unit vector has~$\min_i r_i(h)\geq0$.
+
+The function
+\[
+  h\mapsto \min_i r_i(h)
+\]
+is continuous on the compact unit sphere in~$E$.  It is everywhere negative
+there, so its maximum is a negative number.  Taking~$\eta$ to be the negative
+of that maximum proves the claim.
+\end{proof}
+
+\begin{proposition}[Finite feasible-branch certificate for a slice]
+\label{prop:hko-feasible-branch-slice-local-max}
+Let~$E$ be a finite-dimensional real inner product space and let~$a_0\in E$.
+Let~$f$ be a function defined near~$a_0$.  Suppose there is a finite set
+$\mathcal S$ and smooth functions~$U_\sigma$ near~$a_0$ such that
+\[
+  f(a)\leq U_\sigma(a)
+  \quad\text{near }a_0,
+  \qquad
+  f(a_0)=U_\sigma(a_0)
+  \quad
+  (\sigma\in\mathcal S).
+\]
+Write~$r_\sigma=DU_\sigma(a_0)\in E^*$.  If the functionals~$r_\sigma$
+admit positive coefficients~$\lambda_\sigma>0$ such that
+\[
+  \sum_{\sigma\in\mathcal S}\lambda_\sigma=1,\qquad
+  \sum_{\sigma\in\mathcal S}\lambda_\sigma r_\sigma=0,
+\]
+and the~$r_\sigma$ span~$E^*$, then~$a_0$ is a strict local maximum of~$f$
+on~$E$: for all sufficiently small nonzero~$v\in E$,
+\[
+  f(a_0+v)<f(a_0).
+\]
+\end{proposition}
+
+\begin{proof}
+By Lemma~\ref{lem:hko-positive-convex-certificate-margin}, choose~$\eta>0$
+such that for every unit~$h\in E$ there exists~$\sigma$ with
+\[
+  r_\sigma(h)\leq-\eta.
+\]
+Since the set~$\mathcal S$ is finite and the~$U_\sigma$ are smooth, after
+shrinking the neighborhood of~$a_0$ there is a uniform first-order estimate
+\[
+  \left|U_\sigma(a_0+v)-U_\sigma(a_0)-r_\sigma(v)\right|
+  \leq \frac{\eta}{2}\|v\|
+\]
+for every~$\sigma\in\mathcal S$ and every sufficiently small~$v$.
+
+Let~$v\neq0$ be sufficiently small and put~$h=v/\|v\|$.  Choose~$\sigma$
+with~$r_\sigma(h)\leq-\eta$.  Then
+\[
+  U_\sigma(a_0+v)
+  \leq
+  U_\sigma(a_0)-\eta\|v\|+\frac{\eta}{2}\|v\|
+  <
+  U_\sigma(a_0).
+\]
+Using the upper-branch property and equality at~$a_0$,
+\[
+  f(a_0+v)
+  \leq U_\sigma(a_0+v)
+  <
+  U_\sigma(a_0)
+  =
+  f(a_0).
+\]
+\end{proof}
+
+\begin{corollary}[HKO quotient-local certificate template]
+\label{cor:hko-feasible-branch-quotient-template}
+Let~$E$ be the chosen exact slice transverse to the tangent space generated by
+translations, scaling, and the identity component of the linear symplectic
+action at the HKO point~$a_0$.  Suppose that Sage verifies a finite list of
+HK2017 feasible-section upper branches~$U_\sigma$ satisfying
+Lemma~\ref{lem:hko-feasible-section-upper-branch}, and that the projected rows
+$DU_\sigma(a_0)|_E$ satisfy the positive convex certificate in
+Proposition~\ref{prop:hko-feasible-branch-slice-local-max}.  Then HKO is a
+strict local maximum of the systolic ratio on the slice~$E$.
+
+If, in addition, the local chart is quotiented by the above symmetry action
+and the systolic ratio is invariant along the corresponding symmetry orbits,
+then this slice statement gives the desired quotient-local maximum in the
+ten-row model.
+\end{corollary}
+
+\end{unverified}

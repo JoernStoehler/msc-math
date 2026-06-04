@@ -65,7 +65,7 @@ obligations.
 
 | Thesis story | Interpretation source | Work obligations |
 | --- | --- | --- |
-| HKO2024 local maximality | `hko-local-maximum.md`, `hko-local-maximum-status.md`, `hko-local-maximum-exact-witness.md`, `hko-local-maximum-proof-route-note.md` | `tasks/definition-of-success.md`, `tasks/current-state.md`, `tasks/planning-notes.md` |
+| HKO2024 local maximality | `hko-local-maximum.md`, `hko-local-maximum-status.md`, `hko-local-maximum-proof-control-packet.md`, `hko-local-maximum-exact-witness.md`, `hko-local-maximum-proof-route-note.md` | `tasks/definition-of-success.md`, `tasks/current-state.md`, `tasks/planning-notes.md` |
 | Hostile sys-search landscape | `sys-landscape.md`, `sys-landscape-toolbox-audit.md`, `sys-landscape-datascience/` | `tasks/definition-of-success.md`, `tasks/current-state.md`, `tasks/planning-notes.md`, `research/sys-landscape-datascience/worker-procedure.md` |
 | Crosspolytope capacity | `crosspolytope.md` | `tasks/current-state.md`, `tasks/planning-notes.md` if thesis cites the computation |
 | Visualization negative exploration | `visualization.md` | `tasks/planning-notes.md` if included as standalone or supporting material |
@@ -79,7 +79,7 @@ obligations.
 | Area | Start here | Role |
 | --- | --- | --- |
 | Current finish state | `finish-current-state.md` | repo-state and closeout context |
-| HKO local maximum | `hko-local-maximum.md`, `hko-local-maximum-status.md`, `hko-local-maximum-exact-witness.md`, `hko-local-maximum-proof-route-note.md` | HKO proof route, exact-witness state, selected-branch checkpoint, and blockers |
+| HKO local maximum | `hko-local-maximum.md`, `hko-local-maximum-status.md`, `hko-local-maximum-proof-control-packet.md`, `hko-local-maximum-exact-witness.md`, `hko-local-maximum-proof-route-note.md` | HKO proof route, exact-witness state, proof-control packet, selected-branch checkpoint, and blockers |
 | Hostile sys landscape | `sys-landscape.md`, `sys-landscape-toolbox-audit.md`, `sys-landscape-datascience/` | negative-search interpretation and data-science method state |
 | Sys first-order local behavior | `sys-first-order-local-behavior.md` | generic smooth case, non-generic active-germ classification, and semialgebraic fallback status |
 | Numerics | `numerics.md`, `numerics-error-bounds.md` | numerical-method status and error-bound interpretation |

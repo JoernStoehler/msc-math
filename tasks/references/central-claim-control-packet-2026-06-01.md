@@ -55,6 +55,8 @@ Allowed review gates:
    - Input: HKO rows in this file plus `research/hko-local-maximum*.md`.
    - Output: theorem target, exact subclaims, artifact-to-subclaim map, Packet 3
      missing rows, fallback wording.
+   - Current packet surface:
+     `research/hko-local-maximum-proof-control-packet.md`.
    - Stop: no broad compute until this map exists.
 
 2. Hostile method-table closeout packet.

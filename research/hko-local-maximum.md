@@ -9,6 +9,12 @@ Current proof-route checkpoint:
 selected-branch certificate idea, current `150`-row f64 diagnostic evidence,
 and the singular-KKT obstruction.
 
+Current proof-control packet:
+`research/hko-local-maximum-proof-control-packet.md` is the Packet 1 control
+surface for the next HKO work. It records the theorem target, sufficient Sage
+decision problem, proof tree, feasible-section row target, verifier boundary,
+fallback branches, and review questions.
+
 ## Scope
 
 This note is the consolidated research-facing record for `hko-local-maximum`.
@@ -31,7 +37,14 @@ It combines the former topic note set while keeping experiment artifacts under
   - A newer proof-route checkpoint records a possible one-sided
     selected-branch certificate: all `150` f64 positive active rows cover the
     `25`-dimensional slice numerically, but `106` of those rows have singular
-    KKT matrices and still need exact singular-family justification.
+    KKT matrices and still need exact feasible-section replacement rows.
+  - The proof-control packet now makes this the next explicit HKO packet:
+    compute theorem-valid feasible-section upper-branch rows, then prove or
+    reject that interpretation before implementing the final exact verifier.
+  - Current f64 diagnostic status: the explicit feasible-section rows have
+    projected rank `25`, a positive convex-hull witness, and maximum
+    `D_sys` difference about `1.7e-11` from the old KKT-derived rows.
+    Exact Sage verification remains open.
   - Sigma-word combinatorics are still: `50,400` raw, `6,240` directed-feasible,
     `717` valid KKT orbits, and `150` exact minima.
 - Numerical evidence track:

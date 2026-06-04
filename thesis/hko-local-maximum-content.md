@@ -71,6 +71,31 @@ The HKO thesis-facing result is a packet, not only one theorem statement.
 Guard: do not collapse items 3--6 into item 2. They are thesis-facing result
 components with different claim strengths.
 
+## Current HKO Work Packets
+
+The HKO non-writing work is currently split into four packets.
+
+1. Proof-control packet:
+   `research/hko-local-maximum-proof-control-packet.md`.
+   This packet is current and records what the next proof work must prove or
+   check. It is not final thesis-writing material.
+
+2. Feasible-section packet:
+   interpret the selected positive-beta rows as theorem-valid feasible
+   upper-branch witnesses, then prove or reject that interpretation.
+   This is the next HKO proof task.
+
+3. Sage construction and verification packet:
+   if the feasible-section route succeeds, finish the trusted Sage
+   construction code and exact witness checks.
+
+4. Thesis-writing companion finalization:
+   only after the theorem outcome is known, refresh this file into the final
+   structure Jörn can write from.
+
+Do not treat this file as complete enough for final HKO writing until Packet 2
+and Packet 3 settle the theorem-strength outcome.
+
 ## Evidence By Packet Component
 
 ### 1. Known Result
@@ -95,6 +120,11 @@ Source pointers:
   "Current Proof Route".
 - `research/hko-local-maximum.md`, sections "Current State", "Decisions", and
   "Next Steps".
+- `research/hko-local-maximum-proof-control-packet.md` for the current
+  theorem target, proof tree, sufficient Sage decision problem,
+  feasible-section route, and stop conditions.
+- `formal/hko-feasible-section-upper-branches.tex` for the current PDF-review
+  draft of the feasible-section upper-branch lemmas.
 - `research/hko-local-maximum-proof-route-note.md` for the 2026-06-03
   selected-branch proof checkpoint and singular-KKT obstruction.
 - `tasks/current-state.md`, HKO local maximality row.
@@ -149,6 +179,17 @@ Thesis-use note:
   witness: the nonsingular active branches cover only rank `23` of the
   `25`-dimensional quotient slice, while the smooth padded-once diagnostic
   found no nonsingular minimum-action replacement rows.
+- If the feasible-section route succeeds, the clean explanation is likely that
+  the KKT matrix can be singular because there is a family of minimizing beta
+  data at `a0`, but each selected positive beta can still admit a local
+  feasible section through a full-rank closure/normalization minor. The proof
+  should compute the derivative of that explicit feasible upper branch; it
+  should not require nearby optimizing beta data or nearby KKT criticality.
+- Current f64 status: the active-branch diagnostic now computes the explicit
+  feasible-section rows. For all `150` positive active rows these still give
+  rank `25` and a positive convex-hull witness on the quotient slice; the
+  largest f64 `D_sys` difference from the old KKT-derived rows is about
+  `1.7e-11`. The remaining thesis-strength blocker is exact Sage verification.
 
 ### 4. Empirical Confirmation
 
@@ -214,9 +255,11 @@ Missing:
    `research/hko-local-maximum.md`;
    `research/hko-local-maximum-exact-witness.md`.
 
-2. Produce final Sage-readable theorem certificate.
-   Required checks should include exact row validity, active matrix rank,
-   kernel/symmetry equality, and cone/no-increase condition.
+2. Produce final Sage theorem certificate.
+   Sage should construct source-defined exact objects such as the HKO
+   coordinates and symmetry/slice data, then verify the generated finite
+   witness choices. Required checks should include exact row validity, active
+   matrix rank, kernel/symmetry equality, and cone/no-increase condition.
    Source pointers: current partial verifier in
    `experiments/hko-local-maximum/theorem/exact-witness/verify_widened_representative_witness.sage`
    and exact-witness research notes.
@@ -224,8 +267,10 @@ Missing:
 3. Write or refresh the mathematical reduction from verified certificate to
    local maximality.
    Source pointers: `formal/hko-local-maximality-conditions.tex`;
+   `formal/hko-feasible-section-upper-branches.tex`;
    `formal/hko-symmetry-gradient-structure.tex`;
    `research/sys-first-order-local-behavior.md`;
+   `research/hko-local-maximum-proof-control-packet.md`;
    `research/hko-local-maximum-proof-route-note.md`.
 
 4. Decide empirical-support inclusion.
