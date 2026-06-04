@@ -1,6 +1,6 @@
 # Dataset Fingerprint
 
-- dataset dir: `experiments/sys-landscape/datascience/batches/2026-06-03-current/dataset`
+- dataset dir: `experiments/sys-landscape/datascience/dataset`
 - polytope rows: `282`
 - observation rows: `282`
 - polytope union fields: `135`

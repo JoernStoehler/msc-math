@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# Build the current sys-landscape datascience tables into an owned batch path.
+# Build the current sys-landscape datascience tables into the active dataset.
 #
 # Default output:
-#   experiments/sys-landscape/datascience/batches/2026-06-03-current/dataset/
+#   experiments/sys-landscape/datascience/dataset/
 #
 # Use this for method waves. Do not ask each method executor to rebuild a
 # private /tmp dataset.
@@ -10,23 +10,19 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
-DEFAULT_BATCH_REL="experiments/sys-landscape/datascience/batches/2026-06-03-current"
-BATCH_ARG="${1:-$DEFAULT_BATCH_REL}"
-if [[ "$BATCH_ARG" = /* ]]; then
-  BATCH_DIR="$BATCH_ARG"
-  DATASET_ARG="$BATCH_ARG/dataset"
+DEFAULT_DATASET_REL="experiments/sys-landscape/datascience/dataset"
+DATASET_ARG="${1:-$DEFAULT_DATASET_REL}"
+if [[ "$DATASET_ARG" = /* ]]; then
+  DATASET_DIR="$DATASET_ARG"
 else
-  BATCH_DIR="$ROOT/$BATCH_ARG"
-  DATASET_ARG="$BATCH_ARG/dataset"
+  DATASET_DIR="$ROOT/$DATASET_ARG"
 fi
-DATASET_DIR="$BATCH_DIR/dataset"
-FINGERPRINT="$BATCH_DIR/FINGERPRINT.md"
+FINGERPRINT="$DATASET_DIR/FINGERPRINT.md"
 
 mkdir -p "$DATASET_DIR"
 
 echo "Building sys-landscape datascience tables"
 echo "  repo:        $ROOT"
-echo "  batch dir:   $BATCH_DIR"
 echo "  dataset dir: $DATASET_DIR"
 echo
 

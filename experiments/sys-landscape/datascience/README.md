@@ -13,28 +13,28 @@ The pipeline has three stages:
    - `observation-table.jsonl`
 3. `methods/` owns consumer-side method scripts and reports.
 
-Method agents should normally start from an existing batch dataset under
-`batches/`, not rebuild producer caches and not create private source-truth
+Method agents should normally start from the retained dataset under `dataset/`,
+not rebuild producer caches and not create private source-truth
 datasets under `/tmp`.
 
-## Current Batch Dataset
+## Current Dataset
 
-Current shared batch dataset:
+Current shared dataset:
 
 ```text
-experiments/sys-landscape/datascience/batches/2026-06-03-current/dataset/
+experiments/sys-landscape/datascience/dataset/
 ```
 
 Fingerprint:
 
 ```text
-experiments/sys-landscape/datascience/batches/2026-06-03-current/FINGERPRINT.md
+experiments/sys-landscape/datascience/dataset/FINGERPRINT.md
 ```
 
 Build or refresh it from the current committed producer caches with:
 
 ```bash
-experiments/sys-landscape/datascience/build-current-dataset.sh
+experiments/sys-landscape/datascience/build-dataset.sh
 ```
 
 Observed on 2026-06-03 in the devcontainer:
@@ -45,15 +45,15 @@ Observed on 2026-06-03 in the devcontainer:
 - output rows: `282` polytope rows and `282` observation rows.
 
 Because the final tables are small and `*.jsonl` is tracked through Git LFS in
-this repo, committing a retained batch dataset is reasonable. The expensive
-artifact is the producer cache stage, especially `produce/continuation-cache.jsonl`.
+this repo, committing the retained dataset is reasonable. The expensive artifact
+is the producer cache stage, especially `produce/continuation-cache.jsonl`.
 
 ## Worktree / Agent Flow
 
 For a method wave:
 
 1. Create an integration worktree.
-2. Build or refresh one batch dataset in that worktree.
+2. Build or refresh `dataset/` in that worktree.
 3. Pass that `dataset/` path to every method executor.
 4. Spawn method executors in their own worktrees.
 5. Executors write only their method folder under `methods/<slug>/`.
@@ -73,11 +73,11 @@ Print a fingerprint for a dataset with:
 
 ```bash
 uv run --script experiments/sys-landscape/datascience/fingerprint-dataset.py \
-  experiments/sys-landscape/datascience/batches/2026-06-03-current/dataset
+  experiments/sys-landscape/datascience/dataset
 ```
 
 A method report should cite the dataset path and either include this fingerprint
-or link to the batch `FINGERPRINT.md`.
+or link to `dataset/FINGERPRINT.md`.
 
 ## Stage Documentation
 

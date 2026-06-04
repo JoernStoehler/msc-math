@@ -4,9 +4,8 @@ This directory owns consumer-side datascience scripts for `experiments/sys-lands
 
 Current rule:
 - methods read tables written by `tables/main.rs`
-- method waves should use the shared dataset path under
-  `../batches/<batch>/dataset/`; methods should not create private `/tmp`
-  datasets as source truth
+- method waves should use `../dataset/`; methods should not create private
+  `/tmp` datasets as source truth
 - methods do not rebuild producer caches
 - method-local filtering, scaling, and model matrices stay local to the method
 - new method spikes should get their own folder under this directory
@@ -30,9 +29,9 @@ The current dataset inputs are:
 Current shared dataset:
 
 ```text
-experiments/sys-landscape/datascience/batches/2026-06-03-current/dataset/
+experiments/sys-landscape/datascience/dataset/
 ```
 
 Historical committed reports may mention `/tmp/...` dataset snapshots. Treat
 those as historical provenance only. New method-wave reports should cite a
-shared batch dataset path and its `FINGERPRINT.md`.
+shared dataset path and its `FINGERPRINT.md`.

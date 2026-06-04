@@ -109,7 +109,7 @@ Usage:
   {program} --out-dir <dataset-dir> [options]
 
 Method-wave output:
-  experiments/sys-landscape/datascience/batches/<batch>/dataset
+  experiments/sys-landscape/datascience/dataset
 
 Options:
   --produce-dir <dir>              Read canonical producer filenames from <dir>
@@ -126,8 +126,8 @@ Options:
   --help                           Show this help
 
 If --out-dir is omitted, this command writes to a temporary smoke directory.
-Use that only for one-off scratch. For method batches, use an owned path under
-experiments/sys-landscape/datascience/batches/.
+Use that only for one-off scratch. For method waves, use an owned path under
+experiments/sys-landscape/datascience/dataset/.
 "
     );
 }

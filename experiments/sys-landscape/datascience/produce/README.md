@@ -36,11 +36,11 @@ Current committed producer artifacts:
 Older `sys-landscape` experiment directories still exist outside `datascience/`, but
 this directory is the maintained producer surface for the datascience pipeline.
 
-## Batch And Smoke Paths
+## Dataset And Smoke Paths
 
 For method waves, do not ask every method worker to regenerate or privately
-copy producer data. Build one shared table dataset under
-`experiments/sys-landscape/datascience/batches/` and pass that dataset path to
+copy producer data. Build the shared table dataset under
+`experiments/sys-landscape/datascience/dataset/` and pass that dataset path to
 method workers. See `../README.md`.
 
 ## Smoke Path

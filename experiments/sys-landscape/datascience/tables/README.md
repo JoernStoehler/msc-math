@@ -11,17 +11,16 @@ Current outputs:
 - `polytope-table.jsonl`
 - `observation-table.jsonl`
 
-For method waves, the table output should live under a shared batch path such
-as:
+For method waves, the table output should live under:
 
 ```text
-experiments/sys-landscape/datascience/batches/2026-06-03-current/dataset/
+experiments/sys-landscape/datascience/dataset/
 ```
 
-Build the current batch dataset with:
+Build the current dataset with:
 
 ```bash
-experiments/sys-landscape/datascience/build-current-dataset.sh
+experiments/sys-landscape/datascience/build-dataset.sh
 ```
 
 Code ownership:
