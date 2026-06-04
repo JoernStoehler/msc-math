@@ -88,11 +88,11 @@ array task. Defaults skip existing committed seed ranges: general starts at
 - [licca-ascent-smoke-product.slurm.sh](licca-ascent-smoke-product.slurm.sh): one
   `test`-partition product shard with `2` seeds.
 - [licca-ascent-production-general.slurm.sh](licca-ascent-production-general.slurm.sh):
-  production general wave with array `10-13`, `1024` seeds per shard, and
-  `128` CPUs per shard.
+  production general wave with array `0-3`, `1024` seeds per shard, and
+  `128` CPUs per shard. It starts at seed `510`.
 - [licca-ascent-production-product.slurm.sh](licca-ascent-production-product.slurm.sh):
-  production product wave with array `10-13`, `1024` seeds per shard, and
-  `128` CPUs per shard.
+  production product wave with array `0-3`, `1024` seeds per shard, and
+  `128` CPUs per shard. It starts at seed `512`.
 
 Resume rule: do not delete partial shard files after timeout. Rerun the same
 wrapper with the same array index and constants. The Rust binary reads
@@ -125,5 +125,7 @@ sbatch licca-ascent-production-general.slurm.sh
 sbatch licca-ascent-production-product.slurm.sh
 ```
 
-This requests `4096` new general seeds and `4096` new product seeds, starting
-after the already submitted shard ids `0-9`.
+This requests `4096` new general seeds and `4096` new product seeds. It writes
+to `licca-shards/general-production-1024/` and
+`licca-shards/product-production-1024/` so it does not collide with the first
+conservative wave under `licca-shards/general/` and `licca-shards/product/`.

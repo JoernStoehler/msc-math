@@ -11,7 +11,7 @@
 
 #SBATCH --job-name=ds-general
 #SBATCH --partition=epyc
-#SBATCH --array=10-13
+#SBATCH --array=0-3
 #SBATCH --cpus-per-task=128
 #SBATCH --mem=32G
 #SBATCH --time=06:00:00
@@ -26,7 +26,9 @@
 #   seed estimate.
 # - 6h wall time allows heavy-tail seeds. On timeout, rerun this same script;
 #   completed summary rows are skipped.
-# - array=10-13 continues after the first conservative wave's shard ids 0-9.
+# - array=0-3 writes a second-wave output directory. The seed range starts at
+#   510, immediately after the first conservative general wave's expected range
+#   10..509.
 
 set -euo pipefail
 
@@ -37,11 +39,11 @@ export RAYON_NUM_THREADS="$SLURM_CPUS_PER_TASK"
 RUN_LABEL="production-general-1024x128"
 KIND="general"
 SHARD_ID="${SLURM_ARRAY_TASK_ID:-0}"
-BASE_N_START=10
+BASE_N_START=510
 SEEDS_PER_SHARD=1024
 SEED_TIME_BUDGET_SECS=120
 BINARY="$CARGO_TARGET_DIR/release/sys-dataset-ascent"
-OUT_DIR="experiments/sys-landscape/datascience/produce/licca-shards/$KIND"
+OUT_DIR="experiments/sys-landscape/datascience/produce/licca-shards/$KIND-production-1024"
 OUT="$OUT_DIR/general-shard-${SHARD_ID}.jsonl"
 N_START=$((BASE_N_START + SHARD_ID * SEEDS_PER_SHARD))
 
