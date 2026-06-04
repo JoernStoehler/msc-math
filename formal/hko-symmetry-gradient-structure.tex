@@ -3,8 +3,8 @@
 % Symmetry analysis of the HKO2024 counterexample and its sensitivity structure.
 %
 % Sources:
-%   - Generated data: experiments/hko-local-maximum/gradient-analysis/hko-neighborhood-sensitivity.jsonl
-%   - Plot script: experiments/hko-local-maximum/gradient-analysis/analyze.py
+%   - Generated data: experiments/hko-local-maximum/empirical/first-order/hko-neighborhood-sensitivity.jsonl
+%   - Plot script: experiments/hko-local-maximum/empirical/first-order/analyze.py
 %   - HKO2024 paper: papers/hko2024/counterexample.tex (Prop. 3, Sec. 3.1)
 %   - Thesis definitions: basic-definitions.tex, lagrangian-product-algorithm-proof.tex
 %
@@ -43,9 +43,9 @@ entries while visited-facet entries are orbit-dependent.
 The billiard algorithm
 (Algorithm~\ref{alg:billiard}) currently records 717 valid orbits and
 150 near-optimal rows at gap threshold $0.01$ in
-`experiments/hko-local-maximum/gradient-analysis/hko-neighborhood-sensitivity.jsonl`.
-The exact-Clarke summary
-`experiments/hko-local-maximum/exact-clarke/numerical-minima-summary.json`
+`experiments/hko-local-maximum/empirical/first-order/hko-neighborhood-sensitivity.jsonl`.
+The exact-witness summary
+`experiments/hko-local-maximum/theorem/exact-witness/numerical-minima-summary.json`
 records the exact-minimum active bookkeeping: 150 exact-action orbits,
 20 distinct visited-facet subsets, and 28 distinct height gradients.
 The sensitivity analysis from
@@ -182,7 +182,7 @@ differentiable points).
 Among the 150 per-orbit height-gradient vectors:
 \begin{itemize}
 \item \textbf{28 are distinct}
-  in the current exact-Clarke summary.
+  in the current exact-witness summary.
 \item \textbf{Gradient norms are not all identical}
   in the current sensitivity artifact; the per-orbit height-gradient norms
   range from about $1.302$ to $1.431$.
@@ -238,7 +238,7 @@ characteristic of regular pentagon geometry.
   At visited facets the sign depends on the orbit, because both the capacity
   and volume derivatives contribute.
   The older 10-gradient symmetry-average argument must be re-checked against
-  the current 28-gradient exact-Clarke bookkeeping before it is used in the
+  the current 28-gradient exact-witness bookkeeping before it is used in the
   theorem-facing route.
 
 \item \textbf{One representative facet suffices for the omega-obstacle

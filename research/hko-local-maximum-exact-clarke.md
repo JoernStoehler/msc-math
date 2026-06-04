@@ -94,7 +94,7 @@ Terminology note:
 ## How To Run
 
 ```bash
-cd experiments/hko-local-maximum/exact-clarke
+cd experiments/hko-local-maximum/theorem/exact-witness
 sage check.sage
 python3 check_packet1.py
 python3 summarize_numerical_minima.py
@@ -151,7 +151,7 @@ Miniforge / conda-forge install in `.devcontainer/Dockerfile`.
 Current verified command:
 
 ```bash
-cd experiments/hko-local-maximum/exact-clarke
+cd experiments/hko-local-maximum/theorem/exact-witness
 python3 build_widened_seed_witness.py
 sage verify_widened_seed_witness.sage
 ```

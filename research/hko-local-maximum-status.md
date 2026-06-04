@@ -52,14 +52,13 @@ Use it before reading deeper notes or experiment folders.
 
 ## Supporting Evidence
 
-- `gradient-analysis/`:
+- `empirical/first-order/`:
   first-order numerical support and the current active-gradient bookkeeping
   surface.
-- `second-order/`:
+- `empirical/second-order/`:
   negative-curvature evidence along sampled flat directions; supporting
   evidence, not the preferred final proof route.
-- `perturbation-neighborhood/`, `facet-splitting/`, `cut-and-ascent/`,
-  `lagrangian-boundary/`:
+- `empirical/neighborhood-sampling/` and `empirical/m11-ascent/`:
   empirical falsification attempts and neighborhood evidence around HKO.
 
 ## Still Open

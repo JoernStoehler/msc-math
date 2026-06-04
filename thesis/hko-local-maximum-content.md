@@ -38,20 +38,20 @@ The HKO thesis-facing result is a packet, not only one theorem statement.
    proves that the verified witness implies the theorem target.
    Source pointers: `FACTSHEET.md` items 20--22;
    `research/hko-local-maximum-exact-clarke.md`;
-   `experiments/hko-local-maximum/exact-clarke/README.md`;
-   `experiments/hko-local-maximum/exact-clarke/widened-seed-witness.json`;
-   `experiments/hko-local-maximum/exact-clarke/widened-seed-witness-verification.json`.
+   `experiments/hko-local-maximum/theorem/exact-witness/README.md`;
+   `experiments/hko-local-maximum/theorem/exact-witness/widened-seed-witness.json`;
+   `experiments/hko-local-maximum/theorem/exact-witness/widened-seed-witness-verification.json`.
 
 4. Empirical confirmation:
    Numerical and perturbative checks support the local-maximum picture.
    Source pointers: `research/hko-local-maximum.md`;
    `experiments/hko-local-maximum/README.md`;
-   `experiments/hko-local-maximum/gradient-analysis/`;
-   `experiments/hko-local-maximum/second-order/`;
-   `experiments/hko-local-maximum/perturbation-neighborhood/`;
-   `experiments/hko-local-maximum/facet-splitting/`;
-   `experiments/hko-local-maximum/cut-and-ascent/`;
-   `experiments/hko-local-maximum/lagrangian-boundary/`.
+   `experiments/hko-local-maximum/empirical/first-order/`;
+   `experiments/hko-local-maximum/empirical/second-order/`;
+   `experiments/hko-local-maximum/empirical/neighborhood-sampling/m10/`;
+   `experiments/hko-local-maximum/empirical/neighborhood-sampling/m11/`;
+   `experiments/hko-local-maximum/empirical/m11-ascent/`;
+   `experiments/hko-local-maximum/empirical/neighborhood-sampling/m10-lagrangian-product/`.
 
 5. Broader conjectural interpretation:
    HKO appears locally stable beyond the exact theorem model, but this broader
@@ -130,8 +130,8 @@ Source pointers:
   "Singular-KKT Obstruction" and "Padded-Endpoint Alternative", for the
   thesis-facing reason why the witness has to use singular positive-beta
   seven-facet branches.
-- `experiments/hko-local-maximum/exact-clarke/widened-seed-witness.json`.
-- `experiments/hko-local-maximum/exact-clarke/widened-seed-witness-verification.json`.
+- `experiments/hko-local-maximum/theorem/exact-witness/widened-seed-witness.json`.
+- `experiments/hko-local-maximum/theorem/exact-witness/widened-seed-witness-verification.json`.
 
 Missing:
 - Final theorem-facing active-gradient matrix.
@@ -153,13 +153,13 @@ Thesis-use note:
 ### 4. Empirical Confirmation
 
 Status:
-- `gradient-analysis/` gives first-order numerical support and active-gradient
+- `empirical/first-order/` gives first-order numerical support and active-gradient
   bookkeeping.
-- `second-order/` gives fixed-`F=10` support, including current notes reporting
+- `empirical/second-order/` gives fixed-`F=10` support, including current notes reporting
   `rank(G)=25`, `dim ker(G)=15`, and negative curvature evidence along sampled
   flat directions.
-- `perturbation-neighborhood/`, `facet-splitting/`, `cut-and-ascent/`, and
-  `lagrangian-boundary/` are supporting falsification/neighborhood checks.
+- `empirical/neighborhood-sampling/` and `empirical/m11-ascent/` are supporting
+  falsification/neighborhood checks.
 
 Source pointers:
 - `research/hko-local-maximum.md`, "Current State" and "Supporting Evidence".
@@ -218,8 +218,8 @@ Missing:
    Required checks should include exact row validity, active matrix rank,
    kernel/symmetry equality, and cone/no-increase condition.
    Source pointers: current partial verifier in
-   `experiments/hko-local-maximum/exact-clarke/verify_widened_seed_witness.sage`
-   and exact-Clarke research notes.
+   `experiments/hko-local-maximum/theorem/exact-witness/verify_widened_seed_witness.sage`
+   and exact-witness research notes.
 
 3. Write or refresh the mathematical reduction from verified certificate to
    local maximality.

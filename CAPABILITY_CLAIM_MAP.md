@@ -208,7 +208,7 @@ claim.
     - `experiments/verification/algorithm-comparison/README.md`
     - `experiments/sys-landscape/README.md`
     - `experiments/sys-landscape/datascience/produce/README.md`
-    - `experiments/hko-local-maximum/exact-clarke/README.md`
+    - `experiments/hko-local-maximum/theorem/exact-witness/README.md`
     - `experiments/hko-local-maximum/README.md`
     - `experiments/numerics/README.md`
     - `experiments/combinatorial-cells/README.md`
@@ -271,15 +271,14 @@ claim.
     - `tasks/current-state.md`
     - `tasks/planning-notes.md`
     - `experiments/hko-local-maximum/README.md`
-    - `experiments/hko-local-maximum/exact-clarke/`
-  - Exact-Clarke Packet 1 is closed, Packet 2 is partially closed, and Packet 3
+    - `experiments/hko-local-maximum/theorem/exact-witness/`
+  - Exact-witness Packet 1 is closed, Packet 2 is partially closed, and Packet 3
     remains the main blocker.
   - The current widened representative-row witness passes its present Sage
     checks, but is still a partial witness surface rather than a final theorem
     certificate.
-  - First-order numerical support, second-order evidence, perturbation
-    neighborhood checks, facet splitting, cut-and-ascent, and
-    lagrangian-boundary experiments are supporting evidence.
+  - First-order numerical support, second-order evidence, neighborhood
+    sampling, and `M_11` cut-and-ascent experiments are supporting evidence.
   - Nuance:
     - supporting experiments cannot replace the missing exact rank/kernel
       certificate for theorem-strength wording.
@@ -288,9 +287,9 @@ claim.
     - old `44`-orbit / `10`-gradient prose has been caveated against the
       current `150` exact action orbits / `20` visited subsets / `28`
       gradient-pattern bookkeeping, but theorem-facing symmetry claims still
-      need the exact-Clarke route.
+      need the exact-witness route.
   - Refresh when:
-    - exact-Clarke witness coverage changes
+    - exact-witness coverage changes
     - HKO theorem wording is frozen or weakened
     - field wording or exact-minimum bookkeeping changes
     - new LICCA/HKO evidence is promoted

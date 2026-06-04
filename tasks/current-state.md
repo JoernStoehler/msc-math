@@ -50,7 +50,7 @@ source files.
   decisions overrule it.
 
 - HKO local maximality is thesis spine.
-  Source truth: `research/hko-local-maximum*.md`, exact-Clarke artifacts,
+  Source truth: `research/hko-local-maximum*.md`, exact-witness artifacts,
   related formal/thesis files.
   Current state: repo evidence strongly supports the `M_10` local-maximality
   story; the exact theorem certificate is not closed.
@@ -60,7 +60,7 @@ source files.
     kernel equal to the symmetry tangent space.
   - Old `44`-orbit / `10`-gradient prose is stale against current `150` exact
     minima, `20` visited subsets, and `28` gradient-pattern bookkeeping.
-  Refresh when: exact-Clarke route, HKO theorem wording, or LICCA evidence
+  Refresh when: exact-witness route, HKO theorem wording, or LICCA evidence
   changes.
 
 - Hostile `sys`-search landscape is thesis spine.

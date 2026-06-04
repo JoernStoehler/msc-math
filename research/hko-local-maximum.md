@@ -35,19 +35,21 @@ It combines the former topic note set while keeping experiment artifacts under
   - Sigma-word combinatorics are still: `50,400` raw, `6,240` directed-feasible,
     `717` valid KKT orbits, and `150` exact minima.
 - Numerical evidence track:
-  - `gradient-analysis/` has baseline sensitivity and exact-certification bank,
+  - `empirical/first-order/` has baseline sensitivity and exact-certification bank,
     with `hko-neighborhood-sensitivity.jsonl` and
     `hko-neighborhood-ascent.jsonl` showing flat first-order behavior at HKO.
-  - `second-order/` gives fixed-`F=10` support: `rank(G)=25`,
+  - `empirical/second-order/` gives fixed-`F=10` support: `rank(G)=25`,
     `dim ker(G)=15`, and negative curvature in all flat directions.
-  - `facet-splitting/` and `cut-and-ascent/` found no `sys` increase over HKO
-    on committed runs.
-  - `lagrangian-boundary/` reports an anisotropic compact local `sys > 1` region
-    (median per-component radius near `0.035`, strong decay by `eps ~= 0.15`).
-  - `perturbation-neighborhood/` keeps historical `pentagon-perturb.jsonl` as
-    background context while the current pipeline uses smoke/LICCA buckets.
-  - `sage-validation/` validates the exact row bank against Sage, not a full
-    theorem certificate.
+  - `empirical/neighborhood-sampling/m11/` and `empirical/m11-ascent/` found no
+    `sys` increase over HKO on committed runs.
+  - `empirical/neighborhood-sampling/m10-lagrangian-product/` reports an
+    anisotropic compact local `sys > 1` region (median per-component radius
+    near `0.035`, strong decay by `eps ~= 0.15`).
+  - `empirical/neighborhood-sampling/m10/` keeps historical
+    `pentagon-perturb.jsonl` as background context while the current pipeline
+    uses smoke/LICCA buckets.
+  - `theorem/row-bank-validation/` validates the exact row bank against Sage,
+    but is not a full theorem certificate.
 
 ## Evidence And Interpretation
 
@@ -71,11 +73,12 @@ It combines the former topic note set while keeping experiment artifacts under
   basis, and symmetry inclusion/equality checks.
 - The reduced exact route is preferred; the raw `6,240` directed-feasible sigma
   route is valid but remains too slow in current tooling as a default.
-- `subdifferential-lp/phase_c_lp_test.py` is intentionally inactive until the
-  `(n,h)` schema migration is done.
-- Keep neighborhood falsification with `perturbation-neighborhood/` and
-  `lagrangian-boundary/` as complementary checks; broad blind counterexample
-  searches are not the default.
+- The old `subdifferential-lp/phase_c_lp_test.py` route was deleted during the
+  experiment layout migration; git history is the archive for that broken
+  `(n,h)` Phase C attempt.
+- Keep neighborhood falsification with `empirical/neighborhood-sampling/m10/`
+  and `empirical/neighborhood-sampling/m10-lagrangian-product/` as
+  complementary checks; broad blind counterexample searches are not the default.
 - Keep `pentagon-perturb.jsonl` as historical context; prefer committed new-format
   smoke/LICCA buckets for analysis.
 - If representative coverage stalls, it is acceptable to pause and document the
@@ -83,8 +86,8 @@ It combines the former topic note set while keeping experiment artifacts under
 
 ## History
 
-- `perturbation-neighborhood/` historically used 101-row evidence and has since
-  moved to the current smoke/LICCA flow.
+- `empirical/neighborhood-sampling/m10/` historically used 101-row evidence and
+  has since moved to the current smoke/LICCA flow.
 - Exact widened-route development reached right-kernel `29` on current
   representative surfaces; this indicates active-row multiplicity, not affine
   mismatch, is the remaining obstruction.
@@ -110,15 +113,16 @@ It combines the former topic note set while keeping experiment artifacts under
   - final packet must use reduced prototypes (`endpoint-seed-rows.json`,
     `midpoint-seed-rows.json`) plus additional exact representatives.
 - Immediate execution actions:
-  1. refresh `exact-clarke/numerical-permutation-orbits.json`;
+  1. refresh `theorem/exact-witness/numerical-permutation-orbits.json`;
   2. add missing exact representative rows in the existing witness shape;
   3. rebuild `reduced-sys-prototypes.json` and rerun the exact witness + Sage
      verifier:
-     - `cargo run -p exp-hko-local-maximum --release --bin hko-sage-validation -- --canonical`
-     - `cd experiments/hko-local-maximum/sage-validation && sage -python analyze.py --canonical`;
-  4. update `exact-clarke/widened-seed-witness.json` only from scripted output.
+     - `cargo run -p exp-hko-local-maximum --release --bin hko-row-bank-validation -- --canonical`
+     - `cd experiments/hko-local-maximum/theorem/row-bank-validation && sage -python analyze.py --canonical`;
+  4. update `theorem/exact-witness/widened-seed-witness.json` only from scripted output.
 - Fallback: if exact completion is blocked by backend cost, log the obstruction and
   rerun the exact `6,240` sigma route on a faster backend before switching to the
   contingency route.
 - Secondary: keep neighborhood evidence runnable for comparison and use
-  `lagrangian-boundary/` and `cut-and-ascent/` as non-default regression checks.
+  `empirical/neighborhood-sampling/m10-lagrangian-product/` and
+  `empirical/m11-ascent/` as non-default regression checks.

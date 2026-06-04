@@ -34,7 +34,7 @@
 ## Decisions
 - Keep normalized, joinable dataset normalization (`poly_id` + `state_id`) as the stable ingestion contract. Avoid one-table redesign that would break provenance and force rewrites.
 - Preserve ordered dual-vertex geometry under `poly_id` and store exact rational payload (`dual_vertices_rational`) with each `poly_id`.
-- Keep HKO-specific packets outside the principal hostile-landscape surface and treat `hko-local-maximum/cut-and-ascent/cut-and-ascent.jsonl` as optional control.
+- Keep HKO-specific packets outside the principal hostile-landscape surface and treat `hko-local-maximum/empirical/m11-ascent/cut-and-ascent.jsonl` as optional control.
 - Use experiment-specific seed streams consistently in `gradient-ascent-*`, including `--fresh`, per-seed RNG streams, and `--no-db-update` under parallel execution.
 - Do not run large local reruns (for example `N=1000`) as defaults; scale on LICCA with wall-time overrides.
 - Carry LICCA tripwire (`#SBATCH --time=00:00:01`) as hard guardrail and require CLI `--time` for production.

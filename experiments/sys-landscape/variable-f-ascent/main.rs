@@ -490,7 +490,7 @@ fn full_ascent_limited(
 /// This creates an (F+1)-facet polytope that is close to the original:
 /// the new halfspace ⟨n,x⟩ ≤ h_K(n) - ε shaves a thin sliver.
 ///
-/// Pattern from facet-splitting/main.rs.
+/// Pattern from HKO neighborhood-sampling m11 sampler.
 // TODO: add [lem:facet-addition] to formal math (dual vertex ↔ halfspace correspondence)
 fn add_facet(
     polytope: &SysLandscapePolytopeCache,
