@@ -1,6 +1,6 @@
 #!/usr/bin/env sage -python
 """
-Assert-only verifier for the HKO feasible-section certificate witness.
+Exception-based verifier for the HKO feasible-section certificate witness.
 
 This script does not solve for witness values. It reconstructs the HKO source
 objects from definitions, reloads the witness, and checks the equations needed
@@ -12,12 +12,17 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from sage.all import QQ, NumberField, PolynomialRing, matrix, vector, sqrt, RR
+from sage.all import AA, QQ, RIF, NumberField, PolynomialRing, matrix, vector
 
 
 PACKET_DIR = Path(__file__).resolve().parent
 WITNESS_PATH = PACKET_DIR / "feasible-section-witness.json"
 SUMMARY_PATH = PACKET_DIR / "verification-summary.json"
+
+
+def check(condition, message):
+    if not bool(condition):
+        raise ValueError(f"verification failed: {message}")
 
 
 def q_from_json(entry):
@@ -29,6 +34,17 @@ def polynomial_from_desc_coefficients(coefficients_desc):
     x = ring.gen()
     degree = len(coefficients_desc) - 1
     return sum(q_from_json(coeff) * x ** (degree - idx) for idx, coeff in enumerate(coefficients_desc))
+
+
+def number_field_from_witness(field_desc):
+    polynomial = polynomial_from_desc_coefficients(field_desc["minimal_polynomial_coefficients_desc"])
+    check(field_desc["generator_name"] == "t", "expected field generator name t")
+    check(field_desc["degree"] == 4, "expected degree-four HKO field")
+    return NumberField(
+        polynomial,
+        field_desc["generator_name"],
+        embedding=AA.polynomial_root(polynomial, RIF(0, 1)),
+    )
 
 
 def field_element_from_coeff_vector(K, coeffs):
@@ -181,10 +197,10 @@ def d_q_row(K, duals, sigma, beta, d_beta):
     return vector(K, row)
 
 
-def assert_partial_permutation(sigma, facet_count):
-    assert all(isinstance(facet, int) for facet in sigma)
-    assert all(0 <= facet < facet_count for facet in sigma)
-    assert len(set(sigma)) == len(sigma)
+def check_partial_permutation(sigma, facet_count):
+    check(all(isinstance(facet, int) for facet in sigma), "sigma entries must be integers")
+    check(all(0 <= facet < facet_count for facet in sigma), "sigma entries must be valid facet indices")
+    check(len(set(sigma)) == len(sigma), "sigma must be a partial permutation")
 
 
 def verify_d_beta(K, duals, sigma, beta, d_beta, fixed_indices):
@@ -197,16 +213,32 @@ def verify_d_beta(K, duals, sigma, beta, d_beta, fixed_indices):
         residual = C * d_beta_column
         if facet in sigma:
             residual[coord] += beta[sigma.index(facet)]
-        assert residual == vector(K, [0, 0, 0, 0, 0])
+        check(residual == vector(K, [0, 0, 0, 0, 0]), "D beta must satisfy differentiated feasibility")
     for beta_idx in fixed_indices:
-        assert all(d_beta[beta_idx][flat_idx] == K(0) for flat_idx in range(ambient_dimension))
+        check(
+            all(d_beta[beta_idx][flat_idx] == K(0) for flat_idx in range(ambient_dimension)),
+            "fixed beta coordinates must have zero derivative",
+        )
 
 
 def verify_row(K, duals, volume, volume_row, action_min, q_min, symmetry_columns, row):
     sigma = row["sigma"]
     minor_columns = row["minor_columns"]
     fixed_indices = row["fixed_beta_indices"]
-    assert_partial_permutation(sigma, len(duals))
+    check_partial_permutation(sigma, len(duals))
+    expected_indices = list(range(len(sigma)))
+    check(len(minor_columns) == 5, "selected minor must have five columns")
+    check(sorted(minor_columns) == list(minor_columns), "minor columns must be sorted")
+    check(sorted(fixed_indices) == list(fixed_indices), "fixed beta indices must be sorted")
+    check(
+        sorted(minor_columns + fixed_indices) == expected_indices,
+        "minor columns and fixed beta indices must be complementary",
+    )
+    check(set(minor_columns).isdisjoint(set(fixed_indices)), "minor and fixed beta indices must be disjoint")
+    check(
+        len(row["free_beta_values_power_basis"]) == len(fixed_indices),
+        "free beta witness count must match fixed beta index count",
+    )
 
     beta = vector_from_json(K, row["beta0_power_basis"])
     d_beta = matrix_rows_from_json(K, row["d_beta_power_basis"])
@@ -217,18 +249,18 @@ def verify_row(K, duals, volume, volume_row, action_min, q_min, symmetry_columns
 
     C = constraint_matrix(K, duals, sigma)
     e = vector(K, [0, 0, 0, 0, 1])
-    assert C * beta == e
-    assert all(entry > K(0) for entry in beta)
-    assert C[:, minor_columns].det() != K(0)
-    assert q == q_min
-    assert q_value(duals, sigma, beta) == q
-    assert action == action_min
-    assert action == 1 / (2 * q)
+    check(C * beta == e, "beta must satisfy closure plus normalization")
+    check(all(entry > K(0) for entry in beta), "beta must be strictly positive in the chosen real field embedding")
+    check(C[:, minor_columns].det() != K(0), "selected feasible-section minor must be invertible")
+    check(q == q_min, "row q must equal q_min")
+    check(q_value(duals, sigma, beta) == q, "row q must match the HK2017 quadratic formula")
+    check(action == action_min, "row action must equal the HKO action")
+    check(action == 1 / (2 * q), "row action must equal 1/(2q)")
 
     verify_d_beta(K, duals, sigma, beta, d_beta, fixed_indices)
     recomputed_d_q = d_q_row(K, duals, sigma, beta, d_beta)
     recomputed_d_action = vector(K, [-(entry) / (2 * q**2) for entry in recomputed_d_q])
-    assert d_action == recomputed_d_action
+    check(d_action == recomputed_d_action, "D action row must match differentiated action formula")
     recomputed_d_sys = vector(
         K,
         [
@@ -236,50 +268,89 @@ def verify_row(K, duals, volume, volume_row, action_min, q_min, symmetry_columns
             for idx in range(len(volume_row))
         ],
     )
-    assert d_sys == recomputed_d_sys
+    check(d_sys == recomputed_d_sys, "D sys row must match differentiated systolic-ratio formula")
     for column in symmetry_columns:
-        assert d_sys.dot_product(column) == K(0)
+        check(d_sys.dot_product(column) == K(0), "D sys row must annihilate each symmetry tangent column")
     return d_sys
 
 
 def main():
     witness = json.loads(WITNESS_PATH.read_text())
-    polynomial = polynomial_from_desc_coefficients(witness["field"]["minimal_polynomial_coefficients_desc"])
-    K = NumberField(polynomial, witness["field"]["generator_name"])
+    check(witness["packet"] == "hko-feasible-section-certificate", "unexpected packet id")
+    check(witness["witness_version"] == 1, "unexpected witness version")
+    check(witness["source_candidate_path"] == "candidate-certificate.json", "unexpected source candidate path")
+
+    K = number_field_from_witness(witness["field"])
     t = K.gen()
+    check(t > 0, "field generator t must be positive")
+    check(t < 1, "field generator t must be the root in (0,1)")
     sqrt5, duals = exact_hko_geometry(K)
+    check(sqrt5 > K(0), "sqrt5 expression must be positive in the chosen real field embedding")
     volume, volume_row = volume_data(K, sqrt5, duals)
     action_min = 5 * t - t**3 / 2
     q_min = 1 / (2 * action_min)
+    cos36 = 1 / (sqrt5 - 1)
+    cos18 = (11 * t - t**3) / 8
+    hko2024_capacity_formula = 2 * cos18 * (1 + cos36)
+    check(cos18 > K(0), "cos(pi/10) expression must be positive")
+    check(cos36 > K(0), "cos(pi/5) expression must be positive")
+    check(action_min == hko2024_capacity_formula, "action_min must match HKO2024 Proposition counterexample_prop")
+    check(action_min > K(0), "action_min must be positive")
+    check(q_min > K(0), "q_min must be positive")
+    check(volume > K(0), "volume must be positive")
     labels, symmetry_columns, sp4_checks = symmetry_basis(K, duals)
     symmetry_matrix = matrix(K, [list(column) for column in symmetry_columns]).transpose()
 
     witness_duals = matrix_rows_from_json(K, witness["geometry"]["dual_vertices_power_basis"])
-    assert witness_duals == duals
-    assert field_element_from_coeff_vector(K, witness["constants"]["q_min_power_basis"]) == q_min
-    assert field_element_from_coeff_vector(K, witness["constants"]["action_min_power_basis"]) == action_min
-    assert field_element_from_coeff_vector(K, witness["constants"]["volume_power_basis"]) == volume
-    assert vector_from_json(K, witness["constants"]["volume_derivative_flat_power_basis"]) == volume_row
-    assert witness["symmetry"]["labels"] == labels
-    assert matrix_rows_from_json(K, witness["symmetry"]["columns_power_basis"]) == symmetry_columns
-    assert symmetry_matrix.rank() == 15
-    assert witness["symmetry"]["rank"] == 15
-    assert all(passed for _label, passed in sp4_checks)
-    assert all(entry["is_sp4"] for entry in witness["symmetry"]["generator_sp4_checks"])
+    check(witness["geometry"]["facet_order"] == list(range(len(duals))), "unexpected facet order")
+    check(witness_duals == duals, "witness dual vertices must match reconstructed HKO geometry")
+    check(field_element_from_coeff_vector(K, witness["constants"]["q_min_power_basis"]) == q_min, "q_min witness must match formula")
+    check(
+        field_element_from_coeff_vector(K, witness["constants"]["action_min_power_basis"]) == action_min,
+        "action_min witness must match formula",
+    )
+    check(
+        field_element_from_coeff_vector(K, witness["constants"]["volume_power_basis"]) == volume,
+        "volume witness must match formula",
+    )
+    check(
+        vector_from_json(K, witness["constants"]["volume_derivative_flat_power_basis"]) == volume_row,
+        "volume derivative witness must match formula",
+    )
+    check(witness["symmetry"]["labels"] == labels, "symmetry labels must match reconstructed generators")
+    check(
+        matrix_rows_from_json(K, witness["symmetry"]["columns_power_basis"]) == symmetry_columns,
+        "symmetry columns must match reconstructed generators",
+    )
+    check(symmetry_matrix.rank() == 15, "symmetry tangent matrix must have rank 15")
+    check(witness["symmetry"]["rank"] == 15, "witness symmetry rank must be 15")
+    check(all(passed for _label, passed in sp4_checks), "reconstructed sp4 generators must pass the sp4 test")
+    check(
+        all(entry["is_sp4"] for entry in witness["symmetry"]["generator_sp4_checks"]),
+        "witness sp4 generator checks must all pass",
+    )
+    check(len(witness["rows"]) == 26, "witness must contain 26 selected rows")
+    check(
+        [row["certificate_index"] for row in witness["rows"]] == list(range(len(witness["rows"]))),
+        "certificate indices must be consecutive",
+    )
 
     verified_rows = [
         verify_row(K, duals, volume, volume_row, action_min, q_min, symmetry_columns, row)
         for row in witness["rows"]
     ]
     row_matrix = matrix(K, [list(row) for row in verified_rows])
-    assert row_matrix.rank() == 25
+    check(row_matrix.rank() == 25, "verified rows must have rank 25")
 
     lambdas = vector_from_json(K, witness["convex_certificate"]["lambda_power_basis"])
-    assert len(lambdas) == len(verified_rows)
-    assert all(entry > K(0) for entry in lambdas)
-    assert sum(lambdas, K(0)) == K(1)
-    assert lambdas * row_matrix == vector(K, [0 for _ in range(row_matrix.ncols())])
-    assert witness["convex_certificate"]["rank"] == 25
+    check(len(lambdas) == len(verified_rows), "lambda count must match verified row count")
+    check(all(entry > K(0) for entry in lambdas), "convex coefficients must be strictly positive")
+    check(sum(lambdas, K(0)) == K(1), "convex coefficients must sum to 1")
+    check(
+        lambdas * row_matrix == vector(K, [0 for _ in range(row_matrix.ncols())]),
+        "convex coefficients must combine rows to zero",
+    )
+    check(witness["convex_certificate"]["rank"] == 25, "convex certificate rank field must be 25")
 
     summary = {
         "packet": "hko-feasible-section-certificate",
@@ -290,10 +361,13 @@ def main():
         "symmetry_rank": int(symmetry_matrix.rank()),
         "lambda_count": len(lambdas),
         "checks": [
+            "ordered number field pinned to the root t in (0,1)",
             "hko geometry reconstructed from definition",
+            "action_min matched HKO2024 Proposition counterexample_prop in the exact field",
             "volume and volume derivative matched source formulas",
             "symmetry tangent generators reconstructed and rank checked",
             "each beta is positive and satisfies closure plus normalization",
+            "each minor-column set is complementary to the fixed beta index set",
             "each selected minor is invertible",
             "each action equals the HKO action",
             "each D beta satisfies the feasible-section derivative equation",

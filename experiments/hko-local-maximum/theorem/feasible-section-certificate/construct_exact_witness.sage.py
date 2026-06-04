@@ -13,7 +13,7 @@ import json
 from fractions import Fraction
 from pathlib import Path
 
-from sage.all import QQ, NumberField, PolynomialRing, matrix, vector, sqrt, RR
+from sage.all import AA, QQ, RIF, NumberField, PolynomialRing, matrix, vector, sqrt, RR
 
 
 PACKET_DIR = Path(__file__).resolve().parent
@@ -43,7 +43,8 @@ def matrix_rows_json(rows, degree):
 def exact_hko_geometry():
     ring = PolynomialRing(QQ, "x")
     x = ring.gen()
-    K = NumberField(x**4 - 10 * x**2 + 5, "t")
+    polynomial = x**4 - 10 * x**2 + 5
+    K = NumberField(polynomial, "t", embedding=AA.polynomial_root(polynomial, RIF(0, 1)))
     t = K.gen()
     degree = K.degree()
     sqrt5 = (QQ(5) - t**2) / 2

@@ -33,7 +33,7 @@ finished enough to move into polished thesis prose.
 
 The intended theorem is:
 
-1. Work in the ten-row dual-vertex chart `a in R^40` for HKO2024.
+1. Work in the ten-facet dual-vertex chart `a in R^40` for HKO2024.
 2. Quotient by the natural `sys` symmetries:
    translations, scaling, and the identity component of `Sp(4)`.
 3. At the HKO point `a0`, the symmetry tangent space has dimension `15`.
@@ -41,7 +41,7 @@ The intended theorem is:
 5. Prove that every nonzero slice direction has strictly negative first-order
    upper slope for `sys`.
 6. Conclude that HKO is a strict local maximum on the quotient, inside the
-   ten-row model.
+   ten-facet model.
 
 This is the theorem target only if the exact certificate closes. Current repo
 claim status still treats broad HKO local maximality as conjectural; see
@@ -370,7 +370,7 @@ The proof then only needs to show:
 Sage decision problem true
 => selected branches give a one-sided decreasing upper branch in every
    nonzero quotient direction
-=> HKO is locally maximal in the ten-row quotient model.
+=> HKO is locally maximal in the ten-facet quotient model.
 ```
 
 No equivalence theorem and no complete branch enumeration are needed for this

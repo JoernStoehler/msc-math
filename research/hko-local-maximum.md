@@ -40,7 +40,7 @@ It combines the former topic note set while keeping experiment artifacts under
   - The older representative-expansion route remains partial.
   - The current route is the selected feasible-section upper-branch
     certificate. Rust exports a 26-row candidate; Sage constructs exact witness
-    values; the assert-only Sage verifier checks the exact finite decision
+    values; the exception-based Sage verifier checks the exact finite decision
     problem.
   - Current exact verifier status: 26 rows, exact row rank `25`, exact symmetry
     tangent rank `15`, positive exact lambdas summing to `1`, and exact

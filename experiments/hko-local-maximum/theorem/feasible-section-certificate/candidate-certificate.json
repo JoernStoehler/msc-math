@@ -1,4 +1,5 @@
 {
+  "candidate_role": "standalone finite row choices for exact Sage witness construction; diagnostic provenance is debug context only",
   "candidate_version": 1,
   "certificate_goal": {
     "ambient_dimension": 40,
@@ -7,6 +8,8 @@
     "selected_row_count": 26,
     "symmetry_dimension": 15
   },
+  "debug_source_diagnostic_path": "experiments/hko-local-maximum/theorem/active-branch-diagnostic/smoke-active-branch-diagnostic.json",
+  "debug_source_diagnostic_version": 2,
   "output_mode": "canonical",
   "packet": "hko-feasible-section-certificate",
   "rows": [
@@ -2154,53 +2157,5 @@
       "source_feasible_section_row_index": 67,
       "source_kkt_singular_f64": true
     }
-  ],
-  "source_diagnostic_path": "experiments/hko-local-maximum/theorem/active-branch-diagnostic/smoke-active-branch-diagnostic.json",
-  "source_diagnostic_version": 2,
-  "source_summary": {
-    "feasible_section_candidate_count": 150,
-    "feasible_section_convex_hull_zero": {
-      "dimension": 25,
-      "feasible": true,
-      "lambda_max": 0.028089152016679244,
-      "lambda_min": 0.0028573509640838378,
-      "max_abs_residual": 1.8161725168479997e-9,
-      "positive_lambda_count": 150,
-      "positive_lambda_projected_rank": 25,
-      "row_count": 150,
-      "solver_message": "LP solver found a numerical convex-hull witness"
-    },
-    "feasible_section_projected_rank": {
-      "column_count": 25,
-      "rank": 25,
-      "row_count": 150,
-      "singular_values": [
-        36.53656871090233,
-        21.851385298714863,
-        16.807422920519095,
-        13.37789204679216,
-        9.864143397895498,
-        6.64729227978571,
-        5.910555104760311,
-        4.027679174673884,
-        3.929093954518706,
-        3.6804350501939855,
-        3.4870923335727095,
-        3.106912628279812,
-        2.861462834352505,
-        2.513005102454794,
-        2.431784429567434,
-        2.1634485291199748,
-        1.8204988975391663,
-        1.716225497472141,
-        1.5953210143567267,
-        1.1804574206054979,
-        0.9576510277765816,
-        0.6011147627483654,
-        0.48952307982042986,
-        0.20048843860141066,
-        0.17627535051392398
-      ]
-    }
-  }
+  ]
 }

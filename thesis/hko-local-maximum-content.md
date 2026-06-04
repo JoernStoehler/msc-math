@@ -116,7 +116,7 @@ Status:
 - Target theorem wording is local maximality on `M_10` modulo translations,
   scaling, and linear symplectic maps.
 - Current repo classification: broad HKO local maximality remains conjectural;
-  the ten-row feasible-section certificate now verifies exactly in Sage.
+  the ten-facet feasible-section certificate now verifies exactly in Sage.
 
 Source pointers:
 - `research/hko-local-maximum-status.md`, sections "Current Repo Claim" and

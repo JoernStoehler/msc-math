@@ -49,7 +49,7 @@ Jörn reviewed the high-level Packet 1 questions in chat.
 
 Accepted:
 
-1. The theorem target is the ten-row quotient-local maximum statement below.
+1. The theorem target is the ten-facet quotient-local maximum statement below.
    Jörn believes this is true, is the best theorem-strength target available,
    and is plausibly provable with current or nearby methodology.
 2. The selected-branch upper-bound proof tree is the intended strategy. The
@@ -75,7 +75,7 @@ This is Packet 1 in the current HKO ordering.
    theorem-valid feasible upper-branch witnesses. Implemented by
    `experiments/hko-local-maximum/theorem/feasible-section-certificate/`.
 3. Sage construction and verification packet: implemented by the constructor
-   and assert-only verifier in the feasible-section certificate folder.
+   and exception-based verifier in the feasible-section certificate folder.
 4. Thesis-writing companion packet: after the theorem outcome is known, update
    `thesis/hko-local-maximum-content.md` so Jörn can write from it.
 
@@ -88,7 +88,7 @@ the final thesis companion refresh.
 Conditional target, if the exact certificate closes:
 
 ```text
-At the HKO2024 point in the ten-row dual-vertex chart, the systolic ratio is
+At the HKO2024 point in the ten-facet dual-vertex chart, the systolic ratio is
 locally maximal modulo translations, scaling, and linear symplectic maps.
 ```
 
@@ -103,12 +103,12 @@ More explicitly:
 4. Choose an exact `25`-dimensional slice transverse to `T_sym`.
 5. Prove that every nonzero slice direction has a selected branch upper bound
    whose first-order change in `sys` is strictly negative.
-6. Conclude local maximality on the quotient in the ten-row model.
+6. Conclude local maximality on the quotient in the ten-facet model.
 
 Non-targets:
 
 1. Do not claim raw strict local maximality in ambient `R^40`.
-2. Do not claim broad HKO local maximality beyond the ten-row theorem target.
+2. Do not claim broad HKO local maximality beyond the ten-facet theorem target.
 3. Do not prove a complete first-order evaluator for every nearby polytope
    unless the selected-branch route fails and the heavy fallback is chosen.
 4. Do not require a complete catalogue of all HK branches if the selected
@@ -319,7 +319,7 @@ Then:
 sys(a) <= U_sigma(a) := A_sigma(a)^2 / (2 Vol(a))
 ```
 
-near `a0` in the same ten-row chart, and `U_sigma(a0)=sys(a0)`.
+near `a0` in the same ten-facet chart, and `U_sigma(a0)=sys(a0)`.
 
 This lemma is deliberately not a KKT lemma. It only uses feasible HK2017 data
 to build an upper branch for `sys`.
@@ -395,7 +395,7 @@ sys(a0+t h) <= min_sigma U_sigma(a0+t h) < sys(a0)
 
 for every unit slice direction `h`. This gives strict local maximality on the
 slice. The separate symmetry argument transfers this to the quotient-local
-statement in the ten-row chart.
+statement in the ten-facet chart.
 
 ### Current Computational Status
 
@@ -525,7 +525,7 @@ Implemented shape:
 
 If the formal implication is accepted:
 
-1. State theorem-strength local maximality in the ten-row quotient model.
+1. State theorem-strength local maximality in the ten-facet quotient model.
 2. Use Sage as the trusted verifier.
 3. Use Rust as a generator only.
 4. Move final proof structure into the HKO thesis-writing companion.
@@ -561,7 +561,7 @@ The next Jörn review should focus on these points, in order.
    and inequality direction?
 3. Is the cone-to-local-maximum lemma the right local implication from the
    finite row certificate?
-4. Is the theorem target exactly the intended ten-row quotient statement?
+4. Is the theorem target exactly the intended ten-facet quotient statement?
 5. Is the selected-branch upper-bound proof tree sufficient in principle, so
    that we do not need branch completeness if the selected rows cover the
    quotient slice?
