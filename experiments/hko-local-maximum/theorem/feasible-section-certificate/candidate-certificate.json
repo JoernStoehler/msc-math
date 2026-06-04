@@ -10,6 +10,7 @@
   },
   "debug_source_diagnostic_path": "experiments/hko-local-maximum/theorem/active-branch-diagnostic/smoke-active-branch-diagnostic.json",
   "debug_source_diagnostic_version": 2,
+  "debug_source_input_was_explicit": true,
   "output_mode": "canonical",
   "packet": "hko-feasible-section-certificate",
   "rows": [

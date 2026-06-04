@@ -38,7 +38,7 @@ implication, not the Rust search method.
 
 | File | Role |
 | --- | --- |
-| `main.rs` | Rust exporter for a 26-row candidate selected from the active-branch diagnostic; it checks the selected source rows against hard-coded sigma/minor identities before writing. |
+| `main.rs` | Rust exporter for a 26-row candidate selected from the active-branch diagnostic; it checks the selected source rows against hard-coded sigma, minor, fixed-index, and fixed-hint identities before writing. |
 | `candidate-certificate.json` | Tracked candidate choices from Rust. Not proof-facing by itself. |
 | `construct_exact_witness.sage.py` | Exact witness constructor. It may solve exact systems. |
 | `feasible-section-witness.json` | Exact witness values consumed by the verifier. |
@@ -56,8 +56,11 @@ cargo run -p exp-hko-local-maximum --release --bin hko-active-branch-diagnostic
 Refresh the tracked candidate:
 
 ```bash
-cargo run -p exp-hko-local-maximum --release --bin hko-feasible-section-certificate -- --canonical
+cargo run -p exp-hko-local-maximum --release --bin hko-feasible-section-certificate -- --canonical --input experiments/hko-local-maximum/theorem/active-branch-diagnostic/smoke-active-branch-diagnostic.json
 ```
+
+`--canonical` deliberately requires `--input`, because the diagnostic source is
+ignored local data and should not be hidden in the default command.
 
 Construct the exact witness:
 

@@ -181,6 +181,7 @@ const SELECTED_ROWS: &[SelectedRow] = &[
 #[derive(Clone, Debug)]
 struct Options {
     input_path: PathBuf,
+    input_was_explicit: bool,
     output_path: PathBuf,
     output_mode: &'static str,
 }
@@ -191,8 +192,8 @@ fn print_usage() {
 
 Optional flags:
   --help, -h          Show this help message and exit.
-  --smoke             Write smoke-candidate-certificate.json. This is the default.
-  --canonical         Refresh candidate-certificate.json.
+  --smoke             Write smoke-candidate-certificate.json. This is the default and may use the default smoke input.
+  --canonical         Refresh candidate-certificate.json. Requires an explicit --input.
   --input <PATH>      Source active-branch diagnostic JSON."#
     );
 }
@@ -201,8 +202,9 @@ impl Options {
     fn parse() -> Self {
         let package_root = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
         let packet_dir = package_root.join("theorem/feasible-section-certificate");
-        let mut input_path = package_root
+        let default_input_path = package_root
             .join("theorem/active-branch-diagnostic/smoke-active-branch-diagnostic.json");
+        let mut input_path = None;
         let mut output_path = packet_dir.join("smoke-candidate-certificate.json");
         let mut output_mode = "smoke";
 
@@ -225,14 +227,21 @@ impl Options {
                     let Some(path) = args.next() else {
                         panic!("--input requires a path");
                     };
-                    input_path = PathBuf::from(path);
+                    input_path = Some(PathBuf::from(path));
                 }
                 other => panic!("unsupported argument: {other}"),
             }
         }
 
+        if output_mode == "canonical" && input_path.is_none() {
+            panic!("--canonical requires an explicit --input path");
+        }
+        let input_was_explicit = input_path.is_some();
+        let input_path = input_path.unwrap_or(default_input_path);
+
         Self {
             input_path,
+            input_was_explicit,
             output_path,
             output_mode,
         }
@@ -280,6 +289,72 @@ fn required_usize_vec(value: &Value, key: &str) -> Vec<usize> {
         .collect()
 }
 
+fn required_f64_vec(value: &Value, key: &str) -> Vec<f64> {
+    required(value, key)
+        .as_array()
+        .unwrap_or_else(|| panic!("diagnostic key `{key}` must be an array"))
+        .iter()
+        .map(|entry| {
+            entry
+                .as_f64()
+                .unwrap_or_else(|| panic!("diagnostic key `{key}` must contain numbers"))
+        })
+        .collect()
+}
+
+fn complement_indices(len: usize, selected: &[usize]) -> Vec<usize> {
+    (0..len).filter(|idx| !selected.contains(idx)).collect()
+}
+
+fn expected_fixed_beta_values(source_index: usize) -> &'static [f64] {
+    match source_index {
+        0 => &[0.13819660112489568],
+        2 => &[0.22360679774997907],
+        8 => &[0.06909830056250513, 0.22360679774997885],
+        11 => &[0.22360679774997871],
+        17 => &[0.22360679774997894],
+        18 => &[0.13819660112501053],
+        21 => &[0.180901699437495, 0.13819660112501064],
+        25 => &[0.0690983005625053, 0.18090169943749473],
+        29 => &[0.06909830056250515, 0.18090169943749462],
+        30 => &[0.1809016994374947, 0.223606797749979],
+        32 => &[0.18090169943749512, 0.22360679774997916],
+        34 => &[0.18090169943749473, 0.13819660112501053],
+        36 => &[0.1381966011250107],
+        37 => &[0.1381966011250105],
+        40 => &[0.1381966011250105],
+        43 => &[0.2236067977499791],
+        46 => &[0.13819660112501053],
+        48 => &[0.18090169943749507, 0.22360679774997883],
+        54 => &[0.06909830056250547, 0.22360679774997916],
+        55 => &[0.13819660112501048, 0.06909830056250552],
+        57 => &[0.1381966011250106, 0.14926352961534042],
+        58 => &[0.22360679774997896, 0.1809016994374947],
+        62 => &[0.18090169943749482, 0.13819660112501087],
+        63 => &[0.13819660112501067, 0.06909830056250518],
+        66 => &[0.1809016994374948, 0.1381966011250105],
+        67 => &[0.22360679774997913, 0.12028993467659169],
+        other => panic!("no expected fixed beta values for selected source index {other}"),
+    }
+}
+
+fn check_f64_slice_close(source_index: usize, label: &str, actual: &[f64], expected: &[f64]) {
+    if actual.len() != expected.len() {
+        panic!(
+            "selected source index {source_index} has {label} length {}, expected {}",
+            actual.len(),
+            expected.len()
+        );
+    }
+    for (idx, (&actual, &expected)) in actual.iter().zip(expected.iter()).enumerate() {
+        if (actual - expected).abs() > 1.0e-12 {
+            panic!(
+                "selected source index {source_index} has {label}[{idx}] {actual}, expected {expected}"
+            );
+        }
+    }
+}
+
 fn selected_candidate_rows(diagnostic: &Value) -> Vec<Value> {
     let rows = diagnostic["feasible_section_rows"]
         .as_array()
@@ -298,6 +373,8 @@ fn selected_candidate_rows(diagnostic: &Value) -> Vec<Value> {
             });
             let actual_sigma = required_usize_vec(row, "sigma");
             let actual_minor_columns = required_usize_vec(row, "minor_columns_exact");
+            let actual_fixed_indices = required_usize_vec(row, "fixed_beta_indices");
+            let actual_fixed_beta_values = required_f64_vec(row, "fixed_beta_values_f64");
             if actual_sigma.as_slice() != selected.sigma {
                 panic!(
                     "selected source index {} has sigma {:?}, expected {:?}",
@@ -310,6 +387,20 @@ fn selected_candidate_rows(diagnostic: &Value) -> Vec<Value> {
                     selected.source_index, actual_minor_columns, selected.minor_columns
                 );
             }
+            let expected_fixed_indices =
+                complement_indices(actual_sigma.len(), selected.minor_columns);
+            if actual_fixed_indices != expected_fixed_indices {
+                panic!(
+                    "selected source index {} has fixed beta indices {:?}, expected {:?}",
+                    selected.source_index, actual_fixed_indices, expected_fixed_indices
+                );
+            }
+            check_f64_slice_close(
+                selected.source_index,
+                "fixed_beta_values_f64",
+                &actual_fixed_beta_values,
+                expected_fixed_beta_values(selected.source_index),
+            );
             json!({
                 "certificate_index": certificate_index,
                 "source_feasible_section_row_index": selected.source_index,
@@ -356,6 +447,7 @@ fn main() {
         "candidate_role": "standalone finite row choices for exact Sage witness construction; diagnostic provenance is debug context only",
         "debug_source_diagnostic_path": path_for_json(&options.input_path),
         "debug_source_diagnostic_version": diagnostic["diagnostic_version"],
+        "debug_source_input_was_explicit": options.input_was_explicit,
         "certificate_goal": {
             "selected_row_count": candidate_rows.len(),
             "ambient_dimension": 40,

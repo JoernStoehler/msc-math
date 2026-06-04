@@ -38,6 +38,8 @@ def polynomial_from_desc_coefficients(coefficients_desc):
 
 def number_field_from_witness(field_desc):
     polynomial = polynomial_from_desc_coefficients(field_desc["minimal_polynomial_coefficients_desc"])
+    x = polynomial.parent().gen()
+    check(polynomial == x**4 - 10 * x**2 + 5, "field polynomial must be t^4 - 10 t^2 + 5")
     check(field_desc["generator_name"] == "t", "expected field generator name t")
     check(field_desc["degree"] == 4, "expected degree-four HKO field")
     return NumberField(
@@ -241,6 +243,7 @@ def verify_row(K, duals, volume, volume_row, action_min, q_min, symmetry_columns
     )
 
     beta = vector_from_json(K, row["beta0_power_basis"])
+    free_beta_values = vector_from_json(K, row["free_beta_values_power_basis"])
     d_beta = matrix_rows_from_json(K, row["d_beta_power_basis"])
     q = field_element_from_coeff_vector(K, row["q_power_basis"])
     action = field_element_from_coeff_vector(K, row["action_power_basis"])
@@ -251,6 +254,10 @@ def verify_row(K, duals, volume, volume_row, action_min, q_min, symmetry_columns
     e = vector(K, [0, 0, 0, 0, 1])
     check(C * beta == e, "beta must satisfy closure plus normalization")
     check(all(entry > K(0) for entry in beta), "beta must be strictly positive in the chosen real field embedding")
+    check(
+        all(free_beta_values[idx] == beta[fixed_indices[idx]] for idx in range(len(fixed_indices))),
+        "stored free beta values must match beta at the fixed beta indices",
+    )
     check(C[:, minor_columns].det() != K(0), "selected feasible-section minor must be invertible")
     check(q == q_min, "row q must equal q_min")
     check(q_value(duals, sigma, beta) == q, "row q must match the HK2017 quadratic formula")
@@ -324,10 +331,11 @@ def main():
     )
     check(symmetry_matrix.rank() == 15, "symmetry tangent matrix must have rank 15")
     check(witness["symmetry"]["rank"] == 15, "witness symmetry rank must be 15")
+    expected_sp4_checks = [{"label": label, "is_sp4": bool(passed)} for label, passed in sp4_checks]
     check(all(passed for _label, passed in sp4_checks), "reconstructed sp4 generators must pass the sp4 test")
     check(
-        all(entry["is_sp4"] for entry in witness["symmetry"]["generator_sp4_checks"]),
-        "witness sp4 generator checks must all pass",
+        witness["symmetry"]["generator_sp4_checks"] == expected_sp4_checks,
+        "witness sp4 generator checks must match reconstructed labels and results",
     )
     check(len(witness["rows"]) == 26, "witness must contain 26 selected rows")
     check(
@@ -361,12 +369,13 @@ def main():
         "symmetry_rank": int(symmetry_matrix.rank()),
         "lambda_count": len(lambdas),
         "checks": [
-            "ordered number field pinned to the root t in (0,1)",
+            "ordered number field pinned to the root t in (0,1) of t^4 - 10 t^2 + 5",
             "hko geometry reconstructed from definition",
             "action_min matched HKO2024 Proposition counterexample_prop in the exact field",
             "volume and volume derivative matched source formulas",
             "symmetry tangent generators reconstructed and rank checked",
             "each beta is positive and satisfies closure plus normalization",
+            "stored free beta values match beta at the fixed beta indices",
             "each minor-column set is complementary to the fixed beta index set",
             "each selected minor is invertible",
             "each action equals the HKO action",

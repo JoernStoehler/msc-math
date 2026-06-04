@@ -1,12 +1,13 @@
 {
   "ambient_dimension": 40,
   "checks": [
-    "ordered number field pinned to the root t in (0,1)",
+    "ordered number field pinned to the root t in (0,1) of t^4 - 10 t^2 + 5",
     "hko geometry reconstructed from definition",
     "action_min matched HKO2024 Proposition counterexample_prop in the exact field",
     "volume and volume derivative matched source formulas",
     "symmetry tangent generators reconstructed and rank checked",
     "each beta is positive and satisfies closure plus normalization",
+    "stored free beta values match beta at the fixed beta indices",
     "each minor-column set is complementary to the fixed beta index set",
     "each selected minor is invertible",
     "each action equals the HKO action",
