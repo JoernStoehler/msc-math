@@ -138,8 +138,8 @@ conservative wave under `licca-shards/general/` and `licca-shards/product/`.
 After shard review, consolidate on LICCA or locally with:
 
 ```bash
-uv run --script experiments/sys-landscape/datascience/produce/merge-licca-ascent-shards.py
-uv run --script experiments/sys-landscape/datascience/produce/merge-licca-ascent-shards.py --write
+python3 experiments/sys-landscape/datascience/produce/merge-licca-ascent-shards.py
+python3 experiments/sys-landscape/datascience/produce/merge-licca-ascent-shards.py --write
 ```
 
 The `--write` form creates:

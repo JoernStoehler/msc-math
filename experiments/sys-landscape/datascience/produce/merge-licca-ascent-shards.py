@@ -75,6 +75,14 @@ def collect_paths(produce_dir: Path, canonical_name: str, shard_globs: list[str]
     return [path for path in paths if path.exists()]
 
 
+def reject_trace_paths(paths: list[Path]) -> list[Path]:
+    return [path for path in paths if not path.name.endswith("-trace.jsonl")]
+
+
+def keep_trace_paths(paths: list[Path]) -> list[Path]:
+    return [path for path in paths if path.name.endswith("-trace.jsonl")]
+
+
 def dedup_rows(
     paths: list[Path],
     key_field: str,
@@ -148,38 +156,38 @@ def main() -> None:
     args = parse_args()
     produce_dir = args.produce_dir
 
-    general_paths = collect_paths(
+    general_paths = reject_trace_paths(collect_paths(
         produce_dir,
         "ascent.jsonl",
         [
             "licca-shards/general/general-shard-*.jsonl",
             "licca-shards/general-production-1024/general-shard-*.jsonl",
         ],
-    )
-    general_trace_paths = collect_paths(
+    ))
+    general_trace_paths = keep_trace_paths(collect_paths(
         produce_dir,
         "ascent-trace.jsonl",
         [
             "licca-shards/general/general-shard-*-trace.jsonl",
             "licca-shards/general-production-1024/general-shard-*-trace.jsonl",
         ],
-    )
-    product_paths = collect_paths(
+    ))
+    product_paths = reject_trace_paths(collect_paths(
         produce_dir,
         "ascent-product.jsonl",
         [
             "licca-shards/product/product-shard-*.jsonl",
             "licca-shards/product-production-1024/product-shard-*.jsonl",
         ],
-    )
-    product_trace_paths = collect_paths(
+    ))
+    product_trace_paths = keep_trace_paths(collect_paths(
         produce_dir,
         "ascent-product-trace.jsonl",
         [
             "licca-shards/product/product-shard-*-trace.jsonl",
             "licca-shards/product-production-1024/product-shard-*-trace.jsonl",
         ],
-    )
+    ))
 
     general_rows, _ = dedup_rows(general_paths, "summary", row_key)
     general_trace_rows, _ = dedup_rows(general_trace_paths, "trace", trace_key)
