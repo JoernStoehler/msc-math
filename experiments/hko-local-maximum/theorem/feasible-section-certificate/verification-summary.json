@@ -1,0 +1,22 @@
+{
+  "ambient_dimension": 40,
+  "checks": [
+    "hko geometry reconstructed from definition",
+    "volume and volume derivative matched source formulas",
+    "symmetry tangent generators reconstructed and rank checked",
+    "each beta is positive and satisfies closure plus normalization",
+    "each selected minor is invertible",
+    "each action equals the HKO action",
+    "each D beta satisfies the feasible-section derivative equation",
+    "each D action and D sys row matches the formula",
+    "each D sys row annihilates the symmetry tangent space",
+    "selected rows have exact rank 25",
+    "positive lambdas sum to 1 and combine rows to 0"
+  ],
+  "lambda_count": 26,
+  "packet": "hko-feasible-section-certificate",
+  "row_count": 26,
+  "row_rank": 25,
+  "symmetry_rank": 15,
+  "verified": true
+}

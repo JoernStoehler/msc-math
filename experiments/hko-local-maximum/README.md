@@ -24,6 +24,7 @@ experiments/hko-local-maximum/
 |-- theorem/
 |   |-- exact-witness/
 |   |-- active-branch-diagnostic/
+|   |-- feasible-section-certificate/
 |   `-- row-bank-validation/
 |-- empirical/
 |   |-- first-order/
@@ -71,7 +72,11 @@ migration. Git history is the archive for that broken `(n,h)` Phase C attempt;
   and exact closure/normalization minor check for the current feasible-section
   route. The `feasible_section_rows` block computes the f64 derivative rows of
   the resulting explicit feasible beta sections and reruns the slice/cone
-  checks; theorem use still requires exact Sage verification.
+  checks.
+- `hko-feasible-section-certificate --canonical` writes
+  `theorem/feasible-section-certificate/candidate-certificate.json` from the
+  active-branch diagnostic. The Sage constructor/verifier in that folder then
+  produces and checks the exact 26-row feasible-section certificate.
 
 ## Fast Reading Order
 

@@ -10,6 +10,7 @@ searches.
 | --- | --- |
 | `exact-witness/` | Exact witness-building scripts and JSON artifacts for the current exact proof route. |
 | `active-branch-diagnostic/` | Rust diagnostic for active rows, KKT singularity, feasible-section derivative rows, symmetry tangent directions, and numerical slice/cone checks. |
+| `feasible-section-certificate/` | Current theorem-facing feasible-section certificate. Rust exports candidate choices; Sage constructs and verifies exact witness propositions. |
 | `row-bank-validation/` | Sage-backed validation surface for selected exact row-bank entries. This is not the final theorem verifier by itself. |
 
 ## Reading Order
@@ -19,4 +20,5 @@ searches.
 3. `research/hko-local-maximum-proof-route-note.md`
 4. `exact-witness/README.md`
 5. `active-branch-diagnostic/`
-6. `row-bank-validation/`
+6. `feasible-section-certificate/`
+7. `row-bank-validation/`

@@ -1,8 +1,9 @@
 # HKO Local Maximum Proof-Control Packet
 
-Status: Packet 1 control artifact for the HKO local-maximum proof route. This
-is not a theorem proof, not a Sage certificate, and not the final thesis-writing
-companion.
+Status: Packet 1 control artifact for the HKO local-maximum proof route. The
+main open question from this packet has now been implemented by the exact
+feasible-section certificate in
+`experiments/hko-local-maximum/theorem/feasible-section-certificate/`.
 
 Purpose: make the next HKO proof work precise enough that Packet 2 can start
 without re-deciding the theorem target, the proof tree, the singular-row
@@ -36,6 +37,12 @@ Refresh this packet when the feasible-section route succeeds or fails, when
 the Sage construction/verification target changes, when the selected branch
 rows change, or when the HKO theorem target is weakened.
 
+2026-06-04 implementation result:
+`verify_feasible_section_witness.sage.py` verifies a 26-row exact certificate:
+exact row rank `25`, symmetry rank `15`, positive lambdas, and exact
+lambda-weighted row sum `0`. The remaining route risk is formal review of
+`formal/hko-feasible-section-upper-branches.tex` and theorem wording.
+
 ## Review Decisions So Far
 
 Jörn reviewed the high-level Packet 1 questions in chat.
@@ -65,15 +72,16 @@ This is Packet 1 in the current HKO ordering.
 
 1. Proof-control packet: this file.
 2. Feasible-section packet: interpret the selected positive-beta rows as
-   theorem-valid feasible upper-branch witnesses, or reject that route.
-3. Sage construction and verification packet: if Packet 2 succeeds, finish
-   the trusted Sage construction code and exact witness checks.
+   theorem-valid feasible upper-branch witnesses. Implemented by
+   `experiments/hko-local-maximum/theorem/feasible-section-certificate/`.
+3. Sage construction and verification packet: implemented by the constructor
+   and assert-only verifier in the feasible-section certificate folder.
 4. Thesis-writing companion packet: after the theorem outcome is known, update
    `thesis/hko-local-maximum-content.md` so Jörn can write from it.
 
-This file should not try to be Packet 4. It may contain fallback wording
-requirements, but it should not pretend the final thesis section is writable
-before Packet 2 and Packet 3 settle.
+This file should not try to be Packet 4. Packet 2 and Packet 3 now have an
+implemented certificate; the thesis section still needs formal line-check and
+the final thesis companion refresh.
 
 ## Theorem Target For Review
 
@@ -188,8 +196,8 @@ where `g_i` are the projected rows. The certificate rows may be all selected
 rows or a theorem-valid subset. This proves strict first-order decrease in
 every nonzero slice direction.
 
-The f64 diagnostic already has this shape for all `150` strict-positive active
-rows, but not yet as an exact theorem certificate.
+The exact feasible-section certificate now proves this shape for a selected
+26-row subset.
 
 ## Proof Tree
 
@@ -406,13 +414,11 @@ statement in the ten-row chart.
      `1.65e-14`;
    - the maximum f64 `D_sys` row difference from the old KKT-derived rows is
      `1.61e-11`.
-3. Therefore the main computational risk that first-choice feasible sections
-   would destroy the cone certificate did not occur in f64. The remaining
-   theorem work is to make the same certificate exact in Sage.
+3. The exact feasible-section certificate selects 26 rows from this diagnostic
+   and verifies the corresponding exact feasible-section rows in Sage.
 4. The singular rows alone have projected rank `25`, but their current convex
    witness has positive-lambda projected rank `23`. The clean route should use
-   the full `150` feasible-section row set unless a smaller exact subset is
-   found.
+   a mixed selected subset. The current exact certificate uses 26 rows.
 
 ### Formal Review Draft
 
@@ -433,9 +439,9 @@ Review these labels first:
 5. `prop:hko-feasible-branch-slice-local-max`;
 6. `cor:hko-feasible-branch-quotient-template`.
 
-### Packet 2 Checks To Try
+### Packet 2 Checks Implemented
 
-For each selected row or representative family, try to verify:
+The current exact certificate verifies the following for each selected row:
 
 1. exact positivity of the base beta;
 2. exact closure and normalization;
@@ -443,10 +449,9 @@ For each selected row or representative family, try to verify:
 4. an exact full-rank constraint minor giving a smooth feasible section;
 5. exact `D beta(a0)` from the feasible-section equations;
 6. exact formula for the action/sys row of the feasible upper branch;
-7. exact relation to the segment certificates already present in
-   `segment-a-gradient-reduction.json` and `reduced-sys-prototypes.json`;
-8. exact symmetry images or representative expansion cover all selected
-   rows used in the final cone certificate.
+7. exact symmetry annihilation for the resulting `D sys` row.
+
+The certificate does not use the older segment-representative route.
 
 ### Packet 2 Failure Conditions
 
@@ -468,10 +473,7 @@ semialgebraic fallback and honest weakened thesis wording.
 
 ## Sage Construction And Verification Packet
 
-Packet 3 starts only after Packet 2 supplies theorem-valid feasible-section
-rows or replacement rows.
-
-Packet 3 should produce:
+Packet 3 now produces:
 
 1. trusted Sage construction code for source-defined exact objects;
 2. generator output for finite candidate choices;
@@ -510,30 +512,32 @@ Different data have different roles.
    - exact row rank `25`;
    - exact positive convex-combination certificate.
 
-Preferred implementation shape: one Sage file with small subroutines for the
-trusted constructions and verification checks. Recomputing `a0` and related
-exact objects on each run is acceptable if it keeps the source of truth close
-to the mathematical definitions. Hard-coded exact expressions may still be
-used inside other scripts if they are generated by the trusted construction
-script and kept clearly derived.
+Implemented shape:
+
+1. Rust exports `candidate-certificate.json`.
+2. `construct_exact_witness.sage.py` constructs exact witness values. It may
+   solve exact systems; this script is not proof-facing.
+3. `verify_feasible_section_witness.sage.py` reloads the witness and asserts
+   all proof-facing equations.
+4. `verification-summary.json` records the passing exact checks.
 
 ## Fallback Branches
 
-If Packet 2 and Packet 3 both succeed:
+If the formal implication is accepted:
 
 1. State theorem-strength local maximality in the ten-row quotient model.
 2. Use Sage as the trusted verifier.
 3. Use Rust as a generator only.
 4. Move final proof structure into the HKO thesis-writing companion.
 
-If Packet 2 succeeds but Packet 3 fails for implementation reasons:
+If future verifier maintenance fails for implementation reasons:
 
 1. Record the exact mathematical theorem route.
 2. Decide whether a smaller exact verifier or manual Sage check can close the
    thesis claim.
 3. If not, weaken thesis wording to exact support plus unfinished verifier.
 
-If Packet 2 fails:
+If formal review finds a real gap in the feasible-section implication:
 
 1. Do not state theorem-strength HKO local maximality.
 2. Consider the heavy semialgebraic active-germ route only if its cost is still
@@ -541,7 +545,7 @@ If Packet 2 fails:
 3. Otherwise use honest fallback wording: strong numerical/exact partial
    support, with the singular-row certificate as the named blocker.
 
-If Packet 3 produces a different exact row set or theorem shape:
+If a future certificate produces a different exact row set or theorem shape:
 
 1. Refresh this packet.
 2. Refresh `research/hko-local-maximum-status.md`.
@@ -566,15 +570,7 @@ The next Jörn review should focus on these points, in order.
 
 ## Next Action
 
-Move from the f64 feasible-section diagnostic to the exact Sage construction
-and verification script.
-
-The next implementation step is to make Sage construct source-defined exact
-objects and verify the same candidate data now computed by the f64 diagnostic:
-
-1. exact `beta0`, positivity, closure, and normalization;
-2. exact full-rank minor and the induced `D beta(a0)` equations;
-3. exact feasible-section `D_a action` and `D_a sys` rows;
-4. exact equality `U_sigma(a0)=sys(a0)`;
-5. exact symmetry annihilation, projected rank `25`, and positive convex-hull
-   certificate for the selected feasible-section rows.
+Line-check `formal/hko-feasible-section-upper-branches.tex` against
+`experiments/hko-local-maximum/theorem/feasible-section-certificate/verification-summary.json`.
+If accepted, refresh `thesis/hko-local-maximum-content.md` into the final
+writing companion.

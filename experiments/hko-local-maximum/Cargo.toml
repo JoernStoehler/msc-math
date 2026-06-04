@@ -30,6 +30,10 @@ path = "theorem/row-bank-validation/main.rs"
 name = "hko-active-branch-diagnostic"
 path = "theorem/active-branch-diagnostic/main.rs"
 
+[[bin]]
+name = "hko-feasible-section-certificate"
+path = "theorem/feasible-section-certificate/main.rs"
+
 [lints]
 workspace = true
 

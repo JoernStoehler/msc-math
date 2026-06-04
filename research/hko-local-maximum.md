@@ -15,6 +15,12 @@ surface for the next HKO work. It records the theorem target, sufficient Sage
 decision problem, proof tree, feasible-section row target, verifier boundary,
 fallback branches, and review questions.
 
+Current theorem certificate:
+`experiments/hko-local-maximum/theorem/feasible-section-certificate/` contains
+the exact feasible-section certificate generated on 2026-06-04. The verifier
+checks 26 rows, exact row rank `25`, exact symmetry rank `15`, positive
+lambdas, and exact lambda-weighted row sum `0`.
+
 ## Scope
 
 This note is the consolidated research-facing record for `hko-local-maximum`.
@@ -28,23 +34,17 @@ It combines the former topic note set while keeping experiment artifacts under
     `hko-geometry.json` and `hko-symmetry-tangent.json`.
   - Packet 1 is essentially closed: exact dual coordinates, rank-15 symmetry
     tangent basis, and exact `R^40` setup are in place.
-  - Packet 2 is partially closed with exact prototypes:
+  - The older exact-witness Packet 2 is partially closed with prototypes:
     one six-facet endpoint family and one neighboring seven-facet midpoint-style
-    segment family.
-  - Packet 3 is the current blocker. Exact representative expansion still needs
-    additional symmetry-inequivalent representatives before final active-gradient
-    coverage reaches `rank(G)=25` with kernel matching the symmetry tangent space.
-  - A newer proof-route checkpoint records a possible one-sided
-    selected-branch certificate: all `150` f64 positive active rows cover the
-    `25`-dimensional slice numerically, but `106` of those rows have singular
-    KKT matrices and still need exact feasible-section replacement rows.
-  - The proof-control packet now makes this the next explicit HKO packet:
-    compute theorem-valid feasible-section upper-branch rows, then prove or
-    reject that interpretation before implementing the final exact verifier.
-  - Current f64 diagnostic status: the explicit feasible-section rows have
-    projected rank `25`, a positive convex-hull witness, and maximum
-    `D_sys` difference about `1.7e-11` from the old KKT-derived rows.
-    Exact Sage verification remains open.
+    segment family. This is not the current theorem-closing route.
+  - The older representative-expansion route remains partial.
+  - The current route is the selected feasible-section upper-branch
+    certificate. Rust exports a 26-row candidate; Sage constructs exact witness
+    values; the assert-only Sage verifier checks the exact finite decision
+    problem.
+  - Current exact verifier status: 26 rows, exact row rank `25`, exact symmetry
+    tangent rank `15`, positive exact lambdas summing to `1`, and exact
+    lambda-weighted row sum `0`.
   - Sigma-word combinatorics are still: `50,400` raw, `6,240` directed-feasible,
     `717` valid KKT orbits, and `150` exact minima.
 - Numerical evidence track:
@@ -68,9 +68,10 @@ It combines the former topic note set while keeping experiment artifacts under
 
 - Current code and artifacts strongly support a strict local-maximum hypothesis for
   HKO in tested finite and smooth neighborhoods.
-- The exact-first first-order formal certificate is not yet closed.
-- The remaining exact work is primarily representative coverage and a final
-  `rank(K)/kernel` comparison on a backend-agnostic witness bundle.
+- The exact finite certificate for the feasible-section route is now closed at
+  the Sage-verifier level.
+- The remaining proof-route work is line-checking the formal implication from
+  the verifier propositions to the quotient-local maximum theorem.
 - Historical neighborhood evidence is treated as support, with priority on finishing
   exact active-set closure without altering artifact contracts.
 
@@ -94,49 +95,29 @@ It combines the former topic note set while keeping experiment artifacts under
   complementary checks; broad blind counterexample searches are not the default.
 - Keep `pentagon-perturb.jsonl` as historical context; prefer committed new-format
   smoke/LICCA buckets for analysis.
-- If representative coverage stalls, it is acceptable to pause and document the
-  blocker instead of adding ad-hoc representative heuristics outside contract.
+- Do not revive the older representative-coverage route unless formal review
+  rejects the feasible-section certificate route.
 
 ## History
 
 - `empirical/neighborhood-sampling/m10/` historically used 101-row evidence and
   has since moved to the current smoke/LICCA flow.
 - Exact widened-route development reached right-kernel `29` on current
-  representative surfaces; this indicates active-row multiplicity, not affine
-  mismatch, is the remaining obstruction.
-- Exact route currently has two unresolved asymmetric seven-facet representative
-  classes.
+  representative surfaces. That is historical context for why the route moved
+  to selected feasible-section upper branches.
+- The older exact representative route still has two unresolved asymmetric
+  seven-facet representative classes, but they are no longer blockers for the
+  current feasible-section certificate.
 
 ## Next Steps
 
-- Primary: close exact Packet 3 by extending representative coverage to final
-  rank-equal active matrix and completing witness-vs-symmetry comparison.
-- Immediate proof-route question: develop a theorem-valid treatment of the
-  singular seven-facet, positive-beta active rows. The 2026-06-03
-  padded-extension diagnostic found no nonsingular minimum-action padded-once
-  rows, so the simple nonsingular padded alternative currently has no
-  surviving rows. The smooth-only row set is still short by two slice
-  dimensions.
-- Required stop condition:
-  - produce witness bundle with `rank(active_grad_G)=25`;
-  - `dim(ker(G))=15`;
-  - kernel matches the `R^40` symmetry tangent basis.
-- Explicit blockers:
-  - remaining two asymmetric seven-facet classes;
-  - final packet must use reduced prototypes (`endpoint-representative-rows.json`,
-    `midpoint-representative-rows.json`) plus additional exact representatives.
-- Immediate execution actions:
-  1. refresh `theorem/exact-witness/numerical-permutation-orbits.json`;
-  2. add missing exact representative rows in the existing witness shape;
-  3. rebuild `reduced-sys-prototypes.json` and rerun the exact witness + Sage
-     verifier:
-     - `cargo run -p exp-hko-local-maximum --release --bin hko-row-bank-validation -- --canonical`
-     - `cd experiments/hko-local-maximum/theorem/row-bank-validation && sage -python analyze.py --canonical`;
-  4. update `theorem/exact-witness/widened-representative-witness.json` only
-     from scripted output.
-- Fallback: if exact completion is blocked by backend cost, log the obstruction and
-  rerun the exact `6,240` sigma route on a faster backend before switching to the
-  contingency route.
+- Primary: line-check `formal/hko-feasible-section-upper-branches.tex` against
+  `theorem/feasible-section-certificate/verification-summary.json`.
+- Then update the thesis-writing companion so Jörn can write the HKO section
+  from fixed theorem/proof content instead of re-deciding the proof structure.
+- Fallback: if formal review finds a real gap in the feasible-section
+  implication, return to this note and choose between repairing the implication
+  and weakening the theorem wording.
 - Secondary: keep neighborhood evidence runnable for comparison and use
   `empirical/neighborhood-sampling/m10-lagrangian-product/` and
   `empirical/m11-ascent/` as non-default regression checks.

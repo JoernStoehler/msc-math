@@ -27,7 +27,8 @@ The HKO thesis-facing result is a packet, not only one theorem statement.
 
 2. Main theorem target:
    HKO is locally maximal in the ten-facet model modulo translations, scaling,
-   and linear symplectic maps, if the exact certificate closes.
+   and linear symplectic maps, conditional on final review of the
+   feasible-section implication from the exact certificate.
    Source pointers: `research/hko-local-maximum-status.md`;
    `research/hko-local-maximum.md`;
    `tasks/references/central-claim-control-packet-2026-06-01.md`;
@@ -40,7 +41,9 @@ The HKO thesis-facing result is a packet, not only one theorem statement.
    `research/hko-local-maximum-exact-witness.md`;
    `experiments/hko-local-maximum/theorem/exact-witness/README.md`;
    `experiments/hko-local-maximum/theorem/exact-witness/widened-representative-witness.json`;
-   `experiments/hko-local-maximum/theorem/exact-witness/widened-representative-witness-verification.json`.
+   `experiments/hko-local-maximum/theorem/exact-witness/widened-representative-witness-verification.json`;
+   `experiments/hko-local-maximum/theorem/feasible-section-certificate/README.md`;
+   `experiments/hko-local-maximum/theorem/feasible-section-certificate/verification-summary.json`.
 
 4. Empirical confirmation:
    Numerical and perturbative checks support the local-maximum picture.
@@ -81,20 +84,20 @@ The HKO non-writing work is currently split into four packets.
    check. It is not final thesis-writing material.
 
 2. Feasible-section packet:
-   interpret the selected positive-beta rows as theorem-valid feasible
-   upper-branch witnesses, then prove or reject that interpretation.
-   This is the next HKO proof task.
+   implemented by `theorem/feasible-section-certificate/`.
+   The exact verifier checks 26 rows, exact row rank `25`, exact symmetry rank
+   `15`, positive lambdas, and exact lambda-weighted row sum `0`.
 
 3. Sage construction and verification packet:
-   if the feasible-section route succeeds, finish the trusted Sage
-   construction code and exact witness checks.
+   implemented by `construct_exact_witness.sage.py` and
+   `verify_feasible_section_witness.sage.py`.
 
 4. Thesis-writing companion finalization:
    only after the theorem outcome is known, refresh this file into the final
    structure Jörn can write from.
 
-Do not treat this file as complete enough for final HKO writing until Packet 2
-and Packet 3 settle the theorem-strength outcome.
+Do not treat this file as complete enough for final HKO writing until the
+formal implication has been line-checked against the verifier propositions.
 
 ## Evidence By Packet Component
 
@@ -113,7 +116,7 @@ Status:
 - Target theorem wording is local maximality on `M_10` modulo translations,
   scaling, and linear symplectic maps.
 - Current repo classification: broad HKO local maximality remains conjectural;
-  exact first-order certificate is not yet closed.
+  the ten-row feasible-section certificate now verifies exactly in Sage.
 
 Source pointers:
 - `research/hko-local-maximum-status.md`, sections "Current Repo Claim" and
@@ -130,18 +133,19 @@ Source pointers:
 - `tasks/current-state.md`, HKO local maximality row.
 
 Missing:
-- Final exact active-gradient certificate.
+- Line-check of the formal implication from the verified certificate to the
+  local-maximum theorem.
 - Jörn/Kai acceptance of theorem-strength wording.
 
 ### 3. Exact Certificate
 
 Status:
-- Packet 1 is closed in the current research notes: exact dual coordinates,
-  coefficient field, and rank-15 symmetry tangent setup.
-- Packet 2 is partially closed with exact prototypes.
-- Packet 3 remains the main blocker.
-- Current widened representative-row witness passes present Sage checks but is
-  partial.
+- Exact dual coordinates, coefficient field, and rank-15 symmetry tangent setup
+  are in place.
+- The older widened representative-row witness passes present Sage checks but
+  is partial.
+- The current theorem-facing certificate is the 26-row feasible-section
+  certificate.
 
 Current checked partial witness facts:
 - Exact field: `Q(tan(pi/5))`, minimal polynomial `t^4 - 10 t^2 + 5`.
@@ -163,33 +167,27 @@ Source pointers:
 - `experiments/hko-local-maximum/theorem/exact-witness/widened-representative-witness.json`.
 - `experiments/hko-local-maximum/theorem/exact-witness/widened-representative-witness-verification.json`.
 
+Current checked theorem-facing facts:
+- 26 exact feasible-section rows.
+- Exact row rank `25`.
+- Exact symmetry tangent rank `15`.
+- Every row annihilates the symmetry tangent space.
+- Positive exact lambdas sum to `1`.
+- The lambda-weighted exact row sum is `0`.
+
 Missing:
-- Final theorem-facing active-gradient matrix.
-- Rank target `rank(G)=25`.
-- Kernel target `dim ker(G)=15`.
-- Equality of kernel with the symmetry tangent space.
-- Cone or convex-combination certificate proving no increasing quotient
-  direction.
-- Completeness check for the active row set used by the theorem-facing
-  decision problem.
-- Exact treatment of remaining asymmetric seven-facet representatives.
+- Formal proof review against these verifier propositions.
 
 Thesis-use note:
 - Spend at least one sentence explaining why singular cases appear in the
   witness: the nonsingular active branches cover only rank `23` of the
   `25`-dimensional quotient slice, while the smooth padded-once diagnostic
   found no nonsingular minimum-action replacement rows.
-- If the feasible-section route succeeds, the clean explanation is likely that
-  the KKT matrix can be singular because there is a family of minimizing beta
-  data at `a0`, but each selected positive beta can still admit a local
-  feasible section through a full-rank closure/normalization minor. The proof
-  should compute the derivative of that explicit feasible upper branch; it
-  should not require nearby optimizing beta data or nearby KKT criticality.
-- Current f64 status: the active-branch diagnostic now computes the explicit
-  feasible-section rows. For all `150` positive active rows these still give
-  rank `25` and a positive convex-hull witness on the quotient slice; the
-  largest f64 `D_sys` difference from the old KKT-derived rows is about
-  `1.7e-11`. The remaining thesis-strength blocker is exact Sage verification.
+- Clean explanation: the KKT matrix can be singular because there is a family
+  of minimizing beta data at `a0`, but selected positive betas still admit
+  local feasible sections through full-rank closure/normalization minors. The
+  proof computes the derivative of those explicit feasible upper branches; it
+  does not require nearby optimizing beta data or nearby KKT criticality.
 
 ### 4. Empirical Confirmation
 
@@ -250,28 +248,24 @@ Missing:
 
 ## Non-Writing Blockers
 
-1. Close exact Packet 3 or honestly weaken theorem wording.
+1. Line-check the formal implication from the Sage verifier propositions to
+   the local-maximum theorem.
    Source pointers: `research/hko-local-maximum-status.md`;
    `research/hko-local-maximum.md`;
-   `research/hko-local-maximum-exact-witness.md`.
-
-2. Produce final Sage theorem certificate.
-   Sage should construct source-defined exact objects such as the HKO
-   coordinates and symmetry/slice data, then verify the generated finite
-   witness choices. Required checks should include exact row validity, active
-   matrix rank, kernel/symmetry equality, and cone/no-increase condition.
-   Source pointers: current partial verifier in
-   `experiments/hko-local-maximum/theorem/exact-witness/verify_widened_representative_witness.sage`
-   and exact-witness research notes.
-
-3. Write or refresh the mathematical reduction from verified certificate to
-   local maximality.
-   Source pointers: `formal/hko-local-maximality-conditions.tex`;
    `formal/hko-feasible-section-upper-branches.tex`;
-   `formal/hko-symmetry-gradient-structure.tex`;
-   `research/sys-first-order-local-behavior.md`;
-   `research/hko-local-maximum-proof-control-packet.md`;
-   `research/hko-local-maximum-proof-route-note.md`.
+   `experiments/hko-local-maximum/theorem/feasible-section-certificate/verification-summary.json`.
+
+2. Decide final theorem wording.
+   The intended wording is local maximality in the ten-facet model modulo
+   translations, scaling, and linear symplectic maps. Broad HKO local
+   maximality should remain conjectural unless separately proved.
+   Source pointers: `research/hko-local-maximum-status.md`;
+   `research/hko-local-maximum-proof-control-packet.md`.
+
+3. Refresh this thesis companion into a final writing plan after the formal
+   implication line-check.
+   Source pointers: this file; `formal/hko-feasible-section-upper-branches.tex`;
+   `experiments/hko-local-maximum/theorem/feasible-section-certificate/README.md`.
 
 4. Decide empirical-support inclusion.
    Source pointers: `research/hko-local-maximum.md`;
@@ -283,15 +277,16 @@ Missing:
 
 ## Fallback Branches
 
-If the exact certificate closes:
+If the formal implication is accepted:
 - State theorem-strength local maximality in the ten-facet quotient model.
 - Present the exact generator/verifier/proof chain as the main support.
 - Present empirical checks as confirmation and broader context.
 - Keep broader local-stability language conjectural unless separately proved.
 
-If the exact certificate remains partial:
+If the formal implication has a real gap:
 - Do not state theorem-strength local maximality.
-- State exact partial-certificate status and current blocker.
+- State exact feasible-section certificate status and the remaining formal
+  blocker.
 - Present empirical confirmation honestly as support.
 - State broader local stability as conjectural.
 
