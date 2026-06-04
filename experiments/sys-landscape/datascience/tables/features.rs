@@ -25,6 +25,7 @@ use euclidean_polytopes::{
 };
 use exp_sys_landscape::euclidean_volume_f64;
 use exp_sys_landscape::SysLandscapePolytopeCache;
+use rayon::prelude::*;
 
 fn enrich_row(row: &LoadedPolytopeRow) -> PolytopeTableRow {
     let (dual_vectors, dual_vertex_fields) = features_dual_vertices::dual_vertices_f64(row);
@@ -233,5 +234,5 @@ fn enrich_row(row: &LoadedPolytopeRow) -> PolytopeTableRow {
 }
 
 pub fn build_polytope_table(rows: &[LoadedPolytopeRow]) -> Vec<PolytopeTableRow> {
-    rows.iter().map(enrich_row).collect()
+    rows.par_iter().map(enrich_row).collect()
 }
