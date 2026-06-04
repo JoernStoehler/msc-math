@@ -314,25 +314,12 @@ fn poly_id_from_dual_vertices(dual_vertices_rational: &[[String; 4]]) -> String 
     hasher.finalize().to_hex().to_string()
 }
 
-fn orbit_payloads(paths: &DatasetPaths) -> HashMap<String, OrbitPayload> {
-    let mut cache_paths = Vec::new();
-    if paths.shared_cache.exists() {
-        cache_paths.push(paths.shared_cache.as_path());
-    }
-    if paths.ascent_cache.exists() {
-        cache_paths.push(paths.ascent_cache.as_path());
-    }
-    if paths.ascent_product_cache.exists() {
-        cache_paths.push(paths.ascent_product_cache.as_path());
-    }
-    if paths.continuation_cache.exists() {
-        cache_paths.push(paths.continuation_cache.as_path());
-    }
+fn orbit_payloads_from_paths(cache_paths: &[&Path]) -> HashMap<String, OrbitPayload> {
     if cache_paths.is_empty() {
         return HashMap::new();
     }
 
-    let db = load_many(&cache_paths).expect("load producer caches");
+    let db = load_many(cache_paths).expect("load producer caches");
     let mut out = HashMap::new();
     for (_key, record) in db {
         let poly_id =
@@ -350,6 +337,25 @@ fn orbit_payloads(paths: &DatasetPaths) -> HashMap<String, OrbitPayload> {
         );
     }
     out
+}
+
+fn existing_paths<'a>(paths: impl IntoIterator<Item = &'a Path>) -> Vec<&'a Path> {
+    paths.into_iter().filter(|path| path.exists()).collect()
+}
+
+fn orbit_payloads(paths: &DatasetPaths) -> HashMap<String, OrbitPayload> {
+    let cache_paths = existing_paths([
+        paths.shared_cache.as_path(),
+        paths.ascent_cache.as_path(),
+        paths.ascent_product_cache.as_path(),
+        paths.continuation_cache.as_path(),
+    ]);
+    orbit_payloads_from_paths(&cache_paths)
+}
+
+fn orbit_payloads_for_path(path: &Path) -> HashMap<String, OrbitPayload> {
+    let cache_paths = existing_paths([path]);
+    orbit_payloads_from_paths(&cache_paths)
 }
 
 fn sigma_gap_cutoff(record: &PolytopeRecord) -> Option<f64> {
@@ -560,6 +566,7 @@ fn load_ascent_rows(
     polytopes: &mut HashMap<String, LoadedPolytopeRow>,
     observations: &mut Vec<LoadedObservationRow>,
     orbit_payloads: &HashMap<String, OrbitPayload>,
+    ascent_orbit_payloads: &HashMap<String, OrbitPayload>,
 ) {
     let trace_events = trace_events_by_name(trace_path);
     for row in read_jsonl::<SummaryRow>(summary_path) {
@@ -570,7 +577,7 @@ fn load_ascent_rows(
             row.final_capacity,
             row.final_volume,
             row.final_sys,
-            orbit_payloads,
+            ascent_orbit_payloads,
         );
         let poly_id = ensure_polytope(
             polytopes,
@@ -628,6 +635,7 @@ fn load_ascent_product_rows(
     polytopes: &mut HashMap<String, LoadedPolytopeRow>,
     observations: &mut Vec<LoadedObservationRow>,
     orbit_payloads: &HashMap<String, OrbitPayload>,
+    ascent_product_orbit_payloads: &HashMap<String, OrbitPayload>,
 ) {
     let trace_events = trace_events_by_name(trace_path);
     for row in read_jsonl::<SummaryRow>(summary_path) {
@@ -638,7 +646,7 @@ fn load_ascent_product_rows(
             row.final_capacity,
             row.final_volume,
             row.final_sys,
-            orbit_payloads,
+            ascent_product_orbit_payloads,
         );
         let poly_id = ensure_polytope(
             polytopes,
@@ -753,6 +761,8 @@ fn load_continuation_rows(
 
 pub fn load_caches(paths: &DatasetPaths) -> LoadedCaches {
     let orbit_payloads = orbit_payloads(paths);
+    let ascent_orbit_payloads = orbit_payloads_for_path(&paths.ascent_cache);
+    let ascent_product_orbit_payloads = orbit_payloads_for_path(&paths.ascent_product_cache);
     let mut polytopes = HashMap::<String, LoadedPolytopeRow>::new();
     let mut observations = Vec::<LoadedObservationRow>::new();
 
@@ -774,6 +784,7 @@ pub fn load_caches(paths: &DatasetPaths) -> LoadedCaches {
         &mut polytopes,
         &mut observations,
         &orbit_payloads,
+        &ascent_orbit_payloads,
     );
     load_ascent_product_rows(
         &paths.ascent_product_summary,
@@ -781,6 +792,7 @@ pub fn load_caches(paths: &DatasetPaths) -> LoadedCaches {
         &mut polytopes,
         &mut observations,
         &orbit_payloads,
+        &ascent_product_orbit_payloads,
     );
     load_continuation_rows(
         &paths.continuation_summary,

@@ -75,10 +75,11 @@ surface on temporary outputs:
 - no tracked `.jsonl` files are touched.
 
 Runtime caveat: this is integration smoke, not a cheap command check. On
-2026-05-31, the temp-output path was safe, but the script was stopped after
-about two minutes while `sys-dataset-continuation --smoke` was still running.
-Use `--help`, compile checks, or narrower producer smoke commands for fast
-validation.
+2026-06-04, the default temp-output path took about 49 seconds locally with
+`ASCENT_BUDGET_SECS=1`. The default runs both ascent producers twice and checks
+that the second pass resumes without duplicate summary/cache rows. Set
+`RUN_CONTINUATION_SMOKE=1` only when the older slow continuation integration
+path is specifically needed.
 
 ## LICCA Fixed-F Ascent Shards
 
