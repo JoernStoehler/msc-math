@@ -73,13 +73,37 @@ validation.
 
 ## LICCA Fixed-F Ascent Shards
 
-Use [licca-ascent-array.sh](licca-ascent-array.sh) on the
+Use the `licca-ascent-*.sh` Slurm wrappers on the
 `licca-datascience-datasets` branch to scale fixed-F ascent without shared
-output races.
+output races. Submit the wrappers directly; do not pass production settings as
+`sbatch` flags.
 
 The script writes one summary JSONL and one derived `*-trace.jsonl` per Slurm
 array task. Defaults skip existing committed seed ranges: general starts at
 `n-start=10`, and product starts at `n-start=12`.
+
+Shared implementation:
+
+- [licca-ascent-array.sh](licca-ascent-array.sh): common runner; do not submit
+  directly.
+
+Direct-submit wrappers:
+
+- [licca-ascent-smoke-general.sh](licca-ascent-smoke-general.sh): one
+  `test`-partition general shard with `2` seeds.
+- [licca-ascent-smoke-product.sh](licca-ascent-smoke-product.sh): one
+  `test`-partition product shard with `2` seeds.
+- [licca-ascent-production-general.sh](licca-ascent-production-general.sh):
+  production general wave with array `10-13`, `1024` seeds per shard, and
+  `128` CPUs per shard.
+- [licca-ascent-production-product.sh](licca-ascent-production-product.sh):
+  production product wave with array `10-13`, `1024` seeds per shard, and
+  `128` CPUs per shard.
+
+Resume rule: do not delete partial shard files after timeout. Rerun the same
+wrapper with the same array index and constants. The Rust binary reads
+completed summary rows and skips them, then canonicalizes output on a normal
+exit.
 
 Build the binaries on LICCA first:
 
@@ -95,25 +119,17 @@ Smoke-submit one small shard per kind:
 
 ```bash
 cd "$HOME/msc-math/experiments/sys-landscape/datascience/produce"
-sbatch -p test --time=00:10:00 --array=0-0 \
-  --export=ALL,KIND=general,SEEDS_PER_SHARD=2,SEED_TIME_BUDGET_SECS=30 \
-  licca-ascent-array.sh
-sbatch -p test --time=00:10:00 --array=0-0 \
-  --export=ALL,KIND=product,SEEDS_PER_SHARD=2,SEED_TIME_BUDGET_SECS=30 \
-  licca-ascent-array.sh
+sbatch licca-ascent-smoke-general.sh
+sbatch licca-ascent-smoke-product.sh
 ```
 
-After reviewing smoke logs, a conservative first production wave is:
+After reviewing logs, submit the production wrappers directly:
 
 ```bash
 cd "$HOME/msc-math/experiments/sys-landscape/datascience/produce"
-sbatch --time=02:00:00 --array=0-9 \
-  --export=ALL,KIND=general,SEEDS_PER_SHARD=50 \
-  licca-ascent-array.sh
-sbatch --time=02:00:00 --array=0-9 \
-  --export=ALL,KIND=product,SEEDS_PER_SHARD=50 \
-  licca-ascent-array.sh
+sbatch licca-ascent-production-general.sh
+sbatch licca-ascent-production-product.sh
 ```
 
-This requests `500` new general seeds and `500` new product seeds. Increase
-`--array` after the first wave only if logs and output guards look clean.
+This requests `4096` new general seeds and `4096` new product seeds, starting
+after the already submitted shard ids `0-9`.

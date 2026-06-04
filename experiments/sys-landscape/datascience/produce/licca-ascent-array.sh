@@ -1,33 +1,17 @@
 #!/bin/bash
-# Slurm array runner for the datascience fixed-F ascent producer stage.
+# Shared implementation for LICCA fixed-F ascent Slurm wrappers.
 #
-# Submit with explicit --time and --array. The #SBATCH time below is a
-# tripwire so accidental production submits without a CLI wall time die quickly.
+# Do not submit this file directly. Submit one of:
+# - licca-ascent-smoke-general.sh
+# - licca-ascent-smoke-product.sh
+# - licca-ascent-production-general.sh
+# - licca-ascent-production-product.sh
 #
-# Smoke examples:
-#   sbatch -p test --time=00:10:00 --array=0-0 --export=ALL,KIND=general,SEEDS_PER_SHARD=2,SEED_TIME_BUDGET_SECS=30 licca-ascent-array.sh
-#   sbatch -p test --time=00:10:00 --array=0-0 --export=ALL,KIND=product,SEEDS_PER_SHARD=2,SEED_TIME_BUDGET_SECS=30 licca-ascent-array.sh
-#
-# Production examples:
-#   sbatch --time=02:00:00 --array=0-9 --export=ALL,KIND=general,SEEDS_PER_SHARD=50 licca-ascent-array.sh
-#   sbatch --time=02:00:00 --array=0-9 --export=ALL,KIND=product,SEEDS_PER_SHARD=50 licca-ascent-array.sh
-
-#SBATCH --job-name=ds-ascent
-#SBATCH --partition=epyc
-#SBATCH --cpus-per-task=10
-#SBATCH --mem=8G
-#SBATCH --time=00:00:01
-#SBATCH --output=logs/%x-%A_%a.out
-
-# Resource justification:
-# - partition=epyc: CPU-only production partition with a 7-day limit.
-# - cpus-per-task=10: the ascent binaries use rayon over seed indices; 10 cores
-#   matches the historical LICCA fixed-F ascent scripts.
-# - mem=8G: historical estimate was about 100 MB per active seed, so 10 threads
-#   need about 1 GB; 8 GB leaves headroom for construction and solver spikes.
-# - time=00:00:01: tripwire; pass real wall time on the sbatch CLI.
-# - array shards: each task writes distinct output files, avoiding shared JSONL
-#   write races and making failed shards easy to rerun.
+# Resume rule:
+# - Do not delete partial shard files after timeout.
+# - Rerun the same wrapper with the same array index and constants.
+# - The Rust binary skips completed summary rows and canonicalizes output after
+#   a normal exit.
 
 set -euo pipefail
 
@@ -39,6 +23,7 @@ KIND="${KIND:-general}"
 SEEDS_PER_SHARD="${SEEDS_PER_SHARD:-50}"
 SEED_TIME_BUDGET_SECS="${SEED_TIME_BUDGET_SECS:-120}"
 SHARD_ID="${SLURM_ARRAY_TASK_ID:-0}"
+RUN_LABEL="${RUN_LABEL:-manual}"
 
 case "$KIND" in
     general)
@@ -76,6 +61,7 @@ echo "LICCA datascience ascent shard"
 echo "  host:                  $(hostname)"
 echo "  date:                  $(date)"
 echo "  repo:                  $(git rev-parse --short HEAD)"
+echo "  run label:             $RUN_LABEL"
 echo "  kind:                  $KIND"
 echo "  shard id:              $SHARD_ID"
 echo "  seeds per shard:       $SEEDS_PER_SHARD"
