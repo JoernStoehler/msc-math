@@ -16,10 +16,11 @@ use std::sync::{Arc, Mutex};
 ///   The per-seed JSON payloads for index i are byte-reproducible
 ///   regardless of which thread processes it. **File-level byte reproducibility
 ///   requires the caller to invoke `finalize_ascent_output` after this function
-///   returns** — rayon scheduling determines the append order within both
-///   output files, and `finalize_ascent_output` is what canonicalizes row order.
+///   returns** — rayon scheduling determines the append order within the
+///   summary, trace, and cache files, and `finalize_ascent_output` is what
+///   canonicalizes row order.
 /// - `completed` is checked before calling `process`; resume semantics
-///   therefore hold across crashes (see `write_result` for the on-disk
+///   therefore hold across crashes (see `write_seed_result` for the on-disk
 ///   ordering invariant that backs this).
 /// - Writers are locked only during append (ms); contention is negligible
 ///   against per-seed ascent cost (~seconds).
@@ -27,13 +28,14 @@ use std::sync::{Arc, Mutex};
 ///   used by both ascent binaries before the refactor.
 ///
 /// Lock acquisition order inside the rayon closure is strictly:
-/// `db` (outside `write_result`, in the per-experiment closure) → `trace`
-/// (inside `write_result`) → `summary` (inside `write_result`) → `best`
-/// (here, after `write_result` returns). Each lock is released before the
-/// next is acquired — no nesting — so two threads cannot form a deadlock
-/// cycle regardless of which seed each is processing.
+/// `db` (outside `write_seed_result`, in the per-experiment closure) → `trace`
+/// (inside `write_seed_result`) → `cache` (inside `write_seed_result`) →
+/// `summary` (inside `write_seed_result`) → `best` (here, after
+/// `write_seed_result` returns). Each lock is released before the next is
+/// acquired — no nesting — so two threads cannot form a deadlock cycle
+/// regardless of which seed each is processing.
 ///
-/// Panic propagation: a panic inside `process` (or inside `write_result`)
+/// Panic propagation: a panic inside `process` (or inside `write_seed_result`)
 /// poisons any mutex held across the panic point. Subsequent seeds that
 /// call `.lock().expect("... poisoned")` will then fan the panic out and
 /// crash the binary. This is **intended**: on LICCA, a panicking seed

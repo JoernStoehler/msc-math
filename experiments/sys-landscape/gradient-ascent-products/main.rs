@@ -23,7 +23,7 @@
 //! - `--seed <u64>`       base RNG seed                               (default: 42)
 //! - `--out <path>`       output summary .jsonl                       (default: untracked temp smoke path)
 //! - `--seed-time-budget-secs <f64>` per-seed wall-clock budget       (default: 120)
-//! - `--fresh`            delete existing summary + trace files before running
+//! - `--fresh`            delete existing summary + trace + cache files before running
 //! - `--db-update`        load and save the sys-landscape family cache
 //! - `--no-db-update`     do not load or save the sys-landscape family cache
 //!                        (set by LICCA shards to avoid concurrent write races)
@@ -584,9 +584,10 @@ fn main() {
         Some(result)
     });
 
-    // Drop writers (consumed by finalize), sort + rewrite both output files
-    // so row order is deterministic regardless of rayon thread scheduling and
-    // any crash-resume history. See `finalize_ascent_output` for details.
+    // Drop writers (consumed by finalize), sort + rewrite summary, trace, and
+    // cache files so row order is deterministic regardless of rayon thread
+    // scheduling and any crash-resume history. See `finalize_ascent_output`
+    // for details.
     finalize_ascent_output(&output_paths, writers);
 
     if !no_db_update {

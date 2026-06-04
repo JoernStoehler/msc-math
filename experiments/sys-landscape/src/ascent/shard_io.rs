@@ -126,37 +126,40 @@ pub fn write_seed_result(result: &SeedResult, writers: &AscentWriters) {
         w.flush().expect("failed to flush summary row");
     }
 }
-/// Canonicalize both output files after a parallel run.
+/// Canonicalize all shard output files after a parallel run.
 ///
-/// Takes `writers` by value so the `Arc<Mutex<BufWriter<File>>>` pair is
-/// dropped at the top of this function — that drop flushes the BufWriters and
+/// Takes `writers` by value so the summary, trace, and cache BufWriters are
+/// dropped at the top of this function. That drop flushes the BufWriters and
 /// closes the underlying files before we re-open them for reading. The caller
 /// must not clone the writers elsewhere; after `run_parallel_seeds` returns,
-/// the writer tuple is the sole owner and passing it here releases it.
+/// the writer struct is the sole owner and passing it here releases it.
 ///
 /// Behavior:
 /// 1. Parse `summary_path` line-by-line as `SummaryRow`, tolerating malformed
 ///    lines (same style as `load_completed_names`). Sort by `name` lexicographic.
-///    Write to `summary_path.with_extension("jsonl.tmp")` then atomic-rename.
+///    Write to a tempfile then atomic-rename.
 /// 2. Parse `trace_path` as `TraceRow`, sort by `(name, phase, iteration)`,
 ///    then dedup adjacent rows by the same key. The dedup step removes
-///    duplicate trace rows introduced by crash-resume: `write_result` writes
-///    trace before summary, so a crash between the two flushes leaves orphan
-///    trace rows that get rewritten when the seed is re-run. Sort + dedup
-///    reduces these to a single copy.
-/// 3. Atomic-rename trace tempfile.
+///    duplicate trace rows introduced by crash-resume: `write_seed_result`
+///    writes trace before summary, so a crash before the summary flush leaves
+///    orphan trace rows that get rewritten when the seed is re-run. Sort +
+///    dedup reduces these to a single copy.
+/// 3. Parse `cache_path` as `PolytopeRecord`, sort by exact rational dual
+///    vertices, reject conflicting duplicate records, and dedup identical
+///    cache rows introduced by crash-resume.
 ///
-/// After this function returns, both files are byte-identical across runs
-/// that processed the same seed set, regardless of thread count or crash/resume
-/// history (modulo per-seed `total_time_ms` which is wall-clock noise).
+/// After this function returns, all three files are byte-identical across runs
+/// that processed the same seed set, regardless of thread count or
+/// crash/resume history (modulo per-seed `total_time_ms` which is wall-clock
+/// noise).
 ///
-/// Sort convention: row order in both files is **lexicographic on `name`**
-/// (trace additionally by `phase`, `iteration` within a name). Because seed
-/// names are `{prefix}_{i}` with `i` rendered as a decimal string, the row
-/// order is NOT numeric: e.g. `general_10` < `general_2` < `general_20` <
-/// `general_3`. Downstream `analyze.py` must parse the integer out of the
-/// name if it needs numeric ordering; it must not assume JSONL row index
-/// equals seed index.
+/// Sort convention: summary and trace row order is **lexicographic on `name`**
+/// (trace additionally by `phase`, `iteration` within a name); cache row order
+/// is by exact rational dual-vertex key. Because seed names are `{prefix}_{i}`
+/// with `i` rendered as a decimal string, the row order is NOT numeric: e.g.
+/// `general_10` < `general_2` < `general_20` < `general_3`. Downstream
+/// `analyze.py` must parse the integer out of the name if it needs numeric
+/// ordering; it must not assume JSONL row index equals seed index.
 pub fn finalize_ascent_output(paths: &AscentOutputPaths, writers: AscentWriters) {
     // Drop writers first so the BufWriters flush and the files are closed
     // before we re-open them below. Explicit drop (not just letting it fall
@@ -177,7 +180,7 @@ pub fn finalize_ascent_output(paths: &AscentOutputPaths, writers: AscentWriters)
             .then_with(|| a.phase.cmp(&b.phase))
             .then_with(|| a.iteration.cmp(&b.iteration))
     });
-    // Remove duplicates from crash-resume (see doc comment on `write_result`).
+    // Remove duplicates from crash-resume (see doc comment on `write_seed_result`).
     // dedup_by keeps the first of each adjacent run of equal keys.
     trace_rows
         .dedup_by(|a, b| a.name == b.name && a.phase == b.phase && a.iteration == b.iteration);
