@@ -2,7 +2,8 @@
 
 ## Dataset
 
-- dataset source: `/tmp/sys-ds-reset-pilot-tables-VJ6D0P`
+- historical dataset source: `/tmp/sys-ds-reset-pilot-tables-VJ6D0P`
+- current reruns should use: `experiments/sys-landscape/datascience/dataset/`
 - joined rows: `282`
 - groups used for leakage control: `212`
 - random rows: `170`

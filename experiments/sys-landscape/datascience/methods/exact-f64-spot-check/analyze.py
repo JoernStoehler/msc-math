@@ -11,8 +11,6 @@ Input Artifacts:
     `polytope-table.jsonl` and `observation-table.jsonl`
 Output Artifacts:
   - experiments/sys-landscape/datascience/methods/exact-f64-spot-check/report.md
-  - experiments/sys-landscape/datascience/methods/exact-f64-spot-check/summary.json
-    as an existing historical sidecar, not a default requirement for new methods
 """
 
 from __future__ import annotations
@@ -29,20 +27,20 @@ from typing import Any
 
 
 EXPERIMENT_DIR = Path(__file__).resolve().parent
+DEFAULT_DATASET_DIR = EXPERIMENT_DIR.parent.parent / "dataset"
 REPORT_MD = EXPERIMENT_DIR / "report.md"
-SUMMARY_JSON = EXPERIMENT_DIR / "summary.json"
 
 EXPECTED_POLY_ROWS = 282
 EXPECTED_OBS_ROWS = 282
 EXPECTED_MAX_SYS = 0.906316153431123
 EXPECTED_SYS_GT_ONE = 0
 PRODUCER_COMMAND = (
-    "cargo run -p exp-sys-landscape --bin sys-dataset -- "
-    "--out-dir /tmp/sys-ds-pilot1-tables-tH33Hr"
+    "experiments/sys-landscape/datascience/build-dataset.sh"
 )
 DEFAULT_COMMAND = (
     "uv run --script experiments/sys-landscape/datascience/methods/"
-    "exact-f64-spot-check/analyze.py --dataset-dir /tmp/sys-ds-pilot1-tables-tH33Hr"
+    "exact-f64-spot-check/analyze.py --dataset-dir "
+    "experiments/sys-landscape/datascience/dataset"
 )
 
 GEOMETRY_COLUMNS = [
@@ -71,14 +69,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--dataset-dir",
         type=Path,
-        required=True,
-        help="Frozen dataset directory with polytope-table.jsonl and observation-table.jsonl.",
+        default=DEFAULT_DATASET_DIR,
+        help="Dataset directory. Defaults to experiments/sys-landscape/datascience/dataset.",
     )
     parser.add_argument(
         "--out-dir",
         type=Path,
         default=EXPERIMENT_DIR,
-        help="Output directory for report.md and this method's historical summary.json sidecar.",
+        help="Output directory for report.md.",
     )
     return parser.parse_args()
 
@@ -311,7 +309,7 @@ def verdict(checks: dict[str, Any], summary: dict[str, Any]) -> dict[str, str]:
             "evidence_strength": "high",
             "implementation_trust": "high",
             "thesis_use": "Jorn decision needed",
-            "caveat": "Stop condition hit: frozen table contains sys > 1.",
+            "caveat": "Stop condition hit: dataset contains sys > 1.",
             "reopen_trigger": "After the sys > 1 row provenance is resolved.",
         }
     if not checks["passed"]:
@@ -320,7 +318,7 @@ def verdict(checks: dict[str, Any], summary: dict[str, Any]) -> dict[str, str]:
             "evidence_strength": "low",
             "implementation_trust": "high",
             "thesis_use": "omit before submission",
-            "caveat": "Dataset guard mismatch; the spike did not test the frozen packet.",
+            "caveat": "Dataset guard mismatch; the spike did not test the expected dataset.",
             "reopen_trigger": "Rerun after row counts, max sys, and sys > 1 count match the packet.",
         }
     if summary["max_flat_vs_nested_abs_error"] != 0.0:
@@ -476,7 +474,6 @@ def main() -> None:
             "sample_size": 0,
         }
 
-    (out_dir / "summary.json").write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n")
     write_report(out_dir, payload)
 
     if checks["sys_gt_one_count"] > 0:

@@ -11,8 +11,6 @@ Input Artifacts:
   - dataset directory passed by `--dataset-dir`, containing
     `polytope-table.jsonl` and `observation-table.jsonl`
 Output Artifacts:
-  - experiments/sys-landscape/datascience/methods/supervised-alternatives-spike/summary.json
-    as an existing historical sidecar, not a default requirement for new methods
   - experiments/sys-landscape/datascience/methods/supervised-alternatives-spike/REPORT.md
 """
 
@@ -53,7 +51,7 @@ except ImportError:  # pragma: no cover - old sklearn fallback.
 
 
 EXPERIMENT_DIR = Path(__file__).resolve().parent
-SUMMARY_JSON = EXPERIMENT_DIR / "summary.json"
+DEFAULT_DATASET_DIR = EXPERIMENT_DIR.parent.parent / "dataset"
 REPORT_MD = EXPERIMENT_DIR / "REPORT.md"
 
 ENDPOINT_DATASETS = {
@@ -113,8 +111,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--dataset-dir",
         type=Path,
-        required=True,
-        help="Frozen dataset directory with polytope and observation JSONL tables.",
+        default=DEFAULT_DATASET_DIR,
+        help="Dataset directory. Defaults to experiments/sys-landscape/datascience/dataset.",
     )
     parser.add_argument(
         "--permutations",
@@ -543,7 +541,7 @@ def summarize(rows: list[Row], dataset_dir: Path, checks: dict[str, Any], permut
     implementation_trust = "medium"
     thesis_use = "supporting/caveat only"
     caveat = (
-        "Frozen 282-row table only; feature matrix excludes target/capacity, raw arrays, ids, "
+        "Current 282-row dataset only; feature matrix excludes target/capacity, raw arrays, ids, "
         "and observation provenance for claim-bearing blocks; the `intrinsic_numeric` block "
         "still includes cached orbit-search scalar features, so `intrinsic_no_orbit_search` is "
         "the cleaner geometry-side sensitivity. The method panel is small and cheap."
@@ -564,8 +562,7 @@ def summarize(rows: list[Row], dataset_dir: Path, checks: dict[str, Any], permut
         "dataset": {
             "path": str(dataset_dir),
             "producer_command": (
-                "cargo run -p exp-sys-landscape --bin sys-dataset -- "
-                "--out-dir /tmp/sys-ds-pilot1-tables-tH33Hr"
+                "experiments/sys-landscape/datascience/build-dataset.sh"
             ),
             "checks": checks,
         },
@@ -605,7 +602,7 @@ def summarize(rows: list[Row], dataset_dir: Path, checks: dict[str, Any], permut
             "classification_cv": "StratifiedGroupKFold when available, same groups",
             "transfer": "train all random rows and score all endpoint rows; this is the load-bearing search-usefulness surface",
             "unique_polytope_note": (
-                "The frozen snapshot has one observation per polytope, but grouping is still used "
+                "The current dataset has one observation per polytope, but grouping is still used "
                 "because the producer lineage/root fields can couple rows through common starts or sources."
             ),
         },
@@ -755,10 +752,8 @@ def main() -> None:
     args = parse_args()
     rows, checks = load_rows(args.dataset_dir)
     summary = summarize(rows, args.dataset_dir, checks, args.permutations)
-    SUMMARY_JSON.write_text(json.dumps(summary, indent=2, sort_keys=True) + "\n")
     write_report(summary)
     print(json.dumps(summary["key_results"], indent=2, sort_keys=True))
-    print(f"wrote {SUMMARY_JSON}")
     print(f"wrote {REPORT_MD}")
 
 

@@ -12,8 +12,6 @@ Input Artifacts:
     `polytope-table.jsonl` and `observation-table.jsonl`
 Output Artifacts:
   - experiments/sys-landscape/datascience/methods/pca-cluster-spike/report.md
-  - experiments/sys-landscape/datascience/methods/pca-cluster-spike/summary.json
-    as an existing historical sidecar, not a default requirement for new methods
 """
 
 from __future__ import annotations
@@ -34,6 +32,7 @@ from sklearn.metrics import silhouette_score
 from sklearn.preprocessing import StandardScaler
 
 EXPERIMENT_DIR = Path(__file__).resolve().parent
+DEFAULT_DATASET_DIR = EXPERIMENT_DIR.parent.parent / "dataset"
 EXPECTED_POLYTOPE_ROWS = 282
 EXPECTED_OBSERVATION_ROWS = 282
 EXPECTED_MAX_SYS = 0.906316153431123
@@ -62,7 +61,12 @@ POLYTOPE_EXCLUDED_PREFIXES = (
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--dataset-dir", type=Path, required=True)
+    parser.add_argument(
+        "--dataset-dir",
+        type=Path,
+        default=DEFAULT_DATASET_DIR,
+        help="Dataset directory. Defaults to experiments/sys-landscape/datascience/dataset.",
+    )
     parser.add_argument("--out-dir", type=Path, default=EXPERIMENT_DIR)
     return parser.parse_args()
 
@@ -333,7 +337,7 @@ def decide_verdict(summary: dict[str, Any]) -> dict[str, str]:
             "evidence_strength": "low",
             "implementation_trust": "medium",
             "thesis_use": "omit before submission",
-            "caveat": "Frozen dataset guards failed; do not use the scan result.",
+            "caveat": "Dataset guards failed; do not use the scan result.",
             "reopen_trigger": "Rerun after the dataset path matches the packet row counts, max sys, and sys > 1 count.",
         }
     best_cluster = summary["cluster"]["selected_by_silhouette"]["best_mean_sys_cluster"]
@@ -345,7 +349,7 @@ def decide_verdict(summary: dict[str, Any]) -> dict[str, str]:
             "evidence_strength": "high",
             "implementation_trust": "high",
             "thesis_use": "Jorn decision needed",
-            "caveat": "The frozen table contains sys > 1; stop DS-I004 and inspect the producer result directly.",
+            "caveat": "The dataset contains sys > 1; stop DS-I004 and inspect the producer result directly.",
             "reopen_trigger": "After Jorn/lead resolves the sys > 1 row provenance.",
         }
     if (
@@ -367,7 +371,7 @@ def decide_verdict(summary: dict[str, Any]) -> dict[str, str]:
         "evidence_strength": "medium",
         "implementation_trust": "high",
         "thesis_use": "supporting/caveat only",
-        "caveat": "This is a 282-row frozen table scan over nonconstant intrinsic numeric polytope features; it excludes observation provenance and capacity/search witness columns, and it tests only PCA, KMeans k=2..8, and IsolationForest at 10 percent contamination.",
+        "caveat": "This is a 282-row retained-dataset scan over nonconstant intrinsic numeric polytope features; it excludes observation provenance and capacity/search witness columns, and it tests only PCA, KMeans k=2..8, and IsolationForest at 10 percent contamination.",
         "reopen_trigger": "Reopen if a larger or fresher table adds sys > 1, changes the row guards, or a sampling rule is proposed that can sample a feature-space region before inspecting sys, endpoint labels, dataset identity, or optimizer provenance.",
     }
 
@@ -424,7 +428,7 @@ def write_report(summary: dict[str, Any], path: Path) -> None:
         "",
         "## Inference",
         "",
-        "The PCA/clustering/anomaly methods see structure in the frozen table, but the fitted structure is not by itself a candidate-proposer. The strongest PCA diagnostic is a correlation with `sys`, which is an audit statistic rather than a sampling rule. The silhouette-selected cluster split is broad rather than a targeted high-`sys` rule; higher-k clusters with stronger high-`sys` concentration are endpoint/dataset-heavy when inspected after fitting. The anomaly rule does not enrich for high `sys` relative to the rest of the table. A positive follow-up would need to turn intrinsic feature loadings or cluster geometry into a sampling rule specified before inspecting `sys`, endpoint labels, dataset identity, or optimizer provenance.",
+        "The PCA/clustering/anomaly methods see structure in the retained dataset, but the fitted structure is not by itself a candidate-proposer. The strongest PCA diagnostic is a correlation with `sys`, which is an audit statistic rather than a sampling rule. The silhouette-selected cluster split is broad rather than a targeted high-`sys` rule; higher-k clusters with stronger high-`sys` concentration are endpoint/dataset-heavy when inspected after fitting. The anomaly rule does not enrich for high `sys` relative to the rest of the table. A positive follow-up would need to turn intrinsic feature loadings or cluster geometry into a sampling rule specified before inspecting `sys`, endpoint labels, dataset identity, or optimizer provenance.",
         "",
         "## Verdict",
         "",
@@ -467,7 +471,7 @@ def main() -> None:
         "script": str(Path(__file__).relative_to(Path.cwd())),
         "dataset_dir": str(args.dataset_dir),
         "out_dir": str(args.out_dir),
-        "producer_command": "cargo run -p exp-sys-landscape --bin sys-dataset -- --out-dir /tmp/sys-ds-pilot1-tables-tH33Hr",
+        "producer_command": "experiments/sys-landscape/datascience/build-dataset.sh",
         "git_commit": git_commit(),
         "dataset_checks": checks,
         "feature_info": feature_info,
@@ -477,12 +481,9 @@ def main() -> None:
     }
     summary["verdict"] = decide_verdict(summary)
 
-    summary_path = args.out_dir / "summary.json"
     report_path = args.out_dir / "report.md"
-    summary_path.write_text(json.dumps(summary, indent=2, sort_keys=True) + "\n")
     write_report(summary, report_path)
     print(f"Wrote {report_path}")
-    print(f"Wrote {summary_path}")
     print(json.dumps(summary["verdict"], sort_keys=True))
 
 

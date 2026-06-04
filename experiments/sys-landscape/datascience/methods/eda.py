@@ -24,10 +24,17 @@ from figure_config import FIGSIZE_SINGLE, setup
 
 setup()
 
+DEFAULT_DATASET_DIR = Path(__file__).resolve().parent.parent / "dataset"
+
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--dataset-dir", type=Path, required=True)
+    parser.add_argument(
+        "--dataset-dir",
+        type=Path,
+        default=DEFAULT_DATASET_DIR,
+        help="Dataset directory. Defaults to experiments/sys-landscape/datascience/dataset.",
+    )
     parser.add_argument("--out-dir", type=Path, required=True)
     return parser.parse_args()
 

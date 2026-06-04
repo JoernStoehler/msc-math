@@ -2,9 +2,15 @@
 
 ## Command And Provenance
 
-- command: `uv run --script experiments/sys-landscape/datascience/methods/supervised-alternatives-spike/analyze.py --dataset-dir /tmp/sys-ds-pilot1-tables-tH33Hr --permutations 20`
-- dataset path: `/tmp/sys-ds-pilot1-tables-tH33Hr`
-- producer command: `cargo run -p exp-sys-landscape --bin sys-dataset -- --out-dir /tmp/sys-ds-pilot1-tables-tH33Hr`
+Historical note: this report records an older worker run that used a temporary
+dataset path. Current reruns should use
+`experiments/sys-landscape/datascience/dataset/` and should not recreate this
+private `/tmp` dataset.
+
+- historical command: `uv run --script experiments/sys-landscape/datascience/methods/supervised-alternatives-spike/analyze.py --dataset-dir /tmp/sys-ds-pilot1-tables-tH33Hr --permutations 20`
+- current rerun command: `uv run --script experiments/sys-landscape/datascience/methods/supervised-alternatives-spike/analyze.py --dataset-dir experiments/sys-landscape/datascience/dataset --permutations 20`
+- historical dataset path: `/tmp/sys-ds-pilot1-tables-tH33Hr`
+- historical producer command: `cargo run -p exp-sys-landscape --bin sys-dataset -- --out-dir /tmp/sys-ds-pilot1-tables-tH33Hr`
 - generated at UTC: `2026-04-30T15:47:56.754035+00:00`
 
 ## Dataset Snapshot And Guards
@@ -101,7 +107,7 @@ For the M012-style endpoint-vs-random question, non-provenance numeric polytope 
 - evidence_strength: `medium`
 - implementation_trust: `medium`
 - thesis_use: `supporting/caveat only`
-- caveat: Frozen 282-row table only; feature matrix excludes target/capacity, raw arrays, ids, and observation provenance for claim-bearing blocks; the `intrinsic_numeric` block still includes cached orbit-search scalar features, so `intrinsic_no_orbit_search` is the cleaner geometry-side sensitivity. The method panel is small and cheap.
+- caveat: Current 282-row dataset only; feature matrix excludes target/capacity, raw arrays, ids, and observation provenance for claim-bearing blocks; the `intrinsic_numeric` block still includes cached orbit-search scalar features, so `intrinsic_no_orbit_search` is the cleaner geometry-side sensitivity. The method panel is small and cheap.
 - reopen trigger: Reopen if refreshed tables add materially more random/endpoint
   rows, if new non-provenance features make random-to-endpoint R^2 nonnegative
   under grouped prediction, or if a reviewer finds a leakage bug in the feature

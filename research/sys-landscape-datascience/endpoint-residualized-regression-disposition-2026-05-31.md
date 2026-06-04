@@ -40,7 +40,9 @@ The 2026-06-03 repair made `analyze_residual.py` enforce endpoint-only loading
 via `load_joined_rows(dataset_dir, endpoint_only=True)` and write
 `feature_pattern_search_residual_summary.md`.
 
-The repaired run used `/tmp/sys-ds-reset-pilot-tables-VJ6D0P` and recorded:
+The repaired historical run used `/tmp/sys-ds-reset-pilot-tables-VJ6D0P`.
+Current reruns should use `experiments/sys-landscape/datascience/dataset/`.
+The historical run recorded:
 
 - `112` endpoint rows;
 - `5` grouped endpoint folds;

@@ -4,9 +4,15 @@ idea_id = DS-I007
 
 ## Command And Provenance
 
-- Actual command run: `uv run --script experiments/sys-landscape/datascience/methods/exact-f64-spot-check/analyze.py --dataset-dir /tmp/sys-ds-pilot1-tables-tH33Hr`
-- Dataset path: `/tmp/sys-ds-pilot1-tables-tH33Hr`
-- Producer command from packet: `cargo run -p exp-sys-landscape --bin sys-dataset -- --out-dir /tmp/sys-ds-pilot1-tables-tH33Hr`
+Historical note: this report records an older worker run that used a temporary
+dataset path. Current reruns should use
+`experiments/sys-landscape/datascience/dataset/` and should not recreate this
+private `/tmp` dataset.
+
+- Historical command run: `uv run --script experiments/sys-landscape/datascience/methods/exact-f64-spot-check/analyze.py --dataset-dir /tmp/sys-ds-pilot1-tables-tH33Hr`
+- Current rerun command: `uv run --script experiments/sys-landscape/datascience/methods/exact-f64-spot-check/analyze.py --dataset-dir experiments/sys-landscape/datascience/dataset`
+- Historical dataset path: `/tmp/sys-ds-pilot1-tables-tH33Hr`
+- Historical producer command from packet: `cargo run -p exp-sys-landscape --bin sys-dataset -- --out-dir /tmp/sys-ds-pilot1-tables-tH33Hr`
 - Run timestamp UTC: `2026-04-30T16:23:40.138816+00:00`
 - Python: `3.12.3`
 

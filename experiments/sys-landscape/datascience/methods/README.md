@@ -19,6 +19,16 @@ Current consumers:
 - `pca-cluster-spike/`
 - `supervised-alternatives-spike/`
 
+Useful existing examples:
+- `feature-pattern-search/regime-classification-report.md` is a compact report
+  with provenance, result summary, caveats, and no required JSON sidecar;
+- `feature-pattern-search/analyze_regime_classification.py` shows a real method
+  script that reads the active dataset by default, uses grouped CV, and writes
+  a report and figure;
+- `feature-pattern-search/common.py` shows shared method-local loading helpers;
+- `../tables/features.rs` shows where accepted reusable table features are
+  assembled from the table feature modules.
+
 The current dataset inputs are:
 - `polytope-table.jsonl`
 - `observation-table.jsonl`

@@ -2,10 +2,15 @@
 
 ## Command / Provenance
 
+Historical note: this report records an older worker run that used a temporary
+dataset path. Current reruns should use
+`experiments/sys-landscape/datascience/dataset/` and should not recreate this
+private `/tmp` dataset.
+
 - Script: `experiments/sys-landscape/datascience/methods/pca-cluster-spike/analyze.py`
-- Dataset dir: `/tmp/sys-ds-pilot1-tables-tH33Hr`
+- Historical dataset dir: `/tmp/sys-ds-pilot1-tables-tH33Hr`
 - Output dir: `experiments/sys-landscape/datascience/methods/pca-cluster-spike`
-- Producer command recorded in packet: `cargo run -p exp-sys-landscape --bin sys-dataset -- --out-dir /tmp/sys-ds-pilot1-tables-tH33Hr`
+- Historical producer command recorded in packet: `cargo run -p exp-sys-landscape --bin sys-dataset -- --out-dir /tmp/sys-ds-pilot1-tables-tH33Hr`
 - Git commit: `32a39b2c`
 - Random state: `20260430`
 
@@ -41,7 +46,7 @@
 
 ## Inference
 
-The PCA/clustering/anomaly methods see structure in the frozen table, but the fitted structure is not by itself a candidate-proposer. The strongest PCA diagnostic is a correlation with `sys`, which is an audit statistic rather than a sampling rule. The silhouette-selected cluster split is broad rather than a targeted high-`sys` rule; higher-k clusters with stronger high-`sys` concentration are endpoint/dataset-heavy when inspected after fitting. The anomaly rule does not enrich for high `sys` relative to the rest of the table. A positive follow-up would need to turn intrinsic feature loadings or cluster geometry into a sampling rule specified before inspecting `sys`, endpoint labels, dataset identity, or optimizer provenance.
+The PCA/clustering/anomaly methods see structure in the retained dataset, but the fitted structure is not by itself a candidate-proposer. The strongest PCA diagnostic is a correlation with `sys`, which is an audit statistic rather than a sampling rule. The silhouette-selected cluster split is broad rather than a targeted high-`sys` rule; higher-k clusters with stronger high-`sys` concentration are endpoint/dataset-heavy when inspected after fitting. The anomaly rule does not enrich for high `sys` relative to the rest of the table. A positive follow-up would need to turn intrinsic feature loadings or cluster geometry into a sampling rule specified before inspecting `sys`, endpoint labels, dataset identity, or optimizer provenance.
 
 ## Verdict
 
@@ -49,11 +54,11 @@ The PCA/clustering/anomaly methods see structure in the frozen table, but the fi
 - `evidence_strength`: `medium`
 - `implementation_trust`: `high`
 - `thesis_use`: `supporting/caveat only`
-- `caveat`: This is a 282-row frozen table scan over nonconstant intrinsic numeric polytope features; it excludes observation provenance and capacity/search witness columns, and it tests only PCA, KMeans k=2..8, and IsolationForest at 10 percent contamination.
+- `caveat`: This is a 282-row retained-dataset scan over nonconstant intrinsic numeric polytope features; it excludes observation provenance and capacity/search witness columns, and it tests only PCA, KMeans k=2..8, and IsolationForest at 10 percent contamination.
 - `reopen_trigger`: Reopen if a larger or fresher table adds sys > 1, changes the row guards, or a sampling rule is proposed that can sample a feature-space region before inspecting sys, endpoint labels, dataset identity, or optimizer provenance.
 
 ## Reproducibility
 
 ```bash
-uv run --script experiments/sys-landscape/datascience/methods/pca-cluster-spike/analyze.py --dataset-dir /tmp/sys-ds-pilot1-tables-tH33Hr --out-dir experiments/sys-landscape/datascience/methods/pca-cluster-spike
+uv run --script experiments/sys-landscape/datascience/methods/pca-cluster-spike/analyze.py --dataset-dir experiments/sys-landscape/datascience/dataset --out-dir experiments/sys-landscape/datascience/methods/pca-cluster-spike
 ```

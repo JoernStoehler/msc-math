@@ -182,7 +182,8 @@ Record only lessons that change future delegation or spike design.
 Disposition: current report-ledger serial pilot accepted and merged to the integration
 branch.
 
-Worker commands:
+Historical worker commands; current reruns should use
+`experiments/sys-landscape/datascience/dataset/`:
 
 ```bash
 uv run --script experiments/sys-landscape/datascience/methods/feature-pattern-search/analyze.py --dataset-dir /tmp/sys-ds-reset-pilot-tables-VJ6D0P
@@ -232,7 +233,8 @@ Qualifiers: `evidence_strength = medium`; `implementation_trust = medium`;
 
 Disposition: source-truth repair merged to `main`.
 
-Worker command:
+Historical worker command; current reruns should use
+`experiments/sys-landscape/datascience/dataset/`:
 
 ```bash
 uv run --script experiments/sys-landscape/datascience/methods/pca-cluster-spike/analyze.py --dataset-dir /tmp/sys-ds-pilot1-tables-tH33Hr --out-dir experiments/sys-landscape/datascience/methods/pca-cluster-spike
@@ -244,8 +246,8 @@ Evidence:
 - Main commit: `39039550`.
 - Report path after merge:
   `experiments/sys-landscape/datascience/methods/pca-cluster-spike/report.md`.
-- Auxiliary metadata path after merge, not source truth:
-  `experiments/sys-landscape/datascience/methods/pca-cluster-spike/summary.json`.
+- Historical auxiliary metadata sidecar was removed on 2026-06-04 because the
+  report is source truth and no current consumer needs the JSON.
 
 Observation:
 
@@ -282,7 +284,8 @@ Qualifiers: `evidence_strength = medium`; `implementation_trust = high`;
 Disposition: source-truth repair merged to `main`; process result was a partial
 worker failure repaired by the lead.
 
-Lead command:
+Historical lead command; current reruns should use
+`experiments/sys-landscape/datascience/dataset/`:
 
 ```bash
 uv run --script experiments/sys-landscape/datascience/methods/supervised-alternatives-spike/analyze.py --dataset-dir /tmp/sys-ds-pilot1-tables-tH33Hr --permutations 20
@@ -294,8 +297,8 @@ Evidence:
 - Main commit: `5e8db378`.
 - Report path after merge:
   `experiments/sys-landscape/datascience/methods/supervised-alternatives-spike/REPORT.md`.
-- Auxiliary metadata path after merge, not source truth:
-  `experiments/sys-landscape/datascience/methods/supervised-alternatives-spike/summary.json`.
+- Historical auxiliary metadata sidecar was removed on 2026-06-04 because the
+  report is source truth and no current consumer needs the JSON.
 
 Observation:
 
@@ -336,7 +339,8 @@ script, report, and run outputs are not committed under the current
 report-ledger contract, so do not quote the numerical null/permutation results
 as thesis source truth unless a repo-owned method packet is added later.
 
-Worker command:
+Historical worker command; current reruns should use
+`experiments/sys-landscape/datascience/dataset/`:
 
 ```bash
 uv run experiments/sys-landscape/datascience/methods/stat-sanity-spike/analyze.py --dataset-dir /tmp/sys-ds-plan-tables --out-dir /tmp/ds-stat-sanity-spike
@@ -384,7 +388,8 @@ the toolbox audit rather than these scratch numbers.
 
 Disposition: source-truth branch merged to `main`.
 
-Worker command:
+Historical worker command; current reruns should use
+`experiments/sys-landscape/datascience/dataset/`:
 
 ```bash
 uv run --script experiments/sys-landscape/datascience/methods/exact-f64-spot-check/analyze.py --dataset-dir /tmp/sys-ds-pilot1-tables-tH33Hr
@@ -396,8 +401,8 @@ Evidence:
 - Main commit: `e8528963`.
 - Report path after merge:
   `experiments/sys-landscape/datascience/methods/exact-f64-spot-check/report.md`.
-- Auxiliary metadata path after merge, not source truth:
-  `experiments/sys-landscape/datascience/methods/exact-f64-spot-check/summary.json`.
+- Historical auxiliary metadata sidecar was removed on 2026-06-04 because the
+  report is source truth and no current consumer needs the JSON.
 
 Observation:
 
