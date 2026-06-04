@@ -145,6 +145,13 @@ After shard review, consolidate on LICCA or locally with:
 
 ```bash
 python3 experiments/sys-landscape/datascience/produce/merge-licca-ascent-shards.py
+python3 experiments/sys-landscape/datascience/produce/merge-licca-ascent-shards.py --write
+```
+
+For future cache-complete LICCA campaigns, use `--require-cache` during review
+and write:
+
+```bash
 python3 experiments/sys-landscape/datascience/produce/merge-licca-ascent-shards.py --require-cache
 python3 experiments/sys-landscape/datascience/produce/merge-licca-ascent-shards.py --require-cache --write
 ```

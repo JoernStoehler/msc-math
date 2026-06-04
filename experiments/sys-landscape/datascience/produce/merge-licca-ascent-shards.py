@@ -90,8 +90,13 @@ def collect_paths(produce_dir: Path, canonical_name: str, shard_globs: list[str]
     return [path for path in paths if path.exists()]
 
 
-def reject_trace_paths(paths: list[Path]) -> list[Path]:
-    return [path for path in paths if not path.name.endswith("-trace.jsonl")]
+def keep_summary_paths(paths: list[Path]) -> list[Path]:
+    return [
+        path
+        for path in paths
+        if not path.name.endswith("-trace.jsonl")
+        and not path.name.endswith("-cache.jsonl")
+    ]
 
 
 def keep_trace_paths(paths: list[Path]) -> list[Path]:
@@ -138,12 +143,24 @@ def validate_summary_cache(
 ) -> list[str]:
     cache_by_key = {cache_key(row): row for row in cache_rows}
     missing: list[str] = []
+    incomplete: list[str] = []
     mismatches: list[str] = []
     for row in rows:
         cached = cache_by_key.get(summary_cache_key(row))
         if cached is None:
             missing.append(str(row["name"]))
             continue
+        if require_cache:
+            missing_fields = [
+                field
+                for field in ("capacity", "volume", "sigmas", "orbit_scalars")
+                if cached.get(field) is None
+            ]
+            if missing_fields:
+                incomplete.append(f"{row['name']}: {missing_fields}")
+            for field in ("final_capacity", "final_volume"):
+                if row.get(field) in (None, 0.0):
+                    incomplete.append(f"{row['name']}: missing {field}")
         final_capacity = row.get("final_capacity")
         if final_capacity not in (None, 0.0) and cached.get("capacity") is not None:
             if abs(float(final_capacity) - float(cached["capacity"])) > 1e-9:
@@ -154,6 +171,11 @@ def validate_summary_cache(
                 mismatches.append(f"{row['name']}: final_volume")
     if mismatches:
         raise SystemExit(f"{label}: summary/cache scalar mismatches: {mismatches[:20]}")
+    if require_cache and incomplete:
+        raise SystemExit(
+            f"{label}: {len(incomplete)} incomplete summary/cache rows; "
+            f"first incomplete: {incomplete[:20]}"
+        )
     if require_cache and missing:
         raise SystemExit(
             f"{label}: {len(missing)} summary rows lack matching cache rows; "
@@ -227,7 +249,7 @@ def main() -> None:
     args = parse_args()
     produce_dir = args.produce_dir
 
-    general_paths = reject_trace_paths(collect_paths(
+    general_paths = keep_summary_paths(collect_paths(
         produce_dir,
         "ascent.jsonl",
         [
@@ -251,7 +273,7 @@ def main() -> None:
             "licca-shards/general-production-1024/general-shard-*-cache.jsonl",
         ],
     )
-    product_paths = reject_trace_paths(collect_paths(
+    product_paths = keep_summary_paths(collect_paths(
         produce_dir,
         "ascent-product.jsonl",
         [
