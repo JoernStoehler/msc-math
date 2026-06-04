@@ -35,6 +35,11 @@ licca-shards/product/
 These shard files are producer-stage artifacts. Review and merge them into the
 canonical producer files before rebuilding `../dataset/`.
 
+Use [merge-licca-ascent-shards.py](merge-licca-ascent-shards.py) to consolidate
+canonical ascent files and LICCA shard directories into branch-local merged
+producer files for review. It reports row counts, missing expected seed indices,
+max `final_sys`, and any `final_sys > 1` rows.
+
 ## Producer binaries
 
 - `sys-dataset-random` writes `random.jsonl` and updates `shared-cache.jsonl`.
@@ -129,3 +134,22 @@ This requests `4096` new general seeds and `4096` new product seeds. It writes
 to `licca-shards/general-production-1024/` and
 `licca-shards/product-production-1024/` so it does not collide with the first
 conservative wave under `licca-shards/general/` and `licca-shards/product/`.
+
+After shard review, consolidate on LICCA or locally with:
+
+```bash
+uv run --script experiments/sys-landscape/datascience/produce/merge-licca-ascent-shards.py
+uv run --script experiments/sys-landscape/datascience/produce/merge-licca-ascent-shards.py --write
+```
+
+The `--write` form creates:
+
+```text
+ascent-licca-merged.jsonl
+ascent-licca-merged-trace.jsonl
+ascent-product-licca-merged.jsonl
+ascent-product-licca-merged-trace.jsonl
+```
+
+These files are review targets. Promote them to the canonical producer filenames
+only after row guards and logs are accepted.
