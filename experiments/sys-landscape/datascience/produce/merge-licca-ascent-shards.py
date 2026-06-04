@@ -29,6 +29,11 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Write merged outputs. Without this flag, only print a review report.",
     )
+    parser.add_argument(
+        "--require-cache",
+        action="store_true",
+        help="Require every merged summary endpoint to have a matching producer-cache row.",
+    )
     return parser.parse_args()
 
 
@@ -68,6 +73,16 @@ def trace_key(row: dict[str, Any]) -> tuple[int, str, int, int]:
     )
 
 
+def cache_key(row: dict[str, Any]) -> str:
+    return json.dumps(row["dual_vertices_rational"], sort_keys=True, separators=(",", ":"))
+
+
+def summary_cache_key(row: dict[str, Any]) -> str:
+    return json.dumps(
+        row["final_dual_vertices_rational"], sort_keys=True, separators=(",", ":")
+    )
+
+
 def collect_paths(produce_dir: Path, canonical_name: str, shard_globs: list[str]) -> list[Path]:
     paths = [produce_dir / canonical_name]
     for pattern in shard_globs:
@@ -99,6 +114,52 @@ def dedup_rows(
             rows_by_key[key] = row
             sources_by_key.setdefault(key, []).append(path)
     return sorted(rows_by_key.values(), key=sort_key), sources_by_key
+
+
+def dedup_cache_rows(paths: list[Path]) -> tuple[list[dict[str, Any]], dict[str, list[Path]]]:
+    rows_by_key: dict[str, dict[str, Any]] = {}
+    sources_by_key: dict[str, list[Path]] = {}
+    for path in paths:
+        for row in load_jsonl(path):
+            key = cache_key(row)
+            previous = rows_by_key.get(key)
+            if previous is not None and previous != row:
+                raise SystemExit(f"conflicting duplicate cache row for {key!r} in {path}")
+            rows_by_key[key] = row
+            sources_by_key.setdefault(key, []).append(path)
+    return sorted(rows_by_key.values(), key=cache_key), sources_by_key
+
+
+def validate_summary_cache(
+    label: str,
+    rows: list[dict[str, Any]],
+    cache_rows: list[dict[str, Any]],
+    require_cache: bool,
+) -> list[str]:
+    cache_by_key = {cache_key(row): row for row in cache_rows}
+    missing: list[str] = []
+    mismatches: list[str] = []
+    for row in rows:
+        cached = cache_by_key.get(summary_cache_key(row))
+        if cached is None:
+            missing.append(str(row["name"]))
+            continue
+        final_capacity = row.get("final_capacity")
+        if final_capacity not in (None, 0.0) and cached.get("capacity") is not None:
+            if abs(float(final_capacity) - float(cached["capacity"])) > 1e-9:
+                mismatches.append(f"{row['name']}: final_capacity")
+        final_volume = row.get("final_volume")
+        if final_volume not in (None, 0.0) and cached.get("volume") is not None:
+            if abs(float(final_volume) - float(cached["volume"])) > 1e-9:
+                mismatches.append(f"{row['name']}: final_volume")
+    if mismatches:
+        raise SystemExit(f"{label}: summary/cache scalar mismatches: {mismatches[:20]}")
+    if require_cache and missing:
+        raise SystemExit(
+            f"{label}: {len(missing)} summary rows lack matching cache rows; "
+            f"first missing: {missing[:20]}"
+        )
+    return missing
 
 
 def missing_indices(rows: list[dict[str, Any]], start: int, stop_inclusive: int) -> list[int]:
@@ -133,6 +194,9 @@ def report_family(
     label: str,
     rows: list[dict[str, Any]],
     paths: list[Path],
+    cache_rows: list[dict[str, Any]],
+    cache_paths: list[Path],
+    missing_cache_names: list[str],
     expected_start: int,
     expected_stop: int,
 ) -> None:
@@ -143,6 +207,13 @@ def report_family(
     for path in paths:
         print(f"  - `{path}`")
     print(f"- merged rows: `{len(rows)}`")
+    print(f"- cache input files: `{len(cache_paths)}`")
+    for path in cache_paths:
+        print(f"  - `{path}`")
+    print(f"- merged cache rows: `{len(cache_rows)}`")
+    print(f"- summary rows missing cache: `{len(missing_cache_names)}`")
+    if missing_cache_names:
+        print(f"- first missing cache rows: `{missing_cache_names[:20]}`")
     print(f"- expected covered seed range: `{expected_start}..{expected_stop}`")
     missing = missing_indices(rows, expected_start, expected_stop)
     print(f"- missing expected seed count: `{len(missing)}`")
@@ -172,6 +243,14 @@ def main() -> None:
             "licca-shards/general-production-1024/general-shard-*-trace.jsonl",
         ],
     ))
+    general_cache_paths = collect_paths(
+        produce_dir,
+        "ascent-cache.jsonl",
+        [
+            "licca-shards/general/general-shard-*-cache.jsonl",
+            "licca-shards/general-production-1024/general-shard-*-cache.jsonl",
+        ],
+    )
     product_paths = reject_trace_paths(collect_paths(
         produce_dir,
         "ascent-product.jsonl",
@@ -188,16 +267,50 @@ def main() -> None:
             "licca-shards/product-production-1024/product-shard-*-trace.jsonl",
         ],
     ))
+    product_cache_paths = collect_paths(
+        produce_dir,
+        "ascent-product-cache.jsonl",
+        [
+            "licca-shards/product/product-shard-*-cache.jsonl",
+            "licca-shards/product-production-1024/product-shard-*-cache.jsonl",
+        ],
+    )
 
     general_rows, _ = dedup_rows(general_paths, "summary", row_key)
     general_trace_rows, _ = dedup_rows(general_trace_paths, "trace", trace_key)
+    general_cache_rows, _ = dedup_cache_rows(general_cache_paths)
     product_rows, _ = dedup_rows(product_paths, "summary", row_key)
     product_trace_rows, _ = dedup_rows(product_trace_paths, "trace", trace_key)
+    product_cache_rows, _ = dedup_cache_rows(product_cache_paths)
+    general_missing_cache = validate_summary_cache(
+        "general", general_rows, general_cache_rows, args.require_cache
+    )
+    product_missing_cache = validate_summary_cache(
+        "product", product_rows, product_cache_rows, args.require_cache
+    )
 
     print("# LICCA Ascent Shard Merge Report")
     print()
-    report_family("general summary", general_rows, general_paths, 0, max(509, name_index(general_rows[-1]) if general_rows else 0))
-    report_family("product summary", product_rows, product_paths, 0, max(511, name_index(product_rows[-1]) if product_rows else 0))
+    report_family(
+        "general summary",
+        general_rows,
+        general_paths,
+        general_cache_rows,
+        general_cache_paths,
+        general_missing_cache,
+        0,
+        max(509, name_index(general_rows[-1]) if general_rows else 0),
+    )
+    report_family(
+        "product summary",
+        product_rows,
+        product_paths,
+        product_cache_rows,
+        product_cache_paths,
+        product_missing_cache,
+        0,
+        max(511, name_index(product_rows[-1]) if product_rows else 0),
+    )
     print(f"## trace rows")
     print(f"- general trace rows: `{len(general_trace_rows)}`")
     print(f"- product trace rows: `{len(product_trace_rows)}`")
@@ -207,8 +320,10 @@ def main() -> None:
         outputs = [
             (produce_dir / "ascent-licca-merged.jsonl", general_rows),
             (produce_dir / "ascent-licca-merged-trace.jsonl", general_trace_rows),
+            (produce_dir / "ascent-licca-merged-cache.jsonl", general_cache_rows),
             (produce_dir / "ascent-product-licca-merged.jsonl", product_rows),
             (produce_dir / "ascent-product-licca-merged-trace.jsonl", product_trace_rows),
+            (produce_dir / "ascent-product-licca-merged-cache.jsonl", product_cache_rows),
         ]
         for path, rows in outputs:
             write_jsonl(path, rows)

@@ -37,15 +37,19 @@ canonical producer files before rebuilding `../dataset/`.
 
 Use [merge-licca-ascent-shards.py](merge-licca-ascent-shards.py) to consolidate
 canonical ascent files and LICCA shard directories into branch-local merged
-producer files for review. It reports row counts, missing expected seed indices,
-max `final_sys`, and any `final_sys > 1` rows.
+producer files for review. It reports row counts, cache coverage, missing
+expected seed indices, max `final_sys`, and any `final_sys > 1` rows. Pass
+`--require-cache` for future LICCA campaigns where every summary endpoint must
+have a matching shard-local producer-cache row.
 
 ## Producer binaries
 
 - `sys-dataset-random` writes `random.jsonl` and updates `shared-cache.jsonl`.
 - `sys-dataset-random-product` writes `random-product.jsonl` and updates `shared-cache.jsonl`.
-- `sys-dataset-ascent` writes `ascent.jsonl` and `ascent-trace.jsonl`.
-- `sys-dataset-ascent-product` writes `ascent-product.jsonl` and `ascent-product-trace.jsonl`.
+- `sys-dataset-ascent` writes `ascent.jsonl`, `ascent-trace.jsonl`, and
+  `ascent-cache.jsonl`.
+- `sys-dataset-ascent-product` writes `ascent-product.jsonl`,
+  `ascent-product-trace.jsonl`, and `ascent-product-cache.jsonl`.
 - `sys-dataset-continuation` writes `continuation.jsonl` and `continuation-cache.jsonl`.
 
 Older `sys-landscape` experiment directories still exist outside `datascience/`, but
@@ -84,9 +88,11 @@ output races. Submit these scripts directly; do not pass production settings as
 `sbatch` flags. Each Slurm script is self-contained and includes its resources,
 seed range, output path, resume rule, and exact Rust command.
 
-The script writes one summary JSONL and one derived `*-trace.jsonl` per Slurm
-array task. Defaults skip existing committed seed ranges: general starts at
-`n-start=10`, and product starts at `n-start=12`.
+The script writes one summary JSONL, one derived `*-trace.jsonl`, and one
+derived `*-cache.jsonl` per Slurm array task. The cache file is shard-local and
+is still written when the binary runs with `--no-db-update`; that flag only
+prevents shared cache writes. Defaults skip existing committed seed ranges:
+general starts at `n-start=10`, and product starts at `n-start=12`.
 
 - [licca-ascent-smoke-general.slurm.sh](licca-ascent-smoke-general.slurm.sh): one
   `test`-partition general shard with `2` seeds.
@@ -139,7 +145,8 @@ After shard review, consolidate on LICCA or locally with:
 
 ```bash
 python3 experiments/sys-landscape/datascience/produce/merge-licca-ascent-shards.py
-python3 experiments/sys-landscape/datascience/produce/merge-licca-ascent-shards.py --write
+python3 experiments/sys-landscape/datascience/produce/merge-licca-ascent-shards.py --require-cache
+python3 experiments/sys-landscape/datascience/produce/merge-licca-ascent-shards.py --require-cache --write
 ```
 
 The `--write` form creates:
@@ -147,8 +154,10 @@ The `--write` form creates:
 ```text
 ascent-licca-merged.jsonl
 ascent-licca-merged-trace.jsonl
+ascent-licca-merged-cache.jsonl
 ascent-product-licca-merged.jsonl
 ascent-product-licca-merged-trace.jsonl
+ascent-product-licca-merged-cache.jsonl
 ```
 
 These files are review targets. Promote them to the canonical producer filenames
