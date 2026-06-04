@@ -138,7 +138,7 @@ explicitly asks for a canonical refresh.
 | `deep-latent-models` | Neural networks or deep latent models | method | Current 282-row dataset | Would need overfit controls and enough rows for flexible models | `rejected-low-voi` | Too small and too easy to overfit before thesis closeout; reopen only with much larger data. |
 | `svm-supervised-baseline` | SVM regression/classification baseline | method spike | Current feature tables only | Whether a standard margin-based model changes the supervised random-to-endpoint prediction or endpoint-vs-random classification story under the same grouped split policy | `future` | Candidate for one optional small parallel wave. Skip if setup cost is not clearly lower than its thesis value; otherwise write source truth under `experiments/sys-landscape/datascience/methods/svm-supervised-baseline/`. |
 | `interpretable-tail-rules` | Simple threshold/tree/interaction rule mining for high-`sys` tails | method spike | Current feature tables only | A candidate-proposer that suggests where to search next before inspecting forbidden inputs, or a bounded no-search-output result for simple interpretable rule classes | `future` | Candidate for one optional small parallel wave. Must not use endpoint labels, producer identity, or target leakage to define the final candidate rule. |
-| `surrogate-guided-search` | Bayesian optimization / surrogate-guided search loop | search | Candidate generator plus exact evaluation budget | New high-sys candidates or clear comparison against random/local baselines | `future` | Reopen only with a bounded candidate space and compute budget approved by Jörn. |
+| `surrogate-guided-search` | Bayesian optimization / surrogate-guided search loop | search | Candidate-proposer plus exact evaluation budget | New high-sys candidates or clear comparison against random/local baselines | `future` | Reopen only with a bounded candidate space and compute budget approved by Jörn. |
 | `geometric-feature-columns` | New symplectic/geometric feature columns from informal intuition | column | Table-stage additive columns | Computable definition, sanity check, and expected information gain | `future` | Split each proposed column into its own row before implementation. |
 | `hko-positive-region-random-walk` | Random walk away from HKO2024 while staying in the `sys > 1` region | search / geometry probe | HKO2024 neighborhood, not the principal generic hostile-landscape table unless later promoted | How far positive examples persist after quotienting or renormalizing symmetry-group motion | `future` | Jörn idea recorded on 2026-06-03: run a random walk away from HKO2024, always staying in the `sys > 1` regime, possibly with renormalization to quotient out the `sys`-symmetry group so perturbation size does not mainly measure symmetry movement. Reopen only as HKO-neighborhood/future-work exploration unless a later packet promotes it to thesis-facing evidence. |
 
@@ -179,24 +179,22 @@ Record only lessons that change future delegation or spike design.
 
 ### `regime-classification` Regime Classification
 
-Disposition: current report-ledger serial pilot accepted and merged to the integration
-branch.
+Disposition: report refreshed on 2026-06-04 from the retained dataset.
 
-Historical worker commands; current reruns should use
-`experiments/sys-landscape/datascience/dataset/`:
+Current rerun commands:
 
 ```bash
-uv run --script experiments/sys-landscape/datascience/methods/feature-pattern-search/analyze.py --dataset-dir /tmp/sys-ds-reset-pilot-tables-VJ6D0P
-uv run --script experiments/sys-landscape/datascience/methods/feature-pattern-search/analyze_regime_classification.py --dataset-dir /tmp/sys-ds-reset-pilot-tables-VJ6D0P
+uv run --script experiments/sys-landscape/datascience/methods/feature-pattern-search/analyze.py --dataset-dir experiments/sys-landscape/datascience/dataset
+uv run --script experiments/sys-landscape/datascience/methods/feature-pattern-search/analyze_regime_classification.py --dataset-dir experiments/sys-landscape/datascience/dataset
 ```
 
 Evidence:
 
-- Branch: `ds-pilot-reset-regime-classification`.
-- Integration commit: `3785cf9a` merges worker commit `be5e5fbb`.
-- Report path:
+- Historical branch: `ds-pilot-reset-regime-classification`.
+- Historical integration commit: `3785cf9a` merges worker commit `be5e5fbb`.
+- Current report path:
   `experiments/sys-landscape/datascience/methods/feature-pattern-search/regime-classification-report.md`.
-- Summary path:
+- Current summary path:
   `experiments/sys-landscape/datascience/methods/feature-pattern-search/regime_classification_summary.md`.
 
 Observation:
@@ -231,20 +229,20 @@ Qualifiers: `evidence_strength = medium`; `implementation_trust = medium`;
 
 ### `pca-cluster-anomaly` PCA / Clustering / Anomaly Scan
 
-Disposition: source-truth repair merged to `main`.
+Disposition: source-truth report refreshed on 2026-06-04 from the retained
+dataset.
 
-Historical worker command; current reruns should use
-`experiments/sys-landscape/datascience/dataset/`:
+Current rerun command:
 
 ```bash
-uv run --script experiments/sys-landscape/datascience/methods/pca-cluster-spike/analyze.py --dataset-dir /tmp/sys-ds-pilot1-tables-tH33Hr --out-dir experiments/sys-landscape/datascience/methods/pca-cluster-spike
+uv run --script experiments/sys-landscape/datascience/methods/pca-cluster-spike/analyze.py --dataset-dir experiments/sys-landscape/datascience/dataset --out-dir experiments/sys-landscape/datascience/methods/pca-cluster-spike
 ```
 
 Evidence:
 
-- Branch: `ds-pilot1-pca-cluster`.
-- Main commit: `39039550`.
-- Report path after merge:
+- Historical branch: `ds-pilot1-pca-cluster`.
+- Original main commit: `39039550`.
+- Current report path:
   `experiments/sys-landscape/datascience/methods/pca-cluster-spike/report.md`.
 - Historical auxiliary metadata sidecar was removed on 2026-06-04 because the
   report is source truth and no current consumer needs the JSON.
@@ -263,8 +261,8 @@ Observation:
   membership.
 - Across `k = 2..8`, the highest mean-`sys` cluster was endpoint/dataset-heavy
   with dominant dataset `variable_f_ascent`.
-- IsolationForest anomalies were not high-sys enriched; anomaly mean
-  `sys ~= 0.067` versus normal mean `sys ~= 0.532`.
+- IsolationForest anomalies were not high-sys enriched in the refreshed report;
+  anomaly mean `sys ~= 0.099` versus normal mean `sys ~= 0.529`.
 
 Inference:
 
@@ -281,21 +279,21 @@ Qualifiers: `evidence_strength = medium`; `implementation_trust = high`;
 
 ### `supervised-alternatives` Cheap Supervised Alternatives
 
-Disposition: source-truth repair merged to `main`; process result was a partial
-worker failure repaired by the lead.
+Disposition: source-truth report refreshed on 2026-06-04 from the retained
+dataset. Historical process result was a partial worker failure repaired by the
+lead.
 
-Historical lead command; current reruns should use
-`experiments/sys-landscape/datascience/dataset/`:
+Current rerun command:
 
 ```bash
-uv run --script experiments/sys-landscape/datascience/methods/supervised-alternatives-spike/analyze.py --dataset-dir /tmp/sys-ds-pilot1-tables-tH33Hr --permutations 20
+uv run --script experiments/sys-landscape/datascience/methods/supervised-alternatives-spike/analyze.py --dataset-dir experiments/sys-landscape/datascience/dataset --permutations 20
 ```
 
 Evidence:
 
-- Branch: `ds-pilot2-supervised-alts`.
-- Main commit: `5e8db378`.
-- Report path after merge:
+- Historical branch: `ds-pilot2-supervised-alts`.
+- Original main commit: `5e8db378`.
+- Current report path:
   `experiments/sys-landscape/datascience/methods/supervised-alternatives-spike/REPORT.md`.
 - Historical auxiliary metadata sidecar was removed on 2026-06-04 because the
   report is source truth and no current consumer needs the JSON.
@@ -312,20 +310,19 @@ Observation:
 - Best random-to-endpoint prediction among claim-bearing alternatives was
   histogram gradient boosting on `intrinsic_no_orbit_search`, with
   `R^2 ~= -2.8894`.
-- Within-random and within-endpoint fits were positive (`R^2 ~= 0.8995` and
-  `R^2 ~= 0.3268` for the best intrinsic blocks), but those do not give positive
-  random-to-endpoint prediction.
+- Within-random and within-endpoint fits were positive (`R^2 ~= 0.9014` and
+  `R^2 ~= 0.2953` for the best intrinsic blocks), but those do not give positive
+  random-to-endpoint transfer.
 - Endpoint-vs-random classification from intrinsic numeric features remained
-  strong: best balanced accuracy `~= 0.9451`, ROC AUC `~= 0.9931`.
+  strong: best balanced accuracy `~= 0.9510`, ROC AUC `~= 0.9933`.
 
 Inference:
 
 Cheap supervised alternatives do not change the `feature-block-regression`
 no-candidate-proposer story:
-the load-bearing random-to-endpoint prediction surface remains strongly
-negative even with flexible tree and kNN alternatives. Endpoint-vs-random
-classification remains a table observation and not a rule for proposing new
-high-`sys` candidates.
+the load-bearing random-to-endpoint transfer surface remains strongly negative
+even with flexible tree and kNN alternatives. Endpoint-vs-random classification
+remains a table observation and not a candidate-proposer.
 
 Verdict: `no-search-output`.
 
@@ -386,20 +383,20 @@ the toolbox audit rather than these scratch numbers.
 
 ### `exact-f64-spot-check` Exact-vs-f64 Spot Check
 
-Disposition: source-truth branch merged to `main`.
+Disposition: source-truth report refreshed on 2026-06-04 from the retained
+dataset.
 
-Historical worker command; current reruns should use
-`experiments/sys-landscape/datascience/dataset/`:
+Current rerun command:
 
 ```bash
-uv run --script experiments/sys-landscape/datascience/methods/exact-f64-spot-check/analyze.py --dataset-dir /tmp/sys-ds-pilot1-tables-tH33Hr
+uv run --script experiments/sys-landscape/datascience/methods/exact-f64-spot-check/analyze.py --dataset-dir experiments/sys-landscape/datascience/dataset
 ```
 
 Evidence:
 
-- Branch: `ds-pilot3-exact-f64`.
-- Main commit: `e8528963`.
-- Report path after merge:
+- Historical branch: `ds-pilot3-exact-f64`.
+- Original main commit: `e8528963`.
+- Current report path:
   `experiments/sys-landscape/datascience/methods/exact-f64-spot-check/report.md`.
 - Historical auxiliary metadata sidecar was removed on 2026-06-04 because the
   report is source truth and no current consumer needs the JSON.

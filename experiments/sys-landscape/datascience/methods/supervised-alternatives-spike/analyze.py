@@ -51,6 +51,7 @@ except ImportError:  # pragma: no cover - old sklearn fallback.
 
 
 EXPERIMENT_DIR = Path(__file__).resolve().parent
+REPO_ROOT = EXPERIMENT_DIR.parents[4]
 DEFAULT_DATASET_DIR = EXPERIMENT_DIR.parent.parent / "dataset"
 REPORT_MD = EXPERIMENT_DIR / "REPORT.md"
 
@@ -92,6 +93,14 @@ ORBIT_SEARCH_KEYS = {
     "orbit_best_is_admissible_exact",
     "orbit_best_is_indeterminate_f64",
 }
+
+
+def repo_path(path: Path) -> str:
+    resolved = path.resolve()
+    try:
+        return str(resolved.relative_to(REPO_ROOT))
+    except ValueError:
+        return str(resolved)
 
 
 @dataclass(frozen=True)
@@ -536,7 +545,7 @@ def summarize(rows: list[Row], dataset_dir: Path, checks: dict[str, Any], permut
         blocks=claim_blocks,
     )
 
-    verdict = "negative"
+    verdict = "no-search-output"
     evidence_strength = "medium"
     implementation_trust = "medium"
     thesis_use = "supporting/caveat only"
@@ -557,10 +566,10 @@ def summarize(rows: list[Row], dataset_dir: Path, checks: dict[str, Any], permut
         "command": (
             "uv run --script experiments/sys-landscape/datascience/methods/"
             "supervised-alternatives-spike/analyze.py --dataset-dir "
-            f"{dataset_dir} --permutations {permutations}"
+            f"{repo_path(dataset_dir)} --permutations {permutations}"
         ),
         "dataset": {
-            "path": str(dataset_dir),
+            "path": repo_path(dataset_dir),
             "producer_command": (
                 "experiments/sys-landscape/datascience/build-dataset.sh"
             ),
@@ -733,7 +742,7 @@ def write_report(summary: dict[str, Any]) -> None:
             "",
             "The cheap supervised alternatives do not change the M011 search-usefulness story under the load-bearing random-to-endpoint surface. The best claim-bearing random-to-endpoint `R^2` remains negative, even when flexible tree and kNN alternatives are allowed. Within-regime fits can be positive, but they do not transfer from random samples to endpoint rows.",
             "",
-            "For the M012-style regime question, non-provenance numeric polytope features can still separate endpoint and random regimes. That is a table/regime observation, not a generator rule for finding new high-`sys` candidates; the metadata/provenance baseline is kept only as a caveat comparison.",
+            "For the M012-style regime question, non-provenance numeric polytope features can still separate endpoint and random regimes. That is a table/regime observation, not a candidate-proposer for finding new high-`sys` candidates; the metadata/provenance baseline is kept only as a caveat comparison.",
             "",
             "## Verdict",
             "",

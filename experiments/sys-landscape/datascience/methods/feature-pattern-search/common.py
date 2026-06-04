@@ -37,6 +37,14 @@ RANDOM_DATASETS = {
 }
 
 
+def repo_path(path: Path) -> str:
+    resolved = path.resolve()
+    try:
+        return str(resolved.relative_to(REPO_ROOT))
+    except ValueError:
+        return str(resolved)
+
+
 @dataclass
 class JoinedRow:
     state_id: str

@@ -40,9 +40,15 @@ The 2026-06-03 repair made `analyze_residual.py` enforce endpoint-only loading
 via `load_joined_rows(dataset_dir, endpoint_only=True)` and write
 `feature_pattern_search_residual_summary.md`.
 
-The repaired historical run used `/tmp/sys-ds-reset-pilot-tables-VJ6D0P`.
-Current reruns should use `experiments/sys-landscape/datascience/dataset/`.
-The historical run recorded:
+The report was refreshed on 2026-06-04 from
+`experiments/sys-landscape/datascience/dataset`.
+Current rerun command:
+
+```bash
+uv run --script experiments/sys-landscape/datascience/methods/feature-pattern-search/analyze_residual.py --dataset-dir experiments/sys-landscape/datascience/dataset
+```
+
+The current report records:
 
 - `112` endpoint rows;
 - `5` grouped endpoint folds;
@@ -53,7 +59,7 @@ Several blocks add endpoint-only grouped-CV association beyond metadata. The
 strongest ridge block is `face_symplectic` with metadata `R^2 = -0.0159`,
 combined `R^2 = 0.4065`, and residual `R^2 = 0.4158`. The strongest random
 forest block is `all_non_metadata` with metadata `R^2 = -0.0079`, combined
-`R^2 = 0.3225`, and residual `R^2 = 0.3278`.
+`R^2 = 0.3281`, and residual `R^2 = 0.3334`.
 
 Interpretation: this is an endpoint-side table association, not a
 candidate-proposer. It does not produce a validated new `sys > 1` row and does

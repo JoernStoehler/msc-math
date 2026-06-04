@@ -4,16 +4,10 @@ idea_id = DS-I007
 
 ## Command And Provenance
 
-Historical note: this report records an older worker run that used a temporary
-dataset path. Current reruns should use
-`experiments/sys-landscape/datascience/dataset/` and should not recreate this
-private `/tmp` dataset.
-
-- Historical command run: `uv run --script experiments/sys-landscape/datascience/methods/exact-f64-spot-check/analyze.py --dataset-dir /tmp/sys-ds-pilot1-tables-tH33Hr`
-- Current rerun command: `uv run --script experiments/sys-landscape/datascience/methods/exact-f64-spot-check/analyze.py --dataset-dir experiments/sys-landscape/datascience/dataset`
-- Historical dataset path: `/tmp/sys-ds-pilot1-tables-tH33Hr`
-- Historical producer command from packet: `cargo run -p exp-sys-landscape --bin sys-dataset -- --out-dir /tmp/sys-ds-pilot1-tables-tH33Hr`
-- Run timestamp UTC: `2026-04-30T16:23:40.138816+00:00`
+- Actual command run: `uv run --script experiments/sys-landscape/datascience/methods/exact-f64-spot-check/analyze.py --dataset-dir experiments/sys-landscape/datascience/dataset`
+- Dataset path: `experiments/sys-landscape/datascience/dataset`
+- Producer command from packet: `experiments/sys-landscape/datascience/build-dataset.sh`
+- Run timestamp UTC: `2026-06-04T07:33:31.229197+00:00`
 - Python: `3.12.3`
 
 ## Heartbeat
@@ -37,20 +31,20 @@ Sampled `sys` values:
 
 ```json
 [
-  0.004489394168139556,
+  0.004489394168139562,
   0.12919967268781993,
-  0.2094453173254387,
+  0.20944531732543872,
   0.3228091869465833,
-  0.47113141230797684,
-  0.598925434564416,
-  0.798937037463905,
-  0.7996731483730771,
-  0.875353292983978,
-  0.9029645269387064,
-  0.9031764782043712,
-  0.9037701674852815,
-  0.9046800866780647,
-  0.906316153431123
+  0.47113141230797634,
+  0.5989254345644163,
+  0.7989370374639041,
+  0.7996731483730778,
+  0.8753532929839783,
+  0.9029645269387069,
+  0.9031764782043711,
+  0.9037701674852819,
+  0.904680086678065,
+  0.9063161534311229
 ]
 ```
 
@@ -84,7 +78,7 @@ Observation: the script also recomputes the following f64 geometry columns from 
 ]
 ```
 
-Observation: maximum geometry-column recomputation error was `1.776e-15` in column `geom_vol1_pairwise_dist_max` for poly_id `f7f0e8b2a9fff060d2b2eab2efc6c4d93b72c735322c85d82c4eea772f911f7a`.
+Observation: maximum geometry-column recomputation error was `1.776e-15` in column `geom_vol1_pairwise_dist_mean` for poly_id `37a2394e8552ca5ccac37fadc4c43b37501b56a92d4f4e5dc1496a62db93ff9f`.
 
 ## Numerical Tolerances
 
@@ -100,7 +94,7 @@ Inference caveat: this does not prove exactness of derived scalar semantics. The
 
 ## Verdict
 
-- verdict: `supporting sanity check`
+- verdict: `no-search-output`
 - evidence_strength: `medium`
 - implementation_trust: `high`
 - thesis_use: `supporting/caveat only`

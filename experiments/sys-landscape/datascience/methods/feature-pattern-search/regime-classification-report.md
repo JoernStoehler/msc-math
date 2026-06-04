@@ -2,14 +2,9 @@ Status: complete
 Idea slug: regime-classification
 Blocker target: Evidence, caveat, thesis-use, and serial report-ledger process blockers. Experiment-validity is closed only for a caveated supporting diagnostic, not for a claim-bearing finite-sample inference.
 Objective: Decide whether endpoint-vs-random classification from the current feature tables gives a thesis-usable observation, a caveated supporting-only observation, or a result to omit before submission, while separating provenance/metadata separation from non-provenance geometric or orbit-feature separation.
-Historical note: this report records an older worker run that used a temporary
-dataset path. Current reruns should use
-`experiments/sys-landscape/datascience/dataset/` and should not recreate this
-private `/tmp` dataset.
-Base historical dataset snapshot: /tmp/sys-ds-reset-pilot-tables-VJ6D0P, produced by `cargo run -p exp-sys-landscape --bin sys-dataset -- --out-dir /tmp/sys-ds-reset-pilot-tables-VJ6D0P`
+Dataset source: `experiments/sys-landscape/datascience/dataset`, produced by `experiments/sys-landscape/datascience/build-dataset.sh`
 Dataset filtering/subsetting: No rows filtered; all 282 observations were used. Endpoint label is `gradient_ascent_general`, `gradient_ascent_products`, or `variable_f_ascent`; random label is `random_sample` or `random_product_sample`. Grouped CV uses `root_group_id` when present, with `source_name`/`lineage_id`/`observation_id` fallback from `common.py`.
-Historical command run: `uv run --script experiments/sys-landscape/datascience/methods/feature-pattern-search/analyze.py --dataset-dir /tmp/sys-ds-reset-pilot-tables-VJ6D0P`; `uv run --script experiments/sys-landscape/datascience/methods/feature-pattern-search/analyze_regime_classification.py --dataset-dir /tmp/sys-ds-reset-pilot-tables-VJ6D0P`
-Current rerun command: `uv run --script experiments/sys-landscape/datascience/methods/feature-pattern-search/analyze.py --dataset-dir experiments/sys-landscape/datascience/dataset`; `uv run --script experiments/sys-landscape/datascience/methods/feature-pattern-search/analyze_regime_classification.py --dataset-dir experiments/sys-landscape/datascience/dataset`
+Command run: `uv run --script experiments/sys-landscape/datascience/methods/feature-pattern-search/analyze.py --dataset-dir experiments/sys-landscape/datascience/dataset`; `uv run --script experiments/sys-landscape/datascience/methods/feature-pattern-search/analyze_regime_classification.py --dataset-dir experiments/sys-landscape/datascience/dataset`
 Verdict: no-search-output
 Evidence strength: Moderate diagnostic evidence only. Grouped-CV metrics are far above null for both metadata and non-provenance geometric/orbit blocks, but the result is a regime-separation diagnostic, not a target-case search rule.
 Implementation trust: Medium. Dataset guards and feature row counts match the reset packet, the script now writes a markdown summary, and grouped CV blocks direct duplicate-lineage leakage; no permutation or independent fresh-table replication was run.
@@ -22,7 +17,7 @@ Evidence paths: `experiments/sys-landscape/datascience/methods/feature-pattern-s
 
 ## Command/Provenance
 
-Historical dataset snapshot checks on `/tmp/sys-ds-reset-pilot-tables-VJ6D0P`:
+Dataset checks on `experiments/sys-landscape/datascience/dataset`:
 
 - polytope rows: `282`
 - observation rows: `282`
@@ -32,7 +27,7 @@ Historical dataset snapshot checks on `/tmp/sys-ds-reset-pilot-tables-VJ6D0P`:
 - maximum `sys`: `0.906316153431123`
 - rows with `sys > 1`: `0`
 
-The feature-refresh command regenerated the local feature tables from the same dataset snapshot; each feature table had `282` rows after the run. Only the regime-classification script, summary, report, and regime-classification bar plot remain as tracked changes from this worker.
+The feature-refresh command regenerated the local feature tables from the retained dataset; each feature table had `282` rows after the run.
 
 The classifier command used all `282` joined observations and `212` grouped-CV groups. No `summary.json` or other machine-readable sidecar is required.
 
@@ -69,11 +64,11 @@ That observation is not by itself a thesis-usable positive result. It does not f
 
 - Created this report path before full method changes.
 - Validated dataset guards against the packet: row counts, union field counts, dataset counts, max `sys`, and `sys > 1` count.
-- Ran historical command `uv run --script experiments/sys-landscape/datascience/methods/feature-pattern-search/analyze.py --dataset-dir /tmp/sys-ds-reset-pilot-tables-VJ6D0P`.
-- Ran historical command `uv run --script experiments/sys-landscape/datascience/methods/feature-pattern-search/analyze_regime_classification.py --dataset-dir /tmp/sys-ds-reset-pilot-tables-VJ6D0P`.
+- Ran `uv run --script experiments/sys-landscape/datascience/methods/feature-pattern-search/analyze.py --dataset-dir experiments/sys-landscape/datascience/dataset`.
+- Ran `uv run --script experiments/sys-landscape/datascience/methods/feature-pattern-search/analyze_regime_classification.py --dataset-dir experiments/sys-landscape/datascience/dataset`.
 - Confirmed all seven local feature tables have `282` rows after refresh.
-- Removed unrelated `feature_pattern_search_ridge.png` and `feature_pattern_search_rf.png` rewrites from the feature-refresh command output.
-- Confirmed the root checkout touched-path status is clean after accidentally applying the first draft patch outside this worktree and reverting only those own edits.
+- Regenerated the ridge, random-forest, and regime-classification figures from the retained dataset.
+- Checked that regenerated provenance paths are repo-relative.
 
 ## Failure Modes/Caveats
 

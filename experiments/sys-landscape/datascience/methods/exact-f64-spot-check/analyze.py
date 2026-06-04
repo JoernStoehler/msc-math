@@ -27,6 +27,7 @@ from typing import Any
 
 
 EXPERIMENT_DIR = Path(__file__).resolve().parent
+REPO_ROOT = EXPERIMENT_DIR.parents[4]
 DEFAULT_DATASET_DIR = EXPERIMENT_DIR.parent.parent / "dataset"
 REPORT_MD = EXPERIMENT_DIR / "report.md"
 
@@ -42,6 +43,14 @@ DEFAULT_COMMAND = (
     "exact-f64-spot-check/analyze.py --dataset-dir "
     "experiments/sys-landscape/datascience/dataset"
 )
+
+
+def repo_path(path: Path) -> str:
+    resolved = path.resolve()
+    try:
+        return str(resolved.relative_to(REPO_ROOT))
+    except ValueError:
+        return str(resolved)
 
 GEOMETRY_COLUMNS = [
     "geom_vol1_norm_mean",
@@ -340,7 +349,7 @@ def verdict(checks: dict[str, Any], summary: dict[str, Any]) -> dict[str, str]:
             "reopen_trigger": "Expand DS-I007 into a full table audit before using affected columns.",
         }
     return {
-        "verdict": "negative",
+        "verdict": "no-search-output",
         "evidence_strength": "medium",
         "implementation_trust": "high",
         "thesis_use": "supporting/caveat only",
@@ -453,7 +462,7 @@ def main() -> None:
     payload = {
         "idea_id": "DS-I007",
         "command_run": DEFAULT_COMMAND,
-        "dataset_dir": str(args.dataset_dir),
+        "dataset_dir": repo_path(args.dataset_dir),
         "producer_command": PRODUCER_COMMAND,
         "heartbeat": {
             "path": "experiments/sys-landscape/datascience/methods/exact-f64-spot-check/report.md",

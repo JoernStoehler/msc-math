@@ -37,7 +37,7 @@ try:
 except ImportError:  # pragma: no cover - fallback for older scikit-learn.
     StratifiedGroupKFold = None
 
-from common import DEFAULT_DATASET_DIR, FIGSIZE_DUAL, JoinedRow, load_joined_rows, setup
+from common import DEFAULT_DATASET_DIR, FIGSIZE_DUAL, JoinedRow, load_joined_rows, repo_path, setup
 
 setup()
 
@@ -414,7 +414,7 @@ def plot_results(results: list[dict], out_path: Path) -> None:
 def main() -> None:
     args = parse_args()
     dataset_dir = args.dataset_dir.resolve()
-    normalized_source_label = f"`{dataset_dir}`"
+    normalized_source_label = f"`{repo_path(dataset_dir)}`"
     rows = load_joined_rows(dataset_dir)
     results = run_evaluations(rows)
     write_summary(normalized_source_label, rows, results)

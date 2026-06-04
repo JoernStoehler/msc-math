@@ -2,8 +2,7 @@
 
 ## Dataset
 
-- historical dataset source: `/tmp/sys-ds-reset-pilot-tables-VJ6D0P`
-- current reruns should use: `experiments/sys-landscape/datascience/dataset/`
+- dataset source: `experiments/sys-landscape/datascience/dataset`
 - joined rows: `282`
 - groups used for leakage control: `212`
 - random rows: `170`
@@ -69,25 +68,25 @@ Reported metrics are out-of-fold accuracy, balanced accuracy, and ROC AUC. Split
 | `facet_count` | 0.8404 | 0.8676 | 0.9078 |
 | `provenance_metadata` | 1.0000 | 1.0000 | 1.0000 |
 | `metadata` | 1.0000 | 1.0000 | 1.0000 |
-| `geometry` | 0.9255 | 0.9200 | 0.9847 |
+| `geometry` | 0.9255 | 0.9200 | 0.9848 |
 | `face_geometry` | 0.9291 | 0.9275 | 0.9831 |
-| `face_symplectic` | 0.9220 | 0.9155 | 0.9838 |
-| `skeleton` | 0.8723 | 0.8743 | 0.9581 |
-| `omega` | 0.9220 | 0.9170 | 0.9704 |
-| `orbit_combinatorics` | 0.8511 | 0.8521 | 0.9410 |
-| `orbit_geometry` | 0.8830 | 0.8572 | 0.9127 |
-| `orbit_search` | 0.9113 | 0.9006 | 0.9636 |
-| `orbit` | 0.9574 | 0.9464 | 0.9869 |
+| `face_symplectic` | 0.9220 | 0.9155 | 0.9840 |
+| `skeleton` | 0.8723 | 0.8743 | 0.9589 |
+| `omega` | 0.9220 | 0.9170 | 0.9697 |
+| `orbit_combinatorics` | 0.8475 | 0.8461 | 0.9406 |
+| `orbit_geometry` | 0.8830 | 0.8572 | 0.9125 |
+| `orbit_search` | 0.9113 | 0.9006 | 0.9638 |
+| `orbit` | 0.9574 | 0.9464 | 0.9855 |
 | `trajectory` | 0.6809 | 0.5982 | 0.5982 |
 | `all` | 1.0000 | 1.0000 | 1.0000 |
 
 - best block by balanced accuracy: `provenance_metadata` (`balanced_accuracy=1.0000`, `roc_auc=1.0000`)
-- best non-metadata block: `orbit` (`balanced_accuracy=0.9464`, `roc_auc=0.9869`)
+- best non-metadata block: `orbit` (`balanced_accuracy=0.9464`, `roc_auc=0.9855`)
 - best non-provenance geometry/orbit block: `face_geometry` (`balanced_accuracy=0.9275`, `roc_auc=0.9831`)
 
 ## Interpretation
 
 - metadata is the clearest separator, but that block includes regime-linked provenance fields (`dataset`, `family`, `role`, `search_space`, `optimizer`, `backend`), so it is not a pure geometry test.
 - among non-provenance blocks, logistic regression and random forest both favor `orbit`.
-- compare `provenance_metadata`, `facet_count`, and the geometry/orbit sub-blocks before treating a high score as geometric association.
+- compare `provenance_metadata`, `facet_count`, and the geometry/orbit sub-blocks before treating a high score as geometric signal.
 - `all` is only a ceiling because it mixes the provenance block with every feature family.

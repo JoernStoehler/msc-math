@@ -32,6 +32,7 @@ from sklearn.metrics import silhouette_score
 from sklearn.preprocessing import StandardScaler
 
 EXPERIMENT_DIR = Path(__file__).resolve().parent
+REPO_ROOT = EXPERIMENT_DIR.parents[4]
 DEFAULT_DATASET_DIR = EXPERIMENT_DIR.parent.parent / "dataset"
 EXPECTED_POLYTOPE_ROWS = 282
 EXPECTED_OBSERVATION_ROWS = 282
@@ -57,6 +58,14 @@ POLYTOPE_EXCLUDED_PREFIXES = (
     "orbit_result_",
     "orbit_best_",
 )
+
+
+def repo_path(path: Path) -> str:
+    resolved = path.resolve()
+    try:
+        return str(resolved.relative_to(REPO_ROOT))
+    except ValueError:
+        return str(resolved)
 
 
 def parse_args() -> argparse.Namespace:
@@ -363,11 +372,11 @@ def decide_verdict(summary: dict[str, Any]) -> dict[str, str]:
             "evidence_strength": "medium",
             "implementation_trust": "high",
             "thesis_use": "Jorn decision needed",
-            "caveat": "This is only a generator hypothesis from intrinsic table features; it still needs a search/falsification follow-up.",
-            "reopen_trigger": "Run a generator-side search rule derived without sys, endpoint labels, dataset identity, or optimizer provenance.",
+            "caveat": "This is only a candidate-proposer hypothesis from intrinsic table features; it still needs a search/falsification follow-up.",
+            "reopen_trigger": "Run a candidate-proposer follow-up derived without sys, endpoint labels, dataset identity, or optimizer provenance.",
         }
     return {
-        "verdict": "negative",
+        "verdict": "no-search-output",
         "evidence_strength": "medium",
         "implementation_trust": "high",
         "thesis_use": "supporting/caveat only",
@@ -468,9 +477,9 @@ def main() -> None:
 
     summary: dict[str, Any] = {
         "idea_id": "DS-I004",
-        "script": str(Path(__file__).relative_to(Path.cwd())),
-        "dataset_dir": str(args.dataset_dir),
-        "out_dir": str(args.out_dir),
+        "script": repo_path(Path(__file__)),
+        "dataset_dir": repo_path(args.dataset_dir),
+        "out_dir": repo_path(args.out_dir),
         "producer_command": "experiments/sys-landscape/datascience/build-dataset.sh",
         "git_commit": git_commit(),
         "dataset_checks": checks,

@@ -2,16 +2,11 @@
 
 ## Command / Provenance
 
-Historical note: this report records an older worker run that used a temporary
-dataset path. Current reruns should use
-`experiments/sys-landscape/datascience/dataset/` and should not recreate this
-private `/tmp` dataset.
-
 - Script: `experiments/sys-landscape/datascience/methods/pca-cluster-spike/analyze.py`
-- Historical dataset dir: `/tmp/sys-ds-pilot1-tables-tH33Hr`
+- Dataset dir: `experiments/sys-landscape/datascience/dataset`
 - Output dir: `experiments/sys-landscape/datascience/methods/pca-cluster-spike`
-- Historical producer command recorded in packet: `cargo run -p exp-sys-landscape --bin sys-dataset -- --out-dir /tmp/sys-ds-pilot1-tables-tH33Hr`
-- Git commit: `32a39b2c`
+- Producer command recorded in packet: `experiments/sys-landscape/datascience/build-dataset.sh`
+- Git commit: `af976dbf`
 - Random state: `20260430`
 
 ## Dataset Snapshot And Guards
@@ -42,7 +37,7 @@ private `/tmp` dataset.
 - KMeans best mean-`sys` cluster has `234` rows, mean `sys = 0.564`, max `sys = 0.906`, top-decile high-`sys` rate `0.124`, dominant dataset `variable_f_ascent` at share `0.385`, and regime counts `{'endpoint': 112, 'random': 122}`.
 - Across `k = 2..8`, the highest mean-`sys` cluster has `104` rows, mean `sys = 0.737`, dominant dataset `variable_f_ascent` at share `0.721`, and regime counts `{'endpoint': 85, 'random': 19}`.
 - Across `k = 2..8`, the highest top-decile high-`sys` rate is `0.267` in a `15`-row cluster with dominant dataset `variable_f_ascent` at share `1.000`.
-- IsolationForest: `29` anomalies have mean `sys = 0.067` versus normal mean `sys = 0.532`; anomaly max `sys = 0.396`.
+- IsolationForest: `29` anomalies have mean `sys = 0.099` versus normal mean `sys = 0.529`; anomaly max `sys = 0.693`.
 
 ## Inference
 
