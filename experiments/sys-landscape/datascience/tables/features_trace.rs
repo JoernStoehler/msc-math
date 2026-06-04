@@ -2,6 +2,7 @@
 
 use crate::load_caches::{LoadedObservationRow, TraceEvent};
 use crate::rows::ObservationTableRow;
+use rayon::prelude::*;
 
 fn stats_or_zero(values: &[f64]) -> (f64, f64, f64) {
     if values.is_empty() {
@@ -231,7 +232,7 @@ fn enrich_trace(row: &LoadedObservationRow, events: &[TraceEvent]) -> Observatio
 }
 
 pub fn build_observation_table(rows: &[LoadedObservationRow]) -> Vec<ObservationTableRow> {
-    rows.iter()
+    rows.par_iter()
         .map(|row| enrich_trace(row, &row.trace_events))
         .collect()
 }

@@ -82,6 +82,7 @@ pub struct LoadedCaches {
 #[derive(Clone)]
 struct OrbitPayload {
     capacity: Option<f64>,
+    volume: Option<f64>,
     sigmas: Option<Vec<SigmaAction>>,
     sigma_gap_cutoff: Option<f64>,
     orbit_scalars: Option<OrbitScalars>,
@@ -92,8 +93,10 @@ pub struct DatasetPaths {
     pub random_product: PathBuf,
     pub ascent_summary: PathBuf,
     pub ascent_trace: PathBuf,
+    pub ascent_cache: PathBuf,
     pub ascent_product_summary: PathBuf,
     pub ascent_product_trace: PathBuf,
+    pub ascent_product_cache: PathBuf,
     pub continuation_summary: PathBuf,
     pub shared_cache: PathBuf,
     pub continuation_cache: PathBuf,
@@ -117,8 +120,10 @@ Options:
   --random-product <path>          Override random-product.jsonl
   --ascent <path>                  Override ascent.jsonl
   --ascent-trace <path>            Override ascent-trace.jsonl
+  --ascent-cache <path>            Override ascent-cache.jsonl
   --ascent-product <path>          Override ascent-product.jsonl
   --ascent-product-trace <path>    Override ascent-product-trace.jsonl
+  --ascent-product-cache <path>    Override ascent-product-cache.jsonl
   --continuation <path>            Override continuation.jsonl
   --shared-cache <path>            Override shared-cache.jsonl
   --continuation-cache <path>      Override continuation-cache.jsonl
@@ -149,8 +154,10 @@ fn default_paths() -> DatasetPaths {
         random_product: produce_dir.join("random-product.jsonl"),
         ascent_summary: produce_dir.join("ascent.jsonl"),
         ascent_trace: produce_dir.join("ascent-trace.jsonl"),
+        ascent_cache: produce_dir.join("ascent-cache.jsonl"),
         ascent_product_summary: produce_dir.join("ascent-product.jsonl"),
         ascent_product_trace: produce_dir.join("ascent-product-trace.jsonl"),
+        ascent_product_cache: produce_dir.join("ascent-product-cache.jsonl"),
         continuation_summary: produce_dir.join("continuation.jsonl"),
         shared_cache: produce_dir.join("shared-cache.jsonl"),
         continuation_cache: produce_dir.join("continuation-cache.jsonl"),
@@ -164,8 +171,10 @@ pub fn parse_args() -> DatasetPaths {
     let mut random_product = defaults.random_product;
     let mut ascent_summary = defaults.ascent_summary;
     let mut ascent_trace = defaults.ascent_trace;
+    let mut ascent_cache = defaults.ascent_cache;
     let mut ascent_product_summary = defaults.ascent_product_summary;
     let mut ascent_product_trace = defaults.ascent_product_trace;
+    let mut ascent_product_cache = defaults.ascent_product_cache;
     let mut continuation_summary = defaults.continuation_summary;
     let mut shared_cache = defaults.shared_cache;
     let mut continuation_cache = defaults.continuation_cache;
@@ -189,8 +198,10 @@ pub fn parse_args() -> DatasetPaths {
                 random_product = dir.join("random-product.jsonl");
                 ascent_summary = dir.join("ascent.jsonl");
                 ascent_trace = dir.join("ascent-trace.jsonl");
+                ascent_cache = dir.join("ascent-cache.jsonl");
                 ascent_product_summary = dir.join("ascent-product.jsonl");
                 ascent_product_trace = dir.join("ascent-product-trace.jsonl");
+                ascent_product_cache = dir.join("ascent-product-cache.jsonl");
                 continuation_summary = dir.join("continuation.jsonl");
                 shared_cache = dir.join("shared-cache.jsonl");
                 continuation_cache = dir.join("continuation-cache.jsonl");
@@ -212,12 +223,20 @@ pub fn parse_args() -> DatasetPaths {
                 ascent_trace = PathBuf::from(value);
                 i += 2;
             }
+            "--ascent-cache" => {
+                ascent_cache = PathBuf::from(value);
+                i += 2;
+            }
             "--ascent-product" => {
                 ascent_product_summary = PathBuf::from(value);
                 i += 2;
             }
             "--ascent-product-trace" => {
                 ascent_product_trace = PathBuf::from(value);
+                i += 2;
+            }
+            "--ascent-product-cache" => {
+                ascent_product_cache = PathBuf::from(value);
                 i += 2;
             }
             "--continuation" => {
@@ -245,8 +264,10 @@ pub fn parse_args() -> DatasetPaths {
         random_product,
         ascent_summary,
         ascent_trace,
+        ascent_cache,
         ascent_product_summary,
         ascent_product_trace,
+        ascent_product_cache,
         continuation_summary,
         shared_cache,
         continuation_cache,
@@ -293,19 +314,12 @@ fn poly_id_from_dual_vertices(dual_vertices_rational: &[[String; 4]]) -> String 
     hasher.finalize().to_hex().to_string()
 }
 
-fn orbit_payloads(paths: &DatasetPaths) -> HashMap<String, OrbitPayload> {
-    let mut cache_paths = Vec::new();
-    if paths.shared_cache.exists() {
-        cache_paths.push(paths.shared_cache.as_path());
-    }
-    if paths.continuation_cache.exists() {
-        cache_paths.push(paths.continuation_cache.as_path());
-    }
+fn orbit_payloads_from_paths(cache_paths: &[&Path]) -> HashMap<String, OrbitPayload> {
     if cache_paths.is_empty() {
         return HashMap::new();
     }
 
-    let db = load_many(&cache_paths).expect("load producer caches");
+    let db = load_many(cache_paths).expect("load producer caches");
     let mut out = HashMap::new();
     for (_key, record) in db {
         let poly_id =
@@ -315,6 +329,7 @@ fn orbit_payloads(paths: &DatasetPaths) -> HashMap<String, OrbitPayload> {
             poly_id,
             OrbitPayload {
                 capacity: record.capacity,
+                volume: record.volume,
                 sigmas: record.sigmas,
                 sigma_gap_cutoff,
                 orbit_scalars: record.orbit_scalars,
@@ -322,6 +337,25 @@ fn orbit_payloads(paths: &DatasetPaths) -> HashMap<String, OrbitPayload> {
         );
     }
     out
+}
+
+fn existing_paths<'a>(paths: impl IntoIterator<Item = &'a Path>) -> Vec<&'a Path> {
+    paths.into_iter().filter(|path| path.exists()).collect()
+}
+
+fn orbit_payloads(paths: &DatasetPaths) -> HashMap<String, OrbitPayload> {
+    let cache_paths = existing_paths([
+        paths.shared_cache.as_path(),
+        paths.ascent_cache.as_path(),
+        paths.ascent_product_cache.as_path(),
+        paths.continuation_cache.as_path(),
+    ]);
+    orbit_payloads_from_paths(&cache_paths)
+}
+
+fn orbit_payloads_for_path(path: &Path) -> HashMap<String, OrbitPayload> {
+    let cache_paths = existing_paths([path]);
+    orbit_payloads_from_paths(&cache_paths)
 }
 
 fn sigma_gap_cutoff(record: &PolytopeRecord) -> Option<f64> {
@@ -350,6 +384,7 @@ fn ensure_polytope(
     let capacity = orbit_payload
         .and_then(|row| row.capacity)
         .unwrap_or(reported_capacity);
+    let volume = orbit_payload.and_then(|row| row.volume).unwrap_or(volume);
     match polytopes.get_mut(&poly_id) {
         Some(existing) => {
             if existing.capacity_iterations.is_none() {
@@ -531,16 +566,26 @@ fn load_ascent_rows(
     polytopes: &mut HashMap<String, LoadedPolytopeRow>,
     observations: &mut Vec<LoadedObservationRow>,
     orbit_payloads: &HashMap<String, OrbitPayload>,
+    ascent_orbit_payloads: &HashMap<String, OrbitPayload>,
 ) {
     let trace_events = trace_events_by_name(trace_path);
     for row in read_jsonl::<SummaryRow>(summary_path) {
+        let payload = require_endpoint_payload(
+            "gradient_ascent_general",
+            &row.name,
+            &row.final_dual_vertices_rational,
+            row.final_capacity,
+            row.final_volume,
+            row.final_sys,
+            ascent_orbit_payloads,
+        );
         let poly_id = ensure_polytope(
             polytopes,
             orbit_payloads,
             row.final_dual_vertices_rational.clone(),
             row.facet_count,
-            0.0,
-            0.0,
+            payload.capacity,
+            payload.volume,
             row.final_sys,
             None,
             "gradient_ascent_general",
@@ -590,16 +635,26 @@ fn load_ascent_product_rows(
     polytopes: &mut HashMap<String, LoadedPolytopeRow>,
     observations: &mut Vec<LoadedObservationRow>,
     orbit_payloads: &HashMap<String, OrbitPayload>,
+    ascent_product_orbit_payloads: &HashMap<String, OrbitPayload>,
 ) {
     let trace_events = trace_events_by_name(trace_path);
     for row in read_jsonl::<SummaryRow>(summary_path) {
+        let payload = require_endpoint_payload(
+            "gradient_ascent_products",
+            &row.name,
+            &row.final_dual_vertices_rational,
+            row.final_capacity,
+            row.final_volume,
+            row.final_sys,
+            ascent_product_orbit_payloads,
+        );
         let poly_id = ensure_polytope(
             polytopes,
             orbit_payloads,
             row.final_dual_vertices_rational.clone(),
             row.facet_count,
-            0.0,
-            0.0,
+            payload.capacity,
+            payload.volume,
             row.final_sys,
             None,
             "gradient_ascent_products",
@@ -706,6 +761,8 @@ fn load_continuation_rows(
 
 pub fn load_caches(paths: &DatasetPaths) -> LoadedCaches {
     let orbit_payloads = orbit_payloads(paths);
+    let ascent_orbit_payloads = orbit_payloads_for_path(&paths.ascent_cache);
+    let ascent_product_orbit_payloads = orbit_payloads_for_path(&paths.ascent_product_cache);
     let mut polytopes = HashMap::<String, LoadedPolytopeRow>::new();
     let mut observations = Vec::<LoadedObservationRow>::new();
 
@@ -727,6 +784,7 @@ pub fn load_caches(paths: &DatasetPaths) -> LoadedCaches {
         &mut polytopes,
         &mut observations,
         &orbit_payloads,
+        &ascent_orbit_payloads,
     );
     load_ascent_product_rows(
         &paths.ascent_product_summary,
@@ -734,6 +792,7 @@ pub fn load_caches(paths: &DatasetPaths) -> LoadedCaches {
         &mut polytopes,
         &mut observations,
         &orbit_payloads,
+        &ascent_product_orbit_payloads,
     );
     load_continuation_rows(
         &paths.continuation_summary,
@@ -750,4 +809,53 @@ pub fn load_caches(paths: &DatasetPaths) -> LoadedCaches {
         polytopes: polytope_rows,
         observations,
     }
+}
+
+struct RequiredEndpointPayload {
+    capacity: f64,
+    volume: f64,
+}
+
+fn require_endpoint_payload(
+    dataset: &str,
+    name: &str,
+    final_dual_vertices_rational: &[[String; 4]],
+    final_capacity: f64,
+    final_volume: f64,
+    final_sys: f64,
+    orbit_payloads: &HashMap<String, OrbitPayload>,
+) -> RequiredEndpointPayload {
+    let poly_id = poly_id_from_dual_vertices(final_dual_vertices_rational);
+    let payload = orbit_payloads.get(&poly_id).unwrap_or_else(|| {
+        panic!("{dataset}:{name}: missing producer-cache row for endpoint {poly_id}")
+    });
+    let capacity = payload
+        .capacity
+        .unwrap_or_else(|| panic!("{dataset}:{name}: producer-cache row lacks capacity"));
+    let volume = payload
+        .volume
+        .unwrap_or_else(|| panic!("{dataset}:{name}: producer-cache row lacks volume"));
+    if payload.sigmas.is_none() {
+        panic!("{dataset}:{name}: producer-cache row lacks sigmas");
+    }
+    if payload.orbit_scalars.is_none() {
+        panic!("{dataset}:{name}: producer-cache row lacks orbit scalars");
+    }
+    if final_capacity > 0.0 && (final_capacity - capacity).abs() > 1e-9 {
+        panic!(
+            "{dataset}:{name}: summary final_capacity {final_capacity} disagrees with cache capacity {capacity}"
+        );
+    }
+    if final_volume > 0.0 && (final_volume - volume).abs() > 1e-9 {
+        panic!(
+            "{dataset}:{name}: summary final_volume {final_volume} disagrees with cache volume {volume}"
+        );
+    }
+    let sys = capacity * capacity / (2.0 * volume);
+    if (sys - final_sys).abs() > 1e-8 {
+        panic!(
+            "{dataset}:{name}: summary final_sys {final_sys} disagrees with cache-derived sys {sys}"
+        );
+    }
+    RequiredEndpointPayload { capacity, volume }
 }

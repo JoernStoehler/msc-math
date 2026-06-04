@@ -11,16 +11,29 @@ Build command:
 experiments/sys-landscape/datascience/build-dataset.sh
 ```
 
-Observed runtime in the devcontainer on 2026-06-03:
+Observed runtime for the current retained dataset:
 
-- warm release build: about `5m16s` wall time;
-- first release run in a fresh worktree: about `38s` compile time plus about
-  `5m48s` total command time.
+- LICCA table build on 2026-06-04 at repo `155d527b`: `2m06s` Slurm wall
+  time, `32` allocated CPUs, `1:07:12` CPUTime, about `1.1G` MaxRSS.
+- Stage timings from the Slurm log: `49.8s` loading producer caches, `72.4s`
+  building the polytope table, `0.0s` building the observation table, and
+  `0.2s` writing outputs.
 
 Contents:
 
 - `polytope-table.jsonl`
 - `observation-table.jsonl`
+
+Current fingerprint:
+
+- polytope rows: `8445`
+- observation rows: `8445`
+- max `sys`: `0.9750768559799221`
+- `sys > 1` rows: `0`
+- `polytope-table.jsonl` sha256:
+  `bc96000d2c7a70c4aa777891a020bf3c8f7d11d8ee17a084519e2706ce2b4554`
+- `observation-table.jsonl` sha256:
+  `5382d131dadb4f220512015e876e65566fee51d7c2a25521f7c891c2db8450ce`
 
 Use this dataset as read-only input for method executors. Method outputs belong
 under `../../methods/<slug>/`.

@@ -32,7 +32,7 @@ use exp_sys_landscape::{
 use nalgebra::Vector4;
 use num_rational::BigRational;
 mod rows;
-use exp_sys_landscape::euclidean_volume_f64;
+use exp_sys_landscape::exact_volume_from_incidence_as_f64;
 use exp_sys_landscape::SysLandscapePolytopeCache;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
@@ -142,7 +142,8 @@ const EPS: f64 = 1e-15;
 // ============================================================================
 
 fn compute_sys(polytope: &SysLandscapePolytopeCache, db: &mut Db) -> Option<f64> {
-    let vol = euclidean_volume_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
+    let vol =
+        exact_volume_from_incidence_as_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
     if vol <= 0.0 {
         return None;
     }
@@ -274,7 +275,8 @@ fn gradient_ascent_phase_limited(
         let (cap, best_perm) = compute_capacity_result(&current, db)?;
         let dual_vertices = &current.dual_vertices_f64;
         let kkt = solve_kkt_for_dual_vertices(dual_vertices, &best_perm).feasible()?;
-        let vol = euclidean_volume_f64(&current.vertices, &current.vertex_facet_incidence);
+        let vol =
+            exact_volume_from_incidence_as_f64(&current.vertices, &current.vertex_facet_incidence);
         if vol <= 0.0 {
             return None;
         }

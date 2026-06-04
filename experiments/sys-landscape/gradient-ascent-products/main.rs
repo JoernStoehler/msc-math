@@ -23,7 +23,7 @@
 //! - `--seed <u64>`       base RNG seed                               (default: 42)
 //! - `--out <path>`       output summary .jsonl                       (default: untracked temp smoke path)
 //! - `--seed-time-budget-secs <f64>` per-seed wall-clock budget       (default: 120)
-//! - `--fresh`            delete existing summary + trace files before running
+//! - `--fresh`            delete existing summary + trace + cache files before running
 //! - `--db-update`        load and save the sys-landscape family cache
 //! - `--no-db-update`     do not load or save the sys-landscape family cache
 //!                        (set by LICCA shards to avoid concurrent write races)
@@ -41,7 +41,7 @@ use exp_sys_landscape::{
     apply_dual_step, ascent_direction, compute_active_sys_state, compute_step_bound, compute_sys,
     dual_vertices_rational_strings, finalize_ascent_output, open_ascent_writers,
     orbit_scalars_from_result, parse_ascent_args, run_parallel_seeds, shared_family_cache_path,
-    smoke_output_path, trace_path_for, AscentArgs, AscentMode, SeedResult, SummaryRow, TraceRow,
+    smoke_output_path, AscentArgs, AscentMode, AscentOutputPaths, SeedResult, SummaryRow, TraceRow,
     MAX_STEP_SIZE,
 };
 use nalgebra::Vector4;
@@ -388,6 +388,8 @@ fn process_seed(
             polytope_type: polytope_type.to_string(),
             facet_count: best_polytope.facet_count(),
             starting_sys,
+            final_capacity,
+            final_volume: final_state.vol,
             final_sys: best_sys,
             total_delta: best_sys - starting_sys,
             n_ascent_phases: n_phases,
@@ -460,15 +462,15 @@ fn main() {
     );
     let t_global = Instant::now();
 
-    let summary_path = args.out.clone();
-    let trace_path = trace_path_for(&summary_path);
+    let output_paths = AscentOutputPaths::from_summary_path(args.out.clone());
 
     println!("gradient-ascent-products: projected gradient ascent on Lagrangian products");
     println!("  n:            {}", args.n);
     println!("  n-start:      {}", args.n_start);
     println!("  seed:         {}", args.seed);
-    println!("  out:          {}", summary_path.display());
-    println!("  trace:        {}", trace_path.display());
+    println!("  out:          {}", output_paths.summary.display());
+    println!("  trace:        {}", output_paths.trace.display());
+    println!("  cache:        {}", output_paths.cache.display());
     println!("  fresh:        {}", args.fresh);
     println!("  budget:       {:.1}s/seed", args.seed_time_budget_secs);
     println!("  no-db-update: {}", args.no_db_update);
@@ -477,7 +479,7 @@ fn main() {
     let completed = if args.fresh {
         std::collections::HashSet::new()
     } else {
-        exp_sys_landscape::load_completed_names(&summary_path)
+        exp_sys_landscape::load_completed_names(&output_paths.summary)
     };
 
     if completed.is_empty() {
@@ -486,7 +488,7 @@ fn main() {
         println!("Resuming: {} seeds already completed.", completed.len());
     }
 
-    let writers = open_ascent_writers(&summary_path, &trace_path, args.fresh);
+    let writers = open_ascent_writers(&output_paths, args.fresh);
     let best = Arc::new(Mutex::new((0.0f64, String::new())));
 
     // DB state: loaded once, shared across threads under a Mutex when !no_db_update.
@@ -582,10 +584,11 @@ fn main() {
         Some(result)
     });
 
-    // Drop writers (consumed by finalize), sort + rewrite both output files
-    // so row order is deterministic regardless of rayon thread scheduling and
-    // any crash-resume history. See `finalize_ascent_output` for details.
-    finalize_ascent_output(&summary_path, &trace_path, writers);
+    // Drop writers (consumed by finalize), sort + rewrite summary, trace, and
+    // cache files so row order is deterministic regardless of rayon thread
+    // scheduling and any crash-resume history. See `finalize_ascent_output`
+    // for details.
+    finalize_ascent_output(&output_paths, writers);
 
     if !no_db_update {
         let db = db_arc.lock().expect("lock db for save");
@@ -610,6 +613,7 @@ fn main() {
         );
     }
     println!("Total time: {:.1}s", t_global.elapsed().as_secs_f64());
-    println!("Output: {}", summary_path.display());
-    println!("Trace: {}", trace_path.display());
+    println!("Output: {}", output_paths.summary.display());
+    println!("Trace: {}", output_paths.trace.display());
+    println!("Cache: {}", output_paths.cache.display());
 }

@@ -20,11 +20,12 @@ pub mod step_bound;
 pub mod sys_landscape_cache;
 
 pub use ascent::{
-    apply_dual_step, ascent_direction, compute_active_sys_state, compute_capacity_result,
-    compute_sys, compute_sys_from_capacity, dual_vertices_rational_strings, finalize_ascent_output,
-    load_completed_names, open_ascent_writers, orbit_scalars_from_result, parse_ascent_args,
-    rational_vec4_to_strings, run_parallel_seeds, smoke_output_path, trace_path_for, write_result,
-    ActiveSysState, AscentArgs, AscentMode, SeedResult, SummaryRow, TraceRow,
+    apply_dual_step, ascent_direction, cache_path_for, compute_active_sys_state,
+    compute_capacity_result, compute_sys, compute_sys_from_capacity,
+    dual_vertices_rational_strings, finalize_ascent_output, load_completed_names,
+    open_ascent_writers, orbit_scalars_from_result, parse_ascent_args, rational_vec4_to_strings,
+    run_parallel_seeds, smoke_output_path, trace_path_for, write_seed_result, ActiveSysState,
+    AscentArgs, AscentMode, AscentOutputPaths, AscentWriters, SeedResult, SummaryRow, TraceRow,
 };
 pub use datasets::{
     continuation_cache_path, experiment_path, package_root, raw_dataset_cache_path,
@@ -36,7 +37,10 @@ pub use step_bound::{
 };
 pub use sys_landscape_cache::SysLandscapePolytopeCache;
 
-pub fn euclidean_volume_f64(vertices: &[[BigRational; 4]], incidence: &DMatrix<bool>) -> f64 {
+pub fn exact_volume_from_incidence_as_f64(
+    vertices: &[[BigRational; 4]],
+    incidence: &DMatrix<bool>,
+) -> f64 {
     let vertices: Vec<Vector4<BigRational>> = vertices
         .iter()
         .map(|v| Vector4::new(v[0].clone(), v[1].clone(), v[2].clone(), v[3].clone()))

@@ -23,28 +23,28 @@ use euclidean_polytopes::{
     edges_from_vertex_facet_incidence, two_faces_from_vertex_facet_incidence,
     vertex_facets_from_vertex_facet_incidence,
 };
-use exp_sys_landscape::capacity_auto;
-use exp_sys_landscape::euclidean_volume_f64;
 use exp_sys_landscape::SysLandscapePolytopeCache;
+use rayon::prelude::*;
 
 fn enrich_row(row: &LoadedPolytopeRow) -> PolytopeTableRow {
     let (dual_vectors, dual_vertex_fields) = features_dual_vertices::dual_vertices_f64(row);
     let polytope: SysLandscapePolytopeCache =
         SysLandscapePolytopeCache::from_f64_dual_vertices(dual_vectors.clone())
             .unwrap_or_else(|| panic!("reconstruct {}", row.poly_id));
-    let polytope_volume =
-        euclidean_volume_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
+    let polytope_volume = row.volume;
+    assert!(
+        polytope_volume.is_finite() && polytope_volume > 0.0,
+        "polytope {} has invalid producer volume {}",
+        row.poly_id,
+        polytope_volume
+    );
     let actual_capacity = if row.capacity > 0.0 {
         row.capacity
     } else {
-        capacity_auto(
-            &polytope.dual_vertices_f64,
-            &polytope.dual_vertices,
-            &polytope.facet_intersection_is_nonempty,
-            &polytope.omega_signs,
+        panic!(
+            "polytope {} lacks producer capacity; normal table builds do not repair capacity",
+            row.poly_id
         )
-        .unwrap_or_else(|e| panic!("capacity {}: {:?}", row.poly_id, e))
-        .capacity()
     };
     let sys_value = actual_capacity * actual_capacity / (2.0 * polytope_volume);
     let facet_count = polytope.facet_count();
@@ -238,5 +238,5 @@ fn enrich_row(row: &LoadedPolytopeRow) -> PolytopeTableRow {
 }
 
 pub fn build_polytope_table(rows: &[LoadedPolytopeRow]) -> Vec<PolytopeTableRow> {
-    rows.iter().map(enrich_row).collect()
+    rows.par_iter().map(enrich_row).collect()
 }

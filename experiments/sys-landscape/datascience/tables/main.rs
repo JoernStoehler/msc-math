@@ -9,21 +9,55 @@ mod load_caches;
 mod rows;
 mod write_database;
 
+use std::collections::BTreeMap;
+use std::time::Instant;
+
 fn main() {
     let paths = load_caches::parse_args();
+    let total_started = Instant::now();
     eprintln!("Loading producer caches");
+    let started = Instant::now();
     let caches = load_caches::load_caches(&paths);
+    eprintln!(
+        "Loaded producer caches in {:.1}s",
+        started.elapsed().as_secs_f64()
+    );
     eprintln!(
         "Loaded {} polytopes and {} observations",
         caches.polytopes.len(),
         caches.observations.len()
     );
+    eprintln!("Capacity sources: {:?}", capacity_source_counts(&caches));
     eprintln!("Building polytope table");
+    let started = Instant::now();
     let polytope_rows = features::build_polytope_table(&caches.polytopes);
+    eprintln!(
+        "Built polytope table in {:.1}s",
+        started.elapsed().as_secs_f64()
+    );
     eprintln!("Building observation table");
+    let started = Instant::now();
     let observation_rows = features_trace::build_observation_table(&caches.observations);
+    eprintln!(
+        "Built observation table in {:.1}s",
+        started.elapsed().as_secs_f64()
+    );
     eprintln!("Writing tables to {}", paths.out_dir.display());
+    let started = Instant::now();
     write_database::write_database(&paths.out_dir, &polytope_rows, &observation_rows);
+    eprintln!("Wrote tables in {:.1}s", started.elapsed().as_secs_f64());
+    eprintln!(
+        "Total table build time {:.1}s",
+        total_started.elapsed().as_secs_f64()
+    );
 
     println!("Wrote {}", paths.out_dir.display());
+}
+
+fn capacity_source_counts(caches: &load_caches::LoadedCaches) -> BTreeMap<&str, usize> {
+    let mut counts = BTreeMap::new();
+    for row in &caches.polytopes {
+        *counts.entry(row.capacity_source.as_str()).or_default() += 1;
+    }
+    counts
 }
