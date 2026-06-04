@@ -41,7 +41,7 @@ use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 mod rows;
 use exp_sys_landscape::capacity_billiard;
-use exp_sys_landscape::euclidean_volume_f64;
+use exp_sys_landscape::exact_volume_from_incidence_as_f64;
 use exp_sys_landscape::SysLandscapePolytopeCache;
 use rows::RandomProductRow;
 use std::collections::HashMap;
@@ -291,7 +291,10 @@ fn main() {
             // Cache miss: compute the specialized billiard result because this
             // dataset records billiard-native iterations and bounce counts.
             let start_vol = Instant::now();
-            let vol = euclidean_volume_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
+            let vol = exact_volume_from_incidence_as_f64(
+                &polytope.vertices,
+                &polytope.vertex_facet_incidence,
+            );
             let time_volume_ms = start_vol.elapsed().as_secs_f64() * 1000.0;
 
             let start_cap = Instant::now();

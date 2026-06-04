@@ -23,7 +23,6 @@ use euclidean_polytopes::{
     edges_from_vertex_facet_incidence, two_faces_from_vertex_facet_incidence,
     vertex_facets_from_vertex_facet_incidence,
 };
-use exp_sys_landscape::euclidean_volume_f64;
 use exp_sys_landscape::SysLandscapePolytopeCache;
 use rayon::prelude::*;
 
@@ -32,8 +31,13 @@ fn enrich_row(row: &LoadedPolytopeRow) -> PolytopeTableRow {
     let polytope: SysLandscapePolytopeCache =
         SysLandscapePolytopeCache::from_f64_dual_vertices(dual_vectors.clone())
             .unwrap_or_else(|| panic!("reconstruct {}", row.poly_id));
-    let polytope_volume =
-        euclidean_volume_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
+    let polytope_volume = row.volume;
+    assert!(
+        polytope_volume.is_finite() && polytope_volume > 0.0,
+        "polytope {} has invalid producer volume {}",
+        row.poly_id,
+        polytope_volume
+    );
     let actual_capacity = if row.capacity > 0.0 {
         row.capacity
     } else {

@@ -37,7 +37,10 @@ pub use step_bound::{
 };
 pub use sys_landscape_cache::SysLandscapePolytopeCache;
 
-pub fn euclidean_volume_f64(vertices: &[[BigRational; 4]], incidence: &DMatrix<bool>) -> f64 {
+pub fn exact_volume_from_incidence_as_f64(
+    vertices: &[[BigRational; 4]],
+    incidence: &DMatrix<bool>,
+) -> f64 {
     let vertices: Vec<Vector4<BigRational>> = vertices
         .iter()
         .map(|v| Vector4::new(v[0].clone(), v[1].clone(), v[2].clone(), v[3].clone()))

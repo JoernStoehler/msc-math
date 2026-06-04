@@ -19,7 +19,7 @@
 //! `iterations` and `bounces`, which the auto-routed capacity helper
 //! wrapper does not expose.
 use exp_sys_landscape::capacity_billiard;
-use exp_sys_landscape::euclidean_volume_f64;
+use exp_sys_landscape::exact_volume_from_incidence_as_f64;
 use exp_sys_landscape::experiment_path;
 use exp_sys_landscape::SysLandscapePolytopeCache;
 use serde::Serialize;
@@ -116,7 +116,10 @@ fn generate_heptagon_7x7() {
         let polytope = SysLandscapePolytopeCache::from_lagrangian_product(&qn, &qh, &pn, &ph)
             .expect("heptagon product construction failed");
 
-        let vol = euclidean_volume_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
+        let vol = exact_volume_from_incidence_as_f64(
+            &polytope.vertices,
+            &polytope.vertex_facet_incidence,
+        );
 
         let start = Instant::now();
         let result = capacity_billiard(
@@ -189,7 +192,10 @@ fn generate_pentagon_5x5() {
         let polytope = SysLandscapePolytopeCache::from_lagrangian_product(&qn, &qh, &pn, &ph)
             .expect("pentagon product construction failed");
 
-        let vol = euclidean_volume_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
+        let vol = exact_volume_from_incidence_as_f64(
+            &polytope.vertices,
+            &polytope.vertex_facet_incidence,
+        );
 
         let start = Instant::now();
         let result = capacity_billiard(
@@ -262,7 +268,10 @@ fn generate_polygon_pairs() {
             let polytope = SysLandscapePolytopeCache::from_lagrangian_product(&qn, &qh, &pn, &ph)
                 .expect("polygon product construction failed");
 
-            let vol = euclidean_volume_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
+            let vol = exact_volume_from_incidence_as_f64(
+                &polytope.vertices,
+                &polytope.vertex_facet_incidence,
+            );
 
             let start = Instant::now();
             let result = capacity_billiard(

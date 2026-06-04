@@ -1,4 +1,4 @@
-use crate::{euclidean_volume_f64, SysLandscapePolytopeCache};
+use crate::{exact_volume_from_incidence_as_f64, SysLandscapePolytopeCache};
 use good_lp::{constraint, default_solver, variable, variables, Expression, Solution, SolverModel};
 use nalgebra::Vector4;
 use num_rational::BigRational;
@@ -42,7 +42,8 @@ pub enum AscentMode<'a> {
 /// Compute the active-orbit local state for one polytope.
 pub fn compute_active_sys_state(polytope: &SysLandscapePolytopeCache) -> Option<ActiveSysState> {
     let capacity = compute_capacity_result(polytope)?;
-    let vol = euclidean_volume_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
+    let vol =
+        exact_volume_from_incidence_as_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
     if vol <= 0.0 {
         return None;
     }
@@ -58,7 +59,8 @@ pub fn compute_sys_from_capacity(
     polytope: &SysLandscapePolytopeCache,
     capacity: &OrbitSearchResult,
 ) -> Option<f64> {
-    let vol = euclidean_volume_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
+    let vol =
+        exact_volume_from_incidence_as_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
     if vol <= 0.0 {
         return None;
     }
@@ -69,7 +71,8 @@ pub fn compute_sys_from_capacity(
 
 /// Compute sys = c_EHZ(K)^2 / (2 vol(K)) for a polytope using HK2017.
 pub fn compute_sys(polytope: &SysLandscapePolytopeCache) -> Option<f64> {
-    let vol = euclidean_volume_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
+    let vol =
+        exact_volume_from_incidence_as_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
     if vol <= 0.0 {
         return None;
     }
