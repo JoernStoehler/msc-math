@@ -19,11 +19,23 @@ Current committed producer artifacts:
 - `random-product.jsonl`
 - `ascent.jsonl`
 - `ascent-trace.jsonl`
+- `ascent-cache.jsonl`
 - `ascent-product.jsonl`
 - `ascent-product-trace.jsonl`
+- `ascent-product-cache.jsonl`
 - `continuation.jsonl`
 - `shared-cache.jsonl`
 - `continuation-cache.jsonl`
+
+Current fixed-F ascent producer counts from the 2026-06-04 LICCA
+cache-complete wave:
+
+- `ascent.jsonl`: `4096` rows; `ascent-cache.jsonl`: `4096` rows.
+- `ascent-product.jsonl`: `4089` rows; `ascent-product-cache.jsonl`: `4089`
+  rows. The product wave attempted seeds `0..4095`; seven seeds did not emit
+  summary/cache rows.
+- Both fixed-F cache files have complete `capacity`, `volume`, `sigmas`, and
+  `orbit_scalars` payloads for every committed summary endpoint.
 
 LICCA shard outputs for this branch should live under:
 
