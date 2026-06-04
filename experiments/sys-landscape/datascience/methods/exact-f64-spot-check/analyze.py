@@ -7,11 +7,12 @@
 Goal: Run the DS-I007 exact-vs-f64 spot check for claim-bearing numeric
       columns in the hostile-landscape datascience tables.
 Input Artifacts:
-  - frozen dataset directory passed by `--dataset-dir`, containing
+  - dataset directory passed by `--dataset-dir`, containing
     `polytope-table.jsonl` and `observation-table.jsonl`
 Output Artifacts:
   - experiments/sys-landscape/datascience/methods/exact-f64-spot-check/report.md
   - experiments/sys-landscape/datascience/methods/exact-f64-spot-check/summary.json
+    as an existing historical sidecar, not a default requirement for new methods
 """
 
 from __future__ import annotations
@@ -77,7 +78,7 @@ def parse_args() -> argparse.Namespace:
         "--out-dir",
         type=Path,
         default=EXPERIMENT_DIR,
-        help="Output directory for report.md and summary.json.",
+        help="Output directory for report.md and this method's historical summary.json sidecar.",
     )
     return parser.parse_args()
 
@@ -479,7 +480,7 @@ def main() -> None:
     write_report(out_dir, payload)
 
     if checks["sys_gt_one_count"] > 0:
-        raise SystemExit("stop condition hit: sys > 1 found in frozen dataset")
+        raise SystemExit("stop condition hit: sys > 1 found in dataset")
     if not checks["passed"]:
         raise SystemExit("dataset guard mismatch; wrote blocker report")
 

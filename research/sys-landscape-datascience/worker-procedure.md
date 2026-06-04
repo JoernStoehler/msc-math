@@ -8,7 +8,8 @@ worker waves, and reassess before relying on it as the default process.
 Reusable procedure for bounded sys-landscape data-science worker packets. Not a
 task queue. Current route and thesis relevance live in
 `tasks/planning-notes.md`; idea status lives in the sys-landscape data-science
-ledger/audit files.
+ledger/audit files. The current data-flow and role rules live in
+`experiments/sys-landscape/datascience/README.md`.
 
 ## Lead Rules
 
@@ -17,9 +18,8 @@ ledger/audit files.
 - Do not use the legacy/full-history launch path for this workflow.
 - Give each worker an isolated worktree and, for new methods, an isolated method
   folder under `experiments/sys-landscape/datascience/methods/<slug>/`.
-- Refresh the shared datascience dataset before launching a method wave when the
-  producer caches or table code changed. Pass that dataset path to workers. Do
-  not ask each worker to build a private `/tmp` dataset as source truth.
+- Follow the orchestrator and method-executor rules in
+  `experiments/sys-landscape/datascience/README.md`.
 - Do not refactor shared Python helpers during a wave unless repeated completed
   reports prove that a shared helper reduces review cost.
 - If a worker times out, inspect the worktree, durable report path, temporary
@@ -43,8 +43,7 @@ ledger/audit files.
 
 - idea slug and blocker target;
 - required cwd/worktree and a first command that prints `pwd`;
-- shared dataset path, producer command or dataset fingerprint, row counts,
-  max `sys`, and `sys > 1` count;
+- shared dataset path and any dataset checks required for this packet;
 - question, hypothesis, verdict meanings, allowed write scope, runtime budget,
   stop conditions, and required repo-owned evidence path;
 - leakage/provenance guards and relevant statistical or numerical checks;

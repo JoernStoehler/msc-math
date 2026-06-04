@@ -3,7 +3,7 @@
 # requires-python = ">=3.12"
 # ///
 
-"""Print a small fingerprint for sys-landscape datascience tables."""
+"""Print on-demand guard facts for sys-landscape datascience tables."""
 
 from __future__ import annotations
 

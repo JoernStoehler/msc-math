@@ -8,7 +8,7 @@
 Goal: classify endpoint vs random regime on the hostile-landscape surface and
       compare the existing feature families as regime separators.
 Input Artifacts:
-  - optionally a precomputed dataset directory passed by `--dataset-dir`
+  - active datascience dataset, or an override passed by `--dataset-dir`
   - feature tables in this directory:
     `feature_geometry.jsonl`, `feature_face_geometry.jsonl`,
     `feature_face_symplectic.jsonl`, `feature_skeleton.jsonl`,
@@ -20,7 +20,6 @@ Output Artifacts:
 
 import argparse
 import math
-import tempfile
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -38,7 +37,7 @@ try:
 except ImportError:  # pragma: no cover - fallback for older scikit-learn.
     StratifiedGroupKFold = None
 
-from common import FIGSIZE_DUAL, JoinedRow, load_joined_rows, refresh_dataset, setup
+from common import DEFAULT_DATASET_DIR, FIGSIZE_DUAL, JoinedRow, load_joined_rows, setup
 
 setup()
 
@@ -110,7 +109,10 @@ ORBIT_SEARCH_KEYS = [
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--dataset-dir", type=Path, help="Use an existing dataset directory instead of refreshing a temp one."
+        "--dataset-dir",
+        type=Path,
+        default=DEFAULT_DATASET_DIR,
+        help="Dataset directory. Defaults to experiments/sys-landscape/datascience/dataset.",
     )
     return parser.parse_args()
 
@@ -411,27 +413,8 @@ def plot_results(results: list[dict], out_path: Path) -> None:
 
 def main() -> None:
     args = parse_args()
-    if args.dataset_dir is not None:
-        dataset_dir = args.dataset_dir.resolve()
-        normalized_source_label = f"`{dataset_dir}`"
-    else:
-        with tempfile.TemporaryDirectory(prefix="regime-classification-") as temp_dir:
-            dataset_dir = Path(temp_dir) / "dataset"
-            dataset_dir.mkdir(parents=True, exist_ok=True)
-            refresh_dataset(dataset_dir)
-            normalized_source_label = (
-                "temporary refresh via "
-                "`cargo run -p exp-sys-landscape --release --bin "
-                "sys-dataset -- --out-dir <temp/dataset>`"
-            )
-            rows = load_joined_rows(dataset_dir)
-            results = run_evaluations(rows)
-            write_summary(normalized_source_label, rows, results)
-            plot_results(results, FIGURE_PNG)
-            print(f"Saved {SUMMARY_MD}")
-            print(f"Saved {FIGURE_PNG}")
-            return
-
+    dataset_dir = args.dataset_dir.resolve()
+    normalized_source_label = f"`{dataset_dir}`"
     rows = load_joined_rows(dataset_dir)
     results = run_evaluations(rows)
     write_summary(normalized_source_label, rows, results)

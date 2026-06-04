@@ -6,13 +6,14 @@
 
 """
 Goal: Rerun the DS-I004 PCA / clustering / anomaly scan as a repo-owned
-      source-truth artifact over a frozen sys-landscape dataset table.
+      source-truth artifact over a sys-landscape dataset table.
 Input Artifacts:
   - a dataset directory passed by `--dataset-dir` containing
     `polytope-table.jsonl` and `observation-table.jsonl`
 Output Artifacts:
   - experiments/sys-landscape/datascience/methods/pca-cluster-spike/report.md
   - experiments/sys-landscape/datascience/methods/pca-cluster-spike/summary.json
+    as an existing historical sidecar, not a default requirement for new methods
 """
 
 from __future__ import annotations
@@ -450,7 +451,7 @@ def main() -> None:
     observation_rows = load_jsonl(args.dataset_dir / "observation-table.jsonl")
     checks = validate_dataset(polytope_rows, observation_rows)
     if checks["sys_gt_one_count"] > 0:
-        raise SystemExit("stop condition hit: sys > 1 found in frozen dataset")
+        raise SystemExit("stop condition hit: sys > 1 found in dataset")
     if not checks["passed"]:
         raise SystemExit(f"dataset guard mismatch: {checks['errors']}")
 

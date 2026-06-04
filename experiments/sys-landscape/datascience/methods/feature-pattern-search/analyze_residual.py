@@ -18,8 +18,7 @@ Input Artifacts:
   - experiments/sys-landscape/datascience/methods/feature-pattern-search/feature_omega.jsonl
   - experiments/sys-landscape/datascience/methods/feature-pattern-search/feature_orbit.jsonl
   - experiments/sys-landscape/datascience/methods/feature-pattern-search/feature_trajectory.jsonl
-  - optionally a precomputed dataset directory passed by
-    `--dataset-dir`
+  - active datascience dataset, or an override passed by `--dataset-dir`
 Output Artifacts:
   - experiments/sys-landscape/datascience/methods/feature-pattern-search/feature_pattern_search_residual.png
   - experiments/sys-landscape/datascience/methods/feature-pattern-search/feature_pattern_search_residual_summary.md
@@ -27,7 +26,6 @@ Output Artifacts:
 
 import argparse
 import math
-import tempfile
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -40,7 +38,7 @@ from sklearn.model_selection import GroupKFold
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import MaxAbsScaler
 
-from common import FIGSIZE_DUAL, JoinedRow, load_joined_rows, refresh_dataset, setup
+from common import DEFAULT_DATASET_DIR, FIGSIZE_DUAL, JoinedRow, load_joined_rows, setup
 
 setup()
 
@@ -64,7 +62,10 @@ TESTED_BLOCKS = [
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--dataset-dir", type=Path, help="Use an existing dataset directory instead of refreshing a temp one."
+        "--dataset-dir",
+        type=Path,
+        default=DEFAULT_DATASET_DIR,
+        help="Dataset directory. Defaults to experiments/sys-landscape/datascience/dataset.",
     )
     return parser.parse_args()
 
@@ -301,13 +302,7 @@ def plot_residual_deltas(results: dict[str, dict[str, dict[str, float]]]) -> Non
 
 def main() -> None:
     args = parse_args()
-    if args.dataset_dir is not None:
-        dataset_dir = args.dataset_dir.resolve()
-    else:
-        temp_dir = tempfile.TemporaryDirectory(prefix="feature-pattern-search-residual-")
-        dataset_dir = Path(temp_dir.name) / "dataset"
-        dataset_dir.mkdir(parents=True, exist_ok=True)
-        refresh_dataset(dataset_dir)
+    dataset_dir = args.dataset_dir.resolve()
 
     rows = load_joined_rows(dataset_dir, endpoint_only=True)
     if not rows:

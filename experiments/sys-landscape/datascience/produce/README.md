@@ -41,7 +41,7 @@ this directory is the maintained producer surface for the datascience pipeline.
 For method waves, do not ask every method worker to regenerate or privately
 copy producer data. Build the shared table dataset under
 `experiments/sys-landscape/datascience/dataset/` and pass that dataset path to
-method workers. See `../README.md`.
+method workers. The current role rules live in `../README.md`.
 
 ## Smoke Path
 

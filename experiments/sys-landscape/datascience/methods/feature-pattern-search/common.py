@@ -7,7 +7,6 @@
 """Shared local helpers for the sys-landscape feature-pattern-search packet."""
 
 import json
-import subprocess
 import sys
 from dataclasses import dataclass
 from pathlib import Path
@@ -17,6 +16,7 @@ from figure_config import FIGSIZE_DUAL, FIGSIZE_SQUARE, setup
 
 EXPERIMENT_DIR = Path(__file__).resolve().parent
 REPO_ROOT = EXPERIMENT_DIR.parent.parent.parent.parent.parent
+DEFAULT_DATASET_DIR = REPO_ROOT / "experiments/sys-landscape/datascience/dataset"
 
 FEATURE_GEOMETRY_JSONL = EXPERIMENT_DIR / "feature_geometry.jsonl"
 FEATURE_FACE_GEOMETRY_JSONL = EXPERIMENT_DIR / "feature_face_geometry.jsonl"
@@ -74,25 +74,6 @@ def write_jsonl(path: Path, rows: list[dict]) -> None:
     with path.open("w") as handle:
         for row in rows:
             handle.write(json.dumps(row) + "\n")
-
-
-def refresh_dataset(out_dir: Path) -> None:
-    subprocess.run(
-        [
-            "cargo",
-            "run",
-            "-p",
-            "exp-sys-landscape",
-            "--release",
-            "--bin",
-            "sys-dataset",
-            "--",
-            "--out-dir",
-            str(out_dir),
-        ],
-        cwd=REPO_ROOT,
-        check=True,
-    )
 
 
 def cv_group_id(state: dict, regime: str) -> str:

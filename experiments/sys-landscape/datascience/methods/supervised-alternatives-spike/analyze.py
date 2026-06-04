@@ -8,10 +8,11 @@
 Goal: Run the DS-I005 supervised-alternatives spike for cheap standard
       regressors/classifiers on the hostile-landscape datascience tables.
 Input Artifacts:
-  - frozen dataset directory passed by `--dataset-dir`, containing
+  - dataset directory passed by `--dataset-dir`, containing
     `polytope-table.jsonl` and `observation-table.jsonl`
 Output Artifacts:
   - experiments/sys-landscape/datascience/methods/supervised-alternatives-spike/summary.json
+    as an existing historical sidecar, not a default requirement for new methods
   - experiments/sys-landscape/datascience/methods/supervised-alternatives-spike/REPORT.md
 """
 

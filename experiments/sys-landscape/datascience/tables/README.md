@@ -23,6 +23,9 @@ Build the current dataset with:
 experiments/sys-landscape/datascience/build-dataset.sh
 ```
 
+The current rules for method-only runs, reusable table features, producer
+changes, reviewers, and speculative datasets live in `../README.md`.
+
 Code ownership:
 - `main.rs` orchestrates `load -> enrich -> write`
 - `load_caches.rs` reads producer files and merges them into unified rows

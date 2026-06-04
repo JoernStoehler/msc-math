@@ -9,9 +9,7 @@ Goal: Run a bounded hostile-landscape pattern-search pass on the dataset
       surface, comparing a narrow metadata baseline against cheap geometry
       features derived from exact dual vertices.
 Input Artifacts:
-  - optionally a precomputed dataset directory passed by `--dataset-dir`
-  - otherwise the datascience producer caches under
-    `experiments/sys-landscape/datascience/produce/`
+  - active datascience dataset, or an override passed by `--dataset-dir`
 Output Artifacts:
   - experiments/sys-landscape/datascience/methods/feature-pattern-search/feature_geometry.jsonl
   - experiments/sys-landscape/datascience/methods/feature-pattern-search/feature_face_geometry.jsonl
@@ -27,7 +25,6 @@ Output Artifacts:
 import argparse
 import math
 import statistics
-import tempfile
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -43,6 +40,7 @@ from sklearn.preprocessing import MaxAbsScaler
 from common import (
     ENDPOINT_DATASETS,
     EXPERIMENT_DIR,
+    DEFAULT_DATASET_DIR,
     FEATURE_FACE_GEOMETRY_JSONL,
     FEATURE_FACE_SYMPLECTIC_JSONL,
     FEATURE_GEOMETRY_JSONL,
@@ -54,10 +52,8 @@ from common import (
     FIGSIZE_SQUARE,
     JoinedRow,
     RANDOM_DATASETS,
-    REPO_ROOT,
     cv_group_id,
     load_jsonl,
-    refresh_dataset,
     setup,
     write_jsonl,
 )
@@ -134,7 +130,10 @@ ORBIT_SEARCH_KEYS = [
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--dataset-dir", type=Path, help="Use an existing dataset directory instead of refreshing a temp one."
+        "--dataset-dir",
+        type=Path,
+        default=DEFAULT_DATASET_DIR,
+        help="Dataset directory. Defaults to experiments/sys-landscape/datascience/dataset.",
     )
     return parser.parse_args()
 
@@ -782,33 +781,17 @@ def plot_model_results(results: list[dict], model_name: str, out_path: Path, tit
 
 def main() -> None:
     args = parse_args()
-    if args.dataset_dir is not None:
-        dataset_dir = args.dataset_dir.resolve()
-        (
-            joined_rows,
-            geometry_rows,
-            face_geometry_rows,
-            face_symplectic_rows,
-            skeleton_rows,
-            omega_rows,
-            orbit_rows,
-            trajectory_rows,
-        ) = load_joined_rows(dataset_dir)
-    else:
-        with tempfile.TemporaryDirectory(prefix="feature-pattern-search-") as temp_dir:
-            dataset_dir = Path(temp_dir) / "dataset"
-            dataset_dir.mkdir(parents=True, exist_ok=True)
-            refresh_dataset(dataset_dir)
-            (
-                joined_rows,
-                geometry_rows,
-                face_geometry_rows,
-                face_symplectic_rows,
-                skeleton_rows,
-                omega_rows,
-                orbit_rows,
-                trajectory_rows,
-            ) = load_joined_rows(dataset_dir)
+    dataset_dir = args.dataset_dir.resolve()
+    (
+        joined_rows,
+        geometry_rows,
+        face_geometry_rows,
+        face_symplectic_rows,
+        skeleton_rows,
+        omega_rows,
+        orbit_rows,
+        trajectory_rows,
+    ) = load_joined_rows(dataset_dir)
 
     write_jsonl(FEATURE_GEOMETRY_JSONL, geometry_rows)
     write_jsonl(FEATURE_FACE_GEOMETRY_JSONL, face_geometry_rows)

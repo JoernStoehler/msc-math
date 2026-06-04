@@ -21,11 +21,17 @@ Contents:
 
 - `polytope-table.jsonl`
 - `observation-table.jsonl`
-- `FINGERPRINT.md`
 
 Use this dataset as read-only input for method executors. Method outputs belong
 under `../../methods/<slug>/`.
 
 Do not replace this dataset with private `/tmp` output. If the producer caches
-or table code change, refresh this directory intentionally and review the
-fingerprint diff.
+or table code change, refresh this directory intentionally and review the table
+diff.
+
+For row counts, hashes, source counts, max `sys`, and `sys > 1` count, run:
+
+```bash
+uv run --script experiments/sys-landscape/datascience/fingerprint-dataset.py \
+  experiments/sys-landscape/datascience/dataset
+```

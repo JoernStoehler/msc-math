@@ -34,8 +34,8 @@ Observed on 2026-06-03 from the committed producer caches:
   `experiments/sys-landscape/datascience/dataset/polytope-table.jsonl`
   and
   `experiments/sys-landscape/datascience/dataset/observation-table.jsonl`
-- Fingerprint:
-  `experiments/sys-landscape/datascience/dataset/FINGERPRINT.md`
+- Dataset checks, when needed:
+  `uv run --script experiments/sys-landscape/datascience/fingerprint-dataset.py experiments/sys-landscape/datascience/dataset`
 - Row counts:
   `282` polytope rows and `282` observation rows.
 - Observation counts:
@@ -107,7 +107,7 @@ paths in the original packet.
 Every spike packet should state:
 
 - required cwd/worktree and a first command that prints `pwd`;
-- frozen dataset path and row-count expectation;
+- shared dataset path and any row-count expectation relevant to the packet;
 - idea, hypothesis, and what would count as positive, no-search-output, or
   inconclusive;
 - allowed write scope;
@@ -166,7 +166,7 @@ Record only lessons that change future delegation or spike design.
 | Date | Source | Lesson | Consequence |
 | --- | --- | --- | --- |
 | 2026-04-30 | Initial planning | Table generation from current producer caches is cheap enough for a lead wave setup but not free for every worker. | Historical rule: build one frozen temp dataset per wave and pass the path to workers. Superseded by the retained dataset rule below. |
-| 2026-06-03 | Pipeline maintenance | The old temp-dataset rule made method inputs hard to share across worktrees and easy to lose after a session. | Supersede it with a retained dataset under `experiments/sys-landscape/datascience/dataset/`, plus `FINGERPRINT.md` for reports and review. |
+| 2026-06-03 | Pipeline maintenance | The old temp-dataset rule made method inputs hard to share across worktrees and easy to lose after a session. | Supersede it with a retained dataset under `experiments/sys-landscape/datascience/dataset/`; compute row counts and hashes on demand with `fingerprint-dataset.py`. |
 | 2026-04-30 | Initial planning | A useful spike must end in a verdict with evidence, not only a plot or script. | Worker packets require a report path with a reviewer-readable result header. |
 | 2026-04-30 | `pca-cluster-anomaly` worker spike | One worker could implement and run a complete PCA/clustering spike from the packet, including row guards, non-provenance features, a permutation sanity check, and a readable verdict. | Full-method spikes are feasible when the dataset path, allowed write scope, and verdict vocabulary are explicit. |
 | 2026-04-30 | `pca-cluster-anomaly` worker spike | The useful lifecycle is one-turn delegation: choose the experiment, define it, delegate, wait, inspect, then merge, trash, or leave a follow-up. Interactive checkpointing is not the default control path. | Future packets should require durable report/output paths for inspection, not chat-style progress management. |
