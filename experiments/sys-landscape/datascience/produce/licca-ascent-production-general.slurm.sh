@@ -1,9 +1,9 @@
 #!/bin/bash
-# Production shard wave for datascience product fixed-F ascent.
+# Production shard wave for datascience general fixed-F ascent.
 # Submit from this directory with:
-#   sbatch licca-ascent-production-product.sh
+#   sbatch licca-ascent-production-general.slurm.sh
 
-#SBATCH --job-name=ds-product
+#SBATCH --job-name=ds-general
 #SBATCH --partition=epyc
 #SBATCH --array=10-13
 #SBATCH --cpus-per-task=128
@@ -24,10 +24,10 @@
 
 set -euo pipefail
 
-export KIND=product
-export RUN_LABEL=production-product-1024x128
-export BASE_N_START=12
+export KIND=general
+export RUN_LABEL=production-general-1024x128
+export BASE_N_START=10
 export SEEDS_PER_SHARD=1024
 export SEED_TIME_BUDGET_SECS=120
 
-bash "$(dirname "$0")/licca-ascent-array.sh"
+bash "$(dirname "$0")/_licca-ascent-runner.sh"

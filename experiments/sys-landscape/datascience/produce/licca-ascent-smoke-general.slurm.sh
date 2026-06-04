@@ -1,9 +1,9 @@
 #!/bin/bash
-# Smoke shard for datascience product fixed-F ascent.
+# Smoke shard for datascience general fixed-F ascent.
 # Submit from this directory with:
-#   sbatch licca-ascent-smoke-product.sh
+#   sbatch licca-ascent-smoke-general.slurm.sh
 
-#SBATCH --job-name=ds-smoke-product
+#SBATCH --job-name=ds-smoke-general
 #SBATCH --partition=test
 #SBATCH --array=0-0
 #SBATCH --cpus-per-task=10
@@ -18,10 +18,10 @@
 
 set -euo pipefail
 
-export KIND=product
-export RUN_LABEL=smoke-product
-export BASE_N_START=12
+export KIND=general
+export RUN_LABEL=smoke-general
+export BASE_N_START=10
 export SEEDS_PER_SHARD=2
 export SEED_TIME_BUDGET_SECS=30
 
-bash "$(dirname "$0")/licca-ascent-array.sh"
+bash "$(dirname "$0")/_licca-ascent-runner.sh"

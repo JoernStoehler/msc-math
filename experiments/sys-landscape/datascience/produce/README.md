@@ -73,7 +73,7 @@ validation.
 
 ## LICCA Fixed-F Ascent Shards
 
-Use the `licca-ascent-*.sh` Slurm wrappers on the
+Use the `licca-ascent-*.slurm.sh` Slurm wrappers on the
 `licca-datascience-datasets` branch to scale fixed-F ascent without shared
 output races. Submit the wrappers directly; do not pass production settings as
 `sbatch` flags.
@@ -84,19 +84,19 @@ array task. Defaults skip existing committed seed ranges: general starts at
 
 Shared implementation:
 
-- [licca-ascent-array.sh](licca-ascent-array.sh): common runner; do not submit
-  directly.
+- [_licca-ascent-runner.sh](_licca-ascent-runner.sh): common runner; do not
+  submit directly.
 
 Direct-submit wrappers:
 
-- [licca-ascent-smoke-general.sh](licca-ascent-smoke-general.sh): one
+- [licca-ascent-smoke-general.slurm.sh](licca-ascent-smoke-general.slurm.sh): one
   `test`-partition general shard with `2` seeds.
-- [licca-ascent-smoke-product.sh](licca-ascent-smoke-product.sh): one
+- [licca-ascent-smoke-product.slurm.sh](licca-ascent-smoke-product.slurm.sh): one
   `test`-partition product shard with `2` seeds.
-- [licca-ascent-production-general.sh](licca-ascent-production-general.sh):
+- [licca-ascent-production-general.slurm.sh](licca-ascent-production-general.slurm.sh):
   production general wave with array `10-13`, `1024` seeds per shard, and
   `128` CPUs per shard.
-- [licca-ascent-production-product.sh](licca-ascent-production-product.sh):
+- [licca-ascent-production-product.slurm.sh](licca-ascent-production-product.slurm.sh):
   production product wave with array `10-13`, `1024` seeds per shard, and
   `128` CPUs per shard.
 
@@ -119,16 +119,16 @@ Smoke-submit one small shard per kind:
 
 ```bash
 cd "$HOME/msc-math/experiments/sys-landscape/datascience/produce"
-sbatch licca-ascent-smoke-general.sh
-sbatch licca-ascent-smoke-product.sh
+sbatch licca-ascent-smoke-general.slurm.sh
+sbatch licca-ascent-smoke-product.slurm.sh
 ```
 
 After reviewing logs, submit the production wrappers directly:
 
 ```bash
 cd "$HOME/msc-math/experiments/sys-landscape/datascience/produce"
-sbatch licca-ascent-production-general.sh
-sbatch licca-ascent-production-product.sh
+sbatch licca-ascent-production-general.slurm.sh
+sbatch licca-ascent-production-product.slurm.sh
 ```
 
 This requests `4096` new general seeds and `4096` new product seeds, starting

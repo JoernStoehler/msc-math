@@ -2,10 +2,10 @@
 # Shared implementation for LICCA fixed-F ascent Slurm wrappers.
 #
 # Do not submit this file directly. Submit one of:
-# - licca-ascent-smoke-general.sh
-# - licca-ascent-smoke-product.sh
-# - licca-ascent-production-general.sh
-# - licca-ascent-production-product.sh
+# - licca-ascent-smoke-general.slurm.sh
+# - licca-ascent-smoke-product.slurm.sh
+# - licca-ascent-production-general.slurm.sh
+# - licca-ascent-production-product.slurm.sh
 #
 # Resume rule:
 # - Do not delete partial shard files after timeout.
