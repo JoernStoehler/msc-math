@@ -9,6 +9,8 @@ mod load_caches;
 mod rows;
 mod write_database;
 
+use std::collections::BTreeMap;
+
 fn main() {
     let paths = load_caches::parse_args();
     eprintln!("Loading producer caches");
@@ -18,6 +20,7 @@ fn main() {
         caches.polytopes.len(),
         caches.observations.len()
     );
+    eprintln!("Capacity sources: {:?}", capacity_source_counts(&caches));
     eprintln!("Building polytope table");
     let polytope_rows = features::build_polytope_table(&caches.polytopes);
     eprintln!("Building observation table");
@@ -26,4 +29,12 @@ fn main() {
     write_database::write_database(&paths.out_dir, &polytope_rows, &observation_rows);
 
     println!("Wrote {}", paths.out_dir.display());
+}
+
+fn capacity_source_counts(caches: &load_caches::LoadedCaches) -> BTreeMap<&str, usize> {
+    let mut counts = BTreeMap::new();
+    for row in &caches.polytopes {
+        *counts.entry(row.capacity_source.as_str()).or_default() += 1;
+    }
+    counts
 }

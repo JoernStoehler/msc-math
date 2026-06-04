@@ -23,7 +23,6 @@ use euclidean_polytopes::{
     edges_from_vertex_facet_incidence, two_faces_from_vertex_facet_incidence,
     vertex_facets_from_vertex_facet_incidence,
 };
-use exp_sys_landscape::capacity_auto;
 use exp_sys_landscape::euclidean_volume_f64;
 use exp_sys_landscape::SysLandscapePolytopeCache;
 
@@ -37,14 +36,10 @@ fn enrich_row(row: &LoadedPolytopeRow) -> PolytopeTableRow {
     let actual_capacity = if row.capacity > 0.0 {
         row.capacity
     } else {
-        capacity_auto(
-            &polytope.dual_vertices_f64,
-            &polytope.dual_vertices,
-            &polytope.facet_intersection_is_nonempty,
-            &polytope.omega_signs,
+        panic!(
+            "polytope {} lacks producer capacity; normal table builds do not repair capacity",
+            row.poly_id
         )
-        .unwrap_or_else(|e| panic!("capacity {}: {:?}", row.poly_id, e))
-        .capacity()
     };
     let sys_value = actual_capacity * actual_capacity / (2.0 * polytope_volume);
     let facet_count = polytope.facet_count();
