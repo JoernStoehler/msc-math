@@ -1,12 +1,8 @@
-# Devcontainer And Codex Web Environment
+# Local Devcontainer
 
 Local devcontainer on Jörn's Ubuntu desktop. Provides OS-level isolation for
 Codex CLI sessions (`danger-full-access` is safe because Docker
 is the security boundary, not Codex's in-tool sandbox rules).
-
-This directory also contains the Codex web environment setup and smoke-test
-documentation in the Codex cloud notes. The helper script names keep their
-historical cloud prefix.
 
 ## Architecture
 
@@ -105,10 +101,6 @@ Access methods (see Architecture section above):
 | `host-devcontainer-rebuild.sh` | Rebuild image + recreate container |
 | `host-vscode-tunnel.sh` | Start VS Code tunnel into container |
 | `warmup-cache.sh` | Background cache warmer (Rust + Python deps) |
-| `codex-cloud-setup.sh` | Setup command for the Codex web environment |
-| `codex-cloud-maintenance.sh` | Maintenance command for cached Codex web containers |
-| `codex-cloud-smoke.sh` | Acceptance smoke test for the Codex web environment |
-| `codex-cloud-rust-warmup.sh` | Shared Rust warm-up used by setup and maintenance |
 
 ## Bind mounts
 
@@ -151,8 +143,8 @@ Treat this devcontainer as shared infrastructure, not a scratch setup.
 Before editing `devcontainer.json`, `Dockerfile`, `post-create.sh`, or host
 scripts:
 
-- recover intent from this README, `.devcontainer/codex-cloud.md`, git history,
-  and the repo commands in `AGENTS.md`;
+- recover intent from this README, git history, and the repo commands in
+  `AGENTS.md`;
 - identify whether the change affects image rebuild cost, post-create runtime,
   host filesystem state, Docker volumes, credentials, cache behavior, or tools
   agents rely on;
@@ -200,28 +192,11 @@ Reason:
 - extra host paths or Docker volumes add hidden state that future agents must
   understand, clean up, and debug;
 - local Cargo build artifacts already persist in the repo-local ignored
-  `target/` directory unless the workspace itself is deleted;
-- Codex web has a separate documented `CARGO_TARGET_DIR` policy because its
-  checkout/cache behavior is different from the local devcontainer.
+  `target/` directory unless the workspace itself is deleted.
 
 Current persistence is intentionally limited to auth/runtime state and caches
 that were already part of the host contract: Claude, Codex, GitHub CLI, uv,
 TeX user trees, bash history, and the existing VS Code state volume.
-
-### Codex web Rust validation target
-
-The Codex web warmup and smoke scripts target the current `symplectic` package
-from the workspace root.
-
-Reason:
-
-- older scripts referred to `${ROOT_DIR}/library`, which no longer exists after
-  the repo layout migration;
-- `.devcontainer/codex-cloud.md` already describes the Rust validation path as
-  `crates/symplectic` and the qhull dependency as
-  `crates/symplectic/src/geom/qhull.rs`;
-- using `cargo ... -p symplectic` from the workspace root avoids depending on a
-  particular crate directory layout.
 
 ## SageMath In The Local Devcontainer
 
@@ -249,7 +224,7 @@ Minimal acceptance check after rebuild:
 
 ```bash
 sage --version
-cd experiments/hko-local-maximum/exact-clarke
-python3 build_widened_seed_witness.py
-sage verify_widened_seed_witness.sage
+cd experiments/hko-local-maximum/theorem/exact-witness
+python3 build_widened_representative_witness.py
+sage verify_widened_representative_witness.sage
 ```

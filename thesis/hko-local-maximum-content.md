@@ -163,7 +163,7 @@ Status:
 
 Source pointers:
 - `research/hko-local-maximum.md`, "Current State" and "Supporting Evidence".
-- `experiments/hko-local-maximum/README.md`, "Directory Roles".
+- `experiments/hko-local-maximum/README.md`, "Result Strands".
 - `formal/hko-local-maximality-conditions.tex` for older second-order formal
   support and caveats.
 

@@ -114,7 +114,6 @@ When interacting with Jörn in chat:
 |-- .worktrees/
 |-- .devcontainer/
 |   |-- README.md
-|   |-- codex-cloud.md
 |   |-- devcontainer.json
 |   |-- Dockerfile
 |   `-- *.sh
@@ -173,8 +172,6 @@ They are not authoritative sources, and can be regenerated via subagent.
 Supported environments:
 - Local devcontainer at `/workspaces/msc-math`: full baseline environment with
   Rust, Python, TeX Live, and `gh`. See `.devcontainer/README.md`.
-- Codex web environment: lower-complexity environment for web sessions. See
-  `.devcontainer/codex-cloud.md`; TeX is intentionally out of scope there.
 
 ## Commands
 
