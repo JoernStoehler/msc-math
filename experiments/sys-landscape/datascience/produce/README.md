@@ -101,10 +101,12 @@ general starts at `n-start=10`, and product starts at `n-start=12`.
   `test`-partition product shard with `2` seeds.
 - [licca-ascent-production-general.slurm.sh](licca-ascent-production-general.slurm.sh):
   production general wave with array `0-3`, `1024` seeds per shard, and
-  `128` CPUs per shard. It starts at seed `510`.
+  `128` CPUs per shard. It starts at seed `0` and writes a fresh
+  cache-complete output directory.
 - [licca-ascent-production-product.slurm.sh](licca-ascent-production-product.slurm.sh):
   production product wave with array `0-3`, `1024` seeds per shard, and
-  `128` CPUs per shard. It starts at seed `512`.
+  `128` CPUs per shard. It starts at seed `0` and writes a fresh
+  cache-complete output directory.
 
 Resume rule: do not delete partial shard files after timeout. Rerun the same
 wrapper with the same array index and constants. The Rust binary reads
@@ -137,10 +139,12 @@ sbatch licca-ascent-production-general.slurm.sh
 sbatch licca-ascent-production-product.slurm.sh
 ```
 
-This requests `4096` new general seeds and `4096` new product seeds. It writes
-to `licca-shards/general-production-1024/` and
-`licca-shards/product-production-1024/` so it does not collide with the first
-conservative wave under `licca-shards/general/` and `licca-shards/product/`.
+This requests `4096` cache-complete general seeds and `4096` cache-complete
+product seeds. It writes to `licca-shards/general-cache-production-1024/` and
+`licca-shards/product-cache-production-1024/` so it does not collide with older
+no-cache waves under `licca-shards/general/`,
+`licca-shards/product/`, `licca-shards/general-production-1024/`, or
+`licca-shards/product-production-1024/`.
 
 After shard review, consolidate on LICCA or locally with:
 
@@ -150,11 +154,17 @@ python3 experiments/sys-landscape/datascience/produce/merge-licca-ascent-shards.
 ```
 
 For future cache-complete LICCA campaigns, use `--require-cache` during review
-and write:
+and write. Use `--fresh-fixed-f` when replacing old fixed-F ascent data instead
+of merging old no-cache waves:
 
 ```bash
-python3 experiments/sys-landscape/datascience/produce/merge-licca-ascent-shards.py --require-cache
-python3 experiments/sys-landscape/datascience/produce/merge-licca-ascent-shards.py --require-cache --write
+python3 experiments/sys-landscape/datascience/produce/merge-licca-ascent-shards.py \
+  --require-cache \
+  --fresh-fixed-f
+python3 experiments/sys-landscape/datascience/produce/merge-licca-ascent-shards.py \
+  --require-cache \
+  --fresh-fixed-f \
+  --write
 ```
 
 The `--write` form creates:

@@ -26,9 +26,9 @@
 #   seed estimate.
 # - 6h wall time allows heavy-tail seeds. On timeout, rerun this same script;
 #   completed summary rows are skipped.
-# - array=0-3 writes a second-wave output directory. The seed range starts at
-#   510, immediately after the first conservative general wave's expected range
-#   10..509.
+# - array=0-3 writes a cache-complete fresh fixed-F output directory. The seed
+#   range starts at 0 because older no-cache ascent waves are intentionally not
+#   reused by the future table pipeline.
 
 set -euo pipefail
 
@@ -36,14 +36,14 @@ cd "$HOME/msc-math"
 export CARGO_TARGET_DIR="${CARGO_TARGET_DIR:-/hpc/gpfs2/scratch/u/stoehljo/cargo-target}"
 export RAYON_NUM_THREADS="$SLURM_CPUS_PER_TASK"
 
-RUN_LABEL="production-general-1024x128"
+RUN_LABEL="cache-production-general-1024x128"
 KIND="general"
 SHARD_ID="${SLURM_ARRAY_TASK_ID:-0}"
-BASE_N_START=510
+BASE_N_START=0
 SEEDS_PER_SHARD=1024
 SEED_TIME_BUDGET_SECS=120
 BINARY="$CARGO_TARGET_DIR/release/sys-dataset-ascent"
-OUT_DIR="experiments/sys-landscape/datascience/produce/licca-shards/$KIND-production-1024"
+OUT_DIR="experiments/sys-landscape/datascience/produce/licca-shards/$KIND-cache-production-1024"
 OUT="$OUT_DIR/general-shard-${SHARD_ID}.jsonl"
 N_START=$((BASE_N_START + SHARD_ID * SEEDS_PER_SHARD))
 

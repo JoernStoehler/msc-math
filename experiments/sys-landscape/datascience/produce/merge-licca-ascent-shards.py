@@ -34,6 +34,14 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Require every merged summary endpoint to have a matching producer-cache row.",
     )
+    parser.add_argument(
+        "--fresh-fixed-f",
+        action="store_true",
+        help=(
+            "Merge only cache-complete fresh fixed-F shard directories, omitting "
+            "canonical ascent files and older no-cache shard waves."
+        ),
+    )
     return parser.parse_args()
 
 
@@ -83,8 +91,13 @@ def summary_cache_key(row: dict[str, Any]) -> str:
     )
 
 
-def collect_paths(produce_dir: Path, canonical_name: str, shard_globs: list[str]) -> list[Path]:
-    paths = [produce_dir / canonical_name]
+def collect_paths(
+    produce_dir: Path,
+    canonical_name: str,
+    shard_globs: list[str],
+    include_canonical: bool = True,
+) -> list[Path]:
+    paths = [produce_dir / canonical_name] if include_canonical else []
     for pattern in shard_globs:
         paths.extend(sorted(produce_dir.glob(pattern)))
     return [path for path in paths if path.exists()]
@@ -185,6 +198,8 @@ def validate_summary_cache(
 
 
 def missing_indices(rows: list[dict[str, Any]], start: int, stop_inclusive: int) -> list[int]:
+    if stop_inclusive < start:
+        return []
     seen = {name_index(row) for row in rows}
     return [idx for idx in range(start, stop_inclusive + 1) if idx not in seen]
 
@@ -236,7 +251,10 @@ def report_family(
     print(f"- summary rows missing cache: `{len(missing_cache_names)}`")
     if missing_cache_names:
         print(f"- first missing cache rows: `{missing_cache_names[:20]}`")
-    print(f"- expected covered seed range: `{expected_start}..{expected_stop}`")
+    expected_range = (
+        "[]" if expected_stop < expected_start else f"{expected_start}..{expected_stop}"
+    )
+    print(f"- expected covered seed range: `{expected_range}`")
     missing = missing_indices(rows, expected_start, expected_stop)
     print(f"- missing expected seed count: `{len(missing)}`")
     print(f"- missing expected seeds: `{compact_indices(missing)}`")
@@ -248,54 +266,63 @@ def report_family(
 def main() -> None:
     args = parse_args()
     produce_dir = args.produce_dir
+    if args.fresh_fixed_f and not args.require_cache:
+        raise SystemExit("--fresh-fixed-f requires --require-cache")
+
+    if args.fresh_fixed_f:
+        general_shard_globs = [
+            "licca-shards/general-cache-production-1024/general-shard-*.jsonl",
+        ]
+        product_shard_globs = [
+            "licca-shards/product-cache-production-1024/product-shard-*.jsonl",
+        ]
+    else:
+        general_shard_globs = [
+            "licca-shards/general/general-shard-*.jsonl",
+            "licca-shards/general-production-1024/general-shard-*.jsonl",
+            "licca-shards/general-cache-production-1024/general-shard-*.jsonl",
+        ]
+        product_shard_globs = [
+            "licca-shards/product/product-shard-*.jsonl",
+            "licca-shards/product-production-1024/product-shard-*.jsonl",
+            "licca-shards/product-cache-production-1024/product-shard-*.jsonl",
+        ]
 
     general_paths = keep_summary_paths(collect_paths(
         produce_dir,
         "ascent.jsonl",
-        [
-            "licca-shards/general/general-shard-*.jsonl",
-            "licca-shards/general-production-1024/general-shard-*.jsonl",
-        ],
+        general_shard_globs,
+        include_canonical=not args.fresh_fixed_f,
     ))
     general_trace_paths = keep_trace_paths(collect_paths(
         produce_dir,
         "ascent-trace.jsonl",
-        [
-            "licca-shards/general/general-shard-*-trace.jsonl",
-            "licca-shards/general-production-1024/general-shard-*-trace.jsonl",
-        ],
+        [pattern.replace(".jsonl", "-trace.jsonl") for pattern in general_shard_globs],
+        include_canonical=not args.fresh_fixed_f,
     ))
     general_cache_paths = collect_paths(
         produce_dir,
         "ascent-cache.jsonl",
-        [
-            "licca-shards/general/general-shard-*-cache.jsonl",
-            "licca-shards/general-production-1024/general-shard-*-cache.jsonl",
-        ],
+        [pattern.replace(".jsonl", "-cache.jsonl") for pattern in general_shard_globs],
+        include_canonical=not args.fresh_fixed_f,
     )
     product_paths = keep_summary_paths(collect_paths(
         produce_dir,
         "ascent-product.jsonl",
-        [
-            "licca-shards/product/product-shard-*.jsonl",
-            "licca-shards/product-production-1024/product-shard-*.jsonl",
-        ],
+        product_shard_globs,
+        include_canonical=not args.fresh_fixed_f,
     ))
     product_trace_paths = keep_trace_paths(collect_paths(
         produce_dir,
         "ascent-product-trace.jsonl",
-        [
-            "licca-shards/product/product-shard-*-trace.jsonl",
-            "licca-shards/product-production-1024/product-shard-*-trace.jsonl",
-        ],
+        [pattern.replace(".jsonl", "-trace.jsonl") for pattern in product_shard_globs],
+        include_canonical=not args.fresh_fixed_f,
     ))
     product_cache_paths = collect_paths(
         produce_dir,
         "ascent-product-cache.jsonl",
-        [
-            "licca-shards/product/product-shard-*-cache.jsonl",
-            "licca-shards/product-production-1024/product-shard-*-cache.jsonl",
-        ],
+        [pattern.replace(".jsonl", "-cache.jsonl") for pattern in product_shard_globs],
+        include_canonical=not args.fresh_fixed_f,
     )
 
     general_rows, _ = dedup_rows(general_paths, "summary", row_key)
@@ -313,6 +340,20 @@ def main() -> None:
 
     print("# LICCA Ascent Shard Merge Report")
     print()
+    general_expected_stop = (
+        name_index(general_rows[-1])
+        if args.fresh_fixed_f and general_rows
+        else -1
+        if args.fresh_fixed_f
+        else max(509, name_index(general_rows[-1]) if general_rows else 0)
+    )
+    product_expected_stop = (
+        name_index(product_rows[-1])
+        if args.fresh_fixed_f and product_rows
+        else -1
+        if args.fresh_fixed_f
+        else max(511, name_index(product_rows[-1]) if product_rows else 0)
+    )
     report_family(
         "general summary",
         general_rows,
@@ -321,7 +362,7 @@ def main() -> None:
         general_cache_paths,
         general_missing_cache,
         0,
-        max(509, name_index(general_rows[-1]) if general_rows else 0),
+        general_expected_stop,
     )
     report_family(
         "product summary",
@@ -331,7 +372,7 @@ def main() -> None:
         product_cache_paths,
         product_missing_cache,
         0,
-        max(511, name_index(product_rows[-1]) if product_rows else 0),
+        product_expected_stop,
     )
     print(f"## trace rows")
     print(f"- general trace rows: `{len(general_trace_rows)}`")
