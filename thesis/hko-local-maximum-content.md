@@ -37,10 +37,10 @@ The HKO thesis-facing result is a packet, not only one theorem statement.
    Code generates a witness, Sage verifies it, and the mathematical writeup
    proves that the verified witness implies the theorem target.
    Source pointers: `FACTSHEET.md` items 20--22;
-   `research/hko-local-maximum-exact-clarke.md`;
+   `research/hko-local-maximum-exact-witness.md`;
    `experiments/hko-local-maximum/theorem/exact-witness/README.md`;
-   `experiments/hko-local-maximum/theorem/exact-witness/widened-seed-witness.json`;
-   `experiments/hko-local-maximum/theorem/exact-witness/widened-seed-witness-verification.json`.
+   `experiments/hko-local-maximum/theorem/exact-witness/widened-representative-witness.json`;
+   `experiments/hko-local-maximum/theorem/exact-witness/widened-representative-witness-verification.json`.
 
 4. Empirical confirmation:
    Numerical and perturbative checks support the local-maximum picture.
@@ -122,7 +122,7 @@ Current checked partial witness facts:
 - Current rows annihilate the 15 symmetry tangent directions.
 
 Source pointers:
-- `research/hko-local-maximum-exact-clarke.md`, sections "Status",
+- `research/hko-local-maximum-exact-witness.md`, sections "Status",
   "Scope Boundary", "Sage Note", and "Packet 2 Note".
 - `research/hko-local-maximum-proof-route-note.md`, especially the one-sided
   branch-certificate principle and candidate Sage decision problem.
@@ -130,8 +130,8 @@ Source pointers:
   "Singular-KKT Obstruction" and "Padded-Endpoint Alternative", for the
   thesis-facing reason why the witness has to use singular positive-beta
   seven-facet branches.
-- `experiments/hko-local-maximum/theorem/exact-witness/widened-seed-witness.json`.
-- `experiments/hko-local-maximum/theorem/exact-witness/widened-seed-witness-verification.json`.
+- `experiments/hko-local-maximum/theorem/exact-witness/widened-representative-witness.json`.
+- `experiments/hko-local-maximum/theorem/exact-witness/widened-representative-witness-verification.json`.
 
 Missing:
 - Final theorem-facing active-gradient matrix.
@@ -212,13 +212,13 @@ Missing:
 1. Close exact Packet 3 or honestly weaken theorem wording.
    Source pointers: `research/hko-local-maximum-status.md`;
    `research/hko-local-maximum.md`;
-   `research/hko-local-maximum-exact-clarke.md`.
+   `research/hko-local-maximum-exact-witness.md`.
 
 2. Produce final Sage-readable theorem certificate.
    Required checks should include exact row validity, active matrix rank,
    kernel/symmetry equality, and cone/no-increase condition.
    Source pointers: current partial verifier in
-   `experiments/hko-local-maximum/theorem/exact-witness/verify_widened_seed_witness.sage`
+   `experiments/hko-local-maximum/theorem/exact-witness/verify_widened_representative_witness.sage`
    and exact-witness research notes.
 
 3. Write or refresh the mathematical reduction from verified certificate to

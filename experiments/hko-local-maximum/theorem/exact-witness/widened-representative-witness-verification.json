@@ -10,7 +10,7 @@
     "dual_vertex_lengths": [
       4
     ],
-    "current_float_cross_check_max_abs_diff": 2.220446049250313e-16,
+    "current_float_cross_check_max_abs_diff": 3.3306690738754696e-16,
     "passed": true
   },
   "symmetry_basis": {
@@ -22,7 +22,7 @@
   },
   "row_families": [
     {
-      "family_id": "endpoint_seed_rows",
+      "family_id": "endpoint_representative_rows",
       "expected_row_count": 5,
       "actual_row_count": 5,
       "expected_rank": 5,
@@ -41,7 +41,7 @@
       "passed": true
     },
     {
-      "family_id": "midpoint_seed_rows",
+      "family_id": "midpoint_representative_rows",
       "expected_row_count": 6,
       "actual_row_count": 6,
       "expected_rank": 6,
@@ -61,13 +61,13 @@
       "passed": true
     }
   ],
-  "widened_seed_union": {
+  "widened_representative_union": {
     "expected_row_count": 11,
     "actual_row_count": 11,
     "actual_rank": 11,
     "ambient_dimension": 40,
     "right_kernel_dimension": 29,
-    "seed_plus_symmetry_rank": 26,
+    "representative_plus_symmetry_rank": 26,
     "symmetry_annihilation_passed": true,
     "symmetry_residual_summary": [
       {

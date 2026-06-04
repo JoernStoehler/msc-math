@@ -49,7 +49,7 @@ impl CliOptions {
 }
 
 #[derive(Debug, Serialize)]
-struct SageValidationInputRow {
+struct RowBankValidationInputRow {
     row_name: String,
     polytope: String,
     exact_field: String,
@@ -101,12 +101,12 @@ fn canonical_vec4<F: HkoExactScalar>(vector: &Vector4<F>) -> Vec<CanonicalElemen
 fn build_row<F: HkoExactScalar + 'static>(
     entry: &ExactBankEntry,
     dual_vertices: &[Vector4<F>],
-) -> SageValidationInputRow {
+) -> RowBankValidationInputRow {
     let orbit = solve_orbit_sigma_exact(dual_vertices, entry.sigma)
-        .expect("selected Sage-validation sigma must solve exactly");
+        .expect("selected row-bank validation sigma must solve exactly");
     let gradient = capacity_derivatives_a_exact_from_orbit(dual_vertices, &orbit);
 
-    SageValidationInputRow {
+    RowBankValidationInputRow {
         row_name: entry.row_name.to_string(),
         polytope: entry.target.polytope_name().to_string(),
         exact_field: entry.target.exact_field().to_string(),
@@ -125,7 +125,7 @@ fn build_row<F: HkoExactScalar + 'static>(
     }
 }
 
-fn build_rows() -> Vec<SageValidationInputRow> {
+fn build_rows() -> Vec<RowBankValidationInputRow> {
     let exact_hko = exact_hko_dual_vertices();
     let exact_simplex = exact_simplex_dual_vertices();
 
@@ -160,7 +160,7 @@ fn main() {
     write_jsonl_rows(&output, &rows);
 
     println!(
-        "wrote {} Sage-validation input rows to {}",
+        "wrote {} row-bank validation input rows to {}",
         rows.len(),
         output.display()
     );

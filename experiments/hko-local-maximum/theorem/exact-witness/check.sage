@@ -46,6 +46,15 @@ def matrix_columns_json(columns, degree):
     return [vector_json(column, degree) for column in columns]
 
 
+def real_generator_approx():
+    return sqrt(RR(5) - RR(2) * sqrt(RR(5)))
+
+
+def real_float(x):
+    t_real = real_generator_approx()
+    return float(sum(RR(coeff) * t_real**idx for idx, coeff in enumerate(x.list())))
+
+
 def flatten_columns(columns):
     rows = len(columns[0])
     cols = len(columns)
@@ -111,7 +120,7 @@ def geometry_cross_check_report(duals):
     max_abs_diff = 0.0
     per_facet = []
     for idx, (exact_dual, current_dual) in enumerate(zip(duals, current)):
-        exact_float = [float(entry) for entry in exact_dual]
+        exact_float = [real_float(entry) for entry in exact_dual]
         diffs = [abs(a - b) for a, b in zip(exact_float, current_dual)]
         max_abs_diff = max(max_abs_diff, max(diffs))
         per_facet.append(
@@ -317,14 +326,14 @@ def main():
     geometry_payload = {
         "field": {
             "generator_name": "t",
-            "generator_approx": float(K.gen()),
-            "degree": degree,
+            "generator_approx": float(real_generator_approx()),
+            "degree": int(degree),
             "minimal_polynomial": [q_json(c) for c in K.defining_polynomial().list()],
             "formulas": formulas,
         },
         "facet_order": list(range(len(duals))),
         "dual_vertices_power_basis": matrix_columns_json(duals, degree),
-        "dual_vertices_float": [[float(entry) for entry in dual] for dual in duals],
+        "dual_vertices_float": [[real_float(entry) for entry in dual] for dual in duals],
         "cross_check_current_numerical": geometry_cross_check_report(duals),
     }
     write_json(GEOMETRY_OUT, geometry_payload)
@@ -332,8 +341,8 @@ def main():
     labels, columns, tangent_matrix, generator_checks = build_symmetry_basis(duals, K)
     symmetry_payload = {
         "field_generator_name": "t",
-        "dimension_ambient": tangent_matrix.nrows(),
-        "dimension_generators": tangent_matrix.ncols(),
+        "dimension_ambient": int(tangent_matrix.nrows()),
+        "dimension_generators": int(tangent_matrix.ncols()),
         "rank": int(tangent_matrix.rank()),
         "labels": labels,
         "columns_power_basis": matrix_columns_json(columns, degree),

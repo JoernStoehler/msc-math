@@ -22,7 +22,7 @@
 //! HKO2024 in the F=11 ambient space: adding a halfspace is an intersection,
 //! so K' ⊆ K always. When h = h_K(n) the halfspace is redundant (K' = K);
 //! when h < h_K(n) it cuts. To make K *larger* we'd need to relax an existing
-//! halfspace, which is already covered by gradient-analysis's (n,h) gradient analysis.
+//! halfspace, which is already covered by the first-order (n,h) gradient analysis.
 
 use crate::flat_polytope::HkoPolytopeCache;
 use exp_hko_local_maximum::capacity_auto;

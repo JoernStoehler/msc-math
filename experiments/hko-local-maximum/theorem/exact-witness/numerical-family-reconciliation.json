@@ -1,7 +1,7 @@
 {
   "all_size7_classes_have_beta_profile_combination_witness": true,
   "all_size7_classes_have_segment_witness": true,
-  "input_artifact": "experiments/hko-local-maximum/gradient-analysis/hko-neighborhood-sensitivity.jsonl",
+  "input_artifact": "experiments/hko-local-maximum/empirical/first-order/hko-neighborhood-sensitivity.jsonl",
   "n_distinct_size6_gradient_classes": 15,
   "n_distinct_size6_subsets": 10,
   "n_distinct_size7_gradient_classes": 13,

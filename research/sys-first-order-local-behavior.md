@@ -26,7 +26,7 @@ Evidence read: historical task notes for sys first-order and HKO,
 `formal/capacity-boundary-subdifferential.tex`,
 `formal/hko-local-maximality-conditions.tex`,
 `formal/hko-symmetry-gradient-structure.tex`,
-`research/hko-local-maximum-exact-clarke.md`,
+`research/hko-local-maximum-exact-witness.md`,
 `research/combinatorial-cells.md`, and `papers/hk2017/EHZ-polytopes.tex`.
 
 ## 1. Problem model
@@ -200,7 +200,7 @@ Current HKO evidence has many active orbits, symmetry quotients, exact
 representative rows, endpoint/midpoint families, and unresolved seven-facet
 representative classes. The formal HKO second-order route uses a
 smooth/min-envelope argument that the task progress files already reject as a
-substitute for arbitrary closed-value behavior. The gradient-analysis note
+substitute for arbitrary closed-value behavior. The first-order note
 also records that current bookkeeping has 150 exact-action orbits, 20 visited
 facet subsets, and 28 distinct gradient patterns, so the active surface is not
 a single smooth branch.

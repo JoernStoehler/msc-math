@@ -6,15 +6,15 @@
 
 """Assemble a backend-neutral widened representative-row witness.
 
-Goal: freeze the current Packet 3 widened seed surface into one self-contained
+Goal: freeze the current Packet 3 widened representative surface into one self-contained
       exact witness artifact that later exact backends and Sage verifiers can
       both consume.
 Input Artifacts: experiments/hko-local-maximum/theorem/exact-witness/hko-geometry.json
                  experiments/hko-local-maximum/theorem/exact-witness/hko-symmetry-tangent.json
                  experiments/hko-local-maximum/theorem/exact-witness/hko-volume-derivative.json
-                 experiments/hko-local-maximum/theorem/exact-witness/endpoint-seed-rows.json
-                 experiments/hko-local-maximum/theorem/exact-witness/midpoint-seed-rows.json
-Output Artifacts: experiments/hko-local-maximum/theorem/exact-witness/widened-seed-witness.json
+                 experiments/hko-local-maximum/theorem/exact-witness/endpoint-representative-rows.json
+                 experiments/hko-local-maximum/theorem/exact-witness/midpoint-representative-rows.json
+Output Artifacts: experiments/hko-local-maximum/theorem/exact-witness/widened-representative-witness.json
 """
 
 from __future__ import annotations
@@ -30,9 +30,9 @@ EXPERIMENT_DIR = Path(__file__).resolve().parent
 GEOMETRY_PATH = EXPERIMENT_DIR / "hko-geometry.json"
 SYMMETRY_PATH = EXPERIMENT_DIR / "hko-symmetry-tangent.json"
 VOLUME_PATH = EXPERIMENT_DIR / "hko-volume-derivative.json"
-ENDPOINT_ROWS_PATH = EXPERIMENT_DIR / "endpoint-seed-rows.json"
-MIDPOINT_ROWS_PATH = EXPERIMENT_DIR / "midpoint-seed-rows.json"
-OUTPUT_PATH = EXPERIMENT_DIR / "widened-seed-witness.json"
+ENDPOINT_ROWS_PATH = EXPERIMENT_DIR / "endpoint-representative-rows.json"
+MIDPOINT_ROWS_PATH = EXPERIMENT_DIR / "midpoint-representative-rows.json"
+OUTPUT_PATH = EXPERIMENT_DIR / "widened-representative-witness.json"
 
 T_EXPR = sqrt(5 - 2 * sqrt(5))
 FIELD_DEGREE = to_number_field(T_EXPR).minpoly.degree()
@@ -56,9 +56,9 @@ def canonical_expr_str(expr):
     return str(to_number_field(simplify(sympify(expr)), T_EXPR).as_expr())
 
 
-def convert_seed_row(row):
+def convert_representative_row(row):
     return {
-        "seed_id": row["seed_id"],
+        "representative_id": row["representative_id"],
         "subset": row["subset"],
         "representative_permutation": row["representative_permutation"],
         "exact_beta_profile": row["exact_beta_profile"],
@@ -90,8 +90,8 @@ def main() -> None:
     endpoint_rows = json.loads(ENDPOINT_ROWS_PATH.read_text())
     midpoint_rows = json.loads(MIDPOINT_ROWS_PATH.read_text())
 
-    endpoint_entries = endpoint_rows["endpoint_seed_rows"]
-    midpoint_entries = midpoint_rows["midpoint_seed_rows"]
+    endpoint_entries = endpoint_rows["endpoint_representative_rows"]
+    midpoint_entries = midpoint_rows["midpoint_representative_rows"]
     all_rows = endpoint_entries + midpoint_entries
 
     common_signed_capacity = ensure_constant_scalar(all_rows, "capacity")
@@ -100,7 +100,7 @@ def main() -> None:
     payload = {
         "witness_version": 1,
         "witness_scope": (
-            "Current widened Packet 3 representative-row surface for the exact Clarke route. "
+            "Current widened Packet 3 representative-row surface for the exact witness route. "
             "This is not the final theorem witness because two asymmetric "
             "seven-facet representatives remain unresolved and the active matrix itself "
             "is not yet assembled."
@@ -147,19 +147,19 @@ def main() -> None:
         },
         "row_families": [
             {
-                "family_id": "endpoint_seed_rows",
-                "expected_row_count": endpoint_rows["n_exactified_endpoint_seed_rows"],
-                "expected_rank": endpoint_rows["rank_of_endpoint_seed_rows"],
-                "rows": [convert_seed_row(row) for row in endpoint_entries],
+                "family_id": "endpoint_representative_rows",
+                "expected_row_count": endpoint_rows["n_exactified_endpoint_representative_rows"],
+                "expected_rank": endpoint_rows["rank_of_endpoint_representative_rows"],
+                "rows": [convert_representative_row(row) for row in endpoint_entries],
             },
             {
-                "family_id": "midpoint_seed_rows",
-                "expected_row_count": midpoint_rows["n_exactified_midpoint_seed_rows"],
-                "expected_rank": midpoint_rows["rank_of_midpoint_seed_rows"],
-                "rows": [convert_seed_row(row) for row in midpoint_entries],
+                "family_id": "midpoint_representative_rows",
+                "expected_row_count": midpoint_rows["n_exactified_midpoint_representative_rows"],
+                "expected_rank": midpoint_rows["rank_of_midpoint_representative_rows"],
+                "rows": [convert_representative_row(row) for row in midpoint_entries],
             },
         ],
-        "expected_total_seed_rows": len(all_rows),
+        "expected_total_representative_rows": len(all_rows),
         "current_limitations": [
             "Two asymmetric seven-facet representatives are not included yet.",
             "This witness does not yet contain an active-gradient matrix, kernel basis, or symmetry-equality certificate.",

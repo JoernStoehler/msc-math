@@ -142,7 +142,7 @@ README or source header that owns the producer. The high-risk refresh areas are:
 - `experiments/verification/`: tracked correctness, all-minimum, orbit-recovery,
   and algorithm-comparison evidence;
 - `experiments/hko-local-maximum/`: canonical HKO gradient/Sage evidence and
-  exact-Clarke JSON artifacts;
+  exact-witness JSON artifacts;
 - `experiments/sys-landscape/`: random/product/ascent/continuation datasets,
   datascience producer caches, tables, method reports, and full-output search
   artifacts;

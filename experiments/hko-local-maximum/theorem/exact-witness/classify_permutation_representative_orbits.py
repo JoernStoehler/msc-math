@@ -7,7 +7,7 @@
 
 Goal: compress the current numerical exact-minimum class representatives by the
       10-element HKO symplectic symmetry group and cyclic reindexing, so Packet
-      3 can track how many permutation-level seed families are still live.
+      3 can track how many permutation-level representative families are still live.
 Input Artifacts: experiments/hko-local-maximum/theorem/exact-witness/numerical-family-reconciliation.json
 Output Artifacts: experiments/hko-local-maximum/theorem/exact-witness/numerical-permutation-orbits.json
 """
@@ -73,8 +73,8 @@ def classify(classes: list[dict[str, object]]) -> list[dict[str, object]]:
     unseen = set(representatives)
     orbits = []
     while unseen:
-        seed_id = min(unseen)
-        orbit_keys = permutation_orbit(representatives[seed_id])
+        representative_id = min(unseen)
+        orbit_keys = permutation_orbit(representatives[representative_id])
         members = sorted(
             entry_id
             for entry_id, permutation in representatives.items()
@@ -84,7 +84,7 @@ def classify(classes: list[dict[str, object]]) -> list[dict[str, object]]:
             unseen.discard(entry_id)
         orbits.append(
             {
-                "seed_id": seed_id,
+                "representative_id": representative_id,
                 "member_ids": members,
                 "n_members": len(members),
                 "canonical_orbit_representatives": [list(key) for key in sorted(orbit_keys)],
@@ -109,13 +109,13 @@ def main() -> None:
             "symplectic symmetry group on facet labels and by cyclic rotation "
             "of the same cyclic orbit."
         ),
-        "n_size6_seed_orbits": len(size6_orbits),
-        "n_size7_seed_orbits": len(size7_orbits),
+        "n_size6_representative_orbits": len(size6_orbits),
+        "n_size7_representative_orbits": len(size7_orbits),
         "size6_permutation_orbits": size6_orbits,
         "size7_permutation_orbits": size7_orbits,
         "theorem_use": (
             "This artifact is a numerical Packet 3 planning surface. It does not "
-            "prove which seed permutations survive exactification, but it records "
+            "prove which representative permutations survive exactification, but it records "
             "how much permutation-level diversity remains after quotienting by the "
             "obvious HKO symmetries."
         ),

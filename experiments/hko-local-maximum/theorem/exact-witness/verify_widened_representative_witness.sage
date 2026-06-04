@@ -4,8 +4,8 @@ Verify the widened exact representative-row witness in SageMath.
 
 Goal: reconstruct the quartic field and replay the exact geometry, symmetry,
       and widened representative-row checks on one backend-neutral witness artifact.
-Input Artifacts: experiments/hko-local-maximum/theorem/exact-witness/widened-seed-witness.json
-Output Artifacts: experiments/hko-local-maximum/theorem/exact-witness/widened-seed-witness-verification.json
+Input Artifacts: experiments/hko-local-maximum/theorem/exact-witness/widened-representative-witness.json
+Output Artifacts: experiments/hko-local-maximum/theorem/exact-witness/widened-representative-witness-verification.json
 """
 
 from __future__ import annotations
@@ -17,8 +17,8 @@ from sage.all import QQ, NumberField, PolynomialRing, matrix, vector
 
 
 EXPERIMENT_DIR = Path(__file__).resolve().parent
-WITNESS_PATH = EXPERIMENT_DIR / "widened-seed-witness.json"
-OUTPUT_PATH = EXPERIMENT_DIR / "widened-seed-witness-verification.json"
+WITNESS_PATH = EXPERIMENT_DIR / "widened-representative-witness.json"
+OUTPUT_PATH = EXPERIMENT_DIR / "widened-representative-witness-verification.json"
 
 
 def q_from_json(entry):
@@ -71,7 +71,7 @@ def build_verification_payload(witness):
     )
 
     row_family_summaries = []
-    combined_seed_rows = []
+    combined_representative_rows = []
     all_checks_pass = True
 
     for family in witness["row_families"]:
@@ -86,24 +86,24 @@ def build_verification_payload(witness):
         row_ids = []
 
         for entry in family["rows"]:
-            row_ids.append(entry["seed_id"])
+            row_ids.append(entry["representative_id"])
             closure = vector_from_coeff_matrix(K, entry["closure_check_power_basis"])
             if any(component != 0 for component in closure):
-                closure_failures.append(entry["seed_id"])
+                closure_failures.append(entry["representative_id"])
 
             normalization = field_element_from_coeff_vector(
                 K, entry["normalization_check_power_basis"]
             )
             if normalization != 1:
-                normalization_failures.append(entry["seed_id"])
+                normalization_failures.append(entry["representative_id"])
 
             capacity = field_element_from_coeff_vector(K, entry["signed_capacity_power_basis"])
             if capacity != common_capacity:
-                capacity_failures.append(entry["seed_id"])
+                capacity_failures.append(entry["representative_id"])
 
             sys_value = field_element_from_coeff_vector(K, entry["sys_value_power_basis"])
             if sys_value != common_sys_value:
-                sys_value_failures.append(entry["seed_id"])
+                sys_value_failures.append(entry["representative_id"])
 
         family_passed = (
             len(family["rows"]) == family["expected_row_count"]
@@ -130,14 +130,14 @@ def build_verification_payload(witness):
                 "passed": family_passed,
             }
         )
-        combined_seed_rows.extend(rows)
+        combined_representative_rows.extend(rows)
 
-    widened_seed_matrix = rows_to_matrix(K, combined_seed_rows)
-    widened_seed_rank = widened_seed_matrix.rank()
-    seed_plus_symmetry_rank = widened_seed_matrix.stack(symmetry_row_matrix).rank()
-    widened_seed_right_kernel = widened_seed_matrix.right_kernel()
-    widened_seed_right_kernel_dimension = widened_seed_right_kernel.dimension()
-    symmetry_residual_matrix = widened_seed_matrix * symmetry_column_matrix
+    widened_representative_matrix = rows_to_matrix(K, combined_representative_rows)
+    widened_representative_rank = widened_representative_matrix.rank()
+    representative_plus_symmetry_rank = widened_representative_matrix.stack(symmetry_row_matrix).rank()
+    widened_representative_right_kernel = widened_representative_matrix.right_kernel()
+    widened_representative_right_kernel_dimension = widened_representative_right_kernel.dimension()
+    symmetry_residual_matrix = widened_representative_matrix * symmetry_column_matrix
     symmetry_annihilation_passed = all(
         symmetry_residual_matrix[row, col] == 0
         for row in range(symmetry_residual_matrix.nrows())
@@ -193,17 +193,17 @@ def build_verification_payload(witness):
             "passed": symmetry_rank == witness["symmetry_basis"]["expected_rank"],
         },
         "row_families": row_family_summaries,
-        "widened_seed_union": {
-            "expected_row_count": witness["expected_total_seed_rows"],
-            "actual_row_count": len(combined_seed_rows),
-            "actual_rank": int(widened_seed_rank),
-            "ambient_dimension": widened_seed_matrix.ncols(),
-            "right_kernel_dimension": int(widened_seed_right_kernel_dimension),
-            "seed_plus_symmetry_rank": int(seed_plus_symmetry_rank),
+        "widened_representative_union": {
+            "expected_row_count": witness["expected_total_representative_rows"],
+            "actual_row_count": len(combined_representative_rows),
+            "actual_rank": int(widened_representative_rank),
+            "ambient_dimension": widened_representative_matrix.ncols(),
+            "right_kernel_dimension": int(widened_representative_right_kernel_dimension),
+            "representative_plus_symmetry_rank": int(representative_plus_symmetry_rank),
             "symmetry_annihilation_passed": symmetry_annihilation_passed,
             "symmetry_residual_summary": symmetry_residual_summary,
             "kernel_dimension_minus_symmetry_dimension": int(
-                widened_seed_right_kernel_dimension - symmetry_rank
+                widened_representative_right_kernel_dimension - symmetry_rank
             ),
         },
     }
@@ -212,7 +212,7 @@ def build_verification_payload(witness):
         and summary["field"]["passed"]
         and summary["geometry"]["passed"]
         and summary["symmetry_basis"]["passed"]
-        and len(combined_seed_rows) == witness["expected_total_seed_rows"]
+        and len(combined_representative_rows) == witness["expected_total_representative_rows"]
     )
     return summary
 

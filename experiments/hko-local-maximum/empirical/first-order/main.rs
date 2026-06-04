@@ -1,4 +1,4 @@
-//! Gradient analysis of HKO2024: analytical sensitivity + gradient ascent in F=10 space.
+//! First-order analysis of HKO2024: analytical sensitivity + gradient ascent in F=10 space.
 //!
 //! Goal: Measure first-order sensitivity at HKO2024 and run local gradient-ascent
 //! probes within the 10-facet space.
@@ -11,16 +11,16 @@
 //! polytope, then runs gradient ascent in joint (h, n) space. Tracks all near-optimal
 //! Reeb orbits (subdifferential structure).
 //!
-//! Split from gradient-is-zero/main.rs (Phase A).
+//! Split from the older gradient-is-zero Phase A experiment.
 //!
 //! Modes:
-//! 1. `cargo run --bin hko-gradient-analysis --release` generates the Phase A
+//! 1. `cargo run --bin hko-first-order --release` generates the Phase A
 //!    sensitivity and ascent datasets.
-//! 2. `cargo run --bin hko-gradient-analysis --release -- --smoke` runs only
+//! 2. `cargo run --bin hko-first-order --release -- --smoke` runs only
 //!    the sensitivity half of Phase A.
-//! 3. `cargo run --bin hko-gradient-analysis --release -- --exact-bank` writes
+//! 3. `cargo run --bin hko-first-order --release -- --exact-bank` writes
 //!    `smoke-exact-certification-bank.jsonl`.
-//! 4. `cargo run --bin hko-gradient-analysis --release -- --exact-bank --canonical`
+//! 4. `cargo run --bin hko-first-order --release -- --exact-bank --canonical`
 //!    refreshes `exact-certification-bank.jsonl`.
 //! 5. Python script (analyze.py) reads the Phase A JSONL outputs and produces
 //!    figures.
@@ -198,6 +198,18 @@ struct CliOptions {
 }
 
 impl CliOptions {
+    fn print_usage() {
+        eprintln!(
+            r#"Usage: hko-first-order [options]
+
+Optional flags:
+  --help, -h          Show this help message and exit.
+  --smoke             Run smoke-sized sensitivity and ascent outputs.
+  --exact-bank        Write exact-bank input rows.
+  --canonical         With --exact-bank, refresh the tracked exact-bank artifact."#
+        );
+    }
+
     fn parse_from<I, S>(args: I) -> Self
     where
         I: IntoIterator<Item = S>,
@@ -209,6 +221,10 @@ impl CliOptions {
 
         for arg in args {
             match arg.as_ref() {
+                "--help" | "-h" => {
+                    Self::print_usage();
+                    std::process::exit(0);
+                }
                 "--smoke" => smoke = true,
                 "--exact-bank" => exact_bank = true,
                 "--canonical" => canonical = true,
@@ -271,9 +287,9 @@ fn compute_sensitivity(
         &polytope.vertices_f64,
         &polytope.vertex_facet_incidence,
     )
-    .expect("gradient-analysis polytope has valid finite geometry");
+    .expect("first-order polytope has valid finite geometry");
     let d_cap_a = capacity_derivatives_a_from_orbit(&polytope.dual_vertices_f64, orbit)
-        .expect("gradient-analysis stores orbit payloads with closure multipliers");
+        .expect("first-order stores orbit payloads with closure multipliers");
 
     let d_sys_a: Vec<Vector4<f64>> = d_vol_a
         .iter()
@@ -394,7 +410,7 @@ fn float_sigma_diagnostics(
 ) -> Result<SigmaDiagnostics, OrbitSolveError> {
     let orbit = solve_orbit_sigma_saddle_point(&polytope.dual_vertices_f64, sigma)?;
     let gradient = capacity_derivatives_a_from_orbit(&polytope.dual_vertices_f64, &orbit)
-        .expect("gradient-analysis float orbit payload carries closure multipliers");
+        .expect("first-order float orbit payload carries closure multipliers");
     Ok(SigmaDiagnostics {
         q_f64: orbit.q,
         action_f64: orbit.action,
@@ -1422,7 +1438,7 @@ mod tests {
     }
 
     #[test]
-    fn exact_bank_contains_required_seed_rows() {
+    fn exact_bank_contains_required_representative_rows() {
         assert!(EXACT_BANK_ENTRIES.iter().any(|entry| {
             entry.target == ExactBankTarget::HkoPentagon && entry.sigma == HKO_WINNING_SIGMA
         }));
@@ -1445,7 +1461,7 @@ mod tests {
     }
 
     #[test]
-    fn exact_bank_rows_cover_all_seed_entries() {
+    fn exact_bank_rows_cover_all_representative_entries() {
         for entry in EXACT_BANK_ENTRIES {
             let row = build_exact_bank_row(entry);
             assert_eq!(

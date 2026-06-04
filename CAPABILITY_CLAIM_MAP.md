@@ -267,7 +267,7 @@ claim.
   - Files:
     - `research/hko-local-maximum-status.md`
     - `research/hko-local-maximum.md`
-    - `research/hko-local-maximum-exact-clarke.md`
+    - `research/hko-local-maximum-exact-witness.md`
     - `tasks/current-state.md`
     - `tasks/planning-notes.md`
     - `experiments/hko-local-maximum/README.md`
@@ -278,7 +278,7 @@ claim.
     checks, but is still a partial witness surface rather than a final theorem
     certificate.
   - First-order numerical support, second-order evidence, neighborhood
-    sampling, and `M_11` cut-and-ascent experiments are supporting evidence.
+    sampling, and `M_11` ascent experiments are supporting evidence.
   - Nuance:
     - supporting experiments cannot replace the missing exact rank/kernel
       certificate for theorem-strength wording.

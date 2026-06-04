@@ -1,4 +1,4 @@
-//! Local ascent/search helpers for the cut-and-ascent HKO experiment.
+//! Local ascent/search helpers for the M11-ascent HKO experiment.
 //!
 //! These stay experiment-local because they preserve the current experiment's
 //! search policy rather than defining a durable library API.

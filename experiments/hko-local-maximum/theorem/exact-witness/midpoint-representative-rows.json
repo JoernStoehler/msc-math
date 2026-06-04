@@ -5,11 +5,11 @@
     "numerical-permutation-orbits.json",
     "hko-volume-derivative.json"
   ],
-  "n_exactified_midpoint_seed_rows": 6,
-  "rank_of_midpoint_seed_rows": 6,
-  "midpoint_seed_rows": [
+  "n_exactified_midpoint_representative_rows": 6,
+  "rank_of_midpoint_representative_rows": 6,
+  "midpoint_representative_rows": [
     {
-      "seed_id": "7-facet-class-03",
+      "representative_id": "7-facet-class-03",
       "subset": [
         0,
         1,
@@ -813,7 +813,7 @@
       ]
     },
     {
-      "seed_id": "7-facet-class-08",
+      "representative_id": "7-facet-class-08",
       "subset": [
         0,
         2,
@@ -1617,7 +1617,7 @@
       ]
     },
     {
-      "seed_id": "7-facet-class-09",
+      "representative_id": "7-facet-class-09",
       "subset": [
         0,
         2,
@@ -2421,7 +2421,7 @@
       ]
     },
     {
-      "seed_id": "7-facet-class-02",
+      "representative_id": "7-facet-class-02",
       "subset": [
         0,
         1,
@@ -3225,7 +3225,7 @@
       ]
     },
     {
-      "seed_id": "7-facet-class-04",
+      "representative_id": "7-facet-class-04",
       "subset": [
         0,
         1,
@@ -4029,7 +4029,7 @@
       ]
     },
     {
-      "seed_id": "7-facet-class-06",
+      "representative_id": "7-facet-class-06",
       "subset": [
         0,
         1,
@@ -4833,5 +4833,5 @@
       ]
     }
   ],
-  "theorem_use": "This artifact exactifies the midpoint-style seven-facet seed orbits whose current numerical segment coefficient is 1/2. It is Packet 3 scaffolding, not theorem input, because the seed choice still comes from numerical planning."
+  "theorem_use": "This artifact exactifies the midpoint-style seven-facet representative orbits whose current numerical segment coefficient is 1/2. It is Packet 3 scaffolding, not theorem input, because the representative choice still comes from numerical planning."
 }

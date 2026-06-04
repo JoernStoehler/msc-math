@@ -4,7 +4,7 @@
 # ///
 
 """
-Gradient analysis experiment: figures and analysis.
+First-order experiment: figures and analysis.
 
 Goal: Visualize sensitivity structure and gradient ascent at HKO2024.
 Input Artifacts: hko-neighborhood-sensitivity.jsonl, hko-neighborhood-ascent.jsonl
@@ -142,14 +142,14 @@ def fig_orbits(sens: dict) -> None:
 
 
 def main():
-    print("Gradient analysis: generating figures\n")
+    print("First-order analysis: generating figures\n")
 
     # Load data
     sens_rows = load_jsonl("hko-neighborhood-sensitivity.jsonl")
     ascent_rows = load_jsonl("hko-neighborhood-ascent.jsonl")
 
     if not sens_rows:
-        print("ERROR: No sensitivity data. Run `cargo run -p exp-hko-local-maximum --release --bin hko-gradient-analysis` first.")
+        print("ERROR: No sensitivity data. Run `cargo run -p exp-hko-local-maximum --release --bin hko-first-order` first.")
         sys.exit(1)
 
     sens = sens_rows[0]

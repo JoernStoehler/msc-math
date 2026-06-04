@@ -213,10 +213,10 @@ provided the singular positive-beta rows become theorem-valid.
 
 ## 8. How The Singular Rows Might Be Saved
 
-Existing exact-Clarke artifacts suggest a plausible route for the singular
+Existing exact-witness artifacts suggest a plausible route for the singular
 seven-facet rows:
 
-1. `research/hko-local-maximum-exact-clarke.md` records that the seven-facet
+1. `research/hko-local-maximum-exact-witness.md` records that the seven-facet
    exact minima are consistent with equality-case trajectories from the HKO
    minimizing family.
 2. `experiments/hko-local-maximum/theorem/exact-witness/segment-gradient-reduction.json`
@@ -433,7 +433,7 @@ This note should be read with:
 
 1. `research/hko-local-maximum-status.md` for current claim strength.
 2. `research/hko-local-maximum.md` for broader HKO evidence and task state.
-3. `research/hko-local-maximum-exact-clarke.md` for exact-Clarke artifacts.
+3. `research/hko-local-maximum-exact-witness.md` for exact-witness artifacts.
 4. `research/sys-first-order-local-behavior.md` for the heavier general theory
    that handles singular KKT systems and right-active germs.
 5. `thesis/hko-local-maximum-content.md` for thesis packet structure.

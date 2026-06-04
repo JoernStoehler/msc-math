@@ -1,4 +1,4 @@
-//! Exact HKO local-maximum seed bank and control polytopes.
+//! Exact HKO local-maximum row bank and control polytopes.
 
 use algebraic_numbers::{Algebraic, ExactScalar, RealAlgebraicField};
 use nalgebra::Vector4;
@@ -44,7 +44,7 @@ impl<F: RealAlgebraicField> HkoExactScalar for Algebraic<F> {
     }
 }
 
-/// Hand-picked exact certification bank seed reused across HKO exact consumers.
+/// Hand-picked exact certification bank row reused across HKO exact consumers.
 pub const HKO_WINNING_SIGMA: &[usize] = &[1, 8, 7, 3, 4, 5, 9];
 pub const HKO_RANK_DEFICIENT_SIGMA: &[usize] = &[1, 7, 2, 8, 4, 6, 5];
 pub const HKO_FLOAT_WINNING_SIGMA: &[usize] = &[0, 1, 7, 3, 9, 5];

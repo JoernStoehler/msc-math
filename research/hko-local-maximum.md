@@ -25,7 +25,7 @@ It combines the former topic note set while keeping experiment artifacts under
   - Packet 2 is partially closed with exact prototypes:
     one six-facet endpoint family and one neighboring seven-facet midpoint-style
     segment family.
-  - Packet 3 is the current blocker. Exact seed expansion still needs
+  - Packet 3 is the current blocker. Exact representative expansion still needs
     additional symmetry-inequivalent representatives before final active-gradient
     coverage reaches `rank(G)=25` with kernel matching the symmetry tangent space.
   - A newer proof-route checkpoint records a possible one-sided
@@ -96,7 +96,7 @@ It combines the former topic note set while keeping experiment artifacts under
 
 ## Next Steps
 
-- Primary: close exact Packet 3 by extending representative-seed coverage to final
+- Primary: close exact Packet 3 by extending representative coverage to final
   rank-equal active matrix and completing witness-vs-symmetry comparison.
 - Immediate proof-route question: develop a theorem-valid treatment of the
   singular seven-facet, positive-beta active rows. The 2026-06-03
@@ -110,8 +110,8 @@ It combines the former topic note set while keeping experiment artifacts under
   - kernel matches the `R^40` symmetry tangent basis.
 - Explicit blockers:
   - remaining two asymmetric seven-facet classes;
-  - final packet must use reduced prototypes (`endpoint-seed-rows.json`,
-    `midpoint-seed-rows.json`) plus additional exact representatives.
+  - final packet must use reduced prototypes (`endpoint-representative-rows.json`,
+    `midpoint-representative-rows.json`) plus additional exact representatives.
 - Immediate execution actions:
   1. refresh `theorem/exact-witness/numerical-permutation-orbits.json`;
   2. add missing exact representative rows in the existing witness shape;
@@ -119,7 +119,8 @@ It combines the former topic note set while keeping experiment artifacts under
      verifier:
      - `cargo run -p exp-hko-local-maximum --release --bin hko-row-bank-validation -- --canonical`
      - `cd experiments/hko-local-maximum/theorem/row-bank-validation && sage -python analyze.py --canonical`;
-  4. update `theorem/exact-witness/widened-seed-witness.json` only from scripted output.
+  4. update `theorem/exact-witness/widened-representative-witness.json` only
+     from scripted output.
 - Fallback: if exact completion is blocked by backend cost, log the obstruction and
   rerun the exact `6,240` sigma route on a faster backend before switching to the
   contingency route.

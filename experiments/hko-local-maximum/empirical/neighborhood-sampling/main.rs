@@ -20,9 +20,6 @@ Samplers:
   m10-lagrangian-product-probe
                               Fixed-F=10 Lagrangian-product radial boundary probe.
 
-Aliases:
-  m10-perturbation, m11-facet-splitting, m10-lag, m10-lag-probe
-
 Use `hko-neighborhood-sampling <sampler> --help` for sampler-specific flags."#
     );
 }
@@ -36,12 +33,10 @@ fn main() {
 
     let sampler = args.remove(0);
     match sampler.as_str() {
-        "m10" | "m10-perturbation" => samplers::m10::run(&args),
-        "m11" | "m11-facet-splitting" => samplers::m11::run(&args),
-        "m10-lagrangian-product" | "m10-lag" => samplers::m10_lagrangian_product::run(&args),
-        "m10-lagrangian-product-probe" | "m10-lag-probe" => {
-            samplers::m10_lagrangian_product_probe::run(&args)
-        }
+        "m10" => samplers::m10::run(&args),
+        "m11" => samplers::m11::run(&args),
+        "m10-lagrangian-product" => samplers::m10_lagrangian_product::run(&args),
+        "m10-lagrangian-product-probe" => samplers::m10_lagrangian_product_probe::run(&args),
         other => {
             eprintln!("error: unknown sampler: {other}\n");
             print_usage();

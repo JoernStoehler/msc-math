@@ -4,15 +4,15 @@
 # dependencies = ["sympy"]
 # ///
 
-"""Exactify the numerical six-facet permutation seed orbits.
+"""Exactify the numerical six-facet permutation representative orbits.
 
-Goal: turn the current numerical six-facet permutation-seed planning surface
+Goal: turn the current numerical six-facet permutation-representative planning surface
       into exact endpoint-family `sys` rows in the shared facet-major `R^40`
       order.
 Input Artifacts: experiments/hko-local-maximum/theorem/exact-witness/numerical-family-reconciliation.json
                  experiments/hko-local-maximum/theorem/exact-witness/numerical-permutation-orbits.json
                  experiments/hko-local-maximum/theorem/exact-witness/hko-volume-derivative.json
-Output Artifacts: experiments/hko-local-maximum/theorem/exact-witness/endpoint-seed-rows.json
+Output Artifacts: experiments/hko-local-maximum/theorem/exact-witness/endpoint-representative-rows.json
 """
 
 from __future__ import annotations
@@ -30,7 +30,7 @@ EXPERIMENT_DIR = Path(__file__).resolve().parent
 RECONCILIATION_PATH = EXPERIMENT_DIR / "numerical-family-reconciliation.json"
 PERMUTATION_ORBITS_PATH = EXPERIMENT_DIR / "numerical-permutation-orbits.json"
 VOLUME_PATH = EXPERIMENT_DIR / "hko-volume-derivative.json"
-OUTPUT_PATH = EXPERIMENT_DIR / "endpoint-seed-rows.json"
+OUTPUT_PATH = EXPERIMENT_DIR / "endpoint-representative-rows.json"
 
 FIELD_GENERATOR_EXPR = sqrt(5 - 2 * sqrt(5))
 FIELD_DEGREE = to_number_field(FIELD_GENERATOR_EXPR).minpoly.degree()
@@ -121,13 +121,13 @@ def main() -> None:
     total_volume = sympify(volume["total_volume"])
     volume_row = [sympify(entry) for entry in volume["volume_derivative_row_flat"]]
 
-    exact_seed_rows = []
+    exact_representative_rows = []
     row_matrix_entries = []
     for orbit in permutation_orbits["size6_permutation_orbits"]:
-        seed_id = orbit["seed_id"]
-        seed_class = classes_by_id[seed_id]
-        permutation = list(seed_class["representative_permutation"])
-        beta_profile = classify_exact_beta(seed_class["representative_beta"])
+        representative_id = orbit["representative_id"]
+        representative_class = classes_by_id[representative_id]
+        permutation = list(representative_class["representative_permutation"])
+        beta_profile = classify_exact_beta(representative_class["representative_beta"])
 
         h_matrix = Matrix.zeros(len(permutation), len(permutation))
         for i in range(len(permutation)):
@@ -158,10 +158,10 @@ def main() -> None:
         ]
         row_matrix_entries.append(sys_row)
 
-        exact_seed_rows.append(
+        exact_representative_rows.append(
             {
-                "seed_id": seed_id,
-                "subset": seed_class["subset"],
+                "representative_id": representative_id,
+                "subset": representative_class["subset"],
                 "representative_permutation": permutation,
                 "exact_beta_profile": [field_expr_str(entry) for entry in beta_profile],
                 "closure_check": [field_expr_str(entry) for entry in closure],
@@ -184,13 +184,13 @@ def main() -> None:
             PERMUTATION_ORBITS_PATH.name,
             VOLUME_PATH.name,
         ],
-        "n_exactified_endpoint_seed_rows": len(exact_seed_rows),
-        "rank_of_endpoint_seed_rows": rank,
-        "endpoint_seed_rows": exact_seed_rows,
+        "n_exactified_endpoint_representative_rows": len(exact_representative_rows),
+        "rank_of_endpoint_representative_rows": rank,
+        "endpoint_representative_rows": exact_representative_rows,
         "theorem_use": (
             "This artifact exactifies the current numerical six-facet permutation "
-            "seed orbits. It is a Packet 3 construction surface, not yet theorem "
-            "input, because the seed choice still comes from numerical planning."
+            "representative orbits. It is a Packet 3 construction surface, not yet theorem "
+            "input, because the representative choice still comes from numerical planning."
         ),
     }
     OUTPUT_PATH.write_text(json.dumps(payload, indent=2) + "\n")

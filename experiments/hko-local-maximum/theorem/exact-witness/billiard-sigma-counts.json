@@ -29,7 +29,7 @@
       4
     ]
   },
-  "input_artifact": "experiments/hko-local-maximum/gradient-analysis/hko-neighborhood-sensitivity.jsonl",
+  "input_artifact": "experiments/hko-local-maximum/empirical/first-order/hko-neighborhood-sensitivity.jsonl",
   "interpretation": "The already-valid KKT surface is only a small multiple of the exact minima, but the theorem-native billiard sigma-word surface is much larger. An exhaustive exact route that starts from block-structured billiard words therefore pays a substantially larger front-end certification cost than a route that starts from the already-valid orbit surface.",
   "per_k_counts": {
     "2": {

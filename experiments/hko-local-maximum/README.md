@@ -39,7 +39,7 @@ migration. Git history is the archive for that broken `(n,h)` Phase C attempt;
 
 ## Rust Command Contract
 
-- `hko-gradient-analysis --smoke` writes
+- `hko-first-order --smoke` writes
   `empirical/first-order/hko-neighborhood-sensitivity-smoke.jsonl`; full mode
   writes the tracked sensitivity/ascent outputs. `--exact-bank` defaults to
   smoke output; add `--canonical` only when refreshing the tracked exact bank.
@@ -57,9 +57,9 @@ migration. Git history is the archive for that broken `(n,h)` Phase C attempt;
   full mode writes `empirical/neighborhood-sampling/m10-lagrangian-product/lagrangian-probe.jsonl`.
 - `hko-second-order --smoke` runs the phase-1 probe without writing tracked
   outputs; full mode writes `empirical/second-order/*.jsonl`.
-- `hko-cut-and-ascent --smoke` writes
-  `empirical/m11-ascent/cut-and-ascent-smoke.jsonl`; full mode appends to
-  `empirical/m11-ascent/cut-and-ascent.jsonl` unless `--fresh` is given.
+- `hko-m11-ascent --smoke` writes
+  `empirical/m11-ascent/m11-ascent-smoke.jsonl`; full mode appends to
+  `empirical/m11-ascent/m11-ascent.jsonl` unless `--fresh` is given.
 - `hko-row-bank-validation` defaults to smoke input. Use `--canonical` only
   when refreshing `theorem/row-bank-validation/row-bank-validation-input.jsonl`.
 - `hko-active-branch-diagnostic` writes an ignored smoke JSON by default and

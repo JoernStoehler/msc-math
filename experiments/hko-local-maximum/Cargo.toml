@@ -7,7 +7,7 @@ edition = "2021"
 path = "src/lib.rs"
 
 [[bin]]
-name = "hko-gradient-analysis"
+name = "hko-first-order"
 path = "empirical/first-order/main.rs"
 
 [[bin]]
@@ -19,7 +19,7 @@ name = "hko-second-order"
 path = "empirical/second-order/main.rs"
 
 [[bin]]
-name = "hko-cut-and-ascent"
+name = "hko-m11-ascent"
 path = "empirical/m11-ascent/main.rs"
 
 [[bin]]

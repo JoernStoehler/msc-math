@@ -5,11 +5,11 @@
     "numerical-permutation-orbits.json",
     "hko-volume-derivative.json"
   ],
-  "n_exactified_endpoint_seed_rows": 5,
-  "rank_of_endpoint_seed_rows": 5,
-  "endpoint_seed_rows": [
+  "n_exactified_endpoint_representative_rows": 5,
+  "rank_of_endpoint_representative_rows": 5,
+  "endpoint_representative_rows": [
     {
-      "seed_id": "6-facet-class-03",
+      "representative_id": "6-facet-class-03",
       "subset": [
         0,
         1,
@@ -810,7 +810,7 @@
       ]
     },
     {
-      "seed_id": "6-facet-class-08",
+      "representative_id": "6-facet-class-08",
       "subset": [
         0,
         2,
@@ -1611,7 +1611,7 @@
       ]
     },
     {
-      "seed_id": "6-facet-class-02",
+      "representative_id": "6-facet-class-02",
       "subset": [
         0,
         1,
@@ -2412,7 +2412,7 @@
       ]
     },
     {
-      "seed_id": "6-facet-class-01",
+      "representative_id": "6-facet-class-01",
       "subset": [
         0,
         1,
@@ -3213,7 +3213,7 @@
       ]
     },
     {
-      "seed_id": "6-facet-class-04",
+      "representative_id": "6-facet-class-04",
       "subset": [
         0,
         1,
@@ -4014,5 +4014,5 @@
       ]
     }
   ],
-  "theorem_use": "This artifact exactifies the current numerical six-facet permutation seed orbits. It is a Packet 3 construction surface, not yet theorem input, because the seed choice still comes from numerical planning."
+  "theorem_use": "This artifact exactifies the current numerical six-facet permutation representative orbits. It is a Packet 3 construction surface, not yet theorem input, because the representative choice still comes from numerical planning."
 }

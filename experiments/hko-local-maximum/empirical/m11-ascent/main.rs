@@ -1,4 +1,4 @@
-//! Cut-and-ascent on HKO2024: add a facet (F=10→F=11), then run gradient ascent.
+//! M11 ascent on HKO2024: add a facet (F=10→F=11), then run gradient ascent.
 //!
 //! Tests whether HKO2024 is a local maximum in the F=11 polytope space.
 //! The facet-splitting experiment showed 536/536 cuts decrease sys, but
@@ -8,10 +8,10 @@
 //! facet a_{F+1} = n / (h_K(n) - ε), then run gradient ascent with overshoot
 //! and wiggle escape. Same ascent algorithm as gradient-ascent-general.
 //!
-//! Usage: cargo run -p exp-hko-local-maximum --release --bin hko-cut-and-ascent
+//! Usage: cargo run -p exp-hko-local-maximum --release --bin hko-m11-ascent
 //! Flags: --fresh  (clear existing data and rerun)
 //! Input Artifacts: None (starts from the hardcoded HKO2024 polytope).
-//! Output Artifacts: experiments/hko-local-maximum/empirical/m11-ascent/cut-and-ascent.jsonl
+//! Output Artifacts: experiments/hko-local-maximum/empirical/m11-ascent/m11-ascent.jsonl
 
 #[path = "../../src/flat_polytope.rs"]
 mod flat_polytope;
@@ -103,7 +103,7 @@ struct Args {
 
 fn print_usage() {
     eprintln!(
-        r#"Usage: hko-cut-and-ascent [options]
+        r#"Usage: hko-m11-ascent [options]
 
 Optional flags:
   --help, -h          Show this help message and exit.
@@ -152,12 +152,12 @@ fn main() {
     let base = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("empirical/m11-ascent");
     let args = parse_args();
     let output_path = if args.smoke {
-        base.join("cut-and-ascent-smoke.jsonl")
+        base.join("m11-ascent-smoke.jsonl")
     } else {
-        base.join("cut-and-ascent.jsonl")
+        base.join("m11-ascent.jsonl")
     };
 
-    println!("cut-and-ascent: facet addition + gradient ascent on HKO2024\n");
+    println!("m11-ascent: facet addition + gradient ascent on HKO2024\n");
 
     std::fs::create_dir_all(&base).expect("create output dir");
 

@@ -1,4 +1,4 @@
-# Exact Clarke Checker
+# Exact Witness Checker
 
 Exact first-order proof tooling for the HKO2024 `M_10` local-maximality route.
 
@@ -23,14 +23,15 @@ Packet 1 completed:
 - the reduced endpoint/midpoint prototype `sys` rows are now emitted exactly in
   the Packet 3 `R^40` coordinate order.
 - the current widened Packet 3 representative-row surface is now bundled into the
-  backend-neutral witness artifact `widened-seed-witness.json` via
-  `build_widened_seed_witness.py`.
-- `verify_widened_seed_witness.sage` is now the first concrete Sage verifier
-  for Packet 3: it reconstructs the quartic field from that witness and
-  replays exact geometry, symmetry-rank, closure, normalization, and representative-row
-  rank checks.
-- the current widened-seed witness verification now runs successfully in the
-  local devcontainer and emits `widened-seed-witness-verification.json`.
+  backend-neutral witness artifact `widened-representative-witness.json` via
+  `build_widened_representative_witness.py`.
+- `verify_widened_representative_witness.sage` is now the first concrete Sage
+  verifier for Packet 3: it reconstructs the quartic field from that witness
+  and replays exact geometry, symmetry-rank, closure, normalization, and
+  representative-row rank checks.
+- the current widened representative witness verification now runs successfully
+  in the local devcontainer and emits
+  `widened-representative-witness-verification.json`.
 - the next blocker is no longer volume-row or row-assembly arithmetic; it is
   permutation-level prototype multiplicity. One endpoint representative plus one midpoint
   representative expand to only `20` symmetry images, so that reduced surface cannot
@@ -42,13 +43,6 @@ Packet 1 completed:
   now exactified into exact midpoint-family `sys` rows, each with exact closure and normalization
   checks; only the two asymmetric `lambda ≈ 0.129573855671` seven-facet representative
   classes remain unresolved on the current numerical planning surface.
-
-Terminology note:
-
-- “representative” means one chosen numerical representative of a permutation
-  orbit class modulo the currently quotiented symmetries and cyclic relabeling;
-- some filenames still contain `seed` for continuity with earlier commits, but
-  theorem-facing prose in this note should read those as “representative”.
 
 ## Files
 
@@ -67,11 +61,11 @@ Terminology note:
 | `derive_segment_a_gradient_reduction.py` | Exact Packet 2 certificate that the seven-facet KKT segment gives a degree-2 dual-vertex row family spanned by three prototype rows |
 | `derive_hko_volume_derivative.py` | Exact Packet 3 support script deriving the HKO dual-coordinate volume row in facet-major `R^40` order |
 | `derive_reduced_sys_prototypes.py` | Exact Packet 3 support script combining prototype capacity rows with the HKO volume row to emit exact prototype `sys` rows |
-| `classify_permutation_seed_orbits.py` | Packet 3 planning script classifying numerical representative permutations modulo HKO symmetries and cyclic relabeling |
-| `derive_endpoint_seed_rows.py` | Packet 3 support script exactifying the current numerical six-facet representative permutations into exact endpoint-family `sys` rows |
-| `derive_midpoint_seed_rows.py` | Packet 3 support script exactifying the midpoint-style numerical seven-facet representative permutations into exact midpoint-family `sys` rows |
-| `build_widened_seed_witness.py` | Packet 3 witness assembler that freezes the current widened exact representative-row surface into one backend-neutral JSON artifact |
-| `verify_widened_seed_witness.sage` | SageMath verifier for the widened representative-row witness; writes a machine-readable verification summary |
+| `classify_permutation_representative_orbits.py` | Packet 3 planning script classifying numerical representative permutations modulo HKO symmetries and cyclic relabeling |
+| `derive_endpoint_representative_rows.py` | Packet 3 support script exactifying the current numerical six-facet representative permutations into exact endpoint-family `sys` rows |
+| `derive_midpoint_representative_rows.py` | Packet 3 support script exactifying the midpoint-style numerical seven-facet representative permutations into exact midpoint-family `sys` rows |
+| `build_widened_representative_witness.py` | Packet 3 witness assembler that freezes the current widened exact representative-row surface into one backend-neutral JSON artifact |
+| `verify_widened_representative_witness.sage` | SageMath verifier for the widened representative-row witness; writes a machine-readable verification summary |
 | `billiard-sigma-counts.json` | Generated Packet 2 count ladder for the HKO billiard combinatorics surface |
 | `billiard-sigma-orbits.json` | Generated symmetry-quotiented count surface for directed-feasible HKO sigma words |
 | `billiard-exact-probe.json` | Generated timing probe for exact quartic KKT solves on sampled directed-feasible sigma words |
@@ -79,11 +73,11 @@ Terminology note:
 | `hko-geometry.json` | Generated exact geometry record |
 | `hko-volume-derivative.json` | Generated exact HKO volume-row certificate |
 | `reduced-sys-prototypes.json` | Generated exact reduced prototype `sys` rows and their interpolation/coincidence checks |
-| `numerical-permutation-orbits.json` | Generated numerical symmetry-quotiented permutation-seed count surface for Packet 3 planning |
-| `endpoint-seed-rows.json` | Generated exact six-facet representative rows chosen from the current numerical permutation-orbit planning surface |
-| `midpoint-seed-rows.json` | Generated exact midpoint-style seven-facet representative rows chosen from the current numerical permutation-orbit planning surface |
-| `widened-seed-witness.json` | Generated backend-neutral Packet 3 witness bundle for geometry, symmetry, and the current widened exact representative rows |
-| `widened-seed-witness-verification.json` | Generated Sage verification summary for the current widened representative-row witness |
+| `numerical-permutation-orbits.json` | Generated numerical symmetry-quotiented permutation-representative count surface for Packet 3 planning |
+| `endpoint-representative-rows.json` | Generated exact six-facet representative rows chosen from the current numerical permutation-orbit planning surface |
+| `midpoint-representative-rows.json` | Generated exact midpoint-style seven-facet representative rows chosen from the current numerical permutation-orbit planning surface |
+| `widened-representative-witness.json` | Generated backend-neutral Packet 3 witness bundle for geometry, symmetry, and the current widened exact representative rows |
+| `widened-representative-witness-verification.json` | Generated Sage verification summary for the current widened representative-row witness |
 | `hko-symmetry-tangent.json` | Generated exact symmetry tangent-space certificate |
 | `numerical-minima-summary.json` | Generated current numerical minima summary |
 | `numerical-family-reconciliation.json` | Generated Packet 2 bookkeeping summary of endpoint/equality-case classes |
@@ -108,11 +102,11 @@ python3 derive_segment_gradient_reduction.py
 python3 derive_segment_a_gradient_reduction.py
 python3 derive_hko_volume_derivative.py
 python3 derive_reduced_sys_prototypes.py
-python3 classify_permutation_seed_orbits.py
-python3 derive_endpoint_seed_rows.py
-python3 derive_midpoint_seed_rows.py
-python3 build_widened_seed_witness.py
-sage verify_widened_seed_witness.sage
+python3 classify_permutation_representative_orbits.py
+python3 derive_endpoint_representative_rows.py
+python3 derive_midpoint_representative_rows.py
+python3 build_widened_representative_witness.py
+sage verify_widened_representative_witness.sage
 ```
 
 ## Scope Boundary
@@ -126,9 +120,10 @@ sage verify_widened_seed_witness.sage
 It does **not** yet close the full theorem route, because the final
 paper-derived orbit catalog and exact active-gradient matrix are still pending.
 
-`widened-seed-witness.json` and `verify_widened_seed_witness.sage` now give a
-concrete Sage-facing Packet 3 surface, but they still do **not** close the
-theorem route. They currently verify only:
+`widened-representative-witness.json` and
+`verify_widened_representative_witness.sage` now give a concrete Sage-facing
+Packet 3 surface, but they still do **not** close the theorem route. They
+currently verify only:
 
 - the quartic field and dual-geometry bundle already frozen by Packet 1;
 - exact symmetry-basis rank;
@@ -152,18 +147,18 @@ Current verified command:
 
 ```bash
 cd experiments/hko-local-maximum/theorem/exact-witness
-python3 build_widened_seed_witness.py
-sage verify_widened_seed_witness.sage
+python3 build_widened_representative_witness.py
+sage verify_widened_representative_witness.sage
 ```
 
 That verifier currently passes and emits:
 
-- `widened-seed-witness-verification.json`, with `passed = true`,
+- `widened-representative-witness-verification.json`, with `passed = true`,
 - exact symmetry rank `15`,
 - endpoint family rank `5`,
 - midpoint family rank `6`,
 - widened representative-row union rank `11`,
-- widened-seed-plus-symmetry rank `26`.
+- widened representative plus symmetry rank `26`.
 
 Current exact consequence from that same verification:
 

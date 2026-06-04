@@ -1,12 +1,12 @@
 {
   "witness_version": 1,
-  "witness_scope": "Current widened Packet 3 representative-row surface for the exact Clarke route. This is not the final theorem witness because two asymmetric seven-facet representatives remain unresolved and the active matrix itself is not yet assembled.",
+  "witness_scope": "Current widened Packet 3 representative-row surface for the exact witness route. This is not the final theorem witness because two asymmetric seven-facet representatives remain unresolved and the active matrix itself is not yet assembled.",
   "source_artifacts": [
     "hko-geometry.json",
     "hko-symmetry-tangent.json",
     "hko-volume-derivative.json",
-    "endpoint-seed-rows.json",
-    "midpoint-seed-rows.json"
+    "endpoint-representative-rows.json",
+    "midpoint-representative-rows.json"
   ],
   "field": {
     "generator_name": "t",
@@ -855,7 +855,7 @@
         ]
       ]
     ],
-    "current_float_cross_check_max_abs_diff": 2.220446049250313e-16
+    "current_float_cross_check_max_abs_diff": 3.3306690738754696e-16
   },
   "symmetry_basis": {
     "labels": [
@@ -11751,12 +11751,12 @@
   },
   "row_families": [
     {
-      "family_id": "endpoint_seed_rows",
+      "family_id": "endpoint_representative_rows",
       "expected_row_count": 5,
       "expected_rank": 5,
       "rows": [
         {
-          "seed_id": "6-facet-class-03",
+          "representative_id": "6-facet-class-03",
           "subset": [
             0,
             1,
@@ -12642,7 +12642,7 @@
           ]
         },
         {
-          "seed_id": "6-facet-class-08",
+          "representative_id": "6-facet-class-08",
           "subset": [
             0,
             2,
@@ -13528,7 +13528,7 @@
           ]
         },
         {
-          "seed_id": "6-facet-class-02",
+          "representative_id": "6-facet-class-02",
           "subset": [
             0,
             1,
@@ -14414,7 +14414,7 @@
           ]
         },
         {
-          "seed_id": "6-facet-class-01",
+          "representative_id": "6-facet-class-01",
           "subset": [
             0,
             1,
@@ -15300,7 +15300,7 @@
           ]
         },
         {
-          "seed_id": "6-facet-class-04",
+          "representative_id": "6-facet-class-04",
           "subset": [
             0,
             1,
@@ -16188,12 +16188,12 @@
       ]
     },
     {
-      "family_id": "midpoint_seed_rows",
+      "family_id": "midpoint_representative_rows",
       "expected_row_count": 6,
       "expected_rank": 6,
       "rows": [
         {
-          "seed_id": "7-facet-class-03",
+          "representative_id": "7-facet-class-03",
           "subset": [
             0,
             1,
@@ -17082,7 +17082,7 @@
           ]
         },
         {
-          "seed_id": "7-facet-class-08",
+          "representative_id": "7-facet-class-08",
           "subset": [
             0,
             2,
@@ -17971,7 +17971,7 @@
           ]
         },
         {
-          "seed_id": "7-facet-class-09",
+          "representative_id": "7-facet-class-09",
           "subset": [
             0,
             2,
@@ -18860,7 +18860,7 @@
           ]
         },
         {
-          "seed_id": "7-facet-class-02",
+          "representative_id": "7-facet-class-02",
           "subset": [
             0,
             1,
@@ -19749,7 +19749,7 @@
           ]
         },
         {
-          "seed_id": "7-facet-class-04",
+          "representative_id": "7-facet-class-04",
           "subset": [
             0,
             1,
@@ -20638,7 +20638,7 @@
           ]
         },
         {
-          "seed_id": "7-facet-class-06",
+          "representative_id": "7-facet-class-06",
           "subset": [
             0,
             1,
@@ -21529,7 +21529,7 @@
       ]
     }
   ],
-  "expected_total_seed_rows": 11,
+  "expected_total_representative_rows": 11,
   "current_limitations": [
     "Two asymmetric seven-facet representatives are not included yet.",
     "This witness does not yet contain an active-gradient matrix, kernel basis, or symmetry-equality certificate.",

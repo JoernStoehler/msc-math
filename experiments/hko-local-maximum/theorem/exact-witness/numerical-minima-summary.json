@@ -422,7 +422,7 @@
       ]
     }
   ],
-  "input_artifact": "experiments/hko-local-maximum/gradient-analysis/hko-neighborhood-sensitivity.jsonl",
+  "input_artifact": "experiments/hko-local-maximum/empirical/first-order/hko-neighborhood-sensitivity.jsonl",
   "n_distinct_height_gradients": 28,
   "n_distinct_visited_subsets": 20,
   "n_exact_action_orbits": 150,

@@ -4,15 +4,15 @@
 # dependencies = ["sympy"]
 # ///
 
-"""Exactify the midpoint-style numerical seven-facet permutation seed orbits.
+"""Exactify the midpoint-style numerical seven-facet permutation representative orbits.
 
-Goal: turn the current midpoint-style numerical seven-facet permutation-seed
+Goal: turn the current midpoint-style numerical seven-facet permutation-representative
       planning surface into exact midpoint-family `sys` rows in the shared
       facet-major `R^40` order.
 Input Artifacts: experiments/hko-local-maximum/theorem/exact-witness/numerical-family-reconciliation.json
                  experiments/hko-local-maximum/theorem/exact-witness/numerical-permutation-orbits.json
                  experiments/hko-local-maximum/theorem/exact-witness/hko-volume-derivative.json
-Output Artifacts: experiments/hko-local-maximum/theorem/exact-witness/midpoint-seed-rows.json
+Output Artifacts: experiments/hko-local-maximum/theorem/exact-witness/midpoint-representative-rows.json
 """
 
 from __future__ import annotations
@@ -30,7 +30,7 @@ EXPERIMENT_DIR = Path(__file__).resolve().parent
 RECONCILIATION_PATH = EXPERIMENT_DIR / "numerical-family-reconciliation.json"
 PERMUTATION_ORBITS_PATH = EXPERIMENT_DIR / "numerical-permutation-orbits.json"
 VOLUME_PATH = EXPERIMENT_DIR / "hko-volume-derivative.json"
-OUTPUT_PATH = EXPERIMENT_DIR / "midpoint-seed-rows.json"
+OUTPUT_PATH = EXPERIMENT_DIR / "midpoint-representative-rows.json"
 
 FIELD_GENERATOR_EXPR = sqrt(5 - 2 * sqrt(5))
 FIELD_DEGREE = to_number_field(FIELD_GENERATOR_EXPR).minpoly.degree()
@@ -126,17 +126,17 @@ def main() -> None:
     total_volume = sympify(volume["total_volume"])
     volume_row = [sympify(entry) for entry in volume["volume_derivative_row_flat"]]
 
-    midpoint_seed_rows = []
+    midpoint_representative_rows = []
     row_matrix_entries = []
     for orbit in permutation_orbits["size7_permutation_orbits"]:
-        seed_id = orbit["seed_id"]
-        seed_class = classes_by_id[seed_id]
-        coefficient = seed_class.get("segment_witness", {}).get("coefficient_on_second")
+        representative_id = orbit["representative_id"]
+        representative_class = classes_by_id[representative_id]
+        coefficient = representative_class.get("segment_witness", {}).get("coefficient_on_second")
         if coefficient != 0.5:
             continue
 
-        permutation = list(seed_class["representative_permutation"])
-        beta_profile = classify_exact_beta(seed_class["representative_beta"])
+        permutation = list(representative_class["representative_permutation"])
+        beta_profile = classify_exact_beta(representative_class["representative_beta"])
 
         h_matrix = Matrix.zeros(len(permutation), len(permutation))
         for i in range(len(permutation)):
@@ -167,10 +167,10 @@ def main() -> None:
         ]
         row_matrix_entries.append(sys_row)
 
-        midpoint_seed_rows.append(
+        midpoint_representative_rows.append(
             {
-                "seed_id": seed_id,
-                "subset": seed_class["subset"],
+                "representative_id": representative_id,
+                "subset": representative_class["subset"],
                 "representative_permutation": permutation,
                 "exact_beta_profile": [field_expr_str(entry) for entry in beta_profile],
                 "closure_check": [field_expr_str(entry) for entry in closure],
@@ -193,13 +193,13 @@ def main() -> None:
             PERMUTATION_ORBITS_PATH.name,
             VOLUME_PATH.name,
         ],
-        "n_exactified_midpoint_seed_rows": len(midpoint_seed_rows),
-        "rank_of_midpoint_seed_rows": rank,
-        "midpoint_seed_rows": midpoint_seed_rows,
+        "n_exactified_midpoint_representative_rows": len(midpoint_representative_rows),
+        "rank_of_midpoint_representative_rows": rank,
+        "midpoint_representative_rows": midpoint_representative_rows,
         "theorem_use": (
-            "This artifact exactifies the midpoint-style seven-facet seed orbits "
+            "This artifact exactifies the midpoint-style seven-facet representative orbits "
             "whose current numerical segment coefficient is 1/2. It is Packet 3 "
-            "scaffolding, not theorem input, because the seed choice still comes "
+            "scaffolding, not theorem input, because the representative choice still comes "
             "from numerical planning."
         ),
     }

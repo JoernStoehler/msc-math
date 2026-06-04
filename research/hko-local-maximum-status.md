@@ -12,7 +12,7 @@ Use it before reading deeper notes or experiment folders.
 - Thesis-done gate: `tasks/definition-of-success.md`
 - Active/open work items: `tasks/planning-notes.md`
 - Topic research note and interpretation: `research/hko-local-maximum.md`
-- Exact theorem route details: `research/hko-local-maximum-exact-clarke.md`
+- Exact theorem route details: `research/hko-local-maximum-exact-witness.md`
 - Current proof-route checkpoint:
   `research/hko-local-maximum-proof-route-note.md`
 - Current experiment layout: `experiments/hko-local-maximum/README.md`
@@ -80,5 +80,5 @@ Use it before reading deeper notes or experiment folders.
 3. `research/hko-local-maximum-status.md`
 4. `research/hko-local-maximum.md`
 5. `research/hko-local-maximum-proof-route-note.md`
-6. `research/hko-local-maximum-exact-clarke.md`
+6. `research/hko-local-maximum-exact-witness.md`
 7. `experiments/hko-local-maximum/README.md`

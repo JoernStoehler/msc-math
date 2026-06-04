@@ -2,16 +2,16 @@
   "free_parameter_histogram": {
     "1": 1
   },
-  "input_artifact": "experiments/hko-local-maximum/exact-clarke/billiard-sigma-counts.json",
+  "input_artifact": "experiments/hko-local-maximum/theorem/exact-witness/billiard-sigma-counts.json",
   "interpretation": "This is a probe of exact quartic linear/KKT solve cost in the current sympy environment, not yet a theorem artifact. The projected full-6240 time estimates whether a direct exhaustive exact sigma route is practical before adding exact positivity and action-comparison bookkeeping.",
-  "mean_elapsed_s_per_sigma": 8.083091337000951,
+  "mean_elapsed_s_per_sigma": 8.036516173000564,
   "positive_unique_count": 0,
-  "projected_elapsed_s_for_full_6240": 50438.489942885935,
+  "projected_elapsed_s_for_full_6240": 50147.86091952352,
   "sample_limit": 1,
   "sample_rows": [
     {
       "beta_min_float": null,
-      "elapsed_s": 7.9060920649790205,
+      "elapsed_s": 7.874166595007409,
       "free_parameter_count": 1,
       "length": 8,
       "q_float": null,
@@ -34,5 +34,5 @@
     "unique_lu": 0
   },
   "total_directed_feasible_sigma_words": 6240,
-  "total_elapsed_s": 8.083091337000951
+  "total_elapsed_s": 8.036516173000564
 }
