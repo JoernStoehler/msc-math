@@ -135,6 +135,218 @@ Outcome needed:
 Fallback: if review finds a real gap, repair the implication or weaken the HKO
 section to exact-certificate status plus the named blocker.
 
+## Thesis Material Beyond The Sage Script
+
+Purpose: prevent the HKO thesis section from becoming only a walkthrough of
+`verify_feasible_section_witness.sage.py`. The script verifies the finite
+predicate. The thesis still has to supply the mathematical setup, the
+implication from the finite predicate to local maximality, and the scope
+control around the result.
+
+Current status: this is the working checklist for
+`thesis/hko-local-maximum.tex`. It should be refreshed if the theorem wording,
+row certificate, or Kai review outcome changes.
+
+### 1. The theorem setting
+
+What the thesis must explain:
+- the HKO2024 input is the Lagrangian product of two regular pentagons, with
+  the capacity value taken from HKO2024;
+- the local model is the ten-facet dual-vertex chart
+  `K(a) = {x : <a_i,x> <= 1}` near the HKO point `a0`;
+- the coordinate order is facet-major in `(q1,q2,p1,p2)`;
+- the statement is quotient-local, not raw ambient strict local maximality.
+
+Why this is not just script explanation:
+- the Sage verifier can reconstruct `a0` and check exact algebra, but it does
+  not decide which local moduli problem the thesis claims.
+
+Source pointers:
+- `formal/hko-feasible-section-upper-branches.tex`,
+  `lem:hko-capacity-normalization` and
+  `lem:hko-full-chart-volume-row`;
+- `research/hko-local-maximum-status.md`, "Current Repo Claim";
+- `research/hko-local-maximum-proof-control-packet.md`, "Theorem Target For
+  Review".
+
+### 2. The quotient and slice
+
+What the thesis must explain:
+- translations, scaling, and the identity component of `Sp(4)` preserve the
+  systolic ratio in the local model;
+- their tangent directions form a `15`-dimensional symmetry tangent space at
+  HKO;
+- a `25`-dimensional transverse slice is used because the ambient chart has
+  dimension `40`;
+- rows that annihilate the symmetry tangent space descend to covectors on the
+  quotient slice.
+
+Why this is not just script explanation:
+- Sage checks rank `15`, row annihilation, and row rank `25`; the thesis must
+  say why these are the right linear objects for quotient-local maximality.
+
+Source pointers:
+- `formal/hko-feasible-section-upper-branches.tex`,
+  `lem:hko-ambient-rows-descend-to-slice`,
+  `lem:hko-transverse-symmetry-slice`, and
+  `cor:hko-feasible-branch-quotient-template`;
+- `experiments/hko-local-maximum/theorem/feasible-section-certificate/README.md`,
+  "Current verifier summary".
+
+### 3. Why selected upper branches suffice
+
+What the thesis must explain:
+- no completeness theorem for all HK2017 branches is needed;
+- for each selected feasible branch `U_sigma`, one has
+  `sys(a) <= U_sigma(a)` near `a0` and equality at `a0`;
+- if every nonzero slice direction has some selected upper branch with
+  negative first derivative, then `sys` decreases in that direction;
+- the positive convex-hull certificate gives a uniform negative first-order
+  margin on the slice unit sphere.
+
+Why this is not just script explanation:
+- the verifier checks the finite row certificate, but the thesis must prove the
+  logical implication from selected upper branches to local maximality.
+
+Source pointers:
+- `formal/hko-feasible-section-upper-branches.tex`,
+  `lem:hko-feasible-section-upper-branch`,
+  `lem:hko-positive-convex-certificate-margin`, and
+  `prop:hko-feasible-branch-slice-local-max`;
+- `research/hko-local-maximum-proof-route-note.md`, "One-Sided
+  Branch-Certificate Principle" and "Convex-Hull Criterion On The Slice";
+- `research/hko-local-maximum-proof-control-packet.md`, "Proof Tree".
+
+### 4. Why singular rows appear, and why they are legitimate
+
+What the thesis must explain:
+- nonsingular positive-beta active rows are not enough for the current
+  certificate: they span only rank `23` in the `25`-dimensional quotient slice;
+- the padded-once diagnostic did not find a nonsingular minimum-action
+  replacement route;
+- this is why the final witness uses singular positive-beta seven-facet rows;
+- these rows are not justified as nearby optimizing KKT branches;
+- they are justified by explicit feasible beta sections, which give smooth
+  HK2017 upper branches.
+
+Why this is not just script explanation:
+- Kai may reasonably ask why singular data occur although HKO has a minimizing
+  family, and why the proof is still allowed to differentiate something. The
+  answer is a mathematical construction of feasible sections, not a script
+  implementation detail.
+
+Source pointers:
+- `formal/hko-feasible-section-upper-branches.tex`,
+  `lem:hko-feasible-section-upper-branch` and
+  `rem:hko-feasible-section-derivative-data`;
+- `research/hko-local-maximum-proof-route-note.md`, "Singular-KKT
+  Obstruction", "Endpoint Rows And The Minimizing Family", and "Padded-Endpoint
+  Alternative";
+- `research/hko-local-maximum-proof-control-packet.md`, "Feasible-Section
+  Packet".
+
+### 5. What the exact certificate statement should say
+
+What the thesis must explain:
+- Rust is only a generator of finite candidate choices;
+- Sage is trusted for exact construction and exact verification;
+- the proof-facing certificate is the exception-based verifier result, not the
+  search procedure;
+- the final finite predicate is: 26 selected feasible-section rows, exact
+  action equality at HKO, exact feasible-section derivative rows, exact
+  symmetry annihilation, exact row rank `25`, positive exact lambdas summing to
+  `1`, and exact lambda-weighted row sum `0`.
+
+Why this is not just script explanation:
+- the thesis should state the checked mathematical predicate before or while
+  showing any code snippets. A reader should be able to understand what the
+  computation proves without reconstructing it from source code order.
+
+Source pointers:
+- `experiments/hko-local-maximum/theorem/feasible-section-certificate/README.md`,
+  "Trust Boundary" and "Current verifier summary";
+- `experiments/hko-local-maximum/theorem/feasible-section-certificate/verification-summary.json`;
+- `research/hko-local-maximum-proof-control-packet.md`, "Sage Construction
+  And Verification Packet".
+
+### 6. What to include from the verifier script
+
+What the thesis should use from the script:
+- selected short code listings only where they make a mathematical check more
+  inspectable;
+- current anchors to consider: field setup, HKO geometry reconstruction,
+  volume row, symmetry tangent generators, row-level feasible-section checks,
+  and convex certificate checks;
+- printed summaries or small snippets if they help a reader sanity-check the
+  long finite list.
+
+What the thesis should not do:
+- do not ask the reader to trust a long code listing instead of a stated
+  mathematical predicate;
+- do not present the verifier as an independent derivation of the formulas.
+  The formulas belong in the proof; Sage mirrors them and checks exact witness
+  equations.
+
+Source pointers:
+- `experiments/hko-local-maximum/theorem/feasible-section-certificate/verify_feasible_section_witness.sage.py`;
+- `formal/hko-feasible-section-upper-branches.tex`,
+  `rem:hko-feasible-section-derivative-data`.
+
+### 7. Empirical and sanity-check context
+
+What the thesis may include after the theorem proof:
+- first-order numerical bookkeeping;
+- second-order support;
+- perturbation/neighborhood checks in `M_10`, `M_11`, and Lagrangian-product
+  neighborhoods, if refreshed at writing time;
+- the formula finite-difference sanity checks only as development assurance,
+  if included at all.
+
+What the thesis must not claim:
+- finite-difference sanity checks do not prove the theorem;
+- empirical neighborhood checks do not prove broad local maximality;
+- `M_11` and ascent evidence are context unless a separate theorem uses them.
+
+Source pointers:
+- `experiments/hko-local-maximum/README.md`, "Result Strands";
+- `experiments/hko-local-maximum/theorem/feasible-section-certificate/README.md`,
+  "Ancillary Formula Sanity Checks";
+- `research/hko-local-maximum.md`, "Supporting Evidence";
+- `research/sys-landscape-toolbox-audit.md`, HKO-local perturbation row.
+
+### 8. Tables, examples, and reader-facing artifacts
+
+What the thesis may need besides prose:
+- a small table stating the certificate summary: row count `26`, row rank
+  `25`, symmetry rank `15`, positive lambda certificate, and exact zero row
+  sum;
+- a short table separating trusted Sage checks from generator-only Rust
+  choices;
+- one geometric example explaining how a nonsingular active row can coexist
+  with the HKO minimizing family;
+- selected verifier code snippets for field construction, row checks, and
+  convex certificate checks, if they improve readability;
+- selected printed witness snippets only if they make the finite certificate
+  easier to audit.
+
+Source pointers:
+- `research/hko-local-maximum-proof-route-note.md`, "Endpoint Rows And The
+  Minimizing Family";
+- `experiments/hko-local-maximum/theorem/feasible-section-certificate/README.md`,
+  "Files" and "Current verifier summary";
+- `experiments/hko-local-maximum/theorem/feasible-section-certificate/verification-summary.json`.
+
+### 9. Forbidden thesis claims
+
+Do not write:
+- "The branch list is complete."
+- "Rust proves the certificate."
+- "The finite-difference sanity script verifies the theorem."
+- "The theorem proves broad HKO local maximality outside the ten-facet model."
+- "The singular rows are nearby optimizing branches."
+- "The verifier independently derives all formulas."
+- "The quotient-local theorem is raw strict local maximality in `R^40`."
+
 ## Evidence By Packet Component
 
 ### 1. Known Result
@@ -210,8 +422,8 @@ Current checked theorem-facing facts:
 - The lambda-weighted exact row sum is `0`.
 
 Missing:
-- Jörn/Kai proof review against these verifier propositions and the formal
-  implication.
+- Kai acceptance of theorem-strength wording and the final thesis presentation
+  of the certificate.
 
 Thesis-use note:
 - Spend at least one sentence explaining why singular cases appear in the
