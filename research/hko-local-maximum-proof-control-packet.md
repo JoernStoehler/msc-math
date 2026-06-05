@@ -40,8 +40,10 @@ rows change, or when the HKO theorem target is weakened.
 2026-06-04 implementation result:
 `verify_feasible_section_witness.sage.py` verifies a 26-row exact certificate:
 exact row rank `25`, symmetry rank `15`, positive lambdas, and exact
-lambda-weighted row sum `0`. The remaining route risk is formal review of
-`formal/hko-feasible-section-upper-branches.tex` and theorem wording.
+lambda-weighted row sum `0`. The formal implication in
+`formal/hko-feasible-section-upper-branches.tex` has been agent-line-checked
+against the verifier propositions. The remaining route risk is Jörn/Kai review
+of that mathematical implication and theorem wording.
 
 ## Review Decisions So Far
 
@@ -80,8 +82,9 @@ This is Packet 1 in the current HKO ordering.
    `thesis/hko-local-maximum-content.md` so Jörn can write from it.
 
 This file should not try to be Packet 4. Packet 2 and Packet 3 now have an
-implemented certificate; the thesis section still needs formal line-check and
-the final thesis companion refresh.
+implemented certificate, and the formal implication has been
+agent-line-checked. The thesis section still needs Jörn/Kai review and the
+final thesis companion refresh.
 
 ## Theorem Target For Review
 
@@ -430,14 +433,18 @@ Jörn reviewed the route on 2026-06-04 and accepted it as enough to proceed:
 not a 1:1 writing review, but enough confidence that any remaining proof-text
 gaps can be closed later if found.
 
+The agent line-check on 2026-06-04 checked the formal implication against the
+exact verifier propositions and added the explicit quotient-slice step via an
+inverse-function-theorem lemma. The file remains `unverified` until Jörn
+reviews the mathematical text.
+
 Review these labels first:
 
-1. `lem:hko-feasible-section-upper-branch`;
-2. `rem:hko-feasible-section-derivative-data`;
-3. `lem:hko-upper-branch-directional-inequality`;
-4. `lem:hko-positive-convex-certificate-margin`;
-5. `prop:hko-feasible-branch-slice-local-max`;
-6. `cor:hko-feasible-branch-quotient-template`.
+1. `lem:hko-full-chart-volume-row`;
+2. `lem:hko-feasible-section-upper-branch`;
+3. `prop:hko-feasible-branch-slice-local-max`;
+4. `lem:hko-transverse-symmetry-slice`;
+5. `cor:hko-feasible-branch-quotient-template`.
 
 ### Packet 2 Checks Implemented
 
@@ -570,7 +577,8 @@ The next Jörn review should focus on these points, in order.
 
 ## Next Action
 
-Line-check `formal/hko-feasible-section-upper-branches.tex` against
-`experiments/hko-local-maximum/theorem/feasible-section-certificate/verification-summary.json`.
-If accepted, refresh `thesis/hko-local-maximum-content.md` into the final
-writing companion.
+Jörn reviews the agent-line-checked formal implication using the focused review
+brief in `thesis/hko-local-maximum-content.md`. If accepted, refresh
+`thesis/hko-local-maximum-content.md` into the final writing companion and
+write `thesis/hko-local-maximum.tex`. If rejected, repair the implication or
+weaken the HKO thesis wording.

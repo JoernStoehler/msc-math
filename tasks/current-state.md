@@ -52,12 +52,15 @@ source files.
 - HKO local maximality is thesis spine.
   Source truth: `research/hko-local-maximum*.md`, exact-witness artifacts,
   related formal/thesis files.
-  Current state: repo evidence strongly supports the `M_10` local-maximality
-  story; the exact theorem certificate is not closed.
+  Current state: the exact feasible-section theorem certificate is merged and
+  verifies in Sage; the formal implication has been agent-line-checked. The
+  remaining theorem-strength gate is Jörn/Kai review of the mathematical
+  implication and final theorem wording.
   High-risk facts:
   - Current exact field is quartic `Q(tan(pi/5))`, not `Q(sqrt(5))`.
-  - Packet 3 target is active-gradient rank `25`, kernel dimension `15`, and
-    kernel equal to the symmetry tangent space.
+  - Current theorem-facing certificate uses 26 feasible-section rows, exact
+    row rank `25`, exact symmetry tangent rank `15`, and a positive exact
+    convex relation summing the rows to `0`.
   - Old `44`-orbit / `10`-gradient prose is stale against current `150` exact
     minima, `20` visited subsets, and `28` gradient-pattern bookkeeping.
   Refresh when: exact-witness route, HKO theorem wording, or LICCA evidence

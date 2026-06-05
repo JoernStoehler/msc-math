@@ -30,9 +30,10 @@ Use it before reading deeper notes or experiment folders.
   translations, scaling, and linear symplectic maps.
 - Thesis-safe wording today:
   the repo has an exact Sage-verified feasible-section certificate for the
-  finite first-order decision problem supporting the `M_10` theorem route.
-  The remaining non-writing risk is review of the formal implication and final
-  theorem wording.
+  finite first-order decision problem supporting the `M_10` theorem route, and
+  the formal implication has been agent-line-checked against the verifier
+  propositions. The remaining theorem-strength gate is Jörn/Kai review of the
+  mathematical implication and final theorem wording.
 
 ## Current Proof Route
 
@@ -77,8 +78,9 @@ Use it before reading deeper notes or experiment folders.
 
 ## Still Open
 
-- line-check the formal feasible-section implication and quotient-local maximum
-  proof against the verifier propositions
+- Jörn review of the agent-line-checked formal feasible-section implication and
+  quotient-local maximum proof, especially the volume-row lemma, the transverse
+  slice lemma, and the final certificate-template corollary
 - decide final thesis theorem wording with Jörn/Kai review
 - reconcile stale `44/10` language with the current `150`-orbit bookkeeping
   surface

@@ -3,7 +3,7 @@
 Status: thesis-local content-gathering notes, not source truth.
 
 Purpose: gather the HKO result packet, source pointers, evidence status, and
-missing non-writing work needed to draft `thesis/hko-local-maximum.tex`.
+remaining review gates needed to draft `thesis/hko-local-maximum.tex`.
 
 Overruled by: `FACTSHEET.md`, `research/hko-local-maximum*.md`, exact
 artifacts in `experiments/hko-local-maximum/`, formal proof files, task files,
@@ -27,8 +27,8 @@ The HKO thesis-facing result is a packet, not only one theorem statement.
 
 2. Main theorem target:
    HKO is locally maximal in the ten-facet model modulo translations, scaling,
-   and linear symplectic maps, conditional on final review of the
-   feasible-section implication from the exact certificate.
+   and linear symplectic maps, conditional on Jörn/Kai review of the
+   agent-line-checked feasible-section implication from the exact certificate.
    Source pointers: `research/hko-local-maximum-status.md`;
    `research/hko-local-maximum.md`;
    `tasks/references/central-claim-control-packet-2026-06-01.md`;
@@ -93,11 +93,60 @@ The HKO non-writing work is currently split into four packets.
    `verify_feasible_section_witness.sage.py`.
 
 4. Thesis-writing companion finalization:
-   only after the theorem outcome is known, refresh this file into the final
-   structure Jörn can write from.
+   this file now records the intended writing structure and focused review
+   brief. After Jörn/Kai theorem review, update the status markers and write
+   `thesis/hko-local-maximum.tex` from this file.
 
-Do not treat this file as complete enough for final HKO writing until the
-formal implication has been line-checked against the verifier propositions.
+Do not treat this file as complete enough for final theorem-strength HKO
+writing until Jörn/Kai review accepts the agent-line-checked formal implication
+and theorem wording.
+
+## Focused Review Brief
+
+Purpose: decide whether the exact Sage certificate plus the formal implication
+support theorem-strength HKO local maximality in the ten-facet quotient model.
+This is not a prose-style review and not a review of broad HKO local
+stability.
+
+Review source:
+- `formal/main.pdf`, section "HKO Feasible-Section Upper Branches".
+- Source TeX if needed:
+  `formal/hko-feasible-section-upper-branches.tex`.
+- Verifier summary:
+  `experiments/hko-local-maximum/theorem/feasible-section-certificate/verification-summary.json`.
+
+Review these labels first:
+
+1. `lem:hko-full-chart-volume-row`.
+   Why it matters: the Sage verifier uses the displayed full `R^40` volume row
+   to convert action derivatives into systolic-ratio derivatives. If the
+   volume row is only product-chart-valid, the ambient quotient certificate is
+   not justified.
+
+2. `lem:hko-feasible-section-upper-branch`.
+   Why it matters: this is the singular-row escape hatch. It proves the proof
+   does not need nearby KKT criticality or a unique optimizing beta, only a
+   local feasible HK2017 beta section giving an upper branch for `sys`.
+
+3. `prop:hko-feasible-branch-slice-local-max`.
+   Why it matters: this is the finite-row convex-hull argument. It turns the
+   exact positive convex relation and rank `25` row span into strict local
+   decrease in every nonzero slice direction.
+
+4. `lem:hko-transverse-symmetry-slice`.
+   Why it matters: this turns strict local maximality on a transverse affine
+   slice into local maximality modulo translations, scaling, and the identity
+   component of `Sp(4)`.
+
+5. `cor:hko-feasible-branch-quotient-template`.
+   Why it matters: this is the final bridge from the exact Sage propositions to
+   the ten-facet quotient-local theorem statement.
+
+Review output needed:
+- Accept theorem route as mathematically sound enough for thesis drafting;
+- or name the first label where the implication fails or needs repair;
+- and decide whether the theorem wording may say "locally maximal in the
+  ten-facet model modulo translations, scaling, and linear symplectic maps".
 
 ## Evidence By Packet Component
 
@@ -133,9 +182,8 @@ Source pointers:
 - `tasks/current-state.md`, HKO local maximality row.
 
 Missing:
-- Line-check of the formal implication from the verified certificate to the
-  local-maximum theorem.
-- Jörn/Kai acceptance of theorem-strength wording.
+- Jörn/Kai acceptance of the agent-line-checked formal implication and
+  theorem-strength wording.
 
 ### 3. Exact Certificate
 
@@ -176,7 +224,8 @@ Current checked theorem-facing facts:
 - The lambda-weighted exact row sum is `0`.
 
 Missing:
-- Formal proof review against these verifier propositions.
+- Jörn/Kai proof review against these verifier propositions and the formal
+  implication.
 
 Thesis-use note:
 - Spend at least one sentence explaining why singular cases appear in the
@@ -248,8 +297,8 @@ Missing:
 
 ## Non-Writing Blockers
 
-1. Line-check the formal implication from the Sage verifier propositions to
-   the local-maximum theorem.
+1. Jörn review of the agent-line-checked formal implication from the Sage
+   verifier propositions to the local-maximum theorem.
    Source pointers: `research/hko-local-maximum-status.md`;
    `research/hko-local-maximum.md`;
    `formal/hko-feasible-section-upper-branches.tex`;
@@ -262,8 +311,8 @@ Missing:
    Source pointers: `research/hko-local-maximum-status.md`;
    `research/hko-local-maximum-proof-control-packet.md`.
 
-3. Refresh this thesis companion into a final writing plan after the formal
-   implication line-check.
+3. Refresh this thesis companion into a final writing plan after Jörn/Kai
+   theorem review.
    Source pointers: this file; `formal/hko-feasible-section-upper-branches.tex`;
    `experiments/hko-local-maximum/theorem/feasible-section-certificate/README.md`.
 
@@ -304,3 +353,52 @@ If exact work changes theorem wording:
 - Caveated/status wording only:
   empirical confirmation and search/context paragraphs, provided they do not
   assert theorem-strength claims.
+
+## Thesis Section Writing Plan
+
+Use this plan after the review gate above is accepted, or use the fallback
+branch if it is not accepted.
+
+1. Start with the theorem target.
+   Claim: in the ten-facet dual-vertex model, HKO is locally maximal modulo
+   translations, scaling, and linear symplectic maps.
+   Caveat: this is not a theorem about all nearby facet counts or broad HKO
+   local stability.
+
+2. Recall the HKO2024 input.
+   State the Lagrangian product of the two circumradius-1 regular pentagons
+   and cite HKO2024 for the capacity value. Use the exact field
+   `t = tan(pi/5)`, `t^4 - 10t^2 + 5 = 0`, only where it helps explain the
+   verifier.
+
+3. State the certificate theorem in human terms.
+   Rust produces a finite witness. Sage reconstructs the exact HKO geometry,
+   verifies the witness equations exactly, and checks 26 feasible-section rows,
+   row rank `25`, symmetry rank `15`, positive lambdas, and row sum `0`.
+
+4. Explain why feasible sections are used.
+   The witness needs singular positive-beta rows because nonsingular active
+   branches span only rank `23` on the 25-dimensional quotient slice, and the
+   padded-once diagnostic found no nonsingular minimum-action replacements.
+   The proof avoids nearby KKT criticality: it fixes enough beta coordinates,
+   solves the closure/normalization equations locally, and uses the resulting
+   feasible HK2017 branches only as upper bounds.
+
+5. Give the proof tree.
+   Each selected feasible section gives a smooth upper branch `U_sigma` with
+   `sys <= U_sigma` and equality at HKO. The exact row certificate says the
+   first-order rows of these upper branches span the quotient cotangent space
+   and contain `0` in their positive convex hull. Therefore every nonzero slice
+   direction has some upper branch with strictly negative first-order change.
+   A uniform remainder argument gives strict local maximality on the slice.
+   The transverse-slice lemma turns this into quotient-local maximality.
+
+6. State empirical confirmation separately.
+   Use only short supporting language unless a retained experiment is refreshed
+   at writing time. Keep `M_11`, neighborhood sampling, and second-order checks
+   as context, not as the proof of the theorem.
+
+7. End with scope and fallback wording.
+   If the formal review is accepted, the section may state the theorem-strength
+   ten-facet quotient result. If the formal review finds a gap, state the exact
+   certificate and the named remaining implication blocker instead.
