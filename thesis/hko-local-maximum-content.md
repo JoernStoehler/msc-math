@@ -425,11 +425,13 @@ Recommended auxiliary assets:
 
    TODO(Jörn): next/highest-value picture: draw the global `R -> R` setting
    along a finitely extended toy slice. Draw several smooth curves on the
-   whole extended slice or neighborhood, labeled by pairs `(sigma, I)`, with
-   values
-   `1/(2 Q_sigma(beta_{sigma,I}(a)))`.
-   The prose can define `beta_{sigma,I}(a)`. The picture should illustrate
-   only the upper-bound mechanism:
+   whole extended slice or neighborhood. In the image, it is probably enough
+   to label these curves as `sys_{sigma,I}(a)` and the actual function as
+   `sys(a)`, instead of already showing action/capacity/beta notation.
+   The prose can define `beta_{sigma,I}(a)` and explain that, for each
+   selected pair `(sigma,I)`, the drawn upper branch comes from
+   `1/(2 Q_sigma(beta_{sigma,I}(a)))`. The picture should illustrate only the
+   upper-bound mechanism:
    `action(a) = min_{sigma,beta} 1/(2 Q_sigma(beta(a))) <=
    1/(2 Q_sigma(beta_{sigma,I}(a)))`.
    At `a0`, the drawn selected examples meet at the same value. In one
