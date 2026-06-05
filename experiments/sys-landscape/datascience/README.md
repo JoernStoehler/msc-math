@@ -41,6 +41,59 @@ Read these files for ordinary datascience work:
 The task and research notes are not ordinary entry points for this slice. Use
 them only when auditing cross-thesis claim wording or older context.
 
+## Prompt Examples
+
+These files are examples from the PCA method-packet flow, not templates:
+
+- `prompt-example-executor-pca-projection.md`
+- `prompt-example-technical-reviewer-pca-projection.md`
+- `prompt-example-thesis-reviewer-pca-projection.md`
+- `prompt-example-post-run-calibration-pca-projection.md`
+
+They live here because they describe method-packet orchestration. Method
+evidence and reports still live under `methods/`.
+
+The post-run calibration prompt is sent after an executor or reviewer has
+finished. Do not include it in the initial prompt; it is meant to reveal what
+was unclear without priming the agent's work.
+
+Method packet merge standard:
+
+- The executor hands back a committed method-packet diff on its method branch.
+  Reviewers review the commit, not a loose dirty worktree, unless dirty state
+  affects reproducibility or makes the committed packet ambiguous.
+- Reviewers report findings, consequences, severity, reproducibility evidence,
+  and whether issues block direct use as current evidence. They do not own the
+  final acceptance decision.
+- The orchestrator accepts a packet into the integration branch only when the
+  packet is directly usable as current method-table evidence with ordinary
+  thesis-writing work remaining.
+- Useful raw work, salvage value, or "better than nothing" is not enough. If a
+  packet needs substantial repair, reinterpretation, rerun, or archaeology
+  before the row can be trusted, keep it out of the integration branch or revise
+  it before merging.
+- A packet with a candidate-proposer or validated new row should be escalated
+  before ordinary method-table closure continues.
+
+Method packet success standard:
+
+- A committed method packet is successful when it can be used as current
+  method-table evidence without rerunning the experiment, repairing the
+  analysis, further interpreting the result, or inspecting stale files.
+- The report should include enough context for a future agent to understand and
+  audit the method-table evidence. This usually includes the method question,
+  dataset, command, reproducibility status, what the method found, what follows
+  from that evidence and how strongly, what does not follow, whether the packet
+  contains candidate-proposer evidence or a validated new `sys > 1` row,
+  whether it contains other positive or ambiguous descriptive evidence, and
+  what should happen next for the row.
+- A negative method verdict must not hide positive or ambiguous evidence. If
+  the method finds a pattern that changes the row's interpretation, thesis
+  wording, or follow-up, the report should say so before presenting the
+  terminal state.
+- If the packet is not usable as current method-table evidence, state what
+  blocks use and what next action is recommended.
+
 ## Source Truth Order
 
 For ordinary datascience work:
