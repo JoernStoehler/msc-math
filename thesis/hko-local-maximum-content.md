@@ -409,46 +409,60 @@ Recommended auxiliary assets:
    | The selected rows force a negative first-order upper slope in every slice direction. | Checks the 26 verified rows have exact rank `25`; checks exact lambdas are positive, sum to `1`, and combine the rows to `0`. | Positive convex relation plus spanning gives a uniform negative margin on the slice unit sphere. See `lem:hko-positive-convex-certificate-margin` and `prop:hko-feasible-branch-slice-local-max`. |
    | The slice statement is the intended quotient-local theorem. | No extra Sage step; this is a mathematical implication from the local symmetry action and the verified tangent rank. | The transverse-slice lemma converts strict slice maximality to quotient-local maximality in the ten-facet model. See `lem:hko-transverse-symmetry-slice` and `cor:hko-feasible-branch-quotient-template`. |
 
-2. Compact certificate facts display.
-   Status: draft below, not thesis-ready. Priority: medium-high, only next to the finite
-   certificate proposition.
-   Content: ambient dimension `40`, symmetry rank `15`, selected rows `26`,
-   row rank `25`, positive lambdas, lambda sum `1`, lambda-weighted row sum
-   `0`.
-   Purpose: make the finite linear-algebra endpoint visible at a glance.
+2. Low-dimensional proof illustrations.
+   Status: TODO(Jörn), not done. Priority: high if the theorem proof feels
+   geometrically opaque after prose.
+   Purpose: illustrate the proof mechanism, not the exact certificate facts.
+   These drawings should be fake low-dimensional pictures for reader
+   orientation. They are not source truth.
 
-   Draft writing aid, not source truth:
+   TODO(Jörn): draw the setting with a toy map `sys: R^2 -> R`, a point `a0`,
+   and a one-dimensional symmetry orbit. Use the toy picture to show the
+   tangent direction along the symmetry orbit and a transverse slice. The
+   actual theorem uses ambient dimension `40`, symmetry tangent dimension `15`,
+   and transverse slice dimension `25`; the picture may label these actual
+   dimensions in captions.
 
-   ```text
-   Exact finite certificate checked by Sage:
+   TODO(Jörn): draw the slice profile in the fake one-dimensional slice. The
+   graph should show that the local `sys` profile need not be `C^1`; it can be
+   piecewise smooth or cusp-like because several smooth upper branches meet at
+   `a0`. The selected upper branches should illustrate that in each nonzero
+   slice direction at least one upper branch has negative first-order change.
 
-   ambient dimension                40
-   symmetry tangent rank            15
-   quotient slice dimension         25
-   selected feasible-section rows   26
-   verified row rank                25
-   convex coefficients              lambda_i > 0
-   convex normalization             sum_i lambda_i = 1
-   convex relation                  sum_i lambda_i r_i = 0
-   ```
+   TODO(Jörn): if helpful, draw both a nonlocal view and a local tangent view:
+   one ambient picture `R^2 -> R`, one slice picture `R -> R`, and the
+   corresponding local/tangent versions. Keep the point of the figures narrow:
+   quotient out symmetry, pass to a transverse slice, and use finitely many
+   smooth upper branches to force strict decrease in every nonzero slice
+   direction.
 
-   Use this display only if it sits next to the finite certificate proposition.
-   Refresh the numbers from
-   `experiments/hko-local-maximum/theorem/feasible-section-certificate/verification-summary.json`
-   before copying it into thesis prose.
+   Caption constraints:
+   - the drawn slice may be orthogonal for clarity, but the proof only needs a
+     transverse complement;
+   - the toy symmetry orbit is one-dimensional, while the actual symmetry
+     tangent space has dimension `15`;
+   - the toy transverse slice is one-dimensional, while the actual transverse
+     slice has dimension `25`;
+   - the figures do not encode the 26-row certificate data.
 
 Deferred auxiliary assets:
 
-1. Trust-boundary mini table.
+1. Compact certificate facts display.
+   Defer or reject. The finite certificate proposition and the
+   verification-interface table should already state the facts. A separate
+   display collecting all numbers is likely redundant unless the thesis prose
+   becomes hard to scan.
+
+2. Trust-boundary mini table.
    Defer because prose may be enough. Use only if the trust-boundary paragraph
    becomes too dense.
 
-2. Selected Sage code snippets.
+3. Selected Sage code snippets.
    Defer until the thesis prose exists. Candidate snippets are field/root
    pinning, row verification, and convex-certificate verification. Use snippets
    only to support a stated mathematical predicate, not to replace it.
 
-3. Nonsingular-endpoint geometric figure.
+4. Nonsingular-endpoint geometric figure.
    Defer. The geometric point should first be handled as prose in the
    singular-row explanation. Add a figure only if prose is not enough.
 
