@@ -93,60 +93,41 @@ The HKO non-writing work is currently split into four packets.
    `verify_feasible_section_witness.sage.py`.
 
 4. Thesis-writing companion finalization:
-   this file now records the intended writing structure and focused review
-   brief. After Jörn/Kai theorem review, update the status markers and write
+   this file now records the intended writing structure and review gate. After
+   Jörn/Kai theorem review, update the status markers and write
    `thesis/hko-local-maximum.tex` from this file.
 
 Do not treat this file as complete enough for final theorem-strength HKO
 writing until Jörn/Kai review accepts the agent-line-checked formal implication
 and theorem wording.
 
-## Focused Review Brief
+## Review Gate
 
-Purpose: decide whether the exact Sage certificate plus the formal implication
-support theorem-strength HKO local maximality in the ten-facet quotient model.
-This is not a prose-style review and not a review of broad HKO local
-stability.
+Purpose: decide whether the exact Sage certificate plus
+`formal/hko-feasible-section-upper-branches.tex` support theorem-strength HKO
+local maximality in the ten-facet quotient model.
 
-Review source:
+Source pointers:
 - `formal/main.pdf`, section "HKO Feasible-Section Upper Branches".
-- Source TeX if needed:
-  `formal/hko-feasible-section-upper-branches.tex`.
-- Verifier summary:
-  `experiments/hko-local-maximum/theorem/feasible-section-certificate/verification-summary.json`.
+- `formal/hko-feasible-section-upper-branches.tex`.
+- `experiments/hko-local-maximum/theorem/feasible-section-certificate/verification-summary.json`.
 
-Review these labels first:
+Review labels:
 
-1. `lem:hko-full-chart-volume-row`.
-   Why it matters: the Sage verifier uses the displayed full `R^40` volume row
-   to convert action derivatives into systolic-ratio derivatives. If the
-   volume row is only product-chart-valid, the ambient quotient certificate is
-   not justified.
-
-2. `lem:hko-feasible-section-upper-branch`.
-   Why it matters: this is the singular-row escape hatch. It proves the proof
-   does not need nearby KKT criticality or a unique optimizing beta, only a
-   local feasible HK2017 beta section giving an upper branch for `sys`.
-
-3. `prop:hko-feasible-branch-slice-local-max`.
-   Why it matters: this is the finite-row convex-hull argument. It turns the
-   exact positive convex relation and rank `25` row span into strict local
-   decrease in every nonzero slice direction.
-
-4. `lem:hko-transverse-symmetry-slice`.
-   Why it matters: this turns strict local maximality on a transverse affine
-   slice into local maximality modulo translations, scaling, and the identity
-   component of `Sp(4)`.
-
+1. `lem:hko-full-chart-volume-row`;
+2. `lem:hko-feasible-section-upper-branch`;
+3. `prop:hko-feasible-branch-slice-local-max`;
+4. `lem:hko-transverse-symmetry-slice`;
 5. `cor:hko-feasible-branch-quotient-template`.
-   Why it matters: this is the final bridge from the exact Sage propositions to
-   the ten-facet quotient-local theorem statement.
 
-Review output needed:
-- Accept theorem route as mathematically sound enough for thesis drafting;
-- or name the first label where the implication fails or needs repair;
+Outcome needed:
+- accept theorem route as thesis-ready modulo prose;
+- or name the first proof label that needs repair;
 - and decide whether the theorem wording may say "locally maximal in the
   ten-facet model modulo translations, scaling, and linear symplectic maps".
+
+Fallback: if review finds a real gap, repair the implication or weaken the HKO
+section to exact-certificate status plus the named blocker.
 
 ## Evidence By Packet Component
 
