@@ -1,10 +1,6 @@
-# Harness Engineering
-
 Official source: https://openai.com/index/harness-engineering/
 
-Downloaded markdown copy follows. Direct command-line fetch of the official
-HTTPS page returned a challenge page, so this copy was captured through a
-markdown reader from the same OpenAI article.
+# Harness Engineering
 
 Over the past five months, our team has been running an experiment: building and shipping an internal beta of a software product with**0 lines of manually-written code**.
 

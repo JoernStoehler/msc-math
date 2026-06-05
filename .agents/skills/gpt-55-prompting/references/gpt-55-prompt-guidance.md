@@ -1,8 +1,4 @@
-# GPT-5.5 Prompt Guidance
-
 Official source: https://developers.openai.com/api/docs/guides/prompt-guidance.md
-
-Downloaded markdown copy follows.
 
 # GPT-5.5 prompting guide
 
