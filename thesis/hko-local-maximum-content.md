@@ -457,6 +457,34 @@ Recommended auxiliary assets:
      slice has dimension `25`;
    - the figures do not encode the 26-row certificate data.
 
+3. Cotangent convex-hull illustration.
+   Status: candidate, not done.
+   Purpose: illustrate why the positive convex relation plus spanning rows
+   force every nonzero slice direction to have a negative pairing with some
+   selected row.
+
+   TODO(Jörn): draw the fake two-dimensional slice-cotangent case. Use three
+   covectors `r_1,r_2,r_3` whose triangle contains `0` in its interior. Caption
+   should say that the real certificate uses 26 covectors spanning the
+   25-dimensional quotient cotangent space and a positive convex relation.
+   The point of the picture is the implication
+   `0=sum_i lambda_i r_i`, `lambda_i>0`, `span(r_i)=E^*`
+   implies that for every nonzero direction `h`, some `r_i(h)<0`.
+
+4. HKO product-geometry reminder.
+   Status: candidate, not done.
+   Purpose: remind the reader what the HKO2024 body is before the local
+   certificate proof starts.
+
+   TODO(Jörn): draw the standard reminder picture of the two regular pentagons
+   in the `q`- and `p`-planes. If adding certificate information, avoid
+   overlaying all 26 trajectories. Better options are one or two representative
+   rows, or a small word/barcode-style inset. For a representative row, mark
+   positions in `I` as solved beta coordinates and positions in the complement
+   `J` as fixed beta coordinates. Do not describe `I` as geometrically
+   distinguished trajectory segments unless that interpretation is separately
+   verified.
+
 Deferred auxiliary assets:
 
 1. Compact certificate facts display.
@@ -485,6 +513,10 @@ Rejected or non-assets for thesis purposes:
 - finite-difference formula sanity-check report;
 - standalone proof-dependency diagram before the proof prose exists;
 - appendix code-audit map before final prose chooses snippets.
+- upper-branch proof logic as a separate flowchart;
+- feasible-section-in-beta-coordinates figure;
+- trusted/untrusted data-flow diagram;
+- singular-row necessity rank-bar graphic.
 
 Source pointers:
 - `experiments/hko-local-maximum/theorem/feasible-section-certificate/README.md`,
