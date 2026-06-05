@@ -69,7 +69,7 @@ obligations.
 | Hostile sys-search landscape | `experiments/sys-landscape/datascience/README.md`, `experiments/sys-landscape/datascience/methods/README.md`, `sys-landscape.md`, `sys-landscape-toolbox-audit.md` | local datascience README files first; research/task files only for older context or cross-thesis audit |
 | Crosspolytope capacity | `crosspolytope.md` | `tasks/current-state.md`, `tasks/planning-notes.md` if thesis cites the computation |
 | Visualization negative exploration | `visualization.md` | `tasks/planning-notes.md` if included as standalone or supporting material |
-| Pentagon rotation formula | `sys-landscape.md`, future dedicated note if promoted | `tasks/planning-notes.md` if promoted from future work |
+| Pentagon rotation formula | `experiments/regular-products/README.md`; `thesis/rotated-regular-polygons-content.md`; `experiments/regular-products/pentagon-rotation-formula-proof/` | `thesis/rotated-regular-polygons.tex` and final thesis review gates |
 | Numerical and algorithmic method story | `numerics.md`, `numerics-error-bounds.md`, `verification.md`, `verification-orbit-recovery.md` | `tasks/definition-of-success.md`, `tasks/current-state.md`, `tasks/planning-notes.md` |
 | Tube algorithm import | `tube-algorithm-raw-jorn-2026-05-04.md`, `tube-algorithm.md` | `tasks/planning-notes.md` if promoted into thesis text |
 | Repo/software/process story | `finish-current-state.md`, `verification.md`, `visualization.md`, architecture and submission maps | `tasks/definition-of-success.md`, `tasks/current-state.md`, `tasks/planning-notes.md`, `tasks/submit-thesis/README.md` |
@@ -81,6 +81,7 @@ obligations.
 | Current finish state | `finish-current-state.md` | repo-state and closeout context |
 | HKO local maximum | `hko-local-maximum.md`, `hko-local-maximum-status.md`, `hko-local-maximum-proof-control-packet.md`, `hko-local-maximum-exact-witness.md`, `hko-local-maximum-proof-route-note.md` | HKO proof route, exact-witness state, proof-control packet, selected-branch checkpoint, and blockers |
 | Hostile sys landscape | `experiments/sys-landscape/datascience/README.md`, `experiments/sys-landscape/datascience/methods/README.md`, `sys-landscape.md`, `sys-landscape-toolbox-audit.md` | local datascience state first; research notes are context |
+| Pentagon rotation formula / regular products | `experiments/regular-products/README.md`, `thesis/rotated-regular-polygons-content.md` | regular-product side-result inventory, writing companion, proof packet routing, and source-truth boundaries |
 | Sys first-order local behavior | `sys-first-order-local-behavior.md` | generic smooth case, non-generic active-germ classification, and semialgebraic fallback status |
 | Numerics | `numerics.md`, `numerics-error-bounds.md` | numerical-method status and error-bound interpretation |
 | Tube algorithm | `tube-algorithm-raw-jorn-2026-05-04.md`, `tube-algorithm.md` | raw Jörn source note plus routing/clarification note before rewriting old TeX or Rust surfaces |

@@ -157,8 +157,8 @@ The thesis-facing side result is a packet, not only one formula.
    ```
 
    Source pointers:
-   `experiments/regular-products/pentagon-rotation-formula-proof/EXECUTABLE_PROOF_COMPANION.md`;
    `experiments/regular-products/pentagon-rotation-formula-proof/executable_proof.sage.py`;
+   `experiments/regular-products/pentagon-rotation-formula-proof/executable_proof.full.stdout.txt`;
    `experiments/regular-products/README.md`;
    `formal/pentagon-rotation-capacity.tex`;
    `thesis/rotated-regular-polygons.tex`.
@@ -190,9 +190,11 @@ The thesis-facing side result is a packet, not only one formula.
 
    Source pointers:
    `experiments/regular-products/pentagon-rotation-formula-proof/executable_proof.sage.py`;
-   `experiments/regular-products/README.md`;
-   `experiments/regular-products/pentagon-rotation-formula-proof/EXECUTABLE_PROOF_COMPANION.md`;
-   `experiments/regular-products/pentagon-rotation-formula-proof/EXECUTABLE_PROOF_PLAN.md`.
+   `experiments/regular-products/pentagon-rotation-formula-proof/executable_proof.full.stdout.txt`;
+   `experiments/regular-products/README.md`.
+
+   Code-reading guide:
+   `experiments/regular-products/pentagon-rotation-formula-proof/executable_proof_audit_guide.md`.
 
 4. Empirical and figure support:
    The sampled sweeps and plots motivated the formula and should be presented

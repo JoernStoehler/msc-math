@@ -1,12 +1,91 @@
-# Regular Products Experiments
+# Regular Products Slice
 
-This package owns experiments and proof-support artifacts for Lagrangian
-products of rotated regular polygons.
+This is the single entry point for the thesis slice about Lagrangian products
+of rotated regular polygons.
 
-It is separate from `experiments/sys-landscape/` because this side result has a
-different thesis role from the hostile-landscape search. The regular-product
-packet studies structured polygon families; the sys-landscape package studies
-global search behavior and adversarial examples.
+The main theorem-strength result is the exact formula for
+
+```text
+sys(P_5 x_L R(theta)P_5)
+```
+
+on the pentagon rotation fundamental domain. Broad regular-product sweeps and
+pentagon figures are supporting context, not proof input.
+
+This package is separate from `experiments/sys-landscape/` because it has a
+different thesis role. `experiments/regular-products/` owns the structured
+regular-product side result; `experiments/sys-landscape/` owns hostile-search
+and data-science evidence.
+
+## Start Here
+
+Read only the row that matches your task.
+
+| Task | Minimum read path | Stop before opening |
+| --- | --- | --- |
+| Write the thesis section | `thesis/rotated-regular-polygons-content.md`, then `thesis/rotated-regular-polygons.tex` | Sage source, generated JSONL/PNG/HTML, stale formal draft |
+| Check the exact proof result | `pentagon-rotation-formula-proof/README.md`, then `pentagon-rotation-formula-proof/executable_proof.full.stdout.txt` | empirical folders |
+| Audit the proof code | `pentagon-rotation-formula-proof/README.md`, then `pentagon-rotation-formula-proof/executable_proof_audit_guide.md`, then the specific Sage functions named there | generated artifacts |
+| Choose figures | `pentagon-rotation-empirics/README.md`, then the ranked figure list in `thesis/rotated-regular-polygons-content.md` | exact proof source |
+| Understand broad regular-product context | `rotated-regular-products/README.md` | pentagon proof internals |
+| Recover old calculation details | `formal/pentagon-rotation-capacity.tex` | unless a current guide points to a specific calculation |
+
+Default order for a new agent:
+
+1. Read this README.
+2. If writing, read `thesis/rotated-regular-polygons-content.md`.
+3. If verifying the proof, read `pentagon-rotation-formula-proof/README.md`.
+4. Stop until a concrete question requires a narrower file.
+
+## Do Not Open By Default
+
+These files are useful, but they usually cost more context than they save:
+
+1. generated JSONL, PNG, and HTML artifacts;
+2. `pentagon-rotation-formula-proof/executable_proof.sage.py`;
+3. `formal/pentagon-rotation-capacity.tex`;
+4. broad sweep data files in `rotated-regular-products/`.
+
+Open them only when a README or thesis companion points to a specific detail.
+
+## Who Says What
+
+| File or folder | Role | Current value | Maintenance risk |
+| --- | --- | --- | --- |
+| `thesis/rotated-regular-polygons.tex` | Active thesis scaffold | Place where the final prose is written | Contains only scaffold comments today |
+| `thesis/rotated-regular-polygons-content.md` | Thesis writing companion | Best current human/agent guide to theorem, proof route, figures, and wording risks | Not source truth; delete or shrink after prose stabilizes |
+| `pentagon-rotation-formula-proof/executable_proof.sage.py` | Exact proof source | Source truth for the open half-domain executable certificate | If edited, rerun the full proof and refresh stdout |
+| `pentagon-rotation-formula-proof/executable_proof.full.stdout.txt` | Full proof run output | Source truth for exact run output, status counts, and runtime | Do not hand-edit |
+| `pentagon-rotation-formula-proof/README.md` | Proof packet runbook | Best entry point for proof reproduction | Keep short and routing-focused |
+| `pentagon-rotation-formula-proof/executable_proof_audit_guide.md` | Code-audit guide | Explains how to read the Sage proof source | Not source truth; keep code-audit focused |
+| `pentagon-rotation-empirics/` | Sampled pentagon artifacts | Figures, sampled sweep, and orbit viewer for exposition | Not proof input; avoid overclaiming |
+| `rotated-regular-products/` | Broad regular-pair sweeps | Context for tested regular polygon products | Empirical only; not a classification theorem |
+| `src/` | Shared Rust helpers | Product cache, capacity wrapper, volume helper, package paths | Ordinary code source; keep comments near code |
+| `formal/lagrangian-product-rotation-symmetry.tex` | Formal symmetry source | Current rotation/reflection and factor-swap lemmas | Developer-facing proof text, not thesis prose |
+| `formal/combinatorial-boundary-regularity.tex` | Formal continuity source | Current preferred endpoint route via EHZ Hausdorff continuity | Broader than this slice |
+| `formal/pentagon-rotation-capacity.tex` | Old formal proof draft | Useful for notation and active-branch derivation | Stale body text includes old paths and deleted `cas_witnesses.py` references; no longer input by `formal/main.tex` |
+| `research/sys-landscape.md` and `research/sys-landscape-toolbox-audit.md` | Search/data-science context | Explain regular products as structured contrast in the hostile-search story | Do not use them as proof sources for the formula |
+
+## Current Proof Status
+
+The exact executable proof is complete for the open half-domain
+
+```text
+0 < theta < pi/10.
+```
+
+The endpoint and mirror steps are mathematical writeup steps:
+
+1. **Endpoints:** use EHZ Hausdorff continuity and constant volume.
+2. **Mirror:** use the equal odd-pentagon factor-swap symmetry.
+
+The full proof run is recorded in
+
+```text
+pentagon-rotation-formula-proof/executable_proof.full.stdout.txt
+```
+
+Use that stdout file for exact status counts and runtime.
 
 ## Folder Layout
 
@@ -27,7 +106,7 @@ viewer. These artifacts are empirical and illustrative.
 pentagon-rotation-formula-proof/
 ```
 
-Exact SageMath executable proof and proof-companion notes for the pentagon
+Exact SageMath executable proof and code-audit notes for the pentagon
 formula. The proof does not depend on the empirical JSONL or figures.
 
 ```text
@@ -40,6 +119,37 @@ Small Rust helpers shared by the regular-product producers:
 2. `capacity.rs`: explicit billiard-capacity wrapper.
 3. `volume.rs`: exact-incidence volume converted to `f64`.
 4. `paths.rs`: package-relative output paths.
+
+## Thesis Boundaries
+
+Use this split while writing:
+
+1. `thesis/rotated-regular-polygons.tex` owns the regular-product side result:
+   formula, proof architecture, selected empirical figures, and
+   endpoint/symmetry close.
+2. `thesis/black-box-datascience.tex` may mention product samples and broad
+   regular-product sweeps as hostile-search context. It should not own the
+   pentagon formula theorem.
+3. `thesis/published-code-data.tex` should point to durable reproduction
+   artifacts such as the proof script and stdout.
+4. `thesis/appendix-sagemath-computations.tex` may contain code excerpts if
+   the main text needs an appendix.
+
+## Knowledge-Base Notes
+
+1. **Best current entry point:** this README for inventory, then
+   `thesis/rotated-regular-polygons-content.md` for writing.
+2. **Most stale current file:** `formal/pentagon-rotation-capacity.tex`.
+   Its header marks it stale, but the body still contains historical labels,
+   old `experiments/sys-landscape/...` paths, and deleted
+   `cas_witnesses.py` references. It is retained only because the thesis
+   companion still points to specific calculations in it.
+3. **Avoid hidden source truth:** if a claim is about code behavior, check the
+   producer script or exact proof script. If a claim is about final thesis
+   wording, check `thesis/rotated-regular-polygons.tex`; use
+   `thesis/rotated-regular-polygons-content.md` for drafting guidance.
+4. **Generated artifacts:** do not patch-edit JSONL, HTML, or PNG outputs.
+   Regenerate them with the commands below when source behavior changes.
 
 ## Commands
 

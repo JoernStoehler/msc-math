@@ -10,6 +10,19 @@ These artifacts are thesis-support and orientation outputs. They are not proof
 inputs. The exact proof lives in the sibling folder
 `../pentagon-rotation-formula-proof/`.
 
+Local filenames below are relative to this folder. Paths outside this folder
+are repo-root relative unless they begin with `../`.
+
+Read this file if you need figures, sampled motivation, or regeneration
+commands.
+
+Do not read this folder for theorem verification. For proof status, go to
+`../pentagon-rotation-formula-proof/README.md`.
+
+Do not open generated JSONL, PNG, or HTML files by default. Use the figure
+recommendations in `thesis/rotated-regular-polygons-content.md` first, then
+open only the specific artifact you need.
+
 ## Source Files
 
 ```text
@@ -40,7 +53,8 @@ minimum_orbit_projection_dataset.jsonl
 ```
 
 `theta-sweep.jsonl` is the sampled minima sweep. The viewer dataset is derived
-from it and committed next to the viewer.
+from it and committed next to the viewer. These are generated artifacts, not
+proof inputs.
 
 ## Figures And Viewer
 
@@ -54,6 +68,9 @@ signature_state_table_competitive.png
 signature_legend.txt
 minimum_orbit_projection_viewer.html
 ```
+
+Use these as thesis illustrations only. The exact proof does not depend on
+them.
 
 ## Regeneration Commands
 

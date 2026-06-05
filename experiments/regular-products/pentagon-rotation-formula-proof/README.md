@@ -1,6 +1,6 @@
 # Pentagon Rotation Formula Proof
 
-This folder owns the exact executable proof and proof-companion notes for the
+This folder owns the exact executable proof and code-audit guide for the
 formula for
 
 ```text
@@ -10,6 +10,9 @@ sys(P_5 x_L R(theta)P_5).
 The sibling folder `../pentagon-rotation-empirics/` owns sampled data, figures,
 and the interactive viewer. Those empirical artifacts are useful for intuition
 and thesis exposition, but they are not proof inputs.
+
+Local filenames below are relative to this folder. Paths outside this folder
+are repo-root relative unless they begin with `../`.
 
 ## Source Files
 
@@ -31,14 +34,23 @@ rerunning the full proof command.
 If `executable_proof.sage.py` changes, rerun the full proof and replace this
 stdout file before using it as evidence.
 
-## Proof Notes
+## Read Path
+
+1. To check the proof result, read this README and
+   `executable_proof.full.stdout.txt`.
+2. To audit the code, read `executable_proof_audit_guide.md`, then open only
+   the Sage functions named there.
+3. To write thesis prose, use
+   `thesis/rotated-regular-polygons-content.md`.
+4. Do not open empirical JSONL/PNG/HTML artifacts for proof verification.
+
+## Audit Notes
 
 ```text
-EXECUTABLE_PROOF_PLAN.md
-EXECUTABLE_PROOF_COMPANION.md
+executable_proof_audit_guide.md
 ```
 
-Development and proof-companion notes. These are not thesis prose.
+Code-audit guide. It is not source truth and not thesis prose.
 
 ## Proof Surface Routing
 
@@ -48,6 +60,7 @@ Use these files for different questions:
 | --- | --- |
 | What is the executable proof? | `executable_proof.sage.py` |
 | What did the full proof run print? | `executable_proof.full.stdout.txt` |
+| How should I audit the Sage source? | `executable_proof_audit_guide.md` |
 | How should the thesis explain the proof architecture? | `thesis/rotated-regular-polygons-content.md` |
 | Where is older formal source material? | `formal/pentagon-rotation-capacity.tex`, treated as stale source material |
 | Where are empirical figures and viewer artifacts? | `../pentagon-rotation-empirics/` |
@@ -71,7 +84,7 @@ sage -python experiments/regular-products/pentagon-rotation-formula-proof/execut
 
 ## Full-Run Result
 
-The current raw stdout artifact records:
+The current raw stdout artifact records the cached excerpt:
 
 ```text
 open_domain_raw_sigma_count = 3340
