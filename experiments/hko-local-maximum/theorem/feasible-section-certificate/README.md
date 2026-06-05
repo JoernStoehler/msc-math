@@ -44,8 +44,6 @@ implication, not the Rust search method.
 | `feasible-section-witness.json` | Exact witness values consumed by the verifier. |
 | `verify_feasible_section_witness.sage.py` | Exception-based proof-facing verifier. |
 | `verification-summary.json` | Verifier result summary. |
-| `sanity_check_formulas.sage.py` | Numerical finite-difference smoke checks for formula bug detection. Not proof evidence. |
-| `sanity-check-report.md` | Current tracked output of the formula sanity checks. Not proof evidence. |
 
 ## Current Pipeline
 
@@ -79,47 +77,6 @@ Verify the exact witness:
 ```bash
 sage -python experiments/hko-local-maximum/theorem/feasible-section-certificate/verify_feasible_section_witness.sage.py
 ```
-
-### Ancillary Formula Sanity Checks
-
-These checks are not part of the theorem certificate. They are cheap
-finite-difference smoke checks for formula, sign, coordinate-order, and
-normalization mistakes.
-
-Run the default all-row formula sanity check:
-
-```bash
-sage -python experiments/hko-local-maximum/theorem/feasible-section-certificate/sanity_check_formulas.sage.py
-```
-
-For a shorter smoke pass, run:
-
-```bash
-sage -python experiments/hko-local-maximum/theorem/feasible-section-certificate/sanity_check_formulas.sage.py --rows 3 --directions 1 --eps-min-power 3 --eps-max-power 6
-```
-
-The current tracked output is `sanity-check-report.md`.
-
-This script prints deterministic markdown tables. It compares exact derivative
-rows against central finite differences for selected witness rows. Full
-40-dimensional directions check beta and action derivatives. Lagrangian-product
-directions check beta, action, sys, and volume derivatives. The checked formulas
-are:
-
-- feasible-section beta derivative;
-- feasible-section action derivative;
-- systolic upper-branch derivative, including the volume normalization;
-- volume derivative along Lagrangian-product-preserving directions, using the
-  elementary product of planar areas as the finite-difference volume oracle;
-- direct numerical annihilation of the symmetry tangent columns by the selected
-  `D sys` rows.
-
-The sanity script is deliberately not part of the proof. It is meant to catch
-formula, sign, coordinate-order, and normalization mistakes before thesis
-writing. It does not check the full 40-dimensional volume derivative by
-independent polytope-volume finite differences; Sage's inexact polyhedron
-volume backend was too fragile near the degenerate product point for a cheap
-smoke packet.
 
 Current verifier summary:
 

@@ -302,25 +302,20 @@ Source pointers:
 - `formal/hko-feasible-section-upper-branches.tex`,
   `rem:hko-feasible-section-derivative-data`.
 
-### 7. Empirical and sanity-check context
+### 7. Empirical context
 
 What the thesis may include after the theorem proof:
 - first-order numerical bookkeeping;
 - second-order support;
-- perturbation/neighborhood checks in `M_10`, `M_11`, and Lagrangian-product
-  neighborhoods, if refreshed at writing time;
-- the formula finite-difference sanity checks only as development assurance,
-  if included at all.
+- perturbation/neighborhood checks in `M_10`, `M_11`, and
+  Lagrangian-product neighborhoods, if refreshed at writing time.
 
 What the thesis must not claim:
-- finite-difference sanity checks do not prove the theorem;
 - empirical neighborhood checks do not prove broad local maximality;
 - `M_11` and ascent evidence are context unless a separate theorem uses them.
 
 Source pointers:
 - `experiments/hko-local-maximum/README.md`, "Result Strands";
-- `experiments/hko-local-maximum/theorem/feasible-section-certificate/README.md`,
-  "Ancillary Formula Sanity Checks";
 - `research/hko-local-maximum.md`, "Supporting Evidence";
 - `research/sys-landscape-toolbox-audit.md`, HKO-local perturbation row.
 
@@ -331,6 +326,16 @@ Status:
 - the auxiliary assets below are not yet created;
 - the next work should update this same companion or `thesis/hko-local-maximum.tex`,
   not create another planning surface.
+
+Asset decision status:
+- current recommendation: first draft the core thesis content below, then
+  create only the verification-interface table and maybe the compact facts
+  display;
+- do not create code snippets, raw witness excerpts, or figures before the
+  thesis prose shows a concrete need for them;
+- the finite-difference formula sanity-check script/report previously in the
+  feasible-section folder was deleted from the active worktree because it was
+  not thesis evidence and kept causing category confusion.
 
 Core thesis content, not auxiliary assets:
 
@@ -418,7 +423,7 @@ Rejected or non-assets for thesis purposes:
 - raw 26-row table;
 - full lambda list;
 - full printed witness excerpts;
-- finite-difference sanity-check report;
+- finite-difference formula sanity-check report;
 - standalone proof-dependency diagram before the proof prose exists;
 - appendix code-audit map before final prose chooses snippets.
 
@@ -435,7 +440,6 @@ Source pointers:
 Do not write:
 - "The branch list is complete."
 - "Rust proves the certificate."
-- "The finite-difference sanity script verifies the theorem."
 - "The theorem proves broad HKO local maximality outside the ten-facet model."
 - "The singular rows are nearby optimizing branches."
 - "The verifier independently derives all formulas."
