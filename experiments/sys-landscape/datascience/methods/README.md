@@ -37,6 +37,25 @@ make these visible:
 Reports are current evidence only if they were generated from the current
 retained dataset. Otherwise they must say they are status markers.
 
+## Method Packet Workflow
+
+Use separated roles for current method packets:
+
+- Orchestrator: prepares the integration branch, chooses the next method row or
+  method surface, and records the short `report.md` header when useful.
+- Executor: runs the fresh method experiment in a method worktree branched from
+  the integration branch. The executor owns the method folder, designs the
+  analysis, writes the final report, and deletes or ignores stale source
+  material unless extraction is explicitly justified.
+- Reviewer: independently checks the packet after execution. The reviewer has
+  full repo access, but should not inherit the executor's context window. The
+  review focuses on leakage, interpretation, reproducibility, terminal state,
+  and whether the packet is useful for the method table.
+
+Prep and queue edits may be made directly on the integration branch. Merge a
+method packet into the integration branch only after review and orchestrator
+acceptance.
+
 ## Result Types
 
 Use one primary terminal state per method row:
@@ -74,15 +93,17 @@ code overrule this table.
 | `table-column-regression` | Table-column regression. Do retained table-column groups trained on random rows predict endpoint rows? | No current retained-dataset result. Old broad-folder artifacts were deleted. | Not evidence until a clean current run exists or the row is abandoned. | No current command; write a row-specific script only if this row remains required. | `table-column-regression/report.md` | Guard: grouped random-to-endpoint prediction. Thesis use: none before rerun or abandonment. |
 | `regime-classification` | Endpoint-vs-random classification. Can standard classifiers separate endpoint rows from random rows, and is the separator not just provenance? | No current retained-dataset result. Old broad-folder artifacts were deleted. | Not evidence until a clean current run exists or the row is abandoned. | No current command; write a row-specific script only if this row remains required. | `regime-classification/report.md` | Guard: separate metadata/provenance from geometric table columns. Thesis use: caveat/diagnostic only before any candidate-proposer. |
 | `endpoint-residualized-regression` | Endpoint residualized regression. Do endpoint table-column groups add endpoint-only association beyond metadata? | No current retained-dataset result. Old pre-LICCA disposition was deleted. | Not evidence until a clean current run exists or the row is abandoned. | No current command; write a row-specific script only if this row remains required. | `endpoint-residualized-regression/report.md` | Guard: grouped endpoint CV after metadata-first residualization. Thesis use: none before rerun or abandonment. |
-| `pca-cluster-anomaly` / PCA row | PCA projection. Does a low-dimensional projection expose a search rule for high-`sys` candidates? | Script retained and LICCA path guards updated; report is a status marker only. | Not evidence until rerun on the `8445`-row retained dataset. | `pca-cluster-anomaly/analyze.py` | `pca-cluster-anomaly/report.md` | Guard: candidate rule must be specified beyond inspecting correlation with `sys`. Thesis use: pending rerun or abandonment. |
+| `pca-projection` | PCA projection. Does a low-dimensional linear projection expose a reproducible rule for proposing high-`sys` candidates? | Planned fresh experiment. The old bundled PCA/clustering/anomaly packet is stale source material only. | Not evidence until a fresh current retained-dataset packet replaces `pca-projection/report.md`. | No current command; the worker should design a fresh PCA experiment instead of rerunning the stale bundled script by default. | `pca-projection/report.md` | Guard: a candidate-proposer must be specified before evaluating `sys` and must not use endpoint labels, dataset identity, optimizer provenance, or post-hoc `sys` inspection. Thesis use: pending fresh packet or abandonment. |
 | `pca-cluster-anomaly` / clustering row | Clustering or manifold grouping. Does unsupervised grouping define a candidate-proposer? | Same bundled evidence packet as PCA; no current retained-dataset result. | Not evidence until rerun on the `8445`-row retained dataset. | `pca-cluster-anomaly/analyze.py` | `pca-cluster-anomaly/report.md` | Guard: cluster-to-search rule, not rediscovery of producer families. Thesis use: pending rerun or abandonment. |
 | `pca-cluster-anomaly` / anomaly row | Anomaly scan. Do outliers in retained table columns point to new high-`sys` candidates? | Same bundled evidence packet as PCA; no current retained-dataset result. | Not evidence until rerun on the `8445`-row retained dataset. | `pca-cluster-anomaly/analyze.py` | `pca-cluster-anomaly/report.md` | Guard: anomaly rule must propose candidates before claiming search value. Thesis use: pending rerun or abandonment. |
 | `supervised-alternatives` | Boosting and nearest-neighbor supervised alternatives. Do cheap standard alternatives change the regression/classification verdicts? | Script retained and LICCA path guards updated; report is a status marker only. | Not evidence until rerun on the `8445`-row retained dataset. | `supervised-alternatives/analyze.py` | `supervised-alternatives/report.md` | Guard: same grouped-CV and random-to-endpoint framing as the baseline supervised rows. Thesis use: pending rerun or abandonment. |
 | `exact-f64-spot-check` | Exact-vs-f64 spot check. Do stored f64 geometry columns agree with exact rational source coordinates on sampled rows? | Script retained and dataset guards updated; report is a status marker only. | Not evidence until rerun on the `8445`-row retained dataset. | `exact-f64-spot-check/analyze.py` | `exact-f64-spot-check/report.md` | Guard: exact rational recomputation on sampled rows. Thesis use: supporting/caveat only. |
 
-`pca-cluster-anomaly/` is intentionally a bundled evidence packet for three
-closely coupled unsupervised rows. If one row becomes thesis-relevant or
-positive, split it into its own folder before further work.
+`pca-cluster-anomaly/` is stale source material. It is not current evidence and
+should not be rerun by default. It mixed PCA, clustering, anomaly scanning,
+feature policy, and report prose in one old packet. Extract from it only if a
+fresh worker records a concrete reason. Delete it once current replacement
+packets cover the useful rows or explicitly abandon them.
 
 Supporting script:
 
