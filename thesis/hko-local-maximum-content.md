@@ -147,6 +147,16 @@ Current status: this is the working checklist for
 `thesis/hko-local-maximum.tex`. It should be refreshed if the theorem wording,
 row certificate, or Kai review outcome changes.
 
+Classification rule:
+- core thesis content is prose or theorem/proof text that the HKO section must
+  contain;
+- an auxiliary asset is a table, display, figure, code excerpt, or data excerpt
+  that supports core thesis content;
+- do not create an auxiliary asset merely because a source artifact exists in
+  `experiments/`;
+- an auxiliary asset is worth creating only if it solves a specific reader
+  problem better than prose alone.
+
 ### 1. The theorem setting
 
 What the thesis must explain:
@@ -314,27 +324,111 @@ Source pointers:
 - `research/hko-local-maximum.md`, "Supporting Evidence";
 - `research/sys-landscape-toolbox-audit.md`, HKO-local perturbation row.
 
-### 8. Tables, examples, and reader-facing artifacts
+### 8. Core content and auxiliary asset decisions
 
-What the thesis may need besides prose:
-- a small table stating the certificate summary: row count `26`, row rank
-  `25`, symmetry rank `15`, positive lambda certificate, and exact zero row
-  sum;
-- a short table separating trusted Sage checks from generator-only Rust
-  choices;
-- one geometric example explaining how a nonsingular active row can coexist
-  with the HKO minimizing family;
-- selected verifier code snippets for field construction, row checks, and
-  convex certificate checks, if they improve readability;
-- selected printed witness snippets only if they make the finite certificate
-  easier to audit.
+Status:
+- the core content below is not yet written in thesis-ready form;
+- the auxiliary assets below are not yet created;
+- the next work should update this same companion or `thesis/hko-local-maximum.tex`,
+  not create another planning surface.
+
+Core thesis content, not auxiliary assets:
+
+1. Finite certificate proposition.
+   Purpose: state the exact finite predicate verified by Sage before discussing
+   code order. This should include the exact field, HKO geometry/capacity
+   normalization, 26 feasible-section rows, equality at HKO, symmetry
+   annihilation, row rank `25`, and the positive convex relation.
+   Source pointers:
+   `experiments/hko-local-maximum/theorem/feasible-section-certificate/verification-summary.json`;
+   `formal/hko-feasible-section-upper-branches.tex`,
+   `cor:hko-feasible-branch-quotient-template`.
+
+2. Proof-implication text.
+   Purpose: explain why the verified predicate implies local maximality:
+   feasible upper branches give upper bounds for `sys`, the positive convex
+   relation gives a uniform negative first-order margin on the quotient slice,
+   and the transverse-slice lemma turns the slice statement into the quotient
+   statement.
+   Source pointers:
+   `formal/hko-feasible-section-upper-branches.tex`,
+   `lem:hko-feasible-section-upper-branch`,
+   `lem:hko-positive-convex-certificate-margin`,
+   `prop:hko-feasible-branch-slice-local-max`,
+   `lem:hko-ambient-rows-descend-to-slice`,
+   `lem:hko-transverse-symmetry-slice`.
+
+3. Trust-boundary text.
+   Purpose: say that Rust proposes finite candidate data, Sage verifies exact
+   equations/ranks/positivity in the chosen number field, and LaTeX proves the
+   implication. The theorem should not rely on Rust correctness or numerical
+   search correctness.
+   Source pointers:
+   `FACTSHEET.md` items 20--22;
+   `experiments/hko-local-maximum/theorem/feasible-section-certificate/README.md`,
+   "Trust Boundary".
+
+4. Singular-row explanation.
+   Purpose: explain why the witness uses singular positive-beta seven-facet
+   rows and why this is legitimate. The proof differentiates explicit feasible
+   beta sections, not nearby optimizing KKT branches.
+   Source pointers:
+   `research/hko-local-maximum-proof-route-note.md`, "Singular-KKT
+   Obstruction" and "Endpoint Rows And The Minimizing Family";
+   `research/hko-local-maximum-proof-control-packet.md`, "Feasible-Section
+   Packet"; `formal/hko-feasible-section-upper-branches.tex`,
+   `lem:hko-feasible-section-upper-branch`.
+
+Recommended auxiliary assets:
+
+1. Verification-interface table.
+   Status: not done. Priority: high.
+   Shape: `Proof obligation | Sage check | Formal proof use`.
+   Purpose: make the bridge between the verifier and proof auditable. This is
+   better than a raw code listing because it is organized by mathematical
+   obligation rather than by source-file order.
+   Candidate rows: HKO field/geometry/capacity normalization; feasible beta
+   section data; derivative row formula; symmetry annihilation; row rank and
+   positive convex relation; quotient-local conclusion.
+
+2. Compact certificate facts display.
+   Status: not done. Priority: medium-high, only next to the finite
+   certificate proposition.
+   Content: ambient dimension `40`, symmetry rank `15`, selected rows `26`,
+   row rank `25`, positive lambdas, lambda sum `1`, lambda-weighted row sum
+   `0`.
+   Purpose: make the finite linear-algebra endpoint visible at a glance.
+
+Deferred auxiliary assets:
+
+1. Trust-boundary mini table.
+   Defer because prose may be enough. Use only if the trust-boundary paragraph
+   becomes too dense.
+
+2. Selected Sage code snippets.
+   Defer until the thesis prose exists. Candidate snippets are field/root
+   pinning, row verification, and convex-certificate verification. Use snippets
+   only to support a stated mathematical predicate, not to replace it.
+
+3. Nonsingular-endpoint geometric figure.
+   Defer. The geometric point should first be handled as prose in the
+   singular-row explanation. Add a figure only if prose is not enough.
+
+Rejected or non-assets for thesis purposes:
+- raw 26-row table;
+- full lambda list;
+- full printed witness excerpts;
+- finite-difference sanity-check report;
+- standalone proof-dependency diagram before the proof prose exists;
+- appendix code-audit map before final prose chooses snippets.
 
 Source pointers:
-- `research/hko-local-maximum-proof-route-note.md`, "Endpoint Rows And The
-  Minimizing Family";
 - `experiments/hko-local-maximum/theorem/feasible-section-certificate/README.md`,
-  "Files" and "Current verifier summary";
-- `experiments/hko-local-maximum/theorem/feasible-section-certificate/verification-summary.json`.
+  "Trust Boundary", "Files", and "Current verifier summary";
+- `experiments/hko-local-maximum/theorem/feasible-section-certificate/verification-summary.json`;
+- `experiments/hko-local-maximum/theorem/feasible-section-certificate/verify_feasible_section_witness.sage.py`;
+- `research/hko-local-maximum-proof-route-note.md`, "Endpoint Rows And The
+  Minimizing Family".
 
 ### 9. Forbidden thesis claims
 
