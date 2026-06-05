@@ -477,13 +477,26 @@ Recommended auxiliary assets:
    certificate proof starts.
 
    TODO(Jörn): draw the standard reminder picture of the two regular pentagons
-   in the `q`- and `p`-planes. If adding certificate information, avoid
-   overlaying all 26 trajectories. Better options are one or two representative
-   rows, or a small word/barcode-style inset. For a representative row, mark
-   positions in `I` as solved beta coordinates and positions in the complement
-   `J` as fixed beta coordinates. Do not describe `I` as geometrically
-   distinguished trajectory segments unless that interpretation is separately
-   verified.
+   in the `q`- and `p`-planes.
+
+   TODO(Jörn): possible certificate-enhanced version: pick one selected
+   `(sigma,I)` witness first, not all 26. Compute/read `beta0`, choose any
+   matching trajectory representative, and draw its projections in
+   `R^2_q` and `R^2_p` side by side. The projected paths should show the
+   usual alternating behavior: in one projection the point is constant while
+   the other projection moves along the corresponding segment. Each segment
+   has an associated facet `k=sigma_j` and velocity
+   `R_k=2J a_k`, where `J` in this formula denotes the standard symplectic
+   matrix.
+
+   TODO(Jörn): highlight the smaller fixed-beta set. For every word index
+   `j in J={1,...,m}\setminus I`, highlight the projected segment whose
+   velocity is `R_{sigma_j}`. These are the beta entries held fixed in the
+   chosen feasible-section chart. This should be described as the fixed-beta
+   part of the chart, not as the active/inactive part of the orbit. TODO verify
+   before thesis prose: whether it is accurate and useful to say that the
+   fraction of time spent on those highlighted segments stays fixed under the
+   perturbation.
 
 Deferred auxiliary assets:
 
