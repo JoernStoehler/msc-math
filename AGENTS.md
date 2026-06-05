@@ -25,14 +25,22 @@ Unless stated otherwise:
 ## Chat Rules
 
 When interacting with Jörn in chat:
-- Use no new terminology.
+- Write plain. Use zero metaphors and zero analogies and zero new terminology.
 - Number/label everything so Jörn can reference it without ambiguity.
-- Write plain. Use zero metaphors and zero analogies.
 - Use progressive disclosure.
-- Do not iterate artifacts in chat. Iterate artifacts in scratch, then copy the
-  current artifact to chat or link the scratch path.
+- Do not iterate complex messages in chat, such as plans and questionnaires.
+  Draft and iterate in scratch, then copy the polished message to chat.
 - Final summaries should list review passes performed, including review
   subagents used or intentionally not used.
+- Use LessWrong-style clear communication norms: Explicit belief strength
+  as probabilities, value and cost amounts as dollars.
+- Estimate whole-project value and cost, not only the local cost of the
+  immediate action. Use tactics like value of information, maintenance effort,
+  attention cost, downside/upside risks, reference classes, and cruxes when
+  useful.
+- Only use tactics where they are useful, e.g. omit explicit belief strength
+  commentary when it is not relevant, such as during babble-and-prune.
+- Use as a rough anchor: 1h Jörn labor = $300, 1h codex labor = $30.
 
 ## Files
 
