@@ -73,8 +73,10 @@ It combines the former topic note set while keeping experiment artifacts under
 - The formal implication from the verifier propositions to the quotient-local
   maximum theorem has been agent-line-checked. Jörn quick-reviewed the rebuilt
   PDF on 2026-06-05 and spotted no gaps; he judged any remaining mistakes
-  likely closeable before thesis release. The remaining theorem-strength gate is
-  cheap formal clarity/checkability repair and final theorem wording/Kai review.
+  likely closeable before thesis release. The 2026-06-05 clarity repairs made
+  the local chart hypotheses, the volume-row arithmetic, and the local symmetry
+  group/dimension explicit. The remaining theorem-strength gate is final
+  theorem wording/Kai review.
 - Historical neighborhood evidence is treated as support, with priority on finishing
   exact active-set closure without altering artifact contracts.
 
@@ -114,10 +116,9 @@ It combines the former topic note set while keeping experiment artifacts under
 
 ## Next Steps
 
-- Primary: patch the cheap clarity/checkability issues from the 2026-06-05
-  subagent pass in `formal/hko-feasible-section-upper-branches.tex`.
-- Then update the thesis-writing companion so Jörn can write the HKO section
-  from fixed theorem/proof content instead of re-deciding the proof structure.
+- Primary: update the thesis-writing companion so Jörn can write the HKO
+  section from fixed theorem/proof content instead of re-deciding the proof
+  structure.
 - Fallback: if review finds a real gap in the feasible-section implication,
   return to this note and choose between repairing the implication and
   weakening the theorem wording.

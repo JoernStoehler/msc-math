@@ -86,9 +86,10 @@ This is Packet 1 in the current HKO ordering.
 This file should not try to be Packet 4. Packet 2 and Packet 3 now have an
 implemented certificate, and the formal implication has been
 agent-line-checked. Jörn quick-reviewed the rebuilt PDF on 2026-06-05 and
-spotted no gaps. The thesis section still needs the cheap formal
-clarity/checkability repairs, final theorem wording/Kai review, and the final
-thesis companion refresh.
+spotted no gaps. The 2026-06-05 clarity repairs made the local chart
+hypotheses, the volume-row arithmetic, and the local symmetry group/dimension
+explicit. The thesis section still needs final theorem wording/Kai review and
+the final thesis companion refresh.
 
 ## Theorem Target For Review
 
@@ -443,9 +444,8 @@ release.
 The agent line-check on 2026-06-04 checked the formal implication against the
 exact verifier propositions and added the explicit quotient-slice step via an
 inverse-function-theorem lemma. The route is no longer waiting on first Jörn
-mathematical review; it still needs thesis-prose polish, the cheap
-clarity/checkability repairs from the 2026-06-05 subagent pass, and final
-theorem wording/Kai review.
+mathematical review; it still needs thesis-prose polish and final theorem
+wording/Kai review.
 
 Review these labels first:
 
@@ -539,7 +539,7 @@ Implemented shape:
 
 ## Fallback Branches
 
-If the formal implication is accepted:
+If final theorem wording/Kai review accepts the theorem route:
 
 1. State theorem-strength local maximality in the ten-facet quotient model.
 2. Use Sage as the trusted verifier.
@@ -587,7 +587,6 @@ list as the checklist to reopen first if later review finds a real issue.
 
 ## Next Action
 
-Patch the cheap clarity/checkability issues from the 2026-06-05 subagent pass,
-then refresh `thesis/hko-local-maximum-content.md` into the final writing
-companion and write `thesis/hko-local-maximum.tex`. If later review finds a
-real gap, repair the implication or weaken the HKO thesis wording.
+Refresh `thesis/hko-local-maximum-content.md` into the final writing companion
+and write `thesis/hko-local-maximum.tex`. If later review finds a real gap,
+repair the implication or weaken the HKO thesis wording.

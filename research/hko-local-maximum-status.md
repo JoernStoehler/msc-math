@@ -34,7 +34,9 @@ Use it before reading deeper notes or experiment folders.
   the formal implication has been agent-line-checked against the verifier
   propositions. Jörn quick-reviewed the rebuilt PDF on 2026-06-05 and spotted
   no gaps; he judged any remaining mistakes likely closeable before thesis
-  release. The remaining theorem-strength gate is final wording/Kai review.
+  release. The 2026-06-05 clarity repairs made the local chart hypotheses, the
+  volume-row arithmetic, and the local symmetry group/dimension explicit. The
+  remaining theorem-strength gate is final wording/Kai review.
 
 ## Current Proof Route
 
@@ -79,9 +81,6 @@ Use it before reading deeper notes or experiment folders.
 
 ## Still Open
 
-- address cheap clarity/checkability issues from the 2026-06-05 subagent pass:
-  explicit local chart hypotheses, expanded volume-row arithmetic, and explicit
-  local symmetry group/dimension in the final corollary
 - decide final thesis theorem wording with Kai review
 - reconcile stale `44/10` language with the current `150`-orbit bookkeeping
   surface
