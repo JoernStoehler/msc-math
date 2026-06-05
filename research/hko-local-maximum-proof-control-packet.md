@@ -42,8 +42,10 @@ rows change, or when the HKO theorem target is weakened.
 exact row rank `25`, symmetry rank `15`, positive lambdas, and exact
 lambda-weighted row sum `0`. The formal implication in
 `formal/hko-feasible-section-upper-branches.tex` has been agent-line-checked
-against the verifier propositions. The remaining route risk is Jörn/Kai review
-of that mathematical implication and theorem wording.
+against the verifier propositions. Jörn quick-reviewed the rebuilt PDF on
+2026-06-05, spotted no gaps, and judged any remaining mistakes likely closeable
+before thesis release. The remaining route risk is final theorem wording/Kai
+review.
 
 ## Review Decisions So Far
 
@@ -83,8 +85,10 @@ This is Packet 1 in the current HKO ordering.
 
 This file should not try to be Packet 4. Packet 2 and Packet 3 now have an
 implemented certificate, and the formal implication has been
-agent-line-checked. The thesis section still needs Jörn/Kai review and the
-final thesis companion refresh.
+agent-line-checked. Jörn quick-reviewed the rebuilt PDF on 2026-06-05 and
+spotted no gaps. The thesis section still needs the cheap formal
+clarity/checkability repairs, final theorem wording/Kai review, and the final
+thesis companion refresh.
 
 ## Theorem Target For Review
 
@@ -431,12 +435,17 @@ The mathematical route is now written for PDF review in
 
 Jörn reviewed the route on 2026-06-04 and accepted it as enough to proceed:
 not a 1:1 writing review, but enough confidence that any remaining proof-text
-gaps can be closed later if found.
+gaps can be closed later if found. After the rebuilt PDF was available, Jörn
+quick-reviewed the HKO feasible-section section again on 2026-06-05, spotted
+no gaps, and judged any remaining mistakes likely closeable before thesis
+release.
 
 The agent line-check on 2026-06-04 checked the formal implication against the
 exact verifier propositions and added the explicit quotient-slice step via an
-inverse-function-theorem lemma. The file remains `unverified` until Jörn
-reviews the mathematical text.
+inverse-function-theorem lemma. The route is no longer waiting on first Jörn
+mathematical review; it still needs thesis-prose polish, the cheap
+clarity/checkability repairs from the 2026-06-05 subagent pass, and final
+theorem wording/Kai review.
 
 Review these labels first:
 
@@ -558,9 +567,10 @@ If a future certificate produces a different exact row set or theorem shape:
 2. Refresh `research/hko-local-maximum-status.md`.
 3. Refresh `thesis/hko-local-maximum-content.md`.
 
-## Jörn Review Questions
+## Reviewed Questions
 
-The next Jörn review should focus on these points, in order.
+Jörn quick-reviewed these points on 2026-06-05 and spotted no gaps. Keep this
+list as the checklist to reopen first if later review finds a real issue.
 
 1. Is the feasible-section lemma above mathematically correct and strong
    enough for HK2017 theorem use?
@@ -577,8 +587,7 @@ The next Jörn review should focus on these points, in order.
 
 ## Next Action
 
-Jörn reviews the agent-line-checked formal implication using the focused review
-brief in `thesis/hko-local-maximum-content.md`. If accepted, refresh
-`thesis/hko-local-maximum-content.md` into the final writing companion and
-write `thesis/hko-local-maximum.tex`. If rejected, repair the implication or
-weaken the HKO thesis wording.
+Patch the cheap clarity/checkability issues from the 2026-06-05 subagent pass,
+then refresh `thesis/hko-local-maximum-content.md` into the final writing
+companion and write `thesis/hko-local-maximum.tex`. If later review finds a
+real gap, repair the implication or weaken the HKO thesis wording.

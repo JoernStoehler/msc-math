@@ -27,8 +27,10 @@ The HKO thesis-facing result is a packet, not only one theorem statement.
 
 2. Main theorem target:
    HKO is locally maximal in the ten-facet model modulo translations, scaling,
-   and linear symplectic maps, conditional on Jörn/Kai review of the
-   agent-line-checked feasible-section implication from the exact certificate.
+   and linear symplectic maps, conditional on cheap clarity/checkability
+   repairs and final theorem wording/Kai review. Jörn quick-reviewed the
+   agent-line-checked feasible-section implication from the exact certificate
+   on 2026-06-05 and spotted no gaps.
    Source pointers: `research/hko-local-maximum-status.md`;
    `research/hko-local-maximum.md`;
    `tasks/references/central-claim-control-packet-2026-06-01.md`;
@@ -94,12 +96,13 @@ The HKO non-writing work is currently split into four packets.
 
 4. Thesis-writing companion finalization:
    this file now records the intended writing structure and review gate. After
-   Jörn/Kai theorem review, update the status markers and write
+   the cheap clarity/checkability repairs and Kai theorem review, update the
+   status markers and write
    `thesis/hko-local-maximum.tex` from this file.
 
 Do not treat this file as complete enough for final theorem-strength HKO
-writing until Jörn/Kai review accepts the agent-line-checked formal implication
-and theorem wording.
+writing until the cheap clarity/checkability repairs are made and Kai review
+accepts the theorem wording.
 
 ## Review Gate
 
@@ -121,10 +124,12 @@ Review labels:
 5. `cor:hko-feasible-branch-quotient-template`.
 
 Outcome needed:
-- accept theorem route as thesis-ready modulo prose;
-- or name the first proof label that needs repair;
-- and decide whether the theorem wording may say "locally maximal in the
-  ten-facet model modulo translations, scaling, and linear symplectic maps".
+- Jörn quick-reviewed the rebuilt PDF on 2026-06-05 and spotted no gaps;
+- Jörn judged remaining mistakes, if any, likely closeable before thesis
+  release;
+- remaining: patch cheap clarity/checkability issues, then decide with Kai
+  whether the theorem wording may say "locally maximal in the ten-facet model
+  modulo translations, scaling, and linear symplectic maps".
 
 Fallback: if review finds a real gap, repair the implication or weaken the HKO
 section to exact-certificate status plus the named blocker.
@@ -163,8 +168,10 @@ Source pointers:
 - `tasks/current-state.md`, HKO local maximality row.
 
 Missing:
-- Jörn/Kai acceptance of the agent-line-checked formal implication and
-  theorem-strength wording.
+- cheap clarity/checkability repairs from the 2026-06-05 subagent pass:
+  explicit local chart hypotheses, expanded volume-row arithmetic, and explicit
+  local symmetry group/dimension in the final corollary;
+- Kai acceptance of theorem-strength wording.
 
 ### 3. Exact Certificate
 
@@ -278,8 +285,8 @@ Missing:
 
 ## Non-Writing Blockers
 
-1. Jörn review of the agent-line-checked formal implication from the Sage
-   verifier propositions to the local-maximum theorem.
+1. Patch the cheap clarity/checkability issues from the 2026-06-05 subagent
+   pass.
    Source pointers: `research/hko-local-maximum-status.md`;
    `research/hko-local-maximum.md`;
    `formal/hko-feasible-section-upper-branches.tex`;
@@ -292,8 +299,8 @@ Missing:
    Source pointers: `research/hko-local-maximum-status.md`;
    `research/hko-local-maximum-proof-control-packet.md`.
 
-3. Refresh this thesis companion into a final writing plan after Jörn/Kai
-   theorem review.
+3. Refresh this thesis companion into a final writing plan after the cheap
+   formal repairs and Kai theorem review.
    Source pointers: this file; `formal/hko-feasible-section-upper-branches.tex`;
    `experiments/hko-local-maximum/theorem/feasible-section-certificate/README.md`.
 
@@ -301,7 +308,7 @@ Missing:
    Source pointers: `research/hko-local-maximum.md`;
    `experiments/hko-local-maximum/README.md`.
 
-5. Get required Jörn/Kai review for theorem-strength wording.
+5. Get required Kai review for theorem-strength wording.
    Source pointers: `tasks/definition-of-success.md`;
    `FACTSHEET.md` items 20--22.
 
@@ -328,7 +335,8 @@ If exact work changes theorem wording:
 ## Review Gates
 
 - Jörn math correctness review:
-  theorem target, certificate implication, and conjectural/broader wording.
+  quick-reviewed on 2026-06-05 with no spotted gaps; remaining mistakes, if
+  any, judged likely closeable before thesis release.
 - Kai theorem framing review:
   theorem-strength HKO claim and Sage-readable proof-by-computation framing.
 - Caveated/status wording only:

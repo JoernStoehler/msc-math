@@ -53,9 +53,11 @@ source files.
   Source truth: `research/hko-local-maximum*.md`, exact-witness artifacts,
   related formal/thesis files.
   Current state: the exact feasible-section theorem certificate is merged and
-  verifies in Sage; the formal implication has been agent-line-checked. The
-  remaining theorem-strength gate is Jörn/Kai review of the mathematical
-  implication and final theorem wording.
+  verifies in Sage; the formal implication has been agent-line-checked. Jörn
+  quick-reviewed the rebuilt PDF on 2026-06-05 and spotted no gaps; he judged
+  any remaining mistakes likely closeable before thesis release. The remaining
+  theorem-strength gate is cheap formal clarity/checkability repair and final
+  theorem wording/Kai review.
   High-risk facts:
   - Current exact field is quartic `Q(tan(pi/5))`, not `Q(sqrt(5))`.
   - Current theorem-facing certificate uses 26 feasible-section rows, exact
