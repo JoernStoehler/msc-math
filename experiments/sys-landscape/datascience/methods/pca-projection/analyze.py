@@ -157,32 +157,94 @@ def quantile_threshold(values: np.ndarray, q: float, side: str) -> float:
     return float(np.quantile(values, q, method=method))
 
 
-def summarize_region(name: str, mask: np.ndarray, sys_values: np.ndarray, global_top_mask: np.ndarray) -> dict:
+def log_comb(total: int, selected: int) -> float:
+    if selected < 0 or selected > total:
+        return float("-inf")
+    return math.lgamma(total + 1) - math.lgamma(selected + 1) - math.lgamma(total - selected + 1)
+
+
+def hypergeometric_tail(
+    population_count: int,
+    success_count: int,
+    draw_count: int,
+    observed_successes: int,
+) -> float:
+    """P(X >= observed_successes) for X ~ Hypergeom(population, successes, draws)."""
+    if observed_successes <= 0:
+        return 1.0
+    max_successes = min(success_count, draw_count)
+    denominator = log_comb(population_count, draw_count)
+    terms = [
+        math.exp(
+            log_comb(success_count, successes)
+            + log_comb(population_count - success_count, draw_count - successes)
+            - denominator
+        )
+        for successes in range(observed_successes, max_successes + 1)
+    ]
+    return float(math.fsum(terms))
+
+
+def summarize_region(
+    name: str,
+    mask: np.ndarray,
+    sys_values: np.ndarray,
+    global_top_mask: np.ndarray,
+) -> dict:
     region_sys = sys_values[mask]
+    population_count = int(sys_values.shape[0])
+    global_top_count = int(global_top_mask.sum())
+    row_count = int(mask.sum())
+    captured = int(np.logical_and(mask, global_top_mask).sum())
+    expected_captured = row_count * global_top_count / population_count
     return {
         "name": name,
-        "row_count": int(mask.sum()),
+        "row_count": row_count,
         "row_fraction": float(mask.mean()),
         "max_sys": float(region_sys.max()),
         "mean_sys": float(region_sys.mean()),
         "p90_sys": float(np.quantile(region_sys, 0.9)),
-        "global_top_1_percent_rows_captured": int(np.logical_and(mask, global_top_mask).sum()),
+        "global_top_1_percent_rows_captured": captured,
+        "expected_top_1_percent_rows_captured_random": float(expected_captured),
+        "top_1_percent_capture_enrichment_vs_random": float(captured / expected_captured)
+        if expected_captured > 0
+        else None,
+        "hypergeometric_p_value_ge_observed_top_1_percent_capture": hypergeometric_tail(
+            population_count,
+            global_top_count,
+            row_count,
+            captured,
+        ),
     }
 
 
 def candidate_region_audit(scores: np.ndarray, sys_values: np.ndarray) -> list[dict]:
-    pc1 = scores[:, 0]
-    pc2 = scores[:, 1]
-    radius = np.sqrt(pc1**2 + pc2**2)
     top_1_threshold = quantile_threshold(sys_values, 0.99, "high")
     global_top_mask = sys_values >= top_1_threshold
-    regions = [
-        ("pc1_high_top_5_percent", pc1 >= quantile_threshold(pc1, 0.95, "high")),
-        ("pc1_low_top_5_percent", pc1 <= quantile_threshold(pc1, 0.05, "low")),
-        ("pc2_high_top_5_percent", pc2 >= quantile_threshold(pc2, 0.95, "high")),
-        ("pc2_low_top_5_percent", pc2 <= quantile_threshold(pc2, 0.05, "low")),
-        ("pc_radius_high_top_5_percent", radius >= quantile_threshold(radius, 0.95, "high")),
-    ]
+    regions = []
+    for component_index in range(scores.shape[1]):
+        pc_scores = scores[:, component_index]
+        pc_name = f"pc{component_index + 1}"
+        regions.append(
+            (
+                f"{pc_name}_high_top_5_percent",
+                pc_scores >= quantile_threshold(pc_scores, 0.95, "high"),
+            )
+        )
+        regions.append(
+            (
+                f"{pc_name}_low_top_5_percent",
+                pc_scores <= quantile_threshold(pc_scores, 0.05, "low"),
+            )
+        )
+    for component_count in range(2, scores.shape[1] + 1):
+        radius = np.sqrt(np.sum(scores[:, :component_count] ** 2, axis=1))
+        regions.append(
+            (
+                f"pc1_to_pc{component_count}_radius_high_top_5_percent",
+                radius >= quantile_threshold(radius, 0.95, "high"),
+            )
+        )
     return [summarize_region(name, mask, sys_values, global_top_mask) for name, mask in regions]
 
 
@@ -253,6 +315,15 @@ def main() -> None:
             "global_sys_mean": float(sys_values.mean()),
             "global_sys_p90": float(np.quantile(sys_values, 0.9)),
             "global_sys_p99": float(np.quantile(sys_values, 0.99)),
+            "global_top_1_percent_threshold": quantile_threshold(sys_values, 0.99, "high"),
+            "global_top_1_percent_row_count": int(
+                (sys_values >= quantile_threshold(sys_values, 0.99, "high")).sum()
+            ),
+            "region_baseline": (
+                "Each audited region is a fixed pre-sys PCA-score rule. "
+                "Top-1% capture is calibrated against a random subset with the same row count "
+                "using the hypergeometric tail probability P(X >= observed)."
+            ),
             "candidate_regions": candidate_region_audit(scores, sys_values),
         },
         "runtime_seconds": time.perf_counter() - started,

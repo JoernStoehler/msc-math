@@ -6,10 +6,12 @@ description: >
   columns, endpoint labels, dataset identity, and optimizer provenance. Fixed
   PCA-score regions are then audited against sys only after fitting.
 result: >
-  Current retained-dataset run completed locally in 2.8 seconds. The audited
-  PCA regions show weak descriptive structure but do not supply a reproducible
-  candidate-proposer for new high-sys polytopes; terminal state: ran with no
-  candidate-proposer and no new validated row.
+  Current retained-dataset run completed locally in 2.921 seconds wall time.
+  PC2-high is statistically meaningful descriptive enrichment among already
+  evaluated retained rows, but the packet does not contain a current
+  candidate-generation interface. Terminal state: ran with no
+  candidate-proposer and no new validated row. Secondary labels: supporting
+  evidence only; future reopen trigger.
 ---
 
 # PCA Projection
@@ -42,8 +44,9 @@ time uv run --script experiments/sys-landscape/datascience/methods/pca-projectio
   --output experiments/sys-landscape/datascience/methods/pca-projection/pca-summary.json
 ```
 
-Observed wall runtime: `2.835s`. The full retained-dataset run is within the
-accepted local reproducibility bound.
+Observed wall runtime on 2026-06-05: `2.921s`. The full retained-dataset run is
+within the accepted local reproducibility bound. The JSON-internal analysis
+runtime was `2.556s`.
 
 Smoke command used during development:
 
@@ -53,7 +56,7 @@ time uv run --script experiments/sys-landscape/datascience/methods/pca-projectio
   --output /tmp/pca-projection-smoke.json
 ```
 
-Observed wall runtime: `0.261s`.
+Observed wall runtime on 2026-06-05: `0.330s`.
 
 ## Validity Guard
 
@@ -118,17 +121,36 @@ fractions and transition bidirectionality:
 `transition_bidirectional_given_facet_intersection_fraction`, and
 `ridge_zero_fraction`.
 
-The audited `sys` distribution has global mean `0.756982`, p90 `0.859590`, p99
-`0.912872`, and max `0.975077`. Fixed pre-`sys` PCA candidate regions, each
-selecting about `5.01%` of rows (`423` rows), gave:
+The audited `sys` distribution has global mean `0.756982`, p90 `0.859590`,
+p99 `0.912872`, top-1% threshold `0.913102`, top-1% row count `85`, and max
+`0.975077`.
 
-| Region | Max sys | Mean sys | p90 sys | Top-1% rows captured |
-| --- | ---: | ---: | ---: | ---: |
-| PC1 high | `0.875133` | `0.499180` | `0.778924` | `0` |
-| PC1 low | `0.944267` | `0.818344` | `0.882917` | `8` |
-| PC2 high | `0.960570` | `0.666710` | `0.879253` | `20` |
-| PC2 low | `0.896303` | `0.741667` | `0.835445` | `0` |
-| PC1/PC2 radius high | `0.875133` | `0.503388` | `0.778924` | `0` |
+The committed fixed-region audit now covers all six computed PCs and cumulative
+PCA-score radii from PC1-PC2 through PC1-PC6. Each region selects `423` rows,
+or `5.01%` of the retained dataset. A random region of this size is expected
+to capture `4.26` of the `85` top-1% rows. The hypergeometric p-value is
+`P(X >= observed)` under random selection of `423` rows from the retained
+dataset.
+
+| Region | Max sys | Mean sys | p90 sys | Top-1% captured | Enrichment | p-value |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| PC1 high | `0.875133` | `0.499180` | `0.778924` | `0` | `0.00x` | `1.00` |
+| PC1 low | `0.944267` | `0.818344` | `0.882917` | `8` | `1.88x` | `6.20e-02` |
+| PC2 high | `0.960570` | `0.666710` | `0.879253` | `20` | `4.70x` | `4.34e-09` |
+| PC2 low | `0.896303` | `0.741667` | `0.835445` | `0` | `0.00x` | `1.00` |
+| PC3 high | `0.943176` | `0.686071` | `0.853535` | `7` | `1.64x` | `1.33e-01` |
+| PC3 low | `0.935247` | `0.728157` | `0.876177` | `3` | `0.70x` | `8.06e-01` |
+| PC4 high | `0.916527` | `0.699551` | `0.861162` | `2` | `0.47x` | `9.31e-01` |
+| PC4 low | `0.927901` | `0.625916` | `0.812196` | `1` | `0.23x` | `9.88e-01` |
+| PC5 high | `0.949887` | `0.741730` | `0.870422` | `4` | `0.94x` | `6.22e-01` |
+| PC5 low | `0.909015` | `0.603484` | `0.813283` | `0` | `0.00x` | `1.00` |
+| PC6 high | `0.927901` | `0.669317` | `0.825179` | `2` | `0.47x` | `9.31e-01` |
+| PC6 low | `0.932218` | `0.660553` | `0.843824` | `1` | `0.23x` | `9.88e-01` |
+| PC1-PC2 radius high | `0.875133` | `0.503388` | `0.778924` | `0` | `0.00x` | `1.00` |
+| PC1-PC3 radius high | `0.941291` | `0.503524` | `0.821400` | `4` | `0.94x` | `6.22e-01` |
+| PC1-PC4 radius high | `0.935247` | `0.497761` | `0.793854` | `1` | `0.23x` | `9.88e-01` |
+| PC1-PC5 radius high | `0.935247` | `0.481965` | `0.785453` | `1` | `0.23x` | `9.88e-01` |
+| PC1-PC6 radius high | `0.935247` | `0.484354` | `0.782351` | `1` | `0.23x` | `9.88e-01` |
 
 The machine-readable run summary is
 `experiments/sys-landscape/datascience/methods/pca-projection/pca-summary.json`.
@@ -136,15 +158,28 @@ The machine-readable run summary is
 ## Inference
 
 PCA finds interpretable low-dimensional axes, mainly size/scale geometry and
-near-zero symplectic-area or transition features. These axes are descriptive
-but not enough for a candidate-proposer. The best fixed region by top-1%
-capture, PC2 high, captures only `20` of the retained top-1% `sys` rows and
-misses the global maximum. PC1 low has an elevated mean `sys`, but it captures
-only `8` top-1% rows and also misses the global maximum.
+near-zero symplectic-area or transition features.
 
-Selecting a narrower or different PCA-score rule because it looks better after
-this audit would be post-hoc `sys` inspection. This packet therefore does not
-claim a PCA-derived proposal rule.
+PC2-high is statistically meaningful descriptive enrichment among already
+evaluated retained rows. It captures `20/85` top-1% rows in a `423/8445` row
+region, compared with `4.26` expected by random selection. This is `4.70x`
+enrichment with hypergeometric p-value `4.34e-09`.
+
+This is not a current candidate-proposer under the method-table definition.
+The committed packet audits fixed PCA-score regions inside an already evaluated
+retained dataset. It does not provide an unevaluated candidate pool, a generator
+for new polytopes, or a pre-registered interface that scores unevaluated rows
+before their `sys` values are evaluated.
+
+PC2-high is therefore a candidate-proposer hypothesis and future follow-up
+trigger, not a current positive method-table row. A future positive packet
+would need to specify, before `sys` audit, how unevaluated polytopes or rows are
+generated, which allowed columns are computed for them, how the PCA transform
+or PC2-high rule is fixed, and how proposed rows are evaluated.
+
+The audit does not support a claim that PCA regions are uninformative. It does
+support the narrower claim that this current PCA projection packet found no
+validated `sys > 1` row and no current candidate-generation interface.
 
 ## Terminal State
 
@@ -154,21 +189,32 @@ Primary terminal state:
 ran with no candidate-proposer and no new validated row
 ```
 
-Secondary label:
+Secondary labels:
 
 ```text
 supporting evidence only
+future reopen trigger
 ```
 
 ## Thesis Use
 
-This row can support the closed method table as a negative PCA projection
-packet: a standard low-dimensional linear projection of allowed retained
-columns was run on the current retained dataset and did not yield a valid
-candidate-proposer or any validated new `sys > 1` row.
+This packet is directly usable as mixed current method-table evidence:
 
-It should not be phrased as an impossibility, density statement, or exhaustive
-search claim.
+- Negative current method-table verdict: no candidate-proposer and no validated
+  new row are committed here.
+- Positive descriptive finding: PC2-high concentrates high retained `sys` rows
+  among already evaluated rows.
+- Caveat: do not phrase this as a clean negative PCA result, an impossibility
+  result, a density statement, or an exhaustive PCA-region search.
+
+Recommended row wording:
+
+```text
+PCA projection on allowed retained scalar columns found statistically
+meaningful PC2-high enrichment among already evaluated high-sys rows, but the
+packet did not define a candidate-generation interface for unevaluated rows and
+found no validated sys > 1 row.
+```
 
 ## Reopen Condition
 

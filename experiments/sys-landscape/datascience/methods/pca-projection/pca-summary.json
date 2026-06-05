@@ -2,54 +2,216 @@
   "audit": {
     "candidate_regions": [
       {
+        "expected_top_1_percent_rows_captured_random": 4.2575488454706925,
         "global_top_1_percent_rows_captured": 0,
+        "hypergeometric_p_value_ge_observed_top_1_percent_capture": 1.0,
         "max_sys": 0.8751328578410118,
         "mean_sys": 0.4991795111069859,
         "name": "pc1_high_top_5_percent",
         "p90_sys": 0.7789239346578533,
         "row_count": 423,
-        "row_fraction": 0.05008880994671403
+        "row_fraction": 0.05008880994671403,
+        "top_1_percent_capture_enrichment_vs_random": 0.0
       },
       {
+        "expected_top_1_percent_rows_captured_random": 4.2575488454706925,
         "global_top_1_percent_rows_captured": 8,
+        "hypergeometric_p_value_ge_observed_top_1_percent_capture": 0.06199326251128019,
         "max_sys": 0.9442669924134147,
         "mean_sys": 0.818343945667332,
         "name": "pc1_low_top_5_percent",
         "p90_sys": 0.8829167747932859,
         "row_count": 423,
-        "row_fraction": 0.05008880994671403
+        "row_fraction": 0.05008880994671403,
+        "top_1_percent_capture_enrichment_vs_random": 1.879015435961619
       },
       {
+        "expected_top_1_percent_rows_captured_random": 4.2575488454706925,
         "global_top_1_percent_rows_captured": 20,
+        "hypergeometric_p_value_ge_observed_top_1_percent_capture": 4.343636210934539e-09,
         "max_sys": 0.9605700102775944,
         "mean_sys": 0.6667095030940663,
         "name": "pc2_high_top_5_percent",
         "p90_sys": 0.879253202297989,
         "row_count": 423,
-        "row_fraction": 0.05008880994671403
+        "row_fraction": 0.05008880994671403,
+        "top_1_percent_capture_enrichment_vs_random": 4.697538589904047
       },
       {
+        "expected_top_1_percent_rows_captured_random": 4.2575488454706925,
         "global_top_1_percent_rows_captured": 0,
+        "hypergeometric_p_value_ge_observed_top_1_percent_capture": 1.0,
         "max_sys": 0.896302501518902,
         "mean_sys": 0.7416671541138392,
         "name": "pc2_low_top_5_percent",
         "p90_sys": 0.8354448836859818,
         "row_count": 423,
-        "row_fraction": 0.05008880994671403
+        "row_fraction": 0.05008880994671403,
+        "top_1_percent_capture_enrichment_vs_random": 0.0
       },
       {
+        "expected_top_1_percent_rows_captured_random": 4.2575488454706925,
+        "global_top_1_percent_rows_captured": 7,
+        "hypergeometric_p_value_ge_observed_top_1_percent_capture": 0.1328292160192949,
+        "max_sys": 0.9431764328688886,
+        "mean_sys": 0.6860713877396049,
+        "name": "pc3_high_top_5_percent",
+        "p90_sys": 0.8535354259205843,
+        "row_count": 423,
+        "row_fraction": 0.05008880994671403,
+        "top_1_percent_capture_enrichment_vs_random": 1.6441385064664165
+      },
+      {
+        "expected_top_1_percent_rows_captured_random": 4.2575488454706925,
+        "global_top_1_percent_rows_captured": 3,
+        "hypergeometric_p_value_ge_observed_top_1_percent_capture": 0.806094505899292,
+        "max_sys": 0.9352472979900089,
+        "mean_sys": 0.7281565269420667,
+        "name": "pc3_low_top_5_percent",
+        "p90_sys": 0.8761765121778151,
+        "row_count": 423,
+        "row_fraction": 0.05008880994671403,
+        "top_1_percent_capture_enrichment_vs_random": 0.704630788485607
+      },
+      {
+        "expected_top_1_percent_rows_captured_random": 4.2575488454706925,
+        "global_top_1_percent_rows_captured": 2,
+        "hypergeometric_p_value_ge_observed_top_1_percent_capture": 0.9314524544334508,
+        "max_sys": 0.9165267630407853,
+        "mean_sys": 0.6995505111153958,
+        "name": "pc4_high_top_5_percent",
+        "p90_sys": 0.8611616419666145,
+        "row_count": 423,
+        "row_fraction": 0.05008880994671403,
+        "top_1_percent_capture_enrichment_vs_random": 0.4697538589904047
+      },
+      {
+        "expected_top_1_percent_rows_captured_random": 4.2575488454706925,
+        "global_top_1_percent_rows_captured": 1,
+        "hypergeometric_p_value_ge_observed_top_1_percent_capture": 0.9876032529790999,
+        "max_sys": 0.9279007083064658,
+        "mean_sys": 0.6259160927482075,
+        "name": "pc4_low_top_5_percent",
+        "p90_sys": 0.8121957802989275,
+        "row_count": 423,
+        "row_fraction": 0.05008880994671403,
+        "top_1_percent_capture_enrichment_vs_random": 0.23487692949520236
+      },
+      {
+        "expected_top_1_percent_rows_captured_random": 4.2575488454706925,
+        "global_top_1_percent_rows_captured": 4,
+        "hypergeometric_p_value_ge_observed_top_1_percent_capture": 0.622199342352834,
+        "max_sys": 0.9498874901883911,
+        "mean_sys": 0.7417303887592938,
+        "name": "pc5_high_top_5_percent",
+        "p90_sys": 0.8704222557732961,
+        "row_count": 423,
+        "row_fraction": 0.05008880994671403,
+        "top_1_percent_capture_enrichment_vs_random": 0.9395077179808095
+      },
+      {
+        "expected_top_1_percent_rows_captured_random": 4.2575488454706925,
         "global_top_1_percent_rows_captured": 0,
+        "hypergeometric_p_value_ge_observed_top_1_percent_capture": 1.0,
+        "max_sys": 0.9090150954024268,
+        "mean_sys": 0.6034839870598605,
+        "name": "pc5_low_top_5_percent",
+        "p90_sys": 0.8132834236130367,
+        "row_count": 423,
+        "row_fraction": 0.05008880994671403,
+        "top_1_percent_capture_enrichment_vs_random": 0.0
+      },
+      {
+        "expected_top_1_percent_rows_captured_random": 4.2575488454706925,
+        "global_top_1_percent_rows_captured": 2,
+        "hypergeometric_p_value_ge_observed_top_1_percent_capture": 0.9314524544334508,
+        "max_sys": 0.9279007083064658,
+        "mean_sys": 0.6693167323332718,
+        "name": "pc6_high_top_5_percent",
+        "p90_sys": 0.8251788879784796,
+        "row_count": 423,
+        "row_fraction": 0.05008880994671403,
+        "top_1_percent_capture_enrichment_vs_random": 0.4697538589904047
+      },
+      {
+        "expected_top_1_percent_rows_captured_random": 4.2575488454706925,
+        "global_top_1_percent_rows_captured": 1,
+        "hypergeometric_p_value_ge_observed_top_1_percent_capture": 0.9876032529790999,
+        "max_sys": 0.932218107078792,
+        "mean_sys": 0.6605533062272042,
+        "name": "pc6_low_top_5_percent",
+        "p90_sys": 0.8438238361910297,
+        "row_count": 423,
+        "row_fraction": 0.05008880994671403,
+        "top_1_percent_capture_enrichment_vs_random": 0.23487692949520236
+      },
+      {
+        "expected_top_1_percent_rows_captured_random": 4.2575488454706925,
+        "global_top_1_percent_rows_captured": 0,
+        "hypergeometric_p_value_ge_observed_top_1_percent_capture": 1.0,
         "max_sys": 0.8751328578410118,
         "mean_sys": 0.5033883482702755,
-        "name": "pc_radius_high_top_5_percent",
+        "name": "pc1_to_pc2_radius_high_top_5_percent",
         "p90_sys": 0.7789239346578533,
         "row_count": 423,
-        "row_fraction": 0.05008880994671403
+        "row_fraction": 0.05008880994671403,
+        "top_1_percent_capture_enrichment_vs_random": 0.0
+      },
+      {
+        "expected_top_1_percent_rows_captured_random": 4.2575488454706925,
+        "global_top_1_percent_rows_captured": 4,
+        "hypergeometric_p_value_ge_observed_top_1_percent_capture": 0.622199342352834,
+        "max_sys": 0.9412905390563562,
+        "mean_sys": 0.503524240426865,
+        "name": "pc1_to_pc3_radius_high_top_5_percent",
+        "p90_sys": 0.8213999324008117,
+        "row_count": 423,
+        "row_fraction": 0.05008880994671403,
+        "top_1_percent_capture_enrichment_vs_random": 0.9395077179808095
+      },
+      {
+        "expected_top_1_percent_rows_captured_random": 4.2575488454706925,
+        "global_top_1_percent_rows_captured": 1,
+        "hypergeometric_p_value_ge_observed_top_1_percent_capture": 0.9876032529790999,
+        "max_sys": 0.9352472979900089,
+        "mean_sys": 0.4977611384805835,
+        "name": "pc1_to_pc4_radius_high_top_5_percent",
+        "p90_sys": 0.7938543172875113,
+        "row_count": 423,
+        "row_fraction": 0.05008880994671403,
+        "top_1_percent_capture_enrichment_vs_random": 0.23487692949520236
+      },
+      {
+        "expected_top_1_percent_rows_captured_random": 4.2575488454706925,
+        "global_top_1_percent_rows_captured": 1,
+        "hypergeometric_p_value_ge_observed_top_1_percent_capture": 0.9876032529790999,
+        "max_sys": 0.9352472979900089,
+        "mean_sys": 0.48196495153245195,
+        "name": "pc1_to_pc5_radius_high_top_5_percent",
+        "p90_sys": 0.7854526750093298,
+        "row_count": 423,
+        "row_fraction": 0.05008880994671403,
+        "top_1_percent_capture_enrichment_vs_random": 0.23487692949520236
+      },
+      {
+        "expected_top_1_percent_rows_captured_random": 4.2575488454706925,
+        "global_top_1_percent_rows_captured": 1,
+        "hypergeometric_p_value_ge_observed_top_1_percent_capture": 0.9876032529790999,
+        "max_sys": 0.9352472979900089,
+        "mean_sys": 0.48435428962721394,
+        "name": "pc1_to_pc6_radius_high_top_5_percent",
+        "p90_sys": 0.7823507134246763,
+        "row_count": 423,
+        "row_fraction": 0.05008880994671403,
+        "top_1_percent_capture_enrichment_vs_random": 0.23487692949520236
       }
     ],
     "global_sys_mean": 0.7569823095258924,
     "global_sys_p90": 0.8595900796361137,
-    "global_sys_p99": 0.91287200938903
+    "global_sys_p99": 0.91287200938903,
+    "global_top_1_percent_row_count": 85,
+    "global_top_1_percent_threshold": 0.913102461433656,
+    "region_baseline": "Each audited region is a fixed pre-sys PCA-score rule. Top-1% capture is calibrated against a random subset with the same row count using the hypergeometric tail probability P(X >= observed)."
   },
   "dataset": {
     "limit": null,
@@ -288,7 +450,7 @@
       ]
     }
   },
-  "runtime_seconds": 2.4488488509996387,
+  "runtime_seconds": 2.556437219001964,
   "validity_guard": {
     "excluded_inputs": {
       "constant": [
