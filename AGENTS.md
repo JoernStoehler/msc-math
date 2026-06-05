@@ -172,6 +172,31 @@ They are not authoritative sources, and can be regenerated via subagent.
 - `experiments/MAP.md`: tree of experiments and current status.
 - `thesis/MAP.md`: chapter structure and current status.
 
+## README.md Files
+
+- `README.md` files are entry points for agents working on a project slice. They
+  reference further reading material so relevant files are discoverable without
+  opening the whole folder.
+- `README.md` files may contain summaries, overviews, factual notes, plans,
+  roadmaps, important considerations, conventions, and workflows when this
+  reduces future agent cost.
+- Such knowledge must be maintainable. Point to source truth when source truth
+  exists. When no source truth exists, include enough context or reasoning for
+  future agents to reconstruct and re-evaluate the claim.
+- Most knowledge should live exactly where it is needed: text, code, comments,
+  TeX, experiment artifacts, research notes, task files, generated outputs, or
+  other local file content.
+- Process knowledge was often written by gpt-5.5 Codex agents during local
+  work. It is based on contextual assumptions that may need to be questioned or
+  overridden. Jörn is available to help with context and maintenance.
+- The basic decision calculus is to weigh the value of a piece of knowledge for
+  future agents against the cost for agents who read it and the cost for agents
+  who maintain it. Keep documentation lean; prefer clear, precise, trustworthy
+  source truth over large secondary explanations.
+- Delete or demote historical notes when their current value is lower than
+  their verification and maintenance cost. Git history is enough for obsolete
+  planning material.
+
 ## Environments
 
 Supported environments:
