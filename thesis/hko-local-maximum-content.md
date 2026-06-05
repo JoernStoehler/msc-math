@@ -387,7 +387,7 @@ Core thesis content, not auxiliary assets:
 Recommended auxiliary assets:
 
 1. Verification-interface table.
-   Status: not done. Priority: high.
+   Status: draft below, not thesis-ready. Priority: high.
    Shape: `Proof obligation | Sage check | Formal proof use`.
    Purpose: make the bridge between the verifier and proof auditable. This is
    better than a raw code listing because it is organized by mathematical
@@ -396,13 +396,46 @@ Recommended auxiliary assets:
    section data; derivative row formula; symmetry annihilation; row rank and
    positive convex relation; quotient-local conclusion.
 
+   Draft writing aid, not source truth:
+
+   | Proof obligation | Sage check | Formal proof use |
+   | --- | --- | --- |
+   | Work in the intended exact HKO field and base geometry. | Pins the ordered number field by `t^4 - 10t^2 + 5` with `0<t<1`; reconstructs the HKO dual vertices from formulas; checks the witness geometry matches. | Supplies the base point for the ten-facet dual-vertex chart and the HKO capacity normalization. See `lem:hko-capacity-normalization`. |
+   | Use the HKO2024 capacity value at the base point. | Checks `action_min` equals `2 cos(pi/10)(1+cos(pi/5))` in the exact field. | Gives equality `U_sigma(a0)=sys(a0)` once a selected row has the same action. See `lem:hko-capacity-normalization` and `lem:hko-feasible-section-upper-branch`. |
+   | Use the correct volume and volume derivative row. | Reconstructs exact volume and the exact `D volume` row; checks witness values match these formulas. | Converts action derivatives into `D sys` rows. See `lem:hko-product-volume-derivative`, `lem:hko-full-chart-volume-row`, and `rem:hko-feasible-section-derivative-data`. |
+   | Each selected row gives a smooth feasible upper branch. | For each row, checks `sigma` is a partial permutation, `beta>0`, `C_sigma(a0) beta=e`, selected minor invertible, fixed beta coordinates consistent, `q=q_min`, and action equals `action_min`. | The full-rank minor defines a local feasible beta section; feasibility gives `sys <= U_sigma`; action equality gives equality at HKO. See `lem:hko-feasible-section-upper-branch`. |
+   | The stored derivative row is the derivative of that explicit upper branch. | Checks `D beta` satisfies the differentiated feasibility equation and fixed-coordinate equations; recomputes `D action` and `D sys` from the formulas. | Identifies the exact row as `D U_sigma(a0)`. See `rem:hko-feasible-section-derivative-data`. |
+   | The rows descend to the quotient directions. | Reconstructs translation, scaling, and `sp(4)` tangent generators; checks their rank is `15`; checks every `D sys` row annihilates every symmetry tangent column. | Rows vanish on the symmetry tangent space and therefore define covectors on a transverse `25`-dimensional slice. See `lem:hko-ambient-rows-descend-to-slice`. |
+   | The selected rows force a negative first-order upper slope in every slice direction. | Checks the 26 verified rows have exact rank `25`; checks exact lambdas are positive, sum to `1`, and combine the rows to `0`. | Positive convex relation plus spanning gives a uniform negative margin on the slice unit sphere. See `lem:hko-positive-convex-certificate-margin` and `prop:hko-feasible-branch-slice-local-max`. |
+   | The slice statement is the intended quotient-local theorem. | No extra Sage step; this is a mathematical implication from the local symmetry action and the verified tangent rank. | The transverse-slice lemma converts strict slice maximality to quotient-local maximality in the ten-facet model. See `lem:hko-transverse-symmetry-slice` and `cor:hko-feasible-branch-quotient-template`. |
+
 2. Compact certificate facts display.
-   Status: not done. Priority: medium-high, only next to the finite
+   Status: draft below, not thesis-ready. Priority: medium-high, only next to the finite
    certificate proposition.
    Content: ambient dimension `40`, symmetry rank `15`, selected rows `26`,
    row rank `25`, positive lambdas, lambda sum `1`, lambda-weighted row sum
    `0`.
    Purpose: make the finite linear-algebra endpoint visible at a glance.
+
+   Draft writing aid, not source truth:
+
+   ```text
+   Exact finite certificate checked by Sage:
+
+   ambient dimension                40
+   symmetry tangent rank            15
+   quotient slice dimension         25
+   selected feasible-section rows   26
+   verified row rank                25
+   convex coefficients              lambda_i > 0
+   convex normalization             sum_i lambda_i = 1
+   convex relation                  sum_i lambda_i r_i = 0
+   ```
+
+   Use this display only if it sits next to the finite certificate proposition.
+   Refresh the numbers from
+   `experiments/hko-local-maximum/theorem/feasible-section-certificate/verification-summary.json`
+   before copying it into thesis prose.
 
 Deferred auxiliary assets:
 
