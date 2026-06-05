@@ -423,11 +423,21 @@ Recommended auxiliary assets:
    and transverse slice dimension `25`; the picture may label these actual
    dimensions in captions.
 
-   TODO(Jörn): draw the slice profile in the fake one-dimensional slice. The
-   graph should show that the local `sys` profile need not be `C^1`; it can be
-   piecewise smooth or cusp-like because several smooth upper branches meet at
-   `a0`. The selected upper branches should illustrate that in each nonzero
-   slice direction at least one upper branch has negative first-order change.
+   TODO(Jörn): next/highest-value picture: draw the global `R -> R` setting
+   along a finitely extended toy slice. Draw several smooth curves on the
+   whole extended slice or neighborhood, labeled by pairs `(sigma, I)`, with
+   values
+   `1/(2 Q_sigma(beta_{sigma,I}(a)))`.
+   The prose can define `beta_{sigma,I}(a)`. The picture should illustrate
+   only the upper-bound mechanism:
+   `action(a) = min_{sigma,beta} 1/(2 Q_sigma(beta(a))) <=
+   1/(2 Q_sigma(beta_{sigma,I}(a)))`.
+   At `a0`, the drawn selected examples meet at the same value. In one
+   direction one selected curve has negative slope, and in the opposite
+   direction another selected curve has negative slope. Other drawn curves may
+   go upward in either direction; the proof only needs that each nonzero slice
+   direction has at least one selected upper branch with negative first-order
+   change.
 
    TODO(Jörn): if helpful, draw both a nonlocal view and a local tangent view:
    one ambient picture `R^2 -> R`, one slice picture `R -> R`, and the
