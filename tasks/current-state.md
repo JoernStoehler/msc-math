@@ -67,21 +67,17 @@ source files.
   changes.
 
 - Hostile `sys`-search landscape is thesis spine.
-  Source truth: `research/sys-landscape.md`,
-  `research/sys-landscape-toolbox-audit.md`,
-  `research/sys-landscape-datascience/`, and
-  `experiments/sys-landscape/`.
-  Current state: data-science work is bounded by idea exhaustion and
-  source-truth repair, not open-ended method invention.
+  Data-science source truth:
+  `experiments/sys-landscape/datascience/README.md` and
+  `experiments/sys-landscape/datascience/methods/README.md`.
+  Current state: the retained LICCA dataset is in
+  `experiments/sys-landscape/datascience/dataset/`; method rows that still
+  matter need current evidence packets or explicit abandonment.
   High-risk fact: tried thesis-affecting results need repo-owned evidence,
   checks appropriate to their verdict, explicit caveats, and thesis-use
   disposition.
-  Current state: `endpoint-residualized-regression` was repaired on 2026-06-03
-  and is now supporting/caveat evidence only. `stat-sanity` was downgraded to
-  non-load-bearing caveat evidence because its only source truth is scratch
-  output. See
-  `research/sys-landscape-datascience/endpoint-residualized-regression-disposition-2026-05-31.md`
-  and `research/sys-landscape-datascience/idea-ledger.md`.
+  Current state: older pre-LICCA data-science reports were removed or replaced
+  by status markers. See the methods README for the active method inventory.
   Refresh when: retained hostile-landscape wording or endpoint datasets change.
 
 - Sys first-order generic row-chart writing is active.

@@ -11,7 +11,7 @@ Input Artifacts:
   - a dataset directory passed by `--dataset-dir` containing
     `polytope-table.jsonl` and `observation-table.jsonl`
 Output Artifacts:
-  - experiments/sys-landscape/datascience/methods/pca-cluster-spike/report.md
+  - experiments/sys-landscape/datascience/methods/pca-cluster-anomaly/report.md
 """
 
 from __future__ import annotations
@@ -34,9 +34,9 @@ from sklearn.preprocessing import StandardScaler
 EXPERIMENT_DIR = Path(__file__).resolve().parent
 REPO_ROOT = EXPERIMENT_DIR.parents[4]
 DEFAULT_DATASET_DIR = EXPERIMENT_DIR.parent.parent / "dataset"
-EXPECTED_POLYTOPE_ROWS = 282
-EXPECTED_OBSERVATION_ROWS = 282
-EXPECTED_MAX_SYS = 0.906316153431123
+EXPECTED_POLYTOPE_ROWS = 8445
+EXPECTED_OBSERVATION_ROWS = 8445
+EXPECTED_MAX_SYS = 0.9750768559799221
 EXPECTED_SYS_GT_ONE = 0
 RANDOM_STATE = 20260430
 
@@ -380,7 +380,7 @@ def decide_verdict(summary: dict[str, Any]) -> dict[str, str]:
         "evidence_strength": "medium",
         "implementation_trust": "high",
         "thesis_use": "supporting/caveat only",
-        "caveat": "This is a 282-row retained-dataset scan over nonconstant intrinsic numeric polytope features; it excludes observation provenance and capacity/search witness columns, and it tests only PCA, KMeans k=2..8, and IsolationForest at 10 percent contamination.",
+        "caveat": "This is a current retained-dataset scan over nonconstant intrinsic numeric polytope columns; it excludes observation provenance and capacity/search witness columns, and it tests only PCA, KMeans k=2..8, and IsolationForest at 10 percent contamination.",
         "reopen_trigger": "Reopen if a larger or fresher table adds sys > 1, changes the row guards, or a sampling rule is proposed that can sample a feature-space region before inspecting sys, endpoint labels, dataset identity, or optimizer provenance.",
     }
 

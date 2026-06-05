@@ -91,7 +91,12 @@ When interacting with Jörn in chat:
 |-- research/
 |   |-- INDEX.md
 |   |-- *.md
-|   `-- sys-landscape-datascience/
+|-- experiments/sys-landscape/datascience/
+|   |-- README.md
+|   |-- dataset/
+|   |-- produce/
+|   |-- tables/
+|   `-- methods/
 |-- papers/<abbreviationYear>/
 |-- tasks/
 |   |-- README.md

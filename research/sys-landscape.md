@@ -1,5 +1,10 @@
 # Sys-Landscape Research Note
 
+This is not the ordinary entry point for the data-science thesis slice. Start
+with `experiments/sys-landscape/datascience/README.md` and
+`experiments/sys-landscape/datascience/methods/README.md`; use this note only
+for older topic context.
+
 ## Scope
 - Capture the current status of the `sys-landscape` experimentation branch in a single research-facing note.
 - Keep the experimental artifact and code locations in `experiments/` as canonical storage.

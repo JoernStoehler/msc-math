@@ -11,7 +11,7 @@ Input Artifacts:
   - dataset directory passed by `--dataset-dir`, containing
     `polytope-table.jsonl` and `observation-table.jsonl`
 Output Artifacts:
-  - experiments/sys-landscape/datascience/methods/supervised-alternatives-spike/REPORT.md
+  - experiments/sys-landscape/datascience/methods/supervised-alternatives/report.md
 """
 
 from __future__ import annotations
@@ -53,7 +53,7 @@ except ImportError:  # pragma: no cover - old sklearn fallback.
 EXPERIMENT_DIR = Path(__file__).resolve().parent
 REPO_ROOT = EXPERIMENT_DIR.parents[4]
 DEFAULT_DATASET_DIR = EXPERIMENT_DIR.parent.parent / "dataset"
-REPORT_MD = EXPERIMENT_DIR / "REPORT.md"
+REPORT_MD = EXPERIMENT_DIR / "report.md"
 
 ENDPOINT_DATASETS = {
     "gradient_ascent_general",
@@ -65,9 +65,9 @@ RANDOM_DATASETS = {
     "random_product_sample",
 }
 
-EXPECTED_POLY_ROWS = 282
-EXPECTED_OBS_ROWS = 282
-EXPECTED_MAX_SYS = 0.906316153431123
+EXPECTED_POLY_ROWS = 8445
+EXPECTED_OBS_ROWS = 8445
+EXPECTED_MAX_SYS = 0.9750768559799221
 EXPECTED_SYS_GT_ONE = 0
 
 EXCLUDED_POLY_KEYS = {
@@ -319,7 +319,7 @@ def feature_dict(row: Row, block: str) -> dict[str, Any]:
         return dict(row.intrinsic_without_orbit_search)
     if block == "metadata_caveat":
         return dict(row.metadata_features)
-    raise ValueError(f"unknown feature block {block}")
+    raise ValueError(f"unknown column group {block}")
 
 
 def evaluate_grouped_regression(
@@ -550,7 +550,7 @@ def summarize(rows: list[Row], dataset_dir: Path, checks: dict[str, Any], permut
     implementation_trust = "medium"
     thesis_use = "supporting/caveat only"
     caveat = (
-        "Current 282-row dataset only; feature matrix excludes target/capacity, raw arrays, ids, "
+        "Current retained dataset only; feature matrix excludes target/capacity, raw arrays, ids, "
         "and observation provenance for claim-bearing blocks; the `intrinsic_numeric` block "
         "still includes cached orbit-search scalar features, so `intrinsic_no_orbit_search` is "
         "the cleaner geometry-side sensitivity. The method panel is small and cheap."
@@ -565,7 +565,7 @@ def summarize(rows: list[Row], dataset_dir: Path, checks: dict[str, Any], permut
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
         "command": (
             "uv run --script experiments/sys-landscape/datascience/methods/"
-            "supervised-alternatives-spike/analyze.py --dataset-dir "
+            "supervised-alternatives/analyze.py --dataset-dir "
             f"{repo_path(dataset_dir)} --permutations {permutations}"
         ),
         "dataset": {
@@ -618,7 +618,6 @@ def summarize(rows: list[Row], dataset_dir: Path, checks: dict[str, Any], permut
         "model_panel": {
             "regression": sorted(regressors.keys()),
             "classification": sorted(classifiers.keys()),
-            "excluded": ["neural_net", "bayesian_optimization"],
         },
         "regression_results": regression_results,
         "permutation_transfer_null": permutation_results,
@@ -654,7 +653,7 @@ def fmt(value: float) -> str:
 
 def table_rows(rows: list[dict[str, Any]], metric: str, surfaces: list[str]) -> list[str]:
     lines = [
-        "| surface | model | feature block | " + metric + " | secondary |",
+        "| surface | model | column group | " + metric + " | secondary |",
         "| --- | --- | --- | ---: | ---: |",
     ]
     for surface in surfaces:
@@ -673,7 +672,7 @@ def write_report(summary: dict[str, Any]) -> None:
     key = summary["key_results"]
     checks = summary["dataset"]["checks"]
     lines = [
-        "# DS-I005 Supervised Alternatives Spike",
+        "# DS-I005 Boosting and Nearest-Neighbor Supervised Alternatives",
         "",
         "## Command And Provenance",
         "",
@@ -721,7 +720,7 @@ def write_report(summary: dict[str, Any]) -> None:
         "",
         "Random-to-endpoint permutation null for claim-bearing blocks:",
         "",
-        "| model | feature block | real R^2 | permuted p05 | permuted median | permuted p95 |",
+        "| model | column group | real R^2 | permuted p05 | permuted median | permuted p95 |",
         "| --- | --- | ---: | ---: | ---: | ---: |",
     ]
     for row in summary["permutation_transfer_null"]:

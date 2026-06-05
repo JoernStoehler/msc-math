@@ -36,7 +36,7 @@ Current fingerprint:
   `5382d131dadb4f220512015e876e65566fee51d7c2a25521f7c891c2db8450ce`
 
 Use this dataset as read-only input for method executors. Method outputs belong
-under `../../methods/<slug>/`.
+under `../methods/<slug>/`.
 
 Do not replace this dataset with private `/tmp` output. If the producer caches
 or table code change, refresh this directory intentionally and review the table

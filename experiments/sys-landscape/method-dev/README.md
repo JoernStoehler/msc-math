@@ -11,7 +11,7 @@ Current examples:
 - `random-product-sample/`
 - `datascience/produce/`
 - `datascience/tables/`
-- `datascience/methods/feature-pattern-search/`
+- `datascience/methods/`
 
 These folders are not moved here. The point of this directory is to name the
 method-development role while the repo still carries overlapping legacy and

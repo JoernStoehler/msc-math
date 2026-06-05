@@ -1,26 +1,79 @@
 # Sys-Landscape Datascience
 
-This directory owns the maintained data flow for sys-landscape datascience
-experiments. Read this file before launching, executing, or reviewing a
-datascience method wave.
+Read this file before touching sys-landscape datascience code, data, reports,
+or worker prompts.
 
-## Folder Map
+## Thesis Role
+
+This folder supports the thesis data-science/search result. The target result
+is a closed method table, not a folder or a single model.
+
+Working thesis sentence:
+
+> The closed method table records no new source of `sys > 1` examples and no
+> candidate-proposer for finding one, beyond examples that are already explained
+> by the HKO2024 construction and its symplectic images or controlled
+> perturbations.
+
+Do not weaken this to "representative methods". Standard-method coverage must
+be run, ruled inapplicable, abandoned for cost, deferred with reason, or
+escalated if positive.
+
+The "standard repertoire" means the known data-science method/tool repertoire
+that is relevant to this search interface. It does not mean proving exhaustion
+over every possible data-science method. If a known applicable method is not
+run, record the reason in `methods/README.md` or the row's `report.md`.
+
+Do not prewrite this slice as purely negative before row closure. If a
+positive or conjectured-positive pattern appears, record it and escalate before
+continuing unrelated method cleanup.
+
+## Required Navigation
+
+Read these files for ordinary datascience work:
+
+- `dataset/README.md`: current retained dataset identity and fingerprint.
+- `produce/README.md`: accepted producer rows, caches, and LICCA rules.
+- `tables/README.md`: accepted reusable table columns.
+- `methods/README.md`: method rows, current/stale report status, and method
+  folder conventions.
+
+The task and research notes are not ordinary entry points for this slice. Use
+them only when auditing cross-thesis claim wording or older context.
+
+## Source Truth Order
+
+For ordinary datascience work:
+
+1. `dataset/README.md` and `fingerprint-dataset.py` identify the retained
+   dataset.
+2. `produce/README.md` and `tables/README.md` identify accepted producers and
+   reusable table columns.
+3. `methods/README.md` is the method-row navigation index.
+4. Each method folder's `report.md` and source code are the source truth for
+   that method row's command, evidence status, result, and caveats.
+
+For thesis wording, start from this README and `methods/README.md`. Older
+research/task notes may explain why a decision was made, but method reports and
+source code are the source truth for current row-level evidence status.
+
+## Data Flow
 
 ```text
-experiments/sys-landscape/datascience/
-|-- README.md              # this data-flow and agent-role guide
-|-- build-dataset.sh       # refreshes dataset/ from produce/ through tables/
-|-- fingerprint-dataset.py # prints on-demand row counts, hashes, and guard facts
-|-- dataset/               # active shared method input; read-only for method agents
-|-- produce/               # accepted polytope/observation producers and caches
-|-- tables/                # Rust table builder and feature columns
-|-- methods/               # method experiments and reports
-`-- smoke-pipeline.sh      # temp-output integration smoke path
+produce/  ->  tables/  ->  dataset/  ->  methods/
 ```
+
+- `produce/` owns accepted polytope/observation producer outputs and caches.
+- `tables/` owns accepted reusable table columns and the table builder.
+- `dataset/` owns the retained shared input tables.
+- `methods/` owns method evidence packets and reports.
+
+Method agents read `dataset/`. They do not rebuild `produce/`, edit `tables/`,
+or overwrite `dataset/` unless explicitly assigned that stage.
 
 ## Current Dataset
 
-Current shared dataset:
+Current retained dataset:
 
 ```text
 experiments/sys-landscape/datascience/dataset/
@@ -31,13 +84,7 @@ Contents:
 - `polytope-table.jsonl`
 - `observation-table.jsonl`
 
-Build or refresh these files from the current committed producer caches with:
-
-```bash
-experiments/sys-landscape/datascience/build-dataset.sh
-```
-
-Current retained dataset fingerprint:
+Fingerprint:
 
 - polytope rows: `8445`
 - observation rows: `8445`
@@ -50,94 +97,54 @@ Current retained dataset fingerprint:
   - `random_sample`: `70`
   - `variable_f_ascent`: `90`
 
-For the current dataset runtime and hashes, see `dataset/README.md`.
-Because the final tables are tracked through Git LFS in this repo, committing
-the retained dataset is reasonable. The expensive artifacts are the producer
-cache stage files under `produce/`.
-
-Use `git log -- experiments/sys-landscape/datascience/dataset/` and file mtimes
-for timing/provenance questions. Use `fingerprint-dataset.py` only when a report
-or review needs explicit row counts, hashes, max `sys`, or `sys > 1` count.
-
-## Agent Roles
-
-### Orchestrators
-
-- Create an integration worktree for a method wave.
-- Refresh `dataset/` only if `produce/`, `tables/`, or table-related source
-  changed.
-- Give executors the dataset path, write scope, research question, stop
-  conditions, and required report path.
-- Treat `/tmp` as scratch only. Do not use a private `/tmp` dataset as source
-  truth for a method wave.
-
-### Method Executors
-
-- For method-only experiments, read `dataset/` and write only under
-  `methods/<slug>/`.
-- Do not rebuild producer caches or overwrite `dataset/` unless explicitly
-  assigned that stage.
-- Required output is `report.md` or an already established report filename in
-  an existing method folder. Machine-readable sidecars are optional and need a
-  real consumer.
-- If a method computes local exploratory features, keep them in the method
-  folder and label them in the report as local exploratory features, candidate
-  table features, or rejected features.
-
-### Feature/Table Executors
-
-- Use this role for reusable columns derived from existing producer rows.
-- Local feature probes should live in `methods/<slug>/` first unless the feature
-  is already clearly reusable and mathematically natural.
-- Accepted reusable features belong in `tables/`; refreshing `dataset/` is part
-  of that stage change.
-- The report must separate the table-feature claim from any method-result claim.
-
-### Producer Executors
-
-- Use this role for new polytope or observation sources.
-- Speculative producer output should stay method-local, for example under
-  `methods/<slug>/candidate-dataset/`, until reviewed.
-- Accepted producer output belongs in `produce/`; refreshing `dataset/` is part
-  of accepting the producer into the maintained data flow.
-- The report must separate what was generated from what later methods inferred.
-
-### Reviewers
-
-- Review the report, command, changed files, and dataset path.
-- Recompute dataset guard facts when needed with `fingerprint-dataset.py`; do
-  not require a tracked metadata sidecar unless the method created one for a
-  specific consumer.
-- Check leakage, stale data, overclaiming, and whether the result supports the
-  stated verdict.
-
-## Source-Truth Rules
-
-- `produce/` owns accepted producer rows and caches.
-- `tables/` owns reusable table columns and table-building code.
-- `dataset/` is the active shared input for methods.
-- `methods/<slug>/` owns method-local code, reports, figures, and local
-  exploratory features.
-- Historical reports may cite `/tmp` dataset paths or old dataset fingerprints.
-  Treat those as provenance for that old run, not as current source truth.
-  Report filenames that represent a current method result should be replaced
-  from current data rather than preserving old report contents in place.
-- Do not patch-edit generated JSONL tables. Regenerate them with the recorded
-  command and review the diff.
-
-## On-Demand Dataset Checks
-
-Print row counts, hashes, source counts, max `sys`, and `sys > 1` count with:
+Use `fingerprint-dataset.py` when a report or review needs explicit row
+counts, hashes, max `sys`, or `sys > 1` count:
 
 ```bash
 uv run --script experiments/sys-landscape/datascience/fingerprint-dataset.py \
   experiments/sys-landscape/datascience/dataset
 ```
 
-Add `--format json` if a reviewer or script needs machine-readable output.
+Build or refresh the retained dataset from committed producer caches with:
+
+```bash
+experiments/sys-landscape/datascience/build-dataset.sh
+```
+
+Refresh `dataset/` only after an intentional producer/table-stage change.
+
+## Architecture Rules
+
+1. Operational truth lives in these README files, not in chat history.
+2. Accepted reusable columns live in `tables/` and appear in `dataset/`.
+3. Methods split retained table columns into model inputs in memory.
+4. Do not track duplicate method-local `feature_*.jsonl` views unless a current
+   report names a concrete consumer.
+5. One active method folder should support one method-table row.
+6. Current-looking reports must either contain current retained-dataset
+   evidence or explicitly say they are stale/status markers.
+7. Obsolete experiment artifacts are deleted by default. Extract old work only
+   if it has positive expected value after contamination risk.
+8. If a method records a validated new `sys > 1` row outside the known
+   HKO2024-derived source, or records a candidate-proposer, stop unrelated
+   method work and write an escalation packet before continuing.
+
+## Deletion-First Rule
+
+Old work is not valuable because it exists. Before extracting from old
+experiments, check:
+
+- Which method-table row does it support now?
+- Does it run on the current retained dataset?
+- Does it avoid stale paths, old row counts, duplicate local data, and vague
+  vocabulary?
+- Is adapting it safer than rewriting a small clean script?
+
+If not, delete or leave it in git history.
 
 ## Stage Documentation
 
 - Producer stage: `produce/README.md`
 - Table stage: `tables/README.md`
+- Dataset stage: `dataset/README.md`
 - Method stage: `methods/README.md`

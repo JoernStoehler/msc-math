@@ -311,9 +311,9 @@ Near-term independent starts:
 - Hostile landscape: turn the method universe into row packets and drive
   unresolved rows to terminal states with source-owned evidence and
   thesis-use verdicts that can survive focused review.
-  `endpoint-residualized-regression` is now terminal supporting/caveat
-  `no-search-output`; `stat-sanity` is downgraded to non-load-bearing caveat
-  evidence.
+  `endpoint-residualized-regression` has no current LICCA evidence packet and
+  must be redone or explicitly abandoned before thesis use. `stat-sanity` is
+  downgraded to non-load-bearing caveat evidence.
 - Thesis writing: `thesis/first-order-perturbations.tex` is agent-suitable for
   a generic row-chart draft with explicit non-generic caveats. Do not accept
   theorem-strength arbitrary-polytope or HKO wording there.
@@ -383,10 +383,9 @@ Acceptance guard:
 
 Status: active while hostile landscape remains retained thesis spine.
 
-Reread before use: `research/sys-landscape-toolbox-audit.md`,
-`research/sys-landscape-datascience/idea-ledger.md`, current experiment report
-paths, and reusable procedure under `research/sys-landscape-datascience/` if it
-exists.
+Reread before use: `experiments/sys-landscape/datascience/README.md` and
+`experiments/sys-landscape/datascience/methods/README.md`. Older research notes
+are context only unless cross-thesis wording is being audited.
 
 Guidance:
 
@@ -395,9 +394,8 @@ Guidance:
 - Treat the method table as the deliverable, not any single row. Drive rows
   that the thesis relies on to a terminal state with evidence and adversarially
   defensible interpretation.
-- `endpoint-residualized-regression` was repaired on 2026-06-03. It is now a
-  supporting/caveat `no-search-output` row: endpoint-side associations exist,
-  but no candidate-proposer and no validated new `sys > 1` row were recorded.
+- `endpoint-residualized-regression` has no current LICCA evidence packet.
+  Redo or explicitly abandon the row before using it in thesis-facing wording.
 - `stat-sanity` was downgraded on 2026-06-03 to non-load-bearing caveat
   evidence because only scratch output exists. Do not quote its numerical
   null/permutation results in thesis text unless a repo-owned method packet is
@@ -430,10 +428,10 @@ Closure summary:
   checks, caveats, and thesis-use disposition.
 - Candidate-proposer or validated-new-row results stop unrelated method work
   until Jörn or a falsification/search packet resolves the lead.
-- Concrete one-use worker prompts may go in `/tmp`; multi-day table/control
-  material should live in a durable research or thesis-adjacent file.
-- Reusable worker launch/review procedure belongs under
-  `research/sys-landscape-datascience/`, not in `tasks/`.
+- Concrete one-use worker prompts may go in `/tmp`; durable datascience
+  control material should live in
+  `experiments/sys-landscape/datascience/README.md` or
+  `experiments/sys-landscape/datascience/methods/README.md`.
 
 ## Numerics Work Ordering
 

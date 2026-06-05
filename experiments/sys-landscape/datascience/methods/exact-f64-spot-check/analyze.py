@@ -31,9 +31,9 @@ REPO_ROOT = EXPERIMENT_DIR.parents[4]
 DEFAULT_DATASET_DIR = EXPERIMENT_DIR.parent.parent / "dataset"
 REPORT_MD = EXPERIMENT_DIR / "report.md"
 
-EXPECTED_POLY_ROWS = 282
-EXPECTED_OBS_ROWS = 282
-EXPECTED_MAX_SYS = 0.906316153431123
+EXPECTED_POLY_ROWS = 8445
+EXPECTED_OBS_ROWS = 8445
+EXPECTED_MAX_SYS = 0.9750768559799221
 EXPECTED_SYS_GT_ONE = 0
 PRODUCER_COMMAND = (
     "experiments/sys-landscape/datascience/build-dataset.sh"
@@ -384,11 +384,6 @@ def write_report(out_dir: Path, payload: dict[str, Any]) -> None:
         f"- Run timestamp UTC: `{payload['run_timestamp_utc']}`",
         f"- Python: `{payload['python_version']}`",
         "",
-        "## Heartbeat",
-        "",
-        "- Heartbeat artifact path: `experiments/sys-landscape/datascience/methods/exact-f64-spot-check/report.md`.",
-        "- Heartbeat status: this report path was created with `idea_id`, dataset path, planned command, and current status before full method implementation.",
-        "",
         "## Dataset Snapshot",
         "",
         f"- Polytope rows: `{checks['polytope_rows']}` expected `{EXPECTED_POLY_ROWS}`.",
@@ -464,13 +459,6 @@ def main() -> None:
         "command_run": DEFAULT_COMMAND,
         "dataset_dir": repo_path(args.dataset_dir),
         "producer_command": PRODUCER_COMMAND,
-        "heartbeat": {
-            "path": "experiments/sys-landscape/datascience/methods/exact-f64-spot-check/report.md",
-            "status": (
-                "created before full method implementation with idea_id, dataset path, "
-                "planned command, and current status"
-            ),
-        },
         "run_timestamp_utc": datetime.now(timezone.utc).isoformat(),
         "python_version": platform.python_version(),
         "dataset_snapshot": checks,

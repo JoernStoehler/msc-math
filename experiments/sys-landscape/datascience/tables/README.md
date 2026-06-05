@@ -28,17 +28,21 @@ Build the current dataset with:
 experiments/sys-landscape/datascience/build-dataset.sh
 ```
 
-The current rules for method-only runs, reusable table features, producer
+The current rules for method-only runs, reusable table columns, producer
 changes, reviewers, and speculative datasets live in `../README.md`.
 
 Code ownership:
 - `main.rs` orchestrates `load -> enrich -> write`
 - `load_caches.rs` reads producer files, merges them into unified rows, and
   validates required producer payload
-- `features.rs` computes the polytope-level columns from already-loaded
+- `features.rs` computes the polytope-level table columns from already-loaded
   capacity and geometry payload; it does not run capacity search
-- `features_trace.rs` computes the observation / trace columns
+- `features_trace.rs` computes the observation / trace table columns
 - `write_database.rs` writes the final JSONL tables
+
+Accepted reusable columns belong here. Method-local model matrices and column
+groups belong under `../methods/` and should not be tracked as duplicate JSONL
+views of the retained dataset.
 
 Smoke path:
 - [smoke-pipeline.sh](../smoke-pipeline.sh)

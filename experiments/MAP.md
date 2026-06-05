@@ -62,7 +62,7 @@ Current boundary facts:
 | Area | Current role | Related task/research surfaces |
 | --- | --- | --- |
 | `experiments/hko-local-maximum/` | HKO local-maximality experiments: theorem certificate tooling under `theorem/`, empirical support checks under `empirical/`, and shared topic helpers under `src/` | `tasks/current-state.md`, `tasks/planning-notes.md`, `research/hko-local-maximum*.md`, `experiments/hko-local-maximum/README.md` |
-| `experiments/sys-landscape/` | hostile sys-search landscape: random/product searches, gradient ascent, variable-`F` continuation, rejection calibration, and datascience pipeline | `tasks/current-state.md`, `tasks/planning-notes.md`, `research/sys-landscape*.md`, `research/sys-landscape-datascience/` |
+| `experiments/sys-landscape/` | hostile sys-search landscape: random/product searches, gradient ascent, variable-`F` continuation, rejection calibration, and datascience pipeline | `tasks/current-state.md`, `tasks/planning-notes.md`, `research/sys-landscape*.md`, `experiments/sys-landscape/datascience/README.md` |
 | `experiments/regular-products/` | regular polygon product side result: broad rotated-product sweeps, pentagon empirical figures/viewer, and exact pentagon formula proof packet | `experiments/regular-products/README.md`, `thesis/rotated-regular-polygons-content.md` |
 | `experiments/sys-landscape/gradient-ascent-dev/` | method-development helper package for step calibration and strategy comparison | `experiments/sys-landscape/gradient-ascent-dev/src/lib.rs` |
 | `experiments/numerics/` | numerical-method validation, error bounds, algebraic exactness, Sage feasibility, unknown predicates, and KKT diagnostics | `tasks/current-state.md`, `tasks/planning-notes.md`, `research/numerics*.md` |
@@ -186,6 +186,5 @@ Then read the producer entrypoint, nearby analyzer, and relevant research note.
 - Which experiment outputs are thesis evidence, preserved historical records,
   or future/follow-up material?
 - Which cached fields can downstream consumers trust as stable contracts?
-- Should empty or bytecode-only historical directories such as
-  `experiments/sys-landscape/feature-pattern-search/` be removed, ignored, or
-  kept as provenance?
+- Which datascience method rows still need current evidence packets before they
+  can support thesis wording?

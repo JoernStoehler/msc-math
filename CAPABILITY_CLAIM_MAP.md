@@ -232,23 +232,19 @@ claim.
   - Scope: data tables, method reports, and idea/method ledgers that support
     bounded negative/search-usefulness claims.
   - Files:
+    - `experiments/sys-landscape/datascience/README.md`
+    - `experiments/sys-landscape/datascience/dataset/README.md`
     - `experiments/sys-landscape/datascience/tables/README.md`
     - `experiments/sys-landscape/datascience/tables/main.rs`
     - `experiments/sys-landscape/datascience/methods/README.md`
     - `experiments/sys-landscape/datascience/produce/README.md`
     - `experiments/sys-landscape/datascience/smoke-pipeline.sh`
-    - `research/sys-landscape-toolbox-audit.md`
-    - `research/sys-landscape-datascience/idea-ledger.md`
-    - `research/sys-landscape-datascience/method-ledger.md`
-    - `tasks/current-state.md`
-    - `tasks/planning-notes.md`
-    - `research/sys-landscape-datascience/worker-procedure.md`
+    - `experiments/sys-landscape/datascience/methods/taxonomies/README.md`
   - The datascience tables pipeline writes `polytope-table.jsonl` and
     `observation-table.jsonl`.
   - Method packets consume those tables as black-box inputs and classify
     results for the hostile-landscape story.
-  - The toolbox audit separates observation, inference, and thesis-safe
-    wording.
+  - Method reports separate observation, inference, and thesis use.
   - Nuance:
     - this supports bounded negative/search-usefulness evidence, not a density
       theorem, impossibility theorem, or general ML benchmark claim.
