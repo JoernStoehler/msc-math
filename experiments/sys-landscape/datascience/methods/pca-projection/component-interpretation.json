@@ -1,0 +1,1751 @@
+{
+  "component_interpretation_metrics": [
+    {
+      "component": "pc1",
+      "explained_variance_ratio": 0.3283615112672078,
+      "loading_family_contributions": [
+        {
+          "family": "geom",
+          "fraction_of_component_squared_loading": 0.3312698743486015,
+          "squared_loading_sum": 0.3312698743486012
+        },
+        {
+          "family": "ridge",
+          "fraction_of_component_squared_loading": 0.23548836738623355,
+          "squared_loading_sum": 0.23548836738623335
+        },
+        {
+          "family": "facet",
+          "fraction_of_component_squared_loading": 0.1673759883473117,
+          "squared_loading_sum": 0.16737598834731157
+        },
+        {
+          "family": "edge",
+          "fraction_of_component_squared_loading": 0.11312269020628823,
+          "squared_loading_sum": 0.11312269020628815
+        },
+        {
+          "family": "allpair",
+          "fraction_of_component_squared_loading": 0.10083746686118501,
+          "squared_loading_sum": 0.10083746686118493
+        },
+        {
+          "family": "volume",
+          "fraction_of_component_squared_loading": 0.023863273252388746,
+          "squared_loading_sum": 0.02386327325238873
+        },
+        {
+          "family": "combinatorics",
+          "fraction_of_component_squared_loading": 0.013304946875399145,
+          "squared_loading_sum": 0.013304946875399135
+        },
+        {
+          "family": "transition",
+          "fraction_of_component_squared_loading": 0.01072907182407527,
+          "squared_loading_sum": 0.010729071824075261
+        },
+        {
+          "family": "vertex",
+          "fraction_of_component_squared_loading": 0.004008320898516851,
+          "squared_loading_sum": 0.004008320898516848
+        }
+      ],
+      "source_eta_squared": 0.3374784805648297,
+      "top_loadings": [
+        {
+          "column": "geom_vol1_pairwise_dist_mean",
+          "loading": 0.1881560203181598
+        },
+        {
+          "column": "facet_volume_vol1_sum",
+          "loading": 0.1880686849194174
+        },
+        {
+          "column": "geom_vol1_norm_mean",
+          "loading": 0.18722086619505593
+        },
+        {
+          "column": "facet_volume_vol1_mean",
+          "loading": 0.18560820222542773
+        },
+        {
+          "column": "ridge_abs_omega_vol1_mean",
+          "loading": 0.18417042499005581
+        },
+        {
+          "column": "allpair_abs_omega_vol1_mean",
+          "loading": 0.18058783323885486
+        },
+        {
+          "column": "geom_vol1_norm_max",
+          "loading": 0.17620488724668282
+        },
+        {
+          "column": "allpair_abs_omega_vol1_max",
+          "loading": 0.17542767372424312
+        }
+      ]
+    },
+    {
+      "component": "pc2",
+      "explained_variance_ratio": 0.19716917264690814,
+      "loading_family_contributions": [
+        {
+          "family": "ridge",
+          "fraction_of_component_squared_loading": 0.5282243637956925,
+          "squared_loading_sum": 0.5282243637956924
+        },
+        {
+          "family": "transition",
+          "fraction_of_component_squared_loading": 0.11215653321872998,
+          "squared_loading_sum": 0.11215653321872995
+        },
+        {
+          "family": "facet",
+          "fraction_of_component_squared_loading": 0.10480692177352563,
+          "squared_loading_sum": 0.1048069217735256
+        },
+        {
+          "family": "geom",
+          "fraction_of_component_squared_loading": 0.08125777382979198,
+          "squared_loading_sum": 0.08125777382979196
+        },
+        {
+          "family": "edge",
+          "fraction_of_component_squared_loading": 0.07355453317809522,
+          "squared_loading_sum": 0.07355453317809521
+        },
+        {
+          "family": "allpair",
+          "fraction_of_component_squared_loading": 0.06014365423155662,
+          "squared_loading_sum": 0.060143654231556605
+        },
+        {
+          "family": "vertex",
+          "fraction_of_component_squared_loading": 0.03312488351674634,
+          "squared_loading_sum": 0.033124883516746334
+        },
+        {
+          "family": "combinatorics",
+          "fraction_of_component_squared_loading": 0.005550276260872759,
+          "squared_loading_sum": 0.005550276260872758
+        },
+        {
+          "family": "volume",
+          "fraction_of_component_squared_loading": 0.001181060194988957,
+          "squared_loading_sum": 0.0011810601949889569
+        }
+      ],
+      "source_eta_squared": 0.8890920222432043,
+      "top_loadings": [
+        {
+          "column": "ridge_symp_area_volnorm_zero_fraction",
+          "loading": 0.23507430101604979
+        },
+        {
+          "column": "ridge_abs_omega_vol1_le_1em3_fraction",
+          "loading": 0.23482940662182417
+        },
+        {
+          "column": "ridge_abs_omega_vol1_le_1em2_fraction",
+          "loading": 0.23465303680350244
+        },
+        {
+          "column": "ridge_abs_omega_vol1_le_1em1_fraction",
+          "loading": 0.23260986322083532
+        },
+        {
+          "column": "ridge_symp_area_volnorm_le_1em3_fraction",
+          "loading": 0.22879777659605488
+        },
+        {
+          "column": "ridge_symp_area_volnorm_le_1em2_fraction",
+          "loading": 0.2203033396894184
+        },
+        {
+          "column": "transition_bidirectional_given_facet_intersection_fraction",
+          "loading": 0.20623781312188888
+        },
+        {
+          "column": "ridge_zero_fraction",
+          "loading": 0.20623781312188885
+        }
+      ]
+    },
+    {
+      "component": "pc3",
+      "explained_variance_ratio": 0.11450585327627444,
+      "loading_family_contributions": [
+        {
+          "family": "facet",
+          "fraction_of_component_squared_loading": 0.5600125177842571,
+          "squared_loading_sum": 0.5600125177842572
+        },
+        {
+          "family": "ridge",
+          "fraction_of_component_squared_loading": 0.21934829932410446,
+          "squared_loading_sum": 0.21934829932410452
+        },
+        {
+          "family": "geom",
+          "fraction_of_component_squared_loading": 0.08765739622455004,
+          "squared_loading_sum": 0.08765739622455006
+        },
+        {
+          "family": "transition",
+          "fraction_of_component_squared_loading": 0.06909177303870502,
+          "squared_loading_sum": 0.06909177303870503
+        },
+        {
+          "family": "edge",
+          "fraction_of_component_squared_loading": 0.03189347040484688,
+          "squared_loading_sum": 0.031893470404846885
+        },
+        {
+          "family": "vertex",
+          "fraction_of_component_squared_loading": 0.01512473872025888,
+          "squared_loading_sum": 0.015124738720258884
+        },
+        {
+          "family": "allpair",
+          "fraction_of_component_squared_loading": 0.01046438584999184,
+          "squared_loading_sum": 0.010464385849991842
+        },
+        {
+          "family": "volume",
+          "fraction_of_component_squared_loading": 0.003207159720295039,
+          "squared_loading_sum": 0.00320715972029504
+        },
+        {
+          "family": "combinatorics",
+          "fraction_of_component_squared_loading": 0.003200258932990733,
+          "squared_loading_sum": 0.003200258932990734
+        }
+      ],
+      "source_eta_squared": 0.035866077992607326,
+      "top_loadings": [
+        {
+          "column": "facet_vertex_count_std",
+          "loading": 0.3176148457175426
+        },
+        {
+          "column": "facet_neighbor_count_std",
+          "loading": 0.31761484571754256
+        },
+        {
+          "column": "facet_vertex_count_max",
+          "loading": 0.2696820072784894
+        },
+        {
+          "column": "facet_neighbor_count_max",
+          "loading": 0.26968200727848934
+        },
+        {
+          "column": "facet_neighbor_count_min",
+          "loading": -0.26744218248930385
+        },
+        {
+          "column": "facet_vertex_count_min",
+          "loading": -0.2674421824893038
+        },
+        {
+          "column": "ridge_size_max",
+          "loading": 0.26329934982250275
+        },
+        {
+          "column": "ridge_size_std",
+          "loading": 0.25155870750449416
+        }
+      ]
+    },
+    {
+      "component": "pc4",
+      "explained_variance_ratio": 0.07014226006871693,
+      "loading_family_contributions": [
+        {
+          "family": "ridge",
+          "fraction_of_component_squared_loading": 0.2562589328016129,
+          "squared_loading_sum": 0.2562589328016128
+        },
+        {
+          "family": "geom",
+          "fraction_of_component_squared_loading": 0.2388187541594458,
+          "squared_loading_sum": 0.23881875415944576
+        },
+        {
+          "family": "facet",
+          "fraction_of_component_squared_loading": 0.1793406733803502,
+          "squared_loading_sum": 0.17934067338035017
+        },
+        {
+          "family": "edge",
+          "fraction_of_component_squared_loading": 0.11653672127600972,
+          "squared_loading_sum": 0.1165367212760097
+        },
+        {
+          "family": "transition",
+          "fraction_of_component_squared_loading": 0.0684647361278966,
+          "squared_loading_sum": 0.06846473612789658
+        },
+        {
+          "family": "combinatorics",
+          "fraction_of_component_squared_loading": 0.056436327847813404,
+          "squared_loading_sum": 0.05643632784781339
+        },
+        {
+          "family": "allpair",
+          "fraction_of_component_squared_loading": 0.055286680985851544,
+          "squared_loading_sum": 0.05528668098585153
+        },
+        {
+          "family": "vertex",
+          "fraction_of_component_squared_loading": 0.028854775975909124,
+          "squared_loading_sum": 0.028854775975909117
+        },
+        {
+          "family": "volume",
+          "fraction_of_component_squared_loading": 2.397445110669027e-06,
+          "squared_loading_sum": 2.3974451106690265e-06
+        }
+      ],
+      "source_eta_squared": 0.11178020818999293,
+      "top_loadings": [
+        {
+          "column": "edge_density",
+          "loading": 0.24737416000613988
+        },
+        {
+          "column": "dual_vertex_count",
+          "loading": -0.23756331334575503
+        },
+        {
+          "column": "facet_count",
+          "loading": -0.23756331334575498
+        },
+        {
+          "column": "ridge_symp_area_volnorm_min",
+          "loading": 0.20084214086425017
+        },
+        {
+          "column": "geom_cosine_max",
+          "loading": -0.1983057113713002
+        },
+        {
+          "column": "geom_cosine_mean",
+          "loading": -0.19475708398209068
+        },
+        {
+          "column": "ridge_count",
+          "loading": -0.18652244036097632
+        },
+        {
+          "column": "ridge_symp_area_volnorm_le_1em1_fraction",
+          "loading": -0.1791150936893121
+        }
+      ]
+    },
+    {
+      "component": "pc5",
+      "explained_variance_ratio": 0.034855971869931834,
+      "loading_family_contributions": [
+        {
+          "family": "transition",
+          "fraction_of_component_squared_loading": 0.4254955625705573,
+          "squared_loading_sum": 0.4254955625705577
+        },
+        {
+          "family": "ridge",
+          "fraction_of_component_squared_loading": 0.26731926473880374,
+          "squared_loading_sum": 0.26731926473880396
+        },
+        {
+          "family": "facet",
+          "fraction_of_component_squared_loading": 0.10760814899864712,
+          "squared_loading_sum": 0.10760814899864722
+        },
+        {
+          "family": "allpair",
+          "fraction_of_component_squared_loading": 0.08338189587562408,
+          "squared_loading_sum": 0.08338189587562415
+        },
+        {
+          "family": "geom",
+          "fraction_of_component_squared_loading": 0.08203269012241358,
+          "squared_loading_sum": 0.08203269012241365
+        },
+        {
+          "family": "edge",
+          "fraction_of_component_squared_loading": 0.02023699620404165,
+          "squared_loading_sum": 0.020236996204041666
+        },
+        {
+          "family": "volume",
+          "fraction_of_component_squared_loading": 0.007832389949913986,
+          "squared_loading_sum": 0.007832389949913993
+        },
+        {
+          "family": "vertex",
+          "fraction_of_component_squared_loading": 0.006086973081009961,
+          "squared_loading_sum": 0.006086973081009966
+        },
+        {
+          "family": "combinatorics",
+          "fraction_of_component_squared_loading": 6.078458988566383e-06,
+          "squared_loading_sum": 6.078458988566388e-06
+        }
+      ],
+      "source_eta_squared": 0.03553127864213037,
+      "top_loadings": [
+        {
+          "column": "transition_out_degree_mean",
+          "loading": 0.3380921777398938
+        },
+        {
+          "column": "transition_density",
+          "loading": 0.3344613535073325
+        },
+        {
+          "column": "transition_out_degree_min",
+          "loading": 0.30631042724176305
+        },
+        {
+          "column": "allpair_zero_fraction",
+          "loading": 0.2681759861770403
+        },
+        {
+          "column": "transition_bidirectional_given_facet_intersection_fraction",
+          "loading": 0.2666659712808597
+        },
+        {
+          "column": "ridge_zero_fraction",
+          "loading": 0.26666597128085945
+        },
+        {
+          "column": "ridge_size_std",
+          "loading": 0.18037052762218408
+        },
+        {
+          "column": "transition_out_degree_max",
+          "loading": 0.15677658664850821
+        }
+      ]
+    },
+    {
+      "component": "pc6",
+      "explained_variance_ratio": 0.030819842253177278,
+      "loading_family_contributions": [
+        {
+          "family": "ridge",
+          "fraction_of_component_squared_loading": 0.27518717978682045,
+          "squared_loading_sum": 0.2751871797868203
+        },
+        {
+          "family": "geom",
+          "fraction_of_component_squared_loading": 0.22673177572065226,
+          "squared_loading_sum": 0.22673177572065212
+        },
+        {
+          "family": "edge",
+          "fraction_of_component_squared_loading": 0.17336050195234226,
+          "squared_loading_sum": 0.17336050195234218
+        },
+        {
+          "family": "facet",
+          "fraction_of_component_squared_loading": 0.15619886436039904,
+          "squared_loading_sum": 0.15619886436039895
+        },
+        {
+          "family": "transition",
+          "fraction_of_component_squared_loading": 0.08060613015436582,
+          "squared_loading_sum": 0.08060613015436578
+        },
+        {
+          "family": "allpair",
+          "fraction_of_component_squared_loading": 0.052663698124812974,
+          "squared_loading_sum": 0.05266369812481295
+        },
+        {
+          "family": "volume",
+          "fraction_of_component_squared_loading": 0.01884102533276935,
+          "squared_loading_sum": 0.01884102533276934
+        },
+        {
+          "family": "combinatorics",
+          "fraction_of_component_squared_loading": 0.012249804229669295,
+          "squared_loading_sum": 0.012249804229669288
+        },
+        {
+          "family": "vertex",
+          "fraction_of_component_squared_loading": 0.004161020338168575,
+          "squared_loading_sum": 0.004161020338168573
+        }
+      ],
+      "source_eta_squared": 0.036079850641129216,
+      "top_loadings": [
+        {
+          "column": "facet_volume_vol1_max_share",
+          "loading": 0.26076073516391524
+        },
+        {
+          "column": "edge_length_vol1_std",
+          "loading": -0.24864546350093347
+        },
+        {
+          "column": "geom_cosine_mean",
+          "loading": 0.24231478255458055
+        },
+        {
+          "column": "ridge_symp_area_volnorm_sum",
+          "loading": -0.24050469223572798
+        },
+        {
+          "column": "ridge_symp_area_volnorm_std",
+          "loading": -0.21435704136855363
+        },
+        {
+          "column": "geom_vol1_centroid_norm",
+          "loading": 0.2136082255637246
+        },
+        {
+          "column": "ridge_symp_area_volnorm_max",
+          "loading": -0.20614296571147928
+        },
+        {
+          "column": "edge_length_vol1_mean",
+          "loading": -0.19581929563654496
+        }
+      ]
+    }
+  ],
+  "dataset": {
+    "limit": null,
+    "max_sys": 0.9750768559799221,
+    "observation_rows": 8445,
+    "path": "experiments/sys-landscape/datascience/dataset",
+    "polytope_rows": 8445,
+    "sha256": {
+      "observation-table.jsonl": "5382d131dadb4f220512015e876e65566fee51d7c2a25521f7c891c2db8450ce",
+      "polytope-table.jsonl": "bc96000d2c7a70c4aa777891a020bf3c8f7d11d8ee17a084519e2706ce2b4554"
+    },
+    "source_counts": {
+      "gradient_ascent_general": 4096,
+      "gradient_ascent_products": 4089,
+      "random_product_sample": 100,
+      "random_sample": 70,
+      "variable_f_ascent": 90
+    },
+    "sys_gt_1_rows": 0
+  },
+  "inputs": {
+    "dataset_path": "experiments/sys-landscape/datascience/dataset",
+    "pca_scores": "Recomputed from the retained dataset with analyze.py helpers.",
+    "pca_summary": "experiments/sys-landscape/datascience/methods/pca-projection/pca-summary.json",
+    "sys_use": "Used after PCA fitting to interpret score association only."
+  },
+  "interpretation_limits": [
+    "Source labels are not PCA inputs; source_eta_squared measures post-fit alignment with source families.",
+    "High source_eta_squared does not prove source causation; it says source families occupy different regions in the fitted PCA coordinates.",
+    "PC-sys correlations are descriptive audits on already evaluated retained rows, not candidate-proposer rules."
+  ],
+  "method": "pca-projection-component-interpretation",
+  "pc_sys_relations": {
+    "pc1": {
+      "all_retained_rows": {
+        "pearson_pc_sys": -0.5861790271930943,
+        "row_count": 8445,
+        "spearman_pc_sys": -0.4163129588220254
+      },
+      "gradient_ascent_general": {
+        "pearson_pc_sys": -0.2822278383490445,
+        "row_count": 4096,
+        "spearman_pc_sys": -0.2963308476867846
+      },
+      "gradient_ascent_products": {
+        "pearson_pc_sys": -0.621787633556997,
+        "row_count": 4089,
+        "spearman_pc_sys": -0.354968796043308
+      },
+      "random_product_sample": {
+        "pearson_pc_sys": -0.7062319689277213,
+        "row_count": 100,
+        "spearman_pc_sys": -0.8672187218721874
+      },
+      "random_sample": {
+        "pearson_pc_sys": -0.7117824350309516,
+        "row_count": 70,
+        "spearman_pc_sys": -0.8270317557519026
+      },
+      "variable_f_ascent": {
+        "pearson_pc_sys": -0.42750917051084664,
+        "row_count": 90,
+        "spearman_pc_sys": -0.17216188073521432
+      }
+    },
+    "pc2": {
+      "all_retained_rows": {
+        "pearson_pc_sys": -0.07209747939878061,
+        "row_count": 8445,
+        "spearman_pc_sys": 0.20556220739613257
+      },
+      "gradient_ascent_general": {
+        "pearson_pc_sys": 0.10984654493751767,
+        "row_count": 4096,
+        "spearman_pc_sys": 0.13521349630659796
+      },
+      "gradient_ascent_products": {
+        "pearson_pc_sys": 0.2735484572028732,
+        "row_count": 4089,
+        "spearman_pc_sys": 0.31164091160633745
+      },
+      "random_product_sample": {
+        "pearson_pc_sys": -0.5849090800264516,
+        "row_count": 100,
+        "spearman_pc_sys": -0.5975877587758777
+      },
+      "random_sample": {
+        "pearson_pc_sys": -0.5621628295298268,
+        "row_count": 70,
+        "spearman_pc_sys": -0.606088706149943
+      },
+      "variable_f_ascent": {
+        "pearson_pc_sys": -0.023160107217487267,
+        "row_count": 90,
+        "spearman_pc_sys": 0.25210623577706953
+      }
+    },
+    "pc3": {
+      "all_retained_rows": {
+        "pearson_pc_sys": 0.026066807543195607,
+        "row_count": 8445,
+        "spearman_pc_sys": -0.06525448374282773
+      },
+      "gradient_ascent_general": {
+        "pearson_pc_sys": -0.09144071186140484,
+        "row_count": 4096,
+        "spearman_pc_sys": -0.08775300217437756
+      },
+      "gradient_ascent_products": {
+        "pearson_pc_sys": -0.12908908953884052,
+        "row_count": 4089,
+        "spearman_pc_sys": -0.1467869908436868
+      },
+      "random_product_sample": {
+        "pearson_pc_sys": 0.4139278976429137,
+        "row_count": 100,
+        "spearman_pc_sys": 0.3914311431143115
+      },
+      "random_sample": {
+        "pearson_pc_sys": 0.6186989932485022,
+        "row_count": 70,
+        "spearman_pc_sys": 0.729997375557694
+      },
+      "variable_f_ascent": {
+        "pearson_pc_sys": -0.19703855452269486,
+        "row_count": 90,
+        "spearman_pc_sys": -0.02562466816776104
+      }
+    },
+    "pc4": {
+      "all_retained_rows": {
+        "pearson_pc_sys": 0.0216232207812411,
+        "row_count": 8445,
+        "spearman_pc_sys": 0.14159750982385516
+      },
+      "gradient_ascent_general": {
+        "pearson_pc_sys": 0.2635972649333122,
+        "row_count": 4096,
+        "spearman_pc_sys": 0.2568452814017404
+      },
+      "gradient_ascent_products": {
+        "pearson_pc_sys": 0.30132973682459896,
+        "row_count": 4089,
+        "spearman_pc_sys": 0.1843541184997333
+      },
+      "random_product_sample": {
+        "pearson_pc_sys": 0.07107682433206979,
+        "row_count": 100,
+        "spearman_pc_sys": 0.06215421542154217
+      },
+      "random_sample": {
+        "pearson_pc_sys": -0.2732368675770881,
+        "row_count": 70,
+        "spearman_pc_sys": -0.19937013384655758
+      },
+      "variable_f_ascent": {
+        "pearson_pc_sys": 0.23282478631628772,
+        "row_count": 90,
+        "spearman_pc_sys": 0.2578353617149949
+      }
+    },
+    "pc5": {
+      "all_retained_rows": {
+        "pearson_pc_sys": 0.2574272151515627,
+        "row_count": 8445,
+        "spearman_pc_sys": 0.2968323229468529
+      },
+      "gradient_ascent_general": {
+        "pearson_pc_sys": 0.03524649271434904,
+        "row_count": 4096,
+        "spearman_pc_sys": 0.01517923534519138
+      },
+      "gradient_ascent_products": {
+        "pearson_pc_sys": 0.5244673241159107,
+        "row_count": 4089,
+        "spearman_pc_sys": 0.5087362476436568
+      },
+      "random_product_sample": {
+        "pearson_pc_sys": -0.23467832534618932,
+        "row_count": 100,
+        "spearman_pc_sys": -0.10874287428742876
+      },
+      "random_sample": {
+        "pearson_pc_sys": -0.282362885549302,
+        "row_count": 70,
+        "spearman_pc_sys": -0.34668882862391737
+      },
+      "variable_f_ascent": {
+        "pearson_pc_sys": 0.1115855141568259,
+        "row_count": 90,
+        "spearman_pc_sys": -0.08486679370691176
+      }
+    },
+    "pc6": {
+      "all_retained_rows": {
+        "pearson_pc_sys": 0.11224722246092604,
+        "row_count": 8445,
+        "spearman_pc_sys": 0.04674854610710368
+      },
+      "gradient_ascent_general": {
+        "pearson_pc_sys": -0.15923494023007848,
+        "row_count": 4096,
+        "spearman_pc_sys": -0.14142641249465793
+      },
+      "gradient_ascent_products": {
+        "pearson_pc_sys": 0.34606137022308087,
+        "row_count": 4089,
+        "spearman_pc_sys": 0.22887667949925464
+      },
+      "random_product_sample": {
+        "pearson_pc_sys": 0.3971778590640261,
+        "row_count": 100,
+        "spearman_pc_sys": 0.38450645064506456
+      },
+      "random_sample": {
+        "pearson_pc_sys": -0.03621981035230567,
+        "row_count": 70,
+        "spearman_pc_sys": 0.003936663459014959
+      },
+      "variable_f_ascent": {
+        "pearson_pc_sys": 0.04088653995483118,
+        "row_count": 90,
+        "spearman_pc_sys": 0.09837468977607201
+      }
+    }
+  },
+  "source_local_region_audit": [
+    {
+      "dataset": "gradient_ascent_general",
+      "expected_source_top_1_percent_capture_random": 2.052001953125,
+      "hypergeometric_p_value_ge_observed_capture": 1.0,
+      "region": "pc1_high_top_5_percent",
+      "selected_row_count": 205,
+      "source_row_count": 4096,
+      "source_top_1_percent_capture_enrichment": 0.0,
+      "source_top_1_percent_captured": 0,
+      "source_top_1_percent_row_count": 41,
+      "source_top_1_percent_threshold": 0.8892560478235598
+    },
+    {
+      "dataset": "gradient_ascent_general",
+      "expected_source_top_1_percent_capture_random": 2.052001953125,
+      "hypergeometric_p_value_ge_observed_capture": 0.14684253418290477,
+      "region": "pc1_low_top_5_percent",
+      "selected_row_count": 205,
+      "source_row_count": 4096,
+      "source_top_1_percent_capture_enrichment": 1.9493158834027364,
+      "source_top_1_percent_captured": 4,
+      "source_top_1_percent_row_count": 41,
+      "source_top_1_percent_threshold": 0.8892560478235598
+    },
+    {
+      "dataset": "gradient_ascent_general",
+      "expected_source_top_1_percent_capture_random": 2.052001953125,
+      "hypergeometric_p_value_ge_observed_capture": 0.14684253418290477,
+      "region": "pc2_high_top_5_percent",
+      "selected_row_count": 205,
+      "source_row_count": 4096,
+      "source_top_1_percent_capture_enrichment": 1.9493158834027364,
+      "source_top_1_percent_captured": 4,
+      "source_top_1_percent_row_count": 41,
+      "source_top_1_percent_threshold": 0.8892560478235598
+    },
+    {
+      "dataset": "gradient_ascent_general",
+      "expected_source_top_1_percent_capture_random": 2.052001953125,
+      "hypergeometric_p_value_ge_observed_capture": 0.8794573655639304,
+      "region": "pc2_low_top_5_percent",
+      "selected_row_count": 205,
+      "source_row_count": 4096,
+      "source_top_1_percent_capture_enrichment": 0.4873289708506841,
+      "source_top_1_percent_captured": 1,
+      "source_top_1_percent_row_count": 41,
+      "source_top_1_percent_threshold": 0.8892560478235598
+    },
+    {
+      "dataset": "gradient_ascent_general",
+      "expected_source_top_1_percent_capture_random": 2.052001953125,
+      "hypergeometric_p_value_ge_observed_capture": 0.6163670403474234,
+      "region": "pc3_high_top_5_percent",
+      "selected_row_count": 205,
+      "source_row_count": 4096,
+      "source_top_1_percent_capture_enrichment": 0.9746579417013682,
+      "source_top_1_percent_captured": 2,
+      "source_top_1_percent_row_count": 41,
+      "source_top_1_percent_threshold": 0.8892560478235598
+    },
+    {
+      "dataset": "gradient_ascent_general",
+      "expected_source_top_1_percent_capture_random": 2.052001953125,
+      "hypergeometric_p_value_ge_observed_capture": 0.8794573655639304,
+      "region": "pc3_low_top_5_percent",
+      "selected_row_count": 205,
+      "source_row_count": 4096,
+      "source_top_1_percent_capture_enrichment": 0.4873289708506841,
+      "source_top_1_percent_captured": 1,
+      "source_top_1_percent_row_count": 41,
+      "source_top_1_percent_threshold": 0.8892560478235598
+    },
+    {
+      "dataset": "gradient_ascent_general",
+      "expected_source_top_1_percent_capture_random": 2.052001953125,
+      "hypergeometric_p_value_ge_observed_capture": 0.33770439058586005,
+      "region": "pc4_high_top_5_percent",
+      "selected_row_count": 205,
+      "source_row_count": 4096,
+      "source_top_1_percent_capture_enrichment": 1.4619869125520524,
+      "source_top_1_percent_captured": 3,
+      "source_top_1_percent_row_count": 41,
+      "source_top_1_percent_threshold": 0.8892560478235598
+    },
+    {
+      "dataset": "gradient_ascent_general",
+      "expected_source_top_1_percent_capture_random": 2.052001953125,
+      "hypergeometric_p_value_ge_observed_capture": 1.0,
+      "region": "pc4_low_top_5_percent",
+      "selected_row_count": 205,
+      "source_row_count": 4096,
+      "source_top_1_percent_capture_enrichment": 0.0,
+      "source_top_1_percent_captured": 0,
+      "source_top_1_percent_row_count": 41,
+      "source_top_1_percent_threshold": 0.8892560478235598
+    },
+    {
+      "dataset": "gradient_ascent_general",
+      "expected_source_top_1_percent_capture_random": 2.052001953125,
+      "hypergeometric_p_value_ge_observed_capture": 0.14684253418290477,
+      "region": "pc5_high_top_5_percent",
+      "selected_row_count": 205,
+      "source_row_count": 4096,
+      "source_top_1_percent_capture_enrichment": 1.9493158834027364,
+      "source_top_1_percent_captured": 4,
+      "source_top_1_percent_row_count": 41,
+      "source_top_1_percent_threshold": 0.8892560478235598
+    },
+    {
+      "dataset": "gradient_ascent_general",
+      "expected_source_top_1_percent_capture_random": 2.052001953125,
+      "hypergeometric_p_value_ge_observed_capture": 0.14684253418290477,
+      "region": "pc5_low_top_5_percent",
+      "selected_row_count": 205,
+      "source_row_count": 4096,
+      "source_top_1_percent_capture_enrichment": 1.9493158834027364,
+      "source_top_1_percent_captured": 4,
+      "source_top_1_percent_row_count": 41,
+      "source_top_1_percent_threshold": 0.8892560478235598
+    },
+    {
+      "dataset": "gradient_ascent_general",
+      "expected_source_top_1_percent_capture_random": 2.052001953125,
+      "hypergeometric_p_value_ge_observed_capture": 0.8794573655639304,
+      "region": "pc6_high_top_5_percent",
+      "selected_row_count": 205,
+      "source_row_count": 4096,
+      "source_top_1_percent_capture_enrichment": 0.4873289708506841,
+      "source_top_1_percent_captured": 1,
+      "source_top_1_percent_row_count": 41,
+      "source_top_1_percent_threshold": 0.8892560478235598
+    },
+    {
+      "dataset": "gradient_ascent_general",
+      "expected_source_top_1_percent_capture_random": 2.052001953125,
+      "hypergeometric_p_value_ge_observed_capture": 0.33770439058586005,
+      "region": "pc6_low_top_5_percent",
+      "selected_row_count": 205,
+      "source_row_count": 4096,
+      "source_top_1_percent_capture_enrichment": 1.4619869125520524,
+      "source_top_1_percent_captured": 3,
+      "source_top_1_percent_row_count": 41,
+      "source_top_1_percent_threshold": 0.8892560478235598
+    },
+    {
+      "dataset": "gradient_ascent_products",
+      "expected_source_top_1_percent_capture_random": 2.0555147957935924,
+      "hypergeometric_p_value_ge_observed_capture": 1.0,
+      "region": "pc1_high_top_5_percent",
+      "selected_row_count": 205,
+      "source_row_count": 4089,
+      "source_top_1_percent_capture_enrichment": 0.0,
+      "source_top_1_percent_captured": 0,
+      "source_top_1_percent_row_count": 41,
+      "source_top_1_percent_threshold": 0.9253525979384741
+    },
+    {
+      "dataset": "gradient_ascent_products",
+      "expected_source_top_1_percent_capture_random": 2.0555147957935924,
+      "hypergeometric_p_value_ge_observed_capture": 0.3386846120198171,
+      "region": "pc1_low_top_5_percent",
+      "selected_row_count": 205,
+      "source_row_count": 4089,
+      "source_top_1_percent_capture_enrichment": 1.4594883997620465,
+      "source_top_1_percent_captured": 3,
+      "source_top_1_percent_row_count": 41,
+      "source_top_1_percent_threshold": 0.9253525979384741
+    },
+    {
+      "dataset": "gradient_ascent_products",
+      "expected_source_top_1_percent_capture_random": 2.0555147957935924,
+      "hypergeometric_p_value_ge_observed_capture": 3.994505450403976e-07,
+      "region": "pc2_high_top_5_percent",
+      "selected_row_count": 205,
+      "source_row_count": 4089,
+      "source_top_1_percent_capture_enrichment": 5.837953599048186,
+      "source_top_1_percent_captured": 12,
+      "source_top_1_percent_row_count": 41,
+      "source_top_1_percent_threshold": 0.9253525979384741
+    },
+    {
+      "dataset": "gradient_ascent_products",
+      "expected_source_top_1_percent_capture_random": 2.0555147957935924,
+      "hypergeometric_p_value_ge_observed_capture": 1.0,
+      "region": "pc2_low_top_5_percent",
+      "selected_row_count": 205,
+      "source_row_count": 4089,
+      "source_top_1_percent_capture_enrichment": 0.0,
+      "source_top_1_percent_captured": 0,
+      "source_top_1_percent_row_count": 41,
+      "source_top_1_percent_threshold": 0.9253525979384741
+    },
+    {
+      "dataset": "gradient_ascent_products",
+      "expected_source_top_1_percent_capture_random": 2.0555147957935924,
+      "hypergeometric_p_value_ge_observed_capture": 1.0,
+      "region": "pc3_high_top_5_percent",
+      "selected_row_count": 205,
+      "source_row_count": 4089,
+      "source_top_1_percent_capture_enrichment": 0.0,
+      "source_top_1_percent_captured": 0,
+      "source_top_1_percent_row_count": 41,
+      "source_top_1_percent_threshold": 0.9253525979384741
+    },
+    {
+      "dataset": "gradient_ascent_products",
+      "expected_source_top_1_percent_capture_random": 2.0555147957935924,
+      "hypergeometric_p_value_ge_observed_capture": 0.6173201464170898,
+      "region": "pc3_low_top_5_percent",
+      "selected_row_count": 205,
+      "source_row_count": 4089,
+      "source_top_1_percent_capture_enrichment": 0.9729922665080311,
+      "source_top_1_percent_captured": 2,
+      "source_top_1_percent_row_count": 41,
+      "source_top_1_percent_threshold": 0.9253525979384741
+    },
+    {
+      "dataset": "gradient_ascent_products",
+      "expected_source_top_1_percent_capture_random": 2.0555147957935924,
+      "hypergeometric_p_value_ge_observed_capture": 0.6173201464170898,
+      "region": "pc4_high_top_5_percent",
+      "selected_row_count": 205,
+      "source_row_count": 4089,
+      "source_top_1_percent_capture_enrichment": 0.9729922665080311,
+      "source_top_1_percent_captured": 2,
+      "source_top_1_percent_row_count": 41,
+      "source_top_1_percent_threshold": 0.9253525979384741
+    },
+    {
+      "dataset": "gradient_ascent_products",
+      "expected_source_top_1_percent_capture_random": 2.0555147957935924,
+      "hypergeometric_p_value_ge_observed_capture": 0.8799068203777705,
+      "region": "pc4_low_top_5_percent",
+      "selected_row_count": 205,
+      "source_row_count": 4089,
+      "source_top_1_percent_capture_enrichment": 0.48649613325401553,
+      "source_top_1_percent_captured": 1,
+      "source_top_1_percent_row_count": 41,
+      "source_top_1_percent_threshold": 0.9253525979384741
+    },
+    {
+      "dataset": "gradient_ascent_products",
+      "expected_source_top_1_percent_capture_random": 2.0555147957935924,
+      "hypergeometric_p_value_ge_observed_capture": 0.6173201464170898,
+      "region": "pc5_high_top_5_percent",
+      "selected_row_count": 205,
+      "source_row_count": 4089,
+      "source_top_1_percent_capture_enrichment": 0.9729922665080311,
+      "source_top_1_percent_captured": 2,
+      "source_top_1_percent_row_count": 41,
+      "source_top_1_percent_threshold": 0.9253525979384741
+    },
+    {
+      "dataset": "gradient_ascent_products",
+      "expected_source_top_1_percent_capture_random": 2.0555147957935924,
+      "hypergeometric_p_value_ge_observed_capture": 1.0,
+      "region": "pc5_low_top_5_percent",
+      "selected_row_count": 205,
+      "source_row_count": 4089,
+      "source_top_1_percent_capture_enrichment": 0.0,
+      "source_top_1_percent_captured": 0,
+      "source_top_1_percent_row_count": 41,
+      "source_top_1_percent_threshold": 0.9253525979384741
+    },
+    {
+      "dataset": "gradient_ascent_products",
+      "expected_source_top_1_percent_capture_random": 2.0555147957935924,
+      "hypergeometric_p_value_ge_observed_capture": 0.8799068203777705,
+      "region": "pc6_high_top_5_percent",
+      "selected_row_count": 205,
+      "source_row_count": 4089,
+      "source_top_1_percent_capture_enrichment": 0.48649613325401553,
+      "source_top_1_percent_captured": 1,
+      "source_top_1_percent_row_count": 41,
+      "source_top_1_percent_threshold": 0.9253525979384741
+    },
+    {
+      "dataset": "gradient_ascent_products",
+      "expected_source_top_1_percent_capture_random": 2.0555147957935924,
+      "hypergeometric_p_value_ge_observed_capture": 0.8799068203777705,
+      "region": "pc6_low_top_5_percent",
+      "selected_row_count": 205,
+      "source_row_count": 4089,
+      "source_top_1_percent_capture_enrichment": 0.48649613325401553,
+      "source_top_1_percent_captured": 1,
+      "source_top_1_percent_row_count": 41,
+      "source_top_1_percent_threshold": 0.9253525979384741
+    },
+    {
+      "dataset": "random_product_sample",
+      "expected_source_top_1_percent_capture_random": 0.05,
+      "hypergeometric_p_value_ge_observed_capture": 1.0,
+      "region": "pc1_high_top_5_percent",
+      "selected_row_count": 5,
+      "source_row_count": 100,
+      "source_top_1_percent_capture_enrichment": 0.0,
+      "source_top_1_percent_captured": 0,
+      "source_top_1_percent_row_count": 1,
+      "source_top_1_percent_threshold": 0.7943664315075561
+    },
+    {
+      "dataset": "random_product_sample",
+      "expected_source_top_1_percent_capture_random": 0.05,
+      "hypergeometric_p_value_ge_observed_capture": 0.050000000000000384,
+      "region": "pc1_low_top_5_percent",
+      "selected_row_count": 5,
+      "source_row_count": 100,
+      "source_top_1_percent_capture_enrichment": 20.0,
+      "source_top_1_percent_captured": 1,
+      "source_top_1_percent_row_count": 1,
+      "source_top_1_percent_threshold": 0.7943664315075561
+    },
+    {
+      "dataset": "random_product_sample",
+      "expected_source_top_1_percent_capture_random": 0.05,
+      "hypergeometric_p_value_ge_observed_capture": 1.0,
+      "region": "pc2_high_top_5_percent",
+      "selected_row_count": 5,
+      "source_row_count": 100,
+      "source_top_1_percent_capture_enrichment": 0.0,
+      "source_top_1_percent_captured": 0,
+      "source_top_1_percent_row_count": 1,
+      "source_top_1_percent_threshold": 0.7943664315075561
+    },
+    {
+      "dataset": "random_product_sample",
+      "expected_source_top_1_percent_capture_random": 0.05,
+      "hypergeometric_p_value_ge_observed_capture": 1.0,
+      "region": "pc2_low_top_5_percent",
+      "selected_row_count": 5,
+      "source_row_count": 100,
+      "source_top_1_percent_capture_enrichment": 0.0,
+      "source_top_1_percent_captured": 0,
+      "source_top_1_percent_row_count": 1,
+      "source_top_1_percent_threshold": 0.7943664315075561
+    },
+    {
+      "dataset": "random_product_sample",
+      "expected_source_top_1_percent_capture_random": 0.05,
+      "hypergeometric_p_value_ge_observed_capture": 1.0,
+      "region": "pc3_high_top_5_percent",
+      "selected_row_count": 5,
+      "source_row_count": 100,
+      "source_top_1_percent_capture_enrichment": 0.0,
+      "source_top_1_percent_captured": 0,
+      "source_top_1_percent_row_count": 1,
+      "source_top_1_percent_threshold": 0.7943664315075561
+    },
+    {
+      "dataset": "random_product_sample",
+      "expected_source_top_1_percent_capture_random": 0.05,
+      "hypergeometric_p_value_ge_observed_capture": 1.0,
+      "region": "pc3_low_top_5_percent",
+      "selected_row_count": 5,
+      "source_row_count": 100,
+      "source_top_1_percent_capture_enrichment": 0.0,
+      "source_top_1_percent_captured": 0,
+      "source_top_1_percent_row_count": 1,
+      "source_top_1_percent_threshold": 0.7943664315075561
+    },
+    {
+      "dataset": "random_product_sample",
+      "expected_source_top_1_percent_capture_random": 0.05,
+      "hypergeometric_p_value_ge_observed_capture": 1.0,
+      "region": "pc4_high_top_5_percent",
+      "selected_row_count": 5,
+      "source_row_count": 100,
+      "source_top_1_percent_capture_enrichment": 0.0,
+      "source_top_1_percent_captured": 0,
+      "source_top_1_percent_row_count": 1,
+      "source_top_1_percent_threshold": 0.7943664315075561
+    },
+    {
+      "dataset": "random_product_sample",
+      "expected_source_top_1_percent_capture_random": 0.05,
+      "hypergeometric_p_value_ge_observed_capture": 1.0,
+      "region": "pc4_low_top_5_percent",
+      "selected_row_count": 5,
+      "source_row_count": 100,
+      "source_top_1_percent_capture_enrichment": 0.0,
+      "source_top_1_percent_captured": 0,
+      "source_top_1_percent_row_count": 1,
+      "source_top_1_percent_threshold": 0.7943664315075561
+    },
+    {
+      "dataset": "random_product_sample",
+      "expected_source_top_1_percent_capture_random": 0.05,
+      "hypergeometric_p_value_ge_observed_capture": 1.0,
+      "region": "pc5_high_top_5_percent",
+      "selected_row_count": 5,
+      "source_row_count": 100,
+      "source_top_1_percent_capture_enrichment": 0.0,
+      "source_top_1_percent_captured": 0,
+      "source_top_1_percent_row_count": 1,
+      "source_top_1_percent_threshold": 0.7943664315075561
+    },
+    {
+      "dataset": "random_product_sample",
+      "expected_source_top_1_percent_capture_random": 0.05,
+      "hypergeometric_p_value_ge_observed_capture": 1.0,
+      "region": "pc5_low_top_5_percent",
+      "selected_row_count": 5,
+      "source_row_count": 100,
+      "source_top_1_percent_capture_enrichment": 0.0,
+      "source_top_1_percent_captured": 0,
+      "source_top_1_percent_row_count": 1,
+      "source_top_1_percent_threshold": 0.7943664315075561
+    },
+    {
+      "dataset": "random_product_sample",
+      "expected_source_top_1_percent_capture_random": 0.05,
+      "hypergeometric_p_value_ge_observed_capture": 1.0,
+      "region": "pc6_high_top_5_percent",
+      "selected_row_count": 5,
+      "source_row_count": 100,
+      "source_top_1_percent_capture_enrichment": 0.0,
+      "source_top_1_percent_captured": 0,
+      "source_top_1_percent_row_count": 1,
+      "source_top_1_percent_threshold": 0.7943664315075561
+    },
+    {
+      "dataset": "random_product_sample",
+      "expected_source_top_1_percent_capture_random": 0.05,
+      "hypergeometric_p_value_ge_observed_capture": 1.0,
+      "region": "pc6_low_top_5_percent",
+      "selected_row_count": 5,
+      "source_row_count": 100,
+      "source_top_1_percent_capture_enrichment": 0.0,
+      "source_top_1_percent_captured": 0,
+      "source_top_1_percent_row_count": 1,
+      "source_top_1_percent_threshold": 0.7943664315075561
+    },
+    {
+      "dataset": "random_sample",
+      "expected_source_top_1_percent_capture_random": 0.05714285714285714,
+      "hypergeometric_p_value_ge_observed_capture": 1.0,
+      "region": "pc1_high_top_5_percent",
+      "selected_row_count": 4,
+      "source_row_count": 70,
+      "source_top_1_percent_capture_enrichment": 0.0,
+      "source_top_1_percent_captured": 0,
+      "source_top_1_percent_row_count": 1,
+      "source_top_1_percent_threshold": 0.7389189350162976
+    },
+    {
+      "dataset": "random_sample",
+      "expected_source_top_1_percent_capture_random": 0.05714285714285714,
+      "hypergeometric_p_value_ge_observed_capture": 0.05714285714285901,
+      "region": "pc1_low_top_5_percent",
+      "selected_row_count": 4,
+      "source_row_count": 70,
+      "source_top_1_percent_capture_enrichment": 17.5,
+      "source_top_1_percent_captured": 1,
+      "source_top_1_percent_row_count": 1,
+      "source_top_1_percent_threshold": 0.7389189350162976
+    },
+    {
+      "dataset": "random_sample",
+      "expected_source_top_1_percent_capture_random": 0.05714285714285714,
+      "hypergeometric_p_value_ge_observed_capture": 1.0,
+      "region": "pc2_high_top_5_percent",
+      "selected_row_count": 4,
+      "source_row_count": 70,
+      "source_top_1_percent_capture_enrichment": 0.0,
+      "source_top_1_percent_captured": 0,
+      "source_top_1_percent_row_count": 1,
+      "source_top_1_percent_threshold": 0.7389189350162976
+    },
+    {
+      "dataset": "random_sample",
+      "expected_source_top_1_percent_capture_random": 0.05714285714285714,
+      "hypergeometric_p_value_ge_observed_capture": 0.05714285714285901,
+      "region": "pc2_low_top_5_percent",
+      "selected_row_count": 4,
+      "source_row_count": 70,
+      "source_top_1_percent_capture_enrichment": 17.5,
+      "source_top_1_percent_captured": 1,
+      "source_top_1_percent_row_count": 1,
+      "source_top_1_percent_threshold": 0.7389189350162976
+    },
+    {
+      "dataset": "random_sample",
+      "expected_source_top_1_percent_capture_random": 0.05714285714285714,
+      "hypergeometric_p_value_ge_observed_capture": 1.0,
+      "region": "pc3_high_top_5_percent",
+      "selected_row_count": 4,
+      "source_row_count": 70,
+      "source_top_1_percent_capture_enrichment": 0.0,
+      "source_top_1_percent_captured": 0,
+      "source_top_1_percent_row_count": 1,
+      "source_top_1_percent_threshold": 0.7389189350162976
+    },
+    {
+      "dataset": "random_sample",
+      "expected_source_top_1_percent_capture_random": 0.05714285714285714,
+      "hypergeometric_p_value_ge_observed_capture": 1.0,
+      "region": "pc3_low_top_5_percent",
+      "selected_row_count": 4,
+      "source_row_count": 70,
+      "source_top_1_percent_capture_enrichment": 0.0,
+      "source_top_1_percent_captured": 0,
+      "source_top_1_percent_row_count": 1,
+      "source_top_1_percent_threshold": 0.7389189350162976
+    },
+    {
+      "dataset": "random_sample",
+      "expected_source_top_1_percent_capture_random": 0.05714285714285714,
+      "hypergeometric_p_value_ge_observed_capture": 1.0,
+      "region": "pc4_high_top_5_percent",
+      "selected_row_count": 4,
+      "source_row_count": 70,
+      "source_top_1_percent_capture_enrichment": 0.0,
+      "source_top_1_percent_captured": 0,
+      "source_top_1_percent_row_count": 1,
+      "source_top_1_percent_threshold": 0.7389189350162976
+    },
+    {
+      "dataset": "random_sample",
+      "expected_source_top_1_percent_capture_random": 0.05714285714285714,
+      "hypergeometric_p_value_ge_observed_capture": 1.0,
+      "region": "pc4_low_top_5_percent",
+      "selected_row_count": 4,
+      "source_row_count": 70,
+      "source_top_1_percent_capture_enrichment": 0.0,
+      "source_top_1_percent_captured": 0,
+      "source_top_1_percent_row_count": 1,
+      "source_top_1_percent_threshold": 0.7389189350162976
+    },
+    {
+      "dataset": "random_sample",
+      "expected_source_top_1_percent_capture_random": 0.05714285714285714,
+      "hypergeometric_p_value_ge_observed_capture": 1.0,
+      "region": "pc5_high_top_5_percent",
+      "selected_row_count": 4,
+      "source_row_count": 70,
+      "source_top_1_percent_capture_enrichment": 0.0,
+      "source_top_1_percent_captured": 0,
+      "source_top_1_percent_row_count": 1,
+      "source_top_1_percent_threshold": 0.7389189350162976
+    },
+    {
+      "dataset": "random_sample",
+      "expected_source_top_1_percent_capture_random": 0.05714285714285714,
+      "hypergeometric_p_value_ge_observed_capture": 1.0,
+      "region": "pc5_low_top_5_percent",
+      "selected_row_count": 4,
+      "source_row_count": 70,
+      "source_top_1_percent_capture_enrichment": 0.0,
+      "source_top_1_percent_captured": 0,
+      "source_top_1_percent_row_count": 1,
+      "source_top_1_percent_threshold": 0.7389189350162976
+    },
+    {
+      "dataset": "random_sample",
+      "expected_source_top_1_percent_capture_random": 0.05714285714285714,
+      "hypergeometric_p_value_ge_observed_capture": 1.0,
+      "region": "pc6_high_top_5_percent",
+      "selected_row_count": 4,
+      "source_row_count": 70,
+      "source_top_1_percent_capture_enrichment": 0.0,
+      "source_top_1_percent_captured": 0,
+      "source_top_1_percent_row_count": 1,
+      "source_top_1_percent_threshold": 0.7389189350162976
+    },
+    {
+      "dataset": "random_sample",
+      "expected_source_top_1_percent_capture_random": 0.05714285714285714,
+      "hypergeometric_p_value_ge_observed_capture": 1.0,
+      "region": "pc6_low_top_5_percent",
+      "selected_row_count": 4,
+      "source_row_count": 70,
+      "source_top_1_percent_capture_enrichment": 0.0,
+      "source_top_1_percent_captured": 0,
+      "source_top_1_percent_row_count": 1,
+      "source_top_1_percent_threshold": 0.7389189350162976
+    },
+    {
+      "dataset": "variable_f_ascent",
+      "expected_source_top_1_percent_capture_random": 0.05555555555555555,
+      "hypergeometric_p_value_ge_observed_capture": 1.0,
+      "region": "pc1_high_top_5_percent",
+      "selected_row_count": 5,
+      "source_row_count": 90,
+      "source_top_1_percent_capture_enrichment": 0.0,
+      "source_top_1_percent_captured": 0,
+      "source_top_1_percent_row_count": 1,
+      "source_top_1_percent_threshold": 0.9063161368249018
+    },
+    {
+      "dataset": "variable_f_ascent",
+      "expected_source_top_1_percent_capture_random": 0.05555555555555555,
+      "hypergeometric_p_value_ge_observed_capture": 1.0,
+      "region": "pc1_low_top_5_percent",
+      "selected_row_count": 5,
+      "source_row_count": 90,
+      "source_top_1_percent_capture_enrichment": 0.0,
+      "source_top_1_percent_captured": 0,
+      "source_top_1_percent_row_count": 1,
+      "source_top_1_percent_threshold": 0.9063161368249018
+    },
+    {
+      "dataset": "variable_f_ascent",
+      "expected_source_top_1_percent_capture_random": 0.05555555555555555,
+      "hypergeometric_p_value_ge_observed_capture": 1.0,
+      "region": "pc2_high_top_5_percent",
+      "selected_row_count": 5,
+      "source_row_count": 90,
+      "source_top_1_percent_capture_enrichment": 0.0,
+      "source_top_1_percent_captured": 0,
+      "source_top_1_percent_row_count": 1,
+      "source_top_1_percent_threshold": 0.9063161368249018
+    },
+    {
+      "dataset": "variable_f_ascent",
+      "expected_source_top_1_percent_capture_random": 0.05555555555555555,
+      "hypergeometric_p_value_ge_observed_capture": 1.0,
+      "region": "pc2_low_top_5_percent",
+      "selected_row_count": 5,
+      "source_row_count": 90,
+      "source_top_1_percent_capture_enrichment": 0.0,
+      "source_top_1_percent_captured": 0,
+      "source_top_1_percent_row_count": 1,
+      "source_top_1_percent_threshold": 0.9063161368249018
+    },
+    {
+      "dataset": "variable_f_ascent",
+      "expected_source_top_1_percent_capture_random": 0.05555555555555555,
+      "hypergeometric_p_value_ge_observed_capture": 1.0,
+      "region": "pc3_high_top_5_percent",
+      "selected_row_count": 5,
+      "source_row_count": 90,
+      "source_top_1_percent_capture_enrichment": 0.0,
+      "source_top_1_percent_captured": 0,
+      "source_top_1_percent_row_count": 1,
+      "source_top_1_percent_threshold": 0.9063161368249018
+    },
+    {
+      "dataset": "variable_f_ascent",
+      "expected_source_top_1_percent_capture_random": 0.05555555555555555,
+      "hypergeometric_p_value_ge_observed_capture": 1.0,
+      "region": "pc3_low_top_5_percent",
+      "selected_row_count": 5,
+      "source_row_count": 90,
+      "source_top_1_percent_capture_enrichment": 0.0,
+      "source_top_1_percent_captured": 0,
+      "source_top_1_percent_row_count": 1,
+      "source_top_1_percent_threshold": 0.9063161368249018
+    },
+    {
+      "dataset": "variable_f_ascent",
+      "expected_source_top_1_percent_capture_random": 0.05555555555555555,
+      "hypergeometric_p_value_ge_observed_capture": 1.0,
+      "region": "pc4_high_top_5_percent",
+      "selected_row_count": 5,
+      "source_row_count": 90,
+      "source_top_1_percent_capture_enrichment": 0.0,
+      "source_top_1_percent_captured": 0,
+      "source_top_1_percent_row_count": 1,
+      "source_top_1_percent_threshold": 0.9063161368249018
+    },
+    {
+      "dataset": "variable_f_ascent",
+      "expected_source_top_1_percent_capture_random": 0.05555555555555555,
+      "hypergeometric_p_value_ge_observed_capture": 1.0,
+      "region": "pc4_low_top_5_percent",
+      "selected_row_count": 5,
+      "source_row_count": 90,
+      "source_top_1_percent_capture_enrichment": 0.0,
+      "source_top_1_percent_captured": 0,
+      "source_top_1_percent_row_count": 1,
+      "source_top_1_percent_threshold": 0.9063161368249018
+    },
+    {
+      "dataset": "variable_f_ascent",
+      "expected_source_top_1_percent_capture_random": 0.05555555555555555,
+      "hypergeometric_p_value_ge_observed_capture": 1.0,
+      "region": "pc5_high_top_5_percent",
+      "selected_row_count": 5,
+      "source_row_count": 90,
+      "source_top_1_percent_capture_enrichment": 0.0,
+      "source_top_1_percent_captured": 0,
+      "source_top_1_percent_row_count": 1,
+      "source_top_1_percent_threshold": 0.9063161368249018
+    },
+    {
+      "dataset": "variable_f_ascent",
+      "expected_source_top_1_percent_capture_random": 0.05555555555555555,
+      "hypergeometric_p_value_ge_observed_capture": 1.0,
+      "region": "pc5_low_top_5_percent",
+      "selected_row_count": 5,
+      "source_row_count": 90,
+      "source_top_1_percent_capture_enrichment": 0.0,
+      "source_top_1_percent_captured": 0,
+      "source_top_1_percent_row_count": 1,
+      "source_top_1_percent_threshold": 0.9063161368249018
+    },
+    {
+      "dataset": "variable_f_ascent",
+      "expected_source_top_1_percent_capture_random": 0.05555555555555555,
+      "hypergeometric_p_value_ge_observed_capture": 1.0,
+      "region": "pc6_high_top_5_percent",
+      "selected_row_count": 5,
+      "source_row_count": 90,
+      "source_top_1_percent_capture_enrichment": 0.0,
+      "source_top_1_percent_captured": 0,
+      "source_top_1_percent_row_count": 1,
+      "source_top_1_percent_threshold": 0.9063161368249018
+    },
+    {
+      "dataset": "variable_f_ascent",
+      "expected_source_top_1_percent_capture_random": 0.05555555555555555,
+      "hypergeometric_p_value_ge_observed_capture": 1.0,
+      "region": "pc6_low_top_5_percent",
+      "selected_row_count": 5,
+      "source_row_count": 90,
+      "source_top_1_percent_capture_enrichment": 0.0,
+      "source_top_1_percent_captured": 0,
+      "source_top_1_percent_row_count": 1,
+      "source_top_1_percent_threshold": 0.9063161368249018
+    }
+  ],
+  "source_score_summaries": {
+    "pc1": [
+      {
+        "dataset": "gradient_ascent_general",
+        "mean": 0.8166047570489583,
+        "median": 0.19220149469821415,
+        "p05": -2.1472749185805102,
+        "p95": 5.920387956291613,
+        "row_count": 4096,
+        "std": 2.837485882046742
+      },
+      {
+        "dataset": "gradient_ascent_products",
+        "mean": -1.5530625664095208,
+        "median": -1.9796143181436474,
+        "p05": -4.334602030631674,
+        "p95": 2.9834413288397776,
+        "row_count": 4089,
+        "std": 2.582584368700344
+      },
+      {
+        "dataset": "random_product_sample",
+        "mean": 12.93891076396148,
+        "median": 6.853378250387771,
+        "p05": -5.228050754897869,
+        "p95": 53.25153577935331,
+        "row_count": 100,
+        "std": 19.91748940691902
+      },
+      {
+        "dataset": "random_sample",
+        "mean": 25.487474336042073,
+        "median": 17.1545852482259,
+        "p05": -2.2076424252864095,
+        "p95": 65.46393471312467,
+        "row_count": 70,
+        "std": 25.78491773888478
+      },
+      {
+        "dataset": "variable_f_ascent",
+        "mean": -0.8039392304708255,
+        "median": -1.3530406867521474,
+        "p05": -3.34164720560402,
+        "p95": 4.327334010217584,
+        "row_count": 90,
+        "std": 2.3867149279392637
+      }
+    ],
+    "pc2": [
+      {
+        "dataset": "gradient_ascent_general",
+        "mean": -3.7135569852184886,
+        "median": -3.701513752046239,
+        "p05": -4.856823834500647,
+        "p95": -2.6015867080763617,
+        "row_count": 4096,
+        "std": 0.6781787296855557
+      },
+      {
+        "dataset": "gradient_ascent_products",
+        "mean": 3.5850461047868807,
+        "median": 3.8812632567417973,
+        "p05": 1.4757065542802523,
+        "p95": 5.168157414427812,
+        "row_count": 4089,
+        "std": 1.201269480793727
+      },
+      {
+        "dataset": "random_product_sample",
+        "mean": 8.162566796519634,
+        "median": 7.886129574453232,
+        "p05": -1.516522408671648,
+        "p95": 17.300629503794244,
+        "row_count": 100,
+        "std": 5.916771576189839
+      },
+      {
+        "dataset": "random_sample",
+        "mean": 2.6374524777000294,
+        "median": 1.4276870567646502,
+        "p05": -7.784357325153605,
+        "p95": 14.414697033814594,
+        "row_count": 70,
+        "std": 6.989323292021009
+      },
+      {
+        "dataset": "variable_f_ascent",
+        "mean": -4.993360712304422,
+        "median": -5.004603901872731,
+        "p05": -6.437749181252084,
+        "p95": -3.6873081455995034,
+        "row_count": 90,
+        "std": 0.8751318858756264
+      }
+    ],
+    "pc3": [
+      {
+        "dataset": "gradient_ascent_general",
+        "mean": 0.06082787825925379,
+        "median": -0.011869007140040518,
+        "p05": -2.131780862571044,
+        "p95": 2.50675185699466,
+        "row_count": 4096,
+        "std": 1.4867073063506473
+      },
+      {
+        "dataset": "gradient_ascent_products",
+        "mean": 0.053488620647909456,
+        "median": -0.5023756508473668,
+        "p05": -4.976340837782526,
+        "p95": 5.575076386085914,
+        "row_count": 4089,
+        "std": 3.908556277036787
+      },
+      {
+        "dataset": "random_product_sample",
+        "mean": -3.9780927080343242,
+        "median": -3.956046488497549,
+        "p05": -10.225070952989451,
+        "p95": 2.063804240558714,
+        "row_count": 100,
+        "std": 3.8335282262548738
+      },
+      {
+        "dataset": "random_sample",
+        "mean": -3.4572839693647155,
+        "median": -1.9701576732947497,
+        "p05": -11.556224289624078,
+        "p95": 1.345598792318097,
+        "row_count": 70,
+        "std": 4.36489801202711
+      },
+      {
+        "dataset": "variable_f_ascent",
+        "mean": 1.9105909942445332,
+        "median": 2.238316126887116,
+        "p05": -1.1158227425128717,
+        "p95": 4.26733059303488,
+        "row_count": 90,
+        "std": 1.706275200103378
+      }
+    ],
+    "pc4": [
+      {
+        "dataset": "gradient_ascent_general",
+        "mean": 0.31925520580150435,
+        "median": 0.5744937138923008,
+        "p05": -3.1193023126786654,
+        "p95": 2.8947648807150856,
+        "row_count": 4096,
+        "std": 1.891584998884011
+      },
+      {
+        "dataset": "gradient_ascent_products",
+        "mean": -0.38169407520906273,
+        "median": -0.29929594384317015,
+        "p05": -2.6133272946979993,
+        "p95": 1.6096740240979168,
+        "row_count": 4089,
+        "std": 1.3460679987613309
+      },
+      {
+        "dataset": "random_product_sample",
+        "mean": -0.4032997285285566,
+        "median": -0.577136438567301,
+        "p05": -13.66269853712184,
+        "p95": 14.041993260135815,
+        "row_count": 100,
+        "std": 8.573451816753291
+      },
+      {
+        "dataset": "random_sample",
+        "mean": 7.308232520229527,
+        "median": 2.970329403218948,
+        "p05": -9.620498194267084,
+        "p95": 34.41203073389957,
+        "row_count": 70,
+        "std": 13.273201493938343
+      },
+      {
+        "dataset": "variable_f_ascent",
+        "mean": -2.4240950332707407,
+        "median": -2.418152762510719,
+        "p05": -5.787548671145189,
+        "p95": 0.012132525432795221,
+        "row_count": 90,
+        "std": 1.9535479371813467
+      }
+    ],
+    "pc5": [
+      {
+        "dataset": "gradient_ascent_general",
+        "mean": 0.2519407050318241,
+        "median": 0.250257389352261,
+        "p05": -1.3851301584870392,
+        "p95": 1.8775504027237344,
+        "row_count": 4096,
+        "std": 0.9922179793266761
+      },
+      {
+        "dataset": "gradient_ascent_products",
+        "mean": -0.301864189238851,
+        "median": 0.6375324839407479,
+        "p05": -3.8880394306562382,
+        "p95": 1.8596562774418537,
+        "row_count": 4089,
+        "std": 2.049805790708719
+      },
+      {
+        "dataset": "random_product_sample",
+        "mean": 1.283234349569889,
+        "median": 0.7039570294402676,
+        "p05": -1.4485699074613418,
+        "p95": 5.187286797225077,
+        "row_count": 100,
+        "std": 2.7949578632876846
+      },
+      {
+        "dataset": "random_sample",
+        "mean": 0.25865286733922904,
+        "median": -0.19619312131716202,
+        "p05": -3.7420482451555785,
+        "p95": 4.072305890678802,
+        "row_count": 70,
+        "std": 3.0124156937258673
+      },
+      {
+        "dataset": "variable_f_ascent",
+        "mean": 0.6216045146181473,
+        "median": 0.6855918735081503,
+        "p05": -1.0048816897293464,
+        "p95": 1.9873398170064671,
+        "row_count": 90,
+        "std": 0.9563271393335178
+      }
+    ],
+    "pc6": [
+      {
+        "dataset": "gradient_ascent_general",
+        "mean": 0.09685540081685899,
+        "median": -0.029321956918425804,
+        "p05": -1.6716277645271604,
+        "p95": 2.2861921439530004,
+        "row_count": 4096,
+        "std": 1.2227274778107073
+      },
+      {
+        "dataset": "gradient_ascent_products",
+        "mean": -0.06170147291765449,
+        "median": 0.10061585122593417,
+        "p05": -1.9262216507846106,
+        "p95": 1.5734519551915178,
+        "row_count": 4089,
+        "std": 1.1015762461726473
+      },
+      {
+        "dataset": "random_product_sample",
+        "mean": -1.3752102246900697,
+        "median": 0.49600982831445817,
+        "p05": -15.519168135469034,
+        "p95": 4.438506524877539,
+        "row_count": 100,
+        "std": 8.145822919255991
+      },
+      {
+        "dataset": "random_sample",
+        "mean": 1.9769814466260134,
+        "median": 2.090130352696529,
+        "p05": -4.5888475594293086,
+        "p95": 10.893704168610519,
+        "row_count": 70,
+        "std": 5.6278580559423
+      },
+      {
+        "dataset": "variable_f_ascent",
+        "mean": -1.6143341975566667,
+        "median": -1.9349754019388063,
+        "p05": -3.175879752821805,
+        "p95": 0.2877487021134909,
+        "row_count": 90,
+        "std": 1.213081808998202
+      }
+    ]
+  }
+}
