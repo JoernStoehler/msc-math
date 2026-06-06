@@ -26,7 +26,7 @@ Unless stated otherwise:
 
 When interacting with Jörn in chat:
 - Write plain. Use zero metaphors and zero analogies and zero new terminology.
-- Number/label everything so Jörn can reference it without ambiguity.
+- Number everything so Jörn can reference it without ambiguity.
 - Use progressive disclosure.
 - Do not iterate complex messages in chat, such as plans and questionnaires.
   Draft and iterate in scratch, then copy the polished message to chat.
