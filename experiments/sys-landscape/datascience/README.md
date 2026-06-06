@@ -24,8 +24,9 @@ that is relevant to this search interface. It does not mean proving exhaustion
 over every possible data-science method. If a known applicable method is not
 run, record the reason in `methods/README.md` or the row's `report.md`.
 
-Do not prewrite this slice as purely negative before row closure. If a
-positive or conjectured-positive pattern appears, record it and escalate before
+Do not prewrite this slice as purely negative before retained evidence and
+documented deferrals or abandonments support the thesis claim. If a positive
+or conjectured-positive pattern appears, record it and escalate before
 continuing unrelated method cleanup.
 
 ## Required Navigation
@@ -40,6 +41,84 @@ Read these files for ordinary datascience work:
 
 The task and research notes are not ordinary entry points for this slice. Use
 them only when auditing cross-thesis claim wording or older context.
+
+## Prompt Examples
+
+These files are examples from the PCA method-row workflow, not templates:
+
+- `prompt-example-executor-pca-projection.md`
+- `prompt-example-technical-reviewer-pca-projection.md`
+- `prompt-example-thesis-reviewer-pca-projection.md`
+- `prompt-example-post-run-calibration-pca-projection.md`
+
+They live here because they describe method-row orchestration. Method
+evidence and reports still live under `methods/`.
+
+The post-run calibration prompt is sent after an executor or reviewer has
+finished. Do not include it in the initial prompt; it is meant to reveal what
+was unclear without priming the agent's work.
+
+## Thesis-Success Loop
+
+The data-science slice is successful when the retained evidence and method
+table support the thesis claim with calibrated positive and negative results,
+and no known open question appears worth answering after a quick
+back-of-the-envelope value-of-information vs wall-time estimate.
+
+Agents should prioritize work by thesis value, value of information, and
+wall-time to useful evidence. Negative, ambiguous, or abandoned results are
+valuable only when they are reproducible or explicitly non-runnable with reason,
+calibrated, interpretable, and not overclaimed.
+
+The integration branch is not scratch space. It should stay maintainable,
+navigable, and documented enough that future agents can continue without
+repairing stale artifacts or reconstructing intent from chat. Merge non-final
+or bounded experimental artifacts only when the committed artifact has a
+narrower current purpose and states its evidence status, thesis use, reason for
+stopping, reopen trigger if any, and what can be deleted later. Examples are
+current evidence, an explicit non-evidence status marker, or a bounded deferral
+or abandonment record. Do not merge work that leaves future agents to infer
+what it means.
+
+Salvage value is not enough. Work is not mergeable if a future agent must rerun,
+repair, further interpret, inspect stale files, or reconstruct intent from chat
+before relying on it. Request repair, split follow-up, deferral, abandonment,
+or escalation instead when a proposed merge would create maintenance burden or
+false closure.
+
+Methods should stay separated unless shared code has clear current value.
+Because this is exploratory research, do not preserve legacy or superseded code
+by default. Replace, delete, or prune to the takeaway once HEAD maintenance cost
+exceeds the value of keeping the material available outside the git log.
+
+## Integration Decision Vocabulary
+
+- Repair when the intended merge artifact is valuable but technically or
+  interpretively unreliable.
+- Split follow-up when the current artifact is mergeable and the remaining
+  question is separable.
+- Defer when the question may matter later but has lower current thesis value
+  than other work.
+- Abandon when expected thesis value is below maintenance and execution cost.
+- Escalate when there is candidate-proposer evidence, a validated new `sys > 1`
+  row, or evidence that should change thesis wording before unrelated method
+  work continues.
+
+## Method Folder Local Status
+
+A method folder owns local evidence and local considerations for one
+method-table row or explicitly named row group. It does not decide thesis
+success by itself.
+
+A method report should expose what future agents need for the thesis-success
+loop: current evidence, validity limits, interpretation, important caveats,
+cheap follow-up ideas, reasons to defer or abandon, and interactions with
+nearby methods when they matter.
+
+Local follow-up notes are inputs to prioritization, not automatic blockers and
+not automatic todo items. Use quick value-of-information vs wall-time estimates
+to decide whether they should be run now, split out, deferred, or left as
+future work.
 
 ## Source Truth Order
 
@@ -66,7 +145,7 @@ produce/  ->  tables/  ->  dataset/  ->  methods/
 - `produce/` owns accepted polytope/observation producer outputs and caches.
 - `tables/` owns accepted reusable table columns and the table builder.
 - `dataset/` owns the retained shared input tables.
-- `methods/` owns method evidence packets and reports.
+- `methods/` owns method evidence artifacts and reports.
 
 Method agents read `dataset/`. They do not rebuild `produce/`, edit `tables/`,
 or overwrite `dataset/` unless explicitly assigned that stage.
@@ -127,7 +206,8 @@ Refresh `dataset/` only after an intentional producer/table-stage change.
    if it has positive expected value after contamination risk.
 8. If a method records a validated new `sys > 1` row outside the known
    HKO2024-derived source, or records a candidate-proposer, stop unrelated
-   method work and write an escalation packet before continuing.
+   method work and write an escalation note stating the evidence, affected
+   thesis claim or wording, and recommended next action before continuing.
 
 ## Deletion-First Rule
 

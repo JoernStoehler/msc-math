@@ -1,6 +1,6 @@
 # Sys-Landscape Datascience Methods
 
-This directory owns evidence packets for datascience method-table rows. It does
+This directory owns evidence artifacts for datascience method-table rows. It does
 not own the retained dataset and it does not own thesis wording.
 
 Read `../README.md` and `../dataset/README.md` before running a method.
@@ -32,14 +32,36 @@ make these visible:
 - validity guard;
 - current/stale status;
 - report path;
-- terminal state when available.
+- primary result/status label when available.
 
 Reports are current evidence only if they were generated from the current
 retained dataset. Otherwise they must say they are status markers.
 
+## Method Row Workflow
+
+Use separated roles for current method-row work:
+
+- Orchestrator: keeps the integration branch maintainable, chooses the next
+  method-table row or explicitly named row group by thesis value, value of
+  information, and wall-time, and decides whether reviewed work should merge,
+  be repaired, split, deferred, abandoned, or escalated.
+- Executor: works in a method worktree branched from integration. The executor
+  owns the assigned method folder, designs the
+  analysis, writes the final report, and deletes or ignores stale source
+  material unless extraction is explicitly justified.
+- Reviewer: independently checks reviewed work after execution. The reviewer has
+  full repo access, but should not inherit the executor's context window. The
+  review focuses on leakage, interpretation, reproducibility,
+  maintainability, thesis usefulness, and whether the work would create false
+  closure or useful follow-up.
+
+Prep and queue edits may be made directly on the integration branch. Merge
+method-row work into the integration branch only after review and orchestrator
+acceptance.
+
 ## Result Types
 
-Use one primary terminal state per method row:
+Use one primary result/status label per current method report:
 
 - `ran with no candidate-proposer and no new validated row`
 - `ran as local optimization only`
@@ -61,8 +83,9 @@ polytopes or rows before their `sys` values are evaluated. A validated new row
 is a committed row with `sys > 1` outside examples already explained by the
 HKO2024 construction and its symplectic images or controlled perturbations.
 
-If a row gets either positive state, stop unrelated method work and write the
-follow-up/escalation packet before continuing method-table closure.
+If a row gets either positive state, stop unrelated method work and write an
+escalation note stating the evidence, affected thesis claim or wording, and
+recommended next action before continuing.
 
 ## Active Method Rows
 
@@ -71,18 +94,20 @@ code overrule this table.
 
 | Slug | Method row and question | Current result or status | Evidence status | Command or script | Source truth | Validity guard and thesis use |
 | --- | --- | --- | --- | --- | --- | --- |
-| `table-column-regression` | Table-column regression. Do retained table-column groups trained on random rows predict endpoint rows? | No current retained-dataset result. Old broad-folder artifacts were deleted. | Not evidence until a clean current run exists or the row is abandoned. | No current command; write a row-specific script only if this row remains required. | `table-column-regression/report.md` | Guard: grouped random-to-endpoint prediction. Thesis use: none before rerun or abandonment. |
-| `regime-classification` | Endpoint-vs-random classification. Can standard classifiers separate endpoint rows from random rows, and is the separator not just provenance? | No current retained-dataset result. Old broad-folder artifacts were deleted. | Not evidence until a clean current run exists or the row is abandoned. | No current command; write a row-specific script only if this row remains required. | `regime-classification/report.md` | Guard: separate metadata/provenance from geometric table columns. Thesis use: caveat/diagnostic only before any candidate-proposer. |
-| `endpoint-residualized-regression` | Endpoint residualized regression. Do endpoint table-column groups add endpoint-only association beyond metadata? | No current retained-dataset result. Old pre-LICCA disposition was deleted. | Not evidence until a clean current run exists or the row is abandoned. | No current command; write a row-specific script only if this row remains required. | `endpoint-residualized-regression/report.md` | Guard: grouped endpoint CV after metadata-first residualization. Thesis use: none before rerun or abandonment. |
-| `pca-cluster-anomaly` / PCA row | PCA projection. Does a low-dimensional projection expose a search rule for high-`sys` candidates? | Script retained and LICCA path guards updated; report is a status marker only. | Not evidence until rerun on the `8445`-row retained dataset. | `pca-cluster-anomaly/analyze.py` | `pca-cluster-anomaly/report.md` | Guard: candidate rule must be specified beyond inspecting correlation with `sys`. Thesis use: pending rerun or abandonment. |
-| `pca-cluster-anomaly` / clustering row | Clustering or manifold grouping. Does unsupervised grouping define a candidate-proposer? | Same bundled evidence packet as PCA; no current retained-dataset result. | Not evidence until rerun on the `8445`-row retained dataset. | `pca-cluster-anomaly/analyze.py` | `pca-cluster-anomaly/report.md` | Guard: cluster-to-search rule, not rediscovery of producer families. Thesis use: pending rerun or abandonment. |
-| `pca-cluster-anomaly` / anomaly row | Anomaly scan. Do outliers in retained table columns point to new high-`sys` candidates? | Same bundled evidence packet as PCA; no current retained-dataset result. | Not evidence until rerun on the `8445`-row retained dataset. | `pca-cluster-anomaly/analyze.py` | `pca-cluster-anomaly/report.md` | Guard: anomaly rule must propose candidates before claiming search value. Thesis use: pending rerun or abandonment. |
+| `table-column-regression` | Table-column regression. Do retained table-column groups trained on random rows predict endpoint rows? | No current retained-dataset result. Old broad-folder artifacts were deleted. | Not evidence until a clean current run exists or an explicit abandonment reason is recorded. | No current command; write a row-specific script only if this row remains required. | `table-column-regression/report.md` | Guard: grouped random-to-endpoint prediction. Thesis use: none before rerun or abandonment. |
+| `regime-classification` | Endpoint-vs-random classification. Can standard classifiers separate endpoint rows from random rows, and is the separator not just provenance? | No current retained-dataset result. Old broad-folder artifacts were deleted. | Not evidence until a clean current run exists or an explicit abandonment reason is recorded. | No current command; write a row-specific script only if this row remains required. | `regime-classification/report.md` | Guard: separate metadata/provenance from geometric table columns. Thesis use: caveat/diagnostic only before any candidate-proposer. |
+| `endpoint-residualized-regression` | Endpoint residualized regression. Do endpoint table-column groups add endpoint-only association beyond metadata? | No current retained-dataset result. Old pre-LICCA disposition was deleted. | Not evidence until a clean current run exists or an explicit abandonment reason is recorded. | No current command; write a row-specific script only if this row remains required. | `endpoint-residualized-regression/report.md` | Guard: grouped endpoint CV after metadata-first residualization. Thesis use: none before rerun or abandonment. |
+| `pca-projection` | PCA projection. Does a low-dimensional linear projection expose a reproducible rule for proposing high-`sys` candidates? | Partial/status evidence. The retained-dataset run and PC2-high audit completed locally. PC2-high enriches already evaluated high-`sys` rows, mainly inside `gradient_ascent_products`; within that source it still enriches source-local top-1% rows. This work does not define a candidate-generation interface and found no validated new row. | Not finished current method-table evidence. The report records reproducible partial evidence, but the method-level PCA interpretation remains open. | `pca-projection/analyze.py`; `pca-projection/interpret_pc2_high.py` | `pca-projection/report.md` | Guard: PCA inputs exclude `sys`, capacity columns, endpoint labels, dataset identity, optimizer provenance, and post-hoc `sys` inspection. Thesis use: partial/status evidence only until the PCA method-level interpretation is supplied, deferred, or abandoned. |
+| `pca-cluster-anomaly` / clustering row | Clustering or manifold grouping. Does unsupervised grouping define a candidate-proposer? | Same bundled stale source material as PCA; no current retained-dataset result. | Not evidence until rerun on the `8445`-row retained dataset. | `pca-cluster-anomaly/analyze.py` | `pca-cluster-anomaly/report.md` | Guard: cluster-to-search rule, not rediscovery of producer families. Thesis use: pending rerun or abandonment. |
+| `pca-cluster-anomaly` / anomaly row | Anomaly scan. Do outliers in retained table columns point to new high-`sys` candidates? | Same bundled stale source material as PCA; no current retained-dataset result. | Not evidence until rerun on the `8445`-row retained dataset. | `pca-cluster-anomaly/analyze.py` | `pca-cluster-anomaly/report.md` | Guard: anomaly rule must propose candidates before claiming search value. Thesis use: pending rerun or abandonment. |
 | `supervised-alternatives` | Boosting and nearest-neighbor supervised alternatives. Do cheap standard alternatives change the regression/classification verdicts? | Script retained and LICCA path guards updated; report is a status marker only. | Not evidence until rerun on the `8445`-row retained dataset. | `supervised-alternatives/analyze.py` | `supervised-alternatives/report.md` | Guard: same grouped-CV and random-to-endpoint framing as the baseline supervised rows. Thesis use: pending rerun or abandonment. |
 | `exact-f64-spot-check` | Exact-vs-f64 spot check. Do stored f64 geometry columns agree with exact rational source coordinates on sampled rows? | Script retained and dataset guards updated; report is a status marker only. | Not evidence until rerun on the `8445`-row retained dataset. | `exact-f64-spot-check/analyze.py` | `exact-f64-spot-check/report.md` | Guard: exact rational recomputation on sampled rows. Thesis use: supporting/caveat only. |
 
-`pca-cluster-anomaly/` is intentionally a bundled evidence packet for three
-closely coupled unsupervised rows. If one row becomes thesis-relevant or
-positive, split it into its own folder before further work.
+`pca-cluster-anomaly/` is stale source material. It is not current evidence and
+should not be rerun by default. It mixed PCA, clustering, anomaly scanning,
+feature policy, and report prose in one old bundle. Extract from it only if a
+fresh worker records a concrete reason. Delete it once current replacement
+work covers the useful rows or explicitly abandons them.
 
 Supporting script:
 
@@ -92,12 +117,13 @@ Supporting script:
 ## Coverage Policy
 
 The method table is the deliverable, not any single row. Rows needed by the
-thesis should be driven to a terminal state with repo-owned evidence or an
-explicit abandoned/deferred reason.
+thesis should accumulate current evidence or explicit reasons for
+inapplicability, deferral, abandonment, split-out follow-up, or escalation.
 
 Do not call the method set merely representative. Standard-method coverage must
 be run, ruled inapplicable, abandoned for cost, deferred with reason, or
-escalated if positive.
+escalated if positive. Prioritize remaining work by thesis value, value of
+information, and wall-time rather than local row-completion language.
 
 Known omitted/deferred families should be named when they matter for reader
 expectations. Current deferred examples include SVMs, neural networks, Bayesian
@@ -143,7 +169,7 @@ A current method report must include:
 - validity guard;
 - observation;
 - inference;
-- terminal state;
+- primary result/status label;
 - thesis use;
 - reopen condition.
 
