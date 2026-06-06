@@ -268,9 +268,12 @@ structure, both, or an unresolved mixture. If that interpretation is not worth
 the cost, the PCA row should be explicitly deferred or abandoned rather than
 presented as finished.
 
-## Current Result/Status
+## Report-Local Result
 
-Current status:
+This section is the report's proposed evidence classification and next action.
+Approved method-row status lives in `../STATUS.md`.
+
+Report-local classification:
 
 ```text
 partial/status evidence; method-level PCA interpretation incomplete

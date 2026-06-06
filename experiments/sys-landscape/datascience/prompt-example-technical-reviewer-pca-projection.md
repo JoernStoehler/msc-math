@@ -56,8 +56,8 @@ often matters for this work includes:
 - included and excluded columns relative to the validity guard;
 - leakage risks from `sys`, capacity columns, endpoint labels, dataset
   identity, optimizer provenance, or post-hoc `sys` inspection;
-- separation of observation, inference, thesis use, and proposed result/status
-  label;
+- separation of observation, inference, thesis use, proposed evidence
+  classification, and proposed next action;
 - consistency between `methods/README.md`, the report, script, and summary;
 - code simplicity and auditability;
 - whether old `pca-cluster-anomaly/` material contaminates the current work.
@@ -72,8 +72,8 @@ so. If not, state the residual risk.
 Output findings first, ordered by severity, with file paths. Then give:
 
 - whether any issue blocks integration;
-- what status update, if any, your findings support and what you actually
-  checked;
+- what approved-status update, if any, your findings support and what you
+  actually checked;
 - what would need to change before merge, if anything;
 - what could be nonblocking follow-up after merge;
 - which commit you reviewed;

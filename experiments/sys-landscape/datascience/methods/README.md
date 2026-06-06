@@ -33,7 +33,7 @@ make these visible:
 - validity guard;
 - current/stale evidence state;
 - report path;
-- proposed result/status label when useful.
+- proposed evidence classification and next action when useful.
 
 Reports are current evidence only if they were generated from the current
 retained dataset. Otherwise they must say they are stale or status markers.
@@ -60,12 +60,14 @@ Use separated roles for current method-row work:
 
 Prep and queue edits may be made directly on the integration branch. Merge
 method-row work into the integration branch only after review and orchestrator
-acceptance. A worker or reviewer may recommend a status, but that recommendation
-is not approved status until `STATUS.md` records it.
+acceptance. A worker or reviewer may recommend an evidence classification or
+next action, but that recommendation is not approved method-row status until
+`STATUS.md` records it.
 
 ## Result Types
 
-Workers may propose one local result/status label per current method report:
+Workers may propose one local evidence classification per current method
+report:
 
 - `ran with no candidate-proposer and no new validated row`
 - `ran as local optimization only`
@@ -183,7 +185,7 @@ A current method report must include:
 - validity guard;
 - observation;
 - inference;
-- proposed result/status label when useful;
+- proposed evidence classification and next action when useful;
 - thesis use;
 - reopen condition.
 
@@ -198,8 +200,8 @@ Experiments over 30 minutes are not accepted as reproducible local method
 evidence. Use smoke runs for development. If a method needs longer compute,
 record the reason and escalate before treating it as current evidence.
 
-Report status wording is local to the report. It is not approved method-row
-status unless `STATUS.md` cites it.
+Report-local result wording is evidence from that report. It is not approved
+method-row status unless `STATUS.md` cites it and records the approval scope.
 
 ## Coverage References
 

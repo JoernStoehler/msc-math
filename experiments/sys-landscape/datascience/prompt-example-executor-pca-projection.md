@@ -64,13 +64,14 @@ The report body structure is your decision. A reviewer must be able to check:
 - validity guard;
 - observation;
 - inference;
-- proposed result/status label when useful;
+- proposed evidence classification and next action when useful;
 - thesis use;
 - reopen condition.
 
-Your proposed status is not authoritative. Approved method-row status lives in
-`experiments/sys-landscape/datascience/methods/STATUS.md` and is updated by the
-orchestrator after evidence and review are inspected.
+Your proposed evidence classification or next action is not authoritative
+method-row status. Approved method-row status lives in
+`experiments/sys-landscape/datascience/methods/STATUS.md` and is updated by
+the orchestrator after evidence and review are inspected.
 
 A candidate-proposer must propose candidate polytopes or rows before their
 `sys` values are evaluated.
@@ -129,7 +130,7 @@ Final response:
 - commit hash;
 - changed files;
 - commands run and runtime if measured;
-- proposed method-table status and next action for the PCA row;
+- proposed evidence classification and next action for the PCA row;
 - whether old `pca-cluster-anomaly/` material was used, and why;
 - what the reviewer should focus on.
 ```

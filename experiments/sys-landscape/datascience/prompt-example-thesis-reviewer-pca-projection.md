@@ -79,8 +79,8 @@ Output findings first, ordered by importance. Then give:
 
 - confidence percentages where useful;
 - whether any issue blocks integration;
-- what status update, if any, your findings support and what you actually
-  checked;
+- what approved-status update, if any, your findings support and what you
+  actually checked;
 - what would need to change before merge, if anything;
 - what could be nonblocking follow-up after merge;
 - which commit you reviewed;
