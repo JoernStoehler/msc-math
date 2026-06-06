@@ -49,8 +49,7 @@ time uv run --script experiments/sys-landscape/datascience/methods/pca-projectio
 ```
 
 Observed wall runtime on 2026-06-06: `2.707s`. The full retained-dataset run is
-within the accepted local reproducibility bound. The JSON-internal analysis
-runtime was `2.398s`.
+within the accepted local reproducibility bound.
 
 PC2-high interpretation command:
 
@@ -63,10 +62,10 @@ time uv run --script experiments/sys-landscape/datascience/methods/pca-projectio
 
 Observed wall runtime on 2026-06-06: `2.803s`.
 
-This command consumes `pca-summary.json` for the included/excluded feature
-policy check, PC2 loading columns, and candidate-region p-value. It recomputes
-the same PCA scores from the retained dataset and writes the compact audit
-artifact `pc2-high-audit.json`.
+This command consumes `pca-summary.json` for dataset fingerprint checks,
+included/excluded feature policy checks, PC2 loading columns, and the
+candidate-region p-value. It recomputes the same PCA scores from the retained
+dataset and writes the compact audit artifact `pc2-high-audit.json`.
 
 Smoke command used during development:
 

@@ -13,7 +13,6 @@ import argparse
 import hashlib
 import json
 import math
-import time
 from pathlib import Path
 
 import numpy as np
@@ -269,7 +268,6 @@ def source_counts(observation_rows: list[dict]) -> dict[str, int]:
 
 def main() -> None:
     args = parse_args()
-    started = time.perf_counter()
     dataset = args.dataset
     poly_path = dataset / "polytope-table.jsonl"
     observation_path = dataset / "observation-table.jsonl"
@@ -326,7 +324,6 @@ def main() -> None:
             ),
             "candidate_regions": candidate_region_audit(scores, sys_values),
         },
-        "runtime_seconds": time.perf_counter() - started,
     }
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(summary, indent=2, sort_keys=True) + "\n")

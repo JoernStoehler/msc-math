@@ -239,12 +239,61 @@ def feature_means(
     return out
 
 
+def current_dataset_fingerprint(
+    dataset: Path,
+    poly_rows: list[dict],
+    observation_rows: list[dict],
+    sys_values: np.ndarray,
+) -> dict:
+    poly_path = dataset / "polytope-table.jsonl"
+    observation_path = dataset / "observation-table.jsonl"
+    return {
+        "polytope_rows": len(poly_rows),
+        "observation_rows": len(observation_rows),
+        "max_sys": float(sys_values.max()),
+        "sys_gt_1_rows": int((sys_values > 1.0).sum()),
+        "source_counts": analyze.source_counts(observation_rows),
+        "sha256": {
+            "polytope-table.jsonl": analyze.sha256(poly_path),
+            "observation-table.jsonl": analyze.sha256(observation_path),
+        },
+    }
+
+
+def check_summary_dataset(summary: dict, current: dict) -> None:
+    summary_dataset = summary["dataset"]
+    checked_fields = (
+        "polytope_rows",
+        "observation_rows",
+        "max_sys",
+        "sys_gt_1_rows",
+        "source_counts",
+        "sha256",
+    )
+    mismatches = [
+        field
+        for field in checked_fields
+        if summary_dataset.get(field) != current[field]
+    ]
+    if mismatches:
+        raise SystemExit(
+            "pca-summary.json does not match the retained dataset for fields "
+            f"{mismatches}; rerun analyze.py before interpreting PC2-high."
+        )
+
+
 def main() -> None:
     args = parse_args()
     summary = json.loads(args.summary.read_text())
     poly_rows = analyze.read_jsonl(args.dataset / "polytope-table.jsonl")
     observation_rows = analyze.read_jsonl(args.dataset / "observation-table.jsonl")
     observation_by_poly_id = {row["poly_id"]: row for row in observation_rows}
+    sys_values = np.array([float(row["sys"]) for row in poly_rows], dtype=float)
+
+    check_summary_dataset(
+        summary,
+        current_dataset_fingerprint(args.dataset, poly_rows, observation_rows, sys_values),
+    )
 
     features, excluded = analyze.choose_features(poly_rows)
     summary_features = summary["validity_guard"]["included_features"]
@@ -255,7 +304,6 @@ def main() -> None:
 
     z = analyze.standardized_matrix(poly_rows, features)
     scores, _, _ = analyze.fit_pca(z, args.components)
-    sys_values = np.array([float(row["sys"]) for row in poly_rows], dtype=float)
     pc2_scores = scores[:, 1]
     pc2_threshold = quantile_high(pc2_scores, 0.05)
     pc2_high = pc2_scores >= pc2_threshold
