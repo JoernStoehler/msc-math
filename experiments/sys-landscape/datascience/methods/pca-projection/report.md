@@ -6,9 +6,12 @@ description: >
   columns, endpoint labels, dataset identity, and optimizer provenance. Fixed
   PCA-score regions are then audited against sys only after fitting.
 result: >
-  Current retained-dataset run completed locally in 2.921 seconds wall time.
+  Current retained-dataset PCA run completed locally in 2.707 seconds wall
+  time, with a PC2-high interpretation audit in 2.803 seconds wall time.
   PC2-high is statistically meaningful descriptive enrichment among already
-  evaluated retained rows, but this work does not contain a current
+  evaluated retained rows. The enrichment is strongly entangled with product
+  source/provenance, but within gradient_ascent_products it still enriches
+  source-local top-1% sys rows. This work does not contain a current
   candidate-generation interface. Primary result/status label: ran with no
   candidate-proposer and no new validated row. Secondary labels: supporting
   evidence only; future reopen trigger. This is not a clean "no patterns found"
@@ -45,9 +48,25 @@ time uv run --script experiments/sys-landscape/datascience/methods/pca-projectio
   --output experiments/sys-landscape/datascience/methods/pca-projection/pca-summary.json
 ```
 
-Observed wall runtime on 2026-06-05: `2.921s`. The full retained-dataset run is
+Observed wall runtime on 2026-06-06: `2.707s`. The full retained-dataset run is
 within the accepted local reproducibility bound. The JSON-internal analysis
-runtime was `2.556s`.
+runtime was `2.398s`.
+
+PC2-high interpretation command:
+
+```bash
+time uv run --script experiments/sys-landscape/datascience/methods/pca-projection/interpret_pc2_high.py \
+  --dataset experiments/sys-landscape/datascience/dataset \
+  --summary experiments/sys-landscape/datascience/methods/pca-projection/pca-summary.json \
+  --output experiments/sys-landscape/datascience/methods/pca-projection/pc2-high-audit.json
+```
+
+Observed wall runtime on 2026-06-06: `2.803s`.
+
+This command consumes `pca-summary.json` for the included/excluded feature
+policy check, PC2 loading columns, and candidate-region p-value. It recomputes
+the same PCA scores from the retained dataset and writes the compact audit
+artifact `pc2-high-audit.json`.
 
 Smoke command used during development:
 
@@ -156,6 +175,41 @@ dataset.
 The machine-readable run summary is
 `experiments/sys-landscape/datascience/methods/pca-projection/pca-summary.json`.
 
+The PC2-high interpretation audit is
+`experiments/sys-landscape/datascience/methods/pca-projection/pc2-high-audit.json`.
+It records these additional observations:
+
+| Row set | `gradient_ascent_general` | `gradient_ascent_products` | `random_product_sample` | `random_sample` | `variable_f_ascent` |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| All retained rows | `4096` | `4089` | `100` | `70` | `90` |
+| Global top-1% `sys` rows | `5` | `80` | `0` | `0` | `0` |
+| PC2-high rows | `0` | `337` | `62` | `24` | `0` |
+| PC2-high global top-1% rows | `0` | `20` | `0` | `0` | `0` |
+
+Within `gradient_ascent_products`, PC2-high selects `337/4089` rows. It
+captures `20/80` global top-1% rows from that source, versus `6.59` expected
+from a same-source random subset of size `337` (`3.03x`, hypergeometric
+`p=4.26e-06`). It also captures `14/41` source-local top-1% rows, versus
+`3.38` expected (`4.14x`, `p=2.31e-06`).
+
+The PC2-high p-value remains small after a narrow Bonferroni correction over
+the `17` fixed candidate regions in `pca-summary.json`: raw `4.34e-09`,
+adjusted `7.38e-08`. This correction does not cover all exploratory choices
+made while interpreting the signal.
+
+The signal is not monotone in PC2. Among all retained rows, the top `0.5%` and
+top `1%` by PC2 capture `0` global top-1% `sys` rows. The top `2%`, `5%`,
+`10%`, and `20%` by PC2 capture `6`, `20`, `35`, and `54` global top-1% rows,
+respectively. The most extreme PC2 rows include many `random_product_sample`
+rows, whose highest-PC2 deciles have low `sys`.
+
+The top PC2 loading columns are near-zero symplectic-area fractions and
+transition bidirectionality. For example,
+`ridge_symp_area_volnorm_zero_fraction` has mean `0.146` globally, `0.308` in
+PC2-high, and `0.323` in PC2-high global top-1% rows. The matching
+`gradient_ascent_products` means are `0.322` inside PC2-high and `0.291`
+outside PC2-high. The full per-column audit is in `pc2-high-audit.json`.
+
 ## Inference
 
 PCA finds interpretable low-dimensional axes, mainly size/scale geometry and
@@ -166,21 +220,43 @@ evaluated retained rows. It captures `20/85` top-1% rows in a `423/8445` row
 region, compared with `4.26` expected by random selection. This is `4.70x`
 enrichment with hypergeometric p-value `4.34e-09`.
 
+The new audit makes the interpretation sharper:
+
+- PC2-high is evidence for a product or near-degenerate symplectic-geometry
+  direction in the retained rows.
+- PC2-high is strongly entangled with source/provenance. All captured global
+  top-1% rows are `gradient_ascent_products` rows, and PC2-high contains no
+  `gradient_ascent_general` or `variable_f_ascent` rows.
+- PC2-high is not explained by selecting `gradient_ascent_products` alone.
+  Within that source, PC2-high still enriches source-local top-1% `sys` rows.
+- PC2-high is not a clean monotone score rule. The most extreme PC2 rows do
+  not contain high-`sys` rows, so a candidate rule would need a band or
+  source-specific interface that has not been specified before `sys` audit.
+
 This is not a current candidate-proposer under the method-table definition.
 The committed run audits fixed PCA-score regions inside an already evaluated
 retained dataset. It does not provide an unevaluated candidate pool, a generator
 for new polytopes, or a pre-registered interface that scores unevaluated rows
 before their `sys` values are evaluated.
 
-PC2-high is therefore a candidate-proposer hypothesis and future follow-up
-trigger, not a current positive method-table row. Future positive work would
-need to specify, before `sys` audit, how unevaluated polytopes or rows are
-generated, which allowed columns are computed for them, how the PCA transform
-or PC2-high rule is fixed, and how proposed rows are evaluated.
+PC2-high is therefore a candidate-proposer hypothesis and future reopen trigger,
+not a current positive method-table row. Future positive work would need to
+specify, before `sys` audit, how unevaluated polytopes or rows are generated,
+which allowed columns are computed for them, how the PCA transform or PC2 band
+rule is fixed, and how proposed rows are evaluated.
 
 The audit does not support a claim that PCA regions are uninformative. It does
 support the narrower claim that this current PCA projection work found no
 validated `sys > 1` row and no current candidate-generation interface.
+
+Further PCA interpretation has lower expected thesis value than moving to
+another open method row. Belief `0.75`: another local PCA-only audit would
+mostly refine this same product-family interpretation rather than change the
+method-table status. Estimated whole-project value of one more PCA-only local
+pass: about `$90-$180`. Estimated cost: one Codex hour plus future review
+attention, about `$60-$120`. A split product-family proposer could be worth
+more, but only if it defines an unevaluated candidate pool and pre-registered
+PC2 band before `sys` audit.
 
 ## Current Result/Status Label
 
@@ -204,15 +280,19 @@ This work is directly usable as mixed current method-table evidence:
 - Negative current method-table verdict: no candidate-proposer and no validated
   new row are committed here.
 - Positive descriptive finding: PC2-high concentrates high retained `sys` rows
-  among already evaluated rows.
+  among already evaluated rows, mostly inside the product-source part of the
+  retained dataset.
 - Caveat: do not phrase this as a clean negative PCA result, an impossibility
-  result, a density statement, or an exhaustive PCA-region search.
+  result, a density statement, a source-independent pattern, a monotone score
+  rule, or an exhaustive PCA-region search.
 
 Recommended row wording:
 
 ```text
 PCA projection on allowed retained scalar columns found statistically
-meaningful PC2-high enrichment among already evaluated high-sys rows, but the
+meaningful PC2-high enrichment among already evaluated high-sys rows. The
+signal is product/source-entangled and non-monotone in PC2, but within
+gradient_ascent_products it still enriches source-local top-1% sys rows. The
 work did not define a candidate-generation interface for unevaluated rows and
 found no validated sys > 1 row.
 ```
@@ -224,3 +304,10 @@ PCA-score proposal rule is specified before `sys` audit, or if a new candidate
 generation interface can turn PCA-score directions into unevaluated polytopes
 without using endpoint labels, optimizer provenance, dataset identity, capacity
 columns, or post-hoc `sys` inspection.
+
+The concrete split follow-up, if reopened, is a product-family PCA-band
+candidate-proposer. It must define the unevaluated row pool, allowed feature
+computation, fixed PCA transform, PC2 band or threshold, and evaluation
+protocol before inspecting new `sys` values. Defer this follow-up unless the
+remaining method-table work still leaves a product-family candidate-proposer
+gap.
