@@ -8,10 +8,11 @@ description: >
 result: >
   Current retained-dataset run completed locally in 2.921 seconds wall time.
   PC2-high is statistically meaningful descriptive enrichment among already
-  evaluated retained rows, but the packet does not contain a current
-  candidate-generation interface. Terminal state: ran with no
+  evaluated retained rows, but this work does not contain a current
+  candidate-generation interface. Primary result/status label: ran with no
   candidate-proposer and no new validated row. Secondary labels: supporting
-  evidence only; future reopen trigger.
+  evidence only; future reopen trigger. This is not a clean "no patterns found"
+  result.
 ---
 
 # PCA Projection
@@ -61,7 +62,7 @@ Observed wall runtime on 2026-06-05: `0.330s`.
 ## Validity Guard
 
 The candidate-proposer guard is that any proposed row set must be definable
-before `sys` is inspected. This packet therefore fits PCA only on allowed
+before `sys` is inspected. This work therefore fits PCA only on allowed
 scalar intrinsic polytope columns and uses `sys` only after fitting as audit and
 interpretation.
 
@@ -88,7 +89,7 @@ Excluded input columns:
   `dataset`, `family`, `role`, `optimizer`, `backend`, `source_name`,
   `root_group_id`, `lineage_id`, and trajectory fields.
 
-The stale `pca-cluster-anomaly/` packet was not rerun and no code or result was
+The stale `pca-cluster-anomaly/` bundle was not rerun and no code or result was
 extracted from it.
 
 ## Observation
@@ -166,24 +167,24 @@ region, compared with `4.26` expected by random selection. This is `4.70x`
 enrichment with hypergeometric p-value `4.34e-09`.
 
 This is not a current candidate-proposer under the method-table definition.
-The committed packet audits fixed PCA-score regions inside an already evaluated
+The committed run audits fixed PCA-score regions inside an already evaluated
 retained dataset. It does not provide an unevaluated candidate pool, a generator
 for new polytopes, or a pre-registered interface that scores unevaluated rows
 before their `sys` values are evaluated.
 
 PC2-high is therefore a candidate-proposer hypothesis and future follow-up
-trigger, not a current positive method-table row. A future positive packet
-would need to specify, before `sys` audit, how unevaluated polytopes or rows are
+trigger, not a current positive method-table row. Future positive work would
+need to specify, before `sys` audit, how unevaluated polytopes or rows are
 generated, which allowed columns are computed for them, how the PCA transform
 or PC2-high rule is fixed, and how proposed rows are evaluated.
 
 The audit does not support a claim that PCA regions are uninformative. It does
-support the narrower claim that this current PCA projection packet found no
+support the narrower claim that this current PCA projection work found no
 validated `sys > 1` row and no current candidate-generation interface.
 
-## Terminal State
+## Current Result/Status Label
 
-Primary terminal state:
+Primary result/status label:
 
 ```text
 ran with no candidate-proposer and no new validated row
@@ -198,7 +199,7 @@ future reopen trigger
 
 ## Thesis Use
 
-This packet is directly usable as mixed current method-table evidence:
+This work is directly usable as mixed current method-table evidence:
 
 - Negative current method-table verdict: no candidate-proposer and no validated
   new row are committed here.
@@ -212,7 +213,7 @@ Recommended row wording:
 ```text
 PCA projection on allowed retained scalar columns found statistically
 meaningful PC2-high enrichment among already evaluated high-sys rows, but the
-packet did not define a candidate-generation interface for unevaluated rows and
+work did not define a candidate-generation interface for unevaluated rows and
 found no validated sys > 1 row.
 ```
 

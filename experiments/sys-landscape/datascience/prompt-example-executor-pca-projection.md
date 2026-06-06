@@ -1,27 +1,29 @@
 # Prompt Example: PCA Projection Executor
 
-This is the executor prompt used as the source pattern for the current
-`pca-projection` method packet. It is an example, not a template. For another
-method row, adapt the goal, source-truth files, method folder, validity guard,
-and expected evidence instead of mechanically replacing names.
+This is the executor prompt used as the source pattern for current
+`pca-projection` method-row work. It is an example, not a template. For
+another method row, adapt the goal, source-truth files, method folder, validity
+guard, and expected evidence instead of mechanically replacing names.
 
 ```text
 Work in `/workspaces/msc-math/.worktrees/ds-pca-projection`, branched from
 `ds-method-integration`.
 
-Create a fresh PCA projection packet for the sys-landscape data-science method
-table, or give a clear reason why PCA should be abandoned or deferred for this
-dataset/search interface.
+Create fresh PCA projection work for the sys-landscape data-science method
+table, or give a clear reason why PCA should be repaired, abandoned, deferred,
+split into follow-up work, or escalated for this dataset/search interface.
 
 Method question:
 
 > Does a low-dimensional linear projection of allowed retained dataset columns
 > suggest a reproducible rule for proposing high-`sys` candidate polytopes?
 
-The useful output is a committed method packet that satisfies the method packet
-success standard in `experiments/sys-landscape/datascience/README.md`. A PCA
-run is successful if the packet is usable as current method-table evidence,
-even when the row does not end negatively.
+The useful output is reviewed PCA method-row work worth merging into the
+data-science integration branch. It should serve the thesis-success loop and
+branch hygiene standards in `experiments/sys-landscape/datascience/README.md`.
+The PCA work is useful if it improves current method-table evidence or clearly
+explains why PCA should be repaired, deferred, abandoned, split into follow-up
+work, or escalated.
 
 Read these first:
 
@@ -62,7 +64,7 @@ The report body structure is your decision. A reviewer must be able to check:
 - validity guard;
 - observation;
 - inference;
-- terminal state;
+- primary result/status label;
 - thesis use;
 - reopen condition.
 
@@ -93,7 +95,7 @@ make impossibility, density, or exhaustive-search claims.
 
 `experiments/sys-landscape/datascience/methods/pca-cluster-anomaly/` is stale
 source material, not current evidence. Do not rerun it by default. Inspect it
-only if it has concrete value for this fresh PCA packet. If you extract an idea
+only if it has concrete value for this fresh PCA work. If you extract an idea
 or code, say what you extracted and why in the report or final summary.
 Otherwise leave it alone.
 
@@ -107,22 +109,23 @@ route appears to require more than 30 minutes, record that as a compute/data
 bound instead of claiming current evidence.
 
 Keep the analysis narrow enough that the reviewer can decide whether the PCA
-row is done.
+work should merge, be repaired, be split into follow-up work, be deferred, be
+abandoned, or be escalated.
 
 Before finishing, run the report reproduction command, or explain why no
 accepted current command exists. Run a cheap syntax/check command for new
 Python code. Check `git diff --check`.
 
-Commit the method packet on the method branch before handing it back. The
-reviewers should be able to review a committed packet diff, not reconstruct
-which loose working-tree files belong to the method result.
+Commit the method-row work on the method branch before handing it back. The
+reviewers should be able to review a committed diff, not reconstruct which
+loose working-tree files belong to the method result.
 
 Final response:
 
 - commit hash;
 - changed files;
 - commands run and runtime if measured;
-- recommended terminal state for the PCA row;
+- recommended method-table status and next action for the PCA row;
 - whether old `pca-cluster-anomaly/` material was used, and why;
 - what the reviewer should focus on.
 ```

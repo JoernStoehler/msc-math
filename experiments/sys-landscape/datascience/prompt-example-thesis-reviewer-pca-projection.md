@@ -1,45 +1,40 @@
 # Prompt Example: PCA Projection Thesis Reviewer
 
-This is an example for reviewing whether a technically plausible method packet
+This is an example for reviewing whether technically plausible method-row work
 helps the thesis result. It is intentionally broader and less checklist-shaped
 than the technical review prompt. For another method row, adapt the method
 question and nearby row interactions.
 
 ```text
-Review the PCA projection packet commit in:
+Review the PCA projection work commit in:
 
 `/workspaces/msc-math/.worktrees/ds-pca-projection`
 
-Do not edit files. Do not rely on executor context. Treat the committed packet
-diff, files, and any commands you run as the evidence. If the worktree is
-dirty, review the committed packet diff unless the dirty state affects
-interpretation or makes the committed packet ambiguous.
+Do not edit files. Do not rely on executor context. Treat the committed diff,
+files, and any commands you run as the evidence. If the worktree is dirty,
+review the committed diff unless the dirty state affects interpretation or
+makes the committed work ambiguous.
 
 Goal:
 
-Report whether the PCA packet is directly usable as current method-table
-evidence for the data-science thesis result. The orchestrator will use your
-findings to decide acceptance.
+Report whether the PCA work should merge into the data-science integration
+branch for thesis success. The orchestrator will use your findings to decide
+whether to merge, request repair, split follow-up, defer, abandon, or escalate.
 
 Context:
 
 - The data-science thesis result is a closed method table.
-- A useful method packet should help decide whether the method contributes
+- Useful method-row work should help decide whether the method contributes
   positive evidence, negative evidence, a candidate-proposer, a validated row,
   or a reason to abandon or defer the row.
-- A committed method packet is successful when it can be used as current
-  method-table evidence without rerunning the experiment, repairing the
-  analysis, further interpreting the result, or inspecting stale files.
-- The packet should reduce future Jörn/agent work. It should not preserve stale
-  structure or make thesis writing easier to get wrong.
-- A technically correct packet can still fail if it answers the wrong question,
+- The work should reduce future Jörn/agent work. It should not preserve stale
+  structure, create false closure, or make thesis writing easier to get wrong.
+- Technically correct work can still fail if it answers the wrong question,
   closes the wrong row, misses a cheap high-value analysis, weakens the
   narrative, or invites a future thesis-writing agent to overclaim.
-- For each material issue, make clear whether the packet is still directly
-  usable as current method-table evidence with ordinary thesis-writing work
-  remaining, or whether it needs substantial repair, reinterpretation, rerun, or
-  archaeology before the row can be trusted. Salvage value is not enough for
-  current evidence.
+- For each material issue, make clear whether the work should merge, be
+  repaired, be split into follow-up work, be deferred, be abandoned, or be
+  escalated. Salvage value is not enough for integration.
 
 Source files likely needed:
 
@@ -49,9 +44,9 @@ Source files likely needed:
 - `experiments/sys-landscape/datascience/methods/pca-projection/analyze.py`
 - `experiments/sys-landscape/datascience/methods/pca-projection/pca-summary.json`
 
-The review is good if it establishes whether this packet is the right
+The review is good if it establishes whether this work is the right
 thesis-useful artifact, not merely whether it is internally coherent. Evidence
-that often matters for this packet includes:
+that often matters for this work includes:
 
 - what thesis success requires from the PCA row;
 - whether the report answers the PCA method question rather than merely reports
@@ -65,20 +60,21 @@ that often matters for this packet includes:
   enough for thesis interpretation;
 - whether a cheap missing analysis would materially change the row's thesis
   value;
-- whether the packet interacts badly with nearby clustering/anomaly rows;
-- whether the row should instead be accepted, revised, expanded, split,
-  renamed, abandoned, or replaced by a different PCA-style packet;
+- whether the work interacts badly with nearby clustering/anomaly rows;
+- whether the work should merge as current evidence or a status record, be
+  revised, expanded, split, renamed, abandoned, or replaced by different
+  PCA-style work;
 - whether `methods/README.md` helps a future thesis-writing agent use the row
   correctly;
-- whether the packet reduces future Jörn/agent time or creates confusing
+- whether the work reduces future Jörn/agent time or creates confusing
   maintenance burden.
 
 Output findings first, ordered by importance. Then give:
 
 - confidence percentages where useful;
-- whether any issue blocks direct use as current method-table evidence;
-- what would need to change before direct use, if anything;
-- what could be follow-up after direct use;
+- whether any issue blocks integration;
+- what would need to change before merge, if anything;
+- what could be nonblocking follow-up after merge;
 - which commit you reviewed;
 - commands you ran, if any.
 ```

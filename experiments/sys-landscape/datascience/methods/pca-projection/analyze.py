@@ -5,7 +5,7 @@
 #   "numpy",
 # ]
 # ///
-"""PCA projection packet for the retained sys-landscape dataset."""
+"""PCA projection analysis for the retained sys-landscape dataset."""
 
 from __future__ import annotations
 
