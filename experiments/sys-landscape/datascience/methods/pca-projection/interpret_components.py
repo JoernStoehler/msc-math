@@ -204,6 +204,39 @@ def source_local_region_audit(
     return out
 
 
+def check_recomputed_pca_matches_summary(
+    summary: dict,
+    features: list[str],
+    components: np.ndarray,
+    explained: np.ndarray,
+) -> None:
+    expected_component_count = int(summary["pca"]["component_count"])
+    if components.shape[0] != expected_component_count:
+        raise SystemExit(
+            "Recomputed PCA component count does not match pca-summary.json; "
+            "rerun analyze.py before interpreting components."
+        )
+
+    summary_explained = np.array(summary["pca"]["explained_variance_ratio"], dtype=float)
+    if summary_explained.shape != explained.shape or not np.allclose(
+        summary_explained,
+        explained,
+        rtol=1e-12,
+        atol=1e-12,
+    ):
+        raise SystemExit(
+            "Recomputed PCA explained variance does not match pca-summary.json; "
+            "rerun analyze.py before interpreting components."
+        )
+
+    recomputed_top_loadings = analyze.top_loadings(features, components)
+    if recomputed_top_loadings != summary["pca"]["top_loadings"]:
+        raise SystemExit(
+            "Recomputed PCA top loadings do not match pca-summary.json; "
+            "rerun analyze.py before interpreting components."
+        )
+
+
 def main() -> None:
     args = parse_args()
     summary = json.loads(args.summary.read_text())
@@ -230,6 +263,7 @@ def main() -> None:
 
     z = analyze.standardized_matrix(poly_rows, features)
     scores, components, explained = analyze.fit_pca(z, args.components)
+    check_recomputed_pca_matches_summary(summary, features, components, explained)
     datasets = np.array(
         [str(observation_by_poly_id[row["poly_id"]].get("dataset")) for row in poly_rows],
         dtype=object,
