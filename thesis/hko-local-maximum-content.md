@@ -472,14 +472,30 @@ Recommended auxiliary assets:
    implies that for every nonzero direction `h`, some `r_i(h)<0`.
 
 4. HKO product-geometry reminder.
-   Status: candidate, not done.
+   Status: candidate working figure exists for one selected witness; not
+   theorem evidence.
    Purpose: remind the reader what the HKO2024 body is before the local
    certificate proof starts.
+
+   Current working asset:
+   - source: `thesis/working/plot_hko_row0_trajectory.py`;
+   - regenerate with `uv run --script thesis/working/plot_hko_row0_trajectory.py`;
+   - PNG: `thesis/working/hko-row0-trajectory-projections.png`.
+
+   The plot uses witness row 0 with
+   `sigma=[0,1,7,3,9,5]`, `I=[0,1,2,3,4]`, and fixed beta index `[5]`.
+   The script reads `feasible-section-witness.json`, recovers a geometric
+   representative from `(sigma,beta0,action)`, asserts closure/on-facet/inside
+   residuals, and draws the `q`- and `p`-plane projections side by side.
+   The orange highlight marks the fixed-beta word index `j=5`.
+
+   Thesis-use status: this is a candidate explanatory figure. It is not a
+   source of truth for the certificate and should not be cited as proof data.
 
    TODO(Jörn): draw the standard reminder picture of the two regular pentagons
    in the `q`- and `p`-planes.
 
-   TODO(Jörn): possible certificate-enhanced version: pick one selected
+   Done as a working candidate: pick one selected
    `(sigma,I)` witness first, not all 26. Compute/read `beta0`, choose any
    matching trajectory representative, and draw its projections in
    `R^2_q` and `R^2_p` side by side. The projected paths should show the
