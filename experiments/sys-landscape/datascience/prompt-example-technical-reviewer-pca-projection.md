@@ -20,7 +20,7 @@ Goal:
 Report whether the PCA work is technically reliable and maintainable enough to
 support an integration-branch decision. The orchestrator will use your findings
 to decide whether to merge, request repair, split follow-up, defer, abandon, or
-escalate.
+escalate, and whether to update approved status in `methods/STATUS.md`.
 
 Context:
 
@@ -56,11 +56,15 @@ often matters for this work includes:
 - included and excluded columns relative to the validity guard;
 - leakage risks from `sys`, capacity columns, endpoint labels, dataset
   identity, optimizer provenance, or post-hoc `sys` inspection;
-- separation of observation, inference, thesis use, and primary result/status
+- separation of observation, inference, thesis use, and proposed result/status
   label;
 - consistency between `methods/README.md`, the report, script, and summary;
 - code simplicity and auditability;
 - whether old `pca-cluster-anomaly/` material contaminates the current work.
+
+Your review may recommend a status or decision, but it does not approve
+method-row status. Approved status is orchestrator-owned and recorded in
+`methods/STATUS.md`.
 
 If rerunning the work or a smaller check materially improves confidence, do
 so. If not, state the residual risk.
@@ -68,6 +72,8 @@ so. If not, state the residual risk.
 Output findings first, ordered by severity, with file paths. Then give:
 
 - whether any issue blocks integration;
+- what status update, if any, your findings support and what you actually
+  checked;
 - what would need to change before merge, if anything;
 - what could be nonblocking follow-up after merge;
 - which commit you reviewed;

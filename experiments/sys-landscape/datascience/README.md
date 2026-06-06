@@ -36,8 +36,8 @@ Read these files for ordinary datascience work:
 - `dataset/README.md`: current retained dataset identity and fingerprint.
 - `produce/README.md`: accepted producer rows, caches, and LICCA rules.
 - `tables/README.md`: accepted reusable table columns.
-- `methods/README.md`: method rows, current/stale report status, and method
-  folder conventions.
+- `methods/README.md`: method rows and method folder conventions.
+- `methods/STATUS.md`: orchestrator-approved method-row status.
 
 The task and research notes are not ordinary entry points for this slice. Use
 them only when auditing cross-thesis claim wording or older context.
@@ -91,6 +91,21 @@ Because this is exploratory research, do not preserve legacy or superseded code
 by default. Replace, delete, or prune to the takeaway once HEAD maintenance cost
 exceeds the value of keeping the material available outside the git log.
 
+## Status Authority
+
+Method reports own evidence. Reviewers own findings. Orchestrator-approved
+status lives in `methods/STATUS.md`.
+
+Worker-written report summaries, YAML `result` fields, README summaries, and
+reviewer verdicts are not authoritative method status. They are evidence with
+scope limited by the artifact, prompt, and review trace. A green review means
+only that the reviewer did not report a blocker under the checks it actually
+performed.
+
+If `methods/STATUS.md` has no approved status for a row, agents must read the
+report and reason from evidence instead of inferring status from a report
+header, README row, or reviewer verdict.
+
 ## Integration Decision Vocabulary
 
 - Repair when the intended merge artifact is valuable but technically or
@@ -128,13 +143,16 @@ For ordinary datascience work:
    dataset.
 2. `produce/README.md` and `tables/README.md` identify accepted producers and
    reusable table columns.
-3. `methods/README.md` is the method-row navigation index.
-4. Each method folder's `report.md` and source code are the source truth for
-   that method row's command, evidence status, result, and caveats.
+3. `methods/STATUS.md` records orchestrator-approved method-row status.
+4. `methods/README.md` is the method-row navigation index.
+5. Each method folder's `report.md` and source code are source truth for that
+   method row's command, evidence, observations, proposed interpretation, and
+   caveats.
 
-For thesis wording, start from this README and `methods/README.md`. Older
-research/task notes may explain why a decision was made, but method reports and
-source code are the source truth for current row-level evidence status.
+For thesis wording, start from this README, `methods/STATUS.md`, and
+`methods/README.md`. Older research/task notes may explain why a decision was
+made, but method reports and source code are evidence artifacts, not
+orchestrator-approved status.
 
 ## Data Flow
 

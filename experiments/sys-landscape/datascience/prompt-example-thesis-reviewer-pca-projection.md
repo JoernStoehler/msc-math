@@ -19,7 +19,8 @@ Goal:
 
 Report whether the PCA work should merge into the data-science integration
 branch for thesis success. The orchestrator will use your findings to decide
-whether to merge, request repair, split follow-up, defer, abandon, or escalate.
+whether to merge, request repair, split follow-up, defer, abandon, escalate,
+or update approved status in `methods/STATUS.md`.
 
 Context:
 
@@ -69,10 +70,17 @@ that often matters for this work includes:
 - whether the work reduces future Jörn/agent time or creates confusing
   maintenance burden.
 
+Your review may recommend a status or decision, but it does not approve
+method-row status. Approved status is orchestrator-owned and recorded in
+`methods/STATUS.md`. A green review is evidence only for the checks recorded in
+your findings and commands, not proof that all relevant questions are answered.
+
 Output findings first, ordered by importance. Then give:
 
 - confidence percentages where useful;
 - whether any issue blocks integration;
+- what status update, if any, your findings support and what you actually
+  checked;
 - what would need to change before merge, if anything;
 - what could be nonblocking follow-up after merge;
 - which commit you reviewed;
