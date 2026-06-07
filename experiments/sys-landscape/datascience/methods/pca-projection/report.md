@@ -8,15 +8,14 @@ description: >
 result: >
   Current retained-dataset PCA run completed locally in 2.707 seconds wall
   time, with a PC2-high audit in 2.803 seconds wall time and a component
-  interpretation run in 2.938 seconds wall time. Pooled PCA mostly exposes
-  differences between retained data sources that are visible in allowed
-  geometry columns. PC1 is dominated by
-  volume-normalized Euclidean geometry summaries, not by a meaningful scale
-  direction for `sys`. PC2 is mainly a product-like near-zero-ridge
-  symplectic direction; post-fit source-label audits show that it separates
-  retained sources, but it still enriches source-local top-1% `sys` rows
-  inside `gradient_ascent_products`. The run
-  records no current candidate-proposer and no validated new row.
+  interpretation run in 2.938 seconds wall time. Reading the loading vectors,
+  PC1 is dominated by volume-normalized Euclidean geometry summaries, not by a
+  meaningful scale direction for `sys`. PC2 is dominated by near-zero ridge
+  symplectic-area columns and transition-bidirectionality columns. The PC2-high
+  region enriches already evaluated high-`sys` rows, including inside
+  `gradient_ascent_products`, but post-fit source-label audits show that this
+  is not a source-independent PCA rule. The run records no current
+  candidate-proposer and no validated new row.
 ---
 
 # PCA Projection
@@ -80,8 +79,8 @@ time uv run --script experiments/sys-landscape/datascience/methods/pca-projectio
 Observed wall runtime on 2026-06-06: `2.938s`.
 
 This command consumes `pca-summary.json`, checks the retained-dataset
-fingerprint and feature policy, recomputes PCA scores, and writes source
-separation, feature-family loading, source-local region, and PC-`sys`
+fingerprint and feature policy, recomputes PCA scores, and writes
+feature-family loading, source-label audit, source-local region, and PC-`sys`
 association audits to `component-interpretation.json`.
 
 Smoke command used during development:
@@ -239,9 +238,12 @@ It records:
 | PC5 | `0.035` | `0.036` | `transition 0.43`, `ridge 0.27`, `facet 0.11`, `allpair 0.08` |
 | PC6 | `0.031` | `0.036` | `ridge 0.28`, `geom 0.23`, `edge 0.17`, `facet 0.16` |
 
-Here source eta-squared is the fraction of PC-score variance explained by the
-observation-table `dataset` label after fitting PCA without that label as an
-input. It measures alignment with source families, not causation.
+The loading-family columns are the primary component interpretation in this
+report. Source eta-squared is a post-fit audit: it is the fraction of PC-score
+variance explained by the observation-table `dataset` label after fitting PCA
+without that label as an input. It is used to detect whether a pooled PCA
+coordinate is specific to retained data subsets, not to define what the
+component means.
 
 PC2 source-score means are separated by source:
 
@@ -274,12 +276,13 @@ a broad within-product association, not a top-tail proposal rule.
 
 ## Inference
 
-Pooled PCA applied to the retained dataset tells us that the allowed
-scalar table columns contain strong geometry differences between retained data
-sources, and that one PCA direction isolates a high-`sys` enriched product
-region among already evaluated rows. The source labels were not PCA inputs;
-they were used only after fitting to audit what the pooled PCA coordinates
-separated.
+Pooled PCA applied to the retained dataset gives this direct component reading:
+PC1 is dominated by volume-normalized Euclidean geometry summaries, while PC2
+is dominated by near-zero ridge symplectic-area columns and
+transition-bidirectionality columns. The PC2-high region enriches already
+evaluated high-`sys` rows. Source labels were not PCA inputs; they were used
+only after fitting to audit whether this pooled PCA signal is shared across
+retained data subsets.
 
 PC2-high has statistically meaningful descriptive enrichment among already
 evaluated retained rows. It captures `20/85` top-1% rows in a `423/8445` row
@@ -301,22 +304,24 @@ The PC2-high audit adds these supported facts:
   not contain high-`sys` rows, so a candidate rule would need a band or
   source-specific interface that has not been specified before `sys` audit.
 
-The component interpretation supports this reading:
+The loading vectors support this component reading:
 
 - PC1 is mostly a volume-normalized Euclidean geometry-summary direction. It
   explains `32.8%` of allowed-feature variance, has largest loading-family
   mass in `geom`, `ridge`, `facet`, and `edge` columns, and is negatively
   correlated with `sys` globally.
 - PC2 is mainly a near-zero-ridge symplectic direction. Post-fit
-  source-label audits show that this pooled-PCA coordinate separates
-  product-like retained sources. It explains `19.7%` of allowed-feature
-  variance, has `53%` of squared loading mass in `ridge` columns, and has
-  source eta-squared `0.889`. Its high side contains product rows and random
-  product-like rows, while its low side contains general and variable-f
-  ascent rows.
-- PC2 is not only source selection. Within `gradient_ascent_products`, the
-  source-local PC2-high top-5% region captures `12/41` source-local top-1%
-  `sys` rows, versus `2.06` expected from a same-source random subset.
+  source-label audits show that this pooled-PCA coordinate is not
+  source-independent. It explains `19.7%` of allowed-feature variance, has
+  `53%` of squared loading mass in `ridge` columns, and its largest loadings
+  are near-zero ridge symplectic-area fractions and transition
+  bidirectionality.
+- The source-label audit is a caveat, not the component interpretation.
+  PC2 has source eta-squared `0.889`: its high side contains product rows and
+  random product-like rows, while its low side contains general and variable-f
+  ascent rows. Within `gradient_ascent_products`, the source-local PC2-high
+  top-5% region still captures `12/41` source-local top-1% `sys` rows, versus
+  `2.06` expected from a same-source random subset.
 - PC5 has the strongest monotone product-family PC-`sys` correlation among
   the first six PCs, but its source-local top-5% region does not capture a
   top-tail excess. This makes it descriptive association evidence, not a
@@ -336,8 +341,8 @@ or PC2 band rule is fixed, and how proposed rows are evaluated.
 
 The audit does not support a claim that PCA is uninformative. It supports the
 narrower claim that this retained-dataset PCA work found a real descriptive
-product-family pattern but no current candidate-proposer, no validated
-`sys > 1` row, and no source-independent high-`sys` PCA rule.
+near-zero-ridge symplectic-area pattern but no current candidate-proposer, no
+validated `sys > 1` row, and no source-independent high-`sys` PCA rule.
 
 ## Report-Local Result
 
@@ -355,7 +360,7 @@ Supported local facts:
 
 - no current candidate-proposer;
 - no validated new row;
-- descriptive product-family PC2 signal among already evaluated rows;
+- descriptive near-zero-ridge PC2 signal among already evaluated rows;
 - future reopen trigger for a product-family PCA-band candidate-proposer.
 
 ## Thesis Use
@@ -365,10 +370,9 @@ PCA row, subject to the caveats below.
 
 - Reproducible observation: PC2-high concentrates high retained `sys` rows
   among already evaluated rows, mainly inside `gradient_ascent_products`.
-- Interpretation: PC2 is mostly a near-zero-ridge symplectic direction;
-  post-fit source-label audits show that it separates product-like retained
-  sources, and the signal remains enriched inside
-  `gradient_ascent_products`.
+- Interpretation: PC2 is mostly a near-zero-ridge symplectic-area direction.
+  Post-fit source-label audits show that the pooled-PC2 signal is not
+  source-independent, but it remains enriched inside `gradient_ascent_products`.
 - Positive-but-limited fact: PCA found a real descriptive pattern in the
   retained data, not an empty or purely null result.
 - Reproducible negative fact: this PCA work commits no candidate-proposer and
@@ -384,10 +388,10 @@ Status wording for the method table or queue:
 
 ```text
 Pooled PCA projection on retained scalar table columns found a descriptive
-product-region signal: PC2 is a near-zero-ridge symplectic direction, and
-post-fit source-label audits show that this coordinate separates retained
-data sources. Its high-product region enriches already evaluated top-sys rows
-even inside gradient_ascent_products. The run found no current
+near-zero-ridge symplectic-area signal in PC2. The PC2-high region enriches
+already evaluated top-sys rows, including inside gradient_ascent_products, but
+post-fit source-label audits show that this is not a source-independent PCA
+rule. The run found no current
 candidate-proposer and no validated sys > 1 row.
 ```
 
