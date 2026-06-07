@@ -73,8 +73,8 @@ source files.
   Data-science source truth:
   `experiments/sys-landscape/datascience/README.md` and
   `experiments/sys-landscape/datascience/methods/README.md`.
-  Current state: the retained LICCA dataset is in
-  `experiments/sys-landscape/datascience/dataset/`; method rows that still
+  Current state: the retained LICCA datascience tables are in
+  `experiments/sys-landscape/datascience/tables/`; method rows that still
   matter need current evidence packets or explicit abandonment.
   High-risk fact: tried thesis-affecting results need repo-owned evidence,
   checks appropriate to their verdict, explicit caveats, and thesis-use

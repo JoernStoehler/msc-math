@@ -163,9 +163,10 @@ Datascience pipeline exception:
 - `experiments/sys-landscape/datascience/produce/shared-cache.jsonl` and
   `continuation-cache.jsonl` are maintained producer-stage caches for the
   datascience pipeline, not mirrors of the old root `cache.jsonl`.
-- `experiments/sys-landscape/datascience/tables/` writes
-  `polytope-table.jsonl` and `observation-table.jsonl`; method scripts read
-  those tables as black-box inputs.
+- `experiments/sys-landscape/datascience/tables/` writes flat retained table
+  files next to the table builder: one polytope-level table, one provenance
+  table, and one ascent-run table. Method scripts read these retained tables
+  and build method-local rectangular inputs when needed.
 
 ## Provenance Search
 

@@ -23,8 +23,8 @@ datascience pipeline interpreted in `research/sys-landscape.md`,
 - `sys-dataset-*` producer commands are documented in
   `datascience/produce/README.md`; their default behavior is temp smoke output
   unless explicit output/cache paths are supplied.
-- `sys-dataset` writes tables to the `--out-dir` path. For method waves, use an
-  owned dataset path under `datascience/dataset/`; temp output is only for
+- `sys-dataset` writes tables to the `--out-dir` path. For method waves, use
+  `datascience/tables/`; temp output is only for
   one-off smoke/scratch runs.
 
 The tracked full-output JSONL files are evidence artifacts. Use compile checks

@@ -1,5 +1,5 @@
 #!/bin/bash
-# Build the retained datascience table dataset on LICCA.
+# Build the retained datascience tables on LICCA.
 # Submit from this directory with:
 #   sbatch licca-build-dataset.slurm.sh
 #
@@ -8,8 +8,8 @@
 # - fixed-F ascent producer caches ascent-cache.jsonl and ascent-product-cache.jsonl
 #
 # Output:
-# - experiments/sys-landscape/datascience/dataset/
-# - a dataset fingerprint printed at the end of the Slurm log
+# - experiments/sys-landscape/datascience/tables/
+# - a table fingerprint printed at the end of the Slurm log
 
 #SBATCH --job-name=ds-table
 #SBATCH --partition=epyc
@@ -38,12 +38,12 @@ echo "  repo:           $(git rev-parse --short HEAD)"
 echo "  cpus:           ${SLURM_CPUS_PER_TASK:-unknown}"
 echo "  rayon threads:  $RAYON_NUM_THREADS"
 echo "  cargo target:   $CARGO_TARGET_DIR"
-echo "  dataset dir:    experiments/sys-landscape/datascience/dataset"
+echo "  tables dir:     experiments/sys-landscape/datascience/tables"
 echo
 
 cargo run -p exp-sys-landscape --release --bin sys-dataset -- \
-    --out-dir experiments/sys-landscape/datascience/dataset
+    --out-dir experiments/sys-landscape/datascience/tables
 
 echo
 python3 experiments/sys-landscape/datascience/fingerprint-dataset.py \
-    experiments/sys-landscape/datascience/dataset
+    experiments/sys-landscape/datascience/tables

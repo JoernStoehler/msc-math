@@ -42,8 +42,8 @@ pub struct TraceEvent {
 }
 
 #[derive(Clone)]
-pub struct LoadedObservationRow {
-    pub observation_id: String,
+pub struct LoadedProvenanceRow {
+    pub provenance_id: String,
     pub poly_id: String,
     pub dataset: String,
     pub family: String,
@@ -55,7 +55,7 @@ pub struct LoadedObservationRow {
     pub root_group_id: String,
     pub seed_index: Option<usize>,
     pub lineage_id: Option<String>,
-    pub parent_observation_id: Option<String>,
+    pub parent_provenance_id: Option<String>,
     pub rq: Option<String>,
     pub path: Option<String>,
     pub starting_f: Option<usize>,
@@ -76,7 +76,7 @@ pub struct LoadedObservationRow {
 
 pub struct LoadedCaches {
     pub polytopes: Vec<LoadedPolytopeRow>,
-    pub observations: Vec<LoadedObservationRow>,
+    pub provenance_rows: Vec<LoadedProvenanceRow>,
 }
 
 #[derive(Clone)]
@@ -109,10 +109,10 @@ fn print_help(program: &str) {
 Build sys-landscape datascience tables from producer caches.
 
 Usage:
-  {program} --out-dir <dataset-dir> [options]
+  {program} --out-dir <tables-dir> [options]
 
 Method-wave output:
-  experiments/sys-landscape/datascience/dataset
+  experiments/sys-landscape/datascience/tables
 
 Options:
   --produce-dir <dir>              Read canonical producer filenames from <dir>
@@ -127,12 +127,12 @@ Options:
   --continuation <path>            Override continuation.jsonl
   --shared-cache <path>            Override shared-cache.jsonl
   --continuation-cache <path>      Override continuation-cache.jsonl
-  --out-dir <dataset-dir>          Output directory for polytope/observation tables
+  --out-dir <tables-dir>           Output directory for retained table files
   --help                           Show this help
 
 If --out-dir is omitted, this command writes to a temporary smoke directory.
 Use that only for one-off scratch. For method waves, use an owned path under
-experiments/sys-landscape/datascience/dataset/.
+experiments/sys-landscape/datascience/tables/.
 "
     );
 }
@@ -432,14 +432,14 @@ fn root_group(dataset: &str, source_name: &str, lineage_id: &str, name: &str) ->
     format!("{dataset}:{name}")
 }
 
-fn observation_id(dataset: &str, name: &str) -> String {
+fn provenance_id(dataset: &str, name: &str) -> String {
     format!("{dataset}:{name}")
 }
 
 fn load_random_sample_rows(
     path: &Path,
     polytopes: &mut HashMap<String, LoadedPolytopeRow>,
-    observations: &mut Vec<LoadedObservationRow>,
+    provenance_rows: &mut Vec<LoadedProvenanceRow>,
     orbit_payloads: &HashMap<String, OrbitPayload>,
 ) {
     for row in read_jsonl::<RandomSweepRow>(path) {
@@ -454,8 +454,8 @@ fn load_random_sample_rows(
             Some(row.iterations),
             "random_sample",
         );
-        observations.push(LoadedObservationRow {
-            observation_id: observation_id("random_sample", &row.name),
+        provenance_rows.push(LoadedProvenanceRow {
+            provenance_id: provenance_id("random_sample", &row.name),
             poly_id,
             dataset: "random_sample".to_string(),
             family: "general".to_string(),
@@ -467,7 +467,7 @@ fn load_random_sample_rows(
             root_group_id: root_group("random_sample", &row.name, "", &row.name),
             seed_index: None,
             lineage_id: None,
-            parent_observation_id: None,
+            parent_provenance_id: None,
             rq: None,
             path: None,
             starting_f: None,
@@ -491,7 +491,7 @@ fn load_random_sample_rows(
 fn load_random_product_rows(
     path: &Path,
     polytopes: &mut HashMap<String, LoadedPolytopeRow>,
-    observations: &mut Vec<LoadedObservationRow>,
+    provenance_rows: &mut Vec<LoadedProvenanceRow>,
     orbit_payloads: &HashMap<String, OrbitPayload>,
 ) {
     for row in read_jsonl::<RandomProductRow>(path) {
@@ -506,8 +506,8 @@ fn load_random_product_rows(
             Some(row.iterations),
             "random_product_sample",
         );
-        observations.push(LoadedObservationRow {
-            observation_id: observation_id("random_product_sample", &row.name),
+        provenance_rows.push(LoadedProvenanceRow {
+            provenance_id: provenance_id("random_product_sample", &row.name),
             poly_id,
             dataset: "random_product_sample".to_string(),
             family: "lagrangian_product".to_string(),
@@ -519,7 +519,7 @@ fn load_random_product_rows(
             root_group_id: root_group("random_product_sample", &row.name, "", &row.name),
             seed_index: None,
             lineage_id: None,
-            parent_observation_id: None,
+            parent_provenance_id: None,
             rq: None,
             path: Some(format!("lp_{}x{}", row.k, row.m)),
             starting_f: None,
@@ -564,7 +564,7 @@ fn load_ascent_rows(
     summary_path: &Path,
     trace_path: &Path,
     polytopes: &mut HashMap<String, LoadedPolytopeRow>,
-    observations: &mut Vec<LoadedObservationRow>,
+    provenance_rows: &mut Vec<LoadedProvenanceRow>,
     orbit_payloads: &HashMap<String, OrbitPayload>,
     ascent_orbit_payloads: &HashMap<String, OrbitPayload>,
 ) {
@@ -590,8 +590,8 @@ fn load_ascent_rows(
             None,
             "gradient_ascent_general",
         );
-        observations.push(LoadedObservationRow {
-            observation_id: observation_id("gradient_ascent_general", &row.name),
+        provenance_rows.push(LoadedProvenanceRow {
+            provenance_id: provenance_id("gradient_ascent_general", &row.name),
             poly_id,
             dataset: "gradient_ascent_general".to_string(),
             family: "general".to_string(),
@@ -608,7 +608,7 @@ fn load_ascent_rows(
             ),
             seed_index: Some(row.seed_index),
             lineage_id: (!row.lineage_id.is_empty()).then_some(row.lineage_id.clone()),
-            parent_observation_id: None,
+            parent_provenance_id: None,
             rq: None,
             path: None,
             starting_f: Some(row.facet_count),
@@ -633,7 +633,7 @@ fn load_ascent_product_rows(
     summary_path: &Path,
     trace_path: &Path,
     polytopes: &mut HashMap<String, LoadedPolytopeRow>,
-    observations: &mut Vec<LoadedObservationRow>,
+    provenance_rows: &mut Vec<LoadedProvenanceRow>,
     orbit_payloads: &HashMap<String, OrbitPayload>,
     ascent_product_orbit_payloads: &HashMap<String, OrbitPayload>,
 ) {
@@ -659,8 +659,8 @@ fn load_ascent_product_rows(
             None,
             "gradient_ascent_products",
         );
-        observations.push(LoadedObservationRow {
-            observation_id: observation_id("gradient_ascent_products", &row.name),
+        provenance_rows.push(LoadedProvenanceRow {
+            provenance_id: provenance_id("gradient_ascent_products", &row.name),
             poly_id,
             dataset: "gradient_ascent_products".to_string(),
             family: "lagrangian_product".to_string(),
@@ -677,7 +677,7 @@ fn load_ascent_product_rows(
             ),
             seed_index: Some(row.seed_index),
             lineage_id: (!row.lineage_id.is_empty()).then_some(row.lineage_id.clone()),
-            parent_observation_id: None,
+            parent_provenance_id: None,
             rq: None,
             path: None,
             starting_f: Some(row.facet_count),
@@ -701,7 +701,7 @@ fn load_ascent_product_rows(
 fn load_continuation_rows(
     path: &Path,
     polytopes: &mut HashMap<String, LoadedPolytopeRow>,
-    observations: &mut Vec<LoadedObservationRow>,
+    provenance_rows: &mut Vec<LoadedProvenanceRow>,
     orbit_payloads: &HashMap<String, OrbitPayload>,
 ) {
     for row in read_jsonl::<ResultRow>(path) {
@@ -716,12 +716,12 @@ fn load_continuation_rows(
             None,
             "variable_f_ascent",
         );
-        let parent_observation_id = row
+        let parent_provenance_id = row
             .direct_parent_trial
             .as_ref()
-            .map(|parent| observation_id("variable_f_ascent", parent));
-        observations.push(LoadedObservationRow {
-            observation_id: observation_id("variable_f_ascent", &row.name),
+            .map(|parent| provenance_id("variable_f_ascent", parent));
+        provenance_rows.push(LoadedProvenanceRow {
+            provenance_id: provenance_id("variable_f_ascent", &row.name),
             poly_id,
             dataset: "variable_f_ascent".to_string(),
             family: "general".to_string(),
@@ -738,7 +738,7 @@ fn load_continuation_rows(
             ),
             seed_index: None,
             lineage_id: (!row.lineage_id.is_empty()).then_some(row.lineage_id.clone()),
-            parent_observation_id,
+            parent_provenance_id,
             rq: Some(row.rq.clone()),
             path: Some(row.path.clone()),
             starting_f: Some(row.starting_f),
@@ -764,25 +764,25 @@ pub fn load_caches(paths: &DatasetPaths) -> LoadedCaches {
     let ascent_orbit_payloads = orbit_payloads_for_path(&paths.ascent_cache);
     let ascent_product_orbit_payloads = orbit_payloads_for_path(&paths.ascent_product_cache);
     let mut polytopes = HashMap::<String, LoadedPolytopeRow>::new();
-    let mut observations = Vec::<LoadedObservationRow>::new();
+    let mut provenance_rows = Vec::<LoadedProvenanceRow>::new();
 
     load_random_sample_rows(
         &paths.random_sample,
         &mut polytopes,
-        &mut observations,
+        &mut provenance_rows,
         &orbit_payloads,
     );
     load_random_product_rows(
         &paths.random_product,
         &mut polytopes,
-        &mut observations,
+        &mut provenance_rows,
         &orbit_payloads,
     );
     load_ascent_rows(
         &paths.ascent_summary,
         &paths.ascent_trace,
         &mut polytopes,
-        &mut observations,
+        &mut provenance_rows,
         &orbit_payloads,
         &ascent_orbit_payloads,
     );
@@ -790,24 +790,24 @@ pub fn load_caches(paths: &DatasetPaths) -> LoadedCaches {
         &paths.ascent_product_summary,
         &paths.ascent_product_trace,
         &mut polytopes,
-        &mut observations,
+        &mut provenance_rows,
         &orbit_payloads,
         &ascent_product_orbit_payloads,
     );
     load_continuation_rows(
         &paths.continuation_summary,
         &mut polytopes,
-        &mut observations,
+        &mut provenance_rows,
         &orbit_payloads,
     );
 
     let mut polytope_rows = polytopes.into_values().collect::<Vec<_>>();
     polytope_rows.sort_by(|a, b| a.poly_id.cmp(&b.poly_id));
-    observations.sort_by(|a, b| a.observation_id.cmp(&b.observation_id));
+    provenance_rows.sort_by(|a, b| a.provenance_id.cmp(&b.provenance_id));
 
     LoadedCaches {
         polytopes: polytope_rows,
-        observations,
+        provenance_rows,
     }
 }
 

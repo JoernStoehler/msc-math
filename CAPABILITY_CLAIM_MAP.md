@@ -233,17 +233,16 @@ claim.
     bounded negative/search-usefulness claims.
   - Files:
     - `experiments/sys-landscape/datascience/README.md`
-    - `experiments/sys-landscape/datascience/dataset/README.md`
     - `experiments/sys-landscape/datascience/tables/README.md`
     - `experiments/sys-landscape/datascience/tables/main.rs`
     - `experiments/sys-landscape/datascience/methods/README.md`
     - `experiments/sys-landscape/datascience/produce/README.md`
     - `experiments/sys-landscape/datascience/smoke-pipeline.sh`
     - `experiments/sys-landscape/datascience/methods/taxonomies/README.md`
-  - The datascience tables pipeline writes `polytope-table.jsonl` and
-    `observation-table.jsonl`.
-  - Method packets consume those tables as black-box inputs and classify
-    results for the hostile-landscape story.
+  - The datascience tables pipeline writes flat retained table files under
+    `experiments/sys-landscape/datascience/tables/`.
+  - Method packets consume retained tables and build method-local rectangular
+    inputs when needed.
   - Method reports separate observation, inference, and thesis use.
   - Nuance:
     - this supports bounded negative/search-usefulness evidence, not a density

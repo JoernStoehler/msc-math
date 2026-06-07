@@ -1,207 +1,95 @@
 # Sys-Landscape Datascience Methods
 
-This directory owns evidence artifacts for datascience method-table rows. It does
-not own the retained dataset and it does not own thesis wording.
+This directory owns current method packets for the sys-landscape datascience
+method table.
 
-Read `../README.md`, `../dataset/README.md`, and `STATUS.md` before running a
-method.
+Read first:
 
-## Current Inputs
+1. `../README.md`
+2. `../tables/README.md`
+3. `STATUS.md`
 
-All methods default to:
+## Current State
 
-```text
-experiments/sys-landscape/datascience/dataset/
-```
+There are no current method packets in HEAD after the table-output ownership
+reset.
 
-Required files:
+Old PCA, clustering, regression, classification, supervised-alternative,
+exact/f64, prompt example, and review artifacts were deleted from HEAD because
+they were stale, architecture-inconsistent, or cheaper to rerun cleanly than to
+maintain. Use git history only if a specific extraction has positive expected
+value after contamination risk.
 
-- `polytope-table.jsonl`
-- `observation-table.jsonl`
+## Method Question
 
-Current retained dataset: `8445` polytope rows, `8445` observation rows, max
-`sys=0.9750768559799221`, and `0` rows with `sys > 1`.
+The global question is fixed:
 
-## Method Folder Rule
+> Can a standard datascience method help find a `sys > 1` polytope outside the
+> already explained HKO2024-derived class, including symplectic images and
+> controlled perturbations?
 
-One active method folder supports one method-table row. A method folder must
-make these visible:
+Each method packet states only the method-specific reduction of that question:
+what this method would count as positive evidence, negative evidence,
+abandonment, deferral, or escalation.
 
-- method-table row role;
-- dataset path;
-- command, or an explicit statement that no current command exists;
-- validity guard;
-- current/stale evidence state;
-- report path;
-- proposed evidence classification and next action when useful.
+## Inputs
 
-Reports are current evidence only if they were generated from the current
-retained dataset. Otherwise they must say they are stale or status markers.
-Reports do not approve method-row status. Approved status lives in `STATUS.md`.
+Ordinary rectangular datascience methods should start from retained tables
+under `../tables/` and build method-specific input matrices inside the method
+folder. Copy and adapt input-building code between methods when that is cheaper
+than maintaining shared helper code.
 
-## Method Row Workflow
+Current retained table facts:
 
-Use separated roles for current method-row work:
+- polytope rows: `8445`
+- provenance rows: `8445`
+- ascent run rows: `8275`
+- max `sys`: `0.9750768559799221`
+- `sys > 1` rows: `0`
 
-- Orchestrator: keeps the integration branch maintainable, chooses the next
-  method-table row or explicitly named row group by thesis value, value of
-  information, and wall-time, decides whether reviewed work should merge, be
-  repaired, split, deferred, abandoned, or escalated, and owns approved status
-  updates in `STATUS.md`.
-- Executor: works in a method worktree branched from integration. The executor
-  owns the assigned method folder, designs the
-  analysis, writes the final report, and deletes or ignores stale source
-  material unless extraction is explicitly justified.
-- Reviewer: independently checks reviewed work after execution. The reviewer has
-  full repo access, but should not inherit the executor's context window. The
-  review focuses on leakage, interpretation, reproducibility,
-  maintainability, thesis usefulness, and whether the work would create false
-  closure or useful follow-up.
+## Method Packets
 
-Prep and queue edits may be made directly on the integration branch. Merge
-method-row work into the integration branch only after review and orchestrator
-acceptance. A worker or reviewer may recommend an evidence classification or
-next action, but that recommendation is not approved method-row status until
-`STATUS.md` records it.
+Create a method folder only when running or recording a current method packet.
+One active method folder should support one method-table row or one explicitly
+named row group.
 
-## Result Types
+A method folder may contain:
 
-Workers may propose one local evidence classification per current method
-report:
+- a small script or scripts;
+- small generated artifacts needed for audit;
+- figures or assets if they are directly used;
+- `report.md` as the current research ledger.
 
-- `ran with no candidate-proposer and no new validated row`
-- `ran as local optimization only`
-- `not applicable to this data/search interface`
-- `not run within the stated implementation bound`
-- `not run within the stated compute/data bound`
-- `implementation bug; no method verdict`
-- `candidate-proposer`
-- `validated new row`
+Delete stale scripts, reports, generated artifacts, and review traces once
+their value in HEAD is lower than their maintenance and confusion cost. Git
+history is the archive for obsolete runs.
 
-Optional secondary labels:
+## Reports
 
-- `supporting evidence only`
-- `validity caveat`
-- `future reopen trigger`
+A `report.md` is a research ledger. It is not raw evidence and it is not
+approved status.
 
-A `candidate-proposer` is a reproducible rule that proposes candidate
-polytopes or rows before their `sys` values are evaluated. A validated new row
-is a committed row with `sys > 1` outside examples already explained by the
-HKO2024 construction and its symplectic images or controlled perturbations.
+Use a report to record:
 
-If a row gets either positive state, stop unrelated method work and write an
-escalation note stating the evidence, affected thesis claim or wording, and
-recommended next action before continuing.
-
-## Authoritative Status
-
-Authoritative method-row status lives in `STATUS.md`.
-
-The table below is a navigation cache. It may summarize evidence and point to
-commands, but it is not the status authority. If the table and `STATUS.md`
-appear to disagree, treat `STATUS.md` as the approved status and inspect the
-method report before acting.
-
-## Active Method Rows
-
-This table is a navigation cache. For approved status, read `STATUS.md`. For
-details, the row's `report.md` and source code overrule this table's evidence
-summary.
-
-| Slug | Method row and question | Evidence summary | Approved status source | Command or script | Evidence source | Validity guard and thesis use |
-| --- | --- | --- | --- | --- | --- | --- |
-| `table-column-regression` | Table-column regression. Do retained table-column groups trained on random rows predict endpoint rows? | No current retained-dataset result. Old broad-folder artifacts were deleted. | `STATUS.md` | No current command; write a row-specific script only if this row remains required. | `table-column-regression/report.md` | Guard: grouped random-to-endpoint prediction. Thesis use: none before approved rerun, deferral, or abandonment. |
-| `regime-classification` | Endpoint-vs-random classification. Can standard classifiers separate endpoint rows from random rows, and is the separator not just provenance? | No current retained-dataset result. Old broad-folder artifacts were deleted. | `STATUS.md` | No current command; write a row-specific script only if this row remains required. | `regime-classification/report.md` | Guard: separate metadata/provenance from geometric table columns. Thesis use: caveat/diagnostic only before any candidate-proposer. |
-| `endpoint-residualized-regression` | Endpoint residualized regression. Do endpoint table-column groups add endpoint-only association beyond metadata? | No current retained-dataset result. Old pre-LICCA disposition was deleted. | `STATUS.md` | No current command; write a row-specific script only if this row remains required. | `endpoint-residualized-regression/report.md` | Guard: grouped endpoint CV after metadata-first residualization. Thesis use: none before approved rerun, deferral, or abandonment. |
-| `pca-projection` | PCA projection. Does a low-dimensional linear projection expose a reproducible rule for proposing high-`sys` candidates? | Retained-dataset run, PC2-high audit, and component interpretation completed locally. Reading the loading vectors, PC2 is dominated by near-zero ridge symplectic-area columns and transition-bidirectionality columns. The PC2-high region enriches already evaluated top-`sys` rows, including inside `gradient_ascent_products`, but post-fit source-label audits show that this is not a source-independent PCA rule. No candidate-generation interface and no validated new row. | `STATUS.md` | `pca-projection/analyze.py`; `pca-projection/interpret_pc2_high.py`; `pca-projection/interpret_components.py` | `pca-projection/report.md` | Guard: PCA inputs exclude `sys`, capacity columns, endpoint labels, dataset identity, optimizer provenance, and post-hoc `sys` inspection. Thesis use follows `STATUS.md`: current descriptive evidence, not a current candidate-proposer. |
-| `pca-cluster-anomaly` / clustering row | Clustering or manifold grouping. Does unsupervised grouping define a candidate-proposer? | Same bundled stale source material as PCA; no current retained-dataset result. | `STATUS.md` | `pca-cluster-anomaly/analyze.py` | `pca-cluster-anomaly/report.md` | Guard: cluster-to-search rule, not rediscovery of producer families. Thesis use: pending fresh evidence, deferral, or abandonment. |
-| `pca-cluster-anomaly` / anomaly row | Anomaly scan. Do outliers in retained table columns point to new high-`sys` candidates? | Same bundled stale source material as PCA; no current retained-dataset result. | `STATUS.md` | `pca-cluster-anomaly/analyze.py` | `pca-cluster-anomaly/report.md` | Guard: anomaly rule must propose candidates before claiming search value. Thesis use: pending fresh evidence, deferral, or abandonment. |
-| `supervised-alternatives` | Boosting and nearest-neighbor supervised alternatives. Do cheap standard alternatives change the regression/classification verdicts? | Script retained and LICCA path guards updated; report is a status marker only. | `STATUS.md` | `supervised-alternatives/analyze.py` | `supervised-alternatives/report.md` | Guard: same grouped-CV and random-to-endpoint framing as the baseline supervised rows. Thesis use: pending approved rerun, deferral, or abandonment. |
-| `exact-f64-spot-check` | Exact-vs-f64 spot check. Do stored f64 geometry columns agree with exact rational source coordinates on sampled rows? | Script retained and dataset guards updated; report is a status marker only. | `STATUS.md` | `exact-f64-spot-check/analyze.py` | `exact-f64-spot-check/report.md` | Guard: exact rational recomputation on sampled rows. Thesis use: supporting/caveat only after approved evidence. |
-
-`pca-cluster-anomaly/` is stale source material. It is not current evidence and
-should not be rerun by default. It mixed PCA, clustering, anomaly scanning,
-feature policy, and report prose in one old bundle. Extract from it only if a
-fresh worker records a concrete reason. Delete it once current replacement
-work covers the useful rows or explicitly abandons them.
-
-Supporting script:
-
-- `eda.py`: exploratory dataset summary helper, not a method-table verdict by
-  itself.
-
-## Coverage Policy
-
-The method table is the deliverable, not any single row. Rows needed by the
-thesis should accumulate current evidence or explicit reasons for
-inapplicability, deferral, abandonment, split-out follow-up, or escalation.
-
-Do not call the method set merely representative. Standard-method coverage must
-be run, ruled inapplicable, abandoned for cost, deferred with reason, or
-escalated if positive. Prioritize remaining work by thesis value, value of
-information, and wall-time rather than local row-completion language.
-
-Known omitted/deferred families should be named when they matter for reader
-expectations. Current deferred examples include SVMs, neural networks, Bayesian
-optimization, and other high-capacity or compute-heavy variants listed in
-`future-method-ideas.md` and `taxonomies/`.
-
-## Deleted Broad Folder
-
-`feature-pattern-search/` was deleted from the active tree.
-
-Reason:
-
-- it was not one standard method;
-- it mixed regression, classification, residual checks, shared helpers,
-  generated local feature views, stale reports, and figures;
-- the tracked `feature_*.jsonl` files duplicated retained dataset columns;
-- preserving it had high contamination risk.
-
-Do not resurrect files from that folder unless the extraction has positive
-expected value after contamination risk. Prefer a small clean script in the
-row-specific folder.
-
-## Shared Code
-
-No shared Python package is currently tracked. Create a single shared module
-only after two current method scripts need the same helper.
-
-Preferred future path:
-
-```text
-common/retained_table_columns.py
-```
-
-Shared code must have no report and no thesis claim.
-
-## Report Requirements
-
-A current method report must include:
-
-- dataset path and fingerprint facts used;
-- command run, or that no current command exists;
-- runtime or confirmation that it fits the accepted local bound;
-- validity guard;
+- the method-specific question;
+- retained table input and method-local input construction used;
+- command and runtime;
+- retained generated artifacts;
 - observation;
-- inference;
-- proposed evidence classification and next action when useful;
+- proposed interpretation;
+- validity limits;
 - thesis use;
-- reopen condition.
+- follow-up, deferral, abandonment, or escalation recommendation.
 
-Each report should separate:
+Future agents should use reports to orient, then re-check any claim they rely
+on against current code, retained data, generated artifacts, and `STATUS.md`.
 
-- observation: what the committed run or artifact literally shows;
-- inference: what the observation supports;
-- thesis use: whether the row supports a main claim, only a caveat, only
-  future work, or should stay out of the thesis.
+## Status
 
-Experiments over 30 minutes are not accepted as reproducible local method
-evidence. Use smoke runs for development. If a method needs longer compute,
-record the reason and escalate before treating it as current evidence.
+Approved current method-row status lives in `STATUS.md`.
 
-Report-local result wording is evidence from that report. It is not approved
-method-row status unless `STATUS.md` cites it and records the approval scope.
+Executors and reviewers may recommend status, but they do not approve it. A
+green review is evidence only for the checks it actually performed.
 
 ## Coverage References
 
@@ -213,6 +101,5 @@ be named:
 
 - `taxonomies/README.md`
 
-Older research/task notes may contain history, but they are not the ordinary
-entry point for this method slice. Method reports and source code overrule them
-for current row-level evidence status.
+Optional or deferred method ideas live in `future-method-ideas.md`. Do not use
+that file as an automatic task queue.

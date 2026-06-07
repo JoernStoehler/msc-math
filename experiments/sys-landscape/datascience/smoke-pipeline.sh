@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Low-friction smoke run for the sys-landscape produce -> tables -> methods
+# Low-friction smoke run for the sys-landscape produce -> tables
 # surface. All outputs go to a temp directory. The default path is intended to
 # stay under about two minutes on the devcontainer and exercises cache/resume
 # contracts by running ascent producers twice without deleting temp data.
@@ -11,12 +11,11 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
 WORKDIR="$(mktemp -d)"
 PRODUCE_DIR="$WORKDIR/produce"
-DATASET_DIR="$WORKDIR/dataset"
-METHOD_DIR="$WORKDIR/methods"
+TABLES_DIR="$WORKDIR/tables"
 ASCENT_BUDGET_SECS="${ASCENT_BUDGET_SECS:-5}"
 RUN_CONTINUATION_SMOKE="${RUN_CONTINUATION_SMOKE:-0}"
 
-mkdir -p "$PRODUCE_DIR" "$DATASET_DIR" "$METHOD_DIR"
+mkdir -p "$PRODUCE_DIR" "$TABLES_DIR"
 
 echo "Smoke workspace: $WORKDIR"
 
@@ -75,20 +74,16 @@ test "$(wc -l < "$PRODUCE_DIR/ascent-product.jsonl")" -eq 1
 test "$(wc -l < "$PRODUCE_DIR/ascent-product-cache.jsonl")" -eq 1
 
 cargo run -p exp-sys-landscape --bin sys-dataset -- \
-  --out-dir "$DATASET_DIR" \
+  --out-dir "$TABLES_DIR" \
   --produce-dir "$PRODUCE_DIR"
 
-test -s "$DATASET_DIR/polytope-table.jsonl"
-test -s "$DATASET_DIR/observation-table.jsonl"
-
-uv run "$ROOT/experiments/sys-landscape/datascience/methods/eda.py" \
-  --dataset-dir "$DATASET_DIR" \
-  --out-dir "$METHOD_DIR"
+test -s "$TABLES_DIR/polytope-table.jsonl"
+test -s "$TABLES_DIR/polytope-provenance-table.jsonl"
+test -s "$TABLES_DIR/polytope-ascent-run-table.jsonl"
 
 echo
 echo "Smoke outputs:"
 echo "  ascent budget: ${ASCENT_BUDGET_SECS}s/seed"
 echo "  continuation:  $RUN_CONTINUATION_SMOKE"
 echo "  produce:    $PRODUCE_DIR"
-echo "  dataset:    $DATASET_DIR"
-echo "  methods:    $METHOD_DIR"
+echo "  tables:     $TABLES_DIR"
