@@ -6,7 +6,7 @@ Main code areas:
 - `src/geom/`: flat polytope fixtures, dual-vertex validation, symplectic
   form helpers, and Euclidean geometry reexports used by symplectic algorithms
 - `src/kkt/`: context-free KKT/QP solve machinery
-- `src/algorithms/`: HK2017, billiard, and tube algorithm surfaces
+- `src/algorithms/`: HK2017, billiard, and flow-graph algorithm surfaces
 - `src/exact/`: exact single-orbit kernels over ordered fields
 - `src/database.rs`, `src/dataset.rs`, `src/derivatives.rs`, `src/random.rs`:
   persistence, row schemas, derivatives, and sampling support

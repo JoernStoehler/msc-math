@@ -317,9 +317,11 @@ Near-term independent starts:
 - Thesis writing: `thesis/first-order-perturbations.tex` is agent-suitable for
   a generic row-chart draft with explicit non-generic caveats. Do not accept
   theorem-strength arbitrary-polytope or HKO wording there.
-- Thesis scope audit: `thesis/flow-graph-algorithm-ch2021.tex` is audit-only
-  until Jörn decides whether a theory/status section is worth retaining without
-  implementation or empirical validation.
+- Thesis scope audit: `thesis/flow-graph-algorithm-ch2021.tex` remains
+  audit-only until Jörn decides whether a theory/status section is worth
+  retaining without implementation or empirical validation. The companion
+  `thesis/flow-graph-algorithm-ch2021-content.md` is a note surface, not a
+  retention decision.
 
 Defer:
 
@@ -455,14 +457,17 @@ Guidance:
   solver polish as future unless retained wording needs them.
 - Revalidate `thesis/legacy/migration-findings.md` rows 3-11 before relying on
   old algorithm boxes or numerical appendix prose.
-- Tube algorithm work starts from Jörn's current raw source, not deleted stale
-  thesis/formal/Rust surfaces. Before starting implementation, check whether
+- Flow-graph algorithm work starts from
+  `crates/symplectic/src/algorithms/flow_graph/README.md`. The older
+  `research/tube-algorithm*.md` files are legacy/imported source material, not
+  the live control surface. Before starting implementation, check whether
   `thesis/flow-graph-algorithm-ch2021.tex` or another active thesis file still
-  retains tube content.
+  retains flow-graph/tube content.
 
-Tube import done state:
+Flow-graph import done target:
 
-- current mathematical source states `Tube(k,s,Acut)`, breakpoint order and
+- The current live source states the algorithm contract, including tube objects,
+  breakpoint order and
   locations, finite polygon-affine representation, primitive tubes, tube
   intersection, action restriction, closed-loop fixed points, exhaustive
   simple-word capacity search, and current exclusions;

@@ -15,6 +15,7 @@ use symplectic::{
 };
 
 pub mod boundary_events;
+pub mod flat_polytope;
 pub mod instrumented_capacity;
 pub mod records;
 

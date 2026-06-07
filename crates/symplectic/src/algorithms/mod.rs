@@ -4,9 +4,9 @@
 //! - `hk2017` — general capacity (exponential in #facets).
 //! - `billiard` — Lagrangian product capacity (fast).
 //!
-//! The tube algorithm is being re-imported from the current mathematical source
-//! under `research/`; the old private test module was deleted because it was
-//! not a trusted implementation.
+//! The flow-graph algorithm work surface lives under `flow_graph/`. Its local
+//! README is the current algorithm contract/status surface; the old tube notes
+//! under `research/` are legacy/imported source material.
 //!
 //! # Correctness invariant
 //!
@@ -24,6 +24,7 @@
 
 pub mod billiard;
 pub mod facet_adjacency;
+pub mod flow_graph;
 pub mod hk2017;
 pub mod orbit_search;
 

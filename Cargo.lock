@@ -538,6 +538,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "exp-flow-graph"
+version = "0.1.0"
+dependencies = [
+ "exp-combinatorial-cells",
+ "nalgebra",
+ "num-rational",
+ "num-traits",
+ "serde",
+ "serde_json",
+ "symplectic",
+ "tracing-subscriber",
+]
+
+[[package]]
 name = "exp-hko-local-maximum"
 version = "0.1.0"
 dependencies = [
@@ -1496,6 +1510,7 @@ dependencies = [
  "serde",
  "serde_json",
  "tempfile",
+ "tracing",
  "tracing-subscriber",
  "wait-timeout",
 ]

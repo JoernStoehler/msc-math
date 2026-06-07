@@ -8,6 +8,7 @@ members = [
     "experiments/sys-landscape",
     "experiments/sys-landscape/gradient-ascent-dev",
     "experiments/combinatorial-cells",
+    "experiments/flow-graph",
     "experiments/verification",
     "experiments/verification/algorithm-comparison",
     "experiments/numerics",

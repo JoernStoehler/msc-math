@@ -50,16 +50,17 @@ Map maintenance:
 | --- | --- | --- |
 | `geom` | geometry helper layer | owns flat dual-vertex validation, exact/rational geometry utilities, symplectic form helpers, known flat fixtures, and related geometry routines |
 | `kkt` | context-free constrained-QP solver layer | operates on abstract matrices `(C, d, H)`; `qp_assembly` crosses from polytope geometry into solver inputs |
-| `algorithms` | symplectic/capacity algorithm layer | owns HK2017, billiard, shared capacity-accumulator logic, and related pruning/combinatorics |
+| `algorithms` | symplectic/capacity algorithm layer | owns HK2017, billiard, flow-graph, shared capacity-accumulator logic, and related pruning/combinatorics |
 | `database` / `dataset` | persistence/schema support layer | owns JSONL storage helpers and row schemas; callers choose paths |
 | `derivatives` | differential support layer | analytical derivatives with respect to dual vertices `a_i` |
 | `random` | sampling/generation support layer | seeded random polytope generation for experiments |
 | `exact` | exact-validation support layer | exact polytope/orbit/derivative helpers used by theorem-facing validation paths |
 | `constants` | shared numeric tolerance layer | cross-module tolerances; check users before changing values |
 
-`algorithms::tube` exists only behind `#[cfg(test)]` in
-`crates/symplectic/src/algorithms/mod.rs`; the local module header says its
-formula is blocked and it is not a supported experiment entrypoint.
+`algorithms::flow_graph` is a development work surface for the flow-graph
+capacity algorithm. Start at
+`crates/symplectic/src/algorithms/flow_graph/README.md`; current f64 routines
+are development evidence, not exact `c_EHZ` certificates.
 
 ## Algebraic-Numbers Subsystems
 

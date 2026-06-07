@@ -103,10 +103,12 @@ source files.
   Generic-route handles: full rank/condition of `C`, negative reduced Hessian
   on the retained tangent space, positive beta margin, positive `Q`/action gap
   from competitors, and adjacency/pruning assumptions.
-  Tube cache: current tube import starts from
+  Flow-graph/tube cache: current live control surface is
+  `crates/symplectic/src/algorithms/flow_graph/README.md`. The older
   `research/tube-algorithm-raw-jorn-2026-05-04.md` and
-  `research/tube-algorithm.md`; old thesis/formal/Rust tube surfaces are stale
-  unless rewritten from that source.
+  `research/tube-algorithm.md` files are legacy/imported source material.
+  Old thesis/formal/Rust tube surfaces are stale unless rewritten from the live
+  flow-graph surface and source truth.
   Refresh when: numerical appendix route, solver story, derivative/projection
   claim, or tube inclusion changes.
 

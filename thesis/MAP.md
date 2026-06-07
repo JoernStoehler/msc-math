@@ -13,6 +13,10 @@ Status: navigation cache for the active thesis scaffold.
 - `quadratic-program-algorithm-hk2019.tex`: HK2019 quadratic-program algorithm
   scaffold.
 - `flow-graph-algorithm-ch2021.tex`: CH2021 flow-graph algorithm scaffold.
+- `flow-graph-algorithm-ch2021-content.md`: section-local content companion
+  for the flow-graph algorithm section. Not source truth; use
+  `crates/symplectic/src/algorithms/flow_graph/README.md` before relying on
+  claims.
 - `first-order-perturbations.tex`: first-order perturbation scaffold.
 - `hko-local-maximum.tex`: HKO local-maximum main-result scaffold.
 - `hko-local-maximum-content.md`: section-local content-gathering notes for

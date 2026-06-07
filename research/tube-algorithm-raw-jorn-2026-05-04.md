@@ -1,3 +1,12 @@
+Status: legacy/imported raw source material.
+
+Live flow-graph algorithm control surface:
+`crates/symplectic/src/algorithms/flow_graph/README.md`.
+
+This file is preserved as the raw 2026-05-04 Jörn note. Do not treat it as the
+current algorithm contract without checking the live flow-graph README and
+newer accepted decisions.
+
 mathematical:
 
 define the tube of

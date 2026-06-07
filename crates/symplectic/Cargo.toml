@@ -20,6 +20,7 @@ num-integer.workspace = true
 blake3.workspace = true
 algebraic-numbers.workspace = true
 euclidean-polytopes.workspace = true
+tracing.workspace = true
 tracing-subscriber.workspace = true
 
 [dev-dependencies]
