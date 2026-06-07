@@ -75,13 +75,15 @@ Path-specific outcome contract:
   positive-action singular fixed set.
 - f64 accepted output has the same ordinary shape as exact accepted output, but
   with approximate actions and a different error type.
-- `capacity_f64` is the accepted f64 capacity function. It computes a diagnostic
-  f64 closed-word search and resolves every f64 closed-word error with exact
-  flow-graph closed-word arithmetic. It accepts only if exact resolution resolves
-  all such words without an exact construction error or unsupported positive
-  singular outcome. Its capacity is the minimum of f64 positive words and exact
-  resolution positive words.
-- `capacity_exact` is the accepted exact rational capacity wrapper.
+- `capacity_f64` is the current f64 wrapper used by tests and experiments. It
+  computes a diagnostic f64 closed-word search and resolves every f64
+  closed-word error with exact flow-graph closed-word arithmetic. It returns a
+  value only if exact resolution resolves all such words without an exact
+  construction error or unsupported positive singular outcome. Its returned
+  action is the minimum of f64 positive words and exact-resolution positive
+  words.
+- `capacity_exact` is the current exact rational search wrapper used by tests
+  and experiments.
 - `diagnose_f64_closed_words` is the development/experiment function.
   It may return a candidate action together with per-word errors. Its output is
   not accepted capacity output.
