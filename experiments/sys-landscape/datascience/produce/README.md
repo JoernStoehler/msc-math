@@ -45,7 +45,7 @@ licca-shards/product/
 ```
 
 These shard files are producer-stage artifacts. Review and merge them into the
-canonical producer files before rebuilding `../dataset/`.
+canonical producer files before rebuilding `../tables/`.
 
 Use [merge-licca-ascent-shards.py](merge-licca-ascent-shards.py) to consolidate
 canonical ascent files and LICCA shard directories into branch-local merged
@@ -71,8 +71,9 @@ this directory is the maintained producer surface for the datascience pipeline.
 
 For method waves, do not ask every method worker to regenerate or privately
 copy producer data. Build the shared table dataset under
-`experiments/sys-landscape/datascience/dataset/` and pass that dataset path to
-method workers. The current role rules live in `../README.md`.
+`experiments/sys-landscape/datascience/tables/` and let method workers
+build method-local rectangular inputs when needed. The current role rules live
+in `../README.md`.
 
 ## Smoke Path
 

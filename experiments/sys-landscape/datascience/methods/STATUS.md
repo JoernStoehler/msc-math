@@ -1,38 +1,39 @@
 # Datascience Method Status
 
-This file is the orchestrator-owned status ledger for
+This file is the orchestrator-owned current status ledger for
 `experiments/sys-landscape/datascience/methods/`.
 
-Method reports own evidence. Reviewers own findings. This file owns
-orchestrator-approved method-row status. Worker-written report summaries and
-reviewer verdicts are not authoritative status unless this file cites them and
-records the approval scope.
+## Current State
+
+No method row currently has approved HEAD evidence after the table-output
+ownership reset.
+
+The previous PCA packet, old status-marker reports, old review traces, and old
+prompt examples were removed from HEAD during the reset. They remain in git
+history as historical committed states. Do not infer current method status from
+those deleted files.
 
 ## Status Rules
 
-1. Executors may write evidence, observations, proposed interpretation,
-   limitations, and proposed next actions in method folders.
-2. Reviewers may write findings and review traces.
-3. Executors and reviewers do not approve method-row status.
-4. The orchestrator updates this file after inspecting the evidence and the
-   review trace. Jörn approval is required for status that changes thesis
-   wording, records a candidate-proposer, records a validated new row, or is
-   otherwise ambiguous/high-impact.
-5. A green review is evidence only for the checks named in its prompt and trace.
-   It is not global proof that a row is finished, useful, or safe to merge.
-6. If this file has no approved status for a method row, future agents must read
-   the report and reason from evidence instead of inferring status from a
-   report header, README summary, or reviewer verdict.
+1. A method folder may contain scripts, generated artifacts, and `report.md`
+   only when that material has current positive value in HEAD.
+2. A `report.md` is a research ledger: it records retained observations,
+   proposed interpretation, caveats, and follow-up ideas. It is not raw
+   evidence and it is not approval.
+3. Raw evidence is current code, retained input data, generated artifacts,
+   commands, and reproducible checks.
+4. Git history is the archive for obsolete reports, stale scripts, deleted
+   generated artifacts, and old prompt/review material.
+5. Reviewers own findings. A green review means only that the reviewer did not
+   report a blocker under the checks it actually performed.
+6. This file owns approved current method-row status. Update it only after the
+   orchestrator inspects the retained evidence and review trace.
+7. Jörn approval is required for status that changes thesis wording, records a
+   candidate-proposer, records a validated new row, or is otherwise
+   ambiguous/high-impact.
 
 ## Approved Status Ledger
 
-| Method | Approved status | Authority | Evidence | Review trace | Scope limits / reopen trigger |
-| --- | --- | --- | --- | --- | --- |
-| `pca-projection` | Current retained-dataset descriptive evidence. No current candidate-proposer and no validated new row. | Orchestrator-approved after technical and thesis-success review of `ds-pca-interpretation` on 2026-06-06. | `pca-projection/report.md`; `pca-projection/pca-summary.json`; `pca-projection/pc2-high-audit.json`; `pca-projection/component-interpretation.json` | `reviews/pca-interpretation-technical-review-2026-06-06.md`; `reviews/pca-interpretation-thesis-review-2026-06-06.md`; previous downgrade review: `reviews/pca-downgrade-charter-review-2026-06-06.md` | Reading the loading vectors, PC2 is dominated by near-zero ridge symplectic-area columns and transition-bidirectionality columns. The PC2-high region enriches already evaluated top-`sys` rows, including inside `gradient_ascent_products`, but post-fit source-label audits show that this is not a source-independent PCA rule. Reopen if the retained dataset changes materially or if a pre-registered PCA-score proposal rule is specified before `sys` audit. |
-| `table-column-regression` | No approved current retained-dataset evidence status. | Orchestrator placeholder. | `table-column-regression/report.md` | None. | Requires fresh evidence, explicit deferral, or abandonment before method-table use. |
-| `regime-classification` | No approved current retained-dataset evidence status. | Orchestrator placeholder. | `regime-classification/report.md` | None. | Requires fresh evidence, explicit deferral, or abandonment before method-table use. |
-| `endpoint-residualized-regression` | No approved current retained-dataset evidence status. | Orchestrator placeholder. | `endpoint-residualized-regression/report.md` | None. | Requires fresh evidence, explicit deferral, or abandonment before method-table use. |
-| `pca-cluster-anomaly` / clustering row | No approved current retained-dataset evidence status. | Orchestrator placeholder. | `pca-cluster-anomaly/report.md` | None. | Stale source material only unless fresh clustering work replaces or abandons it. |
-| `pca-cluster-anomaly` / anomaly row | No approved current retained-dataset evidence status. | Orchestrator placeholder. | `pca-cluster-anomaly/report.md` | None. | Stale source material only unless fresh anomaly work replaces or abandons it. |
-| `supervised-alternatives` | No approved current retained-dataset evidence status. | Orchestrator placeholder. | `supervised-alternatives/report.md` | None. | Requires rerun, explicit deferral, or abandonment before method-table use. |
-| `exact-f64-spot-check` | No approved current retained-dataset evidence status. | Orchestrator placeholder. | `exact-f64-spot-check/report.md` | None. | Requires rerun, explicit deferral, or abandonment before method-table use. |
+| Method | Approved current status | Evidence in HEAD | Scope / reopen trigger |
+| --- | --- | --- | --- |
+| none | No approved current method-row evidence after the reset. | None. | Start new method work from `methods/README.md` and current retained tables. |

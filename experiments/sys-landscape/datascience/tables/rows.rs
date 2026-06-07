@@ -147,8 +147,8 @@ pub struct PolytopeTableRow {
 }
 
 #[derive(Debug, Serialize)]
-pub struct ObservationTableRow {
-    pub observation_id: String,
+pub struct ProvenanceRunRow {
+    pub provenance_id: String,
     pub poly_id: String,
     pub dataset: String,
     pub family: String,
@@ -163,7 +163,7 @@ pub struct ObservationTableRow {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub lineage_id: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub parent_observation_id: Option<String>,
+    pub parent_provenance_id: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub rq: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]

@@ -1,7 +1,7 @@
-//! Build the observation table from provisioning rows and trace events.
+//! Build the provenance/run table from provisioning rows and trace events.
 
-use crate::load_caches::{LoadedObservationRow, TraceEvent};
-use crate::rows::ObservationTableRow;
+use crate::load_caches::{LoadedProvenanceRow, TraceEvent};
+use crate::rows::ProvenanceRunRow;
 use rayon::prelude::*;
 
 fn stats_or_zero(values: &[f64]) -> (f64, f64, f64) {
@@ -21,9 +21,9 @@ fn stats_or_zero(values: &[f64]) -> (f64, f64, f64) {
     (mean, var.sqrt(), max)
 }
 
-fn zero_row(row: &LoadedObservationRow) -> ObservationTableRow {
-    ObservationTableRow {
-        observation_id: row.observation_id.clone(),
+fn zero_row(row: &LoadedProvenanceRow) -> ProvenanceRunRow {
+    ProvenanceRunRow {
+        provenance_id: row.provenance_id.clone(),
         poly_id: row.poly_id.clone(),
         dataset: row.dataset.clone(),
         family: row.family.clone(),
@@ -35,7 +35,7 @@ fn zero_row(row: &LoadedObservationRow) -> ObservationTableRow {
         root_group_id: row.root_group_id.clone(),
         seed_index: row.seed_index,
         lineage_id: row.lineage_id.clone(),
-        parent_observation_id: row.parent_observation_id.clone(),
+        parent_provenance_id: row.parent_provenance_id.clone(),
         rq: row.rq.clone(),
         path: row.path.clone(),
         starting_f: row.starting_f,
@@ -79,7 +79,7 @@ fn zero_row(row: &LoadedObservationRow) -> ObservationTableRow {
     }
 }
 
-fn enrich_trace(row: &LoadedObservationRow, events: &[TraceEvent]) -> ObservationTableRow {
+fn enrich_trace(row: &LoadedProvenanceRow, events: &[TraceEvent]) -> ProvenanceRunRow {
     if events.is_empty() {
         return zero_row(row);
     }
@@ -174,8 +174,8 @@ fn enrich_trace(row: &LoadedObservationRow, events: &[TraceEvent]) -> Observatio
         0.0
     };
 
-    ObservationTableRow {
-        observation_id: row.observation_id.clone(),
+    ProvenanceRunRow {
+        provenance_id: row.provenance_id.clone(),
         poly_id: row.poly_id.clone(),
         dataset: row.dataset.clone(),
         family: row.family.clone(),
@@ -187,7 +187,7 @@ fn enrich_trace(row: &LoadedObservationRow, events: &[TraceEvent]) -> Observatio
         root_group_id: row.root_group_id.clone(),
         seed_index: row.seed_index,
         lineage_id: row.lineage_id.clone(),
-        parent_observation_id: row.parent_observation_id.clone(),
+        parent_provenance_id: row.parent_provenance_id.clone(),
         rq: row.rq.clone(),
         path: row.path.clone(),
         starting_f: row.starting_f,
@@ -231,7 +231,7 @@ fn enrich_trace(row: &LoadedObservationRow, events: &[TraceEvent]) -> Observatio
     }
 }
 
-pub fn build_observation_table(rows: &[LoadedObservationRow]) -> Vec<ObservationTableRow> {
+pub fn build_provenance_run_table(rows: &[LoadedProvenanceRow]) -> Vec<ProvenanceRunRow> {
     rows.par_iter()
         .map(|row| enrich_trace(row, &row.trace_events))
         .collect()

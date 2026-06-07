@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
-# Build the current sys-landscape datascience tables into the active dataset.
+# Build the current sys-landscape datascience tables into the retained table
+# directory.
 #
 # Default output:
-#   experiments/sys-landscape/datascience/dataset/
+#   experiments/sys-landscape/datascience/tables/
 #
 # Use this for method waves. Do not ask each method executor to rebuild a
 # private /tmp dataset.
@@ -10,23 +11,23 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
-DEFAULT_DATASET_REL="experiments/sys-landscape/datascience/dataset"
-DATASET_ARG="${1:-$DEFAULT_DATASET_REL}"
-if [[ "$DATASET_ARG" = /* ]]; then
-  DATASET_DIR="$DATASET_ARG"
+DEFAULT_TABLES_REL="experiments/sys-landscape/datascience/tables"
+TABLES_ARG="${1:-$DEFAULT_TABLES_REL}"
+if [[ "$TABLES_ARG" = /* ]]; then
+  TABLES_DIR="$TABLES_ARG"
 else
-  DATASET_DIR="$ROOT/$DATASET_ARG"
+  TABLES_DIR="$ROOT/$TABLES_ARG"
 fi
-mkdir -p "$DATASET_DIR"
+mkdir -p "$TABLES_DIR"
 
 echo "Building sys-landscape datascience tables"
 echo "  repo:        $ROOT"
-echo "  dataset dir: $DATASET_DIR"
+echo "  tables dir: $TABLES_DIR"
 echo
 
-cargo run -p exp-sys-landscape --release --bin sys-dataset -- --out-dir "$DATASET_DIR"
+cargo run -p exp-sys-landscape --release --bin sys-dataset -- --out-dir "$TABLES_DIR"
 
 echo
-echo "Wrote dataset:     $DATASET_DIR"
-echo "Check dataset with:"
-echo "  uv run --script experiments/sys-landscape/datascience/fingerprint-dataset.py $DATASET_ARG"
+echo "Wrote tables:      $TABLES_DIR"
+echo "Check tables with:"
+echo "  uv run --script experiments/sys-landscape/datascience/fingerprint-dataset.py $TABLES_ARG"
