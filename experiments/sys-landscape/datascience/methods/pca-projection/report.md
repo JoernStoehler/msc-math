@@ -8,11 +8,14 @@ description: >
 result: >
   Current retained-dataset PCA run completed locally in 2.707 seconds wall
   time, with a PC2-high audit in 2.803 seconds wall time and a component
-  interpretation run in 2.938 seconds wall time. PCA mostly exposes existing
-  geometry/source structure in the retained rows. PC1 is a size/scale
-  geometry direction. PC2 is mainly a product-like near-zero-ridge symplectic
-  direction and is strongly aligned with source family, but still enriches
-  source-local top-1% `sys` rows inside `gradient_ascent_products`. The run
+  interpretation run in 2.938 seconds wall time. Pooled PCA mostly exposes
+  differences between retained data sources that are visible in allowed
+  geometry columns. PC1 is dominated by
+  volume-normalized Euclidean geometry summaries, not by a meaningful scale
+  direction for `sys`. PC2 is mainly a product-like near-zero-ridge
+  symplectic direction; post-fit source-label audits show that it separates
+  retained sources, but it still enriches source-local top-1% `sys` rows
+  inside `gradient_ascent_products`. The run
   records no current candidate-proposer and no validated new row.
 ---
 
@@ -137,7 +140,7 @@ PC5 0.0349
 PC6 0.0308
 ```
 
-The strongest PC1 loadings are broad size/scale geometry summaries:
+The strongest PC1 loadings are broad volume-normalized Euclidean geometry summaries:
 `geom_vol1_pairwise_dist_mean`, `facet_volume_vol1_sum`,
 `geom_vol1_norm_mean`, `facet_volume_vol1_mean`,
 `ridge_abs_omega_vol1_mean`, `allpair_abs_omega_vol1_mean`,
@@ -271,10 +274,12 @@ a broad within-product association, not a top-tail proposal rule.
 
 ## Inference
 
-PCA applied to the retained dataset tells us that the allowed scalar table
-columns contain strong source-family and product-geometry structure, and that
-one PCA direction isolates a high-`sys` enriched product-family region among
-already evaluated rows.
+Pooled PCA applied to the retained dataset tells us that the allowed
+scalar table columns contain strong geometry differences between retained data
+sources, and that one PCA direction isolates a high-`sys` enriched product
+region among already evaluated rows. The source labels were not PCA inputs;
+they were used only after fitting to audit what the pooled PCA coordinates
+separated.
 
 PC2-high has statistically meaningful descriptive enrichment among already
 evaluated retained rows. It captures `20/85` top-1% rows in a `423/8445` row
@@ -298,12 +303,13 @@ The PC2-high audit adds these supported facts:
 
 The component interpretation supports this reading:
 
-- PC1 is mostly a size/scale geometry direction. It explains `32.8%` of
-  allowed-feature variance, has largest loading-family mass in `geom`,
-  `ridge`, `facet`, and `edge` columns, and is negatively correlated with
-  `sys` globally.
-- PC2 is mainly a near-zero-ridge symplectic direction aligned with
-  product-like source families. It explains `19.7%` of allowed-feature
+- PC1 is mostly a volume-normalized Euclidean geometry-summary direction. It
+  explains `32.8%` of allowed-feature variance, has largest loading-family
+  mass in `geom`, `ridge`, `facet`, and `edge` columns, and is negatively
+  correlated with `sys` globally.
+- PC2 is mainly a near-zero-ridge symplectic direction. Post-fit
+  source-label audits show that this pooled-PCA coordinate separates
+  product-like retained sources. It explains `19.7%` of allowed-feature
   variance, has `53%` of squared loading mass in `ridge` columns, and has
   source eta-squared `0.889`. Its high side contains product rows and random
   product-like rows, while its low side contains general and variable-f
@@ -359,8 +365,9 @@ PCA row, subject to the caveats below.
 
 - Reproducible observation: PC2-high concentrates high retained `sys` rows
   among already evaluated rows, mainly inside `gradient_ascent_products`.
-- Interpretation: PC2 is mostly a near-zero-ridge symplectic direction aligned
-  with product-like source families; the signal remains enriched inside
+- Interpretation: PC2 is mostly a near-zero-ridge symplectic direction;
+  post-fit source-label audits show that it separates product-like retained
+  sources, and the signal remains enriched inside
   `gradient_ascent_products`.
 - Positive-but-limited fact: PCA found a real descriptive pattern in the
   retained data, not an empty or purely null result.
@@ -369,24 +376,30 @@ PCA row, subject to the caveats below.
 - Caveat: do not phrase this as a finished PCA verdict, a clean negative PCA
   result, an impossibility result, a density statement, a source-independent
   pattern, a monotone score rule, or an exhaustive PCA-region search.
+- Caveat: this pooled PCA run does not answer the separate question whether
+  PCAs trained on individual retained sources, or transferred across source
+  subsets, reveal shared geometry useful for candidate proposal.
 
 Status wording for the method table or queue:
 
 ```text
-PCA projection on retained scalar table columns found a descriptive product-
-family signal: PC2 is a near-zero-ridge symplectic direction strongly aligned
-with source family, and its high-product region enriches already evaluated
-top-sys rows even inside gradient_ascent_products. The run found no current
+Pooled PCA projection on retained scalar table columns found a descriptive
+product-region signal: PC2 is a near-zero-ridge symplectic direction, and
+post-fit source-label audits show that this coordinate separates retained
+data sources. Its high-product region enriches already evaluated top-sys rows
+even inside gradient_ascent_products. The run found no current
 candidate-proposer and no validated sys > 1 row.
 ```
 
 ## Reopen Condition
 
 Reopen or continue this row if the retained dataset changes materially, if a
-pre-registered PCA-score proposal rule is specified before `sys` audit, or if
-a new candidate-generation interface can turn PCA-score directions into
+pre-registered PCA-score proposal rule is specified before `sys` audit, if a
+new candidate-generation interface can turn PCA-score directions into
 unevaluated polytopes without using endpoint labels, optimizer provenance,
-dataset identity, capacity columns, or post-hoc `sys` inspection.
+dataset identity, capacity columns, or post-hoc `sys` inspection, or if
+per-source or cross-source-transfer PCA has enough value of information after
+higher-priority method rows are handled.
 
 The concrete split follow-up, if reopened, is a product-family PCA-band
 candidate-proposer. It must define the unevaluated row pool, allowed feature
