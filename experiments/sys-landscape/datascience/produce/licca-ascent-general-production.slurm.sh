@@ -1,7 +1,7 @@
 #!/bin/bash
 # Production shard wave for datascience general fixed-F ascent.
 # Submit from this directory with:
-#   sbatch licca-ascent-production-general.slurm.sh
+#   sbatch licca-ascent-general-production.slurm.sh
 #
 # Resume rule:
 # - Do not delete partial shard files after timeout.

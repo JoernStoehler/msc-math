@@ -15,9 +15,11 @@ set -euo pipefail
 
 mkdir -p logs
 
-general_jid="$(sbatch --parsable licca-ascent-production-general.slurm.sh)"
-product_jid="$(sbatch --parsable licca-ascent-production-product.slurm.sh)"
-merge_jid="$(sbatch --parsable --dependency=afterok:${general_jid}:${product_jid} \
+general_jid="$(sbatch --parsable licca-ascent-general-production.slurm.sh)"
+product_jid="$(sbatch --parsable licca-ascent-product-production.slurm.sh)"
+merge_jid="$(sbatch --parsable \
+  --export=ALL,MERGE_ARGS="--require-cache --fresh-fixed-f" \
+  --dependency=afterok:${general_jid}:${product_jid} \
   licca-merge-ascent-shards.slurm.sh)"
 
 cat <<EOF

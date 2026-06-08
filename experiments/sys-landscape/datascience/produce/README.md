@@ -122,21 +122,21 @@ prevents shared cache writes. Defaults skip existing committed seed ranges:
 general starts at
 `n-start=10`, and product starts at `n-start=12`.
 
-- [licca-ascent-smoke-general.slurm.sh](licca-ascent-smoke-general.slurm.sh): one
+- [licca-ascent-general-smoke.slurm.sh](licca-ascent-general-smoke.slurm.sh): one
   `test`-partition general shard with `2` seeds.
-- [licca-ascent-smoke-product.slurm.sh](licca-ascent-smoke-product.slurm.sh): one
+- [licca-ascent-product-smoke.slurm.sh](licca-ascent-product-smoke.slurm.sh): one
   `test`-partition product shard with `2` seeds.
-- [licca-ascent-smoke-general.local.sh](licca-ascent-smoke-general.local.sh):
+- [licca-ascent-general-smoke.local.sh](licca-ascent-general-smoke.local.sh):
   local general smoke companion with one seed by default, one-second local
   budget, and a LICCA-shaped temp output directory.
-- [licca-ascent-smoke-product.local.sh](licca-ascent-smoke-product.local.sh):
+- [licca-ascent-product-smoke.local.sh](licca-ascent-product-smoke.local.sh):
   local product smoke companion with one seed by default, one-second local
   budget, and a LICCA-shaped temp output directory.
-- [licca-ascent-production-general.slurm.sh](licca-ascent-production-general.slurm.sh):
+- [licca-ascent-general-production.slurm.sh](licca-ascent-general-production.slurm.sh):
   production general wave with array `0-3`, `1024` seeds per shard, and
   `128` CPUs per shard. It starts at seed `0` and writes a fresh
   cache-complete output directory.
-- [licca-ascent-production-product.slurm.sh](licca-ascent-production-product.slurm.sh):
+- [licca-ascent-product-production.slurm.sh](licca-ascent-product-production.slurm.sh):
   production product wave with array `0-3`, `1024` seeds per shard, and
   `128` CPUs per shard. It starts at seed `0` and writes a fresh
   cache-complete output directory.
@@ -182,20 +182,32 @@ It runs tiny producer inputs, table build, and `scan-sys-gt-1` on temporary
 files in one `test`-partition job. It should pass before submitting production
 ascent jobs.
 
+Then run the production-shaped ascent smoke dependency chain:
+
+```bash
+cd "$HOME/msc-math/experiments/sys-landscape/datascience/produce"
+./submit-licca-ascent-smoke-pipeline.sh
+```
+
+This submits the existing smoke general/product ascent array jobs, then submits
+the same merge Slurm job with an `afterok` dependency on both smoke arrays. It
+checks Slurm array submission, dependency wiring, shard output paths, and merge
+behavior before production submission.
+
 Smoke-submit one small shard per kind:
 
 ```bash
 cd "$HOME/msc-math/experiments/sys-landscape/datascience/produce"
-sbatch licca-ascent-smoke-general.slurm.sh
-sbatch licca-ascent-smoke-product.slurm.sh
+sbatch licca-ascent-general-smoke.slurm.sh
+sbatch licca-ascent-product-smoke.slurm.sh
 ```
 
 After reviewing logs, submit the production wrappers directly:
 
 ```bash
 cd "$HOME/msc-math/experiments/sys-landscape/datascience/produce"
-sbatch licca-ascent-production-general.slurm.sh
-sbatch licca-ascent-production-product.slurm.sh
+sbatch licca-ascent-general-production.slurm.sh
+sbatch licca-ascent-product-production.slurm.sh
 ```
 
 This requests `4096` cache-complete general seeds and `4096` cache-complete

@@ -48,14 +48,14 @@ step_ascent_general() {
   OUT_ROOT="$OUT_ROOT" \
   OUT_DIR="$PRODUCE_DIR/licca-shards/general-cache-production-1024" \
   BASE_N_START=0 \
-    experiments/sys-landscape/datascience/produce/licca-ascent-smoke-general.local.sh
+    experiments/sys-landscape/datascience/produce/licca-ascent-general-smoke.local.sh
 }
 
 step_ascent_product() {
   OUT_ROOT="$OUT_ROOT" \
   OUT_DIR="$PRODUCE_DIR/licca-shards/product-cache-production-1024" \
   BASE_N_START=0 \
-    experiments/sys-landscape/datascience/produce/licca-ascent-smoke-product.local.sh
+    experiments/sys-landscape/datascience/produce/licca-ascent-product-smoke.local.sh
 }
 
 step_ascent_shards() {

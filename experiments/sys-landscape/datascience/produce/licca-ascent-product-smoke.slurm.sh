@@ -1,7 +1,7 @@
 #!/bin/bash
 # Smoke shard for datascience product fixed-F ascent.
 # Submit from this directory with:
-#   sbatch licca-ascent-smoke-product.slurm.sh
+#   sbatch licca-ascent-product-smoke.slurm.sh
 #
 # Resume rule:
 # - Do not delete partial shard files after timeout.

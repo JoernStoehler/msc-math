@@ -26,14 +26,16 @@ echo "LICCA datascience ascent merge"
 echo "  host: $(hostname)"
 echo "  date: $(date)"
 echo "  repo: $(git rev-parse --short HEAD)"
+echo "  extra args: ${MERGE_ARGS:-}"
 echo
 
+# Production submitters set MERGE_ARGS to `--require-cache --fresh-fixed-f`.
+# Smoke submitters leave it empty because smoke shards live under
+# licca-shards/general/ and licca-shards/product/.
 python3 experiments/sys-landscape/datascience/produce/merge-licca-ascent-shards.py \
-    --require-cache \
-    --fresh-fixed-f
+    ${MERGE_ARGS:-}
 
 echo
 python3 experiments/sys-landscape/datascience/produce/merge-licca-ascent-shards.py \
-    --require-cache \
-    --fresh-fixed-f \
+    ${MERGE_ARGS:-} \
     --write
