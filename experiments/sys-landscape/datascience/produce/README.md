@@ -156,8 +156,20 @@ cargo build --release -p exp-sys-landscape \
   --bin sys-dataset-ascent-product
 ```
 
-Submit the production ascent pipeline with one wrapper when the production
-settings are already accepted and after the LICCA smoke pipeline passes:
+Before production, run the production-shaped ascent smoke dependency chain:
+
+```bash
+cd "$HOME/msc-math/experiments/sys-landscape/datascience/produce"
+./submit-licca-ascent-smoke-pipeline.sh
+```
+
+This submits the existing smoke general/product ascent array jobs, then submits
+the same merge Slurm job with an `afterok` dependency on both smoke arrays. It
+checks Slurm array submission, dependency wiring, shard output paths, and merge
+behavior before production submission.
+
+After the smoke dependency chain passes, submit the production ascent pipeline
+with one wrapper:
 
 ```bash
 cd "$HOME/msc-math/experiments/sys-landscape/datascience/produce"
@@ -169,30 +181,6 @@ This submits the general and product production arrays, then submits
 `afterok` dependency on both arrays. The merge job writes review targets. It
 does not promote those files to canonical producer filenames, so table build
 submission remains a separate step after review.
-
-Before production, run the LICCA end-to-end smoke pipeline from the datascience
-directory:
-
-```bash
-cd "$HOME/msc-math/experiments/sys-landscape/datascience"
-sbatch licca-smoke-pipeline.slurm.sh
-```
-
-It runs tiny producer inputs, table build, and `scan-sys-gt-1` on temporary
-files in one `test`-partition job. It should pass before submitting production
-ascent jobs.
-
-Then run the production-shaped ascent smoke dependency chain:
-
-```bash
-cd "$HOME/msc-math/experiments/sys-landscape/datascience/produce"
-./submit-licca-ascent-smoke-pipeline.sh
-```
-
-This submits the existing smoke general/product ascent array jobs, then submits
-the same merge Slurm job with an `afterok` dependency on both smoke arrays. It
-checks Slurm array submission, dependency wiring, shard output paths, and merge
-behavior before production submission.
 
 Smoke-submit one small shard per kind:
 
