@@ -91,15 +91,13 @@ Approved current method-row status lives in `STATUS.md`.
 Executors and reviewers may recommend status, but they do not approve it. A
 green review is evidence only for the checks it actually performed.
 
-## Coverage References
+## Coverage Checklist
 
-Taxonomy snapshots are under `taxonomies/`. They are coverage references, not
-repo-state summaries and not thesis evidence.
+Use `method-coverage-checklist.md` to avoid forgetting datascience methods,
+tactics, patterns, and concepts that may deserve a method-table disposition.
+It is intentionally redundant and not a taxonomy, repo-state summary, thesis
+evidence, or task queue.
 
-Read them only when deciding whether a standard method family exists or should
-be named:
+Read it when choosing or reviewing method-table coverage:
 
-- `taxonomies/README.md`
-
-Optional or deferred method ideas live in `future-method-ideas.md`. Do not use
-that file as an automatic task queue.
+- `method-coverage-checklist.md`

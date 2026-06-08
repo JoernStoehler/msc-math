@@ -22,8 +22,10 @@
   for key standard-toolbox families. Do not try to cover the broader data-science
   toolbox exhaustively.
 - Phase 3 should tighten the shorter surfaces so they point here instead of paraphrasing the same story in multiple places.
-- Frozen taxonomy anchors now live under
-  `experiments/sys-landscape/datascience/methods/taxonomies/`.
+- The current coverage reminder lives in
+  `experiments/sys-landscape/datascience/methods/method-coverage-checklist.md`.
+  It is intentionally redundant and not a taxonomy, result ledger, or thesis
+  evidence.
 
 ## Claim Boundary
 
@@ -104,14 +106,15 @@ Interpret the columns strictly:
 | Neural-network methods | Would a flexible learned model give a candidate-proposer for high-`sys` rows? | deferred high-capacity supervised model family | No committed neural-network method packet found in the ledger. | Would need grouped splits, random-to-endpoint prediction tests, capacity/overfit controls, and enough data to make the fit meaningful. | Not attempted as a method program in the current ledger. | This remains unclassified for the current LICCA dataset until value, implementation cost, and review cost are reassessed. | `not run within the stated implementation bound` | Explicit omitted-family or abandoned-for-cost row only after current-dataset reassessment. | Reopen if the current method-table coverage requires a neural-network terminal state before thesis closeout. |
 | Bayesian optimization | Would surrogate-guided black-box search find better candidates than random/local methods? | deferred black-box search over candidate-generation space | No committed Bayesian-optimization method packet found in the ledger. | A valid attempt would need a parameterized candidate space, acquisition loop, exact-evaluation budget, and held-out reporting. | Not attempted as a method program in the current ledger. | This remains a plausible future search program, not evidence for or against the current no-candidate-proposer result. | `not run within the stated compute/data bound` | Future-work caveat only. | Reopen if a bounded candidate space and compute budget are approved. |
 
-## Taxonomy Anchors
+## Coverage Reminder
 
-- `experiments/sys-landscape/datascience/methods/taxonomies/`
+- `experiments/sys-landscape/datascience/methods/method-coverage-checklist.md`
 - `experiments/sys-landscape/datascience/methods/README.md`
 
-Phase 2 should treat the taxonomy files as frozen external method universes,
-the method README as the active repo-method index, and this audit as the place
-where thesis-facing verdicts are organized.
+Phase 2 should treat the checklist as a recall aid for methods, tactics,
+patterns, and concepts. It is not a source of row-level evidence. The method
+README is the active repo-method index, and this audit is the historical
+cross-thesis place where thesis-facing verdicts were organized.
 
 ## Method Buckets To Populate In Phase 2
 
