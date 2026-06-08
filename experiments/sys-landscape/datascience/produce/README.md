@@ -157,7 +157,7 @@ cargo build --release -p exp-sys-landscape \
 ```
 
 Submit the production ascent pipeline with one wrapper when the production
-settings are already accepted:
+settings are already accepted and after the LICCA smoke pipeline passes:
 
 ```bash
 cd "$HOME/msc-math/experiments/sys-landscape/datascience/produce"
@@ -169,6 +169,18 @@ This submits the general and product production arrays, then submits
 `afterok` dependency on both arrays. The merge job writes review targets. It
 does not promote those files to canonical producer filenames, so table build
 submission remains a separate step after review.
+
+Before production, run the LICCA end-to-end smoke pipeline from the datascience
+directory:
+
+```bash
+cd "$HOME/msc-math/experiments/sys-landscape/datascience"
+sbatch licca-smoke-pipeline.slurm.sh
+```
+
+It runs tiny producer inputs, table build, and `scan-sys-gt-1` on temporary
+files in one `test`-partition job. It should pass before submitting production
+ascent jobs.
 
 Smoke-submit one small shard per kind:
 
