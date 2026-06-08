@@ -42,6 +42,14 @@ def parse_args() -> argparse.Namespace:
             "canonical ascent files and older no-cache shard waves."
         ),
     )
+    parser.add_argument(
+        "--smoke-fixed-f",
+        action="store_true",
+        help=(
+            "Merge only isolated fixed-F smoke shard directories, omitting "
+            "canonical ascent files and production shard waves."
+        ),
+    )
     return parser.parse_args()
 
 
@@ -271,10 +279,21 @@ def report_family(
 def main() -> None:
     args = parse_args()
     produce_dir = args.produce_dir
+    if args.fresh_fixed_f and args.smoke_fixed_f:
+        raise SystemExit("--fresh-fixed-f and --smoke-fixed-f are mutually exclusive")
     if args.fresh_fixed_f and not args.require_cache:
         raise SystemExit("--fresh-fixed-f requires --require-cache")
+    if args.smoke_fixed_f and not args.require_cache:
+        raise SystemExit("--smoke-fixed-f requires --require-cache")
 
-    if args.fresh_fixed_f:
+    if args.smoke_fixed_f:
+        general_shard_globs = [
+            "licca-shards/general-smoke/general-shard-*.jsonl",
+        ]
+        product_shard_globs = [
+            "licca-shards/product-smoke/product-shard-*.jsonl",
+        ]
+    elif args.fresh_fixed_f:
         general_shard_globs = [
             "licca-shards/general-cache-production-1024/general-shard-*.jsonl",
         ]
@@ -297,49 +316,49 @@ def main() -> None:
         produce_dir,
         "ascent-general-endpoints.jsonl",
         general_shard_globs,
-        include_canonical=not args.fresh_fixed_f,
+        include_canonical=not (args.fresh_fixed_f or args.smoke_fixed_f),
     ))
     general_trace_paths = keep_trace_paths(collect_paths(
         produce_dir,
         "ascent-general-trace.jsonl",
         [pattern.replace(".jsonl", "-trace.jsonl") for pattern in general_shard_globs],
-        include_canonical=not args.fresh_fixed_f,
+        include_canonical=not (args.fresh_fixed_f or args.smoke_fixed_f),
     ))
     general_cache_paths = collect_paths(
         produce_dir,
         "ascent-general-cache.jsonl",
         [pattern.replace(".jsonl", "-cache.jsonl") for pattern in general_shard_globs],
-        include_canonical=not args.fresh_fixed_f,
+        include_canonical=not (args.fresh_fixed_f or args.smoke_fixed_f),
     )
     general_computed_polytope_paths = collect_paths(
         produce_dir,
         "ascent-general-computed-polytopes.jsonl",
         [pattern.replace(".jsonl", "-computed-polytopes.jsonl") for pattern in general_shard_globs],
-        include_canonical=not args.fresh_fixed_f,
+        include_canonical=not (args.fresh_fixed_f or args.smoke_fixed_f),
     )
     product_paths = keep_summary_paths(collect_paths(
         produce_dir,
         "ascent-product-endpoints.jsonl",
         product_shard_globs,
-        include_canonical=not args.fresh_fixed_f,
+        include_canonical=not (args.fresh_fixed_f or args.smoke_fixed_f),
     ))
     product_trace_paths = keep_trace_paths(collect_paths(
         produce_dir,
         "ascent-product-trace.jsonl",
         [pattern.replace(".jsonl", "-trace.jsonl") for pattern in product_shard_globs],
-        include_canonical=not args.fresh_fixed_f,
+        include_canonical=not (args.fresh_fixed_f or args.smoke_fixed_f),
     ))
     product_cache_paths = collect_paths(
         produce_dir,
         "ascent-product-cache.jsonl",
         [pattern.replace(".jsonl", "-cache.jsonl") for pattern in product_shard_globs],
-        include_canonical=not args.fresh_fixed_f,
+        include_canonical=not (args.fresh_fixed_f or args.smoke_fixed_f),
     )
     product_computed_polytope_paths = collect_paths(
         produce_dir,
         "ascent-product-computed-polytopes.jsonl",
         [pattern.replace(".jsonl", "-computed-polytopes.jsonl") for pattern in product_shard_globs],
-        include_canonical=not args.fresh_fixed_f,
+        include_canonical=not (args.fresh_fixed_f or args.smoke_fixed_f),
     )
 
     general_rows, _ = dedup_rows(general_paths, "summary", row_key)
@@ -369,16 +388,16 @@ def main() -> None:
     print()
     general_expected_stop = (
         name_index(general_rows[-1])
-        if args.fresh_fixed_f and general_rows
+        if (args.fresh_fixed_f or args.smoke_fixed_f) and general_rows
         else -1
-        if args.fresh_fixed_f
+        if args.fresh_fixed_f or args.smoke_fixed_f
         else max(509, name_index(general_rows[-1]) if general_rows else 0)
     )
     product_expected_stop = (
         name_index(product_rows[-1])
-        if args.fresh_fixed_f and product_rows
+        if (args.fresh_fixed_f or args.smoke_fixed_f) and product_rows
         else -1
-        if args.fresh_fixed_f
+        if args.fresh_fixed_f or args.smoke_fixed_f
         else max(511, name_index(product_rows[-1]) if product_rows else 0)
     )
     report_family(

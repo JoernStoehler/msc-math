@@ -16,7 +16,9 @@ mkdir -p logs
 
 general_jid="$(sbatch --parsable licca-ascent-general-smoke.slurm.sh)"
 product_jid="$(sbatch --parsable licca-ascent-product-smoke.slurm.sh)"
-merge_jid="$(sbatch --parsable --dependency=afterok:${general_jid}:${product_jid} \
+merge_jid="$(sbatch --parsable \
+  --export=ALL,MERGE_ARGS="--require-cache --smoke-fixed-f" \
+  --dependency=afterok:${general_jid}:${product_jid} \
   licca-merge-ascent-shards.slurm.sh)"
 
 cat <<EOF

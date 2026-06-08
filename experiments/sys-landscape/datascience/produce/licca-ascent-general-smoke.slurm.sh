@@ -33,11 +33,11 @@ export RAYON_NUM_THREADS="$SLURM_CPUS_PER_TASK"
 RUN_LABEL="smoke-general"
 KIND="general"
 SHARD_ID="${SLURM_ARRAY_TASK_ID:-0}"
-BASE_N_START=10
+BASE_N_START=0
 SEEDS_PER_SHARD=2
 SEED_TIME_BUDGET_SECS=30
 BINARY="$CARGO_TARGET_DIR/release/sys-dataset-ascent"
-OUT_DIR="experiments/sys-landscape/datascience/produce/licca-shards/$KIND"
+OUT_DIR="experiments/sys-landscape/datascience/produce/licca-shards/$KIND-smoke"
 OUT="$OUT_DIR/general-shard-${SHARD_ID}.jsonl"
 N_START=$((BASE_N_START + SHARD_ID * SEEDS_PER_SHARD))
 

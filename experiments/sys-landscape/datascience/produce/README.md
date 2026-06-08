@@ -126,9 +126,9 @@ general starts at
 `n-start=10`, and product starts at `n-start=12`.
 
 - [licca-ascent-general-smoke.slurm.sh](licca-ascent-general-smoke.slurm.sh): one
-  `test`-partition general shard with `2` seeds.
+  `test`-partition general shard with `2` seeds in `licca-shards/general-smoke/`.
 - [licca-ascent-product-smoke.slurm.sh](licca-ascent-product-smoke.slurm.sh): one
-  `test`-partition product shard with `2` seeds.
+  `test`-partition product shard with `2` seeds in `licca-shards/product-smoke/`.
 - [licca-ascent-general-smoke.local.sh](licca-ascent-general-smoke.local.sh):
   local general smoke companion with one seed by default, one-second local
   budget, and a LICCA-shaped temp output directory.
