@@ -112,6 +112,10 @@ output races. Submit these scripts directly; do not pass production settings as
 `sbatch` flags. Each Slurm script is self-contained and includes its resources,
 seed range, output path, resume rule, and exact Rust command.
 
+Design rule: production scripts are the source of truth for job topology. Smoke
+scripts keep that topology and reduce only scale, partition/resource settings,
+and output paths. Submit smoke before production.
+
 The script writes one summary JSONL, one derived `*-trace.jsonl`, one derived
 `*-cache.jsonl`, and one derived `*-computed-polytopes.jsonl` per Slurm array
 task. For fixed-F ascent, `*-computed-polytopes.jsonl` is the producer output
@@ -181,22 +185,6 @@ This submits the general and product production arrays, then submits
 `afterok` dependency on both arrays. The merge job writes review targets. It
 does not promote those files to canonical producer filenames, so table build
 submission remains a separate step after review.
-
-Smoke-submit one small shard per kind:
-
-```bash
-cd "$HOME/msc-math/experiments/sys-landscape/datascience/produce"
-sbatch licca-ascent-general-smoke.slurm.sh
-sbatch licca-ascent-product-smoke.slurm.sh
-```
-
-After reviewing logs, submit the production wrappers directly:
-
-```bash
-cd "$HOME/msc-math/experiments/sys-landscape/datascience/produce"
-sbatch licca-ascent-general-production.slurm.sh
-sbatch licca-ascent-product-production.slurm.sh
-```
 
 This requests `4096` cache-complete general seeds and `4096` cache-complete
 product seeds. It writes to `licca-shards/general-cache-production-1024/` and
