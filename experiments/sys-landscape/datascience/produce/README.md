@@ -112,9 +112,8 @@ output races. Submit these scripts directly; do not pass production settings as
 `sbatch` flags. Each Slurm script is self-contained and includes its resources,
 seed range, output path, resume rule, and exact Rust command.
 
-Design rule: production scripts are the source of truth for job topology. Smoke
-scripts keep that topology and reduce only scale, partition/resource settings,
-and output paths. Submit smoke before production.
+Rule: keep smoke scripts shaped like production scripts. Only make them smaller
+and cheaper. Run smoke before production.
 
 The script writes one summary JSONL, one derived `*-trace.jsonl`, one derived
 `*-cache.jsonl`, and one derived `*-computed-polytopes.jsonl` per Slurm array
