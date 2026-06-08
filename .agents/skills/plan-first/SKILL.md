@@ -1,13 +1,15 @@
 ---
-description: Plan before implementation
-argument-hint: TASK
+name: plan-first
+description: Explicit plan-first workflow for Codex tasks. Use only when Jörn invokes `$plan-first` or explicitly asks to plan before implementation.
 ---
 
-Plan before implementation.
+# Plan First
 
 Do not change tracked project files or generated project artifacts until Jörn
-approves the plan or asks you to implement. Scratch work outside tracked project
-content is allowed, for example under `/tmp`.
+approves the plan or asks you to implement.
+
+Scratch work outside tracked project content is allowed, for example under
+`/tmp`.
 
 Use local context and cheap checks to make the plan reliable. If Jörn's input is
 needed before a useful plan can be written, send a polished clarification
@@ -20,6 +22,3 @@ the investigation. The plan should be actionable, compare materially different
 approaches when the choice matters, use value-of-information reasoning where it
 matters, and communicate important uncertainty, value, cost, risk, predictions,
 and stop/ask conditions with calibrated numbers when useful.
-
-Task:
-$ARGUMENTS
