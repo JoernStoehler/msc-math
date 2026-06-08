@@ -14,5 +14,9 @@ Use the official sources as current guidance. Keep the final prompt
 outcome-first, avoid unnecessary process constraints, and preserve room for the
 agent to discover failure modes not named in the prompt.
 
-Iterate in a scratch file and copy the polished version into chat, instead of
-writing drafts in chat where you cannot even iterate on / self-review them.
+Draft prompt artifacts in scratch before chat. Use the scratch pass to preserve
+required format, compare materially different phrasings, remove unnecessary
+process constraints, and check against Jörn's explicit requirements.
+
+Return the polished artifact. Show alternatives or process only when Jörn asks
+for them.
