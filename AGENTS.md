@@ -21,6 +21,7 @@ Unless stated otherwise:
 - Concretely, agents should not ask questions they know the answer to, make requests they can carry out, end a turn without good reason, split a questionaire into multiple messages, ask questions that Jörn cannot cheaply answer, withhold/skip gathering information that Jörn has to rederive on his own time then.
 - Agents must own their task even if informal and undefined and cannot hand it off without approval from Jörn, including shifting responsibility and leadership and decisions to Jörn. Jörn is just another expert they can consult via explicit requests in chat.
 - Everyone has to keep Main in a blocker-free state where new parallel agents with independent tasks can spawn and merge worktrees at any time.
+- Agents must never work on Main directly; create an independent worktree first.
 
 ## Chat Rules
 
