@@ -1,26 +1,35 @@
 # Sys-Landscape Produce
 
-This directory owns the producer stage for `experiments/sys-landscape/datascience/`.
+This directory owns producer programs, producer caches, and producer outputs for
+`experiments/sys-landscape/datascience/`.
 
-It owns the cache-worthy geometry and witness payloads:
+Producer outputs must preserve every expensive computed polytope fact that
+later stages should not have to recompute:
 - exact or reconstructible polytope/state identity;
-- provenance and lineage metadata;
-- near-minimal `sigma[]` witness sets and cutoffs;
-- raw traces or generator logs when those are part of the expensive search surface.
+- capacity, volume, and `sys` when computed;
+- provenance and lineage metadata needed to interpret the row;
+- near-minimal `sigma[]` witness sets and cutoffs when already computed;
+- raw traces or generator logs when those are part of the expensive search
+  surface.
+
+Producer outputs should not decide the final method-facing table shape.
+Reusable datascience feature columns, deliberate deduplication, retained table
+row entities, and method-specific rectangular matrices belong downstream.
 
 Canonical file naming follows:
 - `name.jsonl`
 - `name-trace.jsonl`
 - `name-cache.jsonl`
+- `name-computed-polytopes.jsonl`
 - transient smoke outputs `smoke-name.jsonl`
 
 Current committed producer artifacts:
 - `random.jsonl`
 - `random-product.jsonl`
-- `ascent.jsonl`
-- `ascent-trace.jsonl`
-- `ascent-cache.jsonl`
-- `ascent-product.jsonl`
+- `ascent-general-endpoints.jsonl`
+- `ascent-general-trace.jsonl`
+- `ascent-general-cache.jsonl`
+- `ascent-product-endpoints.jsonl`
 - `ascent-product-trace.jsonl`
 - `ascent-product-cache.jsonl`
 - `continuation.jsonl`
@@ -30,8 +39,8 @@ Current committed producer artifacts:
 Current fixed-F ascent producer counts from the 2026-06-04 LICCA
 cache-complete wave:
 
-- `ascent.jsonl`: `4096` rows; `ascent-cache.jsonl`: `4096` rows.
-- `ascent-product.jsonl`: `4089` rows; `ascent-product-cache.jsonl`: `4089`
+- `ascent-general-endpoints.jsonl`: `4096` rows; `ascent-general-cache.jsonl`: `4096` rows.
+- `ascent-product-endpoints.jsonl`: `4089` rows; `ascent-product-cache.jsonl`: `4089`
   rows. The product wave attempted seeds `0..4095`; seven seeds did not emit
   summary/cache rows.
 - Both fixed-F cache files have complete `capacity`, `volume`, `sigmas`, and
@@ -58,10 +67,11 @@ have a matching shard-local producer-cache row.
 
 - `sys-dataset-random` writes `random.jsonl` and updates `shared-cache.jsonl`.
 - `sys-dataset-random-product` writes `random-product.jsonl` and updates `shared-cache.jsonl`.
-- `sys-dataset-ascent` writes `ascent.jsonl`, `ascent-trace.jsonl`, and
-  `ascent-cache.jsonl`.
-- `sys-dataset-ascent-product` writes `ascent-product.jsonl`,
-  `ascent-product-trace.jsonl`, and `ascent-product-cache.jsonl`.
+- `sys-dataset-ascent` writes `ascent-general-endpoints.jsonl`, `ascent-general-trace.jsonl`,
+  `ascent-general-cache.jsonl`, and `ascent-general-computed-polytopes.jsonl`.
+- `sys-dataset-ascent-product` writes `ascent-product-endpoints.jsonl`,
+  `ascent-product-trace.jsonl`, `ascent-product-cache.jsonl`, and
+  `ascent-product-computed-polytopes.jsonl`.
 - `sys-dataset-continuation` writes `continuation.jsonl` and `continuation-cache.jsonl`.
 
 Older `sys-landscape` experiment directories still exist outside `datascience/`, but
@@ -102,16 +112,26 @@ output races. Submit these scripts directly; do not pass production settings as
 `sbatch` flags. Each Slurm script is self-contained and includes its resources,
 seed range, output path, resume rule, and exact Rust command.
 
-The script writes one summary JSONL, one derived `*-trace.jsonl`, and one
-derived `*-cache.jsonl` per Slurm array task. The cache file is shard-local and
-is still written when the binary runs with `--no-db-update`; that flag only
+The script writes one summary JSONL, one derived `*-trace.jsonl`, one derived
+`*-cache.jsonl`, and one derived `*-computed-polytopes.jsonl` per Slurm array
+task. For fixed-F ascent, `*-computed-polytopes.jsonl` is the producer output
+that preserves computed-polytope facts for starts, line-search candidates,
+accepted candidates, and final endpoints. The cache file is shard-local and is
+still written when the binary runs with `--no-db-update`; that flag only
 prevents shared cache writes. Defaults skip existing committed seed ranges:
-general starts at `n-start=10`, and product starts at `n-start=12`.
+general starts at
+`n-start=10`, and product starts at `n-start=12`.
 
 - [licca-ascent-smoke-general.slurm.sh](licca-ascent-smoke-general.slurm.sh): one
   `test`-partition general shard with `2` seeds.
 - [licca-ascent-smoke-product.slurm.sh](licca-ascent-smoke-product.slurm.sh): one
   `test`-partition product shard with `2` seeds.
+- [licca-ascent-smoke-general.local.sh](licca-ascent-smoke-general.local.sh):
+  local general smoke companion with one seed by default, one-second local
+  budget, and a LICCA-shaped temp output directory.
+- [licca-ascent-smoke-product.local.sh](licca-ascent-smoke-product.local.sh):
+  local product smoke companion with one seed by default, one-second local
+  budget, and a LICCA-shaped temp output directory.
 - [licca-ascent-production-general.slurm.sh](licca-ascent-production-general.slurm.sh):
   production general wave with array `0-3`, `1024` seeds per shard, and
   `128` CPUs per shard. It starts at seed `0` and writes a fresh
@@ -135,6 +155,20 @@ cargo build --release -p exp-sys-landscape \
   --bin sys-dataset-ascent \
   --bin sys-dataset-ascent-product
 ```
+
+Submit the production ascent pipeline with one wrapper when the production
+settings are already accepted:
+
+```bash
+cd "$HOME/msc-math/experiments/sys-landscape/datascience/produce"
+./submit-licca-ascent-pipeline.sh
+```
+
+This submits the general and product production arrays, then submits
+[licca-merge-ascent-shards.slurm.sh](licca-merge-ascent-shards.slurm.sh) with an
+`afterok` dependency on both arrays. The merge job writes review targets. It
+does not promote those files to canonical producer filenames, so table build
+submission remains a separate step after review.
 
 Smoke-submit one small shard per kind:
 
@@ -183,12 +217,14 @@ python3 experiments/sys-landscape/datascience/produce/merge-licca-ascent-shards.
 The `--write` form creates:
 
 ```text
-ascent-licca-merged.jsonl
-ascent-licca-merged-trace.jsonl
-ascent-licca-merged-cache.jsonl
-ascent-product-licca-merged.jsonl
+ascent-general-licca-merged-endpoints.jsonl
+ascent-general-licca-merged-trace.jsonl
+ascent-general-licca-merged-cache.jsonl
+ascent-general-licca-merged-computed-polytopes.jsonl
+ascent-product-licca-merged-endpoints.jsonl
 ascent-product-licca-merged-trace.jsonl
 ascent-product-licca-merged-cache.jsonl
+ascent-product-licca-merged-computed-polytopes.jsonl
 ```
 
 These files are review targets. Promote them to the canonical producer filenames

@@ -85,6 +85,10 @@ def cache_key(row: dict[str, Any]) -> str:
     return json.dumps(row["dual_vertices_rational"], sort_keys=True, separators=(",", ":"))
 
 
+def computed_polytope_key(row: dict[str, Any]) -> str:
+    return str(row["result_id"])
+
+
 def summary_cache_key(row: dict[str, Any]) -> str:
     return json.dumps(
         row["final_dual_vertices_rational"], sort_keys=True, separators=(",", ":")
@@ -109,6 +113,7 @@ def keep_summary_paths(paths: list[Path]) -> list[Path]:
         for path in paths
         if not path.name.endswith("-trace.jsonl")
         and not path.name.endswith("-cache.jsonl")
+        and not path.name.endswith("-computed-polytopes.jsonl")
     ]
 
 
@@ -290,25 +295,31 @@ def main() -> None:
 
     general_paths = keep_summary_paths(collect_paths(
         produce_dir,
-        "ascent.jsonl",
+        "ascent-general-endpoints.jsonl",
         general_shard_globs,
         include_canonical=not args.fresh_fixed_f,
     ))
     general_trace_paths = keep_trace_paths(collect_paths(
         produce_dir,
-        "ascent-trace.jsonl",
+        "ascent-general-trace.jsonl",
         [pattern.replace(".jsonl", "-trace.jsonl") for pattern in general_shard_globs],
         include_canonical=not args.fresh_fixed_f,
     ))
     general_cache_paths = collect_paths(
         produce_dir,
-        "ascent-cache.jsonl",
+        "ascent-general-cache.jsonl",
         [pattern.replace(".jsonl", "-cache.jsonl") for pattern in general_shard_globs],
+        include_canonical=not args.fresh_fixed_f,
+    )
+    general_computed_polytope_paths = collect_paths(
+        produce_dir,
+        "ascent-general-computed-polytopes.jsonl",
+        [pattern.replace(".jsonl", "-computed-polytopes.jsonl") for pattern in general_shard_globs],
         include_canonical=not args.fresh_fixed_f,
     )
     product_paths = keep_summary_paths(collect_paths(
         produce_dir,
-        "ascent-product.jsonl",
+        "ascent-product-endpoints.jsonl",
         product_shard_globs,
         include_canonical=not args.fresh_fixed_f,
     ))
@@ -324,13 +335,29 @@ def main() -> None:
         [pattern.replace(".jsonl", "-cache.jsonl") for pattern in product_shard_globs],
         include_canonical=not args.fresh_fixed_f,
     )
+    product_computed_polytope_paths = collect_paths(
+        produce_dir,
+        "ascent-product-computed-polytopes.jsonl",
+        [pattern.replace(".jsonl", "-computed-polytopes.jsonl") for pattern in product_shard_globs],
+        include_canonical=not args.fresh_fixed_f,
+    )
 
     general_rows, _ = dedup_rows(general_paths, "summary", row_key)
     general_trace_rows, _ = dedup_rows(general_trace_paths, "trace", trace_key)
     general_cache_rows, _ = dedup_cache_rows(general_cache_paths)
+    general_computed_polytope_rows, _ = dedup_rows(
+        general_computed_polytope_paths,
+        "computed-polytope",
+        computed_polytope_key,
+    )
     product_rows, _ = dedup_rows(product_paths, "summary", row_key)
     product_trace_rows, _ = dedup_rows(product_trace_paths, "trace", trace_key)
     product_cache_rows, _ = dedup_cache_rows(product_cache_paths)
+    product_computed_polytope_rows, _ = dedup_rows(
+        product_computed_polytope_paths,
+        "computed-polytope",
+        computed_polytope_key,
+    )
     general_missing_cache = validate_summary_cache(
         "general", general_rows, general_cache_rows, args.require_cache
     )
@@ -378,15 +405,29 @@ def main() -> None:
     print(f"- general trace rows: `{len(general_trace_rows)}`")
     print(f"- product trace rows: `{len(product_trace_rows)}`")
     print()
+    print(f"## computed-polytope rows")
+    print(f"- general computed-polytope input files: `{len(general_computed_polytope_paths)}`")
+    print(f"- general computed-polytope rows: `{len(general_computed_polytope_rows)}`")
+    print(f"- product computed-polytope input files: `{len(product_computed_polytope_paths)}`")
+    print(f"- product computed-polytope rows: `{len(product_computed_polytope_rows)}`")
+    print()
 
     if args.write:
         outputs = [
-            (produce_dir / "ascent-licca-merged.jsonl", general_rows),
-            (produce_dir / "ascent-licca-merged-trace.jsonl", general_trace_rows),
-            (produce_dir / "ascent-licca-merged-cache.jsonl", general_cache_rows),
-            (produce_dir / "ascent-product-licca-merged.jsonl", product_rows),
+            (produce_dir / "ascent-general-licca-merged-endpoints.jsonl", general_rows),
+            (produce_dir / "ascent-general-licca-merged-trace.jsonl", general_trace_rows),
+            (produce_dir / "ascent-general-licca-merged-cache.jsonl", general_cache_rows),
+            (
+                produce_dir / "ascent-general-licca-merged-computed-polytopes.jsonl",
+                general_computed_polytope_rows,
+            ),
+            (produce_dir / "ascent-product-licca-merged-endpoints.jsonl", product_rows),
             (produce_dir / "ascent-product-licca-merged-trace.jsonl", product_trace_rows),
             (produce_dir / "ascent-product-licca-merged-cache.jsonl", product_cache_rows),
+            (
+                produce_dir / "ascent-product-licca-merged-computed-polytopes.jsonl",
+                product_computed_polytope_rows,
+            ),
         ]
         for path, rows in outputs:
             write_jsonl(path, rows)

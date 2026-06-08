@@ -22,8 +22,6 @@ Disposition words below are planning hints only:
 ## Baseline And EDA
 
 - `open` target predicate scan: rows with `sys > 1`.
-- `open` max and top-k `sys` rows.
-- `open` source-wise max and top-k `sys` rows.
 - `open` target distribution, quantiles, and tail summaries.
 - `open` grouped summaries by source, family, optimizer, lineage, and role.
 - `open` missingness, duplicate, schema, and row-count checks.

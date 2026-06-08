@@ -18,16 +18,19 @@ pub struct AscentOutputPaths {
     pub summary: PathBuf,
     pub trace: PathBuf,
     pub cache: PathBuf,
+    pub computed_polytopes: PathBuf,
 }
 
 impl AscentOutputPaths {
     pub fn from_summary_path(summary: PathBuf) -> Self {
         let trace = trace_path_for(&summary);
         let cache = cache_path_for(&summary);
+        let computed_polytopes = computed_polytopes_path_for(&summary);
         Self {
             summary,
             trace,
             cache,
+            computed_polytopes,
         }
     }
 }
@@ -130,6 +133,7 @@ pub fn parse_ascent_args(
 /// Derive the trace file path from the summary file path.
 ///
 /// `foo/bar.jsonl` -> `foo/bar-trace.jsonl`.
+/// `foo/bar-endpoints.jsonl` -> `foo/bar-trace.jsonl`.
 pub fn trace_path_for(summary_path: &Path) -> PathBuf {
     sibling_path_with_suffix(summary_path, "trace")
 }
@@ -137,8 +141,17 @@ pub fn trace_path_for(summary_path: &Path) -> PathBuf {
 /// Derive the shard-local cache file path from the summary file path.
 ///
 /// `foo/bar.jsonl` -> `foo/bar-cache.jsonl`.
+/// `foo/bar-endpoints.jsonl` -> `foo/bar-cache.jsonl`.
 pub fn cache_path_for(summary_path: &Path) -> PathBuf {
     sibling_path_with_suffix(summary_path, "cache")
+}
+
+/// Derive the computed-polytope file path from the summary file path.
+///
+/// `foo/bar.jsonl` -> `foo/bar-computed-polytopes.jsonl`.
+/// `foo/bar-endpoints.jsonl` -> `foo/bar-computed-polytopes.jsonl`.
+pub fn computed_polytopes_path_for(summary_path: &Path) -> PathBuf {
+    sibling_path_with_suffix(summary_path, "computed-polytopes")
 }
 
 fn sibling_path_with_suffix(summary_path: &Path, suffix: &str) -> PathBuf {
@@ -147,6 +160,7 @@ fn sibling_path_with_suffix(summary_path: &Path, suffix: &str) -> PathBuf {
         .expect("summary path must have a file name")
         .to_string_lossy()
         .into_owned();
+    let stem = stem.strip_suffix("-endpoints").unwrap_or(&stem);
     let ext = summary_path
         .extension()
         .map(|e| e.to_string_lossy().into_owned())

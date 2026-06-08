@@ -389,6 +389,7 @@ fn process_seed(
             final_dual_vertices: final_dvs,
         },
         trace: all_trace,
+        computed_polytopes: Vec::new(),
         final_record,
         final_polytope: best_polytope,
     })

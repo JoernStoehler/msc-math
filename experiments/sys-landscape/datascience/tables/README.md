@@ -4,16 +4,22 @@ This directory owns the retained table stage for
 `experiments/sys-landscape/datascience/`.
 
 Pipeline:
-- `produce/` writes cache and summary JSONL files
-- `tables/main.rs` loads those files, enriches them, and writes the retained
-  tables next to the table code
+- `produce/` writes producer JSONL files that preserve expensive computed
+  polytope facts and producer context
+- `tables/main.rs` loads the producer files needed for the current table row
+  entities, enriches them, and writes the retained tables next to the table code
 - `methods/` reads the retained tables as black-box inputs and may build
   method-local rectangular inputs
 
 Normal table builds do not repair missing capacity payloads. Fixed-F ascent
-summary rows must have matching producer-cache rows (`ascent-cache.jsonl` and
+summary rows must have matching producer-cache rows (`ascent-general-cache.jsonl` and
 `ascent-product-cache.jsonl`) with capacity, volume, sigmas, and orbit scalars
 before this stage runs.
+
+Producer `*-computed-polytopes.jsonl` files preserve additional computed-polytope
+facts from ascent. They are producer outputs, not current table outputs. Add a
+table for those rows only when the table row entity and reusable columns are
+chosen deliberately.
 
 Current outputs:
 - `polytope-table.jsonl`: one row per retained polytope keyed by `poly_id`;
@@ -39,6 +45,17 @@ Build the current retained table output with:
 ```bash
 experiments/sys-landscape/datascience/build-dataset.sh
 ```
+
+Visualize the retained dataset composition for method planning with:
+
+```bash
+uv run --script experiments/sys-landscape/datascience/tables/plot_dataset_composition.py
+```
+
+This script reads `polytope-table.jsonl` and
+`polytope-provenance-table.jsonl`, prints counts by dataset source, and writes
+`dataset-composition.png` by default. The plot is table-scoped: it describes
+the polytopes currently available to methods.
 
 The current rules for method-only runs, reusable table columns, producer
 changes, reviewers, and speculative datasets live in `../README.md`.

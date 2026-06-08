@@ -30,6 +30,13 @@ pub struct ActiveSysState {
     pub sys: f64,
 }
 
+#[derive(Clone, Debug)]
+pub struct SysComputation {
+    pub capacity: OrbitSearchResult,
+    pub vol: f64,
+    pub sys: f64,
+}
+
 /// Mode-specific projection for the ascent direction.
 #[derive(Clone, Copy, Debug)]
 pub enum AscentMode<'a> {
@@ -71,14 +78,21 @@ pub fn compute_sys_from_capacity(
 
 /// Compute sys = c_EHZ(K)^2 / (2 vol(K)) for a polytope using HK2017.
 pub fn compute_sys(polytope: &SysLandscapePolytopeCache) -> Option<f64> {
+    Some(compute_sys_computation(polytope)?.sys)
+}
+
+/// Compute sys and keep the capacity payload for producer audit rows.
+pub fn compute_sys_computation(polytope: &SysLandscapePolytopeCache) -> Option<SysComputation> {
     let vol =
         exact_volume_from_incidence_as_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
     if vol <= 0.0 {
         return None;
     }
-    let cap = compute_capacity_result(polytope)?.capacity();
+    let capacity = compute_capacity_result(polytope)?;
+    let cap = capacity.capacity();
     let sys = systolic_ratio(cap, vol);
-    sys.is_finite().then_some(sys)
+    sys.is_finite()
+        .then(|| SysComputation { capacity, vol, sys })
 }
 
 /// Compute the active-orbit capacity result.
@@ -251,14 +265,24 @@ pub fn apply_dual_step(
     direction: &[Vector4<f64>],
     t: f64,
 ) -> Option<(SysLandscapePolytopeCache, f64)> {
+    let (polytope, computation) = apply_dual_step_with_computation(duals, direction, t)?;
+    Some((polytope, computation.sys))
+}
+
+/// Try a step and keep the capacity payload for producer audit rows.
+pub fn apply_dual_step_with_computation(
+    duals: &[Vector4<f64>],
+    direction: &[Vector4<f64>],
+    t: f64,
+) -> Option<(SysLandscapePolytopeCache, SysComputation)> {
     let new_duals: Vec<Vector4<f64>> = duals
         .iter()
         .zip(direction)
         .map(|(a, d)| a + t * d)
         .collect();
     let polytope = SysLandscapePolytopeCache::from_f64_dual_vertices(new_duals)?;
-    let sys = compute_sys(&polytope)?;
-    Some((polytope, sys))
+    let computation = compute_sys_computation(&polytope)?;
+    Some((polytope, computation))
 }
 
 pub fn rational_vec4_to_strings(data: &[[BigRational; 4]]) -> Vec<[String; 4]> {

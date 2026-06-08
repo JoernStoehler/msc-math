@@ -3,7 +3,7 @@
 # requires-python = ">=3.12"
 # ///
 
-"""Baseline EDA scan for retained table rows with `sys > 1`."""
+"""Baseline EDA scan for recorded rows with `sys > 1`."""
 
 from __future__ import annotations
 
@@ -30,7 +30,13 @@ def parse_args() -> argparse.Namespace:
         type=Path,
         default=TABLES_DIR / "polytope-provenance-table.jsonl",
     )
-    parser.add_argument("--top-k", type=int, default=10)
+    parser.add_argument(
+        "--computed-polytopes",
+        type=Path,
+        action="append",
+        default=[],
+        help="Ascent producer computed-polytopes JSONL file to scan.",
+    )
     return parser.parse_args()
 
 
@@ -59,23 +65,26 @@ def source_label(provenance_rows: list[dict[str, Any]]) -> str:
     return ", ".join(dataset for dataset in datasets if dataset) or "-"
 
 
+def scan_rows(rows: list[dict[str, Any]], *, id_field: str) -> list[dict[str, Any]]:
+    for row in rows:
+        value = row.get("sys")
+        if not isinstance(value, int | float):
+            raise SystemExit(f"Missing or non-numeric `sys` for {id_field}={row.get(id_field)}")
+
+    return [row for row in rows if float(row["sys"]) > 1.0]
+
+
 def main() -> None:
     args = parse_args()
-    if args.top_k <= 0:
-        raise SystemExit("--top-k must be positive")
 
     polytope_rows = load_jsonl(args.polytope_table)
     provenance_rows = load_jsonl(args.provenance_table)
     provenance = provenance_by_poly_id(provenance_rows)
 
-    for row in polytope_rows:
-        value = row.get("sys")
-        if not isinstance(value, int | float):
-            raise SystemExit(f"Missing or non-numeric `sys` for poly_id={row.get('poly_id')}")
-
-    sorted_rows = sorted(polytope_rows, key=lambda row: float(row["sys"]), reverse=True)
-    positives = [row for row in sorted_rows if float(row["sys"]) > 1.0]
-    max_sys = float(sorted_rows[0]["sys"]) if sorted_rows else None
+    positives = scan_rows(
+        polytope_rows,
+        id_field="poly_id",
+    )
 
     source_summary: dict[str, dict[str, Any]] = {}
     for row in polytope_rows:
@@ -84,42 +93,66 @@ def main() -> None:
         label = source_label(provenance.get(poly_id, []))
         entry = source_summary.setdefault(
             label,
-            {"rows": 0, "sys_gt_1": 0, "max_sys": None},
+            {"rows": 0, "sys_gt_1": 0},
         )
         entry["rows"] += 1
         if sys_value > 1.0:
             entry["sys_gt_1"] += 1
-        if entry["max_sys"] is None or sys_value > entry["max_sys"]:
-            entry["max_sys"] = sys_value
+
+    computed_polytope_rows: list[dict[str, Any]] = []
+    for path in args.computed_polytopes:
+        computed_polytope_rows.extend(load_jsonl(path))
+
+    computed_polytope_positives: list[dict[str, Any]] = []
+    if computed_polytope_rows:
+        computed_polytope_positives = scan_rows(
+            computed_polytope_rows,
+            id_field="result_id",
+        )
 
     print("# scan-sys-gt-1")
     print()
     print(f"- polytope rows: `{len(polytope_rows)}`")
     print(f"- provenance rows: `{len(provenance_rows)}`")
     print(f"- rows with `sys > 1`: `{len(positives)}`")
-    print(f"- max `sys`: `{max_sys}`")
-    print()
-    print(f"## Top {min(args.top_k, len(sorted_rows))} Rows")
-    print()
-    print("| rank | poly_id | sys | dataset |")
-    print("| ---: | --- | ---: | --- |")
-    for rank, row in enumerate(sorted_rows[: args.top_k], start=1):
-        poly_id = str(row["poly_id"])
-        print(
-            f"| {rank} | `{poly_id}` | `{float(row['sys'])}` | "
-            f"{source_label(provenance.get(poly_id, []))} |"
-        )
+    if positives:
+        print()
+        print("## Positive Rows")
+        print()
+        print("| poly_id | sys | dataset |")
+        print("| --- | ---: | --- |")
+        for row in positives:
+            poly_id = str(row["poly_id"])
+            print(
+                f"| `{poly_id}` | `{float(row['sys'])}` | "
+                f"{source_label(provenance.get(poly_id, []))} |"
+            )
     print()
     print("## Source Summary")
     print()
-    print("| dataset | rows | sys > 1 | max sys |")
-    print("| --- | ---: | ---: | ---: |")
+    print("| dataset | rows | sys > 1 |")
+    print("| --- | ---: | ---: |")
     for label in sorted(source_summary):
         entry = source_summary[label]
-        print(
-            f"| {label} | `{entry['rows']}` | `{entry['sys_gt_1']}` | "
-            f"`{entry['max_sys']}` |"
-        )
+        print(f"| {label} | `{entry['rows']}` | `{entry['sys_gt_1']}` |")
+
+    if computed_polytope_rows:
+        print()
+        print("## Computed-Polytope Inputs")
+        print()
+        print(f"- computed-polytope rows: `{len(computed_polytope_rows)}`")
+        print(f"- rows with `sys > 1`: `{len(computed_polytope_positives)}`")
+        if computed_polytope_positives:
+            print()
+            print("### Positive Computed-Polytope Rows")
+            print()
+            print("| result_id | sys | dataset | role |")
+            print("| --- | ---: | --- | --- |")
+            for row in computed_polytope_positives:
+                print(
+                    f"| `{row.get('result_id', '-')}` | `{float(row['sys'])}` | "
+                    f"{row.get('dataset', '-')} | {row.get('role', '-')} |"
+                )
 
 
 if __name__ == "__main__":

@@ -21,13 +21,14 @@
 //!        --out <path>  (override output JSONL path)
 //!        --cache <path>  (override cache JSONL path)
 //!        --ascent-input <path>  (override source ascent JSONL path)
-//! Input Artifacts: experiments/sys-landscape/datascience/produce/ascent.jsonl
+//! Input Artifacts: experiments/sys-landscape/datascience/produce/ascent-general-endpoints.jsonl
 //! Output Artifacts: experiments/sys-landscape/datascience/produce/continuation.jsonl
 //!         experiments/sys-landscape/datascience/produce/continuation-cache.jsonl
 
 use euclidean_polytopes::vertex_facets_from_vertex_facet_incidence;
 use exp_sys_landscape::{
     compute_step_bound, orbit_scalars_from_result, raw_dataset_cache_path, raw_dataset_path,
+    raw_root,
 };
 use nalgebra::Vector4;
 use num_rational::BigRational;
@@ -704,7 +705,7 @@ fn main() {
     let t_global = Instant::now();
     let default_output_path = raw_dataset_path("continuation");
     let default_cache_path = raw_dataset_cache_path("continuation");
-    let default_ascent_input_path = raw_dataset_path("ascent");
+    let default_ascent_input_path = raw_root().join("ascent-general-endpoints.jsonl");
 
     println!("dataset-continuation: variable-F continuation experiment\n");
 

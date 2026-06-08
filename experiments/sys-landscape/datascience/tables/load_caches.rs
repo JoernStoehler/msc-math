@@ -118,10 +118,10 @@ Options:
   --produce-dir <dir>              Read canonical producer filenames from <dir>
   --random <path>                  Override random.jsonl
   --random-product <path>          Override random-product.jsonl
-  --ascent <path>                  Override ascent.jsonl
-  --ascent-trace <path>            Override ascent-trace.jsonl
-  --ascent-cache <path>            Override ascent-cache.jsonl
-  --ascent-product <path>          Override ascent-product.jsonl
+  --ascent <path>                  Override ascent-general-endpoints.jsonl
+  --ascent-trace <path>            Override ascent-general-trace.jsonl
+  --ascent-cache <path>            Override ascent-general-cache.jsonl
+  --ascent-product <path>          Override ascent-product-endpoints.jsonl
   --ascent-product-trace <path>    Override ascent-product-trace.jsonl
   --ascent-product-cache <path>    Override ascent-product-cache.jsonl
   --continuation <path>            Override continuation.jsonl
@@ -152,10 +152,10 @@ fn default_paths() -> DatasetPaths {
     DatasetPaths {
         random_sample: produce_dir.join("random.jsonl"),
         random_product: produce_dir.join("random-product.jsonl"),
-        ascent_summary: produce_dir.join("ascent.jsonl"),
-        ascent_trace: produce_dir.join("ascent-trace.jsonl"),
-        ascent_cache: produce_dir.join("ascent-cache.jsonl"),
-        ascent_product_summary: produce_dir.join("ascent-product.jsonl"),
+        ascent_summary: produce_dir.join("ascent-general-endpoints.jsonl"),
+        ascent_trace: produce_dir.join("ascent-general-trace.jsonl"),
+        ascent_cache: produce_dir.join("ascent-general-cache.jsonl"),
+        ascent_product_summary: produce_dir.join("ascent-product-endpoints.jsonl"),
         ascent_product_trace: produce_dir.join("ascent-product-trace.jsonl"),
         ascent_product_cache: produce_dir.join("ascent-product-cache.jsonl"),
         continuation_summary: produce_dir.join("continuation.jsonl"),
@@ -196,10 +196,10 @@ pub fn parse_args() -> DatasetPaths {
                 let dir = PathBuf::from(value);
                 random_sample = dir.join("random.jsonl");
                 random_product = dir.join("random-product.jsonl");
-                ascent_summary = dir.join("ascent.jsonl");
-                ascent_trace = dir.join("ascent-trace.jsonl");
-                ascent_cache = dir.join("ascent-cache.jsonl");
-                ascent_product_summary = dir.join("ascent-product.jsonl");
+                ascent_summary = dir.join("ascent-general-endpoints.jsonl");
+                ascent_trace = dir.join("ascent-general-trace.jsonl");
+                ascent_cache = dir.join("ascent-general-cache.jsonl");
+                ascent_product_summary = dir.join("ascent-product-endpoints.jsonl");
                 ascent_product_trace = dir.join("ascent-product-trace.jsonl");
                 ascent_product_cache = dir.join("ascent-product-cache.jsonl");
                 continuation_summary = dir.join("continuation.jsonl");
