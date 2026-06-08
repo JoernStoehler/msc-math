@@ -35,11 +35,23 @@
 \usepackage{longtable}
 \usepackage{mathtools}
 \usepackage{graphicx}
+\usepackage[outputdir=build]{minted}
+\usepackage{needspace}
 \usepackage{placeins}
 \usepackage{xcolor}
 \usepackage{hyperref}
 \usepackage[style=alphabetic,backend=biber]{biblatex}
 \addbibresource{bibliography.bib}
+
+\setminted[python]{
+  fontsize=\footnotesize,
+  linenos,
+  breaklines,
+  breakanywhere=false,
+  autogobble,
+  frame=single,
+  framesep=2mm
+}
 
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{lemma}[theorem]{Lemma}
@@ -68,28 +80,47 @@
 \end{abstract}
 
 \tableofcontents
+\clearpage
 
 \input{introduction}
+\clearpage
 \input{preliminaries}
+\clearpage
 \input{generalized-reeb-orbits-polytopes}
+\clearpage
 \input{quadratic-program-algorithm-hk2019}
+\clearpage
 \input{flow-graph-algorithm-ch2021}
+\clearpage
 \input{first-order-perturbations}
+\clearpage
 \input{hko-local-maximum}
+\clearpage
 \input{black-box-datascience}
+\clearpage
 \input{rotated-regular-polygons}
+\clearpage
 \input{visualization-3d}
+\clearpage
 \input{numerics}
+\clearpage
 \input{published-code-data}
+\clearpage
 \input{use-of-ai}
+\clearpage
 \input{conclusion}
 
 \appendix
 \input{appendix-datascience-results}
+\clearpage
 \input{appendix-numerics-proofs}
+\clearpage
 \input{appendix-sagemath-computations}
 
 \FloatBarrier
+\begingroup
+\emergencystretch=3em
 \printbibliography
+\endgroup
 
 \end{document}
