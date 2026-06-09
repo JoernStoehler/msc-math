@@ -34,6 +34,38 @@ By default it writes JSONL to:
 Pass `--output <path>` to write somewhere else. Do not add generated smoke
 output to git unless Jörn explicitly asks for a canonical evidence artifact.
 
+The command exits nonzero if it cannot produce at least one successful row for
+the deterministic generic basepoint. HKO rows may succeed or fail, but failures
+should be explicit in the row `status`.
+
+## Reading Rows
+
+Each row compares one first-order prediction with one full recomputation:
+
+- `predicted_sys` is `sys0 + t * min_i <grad_sys_i, d>`;
+- `recomputed_sys` is from a fresh HK2017 solve at `a0 + t d`;
+- `abs_prediction_error` and `rel_prediction_error` compare those two numbers.
+
+This is a heuristic local comparison. The row does not certify a local error
+bound for `sys(a0 + t d)`.
+
+The warning fields say how much trust to put in the comparison:
+
+- `active_orbit_count` and `active_action_spread` describe the active orbit set
+  used for the Clarke prediction;
+- `target_best_sigma_in_base_active_set` says whether the recomputed target
+  best sigma was among the base active sigmas;
+- `active_min_beta_margin` and `active_max_q_error_bound` summarize the active
+  set used for the subdifferential;
+- `best_beta_margin` and `best_q_error_bound` are only best-orbit diagnostics.
+
+`q_error_bound` is a KKT `Q` error bound from the capacity solver. It is useful
+as a numerical warning. It is not a proven first-order prediction-error bound.
+
+The HKO pentagon product is included because it is a non-generic stress case.
+Many active orbits or target sigmas outside the base active set should be read as
+switching or conditioning signals, not as clean local-prediction evidence.
+
 ## Source Truth
 
 Source truth is the Rust code and reproducible command output. `research/`
