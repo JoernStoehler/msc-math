@@ -10,13 +10,10 @@ from pathlib import Path
 
 PHASE_ORDER = {
     "fixture_generation": 0,
-    "fixture_seed_setup": 1,
-    "fixture_raw_sampling": 2,
-    "fixture_acceptance_validation": 3,
-    "exact_geometry": 4,
-    "transition_matrix": 5,
-    "solve_candidates": 6,
-    "aggregate_minima": 7,
+    "exact_geometry": 1,
+    "transition_matrix": 2,
+    "solve_candidates": 3,
+    "aggregate_minima": 4,
 }
 
 

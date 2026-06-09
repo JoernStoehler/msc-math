@@ -15,7 +15,6 @@ use euclidean_polytopes::sample_random_dual_vertices_f64;
 use nalgebra::Vector4;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
-use std::time::Instant;
 
 fn validate_sampling_parameters(
     facet_count: usize,
@@ -62,24 +61,6 @@ fn validate_f64_dual_vertices(dual_vertices: &[Vector4<f64>]) -> Result<(), Cons
     Ok(())
 }
 
-/// Timing details for one deterministic dual-vertex generation attempt.
-#[derive(Clone, Debug)]
-pub struct DualVertexAttemptProfile {
-    pub seed_setup_ms: f64,
-    pub raw_sampling_ms: f64,
-    pub validation_ms: f64,
-}
-
-impl DualVertexAttemptProfile {
-    fn new() -> Self {
-        Self {
-            seed_setup_ms: 0.0,
-            raw_sampling_ms: 0.0,
-            validation_ms: 0.0,
-        }
-    }
-}
-
 /// Generate a single accepted dual-vertex attempt with an independent seed.
 /// The (master_seed, attempt) pair fully determines the attempt.
 ///
@@ -99,46 +80,6 @@ pub fn generate_dual_vertices(
     let seed = blake3::derive_key("polytope-gen", &key_material);
     let mut rng = ChaCha8Rng::from_seed(seed);
     sample_random_dual_vertices(facet_count, h_min, h_max, &mut rng)
-}
-
-/// Generate one deterministic dual-vertex attempt and report where it spent time.
-///
-/// This is intended for performance experiments that need to separate raw
-/// random sampling from the exact accepted-polytope validation used by the
-/// ordinary generator.
-pub fn generate_dual_vertices_profiled(
-    facet_count: usize,
-    h_min: f64,
-    h_max: f64,
-    master_seed: u64,
-    attempt: u64,
-) -> (
-    Result<Vec<Vector4<f64>>, ConstructionError>,
-    DualVertexAttemptProfile,
-) {
-    let mut profile = DualVertexAttemptProfile::new();
-
-    let start = Instant::now();
-    let mut key_material = [0u8; 16];
-    key_material[..8].copy_from_slice(&master_seed.to_le_bytes());
-    key_material[8..].copy_from_slice(&attempt.to_le_bytes());
-    let seed = blake3::derive_key("polytope-gen", &key_material);
-    let mut rng = ChaCha8Rng::from_seed(seed);
-    profile.seed_setup_ms = start.elapsed().as_secs_f64() * 1000.0;
-
-    let start = Instant::now();
-    let parameter_validation = validate_sampling_parameters(facet_count, h_min, h_max);
-    if let Err(error) = parameter_validation {
-        return (Err(error), profile);
-    }
-    let dual_vertices = sample_random_dual_vertices_f64(facet_count, h_min, h_max, &mut rng);
-    profile.raw_sampling_ms = start.elapsed().as_secs_f64() * 1000.0;
-
-    let start = Instant::now();
-    let validation = validate_f64_dual_vertices(&dual_vertices);
-    profile.validation_ms = start.elapsed().as_secs_f64() * 1000.0;
-
-    (validation.map(|_| dual_vertices), profile)
 }
 
 /// Generate accepted random dual-vertex sets via rejection sampling.
