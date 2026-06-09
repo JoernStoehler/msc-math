@@ -31,10 +31,10 @@ def parse_args() -> argparse.Namespace:
         default=TABLES_DIR / "polytope-provenance-table.jsonl",
     )
     parser.add_argument(
-        "--computed-polytope-table",
+        "--computed-polytope-observation-table",
         type=Path,
-        default=TABLES_DIR / "computed-polytope-table.jsonl",
-        help="Table-stage computed-polytope JSONL file to scan.",
+        default=TABLES_DIR / "computed-polytope-observation-table.jsonl",
+        help="Table-stage computed-polytope observation JSONL file to count.",
     )
     parser.add_argument(
         "--computed-polytopes",
@@ -66,9 +66,9 @@ def provenance_by_poly_id(rows: list[dict[str, Any]]) -> dict[str, list[dict[str
     return dict(by_poly_id)
 
 
-def source_label(provenance_rows: list[dict[str, Any]]) -> str:
+def source_label(provenance_rows: list[dict[str, Any]], fallback: object = "") -> str:
     datasets = sorted({str(row.get("dataset", "")) for row in provenance_rows})
-    return ", ".join(dataset for dataset in datasets if dataset) or "-"
+    return ", ".join(dataset for dataset in datasets if dataset) or str(fallback or "-")
 
 
 def scan_rows(rows: list[dict[str, Any]], *, id_field: str) -> list[dict[str, Any]]:
@@ -96,7 +96,7 @@ def main() -> None:
     for row in polytope_rows:
         poly_id = str(row["poly_id"])
         sys_value = float(row["sys"])
-        label = source_label(provenance.get(poly_id, []))
+        label = source_label(provenance.get(poly_id, []), row.get("capacity_source", ""))
         entry = source_summary.setdefault(
             label,
             {"rows": 0, "sys_gt_1": 0},
@@ -105,16 +105,19 @@ def main() -> None:
         if sys_value > 1.0:
             entry["sys_gt_1"] += 1
 
-    computed_polytope_rows: list[dict[str, Any]] = load_jsonl(args.computed_polytope_table)
+    computed_observation_rows: list[dict[str, Any]] = load_jsonl(
+        args.computed_polytope_observation_table
+    )
     for path in args.computed_polytopes:
-        computed_polytope_rows.extend(load_jsonl(path))
-
-    computed_polytope_positives: list[dict[str, Any]] = []
-    if computed_polytope_rows:
-        computed_polytope_positives = scan_rows(
-            computed_polytope_rows,
-            id_field="result_id",
-        )
+        for row in load_jsonl(path):
+            computed_observation_rows.append(
+                {
+                    "result_id": row["result_id"],
+                    "poly_id": row.get("poly_id"),
+                    "dataset": row["dataset"],
+                    "role": row["role"],
+                }
+            )
 
     print("# scan-sys-gt-1")
     print()
@@ -131,7 +134,7 @@ def main() -> None:
             poly_id = str(row["poly_id"])
             print(
                 f"| `{poly_id}` | `{float(row['sys'])}` | "
-                f"{source_label(provenance.get(poly_id, []))} |"
+                f"{source_label(provenance.get(poly_id, []), row.get('capacity_source', ''))} |"
             )
     print()
     print("## Source Summary")
@@ -142,23 +145,11 @@ def main() -> None:
         entry = source_summary[label]
         print(f"| {label} | `{entry['rows']}` | `{entry['sys_gt_1']}` |")
 
-    if computed_polytope_rows:
+    if computed_observation_rows:
         print()
-        print("## Computed-Polytope Inputs")
+        print("## Computed-Polytope Observations")
         print()
-        print(f"- computed-polytope rows: `{len(computed_polytope_rows)}`")
-        print(f"- rows with `sys > 1`: `{len(computed_polytope_positives)}`")
-        if computed_polytope_positives:
-            print()
-            print("### Positive Computed-Polytope Rows")
-            print()
-            print("| result_id | sys | dataset | role |")
-            print("| --- | ---: | --- | --- |")
-            for row in computed_polytope_positives:
-                print(
-                    f"| `{row.get('result_id', '-')}` | `{float(row['sys'])}` | "
-                    f"{row.get('dataset', '-')} | {row.get('role', '-')} |"
-                )
+        print(f"- computed-polytope observation rows: `{len(computed_observation_rows)}`")
 
 
 if __name__ == "__main__":

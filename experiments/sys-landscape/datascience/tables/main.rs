@@ -28,8 +28,8 @@ fn main() {
         caches.provenance_rows.len()
     );
     eprintln!(
-        "Loaded {} computed-polytope table rows",
-        caches.computed_polytope_rows.len()
+        "Loaded {} computed-polytope observation rows",
+        caches.computed_polytope_observations.len()
     );
     eprintln!("Capacity sources: {:?}", capacity_source_counts(&caches));
     eprintln!("Building polytope table");
@@ -52,7 +52,7 @@ fn main() {
         &paths.out_dir,
         &polytope_rows,
         &provenance_run_rows,
-        &caches.computed_polytope_rows,
+        &caches.computed_polytope_observations,
     );
     eprintln!("Wrote tables in {:.1}s", started.elapsed().as_secs_f64());
     eprintln!(

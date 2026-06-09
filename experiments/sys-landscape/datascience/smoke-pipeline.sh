@@ -88,7 +88,7 @@ cargo run -p exp-sys-landscape --bin sys-dataset -- \
   --produce-dir "$PRODUCE_DIR"
 
 test -s "$TABLES_DIR/polytope-table.jsonl"
-test -s "$TABLES_DIR/computed-polytope-table.jsonl"
+test -s "$TABLES_DIR/computed-polytope-observation-table.jsonl"
 test -s "$TABLES_DIR/polytope-provenance-table.jsonl"
 test -s "$TABLES_DIR/polytope-ascent-run-table.jsonl"
 computed_input_rows="$(
@@ -97,13 +97,33 @@ computed_input_rows="$(
     "$PRODUCE_DIR/ascent-product-computed-polytopes.jsonl" \
     | awk 'END {print $1}'
 )"
-computed_table_rows="$(wc -l < "$TABLES_DIR/computed-polytope-table.jsonl")"
-test "$computed_table_rows" -eq "$computed_input_rows"
+computed_observation_rows="$(wc -l < "$TABLES_DIR/computed-polytope-observation-table.jsonl")"
+test "$computed_observation_rows" -eq "$computed_input_rows"
+python3 - "$TABLES_DIR/polytope-table.jsonl" "$TABLES_DIR/computed-polytope-observation-table.jsonl" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+polytope_ids = {
+    json.loads(line)["poly_id"]
+    for line in Path(sys.argv[1]).read_text().splitlines()
+    if line.strip()
+}
+missing = []
+for line_number, line in enumerate(Path(sys.argv[2]).read_text().splitlines(), start=1):
+    if not line.strip():
+        continue
+    row = json.loads(line)
+    if row["poly_id"] not in polytope_ids:
+        missing.append((line_number, row["result_id"], row["poly_id"]))
+if missing:
+    raise SystemExit(f"computed observations missing polytope rows: {missing[:5]}")
+PY
 
 uv run --script "$ROOT/experiments/sys-landscape/datascience/methods/scan-sys-gt-1/analyze.py" \
   --polytope-table "$TABLES_DIR/polytope-table.jsonl" \
   --provenance-table "$TABLES_DIR/polytope-provenance-table.jsonl" \
-  --computed-polytope-table "$TABLES_DIR/computed-polytope-table.jsonl"
+  --computed-polytope-observation-table "$TABLES_DIR/computed-polytope-observation-table.jsonl"
 
 echo
 echo "Smoke outputs:"

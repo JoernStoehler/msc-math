@@ -15,7 +15,7 @@ use std::path::{Path, PathBuf};
 use std::time::{SystemTime, UNIX_EPOCH};
 use symplectic::database::{load_many, OrbitScalars, PolytopeRecord, SigmaAction};
 
-use crate::rows::ComputedPolytopeTableRow;
+use crate::rows::ComputedPolytopeObservationRow;
 
 #[derive(Clone)]
 pub struct LoadedPolytopeRow {
@@ -81,7 +81,7 @@ pub struct LoadedProvenanceRow {
 pub struct LoadedCaches {
     pub polytopes: Vec<LoadedPolytopeRow>,
     pub provenance_rows: Vec<LoadedProvenanceRow>,
-    pub computed_polytope_rows: Vec<ComputedPolytopeTableRow>,
+    pub computed_polytope_observations: Vec<ComputedPolytopeObservationRow>,
 }
 
 #[derive(Clone)]
@@ -788,18 +788,70 @@ fn load_continuation_rows(
     }
 }
 
-fn computed_polytope_table_rows(paths: &DatasetPaths) -> Vec<ComputedPolytopeTableRow> {
+fn sigma_gap_cutoff_from_sigmas(sigmas: &[SigmaAction]) -> Option<f64> {
+    if sigmas.is_empty() {
+        return None;
+    }
+    if sigmas.len() < 2 {
+        return Some(0.0);
+    }
+    Some(sigmas[1].action - sigmas[0].action)
+}
+
+fn load_computed_polytope_observations(
+    paths: &DatasetPaths,
+    polytopes: &mut HashMap<String, LoadedPolytopeRow>,
+) -> Vec<ComputedPolytopeObservationRow> {
     let mut rows = Vec::new();
-    load_computed_polytope_rows(&paths.ascent_computed_polytopes, &mut rows);
-    load_computed_polytope_rows(&paths.ascent_product_computed_polytopes, &mut rows);
+    load_computed_polytope_rows(&paths.ascent_computed_polytopes, polytopes, &mut rows);
+    load_computed_polytope_rows(
+        &paths.ascent_product_computed_polytopes,
+        polytopes,
+        &mut rows,
+    );
     rows.sort_by(|a, b| a.result_id.cmp(&b.result_id));
     rows
 }
 
-fn load_computed_polytope_rows(path: &Path, out: &mut Vec<ComputedPolytopeTableRow>) {
+fn load_computed_polytope_rows(
+    path: &Path,
+    polytopes: &mut HashMap<String, LoadedPolytopeRow>,
+    out: &mut Vec<ComputedPolytopeObservationRow>,
+) {
     for row in read_jsonl_if_exists::<ComputedPolytopeRow>(path) {
         let poly_id = poly_id_from_dual_vertices(&row.dual_vertices_rational);
-        out.push(ComputedPolytopeTableRow {
+        match polytopes.get_mut(&poly_id) {
+            Some(existing) => {
+                if existing.sigmas.is_none() {
+                    existing.sigmas = Some(row.sigmas.clone());
+                }
+                if existing.orbit_scalars.is_none() {
+                    existing.orbit_scalars = Some(row.orbit_scalars.clone());
+                }
+                if existing.sigma_gap_cutoff.is_none() {
+                    existing.sigma_gap_cutoff = sigma_gap_cutoff_from_sigmas(&row.sigmas);
+                }
+            }
+            None => {
+                polytopes.insert(
+                    poly_id.clone(),
+                    LoadedPolytopeRow {
+                        poly_id: poly_id.clone(),
+                        dual_vertices_rational: row.dual_vertices_rational,
+                        facet_count: row.facet_count,
+                        capacity: row.capacity,
+                        volume: row.volume,
+                        sys: row.sys,
+                        capacity_iterations: None,
+                        capacity_source: row.dataset.clone(),
+                        sigma_gap_cutoff: sigma_gap_cutoff_from_sigmas(&row.sigmas),
+                        sigmas: Some(row.sigmas.clone()),
+                        orbit_scalars: Some(row.orbit_scalars.clone()),
+                    },
+                );
+            }
+        }
+        out.push(ComputedPolytopeObservationRow {
             result_id: row.result_id,
             poly_id,
             dataset: row.dataset,
@@ -813,13 +865,6 @@ fn load_computed_polytope_rows(path: &Path, out: &mut Vec<ComputedPolytopeTableR
             t_actual: row.t_actual,
             accepted_in_iteration: row.accepted_in_iteration,
             became_run_final: row.became_run_final,
-            dual_vertices_rational: row.dual_vertices_rational,
-            facet_count: row.facet_count,
-            capacity: row.capacity,
-            volume: row.volume,
-            sys: row.sys,
-            sigmas: row.sigmas,
-            raw_orbit_scalars: row.orbit_scalars,
         });
     }
 }
@@ -865,6 +910,7 @@ pub fn load_caches(paths: &DatasetPaths) -> LoadedCaches {
         &mut provenance_rows,
         &orbit_payloads,
     );
+    let computed_polytope_observations = load_computed_polytope_observations(paths, &mut polytopes);
 
     let mut polytope_rows = polytopes.into_values().collect::<Vec<_>>();
     polytope_rows.sort_by(|a, b| a.poly_id.cmp(&b.poly_id));
@@ -873,7 +919,7 @@ pub fn load_caches(paths: &DatasetPaths) -> LoadedCaches {
     LoadedCaches {
         polytopes: polytope_rows,
         provenance_rows,
-        computed_polytope_rows: computed_polytope_table_rows(paths),
+        computed_polytope_observations,
     }
 }
 

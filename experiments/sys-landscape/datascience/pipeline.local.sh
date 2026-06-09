@@ -121,8 +121,7 @@ step_scan_sys_gt_1() {
   uv run --script experiments/sys-landscape/datascience/methods/scan-sys-gt-1/analyze.py \
     --polytope-table "$TABLES_DIR/polytope-table.jsonl" \
     --provenance-table "$TABLES_DIR/polytope-provenance-table.jsonl" \
-    --computed-polytopes "$PRODUCE_DIR/licca-shards/general-computed-production-1024/general-shard-0-computed-polytopes.jsonl" \
-    --computed-polytopes "$PRODUCE_DIR/licca-shards/product-computed-production-1024/product-shard-0-computed-polytopes.jsonl"
+    --computed-polytope-observation-table "$TABLES_DIR/computed-polytope-observation-table.jsonl"
 }
 
 step_build_tables() {

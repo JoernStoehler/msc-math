@@ -107,13 +107,13 @@ experiments/sys-landscape/datascience/tables/
 
 Expected contents after rebuilding with the current table builder:
 
-- `polytope-table.jsonl`: one row per retained polytope keyed by `poly_id`;
+- `polytope-table.jsonl`: one row per retained exact polytope geometry keyed by `poly_id`;
   contains defining dual vertices, computed polytope-level quantities such as
   `volume`, capacity, and `sys`, derived scalar features, and capacity/orbit
   audit fields.
-- `computed-polytope-table.jsonl`: one row per fixed-F ascent producer
-  computed-polytope observation; contains exact dual vertices, capacity,
-  volume, `sys`, orbit witness fields, and ascent context.
+- `computed-polytope-observation-table.jsonl`: one row per fixed-F ascent
+  producer computed-polytope observation; records ascent context and references
+  the geometric row by `poly_id`.
 - `polytope-provenance-table.jsonl`: one row per retained provenance record
   keyed by `provenance_id`; records how a retained polytope entered the
   datascience tables, including source, role, optimizer, seed, path, and
@@ -125,7 +125,7 @@ Expected contents after rebuilding with the current table builder:
 Checked-in fingerprint before the computed-polytope table rebuild:
 
 - polytope rows: `8445`
-- computed-polytope rows: not present in this fingerprint
+- computed-polytope observations: not present in this fingerprint
 - provenance rows: `8445`
 - ascent run rows: `8275`
 - max `sys`: `0.9750768559799221`

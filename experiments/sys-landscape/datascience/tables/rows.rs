@@ -4,7 +4,7 @@ use serde::Serialize;
 use symplectic::database::{OrbitScalars, SigmaAction};
 
 #[derive(Serialize)]
-pub struct ComputedPolytopeTableRow {
+pub struct ComputedPolytopeObservationRow {
     pub result_id: String,
     pub poly_id: String,
     pub dataset: String,
@@ -23,13 +23,6 @@ pub struct ComputedPolytopeTableRow {
     pub t_actual: Option<f64>,
     pub accepted_in_iteration: bool,
     pub became_run_final: bool,
-    pub dual_vertices_rational: Vec<[String; 4]>,
-    pub facet_count: usize,
-    pub capacity: f64,
-    pub volume: f64,
-    pub sys: f64,
-    pub sigmas: Vec<SigmaAction>,
-    pub raw_orbit_scalars: OrbitScalars,
 }
 
 #[derive(Serialize)]
