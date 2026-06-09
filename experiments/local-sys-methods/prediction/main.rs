@@ -1,4 +1,6 @@
-use exp_local_sys_methods::{default_output_path, run_prediction_smoke};
+mod smoke;
+
+use smoke::{default_output_path, run_prediction_smoke};
 use std::path::PathBuf;
 
 fn parse_output_path() -> PathBuf {
@@ -28,20 +30,10 @@ fn parse_output_path() -> PathBuf {
 
 fn main() {
     let output_path = parse_output_path();
-    let rows = run_prediction_smoke(&output_path)
+    let report = run_prediction_smoke(&output_path)
         .unwrap_or_else(|err| panic!("local sys prediction smoke failed: {err:?}"));
-    let successful = rows.iter().filter(|row| row.status == "ok").count();
-    let generic_success = rows
-        .iter()
-        .any(|row| row.basepoint_name.starts_with("random_f10") && row.status == "ok");
-    println!(
-        "local-sys-prediction-smoke: wrote {} rows to {}",
-        rows.len(),
-        output_path.display()
-    );
-    println!("  successful rows: {successful}");
-    println!("  generic basepoint success: {generic_success}");
-    if successful == 0 || !generic_success {
+    report.print(&output_path);
+    if !report.has_required_success() {
         eprintln!("local-sys-prediction-smoke did not produce a successful generic row");
         std::process::exit(2);
     }

@@ -38,6 +38,11 @@ The command exits nonzero if it cannot produce at least one successful row for
 the deterministic generic basepoint. HKO rows may succeed or fail, but failures
 should be explicit in the row `status`.
 
+The command also prints one summary per basepoint: row counts, failed rows,
+active/candidate orbit counts, maximum relative prediction error, target-sigma
+miss counts, and miss-cause counts. Use this stdout summary for quick steering;
+use the JSONL rows when checking individual directions, steps, or sigmas.
+
 ## Reading Rows
 
 Each row compares one first-order prediction with one full recomputation:
@@ -60,16 +65,14 @@ The warning fields say how much trust to put in the comparison:
   candidate window used to collect the base orbit result and to diagnose
   switches;
 - `target_best_sigma_base_transition_allowed`,
-  `target_best_sigma_base_solve_status`, `target_best_sigma_base_action`, and
+  `target_best_sigma_base_solve_status`, and
   `target_best_sigma_base_action_gap` evaluate the target winner back at `a0`
   as a switch-miss diagnostic;
-- `target_best_sigma_base_rejected_transitions`,
-  `target_best_sigma_target_rejected_transitions`, and
-  `target_best_sigma_transitions_opened` compare consecutive facet transitions
-  of the target winner under the base and target HK2017 transition filters;
+- `target_best_sigma_transitions_opened` records consecutive facet transitions
+  of the target winner that are rejected by the base HK2017 transition filter
+  and accepted by the target transition filter;
 - `active_min_beta_margin` and `active_max_q_error_bound` summarize the active
-  set used for the subdifferential;
-- `best_beta_margin` and `best_q_error_bound` are only best-orbit diagnostics.
+  set used for the subdifferential.
 
 `q_error_bound` is a KKT `Q` error bound from the capacity solver. It is useful
 as a numerical warning. It is not a proven first-order prediction-error bound.
@@ -89,10 +92,10 @@ KKT solve does not by itself certify that HK2017 would enumerate the sigma as a
 geometric candidate at `a0`; read it together with
 `target_best_sigma_base_transition_allowed`.
 
-The rejected-transition fields inspect only the consecutive facet pairs in the
-target-minimizing sigma. They can show that this sigma fails the base transition
+The opened-transition field inspects only the consecutive facet pairs in the
+target-minimizing sigma. It can show that this sigma fails the base transition
 filter because specific pairs are rejected at `a0` and accepted at
-`a0 + t d`. They do not classify every sigma excluded by HK2017 pruning.
+`a0 + t d`. It does not classify every sigma excluded by HK2017 pruning.
 
 The active orbit set is re-filtered from the same base action-gap window by
 near-minimum action. The wider base search can recover exact minimizers that a
