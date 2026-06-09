@@ -1,6 +1,6 @@
 //! Write the final datascience tables.
 
-use crate::rows::{PolytopeTableRow, ProvenanceRunRow};
+use crate::rows::{ComputedPolytopeTableRow, PolytopeTableRow, ProvenanceRunRow};
 use serde::Serialize;
 use std::fs::File;
 use std::io::{BufWriter, Write};
@@ -20,6 +20,7 @@ pub fn write_database(
     out_dir: &Path,
     polytope_rows: &[PolytopeTableRow],
     provenance_run_rows: &[ProvenanceRunRow],
+    computed_polytope_rows: &[ComputedPolytopeTableRow],
 ) {
     std::fs::create_dir_all(out_dir)
         .unwrap_or_else(|e| panic!("create {}: {e}", out_dir.display()));
@@ -33,6 +34,10 @@ pub fn write_database(
         .map(PolytopeAscentRunTableRow::from)
         .collect::<Vec<_>>();
     write_jsonl(&out_dir.join("polytope-table.jsonl"), polytope_rows);
+    write_jsonl(
+        &out_dir.join("computed-polytope-table.jsonl"),
+        computed_polytope_rows,
+    );
     write_jsonl(
         &out_dir.join("polytope-provenance-table.jsonl"),
         &provenance_rows,

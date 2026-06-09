@@ -13,13 +13,12 @@ Checklist anchor: `Baseline And EDA / target predicate scan`.
 ## Inputs
 
 - `../../tables/polytope-table.jsonl`
+- `../../tables/computed-polytope-table.jsonl`
 - `../../tables/polytope-provenance-table.jsonl`
 
-The retained report below is table-scoped. The script can also scan ascent
-producer `*-computed-polytopes.jsonl` files when the caller passes
-`--computed-polytopes`. Those files preserve computed-polytope facts that are not
-yet table rows; the smoke pipeline uses this path as the basic producer-output
-consumer.
+The retained report below is table-scoped. The script also scans
+`computed-polytope-table.jsonl` when it exists. The optional
+`--computed-polytopes` flag is for ad hoc review of extra producer files.
 
 ## Command
 
@@ -29,16 +28,14 @@ uv run --script experiments/sys-landscape/datascience/methods/scan-sys-gt-1/anal
 
 Run locally on 2026-06-08.
 
-Smoke or LICCA merge review can include producer computed-polytope rows after
-those files have been generated. Use the `produce:` directory printed by
-`../../smoke-pipeline.sh`, or a reviewed LICCA merge output directory:
+Smoke or LICCA merge review should scan the table-stage computed-polytope
+output:
 
 ```bash
 uv run --script experiments/sys-landscape/datascience/methods/scan-sys-gt-1/analyze.py \
   --polytope-table "$TABLES_DIR/polytope-table.jsonl" \
   --provenance-table "$TABLES_DIR/polytope-provenance-table.jsonl" \
-  --computed-polytopes "$PRODUCE_DIR/ascent-general-computed-polytopes.jsonl" \
-  --computed-polytopes "$PRODUCE_DIR/ascent-product-computed-polytopes.jsonl"
+  --computed-polytope-table "$TABLES_DIR/computed-polytope-table.jsonl"
 ```
 
 ## Observation
@@ -68,12 +65,11 @@ predicate is absent from the retained method-table input.
 ## Caveats
 
 - The retained observation scans recorded table values only.
-- Producer computed-polytope scans are available but not included in the retained
-  full-dataset observation above until those producer rows are intentionally
-  converted into a table row entity.
+- Refresh this report after rebuilding retained tables with
+  `computed-polytope-table.jsonl`.
 - This does not validate capacity, volume, or `sys` computations.
 - This does not scan producer files, LICCA merged review targets, stale
-  artifacts, or other experiment folders.
+  artifacts, or other experiment folders unless passed explicitly.
 - This is not an exhaustive-search claim.
 - This does not close the hostile-landscape method table by itself.
 

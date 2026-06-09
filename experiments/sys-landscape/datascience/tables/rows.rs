@@ -4,6 +4,35 @@ use serde::Serialize;
 use symplectic::database::{OrbitScalars, SigmaAction};
 
 #[derive(Serialize)]
+pub struct ComputedPolytopeTableRow {
+    pub result_id: String,
+    pub poly_id: String,
+    pub dataset: String,
+    pub run_id: String,
+    pub seed_index: usize,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub phase: Option<usize>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub iteration: Option<usize>,
+    pub role: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub step_type: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub t_fraction: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub t_actual: Option<f64>,
+    pub accepted_in_iteration: bool,
+    pub became_run_final: bool,
+    pub dual_vertices_rational: Vec<[String; 4]>,
+    pub facet_count: usize,
+    pub capacity: f64,
+    pub volume: f64,
+    pub sys: f64,
+    pub sigmas: Vec<SigmaAction>,
+    pub raw_orbit_scalars: OrbitScalars,
+}
+
+#[derive(Serialize)]
 pub struct PolytopeTableRow {
     pub poly_id: String,
     pub dual_vertices_rational: Vec<[String; 4]>,

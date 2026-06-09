@@ -57,28 +57,40 @@ def union_field_count(rows: list[dict[str, Any]]) -> int:
 
 def fingerprint(tables_dir: Path) -> dict[str, Any]:
     polytope_path = tables_dir / "polytope-table.jsonl"
+    computed_polytope_path = tables_dir / "computed-polytope-table.jsonl"
     provenance_path = tables_dir / "polytope-provenance-table.jsonl"
     ascent_run_path = tables_dir / "polytope-ascent-run-table.jsonl"
     polytope_rows = load_jsonl(polytope_path)
+    computed_polytope_rows = load_jsonl(computed_polytope_path)
     provenance_rows = load_jsonl(provenance_path)
     ascent_run_rows = load_jsonl(ascent_run_path)
     sys_values = [float(row["sys"]) for row in polytope_rows]
+    computed_sys_values = [float(row["sys"]) for row in computed_polytope_rows]
+    hashes = {
+        "polytope-table.jsonl": sha256(polytope_path),
+        "polytope-provenance-table.jsonl": sha256(provenance_path),
+        "polytope-ascent-run-table.jsonl": sha256(ascent_run_path),
+    }
+    hashes["computed-polytope-table.jsonl"] = sha256(computed_polytope_path)
     return {
         "tables_dir": str(tables_dir),
         "polytope_rows": len(polytope_rows),
+        "computed_polytope_rows": len(computed_polytope_rows),
         "provenance_rows": len(provenance_rows),
         "ascent_run_rows": len(ascent_run_rows),
         "polytope_union_field_count": union_field_count(polytope_rows),
+        "computed_polytope_union_field_count": union_field_count(computed_polytope_rows),
         "provenance_union_field_count": union_field_count(provenance_rows),
         "ascent_run_union_field_count": union_field_count(ascent_run_rows),
         "dataset_counts": count_by(provenance_rows, "dataset"),
+        "computed_polytope_dataset_counts": count_by(computed_polytope_rows, "dataset"),
         "max_sys": max(sys_values) if sys_values else None,
         "sys_gt_one_count": sum(1 for value in sys_values if value > 1.0),
-        "sha256": {
-            "polytope-table.jsonl": sha256(polytope_path),
-            "polytope-provenance-table.jsonl": sha256(provenance_path),
-            "polytope-ascent-run-table.jsonl": sha256(ascent_run_path),
-        },
+        "computed_polytope_max_sys": max(computed_sys_values) if computed_sys_values else None,
+        "computed_polytope_sys_gt_one_count": sum(
+            1 for value in computed_sys_values if value > 1.0
+        ),
+        "sha256": hashes,
     }
 
 
@@ -87,15 +99,28 @@ def print_markdown(data: dict[str, Any]) -> None:
     print()
     print(f"- tables dir: `{data['tables_dir']}`")
     print(f"- polytope rows: `{data['polytope_rows']}`")
+    print(f"- computed-polytope rows: `{data['computed_polytope_rows']}`")
     print(f"- provenance rows: `{data['provenance_rows']}`")
     print(f"- ascent run rows: `{data['ascent_run_rows']}`")
     print(f"- polytope union fields: `{data['polytope_union_field_count']}`")
+    print(
+        "- computed-polytope union fields: "
+        f"`{data['computed_polytope_union_field_count']}`"
+    )
     print(f"- provenance union fields: `{data['provenance_union_field_count']}`")
     print(f"- ascent run union fields: `{data['ascent_run_union_field_count']}`")
     print(f"- max `sys`: `{data['max_sys']}`")
     print(f"- `sys > 1` rows: `{data['sys_gt_one_count']}`")
+    print(f"- computed-polytope max `sys`: `{data['computed_polytope_max_sys']}`")
+    print(
+        "- computed-polytope `sys > 1` rows: "
+        f"`{data['computed_polytope_sys_gt_one_count']}`"
+    )
     print("- dataset counts:")
     for key, value in data["dataset_counts"].items():
+        print(f"  - `{key}`: `{value}`")
+    print("- computed-polytope dataset counts:")
+    for key, value in data["computed_polytope_dataset_counts"].items():
         print(f"  - `{key}`: `{value}`")
     print("- sha256:")
     for key, value in data["sha256"].items():

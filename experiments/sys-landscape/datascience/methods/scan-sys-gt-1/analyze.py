@@ -31,11 +31,17 @@ def parse_args() -> argparse.Namespace:
         default=TABLES_DIR / "polytope-provenance-table.jsonl",
     )
     parser.add_argument(
+        "--computed-polytope-table",
+        type=Path,
+        default=TABLES_DIR / "computed-polytope-table.jsonl",
+        help="Table-stage computed-polytope JSONL file to scan.",
+    )
+    parser.add_argument(
         "--computed-polytopes",
         type=Path,
         action="append",
         default=[],
-        help="Ascent producer computed-polytopes JSONL file to scan.",
+        help="Additional producer computed-polytopes JSONL file to scan.",
     )
     return parser.parse_args()
 
@@ -99,7 +105,7 @@ def main() -> None:
         if sys_value > 1.0:
             entry["sys_gt_1"] += 1
 
-    computed_polytope_rows: list[dict[str, Any]] = []
+    computed_polytope_rows: list[dict[str, Any]] = load_jsonl(args.computed_polytope_table)
     for path in args.computed_polytopes:
         computed_polytope_rows.extend(load_jsonl(path))
 

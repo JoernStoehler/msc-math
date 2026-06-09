@@ -88,14 +88,22 @@ cargo run -p exp-sys-landscape --bin sys-dataset -- \
   --produce-dir "$PRODUCE_DIR"
 
 test -s "$TABLES_DIR/polytope-table.jsonl"
+test -s "$TABLES_DIR/computed-polytope-table.jsonl"
 test -s "$TABLES_DIR/polytope-provenance-table.jsonl"
 test -s "$TABLES_DIR/polytope-ascent-run-table.jsonl"
+computed_input_rows="$(
+  wc -l \
+    "$PRODUCE_DIR/ascent-general-computed-polytopes.jsonl" \
+    "$PRODUCE_DIR/ascent-product-computed-polytopes.jsonl" \
+    | awk 'END {print $1}'
+)"
+computed_table_rows="$(wc -l < "$TABLES_DIR/computed-polytope-table.jsonl")"
+test "$computed_table_rows" -eq "$computed_input_rows"
 
 uv run --script "$ROOT/experiments/sys-landscape/datascience/methods/scan-sys-gt-1/analyze.py" \
   --polytope-table "$TABLES_DIR/polytope-table.jsonl" \
   --provenance-table "$TABLES_DIR/polytope-provenance-table.jsonl" \
-  --computed-polytopes "$PRODUCE_DIR/ascent-general-computed-polytopes.jsonl" \
-  --computed-polytopes "$PRODUCE_DIR/ascent-product-computed-polytopes.jsonl"
+  --computed-polytope-table "$TABLES_DIR/computed-polytope-table.jsonl"
 
 echo
 echo "Smoke outputs:"

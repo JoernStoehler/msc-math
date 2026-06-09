@@ -97,20 +97,23 @@ to `produce/`, reusable retained data to `tables/`, and method-specific
 inputs or artifacts to `methods/`. If a row entity changes, choose a table name
 for the new row entity rather than preserving the old name.
 
-## Current Retained Tables
+## Retained Tables
 
-Current retained table output:
+Retained table output path:
 
 ```text
 experiments/sys-landscape/datascience/tables/
 ```
 
-Contents:
+Expected contents after rebuilding with the current table builder:
 
 - `polytope-table.jsonl`: one row per retained polytope keyed by `poly_id`;
   contains defining dual vertices, computed polytope-level quantities such as
   `volume`, capacity, and `sys`, derived scalar features, and capacity/orbit
   audit fields.
+- `computed-polytope-table.jsonl`: one row per fixed-F ascent producer
+  computed-polytope observation; contains exact dual vertices, capacity,
+  volume, `sys`, orbit witness fields, and ascent context.
 - `polytope-provenance-table.jsonl`: one row per retained provenance record
   keyed by `provenance_id`; records how a retained polytope entered the
   datascience tables, including source, role, optimizer, seed, path, and
@@ -119,9 +122,10 @@ Contents:
   provenance record keyed by `provenance_id`; records run-level and
   trajectory-summary fields. Random-sample provenance rows do not appear here.
 
-Fingerprint:
+Checked-in fingerprint before the computed-polytope table rebuild:
 
 - polytope rows: `8445`
+- computed-polytope rows: not present in this fingerprint
 - provenance rows: `8445`
 - ascent run rows: `8275`
 - max `sys`: `0.9750768559799221`

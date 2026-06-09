@@ -17,9 +17,9 @@ summary rows must have matching producer-cache rows (`ascent-general-cache.jsonl
 before this stage runs.
 
 Producer `*-computed-polytopes.jsonl` files preserve additional computed-polytope
-facts from ascent. They are producer outputs, not current table outputs. Add a
-table for those rows only when the table row entity and reusable columns are
-chosen deliberately.
+facts from ascent. The table stage records them in
+`computed-polytope-table.jsonl` as one row per producer computed-polytope
+observation.
 
 Ascent producers also emit `*-ascent-events.jsonl` and
 `*-expensive-computations-cache.jsonl`. Those are the durable producer-side
@@ -33,6 +33,9 @@ Current outputs:
   contains defining dual vertices, computed polytope-level quantities such as
   `volume`, capacity, and `sys`, derived scalar features, and capacity/orbit
   audit fields.
+- `computed-polytope-table.jsonl`: one row per successful producer
+  computed-polytope observation from fixed-F ascent; records the exact dual
+  vertices, capacity, volume, `sys`, orbit witness fields, and ascent context.
 - `polytope-provenance-table.jsonl`: one row per retained provenance record
   keyed by `provenance_id`; records how a retained polytope entered the
   datascience tables, including source, role, optimizer, seed, path, and
