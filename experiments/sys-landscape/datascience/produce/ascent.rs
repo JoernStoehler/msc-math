@@ -40,12 +40,13 @@
 
 use exp_sys_landscape::SysLandscapePolytopeCache;
 use exp_sys_landscape::{
-    apply_dual_step_with_computation, ascent_direction, compute_active_sys_state,
-    compute_step_bound, compute_sys_computation, dual_vertices_rational_strings,
+    apply_dual_step_with_cached_computation, ascent_direction, compute_active_sys_state_cached,
+    compute_step_bound, compute_sys_computation_cached, dual_vertices_rational_strings,
     finalize_ascent_output, open_ascent_writers, orbit_scalars_from_result, parse_ascent_args,
-    run_parallel_seeds, shared_family_cache_path, smoke_output_path, AscentArgs, AscentMode,
-    AscentOutputPaths, ComputedPolytopeMeta, ComputedPolytopeRecorder, SeedResult, SummaryRow,
-    TraceRow, MAX_STEP_SIZE,
+    run_parallel_seeds, shared_family_cache_path, smoke_output_path,
+    write_expensive_computation_cache_rows, AscentArgs, AscentMode, AscentOutputPaths,
+    ComputedPolytopeMeta, ComputedPolytopeRecorder, ExpensiveComputationCache, SeedResult,
+    SummaryRow, TraceRow, MAX_STEP_SIZE,
 };
 use nalgebra::Vector4;
 use rand::SeedableRng;
@@ -147,11 +148,12 @@ fn gradient_ascent(
     budget: f64,
     initial_role: &str,
     computed_polytopes: &mut ComputedPolytopeRecorder,
+    expensive_cache: &ExpensiveComputationCache,
 ) -> Option<AscentResult> {
     let mut current =
         SysLandscapePolytopeCache::from_f64_dual_vertices(start.dual_vertices_f64.to_vec())?;
 
-    let initial = compute_sys_computation(&current)?;
+    let initial = compute_sys_computation_cached(&current, expensive_cache)?;
     computed_polytopes.push(
         ComputedPolytopeMeta {
             phase: Some(phase),
@@ -176,7 +178,7 @@ fn gradient_ascent(
         }
 
         // 1. Shared local state
-        let state = compute_active_sys_state(&current)?;
+        let state = compute_active_sys_state_cached(&current, expensive_cache)?;
         let sys = state.sys;
         let duals = &current.dual_vertices_f64;
         computed_polytopes.push(
@@ -212,7 +214,9 @@ fn gradient_ascent(
 
         for &frac in STEP_FRACTIONS {
             let t = frac * t_max;
-            if let Some((p, computation)) = apply_dual_step_with_computation(duals, &d_sys_a, t) {
+            if let Some((p, computation)) =
+                apply_dual_step_with_cached_computation(duals, &d_sys_a, t, expensive_cache)
+            {
                 let result_idx = computed_polytopes.push(
                     ComputedPolytopeMeta {
                         phase: Some(phase),
@@ -240,7 +244,8 @@ fn gradient_ascent(
         if t_max < MAX_STEP_SIZE {
             for &mult in OVERSHOOT_MULTIPLIERS {
                 let t = mult * t_max;
-                if let Some((p, computation)) = apply_dual_step_with_computation(duals, &d_sys_a, t)
+                if let Some((p, computation)) =
+                    apply_dual_step_with_cached_computation(duals, &d_sys_a, t, expensive_cache)
                 {
                     let step_type = format!("overshoot_{mult}x");
                     let result_idx = computed_polytopes.push(
@@ -347,11 +352,12 @@ fn process_seed(
     polytope: &SysLandscapePolytopeCache,
     seed_time_budget_secs: f64,
     rng: &mut ChaCha8Rng,
+    expensive_cache: &ExpensiveComputationCache,
 ) -> Option<SeedResult> {
     let t0 = Instant::now();
     let budget = seed_time_budget_secs;
 
-    let starting_computation = compute_sys_computation(polytope)?;
+    let starting_computation = compute_sys_computation_cached(polytope, expensive_cache)?;
     let starting_sys = starting_computation.sys;
     let mut computed_polytopes =
         ComputedPolytopeRecorder::new("gradient_ascent_general", name, seed_index);
@@ -383,6 +389,7 @@ fn process_seed(
         budget,
         "current_state",
         &mut computed_polytopes,
+        expensive_cache,
     ) {
         n_phases += 1;
         n_iters_total += result.n_iters;
@@ -421,6 +428,7 @@ fn process_seed(
                     budget,
                     "wiggle_start",
                     &mut computed_polytopes,
+                    expensive_cache,
                 ) {
                     n_phases += 1;
                     n_iters_total += result.n_iters;
@@ -444,7 +452,7 @@ fn process_seed(
     }
 
     let total_time_ms = t0.elapsed().as_secs_f64() * 1000.0;
-    let final_state = compute_active_sys_state(&best_polytope)?;
+    let final_state = compute_active_sys_state_cached(&best_polytope, expensive_cache)?;
     let final_capacity = final_state.capacity.capacity();
     computed_polytopes.push(
         ComputedPolytopeMeta {
@@ -552,24 +560,25 @@ fn main() {
         "  computed:     {}",
         output_paths.computed_polytopes.display()
     );
+    println!(
+        "  expensive-cache-out: {}",
+        output_paths.expensive_computations_cache.display()
+    );
+    for path in &args.expensive_computation_caches {
+        println!("  expensive-cache-in:  {}", path.display());
+    }
     println!("  fresh:        {}", args.fresh);
     println!("  budget:       {:.1}s/seed", args.seed_time_budget_secs);
     println!("  no-db-update: {}\n", args.no_db_update);
 
-    let completed = if args.fresh {
-        std::collections::HashSet::new()
-    } else {
-        exp_sys_landscape::load_completed_names(&output_paths.summary)
-    };
-
-    if completed.is_empty() {
-        println!("Starting fresh run.");
-    } else {
-        println!("Resuming: {} seeds already completed.", completed.len());
-    }
+    let completed = std::collections::HashSet::new();
+    println!("Rerunning shard control flow; expensive computations use read-only cache hits.");
 
     let writers = open_ascent_writers(&output_paths, args.fresh);
     let best = Arc::new(Mutex::new((0.0f64, String::new())));
+    let expensive_cache = Arc::new(ExpensiveComputationCache::load(
+        &args.expensive_computation_caches,
+    ));
 
     // DB state: loaded once, shared across threads under a Mutex when !no_db_update.
     // On LICCA (--no-db-update), both load and insertion are skipped entirely.
@@ -586,6 +595,7 @@ fn main() {
     let no_db_update = args.no_db_update;
     let seed_time_budget_secs = args.seed_time_budget_secs;
     let db_for_closure = Arc::clone(&db_arc);
+    let expensive_cache_for_closure = Arc::clone(&expensive_cache);
 
     run_parallel_seeds(&args, &completed, &writers, &best, move |i, seed_i| {
         let mut rng_i = ChaCha8Rng::seed_from_u64(seed_i);
@@ -622,6 +632,7 @@ fn main() {
             &polytope,
             seed_time_budget_secs,
             &mut rng_i,
+            &expensive_cache_for_closure,
         )?;
 
         if !no_db_update {
@@ -682,6 +693,8 @@ fn main() {
     // scheduling and any crash-resume history. See `finalize_ascent_output`
     // for details.
     finalize_ascent_output(&output_paths, writers);
+    let cache_rows = expensive_cache.emitted_miss_rows();
+    write_expensive_computation_cache_rows(&output_paths, &cache_rows);
 
     if !no_db_update {
         let db = db_arc.lock().expect("lock db for save");
@@ -706,9 +719,20 @@ fn main() {
         );
     }
     println!("Total time: {:.1}s", t_global.elapsed().as_secs_f64());
+    let expensive_stats = expensive_cache.stats();
+    println!(
+        "Expensive-computation cache: hits={}, misses={}, emitted_rows={}",
+        expensive_stats.hits,
+        expensive_stats.misses,
+        cache_rows.len()
+    );
     println!("Output: {}", output_paths.summary.display());
     println!("Trace: {}", output_paths.trace.display());
     println!("Cache: {}", output_paths.cache.display());
+    println!(
+        "Expensive computations cache: {}",
+        output_paths.expensive_computations_cache.display()
+    );
     println!(
         "Computed polytopes: {}",
         output_paths.computed_polytopes.display()

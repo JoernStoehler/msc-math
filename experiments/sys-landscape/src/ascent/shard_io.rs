@@ -1,4 +1,5 @@
 use super::cli::AscentOutputPaths;
+use super::expensive_cache::ExpensiveComputationCacheRow;
 use super::rows::{ComputedPolytopeRow, SeedResult, SummaryRow, TraceRow};
 use num_rational::BigRational;
 use serde::de::DeserializeOwned;
@@ -101,8 +102,10 @@ pub fn open_ascent_writers(paths: &AscentOutputPaths, fresh: bool) -> AscentWrit
 /// Crash-safety invariant: **trace, cache, and computed-polytope rows for a
 /// seed are on disk before that seed's summary row is on disk**. Write order is
 /// trace (+ flush) → cache (+ flush) → computed-polytopes (+ flush) → summary
-/// (+ flush). `load_completed_names` reads only the summary file, so a seed
-/// counts as "completed" only after its full payload is flushed.
+/// (+ flush). Legacy skip-resume can read the summary file with
+/// `load_completed_names`, so a seed counts as "completed" only after its full
+/// payload is flushed. The datascience ascent producers now rerun shard control
+/// flow and use the expensive-computation cache for cost control instead.
 ///
 /// Caveat: `BufWriter::flush` only pushes bytes to the OS page cache — it does
 /// not `fsync`. The invariant therefore holds against process-level kills
@@ -236,6 +239,13 @@ pub fn finalize_ascent_output(paths: &AscentOutputPaths, writers: AscentWriters)
     );
     computed_polytope_rows.dedup_by(|a, b| a.result_id == b.result_id);
     write_rows_atomic(&paths.computed_polytopes, &computed_polytope_rows);
+}
+
+pub fn write_expensive_computation_cache_rows(
+    paths: &AscentOutputPaths,
+    rows: &[ExpensiveComputationCacheRow],
+) {
+    write_rows_atomic(&paths.expensive_computations_cache, rows);
 }
 
 fn read_rows<T: DeserializeOwned>(path: &Path) -> Vec<T> {

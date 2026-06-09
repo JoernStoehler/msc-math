@@ -10,6 +10,8 @@ use symplectic::derivatives::{
 };
 use symplectic::{systolic_ratio, OrbitAdmissibility, OrbitKktData, OrbitSearchResult};
 
+use super::ExpensiveComputationCache;
+
 /// Numerical zero threshold for gradient checks.
 const EPS_NUMERICAL_ZERO: f64 = 1e-15;
 
@@ -59,6 +61,18 @@ pub fn compute_active_sys_state(polytope: &SysLandscapePolytopeCache) -> Option<
         .then_some(ActiveSysState { capacity, vol, sys })
 }
 
+pub fn compute_active_sys_state_cached(
+    polytope: &SysLandscapePolytopeCache,
+    cache: &ExpensiveComputationCache,
+) -> Option<ActiveSysState> {
+    let computation = cache.compute(polytope)?;
+    Some(ActiveSysState {
+        capacity: computation.capacity,
+        vol: computation.vol,
+        sys: computation.sys,
+    })
+}
+
 /// Compute sys = c_EHZ(K)^2 / (2 vol(K)) from a cached capacity result.
 ///
 /// `capacity` must come from the same `polytope`.
@@ -93,6 +107,13 @@ pub fn compute_sys_computation(polytope: &SysLandscapePolytopeCache) -> Option<S
     let sys = systolic_ratio(cap, vol);
     sys.is_finite()
         .then(|| SysComputation { capacity, vol, sys })
+}
+
+pub fn compute_sys_computation_cached(
+    polytope: &SysLandscapePolytopeCache,
+    cache: &ExpensiveComputationCache,
+) -> Option<SysComputation> {
+    cache.compute(polytope)
 }
 
 /// Compute the active-orbit capacity result.
@@ -282,6 +303,22 @@ pub fn apply_dual_step_with_computation(
         .collect();
     let polytope = SysLandscapePolytopeCache::from_f64_dual_vertices(new_duals)?;
     let computation = compute_sys_computation(&polytope)?;
+    Some((polytope, computation))
+}
+
+pub fn apply_dual_step_with_cached_computation(
+    duals: &[Vector4<f64>],
+    direction: &[Vector4<f64>],
+    t: f64,
+    cache: &ExpensiveComputationCache,
+) -> Option<(SysLandscapePolytopeCache, SysComputation)> {
+    let new_duals: Vec<Vector4<f64>> = duals
+        .iter()
+        .zip(direction)
+        .map(|(a, d)| a + t * d)
+        .collect();
+    let polytope = SysLandscapePolytopeCache::from_f64_dual_vertices(new_duals)?;
+    let computation = compute_sys_computation_cached(&polytope, cache)?;
     Some((polytope, computation))
 }
 
