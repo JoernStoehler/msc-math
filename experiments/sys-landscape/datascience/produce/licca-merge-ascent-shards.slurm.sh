@@ -9,13 +9,15 @@
 #SBATCH --job-name=ds-merge-ascent
 #SBATCH --partition=epyc
 #SBATCH --cpus-per-task=1
-#SBATCH --mem=4G
+#SBATCH --mem=32G
 #SBATCH --time=00:20:00
 #SBATCH --output=logs/%x-%j.out
 
 # Resource justification:
-# - Merge is standard-library Python over JSONL files and should be I/O-bound.
-# - 1 CPU and 4G memory are sufficient for shard-scale row-count/dedup checks.
+# - Merge is standard-library Python over JSONL files and is mostly I/O-bound.
+# - 1 CPU is enough. 32G memory is conservative for production fixed-F merges:
+#   the 2026-06-09 run had 5.3G of shard JSONL and OOM-killed a 4G merge job
+#   while loading/deduplicating Python dict/list rows.
 # - 20m leaves slack for GPFS latency and large computed-polytope files.
 
 set -euo pipefail
