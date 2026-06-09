@@ -104,22 +104,8 @@ python3 experiments/performance/scripts/summarize_hk2017_trace.py \
 ```
 
 The `hk2017_candidate_solve_summary` event reports total candidate-search time,
-time outside the candidate callback, accumulated candidate-callback time,
-callback time outside KKT/payload, accumulated KKT solve time, orbit-payload
-time, sigma-length summaries, KKT outcome counts, and admissibility counts.
-Interpret these fields as a tree:
-
-```text
-candidate search
-|-- emit_outside_callback_ms
-`-- candidate_callback_ms
-    |-- kkt_ms
-    |-- payload_ms
-    `-- callback_overhead_ms
-```
-
-Do not read `emit_outside_callback_ms` as all enumeration cost unless the
-caller's `emit_sigma` implementation makes that true. The
+residual traversal overhead, accumulated KKT solve time, orbit-payload time,
+sigma-length summaries, KKT outcome counts, and admissibility counts. The
 `hk2017_enumeration_summary` event reports graph-native simple-cycle traversal
 counters: DFS prefixes, rejected directed-edge extensions, and emitted cycles.
 On successful runs emitted cycles equal the candidate-solve `iterations` count;

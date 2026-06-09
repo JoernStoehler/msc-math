@@ -19,9 +19,6 @@ NUMERIC_FIELDS = [
     "raw_orbits",
     "search_ms",
     "traversal_ms",
-    "emit_outside_callback_ms",
-    "candidate_callback_ms",
-    "callback_overhead_ms",
     "kkt_ms",
     "payload_ms",
     "sigma_len_mean",
@@ -48,14 +45,10 @@ EVENT_COLUMNS = {
         ("iterations_mean", "iter_mean"),
         ("raw_orbits_mean", "raw_orbits"),
         ("search_ms_mean", "search_ms"),
-        ("emit_outside_callback_ms_mean", "emit_outside_cb_ms"),
-        ("candidate_callback_ms_mean", "candidate_cb_ms"),
-        ("callback_overhead_ms_mean", "cb_overhead_ms"),
+        ("traversal_ms_mean", "traversal_ms"),
         ("kkt_ms_mean", "kkt_ms"),
         ("payload_ms_mean", "payload_ms"),
-        ("emit_outside_callback_pct_search", "emit_outside_cb_pct"),
-        ("candidate_callback_pct_search", "candidate_cb_pct"),
-        ("callback_overhead_pct_search", "cb_overhead_pct"),
+        ("traversal_pct_search", "trav_pct"),
         ("kkt_pct_search", "kkt_pct"),
         ("payload_pct_search", "payload_pct"),
         ("sigma_len_mean_mean", "sigma_len_mean"),
@@ -144,31 +137,13 @@ def summarize(rows: list[dict]) -> list[dict]:
         kkt_ms = item.get("kkt_ms_mean")
         payload_ms = item.get("payload_ms_mean")
         search_ms = item.get("search_ms_mean")
-        emit_outside_callback_ms = item.get("emit_outside_callback_ms_mean")
-        if emit_outside_callback_ms is None:
-            emit_outside_callback_ms = item.get("traversal_ms_mean")
-        candidate_callback_ms = item.get("candidate_callback_ms_mean")
-        callback_overhead_ms = item.get("callback_overhead_ms_mean")
+        traversal_ms = item.get("traversal_ms_mean")
         if search_ms is not None and search_ms > 0.0:
-            item["emit_outside_callback_pct_search"] = (
-                100.0 * (emit_outside_callback_ms or 0.0) / search_ms
-            )
-            item["candidate_callback_pct_search"] = (
-                100.0 * (candidate_callback_ms or 0.0) / search_ms
-                if candidate_callback_ms is not None
-                else None
-            )
-            item["callback_overhead_pct_search"] = (
-                100.0 * (callback_overhead_ms or 0.0) / search_ms
-                if callback_overhead_ms is not None
-                else None
-            )
+            item["traversal_pct_search"] = 100.0 * (traversal_ms or 0.0) / search_ms
             item["kkt_pct_search"] = 100.0 * (kkt_ms or 0.0) / search_ms
             item["payload_pct_search"] = 100.0 * (payload_ms or 0.0) / search_ms
         else:
-            item["emit_outside_callback_pct_search"] = None
-            item["candidate_callback_pct_search"] = None
-            item["callback_overhead_pct_search"] = None
+            item["traversal_pct_search"] = None
             item["kkt_pct_search"] = None
             item["payload_pct_search"] = None
         result.append(item)
@@ -237,15 +212,7 @@ def write_csv(path: Path, summary: list[dict]) -> None:
     fieldnames = ["event", "facet_count", "samples"]
     for field in NUMERIC_FIELDS:
         fieldnames.append(f"{field}_mean")
-    fieldnames.extend(
-        [
-            "emit_outside_callback_pct_search",
-            "candidate_callback_pct_search",
-            "callback_overhead_pct_search",
-            "kkt_pct_search",
-            "payload_pct_search",
-        ]
-    )
+    fieldnames.extend(["traversal_pct_search", "kkt_pct_search", "payload_pct_search"])
     with path.open("w", newline="") as handle:
         writer = csv.DictWriter(handle, fieldnames=fieldnames)
         writer.writeheader()
