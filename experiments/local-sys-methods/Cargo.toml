@@ -1,0 +1,26 @@
+[package]
+name = "exp-local-sys-methods"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+path = "src/lib.rs"
+
+[[bin]]
+name = "local-sys-prediction-smoke"
+path = "prediction/main.rs"
+
+[lints]
+workspace = true
+
+[dependencies]
+symplectic.workspace = true
+euclidean-polytopes.workspace = true
+nalgebra.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+rand.workspace = true
+rand_chacha.workspace = true
+num-rational.workspace = true
+num-traits.workspace = true
+blake3.workspace = true
