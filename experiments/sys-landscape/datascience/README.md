@@ -122,7 +122,8 @@ Expected contents after rebuilding with the current table builder:
   provenance record keyed by `provenance_id`; records run-level and
   trajectory-summary fields. Random-sample provenance rows do not appear here.
 
-Checked-in fingerprint before the computed-polytope table rebuild:
+Checked-in fingerprint before the computed-polytope table rebuild and before
+the standalone random refresh:
 
 - polytope rows: `8445`
 - computed-polytope observations: not present in this fingerprint
@@ -133,8 +134,8 @@ Checked-in fingerprint before the computed-polytope table rebuild:
 - source counts:
   - `gradient_ascent_general`: `4096`
   - `gradient_ascent_products`: `4089`
-  - `random_product_sample`: `100`
-  - `random_sample`: `70`
+  - `random_product_sample`: `100` (old small random wave)
+  - `random_sample`: `70` (old small random wave)
   - `variable_f_ascent`: `90`
 - sha256:
   - `polytope-table.jsonl`:

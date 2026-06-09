@@ -103,6 +103,50 @@ copy producer data. Build the shared table dataset under
 build method-local rectangular inputs when needed. The current role rules live
 in `../README.md`.
 
+## Random Producer Refresh
+
+The checked-in random producer artifacts from the older wave are small (`70`
+generic random rows plus `100` product random rows). That is too small for
+method work because ascent starts are not a substitute for a larger standalone
+random baseline.
+
+The current standalone random refresh target is:
+
+- `4096` generic random rows: `512` samples for each facet count `F=5..12`.
+- `10240` random Lagrangian-product rows: `1024` samples for each polygon-pair
+  bucket with `3 <= k <= m <= 6`.
+- total standalone random rows: `14336`.
+
+This size is meant to be larger than the fixed-F ascent start set while staying
+far cheaper than producing and retaining every ascent candidate observation.
+The Rust binaries keep small defaults so accidental bare local runs remain
+cheap; the larger target is explicit in the LICCA script.
+
+On LICCA, run [licca-refresh-random.slurm.sh](licca-refresh-random.slurm.sh) to
+write review targets:
+
+```bash
+cd "$HOME/msc-math/experiments/sys-landscape/datascience/produce"
+sbatch licca-refresh-random.slurm.sh
+```
+
+The Slurm job writes:
+
+```text
+random-licca-refresh.jsonl
+random-product-licca-refresh.jsonl
+shared-cache-licca-random-refresh.jsonl
+```
+
+After checking the Slurm log and dry-run promotion output, promote with:
+
+```bash
+python3 promote-licca-random-refresh.py
+python3 promote-licca-random-refresh.py --write
+```
+
+Then rebuild `../tables/` from canonical producer files.
+
 ## Smoke Path
 
 Use [smoke-pipeline.sh](../smoke-pipeline.sh) to exercise the full low-friction
