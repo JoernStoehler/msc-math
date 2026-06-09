@@ -1,4 +1,7 @@
-use exp_local_sys_methods::{default_output_path, run_prediction_smoke};
+use exp_local_sys_methods::{
+    default_base_candidate_action_gap, default_output_path,
+    run_prediction_smoke_with_base_candidate_action_gap,
+};
 use std::collections::{BTreeMap, BTreeSet};
 use std::path::PathBuf;
 
@@ -16,9 +19,15 @@ struct BasepointSummary {
     max_active_q_error_bound: f64,
 }
 
-fn parse_output_path() -> PathBuf {
+struct CliOptions {
+    output_path: PathBuf,
+    base_candidate_action_gap: f64,
+}
+
+fn parse_options() -> CliOptions {
     let mut args = std::env::args().skip(1);
     let mut output = PathBuf::from(default_output_path());
+    let mut base_candidate_action_gap = default_base_candidate_action_gap();
     while let Some(arg) = args.next() {
         match arg.as_str() {
             "--output" => {
@@ -27,24 +36,44 @@ fn parse_output_path() -> PathBuf {
                 };
                 output = PathBuf::from(path);
             }
+            "--base-candidate-action-gap" => {
+                let Some(value) = args.next() else {
+                    panic!("--base-candidate-action-gap requires a nonnegative finite f64");
+                };
+                base_candidate_action_gap = value
+                    .parse::<f64>()
+                    .expect("--base-candidate-action-gap requires a nonnegative finite f64");
+            }
             "--help" | "-h" => {
                 eprintln!(
-                    "Usage: local-sys-prediction-smoke [--output <path>]\n\
-                     Default output: {}",
-                    default_output_path()
+                    "Usage: local-sys-prediction-smoke [--output <path>] \
+                     [--base-candidate-action-gap <f64>]\n\
+                     Default output: {}\n\
+                     Default base candidate action gap: {:.3e}",
+                    default_output_path(),
+                    default_base_candidate_action_gap()
                 );
                 std::process::exit(0);
             }
             other => panic!("unsupported argument: {other}"),
         }
     }
-    output
+    if !base_candidate_action_gap.is_finite() || base_candidate_action_gap < 0.0 {
+        panic!("--base-candidate-action-gap requires a nonnegative finite f64");
+    }
+    CliOptions {
+        output_path: output,
+        base_candidate_action_gap,
+    }
 }
 
 fn main() {
-    let output_path = parse_output_path();
-    let rows = run_prediction_smoke(&output_path)
-        .unwrap_or_else(|err| panic!("local sys prediction smoke failed: {err:?}"));
+    let options = parse_options();
+    let rows = run_prediction_smoke_with_base_candidate_action_gap(
+        &options.output_path,
+        options.base_candidate_action_gap,
+    )
+    .unwrap_or_else(|err| panic!("local sys prediction smoke failed: {err:?}"));
     let successful = rows.iter().filter(|row| row.status == "ok").count();
     let generic_success = rows
         .iter()
@@ -52,7 +81,7 @@ fn main() {
     println!(
         "local-sys-prediction-smoke: wrote {} rows to {}",
         rows.len(),
-        output_path.display()
+        options.output_path.display()
     );
     println!("  successful rows: {successful}");
     println!("  generic basepoint success: {generic_success}");

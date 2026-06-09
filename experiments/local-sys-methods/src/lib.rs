@@ -40,7 +40,7 @@ const RANDOM_H_MAX: f64 = 2.0;
 const STEP_VALUES: [f64; 3] = [1e-4, 1e-3, 1e-2];
 // Base-only collection window. This is a heuristic diagnostic, and also lets
 // exact minimizers survive f64 lower-bound trimming before the active filter.
-const BASE_CANDIDATE_ACTION_GAP: f64 = 1e-2;
+const DEFAULT_BASE_CANDIDATE_ACTION_GAP: f64 = 1e-2;
 
 #[derive(Clone, Debug)]
 pub struct LocalPolytopeCache {
@@ -62,6 +62,7 @@ struct BaseState {
     active_orbits: Vec<OrbitKktData>,
     sys_subgradients: Vec<Vec<Vector4<f64>>>,
     action_spread: f64,
+    candidate_action_gap: f64,
     active_min_beta_margin: f64,
     active_max_q_error_bound: f64,
 }
@@ -205,7 +206,27 @@ pub fn default_output_path() -> &'static str {
     "/tmp/local-sys-methods/smoke-local-prediction.jsonl"
 }
 
+pub fn default_base_candidate_action_gap() -> f64 {
+    DEFAULT_BASE_CANDIDATE_ACTION_GAP
+}
+
 pub fn run_prediction_smoke(output_path: &Path) -> Result<Vec<PredictionRow>, PredictionError> {
+    run_prediction_smoke_with_base_candidate_action_gap(
+        output_path,
+        DEFAULT_BASE_CANDIDATE_ACTION_GAP,
+    )
+}
+
+pub fn run_prediction_smoke_with_base_candidate_action_gap(
+    output_path: &Path,
+    base_candidate_action_gap: f64,
+) -> Result<Vec<PredictionRow>, PredictionError> {
+    if !base_candidate_action_gap.is_finite() || base_candidate_action_gap < 0.0 {
+        return Err(PredictionError::Geometry(
+            "base candidate action gap must be nonnegative finite".to_string(),
+        ));
+    }
+
     let basepoints = vec![
         (
             "random_f10_seed_5a51_2026".to_string(),
@@ -222,7 +243,7 @@ pub fn run_prediction_smoke(output_path: &Path) -> Result<Vec<PredictionRow>, Pr
 
     let mut rows = Vec::new();
     for (name, polytope) in basepoints {
-        let base = compute_base_state(polytope, BASE_CANDIDATE_ACTION_GAP)?;
+        let base = compute_base_state(polytope, base_candidate_action_gap)?;
         let directions = prediction_directions(&base)?;
         for (direction_label, direction) in directions {
             for step in STEP_VALUES {
@@ -327,6 +348,7 @@ fn compute_base_state(
         active_orbits,
         sys_subgradients,
         action_spread,
+        candidate_action_gap: action_gap,
         active_min_beta_margin,
         active_max_q_error_bound,
     })
@@ -399,7 +421,7 @@ fn prediction_row(
         target_best_sigma_in_base_candidate_window: None,
         active_orbit_count: base.active_orbits.len(),
         base_candidate_orbit_count: base.capacity.orbits.len(),
-        base_candidate_action_gap: BASE_CANDIDATE_ACTION_GAP,
+        base_candidate_action_gap: base.candidate_action_gap,
         active_action_spread: base.action_spread,
         active_min_beta_margin: base.active_min_beta_margin,
         active_max_q_error_bound: base.active_max_q_error_bound,
@@ -578,8 +600,8 @@ mod tests {
         let hko = LocalPolytopeCache::from_known(known_polytopes::hko_pentagon());
 
         for (name, polytope) in [("random", random), ("hko", hko)] {
-            let base =
-                compute_base_state(polytope, BASE_CANDIDATE_ACTION_GAP).unwrap_or_else(|err| {
+            let base = compute_base_state(polytope, DEFAULT_BASE_CANDIDATE_ACTION_GAP)
+                .unwrap_or_else(|err| {
                     panic!("{name} base state failed: {err:?}");
                 });
             let directions = prediction_directions(&base).unwrap_or_else(|err| {
@@ -592,7 +614,10 @@ mod tests {
             assert!(row.active_min_beta_margin.is_finite());
             assert!(row.active_max_q_error_bound.is_finite());
             assert!(row.base_candidate_orbit_count >= row.active_orbit_count);
-            assert_eq!(row.base_candidate_action_gap, BASE_CANDIDATE_ACTION_GAP);
+            assert_eq!(
+                row.base_candidate_action_gap,
+                DEFAULT_BASE_CANDIDATE_ACTION_GAP
+            );
             if name == "random" {
                 assert_eq!(row.status, "ok");
             }

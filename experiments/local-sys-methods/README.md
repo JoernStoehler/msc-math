@@ -31,7 +31,9 @@ By default it writes JSONL to:
 /tmp/local-sys-methods/smoke-local-prediction.jsonl
 ```
 
-Pass `--output <path>` to write somewhere else. Do not add generated smoke
+Pass `--output <path>` to write somewhere else. Pass
+`--base-candidate-action-gap <f64>` to change the base action-gap window used
+for active-orbit collection and switch diagnostics. Do not add generated smoke
 output to git unless Jörn explicitly asks for a canonical evidence artifact.
 
 The command exits nonzero if it cannot produce at least one successful row for
