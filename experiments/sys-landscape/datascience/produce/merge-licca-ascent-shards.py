@@ -38,7 +38,7 @@ def parse_args() -> argparse.Namespace:
         "--fresh-fixed-f",
         action="store_true",
         help=(
-            "Merge only cache-complete fresh fixed-F shard directories, omitting "
+            "Merge only fresh fixed-F computed shard directories, omitting "
             "canonical ascent files and older no-cache shard waves."
         ),
     )

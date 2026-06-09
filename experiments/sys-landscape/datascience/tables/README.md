@@ -21,6 +21,13 @@ facts from ascent. They are producer outputs, not current table outputs. Add a
 table for those rows only when the table row entity and reusable columns are
 chosen deliberately.
 
+Ascent producers also emit `*-ascent-events.jsonl` and
+`*-expensive-computations-cache.jsonl`. Those are the durable producer-side
+split between run metadata and reusable expensive capacity/orbit-search
+payloads. Current tables still read endpoint summary/cache compatibility files;
+switching table construction to derive endpoint rows from ascent events should
+be done as a table-loader change, not by changing producer shard semantics.
+
 Current outputs:
 - `polytope-table.jsonl`: one row per retained polytope keyed by `poly_id`;
   contains defining dual vertices, computed polytope-level quantities such as

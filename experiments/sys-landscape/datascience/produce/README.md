@@ -3,14 +3,19 @@
 This directory owns producer programs, producer caches, and producer outputs for
 `experiments/sys-landscape/datascience/`.
 
-Producer outputs must preserve every expensive computed polytope fact that
-later stages should not have to recompute:
-- exact or reconstructible polytope/state identity;
-- capacity, volume, and `sys` when computed;
-- provenance and lineage metadata needed to interpret the row;
-- near-minimal `sigma[]` witness sets and cutoffs when already computed;
-- raw traces or generator logs when those are part of the expensive search
-  surface.
+Producer outputs split expensive polytope computations from run metadata:
+
+- `*-expensive-computations-cache.jsonl`: exact polytope key plus expensive
+  capacity/orbit-search payload, and volume/sys when already computed. This is
+  cache-shaped data. Shard workers may read previous cache files as immutable
+  inputs and write self-contained shard-local cache outputs.
+- `*-ascent-events.jsonl`: run metadata saying where an ascent run used a
+  polytope: seed, phase, iteration, role, accepted/final flags, and
+  `polytope_key`. This is not cache data.
+
+Do not cache ascent orchestration such as rejected/accepted decisions,
+gradients, or seed state. Rerun cheap control flow; reuse expensive
+capacity/orbit results.
 
 Producer outputs should not decide the final method-facing table shape.
 Reusable datascience feature columns, deliberate deduplication, retained table
@@ -21,6 +26,8 @@ Canonical file naming follows:
 - `name-trace.jsonl`
 - `name-cache.jsonl`
 - `name-computed-polytopes.jsonl`
+- `name-ascent-events.jsonl`
+- `name-expensive-computations-cache.jsonl`
 - transient smoke outputs `smoke-name.jsonl`
 
 Current committed producer artifacts:
@@ -29,15 +36,22 @@ Current committed producer artifacts:
 - `ascent-general-endpoints.jsonl`
 - `ascent-general-trace.jsonl`
 - `ascent-general-cache.jsonl`
+- `ascent-general-ascent-events.jsonl`
+- `ascent-general-expensive-computations-cache.jsonl`
 - `ascent-product-endpoints.jsonl`
 - `ascent-product-trace.jsonl`
 - `ascent-product-cache.jsonl`
+- `ascent-product-ascent-events.jsonl`
+- `ascent-product-expensive-computations-cache.jsonl`
+- `expensive-computations-cache.jsonl` after review/promotion of merged
+  cache rows
+- `ascent-events.jsonl` after review/promotion of merged ascent events
 - `continuation.jsonl`
 - `shared-cache.jsonl`
 - `continuation-cache.jsonl`
 
-Current fixed-F ascent producer counts from the 2026-06-04 LICCA
-cache-complete wave:
+Current fixed-F ascent endpoint/cache compatibility counts from the 2026-06-04
+LICCA wave:
 
 - `ascent-general-endpoints.jsonl`: `4096` rows; `ascent-general-cache.jsonl`: `4096` rows.
 - `ascent-product-endpoints.jsonl`: `4089` rows; `ascent-product-cache.jsonl`: `4089`
@@ -46,32 +60,35 @@ cache-complete wave:
 - Both fixed-F cache files have complete `capacity`, `volume`, `sigmas`, and
   `orbit_scalars` payloads for every committed summary endpoint.
 
-LICCA shard outputs for this branch should live under:
+LICCA fixed-F ascent shard outputs for this branch live under:
 
 ```text
-licca-shards/general/
-licca-shards/product/
+licca-shards/general-computed-production-1024/
+licca-shards/product-computed-production-1024/
 ```
 
 These shard files are producer-stage artifacts. Review and merge them into the
 canonical producer files before rebuilding `../tables/`.
 
 Use [merge-licca-ascent-shards.py](merge-licca-ascent-shards.py) to consolidate
-canonical ascent files and LICCA shard directories into branch-local merged
-producer files for review. It reports row counts, cache coverage, missing
+LICCA shard directories into branch-local merged producer files for review. It
+reports row counts, producer-cache coverage, event/cache coverage, missing
 expected seed indices, max `final_sys`, and any `final_sys > 1` rows. Pass
-`--require-cache` for future LICCA campaigns where every summary endpoint must
-have a matching shard-local producer-cache row.
+`--require-cache --fresh-fixed-f` for the fixed-F replacement wave.
 
 ## Producer binaries
 
 - `sys-dataset-random` writes `random.jsonl` and updates `shared-cache.jsonl`.
 - `sys-dataset-random-product` writes `random-product.jsonl` and updates `shared-cache.jsonl`.
 - `sys-dataset-ascent` writes `ascent-general-endpoints.jsonl`, `ascent-general-trace.jsonl`,
-  `ascent-general-cache.jsonl`, and `ascent-general-computed-polytopes.jsonl`.
+  `ascent-general-cache.jsonl`, `ascent-general-computed-polytopes.jsonl`,
+  `ascent-general-ascent-events.jsonl`, and
+  `ascent-general-expensive-computations-cache.jsonl`.
 - `sys-dataset-ascent-product` writes `ascent-product-endpoints.jsonl`,
   `ascent-product-trace.jsonl`, `ascent-product-cache.jsonl`, and
-  `ascent-product-computed-polytopes.jsonl`.
+  `ascent-product-computed-polytopes.jsonl`,
+  `ascent-product-ascent-events.jsonl`, and
+  `ascent-product-expensive-computations-cache.jsonl`.
 - `sys-dataset-continuation` writes `continuation.jsonl` and `continuation-cache.jsonl`.
 
 Older `sys-landscape` experiment directories still exist outside `datascience/`, but
@@ -97,12 +114,21 @@ surface on temporary outputs:
   `--seed-time-budget-secs` override;
 - no tracked `.jsonl` files are touched.
 
-Runtime caveat: this is integration smoke, not a cheap command check. On
-2026-06-04, the default temp-output path took about 49 seconds locally with
-`ASCENT_BUDGET_SECS=1`. The default runs both ascent producers twice and checks
-that the second pass resumes without duplicate summary/cache rows. Set
-`RUN_CONTINUATION_SMOKE=1` only when the older slow continuation integration
-path is specifically needed.
+Runtime caveat: this is integration smoke, not a cheap command check. The
+default runs both ascent producers twice: cold first, then hot against the
+same shard-local expensive-computation cache. Set `RUN_CONTINUATION_SMOKE=1`
+only when the older slow continuation integration path is specifically needed.
+
+For a focused cold/hot cache benchmark, run:
+
+```bash
+SEED_TIME_BUDGET_SECS=1 \
+  experiments/sys-landscape/datascience/pipeline.local.sh cache-benchmark
+```
+
+The benchmark runs cold local general/product shards, merges their cache/events,
+reruns hot against the merged cache, then reports row counts. Check the producer
+logs for `Expensive-computation cache: hits=..., misses=...`.
 
 ## LICCA Fixed-F Ascent Shards
 
@@ -115,15 +141,17 @@ seed range, output path, resume rule, and exact Rust command.
 Rule: keep smoke scripts shaped like production scripts. Only make them smaller
 and cheaper. Run smoke before production.
 
-The script writes one summary JSONL, one derived `*-trace.jsonl`, one derived
-`*-cache.jsonl`, and one derived `*-computed-polytopes.jsonl` per Slurm array
-task. For fixed-F ascent, `*-computed-polytopes.jsonl` is the producer output
-that preserves computed-polytope facts for starts, line-search candidates,
-accepted candidates, and final endpoints. The cache file is shard-local and is
-still written when the binary runs with `--no-db-update`; that flag only
-prevents shared cache writes. Defaults skip existing committed seed ranges:
-general starts at
-`n-start=10`, and product starts at `n-start=12`.
+The script writes one endpoint summary JSONL, and derived `*-trace.jsonl`,
+`*-cache.jsonl`, `*-computed-polytopes.jsonl`, `*-ascent-events.jsonl`, and
+`*-expensive-computations-cache.jsonl` per Slurm array task. Endpoint summaries
+are transitional compatibility output for current tables. The cache/event split
+is the durable producer surface for the ascent polytopes.
+
+Shard scripts pass `--fresh`: retry rewrites shard outputs instead of appending
+timing-dependent duplicate summaries. Before rewriting, the producer loads any
+existing shard-local expensive-computation cache plus the canonical
+`expensive-computations-cache.jsonl` if present. The rerun recomputes cheap
+control flow and reuses cached capacity/orbit-search payloads.
 
 - [licca-ascent-general-smoke.slurm.sh](licca-ascent-general-smoke.slurm.sh): one
   `test`-partition general shard with `2` seeds in `licca-shards/general-smoke/`.
@@ -137,17 +165,16 @@ general starts at
   budget, and a LICCA-shaped temp output directory.
 - [licca-ascent-general-production.slurm.sh](licca-ascent-general-production.slurm.sh):
   production general wave with array `0-3`, `1024` seeds per shard, and
-  `128` CPUs per shard. It starts at seed `0` and writes a fresh
-  cache-complete output directory.
+  `128` CPUs per shard. It starts at seed `0` and writes the fresh fixed-F
+  output directory.
 - [licca-ascent-product-production.slurm.sh](licca-ascent-product-production.slurm.sh):
   production product wave with array `0-3`, `1024` seeds per shard, and
-  `128` CPUs per shard. It starts at seed `0` and writes a fresh
-  cache-complete output directory.
+  `128` CPUs per shard. It starts at seed `0` and writes the fresh fixed-F
+  output directory.
 
-Resume rule: do not delete partial shard files after timeout. Rerun the same
-wrapper with the same array index and constants. The Rust binary reads
-completed summary rows and skips them, then canonicalizes output on a normal
-exit.
+Retry rule: rerun the same wrapper with the same array index and constants.
+Do not edit canonical producer files from worker jobs. Worker jobs only read
+canonical expensive-computation cache files and write shard-local outputs.
 
 Build the binaries on LICCA first:
 
@@ -185,12 +212,15 @@ This submits the general and product production arrays, then submits
 does not promote those files to canonical producer filenames, so table build
 submission remains a separate step after review.
 
-This requests `4096` cache-complete general seeds and `4096` cache-complete
-product seeds. It writes to `licca-shards/general-cache-production-1024/` and
-`licca-shards/product-cache-production-1024/` so it does not collide with older
-no-cache waves under `licca-shards/general/`,
-`licca-shards/product/`, `licca-shards/general-production-1024/`, or
-`licca-shards/product-production-1024/`.
+This requests `4096` computed-polytope general seeds and `4096`
+computed-polytope product seeds and the corresponding cache/event streams. It writes to
+`licca-shards/general-computed-production-1024/` and
+`licca-shards/product-computed-production-1024/` so it does not collide with
+older waves under `licca-shards/general/`, `licca-shards/product/`,
+`licca-shards/general-production-1024/`,
+`licca-shards/product-production-1024/`,
+`licca-shards/general-cache-production-1024/`, or
+`licca-shards/product-cache-production-1024/`.
 
 After shard review, consolidate on LICCA or locally with:
 
@@ -199,9 +229,8 @@ python3 experiments/sys-landscape/datascience/produce/merge-licca-ascent-shards.
 python3 experiments/sys-landscape/datascience/produce/merge-licca-ascent-shards.py --write
 ```
 
-For future cache-complete LICCA campaigns, use `--require-cache` during review
-and write. Use `--fresh-fixed-f` when replacing old fixed-F ascent data instead
-of merging old no-cache waves:
+For the fixed-F replacement wave, use `--require-cache --fresh-fixed-f` during
+review and write. This omits older fixed-F shard waves from the merge:
 
 ```bash
 python3 experiments/sys-landscape/datascience/produce/merge-licca-ascent-shards.py \
@@ -224,6 +253,8 @@ ascent-product-licca-merged-endpoints.jsonl
 ascent-product-licca-merged-trace.jsonl
 ascent-product-licca-merged-cache.jsonl
 ascent-product-licca-merged-computed-polytopes.jsonl
+expensive-computations-cache-licca-merged.jsonl
+ascent-events-licca-merged.jsonl
 ```
 
 These files are review targets. Promote them to the canonical producer filenames
