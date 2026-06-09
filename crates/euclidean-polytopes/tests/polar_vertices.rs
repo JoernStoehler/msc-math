@@ -271,6 +271,63 @@ fn rational_integer_scaled_path_matches_generic_checked_polar_on_named_fixtures(
 }
 
 #[test]
+fn rational_integer_scaled_path_matches_generic_checked_polar_on_nondyadic_fixture() {
+    let mut points = crosspolytope_vertices_exact();
+    points.push(vq_frac([(1, 3), (1, 3), (1, 3), (1, 3)]));
+    points.push(vq_frac([(-1, 3), (-1, 3), (-1, 3), (-1, 3)]));
+
+    let generic = polar_vertices_exact(&points);
+    let integer_scaled = polar_vertices_exact_rational_assuming_origin_interior(&points);
+
+    assert_polar_outputs_eq(integer_scaled, generic);
+}
+
+#[test]
+fn rational_integer_scaled_path_matches_generic_on_scale_separated_nondyadic_fixture() {
+    let mut points = vec![
+        vq_frac([(1, 3), (0, 1), (0, 1), (0, 1)]),
+        vq_frac([(-1, 3), (0, 1), (0, 1), (0, 1)]),
+        vq_frac([(0, 1), (7, 5), (0, 1), (0, 1)]),
+        vq_frac([(0, 1), (-7, 5), (0, 1), (0, 1)]),
+        vq_frac([(0, 1), (0, 1), (11, 13), (0, 1)]),
+        vq_frac([(0, 1), (0, 1), (-11, 13), (0, 1)]),
+        vq_frac([(0, 1), (0, 1), (0, 1), (17, 2)]),
+        vq_frac([(0, 1), (0, 1), (0, 1), (-17, 2)]),
+    ];
+    points.push(vq_frac([(1, 9), (7, 15), (11, 39), (17, 6)]));
+    points.push(vq_frac([(-1, 9), (-7, 15), (-11, 39), (-17, 6)]));
+
+    let generic = polar_vertices_exact(&points);
+    let integer_scaled = polar_vertices_exact_rational_assuming_origin_interior(&points);
+
+    assert_polar_outputs_eq(integer_scaled, generic);
+}
+
+proptest! {
+    #![proptest_config(ProptestConfig::with_cases(32))]
+
+    /// Proposition: the rational integer-scaled polar path must return the same
+    /// vertices and incidence as the generic exact path on generated
+    /// positive-spanning rational fixtures.
+    ///
+    /// Operationalization: use the same crosspolytope-plus-redundant-edge-point
+    /// generator as the soundness tests. This is the comparison test that guards
+    /// rational-path optimizations such as f64 prefilters with exact fallback.
+    #[test]
+    fn generated_rational_integer_scaled_path_matches_generic_checked_polar(
+        scales in [1_i64..=3, 1_i64..=3, 1_i64..=3, 1_i64..=3],
+        extra_codes in proptest::collection::vec(0_u8..64, 0..=4),
+    ) {
+        let (points, _) = positive_spanning_points_with_redundant_edge_points(scales, &extra_codes);
+
+        prop_assert!(origin_in_interior_of_conv_exact(&points));
+        let generic = polar_vertices_exact(&points);
+        let integer_scaled = polar_vertices_exact_rational_assuming_origin_interior(&points);
+        assert_polar_outputs_eq(integer_scaled, generic);
+    }
+}
+
+#[test]
 #[should_panic(expected = "polar_vertices_exact requires 0 in int conv(vertices)")]
 fn polar_vertices_exact_panics_when_origin_is_not_interior() {
     let points = vec![

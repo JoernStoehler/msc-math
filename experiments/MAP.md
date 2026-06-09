@@ -18,7 +18,7 @@ Map maintenance:
 ## Status
 
 - State: split from the old root `ARCHITECTURE.md`.
-- Last updated: 2026-06-04.
+- Last updated: 2026-06-08.
 - Source surfaces: `experiments/**/Cargo.toml`, `experiments/**/src/lib.rs`,
   local `README.md` files, experiment entrypoints, `research/*.md`, and the
   task progress files.
@@ -65,11 +65,12 @@ Current boundary facts:
 | `experiments/sys-landscape/` | hostile sys-search landscape: random/product searches, gradient ascent, variable-`F` continuation, rejection calibration, and datascience pipeline | `tasks/current-state.md`, `tasks/planning-notes.md`, `research/sys-landscape*.md`, `experiments/sys-landscape/datascience/README.md` |
 | `experiments/regular-products/` | regular polygon product side result: broad rotated-product sweeps, pentagon empirical figures/viewer, and exact pentagon formula proof packet | `experiments/regular-products/README.md`, `thesis/rotated-regular-polygons-content.md` |
 | `experiments/sys-landscape/gradient-ascent-dev/` | method-development helper package for step calibration and strategy comparison | `experiments/sys-landscape/gradient-ascent-dev/src/lib.rs` |
-| `experiments/numerics/` | numerical-method validation, error bounds, algebraic exactness, Sage feasibility, unknown predicates, and KKT diagnostics | `tasks/current-state.md`, `tasks/planning-notes.md`, `research/numerics*.md` |
+| `experiments/numerics/` | numerical-method validation, error-bound collection, algebraic exactness, Sage feasibility, unknown predicates, and KKT diagnostics | `tasks/current-state.md`, `tasks/planning-notes.md`, `research/numerics*.md` |
 | `experiments/flow-graph/` | flow-graph execution experiments: current frontier counts and endpoint representation spike; intended home for future profiling, HK2017 comparison, and numerical-stability checks | `crates/symplectic/src/algorithms/flow_graph/README.md`, `tasks/current-state.md`, `tasks/planning-notes.md` |
 | `experiments/numerics/gradient/` | separate gradient-validation package for first-order derivative checks, edge cases, and subdifferential tests | `tasks/current-state.md`, `tasks/planning-notes.md`, `research/numerics*.md` |
-| `experiments/verification/` | cross-topic correctness, minimum-set, orbit-recovery, and reusable Sage validation experiments | `tasks/current-state.md`, `tasks/planning-notes.md`, `research/verification*.md`, `experiments/verification/sage/README.md` |
-| `experiments/verification/algorithm-comparison/` | algorithm comparison, ablation, benchmark, and profiling evidence | `research/verification.md` |
+| `experiments/verification/` | experiment-level correctness and regression evidence, minimum-set validation, orbit recovery, and reusable Sage validation experiments | `tasks/current-state.md`, `tasks/planning-notes.md`, `research/verification*.md`, `experiments/verification/README.md`, `experiments/verification/sage/README.md` |
+| `experiments/verification/algorithm-comparison/` | historical algorithm comparison, ablation, and benchmark artifacts for capacity-algorithm implementation choices | `research/verification.md`, `experiments/verification/algorithm-comparison/README.md` |
+| `experiments/performance/` | shared runtime and memory profiling targets, reusable measurement practice, and post-processing scripts; generated outputs normally go under `/tmp` | `experiments/performance/README.md` |
 | `experiments/combinatorial-cells/` | combinatorial-cell exploration: boundary characterization, cell widths, convexity, multiple crossings, omega hypothesis, and gradient-discontinuity analysis | `research/combinatorial-cells.md` |
 | `experiments/crosspolytope/` | one-off crosspolytope computation and checkpointing | `research/crosspolytope.md` |
 | `experiments/visualization/` | visualization data/PNG generation and browser rendering assets for negative-exploration support | `research/visualization.md` |
@@ -86,6 +87,7 @@ Topic helper crates already exist at:
 - `experiments/verification/src/lib.rs`
 - `experiments/sys-landscape/src/lib.rs`
 - `experiments/sys-landscape/gradient-ascent-dev/src/lib.rs`
+- `experiments/performance/src/lib.rs`
 
 Current observed pattern:
 
@@ -115,6 +117,7 @@ Current helper families:
 | numerics exactness helpers | `experiments/numerics/src/lib.rs` exposes the algebraic exactness spike under `src/algebraic/` |
 | gradient validation helpers | `experiments/numerics/gradient/src/lib.rs` owns random-direction sampling, first-order row schemas, and small smoke-run helpers |
 | verification target plumbing | `experiments/verification/src/target_pool.rs` owns target selection; `io.rs` owns run modes and shared JSONL writers |
+| performance target plumbing | `experiments/performance/src/lib.rs` owns generic output-directory, JSONL, JSON, and timing helpers for performance binaries |
 
 ## Artifact And Data Patterns
 

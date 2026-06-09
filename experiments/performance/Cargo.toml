@@ -1,0 +1,30 @@
+[package]
+name = "exp-performance"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+path = "src/lib.rs"
+
+[[bin]]
+name = "hk2017-pruned-f64"
+path = "src/bin/hk2017_pruned_f64.rs"
+
+[[bin]]
+name = "hk2017-cycle-enumeration"
+path = "src/bin/hk2017_cycle_enumeration.rs"
+
+[lints]
+workspace = true
+
+[dependencies]
+symplectic.workspace = true
+euclidean-polytopes.workspace = true
+nalgebra.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+num-rational.workspace = true
+rand.workspace = true
+rand_chacha.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true

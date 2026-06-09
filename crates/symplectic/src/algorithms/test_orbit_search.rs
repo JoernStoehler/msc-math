@@ -82,6 +82,32 @@ fn exact_resolution_upgrades_known_winner() {
 }
 
 #[test]
+fn sigma_stream_info_tracing_matches_plain_result() {
+    let kp = known_polytopes::simplex();
+    let dual_vertices = &kp.dual_vertices_f64;
+
+    let plain = solve_sigma_stream_with_dual_vertices(dual_vertices, |visit| {
+        let facet_count = dual_vertices.len();
+        crate::algorithms::hk2017::for_each_sigma_unpruned_facet_count(facet_count, visit)
+    })
+    .expect("plain sigma stream should solve");
+
+    let subscriber = tracing_subscriber::fmt()
+        .with_max_level(tracing::Level::INFO)
+        .with_writer(std::io::sink)
+        .finish();
+    let traced = tracing::subscriber::with_default(subscriber, || {
+        solve_sigma_stream_with_dual_vertices(dual_vertices, |visit| {
+            let facet_count = dual_vertices.len();
+            crate::algorithms::hk2017::for_each_sigma_unpruned_facet_count(facet_count, visit)
+        })
+    })
+    .expect("traced sigma stream should solve");
+
+    assert_eq!(traced, plain);
+}
+
+#[test]
 fn boundsafe_resolves_indeterminate_argmin() {
     let kp = known_polytopes::simplex();
     let result = pruned_capacity_for_fixture(kp).expect("ehz_capacity should succeed");

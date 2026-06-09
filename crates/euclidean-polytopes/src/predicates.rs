@@ -176,7 +176,7 @@ fn orient4_error_bound_f64(magnitude_sum: f64) -> Option<f64> {
     padded_error_bound.is_finite().then_some(padded_error_bound)
 }
 
-fn gamma_f64(k: f64) -> f64 {
+pub(crate) fn gamma_f64(k: f64) -> f64 {
     let ku = k * F64_UNIT_ROUNDOFF;
     ku / (1.0 - ku)
 }

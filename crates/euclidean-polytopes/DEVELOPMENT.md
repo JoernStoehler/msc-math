@@ -53,6 +53,51 @@ f64. The retained `f64` volume helpers require already-known boolean
 incidence, validate finite coordinates, and do not decide incidence from
 approximate signed gaps.
 
+The exact rational polar path has an internal f64 rejection filter before the
+exact integer Cramer solve. This is not a public diagnostic API. It is a
+sufficient-condition optimization: it may reject a tuple only when f64
+arithmetic certifies infeasibility; otherwise it falls back to the exact
+integer determinant and feasibility-gap checks. Returned vertices and incidence
+are still produced by exact arithmetic.
+
+The polar sufficient-condition rejection test interprets rational coordinates
+as f64 approximations with per-coordinate input errors
+`e_ij = |a_ij - a_f64_ij|`.
+For f64-derived inputs these errors are exactly zero. For determinant input
+perturbation it uses the conservative bound
+
+```text
+A = max |a_f64_ij|
+E = max e_ij
+|det(a) - det(a_f64)| <= 24 * ((A + E)^4 - A^4).
+```
+
+The implementation evaluates the expanded polynomial
+`24 * (4 A^3 E + 6 A^2 E^2 + 4 A E^3 + E^4)` to avoid cancellation when
+`E` is much smaller than `ulp(A)`.
+
+The determinant value is evaluated by the same cofactor expansion shape as the
+integer helper. Its arithmetic bound is deliberately padded:
+
+```text
+|det(a_f64) - det_f64| <= 256 * gamma_50 * 24 * A^4,
+gamma_k = k u / (1 - k u), u = 2^-53.
+```
+
+For a tuple matrix `A_tuple`, Cramer's rule gives `y_j = nu_j / delta`.
+For an input row `a`, feasibility `a*y <= 1` is checked by the signed gap
+`h = delta - a*nu`; infeasibility is certified only when `sign(delta) * h < 0`
+by more than the accumulated determinant, numerator, row-input, dot-rounding,
+and subtraction error bound. Narrow, non-finite, or unsupported cases fall
+back to exact arithmetic. Nonzero f64 products that overflow or do not remain
+normal are unsupported for this filter and also fall back to exact arithmetic.
+
+Epistemic status: this filter is tested and its bounds are intentionally
+conservative. The compound signed-gap bound has not been promoted to a
+separately written formal lemma. If future work makes this filter a relied-on
+theorem rather than a rejection-only optimization with exact fallback, write
+that proof before expanding the API surface.
+
 Do not add broad public API only because it is mathematically natural. Add a
 function when a current migration caller needs it or when it removes duplicated
 existing code.
@@ -648,7 +693,9 @@ exactly before the exact function returns.
 
 The checked polar APIs currently validate the origin-interior contract exactly.
 The BigRational path uses integer-scaled determinant/gap arithmetic for the hot
-case; it does not use a 5-set f64 precheck or an unproved f64 rejection filter.
+case. It may first use the internal sufficient-condition f64 rejection filter
+described near the top of this file; inconclusive tuples are resolved by exact
+integer-scaled arithmetic.
 
 For `origin_in_interior_of_conv_f64`, keep the diagnostic as the triple-normal
 separation filter proved in `formal/f64-orientation-sign-filters.tex`.

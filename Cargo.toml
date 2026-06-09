@@ -13,6 +13,7 @@ members = [
     "experiments/verification/algorithm-comparison",
     "experiments/numerics",
     "experiments/numerics/gradient",
+    "experiments/performance",
     "experiments/crosspolytope",
     "experiments/visualization",
 ]

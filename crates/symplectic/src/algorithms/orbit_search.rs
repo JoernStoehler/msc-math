@@ -16,6 +16,8 @@ use crate::kkt::saddle_point_solver::{
 use nalgebra::Vector4;
 use num_rational::BigRational;
 use num_traits::{One, Signed, Zero};
+use std::time::Instant;
+use tracing::{info, info_span, Level};
 
 /// Admissibility status of a numerically solved orbit candidate.
 ///
@@ -235,6 +237,45 @@ pub fn solve_orbit_sigma_saddle_point(
 ) -> Result<OrbitKktData, OrbitSolveError> {
     let outcome = solve_kkt_for_dual_vertices(dual_vertices, sigma);
     solve_saddle_point_sigma(sigma, outcome)
+}
+
+struct SigmaSolveProfile {
+    kkt_ms: f64,
+    payload_ms: f64,
+    kkt_outcome: &'static str,
+}
+
+fn solve_orbit_sigma_saddle_point_profiled(
+    dual_vertices: &[Vector4<f64>],
+    sigma: &[usize],
+) -> (Result<OrbitKktData, OrbitSolveError>, SigmaSolveProfile) {
+    let kkt_start = Instant::now();
+    let outcome = solve_kkt_for_dual_vertices(dual_vertices, sigma);
+    let kkt_ms = kkt_start.elapsed().as_secs_f64() * 1000.0;
+    let kkt_outcome = kkt_outcome_label(&outcome);
+
+    let payload_start = Instant::now();
+    let result = solve_saddle_point_sigma(sigma, outcome);
+    let payload_ms = payload_start.elapsed().as_secs_f64() * 1000.0;
+
+    (
+        result,
+        SigmaSolveProfile {
+            kkt_ms,
+            payload_ms,
+            kkt_outcome,
+        },
+    )
+}
+
+fn kkt_outcome_label(outcome: &KktOutcome) -> &'static str {
+    match outcome {
+        KktOutcome::Feasible(_) => "feasible",
+        KktOutcome::Infeasible => "infeasible",
+        KktOutcome::SingularMatrix => "singular_matrix",
+        KktOutcome::TypeCViolation => "type_c_violation",
+        KktOutcome::ConstraintViolation => "constraint_violation",
+    }
 }
 
 fn solve_saddle_point_sigma(
@@ -743,8 +784,23 @@ pub fn aggregate_certified_orbits_with_dual_vertices_exact(
 
 pub(crate) fn solve_sigma_stream_with_dual_vertices(
     dual_vertices: &[Vector4<f64>],
-    mut emit_sigma: impl FnMut(&mut dyn FnMut(&[usize])),
+    emit_sigma: impl FnMut(&mut dyn FnMut(&[usize])),
 ) -> Result<(Vec<OrbitKktData>, u64), OrbitSearchError> {
+    solve_sigma_stream_with_dual_vertices_impl(
+        dual_vertices,
+        emit_sigma,
+        tracing::enabled!(Level::INFO),
+    )
+}
+
+fn solve_sigma_stream_with_dual_vertices_impl(
+    dual_vertices: &[Vector4<f64>],
+    mut emit_sigma: impl FnMut(&mut dyn FnMut(&[usize])),
+    collect_stats: bool,
+) -> Result<(Vec<OrbitKktData>, u64), OrbitSearchError> {
+    let _span = collect_stats
+        .then(|| info_span!("hk2017_candidate_solve", facet_count = dual_vertices.len()).entered());
+    let mut stats = collect_stats.then(CandidateSolveTraceStats::new);
     let mut orbits = Vec::new();
     let mut iterations = 0u64;
     let mut fatal_error: Option<OrbitSearchError> = None;
@@ -754,16 +810,43 @@ pub(crate) fn solve_sigma_stream_with_dual_vertices(
             return;
         }
         iterations += 1;
-        match solve_orbit_sigma_saddle_point(dual_vertices, sigma) {
-            Ok(orbit) => orbits.push(orbit),
-            Err(OrbitSolveError::Inadmissible) => {}
+        if let Some(stats) = stats.as_mut() {
+            stats.record_sigma(sigma);
+        }
+        let solve_result = if let Some(stats) = stats.as_mut() {
+            let (solve_result, profile) =
+                solve_orbit_sigma_saddle_point_profiled(dual_vertices, sigma);
+            stats.record_profile(&profile);
+            solve_result
+        } else {
+            solve_orbit_sigma_saddle_point(dual_vertices, sigma)
+        };
+        match solve_result {
+            Ok(orbit) => {
+                if let Some(stats) = stats.as_mut() {
+                    stats.record_admissible_orbit(&orbit);
+                }
+                orbits.push(orbit);
+            }
+            Err(OrbitSolveError::Inadmissible) => {
+                if let Some(stats) = stats.as_mut() {
+                    stats.record_payload_inadmissible();
+                }
+            }
             Err(OrbitSolveError::NumericalFailure) => {
+                if let Some(stats) = stats.as_mut() {
+                    stats.record_numerical_failure();
+                }
                 fatal_error = Some(OrbitSearchError::NumericalFailure);
             }
         }
     };
 
     emit_sigma(&mut visit);
+
+    if let Some(stats) = stats {
+        stats.emit(dual_vertices.len(), iterations, orbits.len());
+    }
 
     if let Some(err) = fatal_error {
         return Err(err);
@@ -773,6 +856,120 @@ pub(crate) fn solve_sigma_stream_with_dual_vertices(
     }
 
     Ok((orbits, iterations))
+}
+
+struct CandidateSolveTraceStats {
+    search_start: Instant,
+    kkt_ms: f64,
+    payload_ms: f64,
+    kkt_feasible: u64,
+    kkt_infeasible: u64,
+    kkt_singular_matrix: u64,
+    kkt_type_c_violation: u64,
+    kkt_constraint_violation: u64,
+    admissible_f64: u64,
+    indeterminate_f64: u64,
+    payload_inadmissible: u64,
+    numerical_failures: u64,
+    sigma_len_sum: u64,
+    sigma_len_min: u64,
+    sigma_len_max: u64,
+}
+
+impl CandidateSolveTraceStats {
+    fn new() -> Self {
+        Self {
+            search_start: Instant::now(),
+            kkt_ms: 0.0,
+            payload_ms: 0.0,
+            kkt_feasible: 0,
+            kkt_infeasible: 0,
+            kkt_singular_matrix: 0,
+            kkt_type_c_violation: 0,
+            kkt_constraint_violation: 0,
+            admissible_f64: 0,
+            indeterminate_f64: 0,
+            payload_inadmissible: 0,
+            numerical_failures: 0,
+            sigma_len_sum: 0,
+            sigma_len_min: u64::MAX,
+            sigma_len_max: 0,
+        }
+    }
+
+    fn record_sigma(&mut self, sigma: &[usize]) {
+        let sigma_len = sigma.len() as u64;
+        self.sigma_len_sum += sigma_len;
+        self.sigma_len_min = self.sigma_len_min.min(sigma_len);
+        self.sigma_len_max = self.sigma_len_max.max(sigma_len);
+    }
+
+    fn record_profile(&mut self, profile: &SigmaSolveProfile) {
+        self.kkt_ms += profile.kkt_ms;
+        self.payload_ms += profile.payload_ms;
+        match profile.kkt_outcome {
+            "feasible" => self.kkt_feasible += 1,
+            "infeasible" => self.kkt_infeasible += 1,
+            "singular_matrix" => self.kkt_singular_matrix += 1,
+            "type_c_violation" => self.kkt_type_c_violation += 1,
+            "constraint_violation" => self.kkt_constraint_violation += 1,
+            _ => unreachable!("unknown KKT outcome label"),
+        }
+    }
+
+    fn record_admissible_orbit(&mut self, orbit: &OrbitKktData) {
+        match orbit.admissibility {
+            OrbitAdmissibility::AdmissibleF64 => self.admissible_f64 += 1,
+            OrbitAdmissibility::IndeterminateF64 => self.indeterminate_f64 += 1,
+            OrbitAdmissibility::AdmissibleExact => {
+                unreachable!("f64 candidate solve cannot return exact admissibility")
+            }
+        }
+    }
+
+    fn record_payload_inadmissible(&mut self) {
+        self.payload_inadmissible += 1;
+    }
+
+    fn record_numerical_failure(&mut self) {
+        self.numerical_failures += 1;
+    }
+
+    fn emit(self, facet_count: usize, iterations: u64, raw_orbits: usize) {
+        let search_ms = self.search_start.elapsed().as_secs_f64() * 1000.0;
+        let traversal_ms = (search_ms - self.kkt_ms - self.payload_ms).max(0.0);
+        let sigma_len_min = if iterations > 0 {
+            self.sigma_len_min
+        } else {
+            0
+        };
+        info!(
+            facet_count,
+            iterations,
+            raw_orbits,
+            search_ms,
+            traversal_ms,
+            kkt_ms = self.kkt_ms,
+            payload_ms = self.payload_ms,
+            sigma_len_mean = if iterations > 0 {
+                self.sigma_len_sum as f64 / iterations as f64
+            } else {
+                0.0
+            },
+            sigma_len_min,
+            sigma_len_max = self.sigma_len_max,
+            kkt_feasible = self.kkt_feasible,
+            kkt_infeasible = self.kkt_infeasible,
+            kkt_singular_matrix = self.kkt_singular_matrix,
+            kkt_type_c_violation = self.kkt_type_c_violation,
+            kkt_constraint_violation = self.kkt_constraint_violation,
+            admissible_f64 = self.admissible_f64,
+            indeterminate_f64 = self.indeterminate_f64,
+            payload_inadmissible = self.payload_inadmissible,
+            numerical_failures = self.numerical_failures,
+            "hk2017_candidate_solve_summary"
+        );
+    }
 }
 
 /// Aggregate solved orbit candidates with explicit admissibility guarantees.

@@ -571,6 +571,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "exp-performance"
+version = "0.1.0"
+dependencies = [
+ "euclidean-polytopes",
+ "nalgebra",
+ "num-rational",
+ "rand 0.8.5",
+ "rand_chacha 0.3.1",
+ "serde",
+ "serde_json",
+ "symplectic",
+ "tracing",
+ "tracing-subscriber",
+]
+
+[[package]]
 name = "exp-regular-products"
 version = "0.1.0"
 dependencies = [

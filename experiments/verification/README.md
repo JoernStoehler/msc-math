@@ -1,9 +1,15 @@
 # Capacity Verification
 
-This package owns local Rust validation commands for capacity algorithms,
-minimum-orbit result semantics, and geometric orbit recovery. Use
+This package is the experiment-level correctness and regression home for local
+Rust validation commands, capacity algorithms, minimum-orbit result semantics,
+and geometric orbit recovery. Use
 `research/verification.md`, `tasks/current-state.md`, and
 `tasks/planning-notes.md` for interpretation and remaining task state.
+
+Use crate tests for fast local API regressions. Use `experiments/numerics/` for
+numerical error-bound collection, unknown-predicate diagnostics, algebraic
+exactness checks, and gradient-validation experiments. Use
+`experiments/performance/` only for runtime and memory measurement targets.
 
 ## Rust Command Contract
 

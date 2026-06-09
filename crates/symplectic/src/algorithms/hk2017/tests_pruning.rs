@@ -8,6 +8,8 @@ use crate::algorithms::test_helpers::{
     unpruned_capacity_for_dual_vertices, unpruned_capacity_for_fixture,
 };
 use crate::geom::known_polytopes;
+use nalgebra::DMatrix;
+use std::collections::HashSet;
 
 // ── Combinatorics utility ──
 
@@ -20,6 +22,125 @@ fn combinations_basic() {
     assert_eq!(combinations(4, 2).len(), 6); // C(4,2) = 6
     assert_eq!(combinations(5, 3).len(), 10); // C(5,3) = 10
     assert_eq!(combinations(5, 5).len(), 1); // C(5,5) = 1
+}
+
+fn old_filtered_pruned_sigmas(transition_is_allowed: &DMatrix<bool>) -> HashSet<Vec<usize>> {
+    let facet_count = transition_is_allowed.nrows();
+    let mut sigmas = HashSet::new();
+    for m in 2..=facet_count {
+        for subset in combinations(facet_count, m) {
+            super::permutations::for_each_cyclic_permutation(&subset, &mut |sigma| {
+                if crate::algorithms::facet_adjacency::is_feasible_cycle(
+                    sigma,
+                    transition_is_allowed,
+                ) {
+                    sigmas.insert(sigma.to_vec());
+                }
+            });
+        }
+    }
+    sigmas
+}
+
+fn graph_native_pruned_sigmas(transition_is_allowed: &DMatrix<bool>) -> HashSet<Vec<usize>> {
+    SimpleDirectedCyclesCanonical::new(transition_is_allowed).collect()
+}
+
+fn complete_transition_matrix(facet_count: usize) -> DMatrix<bool> {
+    DMatrix::from_fn(facet_count, facet_count, |i, j| i != j)
+}
+
+#[test]
+fn graph_native_pruned_sigmas_match_filtered_cyclic_permutations_on_complete_graph() {
+    let transition = complete_transition_matrix(6);
+    assert_eq!(
+        graph_native_pruned_sigmas(&transition),
+        old_filtered_pruned_sigmas(&transition)
+    );
+}
+
+#[test]
+fn graph_native_pruned_sigmas_match_filtered_cyclic_permutations_on_sparse_graph() {
+    let transition = DMatrix::from_row_slice(
+        6,
+        6,
+        &[
+            false, true, false, false, true, false, //
+            false, false, true, false, false, true, //
+            true, false, false, true, false, false, //
+            false, true, false, false, true, false, //
+            false, false, true, false, false, true, //
+            true, false, false, true, false, false, //
+        ],
+    );
+    assert_eq!(
+        graph_native_pruned_sigmas(&transition),
+        old_filtered_pruned_sigmas(&transition)
+    );
+}
+
+#[test]
+fn graph_native_cycle_iterator_emits_unique_stream_and_is_fused_after_eof() {
+    let transition = DMatrix::from_row_slice(
+        5,
+        5,
+        &[
+            false, true, true, false, false, //
+            false, false, true, true, false, //
+            true, false, false, true, false, //
+            false, true, false, false, true, //
+            true, false, true, false, false, //
+        ],
+    );
+    let mut cycle_iter = SimpleDirectedCyclesCanonical::new(&transition);
+    let first = cycle_iter.next().expect("fixture has cycles");
+    let mut emitted = vec![first];
+    emitted.extend(cycle_iter.by_ref());
+
+    assert_eq!(cycle_iter.next(), None);
+    assert_eq!(cycle_iter.next(), None);
+
+    let unique: HashSet<_> = emitted.iter().cloned().collect();
+    assert_eq!(unique.len(), emitted.len(), "duplicate emitted cycle");
+    assert_eq!(unique, old_filtered_pruned_sigmas(&transition));
+}
+
+#[test]
+fn graph_native_pruned_sigmas_are_canonical_simple_directed_cycles() {
+    let transition = DMatrix::from_row_slice(
+        5,
+        5,
+        &[
+            false, true, true, false, false, //
+            false, false, true, true, false, //
+            true, false, false, true, false, //
+            false, true, false, false, true, //
+            true, false, true, false, false, //
+        ],
+    );
+
+    for sigma in graph_native_pruned_sigmas(&transition) {
+        assert!(sigma.len() >= 2);
+        let min = *sigma.iter().min().expect("sigma is nonempty");
+        assert_eq!(sigma[0], min, "sigma is not rotation-canonical: {sigma:?}");
+        let unique: HashSet<_> = sigma.iter().copied().collect();
+        assert_eq!(
+            unique.len(),
+            sigma.len(),
+            "sigma repeats a facet: {sigma:?}"
+        );
+        assert!(crate::algorithms::facet_adjacency::is_feasible_cycle(
+            &sigma,
+            &transition
+        ));
+    }
+}
+
+#[test]
+#[should_panic(expected = "transition_is_allowed must be square")]
+fn graph_native_cycle_enumerator_rejects_rectangular_matrix() {
+    let transition = DMatrix::from_element(2, 3, true);
+    let _ = SimpleDirectedCyclesCanonical::new(&transition);
 }
 
 // ── Direct pruning agreement ──

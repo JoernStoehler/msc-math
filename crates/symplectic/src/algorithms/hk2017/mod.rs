@@ -22,7 +22,10 @@ use crate::algorithms::{OrbitKktData, OrbitSearchError};
 use nalgebra::{DMatrix, Vector4};
 
 pub use combinatorics::combinations;
-pub use enumeration::{for_each_sigma_pruned_by_transition, for_each_sigma_unpruned_facet_count};
+pub use enumeration::{
+    for_each_sigma_pruned_by_transition, for_each_sigma_unpruned_facet_count,
+    for_each_simple_directed_cycle_canonical, SimpleDirectedCyclesCanonical,
+};
 
 /// Solve every HK2017 sigma candidate without transition pruning.
 ///
