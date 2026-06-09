@@ -103,6 +103,21 @@ impl ComputedPolytopeRecorder {
             accepted_in_iteration: meta.accepted_in_iteration,
             became_run_final: meta.became_run_final,
             polytope_key,
+            source_name: None,
+            lineage_id: None,
+            polytope_type: None,
+            facet_count: None,
+            starting_sys: None,
+            final_capacity: None,
+            final_volume: None,
+            final_sys: None,
+            total_delta: None,
+            n_ascent_phases: None,
+            n_gradient_iters_total: None,
+            n_escape_overshoot: None,
+            n_escape_wiggle: None,
+            best_strategy: None,
+            total_time_ms: None,
         });
         result_idx
     }

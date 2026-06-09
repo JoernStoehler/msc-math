@@ -26,7 +26,7 @@ pub use ascent::{
     compute_sys_computation_cached, compute_sys_from_capacity, computed_polytopes_path_for,
     dual_vertices_rational_strings, expensive_computations_cache_path_for, finalize_ascent_output,
     load_completed_names, open_ascent_writers, orbit_scalars_from_result, parse_ascent_args,
-    rational_vec4_to_strings, run_parallel_seeds, smoke_output_path, trace_path_for,
+    polytope_key, rational_vec4_to_strings, run_parallel_seeds, smoke_output_path, trace_path_for,
     write_expensive_computation_cache_rows, write_seed_result, ActiveSysState, AscentArgs,
     AscentEventRow, AscentMode, AscentOutputPaths, AscentWriters, ComputedPolytopeMeta,
     ComputedPolytopeRecorder, ComputedPolytopeRow, ExpensiveComputationCache,

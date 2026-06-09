@@ -11,7 +11,8 @@ Producer outputs split expensive polytope computations from run metadata:
   inputs and write self-contained shard-local cache outputs.
 - `*-ascent-events.jsonl`: run metadata saying where an ascent run used a
   polytope: seed, phase, iteration, role, accepted/final flags, and
-  `polytope_key`. This is not cache data.
+  `polytope_key`. A `run_completed` event also carries the endpoint summary
+  fields currently mirrored in `*-endpoints.jsonl`. This is not cache data.
 
 Do not cache ascent orchestration such as rejected/accepted decisions,
 gradients, or seed state. Rerun cheap control flow; reuse expensive

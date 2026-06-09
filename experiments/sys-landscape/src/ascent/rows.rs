@@ -117,6 +117,36 @@ pub struct AscentEventRow {
     pub accepted_in_iteration: bool,
     pub became_run_final: bool,
     pub polytope_key: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub source_name: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub lineage_id: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub polytope_type: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub facet_count: Option<usize>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub starting_sys: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub final_capacity: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub final_volume: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub final_sys: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub total_delta: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub n_ascent_phases: Option<usize>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub n_gradient_iters_total: Option<usize>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub n_escape_overshoot: Option<usize>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub n_escape_wiggle: Option<usize>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub best_strategy: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub total_time_ms: Option<f64>,
 }
 
 /// Result of processing one seed: the summary row plus its trace rows.
