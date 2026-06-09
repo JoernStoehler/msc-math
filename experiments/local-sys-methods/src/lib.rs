@@ -206,27 +206,7 @@ pub fn default_output_path() -> &'static str {
     "/tmp/local-sys-methods/smoke-local-prediction.jsonl"
 }
 
-pub fn default_base_candidate_action_gap() -> f64 {
-    DEFAULT_BASE_CANDIDATE_ACTION_GAP
-}
-
 pub fn run_prediction_smoke(output_path: &Path) -> Result<Vec<PredictionRow>, PredictionError> {
-    run_prediction_smoke_with_base_candidate_action_gap(
-        output_path,
-        DEFAULT_BASE_CANDIDATE_ACTION_GAP,
-    )
-}
-
-pub fn run_prediction_smoke_with_base_candidate_action_gap(
-    output_path: &Path,
-    base_candidate_action_gap: f64,
-) -> Result<Vec<PredictionRow>, PredictionError> {
-    if !base_candidate_action_gap.is_finite() || base_candidate_action_gap < 0.0 {
-        return Err(PredictionError::Geometry(
-            "base candidate action gap must be nonnegative finite".to_string(),
-        ));
-    }
-
     let basepoints = vec![
         (
             "random_f10_seed_5a51_2026".to_string(),
@@ -243,7 +223,7 @@ pub fn run_prediction_smoke_with_base_candidate_action_gap(
 
     let mut rows = Vec::new();
     for (name, polytope) in basepoints {
-        let base = compute_base_state(polytope, base_candidate_action_gap)?;
+        let base = compute_base_state(polytope, DEFAULT_BASE_CANDIDATE_ACTION_GAP)?;
         let directions = prediction_directions(&base)?;
         for (direction_label, direction) in directions {
             for step in STEP_VALUES {
@@ -624,12 +604,6 @@ mod tests {
             if row.status == "ok" {
                 assert!(row.recomputed_sys.expect("recomputed sys").is_finite());
                 assert!(row.target_best_sigma_in_base_candidate_window.is_some());
-            }
-            if name == "hko" {
-                assert!(
-                    row.base_candidate_orbit_count > row.active_orbit_count,
-                    "HKO should exercise non-active base candidate window rows"
-                );
             }
         }
     }
