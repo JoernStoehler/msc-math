@@ -1,7 +1,9 @@
 # Algorithm Comparison
 
-This package owns performance and variant-consistency experiments for
-capacity-algorithm implementation choices.
+This package owns variant-consistency experiments and historical comparison
+artifacts for capacity-algorithm implementation choices. Use
+`experiments/performance/` for new reusable profiling targets and profiling
+post-processing.
 
 ## Rust Command Contract
 
