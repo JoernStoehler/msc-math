@@ -59,6 +59,10 @@ The warning fields say how much trust to put in the comparison:
   `target_best_sigma_in_base_candidate_window` describe the base action-gap
   candidate window used to collect the base orbit result and to diagnose
   switches;
+- `target_best_sigma_base_transition_allowed`,
+  `target_best_sigma_base_solve_status`, `target_best_sigma_base_action`, and
+  `target_best_sigma_base_action_gap` evaluate the target winner back at `a0`
+  as a switch-miss diagnostic;
 - `active_min_beta_margin` and `active_max_q_error_bound` summarize the active
   set used for the subdifferential;
 - `best_beta_margin` and `best_q_error_bound` are only best-orbit diagnostics.
@@ -71,6 +75,15 @@ heuristic and not scale-normalized. It is not a completeness claim over finite
 distances. HK2017 can miss a sigma that becomes relevant after moving away from
 `a0`. Use the window only as a heuristic signal for whether an observed target
 switch was already visible near `a0`.
+
+When a target sigma is absent from the base candidate window, the base-solve
+fields classify that absence locally. For example, a target sigma may already
+solve at `a0` but sit outside the base action window, or it may fail the
+base-point KKT solve and only become admissible after moving. This is a
+diagnostic, not a proof that no other missing sigma matters. The single-sigma
+KKT solve does not by itself certify that HK2017 would enumerate the sigma as a
+geometric candidate at `a0`; read it together with
+`target_best_sigma_base_transition_allowed`.
 
 The active orbit set is re-filtered from the same base action-gap window by
 near-minimum action. The wider base search can recover exact minimizers that a

@@ -19,6 +19,7 @@ use std::fs::{self, File};
 use std::io::{BufWriter, Write};
 use std::path::Path;
 use symplectic::algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega;
+use symplectic::algorithms::facet_adjacency::is_feasible_cycle;
 use symplectic::algorithms::{OrbitKktData, OrbitSearchError, OrbitSearchResult};
 use symplectic::derivatives::{
     capacity_subgradients_a, clarke_directional_derivative_a, systolic_ratio_gradient_a,
@@ -27,8 +28,8 @@ use symplectic::derivatives::{
 use symplectic::exact::omega_signs_exact;
 use symplectic::geom::known_polytopes::{self, KnownPolytope};
 use symplectic::{
-    aggregate_orbits_with_dual_vertices_exact, solve_pruned_hk2017_candidates, systolic_ratio,
-    OrbitGuaranteeMode,
+    aggregate_orbits_with_dual_vertices_exact, solve_orbit_sigma_saddle_point,
+    solve_pruned_hk2017_candidates, systolic_ratio, OrbitGuaranteeMode,
 };
 
 const ACTIVE_ORBIT_RTOL: f64 = 1e-9;
@@ -84,6 +85,10 @@ pub struct PredictionRow {
     pub best_sigma_changed: Option<bool>,
     pub target_best_sigma_in_base_active_set: Option<bool>,
     pub target_best_sigma_in_base_candidate_window: Option<bool>,
+    pub target_best_sigma_base_transition_allowed: Option<bool>,
+    pub target_best_sigma_base_solve_status: Option<String>,
+    pub target_best_sigma_base_action: Option<f64>,
+    pub target_best_sigma_base_action_gap: Option<f64>,
     pub active_orbit_count: usize,
     pub base_candidate_orbit_count: usize,
     pub base_candidate_action_gap: f64,
@@ -399,6 +404,10 @@ fn prediction_row(
         best_sigma_changed: None,
         target_best_sigma_in_base_active_set: None,
         target_best_sigma_in_base_candidate_window: None,
+        target_best_sigma_base_transition_allowed: None,
+        target_best_sigma_base_solve_status: None,
+        target_best_sigma_base_action: None,
+        target_best_sigma_base_action_gap: None,
         active_orbit_count: base.active_orbits.len(),
         base_candidate_orbit_count: base.capacity.orbits.len(),
         base_candidate_action_gap: base.candidate_action_gap,
@@ -450,6 +459,26 @@ fn prediction_row(
             .iter()
             .any(|orbit| orbit.sigma == target_best_sigma),
     );
+    let base_transition_is_allowed = build_transition_matrix_from_facet_intersections_and_omega(
+        &base.polytope.facet_intersection_is_nonempty,
+        &base.polytope.omega_signs,
+    );
+    row.target_best_sigma_base_transition_allowed = Some(is_feasible_cycle(
+        &target_best_sigma,
+        &base_transition_is_allowed,
+    ));
+    match solve_orbit_sigma_saddle_point(&base.polytope.dual_vertices_f64, &target_best_sigma) {
+        Ok(base_target_orbit) => {
+            row.target_best_sigma_base_solve_status =
+                Some(format!("ok:{:?}", base_target_orbit.admissibility));
+            row.target_best_sigma_base_action = Some(base_target_orbit.action);
+            row.target_best_sigma_base_action_gap =
+                Some(base_target_orbit.action - base.capacity.min_action);
+        }
+        Err(err) => {
+            row.target_best_sigma_base_solve_status = Some(format!("{err:?}"));
+        }
+    }
     row.target_best_sigma = Some(target_best_sigma);
     Ok(row)
 }
@@ -601,6 +630,8 @@ mod tests {
             if row.status == "ok" {
                 assert!(row.recomputed_sys.expect("recomputed sys").is_finite());
                 assert!(row.target_best_sigma_in_base_candidate_window.is_some());
+                assert!(row.target_best_sigma_base_transition_allowed.is_some());
+                assert!(row.target_best_sigma_base_solve_status.is_some());
             }
         }
     }
