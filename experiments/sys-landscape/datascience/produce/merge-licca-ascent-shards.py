@@ -139,6 +139,15 @@ def keep_trace_paths(paths: list[Path]) -> list[Path]:
     return [path for path in paths if path.name.endswith("-trace.jsonl")]
 
 
+def keep_producer_cache_paths(paths: list[Path]) -> list[Path]:
+    return [
+        path
+        for path in paths
+        if path.name.endswith("-cache.jsonl")
+        and not path.name.endswith("-expensive-computations-cache.jsonl")
+    ]
+
+
 def dedup_rows(
     paths: list[Path],
     key_field: str,
@@ -354,12 +363,12 @@ def main() -> None:
         [pattern.replace(".jsonl", "-trace.jsonl") for pattern in general_shard_globs],
         include_canonical=not (args.fresh_fixed_f or args.smoke_fixed_f),
     ))
-    general_cache_paths = collect_paths(
+    general_cache_paths = keep_producer_cache_paths(collect_paths(
         produce_dir,
         "ascent-general-cache.jsonl",
         [pattern.replace(".jsonl", "-cache.jsonl") for pattern in general_shard_globs],
         include_canonical=not (args.fresh_fixed_f or args.smoke_fixed_f),
-    )
+    ))
     general_computed_polytope_paths = collect_paths(
         produce_dir,
         "ascent-general-computed-polytopes.jsonl",
@@ -378,12 +387,12 @@ def main() -> None:
         [pattern.replace(".jsonl", "-trace.jsonl") for pattern in product_shard_globs],
         include_canonical=not (args.fresh_fixed_f or args.smoke_fixed_f),
     ))
-    product_cache_paths = collect_paths(
+    product_cache_paths = keep_producer_cache_paths(collect_paths(
         produce_dir,
         "ascent-product-cache.jsonl",
         [pattern.replace(".jsonl", "-cache.jsonl") for pattern in product_shard_globs],
         include_canonical=not (args.fresh_fixed_f or args.smoke_fixed_f),
-    )
+    ))
     product_computed_polytope_paths = collect_paths(
         produce_dir,
         "ascent-product-computed-polytopes.jsonl",

@@ -65,6 +65,21 @@ impl ExpensiveComputationCache {
                 sys: row.sys,
             });
         }
+        if let Some(row) = self
+            .used_rows
+            .lock()
+            .expect("used cache mutex poisoned")
+            .get(&key)
+            .cloned()
+        {
+            let mut stats = self.stats.lock().expect("cache stats mutex poisoned");
+            stats.hits += 1;
+            return Some(SysComputation {
+                capacity: row.capacity_result,
+                vol: row.volume,
+                sys: row.sys,
+            });
+        }
 
         let volume = exact_volume_from_incidence_as_f64(
             &polytope.vertices,
