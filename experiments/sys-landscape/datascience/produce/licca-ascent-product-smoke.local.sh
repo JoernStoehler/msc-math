@@ -20,6 +20,7 @@ SEED_TIME_BUDGET_SECS="${SEED_TIME_BUDGET_SECS:-1}"
 OUT_ROOT="${OUT_ROOT:-$(mktemp -d)}"
 OUT_DIR="${OUT_DIR:-$OUT_ROOT/produce/licca-shards/$KIND}"
 OUT="$OUT_DIR/product-shard-${SHARD_ID}.jsonl"
+CACHE_IN="${EXPENSIVE_COMPUTATIONS_CACHE_IN:-}"
 N_START=$((BASE_N_START + SHARD_ID * SEEDS_PER_SHARD))
 
 mkdir -p "$OUT_DIR"
@@ -33,12 +34,20 @@ echo "  n-start:               $N_START"
 echo "  seed time budget secs: $SEED_TIME_BUDGET_SECS"
 echo "  threads:               $RAYON_NUM_THREADS"
 echo "  out:                   $OUT"
+if [[ -n "$CACHE_IN" && -s "$CACHE_IN" ]]; then
+  echo "  expensive cache in:    $CACHE_IN"
+  CACHE_ARGS=(--expensive-computations-cache "$CACHE_IN")
+else
+  echo "  expensive cache in:    <none>"
+  CACHE_ARGS=()
+fi
 
 cargo run -p exp-sys-landscape --bin sys-dataset-ascent-product -- \
     --no-db-update \
     --n "$SEEDS_PER_SHARD" \
     --n-start "$N_START" \
     --seed-time-budget-secs "$SEED_TIME_BUDGET_SECS" \
+    "${CACHE_ARGS[@]}" \
     --out "$OUT"
 
 echo "  produce root:          $OUT_ROOT/produce"

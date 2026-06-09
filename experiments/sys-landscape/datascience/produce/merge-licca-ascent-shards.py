@@ -97,6 +97,14 @@ def computed_polytope_key(row: dict[str, Any]) -> str:
     return str(row["result_id"])
 
 
+def ascent_event_key(row: dict[str, Any]) -> str:
+    return str(row["event_id"])
+
+
+def expensive_computation_key(row: dict[str, Any]) -> str:
+    return str(row["polytope_key"])
+
+
 def summary_cache_key(row: dict[str, Any]) -> str:
     return json.dumps(
         row["final_dual_vertices_rational"], sort_keys=True, separators=(",", ":")
@@ -122,6 +130,8 @@ def keep_summary_paths(paths: list[Path]) -> list[Path]:
         if not path.name.endswith("-trace.jsonl")
         and not path.name.endswith("-cache.jsonl")
         and not path.name.endswith("-computed-polytopes.jsonl")
+        and not path.name.endswith("-ascent-events.jsonl")
+        and not path.name.endswith("-expensive-computations-cache.jsonl")
     ]
 
 
@@ -159,6 +169,24 @@ def dedup_cache_rows(paths: list[Path]) -> tuple[list[dict[str, Any]], dict[str,
             rows_by_key[key] = row
             sources_by_key.setdefault(key, []).append(path)
     return sorted(rows_by_key.values(), key=cache_key), sources_by_key
+
+
+def validate_event_cache_coverage(
+    events: list[dict[str, Any]],
+    expensive_rows: list[dict[str, Any]],
+) -> list[str]:
+    cache_keys = {expensive_computation_key(row) for row in expensive_rows}
+    missing = [
+        str(row.get("event_id", "<missing-event-id>"))
+        for row in events
+        if str(row.get("polytope_key", "")) not in cache_keys
+    ]
+    if missing:
+        raise SystemExit(
+            f"{len(missing)} ascent events lack matching expensive-computation cache rows; "
+            f"first missing events: {missing[:20]}"
+        )
+    return missing
 
 
 def validate_summary_cache(
@@ -295,21 +323,23 @@ def main() -> None:
         ]
     elif args.fresh_fixed_f:
         general_shard_globs = [
-            "licca-shards/general-cache-production-1024/general-shard-*.jsonl",
+            "licca-shards/general-computed-production-1024/general-shard-*.jsonl",
         ]
         product_shard_globs = [
-            "licca-shards/product-cache-production-1024/product-shard-*.jsonl",
+            "licca-shards/product-computed-production-1024/product-shard-*.jsonl",
         ]
     else:
         general_shard_globs = [
             "licca-shards/general/general-shard-*.jsonl",
             "licca-shards/general-production-1024/general-shard-*.jsonl",
             "licca-shards/general-cache-production-1024/general-shard-*.jsonl",
+            "licca-shards/general-computed-production-1024/general-shard-*.jsonl",
         ]
         product_shard_globs = [
             "licca-shards/product/product-shard-*.jsonl",
             "licca-shards/product-production-1024/product-shard-*.jsonl",
             "licca-shards/product-cache-production-1024/product-shard-*.jsonl",
+            "licca-shards/product-computed-production-1024/product-shard-*.jsonl",
         ]
 
     general_paths = keep_summary_paths(collect_paths(
@@ -360,6 +390,26 @@ def main() -> None:
         [pattern.replace(".jsonl", "-computed-polytopes.jsonl") for pattern in product_shard_globs],
         include_canonical=not (args.fresh_fixed_f or args.smoke_fixed_f),
     )
+    ascent_event_paths = collect_paths(
+        produce_dir,
+        "ascent-events.jsonl",
+        [pattern.replace(".jsonl", "-ascent-events.jsonl") for pattern in general_shard_globs]
+        + [pattern.replace(".jsonl", "-ascent-events.jsonl") for pattern in product_shard_globs],
+        include_canonical=not (args.fresh_fixed_f or args.smoke_fixed_f),
+    )
+    expensive_computation_cache_paths = collect_paths(
+        produce_dir,
+        "expensive-computations-cache.jsonl",
+        [
+            pattern.replace(".jsonl", "-expensive-computations-cache.jsonl")
+            for pattern in general_shard_globs
+        ]
+        + [
+            pattern.replace(".jsonl", "-expensive-computations-cache.jsonl")
+            for pattern in product_shard_globs
+        ],
+        include_canonical=True,
+    )
 
     general_rows, _ = dedup_rows(general_paths, "summary", row_key)
     general_trace_rows, _ = dedup_rows(general_trace_paths, "trace", trace_key)
@@ -377,12 +427,23 @@ def main() -> None:
         "computed-polytope",
         computed_polytope_key,
     )
+    ascent_event_rows, _ = dedup_rows(
+        ascent_event_paths,
+        "ascent-event",
+        ascent_event_key,
+    )
+    expensive_computation_cache_rows, _ = dedup_rows(
+        expensive_computation_cache_paths,
+        "expensive-computation-cache",
+        expensive_computation_key,
+    )
     general_missing_cache = validate_summary_cache(
         "general", general_rows, general_cache_rows, args.require_cache
     )
     product_missing_cache = validate_summary_cache(
         "product", product_rows, product_cache_rows, args.require_cache
     )
+    validate_event_cache_coverage(ascent_event_rows, expensive_computation_cache_rows)
 
     print("# LICCA Ascent Shard Merge Report")
     print()
@@ -430,6 +491,16 @@ def main() -> None:
     print(f"- product computed-polytope input files: `{len(product_computed_polytope_paths)}`")
     print(f"- product computed-polytope rows: `{len(product_computed_polytope_rows)}`")
     print()
+    print(f"## expensive-computation cache and ascent events")
+    print(f"- expensive-computation cache input files: `{len(expensive_computation_cache_paths)}`")
+    for path in expensive_computation_cache_paths:
+        print(f"  - `{path}`")
+    print(f"- expensive-computation cache rows: `{len(expensive_computation_cache_rows)}`")
+    print(f"- ascent-event input files: `{len(ascent_event_paths)}`")
+    for path in ascent_event_paths:
+        print(f"  - `{path}`")
+    print(f"- ascent-event rows: `{len(ascent_event_rows)}`")
+    print()
 
     if args.write:
         outputs = [
@@ -447,6 +518,11 @@ def main() -> None:
                 produce_dir / "ascent-product-licca-merged-computed-polytopes.jsonl",
                 product_computed_polytope_rows,
             ),
+            (
+                produce_dir / "expensive-computations-cache-licca-merged.jsonl",
+                expensive_computation_cache_rows,
+            ),
+            (produce_dir / "ascent-events-licca-merged.jsonl", ascent_event_rows),
         ]
         for path, rows in outputs:
             write_jsonl(path, rows)
