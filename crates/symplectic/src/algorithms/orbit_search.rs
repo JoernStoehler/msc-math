@@ -809,6 +809,7 @@ fn solve_sigma_stream_with_dual_vertices_impl(
         if fatal_error.is_some() {
             return;
         }
+        let visit_start = stats.as_ref().map(|_| Instant::now());
         iterations += 1;
         if let Some(stats) = stats.as_mut() {
             stats.record_sigma(sigma);
@@ -840,6 +841,9 @@ fn solve_sigma_stream_with_dual_vertices_impl(
                 fatal_error = Some(OrbitSearchError::NumericalFailure);
             }
         }
+        if let (Some(stats), Some(visit_start)) = (stats.as_mut(), visit_start) {
+            stats.record_candidate_callback_ms(visit_start.elapsed().as_secs_f64() * 1000.0);
+        }
     };
 
     emit_sigma(&mut visit);
@@ -860,6 +864,7 @@ fn solve_sigma_stream_with_dual_vertices_impl(
 
 struct CandidateSolveTraceStats {
     search_start: Instant,
+    candidate_callback_ms: f64,
     kkt_ms: f64,
     payload_ms: f64,
     kkt_feasible: u64,
@@ -880,6 +885,7 @@ impl CandidateSolveTraceStats {
     fn new() -> Self {
         Self {
             search_start: Instant::now(),
+            candidate_callback_ms: 0.0,
             kkt_ms: 0.0,
             payload_ms: 0.0,
             kkt_feasible: 0,
@@ -917,6 +923,10 @@ impl CandidateSolveTraceStats {
         }
     }
 
+    fn record_candidate_callback_ms(&mut self, elapsed_ms: f64) {
+        self.candidate_callback_ms += elapsed_ms;
+    }
+
     fn record_admissible_orbit(&mut self, orbit: &OrbitKktData) {
         match orbit.admissibility {
             OrbitAdmissibility::AdmissibleF64 => self.admissible_f64 += 1,
@@ -937,7 +947,9 @@ impl CandidateSolveTraceStats {
 
     fn emit(self, facet_count: usize, iterations: u64, raw_orbits: usize) {
         let search_ms = self.search_start.elapsed().as_secs_f64() * 1000.0;
-        let traversal_ms = (search_ms - self.kkt_ms - self.payload_ms).max(0.0);
+        let emit_outside_callback_ms = (search_ms - self.candidate_callback_ms).max(0.0);
+        let callback_overhead_ms =
+            (self.candidate_callback_ms - self.kkt_ms - self.payload_ms).max(0.0);
         let sigma_len_min = if iterations > 0 {
             self.sigma_len_min
         } else {
@@ -948,7 +960,10 @@ impl CandidateSolveTraceStats {
             iterations,
             raw_orbits,
             search_ms,
-            traversal_ms,
+            emit_outside_callback_ms,
+            candidate_callback_ms = self.candidate_callback_ms,
+            callback_overhead_ms,
+            traversal_ms = emit_outside_callback_ms,
             kkt_ms = self.kkt_ms,
             payload_ms = self.payload_ms,
             sigma_len_mean = if iterations > 0 {
