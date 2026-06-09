@@ -11,19 +11,22 @@
 #SBATCH --job-name=ds-general
 #SBATCH --partition=epyc
 #SBATCH --array=0-3
-#SBATCH --cpus-per-task=128
+#SBATCH --cpus-per-task=64
 #SBATCH --mem=32G
-#SBATCH --time=06:00:00
+#SBATCH --time=02:00:00
 #SBATCH --output=logs/%x-%A_%a.out
 
 # Resource justification:
 # - partition=epyc is the CPU-only production partition.
-# - 128 CPUs uses a full normal epyc node. The binary parallelizes over seed
-#   indices, so this only makes sense with a large shard.
-# - 1024 seeds per shard keeps 128 Rayon workers busy for most of the run.
+# - 64 CPUs was chosen after `sbatch --test-only` showed the same start time as
+#   lower-risk 32 CPU variants and a much earlier start than 128 CPU variants.
+# - 1024 seeds per shard keeps the workers busy while preserving the reviewed
+#   fixed-F shard topology.
 # - 32G memory is conservative headroom above the historical 100 MB per active
 #   seed estimate.
-# - 6h wall time allows heavy-tail seeds. On timeout, rerun this same script.
+# - 2h wall time is conservative over the 1024/64*120s ideal budget bound. The
+#   1h variant had the same scheduler start estimate, so 2h reduces timeout and
+#   Jörn-loop risk without observed queue-start cost.
 # - array=0-3 writes a fresh fixed-F output directory with shard-local
 #   expensive-computation cache additions and ascent events.
 
@@ -33,7 +36,7 @@ cd "$HOME/msc-math"
 export CARGO_TARGET_DIR="${CARGO_TARGET_DIR:-/hpc/gpfs2/scratch/u/stoehljo/cargo-target}"
 export RAYON_NUM_THREADS="$SLURM_CPUS_PER_TASK"
 
-RUN_LABEL="computed-production-general-1024x128"
+RUN_LABEL="computed-production-general-1024x64"
 KIND="general"
 SHARD_ID="${SLURM_ARRAY_TASK_ID:-0}"
 BASE_N_START=0
