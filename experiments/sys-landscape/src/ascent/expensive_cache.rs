@@ -104,10 +104,7 @@ impl ExpensiveComputationCache {
             sys,
         };
         {
-            let mut used = self
-                .used_rows
-                .lock()
-                .expect("emitted cache mutex poisoned");
+            let mut used = self.used_rows.lock().expect("emitted cache mutex poisoned");
             used.entry(key).or_insert(row);
         }
         {
@@ -123,10 +120,7 @@ impl ExpensiveComputationCache {
     }
 
     pub fn used_rows(&self) -> Vec<ExpensiveComputationCacheRow> {
-        let used = self
-            .used_rows
-            .lock()
-            .expect("used cache mutex poisoned");
+        let used = self.used_rows.lock().expect("used cache mutex poisoned");
         let mut rows: Vec<_> = used.values().cloned().collect();
         rows.sort_by(|a, b| a.polytope_key.cmp(&b.polytope_key));
         rows
