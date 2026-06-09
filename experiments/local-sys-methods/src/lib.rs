@@ -38,6 +38,8 @@ const RANDOM_FACET_COUNT: usize = 10;
 const RANDOM_H_MIN: f64 = 0.5;
 const RANDOM_H_MAX: f64 = 2.0;
 const STEP_VALUES: [f64; 3] = [1e-4, 1e-3, 1e-2];
+// Base-only collection window. This is a heuristic diagnostic, and also lets
+// exact minimizers survive f64 lower-bound trimming before the active filter.
 const BASE_CANDIDATE_ACTION_GAP: f64 = 1e-2;
 
 #[derive(Clone, Debug)]
@@ -590,11 +592,19 @@ mod tests {
             assert!(row.active_min_beta_margin.is_finite());
             assert!(row.active_max_q_error_bound.is_finite());
             assert!(row.base_candidate_orbit_count >= row.active_orbit_count);
+            assert_eq!(row.base_candidate_action_gap, BASE_CANDIDATE_ACTION_GAP);
             if name == "random" {
                 assert_eq!(row.status, "ok");
             }
             if row.status == "ok" {
                 assert!(row.recomputed_sys.expect("recomputed sys").is_finite());
+                assert!(row.target_best_sigma_in_base_candidate_window.is_some());
+            }
+            if name == "hko" {
+                assert!(
+                    row.base_candidate_orbit_count > row.active_orbit_count,
+                    "HKO should exercise non-active base candidate window rows"
+                );
             }
         }
     }

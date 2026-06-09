@@ -56,8 +56,9 @@ The warning fields say how much trust to put in the comparison:
 - `target_best_sigma_in_base_active_set` says whether the recomputed target
   best sigma was among the base active sigmas;
 - `base_candidate_orbit_count`, `base_candidate_action_gap`, and
-  `target_best_sigma_in_base_candidate_window` describe a small base action-gap
-  candidate window used only as a switch diagnostic;
+  `target_best_sigma_in_base_candidate_window` describe the base action-gap
+  candidate window used to collect the base orbit result and to diagnose
+  switches;
 - `active_min_beta_margin` and `active_max_q_error_bound` summarize the active
   set used for the subdifferential;
 - `best_beta_margin` and `best_q_error_bound` are only best-orbit diagnostics.
@@ -65,10 +66,16 @@ The warning fields say how much trust to put in the comparison:
 `q_error_bound` is a KKT `Q` error bound from the capacity solver. It is useful
 as a numerical warning. It is not a proven first-order prediction-error bound.
 
-The base candidate window is not a completeness claim over finite distances.
-HK2017 can miss a sigma that becomes relevant after moving away from `a0`.
-Use the window only as a heuristic signal for whether an observed target switch
-was already visible near `a0`.
+The base candidate window uses a fixed absolute action gap. It is intentionally
+heuristic and not scale-normalized. It is not a completeness claim over finite
+distances. HK2017 can miss a sigma that becomes relevant after moving away from
+`a0`. Use the window only as a heuristic signal for whether an observed target
+switch was already visible near `a0`.
+
+The active orbit set is re-filtered from the same base action-gap window by
+near-minimum action. The wider base search can recover exact minimizers that a
+zero-gap f64 trim would hide, but it is still not a proof that every active
+sigma has been found.
 
 The HKO pentagon product is included because it is a non-generic stress case.
 Many active orbits or target sigmas outside the base active set should be read as
