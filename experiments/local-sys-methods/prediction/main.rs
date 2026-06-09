@@ -41,4 +41,8 @@ fn main() {
     );
     println!("  successful rows: {successful}");
     println!("  generic basepoint success: {generic_success}");
+    if successful == 0 || !generic_success {
+        eprintln!("local-sys-prediction-smoke did not produce a successful generic row");
+        std::process::exit(2);
+    }
 }

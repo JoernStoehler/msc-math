@@ -59,6 +59,8 @@ struct BaseState {
     active_orbits: Vec<OrbitKktData>,
     sys_subgradients: Vec<Vec<Vector4<f64>>>,
     action_spread: f64,
+    active_min_beta_margin: f64,
+    active_max_q_error_bound: f64,
 }
 
 #[derive(Debug, Serialize)]
@@ -79,6 +81,8 @@ pub struct PredictionRow {
     pub target_best_sigma_in_base_active_set: Option<bool>,
     pub active_orbit_count: usize,
     pub active_action_spread: f64,
+    pub active_min_beta_margin: f64,
+    pub active_max_q_error_bound: f64,
     pub best_beta_margin: f64,
     pub best_q_error_bound: f64,
     pub step_norm: f64,
@@ -280,6 +284,14 @@ fn compute_base_state(polytope: LocalPolytopeCache) -> Result<BaseState, Predict
     let active_orbits = admissible_active_orbits(&capacity);
     let active_actions: Vec<f64> = active_orbits.iter().map(|orbit| orbit.action).collect();
     let action_spread = spread_or_zero(&active_actions);
+    let active_min_beta_margin = active_orbits
+        .iter()
+        .map(|orbit| orbit.beta_margin)
+        .fold(f64::INFINITY, f64::min);
+    let active_max_q_error_bound = active_orbits
+        .iter()
+        .map(|orbit| orbit.q_error_bound)
+        .fold(0.0, f64::max);
     let d_volume_da = volume_derivatives_a(
         &polytope.dual_vertices_f64,
         &polytope.vertices_f64,
@@ -305,6 +317,8 @@ fn compute_base_state(polytope: LocalPolytopeCache) -> Result<BaseState, Predict
         active_orbits,
         sys_subgradients,
         action_spread,
+        active_min_beta_margin,
+        active_max_q_error_bound,
     })
 }
 
@@ -374,6 +388,8 @@ fn prediction_row(
         target_best_sigma_in_base_active_set: None,
         active_orbit_count: base.active_orbits.len(),
         active_action_spread: base.action_spread,
+        active_min_beta_margin: base.active_min_beta_margin,
+        active_max_q_error_bound: base.active_max_q_error_bound,
         best_beta_margin: best.beta_margin,
         best_q_error_bound: best.q_error_bound,
         step_norm,
@@ -553,6 +569,11 @@ mod tests {
                 .unwrap_or_else(|err| panic!("{name} prediction row failed: {err:?}"));
             assert!(row.predicted_sys.is_finite());
             assert!(row.sys0.is_finite());
+            assert!(row.active_min_beta_margin.is_finite());
+            assert!(row.active_max_q_error_bound.is_finite());
+            if name == "random" {
+                assert_eq!(row.status, "ok");
+            }
             if row.status == "ok" {
                 assert!(row.recomputed_sys.expect("recomputed sys").is_finite());
             }
