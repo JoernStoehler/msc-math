@@ -16,7 +16,7 @@ use std::process::ExitCode;
 use symplectic::algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega;
 use symplectic::exact::omega_signs_exact;
 use symplectic::geom::rational_arithmetic::f64_to_rational;
-use symplectic::random::generate_dual_vertices;
+use symplectic::random::generate_dual_vertices_profiled;
 use symplectic::{
     aggregate_orbits_with_dual_vertices_exact, solve_pruned_hk2017_candidates, OrbitGuaranteeMode,
     OrbitKktData,
@@ -86,6 +86,10 @@ struct PhaseEvent {
     status: &'static str,
     #[serde(skip_serializing_if = "Option::is_none")]
     fixture_attempts: Option<u64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    attempt_index: Option<u64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    accepted: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]
     vertex_count: Option<usize>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -185,7 +189,7 @@ fn profile_sample(
     )
     .entered();
     let (fixture_result, fixture_ms) =
-        timed_result(|| phase_fixture_generation(config, facet_count, sample));
+        timed_result(|| phase_fixture_generation(config, facet_count, sample, phase_events));
     let (dual_vertices, fixture_attempts) = match fixture_result {
         Ok(value) => {
             phase_events.write(
@@ -276,16 +280,12 @@ fn phase_fixture_generation(
     config: &Config,
     facet_count: usize,
     sample: usize,
+    phase_events: &mut JsonlWriter,
 ) -> Result<(Vec<Vector4<f64>>, u64), String> {
     let first_attempt = facet_count as u64 * 1_000_000 + sample as u64 * MAX_ATTEMPTS_PER_SAMPLE;
     for offset in 0..MAX_ATTEMPTS_PER_SAMPLE {
-        match generate_dual_vertices(
-            facet_count,
-            config.h_min,
-            config.h_max,
-            config.seed,
-            first_attempt + offset,
-        ) {
+        let attempt = first_attempt + offset;
+        match profile_fixture_attempt(config, facet_count, sample, attempt, phase_events) {
             Ok(dual_vertices) => return Ok((dual_vertices, offset + 1)),
             Err(_) => continue,
         }
@@ -294,6 +294,55 @@ fn phase_fixture_generation(
     Err(format!(
         "no accepted fixture after {MAX_ATTEMPTS_PER_SAMPLE} attempts"
     ))
+}
+
+fn profile_fixture_attempt(
+    config: &Config,
+    facet_count: usize,
+    sample: usize,
+    attempt: u64,
+    phase_events: &mut JsonlWriter,
+) -> Result<Vec<Vector4<f64>>, String> {
+    let (result, profile) = generate_dual_vertices_profiled(
+        facet_count,
+        config.h_min,
+        config.h_max,
+        config.seed,
+        attempt,
+    );
+    phase_events.write(
+        &base_event(config, facet_count, sample, "fixture_seed_setup")
+            .elapsed(profile.seed_setup_ms)
+            .attempt_index(attempt),
+    )?;
+
+    phase_events.write(
+        &base_event(config, facet_count, sample, "fixture_raw_sampling")
+            .elapsed(profile.raw_sampling_ms)
+            .attempt_index(attempt),
+    )?;
+
+    match result {
+        Ok(dual_vertices) => {
+            phase_events.write(
+                &base_event(config, facet_count, sample, "fixture_acceptance_validation")
+                    .elapsed(profile.validation_ms)
+                    .attempt_index(attempt)
+                    .accepted(true),
+            )?;
+            Ok(dual_vertices)
+        }
+        Err(error) => {
+            phase_events.write(
+                &base_event(config, facet_count, sample, "fixture_acceptance_validation")
+                    .elapsed(profile.validation_ms)
+                    .attempt_index(attempt)
+                    .accepted(false)
+                    .error(format!("{error:?}")),
+            )?;
+            Err("rejected fixture attempt".to_string())
+        }
+    }
 }
 
 #[inline(never)]
@@ -398,6 +447,8 @@ fn base_event(
         elapsed_ms: 0.0,
         status: "ok",
         fixture_attempts: None,
+        attempt_index: None,
+        accepted: None,
         vertex_count: None,
         allowed_transitions: None,
         iterations: None,
@@ -417,6 +468,16 @@ impl PhaseEvent {
 
     fn fixture_attempts(mut self, fixture_attempts: u64) -> Self {
         self.fixture_attempts = Some(fixture_attempts);
+        self
+    }
+
+    fn attempt_index(mut self, attempt_index: u64) -> Self {
+        self.attempt_index = Some(attempt_index);
+        self
+    }
+
+    fn accepted(mut self, accepted: bool) -> Self {
+        self.accepted = Some(accepted);
         self
     }
 
