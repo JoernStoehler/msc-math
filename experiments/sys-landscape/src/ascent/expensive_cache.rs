@@ -104,7 +104,7 @@ impl ExpensiveComputationCache {
             sys,
         };
         {
-            let mut used = self.used_rows.lock().expect("emitted cache mutex poisoned");
+            let mut used = self.used_rows.lock().expect("used cache mutex poisoned");
             used.entry(key).or_insert(row);
         }
         {
