@@ -345,12 +345,13 @@ fn compute_base_state(
 fn prediction_directions(
     base: &BaseState,
 ) -> Result<Vec<(String, Vec<Vector4<f64>>)>, PredictionError> {
-    let first_gradient = base
+    let first_returned_gradient = base
         .sys_subgradients
         .first()
         .ok_or_else(|| PredictionError::Derivative("empty sys subgradient set".to_string()))?;
-    let gradient_direction = normalize_direction(first_gradient)
-        .ok_or_else(|| PredictionError::Derivative("zero first active gradient".to_string()))?;
+    let gradient_direction = normalize_direction(first_returned_gradient).ok_or_else(|| {
+        PredictionError::Derivative("zero first returned active gradient".to_string())
+    })?;
     let negative_gradient_direction: Vec<Vector4<f64>> =
         gradient_direction.iter().map(|v| -*v).collect();
 
@@ -361,9 +362,12 @@ fn prediction_directions(
         .ok_or_else(|| PredictionError::Derivative("random direction B was zero".to_string()))?;
 
     Ok(vec![
-        ("first_active_gradient".to_string(), gradient_direction),
         (
-            "negative_first_active_gradient".to_string(),
+            "first_returned_active_gradient".to_string(),
+            gradient_direction,
+        ),
+        (
+            "negative_first_returned_active_gradient".to_string(),
             negative_gradient_direction,
         ),
         ("random_unit_a".to_string(), random_a),
@@ -453,7 +457,8 @@ fn prediction_row(
     row.recomputed_sys = Some(recomputed_sys);
     row.abs_prediction_error = Some(error);
     row.rel_prediction_error = Some(relative_error);
-    row.best_sigma_changed = Some(row.base_best_sigma != target_best_sigma);
+    row.best_sigma_changed =
+        (base.active_orbits.len() == 1).then(|| row.base_best_sigma != target_best_sigma);
     row.target_best_sigma_in_base_active_set = Some(
         base.active_orbits
             .iter()
@@ -653,6 +658,28 @@ mod tests {
     use super::*;
 
     #[test]
+    fn transition_helpers_detect_rejected_and_opened_edges() {
+        let base = DMatrix::from_row_slice(
+            3,
+            3,
+            &[true, false, true, true, true, true, false, true, true],
+        );
+        let target = DMatrix::from_row_slice(
+            3,
+            3,
+            &[true, true, true, true, true, true, false, true, true],
+        );
+        let sigma = vec![0, 1, 2];
+
+        assert_eq!(rejected_transitions(&sigma, &base), vec![[0, 1], [2, 0]]);
+        assert_eq!(
+            transitions_rejected_then_allowed(&sigma, &base, &target),
+            vec![[0, 1]]
+        );
+    }
+
+    #[test]
+    #[ignore = "runs live HK2017 recomputation on HKO; use the smoke binary for routine checks"]
     fn smoke_rows_cover_generic_and_hko_basepoints() {
         let random =
             LocalPolytopeCache::generate_random(RANDOM_FACET_COUNT, RANDOM_H_MIN, RANDOM_H_MAX)

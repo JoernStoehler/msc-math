@@ -1,7 +1,7 @@
 # Local Sys Methods
 
-This package is a cross-result method-development surface for local systolic
-ratio methods.
+This package contains one smoke packet for local systolic-ratio method
+development.
 
 ## Purpose
 
@@ -103,11 +103,12 @@ The HKO pentagon product is included because it is a non-generic stress case.
 Many active orbits or target sigmas outside the base active set should be read as
 switching or conditioning signals, not as clean local-prediction evidence.
 
-## Source Truth
+## Interpretation Boundary
 
-Source truth is the Rust code and reproducible command output. `research/`
-files may orient future work, but claims here should be checked against code,
-formal proof files where relevant, and generated output from the command above.
+The Rust code defines what the command computes. Fresh command output is the
+source for run-specific observations. This README is execution-facing
+orientation only; it is not a research note, thesis evidence, or a durable
+interpretation layer.
 
 ## Pause Rule
 
