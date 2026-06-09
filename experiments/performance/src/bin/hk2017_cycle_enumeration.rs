@@ -1,15 +1,13 @@
-use exp_performance::{
-    prepare_out_dir, run_environment, timed, unix_timestamp_secs, write_json_file, JsonlWriter,
-    RunEnvironment,
-};
 use nalgebra::DMatrix;
 use rand::{Rng, SeedableRng};
 use rand_chacha::ChaCha8Rng;
 use serde::Serialize;
-use std::env::{self, ArgsOs};
-use std::ffi::OsString;
+use std::env;
+use std::fs::{self, File, OpenOptions};
+use std::io::{BufWriter, Write};
 use std::path::{Path, PathBuf};
-use std::process::ExitCode;
+use std::process::{self, ExitCode};
+use std::time::{Duration, Instant, SystemTime, UNIX_EPOCH};
 use symplectic::algorithms::hk2017::SimpleDirectedCyclesCanonical;
 use tracing::info_span;
 use tracing_subscriber::fmt::format::FmtSpan;
@@ -17,6 +15,8 @@ use tracing_subscriber::fmt::format::FmtSpan;
 const TARGET_NAME: &str = "hk2017-cycle-enumeration";
 const DEFAULT_SEED: u64 = 42;
 const DEFAULT_EDGE_PROBABILITY: f64 = 0.25;
+const DEFAULT_TARGET_ROOT: &str = "/tmp/msc-math-performance";
+const SAMPLE_SEED_STRIDE: u64 = 7919;
 
 #[derive(Clone, Debug, Serialize)]
 struct Config {
@@ -26,38 +26,6 @@ struct Config {
     edge_probability: f64,
     trace: bool,
     out_dir: Option<PathBuf>,
-}
-
-#[derive(Clone, Debug)]
-struct Invocation {
-    program: OsString,
-    args: Vec<String>,
-}
-
-#[derive(Serialize)]
-struct RunMetadata {
-    target: &'static str,
-    started_unix_secs: u64,
-    cwd: String,
-    command: Vec<String>,
-    environment: RunEnvironment,
-    config: ConfigForMetadata,
-    files: OutputFiles,
-}
-
-#[derive(Serialize)]
-struct ConfigForMetadata {
-    facet_counts: Vec<usize>,
-    samples: usize,
-    seed: u64,
-    edge_probability: f64,
-    trace: bool,
-}
-
-#[derive(Serialize)]
-struct OutputFiles {
-    phase_events_jsonl: String,
-    run_metadata_json: String,
 }
 
 #[derive(Serialize)]
@@ -90,38 +58,14 @@ fn main() -> ExitCode {
 }
 
 fn run() -> Result<PathBuf, String> {
-    let invocation = Invocation::from_env(env::args_os())?;
-    let config = parse_args(invocation.args.iter().cloned())?;
+    let config = parse_args(env::args().skip(1))?;
     validate_config(&config)?;
-    let out_dir = prepare_out_dir(config.out_dir.clone(), TARGET_NAME)?;
+    let out_dir = prepare_out_dir(config.out_dir.clone())?;
     if config.trace {
         init_tracing()?;
     }
 
     let phase_events_path = out_dir.join("phase-events.jsonl");
-    let metadata_path = out_dir.join("run-metadata.json");
-    let metadata = RunMetadata {
-        target: TARGET_NAME,
-        started_unix_secs: unix_timestamp_secs()?,
-        cwd: env::current_dir()
-            .map_err(|error| format!("read current directory: {error}"))?
-            .display()
-            .to_string(),
-        command: invocation.command_for_metadata(),
-        environment: run_environment(),
-        config: ConfigForMetadata {
-            facet_counts: config.facet_counts.clone(),
-            samples: config.samples,
-            seed: config.seed,
-            edge_probability: config.edge_probability,
-            trace: config.trace,
-        },
-        files: OutputFiles {
-            phase_events_jsonl: phase_events_path.display().to_string(),
-            run_metadata_json: metadata_path.display().to_string(),
-        },
-    };
-    write_json_file(&metadata_path, &metadata)?;
 
     let mut phase_events = JsonlWriter::create(&phase_events_path)?;
     for &facet_count in &config.facet_counts {
@@ -133,8 +77,7 @@ fn run() -> Result<PathBuf, String> {
                 sample
             )
             .entered();
-            let graph_seed =
-                config.seed ^ ((facet_count as u64) << 32) ^ (sample as u64).wrapping_mul(7919);
+            let graph_seed = graph_seed(config.seed, facet_count, sample);
             let transition =
                 random_transition_matrix(facet_count, config.edge_probability, graph_seed);
             let allowed_edges = transition.iter().filter(|&&allowed| allowed).count();
@@ -173,7 +116,12 @@ fn enumerate_cycles(transition: &DMatrix<bool>) -> (u64, u64) {
     (cycles, checksum)
 }
 
+fn graph_seed(master_seed: u64, facet_count: usize, sample: usize) -> u64 {
+    master_seed ^ ((facet_count as u64) << 32) ^ (sample as u64).wrapping_mul(SAMPLE_SEED_STRIDE)
+}
+
 fn cycle_checksum(sigma: &[usize]) -> u64 {
+    // Make the timed loop depend on the emitted cycle contents.
     sigma.iter().fold(sigma.len() as u64, |acc, &facet| {
         acc.wrapping_mul(1_000_003).wrapping_add(facet as u64)
     })
@@ -263,30 +211,6 @@ fn validate_config(config: &Config) -> Result<(), String> {
     Ok(())
 }
 
-impl Invocation {
-    fn from_env(args: ArgsOs) -> Result<Self, String> {
-        let mut args = args.into_iter();
-        let program = args
-            .next()
-            .ok_or_else(|| "missing argv[0] program name".to_owned())?;
-        let args = args
-            .map(|arg| {
-                arg.into_string().map_err(|arg| {
-                    format!("non-utf8 command argument: {}", Path::new(&arg).display())
-                })
-            })
-            .collect::<Result<Vec<_>, _>>()?;
-        Ok(Self { program, args })
-    }
-
-    fn command_for_metadata(&self) -> Vec<String> {
-        let mut command = Vec::with_capacity(self.args.len() + 1);
-        command.push(Path::new(&self.program).display().to_string());
-        command.extend(self.args.iter().cloned());
-        command
-    }
-}
-
 fn split_inline_arg(arg: String) -> (String, Option<String>) {
     match arg.split_once('=') {
         Some((flag, value)) => (flag.to_owned(), Some(value.to_owned())),
@@ -344,11 +268,73 @@ fn usage() -> &'static str {
         --out-dir /tmp/perf-hk2017-cycles\n\
 \n\
 Options:\n\
-  --facet-counts LIST      Comma-separated node/facet counts [default: 11]\n\
+  --facet-counts LIST      Comma-separated synthetic graph node counts [default: 11]\n\
   --samples N              Random directed graphs per facet count [default: 8]\n\
   --seed N                 Master seed for deterministic graph generation [default: 42]\n\
   --edge-probability P     Directed edge probability in [0,1], excluding self-edges [default: 0.25]\n\
   --out-dir PATH           Output directory [default: /tmp/msc-math-performance/<target>-<time>-pid<PID>]\n\
   --trace                  Emit tracing span close events to stderr\n\
   --help                   Print this help text"
+}
+
+struct JsonlWriter {
+    writer: BufWriter<File>,
+}
+
+impl JsonlWriter {
+    fn create(path: &Path) -> Result<Self, String> {
+        let file = OpenOptions::new()
+            .write(true)
+            .create(true)
+            .truncate(true)
+            .open(path)
+            .map_err(|error| format!("create {}: {error}", path.display()))?;
+        Ok(Self {
+            writer: BufWriter::new(file),
+        })
+    }
+
+    fn write<T: Serialize>(&mut self, value: &T) -> Result<(), String> {
+        serde_json::to_writer(&mut self.writer, value)
+            .map_err(|error| format!("serialize jsonl row: {error}"))?;
+        self.writer
+            .write_all(b"\n")
+            .map_err(|error| format!("write jsonl newline: {error}"))
+    }
+
+    fn flush(&mut self) -> Result<(), String> {
+        self.writer
+            .flush()
+            .map_err(|error| format!("flush jsonl writer: {error}"))
+    }
+}
+
+fn prepare_out_dir(out_dir: Option<PathBuf>) -> Result<PathBuf, String> {
+    let path = match out_dir {
+        Some(path) => path,
+        None => PathBuf::from(DEFAULT_TARGET_ROOT).join(format!(
+            "{TARGET_NAME}-{}-pid{}",
+            unix_timestamp_secs()?,
+            process::id()
+        )),
+    };
+    fs::create_dir_all(&path).map_err(|error| format!("create {}: {error}", path.display()))?;
+    Ok(path)
+}
+
+fn timed<T>(operation: impl FnOnce() -> T) -> (T, f64) {
+    let start = Instant::now();
+    let value = operation();
+    (value, ms(start.elapsed()))
+}
+
+fn ms(duration: Duration) -> f64 {
+    duration.as_secs_f64() * 1000.0
+}
+
+fn unix_timestamp_secs() -> Result<u64, String> {
+    SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .map(|duration| duration.as_secs())
+        .map_err(|error| format!("system clock before unix epoch: {error}"))
 }

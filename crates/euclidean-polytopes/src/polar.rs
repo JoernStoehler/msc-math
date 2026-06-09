@@ -229,7 +229,7 @@ fn polar_vertices_exact_rational_impl(
     let enumeration_start = Instant::now();
     for tuple in tuples {
         if let Some(vertices_f64) = &vertices_f64 {
-            if f64_prefilter_rejects(vertices_f64, &tuple) {
+            if f64_prefilter_certifies_rejection(vertices_f64, &tuple) {
                 f64_prefilter_rejections += 1;
                 continue;
             }
@@ -492,7 +492,12 @@ fn integer_scaled_feasibility_gap(
     common_denominator * &candidate.denominator - dot4_int(integer_row, &candidate.numerators)
 }
 
-fn f64_prefilter_rejects(vertices_f64: &[F64ApproxVector4], tuple: &[usize; 4]) -> bool {
+fn f64_prefilter_certifies_rejection(
+    vertices_f64: &[F64ApproxVector4],
+    tuple: &[usize; 4],
+) -> bool {
+    // Contract: `true` means exact arithmetic would reject this tuple as
+    // infeasible. `false` means inconclusive.
     // Rejection-only filter. For a tuple matrix A, Cramer's rule gives
     // y_j = nu_j / det(A). For a row a, a*y <= 1 is equivalent to the signed
     // gap condition det(A) and h = det(A) - a*nu having compatible signs. If
@@ -555,6 +560,7 @@ fn signed_cramer_feasibility_gap_f64(
     numerators: [f64; 4],
     numerator_errors: [f64; 4],
 ) -> Option<(f64, f64)> {
+    // `None` means the f64 filter is inconclusive; exact arithmetic decides.
     let products: [Option<f64>; 4] = std::array::from_fn(|coordinate| {
         checked_mul_f64(row.values[coordinate], numerators[coordinate])
     });
@@ -766,7 +772,7 @@ fn det4_int(rows: &[[BigInt; 4]; 4]) -> BigInt {
 #[cfg(test)]
 mod tests {
     use super::{
-        det4_f64_with_error, f64_prefilter_rejects, integer_scale_rational_vertices,
+        det4_f64_with_error, f64_prefilter_certifies_rejection, integer_scale_rational_vertices,
         integer_scaled_feasibility_gap, integer_scaled_polar_candidate,
         rational_vertices_to_f64_approximations, signed_cramer_feasibility_gap_f64,
         F64ApproxVector4,
@@ -871,7 +877,7 @@ mod tests {
             for b in a + 1..vertices.len() {
                 for c in b + 1..vertices.len() {
                     for d in c + 1..vertices.len() {
-                        if f64_prefilter_rejects(&approximations, &[a, b, c, d]) {
+                        if f64_prefilter_certifies_rejection(&approximations, &[a, b, c, d]) {
                             rejected += 1;
                         }
                     }
@@ -907,7 +913,7 @@ mod tests {
                 for c in b + 1..vertices.len() {
                     for d in c + 1..vertices.len() {
                         let tuple = [a, b, c, d];
-                        if !f64_prefilter_rejects(&approximations, &tuple) {
+                        if !f64_prefilter_certifies_rejection(&approximations, &tuple) {
                             continue;
                         }
                         rejected += 1;

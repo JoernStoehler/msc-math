@@ -10,65 +10,12 @@ from pathlib import Path
 
 SUMMARY_MARKERS = [
     "hk2017_candidate_solve_summary",
-    "hk2017_enumeration_summary",
+    "hk2017_directed_cycle_summary",
+    "hk2017_unpruned_enumeration_summary",
 ]
 FIELD_RE = re.compile(r"([A-Za-z_][A-Za-z0-9_]*)=([^\s]+)")
 
-NUMERIC_FIELDS = [
-    "iterations",
-    "raw_orbits",
-    "search_ms",
-    "traversal_ms",
-    "kkt_ms",
-    "payload_ms",
-    "sigma_len_mean",
-    "sigma_len_min",
-    "sigma_len_max",
-    "kkt_feasible",
-    "kkt_infeasible",
-    "kkt_singular_matrix",
-    "kkt_type_c_violation",
-    "kkt_constraint_violation",
-    "admissible_f64",
-    "indeterminate_f64",
-    "payload_inadmissible",
-    "numerical_failures",
-    "subset_count",
-    "cyclic_permutation_count",
-    "dfs_prefix_count",
-    "edge_rejections",
-    "emitted_sigmas",
-]
-
-EVENT_COLUMNS = {
-    "hk2017_candidate_solve_summary": [
-        ("iterations_mean", "iter_mean"),
-        ("raw_orbits_mean", "raw_orbits"),
-        ("search_ms_mean", "search_ms"),
-        ("traversal_ms_mean", "traversal_ms"),
-        ("kkt_ms_mean", "kkt_ms"),
-        ("payload_ms_mean", "payload_ms"),
-        ("traversal_pct_search", "trav_pct"),
-        ("kkt_pct_search", "kkt_pct"),
-        ("payload_pct_search", "payload_pct"),
-        ("sigma_len_mean_mean", "sigma_len_mean"),
-        ("sigma_len_min_mean", "sigma_len_min"),
-        ("sigma_len_max_mean", "sigma_len_max"),
-        ("kkt_feasible_mean", "kkt_feasible"),
-        ("kkt_infeasible_mean", "kkt_infeasible"),
-        ("admissible_f64_mean", "admissible_f64"),
-        ("indeterminate_f64_mean", "indeterminate_f64"),
-        ("payload_inadmissible_mean", "payload_inadm"),
-        ("numerical_failures_mean", "num_fail"),
-    ],
-    "hk2017_enumeration_summary": [
-        ("subset_count_mean", "subsets"),
-        ("cyclic_permutation_count_mean", "cyclic_perms"),
-        ("dfs_prefix_count_mean", "dfs_prefixes"),
-        ("edge_rejections_mean", "edge_rej"),
-        ("emitted_sigmas_mean", "emitted"),
-    ],
-}
+NON_NUMERIC_TRACE_FIELDS = {"target", "sample", "level", "message", "fields.message"}
 
 
 def main() -> int:
@@ -106,9 +53,13 @@ def read_summary_events(path: Path) -> list[dict]:
                 "event": event,
                 "facet_count": int(fields["facet_count"]),
             }
-            for field in NUMERIC_FIELDS:
-                if field in fields:
-                    row[field] = float(fields[field])
+            for field, value in fields.items():
+                if field in NON_NUMERIC_TRACE_FIELDS or field == "facet_count":
+                    continue
+                try:
+                    row[field] = float(clean_trace_value(value))
+                except ValueError:
+                    pass
             rows.append(row)
     if not rows:
         raise SystemExit(f"{path}: no HK2017 summary events found")
@@ -132,22 +83,30 @@ def summarize(rows: list[dict]) -> list[dict]:
             "facet_count": facet_count,
             "samples": len(group),
         }
-        for field in NUMERIC_FIELDS:
+        for field in numeric_fields(group):
             item[f"{field}_mean"] = mean_present(group, field)
         kkt_ms = item.get("kkt_ms_mean")
         payload_ms = item.get("payload_ms_mean")
         search_ms = item.get("search_ms_mean")
-        traversal_ms = item.get("traversal_ms_mean")
+        unattributed_ms = item.get("unattributed_search_ms_mean")
         if search_ms is not None and search_ms > 0.0:
-            item["traversal_pct_search"] = 100.0 * (traversal_ms or 0.0) / search_ms
+            item["unattributed_pct_search"] = 100.0 * (unattributed_ms or 0.0) / search_ms
             item["kkt_pct_search"] = 100.0 * (kkt_ms or 0.0) / search_ms
             item["payload_pct_search"] = 100.0 * (payload_ms or 0.0) / search_ms
         else:
-            item["traversal_pct_search"] = None
+            item["unattributed_pct_search"] = None
             item["kkt_pct_search"] = None
             item["payload_pct_search"] = None
         result.append(item)
     return result
+
+
+def numeric_fields(rows: list[dict]) -> list[str]:
+    excluded = {"target", "event", "facet_count"}
+    fields = set()
+    for row in rows:
+        fields.update(key for key in row if key not in excluded)
+    return sorted(fields)
 
 
 def warn_on_mismatched_event_counts(summary: list[dict]) -> None:
@@ -181,22 +140,19 @@ def print_stdout_summary(summary: list[dict]) -> None:
         ("event", "event"),
         ("samples", "samples"),
     ]
-    rows_by_event: dict[str, list[dict]] = defaultdict(list)
+    metric_columns = [(key, key) for key in summary_metric_keys(summary)]
+    columns = common_columns + metric_columns
+    print("\t".join(label for _, label in columns))
     for row in summary:
-        rows_by_event[row["event"]].append(row)
+        print("\t".join(format_value(row.get(key)) for key, _ in columns))
 
-    first_section = True
-    for event in SUMMARY_MARKERS:
-        rows = rows_by_event.get(event, [])
-        if not rows:
-            continue
-        if not first_section:
-            print()
-        first_section = False
-        columns = common_columns + EVENT_COLUMNS[event]
-        print("\t".join(label for _, label in columns))
-        for row in rows:
-            print("\t".join(format_value(row.get(key)) for key, _ in columns))
+
+def summary_metric_keys(summary: list[dict]) -> list[str]:
+    excluded = {"target", "facet_count", "event", "samples"}
+    keys = set()
+    for row in summary:
+        keys.update(key for key in row if key not in excluded)
+    return sorted(keys)
 
 
 def format_value(value) -> str:
@@ -209,10 +165,7 @@ def format_value(value) -> str:
 
 def write_csv(path: Path, summary: list[dict]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    fieldnames = ["event", "facet_count", "samples"]
-    for field in NUMERIC_FIELDS:
-        fieldnames.append(f"{field}_mean")
-    fieldnames.extend(["traversal_pct_search", "kkt_pct_search", "payload_pct_search"])
+    fieldnames = ["target", "event", "facet_count", "samples"] + summary_metric_keys(summary)
     with path.open("w", newline="") as handle:
         writer = csv.DictWriter(handle, fieldnames=fieldnames)
         writer.writeheader()

@@ -2,12 +2,8 @@
 
 ## Profiling And Coverage
 
-Use `experiments/performance/` for reusable performance targets, phase-event
-JSONL, post-processing scripts, and call-stack profiler wrapper commands.
-
-Use `experiments/performance/README.md` for current rerunnable HK2017 profiling
-targets, trace summaries, and profiler wrapper commands. The older crate-local
-pruned HK2017 profiler is legacy/ad-hoc only.
+Use `experiments/performance/` for reusable profiling targets, JSONL outputs,
+trace summaries, and profiler wrapper commands.
 
 Use source-based coverage when the question is whether tests execute a
 line/region path:

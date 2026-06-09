@@ -87,7 +87,6 @@ Topic helper crates already exist at:
 - `experiments/verification/src/lib.rs`
 - `experiments/sys-landscape/src/lib.rs`
 - `experiments/sys-landscape/gradient-ascent-dev/src/lib.rs`
-- `experiments/performance/src/lib.rs`
 
 Current observed pattern:
 
@@ -117,7 +116,6 @@ Current helper families:
 | numerics exactness helpers | `experiments/numerics/src/lib.rs` exposes the algebraic exactness spike under `src/algebraic/` |
 | gradient validation helpers | `experiments/numerics/gradient/src/lib.rs` owns random-direction sampling, first-order row schemas, and small smoke-run helpers |
 | verification target plumbing | `experiments/verification/src/target_pool.rs` owns target selection; `io.rs` owns run modes and shared JSONL writers |
-| performance target plumbing | `experiments/performance/src/lib.rs` owns generic output-directory, JSONL, JSON, and timing helpers for performance binaries |
 
 ## Artifact And Data Patterns
 

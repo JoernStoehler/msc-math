@@ -50,7 +50,7 @@ fn for_each_sigma_impl(facet_count: usize, visit: &mut dyn FnMut(&[usize])) {
         cyclic_permutation_count,
         emitted_sigmas,
         emitted_by_len = ?emitted_by_len,
-        "hk2017_enumeration_summary"
+        "hk2017_unpruned_enumeration_summary"
     );
 }
 
@@ -160,7 +160,7 @@ impl<'a> SimpleDirectedCyclesCanonical<'a> {
                 edge_rejections = self.stats.edge_rejections,
                 emitted_sigmas = self.stats.emitted_sigmas,
                 emitted_by_len = ?self.stats.emitted_by_len,
-                "hk2017_enumeration_summary"
+                "hk2017_directed_cycle_summary"
             );
         }
     }
@@ -203,6 +203,8 @@ impl Iterator for SimpleDirectedCyclesCanonical<'_> {
 
             self.path.push(next);
             self.used[next] = true;
+            // Restart at `start + 1` because `start` is the canonical minimum
+            // vertex; `used` prevents repeats.
             self.stack.push(SimpleCycleFrame {
                 next_candidate: self.start + 1,
             });

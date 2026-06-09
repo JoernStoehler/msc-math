@@ -1,32 +1,21 @@
 # Performance Experiments
 
-This directory owns reusable performance targets and profiling practice. It
-does not own production datasets, thesis evidence, or durable datascience
-results. Correctness, regression, and numerical-validation work belongs in
-crate tests or `experiments/verification/`, not in this performance package.
-Numerical error-bound collection and predicate diagnostics belong in
-`experiments/numerics/`.
-
-Correctness-adjacent information may appear here only when it is part of the
-measurement record: status fields, error messages, input selectors, traced
-phase counters, and instrumentation needed to explain where time or memory was
-spent. Do not add correctness experiments, proof notes, regression suites, or
-numerical validation datasets here just because the same algorithm is being
-profiled.
+This directory owns reusable runtime and memory profiling targets. Correctness
+and regression experiments belong in `experiments/verification/`. Numerical
+error-bound collection belongs in `experiments/numerics/`.
 
 The default pattern is:
 
 1. run a concrete end-to-end target binary,
 2. write raw structured outputs under an explicit output directory,
 3. summarize or render those outputs with scripts,
-4. wrap the same binary with sampling, callgrind, or heap tools when the
+4. wrap the same binary with sampling, callgrind, or heap tools when a
    question needs lower-level attribution.
 
 Commands below assume the repo root as the working directory.
 
-Generated outputs should usually go under `/tmp`. Commit only small reports or
-assets whose current value is higher than their maintenance cost. Reports under
-`/tmp` are review artifacts, not durable project state.
+Generated outputs should usually go under `/tmp`. Reports under `/tmp` are
+review artifacts, not durable project state.
 
 ## Targets
 
@@ -36,18 +25,16 @@ This target profiles the pruned HK2017 f64 candidate path on deterministic
 synthetic flat polytopes. It is for algorithm-path profiling, not for measuring
 the retained datascience tables. It mirrors the scalar capacity path:
 
-1. generate an accepted random fixture,
+1. acquire an accepted random fixture,
 2. build exact geometry,
 3. build the transition matrix,
 4. solve pruned HK2017 candidates,
 5. aggregate the zero-gap minimum orbit set with exact fallback.
 
-Fixture generation is not raw random sampling only. It calls the existing
-accepted-fixture generator, which validates candidate dual vertices through the
-rational construction pipeline before returning. The later `exact_geometry`
-phase rebuilds the geometry being profiled from that accepted fixture.
-Interpret `fixture_generation` as accepted-input acquisition overhead, not as a
-subphase of the capacity computation on an already-loaded fixture.
+The `accepted_fixture_acquisition` phase calls the existing random fixture
+generator until it returns an accepted polytope. It includes the generator's
+validation work. The later `exact_geometry` phase rebuilds geometry from that
+accepted fixture for the profiled capacity path.
 
 The phase boundaries are real wrapper functions marked `#[inline(never)]` in
 the profiling binary. This makes flamegraphs and callgraphs more likely to show
@@ -71,16 +58,10 @@ python3 experiments/performance/scripts/summarize_phase_jsonl.py \
 
 The binary writes:
 
-- `run-metadata.json`: target, command, cwd, configuration, output file paths,
-  timestamp, git head/dirty status when available, and `rustc --version` when
-  available.
-- `phase-events.jsonl`: one raw event for each phase that was reached by a
-  sample. If a fixture or solve phase fails, later phases for that sample are
-  omitted. The summarizer reports error counts and computes timing means from
-  successful phase rows.
+- `phase-events.jsonl`: one flat sibling event for each phase reached by a
+  sample. Do not put nested subphase rows here; use tracing for subphases.
 
-For subphase questions, keep the normal JSONL schema stable and use opt-in
-tracing:
+For subphase questions, use opt-in tracing:
 
 ```bash
 mkdir -p /tmp/perf-hk2017-trace
@@ -92,34 +73,29 @@ cargo run -q -p exp-performance --release --bin hk2017-pruned-f64 -- \
   2> /tmp/perf-hk2017-trace/span-close.log
 ```
 
-The trace stream is raw measurement output. Post-process it for a specific
-question instead of adding one-off analysis columns to `phase-events.jsonl`.
-Current HK2017 trace summaries are aggregate subphase rows keyed by facet count;
-use `phase-events.jsonl` for per-sample timing and error status.
-HK2017 candidate-solve summary events can be summarized with:
+The trace stream is raw measurement output. Current HK2017 trace summaries are
+grouped by target, event name, and facet count; use `phase-events.jsonl` for
+per-sample timing and error status.
+HK2017 trace summary events can be summarized with:
 
 ```bash
 python3 experiments/performance/scripts/summarize_hk2017_trace.py \
   /tmp/perf-hk2017-trace/span-close.log
 ```
 
-The `hk2017_candidate_solve_summary` event reports total candidate-search time,
-residual traversal overhead, accumulated KKT solve time, orbit-payload time,
-sigma-length summaries, KKT outcome counts, and admissibility counts. The
-`hk2017_enumeration_summary` event reports graph-native simple-cycle traversal
-counters: DFS prefixes, rejected directed-edge extensions, and emitted cycles.
-On successful runs emitted cycles equal the candidate-solve `iterations` count;
-on fatal solver failure, `iterations` is the number actually attempted before
-stopping. This is a domain-level split; use `perf` or callgrind on the same
-binary when the next question is which concrete functions consume a reported
-bucket.
+The `hk2017_candidate_solve_summary` event includes `unattributed_search_ms`.
+That value is a residual, not measured traversal time. Use `perf` or callgrind
+when the question is which concrete functions consume CPU time. Enumeration
+trace events are split by producer: `hk2017_directed_cycle_summary` for the
+graph-native pruned iterator and `hk2017_unpruned_enumeration_summary` for the
+unpruned subset/permutation traversal.
 
 ### `hk2017-cycle-enumeration`
 
-This target profiles only the directed-graph simple-cycle enumeration used by
-HK2017 transition pruning. It does not generate polytopes, build exact
-geometry, or solve KKT systems. Nodes are facet indices and directed edges are
-allowed transitions `i -> j`.
+This target profiles only the directed-graph simple-cycle iterator used by
+HK2017 transition pruning. It uses synthetic directed graphs; `facet_count` is
+the node count for those graphs. Use the e2e target when representativeness for
+random polytopes matters.
 
 The Rust API is
 `symplectic::algorithms::hk2017::SimpleDirectedCyclesCanonical`.
@@ -149,8 +125,8 @@ cargo run -q -p exp-performance --release --bin hk2017-cycle-enumeration -- \
   2> /tmp/perf-hk2017-cycles-trace/span-close.log
 ```
 
-Summarize the normal phase rows with `summarize_phase_jsonl.py`. Summarize the
-HK2017 enumeration trace rows with `summarize_hk2017_trace.py`.
+Summarize the phase rows with `summarize_phase_jsonl.py`. Summarize trace rows
+with `summarize_hk2017_trace.py`.
 
 ## Tool Use
 
@@ -159,10 +135,10 @@ Use the same target binary with different tools.
 - Phase JSONL: workflow timing, cold/hot separation, and post-processing.
 - Tracing: opt-in subphase spans when the question needs domain boundaries
   below the normal phase rows.
-- `cargo flamegraph` or `perf`: sampled CPU call stacks. This is the preferred
-  call-stack view when the question is CPU time under a release run.
+- `cargo flamegraph` or `perf`: sampled CPU call stacks for CPU time under a
+  release run.
 - `valgrind --tool=callgrind`: deterministic instruction attribution and a
-  portable fallback when host-kernel `perf` tooling blocks flamegraphs.
+  separate attribution tool when `perf` cannot run.
 - Heap profilers: allocation and memory questions.
 - Criterion: tight kernel comparisons after an end-to-end run has identified a
   kernel worth isolating.
@@ -204,8 +180,7 @@ cargo flamegraph --root -p exp-performance --release --bin hk2017-pruned-f64 -- 
   --out-dir /tmp/perf-hk2017-flame
 ```
 
-Use callgrind as a fallback when kernel permissions or host policy still block
-`perf`.
+Use callgrind when kernel permissions or host policy block `perf`.
 
 ### Callgrind
 
@@ -235,8 +210,8 @@ production runtime estimate.
 3. Reusing an output directory may overwrite that target's raw output files.
 4. Binaries should print only the output directory or a short status line.
 5. Raw measurements should be structured files, not ad-hoc prose on stdout.
-6. Reviewed reports should link their raw command, target, git state if
-   relevant, input selector, and generated artifact paths.
+6. Reviewed reports should link their raw command, target, input selector, and
+   generated artifact paths.
 
 ## Adding Targets
 

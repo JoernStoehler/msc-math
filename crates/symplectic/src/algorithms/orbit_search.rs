@@ -937,7 +937,7 @@ impl CandidateSolveTraceStats {
 
     fn emit(self, facet_count: usize, iterations: u64, raw_orbits: usize) {
         let search_ms = self.search_start.elapsed().as_secs_f64() * 1000.0;
-        let traversal_ms = (search_ms - self.kkt_ms - self.payload_ms).max(0.0);
+        let unattributed_search_ms = (search_ms - self.kkt_ms - self.payload_ms).max(0.0);
         let sigma_len_min = if iterations > 0 {
             self.sigma_len_min
         } else {
@@ -948,7 +948,7 @@ impl CandidateSolveTraceStats {
             iterations,
             raw_orbits,
             search_ms,
-            traversal_ms,
+            unattributed_search_ms,
             kkt_ms = self.kkt_ms,
             payload_ms = self.payload_ms,
             sigma_len_mean = if iterations > 0 {

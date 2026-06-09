@@ -2,17 +2,15 @@ use euclidean_polytopes::{
     facet_intersection_is_nonempty_from_vertex_facet_incidence,
     polar_vertices_exact_rational_assuming_origin_interior, PolarVerticesExact,
 };
-use exp_performance::{
-    prepare_out_dir, run_environment, timed, timed_result, unix_timestamp_secs, write_json_file,
-    JsonlWriter, RunEnvironment,
-};
 use nalgebra::{DMatrix, Vector4};
 use num_rational::BigRational;
 use serde::Serialize;
-use std::env::{self, ArgsOs};
-use std::ffi::OsString;
+use std::env;
+use std::fs::{self, File, OpenOptions};
+use std::io::{BufWriter, Write};
 use std::path::{Path, PathBuf};
-use std::process::ExitCode;
+use std::process::{self, ExitCode};
+use std::time::{Duration, Instant, SystemTime, UNIX_EPOCH};
 use symplectic::algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega;
 use symplectic::exact::omega_signs_exact;
 use symplectic::geom::rational_arithmetic::f64_to_rational;
@@ -29,6 +27,7 @@ const DEFAULT_SEED: u64 = 42;
 const DEFAULT_H_MIN: f64 = 0.5;
 const DEFAULT_H_MAX: f64 = 2.0;
 const MAX_ATTEMPTS_PER_SAMPLE: u64 = 10_000;
+const DEFAULT_TARGET_ROOT: &str = "/tmp/msc-math-performance";
 
 #[derive(Clone, Debug, Serialize)]
 struct Config {
@@ -39,40 +38,6 @@ struct Config {
     h_max: f64,
     trace: bool,
     out_dir: Option<PathBuf>,
-}
-
-#[derive(Clone, Debug)]
-struct Invocation {
-    program: OsString,
-    args: Vec<String>,
-}
-
-#[derive(Serialize)]
-struct RunMetadata {
-    target: &'static str,
-    started_unix_secs: u64,
-    cwd: String,
-    command: Vec<String>,
-    environment: RunEnvironment,
-    config: ConfigForMetadata,
-    files: OutputFiles,
-}
-
-#[derive(Serialize)]
-struct ConfigForMetadata {
-    facet_counts: Vec<usize>,
-    samples: usize,
-    seed: u64,
-    h_min: f64,
-    h_max: f64,
-    max_attempts_per_sample: u64,
-    trace: bool,
-}
-
-#[derive(Serialize)]
-struct OutputFiles {
-    phase_events_jsonl: String,
-    run_metadata_json: String,
 }
 
 #[derive(Serialize)]
@@ -125,40 +90,13 @@ fn main() -> ExitCode {
 }
 
 fn run() -> Result<PathBuf, String> {
-    let invocation = Invocation::from_env(env::args_os())?;
-    let config = parse_args(invocation.args.iter().cloned())?;
+    let config = parse_args(env::args().skip(1))?;
     validate_config(&config)?;
-    let out_dir = prepare_out_dir(config.out_dir.clone(), TARGET_NAME)?;
+    let out_dir = prepare_out_dir(config.out_dir.clone())?;
     if config.trace {
         init_tracing()?;
     }
     let phase_events_path = out_dir.join("phase-events.jsonl");
-    let metadata_path = out_dir.join("run-metadata.json");
-
-    let metadata = RunMetadata {
-        target: TARGET_NAME,
-        started_unix_secs: unix_timestamp_secs()?,
-        cwd: env::current_dir()
-            .map_err(|error| format!("read current directory: {error}"))?
-            .display()
-            .to_string(),
-        command: invocation.command_for_metadata(),
-        environment: run_environment(),
-        config: ConfigForMetadata {
-            facet_counts: config.facet_counts.clone(),
-            samples: config.samples,
-            seed: config.seed,
-            h_min: config.h_min,
-            h_max: config.h_max,
-            max_attempts_per_sample: MAX_ATTEMPTS_PER_SAMPLE,
-            trace: config.trace,
-        },
-        files: OutputFiles {
-            phase_events_jsonl: phase_events_path.display().to_string(),
-            run_metadata_json: metadata_path.display().to_string(),
-        },
-    };
-    write_json_file(&metadata_path, &metadata)?;
 
     let mut phase_events = JsonlWriter::create(&phase_events_path)?;
     for &facet_count in &config.facet_counts {
@@ -185,11 +123,11 @@ fn profile_sample(
     )
     .entered();
     let (fixture_result, fixture_ms) =
-        timed_result(|| phase_fixture_generation(config, facet_count, sample));
+        timed_result(|| phase_accepted_fixture_acquisition(config, facet_count, sample));
     let (dual_vertices, fixture_attempts) = match fixture_result {
         Ok(value) => {
             phase_events.write(
-                &base_event(config, facet_count, sample, "fixture_generation")
+                &base_event(config, facet_count, sample, "accepted_fixture_acquisition")
                     .elapsed(fixture_ms)
                     .fixture_attempts(value.1),
             )?;
@@ -197,7 +135,7 @@ fn profile_sample(
         }
         Err(error) => {
             phase_events.write(
-                &base_event(config, facet_count, sample, "fixture_generation")
+                &base_event(config, facet_count, sample, "accepted_fixture_acquisition")
                     .elapsed(fixture_ms)
                     .error(error),
             )?;
@@ -272,7 +210,7 @@ fn profile_sample(
 }
 
 #[inline(never)]
-fn phase_fixture_generation(
+fn phase_accepted_fixture_acquisition(
     config: &Config,
     facet_count: usize,
     sample: usize,
@@ -526,30 +464,6 @@ fn parse_args(args: impl Iterator<Item = String>) -> Result<Config, String> {
     Ok(config)
 }
 
-impl Invocation {
-    fn from_env(args: ArgsOs) -> Result<Self, String> {
-        let mut args = args.into_iter();
-        let program = args
-            .next()
-            .ok_or_else(|| "missing argv[0] program name".to_owned())?;
-        let args = args
-            .map(|arg| {
-                arg.into_string().map_err(|arg| {
-                    format!("non-utf8 command argument: {}", Path::new(&arg).display())
-                })
-            })
-            .collect::<Result<Vec<_>, _>>()?;
-        Ok(Self { program, args })
-    }
-
-    fn command_for_metadata(&self) -> Vec<String> {
-        let mut command = Vec::with_capacity(self.args.len() + 1);
-        command.push(Path::new(&self.program).display().to_string());
-        command.extend(self.args.iter().cloned());
-        command
-    }
-}
-
 fn split_inline_arg(arg: String) -> (String, Option<String>) {
     match arg.split_once('=') {
         Some((flag, value)) => (flag.to_owned(), Some(value.to_owned())),
@@ -609,6 +523,74 @@ fn validate_config(config: &Config) -> Result<(), String> {
         ));
     }
     Ok(())
+}
+
+struct JsonlWriter {
+    writer: BufWriter<File>,
+}
+
+impl JsonlWriter {
+    fn create(path: &Path) -> Result<Self, String> {
+        let file = OpenOptions::new()
+            .write(true)
+            .create(true)
+            .truncate(true)
+            .open(path)
+            .map_err(|error| format!("create {}: {error}", path.display()))?;
+        Ok(Self {
+            writer: BufWriter::new(file),
+        })
+    }
+
+    fn write<T: Serialize>(&mut self, value: &T) -> Result<(), String> {
+        serde_json::to_writer(&mut self.writer, value)
+            .map_err(|error| format!("serialize jsonl row: {error}"))?;
+        self.writer
+            .write_all(b"\n")
+            .map_err(|error| format!("write jsonl newline: {error}"))
+    }
+
+    fn flush(&mut self) -> Result<(), String> {
+        self.writer
+            .flush()
+            .map_err(|error| format!("flush jsonl writer: {error}"))
+    }
+}
+
+fn prepare_out_dir(out_dir: Option<PathBuf>) -> Result<PathBuf, String> {
+    let path = match out_dir {
+        Some(path) => path,
+        None => PathBuf::from(DEFAULT_TARGET_ROOT).join(format!(
+            "{TARGET_NAME}-{}-pid{}",
+            unix_timestamp_secs()?,
+            process::id()
+        )),
+    };
+    fs::create_dir_all(&path).map_err(|error| format!("create {}: {error}", path.display()))?;
+    Ok(path)
+}
+
+fn timed<T>(operation: impl FnOnce() -> T) -> (T, f64) {
+    let start = Instant::now();
+    let value = operation();
+    (value, ms(start.elapsed()))
+}
+
+fn timed_result<T, E>(operation: impl FnOnce() -> Result<T, E>) -> (Result<T, E>, f64) {
+    let start = Instant::now();
+    let value = operation();
+    (value, ms(start.elapsed()))
+}
+
+fn ms(duration: Duration) -> f64 {
+    duration.as_secs_f64() * 1000.0
+}
+
+fn unix_timestamp_secs() -> Result<u64, String> {
+    SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .map(|duration| duration.as_secs())
+        .map_err(|error| format!("system clock before unix epoch: {error}"))
 }
 
 fn init_tracing() -> Result<(), String> {

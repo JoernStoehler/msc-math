@@ -8,15 +8,6 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
-PHASE_ORDER = {
-    "fixture_generation": 0,
-    "exact_geometry": 1,
-    "transition_matrix": 2,
-    "solve_candidates": 3,
-    "aggregate_minima": 4,
-}
-
-
 def main() -> int:
     parser = argparse.ArgumentParser(
         description="Summarize experiments/performance phase-events.jsonl files."
@@ -75,9 +66,7 @@ def summarize(rows: list[dict]) -> list[dict]:
             sample_totals[sample_key] += float(row["elapsed_ms"])
 
     result = []
-    for (target, facet_count, phase), group_rows in sorted(
-        groups.items(), key=lambda item: group_sort_key(item[0])
-    ):
+    for (target, facet_count, phase), group_rows in groups.items():
         ok_group_rows = [row for row in group_rows if row.get("status") == "ok"]
         error_group_rows = [row for row in group_rows if row.get("status") != "ok"]
         total_ms = sum(float(row["elapsed_ms"]) for row in ok_group_rows)
@@ -117,11 +106,6 @@ def summarize(rows: list[dict]) -> list[dict]:
             }
         )
     return result
-
-
-def group_sort_key(key: tuple[str, int, str]) -> tuple[str, int, int, str]:
-    target, facet_count, phase = key
-    return (target, facet_count, PHASE_ORDER.get(phase, len(PHASE_ORDER)), phase)
 
 
 def mean_present(rows: list[dict], key: str) -> float | None:
