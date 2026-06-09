@@ -48,6 +48,7 @@ cargo run -p exp-sys-landscape --bin sys-dataset-ascent -- \
     --n-start "$N_START" \
     --seed-time-budget-secs "$SEED_TIME_BUDGET_SECS" \
     "${CACHE_ARGS[@]}" \
+    --fresh \
     --out "$OUT"
 
 echo "  produce root:          $OUT_ROOT/produce"

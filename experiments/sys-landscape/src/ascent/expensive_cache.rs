@@ -23,7 +23,7 @@ pub struct ExpensiveComputationCacheRow {
 #[derive(Default)]
 pub struct ExpensiveComputationCache {
     rows: HashMap<String, ExpensiveComputationCacheRow>,
-    emitted_misses: Mutex<HashMap<String, ExpensiveComputationCacheRow>>,
+    used_rows: Mutex<HashMap<String, ExpensiveComputationCacheRow>>,
     stats: Mutex<ExpensiveComputationCacheStats>,
 }
 
@@ -41,7 +41,7 @@ impl ExpensiveComputationCache {
         }
         Self {
             rows,
-            emitted_misses: Mutex::new(HashMap::new()),
+            used_rows: Mutex::new(HashMap::new()),
             stats: Mutex::new(ExpensiveComputationCacheStats::default()),
         }
     }
@@ -53,6 +53,10 @@ impl ExpensiveComputationCache {
     pub fn compute(&self, polytope: &SysLandscapePolytopeCache) -> Option<SysComputation> {
         let key = polytope_key(polytope);
         if let Some(row) = self.rows.get(&key) {
+            {
+                let mut used = self.used_rows.lock().expect("used cache mutex poisoned");
+                used.entry(key).or_insert_with(|| row.clone());
+            }
             let mut stats = self.stats.lock().expect("cache stats mutex poisoned");
             stats.hits += 1;
             return Some(SysComputation {
@@ -85,11 +89,11 @@ impl ExpensiveComputationCache {
             sys,
         };
         {
-            let mut emitted = self
-                .emitted_misses
+            let mut used = self
+                .used_rows
                 .lock()
                 .expect("emitted cache mutex poisoned");
-            emitted.entry(key).or_insert(row);
+            used.entry(key).or_insert(row);
         }
         {
             let mut stats = self.stats.lock().expect("cache stats mutex poisoned");
@@ -103,12 +107,12 @@ impl ExpensiveComputationCache {
         })
     }
 
-    pub fn emitted_miss_rows(&self) -> Vec<ExpensiveComputationCacheRow> {
-        let emitted = self
-            .emitted_misses
+    pub fn used_rows(&self) -> Vec<ExpensiveComputationCacheRow> {
+        let used = self
+            .used_rows
             .lock()
-            .expect("emitted cache mutex poisoned");
-        let mut rows: Vec<_> = emitted.values().cloned().collect();
+            .expect("used cache mutex poisoned");
+        let mut rows: Vec<_> = used.values().cloned().collect();
         rows.sort_by(|a, b| a.polytope_key.cmp(&b.polytope_key));
         rows
     }

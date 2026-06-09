@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Low-friction smoke run for the sys-landscape produce -> tables
 # surface. All outputs go to a temp directory. The default path is intended to
-# stay under about two minutes on the devcontainer and exercises cache/resume
-# contracts by running ascent producers twice without deleting temp data.
+# stay under about two minutes on the devcontainer and exercises cold/hot
+# expensive-computation cache contracts by running ascent producers twice.
 #
 # Set RUN_CONTINUATION_SMOKE=1 for the older slow continuation integration path.
 
@@ -35,25 +35,29 @@ cargo run -p exp-sys-landscape --bin sys-dataset-ascent -- \
   --n 1 \
   --seed-time-budget-secs "$ASCENT_BUDGET_SECS" \
   --out "$PRODUCE_DIR/ascent-general-endpoints.jsonl" \
-  --no-db-update
+  --no-db-update \
+  --fresh
 
 cargo run -p exp-sys-landscape --bin sys-dataset-ascent -- \
   --n 1 \
   --seed-time-budget-secs "$ASCENT_BUDGET_SECS" \
   --out "$PRODUCE_DIR/ascent-general-endpoints.jsonl" \
-  --no-db-update
+  --no-db-update \
+  --fresh
 
 cargo run -p exp-sys-landscape --bin sys-dataset-ascent-product -- \
   --n 1 \
   --seed-time-budget-secs "$ASCENT_BUDGET_SECS" \
   --out "$PRODUCE_DIR/ascent-product-endpoints.jsonl" \
-  --no-db-update
+  --no-db-update \
+  --fresh
 
 cargo run -p exp-sys-landscape --bin sys-dataset-ascent-product -- \
   --n 1 \
   --seed-time-budget-secs "$ASCENT_BUDGET_SECS" \
   --out "$PRODUCE_DIR/ascent-product-endpoints.jsonl" \
-  --no-db-update
+  --no-db-update \
+  --fresh
 
 if [[ "$RUN_CONTINUATION_SMOKE" == "1" ]]; then
   cargo run -p exp-sys-landscape --bin sys-dataset-continuation -- \
@@ -68,8 +72,12 @@ fi
 
 test -s "$PRODUCE_DIR/ascent-general-cache.jsonl"
 test -s "$PRODUCE_DIR/ascent-general-computed-polytopes.jsonl"
+test -s "$PRODUCE_DIR/ascent-general-ascent-events.jsonl"
+test -s "$PRODUCE_DIR/ascent-general-expensive-computations-cache.jsonl"
 test -s "$PRODUCE_DIR/ascent-product-cache.jsonl"
 test -s "$PRODUCE_DIR/ascent-product-computed-polytopes.jsonl"
+test -s "$PRODUCE_DIR/ascent-product-ascent-events.jsonl"
+test -s "$PRODUCE_DIR/ascent-product-expensive-computations-cache.jsonl"
 test "$(wc -l < "$PRODUCE_DIR/ascent-general-endpoints.jsonl")" -eq 1
 test "$(wc -l < "$PRODUCE_DIR/ascent-general-cache.jsonl")" -eq 1
 test "$(wc -l < "$PRODUCE_DIR/ascent-product-endpoints.jsonl")" -eq 1

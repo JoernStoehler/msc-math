@@ -579,9 +579,9 @@ fn main() {
 
     let writers = open_ascent_writers(&output_paths, args.fresh);
     let best = Arc::new(Mutex::new((0.0f64, String::new())));
-    let expensive_cache = Arc::new(ExpensiveComputationCache::load(
-        &args.expensive_computation_caches,
-    ));
+    let mut expensive_cache_inputs = args.expensive_computation_caches.clone();
+    expensive_cache_inputs.push(output_paths.expensive_computations_cache.clone());
+    let expensive_cache = Arc::new(ExpensiveComputationCache::load(&expensive_cache_inputs));
 
     // DB state: loaded once, shared across threads under a Mutex when !no_db_update.
     // On LICCA (--no-db-update), both load and insertion are skipped entirely.
@@ -696,7 +696,7 @@ fn main() {
     // scheduling and any crash-resume history. See `finalize_ascent_output`
     // for details.
     finalize_ascent_output(&output_paths, writers);
-    let cache_rows = expensive_cache.emitted_miss_rows();
+    let cache_rows = expensive_cache.used_rows();
     write_expensive_computation_cache_rows(&output_paths, &cache_rows);
 
     if !no_db_update {
@@ -724,7 +724,7 @@ fn main() {
     println!("Total time: {:.1}s", t_global.elapsed().as_secs_f64());
     let expensive_stats = expensive_cache.stats();
     println!(
-        "Expensive-computation cache: hits={}, misses={}, emitted_rows={}",
+        "Expensive-computation cache: hits={}, misses={}, used_rows={}",
         expensive_stats.hits,
         expensive_stats.misses,
         cache_rows.len()

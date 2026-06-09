@@ -79,4 +79,5 @@ fi
     --n-start "$N_START" \
     --seed-time-budget-secs "$SEED_TIME_BUDGET_SECS" \
     "${CACHE_ARGS[@]}" \
+    --fresh \
     --out "$OUT"
