@@ -89,6 +89,9 @@ pub struct PredictionRow {
     pub target_best_sigma_base_solve_status: Option<String>,
     pub target_best_sigma_base_action: Option<f64>,
     pub target_best_sigma_base_action_gap: Option<f64>,
+    pub target_best_sigma_base_rejected_transitions: Option<Vec<[usize; 2]>>,
+    pub target_best_sigma_target_rejected_transitions: Option<Vec<[usize; 2]>>,
+    pub target_best_sigma_transitions_opened: Option<Vec<[usize; 2]>>,
     pub active_orbit_count: usize,
     pub base_candidate_orbit_count: usize,
     pub base_candidate_action_gap: f64,
@@ -408,6 +411,9 @@ fn prediction_row(
         target_best_sigma_base_solve_status: None,
         target_best_sigma_base_action: None,
         target_best_sigma_base_action_gap: None,
+        target_best_sigma_base_rejected_transitions: None,
+        target_best_sigma_target_rejected_transitions: None,
+        target_best_sigma_transitions_opened: None,
         active_orbit_count: base.active_orbits.len(),
         base_candidate_orbit_count: base.capacity.orbits.len(),
         base_candidate_action_gap: base.candidate_action_gap,
@@ -467,6 +473,23 @@ fn prediction_row(
         &target_best_sigma,
         &base_transition_is_allowed,
     ));
+    let target_transition_is_allowed = build_transition_matrix_from_facet_intersections_and_omega(
+        &target_polytope.facet_intersection_is_nonempty,
+        &target_polytope.omega_signs,
+    );
+    row.target_best_sigma_base_rejected_transitions = Some(rejected_transitions(
+        &target_best_sigma,
+        &base_transition_is_allowed,
+    ));
+    row.target_best_sigma_target_rejected_transitions = Some(rejected_transitions(
+        &target_best_sigma,
+        &target_transition_is_allowed,
+    ));
+    row.target_best_sigma_transitions_opened = Some(transitions_rejected_then_allowed(
+        &target_best_sigma,
+        &base_transition_is_allowed,
+        &target_transition_is_allowed,
+    ));
     match solve_orbit_sigma_saddle_point(&base.polytope.dual_vertices_f64, &target_best_sigma) {
         Ok(base_target_orbit) => {
             row.target_best_sigma_base_solve_status =
@@ -481,6 +504,34 @@ fn prediction_row(
     }
     row.target_best_sigma = Some(target_best_sigma);
     Ok(row)
+}
+
+fn rejected_transitions(sigma: &[usize], transition_is_allowed: &DMatrix<bool>) -> Vec<[usize; 2]> {
+    sigma
+        .iter()
+        .copied()
+        .zip(sigma.iter().copied().cycle().skip(1))
+        .take(sigma.len())
+        .filter(|&(from, to)| !transition_is_allowed[(from, to)])
+        .map(|(from, to)| [from, to])
+        .collect()
+}
+
+fn transitions_rejected_then_allowed(
+    sigma: &[usize],
+    base_transition_is_allowed: &DMatrix<bool>,
+    target_transition_is_allowed: &DMatrix<bool>,
+) -> Vec<[usize; 2]> {
+    sigma
+        .iter()
+        .copied()
+        .zip(sigma.iter().copied().cycle().skip(1))
+        .take(sigma.len())
+        .filter(|&(from, to)| {
+            !base_transition_is_allowed[(from, to)] && target_transition_is_allowed[(from, to)]
+        })
+        .map(|(from, to)| [from, to])
+        .collect()
 }
 
 fn admissible_active_orbits(result: &OrbitSearchResult) -> Vec<OrbitKktData> {
@@ -632,6 +683,9 @@ mod tests {
                 assert!(row.target_best_sigma_in_base_candidate_window.is_some());
                 assert!(row.target_best_sigma_base_transition_allowed.is_some());
                 assert!(row.target_best_sigma_base_solve_status.is_some());
+                assert!(row.target_best_sigma_base_rejected_transitions.is_some());
+                assert!(row.target_best_sigma_target_rejected_transitions.is_some());
+                assert!(row.target_best_sigma_transitions_opened.is_some());
             }
         }
     }

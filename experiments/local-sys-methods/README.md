@@ -63,6 +63,10 @@ The warning fields say how much trust to put in the comparison:
   `target_best_sigma_base_solve_status`, `target_best_sigma_base_action`, and
   `target_best_sigma_base_action_gap` evaluate the target winner back at `a0`
   as a switch-miss diagnostic;
+- `target_best_sigma_base_rejected_transitions`,
+  `target_best_sigma_target_rejected_transitions`, and
+  `target_best_sigma_transitions_opened` compare consecutive facet transitions
+  of the target winner under the base and target HK2017 transition filters;
 - `active_min_beta_margin` and `active_max_q_error_bound` summarize the active
   set used for the subdifferential;
 - `best_beta_margin` and `best_q_error_bound` are only best-orbit diagnostics.
@@ -84,6 +88,11 @@ diagnostic, not a proof that no other missing sigma matters. The single-sigma
 KKT solve does not by itself certify that HK2017 would enumerate the sigma as a
 geometric candidate at `a0`; read it together with
 `target_best_sigma_base_transition_allowed`.
+
+The rejected-transition fields inspect only the consecutive facet pairs in the
+target-minimizing sigma. They can show that this sigma fails the base transition
+filter because specific pairs are rejected at `a0` and accepted at
+`a0 + t d`. They do not classify every sigma excluded by HK2017 pruning.
 
 The active orbit set is re-filtered from the same base action-gap window by
 near-minimum action. The wider base search can recover exact minimizers that a
