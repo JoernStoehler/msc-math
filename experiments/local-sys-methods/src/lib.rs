@@ -38,6 +38,7 @@ const RANDOM_FACET_COUNT: usize = 10;
 const RANDOM_H_MIN: f64 = 0.5;
 const RANDOM_H_MAX: f64 = 2.0;
 const STEP_VALUES: [f64; 3] = [1e-4, 1e-3, 1e-2];
+const BASE_CANDIDATE_ACTION_GAP: f64 = 1e-2;
 
 #[derive(Clone, Debug)]
 pub struct LocalPolytopeCache {
@@ -79,7 +80,10 @@ pub struct PredictionRow {
     pub target_best_sigma: Option<Vec<usize>>,
     pub best_sigma_changed: Option<bool>,
     pub target_best_sigma_in_base_active_set: Option<bool>,
+    pub target_best_sigma_in_base_candidate_window: Option<bool>,
     pub active_orbit_count: usize,
+    pub base_candidate_orbit_count: usize,
+    pub base_candidate_action_gap: f64,
     pub active_action_spread: f64,
     pub active_min_beta_margin: f64,
     pub active_max_q_error_bound: f64,
@@ -216,7 +220,7 @@ pub fn run_prediction_smoke(output_path: &Path) -> Result<Vec<PredictionRow>, Pr
 
     let mut rows = Vec::new();
     for (name, polytope) in basepoints {
-        let base = compute_base_state(polytope)?;
+        let base = compute_base_state(polytope, BASE_CANDIDATE_ACTION_GAP)?;
         let directions = prediction_directions(&base)?;
         for (direction_label, direction) in directions {
             for step in STEP_VALUES {
@@ -237,6 +241,7 @@ pub fn run_prediction_smoke(output_path: &Path) -> Result<Vec<PredictionRow>, Pr
 
 fn compute_capacity_result(
     polytope: &LocalPolytopeCache,
+    action_gap: f64,
 ) -> Result<OrbitSearchResult, PredictionError> {
     let transition_is_allowed = build_transition_matrix_from_facet_intersections_and_omega(
         &polytope.facet_intersection_is_nonempty,
@@ -249,7 +254,7 @@ fn compute_capacity_result(
         &polytope.dual_vertices,
         orbits,
         iterations,
-        0.0,
+        action_gap,
         OrbitGuaranteeMode::MinimaSafe,
     )
     .map_err(PredictionError::Capacity)
@@ -266,8 +271,11 @@ fn compute_volume(polytope: &LocalPolytopeCache) -> f64 {
         .unwrap_or(f64::NAN)
 }
 
-fn compute_base_state(polytope: LocalPolytopeCache) -> Result<BaseState, PredictionError> {
-    let capacity = compute_capacity_result(&polytope)?;
+fn compute_base_state(
+    polytope: LocalPolytopeCache,
+    action_gap: f64,
+) -> Result<BaseState, PredictionError> {
+    let capacity = compute_capacity_result(&polytope, action_gap)?;
     let volume = compute_volume(&polytope);
     if !volume.is_finite() || volume <= 0.0 {
         return Err(PredictionError::Geometry(
@@ -386,7 +394,10 @@ fn prediction_row(
         target_best_sigma: None,
         best_sigma_changed: None,
         target_best_sigma_in_base_active_set: None,
+        target_best_sigma_in_base_candidate_window: None,
         active_orbit_count: base.active_orbits.len(),
+        base_candidate_orbit_count: base.capacity.orbits.len(),
+        base_candidate_action_gap: BASE_CANDIDATE_ACTION_GAP,
         active_action_spread: base.action_spread,
         active_min_beta_margin: base.active_min_beta_margin,
         active_max_q_error_bound: base.active_max_q_error_bound,
@@ -399,7 +410,7 @@ fn prediction_row(
         row.status = "target_polytope_construction_failed".to_string();
         return Ok(row);
     };
-    let target_capacity = match compute_capacity_result(&target_polytope) {
+    let target_capacity = match compute_capacity_result(&target_polytope, 0.0) {
         Ok(capacity) => capacity,
         Err(err) => {
             row.status = format!("target_capacity_failed:{err:?}");
@@ -426,6 +437,12 @@ fn prediction_row(
     row.best_sigma_changed = Some(row.base_best_sigma != target_best_sigma);
     row.target_best_sigma_in_base_active_set = Some(
         base.active_orbits
+            .iter()
+            .any(|orbit| orbit.sigma == target_best_sigma),
+    );
+    row.target_best_sigma_in_base_candidate_window = Some(
+        base.capacity
+            .orbits
             .iter()
             .any(|orbit| orbit.sigma == target_best_sigma),
     );
@@ -559,9 +576,10 @@ mod tests {
         let hko = LocalPolytopeCache::from_known(known_polytopes::hko_pentagon());
 
         for (name, polytope) in [("random", random), ("hko", hko)] {
-            let base = compute_base_state(polytope).unwrap_or_else(|err| {
-                panic!("{name} base state failed: {err:?}");
-            });
+            let base =
+                compute_base_state(polytope, BASE_CANDIDATE_ACTION_GAP).unwrap_or_else(|err| {
+                    panic!("{name} base state failed: {err:?}");
+                });
             let directions = prediction_directions(&base).unwrap_or_else(|err| {
                 panic!("{name} directions failed: {err:?}");
             });
@@ -571,6 +589,7 @@ mod tests {
             assert!(row.sys0.is_finite());
             assert!(row.active_min_beta_margin.is_finite());
             assert!(row.active_max_q_error_bound.is_finite());
+            assert!(row.base_candidate_orbit_count >= row.active_orbit_count);
             if name == "random" {
                 assert_eq!(row.status, "ok");
             }

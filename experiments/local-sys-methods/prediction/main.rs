@@ -8,8 +8,11 @@ struct BasepointSummary {
     successful: usize,
     switches: usize,
     target_outside_base_active: usize,
+    target_outside_base_candidate_window: usize,
     max_abs_error: f64,
     active_orbit_counts: BTreeSet<usize>,
+    base_candidate_orbit_counts: BTreeSet<usize>,
+    base_candidate_action_gaps: BTreeSet<String>,
     max_active_q_error_bound: f64,
 }
 
@@ -56,13 +59,19 @@ fn main() {
     for (basepoint, summary) in summarize_by_basepoint(&rows) {
         println!(
             "  {basepoint}: ok {}/{}, switches {}, target outside base active {}, \
-             max abs error {:.3e}, active orbit counts {:?}, max active q error {:.3e}",
+             target outside base candidate window {}, max abs error {:.3e}, \
+             active orbit counts {:?}, base candidate counts {:?}, \
+             base candidate gaps {:?}, \
+             max active q error {:.3e}",
             summary.successful,
             summary.rows,
             summary.switches,
             summary.target_outside_base_active,
+            summary.target_outside_base_candidate_window,
             summary.max_abs_error,
             summary.active_orbit_counts,
+            summary.base_candidate_orbit_counts,
+            summary.base_candidate_action_gaps,
             summary.max_active_q_error_bound,
         );
     }
@@ -90,10 +99,19 @@ fn summarize_by_basepoint(
         if row.target_best_sigma_in_base_active_set == Some(false) {
             summary.target_outside_base_active += 1;
         }
+        if row.target_best_sigma_in_base_candidate_window == Some(false) {
+            summary.target_outside_base_candidate_window += 1;
+        }
         if let Some(error) = row.abs_prediction_error {
             summary.max_abs_error = summary.max_abs_error.max(error);
         }
         summary.active_orbit_counts.insert(row.active_orbit_count);
+        summary
+            .base_candidate_orbit_counts
+            .insert(row.base_candidate_orbit_count);
+        summary
+            .base_candidate_action_gaps
+            .insert(format!("{:.3e}", row.base_candidate_action_gap));
         summary.max_active_q_error_bound = summary
             .max_active_q_error_bound
             .max(row.active_max_q_error_bound);
