@@ -93,11 +93,38 @@ pub struct ComputedPolytopeRow {
     pub orbit_scalars: OrbitScalars,
 }
 
+/// One row per ascent occurrence of a polytope.
+///
+/// This is run metadata. It records where a polytope appeared in an ascent run
+/// and points at the expensive-computation cache by `polytope_key`.
+#[derive(Clone, Serialize, Deserialize)]
+pub struct AscentEventRow {
+    pub event_id: String,
+    pub dataset: String,
+    pub run_id: String,
+    pub seed_index: usize,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub phase: Option<usize>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub iteration: Option<usize>,
+    pub role: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub step_type: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub t_fraction: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub t_actual: Option<f64>,
+    pub accepted_in_iteration: bool,
+    pub became_run_final: bool,
+    pub polytope_key: String,
+}
+
 /// Result of processing one seed: the summary row plus its trace rows.
 pub struct SeedResult {
     pub summary: SummaryRow,
     pub trace: Vec<TraceRow>,
     pub computed_polytopes: Vec<ComputedPolytopeRow>,
+    pub ascent_events: Vec<AscentEventRow>,
     pub final_polytope: SysLandscapePolytopeCache,
     pub final_record: PolytopeRecord,
 }

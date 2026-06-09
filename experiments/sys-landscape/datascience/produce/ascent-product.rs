@@ -497,6 +497,7 @@ fn process_seed(
         .map(|a| [a[0], a[1], a[2], a[3]])
         .collect();
 
+    let (computed_polytope_rows, ascent_event_rows) = computed_polytopes.into_outputs();
     Some(SeedResult {
         summary: SummaryRow {
             name: name.to_string(),
@@ -521,7 +522,8 @@ fn process_seed(
             final_dual_vertices: final_dvs,
         },
         trace: all_trace,
-        computed_polytopes: computed_polytopes.into_rows(),
+        computed_polytopes: computed_polytope_rows,
+        ascent_events: ascent_event_rows,
         final_record,
         final_polytope: best_polytope,
     })
@@ -594,6 +596,7 @@ fn main() {
         "  computed:     {}",
         output_paths.computed_polytopes.display()
     );
+    println!("  events:       {}", output_paths.ascent_events.display());
     println!(
         "  expensive-cache-out: {}",
         output_paths.expensive_computations_cache.display()
@@ -759,4 +762,5 @@ fn main() {
         "Computed polytopes: {}",
         output_paths.computed_polytopes.display()
     );
+    println!("Ascent events: {}", output_paths.ascent_events.display());
 }

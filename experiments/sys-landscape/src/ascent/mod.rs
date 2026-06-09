@@ -12,8 +12,9 @@ mod shard_io;
 mod tests;
 
 pub use cli::{
-    cache_path_for, computed_polytopes_path_for, expensive_computations_cache_path_for,
-    parse_ascent_args, smoke_output_path, trace_path_for, AscentArgs, AscentOutputPaths,
+    ascent_events_path_for, cache_path_for, computed_polytopes_path_for,
+    expensive_computations_cache_path_for, parse_ascent_args, smoke_output_path, trace_path_for,
+    AscentArgs, AscentOutputPaths,
 };
 pub use compute::{
     apply_dual_step, apply_dual_step_with_cached_computation, apply_dual_step_with_computation,
@@ -27,7 +28,7 @@ pub use expensive_cache::{
     polytope_key, ExpensiveComputationCache, ExpensiveComputationCacheRow,
     ExpensiveComputationCacheStats,
 };
-pub use rows::{ComputedPolytopeRow, SeedResult, SummaryRow, TraceRow};
+pub use rows::{AscentEventRow, ComputedPolytopeRow, SeedResult, SummaryRow, TraceRow};
 pub use runner::run_parallel_seeds;
 pub use shard_io::{
     finalize_ascent_output, load_completed_names, open_ascent_writers,

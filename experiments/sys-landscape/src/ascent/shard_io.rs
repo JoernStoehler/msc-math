@@ -1,6 +1,6 @@
 use super::cli::AscentOutputPaths;
 use super::expensive_cache::ExpensiveComputationCacheRow;
-use super::rows::{ComputedPolytopeRow, SeedResult, SummaryRow, TraceRow};
+use super::rows::{AscentEventRow, ComputedPolytopeRow, SeedResult, SummaryRow, TraceRow};
 use num_rational::BigRational;
 use serde::de::DeserializeOwned;
 use serde::Serialize;
@@ -16,6 +16,7 @@ pub struct AscentWriters {
     trace: Arc<Mutex<BufWriter<File>>>,
     cache: Arc<Mutex<BufWriter<File>>>,
     computed_polytopes: Arc<Mutex<BufWriter<File>>>,
+    ascent_events: Arc<Mutex<BufWriter<File>>>,
 }
 
 /// Load the set of already-completed seed names from a summary .jsonl file.
@@ -53,12 +54,14 @@ pub fn open_ascent_writers(paths: &AscentOutputPaths, fresh: bool) -> AscentWrit
         let _ = std::fs::remove_file(&paths.trace);
         let _ = std::fs::remove_file(&paths.cache);
         let _ = std::fs::remove_file(&paths.computed_polytopes);
+        let _ = std::fs::remove_file(&paths.ascent_events);
     }
     for path in [
         &paths.summary,
         &paths.trace,
         &paths.cache,
         &paths.computed_polytopes,
+        &paths.ascent_events,
     ] {
         if let Some(parent) = path.parent() {
             let _ = std::fs::create_dir_all(parent);
@@ -89,11 +92,22 @@ pub fn open_ascent_writers(paths: &AscentOutputPaths, fresh: bool) -> AscentWrit
                 paths.computed_polytopes
             )
         });
+    let ascent_events_file = OpenOptions::new()
+        .create(true)
+        .append(true)
+        .open(&paths.ascent_events)
+        .unwrap_or_else(|e| {
+            panic!(
+                "failed to open ascent-events file {:?}: {e}",
+                paths.ascent_events
+            )
+        });
     AscentWriters {
         summary: Arc::new(Mutex::new(BufWriter::new(summary_file))),
         trace: Arc::new(Mutex::new(BufWriter::new(trace_file))),
         cache: Arc::new(Mutex::new(BufWriter::new(cache_file))),
         computed_polytopes: Arc::new(Mutex::new(BufWriter::new(computed_polytopes_file))),
+        ascent_events: Arc::new(Mutex::new(BufWriter::new(ascent_events_file))),
     }
 }
 
@@ -101,8 +115,8 @@ pub fn open_ascent_writers(paths: &AscentOutputPaths, fresh: bool) -> AscentWrit
 ///
 /// Crash-safety invariant: **trace, cache, and computed-polytope rows for a
 /// seed are on disk before that seed's summary row is on disk**. Write order is
-/// trace (+ flush) → cache (+ flush) → computed-polytopes (+ flush) → summary
-/// (+ flush). Legacy skip-resume can read the summary file with
+/// trace (+ flush) → cache (+ flush) → computed-polytopes (+ flush) →
+/// ascent-events (+ flush) → summary (+ flush). Legacy skip-resume can read the summary file with
 /// `load_completed_names`, so a seed counts as "completed" only after its full
 /// payload is flushed. The datascience ascent producers now rerun shard control
 /// flow and use the expensive-computation cache for cost control instead.
@@ -149,6 +163,18 @@ pub fn write_seed_result(result: &SeedResult, writers: &AscentWriters) {
             writeln!(w, "{row_json}").expect("failed to write computed-polytope row");
         }
         w.flush().expect("failed to flush computed-polytope rows");
+    }
+    {
+        let mut w = writers
+            .ascent_events
+            .lock()
+            .expect("ascent-events writer mutex poisoned");
+        for row in &result.ascent_events {
+            let row_json =
+                serde_json::to_string(row).expect("AscentEventRow serialization should succeed");
+            writeln!(w, "{row_json}").expect("failed to write ascent-event row");
+        }
+        w.flush().expect("failed to flush ascent-event rows");
     }
     // Summary row last — only after trace, cache, and computed-polytopes are durable.
     let summary_json = serde_json::to_string(&result.summary)
@@ -239,6 +265,17 @@ pub fn finalize_ascent_output(paths: &AscentOutputPaths, writers: AscentWriters)
     );
     computed_polytope_rows.dedup_by(|a, b| a.result_id == b.result_id);
     write_rows_atomic(&paths.computed_polytopes, &computed_polytope_rows);
+
+    // --- Ascent events: sort by stable event id, dedup identical rows. ---
+    let mut ascent_event_rows = read_rows::<AscentEventRow>(&paths.ascent_events);
+    ascent_event_rows.sort_by(|a, b| a.event_id.cmp(&b.event_id));
+    reject_conflicting_adjacent(
+        &ascent_event_rows,
+        |row| row.event_id.clone(),
+        "ascent-event",
+    );
+    ascent_event_rows.dedup_by(|a, b| a.event_id == b.event_id);
+    write_rows_atomic(&paths.ascent_events, &ascent_event_rows);
 }
 
 pub fn write_expensive_computation_cache_rows(

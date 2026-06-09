@@ -20,6 +20,7 @@ pub struct AscentOutputPaths {
     pub trace: PathBuf,
     pub cache: PathBuf,
     pub computed_polytopes: PathBuf,
+    pub ascent_events: PathBuf,
     pub expensive_computations_cache: PathBuf,
 }
 
@@ -28,12 +29,14 @@ impl AscentOutputPaths {
         let trace = trace_path_for(&summary);
         let cache = cache_path_for(&summary);
         let computed_polytopes = computed_polytopes_path_for(&summary);
+        let ascent_events = ascent_events_path_for(&summary);
         let expensive_computations_cache = expensive_computations_cache_path_for(&summary);
         Self {
             summary,
             trace,
             cache,
             computed_polytopes,
+            ascent_events,
             expensive_computations_cache,
         }
     }
@@ -163,6 +166,14 @@ pub fn cache_path_for(summary_path: &Path) -> PathBuf {
 /// `foo/bar-endpoints.jsonl` -> `foo/bar-computed-polytopes.jsonl`.
 pub fn computed_polytopes_path_for(summary_path: &Path) -> PathBuf {
     sibling_path_with_suffix(summary_path, "computed-polytopes")
+}
+
+/// Derive the ascent-events file path from the summary file path.
+///
+/// `foo/bar.jsonl` -> `foo/bar-ascent-events.jsonl`.
+/// `foo/bar-endpoints.jsonl` -> `foo/bar-ascent-events.jsonl`.
+pub fn ascent_events_path_for(summary_path: &Path) -> PathBuf {
+    sibling_path_with_suffix(summary_path, "ascent-events")
 }
 
 /// Derive the expensive-computations cache output path from the summary path.

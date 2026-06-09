@@ -404,6 +404,7 @@ fn process_seed(
         },
         trace: all_trace,
         computed_polytopes: Vec::new(),
+        ascent_events: Vec::new(),
         final_record,
         final_polytope: best_polytope,
     })
