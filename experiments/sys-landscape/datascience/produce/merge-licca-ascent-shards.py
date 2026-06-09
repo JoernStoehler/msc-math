@@ -198,6 +198,80 @@ def validate_event_cache_coverage(
     return missing
 
 
+def validate_run_completed_events(
+    label: str,
+    dataset: str,
+    rows: list[dict[str, Any]],
+    events: list[dict[str, Any]],
+    require_events: bool,
+) -> list[str]:
+    completed_by_run_id: dict[str, dict[str, Any]] = {}
+    for event in events:
+        if event.get("dataset") != dataset or event.get("role") != "run_completed":
+            continue
+        run_id = str(event.get("run_id", ""))
+        previous = completed_by_run_id.get(run_id)
+        if previous is not None and previous != event:
+            raise SystemExit(f"{label}: conflicting run_completed events for {run_id!r}")
+        completed_by_run_id[run_id] = event
+
+    missing: list[str] = []
+    mismatches: list[str] = []
+    for row in rows:
+        name = str(row["name"])
+        event = completed_by_run_id.get(name)
+        if event is None:
+            missing.append(name)
+            continue
+        scalar_pairs = [
+            ("final_capacity", "final_capacity"),
+            ("final_volume", "final_volume"),
+            ("final_sys", "final_sys"),
+            ("total_delta", "total_delta"),
+        ]
+        for row_field, event_field in scalar_pairs:
+            if event.get(event_field) is None:
+                mismatches.append(f"{name}: event missing {event_field}")
+                continue
+            if abs(float(row[row_field]) - float(event[event_field])) > 1e-9:
+                mismatches.append(f"{name}: {row_field}/{event_field}")
+        integer_pairs = [
+            ("seed_index", "seed_index"),
+            ("facet_count", "facet_count"),
+            ("n_ascent_phases", "n_ascent_phases"),
+            ("n_gradient_iters_total", "n_gradient_iters_total"),
+            ("n_escape_overshoot", "n_escape_overshoot"),
+            ("n_escape_wiggle", "n_escape_wiggle"),
+        ]
+        for row_field, event_field in integer_pairs:
+            if event.get(event_field) is None:
+                mismatches.append(f"{name}: event missing {event_field}")
+                continue
+            if int(row[row_field]) != int(event[event_field]):
+                mismatches.append(f"{name}: {row_field}/{event_field}")
+        string_pairs = [
+            ("source_name", "source_name"),
+            ("lineage_id", "lineage_id"),
+            ("polytope_type", "polytope_type"),
+            ("best_strategy", "best_strategy"),
+        ]
+        for row_field, event_field in string_pairs:
+            if str(row[row_field]) != str(event.get(event_field, "")):
+                mismatches.append(f"{name}: {row_field}/{event_field}")
+
+    if mismatches:
+        raise SystemExit(
+            f"{label}: {len(mismatches)} summary/run_completed mismatches; "
+            f"first mismatches: {mismatches[:20]}"
+        )
+    if require_events and missing:
+        raise SystemExit(
+            f"{label}: {len(missing)} summary rows lack run_completed events; "
+            f"first missing: {missing[:20]}"
+        )
+    return missing
+
+
 def validate_summary_cache(
     label: str,
     rows: list[dict[str, Any]],
@@ -446,11 +520,31 @@ def main() -> None:
         "expensive-computation-cache",
         expensive_computation_key,
     )
+    require_ascent_events = args.require_cache and (args.fresh_fixed_f or args.smoke_fixed_f)
+    if require_ascent_events:
+        if not general_rows:
+            raise SystemExit("general: fixed-F merge found zero summary rows")
+        if not product_rows:
+            raise SystemExit("product: fixed-F merge found zero summary rows")
     general_missing_cache = validate_summary_cache(
         "general", general_rows, general_cache_rows, args.require_cache
     )
     product_missing_cache = validate_summary_cache(
         "product", product_rows, product_cache_rows, args.require_cache
+    )
+    general_missing_completed = validate_run_completed_events(
+        "general",
+        "gradient_ascent_general",
+        general_rows,
+        ascent_event_rows,
+        require_ascent_events,
+    )
+    product_missing_completed = validate_run_completed_events(
+        "product",
+        "gradient_ascent_products",
+        product_rows,
+        ascent_event_rows,
+        require_ascent_events,
     )
     validate_event_cache_coverage(ascent_event_rows, expensive_computation_cache_rows)
 
@@ -509,6 +603,8 @@ def main() -> None:
     for path in ascent_event_paths:
         print(f"  - `{path}`")
     print(f"- ascent-event rows: `{len(ascent_event_rows)}`")
+    print(f"- general summaries missing run_completed event: `{len(general_missing_completed)}`")
+    print(f"- product summaries missing run_completed event: `{len(product_missing_completed)}`")
     print()
 
     if args.write:

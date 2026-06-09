@@ -10,7 +10,7 @@ use symplectic::OrbitSearchResult;
 use super::compute::{compute_capacity_result, SysComputation};
 use super::dual_vertices_rational_strings;
 
-#[derive(Clone, Serialize, Deserialize)]
+#[derive(Clone, PartialEq, Serialize, Deserialize)]
 pub struct ExpensiveComputationCacheRow {
     pub polytope_key: String,
     pub dual_vertices_rational: Vec<[String; 4]>,
@@ -144,14 +144,34 @@ fn load_rows(path: &Path, rows: &mut HashMap<String, ExpensiveComputationCacheRo
         return;
     };
     let reader = BufReader::new(file);
-    for line in reader.lines().map_while(Result::ok) {
+    for (line_number, line) in reader.lines().enumerate() {
+        let line = line.unwrap_or_else(|e| {
+            panic!(
+                "failed to read expensive-computation cache {:?}:{}: {e}",
+                path,
+                line_number + 1
+            )
+        });
         let line = line.trim();
         if line.is_empty() {
             continue;
         }
-        let Ok(row) = serde_json::from_str::<ExpensiveComputationCacheRow>(line) else {
-            continue;
-        };
-        rows.entry(row.polytope_key.clone()).or_insert(row);
+        let row = serde_json::from_str::<ExpensiveComputationCacheRow>(line).unwrap_or_else(|e| {
+            panic!(
+                "invalid expensive-computation cache JSON {:?}:{}: {e}",
+                path,
+                line_number + 1
+            )
+        });
+        if let Some(previous) = rows.get(&row.polytope_key) {
+            assert!(
+                previous == &row,
+                "conflicting expensive-computation cache row for polytope_key {:?} in {:?}:{}",
+                row.polytope_key,
+                path,
+                line_number + 1
+            );
+        }
+        rows.insert(row.polytope_key.clone(), row);
     }
 }
