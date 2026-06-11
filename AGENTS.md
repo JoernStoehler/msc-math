@@ -4,8 +4,7 @@
 
 Master thesis by Jörn Stöhler, University of Augsburg.
 Advisor: Kai Cieliebak. Second advisor: Elizabeth Gaar.
-Deadline: finished PDF to Kai by 9.6.2026; official submission facts still need
-current-source refresh before final handin.
+Deadline: finished PDF to Kai by 16.6.2026.
 Topic: Probing Viterbo's Conjecture.
 
 Planned deliverables:
@@ -13,37 +12,84 @@ Planned deliverables:
 2. Durable Rust crates for symplectic geometry and exact arithmetic: `crates/`
 3. A reproducible experiment pipeline: `experiments/`
 
-## Implicit Objectives
-Unless stated otherwise:
-- Agents must contextualize their work, including task scope and review criteria, as instrumental for thesis success.
-- Agents must escalate early and push back if their task is nonsense or sub-optimally set.
-- Agents must minimize the amount of time Jörn has to spend (this is the one bottleneck for the tgesis timeline)
-- Concretely, agents should not ask questions they know the answer to, make requests they can carry out, end a turn without good reason, split a questionaire into multiple messages, ask questions that Jörn cannot cheaply answer, withhold/skip gathering information that Jörn has to rederive on his own time then.
-- Agents must own their task even if informal and undefined and cannot hand it off without approval from Jörn, including shifting responsibility and leadership and decisions to Jörn. Jörn is just another expert they can consult via explicit requests in chat.
-- Everyone has to keep Main in a blocker-free state where new parallel agents with independent tasks can spawn and merge worktrees at any time.
-- Agents must never work on Main directly; create an independent worktree first.
+## Rules
 
-## Chat Rules
+These rules override default agent behavior where this thesis project needs a
+more specific operating mode. They exist to fix common agent failures, not to
+turn AGENTS.md into a full manual.
 
-When interacting with Jörn in chat:
-- Write plain. Use zero metaphors and zero analogies and zero new terminology.
-- Number everything so Jörn can reference it without ambiguity.
-- Use progressive disclosure.
-- Do not iterate complex messages in chat, such as plans and questionnaires.
-  Draft and iterate in scratch, then copy the polished message to chat.
-- Final summaries should list review passes performed, including review
-  subagents used or intentionally not used.
-- Use LessWrong-style clear communication norms: Explicit belief strength
-  as probabilities, value and cost amounts as dollars.
-- Estimate whole-project value and cost, not only the local cost of the
-  immediate action. Use tactics like value of information, maintenance effort,
-  attention cost, downside/upside risks, reference classes, and cruxes when
-  useful.
-- Only use tactics where they are useful, e.g. omit explicit belief strength
-  commentary when it is not relevant, such as during babble-and-prune.
-- Use as a rough anchor: 1h Jörn labor = $300, 1h codex labor = $30.
+- Every session must serve thesis success. If the relation to thesis success is
+  unclear, ask. Task definitions should explain how the task increases expected
+  thesis success. Push back when a task or scope looks worse than an
+  alternative. It is fine to make progress on an established task before all
+  downstream uses are understood; restore thesis-level context during review so
+  goal drift is caught.
 
-## Files
+- Agents own their work, even while the goal is still being chosen, scoped, or
+  clarified. Jörn is available as mathematical expert, thesis stakeholder, and
+  prompt/harness/agent-engineering expert. Agents should otherwise cover the
+  roles needed to complete the work: developer, reviewer, tester, progress
+  tracker, interviewer, devops operator, mathematician, and similar roles.
+
+- Jörn has elevated access to LICCA, the devcontainer CLI, other Codex sessions,
+  and mail. Everything else in the repo or local environment is available to
+  agents directly. Do not ask Jörn to do accessible local/repo work; for the
+  elevated resources, ask Jörn instead of treating access as impossible.
+
+- Main must remain blocker-free so new sessions can spawn and merge independent
+  work. Read-only inspection on Main is fine. Do not make repo-tracked changes
+  on Main unless Jörn explicitly asks for that exact Main edit. For ordinary
+  work, create a git worktree first, do the work there, and merge after review.
+
+- Harness files (`AGENTS.md`, `.agents/skills/**`, `.codex/agents/**`) are
+  frozen unless Jörn explicitly asks for a harness edit. Discussion, planning,
+  and read-only inspection are allowed.
+
+### Chat with Jörn
+
+Jörn's time should go to expert feedback, not large amounts of handholding or
+session repair. Communication should be low-friction and focused on information
+transfer, not presentation or narration.
+
+- Write plain: ordinary words, existing thesis/repo terms, no metaphors, no
+  analogies, no invented labels.
+- Use `/tmp/` to polish messages that cannot be written cleanly top to bottom
+  without pausing, revising, reordering, or removing filler. Then send the
+  polished message.
+- Do not bundle unrelated questions or concerns in one request. Go through them
+  one by one. Within one concern, include related alternatives when comparing
+  them makes Jörn's feedback more useful.
+- Give enough context for Jörn's answers. When asking a question or requesting
+  review, state the relevant current state, uncertainty, and what kind of
+  answer helps. For high-leverage or unclear work, discuss the problem
+  model before proposing solutions.
+- Make questions, review requests, and other requests to Jörn hard to overlook.
+  Usually put them on their own line or at the end of a short list. Re-ask or
+  follow up if a request was missed or only partly answered.
+- Use line breaks and light structure so Jörn can skip known parts quickly. Use
+  numbers, short labels, or tables only when they make the message easier to
+  read, answer, or refer to.
+- Preserve precision that matters for communication. Do not shorten recaps if
+  shortening loses the actual distinction.
+- Make list type clear when ambiguity matters: exhaustive list, examples,
+  current known set, priority order, or another ordinary description.
+- Communicate current state, history summaries, problem models, and useful
+  alternatives. Do not narrate process unless the process itself is the relevant
+  state.
+- Communicate epistemic status when it matters. Bayesian/LessWrong-style here
+  means graded belief, expected value, and clear quantities. English phrases are
+  fine when precision is unimportant. Numbers can reduce ambiguity about
+  strength, size, likelihood, or cost, but only if it is clear what quantity they
+  estimate.
+- Use whole-project value and cost, not only local task cost, when estimates
+  matter. Rough anchor: 1h Jörn labor = $300; 1h Codex labor = $30.
+- Final summaries after completed work should list review passes performed,
+  including review subagents used or intentionally not used. Do not add ritual
+  review summaries to small chat-only replies.
+
+## Navigation
+
+This repo does not use nested `AGENTS.md` files.
 
 ```text
 .
@@ -135,84 +181,48 @@ When interacting with Jörn in chat:
 `-- /tmp/  (outside repo)
 ```
 
-- `AGENTS.md`: root instruction map. This repo does not use nested `AGENTS.md`.
-- `FACTSHEET.md`: Jörn-confirmed project facts. Use it for project context
-  that agents can rely on without re-asking or second-guessing unless newer
+Start here:
+- `FACTSHEET.md`: Jörn-confirmed project facts. Use it unless newer
   Jörn/Kai/source truth contradicts it.
-- `CAPABILITY_CLAIM_MAP.md`: non-authoritative cache of high-level repo-capability
-  claims, their scope, support, caveats, and refresh triggers. Source files,
-  tests, data, research notes, task progress files, and thesis text overrule it.
-- `Cargo.toml`, `**/Cargo.toml`: Rust workspace and package manifests.
-- `**/README.md`: consumer-facing entry point for normal use.
-- `**/DEVELOPMENT.md`: maintainer-facing notes for changing internals.
-- `thesis/`: publishable thesis. Self-contained, assets and text are copied
-  deliberately instead of linking to `experiments/`, `formal/`, etc.
-  `thesis/main.tex` inputs the active thesis scaffold. `thesis/legacy/`
-  contains source material only, not active thesis text.
-- `crates/`: internal Rust crates with stable code shared across experiments.
-- `formal/`: formalization and proofs for development, not for publication.
-- `experiments/`: Rust/Python experiment packages. Execution code, data,
-  reports, and figures are next to their producer.
-- `research/`: notes with ideas, design, interpretations for development.
-- `papers/<abbreviationYear>/`: raw sources of cited papers.
-- `tasks/`: live task model, current steering, submission/admin source files,
-  and final thesis-done checks. Start at `tasks/README.md`.
-- `.agents/skills/`: repo-local skill surface.
-- `.codex/agents/`: repo-local subagent templates (optional).
-- Harness files (`AGENTS.md`, `.agents/skills/**`, `.codex/agents/**`) are
-  frozen unless Jörn explicitly asks for a harness edit.
-- `.worktrees/`: ignored local worktrees for independent agent sessions.
-- `.devcontainer/`: local devcontainer with documentation.
-- `scripts/`: small repo helper commands.
-- `/tmp/`: scratch space for subagent prompts, iterative drafts, and
-  disposable chat artifacts; not durable project state.
+- `tasks/README.md`: live task model, steering, submission/admin source files,
+  and final thesis-done checks.
+- Slice entry points: `thesis/MAP.md`, `experiments/MAP.md`,
+  `crates/<crate>/MAP.md`, and `research/INDEX.md`.
 
-## Map Files
+Trust model:
+- Source files, tests, data, research notes, task files, and thesis text overrule
+  maps and summaries.
+- `CAPABILITY_CLAIM_MAP.md` is a non-authoritative cache of high-level
+  capability claims.
+- `MAP.md` files are navigation caches, not authoritative sources.
+- `README.md` files are entry points. `DEVELOPMENT.md` files are
+  maintainer-facing notes.
 
-The `MAP.md` files are navigation caches. They index, summarize and
-structure the folder content for quick navigation.
-They are not authoritative sources, and can be regenerated via subagent.
+Important boundaries:
+- `thesis/` is publishable thesis text. It is self-contained; assets and text
+  are copied deliberately instead of linked from `experiments/` or `formal/`.
+  `thesis/main.tex` inputs active text. `thesis/legacy/` is source material
+  only.
+- `formal/` is proof development, not publication text.
+- `experiments/` keeps execution code, data, reports, and figures next to their
+  producer.
+- `.worktrees/` contains ignored local worktrees for independent sessions.
+- `/tmp/` is scratch for drafts, subagent prompts, handoffs, and disposable chat
+  artifacts; it is not durable project state.
 
-- `CAPABILITY_CLAIM_MAP.md`: high-level repo-capability claim cache. It is not a folder
-  inventory. Use it for "what can this repo currently rely on?" questions and
-  refresh affected rows from source truth when source behavior changes.
-- `research/INDEX.md`: research questions and current status.
-- `crates/<crate>/MAP.md`: api and architecture.
-- `experiments/MAP.md`: tree of experiments and current status.
-- `thesis/MAP.md`: chapter structure and current status.
+Documentation:
+Knowledge should live where future agents need it: code, comments, TeX,
+experiment artifacts, research notes, task files, generated outputs, or local
+documentation. Keep documentation lean, current, and easy to verify. Delete or
+demote obsolete notes; git history is enough for historical material.
 
-## README.md Files
+## Environment and commands
 
-- `README.md` files are entry points for agents working on a project slice. They
-  reference further reading material so relevant files are discoverable without
-  opening the whole folder.
-- `README.md` files may contain summaries, overviews, factual notes, plans,
-  roadmaps, important considerations, conventions, and workflows when this
-  reduces future agent cost.
-- Such knowledge must be maintainable. Point to source truth when source truth
-  exists. When no source truth exists, include enough context or reasoning for
-  future agents to reconstruct and re-evaluate the claim.
-- Most knowledge should live exactly where it is needed: text, code, comments,
-  TeX, experiment artifacts, research notes, task files, generated outputs, or
-  other local file content.
-- Process knowledge was often written by gpt-5.5 Codex agents during local
-  work. It is based on contextual assumptions that may need to be questioned or
-  overridden. Jörn is available to help with context and maintenance.
-- The basic decision calculus is to weigh the value of a piece of knowledge for
-  future agents against the cost for agents who read it and the cost for agents
-  who maintain it. Keep documentation lean; prefer clear, precise, trustworthy
-  source truth over large secondary explanations.
-- Delete or demote historical notes when their current value is lower than
-  their verification and maintenance cost. Git history is enough for obsolete
-  planning material.
+Supported baseline environment: local devcontainer at `/workspaces/msc-math`
+with Rust, Python, TeX Live, and `gh`. See `.devcontainer/README.md`.
 
-## Environments
-
-Supported environments:
-- Local devcontainer at `/workspaces/msc-math`: full baseline environment with
-  Rust, Python, TeX Live, and `gh`. See `.devcontainer/README.md`.
-
-## Commands
+Use these as baseline commands. Verify locally when a command might be stale or
+too broad for the task.
 
 ```bash
 # Create local worktree
@@ -247,7 +257,7 @@ uv run --script experiments/sys-landscape/random-sample/analyze.py # PEP 723 inl
 cargo run -p symplectic --release --bin profile-pruned-hk2017 -- --facet-counts 8 --samples 3 --jsonl
 
 # Thesis
-cd thesis/ && latexmk && ./check-build.sh # output: `thesis/build/main.pdf`
+cd thesis/ && latexmk && ./check-build.sh # output: thesis/build/main.pdf
 
 # Formal math
 cd formal/ && latexmk
