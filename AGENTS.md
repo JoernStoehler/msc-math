@@ -211,10 +211,16 @@ Important boundaries:
   artifacts; it is not durable project state.
 
 Documentation:
-Knowledge should live where future agents need it: code, comments, TeX,
-experiment artifacts, research notes, task files, generated outputs, or local
-documentation. Keep documentation lean, current, and easy to verify. Delete or
-demote obsolete notes; git history is enough for historical material.
+- Write for Codex GPT-5.5 agents, not weaker hypothetical agents. Use your own
+  current model as the proxy for what future GPT-5.5 agents can know. If you
+  know a standard term, library, or reasoning step, assume future agents can know
+  it too. Document repo-specific facts, local conventions, source-truth links,
+  decisions, evidence, sharp edges, and expensive checks; do not spell out
+  generic reasoning GPT-5.5 can reconstruct.
+- Knowledge should live where future agents need it: code, comments, TeX,
+  experiment artifacts, research notes, task files, generated outputs, or local
+  documentation. Keep documentation lean, current, and easy to verify. Delete or
+  demote obsolete notes; git history is enough for historical material.
 
 ## Environment and commands
 
