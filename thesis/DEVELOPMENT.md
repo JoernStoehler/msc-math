@@ -9,24 +9,52 @@ Purpose:
 
 Do not treat this file as a process contract. Use it as context.
 
-## Current Scaffold State
+## Thesis Surface Convention
 
-`thesis/planned-toc.md` was converted into active `.tex` scaffold files.
-`thesis/main.tex` inputs the scaffold files. Old thesis prose and thesis-local
-notes were moved to `thesis/legacy/` as source material only.
+`thesis/main.tex` inputs the active `.tex` files. Old thesis prose and
+thesis-local notes live in `thesis/legacy/` as source material only.
 
-Scaffold files may intentionally contain only headings, labels, and local
-TODO/context comments. They are meant to let Jörn start writing, spawn
-thesis-local tasks, ask agents where text needs fleshing out, and decide ad hoc
-whether Jörn writes, an agent attempts work, or an agent only gathers
-information.
+Active `.tex` files are reader-facing thesis files. They should contain
+polished prose, TeX structure, labels, figures, and rare TeX-mechanics comments.
+Do not use them as durable TODO ledgers, content-control dashboards, or
+long-lived planning surfaces.
+
+Section-local `*-content.md` companions are the durable "what to say" surface.
+Use them for content inventory, claim/support/caveat notes, source pointers,
+fallback branches, review gates, and open writing decisions. These files are
+not source truth; they organize thesis writing from source truth.
+
+Use `/tmp` for temporary planning, reasoning, phrasing alternatives, and prompt
+packets. Use normal repo files as source truth for what is available to say:
+`research/`, `experiments/`, `formal/`, `crates/`, and task files where
+appropriate.
+
+When editing a thesis section, migrate durable section comments from `.tex` to
+the companion before or during prose work. Prune scaffold provenance, duplicated
+process reminders, and vague "write this" comments instead of preserving them
+mechanically. If a note may affect a retained claim but lacks source support,
+keep it in the companion as `needs source`.
+
+## Writing Targets
+
+- Optimize for time, readability for Kai and Elizabeth, completeness of
+  obtained results, correctness, and proof completeness where retained claims
+  need it.
+- Spoil each section's point early so readers can see the claim, support, and
+  caveat before reading details.
+- Keep execution status, ownership, commands, and final verification gates in
+  tasks or research notes rather than in structural TeX files.
+- Section planning test: claim, support, caveat, and pointer to proof, artifact,
+  or appendix. This is a check, not a required format. Notation, orientation,
+  summary tables, soft intuition, and appendix reference material may need a
+  purpose/dependency/placement check instead.
 
 ## Section-Local Content Companions
 
-Some thesis sections may have a nearby `*-content.md` companion file. These
-files gather section-local result packets, source pointers, evidence status,
-missing non-writing work, fallback branches, and review gates before final prose
-is written.
+Each active thesis section may have a nearby `*-content.md` companion file.
+These files gather section-local result packets, source pointers, evidence
+status, missing non-writing work, fallback branches, and review gates before
+final prose is written.
 
 Treat these files as writeup-gathering notes, not source truth. They should
 state their own status, purpose, overruled-by sources, lifecycle, and update
@@ -37,6 +65,10 @@ indirection and lets each file have its own lifecycle.
 Use a companion file when it reduces source scatter or prevents a section from
 losing thesis-facing content. Do not create one merely to record transient
 reasoning that is cheaper to rederive.
+
+The 2026-06-11 surface refactor migrated the planned-ToC scaffold comments out
+of active `.tex` files. Future agents should add new durable content notes to
+companions, not back into TeX comments.
 
 ## Questionnaire And Answers From The Design Session
 

@@ -1,52 +1,78 @@
 # Thesis Map
 
-Status: navigation cache for the active thesis scaffold.
+Status: navigation cache for the active thesis surface.
 
 ## Active Thesis
 
-- `main.tex`: structural entry point. It inputs the active scaffold files and
+- `main.tex`: structural entry point. It inputs the active thesis files and
   no legacy thesis prose.
-- `abstract.tex`: abstract scaffold.
-- `introduction.tex`: introduction scaffold.
-- `preliminaries.tex`: preliminaries scaffold.
-- `generalized-reeb-orbits-polytopes.tex`: generalized Reeb orbit scaffold.
+- `abstract.tex`: abstract thesis surface.
+- `abstract-content.md`: section-local abstract content notes.
+- `introduction.tex`: introduction thesis surface.
+- `introduction-content.md`: section-local introduction content notes.
+- `preliminaries.tex`: preliminaries thesis surface.
+- `preliminaries-content.md`: section-local preliminaries content notes.
+- `generalized-reeb-orbits-polytopes.tex`: generalized Reeb orbit thesis
+  surface.
+- `generalized-reeb-orbits-polytopes-content.md`: section-local generalized
+  Reeb orbit content notes.
 - `quadratic-program-algorithm-hk2019.tex`: HK2019 quadratic-program algorithm
-  scaffold.
-- `flow-graph-algorithm-ch2021.tex`: CH2021 flow-graph algorithm scaffold.
+  thesis surface.
+- `quadratic-program-algorithm-hk2019-content.md`: section-local HK2019
+  algorithm content notes.
+- `flow-graph-algorithm-ch2021.tex`: CH2021 flow-graph algorithm thesis
+  surface.
 - `flow-graph-algorithm-ch2021-content.md`: section-local content companion
   for the flow-graph algorithm section. Not source truth; use
   `crates/symplectic/src/algorithms/flow_graph/README.md` before relying on
   claims.
-- `first-order-perturbations.tex`: first-order perturbation scaffold.
-- `hko-local-maximum.tex`: HKO local-maximum main-result scaffold.
+- `first-order-perturbations.tex`: first-order perturbation thesis surface.
+- `first-order-perturbations-content.md`: section-local first-order
+  perturbation content notes.
+- `hko-local-maximum.tex`: HKO local-maximum main-result thesis surface.
 - `hko-local-maximum-content.md`: section-local content-gathering notes for
   the HKO result packet. Not source truth; use its source pointers before
   relying on claims.
-- `black-box-datascience.tex`: data-science search-result scaffold.
+- `black-box-datascience.tex`: data-science search-result thesis surface.
+- `black-box-datascience-content.md`: section-local data-science search-result
+  content notes.
 - `rotated-regular-polygons.tex`: rotated regular polygon side-result
-  scaffold.
+  thesis surface.
 - `rotated-regular-polygons-content.md`: section-local content-gathering notes
   for the rotated regular polygon side result, especially the pentagon
   executable proof packet. Not source truth; use its source pointers before
   relying on claims.
-- `visualization-3d.tex`: visualization side-result scaffold.
-- `numerics.tex`: high-level numerics scaffold.
-- `published-code-data.tex`: published code and data scaffold.
-- `use-of-ai.tex`: AI-use scaffold.
-- `conclusion.tex`: conclusion scaffold.
-- `appendix-datascience-results.tex`: data-science appendix scaffold.
-- `appendix-numerics-proofs.tex`: numerics appendix scaffold.
+- `visualization-3d.tex`: visualization side-result thesis surface.
+- `visualization-3d-content.md`: section-local visualization content notes.
+- `numerics.tex`: high-level numerics thesis surface.
+- `numerics-content.md`: section-local numerics content notes.
+- `published-code-data.tex`: published code and data thesis surface.
+- `published-code-data-content.md`: section-local publication/reproducibility
+  content notes.
+- `use-of-ai.tex`: AI-use thesis surface.
+- `use-of-ai-content.md`: section-local AI-use content notes.
+- `conclusion.tex`: conclusion thesis surface.
+- `conclusion-content.md`: section-local conclusion content notes.
+- `appendix-datascience-results.tex`: data-science appendix thesis surface.
+- `appendix-datascience-results-content.md`: section-local data-science appendix
+  content notes.
+- `appendix-numerics-proofs.tex`: numerics appendix thesis surface.
+- `appendix-numerics-proofs-content.md`: section-local numerics appendix
+  content notes.
 - `appendix-sagemath-computations.tex`: SageMath computation appendix
-  scaffold.
+  thesis surface.
+- `appendix-sagemath-computations-content.md`: section-local SageMath appendix
+  content notes.
 - `preamble.tex`: additional LaTeX preamble definitions.
 - `bibliography.bib`: thesis bibliography.
 
 ## Thesis Development Notes
 
-- `DEVELOPMENT.md`: maintainer-facing notes about the scaffold conversion and
-  process discussion that produced it.
-- Section-local `*-content.md` files, when present, are writeup-gathering
-  companions for nearby `.tex` files. They are not source truth.
+- `DEVELOPMENT.md`: maintainer-facing notes about the thesis surface
+  convention, scaffold conversion history, and process discussion that produced
+  it.
+- Section-local `*-content.md` files are writeup-gathering companions for
+  nearby `.tex` files. They are not source truth.
 
 ## Legacy Source Material
 
@@ -81,5 +107,6 @@ Status: navigation cache for the active thesis scaffold.
 
 ## Removed Source
 
-- `planned-toc.md` was converted into the active scaffold and removed. Its
-  useful section descriptions now live as local comments in the scaffold files.
+- `planned-toc.md` was converted into the active thesis surface and removed. Its
+  useful section descriptions now live in section-local `*-content.md`
+  companions.

@@ -77,6 +77,49 @@ The HKO thesis-facing result is a packet, not only one theorem statement.
 Guard: do not collapse items 3--6 into item 2. They are thesis-facing result
 components with different claim strengths.
 
+## Drafting Map By Thesis Subsection
+
+### Decision Problem
+
+- State and prove the main local-maximum theorem.
+- Define the exact local question: HKO2024 among ten-facet polytopes, modulo
+  the natural symmetries.
+- Include the HKO2024 configuration, the ten-facet local model, translations,
+  scaling, and linear symplectic maps as symmetries.
+- Explain why raw strict local maximality in ambient coordinates is not the
+  right statement.
+
+### Computation With SageMath
+
+- Define the decision problem and explain the SageMath computation that decides
+  it.
+- Define the chained computational steps/subroutines that decide the problem.
+- Prove each step correct as it is introduced.
+- Mention early that the exact field is `Q[tan(pi/5)] = Q[t]/p(t)` and give
+  the polynomial `p(t)`. SageMath may use `QQbar`; that is acceptable because
+  performance is not the bottleneck here.
+- Include selected Sage/Python snippets where they make the computation more
+  checkable or concrete.
+- Include selected printed data snippets where they help sanity-check the
+  computation, for example the first few and last few lines of a long printed
+  sigma list.
+- State the active orbit/row set, active-gradient rank/kernel comparison, and
+  equality of flat first-order directions with the symmetry tangent space.
+- Prefer a chain of defined subroutines or checks, each with its own meaning
+  and correctness explanation, over pseudocode by default.
+- Full code and full data live in the repo. Passages of code and data may go in
+  the main text when logically important or useful as sanity checks.
+- Open decision: how much code/data belongs in main text versus appendix versus
+  repo-only. Current leaning from the scaffold: full code/data in the repo,
+  important passages in main text, appendix only if it improves readability.
+
+### Empirical Tests
+
+- State first-order numerical bookkeeping, second-order checks, perturbation
+  checks, and neighborhood-sampling / `M_11` ascent checks if retained.
+- These are support and sanity checks, not substitutes for the exact
+  calculation.
+
 ## Current HKO Work Packets
 
 The HKO non-writing work is currently split into four packets.
