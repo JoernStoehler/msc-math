@@ -62,6 +62,10 @@ path = "datascience/produce/continuation.rs"
 name = "sys-dataset"
 path = "datascience/tables/main.rs"
 
+[[bin]]
+name = "sys-endpoint-local-max-diagnostic"
+path = "datascience/methods/endpoint-local-max-diagnostic/main.rs"
+
 [lints]
 workspace = true
 

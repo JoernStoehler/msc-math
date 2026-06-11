@@ -13,6 +13,8 @@ Read first:
 
 Current method packets in HEAD:
 
+- `endpoint-local-max-diagnostic/`: quotient first-order diagnostic for sampled
+  retained endpoints.
 - `scan-sys-gt-1/`: baseline target-predicate scan over the retained tables.
 
 Old PCA, clustering, regression, classification, supervised-alternative,
