@@ -20,12 +20,18 @@ pub mod step_bound;
 pub mod sys_landscape_cache;
 
 pub use ascent::{
-    apply_dual_step, ascent_direction, cache_path_for, compute_active_sys_state,
-    compute_capacity_result, compute_sys, compute_sys_from_capacity,
-    dual_vertices_rational_strings, finalize_ascent_output, load_completed_names,
-    open_ascent_writers, orbit_scalars_from_result, parse_ascent_args, rational_vec4_to_strings,
-    run_parallel_seeds, smoke_output_path, trace_path_for, write_seed_result, ActiveSysState,
-    AscentArgs, AscentMode, AscentOutputPaths, AscentWriters, SeedResult, SummaryRow, TraceRow,
+    apply_dual_step, apply_dual_step_with_cached_computation, apply_dual_step_with_computation,
+    ascent_direction, ascent_events_path_for, cache_path_for, compute_active_sys_state,
+    compute_active_sys_state_cached, compute_capacity_result, compute_sys, compute_sys_computation,
+    compute_sys_computation_cached, compute_sys_from_capacity, computed_polytopes_path_for,
+    dual_vertices_rational_strings, expensive_computations_cache_path_for, finalize_ascent_output,
+    load_completed_names, open_ascent_writers, orbit_scalars_from_result, parse_ascent_args,
+    polytope_key, rational_vec4_to_strings, run_parallel_seeds, smoke_output_path, trace_path_for,
+    write_expensive_computation_cache_rows, write_seed_result, ActiveSysState, AscentArgs,
+    AscentEventRow, AscentMode, AscentOutputPaths, AscentWriters, ComputedPolytopeMeta,
+    ComputedPolytopeRecorder, ComputedPolytopeRow, ExpensiveComputationCache,
+    ExpensiveComputationCacheRow, ExpensiveComputationCacheStats, SeedResult, SummaryRow,
+    SysComputation, TraceRow,
 };
 pub use datasets::{
     continuation_cache_path, experiment_path, package_root, raw_dataset_cache_path,

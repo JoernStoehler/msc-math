@@ -9,6 +9,7 @@ pub struct AscentArgs {
     pub fresh: bool,
     pub no_db_update: bool,
     pub seed_time_budget_secs: f64,
+    pub expensive_computation_caches: Vec<PathBuf>,
     /// Name prefix for the seed — used to build polytope names (e.g. `general_42`).
     pub prefix: String,
 }
@@ -18,16 +19,25 @@ pub struct AscentOutputPaths {
     pub summary: PathBuf,
     pub trace: PathBuf,
     pub cache: PathBuf,
+    pub computed_polytopes: PathBuf,
+    pub ascent_events: PathBuf,
+    pub expensive_computations_cache: PathBuf,
 }
 
 impl AscentOutputPaths {
     pub fn from_summary_path(summary: PathBuf) -> Self {
         let trace = trace_path_for(&summary);
         let cache = cache_path_for(&summary);
+        let computed_polytopes = computed_polytopes_path_for(&summary);
+        let ascent_events = ascent_events_path_for(&summary);
+        let expensive_computations_cache = expensive_computations_cache_path_for(&summary);
         Self {
             summary,
             trace,
             cache,
+            computed_polytopes,
+            ascent_events,
+            expensive_computations_cache,
         }
     }
 }
@@ -48,7 +58,8 @@ pub fn smoke_output_path(label: &str, file_name: &str) -> PathBuf {
 ///
 /// Recognized flags:
 /// `--n`, `--n-start`, `--seed`, `--out`, `--fresh`, `--db-update`,
-/// `--no-db-update`, `--seed-time-budget-secs`.
+/// `--no-db-update`, `--seed-time-budget-secs`,
+/// `--expensive-computations-cache`.
 pub fn parse_ascent_args(
     default_seed: u64,
     default_n: usize,
@@ -65,6 +76,7 @@ pub fn parse_ascent_args(
     let mut fresh = false;
     let mut no_db_update = true;
     let mut seed_time_budget_secs: f64 = default_seed_time_budget_secs;
+    let mut expensive_computation_caches = Vec::new();
 
     let mut i = 1;
     while i < argv.len() {
@@ -99,6 +111,10 @@ pub fn parse_ascent_args(
                     .expect("--seed-time-budget-secs must be an f64");
                 i += 2;
             }
+            "--expensive-computations-cache" => {
+                expensive_computation_caches.push(PathBuf::from(value()));
+                i += 2;
+            }
             "--fresh" => {
                 fresh = true;
                 i += 1;
@@ -123,6 +139,7 @@ pub fn parse_ascent_args(
         fresh,
         no_db_update,
         seed_time_budget_secs,
+        expensive_computation_caches,
         prefix: prefix.to_string(),
     }
 }
@@ -130,6 +147,7 @@ pub fn parse_ascent_args(
 /// Derive the trace file path from the summary file path.
 ///
 /// `foo/bar.jsonl` -> `foo/bar-trace.jsonl`.
+/// `foo/bar-endpoints.jsonl` -> `foo/bar-trace.jsonl`.
 pub fn trace_path_for(summary_path: &Path) -> PathBuf {
     sibling_path_with_suffix(summary_path, "trace")
 }
@@ -137,8 +155,33 @@ pub fn trace_path_for(summary_path: &Path) -> PathBuf {
 /// Derive the shard-local cache file path from the summary file path.
 ///
 /// `foo/bar.jsonl` -> `foo/bar-cache.jsonl`.
+/// `foo/bar-endpoints.jsonl` -> `foo/bar-cache.jsonl`.
 pub fn cache_path_for(summary_path: &Path) -> PathBuf {
     sibling_path_with_suffix(summary_path, "cache")
+}
+
+/// Derive the computed-polytope file path from the summary file path.
+///
+/// `foo/bar.jsonl` -> `foo/bar-computed-polytopes.jsonl`.
+/// `foo/bar-endpoints.jsonl` -> `foo/bar-computed-polytopes.jsonl`.
+pub fn computed_polytopes_path_for(summary_path: &Path) -> PathBuf {
+    sibling_path_with_suffix(summary_path, "computed-polytopes")
+}
+
+/// Derive the ascent-events file path from the summary file path.
+///
+/// `foo/bar.jsonl` -> `foo/bar-ascent-events.jsonl`.
+/// `foo/bar-endpoints.jsonl` -> `foo/bar-ascent-events.jsonl`.
+pub fn ascent_events_path_for(summary_path: &Path) -> PathBuf {
+    sibling_path_with_suffix(summary_path, "ascent-events")
+}
+
+/// Derive the expensive-computations cache output path from the summary path.
+///
+/// `foo/bar.jsonl` -> `foo/bar-expensive-computations-cache.jsonl`.
+/// `foo/bar-endpoints.jsonl` -> `foo/bar-expensive-computations-cache.jsonl`.
+pub fn expensive_computations_cache_path_for(summary_path: &Path) -> PathBuf {
+    sibling_path_with_suffix(summary_path, "expensive-computations-cache")
 }
 
 fn sibling_path_with_suffix(summary_path: &Path, suffix: &str) -> PathBuf {
@@ -147,6 +190,7 @@ fn sibling_path_with_suffix(summary_path: &Path, suffix: &str) -> PathBuf {
         .expect("summary path must have a file name")
         .to_string_lossy()
         .into_owned();
+    let stem = stem.strip_suffix("-endpoints").unwrap_or(&stem);
     let ext = summary_path
         .extension()
         .map(|e| e.to_string_lossy().into_owned())

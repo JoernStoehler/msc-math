@@ -16,6 +16,7 @@ use crate::kkt::saddle_point_solver::{
 use nalgebra::Vector4;
 use num_rational::BigRational;
 use num_traits::{One, Signed, Zero};
+use serde::{Deserialize, Serialize};
 use std::time::Instant;
 use tracing::{info, info_span, Level};
 
@@ -23,7 +24,7 @@ use tracing::{info, info_span, Level};
 ///
 /// Known-inadmissible candidates are discarded before they become
 /// `OrbitKktData`. This enum therefore describes only the surviving states.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub enum OrbitAdmissibility {
     /// Admissible according to the f64 solve/classification path.
     AdmissibleF64,
@@ -59,7 +60,7 @@ pub enum CertifiedOrbitSetMode {
 }
 
 /// Solved orbit payload used by all capacity frontends.
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct OrbitKktData {
     /// Cyclic facet sequence σ. Entries are distinct facet indices, not a full
     /// permutation of `0..F`.
@@ -98,7 +99,7 @@ impl OrbitKktData {
 }
 
 /// Shared result of collecting near-minimum solved orbits.
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct OrbitSearchResult {
     /// Returned orbits, sorted by lower action bound ascending.
     pub orbits: Vec<OrbitKktData>,

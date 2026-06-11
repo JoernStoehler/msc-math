@@ -4,8 +4,8 @@
 //! record both the summary outcomes and per-step traces.
 //! Input Artifacts: experiments/sys-landscape/datascience/produce/shared-cache.jsonl
 //! Output Artifacts: experiments/sys-landscape/datascience/produce/shared-cache.jsonl
-//!         experiments/sys-landscape/datascience/produce/ascent.jsonl
-//!         experiments/sys-landscape/datascience/produce/ascent-trace.jsonl
+//!         experiments/sys-landscape/datascience/produce/ascent-general-endpoints.jsonl
+//!         experiments/sys-landscape/datascience/produce/ascent-general-trace.jsonl
 //!
 //! At each iteration, builds the active-orbit first-order model for `sys`.
 //! With one active orbit, uses that branch gradient directly; at switching
@@ -21,15 +21,15 @@
 //! - `--n <count>`        number of seeds this invocation processes   (default: 10)
 //! - `--n-start <offset>` starting global seed index                  (default: 0)
 //! - `--seed <u64>`       base RNG seed                               (default: 42)
-//! - `--out <path>`       output summary .jsonl                       (default: untracked temp smoke path)
+//! - `--out <path>`       output endpoint summary .jsonl                       (default: untracked temp smoke path)
 //! - `--seed-time-budget-secs <f64>` per-seed wall-clock budget       (default: 120)
-//! - `--fresh`            delete existing summary + trace + cache files before running
+//! - `--fresh`            delete existing endpoint summary + trace + cache + computed-polytope files before running
 //! - `--db-update`        load and save the sys-landscape family cache
 //! - `--no-db-update`     do not load or save the sys-landscape family cache
 //!                        (set by LICCA to avoid concurrent write races)
 //!
 //! Canonical refresh example:
-//! `cargo run -p exp-sys-landscape --release --bin sys-dataset-ascent -- --out experiments/sys-landscape/datascience/produce/ascent.jsonl --db-update`
+//! `cargo run -p exp-sys-landscape --release --bin sys-dataset-ascent -- --out experiments/sys-landscape/datascience/produce/ascent-general-endpoints.jsonl --db-update`
 //!
 //! Architecture B (2026-04-12): rayon `par_iter` over `[n_start, n_start+n)`
 //! at the dataset level. Seed i uses its own RNG stream
@@ -40,11 +40,13 @@
 
 use exp_sys_landscape::SysLandscapePolytopeCache;
 use exp_sys_landscape::{
-    apply_dual_step, ascent_direction, compute_active_sys_state, compute_step_bound, compute_sys,
-    dual_vertices_rational_strings, finalize_ascent_output, open_ascent_writers,
-    orbit_scalars_from_result, parse_ascent_args, run_parallel_seeds, shared_family_cache_path,
-    smoke_output_path, AscentArgs, AscentMode, AscentOutputPaths, SeedResult, SummaryRow, TraceRow,
-    MAX_STEP_SIZE,
+    apply_dual_step_with_cached_computation, ascent_direction, compute_active_sys_state_cached,
+    compute_step_bound, compute_sys_computation_cached, dual_vertices_rational_strings,
+    finalize_ascent_output, open_ascent_writers, orbit_scalars_from_result, parse_ascent_args,
+    polytope_key, run_parallel_seeds, shared_family_cache_path, smoke_output_path,
+    write_expensive_computation_cache_rows, AscentArgs, AscentEventRow, AscentMode,
+    AscentOutputPaths, ComputedPolytopeMeta, ComputedPolytopeRecorder, ExpensiveComputationCache,
+    SeedResult, SummaryRow, TraceRow, MAX_STEP_SIZE,
 };
 use nalgebra::Vector4;
 use rand::SeedableRng;
@@ -139,17 +141,33 @@ struct AscentResult {
 // TODO: add [lem:sys-sensitivity] to formal math (see gradient-correctness experiment)
 fn gradient_ascent(
     name: &str,
+    seed_index: usize,
     phase: usize,
     start: &SysLandscapePolytopeCache,
     t0: Instant,
     budget: f64,
+    initial_role: &str,
+    computed_polytopes: &mut ComputedPolytopeRecorder,
+    expensive_cache: &ExpensiveComputationCache,
 ) -> Option<AscentResult> {
     let mut current =
         SysLandscapePolytopeCache::from_f64_dual_vertices(start.dual_vertices_f64.to_vec())?;
 
-    let sys_init = compute_sys(&current)?;
+    let initial = compute_sys_computation_cached(&current, expensive_cache)?;
+    computed_polytopes.push(
+        ComputedPolytopeMeta {
+            phase: Some(phase),
+            iteration: None,
+            role: initial_role,
+            ..ComputedPolytopeMeta::role(initial_role)
+        },
+        &current,
+        &initial.capacity,
+        initial.vol,
+        initial.sys,
+    );
 
-    let mut current_sys = sys_init;
+    let mut current_sys = initial.sys;
     let mut n_iters = 0usize;
     let mut n_overshoot = 0usize;
     let mut trace = Vec::new();
@@ -160,9 +178,20 @@ fn gradient_ascent(
         }
 
         // 1. Shared local state
-        let state = compute_active_sys_state(&current)?;
+        let state = compute_active_sys_state_cached(&current, expensive_cache)?;
         let sys = state.sys;
         let duals = &current.dual_vertices_f64;
+        computed_polytopes.push(
+            ComputedPolytopeMeta {
+                phase: Some(phase),
+                iteration: Some(iter),
+                ..ComputedPolytopeMeta::role("current_state")
+            },
+            &current,
+            &state.capacity,
+            state.vol,
+            state.sys,
+        );
 
         // 2. Ascent direction: single branch when unique, nonsmooth maximin
         // direction when several active orbit branches tie.
@@ -181,12 +210,33 @@ fn gradient_ascent(
 
         // 4. Line search: within-bound + overshoot
         let mut best: Option<(SysLandscapePolytopeCache, f64, String, f64, f64)> = None;
+        let mut best_result_idx: Option<usize> = None;
 
         for &frac in STEP_FRACTIONS {
             let t = frac * t_max;
-            if let Some((p, new_sys)) = apply_dual_step(duals, &d_sys_a, t) {
+            if let Some((p, computation)) =
+                apply_dual_step_with_cached_computation(duals, &d_sys_a, t, expensive_cache)
+            {
+                let result_idx = computed_polytopes.push(
+                    ComputedPolytopeMeta {
+                        phase: Some(phase),
+                        iteration: Some(iter),
+                        role: "line_search_candidate",
+                        step_type: Some("within"),
+                        t_fraction: Some(frac),
+                        t_actual: Some(t),
+                        accepted_in_iteration: false,
+                        became_run_final: false,
+                    },
+                    &p,
+                    &computation.capacity,
+                    computation.vol,
+                    computation.sys,
+                );
+                let new_sys = computation.sys;
                 if new_sys > sys && best.as_ref().is_none_or(|b| new_sys > b.1) {
                     best = Some((p, new_sys, "within".into(), frac, t));
+                    best_result_idx = Some(result_idx);
                 }
             }
         }
@@ -194,9 +244,30 @@ fn gradient_ascent(
         if t_max < MAX_STEP_SIZE {
             for &mult in OVERSHOOT_MULTIPLIERS {
                 let t = mult * t_max;
-                if let Some((p, new_sys)) = apply_dual_step(duals, &d_sys_a, t) {
+                if let Some((p, computation)) =
+                    apply_dual_step_with_cached_computation(duals, &d_sys_a, t, expensive_cache)
+                {
+                    let step_type = format!("overshoot_{mult}x");
+                    let result_idx = computed_polytopes.push(
+                        ComputedPolytopeMeta {
+                            phase: Some(phase),
+                            iteration: Some(iter),
+                            role: "line_search_candidate",
+                            step_type: Some(&step_type),
+                            t_fraction: Some(mult),
+                            t_actual: Some(t),
+                            accepted_in_iteration: false,
+                            became_run_final: false,
+                        },
+                        &p,
+                        &computation.capacity,
+                        computation.vol,
+                        computation.sys,
+                    );
+                    let new_sys = computation.sys;
                     if new_sys > sys && best.as_ref().is_none_or(|b| new_sys > b.1) {
-                        best = Some((p, new_sys, format!("overshoot_{mult}x"), mult, t));
+                        best = Some((p, new_sys, step_type, mult, t));
+                        best_result_idx = Some(result_idx);
                     }
                 }
             }
@@ -205,6 +276,9 @@ fn gradient_ascent(
         // 5. Take best step or stop
         match best {
             Some((new_polytope, new_sys, step_type, frac, t)) => {
+                if let Some(result_idx) = best_result_idx {
+                    computed_polytopes.mark_accepted(result_idx);
+                }
                 let delta = new_sys - sys;
                 if step_type.starts_with("overshoot") {
                     n_overshoot += 1;
@@ -278,11 +352,22 @@ fn process_seed(
     polytope: &SysLandscapePolytopeCache,
     seed_time_budget_secs: f64,
     rng: &mut ChaCha8Rng,
+    expensive_cache: &ExpensiveComputationCache,
 ) -> Option<SeedResult> {
     let t0 = Instant::now();
     let budget = seed_time_budget_secs;
 
-    let starting_sys = compute_sys(polytope)?;
+    let starting_computation = compute_sys_computation_cached(polytope, expensive_cache)?;
+    let starting_sys = starting_computation.sys;
+    let mut computed_polytopes =
+        ComputedPolytopeRecorder::new("gradient_ascent_general", name, seed_index);
+    computed_polytopes.push(
+        ComputedPolytopeMeta::role("start"),
+        polytope,
+        &starting_computation.capacity,
+        starting_computation.vol,
+        starting_computation.sys,
+    );
 
     let mut best_polytope =
         SysLandscapePolytopeCache::from_f64_dual_vertices(polytope.dual_vertices_f64.to_vec())?;
@@ -295,7 +380,17 @@ fn process_seed(
     let mut all_trace = Vec::new();
 
     // Phase 0: initial gradient ascent (with overshoot at each step)
-    if let Some(result) = gradient_ascent(name, n_phases, polytope, t0, budget) {
+    if let Some(result) = gradient_ascent(
+        name,
+        seed_index,
+        n_phases,
+        polytope,
+        t0,
+        budget,
+        "current_state",
+        &mut computed_polytopes,
+        expensive_cache,
+    ) {
         n_phases += 1;
         n_iters_total += result.n_iters;
         n_escape_overshoot += result.n_overshoot_improvements;
@@ -324,7 +419,17 @@ fn process_seed(
                 break;
             }
             if let Some(wiggled) = wiggle(&best_polytope, rng) {
-                if let Some(result) = gradient_ascent(name, n_phases, &wiggled, t0, budget) {
+                if let Some(result) = gradient_ascent(
+                    name,
+                    seed_index,
+                    n_phases,
+                    &wiggled,
+                    t0,
+                    budget,
+                    "wiggle_start",
+                    &mut computed_polytopes,
+                    expensive_cache,
+                ) {
                     n_phases += 1;
                     n_iters_total += result.n_iters;
                     n_escape_overshoot += result.n_overshoot_improvements;
@@ -347,8 +452,18 @@ fn process_seed(
     }
 
     let total_time_ms = t0.elapsed().as_secs_f64() * 1000.0;
-    let final_state = compute_active_sys_state(&best_polytope)?;
+    let final_state = compute_active_sys_state_cached(&best_polytope, expensive_cache)?;
     let final_capacity = final_state.capacity.capacity();
+    computed_polytopes.push(
+        ComputedPolytopeMeta {
+            became_run_final: true,
+            ..ComputedPolytopeMeta::role("final")
+        },
+        &best_polytope,
+        &final_state.capacity,
+        final_state.vol,
+        final_state.sys,
+    );
     let mut final_record = best_polytope.to_record();
     final_record = final_record.with_computed_fields(final_state.vol, 0.0, final_capacity, 0.0);
     final_record = final_record.with_sigmas(
@@ -368,30 +483,64 @@ fn process_seed(
         .map(|a| [a[0], a[1], a[2], a[3]])
         .collect();
 
+    let (computed_polytope_rows, mut ascent_event_rows) = computed_polytopes.into_outputs();
+    let summary = SummaryRow {
+        name: name.to_string(),
+        seed_index,
+        source_name: name.to_string(),
+        lineage_id: format!("general::{name}"),
+        polytope_type: polytope_type.to_string(),
+        facet_count: best_polytope.facet_count(),
+        starting_sys,
+        final_capacity,
+        final_volume: final_state.vol,
+        final_sys: best_sys,
+        total_delta: best_sys - starting_sys,
+        n_ascent_phases: n_phases,
+        n_gradient_iters_total: n_iters_total,
+        n_escape_overshoot,
+        n_escape_wiggle,
+        best_strategy,
+        total_time_ms,
+        starting_dual_vertices_rational,
+        final_dual_vertices_rational,
+        final_dual_vertices: final_dvs,
+    };
+    ascent_event_rows.push(AscentEventRow {
+        event_id: format!("gradient_ascent_general:{name}:run_completed"),
+        dataset: "gradient_ascent_general".to_string(),
+        run_id: name.to_string(),
+        seed_index,
+        phase: None,
+        iteration: None,
+        role: "run_completed".to_string(),
+        step_type: None,
+        t_fraction: None,
+        t_actual: None,
+        accepted_in_iteration: false,
+        became_run_final: true,
+        polytope_key: polytope_key(&best_polytope),
+        source_name: Some(summary.source_name.clone()),
+        lineage_id: Some(summary.lineage_id.clone()),
+        polytope_type: Some(summary.polytope_type.clone()),
+        facet_count: Some(summary.facet_count),
+        starting_sys: Some(summary.starting_sys),
+        final_capacity: Some(summary.final_capacity),
+        final_volume: Some(summary.final_volume),
+        final_sys: Some(summary.final_sys),
+        total_delta: Some(summary.total_delta),
+        n_ascent_phases: Some(summary.n_ascent_phases),
+        n_gradient_iters_total: Some(summary.n_gradient_iters_total),
+        n_escape_overshoot: Some(summary.n_escape_overshoot),
+        n_escape_wiggle: Some(summary.n_escape_wiggle),
+        best_strategy: Some(summary.best_strategy.clone()),
+        total_time_ms: Some(summary.total_time_ms),
+    });
     Some(SeedResult {
-        summary: SummaryRow {
-            name: name.to_string(),
-            seed_index,
-            source_name: name.to_string(),
-            lineage_id: format!("general::{name}"),
-            polytope_type: polytope_type.to_string(),
-            facet_count: best_polytope.facet_count(),
-            starting_sys,
-            final_capacity,
-            final_volume: final_state.vol,
-            final_sys: best_sys,
-            total_delta: best_sys - starting_sys,
-            n_ascent_phases: n_phases,
-            n_gradient_iters_total: n_iters_total,
-            n_escape_overshoot,
-            n_escape_wiggle,
-            best_strategy,
-            total_time_ms,
-            starting_dual_vertices_rational,
-            final_dual_vertices_rational,
-            final_dual_vertices: final_dvs,
-        },
+        summary,
         trace: all_trace,
+        computed_polytopes: computed_polytope_rows,
+        ascent_events: ascent_event_rows,
         final_record,
         final_polytope: best_polytope,
     })
@@ -420,7 +569,8 @@ fn insert_polytope_to_db(
 // ============================================================================
 
 fn main() {
-    let default_out = smoke_output_path("sys-dataset-ascent", "smoke-ascent.jsonl");
+    let default_out =
+        smoke_output_path("sys-dataset-ascent", "smoke-ascent-general-endpoints.jsonl");
     let args: AscentArgs = parse_ascent_args(
         DEFAULT_SEED,
         10,
@@ -439,24 +589,30 @@ fn main() {
     println!("  out:          {}", output_paths.summary.display());
     println!("  trace:        {}", output_paths.trace.display());
     println!("  cache:        {}", output_paths.cache.display());
+    println!(
+        "  computed:     {}",
+        output_paths.computed_polytopes.display()
+    );
+    println!("  events:       {}", output_paths.ascent_events.display());
+    println!(
+        "  expensive-cache-out: {}",
+        output_paths.expensive_computations_cache.display()
+    );
+    for path in &args.expensive_computation_caches {
+        println!("  expensive-cache-in:  {}", path.display());
+    }
     println!("  fresh:        {}", args.fresh);
     println!("  budget:       {:.1}s/seed", args.seed_time_budget_secs);
     println!("  no-db-update: {}\n", args.no_db_update);
 
-    let completed = if args.fresh {
-        std::collections::HashSet::new()
-    } else {
-        exp_sys_landscape::load_completed_names(&output_paths.summary)
-    };
-
-    if completed.is_empty() {
-        println!("Starting fresh run.");
-    } else {
-        println!("Resuming: {} seeds already completed.", completed.len());
-    }
+    let completed = std::collections::HashSet::new();
+    println!("Rerunning shard control flow; expensive computations use read-only cache hits.");
 
     let writers = open_ascent_writers(&output_paths, args.fresh);
     let best = Arc::new(Mutex::new((0.0f64, String::new())));
+    let mut expensive_cache_inputs = args.expensive_computation_caches.clone();
+    expensive_cache_inputs.push(output_paths.expensive_computations_cache.clone());
+    let expensive_cache = Arc::new(ExpensiveComputationCache::load(&expensive_cache_inputs));
 
     // DB state: loaded once, shared across threads under a Mutex when !no_db_update.
     // On LICCA (--no-db-update), both load and insertion are skipped entirely.
@@ -473,6 +629,7 @@ fn main() {
     let no_db_update = args.no_db_update;
     let seed_time_budget_secs = args.seed_time_budget_secs;
     let db_for_closure = Arc::clone(&db_arc);
+    let expensive_cache_for_closure = Arc::clone(&expensive_cache);
 
     run_parallel_seeds(&args, &completed, &writers, &best, move |i, seed_i| {
         let mut rng_i = ChaCha8Rng::seed_from_u64(seed_i);
@@ -509,6 +666,7 @@ fn main() {
             &polytope,
             seed_time_budget_secs,
             &mut rng_i,
+            &expensive_cache_for_closure,
         )?;
 
         if !no_db_update {
@@ -569,6 +727,8 @@ fn main() {
     // scheduling and any crash-resume history. See `finalize_ascent_output`
     // for details.
     finalize_ascent_output(&output_paths, writers);
+    let cache_rows = expensive_cache.used_rows();
+    write_expensive_computation_cache_rows(&output_paths, &cache_rows);
 
     if !no_db_update {
         let db = db_arc.lock().expect("lock db for save");
@@ -593,7 +753,23 @@ fn main() {
         );
     }
     println!("Total time: {:.1}s", t_global.elapsed().as_secs_f64());
+    let expensive_stats = expensive_cache.stats();
+    println!(
+        "Expensive-computation cache: hits={}, misses={}, used_rows={}",
+        expensive_stats.hits,
+        expensive_stats.misses,
+        cache_rows.len()
+    );
     println!("Output: {}", output_paths.summary.display());
     println!("Trace: {}", output_paths.trace.display());
     println!("Cache: {}", output_paths.cache.display());
+    println!(
+        "Expensive computations cache: {}",
+        output_paths.expensive_computations_cache.display()
+    );
+    println!(
+        "Computed polytopes: {}",
+        output_paths.computed_polytopes.display()
+    );
+    println!("Ascent events: {}", output_paths.ascent_events.display());
 }

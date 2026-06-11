@@ -1,7 +1,9 @@
 //! Load producer outputs and merge them into unified datascience input rows.
 
 use blake3::Hasher;
-use exp_sys_landscape::{package_root, rational_vec4_to_strings, SummaryRow, TraceRow};
+use exp_sys_landscape::{
+    package_root, rational_vec4_to_strings, ComputedPolytopeRow, SummaryRow, TraceRow,
+};
 #[path = "../produce/rows.rs"]
 mod rows;
 use rows::{RandomProductRow, RandomSweepRow, ResultRow};
@@ -12,6 +14,8 @@ use std::io::{BufRead, BufReader};
 use std::path::{Path, PathBuf};
 use std::time::{SystemTime, UNIX_EPOCH};
 use symplectic::database::{load_many, OrbitScalars, PolytopeRecord, SigmaAction};
+
+use crate::rows::ComputedPolytopeObservationRow;
 
 #[derive(Clone)]
 pub struct LoadedPolytopeRow {
@@ -77,6 +81,7 @@ pub struct LoadedProvenanceRow {
 pub struct LoadedCaches {
     pub polytopes: Vec<LoadedPolytopeRow>,
     pub provenance_rows: Vec<LoadedProvenanceRow>,
+    pub computed_polytope_observations: Vec<ComputedPolytopeObservationRow>,
 }
 
 #[derive(Clone)]
@@ -94,9 +99,11 @@ pub struct DatasetPaths {
     pub ascent_summary: PathBuf,
     pub ascent_trace: PathBuf,
     pub ascent_cache: PathBuf,
+    pub ascent_computed_polytopes: PathBuf,
     pub ascent_product_summary: PathBuf,
     pub ascent_product_trace: PathBuf,
     pub ascent_product_cache: PathBuf,
+    pub ascent_product_computed_polytopes: PathBuf,
     pub continuation_summary: PathBuf,
     pub shared_cache: PathBuf,
     pub continuation_cache: PathBuf,
@@ -118,12 +125,16 @@ Options:
   --produce-dir <dir>              Read canonical producer filenames from <dir>
   --random <path>                  Override random.jsonl
   --random-product <path>          Override random-product.jsonl
-  --ascent <path>                  Override ascent.jsonl
-  --ascent-trace <path>            Override ascent-trace.jsonl
-  --ascent-cache <path>            Override ascent-cache.jsonl
-  --ascent-product <path>          Override ascent-product.jsonl
+  --ascent <path>                  Override ascent-general-endpoints.jsonl
+  --ascent-trace <path>            Override ascent-general-trace.jsonl
+  --ascent-cache <path>            Override ascent-general-cache.jsonl
+  --ascent-computed-polytopes <path>
+                                  Override ascent-general-computed-polytopes.jsonl
+  --ascent-product <path>          Override ascent-product-endpoints.jsonl
   --ascent-product-trace <path>    Override ascent-product-trace.jsonl
   --ascent-product-cache <path>    Override ascent-product-cache.jsonl
+  --ascent-product-computed-polytopes <path>
+                                  Override ascent-product-computed-polytopes.jsonl
   --continuation <path>            Override continuation.jsonl
   --shared-cache <path>            Override shared-cache.jsonl
   --continuation-cache <path>      Override continuation-cache.jsonl
@@ -152,12 +163,15 @@ fn default_paths() -> DatasetPaths {
     DatasetPaths {
         random_sample: produce_dir.join("random.jsonl"),
         random_product: produce_dir.join("random-product.jsonl"),
-        ascent_summary: produce_dir.join("ascent.jsonl"),
-        ascent_trace: produce_dir.join("ascent-trace.jsonl"),
-        ascent_cache: produce_dir.join("ascent-cache.jsonl"),
-        ascent_product_summary: produce_dir.join("ascent-product.jsonl"),
+        ascent_summary: produce_dir.join("ascent-general-endpoints.jsonl"),
+        ascent_trace: produce_dir.join("ascent-general-trace.jsonl"),
+        ascent_cache: produce_dir.join("ascent-general-cache.jsonl"),
+        ascent_computed_polytopes: produce_dir.join("ascent-general-computed-polytopes.jsonl"),
+        ascent_product_summary: produce_dir.join("ascent-product-endpoints.jsonl"),
         ascent_product_trace: produce_dir.join("ascent-product-trace.jsonl"),
         ascent_product_cache: produce_dir.join("ascent-product-cache.jsonl"),
+        ascent_product_computed_polytopes: produce_dir
+            .join("ascent-product-computed-polytopes.jsonl"),
         continuation_summary: produce_dir.join("continuation.jsonl"),
         shared_cache: produce_dir.join("shared-cache.jsonl"),
         continuation_cache: produce_dir.join("continuation-cache.jsonl"),
@@ -172,9 +186,11 @@ pub fn parse_args() -> DatasetPaths {
     let mut ascent_summary = defaults.ascent_summary;
     let mut ascent_trace = defaults.ascent_trace;
     let mut ascent_cache = defaults.ascent_cache;
+    let mut ascent_computed_polytopes = defaults.ascent_computed_polytopes;
     let mut ascent_product_summary = defaults.ascent_product_summary;
     let mut ascent_product_trace = defaults.ascent_product_trace;
     let mut ascent_product_cache = defaults.ascent_product_cache;
+    let mut ascent_product_computed_polytopes = defaults.ascent_product_computed_polytopes;
     let mut continuation_summary = defaults.continuation_summary;
     let mut shared_cache = defaults.shared_cache;
     let mut continuation_cache = defaults.continuation_cache;
@@ -196,12 +212,15 @@ pub fn parse_args() -> DatasetPaths {
                 let dir = PathBuf::from(value);
                 random_sample = dir.join("random.jsonl");
                 random_product = dir.join("random-product.jsonl");
-                ascent_summary = dir.join("ascent.jsonl");
-                ascent_trace = dir.join("ascent-trace.jsonl");
-                ascent_cache = dir.join("ascent-cache.jsonl");
-                ascent_product_summary = dir.join("ascent-product.jsonl");
+                ascent_summary = dir.join("ascent-general-endpoints.jsonl");
+                ascent_trace = dir.join("ascent-general-trace.jsonl");
+                ascent_cache = dir.join("ascent-general-cache.jsonl");
+                ascent_computed_polytopes = dir.join("ascent-general-computed-polytopes.jsonl");
+                ascent_product_summary = dir.join("ascent-product-endpoints.jsonl");
                 ascent_product_trace = dir.join("ascent-product-trace.jsonl");
                 ascent_product_cache = dir.join("ascent-product-cache.jsonl");
+                ascent_product_computed_polytopes =
+                    dir.join("ascent-product-computed-polytopes.jsonl");
                 continuation_summary = dir.join("continuation.jsonl");
                 shared_cache = dir.join("shared-cache.jsonl");
                 continuation_cache = dir.join("continuation-cache.jsonl");
@@ -227,6 +246,10 @@ pub fn parse_args() -> DatasetPaths {
                 ascent_cache = PathBuf::from(value);
                 i += 2;
             }
+            "--ascent-computed-polytopes" => {
+                ascent_computed_polytopes = PathBuf::from(value);
+                i += 2;
+            }
             "--ascent-product" => {
                 ascent_product_summary = PathBuf::from(value);
                 i += 2;
@@ -237,6 +260,10 @@ pub fn parse_args() -> DatasetPaths {
             }
             "--ascent-product-cache" => {
                 ascent_product_cache = PathBuf::from(value);
+                i += 2;
+            }
+            "--ascent-product-computed-polytopes" => {
+                ascent_product_computed_polytopes = PathBuf::from(value);
                 i += 2;
             }
             "--continuation" => {
@@ -265,9 +292,11 @@ pub fn parse_args() -> DatasetPaths {
         ascent_summary,
         ascent_trace,
         ascent_cache,
+        ascent_computed_polytopes,
         ascent_product_summary,
         ascent_product_trace,
         ascent_product_cache,
+        ascent_product_computed_polytopes,
         continuation_summary,
         shared_cache,
         continuation_cache,
@@ -759,6 +788,91 @@ fn load_continuation_rows(
     }
 }
 
+fn sigma_gap_cutoff_from_sigmas(sigmas: &[SigmaAction]) -> Option<f64> {
+    if sigmas.is_empty() {
+        return None;
+    }
+    if sigmas.len() < 2 {
+        return Some(0.0);
+    }
+    Some(sigmas[1].action - sigmas[0].action)
+}
+
+fn load_computed_polytope_observations(
+    paths: &DatasetPaths,
+    polytopes: &mut HashMap<String, LoadedPolytopeRow>,
+) -> Vec<ComputedPolytopeObservationRow> {
+    let mut rows = Vec::new();
+    load_computed_polytope_rows(&paths.ascent_computed_polytopes, polytopes, &mut rows);
+    load_computed_polytope_rows(
+        &paths.ascent_product_computed_polytopes,
+        polytopes,
+        &mut rows,
+    );
+    rows.sort_by(|a, b| a.result_id.cmp(&b.result_id));
+    rows
+}
+
+fn load_computed_polytope_rows(
+    path: &Path,
+    polytopes: &mut HashMap<String, LoadedPolytopeRow>,
+    out: &mut Vec<ComputedPolytopeObservationRow>,
+) {
+    for row in read_jsonl_if_exists::<ComputedPolytopeRow>(path) {
+        let poly_id = poly_id_from_dual_vertices(&row.dual_vertices_rational);
+        let materialize_polytope =
+            row.role == "start" || row.role == "final" || row.became_run_final;
+        if materialize_polytope {
+            match polytopes.get_mut(&poly_id) {
+                Some(existing) => {
+                    if existing.sigmas.is_none() {
+                        existing.sigmas = Some(row.sigmas.clone());
+                    }
+                    if existing.orbit_scalars.is_none() {
+                        existing.orbit_scalars = Some(row.orbit_scalars.clone());
+                    }
+                    if existing.sigma_gap_cutoff.is_none() {
+                        existing.sigma_gap_cutoff = sigma_gap_cutoff_from_sigmas(&row.sigmas);
+                    }
+                }
+                None => {
+                    polytopes.insert(
+                        poly_id.clone(),
+                        LoadedPolytopeRow {
+                            poly_id: poly_id.clone(),
+                            dual_vertices_rational: row.dual_vertices_rational,
+                            facet_count: row.facet_count,
+                            capacity: row.capacity,
+                            volume: row.volume,
+                            sys: row.sys,
+                            capacity_iterations: None,
+                            capacity_source: row.dataset.clone(),
+                            sigma_gap_cutoff: sigma_gap_cutoff_from_sigmas(&row.sigmas),
+                            sigmas: Some(row.sigmas.clone()),
+                            orbit_scalars: Some(row.orbit_scalars.clone()),
+                        },
+                    );
+                }
+            }
+        }
+        out.push(ComputedPolytopeObservationRow {
+            result_id: row.result_id,
+            poly_id,
+            dataset: row.dataset,
+            run_id: row.run_id,
+            seed_index: row.seed_index,
+            phase: row.phase,
+            iteration: row.iteration,
+            role: row.role,
+            step_type: row.step_type,
+            t_fraction: row.t_fraction,
+            t_actual: row.t_actual,
+            accepted_in_iteration: row.accepted_in_iteration,
+            became_run_final: row.became_run_final,
+        });
+    }
+}
+
 pub fn load_caches(paths: &DatasetPaths) -> LoadedCaches {
     let orbit_payloads = orbit_payloads(paths);
     let ascent_orbit_payloads = orbit_payloads_for_path(&paths.ascent_cache);
@@ -800,6 +914,7 @@ pub fn load_caches(paths: &DatasetPaths) -> LoadedCaches {
         &mut provenance_rows,
         &orbit_payloads,
     );
+    let computed_polytope_observations = load_computed_polytope_observations(paths, &mut polytopes);
 
     let mut polytope_rows = polytopes.into_values().collect::<Vec<_>>();
     polytope_rows.sort_by(|a, b| a.poly_id.cmp(&b.poly_id));
@@ -808,6 +923,7 @@ pub fn load_caches(paths: &DatasetPaths) -> LoadedCaches {
     LoadedCaches {
         polytopes: polytope_rows,
         provenance_rows,
+        computed_polytope_observations,
     }
 }
 

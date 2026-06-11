@@ -104,20 +104,24 @@ to `produce/`, reusable retained data to `tables/`, and method-specific
 inputs or artifacts to `methods/`. If a row entity changes, choose a table name
 for the new row entity rather than preserving the old name.
 
-## Current Retained Tables
+## Retained Tables
 
-Current retained table output:
+Retained table output path:
 
 ```text
 experiments/sys-landscape/datascience/tables/
 ```
 
-Contents:
+Expected contents after rebuilding with the current table builder:
 
-- `polytope-table.jsonl`: one row per retained polytope keyed by `poly_id`;
+- `polytope-table.jsonl`: one row per retained exact polytope geometry keyed by `poly_id`;
   contains defining dual vertices, computed polytope-level quantities such as
   `volume`, capacity, and `sys`, derived scalar features, and capacity/orbit
   audit fields.
+- `computed-polytope-observation-table.jsonl`: one row per fixed-F ascent
+  producer computed-polytope observation; records ascent context. Intermediate
+  ascent observations may reference producer-retained polytopes that are not
+  materialized as feature rows in `polytope-table.jsonl`.
 - `polytope-provenance-table.jsonl`: one row per retained provenance record
   keyed by `provenance_id`; records how a retained polytope entered the
   datascience tables, including source, role, optimizer, seed, path, and
@@ -126,9 +130,11 @@ Contents:
   provenance record keyed by `provenance_id`; records run-level and
   trajectory-summary fields. Random-sample provenance rows do not appear here.
 
-Fingerprint:
+Checked-in fingerprint before the computed-polytope table rebuild and before
+the standalone random refresh:
 
 - polytope rows: `8445`
+- computed-polytope observations: not present in this fingerprint
 - provenance rows: `8445`
 - ascent run rows: `8275`
 - max `sys`: `0.9750768559799221`
@@ -136,8 +142,8 @@ Fingerprint:
 - source counts:
   - `gradient_ascent_general`: `4096`
   - `gradient_ascent_products`: `4089`
-  - `random_product_sample`: `100`
-  - `random_sample`: `70`
+  - `random_product_sample`: `100` (old small random wave)
+  - `random_sample`: `70` (old small random wave)
   - `variable_f_ascent`: `90`
 - sha256:
   - `polytope-table.jsonl`:

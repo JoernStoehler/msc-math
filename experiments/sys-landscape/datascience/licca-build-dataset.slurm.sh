@@ -5,7 +5,7 @@
 #
 # Inputs:
 # - canonical producer files under experiments/sys-landscape/datascience/produce/
-# - fixed-F ascent producer caches ascent-cache.jsonl and ascent-product-cache.jsonl
+# - fixed-F ascent producer caches ascent-general-cache.jsonl and ascent-product-cache.jsonl
 #
 # Output:
 # - experiments/sys-landscape/datascience/tables/
