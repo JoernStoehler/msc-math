@@ -30,7 +30,8 @@ feature rows for them.
 uv run --script experiments/sys-landscape/datascience/methods/scan-sys-gt-1/analyze.py
 ```
 
-Run locally on 2026-06-08.
+Run locally on 2026-06-11 after copying the LICCA `9825413` table outputs and
+fixed-F producer computed-polytopes files.
 
 Smoke or LICCA merge review should scan the table-stage computed-polytope
 observation output and producer computed-polytope rows:
@@ -44,14 +45,18 @@ uv run --script experiments/sys-landscape/datascience/methods/scan-sys-gt-1/anal
   --computed-polytopes "$PRODUCE_DIR/ascent-product-computed-polytopes.jsonl"
 ```
 
-## Pre-Rebuild Observation
+## Observation
 
-These counts are from the old retained tables before computed ascent polytopes
-were integrated into `polytope-table.jsonl`.
+These counts are from the retained tables built by LICCA job `9825413` from
+commit `58a93537`, plus the producer computed-polytopes files from the same
+fixed-F ascent wave.
 
-- polytope rows: `8445`
+- polytope rows: `16629`
 - provenance rows: `8445`
-- rows with `sys > 1`: `0`
+- table rows with `sys > 1`: `0`
+- producer computed-polytope rows scanned: `879235`
+- producer computed-polytope rows with `sys > 1`: `0`
+- computed-polytope observation rows: `879235`
 
 Source summary:
 
@@ -65,11 +70,12 @@ Source summary:
 
 ## Interpretation
 
-The retained datascience table dataset contains no recorded row with
-`sys > 1`.
+The retained datascience table dataset and the fixed-F producer computed
+polytopes contain no recorded row with `sys > 1`.
 
 This is baseline EDA evidence only. It confirms that the direct target
-predicate is absent from the retained method-table input.
+predicate is absent from the current retained method-table input and from the
+current fixed-F intermediate producer rows.
 
 ## Caveats
 
