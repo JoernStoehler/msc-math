@@ -11,11 +11,12 @@ import argparse
 import json
 from collections import defaultdict
 from pathlib import Path
-from typing import Any
+from typing import Any, Iterable
 
 
 HERE = Path(__file__).resolve().parent
 TABLES_DIR = HERE.parent.parent / "tables"
+PRODUCE_DIR = HERE.parent.parent / "produce"
 
 
 def parse_args() -> argparse.Namespace:
@@ -40,8 +41,12 @@ def parse_args() -> argparse.Namespace:
         "--computed-polytopes",
         type=Path,
         action="append",
-        default=[],
-        help="Additional producer computed-polytopes JSONL file to scan.",
+        default=None,
+        help=(
+            "Producer computed-polytopes JSONL file to scan for raw sys values. "
+            "Defaults to the canonical general/product producer files; pass one "
+            "or more values to override that default."
+        ),
     )
     return parser.parse_args()
 
@@ -57,6 +62,17 @@ def load_jsonl(path: Path) -> list[dict[str, Any]]:
                 raise SystemExit(f"Expected JSON object in {path}:{line_number}")
             rows.append(row)
     return rows
+
+
+def iter_jsonl(path: Path) -> Iterable[tuple[int, dict[str, Any]]]:
+    with path.open() as handle:
+        for line_number, line in enumerate(handle, start=1):
+            if not line.strip():
+                continue
+            row = json.loads(line)
+            if not isinstance(row, dict):
+                raise SystemExit(f"Expected JSON object in {path}:{line_number}")
+            yield line_number, row
 
 
 def provenance_by_poly_id(rows: list[dict[str, Any]]) -> dict[str, list[dict[str, Any]]]:
@@ -80,8 +96,34 @@ def scan_rows(rows: list[dict[str, Any]], *, id_field: str) -> list[dict[str, An
     return [row for row in rows if float(row["sys"]) > 1.0]
 
 
+def scan_computed_polytope_file(path: Path) -> tuple[int, int, list[dict[str, Any]]]:
+    scanned = 0
+    positives: list[dict[str, Any]] = []
+    for line_number, row in iter_jsonl(path):
+        value = row.get("sys")
+        if not isinstance(value, int | float):
+            raise SystemExit(f"Missing or non-numeric `sys` in {path}:{line_number}")
+        scanned += 1
+        if float(value) > 1.0:
+            positives.append(
+                {
+                    "source_file": str(path),
+                    "line_number": line_number,
+                    "result_id": row.get("result_id", ""),
+                    "dataset": row.get("dataset", ""),
+                    "role": row.get("role", ""),
+                    "sys": float(value),
+                }
+            )
+    return scanned, len(positives), positives
+
+
 def main() -> None:
     args = parse_args()
+    computed_polytope_paths = args.computed_polytopes or [
+        PRODUCE_DIR / "ascent-general-computed-polytopes.jsonl",
+        PRODUCE_DIR / "ascent-product-computed-polytopes.jsonl",
+    ]
 
     polytope_rows = load_jsonl(args.polytope_table)
     provenance_rows = load_jsonl(args.provenance_table)
@@ -108,25 +150,26 @@ def main() -> None:
     computed_observation_rows: list[dict[str, Any]] = load_jsonl(
         args.computed_polytope_observation_table
     )
-    for path in args.computed_polytopes:
-        for row in load_jsonl(path):
-            computed_observation_rows.append(
-                {
-                    "result_id": row["result_id"],
-                    "poly_id": row.get("poly_id"),
-                    "dataset": row["dataset"],
-                    "role": row["role"],
-                }
-            )
+    computed_scan_rows = 0
+    computed_scan_positive_rows = 0
+    computed_scan_positives: list[dict[str, Any]] = []
+    for path in computed_polytope_paths:
+        scanned, positive_count, positives_for_file = scan_computed_polytope_file(path)
+        computed_scan_rows += scanned
+        computed_scan_positive_rows += positive_count
+        computed_scan_positives.extend(positives_for_file)
 
     print("# scan-sys-gt-1")
     print()
     print(f"- polytope rows: `{len(polytope_rows)}`")
     print(f"- provenance rows: `{len(provenance_rows)}`")
-    print(f"- rows with `sys > 1`: `{len(positives)}`")
+    print(f"- table rows with `sys > 1`: `{len(positives)}`")
+    if computed_polytope_paths:
+        print(f"- producer computed-polytope rows scanned: `{computed_scan_rows}`")
+        print(f"- producer computed-polytope rows with `sys > 1`: `{computed_scan_positive_rows}`")
     if positives:
         print()
-        print("## Positive Rows")
+        print("## Positive Table Rows")
         print()
         print("| poly_id | sys | dataset |")
         print("| --- | ---: | --- |")
@@ -135,6 +178,18 @@ def main() -> None:
             print(
                 f"| `{poly_id}` | `{float(row['sys'])}` | "
                 f"{source_label(provenance.get(poly_id, []), row.get('capacity_source', ''))} |"
+            )
+    if computed_scan_positives:
+        print()
+        print("## Positive Producer Computed-Polytope Rows")
+        print()
+        print("| source_file | line | result_id | sys | dataset | role |")
+        print("| --- | ---: | --- | ---: | --- | --- |")
+        for row in computed_scan_positives:
+            print(
+                f"| `{row['source_file']}` | `{row['line_number']}` | "
+                f"`{row['result_id']}` | `{row['sys']}` | "
+                f"{row['dataset']} | {row['role']} |"
             )
     print()
     print("## Source Summary")

@@ -13,14 +13,16 @@ Checklist anchor: `Baseline And EDA / target predicate scan`.
 ## Inputs
 
 - `../../tables/polytope-table.jsonl`
-- `../../tables/computed-polytope-observation-table.jsonl`
 - `../../tables/polytope-provenance-table.jsonl`
+- `../../tables/computed-polytope-observation-table.jsonl`
+- `../../produce/ascent-general-computed-polytopes.jsonl`
+- `../../produce/ascent-product-computed-polytopes.jsonl`
 
-The retained report below is table-scoped. The script scans geometric `sys`
-values from `polytope-table.jsonl` and counts
-`computed-polytope-observation-table.jsonl` rows as ascent occurrence context.
-The optional `--computed-polytopes` flag is for ad hoc review of extra producer
-files.
+The script scans geometric `sys` values from `polytope-table.jsonl` and raw
+producer computed-polytope rows from canonical producer files by default. Pass
+`--computed-polytopes` to override those producer paths. This lets the method
+check intermediate ascent polytopes without requiring tables to materialize full
+feature rows for them.
 
 ## Command
 
@@ -31,13 +33,15 @@ uv run --script experiments/sys-landscape/datascience/methods/scan-sys-gt-1/anal
 Run locally on 2026-06-08.
 
 Smoke or LICCA merge review should scan the table-stage computed-polytope
-observation output:
+observation output and producer computed-polytope rows:
 
 ```bash
 uv run --script experiments/sys-landscape/datascience/methods/scan-sys-gt-1/analyze.py \
   --polytope-table "$TABLES_DIR/polytope-table.jsonl" \
   --provenance-table "$TABLES_DIR/polytope-provenance-table.jsonl" \
-  --computed-polytope-observation-table "$TABLES_DIR/computed-polytope-observation-table.jsonl"
+  --computed-polytope-observation-table "$TABLES_DIR/computed-polytope-observation-table.jsonl" \
+  --computed-polytopes "$PRODUCE_DIR/ascent-general-computed-polytopes.jsonl" \
+  --computed-polytopes "$PRODUCE_DIR/ascent-product-computed-polytopes.jsonl"
 ```
 
 ## Pre-Rebuild Observation
@@ -69,7 +73,7 @@ predicate is absent from the retained method-table input.
 
 ## Caveats
 
-- The retained observation scans recorded table values only.
+- Producer computed-polytope scanning checks raw recorded `sys` values only.
 - Refresh this report after rebuilding retained tables with
   `computed-polytope-observation-table.jsonl`.
 - This does not validate capacity, volume, or `sys` computations.

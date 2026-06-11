@@ -66,7 +66,7 @@ def fingerprint(tables_dir: Path) -> dict[str, Any]:
     ascent_run_rows = load_jsonl(ascent_run_path)
     sys_values = [float(row["sys"]) for row in polytope_rows]
     polytope_ids = {str(row["poly_id"]) for row in polytope_rows}
-    missing_observation_poly_ids = sum(
+    nonmaterialized_observation_poly_ids = sum(
         1 for row in computed_observation_rows if str(row["poly_id"]) not in polytope_ids
     )
     hashes = {
@@ -79,7 +79,7 @@ def fingerprint(tables_dir: Path) -> dict[str, Any]:
         "tables_dir": str(tables_dir),
         "polytope_rows": len(polytope_rows),
         "computed_polytope_observation_rows": len(computed_observation_rows),
-        "computed_polytope_observations_missing_polytope_rows": missing_observation_poly_ids,
+        "computed_polytope_observations_without_polytope_rows": nonmaterialized_observation_poly_ids,
         "provenance_rows": len(provenance_rows),
         "ascent_run_rows": len(ascent_run_rows),
         "polytope_union_field_count": union_field_count(polytope_rows),
@@ -109,8 +109,8 @@ def print_markdown(data: dict[str, Any]) -> None:
         f"`{data['computed_polytope_observation_rows']}`"
     )
     print(
-        "- computed-polytope observations missing polytope rows: "
-        f"`{data['computed_polytope_observations_missing_polytope_rows']}`"
+        "- computed-polytope observations without materialized polytope rows: "
+        f"`{data['computed_polytope_observations_without_polytope_rows']}`"
     )
     print(f"- provenance rows: `{data['provenance_rows']}`")
     print(f"- ascent run rows: `{data['ascent_run_rows']}`")

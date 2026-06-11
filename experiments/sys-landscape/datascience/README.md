@@ -112,8 +112,9 @@ Expected contents after rebuilding with the current table builder:
   `volume`, capacity, and `sys`, derived scalar features, and capacity/orbit
   audit fields.
 - `computed-polytope-observation-table.jsonl`: one row per fixed-F ascent
-  producer computed-polytope observation; records ascent context and references
-  the geometric row by `poly_id`.
+  producer computed-polytope observation; records ascent context. Intermediate
+  ascent observations may reference producer-retained polytopes that are not
+  materialized as feature rows in `polytope-table.jsonl`.
 - `polytope-provenance-table.jsonl`: one row per retained provenance record
   keyed by `provenance_id`; records how a retained polytope entered the
   datascience tables, including source, role, optimizer, seed, path, and

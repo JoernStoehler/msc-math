@@ -114,16 +114,19 @@ for line_number, line in enumerate(Path(sys.argv[2]).read_text().splitlines(), s
     if not line.strip():
         continue
     row = json.loads(line)
-    if row["poly_id"] not in polytope_ids:
+    should_have_polytope_row = row["role"] in {"start", "final"} or row["became_run_final"]
+    if should_have_polytope_row and row["poly_id"] not in polytope_ids:
         missing.append((line_number, row["result_id"], row["poly_id"]))
 if missing:
-    raise SystemExit(f"computed observations missing polytope rows: {missing[:5]}")
+    raise SystemExit(f"start/final computed observations missing polytope rows: {missing[:5]}")
 PY
 
 uv run --script "$ROOT/experiments/sys-landscape/datascience/methods/scan-sys-gt-1/analyze.py" \
   --polytope-table "$TABLES_DIR/polytope-table.jsonl" \
   --provenance-table "$TABLES_DIR/polytope-provenance-table.jsonl" \
-  --computed-polytope-observation-table "$TABLES_DIR/computed-polytope-observation-table.jsonl"
+  --computed-polytope-observation-table "$TABLES_DIR/computed-polytope-observation-table.jsonl" \
+  --computed-polytopes "$PRODUCE_DIR/ascent-general-computed-polytopes.jsonl" \
+  --computed-polytopes "$PRODUCE_DIR/ascent-product-computed-polytopes.jsonl"
 
 echo
 echo "Smoke outputs:"

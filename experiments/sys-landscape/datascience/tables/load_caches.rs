@@ -820,35 +820,39 @@ fn load_computed_polytope_rows(
 ) {
     for row in read_jsonl_if_exists::<ComputedPolytopeRow>(path) {
         let poly_id = poly_id_from_dual_vertices(&row.dual_vertices_rational);
-        match polytopes.get_mut(&poly_id) {
-            Some(existing) => {
-                if existing.sigmas.is_none() {
-                    existing.sigmas = Some(row.sigmas.clone());
+        let materialize_polytope =
+            row.role == "start" || row.role == "final" || row.became_run_final;
+        if materialize_polytope {
+            match polytopes.get_mut(&poly_id) {
+                Some(existing) => {
+                    if existing.sigmas.is_none() {
+                        existing.sigmas = Some(row.sigmas.clone());
+                    }
+                    if existing.orbit_scalars.is_none() {
+                        existing.orbit_scalars = Some(row.orbit_scalars.clone());
+                    }
+                    if existing.sigma_gap_cutoff.is_none() {
+                        existing.sigma_gap_cutoff = sigma_gap_cutoff_from_sigmas(&row.sigmas);
+                    }
                 }
-                if existing.orbit_scalars.is_none() {
-                    existing.orbit_scalars = Some(row.orbit_scalars.clone());
+                None => {
+                    polytopes.insert(
+                        poly_id.clone(),
+                        LoadedPolytopeRow {
+                            poly_id: poly_id.clone(),
+                            dual_vertices_rational: row.dual_vertices_rational,
+                            facet_count: row.facet_count,
+                            capacity: row.capacity,
+                            volume: row.volume,
+                            sys: row.sys,
+                            capacity_iterations: None,
+                            capacity_source: row.dataset.clone(),
+                            sigma_gap_cutoff: sigma_gap_cutoff_from_sigmas(&row.sigmas),
+                            sigmas: Some(row.sigmas.clone()),
+                            orbit_scalars: Some(row.orbit_scalars.clone()),
+                        },
+                    );
                 }
-                if existing.sigma_gap_cutoff.is_none() {
-                    existing.sigma_gap_cutoff = sigma_gap_cutoff_from_sigmas(&row.sigmas);
-                }
-            }
-            None => {
-                polytopes.insert(
-                    poly_id.clone(),
-                    LoadedPolytopeRow {
-                        poly_id: poly_id.clone(),
-                        dual_vertices_rational: row.dual_vertices_rational,
-                        facet_count: row.facet_count,
-                        capacity: row.capacity,
-                        volume: row.volume,
-                        sys: row.sys,
-                        capacity_iterations: None,
-                        capacity_source: row.dataset.clone(),
-                        sigma_gap_cutoff: sigma_gap_cutoff_from_sigmas(&row.sigmas),
-                        sigmas: Some(row.sigmas.clone()),
-                        orbit_scalars: Some(row.orbit_scalars.clone()),
-                    },
-                );
             }
         }
         out.push(ComputedPolytopeObservationRow {
