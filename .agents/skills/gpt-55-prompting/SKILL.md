@@ -1,6 +1,6 @@
 ---
 name: gpt-55-prompting
-description: Use when drafting, reviewing, diagnosing, or substantially revising prompts or agent-facing instruction surfaces for GPT-5.5/Codex agents, including subagent prompts, reviewer prompts, `AGENTS.md`, `SKILL.md` files and frontmatter, `.codex/agents` configs, and other harness-like prompt surfaces. Do not use for ordinary coding, research, or prose work unless the prompt or instruction surface is being changed or evaluated.
+description: Use when editing, reviewing, diagnosing, or substantially revising `SKILL.md` files/frontmatter, `AGENTS.md`, `.codex/agents` configs, subagent or reviewer prompts, or other GPT-5.5/Codex agent-facing instruction surfaces. Also use when drafting or evaluating prompts for GPT-5.5/Codex agents. Do not use for ordinary coding, research, or prose work unless the prompt or instruction surface is being changed or evaluated.
 ---
 
 # GPT-5.5 Prompting

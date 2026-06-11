@@ -20,6 +20,10 @@ description: Use before writing any command Jörn should run on, to, or from LIC
   `ssh`/`scp` in the same command block as commands intended to run after login.
 - For handoff commands, label each execution context: local machine, LICCA login
   node, or Slurm job.
+- Do not give Jörn interactive or indefinitely blocking commands for LICCA
+  handoffs, such as `tail -f`, `watch`, pagers, interactive `srun`, or shell
+  loops. Use bounded snapshots instead, for example `tail -n 80`, `squeue -j
+  <jobid>`, `sacct`, `grep`, `wc -l`, or `ps`.
 - For external access from home, use the University of Augsburg gateway with
   an explicit `ProxyCommand`. This form is currently preferred over `-J`
   because Jörn observed the `ProxyJump` form still failing with "Too many
@@ -56,16 +60,31 @@ SHA256:ZKi0w4Cc24qHbrLQKXX/ifYQ92208g2yhCVPHvgxWz8
   Put resource choices, seed ranges, output paths, resume rules, and exact
   binary commands in the script. This is easier to audit than important
   `sbatch` settings living only in chat or CLI flags.
+- Do not change known-working LICCA path, checkout, or environment assumptions
+  for portability or aesthetics during an active handoff. In particular,
+  hardcoded project paths such as `cd "$HOME/msc-math"` may be the safest
+  operational choice when Jörn is running from the normal LICCA checkout.
 - Use `/hpc/gpfs2/scratch/u/stoehljo/cargo-target` as the LICCA
   `CARGO_TARGET_DIR` for Rust builds unless Jörn says the storage layout
   changed.
 - LICCA currently has system `python3` available, observed as Python 3.12.3 on
   2026-06-04. It did not have `uv` available then. For standard-library helper
   scripts on LICCA, use `python3 script.py`, not `uv run --script`.
-- GitHub password authentication is not supported for Git operations. Unless
-  LICCA GitHub SSH/token auth has been explicitly set up, do not ask Jörn to
-  push from LICCA. Retrieve artifacts with `scp` through the gateway and commit
-  from the local/devcontainer environment.
+- For repo code, script, and handoff changes, prefer local/devcontainer
+  `commit` + `push` followed by LICCA `git fetch`/`git checkout`/`git pull`.
+  LICCA can pull from GitHub for this project; do not replace that with
+  `scp`/tarball transfer unless pull fails or Jörn asks for file transfer.
+- If LICCA `git checkout`/`git pull` is blocked by dirty generated artifacts,
+  do not invent a new execution surface such as `scp`, tarball transfer, a new
+  clone, a worktree, or an exported tree unless Jörn asks or the blocker
+  changes. Stay on the normal checkout path and resolve only the exact paths
+  Git reports as blockers. For tracked blockers, restore those exact paths. For
+  untracked blockers, move those exact paths aside. Do not broad-clean
+  experiment/data directories as a checkout fix unless Jörn explicitly accepts
+  discarding or re-downloading the materialized data.
+- GitHub password authentication is not supported for Git operations. Do not
+  ask Jörn to push from LICCA. Retrieve generated artifacts with `scp` through
+  the gateway and commit them from the local/devcontainer environment.
 - Example retrieval from the local host, using the same gateway style:
 
 ```bash
@@ -97,6 +116,18 @@ scp \
     changes before changing shard/output topology
   - scheduler evidence when available, using `sbatch --test-only`,
     `squeue --start`, or `sacct` before asking Jörn to cancel/resubmit
+- When pricing Jörn time in a BOTEC, distinguish calendar delay from active
+  Jörn labor. Ask or state whether Jörn is actively waiting/babysitting; if he
+  is, wall time can dominate the estimate, and resource choices may flip.
+- Keep command blocks separated by purpose. Do not bundle cleanup, branch
+  checkout/pull, Slurm submission, monitoring, result checks, promotion, or
+  retrieval into one pasted block unless Jörn explicitly asks for a combined
+  script.
+- `sbatch --test-only` checks scheduling, not script-body correctness. `bash -n`
+  checks syntax, not Slurm execution semantics. If a Slurm edit changes
+  cwd/path resolution, environment assumptions, output topology, or resource
+  behavior, run or provide a tiny Slurm smoke path before production, or clearly
+  label the production submission as un-smoked and higher risk.
 - For CPU-parallel production jobs whose inner work uses Rayon or many
   independent CPU-bound units, treat `64` CPUs as the normal first LICCA
   production candidate, not `32`, unless the job is known small or scheduler
@@ -121,10 +152,12 @@ scp \
 sacct -j <jobid> --format=JobID,JobName%24,Partition,State,Elapsed,AllocCPUS,CPUTime,MaxRSS,ExitCode
 ```
 
-- For logs, use `tail`, `grep`, and row counts before interpreting results:
+- For logs, use bounded `tail`, `grep`, and row counts before interpreting
+  results:
 
 ```bash
 grep -R "\*\*\* VITERBO VIOLATION" logs/*.out 2>/dev/null || true
+tail -n 80 logs/*.out
 wc -l path/to/shards/*.jsonl
 ```
 
