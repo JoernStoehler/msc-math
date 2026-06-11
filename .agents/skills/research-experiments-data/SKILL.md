@@ -15,7 +15,9 @@ description: Use when Codex writes, edits, reviews, or delegates research notes,
 - split experiments when it becomes hard to achieve multiple purposes/answer multiple questions in one experiment, copy and edit code cheaply
 - track carefully the current prioritized subquestions/subgoals, in particular distinguish exploring the feasibility of an idea, strengthening the evidence of a weak result, aiming to falsify, aiming to distinguish between hypotheses, producing evidence that is more legible even though it contains no new/additional information, refactoring/cleaning the experiment for long-term maintainability, and so on. Often multiple subgoals can be pursued at once - but not always all of them.
 - experiments should be reproducible from scratch given all related research notes
-- repo state: we now have the main and side results nailed down, and each experiment supports only one line of inquiry
+- repo state: current experiment work is organized around mostly settled main
+  and side-result lines of inquiry; each experiment should support one line of
+  inquiry unless a research note explains otherwise
 
 ## Experiments
 
