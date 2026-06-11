@@ -7,12 +7,13 @@ Read first:
 
 1. `../README.md`
 2. `../tables/README.md`
-3. `STATUS.md`
+3. the relevant method folder `README.md`
 
 ## Current State
 
-There are no current method packets in HEAD after the table-output ownership
-reset.
+Current method packets in HEAD:
+
+- `scan-sys-gt-1/`: baseline target-predicate scan over the retained tables.
 
 Old PCA, clustering, regression, classification, supervised-alternative,
 exact/f64, prompt example, and review artifacts were deleted from HEAD because
@@ -53,43 +54,70 @@ Create a method folder only when running or recording a current method packet.
 One active method folder should support one method-table row or one explicitly
 named row group.
 
+A method folder `README.md` is the durable control surface for that packet. It
+should record the current method-specific state that future agents need:
+
+- research question;
+- datascience method being applied to the black-box search problem;
+- retained input tables and method-local input or feature construction;
+- commands to run or rerun;
+- retained generated artifacts, if any;
+- observations and proposed interpretation with epistemic status;
+- validity guards, leakage concerns, and scope limits;
+- Jörn feedback that is specific to the method;
+- cross-references to related method folders;
+- current disposition;
+- remaining worthwhile questions;
+- predicted stability under rerun;
+- thesis use;
+- reopen triggers.
+
 A method folder may contain:
 
 - a small script or scripts;
 - small generated artifacts needed for audit;
 - figures or assets if they are directly used;
-- `report.md` as the current research ledger.
+- disposable GPT-5.5 interpretation notes if they have short-term value.
 
-Delete stale scripts, reports, generated artifacts, and review traces once
-their value in HEAD is lower than their maintenance and confusion cost. Git
-history is the archive for obsolete runs.
+Do not use `report.md` as the durable method state. If a worker produces a
+report, extract any current value into the method `README.md` and then delete
+the report once the packet is integrated. Delete stale scripts, reports,
+generated artifacts, and review traces once their value in HEAD is lower than
+their maintenance and confusion cost. Git history is the archive for obsolete
+runs.
 
-## Reports
+## Disposition Vocabulary
 
-A `report.md` is a research ledger. It is not raw evidence and it is not
-approved status.
+Use current-disposition language instead of hard signoff/finality language.
+Useful fields are:
 
-Use a report to record:
+- `current disposition`: what the packet currently supports, defers, abandons,
+  or escalates;
+- `remaining worthwhile questions`: follow-up checks with positive expected
+  thesis value;
+- `predicted stability under rerun`: whether the packet is likely to change if
+  rerun on unchanged retained tables;
+- `reopen triggers`: concrete source-truth changes that make the packet stale;
+- `thesis use`: what thesis-facing statement the packet can support and what it
+  must not be used to claim.
 
-- the method-specific question;
-- retained table input and method-local input construction used;
-- command and runtime;
-- retained generated artifacts;
-- observation;
-- proposed interpretation;
-- validity limits;
-- thesis use;
-- follow-up, deferral, abandonment, or escalation recommendation.
+Escalate before unrelated method work continues when a method records a
+validated new `sys > 1` row outside the known HKO2024-derived source, records a
+candidate-proposer, or gives evidence that should change thesis wording.
 
-Future agents should use reports to orient, then re-check any claim they rely
-on against current code, retained data, generated artifacts, and `STATUS.md`.
+## Jörn Feedback
 
-## Status
+Record method-specific Jörn feedback in the relevant method `README.md`, near
+the observation or validity guard it affects.
 
-Approved current method-row status lives in `STATUS.md`.
+Example to preserve when PCA is recreated: PCA analysis still did not check
+whether PC0 from random generic polytopes and random Lagrangian-product
+polytopes are similar.
 
-Executors and reviewers may recommend status, but they do not approve it. A
-green review is evidence only for the checks it actually performed.
+Cross-method thesis interpretation belongs in
+`thesis/black-box-datascience-content.md` or future thesis content files, not
+in a central method-status ledger. If someone needs a dashboard, ask an agent
+to read the method READMEs and synthesize the current view.
 
 ## Coverage Checklist
 

@@ -6,24 +6,24 @@ Use this file to avoid forgetting methods, tactics, patterns, and concepts
 when closing the sys-landscape datascience method table. It is intentionally
 redundant, mixed-granularity, and not ordered except for loose grouping.
 
-This file does not approve results. Approved current method-row status lives in
-`STATUS.md`. When an item becomes active, create or update a method packet with
-the method-specific question, inputs, leakage guards, observations, caveats,
-thesis use, and reopen trigger.
+This file is not a result ledger. When an item becomes active, create or update
+a method packet `README.md` with the method-specific question, inputs, leakage
+guards, observations, caveats, current disposition, thesis use, and reopen
+trigger.
 
 Disposition words below are planning hints only:
 
 - `open`: not currently closed on the retained tables.
 - `used`: appears in current producer/table surfaces, but may still need a
-  method packet or status.
+  method packet README.
 - `defer`: plausible but lower current thesis value.
 - `reject`: not applicable unless a missing interface or data source appears.
 
 ## Baseline And EDA
 
-- `open` target predicate scan: rows with `sys > 1`.
-- `open` max and top-k `sys` rows.
-- `open` source-wise max and top-k `sys` rows.
+- `used` target predicate scan: rows with `sys > 1`.
+- `used` max and top-k `sys` rows.
+- `used` source-wise max and top-k `sys` rows.
 - `open` target distribution, quantiles, and tail summaries.
 - `open` grouped summaries by source, family, optimizer, lineage, and role.
 - `open` missingness, duplicate, schema, and row-count checks.

@@ -1,7 +1,7 @@
 # Sys-Landscape Datascience
 
-Read this file before touching sys-landscape datascience code, data, reports,
-or worker prompts.
+Read this file before touching sys-landscape datascience code, data, method
+packets, or worker prompts.
 
 ## Thesis Role
 
@@ -40,14 +40,21 @@ because it once existed.
 - `produce/`: owns row production code, producer caches, and producer outputs.
 - `tables/`: owns reusable table-column computation and the retained table
   outputs under `tables/`.
-- `methods/`: owns current method packets and research ledgers.
-- `methods/STATUS.md`: owns orchestrator-approved current method-row status.
+- `methods/`: owns current method packets, one durable `README.md` per active
+  method folder.
 
-A `report.md` is a research ledger. It records retained observations, proposed
-interpretations, caveats, and follow-up ideas. It is not raw evidence and it is
-not approval. Future agents should use it to orient, then re-check any claim
-they rely on against current code, retained data, generated method artifacts,
-table fingerprints, and `methods/STATUS.md`.
+A method folder `README.md` is the durable method-packet control surface:
+research question, datascience method, input tables and features, commands,
+retained artifacts, method-specific Jörn feedback, related method folders,
+validity guards and leakage concerns, current disposition, remaining
+worthwhile questions, predicted stability under rerun, thesis use, and reopen
+triggers.
+
+`report.md` files are optional disposable GPT-5.5 interpretation notes, not
+durable state. If a worker produces one, extract current value into the method
+`README.md` before integration and then delete the report. Future agents should
+re-check claims they rely on against current code, retained data, generated
+method artifacts, table fingerprints, and the method `README.md`.
 
 ## Required Navigation
 
@@ -56,8 +63,8 @@ Read these files for ordinary datascience work:
 - `produce/README.md`: accepted producer rows, caches, and LICCA rules.
 - `tables/README.md`: table builder ownership, retained table outputs, and
   fingerprints.
-- `methods/README.md`: method packet conventions and current method state.
-- `methods/STATUS.md`: orchestrator-approved current method-row status.
+- `methods/README.md`: method packet conventions and current packet list.
+- relevant `methods/<method>/README.md`: durable state for that method packet.
 
 The task and research notes are not ordinary entry points for this slice. Use
 them only when auditing cross-thesis claim wording or older context.
@@ -72,7 +79,7 @@ produce/  ->  tables/  ->  methods/
 - `tables/` owns accepted reusable table columns, the table builder, and the
   retained table outputs under `tables/`.
 - `methods/` owns current method scripts, retained method artifacts, and
-  research ledgers.
+  method-packet README files.
 
 Consumers do not control producer outputs. If a method needs a rectangular
 input shape, build it inside the method folder unless a later concrete reuse or
@@ -177,19 +184,22 @@ Because this is exploratory research, do not preserve legacy or superseded code
 by default. Replace, delete, or prune to the takeaway once HEAD maintenance cost
 exceeds the value of keeping the material available outside the git log.
 
-## Status Authority
+## Method-Packet Authority
 
-Reports are research ledgers. Reviewers own findings. Orchestrator-approved
-status lives in `methods/STATUS.md`.
+Method-specific durable state lives in `methods/<method>/README.md`.
+Reviewers own findings, and worker-written report summaries, YAML `result`
+fields, and reviewer verdicts are not durable method state by themselves. A
+green review means only that the reviewer did not report a blocker under the
+checks it actually performed.
 
-Worker-written report summaries, YAML `result` fields, README summaries, and
-reviewer verdicts are not authoritative method status. A green review means
-only that the reviewer did not report a blocker under the checks it actually
-performed.
+Use current-disposition, remaining-worthwhile-question, predicted-stability,
+reopen-trigger, and thesis-use language. Avoid hard signoff or finality
+language unless quoting old text.
 
-If `methods/STATUS.md` has no approved status for a row, agents must reason
-from current evidence instead of inferring status from a report header, README
-row, or reviewer verdict.
+Cross-method thesis interpretation belongs in
+`thesis/black-box-datascience-content.md` or future thesis content files when
+those surfaces exist. If someone needs a cross-method dashboard, ask an agent
+to read the method READMEs and synthesize the current view.
 
 ## Integration Decision Vocabulary
 
@@ -214,12 +224,11 @@ row, or reviewer verdict.
 5. Do not promote method-local input builders into shared code until a concrete
    reuse or compute-cost case exists.
 6. Do not track duplicate method-local `feature_*.jsonl` inputs unless a
-   current report names a concrete consumer.
+   method README names a concrete consumer.
 7. One active method folder should support one method-table row or explicitly
    named row group.
-8. Current-looking reports must be current research ledgers over retained
-   evidence. Delete stale/status-marker reports instead of keeping them in
-   HEAD.
+8. Method READMEs are durable method-packet state. Delete integrated, stale, or
+   status-marker `report.md` files instead of keeping them in HEAD.
 9. Obsolete experiment artifacts are deleted by default. Extract old work only
    if it has positive expected value after contamination risk.
 10. If a method records a validated new `sys > 1` row outside the known

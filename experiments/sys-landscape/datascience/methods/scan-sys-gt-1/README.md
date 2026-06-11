@@ -1,14 +1,19 @@
 # scan-sys-gt-1
 
-Status: method packet report. Not approved method-row status; see
-`../STATUS.md` for approved status.
-
-## Question
+## Research Question
 
 Does the current retained sys-landscape datascience table dataset already
 contain a recorded row with `sys > 1`?
 
 Checklist anchor: `Baseline And EDA / target predicate scan`.
+
+## Method
+
+This is baseline EDA for the black-box search problem: directly scan the
+retained table rows for the target predicate and summarize the top tail.
+
+Positive evidence would be at least one retained table row with `sys > 1`.
+Negative evidence is only table-scoped absence of a recorded positive row.
 
 ## Inputs
 
@@ -24,7 +29,7 @@ merged review targets, stale artifacts, or other experiment folders.
 uv run --script experiments/sys-landscape/datascience/methods/scan-sys-gt-1/analyze.py
 ```
 
-Run locally on 2026-06-08.
+Last recorded local run: 2026-06-08.
 
 ## Observation
 
@@ -67,7 +72,7 @@ This is baseline EDA evidence only. It confirms that the direct target
 predicate is absent from the retained method-table input, and it identifies the
 current maximum and top rows for follow-up context.
 
-## Caveats
+## Validity Guards
 
 - This scans recorded table values only.
 - This does not validate capacity, volume, or `sys` computations.
@@ -76,13 +81,40 @@ current maximum and top rows for follow-up context.
 - This is not an exhaustive-search claim.
 - This does not close the hostile-landscape method table by itself.
 
-## Thesis Use
+## Jörn Feedback
+
+No method-specific Jörn feedback is recorded for this packet.
+
+## Related Method Folders
+
+No related method folders are currently present in HEAD.
+
+## Current Disposition
 
 Use as a baseline datascience method-table row: the current retained table
 dataset does not already contain a recorded positive sample.
 
 Do not use it as evidence that no positive sample exists outside the retained
 table dataset.
+
+## Remaining Worthwhile Questions
+
+No follow-up is worthwhile for this exact table-scoped predicate scan unless a
+reopen trigger fires. Other EDA, validation, and search-method questions belong
+in separate method packets.
+
+## Predicted Stability Under Rerun
+
+High if rerun against unchanged retained tables and unchanged `sys` schema. The
+script is deterministic and only reads the retained table files named above.
+
+## Thesis Use
+
+This packet supports the narrow statement that the retained datascience table
+contains no recorded positive `sys > 1` row.
+
+It does not support a claim about producer-stage outputs, non-retained rows, or
+the nonexistence of positive examples.
 
 ## Reopen Triggers
 
