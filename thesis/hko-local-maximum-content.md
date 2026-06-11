@@ -103,8 +103,10 @@ components with different claim strengths.
 - Include selected printed data snippets where they help sanity-check the
   computation, for example the first few and last few lines of a long printed
   sigma list.
-- State the active orbit/row set, active-gradient rank/kernel comparison, and
-  equality of flat first-order directions with the symmetry tangent space.
+- State the theorem-facing feasible-section certificate interface: 26 selected
+  feasible-section rows, exact derivative rows, symmetry annihilation, exact
+  row rank `25`, symmetry tangent rank `15`, positive exact lambdas, and exact
+  lambda-weighted row sum `0`.
 - Prefer a chain of defined subroutines or checks, each with its own meaning
   and correctness explanation, over pseudocode by default.
 - Full code and full data live in the repo. Passages of code and data may go in

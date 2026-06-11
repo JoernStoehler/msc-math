@@ -254,8 +254,9 @@ claim.
     - positive or conjectured-positive search-rule statuses change
     - thesis-use decisions change
 
-- We have a current HKO local-maximum evidence route, but not a closed theorem
-  certificate.
+- We have a current HKO local-maximum theorem route with a verified exact
+  feasible-section certificate, while final theorem wording remains gated by
+  Kai review.
   - Scope: HKO2024 `M_10` local-maximality story modulo natural `sys`
     symmetries; broad HKO local maximality remains conjectural in current repo
     classification.
@@ -267,22 +268,28 @@ claim.
     - `tasks/planning-notes.md`
     - `experiments/hko-local-maximum/README.md`
     - `experiments/hko-local-maximum/theorem/exact-witness/`
-  - Exact-witness Packet 1 is closed, Packet 2 is partially closed, and Packet 3
-    remains the main blocker.
-  - The current widened representative-row witness passes its present Sage
-    checks, but is still a partial witness surface rather than a final theorem
-    certificate.
+    - `experiments/hko-local-maximum/theorem/feasible-section-certificate/`
+    - `formal/hko-feasible-section-upper-branches.tex`
+  - The current theorem-facing certificate is the feasible-section certificate:
+    26 exact rows, exact row rank `25`, exact symmetry tangent rank `15`,
+    positive lambdas, and exact lambda-weighted row sum `0`.
+  - The exact Sage certificate verifies. The formal implication from that
+    finite predicate to quotient-local maximality has been agent-line-checked;
+    Jörn quick-reviewed the rebuilt PDF on 2026-06-05 and spotted no gaps.
+    The remaining gate is final theorem wording/Kai review.
+  - The older widened representative-row witness remains a partial historical
+    surface, not the theorem-facing certificate.
   - First-order numerical support, second-order evidence, neighborhood
     sampling, and `M_11` ascent experiments are supporting evidence.
   - Nuance:
-    - supporting experiments cannot replace the missing exact rank/kernel
-      certificate for theorem-strength wording.
+    - supporting experiments do not replace the exact feasible-section
+      certificate or the formal implication for theorem-strength wording.
     - current theorem-facing field wording uses the quartic
       `Q(tan(pi/5))`; older `Q(sqrt(5))` certificate wording is stale.
     - old `44`-orbit / `10`-gradient prose has been caveated against the
       current `150` exact action orbits / `20` visited subsets / `28`
-      gradient-pattern bookkeeping, but theorem-facing symmetry claims still
-      need the exact-witness route.
+      gradient-pattern bookkeeping; theorem-facing prose should use the
+      26-row feasible-section certificate interface.
   - Refresh when:
     - exact-witness coverage changes
     - HKO theorem wording is frozen or weakened
