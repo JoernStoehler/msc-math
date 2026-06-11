@@ -256,7 +256,7 @@ cargo check -p exp-sys-landscape
 
 # Python
 # `python` is absent on Ubuntu 24.04; `python3` lacks undeclared packages.
-uv run --with pyyaml --script /home/vscode/.codex/skills/.system/skill-creator/scripts/quick_validate.py .agents/skills/clarify-in-chat
+uv run --with pyyaml --script /home/vscode/.codex/skills/.system/skill-creator/scripts/quick_validate.py .agents/skills/stalled-session-recovery
 uv run --script experiments/sys-landscape/random-sample/analyze.py # PEP 723 inline dependencies
 
 # Profiling
