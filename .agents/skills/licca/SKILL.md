@@ -1,6 +1,6 @@
 ---
 name: licca
-description: Use when Codex prepares, reviews, or edits LICCA/cluster/external-execution work, including Slurm scripts, resource choices, handoff instructions for Jörn, retrieval instructions, or local-vs-cluster execution boundaries.
+description: Use before writing any command Jörn should run on, to, or from LICCA, including SSH login, SCP retrieval, Slurm scripts, sbatch/squeue/sacct commands, resource choices, handoff instructions, and local-vs-cluster execution boundaries.
 ---
 
 # LICCA
@@ -16,17 +16,28 @@ description: Use when Codex prepares, reviews, or edits LICCA/cluster/external-e
 ## Login path for Jörn
 
 - Do not guess a local alias such as `ssh licca`.
+- Keep local commands and LICCA-side commands in separate code blocks. Never put
+  `ssh`/`scp` in the same command block as commands intended to run after login.
+- For handoff commands, label each execution context: local machine, LICCA login
+  node, or Slurm job.
 - For external access from home, use the University of Augsburg gateway with
-  SSH `ProxyJump`:
+  an explicit `ProxyCommand`. This form is currently preferred over `-J`
+  because Jörn observed the `ProxyJump` form still failing with "Too many
+  authentication failures" on 2026-06-11:
 
 ```bash
-ssh -t -o IdentitiesOnly=yes -o PubkeyAuthentication=no \
-  -J stoehljo@xlogin.uni-augsburg.de \
+ssh -t \
+  -o IdentitiesOnly=yes \
+  -o PubkeyAuthentication=no \
+  -o PreferredAuthentications=password,keyboard-interactive \
+  -o 'ProxyCommand=ssh -o IdentitiesOnly=yes -o PubkeyAuthentication=no -o PreferredAuthentications=password,keyboard-interactive -W %h:%p stoehljo@xlogin.uni-augsburg.de' \
   stoehljo@licca-li-01.rz.uni-augsburg.de
 ```
 
 - The no-pubkey options avoid "Too many authentication failures" when Jörn's
-  local SSH agent offers too many keys before password authentication.
+  local SSH agent offers too many keys before password authentication. This
+  command asks for the password twice: once for `xlogin.uni-augsburg.de` and
+  once for `licca-li-01.rz.uni-augsburg.de`.
 - On first connection, the LICCA ED25519 host key fingerprint observed in the
   Augsburg HPC docs and confirmed by Jörn on 2026-06-04 is:
 
@@ -55,11 +66,14 @@ SHA256:ZKi0w4Cc24qHbrLQKXX/ifYQ92208g2yhCVPHvgxWz8
   LICCA GitHub SSH/token auth has been explicitly set up, do not ask Jörn to
   push from LICCA. Retrieve artifacts with `scp` through the gateway and commit
   from the local/devcontainer environment.
-- Example retrieval from the local host, using the same gateway:
+- Example retrieval from the local host, using the same gateway style:
 
 ```bash
-scp -o IdentitiesOnly=yes -o PubkeyAuthentication=no \
-  -o ProxyJump=stoehljo@xlogin.uni-augsburg.de \
+scp \
+  -o IdentitiesOnly=yes \
+  -o PubkeyAuthentication=no \
+  -o PreferredAuthentications=password,keyboard-interactive \
+  -o 'ProxyCommand=ssh -o IdentitiesOnly=yes -o PubkeyAuthentication=no -o PreferredAuthentications=password,keyboard-interactive -W %h:%p stoehljo@xlogin.uni-augsburg.de' \
   stoehljo@licca-li-01.rz.uni-augsburg.de:~/artifact.tgz \
   ~/workspaces/msc-math/.worktrees/<worktree>/
 ```
@@ -70,6 +84,26 @@ scp -o IdentitiesOnly=yes -o PubkeyAuthentication=no \
 
 ## Slurm and data-output rules
 
+- For nontrivial resource choices or changes, do not guess limits from vibes.
+  Before recommending `--time`, `--cpus-per-task`, memory, array shape, or
+  cancel/resubmit decisions, state:
+  - the objective: calendar time, core-hours, timeout risk, Jörn intervention
+    cost, and correctness/topology risk
+  - a runtime BOTEC from job units, parallelism, and per-unit budget or measured
+    timings
+  - the cost of timeout, including lost core-hours, delayed downstream work, and
+    expected Jörn follow-up loops
+  - the lowest-risk variable to change first; prefer wall time or CPU count
+    changes before changing shard/output topology
+  - scheduler evidence when available, using `sbatch --test-only`,
+    `squeue --start`, or `sacct` before asking Jörn to cancel/resubmit
+- For CPU-parallel production jobs whose inner work uses Rayon or many
+  independent CPU-bound units, treat `64` CPUs as the normal first LICCA
+  production candidate, not `32`, unless the job is known small or scheduler
+  tests penalize 64 CPUs. Still compare with `sbatch --test-only` when changing
+  resources. This rule is based on the 2026-06-11 datascience table scheduler
+  checks where `32 CPU / 6h`, `64 CPU / 4h`, and `64 CPU / 6h` had essentially
+  identical start estimates.
 - Shard outputs should be separate files. Avoid concurrent writes to one JSONL
   or cache file.
 - Rust ascent shard resume works only for the same output summary file. A rerun
