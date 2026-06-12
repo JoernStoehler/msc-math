@@ -56,6 +56,7 @@ fi
 
 export CARGO_TARGET_DIR="${CARGO_TARGET_DIR:-/hpc/gpfs2/scratch/u/stoehljo/cargo-target}"
 export RAYON_NUM_THREADS="${SLURM_CPUS_PER_TASK}"
+BINARY="$CARGO_TARGET_DIR/release/sys-datascience-produce"
 
 echo "LICCA datascience produce"
 echo "  host:        $(hostname)"
@@ -67,10 +68,18 @@ echo "  cpus:        ${SLURM_CPUS_PER_TASK}"
 echo "  output dir:  $OUTPUT_DIR"
 echo "  base cache:  $BASE_CACHE"
 echo "  cargo target:$CARGO_TARGET_DIR"
+echo "  binary:      $BINARY"
 
-cargo build --release -p exp-sys-landscape --bin sys-datascience-produce
+if [[ ! -x "$BINARY" ]]; then
+  echo "missing executable: $BINARY" >&2
+  echo "build on the LICCA login node first:" >&2
+  echo "  cd \"$REPO_ROOT\"" >&2
+  echo "  export CARGO_TARGET_DIR=\"$CARGO_TARGET_DIR\"" >&2
+  echo "  cargo build --release -p exp-sys-landscape --bin sys-datascience-produce" >&2
+  exit 2
+fi
 
-"$CARGO_TARGET_DIR/release/sys-datascience-produce" \
+"$BINARY" \
   --mode "$MODE" \
   --producers "$PRODUCERS" \
   --output-dir "$OUTPUT_DIR" \

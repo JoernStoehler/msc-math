@@ -38,6 +38,7 @@ mkdir -p "$OUTPUT_DIR"
 
 export CARGO_TARGET_DIR="${CARGO_TARGET_DIR:-/hpc/gpfs2/scratch/u/stoehljo/cargo-target}"
 export RAYON_NUM_THREADS="${SLURM_CPUS_PER_TASK}"
+BINARY="$CARGO_TARGET_DIR/release/sys-datascience-prepare"
 
 echo "LICCA datascience prepare"
 echo "  host:        $(hostname)"
@@ -47,9 +48,17 @@ echo "  cpus:        ${SLURM_CPUS_PER_TASK}"
 echo "  produce dir: $DATASCIENCE_PRODUCE_DIR"
 echo "  output dir:  $OUTPUT_DIR"
 echo "  cargo target:$CARGO_TARGET_DIR"
+echo "  binary:      $BINARY"
 
-cargo build --release -p exp-sys-landscape --bin sys-datascience-prepare
+if [[ ! -x "$BINARY" ]]; then
+  echo "missing executable: $BINARY" >&2
+  echo "build on the LICCA login node first:" >&2
+  echo "  cd \"$REPO_ROOT\"" >&2
+  echo "  export CARGO_TARGET_DIR=\"$CARGO_TARGET_DIR\"" >&2
+  echo "  cargo build --release -p exp-sys-landscape --bin sys-datascience-prepare" >&2
+  exit 2
+fi
 
-"$CARGO_TARGET_DIR/release/sys-datascience-prepare" \
+"$BINARY" \
   --produce-dir "$DATASCIENCE_PRODUCE_DIR" \
   --out-dir "$OUTPUT_DIR"

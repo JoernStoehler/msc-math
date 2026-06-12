@@ -147,10 +147,20 @@ targets match the standalone random refresh counts: `4096` generic rows and
 - hot smoke from the cold `computed-polytopes.jsonl`: `18` hits, `0` misses.
 
 On LICCA, [licca-datascience-produce.slurm.sh](licca-datascience-produce.slurm.sh)
-runs the same binary and writes a run-local produce directory. The execution
-flow is:
+runs the prebuilt binary and writes a run-local produce directory. Build on the
+login node before submitting so Slurm time measures the producer job, not Rust
+compilation:
+
+```bash
+cd "$HOME/msc-math"
+export CARGO_TARGET_DIR=/hpc/gpfs2/scratch/u/stoehljo/cargo-target
+cargo build --release -p exp-sys-landscape --bin sys-datascience-produce
+```
+
+The execution flow is:
 
 ```text
+build the binary on the login node
 sbatch produce
 validate the produce output on the login node
 sbatch prepare

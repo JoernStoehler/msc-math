@@ -23,9 +23,18 @@ cargo run -p exp-sys-landscape --release --bin sys-datascience-prepare -- \
 ```
 
 On LICCA, [licca-datascience-prepare.slurm.sh](licca-datascience-prepare.slurm.sh)
-runs only `sys-datascience-prepare`. Validate the produce directory before
-submitting prepare, then fingerprint the prepare output after the job finishes.
-Those are explicit login-node gates, not hidden Slurm job steps.
+runs only the prebuilt `sys-datascience-prepare` binary. Build on the login node
+before submitting so Slurm time measures prepare, not Rust compilation:
+
+```bash
+cd "$HOME/msc-math"
+export CARGO_TARGET_DIR=/hpc/gpfs2/scratch/u/stoehljo/cargo-target
+cargo build --release -p exp-sys-landscape --bin sys-datascience-prepare
+```
+
+Validate the produce directory before submitting prepare, then fingerprint the
+prepare output after the job finishes. Those are explicit login-node gates, not
+hidden Slurm job steps.
 Submit the Slurm script from this `tables/` directory; it uses
 `SLURM_SUBMIT_DIR` for run-local output paths because Slurm may execute a spool
 copy of the script.
