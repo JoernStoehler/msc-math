@@ -26,6 +26,8 @@ On LICCA, [licca-datascience-prepare.slurm.sh](licca-datascience-prepare.slurm.s
 runs only `sys-datascience-prepare`. Validate the produce directory before
 submitting prepare, then fingerprint the prepare output after the job finishes.
 Those are explicit login-node gates, not hidden Slurm job steps.
+Use `--partition=test` for prepare smoke submissions; the script default is the
+production-shaped `epyc` partition.
 
 Normal prepare runs require the expensive payload for every producer metadata
 row. They do not run capacity search. Local smoke evidence on this branch:

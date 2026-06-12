@@ -169,6 +169,16 @@ a second configuration system. Semantic run-shape values such as
 command. Run-local paths may still default to printed directories when the
 default is reviewable and does not overwrite canonical artifacts.
 
+Partition choice is part of the execution contract:
+
+- smoke submissions should pass `--partition=test`;
+- production submissions should use `epyc` unless current scheduler evidence
+  says another production partition is better.
+
+The Slurm scripts keep `#SBATCH --partition=epyc` as the production default, so
+smoke handoffs must override it explicitly. Do not infer from `--test-only` that
+the real smoke submission will start promptly on the same partition.
+
 ## Cached Sigma Derivative Evidence
 
 `computed-polytopes.jsonl` stores the retained best sigma/action list, not the

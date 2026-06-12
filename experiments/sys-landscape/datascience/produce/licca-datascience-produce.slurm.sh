@@ -11,6 +11,10 @@
 
 set -euo pipefail
 
+# The default partition is production-shaped. Smoke submissions should override
+# this with `sbatch --partition=test ...`; do not spend epyc queue time on a
+# path-check smoke unless `test` is unavailable or too constrained.
+
 SCRIPT_DIR="$(cd -- "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../../../.." && pwd)"
 cd "$REPO_ROOT"
