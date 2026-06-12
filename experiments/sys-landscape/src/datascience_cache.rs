@@ -277,6 +277,11 @@ fn semantic_payload_eq(a: &ComputedPolytopePayloadRow, b: &ComputedPolytopePaylo
 mod tests {
     use super::*;
     use nalgebra::Vector4;
+    use std::io::Write;
+    use std::path::PathBuf;
+    use std::sync::atomic::{AtomicUsize, Ordering};
+
+    static TEMP_COUNTER: AtomicUsize = AtomicUsize::new(0);
 
     #[test]
     fn poly_id_normalizes_signed_zero() {
@@ -302,5 +307,94 @@ mod tests {
             poly_id_from_dual_vertices(&a),
             poly_id_from_dual_vertices(&b)
         );
+    }
+
+    fn test_payload() -> ComputedPolytopePayloadRow {
+        ComputedPolytopePayloadRow {
+            poly_id: "poly-a".to_string(),
+            dual_vertices: vec![[1.0, 0.0, 0.0, 0.0]],
+            dual_vertices_rational: vec![[
+                "1/1".to_string(),
+                "0/1".to_string(),
+                "0/1".to_string(),
+                "0/1".to_string(),
+            ]],
+            vertices_rational: vec![[
+                "1/1".to_string(),
+                "0/1".to_string(),
+                "0/1".to_string(),
+                "0/1".to_string(),
+            ]],
+            facet_count: 1,
+            backend: "auto".to_string(),
+            volume: 2.0,
+            capacity: 1.0,
+            sys: 0.25,
+            sigma_gap_cutoff: 0.0,
+            sigmas: vec![SigmaAction {
+                perm: vec![0],
+                action: 1.0,
+            }],
+            orbit_scalars: OrbitScalars {
+                iterations: 1,
+                returned_orbit_count: 1,
+                best_beta_margin: 0.5,
+                best_q_error_bound: 0.0,
+                best_has_mu: true,
+                best_has_xi: true,
+                best_is_admissible_exact: false,
+                best_is_indeterminate_f64: false,
+            },
+            time_volume_ms: 1.0,
+            time_capacity_ms: 2.0,
+        }
+    }
+
+    fn temp_cache_path() -> PathBuf {
+        let counter = TEMP_COUNTER.fetch_add(1, Ordering::Relaxed);
+        std::env::temp_dir().join(format!(
+            "datascience-cache-test-{}-{counter}.jsonl",
+            std::process::id()
+        ))
+    }
+
+    fn write_payloads(rows: &[ComputedPolytopePayloadRow]) -> PathBuf {
+        let path = temp_cache_path();
+        let mut file = File::create(&path).expect("create temp cache file");
+        for row in rows {
+            serde_json::to_writer(&mut file, row).expect("write payload JSON");
+            writeln!(file).expect("write payload newline");
+        }
+        path
+    }
+
+    #[test]
+    fn cache_loader_accepts_execution_metadata_differences() {
+        let a = test_payload();
+        let mut b = a.clone();
+        b.backend = "billiard".to_string();
+        b.time_volume_ms = 10.0;
+        b.time_capacity_ms = 20.0;
+        let path = write_payloads(&[a.clone(), b]);
+
+        let cache = ComputedPolytopeCache::load(std::slice::from_ref(&path));
+        std::fs::remove_file(&path).expect("remove temp cache file");
+
+        assert_eq!(cache.rows.len(), 1);
+        assert_eq!(
+            cache.rows.get("poly-a").expect("payload").capacity,
+            a.capacity
+        );
+    }
+
+    #[test]
+    #[should_panic(expected = "conflicting computed-polytope cache row")]
+    fn cache_loader_rejects_semantic_payload_conflicts() {
+        let a = test_payload();
+        let mut b = a.clone();
+        b.capacity = 1.25;
+        let path = write_payloads(&[a, b]);
+
+        let _ = ComputedPolytopeCache::load(std::slice::from_ref(&path));
     }
 }
