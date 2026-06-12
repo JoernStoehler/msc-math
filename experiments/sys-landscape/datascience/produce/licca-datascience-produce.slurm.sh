@@ -56,9 +56,4 @@ cargo build --release -p exp-sys-landscape --bin sys-datascience-produce
   --parallelism "$SLURM_CPUS_PER_TASK" \
   --base-cache "$BASE_CACHE"
 
-python3 "$SCRIPT_DIR/validate-datascience-produced.py" \
-  --produce-dir "$OUTPUT_DIR" \
-  --mode "$MODE" \
-  --producers "$PRODUCERS"
-
 wc -l "$OUTPUT_DIR"/*.jsonl

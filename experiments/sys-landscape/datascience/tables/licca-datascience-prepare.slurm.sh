@@ -38,11 +38,6 @@ echo "  cargo target:$CARGO_TARGET_DIR"
 
 cargo build --release -p exp-sys-landscape --bin sys-datascience-prepare
 
-python3 experiments/sys-landscape/datascience/produce/validate-datascience-produced.py \
-  --produce-dir "$DATASCIENCE_PRODUCE_DIR"
-
 "$CARGO_TARGET_DIR/release/sys-datascience-prepare" \
   --produce-dir "$DATASCIENCE_PRODUCE_DIR" \
   --out-dir "$OUTPUT_DIR"
-
-python3 experiments/sys-landscape/datascience/fingerprint-dataset.py "$OUTPUT_DIR"

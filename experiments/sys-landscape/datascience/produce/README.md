@@ -147,8 +147,20 @@ targets match the standalone random refresh counts: `4096` generic rows and
 - hot smoke from the cold `computed-polytopes.jsonl`: `18` hits, `0` misses.
 
 On LICCA, [licca-datascience-produce.slurm.sh](licca-datascience-produce.slurm.sh)
-runs the same binary and then runs the validator. Submit smoke first; submit
-production only after bounded smoke inspection.
+runs the same binary and writes a run-local produce directory. The execution
+flow is:
+
+```text
+sbatch produce
+validate the produce output on the login node
+sbatch prepare
+fingerprint/inspect the prepare output on the login node
+archive and retrieve the run-local outputs
+validate/review locally
+```
+
+Keep validation as an explicit gate between jobs. Submit production only after
+bounded smoke inspection.
 
 ## Cached Sigma Derivative Evidence
 

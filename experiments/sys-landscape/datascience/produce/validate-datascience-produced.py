@@ -47,44 +47,22 @@ def require(condition: bool, message: str) -> None:
         raise SystemExit(message)
 
 
-def parse_producers(raw: str | None, produce_dir: Path, stats: dict[str, Any]) -> list[str]:
-    if raw is not None:
-        producers = [item.strip() for item in raw.split(",") if item.strip()]
-        unknown = [item for item in producers if item not in PRODUCER_FILES]
-        require(not unknown, f"unknown producers: {unknown}")
-        require(bool(producers), "--producers must not be empty")
-        return producers
-
-    if "producers" in stats:
-        producers_raw = stats["producers"]
-        require(isinstance(producers_raw, list), "produce-stats producers must be a list")
-        producers = [str(item) for item in producers_raw]
-        unknown = [item for item in producers if item not in PRODUCER_FILES]
-        require(not unknown, f"unknown producers in produce-stats: {unknown}")
-        require(bool(producers), "produce-stats producers must not be empty")
-        return producers
-
-    producers = [
-        producer
-        for producer, filename in PRODUCER_FILES.items()
-        if (produce_dir / filename).exists()
-    ]
-    require(bool(producers), f"no producer sample files found in {produce_dir}")
+def parse_producers(raw: str) -> list[str]:
+    producers = [item.strip() for item in raw.split(",") if item.strip()]
+    unknown = [item for item in producers if item not in PRODUCER_FILES]
+    require(not unknown, f"unknown producers: {unknown}")
+    require(bool(producers), "--producers must not be empty")
     return producers
 
 
-def validate(produce_dir: Path, mode: str | None, producers_raw: str | None) -> dict[str, Any]:
+def validate(produce_dir: Path, mode: str, producers_raw: str) -> dict[str, Any]:
     payload_path = produce_dir / "computed-polytopes.jsonl"
     stats_path = produce_dir / "produce-stats.json"
 
     require(payload_path.exists(), f"missing required file: {payload_path}")
     require(stats_path.exists(), f"missing required file: {stats_path}")
     stats = load_json(stats_path)
-    producers = parse_producers(producers_raw, produce_dir, stats)
-    if mode is None and "mode" in stats:
-        stats_mode = str(stats["mode"])
-        require(stats_mode in EXPECTED, f"unknown produce-stats mode: {stats_mode}")
-        mode = stats_mode
+    producers = parse_producers(producers_raw)
 
     for producer in producers:
         path = produce_dir / PRODUCER_FILES[producer]
@@ -101,15 +79,14 @@ def validate(produce_dir: Path, mode: str | None, producers_raw: str | None) -> 
     )
     sample_rows = [*random_rows, *product_rows]
 
-    if mode is not None:
-        expected = EXPECTED[mode]
-        for producer in producers:
-            filename = PRODUCER_FILES[producer]
-            row_count = len(random_rows) if producer == "random" else len(product_rows)
-            require(
-                row_count == expected[filename],
-                f"{filename} row count {row_count} != expected {expected[filename]}",
-            )
+    expected = EXPECTED[mode]
+    for producer in producers:
+        filename = PRODUCER_FILES[producer]
+        row_count = len(random_rows) if producer == "random" else len(product_rows)
+        require(
+            row_count == expected[filename],
+            f"{filename} row count {row_count} != expected {expected[filename]}",
+        )
 
     payload_ids = [str(row["poly_id"]) for row in payload_rows]
     sample_ids = [str(row["poly_id"]) for row in sample_rows]
@@ -156,7 +133,7 @@ def validate(produce_dir: Path, mode: str | None, producers_raw: str | None) -> 
         stats.get("cache_hits", 0) + stats.get("cache_misses", 0) == len(sample_rows),
         "produce-stats cache_hits + cache_misses must equal sample rows",
     )
-    require(stats.get("mode") == (mode or stats.get("mode")), "produce-stats mode mismatch")
+    require(stats.get("mode") == mode, "produce-stats mode mismatch")
     require(stats.get("producers") == producers, "produce-stats producers mismatch")
     require(
         stats.get("cache_miss_volume_ms", -1.0) >= 0.0,
@@ -177,7 +154,7 @@ def validate(produce_dir: Path, mode: str | None, producers_raw: str | None) -> 
 
     return {
         "produce_dir": str(produce_dir),
-        "mode": mode or "count-only",
+        "mode": mode,
         "producers": ",".join(producers),
         "random_rows": len(random_rows),
         "random_product_rows": len(product_rows),
@@ -192,10 +169,11 @@ def validate(produce_dir: Path, mode: str | None, producers_raw: str | None) -> 
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--produce-dir", type=Path, required=True)
-    parser.add_argument("--mode", choices=sorted(EXPECTED), default=None)
+    parser.add_argument("--mode", choices=sorted(EXPECTED), required=True)
     parser.add_argument(
         "--producers",
-        help="Comma-separated producer list. If omitted, validate sample files present in the directory.",
+        required=True,
+        help="Comma-separated producer list.",
     )
     args = parser.parse_args()
 
