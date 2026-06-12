@@ -62,6 +62,7 @@ Current boundary facts:
 | Area | Current role | Related task/research surfaces |
 | --- | --- | --- |
 | `experiments/hko-local-maximum/` | HKO local-maximality experiments: theorem certificate tooling under `theorem/`, empirical support checks under `empirical/`, and shared topic helpers under `src/` | `tasks/current-state.md`, `tasks/planning-notes.md`, `research/hko-local-maximum*.md`, `experiments/hko-local-maximum/README.md` |
+| `experiments/dev-gradient-ascent/` | active top-level development packet for a heuristic gradient-ascent method for nonsmooth high-dimensional `sys(a)`; owns question ledger, schema-smoke artifacts, and future method-development probes before promotion | `experiments/dev-gradient-ascent/README.md`, `experiments/sys-landscape/datascience/README.md`, `research/sys-first-order-local-behavior.md` |
 | `experiments/sys-landscape/` | hostile sys-search landscape: random/product searches, gradient ascent, variable-`F` continuation, rejection calibration, and datascience pipeline | `tasks/current-state.md`, `tasks/planning-notes.md`, `research/sys-landscape*.md`, `experiments/sys-landscape/datascience/README.md` |
 | `experiments/regular-products/` | regular polygon product side result: broad rotated-product sweeps, pentagon empirical figures/viewer, and exact pentagon formula proof packet | `experiments/regular-products/README.md`, `thesis/rotated-regular-polygons-content.md` |
 | `experiments/local-sys-methods/` | narrow smoke packet for local `sys(a0 + t d)` prediction diagnostics against HK2017 recomputation; method-development code, not thesis evidence | `experiments/local-sys-methods/README.md` |
@@ -80,6 +81,7 @@ Current boundary facts:
 Topic helper crates already exist at:
 
 - `experiments/combinatorial-cells/src/lib.rs`
+- `experiments/dev-gradient-ascent/src/lib.rs`
 - `experiments/hko-local-maximum/src/lib.rs`
 - `experiments/regular-products/src/lib.rs`
 - `experiments/numerics/src/lib.rs`
@@ -89,7 +91,8 @@ Topic helper crates already exist at:
 
 Current observed pattern:
 
-- `experiments/numerics/` and
+- `experiments/dev-gradient-ascent/`, `experiments/numerics/`,
+  `experiments/numerics/gradient/`, and
   `experiments/sys-landscape/gradient-ascent-dev/` are Rust-heavy or
   feature-incubator packages where `src/` is an appropriate package surface.
 - `experiments/combinatorial-cells/`, `experiments/hko-local-maximum/`,

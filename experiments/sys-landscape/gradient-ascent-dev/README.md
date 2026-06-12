@@ -1,5 +1,8 @@
 # Gradient Ascent Development Stubs
 
+Status: superseded stub surface. New gradient-ascent method development should
+start at `experiments/dev-gradient-ascent/`.
+
 This directory is a placeholder surface for planned gradient-ascent method
 development tools. The current binaries are stubs:
 

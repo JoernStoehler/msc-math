@@ -1,0 +1,46 @@
+[package]
+name = "exp-dev-gradient-ascent"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+path = "src/lib.rs"
+
+[[bin]]
+name = "dev-gradient-ascent-smoke"
+path = "smoke/main.rs"
+
+[[bin]]
+name = "dev-gradient-ascent-branch-diagnostic"
+path = "branch-diagnostic/main.rs"
+
+[[bin]]
+name = "dev-gradient-ascent-local-geometry-probe"
+path = "local-geometry-probe/main.rs"
+
+[[bin]]
+name = "dev-gradient-ascent-trace-policy-sweep"
+path = "trace-policy-sweep/main.rs"
+
+[[bin]]
+name = "dev-gradient-ascent-aggregate-summaries"
+path = "aggregate-summaries/main.rs"
+
+[[bin]]
+name = "dev-gradient-ascent-endpoint-scan-report"
+path = "endpoint-scan-report/main.rs"
+
+[[bin]]
+name = "dev-gradient-ascent-run-trace-report"
+path = "run-trace-report/main.rs"
+
+[lints]
+workspace = true
+
+[dependencies]
+exp-sys-landscape = { path = "../sys-landscape" }
+good_lp.workspace = true
+nalgebra.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+symplectic.workspace = true

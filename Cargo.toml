@@ -3,6 +3,7 @@ members = [
     "crates/symplectic",
     "crates/algebraic-numbers",
     "crates/euclidean-polytopes",
+    "experiments/dev-gradient-ascent",
     "experiments/hko-local-maximum",
     "experiments/regular-products",
     "experiments/sys-landscape",

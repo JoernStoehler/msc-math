@@ -501,6 +501,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "exp-dev-gradient-ascent"
+version = "0.1.0"
+dependencies = [
+ "exp-sys-landscape",
+ "good_lp",
+ "nalgebra",
+ "serde",
+ "serde_json",
+ "symplectic",
+]
+
+[[package]]
 name = "exp-flow-graph"
 version = "0.1.0"
 dependencies = [
