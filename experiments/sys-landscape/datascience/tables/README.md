@@ -26,6 +26,9 @@ On LICCA, [licca-datascience-prepare.slurm.sh](licca-datascience-prepare.slurm.s
 runs only `sys-datascience-prepare`. Validate the produce directory before
 submitting prepare, then fingerprint the prepare output after the job finishes.
 Those are explicit login-node gates, not hidden Slurm job steps.
+Submit the Slurm script from this `tables/` directory; it uses
+`SLURM_SUBMIT_DIR` for run-local output paths because Slurm may execute a spool
+copy of the script.
 Use `--partition=test` for prepare smoke submissions; the script default is the
 production-shaped `epyc` partition. Smoke submissions should also override the
 CPU count, memory, and timeout, for example `--cpus-per-task=4 --mem=8G

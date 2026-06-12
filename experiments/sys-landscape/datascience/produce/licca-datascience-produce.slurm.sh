@@ -15,7 +15,15 @@ set -euo pipefail
 # partition, CPU count, memory, and time; e.g. `--partition=test --cpus-per-task=4
 # --mem=8G --time=00:20:00`.
 
-SCRIPT_DIR="$(cd -- "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if [[ -n "${SLURM_SUBMIT_DIR:-}" ]]; then
+  SCRIPT_DIR="$(cd -- "$SLURM_SUBMIT_DIR" && pwd)"
+else
+  SCRIPT_DIR="$(cd -- "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+fi
+case "$SCRIPT_DIR" in
+  */experiments/sys-landscape/datascience/produce) ;;
+  *) echo "submit from experiments/sys-landscape/datascience/produce, got: $SCRIPT_DIR" >&2; exit 2 ;;
+esac
 REPO_ROOT="$(cd "$SCRIPT_DIR/../../../.." && pwd)"
 cd "$REPO_ROOT"
 

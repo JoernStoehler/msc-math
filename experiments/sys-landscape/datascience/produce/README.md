@@ -162,6 +162,10 @@ validate/review locally
 Keep validation as an explicit gate between jobs. Submit production only after
 bounded smoke inspection.
 
+Submit the Slurm script from this `produce/` directory. The script uses
+`SLURM_SUBMIT_DIR` for run-local output paths because Slurm may execute a spool
+copy of the script where `BASH_SOURCE[0]` is not a repo path.
+
 Slurm scripts use environment variables only as the `sbatch --export` bridge
 into ordinary executable CLI arguments. They are not meant as hidden defaults or
 a second configuration system. Semantic run-shape values such as
