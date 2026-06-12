@@ -41,7 +41,7 @@ cargo build --release -p exp-sys-landscape --bin sys-datascience-prepare
 python3 experiments/sys-landscape/datascience/produce/validate-datascience-produced.py \
   --produce-dir "$DATASCIENCE_PRODUCE_DIR"
 
-target/release/sys-datascience-prepare \
+"$CARGO_TARGET_DIR/release/sys-datascience-prepare" \
   --produce-dir "$DATASCIENCE_PRODUCE_DIR" \
   --out-dir "$OUTPUT_DIR"
 

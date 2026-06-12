@@ -17,7 +17,6 @@ cd "$REPO_ROOT"
 
 MODE="${DATASCIENCE_MODE:-smoke}"
 PRODUCERS="${DATASCIENCE_PRODUCERS:-random,random-product}"
-BASE_CACHE="${DATASCIENCE_BASE_CACHE:-$SCRIPT_DIR/computed-polytopes.jsonl}"
 OUTPUT_DIR="${DATASCIENCE_OUTPUT_DIR:-$SCRIPT_DIR/licca-runs/datascience-produce-${MODE}-${SLURM_JOB_ID}}"
 
 case "$MODE" in
@@ -26,6 +25,13 @@ case "$MODE" in
 esac
 
 mkdir -p "$OUTPUT_DIR"
+
+if [[ -n "${DATASCIENCE_BASE_CACHE:-}" ]]; then
+  BASE_CACHE="$DATASCIENCE_BASE_CACHE"
+else
+  BASE_CACHE="$OUTPUT_DIR/base-cache-empty.jsonl"
+  : > "$BASE_CACHE"
+fi
 
 export CARGO_TARGET_DIR="${CARGO_TARGET_DIR:-/hpc/gpfs2/scratch/u/stoehljo/cargo-target}"
 export RAYON_NUM_THREADS="${SLURM_CPUS_PER_TASK}"
@@ -43,7 +49,7 @@ echo "  cargo target:$CARGO_TARGET_DIR"
 
 cargo build --release -p exp-sys-landscape --bin sys-datascience-produce
 
-target/release/sys-datascience-produce \
+"$CARGO_TARGET_DIR/release/sys-datascience-produce" \
   --mode "$MODE" \
   --producers "$PRODUCERS" \
   --output-dir "$OUTPUT_DIR" \
