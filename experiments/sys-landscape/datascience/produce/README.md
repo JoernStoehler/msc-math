@@ -115,7 +115,10 @@ cargo run -p exp-sys-landscape --release --bin sys-datascience-produce -- \
 Outputs:
 
 - `computed-polytopes.jsonl`: reusable expensive payloads keyed by canonical
-  f64-bit `poly_id`;
+  f64-bit `poly_id`. During a run, cache misses are appended here as they finish;
+  on normal completion the file is rewritten with the full used payload set.
+  After an interrupted run, pass this partial file as `--base-cache` or
+  `DATASCIENCE_BASE_CACHE` to reuse completed misses;
 - `random-samples.jsonl` and `random-product-samples.jsonl`: producer metadata
   keyed by `poly_id`;
 - `produce-stats.json`: run-level resource evidence: counts, cache hits/misses,

@@ -408,7 +408,11 @@ fn main() {
 
     std::fs::create_dir_all(&args.output_dir).expect("create output dir");
 
-    let cache = ComputedPolytopeCache::load(&[args.base_cache.clone()]);
+    let payload_path = args.output_dir.join("computed-polytopes.jsonl");
+    let cache = ComputedPolytopeCache::load_with_wal(
+        &[args.base_cache.clone()],
+        Some(payload_path.clone()),
+    );
     let mut work = Vec::new();
     if args.producers.contains(&Producer::Random) {
         work.extend(random_work(args.seed, args.mode));
@@ -469,10 +473,7 @@ fn main() {
             &random_product_rows,
         );
     }
-    write_jsonl(
-        args.output_dir.join("computed-polytopes.jsonl"),
-        &payload_rows,
-    );
+    write_jsonl(payload_path, &payload_rows);
 
     let stats = cache.stats();
     let failure_count = *failures.lock().expect("failure mutex poisoned");

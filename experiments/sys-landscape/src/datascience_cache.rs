@@ -10,8 +10,8 @@ use crate::{
 use num_rational::BigRational;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-use std::fs::File;
-use std::io::{BufRead, BufReader};
+use std::fs::{File, OpenOptions};
+use std::io::{BufRead, BufReader, BufWriter, Write};
 use std::path::{Path, PathBuf};
 use std::sync::Mutex;
 use std::time::Instant;
@@ -63,18 +63,42 @@ pub struct ComputedPolytopeCache {
     rows: HashMap<String, ComputedPolytopePayloadRow>,
     used_rows: Mutex<HashMap<String, ComputedPolytopePayloadRow>>,
     stats: Mutex<ComputeCacheStats>,
+    wal: Option<Mutex<BufWriter<File>>>,
 }
 
 impl ComputedPolytopeCache {
     pub fn load(paths: &[PathBuf]) -> Self {
+        Self::load_with_wal(paths, None)
+    }
+
+    pub fn load_with_wal(paths: &[PathBuf], wal_path: Option<PathBuf>) -> Self {
         let mut rows = HashMap::new();
         for path in paths {
             load_payload_rows(path, &mut rows);
         }
+        let wal = wal_path.map(|path| {
+            if let Some(parent) = path.parent() {
+                if !parent.as_os_str().is_empty() {
+                    std::fs::create_dir_all(parent).unwrap_or_else(|e| {
+                        panic!(
+                            "create computed-polytope WAL parent {}: {e}",
+                            parent.display()
+                        )
+                    });
+                }
+            }
+            let file = OpenOptions::new()
+                .create(true)
+                .append(true)
+                .open(&path)
+                .unwrap_or_else(|e| panic!("open computed-polytope WAL {}: {e}", path.display()));
+            Mutex::new(BufWriter::new(file))
+        });
         Self {
             rows,
             used_rows: Mutex::new(HashMap::new()),
             stats: Mutex::new(ComputeCacheStats::default()),
+            wal,
         }
     }
 
@@ -157,7 +181,10 @@ impl ComputedPolytopeCache {
 
         {
             let mut used = self.used_rows.lock().expect("used cache mutex poisoned");
-            used.entry(poly_id).or_insert_with(|| row.clone());
+            if !used.contains_key(&poly_id) {
+                self.append_wal(&row);
+                used.insert(poly_id, row.clone());
+            }
         }
         {
             let mut stats = self.stats.lock().expect("cache stats mutex poisoned");
@@ -186,6 +213,16 @@ impl ComputedPolytopeCache {
         }
         let mut stats = self.stats.lock().expect("cache stats mutex poisoned");
         stats.hits += 1;
+    }
+
+    fn append_wal(&self, row: &ComputedPolytopePayloadRow) {
+        let Some(wal) = &self.wal else {
+            return;
+        };
+        let mut writer = wal.lock().expect("computed-polytope WAL mutex poisoned");
+        serde_json::to_writer(&mut *writer, row).expect("write computed-polytope WAL JSON");
+        writeln!(&mut *writer).expect("write computed-polytope WAL newline");
+        writer.flush().expect("flush computed-polytope WAL");
     }
 }
 
@@ -385,6 +422,22 @@ mod tests {
             cache.rows.get("poly-a").expect("payload").capacity,
             a.capacity
         );
+    }
+
+    #[test]
+    fn cache_wal_appends_loadable_payload_rows() {
+        let path = temp_cache_path();
+        let row = test_payload();
+        let cache = ComputedPolytopeCache::load_with_wal(&[], Some(path.clone()));
+
+        cache.append_wal(&row);
+        drop(cache);
+
+        let loaded = ComputedPolytopeCache::load(std::slice::from_ref(&path));
+        std::fs::remove_file(&path).expect("remove temp cache file");
+
+        assert_eq!(loaded.rows.len(), 1);
+        assert_eq!(loaded.rows.get("poly-a").expect("payload").sys, row.sys);
     }
 
     #[test]
