@@ -101,6 +101,9 @@ Use object-level artifact names rather than vague evidence labels.
   and stop reason.
 - **Branch-set diagnostic:** action gaps, tolerance windows, and near-active
   sigma counts.
+- **Branch cartography:** paired `(a0, data(a0))` and nearby
+  `(a, data(a), relation_to_a0)` records, including whether target best sigmas
+  were visible at `a0` or appeared through branch-domain changes.
 - **Local geometry probe:** sampled behavior of `sys(a0 + t d)` near selected
   points.
 - **Endpoint diagnostic:** whether a produced endpoint passes the chosen
@@ -176,6 +179,94 @@ multi-branch cases, including one random-product row with four near-active
 branches at `1e-12` relative tolerance. The next useful step is to connect this
 branch-set diagnostic to local geometry probes or ascent traces, not to treat
 these counts as endpoint local-maximality evidence.
+
+## Branch Cartography
+
+This command consumes a branch diagnostic output directory, selects classified
+basepoints, and records point/sample pairs:
+
+```text
+(a0, data(a0), [(a, data(a), relation_to_a0)])
+```
+
+It evaluates branch-derived directions and optional deterministic random unit
+directions at finite radii. For every successful sample, it records whether the
+target best sigma was already in the base near-active set, was at least inside
+the wider base candidate window, was blocked by base transitions, or used a
+transition that opened at the target.
+
+By default it samples one layer around each selected fixture. Use `--layers N`
+to expand improving samples for `N` finite-step layers. Non-improving target
+points are still recorded as point records, but they are not expanded.
+
+```bash
+cargo run -p exp-dev-gradient-ascent \
+  --bin dev-gradient-ascent-branch-cartography -- \
+  --diagnostic-dir /tmp/dev-gradient-ascent-branch-diagnostic-allsafe-check \
+  --out-dir /tmp/dev-gradient-ascent-branch-cartography-check \
+  --steps 1e-4 \
+  --max-fixtures-per-label 1 \
+  --random-directions 1
+```
+
+Use `--selection-threshold-relative 0.01 --degeneracy-labels high_degeneracy`
+to select the wide-window high-degeneracy rows from the checked allsafe branch
+diagnostic output.
+
+It writes:
+
+- `fixture-selection.jsonl`
+- `branch-cartography-points.jsonl`
+- `branch-cartography-samples.jsonl`
+- `compute-budget-report.json`
+- `summary.json`
+
+Current checked observations:
+
+- output: `/tmp/dev-gradient-ascent-branch-cartography-check`;
+- selection threshold: `1e-3`;
+- selected fixtures: `2` (`large_gap = 1`, `narrow_gap = 1`);
+- sample rows: `7`;
+- failures: `0`;
+- classifications:
+  `improving_visible_near_active_branch = 3`,
+  `non_improving_visible_near_active_branch = 4`;
+- elapsed wall time: about `85s` in the local devcontainer.
+
+High-degeneracy check:
+
+- output: `/tmp/dev-gradient-ascent-branch-cartography-highdeg-check`;
+- selection threshold: `1e-2`;
+- selected fixtures: `1` (`high_degeneracy = 1`);
+- sample rows: `4`;
+- base near-active count: `6`;
+- classifications:
+  `improving_visible_near_active_branch = 2`,
+  `non_improving_visible_near_active_branch = 2`;
+- elapsed wall time: about `49s` in the local devcontainer.
+
+Layer-expansion smoke:
+
+- output: `/tmp/dev-gradient-ascent-branch-cartography-layer-check`;
+- command shape:
+  `--degeneracy-labels large_gap --steps 1e-4 --random-directions 0 --layers 2`;
+- selected fixtures: `1`;
+- point records: `5`;
+- sample rows: `4`;
+- source-state counts:
+  `selected_fixture = 1`, `sample_target_layer_1 = 2`,
+  `sample_target_layer_2 = 2`;
+- classifications:
+  `improving_visible_near_active_branch = 2`,
+  `non_improving_visible_near_active_branch = 2`.
+
+Interpretation: these first small-radius runs did not expose missing target
+branches or transition-opened samples. They did show that the wide-window
+high-degeneracy fixture still has positive finite improving directions, so it
+is not endpoint local-maximality evidence. The next useful use of this surface
+is to stress larger radii, traced intermediate states, and post-stop endpoints
+until branch-domain changes or post-stop improvements are either found or made
+rarer under documented conditions.
 
 ## Local Geometry Probe
 

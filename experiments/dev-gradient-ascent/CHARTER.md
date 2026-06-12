@@ -163,6 +163,9 @@ Artifacts should be named by what they are, not by how they affect belief.
   stop reason, and failure mode.
 - **Branch-set diagnostic:** action gaps, tolerance windows, near-active sigma
   counts, selected branches, and branch-selection failure statuses.
+- **Branch cartography:** paired records for a selected `a0` and nearby
+  sampled points, including target best-sigma visibility, transition changes,
+  candidate-window misses, and branch-domain failure classifications.
 - **Local geometry probe:** evaluated behavior of `sys(a0 + t d)` near selected
   points, with direction and radius selection recorded.
 - **Endpoint diagnostic:** checks bearing on whether an endpoint is a local

@@ -19,6 +19,10 @@ name = "dev-gradient-ascent-local-geometry-probe"
 path = "local-geometry-probe/main.rs"
 
 [[bin]]
+name = "dev-gradient-ascent-branch-cartography"
+path = "branch-cartography/main.rs"
+
+[[bin]]
 name = "dev-gradient-ascent-trace-policy-sweep"
 path = "trace-policy-sweep/main.rs"
 
@@ -41,6 +45,8 @@ workspace = true
 exp-sys-landscape = { path = "../sys-landscape" }
 good_lp.workspace = true
 nalgebra.workspace = true
+rand.workspace = true
+rand_chacha.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 symplectic.workspace = true
