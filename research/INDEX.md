@@ -59,7 +59,7 @@ obligations.
 ### Thesis Story Index
 
 This table is the top-level entrypoint for the thesis-facing research stories.
-It is not a separate claim register. The research note owns interpretation; the
+It is not a separate claim register. The listed source owns interpretation; the
 task progress files own remaining proof, writeup, verification, and cut/weaken
 obligations.
 
@@ -70,7 +70,7 @@ obligations.
 | Crosspolytope capacity | `crosspolytope.md` | `tasks/current-state.md`, `tasks/planning-notes.md` if thesis cites the computation |
 | Visualization negative exploration | `visualization.md` | `tasks/planning-notes.md` if included as standalone or supporting material |
 | Pentagon rotation formula | `experiments/regular-products/README.md`; `thesis/rotated-regular-polygons-content.md`; `experiments/regular-products/pentagon-rotation-formula-proof/` | `thesis/rotated-regular-polygons.tex` and final thesis review gates |
-| Numerical and algorithmic method story | `numerics.md`, `numerics-error-bounds.md`, `verification.md`, `verification-orbit-recovery.md` | `tasks/definition-of-success.md`, `tasks/current-state.md`, `tasks/planning-notes.md` |
+| Numerical and algorithmic method story | `experiments/numerics/README.md`, `formal/hk2017-qp-core.tex`, `formal/hk2017-qp-precision.tex`, `verification.md`, `verification-orbit-recovery.md` | `tasks/definition-of-success.md`, `tasks/current-state.md`, `tasks/planning-notes.md` |
 | Tube algorithm import | `tube-algorithm-raw-jorn-2026-05-04.md`, `tube-algorithm.md` | `tasks/planning-notes.md` if promoted into thesis text |
 | Repo/software/process story | `finish-current-state.md`, `verification.md`, `visualization.md`, architecture and submission maps | `tasks/definition-of-success.md`, `tasks/current-state.md`, `tasks/planning-notes.md`, `tasks/submit-thesis/README.md` |
 
@@ -83,7 +83,6 @@ obligations.
 | Hostile sys landscape | `experiments/sys-landscape/datascience/README.md`, `experiments/sys-landscape/datascience/methods/README.md`, `sys-landscape.md`, `sys-landscape-toolbox-audit.md` | local datascience state first; research notes are context |
 | Pentagon rotation formula / regular products | `experiments/regular-products/README.md`, `thesis/rotated-regular-polygons-content.md` | regular-product side-result inventory, writing companion, proof packet routing, and source-truth boundaries |
 | Sys first-order local behavior | `sys-first-order-local-behavior.md` | generic smooth case, non-generic active-germ classification, and semialgebraic fallback status |
-| Numerics | `numerics.md`, `numerics-error-bounds.md` | numerical-method status and error-bound interpretation |
 | Tube algorithm | `tube-algorithm-raw-jorn-2026-05-04.md`, `tube-algorithm.md` | raw Jörn source note plus routing/clarification note before rewriting old TeX or Rust surfaces |
 | Verification | `verification.md`, `verification-orbit-recovery.md` | validation evidence and orbit-recovery interpretation |
 | Standalone topics | `crosspolytope.md`, `visualization.md`, `combinatorial-cells.md` | topic-local result interpretation |

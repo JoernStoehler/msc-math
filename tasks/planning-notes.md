@@ -440,8 +440,8 @@ Closure summary:
 Status: active for retained numerics claims; deferred for broad solver
 formalization unless thesis wording needs it.
 
-Reread before use: `research/numerics*.md`, `formal/hk2017-qp-*.tex`,
-`experiments/numerics/README.md`, `thesis/numerics.tex`,
+Reread before use: `experiments/numerics/README.md`,
+`formal/hk2017-qp-*.tex`, `thesis/numerics.tex`,
 `thesis/appendix-numerics-proofs.tex`.
 
 Guidance:

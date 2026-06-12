@@ -350,7 +350,7 @@ Given β̃ from the solver, certify whether β* > 0.
   - Cannot trust Q̃ as lower bound on Q_max (the overestimate means Q̃ could exceed the true Q_max)
   - Must propagate to accumulator (Part 8) for lazy resolution
 
-- **Empirical performance** (from `research/numerics-error-bounds.md`, 44,808 natural polytope σ-nodes):
+- **Empirical performance** (from deleted historical numerics error-bounds note, 44,808 natural polytope σ-nodes):
   - True positive: 44,414 (β* > 0 certified)
   - False positive: **0** (no false certifications)
   - False negative: 9 (β* > 0 but not certified — all m=6, rank-deficient M with near-null eigenvalue)
@@ -605,7 +605,7 @@ The punchline: what can we say about the computed capacity?
   - Empirical: on all tested polytopes (47 polytopes, F ≤ 8), the winning orbit has σ_min(C) ≥ 0.3.
   [GAP: no proof that this holds in general. A counterexample would be a polytope where the capacity-achieving orbit visits facets with nearly-dependent normals.]
 
-### Empirical validation summary (from `research/numerics-error-bounds.md`)
+### Empirical validation summary (from deleted historical numerics error-bounds note)
 
 - **Literature polytopes:** 7 polytopes match published c_EHZ values at 1 × 10⁻⁶ relative tolerance
 - **Capacity axioms:** 6 axioms (monotonicity, conformality, symplectic invariance, normalization, Lagrangian product, symplectic product) verified on 47 polytopes

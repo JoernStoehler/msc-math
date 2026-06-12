@@ -323,13 +323,13 @@ claim.
       branches
     - HKO proof wording starts depending on this theorem route
 
-- We have numerics experiments and notes that support solver diagnostics and
+- We have a numerics audit experiment that supports solver diagnostics and
   caveated numerical trust.
-  - Scope: algebraic exactness, f64-vs-exact error bounds, Q-error checks,
-    KKT-inertia diagnostics, unknown-predicate effects, and Sage feasibility.
+  - Scope: structured f64-vs-oracle observations for retained KKT variables and
+    predicates, with explicit input-pair and oracle provenance. The old
+    packet-style numerics categories are historical and available only through
+    git history.
   - Files:
-    - `research/numerics.md`
-    - `research/numerics-error-bounds.md`
     - `tasks/current-state.md`
     - `tasks/planning-notes.md`
     - `experiments/numerics/README.md`
