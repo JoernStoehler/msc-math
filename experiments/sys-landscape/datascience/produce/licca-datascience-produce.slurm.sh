@@ -39,6 +39,7 @@ fi
 MODE="$DATASCIENCE_MODE"
 PRODUCERS="$DATASCIENCE_PRODUCERS"
 OUTPUT_DIR="${DATASCIENCE_OUTPUT_DIR:-$SCRIPT_DIR/licca-runs/datascience-produce-${MODE}-${SLURM_JOB_ID}}"
+PLAN_ONLY="${DATASCIENCE_PLAN_ONLY:-0}"
 
 case "$MODE" in
   smoke|production) ;;
@@ -65,6 +66,7 @@ echo "  repo:        $(git rev-parse --short HEAD)"
 echo "  mode:        $MODE"
 echo "  producers:   $PRODUCERS"
 echo "  cpus:        ${SLURM_CPUS_PER_TASK}"
+echo "  plan only:   $PLAN_ONLY"
 echo "  output dir:  $OUTPUT_DIR"
 echo "  base cache:  $BASE_CACHE"
 echo "  cargo target:$CARGO_TARGET_DIR"
@@ -79,11 +81,18 @@ if [[ ! -x "$BINARY" ]]; then
   exit 2
 fi
 
-"$BINARY" \
+cmd=(
+  "$BINARY"
   --mode "$MODE" \
   --producers "$PRODUCERS" \
   --output-dir "$OUTPUT_DIR" \
   --parallelism "$SLURM_CPUS_PER_TASK" \
   --base-cache "$BASE_CACHE"
+)
+if [[ "$PLAN_ONLY" == "1" ]]; then
+  cmd+=(--plan-only)
+fi
 
-wc -l "$OUTPUT_DIR"/*.jsonl
+"${cmd[@]}"
+
+wc -l "$OUTPUT_DIR"/*.jsonl 2>/dev/null || true

@@ -92,6 +92,7 @@ def validate(produce_dir: Path, mode: str, producers_raw: str) -> dict[str, Any]
     sample_ids = [str(row["poly_id"]) for row in sample_rows]
     sample_names = [str(row["name"]) for row in sample_rows]
     require(count_duplicates(payload_ids) == 0, "duplicate poly_id in computed-polytopes.jsonl")
+    require(count_duplicates(sample_ids) == 0, "duplicate sample poly_id")
     require(count_duplicates(sample_names) == 0, "duplicate sample name")
     require(
         len(payload_rows) == len(set(sample_ids)),

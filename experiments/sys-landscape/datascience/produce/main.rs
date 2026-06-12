@@ -12,7 +12,7 @@ use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use rayon::prelude::*;
 use serde::Serialize;
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::BTreeSet;
 use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::path::PathBuf;
@@ -61,26 +61,25 @@ struct Args {
     parallelism: usize,
     base_cache: PathBuf,
     seed: u64,
+    plan_only: bool,
 }
 
 #[derive(Clone)]
-enum WorkUnit {
+enum WorkSpec {
     Random {
         name: String,
         facet_count: usize,
-        attempt: u64,
-        polytope: SysLandscapePolytopeCache,
+        sample_index: usize,
     },
     RandomProduct {
         name: String,
         k: usize,
         m: usize,
-        attempt: u64,
-        polytope: SysLandscapePolytopeCache,
+        sample_index: usize,
     },
 }
 
-impl WorkUnit {
+impl WorkSpec {
     fn label(&self) -> String {
         match self {
             Self::Random {
@@ -93,16 +92,12 @@ impl WorkUnit {
             }
         }
     }
-
-    fn polytope(&self) -> &SysLandscapePolytopeCache {
-        match self {
-            Self::Random { polytope, .. } | Self::RandomProduct { polytope, .. } => polytope,
-        }
-    }
 }
 
 struct ComputedWorkUnit {
     producer: Producer,
+    label: String,
+    poly_id: String,
     random: Option<DatascienceRandomSampleRow>,
     random_product: Option<DatascienceRandomProductSampleRow>,
 }
@@ -137,6 +132,7 @@ fn parse_args_from(argv: impl IntoIterator<Item = impl Into<String>>) -> Args {
     let mut parallelism = None;
     let mut base_cache = None;
     let mut seed = SEED;
+    let mut plan_only = false;
 
     let mut i = 1usize;
     while i < argv.len() {
@@ -179,6 +175,10 @@ fn parse_args_from(argv: impl IntoIterator<Item = impl Into<String>>) -> Args {
                 seed = value().parse().expect("--seed must be a u64");
                 i += 2;
             }
+            "--plan-only" => {
+                plan_only = true;
+                i += 1;
+            }
             "--help" | "-h" => {
                 print_help(
                     argv.first()
@@ -198,6 +198,7 @@ fn parse_args_from(argv: impl IntoIterator<Item = impl Into<String>>) -> Args {
         parallelism: parallelism.expect("--parallelism is required"),
         base_cache: base_cache.expect("--base-cache is required"),
         seed,
+        plan_only,
     }
 }
 
@@ -208,7 +209,7 @@ Run datascience producers into a reviewable output directory.
 
 Usage:
   {program} --mode smoke|production --producers <list> --output-dir <dir> \\
-    --parallelism <n> --base-cache <computed-polytopes.jsonl> [--seed <u64>]
+    --parallelism <n> --base-cache <computed-polytopes.jsonl> [--seed <u64>] [--plan-only]
 
 Producers:
   random,random-product
@@ -267,85 +268,144 @@ fn product_samples_per_bucket(mode: Mode) -> usize {
     }
 }
 
-fn random_work(seed: u64, mode: Mode) -> Vec<WorkUnit> {
+fn should_log_plan_progress(accepted: usize, target: usize) -> bool {
+    accepted == 1 || accepted == target || accepted % 128 == 0
+}
+
+fn random_work(mode: Mode) -> Vec<WorkSpec> {
+    let started = std::time::Instant::now();
     let samples_per_f = generic_samples_per_f(mode);
     let mut work = Vec::new();
     for &facet_count in GENERIC_FACETS {
-        let mut accepted = 0usize;
-        let mut attempt = 0u64;
-        while accepted < samples_per_f {
-            if let Some(polytope) =
-                SysLandscapePolytopeCache::generate_random(facet_count, H_MIN, H_MAX, seed, attempt)
-            {
-                work.push(WorkUnit::Random {
-                    name: format!("random_F{facet_count}_{accepted}"),
-                    facet_count,
-                    attempt,
-                    polytope,
-                });
-                accepted += 1;
+        println!("planning random F={facet_count}: target={samples_per_f}");
+        flush_stdout();
+        for sample_index in 0..samples_per_f {
+            work.push(WorkSpec::Random {
+                name: format!("random_F{facet_count}_{sample_index}"),
+                facet_count,
+                sample_index,
+            });
+            let planned = sample_index + 1;
+            if should_log_plan_progress(planned, samples_per_f) {
+                println!("planning random F={facet_count}: planned={planned}/{samples_per_f}");
+                flush_stdout();
             }
-            attempt += 1;
         }
     }
+    println!(
+        "planned random work units={} elapsed_ms={:.1}",
+        work.len(),
+        started.elapsed().as_secs_f64() * 1000.0
+    );
+    flush_stdout();
     work
 }
 
-fn product_seed(seed: u64, k: usize, m: usize, attempt: u64) -> [u8; 32] {
+fn random_seed(seed: u64, facet_count: usize, sample_index: usize, attempt: u64) -> [u8; 32] {
+    let mut material = Vec::new();
+    material.extend_from_slice(&seed.to_le_bytes());
+    material.extend_from_slice(&(facet_count as u64).to_le_bytes());
+    material.extend_from_slice(&(sample_index as u64).to_le_bytes());
+    material.extend_from_slice(&attempt.to_le_bytes());
+    blake3::derive_key("datascience-random-generic", &material)
+}
+
+fn product_seed(seed: u64, k: usize, m: usize, sample_index: usize, attempt: u64) -> [u8; 32] {
     let mut material = Vec::new();
     material.extend_from_slice(&seed.to_le_bytes());
     material.extend_from_slice(&(k as u64).to_le_bytes());
     material.extend_from_slice(&(m as u64).to_le_bytes());
+    material.extend_from_slice(&(sample_index as u64).to_le_bytes());
     material.extend_from_slice(&attempt.to_le_bytes());
     blake3::derive_key("datascience-random-product", &material)
 }
 
-fn random_product_work(seed: u64, mode: Mode) -> Vec<WorkUnit> {
+fn random_product_work(mode: Mode) -> Vec<WorkSpec> {
+    let started = std::time::Instant::now();
     let samples_per_bucket = product_samples_per_bucket(mode);
     let mut work = Vec::new();
     for &(k, m) in PRODUCT_PAIRS {
-        let mut accepted = 0usize;
-        let mut attempt = 0u64;
-        while accepted < samples_per_bucket {
-            let mut rng = ChaCha8Rng::from_seed(product_seed(seed, k, m, attempt));
-            let (qn, qh) = random_polygon_2d(k, H_MIN, H_MAX, &mut rng);
-            let (pn, ph) = random_polygon_2d(m, H_MIN, H_MAX, &mut rng);
-            if let Some(polytope) =
-                SysLandscapePolytopeCache::from_lagrangian_product(&qn, &qh, &pn, &ph)
-            {
-                work.push(WorkUnit::RandomProduct {
-                    name: format!("random_{k}x{m}_{accepted}"),
-                    k,
-                    m,
-                    attempt,
-                    polytope,
-                });
-                accepted += 1;
+        println!("planning random-product {k}x{m}: target={samples_per_bucket}");
+        flush_stdout();
+        for sample_index in 0..samples_per_bucket {
+            work.push(WorkSpec::RandomProduct {
+                name: format!("random_{k}x{m}_{sample_index}"),
+                k,
+                m,
+                sample_index,
+            });
+            let planned = sample_index + 1;
+            if should_log_plan_progress(planned, samples_per_bucket) {
+                println!("planning random-product {k}x{m}: planned={planned}/{samples_per_bucket}");
+                flush_stdout();
             }
-            attempt += 1;
         }
     }
+    println!(
+        "planned random-product work units={} elapsed_ms={:.1}",
+        work.len(),
+        started.elapsed().as_secs_f64() * 1000.0
+    );
+    flush_stdout();
     work
 }
 
+fn generate_random_polytope(
+    seed: u64,
+    facet_count: usize,
+    sample_index: usize,
+) -> Option<(SysLandscapePolytopeCache, u64)> {
+    for attempt in 0.. {
+        let mut rng = ChaCha8Rng::from_seed(random_seed(seed, facet_count, sample_index, attempt));
+        if let Some(polytope) =
+            SysLandscapePolytopeCache::sample_random(facet_count, H_MIN, H_MAX, &mut rng)
+        {
+            return Some((polytope, attempt));
+        }
+    }
+    None
+}
+
+fn generate_product_polytope(
+    seed: u64,
+    k: usize,
+    m: usize,
+    sample_index: usize,
+) -> Option<(SysLandscapePolytopeCache, u64)> {
+    for attempt in 0.. {
+        let mut rng = ChaCha8Rng::from_seed(product_seed(seed, k, m, sample_index, attempt));
+        let (qn, qh) = random_polygon_2d(k, H_MIN, H_MAX, &mut rng);
+        let (pn, ph) = random_polygon_2d(m, H_MIN, H_MAX, &mut rng);
+        if let Some(polytope) =
+            SysLandscapePolytopeCache::from_lagrangian_product(&qn, &qh, &pn, &ph)
+        {
+            return Some((polytope, attempt));
+        }
+    }
+    None
+}
+
 fn compute_work_unit(
-    unit: WorkUnit,
+    unit: WorkSpec,
     seed: u64,
     cache: &ComputedPolytopeCache,
 ) -> Option<ComputedWorkUnit> {
     match unit {
-        WorkUnit::Random {
+        WorkSpec::Random {
             name,
             facet_count,
-            attempt,
-            polytope,
+            sample_index,
         } => {
+            let (polytope, attempt) = generate_random_polytope(seed, facet_count, sample_index)?;
+            let poly_id = poly_id(&polytope);
             let payload = cache.compute(&polytope, CapacityBackend::Auto)?;
             Some(ComputedWorkUnit {
                 producer: Producer::Random,
+                label: format!("{name} F={facet_count}"),
+                poly_id: poly_id.clone(),
                 random: Some(DatascienceRandomSampleRow {
                     name,
-                    poly_id: poly_id(&polytope),
+                    poly_id,
                     facet_count,
                     seed,
                     attempt,
@@ -356,13 +416,14 @@ fn compute_work_unit(
                 random_product: None,
             })
         }
-        WorkUnit::RandomProduct {
+        WorkSpec::RandomProduct {
             name,
             k,
             m,
-            attempt,
-            polytope,
+            sample_index,
         } => {
+            let (polytope, attempt) = generate_product_polytope(seed, k, m, sample_index)?;
+            let poly_id = poly_id(&polytope);
             let payload = cache.compute(&polytope, CapacityBackend::Billiard)?;
             let classification = classify_facets_from_dual_vertices(&polytope.dual_vertices_f64)
                 .expect("generated Lagrangian product should classify");
@@ -373,10 +434,12 @@ fn compute_work_unit(
             )?;
             Some(ComputedWorkUnit {
                 producer: Producer::RandomProduct,
+                label: format!("{name} pair={k}x{m}"),
+                poly_id: poly_id.clone(),
                 random: None,
                 random_product: Some(DatascienceRandomProductSampleRow {
                     name,
-                    poly_id: poly_id(&polytope),
+                    poly_id,
                     k,
                     m,
                     facet_count: polytope.facet_count(),
@@ -424,29 +487,17 @@ fn flush_stdout() {
     std::io::stdout().flush().expect("flush stdout");
 }
 
-fn report_work_plan(work: &[WorkUnit]) {
-    let mut counts: BTreeMap<String, usize> = BTreeMap::new();
-    for unit in work {
-        *counts.entry(poly_id(unit.polytope())).or_insert(0) += 1;
-    }
-    let duplicate_entries: Vec<_> = counts
-        .iter()
-        .filter_map(|(poly_id, count)| (*count > 1).then_some((poly_id, *count)))
-        .collect();
-    let duplicate_rows: usize = duplicate_entries
-        .iter()
-        .map(|(_, count)| count.saturating_sub(1))
-        .sum();
+fn report_work_plan(work: &[WorkSpec]) {
     println!(
-        "work plan: units={} unique_poly_ids={} duplicate_rows={} duplicate_poly_ids={}",
+        "work plan: units={} random_units={} random_product_units={}",
         work.len(),
-        counts.len(),
-        duplicate_rows,
-        duplicate_entries.len()
+        work.iter()
+            .filter(|unit| matches!(unit, WorkSpec::Random { .. }))
+            .count(),
+        work.iter()
+            .filter(|unit| matches!(unit, WorkSpec::RandomProduct { .. }))
+            .count()
     );
-    for (poly_id, count) in duplicate_entries.iter().take(10) {
-        println!("work plan duplicate: poly_id={poly_id} count={count}");
-    }
     flush_stdout();
 }
 
@@ -467,21 +518,31 @@ fn main() {
     );
     let mut work = Vec::new();
     if args.producers.contains(&Producer::Random) {
-        work.extend(random_work(args.seed, args.mode));
+        work.extend(random_work(args.mode));
     }
     if args.producers.contains(&Producer::RandomProduct) {
-        work.extend(random_product_work(args.seed, args.mode));
+        work.extend(random_product_work(args.mode));
     }
 
     println!(
-        "datascience produce: mode={:?} producers={:?} work_units={} parallelism={} base_cache={}",
+        "datascience produce: mode={:?} producers={:?} work_units={} parallelism={} base_cache={} plan_only={}",
         args.mode,
         args.producers,
         work.len(),
         args.parallelism,
-        args.base_cache.display()
+        args.base_cache.display(),
+        args.plan_only
     );
     report_work_plan(&work);
+    if args.plan_only {
+        println!(
+            "plan-only complete: work_units={} elapsed_ms={:.1}",
+            work.len(),
+            total_started.elapsed().as_secs_f64() * 1000.0
+        );
+        flush_stdout();
+        return;
+    }
 
     let failures = Mutex::new(0usize);
     let started = AtomicUsize::new(0);
@@ -491,10 +552,9 @@ fn main() {
         .into_par_iter()
         .filter_map(|unit| {
             let label = unit.label();
-            let poly_id = poly_id(unit.polytope());
             let started_now = started.fetch_add(1, Ordering::Relaxed) + 1;
             if started_now <= args.parallelism || started_now % 512 == 0 {
-                println!("started {started_now}/{total_work}: {label} poly_id={poly_id}");
+                println!("started {started_now}/{total_work}: {label}");
                 flush_stdout();
             }
             let unit_started = std::time::Instant::now();
@@ -506,6 +566,10 @@ fn main() {
             let completed_now = completed.fetch_add(1, Ordering::Relaxed) + 1;
             let elapsed_ms = unit_started.elapsed().as_secs_f64() * 1000.0;
             if completed_now <= args.parallelism || completed_now % 128 == 0 || result.is_none() {
+                let (label, poly_id) = result
+                    .as_ref()
+                    .map(|row| (row.label.as_str(), row.poly_id.as_str()))
+                    .unwrap_or((label.as_str(), "<failed-before-poly-id>"));
                 println!(
                     "completed {completed_now}/{total_work}: {label} poly_id={poly_id} ok={} elapsed_ms={elapsed_ms:.1}",
                     result.is_some()
@@ -601,11 +665,13 @@ mod tests {
             "1",
             "--base-cache",
             "/tmp/base.jsonl",
+            "--plan-only",
         ]);
         assert_eq!(args.mode, Mode::Smoke);
         assert!(args.producers.contains(&Producer::Random));
         assert!(args.producers.contains(&Producer::RandomProduct));
         assert_eq!(args.parallelism, 1);
+        assert!(args.plan_only);
     }
 
     #[test]

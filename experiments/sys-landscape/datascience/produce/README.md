@@ -183,6 +183,10 @@ a second configuration system. Semantic run-shape values such as
 command. Run-local paths may still default to printed directories when the
 default is reviewable and does not overwrite canonical artifacts.
 
+For production-size diagnostics, set `DATASCIENCE_PLAN_ONLY=1`. This runs the
+same producer work-plan construction and row-count reporting, then exits before
+capacity computation and before writing producer JSONL rows.
+
 Partition choice is part of the execution contract:
 
 - smoke submissions should pass `--partition=test`, a small CPU count, bounded
