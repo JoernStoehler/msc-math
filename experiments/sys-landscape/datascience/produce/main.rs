@@ -85,6 +85,24 @@ struct ComputedWorkUnit {
     random_product: Option<DatascienceRandomProductSampleRow>,
 }
 
+#[derive(Serialize)]
+struct ProduceStatsRow {
+    mode: String,
+    producers: Vec<String>,
+    seed: u64,
+    parallelism: usize,
+    random_rows: usize,
+    random_product_rows: usize,
+    computed_payload_rows: usize,
+    cache_hits: usize,
+    cache_misses: usize,
+    failures: usize,
+    max_sys: Option<f64>,
+    total_volume_ms: f64,
+    total_capacity_ms: f64,
+    wall_time_ms: f64,
+}
+
 fn parse_args() -> Args {
     parse_args_from(std::env::args())
 }
@@ -197,6 +215,20 @@ fn parse_producers(raw: &str) -> BTreeSet<Producer> {
     }
     assert!(!producers.is_empty(), "--producers must not be empty");
     producers
+}
+
+fn mode_name(mode: Mode) -> &'static str {
+    match mode {
+        Mode::Smoke => "smoke",
+        Mode::Production => "production",
+    }
+}
+
+fn producer_name(producer: Producer) -> &'static str {
+    match producer {
+        Producer::Random => "random",
+        Producer::RandomProduct => "random-product",
+    }
 }
 
 fn generic_samples_per_f(mode: Mode) -> usize {
@@ -355,7 +387,19 @@ fn write_jsonl<T: Serialize>(path: PathBuf, rows: &[T]) {
         .unwrap_or_else(|e| panic!("flush {}: {e}", path.display()));
 }
 
+fn write_json<T: Serialize>(path: PathBuf, value: &T) {
+    if let Some(parent) = path.parent() {
+        if !parent.as_os_str().is_empty() {
+            std::fs::create_dir_all(parent).expect("create output parent");
+        }
+    }
+    let file = File::create(&path).unwrap_or_else(|e| panic!("create {}: {e}", path.display()));
+    serde_json::to_writer_pretty(BufWriter::new(file), value)
+        .unwrap_or_else(|e| panic!("write {}: {e}", path.display()));
+}
+
 fn main() {
+    let total_started = std::time::Instant::now();
     let args = parse_args();
     rayon::ThreadPoolBuilder::new()
         .num_threads(args.parallelism)
@@ -432,6 +476,27 @@ fn main() {
 
     let stats = cache.stats();
     let failure_count = *failures.lock().expect("failure mutex poisoned");
+    let produce_stats = ProduceStatsRow {
+        mode: mode_name(args.mode).to_string(),
+        producers: args
+            .producers
+            .iter()
+            .map(|producer| producer_name(*producer).to_string())
+            .collect(),
+        seed: args.seed,
+        parallelism: args.parallelism,
+        random_rows: random_rows.len(),
+        random_product_rows: random_product_rows.len(),
+        computed_payload_rows: payload_rows.len(),
+        cache_hits: stats.hits,
+        cache_misses: stats.misses,
+        failures: failure_count,
+        max_sys: payload_rows.iter().map(|row| row.sys).reduce(f64::max),
+        total_volume_ms: payload_rows.iter().map(|row| row.time_volume_ms).sum(),
+        total_capacity_ms: payload_rows.iter().map(|row| row.time_capacity_ms).sum(),
+        wall_time_ms: total_started.elapsed().as_secs_f64() * 1000.0,
+    };
+    write_json(args.output_dir.join("produce-stats.json"), &produce_stats);
     println!(
         "wrote random={} random_product={} computed_payloads={} cache_hits={} cache_misses={} failures={}",
         random_rows.len(),

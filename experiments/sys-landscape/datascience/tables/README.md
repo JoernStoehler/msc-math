@@ -26,7 +26,9 @@ Normal prepare runs require the expensive payload for every producer metadata
 row. They do not run capacity search. Local smoke evidence on this branch:
 `18` produced polytopes became `18` polytope-table rows and `18` provenance
 rows; `fingerprint-dataset.py` reported max `sys=0.8015672385893916` and
-`0` rows with `sys > 1`.
+`0` rows with `sys > 1`. Prepare also writes `prepare-stats.json` next to the
+tables so a smoke or LICCA run records row counts, max `sys`, and wall time
+without relying only on Slurm stdout.
 
 Normal table builds do not repair missing capacity payloads. Fixed-F ascent
 summary rows must have matching producer-cache rows (`ascent-general-cache.jsonl` and

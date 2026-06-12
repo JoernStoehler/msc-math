@@ -17,15 +17,30 @@ use load_caches::{LoadedCaches, LoadedPolytopeRow, LoadedProvenanceRow};
 use producer_rows::{DatascienceRandomProductSampleRow, DatascienceRandomSampleRow};
 use rows::ComputedPolytopeObservationRow;
 use serde::de::DeserializeOwned;
+use serde::Serialize;
 use std::collections::HashMap;
 use std::fs::File;
-use std::io::{BufRead, BufReader};
+use std::io::{BufRead, BufReader, BufWriter};
 use std::path::{Path, PathBuf};
 use std::time::Instant;
 
 struct Args {
     produce_dir: PathBuf,
     out_dir: PathBuf,
+}
+
+#[derive(Serialize)]
+struct PrepareStatsRow {
+    produce_dir: String,
+    out_dir: String,
+    polytope_rows: usize,
+    provenance_rows: usize,
+    computed_polytope_observation_rows: usize,
+    ascent_run_rows: usize,
+    max_sys: Option<f64>,
+    sys_gt_one: usize,
+    build_polytope_table_ms: f64,
+    wall_time_ms: f64,
 }
 
 fn parse_args() -> Args {
@@ -108,6 +123,16 @@ fn read_jsonl_if_exists<T: DeserializeOwned>(path: &Path) -> Vec<T> {
     } else {
         Vec::new()
     }
+}
+
+fn write_json<T: Serialize>(path: &Path, value: &T) {
+    if let Some(parent) = path.parent() {
+        std::fs::create_dir_all(parent).expect("create stats parent");
+    }
+    let file = File::create(path).unwrap_or_else(|e| panic!("create {}: {e}", path.display()));
+    let writer = BufWriter::new(file);
+    serde_json::to_writer_pretty(writer, value)
+        .unwrap_or_else(|e| panic!("write {}: {e}", path.display()));
 }
 
 fn payloads_by_poly_id(path: &Path) -> HashMap<String, ComputedPolytopePayloadRow> {
@@ -294,9 +319,10 @@ fn main() {
 
     let started = Instant::now();
     let polytope_rows = features::build_polytope_table(&caches.polytopes);
+    let build_polytope_table_ms = started.elapsed().as_secs_f64() * 1000.0;
     eprintln!(
         "Built polytope table in {:.1}s",
-        started.elapsed().as_secs_f64()
+        build_polytope_table_ms / 1000.0
     );
 
     let provenance_run_rows = features_trace::build_provenance_run_table(&caches.provenance_rows);
@@ -306,9 +332,23 @@ fn main() {
         &provenance_run_rows,
         &caches.computed_polytope_observations,
     );
-    eprintln!(
-        "Total prepare time {:.1}s",
-        total_started.elapsed().as_secs_f64()
-    );
+    let wall_time_ms = total_started.elapsed().as_secs_f64() * 1000.0;
+    let stats = PrepareStatsRow {
+        produce_dir: args.produce_dir.display().to_string(),
+        out_dir: args.out_dir.display().to_string(),
+        polytope_rows: polytope_rows.len(),
+        provenance_rows: caches.provenance_rows.len(),
+        computed_polytope_observation_rows: caches.computed_polytope_observations.len(),
+        ascent_run_rows: provenance_run_rows
+            .iter()
+            .filter(|row| row.optimizer.contains("gradient_ascent"))
+            .count(),
+        max_sys: polytope_rows.iter().map(|row| row.sys).reduce(f64::max),
+        sys_gt_one: polytope_rows.iter().filter(|row| row.sys > 1.0).count(),
+        build_polytope_table_ms,
+        wall_time_ms,
+    };
+    write_json(&args.out_dir.join("prepare-stats.json"), &stats);
+    eprintln!("Total prepare time {:.1}s", wall_time_ms / 1000.0);
     println!("Wrote {}", args.out_dir.display());
 }

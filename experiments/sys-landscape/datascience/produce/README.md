@@ -117,7 +117,9 @@ Outputs:
 - `computed-polytopes.jsonl`: reusable expensive payloads keyed by canonical
   f64-bit `poly_id`;
 - `random-samples.jsonl` and `random-product-samples.jsonl`: producer metadata
-  keyed by `poly_id`.
+  keyed by `poly_id`;
+- `produce-stats.json`: run-level resource evidence: counts, cache hits/misses,
+  failures, max `sys`, aggregate payload timings, and wall time.
 
 Validate a produced directory before prepare or promotion decisions:
 
