@@ -51,6 +51,10 @@ name = "sys-datascience-produce"
 path = "datascience/produce/main.rs"
 
 [[bin]]
+name = "sys-kkt-payload-profile"
+path = "datascience/produce/kkt-payload-profile.rs"
+
+[[bin]]
 name = "sys-dataset-ascent"
 path = "datascience/produce/ascent.rs"
 

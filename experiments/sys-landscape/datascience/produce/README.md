@@ -143,6 +143,33 @@ On LICCA, [licca-datascience-produce.slurm.sh](licca-datascience-produce.slurm.s
 runs the same binary and then runs the validator. Submit smoke first; submit
 production only after bounded smoke inspection.
 
+## Cached Sigma Derivative Evidence
+
+`computed-polytopes.jsonl` stores the retained best sigma/action list, not the
+full KKT derivative payload. This is intentional unless later evidence changes:
+known-sigma derivative inputs are cheap to reconstruct compared with full
+capacity search.
+
+Check with:
+
+```bash
+cargo run -p exp-sys-landscape --release --bin sys-kkt-payload-profile -- \
+  --samples-per-f 3 \
+  --out /tmp/kkt-payload-profile-3.jsonl
+```
+
+Current local evidence on 24 generated general polytopes (`3` per
+`F=5..12`):
+
+- full capacity search mean `11.115 ms`, median `1.511 ms`, max `75.663 ms`;
+- known-sigma KKT plus volume/capacity/sys derivative mean `0.092 ms`, median
+  `0.085 ms`, max `0.207 ms`;
+- high-F mean ratios: `F=10` `0.0154`, `F=11` `0.0111`, `F=12` `0.0062`.
+
+This supports storing sigma/action plus audit/timing metadata in the shared
+computed-polytope cache and recomputing KKT derivative inputs when ascent needs
+them.
+
 ## Dataset And Smoke Paths
 
 For method waves, do not ask every method worker to regenerate or privately
