@@ -192,18 +192,20 @@ def render_report(
     observations = [row for row in rows if row.get("event") == "observation"]
     predicate_rows = [row for row in rows if row.get("event") == "predicate_observation"]
     contexts = sorted(
-        {
-            f"{row.get('object_id')} sigma={row.get('sigma')} "
-            f"input_pair={row.get('input_pair_kind')} policy={row.get('sample_policy')}"
-            for row in rows
-            if row.get("event") == "context_started"
-        }
+        (row for row in rows if row.get("event") == "context_started"),
+        key=lambda row: (
+            row.get("object_id", ""),
+            str(row.get("sigma", "")),
+            row.get("input_pair_kind", ""),
+            row.get("sample_policy", ""),
+        ),
     )
-    worst_numeric = sorted(
-        (row for row in numeric if row["max_abs_error"] != ""),
-        key=lambda row: float(row["max_abs_error"]),
+    oracle_numeric_rows = [row for row in observations if "oracle_kind" in row]
+    worst_numeric_rows = sorted(
+        (row for row in oracle_numeric_rows if "abs_error" in row),
+        key=lambda row: float(row["abs_error"]),
         reverse=True,
-    )[:8]
+    )[:10]
     disagreements = [row for row in predicates if row["disagreements"]]
     exact_rational_disagreements = [
         row
@@ -227,7 +229,7 @@ def render_report(
         f"- Contexts: {len(contexts)}",
         f"- Numeric observations: {len(observations)}",
         f"- Predicate observations: {len(predicate_rows)}",
-        f"- Oracle-backed numeric observations: {sum(1 for row in observations if 'oracle_kind' in row)}",
+        f"- Oracle-backed numeric observations: {len(oracle_numeric_rows)}",
         "",
         "## Support Status",
         "",
@@ -239,20 +241,33 @@ def render_report(
         "  on the rational values represented by the stored binary64 input.",
         "- Exact-binary64-input rows are not algebraic-source oracle evidence.",
         "",
-        "## Contexts",
+        "## Emitted Context Bank",
         "",
     ]
-    lines.extend(f"- {context}" for context in contexts)
-    lines.extend(["", "## Largest Absolute Errors", ""])
-    if worst_numeric:
-        lines.extend(
-            "- {algorithm}/{variable} on {input_pair_kind} policy={sample_policy} "
-            "oracle={oracle_kind}: max_abs_error={max_abs_error}".format(**row)
-            for row in worst_numeric
+    lines.extend(
+        markdown_table(
+            ["object", "sigma", "input_pair_kind", "sample_policy"],
+            [
+                [
+                    str(row.get("object_id", "")),
+                    json.dumps(row.get("sigma", "")),
+                    str(row.get("input_pair_kind", "")),
+                    str(row.get("sample_policy", "")),
+                ]
+                for row in contexts
+            ],
         )
+    )
+    lines.extend(["", "## Oracle-Backed f64 Measurements", ""])
+    lines.extend(render_oracle_coverage_table(numeric))
+    lines.extend(["", "### Largest Row-Level Absolute Errors", ""])
+    if worst_numeric_rows:
+        lines.extend(render_worst_numeric_rows(worst_numeric_rows))
     else:
         lines.append("- No oracle-backed numeric errors were emitted.")
-    lines.extend(["", "## Predicate Disagreements", ""])
+    lines.extend(["", "## Predicate Agreement Diagnostics", ""])
+    lines.extend(render_predicate_summary(predicates))
+    lines.extend(["", "### Predicate Disagreements", ""])
     if disagreements:
         lines.extend(
             "- {algorithm}/{predicate} on {input_pair_kind} policy={sample_policy} "
@@ -261,6 +276,8 @@ def render_report(
         )
     else:
         lines.append("- No predicate disagreements were observed in this run.")
+    lines.extend(["", "## Conditioning And Solver Diagnostics Without Oracle", ""])
+    lines.extend(render_diagnostic_table(observations))
     lines.extend(
         [
             "",
@@ -277,6 +294,189 @@ def render_report(
         ]
     )
     return "\n".join(lines)
+
+
+def render_oracle_coverage_table(numeric: list[dict[str, Any]]) -> list[str]:
+    oracle_rows = [row for row in numeric if row["oracle_kind"] != "none"]
+    if not oracle_rows:
+        return ["- No oracle-backed numeric rows were emitted."]
+    return markdown_table(
+        [
+            "input_pair_kind",
+            "oracle_kind",
+            "algorithm",
+            "variable",
+            "sample_policy",
+            "count",
+            "max_abs_error",
+            "p95_abs_error",
+        ],
+        [
+            [
+                row["input_pair_kind"],
+                row["oracle_kind"],
+                row["algorithm"],
+                row["variable"],
+                row["sample_policy"],
+                row["count"],
+                format_cell(row["max_abs_error"]),
+                format_cell(row["p95_abs_error"]),
+            ]
+            for row in oracle_rows
+        ],
+    )
+
+
+def render_worst_numeric_rows(rows: list[dict[str, Any]]) -> list[str]:
+    return markdown_table(
+        [
+            "object",
+            "sigma",
+            "input_pair_kind",
+            "oracle_kind",
+            "algorithm",
+            "variable",
+            "component",
+            "f64",
+            "oracle_f64",
+            "abs_error",
+        ],
+        [
+            [
+                row.get("object_id", ""),
+                json.dumps(row.get("sigma", "")),
+                row.get("input_pair_kind", ""),
+                row.get("oracle_kind", ""),
+                row.get("algorithm", ""),
+                row.get("variable", ""),
+                row.get("component", ""),
+                format_cell(row.get("f64", "")),
+                format_cell(row.get("oracle_f64", "")),
+                format_cell(row.get("abs_error", "")),
+            ]
+            for row in rows
+        ],
+    )
+
+
+def render_predicate_summary(predicates: list[dict[str, Any]]) -> list[str]:
+    if not predicates:
+        return ["- No predicate observations were emitted."]
+    return markdown_table(
+        [
+            "input_pair_kind",
+            "oracle_kind",
+            "algorithm",
+            "predicate",
+            "sample_policy",
+            "count",
+            "with_oracle",
+            "disagreements",
+            "indeterminate_or_nonbinary",
+        ],
+        [
+            [
+                row["input_pair_kind"],
+                row["oracle_kind"],
+                row["algorithm"],
+                row["predicate"],
+                row["sample_policy"],
+                row["count"],
+                row["with_oracle"],
+                row["disagreements"],
+                row["indeterminate_or_nonbinary"],
+            ]
+            for row in predicates
+        ],
+    )
+
+
+DIAGNOSTIC_VARIABLES = {
+    "sigma_min_c",
+    "h_eigenvalue",
+    "constraint_residual_norm",
+    "beta_margin",
+    "q_error_bound",
+    "positive_eigenvalues",
+    "zero_eigenvalues",
+    "negative_eigenvalues",
+}
+
+
+def render_diagnostic_table(observations: list[dict[str, Any]]) -> list[str]:
+    diagnostics = [
+        row
+        for row in observations
+        if "oracle_kind" not in row and row.get("variable") in DIAGNOSTIC_VARIABLES
+    ]
+    if not diagnostics:
+        return ["- No no-oracle conditioning or solver diagnostics were emitted."]
+
+    groups: dict[tuple[Any, ...], list[dict[str, Any]]] = defaultdict(list)
+    for row in diagnostics:
+        groups[
+            (
+                row.get("input_pair_kind", ""),
+                row.get("algorithm", ""),
+                row.get("variable", ""),
+                row.get("sample_policy", ""),
+            )
+        ].append(row)
+
+    table_rows = []
+    for key in sorted(groups):
+        group = groups[key]
+        values = [float(row["f64"]) for row in group if "f64" in row]
+        table_rows.append(
+            [
+                key[0],
+                key[1],
+                key[2],
+                key[3],
+                len(group),
+                format_cell(min(values) if values else ""),
+                format_cell(max(values) if values else ""),
+            ]
+        )
+    return markdown_table(
+        [
+            "input_pair_kind",
+            "algorithm",
+            "diagnostic",
+            "sample_policy",
+            "count",
+            "min_f64",
+            "max_f64",
+        ],
+        table_rows,
+    )
+
+
+def markdown_table(headers: list[str], rows: list[list[Any]]) -> list[str]:
+    if not rows:
+        return ["- No rows."]
+    lines = [
+        "| " + " | ".join(headers) + " |",
+        "| " + " | ".join("---" for _ in headers) + " |",
+    ]
+    for row in rows:
+        cells = [escape_markdown_cell(format_cell(cell)) for cell in row]
+        lines.append("| " + " | ".join(cells) + " |")
+    return lines
+
+
+def format_cell(value: Any) -> str:
+    if value is None:
+        return ""
+    if value == "":
+        return ""
+    if isinstance(value, float):
+        return f"{value:.6g}"
+    return str(value)
+
+
+def escape_markdown_cell(value: str) -> str:
+    return value.replace("|", "\\|").replace("\n", " ")
 
 
 if __name__ == "__main__":
