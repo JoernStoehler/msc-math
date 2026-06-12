@@ -126,7 +126,8 @@ Validate a produced directory before prepare or promotion decisions:
 ```bash
 python3 experiments/sys-landscape/datascience/produce/validate-datascience-produced.py \
   --produce-dir /tmp/ds-produce-smoke-cold \
-  --mode smoke
+  --mode smoke \
+  --producers random,random-product
 ```
 
 The validator checks expected row counts, unique sample names, unique

@@ -20,6 +20,11 @@ EXPECTED = {
     },
 }
 
+PRODUCER_FILES = {
+    "random": "random-samples.jsonl",
+    "random-product": "random-product-samples.jsonl",
+}
+
 
 def load_jsonl(path: Path) -> list[dict[str, Any]]:
     with path.open() as handle:
@@ -35,30 +40,52 @@ def require(condition: bool, message: str) -> None:
         raise SystemExit(message)
 
 
-def validate(produce_dir: Path, mode: str | None) -> dict[str, Any]:
-    payload_path = produce_dir / "computed-polytopes.jsonl"
-    random_path = produce_dir / "random-samples.jsonl"
-    product_path = produce_dir / "random-product-samples.jsonl"
+def parse_producers(raw: str | None, produce_dir: Path) -> list[str]:
+    if raw is not None:
+        producers = [item.strip() for item in raw.split(",") if item.strip()]
+        unknown = [item for item in producers if item not in PRODUCER_FILES]
+        require(not unknown, f"unknown producers: {unknown}")
+        require(bool(producers), "--producers must not be empty")
+        return producers
 
-    for path in [payload_path, random_path, product_path]:
+    producers = [
+        producer
+        for producer, filename in PRODUCER_FILES.items()
+        if (produce_dir / filename).exists()
+    ]
+    require(bool(producers), f"no producer sample files found in {produce_dir}")
+    return producers
+
+
+def validate(produce_dir: Path, mode: str | None, producers_raw: str | None) -> dict[str, Any]:
+    producers = parse_producers(producers_raw, produce_dir)
+    payload_path = produce_dir / "computed-polytopes.jsonl"
+
+    require(payload_path.exists(), f"missing required file: {payload_path}")
+    for producer in producers:
+        path = produce_dir / PRODUCER_FILES[producer]
         require(path.exists(), f"missing required file: {path}")
 
     payload_rows = load_jsonl(payload_path)
-    random_rows = load_jsonl(random_path)
-    product_rows = load_jsonl(product_path)
+    random_rows = (
+        load_jsonl(produce_dir / PRODUCER_FILES["random"]) if "random" in producers else []
+    )
+    product_rows = (
+        load_jsonl(produce_dir / PRODUCER_FILES["random-product"])
+        if "random-product" in producers
+        else []
+    )
     sample_rows = [*random_rows, *product_rows]
 
     if mode is not None:
         expected = EXPECTED[mode]
-        require(
-            len(random_rows) == expected["random-samples.jsonl"],
-            f"random row count {len(random_rows)} != expected {expected['random-samples.jsonl']}",
-        )
-        require(
-            len(product_rows) == expected["random-product-samples.jsonl"],
-            "random-product row count "
-            f"{len(product_rows)} != expected {expected['random-product-samples.jsonl']}",
-        )
+        for producer in producers:
+            filename = PRODUCER_FILES[producer]
+            row_count = len(random_rows) if producer == "random" else len(product_rows)
+            require(
+                row_count == expected[filename],
+                f"{filename} row count {row_count} != expected {expected[filename]}",
+            )
 
     payload_ids = [str(row["poly_id"]) for row in payload_rows]
     sample_ids = [str(row["poly_id"]) for row in sample_rows]
@@ -94,6 +121,7 @@ def validate(produce_dir: Path, mode: str | None) -> dict[str, Any]:
     return {
         "produce_dir": str(produce_dir),
         "mode": mode or "count-only",
+        "producers": ",".join(producers),
         "random_rows": len(random_rows),
         "random_product_rows": len(product_rows),
         "computed_payload_rows": len(payload_rows),
@@ -106,9 +134,13 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--produce-dir", type=Path, required=True)
     parser.add_argument("--mode", choices=sorted(EXPECTED), default=None)
+    parser.add_argument(
+        "--producers",
+        help="Comma-separated producer list. If omitted, validate sample files present in the directory.",
+    )
     args = parser.parse_args()
 
-    result = validate(args.produce_dir, args.mode)
+    result = validate(args.produce_dir, args.mode, args.producers)
     print("# Datascience Produce Validation")
     print()
     for key, value in result.items():

@@ -58,6 +58,7 @@ cargo build --release -p exp-sys-landscape --bin sys-datascience-produce
 
 python3 "$SCRIPT_DIR/validate-datascience-produced.py" \
   --produce-dir "$OUTPUT_DIR" \
-  --mode "$MODE"
+  --mode "$MODE" \
+  --producers "$PRODUCERS"
 
 wc -l "$OUTPUT_DIR"/*.jsonl
