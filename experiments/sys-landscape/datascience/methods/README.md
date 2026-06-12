@@ -42,11 +42,11 @@ under `../tables/` and build method-specific input matrices inside the method
 folder. Copy and adapt input-building code between methods when that is cheaper
 than maintaining shared helper code.
 
-Checked-in retained table facts before the computed-ascent table rebuild:
+Checked-in retained table facts on this branch:
 
-- polytope rows: `8445`
-- computed-polytope observations: not present in this fingerprint
-- provenance rows: `8445`
+- polytope rows: `32610`
+- computed-polytope observations: `879235`
+- provenance rows: `22611`
 - ascent run rows: `8275`
 - max `sys`: `0.9750768559799221`
 - `sys > 1` rows: `0`

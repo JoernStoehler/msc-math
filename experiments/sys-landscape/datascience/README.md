@@ -23,6 +23,12 @@ The "standard repertoire" means the known data-science method/tool repertoire
 that is relevant to this search interface. It does not mean proving exhaustion
 over every possible data-science method.
 
+Current closure status: pending. The authoritative method-closure surfaces are
+`methods/README.md`, `methods/method-coverage-checklist.md`, and the active
+`methods/<method>/README.md` packets. A closed method table exists only when
+those surfaces record each standard-method disposition or deferral with enough
+evidence for the thesis wording above.
+
 Do not prewrite this slice as purely negative before retained evidence and
 documented deferrals or abandonments support the thesis claim. If a positive
 or conjectured-positive pattern appears, record it and escalate before
@@ -64,6 +70,8 @@ Read these files for ordinary datascience work:
 - `tables/README.md`: table builder ownership, retained table outputs, and
   fingerprints.
 - `methods/README.md`: method packet conventions and current packet list.
+- `methods/method-coverage-checklist.md`: recall checklist for standard-method
+  coverage while choosing, reviewing, or closing method-table rows.
 - relevant `methods/<method>/README.md`: durable state for that method packet.
 
 The task and research notes are not ordinary entry points for this slice. Use
@@ -130,41 +138,53 @@ Expected contents after rebuilding with the current table builder:
   provenance record keyed by `provenance_id`; records run-level and
   trajectory-summary fields. Random-sample provenance rows do not appear here.
 
-Checked-in fingerprint before the computed-polytope table rebuild and before
-the standalone random refresh:
+Checked-in retained-table fingerprint on this branch:
 
-- polytope rows: `8445`
-- computed-polytope observations: not present in this fingerprint
-- provenance rows: `8445`
+- polytope rows: `32610`
+- computed-polytope observations: `879235`
+- provenance rows: `22611`
 - ascent run rows: `8275`
 - max `sys`: `0.9750768559799221`
 - `sys > 1` rows: `0`
+- computed observations without retained polytope rows: `829497`
 - source counts:
   - `gradient_ascent_general`: `4096`
   - `gradient_ascent_products`: `4089`
-  - `random_product_sample`: `100` (old small random wave)
-  - `random_sample`: `70` (old small random wave)
+  - `random_product_sample`: `10240`
+  - `random_sample`: `4096`
   - `variable_f_ascent`: `90`
 - sha256:
   - `polytope-table.jsonl`:
-    `bc96000d2c7a70c4aa777891a020bf3c8f7d11d8ee17a084519e2706ce2b4554`
+    `18c94481590e3f5739748f195817f78de24335f5bdd66fa344bcecb12744b6b7`
+  - `computed-polytope-observation-table.jsonl`:
+    `61e7d8f25810c022b4e7d6f0aa53f0a99a8917e047e22f71ff415b042e69c121`
   - `polytope-provenance-table.jsonl`:
-    `abe2976decf84531b935132259bb526707b8dcf77844b23a4b64780f53673e8f`
+    `23bf91c55aecd7b9e139ea5b3a324942cdf716ce26d1febc4ee8c112f09f5e5c`
   - `polytope-ascent-run-table.jsonl`:
     `b75b29c66f30ca27e3d6dd289f1f9a8169bca532e6be1b0e0da816fe1963c420`
 
-Check the retained tables with:
+From repo root, check the retained tables with:
 
 ```bash
 uv run --script experiments/sys-landscape/datascience/fingerprint-dataset.py \
   experiments/sys-landscape/datascience/tables
 ```
 
-Build or refresh the retained tables from committed producer caches with:
+From repo root, build or refresh the retained tables from committed producer
+caches with:
 
 ```bash
 experiments/sys-landscape/datascience/build-dataset.sh
 ```
+
+Other operational entry points:
+
+- `pipeline.local.sh`: local command map for focused smoke, shard, merge,
+  cache-benchmark, scan, and retained-table build steps.
+- `smoke-pipeline.sh`: temp-output integration smoke; useful when checking the
+  older full produce-to-table surface, not as a cheap command check.
+- `licca-build-dataset.slurm.sh`: LICCA retained-table rebuild from canonical
+  producer files; distinct from the new run-local `produce`/`prepare` smoke.
 
 Refresh `tables/` only after an intentional producer or table-stage
 change.
@@ -219,6 +239,11 @@ to read the method READMEs and synthesize the current view.
 - Escalate when there is candidate-proposer evidence, a validated new `sys > 1`
   row, or evidence that should change thesis wording before unrelated method
   work continues.
+
+Candidate-proposer threshold: a method is a candidate-proposer only when it
+gives a concrete, reproducible rule or ranking that selects new polytopes or
+producer settings for targeted follow-up with positive expected value. A
+diagnostic saying that such a rule might exist is not yet a candidate-proposer.
 
 ## Architecture Rules
 
