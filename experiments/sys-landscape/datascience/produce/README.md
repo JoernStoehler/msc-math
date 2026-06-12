@@ -37,19 +37,19 @@ Current committed producer artifacts:
 - `ascent-general-endpoints.jsonl`
 - `ascent-general-trace.jsonl`
 - `ascent-general-cache.jsonl`
-- `ascent-general-ascent-events.jsonl`
-- `ascent-general-expensive-computations-cache.jsonl`
 - `ascent-product-endpoints.jsonl`
 - `ascent-product-trace.jsonl`
 - `ascent-product-cache.jsonl`
-- `ascent-product-ascent-events.jsonl`
-- `ascent-product-expensive-computations-cache.jsonl`
-- `expensive-computations-cache.jsonl` after review/promotion of merged
-  cache rows
-- `ascent-events.jsonl` after review/promotion of merged ascent events
 - `continuation.jsonl`
 - `shared-cache.jsonl`
 - `continuation-cache.jsonl`
+
+The `*-ascent-events.jsonl`, `*-expensive-computations-cache.jsonl`,
+`ascent-events.jsonl`, and `expensive-computations-cache.jsonl` names describe
+the intended producer-side split for newer ascent outputs. They are not
+committed artifacts in current HEAD. Current retained tables still read the
+endpoint/cache compatibility files above plus the committed
+`*-computed-polytopes.jsonl` files.
 
 Current fixed-F ascent endpoint/cache compatibility counts from the 2026-06-04
 LICCA wave:
@@ -254,12 +254,12 @@ in `../README.md`.
 
 ## Random Producer Refresh
 
-The checked-in random producer artifacts from the older wave are small (`70`
-generic random rows plus `100` product random rows). That is too small for
-method work because ascent starts are not a substitute for a larger standalone
-random baseline.
+The checked-in random producer artifacts are refreshed to the larger standalone
+random baseline: `4096` generic random rows plus `10240` random
+Lagrangian-product rows. This baseline is separate from ascent startpoints and
+endpoints.
 
-The current standalone random refresh target is:
+The retained standalone random target is:
 
 - `4096` generic random rows: `512` samples for each facet count `F=5..12`.
 - `10240` random Lagrangian-product rows: `1024` samples for each polygon-pair

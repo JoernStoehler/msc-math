@@ -35,8 +35,7 @@ feature rows for them.
 uv run --script experiments/sys-landscape/datascience/methods/scan-sys-gt-1/analyze.py
 ```
 
-Run locally on 2026-06-11 after copying the LICCA `9825413` table outputs and
-fixed-F producer computed-polytopes files.
+Run locally after retained-table rebuilds or producer computed-polytope refreshes.
 
 Smoke or LICCA merge review should scan the table-stage computed-polytope
 observation output and producer computed-polytope rows:
@@ -52,12 +51,11 @@ uv run --script experiments/sys-landscape/datascience/methods/scan-sys-gt-1/anal
 
 ## Observation
 
-These counts are from the retained tables built by LICCA job `9825413` from
-commit `58a93537`, plus the producer computed-polytopes files from the same
-fixed-F ascent wave.
+These counts are from current retained tables on the datascience architecture
+merge, plus the committed fixed-F ascent producer computed-polytopes files.
 
-- polytope rows: `16629`
-- provenance rows: `8445`
+- polytope rows: `32610`
+- provenance rows: `22611`
 - table rows with `sys > 1`: `0`
 - producer computed-polytope rows scanned: `879235`
 - producer computed-polytope rows with `sys > 1`: `0`
@@ -67,10 +65,10 @@ Source summary:
 
 | dataset | rows | sys > 1 |
 | --- | ---: | ---: |
-| gradient_ascent_general | `4096` | `0` |
-| gradient_ascent_products | `4089` | `0` |
-| random_product_sample | `100` | `0` |
-| random_sample | `70` | `0` |
+| gradient_ascent_general | `9533` | `0` |
+| gradient_ascent_products | `8651` | `0` |
+| random_product_sample | `10240` | `0` |
+| random_sample | `4096` | `0` |
 | variable_f_ascent | `90` | `0` |
 
 ## Interpretation
