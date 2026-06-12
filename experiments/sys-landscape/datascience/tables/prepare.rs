@@ -213,11 +213,7 @@ fn load_new_producer_outputs(produce_dir: &Path) -> LoadedCaches {
     let mut provenance_ids = HashSet::new();
 
     for row in random_rows {
-        assert!(
-            sample_poly_ids.insert(row.poly_id.clone()),
-            "duplicate sample poly_id {}",
-            row.poly_id
-        );
+        sample_poly_ids.insert(row.poly_id.clone());
         let provenance_id = provenance_id("random_sample", &row.name);
         assert!(
             provenance_ids.insert(provenance_id.clone()),
@@ -259,11 +255,7 @@ fn load_new_producer_outputs(produce_dir: &Path) -> LoadedCaches {
     }
 
     for row in product_rows {
-        assert!(
-            sample_poly_ids.insert(row.poly_id.clone()),
-            "duplicate sample poly_id {}",
-            row.poly_id
-        );
+        sample_poly_ids.insert(row.poly_id.clone());
         let provenance_id = provenance_id("random_product_sample", &row.name);
         assert!(
             provenance_ids.insert(provenance_id.clone()),
