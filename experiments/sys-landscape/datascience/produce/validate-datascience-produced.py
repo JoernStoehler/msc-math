@@ -47,12 +47,21 @@ def require(condition: bool, message: str) -> None:
         raise SystemExit(message)
 
 
-def parse_producers(raw: str | None, produce_dir: Path) -> list[str]:
+def parse_producers(raw: str | None, produce_dir: Path, stats: dict[str, Any]) -> list[str]:
     if raw is not None:
         producers = [item.strip() for item in raw.split(",") if item.strip()]
         unknown = [item for item in producers if item not in PRODUCER_FILES]
         require(not unknown, f"unknown producers: {unknown}")
         require(bool(producers), "--producers must not be empty")
+        return producers
+
+    if "producers" in stats:
+        producers_raw = stats["producers"]
+        require(isinstance(producers_raw, list), "produce-stats producers must be a list")
+        producers = [str(item) for item in producers_raw]
+        unknown = [item for item in producers if item not in PRODUCER_FILES]
+        require(not unknown, f"unknown producers in produce-stats: {unknown}")
+        require(bool(producers), "produce-stats producers must not be empty")
         return producers
 
     producers = [
@@ -65,17 +74,22 @@ def parse_producers(raw: str | None, produce_dir: Path) -> list[str]:
 
 
 def validate(produce_dir: Path, mode: str | None, producers_raw: str | None) -> dict[str, Any]:
-    producers = parse_producers(producers_raw, produce_dir)
     payload_path = produce_dir / "computed-polytopes.jsonl"
     stats_path = produce_dir / "produce-stats.json"
 
     require(payload_path.exists(), f"missing required file: {payload_path}")
     require(stats_path.exists(), f"missing required file: {stats_path}")
+    stats = load_json(stats_path)
+    producers = parse_producers(producers_raw, produce_dir, stats)
+    if mode is None and "mode" in stats:
+        stats_mode = str(stats["mode"])
+        require(stats_mode in EXPECTED, f"unknown produce-stats mode: {stats_mode}")
+        mode = stats_mode
+
     for producer in producers:
         path = produce_dir / PRODUCER_FILES[producer]
         require(path.exists(), f"missing required file: {path}")
 
-    stats = load_json(stats_path)
     payload_rows = load_jsonl(payload_path)
     random_rows = (
         load_jsonl(produce_dir / PRODUCER_FILES["random"]) if "random" in producers else []
