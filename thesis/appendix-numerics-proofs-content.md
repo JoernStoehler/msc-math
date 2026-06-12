@@ -16,6 +16,10 @@ Source truth is `formal/hk2017-qp-core.tex`,
 - Use the appendix only for details that the main paragraph cannot responsibly
   compress: the exact/f64/indeterminate contract, the generic-case hypotheses,
   and the reason diagnostics do not amount to a public certified-solver claim.
+- Separate the possible numerical workflows:
+  exact audit or certificate, pure f64 with rejection, trinary propagation,
+  lazy exact fallback, and conditional error-bound proof. They answer different
+  needs and should not be presented as one universal solver architecture.
 - If empirical numbers are cited, prefer a compact table derived from the
   current audit report: context count, oracle kind, predicate-disagreement
   count, and largest absolute errors. State that the table is an emitted-context

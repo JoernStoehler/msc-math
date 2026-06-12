@@ -43,27 +43,34 @@ Source truth for the generic-case numerical contract is
 - Include proven error bounds only at the strength needed by retained thesis
   claims.
 
-## Thesis-Useful Content
+## Numerical Mechanisms And Thesis Use
 
-- Main message: exact/Sage/rational computations carry theorem-level finite
-  checks where the thesis needs them; `f64` computations are fast diagnostics
-  and experiment drivers, with explicit indeterminate/caveat boundaries.
-- Current numerics audit support: fixed context bank, structured JSONL events,
-  f64-vs-oracle observations, and predicate-disagreement summaries. The
-  exact-rational simplex/hypercube contexts currently show no predicate
-  disagreements. The HKO rows are same-binary64-input diagnostics and currently
-  expose beta-positivity disagreements; they are not algebraic HKO evidence.
-- Good main-text asset candidate: a compact claim-support table with rows such
-  as exact finite certificates, f64 solver diagnostics, predicate-disagreement
-  audit, and generic-case bounds; columns should be source truth, support
-  strength, thesis use, and caveat.
-- Good explanatory figure candidate: a small provenance diagram showing
-  `P_exact`, `P_f64`, f64 solver output, exact oracle comparison, and report.
-  This can replace several sentences explaining `input_pair_kind` and
-  `oracle_kind`.
-- Poor asset candidates: raw JSONL/CSV screenshots, histograms from four
-  contexts, or a standalone HKO disagreement plot. They would overemphasize a
-  small diagnostic bank and distract from claim strength.
+| Mechanism | Why it appears | What it gives | Cost or alternative | Best context |
+| --- | --- | --- | --- | --- |
+| Exact rational or algebraic computation | Theorem-level finite checks cannot depend on f64 signs near discontinuities. | Proof-bearing finite certificates and exact predicate values. | Slow and specialized; not a high-throughput search engine. | HKO theorem packets, regular-product certificates, small exact audits. |
+| Pure f64 computation with rejection | Large data-science and method-development runs need many well-behaved rows more than they need answers on every input. | Fast datasets whose accepted rows satisfy numerical preconditions. | Rejects uncertain polytopes; unsuitable when the interesting objects are degenerate or near predicate boundaries. | Broad search, regression, and method-table experiments on mostly generic inputs. |
+| Trinary predicate logic | Positivity, rank, and sign predicates are discontinuous, so near-zero f64 values should not become mathematical facts. | Decided values can be used safely; `indeterminate` records that the computation did not decide. | Propagating indeterminacy complicates consumers; some workflows need rejection or exact fallback. | Capacity and search code that branches on numerical predicates. |
+| Lazy exact fallback | Some consumers need an answer on a delicate input instead of rejecting it. | Resolves selected indeterminate cases without running exact arithmetic everywhere. | Only useful where exact fallback exists for the needed predicate or quantity; not a current broad guarantee. | Small or load-bearing cases, especially when a thesis claim depends on the result. |
+| Error bounds | A proof or a certificate needs a quantitative link between f64 residuals and exact quantities. | Conditional statements such as "under these margins, this sign/value is stable." | Requires generic hypotheses and constants; broad non-generic coverage is harder. | Appendix-level generic-case numerical contract. |
+| Empirical f64-vs-exact measurement | Readers need to know whether the implemented f64 path behaves as expected on representative emitted contexts. | Error magnitudes, predicate disagreement counts, and conditioning diagnostics. | Empirical support is not a theorem and depends on context selection. | Numerics audit reports and compact thesis support tables. |
+
+The useful thesis message is the combination, not one mechanism alone. Exact
+computation carries theorem-level finite checks. Pure f64 with rejection is good
+for high-throughput, well-behaved data. Trinary logic and lazy fallback describe
+what happens when f64 branch decisions are delicate. Error bounds and empirical
+measurements explain why the accepted f64 computations are trusted.
+
+The current numerics audit supports the empirical part on an emitted context
+bank. The exact-rational simplex/hypercube contexts currently show no predicate
+disagreements. The HKO rows are same-binary64-input diagnostics and currently
+expose beta-positivity disagreements; they are not algebraic HKO evidence.
+
+Good main-text asset candidate: a compact table with the rows above and columns
+for source truth, thesis use, and caveat. Good explanatory figure candidate: a
+small flow diagram showing f64 computation, trinary decision/rejection,
+optional exact fallback, and exact-oracle audit. Poor asset candidates: raw
+JSONL/CSV screenshots, histograms from four contexts, or a standalone HKO
+disagreement plot.
 
 ## Claim Boundaries
 
