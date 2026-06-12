@@ -47,6 +47,10 @@ name = "sys-dataset-random-product"
 path = "datascience/produce/random-product.rs"
 
 [[bin]]
+name = "sys-datascience-produce"
+path = "datascience/produce/main.rs"
+
+[[bin]]
 name = "sys-dataset-ascent"
 path = "datascience/produce/ascent.rs"
 
@@ -61,6 +65,10 @@ path = "datascience/produce/continuation.rs"
 [[bin]]
 name = "sys-dataset"
 path = "datascience/tables/main.rs"
+
+[[bin]]
+name = "sys-datascience-prepare"
+path = "datascience/tables/prepare.rs"
 
 [[bin]]
 name = "sys-endpoint-local-max-diagnostic"

@@ -79,6 +79,9 @@ expected seed indices, max `final_sys`, and any `final_sys > 1` rows. Pass
 
 ## Producer binaries
 
+- `sys-datascience-produce` is the new run-local producer path. It writes
+  producer metadata plus `computed-polytopes.jsonl` under an explicit
+  `--output-dir`; it does not promote canonical producer files.
 - `sys-dataset-random` writes `random.jsonl` and updates `shared-cache.jsonl`.
 - `sys-dataset-random-product` writes `random-product.jsonl` and updates `shared-cache.jsonl`.
 - `sys-dataset-ascent` writes `ascent-general-endpoints.jsonl`, `ascent-general-trace.jsonl`,
@@ -94,6 +97,39 @@ expected seed indices, max `final_sys`, and any `final_sys > 1` rows. Pass
 
 Older `sys-landscape` experiment directories still exist outside `datascience/`, but
 this directory is the maintained producer surface for the datascience pipeline.
+
+## Run-Local Produce Path
+
+Use the new path for producer/prepare iterations that should not mutate
+canonical producer files:
+
+```bash
+cargo run -p exp-sys-landscape --release --bin sys-datascience-produce -- \
+  --mode smoke \
+  --producers random,random-product \
+  --output-dir /tmp/ds-produce-smoke-cold \
+  --parallelism 4 \
+  --base-cache /tmp/ds-produce-empty-cache.jsonl
+```
+
+Outputs:
+
+- `computed-polytopes.jsonl`: reusable expensive payloads keyed by canonical
+  f64-bit `poly_id`;
+- `random-samples.jsonl` and `random-product-samples.jsonl`: producer metadata
+  keyed by `poly_id`.
+
+The smoke target is `8` generic random rows and `10` product rows. Production
+targets match the standalone random refresh counts: `4096` generic rows and
+`10240` product rows. Local smoke evidence on this branch:
+
+- cold smoke: `18` computed payloads, `0` cache hits, `18` misses, max
+  `sys=0.8015672385893916`;
+- hot smoke from the cold `computed-polytopes.jsonl`: `18` hits, `0` misses.
+
+On LICCA, [licca-datascience-produce.slurm.sh](licca-datascience-produce.slurm.sh)
+runs the same binary. Submit smoke first; submit production only after bounded
+smoke inspection.
 
 ## Dataset And Smoke Paths
 

@@ -11,6 +11,23 @@ Pipeline:
 - `methods/` reads the retained tables as black-box inputs and may build
   method-local rectangular inputs
 
+`sys-datascience-prepare` is the prepare-stage command for the new run-local
+producer path. It consumes a producer output directory containing
+`computed-polytopes.jsonl` plus producer metadata files and writes the same
+retained table filenames as the current table builder:
+
+```bash
+cargo run -p exp-sys-landscape --release --bin sys-datascience-prepare -- \
+  --produce-dir /tmp/ds-produce-smoke-cold \
+  --out-dir /tmp/ds-prepare-smoke
+```
+
+Normal prepare runs require the expensive payload for every producer metadata
+row. They do not run capacity search. Local smoke evidence on this branch:
+`18` produced polytopes became `18` polytope-table rows and `18` provenance
+rows; `fingerprint-dataset.py` reported max `sys=0.8015672385893916` and
+`0` rows with `sys > 1`.
+
 Normal table builds do not repair missing capacity payloads. Fixed-F ascent
 summary rows must have matching producer-cache rows (`ascent-general-cache.jsonl` and
 `ascent-product-cache.jsonl`) with capacity, volume, sigmas, and orbit scalars

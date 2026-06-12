@@ -15,6 +15,7 @@ use symplectic::{
 };
 
 pub mod ascent;
+pub mod datascience_cache;
 pub mod datasets;
 pub mod step_bound;
 pub mod sys_landscape_cache;
@@ -32,6 +33,10 @@ pub use ascent::{
     ComputedPolytopeRecorder, ComputedPolytopeRow, ExpensiveComputationCache,
     ExpensiveComputationCacheRow, ExpensiveComputationCacheStats, SeedResult, SummaryRow,
     SysComputation, TraceRow,
+};
+pub use datascience_cache::{
+    f64_dual_vertices, poly_id, poly_id_from_dual_vertices, CapacityBackend, ComputeCacheStats,
+    ComputedPolytopeCache, ComputedPolytopePayloadRow,
 };
 pub use datasets::{
     continuation_cache_path, experiment_path, package_root, raw_dataset_cache_path,
