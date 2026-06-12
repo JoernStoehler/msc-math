@@ -1,18 +1,9 @@
 # Numerics Content Notes
 
-Status: section-local content companion for `thesis/numerics.tex`. Not source
-truth.
-
-Purpose: gather the high-level numerical reliability story and its boundaries.
-
-Overruled by: `crates/`, `experiments/`, exact verification artifacts, formal
-proofs, task files, and Jörn/Kai review.
-
-Lifecycle: keep while the numerics section is being assembled. After the
-section is stable, delete this file or reduce it to a short maintenance note.
-
-Update rule: add or change a claim only with a source pointer or an explicit
-`needs source` marker.
+Section-local content companion for `thesis/numerics.tex`.
+Source truth for empirical numerics is `experiments/numerics/README.md`.
+Source truth for the generic-case numerical contract is
+`formal/hk2017-qp-core.tex` and `formal/hk2017-qp-precision.tex`.
 
 ## Pacing
 
@@ -29,10 +20,6 @@ Update rule: add or change a claim only with a source pointer or an explicit
 
 ## Content Inventory
 
-- Active source truth: `experiments/numerics/README.md` for the empirical audit
-  and `formal/hk2017-qp-*.tex` for the generic-case numerical contract. Old
-  packet-style numerics artifacts and deleted research notes are historical;
-  revalidate any old claim before thesis use.
 - Exact arithmetic path: rational or algebraic data is used to implement
   mathematically meaningful helper operations slowly but without numerical
   error.
@@ -78,11 +65,12 @@ Update rule: add or change a claim only with a source pointer or an explicit
   contexts, or a standalone HKO disagreement plot. They would overemphasize a
   small diagnostic bank and distract from claim strength.
 
-## Claim Audit Before Writing
+## Claim Boundaries
 
-- For every retained sentence, record: thesis sentence, source truth, support
-  strength, and caveat.
-- Do not claim broad public-solver certification.
-- Do not claim algebraic HKO validation from the numerics audit.
-- Do not reuse old gradient-validation, unknown-predicate aggregate, Sage
-  feasibility, or packet-style error-bound claims without a fresh source.
+- Supported by current source truth: emitted-context f64-vs-oracle diagnostics,
+  exact-rational agreement for the retained rational fixtures, same-binary64
+  HKO diagnostics, and the generic-case proof framework in the formal notes.
+- Not supported by current source truth: broad public-solver certification,
+  algebraic HKO validation from the numerics audit, old gradient-validation
+  aggregates, old unknown-predicate aggregate evidence, old Sage feasibility
+  packets, and broad packet-style error-bound claims.
