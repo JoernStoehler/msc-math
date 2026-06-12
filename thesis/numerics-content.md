@@ -42,6 +42,10 @@ Source truth for the generic-case numerical contract is
   is used to rerun experiments.
 - Include proven error bounds only at the strength needed by retained thesis
   claims.
+- Keep the numerics audit oracle separate from runtime exact fallback. The
+  audit compares f64 outputs with exact or mathematical-identity references;
+  runtime exact resolution belongs only to code paths that actually implement
+  it, such as selected flow-graph surfaces.
 
 ## Numerical Mechanisms And Thesis Use
 
@@ -53,7 +57,7 @@ Source truth for the generic-case numerical contract is
 | Trinary predicate logic | Positivity, rank, and sign predicates are discontinuous, so near-zero f64 values should not become mathematical facts. | Decided values can be used safely; `indeterminate` records that the computation did not decide. | Propagating indeterminacy complicates consumers; some workflows need rejection or exact fallback. | Capacity and search code that branches on numerical predicates. |
 | Lazy exact fallback | Some consumers need an answer on a delicate input instead of rejecting it. | Resolves selected indeterminate cases without running exact arithmetic everywhere. | Only useful where exact fallback exists for the needed predicate or quantity; not a current broad guarantee. | Small or load-bearing cases, especially when a thesis claim depends on the result. |
 | Error bounds | A proof or a certificate needs a quantitative link between f64 residuals and exact quantities. | Conditional statements such as "under these margins, this sign/value is stable." | Requires generic hypotheses and constants; broad non-generic coverage is harder. | Appendix-level generic-case numerical contract. |
-| Empirical f64-vs-exact measurement | Readers need to know whether the implemented f64 path behaves as expected on representative emitted contexts. | Error magnitudes, predicate disagreement counts, and conditioning diagnostics. | Empirical support is not a theorem and depends on context selection. | Numerics audit reports and compact thesis support tables. |
+| Empirical f64-vs-exact measurement | Readers need to know whether the implemented f64 path behaves as expected on the emitted context bank. | Error magnitudes, predicate disagreement counts, and conditioning diagnostics. | Empirical support is not a theorem and depends on context selection. | Numerics audit reports and compact thesis support tables. |
 
 The useful thesis message is the combination, not one mechanism alone. Rust
 exact arithmetic and SageMath exact verification carry theorem-level finite
@@ -66,13 +70,17 @@ The current numerics audit supports the empirical part on an emitted context
 bank. The exact-rational simplex/hypercube contexts currently show no predicate
 disagreements. The HKO rows are same-binary64-input diagnostics and currently
 expose beta-positivity disagreements; they are not algebraic HKO evidence.
+Use the generated report sections as the source for thesis-facing empirical
+facts: `Emitted Context Bank`, `Oracle-Backed f64 Measurements`,
+`Predicate Agreement Diagnostics`, and `Conditioning And Solver Diagnostics
+Without Oracle`.
 
 Good main-text asset candidate: a compact table with the rows above and columns
 for source truth, thesis use, and caveat. Good explanatory figure candidate: a
 small flow diagram showing f64 computation, trinary decision/rejection,
-optional exact fallback, and exact-oracle audit. Poor asset candidates: raw
-JSONL/CSV screenshots, histograms from four contexts, or a standalone HKO
-disagreement plot.
+optional exact resolution where implemented, and exact-oracle audit. Poor asset
+candidates: raw JSONL/CSV screenshots, histograms from four contexts, or a
+standalone HKO disagreement plot.
 
 ## Claim Boundaries
 
@@ -83,3 +91,7 @@ disagreement plot.
   algebraic HKO validation from the numerics audit, old gradient-validation
   aggregates, old unknown-predicate aggregate evidence, old Sage feasibility
   packets, and broad packet-style error-bound claims.
+- Flow-graph f64 rejection and exact-resolution evidence is a separate source
+  surface. Use `crates/symplectic/src/algorithms/flow_graph/README.md` before
+  making flow-graph thesis claims; do not import those claims from the numerics
+  audit.

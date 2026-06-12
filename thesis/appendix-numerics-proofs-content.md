@@ -23,8 +23,15 @@ Source truth is `formal/hk2017-qp-core.tex`,
   one universal solver architecture.
 - If empirical numbers are cited, prefer a compact table derived from the
   current audit report: context count, oracle kind, predicate-disagreement
-  count, and largest absolute errors. State that the table is an emitted-context
+  count, row-level largest absolute errors, and no-oracle conditioning
+  diagnostics. Use the report sections `Emitted Context Bank`, `Oracle-Backed
+  f64 Measurements`, `Predicate Agreement Diagnostics`, and `Conditioning And
+  Solver Diagnostics Without Oracle`. State that the table is an emitted-context
   audit, not a coverage theorem.
+- Do not describe the numerics audit oracle as runtime fallback. Runtime exact
+  resolution belongs only to code paths that implement it; flow-graph claims
+  should be sourced from
+  `crates/symplectic/src/algorithms/flow_graph/README.md`.
 - If a visual asset is needed, prefer a claim-support matrix or provenance
   diagram over plots. A plot is justified only if a future audit has enough
   contexts to reveal a distributional pattern.
