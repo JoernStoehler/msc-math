@@ -7,8 +7,7 @@ and geometric orbit recovery. Use
 `tasks/planning-notes.md` for interpretation and remaining task state.
 
 Use crate tests for fast local API regressions. Use `experiments/numerics/` for
-numerical error-bound collection, unknown-predicate diagnostics, algebraic
-exactness checks, and gradient-validation experiments. Use
+structured numerical error-audit runs over KKT variables and predicates. Use
 `experiments/performance/` only for runtime and memory measurement targets.
 
 ## Rust Command Contract

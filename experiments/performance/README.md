@@ -2,7 +2,7 @@
 
 This directory owns reusable runtime and memory profiling targets. Correctness
 and regression experiments belong in `experiments/verification/`. Numerical
-error-bound collection belongs in `experiments/numerics/`.
+error-audit runs belong in `experiments/numerics/`.
 
 The default pattern is:
 

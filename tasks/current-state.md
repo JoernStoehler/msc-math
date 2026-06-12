@@ -98,8 +98,9 @@ source files.
   Source truth: `research/numerics*.md`, `formal/hk2017-qp-*.tex`,
   `experiments/numerics/`, current thesis numerics files.
   Current state: exact/f64/indeterminate story is not a public certified solver
-  claim; generic-case-first route and retained-experiment reruns drive remaining
-  work.
+  claim; the active experiment is a structured error audit with JSONL raw
+  observations, processed summaries, and a generated report. Generic-case-first
+  proof work drives any stronger retained theorem wording.
   Generic-route handles: full rank/condition of `C`, negative reduced Hessian
   on the retained tangent space, positive beta margin, positive `Q`/action gap
   from competitors, and adjacency/pruning assumptions.

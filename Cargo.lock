@@ -415,46 +415,9 @@ dependencies = [
 ]
 
 [[package]]
-name = "dev-gradient"
-version = "0.1.0"
-dependencies = [
- "euclidean-polytopes",
- "good_lp",
- "nalgebra",
- "num-bigint",
- "num-rational",
- "num-traits",
- "rand 0.8.5",
- "rand_chacha 0.3.1",
- "rand_distr",
- "serde",
- "serde_json",
- "symplectic",
-]
-
-[[package]]
 name = "dev-gradient-ascent"
 version = "0.1.0"
 dependencies = [
- "good_lp",
- "nalgebra",
- "num-bigint",
- "num-rational",
- "num-traits",
- "rand 0.8.5",
- "rand_chacha 0.3.1",
- "rand_distr",
- "serde",
- "serde_json",
- "symplectic",
-]
-
-[[package]]
-name = "dev-numerical-analysis"
-version = "0.1.0"
-dependencies = [
- "algebraic-numbers",
- "euclidean-polytopes",
  "good_lp",
  "nalgebra",
  "num-bigint",
@@ -584,6 +547,19 @@ dependencies = [
  "serde",
  "serde_json",
  "symplectic",
+]
+
+[[package]]
+name = "exp-numerics"
+version = "0.1.0"
+dependencies = [
+ "nalgebra",
+ "num-rational",
+ "num-traits",
+ "serde",
+ "serde_json",
+ "symplectic",
+ "tempfile",
 ]
 
 [[package]]

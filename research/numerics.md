@@ -2,101 +2,91 @@
 
 ## Scope
 
-`experiments/numerics` is the exploratory and validation surface for KKT-capacity numerics used in the thesis.
-Durable math claims should move to formal files and `crates/` only after stabilization.
-This note owns the topic state while keeping runnable code and canonical outputs in
-`experiments/numerics`.
+`experiments/numerics/` is now a replacement numerical error-audit experiment
+for KKT-capacity variables and predicates used by retained thesis claims. It is
+an evidence surface, not a public certified-solver project.
+
+The active runbook is `experiments/numerics/README.md`. Generated run outputs
+normally live under `/tmp`, with raw `events.jsonl`, processed CSV summaries,
+and `report.md` produced from the same event stream.
 
 ## Current State
 
-`experiments/numerics` remains the active evidence layer for the following packets:
+The old packet-style tree (`algebraic-exactness`, `error-bounds`, `q-error`,
+`kkt-inertia`, `unknown-predicates`, `sage-feasibility`, and the separate
+`gradient` package) was deleted in the replacement. Historical artifacts remain
+available through git history, but future agents should not treat those removed
+paths as active experiment surfaces.
 
-- `algebraic-exactness` owns exact-algebraic checks and selected exact KKT experiments.
-  Canonical artifacts include `exact-polytopes.jsonl` and `exact-kkt-comparison.jsonl`.
-  `smoke-*` files are still non-canonical local-run products.
-- `error-bounds` is the abstract-numerics validation packet.
-  Its three-stage workflow (`collect` → `run` → `analyze`) and `tests.rs`
-  make it a reproducible f64-vs-exact and bound-behavior harness.
-- `q-error` and `kkt-inertia` are confirmation packets for known-polytopes coverage and
-  tested winners.
-- `unknown-predicates` checks whether UNKNOWN admissibility currently changes selected
-  outputs; current data suggest it is a numeric-noise concern rather than a correctness gap.
-- `sage-feasibility` remains exploratory and compares Rust orchestration with a Sage baseline
-  on controlled benchmark families.
+The current experiment asks one question across multiple objects and sigma
+contexts:
 
-Recent consolidation rule is to avoid expanding this tree as a chronological log.
-Each packet is now expected to stay narrow with explicit artifact contracts, while
-`crates/` owns durable API only when stability is reached.
+> What are the empirical errors and predicate disagreements for numerical
+> quantities used by the KKT implementations?
 
-## Evidence And Interpretation
+Current emitted row families:
 
-- Core empirical support in this scope is the bound
-  `|Q−Q*| ≤ ||H||·||β̃||·||r||/σ_min(C)` on relevant datasets.
-- A structure-based failure mode has been documented for rank-deficient cases.
-- `q-error` reports bound correctness and exact comparison on all non-singular `F≤10` winners.
-- `kkt-inertia` confirms inertia decomposition on tested known polytopes and classifies a few
-  mismatches as eigenvalue-threshold artifacts.
-- `unknown-predicates` does not currently show output changes from UNKNOWN admissibility
-  cases on current datasets.
-- `sage-feasibility` contributes timing and feasibility quantification without imposing new
-  API complexity on Rust crate architecture.
-- 2026-05-01 generic-case pivot: the next numerics proof route should first
-  state and prove the exact generic case using conditions on intermediate
-  variables (`C`, reduced Hessian spectrum, beta margin, Q/action gap, and
-  adjacency/pruning assumptions), then implement the same contract in f64 and
-  measure how diagnostics blow up toward non-generic limits. This supersedes
-  attempts to close all degenerate cases before the generic theorem is clear.
+- `matrix_assembly`: singular/eigenvalue diagnostics without oracle claims.
+- `exact_kkt_oracle`: exact feasibility status for sigma contexts.
+- `projection_kkt`: `q`, beta components, margin, residual norm, and the
+  `beta_positive` predicate.
+- `saddle_kkt`: corrected `q`, beta components, q error bound, inertia
+  diagnostics, and the `beta_positive` predicate.
 
-## Decisions
+Oracle labels are row-local:
 
-- The experiment-first boundary is preserved for geometry and exact-KKT prototyping; `crates/`
-  behavior is not being retrofitted first.
-- Algebraic arithmetic is currently an ordered-field boundary, not a symbolic CAS.
-- `BigRational` is used directly (or via alias) in v1, with no generic runtime-field API.
-- `Sign`/`cmp_real` remain the admissibility branch criterion; `to_f64()` is reporting only.
-- Serialization uses canonical coefficients only to keep persisted artifacts deterministic.
-- KKT error propagation remains trinary (`TRUE` / `FALSE` / `INDETERMINATE`) with lazy exact fallback.
-- In `num-projection` and interior `β>0` settings, the practical bound is
-  `E = ||H||·||β̃||·||r||/σ_min(C)`, with exact arithmetic as diagnostic ground truth.
-- `algebraic-exactness` stays experiment-owned until `algebraic-numbers` reaches a stable minimal
-  surface and formalized tests.
-- `error-bounds`, `q-error`, and `kkt-inertia` stay anchored to known-polytopes evidence while
-  formal gaps are addressed before data expansion.
-- `sage-feasibility` stays temporary and method-focused unless timing and completion evidence
-  justifies broader architectural impact.
+- `exact_rational`: exact rational arithmetic on rational fixture input.
+- `exact_binary64_input`: exact rational arithmetic on the rational values
+  represented by stored f64 input coordinates.
+- `mathematical_identity`: exact-zero reference for residual-style diagnostics.
 
-## History
+Input-pair provenance is context-local:
 
-- `README.md`, `RESEARCH.md`, and `PLAN-error-bounds.md` are superseded by this topic note layer.
-- `numerics` planning and migration work previously split across three legacy note files under `experiments/numerics`
-  has been merged here.
-- The `experiments/numerics` note files have been used as the archival record for what is now the
-  research-facing state and not a running execution runbook.
+- `rational_source_to_f64`: `P_exact` is the rational source fixture and
+  `P_f64` is its f64 conversion.
+- `binary64_input_to_exact`: `P_f64` is the stored f64 fixture and `P_exact` is
+  the exact rational cast of those binary64 values.
 
-## Next Steps
+## Latest Local Evidence
 
-1. Close remaining error-bound and solver-edge proof gaps in `error-bounds` by
-   following the generic-case route:
-   - state exact generic preconditions on intermediate solver variables;
-   - prove the exact generic solver contract before broad f64 certification;
-   - align f64 diagnostics/tests with those preconditions and measure
-     non-generic limit behavior as margins approach zero;
-   - finish when retained thesis wording can say either "certified under these
-     stated preconditions" or "f64 diagnostic with exact/empirical validation
-     and named caveats."
-   - relevant commands include
-     `cargo test -p dev-numerical-analysis --test verify_numerics_tests`.
-2. Decide when to extract `src/algebraic` into a reusable crate:
-   - finalize scalar boundary as `crates/algebraic-numbers` or another dedicated crate;
-   - resolve compatibility calls for any remaining experiment-local details;
-   - relevant commands include
-     `cargo test -p dev-numerical-analysis` and
-     `cargo test -p dev-numerical-analysis --test verify_numerics_tests`.
-3. Complete Sage feasibility judgement with planned data:
-   - confirm completion/timing for `F=5..10` smoke and canonical runs;
-   - verify baseline-only positioning if required;
-   - relevant commands include
-     `cargo run -p dev-numerical-analysis --release --bin num-sage-feasibility -- --smoke`,
-     `cargo run -p dev-numerical-analysis --release --bin num-sage-feasibility -- --canonical`,
-     `cd experiments/numerics/sage-feasibility && sage -python analyze.py --smoke`,
-     `cd experiments/numerics/sage-feasibility && sage -python analyze.py --canonical`.
+On 2026-06-12, the evidence command completed locally:
+
+```bash
+cargo run -p exp-numerics --release --bin audit-numerical-errors -- \
+  --mode evidence \
+  --out-dir /tmp/numerics-replacement-evidence
+python3 experiments/numerics/scripts/summarize_observations.py \
+  /tmp/numerics-replacement-evidence
+```
+
+The generated report covered two exact-rational contexts and two HKO
+binary64-input contexts. The simplex and hypercube contexts had no predicate
+disagreements; largest exact-rational numeric errors were at ordinary f64
+scale, with the largest observed absolute error about `1.7e-15`.
+
+The HKO pentagon rows are valid same-input diagnostics for the stored f64
+fixture values: exact arithmetic is run on the rational values represented by
+those binary64 coordinates. They are not exact algebraic HKO oracle evidence.
+The current run reports `beta_positive` predicate disagreements for both
+projection and saddle KKT solvers on the two HKO binary64-input contexts.
+
+## Interpretation
+
+Supported by the active experiment:
+
+- empirical f64-vs-exact error measurements for emitted rational fixture
+  contexts;
+- explicit predicate disagreement rows for emitted contexts;
+- diagnostic context for conditioning and solver behavior.
+
+Not supported by the active experiment:
+
+- a claim that public capacity wrappers are fully certified numerical solvers;
+- coverage of all sigma nodes or all polytopes;
+- algebraic-exact HKO validation;
+- finite-difference-vs-gradient validation.
+
+The generic-case-first proof route in `research/numerics-error-bounds.md` is
+still relevant as mathematical context, but the referenced old experiment
+packet paths in that note are historical unless refreshed against the new audit
+surface.

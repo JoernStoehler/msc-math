@@ -4,8 +4,12 @@
 
 Staleness note: this section preserves the 2026-04-30/2026-05-01
 numerics-strong-route audit and Jorn's follow-up steering. It is a resume cache,
-not proof closure. Refresh it before thesis-facing wording by rereading
-`formal/hk2017-qp-core.tex`, `formal/hk2017-qp-precision.tex`, `experiments/numerics/error-bounds/`,
+not proof closure. The old `experiments/numerics/error-bounds/` packet was
+removed during the 2026-06-12 numerics replacement; use git history for that
+packet and `experiments/numerics/README.md` for the active audit runbook.
+Refresh this note before thesis-facing wording by rereading
+`formal/hk2017-qp-core.tex`, `formal/hk2017-qp-precision.tex`,
+`research/numerics.md`, `experiments/numerics/README.md`,
 `crates/symplectic/src/lib.rs`, and
 `crates/symplectic/src/algorithms/orbit_search.rs`.
 
@@ -43,6 +47,10 @@ Otherwise the safe wording remains "f64 diagnostic with exact/empirical
 validation and named caveats."
 
 ## Current task surface
+
+This task surface is historical unless explicitly refreshed. It names files
+from the removed packet-style numerics tree and should not be used as a current
+execution runbook.
 
 ## Context
 
@@ -84,17 +92,20 @@ non-generic limits.
 
 ## Key files
 
-- `experiments/numerics/error-bounds/` — all experiment files
+- Historical, removed in the 2026-06-12 replacement:
+  `experiments/numerics/error-bounds/` — old experiment files
   - `main.rs` — stage 2 binary (loads JSONL, exact + f64 solver, diagnostics)
   - `collect_poly.rs` — stage 1 binary for polytope σ-node collection
   - `projection_solver.rs` and `saddle_point_solver.rs` — f64 solver copies
   - `analyze.py` — stage 3 checks (propositions, bounds, β > 0 classification)
-  - `formal/hk2017-qp-core.tex`, `formal/hk2017-qp-precision.tex` — solver specification, proved pieces,
-    preconditions, and named gaps
-  - `research/numerics-error-bounds.md` — full findings and status
   - `testdata/*.jsonl` — committed regression fixtures
-- `library/src/kkt/projection_solver.rs` — reduced-gradient sign fixed in `e56cf161` (2026-04-12), with regression test `reduced_gradient_sign_distinguishes_fix`
-- `library/src/kkt/qp_assembly.rs` — matrix assembly reference
+- Current active numerics surface: `experiments/numerics/README.md`,
+  `experiments/numerics/src/audit.rs`, and
+  `experiments/numerics/scripts/summarize_observations.py`
+- `formal/hk2017-qp-core.tex`, `formal/hk2017-qp-precision.tex` — solver
+  specification, proved pieces, preconditions, and named gaps
+- `crates/symplectic/src/kkt/projection_solver.rs` — projection KKT solver
+- `crates/symplectic/src/kkt/qp_assembly.rs` — matrix assembly reference
 
 ## Prior findings
 
@@ -226,7 +237,11 @@ The capacity algorithm iterates over all subsets S ⊆ {1,...,F} and all cyclic 
 
 ### Scope and iteration guidance
 
-**Agent owns:** All experiment files (`main.rs`, `projection_solver.rs`, `saddle_point_solver.rs`, `collect_poly.rs`, `analyze.py`), `formal/hk2017-qp-core.tex`, `formal/hk2017-qp-precision.tex`, `research/numerics-error-bounds.md`, JSONL data, `tasks/planning-notes.md` updates, solver algorithm changes.
+**Historical agent-owned surface:** old experiment files (`main.rs`,
+`projection_solver.rs`, `saddle_point_solver.rs`, `collect_poly.rs`,
+`analyze.py`), `formal/hk2017-qp-core.tex`,
+`formal/hk2017-qp-precision.tex`, `research/numerics-error-bounds.md`, JSONL
+data, `tasks/planning-notes.md` updates, solver algorithm changes.
 
 **Needs Jörn:** GAP in cor:taylor-structure proof, mathematical review of new bounds, merge to main, scope decisions.
 
@@ -234,15 +249,12 @@ The capacity algorithm iterates over all subsets S ⊆ {1,...,F} and all cyclic 
 
 **Iteration feedback:** checks.txt violations/ranges, diff from previous run, correlation hunting, coverage gaps, tightness of bounds approaching 1.0, natural vs artificial comparison, independent audit via the generic `reviewer` subagent with `$review` formal-math checks.
 
-## Current execution state
+## Historical execution state
 
-This note is being refreshed from the assigned worktree
-`/workspaces/msc-math/.worktrees/numerics-strong-route` on branch
-`numerics-strong-route`. Older branch details from
-`.claude/worktrees/verify-numerics-q-accuracy` are historical and should not be
-used as the current cwd or merge state.
+The following branch and commands are retained as historical context for the
+removed packet-style tree. They are not current execution instructions.
 
-To regenerate data:
+Historical regeneration commands:
 ```bash
 cargo run -p dev-numerical-analysis --release --bin num-collect-poly -- --polytopes /tmp/all_polytopes.jsonl --max-facets 8
 cargo run -p dev-numerical-analysis --release --bin num-error-bounds -- <input.jsonl> <output.jsonl>
@@ -254,7 +266,7 @@ The `/tmp/all_polytopes.jsonl` is a concatenation of correctness + random-produc
 cat experiments/verification/correctness/correctness.jsonl experiments/sys-landscape/random-product-sample/random-product-sweep.jsonl experiments/verification/algorithm-comparison/benchmark/benchmark.jsonl experiments/verification/algorithm-comparison/ablation/ablation.jsonl > /tmp/all_polytopes.jsonl
 ```
 
-## Success criteria
+## Historical success criteria
 
 1. `formal/hk2017-qp-core.tex` and `formal/hk2017-qp-precision.tex` state the exact generic solver
    specification as definitions and lemmas, with each non-generic case either
@@ -262,11 +274,11 @@ cat experiments/verification/correctness/correctness.jsonl experiments/sys-lands
 2. `formal/hk2017-qp-core.tex` and `formal/hk2017-qp-precision.tex` prove the direction-dependent beta error
    bound under those generic preconditions, or marks the remaining missing
    lemma with a clear GAP/Jorn question.
-3. `experiments/numerics/error-bounds/projection_solver.rs` matches the generic
-   specification and returns the diagnostics used by the theorem.
-4. `analyze.py` and/or Rust tests check the same precondition margins and bound
-   formulas that the theorem states.
+3. A current experiment implementation matches the generic specification and
+   returns the diagnostics used by the theorem.
+4. Current analysis scripts and/or Rust tests check the same precondition
+   margins and bound formulas that the theorem states.
 5. `research/numerics-error-bounds.md` records the algorithm design discussion,
    method comparisons, empirical failures, and non-generic limit behavior.
 6. Generic `reviewer` subagent finds no blocking formal-math issues.
-7. `cargo build -p dev-numerical-analysis --release --bin num-error-bounds --bin num-collect-poly` succeeds.
+7. The active package checks and documented evidence command succeed.

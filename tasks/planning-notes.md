@@ -441,12 +441,16 @@ Status: active for retained numerics claims; deferred for broad solver
 formalization unless thesis wording needs it.
 
 Reread before use: `research/numerics*.md`, `formal/hk2017-qp-*.tex`,
-`thesis/numerics.tex`, `thesis/appendix-numerics-proofs.tex`.
+`experiments/numerics/README.md`, `thesis/numerics.tex`,
+`thesis/appendix-numerics-proofs.tex`.
 
 Guidance:
 
 - First state the exact/f64/indeterminate boundary needed for retained
   experiments and thesis prose.
+- Use `experiments/numerics/` for current empirical error-audit runs; old
+  packet-style numerics paths are historical and available only through git
+  history.
 - Use generic-case-first: explicit conditions, exact theorem/contract, f64
   diagnostics, then non-generic limit behavior.
 - Candidate generic variables are full rank/condition of `C`, strict negative

@@ -1,5 +1,5 @@
 [package]
-name = "dev-numerical-analysis"
+name = "exp-numerics"
 version = "0.1.0"
 edition = "2021"
 
@@ -7,51 +7,19 @@ edition = "2021"
 path = "src/lib.rs"
 
 [[bin]]
-name = "num-error-bounds"
-path = "error-bounds/main.rs"
-
-[[bin]]
-name = "num-collect-poly"
-path = "error-bounds/collect_poly.rs"
-
-[[bin]]
-name = "num-q-error"
-path = "q-error/main.rs"
-
-[[bin]]
-name = "num-kkt-inertia"
-path = "kkt-inertia/main.rs"
-
-[[bin]]
-name = "num-unknown-predicates"
-path = "unknown-predicates/main.rs"
-
-[[bin]]
-name = "num-algebraic-exactness"
-path = "algebraic-exactness/main.rs"
-
-[[bin]]
-name = "num-sage-feasibility"
-path = "sage-feasibility/main.rs"
-
-[[test]]
-name = "verify_numerics_tests"
-path = "error-bounds/tests.rs"
+name = "audit-numerical-errors"
+path = "src/bin/audit_numerical_errors.rs"
 
 [lints]
 workspace = true
 
 [dependencies]
 symplectic.workspace = true
-euclidean-polytopes.workspace = true
 nalgebra.workspace = true
 serde.workspace = true
 serde_json.workspace = true
-rand.workspace = true
-rand_chacha.workspace = true
-rand_distr.workspace = true
-num-bigint.workspace = true
 num-rational.workspace = true
 num-traits.workspace = true
-good_lp.workspace = true
-algebraic-numbers.workspace = true
+
+[dev-dependencies]
+tempfile.workspace = true
