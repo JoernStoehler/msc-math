@@ -35,6 +35,19 @@ def load_jsonl(path: Path) -> list[dict[str, Any]]:
         return [json.loads(line) for line in handle if line.strip()]
 
 
+def load_json(path: Path) -> dict[str, Any]:
+    with path.open() as handle:
+        row = json.load(handle)
+    if not isinstance(row, dict):
+        raise SystemExit(f"{path} must contain a JSON object")
+    return row
+
+
+def require(condition: bool, message: str) -> None:
+    if not condition:
+        raise SystemExit(message)
+
+
 def sha256(path: Path) -> str:
     hasher = hashlib.sha256()
     with path.open("rb") as handle:
@@ -75,7 +88,9 @@ def fingerprint(tables_dir: Path) -> dict[str, Any]:
         "polytope-ascent-run-table.jsonl": sha256(ascent_run_path),
     }
     hashes["computed-polytope-observation-table.jsonl"] = sha256(computed_observation_path)
-    return {
+    max_sys = max(sys_values) if sys_values else None
+    sys_gt_one_count = sum(1 for value in sys_values if value > 1.0)
+    data = {
         "tables_dir": str(tables_dir),
         "polytope_rows": len(polytope_rows),
         "computed_polytope_observation_rows": len(computed_observation_rows),
@@ -93,10 +108,45 @@ def fingerprint(tables_dir: Path) -> dict[str, Any]:
         "computed_polytope_observation_dataset_counts": count_by(
             computed_observation_rows, "dataset"
         ),
-        "max_sys": max(sys_values) if sys_values else None,
-        "sys_gt_one_count": sum(1 for value in sys_values if value > 1.0),
+        "max_sys": max_sys,
+        "sys_gt_one_count": sys_gt_one_count,
         "sha256": hashes,
     }
+    stats_path = tables_dir / "prepare-stats.json"
+    if stats_path.exists():
+        stats = load_json(stats_path)
+        require(
+            stats.get("polytope_rows") == len(polytope_rows),
+            "prepare-stats polytope_rows mismatch",
+        )
+        require(
+            stats.get("provenance_rows") == len(provenance_rows),
+            "prepare-stats provenance_rows mismatch",
+        )
+        require(
+            stats.get("computed_polytope_observation_rows") == len(computed_observation_rows),
+            "prepare-stats computed_polytope_observation_rows mismatch",
+        )
+        require(
+            stats.get("ascent_run_rows") == len(ascent_run_rows),
+            "prepare-stats ascent_run_rows mismatch",
+        )
+        require(stats.get("sys_gt_one") == sys_gt_one_count, "prepare-stats sys_gt_one mismatch")
+        if max_sys is None:
+            require(stats.get("max_sys") is None, "prepare-stats max_sys mismatch")
+        else:
+            require(
+                abs(float(stats.get("max_sys")) - max_sys) <= 1e-12,
+                "prepare-stats max_sys mismatch",
+            )
+        require(
+            stats.get("wall_time_ms", 0.0) > 0.0,
+            "prepare-stats wall_time_ms must be positive",
+        )
+        data["prepare_stats_present"] = True
+    else:
+        data["prepare_stats_present"] = False
+    return data
 
 
 def print_markdown(data: dict[str, Any]) -> None:
@@ -114,6 +164,7 @@ def print_markdown(data: dict[str, Any]) -> None:
     )
     print(f"- provenance rows: `{data['provenance_rows']}`")
     print(f"- ascent run rows: `{data['ascent_run_rows']}`")
+    print(f"- prepare stats present: `{data['prepare_stats_present']}`")
     print(f"- polytope union fields: `{data['polytope_union_field_count']}`")
     print(
         "- computed-polytope observation union fields: "
