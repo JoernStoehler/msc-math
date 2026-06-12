@@ -13,7 +13,7 @@ use std::collections::HashMap;
 use std::fs::{File, OpenOptions};
 use std::io::{BufRead, BufReader, BufWriter, Write};
 use std::path::{Path, PathBuf};
-use std::sync::Mutex;
+use std::sync::{Arc, Mutex};
 use std::time::Instant;
 use symplectic::database::{OrbitScalars, SigmaAction};
 
@@ -62,6 +62,7 @@ pub struct ComputeCacheStats {
 pub struct ComputedPolytopeCache {
     rows: HashMap<String, ComputedPolytopePayloadRow>,
     used_rows: Mutex<HashMap<String, ComputedPolytopePayloadRow>>,
+    in_flight: Mutex<HashMap<String, Arc<Mutex<()>>>>,
     stats: Mutex<ComputeCacheStats>,
     wal: Option<Mutex<BufWriter<File>>>,
 }
@@ -97,6 +98,7 @@ impl ComputedPolytopeCache {
         Self {
             rows,
             used_rows: Mutex::new(HashMap::new()),
+            in_flight: Mutex::new(HashMap::new()),
             stats: Mutex::new(ComputeCacheStats::default()),
             wal,
         }
@@ -119,8 +121,33 @@ impl ComputedPolytopeCache {
             .get(&poly_id)
             .cloned()
         {
-            let mut stats = self.stats.lock().expect("cache stats mutex poisoned");
-            stats.hits += 1;
+            self.record_used_hit(row.clone());
+            return Some(row);
+        }
+
+        let key_lock = {
+            let mut in_flight = self
+                .in_flight
+                .lock()
+                .expect("in-flight cache mutex poisoned");
+            // Keep per-key locks for the run; pruning them while waiters exist
+            // can split one key across two locks after a failed computation.
+            Arc::clone(
+                in_flight
+                    .entry(poly_id.clone())
+                    .or_insert_with(|| Arc::new(Mutex::new(()))),
+            )
+        };
+        let _key_guard = key_lock.lock().expect("in-flight key mutex poisoned");
+
+        if let Some(row) = self
+            .used_rows
+            .lock()
+            .expect("used cache mutex poisoned")
+            .get(&poly_id)
+            .cloned()
+        {
+            self.record_used_hit(row.clone());
             return Some(row);
         }
 
@@ -142,14 +169,17 @@ impl ComputedPolytopeCache {
                 &polytope.facet_intersection_is_nonempty,
                 &polytope.omega_signs,
             )
-            .ok()?,
+            .ok(),
             CapacityBackend::Billiard => capacity_billiard(
                 &polytope.dual_vertices_f64,
                 &polytope.dual_vertices,
                 &polytope.facet_intersection_is_nonempty,
                 &polytope.omega_signs,
             )
-            .ok()?,
+            .ok(),
+        };
+        let Some(capacity_result) = capacity_result else {
+            return None;
         };
         let time_capacity_ms = start_capacity.elapsed().as_secs_f64() * 1000.0;
 
@@ -183,7 +213,7 @@ impl ComputedPolytopeCache {
             let mut used = self.used_rows.lock().expect("used cache mutex poisoned");
             if !used.contains_key(&poly_id) {
                 self.append_wal(&row);
-                used.insert(poly_id, row.clone());
+                used.insert(poly_id.clone(), row.clone());
             }
         }
         {
@@ -211,6 +241,17 @@ impl ComputedPolytopeCache {
             let mut used = self.used_rows.lock().expect("used cache mutex poisoned");
             used.entry(poly_id.to_string()).or_insert(row);
         }
+        self.record_used_hit_count();
+    }
+
+    fn record_used_hit(&self, row: ComputedPolytopePayloadRow) {
+        let mut used = self.used_rows.lock().expect("used cache mutex poisoned");
+        used.entry(row.poly_id.clone()).or_insert(row);
+        drop(used);
+        self.record_used_hit_count();
+    }
+
+    fn record_used_hit_count(&self) {
         let mut stats = self.stats.lock().expect("cache stats mutex poisoned");
         stats.hits += 1;
     }
