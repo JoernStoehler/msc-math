@@ -119,6 +119,18 @@ Outputs:
 - `random-samples.jsonl` and `random-product-samples.jsonl`: producer metadata
   keyed by `poly_id`.
 
+Validate a produced directory before prepare or promotion decisions:
+
+```bash
+python3 experiments/sys-landscape/datascience/produce/validate-datascience-produced.py \
+  --produce-dir /tmp/ds-produce-smoke-cold \
+  --mode smoke
+```
+
+The validator checks expected row counts, unique sample names, unique
+`poly_id`s, one computed payload per sample, `sys <= 1`, required capacity/orbit
+payload fields, and sample/payload `sys` agreement.
+
 The smoke target is `8` generic random rows and `10` product rows. Production
 targets match the standalone random refresh counts: `4096` generic rows and
 `10240` product rows. Local smoke evidence on this branch:
@@ -128,8 +140,8 @@ targets match the standalone random refresh counts: `4096` generic rows and
 - hot smoke from the cold `computed-polytopes.jsonl`: `18` hits, `0` misses.
 
 On LICCA, [licca-datascience-produce.slurm.sh](licca-datascience-produce.slurm.sh)
-runs the same binary. Submit smoke first; submit production only after bounded
-smoke inspection.
+runs the same binary and then runs the validator. Submit smoke first; submit
+production only after bounded smoke inspection.
 
 ## Dataset And Smoke Paths
 
