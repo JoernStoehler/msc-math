@@ -15,8 +15,17 @@ SCRIPT_DIR="$(cd -- "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../../../.." && pwd)"
 cd "$REPO_ROOT"
 
-MODE="${DATASCIENCE_MODE:-smoke}"
-PRODUCERS="${DATASCIENCE_PRODUCERS:-random,random-product}"
+if [[ -z "${DATASCIENCE_MODE:-}" ]]; then
+  echo "DATASCIENCE_MODE is required" >&2
+  exit 2
+fi
+if [[ -z "${DATASCIENCE_PRODUCERS:-}" ]]; then
+  echo "DATASCIENCE_PRODUCERS is required" >&2
+  exit 2
+fi
+
+MODE="$DATASCIENCE_MODE"
+PRODUCERS="$DATASCIENCE_PRODUCERS"
 OUTPUT_DIR="${DATASCIENCE_OUTPUT_DIR:-$SCRIPT_DIR/licca-runs/datascience-produce-${MODE}-${SLURM_JOB_ID}}"
 
 case "$MODE" in

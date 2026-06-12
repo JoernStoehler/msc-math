@@ -162,6 +162,13 @@ validate/review locally
 Keep validation as an explicit gate between jobs. Submit production only after
 bounded smoke inspection.
 
+Slurm scripts use environment variables only as the `sbatch --export` bridge
+into ordinary executable CLI arguments. They are not meant as hidden defaults or
+a second configuration system. Semantic run-shape values such as
+`DATASCIENCE_MODE` and `DATASCIENCE_PRODUCERS` must be explicit in the submit
+command. Run-local paths may still default to printed directories when the
+default is reviewable and does not overwrite canonical artifacts.
+
 ## Cached Sigma Derivative Evidence
 
 `computed-polytopes.jsonl` stores the retained best sigma/action list, not the
