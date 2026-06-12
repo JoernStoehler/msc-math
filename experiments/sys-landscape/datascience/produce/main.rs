@@ -12,10 +12,11 @@ use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use rayon::prelude::*;
 use serde::Serialize;
-use std::collections::BTreeSet;
+use std::collections::{BTreeMap, BTreeSet};
 use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::path::PathBuf;
+use std::sync::atomic::{AtomicUsize, Ordering};
 use std::sync::Mutex;
 use symplectic::algorithms::billiard::bounce_count_from_sigma_for_facets;
 use symplectic::classify_facets_from_dual_vertices;
@@ -77,6 +78,27 @@ enum WorkUnit {
         attempt: u64,
         polytope: SysLandscapePolytopeCache,
     },
+}
+
+impl WorkUnit {
+    fn label(&self) -> String {
+        match self {
+            Self::Random {
+                name, facet_count, ..
+            } => {
+                format!("{name} F={facet_count}")
+            }
+            Self::RandomProduct { name, k, m, .. } => {
+                format!("{name} pair={k}x{m}")
+            }
+        }
+    }
+
+    fn polytope(&self) -> &SysLandscapePolytopeCache {
+        match self {
+            Self::Random { polytope, .. } | Self::RandomProduct { polytope, .. } => polytope,
+        }
+    }
 }
 
 struct ComputedWorkUnit {
@@ -398,6 +420,36 @@ fn write_json<T: Serialize>(path: PathBuf, value: &T) {
         .unwrap_or_else(|e| panic!("write {}: {e}", path.display()));
 }
 
+fn flush_stdout() {
+    std::io::stdout().flush().expect("flush stdout");
+}
+
+fn report_work_plan(work: &[WorkUnit]) {
+    let mut counts: BTreeMap<String, usize> = BTreeMap::new();
+    for unit in work {
+        *counts.entry(poly_id(unit.polytope())).or_insert(0) += 1;
+    }
+    let duplicate_entries: Vec<_> = counts
+        .iter()
+        .filter_map(|(poly_id, count)| (*count > 1).then_some((poly_id, *count)))
+        .collect();
+    let duplicate_rows: usize = duplicate_entries
+        .iter()
+        .map(|(_, count)| count.saturating_sub(1))
+        .sum();
+    println!(
+        "work plan: units={} unique_poly_ids={} duplicate_rows={} duplicate_poly_ids={}",
+        work.len(),
+        counts.len(),
+        duplicate_rows,
+        duplicate_entries.len()
+    );
+    for (poly_id, count) in duplicate_entries.iter().take(10) {
+        println!("work plan duplicate: poly_id={poly_id} count={count}");
+    }
+    flush_stdout();
+}
+
 fn main() {
     let total_started = std::time::Instant::now();
     let args = parse_args();
@@ -429,15 +481,36 @@ fn main() {
         args.parallelism,
         args.base_cache.display()
     );
+    report_work_plan(&work);
 
     let failures = Mutex::new(0usize);
+    let started = AtomicUsize::new(0);
+    let completed = AtomicUsize::new(0);
+    let total_work = work.len();
     let mut computed: Vec<_> = work
         .into_par_iter()
         .filter_map(|unit| {
+            let label = unit.label();
+            let poly_id = poly_id(unit.polytope());
+            let started_now = started.fetch_add(1, Ordering::Relaxed) + 1;
+            if started_now <= args.parallelism || started_now % 512 == 0 {
+                println!("started {started_now}/{total_work}: {label} poly_id={poly_id}");
+                flush_stdout();
+            }
+            let unit_started = std::time::Instant::now();
             let result = compute_work_unit(unit, args.seed, &cache);
             if result.is_none() {
                 let mut failures = failures.lock().expect("failure mutex poisoned");
                 *failures += 1;
+            }
+            let completed_now = completed.fetch_add(1, Ordering::Relaxed) + 1;
+            let elapsed_ms = unit_started.elapsed().as_secs_f64() * 1000.0;
+            if completed_now <= args.parallelism || completed_now % 128 == 0 || result.is_none() {
+                println!(
+                    "completed {completed_now}/{total_work}: {label} poly_id={poly_id} ok={} elapsed_ms={elapsed_ms:.1}",
+                    result.is_some()
+                );
+                flush_stdout();
             }
             result
         })
