@@ -46,10 +46,24 @@ CPU count, memory, and timeout, for example `--cpus-per-task=4 --mem=8G
 Normal prepare runs require the expensive payload for every producer metadata
 row. They do not run capacity search. Local smoke evidence on this branch:
 `18` produced polytopes became `18` polytope-table rows and `18` provenance
-rows; `fingerprint-dataset.py` reported max `sys=0.8015672385893916` and
+rows; `fingerprint-dataset.py` reported max `sys=0.7163711008250128` and
 `0` rows with `sys > 1`. Prepare also writes `prepare-stats.json` next to the
 tables so a smoke or LICCA run records row counts, max `sys`, and wall time
 without relying only on Slurm stdout.
+
+LICCA prepare evidence for commit `8b685cf0`: job `9826142` consumed the
+production run-local producer output from job `9826141`, completed in
+`00:01:07`, and wrote `14336` polytope rows plus `14336` provenance rows.
+`fingerprint-dataset.py` reported max `sys=0.9015863923873765`, `0` rows with
+`sys > 1`, random counts `4096`/`10240`, and sha256:
+
+- `polytope-table.jsonl`:
+  `9e828f85cc6c40632c47749782bfb4aef3569e0f6453f5d580a332a4bf92cb23`
+- `polytope-provenance-table.jsonl`:
+  `e6b6f0e046de0c5bb745cc51dfc3ab069c4055de52ff0144ec9fd71c029f1390`
+- empty `polytope-ascent-run-table.jsonl` and
+  `computed-polytope-observation-table.jsonl`:
+  `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`
 
 Normal table builds do not repair missing capacity payloads. Fixed-F ascent
 summary rows must have matching producer-cache rows (`ascent-general-cache.jsonl` and

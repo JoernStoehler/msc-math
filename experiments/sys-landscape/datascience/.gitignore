@@ -1,0 +1,5 @@
+*.tgz
+produce/ds-produce-*.out
+produce/licca-runs/
+tables/ds-prepare-*.out
+tables/licca-runs/

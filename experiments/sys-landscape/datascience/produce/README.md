@@ -140,11 +140,29 @@ with the produced files.
 
 The smoke target is `8` generic random rows and `10` product rows. Production
 targets match the standalone random refresh counts: `4096` generic rows and
-`10240` product rows. Local smoke evidence on this branch:
+`10240` product rows. Local smoke evidence on this branch after lazy work-unit
+generation:
 
 - cold smoke: `18` computed payloads, `0` cache hits, `18` misses, max
-  `sys=0.8015672385893916`;
-- hot smoke from the cold `computed-polytopes.jsonl`: `18` hits, `0` misses.
+  `sys=0.7163711008250128`, `0` rows with `sys > 1`;
+- hot smoke from the cold `computed-polytopes.jsonl`: `18` hits, `0` misses,
+  max `sys=0.7163711008250128`, `0` rows with `sys > 1`.
+
+LICCA production evidence for commit `8b685cf0`:
+
+- production-size `DATASCIENCE_PLAN_ONLY=1` on the `test` partition planned
+  `14336` work units in `00:00:01`;
+- cold smoke job `9826139` produced `8` generic rows, `10` product rows, and
+  `18` computed payloads with `0` cache hits, `18` misses, max
+  `sys=0.7163711008250128`, and `0` rows with `sys > 1`;
+- hot smoke job `9826140` against the cold cache produced the same row counts
+  with `18` hits and `0` misses;
+- production job `9826141` on `epyc` with `64` CPUs completed in `00:02:32`,
+  produced `4096` generic rows, `10240` product rows, `14336` computed
+  payloads, max `sys=0.9015863923873765`, and `0` rows with `sys > 1`;
+- retrieved archive `datascience-architecture-9826141-9826142.tgz` had sha256
+  `e97e69270c1d28a7623beaf5caf06e3fade09f9c6e3881c649343c1dd2de7376` and was
+  validated locally.
 
 On LICCA, [licca-datascience-produce.slurm.sh](licca-datascience-produce.slurm.sh)
 runs the prebuilt binary and writes a run-local produce directory. Build on the
