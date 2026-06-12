@@ -3,6 +3,12 @@
 Status: active top-level development packet for a heuristic gradient-ascent
 method for `sys(a)`.
 
+Corrected current scope: the newest work in this packet studies behavior of
+`sys(a)` and HK branch data across local, semi-local, and effectively global
+perturbation scales. Gradient ascent is one downstream consumer of that
+understanding, not the only current organizing question. The package name
+`dev-gradient-ascent` is historical for this broader branch-behavior work.
+
 Start with [CHARTER.md](CHARTER.md) before adding method code or interpreting
 outputs. The charter defines the objective, definition of done, evidence
 standard, and question families. This README is the operational entry point.
@@ -182,6 +188,10 @@ these counts as endpoint local-maximality evidence.
 
 ## Branch Cartography
 
+Start with [branch-cartography/README.md](branch-cartography/README.md) before
+changing or interpreting this command. It records the corrected scope,
+perturbation-scale model, run defaults, and caveats.
+
 This command consumes a branch diagnostic output directory, selects classified
 basepoints, and records point/sample pairs:
 
@@ -199,10 +209,16 @@ By default it samples one layer around each selected fixture. Use `--layers N`
 to expand improving samples for `N` finite-step layers. Non-improving target
 points are still recorded as point records, but they are not expanded.
 
+Defaults: `--steps 1e-4,1e-3`, `--layers 1`, `--random-directions 2`,
+`--selection-threshold-relative 1e-3`, `--action-window-relative 1e-2`,
+`--max-fixtures-per-label 1`, and all three degeneracy labels. Classification
+uses the raw sign of `observed_delta_sys`; there is no positive-delta tolerance
+yet.
+
 ```bash
 cargo run -p exp-dev-gradient-ascent \
   --bin dev-gradient-ascent-branch-cartography -- \
-  --diagnostic-dir /tmp/dev-gradient-ascent-branch-diagnostic-allsafe-check \
+  --diagnostic-dir /tmp/dev-gradient-ascent-branch-diagnostic-check \
   --out-dir /tmp/dev-gradient-ascent-branch-cartography-check \
   --steps 1e-4 \
   --max-fixtures-per-label 1 \
@@ -224,6 +240,9 @@ It writes:
 Current checked observations:
 
 - output: `/tmp/dev-gradient-ascent-branch-cartography-check`;
+- canonical regeneration: run the branch degeneracy diagnostic first, then run
+  the branch-cartography command above; the recorded output directories are
+  intentionally ephemeral `/tmp` smoke outputs;
 - selection threshold: `1e-3`;
 - selected fixtures: `2` (`large_gap = 1`, `narrow_gap = 1`);
 - sample rows: `7`;
@@ -261,12 +280,13 @@ Layer-expansion smoke:
   `non_improving_visible_near_active_branch = 2`.
 
 Interpretation: these first small-radius runs did not expose missing target
-branches or transition-opened samples. They did show that the wide-window
-high-degeneracy fixture still has positive finite improving directions, so it
-is not endpoint local-maximality evidence. The next useful use of this surface
-is to stress larger radii, traced intermediate states, and post-stop endpoints
-until branch-domain changes or post-stop improvements are either found or made
-rarer under documented conditions.
+branches or transition-opened samples. They did show raw-sign positive finite
+samples for the wide-window high-degeneracy fixture, so this is not endpoint
+local-maximality evidence. The current command is an ascent-biased reference
+surface: it expands only raw-sign improving samples and its default directions
+are gradient/maximin plus random probes. Use it as early branch-behavior
+evidence or as code to adapt into a datascience-shaped producer, not as an
+unbiased cartography of all perturbations.
 
 ## Local Geometry Probe
 

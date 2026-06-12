@@ -3,6 +3,13 @@
 Status: decision packet for the current development candidate. This is not an
 approval to promote the method or use it as thesis evidence.
 
+Scope note: this packet records the state of one gradient-ascent candidate. It
+is not the current scope controller for branch-cartography or for studying
+`sys(a)` and HK branch behavior across local, semi-local, and effectively
+global perturbation scales. See [CHARTER.md](CHARTER.md) and
+[branch-cartography/README.md](branch-cartography/README.md) before treating
+promotion as the next action.
+
 Source charter: [CHARTER.md](CHARTER.md).
 Current candidate: [METHOD-CANDIDATE.md](METHOD-CANDIDATE.md).
 

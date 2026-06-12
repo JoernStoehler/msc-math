@@ -3,6 +3,11 @@
 Status: current development candidate, not promoted library code and not thesis
 evidence by itself.
 
+Scope note: this note is about one ascent candidate. It does not supersede the
+newer branch-cartography/local-to-global branch-behavior question; see
+[branch-cartography/README.md](branch-cartography/README.md) when working on
+perturbation-scale behavior rather than method promotion.
+
 This note names the current method candidate so later work can review or change
 it without reconstructing the algorithm and checked evidence from JSONL files.
 The objective remains the one in [CHARTER.md](CHARTER.md).

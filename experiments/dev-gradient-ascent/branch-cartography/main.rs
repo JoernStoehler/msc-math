@@ -69,6 +69,17 @@ struct DiagnosticRow {
 }
 
 #[derive(Clone, Debug, Deserialize)]
+struct DiagnosticFixtureRow {
+    poly_id: String,
+    roles: Vec<String>,
+    source_names: Vec<String>,
+    seed_indices: Vec<usize>,
+    best_strategies: Vec<String>,
+    input_capacity: f64,
+    input_volume: f64,
+}
+
+#[derive(Clone, Debug, Deserialize)]
 struct PolytopeRow {
     poly_id: String,
     capacity: f64,
@@ -80,6 +91,7 @@ struct PolytopeRow {
 struct Fixture {
     diagnostic: DiagnosticRow,
     polytope: PolytopeRow,
+    provenance: Option<DiagnosticFixtureRow>,
     selection_rank_within_label: usize,
 }
 
@@ -91,7 +103,13 @@ struct FixtureRow {
     threshold_relative: f64,
     selection_buckets: Vec<String>,
     datasets: Vec<String>,
+    roles: Vec<String>,
+    source_names: Vec<String>,
+    seed_indices: Vec<usize>,
+    best_strategies: Vec<String>,
     input_facet_count: usize,
+    input_capacity: Option<f64>,
+    input_volume: Option<f64>,
     input_sys: f64,
     near_active_count: usize,
 }
@@ -123,7 +141,8 @@ struct BranchCartographySampleRow {
     target_point_key: String,
     poly_id: String,
     degeneracy_label: String,
-    source_state: String,
+    base_source_state: String,
+    target_source_state: String,
     direction_label: String,
     step: f64,
     status: String,
@@ -153,8 +172,16 @@ struct BranchCartographySampleRow {
 struct ComputeBudgetReport {
     command: String,
     diagnostic_dir: String,
+    diagnostic_branch_set_path: String,
+    diagnostic_fixture_selection_path: String,
     polytope_table: String,
+    input_file_metadata: BTreeMap<String, FileMetadata>,
     selection_threshold_relative: f64,
+    action_window_relative: f64,
+    steps: Vec<f64>,
+    layers: usize,
+    random_directions: usize,
+    seed: u64,
     max_fixtures_per_label: usize,
     skip_fixtures_per_label: usize,
     degeneracy_labels: Vec<String>,
@@ -170,7 +197,16 @@ struct ComputeBudgetReport {
 #[derive(Serialize)]
 struct Summary {
     method: String,
+    diagnostic_dir: String,
+    diagnostic_branch_set_path: String,
+    diagnostic_fixture_selection_path: String,
+    polytope_table: String,
     selection_threshold_relative: f64,
+    action_window_relative: f64,
+    steps: Vec<f64>,
+    layers: usize,
+    random_directions: usize,
+    seed: u64,
     max_fixtures_per_label: usize,
     skip_fixtures_per_label: usize,
     degeneracy_labels: Vec<String>,
@@ -185,6 +221,13 @@ struct Summary {
     sample_classification_counts: BTreeMap<String, usize>,
     out_dir: String,
     caveat: String,
+}
+
+#[derive(Clone, Debug, Serialize)]
+struct FileMetadata {
+    bytes: Option<u64>,
+    modified_unix_seconds: Option<u64>,
+    status: String,
 }
 
 #[derive(Clone, Debug)]
@@ -207,8 +250,14 @@ fn main() {
     fs::create_dir_all(&cli.out_dir).expect("failed to create output directory");
     let t0 = Instant::now();
 
-    let diagnostic_rows: Vec<DiagnosticRow> =
-        load_jsonl(&cli.diagnostic_dir.join("branch-set-diagnostic.jsonl"));
+    let branch_set_path = cli.diagnostic_dir.join("branch-set-diagnostic.jsonl");
+    let fixture_selection_path = cli.diagnostic_dir.join("fixture-selection.jsonl");
+    let diagnostic_rows: Vec<DiagnosticRow> = load_jsonl(&branch_set_path);
+    let diagnostic_fixture_rows: HashMap<String, DiagnosticFixtureRow> =
+        load_optional_jsonl(&fixture_selection_path)
+            .into_iter()
+            .map(|row: DiagnosticFixtureRow| (row.poly_id.clone(), row))
+            .collect();
     let polytope_rows: Vec<PolytopeRow> = load_jsonl(&cli.polytope_table);
     let polytope_by_id: HashMap<String, PolytopeRow> = polytope_rows
         .into_iter()
@@ -221,6 +270,13 @@ fn main() {
         cli.max_fixtures_per_label,
         cli.skip_fixtures_per_label,
         &cli.degeneracy_labels,
+        &diagnostic_fixture_rows,
+    );
+    assert!(
+        !fixtures.is_empty(),
+        "branch cartography selected no fixtures; check --selection-threshold-relative, \
+         --degeneracy-labels, --skip-fixtures-per-label, and that the polytope table \
+         contains the selected diagnostic poly_id rows"
     );
 
     let fixture_rows: Vec<FixtureRow> = fixtures.iter().map(fixture_row).collect();
@@ -337,8 +393,20 @@ fn main() {
     let report = ComputeBudgetReport {
         command: "dev-gradient-ascent-branch-cartography".to_string(),
         diagnostic_dir: cli.diagnostic_dir.display().to_string(),
+        diagnostic_branch_set_path: branch_set_path.display().to_string(),
+        diagnostic_fixture_selection_path: fixture_selection_path.display().to_string(),
         polytope_table: cli.polytope_table.display().to_string(),
+        input_file_metadata: input_file_metadata(&[
+            ("branch-set-diagnostic", branch_set_path.as_path()),
+            ("fixture-selection", fixture_selection_path.as_path()),
+            ("polytope-table", cli.polytope_table.as_path()),
+        ]),
         selection_threshold_relative: cli.selection_threshold_relative,
+        action_window_relative: cli.action_window_relative,
+        steps: cli.steps.clone(),
+        layers: cli.layers,
+        random_directions: cli.random_directions,
+        seed: cli.seed,
         max_fixtures_per_label: cli.max_fixtures_per_label,
         skip_fixtures_per_label: cli.skip_fixtures_per_label,
         degeneracy_labels: cli.degeneracy_labels.clone(),
@@ -355,7 +423,16 @@ fn main() {
 
     let summary = Summary {
         method: "dev-gradient-ascent-branch-cartography".to_string(),
+        diagnostic_dir: cli.diagnostic_dir.display().to_string(),
+        diagnostic_branch_set_path: branch_set_path.display().to_string(),
+        diagnostic_fixture_selection_path: fixture_selection_path.display().to_string(),
+        polytope_table: cli.polytope_table.display().to_string(),
         selection_threshold_relative: cli.selection_threshold_relative,
+        action_window_relative: cli.action_window_relative,
+        steps: cli.steps.clone(),
+        layers: cli.layers,
+        random_directions: cli.random_directions,
+        seed: cli.seed,
         max_fixtures_per_label: cli.max_fixtures_per_label,
         skip_fixtures_per_label: cli.skip_fixtures_per_label,
         degeneracy_labels: cli.degeneracy_labels.clone(),
@@ -384,6 +461,7 @@ fn select_fixtures(
     max_per_label: usize,
     skip_per_label: usize,
     degeneracy_labels: &[String],
+    diagnostic_fixture_rows: &HashMap<String, DiagnosticFixtureRow>,
 ) -> Vec<Fixture> {
     let mut selected = Vec::new();
     let mut eligible_seen_by_label: BTreeMap<String, usize> = BTreeMap::new();
@@ -426,6 +504,7 @@ fn select_fixtures(
         selected.push(Fixture {
             diagnostic: row.clone(),
             polytope: polytope.clone(),
+            provenance: diagnostic_fixture_rows.get(&row.poly_id).cloned(),
             selection_rank_within_label,
         });
         *selected_count += 1;
@@ -444,7 +523,7 @@ fn cartography_sample_row(
     fixture: &Fixture,
     base: &BaseState,
     base_point_key: &str,
-    source_state: &str,
+    base_source_state: &str,
     target_source_state: &str,
     direction_label: &str,
     direction: &[Vector4<f64>],
@@ -462,7 +541,8 @@ fn cartography_sample_row(
                     fixture,
                     base,
                     base_point_key,
-                    source_state,
+                    base_source_state,
+                    target_source_state,
                     &target_point_key,
                     direction_label,
                     step,
@@ -483,7 +563,8 @@ fn cartography_sample_row(
             fixture,
             base,
             base_point_key,
-            source_state,
+            base_source_state,
+            target_source_state,
             &target_point_key,
             direction_label,
             step,
@@ -501,7 +582,8 @@ fn cartography_sample_row(
                 fixture,
                 base,
                 base_point_key,
-                source_state,
+                base_source_state,
+                target_source_state,
                 &target_point_key,
                 direction_label,
                 step,
@@ -526,7 +608,8 @@ fn cartography_sample_row(
         target_point_key: target_point_key.clone(),
         poly_id: fixture.polytope.poly_id.clone(),
         degeneracy_label: fixture.diagnostic.degeneracy_label.clone(),
-        source_state: source_state.to_string(),
+        base_source_state: base_source_state.to_string(),
+        target_source_state: target_source_state.to_string(),
         direction_label: direction_label.to_string(),
         step,
         status: "ok".to_string(),
@@ -625,7 +708,8 @@ fn failed_cartography_sample(
     fixture: &Fixture,
     base: &BaseState,
     base_point_key: &str,
-    source_state: &str,
+    base_source_state: &str,
+    target_source_state: &str,
     target_point_key: &str,
     direction_label: &str,
     step: f64,
@@ -637,7 +721,8 @@ fn failed_cartography_sample(
             target_point_key: target_point_key.to_string(),
             poly_id: fixture.polytope.poly_id.clone(),
             degeneracy_label: fixture.diagnostic.degeneracy_label.clone(),
-            source_state: source_state.to_string(),
+            base_source_state: base_source_state.to_string(),
+            target_source_state: target_source_state.to_string(),
             direction_label: direction_label.to_string(),
             step,
             status,
@@ -1052,6 +1137,7 @@ fn polytope_from_row(row: &PolytopeRow) -> Result<SysLandscapePolytopeCache, Str
 }
 
 fn fixture_row(fixture: &Fixture) -> FixtureRow {
+    let provenance = fixture.provenance.as_ref();
     FixtureRow {
         poly_id: fixture.polytope.poly_id.clone(),
         degeneracy_label: fixture.diagnostic.degeneracy_label.clone(),
@@ -1059,7 +1145,19 @@ fn fixture_row(fixture: &Fixture) -> FixtureRow {
         threshold_relative: fixture.diagnostic.threshold_relative,
         selection_buckets: fixture.diagnostic.selection_buckets.clone(),
         datasets: fixture.diagnostic.datasets.clone(),
+        roles: provenance.map(|row| row.roles.clone()).unwrap_or_default(),
+        source_names: provenance
+            .map(|row| row.source_names.clone())
+            .unwrap_or_default(),
+        seed_indices: provenance
+            .map(|row| row.seed_indices.clone())
+            .unwrap_or_default(),
+        best_strategies: provenance
+            .map(|row| row.best_strategies.clone())
+            .unwrap_or_default(),
         input_facet_count: fixture.diagnostic.input_facet_count,
+        input_capacity: provenance.map(|row| row.input_capacity),
+        input_volume: provenance.map(|row| row.input_volume),
         input_sys: fixture.diagnostic.input_sys,
         near_active_count: fixture.diagnostic.near_active_count.unwrap_or(0),
     }
@@ -1258,6 +1356,43 @@ fn load_jsonl<T: for<'de> Deserialize<'de>>(path: &Path) -> Vec<T> {
             })
         })
         .collect()
+}
+
+fn load_optional_jsonl<T: for<'de> Deserialize<'de>>(path: &Path) -> Vec<T> {
+    if path.exists() {
+        load_jsonl(path)
+    } else {
+        Vec::new()
+    }
+}
+
+fn input_file_metadata(paths: &[(&str, &Path)]) -> BTreeMap<String, FileMetadata> {
+    paths
+        .iter()
+        .map(|(label, path)| ((*label).to_string(), file_metadata(path)))
+        .collect()
+}
+
+fn file_metadata(path: &Path) -> FileMetadata {
+    match fs::metadata(path) {
+        Ok(metadata) => {
+            let modified_unix_seconds = metadata
+                .modified()
+                .ok()
+                .and_then(|modified| modified.duration_since(UNIX_EPOCH).ok())
+                .map(|duration| duration.as_secs());
+            FileMetadata {
+                bytes: Some(metadata.len()),
+                modified_unix_seconds,
+                status: "ok".to_string(),
+            }
+        }
+        Err(err) => FileMetadata {
+            bytes: None,
+            modified_unix_seconds: None,
+            status: format!("metadata_failed:{err}"),
+        },
+    }
 }
 
 fn write_jsonl<P: AsRef<Path>, T: Serialize>(path: P, rows: &[T]) -> std::io::Result<()> {

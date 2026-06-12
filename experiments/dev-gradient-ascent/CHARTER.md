@@ -2,6 +2,14 @@
 
 Status: objective charter for `experiments/dev-gradient-ascent/`.
 
+Current scope note: after this charter was first written, the active question
+broadened from only "develop/promote a gradient-ascent method" to "study
+`sys(a)` and HK branch behavior across local, semi-local, and effectively
+global perturbation scales, so we know what a fixed ascent method has to
+handle." The gradient-ascent method remains the main downstream consumer, but
+new branch-cartography work should be read through this broader scope. See
+[branch-cartography/README.md](branch-cartography/README.md).
+
 This file defines the real objective of the top-level gradient-ascent
 development suite so future work does not collapse into a smaller coding
 milestone, a one-sided success narrative, or a proxy artifact that is mistaken
@@ -270,6 +278,8 @@ The current package contains:
 
 - a schema-smoke command for artifact shape;
 - a real-data branch degeneracy diagnostic;
+- a branch-cartography reference surface for paired `(a0, data(a0))` and
+  `(a, data(a), relation_to_a0)` records across finite perturbation scales;
 - a local geometry probe that emits run traces, endpoint diagnostics, endpoint
   direction scans, and compute-budget reports;
 - split-run selectors for resumable retained-sample checks;
@@ -297,3 +307,5 @@ The current promotion decision packet is
 candidate, endpoint condition, evidence, caveats, unresolved risks, downstream
 integration points, and the decision reserved for Jörn/Kai. Its conclusion is:
 ready to ask for a promotion decision, not ready to mark this charter complete.
+It is not the current scope controller for branch-cartography or the
+local-to-global branch-behavior study.
