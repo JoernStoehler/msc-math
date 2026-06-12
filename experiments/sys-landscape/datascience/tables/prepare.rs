@@ -18,7 +18,7 @@ use producer_rows::{DatascienceRandomProductSampleRow, DatascienceRandomSampleRo
 use rows::ComputedPolytopeObservationRow;
 use serde::de::DeserializeOwned;
 use serde::Serialize;
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::fs::File;
 use std::io::{BufRead, BufReader, BufWriter};
 use std::path::{Path, PathBuf};
@@ -91,8 +91,7 @@ Usage:
 
 Inputs in <dir>:
   computed-polytopes.jsonl
-  random-samples.jsonl
-  random-product-samples.jsonl
+  random-samples.jsonl and/or random-product-samples.jsonl
 "
     );
 }
@@ -210,12 +209,24 @@ fn load_new_producer_outputs(produce_dir: &Path) -> LoadedCaches {
 
     let mut polytopes = HashMap::new();
     let mut provenance_rows = Vec::new();
+    let mut sample_poly_ids = HashSet::new();
+    let mut provenance_ids = HashSet::new();
 
     for row in random_rows {
+        assert!(
+            sample_poly_ids.insert(row.poly_id.clone()),
+            "duplicate sample poly_id {}",
+            row.poly_id
+        );
+        let provenance_id = provenance_id("random_sample", &row.name);
+        assert!(
+            provenance_ids.insert(provenance_id.clone()),
+            "duplicate provenance_id {provenance_id}"
+        );
         let payload = require_payload(&payloads, "random_sample", &row.name, &row.poly_id, row.sys);
         ensure_polytope(&mut polytopes, payload, "random_sample");
         provenance_rows.push(LoadedProvenanceRow {
-            provenance_id: provenance_id("random_sample", &row.name),
+            provenance_id,
             poly_id: row.poly_id,
             dataset: "random_sample".to_string(),
             family: "general".to_string(),
@@ -248,6 +259,16 @@ fn load_new_producer_outputs(produce_dir: &Path) -> LoadedCaches {
     }
 
     for row in product_rows {
+        assert!(
+            sample_poly_ids.insert(row.poly_id.clone()),
+            "duplicate sample poly_id {}",
+            row.poly_id
+        );
+        let provenance_id = provenance_id("random_product_sample", &row.name);
+        assert!(
+            provenance_ids.insert(provenance_id.clone()),
+            "duplicate provenance_id {provenance_id}"
+        );
         let payload = require_payload(
             &payloads,
             "random_product_sample",
@@ -257,7 +278,7 @@ fn load_new_producer_outputs(produce_dir: &Path) -> LoadedCaches {
         );
         ensure_polytope(&mut polytopes, payload, "random_product_sample");
         provenance_rows.push(LoadedProvenanceRow {
-            provenance_id: provenance_id("random_product_sample", &row.name),
+            provenance_id,
             poly_id: row.poly_id,
             dataset: "random_product_sample".to_string(),
             family: "lagrangian_product".to_string(),
@@ -295,6 +316,15 @@ fn load_new_producer_outputs(produce_dir: &Path) -> LoadedCaches {
     let mut polytope_rows = polytopes.into_values().collect::<Vec<_>>();
     polytope_rows.sort_by(|a, b| a.poly_id.cmp(&b.poly_id));
     provenance_rows.sort_by(|a, b| a.provenance_id.cmp(&b.provenance_id));
+    assert!(
+        !provenance_rows.is_empty(),
+        "prepare input has no producer metadata rows"
+    );
+    assert_eq!(
+        payloads.len(),
+        sample_poly_ids.len(),
+        "computed payload count must match unique sample poly_id count"
+    );
 
     LoadedCaches {
         polytopes: polytope_rows,
