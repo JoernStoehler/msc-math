@@ -132,7 +132,8 @@ python3 experiments/sys-landscape/datascience/produce/validate-datascience-produ
 
 The validator checks expected row counts, unique sample names, unique
 `poly_id`s, one computed payload per sample, `sys <= 1`, required capacity/orbit
-payload fields, and sample/payload `sys` agreement.
+payload fields, sample/payload `sys` agreement, and consistency of
+`produce-stats.json` with the produced files.
 
 The smoke target is `8` generic random rows and `10` product rows. Production
 targets match the standalone random refresh counts: `4096` generic rows and

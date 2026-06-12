@@ -31,6 +31,13 @@ def load_jsonl(path: Path) -> list[dict[str, Any]]:
         return [json.loads(line) for line in handle if line.strip()]
 
 
+def load_json(path: Path) -> dict[str, Any]:
+    with path.open() as handle:
+        row = json.load(handle)
+    require(isinstance(row, dict), f"{path} must contain a JSON object")
+    return row
+
+
 def count_duplicates(values: list[str]) -> int:
     return len(values) - len(set(values))
 
@@ -60,12 +67,15 @@ def parse_producers(raw: str | None, produce_dir: Path) -> list[str]:
 def validate(produce_dir: Path, mode: str | None, producers_raw: str | None) -> dict[str, Any]:
     producers = parse_producers(producers_raw, produce_dir)
     payload_path = produce_dir / "computed-polytopes.jsonl"
+    stats_path = produce_dir / "produce-stats.json"
 
     require(payload_path.exists(), f"missing required file: {payload_path}")
+    require(stats_path.exists(), f"missing required file: {stats_path}")
     for producer in producers:
         path = produce_dir / PRODUCER_FILES[producer]
         require(path.exists(), f"missing required file: {path}")
 
+    stats = load_json(stats_path)
     payload_rows = load_jsonl(payload_path)
     random_rows = (
         load_jsonl(produce_dir / PRODUCER_FILES["random"]) if "random" in producers else []
@@ -118,6 +128,40 @@ def validate(produce_dir: Path, mode: str | None, producers_raw: str | None) -> 
             f"sample {row['name']} sys {sample_sys} disagrees with payload {payload_sys}",
         )
 
+    max_sys = max(float(row["sys"]) for row in payload_rows) if payload_rows else None
+    require(stats.get("random_rows") == len(random_rows), "produce-stats random_rows mismatch")
+    require(
+        stats.get("random_product_rows") == len(product_rows),
+        "produce-stats random_product_rows mismatch",
+    )
+    require(
+        stats.get("computed_payload_rows") == len(payload_rows),
+        "produce-stats computed_payload_rows mismatch",
+    )
+    require(stats.get("failures") == 0, "produce-stats failures must be zero")
+    require(
+        stats.get("cache_hits", 0) + stats.get("cache_misses", 0) == len(sample_rows),
+        "produce-stats cache_hits + cache_misses must equal sample rows",
+    )
+    require(stats.get("mode") == (mode or stats.get("mode")), "produce-stats mode mismatch")
+    require(stats.get("producers") == producers, "produce-stats producers mismatch")
+    require(
+        stats.get("cache_miss_volume_ms", -1.0) >= 0.0,
+        "produce-stats cache_miss_volume_ms must be nonnegative",
+    )
+    require(
+        stats.get("cache_miss_capacity_ms", -1.0) >= 0.0,
+        "produce-stats cache_miss_capacity_ms must be nonnegative",
+    )
+    require(stats.get("wall_time_ms", 0.0) > 0.0, "produce-stats wall_time_ms must be positive")
+    if max_sys is None:
+        require(stats.get("max_sys") is None, "produce-stats max_sys mismatch")
+    else:
+        require(
+            abs(float(stats.get("max_sys")) - max_sys) <= 1e-12,
+            "produce-stats max_sys mismatch",
+        )
+
     return {
         "produce_dir": str(produce_dir),
         "mode": mode or "count-only",
@@ -125,7 +169,9 @@ def validate(produce_dir: Path, mode: str | None, producers_raw: str | None) -> 
         "random_rows": len(random_rows),
         "random_product_rows": len(product_rows),
         "computed_payload_rows": len(payload_rows),
-        "max_sys": max(float(row["sys"]) for row in payload_rows) if payload_rows else None,
+        "cache_hits": stats.get("cache_hits"),
+        "cache_misses": stats.get("cache_misses"),
+        "max_sys": max_sys,
         "sys_gt_one": sum(1 for row in payload_rows if float(row["sys"]) > 1.0),
     }
 
