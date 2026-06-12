@@ -57,13 +57,16 @@ def read_jsonl(path: Path) -> list[dict]:
 def summarize(rows: list[dict]) -> list[dict]:
     groups: dict[tuple[str, int, str], list[dict]] = defaultdict(list)
     sample_totals: dict[tuple[str, int, int], float] = defaultdict(float)
+    sample_has_error: dict[tuple[str, int, int], bool] = defaultdict(bool)
 
     for row in rows:
         key = (row["target"], int(row["facet_count"]), row["phase"])
         groups[key].append(row)
+        sample_key = (row["target"], int(row["facet_count"]), int(row["sample"]))
         if row.get("status") == "ok":
-            sample_key = (row["target"], int(row["facet_count"]), int(row["sample"]))
             sample_totals[sample_key] += float(row["elapsed_ms"])
+        else:
+            sample_has_error[sample_key] = True
 
     result = []
     for (target, facet_count, phase), group_rows in groups.items():
@@ -75,6 +78,16 @@ def summarize(rows: list[dict]) -> list[dict]:
         denominator = sum(
             sample_totals[(target, facet_count, sample)]
             for sample in {int(row["sample"]) for row in ok_group_rows}
+        )
+        completed_total_ms = sum(
+            float(row["elapsed_ms"])
+            for row in ok_group_rows
+            if not sample_has_error[(target, facet_count, int(row["sample"]))]
+        )
+        completed_denominator = sum(
+            sample_totals[(target, facet_count, sample)]
+            for sample in {int(row["sample"]) for row in ok_group_rows}
+            if not sample_has_error[(target, facet_count, sample)]
         )
         ok_rows = len(ok_group_rows)
         result.append(
@@ -95,6 +108,11 @@ def summarize(rows: list[dict]) -> list[dict]:
                 "pct_of_sample_total": (100.0 * total_ms / denominator)
                 if denominator > 0.0
                 else 0.0,
+                "pct_of_completed_sample_total": (
+                    100.0 * completed_total_ms / completed_denominator
+                )
+                if completed_denominator > 0.0
+                else None,
                 "iterations_mean": mean_present(ok_group_rows, "iterations"),
                 "raw_orbits_mean": mean_present(ok_group_rows, "raw_orbits"),
                 "returned_orbits_mean": mean_present(ok_group_rows, "returned_orbits"),
@@ -135,6 +153,7 @@ def print_stdout_summary(summary: list[dict]) -> None:
         ("ok_mean_ms", "ok_mean_ms"),
         ("error_mean_ms", "error_mean_ms"),
         ("pct_of_sample_total", "pct_total"),
+        ("pct_of_completed_sample_total", "pct_complete"),
         ("iterations_mean", "iter_mean"),
         ("raw_orbits_mean", "raw_orbits"),
         ("returned_orbits_mean", "ret_orbits"),
@@ -170,6 +189,7 @@ def write_csv(path: Path, summary: list[dict]) -> None:
         "ok_mean_ms",
         "error_mean_ms",
         "pct_of_sample_total",
+        "pct_of_completed_sample_total",
         "iterations_mean",
         "raw_orbits_mean",
         "returned_orbits_mean",

@@ -14,6 +14,7 @@ SUMMARY_MARKERS = [
     "hk2017_unpruned_enumeration_summary",
 ]
 FIELD_RE = re.compile(r"([A-Za-z_][A-Za-z0-9_]*)=([^\s]+)")
+VECTOR_FIELD_RE = re.compile(r"([A-Za-z_][A-Za-z0-9_]*)=\[([^\]]*)\]")
 
 NON_NUMERIC_TRACE_FIELDS = {"target", "sample", "level", "message", "fields.message"}
 
@@ -53,8 +54,14 @@ def read_summary_events(path: Path) -> list[dict]:
                 "event": event,
                 "facet_count": int(fields["facet_count"]),
             }
+            for field, value in VECTOR_FIELD_RE.findall(line):
+                row[field] = parse_int_vector(value)
             for field, value in fields.items():
-                if field in NON_NUMERIC_TRACE_FIELDS or field == "facet_count":
+                if (
+                    field in NON_NUMERIC_TRACE_FIELDS
+                    or field == "facet_count"
+                    or field in row
+                ):
                     continue
                 try:
                     row[field] = float(clean_trace_value(value))
@@ -68,6 +75,13 @@ def read_summary_events(path: Path) -> list[dict]:
 
 def clean_trace_value(value: str) -> str:
     return value.strip('"')
+
+
+def parse_int_vector(value: str) -> list[int]:
+    value = value.strip()
+    if not value:
+        return []
+    return [int(part.strip()) for part in value.split(",") if part.strip()]
 
 
 def summarize(rows: list[dict]) -> list[dict]:
@@ -85,6 +99,8 @@ def summarize(rows: list[dict]) -> list[dict]:
         }
         for field in numeric_fields(group):
             item[f"{field}_mean"] = mean_present(group, field)
+        for field in vector_fields(group):
+            item[f"{field}_sum"] = sum_vectors(group, field)
         kkt_ms = item.get("kkt_ms_mean")
         payload_ms = item.get("payload_ms_mean")
         search_ms = item.get("search_ms_mean")
@@ -105,7 +121,18 @@ def numeric_fields(rows: list[dict]) -> list[str]:
     excluded = {"target", "event", "facet_count"}
     fields = set()
     for row in rows:
-        fields.update(key for key in row if key not in excluded)
+        fields.update(
+            key
+            for key, value in row.items()
+            if key not in excluded and isinstance(value, (int, float))
+        )
+    return sorted(fields)
+
+
+def vector_fields(rows: list[dict]) -> list[str]:
+    fields = set()
+    for row in rows:
+        fields.update(key for key, value in row.items() if isinstance(value, list))
     return sorted(fields)
 
 
@@ -131,6 +158,18 @@ def mean_present(rows: list[dict], key: str) -> float | None:
     if not values:
         return None
     return sum(values) / len(values)
+
+
+def sum_vectors(rows: list[dict], key: str) -> list[int] | None:
+    vectors = [row[key] for row in rows if key in row]
+    if not vectors:
+        return None
+    width = max(len(vector) for vector in vectors)
+    total = [0] * width
+    for vector in vectors:
+        for index, value in enumerate(vector):
+            total[index] += value
+    return total
 
 
 def print_stdout_summary(summary: list[dict]) -> None:
@@ -160,6 +199,8 @@ def format_value(value) -> str:
         return ""
     if isinstance(value, float):
         return f"{value:.6g}"
+    if isinstance(value, list):
+        return "[" + ",".join(format_value(item) for item in value) + "]"
     return str(value)
 
 

@@ -2,15 +2,16 @@ use euclidean_polytopes::{
     facet_intersection_is_nonempty_from_vertex_facet_incidence,
     polar_vertices_exact_rational_assuming_origin_interior, PolarVerticesExact,
 };
+use exp_performance::args::{selected_run_mode, split_inline_arg, take_value, RunMode};
+use exp_performance::jsonl::JsonlWriter;
+use exp_performance::output_dir::prepare_out_dir;
+use exp_performance::timing::{timed, timed_result};
 use nalgebra::{DMatrix, Vector4};
 use num_rational::BigRational;
 use serde::Serialize;
 use std::env;
-use std::fs::{self, File, OpenOptions};
-use std::io::{BufWriter, Write};
-use std::path::{Path, PathBuf};
-use std::process::{self, ExitCode};
-use std::time::{Duration, Instant, SystemTime, UNIX_EPOCH};
+use std::path::PathBuf;
+use std::process::ExitCode;
 use symplectic::algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega;
 use symplectic::exact::omega_signs_exact;
 use symplectic::geom::rational_arithmetic::f64_to_rational;
@@ -27,10 +28,10 @@ const DEFAULT_SEED: u64 = 42;
 const DEFAULT_H_MIN: f64 = 0.5;
 const DEFAULT_H_MAX: f64 = 2.0;
 const MAX_ATTEMPTS_PER_SAMPLE: u64 = 10_000;
-const DEFAULT_TARGET_ROOT: &str = "/tmp/msc-math-performance";
 
 #[derive(Clone, Debug, Serialize)]
 struct Config {
+    mode: RunMode,
     facet_counts: Vec<usize>,
     samples: usize,
     seed: u64,
@@ -43,6 +44,7 @@ struct Config {
 #[derive(Serialize)]
 struct PhaseEvent {
     target: &'static str,
+    mode: RunMode,
     facet_count: usize,
     sample: usize,
     seed: u64,
@@ -92,7 +94,7 @@ fn main() -> ExitCode {
 fn run() -> Result<PathBuf, String> {
     let config = parse_args(env::args().skip(1))?;
     validate_config(&config)?;
-    let out_dir = prepare_out_dir(config.out_dir.clone())?;
+    let out_dir = prepare_out_dir(config.out_dir.clone(), TARGET_NAME, config.mode.as_str())?;
     if config.trace {
         init_tracing()?;
     }
@@ -329,6 +331,7 @@ fn base_event(
 ) -> PhaseEvent {
     PhaseEvent {
         target: TARGET_NAME,
+        mode: config.mode,
         facet_count,
         sample,
         seed: config.seed,
@@ -401,47 +404,15 @@ impl PhaseEvent {
 }
 
 fn parse_args(args: impl Iterator<Item = String>) -> Result<Config, String> {
-    let mut config = Config {
-        facet_counts: vec![10],
-        samples: 3,
-        seed: DEFAULT_SEED,
-        h_min: DEFAULT_H_MIN,
-        h_max: DEFAULT_H_MAX,
-        trace: false,
-        out_dir: None,
-    };
+    let args: Vec<String> = args.collect();
+    let mut config = config_for_mode(selected_run_mode(&args)?);
 
-    let mut args = args.peekable();
+    let mut args = args.into_iter().peekable();
     while let Some(arg) = args.next() {
         let (flag, inline_value) = split_inline_arg(arg);
         match flag.as_str() {
-            "--facet-counts" => {
-                let value = take_value("--facet-counts", inline_value, &mut args)?;
-                config.facet_counts = parse_facet_counts(&value)?;
-            }
-            "--samples" => {
-                let value = take_value("--samples", inline_value, &mut args)?;
-                config.samples = value
-                    .parse()
-                    .map_err(|_| format!("--samples must be a positive integer, got {value}"))?;
-            }
-            "--seed" => {
-                let value = take_value("--seed", inline_value, &mut args)?;
-                config.seed = value
-                    .parse()
-                    .map_err(|_| format!("--seed must be a u64, got {value}"))?;
-            }
-            "--h-min" => {
-                let value = take_value("--h-min", inline_value, &mut args)?;
-                config.h_min = value
-                    .parse()
-                    .map_err(|_| format!("--h-min must be a finite f64, got {value}"))?;
-            }
-            "--h-max" => {
-                let value = take_value("--h-max", inline_value, &mut args)?;
-                config.h_max = value
-                    .parse()
-                    .map_err(|_| format!("--h-max must be a finite f64, got {value}"))?;
+            "--mode" => {
+                let _ = take_value("--mode", inline_value, &mut args)?;
             }
             "--out-dir" => {
                 let value = take_value("--out-dir", inline_value, &mut args)?;
@@ -464,53 +435,33 @@ fn parse_args(args: impl Iterator<Item = String>) -> Result<Config, String> {
     Ok(config)
 }
 
-fn split_inline_arg(arg: String) -> (String, Option<String>) {
-    match arg.split_once('=') {
-        Some((flag, value)) => (flag.to_owned(), Some(value.to_owned())),
-        None => (arg, None),
+fn config_for_mode(mode: RunMode) -> Config {
+    let (facet_counts, samples) = match mode {
+        RunMode::Smoke => (vec![5], 1),
+        RunMode::Production => (vec![10, 11, 12], 3),
+    };
+    Config {
+        mode,
+        facet_counts,
+        samples,
+        seed: DEFAULT_SEED,
+        h_min: DEFAULT_H_MIN,
+        h_max: DEFAULT_H_MAX,
+        trace: false,
+        out_dir: None,
     }
-}
-
-fn take_value(
-    flag: &str,
-    inline_value: Option<String>,
-    args: &mut impl Iterator<Item = String>,
-) -> Result<String, String> {
-    match inline_value {
-        Some(value) => Ok(value),
-        None => args
-            .next()
-            .ok_or_else(|| format!("{flag} requires a value")),
-    }
-}
-
-fn parse_facet_counts(value: &str) -> Result<Vec<usize>, String> {
-    let facet_counts: Result<Vec<_>, _> = value
-        .split(',')
-        .map(|part| {
-            let trimmed = part.trim();
-            trimmed
-                .parse::<usize>()
-                .map_err(|_| format!("invalid facet count: {trimmed}"))
-        })
-        .collect();
-    let facet_counts = facet_counts?;
-    if facet_counts.is_empty() {
-        return Err("--facet-counts must contain at least one count".to_owned());
-    }
-    Ok(facet_counts)
 }
 
 fn validate_config(config: &Config) -> Result<(), String> {
     if config.samples == 0 {
-        return Err("--samples must be at least 1".to_owned());
+        return Err("mode sample count must be at least 1".to_owned());
     }
     if config
         .facet_counts
         .iter()
         .any(|&facet_count| facet_count < 5)
     {
-        return Err("--facet-counts entries must be at least 5".to_owned());
+        return Err("mode facet-count entries must be at least 5".to_owned());
     }
     if !config.h_min.is_finite()
         || !config.h_max.is_finite()
@@ -518,79 +469,11 @@ fn validate_config(config: &Config) -> Result<(), String> {
         || config.h_min >= config.h_max
     {
         return Err(format!(
-            "--h-min/--h-max must satisfy finite 0 < h-min < h-max, got {} and {}",
+            "mode h_min/h_max must satisfy finite 0 < h_min < h_max, got {} and {}",
             config.h_min, config.h_max
         ));
     }
     Ok(())
-}
-
-struct JsonlWriter {
-    writer: BufWriter<File>,
-}
-
-impl JsonlWriter {
-    fn create(path: &Path) -> Result<Self, String> {
-        let file = OpenOptions::new()
-            .write(true)
-            .create(true)
-            .truncate(true)
-            .open(path)
-            .map_err(|error| format!("create {}: {error}", path.display()))?;
-        Ok(Self {
-            writer: BufWriter::new(file),
-        })
-    }
-
-    fn write<T: Serialize>(&mut self, value: &T) -> Result<(), String> {
-        serde_json::to_writer(&mut self.writer, value)
-            .map_err(|error| format!("serialize jsonl row: {error}"))?;
-        self.writer
-            .write_all(b"\n")
-            .map_err(|error| format!("write jsonl newline: {error}"))
-    }
-
-    fn flush(&mut self) -> Result<(), String> {
-        self.writer
-            .flush()
-            .map_err(|error| format!("flush jsonl writer: {error}"))
-    }
-}
-
-fn prepare_out_dir(out_dir: Option<PathBuf>) -> Result<PathBuf, String> {
-    let path = match out_dir {
-        Some(path) => path,
-        None => PathBuf::from(DEFAULT_TARGET_ROOT).join(format!(
-            "{TARGET_NAME}-{}-pid{}",
-            unix_timestamp_secs()?,
-            process::id()
-        )),
-    };
-    fs::create_dir_all(&path).map_err(|error| format!("create {}: {error}", path.display()))?;
-    Ok(path)
-}
-
-fn timed<T>(operation: impl FnOnce() -> T) -> (T, f64) {
-    let start = Instant::now();
-    let value = operation();
-    (value, ms(start.elapsed()))
-}
-
-fn timed_result<T, E>(operation: impl FnOnce() -> Result<T, E>) -> (Result<T, E>, f64) {
-    let start = Instant::now();
-    let value = operation();
-    (value, ms(start.elapsed()))
-}
-
-fn ms(duration: Duration) -> f64 {
-    duration.as_secs_f64() * 1000.0
-}
-
-fn unix_timestamp_secs() -> Result<u64, String> {
-    SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .map(|duration| duration.as_secs())
-        .map_err(|error| format!("system clock before unix epoch: {error}"))
 }
 
 fn init_tracing() -> Result<(), String> {
@@ -609,15 +492,49 @@ fn print_usage() {
 
 fn usage() -> &'static str {
     "Usage: cargo run -p exp-performance --release --bin hk2017-pruned-f64 -- \\
-        --facet-counts 10,11,12 --samples 3 --out-dir /tmp/perf-hk2017\n\
+        --mode production --out-dir /tmp/perf-hk2017\n\
 \n\
 Options:\n\
-  --facet-counts LIST  Comma-separated facet counts, each at least 5 [default: 10]\n\
-  --samples N          Accepted deterministic fixtures per facet count [default: 3]\n\
-  --seed N             Master seed for deterministic fixture attempts [default: 42]\n\
-  --h-min X            Random fixture minimum support height [default: 0.5]\n\
-  --h-max X            Random fixture maximum support height [default: 2.0]\n\
-  --out-dir PATH       Output directory [default: /tmp/msc-math-performance/<target>-<time>-pid<PID>]\n\
+  --mode MODE          Named run mode: smoke or production [default: smoke]\n\
+  --out-dir PATH       Output directory [default: /tmp/msc-math-performance/<target>-<mode>-<time>-pid<PID>]\n\
   --trace              Emit tracing span close events to stderr\n\
   --help               Print this help text"
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn parse(values: &[&str]) -> Config {
+        parse_args(values.iter().map(|value| value.to_string())).unwrap()
+    }
+
+    #[test]
+    fn smoke_mode_is_default() {
+        let config = parse(&[]);
+        assert_eq!(config.mode, RunMode::Smoke);
+        assert_eq!(config.facet_counts, vec![5]);
+        assert_eq!(config.samples, 1);
+    }
+
+    #[test]
+    fn production_mode_selects_documented_profile_size() {
+        let config = parse(&["--mode", "production"]);
+        assert_eq!(config.mode, RunMode::Production);
+        assert_eq!(config.facet_counts, vec![10, 11, 12]);
+        assert_eq!(config.samples, 3);
+    }
+
+    #[test]
+    fn ad_hoc_input_selector_flags_are_rejected() {
+        for flag in [
+            "--seed",
+            "--facet-counts",
+            "--samples",
+            "--h-min",
+            "--h-max",
+        ] {
+            assert!(parse_args([flag.to_string(), "1".to_string()].into_iter()).is_err());
+        }
+    }
 }

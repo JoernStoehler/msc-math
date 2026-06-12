@@ -17,6 +17,15 @@ Commands below assume the repo root as the working directory.
 Generated outputs should usually go under `/tmp`. Reports under `/tmp` are
 review artifacts, not durable project state.
 
+Each target has two named modes:
+
+- `smoke`: small input for checking that the binary and summaries still work.
+- `production`: the normal heavier run for profiling decisions.
+
+Changing facet counts, sample counts, height ranges, or graph density is a
+different experiment variant. Add a named mode or change the mode constants in a
+worktree so the variant is visible in the code diff.
+
 ## Targets
 
 ### `hk2017-pruned-f64`
@@ -44,9 +53,16 @@ Run a smoke profile:
 
 ```bash
 cargo run -p exp-performance --release --bin hk2017-pruned-f64 -- \
-  --facet-counts 10 \
-  --samples 1 \
+  --mode smoke \
   --out-dir /tmp/perf-hk2017-smoke
+```
+
+Run the production profile:
+
+```bash
+cargo run -p exp-performance --release --bin hk2017-pruned-f64 -- \
+  --mode production \
+  --out-dir /tmp/perf-hk2017-production
 ```
 
 Summarize phase events:
@@ -66,8 +82,7 @@ For subphase questions, use opt-in tracing:
 ```bash
 mkdir -p /tmp/perf-hk2017-trace
 cargo run -q -p exp-performance --release --bin hk2017-pruned-f64 -- \
-  --facet-counts 10,11 \
-  --samples 3 \
+  --mode production \
   --trace \
   --out-dir /tmp/perf-hk2017-trace \
   2> /tmp/perf-hk2017-trace/span-close.log
@@ -106,9 +121,7 @@ Run an isolated cycle-enumeration profile:
 
 ```bash
 cargo run -q -p exp-performance --release --bin hk2017-cycle-enumeration -- \
-  --facet-counts 10,11 \
-  --samples 8 \
-  --edge-probability 0.25 \
+  --mode production \
   --out-dir /tmp/perf-hk2017-cycles
 ```
 
@@ -117,9 +130,7 @@ With tracing:
 ```bash
 mkdir -p /tmp/perf-hk2017-cycles-trace
 cargo run -q -p exp-performance --release --bin hk2017-cycle-enumeration -- \
-  --facet-counts 10,11 \
-  --samples 8 \
-  --edge-probability 0.25 \
+  --mode production \
   --trace \
   --out-dir /tmp/perf-hk2017-cycles-trace \
   2> /tmp/perf-hk2017-cycles-trace/span-close.log
@@ -155,8 +166,7 @@ Example:
 
 ```bash
 cargo flamegraph -p exp-performance --release --bin hk2017-pruned-f64 -- \
-  --facet-counts 10 \
-  --samples 8 \
+  --mode production \
   --out-dir /tmp/perf-hk2017-flame
 ```
 
@@ -175,8 +185,7 @@ If `perf_event_paranoid` blocks unprivileged profiling, use `--root`:
 
 ```bash
 cargo flamegraph --root -p exp-performance --release --bin hk2017-pruned-f64 -- \
-  --facet-counts 10 \
-  --samples 8 \
+  --mode production \
   --out-dir /tmp/perf-hk2017-flame
 ```
 
@@ -192,8 +201,7 @@ cargo build -p exp-performance --release --bin hk2017-pruned-f64
 valgrind --tool=callgrind \
   --callgrind-out-file=/tmp/perf-hk2017.callgrind \
   target/release/hk2017-pruned-f64 \
-  --facet-counts 10 \
-  --samples 2 \
+  --mode smoke \
   --out-dir /tmp/perf-hk2017-callgrind
 
 callgrind_annotate --threshold=0.5 /tmp/perf-hk2017.callgrind
@@ -205,8 +213,8 @@ production runtime estimate.
 ## Output Policy
 
 1. Every binary must accept `--out-dir`.
-2. Defaults must point under `/tmp` and include the process id to avoid common
-   timestamp collisions.
+2. Defaults must point under `/tmp` and include the target, mode, timestamp, and
+   process id to avoid common collisions.
 3. Reusing an output directory may overwrite that target's raw output files.
 4. Binaries should print only the output directory or a short status line.
 5. Raw measurements should be structured files, not ad-hoc prose on stdout.
