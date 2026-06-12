@@ -98,8 +98,8 @@ struct ProduceStatsRow {
     cache_misses: usize,
     failures: usize,
     max_sys: Option<f64>,
-    total_volume_ms: f64,
-    total_capacity_ms: f64,
+    cache_miss_volume_ms: f64,
+    cache_miss_capacity_ms: f64,
     wall_time_ms: f64,
 }
 
@@ -492,8 +492,8 @@ fn main() {
         cache_misses: stats.misses,
         failures: failure_count,
         max_sys: payload_rows.iter().map(|row| row.sys).reduce(f64::max),
-        total_volume_ms: payload_rows.iter().map(|row| row.time_volume_ms).sum(),
-        total_capacity_ms: payload_rows.iter().map(|row| row.time_capacity_ms).sum(),
+        cache_miss_volume_ms: stats.miss_volume_ms,
+        cache_miss_capacity_ms: stats.miss_capacity_ms,
         wall_time_ms: total_started.elapsed().as_secs_f64() * 1000.0,
     };
     write_json(args.output_dir.join("produce-stats.json"), &produce_stats);

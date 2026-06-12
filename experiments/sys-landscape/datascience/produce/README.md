@@ -119,7 +119,7 @@ Outputs:
 - `random-samples.jsonl` and `random-product-samples.jsonl`: producer metadata
   keyed by `poly_id`;
 - `produce-stats.json`: run-level resource evidence: counts, cache hits/misses,
-  failures, max `sys`, aggregate payload timings, and wall time.
+  failures, max `sys`, cache-miss compute timings, and wall time.
 
 Validate a produced directory before prepare or promotion decisions:
 

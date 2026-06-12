@@ -54,6 +54,8 @@ pub struct ComputedPolytopePayloadRow {
 pub struct ComputeCacheStats {
     pub hits: usize,
     pub misses: usize,
+    pub miss_volume_ms: f64,
+    pub miss_capacity_ms: f64,
 }
 
 #[derive(Default)]
@@ -160,6 +162,8 @@ impl ComputedPolytopeCache {
         {
             let mut stats = self.stats.lock().expect("cache stats mutex poisoned");
             stats.misses += 1;
+            stats.miss_volume_ms += time_volume_ms;
+            stats.miss_capacity_ms += time_capacity_ms;
         }
         Some(row)
     }
