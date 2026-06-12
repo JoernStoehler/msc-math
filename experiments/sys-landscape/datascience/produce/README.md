@@ -171,13 +171,15 @@ default is reviewable and does not overwrite canonical artifacts.
 
 Partition choice is part of the execution contract:
 
-- smoke submissions should pass `--partition=test`;
+- smoke submissions should pass `--partition=test`, a small CPU count, bounded
+  memory such as `--mem=8G`, and a short timeout;
 - production submissions should use `epyc` unless current scheduler evidence
   says another production partition is better.
 
-The Slurm scripts keep `#SBATCH --partition=epyc` as the production default, so
-smoke handoffs must override it explicitly. Do not infer from `--test-only` that
-the real smoke submission will start promptly on the same partition.
+The Slurm scripts keep production-shaped defaults for partition, CPU count, and
+memory. Smoke handoffs must override those explicitly. Do not infer from
+`--test-only` that the real smoke submission will start promptly on the same
+partition or with the same memory request.
 
 ## Cached Sigma Derivative Evidence
 

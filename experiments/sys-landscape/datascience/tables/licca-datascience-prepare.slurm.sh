@@ -4,16 +4,16 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=64
-#SBATCH --mem=0
+#SBATCH --mem=16G
 #SBATCH --time=02:00:00
 #SBATCH --output=ds-prepare-%j.out
 #SBATCH --error=ds-prepare-%j.out
 
 set -euo pipefail
 
-# The default partition is production-shaped. Smoke submissions should override
-# this with `sbatch --partition=test ...`; prepare smoke is a path check, not a
-# throughput run.
+# Defaults are production-shaped and bounded. Smoke submissions should override
+# partition, CPU count, memory, and time; e.g. `--partition=test --cpus-per-task=4
+# --mem=8G --time=00:20:00`.
 
 SCRIPT_DIR="$(cd -- "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../../../.." && pwd)"
