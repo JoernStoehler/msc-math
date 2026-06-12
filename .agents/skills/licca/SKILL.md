@@ -5,29 +5,38 @@ description: Use before writing any command Jörn should run on, to, or from LIC
 
 # LICCA
 
-## Cluster and external execution
+Agents do not have LICCA SSH access. Prepare scripts, binaries, resource
+choices, and handoff/retrieval commands for Jörn. Jörn submits LICCA jobs and
+retrieves external results unless the files are already local.
 
-- agents do not have LICCA SSH access; prepare scripts, binaries, resource
-  choices, and retrieval instructions for Jörn instead
-- Jörn submits cluster jobs and retrieves external results unless the files are
-  already present locally
-- resource choices need a short justification
+## Command Handoffs
 
-## Login path for Jörn
+- Keep local-machine commands, LICCA login-node commands, Slurm submission
+  commands, Slurm monitoring commands, and local retrieval commands in separate
+  command blocks. Label the execution context. Do not bundle cleanup, checkout,
+  submission, monitoring, result checks, promotion, or retrieval into one pasted
+  block unless Jörn explicitly asks for a combined script.
+- Do not give interactive or indefinitely blocking LICCA handoff commands such
+  as `tail -f`, `watch`, pagers, interactive `srun`, shell loops, or commands
+  that wait for completion without a bounded result. Use bounded snapshots.
+- For submitted jobs, prefer `sbatch --parsable` assigned to a descriptive shell
+  variable such as `produce_jid` or `table_jid`, then use that variable in the
+  next monitoring and validation commands. This reduces retyping errors while
+  keeping each command block bounded and inspectable.
+- Login nodes are for light editing, transfers, job submission, and monitoring.
+  Nontrivial computation goes through Slurm.
+- Do not ask Jörn to push from LICCA. LICCA can pull from GitHub for this
+  project; generated artifacts should be retrieved and committed locally.
+- If LICCA `git checkout` or `git pull` is blocked by dirty generated artifacts,
+  resolve only the exact paths Git reports as blockers. For tracked blockers,
+  restore those paths. For untracked blockers, move those paths aside. Do not
+  broad-clean experiment/data directories, create a new clone/worktree/export,
+  or switch to tarball transfer unless Jörn asks or the blocker changes.
 
-- Do not guess a local alias such as `ssh licca`.
-- Keep local commands and LICCA-side commands in separate code blocks. Never put
-  `ssh`/`scp` in the same command block as commands intended to run after login.
-- For handoff commands, label each execution context: local machine, LICCA login
-  node, or Slurm job.
-- Do not give Jörn interactive or indefinitely blocking commands for LICCA
-  handoffs, such as `tail -f`, `watch`, pagers, interactive `srun`, or shell
-  loops. Use bounded snapshots instead, for example `tail -n 80`, `squeue -j
-  <jobid>`, `sacct`, `grep`, `wc -l`, or `ps`.
-- For external access from home, use the University of Augsburg gateway with
-  an explicit `ProxyCommand`. This form is currently preferred over `-J`
-  because Jörn observed the `ProxyJump` form still failing with "Too many
-  authentication failures" on 2026-06-11:
+## Current Facts
+
+Default SSH/SCP route: use the gateway `ProxyCommand` form below unless Jörn
+supplies a current working alias.
 
 ```bash
 ssh -t \
@@ -38,54 +47,30 @@ ssh -t \
   stoehljo@licca-li-01.rz.uni-augsburg.de
 ```
 
-- The no-pubkey options avoid "Too many authentication failures" when Jörn's
-  local SSH agent offers too many keys before password authentication. This
-  command asks for the password twice: once for `xlogin.uni-augsburg.de` and
-  once for `licca-li-01.rz.uni-augsburg.de`.
-- On first connection, the LICCA ED25519 host key fingerprint observed in the
-  Augsburg HPC docs and confirmed by Jörn on 2026-06-04 is:
+The no-pubkey options avoid "Too many authentication failures" when Jörn's
+local SSH agent offers too many keys before password authentication. This form
+asks for the password twice: first for `xlogin.uni-augsburg.de`, then for
+`licca-li-01.rz.uni-augsburg.de`.
+
+LICCA ED25519 host key fingerprint, observed in Augsburg HPC docs and confirmed
+by Jörn on 2026-06-04:
 
 ```text
 SHA256:ZKi0w4Cc24qHbrLQKXX/ifYQ92208g2yhCVPHvgxWz8
 ```
 
-- Once Jörn is on the LICCA login node, give ordinary LICCA-side commands such
-  as `sinfo`, `squeue`, `sbatch`, `git`, `cargo`, and retrieval commands.
-- Login nodes are for light editing, transfers, job submission, and monitoring;
-  serious computation must go through Slurm.
+Other current facts:
 
-## Practical LICCA workflow notes
+- Rust builds: use `CARGO_TARGET_DIR=/hpc/gpfs2/scratch/u/stoehljo/cargo-target`
+  unless Jörn says the storage layout changed.
+- Python: LICCA had system `python3` 3.12.3 on 2026-06-04 and no `uv`; use
+  `python3 script.py` for standard-library helper scripts.
+- Normal LICCA checkout: `"$HOME/msc-math"`.
+- Jörn's host checkout was observed at `~/workspaces/msc-math/`; inside the
+  devcontainer the checkout path is `/workspaces/msc-math/`. Match retrieval
+  destinations to where the `scp` command is actually running.
 
-- Prefer self-contained Slurm scripts named `*.slurm.sh` for reviewed jobs.
-  Put resource choices, seed ranges, output paths, resume rules, and exact
-  binary commands in the script. This is easier to audit than important
-  `sbatch` settings living only in chat or CLI flags.
-- Do not change known-working LICCA path, checkout, or environment assumptions
-  for portability or aesthetics during an active handoff. In particular,
-  hardcoded project paths such as `cd "$HOME/msc-math"` may be the safest
-  operational choice when Jörn is running from the normal LICCA checkout.
-- Use `/hpc/gpfs2/scratch/u/stoehljo/cargo-target` as the LICCA
-  `CARGO_TARGET_DIR` for Rust builds unless Jörn says the storage layout
-  changed.
-- LICCA currently has system `python3` available, observed as Python 3.12.3 on
-  2026-06-04. It did not have `uv` available then. For standard-library helper
-  scripts on LICCA, use `python3 script.py`, not `uv run --script`.
-- For repo code, script, and handoff changes, prefer local/devcontainer
-  `commit` + `push` followed by LICCA `git fetch`/`git checkout`/`git pull`.
-  LICCA can pull from GitHub for this project; do not replace that with
-  `scp`/tarball transfer unless pull fails or Jörn asks for file transfer.
-- If LICCA `git checkout`/`git pull` is blocked by dirty generated artifacts,
-  do not invent a new execution surface such as `scp`, tarball transfer, a new
-  clone, a worktree, or an exported tree unless Jörn asks or the blocker
-  changes. Stay on the normal checkout path and resolve only the exact paths
-  Git reports as blockers. For tracked blockers, restore those exact paths. For
-  untracked blockers, move those exact paths aside. Do not broad-clean
-  experiment/data directories as a checkout fix unless Jörn explicitly accepts
-  discarding or re-downloading the materialized data.
-- GitHub password authentication is not supported for Git operations. Do not
-  ask Jörn to push from LICCA. Retrieve generated artifacts with `scp` through
-  the gateway and commit them from the local/devcontainer environment.
-- Example retrieval from the local host, using the same gateway style:
+Example retrieval command when running `scp` inside the devcontainer:
 
 ```bash
 scp \
@@ -94,73 +79,112 @@ scp \
   -o PreferredAuthentications=password,keyboard-interactive \
   -o 'ProxyCommand=ssh -o IdentitiesOnly=yes -o PubkeyAuthentication=no -o PreferredAuthentications=password,keyboard-interactive -W %h:%p stoehljo@xlogin.uni-augsburg.de' \
   stoehljo@licca-li-01.rz.uni-augsburg.de:~/artifact.tgz \
-  ~/workspaces/msc-math/.worktrees/<worktree>/
+  /workspaces/msc-math/.worktrees/<worktree>/
 ```
 
-- Be careful with host paths versus devcontainer paths. Jörn's host checkout was
-  observed at `~/workspaces/msc-math/`; the devcontainer path is
-  `/workspaces/msc-math/`.
+## Slurm Handoffs
 
-## Slurm and data-output rules
+Prefer self-contained `*.slurm.sh` scripts for reviewed jobs. Put resource
+choices, seed ranges, output paths, resume rules, and exact binary commands in
+the script.
 
-- For nontrivial resource choices or changes, do not guess limits from vibes.
-  Before recommending `--time`, `--cpus-per-task`, memory, array shape, or
-  cancel/resubmit decisions, state:
-  - the objective: calendar time, core-hours, timeout risk, Jörn intervention
-    cost, and correctness/topology risk
-  - a runtime BOTEC from job units, parallelism, and per-unit budget or measured
-    timings
-  - the cost of timeout, including lost core-hours, delayed downstream work, and
-    expected Jörn follow-up loops
-  - the lowest-risk variable to change first; prefer wall time or CPU count
-    changes before changing shard/output topology
-  - scheduler evidence when available, using `sbatch --test-only`,
-    `squeue --start`, or `sacct` before asking Jörn to cancel/resubmit
-- When pricing Jörn time in a BOTEC, distinguish calendar delay from active
-  Jörn labor. Ask or state whether Jörn is actively waiting/babysitting; if he
-  is, wall time can dominate the estimate, and resource choices may flip.
-- Keep command blocks separated by purpose. Do not bundle cleanup, branch
-  checkout/pull, Slurm submission, monitoring, result checks, promotion, or
-  retrieval into one pasted block unless Jörn explicitly asks for a combined
-  script.
-- `sbatch --test-only` checks scheduling, not script-body correctness. `bash -n`
-  checks syntax, not Slurm execution semantics. If a Slurm edit changes
-  cwd/path resolution, environment assumptions, output topology, or resource
-  behavior, run or provide a tiny Slurm smoke path before production, or clearly
-  label the production submission as un-smoked and higher risk.
-- For CPU-parallel production jobs whose inner work uses Rayon or many
-  independent CPU-bound units, treat `64` CPUs as the normal first LICCA
-  production candidate, not `32`, unless the job is known small or scheduler
-  tests penalize 64 CPUs. Still compare with `sbatch --test-only` when changing
-  resources. This rule is based on the 2026-06-11 datascience table scheduler
-  checks where `32 CPU / 6h`, `64 CPU / 4h`, and `64 CPU / 6h` had essentially
-  identical start estimates.
-- Shard outputs should be separate files. Avoid concurrent writes to one JSONL
-  or cache file.
-- Rust ascent shard resume works only for the same output summary file. A rerun
-  of the same shard can skip completed rows from that file; a different output
-  directory or seed layout is not a global cache.
-- Do not delete partial shard files after Slurm timeout if resume is desired.
-  Rerun the same script with the same array index and constants.
-- If `squeue` shows `TIME` such as `0:16`, that is seconds/minutes formatting
-  from Slurm, not necessarily minutes. Confirm elapsed time with `sacct` when
-  reporting wall time.
-- For completed job timing and core-hours, ask Jörn to run `sacct` on LICCA,
-  for example:
+Path and output rules for Slurm scripts:
+
+- Do not derive run-local output directories from `BASH_SOURCE[0]` inside a
+  Slurm job unless you have checked that LICCA is executing the repo copy.
+  LICCA may execute a spool copy under `/var/spool/slurmd/...`, so
+  `BASH_SOURCE[0]` can point outside the checkout.
+- For scripts submitted from a specific repo directory, prefer anchoring
+  run-local outputs to `SLURM_SUBMIT_DIR` and fail clearly if it is not the
+  expected directory. For scripts with a fixed checkout convention, `cd
+  "$HOME/msc-math"` and repo-relative paths are also acceptable.
+- Print the resolved repo root, output directory, resource request, and git
+  commit at job start so path mistakes are visible in the bounded log tail.
+
+Before recommending `sbatch` for a nontrivial job:
+
+- classify the execution model: serial process, Rayon/CPU-parallel process,
+  Slurm array of serial tasks, Slurm array of CPU-parallel tasks, or mostly
+  I/O-bound merge/table/postprocessing;
+- inspect existing Slurm scripts before reusing them, especially
+  `--cpus-per-task`, `--time`, memory, array shape, output paths, resume
+  behavior, and side effects against the current job size;
+- avoid `#SBATCH --mem=0` unless the job truly needs full-node memory and that
+  cost is justified. On LICCA, `--mem=0` can request all node memory and make
+  small `test` partition smoke jobs pend with `QOSGrpMemLimit`. Use bounded
+  memory for smoke submissions, and prefer bounded production defaults unless
+  current evidence says otherwise;
+- give a short resource BOTEC: work units, parallelism, ETA/range, timeout or
+  failed-run cost, Jörn active waiting time if relevant, next bounded check,
+  and cancel/resubmit condition;
+- treat `64` CPUs as a first LICCA candidate for Rayon or otherwise
+  CPU-parallel production jobs, not as a rule. Use `1` CPU for serial tasks and
+  I/O-bound merge/postprocess jobs unless the job evidence says otherwise;
+- remember `sbatch --test-only` checks scheduling, not script-body correctness;
+  `bash -n` checks syntax, not Slurm execution semantics;
+- if a Slurm edit changes cwd/path resolution, environment assumptions, output
+  topology, or resource behavior, run/provide a tiny Slurm smoke path before
+  production, or label production as un-smoked and higher risk.
+- if the production path depends on cache hits, resume files, deduplication, or
+  a base-cache argument, smoke both the cold path and the hot/resume path before
+  treating the LICCA run as production-ready.
+
+For `sbatch --export`, remember that commas separate exported variables. Do not
+inline comma-containing values such as `--export=ALL,FOO=a,b`; Slurm can parse
+that as `FOO=a` plus another export item. Export the value in the shell first,
+then pass the variable name, for example:
+
+```bash
+export DATASCIENCE_PRODUCERS='random,random-product'
+sbatch --export=ALL,DATASCIENCE_PRODUCERS ...
+```
+
+For concurrent data-producing jobs, write per-task output files and merge after
+validation. Avoid concurrent writes to one JSONL or cache file. If resume
+matters, preserve partial outputs and check the producer's resume semantics
+before changing output paths, seeds, or array constants.
+
+After submission, carry the ETA forward. When reading `sacct`, logs, row
+counts, or silence, compare observed elapsed/progress with the estimate. If an
+already-running job used weaker resources than current guidance suggests,
+compare continuing versus cancel/resubmit including lost elapsed work, expected
+queue delay, core-hours, and active Jörn waiting time.
+
+## Ask Or Stop
+
+Ask Jörn before proceeding when the decision depends on:
+
+- whether Jörn is actively waiting/babysitting and that can change the resource
+  or cancel/resubmit decision;
+- deleting, moving, or re-downloading large generated data whose value is not
+  clear from local evidence;
+- changed LICCA environment, storage layout, checkout path, or authentication;
+- job topology that remains unclear after inspecting the relevant code and
+  Slurm script;
+- a resource or cleanup decision that can waste LICCA queue time, redownload
+  large data, or require active Jörn babysitting, with no bounded check to
+  reduce uncertainty first.
+
+Stop and escalate when task-specific stop conditions from the handoff or
+experiment docs fire, or when scheduler/runtime evidence makes the planned
+production run implausible.
+
+When a Slurm job fails in the first few seconds with tiny `MaxRSS`, treat it as
+script setup, path, environment, or scheduler configuration evidence before
+reasoning about the actual compute workload. Inspect the bounded log tail
+before resubmitting.
+
+## Monitoring Snippets
+
+Use bounded commands such as:
 
 ```bash
 sacct -j <jobid> --format=JobID,JobName%24,Partition,State,Elapsed,AllocCPUS,CPUTime,MaxRSS,ExitCode
-```
-
-- For logs, use bounded `tail`, `grep`, and row counts before interpreting
-  results:
-
-```bash
-grep -R "\*\*\* VITERBO VIOLATION" logs/*.out 2>/dev/null || true
 tail -n 80 logs/*.out
 wc -l path/to/shards/*.jsonl
+ps -o pid,etime,pcpu,pmem,rss,cmd -p <pid>
 ```
 
-- Login-node table builds or local postprocessing can be CPU-active for many
-  minutes with no new log lines. Check `ps -o pid,etime,pcpu,pmem,rss,cmd`
-  before calling a quiet process hung.
+If `squeue` shows `TIME` such as `0:16`, that is Slurm seconds/minutes
+formatting, not necessarily minutes. Confirm elapsed time with `sacct` before
+reporting wall time.
