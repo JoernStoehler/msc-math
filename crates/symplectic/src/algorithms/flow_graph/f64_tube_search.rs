@@ -1,9 +1,7 @@
-//! Flow-graph capacity algorithm work surface.
+//! f64 tube construction and search for the flow-graph algorithm.
 //!
-//! This module currently owns the f64 work surface for the combinatorial
-//! frontier, affine tube construction, closed-tube fixed point solving, and
-//! polytope-level counters. These f64 routines are development evidence; they are
-//! not exact certificates for `c_EHZ`.
+//! These routines are development evidence and production-path candidates; they
+//! are not exact certificates for `c_EHZ` without the exact fallback wrapper.
 
 use crate::algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega;
 use crate::algorithms::flow_graph::exact::{

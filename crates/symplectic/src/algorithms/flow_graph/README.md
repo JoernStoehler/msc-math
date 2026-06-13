@@ -217,16 +217,17 @@ Code map:
 
 - `mod.rs` owns the public module surface and re-exports;
 - `words.rs` owns combinatorial word enumeration and half-cache helpers;
-- `f64.rs` owns f64 input validation, tube geometry, f64 search, exact fallback
-  wrapper, and visualization snapshots;
-- `exact.rs` owns exact rational closed-word resolution and exact exhaustive
-  search.
+- `f64_tube_search.rs` owns f64 input validation, tube geometry, f64 search,
+  exact fallback wrapper, and visualization snapshots;
+- `exact_tube.rs` owns exact rational closed-word/tube resolution for one word;
+- `exact_search.rs` owns exact exhaustive word search, action cutoffs, retained
+  orbit aggregation, and exact capacity output.
 
 Current evidence:
 
 - f64 tests live in `tests.rs` and `tests_e2e_prediction.rs` as children of
-  `f64.rs`, so they can inspect f64 implementation details without making
-  those fields public.
+  `f64_tube_search.rs`, so they can inspect f64 implementation details without
+  making those fields public.
 - `experiments/dev-flow-graph/frontier` measures word-frontier and f64 tube counts.
 - `experiments/dev-flow-graph/endpoint-spike` is an exact endpoint-set spike, not a
   supported exact implementation.

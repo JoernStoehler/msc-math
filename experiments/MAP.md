@@ -108,11 +108,11 @@ experiments, thesis sections, or later cleanup decisions may care about.
 | `QP/capacity/exact` | Reserved label for a full exact/CAS-backed QP capacity search. | theorem/Sage-style routes when present, not the current ordinary crate path | Do not use this label for current f64-fast-path crate aggregation. |
 | `QP/recover-orbit` | Recover geometric Reeb trajectory data from QP/HK2017 KKT output. | `crates/symplectic/src/algorithms/hk2017/orbit_recovery.rs`, `crates/symplectic/src/geom/reeb_trajectory.rs` | Validated in `experiments/verification/orbit-recovery/`. |
 | `FG` | CH2021 flow-graph family. | `crates/symplectic/src/algorithms/flow_graph/`, `experiments/dev-flow-graph/` | First read `crates/symplectic/src/algorithms/flow_graph/README.md`. |
-| `FG/closed-word/f64` | f64 flow-graph closed-word/tube construction and fixed-point diagnostics. | `crates/symplectic/src/algorithms/flow_graph/f64.rs` | Keep algorithm-local while design/failure taxonomy is changing. |
-| `FG/closed-word/exact` | Exact flow-graph closed-word/tube resolution. | `crates/symplectic/src/algorithms/flow_graph/exact.rs` | Used by flow-graph exact and f64-resolution tests. |
-| `FG/capacity/f64` | f64 flow-graph capacity route. | `crates/symplectic/src/algorithms/flow_graph/f64.rs` | Development evidence, not an exact certificate by itself. |
-| `FG/capacity/fallback` | f64 flow-graph route with exact resolution of problematic closed words. | `capacity_f64` in `flow_graph/f64.rs` plus exact closed-word code | Current live flow-graph README defines the accepted meaning. |
-| `FG/capacity/exact` | Exact flow-graph capacity search. | `crates/symplectic/src/algorithms/flow_graph/exact.rs` | Compared to certified QP scalar capacity in flow-graph tests. |
+| `FG/closed-word/f64` | f64 flow-graph closed-word/tube construction and fixed-point diagnostics. | `crates/symplectic/src/algorithms/flow_graph/f64_tube_search.rs` | Keep algorithm-local while design/failure taxonomy is changing. |
+| `FG/closed-word/exact` | Exact flow-graph closed-word/tube resolution. | `crates/symplectic/src/algorithms/flow_graph/exact_tube.rs` | Used by flow-graph exact and f64-resolution tests. |
+| `FG/capacity/f64` | f64 flow-graph capacity route. | `crates/symplectic/src/algorithms/flow_graph/f64_tube_search.rs` | Development evidence, not an exact certificate by itself. |
+| `FG/capacity/fallback` | f64 flow-graph route with exact resolution of problematic closed words. | `capacity_f64` in `flow_graph/f64_tube_search.rs` plus exact closed-word code | Current live flow-graph README defines the accepted meaning. |
+| `FG/capacity/exact` | Exact flow-graph capacity search. | `crates/symplectic/src/algorithms/flow_graph/exact_search.rs` | Compared to certified QP scalar capacity in flow-graph tests. |
 | `vol/4d/f64` | 4D volume from known incidence using f64. | `crates/euclidean-polytopes/src/volume.rs` | Ordinary Euclidean geometry, not symplectic capacity. |
 | `vol/4d/exact` | 4D volume from known incidence exactly. | `crates/euclidean-polytopes/src/volume.rs` | Used when exact geometry/volume support matters. |
 | `vol/facet-3d/f64` | Facet 3-volume from known incidence using f64. | `crates/euclidean-polytopes/src/volume.rs`, `crates/symplectic/src/geom/facet_volume.rs` | Supports volume derivatives and geometry checks. |
