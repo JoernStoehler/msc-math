@@ -29,8 +29,8 @@ use symplectic::{
     OrbitGuaranteeMode, OrbitSearchError, OrbitSearchResult,
 };
 
-// Same seed and height range as
-// experiments/verification/algorithm-comparison/benchmark/main.rs for consistency.
+// Retained from the retired algorithm-comparison benchmark setup so historical
+// profiling comparisons remain reproducible from git history if needed.
 const SEED: u64 = 42;
 const H_MIN: f64 = 0.5;
 const H_MAX: f64 = 2.0;

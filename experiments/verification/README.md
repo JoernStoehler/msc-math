@@ -26,8 +26,6 @@ structured numerical error-audit runs over KKT variables and predicates. Use
 - `axioms-orbit-recovery` defaults to smoke mode. It consumes
   `all-minimum/smoke-all-minimum-orbits.jsonl` and writes the smoke recovery
   outputs. Use `--full` only after the full all-minimum outputs are current.
-- `experiments/verification/algorithm-comparison/README.md` documents the
-  algorithm-comparison package.
 - `experiments/verification/sage/README.md` documents Sage validation helpers.
 
 Tracked JSONL files in this package are evidence artifacts. Use `--help`,

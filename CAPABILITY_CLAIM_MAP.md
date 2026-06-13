@@ -205,7 +205,6 @@ claim.
     producers, and tracked-evidence refresh commands where known.
   - Files:
     - `experiments/verification/README.md`
-    - `experiments/verification/algorithm-comparison/README.md`
     - `experiments/sys-landscape/README.md`
     - `experiments/sys-datascience/produce/README.md`
     - `experiments/hko-local-maximum/theorem/exact-witness/README.md`

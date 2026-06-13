@@ -7,7 +7,7 @@ This note centralizes the experiment-only verification package boundary for the 
 
 ## Current State
 
-The verification package is organized into four roles:
+The verification package is organized into three roles:
 
 - `correctness/`: validates core capacity implementation properties and current evidence for
   conformality, symplectic invariance, monotonicity, continuity, literature agreement, and
@@ -16,7 +16,6 @@ The verification package is organized into four roles:
   cross-checks minimum-action values against `ehz_capacity`.
 - `orbit-recovery/`: validates those trusted rows with KKT rebuild and `recover_and_verify`, checking
   closure, facet adherence, inside-`K` compliance, and action error.
-- `algorithm-comparison/`: provides performance and variant-consistency evidence for implementation choices.
 
 Canonical evidence packets currently tracked in checked-in sources are:
 
@@ -47,7 +46,8 @@ Canonical all-minimum and orbit-recovery runs reported:
    - `all-minimum` owns minimum-set generation and writes trusted rows.
    - `orbit-recovery` owns geometric recovery validation.
    - `correctness` remains the package-level property gate.
-   - `algorithm-comparison` stays separate for performance and variant comparison.
+   - Algorithm-comparison reasoning lives outside this package, currently in
+     `experiments/algorithm-comparison/README.md`.
 2. Treat local-first diversity as a coverage/reproducibility choice, not an exhaustive proof surface.
 3. Preserve trust boundaries across minima:
    - `all-minimum` computes minima from shared-cache sources and validates by action.

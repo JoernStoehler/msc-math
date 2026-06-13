@@ -378,46 +378,10 @@ dependencies = [
 ]
 
 [[package]]
-name = "dev-algorithm-comparison"
-version = "0.1.0"
-dependencies = [
- "dev-capacity-validation",
- "euclidean-polytopes",
- "good_lp",
- "nalgebra",
- "num-bigint",
- "num-rational",
- "num-traits",
- "rand 0.8.5",
- "rand_chacha 0.3.1",
- "rand_distr",
- "serde",
- "serde_json",
- "symplectic",
-]
-
-[[package]]
 name = "dev-capacity-validation"
 version = "0.1.0"
 dependencies = [
  "euclidean-polytopes",
- "good_lp",
- "nalgebra",
- "num-bigint",
- "num-rational",
- "num-traits",
- "rand 0.8.5",
- "rand_chacha 0.3.1",
- "rand_distr",
- "serde",
- "serde_json",
- "symplectic",
-]
-
-[[package]]
-name = "dev-gradient-ascent"
-version = "0.1.0"
-dependencies = [
  "good_lp",
  "nalgebra",
  "num-bigint",
