@@ -10,7 +10,7 @@
 
 set -euo pipefail
 
-ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
+ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 cd "$ROOT"
 
 OUT_ROOT="${OUT_ROOT:-/tmp/sys-landscape-datascience-local}"

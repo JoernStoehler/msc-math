@@ -10,7 +10,7 @@
 
 set -euo pipefail
 
-ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
+ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 DEFAULT_TABLES_REL="experiments/sys-datascience/tables"
 TABLES_ARG="${1:-$DEFAULT_TABLES_REL}"
 if [[ "$TABLES_ARG" = /* ]]; then

@@ -8,7 +8,7 @@
 
 set -euo pipefail
 
-ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
+ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 WORKDIR="$(mktemp -d)"
 PRODUCE_DIR="$WORKDIR/produce"
 TABLES_DIR="$WORKDIR/tables"
