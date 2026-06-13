@@ -18,7 +18,7 @@ Map maintenance:
 ## Status
 
 - State: split from the old root `ARCHITECTURE.md`.
-- Last updated: 2026-06-12.
+- Last updated: 2026-06-13.
 - Source surfaces: `experiments/**/Cargo.toml`, `experiments/**/src/lib.rs`,
   local `README.md` files, experiment entrypoints, `research/*.md`, and the
   task progress files.
@@ -82,21 +82,91 @@ Current boundary facts:
 | `experiments/sys-datascience/` | hostile `sys` search data-science pipeline, retained tables, and method-table packets |
 | topic folders | thesis-slice or topic-local producers and evidence when the local README says the topic owns them |
 
+## Algorithm Units
+
+An algorithm unit is a reusable or cross-experiment method or capability
+developed in this project. Path-style labels below are semantic labels, not
+required filesystem paths. Code may match through folders, filenames, module
+paths, or snake_case symbols that are recognizably equivalent.
+
+This inventory excludes one-off method-local code owned entirely by
+`experiments/sys-datascience/methods/<packet>/README.md`. Use the method packet
+README for those local algorithms. Use this table for units that multiple
+experiments, thesis sections, or later cleanup decisions may care about.
+
+| Label | Meaning | Current home | Evidence / next read |
+| --- | --- | --- | --- |
+| `QP` | HK2017 quadratic-program family: sigma enumeration, one-sigma KKT/QP solve, and orbit aggregation. | `crates/symplectic/src/algorithms/hk2017/`, `crates/symplectic/src/kkt/`, `crates/symplectic/src/algorithms/orbit_search.rs` | Main comparison target for correctness, numerics, performance, and flow-graph checks. |
+| `QP/enumerate/unpruned` | General HK2017 sigma enumeration without transition pruning. | `crates/symplectic/src/algorithms/hk2017/enumeration.rs`, `crates/symplectic/src/algorithms/hk2017/permutations.rs`, `crates/symplectic/src/algorithms/hk2017/combinatorics.rs` | Checked against pruned enumeration in crate tests and correctness surfaces. |
+| `QP/enumerate/pruned` | HK2017 sigma enumeration pruned by facet-intersection and `omega_0` transition data. | `crates/symplectic/src/algorithms/hk2017/enumeration.rs`, `crates/symplectic/src/algorithms/facet_adjacency.rs` | Current ordinary general-polytope enumeration path. |
+| `QP/enumerate/billiard` | Lagrangian-product/billiard sigma enumeration simplification; feeds the same KKT/QP solve and aggregation layer. | `crates/symplectic/src/algorithms/billiard/` | Read with product/HKO/regular-product work; not a separate downstream solver stack. |
+| `QP/solve/kkt/f64` | One-sigma f64 KKT/QP solve. | `crates/symplectic/src/kkt/saddle_point_solver.rs`, `crates/symplectic/src/kkt/projection_solver.rs`, `crates/symplectic/src/kkt/qp_assembly.rs` | Numerical behavior belongs in `experiments/numerics/` when it is reusable. |
+| `QP/solve/kkt/exact` | One-sigma exact KKT/QP solve. | `crates/symplectic/src/kkt/rational_solver.rs`, `crates/symplectic/src/exact/orbit.rs` | Exact one-sigma solve only; not a full exact capacity search by itself. |
+| `QP/capacity/f64` | Capacity route using f64 candidate solve/filtering only. | assembled from QP enumeration plus `QP/solve/kkt/f64` | Use only when f64-only ambiguity policy is intended by the caller or experiment. |
+| `QP/capacity/fallback` | Capacity route using f64 solve/filtering with exact fallback for candidates needed by the selected guarantee mode. | `crates/symplectic/src/algorithms/orbit_search.rs` | Current ordinary crate capacity style via `OrbitGuaranteeMode`. |
+| `QP/capacity/certified` | f64 candidate fast path with exact-certified returned capacity, minimizers, and optional gap-window orbit set. | `aggregate_certified_orbits_with_dual_vertices_exact` | Candidate generation is still the f64 fast path; returned orbit-set values are exact. |
+| `QP/capacity/exact` | Reserved label for a full exact/CAS-backed QP capacity search. | theorem/Sage-style routes when present, not the current ordinary crate path | Do not use this label for current f64-fast-path crate aggregation. |
+| `QP/recover-orbit` | Recover geometric Reeb trajectory data from QP/HK2017 KKT output. | `crates/symplectic/src/algorithms/hk2017/orbit_recovery.rs`, `crates/symplectic/src/geom/reeb_trajectory.rs` | Validated in `experiments/verification/orbit-recovery/`. |
+| `FG` | CH2021 flow-graph family. | `crates/symplectic/src/algorithms/flow_graph/`, `experiments/dev-flow-graph/` | First read `crates/symplectic/src/algorithms/flow_graph/README.md`. |
+| `FG/closed-word/f64` | f64 flow-graph closed-word/tube construction and fixed-point diagnostics. | `crates/symplectic/src/algorithms/flow_graph/mod.rs` | Keep algorithm-local while design/failure taxonomy is changing. |
+| `FG/closed-word/exact` | Exact flow-graph closed-word/tube resolution. | `crates/symplectic/src/algorithms/flow_graph/exact.rs` | Used by flow-graph exact and f64-resolution tests. |
+| `FG/capacity/f64` | f64 flow-graph capacity route. | `crates/symplectic/src/algorithms/flow_graph/mod.rs` | Development evidence, not an exact certificate by itself. |
+| `FG/capacity/fallback` | f64 flow-graph route with exact resolution of problematic closed words. | `capacity_f64` in `flow_graph/mod.rs` plus exact closed-word code | Current live flow-graph README defines the accepted meaning. |
+| `FG/capacity/exact` | Exact flow-graph capacity search. | `crates/symplectic/src/algorithms/flow_graph/exact.rs` | Compared to certified QP scalar capacity in flow-graph tests. |
+| `vol/4d/f64` | 4D volume from known incidence using f64. | `crates/euclidean-polytopes/src/volume.rs` | Ordinary Euclidean geometry, not symplectic capacity. |
+| `vol/4d/exact` | 4D volume from known incidence exactly. | `crates/euclidean-polytopes/src/volume.rs` | Used when exact geometry/volume support matters. |
+| `vol/facet-3d/f64` | Facet 3-volume from known incidence using f64. | `crates/euclidean-polytopes/src/volume.rs`, `crates/symplectic/src/geom/facet_volume.rs` | Supports volume derivatives and geometry checks. |
+| `geom/random-dual-vertices` | Candidate random dual-vertex generation and accepted-fixture policy. | `crates/euclidean-polytopes/src/random.rs`, `crates/symplectic/src/random.rs`, experiment producers | Euclidean sampler proposes candidates; acceptance and row policy live with callers. |
+| `geom/polar-and-incidence` | Exact polar vertices, vertex-facet incidence, faces, and facet-intersection data. | `crates/euclidean-polytopes/`, `crates/symplectic/src/geom/vertex_enumeration/` | Geometry source for QP pruning, volume, and validation surfaces. |
+| `data/polytope-records` | Reusable JSONL polytope/capacity/orbit record helpers. | `crates/symplectic/src/database.rs`, `crates/symplectic/src/dataset.rs` | Callers choose cache paths; no repo-wide canonical catalog is implied here. |
+| `data/sys-datascience-tables` | Maintained hostile-search producer caches and retained flat tables. | `experiments/sys-datascience/produce/`, `experiments/sys-datascience/tables/` | Method-local algorithms consume these via `experiments/sys-datascience/methods/`. |
+| `HKO/symmetry-quotient-certificate` | HKO theorem-local symmetry, quotient, and feasible-section certificate machinery. | `experiments/hko-local-maximum/theorem/`, `research/hko-local-maximum*.md`, `formal/hko-feasible-section-upper-branches.tex` | HKO-specific; not a generic symmetry-action library unless later promoted. |
+
+## Lenses And Homes
+
+A lens is the question being asked of an algorithm unit. A home is the package
+where related code, data, notes, and evidence should move together. Folder names
+such as `experiments/dev-<algo>/`, `experiments/<topic>/`, and
+`experiments/sys-datascience/` are homes, not lenses.
+
+| Lens | Question | Usual home |
+| --- | --- | --- |
+| `library` | What is the clean reusable implementation/API for non-instrumented callers? | `crates/**`, with crate tests for cheap durable checks |
+| `numerics` | How do f64 decisions, tolerances, ambiguity handling, and exact/reference behavior compare? | `experiments/numerics/`, unless the numerical question is still coupled to active algorithm design |
+| `performance` | What are the runtime, memory, counters, pruning wins, and scaling behavior? | `experiments/performance/` |
+| `correctness` | Do outputs or intermediate invariants satisfy the intended mathematical or software contract? | `experiments/verification/` for reusable experiment-level evidence, or crate tests when cheap and durable |
+| `data` | Which reusable records, caches, schemas, and retained tables are produced or consumed? | `crates/**` record helpers, `experiments/sys-datascience/produce/`, and `experiments/sys-datascience/tables/` |
+| `thesis-support` | Which evidence or machinery supports one theorem, figure, side result, or thesis slice? | the owning topic folder, e.g. `experiments/hko-local-maximum/` or `experiments/regular-products/` |
+| `formal` | Which proof-facing statements, exact derivations, or theorem-local certificates need formal tracking? | `formal/`, with links back from the owning experiment or research note |
+
+Routing rule: route by the question that should own future changes. Reusable
+algorithm behavior belongs in the cross-cutting homes above. If an algorithm
+family is still moving and its design notes, diagnostics, numerics, correctness
+checks, and performance probes are tightly coupled, keep them together in
+`experiments/dev-<algo>/` until a cleaner split is worth the churn. If the
+question is a theorem, thesis topic, or retained hostile-search dataset question,
+keep it with the topic or data pipeline even when it uses reusable algorithms.
+For example, finite-difference checks of a derivative formula can be
+`correctness`, but "does gradient ascent increase `sys` on this search class?"
+belongs with `experiments/dev-gradient-ascent/` or `experiments/sys-datascience/`
+depending on whether the owner is method development or retained-dataset
+analysis.
+
 ## Topic Packages
 
 | Area | Current role | Related task/research surfaces |
 | --- | --- | --- |
 | `experiments/hko-local-maximum/` | HKO local-maximality experiments: theorem certificate tooling under `theorem/`, empirical support checks under `empirical/`, and shared topic helpers under `src/` | `tasks/current-state.md`, `tasks/planning-notes.md`, `research/hko-local-maximum*.md`, `experiments/hko-local-maximum/README.md` |
+| `experiments/algorithm-comparison/` | README-only routing and reasoning note for cross-algorithm comparisons; no active commands or evidence artifacts | `experiments/algorithm-comparison/README.md`, `experiments/dev-quadratic-program/README.md`, `experiments/performance/README.md`, `experiments/numerics/README.md`, `experiments/verification/README.md` |
+| `experiments/dev-quadratic-program/` | README-only coordination packet for QP/HK2017 library-surface and cleanup questions before code or evidence has a better home | `experiments/dev-quadratic-program/README.md`, `experiments/MAP.md` section `Algorithm Units`, `crates/symplectic/src/algorithms/hk2017/`, `crates/symplectic/src/algorithms/orbit_search.rs` |
 | `experiments/dev-gradient-ascent/` | active top-level development packet for a heuristic gradient-ascent method for nonsmooth high-dimensional `sys(a)`; owns question ledger, schema-smoke artifacts, and future method-development probes before promotion | `experiments/dev-gradient-ascent/README.md`, `experiments/sys-datascience/README.md`, `research/sys-first-order-local-behavior.md` |
 | `experiments/dev-flow-graph/` | active flow-graph algorithm-development packet: frontier counts, endpoint/closed-word representation spikes, case-finding, mismatch visualization, and unresolved-word diagnostics before promotion into numerics, performance, or verification | `experiments/dev-flow-graph/README.md`, `crates/symplectic/src/algorithms/flow_graph/README.md`, `tasks/current-state.md`, `tasks/planning-notes.md` |
 | `experiments/sys-landscape/` | hostile sys-search landscape legacy and producer surfaces: random/product searches, gradient ascent, variable-`F` continuation, and rejection calibration | `tasks/current-state.md`, `tasks/planning-notes.md`, `research/sys-landscape*.md`, `experiments/sys-datascience/README.md` |
 | `experiments/sys-datascience/` | maintained hostile `sys` search data-science pipeline: producer caches, retained tables, and method packets for the thesis method table | `experiments/sys-datascience/README.md`, `experiments/sys-datascience/produce/README.md`, `experiments/sys-datascience/tables/README.md`, `experiments/sys-datascience/methods/README.md` |
 | `experiments/regular-products/` | regular polygon product side result: broad rotated-product sweeps, pentagon empirical figures/viewer, and exact pentagon formula proof packet | `experiments/regular-products/README.md`, `thesis/rotated-regular-polygons-content.md` |
 | `experiments/local-sys-methods/` | narrow smoke packet for local `sys(a0 + t d)` prediction diagnostics against HK2017 recomputation; method-development code, not thesis evidence | `experiments/local-sys-methods/README.md` |
-| `experiments/sys-landscape/gradient-ascent-dev/` | method-development helper package for step calibration and strategy comparison | `experiments/sys-landscape/gradient-ascent-dev/src/lib.rs` |
 | `experiments/numerics/` | single-threaded numerical error audit: structured JSONL observations, f64-vs-oracle summaries, and generated reports for KKT variables and predicates | `experiments/numerics/README.md`, `tasks/current-state.md`, `tasks/planning-notes.md` |
 | `experiments/verification/` | experiment-level correctness and regression evidence, minimum-set validation, orbit recovery, and reusable Sage validation experiments | `tasks/current-state.md`, `tasks/planning-notes.md`, `research/verification*.md`, `experiments/verification/README.md`, `experiments/verification/sage/README.md` |
-| `experiments/verification/algorithm-comparison/` | historical algorithm comparison, ablation, and benchmark artifacts for capacity-algorithm implementation choices | `research/verification.md`, `experiments/verification/algorithm-comparison/README.md` |
 | `experiments/performance/` | shared runtime and memory profiling targets, reusable measurement practice, and post-processing scripts; generated outputs normally go under `/tmp` | `experiments/performance/README.md` |
 | `experiments/combinatorial-cells/` | combinatorial-cell exploration: boundary characterization, cell widths, convexity, multiple crossings, omega hypothesis, and gradient-discontinuity analysis | `research/combinatorial-cells.md` |
 | `experiments/crosspolytope/` | one-off crosspolytope computation and checkpointing | `research/crosspolytope.md` |
@@ -107,28 +177,25 @@ Current boundary facts:
 Topic helper crates already exist at:
 
 - `experiments/combinatorial-cells/src/lib.rs`
-- `experiments/dev-gradient-ascent/src/lib.rs`
 - `experiments/hko-local-maximum/src/lib.rs`
+- `experiments/dev-gradient-ascent/src/lib.rs`
 - `experiments/regular-products/src/lib.rs`
 - `experiments/numerics/src/lib.rs`
 - `experiments/verification/src/lib.rs`
 - `experiments/sys-landscape/src/lib.rs`
-- `experiments/sys-landscape/gradient-ascent-dev/src/lib.rs`
 
 Current observed pattern:
 
-- `experiments/dev-gradient-ascent/`, `experiments/numerics/`,
-  `experiments/numerics/gradient/`, and
-  `experiments/sys-landscape/gradient-ascent-dev/` are Rust-heavy or
-  feature-incubator packages where `src/` is an appropriate package surface.
+- `experiments/dev-gradient-ascent/`, `experiments/numerics/`, and
+  `experiments/numerics/gradient/` are Rust-heavy or feature-incubator packages
+  where `src/` is an appropriate package surface.
 - `experiments/combinatorial-cells/`, `experiments/hko-local-maximum/`,
   `experiments/sys-landscape/`, and `experiments/verification/` expose
   package-level helpers today; keep `src/lib.rs` as an index and put real code
   in named modules.
 - Script/workflow packages such as `experiments/crosspolytope/`,
-  `experiments/visualization/`, and
-  `experiments/verification/algorithm-comparison/` should keep helper modules
-  beside the workflow that owns them.
+  `experiments/visualization/` should keep helper modules beside the workflow
+  that owns them.
 - Some shared logic is still copied across binaries instead of extracted.
 - Extraction is future/follow-up unless it unblocks retained thesis evidence,
   verification, or writing.
