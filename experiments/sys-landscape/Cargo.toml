@@ -31,14 +31,6 @@ name = "sys-variable-f-ascent"
 path = "variable-f-ascent/main.rs"
 
 [[bin]]
-name = "sys-step-calibration"
-path = "gradient-ascent-dev/step-calibration/main.rs"
-
-[[bin]]
-name = "sys-strategy-comparison"
-path = "gradient-ascent-dev/strategy-comparison/main.rs"
-
-[[bin]]
 name = "sys-dataset-random"
 path = "../sys-datascience/produce/random.rs"
 

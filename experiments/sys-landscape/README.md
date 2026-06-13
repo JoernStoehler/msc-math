@@ -19,8 +19,6 @@ data-science pipeline lives at `experiments/sys-datascience/`.
 - `sys-rejection-calibration` is a full-output producer without a smoke mode; do
   not run it as a quick command check unless intentionally refreshing tracked
   artifacts.
-- `sys-step-calibration` and `sys-strategy-comparison` are development stubs and
-  write no artifacts.
 - `sys-dataset-*` producer commands are documented in
   `experiments/sys-datascience/produce/README.md`; their default behavior is
   temp smoke output unless explicit output/cache paths are supplied.

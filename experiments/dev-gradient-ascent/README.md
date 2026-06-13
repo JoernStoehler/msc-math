@@ -695,9 +695,8 @@ would change later basepoints.
 - Put correctness/regression checks in `experiments/verification/`.
 - Put derivative and numerical-error work in `experiments/numerics/`.
 
-## Existing Nested Stub
+## Retired Nested Stub
 
-`experiments/sys-landscape/gradient-ascent-dev/` is an older nested stub
-surface. It is not the active development packet. It may remain temporarily for
-compatibility with existing `exp-sys-landscape` command names, but new method
-development should start here.
+The old `experiments/sys-landscape/gradient-ascent-dev/` placeholder surface
+and its stub binaries were removed. New gradient-ascent and branch-behavior
+method development starts in this package.
