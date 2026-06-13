@@ -213,13 +213,20 @@ Out of scope for this exact e2e suite:
 
 ## Evidence Ledger
 
+Code map:
+
+- `mod.rs` owns the public module surface and re-exports;
+- `words.rs` owns combinatorial word enumeration and half-cache helpers;
+- `f64.rs` owns f64 input validation, tube geometry, f64 search, exact fallback
+  wrapper, and visualization snapshots;
+- `exact.rs` owns exact rational closed-word resolution and exact exhaustive
+  search.
+
 Current evidence:
 
-- `mod.rs` contains the f64 flow-graph route, shared combinatorial word
-  enumeration, exact fallback wrapper, and visualization snapshots.
-- `exact.rs` contains exact rational closed-word/tube resolution and exact
-  exhaustive search.
-- f64 tests live in `tests.rs` and `tests_e2e_prediction.rs`.
+- f64 tests live in `tests.rs` and `tests_e2e_prediction.rs` as children of
+  `f64.rs`, so they can inspect f64 implementation details without making
+  those fields public.
 - `experiments/dev-flow-graph/frontier` measures word-frontier and f64 tube counts.
 - `experiments/dev-flow-graph/endpoint-spike` is an exact endpoint-set spike, not a
   supported exact implementation.
@@ -276,7 +283,7 @@ Current analysis inventory:
 | --- | --- | --- | --- |
 | Exact closed-word/tube arithmetic | polygon intersection tests, selected positive/zero/empty-tube word cases, exact action/fixed-point behavior | `exact.rs` tests | crate regression tests; only promote artifact-backed slower suites to `experiments/verification/` |
 | Exact exhaustive search | exact rejection tests, P1/P2 accepted-polytopes checks, action-cutoff comparison against disabled policy | `exact.rs` tests | crate tests while cheap; `experiments/verification/` for slower fixed suites |
-| f64 tube search and exact resolution | primitive/intersection/fixed-point unit checks, generated f64-error cases exact-resolved against QP scalar capacity | `tests.rs`, `tests_e2e_prediction.rs`, `mod.rs` | `experiments/numerics/` only when the question becomes reusable f64/exact methodology |
+| f64 tube search and exact resolution | primitive/intersection/fixed-point unit checks, generated f64-error cases exact-resolved against QP scalar capacity | `tests.rs`, `tests_e2e_prediction.rs`, `f64.rs` | `experiments/numerics/` only when the question becomes reusable f64/exact methodology |
 | Word frontier and f64 tube counts | transition-pruned frontier sizes, f64 tube live/empty/unsupported counts, polygon-operation counters | `experiments/dev-flow-graph/frontier` | `experiments/performance/` once the measured algorithm path is stable |
 | Endpoint and closed-word spikes | exploratory exact endpoint-set and selected closed-word representation experiments | `experiments/dev-flow-graph/endpoint-spike`, `experiments/dev-flow-graph/closed-word-spike` | retire to git history or keep dev-local notes once the crate exact path supersedes them |
 | Case discovery | bucketed search for high-value FG examples and expected labels | `experiments/dev-flow-graph/discover-e2e` | crate tests for cheap reviewed rows; `experiments/verification/` for slower artifact-backed suites |
