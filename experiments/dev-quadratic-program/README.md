@@ -1,8 +1,9 @@
 # Dev Quadratic Program
 
-Status: lightweight coordination packet for active QP/HK2017 design and
-cleanup questions. This directory currently owns no Rust package, generated
-artifacts, or thesis evidence.
+Status: lightweight coordination packet for unresolved QP/HK2017 route,
+library-surface, and cleanup questions. This directory currently owns no Rust
+package, generated artifacts, or thesis evidence. It does not imply that there
+is ongoing development of the QP method itself.
 
 The durable implementation surface is still `crates/symplectic/`. The reusable
 evidence homes remain:
@@ -16,9 +17,10 @@ evidence homes remain:
   error-path checks;
 - topic folders for theorem-local or thesis-slice use.
 
-Use this packet when the question is about the QP algorithm family itself or
-the reusable library surface, not when the question already has a clear evidence
-home.
+Use this packet when a QP question is still about route naming, reusable API
+shape, or cleanup ownership, not when the question already has a clear evidence
+home. If a future branch develops a f64-only route without exact arithmetic,
+this README can point to that branch or record the decision after it lands.
 
 Use `experiments/algorithm-comparison/README.md` for cross-algorithm comparison
 reasoning that points to performance, numerics, correctness, topic, or thesis
@@ -44,7 +46,7 @@ It is not the ordinary crate path. Current exact crate support includes
 one-sigma exact KKT solving and f64-candidate fast paths with exact fallback or
 certified exact aggregation.
 
-## Good Questions For This Packet
+## Questions For This Packet
 
 - Which QP capacity route or routes should be exposed as the ordinary reusable
   library API?
@@ -54,9 +56,8 @@ certified exact aggregation.
   postprocessing, one-sigma exact solve, and reserved full-exact/CAS routes?
 - What result semantics should the library promise for minimizers, gap-window
   orbit sets, rejected ambiguities, and exact fallback counts?
-- Which QP development questions should stay coupled until the answer is known,
-  and which should move immediately to numerics, performance, or correctness
-  homes?
+- Which QP cleanup questions should stay coupled until the answer is known, and
+  which should move immediately to numerics, performance, or correctness homes?
 
 ## Not Owned Here
 
@@ -73,7 +74,7 @@ certified exact aggregation.
 
 ## Promotion Rule
 
-Keep this directory README-only until there is real coupled QP development work
-that does not yet have a better home. If code is added here, record why the
-work should move together here rather than in `crates/`, `numerics/`,
-`performance/`, `verification/`, or a topic folder.
+Keep this directory README-only unless future coupled QP development work does
+not yet have a better home. If code is added here, record why the work should
+move together here rather than in `crates/`, `numerics/`, `performance/`,
+`verification/`, or a topic folder.
