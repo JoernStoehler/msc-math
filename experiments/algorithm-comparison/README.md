@@ -24,17 +24,21 @@ companion instead of making thesis prose depend on this note.
 | Which QP route should be the ordinary library API? | `experiments/dev-quadratic-program/` while the decision is unsettled, then `crates/symplectic/` docs/API |
 | Which theorem or thesis slice needs a particular route? | the owning topic folder or thesis companion |
 
-## Current Comparison Claims
+## Comparison Ledger
 
-Treat this table as a pointer list, not as source truth. Refresh each claim from
-the named evidence home before using it in thesis prose or API decisions.
+Treat this table as a pointer list, not as source truth. Do not record benchmark
+numbers here. Before using a row in thesis prose or API decisions, rerun or read
+the current evidence in the named home and check whether the reasoning still
+applies.
 
-| Claim | Current pointer |
-| --- | --- |
-| Pruned HK2017 enumeration is the ordinary general-polytope path; unpruned enumeration is retained as a comparison/reference path. | `experiments/MAP.md` labels `QP/enumerate/pruned` and `QP/enumerate/unpruned`; current performance targets are in `experiments/performance/`. |
-| Billiard/Lagrangian-product enumeration is a specialized sigma enumeration feeding the shared QP/KKT solve and aggregation layer. | `experiments/MAP.md` label `QP/enumerate/billiard`; product/topic use lives in `experiments/regular-products/` and HKO-specific use in `experiments/hko-local-maximum/`. |
-| Exact/certified QP results are the comparison target for exact flow-graph capacity tests. | `crates/symplectic/src/algorithms/flow_graph/README.md` and flow-graph tests. |
-| Historical A-axis pruning ablation output existed, but it is no longer an active evidence producer. | Git history for the retired `experiments/verification/algorithm-comparison/` folder; formal note `formal/search-pruning-correctness.tex` records the mathematical pruning discussion. |
+| Comparison | Current reasoning breadcrumb | Fresh evidence pointer | Re-check before use |
+| --- | --- | --- | --- |
+| `QP/enumerate/pruned` vs `QP/enumerate/unpruned` | Pruned enumeration is the ordinary general-polytope path; unpruned enumeration remains useful as a reference and ablation path. | `experiments/performance/` for speed/scaling; `experiments/verification/` or crate tests for agreement/regression; labels in `experiments/MAP.md`. | Check the current performance target or add one that runs both routes on the same input selector. For correctness language, check agreement/minimum-set evidence separately from speed. |
+| `QP/enumerate/billiard` vs general QP enumeration | Billiard/Lagrangian-product enumeration is a specialized sigma source feeding the shared QP/KKT solve and aggregation layer, not a replacement for the general-polytope route. | `experiments/regular-products/` for product use; `experiments/hko-local-maximum/` for HKO-local use; label `QP/enumerate/billiard` in `experiments/MAP.md`. | Check whether the comparison question is about product structure, theorem-local HKO use, or general capacity routing; route evidence accordingly. |
+| `QP/capacity/certified` vs `FG/capacity/exact` | Certified/exact QP values are useful comparison targets for exact flow-graph capacity tests, but the algorithms have different route structure. | `crates/symplectic/src/algorithms/flow_graph/README.md`, flow-graph tests, and current `experiments/numerics/` or `experiments/verification/` targets. | Check whether the claim is numerical agreement, a reusable correctness property, or API-route reasoning; those belong in different lens homes. |
+| f64 route vs fallback/certified route for QP capacity | The ordinary fast route may use f64 candidate generation/filtering; exact fallback or certified aggregation changes ambiguity handling and output trust, not necessarily every internal step. | `experiments/dev-quadratic-program/README.md` for route/API design; `experiments/numerics/` for f64-vs-exact behavior; `experiments/verification/` for reusable correctness checks. | Name the path precisely (`QP/capacity/f64`, `QP/capacity/fallback`, `QP/capacity/certified`, or reserved `QP/capacity/exact`) before comparing. |
+| QP/HK2017 vs FG/CH2021 capacity routes | This is a family-level route/API comparison, not one benchmark. QP and FG evidence may differ by supported inputs, exactness route, performance profile, and theorem relevance. | `experiments/MAP.md` algorithm-unit inventory; `experiments/dev-quadratic-program/`; `experiments/dev-flow-graph/`; lens homes for numerics/performance/verification. | First decide which property is being compared: speed, exactness, supported input class, regression stability, or thesis-section relevance. Then use the matching evidence home. |
+| Historical A-axis pruning ablation | Historical output existed, but it is no longer an active evidence producer. | Git history for the retired `experiments/verification/algorithm-comparison/` folder; `formal/search-pruning-correctness.tex` for the mathematical pruning discussion. | Use only as context for reconstructing a question. Fresh evidence should be produced in `experiments/performance/`, `experiments/numerics/`, or `experiments/verification/`. |
 
 ## Adding A New Comparison
 
