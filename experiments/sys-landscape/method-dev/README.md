@@ -9,9 +9,9 @@ Current examples:
 - `variable-f-ascent/`
 - `random-sample/`
 - `random-product-sample/`
-- `datascience/produce/`
-- `datascience/tables/`
-- `datascience/methods/`
+- `../sys-datascience/produce/`
+- `../sys-datascience/tables/`
+- `../sys-datascience/methods/`
 
 These folders are not moved here. The point of this directory is to name the
 method-development role while the repo still carries overlapping legacy and

@@ -99,14 +99,16 @@ Rust/experiment smoke:
 
 - `dev-capacity-validation` correctness tests pass but are not cheap;
   monotonicity dominated runtime in the smoke pass.
-- `experiments/sys-landscape/datascience/smoke-pipeline.sh` is temp-output safe
+- `experiments/sys-datascience/smoke-pipeline.sh` is temp-output safe
   but not cheap. It was stopped after about two minutes while
   `sys-dataset-continuation --smoke` was still running. This caveat is now
   documented in the local README files, script header, and
   `CAPABILITY_CLAIM_MAP.md`.
-- `experiments/sys-landscape/datascience/README.md` does not exist. The
-  maintained entry points are `produce/README.md`, `tables/README.md`,
-  `methods/README.md`, and `smoke-pipeline.sh`.
+- At the time of this reference, the old nested datascience path had no root
+  README. The current lifted entry point is
+  `experiments/sys-datascience/README.md`, with detailed entry points in
+  `produce/README.md`, `tables/README.md`, `methods/README.md`, and
+  `smoke-pipeline.sh`.
 - The old `cargo check -p sys-landscape` command was stale and failed; use
   `cargo check -p exp-sys-landscape`.
 

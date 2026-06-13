@@ -207,7 +207,7 @@ claim.
     - `experiments/verification/README.md`
     - `experiments/verification/algorithm-comparison/README.md`
     - `experiments/sys-landscape/README.md`
-    - `experiments/sys-landscape/datascience/produce/README.md`
+    - `experiments/sys-datascience/produce/README.md`
     - `experiments/hko-local-maximum/theorem/exact-witness/README.md`
     - `experiments/hko-local-maximum/README.md`
     - `experiments/numerics/README.md`
@@ -232,15 +232,14 @@ claim.
   - Scope: data tables, method reports, and idea/method ledgers that support
     bounded negative/search-usefulness claims.
   - Files:
-    - `experiments/sys-landscape/datascience/README.md`
-    - `experiments/sys-landscape/datascience/tables/README.md`
-    - `experiments/sys-landscape/datascience/tables/main.rs`
-    - `experiments/sys-landscape/datascience/methods/README.md`
-    - `experiments/sys-landscape/datascience/produce/README.md`
-    - `experiments/sys-landscape/datascience/smoke-pipeline.sh`
-    - `experiments/sys-landscape/datascience/methods/taxonomies/README.md`
+    - `experiments/sys-datascience/README.md`
+    - `experiments/sys-datascience/tables/README.md`
+    - `experiments/sys-datascience/tables/main.rs`
+    - `experiments/sys-datascience/methods/README.md`
+    - `experiments/sys-datascience/produce/README.md`
+    - `experiments/sys-datascience/smoke-pipeline.sh`
   - The datascience tables pipeline writes flat retained table files under
-    `experiments/sys-landscape/datascience/tables/`.
+    `experiments/sys-datascience/tables/`.
   - Method packets consume retained tables and build method-local rectangular
     inputs when needed.
   - Method reports separate observation, inference, and thesis use.

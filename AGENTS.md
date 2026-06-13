@@ -135,6 +135,11 @@ This repo does not use nested `AGENTS.md` files.
 |-- experiments/
 |   |-- MAP.md
 |   |-- figure_config.py
+|   |-- dev-<algo>/
+|   |-- numerics/
+|   |-- performance/
+|   |-- verification/
+|   |-- sys-datascience/
 |   |-- <topic>/Cargo.toml
 |   |-- <topic>/src/**/*.rs
 |   |-- <topic>/<experiment>/
@@ -146,9 +151,8 @@ This repo does not use nested `AGENTS.md` files.
 |-- research/
 |   |-- INDEX.md
 |   |-- *.md
-|-- experiments/sys-landscape/datascience/
+|-- experiments/sys-datascience/
 |   |-- README.md
-|   |-- dataset/
 |   |-- produce/
 |   |-- tables/
 |   `-- methods/
@@ -209,6 +213,26 @@ Important boundaries:
 - `.worktrees/` contains ignored local worktrees for independent sessions.
 - `/tmp/` is scratch for drafts, subagent prompts, handoffs, and disposable chat
   artifacts; it is not durable project state.
+
+Experiment routing:
+- Route by what should move together. For example, numerical analysis of
+  `flow_graph` can belong in `experiments/dev-flow-graph/` when it should move
+  with algorithm development, or in `experiments/numerics/` when it should move
+  with reusable numerical methodology.
+- `experiments/dev-<algo>/`: active algorithm development before a settled
+  downstream evidence home. Current examples: `dev-gradient-ascent/` and
+  `dev-flow-graph/`.
+- `experiments/numerics/`: reusable f64 vs exact behavior, numerical stability,
+  numerical-error audits, and derivative/numerical validation.
+- `experiments/performance/`: runtime, memory, counters, profiling, and
+  compute-budget measurement.
+- `experiments/verification/`: correctness/regression checks, capacity axioms,
+  algorithm agreement, literature values, error paths, and slower validation.
+- `experiments/sys-datascience/`: hostile `sys` search data-science pipeline
+  and method-table packets.
+- Topic folders such as `hko-local-maximum/`, `regular-products/`,
+  `combinatorial-cells/`, and `sys-landscape/` own thesis-slice or topic-local
+  producers and evidence when the local README says the topic owns them.
 
 Documentation:
 - Write for Codex GPT-5.5 agents, not weaker hypothetical agents. Use your own

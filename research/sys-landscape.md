@@ -1,8 +1,8 @@
 # Sys-Landscape Research Note
 
 This is not the ordinary entry point for the data-science thesis slice. Start
-with `experiments/sys-landscape/datascience/README.md` and
-`experiments/sys-landscape/datascience/methods/README.md`; use this note only
+with `experiments/sys-datascience/README.md` and
+`experiments/sys-datascience/methods/README.md`; use this note only
 for older topic context.
 
 ## Scope
@@ -20,7 +20,7 @@ for older topic context.
   `random-sample`, `random-product-sample`, `rejection-calibration`,
   `gradient-ascent-general`, `gradient-ascent-products`, and
   `variable-f-ascent`, plus the maintained datascience pipeline under
-  `experiments/sys-landscape/datascience/`.
+  `experiments/sys-datascience/`.
 - Regular polygon products moved to the independent side-result package
   `experiments/regular-products/`.
 
@@ -53,7 +53,7 @@ for older topic context.
 - Open constraints:
   - Keep local topic work in `experiments/` while algorithmic.
   - Use additive schema changes where feasible in the maintained datascience
-    table stage under `experiments/sys-landscape/datascience/tables/`.
+    table stage under `experiments/sys-datascience/tables/`.
   - Treat direct continuation replacement as a measured comparison, not a blind rewrite.
 
 ## History

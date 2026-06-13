@@ -22,7 +22,7 @@ proof text can overrule it. When they do, update this file or mark the mismatch.
   action `> 0` is known.
 - The old `research/tube-algorithm*.md` files are legacy/imported source
   material, not the live control surface.
-- The current experiment package is `experiments/flow-graph/`.
+- The current experiment package is `experiments/dev-flow-graph/`.
 - The thesis section is `thesis/flow-graph-algorithm-ch2021.tex`.
 
 ## Algorithm Contract
@@ -190,8 +190,8 @@ Out of scope for this exact e2e suite:
 Current evidence:
 
 - Unit tests live in `tests.rs` while the module remains compact.
-- `experiments/flow-graph/frontier` measures word-frontier and f64 tube counts.
-- `experiments/flow-graph/endpoint-spike` is an exact endpoint-set spike, not a
+- `experiments/dev-flow-graph/frontier` measures word-frontier and f64 tube counts.
+- `experiments/dev-flow-graph/endpoint-spike` is an exact endpoint-set spike, not a
   supported exact implementation.
 - `exact.rs` has exact rational tests for polygon intersection and selected
   closed words. Current checked cases include a positive F7 word, a zero-action
@@ -233,7 +233,7 @@ Current evidence:
 - The deliberate Rust `#[ignore]` verification suite contains exact F7 checks,
   F10 exact closed-word resolution checks, and F10 capacity_f64
   FG == QP checks. It passed on 2026-06-06 in 141.98 seconds.
-- `experiments/flow-graph/unresolved-diagnostic` emits both per-word records
+- `experiments/dev-flow-graph/unresolved-diagnostic` emits both per-word records
   and an aggregate diagnostic f64 error-word summary. The summary separates f64
   near-singular fixed-point errors, f64 polygon-indeterminate errors, exact
   empty tubes, exact zero-action no-orbits, exact positive orbits, exact
@@ -282,7 +282,7 @@ non-writing result:
 - Keep CH2021 rotation pruning out of the first supported implementation path.
 - Keep exact and f64 paths conceptually separate. Do not imply that the f64 path
   proves exact capacity values by itself.
-- Keep experiments in `experiments/flow-graph/`, not under
+- Keep experiments in `experiments/dev-flow-graph/`, not under
   `experiments/combinatorial-cells/`.
 
 ## Failure Log

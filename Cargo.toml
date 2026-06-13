@@ -10,7 +10,7 @@ members = [
     "experiments/sys-landscape/gradient-ascent-dev",
     "experiments/local-sys-methods",
     "experiments/combinatorial-cells",
-    "experiments/flow-graph",
+    "experiments/dev-flow-graph",
     "experiments/verification",
     "experiments/verification/algorithm-comparison",
     "experiments/numerics",

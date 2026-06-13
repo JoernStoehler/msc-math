@@ -1,8 +1,9 @@
 # Sys-Landscape
 
-This package owns hostile-landscape search experiments and the maintained
-datascience pipeline interpreted in `research/sys-landscape.md`,
-`tasks/current-state.md`, and `tasks/planning-notes.md`.
+This package owns hostile-landscape search experiment binaries and legacy
+producer surfaces interpreted in `research/sys-landscape.md`,
+`tasks/current-state.md`, and `tasks/planning-notes.md`. The maintained
+data-science pipeline lives at `experiments/sys-datascience/`.
 
 ## Rust Command Contract
 
@@ -21,14 +22,14 @@ datascience pipeline interpreted in `research/sys-landscape.md`,
 - `sys-step-calibration` and `sys-strategy-comparison` are development stubs and
   write no artifacts.
 - `sys-dataset-*` producer commands are documented in
-  `datascience/produce/README.md`; their default behavior is temp smoke output
-  unless explicit output/cache paths are supplied.
+  `experiments/sys-datascience/produce/README.md`; their default behavior is
+  temp smoke output unless explicit output/cache paths are supplied.
 - `sys-dataset` writes tables to the `--out-dir` path. For method waves, use
-  `datascience/tables/`; temp output is only for
+  `experiments/sys-datascience/tables/`; temp output is only for
   one-off smoke/scratch runs.
 
 The tracked full-output JSONL files are evidence artifacts. Use compile checks
 or documented smoke/temp modes for local command validation.
 
 For the maintained produce -> tables -> methods flow, start at
-`datascience/README.md`.
+`experiments/sys-datascience/README.md`.

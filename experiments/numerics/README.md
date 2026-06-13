@@ -5,6 +5,14 @@ This experiment asks one question across multiple objects and sigma contexts:
 > What are the empirical errors and predicate disagreements for numerical
 > quantities used by the KKT implementations?
 
+Use this package for numerical analysis whose methodology should improve
+together across algorithms or contexts. Algorithm-local numerical diagnostics
+can stay in `experiments/dev-<algo>/` while they are still deciding the
+algorithm design, supported cases, or failure taxonomy. For example,
+flow-graph f64/exact checks belong in `experiments/dev-flow-graph/` while they
+are flow-graph design triage, and belong here once they become a reusable
+f64/exact audit surface.
+
 The durable evidence artifact is `events.jsonl`. Each row is a structured event.
 The central row types are:
 

@@ -38,13 +38,27 @@ Map maintenance:
 
 ## Role
 
-`experiments/` contains topic-grouped experiment packages, binaries, analyses,
-local helper crates, generated data, and figures.
+`experiments/` contains topic-grouped and target-grouped experiment packages,
+binaries, analyses, local helper crates, generated data, and figures.
+`AGENTS.md` owns first-entry routing; this file is an inventory and local
+navigation cache.
 
 Current boundary facts:
 
 - Experiment code imports `symplectic` directly.
-- New exploratory algorithms start here before any durable crate promotion.
+- New exploratory algorithms start in `dev-<algo>/` before durable crate
+  promotion or promotion into a target evidence home.
+- Organize by the axis that should move together. If one method should be
+  modernized across many targets, keep the method together while it is being
+  developed. If many methods answer one target question, keep the target
+  together.
+- Example: numerical analysis of `flow_graph` can belong in
+  `experiments/dev-flow-graph/` when the analysis should move with changing
+  flow-graph algorithm design, or in `experiments/numerics/` when the analysis
+  should move with reusable f64/exact methodology shared across algorithms.
+- Copying and heavily editing algorithms across experiments is allowed.
+  Extract shared code only when multiple current users should be modernized
+  together or duplication is causing concrete error or maintenance risk.
 - Most experiment code is script-like. Helper `.rs` files live beside the
   binary or in the smallest shared parent directory that contains all binaries
   using them.
@@ -57,18 +71,30 @@ Current boundary facts:
 - Thesis publication assets are copied or owned by `thesis/`; thesis
   correctness must not depend on runtime links into `experiments/`.
 
+## Routing Homes
+
+| Home | Route here when |
+| --- | --- |
+| `experiments/dev-<algo>/` | active algorithm development, diagnostics, case-finding, and representation spikes before a settled downstream evidence home exists |
+| `experiments/numerics/` | f64 vs exact behavior, numerical stability, numerical-error audits, derivative/numerical validation, and reusable numerical methodology |
+| `experiments/performance/` | runtime, memory, counters, profiling, and compute-budget measurement once the measured target is stable enough to profile as a target |
+| `experiments/verification/` | correctness/regression checks, capacity axioms, algorithm agreement, literature values, error paths, and slower artifact-backed validation |
+| `experiments/sys-datascience/` | hostile `sys` search data-science pipeline, retained tables, and method-table packets |
+| topic folders | thesis-slice or topic-local producers and evidence when the local README says the topic owns them |
+
 ## Topic Packages
 
 | Area | Current role | Related task/research surfaces |
 | --- | --- | --- |
 | `experiments/hko-local-maximum/` | HKO local-maximality experiments: theorem certificate tooling under `theorem/`, empirical support checks under `empirical/`, and shared topic helpers under `src/` | `tasks/current-state.md`, `tasks/planning-notes.md`, `research/hko-local-maximum*.md`, `experiments/hko-local-maximum/README.md` |
-| `experiments/dev-gradient-ascent/` | active top-level development packet for a heuristic gradient-ascent method for nonsmooth high-dimensional `sys(a)`; owns question ledger, schema-smoke artifacts, and future method-development probes before promotion | `experiments/dev-gradient-ascent/README.md`, `experiments/sys-landscape/datascience/README.md`, `research/sys-first-order-local-behavior.md` |
-| `experiments/sys-landscape/` | hostile sys-search landscape: random/product searches, gradient ascent, variable-`F` continuation, rejection calibration, and datascience pipeline | `tasks/current-state.md`, `tasks/planning-notes.md`, `research/sys-landscape*.md`, `experiments/sys-landscape/datascience/README.md` |
+| `experiments/dev-gradient-ascent/` | active top-level development packet for a heuristic gradient-ascent method for nonsmooth high-dimensional `sys(a)`; owns question ledger, schema-smoke artifacts, and future method-development probes before promotion | `experiments/dev-gradient-ascent/README.md`, `experiments/sys-datascience/README.md`, `research/sys-first-order-local-behavior.md` |
+| `experiments/dev-flow-graph/` | active flow-graph algorithm-development packet: frontier counts, endpoint/closed-word representation spikes, case-finding, mismatch visualization, and unresolved-word diagnostics before promotion into numerics, performance, or verification | `experiments/dev-flow-graph/README.md`, `crates/symplectic/src/algorithms/flow_graph/README.md`, `tasks/current-state.md`, `tasks/planning-notes.md` |
+| `experiments/sys-landscape/` | hostile sys-search landscape legacy and producer surfaces: random/product searches, gradient ascent, variable-`F` continuation, and rejection calibration | `tasks/current-state.md`, `tasks/planning-notes.md`, `research/sys-landscape*.md`, `experiments/sys-datascience/README.md` |
+| `experiments/sys-datascience/` | maintained hostile `sys` search data-science pipeline: producer caches, retained tables, and method packets for the thesis method table | `experiments/sys-datascience/README.md`, `experiments/sys-datascience/produce/README.md`, `experiments/sys-datascience/tables/README.md`, `experiments/sys-datascience/methods/README.md` |
 | `experiments/regular-products/` | regular polygon product side result: broad rotated-product sweeps, pentagon empirical figures/viewer, and exact pentagon formula proof packet | `experiments/regular-products/README.md`, `thesis/rotated-regular-polygons-content.md` |
 | `experiments/local-sys-methods/` | narrow smoke packet for local `sys(a0 + t d)` prediction diagnostics against HK2017 recomputation; method-development code, not thesis evidence | `experiments/local-sys-methods/README.md` |
 | `experiments/sys-landscape/gradient-ascent-dev/` | method-development helper package for step calibration and strategy comparison | `experiments/sys-landscape/gradient-ascent-dev/src/lib.rs` |
 | `experiments/numerics/` | single-threaded numerical error audit: structured JSONL observations, f64-vs-oracle summaries, and generated reports for KKT variables and predicates | `experiments/numerics/README.md`, `tasks/current-state.md`, `tasks/planning-notes.md` |
-| `experiments/flow-graph/` | flow-graph execution experiments: current frontier counts and endpoint representation spike; intended home for future profiling, HK2017 comparison, and numerical-stability checks | `crates/symplectic/src/algorithms/flow_graph/README.md`, `tasks/current-state.md`, `tasks/planning-notes.md` |
 | `experiments/verification/` | experiment-level correctness and regression evidence, minimum-set validation, orbit recovery, and reusable Sage validation experiments | `tasks/current-state.md`, `tasks/planning-notes.md`, `research/verification*.md`, `experiments/verification/README.md`, `experiments/verification/sage/README.md` |
 | `experiments/verification/algorithm-comparison/` | historical algorithm comparison, ablation, and benchmark artifacts for capacity-algorithm implementation choices | `research/verification.md`, `experiments/verification/algorithm-comparison/README.md` |
 | `experiments/performance/` | shared runtime and memory profiling targets, reusable measurement practice, and post-processing scripts; generated outputs normally go under `/tmp` | `experiments/performance/README.md` |
@@ -113,7 +139,7 @@ Current helper families:
 | --- | --- |
 | step-bound event logic | implemented in `experiments/sys-landscape/src/step_bound.rs` and `experiments/combinatorial-cells/src/boundary_events.rs`; shared durable home is still an open boundary |
 | sys quotient / ascent scaffold | `experiments/sys-landscape/src/ascent.rs` and `datasets.rs` hold reusable landscape helpers, while individual binaries still own backend policy |
-| datascience producer/table plumbing | `experiments/sys-landscape/datascience/produce/` writes producer caches; `datascience/tables/` loads/enriches/writes final tables; `datascience/methods/` reads those tables |
+| datascience producer/table plumbing | `experiments/sys-datascience/produce/` writes producer caches; `experiments/sys-datascience/tables/` loads/enriches/writes final tables; `experiments/sys-datascience/methods/` reads those tables |
 | exact HKO row bank and instrumented searches | `experiments/hko-local-maximum/src/exact_bank.rs` owns exact-bank constants; `instrumented_search.rs` owns local instrumented capacity helpers |
 | numerics audit helpers | `experiments/numerics/src/lib.rs` indexes the audit runner, event schema, argument parsing, and output-directory helpers |
 | verification target plumbing | `experiments/verification/src/target_pool.rs` owns target selection; `io.rs` owns run modes and shared JSONL writers |
@@ -135,7 +161,7 @@ Current persisted-data classes:
 | shared polytope catalog rows | reusable polytope records with rational geometry, source, volume, capacity, and best-sigma-style data |
 | historical mirror catalogs | byte-identical copies of shared catalog content in different experiment areas observed in an earlier pass; current research notes give package-local ownership to at least `experiments/combinatorial-cells/polytopes.jsonl` |
 | topic-local transient caches | local caches that store intermediate search states and are not intended as shared catalogs |
-| datascience pipeline caches | maintained producer caches and final tables under `experiments/sys-landscape/datascience/`; see local `produce/`, `tables/`, and `methods/` READMEs |
+| datascience pipeline caches | maintained producer caches and final tables under `experiments/sys-datascience/`; see local `produce/`, `tables/`, and `methods/` READMEs |
 | analysis outputs | experiment-owned JSONL files consumed by nearby `analyze.py` scripts |
 | resume artifacts | outputs that also serve as later-run inputs or resume sources |
 
@@ -163,10 +189,10 @@ Local-cache exception:
 
 Datascience pipeline exception:
 
-- `experiments/sys-landscape/datascience/produce/shared-cache.jsonl` and
+- `experiments/sys-datascience/produce/shared-cache.jsonl` and
   `continuation-cache.jsonl` are maintained producer-stage caches for the
   datascience pipeline, not mirrors of the old root `cache.jsonl`.
-- `experiments/sys-landscape/datascience/tables/` writes flat retained table
+- `experiments/sys-datascience/tables/` writes flat retained table
   files next to the table builder: one polytope-level table, one provenance
   table, and one ascent-run table. Method scripts read these retained tables
   and build method-local rectangular inputs when needed.

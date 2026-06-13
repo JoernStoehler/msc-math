@@ -40,43 +40,43 @@ path = "gradient-ascent-dev/strategy-comparison/main.rs"
 
 [[bin]]
 name = "sys-dataset-random"
-path = "datascience/produce/random.rs"
+path = "../sys-datascience/produce/random.rs"
 
 [[bin]]
 name = "sys-dataset-random-product"
-path = "datascience/produce/random-product.rs"
+path = "../sys-datascience/produce/random-product.rs"
 
 [[bin]]
 name = "sys-datascience-produce"
-path = "datascience/produce/main.rs"
+path = "../sys-datascience/produce/main.rs"
 
 [[bin]]
 name = "sys-kkt-payload-profile"
-path = "datascience/produce/kkt-payload-profile.rs"
+path = "../sys-datascience/produce/kkt-payload-profile.rs"
 
 [[bin]]
 name = "sys-dataset-ascent"
-path = "datascience/produce/ascent.rs"
+path = "../sys-datascience/produce/ascent.rs"
 
 [[bin]]
 name = "sys-dataset-ascent-product"
-path = "datascience/produce/ascent-product.rs"
+path = "../sys-datascience/produce/ascent-product.rs"
 
 [[bin]]
 name = "sys-dataset-continuation"
-path = "datascience/produce/continuation.rs"
+path = "../sys-datascience/produce/continuation.rs"
 
 [[bin]]
 name = "sys-dataset"
-path = "datascience/tables/main.rs"
+path = "../sys-datascience/tables/main.rs"
 
 [[bin]]
 name = "sys-datascience-prepare"
-path = "datascience/tables/prepare.rs"
+path = "../sys-datascience/tables/prepare.rs"
 
 [[bin]]
 name = "sys-endpoint-local-max-diagnostic"
-path = "datascience/methods/endpoint-local-max-diagnostic/main.rs"
+path = "../sys-datascience/methods/endpoint-local-max-diagnostic/main.rs"
 
 [lints]
 workspace = true

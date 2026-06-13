@@ -385,8 +385,8 @@ Acceptance guard:
 
 Status: active while hostile landscape remains retained thesis spine.
 
-Reread before use: `experiments/sys-landscape/datascience/README.md` and
-`experiments/sys-landscape/datascience/methods/README.md`. Older research notes
+Reread before use: `experiments/sys-datascience/README.md` and
+`experiments/sys-datascience/methods/README.md`. Older research notes
 are context only unless cross-thesis wording is being audited.
 
 Guidance:
@@ -432,8 +432,8 @@ Closure summary:
   until Jörn or a falsification/search packet resolves the lead.
 - Concrete one-use worker prompts may go in `/tmp`; durable datascience
   control material should live in
-  `experiments/sys-landscape/datascience/README.md` or
-  `experiments/sys-landscape/datascience/methods/README.md`.
+  `experiments/sys-datascience/README.md` or
+  `experiments/sys-datascience/methods/README.md`.
 
 ## Numerics Work Ordering
 

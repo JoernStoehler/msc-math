@@ -60,7 +60,7 @@ file from the README and source truth.
 
 - Algorithm/control: `crates/symplectic/src/algorithms/flow_graph/README.md`
 - Implementation: `crates/symplectic/src/algorithms/flow_graph/`
-- Experiments: `experiments/flow-graph/README.md`
+- Experiments: `experiments/dev-flow-graph/README.md`
 - Legacy import material: `research/tube-algorithm.md`,
   `research/tube-algorithm-raw-jorn-2026-05-04.md`
 - Paper source: `papers/ch2021/`
