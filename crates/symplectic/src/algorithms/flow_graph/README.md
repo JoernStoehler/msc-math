@@ -25,6 +25,32 @@ proof text can overrule it. When they do, update this file or mark the mismatch.
 - The current experiment package is `experiments/dev-flow-graph/`.
 - The thesis section is `thesis/flow-graph-algorithm-ch2021.tex`.
 
+## Thesis-Facing Scope
+
+The thesis-facing goal is not to make flow-graph capacity work on every
+geometrically interesting input. It is to make the implemented CH2021-style
+route clear enough that its supported scope, evidence, and caveats can be
+checked without reconstructing the development history.
+
+Supported-scope target:
+
+- exact-admissible deterministic polytopes where the current generic tube
+  assumptions hold;
+- exact exhaustive search and retained-word semantics for those polytopes;
+- scalar capacity comparison against certified HK2017/QP as implementation
+  evidence, not as a word-level oracle;
+- typed rejection or caveat language for unsupported inputs and unresolved
+  numerical cases.
+
+Explicit non-goals unless thesis review asks for them:
+
+- supporting Lagrangian products or HKO fixtures with geometrically possible
+  `omega_0 = 0` transitions;
+- implementing CH2021 rotation pruning;
+- turning f64 diagnostics into exact certificates without exact fallback;
+- proving every dependency inside code or experiment documentation instead of
+  routing proof obligations to formal/thesis text.
+
 ## Algorithm Contract
 
 Target input:
@@ -189,7 +215,11 @@ Out of scope for this exact e2e suite:
 
 Current evidence:
 
-- Unit tests live in `tests.rs` while the module remains compact.
+- `mod.rs` contains the f64 flow-graph route, shared combinatorial word
+  enumeration, exact fallback wrapper, and visualization snapshots.
+- `exact.rs` contains exact rational closed-word/tube resolution and exact
+  exhaustive search.
+- f64 tests live in `tests.rs` and `tests_e2e_prediction.rs`.
 - `experiments/dev-flow-graph/frontier` measures word-frontier and f64 tube counts.
 - `experiments/dev-flow-graph/endpoint-spike` is an exact endpoint-set spike, not a
   supported exact implementation.
@@ -240,6 +270,19 @@ Current evidence:
   unsupported singular outcomes, and exact positives below or at/above the QP
   capacity.
 
+Current analysis inventory:
+
+| Surface | Current analysis/evidence | Current home | Promotion target |
+| --- | --- | --- | --- |
+| Exact closed-word/tube arithmetic | polygon intersection tests, selected positive/zero/empty-tube word cases, exact action/fixed-point behavior | `exact.rs` tests | crate regression tests; only promote artifact-backed slower suites to `experiments/verification/` |
+| Exact exhaustive search | exact rejection tests, P1/P2 accepted-polytopes checks, action-cutoff comparison against disabled policy | `exact.rs` tests | crate tests while cheap; `experiments/verification/` for slower fixed suites |
+| f64 tube search and exact resolution | primitive/intersection/fixed-point unit checks, generated f64-error cases exact-resolved against QP scalar capacity | `tests.rs`, `tests_e2e_prediction.rs`, `mod.rs` | `experiments/numerics/` only when the question becomes reusable f64/exact methodology |
+| Word frontier and f64 tube counts | transition-pruned frontier sizes, f64 tube live/empty/unsupported counts, polygon-operation counters | `experiments/dev-flow-graph/frontier` | `experiments/performance/` once the measured algorithm path is stable |
+| Endpoint and closed-word spikes | exploratory exact endpoint-set and selected closed-word representation experiments | `experiments/dev-flow-graph/endpoint-spike`, `experiments/dev-flow-graph/closed-word-spike` | retire to git history or keep dev-local notes once the crate exact path supersedes them |
+| Case discovery | bucketed search for high-value FG examples and expected labels | `experiments/dev-flow-graph/discover-e2e` | crate tests for cheap reviewed rows; `experiments/verification/` for slower artifact-backed suites |
+| Unresolved f64 diagnostics | f64 failure taxonomy, exact tube resolution, exact one-sigma QP summaries, geometric recovery references | `experiments/dev-flow-graph/unresolved-diagnostic` | `experiments/numerics/` for reusable f64/exact behavior; `experiments/verification/` for stable error-path evidence |
+| Tube visualization | JSON snapshots and rendered tube geometry for selected words | `experiments/dev-flow-graph/visualize-tube` | thesis/topic asset packet only for selected exposition figures |
+
 Role of HK2017/QP comparison:
 
 - HK2017/QP is not used inside the flow-graph algorithm.
@@ -262,7 +305,7 @@ Role of HK2017/QP comparison:
   rule, or exact tube arithmetic.
 
 Evidence still needed before thesis writeup can treat this as a finished
-non-writing result:
+algorithm artifact on the supported scope:
 
 - focused unit tests for primitive tubes;
 - focused unit tests for tube intersection;
@@ -274,6 +317,9 @@ non-writing result:
 - release-mode profiling with counts for polygon operations and word counts.
 - broader action-cutoff tests on F7/F8 polytopes and profiling for how much exact
   cutoff pruning helps;
+
+These are scope-completion checks for the supported exact/f64 routes above.
+They are not requests to expand the supported input class.
 
 ## Decisions
 
