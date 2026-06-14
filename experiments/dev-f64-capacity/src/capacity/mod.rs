@@ -120,7 +120,7 @@ pub fn capacity_f64_only_with_policy_and_method_profiled(
 
     let report = F64CapacityReport {
         outcome,
-        iterations: solved.iterations,
+        sigma_count: solved.sigma_count,
         admissible_f64_count: solved.admissible_count(),
         indeterminate_f64_count: solved.indeterminate_count(),
         inadmissible_count: solved.inadmissible_count,

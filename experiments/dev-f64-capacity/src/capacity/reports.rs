@@ -7,7 +7,7 @@ pub(crate) fn no_vertices_report(combinatorics: F64Combinatorics) -> F64Capacity
         outcome: F64CapacityOutcome::Failure {
             reason: F64FailureReason::NoVertices,
         },
-        iterations: 0,
+        sigma_count: 0,
         admissible_f64_count: 0,
         indeterminate_f64_count: 0,
         inadmissible_count: 0,
@@ -32,7 +32,7 @@ pub(crate) fn no_vertices_report(combinatorics: F64Combinatorics) -> F64Capacity
 pub(crate) fn empty_report(outcome: F64CapacityOutcome) -> F64CapacityReport {
     F64CapacityReport {
         outcome,
-        iterations: 0,
+        sigma_count: 0,
         admissible_f64_count: 0,
         indeterminate_f64_count: 0,
         inadmissible_count: 0,

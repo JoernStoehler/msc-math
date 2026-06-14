@@ -1,7 +1,7 @@
-use crate::args::{AuditGenerated, AuditSimplified};
+use crate::args::{AuditGenerated, AuditPreprocessed};
 use exp_dev_f64_capacity::{
-    scan_case_with_options, F64CapacityMethod, F64ValidationPolicy, FacetSimplificationPolicy,
-    ScanCase, ScanOptions,
+    scan_case_with_options, F64CapacityMethod, F64ValidationPolicy,
+    NearRedundantFacetRemovalPolicy, ScanCase, ScanOptions,
 };
 use std::fs::File;
 use std::io::{BufWriter, Write};
@@ -11,12 +11,12 @@ pub(crate) fn write_scan_rows(
     output: &Path,
     cases: impl IntoIterator<Item = ScanCase>,
     audit_generated: AuditGenerated,
-    audit_simplified: AuditSimplified,
+    audit_preprocessed: AuditPreprocessed,
     max_audit_rows: usize,
     validation_policy: F64ValidationPolicy,
     capacity_method: F64CapacityMethod,
-    facet_simplification: FacetSimplificationPolicy,
-    facet_simplification_delta: f64,
+    near_redundant_facet_removal: NearRedundantFacetRemovalPolicy,
+    near_redundant_facet_removal_delta: f64,
 ) -> usize {
     if let Some(parent) = output.parent() {
         if !parent.as_os_str().is_empty() {
@@ -35,17 +35,17 @@ pub(crate) fn write_scan_rows(
         if audit_this_case {
             exact_audit_rows += 1;
         }
-        let audit_simplified_remaining = audit_simplified == AuditSimplified::All
+        let audit_preprocessed_remaining = audit_preprocessed == AuditPreprocessed::All
             && (max_audit_rows == 0 || exact_audit_rows < max_audit_rows);
         let row = scan_case_with_options(
             case,
             &ScanOptions {
                 audit_generated: audit_this_case,
-                audit_simplified: audit_simplified_remaining,
+                audit_preprocessed: audit_preprocessed_remaining,
                 validation_policy,
                 capacity_method,
-                facet_simplification,
-                facet_simplification_delta,
+                near_redundant_facet_removal,
+                near_redundant_facet_removal_delta,
             },
         );
         if row.exact_audit_status != "not_requested" && !audit_this_case {

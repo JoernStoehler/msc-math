@@ -31,24 +31,22 @@ pub(crate) struct FamilySummaryRow {
     indeterminate_overlap: usize,
     exact_audit_statuses: String,
     product_rounding_statuses: String,
-    facet_simplification_policies: String,
-    facet_simplification_statuses: String,
-    product_simplification_statuses: String,
+    near_redundant_facet_removal_policies: String,
+    near_redundant_facet_removal_statuses: String,
     origin_lp_statuses: String,
     max_product_rounding_minor_over_major: Option<f64>,
     max_product_rounding_abs_change: Option<f64>,
     max_removed_facet_count: Option<usize>,
-    max_facet_simplification_delta_bound: Option<f64>,
-    max_product_simplification_delta_bound: Option<f64>,
+    max_near_redundant_facet_removal_delta_bound: Option<f64>,
     max_capacity_ratio_upper_bound: Option<f64>,
     max_volume_ratio_upper_bound: Option<f64>,
     min_sys_ratio_lower_bound: Option<f64>,
     max_sys_ratio_upper_bound: Option<f64>,
-    simplified_f64_vs_original_artifact_within_bound: String,
-    simplified_audit_vs_original_artifact_within_bound: String,
-    max_simplified_f64_vs_original_artifact_rel_error: Option<f64>,
-    max_simplified_audit_vs_original_artifact_rel_error: Option<f64>,
-    max_simplified_f64_vs_simplified_audit_rel_error: Option<f64>,
+    preprocessed_f64_vs_original_artifact_within_bound: String,
+    preprocessed_audit_vs_original_artifact_within_bound: String,
+    max_preprocessed_f64_vs_original_artifact_rel_error: Option<f64>,
+    max_preprocessed_audit_vs_original_artifact_rel_error: Option<f64>,
+    max_preprocessed_f64_vs_preprocessed_audit_rel_error: Option<f64>,
     median_exact_audit_time_ms: Option<f64>,
     max_exact_audit_time_ms: Option<f64>,
     median_origin_lp_max_min_lambda: Option<f64>,
@@ -118,23 +116,21 @@ struct FamilySummary {
     kkt_indeterminate_counts: Vec<usize>,
     exact_audit_statuses: BTreeMap<String, usize>,
     product_rounding_statuses: BTreeMap<String, usize>,
-    facet_simplification_policies: BTreeMap<String, usize>,
-    facet_simplification_statuses: BTreeMap<String, usize>,
-    product_simplification_statuses: BTreeMap<String, usize>,
+    near_redundant_facet_removal_policies: BTreeMap<String, usize>,
+    near_redundant_facet_removal_statuses: BTreeMap<String, usize>,
     product_rounding_minor_over_major: Vec<f64>,
     product_rounding_abs_changes: Vec<f64>,
     removed_facet_counts: Vec<usize>,
-    facet_simplification_delta_bounds: Vec<f64>,
-    product_simplification_delta_bounds: Vec<f64>,
+    near_redundant_facet_removal_delta_bounds: Vec<f64>,
     capacity_ratio_upper_bounds: Vec<f64>,
     volume_ratio_upper_bounds: Vec<f64>,
     sys_ratio_lower_bounds: Vec<f64>,
     sys_ratio_upper_bounds: Vec<f64>,
-    simplified_f64_vs_original_artifact_within_bound: BTreeMap<String, usize>,
-    simplified_audit_vs_original_artifact_within_bound: BTreeMap<String, usize>,
-    simplified_f64_vs_original_artifact_rel_errors: Vec<f64>,
-    simplified_audit_vs_original_artifact_rel_errors: Vec<f64>,
-    simplified_f64_vs_simplified_audit_rel_errors: Vec<f64>,
+    preprocessed_f64_vs_original_artifact_within_bound: BTreeMap<String, usize>,
+    preprocessed_audit_vs_original_artifact_within_bound: BTreeMap<String, usize>,
+    preprocessed_f64_vs_original_artifact_rel_errors: Vec<f64>,
+    preprocessed_audit_vs_original_artifact_rel_errors: Vec<f64>,
+    preprocessed_f64_vs_preprocessed_audit_rel_errors: Vec<f64>,
     origin_lp_statuses: BTreeMap<String, usize>,
     validation_reasons: BTreeMap<String, usize>,
     exact_audit_reasons: BTreeMap<String, usize>,
@@ -170,7 +166,7 @@ pub(crate) fn summarize(rows: impl IntoIterator<Item = ScanRow>) -> Summary {
 
 pub(crate) fn print_summary(summary: &Summary) {
     println!(
-        "family,validation_policy,capacity_method,rows,accepted_decisive,accepted_ambiguous,validation_rejected,validation_fallback_required,capacity_run_rows,capacity_not_run_rows,success,failure,success_rate,clean,degenerate_value_agrees,fallback_required,indeterminate_overlap,exact_audit_statuses,product_rounding_statuses,facet_simplification_policies,facet_simplification_statuses,product_simplification_statuses,origin_lp_statuses,max_product_rounding_minor_over_major,max_product_rounding_abs_change,max_removed_facet_count,max_facet_simplification_delta_bound,max_product_simplification_delta_bound,max_capacity_ratio_upper_bound,max_volume_ratio_upper_bound,min_sys_ratio_lower_bound,max_sys_ratio_upper_bound,simplified_f64_vs_original_artifact_within_bound,simplified_audit_vs_original_artifact_within_bound,max_simplified_f64_vs_original_artifact_rel_error,max_simplified_audit_vs_original_artifact_rel_error,max_simplified_f64_vs_simplified_audit_rel_error,median_exact_audit_time_ms,max_exact_audit_time_ms,median_origin_lp_max_min_lambda,max_origin_lp_max_abs_residual,max_facets_without_definite_vertex,max_facets_without_possible_vertex,median_validation_bundle_time_ms,max_validation_bundle_time_ms,median_capacity_bundle_time_ms,max_capacity_bundle_time_ms,median_rel_error,max_rel_error,max_abs_error,median_gap,min_gap,median_vertex_indeterminate,max_vertex_indeterminate,median_near_singular_vertex,max_near_singular_vertex,median_bounded_near_singular_vertex,max_bounded_near_singular_vertex,median_ambiguous_vertex_incidence,max_ambiguous_vertex_incidence,median_facet_intersection_indeterminate,max_facet_intersection_indeterminate,median_omega_indeterminate,max_omega_indeterminate,median_kkt_indeterminate,max_kkt_indeterminate,validation_reasons,exact_audit_reasons,failure_reasons,trust_reasons"
+        "family,validation_policy,capacity_method,rows,accepted_decisive,accepted_ambiguous,validation_rejected,validation_fallback_required,capacity_run_rows,capacity_not_run_rows,success,failure,success_rate,clean,degenerate_value_agrees,fallback_required,indeterminate_overlap,exact_audit_statuses,product_rounding_statuses,near_redundant_facet_removal_policies,near_redundant_facet_removal_statuses,origin_lp_statuses,max_product_rounding_minor_over_major,max_product_rounding_abs_change,max_removed_facet_count,max_near_redundant_facet_removal_delta_bound,max_capacity_ratio_upper_bound,max_volume_ratio_upper_bound,min_sys_ratio_lower_bound,max_sys_ratio_upper_bound,preprocessed_f64_vs_original_artifact_within_bound,preprocessed_audit_vs_original_artifact_within_bound,max_preprocessed_f64_vs_original_artifact_rel_error,max_preprocessed_audit_vs_original_artifact_rel_error,max_preprocessed_f64_vs_preprocessed_audit_rel_error,median_exact_audit_time_ms,max_exact_audit_time_ms,median_origin_lp_max_min_lambda,max_origin_lp_max_abs_residual,max_facets_without_definite_vertex,max_facets_without_possible_vertex,median_validation_bundle_time_ms,max_validation_bundle_time_ms,median_capacity_bundle_time_ms,max_capacity_bundle_time_ms,median_rel_error,max_rel_error,max_abs_error,median_gap,min_gap,median_vertex_indeterminate,max_vertex_indeterminate,median_near_singular_vertex,max_near_singular_vertex,median_bounded_near_singular_vertex,max_bounded_near_singular_vertex,median_ambiguous_vertex_incidence,max_ambiguous_vertex_incidence,median_facet_intersection_indeterminate,max_facet_intersection_indeterminate,median_omega_indeterminate,max_omega_indeterminate,median_kkt_indeterminate,max_kkt_indeterminate,validation_reasons,exact_audit_reasons,failure_reasons,trust_reasons"
     );
     for row in &summary.families {
         println!("{}", row.csv_line());
@@ -238,16 +234,12 @@ impl FamilySummary {
             .entry(row.product_rounding_status.clone())
             .or_default() += 1;
         *self
-            .facet_simplification_policies
-            .entry(row.facet_simplification_policy.clone())
+            .near_redundant_facet_removal_policies
+            .entry(row.near_redundant_facet_removal_policy.clone())
             .or_default() += 1;
         *self
-            .facet_simplification_statuses
-            .entry(row.facet_simplification_status.clone())
-            .or_default() += 1;
-        *self
-            .product_simplification_statuses
-            .entry(row.product_simplification_status.clone())
+            .near_redundant_facet_removal_statuses
+            .entry(row.near_redundant_facet_removal_status.clone())
             .or_default() += 1;
         if let Some(value) = row.product_rounding_max_minor_over_major {
             self.product_rounding_minor_over_major.push(value);
@@ -256,11 +248,8 @@ impl FamilySummary {
             self.product_rounding_abs_changes.push(value);
         }
         self.removed_facet_counts.push(row.removed_facet_count);
-        if let Some(value) = row.facet_simplification_delta_bound {
-            self.facet_simplification_delta_bounds.push(value);
-        }
-        if let Some(value) = row.product_simplification_delta_bound {
-            self.product_simplification_delta_bounds.push(value);
+        if let Some(value) = row.near_redundant_facet_removal_delta_bound {
+            self.near_redundant_facet_removal_delta_bounds.push(value);
         }
         if let Some(value) = row.capacity_ratio_upper_bound {
             self.capacity_ratio_upper_bounds.push(value);
@@ -275,27 +264,27 @@ impl FamilySummary {
             self.sys_ratio_upper_bounds.push(value);
         }
         *self
-            .simplified_f64_vs_original_artifact_within_bound
+            .preprocessed_f64_vs_original_artifact_within_bound
             .entry(option_bool_label(
-                row.simplified_f64_vs_original_artifact_within_bound,
+                row.preprocessed_f64_vs_original_artifact_within_bound,
             ))
             .or_default() += 1;
         *self
-            .simplified_audit_vs_original_artifact_within_bound
+            .preprocessed_audit_vs_original_artifact_within_bound
             .entry(option_bool_label(
-                row.simplified_audit_vs_original_artifact_within_bound,
+                row.preprocessed_audit_vs_original_artifact_within_bound,
             ))
             .or_default() += 1;
-        if let Some(value) = row.simplified_f64_vs_original_artifact_rel_error {
-            self.simplified_f64_vs_original_artifact_rel_errors
+        if let Some(value) = row.preprocessed_f64_vs_original_artifact_rel_error {
+            self.preprocessed_f64_vs_original_artifact_rel_errors
                 .push(value);
         }
-        if let Some(value) = row.simplified_audit_vs_original_artifact_rel_error {
-            self.simplified_audit_vs_original_artifact_rel_errors
+        if let Some(value) = row.preprocessed_audit_vs_original_artifact_rel_error {
+            self.preprocessed_audit_vs_original_artifact_rel_errors
                 .push(value);
         }
-        if let Some(value) = row.simplified_f64_vs_simplified_audit_rel_error {
-            self.simplified_f64_vs_simplified_audit_rel_errors
+        if let Some(value) = row.preprocessed_f64_vs_preprocessed_audit_rel_error {
+            self.preprocessed_f64_vs_preprocessed_audit_rel_errors
                 .push(value);
         }
         *self
@@ -357,19 +346,17 @@ impl FamilySummary {
             .sort_by(f64::total_cmp);
         self.product_rounding_abs_changes.sort_by(f64::total_cmp);
         self.removed_facet_counts.sort_unstable();
-        self.facet_simplification_delta_bounds
-            .sort_by(f64::total_cmp);
-        self.product_simplification_delta_bounds
+        self.near_redundant_facet_removal_delta_bounds
             .sort_by(f64::total_cmp);
         self.capacity_ratio_upper_bounds.sort_by(f64::total_cmp);
         self.volume_ratio_upper_bounds.sort_by(f64::total_cmp);
         self.sys_ratio_lower_bounds.sort_by(f64::total_cmp);
         self.sys_ratio_upper_bounds.sort_by(f64::total_cmp);
-        self.simplified_f64_vs_original_artifact_rel_errors
+        self.preprocessed_f64_vs_original_artifact_rel_errors
             .sort_by(f64::total_cmp);
-        self.simplified_audit_vs_original_artifact_rel_errors
+        self.preprocessed_audit_vs_original_artifact_rel_errors
             .sort_by(f64::total_cmp);
-        self.simplified_f64_vs_simplified_audit_rel_errors
+        self.preprocessed_f64_vs_preprocessed_audit_rel_errors
             .sort_by(f64::total_cmp);
         self.origin_lp_max_min_lambdas.sort_by(f64::total_cmp);
         self.origin_lp_max_abs_residuals.sort_by(f64::total_cmp);
@@ -414,9 +401,12 @@ impl FamilySummary {
             indeterminate_overlap: self.indeterminate_overlap,
             exact_audit_statuses: format_counts(&self.exact_audit_statuses),
             product_rounding_statuses: format_counts(&self.product_rounding_statuses),
-            facet_simplification_policies: format_counts(&self.facet_simplification_policies),
-            facet_simplification_statuses: format_counts(&self.facet_simplification_statuses),
-            product_simplification_statuses: format_counts(&self.product_simplification_statuses),
+            near_redundant_facet_removal_policies: format_counts(
+                &self.near_redundant_facet_removal_policies,
+            ),
+            near_redundant_facet_removal_statuses: format_counts(
+                &self.near_redundant_facet_removal_statuses,
+            ),
             origin_lp_statuses: format_counts(&self.origin_lp_statuses),
             max_product_rounding_minor_over_major: self
                 .product_rounding_minor_over_major
@@ -424,34 +414,30 @@ impl FamilySummary {
                 .copied(),
             max_product_rounding_abs_change: self.product_rounding_abs_changes.last().copied(),
             max_removed_facet_count: self.removed_facet_counts.last().copied(),
-            max_facet_simplification_delta_bound: self
-                .facet_simplification_delta_bounds
-                .last()
-                .copied(),
-            max_product_simplification_delta_bound: self
-                .product_simplification_delta_bounds
+            max_near_redundant_facet_removal_delta_bound: self
+                .near_redundant_facet_removal_delta_bounds
                 .last()
                 .copied(),
             max_capacity_ratio_upper_bound: self.capacity_ratio_upper_bounds.last().copied(),
             max_volume_ratio_upper_bound: self.volume_ratio_upper_bounds.last().copied(),
             min_sys_ratio_lower_bound: self.sys_ratio_lower_bounds.first().copied(),
             max_sys_ratio_upper_bound: self.sys_ratio_upper_bounds.last().copied(),
-            simplified_f64_vs_original_artifact_within_bound: format_counts(
-                &self.simplified_f64_vs_original_artifact_within_bound,
+            preprocessed_f64_vs_original_artifact_within_bound: format_counts(
+                &self.preprocessed_f64_vs_original_artifact_within_bound,
             ),
-            simplified_audit_vs_original_artifact_within_bound: format_counts(
-                &self.simplified_audit_vs_original_artifact_within_bound,
+            preprocessed_audit_vs_original_artifact_within_bound: format_counts(
+                &self.preprocessed_audit_vs_original_artifact_within_bound,
             ),
-            max_simplified_f64_vs_original_artifact_rel_error: self
-                .simplified_f64_vs_original_artifact_rel_errors
+            max_preprocessed_f64_vs_original_artifact_rel_error: self
+                .preprocessed_f64_vs_original_artifact_rel_errors
                 .last()
                 .copied(),
-            max_simplified_audit_vs_original_artifact_rel_error: self
-                .simplified_audit_vs_original_artifact_rel_errors
+            max_preprocessed_audit_vs_original_artifact_rel_error: self
+                .preprocessed_audit_vs_original_artifact_rel_errors
                 .last()
                 .copied(),
-            max_simplified_f64_vs_simplified_audit_rel_error: self
-                .simplified_f64_vs_simplified_audit_rel_errors
+            max_preprocessed_f64_vs_preprocessed_audit_rel_error: self
+                .preprocessed_f64_vs_preprocessed_audit_rel_errors
                 .last()
                 .copied(),
             median_exact_audit_time_ms: median(&self.exact_audit_times_ms),
@@ -531,26 +517,24 @@ impl FamilySummaryRow {
             self.indeterminate_overlap.to_string(),
             self.exact_audit_statuses.clone(),
             self.product_rounding_statuses.clone(),
-            self.facet_simplification_policies.clone(),
-            self.facet_simplification_statuses.clone(),
-            self.product_simplification_statuses.clone(),
+            self.near_redundant_facet_removal_policies.clone(),
+            self.near_redundant_facet_removal_statuses.clone(),
             self.origin_lp_statuses.clone(),
             format_option(self.max_product_rounding_minor_over_major),
             format_option(self.max_product_rounding_abs_change),
             format_usize_option(self.max_removed_facet_count),
-            format_option(self.max_facet_simplification_delta_bound),
-            format_option(self.max_product_simplification_delta_bound),
+            format_option(self.max_near_redundant_facet_removal_delta_bound),
             format_option(self.max_capacity_ratio_upper_bound),
             format_option(self.max_volume_ratio_upper_bound),
             format_option(self.min_sys_ratio_lower_bound),
             format_option(self.max_sys_ratio_upper_bound),
-            self.simplified_f64_vs_original_artifact_within_bound
+            self.preprocessed_f64_vs_original_artifact_within_bound
                 .clone(),
-            self.simplified_audit_vs_original_artifact_within_bound
+            self.preprocessed_audit_vs_original_artifact_within_bound
                 .clone(),
-            format_option(self.max_simplified_f64_vs_original_artifact_rel_error),
-            format_option(self.max_simplified_audit_vs_original_artifact_rel_error),
-            format_option(self.max_simplified_f64_vs_simplified_audit_rel_error),
+            format_option(self.max_preprocessed_f64_vs_original_artifact_rel_error),
+            format_option(self.max_preprocessed_audit_vs_original_artifact_rel_error),
+            format_option(self.max_preprocessed_f64_vs_preprocessed_audit_rel_error),
             format_option(self.median_exact_audit_time_ms),
             format_option(self.max_exact_audit_time_ms),
             format_option(self.median_origin_lp_max_min_lambda),

@@ -9,7 +9,7 @@ use symplectic::{
 
 #[derive(Default)]
 pub(crate) struct CandidateSolveSummary {
-    pub(crate) iterations: u64,
+    pub(crate) sigma_count: u64,
     pub(crate) kkt_solve_ms: f64,
     pub(crate) inadmissible_count: usize,
     pub(crate) numerical_failure_count: usize,
@@ -47,7 +47,7 @@ impl CandidateSolveSummary {
     }
 
     fn record_sigma(&mut self, dual_vertices: &[Vector4<f64>], sigma: &[usize]) {
-        self.iterations += 1;
+        self.sigma_count += 1;
         let started = Instant::now();
         let solved = solve_orbit_sigma_saddle_point(dual_vertices, sigma);
         self.kkt_solve_ms += started.elapsed().as_secs_f64() * 1000.0;

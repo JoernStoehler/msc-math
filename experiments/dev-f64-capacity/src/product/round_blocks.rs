@@ -54,7 +54,7 @@ impl ProductRoundingReport {
     }
 }
 
-pub fn round_product_blocks(dual_vertices: &[Vector4<f64>]) -> ProductRoundingReport {
+pub fn round_blocks(dual_vertices: &[Vector4<f64>]) -> ProductRoundingReport {
     let mut q_count = 0usize;
     let mut p_count = 0usize;
     let mut rounded = Vec::with_capacity(dual_vertices.len());
@@ -102,7 +102,7 @@ pub(crate) fn round_known_product_dual_vertices(
     dual_vertices: &[Vector4<f64>],
 ) -> Vec<Vector4<f64>> {
     assert_known_product_dual_vertices(dual_vertices);
-    let report = round_product_blocks(dual_vertices);
+    let report = round_blocks(dual_vertices);
     assert_eq!(
         report.status,
         ProductRoundingStatus::Rounded,
@@ -192,7 +192,7 @@ mod tests {
     #[test]
     fn tolerant_rounding_reports_mixed_facets_without_changing_input() {
         let input = [Vector4::new(1.0, 0.0, 0.1, 0.0)];
-        let report = round_product_blocks(&input);
+        let report = round_blocks(&input);
         assert_eq!(report.status, ProductRoundingStatus::NotBlockStructured);
         assert_eq!(report.rounded_dual_vertices, input);
     }

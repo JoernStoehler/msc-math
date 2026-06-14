@@ -4,14 +4,15 @@ mod capacity;
 mod cases;
 mod classify;
 mod decision_compare;
-mod facet_simplify;
 mod generated_cases;
 mod geometry;
-mod product_preprocess;
-mod product_simplify;
+mod near_redundant_facet_removal;
 mod rows;
 mod scan;
 mod validation;
+
+pub mod generic;
+pub mod product;
 
 pub use artifact_cases::{hko_case, load_retained_artifact_cases};
 pub use audit::{
@@ -31,19 +32,15 @@ pub use classify::{
 pub use decision_compare::{
     compare_f64_decisions, DecisionComparisonReport, DecisionComparisonRow, SingleMethodDecisionRow,
 };
-pub use facet_simplify::{
-    remove_nearly_redundant_facets_single_band, FacetSimplificationPolicy,
-    FacetSimplificationRemoval, FacetSimplificationReport, FacetSimplificationStatus,
-};
 pub use generated_cases::generated_f64_cases;
 pub use geometry::F64CombinatoricsTiming;
-pub use product_preprocess::{
-    round_product_blocks, ProductBlock, ProductRoundingReport, ProductRoundingStatus,
-    PRODUCT_ROUNDING_MAX_MINOR_OVER_MAJOR,
+pub use near_redundant_facet_removal::{
+    NearRedundantFacetRemoval, NearRedundantFacetRemovalPolicy, NearRedundantFacetRemovalReport,
+    NearRedundantFacetRemovalStatus,
 };
-pub use product_simplify::{
-    remove_nearly_redundant_product_facets, ProductFacetRedundancy, ProductSimplificationReport,
-    ProductSimplificationStatus,
+pub use product::{
+    ProductBlock, ProductFacetRemoval, ProductFacetRemovalReport, ProductFacetRemovalStatus,
+    ProductRoundingReport, ProductRoundingStatus, PRODUCT_ROUNDING_MAX_MINOR_OVER_MAJOR,
 };
 pub use rows::ScanRow;
 pub use scan::{

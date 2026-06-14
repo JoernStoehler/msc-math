@@ -1,4 +1,4 @@
-use crate::{round_product_blocks, ProductBlock, ProductRoundingStatus};
+use super::{round_blocks, ProductBlock, ProductRoundingStatus};
 use nalgebra::{Vector2, Vector4};
 use symplectic::classify_facets_from_dual_vertices;
 
@@ -6,7 +6,7 @@ const FACTOR_DET_TOLERANCE: f64 = 1e-12;
 const FACTOR_FEASIBILITY_TOLERANCE: f64 = 1e-10;
 
 #[derive(Clone, Debug)]
-pub struct ProductFacetRedundancy {
+pub struct ProductFacetRemoval {
     pub original_index: usize,
     pub block: ProductBlock,
     pub factor_index: usize,
@@ -14,14 +14,14 @@ pub struct ProductFacetRedundancy {
 }
 
 #[derive(Clone, Debug)]
-pub struct ProductSimplificationReport {
-    pub status: ProductSimplificationStatus,
-    pub simplified_dual_vertices: Vec<Vector4<f64>>,
+pub struct ProductFacetRemovalReport {
+    pub status: ProductFacetRemovalStatus,
+    pub vertices_after_removal: Vec<Vector4<f64>>,
     pub kept_original_indices: Vec<usize>,
-    pub removed_facets: Vec<ProductFacetRedundancy>,
+    pub removed_facets: Vec<ProductFacetRemoval>,
     /// Intended set-level bound:
-    /// P_original <= P_simplified <= (1 + delta_bound) P_original.
-    /// See formal label `rem:product-simplification-experiment-contract`.
+    /// P_original <= P_after <= (1 + delta_bound) P_original.
+    /// See formal label `rem:near-redundant-facet-removal-experiment-contract`.
     pub delta_bound: f64,
     pub capacity_ratio_upper: f64,
     pub volume_ratio_upper: f64,
@@ -30,35 +30,35 @@ pub struct ProductSimplificationReport {
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum ProductSimplificationStatus {
+pub enum ProductFacetRemovalStatus {
     NotAttempted,
-    Simplified,
+    Removed,
     NoNearRedundantFacets,
     NotBlockProduct,
 }
 
-impl ProductSimplificationStatus {
+impl ProductFacetRemovalStatus {
     pub fn label(self) -> &'static str {
         match self {
             Self::NotAttempted => "not_attempted",
-            Self::Simplified => "simplified",
+            Self::Removed => "removed",
             Self::NoNearRedundantFacets => "no_near_redundant_facets",
             Self::NotBlockProduct => "not_block_product",
         }
     }
 }
 
-pub fn remove_nearly_redundant_product_facets(
+pub fn remove_near_redundant_facets(
     dual_vertices: &[Vector4<f64>],
     max_delta: f64,
-) -> ProductSimplificationReport {
-    let rounded = round_product_blocks(dual_vertices);
+) -> ProductFacetRemovalReport {
+    let rounded = round_blocks(dual_vertices);
     if rounded.status != ProductRoundingStatus::Rounded {
-        return ProductSimplificationReport::not_block_product(dual_vertices);
+        return ProductFacetRemovalReport::not_block_product(dual_vertices);
     }
     let dual_vertices = rounded.rounded_dual_vertices;
     let Ok(classification) = classify_facets_from_dual_vertices(&dual_vertices) else {
-        return ProductSimplificationReport::not_block_product(&dual_vertices);
+        return ProductFacetRemovalReport::not_block_product(&dual_vertices);
     };
 
     let q_facets = factor_facets(&dual_vertices, &classification.q_indices, ProductBlock::Q);
@@ -68,8 +68,8 @@ pub fn remove_nearly_redundant_product_facets(
     removed_facets.sort_by_key(|facet| facet.original_index);
 
     if removed_facets.is_empty() {
-        return ProductSimplificationReport::unchanged(
-            ProductSimplificationStatus::NoNearRedundantFacets,
+        return ProductFacetRemovalReport::unchanged(
+            ProductFacetRemovalStatus::NoNearRedundantFacets,
             dual_vertices,
         );
     }
@@ -80,19 +80,19 @@ pub fn remove_nearly_redundant_product_facets(
         remove[facet.original_index] = true;
         delta_bound = delta_bound.max(facet.delta);
     }
-    let mut simplified_dual_vertices = Vec::new();
+    let mut vertices_after_removal = Vec::new();
     let mut kept_original_indices = Vec::new();
     for (idx, vertex) in dual_vertices.iter().enumerate() {
         if !remove[idx] {
-            simplified_dual_vertices.push(*vertex);
+            vertices_after_removal.push(*vertex);
             kept_original_indices.push(idx);
         }
     }
     let distortion = distortion_from_delta_bound(delta_bound);
 
-    ProductSimplificationReport {
-        status: ProductSimplificationStatus::Simplified,
-        simplified_dual_vertices,
+    ProductFacetRemovalReport {
+        status: ProductFacetRemovalStatus::Removed,
+        vertices_after_removal,
         kept_original_indices,
         removed_facets,
         delta_bound,
@@ -103,27 +103,27 @@ pub fn remove_nearly_redundant_product_facets(
     }
 }
 
-impl ProductSimplificationReport {
+impl ProductFacetRemovalReport {
     pub fn not_attempted(dual_vertices: &[Vector4<f64>]) -> Self {
         Self::unchanged(
-            ProductSimplificationStatus::NotAttempted,
+            ProductFacetRemovalStatus::NotAttempted,
             dual_vertices.to_vec(),
         )
     }
 
     fn not_block_product(dual_vertices: &[Vector4<f64>]) -> Self {
         Self::unchanged(
-            ProductSimplificationStatus::NotBlockProduct,
+            ProductFacetRemovalStatus::NotBlockProduct,
             dual_vertices.to_vec(),
         )
     }
 
-    fn unchanged(status: ProductSimplificationStatus, dual_vertices: Vec<Vector4<f64>>) -> Self {
+    fn unchanged(status: ProductFacetRemovalStatus, dual_vertices: Vec<Vector4<f64>>) -> Self {
         let kept_original_indices = (0..dual_vertices.len()).collect();
         let distortion = distortion_from_delta_bound(0.0);
         Self {
             status,
-            simplified_dual_vertices: dual_vertices,
+            vertices_after_removal: dual_vertices,
             kept_original_indices,
             removed_facets: Vec::new(),
             delta_bound: 0.0,
@@ -136,16 +136,16 @@ impl ProductSimplificationReport {
 }
 
 #[derive(Clone, Copy, Debug)]
-struct ProductSimplificationDistortion {
+struct ProductFacetRemovalDistortion {
     capacity_ratio_upper: f64,
     volume_ratio_upper: f64,
     sys_ratio_lower: f64,
     sys_ratio_upper: f64,
 }
 
-fn distortion_from_delta_bound(delta_bound: f64) -> ProductSimplificationDistortion {
+fn distortion_from_delta_bound(delta_bound: f64) -> ProductFacetRemovalDistortion {
     let scale = 1.0 + delta_bound;
-    ProductSimplificationDistortion {
+    ProductFacetRemovalDistortion {
         capacity_ratio_upper: scale.powi(2),
         volume_ratio_upper: scale.powi(4),
         sys_ratio_lower: scale.powi(-4),
@@ -186,7 +186,7 @@ fn factor_facets(
 fn near_redundant_factor_facets(
     facets: &[FactorFacet],
     max_delta: f64,
-) -> Vec<ProductFacetRedundancy> {
+) -> Vec<ProductFacetRemoval> {
     let candidates = facets
         .iter()
         .enumerate()
@@ -203,7 +203,7 @@ fn near_redundant_factor_facets(
         .into_iter()
         .map(|factor_index| {
             let facet = &facets[factor_index];
-            ProductFacetRedundancy {
+            ProductFacetRemoval {
                 original_index: facet.original_index,
                 block: facet.block,
                 factor_index,
@@ -295,7 +295,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn product_simplification_removes_tiny_corner_facet_with_bound() {
+    fn product_facet_removal_removes_tiny_corner_facet_with_bound() {
         let eps = 1e-8;
         let dual_vertices = vec![
             Vector4::new(1.0, 0.0, 0.0, 0.0),
@@ -307,11 +307,11 @@ mod tests {
             Vector4::new(0.0, 0.0, 0.0, 1.0),
             Vector4::new(0.0, 0.0, -1.0, -1.0),
         ];
-        let report = remove_nearly_redundant_product_facets(&dual_vertices, 2e-8);
-        assert_eq!(report.status, ProductSimplificationStatus::Simplified);
+        let report = remove_near_redundant_facets(&dual_vertices, 2e-8);
+        assert_eq!(report.status, ProductFacetRemovalStatus::Removed);
         assert_eq!(report.removed_facets.len(), 1);
         assert!(report.removed_facets[0].delta <= 2e-8);
-        assert_eq!(report.simplified_dual_vertices.len(), 7);
+        assert_eq!(report.vertices_after_removal.len(), 7);
         let scale = 1.0 + report.delta_bound;
         assert_eq!(report.capacity_ratio_upper, scale.powi(2));
         assert_eq!(report.volume_ratio_upper, scale.powi(4));
@@ -320,11 +320,11 @@ mod tests {
     }
 
     #[test]
-    fn product_simplification_reports_non_products() {
+    fn product_facet_removal_reports_non_products() {
         let dual_vertices = vec![Vector4::new(1.0, 0.0, 0.1, 0.0)];
-        let report = remove_nearly_redundant_product_facets(&dual_vertices, 1e-8);
-        assert_eq!(report.status, ProductSimplificationStatus::NotBlockProduct);
-        assert_eq!(report.simplified_dual_vertices, dual_vertices);
+        let report = remove_near_redundant_facets(&dual_vertices, 1e-8);
+        assert_eq!(report.status, ProductFacetRemovalStatus::NotBlockProduct);
+        assert_eq!(report.vertices_after_removal, dual_vertices);
         assert_eq!(report.delta_bound, 0.0);
         assert_eq!(report.capacity_ratio_upper, 1.0);
         assert_eq!(report.volume_ratio_upper, 1.0);

@@ -17,12 +17,12 @@ fn main() {
         &args.output,
         cases,
         args.audit_generated,
-        args.audit_simplified,
+        args.audit_preprocessed,
         args.max_audit_rows,
         args.validation_policy,
         args.capacity_method,
-        args.facet_simplification,
-        args.facet_simplification_delta,
+        args.near_redundant_facet_removal,
+        args.near_redundant_facet_removal_delta,
     );
     eprintln!("wrote {total} rows to {}", args.output.display());
 }

@@ -28,7 +28,7 @@ candidate f64 policy for thesis-scale datascience scans:
 
 This is not theorem-grade certification of every original row. It is a fast
 empirical method that either computes the original f64 row, or computes an
-explicit simplified row whose f64-reported containment/distortion diagnostics
+explicit preprocessed row whose f64-reported containment/distortion diagnostics
 remain visible. The formal implication from a valid containment bound to the
 reported distortion factors is recorded in `formal/`; the f64 computation of
 the bound is still an ordinary floating-point diagnostic.
@@ -40,11 +40,11 @@ commands below before treating them as current evidence.
   the main viability evidence for random empirical scans.
 - Random products should use product rounding and product sigma enumeration.
 - Ascent product endpoints sometimes contain nearly redundant factor facets.
-  Product simplification resolved the one observed fallback row in the current
-  200-row retained sample. On the other simplified rows, generic single-band
-  simplification removed the same facets as product simplification. It did not
-  replace the product policy because it refused the fallback row on 4D
-  vertex/incidence indeterminacy.
+  Product near-redundant facet removal resolved the one observed fallback row
+  in the current 200-row retained sample. On the other preprocessed rows,
+  generic near-redundant facet removal removed the same facets as product
+  near-redundant facet removal. It did not replace the product policy because
+  it refused the fallback row on 4D vertex/incidence indeterminacy.
 - HKO2024 and HKO-like highly degenerate inputs should remain degenerate stress
   fixtures or exact-fallback cases, not targets for a clean f64-only claim.
 
@@ -77,7 +77,7 @@ commands below before treating them as current evidence.
   transition-pruned HK. `transition_pruned_hk` keeps the generic HK path as a
   comparison and fallback evidence surface.
 - `f64-capacity-scan --input-source artifacts` replays retained datascience rows
-  and hard fixtures as a compatibility/audit surface.
+  and hard fixtures as an audit surface for the retained empirical population.
 - `f64-capacity-analyze` summarizes validation coverage, capacity outcomes,
   ambiguity counters, audit agreement, fallback causes, and timing.
 - `f64-capacity-near-singular` keeps the near-singular vertex diagnostic for
@@ -128,7 +128,7 @@ cargo run -p exp-dev-f64-capacity --release --bin f64-capacity-scan -- \
   --output /tmp/f64-capacity-dev-rows.jsonl
 ```
 
-Targeted simplification comparison:
+Targeted near-redundant facet-removal comparison:
 
 ```bash
 cargo run -p exp-dev-f64-capacity --release --bin f64-capacity-scan -- \
@@ -136,28 +136,28 @@ cargo run -p exp-dev-f64-capacity --release --bin f64-capacity-scan -- \
   --max-rows-per-family 0 \
   --family-filter ascent_product_endpoint \
   --source-id-filter ascent_product_60:F10,ascent_product_131:F10,ascent_product_3222:F10 \
-  --output /tmp/f64-capacity-product-simplification-off.jsonl
+  --output /tmp/f64-capacity-product-facet-removal-off.jsonl
 cargo run -p exp-dev-f64-capacity --release --bin f64-capacity-scan -- \
   --input-source artifacts \
   --max-rows-per-family 0 \
   --family-filter ascent_product_endpoint \
   --source-id-filter ascent_product_60:F10,ascent_product_131:F10,ascent_product_3222:F10 \
-  --facet-simplification product_near_redundant \
-  --facet-simplification-delta 1e-8 \
-  --audit-simplified all \
-  --output /tmp/f64-capacity-product-simplification-on.jsonl
+  --near-redundant-facet-removal product \
+  --near-redundant-facet-removal-delta 1e-8 \
+  --audit-preprocessed all \
+  --output /tmp/f64-capacity-product-facet-removal-on.jsonl
 cargo run -p exp-dev-f64-capacity --release --bin f64-capacity-scan -- \
   --input-source artifacts \
   --max-rows-per-family 0 \
   --family-filter ascent_product_endpoint \
   --source-id-filter ascent_product_60:F10,ascent_product_131:F10,ascent_product_3222:F10 \
-  --facet-simplification generic_single_band \
-  --facet-simplification-delta 1e-8 \
-  --audit-simplified all \
-  --output /tmp/f64-capacity-generic-single-band-on.jsonl
+  --near-redundant-facet-removal generic \
+  --near-redundant-facet-removal-delta 1e-8 \
+  --audit-preprocessed all \
+  --output /tmp/f64-capacity-generic-facet-removal-on.jsonl
 cargo run -p exp-dev-f64-capacity --release --bin f64-capacity-analyze -- \
-  --input /tmp/f64-capacity-generic-single-band-on.jsonl \
-  --json-output /tmp/f64-capacity-generic-single-band-on-summary.json
+  --input /tmp/f64-capacity-generic-facet-removal-on.jsonl \
+  --json-output /tmp/f64-capacity-generic-facet-removal-on-summary.json
 ```
 
 Full generated scan:
@@ -204,7 +204,7 @@ cargo run -p exp-dev-f64-capacity --release --bin f64-capacity-analyze -- \
   --json-output /tmp/f64-capacity-policy-lp-generated20-v2-summary.json
 ```
 
-Artifact compatibility scan:
+Retained-artifact scan:
 
 ```bash
 cargo run -p exp-dev-f64-capacity --release --bin f64-capacity-scan -- \
@@ -281,23 +281,22 @@ Rows contain both validation and capacity/audit fields.
   explicit product preprocessing. Capacity is computed on the row's
   post-preprocessing vertices; product rounding is not hidden inside
   `capacity_f64_only_with_policy_and_method_profiled`.
-- `facet_simplification_policy`, `facet_simplification_status`,
-  `removed_original_facets`, `facet_simplification_delta_bound`, and the
-  capacity/volume/sys ratio bounds record optional simplification.
-  Simplification changes the polytope; it is justified only by the reported
-  containment/distortion bounds. `product_simplification_*` fields remain as
-  compatibility aliases for product-only scans.
+- `near_redundant_facet_removal_policy`, `near_redundant_facet_removal_status`,
+  `removed_original_facets`, `near_redundant_facet_removal_delta_bound`, and the
+  capacity/volume/sys ratio bounds record optional near-redundant facet removal.
+  Facet removal changes the polytope; it is justified only by the reported
+  containment/distortion bounds.
 - Capacity labels are object-specific:
   `original_artifact_capacity_label` is for the original artifact row,
-  `simplified_audit_capacity_label` is exact-backed capacity of the
-  post-preprocessing row when requested, and `simplified_f64_capacity` is the
+  `preprocessed_audit_capacity_label` is exact-backed capacity of the
+  post-preprocessing row when requested, and `preprocessed_f64_capacity` is the
   measured f64 capacity of the post-preprocessing row.
-- `simplified_f64_vs_original_artifact_*` and
-  `simplified_audit_vs_original_artifact_*` compare against the original row
+- `preprocessed_f64_vs_original_artifact_*` and
+  `preprocessed_audit_vs_original_artifact_*` compare against the original row
   through the reported distortion bound. These are not same-polytope equality
   checks.
-- `simplified_f64_vs_simplified_audit_*` is the same-polytope f64-vs-exact
-  comparison when exact audit of the simplified row is requested.
+- `preprocessed_f64_vs_preprocessed_audit_*` is the same-polytope f64-vs-exact
+  comparison when exact audit of the preprocessed row is requested.
 - `validation_reasons` records f64 validation predicates and does not replace
   raw counters.
 - `origin_status` and `facet_extremality_status` are tri-state strings:
@@ -357,24 +356,24 @@ own the product structure. If a product-labeled retained row is not
 block-structured within the tolerance, loading fails instead of silently
 projecting it to a different polytope.
 
-`--facet-simplification product_near_redundant` is an explicit product-only
+`--near-redundant-facet-removal product` is an explicit product-only
 preprocessing policy. It rounds product blocks, works in the two 2D factors,
 and removes only factor facets with a reported set-level bound
-`P_original <= P_simplified <= (1 + delta_bound) P_original`.
+`P_original <= P_processed <= (1 + delta_bound) P_original`.
 
-`--facet-simplification generic_single_band` is a generic 4D policy. It uses
+`--near-redundant-facet-removal generic` is a generic 4D policy. It uses
 the f64 vertex/incidence scan and removes a facet only when one retained facet
 guards every definite vertex of the removed facet within the requested
 tolerance. It refuses rows with bounded near-singular or ambiguous-incidence
 geometry because then the f64 vertex list is not a trusted list of all vertices
 of the facet being tested.
 
-The default is `--facet-simplification none`. Use `--audit-simplified all` to
-exact-audit the simplified row after the measured f64 decision has been
-recorded. The formal implication from a valid `delta_bound` to the reported
-capacity, volume, and sys distortion factors is recorded in
-`formal/product-simplification-bounds.tex`
-(`rem:product-simplification-experiment-contract` and
+The default is `--near-redundant-facet-removal none`. Use
+`--audit-preprocessed all` to exact-audit the preprocessed row after the
+measured f64 decision has been recorded. The formal implication from a valid
+`delta_bound` to the reported capacity, volume, and sys distortion factors is
+recorded in `formal/near-redundant-facet-removal-bounds.tex`
+(`rem:near-redundant-facet-removal-experiment-contract` and
 `cor:facet-removal-capacity-volume-sys-bounds`). The single-band/multi-band
 comparison is recorded in `cor:four-dimensional-facet-band-comparison`. The
 current f64 computation of `delta_bound` is an ordinary f64 diagnostic, not an
@@ -385,12 +384,12 @@ outward-rounded certificate.
 These `/tmp` files are not tracked evidence. Re-run the commands before relying
 on the result.
 
-Development iterations should use `--source-id-filter` on one to five rows.
+Development runs should use `--source-id-filter` on one to five rows.
 Bounded family scans are evidence runs. Full retained scans are justified only
 when a thesis table or promotion decision needs full-population rates; do not
 run them merely to increase statistical power.
 
-Current simplification dev rows:
+Current near-redundant facet-removal dev rows:
 
 - `/tmp/f64-generic-redundancy-target-none.jsonl`
 - `/tmp/f64-generic-redundancy-target-product.jsonl`
@@ -403,24 +402,24 @@ Current simplification dev rows:
 
 The targeted rows `ascent_product_60:F10`, `ascent_product_131:F10`, and
 `ascent_product_3222:F10` are mechanism checks, not population evidence. In the
-current runs, the no-simplification scan classifies all three as
+current runs, the no facet-removal scan classifies all three as
 `degenerate_value_agrees`. This changed after `bounded_near_singular` was
 tightened to require a feasible near-singular point. With
-`--facet-simplification product_near_redundant` and
-`--facet-simplification generic_single_band`, both policies remove the same
+`--near-redundant-facet-removal product` and
+`--near-redundant-facet-removal generic`, both policies remove the same
 facet from `ascent_product_60:F10` and `ascent_product_131:F10`, with
-`delta_bound < 8e-9`. Both simplified f64 values and simplified exact-audit
+`delta_bound < 8e-9`. Both preprocessed f64 values and preprocessed exact-audit
 values are inside the original-polytope distortion budget.
 
 Bounded retained-product matrix:
 
-- `random_product`, 20-row sanity with `generic_single_band`: simplification
+- `random_product`, 20-row sanity with `generic`: facet removal
   triggers on 0 rows; all 20 remain `degenerate_value_agrees`.
-- `random`, 20-row sanity with `generic_single_band`: simplification triggers
+- `random`, 20-row sanity with `generic`: facet removal triggers
   on 0 rows; all 20 remain `clean`.
-- `ascent_product_endpoint`, 200 rows: product simplification triggers on 4
+- `ascent_product_endpoint`, 200 rows: product near-redundant facet removal triggers on 4
   rows and removes the one remaining `fallback_required` row. Generic
-  single-band simplification triggers on 3 rows and leaves that same row as
+  single-band facet removal triggers on 3 rows and leaves that same row as
   `fallback_required` because the relevant 4D vertex/incidence geometry is
   indeterminate. This is the current reason to keep the product-only policy in
   addition to the generic one.
@@ -476,7 +475,7 @@ runtime numbers. Reusable performance-comparison targets belong in
 
 Before promoting this into a library or `sys-datascience`, require:
 
-- reviewed generated-f64 scans and artifact compatibility scans;
+- reviewed generated-f64 scans and retained-artifact scans;
 - reviewed analyzer summaries of coverage, ambiguity, fallback causes, audit
   agreement, and timing;
 - an explicit policy for how `accepted_ambiguous` rows are used downstream;

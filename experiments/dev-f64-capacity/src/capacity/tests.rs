@@ -1,6 +1,6 @@
 use super::*;
 use crate::geometry::f64_combinatorics;
-use crate::{round_product_blocks, F64ValidationPolicy};
+use crate::{product, F64ValidationPolicy};
 use nalgebra::Vector4;
 use symplectic::known_polytopes;
 
@@ -80,10 +80,10 @@ fn product_billiard_method_reduces_product_sigma_count() {
         F64CapacityOutcome::Success { .. }
     ));
     assert!(
-        product.iterations < generic.iterations,
+        product.sigma_count < generic.sigma_count,
         "product billiard should cut product sigma count: generic {}, product {}",
-        generic.iterations,
-        product.iterations
+        generic.sigma_count,
+        product.sigma_count
     );
 }
 
@@ -106,7 +106,7 @@ fn product_billiard_method_tolerates_tiny_off_block_drift() {
         F64ValidationPolicy::LpOriginVertex,
         F64CapacityMethod::TransitionPrunedHk,
     );
-    let rounded = round_product_blocks(&dual_vertices);
+    let rounded = product::round_blocks(&dual_vertices);
     assert!(rounded.should_use_rounded_vertices());
     let (product, _) = capacity_f64_only_with_policy_and_method_profiled(
         &rounded.rounded_dual_vertices,
@@ -119,9 +119,9 @@ fn product_billiard_method_tolerates_tiny_off_block_drift() {
         F64CapacityOutcome::Success { .. }
     ));
     assert!(
-        product.iterations < generic.iterations,
+        product.sigma_count < generic.sigma_count,
         "tolerant product routing should cut sigma count: generic {}, product {}",
-        generic.iterations,
-        product.iterations
+        generic.sigma_count,
+        product.sigma_count
     );
 }

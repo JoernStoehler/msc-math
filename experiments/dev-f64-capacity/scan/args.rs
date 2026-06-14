@@ -1,7 +1,9 @@
 use std::path::PathBuf;
 
 use crate::input::InputSource;
-use exp_dev_f64_capacity::{F64CapacityMethod, F64ValidationPolicy, FacetSimplificationPolicy};
+use exp_dev_f64_capacity::{
+    F64CapacityMethod, F64ValidationPolicy, NearRedundantFacetRemovalPolicy,
+};
 
 #[derive(Clone, Debug)]
 pub(crate) struct Args {
@@ -11,12 +13,12 @@ pub(crate) struct Args {
     pub(crate) generated_samples_per_facet: usize,
     pub(crate) generated_seed: u64,
     pub(crate) audit_generated: AuditGenerated,
-    pub(crate) audit_simplified: AuditSimplified,
+    pub(crate) audit_preprocessed: AuditPreprocessed,
     pub(crate) max_audit_rows: usize,
     pub(crate) validation_policy: F64ValidationPolicy,
     pub(crate) capacity_method: F64CapacityMethod,
-    pub(crate) facet_simplification: FacetSimplificationPolicy,
-    pub(crate) facet_simplification_delta: f64,
+    pub(crate) near_redundant_facet_removal: NearRedundantFacetRemovalPolicy,
+    pub(crate) near_redundant_facet_removal_delta: f64,
     pub(crate) family_filter: Vec<String>,
     pub(crate) source_id_filter: Vec<String>,
 }
@@ -28,7 +30,7 @@ pub(crate) enum AuditGenerated {
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub(crate) enum AuditSimplified {
+pub(crate) enum AuditPreprocessed {
     None,
     All,
 }
@@ -41,12 +43,12 @@ pub(crate) fn parse_args() -> Args {
     let mut generated_samples_per_facet = 4usize;
     let mut generated_seed = 0x5eed_f64_u64;
     let mut audit_generated = AuditGenerated::None;
-    let mut audit_simplified = AuditSimplified::None;
+    let mut audit_preprocessed = AuditPreprocessed::None;
     let mut max_audit_rows = 0usize;
     let mut validation_policy = F64ValidationPolicy::LpOriginVertex;
     let mut capacity_method = F64CapacityMethod::ProductBilliardOrHk;
-    let mut facet_simplification = FacetSimplificationPolicy::None;
-    let mut facet_simplification_delta = 1e-8f64;
+    let mut near_redundant_facet_removal = NearRedundantFacetRemovalPolicy::None;
+    let mut near_redundant_facet_removal_delta = 1e-8f64;
     let mut family_filter = Vec::new();
     let mut source_id_filter = Vec::new();
     let mut i = 1;
@@ -93,11 +95,11 @@ pub(crate) fn parse_args() -> Args {
                 };
                 i += 2;
             }
-            "--audit-simplified" => {
-                audit_simplified = match value(&argv, i, "--audit-simplified") {
-                    "none" => AuditSimplified::None,
-                    "all" => AuditSimplified::All,
-                    other => panic!("--audit-simplified must be none or all, got {other}"),
+            "--audit-preprocessed" => {
+                audit_preprocessed = match value(&argv, i, "--audit-preprocessed") {
+                    "none" => AuditPreprocessed::None,
+                    "all" => AuditPreprocessed::All,
+                    other => panic!("--audit-preprocessed must be none or all, got {other}"),
                 };
                 i += 2;
             }
@@ -128,36 +130,17 @@ pub(crate) fn parse_args() -> Args {
                 };
                 i += 2;
             }
-            "--facet-simplification" => {
-                facet_simplification = parse_facet_simplification(
-                    value(&argv, i, "--facet-simplification"),
-                    "--facet-simplification",
+            "--near-redundant-facet-removal" => {
+                near_redundant_facet_removal = parse_near_redundant_facet_removal(
+                    value(&argv, i, "--near-redundant-facet-removal"),
+                    "--near-redundant-facet-removal",
                 );
                 i += 2;
             }
-            "--facet-simplification-delta" => {
-                facet_simplification_delta = parse_simplification_delta(
-                    value(&argv, i, "--facet-simplification-delta"),
-                    "--facet-simplification-delta",
-                );
-                i += 2;
-            }
-            "--product-simplification" => {
-                facet_simplification = match value(&argv, i, "--product-simplification") {
-                    "none" => FacetSimplificationPolicy::None,
-                    "near_redundant" => FacetSimplificationPolicy::ProductNearRedundant,
-                    other => {
-                        panic!(
-                            "--product-simplification must be none or near_redundant, got {other}"
-                        )
-                    }
-                };
-                i += 2;
-            }
-            "--product-simplification-delta" => {
-                facet_simplification_delta = parse_simplification_delta(
-                    value(&argv, i, "--product-simplification-delta"),
-                    "--product-simplification-delta",
+            "--near-redundant-facet-removal-delta" => {
+                near_redundant_facet_removal_delta = parse_removal_delta(
+                    value(&argv, i, "--near-redundant-facet-removal-delta"),
+                    "--near-redundant-facet-removal-delta",
                 );
                 i += 2;
             }
@@ -193,29 +176,27 @@ pub(crate) fn parse_args() -> Args {
         generated_samples_per_facet,
         generated_seed,
         audit_generated,
-        audit_simplified,
+        audit_preprocessed,
         max_audit_rows,
         validation_policy,
         capacity_method,
-        facet_simplification,
-        facet_simplification_delta,
+        near_redundant_facet_removal,
+        near_redundant_facet_removal_delta,
         family_filter,
         source_id_filter,
     }
 }
 
-fn parse_facet_simplification(value: &str, flag: &str) -> FacetSimplificationPolicy {
+fn parse_near_redundant_facet_removal(value: &str, flag: &str) -> NearRedundantFacetRemovalPolicy {
     match value {
-        "none" => FacetSimplificationPolicy::None,
-        "product_near_redundant" => FacetSimplificationPolicy::ProductNearRedundant,
-        "generic_single_band" => FacetSimplificationPolicy::GenericSingleBand,
-        other => panic!(
-            "{flag} must be none, product_near_redundant, or generic_single_band, got {other}"
-        ),
+        "none" => NearRedundantFacetRemovalPolicy::None,
+        "product" => NearRedundantFacetRemovalPolicy::Product,
+        "generic" => NearRedundantFacetRemovalPolicy::Generic,
+        other => panic!("{flag} must be none, product, or generic, got {other}"),
     }
 }
 
-fn parse_simplification_delta(value: &str, flag: &str) -> f64 {
+fn parse_removal_delta(value: &str, flag: &str) -> f64 {
     let delta: f64 = value
         .parse()
         .unwrap_or_else(|_| panic!("{flag} must be a finite non-negative f64"));
@@ -235,17 +216,15 @@ fn value<'a>(argv: &'a [String], i: usize, flag: &str) -> &'a str {
 fn print_help() {
     println!(
         "Usage: f64-capacity-scan [--output PATH] [--input-source all|generated|artifacts] \\\n         [--max-rows-per-family N] [--generated-samples-per-facet N] [--generated-seed U64]\n\
-         [--audit-generated none|all] [--audit-simplified none|all] [--max-audit-rows N]\n\
+         [--audit-generated none|all] [--audit-preprocessed none|all] [--max-audit-rows N]\n\
          [--validation-policy strict|lp_origin_vertex|lp]\n\
          [--capacity-method transition_pruned_hk|product_billiard_or_hk]\n\
-         [--facet-simplification none|product_near_redundant|generic_single_band]\n\
-         [--facet-simplification-delta F64]\n\
+         [--near-redundant-facet-removal none|product|generic]\n\
+         [--near-redundant-facet-removal-delta F64]\n\
          [--family-filter FAMILY[,FAMILY...]] [--source-id-filter SOURCE_ID[,SOURCE_ID...]]\n\
          N=0 scans every row in each retained artifact. Generated rows are deterministic attempts.\n\
          --family-filter keeps only the named emitted families after case loading.\n\
          --source-id-filter keeps only exact source id matches after case loading.\n\
-         --max-audit-rows 0 means no audit row cap.\n\
-         --product-simplification and --product-simplification-delta remain aliases for\n\
-         product_near_redundant compatibility."
+         --max-audit-rows 0 means no audit row cap."
     );
 }

@@ -223,7 +223,7 @@ mod tests {
                 capacity: 2.0,
                 sigma: vec![0, 1],
             },
-            iterations: 1,
+            sigma_count: 1,
             admissible_f64_count: 1,
             indeterminate_f64_count: 0,
             inadmissible_count: 0,

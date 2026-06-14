@@ -1,11 +1,10 @@
 use crate::{
     audit_generated_case_exact, capacity_f64_only_with_policy_and_method_profiled, classify_report,
-    exact_audit_not_requested, remove_nearly_redundant_facets_single_band,
-    remove_nearly_redundant_product_facets, round_product_blocks,
-    validate_f64_polytope_input_with_policy_profiled, ExactAuditReport, F64CapacityMethod,
-    F64CapacityReport, F64CapacityTimingBreakdown, F64ValidationPolicy, F64ValidationReport,
-    F64ValidationStatus, F64ValidationTimingBreakdown, FacetSimplificationPolicy,
-    FacetSimplificationReport, FacetSimplificationStatus, ProductRoundingReport, ScanCase, ScanRow,
+    exact_audit_not_requested, generic, product, validate_f64_polytope_input_with_policy_profiled,
+    ExactAuditReport, F64CapacityMethod, F64CapacityReport, F64CapacityTimingBreakdown,
+    F64ValidationPolicy, F64ValidationReport, F64ValidationStatus, F64ValidationTimingBreakdown,
+    NearRedundantFacetRemovalPolicy, NearRedundantFacetRemovalReport,
+    NearRedundantFacetRemovalStatus, ProductRoundingReport, ScanCase, ScanRow,
 };
 use std::time::Instant;
 
@@ -14,11 +13,11 @@ const BOUND_COMPARISON_TOLERANCE: f64 = 1e-10;
 #[derive(Clone, Debug)]
 pub struct ScanOptions {
     pub audit_generated: bool,
-    pub audit_simplified: bool,
+    pub audit_preprocessed: bool,
     pub validation_policy: F64ValidationPolicy,
     pub capacity_method: F64CapacityMethod,
-    pub facet_simplification: FacetSimplificationPolicy,
-    pub facet_simplification_delta: f64,
+    pub near_redundant_facet_removal: NearRedundantFacetRemovalPolicy,
+    pub near_redundant_facet_removal_delta: f64,
 }
 
 #[derive(Clone, Debug, Default)]
@@ -31,11 +30,11 @@ impl Default for ScanOptions {
     fn default() -> Self {
         Self {
             audit_generated: false,
-            audit_simplified: false,
+            audit_preprocessed: false,
             validation_policy: F64ValidationPolicy::LpOriginVertex,
             capacity_method: F64CapacityMethod::ProductBilliardOrHk,
-            facet_simplification: FacetSimplificationPolicy::None,
-            facet_simplification_delta: 1e-8,
+            near_redundant_facet_removal: NearRedundantFacetRemovalPolicy::None,
+            near_redundant_facet_removal_delta: 1e-8,
         }
     }
 }
@@ -57,10 +56,11 @@ pub fn scan_case_with_options_profiled(
     if product_rounding.should_use_rounded_vertices() {
         case.dual_vertices = product_rounding.rounded_dual_vertices.clone();
     }
-    let facet_simplification = facet_simplification_for_options(&case, options);
-    let input_was_simplified = facet_simplification.status == FacetSimplificationStatus::Simplified;
-    if facet_simplification.status == FacetSimplificationStatus::Simplified {
-        case.dual_vertices = facet_simplification.simplified_dual_vertices.clone();
+    let near_redundant_facet_removal = near_redundant_facet_removal_for_options(&case, options);
+    let input_had_facet_removal =
+        near_redundant_facet_removal.status == NearRedundantFacetRemovalStatus::Removed;
+    if input_had_facet_removal {
+        case.dual_vertices = near_redundant_facet_removal.vertices_after_removal.clone();
         case.audit_capacity_label = None;
         case.audit_sigma_label = None;
     }
@@ -87,7 +87,7 @@ pub fn scan_case_with_options_profiled(
     } else {
         None
     };
-    let exact_audit = exact_audit_for_case(&case, options, input_was_simplified);
+    let exact_audit = exact_audit_for_case(&case, options, input_had_facet_removal);
     let audit_capacity_label = exact_audit.capacity_label.or(case.audit_capacity_label);
     let audit_sigma_label = exact_audit
         .sigma_label
@@ -106,7 +106,7 @@ pub fn scan_case_with_options_profiled(
                 f64_time_ms,
                 original_facet_count,
                 product_rounding,
-                facet_simplification,
+                near_redundant_facet_removal,
                 exact_audit,
                 audit_capacity_label,
                 audit_sigma_label,
@@ -122,7 +122,7 @@ pub fn scan_case_with_options_profiled(
                 options.capacity_method,
                 original_facet_count,
                 product_rounding,
-                facet_simplification,
+                near_redundant_facet_removal,
                 exact_audit,
                 audit_capacity_label,
                 audit_sigma_label,
@@ -142,7 +142,7 @@ fn capacity_row(
     f64_time_ms: f64,
     original_facet_count: usize,
     product_rounding: ProductRoundingReport,
-    facet_simplification: FacetSimplificationReport,
+    near_redundant_facet_removal: NearRedundantFacetRemovalReport,
     exact_audit: ExactAuditReport,
     audit_capacity_label: Option<f64>,
     audit_sigma_label: Option<Vec<usize>>,
@@ -152,8 +152,8 @@ fn capacity_row(
     }
     let f64_capacity = report.outcome.capacity();
     let original_artifact_capacity_label = case.artifact_capacity_label;
-    let simplified_f64_capacity = f64_capacity;
-    let simplified_audit_capacity_label = exact_audit.capacity_label;
+    let preprocessed_f64_capacity = f64_capacity;
+    let preprocessed_audit_capacity_label = exact_audit.capacity_label;
     let (abs_action_error, rel_action_error) = match (f64_capacity, audit_capacity_label) {
         (Some(actual), Some(audit_label)) => {
             let abs = (actual - audit_label).abs();
@@ -168,22 +168,22 @@ fn capacity_row(
         abs_action_error,
         rel_action_error,
     );
-    let simplified_f64_vs_simplified_audit =
-        comparison_error(simplified_f64_capacity, simplified_audit_capacity_label);
-    let simplified_f64_vs_original_artifact =
-        comparison_error(simplified_f64_capacity, original_artifact_capacity_label);
-    let simplified_audit_vs_original_artifact = comparison_error(
-        simplified_audit_capacity_label,
+    let preprocessed_f64_vs_preprocessed_audit =
+        comparison_error(preprocessed_f64_capacity, preprocessed_audit_capacity_label);
+    let preprocessed_f64_vs_original_artifact =
+        comparison_error(preprocessed_f64_capacity, original_artifact_capacity_label);
+    let preprocessed_audit_vs_original_artifact = comparison_error(
+        preprocessed_audit_capacity_label,
         original_artifact_capacity_label,
     );
-    let capacity_ratio_upper_bound = facet_simplification.capacity_ratio_upper;
-    let simplified_f64_vs_original_artifact_within_bound = within_capacity_distortion_bound(
-        simplified_f64_capacity,
+    let capacity_ratio_upper_bound = near_redundant_facet_removal.capacity_ratio_upper;
+    let preprocessed_f64_vs_original_artifact_within_bound = within_capacity_distortion_bound(
+        preprocessed_f64_capacity,
         original_artifact_capacity_label,
         capacity_ratio_upper_bound,
     );
-    let simplified_audit_vs_original_artifact_within_bound = within_capacity_distortion_bound(
-        simplified_audit_capacity_label,
+    let preprocessed_audit_vs_original_artifact_within_bound = within_capacity_distortion_bound(
+        preprocessed_audit_capacity_label,
         original_artifact_capacity_label,
         capacity_ratio_upper_bound,
     );
@@ -208,24 +208,26 @@ fn capacity_row(
         product_rounding_max_abs_change: product_rounding.max_abs_change,
         product_q_facet_count: Some(product_rounding.q_facet_count),
         product_p_facet_count: Some(product_rounding.p_facet_count),
-        facet_simplification_policy: facet_simplification.policy.label().to_string(),
-        facet_simplification_status: facet_simplification.status.label().to_string(),
-        product_simplification_status: product_simplification_status(&facet_simplification),
-        simplified_facet_count: Some(facet_simplification.simplified_dual_vertices.len()),
-        removed_facet_count: facet_simplification.removed_facets.len(),
-        removed_original_facets: facet_simplification
+        near_redundant_facet_removal_policy: near_redundant_facet_removal
+            .policy
+            .label()
+            .to_string(),
+        near_redundant_facet_removal_status: near_redundant_facet_removal
+            .status
+            .label()
+            .to_string(),
+        preprocessed_facet_count: Some(near_redundant_facet_removal.vertices_after_removal.len()),
+        removed_facet_count: near_redundant_facet_removal.removed_facets.len(),
+        removed_original_facets: near_redundant_facet_removal
             .removed_facets
             .iter()
             .map(|facet| facet.original_index())
             .collect(),
-        facet_simplification_delta_bound: Some(facet_simplification.delta_bound),
-        product_simplification_delta_bound: product_simplification_delta_bound(
-            &facet_simplification,
-        ),
-        capacity_ratio_upper_bound: Some(facet_simplification.capacity_ratio_upper),
-        volume_ratio_upper_bound: Some(facet_simplification.volume_ratio_upper),
-        sys_ratio_lower_bound: Some(facet_simplification.sys_ratio_lower),
-        sys_ratio_upper_bound: Some(facet_simplification.sys_ratio_upper),
+        near_redundant_facet_removal_delta_bound: Some(near_redundant_facet_removal.delta_bound),
+        capacity_ratio_upper_bound: Some(near_redundant_facet_removal.capacity_ratio_upper),
+        volume_ratio_upper_bound: Some(near_redundant_facet_removal.volume_ratio_upper),
+        sys_ratio_lower_bound: Some(near_redundant_facet_removal.sys_ratio_lower),
+        sys_ratio_upper_bound: Some(near_redundant_facet_removal.sys_ratio_upper),
         validation_policy: validation_policy.label().to_string(),
         capacity_method: capacity_method.label().to_string(),
         validation_status: validation.status.label().to_string(),
@@ -243,31 +245,35 @@ fn capacity_row(
         outcome: report.outcome.outcome_label().to_string(),
         failure_reason: report.outcome.failure_reason(),
         f64_capacity,
-        simplified_f64_capacity,
+        preprocessed_f64_capacity,
         audit_capacity_label,
         original_artifact_capacity_label,
-        simplified_audit_capacity_label,
+        preprocessed_audit_capacity_label,
         artifact_capacity_label: case.artifact_capacity_label,
         exact_audit_status: exact_audit.status.label().to_string(),
         exact_audit_time_ms: exact_audit.time_ms,
         exact_audit_reasons: exact_audit.reasons,
         abs_action_error,
         rel_action_error,
-        simplified_f64_vs_simplified_audit_abs_error: simplified_f64_vs_simplified_audit.abs,
-        simplified_f64_vs_simplified_audit_rel_error: simplified_f64_vs_simplified_audit.rel,
-        simplified_f64_vs_original_artifact_abs_error: simplified_f64_vs_original_artifact.abs,
-        simplified_f64_vs_original_artifact_rel_error: simplified_f64_vs_original_artifact.rel,
-        simplified_f64_vs_original_artifact_within_bound,
-        simplified_audit_vs_original_artifact_abs_error: simplified_audit_vs_original_artifact.abs,
-        simplified_audit_vs_original_artifact_rel_error: simplified_audit_vs_original_artifact.rel,
-        simplified_audit_vs_original_artifact_within_bound,
+        preprocessed_f64_vs_preprocessed_audit_abs_error: preprocessed_f64_vs_preprocessed_audit
+            .abs,
+        preprocessed_f64_vs_preprocessed_audit_rel_error: preprocessed_f64_vs_preprocessed_audit
+            .rel,
+        preprocessed_f64_vs_original_artifact_abs_error: preprocessed_f64_vs_original_artifact.abs,
+        preprocessed_f64_vs_original_artifact_rel_error: preprocessed_f64_vs_original_artifact.rel,
+        preprocessed_f64_vs_original_artifact_within_bound,
+        preprocessed_audit_vs_original_artifact_abs_error: preprocessed_audit_vs_original_artifact
+            .abs,
+        preprocessed_audit_vs_original_artifact_rel_error: preprocessed_audit_vs_original_artifact
+            .rel,
+        preprocessed_audit_vs_original_artifact_within_bound,
         f64_time_ms,
         agreement_status: classification.agreement_status.label().to_string(),
         trust_class,
         trust_reasons,
         f64_sigma: report.outcome.sigma(),
         audit_sigma_label,
-        sigma_count: report.iterations,
+        sigma_count: report.sigma_count,
         admissible_f64_count: report.admissible_f64_count,
         indeterminate_f64_count: report.indeterminate_f64_count,
         inadmissible_count: report.inadmissible_count,
@@ -294,20 +300,20 @@ fn validation_only_row(
     capacity_method: F64CapacityMethod,
     original_facet_count: usize,
     product_rounding: ProductRoundingReport,
-    facet_simplification: FacetSimplificationReport,
+    near_redundant_facet_removal: NearRedundantFacetRemovalReport,
     exact_audit: ExactAuditReport,
     audit_capacity_label: Option<f64>,
     audit_sigma_label: Option<Vec<usize>>,
 ) -> ScanRow {
     let original_artifact_capacity_label = case.artifact_capacity_label;
-    let simplified_audit_capacity_label = exact_audit.capacity_label;
-    let simplified_audit_vs_original_artifact = comparison_error(
-        simplified_audit_capacity_label,
+    let preprocessed_audit_capacity_label = exact_audit.capacity_label;
+    let preprocessed_audit_vs_original_artifact = comparison_error(
+        preprocessed_audit_capacity_label,
         original_artifact_capacity_label,
     );
-    let capacity_ratio_upper_bound = facet_simplification.capacity_ratio_upper;
-    let simplified_audit_vs_original_artifact_within_bound = within_capacity_distortion_bound(
-        simplified_audit_capacity_label,
+    let capacity_ratio_upper_bound = near_redundant_facet_removal.capacity_ratio_upper;
+    let preprocessed_audit_vs_original_artifact_within_bound = within_capacity_distortion_bound(
+        preprocessed_audit_capacity_label,
         original_artifact_capacity_label,
         capacity_ratio_upper_bound,
     );
@@ -325,24 +331,26 @@ fn validation_only_row(
         product_rounding_max_abs_change: product_rounding.max_abs_change,
         product_q_facet_count: Some(product_rounding.q_facet_count),
         product_p_facet_count: Some(product_rounding.p_facet_count),
-        facet_simplification_policy: facet_simplification.policy.label().to_string(),
-        facet_simplification_status: facet_simplification.status.label().to_string(),
-        product_simplification_status: product_simplification_status(&facet_simplification),
-        simplified_facet_count: Some(facet_simplification.simplified_dual_vertices.len()),
-        removed_facet_count: facet_simplification.removed_facets.len(),
-        removed_original_facets: facet_simplification
+        near_redundant_facet_removal_policy: near_redundant_facet_removal
+            .policy
+            .label()
+            .to_string(),
+        near_redundant_facet_removal_status: near_redundant_facet_removal
+            .status
+            .label()
+            .to_string(),
+        preprocessed_facet_count: Some(near_redundant_facet_removal.vertices_after_removal.len()),
+        removed_facet_count: near_redundant_facet_removal.removed_facets.len(),
+        removed_original_facets: near_redundant_facet_removal
             .removed_facets
             .iter()
             .map(|facet| facet.original_index())
             .collect(),
-        facet_simplification_delta_bound: Some(facet_simplification.delta_bound),
-        product_simplification_delta_bound: product_simplification_delta_bound(
-            &facet_simplification,
-        ),
-        capacity_ratio_upper_bound: Some(facet_simplification.capacity_ratio_upper),
-        volume_ratio_upper_bound: Some(facet_simplification.volume_ratio_upper),
-        sys_ratio_lower_bound: Some(facet_simplification.sys_ratio_lower),
-        sys_ratio_upper_bound: Some(facet_simplification.sys_ratio_upper),
+        near_redundant_facet_removal_delta_bound: Some(near_redundant_facet_removal.delta_bound),
+        capacity_ratio_upper_bound: Some(near_redundant_facet_removal.capacity_ratio_upper),
+        volume_ratio_upper_bound: Some(near_redundant_facet_removal.volume_ratio_upper),
+        sys_ratio_lower_bound: Some(near_redundant_facet_removal.sys_ratio_lower),
+        sys_ratio_upper_bound: Some(near_redundant_facet_removal.sys_ratio_upper),
         validation_policy: validation_policy.label().to_string(),
         capacity_method: capacity_method.label().to_string(),
         validation_status: validation.status.label().to_string(),
@@ -360,24 +368,26 @@ fn validation_only_row(
         outcome: "not_run".to_string(),
         failure_reason: Some(format!("validation_{}", validation.status.label())),
         f64_capacity: None,
-        simplified_f64_capacity: None,
+        preprocessed_f64_capacity: None,
         audit_capacity_label,
         original_artifact_capacity_label,
-        simplified_audit_capacity_label,
+        preprocessed_audit_capacity_label,
         artifact_capacity_label: case.artifact_capacity_label,
         exact_audit_status: exact_audit.status.label().to_string(),
         exact_audit_time_ms: exact_audit.time_ms,
         exact_audit_reasons: exact_audit.reasons,
         abs_action_error: None,
         rel_action_error: None,
-        simplified_f64_vs_simplified_audit_abs_error: None,
-        simplified_f64_vs_simplified_audit_rel_error: None,
-        simplified_f64_vs_original_artifact_abs_error: None,
-        simplified_f64_vs_original_artifact_rel_error: None,
-        simplified_f64_vs_original_artifact_within_bound: None,
-        simplified_audit_vs_original_artifact_abs_error: simplified_audit_vs_original_artifact.abs,
-        simplified_audit_vs_original_artifact_rel_error: simplified_audit_vs_original_artifact.rel,
-        simplified_audit_vs_original_artifact_within_bound,
+        preprocessed_f64_vs_preprocessed_audit_abs_error: None,
+        preprocessed_f64_vs_preprocessed_audit_rel_error: None,
+        preprocessed_f64_vs_original_artifact_abs_error: None,
+        preprocessed_f64_vs_original_artifact_rel_error: None,
+        preprocessed_f64_vs_original_artifact_within_bound: None,
+        preprocessed_audit_vs_original_artifact_abs_error: preprocessed_audit_vs_original_artifact
+            .abs,
+        preprocessed_audit_vs_original_artifact_rel_error: preprocessed_audit_vs_original_artifact
+            .rel,
+        preprocessed_audit_vs_original_artifact_within_bound,
         f64_time_ms: 0.0,
         agreement_status: "no_f64_capacity".to_string(),
         trust_class: "fallback_required".to_string(),
@@ -409,55 +419,43 @@ fn validation_only_row(
 
 fn product_preprocess_for_options(case: &ScanCase, options: &ScanOptions) -> ProductRoundingReport {
     if options.capacity_method == F64CapacityMethod::ProductBilliardOrHk
-        || options.facet_simplification == FacetSimplificationPolicy::ProductNearRedundant
+        || options.near_redundant_facet_removal == NearRedundantFacetRemovalPolicy::Product
     {
-        round_product_blocks(&case.dual_vertices)
+        product::round_blocks(&case.dual_vertices)
     } else {
         ProductRoundingReport::not_attempted(&case.dual_vertices)
     }
 }
 
-fn facet_simplification_for_options(
+fn near_redundant_facet_removal_for_options(
     case: &ScanCase,
     options: &ScanOptions,
-) -> FacetSimplificationReport {
-    match options.facet_simplification {
-        FacetSimplificationPolicy::None => {
-            FacetSimplificationReport::not_attempted(&case.dual_vertices)
+) -> NearRedundantFacetRemovalReport {
+    match options.near_redundant_facet_removal {
+        NearRedundantFacetRemovalPolicy::None => {
+            NearRedundantFacetRemovalReport::not_attempted(&case.dual_vertices)
         }
-        FacetSimplificationPolicy::ProductNearRedundant => {
-            FacetSimplificationReport::from_product(remove_nearly_redundant_product_facets(
+        NearRedundantFacetRemovalPolicy::Product => {
+            NearRedundantFacetRemovalReport::from_product(product::remove_near_redundant_facets(
                 &case.dual_vertices,
-                options.facet_simplification_delta,
+                options.near_redundant_facet_removal_delta,
             ))
         }
-        FacetSimplificationPolicy::GenericSingleBand => remove_nearly_redundant_facets_single_band(
+        NearRedundantFacetRemovalPolicy::Generic => generic::remove_near_redundant_facets(
             &case.dual_vertices,
-            options.facet_simplification_delta,
+            options.near_redundant_facet_removal_delta,
         ),
     }
-}
-
-fn product_simplification_status(report: &FacetSimplificationReport) -> String {
-    if report.policy == FacetSimplificationPolicy::ProductNearRedundant {
-        report.status.label().to_string()
-    } else {
-        FacetSimplificationStatus::NotAttempted.label().to_string()
-    }
-}
-
-fn product_simplification_delta_bound(report: &FacetSimplificationReport) -> Option<f64> {
-    (report.policy == FacetSimplificationPolicy::ProductNearRedundant).then_some(report.delta_bound)
 }
 
 fn exact_audit_for_case(
     case: &ScanCase,
     options: &ScanOptions,
-    product_was_simplified: bool,
+    input_had_facet_removal: bool,
 ) -> ExactAuditReport {
     if options.audit_generated && case.input_source == "generated_f64" {
         audit_generated_case_exact(&case.dual_vertices)
-    } else if options.audit_simplified && product_was_simplified {
+    } else if options.audit_preprocessed && input_had_facet_removal {
         audit_generated_case_exact(&case.dual_vertices)
     } else {
         exact_audit_not_requested()
@@ -545,11 +543,11 @@ mod tests {
             simplex_case(),
             &ScanOptions {
                 audit_generated: true,
-                audit_simplified: false,
+                audit_preprocessed: false,
                 validation_policy: F64ValidationPolicy::Strict,
                 capacity_method: F64CapacityMethod::TransitionPrunedHk,
-                facet_simplification: FacetSimplificationPolicy::None,
-                facet_simplification_delta: 1e-8,
+                near_redundant_facet_removal: NearRedundantFacetRemovalPolicy::None,
+                near_redundant_facet_removal_delta: 1e-8,
             },
         );
         assert_eq!(row.exact_audit_status, "exact_valid_capacity_success");
@@ -563,11 +561,11 @@ mod tests {
             duplicate_case(),
             &ScanOptions {
                 audit_generated: true,
-                audit_simplified: false,
+                audit_preprocessed: false,
                 validation_policy: F64ValidationPolicy::Strict,
                 capacity_method: F64CapacityMethod::TransitionPrunedHk,
-                facet_simplification: FacetSimplificationPolicy::None,
-                facet_simplification_delta: 1e-8,
+                near_redundant_facet_removal: NearRedundantFacetRemovalPolicy::None,
+                near_redundant_facet_removal_delta: 1e-8,
             },
         );
         assert_eq!(row.validation_status, "rejected");
@@ -602,14 +600,13 @@ mod tests {
         assert_eq!(row.original_facet_count, Some(row.facet_count));
         assert!(row.product_rounding_max_abs_change.unwrap() > 0.0);
         assert!(row.product_rounding_max_minor_over_major.unwrap() < 1e-9);
-        assert_eq!(row.facet_simplification_policy, "none");
-        assert_eq!(row.facet_simplification_status, "not_attempted");
-        assert_eq!(row.product_simplification_status, "not_attempted");
+        assert_eq!(row.near_redundant_facet_removal_policy, "none");
+        assert_eq!(row.near_redundant_facet_removal_status, "not_attempted");
         assert_eq!(row.removed_facet_count, 0);
     }
 
     #[test]
-    fn scan_product_simplification_removes_near_redundant_facets_explicitly() {
+    fn scan_product_facet_removal_removes_near_redundant_facets_explicitly() {
         let mut case = near_redundant_product_case();
         case.audit_capacity_label = Some(1.0);
         case.artifact_capacity_label = Some(1.0);
@@ -617,24 +614,25 @@ mod tests {
             case,
             &ScanOptions {
                 audit_generated: false,
-                audit_simplified: true,
+                audit_preprocessed: true,
                 validation_policy: F64ValidationPolicy::LpOriginVertex,
                 capacity_method: F64CapacityMethod::ProductBilliardOrHk,
-                facet_simplification: FacetSimplificationPolicy::ProductNearRedundant,
-                facet_simplification_delta: 2e-8,
+                near_redundant_facet_removal: NearRedundantFacetRemovalPolicy::Product,
+                near_redundant_facet_removal_delta: 2e-8,
             },
         );
-        assert_eq!(row.facet_simplification_policy, "product_near_redundant");
-        assert_eq!(row.facet_simplification_status, "simplified");
-        assert_eq!(row.product_simplification_status, "simplified");
+        assert_eq!(
+            row.near_redundant_facet_removal_policy,
+            "product_remove_near_redundant_facets"
+        );
+        assert_eq!(row.near_redundant_facet_removal_status, "removed");
         assert_eq!(row.original_facet_count, Some(8));
         assert_eq!(row.facet_count, 7);
-        assert_eq!(row.simplified_facet_count, Some(7));
+        assert_eq!(row.preprocessed_facet_count, Some(7));
         assert_eq!(row.removed_facet_count, 1);
-        let delta_bound = row.facet_simplification_delta_bound.unwrap();
+        let delta_bound = row.near_redundant_facet_removal_delta_bound.unwrap();
         let scale = 1.0 + delta_bound;
         assert!(delta_bound <= 2e-8);
-        assert_eq!(row.product_simplification_delta_bound, Some(delta_bound));
         assert_eq!(row.capacity_ratio_upper_bound.unwrap(), scale.powi(2));
         assert_eq!(row.volume_ratio_upper_bound.unwrap(), scale.powi(4));
         assert_eq!(row.sys_ratio_lower_bound.unwrap(), scale.powi(-4));
@@ -643,18 +641,18 @@ mod tests {
         assert!(row.audit_capacity_label.is_some());
         assert_eq!(
             row.audit_capacity_label,
-            row.simplified_audit_capacity_label
+            row.preprocessed_audit_capacity_label
         );
         assert_eq!(row.original_artifact_capacity_label, Some(1.0));
         assert_eq!(row.artifact_capacity_label, Some(1.0));
         assert_eq!(
-            row.simplified_audit_vs_original_artifact_within_bound,
+            row.preprocessed_audit_vs_original_artifact_within_bound,
             Some(false)
         );
     }
 
     #[test]
-    fn scan_simplification_keeps_original_label_without_using_it_as_same_polytope_audit() {
+    fn scan_facet_removal_keeps_original_label_without_using_it_as_same_polytope_audit() {
         let mut case = near_redundant_product_case();
         case.audit_capacity_label = Some(1.0);
         case.artifact_capacity_label = Some(1.0);
@@ -662,45 +660,49 @@ mod tests {
             case,
             &ScanOptions {
                 audit_generated: false,
-                audit_simplified: false,
+                audit_preprocessed: false,
                 validation_policy: F64ValidationPolicy::LpOriginVertex,
                 capacity_method: F64CapacityMethod::ProductBilliardOrHk,
-                facet_simplification: FacetSimplificationPolicy::ProductNearRedundant,
-                facet_simplification_delta: 2e-8,
+                near_redundant_facet_removal: NearRedundantFacetRemovalPolicy::Product,
+                near_redundant_facet_removal_delta: 2e-8,
             },
         );
-        assert_eq!(row.facet_simplification_policy, "product_near_redundant");
-        assert_eq!(row.facet_simplification_status, "simplified");
-        assert_eq!(row.product_simplification_status, "simplified");
+        assert_eq!(
+            row.near_redundant_facet_removal_policy,
+            "product_remove_near_redundant_facets"
+        );
+        assert_eq!(row.near_redundant_facet_removal_status, "removed");
         assert!(row.audit_capacity_label.is_none());
-        assert!(row.simplified_audit_capacity_label.is_none());
+        assert!(row.preprocessed_audit_capacity_label.is_none());
         assert_eq!(row.original_artifact_capacity_label, Some(1.0));
         assert_eq!(row.artifact_capacity_label, Some(1.0));
     }
 
     #[test]
-    fn scan_product_simplification_reports_non_products_without_changing_input() {
+    fn scan_product_facet_removal_reports_non_products_without_changing_input() {
         let row = scan_case_with_options(
             simplex_case(),
             &ScanOptions {
                 audit_generated: false,
-                audit_simplified: false,
+                audit_preprocessed: false,
                 validation_policy: F64ValidationPolicy::LpOriginVertex,
                 capacity_method: F64CapacityMethod::TransitionPrunedHk,
-                facet_simplification: FacetSimplificationPolicy::ProductNearRedundant,
-                facet_simplification_delta: 1e-8,
+                near_redundant_facet_removal: NearRedundantFacetRemovalPolicy::Product,
+                near_redundant_facet_removal_delta: 1e-8,
             },
         );
-        assert_eq!(row.facet_simplification_policy, "product_near_redundant");
-        assert_eq!(row.facet_simplification_status, "not_block_product");
-        assert_eq!(row.product_simplification_status, "not_block_product");
+        assert_eq!(
+            row.near_redundant_facet_removal_policy,
+            "product_remove_near_redundant_facets"
+        );
+        assert_eq!(row.near_redundant_facet_removal_status, "not_block_product");
         assert_eq!(row.original_facet_count, Some(row.facet_count));
-        assert_eq!(row.simplified_facet_count, Some(row.facet_count));
+        assert_eq!(row.preprocessed_facet_count, Some(row.facet_count));
         assert_eq!(row.removed_facet_count, 0);
     }
 
     #[test]
-    fn scan_generic_single_band_simplification_uses_generic_fields() {
+    fn scan_generic_facet_removal_uses_generic_fields() {
         let mut case = generic_near_redundant_case();
         case.audit_capacity_label = Some(1.0);
         case.artifact_capacity_label = Some(1.0);
@@ -708,22 +710,23 @@ mod tests {
             case,
             &ScanOptions {
                 audit_generated: false,
-                audit_simplified: false,
+                audit_preprocessed: false,
                 validation_policy: F64ValidationPolicy::LpOriginVertex,
                 capacity_method: F64CapacityMethod::TransitionPrunedHk,
-                facet_simplification: FacetSimplificationPolicy::GenericSingleBand,
-                facet_simplification_delta: 2e-8,
+                near_redundant_facet_removal: NearRedundantFacetRemovalPolicy::Generic,
+                near_redundant_facet_removal_delta: 2e-8,
             },
         );
-        assert_eq!(row.facet_simplification_policy, "generic_single_band");
-        assert_eq!(row.facet_simplification_status, "simplified");
-        assert_eq!(row.product_simplification_status, "not_attempted");
+        assert_eq!(
+            row.near_redundant_facet_removal_policy,
+            "generic_remove_near_redundant_facets"
+        );
+        assert_eq!(row.near_redundant_facet_removal_status, "removed");
         assert_eq!(row.original_facet_count, Some(9));
         assert_eq!(row.facet_count, 8);
         assert_eq!(row.removed_original_facets.len(), 1);
         assert!([0, 8].contains(&row.removed_original_facets[0]));
-        assert!(row.facet_simplification_delta_bound.unwrap() <= 2e-8);
-        assert!(row.product_simplification_delta_bound.is_none());
+        assert!(row.near_redundant_facet_removal_delta_bound.unwrap() <= 2e-8);
     }
 
     fn simplex_case() -> ScanCase {

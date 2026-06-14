@@ -1,6 +1,4 @@
-use crate::{
-    array_vertices_to_vectors, product_preprocess::round_known_product_dual_vertices, ScanCase,
-};
+use crate::{array_vertices_to_vectors, product::round_known_product_dual_vertices, ScanCase};
 use serde::Deserialize;
 use std::fs::File;
 use std::io::{BufRead, BufReader};

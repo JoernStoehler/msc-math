@@ -1,7 +1,7 @@
 #[derive(Clone, Debug)]
 pub struct F64CapacityReport {
     pub outcome: F64CapacityOutcome,
-    pub iterations: u64,
+    pub sigma_count: u64,
     pub admissible_f64_count: usize,
     pub indeterminate_f64_count: usize,
     pub inadmissible_count: usize,

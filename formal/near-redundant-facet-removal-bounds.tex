@@ -1,7 +1,7 @@
 % Agent-written and not yet Jörn-reviewed.
 %
 % Purpose: record the mathematical contract used by near-redundant facet
-% simplification in experiments/dev-f64-capacity.
+% removal in experiments/dev-f64-capacity.
 % This file proves the conditional implication from a valid delta bound to
 % capacity/volume/sys distortion bounds. It does not certify that an ordinary
 % f64 computation of delta_bound is outward-rounded.
@@ -322,11 +322,11 @@ The upper bound follows from $r_c^2\leq\lambda^4$ and $r_v\geq 1$.
 \end{proof}
 
 \begin{unverified}
-\begin{remark}[Experiment contract for facet simplification]
-\label{rem:product-simplification-experiment-contract}
+\begin{remark}[Experiment contract for near-redundant facet removal]
+\label{rem:near-redundant-facet-removal-experiment-contract}
 The JSONL field
 \[
-  \texttt{facet\_simplification\_delta\_bound}
+  \texttt{near\_redundant\_facet\_removal\_delta\_bound}
 \]
 in \texttt{experiments/dev-f64-capacity} is intended to satisfy the hypothesis of
 Lemma~\ref{lem:hrep-facet-removal-containment}: for every removed original facet
@@ -351,8 +351,5 @@ arithmetic. That is useful as a trusted-enough empirical diagnostic, but it is
 not an outward-rounded certificate. A certificate-strength implementation
 would need an exact audit or directed-rounding interval computation for the
 maximal removed-facet violation.
-
-The older JSONL field \texttt{product\_simplification\_delta\_bound} is retained
-for product-only scans as a compatibility alias.
 \end{remark}
 \end{unverified}
