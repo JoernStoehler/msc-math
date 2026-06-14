@@ -23,6 +23,18 @@ they were stale, architecture-inconsistent, or cheaper to rerun cleanly than to
 maintain. Use git history only if a specific extraction has positive expected
 value after contamination risk.
 
+## Closure Role
+
+This README is not a result ledger. It records method-packet conventions and
+the current packet list. Method-table closure is achieved by current
+`methods/<method>/README.md` packets, with `method-coverage-checklist.md` used
+only as a recall aid for rows that still need a packet, explicit abandonment,
+deferral with reason, inapplicability decision, or escalation.
+
+Do not preserve old audit rows in this README just because a historical report
+named them. Extract old work only when it supports a current method-table row
+with positive expected thesis value after contamination and maintenance risk.
+
 ## Method Question
 
 The global question is fixed:
@@ -117,10 +129,10 @@ Example to preserve when PCA is recreated: PCA analysis still did not check
 whether PC0 from random generic polytopes and random Lagrangian-product
 polytopes are similar.
 
-Cross-method thesis interpretation belongs in
-`thesis/black-box-datascience-content.md` or future thesis content files, not
-in a central method-status ledger. If someone needs a dashboard, ask an agent
-to read the method READMEs and synthesize the current view.
+Cross-method thesis synthesis belongs in
+`thesis/black-box-datascience-content.md` or future thesis content files. Keep
+this README limited to method-packet conventions, the current packet list, and
+routing to the checklist or packet READMEs.
 
 ## Coverage Checklist
 

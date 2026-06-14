@@ -23,11 +23,12 @@ The "standard repertoire" means the known data-science method/tool repertoire
 that is relevant to this search interface. It does not mean proving exhaustion
 over every possible data-science method.
 
-Current closure status: pending. The authoritative method-closure surfaces are
-`methods/README.md`, `methods/method-coverage-checklist.md`, and the active
-`methods/<method>/README.md` packets. A closed method table exists only when
-those surfaces record each standard-method disposition or deferral with enough
-evidence for the thesis wording above.
+Current closure status: pending. The authoritative method-state surfaces are
+`methods/README.md` for conventions and the active
+`methods/<method>/README.md` packets for row state. Use
+`methods/method-coverage-checklist.md` only as a recall aid. A closed method
+table exists only when current method packets record each standard-method
+disposition or deferral with enough evidence for the thesis wording above.
 
 Do not prewrite this slice as purely negative before retained evidence and
 documented deferrals or abandonments support the thesis claim. If a positive

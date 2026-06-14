@@ -71,8 +71,11 @@ source files.
 
 - Hostile `sys`-search landscape is thesis spine.
   Data-science source truth:
-  `experiments/sys-datascience/README.md` and
-  `experiments/sys-datascience/methods/README.md`.
+  `experiments/sys-datascience/README.md`,
+  `experiments/sys-datascience/methods/README.md`, and current
+  `experiments/sys-datascience/methods/<method>/README.md` packets.
+  The method-coverage checklist and research toolbox audit are recall/context
+  only, not source truth.
   Current state: the retained LICCA datascience tables are in
   `experiments/sys-datascience/tables/`; method rows that still
   matter need current evidence packets or explicit abandonment.
@@ -80,7 +83,8 @@ source files.
   checks appropriate to their verdict, explicit caveats, and thesis-use
   disposition.
   Current state: older pre-LICCA data-science reports were removed or replaced
-  by status markers. See the methods README for the active method inventory.
+  by status markers. See the methods README for current packet conventions and
+  current method packets.
   Refresh when: retained hostile-landscape wording or endpoint datasets change.
 
 - Sys first-order generic row-chart writing is active.

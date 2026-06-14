@@ -206,8 +206,11 @@ Visible risks / uncertainty:
 - HKO and hostile landscape are prioritized because current task/research notes
   treat them as retained central stories. Advisor feedback or Jörn's scope
   decision can change that.
-- The hostile method-table shape needs source refresh from the current ledgers
-  before row workers start; stale rows must not be treated as already settled.
+- The hostile method-table shape needs source refresh from
+  `experiments/sys-datascience/README.md`, `methods/README.md`,
+  `methods/method-coverage-checklist.md`, current method packet READMEs, and
+  any historical research context being reused before row workers start. Stale
+  rows must not be treated as already settled.
 - Drafting may reveal hidden proof, evidence, exposition, or reproducibility
   blockers that change this ordering.
 - Jörn/Kai may reject a proposed claim-strength branch even if it is internally
@@ -417,10 +420,12 @@ Stop condition:
 
 - Stop the current data-science closeout when the method table rows needed by
   the thesis have terminal states, no candidate-proposer or validated new row is
-  unresolved, and the toolbox audit states thesis-use/caveats for methods the
-  thesis still mentions. Rows may end as not applicable to this data/search
-  interface, our-side failure and not worth further work, no candidate-proposer,
-  candidate-proposer, or validated new row.
+  unresolved, and current method packet READMEs state thesis-use/caveats for
+  methods the thesis still mentions. Thesis content notes and the historical
+  toolbox audit may synthesize or remind; they do not close method rows. Rows
+  may end as not applicable to this data/search interface, our-side failure and
+  not worth further work, no candidate-proposer, candidate-proposer, or
+  validated new row.
 
 Closure summary:
 
