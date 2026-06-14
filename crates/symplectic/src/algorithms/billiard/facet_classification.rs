@@ -13,15 +13,6 @@
 use super::BilliardError;
 use nalgebra::Vector4;
 
-/// Tolerance for classifying facet dual vertices as q-type or p-type.
-///
-/// A facet is q-type if ||(a[2], a[3])||^2 / ||a||^2 < EPS (normal direction lies in L_q),
-/// p-type if ||(a[0], a[1])||^2 / ||a||^2 < EPS (normal direction lies in L_p).
-/// For exact Lagrangian products, the "other" component pair is exactly zero.
-/// The 1e-10 threshold is well above machine epsilon squared but far below any
-/// genuine mixed normal.
-const EPS_LAGRANGIAN_NORMAL: f64 = 1e-10;
-
 /// Classification of facets into q-type and p-type.
 ///
 /// [lem:lagrangian-facets]: every facet of a Lagrangian product K_q x_L K_p
@@ -130,14 +121,10 @@ pub fn classify_facets_from_dual_vertices(
     let mut p_indices = Vec::new();
 
     for (i, a) in dual_vertices.iter().enumerate() {
-        let norm_sq = a[0] * a[0] + a[1] * a[1] + a[2] * a[2] + a[3] * a[3];
-        let q_norm_sq = a[0] * a[0] + a[1] * a[1];
-        let p_norm_sq = a[2] * a[2] + a[3] * a[3];
-
-        if p_norm_sq / norm_sq < EPS_LAGRANGIAN_NORMAL {
+        if a[2] == 0.0 && a[3] == 0.0 {
             // Normal direction is (n_q, 0): q-type.
             q_indices.push(i);
-        } else if q_norm_sq / norm_sq < EPS_LAGRANGIAN_NORMAL {
+        } else if a[0] == 0.0 && a[1] == 0.0 {
             // Normal direction is (0, n_p): p-type.
             p_indices.push(i);
         } else {
@@ -214,5 +201,22 @@ mod tests {
             assert_eq!(masked[idx][2], direction[idx][2]);
             assert_eq!(masked[idx][3], direction[idx][3]);
         }
+    }
+
+    #[test]
+    fn classification_requires_structural_zero_blocks() {
+        let dual_vertices = vec![
+            Vector4::new(1.0, 0.0, 1e-14, 0.0),
+            Vector4::new(0.0, 1.0, 0.0, 0.0),
+            Vector4::new(-1.0, -1.0, 0.0, 0.0),
+            Vector4::new(0.0, 0.0, 1.0, 0.0),
+            Vector4::new(0.0, 0.0, 0.0, 1.0),
+            Vector4::new(0.0, 0.0, -1.0, -1.0),
+        ];
+
+        assert!(matches!(
+            classify_facets(&dual_vertices),
+            Err(BilliardError::NotLagrangianProduct { facet: 0, .. })
+        ));
     }
 }

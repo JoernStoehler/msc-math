@@ -161,6 +161,7 @@ analysis.
 | `experiments/dev-quadratic-program/` | README-only coordination packet for QP/HK2017 library-surface and cleanup questions before code or evidence has a better home | `experiments/dev-quadratic-program/README.md`, `experiments/MAP.md` section `Algorithm Units`, `crates/symplectic/src/algorithms/hk2017/`, `crates/symplectic/src/algorithms/orbit_search.rs` |
 | `experiments/dev-gradient-ascent/` | active top-level development packet for a heuristic gradient-ascent method for nonsmooth high-dimensional `sys(a)`; owns question ledger, schema-smoke artifacts, and future method-development probes before promotion | `experiments/dev-gradient-ascent/README.md`, `experiments/sys-datascience/README.md`, `research/sys-first-order-local-behavior.md` |
 | `experiments/dev-flow-graph/` | active flow-graph algorithm-development packet: frontier counts, endpoint/closed-word representation spikes, case-finding, mismatch visualization, and unresolved-word diagnostics before promotion into numerics, performance, or verification | `experiments/dev-flow-graph/README.md`, `crates/symplectic/src/algorithms/flow_graph/README.md`, `tasks/current-state.md`, `tasks/planning-notes.md` |
+| `experiments/dev-f64-capacity/` | active pure-`f64` capacity-development packet: generated and retained datascience-style scans, validation/capacity policy comparison, product preprocessing diagnostics, and promotion-readiness evidence before library or `sys-datascience` integration | `experiments/dev-f64-capacity/README.md`, `experiments/sys-datascience/README.md` |
 | `experiments/sys-landscape/` | hostile sys-search landscape legacy and producer surfaces: random/product searches, gradient ascent, variable-`F` continuation, and rejection calibration | `tasks/current-state.md`, `tasks/planning-notes.md`, `research/sys-landscape*.md`, `experiments/sys-datascience/README.md` |
 | `experiments/sys-datascience/` | maintained hostile `sys` search data-science pipeline: producer caches, retained tables, and method packets for the thesis method table | `experiments/sys-datascience/README.md`, `experiments/sys-datascience/produce/README.md`, `experiments/sys-datascience/tables/README.md`, `experiments/sys-datascience/methods/README.md` |
 | `experiments/regular-products/` | regular polygon product side result: broad rotated-product sweeps, pentagon empirical figures/viewer, and exact pentagon formula proof packet | `experiments/regular-products/README.md`, `thesis/rotated-regular-polygons-content.md` |
@@ -183,12 +184,13 @@ Topic helper crates already exist at:
 - `experiments/numerics/src/lib.rs`
 - `experiments/verification/src/lib.rs`
 - `experiments/sys-landscape/src/lib.rs`
+- `experiments/dev-f64-capacity/src/lib.rs`
 
 Current observed pattern:
 
-- `experiments/dev-gradient-ascent/`, `experiments/numerics/`, and
-  `experiments/numerics/gradient/` are Rust-heavy or feature-incubator packages
-  where `src/` is an appropriate package surface.
+- `experiments/dev-gradient-ascent/`, `experiments/dev-f64-capacity/`,
+  `experiments/numerics/`, and `experiments/numerics/gradient/` are Rust-heavy
+  or feature-incubator packages where `src/` is an appropriate package surface.
 - `experiments/combinatorial-cells/`, `experiments/hko-local-maximum/`,
   `experiments/sys-landscape/`, and `experiments/verification/` expose
   package-level helpers today; keep `src/lib.rs` as an index and put real code
