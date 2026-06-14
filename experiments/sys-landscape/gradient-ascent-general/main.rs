@@ -93,7 +93,7 @@ const N_WIGGLES: usize = 5;
 /// Local cell-width probes and prior ascent runs suggest this scale is large
 /// enough to cross boundaries often, while still small enough to keep most
 /// perturbed polytopes constructible. See
-/// `research/combinatorial-cells.md` and
+/// `experiments/combinatorial-cells/README.md` and
 /// `research/sys-landscape.md`.
 /// If changed: much smaller (e.g. 0.01) reduces boundary-crossing probability and escape
 /// effectiveness. Much larger (e.g. 0.2) risks producing degenerate polytopes
