@@ -1,6 +1,7 @@
 # Exact Witness Checker
 
-Exact first-order proof tooling for the HKO2024 `M_10` local-maximality route.
+Older exact-route tooling for the HKO2024 `M_10` local-maximality work. This
+is not the current theorem certificate.
 
 ## Status
 
@@ -88,7 +89,7 @@ Packet 1 completed:
 ## How To Run
 
 ```bash
-cd experiments/hko-local-maximum/theorem/exact-witness
+cd experiments/hko-local-maximum/history/exact-witness
 sage check.sage
 python3 check_packet1.py
 python3 summarize_numerical_minima.py
@@ -146,7 +147,7 @@ Miniforge / conda-forge install in `.devcontainer/Dockerfile`.
 Current verified command:
 
 ```bash
-cd experiments/hko-local-maximum/theorem/exact-witness
+cd experiments/hko-local-maximum/history/exact-witness
 python3 build_widened_representative_witness.py
 sage verify_widened_representative_witness.sage
 ```

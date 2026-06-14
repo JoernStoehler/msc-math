@@ -126,7 +126,7 @@ cargo run -p exp-hko-local-maximum --release --bin hko-active-branch-diagnostic
 ```
 
 The default output is the ignored smoke file
-`experiments/hko-local-maximum/theorem/active-branch-diagnostic/smoke-active-branch-diagnostic.json`.
+`experiments/hko-local-maximum/theorem/smoke-active-branch-diagnostic.json`.
 If that file is absent, regenerate it with the command above. Do not treat the
 ignored smoke JSON as durable source truth.
 
@@ -219,7 +219,7 @@ seven-facet rows:
 1. `research/hko-local-maximum-exact-witness.md` records that the seven-facet
    exact minima are consistent with equality-case trajectories from the HKO
    minimizing family.
-2. `experiments/hko-local-maximum/theorem/exact-witness/segment-gradient-reduction.json`
+2. `experiments/hko-local-maximum/history/exact-witness/segment-gradient-reduction.json`
    and `segment-a-gradient-reduction.json` record exact segment-gradient
    reduction facts.
 3. The `segment-a-gradient-reduction.json` theorem-use field says the exact
@@ -293,7 +293,7 @@ So these rows contribute cones, not full halfplanes. They may still be useful
 if the union of those cones covers the missing slice directions.
 
 The Rust diagnostic
-`experiments/hko-local-maximum/theorem/active-branch-diagnostic/main.rs` now records a
+`experiments/hko-local-maximum/theorem/active_branch_diagnostic.rs` now records a
 f64 triage list of such one-facet padded extensions.
 
 Current padded-extension diagnostic from 2026-06-03:

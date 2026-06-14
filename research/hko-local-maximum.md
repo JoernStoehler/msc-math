@@ -16,7 +16,7 @@ decision problem, proof tree, feasible-section row target, verifier boundary,
 fallback branches, and review questions.
 
 Current theorem certificate:
-`experiments/hko-local-maximum/theorem/feasible-section-certificate/` contains
+`experiments/hko-local-maximum/theorem/` contains
 the exact feasible-section certificate generated on 2026-06-04. The verifier
 checks 26 rows, exact row rank `25`, exact symmetry rank `15`, positive
 lambdas, and exact lambda-weighted row sum `0`.
@@ -60,7 +60,7 @@ It combines the former topic note set while keeping experiment artifacts under
   - `empirical/neighborhood-sampling/m10/` keeps historical
     `pentagon-perturb.jsonl` as background context while the current pipeline
     uses smoke/LICCA buckets.
-  - `theorem/row-bank-validation/` validates the exact row bank against Sage,
+  - `history/row-bank-validation/` validates the exact row bank against Sage,
     but is not a full theorem certificate.
 
 ## Evidence And Interpretation

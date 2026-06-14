@@ -51,7 +51,7 @@ source files.
 
 - HKO local maximality is thesis spine.
   Source truth: `research/hko-local-maximum*.md`, the current
-  `experiments/hko-local-maximum/theorem/feasible-section-certificate/`
+  `experiments/hko-local-maximum/theorem/`
   packet, HKO route-history notes, related formal/thesis files, and
   `exact-witness/` only for old-route fallback/provenance.
   Current state: the exact feasible-section theorem certificate is merged and

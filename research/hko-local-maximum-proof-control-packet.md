@@ -3,7 +3,7 @@
 Status: Packet 1 control artifact for the HKO local-maximum proof route. The
 main open question from this packet has now been implemented by the exact
 feasible-section certificate in
-`experiments/hko-local-maximum/theorem/feasible-section-certificate/`.
+`experiments/hko-local-maximum/theorem/`.
 
 Purpose: make the next HKO proof work precise enough that Packet 2 can start
 without re-deciding the theorem target, the proof tree, the singular-row
@@ -25,9 +25,9 @@ Main sources read:
 - `thesis/hko-local-maximum-content.md`
 - `experiments/hko-local-maximum/README.md`
 - `experiments/hko-local-maximum/theorem/README.md`
-- `experiments/hko-local-maximum/theorem/exact-witness/README.md`
-- `experiments/hko-local-maximum/theorem/exact-witness/segment-a-gradient-reduction.json`
-- `experiments/hko-local-maximum/theorem/exact-witness/reduced-sys-prototypes.json`
+- `experiments/hko-local-maximum/history/exact-witness/README.md`
+- `experiments/hko-local-maximum/history/exact-witness/segment-a-gradient-reduction.json`
+- `experiments/hko-local-maximum/history/exact-witness/reduced-sys-prototypes.json`
 - `formal/capacity-boundary-subdifferential.tex`
 - `formal/capacity-derivatives.tex`
 - `formal/hko-feasible-section-upper-branches.tex`
@@ -77,7 +77,7 @@ This is Packet 1 in the current HKO ordering.
 1. Proof-control packet: this file.
 2. Feasible-section packet: interpret the selected positive-beta rows as
    theorem-valid feasible upper-branch witnesses. Implemented by
-   `experiments/hko-local-maximum/theorem/feasible-section-certificate/`.
+   `experiments/hko-local-maximum/theorem/`.
 3. Sage construction and verification packet: implemented by the constructor
    and exception-based verifier in the feasible-section certificate folder.
 4. Thesis-writing companion packet: after the theorem outcome is known, update
@@ -146,7 +146,7 @@ A theorem-facing Sage run should produce or check the following data.
 Current status:
 
 - Exact geometry, field, symmetry rank, and volume-row support already exist in
-  `experiments/hko-local-maximum/theorem/exact-witness/`.
+  `experiments/hko-local-maximum/history/exact-witness/`.
 - The current widened representative witness verifies symmetry rank `15`,
   endpoint row rank `5`, midpoint row rank `6`, union rank `11`, and exact
   annihilation of the symmetry tangent directions.

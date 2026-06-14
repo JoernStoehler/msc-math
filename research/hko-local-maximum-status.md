@@ -48,7 +48,7 @@ Use it before reading deeper notes or experiment folders.
 - Exact route status:
   Packet 1 is closed, and the feasible-section Packet 2/3 route now has a
   passing exact Sage certificate in
-  `experiments/hko-local-maximum/theorem/feasible-section-certificate/`.
+  `experiments/hko-local-maximum/theorem/`.
 - Current exact certificate status:
   the older widened representative route is partial historical/fallback
   material. The current theorem-facing certificate is the feasible-section

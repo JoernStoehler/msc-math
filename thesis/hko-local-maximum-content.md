@@ -43,8 +43,8 @@ The HKO thesis-facing result is a packet, not only one theorem statement.
    mathematical writeup proves that the checked predicate implies the theorem
    target.
    Source pointers: `FACTSHEET.md` items 20--22;
-   `experiments/hko-local-maximum/theorem/feasible-section-certificate/README.md`;
-   `experiments/hko-local-maximum/theorem/feasible-section-certificate/verification-summary.json`.
+   `experiments/hko-local-maximum/theorem/README.md`;
+   `experiments/hko-local-maximum/theorem/verification-summary.json`.
 
 4. Empirical confirmation:
    Numerical and perturbative checks support the local-maximum picture.
@@ -130,7 +130,7 @@ The HKO non-writing work is currently split into four packets.
    check. It is not final thesis-writing material.
 
 2. Feasible-section packet:
-   implemented by `theorem/feasible-section-certificate/`.
+   implemented by `theorem/`.
    The exact verifier checks 26 rows, exact row rank `25`, exact symmetry rank
    `15`, positive lambdas, and exact lambda-weighted row sum `0`.
 
@@ -155,7 +155,7 @@ local maximality in the ten-facet quotient model.
 Source pointers:
 - `formal/main.pdf`, section "HKO Feasible-Section Upper Branches".
 - `formal/hko-feasible-section-upper-branches.tex`.
-- `experiments/hko-local-maximum/theorem/feasible-section-certificate/verification-summary.json`.
+- `experiments/hko-local-maximum/theorem/verification-summary.json`.
 
 Review labels:
 
@@ -243,7 +243,7 @@ Source pointers:
   `lem:hko-ambient-rows-descend-to-slice`,
   `lem:hko-transverse-symmetry-slice`, and
   `cor:hko-feasible-branch-quotient-template`;
-- `experiments/hko-local-maximum/theorem/feasible-section-certificate/README.md`,
+- `experiments/hko-local-maximum/theorem/README.md`,
   "Current verifier summary".
 
 ### 3. Why selected upper branches suffice
@@ -316,9 +316,9 @@ Why this is not just script explanation:
   computation proves without reconstructing it from source code order.
 
 Source pointers:
-- `experiments/hko-local-maximum/theorem/feasible-section-certificate/README.md`,
+- `experiments/hko-local-maximum/theorem/README.md`,
   "Trust Boundary" and "Current verifier summary";
-- `experiments/hko-local-maximum/theorem/feasible-section-certificate/verification-summary.json`;
+- `experiments/hko-local-maximum/theorem/verification-summary.json`;
 - `research/hko-local-maximum-proof-control-packet.md`, "Sage Construction
   And Verification Packet".
 
@@ -341,7 +341,7 @@ What the thesis should not do:
   equations.
 
 Source pointers:
-- `experiments/hko-local-maximum/theorem/feasible-section-certificate/verify.sage.py`;
+- `experiments/hko-local-maximum/theorem/verify.sage.py`;
 - `formal/hko-feasible-section-upper-branches.tex`,
   `rem:hko-feasible-section-derivative-data`.
 
@@ -388,7 +388,7 @@ Core thesis content, not auxiliary assets:
    normalization, 26 feasible-section rows, equality at HKO, symmetry
    annihilation, row rank `25`, and the positive convex relation.
    Source pointers:
-   `experiments/hko-local-maximum/theorem/feasible-section-certificate/verification-summary.json`;
+   `experiments/hko-local-maximum/theorem/verification-summary.json`;
    `formal/hko-feasible-section-upper-branches.tex`,
    `cor:hko-feasible-branch-quotient-template`.
 
@@ -413,7 +413,7 @@ Core thesis content, not auxiliary assets:
    on Rust correctness or numerical search correctness.
    Source pointers:
    `FACTSHEET.md` items 20--22;
-   `experiments/hko-local-maximum/theorem/feasible-section-certificate/README.md`,
+   `experiments/hko-local-maximum/theorem/README.md`,
    "Trust Boundary".
 
 4. Singular-row explanation.
@@ -521,9 +521,9 @@ Recommended auxiliary assets:
    certificate proof starts.
 
    Current working asset:
-   - source: `thesis/working/plot_hko_row0_trajectory.py`;
-   - regenerate with `uv run --script thesis/working/plot_hko_row0_trajectory.py`;
-   - PNG: `thesis/working/hko-row0-trajectory-projections.png`.
+   - source: `experiments/hko-local-maximum/assets/plot_hko_row0_trajectory.py`;
+   - regenerate with `uv run --script experiments/hko-local-maximum/assets/plot_hko_row0_trajectory.py`;
+   - PNG: `experiments/hko-local-maximum/assets/hko-row0-trajectory-projections.png`.
 
    The plot uses selected entry 0 with
    `sigma=[0,1,7,3,9,5]`, `I=[0,1,2,3,4]`, and fixed beta index `[5]`.
@@ -592,10 +592,10 @@ Rejected or non-assets for thesis purposes:
 - singular-row necessity rank-bar graphic.
 
 Source pointers:
-- `experiments/hko-local-maximum/theorem/feasible-section-certificate/README.md`,
+- `experiments/hko-local-maximum/theorem/README.md`,
   "Trust Boundary", "Files", and "Current verifier summary";
-- `experiments/hko-local-maximum/theorem/feasible-section-certificate/verification-summary.json`;
-- `experiments/hko-local-maximum/theorem/feasible-section-certificate/verify.sage.py`;
+- `experiments/hko-local-maximum/theorem/verification-summary.json`;
+- `experiments/hko-local-maximum/theorem/verify.sage.py`;
 - `research/hko-local-maximum-proof-route-note.md`, "Endpoint Rows And The
   Minimizing Family".
 
@@ -664,8 +664,8 @@ Current checked partial witness facts:
 - Current rows annihilate the 15 symmetry tangent directions.
 
 Source pointers:
-- `experiments/hko-local-maximum/theorem/feasible-section-certificate/README.md`.
-- `experiments/hko-local-maximum/theorem/feasible-section-certificate/verification-summary.json`.
+- `experiments/hko-local-maximum/theorem/README.md`.
+- `experiments/hko-local-maximum/theorem/verification-summary.json`.
 - `research/hko-local-maximum-exact-witness.md`, sections "Status",
   "Scope Boundary", "Sage Note", and "Packet 2 Note", for older-route context.
 - `research/hko-local-maximum-proof-route-note.md`, especially the one-sided
@@ -674,8 +674,8 @@ Source pointers:
   "Singular-KKT Obstruction" and "Padded-Endpoint Alternative", for the
   thesis-facing reason why the witness has to use singular positive-beta
   seven-facet branches.
-- `experiments/hko-local-maximum/theorem/exact-witness/widened-representative-witness.json`.
-- `experiments/hko-local-maximum/theorem/exact-witness/widened-representative-witness-verification.json`.
+- `experiments/hko-local-maximum/history/exact-witness/widened-representative-witness.json`.
+- `experiments/hko-local-maximum/history/exact-witness/widened-representative-witness-verification.json`.
 
 Current checked theorem-facing facts:
 - 26 exact feasible-section rows.
@@ -769,7 +769,7 @@ Missing:
 2. Refresh this thesis companion into a final writing plan after Kai theorem
    review.
    Source pointers: this file; `formal/hko-feasible-section-upper-branches.tex`;
-   `experiments/hko-local-maximum/theorem/feasible-section-certificate/README.md`.
+   `experiments/hko-local-maximum/theorem/README.md`.
 
 3. Decide empirical-support inclusion.
    Source pointers: `research/hko-local-maximum.md`;

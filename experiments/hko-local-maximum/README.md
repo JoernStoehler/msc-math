@@ -9,8 +9,10 @@ Start with `research/hko-local-maximum-status.md` before reading subfolders.
 
 | Strand | Path | Role |
 | --- | --- | --- |
-| Theorem certificate | `theorem/` | Current feasible-section certificate, supporting diagnostics, exact sanity checks, and route-history notes. |
-| Empirical support | `empirical/` | Numerical and sampling evidence that supports or illustrates the local-maximum picture but is not the final proof. |
+| Theorem certificate | `theorem/` | Active feasible-section certificate: generate witness, verify exact predicate. |
+| Empirical sampling | `empirical/` | Numerical and sampling evidence that supports or illustrates the local-maximum picture but is not the final proof. |
+| Assets | `assets/` | Explanatory figure scripts and images. These are not theorem evidence. |
+| History | `history/` | Older exact route material, route-history notes, and non-current exact checks. |
 | Shared Rust helpers | `src/` | Topic-local code shared by theorem and empirical binaries. |
 
 Generated JSON/JSONL/figure artifacts stay beside the producer or sampler that
@@ -22,11 +24,16 @@ sampler that owns the artifact.
 ```text
 experiments/hko-local-maximum/
 |-- theorem/
+|   |-- active_branch_diagnostic.rs
+|   |-- generate.rs
+|   |-- verify.sage.py
+|   |-- witness.json
+|   `-- verification-summary.json
+|-- assets/
+|-- history/
 |   |-- exact-witness/
-|   |-- active-branch-diagnostic/
-|   |-- feasible-section-certificate/
-|   |-- route-history/
-|   `-- row-bank-validation/
+|   |-- row-bank-validation/
+|   `-- *.md
 |-- empirical/
 |   |-- first-order/
 |   |-- second-order/
@@ -63,12 +70,12 @@ migration. Git history is the archive for that broken `(n,h)` Phase C attempt;
   `empirical/m11-ascent/m11-ascent-smoke.jsonl`; full mode appends to
   `empirical/m11-ascent/m11-ascent.jsonl` unless `--fresh` is given.
 - `hko-row-bank-validation` defaults to smoke input. Use `--canonical` only
-  when refreshing `theorem/row-bank-validation/row-bank-validation-input.jsonl`.
+  when refreshing `history/row-bank-validation/row-bank-validation-input.jsonl`.
 - `hko-active-branch-diagnostic` writes an ignored smoke JSON by default and
   exact-checks no branches unless `--exact-limit N` or `--all-exact` is passed.
   Use `--canonical` only when intentionally refreshing a theorem-facing
-  diagnostic source for downstream generation. Current diagnostic JSONs in this
-  folder are local ignored artifacts, not tracked proof objects. Each f64
+  diagnostic source for downstream generation. The smoke diagnostic JSON in
+  `theorem/` is a local ignored artifact, not a tracked proof object. Each f64
   active branch row includes `kkt_f64.singular`; theorem use of `d_sys_flat_f64`
   from singular KKT rows requires a separate theorem argument. The
   `singular_constraint_sections` block records the numerical and exact
@@ -76,11 +83,11 @@ migration. Git history is the archive for that broken `(n,h)` Phase C attempt;
   `feasible_section_rows` block computes the f64 derivative rows of the
   resulting explicit feasible beta sections and reruns the slice/cone checks.
 - `hko-feasible-section-generate --canonical --input <diagnostic.json>` writes
-  `theorem/feasible-section-certificate/witness.json` from the
-  active-branch diagnostic. The explicit `--input` is required because current
-  diagnostic sources are ignored local artifacts. `verify.sage.py` reads that
-  witness, computes the exact algebraic data in SageMath, and checks the exact
-  26-entry feasible-section certificate predicate.
+  `theorem/witness.json` from the active-branch diagnostic. The explicit
+  `--input` is required because current diagnostic sources are ignored local
+  artifacts. `theorem/verify.sage.py` reads that witness, computes the exact
+  algebraic data in SageMath, and checks the exact 26-entry feasible-section
+  certificate predicate.
 
 ## Fast Reading Order
 
@@ -88,17 +95,19 @@ migration. Git history is the archive for that broken `(n,h)` Phase C attempt;
 2. `research/hko-local-maximum.md`
 3. `research/hko-local-maximum-proof-control-packet.md` if the question is
    what to do next for the theorem route
-4. `theorem/README.md`
-5. `theorem/feasible-section-certificate/README.md` if the question is what
-   currently verifies the theorem-facing finite certificate
-6. `research/hko-local-maximum-proof-route-note.md` or `theorem/route-history/`
+4. `theorem/README.md` if the question is what currently verifies the
+   theorem-facing finite certificate
+5. `assets/` if the question is about explanatory figures
+6. `research/hko-local-maximum-proof-route-note.md` or `history/`
    if the question is why the feasible-section route replaced older routes
 7. `empirical/README.md` if the question is about supporting evidence
 
 ## Rule Of Thumb
 
-If a question is "what proves the theorem?", start in `theorem/` and then
-`theorem/feasible-section-certificate/`.
+If a question is "what proves the theorem?", start in `theorem/`.
 
 If a question is "what evidence supports the local-maximality story?", read
 `empirical/` after the status note.
+
+If a question is "what figure can illustrate the HKO local picture?", read
+`assets/`.

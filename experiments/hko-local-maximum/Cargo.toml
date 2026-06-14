@@ -24,15 +24,15 @@ path = "empirical/m11-ascent/main.rs"
 
 [[bin]]
 name = "hko-row-bank-validation"
-path = "theorem/row-bank-validation/main.rs"
+path = "history/row-bank-validation/main.rs"
 
 [[bin]]
 name = "hko-active-branch-diagnostic"
-path = "theorem/active-branch-diagnostic/main.rs"
+path = "theorem/active_branch_diagnostic.rs"
 
 [[bin]]
 name = "hko-feasible-section-generate"
-path = "theorem/feasible-section-certificate/main.rs"
+path = "theorem/generate.rs"
 
 [lints]
 workspace = true
