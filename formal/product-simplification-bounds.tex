@@ -69,14 +69,18 @@ Thus $y\in P$, so $x=(1+\delta)y\in (1+\delta)P$.
 \end{proof}
 
 \begin{unverified}
-\begin{fact}[Minkowski asymmetry center]\label{fact:minkowski-asymmetry-center}
-% [TODO: JÖRN - verify statement and add citation. This is the standard
-% dimension-only bound for Minkowski's measure of asymmetry.]
+\begin{fact}[Minkowski--Radon asymmetry bound]
+\label{fact:minkowski-asymmetry-center}
+% This is the standard bound s(K) <= dim(K) for the Minkowski measure of
+% asymmetry, written in the centered pointwise form used below.
 Let $K$ be an $m$-dimensional compact convex body in its affine hull, with
 $m\geq 1$. Then there exists a point $z\in K$ such that for every $y\in K$,
 \[
   z - \frac{1}{m}(y-z) \in K .
 \]
+Equivalently, the Minkowski asymmetry of $K$ is at most~$m$; see
+\cite[definition of Minkowski asymmetry and the following standard bound]%
+{BrandenbergGonzalezMerino2017Asymmetry}.
 \end{fact}
 \end{unverified}
 
