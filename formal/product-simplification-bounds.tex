@@ -10,6 +10,7 @@
 \providecommand{\vol}{\operatorname{vol}}
 \providecommand{\sys}{\operatorname{sys}}
 \providecommand{\conv}{\operatorname{conv}}
+\providecommand{\aff}{\operatorname{aff}}
 
 \begin{unverified}
 \begin{theorem}[EHZ monotonicity]\label{thm:ehz-monotonicity}
@@ -65,6 +66,191 @@ For $j\in S$, the hypothesis gives
   \leq 1.
 \]
 Thus $y\in P$, so $x=(1+\delta)y\in (1+\delta)P$.
+\end{proof}
+
+\begin{unverified}
+\begin{fact}[Minkowski asymmetry center]\label{fact:minkowski-asymmetry-center}
+% [TODO: JÖRN - verify statement and add citation. This is the standard
+% dimension-only bound for Minkowski's measure of asymmetry.]
+Let $K$ be an $m$-dimensional compact convex body in its affine hull, with
+$m\geq 1$. Then there exists a point $z\in K$ such that for every $y\in K$,
+\[
+  z - \frac{1}{m}(y-z) \in K .
+\]
+\end{fact}
+\end{unverified}
+
+\begin{unverified}
+\begin{definition}[Single-band and multi-band guards]
+\label{def:single-multi-band-guards}
+Let $K$ be a compact convex body. Let
+$f_1,\ldots,f_N:\aff(K)\to\R$ be affine functions satisfying
+$f_j(y)\leq 1$ for every $y\in K$ and every~$j$. For $r\in\R$, define:
+\[
+\begin{aligned}
+  \operatorname{Single}_K(r)
+  &\iff
+  \exists j \text{ such that } f_j(y)\geq r
+  \text{ for every } y\in K,\\
+  \operatorname{Multi}_K(r)
+  &\iff
+  \forall y\in K,\ \exists j \text{ such that } f_j(y)\geq r .
+\end{aligned}
+\]
+\end{definition}
+\end{unverified}
+
+\begin{unverified}
+\begin{theorem}[Band comparison on a convex body]
+\label{thm:single-multi-band-comparison}
+Let $K$ be an $m$-dimensional compact convex body with $m\geq 1$, and let
+$f_1,\ldots,f_N:\aff(K)\to\R$ be affine functions satisfying
+$f_j\leq 1$ on~$K$. Then, for every $r$ with $0<r\leq 1$,
+\[
+  \operatorname{Single}_K(r)
+  \implies
+  \operatorname{Multi}_K(r)
+  \implies
+  \operatorname{Single}_K\bigl(1-(m+1)(1-r)\bigr).
+\]
+\end{theorem}
+\end{unverified}
+
+\begin{proof}
+The first implication is immediate from
+Definition~\ref{def:single-multi-band-guards}.
+
+For the second implication, assume $\operatorname{Multi}_K(r)$.
+Choose $z\in K$ as in Fact~\ref{fact:minkowski-asymmetry-center}. By
+$\operatorname{Multi}_K(r)$, choose $j_0$ such that $f_{j_0}(z)\geq r$.
+Let $g=1-f_{j_0}$. Then $g$ is affine, $g\geq 0$ on~$K$, and
+$g(z)\leq 1-r$.
+
+For any $y\in K$, put
+\[
+  y' = z-\frac{1}{m}(y-z).
+\]
+Then $y'\in K$ and
+\[
+  z = \frac{1}{m+1}y + \frac{m}{m+1}y'.
+\]
+By affinity and nonnegativity of~$g$ on~$K$,
+\[
+  g(z)
+  = \frac{1}{m+1}g(y) + \frac{m}{m+1}g(y')
+  \geq \frac{1}{m+1}g(y).
+\]
+Hence $g(y)\leq (m+1)g(z)\leq (m+1)(1-r)$, so
+\[
+  f_{j_0}(y)
+  = 1-g(y)
+  \geq 1-(m+1)(1-r).
+\]
+Since this holds for every $y\in K$,
+$\operatorname{Single}_K(1-(m+1)(1-r))$ holds.
+\end{proof}
+
+\begin{unverified}
+\begin{corollary}[Band comparison for a 4D polytope facet]
+\label{cor:four-dimensional-facet-band-comparison}
+Let $P=\{x\in\R^4:\langle a_k,x\rangle\leq 1,\ k\in I\}$ and
+let
+\[
+  F_i=P\cap\{x:\langle a_i,x\rangle=1\}.
+\]
+For retained facets $j\in I\setminus\{i\}$, set
+$f_j(y)=\langle a_j,y\rangle$ on~$F_i$.
+If $F_i$ is nonempty and has dimension $m$ with $1\leq m\leq 3$, then
+for every $r$ with $0<r\leq 1$,
+\[
+  \operatorname{Single}_{F_i}(r)
+  \implies
+  \operatorname{Multi}_{F_i}(r)
+  \implies
+  \operatorname{Single}_{F_i}(4r-3).
+\]
+\end{corollary}
+\end{unverified}
+
+\begin{proof}
+Apply Theorem~\ref{thm:single-multi-band-comparison} with
+$m=\dim F_i$. For a genuine facet of a 4D polytope, $m=3$; the same argument
+also covers lower-dimensional nonempty faces with $1\leq m\leq 3$.
+Since $f_j\leq 1$ on $F_i$ for every retained facet~$j$,
+the hypotheses hold. The theorem gives
+\[
+  \operatorname{Multi}_{F_i}(r)
+  \implies
+  \operatorname{Single}_{F_i}\bigl(1-(m+1)(1-r)\bigr).
+\]
+Because $m+1\leq 4$,
+\[
+  1-(m+1)(1-r)\geq 1-4(1-r)=4r-3.
+\]
+Thus $\operatorname{Single}_{F_i}(4r-3)$ follows.
+\end{proof}
+
+\begin{unverified}
+\begin{theorem}[Multi-band guard removal bound]
+\label{thm:multi-band-guard-removal-bound}
+Let
+\[
+  P=\{x\in\R^4:\langle a_k,x\rangle\leq 1,\ k\in I\}
+\]
+and fix $i\in I$. Put $R=I\setminus\{i\}$,
+\[
+  P'=\{x\in\R^4:\langle a_k,x\rangle\leq 1,\ k\in R\}
+\]
+and
+\[
+  F_i=P\cap\{x:\langle a_i,x\rangle=1\}.
+\]
+Assume $F_i$ is nonempty. If, for some $r$ with $0<r\leq 1$,
+\[
+  \forall y\in F_i,\ \exists j\in R
+  \quad\text{such that}\quad
+  \langle a_j,y\rangle\geq r,
+\]
+then
+\[
+  P\subseteq P'\subseteq r^{-1}P.
+\]
+\end{theorem}
+\end{unverified}
+
+\begin{proof}
+The inclusion $P\subseteq P'$ is immediate. For the second inclusion, take
+$x\in P'$. If $\langle a_i,x\rangle\leq 1$, then $x\in P$ and hence
+$x\in r^{-1}P$ because $r\leq 1$. Otherwise put
+\[
+  \alpha=\langle a_i,x\rangle>1,
+  \qquad
+  y=x/\alpha.
+\]
+Then $\langle a_i,y\rangle=1$, and for every $k\in R$,
+\[
+  \langle a_k,y\rangle
+  =\frac{\langle a_k,x\rangle}{\alpha}
+  \leq \frac{1}{\alpha}<1,
+\]
+so $y\in F_i$. Choose $j\in R$ with
+$\langle a_j,y\rangle\geq r$. Since $x\in P'$,
+\[
+  \alpha\,\langle a_j,y\rangle
+  =\langle a_j,x\rangle
+  \leq 1.
+\]
+Thus $\alpha\leq r^{-1}$. Therefore
+\[
+  \langle a_i,x/r^{-1}\rangle\leq 1.
+\]
+For $k\in R$,
+\[
+  \langle a_k,x/r^{-1}\rangle
+  = r\,\langle a_k,x\rangle
+  \leq r\leq 1.
+\]
+Hence $x/r^{-1}\in P$, so $x\in r^{-1}P$.
 \end{proof}
 
 \begin{unverified}
