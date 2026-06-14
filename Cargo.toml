@@ -10,7 +10,6 @@ members = [
     "experiments/local-sys-methods",
     "experiments/combinatorial-cells",
     "experiments/dev-flow-graph",
-    "experiments/dev-f64-capacity",
     "experiments/verification",
     "experiments/numerics",
     "experiments/performance",
