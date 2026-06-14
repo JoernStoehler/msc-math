@@ -23,8 +23,8 @@ home. If a future branch develops a f64-only route without exact arithmetic,
 this README can point to that branch or record the decision after it lands.
 
 Use `experiments/algorithm-comparison/README.md` for cross-algorithm comparison
-reasoning that points to performance, numerics, correctness, topic, or thesis
-evidence homes.
+reasoning that points to performance, numerics, verification/correctness,
+topic, or thesis evidence homes.
 
 ## Algorithm Labels
 
@@ -57,7 +57,8 @@ certified exact aggregation.
 - What result semantics should the library promise for minimizers, gap-window
   orbit sets, rejected ambiguities, and exact fallback counts?
 - Which QP cleanup questions should stay coupled until the answer is known, and
-  which should move immediately to numerics, performance, or correctness homes?
+  which should move immediately to numerics, performance, or
+  verification/correctness homes?
 
 ## Not Owned Here
 
