@@ -57,8 +57,56 @@ struct VertexWitness {
     possible_incident: Vec<usize>,
 }
 
+#[derive(Clone, Debug)]
+pub(crate) struct F64VertexWitness {
+    pub(crate) point: Vector4<f64>,
+    pub(crate) definite_incident: Vec<usize>,
+    pub(crate) possible_incident: Vec<usize>,
+}
+
+#[derive(Clone, Debug)]
+pub(crate) struct F64VertexScanReport {
+    pub(crate) vertices: Vec<F64VertexWitness>,
+    pub(crate) near_singular_vertex_count: usize,
+    pub(crate) bounded_near_singular_vertex_count: usize,
+    pub(crate) ambiguous_vertex_incidence_count: usize,
+}
+
+impl F64VertexScanReport {
+    pub(crate) fn has_indeterminate_geometry(&self) -> bool {
+        self.bounded_near_singular_vertex_count > 0 || self.ambiguous_vertex_incidence_count > 0
+    }
+}
+
 pub(crate) fn f64_combinatorics(dual_vertices: &[Vector4<f64>]) -> Result<F64Combinatorics, ()> {
     f64_combinatorics_profiled(dual_vertices).map(|(combinatorics, _)| combinatorics)
+}
+
+pub(crate) fn f64_vertex_scan_report(
+    dual_vertices: &[Vector4<f64>],
+) -> Result<F64VertexScanReport, ()> {
+    if dual_vertices.len() < 5
+        || dual_vertices
+            .iter()
+            .any(|v| !v.iter().all(|entry| entry.is_finite()))
+    {
+        return Err(());
+    }
+    let scan = enumerate_vertex_witnesses(dual_vertices);
+    Ok(F64VertexScanReport {
+        vertices: scan
+            .vertices
+            .into_iter()
+            .map(|witness| F64VertexWitness {
+                point: witness.point,
+                definite_incident: witness.definite_incident,
+                possible_incident: witness.possible_incident,
+            })
+            .collect(),
+        near_singular_vertex_count: scan.near_singular_vertex_count,
+        bounded_near_singular_vertex_count: scan.bounded_near_singular_vertex_count,
+        ambiguous_vertex_incidence_count: scan.ambiguous_vertex_incidence_count,
+    })
 }
 
 pub(crate) fn f64_combinatorics_profiled(
@@ -494,6 +542,9 @@ fn is_bounded_near_singular_candidate(dual_vertices: &[Vector4<f64>], facets: [u
         && solution
             .iter()
             .all(|coordinate| coordinate.abs() <= MAX_BOUNDED_VERTEX_COORD)
+        && dual_vertices
+            .iter()
+            .all(|normal| normal.dot(&solution) <= 1.0 + EPS_INEQUALITY)
 }
 
 fn facet_matrix(dual_vertices: &[Vector4<f64>], facets: [usize; 4]) -> Matrix4<f64> {

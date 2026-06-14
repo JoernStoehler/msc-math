@@ -21,6 +21,10 @@ pub struct ScanRow {
     pub product_q_facet_count: Option<usize>,
     #[serde(default)]
     pub product_p_facet_count: Option<usize>,
+    #[serde(default = "default_facet_simplification_policy")]
+    pub facet_simplification_policy: String,
+    #[serde(default = "default_facet_simplification_status")]
+    pub facet_simplification_status: String,
     #[serde(default = "default_product_simplification_status")]
     pub product_simplification_status: String,
     #[serde(default)]
@@ -29,6 +33,8 @@ pub struct ScanRow {
     pub removed_facet_count: usize,
     #[serde(default)]
     pub removed_original_facets: Vec<usize>,
+    #[serde(default)]
+    pub facet_simplification_delta_bound: Option<f64>,
     #[serde(default)]
     pub product_simplification_delta_bound: Option<f64>,
     #[serde(default)]
@@ -125,5 +131,13 @@ fn default_product_rounding_status() -> String {
 }
 
 fn default_product_simplification_status() -> String {
+    "unknown_legacy_row".to_string()
+}
+
+fn default_facet_simplification_policy() -> String {
+    "unknown_legacy_row".to_string()
+}
+
+fn default_facet_simplification_status() -> String {
     "unknown_legacy_row".to_string()
 }

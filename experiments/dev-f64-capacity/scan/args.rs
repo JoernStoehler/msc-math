@@ -1,7 +1,7 @@
 use std::path::PathBuf;
 
 use crate::input::InputSource;
-use exp_dev_f64_capacity::{F64CapacityMethod, F64ValidationPolicy, ProductSimplificationPolicy};
+use exp_dev_f64_capacity::{F64CapacityMethod, F64ValidationPolicy, FacetSimplificationPolicy};
 
 #[derive(Clone, Debug)]
 pub(crate) struct Args {
@@ -15,8 +15,8 @@ pub(crate) struct Args {
     pub(crate) max_audit_rows: usize,
     pub(crate) validation_policy: F64ValidationPolicy,
     pub(crate) capacity_method: F64CapacityMethod,
-    pub(crate) product_simplification: ProductSimplificationPolicy,
-    pub(crate) product_simplification_delta: f64,
+    pub(crate) facet_simplification: FacetSimplificationPolicy,
+    pub(crate) facet_simplification_delta: f64,
     pub(crate) family_filter: Vec<String>,
     pub(crate) source_id_filter: Vec<String>,
 }
@@ -45,8 +45,8 @@ pub(crate) fn parse_args() -> Args {
     let mut max_audit_rows = 0usize;
     let mut validation_policy = F64ValidationPolicy::LpOriginVertex;
     let mut capacity_method = F64CapacityMethod::ProductBilliardOrHk;
-    let mut product_simplification = ProductSimplificationPolicy::None;
-    let mut product_simplification_delta = 1e-8f64;
+    let mut facet_simplification = FacetSimplificationPolicy::None;
+    let mut facet_simplification_delta = 1e-8f64;
     let mut family_filter = Vec::new();
     let mut source_id_filter = Vec::new();
     let mut i = 1;
@@ -128,10 +128,24 @@ pub(crate) fn parse_args() -> Args {
                 };
                 i += 2;
             }
+            "--facet-simplification" => {
+                facet_simplification = parse_facet_simplification(
+                    value(&argv, i, "--facet-simplification"),
+                    "--facet-simplification",
+                );
+                i += 2;
+            }
+            "--facet-simplification-delta" => {
+                facet_simplification_delta = parse_simplification_delta(
+                    value(&argv, i, "--facet-simplification-delta"),
+                    "--facet-simplification-delta",
+                );
+                i += 2;
+            }
             "--product-simplification" => {
-                product_simplification = match value(&argv, i, "--product-simplification") {
-                    "none" => ProductSimplificationPolicy::None,
-                    "near_redundant" => ProductSimplificationPolicy::NearRedundant,
+                facet_simplification = match value(&argv, i, "--product-simplification") {
+                    "none" => FacetSimplificationPolicy::None,
+                    "near_redundant" => FacetSimplificationPolicy::ProductNearRedundant,
                     other => {
                         panic!(
                             "--product-simplification must be none or near_redundant, got {other}"
@@ -141,12 +155,9 @@ pub(crate) fn parse_args() -> Args {
                 i += 2;
             }
             "--product-simplification-delta" => {
-                product_simplification_delta = value(&argv, i, "--product-simplification-delta")
-                    .parse()
-                    .expect("--product-simplification-delta must be a finite non-negative f64");
-                assert!(
-                    product_simplification_delta.is_finite() && product_simplification_delta >= 0.0,
-                    "--product-simplification-delta must be finite and non-negative"
+                facet_simplification_delta = parse_simplification_delta(
+                    value(&argv, i, "--product-simplification-delta"),
+                    "--product-simplification-delta",
                 );
                 i += 2;
             }
@@ -186,11 +197,33 @@ pub(crate) fn parse_args() -> Args {
         max_audit_rows,
         validation_policy,
         capacity_method,
-        product_simplification,
-        product_simplification_delta,
+        facet_simplification,
+        facet_simplification_delta,
         family_filter,
         source_id_filter,
     }
+}
+
+fn parse_facet_simplification(value: &str, flag: &str) -> FacetSimplificationPolicy {
+    match value {
+        "none" => FacetSimplificationPolicy::None,
+        "product_near_redundant" => FacetSimplificationPolicy::ProductNearRedundant,
+        "generic_single_band" => FacetSimplificationPolicy::GenericSingleBand,
+        other => panic!(
+            "{flag} must be none, product_near_redundant, or generic_single_band, got {other}"
+        ),
+    }
+}
+
+fn parse_simplification_delta(value: &str, flag: &str) -> f64 {
+    let delta: f64 = value
+        .parse()
+        .unwrap_or_else(|_| panic!("{flag} must be a finite non-negative f64"));
+    assert!(
+        delta.is_finite() && delta >= 0.0,
+        "{flag} must be finite and non-negative"
+    );
+    delta
 }
 
 fn value<'a>(argv: &'a [String], i: usize, flag: &str) -> &'a str {
@@ -205,11 +238,14 @@ fn print_help() {
          [--audit-generated none|all] [--audit-simplified none|all] [--max-audit-rows N]\n\
          [--validation-policy strict|lp_origin_vertex|lp]\n\
          [--capacity-method transition_pruned_hk|product_billiard_or_hk]\n\
-         [--product-simplification none|near_redundant] [--product-simplification-delta F64]\n\
+         [--facet-simplification none|product_near_redundant|generic_single_band]\n\
+         [--facet-simplification-delta F64]\n\
          [--family-filter FAMILY[,FAMILY...]] [--source-id-filter SOURCE_ID[,SOURCE_ID...]]\n\
          N=0 scans every row in each retained artifact. Generated rows are deterministic attempts.\n\
          --family-filter keeps only the named emitted families after case loading.\n\
          --source-id-filter keeps only exact source id matches after case loading.\n\
-         --max-audit-rows 0 means no audit row cap."
+         --max-audit-rows 0 means no audit row cap.\n\
+         --product-simplification and --product-simplification-delta remain aliases for\n\
+         product_near_redundant compatibility."
     );
 }

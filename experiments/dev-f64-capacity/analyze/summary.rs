@@ -31,11 +31,14 @@ pub(crate) struct FamilySummaryRow {
     indeterminate_overlap: usize,
     exact_audit_statuses: String,
     product_rounding_statuses: String,
+    facet_simplification_policies: String,
+    facet_simplification_statuses: String,
     product_simplification_statuses: String,
     origin_lp_statuses: String,
     max_product_rounding_minor_over_major: Option<f64>,
     max_product_rounding_abs_change: Option<f64>,
     max_removed_facet_count: Option<usize>,
+    max_facet_simplification_delta_bound: Option<f64>,
     max_product_simplification_delta_bound: Option<f64>,
     max_capacity_ratio_upper_bound: Option<f64>,
     max_volume_ratio_upper_bound: Option<f64>,
@@ -115,10 +118,13 @@ struct FamilySummary {
     kkt_indeterminate_counts: Vec<usize>,
     exact_audit_statuses: BTreeMap<String, usize>,
     product_rounding_statuses: BTreeMap<String, usize>,
+    facet_simplification_policies: BTreeMap<String, usize>,
+    facet_simplification_statuses: BTreeMap<String, usize>,
     product_simplification_statuses: BTreeMap<String, usize>,
     product_rounding_minor_over_major: Vec<f64>,
     product_rounding_abs_changes: Vec<f64>,
     removed_facet_counts: Vec<usize>,
+    facet_simplification_delta_bounds: Vec<f64>,
     product_simplification_delta_bounds: Vec<f64>,
     capacity_ratio_upper_bounds: Vec<f64>,
     volume_ratio_upper_bounds: Vec<f64>,
@@ -164,7 +170,7 @@ pub(crate) fn summarize(rows: impl IntoIterator<Item = ScanRow>) -> Summary {
 
 pub(crate) fn print_summary(summary: &Summary) {
     println!(
-        "family,validation_policy,capacity_method,rows,accepted_decisive,accepted_ambiguous,validation_rejected,validation_fallback_required,capacity_run_rows,capacity_not_run_rows,success,failure,success_rate,clean,degenerate_value_agrees,fallback_required,indeterminate_overlap,exact_audit_statuses,product_rounding_statuses,product_simplification_statuses,origin_lp_statuses,max_product_rounding_minor_over_major,max_product_rounding_abs_change,max_removed_facet_count,max_product_simplification_delta_bound,max_capacity_ratio_upper_bound,max_volume_ratio_upper_bound,min_sys_ratio_lower_bound,max_sys_ratio_upper_bound,simplified_f64_vs_original_artifact_within_bound,simplified_audit_vs_original_artifact_within_bound,max_simplified_f64_vs_original_artifact_rel_error,max_simplified_audit_vs_original_artifact_rel_error,max_simplified_f64_vs_simplified_audit_rel_error,median_exact_audit_time_ms,max_exact_audit_time_ms,median_origin_lp_max_min_lambda,max_origin_lp_max_abs_residual,max_facets_without_definite_vertex,max_facets_without_possible_vertex,median_validation_bundle_time_ms,max_validation_bundle_time_ms,median_capacity_bundle_time_ms,max_capacity_bundle_time_ms,median_rel_error,max_rel_error,max_abs_error,median_gap,min_gap,median_vertex_indeterminate,max_vertex_indeterminate,median_near_singular_vertex,max_near_singular_vertex,median_bounded_near_singular_vertex,max_bounded_near_singular_vertex,median_ambiguous_vertex_incidence,max_ambiguous_vertex_incidence,median_facet_intersection_indeterminate,max_facet_intersection_indeterminate,median_omega_indeterminate,max_omega_indeterminate,median_kkt_indeterminate,max_kkt_indeterminate,validation_reasons,exact_audit_reasons,failure_reasons,trust_reasons"
+        "family,validation_policy,capacity_method,rows,accepted_decisive,accepted_ambiguous,validation_rejected,validation_fallback_required,capacity_run_rows,capacity_not_run_rows,success,failure,success_rate,clean,degenerate_value_agrees,fallback_required,indeterminate_overlap,exact_audit_statuses,product_rounding_statuses,facet_simplification_policies,facet_simplification_statuses,product_simplification_statuses,origin_lp_statuses,max_product_rounding_minor_over_major,max_product_rounding_abs_change,max_removed_facet_count,max_facet_simplification_delta_bound,max_product_simplification_delta_bound,max_capacity_ratio_upper_bound,max_volume_ratio_upper_bound,min_sys_ratio_lower_bound,max_sys_ratio_upper_bound,simplified_f64_vs_original_artifact_within_bound,simplified_audit_vs_original_artifact_within_bound,max_simplified_f64_vs_original_artifact_rel_error,max_simplified_audit_vs_original_artifact_rel_error,max_simplified_f64_vs_simplified_audit_rel_error,median_exact_audit_time_ms,max_exact_audit_time_ms,median_origin_lp_max_min_lambda,max_origin_lp_max_abs_residual,max_facets_without_definite_vertex,max_facets_without_possible_vertex,median_validation_bundle_time_ms,max_validation_bundle_time_ms,median_capacity_bundle_time_ms,max_capacity_bundle_time_ms,median_rel_error,max_rel_error,max_abs_error,median_gap,min_gap,median_vertex_indeterminate,max_vertex_indeterminate,median_near_singular_vertex,max_near_singular_vertex,median_bounded_near_singular_vertex,max_bounded_near_singular_vertex,median_ambiguous_vertex_incidence,max_ambiguous_vertex_incidence,median_facet_intersection_indeterminate,max_facet_intersection_indeterminate,median_omega_indeterminate,max_omega_indeterminate,median_kkt_indeterminate,max_kkt_indeterminate,validation_reasons,exact_audit_reasons,failure_reasons,trust_reasons"
     );
     for row in &summary.families {
         println!("{}", row.csv_line());
@@ -232,6 +238,14 @@ impl FamilySummary {
             .entry(row.product_rounding_status.clone())
             .or_default() += 1;
         *self
+            .facet_simplification_policies
+            .entry(row.facet_simplification_policy.clone())
+            .or_default() += 1;
+        *self
+            .facet_simplification_statuses
+            .entry(row.facet_simplification_status.clone())
+            .or_default() += 1;
+        *self
             .product_simplification_statuses
             .entry(row.product_simplification_status.clone())
             .or_default() += 1;
@@ -242,6 +256,9 @@ impl FamilySummary {
             self.product_rounding_abs_changes.push(value);
         }
         self.removed_facet_counts.push(row.removed_facet_count);
+        if let Some(value) = row.facet_simplification_delta_bound {
+            self.facet_simplification_delta_bounds.push(value);
+        }
         if let Some(value) = row.product_simplification_delta_bound {
             self.product_simplification_delta_bounds.push(value);
         }
@@ -340,6 +357,8 @@ impl FamilySummary {
             .sort_by(f64::total_cmp);
         self.product_rounding_abs_changes.sort_by(f64::total_cmp);
         self.removed_facet_counts.sort_unstable();
+        self.facet_simplification_delta_bounds
+            .sort_by(f64::total_cmp);
         self.product_simplification_delta_bounds
             .sort_by(f64::total_cmp);
         self.capacity_ratio_upper_bounds.sort_by(f64::total_cmp);
@@ -395,6 +414,8 @@ impl FamilySummary {
             indeterminate_overlap: self.indeterminate_overlap,
             exact_audit_statuses: format_counts(&self.exact_audit_statuses),
             product_rounding_statuses: format_counts(&self.product_rounding_statuses),
+            facet_simplification_policies: format_counts(&self.facet_simplification_policies),
+            facet_simplification_statuses: format_counts(&self.facet_simplification_statuses),
             product_simplification_statuses: format_counts(&self.product_simplification_statuses),
             origin_lp_statuses: format_counts(&self.origin_lp_statuses),
             max_product_rounding_minor_over_major: self
@@ -403,6 +424,10 @@ impl FamilySummary {
                 .copied(),
             max_product_rounding_abs_change: self.product_rounding_abs_changes.last().copied(),
             max_removed_facet_count: self.removed_facet_counts.last().copied(),
+            max_facet_simplification_delta_bound: self
+                .facet_simplification_delta_bounds
+                .last()
+                .copied(),
             max_product_simplification_delta_bound: self
                 .product_simplification_delta_bounds
                 .last()
@@ -506,11 +531,14 @@ impl FamilySummaryRow {
             self.indeterminate_overlap.to_string(),
             self.exact_audit_statuses.clone(),
             self.product_rounding_statuses.clone(),
+            self.facet_simplification_policies.clone(),
+            self.facet_simplification_statuses.clone(),
             self.product_simplification_statuses.clone(),
             self.origin_lp_statuses.clone(),
             format_option(self.max_product_rounding_minor_over_major),
             format_option(self.max_product_rounding_abs_change),
             format_usize_option(self.max_removed_facet_count),
+            format_option(self.max_facet_simplification_delta_bound),
             format_option(self.max_product_simplification_delta_bound),
             format_option(self.max_capacity_ratio_upper_bound),
             format_option(self.max_volume_ratio_upper_bound),

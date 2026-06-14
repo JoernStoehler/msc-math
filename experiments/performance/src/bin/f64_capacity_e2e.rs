@@ -1,6 +1,6 @@
 use exp_dev_f64_capacity::{
     generated_f64_cases, load_retained_artifact_cases, scan_case_with_options_profiled,
-    F64CapacityMethod, F64ValidationPolicy, ProductSimplificationPolicy, ScanCase, ScanOptions,
+    F64CapacityMethod, F64ValidationPolicy, FacetSimplificationPolicy, ScanCase, ScanOptions,
     ScanRow, ScanTimingBreakdown,
 };
 use exp_performance::args::{selected_run_mode, split_inline_arg, take_value, RunMode};
@@ -128,9 +128,15 @@ struct PhaseEvent {
     #[serde(skip_serializing_if = "Option::is_none")]
     product_rounding_max_abs_change: Option<f64>,
     #[serde(skip_serializing_if = "Option::is_none")]
+    facet_simplification_policy: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    facet_simplification_status: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     product_simplification_status: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     removed_facet_count: Option<usize>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    facet_simplification_delta_bound: Option<f64>,
     #[serde(skip_serializing_if = "Option::is_none")]
     product_simplification_delta_bound: Option<f64>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -310,8 +316,11 @@ fn input_acquisition_event(config: &Config, case_count: usize, elapsed_ms: f64) 
         product_rounding_status: None,
         product_rounding_max_minor_over_major: None,
         product_rounding_max_abs_change: None,
+        facet_simplification_policy: None,
+        facet_simplification_status: None,
         product_simplification_status: None,
         removed_facet_count: None,
+        facet_simplification_delta_bound: None,
         product_simplification_delta_bound: None,
         capacity_ratio_upper_bound: None,
         sample: case_count,
@@ -403,8 +412,8 @@ fn phase_f64_capacity_e2e(case: ScanCase, method: Method) -> (ScanRow, ScanTimin
             audit_simplified: false,
             validation_policy: method.validation_policy(),
             capacity_method: method.capacity_method(),
-            product_simplification: ProductSimplificationPolicy::None,
-            product_simplification_delta: 1e-8,
+            facet_simplification: FacetSimplificationPolicy::None,
+            facet_simplification_delta: 1e-8,
         },
     )
 }
@@ -429,8 +438,11 @@ fn event_from_row(
         product_rounding_status: Some(row.product_rounding_status),
         product_rounding_max_minor_over_major: row.product_rounding_max_minor_over_major,
         product_rounding_max_abs_change: row.product_rounding_max_abs_change,
+        facet_simplification_policy: Some(row.facet_simplification_policy),
+        facet_simplification_status: Some(row.facet_simplification_status),
         product_simplification_status: Some(row.product_simplification_status),
         removed_facet_count: Some(row.removed_facet_count),
+        facet_simplification_delta_bound: row.facet_simplification_delta_bound,
         product_simplification_delta_bound: row.product_simplification_delta_bound,
         capacity_ratio_upper_bound: row.capacity_ratio_upper_bound,
         sample,

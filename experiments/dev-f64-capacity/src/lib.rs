@@ -4,6 +4,7 @@ mod capacity;
 mod cases;
 mod classify;
 mod decision_compare;
+mod facet_simplify;
 mod generated_cases;
 mod geometry;
 mod product_preprocess;
@@ -30,6 +31,10 @@ pub use classify::{
 pub use decision_compare::{
     compare_f64_decisions, DecisionComparisonReport, DecisionComparisonRow, SingleMethodDecisionRow,
 };
+pub use facet_simplify::{
+    remove_nearly_redundant_facets_single_band, FacetSimplificationPolicy,
+    FacetSimplificationRemoval, FacetSimplificationReport, FacetSimplificationStatus,
+};
 pub use generated_cases::generated_f64_cases;
 pub use geometry::F64CombinatoricsTiming;
 pub use product_preprocess::{
@@ -42,8 +47,8 @@ pub use product_simplify::{
 };
 pub use rows::ScanRow;
 pub use scan::{
-    scan_case, scan_case_with_options, scan_case_with_options_profiled,
-    ProductSimplificationPolicy, ScanOptions, ScanTimingBreakdown,
+    scan_case, scan_case_with_options, scan_case_with_options_profiled, ScanOptions,
+    ScanTimingBreakdown,
 };
 pub use validation::{
     validate_f64_polytope_input, validate_f64_polytope_input_with_policy,

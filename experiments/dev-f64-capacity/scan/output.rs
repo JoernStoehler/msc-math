@@ -1,6 +1,6 @@
 use crate::args::{AuditGenerated, AuditSimplified};
 use exp_dev_f64_capacity::{
-    scan_case_with_options, F64CapacityMethod, F64ValidationPolicy, ProductSimplificationPolicy,
+    scan_case_with_options, F64CapacityMethod, F64ValidationPolicy, FacetSimplificationPolicy,
     ScanCase, ScanOptions,
 };
 use std::fs::File;
@@ -15,8 +15,8 @@ pub(crate) fn write_scan_rows(
     max_audit_rows: usize,
     validation_policy: F64ValidationPolicy,
     capacity_method: F64CapacityMethod,
-    product_simplification: ProductSimplificationPolicy,
-    product_simplification_delta: f64,
+    facet_simplification: FacetSimplificationPolicy,
+    facet_simplification_delta: f64,
 ) -> usize {
     if let Some(parent) = output.parent() {
         if !parent.as_os_str().is_empty() {
@@ -44,8 +44,8 @@ pub(crate) fn write_scan_rows(
                 audit_simplified: audit_simplified_remaining,
                 validation_policy,
                 capacity_method,
-                product_simplification,
-                product_simplification_delta,
+                facet_simplification,
+                facet_simplification_delta,
             },
         );
         if row.exact_audit_status != "not_requested" && !audit_this_case {

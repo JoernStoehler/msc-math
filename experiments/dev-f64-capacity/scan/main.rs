@@ -21,8 +21,8 @@ fn main() {
         args.max_audit_rows,
         args.validation_policy,
         args.capacity_method,
-        args.product_simplification,
-        args.product_simplification_delta,
+        args.facet_simplification,
+        args.facet_simplification_delta,
     );
     eprintln!("wrote {total} rows to {}", args.output.display());
 }

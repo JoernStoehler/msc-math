@@ -20,30 +20,31 @@ candidate f64 policy for thesis-scale datascience scans:
 1. validate rounded f64 dual vertices with `lp_origin_vertex`;
 2. for product-labelled inputs, round block-structured off-block drift to exact
    `0.0`;
-3. optionally remove product-factor facets that are near-redundant with an
-   explicit containment bound;
+3. optionally remove near-redundant facets with an explicit containment bound,
+   either by the product-factor policy or by the generic single-band policy;
 4. compute capacity with `product_billiard_or_hk`;
 5. keep ambiguity diagnostics and route rows needing stronger witnesses to
    exact fallback.
 
 This is not theorem-grade certification of every original row. It is a fast
 empirical method that either computes the original f64 row, or computes an
-explicit simplified product row whose f64-reported containment/distortion
-diagnostics remain visible. The mathematical use of those distortion fields as
-theorem-backed guarantees is outside this checkpoint and must be reviewed
-separately before it supports thesis claims.
+explicit simplified row whose f64-reported containment/distortion diagnostics
+remain visible. The formal implication from a valid containment bound to the
+reported distortion factors is recorded in `formal/`; the f64 computation of
+the bound is still an ordinary floating-point diagnostic.
 
 Current local runs support these family-level interpretations. Re-run the
 commands below before treating them as current evidence.
 
 - Generic random rows are the strongest case for pure f64 and can be treated as
   the main viability evidence for random empirical scans.
-- Random products should use product rounding and product sigma enumeration;
-  the bounded retained sample found no near-redundant simplification events.
+- Random products should use product rounding and product sigma enumeration.
 - Ascent product endpoints sometimes contain nearly redundant factor facets.
-  Product simplification resolves the observed bounded-near-singular fallback
-  cases in the bounded retained sample, while keeping simplified exact and f64
-  capacities within the original-artifact distortion bound.
+  Product simplification resolved the one observed fallback row in the current
+  200-row retained sample. On the other simplified rows, generic single-band
+  simplification removed the same facets as product simplification. It did not
+  replace the product policy because it refused the fallback row on 4D
+  vertex/incidence indeterminacy.
 - HKO2024 and HKO-like highly degenerate inputs should remain degenerate stress
   fixtures or exact-fallback cases, not targets for a clean f64-only claim.
 
@@ -127,7 +128,7 @@ cargo run -p exp-dev-f64-capacity --release --bin f64-capacity-scan -- \
   --output /tmp/f64-capacity-dev-rows.jsonl
 ```
 
-Targeted product-simplification comparison:
+Targeted simplification comparison:
 
 ```bash
 cargo run -p exp-dev-f64-capacity --release --bin f64-capacity-scan -- \
@@ -141,13 +142,22 @@ cargo run -p exp-dev-f64-capacity --release --bin f64-capacity-scan -- \
   --max-rows-per-family 0 \
   --family-filter ascent_product_endpoint \
   --source-id-filter ascent_product_60:F10,ascent_product_131:F10,ascent_product_3222:F10 \
-  --product-simplification near_redundant \
-  --product-simplification-delta 1e-8 \
+  --facet-simplification product_near_redundant \
+  --facet-simplification-delta 1e-8 \
   --audit-simplified all \
   --output /tmp/f64-capacity-product-simplification-on.jsonl
+cargo run -p exp-dev-f64-capacity --release --bin f64-capacity-scan -- \
+  --input-source artifacts \
+  --max-rows-per-family 0 \
+  --family-filter ascent_product_endpoint \
+  --source-id-filter ascent_product_60:F10,ascent_product_131:F10,ascent_product_3222:F10 \
+  --facet-simplification generic_single_band \
+  --facet-simplification-delta 1e-8 \
+  --audit-simplified all \
+  --output /tmp/f64-capacity-generic-single-band-on.jsonl
 cargo run -p exp-dev-f64-capacity --release --bin f64-capacity-analyze -- \
-  --input /tmp/f64-capacity-product-simplification-on.jsonl \
-  --json-output /tmp/f64-capacity-product-simplification-on-summary.json
+  --input /tmp/f64-capacity-generic-single-band-on.jsonl \
+  --json-output /tmp/f64-capacity-generic-single-band-on-summary.json
 ```
 
 Full generated scan:
@@ -271,10 +281,12 @@ Rows contain both validation and capacity/audit fields.
   explicit product preprocessing. Capacity is computed on the row's
   post-preprocessing vertices; product rounding is not hidden inside
   `capacity_f64_only_with_policy_and_method_profiled`.
-- `product_simplification_status`, `removed_original_facets`,
-  `product_simplification_delta_bound`, and the capacity/volume/sys ratio
-  bounds record optional product-only simplification. Simplification changes the
-  polytope; it is justified only by the reported containment/distortion bounds.
+- `facet_simplification_policy`, `facet_simplification_status`,
+  `removed_original_facets`, `facet_simplification_delta_bound`, and the
+  capacity/volume/sys ratio bounds record optional simplification.
+  Simplification changes the polytope; it is justified only by the reported
+  containment/distortion bounds. `product_simplification_*` fields remain as
+  compatibility aliases for product-only scans.
 - Capacity labels are object-specific:
   `original_artifact_capacity_label` is for the original artifact row,
   `simplified_audit_capacity_label` is exact-backed capacity of the
@@ -345,19 +357,28 @@ own the product structure. If a product-labeled retained row is not
 block-structured within the tolerance, loading fails instead of silently
 projecting it to a different polytope.
 
-`--product-simplification near_redundant` is an explicit product-only
-preprocessing policy. It removes a set of 2D factor facets only after computing
-the set-level bound
-`P_original <= P_simplified <= (1 + delta_bound) P_original`. It reports the
-resulting capacity, volume, and sys distortion factors. The default is
-`--product-simplification none`. Use `--audit-simplified all` to exact-audit
-the simplified row after the measured f64 decision has been recorded. The
-formal implication from a valid `delta_bound` to these distortion factors is
-recorded in `formal/product-simplification-bounds.tex`
+`--facet-simplification product_near_redundant` is an explicit product-only
+preprocessing policy. It rounds product blocks, works in the two 2D factors,
+and removes only factor facets with a reported set-level bound
+`P_original <= P_simplified <= (1 + delta_bound) P_original`.
+
+`--facet-simplification generic_single_band` is a generic 4D policy. It uses
+the f64 vertex/incidence scan and removes a facet only when one retained facet
+guards every definite vertex of the removed facet within the requested
+tolerance. It refuses rows with bounded near-singular or ambiguous-incidence
+geometry because then the f64 vertex list is not a trusted list of all vertices
+of the facet being tested.
+
+The default is `--facet-simplification none`. Use `--audit-simplified all` to
+exact-audit the simplified row after the measured f64 decision has been
+recorded. The formal implication from a valid `delta_bound` to the reported
+capacity, volume, and sys distortion factors is recorded in
+`formal/product-simplification-bounds.tex`
 (`rem:product-simplification-experiment-contract` and
-`cor:facet-removal-capacity-volume-sys-bounds`). The current f64 computation of
-`delta_bound` is an ordinary f64 diagnostic, not an outward-rounded
-certificate.
+`cor:facet-removal-capacity-volume-sys-bounds`). The single-band/multi-band
+comparison is recorded in `cor:four-dimensional-facet-band-comparison`. The
+current f64 computation of `delta_bound` is an ordinary f64 diagnostic, not an
+outward-rounded certificate.
 
 ## Current Local Run Notes
 
@@ -369,43 +390,40 @@ Bounded family scans are evidence runs. Full retained scans are justified only
 when a thesis table or promotion decision needs full-population rates; do not
 run them merely to increase statistical power.
 
-Current product-rounding dev rows:
+Current simplification dev rows:
 
-- `/tmp/f64-capacity-dev-rows-rounded.jsonl`
-- `/tmp/f64-capacity-product-simplification-off.jsonl`
-- `/tmp/f64-capacity-product-simplification-on.jsonl`
-- `/tmp/f64-capacity-products200-simplification-off.jsonl`
-- `/tmp/f64-capacity-products200-simplification-on.jsonl`
-- `/tmp/f64-capacity-generic-random20-simplification-on.jsonl`
+- `/tmp/f64-generic-redundancy-target-none.jsonl`
+- `/tmp/f64-generic-redundancy-target-product.jsonl`
+- `/tmp/f64-generic-redundancy-target-generic.jsonl`
+- `/tmp/f64-generic-redundancy-ascent-product200-none.jsonl`
+- `/tmp/f64-generic-redundancy-ascent-product200-product.jsonl`
+- `/tmp/f64-generic-redundancy-ascent-product200-generic.jsonl`
+- `/tmp/f64-generic-redundancy-random20-generic.jsonl`
+- `/tmp/f64-generic-redundancy-random-product20-generic.jsonl`
 
 The targeted rows `ascent_product_60:F10`, `ascent_product_131:F10`, and
-`ascent_product_3222:F10` are enough to check the mechanism. Structural
-rounding removes the value disagreement on `ascent_product_131:F10` and
-`ascent_product_3222:F10`; remaining fallback classifications come from
-near-singular vertices, tiny action gaps, or other ambiguity diagnostics.
-With `--product-simplification near_redundant --product-simplification-delta
-1e-8 --audit-simplified all`, the targeted scan removes one facet from
-`ascent_product_60:F10` and one from `ascent_product_131:F10`, with
-`delta_bound < 7e-9`; both rows move from `fallback_required` to
-`degenerate_value_agrees` because bounded near-singular vertices disappear.
-Rows record original artifact capacity, simplified exact capacity, and
-simplified f64 capacity separately, then compare the simplified values to the
-original through the distortion bound. In the current targeted run, simplified
-exact and simplified f64 agree to displayed precision on both simplified rows;
-both are inside the original-polytope distortion budget. The largest observed
-simplified-vs-original relative capacity change is about `6.2e-10`.
+`ascent_product_3222:F10` are mechanism checks, not population evidence. In the
+current runs, the no-simplification scan classifies all three as
+`degenerate_value_agrees`. This changed after `bounded_near_singular` was
+tightened to require a feasible near-singular point. With
+`--facet-simplification product_near_redundant` and
+`--facet-simplification generic_single_band`, both policies remove the same
+facet from `ascent_product_60:F10` and `ascent_product_131:F10`, with
+`delta_bound < 8e-9`. Both simplified f64 values and simplified exact-audit
+values are inside the original-polytope distortion budget.
 
 Bounded retained-product matrix:
 
-- `random_product`, 200 rows: simplification triggers on 0 rows; all 200 remain
-  `degenerate_value_agrees`; no bound or f64/exact violations.
-- `ascent_product_endpoint`, 200 rows: simplification triggers on 4 rows, all
-  previously `fallback_required`; all 4 move to `degenerate_value_agrees` after
-  simplification; max `delta_bound` is `6.6e-9`; simplified exact and
-  simplified f64 agree to displayed precision; all simplified values are within
-  the original-artifact distortion bound.
-- Generic random sanity, 20 rows: simplification reports `not_block_product` on
-  every row; all 20 remain `clean`.
+- `random_product`, 20-row sanity with `generic_single_band`: simplification
+  triggers on 0 rows; all 20 remain `degenerate_value_agrees`.
+- `random`, 20-row sanity with `generic_single_band`: simplification triggers
+  on 0 rows; all 20 remain `clean`.
+- `ascent_product_endpoint`, 200 rows: product simplification triggers on 4
+  rows and removes the one remaining `fallback_required` row. Generic
+  single-band simplification triggers on 3 rows and leaves that same row as
+  `fallback_required` because the relevant 4D vertex/incidence geometry is
+  indeterminate. This is the current reason to keep the product-only policy in
+  addition to the generic one.
 
 Current local coverage artifacts:
 

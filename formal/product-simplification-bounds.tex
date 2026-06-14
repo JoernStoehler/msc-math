@@ -1,7 +1,7 @@
 % Agent-written and not yet Jörn-reviewed.
 %
-% Purpose: record the mathematical contract used by the product-only
-% near-redundant facet simplification in experiments/dev-f64-capacity.
+% Purpose: record the mathematical contract used by near-redundant facet
+% simplification in experiments/dev-f64-capacity.
 % This file proves the conditional implication from a valid delta bound to
 % capacity/volume/sys distortion bounds. It does not certify that an ordinary
 % f64 computation of delta_bound is outward-rounded.
@@ -164,8 +164,8 @@ let
 \]
 For retained facets $j\in I\setminus\{i\}$, set
 $f_j(y)=\langle a_j,y\rangle$ on~$F_i$.
-If $F_i$ is nonempty and has dimension $m$ with $1\leq m\leq 3$, then
-for every $r$ with $0<r\leq 1$,
+Assume that $F_i$ is compact and has dimension $m$ with $1\leq m\leq 3$.
+Then for every $r$ with $0<r\leq 1$,
 \[
   \operatorname{Single}_{F_i}(r)
   \implies
@@ -322,15 +322,15 @@ The upper bound follows from $r_c^2\leq\lambda^4$ and $r_v\geq 1$.
 \end{proof}
 
 \begin{unverified}
-\begin{remark}[Experiment contract for product simplification]
+\begin{remark}[Experiment contract for facet simplification]
 \label{rem:product-simplification-experiment-contract}
 The JSONL field
 \[
-  \texttt{product\_simplification\_delta\_bound}
+  \texttt{facet\_simplification\_delta\_bound}
 \]
-in \texttt{experiments/dev-f64-capacity} is intended to satisfy the hypothesis
-of Lemma~\ref{lem:hrep-facet-removal-containment}: for every removed original
-facet $j$ and every point $x$ in the simplified polytope $P_R$,
+in \texttt{experiments/dev-f64-capacity} is intended to satisfy the hypothesis of
+Lemma~\ref{lem:hrep-facet-removal-containment}: for every removed original facet
+$j$ and every point $x$ in the simplified polytope $P_R$,
 \[
   \langle a_j,x\rangle \leq 1+\texttt{delta\_bound}.
 \]
@@ -351,5 +351,8 @@ arithmetic. That is useful as a trusted-enough empirical diagnostic, but it is
 not an outward-rounded certificate. A certificate-strength implementation
 would need an exact audit or directed-rounding interval computation for the
 maximal removed-facet violation.
+
+The older JSONL field \texttt{product\_simplification\_delta\_bound} is retained
+for product-only scans as a compatibility alias.
 \end{remark}
 \end{unverified}
