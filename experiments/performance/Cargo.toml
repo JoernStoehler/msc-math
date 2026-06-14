@@ -11,11 +11,20 @@ path = "src/bin/hk2017_pruned_f64.rs"
 name = "hk2017-cycle-enumeration"
 path = "src/bin/hk2017_cycle_enumeration.rs"
 
+[[bin]]
+name = "f64-capacity-e2e"
+path = "src/bin/f64_capacity_e2e.rs"
+
+[[bin]]
+name = "f64-decision-compare"
+path = "src/bin/f64_decision_compare.rs"
+
 [lints]
 workspace = true
 
 [dependencies]
 symplectic.workspace = true
+exp-dev-f64-capacity = { path = "../dev-f64-capacity" }
 euclidean-polytopes.workspace = true
 nalgebra.workspace = true
 serde.workspace = true

@@ -4,6 +4,7 @@ mod capacity;
 mod cases;
 mod classify;
 mod decision_compare;
+mod generated_cases;
 mod geometry;
 mod product_preprocess;
 mod product_simplify;
@@ -29,6 +30,7 @@ pub use classify::{
 pub use decision_compare::{
     compare_f64_decisions, DecisionComparisonReport, DecisionComparisonRow, SingleMethodDecisionRow,
 };
+pub use generated_cases::generated_f64_cases;
 pub use geometry::F64CombinatoricsTiming;
 pub use product_preprocess::{
     round_product_blocks, ProductBlock, ProductRoundingReport, ProductRoundingStatus,

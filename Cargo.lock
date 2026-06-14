@@ -563,6 +563,7 @@ name = "exp-performance"
 version = "0.1.0"
 dependencies = [
  "euclidean-polytopes",
+ "exp-dev-f64-capacity",
  "nalgebra",
  "num-rational",
  "rand 0.8.5",

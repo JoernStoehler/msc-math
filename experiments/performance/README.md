@@ -28,6 +28,211 @@ worktree so the variant is visible in the code diff.
 
 ## Targets
 
+### `f64-capacity-e2e`
+
+This target measures candidate f64 methods for producing capacity values inside
+`datascience/`-style pipelines. It is not limited to retained artifact replay:
+`--input-cohort retained_artifacts|generated_f64|all` selects retained
+compatibility rows, generated f64 rows, or both.
+
+Rows are loaded or generated before the per-method loop. The target records that
+cost as an `input_acquisition` phase. It then records one `f64_capacity_e2e`
+phase for each selected input row and method. The per-method phase includes f64
+product rounding, f64 validation, f64 capacity when validation accepts, and row
+classification. It excludes exact audit. Artifact capacity labels may appear
+only in agreement fields already produced by `experiments/dev-f64-capacity`.
+For `generated_f64`, `input_acquisition` includes the current generated-case
+preparation cost; generated random rows use exact-backed validity filtering in
+the shared `experiments/dev-f64-capacity` generator.
+
+The current maintained methods are:
+
+- `strict`: strict origin predicate plus generic transition-pruned HK.
+- `lp_origin_vertex`: LP origin decision, vertex-scan geometry, generic
+  transition-pruned HK.
+- `lp_origin_vertex_product_billiard_or_hk`: LP origin decision, vertex-scan
+  geometry, billiard sigma stream for detected products, and generic HK
+  fallback otherwise.
+- `lp`: LP origin decision, LP facet/pair transition geometry, generic
+  transition-pruned HK.
+
+Correctness, coverage, and trust interpretation belong in
+`experiments/dev-f64-capacity`. This target owns runtime, timing breakdowns, and
+method-cost comparison.
+
+The summary table uses these f64-specific timing names:
+
+- `input_acquisition`: the cost of loading retained cases or generating f64
+  cases for the selected cohort. This is not attributed to an individual
+  capacity method.
+- `e2e_mean_ms`: the complete measured `f64_capacity_e2e` phase for one input
+  row and one method.
+- `validation_bundle_ms`: the complete f64 validation stage reported by
+  `experiments/dev-f64-capacity`. This is not an origin-in-interior sub-timer.
+- `capacity_bundle_ms`: the capacity stage only for rows where capacity actually
+  ran. Rows rejected or sent to fallback before capacity are counted in
+  `capacity_not_run` and excluded from this mean.
+
+Candidate and predicate-count columns ending in `_if_capacity` are also
+computed only over rows where capacity ran.
+`sigma_count` is the number of candidate sigma words tested by the exhaustive
+search; it is not an optimization iteration count.
+
+The same rows also include routine-level subphase timers. Validation subphase
+timers are averaged over all ok rows. Capacity subphase timers are averaged only
+over rows where capacity ran. The most useful columns for comparing strict and
+LP policies are:
+
+- `val_origin_lp_diag_ms`: the diagnostic origin LP solve. It is emitted for
+  both policies because the f64 scan row records origin-LP diagnostics.
+- `val_origin_policy_ms`: the predicate used by the selected policy for
+  origin-in-interior.
+- `val_combinatorics_ms`, with `val_vertex_scan_ms`,
+  `val_lp_facet_statuses_ms`, and `val_lp_facet_pairs_ms` as major pieces.
+- `cap_combinatorics_ms`, `cap_transition_matrix_ms`, and
+  `cap_kkt_candidates_ms`. For `lp_origin_vertex_product_billiard_or_hk`,
+  `cap_kkt_candidates_ms` includes f64 product classification plus either
+  billiard sigma solving or generic HK fallback.
+
+Run retained-artifact smoke:
+
+```bash
+cargo run -p exp-performance --release --bin f64-capacity-e2e -- \
+  --mode smoke \
+  --input-cohort retained_artifacts \
+  --out-dir /tmp/perf-f64-capacity-smoke
+```
+
+Run generated-f64 smoke:
+
+```bash
+cargo run -p exp-performance --release --bin f64-capacity-e2e -- \
+  --mode smoke \
+  --input-cohort generated_f64 \
+  --out-dir /tmp/perf-f64-capacity-generated-smoke
+```
+
+Run the bounded retained-artifact production profile:
+
+```bash
+cargo run -p exp-performance --release --bin f64-capacity-e2e -- \
+  --mode production \
+  --input-cohort retained_artifacts \
+  --out-dir /tmp/perf-f64-capacity-production
+```
+
+Run the bounded generated-f64 production profile:
+
+```bash
+cargo run -p exp-performance --release --bin f64-capacity-e2e -- \
+  --mode production \
+  --input-cohort generated_f64 \
+  --out-dir /tmp/perf-f64-capacity-generated-production
+```
+
+Summarize phase events:
+
+```bash
+python3 experiments/performance/scripts/summarize_phase_jsonl.py \
+  /tmp/perf-f64-capacity-smoke
+```
+
+Run a focused retained `random_product F=12` product-aware diagnostic:
+
+```bash
+cargo run -p exp-performance --release --bin f64-capacity-e2e -- \
+  --mode production \
+  --input-cohort retained_artifacts \
+  --case-filter random_product_f12 \
+  --method-filter product_billiard_or_hk \
+  --max-cases 50 \
+  --out-dir /tmp/perf-f64-capacity-f12-kkt-split-50
+```
+
+The binary writes:
+
+- `phase-events.jsonl`: one row for each selected input row and method. Rows
+  include `family`, `method`, f64 outcome fields, candidate counts, transition
+  counts, `validation_bundle_time_ms`, `capacity_bundle_time_ms` when capacity
+  ran, and the complete `elapsed_ms` for the measured phase. One
+  `input_acquisition` row records the selected cohort acquisition cost.
+
+`smoke` uses two retained rows per family plus HKO, or one generated sample per
+facet/product size. `production` uses 100 retained rows per family plus HKO, or
+five generated samples per facet/product size. A full retained-artifact mode
+should be a separate reviewed run, likely on LICCA or in a background session,
+because generic and full-LP product methods can enumerate many more candidates
+than the product-aware billiard method.
+
+Do not treat local `/tmp` outputs as durable evidence. Commit commands and
+schema, not generated timing artifacts.
+
+### `f64-decision-compare`
+
+This target measures the f64 decision routines directly, without bundling them
+into a capacity run. Use it when the question is which algorithm decides a
+specific proposition faster or more decisively:
+
+- origin-in-interior: strict origin predicate versus LP origin;
+- facet presence: vertex-scan coverage, per-facet LP, batched primal LP, and
+  batched polar LP;
+- facet-pair intersection: vertex incidence versus LP facet-pair checks;
+- omega signs: the current f64 omega routine, reported without an alternative.
+
+It writes `decision-events.jsonl`, not `phase-events.jsonl`, because each row is
+a direct routine comparison rather than an end-to-end phase. It does not emit an
+input-acquisition timing row; use `f64-capacity-e2e` when generation/loading
+cost matters.
+
+Run retained-artifact smoke:
+
+```bash
+cargo run -p exp-performance --release --bin f64-decision-compare -- \
+  --mode smoke \
+  --input-cohort retained_artifacts \
+  --out-dir /tmp/perf-f64-decision-compare-smoke
+```
+
+Run generated-f64 smoke:
+
+```bash
+cargo run -p exp-performance --release --bin f64-decision-compare -- \
+  --mode smoke \
+  --input-cohort generated_f64 \
+  --out-dir /tmp/perf-f64-decision-compare-generated-smoke
+```
+
+Run the bounded retained-artifact production comparison:
+
+```bash
+cargo run -p exp-performance --release --bin f64-decision-compare -- \
+  --mode production \
+  --input-cohort retained_artifacts \
+  --out-dir /tmp/perf-f64-decision-compare-production
+```
+
+Run the bounded generated-f64 production comparison:
+
+```bash
+cargo run -p exp-performance --release --bin f64-decision-compare -- \
+  --mode production \
+  --input-cohort generated_f64 \
+  --out-dir /tmp/perf-f64-decision-compare-generated-production
+```
+
+Summarize decision events:
+
+```bash
+python3 experiments/performance/scripts/summarize_decision_jsonl.py \
+  /tmp/perf-f64-decision-compare-production \
+  --csv /tmp/perf-f64-decision-compare-production/decision-summary.csv
+```
+
+Use this target when the question is about one decision routine rather than a
+complete method bundle. In particular, it is the maintained way to compare
+origin predicates, facet-presence formulations, and facet-intersection
+formulations without hiding them inside capacity timing.
+
 ### `hk2017-pruned-f64`
 
 This target profiles the pruned HK2017 f64 candidate path on deterministic
