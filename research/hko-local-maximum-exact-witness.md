@@ -17,33 +17,16 @@ Packet 1 completed:
   `summarize_numerical_minima.py`;
 - Packet 2 numerical reconciliation now has a durable bookkeeping surface via
   `classify_numerical_minima.py`;
-- the theorem-facing orbit catalog is not closed yet and remains the main
-  blocker between the current exact tooling and the final proof surface.
+- the old route's orbit catalog is not closed and remains the main blocker
+  between this exact tooling and a final proof surface.
 - the exact HKO dual-coordinate volume row is now derived in closed form and
   emitted as a dedicated Packet 3 support artifact.
 - the reduced endpoint/midpoint prototype `sys` rows are now emitted exactly in
   the Packet 3 `R^40` coordinate order.
-- the current widened Packet 3 representative-row surface is now bundled into the
-  backend-neutral witness artifact `widened-representative-witness.json` via
-  `build_widened_representative_witness.py`.
-- `verify_widened_representative_witness.sage` is now the first concrete Sage
-  verifier for Packet 3: it reconstructs the quartic field from that witness
-  and replays exact geometry, symmetry-rank, closure, normalization, and
-  representative-row rank checks.
-- the current widened representative witness verification now runs successfully
-  in the local devcontainer and emits
-  `widened-representative-witness-verification.json`.
-- the next blocker is no longer volume-row or row-assembly arithmetic; it is
-  permutation-level prototype multiplicity. One endpoint representative plus one midpoint
-  representative expand to only `20` symmetry images, so that reduced surface cannot
-  reach the target active-matrix rank `25`.
-- five numerical six-facet permutation-orbit representatives are now exactified
-  into exact endpoint-family `sys` rows, each with exact closure and normalization
-  checks.
-- six midpoint-style numerical seven-facet permutation-orbit representatives are
-  now exactified into exact midpoint-family `sys` rows, each with exact closure and normalization
-  checks; only the two asymmetric `lambda ≈ 0.129573855671` seven-facet representative
-  classes remain unresolved on the current numerical planning surface.
+- widened representative-row artifacts were removed from the live tree after
+  `smooth-only-rank-defect/` became the maintained evidence surface for the
+  clean failed smooth-only route attempt; use git history for the deleted
+  widened-route machinery.
 
 ## Files
 
@@ -58,19 +41,9 @@ Packet 1 completed:
 | `derive_segment_a_gradient_reduction.py` | Exact Packet 2 certificate that the seven-facet KKT segment gives a degree-2 dual-vertex row family spanned by three prototype rows |
 | `derive_hko_volume_derivative.py` | Exact Packet 3 support script deriving the HKO dual-coordinate volume row in facet-major `R^40` order |
 | `derive_reduced_sys_prototypes.py` | Exact Packet 3 support script combining prototype capacity rows with the HKO volume row to emit exact prototype `sys` rows |
-| `classify_permutation_representative_orbits.py` | Packet 3 planning script classifying numerical representative permutations modulo HKO symmetries and cyclic relabeling |
-| `derive_endpoint_representative_rows.py` | Packet 3 support script exactifying the current numerical six-facet representative permutations into exact endpoint-family `sys` rows |
-| `derive_midpoint_representative_rows.py` | Packet 3 support script exactifying the midpoint-style numerical seven-facet representative permutations into exact midpoint-family `sys` rows |
-| `build_widened_representative_witness.py` | Packet 3 witness assembler that freezes the current widened exact representative-row surface into one backend-neutral JSON artifact |
-| `verify_widened_representative_witness.sage` | SageMath verifier for the widened representative-row witness; writes a machine-readable verification summary |
 | `hko-geometry.json` | Generated exact geometry record |
 | `hko-volume-derivative.json` | Generated exact HKO volume-row certificate |
 | `reduced-sys-prototypes.json` | Generated exact reduced prototype `sys` rows and their interpolation/coincidence checks |
-| `numerical-permutation-orbits.json` | Generated numerical symmetry-quotiented permutation-representative count surface for Packet 3 planning |
-| `endpoint-representative-rows.json` | Generated exact six-facet representative rows chosen from the current numerical permutation-orbit planning surface |
-| `midpoint-representative-rows.json` | Generated exact midpoint-style seven-facet representative rows chosen from the current numerical permutation-orbit planning surface |
-| `widened-representative-witness.json` | Generated backend-neutral Packet 3 witness bundle for geometry, symmetry, and the current widened exact representative rows |
-| `widened-representative-witness-verification.json` | Generated Sage verification summary for the current widened representative-row witness |
 | `hko-symmetry-tangent.json` | Generated exact symmetry tangent-space certificate |
 | `numerical-minima-summary.json` | Generated current numerical minima summary |
 | `numerical-family-reconciliation.json` | Generated Packet 2 bookkeeping summary of endpoint/equality-case classes |
@@ -91,11 +64,6 @@ python3 derive_segment_gradient_reduction.py
 python3 derive_segment_a_gradient_reduction.py
 python3 derive_hko_volume_derivative.py
 python3 derive_reduced_sys_prototypes.py
-python3 classify_permutation_representative_orbits.py
-python3 derive_endpoint_representative_rows.py
-python3 derive_midpoint_representative_rows.py
-python3 build_widened_representative_witness.py
-sage verify_widened_representative_witness.sage
 ```
 
 ## Scope Boundary
@@ -108,65 +76,6 @@ sage verify_widened_representative_witness.sage
 
 It does **not** yet close the full theorem route, because the final
 paper-derived orbit catalog and exact active-gradient matrix are still pending.
-
-`widened-representative-witness.json` and
-`verify_widened_representative_witness.sage` now give a concrete Sage-facing
-Packet 3 surface, but they still do **not** close the theorem route. They
-currently verify only:
-
-- the quartic field and dual-geometry bundle already frozen by Packet 1;
-- exact symmetry-basis rank;
-- exact closure / normalization / common-scalar checks on the current widened
-  exact representative rows;
-- exact row ranks for the current endpoint and midpoint representative families.
-
-They do **not** yet verify:
-
-- the two unresolved asymmetric seven-facet representative families;
-- the final active-gradient matrix `G`;
-- the final cone certificate, nor any justified reduction of that theorem to a
-  kernel-equals-symmetry summary.
-
-## Sage Note
-
-The local devcontainer now exposes a runnable `sage` binary via the baked
-Miniforge / conda-forge install in `.devcontainer/Dockerfile`.
-
-Current verified command:
-
-```bash
-cd experiments/hko-local-maximum/history/exact-witness
-python3 build_widened_representative_witness.py
-sage verify_widened_representative_witness.sage
-```
-
-That verifier currently passes and emits:
-
-- `widened-representative-witness-verification.json`, with `passed = true`,
-- exact symmetry rank `15`,
-- endpoint family rank `5`,
-- midpoint family rank `6`,
-- widened representative-row union rank `11`,
-- widened representative plus symmetry rank `26`.
-
-Current exact consequence from that same verification:
-
-- the current widened representative rows annihilate all `15` committed
-  symmetry generators exactly, including the `4` translations, the scaling
-  direction, and the `10` linear symplectic generators;
-- the earlier affine/scaling mismatch was in the representative-row formula,
-  not in the symmetry tangent encoding;
-- the widened representative-row matrix still has right-kernel dimension `29`,
-  so the remaining Packet 3 issue is now active-row multiplicity rather than
-  affine-symmetry compatibility.
-
-So the next Packet 3 issue is no longer "fix translation/scaling conventions".
-It is "widen the exact active representative surface until the final cone /
-matrix certificate becomes visible".
-
-The same witness shape is still intended to stay backend-neutral, so a future
-Rust producer should be able to emit it unchanged while Sage remains the
-independent verifier.
 
 ## Field Note
 

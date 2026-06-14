@@ -650,32 +650,20 @@ Missing:
 Status:
 - Exact dual coordinates, coefficient field, and rank-15 symmetry tangent setup
   are in place.
-- The older widened representative-row witness passes present Sage checks but
-  is partial.
 - The current theorem-facing certificate is the 26-row feasible-section
   certificate.
-
-Current checked partial witness facts:
-- Exact field: `Q(tan(pi/5))`, minimal polynomial `t^4 - 10 t^2 + 5`.
-- Endpoint representative rows: 5 rows, rank 5.
-- Midpoint representative rows: 6 rows, rank 6.
-- Current widened representative-row union: 11 rows, rank 11.
-- Current right kernel dimension: 29.
-- Current rows annihilate the 15 symmetry tangent directions.
 
 Source pointers:
 - `experiments/hko-local-maximum/theorem/README.md`.
 - `experiments/hko-local-maximum/theorem/verification-summary.json`.
-- `research/hko-local-maximum-exact-witness.md`, sections "Status",
-  "Scope Boundary", "Sage Note", and "Packet 2 Note", for older-route context.
+- `experiments/hko-local-maximum/smooth-only-rank-defect/summary.json`.
+- `research/hko-local-maximum-exact-witness.md`, for older-route context.
 - `research/hko-local-maximum-proof-route-note.md`, especially the one-sided
   branch-certificate principle and candidate Sage decision problem.
 - `research/hko-local-maximum-proof-route-note.md`, sections
   "Singular-KKT Obstruction" and "Padded-Endpoint Alternative", for the
   thesis-facing reason why the witness has to use singular positive-beta
   seven-facet branches.
-- `experiments/hko-local-maximum/history/exact-witness/widened-representative-witness.json`.
-- `experiments/hko-local-maximum/history/exact-witness/widened-representative-witness-verification.json`.
 
 Current checked theorem-facing facts:
 - 26 exact feasible-section rows.
@@ -693,7 +681,8 @@ Thesis-use note:
 - Spend at least one sentence explaining why singular cases appear in the
   witness: the nonsingular active branches cover only rank `23` of the
   `25`-dimensional quotient slice, while the smooth padded-once diagnostic
-  found no nonsingular minimum-action replacement rows.
+  found no nonsingular minimum-action replacement rows. The maintained summary
+  is `experiments/hko-local-maximum/smooth-only-rank-defect/summary.json`.
 - Clean explanation: the KKT matrix can be singular because there is a family
   of minimizing beta data at `a0`, but selected positive betas still admit
   local feasible sections through full-rank closure/normalization minors. The

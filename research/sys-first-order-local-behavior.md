@@ -197,9 +197,9 @@ first-order branch-completeness proof.
 ## 5. HKO relevance
 
 HKO is not a shortcut around this theory. It is a hard instance of it.
-Current HKO evidence has many active orbits, symmetry quotients, exact
-representative rows, endpoint/midpoint families, and unresolved seven-facet
-representative classes. The formal HKO second-order route uses a
+Current HKO evidence has many active orbits, symmetry quotients, a smooth-only
+rank defect, and singular positive-beta rows handled by feasible sections. The
+formal HKO second-order route uses a
 smooth/min-envelope argument that the task progress files already reject as a
 substitute for arbitrary closed-value behavior. The first-order note
 also records that current bookkeeping has 150 exact-action orbits, 20 visited

@@ -147,10 +147,9 @@ Current status:
 
 - Exact geometry, field, symmetry rank, and volume-row support already exist in
   `experiments/hko-local-maximum/history/exact-witness/`.
-- The current widened representative witness verifies symmetry rank `15`,
-  endpoint row rank `5`, midpoint row rank `6`, union rank `11`, and exact
-  annihilation of the symmetry tangent directions.
-- This is still partial and does not close the theorem.
+- Older widened representative-row artifacts were partial and did not close the
+  theorem. They were removed from the live tree; use git history only if that
+  route must be reopened.
 
 ### Selected Branch Rows
 

@@ -102,12 +102,8 @@ It combines the former topic note set while keeping experiment artifacts under
 
 - `empirical/neighborhood-sampling/m10/` historically used 101-row evidence and
   has since moved to the current smoke/LICCA flow.
-- Exact widened-route development reached right-kernel `29` on current
-  representative surfaces. That is historical context for why the route moved
-  to selected feasible-section upper branches.
-- The older exact representative route still has two unresolved asymmetric
-  seven-facet representative classes, but they are no longer blockers for the
-  current feasible-section certificate.
+- The older exact representative route is historical fallback material only.
+  The maintained failed-route evidence is now `smooth-only-rank-defect/`.
 
 ## Next Steps
 

@@ -5,19 +5,12 @@ current theorem certificate.
 
 The old exact representative route tried to exactify a reduced set of endpoint
 and midpoint-style representative rows and assemble a backend-neutral widened
-witness. It verified useful partial facts, including:
-
-- the quartic field and exact HKO geometry bundle;
-- symmetry tangent rank `15`;
-- endpoint representative rows: `5` rows, rank `5`;
-- midpoint-style representative rows: `6` rows, rank `6`;
-- widened representative-row union rank `11`;
-- exact annihilation of the committed symmetry tangent generators.
+witness.
 
 It did not close the theorem route. In particular, it did not verify the final
-active-gradient matrix or the final cone certificate, and the maintained notes
-record unresolved asymmetric seven-facet representative classes. The widened
-representative verification summary also records right-kernel dimension `29`.
+active-gradient matrix or the final cone certificate. The widened
+representative artifacts were removed from the live tree; use git history only
+if that route must be reopened.
 
 The current theorem-facing route is instead the feasible-section certificate in
 `../theorem/`, together with the formal implication in
@@ -26,8 +19,6 @@ The current theorem-facing route is instead the feasible-section certificate in
 Source pointers:
 
 - `exact-witness/README.md`
-- `exact-witness/widened-representative-witness-verification.json`
-- `exact-witness/widened-representative-witness.json`
 - `research/hko-local-maximum-exact-witness.md`
 - `research/hko-local-maximum.md`
 - `research/hko-local-maximum-status.md`

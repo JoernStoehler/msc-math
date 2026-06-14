@@ -50,8 +50,8 @@ Use it before reading deeper notes or experiment folders.
   passing exact Sage certificate in
   `experiments/hko-local-maximum/theorem/`.
 - Current exact certificate status:
-  the older widened representative route is partial historical/fallback
-  material. The current theorem-facing certificate is the feasible-section
+  the older representative route is partial historical/fallback material. The
+  current theorem-facing certificate is the feasible-section
   certificate: 26 exact derivative covectors, exact covector rank `25`, exact
   symmetry rank `15`, positive lambdas, and exact lambda-weighted covector sum
   `0`.
