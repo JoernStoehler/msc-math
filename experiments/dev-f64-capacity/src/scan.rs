@@ -177,16 +177,25 @@ fn capacity_row(
         original_artifact_capacity_label,
     );
     let capacity_ratio_upper_bound = near_redundant_facet_removal.capacity_ratio_upper;
-    let preprocessed_f64_vs_original_artifact_within_bound = within_capacity_distortion_bound(
-        preprocessed_f64_capacity,
-        original_artifact_capacity_label,
-        capacity_ratio_upper_bound,
-    );
-    let preprocessed_audit_vs_original_artifact_within_bound = within_capacity_distortion_bound(
-        preprocessed_audit_capacity_label,
-        original_artifact_capacity_label,
-        capacity_ratio_upper_bound,
-    );
+    let original_artifact_bound_applies = original_artifact_bound_applies(&product_rounding);
+    let preprocessed_f64_vs_original_artifact_within_bound = original_artifact_bound_applies
+        .then(|| {
+            within_capacity_distortion_bound(
+                preprocessed_f64_capacity,
+                original_artifact_capacity_label,
+                capacity_ratio_upper_bound,
+            )
+        })
+        .flatten();
+    let preprocessed_audit_vs_original_artifact_within_bound = original_artifact_bound_applies
+        .then(|| {
+            within_capacity_distortion_bound(
+                preprocessed_audit_capacity_label,
+                original_artifact_capacity_label,
+                capacity_ratio_upper_bound,
+            )
+        })
+        .flatten();
     let (trust_class, trust_reasons) = validation_adjusted_trust(
         validation.status.clone(),
         classification.trust_class.label(),
@@ -312,11 +321,16 @@ fn validation_only_row(
         original_artifact_capacity_label,
     );
     let capacity_ratio_upper_bound = near_redundant_facet_removal.capacity_ratio_upper;
-    let preprocessed_audit_vs_original_artifact_within_bound = within_capacity_distortion_bound(
-        preprocessed_audit_capacity_label,
-        original_artifact_capacity_label,
-        capacity_ratio_upper_bound,
-    );
+    let preprocessed_audit_vs_original_artifact_within_bound =
+        original_artifact_bound_applies(&product_rounding)
+            .then(|| {
+                within_capacity_distortion_bound(
+                    preprocessed_audit_capacity_label,
+                    original_artifact_capacity_label,
+                    capacity_ratio_upper_bound,
+                )
+            })
+            .flatten();
     ScanRow {
         family: case.family,
         source_id: case.source_id,
@@ -523,6 +537,13 @@ fn within_capacity_distortion_bound(
     Some(value >= lower && value <= upper)
 }
 
+fn original_artifact_bound_applies(product_rounding: &ProductRoundingReport) -> bool {
+    if !product_rounding.should_use_rounded_vertices() {
+        return true;
+    }
+    product_rounding.max_abs_change == Some(0.0)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -603,6 +624,38 @@ mod tests {
         assert_eq!(row.near_redundant_facet_removal_policy, "none");
         assert_eq!(row.near_redundant_facet_removal_status, "not_attempted");
         assert_eq!(row.removed_facet_count, 0);
+    }
+
+    #[test]
+    fn scan_does_not_apply_facet_removal_bound_to_product_rounding_change() {
+        let fixture = known_polytopes::lagrangian_triangle_product();
+        let mut dual_vertices = fixture.dual_vertices_f64.clone();
+        for vertex in &mut dual_vertices {
+            if vertex[2] == 0.0 && vertex[3] == 0.0 {
+                vertex[2] = 1e-14;
+            } else {
+                vertex[0] = -1e-14;
+            }
+        }
+        let row = scan_case(ScanCase {
+            family: "test_product".to_string(),
+            source_id: "drifted_product_with_label".to_string(),
+            input_source: "generated_f64".to_string(),
+            generated_attempt: Some(0),
+            generator_seed: Some(0),
+            requested_facet_count: Some(dual_vertices.len()),
+            dual_vertices,
+            audit_capacity_label: Some(1.0),
+            artifact_capacity_label: Some(1.0),
+            audit_sigma_label: None,
+        });
+
+        assert_eq!(row.product_rounding_status, "rounded");
+        assert!(row.product_rounding_max_abs_change.unwrap() > 0.0);
+        assert!(row
+            .preprocessed_f64_vs_original_artifact_abs_error
+            .is_some());
+        assert_eq!(row.preprocessed_f64_vs_original_artifact_within_bound, None);
     }
 
     #[test]

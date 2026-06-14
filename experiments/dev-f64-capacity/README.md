@@ -17,12 +17,13 @@ the measured f64 path, and decide from current artifacts.
 This checkpoint adds the development experiment packet for the following
 candidate f64 policy for thesis-scale datascience scans:
 
-1. validate rounded f64 dual vertices with `lp_origin_vertex`;
-2. for product-labelled inputs, round block-structured off-block drift to exact
+1. for product-labelled inputs, round block-structured off-block drift to exact
    `0.0`;
-3. optionally remove near-redundant facets with an explicit containment bound,
+2. optionally remove near-redundant facets with an explicit containment bound,
    either by the product-factor policy or by the generic single-band policy;
-4. compute capacity with `product_billiard_or_hk`;
+3. validate the post-preprocessing f64 dual vertices with `lp_origin_vertex`;
+4. compute capacity on the post-preprocessing row with
+   `product_billiard_or_hk`;
 5. keep ambiguity diagnostics and route rows needing stronger witnesses to
    exact fallback.
 
@@ -293,8 +294,11 @@ Rows contain both validation and capacity/audit fields.
   measured f64 capacity of the post-preprocessing row.
 - `preprocessed_f64_vs_original_artifact_*` and
   `preprocessed_audit_vs_original_artifact_*` compare against the original row
-  through the reported distortion bound. These are not same-polytope equality
-  checks.
+  through the reported near-redundant-facet distortion bound when product
+  rounding did not change coordinates. If product rounding changed coordinates,
+  the numeric error fields remain populated when labels exist, but the
+  `*_within_bound` field is unavailable because no rounding distortion bound is
+  reported. These are not same-polytope equality checks.
 - `preprocessed_f64_vs_preprocessed_audit_*` is the same-polytope f64-vs-exact
   comparison when exact audit of the preprocessed row is requested.
 - `validation_reasons` records f64 validation predicates and does not replace
@@ -359,7 +363,9 @@ projecting it to a different polytope.
 `--near-redundant-facet-removal product` is an explicit product-only
 preprocessing policy. It rounds product blocks, works in the two 2D factors,
 and removes only factor facets with a reported set-level bound
-`P_original <= P_processed <= (1 + delta_bound) P_original`.
+`P_original <= P_processed <= (1 + delta_bound) P_original`. The requested
+`--near-redundant-facet-removal-delta` is treated as an aggregate budget over
+all removed facets in a row.
 
 `--near-redundant-facet-removal generic` is a generic 4D policy. It uses
 the f64 vertex/incidence scan and removes a facet only when one retained facet
@@ -378,6 +384,11 @@ recorded in `formal/near-redundant-facet-removal-bounds.tex`
 comparison is recorded in `cor:four-dimensional-facet-band-comparison`. The
 current f64 computation of `delta_bound` is an ordinary f64 diagnostic, not an
 outward-rounded certificate.
+
+Scan preprocessing happens before f64 validation. Validation and capacity
+therefore report on the post-preprocessing row. Original-artifact labels remain
+comparison labels for the original row; they are not used as same-polytope
+labels after facet removal.
 
 ## Current Local Run Notes
 

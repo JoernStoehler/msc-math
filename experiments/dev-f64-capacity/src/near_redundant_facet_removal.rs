@@ -213,8 +213,12 @@ pub fn remove_near_redundant_facets(
             );
         }
 
+        let remaining_delta_budget = (1.0 + max_delta) / scale_bound - 1.0;
+        if remaining_delta_budget < 0.0 {
+            break;
+        }
         let Some(candidate) =
-            best_single_band_candidate(&current_vertices, &vertex_scan, max_delta)
+            best_single_band_candidate(&current_vertices, &vertex_scan, remaining_delta_budget)
         else {
             break;
         };
@@ -381,6 +385,30 @@ mod tests {
         assert!([0, 8].contains(&report.removed_facets[0].original_index()));
         assert!(report.delta_bound <= 2e-8);
         assert_eq!(report.vertices_after_removal.len(), 8);
+    }
+
+    #[test]
+    fn generic_remove_near_redundant_facets_enforces_aggregate_delta_budget() {
+        let eps = 1e-8;
+        let dual_vertices = vec![
+            Vector4::new(1.0, 0.0, 0.0, 0.0),
+            Vector4::new(-1.0, 0.0, 0.0, 0.0),
+            Vector4::new(0.0, 1.0, 0.0, 0.0),
+            Vector4::new(0.0, -1.0, 0.0, 0.0),
+            Vector4::new(0.0, 0.0, 1.0, 0.0),
+            Vector4::new(0.0, 0.0, -1.0, 0.0),
+            Vector4::new(0.0, 0.0, 0.0, 1.0),
+            Vector4::new(0.0, 0.0, 0.0, -1.0),
+            Vector4::new(1.0, eps, 0.0, 0.0),
+            Vector4::new(0.0, 1.0, eps, 0.0),
+        ];
+
+        let report = remove_near_redundant_facets(&dual_vertices, 1.5e-8);
+
+        assert_eq!(report.status, NearRedundantFacetRemovalStatus::Removed);
+        assert_eq!(report.removed_facets.len(), 1);
+        assert!(report.delta_bound <= 1.5e-8);
+        assert_eq!(report.vertices_after_removal.len(), 9);
     }
 
     #[test]
