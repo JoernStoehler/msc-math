@@ -384,6 +384,33 @@ mod tests {
     }
 
     #[test]
+    fn product_facet_removal_leaves_valid_product_without_near_redundancy_unchanged() {
+        let dual_vertices = vec![
+            Vector4::new(1.0, 0.0, 0.0, 0.0),
+            Vector4::new(0.0, 1.0, 0.0, 0.0),
+            Vector4::new(-1.0, 0.0, 0.0, 0.0),
+            Vector4::new(0.0, -1.0, 0.0, 0.0),
+            Vector4::new(0.0, 0.0, 1.0, 0.0),
+            Vector4::new(0.0, 0.0, 0.0, 1.0),
+            Vector4::new(0.0, 0.0, -1.0, -1.0),
+        ];
+
+        let report = remove_near_redundant_facets(&dual_vertices, 1e-8);
+
+        assert_eq!(
+            report.status,
+            ProductFacetRemovalStatus::NoNearRedundantFacets
+        );
+        assert_eq!(report.vertices_after_removal, dual_vertices);
+        assert_eq!(report.removed_facets.len(), 0);
+        assert_eq!(report.delta_bound, 0.0);
+        assert_eq!(report.capacity_ratio_upper, 1.0);
+        assert_eq!(report.volume_ratio_upper, 1.0);
+        assert_eq!(report.sys_ratio_lower, 1.0);
+        assert_eq!(report.sys_ratio_upper, 1.0);
+    }
+
+    #[test]
     fn product_facet_removal_reports_invalid_delta() {
         let dual_vertices = vec![Vector4::new(1.0, 0.0, 0.0, 0.0)];
         let report = remove_near_redundant_facets(&dual_vertices, f64::NAN);
