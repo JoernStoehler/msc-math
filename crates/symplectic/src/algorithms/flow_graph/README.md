@@ -231,19 +231,19 @@ Current evidence:
 - `experiments/dev-flow-graph/frontier` measures word-frontier and f64 tube counts.
 - `experiments/dev-flow-graph/endpoint-spike` is an exact endpoint-set spike, not a
   supported exact implementation.
-- `exact.rs` has exact rational tests for polygon intersection and selected
+- `exact_tube.rs` has exact rational tests for polygon intersection and selected
   closed words. Current checked cases include a positive F7 word, a zero-action
   F7 word, and an F6 word where same-sigma QP has a critical point/action while
   exact flow-graph tube arithmetic returns an empty tube.
-- `exact.rs` also has a baseline exhaustive exact search over transition-pruned
-  simple closed words. Default tests include an F6 polytope. Two F7 exhaustive tests
-  are ignored because they take about 60 seconds in release; run them before
-  changing exact search semantics.
-- `exact.rs` now has proposition-style exact accepted-polytopes tests for P1
-  and P2. The default F5/F6 tests check certified QP capacity equality and
-  retained-word completeness for zero and positive action gaps. The Rust
-  `#[ignore]` F7 gap-zero and positive-gap tests passed in release on
-  2026-06-06 in about two minutes each.
+- `exact_search.rs` has baseline rejection tests for exact exhaustive search.
+  The proposition-style exact exhaustive tests currently live in the
+  `exact_tube.rs` test module because they reuse closed-word fixtures and
+  assertions from that module.
+- The proposition-style exact accepted-polytopes tests support P1 and P2. The
+  default F5/F6 tests check certified QP capacity equality and retained-word
+  completeness for zero and positive action gaps. The Rust `#[ignore]` F7
+  gap-zero and positive-gap tests passed in release on 2026-06-06 in about two
+  minutes each.
 - The cutoff-enabled exact search policy is tested against the disabled policy
   on an F6 polytope. A separate exact single-word test checks that adding an action
   cutoff can make a known higher-action F7 word empty.
@@ -282,9 +282,9 @@ Current analysis inventory:
 
 | Surface | Current analysis/evidence | Current home | Promotion target |
 | --- | --- | --- | --- |
-| Exact closed-word/tube arithmetic | polygon intersection tests, selected positive/zero/empty-tube word cases, exact action/fixed-point behavior | `exact.rs` tests | crate regression tests; only promote artifact-backed slower suites to `experiments/verification/` |
-| Exact exhaustive search | exact rejection tests, P1/P2 accepted-polytopes checks, action-cutoff comparison against disabled policy | `exact.rs` tests | crate tests while cheap; `experiments/verification/` for slower fixed suites |
-| f64 tube search and exact resolution | primitive/intersection/fixed-point unit checks, generated f64-error cases exact-resolved against QP scalar capacity | `tests.rs`, `tests_e2e_prediction.rs`, `f64.rs` | `experiments/numerics/` only when the question becomes reusable f64/exact methodology |
+| Exact closed-word/tube arithmetic | polygon intersection tests, selected positive/zero/empty-tube word cases, exact action/fixed-point behavior | `exact_tube.rs` tests | crate regression tests; only promote artifact-backed slower suites to `experiments/verification/` |
+| Exact exhaustive search | exact rejection tests, P1/P2 accepted-polytopes checks, action-cutoff comparison against disabled policy | `exact_search.rs` tests and proposition-style tests in `exact_tube.rs` | crate tests while cheap; `experiments/verification/` for slower fixed suites |
+| f64 tube search and exact resolution | primitive/intersection/fixed-point unit checks, generated f64-error cases exact-resolved against QP scalar capacity | `tests.rs`, `tests_e2e_prediction.rs`, `f64_tube_search.rs` | `experiments/numerics/` only when the question becomes reusable f64/exact methodology |
 | Word frontier and f64 tube counts | transition-pruned frontier sizes, f64 tube live/empty/unsupported counts, polygon-operation counters | `experiments/dev-flow-graph/frontier` | `experiments/performance/` once the measured algorithm path is stable |
 | Endpoint and closed-word spikes | exploratory exact endpoint-set and selected closed-word representation experiments | `experiments/dev-flow-graph/endpoint-spike`, `experiments/dev-flow-graph/closed-word-spike` | retire to git history or keep dev-local notes once the crate exact path supersedes them |
 | Case discovery | bucketed search for high-value FG examples and expected labels | `experiments/dev-flow-graph/discover-e2e` | crate tests for cheap reviewed rows; `experiments/verification/` for slower artifact-backed suites |
