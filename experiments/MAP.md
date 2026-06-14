@@ -143,14 +143,17 @@ Routing rule: route by the question that should own future changes. Reusable
 algorithm behavior belongs in the cross-cutting homes above. If an algorithm
 family is still moving and its design notes, diagnostics, numerics, correctness
 checks, and performance probes are tightly coupled, keep them together in
-`experiments/dev-<algo>/` until a cleaner split is worth the churn. If the
-question is a theorem, thesis topic, or retained hostile-search dataset question,
-keep it with the topic or data pipeline even when it uses reusable algorithms.
-For example, finite-difference checks of a derivative formula can be
-`correctness`, but "does gradient ascent increase `sys` on this search class?"
-belongs with `experiments/dev-gradient-ascent/` or `experiments/sys-datascience/`
-depending on whether the owner is method development or retained-dataset
-analysis.
+`experiments/dev-<algo>/` until a cleaner split is worth the churn.
+`dev-<algo>` is therefore a temporary or mixed home, not a lens: one algorithm
+packet may contain numerics, correctness checks, performance probes, and API
+notes while those concerns still need to move together. Split them only when a
+downstream evidence home can own future changes more clearly. If the question is
+a theorem, thesis topic, or retained hostile-search dataset question, keep it
+with the topic or data pipeline even when it uses reusable algorithms. For
+example, finite-difference checks of a derivative formula can be `correctness`,
+but "does gradient ascent increase `sys` on this search class?" belongs with
+`experiments/dev-gradient-ascent/` or `experiments/sys-datascience/` depending
+on whether the owner is method development or retained-dataset analysis.
 
 ## Topic Packages
 

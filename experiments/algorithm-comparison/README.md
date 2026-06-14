@@ -27,9 +27,10 @@ companion instead of making thesis prose depend on this note.
 ## Comparison Ledger
 
 Treat this table as a pointer list, not as source truth. Do not record benchmark
-numbers here. Before using a row in thesis prose or API decisions, rerun or read
-the current evidence in the named home and check whether the reasoning still
-applies.
+numbers, local timing summaries, or other easy-staling measurements here when a
+reader can rerun a command or read a current output in the evidence home. Before
+using a row in thesis prose or API decisions, rerun or read the current evidence
+in the named home and check whether the reasoning still applies.
 
 | Comparison | Current reasoning breadcrumb | Fresh evidence pointer | Re-check before use |
 | --- | --- | --- | --- |
@@ -44,6 +45,8 @@ applies.
 
 Do not recreate a comparison crate by default. Add or update a target in the
 lens home that owns the evidence, then record the comparison reasoning here.
+Prefer pointers to commands, target names, and output locations over copied
+measurements; those pointers stay useful after the measurements change.
 
 Example shape:
 
