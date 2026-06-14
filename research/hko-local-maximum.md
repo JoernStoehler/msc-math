@@ -44,8 +44,6 @@ It combines the former topic note set while keeping experiment artifacts under
   - Current exact verifier status: 26 selected entries, exact covector rank
     `25`, exact symmetry tangent rank `15`, positive exact lambdas summing to
     `1`, and exact lambda-weighted covector sum `0`.
-  - Sigma-word combinatorics are still: `50,400` raw, `6,240` directed-feasible,
-    `717` valid KKT orbits, and `150` exact minima.
 - Numerical evidence track:
   - `empirical/first-order/` has baseline sensitivity and exact-certification bank,
     with `hko-neighborhood-sensitivity.jsonl` and
@@ -89,8 +87,6 @@ It combines the former topic note set while keeping experiment artifacts under
   `(n,h)` gauge artifacts.
 - First-order certificates must include exact active derivative covectors,
   counts, ranks, kernel basis, and symmetry inclusion/equality checks.
-- The reduced exact route is preferred; the raw `6,240` directed-feasible sigma
-  route is valid but remains too slow in current tooling as a default.
 - The old `subdifferential-lp/phase_c_lp_test.py` route was deleted during the
   experiment layout migration; git history is the archive for that broken
   `(n,h)` Phase C attempt.
