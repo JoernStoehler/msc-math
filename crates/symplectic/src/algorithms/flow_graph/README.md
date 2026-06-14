@@ -16,10 +16,10 @@ proof text can overrule it. When they do, update this file or mark the mismatch.
   polytopes. It is not yet thesis-ready.
 - The f64 path is the intended production path for larger polytopes. It is not
   an exact certificate by itself.
-- `exact.rs` contains the first exact rational closed-word resolver and an exact
-  exhaustive search. The exact search has an explicit action-cutoff policy:
-  disabled for baseline checks, enabled to use action cutoffs after an exact
-  action `> 0` is known.
+- `exact_tube.rs` contains exact rational closed-word/tube resolution for one
+  selected word. `exact_search.rs` contains exact exhaustive search. The exact
+  search has an explicit action-cutoff policy: disabled for baseline checks,
+  enabled to use action cutoffs after an exact action `> 0` is known.
 - The old `research/tube-algorithm*.md` files are legacy/imported source
   material, not the live control surface.
 - The current experiment package is `experiments/dev-flow-graph/`.

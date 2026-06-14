@@ -10,7 +10,7 @@ use serde::Serialize;
 use std::path::PathBuf;
 use symplectic::algorithms::flow_graph::{
     diagnose_f64_closed_words,
-    exact::{
+    exact_tube::{
         resolve_closed_word_exact, ExactClosedTubeError, ExactClosedWordOutcome, ExactFlatTubeInput,
     },
     F64ClosedCycleOutcome, F64TubeError, FlatTubeInput,

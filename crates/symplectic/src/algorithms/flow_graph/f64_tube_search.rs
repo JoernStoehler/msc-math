@@ -4,7 +4,7 @@
 //! are not exact certificates for `c_EHZ` without the exact fallback wrapper.
 
 use crate::algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega;
-use crate::algorithms::flow_graph::exact::{
+use crate::algorithms::flow_graph::exact_tube::{
     resolve_closed_word_exact, ExactClosedTubeError, ExactClosedWordOutcome, ExactFlatTubeInput,
 };
 use crate::algorithms::flow_graph::words::{all_distinct, is_simple_closable_word, plus_depth};
@@ -17,8 +17,6 @@ use serde::Serialize;
 use std::sync::atomic::{AtomicU64, Ordering};
 use tracing::info;
 
-#[cfg(test)]
-use crate::algorithms::flow_graph::exact;
 #[cfg(test)]
 use crate::algorithms::flow_graph::words::{
     cached_words_contain, counts_by_plus_depth, enumerate_transition_pruned_words,

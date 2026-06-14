@@ -14,9 +14,11 @@
 //! changed. Update them only after re-running the reasoning above.
 
 use super::{
-    capacity_f64, closed_tube_for_sigma_f64, diagnose_f64_closed_words,
-    exact::{resolve_closed_word_exact, ExactClosedWordOutcome, ExactFlatTubeInput},
-    CapacityF64Error, F64ClosedCycleOutcome, F64TubeError, FlatTubeInput,
+    capacity_f64, closed_tube_for_sigma_f64, diagnose_f64_closed_words, CapacityF64Error,
+    F64ClosedCycleOutcome, F64TubeError, FlatTubeInput,
+};
+use crate::algorithms::flow_graph::exact_tube::{
+    resolve_closed_word_exact, ExactClosedWordOutcome, ExactFlatTubeInput,
 };
 use crate::algorithms::test_helpers::{flat_facet_data_from_dual_vertices, pruned_capacity};
 use crate::geom::known_polytopes::{self, KnownPolytope};
