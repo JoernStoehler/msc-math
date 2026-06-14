@@ -59,6 +59,31 @@ work that conforms to `AGENTS.md` guidelines.
   treating silence or omission as evidence.
 - Make requests and assumptions visible.
 
+## Recover Unmerged Work
+
+When the stalled surface includes substantial unmerged or unapproved work, do
+not treat the whole messy branch, diff, scratch set, or discussion as the next
+review unit by default. First ask whether progress can be recovered by
+extracting a smaller natural checkpoint:
+
+- Identify a coherent packet that is already nearly finished and likely
+  reviewable after bounded completion work.
+- Selectively pick from the existing labor and add only the extra work needed to
+  make that packet complete, source-backed, and easy to review.
+- Keep the packet large enough to be worth review, but small enough that its
+  purpose, because-clause, validation, and remaining risks are legible.
+- Leave the rest of the messy work unmerged. Iterate with further focused
+  checkpoints only while each next packet is similarly natural and close to
+  mergeable.
+- Once the remainder is incomplete, low-confidence, or no longer close to a
+  reviewable packet, discuss it as "how do we continue this work into something
+  useful", not as a mergeable checkpoint.
+
+Do not use this as permission to perform another broad branch transformation.
+It applies only when there is a nearly finished checkpoint to extract; if the
+work is too contaminated or only tiny artificial slices are available, stop and
+plan or ask for the missing judgment instead.
+
 ## Observed High-Cost Failure Modes
 
 Jörn reported these as high-cost failures. Use them as examples of what this
@@ -83,3 +108,9 @@ should distinguish observed failures from hypothesized failures.
   without a changed action, feedback request, or downstream use burns attention.
   If failure analysis is worth saying, attach it to a recovery action or
   targeted request.
+- **Agent lets a broad unapproved work surface stay broad.** A messy branch or
+  accumulated scratch work becomes too large to review, and the agent alternates
+  between asking Jörn to judge the whole surface and proposing another broad
+  transformation. Prefer extracting and completing a natural, high-confidence
+  checkpoint when one exists, so progress is made and the remaining stalled
+  surface shrinks.
