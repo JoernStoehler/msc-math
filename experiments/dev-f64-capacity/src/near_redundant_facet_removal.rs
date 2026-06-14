@@ -26,6 +26,7 @@ pub enum NearRedundantFacetRemovalStatus {
     NoNearRedundantFacets,
     NotBlockProduct,
     IndeterminateGeometry,
+    InvalidDelta,
 }
 
 impl NearRedundantFacetRemovalStatus {
@@ -36,6 +37,7 @@ impl NearRedundantFacetRemovalStatus {
             Self::NoNearRedundantFacets => "no_near_redundant_facets",
             Self::NotBlockProduct => "not_block_product",
             Self::IndeterminateGeometry => "indeterminate_geometry",
+            Self::InvalidDelta => "invalid_delta",
         }
     }
 }
@@ -109,6 +111,9 @@ impl NearRedundantFacetRemovalReport {
             ProductFacetRemovalStatus::NotBlockProduct => {
                 NearRedundantFacetRemovalStatus::NotBlockProduct
             }
+            ProductFacetRemovalStatus::InvalidDelta => {
+                NearRedundantFacetRemovalStatus::InvalidDelta
+            }
         };
         let removed_facets = report
             .removed_facets
@@ -170,7 +175,7 @@ pub fn remove_near_redundant_facets(
     if !max_delta.is_finite() || max_delta < 0.0 {
         return NearRedundantFacetRemovalReport::unchanged(
             NearRedundantFacetRemovalPolicy::Generic,
-            NearRedundantFacetRemovalStatus::IndeterminateGeometry,
+            NearRedundantFacetRemovalStatus::InvalidDelta,
             dual_vertices.to_vec(),
         );
     }

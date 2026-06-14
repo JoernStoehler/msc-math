@@ -35,6 +35,7 @@ pub enum ProductFacetRemovalStatus {
     Removed,
     NoNearRedundantFacets,
     NotBlockProduct,
+    InvalidDelta,
 }
 
 impl ProductFacetRemovalStatus {
@@ -44,6 +45,7 @@ impl ProductFacetRemovalStatus {
             Self::Removed => "removed",
             Self::NoNearRedundantFacets => "no_near_redundant_facets",
             Self::NotBlockProduct => "not_block_product",
+            Self::InvalidDelta => "invalid_delta",
         }
     }
 }
@@ -52,6 +54,13 @@ pub fn remove_near_redundant_facets(
     dual_vertices: &[Vector4<f64>],
     max_delta: f64,
 ) -> ProductFacetRemovalReport {
+    if !max_delta.is_finite() || max_delta < 0.0 {
+        return ProductFacetRemovalReport::unchanged(
+            ProductFacetRemovalStatus::InvalidDelta,
+            dual_vertices.to_vec(),
+        );
+    }
+
     let rounded = round_blocks(dual_vertices);
     if rounded.status != ProductRoundingStatus::Rounded {
         return ProductFacetRemovalReport::not_block_product(dual_vertices);
@@ -63,8 +72,10 @@ pub fn remove_near_redundant_facets(
 
     let q_facets = factor_facets(&dual_vertices, &classification.q_indices, ProductBlock::Q);
     let p_facets = factor_facets(&dual_vertices, &classification.p_indices, ProductBlock::P);
-    let mut removed_facets = near_redundant_factor_facets(&q_facets, max_delta);
-    removed_facets.extend(near_redundant_factor_facets(&p_facets, max_delta));
+    let q_plan = near_redundant_factor_facets(&q_facets, max_delta);
+    let p_plan = near_redundant_factor_facets(&p_facets, max_delta);
+    let mut removed_facets = q_plan.removed_facets;
+    removed_facets.extend(p_plan.removed_facets);
     removed_facets.sort_by_key(|facet| facet.original_index);
 
     if removed_facets.is_empty() {
@@ -75,10 +86,8 @@ pub fn remove_near_redundant_facets(
     }
 
     let mut remove = vec![false; dual_vertices.len()];
-    let mut delta_bound = 0.0f64;
     for facet in &removed_facets {
         remove[facet.original_index] = true;
-        delta_bound = delta_bound.max(facet.delta);
     }
     let mut vertices_after_removal = Vec::new();
     let mut kept_original_indices = Vec::new();
@@ -88,6 +97,7 @@ pub fn remove_near_redundant_facets(
             kept_original_indices.push(idx);
         }
     }
+    let delta_bound = q_plan.delta_bound.max(p_plan.delta_bound);
     let distortion = distortion_from_delta_bound(delta_bound);
 
     ProductFacetRemovalReport {
@@ -156,6 +166,7 @@ fn distortion_from_delta_bound(delta_bound: f64) -> ProductFacetRemovalDistortio
 #[derive(Clone, Debug)]
 struct FactorFacet {
     original_index: usize,
+    factor_index: usize,
     block: ProductBlock,
     normal: Vector2<f64>,
 }
@@ -176,6 +187,7 @@ fn factor_facets(
             };
             FactorFacet {
                 original_index,
+                factor_index,
                 block,
                 normal,
             }
@@ -183,100 +195,104 @@ fn factor_facets(
         .collect()
 }
 
-fn near_redundant_factor_facets(
-    facets: &[FactorFacet],
-    max_delta: f64,
-) -> Vec<ProductFacetRemoval> {
-    let candidates = facets
-        .iter()
-        .enumerate()
-        .filter_map(|(factor_index, _facet)| {
-            let delta = removed_set_delta(facets, &[factor_index])?;
-            (0.0 <= delta && delta <= max_delta).then_some(factor_index)
-        })
-        .collect::<Vec<_>>();
-    let Some(selected) = selected_removal_subset(facets, &candidates, max_delta) else {
-        return Vec::new();
-    };
-    selected
-        .factor_indices
-        .into_iter()
-        .map(|factor_index| {
-            let facet = &facets[factor_index];
-            ProductFacetRemoval {
-                original_index: facet.original_index,
-                block: facet.block,
-                factor_index,
-                delta: selected.delta,
-            }
-        })
-        .collect()
+struct FactorRemovalPlan {
+    removed_facets: Vec<ProductFacetRemoval>,
+    delta_bound: f64,
 }
 
-struct SelectedRemovalSubset {
-    factor_indices: Vec<usize>,
+fn near_redundant_factor_facets(facets: &[FactorFacet], max_delta: f64) -> FactorRemovalPlan {
+    let mut current = facets.to_vec();
+    current.sort_by(|left, right| {
+        left.normal[1]
+            .atan2(left.normal[0])
+            .total_cmp(&right.normal[1].atan2(right.normal[0]))
+            .then_with(|| left.original_index.cmp(&right.original_index))
+    });
+
+    let mut removed_facets = Vec::new();
+    let mut scale_bound = 1.0f64;
+    loop {
+        if current.len() <= 3 {
+            break;
+        }
+        let remaining_delta_budget = (1.0 + max_delta) / scale_bound - 1.0;
+        if remaining_delta_budget < 0.0 {
+            break;
+        }
+        let Some(candidate) = best_cyclic_removal_candidate(&current, remaining_delta_budget)
+        else {
+            break;
+        };
+        let facet = current.remove(candidate.sorted_index);
+        scale_bound *= 1.0 + candidate.delta;
+        removed_facets.push(ProductFacetRemoval {
+            original_index: facet.original_index,
+            block: facet.block,
+            factor_index: facet.factor_index,
+            delta: candidate.delta,
+        });
+    }
+
+    FactorRemovalPlan {
+        removed_facets,
+        delta_bound: (scale_bound - 1.0).max(0.0),
+    }
+}
+
+#[derive(Clone, Copy, Debug)]
+struct CyclicRemovalCandidate {
+    sorted_index: usize,
     delta: f64,
 }
 
-fn selected_removal_subset(
+fn best_cyclic_removal_candidate(
     facets: &[FactorFacet],
-    candidates: &[usize],
     max_delta: f64,
-) -> Option<SelectedRemovalSubset> {
-    let mut best: Option<SelectedRemovalSubset> = None;
-    for mask in 1usize..(1usize << candidates.len()) {
-        let factor_indices = candidates
-            .iter()
-            .enumerate()
-            .filter_map(|(pos, &idx)| ((mask & (1usize << pos)) != 0).then_some(idx))
-            .collect::<Vec<_>>();
-        let Some(delta) = removed_set_delta(facets, &factor_indices) else {
+) -> Option<CyclicRemovalCandidate> {
+    let mut best: Option<CyclicRemovalCandidate> = None;
+    for sorted_index in 0..facets.len() {
+        let Some(delta) = cyclic_single_removal_delta(facets, sorted_index) else {
             continue;
         };
-        if !(0.0 <= delta && delta <= max_delta) {
+        if delta > max_delta {
             continue;
         }
+        let candidate = CyclicRemovalCandidate {
+            sorted_index,
+            delta,
+        };
         let replace = best.as_ref().is_none_or(|current| {
-            factor_indices.len() > current.factor_indices.len()
-                || (factor_indices.len() == current.factor_indices.len() && delta < current.delta)
+            candidate.delta < current.delta
+                || (candidate.delta == current.delta
+                    && facets[candidate.sorted_index].original_index
+                        < facets[current.sorted_index].original_index)
         });
         if replace {
-            best = Some(SelectedRemovalSubset {
-                factor_indices,
-                delta,
-            });
+            best = Some(candidate);
         }
     }
     best
 }
 
-fn removed_set_delta(facets: &[FactorFacet], removed_factor_indices: &[usize]) -> Option<f64> {
-    let remaining = (0..facets.len())
-        .filter(|idx| !removed_factor_indices.contains(idx))
-        .collect::<Vec<_>>();
-    if remaining.len() < 3 {
+fn cyclic_single_removal_delta(facets: &[FactorFacet], sorted_index: usize) -> Option<f64> {
+    let n = facets.len();
+    if n <= 3 {
         return None;
     }
-
-    let mut max_value: Option<f64> = None;
-    for (pos, &first_idx) in remaining.iter().enumerate() {
-        for &second_idx in &remaining[pos + 1..] {
-            let Some(vertex) = factor_vertex(facets[first_idx].normal, facets[second_idx].normal)
-            else {
-                continue;
-            };
-            if remaining
-                .iter()
-                .all(|&idx| facets[idx].normal.dot(&vertex) <= 1.0 + FACTOR_FEASIBILITY_TOLERANCE)
-            {
-                for &removed_idx in removed_factor_indices {
-                    let value = facets[removed_idx].normal.dot(&vertex) - 1.0;
-                    max_value = Some(max_value.map_or(value, |current| current.max(value)));
-                }
-            }
-        }
+    // For one removed facet in a 2D cyclic H-representation, the only new
+    // candidate vertex is the intersection of its two cyclic neighbors.
+    let previous_index = (sorted_index + n - 1) % n;
+    let next_index = (sorted_index + 1) % n;
+    let vertex = factor_vertex(facets[previous_index].normal, facets[next_index].normal)?;
+    if !facets
+        .iter()
+        .enumerate()
+        .filter(|(idx, _)| *idx != sorted_index)
+        .all(|(_, facet)| facet.normal.dot(&vertex) <= 1.0 + FACTOR_FEASIBILITY_TOLERANCE)
+    {
+        return None;
     }
-    max_value
+    Some((facets[sorted_index].normal.dot(&vertex) - 1.0).max(0.0))
 }
 
 fn factor_vertex(first: Vector2<f64>, second: Vector2<f64>) -> Option<Vector2<f64>> {
@@ -317,6 +333,64 @@ mod tests {
         assert_eq!(report.volume_ratio_upper, scale.powi(4));
         assert_eq!(report.sys_ratio_lower, scale.powi(-4));
         assert_eq!(report.sys_ratio_upper, scale.powi(4));
+    }
+
+    #[test]
+    fn product_facet_removal_can_remove_multiple_factor_facets_sequentially() {
+        let eps = 1e-8;
+        let dual_vertices = vec![
+            Vector4::new(1.0, 0.0, 0.0, 0.0),
+            Vector4::new(1.0, eps, 0.0, 0.0),
+            Vector4::new(eps, 1.0, 0.0, 0.0),
+            Vector4::new(0.0, 1.0, 0.0, 0.0),
+            Vector4::new(-1.0, 0.0, 0.0, 0.0),
+            Vector4::new(0.0, -1.0, 0.0, 0.0),
+            Vector4::new(0.0, 0.0, 1.0, 0.0),
+            Vector4::new(0.0, 0.0, 0.0, 1.0),
+            Vector4::new(0.0, 0.0, -1.0, -1.0),
+        ];
+
+        let report = remove_near_redundant_facets(&dual_vertices, 3e-8);
+
+        assert_eq!(report.status, ProductFacetRemovalStatus::Removed);
+        assert_eq!(report.removed_facets.len(), 2);
+        assert_eq!(report.removed_facets[0].block, ProductBlock::Q);
+        assert_eq!(report.removed_facets[1].block, ProductBlock::Q);
+        let removed_original_indices = report
+            .removed_facets
+            .iter()
+            .map(|facet| facet.original_index)
+            .collect::<Vec<_>>();
+        assert!(report
+            .removed_facets
+            .iter()
+            .all(|facet| [0, 1, 2, 3].contains(&facet.original_index)));
+        assert_eq!(
+            removed_original_indices
+                .iter()
+                .filter(|idx| [0, 1].contains(idx))
+                .count(),
+            1
+        );
+        assert_eq!(
+            removed_original_indices
+                .iter()
+                .filter(|idx| [2, 3].contains(idx))
+                .count(),
+            1
+        );
+        assert!(report.delta_bound <= 3e-8);
+        assert_eq!(report.vertices_after_removal.len(), 7);
+    }
+
+    #[test]
+    fn product_facet_removal_reports_invalid_delta() {
+        let dual_vertices = vec![Vector4::new(1.0, 0.0, 0.0, 0.0)];
+        let report = remove_near_redundant_facets(&dual_vertices, f64::NAN);
+
+        assert_eq!(report.status, ProductFacetRemovalStatus::InvalidDelta);
+        assert_eq!(report.vertices_after_removal, dual_vertices);
+        assert_eq!(report.delta_bound, 0.0);
     }
 
     #[test]
