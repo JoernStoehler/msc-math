@@ -69,6 +69,10 @@ transfer, not presentation or narration.
 - Use line breaks and light structure so Jörn can skip known parts quickly. Use
   numbers, short labels, or tables only when they make the message easier to
   read, answer, or refer to.
+- `JOERN.md` is Jörn's paste shelf for current-chat steering prompts. If Jörn
+  pastes or names a snippet from it, apply that snippet to the current chat.
+  Otherwise do not treat `JOERN.md` as active instructions, source truth, or a
+  task queue.
 - Preserve precision that matters for communication. Do not shorten recaps if
   shortening loses the actual distinction.
 - Make list type clear when ambiguity matters: exhaustive list, examples,
@@ -94,6 +98,7 @@ This repo does not use nested `AGENTS.md` files.
 ```text
 .
 |-- AGENTS.md
+|-- JOERN.md
 |-- FACTSHEET.md
 |-- Cargo.toml
 |-- CAPABILITY_CLAIM_MAP.md
