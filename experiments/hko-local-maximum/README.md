@@ -10,6 +10,7 @@ Start with `research/hko-local-maximum-status.md` before reading subfolders.
 | Strand | Path | Role |
 | --- | --- | --- |
 | Theorem certificate | `theorem/` | Active feasible-section certificate: generate witness, verify exact predicate. |
+| Smooth-only rank defect | `smooth-only-rank-defect/` | f64 diagnostic summary: nonsingular positive-beta branches have rank `23` in the `25`-dimensional quotient. |
 | Empirical sampling | `empirical/` | Numerical and sampling evidence that supports or illustrates the local-maximum picture but is not the final proof. |
 | Assets | `assets/` | Explanatory figure scripts and images. These are not theorem evidence. |
 | History | `history/` | Older exact route material, route-history notes, and non-current exact checks. |
@@ -29,6 +30,7 @@ experiments/hko-local-maximum/
 |   |-- verify.sage.py
 |   |-- witness.json
 |   `-- verification-summary.json
+|-- smooth-only-rank-defect/
 |-- assets/
 |-- history/
 |   |-- exact-witness/
@@ -82,6 +84,10 @@ migration. Git history is the archive for that broken `(n,h)` Phase C attempt;
   closure/normalization minor check for the current feasible-section route. The
   `feasible_section_rows` block computes the f64 derivative rows of the
   resulting explicit feasible beta sections and reruns the slice/cone checks.
+- `hko-smooth-only-rank-defect` reads the active-branch diagnostic and writes
+  `smooth-only-rank-defect/summary.json`. It records f64 evidence
+  that the nonsingular positive-beta branch attempt has projected rank `23` in
+  the `25`-dimensional quotient. This is not theorem proof.
 - `hko-feasible-section-generate --canonical --input <diagnostic.json>` writes
   `theorem/witness.json` from the active-branch diagnostic. The explicit
   `--input` is required because current diagnostic sources are ignored local
@@ -97,10 +103,12 @@ migration. Git history is the archive for that broken `(n,h)` Phase C attempt;
    what to do next for the theorem route
 4. `theorem/README.md` if the question is what currently verifies the
    theorem-facing finite certificate
-5. `assets/` if the question is about explanatory figures
-6. `research/hko-local-maximum-proof-route-note.md` or `history/`
+5. `smooth-only-rank-defect/` if the question is why the smooth
+   nonsingular positive-beta branch attempt did not close
+6. `assets/` if the question is about explanatory figures
+7. `research/hko-local-maximum-proof-route-note.md` or `history/`
    if the question is why the feasible-section route replaced older routes
-7. `empirical/README.md` if the question is about supporting evidence
+8. `empirical/README.md` if the question is about supporting evidence
 
 ## Rule Of Thumb
 

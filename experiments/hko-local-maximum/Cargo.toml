@@ -31,6 +31,10 @@ name = "hko-active-branch-diagnostic"
 path = "theorem/active_branch_diagnostic.rs"
 
 [[bin]]
+name = "hko-smooth-only-rank-defect"
+path = "smooth-only-rank-defect/main.rs"
+
+[[bin]]
 name = "hko-feasible-section-generate"
 path = "theorem/generate.rs"
 

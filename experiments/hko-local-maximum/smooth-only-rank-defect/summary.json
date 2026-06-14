@@ -1,0 +1,41 @@
+{
+  "checked_attempt": {
+    "active_branch_count": 150,
+    "currently_closes": false,
+    "description": "Use only positive-beta active branches whose f64 KKT matrix is nonsingular at the HKO point.",
+    "evidence_status": "f64 numerical diagnostic, not theorem proof",
+    "f64_projected_rank": 23,
+    "nonsingular_branch_count": 44,
+    "positive_lambda_projected_rank_f64": 21,
+    "projected_matrix_column_count": 25,
+    "quotient_dimension": 25,
+    "rank_defect": 2,
+    "singular_branch_count": 106,
+    "zero_in_convex_hull_feasible_f64": true
+  },
+  "conclusion": {
+    "claim": "The nonsingular positive-beta active branches do not currently close the first-order rank check in the f64 diagnostic.",
+    "not_claimed": "This does not show that no repaired smooth-only or nonsingular-only route can exist.",
+    "reason": "their projected D_sys matrix has numerical rank 23 in quotient dimension 25"
+  },
+  "current_feasible_section_comparison": {
+    "currently_closes_numerically": true,
+    "description": "Current theorem route using feasible beta sections, including singular positive-beta rows.",
+    "f64_projected_rank": 25,
+    "positive_lambda_projected_rank_f64": 25,
+    "row_count": 150,
+    "zero_in_convex_hull_feasible_f64": true
+  },
+  "padded_nonsingular_workaround": {
+    "currently_closes": false,
+    "description": "Insert one missing facet into nonsingular six-facet active branches and keep nonsingular minimum-action rows with one zero beta coordinate.",
+    "f64_projected_rank": 0,
+    "kept_row_count": 0
+  },
+  "source": {
+    "diagnostic_output_mode": "smoke",
+    "diagnostic_path": "theorem/smoke-active-branch-diagnostic.json",
+    "diagnostic_version": 2
+  },
+  "summary_version": 1
+}
