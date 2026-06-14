@@ -573,8 +573,11 @@ function setNorthPolePreset(preset) {
             }
             break;
         case 'normal0':
-            if (poly.normals.length > 0) {
-                northPole = normalize4(poly.normals[0]);
+            {
+                const normals = poly.normals || poly.dual_vertices || [];
+                if (normals.length > 0) {
+                    northPole = normalize4(normals[0]);
+                }
             }
             break;
         case 'diagonal':

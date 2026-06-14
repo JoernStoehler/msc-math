@@ -172,9 +172,9 @@ on whether the owner is method development or retained-dataset analysis.
 | `experiments/numerics/` | single-threaded numerical error audit: structured JSONL observations, f64-vs-oracle summaries, and generated reports for KKT variables and predicates | `experiments/numerics/README.md`, `tasks/current-state.md`, `tasks/planning-notes.md` |
 | `experiments/verification/` | experiment-level correctness and regression evidence, minimum-set validation, orbit recovery, and reusable Sage validation experiments | `tasks/current-state.md`, `tasks/planning-notes.md`, `research/verification*.md`, `experiments/verification/README.md`, `experiments/verification/sage/README.md` |
 | `experiments/performance/` | shared runtime and memory profiling targets, reusable measurement practice, and post-processing scripts; generated outputs normally go under `/tmp` | `experiments/performance/README.md` |
-| `experiments/combinatorial-cells/` | combinatorial-cell exploration: boundary characterization, cell widths, convexity, multiple crossings, omega hypothesis, and gradient-discontinuity analysis | `research/combinatorial-cells.md` |
+| `experiments/combinatorial-cells/` | combinatorial-cell exploration: boundary characterization, cell widths, convexity, multiple crossings, omega hypothesis, and gradient-discontinuity analysis | `experiments/combinatorial-cells/README.md` |
 | `experiments/crosspolytope/` | one-off crosspolytope computation and checkpointing | `research/crosspolytope.md` |
-| `experiments/visualization/` | visualization data/PNG generation and browser rendering assets for negative-exploration support | `research/visualization.md` |
+| `experiments/visualization/` | visualization data/PNG generation and browser rendering assets for negative-exploration support | `experiments/visualization/README.md`, `thesis/visualization-3d-content.md` |
 
 ## Helper Crates
 
@@ -231,7 +231,7 @@ Current persisted-data classes:
 | Class | Current meaning |
 | --- | --- |
 | shared polytope catalog rows | reusable polytope records with rational geometry, source, volume, capacity, and best-sigma-style data |
-| historical mirror catalogs | byte-identical copies of shared catalog content in different experiment areas observed in an earlier pass; current research notes give package-local ownership to at least `experiments/combinatorial-cells/polytopes.jsonl` |
+| historical mirror catalogs | byte-identical copies of shared catalog content in different experiment areas observed in an earlier pass; current package notes give local ownership to at least `experiments/combinatorial-cells/polytopes.jsonl` |
 | topic-local transient caches | local caches that store intermediate search states and are not intended as shared catalogs |
 | datascience pipeline caches | maintained producer caches and final tables under `experiments/sys-datascience/`; see local `produce/`, `tables/`, and `methods/` READMEs |
 | analysis outputs | experiment-owned JSONL files consumed by nearby `analyze.py` scripts |

@@ -68,11 +68,11 @@ obligations.
 | HKO2024 local maximality | `hko-local-maximum.md`, `hko-local-maximum-status.md`, `hko-local-maximum-proof-control-packet.md`, `hko-local-maximum-exact-witness.md`, `hko-local-maximum-proof-route-note.md` | `tasks/definition-of-success.md`, `tasks/current-state.md`, `tasks/planning-notes.md` |
 | Hostile sys-search landscape | active: `experiments/sys-datascience/README.md`, `experiments/sys-datascience/methods/README.md`; context: `sys-landscape.md`, `sys-landscape-toolbox-audit.md` | datascience README files and method packets own current state; research notes are context only |
 | Crosspolytope capacity | `crosspolytope.md` | `tasks/current-state.md`, `tasks/planning-notes.md` if thesis cites the computation |
-| Visualization negative exploration | `visualization.md` | `tasks/planning-notes.md` if included as standalone or supporting material |
+| Visualization negative exploration | `experiments/visualization/README.md`, `thesis/visualization-3d-content.md` | `tasks/planning-notes.md` if included as standalone or supporting material |
 | Pentagon rotation formula | `experiments/regular-products/README.md`; `thesis/rotated-regular-polygons-content.md`; `experiments/regular-products/pentagon-rotation-formula-proof/` | `thesis/rotated-regular-polygons.tex` and final thesis review gates |
-| Numerical and algorithmic method story | `experiments/numerics/README.md`, `formal/hk2017-qp-core.tex`, `formal/hk2017-qp-precision.tex`, `verification.md`, `verification-orbit-recovery.md` | `tasks/definition-of-success.md`, `tasks/current-state.md`, `tasks/planning-notes.md` |
+| Numerical and algorithmic method story | `experiments/numerics/README.md`, `formal/hk2017-qp-core.tex`, `formal/hk2017-qp-precision.tex`, `verification.md`, `experiments/verification/README.md` | `tasks/definition-of-success.md`, `tasks/current-state.md`, `tasks/planning-notes.md` |
 | Tube algorithm import | `tube-algorithm-raw-jorn-2026-05-04.md`, `tube-algorithm.md` | `tasks/planning-notes.md` if promoted into thesis text |
-| Repo/software/process story | `finish-current-state.md`, `verification.md`, `visualization.md`, architecture and submission maps | `tasks/definition-of-success.md`, `tasks/current-state.md`, `tasks/planning-notes.md`, `tasks/submit-thesis/README.md` |
+| Repo/software/process story | `finish-current-state.md`, `verification.md`, architecture and submission maps | `tasks/definition-of-success.md`, `tasks/current-state.md`, `tasks/planning-notes.md`, `tasks/submit-thesis/README.md` |
 
 ### Research Note Index
 
@@ -84,8 +84,8 @@ obligations.
 | Pentagon rotation formula / regular products | `experiments/regular-products/README.md`, `thesis/rotated-regular-polygons-content.md` | regular-product side-result inventory, writing companion, proof packet routing, and source-truth boundaries |
 | Sys first-order local behavior | `sys-first-order-local-behavior.md` | generic smooth case, non-generic active-germ classification, and semialgebraic fallback status |
 | Tube algorithm | `tube-algorithm-raw-jorn-2026-05-04.md`, `tube-algorithm.md` | raw Jörn source note plus routing/clarification note before rewriting old TeX or Rust surfaces |
-| Verification | `verification.md`, `verification-orbit-recovery.md` | validation evidence and orbit-recovery interpretation |
-| Standalone topics | `crosspolytope.md`, `visualization.md`, `combinatorial-cells.md` | topic-local result interpretation |
+| Verification | `verification.md`, `experiments/verification/README.md` | validation evidence and orbit-recovery interpretation |
+| Standalone topics | `crosspolytope.md`; `experiments/visualization/README.md`; `experiments/combinatorial-cells/README.md` | topic-local result interpretation |
 
 ## Handshake With Other Surfaces
 

@@ -162,8 +162,6 @@ source files.
   Source truth: `research/verification.md`, `experiments/verification/`.
   Current state: `research/verification.md` records `28` selected polytopes,
   `469` trusted minima, and full reconstruction success for all `469` minima.
-  `research/verification-orbit-recovery.md` contains older `112`-row planning
-  state and is not current execution truth without refresh.
   Refresh when: solver code, target pool, schema, tolerances, or thesis wording
   changes.
 

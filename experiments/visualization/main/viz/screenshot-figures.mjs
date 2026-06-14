@@ -6,12 +6,12 @@
 //           and Playwright installed (npm install playwright).
 //
 // Usage:
-//   cd experiments/visualization/viz
+//   cd experiments/visualization/main/viz
 //   python3 -m http.server 8080 &
 //   node screenshot-figures.mjs
 //   kill %1
 //
-// Output: experiments/visualization/viz-*.png
+// Output: experiments/visualization/main/viz-*.png
 
 import { chromium } from 'playwright';
 import { mkdirSync } from 'fs';

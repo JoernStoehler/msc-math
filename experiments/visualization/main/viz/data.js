@@ -4,13 +4,13 @@
 window.POLYTOPE_DATA = {
   "crosspolytope": {
   "name": "crosspolytope",
-  "source": "placeholder (capacity unknown)",
-  "capacity": 1.0,
+  "source": "computed (no literature value)",
+  "capacity": 4.0,
   "facet_count": 16,
   "vertex_count": 8,
   "edge_count": 24,
   "ridge_count": 32,
-  "normals": [
+  "dual_vertices": [
     [
       -0.5,
       -0.5,
@@ -107,24 +107,6 @@ window.POLYTOPE_DATA = {
       0.5,
       0.5
     ]
-  ],
-  "heights": [
-    1.0,
-    1.0,
-    1.0,
-    1.0,
-    1.0,
-    1.0,
-    1.0,
-    1.0,
-    1.0,
-    1.0,
-    1.0,
-    1.0,
-    1.0,
-    1.0,
-    1.0,
-    1.0
   ],
   "reeb_vectors": [
     [
@@ -226,9 +208,21 @@ window.POLYTOPE_DATA = {
   ],
   "vertices": [
     [
-      2.0,
+      -2.0,
       0.0,
       0.0,
+      0.0
+    ],
+    [
+      0.0,
+      -2.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      -2.0,
       0.0
     ],
     [
@@ -240,38 +234,26 @@ window.POLYTOPE_DATA = {
     [
       0.0,
       0.0,
-      -2.0,
-      0.0
-    ],
-    [
-      0.0,
-      2.0,
-      0.0,
-      0.0
-    ],
-    [
-      0.0,
-      -2.0,
-      0.0,
-      0.0
-    ],
-    [
-      -2.0,
-      0.0,
-      0.0,
-      0.0
-    ],
-    [
-      0.0,
-      0.0,
-      2.0,
-      0.0
-    ],
-    [
-      0.0,
-      0.0,
       0.0,
       2.0
+    ],
+    [
+      0.0,
+      0.0,
+      2.0,
+      0.0
+    ],
+    [
+      0.0,
+      2.0,
+      0.0,
+      0.0
+    ],
+    [
+      2.0,
+      0.0,
+      0.0,
+      0.0
     ]
   ],
   "edges": [
@@ -293,11 +275,11 @@ window.POLYTOPE_DATA = {
     ],
     [
       0,
-      6
+      5
     ],
     [
       0,
-      7
+      6
     ],
     [
       1,
@@ -317,7 +299,7 @@ window.POLYTOPE_DATA = {
     ],
     [
       1,
-      6
+      7
     ],
     [
       2,
@@ -329,7 +311,7 @@ window.POLYTOPE_DATA = {
     ],
     [
       2,
-      5
+      6
     ],
     [
       2,
@@ -379,9 +361,9 @@ window.POLYTOPE_DATA = {
         1
       ],
       "vertices": [
-        5,
         2,
-        4
+        0,
+        1
       ]
     },
     {
@@ -390,9 +372,9 @@ window.POLYTOPE_DATA = {
         2
       ],
       "vertices": [
-        5,
-        1,
-        4
+        3,
+        0,
+        1
       ]
     },
     {
@@ -401,8 +383,8 @@ window.POLYTOPE_DATA = {
         4
       ],
       "vertices": [
-        5,
-        1,
+        3,
+        0,
         2
       ]
     },
@@ -412,7 +394,7 @@ window.POLYTOPE_DATA = {
         8
       ],
       "vertices": [
-        4,
+        3,
         1,
         2
       ]
@@ -423,9 +405,9 @@ window.POLYTOPE_DATA = {
         3
       ],
       "vertices": [
-        7,
         4,
-        5
+        0,
+        1
       ]
     },
     {
@@ -434,9 +416,9 @@ window.POLYTOPE_DATA = {
         5
       ],
       "vertices": [
-        7,
-        2,
-        5
+        4,
+        0,
+        2
       ]
     },
     {
@@ -445,9 +427,9 @@ window.POLYTOPE_DATA = {
         9
       ],
       "vertices": [
-        7,
-        2,
-        4
+        4,
+        1,
+        2
       ]
     },
     {
@@ -456,9 +438,9 @@ window.POLYTOPE_DATA = {
         3
       ],
       "vertices": [
-        6,
-        4,
-        5
+        5,
+        0,
+        1
       ]
     },
     {
@@ -467,9 +449,9 @@ window.POLYTOPE_DATA = {
         6
       ],
       "vertices": [
-        6,
-        1,
-        5
+        5,
+        0,
+        3
       ]
     },
     {
@@ -478,9 +460,9 @@ window.POLYTOPE_DATA = {
         10
       ],
       "vertices": [
-        6,
+        5,
         1,
-        4
+        3
       ]
     },
     {
@@ -489,9 +471,9 @@ window.POLYTOPE_DATA = {
         7
       ],
       "vertices": [
-        7,
         5,
-        6
+        0,
+        4
       ]
     },
     {
@@ -500,9 +482,9 @@ window.POLYTOPE_DATA = {
         11
       ],
       "vertices": [
-        7,
-        4,
-        6
+        5,
+        1,
+        4
       ]
     },
     {
@@ -511,9 +493,9 @@ window.POLYTOPE_DATA = {
         5
       ],
       "vertices": [
-        5,
-        2,
-        3
+        6,
+        0,
+        2
       ]
     },
     {
@@ -522,8 +504,8 @@ window.POLYTOPE_DATA = {
         6
       ],
       "vertices": [
-        5,
-        1,
+        6,
+        0,
         3
       ]
     },
@@ -533,9 +515,9 @@ window.POLYTOPE_DATA = {
         12
       ],
       "vertices": [
-        3,
-        1,
-        2
+        6,
+        2,
+        3
       ]
     },
     {
@@ -544,9 +526,9 @@ window.POLYTOPE_DATA = {
         7
       ],
       "vertices": [
-        7,
-        3,
-        5
+        6,
+        0,
+        4
       ]
     },
     {
@@ -555,9 +537,9 @@ window.POLYTOPE_DATA = {
         13
       ],
       "vertices": [
-        7,
+        6,
         2,
-        3
+        4
       ]
     },
     {
@@ -567,7 +549,7 @@ window.POLYTOPE_DATA = {
       ],
       "vertices": [
         6,
-        3,
+        0,
         5
       ]
     },
@@ -578,8 +560,8 @@ window.POLYTOPE_DATA = {
       ],
       "vertices": [
         6,
-        1,
-        3
+        3,
+        5
       ]
     },
     {
@@ -588,9 +570,9 @@ window.POLYTOPE_DATA = {
         15
       ],
       "vertices": [
-        7,
-        3,
-        6
+        6,
+        4,
+        5
       ]
     },
     {
@@ -599,8 +581,8 @@ window.POLYTOPE_DATA = {
         9
       ],
       "vertices": [
-        4,
-        0,
+        7,
+        1,
         2
       ]
     },
@@ -610,9 +592,9 @@ window.POLYTOPE_DATA = {
         10
       ],
       "vertices": [
-        4,
-        0,
-        1
+        7,
+        1,
+        3
       ]
     },
     {
@@ -621,9 +603,9 @@ window.POLYTOPE_DATA = {
         12
       ],
       "vertices": [
+        7,
         2,
-        0,
-        1
+        3
       ]
     },
     {
@@ -633,7 +615,7 @@ window.POLYTOPE_DATA = {
       ],
       "vertices": [
         7,
-        0,
+        1,
         4
       ]
     },
@@ -644,8 +626,8 @@ window.POLYTOPE_DATA = {
       ],
       "vertices": [
         7,
-        0,
-        2
+        2,
+        4
       ]
     },
     {
@@ -654,9 +636,9 @@ window.POLYTOPE_DATA = {
         11
       ],
       "vertices": [
-        6,
-        0,
-        4
+        7,
+        1,
+        5
       ]
     },
     {
@@ -665,9 +647,9 @@ window.POLYTOPE_DATA = {
         14
       ],
       "vertices": [
-        6,
-        0,
-        1
+        7,
+        3,
+        5
       ]
     },
     {
@@ -677,8 +659,8 @@ window.POLYTOPE_DATA = {
       ],
       "vertices": [
         7,
-        0,
-        6
+        4,
+        5
       ]
     },
     {
@@ -687,9 +669,9 @@ window.POLYTOPE_DATA = {
         13
       ],
       "vertices": [
-        3,
-        0,
-        2
+        7,
+        2,
+        6
       ]
     },
     {
@@ -698,9 +680,9 @@ window.POLYTOPE_DATA = {
         14
       ],
       "vertices": [
+        7,
         3,
-        0,
-        1
+        6
       ]
     },
     {
@@ -710,8 +692,8 @@ window.POLYTOPE_DATA = {
       ],
       "vertices": [
         7,
-        0,
-        3
+        4,
+        6
       ]
     },
     {
@@ -720,52 +702,22 @@ window.POLYTOPE_DATA = {
         15
       ],
       "vertices": [
-        6,
-        0,
-        3
+        7,
+        5,
+        6
       ]
     }
   ],
   "vertex_facets": [
     [
-      8,
-      9,
-      10,
-      11,
-      12,
-      13,
-      14,
-      15
-    ],
-    [
-      0,
-      2,
-      4,
-      6,
-      8,
-      10,
-      12,
-      14
-    ],
-    [
       0,
       1,
-      4,
-      5,
-      8,
-      9,
-      12,
-      13
-    ],
-    [
+      2,
+      3,
       4,
       5,
       6,
-      7,
-      12,
-      13,
-      14,
-      15
+      7
     ],
     [
       0,
@@ -780,12 +732,32 @@ window.POLYTOPE_DATA = {
     [
       0,
       1,
-      2,
-      3,
       4,
       5,
+      8,
+      9,
+      12,
+      13
+    ],
+    [
+      0,
+      2,
+      4,
       6,
-      7
+      8,
+      10,
+      12,
+      14
+    ],
+    [
+      1,
+      3,
+      5,
+      7,
+      9,
+      11,
+      13,
+      15
     ],
     [
       2,
@@ -798,13 +770,23 @@ window.POLYTOPE_DATA = {
       15
     ],
     [
-      1,
-      3,
+      4,
       5,
+      6,
       7,
-      9,
-      11,
+      12,
       13,
+      14,
+      15
+    ],
+    [
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
       15
     ]
   ],
@@ -2317,8 +2299,8 @@ window.POLYTOPE_DATA = {
       ]
     }
   ],
-  "volume": 10.666667,
-  "systolic_ratio": 0.046874998535156295
+  "volume": 10.666666666666666,
+  "systolic_ratio": 0.75
 },
   "hko_pentagon": {
   "name": "hko_pentagon",
