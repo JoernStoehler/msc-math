@@ -614,10 +614,13 @@ mod tests {
         assert_eq!(row.facet_count, 7);
         assert_eq!(row.simplified_facet_count, Some(7));
         assert_eq!(row.removed_facet_count, 1);
-        assert!(row.product_simplification_delta_bound.unwrap() <= 2e-8);
-        assert!(row.capacity_ratio_upper_bound.unwrap() <= (1.0 + 2e-8f64).powi(2));
-        assert!(row.volume_ratio_upper_bound.unwrap() <= (1.0 + 2e-8f64).powi(4));
-        assert!(row.sys_ratio_lower_bound.unwrap() >= (1.0 + 2e-8f64).powi(-4));
+        let delta_bound = row.product_simplification_delta_bound.unwrap();
+        let scale = 1.0 + delta_bound;
+        assert!(delta_bound <= 2e-8);
+        assert_eq!(row.capacity_ratio_upper_bound.unwrap(), scale.powi(2));
+        assert_eq!(row.volume_ratio_upper_bound.unwrap(), scale.powi(4));
+        assert_eq!(row.sys_ratio_lower_bound.unwrap(), scale.powi(-4));
+        assert_eq!(row.sys_ratio_upper_bound.unwrap(), scale.powi(4));
         assert_eq!(row.exact_audit_status, "exact_valid_capacity_success");
         assert!(row.audit_capacity_label.is_some());
         assert_eq!(

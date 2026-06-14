@@ -351,9 +351,13 @@ the set-level bound
 `P_original <= P_simplified <= (1 + delta_bound) P_original`. It reports the
 resulting capacity, volume, and sys distortion factors. The default is
 `--product-simplification none`. Use `--audit-simplified all` to exact-audit
-the simplified row after the measured f64 decision has been recorded. Treat the
-reported bound as an experiment diagnostic until the corresponding mathematical
-statement and the f64 computation of `delta_bound` have been reviewed.
+the simplified row after the measured f64 decision has been recorded. The
+formal implication from a valid `delta_bound` to these distortion factors is
+recorded in `formal/product-simplification-bounds.tex`
+(`rem:product-simplification-experiment-contract` and
+`cor:facet-removal-capacity-volume-sys-bounds`). The current f64 computation of
+`delta_bound` is an ordinary f64 diagnostic, not an outward-rounded
+certificate.
 
 ## Current Local Run Notes
 

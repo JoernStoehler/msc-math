@@ -1,0 +1,165 @@
+% Agent-written and not yet Jörn-reviewed.
+%
+% Purpose: record the mathematical contract used by the product-only
+% near-redundant facet simplification in experiments/dev-f64-capacity.
+% This file proves the conditional implication from a valid delta bound to
+% capacity/volume/sys distortion bounds. It does not certify that an ordinary
+% f64 computation of delta_bound is outward-rounded.
+
+\providecommand{\R}{\mathbb{R}}
+\providecommand{\vol}{\operatorname{vol}}
+\providecommand{\sys}{\operatorname{sys}}
+\providecommand{\conv}{\operatorname{conv}}
+
+\begin{unverified}
+\begin{theorem}[EHZ monotonicity]\label{thm:ehz-monotonicity}
+% [TODO: JÖRN - verify statement, add citation, and decide whether this belongs
+%   with the other EHZ capacity axioms in capacity-algorithms.tex.]
+If $K,L \subset \R^4$ are convex bodies and $K \subseteq L$, then
+\[
+  c_{\mathrm{EHZ}}(K) \leq c_{\mathrm{EHZ}}(L).
+\]
+\end{theorem}
+\end{unverified}
+
+\begin{unverified}
+\begin{lemma}[Containment after removing near-redundant facets]
+\label{lem:hrep-facet-removal-containment}
+Let $a_1,\ldots,a_F \in \R^4$ and
+\[
+  P = \{x \in \R^4 : \langle a_i,x\rangle \leq 1
+      \text{ for } i=1,\ldots,F\}.
+\]
+Let $R \subseteq \{1,\ldots,F\}$ be the retained indices, let
+$S=\{1,\ldots,F\}\setminus R$, and let
+\[
+  P_R = \{x \in \R^4 : \langle a_i,x\rangle \leq 1
+      \text{ for } i\in R\}.
+\]
+Assume $\delta \geq 0$ and
+\[
+  \langle a_j,x\rangle \leq 1+\delta
+  \quad\text{for every } j\in S \text{ and every } x\in P_R .
+\]
+Then
+\[
+  P \subseteq P_R \subseteq (1+\delta)P .
+\]
+\end{lemma}
+\end{unverified}
+
+\begin{proof}
+The first inclusion follows because $P$ satisfies every retained inequality.
+For the second inclusion, take $x\in P_R$ and put
+$y=x/(1+\delta)$. For $i\in R$,
+\[
+  \langle a_i,y\rangle
+  = \frac{\langle a_i,x\rangle}{1+\delta}
+  \leq \frac{1}{1+\delta}
+  \leq 1.
+\]
+For $j\in S$, the hypothesis gives
+\[
+  \langle a_j,y\rangle
+  = \frac{\langle a_j,x\rangle}{1+\delta}
+  \leq 1.
+\]
+Thus $y\in P$, so $x=(1+\delta)y\in (1+\delta)P$.
+\end{proof}
+
+\begin{unverified}
+\begin{corollary}[Distortion bounds from a facet-removal containment bound]
+\label{cor:facet-removal-capacity-volume-sys-bounds}
+In the setting of Lemma~\ref{lem:hrep-facet-removal-containment}, assume
+that $P$ and $P_R$ are convex bodies in $\R^4$ and write
+$\lambda=1+\delta$. Then
+\[
+  1
+  \leq
+  \frac{c_{\mathrm{EHZ}}(P_R)}{c_{\mathrm{EHZ}}(P)}
+  \leq
+  \lambda^2,
+\]
+\[
+  1
+  \leq
+  \frac{\vol(P_R)}{\vol(P)}
+  \leq
+  \lambda^4,
+\]
+and, for the systolic ratio
+$\sys(K)=c_{\mathrm{EHZ}}(K)^2/(2\vol(K))$ from
+Definition~\ref{def:systolic-ratio},
+\[
+  \lambda^{-4}
+  \leq
+  \frac{\sys(P_R)}{\sys(P)}
+  \leq
+  \lambda^4.
+\]
+\end{corollary}
+\end{unverified}
+
+\begin{proof}
+By Lemma~\ref{lem:hrep-facet-removal-containment},
+$P\subseteq P_R\subseteq \lambda P$. Monotonicity
+(Theorem~\ref{thm:ehz-monotonicity}) and conformality
+(Theorem~\ref{thm:conformality}) give
+\[
+  c_{\mathrm{EHZ}}(P)
+  \leq c_{\mathrm{EHZ}}(P_R)
+  \leq c_{\mathrm{EHZ}}(\lambda P)
+  = \lambda^2 c_{\mathrm{EHZ}}(P).
+\]
+Lebesgue measure is monotone under inclusion and degree-$4$ homogeneous under
+scaling, hence
+\[
+  \vol(P)\leq \vol(P_R)\leq \vol(\lambda P)=\lambda^4\vol(P).
+\]
+Let
+\[
+  r_c=\frac{c_{\mathrm{EHZ}}(P_R)}{c_{\mathrm{EHZ}}(P)}
+  \quad\text{and}\quad
+  r_v=\frac{\vol(P_R)}{\vol(P)}.
+\]
+The previous bounds say $1\leq r_c\leq\lambda^2$ and
+$1\leq r_v\leq\lambda^4$. Therefore
+\[
+  \frac{\sys(P_R)}{\sys(P)}=\frac{r_c^2}{r_v}.
+\]
+The lower bound follows from $r_c^2\geq 1$ and $r_v\leq\lambda^4$.
+The upper bound follows from $r_c^2\leq\lambda^4$ and $r_v\geq 1$.
+\end{proof}
+
+\begin{unverified}
+\begin{remark}[Experiment contract for product simplification]
+\label{rem:product-simplification-experiment-contract}
+The JSONL field
+\[
+  \texttt{product\_simplification\_delta\_bound}
+\]
+in \texttt{experiments/dev-f64-capacity} is intended to satisfy the hypothesis
+of Lemma~\ref{lem:hrep-facet-removal-containment}: for every removed original
+facet $j$ and every point $x$ in the simplified polytope $P_R$,
+\[
+  \langle a_j,x\rangle \leq 1+\texttt{delta\_bound}.
+\]
+If that inequality is a valid nonnegative bound, then the reported
+\[
+\begin{gathered}
+  \texttt{capacity\_ratio\_upper\_bound},\quad
+  \texttt{volume\_ratio\_upper\_bound},\\
+  \texttt{sys\_ratio\_lower\_bound},\quad
+  \texttt{sys\_ratio\_upper\_bound}
+\end{gathered}
+\]
+are exactly the corresponding factors in
+Corollary~\ref{cor:facet-removal-capacity-volume-sys-bounds}.
+
+The current experiment computes \texttt{delta\_bound} with ordinary f64
+arithmetic. That is useful as a trusted-enough empirical diagnostic, but it is
+not an outward-rounded certificate. A certificate-strength implementation
+would need an exact audit or directed-rounding interval computation for the
+maximal removed-facet violation.
+\end{remark}
+\end{unverified}

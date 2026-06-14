@@ -19,6 +19,9 @@ pub struct ProductSimplificationReport {
     pub simplified_dual_vertices: Vec<Vector4<f64>>,
     pub kept_original_indices: Vec<usize>,
     pub removed_facets: Vec<ProductFacetRedundancy>,
+    /// Intended set-level bound:
+    /// P_original <= P_simplified <= (1 + delta_bound) P_original.
+    /// See formal label `rem:product-simplification-experiment-contract`.
     pub delta_bound: f64,
     pub capacity_ratio_upper: f64,
     pub volume_ratio_upper: f64,
@@ -85,6 +88,7 @@ pub fn remove_nearly_redundant_product_facets(
             kept_original_indices.push(idx);
         }
     }
+    let distortion = distortion_from_delta_bound(delta_bound);
 
     ProductSimplificationReport {
         status: ProductSimplificationStatus::Simplified,
@@ -92,10 +96,10 @@ pub fn remove_nearly_redundant_product_facets(
         kept_original_indices,
         removed_facets,
         delta_bound,
-        capacity_ratio_upper: (1.0 + delta_bound).powi(2),
-        volume_ratio_upper: (1.0 + delta_bound).powi(4),
-        sys_ratio_lower: (1.0 + delta_bound).powi(-4),
-        sys_ratio_upper: (1.0 + delta_bound).powi(4),
+        capacity_ratio_upper: distortion.capacity_ratio_upper,
+        volume_ratio_upper: distortion.volume_ratio_upper,
+        sys_ratio_lower: distortion.sys_ratio_lower,
+        sys_ratio_upper: distortion.sys_ratio_upper,
     }
 }
 
@@ -116,17 +120,36 @@ impl ProductSimplificationReport {
 
     fn unchanged(status: ProductSimplificationStatus, dual_vertices: Vec<Vector4<f64>>) -> Self {
         let kept_original_indices = (0..dual_vertices.len()).collect();
+        let distortion = distortion_from_delta_bound(0.0);
         Self {
             status,
             simplified_dual_vertices: dual_vertices,
             kept_original_indices,
             removed_facets: Vec::new(),
             delta_bound: 0.0,
-            capacity_ratio_upper: 1.0,
-            volume_ratio_upper: 1.0,
-            sys_ratio_lower: 1.0,
-            sys_ratio_upper: 1.0,
+            capacity_ratio_upper: distortion.capacity_ratio_upper,
+            volume_ratio_upper: distortion.volume_ratio_upper,
+            sys_ratio_lower: distortion.sys_ratio_lower,
+            sys_ratio_upper: distortion.sys_ratio_upper,
         }
+    }
+}
+
+#[derive(Clone, Copy, Debug)]
+struct ProductSimplificationDistortion {
+    capacity_ratio_upper: f64,
+    volume_ratio_upper: f64,
+    sys_ratio_lower: f64,
+    sys_ratio_upper: f64,
+}
+
+fn distortion_from_delta_bound(delta_bound: f64) -> ProductSimplificationDistortion {
+    let scale = 1.0 + delta_bound;
+    ProductSimplificationDistortion {
+        capacity_ratio_upper: scale.powi(2),
+        volume_ratio_upper: scale.powi(4),
+        sys_ratio_lower: scale.powi(-4),
+        sys_ratio_upper: scale.powi(4),
     }
 }
 
@@ -289,8 +312,11 @@ mod tests {
         assert_eq!(report.removed_facets.len(), 1);
         assert!(report.removed_facets[0].delta <= 2e-8);
         assert_eq!(report.simplified_dual_vertices.len(), 7);
-        assert!(report.capacity_ratio_upper <= (1.0 + 2e-8f64).powi(2));
-        assert!(report.sys_ratio_lower >= (1.0 + 2e-8f64).powi(-4));
+        let scale = 1.0 + report.delta_bound;
+        assert_eq!(report.capacity_ratio_upper, scale.powi(2));
+        assert_eq!(report.volume_ratio_upper, scale.powi(4));
+        assert_eq!(report.sys_ratio_lower, scale.powi(-4));
+        assert_eq!(report.sys_ratio_upper, scale.powi(4));
     }
 
     #[test]
@@ -299,5 +325,10 @@ mod tests {
         let report = remove_nearly_redundant_product_facets(&dual_vertices, 1e-8);
         assert_eq!(report.status, ProductSimplificationStatus::NotBlockProduct);
         assert_eq!(report.simplified_dual_vertices, dual_vertices);
+        assert_eq!(report.delta_bound, 0.0);
+        assert_eq!(report.capacity_ratio_upper, 1.0);
+        assert_eq!(report.volume_ratio_upper, 1.0);
+        assert_eq!(report.sys_ratio_lower, 1.0);
+        assert_eq!(report.sys_ratio_upper, 1.0);
     }
 }
