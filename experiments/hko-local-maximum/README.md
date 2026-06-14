@@ -9,8 +9,8 @@ Start with `research/hko-local-maximum-status.md` before reading subfolders.
 
 | Strand | Path | Role |
 | --- | --- | --- |
-| Theorem certificate | `theorem/` | Exact witness generation, Sage-backed row-bank validation, and active-branch diagnostics for the proof route. |
-| Empirical support | `empirical/` | Numerical and sampling evidence that supports the local-maximum picture but is not the final proof. |
+| Theorem certificate | `theorem/` | Current feasible-section certificate, supporting diagnostics, exact sanity checks, and route-history notes. |
+| Empirical support | `empirical/` | Numerical and sampling evidence that supports or illustrates the local-maximum picture but is not the final proof. |
 | Shared Rust helpers | `src/` | Topic-local code shared by theorem and empirical binaries. |
 
 Generated JSON/JSONL/figure artifacts stay beside the producer or sampler that
@@ -25,6 +25,7 @@ experiments/hko-local-maximum/
 |   |-- exact-witness/
 |   |-- active-branch-diagnostic/
 |   |-- feasible-section-certificate/
+|   |-- route-history/
 |   `-- row-bank-validation/
 |-- empirical/
 |   |-- first-order/
@@ -87,13 +88,17 @@ migration. Git history is the archive for that broken `(n,h)` Phase C attempt;
 2. `research/hko-local-maximum.md`
 3. `research/hko-local-maximum-proof-control-packet.md` if the question is
    what to do next for the theorem route
-4. `research/hko-local-maximum-proof-route-note.md`
-5. `theorem/README.md`
-6. `empirical/README.md` if the question is about supporting evidence
+4. `theorem/README.md`
+5. `theorem/feasible-section-certificate/README.md` if the question is what
+   currently verifies the theorem-facing finite certificate
+6. `research/hko-local-maximum-proof-route-note.md` or `theorem/route-history/`
+   if the question is why the feasible-section route replaced older routes
+7. `empirical/README.md` if the question is about supporting evidence
 
 ## Rule Of Thumb
 
-If a question is "what proves the theorem?", start in `theorem/`.
+If a question is "what proves the theorem?", start in `theorem/` and then
+`theorem/feasible-section-certificate/`.
 
 If a question is "what evidence supports the local-maximality story?", read
 `empirical/` after the status note.
