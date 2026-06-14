@@ -31,7 +31,7 @@ name = "hko-active-branch-diagnostic"
 path = "theorem/active-branch-diagnostic/main.rs"
 
 [[bin]]
-name = "hko-feasible-section-certificate"
+name = "hko-feasible-section-generate"
 path = "theorem/feasible-section-certificate/main.rs"
 
 [lints]

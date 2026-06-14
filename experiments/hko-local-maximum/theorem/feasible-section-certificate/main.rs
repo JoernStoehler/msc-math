@@ -1,9 +1,9 @@
-//! Candidate exporter for the HKO feasible-section certificate.
+//! Generate finite data for the HKO feasible-section certificate.
 //!
-//! This binary promotes a small 26-row candidate from the numerical
-//! active-branch diagnostic into a dedicated candidate JSON file. The output is
-//! a generator artifact, not a proof. The Sage verifier must later check exact
-//! equations for the witness values derived from this candidate.
+//! This binary promotes a small 26-entry selection from the numerical
+//! active-branch diagnostic into `witness.json`. The output is finite verifier
+//! input, not a proof by itself. SageMath reads this file, computes exact data,
+//! and verifies the exact certificate predicate.
 
 use serde_json::{json, Value};
 use std::env;
@@ -188,12 +188,12 @@ struct Options {
 
 fn print_usage() {
     eprintln!(
-        r#"Usage: hko-feasible-section-certificate [options]
+        r#"Usage: hko-feasible-section-generate [options]
 
 Optional flags:
   --help, -h          Show this help message and exit.
-  --smoke             Write smoke-candidate-certificate.json. This is the default and may use the default smoke input.
-  --canonical         Refresh candidate-certificate.json. Requires an explicit --input.
+  --smoke             Write smoke-witness.json. This is the default and may use the default smoke input.
+  --canonical         Refresh witness.json. Requires an explicit --input.
   --input <PATH>      Source active-branch diagnostic JSON."#
     );
 }
@@ -205,7 +205,7 @@ impl Options {
         let default_input_path = package_root
             .join("theorem/active-branch-diagnostic/smoke-active-branch-diagnostic.json");
         let mut input_path = None;
-        let mut output_path = packet_dir.join("smoke-candidate-certificate.json");
+        let mut output_path = packet_dir.join("smoke-witness.json");
         let mut output_mode = "smoke";
 
         let mut args = env::args().skip(1);
@@ -216,11 +216,11 @@ impl Options {
                     std::process::exit(0);
                 }
                 "--smoke" => {
-                    output_path = packet_dir.join("smoke-candidate-certificate.json");
+                    output_path = packet_dir.join("smoke-witness.json");
                     output_mode = "smoke";
                 }
                 "--canonical" => {
-                    output_path = packet_dir.join("candidate-certificate.json");
+                    output_path = packet_dir.join("witness.json");
                     output_mode = "canonical";
                 }
                 "--input" => {
@@ -355,7 +355,7 @@ fn check_f64_slice_close(source_index: usize, label: &str, actual: &[f64], expec
     }
 }
 
-fn selected_candidate_rows(diagnostic: &Value) -> Vec<Value> {
+fn selected_witness_entries(diagnostic: &Value) -> Vec<Value> {
     let rows = diagnostic["feasible_section_rows"]
         .as_array()
         .expect("diagnostic must contain feasible_section_rows array");
@@ -438,24 +438,24 @@ fn write_json(path: &Path, payload: &Value) {
 fn main() {
     let options = Options::parse();
     let diagnostic = read_json(&options.input_path);
-    let candidate_rows = selected_candidate_rows(&diagnostic);
+    let witness_entries = selected_witness_entries(&diagnostic);
 
     let payload = json!({
         "packet": "hko-feasible-section-certificate",
-        "candidate_version": 1,
+        "witness_version": 1,
         "output_mode": options.output_mode,
-        "candidate_role": "standalone finite row choices for exact Sage witness construction; diagnostic provenance is debug context only",
+        "witness_role": "finite verifier input generated from the active-branch diagnostic; SageMath computes exact data and verifies it",
         "debug_source_diagnostic_path": path_for_json(&options.input_path),
         "debug_source_diagnostic_version": diagnostic["diagnostic_version"],
         "debug_source_input_was_explicit": options.input_was_explicit,
         "certificate_goal": {
-            "selected_row_count": candidate_rows.len(),
+            "selected_entry_count": witness_entries.len(),
             "ambient_dimension": 40,
             "symmetry_dimension": 15,
             "quotient_dimension": 25,
-            "proof_use": "candidate choices for exact Sage feasible-section witness construction; Rust is not trusted for theorem correctness"
+            "proof_use": "input for SageMath exact verification; Rust generation is not trusted for theorem correctness"
         },
-        "rows": candidate_rows,
+        "entries": witness_entries,
     });
 
     write_json(&options.output_path, &payload);

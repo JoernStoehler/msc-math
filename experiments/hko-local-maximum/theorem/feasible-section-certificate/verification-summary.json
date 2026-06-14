@@ -6,9 +6,8 @@
     "action_min matched HKO2024 Proposition counterexample_prop in the exact field",
     "volume and volume derivative matched source formulas",
     "symmetry tangent generators reconstructed and rank checked",
+    "witness entries are partial permutations with complementary minor and fixed beta indices",
     "each beta is positive and satisfies closure plus normalization",
-    "stored free beta values match beta at the fixed beta indices",
-    "each minor-column set is complementary to the fixed beta index set",
     "each selected minor is invertible",
     "each action equals the HKO action",
     "each D beta satisfies the feasible-section derivative equation",
@@ -18,9 +17,14 @@
     "positive lambdas sum to 1 and combine rows to 0"
   ],
   "lambda_count": 26,
+  "max_abs_d_sys_delta_vs_f64_hint": 2.146394173507815e-12,
+  "max_lambda_f64": 0.08029271605361593,
+  "min_lambda_f64": 0.002186171685808612,
   "packet": "hko-feasible-section-certificate",
   "row_count": 26,
   "row_rank": 25,
+  "source_witness_path": "witness.json",
+  "symmetry_label_count": 15,
   "symmetry_rank": 15,
   "verified": true
 }

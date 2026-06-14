@@ -2,7 +2,7 @@
 
 Status: route-history and setup note. The current theorem-facing verifier
 reconstructs the HKO geometry directly in
-`../feasible-section-certificate/verify_feasible_section_witness.sage.py`.
+`../feasible-section-certificate/verify.sage.py`.
 
 Facts retained for thesis navigation:
 
@@ -25,7 +25,7 @@ material, not the current theorem certificate.
 Source pointers:
 
 - `../feasible-section-certificate/README.md`
-- `../feasible-section-certificate/verify_feasible_section_witness.sage.py`
+- `../feasible-section-certificate/verify.sage.py`
 - `../feasible-section-certificate/verification-summary.json`
 - `research/hko-local-maximum-status.md`
 - `formal/hko-feasible-section-upper-branches.tex`

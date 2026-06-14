@@ -38,9 +38,9 @@ the Sage construction/verification target changes, when the selected branch
 rows change, or when the HKO theorem target is weakened.
 
 2026-06-04 implementation result:
-`verify_feasible_section_witness.sage.py` verifies a 26-row exact certificate:
-exact row rank `25`, symmetry rank `15`, positive lambdas, and exact
-lambda-weighted row sum `0`. The formal implication in
+`verify.sage.py` verifies a 26-entry exact certificate:
+exact covector rank `25`, symmetry rank `15`, positive lambdas, and exact
+lambda-weighted covector sum `0`. The formal implication in
 `formal/hko-feasible-section-upper-branches.tex` has been agent-line-checked
 against the verifier propositions. Jörn quick-reviewed the rebuilt PDF on
 2026-06-05, spotted no gaps, and judged any remaining mistakes likely closeable
@@ -489,16 +489,17 @@ semialgebraic fallback and honest weakened thesis wording.
 
 ## Sage Construction And Verification Packet
 
-Packet 3 now produces:
+Packet 3 now uses:
 
-1. trusted Sage construction code for source-defined exact objects;
-2. generator output for finite candidate choices;
-3. Sage assertions that the candidate choices satisfy the theorem-facing
+1. Rust-generated finite data for selected HK2017 words, minor choices, fixed
+   beta coordinates, and debug provenance;
+2. SageMath preparation of exact algebraic verifier input;
+3. SageMath assertions that the prepared data satisfy the theorem-facing
    predicate;
 4. machine-readable verification summary;
 5. a short human-readable verifier explanation for the thesis companion.
 
-The trusted-code boundary is not simply "Rust generates, Sage verifies".
+The trusted-code boundary is not simply "one file is the proof object".
 Different data have different roles.
 
 1. Source-defined exact data:
@@ -511,14 +512,16 @@ Different data have different roles.
    obligation is that the Sage construction code matches the LaTeX definition,
    and that the code has enough assertions and sanity checks to make mistakes
    visible.
-2. Search-generated finite choices:
-   Rust or Sage may generate candidate choices such as selected sigmas,
-   minor/fixed-coordinate choices, and a small row subset. These are witnesses.
-   The generator is not trusted for theorem use.
-3. Candidate verification:
-   Sage must assert the predicate `phi(x)` for the candidate witness `x`.
-   For the current small-certificate route, `x` should include the selected
-   sigmas, minor/fixed-coordinate choices, and optionally f64/debug lambdas.
+2. Finite verifier input:
+   Rust generates selected sigmas, minor/fixed-coordinate choices, and a small
+   selected subset into `witness.json`. Rust generation is not trusted for
+   theorem correctness.
+3. Verification:
+   SageMath reads `witness.json`, may solve exact systems internally, computes
+   exact beta values, derivative covectors, and convex coefficients, and asserts
+   the theorem-facing predicate. For the current small-certificate route, the
+   verified data include selected sigmas, minor/fixed-coordinate choices, exact
+   beta data, exact derivative covectors, and exact convex coefficients.
    Sage should verify:
    - exact `beta0`, positivity, closure, and normalization;
    - exact full-rank minor and induced `D beta(a0)` equations;
@@ -530,12 +533,10 @@ Different data have different roles.
 
 Implemented shape:
 
-1. Rust exports `candidate-certificate.json`.
-2. `construct_exact_witness.sage.py` constructs exact witness values. It may
-   solve exact systems; this script is not proof-facing.
-3. `verify_feasible_section_witness.sage.py` reloads the witness and asserts
-   all proof-facing equations.
-4. `verification-summary.json` records the passing exact checks.
+1. `hko-feasible-section-generate` writes `witness.json`.
+2. `verify.sage.py` reads `witness.json`, computes the exact data in memory,
+   and asserts all proof-facing equations.
+3. `verification-summary.json` records the passing exact checks.
 
 ## Fallback Branches
 

@@ -4,7 +4,7 @@
 # dependencies = ["matplotlib", "numpy"]
 # ///
 
-"""Plot recovered HKO witness trajectories in the q- and p-planes."""
+"""Plot one HKO witness-entry trajectory in the q- and p-planes."""
 
 from __future__ import annotations
 
@@ -25,7 +25,7 @@ from figure_config import DPI, FIGSIZE_DUAL, FONT_SIZE_SMALL, setup  # noqa: E40
 WITNESS_PATH = (
     REPO_ROOT
     / "experiments/hko-local-maximum/theorem/feasible-section-certificate/"
-    / "feasible-section-witness.json"
+    / "witness.json"
 )
 PNG_PATH = SCRIPT_DIR / "hko-row0-trajectory-projections.png"
 
@@ -33,15 +33,6 @@ PATH_COLOR = "#1f5aa6"
 FIXED_COLOR = "#d55e00"
 PENTAGON_COLOR = "#666666"
 POINT_COLOR = "#202020"
-
-
-def power_basis_value(coefficients: list[dict[str, int]], t: float) -> float:
-    value = 0.0
-    power = 1.0
-    for entry in coefficients:
-        value += (entry["num"] / entry["den"]) * power
-        power *= t
-    return value
 
 
 def hko_dual_vertices() -> np.ndarray:
@@ -185,23 +176,22 @@ def draw_panel(
         spine.set_visible(False)
 
 
-def row_breakpoints(row: dict, duals: np.ndarray, t: float) -> np.ndarray:
+def row_breakpoints(row: dict, duals: np.ndarray) -> np.ndarray:
     sigma = list(row["sigma"])
-    beta = np.array([power_basis_value(entry, t) for entry in row["beta0_power_basis"]])
-    action = power_basis_value(row["action_power_basis"], t)
+    beta = np.array(row["beta_f64"], dtype=float)
+    action = float(row["action_f64"])
     return recover_breakpoints(duals, sigma, beta, action)
 
 
 def main() -> None:
     setup()
-    t = math.tan(math.pi / 5)
     with WITNESS_PATH.open() as handle:
-        row = json.load(handle)["rows"][0]
+        row = json.load(handle)["entries"][0]
 
     sigma = list(row["sigma"])
     fixed_indices = list(row["fixed_beta_indices"])
     duals = hko_dual_vertices()
-    breakpoints = row_breakpoints(row, duals, t)
+    breakpoints = row_breakpoints(row, duals)
     q_pentagon = polygon_vertices_from_facets(duals[:5, :2])
     p_pentagon = polygon_vertices_from_facets(duals[5:, 2:])
 

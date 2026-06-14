@@ -14,7 +14,7 @@ Use it before reading deeper notes or experiment folders.
 - Topic research note and interpretation: `research/hko-local-maximum.md`
 - Current proof-control packet:
   `research/hko-local-maximum-proof-control-packet.md`
-- Exact theorem route details: `research/hko-local-maximum-exact-witness.md`
+- Historical exact-route details: `research/hko-local-maximum-exact-witness.md`
 - Current proof-route checkpoint:
   `research/hko-local-maximum-proof-route-note.md`
 - Current experiment layout: `experiments/hko-local-maximum/README.md`
@@ -49,11 +49,12 @@ Use it before reading deeper notes or experiment folders.
   Packet 1 is closed, and the feasible-section Packet 2/3 route now has a
   passing exact Sage certificate in
   `experiments/hko-local-maximum/theorem/feasible-section-certificate/`.
-- Current exact witness status:
-  the older widened representative-row witness is partial. The current
-  theorem-facing witness is the feasible-section certificate: 26 exact rows,
-  exact row rank `25`, exact symmetry rank `15`, positive lambdas, and exact
-  lambda-weighted row sum `0`.
+- Current exact certificate status:
+  the older widened representative route is partial historical/fallback
+  material. The current theorem-facing certificate is the feasible-section
+  certificate: 26 exact derivative covectors, exact covector rank `25`, exact
+  symmetry rank `15`, positive lambdas, and exact lambda-weighted covector sum
+  `0`.
 - Current proof-route checkpoint:
   `research/hko-local-maximum-proof-route-note.md` records the 2026-06-03
   one-sided selected-branch certificate idea, the `150`-row f64 diagnostic, and

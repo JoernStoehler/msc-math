@@ -339,9 +339,13 @@ Defer:
 
 Status: active while HKO remains retained thesis spine.
 
-Reread before use: `research/hko-local-maximum*.md`, exact-witness artifacts,
-`tasks/current-state.md`, `thesis/hko-local-maximum.tex`, and any HKO claim in
-`thesis/abstract.tex`, `thesis/introduction.tex`, or `thesis/conclusion.tex`.
+Reread before use: `research/hko-local-maximum*.md`, the current
+`experiments/hko-local-maximum/theorem/feasible-section-certificate/` packet,
+HKO route-history notes, `tasks/current-state.md`,
+`thesis/hko-local-maximum.tex`, and any HKO claim in `thesis/abstract.tex`,
+`thesis/introduction.tex`, or `thesis/conclusion.tex`. Use
+`experiments/hko-local-maximum/theorem/exact-witness/` only for old-route
+fallback/provenance.
 
 Guidance:
 

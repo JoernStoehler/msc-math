@@ -5,7 +5,8 @@ work. It is not the current theorem certificate.
 
 The current theorem-facing certificate is
 `../feasible-section-certificate/`. That packet uses Rust only as a generator:
-Sage constructs and verifies the exact witness, and
+Sage reads `witness.json`, computes exact data internally, verifies the exact
+finite predicate, and
 `formal/hko-feasible-section-upper-branches.tex` records the mathematical
 implication from the verified finite certificate to the quotient-local theorem.
 

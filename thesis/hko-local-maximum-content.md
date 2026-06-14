@@ -38,13 +38,11 @@ The HKO thesis-facing result is a packet, not only one theorem statement.
    `thesis/hko-local-maximum.tex`.
 
 3. Exact certificate:
-   Code generates a witness, Sage verifies it, and the mathematical writeup
-   proves that the verified witness implies the theorem target.
+   Rust writes finite verifier input; SageMath computes exact algebraic data
+   internally and checks the exact finite certificate predicate; the
+   mathematical writeup proves that the checked predicate implies the theorem
+   target.
    Source pointers: `FACTSHEET.md` items 20--22;
-   `research/hko-local-maximum-exact-witness.md`;
-   `experiments/hko-local-maximum/theorem/exact-witness/README.md`;
-   `experiments/hko-local-maximum/theorem/exact-witness/widened-representative-witness.json`;
-   `experiments/hko-local-maximum/theorem/exact-witness/widened-representative-witness-verification.json`;
    `experiments/hko-local-maximum/theorem/feasible-section-certificate/README.md`;
    `experiments/hko-local-maximum/theorem/feasible-section-certificate/verification-summary.json`.
 
@@ -136,9 +134,9 @@ The HKO non-writing work is currently split into four packets.
    The exact verifier checks 26 rows, exact row rank `25`, exact symmetry rank
    `15`, positive lambdas, and exact lambda-weighted row sum `0`.
 
-3. Sage construction and verification packet:
-   implemented by `construct_exact_witness.sage.py` and
-   `verify_feasible_section_witness.sage.py`.
+3. SageMath verification packet:
+   `verify.sage.py` reads `witness.json`, computes exact algebraic data
+   internally, and checks the exact finite certificate predicate.
 
 4. Thesis-writing companion finalization:
    this file now records the intended writing structure and review gate. After
@@ -183,8 +181,8 @@ section to exact-certificate status plus the named blocker.
 ## Thesis Material Beyond The Sage Script
 
 Purpose: prevent the HKO thesis section from becoming only a walkthrough of
-`verify_feasible_section_witness.sage.py`. The script verifies the finite
-predicate. The thesis still has to supply the mathematical setup, the
+`verify.sage.py`. That script checks the finite predicate. The thesis still
+has to supply the mathematical setup, the
 implication from the finite predicate to local maximality, and the scope
 control around the result.
 
@@ -304,7 +302,7 @@ Source pointers:
 
 What the thesis must explain:
 - Rust is only a generator of finite candidate choices;
-- Sage is trusted for exact construction and exact verification;
+- SageMath computes exact verifier data internally and checks the exact predicate;
 - the proof-facing certificate is the exception-based verifier result, not the
   search procedure;
 - the final finite predicate is: 26 selected feasible-section rows, exact
@@ -343,7 +341,7 @@ What the thesis should not do:
   equations.
 
 Source pointers:
-- `experiments/hko-local-maximum/theorem/feasible-section-certificate/verify_feasible_section_witness.sage.py`;
+- `experiments/hko-local-maximum/theorem/feasible-section-certificate/verify.sage.py`;
 - `formal/hko-feasible-section-upper-branches.tex`,
   `rem:hko-feasible-section-derivative-data`.
 
@@ -409,10 +407,10 @@ Core thesis content, not auxiliary assets:
    `lem:hko-transverse-symmetry-slice`.
 
 3. Trust-boundary text.
-   Purpose: say that Rust proposes finite candidate data, Sage verifies exact
-   equations/ranks/positivity in the chosen number field, and LaTeX proves the
-   implication. The theorem should not rely on Rust correctness or numerical
-   search correctness.
+   Purpose: say that Rust writes finite verifier input, SageMath computes exact
+   data internally and checks exact equations/ranks/positivity in the chosen
+   number field, and LaTeX proves the implication. The theorem should not rely
+   on Rust correctness or numerical search correctness.
    Source pointers:
    `FACTSHEET.md` items 20--22;
    `experiments/hko-local-maximum/theorem/feasible-section-certificate/README.md`,
@@ -527,11 +525,12 @@ Recommended auxiliary assets:
    - regenerate with `uv run --script thesis/working/plot_hko_row0_trajectory.py`;
    - PNG: `thesis/working/hko-row0-trajectory-projections.png`.
 
-   The plot uses witness row 0 with
+   The plot uses selected entry 0 with
    `sigma=[0,1,7,3,9,5]`, `I=[0,1,2,3,4]`, and fixed beta index `[5]`.
-   The script reads `feasible-section-witness.json`, recovers a geometric
-   representative from `(sigma,beta0,action)`, asserts closure/on-facet/inside
-   residuals, and draws the `q`- and `p`-plane projections side by side.
+   The script reads `witness.json`, recovers a geometric
+   representative from the f64 `(sigma,beta,action)` fields, asserts
+   closure/on-facet/inside residuals, and draws the `q`- and `p`-plane
+   projections side by side.
    The orange highlight marks the fixed-beta word index `j=5`.
 
    Thesis-use status: this is a candidate explanatory figure. It is not a
@@ -541,7 +540,7 @@ Recommended auxiliary assets:
    in the `q`- and `p`-planes.
 
    Done as a working candidate: pick one selected
-   `(sigma,I)` witness first, not all 26. Compute/read `beta0`, choose any
+   `(sigma,I)` entry first, not all 26. Compute/read `beta0`, choose any
    matching trajectory representative, and draw its projections in
    `R^2_q` and `R^2_p` side by side. The projected paths should show the
    usual alternating behavior: in one projection the point is constant while
@@ -596,7 +595,7 @@ Source pointers:
 - `experiments/hko-local-maximum/theorem/feasible-section-certificate/README.md`,
   "Trust Boundary", "Files", and "Current verifier summary";
 - `experiments/hko-local-maximum/theorem/feasible-section-certificate/verification-summary.json`;
-- `experiments/hko-local-maximum/theorem/feasible-section-certificate/verify_feasible_section_witness.sage.py`;
+- `experiments/hko-local-maximum/theorem/feasible-section-certificate/verify.sage.py`;
 - `research/hko-local-maximum-proof-route-note.md`, "Endpoint Rows And The
   Minimizing Family".
 
@@ -665,8 +664,10 @@ Current checked partial witness facts:
 - Current rows annihilate the 15 symmetry tangent directions.
 
 Source pointers:
+- `experiments/hko-local-maximum/theorem/feasible-section-certificate/README.md`.
+- `experiments/hko-local-maximum/theorem/feasible-section-certificate/verification-summary.json`.
 - `research/hko-local-maximum-exact-witness.md`, sections "Status",
-  "Scope Boundary", "Sage Note", and "Packet 2 Note".
+  "Scope Boundary", "Sage Note", and "Packet 2 Note", for older-route context.
 - `research/hko-local-maximum-proof-route-note.md`, especially the one-sided
   branch-certificate principle and candidate Sage decision problem.
 - `research/hko-local-maximum-proof-route-note.md`, sections

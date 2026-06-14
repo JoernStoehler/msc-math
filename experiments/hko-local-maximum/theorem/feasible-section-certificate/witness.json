@@ -1,19 +1,15 @@
 {
-  "candidate_role": "standalone finite row choices for exact Sage witness construction; diagnostic provenance is debug context only",
-  "candidate_version": 1,
   "certificate_goal": {
     "ambient_dimension": 40,
-    "proof_use": "candidate choices for exact Sage feasible-section witness construction; Rust is not trusted for theorem correctness",
+    "proof_use": "input for SageMath exact verification; Rust generation is not trusted for theorem correctness",
     "quotient_dimension": 25,
-    "selected_row_count": 26,
+    "selected_entry_count": 26,
     "symmetry_dimension": 15
   },
   "debug_source_diagnostic_path": "experiments/hko-local-maximum/theorem/active-branch-diagnostic/smoke-active-branch-diagnostic.json",
   "debug_source_diagnostic_version": 2,
   "debug_source_input_was_explicit": true,
-  "output_mode": "canonical",
-  "packet": "hko-feasible-section-certificate",
-  "rows": [
+  "entries": [
     {
       "action_f64": 3.4409548011779334,
       "beta_f64": [
@@ -2158,5 +2154,9 @@
       "source_feasible_section_row_index": 67,
       "source_kkt_singular_f64": true
     }
-  ]
+  ],
+  "output_mode": "canonical",
+  "packet": "hko-feasible-section-certificate",
+  "witness_role": "finite verifier input generated from the active-branch diagnostic; SageMath computes exact data and verifies it",
+  "witness_version": 1
 }

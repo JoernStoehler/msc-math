@@ -39,12 +39,11 @@ It combines the former topic note set while keeping experiment artifacts under
     segment family. This is not the current theorem-closing route.
   - The older representative-expansion route remains partial.
   - The current route is the selected feasible-section upper-branch
-    certificate. Rust exports a 26-row candidate; Sage constructs exact witness
-    values; the exception-based Sage verifier checks the exact finite decision
-    problem.
-  - Current exact verifier status: 26 rows, exact row rank `25`, exact symmetry
-    tangent rank `15`, positive exact lambdas summing to `1`, and exact
-    lambda-weighted row sum `0`.
+    certificate. Rust writes finite verifier input; SageMath computes exact
+    algebraic data internally and checks the exact finite certificate predicate.
+  - Current exact verifier status: 26 selected entries, exact covector rank
+    `25`, exact symmetry tangent rank `15`, positive exact lambdas summing to
+    `1`, and exact lambda-weighted covector sum `0`.
   - Sigma-word combinatorics are still: `50,400` raw, `6,240` directed-feasible,
     `717` valid KKT orbits, and `150` exact minima.
 - Numerical evidence track:
@@ -88,8 +87,8 @@ It combines the former topic note set while keeping experiment artifacts under
   `t = tan(pi/5)`, with minimal polynomial `t^4 - 10 t^2 + 5 = 0`.
 - Use dual coordinates `a_i` (description `K = {x : a_i * x <= 1}`) to avoid
   `(n,h)` gauge artifacts.
-- First-order witnesses must include exact active rows, row counts, ranks, kernel
-  basis, and symmetry inclusion/equality checks.
+- First-order certificates must include exact active derivative covectors,
+  counts, ranks, kernel basis, and symmetry inclusion/equality checks.
 - The reduced exact route is preferred; the raw `6,240` directed-feasible sigma
   route is valid but remains too slow in current tooling as a default.
 - The old `subdifferential-lp/phase_c_lp_test.py` route was deleted during the

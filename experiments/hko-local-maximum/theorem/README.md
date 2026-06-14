@@ -12,7 +12,7 @@ fallback material; it is not the current theorem certificate.
 
 | Path | Role |
 | --- | --- |
-| `feasible-section-certificate/` | Current theorem-facing feasible-section certificate. Rust exports candidate choices; Sage constructs and verifies exact witness propositions. |
+| `feasible-section-certificate/` | Current theorem-facing feasible-section certificate. Rust writes finite verifier input; SageMath computes exact data and checks the exact certificate predicate. |
 | `active-branch-diagnostic/` | Rust generator/provenance diagnostic for active rows, KKT singularity, feasible-section derivative rows, symmetry tangent directions, and numerical slice/cone checks. |
 | `row-bank-validation/` | Sage-backed validation surface for selected exact row-bank entries. This is not the final theorem verifier by itself. |
 | `route-history/` | Maintained summaries of the exact geometry, active-minima bookkeeping, and abandoned representative route facts that still matter for thesis understanding. |
@@ -26,7 +26,7 @@ fallback material; it is not the current theorem certificate.
 4. `feasible-section-certificate/README.md`
 5. `route-history/README.md` if the question is why the current route replaced
    the older exact representative route
-6. `active-branch-diagnostic/` if the question is candidate-generation
+6. `active-branch-diagnostic/` if the question is Rust generation
    provenance
 7. `row-bank-validation/`
 8. `exact-witness/README.md` only for raw old-route artifacts or fallback work
