@@ -339,9 +339,9 @@ Defer:
 
 Status: active while HKO remains retained thesis spine.
 
-Reread before use: `research/hko-local-maximum*.md`, the current
+Reread before use: `experiments/hko-local-maximum/README.md`, the current
 `experiments/hko-local-maximum/theorem/` packet,
-HKO route-history notes, `tasks/current-state.md`,
+`experiments/hko-local-maximum/notes.md`, `tasks/current-state.md`,
 `thesis/hko-local-maximum.tex`, and any HKO claim in `thesis/abstract.tex`,
 `thesis/introduction.tex`, or `thesis/conclusion.tex`.
 

@@ -24,7 +24,7 @@ path = "empirical/m11-ascent/main.rs"
 
 [[bin]]
 name = "hko-row-bank-validation"
-path = "history/row-bank-validation/main.rs"
+path = "row-bank-validation/main.rs"
 
 [[bin]]
 name = "hko-active-branch-diagnostic"

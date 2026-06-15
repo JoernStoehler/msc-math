@@ -4,7 +4,7 @@
 //! one-sigma calculations so Sage can recompute them independently and compare
 //! exact values.
 //! Input Artifacts: None (starts from the hardcoded exact HKO/control fixtures).
-//! Output Artifacts: experiments/hko-local-maximum/history/row-bank-validation/row-bank-validation-input.jsonl
+//! Output Artifacts: experiments/hko-local-maximum/row-bank-validation/row-bank-validation-input.jsonl
 //!
 //! Modes:
 //! 1. `cargo run -p exp-hko-local-maximum --release --bin hko-row-bank-validation`
@@ -81,7 +81,7 @@ impl CanonicalElement {
 }
 
 fn experiment_dir() -> PathBuf {
-    Path::new(env!("CARGO_MANIFEST_DIR")).join("history/row-bank-validation")
+    Path::new(env!("CARGO_MANIFEST_DIR")).join("row-bank-validation")
 }
 
 fn output_path(canonical: bool) -> PathBuf {
@@ -188,13 +188,13 @@ mod tests {
         assert_eq!(
             output_path(false),
             PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-                .join("history/row-bank-validation")
+                .join("row-bank-validation")
                 .join("smoke-row-bank-validation-input.jsonl")
         );
         assert_eq!(
             output_path(true),
             PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-                .join("history/row-bank-validation")
+                .join("row-bank-validation")
                 .join("row-bank-validation-input.jsonl")
         );
     }
@@ -203,7 +203,7 @@ mod tests {
     fn experiment_dir_is_manifest_relative() {
         assert_eq!(
             experiment_dir(),
-            Path::new(env!("CARGO_MANIFEST_DIR")).join("history/row-bank-validation")
+            Path::new(env!("CARGO_MANIFEST_DIR")).join("row-bank-validation")
         );
     }
 

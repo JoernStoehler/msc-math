@@ -1,8 +1,8 @@
 """
 Goal: independently recompute the selected exact-bank rows in SageMath and
 compare them against the Rust exact export.
-Input Artifacts: experiments/hko-local-maximum/history/row-bank-validation/row-bank-validation-input.jsonl
-Output Artifacts: experiments/hko-local-maximum/history/row-bank-validation/row-bank-validation-report.jsonl
+Input Artifacts: experiments/hko-local-maximum/row-bank-validation/row-bank-validation-input.jsonl
+Output Artifacts: experiments/hko-local-maximum/row-bank-validation/row-bank-validation-report.jsonl
 """
 
 from __future__ import annotations

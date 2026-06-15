@@ -50,9 +50,9 @@ source files.
   decisions overrule it.
 
 - HKO local maximality is thesis spine.
-  Source truth: `research/hko-local-maximum*.md`, the current
-  `experiments/hko-local-maximum/theorem/`
-  packet, HKO route-history notes, and related formal/thesis files.
+  Source truth: `experiments/hko-local-maximum/README.md`, the current
+  `experiments/hko-local-maximum/theorem/` packet,
+  `experiments/hko-local-maximum/notes.md`, and related formal/thesis files.
   Current state: the exact feasible-section theorem certificate is merged and
   verifies in Sage; the formal implication has been agent-line-checked. Jörn
   quick-reviewed the rebuilt PDF on 2026-06-05 and spotted no gaps; he judged

@@ -3,7 +3,25 @@
 This topic directory separates theorem-facing certificate work from empirical
 support checks for the HKO2024 local-maximum result packet.
 
-Start with `research/hko-local-maximum-status.md` before reading subfolders.
+Start here before reading subfolders. This README gives the common context for
+the HKO slice; `notes.md` is optional technical background.
+
+## Current Status
+
+The current theorem-facing route is the feasible-section certificate in
+`theorem/`, together with the mathematical implication in
+`formal/hko-feasible-section-upper-branches.tex`.
+
+The exact Sage verifier checks 26 feasible-section rows, exact row rank `25`,
+exact symmetry tangent rank `15`, positive exact lambdas summing to `1`, and an
+exact lambda-weighted row sum of `0`. Rust selects finite verifier input only;
+Sage reconstructs and verifies the exact algebraic objects.
+
+The formal implication has been agent-line-checked against the verifier
+propositions. Jörn quick-reviewed the rebuilt formal PDF on 2026-06-05 and
+spotted no gaps. Final thesis theorem wording still needs the final wording/Kai
+review gate. The empirical folders are support and sanity checks, not proof
+substitutes.
 
 ## Result Strands
 
@@ -13,7 +31,8 @@ Start with `research/hko-local-maximum-status.md` before reading subfolders.
 | Smooth-only rank defect | `smooth-only-rank-defect/` | f64 diagnostic summary: nonsingular positive-beta branches have rank `23` in the `25`-dimensional quotient. |
 | Empirical sampling | `empirical/` | Numerical and sampling evidence that supports or illustrates the local-maximum picture but is not the final proof. |
 | Assets | `assets/` | Explanatory figure scripts and images. These are not theorem evidence. |
-| History | `history/` | Older exact route material, route-history notes, and non-current exact checks. |
+| Row-bank validation | `row-bank-validation/` | Rust/Sage validation of selected exact-bank rows. This is validation machinery, not theorem proof. |
+| Local notes | `notes.md` | Optional technical breadcrumbs for route choice and thesis explanation. |
 | Shared Rust helpers | `src/` | Topic-local code shared by theorem and empirical binaries. |
 
 Generated JSON/JSONL/figure artifacts stay beside the producer or sampler that
@@ -31,21 +50,19 @@ experiments/hko-local-maximum/
 |   |-- witness.json
 |   `-- verification-summary.json
 |-- smooth-only-rank-defect/
+|-- row-bank-validation/
 |-- assets/
-|-- history/
-|   |-- row-bank-validation/
-|   `-- *.md
 |-- empirical/
 |   |-- first-order/
 |   |-- second-order/
 |   |-- m11-ascent/
 |   `-- neighborhood-sampling/
+|-- notes.md
 `-- src/
 ```
 
-The old inactive `subdifferential-lp/` route was deleted in the layout
-migration. Git history is the archive for that broken `(n,h)` Phase C attempt;
-`empirical/second-order/` records why it was replaced.
+Older inactive routes and deleted exact-route scripts live only in git history
+unless `notes.md` points to a live consequence.
 
 ## Rust Command Contract
 
@@ -71,7 +88,7 @@ migration. Git history is the archive for that broken `(n,h)` Phase C attempt;
   `empirical/m11-ascent/m11-ascent-smoke.jsonl`; full mode appends to
   `empirical/m11-ascent/m11-ascent.jsonl` unless `--fresh` is given.
 - `hko-row-bank-validation` defaults to smoke input. Use `--canonical` only
-  when refreshing `history/row-bank-validation/row-bank-validation-input.jsonl`.
+  when refreshing `row-bank-validation/row-bank-validation-input.jsonl`.
 - `hko-active-branch-diagnostic` writes an ignored smoke JSON by default and
   exact-checks no branches unless `--exact-limit N` or `--all-exact` is passed.
   Use `--canonical` only when intentionally refreshing a theorem-facing
@@ -96,25 +113,23 @@ migration. Git history is the archive for that broken `(n,h)` Phase C attempt;
 
 ## Fast Reading Order
 
-1. `research/hko-local-maximum-status.md`
-2. `research/hko-local-maximum.md`
-3. `research/hko-local-maximum-proof-control-packet.md` if the question is
-   what to do next for the theorem route
-4. `theorem/README.md` if the question is what currently verifies the
+1. This `README.md`
+2. `theorem/README.md` if the question is what currently verifies the
    theorem-facing finite certificate
-5. `smooth-only-rank-defect/` if the question is why the smooth
+3. `smooth-only-rank-defect/` if the question is why the smooth
    nonsingular positive-beta branch attempt did not close
+4. `notes.md` if the question is why the feasible-section route replaced older
+   routes or why singular rows appear
+5. `row-bank-validation/` if the question is about exact-bank cross-checks
 6. `assets/` if the question is about explanatory figures
-7. `research/hko-local-maximum-proof-route-note.md` or `history/`
-   if the question is why the feasible-section route replaced older routes
-8. `empirical/README.md` if the question is about supporting evidence
+7. `empirical/README.md` if the question is about supporting evidence
 
 ## Rule Of Thumb
 
 If a question is "what proves the theorem?", start in `theorem/`.
 
 If a question is "what evidence supports the local-maximality story?", read
-`empirical/` after the status note.
+`empirical/` after this README.
 
 If a question is "what figure can illustrate the HKO local picture?", read
 `assets/`.

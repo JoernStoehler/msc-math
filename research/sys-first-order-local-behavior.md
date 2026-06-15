@@ -200,8 +200,8 @@ Current HKO evidence has many active orbits, symmetry quotients, a smooth-only
 rank defect, and singular positive-beta rows handled by feasible sections. The
 formal HKO second-order route uses a
 smooth/min-envelope argument that the task progress files already reject as a
-substitute for arbitrary closed-value behavior. The HKO route-history notes
-also record that the current diagnostic has 150 active rows, split into 44
+substitute for arbitrary closed-value behavior. The HKO local notes record that
+the current diagnostic has 150 active rows, split into 44
 nonsingular and 106 singular rows, so the active surface is not a single smooth
 branch.
 

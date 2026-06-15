@@ -5,9 +5,9 @@ Status: thesis-local content-gathering notes, not source truth.
 Purpose: gather the HKO result packet, source pointers, evidence status, and
 remaining review gates needed to draft `thesis/hko-local-maximum.tex`.
 
-Overruled by: `FACTSHEET.md`, `research/hko-local-maximum*.md`, exact
-artifacts in `experiments/hko-local-maximum/`, formal proof files, task files,
-and Jörn/Kai review.
+Overruled by: `FACTSHEET.md`, exact artifacts and local documentation in
+`experiments/hko-local-maximum/`, formal proof files, task files, and Jörn/Kai
+review.
 
 Lifecycle: keep while the HKO thesis section is being assembled. After the
 section is stable, either delete this file or reduce it to a short maintenance
@@ -23,7 +23,7 @@ The HKO thesis-facing result is a packet, not only one theorem statement.
 1. Known result:
    HKO2024 is a counterexample with `sys > 1`.
    Source pointers: `FACTSHEET.md` item 8.1; `thesis/bibliography.bib`;
-   `research/hko-local-maximum-status.md`.
+   `experiments/hko-local-maximum/README.md`.
 
 2. Main theorem target:
    HKO is locally maximal in the ten-facet model modulo translations, scaling,
@@ -32,8 +32,8 @@ The HKO thesis-facing result is a packet, not only one theorem statement.
    the exact certificate on 2026-06-05 and spotted no gaps. The 2026-06-05
    clarity repairs made the local chart hypotheses, the volume-row arithmetic,
    and the local symmetry group/dimension explicit.
-   Source pointers: `research/hko-local-maximum-status.md`;
-   `research/hko-local-maximum.md`;
+   Source pointers: `experiments/hko-local-maximum/README.md`;
+   `experiments/hko-local-maximum/theorem/README.md`;
    `tasks/references/central-claim-control-packet-2026-06-01.md`;
    `thesis/hko-local-maximum.tex`.
 
@@ -48,8 +48,8 @@ The HKO thesis-facing result is a packet, not only one theorem statement.
 
 4. Empirical confirmation:
    Numerical and perturbative checks support the local-maximum picture.
-   Source pointers: `research/hko-local-maximum.md`;
-   `experiments/hko-local-maximum/README.md`;
+   Source pointers: `experiments/hko-local-maximum/README.md`;
+   `experiments/hko-local-maximum/empirical/README.md`;
    `experiments/hko-local-maximum/empirical/first-order/`;
    `experiments/hko-local-maximum/empirical/second-order/`;
    `experiments/hko-local-maximum/empirical/neighborhood-sampling/m10/`;
@@ -60,8 +60,8 @@ The HKO thesis-facing result is a packet, not only one theorem statement.
 5. Broader conjectural interpretation:
    HKO appears locally stable beyond the exact theorem model, but this broader
    interpretation is not proved by the current theorem target.
-   Source pointers: `research/hko-local-maximum-status.md`;
-   `research/hko-local-maximum.md`;
+   Source pointers: `experiments/hko-local-maximum/README.md`;
+   `experiments/hko-local-maximum/empirical/README.md`;
    `CAPABILITY_CLAIM_MAP.md` HKO local-maximum evidence-route row.
 
 6. Search/context result:
@@ -94,8 +94,8 @@ components with different claim strengths.
 - Define the chained computational steps/subroutines that decide the problem.
 - Prove each step correct as it is introduced.
 - Mention early that the exact field is `Q[tan(pi/5)] = Q[t]/p(t)` and give
-  the polynomial `p(t)`. SageMath may use `QQbar`; that is acceptable because
-  performance is not the bottleneck here.
+  the polynomial `p(t)`. The verifier uses the small ordered number field
+  rather than generic `QQbar`.
 - Include selected Sage/Python snippets where they make the computation more
   checkable or concrete.
 - Include selected printed data snippets where they help sanity-check the
@@ -124,10 +124,9 @@ components with different claim strengths.
 
 The HKO non-writing work is currently split into four packets.
 
-1. Proof-control packet:
-   `research/hko-local-maximum-proof-control-packet.md`.
-   This packet is current and records what the next proof work must prove or
-   check. It is not final thesis-writing material.
+1. Local HKO entrypoint:
+   `experiments/hko-local-maximum/README.md`.
+   This is the current common-context surface for the HKO slice.
 
 2. Feasible-section packet:
    implemented by `theorem/`.
@@ -218,9 +217,8 @@ Source pointers:
 - `formal/hko-feasible-section-upper-branches.tex`,
   `lem:hko-capacity-normalization` and
   `lem:hko-full-chart-volume-row`;
-- `research/hko-local-maximum-status.md`, "Current Repo Claim";
-- `research/hko-local-maximum-proof-control-packet.md`, "Theorem Target For
-  Review".
+- `experiments/hko-local-maximum/README.md`, "Current Status";
+- `experiments/hko-local-maximum/theorem/README.md`, "Theorem Target".
 
 ### 2. The quotient and slice
 
@@ -244,7 +242,7 @@ Source pointers:
   `lem:hko-transverse-symmetry-slice`, and
   `cor:hko-feasible-branch-quotient-template`;
 - `experiments/hko-local-maximum/theorem/README.md`,
-  "Current verifier summary".
+  "Verifier Predicate" and "Current Pipeline".
 
 ### 3. Why selected upper branches suffice
 
@@ -266,9 +264,9 @@ Source pointers:
   `lem:hko-feasible-section-upper-branch`,
   `lem:hko-positive-convex-certificate-margin`, and
   `prop:hko-feasible-branch-slice-local-max`;
-- `research/hko-local-maximum-proof-route-note.md`, "One-Sided
-  Branch-Certificate Principle" and "Convex-Hull Criterion On The Slice";
-- `research/hko-local-maximum-proof-control-packet.md`, "Proof Tree".
+- `experiments/hko-local-maximum/notes.md`, "Selected Upper Branches";
+- `formal/hko-feasible-section-upper-branches.tex`,
+  `lem:hko-positive-convex-certificate-margin`.
 
 ### 4. Why singular rows appear, and why they are legitimate
 
@@ -292,11 +290,9 @@ Source pointers:
 - `formal/hko-feasible-section-upper-branches.tex`,
   `lem:hko-feasible-section-upper-branch` and
   `rem:hko-feasible-section-derivative-data`;
-- `research/hko-local-maximum-proof-route-note.md`, "Singular-KKT
-  Obstruction", "Endpoint Rows And The Minimizing Family", and "Padded-Endpoint
-  Alternative";
-- `research/hko-local-maximum-proof-control-packet.md`, "Feasible-Section
-  Packet".
+- `experiments/hko-local-maximum/notes.md`, "Why Singular Rows Enter" and
+  "Endpoint Rows And The HKO Minimizing Family";
+- `experiments/hko-local-maximum/smooth-only-rank-defect/summary.json`.
 
 ### 5. What the exact certificate statement should say
 
@@ -317,10 +313,9 @@ Why this is not just script explanation:
 
 Source pointers:
 - `experiments/hko-local-maximum/theorem/README.md`,
-  "Trust Boundary" and "Current verifier summary";
+  "Architecture", "Verifier Predicate", and "Current Pipeline";
 - `experiments/hko-local-maximum/theorem/verification-summary.json`;
-- `research/hko-local-maximum-proof-control-packet.md`, "Sage Construction
-  And Verification Packet".
+- `formal/hko-feasible-section-upper-branches.tex`.
 
 ### 6. What to include from the verifier script
 
@@ -359,7 +354,7 @@ What the thesis must not claim:
 
 Source pointers:
 - `experiments/hko-local-maximum/README.md`, "Result Strands";
-- `research/hko-local-maximum.md`, "Supporting Evidence";
+- `experiments/hko-local-maximum/empirical/README.md`;
 - `research/sys-landscape-toolbox-audit.md`, HKO-local perturbation row.
 
 ### 8. Core content and auxiliary asset decisions
@@ -414,17 +409,16 @@ Core thesis content, not auxiliary assets:
    Source pointers:
    `FACTSHEET.md` items 20--22;
    `experiments/hko-local-maximum/theorem/README.md`,
-   "Trust Boundary".
+   "Architecture".
 
 4. Singular-row explanation.
    Purpose: explain why the witness uses singular positive-beta seven-facet
    rows and why this is legitimate. The proof differentiates explicit feasible
    beta sections, not nearby optimizing KKT branches.
    Source pointers:
-   `research/hko-local-maximum-proof-route-note.md`, "Singular-KKT
-   Obstruction" and "Endpoint Rows And The Minimizing Family";
-   `research/hko-local-maximum-proof-control-packet.md`, "Feasible-Section
-   Packet"; `formal/hko-feasible-section-upper-branches.tex`,
+   `experiments/hko-local-maximum/notes.md`, "Why Singular Rows Enter" and
+   "Endpoint Rows And The HKO Minimizing Family";
+   `formal/hko-feasible-section-upper-branches.tex`,
    `lem:hko-feasible-section-upper-branch`.
 
 Recommended auxiliary assets:
@@ -593,10 +587,10 @@ Rejected or non-assets for thesis purposes:
 
 Source pointers:
 - `experiments/hko-local-maximum/theorem/README.md`,
-  "Trust Boundary", "Files", and "Current verifier summary";
+  "Architecture", "Files", and "Current Pipeline";
 - `experiments/hko-local-maximum/theorem/verification-summary.json`;
 - `experiments/hko-local-maximum/theorem/verify.sage.py`;
-- `research/hko-local-maximum-proof-route-note.md`, "Endpoint Rows And The
+- `experiments/hko-local-maximum/notes.md`, "Endpoint Rows And The HKO
   Minimizing Family".
 
 ### 9. Forbidden thesis claims
@@ -629,17 +623,14 @@ Status:
   the ten-facet feasible-section certificate now verifies exactly in Sage.
 
 Source pointers:
-- `research/hko-local-maximum-status.md`, sections "Current Repo Claim" and
-  "Current Proof Route".
-- `research/hko-local-maximum.md`, sections "Current State", "Decisions", and
-  "Next Steps".
-- `research/hko-local-maximum-proof-control-packet.md` for the current
-  theorem target, proof tree, sufficient Sage decision problem,
-  feasible-section route, and stop conditions.
+- `experiments/hko-local-maximum/README.md` for current status, folder roles,
+  and the final theorem-wording gate.
+- `experiments/hko-local-maximum/theorem/README.md` for the current theorem
+  target, verifier predicate, feasible-section route, and Rust/Sage boundary.
 - `formal/hko-feasible-section-upper-branches.tex` for the current PDF-review
   draft of the feasible-section upper-branch lemmas.
-- `research/hko-local-maximum-proof-route-note.md` for the 2026-06-03
-  selected-branch proof checkpoint and singular-KKT obstruction.
+- `experiments/hko-local-maximum/notes.md` for selected-branch and singular-row
+  breadcrumbs.
 - `tasks/current-state.md`, HKO local maximality row.
 
 Missing:
@@ -657,13 +648,8 @@ Source pointers:
 - `experiments/hko-local-maximum/theorem/README.md`.
 - `experiments/hko-local-maximum/theorem/verification-summary.json`.
 - `experiments/hko-local-maximum/smooth-only-rank-defect/summary.json`.
-- `experiments/hko-local-maximum/history/`, for route-history context.
-- `research/hko-local-maximum-proof-route-note.md`, especially the one-sided
-  branch-certificate principle and candidate Sage decision problem.
-- `research/hko-local-maximum-proof-route-note.md`, sections
-  "Singular-KKT Obstruction" and "Padded-Endpoint Alternative", for the
-  thesis-facing reason why the witness has to use singular positive-beta
-  seven-facet branches.
+- `experiments/hko-local-maximum/notes.md`, especially "Selected Upper
+  Branches" and "Why Singular Rows Enter".
 
 Current checked theorem-facing facts:
 - 26 exact feasible-section rows.
@@ -701,8 +687,8 @@ Status:
   falsification/neighborhood checks.
 
 Source pointers:
-- `research/hko-local-maximum.md`, "Current State" and "Supporting Evidence".
 - `experiments/hko-local-maximum/README.md`, "Result Strands".
+- `experiments/hko-local-maximum/empirical/README.md`.
 - `formal/hko-local-maximality-conditions.tex` for older second-order formal
   support and caveats.
 
@@ -720,8 +706,8 @@ Status:
   classification.
 
 Source pointers:
-- `research/hko-local-maximum-status.md`, "Current Repo Claim".
-- `research/hko-local-maximum.md`, "Evidence And Interpretation".
+- `experiments/hko-local-maximum/README.md`, "Current Status".
+- `experiments/hko-local-maximum/empirical/README.md`.
 - `CAPABILITY_CLAIM_MAP.md`, HKO local-maximum evidence-route row.
 
 Missing:
@@ -752,8 +738,8 @@ Missing:
    The intended wording is local maximality in the ten-facet model modulo
    translations, scaling, and linear symplectic maps. Broad HKO local
    maximality should remain conjectural unless separately proved.
-   Source pointers: `research/hko-local-maximum-status.md`;
-   `research/hko-local-maximum-proof-control-packet.md`.
+   Source pointers: `experiments/hko-local-maximum/README.md`;
+   `experiments/hko-local-maximum/theorem/README.md`.
 
 2. Refresh this thesis companion into a final writing plan after Kai theorem
    review.
@@ -761,8 +747,8 @@ Missing:
    `experiments/hko-local-maximum/theorem/README.md`.
 
 3. Decide empirical-support inclusion.
-   Source pointers: `research/hko-local-maximum.md`;
-   `experiments/hko-local-maximum/README.md`.
+   Source pointers: `experiments/hko-local-maximum/README.md`;
+   `experiments/hko-local-maximum/empirical/README.md`.
 
 4. Get required Kai review for theorem-strength wording.
    Source pointers: `tasks/definition-of-success.md`;
@@ -784,9 +770,8 @@ If the formal implication has a real gap:
 - State broader local stability as conjectural.
 
 If exact work changes theorem wording:
-- Refresh this file from `research/hko-local-maximum-status.md`,
-  `research/hko-local-maximum.md`, exact artifacts, and task files before
-  drafting final thesis prose.
+- Refresh this file from `experiments/hko-local-maximum/`, exact artifacts,
+  formal proof files, and task files before drafting final thesis prose.
 
 ## Review Gates
 

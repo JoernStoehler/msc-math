@@ -120,7 +120,7 @@ experiments, thesis sections, or later cleanup decisions may care about.
 | `geom/polar-and-incidence` | Exact polar vertices, vertex-facet incidence, faces, and facet-intersection data. | `crates/euclidean-polytopes/`, `crates/symplectic/src/geom/vertex_enumeration/` | Geometry source for QP pruning, volume, and validation surfaces. |
 | `data/polytope-records` | Reusable JSONL polytope/capacity/orbit record helpers. | `crates/symplectic/src/database.rs`, `crates/symplectic/src/dataset.rs` | Callers choose cache paths; no repo-wide canonical catalog is implied here. |
 | `data/sys-datascience-tables` | Maintained hostile-search producer caches and retained flat tables. | `experiments/sys-datascience/produce/`, `experiments/sys-datascience/tables/` | Method-local algorithms consume these via `experiments/sys-datascience/methods/`. |
-| `HKO/symmetry-quotient-certificate` | HKO theorem-local symmetry, quotient, and feasible-section certificate machinery. | `experiments/hko-local-maximum/theorem/`, `research/hko-local-maximum*.md`, `formal/hko-feasible-section-upper-branches.tex` | HKO-specific; not a generic symmetry-action library unless later promoted. |
+| `HKO/symmetry-quotient-certificate` | HKO theorem-local symmetry, quotient, and feasible-section certificate machinery. | `experiments/hko-local-maximum/theorem/`, `experiments/hko-local-maximum/notes.md`, `formal/hko-feasible-section-upper-branches.tex` | HKO-specific; not a generic symmetry-action library unless later promoted. |
 
 ## Lenses And Homes
 
@@ -159,7 +159,7 @@ on whether the owner is method development or retained-dataset analysis.
 
 | Area | Current role | Related task/research surfaces |
 | --- | --- | --- |
-| `experiments/hko-local-maximum/` | HKO local-maximality experiments: theorem certificate tooling under `theorem/`, empirical support checks under `empirical/`, and shared topic helpers under `src/` | `tasks/current-state.md`, `tasks/planning-notes.md`, `research/hko-local-maximum*.md`, `experiments/hko-local-maximum/README.md` |
+| `experiments/hko-local-maximum/` | HKO local-maximality experiments: theorem certificate tooling under `theorem/`, empirical support checks under `empirical/`, local notes, and shared topic helpers under `src/` | `tasks/current-state.md`, `tasks/planning-notes.md`, `experiments/hko-local-maximum/README.md` |
 | `experiments/algorithm-comparison/` | README-only routing and reasoning note for cross-algorithm comparisons; no active commands or evidence artifacts | `experiments/algorithm-comparison/README.md`, `experiments/dev-quadratic-program/README.md`, `experiments/performance/README.md`, `experiments/numerics/README.md`, `experiments/verification/README.md` |
 | `experiments/dev-quadratic-program/` | README-only coordination packet for QP/HK2017 library-surface and cleanup questions before code or evidence has a better home | `experiments/dev-quadratic-program/README.md`, `experiments/MAP.md` section `Algorithm Units`, `crates/symplectic/src/algorithms/hk2017/`, `crates/symplectic/src/algorithms/orbit_search.rs` |
 | `experiments/dev-gradient-ascent/` | active top-level development packet for a heuristic gradient-ascent method for nonsmooth high-dimensional `sys(a)`; owns question ledger, schema-smoke artifacts, and future method-development probes before promotion | `experiments/dev-gradient-ascent/README.md`, `experiments/sys-datascience/README.md`, `research/sys-first-order-local-behavior.md` |

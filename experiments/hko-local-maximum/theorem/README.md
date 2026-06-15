@@ -27,6 +27,18 @@ reconstructs the HKO source objects and verifies them over the ordered number
 field `Q(t)`, where `t` is the unique real root of
 `t^4 - 10 t^2 + 5` in `(0,1)`, equivalently `t = tan(pi/5)`.
 
+## Theorem Target
+
+The intended theorem target is local maximality of HKO2024 in the ten-facet
+dual-vertex chart, modulo translations, scaling, and the identity-component
+linear symplectic action. It is not raw strict local maximality in ambient
+`R^40`, and it is not a broad all-facet-count local maximality theorem.
+
+The selected-row proof route is one-sided. It proves enough selected feasible
+upper branches to force strict negative first-order change in every nonzero
+quotient-slice direction. It does not require a complete catalogue of all
+nearby HK2017 branches.
+
 ## Verifier Predicate
 
 `verify.sage.py` reconstructs the HKO source objects from definitions, reads
@@ -44,6 +56,11 @@ field `Q(t)`, where `t` is the unique real root of
 
 The verifier uses explicit exceptions, not Python `assert`, so the checks are
 not stripped by optimized Python mode.
+
+The feasible-section rows, including the singular seven-facet rows, are checked
+as explicit feasible upper branches. The certificate does not justify singular
+rows as nearby optimizing KKT branches and does not trust f64 KKT-derived
+gradients for theorem correctness.
 
 ## Files
 

@@ -1,114 +1,19 @@
 # HKO Local Maximum Research Note
 
-Status entrypoint:
-`research/hko-local-maximum-status.md` is the fastest summary of current claim
-strength, proof-route status, and authoritative surfaces.
+Status: legacy redirect. HKO-local research content has been redistributed to
+local HKO surfaces under `experiments/hko-local-maximum/`.
 
-Current proof-route checkpoint:
-`research/hko-local-maximum-proof-route-note.md` preserves the 2026-06-03
-selected-branch certificate idea, current `150`-row f64 diagnostic evidence,
-and the singular-KKT obstruction.
+Use these files instead:
 
-Current proof-control packet:
-`research/hko-local-maximum-proof-control-packet.md` is the Packet 1 control
-surface for the next HKO work. It records the theorem target, sufficient Sage
-decision problem, proof tree, feasible-section row target, verifier boundary,
-contingency wording, and review questions.
+- `experiments/hko-local-maximum/README.md` for current status, folder roles,
+  and reading order.
+- `experiments/hko-local-maximum/theorem/README.md` for the theorem target,
+  verifier predicate, exact-field contract, and Rust/Sage boundary.
+- `experiments/hko-local-maximum/notes.md` for optional route-choice and
+  thesis-explanation breadcrumbs.
+- `experiments/hko-local-maximum/empirical/README.md` for supporting empirical
+  evidence.
+- `thesis/hko-local-maximum-content.md` and task files for thesis wording and
+  final review gates.
 
-Current theorem certificate:
-`experiments/hko-local-maximum/theorem/` contains
-the exact feasible-section certificate generated on 2026-06-04. The verifier
-checks 26 rows, exact row rank `25`, exact symmetry rank `15`, positive
-lambdas, and exact lambda-weighted row sum `0`.
-
-## Scope
-
-This note is the consolidated research-facing record for `hko-local-maximum`.
-It combines the former topic note set while keeping experiment artifacts under
-`experiments/hko-local-maximum/`.
-
-## Current State
-
-- Exact-first route:
-  - The current feasible-section verifier reconstructs the exact HKO geometry,
-    volume row, and rank-15 symmetry tangent setup.
-  - Older endpoint/segment and representative-expansion routes are historical
-    context only. Their runnable artifacts were deleted from the live tree.
-  - The current route is the selected feasible-section upper-branch
-    certificate. Rust writes finite verifier input; SageMath computes exact
-    algebraic data internally and checks the exact finite certificate predicate.
-  - Current exact verifier status: 26 selected entries, exact covector rank
-    `25`, exact symmetry tangent rank `15`, positive exact lambdas summing to
-    `1`, and exact lambda-weighted covector sum `0`.
-- Numerical evidence track:
-  - `empirical/first-order/` has baseline sensitivity and exact-certification bank,
-    with `hko-neighborhood-sensitivity.jsonl` and
-    `hko-neighborhood-ascent.jsonl` showing flat first-order behavior at HKO.
-  - `empirical/second-order/` gives fixed-`F=10` support: `rank(G)=25`,
-    `dim ker(G)=15`, and negative curvature in all flat directions.
-  - `empirical/neighborhood-sampling/m11/` and `empirical/m11-ascent/` found no
-    `sys` increase over HKO on committed runs.
-  - `empirical/neighborhood-sampling/m10-lagrangian-product/` reports an
-    anisotropic compact local `sys > 1` region (median per-component radius
-    near `0.035`, strong decay by `eps ~= 0.15`).
-  - `empirical/neighborhood-sampling/m10/` keeps historical
-    `pentagon-perturb.jsonl` as background context while the current pipeline
-    uses smoke/LICCA buckets.
-  - `history/row-bank-validation/` validates the exact row bank against Sage,
-    but is not a full theorem certificate.
-
-## Evidence And Interpretation
-
-- Current code and artifacts strongly support a strict local-maximum hypothesis for
-  HKO in tested finite and smooth neighborhoods.
-- The exact finite certificate for the feasible-section route is now closed at
-  the Sage-verifier level.
-- The formal implication from the verifier propositions to the quotient-local
-  maximum theorem has been agent-line-checked. Jörn quick-reviewed the rebuilt
-  PDF on 2026-06-05 and spotted no gaps; he judged any remaining mistakes
-  likely closeable before thesis release. The 2026-06-05 clarity repairs made
-  the local chart hypotheses, the volume-row arithmetic, and the local symmetry
-  group/dimension explicit. The remaining theorem-strength gate is final
-  theorem wording/Kai review.
-- Historical neighborhood evidence is treated as support, with priority on finishing
-  exact active-set closure without altering artifact contracts.
-
-## Decisions
-
-- Primary proof route remains exact first-order in `R^40` with a backend-agnostic
-  contract.
-- Keep the theorem field as the quartic extension
-  `t = tan(pi/5)`, with minimal polynomial `t^4 - 10 t^2 + 5 = 0`.
-- Use dual coordinates `a_i` (description `K = {x : a_i * x <= 1}`) to avoid
-  `(n,h)` gauge artifacts.
-- First-order certificates must include exact active derivative covectors,
-  counts, ranks, kernel basis, and symmetry inclusion/equality checks.
-- The old `subdifferential-lp/phase_c_lp_test.py` route was deleted during the
-  experiment layout migration; git history is the archive for that broken
-  `(n,h)` Phase C attempt.
-- Keep neighborhood falsification with `empirical/neighborhood-sampling/m10/`
-  and `empirical/neighborhood-sampling/m10-lagrangian-product/` as
-  complementary checks; broad blind counterexample searches are not the default.
-- Keep `pentagon-perturb.jsonl` as historical context; prefer committed new-format
-  smoke/LICCA buckets for analysis.
-- Do not revive the older representative-coverage route unless formal review
-  rejects the feasible-section certificate route.
-
-## History
-
-- `empirical/neighborhood-sampling/m10/` historically used 101-row evidence and
-  has since moved to the current smoke/LICCA flow.
-- The older exact representative route is historical context only.
-  The maintained failed-route evidence is now `smooth-only-rank-defect/`.
-
-## Next Steps
-
-- Primary: update the thesis-writing companion so Jörn can write the HKO
-  section from fixed theorem/proof content instead of re-deciding the proof
-  structure.
-- Fallback: if review finds a real gap in the feasible-section implication,
-  return to this note and choose between repairing the implication and
-  weakening the theorem wording.
-- Secondary: keep neighborhood evidence runnable for comparison and use
-  `empirical/neighborhood-sampling/m10-lagrangian-product/` and
-  `empirical/m11-ascent/` as non-default regression checks.
+Git history contains the older consolidated research note.
