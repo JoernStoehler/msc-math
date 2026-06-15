@@ -22,6 +22,11 @@ The theorem proof uses the verified predicate together with
 `formal/hko-feasible-section-upper-branches.tex`. It does not trust the Rust
 search method.
 
+Shared exact-arithmetic contract: Rust selects finite data only. SageMath
+reconstructs the HKO source objects and verifies them over the ordered number
+field `Q(t)`, where `t` is the unique real root of
+`t^4 - 10 t^2 + 5` in `(0,1)`, equivalently `t = tan(pi/5)`.
+
 ## Verifier Predicate
 
 `verify.sage.py` reconstructs the HKO source objects from definitions, reads
@@ -39,10 +44,6 @@ search method.
 
 The verifier uses explicit exceptions, not Python `assert`, so the checks are
 not stripped by optimized Python mode.
-
-The Sage verifier uses the ordered number field where
-`t` is the unique real root of `t^4 - 10 t^2 + 5` in `(0,1)`, equivalently
-`t = tan(pi/5)`.
 
 ## Files
 

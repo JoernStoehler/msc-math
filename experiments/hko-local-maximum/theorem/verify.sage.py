@@ -31,6 +31,9 @@ def exact_hko_geometry():
     ring = PolynomialRing(QQ, "x")
     x = ring.gen()
     polynomial = x**4 - 10 * x**2 + 5
+    # The HKO source geometry and all comparisons used by this verifier live
+    # in the small ordered field Q(tan(pi/5)); using this field keeps exact
+    # coefficients stable and avoids generic QQbar arithmetic.
     K = NumberField(polynomial, "t", embedding=AA.polynomial_root(polynomial, RIF(0, 1)))
     t = K.gen()
     sqrt5 = (QQ(5) - t**2) / 2
