@@ -1,16 +1,14 @@
 # HKO Local Maximum Proof-Route Checkpoint
 
-Status: legacy redirect. The live route-choice breadcrumbs were moved to
-`experiments/hko-local-maximum/notes.md`, and the current theorem route is
-documented in `experiments/hko-local-maximum/theorem/README.md`.
+Status: legacy redirect. The current theorem route is documented in
+`experiments/hko-local-maximum/theorem/README.md`, and the retained
+singular-row route evidence lives in
+`experiments/hko-local-maximum/smooth-only-rank-defect/`.
 
 Use these local surfaces instead:
 
-- `experiments/hko-local-maximum/notes.md` for the selected-upper-branch
-  principle, singular-row motivation, endpoint-family explanation, and old-route
-  provenance.
 - `experiments/hko-local-maximum/smooth-only-rank-defect/summary.json` for the
-  f64 rank-defect evidence.
+  f64 rank-defect and singular-row motivation.
 - `experiments/hko-local-maximum/theorem/README.md` and
   `formal/hko-feasible-section-upper-branches.tex` for the current theorem
   route.

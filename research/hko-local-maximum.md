@@ -9,8 +9,8 @@ Use these files instead:
   and reading order.
 - `experiments/hko-local-maximum/theorem/README.md` for the theorem target,
   verifier predicate, exact-field contract, and Rust/Sage boundary.
-- `experiments/hko-local-maximum/notes.md` for optional route-choice and
-  thesis-explanation breadcrumbs.
+- `experiments/hko-local-maximum/smooth-only-rank-defect/` for retained
+  route-choice evidence around singular rows.
 - `experiments/hko-local-maximum/empirical/README.md` for supporting empirical
   evidence.
 - `thesis/hko-local-maximum-content.md` and task files for thesis wording and

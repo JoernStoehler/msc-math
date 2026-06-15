@@ -341,7 +341,8 @@ Status: active while HKO remains retained thesis spine.
 
 Reread before use: `experiments/hko-local-maximum/README.md`, the current
 `experiments/hko-local-maximum/theorem/` packet,
-`experiments/hko-local-maximum/notes.md`, `tasks/current-state.md`,
+`experiments/hko-local-maximum/smooth-only-rank-defect/`,
+`tasks/current-state.md`,
 `thesis/hko-local-maximum.tex`, and any HKO claim in `thesis/abstract.tex`,
 `thesis/introduction.tex`, or `thesis/conclusion.tex`.
 

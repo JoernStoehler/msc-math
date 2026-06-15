@@ -4,7 +4,7 @@ This topic directory separates theorem-facing certificate work from empirical
 support checks for the HKO2024 local-maximum result packet.
 
 Start here before reading subfolders. This README gives the common context for
-the HKO slice; `notes.md` is optional technical background.
+the HKO slice.
 
 ## Current Status
 
@@ -32,7 +32,6 @@ substitutes.
 | Empirical sampling | `empirical/` | Numerical and sampling evidence that supports or illustrates the local-maximum picture but is not the final proof. |
 | Assets | `assets/` | Explanatory figure scripts and images. These are not theorem evidence. |
 | Row-bank validation | `row-bank-validation/` | Rust/Sage validation of selected exact-bank rows. This is validation machinery, not theorem proof. |
-| Local notes | `notes.md` | Optional technical breadcrumbs for route choice and thesis explanation. |
 | Shared Rust helpers | `src/` | Topic-local code shared by theorem and empirical binaries. |
 
 Generated JSON/JSONL/figure artifacts stay beside the producer or sampler that
@@ -57,12 +56,11 @@ experiments/hko-local-maximum/
 |   |-- second-order/
 |   |-- m11-ascent/
 |   `-- neighborhood-sampling/
-|-- notes.md
 `-- src/
 ```
 
 Older inactive routes and deleted exact-route scripts live only in git history
-unless `notes.md` points to a live consequence.
+unless a current local README or generated summary points to a live consequence.
 
 ## Rust Command Contract
 
@@ -118,11 +116,9 @@ unless `notes.md` points to a live consequence.
    theorem-facing finite certificate
 3. `smooth-only-rank-defect/` if the question is why the smooth
    nonsingular positive-beta branch attempt did not close
-4. `notes.md` if the question is why the feasible-section route replaced older
-   routes or why singular rows appear
-5. `row-bank-validation/` if the question is about exact-bank cross-checks
-6. `assets/` if the question is about explanatory figures
-7. `empirical/README.md` if the question is about supporting evidence
+4. `row-bank-validation/` if the question is about exact-bank cross-checks
+5. `assets/` if the question is about explanatory figures
+6. `empirical/README.md` if the question is about supporting evidence
 
 ## Rule Of Thumb
 

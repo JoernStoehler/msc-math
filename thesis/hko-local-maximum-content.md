@@ -264,9 +264,7 @@ Source pointers:
   `lem:hko-feasible-section-upper-branch`,
   `lem:hko-positive-convex-certificate-margin`, and
   `prop:hko-feasible-branch-slice-local-max`;
-- `experiments/hko-local-maximum/notes.md`, "Selected Upper Branches";
-- `formal/hko-feasible-section-upper-branches.tex`,
-  `lem:hko-positive-convex-certificate-margin`.
+- `experiments/hko-local-maximum/theorem/README.md`, "Theorem Target".
 
 ### 4. Why singular rows appear, and why they are legitimate
 
@@ -290,8 +288,6 @@ Source pointers:
 - `formal/hko-feasible-section-upper-branches.tex`,
   `lem:hko-feasible-section-upper-branch` and
   `rem:hko-feasible-section-derivative-data`;
-- `experiments/hko-local-maximum/notes.md`, "Why Singular Rows Enter" and
-  "Endpoint Rows And The HKO Minimizing Family";
 - `experiments/hko-local-maximum/smooth-only-rank-defect/summary.json`.
 
 ### 5. What the exact certificate statement should say
@@ -416,8 +412,7 @@ Core thesis content, not auxiliary assets:
    rows and why this is legitimate. The proof differentiates explicit feasible
    beta sections, not nearby optimizing KKT branches.
    Source pointers:
-   `experiments/hko-local-maximum/notes.md`, "Why Singular Rows Enter" and
-   "Endpoint Rows And The HKO Minimizing Family";
+   `experiments/hko-local-maximum/smooth-only-rank-defect/summary.json`;
    `formal/hko-feasible-section-upper-branches.tex`,
    `lem:hko-feasible-section-upper-branch`.
 
@@ -590,8 +585,7 @@ Source pointers:
   "Architecture", "Files", and "Current Pipeline";
 - `experiments/hko-local-maximum/theorem/verification-summary.json`;
 - `experiments/hko-local-maximum/theorem/verify.sage.py`;
-- `experiments/hko-local-maximum/notes.md`, "Endpoint Rows And The HKO
-  Minimizing Family".
+- `experiments/hko-local-maximum/smooth-only-rank-defect/summary.json`.
 
 ### 9. Forbidden thesis claims
 
@@ -629,8 +623,8 @@ Source pointers:
   target, verifier predicate, feasible-section route, and Rust/Sage boundary.
 - `formal/hko-feasible-section-upper-branches.tex` for the current PDF-review
   draft of the feasible-section upper-branch lemmas.
-- `experiments/hko-local-maximum/notes.md` for selected-branch and singular-row
-  breadcrumbs.
+- `experiments/hko-local-maximum/smooth-only-rank-defect/summary.json` for
+  singular-row motivation.
 - `tasks/current-state.md`, HKO local maximality row.
 
 Missing:
@@ -648,8 +642,7 @@ Source pointers:
 - `experiments/hko-local-maximum/theorem/README.md`.
 - `experiments/hko-local-maximum/theorem/verification-summary.json`.
 - `experiments/hko-local-maximum/smooth-only-rank-defect/summary.json`.
-- `experiments/hko-local-maximum/notes.md`, especially "Selected Upper
-  Branches" and "Why Singular Rows Enter".
+- `experiments/hko-local-maximum/smooth-only-rank-defect/summary.json`.
 
 Current checked theorem-facing facts:
 - 26 exact feasible-section rows.
