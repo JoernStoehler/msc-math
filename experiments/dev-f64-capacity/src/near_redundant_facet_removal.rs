@@ -259,6 +259,10 @@ fn best_single_band_candidate(
     // Sufficient condition from formal/near-redundant-facet-removal-bounds.tex:
     // if one retained guard facet stays above r on every vertex of the removed
     // facet, then removing that facet expands the polytope by at most 1/r.
+    // No extra roundoff cushion is used here: after the vertex scan has ruled
+    // out near-singular/ambiguous geometry, this routine only takes dot
+    // products and min/max values; it does not divide by a small computed
+    // quantity.
     let min_guard_floor = 1.0 / (1.0 + max_delta);
     let mut best: Option<CandidateRemoval> = None;
     for facet in 0..dual_vertices.len() {

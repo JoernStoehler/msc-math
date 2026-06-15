@@ -297,6 +297,9 @@ fn cyclic_single_removal_delta(facets: &[FactorFacet], sorted_index: usize) -> O
 
 fn factor_vertex(first: Vector2<f64>, second: Vector2<f64>) -> Option<Vector2<f64>> {
     let det = first[0] * second[1] - first[1] * second[0];
+    // Small denominators are rejected. Once this guard passes, the remaining
+    // arithmetic is a 2D solve and dot products, so f64 roundoff is negligible
+    // at the experiment scales compared with the chosen removal budget.
     if det.abs() <= FACTOR_DET_TOLERANCE {
         return None;
     }
