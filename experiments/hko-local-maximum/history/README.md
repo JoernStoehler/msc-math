@@ -19,8 +19,5 @@ still cash out in thesis success:
   matter;
 - the fact that the older representative route did not close the theorem.
 
-Some older scripts and generated artifacts remain in `exact-witness/` for
-active-minima bookkeeping and endpoint/segment prototype context. The old
-geometry, symmetry, volume, billiard, and widened-representative artifacts were
-deleted from the live tree; use git history only if those old implementations
-must be reopened.
+The raw older exact-route scripts and generated artifacts were deleted from the
+live tree. Use git history only if an old implementation must be reopened.

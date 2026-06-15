@@ -65,7 +65,7 @@ obligations.
 
 | Thesis story | Interpretation source | Work obligations |
 | --- | --- | --- |
-| HKO2024 local maximality | `hko-local-maximum.md`, `hko-local-maximum-status.md`, `hko-local-maximum-proof-control-packet.md`, `hko-local-maximum-exact-witness.md`, `hko-local-maximum-proof-route-note.md` | `tasks/definition-of-success.md`, `tasks/current-state.md`, `tasks/planning-notes.md` |
+| HKO2024 local maximality | `hko-local-maximum.md`, `hko-local-maximum-status.md`, `hko-local-maximum-proof-control-packet.md`, `hko-local-maximum-proof-route-note.md`; route-history notes under `experiments/hko-local-maximum/history/` | `tasks/definition-of-success.md`, `tasks/current-state.md`, `tasks/planning-notes.md` |
 | Hostile sys-search landscape | active: `experiments/sys-datascience/README.md`, `experiments/sys-datascience/methods/README.md`; context: `sys-landscape.md`, `sys-landscape-toolbox-audit.md` | datascience README files and method packets own current state; research notes are context only |
 | Crosspolytope capacity | `crosspolytope.md` | `tasks/current-state.md`, `tasks/planning-notes.md` if thesis cites the computation |
 | Visualization negative exploration | `experiments/visualization/README.md`, `thesis/visualization-3d-content.md` | `tasks/planning-notes.md` if included as standalone or supporting material |
@@ -79,7 +79,7 @@ obligations.
 | Area | Start here | Role |
 | --- | --- | --- |
 | Current finish state | `finish-current-state.md` | repo-state and closeout context |
-| HKO local maximum | `hko-local-maximum.md`, `hko-local-maximum-status.md`, `hko-local-maximum-proof-control-packet.md`, `hko-local-maximum-exact-witness.md`, `hko-local-maximum-proof-route-note.md` | HKO proof route, exact-witness state, proof-control packet, selected-branch checkpoint, and blockers |
+| HKO local maximum | `hko-local-maximum.md`, `hko-local-maximum-status.md`, `hko-local-maximum-proof-control-packet.md`, `hko-local-maximum-proof-route-note.md`; route-history notes under `experiments/hko-local-maximum/history/` | HKO proof route, route-history state, proof-control packet, selected-branch checkpoint, and blockers |
 | Hostile sys landscape | `experiments/sys-datascience/README.md`, `experiments/sys-datascience/methods/README.md`, `sys-landscape.md`, `sys-landscape-toolbox-audit.md` | local datascience state first; research notes are context only |
 | Pentagon rotation formula / regular products | `experiments/regular-products/README.md`, `thesis/rotated-regular-polygons-content.md` | regular-product side-result inventory, writing companion, proof packet routing, and source-truth boundaries |
 | Sys first-order local behavior | `sys-first-order-local-behavior.md` | generic smooth case, non-generic active-germ classification, and semialgebraic fallback status |

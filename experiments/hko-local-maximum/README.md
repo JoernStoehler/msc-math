@@ -33,7 +33,6 @@ experiments/hko-local-maximum/
 |-- smooth-only-rank-defect/
 |-- assets/
 |-- history/
-|   |-- exact-witness/
 |   |-- row-bank-validation/
 |   `-- *.md
 |-- empirical/

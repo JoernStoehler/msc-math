@@ -15,10 +15,9 @@ Facts retained for thesis navigation:
 - `../theorem/verification-summary.json` records that
   Sage checked symmetry tangent rank `15`.
 
-Older exact-witness Packet 1 implementations of these checks were deleted from
-the live tree. The facts above are retained here because they remain useful
-for thesis navigation, and the current source of truth is the feasible-section
-verifier.
+Older Packet 1 implementations of these checks were deleted from the live tree.
+The facts above are retained here because they remain useful for thesis
+navigation, and the current source of truth is the feasible-section verifier.
 
 Source pointers:
 

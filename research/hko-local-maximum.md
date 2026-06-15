@@ -32,10 +32,8 @@ It combines the former topic note set while keeping experiment artifacts under
 - Exact-first route:
   - The current feasible-section verifier reconstructs the exact HKO geometry,
     volume row, and rank-15 symmetry tangent setup.
-  - The older exact-witness Packet 2 is partially closed with prototypes:
-    one six-facet endpoint family and one neighboring seven-facet midpoint-style
-    segment family. This is not the current theorem-closing route.
-  - The older representative-expansion route remains partial.
+  - Older endpoint/segment and representative-expansion routes are historical
+    context only. Their runnable artifacts were deleted from the live tree.
   - The current route is the selected feasible-section upper-branch
     certificate. Rust writes finite verifier input; SageMath computes exact
     algebraic data internally and checks the exact finite certificate predicate.

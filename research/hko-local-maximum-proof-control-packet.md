@@ -20,13 +20,11 @@ Main sources read:
 - `research/hko-local-maximum-status.md`
 - `research/hko-local-maximum.md`
 - `research/hko-local-maximum-proof-route-note.md`
-- `research/hko-local-maximum-exact-witness.md`
 - `research/sys-first-order-local-behavior.md`
 - `thesis/hko-local-maximum-content.md`
 - `experiments/hko-local-maximum/README.md`
 - `experiments/hko-local-maximum/theorem/README.md`
-- `experiments/hko-local-maximum/history/exact-witness/README.md`
-- `experiments/hko-local-maximum/history/exact-witness/segment-a-gradient-reduction.json`
+- `experiments/hko-local-maximum/history/`
 - `formal/capacity-boundary-subdifferential.tex`
 - `formal/capacity-derivatives.tex`
 - `formal/hko-feasible-section-upper-branches.tex`

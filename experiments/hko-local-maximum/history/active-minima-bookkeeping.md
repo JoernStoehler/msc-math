@@ -8,11 +8,11 @@ branches.
 
 Facts retained for thesis navigation:
 
-- Current bookkeeping records `150` exact-action rows at the HKO point.
+- The current diagnostic records `150` active rows at the HKO point.
 - Of these, `44` are nonsingular six-facet rows and `106` are singular
   seven-facet rows.
-- The nonsingular rows alone cover only rank `23` of the `25`-dimensional
-  quotient slice in the current proof-route notes.
+- The nonsingular rows alone cover rank `23` of the `25`-dimensional quotient
+  slice in the f64 diagnostic.
 - The padded-once diagnostic did not find a nonsingular minimum-action
   replacement route.
 - This is why the current theorem route keeps singular positive-beta
@@ -33,5 +33,4 @@ Source pointers:
 - `../theorem/README.md`
 - `../theorem/verification-summary.json`
 - `../theorem/active_branch_diagnostic.rs`
-- `exact-witness/numerical-minima-summary.json`
-- `exact-witness/numerical-family-reconciliation.json`
+- `../smooth-only-rank-defect/summary.json`

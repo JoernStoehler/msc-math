@@ -35,19 +35,20 @@ The main findings are:
 the polytope symmetry group has order~50 (all facets equivalent),
 but only a symplectic subgroup of order~10 is known here to preserve $K$
 symplectically and map Reeb orbits to equal-action Reeb orbits;
-the current exact-minimum bookkeeping has 150 exact-action orbits,
-20 distinct visited-facet subsets, and 28 distinct height gradients;
-and the current per-orbit height gradients have negative unvisited-facet
-entries while visited-facet entries are orbit-dependent.
+the current active-branch diagnostic has 150 active rows, split into
+44 nonsingular and 106 singular rows; and the current theorem route uses
+explicit feasible beta sections for the singular rows instead of treating them
+as nearby smooth optimizing branches.
 
 The billiard algorithm
 (Algorithm~\ref{alg:billiard}) currently records 717 valid orbits and
 150 near-optimal rows at gap threshold $0.01$ in
 `experiments/hko-local-maximum/empirical/first-order/hko-neighborhood-sensitivity.jsonl`.
-The exact-witness summary
-`experiments/hko-local-maximum/history/exact-witness/numerical-minima-summary.json`
-records the exact-minimum active bookkeeping: 150 exact-action orbits,
-20 distinct visited-facet subsets, and 28 distinct height gradients.
+The smooth-only rank-defect summary
+`experiments/hko-local-maximum/smooth-only-rank-defect/summary.json`
+records the current route-choice bookkeeping: the 44 nonsingular rows have
+projected rank 23 in the 25-dimensional quotient, while the feasible-section
+route reaches rank 25 in the same f64 diagnostic.
 The sensitivity analysis from
 Section~\ref{sec:sys-optimization} gives
 $\mathrm{sys}(K) \approx 1.04721$, confirming the
@@ -149,18 +150,15 @@ verified by the same enumeration method.
 
 \emph{Older orbit-symmetry classification.}
 The older floating-point first-order run grouped 44 near-optimal
-orbits into 10 visited-set groups.  Current exact-minimum bookkeeping instead
-records 150 exact-action orbits and 20 distinct visited-facet subsets.
-% TODO: JÖRN/agent exact route -- re-check whether these 20 subsets form one
-% or more orbits under $\langle \Delta_{72^\circ}, \varphi \rangle$ before
-% using this as theorem-facing symmetry prose.
+orbits into 10 visited-set groups.  This grouping is historical context only;
+the current theorem route does not use a visited-set classification as proof
+input.
 
 \emph{$C_5^q$ alone does not preserve the orbit structure.}
 Applying $C_5^q$ (rotate $q$-facets only, fix $p$-facets) to the older
 10-group floating-point classification produced pairs $(S_q', S_p)$ outside
-that classification.  The corresponding statement for the current 20
-visited-facet subsets remains to be re-checked before it is used as a final
-symmetry claim.
+that classification.  No current theorem-facing symmetry claim uses a
+replacement visited-subset classification.
 The Reeb dynamics on a Lagrangian product couple $q$- and
 $p$-coordinates (on a $q$-facet
 the trajectory moves in $L_p$, and vice versa), so a rotation
@@ -170,19 +168,12 @@ in one factor alone changes which facets the orbit visits in
 \subsubsection*{Subdifferential structure}
 
 The systolic ratio is $\mathrm{sys} = c_{\mathrm{EHZ}}^2 / (2\,\mathrm{vol})$.
-Because the 150 exact-action orbits all achieve the current exact minimum,
-each orbit defines its own
-$\partial\,\mathrm{sys}/\partial h_k$ vector
-(Section~\ref{sec:sys-optimization}),
-and the convex hull of these 150 vectors is contained in the Clarke
-subdifferential~\cite{Clarke1983} of $\mathrm{sys}$ with respect to
-heights (the convex hull of all limit points of gradients at nearby
-differentiable points).
+The current diagnostic records per-row height-gradient vectors
+(Section~\ref{sec:sys-optimization}).  These vectors are numerical
+route-choice evidence, not the theorem certificate.
 
-Among the 150 per-orbit height-gradient vectors:
+Among the per-orbit height-gradient vectors:
 \begin{itemize}
-\item \textbf{28 are distinct}
-  in the current exact-witness summary.
 \item \textbf{Gradient norms are not all identical}
   in the current sensitivity artifact; the per-orbit height-gradient norms
   range from about $1.302$ to $1.431$.
@@ -237,9 +228,8 @@ characteristic of regular pentagon geometry.
   Current per-orbit gradients have negative components at unvisited facets.
   At visited facets the sign depends on the orbit, because both the capacity
   and volume derivatives contribute.
-  The older 10-gradient symmetry-average argument must be re-checked against
-  the current 28-gradient exact-witness bookkeeping before it is used in the
-  theorem-facing route.
+  The older 10-gradient symmetry-average argument is historical context only;
+  the current theorem-facing route does not use it.
 
 \item \textbf{One representative facet suffices for the omega-obstacle
   Phase~B test.}

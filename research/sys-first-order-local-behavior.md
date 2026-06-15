@@ -26,7 +26,6 @@ Evidence read: historical task notes for sys first-order and HKO,
 `formal/capacity-boundary-subdifferential.tex`,
 `formal/hko-local-maximality-conditions.tex`,
 `formal/hko-symmetry-gradient-structure.tex`,
-`research/hko-local-maximum-exact-witness.md`,
 `experiments/combinatorial-cells/README.md`, and
 `papers/hk2017/EHZ-polytopes.tex`.
 
@@ -201,10 +200,10 @@ Current HKO evidence has many active orbits, symmetry quotients, a smooth-only
 rank defect, and singular positive-beta rows handled by feasible sections. The
 formal HKO second-order route uses a
 smooth/min-envelope argument that the task progress files already reject as a
-substitute for arbitrary closed-value behavior. The first-order note
-also records that current bookkeeping has 150 exact-action orbits, 20 visited
-facet subsets, and 28 distinct gradient patterns, so the active surface is not
-a single smooth branch.
+substitute for arbitrary closed-value behavior. The HKO route-history notes
+also record that the current diagnostic has 150 active rows, split into 44
+nonsingular and 106 singular rows, so the active surface is not a single smooth
+branch.
 
 The `beta_k = 0` case is central for HKO because some listed combinatorics
 collapse to a shorter support at the base point while nearby or symmetric

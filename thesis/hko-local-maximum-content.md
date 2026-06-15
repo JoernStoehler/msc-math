@@ -657,7 +657,7 @@ Source pointers:
 - `experiments/hko-local-maximum/theorem/README.md`.
 - `experiments/hko-local-maximum/theorem/verification-summary.json`.
 - `experiments/hko-local-maximum/smooth-only-rank-defect/summary.json`.
-- `research/hko-local-maximum-exact-witness.md`, for older-route context.
+- `experiments/hko-local-maximum/history/`, for route-history context.
 - `research/hko-local-maximum-proof-route-note.md`, especially the one-sided
   branch-certificate principle and candidate Sage decision problem.
 - `research/hko-local-maximum-proof-route-note.md`, sections

@@ -52,8 +52,7 @@ source files.
 - HKO local maximality is thesis spine.
   Source truth: `research/hko-local-maximum*.md`, the current
   `experiments/hko-local-maximum/theorem/`
-  packet, HKO route-history notes, related formal/thesis files, and
-  `exact-witness/` only for old-route context/provenance.
+  packet, HKO route-history notes, and related formal/thesis files.
   Current state: the exact feasible-section theorem certificate is merged and
   verifies in Sage; the formal implication has been agent-line-checked. Jörn
   quick-reviewed the rebuilt PDF on 2026-06-05 and spotted no gaps; he judged
@@ -66,10 +65,10 @@ source files.
   - Current theorem-facing certificate uses 26 feasible-section rows, exact
     row rank `25`, exact symmetry tangent rank `15`, and a positive exact
     convex relation summing the rows to `0`.
-  - Old `44`-orbit / `10`-gradient prose is stale against current `150` exact
-    minima, `20` visited subsets, and `28` gradient-pattern bookkeeping.
-  Refresh when: exact-witness route, HKO theorem wording, or LICCA evidence
-  changes.
+  - Old `44`-orbit / `10`-gradient prose is stale against the current
+    `150`-active-row diagnostic and its `44` nonsingular / `106` singular row
+    split.
+  Refresh when: HKO theorem wording or LICCA evidence changes.
 
 - Hostile `sys`-search landscape is thesis spine.
   Data-science source truth:

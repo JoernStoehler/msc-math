@@ -14,7 +14,7 @@ Use it before reading deeper notes or experiment folders.
 - Topic research note and interpretation: `research/hko-local-maximum.md`
 - Current proof-control packet:
   `research/hko-local-maximum-proof-control-packet.md`
-- Historical exact-route details: `research/hko-local-maximum-exact-witness.md`
+- Historical route notes: `experiments/hko-local-maximum/history/`
 - Current proof-route checkpoint:
   `research/hko-local-maximum-proof-route-note.md`
 - Current experiment layout: `experiments/hko-local-maximum/README.md`
@@ -81,8 +81,8 @@ Use it before reading deeper notes or experiment folders.
 ## Still Open
 
 - decide final thesis theorem wording with Kai review
-- reconcile stale `44/10` language with the current `150`-orbit bookkeeping
-  surface
+- reconcile stale `44/10` language with the current `150`-active-row
+  bookkeeping surface
 - propagate the final theorem story into `formal/` and `thesis/`
 - reconcile cross-file claim-bearing mismatches, especially when a surface
   still assumes a smaller coefficient field than the exact route uses
@@ -95,5 +95,5 @@ Use it before reading deeper notes or experiment folders.
 4. `research/hko-local-maximum-proof-control-packet.md`
 5. `research/hko-local-maximum.md`
 6. `research/hko-local-maximum-proof-route-note.md`
-7. `research/hko-local-maximum-exact-witness.md`
+7. `experiments/hko-local-maximum/history/`
 8. `experiments/hko-local-maximum/README.md`

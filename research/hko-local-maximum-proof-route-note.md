@@ -211,36 +211,16 @@ No padded-zero branches appear needed for the optimistic one-sided route,
 provided the singular positive-beta rows become theorem-valid.
 ```
 
-## 8. How The Singular Rows Might Be Saved
+## 8. How The Singular Rows Are Handled Now
 
-Existing exact-witness artifacts suggest a plausible route for the singular
-seven-facet rows:
+The old endpoint/segment exactification route was explored but did not become
+the theorem route. Its runnable artifacts were deleted from the live tree; use
+git history only if that route must be reopened.
 
-1. `research/hko-local-maximum-exact-witness.md` records that the seven-facet
-   exact minima are consistent with equality-case trajectories from the HKO
-   minimizing family.
-2. `experiments/hko-local-maximum/history/exact-witness/segment-gradient-reduction.json`
-   and `segment-a-gradient-reduction.json` record exact segment-gradient
-   reduction facts.
-3. The `segment-a-gradient-reduction.json` theorem-use field says the exact
-   capacity row on the seven-facet KKT segment is a degree-2 polynomial in the
-   segment parameter and agrees with interpolation through `0`, `1/2`, and
-   `1`.
-4. The segment endpoints coincide exactly with the corresponding six-facet
-   endpoint rows.
-
-Possible proof path:
-
-1. Treat each singular seven-facet row as a row from a verified local family,
-   not as the derivative of an isolated nonsingular optimizer.
-2. Prove in LaTeX that the selected row is a valid first-order upper branch for
-   the action/sys value, or prove the required directional one-sided inequality
-   directly from the exact family.
-3. Implement the exact family checks in Sage so the final witness verifies
-   row validity without trusting Rust's singular KKT derivative computation.
-
-This would avoid the heavy general semialgebraic active-germ route, but it
-still requires a rigorous singular-family argument.
+The current theorem route handles the singular positive-beta rows by using
+explicit feasible beta sections. The exact finite certificate for this route is
+verified in `experiments/hko-local-maximum/theorem/`, and the mathematical
+implication is recorded in `formal/hko-feasible-section-upper-branches.tex`.
 
 ## 9. Endpoint Rows And The Minimizing Family
 
@@ -433,7 +413,7 @@ This note should be read with:
 
 1. `research/hko-local-maximum-status.md` for current claim strength.
 2. `research/hko-local-maximum.md` for broader HKO evidence and task state.
-3. `research/hko-local-maximum-exact-witness.md` for exact-witness artifacts.
+3. `experiments/hko-local-maximum/history/` for retained route-history notes.
 4. `research/sys-first-order-local-behavior.md` for the heavier general theory
    that handles singular KKT systems and right-active germs.
 5. `thesis/hko-local-maximum-content.md` for thesis packet structure.
