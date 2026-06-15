@@ -17,7 +17,10 @@ still cash out in thesis success:
   setup;
 - the active-minima bookkeeping that explains why singular seven-facet rows
   matter;
-- the reason the older representative route did not close the theorem.
+- the fact that the older representative route did not close the theorem.
 
-The raw older scripts and generated artifacts remain in `exact-witness/`
-for now. They should not be cited as the current theorem certificate.
+Some older scripts and generated artifacts remain in `exact-witness/` for
+active-minima bookkeeping and endpoint/segment prototype context. The old
+geometry, symmetry, volume, billiard, and widened-representative artifacts were
+deleted from the live tree; use git history only if those old implementations
+must be reopened.

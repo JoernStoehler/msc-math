@@ -15,12 +15,10 @@ Facts retained for thesis navigation:
 - `../theorem/verification-summary.json` records that
   Sage checked symmetry tangent rank `15`.
 
-Older exact-witness Packet 1 files such as `exact-witness/check.sage`,
-`exact-witness/hko-geometry.json`,
-`exact-witness/hko-symmetry-tangent.json`, and
-`exact-witness/hko-volume-derivative.json` verified related exact geometry
-and symmetry facts for the earlier route. They are route-history and fallback
-material, not the current theorem certificate.
+Older exact-witness Packet 1 implementations of these checks were deleted from
+the live tree. The facts above are retained here because they remain useful
+for thesis navigation, and the current source of truth is the feasible-section
+verifier.
 
 Source pointers:
 

@@ -13,7 +13,7 @@ Current proof-control packet:
 `research/hko-local-maximum-proof-control-packet.md` is the Packet 1 control
 surface for the next HKO work. It records the theorem target, sufficient Sage
 decision problem, proof tree, feasible-section row target, verifier boundary,
-fallback branches, and review questions.
+contingency wording, and review questions.
 
 Current theorem certificate:
 `experiments/hko-local-maximum/theorem/` contains
@@ -30,10 +30,8 @@ It combines the former topic note set while keeping experiment artifacts under
 ## Current State
 
 - Exact-first route:
-  - Exact geometry and symmetry groundwork is committed:
-    `hko-geometry.json` and `hko-symmetry-tangent.json`.
-  - Packet 1 is essentially closed: exact dual coordinates, rank-15 symmetry
-    tangent basis, and exact `R^40` setup are in place.
+  - The current feasible-section verifier reconstructs the exact HKO geometry,
+    volume row, and rank-15 symmetry tangent setup.
   - The older exact-witness Packet 2 is partially closed with prototypes:
     one six-facet endpoint family and one neighboring seven-facet midpoint-style
     segment family. This is not the current theorem-closing route.
@@ -102,7 +100,7 @@ It combines the former topic note set while keeping experiment artifacts under
 
 - `empirical/neighborhood-sampling/m10/` historically used 101-row evidence and
   has since moved to the current smoke/LICCA flow.
-- The older exact representative route is historical fallback material only.
+- The older exact representative route is historical context only.
   The maintained failed-route evidence is now `smooth-only-rank-defect/`.
 
 ## Next Steps

@@ -53,7 +53,7 @@ source files.
   Source truth: `research/hko-local-maximum*.md`, the current
   `experiments/hko-local-maximum/theorem/`
   packet, HKO route-history notes, related formal/thesis files, and
-  `exact-witness/` only for old-route fallback/provenance.
+  `exact-witness/` only for old-route context/provenance.
   Current state: the exact feasible-section theorem certificate is merged and
   verifies in Sage; the formal implication has been agent-line-checked. Jörn
   quick-reviewed the rebuilt PDF on 2026-06-05 and spotted no gaps; he judged

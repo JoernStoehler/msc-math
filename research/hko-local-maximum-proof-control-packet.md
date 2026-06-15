@@ -27,7 +27,6 @@ Main sources read:
 - `experiments/hko-local-maximum/theorem/README.md`
 - `experiments/hko-local-maximum/history/exact-witness/README.md`
 - `experiments/hko-local-maximum/history/exact-witness/segment-a-gradient-reduction.json`
-- `experiments/hko-local-maximum/history/exact-witness/reduced-sys-prototypes.json`
 - `formal/capacity-boundary-subdifferential.tex`
 - `formal/capacity-derivatives.tex`
 - `formal/hko-feasible-section-upper-branches.tex`
@@ -145,8 +144,9 @@ A theorem-facing Sage run should produce or check the following data.
 
 Current status:
 
-- Exact geometry, field, symmetry rank, and volume-row support already exist in
-  `experiments/hko-local-maximum/history/exact-witness/`.
+- Exact geometry, field, symmetry rank, and volume-row support are now owned by
+  the current feasible-section verifier in
+  `experiments/hko-local-maximum/theorem/`.
 - Older widened representative-row artifacts were partial and did not close the
   theorem. They were removed from the live tree; use git history only if that
   route must be reopened.
