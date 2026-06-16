@@ -1,4 +1,249 @@
-\section{Main Result: HKO2024 Is A Local Maximum Among Ten-Facet Polytopes Up To Symmetry}\label{sec:hko-local-maximum}
-\subsection{Decision problem}\label{subsec:hko-local-maximum-decision-problem}
-\subsection{Computation with SageMath}\label{subsec:hko-local-maximum-computation-with-sagemath}
-\subsection{Empirical tests}\label{subsec:hko-local-maximum-empirical-tests}
+\clearpage
+\section[HKO Local Maximality]{HKO Local Maximality Among Ten-Facet Polytopes}
+\label{sec:hko-local-maximum}
+
+Let \(\mathcal K\) be the space of convex bodies in \(\mathbb R^4\), equipped
+with the Hausdorff metric, and let \(\mathcal P_{10}\subset\mathcal K\) be the
+subspace of convex polytopes with exactly ten facets. Let
+\(K_{\mathrm{HKO}}\) be the HKO polytope from
+\cite[Proposition~1.3]{HaimKislevOstrover2024}: the Lagrangian product of the
+two regular pentagons with circumradius \(1\) used there. We use the centered
+representative, so \(0\in\operatorname{int}(K_{\mathrm{HKO}})\). It lies in
+\(\mathcal P_{10}\), and the computation in
+\cite[Proof of Theorem~1.2]{HaimKislevOstrover2024} gives
+\[
+  \operatorname{sys}(K_{\mathrm{HKO}})
+  =
+  \frac{\sqrt{5}+3}{5}
+  >1.
+\]
+The result of this section is local: inside the ten-facet space, no
+sufficiently small perturbation improves the systolic ratio once the natural
+symmetries have been removed.
+
+\begin{remark}[Certificate status]
+The exact SageMath verifier checks the finite certificate described below. The
+remaining review question is whether the Hausdorff-to-chart reduction and the
+quotient-slice translation are accepted as final theorem-strength thesis text.
+\end{remark}
+
+\begin{theorem}[HKO is locally maximal in the ten-facet space]
+\label{thm:hko-ten-facet-local-maximum}
+There is a Hausdorff neighborhood \(\mathcal U\) of \(K_{\mathrm{HKO}}\) in
+\(\mathcal P_{10}\) such that
+\[
+  \operatorname{sys}(K)\leq \operatorname{sys}(K_{\mathrm{HKO}})
+  \qquad (K\in\mathcal U).
+\]
+Moreover, equality can occur near \(K_{\mathrm{HKO}}\) only along the natural
+symmetries: if \(K\in\mathcal U\) has
+\[
+  \operatorname{sys}(K)=\operatorname{sys}(K_{\mathrm{HKO}}),
+\]
+then \(K\) lies in the local orbit of \(K_{\mathrm{HKO}}\) under translations,
+positive scaling, and linear symplectic transformations.
+\end{theorem}
+
+\clearpage
+\subsection{Reduction to the certificate}
+\label{subsec:hko-local-maximum-decision-problem}
+
+The proof is local, and the first step is not computational. The following
+elementary reduction is the bridge from the Hausdorff theorem statement to the
+dual-vertex coordinates used by the certificate.
+
+\begin{lemma}[Hausdorff-local ten-facet chart]
+\label{lem:hko-hausdorff-local-ten-facet-chart}
+After shrinking the Hausdorff neighborhood of \(K_{\mathrm{HKO}}\) in
+\(\mathcal P_{10}\), every nearby polytope has facets labelled by the ten
+facets of \(K_{\mathrm{HKO}}\). With these labels it has a unique
+dual-vertex representation
+\[
+  K(a)=
+  \{x\in\mathbb R^4:\langle a_i,x\rangle\le 1,\ i=1,\ldots,10\},
+  \qquad
+  a=(a_1,\ldots,a_{10})\in(\mathbb R^4)^{10}.
+\]
+In these coordinates the supporting inequalities stay facet-defining,
+boundedness and nonempty interior persist, and the HKO face combinatorics is
+unchanged. Conversely, a sufficiently small coordinate neighborhood of the HKO
+dual vertices parametrizes this labelled Hausdorff-local stratum.
+\end{lemma}
+
+\begin{proof}
+The centered HKO representative contains the origin in its interior. After
+shrinking the Hausdorff neighborhood, the origin remains in the interior of
+every nearby polytope, and polarity is continuous on this neighborhood. Thus a
+polytope in \(\mathcal P_{10}\) has ten facets if and only if its polar has ten
+vertices.
+
+Since \(K_{\mathrm{HKO}}\) is simple, its irredundant inequalities are stable
+under small labelled perturbations. Equivalently,
+\(K_{\mathrm{HKO}}^\circ\) is a simplicial polytope with ten vertices. For each
+vertex of \(K_{\mathrm{HKO}}^\circ\), choose a linear functional in the interior
+of its normal cone. If a ten-vertex polytope \(L\) is sufficiently
+Hausdorff-close to \(K_{\mathrm{HKO}}^\circ\), then the maximizers of these ten
+functionals lie in disjoint small neighborhoods of the corresponding vertices.
+Since \(L\) has only ten vertices, this labels all vertices of \(L\). Applying
+this to \(L=K^\circ\), every Hausdorff-near \(K\in\mathcal P_{10}\) has ten
+facets corresponding to the ten facets of \(K_{\mathrm{HKO}}\), and the
+corresponding polar vertices give the vectors \(a_i\).
+
+It remains only to shrink to the stable simple-polytope chart. We use the
+standard local stability of simple labelled \(H\)-representations: after
+shrinking the labelled coefficients, a simple polytope keeps the same face
+lattice. In the present chart this is witnessed by finitely many open
+conditions. At \(K_{\mathrm{HKO}}\), each vertex is the transverse intersection
+of its four incident supporting hyperplanes, every nonincident inequality has
+strict slack at that vertex, and the labelled inequalities are irredundant.
+These determinant, slack, irredundancy, boundedness, and origin-interior
+conditions remain true for all sufficiently small labelled perturbations, so the
+HKO face combinatorics is unchanged. Conversely, small perturbations of the
+labelled polar vertices keeping these same open conditions give exactly the
+labelled local stratum after shrinking once more.
+\end{proof}
+
+This local stability statement is separate from the SageMath certificate: the
+certificate begins only after the Hausdorff-local problem has been put in these
+labelled dual-vertex coordinates. By
+Lemma~\ref{lem:hko-hausdorff-local-ten-facet-chart}, a coordinate-local
+conclusion in the chart proves the stated local result in \(\mathcal P_{10}\).
+
+The natural symmetries of the systolic ratio induce a local action on the
+dual-vertex coordinates. A translation by \(y\in\mathbb R^4\) sends
+\[
+  a_i\mapsto \frac{a_i}{1+\langle a_i,y\rangle},
+\]
+positive scaling by \(\rho>0\) sends \(a_i\mapsto \rho^{-1}a_i\), and a
+linear symplectic map \(M\) sends \(a_i\mapsto M^{-T}a_i\). Differentiating
+this induced action at \(K_{\mathrm{HKO}}\) gives a \(15\)-dimensional
+symmetry tangent space \(T_{\mathrm{orb}}\subset(\mathbb R^4)^{10}\).
+
+Choose a linear complement \(S\) to \(T_{\mathrm{orb}}\). The exact verifier
+checks that \(\dim T_{\mathrm{orb}}=15\), so \(\dim S=25\). After shrinking the
+neighborhoods, the map
+\[
+  (g,s)\longmapsto g\cdot(a_{\mathrm{HKO}}+s)
+\]
+from a neighborhood of the identity in
+\(\mathbb R^4\rtimes(\mathbb R_{>0}\times Sp(4,\mathbb R)^0)\) and a
+neighborhood of \(0\) in \(S\) is a local diffeomorphism onto a neighborhood of
+\(a_{\mathrm{HKO}}\) in the chart. After shrinking, each nearby point has a
+unique representation \(g\cdot(a_{\mathrm{HKO}}+s)\) with \(g\) near the
+identity and \(s\in S\) small. Thus it is enough to prove that
+\(\operatorname{sys}\) has a strict local maximum on \(a_{\mathrm{HKO}}+S\). If
+equality holds near HKO, the slice component must be \(s=0\), and the polytope
+lies in the local symmetry orbit.
+
+\subsection{Exact finite certificate}
+\label{subsec:hko-local-maximum-computation-with-sagemath}
+
+The exact certificate proves the slice statement by upper branches. As in the
+finite-capacity algorithm from
+Section~\ref{sec:quadratic-program-algorithm-hk2019}, a word \(\sigma\) fixes
+a cyclic facet sequence, and the coefficients \(\beta\) are the feasible
+weights that produce an admissible action for that sequence. For each selected
+word \(\sigma\), the certificate contains exact data defining a feasible
+section \(\beta_\sigma(a)\). The corresponding function
+\[
+  U_\sigma(a)
+\]
+is a smooth upper bound for \(\operatorname{sys}(K(a))\) near the HKO point,
+and satisfies
+\[
+  U_\sigma(a_{\mathrm{HKO}})
+  =
+  \operatorname{sys}(K_{\mathrm{HKO}}).
+\]
+These feasible sections are not required to be optimizing branches for nearby
+parameters. They are used only as upper branches touching the systolic ratio
+at HKO.
+
+This point is essential for the HKO certificate. The 26-row certificate uses
+both nonsingular six-facet data and singular seven-facet data; the
+nonsingular active rows alone do not span the \(25\)-dimensional quotient
+slice. The proof therefore does not differentiate nearby KKT-critical
+optimizers. Instead, for each selected word it fixes enough beta coordinates
+so that the closure and normalization equations have an invertible minor. This
+gives a smooth feasible beta section and hence a differentiable upper branch
+even when the KKT system for an optimizing branch is singular.
+
+The finite first-order criterion is the following. Let
+\(r_\sigma=D U_\sigma(a_{\mathrm{HKO}})\). If the selected rows annihilate the
+symmetry tangent space, have ambient row rank \(25\), and admit positive
+coefficients \(\lambda_\sigma\) with
+\[
+  \sum_\sigma\lambda_\sigma=1,
+  \qquad
+  \sum_\sigma\lambda_\sigma r_\sigma=0,
+\]
+then every nonzero transverse direction has some upper branch with strictly
+negative first derivative. Indeed, the ambient coordinate space has dimension
+\(40\), and the symmetry tangent space has dimension \(15\), so rank \(25\)
+rows that vanish on the symmetry tangent space span the cotangent space of any
+transverse slice. Since the selected set is finite and the upper branches are
+smooth, the first-order decrease has a uniform negative margin on the compact
+unit sphere in the slice. Hence \(\operatorname{sys}\) decreases for every
+sufficiently small nonzero transverse perturbation.
+
+The finite certificate is a list of exact assertions over the ordered number
+field determined by the real root \(0<t<1\) of
+\[
+  t^4-10t^2+5=0.
+\]
+It records the following proof-facing facts:
+\[
+\begin{array}{ll}
+\text{ambient dimension} & 40\\
+\text{selected feasible sections} & 26\\
+\text{symmetry tangent rank} & 15\\
+\text{upper-branch row rank} & 25\\
+\text{convex certificate} &
+  \lambda_\sigma>0,\quad
+  \sum_\sigma\lambda_\sigma=1,\quad
+  \sum_\sigma\lambda_\sigma r_\sigma=0.
+\end{array}
+\]
+The certificate also checks positivity, closure and normalization of each beta
+vector, invertibility of the selected feasible-section minor, equality of each
+selected branch action with the HKO action, the feasible-section derivative
+equation, the derivative row formula for \(U_\sigma\), and annihilation of the
+symmetry tangent space. These checks enter the proof in three places. The
+field, HKO geometry, capacity, volume, and volume derivative checks identify
+the base point and the normalization used for \(\operatorname{sys}\). The
+rowwise checks give the smooth feasible upper branches \(U_\sigma\) and
+identify their derivatives at the HKO point. The global rank, annihilation, and
+positive-convex-combination checks are exactly the finite first-order
+certificate on the quotient slice.
+
+Rust is used only to generate the finite witness file. SageMath reads that
+witness, reconstructs the exact algebraic data in memory, and checks the
+proof-facing equations. The full verifier packet is stored in
+\path{experiments/hko-local-maximum/theorem/}. The mathematical implication
+from these checked equations to
+Theorem~\ref{thm:hko-ten-facet-local-maximum} is the finite upper-branch and
+slice argument above; it is not a property of the Rust search procedure.
+
+\begin{proof}[Proof of Theorem~\ref{thm:hko-ten-facet-local-maximum}]
+Lemma~\ref{lem:hko-hausdorff-local-ten-facet-chart} reduces the Hausdorff-local
+statement in \(\mathcal P_{10}\) to the labelled dual-vertex chart. The local
+slice paragraph reduces the quotient-local statement to strict local
+maximality on the transverse slice \(a_{\mathrm{HKO}}+S\). The exact finite
+certificate gives that strict slice maximum by the upper-branch argument above.
+Therefore every sufficiently small perturbation has systolic ratio at most
+\(\operatorname{sys}(K_{\mathrm{HKO}})\). If equality holds, strictness on the
+slice forces the slice coordinate to vanish, so the perturbation is in the
+local orbit of \(K_{\mathrm{HKO}}\) under translations, positive scaling, and
+linear symplectic transformations.
+\end{proof}
+
+\subsection{Empirical tests}
+\label{subsec:hko-local-maximum-empirical-tests}
+
+The proof of Theorem~\ref{thm:hko-ten-facet-local-maximum} uses the exact
+feasible-section certificate, not numerical sampling. We also kept empirical
+sanity checks around the HKO point: numerical first- and second-order
+perturbation tests, and recorded \(F=11\) facet-addition/ascent tests. The
+committed runs did not find a higher nearby value of \(\operatorname{sys}\).
+These experiments support the broader local-stability picture, but they are not
+substitutes for the exact certificate.

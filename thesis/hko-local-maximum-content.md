@@ -3,7 +3,8 @@
 Status: thesis-local content-gathering notes, not source truth.
 
 Purpose: gather the HKO result packet, source pointers, evidence status, and
-remaining review gates needed to draft `thesis/hko-local-maximum.tex`.
+remaining review gates needed to draft and review
+`thesis/hko-local-maximum.tex`.
 
 Overruled by: `FACTSHEET.md`, exact artifacts and local documentation in
 `experiments/hko-local-maximum/`, formal proof files, task files, and Jörn/Kai
@@ -16,6 +17,32 @@ index. Do not cite this file as evidence in thesis prose.
 Update rule: add or change a claim only with a source pointer or an explicit
 `needs source` marker.
 
+Current draft checkpoint, 2026-06-15:
+- `thesis/hko-local-maximum.tex` is an integrated theorem-strength draft, not
+  final thesis text.
+- Local checks run in the source draft worktree after the latest substantive
+  edits: exact Sage verifier, thesis build/check, formal build, JSONL
+  empirical summaries, touched Rust binary compile, stale-wording scan, one
+  bounded source/scope review subagent, and one bounded reader-effort review
+  subagent.
+- The bounded review found two plausible issues: the Hausdorff-to-chart bridge
+  was under-explained, and the closing proof sentence was stronger than the
+  visible review-status marker. Both were revised in the source draft.
+- The reader-effort review found the slice/equality step, HK2017-word
+  notation, certificate/provenance ordering, final proof close, and empirical
+  paragraph too compressed or too implementation-facing. These were revised in
+  the source draft.
+- A final focused bridge review found no definite issue or plausible
+  theorem-risking concern in `lem:hko-hausdorff-local-ten-facet-chart`, the
+  quotient-slice paragraph, or the theorem proof close after the latest
+  revisions.
+- The remaining high-value gate is Jörn/Kai judgment on whether the
+  theorem-strength wording and the standard simple-polytope stability bridge
+  are acceptable for final thesis use.
+- Do not weaken the theorem merely because approval is pending. The current
+  state is theorem-strength draft awaiting approval; approval must be obtained
+  before final submission text treats the theorem route as accepted.
+
 ## Result Packet
 
 The HKO thesis-facing result is a packet, not only one theorem statement.
@@ -26,8 +53,9 @@ The HKO thesis-facing result is a packet, not only one theorem statement.
    `experiments/hko-local-maximum/README.md`.
 
 2. Main theorem target:
-   HKO is locally maximal in the ten-facet model modulo translations, scaling,
-   and linear symplectic maps, conditional on final theorem wording/Kai review.
+   HKO is locally maximal in the `F=10` Hausdorff-topology polytope space
+   modulo translations, scaling, and linear symplectic maps, conditional on
+   final theorem wording/Kai review.
    Jörn quick-reviewed the agent-line-checked feasible-section implication from
    the exact certificate on 2026-06-05 and spotted no gaps. The 2026-06-05
    clarity repairs made the local chart hypotheses, the volume-row arithmetic,
@@ -138,9 +166,10 @@ The HKO non-writing work is currently split into four packets.
    internally, and checks the exact finite certificate predicate.
 
 4. Thesis-writing companion finalization:
-   this file now records the intended writing structure and review gate. After
-   Kai theorem review, update the status markers and write
-   `thesis/hko-local-maximum.tex` from this file.
+   this file now records the intended writing structure and review gate. An
+   integrated thesis draft exists in `thesis/hko-local-maximum.tex`. After Kai
+   theorem review, update the status markers and revise that draft instead of
+   treating this companion as source truth.
 
 Do not treat this file as complete enough for final theorem-strength HKO
 writing until Kai review accepts the theorem wording.
@@ -149,7 +178,8 @@ writing until Kai review accepts the theorem wording.
 
 Purpose: decide whether the exact Sage certificate plus
 `formal/hko-feasible-section-upper-branches.tex` support theorem-strength HKO
-local maximality in the ten-facet quotient model.
+local maximality in the `F=10` Hausdorff-topology polytope space modulo
+symmetries.
 
 Source pointers:
 - `formal/main.pdf`, section "HKO Feasible-Section Upper Branches".
@@ -171,11 +201,12 @@ Outcome needed:
 - the 2026-06-05 clarity repairs made the local chart hypotheses, the
   volume-row arithmetic, and the local symmetry group/dimension explicit;
 - remaining: decide with Kai whether the theorem wording may say "locally
-  maximal in the ten-facet model modulo translations, scaling, and linear
-  symplectic maps".
+  maximal in the `F=10` Hausdorff-topology polytope space modulo translations,
+  scaling, and linear symplectic maps".
 
-Fallback: if review finds a real gap, repair the implication or weaken the HKO
-section to exact-certificate status plus the named blocker.
+If review finds a real gap, repair the implication. Only if the gap cannot be
+closed before submission should the HKO section be reduced to exact-certificate
+status plus the named blocker.
 
 ## Thesis Material Beyond The Sage Script
 
@@ -204,8 +235,10 @@ Classification rule:
 What the thesis must explain:
 - the HKO2024 input is the Lagrangian product of two regular pentagons, with
   the capacity value taken from HKO2024;
-- the local model is the ten-facet dual-vertex chart
-  `K(a) = {x : <a_i,x> <= 1}` near the HKO point `a0`;
+- the theorem domain is the `F=10` Hausdorff-topology polytope space, and the
+  proof enters the ten-facet dual-vertex chart
+  `K(a) = {x : <a_i,x> <= 1}` through the local polar-dual stability bridge
+  near the HKO point `a0`;
 - the coordinate order is facet-major in `(q1,q2,p1,p2)`;
 - the statement is quotient-local, not raw ambient strict local maximality.
 
@@ -215,8 +248,9 @@ Why this is not just script explanation:
 
 Source pointers:
 - `formal/hko-feasible-section-upper-branches.tex`,
-  `lem:hko-capacity-normalization` and
-  `lem:hko-full-chart-volume-row`;
+  `lem:hko-capacity-normalization`, `lem:hko-full-chart-volume-row`, and
+  `rem:hko-hausdorff-theorem-domain`;
+- `thesis/hko-local-maximum.tex`, `lem:hko-hausdorff-local-ten-facet-chart`;
 - `experiments/hko-local-maximum/README.md`, "Current Status";
 - `experiments/hko-local-maximum/theorem/README.md`, "Theorem Target".
 
@@ -356,7 +390,9 @@ Source pointers:
 ### 8. Core content and auxiliary asset decisions
 
 Status:
-- the core content below is not yet written in thesis-ready form;
+- the core content now has an integrated theorem-strength draft in
+  `thesis/hko-local-maximum.tex`, but it is not final thesis text until the
+  review gate accepts the theorem wording;
 - the auxiliary assets below are not yet created;
 - the next work should update this same companion or `thesis/hko-local-maximum.tex`,
   not create another planning surface.
@@ -439,7 +475,7 @@ Recommended auxiliary assets:
    | The stored derivative row is the derivative of that explicit upper branch. | Checks `D beta` satisfies the differentiated feasibility equation and fixed-coordinate equations; recomputes `D action` and `D sys` from the formulas. | Identifies the exact row as `D U_sigma(a0)`. See `rem:hko-feasible-section-derivative-data`. |
    | The rows descend to the quotient directions. | Reconstructs translation, scaling, and `sp(4)` tangent generators; checks their rank is `15`; checks every `D sys` row annihilates every symmetry tangent column. | Rows vanish on the symmetry tangent space and therefore define covectors on a transverse `25`-dimensional slice. See `lem:hko-ambient-rows-descend-to-slice`. |
    | The selected rows force a negative first-order upper slope in every slice direction. | Checks the 26 verified rows have exact rank `25`; checks exact lambdas are positive, sum to `1`, and combine the rows to `0`. | Positive convex relation plus spanning gives a uniform negative margin on the slice unit sphere. See `lem:hko-positive-convex-certificate-margin` and `prop:hko-feasible-branch-slice-local-max`. |
-   | The slice statement is the intended quotient-local theorem. | No extra Sage step; this is a mathematical implication from the local symmetry action and the verified tangent rank. | The transverse-slice lemma converts strict slice maximality to quotient-local maximality in the ten-facet model. See `lem:hko-transverse-symmetry-slice` and `cor:hko-feasible-branch-quotient-template`. |
+   | The slice statement is the intended quotient-local theorem. | No extra Sage step; this is a mathematical implication from the local symmetry action and the verified tangent rank. | The transverse-slice lemma converts strict slice maximality to quotient-local maximality in the `F=10` Hausdorff-topology polytope space. See `lem:hko-transverse-symmetry-slice` and `cor:hko-feasible-branch-quotient-template`. |
 
 2. Low-dimensional proof illustrations.
    Status: TODO(Jörn), not done. Priority: high if the theorem proof feels
@@ -592,7 +628,8 @@ Source pointers:
 Do not write:
 - "The branch list is complete."
 - "Rust proves the certificate."
-- "The theorem proves broad HKO local maximality outside the ten-facet model."
+- "The theorem proves broad HKO local maximality outside the `F=10`
+  Hausdorff-topology polytope space."
 - "The singular rows are nearby optimizing branches."
 - "The verifier independently derives all formulas."
 - "The quotient-local theorem is raw strict local maximality in `R^40`."
@@ -705,7 +742,8 @@ Source pointers:
 
 Missing:
 - Final thesis wording must keep this distinct from theorem-strength local
-  maximality in the ten-facet quotient model.
+  maximality in the `F=10` Hausdorff-topology polytope space modulo
+  symmetries.
 
 ### 6. Search/Context Result
 
@@ -728,9 +766,10 @@ Missing:
 ## Non-Writing Blockers
 
 1. Decide final theorem wording.
-   The intended wording is local maximality in the ten-facet model modulo
-   translations, scaling, and linear symplectic maps. Broad HKO local
-   maximality should remain conjectural unless separately proved.
+   The intended wording is local maximality in the `F=10`
+   Hausdorff-topology polytope space modulo translations, scaling, and linear
+   symplectic maps. Broad HKO local maximality should remain conjectural unless
+   separately proved.
    Source pointers: `experiments/hko-local-maximum/README.md`;
    `experiments/hko-local-maximum/theorem/README.md`.
 
@@ -750,7 +789,8 @@ Missing:
 ## Fallback Branches
 
 If final theorem wording/Kai review accepts the theorem route:
-- State theorem-strength local maximality in the ten-facet quotient model.
+- State theorem-strength local maximality in the `F=10` Hausdorff-topology
+  polytope space modulo symmetries.
 - Present the exact generator/verifier/proof chain as the main support.
 - Present empirical checks as confirmation and broader context.
 - Keep broader local-stability language conjectural unless separately proved.
@@ -779,12 +819,12 @@ If exact work changes theorem wording:
 
 ## Thesis Section Writing Plan
 
-Use this plan after the review gate above is accepted, or use the fallback
-branch if it is not accepted.
+Use this plan as a revision checklist for the integrated draft. If review
+identifies a real mathematical gap, use the gap-handling branch above.
 
 1. Start with the theorem target.
-   Claim: in the ten-facet dual-vertex model, HKO is locally maximal modulo
-   translations, scaling, and linear symplectic maps.
+   Claim: in the `F=10` Hausdorff-topology polytope space, HKO is locally
+   maximal modulo translations, scaling, and linear symplectic maps.
    Caveat: this is not a theorem about all nearby facet counts or broad HKO
    local stability.
 
