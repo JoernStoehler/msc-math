@@ -15,9 +15,9 @@ Do not treat this file as a process contract. Use it as context.
 thesis-local notes live in `thesis/legacy/` as source material only.
 
 Active `.tex` files are reader-facing thesis files. They should contain
-polished prose, TeX structure, labels, figures, and rare TeX-mechanics comments.
-Do not use them as durable TODO ledgers, content-control dashboards, or
-long-lived planning surfaces.
+polished prose, TeX structure, labels, figures, and local comments that prevent
+the source from misrepresenting proof status. Do not use them as durable
+planning ledgers or content-control dashboards.
 
 Section-local `*-content.md` companions are the durable "what to say" surface.
 Use them for content inventory, claim/support/caveat notes, source pointers,
@@ -29,11 +29,14 @@ packets. Use normal repo files as source truth for what is available to say:
 `research/`, `experiments/`, `formal/`, `crates/`, and task files where
 appropriate.
 
-When editing a thesis section, migrate durable section comments from `.tex` to
-the companion before or during prose work. Prune scaffold provenance, duplicated
-process reminders, and vague "write this" comments instead of preserving them
-mechanically. If a note may affect a retained claim but lacks source support,
-keep it in the companion as `needs source`.
+When editing a thesis section, migrate durable section-planning comments from
+`.tex` to the companion before or during prose work. Prune scaffold provenance,
+duplicated process reminders, and vague "write this" comments instead of
+preserving them mechanically. Keep a local `.tex` comment next to prose that
+would otherwise read as a resolved proof, citation, data, or dependency claim
+while the supporting active thesis text is still missing or provisional. If a
+note may affect a retained claim but lacks source support, keep it in the
+companion as `needs source` as well.
 
 ## Writing Targets
 
@@ -68,7 +71,9 @@ reasoning that is cheaper to rederive.
 
 The 2026-06-11 surface refactor migrated the planned-ToC scaffold comments out
 of active `.tex` files. Future agents should add new durable content notes to
-companions, not back into TeX comments.
+companions, not back into TeX comments. This does not apply to local comments
+beside active prose whose current wording would otherwise overstate thesis
+readiness.
 
 ## Questionnaire And Answers From The Design Session
 

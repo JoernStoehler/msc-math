@@ -25,7 +25,7 @@ Read only the row that matches your task.
 | --- | --- | --- |
 | Write the thesis section | `thesis/rotated-regular-polygons-content.md`, then `thesis/rotated-regular-polygons.tex` | Sage source, generated JSONL/PNG/HTML, stale formal draft |
 | Check the exact proof result | `pentagon-rotation-formula-proof/README.md`, then `pentagon-rotation-formula-proof/executable_proof.full.stdout.txt` | empirical folders |
-| Audit the proof code | `pentagon-rotation-formula-proof/README.md`, then `pentagon-rotation-formula-proof/executable_proof_audit_guide.md`, then the specific Sage functions named there | generated artifacts |
+| Inspect the proof code | `pentagon-rotation-formula-proof/README.md`, then `pentagon-rotation-formula-proof/executable_proof.sage.py` | generated artifacts |
 | Choose figures | `pentagon-rotation-empirics/README.md`, then the ranked figure list in `thesis/rotated-regular-polygons-content.md` | exact proof source |
 | Understand broad regular-product context | `rotated-regular-products/README.md` | pentagon proof internals |
 | Recover old calculation details | `formal/pentagon-rotation-capacity.tex` | unless a current guide points to a specific calculation |
@@ -57,7 +57,6 @@ Open them only when a README or thesis companion points to a specific detail.
 | `pentagon-rotation-formula-proof/executable_proof.sage.py` | Exact proof source | Source truth for the open half-domain executable certificate | If edited, rerun the full proof and refresh stdout |
 | `pentagon-rotation-formula-proof/executable_proof.full.stdout.txt` | Full proof run output | Source truth for exact run output, status counts, and runtime | Do not hand-edit |
 | `pentagon-rotation-formula-proof/README.md` | Proof packet runbook | Best entry point for proof reproduction | Keep short and routing-focused |
-| `pentagon-rotation-formula-proof/executable_proof_audit_guide.md` | Code-audit guide | Explains how to read the Sage proof source | Not source truth; keep code-audit focused |
 | `pentagon-rotation-empirics/` | Sampled pentagon artifacts | Figures, sampled sweep, and orbit viewer for exposition | Not proof input; avoid overclaiming |
 | `rotated-regular-products/` | Broad regular-pair sweeps | Context for tested regular polygon products | Empirical only; not a classification theorem |
 | `src/` | Shared Rust helpers | Product cache, capacity wrapper, volume helper, package paths | Ordinary code source; keep comments near code |

@@ -174,6 +174,10 @@ Therefore the active branch gives
 This proves the required upper bound for \(\operatorname{sys}(K_\theta)\) on
 the half-domain, since the EHZ capacity is the minimum action.
 
+% The referenced HK2019 section currently does not contain the
+% finite-candidate/billiard reduction used here. Source material exists in
+% formal/billiard-capacity-algorithm.tex and thesis/legacy/, and the missing
+% thesis-facing wording is tracked in rotated-regular-polygons-content.md.
 It remains to prove the lower bound on the open half-domain. By the
 finite-candidate reduction from
 Section~\ref{sec:quadratic-program-algorithm-hk2019}, this is enough to verify
@@ -209,6 +213,9 @@ make all branch expressions rational functions of \(t\) over that coefficient
 field. Sage uses exact algebraic root isolation to compare roots and endpoints
 inside the interval \(0<t<\tan(\pi/20)\).
 
+% Same unsatisfied dependency as above. This paragraph is not final until the
+% finite-candidate theorem is written into active thesis prose or the reference
+% is replaced by an explicit local theorem statement.
 The finite-candidate theorem from
 Section~\ref{sec:quadratic-program-algorithm-hk2019} applies to this family.
 Thus it is exhaustive to consider the two- and three-bounce candidates; all

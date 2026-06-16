@@ -193,9 +193,6 @@ The thesis-facing side result is a packet, not only one formula.
    `experiments/regular-products/pentagon-rotation-formula-proof/executable_proof.full.stdout.txt`;
    `experiments/regular-products/README.md`.
 
-   Code-reading guide:
-   `experiments/regular-products/pentagon-rotation-formula-proof/executable_proof_audit_guide.md`.
-
 4. Empirical and figure support:
    The sampled sweeps and plots motivated the formula and should be presented
    only as empirical context or illustration, not as proof input.
