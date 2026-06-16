@@ -20,12 +20,20 @@ file from the README and source truth.
   certificate for `c_EHZ`.
 - The thesis section must match the support strength recorded in the live
   algorithm README.
+- Scoping decision from Jörn, 2026-06-15: leave the flow-graph algorithm to
+  another session. Do not include this section in the current established-HK
+  content milestone.
+- CH2021 may still be relevant outside this section as source truth for
+  smoothing/limit statements relating smooth convex bodies, polytopes, and
+  combinatorial or generalized Reeb orbits. Route those uses through
+  `thesis/generalized-reeb-orbits-polytopes-content.md`, not through this
+  algorithm section.
 
 ## Writing Inventory
 
-- Present this as a retained thesis algorithm with correctness and performance
-  claims. The main remaining uncertainty is how good the final results are, not
-  whether the section is merely exploratory.
+- Deferred. A later session must decide whether and how to present this as a
+  retained thesis algorithm, and must match all correctness/performance claims
+  to the live flow-graph README.
 - First-use name: "Flow-Graph Algorithm Based On CH2021". This is the most
   correct and precise thesis-facing name.
 - Short forms after first use: "flow graph algorithm"; "algorithm", "capacity
@@ -38,23 +46,11 @@ file from the README and source truth.
 
 ## Section Notes
 
-- Definition: define the algorithm in current thesis notation from the current
-  mathematical source, not stale old thesis text.
-- Definition ingredients to check: input polytope, face graph, tube, primitive
-  tube, tube intersection, action restriction, closed-loop fixed points, and
-  output orbit/capacity.
-- Correctness: prove the algorithm computes the same target as the HK2019
-  formulation under the stated assumptions, if the retained support strength
-  licenses that claim.
-- Correctness assumptions/proof steps to name if retained: exhaustive
-  simple-word search, pruning claims used or not used, fixed-point solving, and
-  comparison with the generalized Reeb orbit definition.
-- Performance optimization: explain the concrete improvements that make the
-  algorithm useful in thesis computations once the implementation is finished.
-- Empirical tests: state comparison tests against HK2019 and targeted tests for
-  the algorithm's own objects, such as primitive maps, empty intersections,
-  action restriction, fixed points, small examples against HK2019, and retained
-  HKO/regular-polygon cases.
+- Deferred with the section. When reopened, likely topics include: input
+  polytope, face graph, tube, primitive tube, tube intersection, action
+  restriction, closed-loop fixed points, output orbit/capacity, correctness
+  assumptions, and empirical comparison with HK. These are not part of the
+  current established-HK content milestone.
 
 ## Source Pointers
 

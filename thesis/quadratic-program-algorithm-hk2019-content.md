@@ -15,14 +15,32 @@ stable, delete this file or reduce it to a short maintenance index.
 Update rule: add or change a claim only with a source pointer or an explicit
 `needs source` marker.
 
+## Session Scope
+
+- In scope: the Haim-Kislev quadratic-program statement and the mathematical
+  reason it computes the EHZ capacity/minimum action for polytopes.
+- In scope: notation choices and conversion notes needed to state the standard
+  result in the thesis convention.
+- Out of scope: the algorithms we developed to solve the quadratic programs.
+  Leave pruning, KKT solvers, exact arithmetic, f64 behavior, performance
+  optimization, and implementation tests to later algorithm/numerics sessions.
+- Out of scope: project-original improvements or insights on top of the HK
+  finite formulation, except where a small convention is needed to make the
+  standard result readable.
+
 ## Purpose And Naming
 
-- Present the first finite algorithmic formulation for the minimizer search.
+- Present the standard finite quadratic-program formulation for the minimizer
+  search. This is Haim-Kislev's work; the thesis work in this section is
+  explanatory and not a new algorithmic contribution.
 - First use can call this "Quadratic Program Algorithm Based On HK2019"; after
   first use, use the shorter algorithmic name.
 - The bibliography currently also has an `HK2017` entry for the same title; the
   journal-version GAFA citation is 2019 and should be preferred in
   reader-facing naming unless a writer chooses otherwise.
+- Open naming decision: choose one reader-facing convention among `HK2017`,
+  `HK2019`, or "Haim-Kislev formula/algorithm", and make the bibliography match
+  that choice.
 
 ## Definition
 
@@ -37,30 +55,31 @@ Update rule: add or change a claim only with a source pointer or an explicit
   vertex-facet incidence for feasibility and pruning, but mathematical
   correctness is the HK2019 finite-search statement plus the preceding validity
   checks.
+- Record the chosen thesis convention for dual vertices versus
+  normals/heights, the action matrix, `Q`, `Qmax`, and the factor relating
+  `Qmax` to `c_EHZ`. Existing formal notes use `c_EHZ = 1/(2 Qmax)` for their
+  `Q`; legacy prose may use a different-looking but equivalent convention and
+  must be converted deliberately.
+- Convention source: use `formal/hk2017-qp-conventions.tex` for the
+  HK2017-to-project translation layer, especially normals/heights to dual
+  vertices, the project `J_0`/`omega_0` convention, fixed-word QP orientation,
+  and the current sign/order audit target. Cite HK2017/Haim--Kislev separately
+  for the theorem itself.
 
 ## Correctness
 
-- Prove that the finite problem computes the intended minimum action/capacity
-  in the polytope setting.
+- State and justify that the finite problem computes the intended minimum
+  action/capacity in the polytope setting, at the proof depth chosen for this
+  thesis section.
 - Likely named claims: finite candidate reduction, equivalence between beta
   problem and generalized orbit action, existence of an optimum, and recovery
   of capacity/sys.
 
-## Performance Optimization
+## Deferred Algorithmic Material
 
-- Explain only optimizations that matter for feasibility or for understanding
-  later experiments.
-- Candidate topics: partial-word enumeration, pruning/admissibility checks, KKT
-  solve, repeated/tied minimizer handling, and accumulator/certainty status.
-- Separate correctness from implementation speed. Incidence tables, cached
-  symplectic products, ordered candidate generation, tracing, profiling, and
-  benchmarking explain why experiments can be run, not why the theorem is true.
-
-## Empirical Tests
-
-- State tests supporting the implementation and put detailed outputs/knobs
-  outside the main reading path.
-- Candidate families: known polytopes, HK2019-vs-CH2021 comparison,
-  exact/f64 spot checks, orbit recovery, and regression tests for past bugs.
-- Testing philosophy: whenever a believed statement is precise enough to
-  formalize and cheap enough to exercise, write it as an automated test.
+- Partial-word enumeration, pruning/admissibility checks, KKT solving,
+  repeated/tied minimizer handling, accumulator/certainty status, and empirical
+  tests belong to a later session about our algorithmic work.
+- When this section is drafted, mention implementation only as far as needed to
+  explain why later thesis sections can call this standard finite problem a
+  computational target.

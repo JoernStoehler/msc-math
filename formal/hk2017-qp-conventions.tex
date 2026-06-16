@@ -1,0 +1,229 @@
+% formal/hk2017-qp-conventions.tex -- HK2017-to-project convention audit
+%
+% Purpose:
+%   Current proof-facing audit for translating HK2017's capacity formula into
+%   the project's dual-vertex, sign, and QP notation.
+%
+% Sources:
+%   papers/hk2017/EHZ-polytopes.tex
+%   papers/citation-index.md
+%   papers/sign_convention_verification.md
+%   formal/symplectic-polytope-geometry.tex
+%   formal/ehz-kkt-system.tex
+%   crates/symplectic/src/geom/symplectic_form.rs
+%   crates/symplectic/src/kkt/qp_assembly.rs
+%   crates/symplectic/src/kkt/rational_solver.rs
+%   crates/symplectic/src/kkt/saddle_point_solver.rs
+%
+% Verification status:
+%   This note is the current source-backed audit for this convention layer, but
+%   it is not yet Jörn-reviewed final mathematical truth. In particular, it
+%   records existing sign/order hazards instead of silently repairing every
+%   dependent formal or Rust surface.
+
+% input by formal/main.tex -- do not add \documentclass or \begin{document}
+
+\subsection{Source theorem and naming}
+\label{subsec:hk2017-source-theorem-and-naming}
+
+The source theorem is Haim--Kislev's finite formula for the EHZ capacity of a
+convex polytope.  In the local citation cache this is HK2017 Theorem~1.1,
+label \texttt{formula\_theorem}.  The same cache records HK2017 Remark~1.4,
+label \texttt{abbondandolo\_remark}, as a Clarke dual-action-principle
+connection and explicitly not a theorem.  HK2017 Theorem~1.5, label
+\texttt{simple\_loop\_theorem}, supplies the simple-minimizer existence result.
+
+Reader-facing thesis naming may later choose ``HK2017'', ``HK2019'', or
+``Haim--Kislev formula'' depending on the bibliography decision.  This formal
+note uses HK2017 because the local paper source and citation-index anchors use
+that name.
+
+\subsection{Project symplectic convention}
+\label{subsec:hk2017-project-symplectic-convention}
+
+The current project convention is the one in
+Definition~\ref{def:symplectic-form} and in
+\texttt{crates/symplectic/src/geom/symplectic\_form.rs}:
+\[
+  (q_1,q_2,p_1,p_2), \qquad
+  J_0(q,p)=(-p,q), \qquad
+  \omega_0(u,v)=\langle J_0u,v\rangle.
+\]
+Equivalently,
+\[
+  \omega_0(u,v)
+  =
+  u_{q_1}v_{p_1}-u_{p_1}v_{q_1}
+  +u_{q_2}v_{p_2}-u_{p_2}v_{q_2}.
+\]
+This matches the Rust helper \texttt{omega0}.  The scratch audit
+\texttt{papers/sign\_convention\_verification.md} uses the matrix
+\(J(q,p)=(p,-q)\) and writes \(\omega(u,v)=\langle -Ju,v\rangle\), which is
+the same symplectic form under \(J=-J_0\).
+
+\subsection{Normals, heights, and dual vertices}
+\label{subsec:hk2017-normals-heights-dual-vertices}
+
+HK2017 states the formula using outward unit normals \(n_i\) and heights
+\[
+  h_i = h_K(n_i).
+\]
+After translating the body so \(0\in\operatorname{int}(K)\), the project often
+uses scaled dual vertices
+\[
+  a_i = n_i/h_i,
+  \qquad
+  K = \{x\in\mathbb{R}^4 : \langle a_i,x\rangle \leq 1
+        \text{ for all }i\}.
+\]
+The variable change
+\[
+  b_i = \beta_i h_i
+\]
+turns HK2017's constraints
+\[
+  \beta_i\geq0,\qquad
+  \sum_i\beta_i h_i=1,\qquad
+  \sum_i\beta_i n_i=0
+\]
+into
+\[
+  b_i\geq0,\qquad
+  \sum_i b_i=1,\qquad
+  \sum_i b_i a_i=0.
+\]
+Under this change, the HK2017 objective
+\[
+  \sum_{1\leq j<i\leq F}
+    \beta_{\sigma(i)}\beta_{\sigma(j)}
+    \omega_0(n_{\sigma(i)},n_{\sigma(j)})
+\]
+becomes
+\[
+  \sum_{1\leq j<i\leq F}
+    b_{\sigma(i)}b_{\sigma(j)}
+    \omega_0(a_{\sigma(i)},a_{\sigma(j)}).
+\]
+This is the source-backed dual-vertex form that later QP notation should
+encode.
+
+\subsection{Fixed-word QP convention}
+\label{subsec:hk2017-fixed-word-qp-convention}
+
+For a fixed ordered word
+\[
+  \sigma=(\sigma(1),\ldots,\sigma(m)),
+\]
+the HK2017 order in the objective is later entry first, earlier entry second:
+\[
+  Q_\sigma(\beta)
+  =
+  \sum_{1\leq j<i\leq m}
+    \beta_i\beta_j\,
+    \omega_0(a_{\sigma(i)},a_{\sigma(j)}).
+\]
+Here \(\beta\) denotes the project dual-vertex weight variable, i.e. the
+\(b\)-variable from Subsection~\ref{subsec:hk2017-normals-heights-dual-vertices},
+not the unscaled HK2017 normals/heights variable.
+Here the feasible set is
+\[
+  \beta_i\geq0,\qquad
+  \sum_i\beta_i=1,\qquad
+  \sum_i\beta_i a_{\sigma(i)}=0.
+\]
+Let
+\[
+  Q_{\max}=\max_{\sigma}\max_{\beta} Q_\sigma(\beta),
+\]
+with the chosen convention for whether \(\sigma\) ranges over all facet
+permutations with zero dwell times allowed or over cyclic words on subsets.
+Then
+\[
+  c_{\mathrm{EHZ}}(K)=\frac{1}{2Q_{\max}}.
+\]
+
+If one writes \(Q_\sigma(\beta)=\frac12\beta^T H(\sigma)\beta\) with a
+symmetric matrix \(H(\sigma)\), the HK2017 fixed-word convention above is
+encoded by
+\[
+  H_{ij}=H_{ji}
+  =
+  \omega_0(a_{\sigma(j)},a_{\sigma(i)})
+  \quad\text{for } i<j.
+\]
+Equivalently, the matrix entry is \(\omega_0\) of the later word entry and the
+earlier word entry when the sum is expanded over \(i<j\).
+
+The equivalence between the HK2017 all-facet-permutation formulation with zero
+dwell times and any project subset/cyclic-word formulation is a separate
+enumeration-convention claim.  This note records the sign and scaling
+translation; the subset/cyclic-word equivalence should be owned by the QP core
+or algorithm statement that uses it.
+
+\subsection{Current mismatch and audit target}
+\label{subsec:hk2017-current-mismatch-audit}
+
+Several existing project surfaces use a different fixed-word matrix convention
+or do not make the word-orientation convention explicit:
+\begin{itemize}
+  \item \texttt{formal/hk2017-qp-core.tex}, Definition
+    \texttt{def:hk2017-problem}, currently sets
+    \(H_{ij}=H_{ji}=\omega_0(a_{\sigma(i)},a_{\sigma(j)})\) for \(i<j\).
+  \item \texttt{formal/capacity-algorithms.tex}, Algorithm~\ref{alg:ehz},
+    uses the same earlier-entry-first symmetric matrix convention and returns
+    \((\max\beta^T H\beta)^{-1}\).
+  \item \texttt{formal/ehz-kkt-system.tex} is mixed: its setup and
+    Lemma~\ref{lem:H-quadratic} use the later-entry-first action sum, while
+    Lemma~\ref{lem:dual-vertex-qp} states an action matrix entry in the
+    earlier-entry-first order.
+  \item \texttt{crates/symplectic/src/kkt/rational\_solver.rs} constructs its
+    KKT matrix with \(H_{ij}=\omega_0(y_{\sigma(i)},y_{\sigma(j)})\) for
+    \(i<j\), while its result comment for exact \(Q(\beta)\) uses
+    \(\sum_{i>j}\beta_i\beta_j\omega_0(y_{\sigma(j)},y_{\sigma(i)})\).
+  \item The f64 assembly path in
+    \texttt{crates/symplectic/src/kkt/qp\_assembly.rs} builds the same
+    earlier-entry-first symmetric \(H\), while
+    \texttt{crates/symplectic/src/kkt/saddle\_point\_solver.rs} also contains a
+    direct \(Q(\beta)\) helper using the later-entry-first sum.
+\end{itemize}
+Because \(\omega_0\) is antisymmetric, these conventions are not identical for
+a fixed word.  They may define the same global scalar capacity after reversing
+word orientation everywhere, but fixed-word orbit reconstruction, derivative
+formulas, pruning, and gap-window semantics are sensitive to this distinction.
+There is also a normalization/factor convention to keep explicit:
+\(Q_\sigma=\frac12\beta^TH\beta\) gives \(c_{\mathrm{EHZ}}=1/(2Q_{\max})\),
+whereas surfaces that optimize \(\beta^TH\beta\) return the reciprocal of that
+maximum.
+
+\begin{unverified}
+\begin{remark}[Audit target]\label{rem:hk2017-q-word-orientation-audit}
+Before thesis prose or code comments cite a fixed-word QP convention as
+HK2017-compatible, audit the dependent formal and Rust surfaces against the
+source-backed convention in
+Subsection~\ref{subsec:hk2017-fixed-word-qp-convention}.  In particular,
+decide whether each surface should be repaired to the HK2017 fixed-word
+orientation, or whether it intentionally uses reversed words and needs an
+explicit equivalence statement.  At the same time, record whether the local
+surface optimizes \(Q_\sigma\), \(\frac12\beta^TH\beta\), or \(\beta^TH\beta\),
+so that capacity reciprocals and factors of~\(2\) are not inferred from context.
+\end{remark}
+\end{unverified}
+
+\subsection{Use by thesis and code}
+\label{subsec:hk2017-conventions-use-by-thesis-and-code}
+
+Future thesis content notes should cite this file for the convention layer and
+cite HK2017 for the theorem content.  This file is not a replacement for
+HK2017, and it is not evidence for project-original solver correctness.
+
+Rust comments may cite:
+\begin{itemize}
+  \item Subsection~\ref{subsec:hk2017-project-symplectic-convention} for the
+    \(J_0,\omega_0\) convention;
+  \item Subsection~\ref{subsec:hk2017-normals-heights-dual-vertices} for the
+    normals/heights-to-dual-vertices translation;
+  \item Subsection~\ref{subsec:hk2017-fixed-word-qp-convention} for the
+    source-backed fixed-word \(Q_\sigma\) convention;
+  \item Remark~\ref{rem:hk2017-q-word-orientation-audit} when marking code or
+    formal math that still needs the word-orientation audit.
+\end{itemize}

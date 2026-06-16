@@ -20,6 +20,16 @@ Update rule: add or change a claim only with a source pointer or an explicit
 - Define the mathematical objects needed by later chapters.
 - Present the simple, robust domain model rather than implementation shortcuts.
 - Collapse notation and conventions where the literature is inconsistent.
+- Keep this section educational and preparatory. It should explain standard
+  Euclidean and symplectic objects, plus the natural thesis notation needed to
+  use the standard literature. It should not present project-original
+  algorithmic improvements or new theorem-strength insights.
+- Distinguish three kinds of material when drafting:
+  - standard background and standard literature results;
+  - thesis explanations, notation choices, and harmless organizing machinery
+    used to make that literature readable here;
+  - project-original extensions, which belong in later result or method
+    sections unless a small setup convention is needed for readability.
 
 ## Polytopes
 
@@ -38,6 +48,10 @@ Update rule: add or change a claim only with a source pointer or an explicit
 - Face lattice and naming conventions.
 - Convex bodies, smooth convex bodies, and Hausdorff distance.
 - The topological space of polytopes with a fixed number of facets.
+- The dual-vertex parametrization of a fixed-facet-count polytope family, with
+  the caveat that facet permutations identify presentations. This is natural
+  setup machinery for local variation and search sections, not a thesis result
+  to advertise as a new contribution.
 - HKO2024 as a ten-facet polytope example.
 - Volume of a polytope.
 
@@ -59,13 +73,23 @@ Update rule: add or change a claim only with a source pointer or an explicit
 ## Clarke Dual Action Principle
 
 - State the principle at the level needed for the thesis.
-- Include the fleshed-out polished proof here if it remains useful; this is not
-  merely motivational background.
+- Do not decide proof depth by default. Current open choice: cite/state only,
+  give a proof sketch, or import a polished proof from legacy material after
+  revalidation.
 - Name the function space, action functional, minimizer/existence statement,
   and the conclusion used later for polytopes.
-- Use it to justify the later finite computation story.
-- Open decision: state exactly which later step it justifies: existence of a
-  minimum-action orbit, reduction to a closed curve/action minimization problem,
-  or the HK2019 finite optimization problem.
+- Use it only for the part of the finite computation story it actually
+  justifies. Open decision: state exactly which later step it justifies:
+  existence of a minimum-action orbit, reduction to a closed
+  curve/action-minimization problem, the simple-minimizer route, or the
+  HK finite optimization theorem.
 - Keep functional-analytic details only where needed for correctness and reader
   pacing.
+
+## Out Of Scope For This Session
+
+- The flow-graph algorithm based on CH2021 is left to another session.
+- Our algorithms for solving the HK quadratic programs are left to another
+  session. This section may prepare notation used by those algorithms, but
+  should not explain pruning, KKT solving, exact/f64 behavior, or performance
+  engineering.

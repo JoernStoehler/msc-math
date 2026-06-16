@@ -16,6 +16,20 @@ maintenance index.
 Update rule: add or change a claim only with a source pointer or an explicit
 `needs source` marker.
 
+## Session Scope
+
+- In scope: generalized Reeb orbits as the polytope object that connects
+  EHZ/minimum action to the finite HK quadratic-program statement.
+- In scope: literature-level limit or smoothing statements needed to explain
+  why polytope orbits are the correct nonsmooth analogues of smooth Reeb
+  orbits.
+- Out of scope: the flow-graph algorithm based on CH2021. CH2021 may still be
+  used here as a source for definitions, smoothing limits, and combinatorial
+  Reeb-orbit statements if those claims are the right source truth.
+- Out of scope: project-original algorithmic improvements on top of HK or
+  CH2021, except for small notation choices needed to state the literature in
+  thesis notation.
+
 ## Definition
 
 - Define generalized Reeb orbits on polytopes in the notation used by the
@@ -29,7 +43,9 @@ Update rule: add or change a claim only with a source pointer or an explicit
 - Explain generalized Reeb orbits as limits of smooth convex bodies.
 - Needs source: exact limit statement, including what converges, which topology
   is used, and what conclusion is needed later.
-- Check the exact CH2021 statement and topology before final prose.
+- Check the exact CH2021 statement and topology before final prose. Do not
+  import the CH2021 flow-graph algorithm merely because CH2021 is useful for
+  this limit/smoothing question.
 
 ## Simple Minimizers
 
