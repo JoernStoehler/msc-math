@@ -53,23 +53,36 @@ source files.
   Source truth: `experiments/hko-local-maximum/README.md`, the current
   `experiments/hko-local-maximum/theorem/` packet,
   `experiments/hko-local-maximum/smooth-only-rank-defect/`, and related
-  formal/thesis files.
+  formal/thesis files, especially `formal/hko-feasible-section-upper-branches.tex`
+  and `thesis/hko-local-maximum.tex`.
   Current state: the exact feasible-section theorem certificate is merged and
-  verifies in Sage; the formal implication has been agent-line-checked. Jörn
-  quick-reviewed the rebuilt PDF on 2026-06-05 and spotted no gaps; he judged
-  any remaining mistakes likely closeable before thesis release. The 2026-06-05
-  clarity repairs made the local chart hypotheses, the volume-row arithmetic,
-  and the local symmetry group/dimension explicit. The remaining
-  theorem-strength gate is final theorem wording/Kai review.
+  verifies in Sage; the formal implication has been agent-line-checked; the
+  integrated thesis chapter `thesis/hko-local-maximum.tex` is on `main` as a
+  theorem-strength draft. Jörn quick-reviewed the rebuilt formal PDF on
+  2026-06-05 and spotted no gaps; he judged any remaining mistakes likely
+  closeable before thesis release. The 2026-06-05 clarity repairs made the
+  local chart hypotheses, the volume-row arithmetic, and the local symmetry
+  group/dimension explicit. A 2026-06-16 status pass ported the thesis chapter,
+  corrected the HKO2024 citation to Proposition 1.3 where needed, added the
+  formal Hausdorff-domain bridge remark, normalized fixed-`F=10`/`F=11`
+  wording, and repaired the malformed trailing line in the `F=11`
+  neighborhood-splitting JSONL artifact. The remaining theorem-strength gate is
+  final theorem wording/Kai review.
   High-risk facts:
   - Current exact field is quartic `Q(tan(pi/5))`, not `Q(sqrt(5))`.
   - Current theorem-facing certificate uses 26 feasible-section rows, exact
     row rank `25`, exact symmetry tangent rank `15`, and a positive exact
     convex relation summing the rows to `0`.
+  - The proof route is the feasible-section upper-branch route. The smooth-only
+    nonsingular positive-beta route is a recorded failed diagnostic, not
+    theorem evidence: it has `44` nonsingular rows of projected rank `23` in
+    the `25`-dimensional quotient, while the feasible-section route reaches
+    rank `25`.
   - Old `44`-orbit / `10`-gradient prose is stale against the current
     `150`-active-row diagnostic and its `44` nonsingular / `106` singular row
     split.
-  Refresh when: HKO theorem wording or LICCA evidence changes.
+  Refresh when: HKO theorem wording, thesis chapter status, or LICCA evidence
+  changes.
 
 - Hostile `sys`-search landscape is thesis spine.
   Data-science source truth:
