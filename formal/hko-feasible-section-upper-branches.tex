@@ -34,7 +34,7 @@ as an upper bound for the capacity.
 \label{lem:hko-capacity-normalization}
 Let $K_{\mathrm{HKO}}=K\times T$ be the Lagrangian product of the two
 regular pentagons with circumradius~$1$ used in
-\cite[Proposition~1.4]{HaimKislevOstrover2024}.
+\cite[Proposition~1.3]{HaimKislevOstrover2024}.
 Let
 \[
   t=\tan(\pi/5),
@@ -55,7 +55,7 @@ Then
 
 \begin{proof}
 The first equality is exactly the capacity computation in
-\cite[Proposition~1.4]{HaimKislevOstrover2024}.  For the second equality,
+\cite[Proposition~1.3]{HaimKislevOstrover2024}.  For the second equality,
 work in the ordered number field determined by the real root
 $0<t<1$ of $t^4-10t^2+5$.  Put $s=(5-t^2)/2$, so $s=\sqrt{5}$ in this
 ordered field.  The identities
@@ -612,7 +612,24 @@ for translations, scaling, and $X\in\mathfrak{sp}(4,\mathbb R)$,
 respectively.  These are exactly the columns whose rank Sage verifies to
 be~$15$.  Therefore
 Lemma~\ref{lem:hko-transverse-symmetry-slice} applies and the slice statement
-gives the desired quotient-local maximum in the ten-facet dual-vertex model.
+gives the desired quotient-local maximum in the ten-facet dual-vertex chart.
 \end{corollary}
+
+\begin{remark}[Hausdorff theorem domain]
+\label{rem:hko-hausdorff-theorem-domain}
+Corollary~\ref{cor:hko-feasible-branch-quotient-template} is a statement in the
+ten-facet dual-vertex chart. To state the thesis theorem in the Hausdorff space
+of exactly ten-facet polytopes, one also uses the elementary local reduction at
+the HKO point: the centered representative contains the origin; polarity is
+continuous on a sufficiently small origin-interior Hausdorff neighborhood;
+facets of~$K$ correspond to vertices of~$K^\circ$; the polar of the simple HKO
+polytope is simplicial, so the ten vertices of~$K^\circ$ can be labelled by
+exposed neighborhoods of the ten vertices of $K_{\mathrm{HKO}}^\circ$; and,
+after returning to the labelled inequalities for~$K$, the standard local
+stability of simple labelled $H$-representations preserves the HKO face lattice
+after shrinking. Concretely, this uses finitely many open determinant, slack,
+irredundancy, boundedness, and origin-interior conditions for the ten labelled
+facets. This geometric reduction is independent of the Sage certificate.
+\end{remark}
 
 \end{unverified}

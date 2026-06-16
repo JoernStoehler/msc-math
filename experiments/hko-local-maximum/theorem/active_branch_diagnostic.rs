@@ -1994,7 +1994,7 @@ fn main() {
 
     let output = DiagnosticOutput {
         diagnostic_version: 2,
-        theorem_use: "High-VoI Rust diagnostic for the HKO M_10 local-maximum route: generate active branch candidates, D_a sys rows, KKT singularity flags, symmetry directions, and numerical quotient-cone checks before building the final Sage certificate.".to_string(),
+        theorem_use: "High-VoI Rust diagnostic for the HKO fixed-F=10 local-maximum route: generate active branch candidates, D_a sys rows, KKT singularity flags, symmetry directions, and numerical quotient-cone checks before building the final Sage certificate.".to_string(),
         output_mode: if options.canonical { "canonical" } else { "smoke" }.to_string(),
         summary,
         symmetry_generators,

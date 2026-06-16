@@ -10,7 +10,7 @@ final theorem certificate.
 | --- | --- |
 | `first-order/` | First-order numerical support and active-gradient/orbit bookkeeping. |
 | `second-order/` | Flat-direction curvature evidence in the fixed `F=10` setting. |
-| `neighborhood-sampling/` | Random nearby-polytope samplers for `M_10`, `M_11`, and Lagrangian-product `M_10` modes. |
+| `neighborhood-sampling/` | Random nearby-polytope samplers for fixed-`F=10`, `F=11` facet-splitting, and fixed-`F=10` Lagrangian-product modes. |
 | `m11-ascent/` | Cut-then-ascent checks starting from `F=11` facet additions. |
 
 ## Interpretation

@@ -1,8 +1,8 @@
 //! M11 ascent on HKO2024: add a facet (F=10→F=11), then run gradient ascent.
 //!
 //! Tests whether HKO2024 is a local maximum in the F=11 polytope space.
-//! The facet-splitting experiment showed 536/536 cuts decrease sys, but
-//! did not run gradient ascent afterward. This experiment closes that gap.
+//! The facet-splitting experiment is a pre-ascent check for sampled `F=11`
+//! cuts. This experiment adds the missing gradient-ascent follow-up.
 //!
 //! Algorithm: for each random direction n on S³, add a barely-non-redundant
 //! facet a_{F+1} = n / (h_K(n) - ε), then run gradient ascent with overshoot
