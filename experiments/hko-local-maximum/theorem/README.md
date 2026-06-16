@@ -70,6 +70,7 @@ gradients for theorem correctness.
 | `generate.rs` | Rust `generate` stage for the 26-entry finite witness selection. |
 | `witness.json` | Tracked finite verifier input from Rust. Not proof-facing by itself. |
 | `verify.sage.py` | SageMath verifier; computes exact data in memory and checks the exact predicate above. |
+| `verify.sage.py.explained.md` | Explained full-source listing of `verify.sage.py`, organized by mathematical proof obligation. |
 | `verification-summary.json` | Verifier result summary. |
 
 ## Current Pipeline
