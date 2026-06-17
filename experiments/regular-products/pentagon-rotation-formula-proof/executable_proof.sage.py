@@ -2,17 +2,16 @@
 """
 Executable proof for the pentagon rotation formula.
 
-This script is the SageMath proof certificate for the open-domain part of the
-formula
+This script is intended to become the readable SageMath proof certificate for
+the formula
 
     sys(P_5 x_L R(theta) P_5)
       = ((5 + 2 sqrt(5)) / 10) sec^2(theta)
 
-on the half-domain. The script certifies 0 < theta < pi/10. The endpoints are
-closed by the thesis continuity argument, and the second half of the
-fundamental domain is then obtained by symmetry.
+on the half-domain 0 <= theta <= pi/10. The second half of the fundamental
+domain is then obtained by symmetry.
 
-Run contract:
+Current development contract:
     - Default invocation runs the full all-raw-sigma certificate.
     - `--limit N` runs the same assertions on only the first N raw sigmas.
     - `CERTIFICATE PASSED` must only be printed when no limit is used.
@@ -33,21 +32,19 @@ from sage.all import AA, CyclotomicField, FractionField, Matrix, PolynomialRing,
 # Exact field and parameter setup
 # ---------------------------------------------------------------------------
 
-CYCLOTOMIC_20 = CyclotomicField(20)
-ZETA_20 = CYCLOTOMIC_20.gen()
-I_IN_CYCLOTOMIC_20 = ZETA_20**5
-K, _ = CYCLOTOMIC_20.maximal_totally_real_subfield()
+C20 = CyclotomicField(20)
+z20 = C20.gen()
+I20 = z20**5
+K, _ = C20.maximal_totally_real_subfield()
 
 R = PolynomialRing(K, "t")
 t = R.gen()
 F = FractionField(R)
 
-CYCLOTOMIC_40 = CyclotomicField(40)
-ZETA_40 = CYCLOTOMIC_40.gen()
-I_IN_CYCLOTOMIC_40 = ZETA_40**10
-HALF_DOMAIN_ENDPOINT = AA(
-    (ZETA_40 - ZETA_40**-1) / (I_IN_CYCLOTOMIC_40 * (ZETA_40 + ZETA_40**-1))
-)
+C40 = CyclotomicField(40)
+z40 = C40.gen()
+I40 = z40**10
+HALF_DOMAIN_ENDPOINT = AA((z40 - z40**-1) / (I40 * (z40 + z40**-1)))
 
 Q_FACETS = tuple(range(5))
 P_FACETS = tuple(range(5, 10))
@@ -67,22 +64,26 @@ def lift(value):
     return F(value)
 
 
+def cos_units(units):
+    """cos(units*pi/10) in the pentagon coefficient field."""
+    return K((z20**units + z20**(-units)) / 2)
+
+
+def sin_units(units):
+    """sin(units*pi/10) in the pentagon coefficient field."""
+    return K((z20**units - z20**(-units)) / (2 * I20))
+
+
+def cos_theta():
+    return lift(1 - t**2) / lift(1 + t**2)
+
+
+def sin_theta():
+    return lift(2 * t) / lift(1 + t**2)
+
+
 def reduced(expr):
     return F(expr)
-
-
-def cos_pi_over_10_multiple(k):
-    """Return cos(k*pi/10) in K = Q(zeta_20)^+."""
-    return K((ZETA_20**k + ZETA_20**(-k)) / 2)
-
-
-def sin_pi_over_10_multiple(k):
-    """Return sin(k*pi/10) in K = Q(zeta_20)^+."""
-    return K((ZETA_20**k - ZETA_20**(-k)) / (2 * I_IN_CYCLOTOMIC_20))
-
-
-COS_THETA = lift(1 - t**2) / lift(1 + t**2)
-SIN_THETA = lift(2 * t) / lift(1 + t**2)
 
 
 # ---------------------------------------------------------------------------
@@ -92,23 +93,22 @@ SIN_THETA = lift(2 * t) / lift(1 + t**2)
 
 def rotate(point):
     x, y = point
-    return (COS_THETA * x - SIN_THETA * y, SIN_THETA * x + COS_THETA * y)
+    c = cos_theta()
+    s = sin_theta()
+    return (c * x - s * y, s * x + c * y)
 
 
 def pentagon_normals():
     # Same convention as analyze.py:
     # normal angle pi/2 + 2*pi*k/5 = (5 + 4k)*pi/10.
     return [
-        (
-            lift(cos_pi_over_10_multiple(5 + 4 * k)),
-            lift(sin_pi_over_10_multiple(5 + 4 * k)),
-        )
+        (lift(cos_units(5 + 4 * k)), lift(sin_units(5 + 4 * k)))
         for k in range(5)
     ]
 
 
 def dual_vertices():
-    height = lift(cos_pi_over_10_multiple(2))  # cos(pi/5)
+    height = lift(cos_units(2))  # cos(pi/5)
     normals = pentagon_normals()
     vertices = []
     for x, y in normals:
@@ -171,13 +171,13 @@ def solve_kkt_branch(sigma):
 
 
 def minimum_action():
-    amplitude = lift(1 + cos_pi_over_10_multiple(2))
-    return reduced(amplitude**2 / COS_THETA)
+    amplitude = lift(1 + cos_units(2))
+    return reduced(amplitude**2 / cos_theta())
 
 
 def systolic_ratio_prefactor():
-    amplitude = lift(1 + cos_pi_over_10_multiple(2))
-    area = lift(5) * lift(sin_pi_over_10_multiple(4)) / 2  # (5/2) sin(2*pi/5)
+    amplitude = lift(1 + cos_units(2))
+    area = lift(5) * lift(sin_units(4)) / 2  # (5/2) sin(2*pi/5)
     return reduced(amplitude**4 / (2 * area**2))
 
 
@@ -335,13 +335,13 @@ def facet_intersection_nonempty(i, j):
 
 
 def assert_facet_conventions():
-    height = lift(cos_pi_over_10_multiple(2))
+    height = lift(cos_units(2))
     assert DUALS[0] == (lift(0), lift(1) / height, lift(0), lift(0))
     assert DUALS[5] == (
         lift(0),
         lift(0),
-        -SIN_THETA / height,
-        COS_THETA / height,
+        -sin_theta() / height,
+        cos_theta() / height,
     )
     assert facet_intersection_nonempty(0, 1)
     assert facet_intersection_nonempty(0, 4)
@@ -494,7 +494,7 @@ def assert_formula_checks():
     intended_sigma = (3, 8, 1, 0, 5, 6)
     beta, q, action = solve_kkt_branch(intended_sigma)
     assert action == minimum_action()
-    sqrt5 = 4 * cos_pi_over_10_multiple(2) - 1
+    sqrt5 = 4 * cos_units(2) - 1
     expected_prefactor = reduced((5 + 2 * sqrt5) / 10)
     assert systolic_ratio_prefactor() == expected_prefactor
     assert all(sign_certificate(beta_i).positive_on_open() for beta_i in beta)

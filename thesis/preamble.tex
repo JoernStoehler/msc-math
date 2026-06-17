@@ -1,6 +1,6 @@
 % preamble.tex — additional preamble definitions (loaded after packages in main.tex)
 %
-% Currently: approval status bars for math review and certificate-sidebars
+% Currently: approval status bars for math review
 
 \usepackage{mdframed}
 
@@ -19,11 +19,3 @@
   linecolor=orange, linewidth=2pt, innerleftmargin=8pt,
   skipabove=0pt, skipbelow=0pt
 ]{notationupdated}
-
-% Neutral sidebars for exact-computation checks used in proof text.
-\newmdenv[
-  leftline=true, rightline=false, topline=false, bottomline=false,
-  linecolor=black!45, linewidth=1.5pt, innerleftmargin=8pt,
-  innerrightmargin=0pt, innertopmargin=3pt, innerbottommargin=3pt,
-  skipabove=6pt, skipbelow=6pt
-]{certificatecheck}

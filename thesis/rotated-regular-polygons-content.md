@@ -147,38 +147,35 @@ The thesis-facing side result is a packet, not only one formula.
 
 1. Main formula target:
    For the regular pentagon product
-   $P_5 \times_L R(\theta)P_5$, on the fundamental domain
-   $0 \le \theta \le \pi/5$,
+   `P_5 x_L R(theta)P_5`, on the fundamental domain
+   `0 <= theta <= pi/5`,
    the thesis-facing systolic-ratio formula is
 
-   $$
-   \operatorname{sys}\bigl(P_5 \times_L R(\theta)P_5\bigr)
-     = \frac{5+2\sqrt{5}}{10}
-       \sec^2\!\bigl(\min(\theta,\pi/5-\theta)\bigr).
-   $$
+   ```text
+   sys(P_5 x_L R(theta)P_5)
+     = ((5 + 2*sqrt(5)) / 10) * sec(min(theta, pi/5 - theta))^2.
+   ```
 
    Source pointers:
    `experiments/regular-products/pentagon-rotation-formula-proof/executable_proof.sage.py`;
    `experiments/regular-products/pentagon-rotation-formula-proof/executable_proof.full.stdout.txt`;
-   `experiments/regular-products/pentagon-rotation-formula-proof/executable_proof.thesis-excerpts.md`;
    `experiments/regular-products/README.md`;
    `formal/pentagon-rotation-capacity.tex`;
    `thesis/rotated-regular-polygons.tex`.
 
 2. Active branch calculation:
-   On $0 \le \theta \le \pi/10$, the active 2-bounce branch has action
+   On `0 <= theta <= pi/10`, the active 2-bounce branch has action
 
-   $$
-   \frac{(1+\cos(\pi/5))^2}{\cos\theta}.
-   $$
+   ```text
+   ((1 + cos(pi/5))^2) / cos(theta).
+   ```
 
    After converting from capacity to systolic ratio using
-   $\operatorname{sys}=c^2/(2\operatorname{vol})$ and the rotation-invariant
-   volume, this gives
+   `sys = c^2/(2 vol)` and the rotation-invariant volume, this gives
 
-   $$
-   \frac{5+2\sqrt{5}}{10}\sec^2\theta.
-   $$
+   ```text
+   ((5 + 2*sqrt(5)) / 10) * sec(theta)^2.
+   ```
 
    Source pointers:
    `formal/pentagon-rotation-capacity.tex`, proposition
@@ -193,7 +190,6 @@ The thesis-facing side result is a packet, not only one formula.
 
    Source pointers:
    `experiments/regular-products/pentagon-rotation-formula-proof/executable_proof.sage.py`;
-   `experiments/regular-products/pentagon-rotation-formula-proof/executable_proof.thesis-excerpts.md`;
    `experiments/regular-products/pentagon-rotation-formula-proof/executable_proof.full.stdout.txt`;
    `experiments/regular-products/README.md`.
 
@@ -282,10 +278,10 @@ Current content status:
    ready only as empirical context. Do not promote the broad sweep to a theorem.
 
 7. code-listing material:
-   ready as a non-runnable Markdown companion. Use
-   `experiments/regular-products/pentagon-rotation-formula-proof/executable_proof.thesis-excerpts.md`
-   for selected quotable excerpts and reader-facing commentary. The Sage
-   source and full stdout remain the source truth.
+   mostly ready. The executable Sage source is concise enough to quote selected
+   blocks. A separate non-executed annotated `.sage.py` file is not recommended
+   at this stage because it would duplicate the proof surface and could drift.
+   Use the listing guide below instead.
 
 ## One-Page Proof Map
 
@@ -324,10 +320,10 @@ Use this table to keep the proof sources separated while writing.
 
 | Proof component | Current status | Main source |
 | --- | --- | --- |
-| Formula target on `0 <= theta <= pi/5` | ready subject to final wording review | `executable_proof.sage.py`; `executable_proof.full.stdout.txt`; `formal/pentagon-rotation-capacity.tex` as stale source material |
+| Formula target on `0 <= theta <= pi/5` | ready subject to final wording review | this companion; `executable_proof.sage.py`; `formal/pentagon-rotation-capacity.tex` as stale source material |
 | Reduction to `0 <= theta <= pi/5` | ready, needs thesis wording | `formal/lagrangian-product-rotation-symmetry.tex`, label `lem:rotation-fundamental-domain` |
 | Further reduction to `0 <= theta <= pi/10` | ready, needs thesis wording | `formal/lagrangian-product-rotation-symmetry.tex`, label `lem:odd-regular-factor-swap-mirror`; `formal/pentagon-rotation-capacity.tex` as stale source material |
-| Finite reduction to 2- and 3-bounce raw sigmas | compact thesis-facing theorem present, needs final mathematical review | `thesis/quadratic-program-algorithm-hk2019.tex`, label `thm:lagrangian-product-finite-enumeration`; source material in `formal/billiard-capacity-algorithm.tex` and `thesis/legacy/lagrangian-product-algorithm-proof.tex` |
+| Finite reduction to 2- and 3-bounce raw sigmas | source available, needs thesis-facing wording | `formal/billiard-capacity-algorithm.tex`, labels `thm:billiard-characterization`, `thm:bounce-bound`, and `alg:billiard`; eventual thesis home likely `thesis/quadratic-program-algorithm-hk2019.tex` or nearby preliminaries |
 | Pentagon normalization | ready | `formal/pentagon-rotation-capacity.tex`, definition of `P_5`; `executable_proof.sage.py`, functions `pentagon_normals` and `dual_vertices` |
 | Volume invariance and volume value | ready as a simple mathematical argument | `formal/pentagon-rotation-capacity.tex`, active-branch calculation; `executable_proof.sage.py`, function `systolic_ratio_prefactor` |
 | Capacity-to-systolic-ratio conversion | ready, checked by Sage preflight | `sys = c_EHZ^2/(2 vol)`; `executable_proof.sage.py`, function `systolic_ratio_prefactor` |
@@ -337,7 +333,6 @@ Use this table to keep the proof sources separated while writing.
 | Transition-sign constancy on open half-domain | ready as exact Sage assertion | `executable_proof.sage.py`, function `transition_table_open` |
 | KKT branch classification | ready as exact Sage assertion | `executable_proof.sage.py`, function `classify_sigma` |
 | Open half-domain lower bound | ready from full Sage run | `executable_proof.sage.py`; `executable_proof.full.stdout.txt` is the source for exact counts |
-| Thesis code excerpts for the Sage bridge | ready as non-runnable quote material | `executable_proof.thesis-excerpts.md`; verify against `executable_proof.sage.py` before final quoting |
 | Endpoints `theta=0`, `theta=pi/10` | ready, needs thesis wording and final citation choice | Chaidez-Hutchings `CH2021` continuity statement; `formal/combinatorial-boundary-regularity.tex`, label `prop:sys-continuous` |
 | Mirror to `pi/10 <= theta <= pi/5` | ready, needs thesis wording | `formal/lagrangian-product-rotation-symmetry.tex`, label `lem:odd-regular-factor-swap-mirror` |
 
@@ -359,7 +354,7 @@ Current reproduction command after CLI cleanup:
 sage -python experiments/regular-products/pentagon-rotation-formula-proof/executable_proof.sage.py --progress-every 500
 ```
 
-Current prefix-check command:
+Current development-prefix command:
 
 ```bash
 sage -python experiments/regular-products/pentagon-rotation-formula-proof/executable_proof.sage.py --limit 50
@@ -369,7 +364,7 @@ Current full stdout artifact:
 
 ```text
 SageMath version: 10.7
-runtime: 2010.05 seconds = 33 minutes 30.05 seconds
+runtime: 2126.34 seconds = 35 minutes 26.34 seconds
 stdout: experiments/regular-products/pentagon-rotation-formula-proof/executable_proof.full.stdout.txt
 ```
 
@@ -393,7 +388,7 @@ thesis writing.
 The full run printed:
 
 ```text
-CERTIFICATE PASSED in 2010.05s
+CERTIFICATE PASSED in 2126.34s
 ```
 
 Post-CLI-cleanup prefix checks:
@@ -554,22 +549,16 @@ it never occurs.
 
 ## Sage Source Listing Guide
 
-Use the non-runnable Markdown companion to choose quote-sized excerpts:
-
-```text
-experiments/regular-products/pentagon-rotation-formula-proof/executable_proof.thesis-excerpts.md
-```
-
-Use the executable source itself as source truth:
+Use the executable source itself for any listings:
 
 ```text
 experiments/regular-products/pentagon-rotation-formula-proof/executable_proof.sage.py
 ```
 
-Do not create a second annotated `.sage.py` proof file. A duplicate
-runnable-looking source file would create a second object that can become
-stale. The Markdown companion is deliberately non-runnable and separates prose
-commentary from quoted code blocks.
+Do not create a second annotated `.sage.py` proof file unless the thesis needs a
+long appendix that cannot be served by direct listings from the executable
+source. A duplicate annotated source would create a second object that can
+become stale.
 
 Current useful listing blocks:
 
@@ -577,32 +566,31 @@ The line ranges below are cached from the current source and are intentionally
 only navigation hints. Regenerate line numbers before quoting.
 
 1. proof contract and exact field setup:
-   cached source lines `1-83`.
+   cached source lines `1-60`.
    Shows the half-domain target, the `--limit` contract, the field
-   `Frac(K[t])`, the endpoint `tan(pi/20)`, accepted statuses, exact
-   trigonometric helpers, and tangent-half-angle constants.
+   `Frac(K[t])`, the endpoint `tan(pi/20)`, and the accepted statuses.
 
 2. pentagon geometry and KKT system:
-   cached source lines `91-179`.
+   cached source lines `94-170`.
    Shows the rotation parameterization, dual facets, symplectic form, KKT
    matrix, `Q_sigma`, and action formula.
 
 3. rational sign certificate:
-   cached source lines `197-275`.
+   cached source lines `197-277`.
    Shows the exact root-cutting method and one-sample-per-cell sign check.
 
 4. raw sigma enumeration and transition-sign constancy:
-   cached source lines `283-380`.
+   cached source lines `285-382`.
    Shows block enumeration, facet adjacency, mixed transition signs, and the
    transition-pruned open-domain raw sigma list.
 
 5. branch classification:
-   cached source lines `390-483`.
+   cached source lines `390-485`.
    Shows the status logic: inconsistent KKT systems, zero `Q`, singular
    forced-zero-beta cases, feasible-cell checks, and strict positive gaps.
 
 6. preflight and full certificate loop:
-   cached source lines `491-576`.
+   cached source lines `493-578`.
    Shows active branch assertions, raw count assertion, representative status
    checks, accepted-status assertion, and the condition for printing
    `CERTIFICATE PASSED`.
@@ -616,8 +604,7 @@ nl -ba experiments/regular-products/pentagon-rotation-formula-proof/executable_p
 
 Suggested thesis usage:
 
-1. Main text: quote no code, or quote only a small status/assertion block from
-   `executable_proof.thesis-excerpts.md`.
+1. Main text: quote no code, or quote only a small status/assertion block.
 2. Body computation subsection: explain the code module by module. Quote only
    the short snippets that make each module's proof obligation concrete.
 3. Avoid quoting the full file unless Kai explicitly wants an appendix-level
@@ -634,7 +621,7 @@ Recommended body-level order:
 1. Exact parameter field.
    Mathematical claim: all branch expressions are rational functions in
    `t = tan(theta/2)` over the real pentagon coefficient field.
-   Code component: field setup, `COS_THETA`, `SIN_THETA`.
+   Code component: field setup, `cos_theta`, `sin_theta`.
    What Kai should check: the field is exact and contains the pentagon
    constants; endpoint comparisons are made in `AA`.
 
@@ -656,7 +643,7 @@ Recommended body-level order:
 
 4. Active branch.
    Mathematical claim: the intended 2-bounce branch has action
-   $\frac{(1+\cos(\pi/5))^2}{\cos\theta}$ and gives the stated systolic-ratio
+   `((1 + cos(pi/5))^2)/cos(theta)` and gives the stated systolic-ratio
    prefactor after dividing by the constant volume.
    Code component: `minimum_action`, `systolic_ratio_prefactor`,
    `assert_formula_checks`.
@@ -675,18 +662,10 @@ Recommended body-level order:
    Mathematical claim: the relevant 2- and 3-bounce raw sigmas are built from
    single facets and ordered adjacent-facet pairs, then pruned by exact
    transition signs that are constant on the open half-domain.
-   The active thesis now states the compact finite-candidate theorem in
-   `thesis/quadratic-program-algorithm-hk2019.tex`, label
-   `thm:lagrangian-product-finite-enumeration`. That theorem still needs final
-   mathematical review because it imports the legacy/formal proof in compact
-   cited form. The enumeration code proves only that the script checked the
-   listed candidates; the mathematical reduction explains why those candidates
-   suffice.
    Code component: `blocks`, `enumerate_k_bounce_sigmas`,
    `transition_table_open`, `transition_pruned_sigmas_open`.
-   What Kai should check: the enumeration is intentionally raw and may contain
-   duplicate representations; checking a raw superset is enough once the
-   finite-candidate reduction is accepted.
+   What Kai should check: the enumeration is intentionally raw; no
+   canonicalization theorem is needed.
 
 7. Branch classification.
    Mathematical claim: every raw sigma either has no KKT branch, is not
@@ -712,16 +691,15 @@ longer excerpts after the body has already explained the proof architecture.
 Use this explanation in thesis-facing form, but rewrite it in Jörn's style.
 
 1. `QQ` is not sufficient because the unrotated pentagon already has constants
-   $\cos(k\pi/10)$ and $\sin(k\pi/10)$.
-2. The expression field is $\operatorname{Frac}(K[t])$, where $K$ is the
-   maximal totally real subfield of `CyclotomicField(20)` and
-   $t=\tan(\theta/2)$.
+   `cos(k*pi/10)` and `sin(k*pi/10)`.
+2. The expression field is `Frac(K[t])`, where `K` is the maximal totally real
+   subfield of `CyclotomicField(20)` and `t = tan(theta/2)`.
 3. With this parameter,
-   $\sin\theta=2t/(1+t^2)$ and
-   $\cos\theta=(1-t^2)/(1+t^2)$, so all KKT branch expressions are rational
-   functions in $t$.
+   `sin(theta) = 2t/(1+t^2)` and
+   `cos(theta) = (1-t^2)/(1+t^2)`, so all KKT branch expressions are rational
+   functions in `t`.
 4. Exact endpoint and root comparisons use Sage's real algebraic field `AA`.
-   The endpoint $\theta=\pi/10$ corresponds to $t=\tan(\pi/20)$.
+   The endpoint `theta = pi/10` corresponds to `t = tan(pi/20)`.
 5. A rational function can change sign only at a zero or a pole. The script
    therefore cuts the open interval at all relevant roots and checks one exact
    algebraic sample point in each cell.
