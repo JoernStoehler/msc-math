@@ -33,6 +33,14 @@ rerunning the full proof command.
 If `executable_proof.sage.py` changes, rerun the full proof and replace this
 stdout file before using it as evidence.
 
+```text
+executable_proof.thesis-excerpts.md
+```
+
+Non-runnable Markdown companion with selected Sage excerpts and reader-facing
+commentary for thesis quotation. It is not source truth; verify it against
+`executable_proof.sage.py` before quoting if the Sage source changes.
+
 ## Read Path
 
 1. To check the proof result, read this README and
@@ -40,7 +48,9 @@ stdout file before using it as evidence.
 2. To inspect the proof code, read `executable_proof.sage.py`.
 3. To write thesis prose, use
    `thesis/rotated-regular-polygons-content.md`.
-4. Do not open empirical JSONL/PNG/HTML artifacts for proof verification.
+4. To decide which code excerpts are worth quoting or checking in the thesis,
+   read `executable_proof.thesis-excerpts.md`.
+5. Do not open empirical JSONL/PNG/HTML artifacts for proof verification.
 
 ## Proof Surface Routing
 
@@ -50,6 +60,7 @@ Use these files for different questions:
 | --- | --- |
 | What is the executable proof? | `executable_proof.sage.py` |
 | What did the full proof run print? | `executable_proof.full.stdout.txt` |
+| Which implementation excerpts are thesis-quotable? | `executable_proof.thesis-excerpts.md` |
 | How should the thesis explain the proof architecture? | `thesis/rotated-regular-polygons-content.md` |
 | Where is older formal source material? | `formal/pentagon-rotation-capacity.tex`, treated as stale source material |
 | Where are empirical figures and viewer artifacts? | `../pentagon-rotation-empirics/` |
@@ -79,7 +90,8 @@ The current raw stdout artifact records the cached excerpt:
 open_domain_raw_sigma_count = 3340
 classified_raw_sigma_count = 3340
 classification_statuses = {'no_kkt_solution': 25, 'zero_q_identity': 1680, 'singular_kkt_forced_zero_beta': 470, 'not_feasible_on_open_domain': 735, 'zero_gap_identity': 20, 'strict_gap_positive_on_feasible_open_domain': 410}
-CERTIFICATE PASSED in 2126.34s
+CERTIFICATE PASSED in 2010.05s
 ```
 
-After the CLI cleanup, prefix checks passed with `--limit 5` and `--limit 50`.
+After the readability cleanup, prefix checks passed with `--limit 5` and
+`--limit 50`; the full certificate was rerun to refresh this stdout artifact.

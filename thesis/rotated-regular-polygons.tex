@@ -13,10 +13,11 @@ The Haim--Kislev--Ostrover counterexample is a member of this family
 one-dimensional profile of the systolic ratio in this family.
 
 \begin{remark}[Review status]
-This section is a draft integration of the executable certificate. The
-certificate source and transcript are committed, but the endpoint, symmetry,
-continuity, and exposition bridge to the theorem statement still need final
-mathematical review before this result is used as final thesis source truth.
+This section contains the current theorem-facing integration of the executable
+certificate. The open-domain SageMath certificate has been rerun after the
+readability cleanup and passes. Before this result is used as final thesis
+source truth, the finite-candidate reduction and the endpoint, symmetry, and
+continuity closure paragraphs still need final mathematical review.
 \end{remark}
 
 \subsection{Empirical curves}
@@ -174,18 +175,17 @@ Therefore the active branch gives
 This proves the required upper bound for \(\operatorname{sys}(K_\theta)\) on
 the half-domain, since the EHZ capacity is the minimum action.
 
-% The referenced HK2019 section currently does not contain the
-% finite-candidate/billiard reduction used here. Source material exists in
-% formal/billiard-capacity-algorithm.tex and thesis/legacy/, and the missing
-% thesis-facing wording is tracked in rotated-regular-polygons-content.md.
-It remains to prove the lower bound on the open half-domain. By the
-finite-candidate reduction from
-Section~\ref{sec:quadratic-program-algorithm-hk2019}, this is enough to verify
-a finite collection of exact algebraic statements for the two- and
-three-bounce candidates described below. The verification is implemented in
-SageMath. The successful run is not an independent proof of the theorem; it is
-the executable certificate that the finite checks required by this reduction
-all pass.
+% The finite-candidate theorem is now present in active thesis prose, but the
+% compact import from the legacy/formal source still needs final mathematical
+% review before the pentagon result is final source truth.
+It remains to prove the lower bound on the open half-domain. By
+Theorem~\ref{thm:lagrangian-product-finite-enumeration}, the lower-bound
+problem for this Lagrangian-product family is exhausted by the two- and
+three-bounce candidates described below. The remaining task is to verify a
+finite collection of exact algebraic statements. The verification is
+implemented in SageMath. The successful run is not an independent proof of the
+theorem; it is the executable certificate that the finite checks required after
+this reduction all pass.
 
 The source and full transcript are in
 \path{experiments/regular-products/pentagon-rotation-formula-proof/}:
@@ -197,6 +197,15 @@ The script computes the active branch in the same exact framework: the function
 \texttt{assert\_formula\_checks} solves the KKT branch for the intended sigma,
 asserts the displayed capacity formula for that branch, and checks the constant
 used to convert it to the systolic-ratio formula.
+
+\begin{certificatecheck}
+\noindent\textbf{Certificate check: active branch.}
+The preflight stage reconstructs the branch
+\((3,8,1,0,5,6)\) over the same exact field as the lower-bound certificate. It
+checks the KKT equations, positivity of the multipliers, positivity of the
+quadratic value, the displayed action formula, and the constant converting the
+action to the displayed systolic-ratio formula.
+\end{certificatecheck}
 
 The certificate uses the parameter
 \[
@@ -210,24 +219,34 @@ The unrotated pentagon already has coefficients in the real subfield of
   \cos\theta=\frac{1-t^2}{1+t^2}
 \]
 make all branch expressions rational functions of \(t\) over that coefficient
-field. Sage uses exact algebraic root isolation to compare roots and endpoints
-inside the interval \(0<t<\tan(\pi/20)\).
+field. Sage uses exact algebraic root isolation to compare interior roots and
+the boundary values \(0\) and \(\tan(\pi/20)\) when constructing the open
+cell decomposition of \(0<t<\tan(\pi/20)\).
 
-% Same unsatisfied dependency as above. This paragraph is not final until the
-% finite-candidate theorem is written into active thesis prose or the reference
-% is replaced by an explicit local theorem statement.
-The finite-candidate theorem from
-Section~\ref{sec:quadratic-program-algorithm-hk2019} applies to this family.
-Thus it is exhaustive to consider the two- and three-bounce candidates; all
-other combinatorial types are either redundant or cannot realize a smaller
-action. In the Lagrangian product
+\begin{certificatecheck}
+\noindent\textbf{Certificate check: exact sign decisions.}
+Every sign assertion used below is reduced to a rational function over this
+ordered algebraic coefficient field. The implementation cuts
+\((0,\tan(\pi/20))\) at the exact roots and poles of the relevant numerator and
+denominator polynomials, then checks one exact algebraic sample point in each
+cell. No floating-point sign test is used for the proof predicate.
+\end{certificatecheck}
+
+% Same review dependency as above: this specialization depends on the compact
+% finite-enumeration theorem in the HK2019 section.
+The finite-enumeration theorem specializes to the following enumeration
+problem.
+It is exhaustive to consider the two- and three-bounce candidates; all other
+combinatorial types are either redundant or cannot realize a smaller action.
+In the Lagrangian product
 \(P_5{}_q\times_L R(\theta)P_5{}_p\), the relevant facet sequence alternates
 between \(q\)-blocks and \(p\)-blocks. We label the \(q\)-facets
 \(0,\ldots,4\) and the \(p\)-facets \(5,\ldots,9\), in counterclockwise order
 in each factor.
 
-A block is either one facet or an ordered adjacent pair of facets inside one
-factor. For a \(k\)-bounce candidate, where \(k=2\) or \(k=3\), Sage chooses
+A block is the local facet data for one bounce. It is either one facet or an
+ordered adjacent pair of facets inside one factor. For a \(k\)-bounce
+candidate, where \(k=2\) or \(k=3\), Sage chooses
 \(k\) non-overlapping \(q\)-blocks and \(k\) non-overlapping \(p\)-blocks. It
 fixes one \(q\)-block as the first block, orders the remaining \(q\)-blocks and
 all \(p\)-blocks, and then alternates \(q\)- and \(p\)-blocks cyclically. The
@@ -243,10 +262,16 @@ Mixed \(q/p\)-transitions must also have the positive symplectic transition
 sign, and Sage checks that this sign has no interior cut point on the open
 half-domain. Thus a pruned-out raw sigma fails a necessary transition condition
 throughout the open half-domain. The rest of the Sage computation then
-classifies every raw representative that survives this pruning. The exact
-enumeration loop is in the committed Sage source; it keeps raw ordered
-representatives instead of quotienting by cyclic shifts, reversals, or
-symmetries, so it overcounts rather than undercounts.
+classifies every raw representative that survives this pruning.
+
+\begin{certificatecheck}
+\noindent\textbf{Certificate check: finite raw list.}
+Using Theorem~\ref{thm:lagrangian-product-finite-enumeration}, the enumeration
+stage constructs a raw superset of all two- and three-bounce words needed for
+the open half-domain. The transition-pruning stage removes only words that fail
+an exact necessary condition throughout \(0<\theta<\pi/10\). The remaining list
+is not sampled and not quotiented by symmetry.
+\end{certificatecheck}
 
 For each raw sigma that passes the open-domain transition pruning, Sage solves
 the KKT system exactly. When a branch exists, this gives rational functions for
@@ -281,6 +306,16 @@ The script also has a manual-review fallback for unrecognized cases. That
 fallback is not accepted by the certificate; the script asserts that every
 classified raw sigma lands in one of the accepted exits.
 
+\begin{certificatecheck}
+\noindent\textbf{Certificate check: fail-closed classification.}
+For each surviving raw word, the certificate must either prove that no strictly
+feasible branch exists on the open half-domain, prove that the branch ties the
+active branch, or prove that its action is strictly larger wherever it is
+strictly feasible. The manual-review exit is deliberately not an accepted
+status, so an unrecognized case makes the run fail instead of contributing to
+the theorem.
+\end{certificatecheck}
+
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=0.78\linewidth]{working/rotated-regular-polygons/three-bounce-branch-actions.png}
@@ -302,7 +337,7 @@ Here \(3340\) is the full unquotiented list after open-domain transition
 pruning, not a sampled subset. The same number of raw sigmas is then classified
 by the certificate. The run then prints
 \[
-  \texttt{CERTIFICATE PASSED in 2126.34s}.
+  \texttt{CERTIFICATE PASSED in 2010.05s}.
 \]
 The status counts in that run were
 \[

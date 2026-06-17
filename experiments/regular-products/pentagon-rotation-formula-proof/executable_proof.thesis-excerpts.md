@@ -1,38 +1,99 @@
-#!/usr/bin/env sage -python
-"""
-Executable proof for the pentagon rotation formula.
+# Thesis Excerpts for `executable_proof.sage.py`
 
-This script is the SageMath proof certificate for the open-domain part of the
-formula
+This file is a non-runnable thesis-facing companion to
+`experiments/regular-products/pentagon-rotation-formula-proof/executable_proof.sage.py`.
+It selects the implementation points that are useful to quote, paraphrase, or
+check against the thesis explanation.
 
-    sys(P_5 x_L R(theta) P_5)
-      = ((5 + 2 sqrt(5)) / 10) sec^2(theta)
+This file is not proof evidence by itself. The source truth is the runnable
+Sage file; the run-output truth is `executable_proof.full.stdout.txt`. If the
+Sage file changes, verify these excerpts against it before quoting them.
 
-on the half-domain. The script certifies 0 < theta < pi/10. The endpoints are
-closed by the thesis continuity argument, and the second half of the
-fundamental domain is then obtained by symmetry.
+The selection criterion is reader-facing: each included excerpt should help Kai
+check that the implementation matches the mathematical proof architecture. Do
+not add internal development comments, planning notes, or source headers here.
 
-Run contract:
-    - Default invocation runs the full all-raw-sigma certificate.
-    - `--limit N` runs the same assertions on only the first N raw sigmas.
-    - `CERTIFICATE PASSED` must only be printed when no limit is used.
+## Reader Checkpoints
 
-The source code is the proof surface. Assertions encode proof obligations; the
-default output is a compact summary and formulas of interest.
-"""
+The useful bridge between thesis prose and Sage implementation is:
 
-import argparse
-import time
-from dataclasses import dataclass
-from itertools import combinations, permutations
+| Thesis claim | Sage surface to quote or check |
+| --- | --- |
+| The computation is exact on the open half-domain. | Coefficient field $K=\mathbb{Q}(\zeta_{20})^+$, rational-function field $K(t)$, and $t=\tan(\theta/2)$ parameterization. |
+| The active branch gives the claimed formula. | `assert_formula_checks()`. |
+| The finite candidate list is the intended 2- and 3-bounce raw-sigma list after transition pruning. | `blocks`, `enumerate_k_bounce_sigmas`, `transition_table_open`, `transition_pruned_sigmas_open`, and the count assertion. |
+| Each branch is rejected by exact sign information, not sampling. | `sign_certificate`, `open_domain_cells`, and `classify_sigma`. |
+| The script fails closed. | `ACCEPTED_STATUSES`, `requires_manual_review`, and the full loop assertion. |
+| The recorded success output is only printed for the full run. | `run_certificate` and CLI `--limit` behavior. |
 
-from sage.all import AA, CyclotomicField, FractionField, Matrix, PolynomialRing, vector
+## Minimal Quote Set
 
+If the thesis wants a compact implementation bridge instead of a long appendix,
+quote or paraphrase these parts first:
 
-# ---------------------------------------------------------------------------
-# Exact field and parameter setup
-# ---------------------------------------------------------------------------
+| Priority | Current source lines | Why these lines matter |
+| --- | --- | --- |
+| 1 | `491-499` | `assert_formula_checks()` checks the active branch, displayed prefactor, and feasibility. |
+| 2 | `209-275` | The exact sign method: roots cut the interval and one algebraic sample checks each cell. |
+| 3 | `398-483` | `classify_sigma()` is the lower-bound branch classifier and shows when the script falls back to `requires_manual_review`. |
+| 4 | `527-548` plus `54-61` | The full loop asserts every branch status is accepted, and `CERTIFICATE PASSED` is printed only for an unbounded run. |
+| 5 | `50-52`, `283-324`, `354-380`, and `514-515` | Include these if the thesis needs to expose how the finite raw-sigma candidate list is produced and counted. |
+| 6 | `34-47` and `72-83` | Include these if the thesis needs to show the exact field and tangent-half-angle parameterization explicitly. |
 
+The line numbers above are navigation hints for the current source. Regenerate
+line numbers from `executable_proof.sage.py` before final thesis quotation.
+
+## 1. Exact Field and Half-Domain Parameter
+
+For the exact finite computation, we first choose a coefficient field that
+contains all pentagon constants, and then keep the rotation angle as a symbolic
+parameter. Let
+
+$$
+\zeta_{20}=\exp(2\pi i/20)=\exp(\pi i/10),
+$$
+
+and set
+
+$$
+K=\mathbb{Q}(\zeta_{20})^+
+$$
+
+to be the maximal totally real subfield of the 20th cyclotomic field. This
+field contains the fixed pentagon constants $\cos(m\pi/10)$ and
+$\sin(m\pi/10)$ used for normals and support heights.
+
+We introduce an indeterminate $t$, later specialized to $t=\tan(\theta/2)$.
+The finite computation is carried out over the rational-function field
+
+$$
+F=K(t)=\operatorname{Frac}(K[t]).
+$$
+
+The tangent-half-angle substitution gives
+
+$$
+\cos\theta=\frac{1-t^2}{1+t^2},\qquad
+\sin\theta=\frac{2t}{1+t^2}.
+$$
+
+Thus every KKT entry, beta, action, and action gap is a rational function in
+$t$ with coefficients in $K$. The open half-domain $0<\theta<\pi/10$ becomes
+
+$$
+0<t<\tan(\pi/20).
+$$
+
+The script constructs `CyclotomicField(40)` only to get the algebraic endpoint
+$\tan(\pi/20)$ as an algebraic real number for root isolation and sign checks; it
+does not enlarge the rational-function coefficient field.
+
+Implementation check:
+
+The following source lines are not the mathematical definition. They are the
+Sage realization of the field and parameter choices above.
+
+```python
 CYCLOTOMIC_20 = CyclotomicField(20)
 ZETA_20 = CYCLOTOMIC_20.gen()
 I_IN_CYCLOTOMIC_20 = ZETA_20**5
@@ -48,21 +109,12 @@ I_IN_CYCLOTOMIC_40 = ZETA_40**10
 HALF_DOMAIN_ENDPOINT = AA(
     (ZETA_40 - ZETA_40**-1) / (I_IN_CYCLOTOMIC_40 * (ZETA_40 + ZETA_40**-1))
 )
+```
 
-Q_FACETS = tuple(range(5))
-P_FACETS = tuple(range(5, 10))
-EXPECTED_OPEN_SIGMA_COUNT = 3340
-DEFAULT_PROGRESS_EVERY = 500
-ACCEPTED_STATUSES = {
-    "no_kkt_solution",
-    "singular_kkt_forced_zero_beta",
-    "zero_q_identity",
-    "zero_gap_identity",
-    "not_feasible_on_open_domain",
-    "strict_gap_positive_on_feasible_open_domain",
-}
+These source lines realize the trigonometric constants in `K` and the
+tangent-half-angle identities in `F`:
 
-
+```python
 def lift(value):
     return F(value)
 
@@ -83,13 +135,16 @@ def sin_pi_over_10_multiple(k):
 
 COS_THETA = lift(1 - t**2) / lift(1 + t**2)
 SIN_THETA = lift(2 * t) / lift(1 + t**2)
+```
 
+## 2. Geometry, KKT System, and Active Branch
 
-# ---------------------------------------------------------------------------
-# Pentagon geometry and KKT system
-# ---------------------------------------------------------------------------
+The script constructs the dual vertices of the two pentagons over the field
+$F$, builds the KKT linear system for each candidate signature $\sigma$, and
+computes the action from the resulting value of $Q_\sigma$. This is the code
+surface to compare against the thesis description of the KKT calculation.
 
-
+```python
 def rotate(point):
     x, y = point
     return (COS_THETA * x - SIN_THETA * y, SIN_THETA * x + COS_THETA * y)
@@ -117,13 +172,6 @@ def dual_vertices():
         x, y = rotate(normal)
         vertices.append((lift(0), lift(0), x / height, y / height))
     return vertices
-
-
-DUALS = dual_vertices()
-
-
-def omega(u, v):
-    return u[0] * v[2] - u[2] * v[0] + u[1] * v[3] - u[3] * v[1]
 
 
 def kkt_matrix(sigma):
@@ -179,21 +227,33 @@ def systolic_ratio_prefactor():
     amplitude = lift(1 + cos_pi_over_10_multiple(2))
     area = lift(5) * lift(sin_pi_over_10_multiple(4)) / 2  # (5/2) sin(2*pi/5)
     return reduced(amplitude**4 / (2 * area**2))
+```
 
+The preflight assertions make the formula claim executable: the chosen branch
+has the active action, the systolic-ratio prefactor is the displayed constant,
+and the branch is feasible on the open half-domain.
 
-def formula_summary():
-    return {
-        "minimum_action": "((1 + cos(pi/5))^2) / cos(theta)",
-        "systolic_ratio_half_domain": "((5 + 2*sqrt(5)) / 10) * sec(theta)^2",
-        "theta_domain": "0 <= theta <= pi/10; open proof uses 0 < theta < pi/10",
-    }
+```python
+def assert_formula_checks():
+    intended_sigma = (3, 8, 1, 0, 5, 6)
+    beta, q, action = solve_kkt_branch(intended_sigma)
+    assert action == minimum_action()
+    sqrt5 = 4 * cos_pi_over_10_multiple(2) - 1
+    expected_prefactor = reduced((5 + 2 * sqrt5) / 10)
+    assert systolic_ratio_prefactor() == expected_prefactor
+    assert all(sign_certificate(beta_i).positive_on_open() for beta_i in beta)
+    assert sign_certificate(q).positive_on_open()
+```
 
+## 3. Exact Sign Certificates
 
-# ---------------------------------------------------------------------------
-# Exact sign certificates
-# ---------------------------------------------------------------------------
+For a rational function in $F=K(t)$, the script isolates the real roots of the
+numerator and denominator inside the open half-domain. These roots cut the
+interval into cells. Since the sign is constant on each cell, one algebraic
+sample point per cell is enough to certify positivity, negativity, or a mixed
+sign pattern.
 
-
+```python
 @dataclass(frozen=True)
 class SignCertificate:
     status: str
@@ -275,11 +335,19 @@ def sign_at(expr, sample):
     denominator = den_aa(sample)
     assert denominator != 0
     return (num_aa(sample) / denominator).sign()
+```
 
+## 4. Candidate Enumeration and Transition Pruning
 
-# ---------------------------------------------------------------------------
-# Sigma enumeration and transition-sign constancy
-# ---------------------------------------------------------------------------
+The raw finite list is generated from single facets and ordered adjacent-pair
+blocks in each factor. These blocks are interleaved to form raw 2- and
+3-bounce signatures. The transition table then removes signatures whose
+successive facets are not transition-feasible on the open half-domain.
+
+```python
+Q_FACETS = tuple(range(5))
+P_FACETS = tuple(range(5, 10))
+EXPECTED_OPEN_SIGMA_COUNT = 3340
 
 
 def adjacent_same_factor(a, b):
@@ -326,33 +394,6 @@ def enumerate_k_bounce_sigmas(k):
                     yield tuple(sigma)
 
 
-def facet_intersection_nonempty(i, j):
-    if i == j:
-        return True
-    if (i < 5) != (j < 5):
-        return True
-    return adjacent_same_factor(i % 5, j % 5)
-
-
-def assert_facet_conventions():
-    height = lift(cos_pi_over_10_multiple(2))
-    assert DUALS[0] == (lift(0), lift(1) / height, lift(0), lift(0))
-    assert DUALS[5] == (
-        lift(0),
-        lift(0),
-        -SIN_THETA / height,
-        COS_THETA / height,
-    )
-    assert facet_intersection_nonempty(0, 1)
-    assert facet_intersection_nonempty(0, 4)
-    assert not facet_intersection_nonempty(0, 2)
-    assert not facet_intersection_nonempty(0, 3)
-
-
-def mixed_omega(i, j):
-    return reduced(omega(DUALS[i], DUALS[j]))
-
-
 def transition_table_open():
     table = {}
     for i in range(10):
@@ -380,23 +421,27 @@ def transition_pruned_sigmas_open():
             if all(table[(i, j)] for i, j in zip(sigma, sigma[1:] + sigma[:1])):
                 sigmas.append(sigma)
     return sigmas
+```
 
+The count assertion is the executable check that this open-domain candidate
+list has the recorded size.
 
-# ---------------------------------------------------------------------------
-# Branch classification
-# ---------------------------------------------------------------------------
+```python
+sigmas = transition_pruned_sigmas_open()
+assert len(sigmas) == EXPECTED_OPEN_SIGMA_COUNT
+```
 
+## 5. Branch Classification and Fail-Closed Logic
 
-@dataclass(frozen=True)
-class BranchClassification:
-    sigma: tuple
-    status: str
-    beta_statuses: tuple = ()
-    q_status: SignCertificate | None = None
-    gap_status: SignCertificate | None = None
-    feasible_cell_count: int = 0
+For each remaining signature, the script solves the KKT system and compares the
+resulting action with the active branch. A signature is accepted only if it has
+no KKT solution, is algebraically degenerate in one of the listed harmless ways,
+is not feasible on the open domain, or has strictly positive action gap on
+every feasible cell. If a feasible cell has non-positive gap, or a singular
+case is not explained by the accepted statuses, classification falls back to
+`requires_manual_review`.
 
-
+```python
 def classify_sigma(sigma, min_action):
     mat, rhs = kkt_matrix(sigma)
     try:
@@ -483,47 +528,21 @@ def classify_sigma(sigma, min_action):
         gap_status,
         feasible_cell_count,
     )
+```
 
+The full loop is the key fail-closed assertion: every classified sigma must
+land in the accepted set. In particular, `requires_manual_review` is not in
+`ACCEPTED_STATUSES`.
 
-# ---------------------------------------------------------------------------
-# Preflight and certificate run
-# ---------------------------------------------------------------------------
-
-
-def assert_formula_checks():
-    intended_sigma = (3, 8, 1, 0, 5, 6)
-    beta, q, action = solve_kkt_branch(intended_sigma)
-    assert action == minimum_action()
-    sqrt5 = 4 * cos_pi_over_10_multiple(2) - 1
-    expected_prefactor = reduced((5 + 2 * sqrt5) / 10)
-    assert systolic_ratio_prefactor() == expected_prefactor
-    assert all(sign_certificate(beta_i).positive_on_open() for beta_i in beta)
-    assert sign_certificate(q).positive_on_open()
-    print(f"minimum_action(t) = {minimum_action()}")
-    print(f"sys_prefactor = {systolic_ratio_prefactor()}")
-
-
-def assert_status(statuses, sigma, expected_status):
-    min_action = minimum_action()
-    classification = classify_sigma(sigma, min_action)
-    statuses[classification.status] = statuses.get(classification.status, 0) + 1
-    assert classification.status == expected_status, classification
-
-
-def run_preflight():
-    assert_facet_conventions()
-    assert_formula_checks()
-    sigmas = transition_pruned_sigmas_open()
-    assert len(sigmas) == EXPECTED_OPEN_SIGMA_COUNT
-
-    statuses = {}
-    assert_status(statuses, (0, 5, 3, 8, 1, 7), "strict_gap_positive_on_feasible_open_domain")
-    assert_status(statuses, (0, 5, 2, 3, 7, 8), "zero_gap_identity")
-    assert_status(statuses, (0, 5, 9, 1, 7), "zero_q_identity")
-    assert_status(statuses, (0, 9, 1, 7), "no_kkt_solution")
-    assert_status(statuses, (0, 5, 9, 1, 6, 7), "singular_kkt_forced_zero_beta")
-    print(f"preflight_statuses = {statuses}")
-    return sigmas
+```python
+ACCEPTED_STATUSES = {
+    "no_kkt_solution",
+    "singular_kkt_forced_zero_beta",
+    "zero_q_identity",
+    "zero_gap_identity",
+    "not_feasible_on_open_domain",
+    "strict_gap_positive_on_feasible_open_domain",
+}
 
 
 def run_certificate(progress_every, limit=None):
@@ -548,35 +567,19 @@ def run_certificate(progress_every, limit=None):
         print(f"CERTIFICATE PASSED in {elapsed:.2f}s")
     else:
         print(f"LIMITED PREFIX PASSED in {elapsed:.2f}s")
+```
 
+## 6. Full-Run Output to Pair With Excerpts
 
-def main():
-    parser = argparse.ArgumentParser(
-        description=(
-            "Exact SageMath executable proof for the pentagon-rotation formula. "
-            "Default mode is the full certificate. Use --limit N for a prefix run. "
-            "Only an unbounded run can print CERTIFICATE PASSED."
-        )
-    )
-    parser.add_argument(
-        "--limit",
-        type=int,
-        default=None,
-        help="Restrict classification to the first N raw sigmas; disables certificate output.",
-    )
-    parser.add_argument(
-        "--progress-every",
-        type=int,
-        default=DEFAULT_PROGRESS_EVERY,
-        help="Print one progress line per N sigmas.",
-    )
-    args = parser.parse_args()
+When quoting any code excerpt as part of a proof packet, pair it with the
+recorded full-run result in `executable_proof.full.stdout.txt`:
 
-    for key, value in formula_summary().items():
-        print(f"{key} = {value}")
+```text
+open_domain_raw_sigma_count = 3340
+classified_raw_sigma_count = 3340
+classification_statuses = {'no_kkt_solution': 25, 'zero_q_identity': 1680, 'singular_kkt_forced_zero_beta': 470, 'not_feasible_on_open_domain': 735, 'zero_gap_identity': 20, 'strict_gap_positive_on_feasible_open_domain': 410}
+CERTIFICATE PASSED in 2010.05s
+```
 
-    run_certificate(args.progress_every, args.limit)
-
-
-if __name__ == "__main__":
-    main()
+The stdout file, not this Markdown file, is the source for exact counts and
+runtime.

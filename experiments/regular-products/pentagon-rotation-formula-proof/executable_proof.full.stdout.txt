@@ -14,4 +14,4 @@ preflight_statuses = {'strict_gap_positive_on_feasible_open_domain': 1, 'zero_ga
 open_domain_raw_sigma_count = 3340
 classified_raw_sigma_count = 3340
 classification_statuses = {'no_kkt_solution': 25, 'zero_q_identity': 1680, 'singular_kkt_forced_zero_beta': 470, 'not_feasible_on_open_domain': 735, 'zero_gap_identity': 20, 'strict_gap_positive_on_feasible_open_domain': 410}
-CERTIFICATE PASSED in 2126.34s
+CERTIFICATE PASSED in 2010.05s
