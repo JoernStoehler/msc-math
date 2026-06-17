@@ -1,5 +1,118 @@
-\section{Quadratic Program Algorithm Based On HK2019}\label{sec:quadratic-program-algorithm-hk2019}
-\subsection{Definition}\label{subsec:quadratic-program-algorithm-hk2019-definition}
-\subsection{Correctness}\label{subsec:quadratic-program-algorithm-hk2019-correctness}
-\subsection{Performance optimization}\label{subsec:quadratic-program-algorithm-hk2019-performance-optimization}
-\subsection{Empirical tests}\label{subsec:quadratic-program-algorithm-hk2019-empirical-tests}
+\section{Quadratic Program Algorithm Based On HK2019}
+\label{sec:quadratic-program-algorithm-hk2019}
+
+This section records the finite computation principle used later in the
+thesis. Haim--Kislev's formula for polytopes reduces the EHZ capacity to a
+finite list of quadratic programs over cyclic facet words
+\cite{HK2017}. For general polytopes this list is combinatorially large. For
+Lagrangian products of planar polygons, the billiard interpretation gives a
+much smaller finite list, and this is the only part of the algorithm needed in
+Section~\ref{sec:rotated-regular-polygons}.
+
+\subsection{Finite enumeration for Lagrangian products}
+\label{subsec:quadratic-program-algorithm-hk2019-lagrangian-products}
+
+Let \(K_q,K_p\subset\mathbb{R}^2\) be nondegenerate convex polygons containing
+the origin in their interiors, and let
+\[
+  K=K_q\times_L K_p\subset\mathbb{R}^2_q\oplus\mathbb{R}^2_p
+\]
+be their Lagrangian product. A facet of \(K\) is either a \(q\)-facet,
+coming from an edge of \(K_q\), or a \(p\)-facet, coming from an edge of
+\(K_p\). We call a single facet a one-facet block, and an ordered adjacent pair
+of facets of the same type a two-facet block.
+
+\begin{theorem}[Finite enumeration for Lagrangian products]
+\label{thm:lagrangian-product-finite-enumeration}
+For a Lagrangian product \(K=K_q\times_L K_p\) of nondegenerate planar convex
+polygons, \(c_{\mathrm{EHZ}}(K)\) is obtained by applying the Haim--Kislev
+finite quadratic-program formula to cyclic words of the form
+\[
+  \bigl([Q\mid QQ]\,[P\mid PP]\bigr)^k,
+  \qquad k\in\{2,3\},
+\]
+where each \(Q\)-block is a one- or two-facet block in \(K_q\), each
+\(P\)-block is a one- or two-facet block in \(K_p\), distinct blocks use
+disjoint facets, and a two-facet block must use adjacent polygon edges.
+\end{theorem}
+
+\begin{proof}
+The Haim--Kislev formula reduces \(c_{\mathrm{EHZ}}(K)\) to a finite
+optimization over simple cyclic facet words \cite{HK2017}. Thus it remains to
+identify which simple words can occur for a Lagrangian product, and how many
+alternating \(q/p\)-blocks need be considered.
+
+On a \(q\)-facet of \(K_q\times_L K_p\), the Reeb vector is tangent to the
+\(p\)-factor; on a \(p\)-facet, it is tangent to the \(q\)-factor. Hence a
+simple orbit cannot contain three consecutive facets of the same type. If
+three consecutive facets were \(q\)-facets, for example, the \(q\)-coordinate
+would be constant through the two intermediate Reeb segments. The first
+breakpoint would force this fixed point of \(K_q\) to lie in the intersection
+of the first two \(K_q\)-edges, while the second breakpoint would force the
+same point to lie in the intersection of the second and third \(K_q\)-edges.
+For three distinct consecutive edges of a nondegenerate polygon these are the
+two different endpoints of the middle edge, which is impossible for one fixed
+point. The same argument applies to \(p\)-facets.
+
+Therefore every same-type run in a cyclic facet word has length one or two,
+and the maximal same-type runs alternate between \(q\)- and \(p\)-runs. A
+two-facet run must use adjacent polygon edges, because consecutive facets in a
+simple orbit share the breakpoint between the corresponding Reeb segments.
+Since the Haim--Kislev words are simple, distinct same-type blocks use disjoint
+facets; otherwise the flattened cyclic word would repeat a facet. A word with
+one \(q\)-block and one \(p\)-block cannot satisfy the positive closure
+equation: the \(q\)-part would require a positive combination of one normal, or
+of two adjacent edge normals, to vanish, and the same obstruction holds in the
+\(p\)-part. Adjacent outward normals of a convex polygon are not antiparallel.
+Thus \(k=1\) is excluded.
+
+The EHZ capacity of a Lagrangian product is also the length of the shortest
+closed \(K_p\)-billiard trajectory in \(K_q\), measured with the support
+function of \(K_p\) \cite{AAO2014,Rudolf2022}. The planar billiard reduction
+of Bezdek and Bezdek, in the form used for Minkowski billiards by Rudolf,
+implies that such a minimizing trajectory may be chosen with at most three
+bounce points \cite{BezdekBezdek2009,Rudolf2022}. Under the
+Reeb-orbit--billiard correspondence, a bounce point is exactly a maximal
+interval of the Reeb orbit on which the \(q\)-coordinate is fixed and lies on
+the active \(K_q\)-edge or adjacent edge pair; in the facet word this is one
+\(q\)-block. The blocks alternate cyclically, so the number of \(p\)-blocks is
+the same as the number of \(q\)-blocks. Hence \(k\leq 3\). Combining this with
+\(k\neq 1\) gives \(k\in\{2,3\}\). Applying the Haim--Kislev quadratic program
+to exactly these alternating block words therefore gives the same minimum as
+the full Lagrangian-product problem.
+\end{proof}
+
+\begin{algorithm}[Lagrangian-product capacity enumeration]
+\label{alg:lagrangian-product-capacity-enumeration}
+For each factor, enumerate all one-facet blocks and all ordered adjacent
+two-facet blocks. For \(k=2,3\), choose \(k\) non-overlapping \(q\)-blocks and
+\(k\) non-overlapping \(p\)-blocks, order them cyclically in the alternating
+pattern
+\[
+  \bigl([Q\mid QQ]\,[P\mid PP]\bigr)^k,
+\]
+flatten the blocks to a facet word, and solve the corresponding
+Haim--Kislev quadratic program. The capacity is the minimum action among the
+feasible words.
+\end{algorithm}
+
+\subsection{General polytopes}
+\label{subsec:quadratic-program-algorithm-hk2019-general-polytopes}
+
+For a general four-dimensional polytope, the same Haim--Kislev formula
+\cite{HK2017} applies to cyclic words in arbitrary facets, with the usual
+adjacency pruning: if two consecutive facets do not intersect, that word cannot
+come from a simple orbit and may be discarded. The Lagrangian-product theorem
+above is stronger only because the product structure and the planar billiard
+bounce bound restrict the relevant words to the alternating two- and
+three-bounce lists.
+
+\subsection{Implementation status}
+\label{subsec:quadratic-program-algorithm-hk2019-implementation-status}
+
+The thesis uses this section as a mathematical interface, not as a complete
+software manual. The exact pentagon computation in
+Section~\ref{sec:rotated-regular-polygons} implements the specialized
+Lagrangian-product enumeration from
+Theorem~\ref{thm:lagrangian-product-finite-enumeration}, then verifies the
+resulting exact algebraic inequalities in SageMath.
