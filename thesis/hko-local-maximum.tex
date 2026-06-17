@@ -229,7 +229,9 @@ SageMath is used for that finite predicate because the checks are exact
 algebraic equalities, inequalities, ranks, and kernel computations. The script
 \path{verify.sage.py} is fail-closed: every proof-facing assertion goes through
 an explicit check, and a failed check raises an exception instead of producing
-a successful certificate summary.
+a successful certificate summary. The excerpts below are shortened to show the
+proof-facing checks; the executable source file is the reference
+implementation.
 
 \begin{verbatim}
 def check(condition, message):
@@ -260,15 +262,32 @@ def exact_hko_geometry():
     return K, t, sqrt5, duals
 \end{verbatim}
 
-Only finite combinatorial choices are read from \path{witness.json}: the words
+The proof-relevant finite choices read from \path{witness.json} are the words
 \(\sigma\), the selected five-column minors, and the beta coordinates that are
-kept fixed in the feasible section. Floating-point numbers in the witness are
-used only as hints for choosing among exact candidates. A row is accepted only
-after exact checks: closure plus normalization, strict beta positivity in the
-chosen real embedding, invertibility of the selected minor, equality with the
-HKO action, the differentiated feasible-section equation, the derivative
-formula for \(D\operatorname{sys}\), and annihilation of every symmetry tangent
-column.
+kept fixed in the feasible section. The witness also contains floating-point
+hints. These hints guide the search for exact beta candidates and are recorded
+for diagnostics, but they do not decide whether a row is accepted. A row is
+accepted only after exact checks: closure plus normalization, strict beta
+positivity in the chosen real embedding, invertibility of the selected minor,
+equality with the HKO action, the differentiated feasible-section equation,
+the derivative formula for \(D\operatorname{sys}\), and annihilation of every
+symmetry tangent column.
+
+\begin{verbatim}
+def beta_is_valid(K, duals, sigma, beta, q_min):
+    C = constraint_matrix(K, duals, sigma)
+    e = vector(K, [0, 0, 0, 0, 1])
+    return (
+        C * beta == e
+        and all(entry > K(0) for entry in beta)
+        and q_value(duals, sigma, beta) == q_min
+    )
+\end{verbatim}
+
+The search routine forms the beta coordinates as exact polynomials in the
+fixed beta variables. It uses the floating-point entries from the witness to
+generate and order rational values and algebraic roots to try. A candidate is
+returned only when \verb|beta_is_valid| accepts it in the exact field.
 
 \begin{verbatim}
 def verify_entry(..., sym_cols, entry):
@@ -335,9 +354,11 @@ row_matrix, lambdas = compute_convex_coefficients(
 )
 \end{verbatim}
 
-The successful run records exactly the values used above: 26 verified rows,
-ambient dimension \(40\), row rank \(25\), symmetry rank \(15\), positive
-coefficients \(\lambda_\sigma\), and
+The successful run records the proof-facing summary values used above: 26
+verified rows, ambient dimension \(40\), row rank \(25\), and symmetry rank
+\(15\). During the run, Sage also computes and checks positive exact
+coefficients \(\lambda_\sigma\) with
+\(\sum_\sigma \lambda_\sigma=1\) and
 \(\sum_\sigma \lambda_\sigma r_\sigma=0\). These are the computational inputs
 to the hand proof of Theorem~\ref{thm:hko-ten-facet-local-maximum}.
 
