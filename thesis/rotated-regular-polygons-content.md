@@ -324,10 +324,10 @@ Use this table to keep the proof sources separated while writing.
 
 | Proof component | Current status | Main source |
 | --- | --- | --- |
-| Formula target on `0 <= theta <= pi/5` | ready subject to final wording review | `executable_proof.sage.py`; `executable_proof.full.stdout.txt`; `formal/pentagon-rotation-capacity.tex` as stale source material |
-| Reduction to `0 <= theta <= pi/5` | ready, needs thesis wording | `formal/lagrangian-product-rotation-symmetry.tex`, label `lem:rotation-fundamental-domain` |
-| Further reduction to `0 <= theta <= pi/10` | ready, needs thesis wording | `formal/lagrangian-product-rotation-symmetry.tex`, label `lem:odd-regular-factor-swap-mirror`; `formal/pentagon-rotation-capacity.tex` as stale source material |
-| Finite reduction to 2- and 3-bounce raw sigmas | compact thesis-facing theorem present, needs final mathematical review | `thesis/quadratic-program-algorithm-hk2019.tex`, label `thm:lagrangian-product-finite-enumeration`; source material in `formal/billiard-capacity-algorithm.tex` and `thesis/legacy/lagrangian-product-algorithm-proof.tex` |
+| Formula target on `0 <= theta <= pi/5` | active thesis prose present; theorem-strength wording still needs Jörn/Kai acceptance | `thesis/rotated-regular-polygons.tex`; `executable_proof.sage.py`; `executable_proof.full.stdout.txt` |
+| Reduction to `0 <= theta <= pi/5` | active thesis prose present | `thesis/rotated-regular-polygons.tex`; `formal/lagrangian-product-rotation-symmetry.tex`, label `lem:rotation-fundamental-domain` |
+| Further reduction to `0 <= theta <= pi/10` | active thesis prose present | `thesis/rotated-regular-polygons.tex`; `formal/lagrangian-product-rotation-symmetry.tex`, label `lem:odd-regular-factor-swap-mirror` |
+| Finite reduction to 2- and 3-bounce raw sigmas | active thesis-facing theorem present; theorem-strength route still needs Jörn/Kai mathematical acceptance | `thesis/quadratic-program-algorithm-hk2019.tex`, label `thm:lagrangian-product-finite-enumeration`; source material in `formal/billiard-capacity-algorithm.tex` and `thesis/legacy/lagrangian-product-algorithm-proof.tex` |
 | Pentagon normalization | ready | `formal/pentagon-rotation-capacity.tex`, definition of `P_5`; `executable_proof.sage.py`, functions `pentagon_normals` and `dual_vertices` |
 | Volume invariance and volume value | ready as a simple mathematical argument | `formal/pentagon-rotation-capacity.tex`, active-branch calculation; `executable_proof.sage.py`, function `systolic_ratio_prefactor` |
 | Capacity-to-systolic-ratio conversion | ready, checked by Sage preflight | `sys = c_EHZ^2/(2 vol)`; `executable_proof.sage.py`, function `systolic_ratio_prefactor` |
@@ -338,8 +338,8 @@ Use this table to keep the proof sources separated while writing.
 | KKT branch classification | ready as exact Sage assertion | `executable_proof.sage.py`, function `classify_sigma` |
 | Open half-domain lower bound | ready from full Sage run | `executable_proof.sage.py`; `executable_proof.full.stdout.txt` is the source for exact counts |
 | Thesis code excerpts for the Sage bridge | ready as non-runnable quote material | `executable_proof.thesis-excerpts.md`; verify against `executable_proof.sage.py` before final quoting |
-| Endpoints `theta=0`, `theta=pi/10` | ready, needs thesis wording and final citation choice | Chaidez-Hutchings `CH2021` continuity statement; `formal/combinatorial-boundary-regularity.tex`, label `prop:sys-continuous` |
-| Mirror to `pi/10 <= theta <= pi/5` | ready, needs thesis wording | `formal/lagrangian-product-rotation-symmetry.tex`, label `lem:odd-regular-factor-swap-mirror` |
+| Endpoints `theta=0`, `theta=pi/10` | active thesis prose present with `CH2021` citation | `thesis/rotated-regular-polygons.tex`; Chaidez-Hutchings `CH2021` continuity statement; `formal/combinatorial-boundary-regularity.tex`, label `prop:sys-continuous` |
+| Mirror to `pi/10 <= theta <= pi/5` | active thesis prose present | `thesis/rotated-regular-polygons.tex`; `formal/lagrangian-product-rotation-symmetry.tex`, label `lem:odd-regular-factor-swap-mirror` |
 
 This table is also the best answer to the question “what should Kai trust?”:
 the open-domain lower bound is the exact Sage certificate; the endpoints and
@@ -677,11 +677,10 @@ Recommended body-level order:
    transition signs that are constant on the open half-domain.
    The active thesis now states the compact finite-candidate theorem in
    `thesis/quadratic-program-algorithm-hk2019.tex`, label
-   `thm:lagrangian-product-finite-enumeration`. That theorem still needs final
-   mathematical review because it imports the legacy/formal proof in compact
-   cited form. The enumeration code proves only that the script checked the
-   listed candidates; the mathematical reduction explains why those candidates
-   suffice.
+   `thm:lagrangian-product-finite-enumeration`. The theorem-strength use of
+   that compact import still needs Jörn/Kai mathematical acceptance. The
+   enumeration code proves only that the script checked the listed candidates;
+   the mathematical reduction explains why those candidates suffice.
    Code component: `blocks`, `enumerate_k_bounce_sigmas`,
    `transition_table_open`, `transition_pruned_sigmas_open`.
    What Kai should check: the enumeration is intentionally raw and may contain
@@ -903,13 +902,13 @@ Closed non-writing items:
 3. exact transition-sign constancy on the open half-domain;
 4. current CLI simplification: default full certificate, `--limit N` prefix.
 
-Still writing or review work:
+Remaining review work:
 
-1. write the endpoint/symmetry argument clearly;
-2. decide how much Sage detail belongs in the main section versus appendix;
-3. decide whether to include empirical figures and which ones;
-4. get Jörn review of theorem wording and status interpretations;
-5. get Kai review of computation-as-proof framing if time allows.
+1. Jörn/Kai mathematical acceptance of the theorem-strength finite-enumeration
+   route and pentagon formula proof;
+2. Jörn writing review of how much Sage detail should remain in the main
+   chapter;
+3. Kai review of the computation-as-proof framing if time allows.
 
 ## Review Gates
 

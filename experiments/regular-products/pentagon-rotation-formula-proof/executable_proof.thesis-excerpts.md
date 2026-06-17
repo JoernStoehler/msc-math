@@ -33,11 +33,11 @@ quote or paraphrase these parts first:
 
 | Priority | Current source lines | Why these lines matter |
 | --- | --- | --- |
-| 1 | `491-499` | `assert_formula_checks()` checks the active branch, displayed prefactor, and feasibility. |
+| 1 | `493-501` | `assert_formula_checks()` checks the active branch, displayed prefactor, and feasibility. |
 | 2 | `209-275` | The exact sign method: roots cut the interval and one algebraic sample checks each cell. |
 | 3 | `398-483` | `classify_sigma()` is the lower-bound branch classifier and shows when the script falls back to `requires_manual_review`. |
-| 4 | `527-548` plus `54-61` | The full loop asserts every branch status is accepted, and `CERTIFICATE PASSED` is printed only for an unbounded run. |
-| 5 | `50-52`, `283-324`, `354-380`, and `514-515` | Include these if the thesis needs to expose how the finite raw-sigma candidate list is produced and counted. |
+| 4 | `529-548` plus `56-63` | The full loop asserts every branch status is accepted, and `CERTIFICATE PASSED` is printed only for an unbounded run. |
+| 5 | `52-54`, `289-326`, `356-382`, and `516-517` | Include these if the thesis needs to expose how the finite raw-sigma candidate list is produced and counted. |
 | 6 | `34-47` and `72-83` | Include these if the thesis needs to show the exact field and tangent-half-angle parameterization explicitly. |
 
 The line numbers above are navigation hints for the current source. Regenerate
