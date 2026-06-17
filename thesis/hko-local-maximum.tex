@@ -21,11 +21,9 @@ The result of this section is local: inside the ten-facet space, no
 sufficiently small perturbation improves the systolic ratio once the natural
 symmetries have been removed.
 
-\begin{remark}[Certificate status]
-The exact SageMath verifier checks the finite certificate described below. The
-remaining review question is whether the Hausdorff-to-chart reduction and the
-quotient-slice translation are accepted as final theorem-strength thesis text.
-\end{remark}
+% Review status: the exact SageMath verifier checks the finite certificate
+% below. The remaining project-review gate is final theorem wording/Kai review,
+% especially the Hausdorff-to-chart reduction and quotient-slice translation.
 
 \begin{theorem}[HKO is locally maximal in the ten-facet space]
 \label{thm:hko-ten-facet-local-maximum}
@@ -223,6 +221,125 @@ proof-facing equations. The full verifier packet is stored in
 from these checked equations to
 Theorem~\ref{thm:hko-ten-facet-local-maximum} is the finite upper-branch and
 slice argument above; it is not a property of the Rust search procedure.
+
+\subsubsection*{How the Sage verifier represents the certificate}
+
+The hand proof has reduced the theorem to the finite predicate just listed.
+SageMath is used for that finite predicate because the checks are exact
+algebraic equalities, inequalities, ranks, and kernel computations. The script
+\path{verify.sage.py} is fail-closed: every proof-facing assertion goes through
+an explicit check, and a failed check raises an exception instead of producing
+a successful certificate summary.
+
+\begin{verbatim}
+def check(condition, message):
+    if not bool(condition):
+        raise ValueError(f"verification failed: {message}")
+\end{verbatim}
+
+The verifier first reconstructs the ordered field and the HKO dual vertices
+from formulas, rather than trusting floating-point coordinates from the Rust
+generator. The field is \(Q(t)\), where \(t\) is the real root in \((0,1)\) of
+\(t^4-10t^2+5\), i.e. \(t=\tan(\pi/5)\).
+
+\begin{verbatim}
+def exact_hko_geometry():
+    ring = PolynomialRing(QQ, "x")
+    x = ring.gen()
+    polynomial = x**4 - 10 * x**2 + 5
+    K = NumberField(
+        polynomial, "t",
+        embedding=AA.polynomial_root(polynomial, RIF(0, 1)),
+    )
+    t = K.gen()
+    sqrt5 = (QQ(5) - t**2) / 2
+    alpha = (QQ(3) - sqrt5) / 2
+    beta = t * (QQ(1) + sqrt5) / 2
+    sec36 = sqrt5 - 1
+    ...
+    return K, t, sqrt5, duals
+\end{verbatim}
+
+Only finite combinatorial choices are read from \path{witness.json}: the words
+\(\sigma\), the selected five-column minors, and the beta coordinates that are
+kept fixed in the feasible section. Floating-point numbers in the witness are
+used only as hints for choosing among exact candidates. A row is accepted only
+after exact checks: closure plus normalization, strict beta positivity in the
+chosen real embedding, invertibility of the selected minor, equality with the
+HKO action, the differentiated feasible-section equation, the derivative
+formula for \(D\operatorname{sys}\), and annihilation of every symmetry tangent
+column.
+
+\begin{verbatim}
+def verify_entry(..., sym_cols, entry):
+    C = constraint_matrix(K, duals, sigma)
+    e = vector(K, [0, 0, 0, 0, 1])
+    check(C * beta == e, "closure")
+    check(all(b > K(0) for b in beta), "beta > 0")
+    minor = C[:, minor_columns]
+    check(minor.det() != K(0), "minor det")
+    check(q == q_min, "q_min")
+    check(action == action_min, "HKO action")
+    verify_d_beta(...)
+    ...
+    check(d_sys == recomputed_d_sys, "D sys")
+    for column in sym_cols:
+        check(d_sys.dot_product(column) == K(0), "symmetry")
+    return d_sys
+\end{verbatim}
+
+After all rows have been checked, the final quotient certificate is a pure
+linear-algebra assertion over the same ordered field. The verified rows must
+have rank \(25\). Their left kernel must contain a vector whose entries are all
+strictly positive after a possible sign change. Normalizing that vector gives
+the coefficients \(\lambda_\sigma\), and the verifier checks exactly that they
+sum to \(1\) and combine the rows to zero.
+
+\begin{verbatim}
+def compute_convex_coefficients(K, verified_rows):
+    M = matrix(K, [list(row) for row in verified_rows])
+    check(M.rank() == 25, "rank 25")
+    kernel = M.transpose().right_kernel().basis()
+    check(len(kernel) == 1, "one left-kernel line")
+    lambdas = list(kernel[0])
+    if all(entry < K(0) for entry in lambdas):
+        lambdas = [-entry for entry in lambdas]
+    check(all(entry > K(0) for entry in lambdas), "positive")
+    total = sum(lambdas, K(0))
+    lambdas = vector(K, [entry / total for entry in lambdas])
+    check(sum(lambdas, K(0)) == K(1), "sum 1")
+    zero = vector(K, [0 for _ in range(M.ncols())])
+    check(lambdas * M == zero, "weighted sum 0")
+    return M, lambdas
+\end{verbatim}
+
+The top-level verifier wires these checks together. It checks the packet
+identity, reconstructs HKO and the symmetry tangent space, checks the requested
+ambient and quotient dimensions, verifies all 26 entries, computes the convex
+coefficients, and writes the successful summary only after these checks have
+passed.
+
+\begin{verbatim}
+entries = [
+    compute_entry(K, duals, volume, volume_row,
+                  action_min, q_min, row)
+    for row in witness["entries"]
+]
+verified_rows = [
+    verify_entry(K, duals, volume, volume_row,
+                 action_min, q_min, symmetry_columns, entry)
+    for entry in entries
+]
+row_matrix, lambdas = compute_convex_coefficients(
+    K, verified_rows
+)
+\end{verbatim}
+
+The successful run records exactly the values used above: 26 verified rows,
+ambient dimension \(40\), row rank \(25\), symmetry rank \(15\), positive
+coefficients \(\lambda_\sigma\), and
+\(\sum_\sigma \lambda_\sigma r_\sigma=0\). These are the computational inputs
+to the hand proof of Theorem~\ref{thm:hko-ten-facet-local-maximum}.
 
 \begin{proof}[Proof of Theorem~\ref{thm:hko-ten-facet-local-maximum}]
 Lemma~\ref{lem:hko-hausdorff-local-ten-facet-chart} reduces the Hausdorff-local
