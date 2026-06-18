@@ -15,6 +15,8 @@ Current method packets in HEAD:
 
 - `endpoint-local-max-diagnostic/`: quotient first-order diagnostic for sampled
   retained endpoints.
+- `local-behavior-prediction/`: exploratory local and semi-local `sys(a)`
+  branch-behavior prediction diagnostics from run-local prepared outputs.
 - `scan-sys-gt-1/`: baseline target-predicate scan over the retained tables.
 
 Old PCA, clustering, regression, classification, supervised-alternative,
