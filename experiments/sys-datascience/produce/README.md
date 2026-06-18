@@ -21,6 +21,17 @@ capacity/orbit results.
 Producer outputs should not decide the final method-facing table shape.
 Reusable datascience feature columns, deliberate deduplication, retained table
 row entities, and method-specific rectangular matrices belong downstream.
+For local-behavior runs, the producer boundary is: materialize expensive point
+facts and traces, then let downstream code derive comparisons, projections, and
+predictor diagnostics. In particular,
+`computed-polytopes.jsonl` should be the reusable point cache keyed by canonical
+`poly_id`, while trace rows should record how points were sampled. Promote a
+branch feature into producer output only when its total compute cost or reuse
+value justifies fixing it at produce time. Ordinary per-branch KKT/status
+diagnostics that are cheap for the current panel belong in the shared prepare
+stage (`tables/` in current HEAD) or a method folder, even if they use exact
+arithmetic. A large repeated search loop can belong in produce when the
+aggregate cost becomes material.
 
 Canonical file naming follows:
 - `name.jsonl`

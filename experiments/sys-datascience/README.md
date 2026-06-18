@@ -81,22 +81,38 @@ them only when auditing cross-thesis claim wording or older context.
 ## Data Flow
 
 ```text
-produce/  ->  tables/  ->  methods/
+produce/  ->  prepare  ->  methods/
 ```
 
-- `produce/` owns accepted polytope producer outputs and caches.
-- `tables/` owns accepted reusable table columns, the table builder, and the
-  retained table outputs under `tables/`.
+- `produce/` owns accepted producer outputs, run traces, and caches for
+  expensive computations. It should preserve source-truth facts such as
+  computed polytope payloads, branch/action windows, and enough run metadata to
+  reproduce how rows were sampled. It should not own method-facing rectangular
+  feature shapes when those features can be derived cheaply downstream.
+- `prepare` is the shared downstream stage. In current HEAD its code and
+  retained outputs live under `tables/`, and the executable is
+  `sys-datascience-prepare`. This stage owns reusable row entities,
+  table-column computation, deliberate deduplication, and retained table
+  outputs. Promote preparation logic here when several methods would otherwise
+  reimplement the same joins, normalization, feature extraction, or consistency
+  checks. This is justified by repeated development/debugging cost, not only by
+  CPU time.
 - `methods/` owns current method scripts, retained method artifacts, and
-  method-packet README files.
+  method-packet README files. Methods answer one research question from
+  producer/table data. They may do cheap method-specific projections,
+  regressions, plots, and reports, but should not recompute capacity or own
+  general-purpose joins that are already reused.
 
 Consumers do not control producer outputs. If a method needs a rectangular
-input shape, build it inside the method folder unless a later concrete reuse or
-compute-cost case justifies promoting it to a shared helper.
+input shape, build it inside the method folder unless concrete reuse, repeated
+implementation/debugging cost, or compute cost justifies promoting it to
+the shared prepare stage (`tables/` in current HEAD) or another explicitly
+shared prepare surface.
 
 Use these examples to place changes:
 
-- Adding a scalar column that several methods should reuse: edit `tables/`.
+- Adding a scalar column that several methods should reuse: edit the shared
+  prepare stage, currently `tables/`.
 - Building PCA input columns from existing retained columns: build the input
   inside the PCA method folder.
 - Saving a PCA-specific transformed matrix: keep it under that method folder.
@@ -109,9 +125,15 @@ Use these examples to place changes:
   scripts, and generated manifests.
 
 If an example does not fit, decide from row ownership: producer outputs belong
-to `produce/`, reusable retained data to `tables/`, and method-specific
-inputs or artifacts to `methods/`. If a row entity changes, choose a table name
-for the new row entity rather than preserving the old name.
+to `produce/`, reusable retained data to the shared prepare stage, and
+method-specific inputs or artifacts to `methods/`. If a row entity changes,
+choose a table name for the new row entity rather than preserving the old name.
+
+Deferred cleanup: spawn a separate session to rename the on-disk
+`experiments/sys-datascience/tables/` folder to `prepare/`, so the directory
+name matches the stage and `sys-datascience-prepare` binary. Treat this as a
+path/API migration and update scripts, README files, map files, research notes,
+task notes, generated manifests, and retained-table commands together.
 
 ## Retained Tables
 

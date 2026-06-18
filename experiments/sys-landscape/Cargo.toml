@@ -43,6 +43,10 @@ name = "sys-datascience-produce"
 path = "../sys-datascience/produce/main.rs"
 
 [[bin]]
+name = "sys-local-behavior-produce"
+path = "../sys-datascience/produce/local-behavior.rs"
+
+[[bin]]
 name = "sys-kkt-payload-profile"
 path = "../sys-datascience/produce/kkt-payload-profile.rs"
 
