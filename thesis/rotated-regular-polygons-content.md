@@ -368,14 +368,12 @@ sage -python experiments/regular-products/pentagon-rotation-formula-proof/execut
 Current full stdout artifact:
 
 ```text
-SageMath version: 10.7
-runtime: 2010.05 seconds = 33 minutes 30.05 seconds
 stdout: experiments/regular-products/pentagon-rotation-formula-proof/executable_proof.full.stdout.txt
 ```
 
-These are cached facts copied from the stdout artifact. If they matter for the
-final text, re-check the stdout file rather than treating this companion as
-source truth.
+Read `executable_proof.full.stdout.txt` for the current SageMath version,
+runtime, exact status counts, and final certificate line. This companion should
+not cache volatile run metadata.
 
 The full run was regenerated after the folder migration and CLI cleanup. The
 stdout file is the source for exact status counts and the final runtime.
@@ -390,11 +388,8 @@ Use this stdout artifact as the source for exact status counts. Do not maintain
 copied count tables in notes unless they are checked against the stdout during
 thesis writing.
 
-The full run printed:
-
-```text
-CERTIFICATE PASSED in 2010.05s
-```
+The full run prints `CERTIFICATE PASSED` only in the stdout artifact. Read that
+artifact for the current runtime and exact final line.
 
 Post-CLI-cleanup prefix checks:
 

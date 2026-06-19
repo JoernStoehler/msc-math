@@ -52,7 +52,7 @@ Open them only when a README or thesis companion points to a specific detail.
 
 | File or folder | Role | Current value | Maintenance risk |
 | --- | --- | --- | --- |
-| `thesis/rotated-regular-polygons.tex` | Active thesis scaffold | Place where the final prose is written | Contains only scaffold comments today |
+| `thesis/rotated-regular-polygons.tex` | Active thesis section | Contains the current theorem/proof draft for the pentagon formula and selected empirical figures | Needs final Jörn/Kai mathematical and presentation review |
 | `thesis/rotated-regular-polygons-content.md` | Thesis writing companion | Best current human/agent guide to theorem, proof route, figures, and wording risks | Not source truth; delete or shrink after prose stabilizes |
 | `pentagon-rotation-formula-proof/executable_proof.sage.py` | Exact proof source | Source truth for the open half-domain executable certificate | If edited, rerun the full proof and refresh stdout |
 | `pentagon-rotation-formula-proof/executable_proof.full.stdout.txt` | Full proof run output | Source truth for exact run output, status counts, and runtime | Do not hand-edit |
