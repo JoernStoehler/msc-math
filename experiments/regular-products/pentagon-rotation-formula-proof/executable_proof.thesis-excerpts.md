@@ -571,15 +571,8 @@ def run_certificate(progress_every, limit=None):
 
 ## 6. Full-Run Output to Pair With Excerpts
 
-When quoting any code excerpt as part of a proof packet, pair it with the
-recorded full-run result in `executable_proof.full.stdout.txt`:
+When quoting any code excerpt as part of a proof packet, pair it with
+`executable_proof.full.stdout.txt`.
 
-```text
-open_domain_raw_sigma_count = 3340
-classified_raw_sigma_count = 3340
-classification_statuses = {'no_kkt_solution': 25, 'zero_q_identity': 1680, 'singular_kkt_forced_zero_beta': 470, 'not_feasible_on_open_domain': 735, 'zero_gap_identity': 20, 'strict_gap_positive_on_feasible_open_domain': 410}
-CERTIFICATE PASSED in 2010.05s
-```
-
-The stdout file, not this Markdown file, is the source for exact counts and
-runtime.
+The stdout file, not this Markdown file, is the source for exact counts,
+runtime, and the final `CERTIFICATE PASSED` line.
