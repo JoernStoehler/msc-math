@@ -4,6 +4,7 @@
 import argparse
 import csv
 import json
+import math
 import sys
 from collections import defaultdict
 from pathlib import Path
@@ -76,6 +77,15 @@ def summarize(rows: list[dict]) -> list[dict]:
         error_group_rows = [row for row in group_rows if row.get("status") != "ok"]
         capacity_rows = [row for row in ok_group_rows if capacity_ran(row)]
         capacity_not_run_rows = [row for row in ok_group_rows if capacity_not_run(row)]
+        capacity_candidate_solve_ms_mean = mean_present(
+            capacity_rows, "capacity_candidate_solve_ms"
+        )
+        capacity_candidate_kkt_solve_ms_mean = mean_present(
+            capacity_rows, "capacity_candidate_kkt_solve_ms"
+        )
+        capacity_sigma_count_mean = mean_present_any(
+            capacity_rows, ["sigma_count", "iterations"]
+        )
         total_ms = sum(float(row["elapsed_ms"]) for row in ok_group_rows)
         error_total_ms = sum(float(row["elapsed_ms"]) for row in error_group_rows)
         sample_count = len({int(row["sample"]) for row in group_rows})
@@ -128,8 +138,9 @@ def summarize(rows: list[dict]) -> list[dict]:
                 "sigma_count_mean": mean_present_any(
                     ok_group_rows, ["sigma_count", "iterations"]
                 ),
-                "capacity_sigma_count_mean": mean_present_any(
-                    capacity_rows, ["sigma_count", "iterations"]
+                "capacity_sigma_count_mean": capacity_sigma_count_mean,
+                "factorial_over_capacity_sigma_count_mean": factorial_over_sigma_count(
+                    facet_count, capacity_sigma_count_mean
                 ),
                 "raw_orbits_mean": mean_present(ok_group_rows, "raw_orbits"),
                 "returned_orbits_mean": mean_present(ok_group_rows, "returned_orbits"),
@@ -181,11 +192,11 @@ def summarize(rows: list[dict]) -> list[dict]:
                 "capacity_transition_matrix_ms_mean": mean_present(
                     capacity_rows, "capacity_transition_matrix_ms"
                 ),
-                "capacity_candidate_solve_ms_mean": mean_present(
-                    capacity_rows, "capacity_candidate_solve_ms"
-                ),
-                "capacity_candidate_kkt_solve_ms_mean": mean_present(
-                    capacity_rows, "capacity_candidate_kkt_solve_ms"
+                "capacity_candidate_solve_ms_mean": capacity_candidate_solve_ms_mean,
+                "capacity_candidate_kkt_solve_ms_mean": capacity_candidate_kkt_solve_ms_mean,
+                "capacity_candidate_kkt_solve_pct": percentage(
+                    capacity_candidate_kkt_solve_ms_mean,
+                    capacity_candidate_solve_ms_mean,
                 ),
                 "capacity_candidate_non_kkt_ms_mean": mean_present(
                     capacity_rows, "capacity_candidate_non_kkt_ms"
@@ -213,6 +224,9 @@ def summarize(rows: list[dict]) -> list[dict]:
                 "indeterminate_f64_mean": mean_present(capacity_rows, "indeterminate_f64_count"),
                 "inadmissible_mean": mean_present(capacity_rows, "inadmissible_count"),
                 "numerical_failure_mean": mean_present(capacity_rows, "numerical_failure_count"),
+                "near_minimizing_sigma_mean": mean_present(
+                    capacity_rows, "near_minimizing_sigma_count"
+                ),
                 "facet_intersection_true_mean": mean_present(capacity_rows, "facet_intersection_true_count"),
                 "facet_intersection_false_mean": mean_present(capacity_rows, "facet_intersection_false_count"),
                 "facet_intersection_indeterminate_mean": mean_present(capacity_rows, "facet_intersection_indeterminate_count"),
@@ -253,6 +267,18 @@ def mean_present_any(rows: list[dict], keys: list[str]) -> float | None:
     if not values:
         return None
     return sum(values) / len(values)
+
+
+def percentage(numerator: float | None, denominator: float | None) -> float | None:
+    if numerator is None or denominator is None or denominator == 0.0:
+        return None
+    return 100.0 * numerator / denominator
+
+
+def factorial_over_sigma_count(facet_count: int, sigma_count: float | None) -> float | None:
+    if facet_count <= 0 or sigma_count is None or sigma_count == 0.0:
+        return None
+    return math.factorial(facet_count) / sigma_count
 
 
 def value_counts(rows: list[dict], key: str) -> str | None:
@@ -297,6 +323,7 @@ def print_stdout_summary(summary: list[dict]) -> None:
         ("capacity_not_run_events", "capacity_not_run"),
         ("sigma_count_mean", "sigma_count_mean"),
         ("capacity_sigma_count_mean", "sigma_count_if_capacity"),
+        ("factorial_over_capacity_sigma_count_mean", "factorial_over_sigmas"),
         ("raw_orbits_mean", "raw_orbits"),
         ("returned_orbits_mean", "ret_orbits"),
         ("allowed_transitions_mean", "allowed_transitions"),
@@ -315,6 +342,7 @@ def print_stdout_summary(summary: list[dict]) -> None:
         ("capacity_transition_matrix_ms_mean", "cap_transition_matrix_ms"),
         ("capacity_candidate_solve_ms_mean", "cap_kkt_candidates_ms"),
         ("capacity_candidate_kkt_solve_ms_mean", "cap_kkt_solve_ms"),
+        ("capacity_candidate_kkt_solve_pct", "cap_kkt_solve_pct"),
         ("capacity_candidate_non_kkt_ms_mean", "cap_enum_filter_ms"),
         ("capacity_geometry_vertex_scan_ms_mean", "cap_vertex_scan_ms"),
         ("capacity_lp_facet_statuses_ms_mean", "cap_lp_facet_statuses_ms"),
@@ -323,6 +351,7 @@ def print_stdout_summary(summary: list[dict]) -> None:
         ("indeterminate_f64_mean", "indet_kkt_if_capacity"),
         ("inadmissible_mean", "inadmissible_if_capacity"),
         ("numerical_failure_mean", "num_fail_if_capacity"),
+        ("near_minimizing_sigma_mean", "near_min_sigmas"),
         ("facet_intersection_true_mean", "facet_pair_true_if_capacity"),
         ("facet_intersection_false_mean", "facet_pair_false_if_capacity"),
         ("facet_intersection_indeterminate_mean", "facet_pair_indet_if_capacity"),
@@ -368,6 +397,7 @@ def write_csv(path: Path, summary: list[dict]) -> None:
         "capacity_not_run_events",
         "sigma_count_mean",
         "capacity_sigma_count_mean",
+        "factorial_over_capacity_sigma_count_mean",
         "raw_orbits_mean",
         "returned_orbits_mean",
         "allowed_transitions_mean",
@@ -390,6 +420,7 @@ def write_csv(path: Path, summary: list[dict]) -> None:
         "capacity_transition_matrix_ms_mean",
         "capacity_candidate_solve_ms_mean",
         "capacity_candidate_kkt_solve_ms_mean",
+        "capacity_candidate_kkt_solve_pct",
         "capacity_candidate_non_kkt_ms_mean",
         "capacity_report_ms_mean",
         "capacity_geometry_vertex_scan_ms_mean",
@@ -402,6 +433,7 @@ def write_csv(path: Path, summary: list[dict]) -> None:
         "indeterminate_f64_mean",
         "inadmissible_mean",
         "numerical_failure_mean",
+        "near_minimizing_sigma_mean",
         "facet_intersection_true_mean",
         "facet_intersection_false_mean",
         "facet_intersection_indeterminate_mean",

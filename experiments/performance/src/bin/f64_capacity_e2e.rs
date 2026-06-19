@@ -1,7 +1,7 @@
 use exp_dev_f64_capacity::{
-    generated_f64_cases, load_retained_artifact_cases, scan_case_with_options_profiled,
-    F64CapacityMethod, F64ValidationPolicy, NearRedundantFacetRemovalPolicy, ScanCase, ScanOptions,
-    ScanRow, ScanTimingBreakdown,
+    generated_f64_cases_with_source_filter, load_retained_artifact_cases,
+    scan_case_with_options_profiled, F64CapacityMethod, F64ValidationPolicy,
+    NearRedundantFacetRemovalPolicy, ScanCase, ScanOptions, ScanRow, ScanTimingBreakdown,
 };
 use exp_performance::args::{selected_run_mode, split_inline_arg, take_value, RunMode};
 use exp_performance::jsonl::JsonlWriter;
@@ -30,6 +30,7 @@ struct Config {
     input_cohort: InputCohort,
     max_cases: Option<usize>,
     case_filter: CaseFilter,
+    source_id_filter: Vec<String>,
     method_filter: MethodFilter,
     trace: bool,
     out_dir: Option<PathBuf>,
@@ -215,6 +216,8 @@ struct PhaseEvent {
     #[serde(skip_serializing_if = "Option::is_none")]
     numerical_failure_count: Option<usize>,
     #[serde(skip_serializing_if = "Option::is_none")]
+    near_minimizing_sigma_count: Option<usize>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     facet_intersection_true_count: Option<usize>,
     #[serde(skip_serializing_if = "Option::is_none")]
     facet_intersection_false_count: Option<usize>,
@@ -278,15 +281,21 @@ fn selected_cases(config: &Config) -> Vec<ScanCase> {
             CaseFilter::All => config.max_rows_per_family,
             CaseFilter::RandomProductF12 => 0,
         };
+        let max_rows_per_family = if config.source_id_filter.is_empty() {
+            max_rows_per_family
+        } else {
+            0
+        };
         cases.extend(load_retained_artifact_cases(max_rows_per_family));
     }
     if matches!(
         config.input_cohort,
         InputCohort::GeneratedF64 | InputCohort::All
     ) {
-        cases.extend(generated_f64_cases(
+        cases.extend(generated_f64_cases_with_source_filter(
             config.generated_samples_per_facet,
             config.generated_seed,
+            &config.source_id_filter,
         ));
     }
     let filtered = cases.into_iter().filter(|case| match config.case_filter {
@@ -294,6 +303,9 @@ fn selected_cases(config: &Config) -> Vec<ScanCase> {
         CaseFilter::RandomProductF12 => {
             case.family == "random_product" && case.dual_vertices.len() == 12
         }
+    });
+    let filtered = filtered.filter(|case| {
+        config.source_id_filter.is_empty() || config.source_id_filter.contains(&case.source_id)
     });
     match config.max_cases {
         Some(limit) => filtered.take(limit).collect(),
@@ -358,6 +370,7 @@ fn input_acquisition_event(config: &Config, case_count: usize, elapsed_ms: f64) 
         indeterminate_f64_count: None,
         inadmissible_count: None,
         numerical_failure_count: None,
+        near_minimizing_sigma_count: None,
         facet_intersection_true_count: None,
         facet_intersection_false_count: None,
         facet_intersection_indeterminate_count: None,
@@ -489,6 +502,7 @@ fn event_from_row(
         indeterminate_f64_count: Some(row.indeterminate_f64_count),
         inadmissible_count: Some(row.inadmissible_count),
         numerical_failure_count: Some(row.numerical_failure_count),
+        near_minimizing_sigma_count: Some(row.near_minimizing_sigma_count),
         facet_intersection_true_count: Some(row.facet_intersection_true_count),
         facet_intersection_false_count: Some(row.facet_intersection_false_count),
         facet_intersection_indeterminate_count: Some(row.facet_intersection_indeterminate_count),
@@ -570,6 +584,14 @@ fn parse_args(args: impl Iterator<Item = String>) -> Result<Config, String> {
                     }
                 };
             }
+            "--source-id-filter" => {
+                config.source_id_filter.extend(
+                    take_value("--source-id-filter", inline_value, &mut args)?
+                        .split(',')
+                        .filter(|source_id| !source_id.is_empty())
+                        .map(str::to_string),
+                );
+            }
             "--max-cases" => {
                 config.max_cases = Some(
                     take_value("--max-cases", inline_value, &mut args)?
@@ -605,6 +627,7 @@ fn config_for_mode(mode: RunMode) -> Config {
         input_cohort: InputCohort::RetainedArtifacts,
         max_cases: None,
         case_filter: CaseFilter::All,
+        source_id_filter: Vec::new(),
         method_filter: MethodFilter::All,
         trace: false,
         out_dir: None,
@@ -648,6 +671,7 @@ Options:\n\
   --mode MODE          Named run mode: smoke or production [default: smoke]\n\
   --input-cohort COHORT Inputs: retained_artifacts, generated_f64, or all [default: retained_artifacts]\n\
   --case-filter FILTER Input cohort: all or random_product_f12 [default: all]\n\
+  --source-id-filter IDS Comma-separated exact source_id list\n\
   --method-filter FILTER Methods: all or product_billiard_or_hk [default: all]\n\
   --generated-samples-per-facet N Generated cases per facet/product size\n\
   --generated-seed U64 Deterministic generated-input seed\n\
@@ -718,6 +742,29 @@ mod tests {
         assert_eq!(config.input_cohort, InputCohort::GeneratedF64);
         assert_eq!(config.generated_samples_per_facet, 2);
         assert_eq!(config.generated_seed, 7);
+    }
+
+    #[test]
+    fn source_id_filter_is_parsed() {
+        let config = parse(&["--source-id-filter", "a,b"]);
+        assert_eq!(config.source_id_filter, vec!["a", "b"]);
+    }
+
+    #[test]
+    fn source_id_filter_is_not_limited_by_mode_family_cap() {
+        let config = parse(&[
+            "--mode",
+            "smoke",
+            "--input-cohort",
+            "retained_artifacts",
+            "--source-id-filter",
+            "ascent_product_0:F10",
+        ]);
+
+        let cases = selected_cases(&config);
+
+        assert_eq!(cases.len(), 1);
+        assert_eq!(cases[0].source_id, "ascent_product_0:F10");
     }
 
     #[test]

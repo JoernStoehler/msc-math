@@ -1,5 +1,7 @@
 use serde::{Deserialize, Serialize};
 
+use crate::OutputEpistemics;
+
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct ScanRow {
     pub family: String,
@@ -88,6 +90,8 @@ pub struct ScanRow {
     pub agreement_status: String,
     pub trust_class: String,
     pub trust_reasons: Vec<String>,
+    #[serde(default)]
+    pub output_epistemics: OutputEpistemics,
     pub f64_sigma: Option<Vec<usize>>,
     pub audit_sigma_label: Option<Vec<usize>>,
     pub sigma_count: u64,
@@ -104,6 +108,8 @@ pub struct ScanRow {
     pub facet_intersection_false_count: usize,
     pub facet_intersection_indeterminate_count: usize,
     pub omega_indeterminate_count: usize,
+    #[serde(default)]
+    pub near_minimizing_sigma_count: usize,
     pub min_action_gap: Option<f64>,
     pub indeterminate_overlaps_best_interval: bool,
 }

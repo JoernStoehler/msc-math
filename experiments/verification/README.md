@@ -10,6 +10,12 @@ Use crate tests for fast local API regressions. Use `experiments/numerics/` for
 structured numerical error-audit runs over KKT variables and predicates. Use
 `experiments/performance/` only for runtime and memory measurement targets.
 
+The rerunnable f64 capacity verification/audit packet is
+[`f64-capacity/README.md`](f64-capacity/README.md). It runs a small manifest of
+generated, retained, and code-owned edge-fixture rows through the current f64
+scanner and compares scan outputs against handwritten expectations, with
+pass/fail status separate from full versus limited f64 claim scope.
+
 ## Rust Command Contract
 
 - `axioms-correctness` is a full-output producer. Running it refreshes

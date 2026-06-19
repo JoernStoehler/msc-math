@@ -17,6 +17,8 @@ use symplectic::classify_facets_from_dual_vertices;
 
 pub use types::{F64CapacityMethod, F64CapacityOutcome, F64CapacityReport, F64FailureReason};
 
+pub const MINIMIZING_SIGMA_SET_ACTION_TOLERANCE: f64 = 1e-8;
+
 #[derive(Clone, Debug, Default)]
 pub struct F64CapacityTimingBreakdown {
     pub combinatorics_ms: f64,
@@ -137,6 +139,8 @@ pub fn capacity_f64_only_with_policy_and_method_profiled(
         facet_intersection_indeterminate_count: combinatorics
             .facet_intersection_indeterminate_count,
         omega_indeterminate_count: combinatorics.omega_indeterminate_count,
+        near_minimizing_sigma_count: solved
+            .near_minimizing_admissible_count(MINIMIZING_SIGMA_SET_ACTION_TOLERANCE),
         min_action_gap: solved.action_gap(),
         indeterminate_overlaps_best_interval: solved.indeterminate_overlaps_best_interval(),
     };

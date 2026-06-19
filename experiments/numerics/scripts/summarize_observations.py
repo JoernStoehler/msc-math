@@ -218,6 +218,14 @@ def render_report(
         if row["oracle_kind"] == "exact_binary64_input"
     ]
 
+    if predicate_rows:
+        predicate_support_lines = [
+            f"- Exact-rational predicate disagreements: {sum(int(row['disagreements']) for row in exact_rational_disagreements)}",
+            f"- Exact-binary64-input predicate disagreements: {sum(int(row['disagreements']) for row in exact_binary64_disagreements)}",
+        ]
+    else:
+        predicate_support_lines = ["- Predicate disagreements: not measured in this run."]
+
     lines = [
         "# Numerics Audit Report",
         "",
@@ -233,8 +241,7 @@ def render_report(
         "",
         "## Support Status",
         "",
-        f"- Exact-rational predicate disagreements: {sum(int(row['disagreements']) for row in exact_rational_disagreements)}",
-        f"- Exact-binary64-input predicate disagreements: {sum(int(row['disagreements']) for row in exact_binary64_disagreements)}",
+        *predicate_support_lines,
         "- Exact-rational numeric errors are empirical f64-vs-exact measurements for",
         "  the emitted rational fixture contexts.",
         "- Exact-binary64-input rows compare f64 solver output with exact arithmetic",
@@ -265,10 +272,14 @@ def render_report(
         lines.extend(render_worst_numeric_rows(worst_numeric_rows))
     else:
         lines.append("- No oracle-backed numeric errors were emitted.")
+    lines.extend(["", "## Stored Comparison Labels", ""])
+    lines.extend(render_stored_label_comparison_table(observations))
     lines.extend(["", "## Predicate Agreement Diagnostics", ""])
     lines.extend(render_predicate_summary(predicates))
     lines.extend(["", "### Predicate Disagreements", ""])
-    if disagreements:
+    if not predicate_rows:
+        lines.append("- Predicate observations were not emitted; disagreements were not measured.")
+    elif disagreements:
         lines.extend(
             "- {algorithm}/{predicate} on {input_pair_kind} policy={sample_policy} "
             "oracle={oracle_kind}: disagreements={disagreements}/{count}".format(**row)
@@ -359,6 +370,45 @@ def render_worst_numeric_rows(rows: list[dict[str, Any]]) -> list[str]:
     )
 
 
+def render_stored_label_comparison_table(observations: list[dict[str, Any]]) -> list[str]:
+    label_rows = [
+        row
+        for row in observations
+        if row.get("comparison_label_kind") == "stored_artifact_label"
+    ]
+    if not label_rows:
+        return ["- No stored comparison labels were emitted."]
+    return markdown_table(
+        [
+            "object",
+            "sigma",
+            "input_pair_kind",
+            "algorithm",
+            "variable",
+            "f64",
+            "label_f64",
+            "abs_difference",
+        ],
+        [
+            [
+                row.get("object_id", ""),
+                json.dumps(row.get("sigma", "")),
+                row.get("input_pair_kind", ""),
+                row.get("algorithm", ""),
+                row.get("variable", ""),
+                format_cell(row.get("f64", "")),
+                format_cell(row.get("comparison_label_f64", "")),
+                format_cell(row.get("comparison_label_abs_difference", "")),
+            ]
+            for row in sorted(
+                label_rows,
+                key=lambda row: float(row.get("comparison_label_abs_difference", 0.0)),
+                reverse=True,
+            )
+        ],
+    )
+
+
 def render_predicate_summary(predicates: list[dict[str, Any]]) -> list[str]:
     if not predicates:
         return ["- No predicate observations were emitted."]
@@ -400,6 +450,29 @@ DIAGNOSTIC_VARIABLES = {
     "positive_eigenvalues",
     "zero_eigenvalues",
     "negative_eigenvalues",
+    "near_minimizing_sigma_count",
+    "min_action_gap",
+    "sigma_count",
+    "admissible_f64_count",
+    "indeterminate_f64_count",
+    "inadmissible_count",
+    "numerical_failure_count",
+    "vertex_indeterminate_count",
+    "near_singular_vertex_count",
+    "bounded_near_singular_vertex_count",
+    "ambiguous_vertex_incidence_count",
+    "facet_intersection_indeterminate_count",
+    "omega_indeterminate_count",
+    "origin_lp_max_min_lambda",
+    "origin_lp_max_abs_residual",
+    "product_rounding_max_minor_over_major",
+    "product_rounding_max_abs_change",
+    "removed_facet_count",
+    "near_redundant_facet_removal_delta_bound",
+    "capacity_ratio_upper_bound",
+    "volume_ratio_upper_bound",
+    "sys_ratio_lower_bound",
+    "sys_ratio_upper_bound",
 }
 
 

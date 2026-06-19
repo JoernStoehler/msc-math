@@ -1,5 +1,9 @@
-use exp_dev_f64_capacity::{generated_f64_cases, ScanCase};
+use exp_dev_f64_capacity::{generated_f64_cases_with_source_filter, ScanCase};
 
-pub(crate) fn generated_cases(samples_per_facet: usize, seed: u64) -> Vec<ScanCase> {
-    generated_f64_cases(samples_per_facet, seed)
+pub(crate) fn generated_cases(
+    samples_per_facet: usize,
+    seed: u64,
+    source_id_filter: &[String],
+) -> Vec<ScanCase> {
+    generated_f64_cases_with_source_filter(samples_per_facet, seed, source_id_filter)
 }

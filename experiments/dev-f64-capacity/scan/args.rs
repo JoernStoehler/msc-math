@@ -69,8 +69,9 @@ pub(crate) fn parse_args() -> Args {
                     "all" => InputSource::All,
                     "generated" => InputSource::Generated,
                     "artifacts" => InputSource::Artifacts,
+                    "edge-fixtures" => InputSource::EdgeFixtures,
                     other => {
-                        panic!("--input-source must be all, generated, or artifacts, got {other}")
+                        panic!("--input-source must be all, generated, artifacts, or edge-fixtures, got {other}")
                     }
                 };
                 i += 2;
@@ -215,7 +216,7 @@ fn value<'a>(argv: &'a [String], i: usize, flag: &str) -> &'a str {
 
 fn print_help() {
     println!(
-        "Usage: f64-capacity-scan [--output PATH] [--input-source all|generated|artifacts] \\\n         [--max-rows-per-family N] [--generated-samples-per-facet N] [--generated-seed U64]\n\
+        "Usage: f64-capacity-scan [--output PATH] [--input-source all|generated|artifacts|edge-fixtures] \\\n         [--max-rows-per-family N] [--generated-samples-per-facet N] [--generated-seed U64]\n\
          [--audit-generated none|all] [--audit-preprocessed none|all] [--max-audit-rows N]\n\
          [--validation-policy strict|lp_origin_vertex|lp]\n\
          [--capacity-method transition_pruned_hk|product_billiard_or_hk]\n\

@@ -3,6 +3,8 @@ use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::path::Path;
 
+use exp_dev_f64_capacity::OutputEpistemics;
+
 #[derive(Clone, Debug, Serialize)]
 pub(crate) struct BenchmarkRow {
     pub(crate) family: String,
@@ -19,9 +21,11 @@ pub(crate) struct BenchmarkRow {
     pub(crate) rel_action_error: Option<f64>,
     pub(crate) outcome: String,
     pub(crate) agreement_status: String,
-    pub(crate) trust_class: String,
-    pub(crate) trust_reasons: Vec<String>,
+    pub(crate) output_epistemics: OutputEpistemics,
+    pub(crate) route_class: String,
+    pub(crate) route_reasons: Vec<String>,
     pub(crate) sigma_count: u64,
+    pub(crate) near_minimizing_sigma_count: usize,
     pub(crate) exact_recompute_status: String,
 }
 

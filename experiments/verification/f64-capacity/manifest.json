@@ -1,0 +1,242 @@
+{
+  "description": "Small f64 capacity verification/audit packet. It separates expectation status, f64 output scope, and evidence support. Full cases expect fully decided checked f64 outputs; limited cases expect intentionally limited f64 epistemics such as unresolved product minimizer ties, visible fallback, or preprocessing edge visibility.",
+  "cases": [
+    {
+      "case_id": "generated_clean_random_f5",
+      "run": "generated",
+      "source_id": "seed99540836:F5:sample0:attempt5000000008",
+      "reason": "generated generic baseline with exact audit",
+      "claim_scope": "full",
+      "expect": {
+        "family": "generated_random_f64",
+        "validation_status": "accepted_decisive",
+        "outcome": "success",
+        "output_epistemics.capacity_value_status": "decided",
+        "output_epistemics.capacity_label_status": "label_agrees",
+        "output_epistemics.minimizing_sigma_set_status": "decided",
+        "near_minimizing_sigma_count": { "equals": 1 },
+        "output_epistemics.low_action_list_completeness": "complete",
+        "output_epistemics.low_action_items_status": "determinate",
+        "output_epistemics.fallback_recommended": false,
+        "exact_audit_status": "exact_valid_capacity_success",
+        "rel_action_error": { "max": 1e-10 }
+      }
+    },
+    {
+      "case_id": "generated_product_tie_q4_p5",
+      "run": "generated",
+      "source_id": "seed99540836:q4:p5:attempt405000000000",
+      "reason": "generated product row where f64 decides the value and intentionally leaves exact minimizer equality unresolved",
+      "claim_scope": "limited",
+      "expect": {
+        "family": "generated_product_f64",
+        "validation_status": "accepted_ambiguous",
+        "outcome": "success",
+        "output_epistemics.capacity_value_status": "decided",
+        "output_epistemics.capacity_label_status": "label_agrees",
+        "output_epistemics.minimizing_sigma_set_status": "undecided",
+        "near_minimizing_sigma_count": { "min": 2 },
+        "output_epistemics.low_action_list_completeness": "complete",
+        "output_epistemics.low_action_items_status": "determinate",
+        "output_epistemics.fallback_recommended": false,
+        "output_epistemics.reasons": {
+          "contains": "output_minimizing_sigma_set_undecided:multiple_near_minimizing_sigmas"
+        },
+        "exact_audit_status": "exact_valid_capacity_success",
+        "rel_action_error": { "max": 1e-10 }
+      }
+    },
+    {
+      "case_id": "retained_clean_random_f5",
+      "run": "artifacts",
+      "source_id": "random_F5_s0_0:F5",
+      "reason": "retained generic baseline with stored artifact label agreement",
+      "claim_scope": "full",
+      "expect": {
+        "family": "random",
+        "validation_status": "accepted_decisive",
+        "outcome": "success",
+        "output_epistemics.capacity_value_status": "decided",
+        "output_epistemics.capacity_label_status": "label_agrees",
+        "output_epistemics.minimizing_sigma_set_status": "decided",
+        "near_minimizing_sigma_count": { "equals": 1 },
+        "output_epistemics.low_action_list_completeness": "complete",
+        "output_epistemics.low_action_items_status": "determinate",
+        "output_epistemics.fallback_recommended": false,
+        "exact_audit_status": "not_requested",
+        "rel_action_error": { "max": 1e-10 }
+      }
+    },
+    {
+      "case_id": "retained_product_tie_3x5",
+      "run": "artifacts",
+      "source_id": "random_3x5_s0_0:F8",
+      "reason": "retained product row where f64 leaves multiple near-minimizing sigma representatives unresolved by design",
+      "claim_scope": "limited",
+      "expect": {
+        "family": "random_product",
+        "validation_status": "accepted_ambiguous",
+        "outcome": "success",
+        "output_epistemics.capacity_value_status": "decided",
+        "output_epistemics.capacity_label_status": "label_agrees",
+        "output_epistemics.minimizing_sigma_set_status": "undecided",
+        "near_minimizing_sigma_count": { "min": 2 },
+        "output_epistemics.low_action_list_completeness": "complete",
+        "output_epistemics.low_action_items_status": "determinate",
+        "output_epistemics.fallback_recommended": false,
+        "output_epistemics.reasons": {
+          "contains": "output_minimizing_sigma_set_undecided:multiple_near_minimizing_sigmas"
+        },
+        "exact_audit_status": "not_requested",
+        "rel_action_error": { "max": 1e-10 }
+      }
+    },
+    {
+      "case_id": "retained_ascent_general_0",
+      "run": "artifacts",
+      "source_id": "ascent_0:F10",
+      "reason": "actual ascent endpoint, generic-shaped",
+      "claim_scope": "full",
+      "expect": {
+        "family": "ascent_general_endpoint",
+        "validation_status": "accepted_decisive",
+        "outcome": "success",
+        "output_epistemics.capacity_value_status": "decided",
+        "output_epistemics.capacity_label_status": "label_agrees",
+        "output_epistemics.minimizing_sigma_set_status": "decided",
+        "near_minimizing_sigma_count": { "equals": 1 },
+        "output_epistemics.low_action_list_completeness": "complete",
+        "output_epistemics.low_action_items_status": "determinate",
+        "output_epistemics.fallback_recommended": false,
+        "exact_audit_status": "not_requested",
+        "rel_action_error": { "max": 1e-10 }
+      }
+    },
+    {
+      "case_id": "retained_ascent_product_0",
+      "run": "artifacts",
+      "source_id": "ascent_product_0:F10",
+      "reason": "actual ascent endpoint, product-shaped with benign f64 structural diagnostics",
+      "claim_scope": "full",
+      "expect": {
+        "family": "ascent_product_endpoint",
+        "validation_status": "accepted_ambiguous",
+        "outcome": "success",
+        "output_epistemics.capacity_value_status": "decided",
+        "output_epistemics.capacity_label_status": "label_agrees",
+        "output_epistemics.minimizing_sigma_set_status": "decided",
+        "near_minimizing_sigma_count": { "equals": 1 },
+        "output_epistemics.low_action_list_completeness": "complete",
+        "output_epistemics.low_action_items_status": "determinate",
+        "output_epistemics.fallback_recommended": false,
+        "exact_audit_status": "not_requested",
+        "rel_action_error": { "max": 1e-10 }
+      }
+    },
+    {
+      "case_id": "hko_fallback_visible",
+      "run": "artifacts",
+      "source_id": "known_polytopes::hko_pentagon_rounded_f64",
+      "reason": "HKO-like f64 stress row must remain visible as fallback-required f64 evidence",
+      "claim_scope": "limited",
+      "expect": {
+        "family": "hko2024_f64",
+        "validation_status": "accepted_ambiguous",
+        "outcome": "success",
+        "output_epistemics.capacity_value_status": "undecided",
+        "output_epistemics.capacity_label_status": "label_agrees",
+        "output_epistemics.minimizing_sigma_set_status": "undecided",
+        "near_minimizing_sigma_count": { "min": 2 },
+        "output_epistemics.low_action_list_completeness": "ambiguous",
+        "output_epistemics.low_action_items_status": "indeterminate",
+        "output_epistemics.fallback_recommended": true,
+        "output_epistemics.reasons": {
+          "contains": "output_capacity_undecided:indeterminate_overlaps_best_interval"
+        },
+        "exact_audit_status": "not_requested",
+        "rel_action_error": { "max": 1e-10 }
+      }
+    },
+    {
+      "case_id": "edge_duplicate_dual_vertices_rejects",
+      "run": "edge_default",
+      "source_id": "edge:duplicate_dual_vertices",
+      "reason": "invalid duplicate dual vertices must reject before capacity",
+      "claim_scope": "limited",
+      "expect": {
+        "family": "edge_invalid",
+        "validation_status": "rejected",
+        "validation_reasons": {
+          "contains": "near_duplicate_dual_vertices:0:1"
+        },
+        "outcome": "not_run",
+        "output_epistemics.capacity_value_status": "not_computed",
+        "output_epistemics.fallback_recommended": true,
+        "trust_class": "fallback_required",
+        "exact_audit_status": "not_requested"
+      }
+    },
+    {
+      "case_id": "edge_missing_origin_routes_to_fallback",
+      "run": "edge_default",
+      "source_id": "edge:missing_origin_interior",
+      "reason": "missing origin interior under default LP-origin validation must not run f64 capacity",
+      "claim_scope": "limited",
+      "expect": {
+        "family": "edge_invalid",
+        "validation_status": "fallback_required",
+        "validation_reasons": {
+          "contains": "origin_interior_indeterminate"
+        },
+        "outcome": "not_run",
+        "output_epistemics.capacity_value_status": "not_computed",
+        "output_epistemics.fallback_recommended": true,
+        "trust_class": "fallback_required",
+        "exact_audit_status": "not_requested"
+      }
+    },
+    {
+      "case_id": "edge_drifted_product_rounds_visible",
+      "run": "edge_default",
+      "source_id": "edge:drifted_product_rounding",
+      "reason": "known product off-block drift is rounded explicitly and remains label-comparable without a rounding distortion bound",
+      "claim_scope": "limited",
+      "expect": {
+        "family": "edge_product",
+        "product_rounding_status": "rounded",
+        "product_rounding_max_abs_change": { "min": 1e-15 },
+        "validation_status": "accepted_ambiguous",
+        "outcome": "success",
+        "output_epistemics.capacity_value_status": "decided",
+        "output_epistemics.capacity_label_status": "label_agrees",
+        "output_epistemics.minimizing_sigma_set_status": "undecided",
+        "output_epistemics.fallback_recommended": false,
+        "preprocessed_f64_vs_original_artifact_within_bound": null,
+        "near_minimizing_sigma_count": { "min": 2 },
+        "rel_action_error": { "max": 1e-10 },
+        "exact_audit_status": "not_requested"
+      }
+    },
+    {
+      "case_id": "edge_near_redundant_product_removal_visible",
+      "run": "edge_product_facet_removal",
+      "source_id": "edge:near_redundant_product",
+      "reason": "near-redundant product preprocessing reports removed facets, bounds, and fallback instead of silently producing a trusted f64 value",
+      "claim_scope": "limited",
+      "expect": {
+        "family": "edge_product",
+        "near_redundant_facet_removal_policy": "product_remove_near_redundant_facets",
+        "near_redundant_facet_removal_status": "removed",
+        "removed_facet_count": { "min": 1 },
+        "near_redundant_facet_removal_delta_bound": { "max": 2e-8 },
+        "validation_status": "rejected",
+        "outcome": "not_run",
+        "output_epistemics.capacity_value_status": "not_computed",
+        "output_epistemics.fallback_recommended": true,
+        "trust_class": "fallback_required",
+        "preprocessed_audit_vs_original_artifact_within_bound": false,
+        "exact_audit_status": "exact_valid_capacity_success"
+      }
+    }
+  ]
+}

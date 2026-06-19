@@ -4,6 +4,9 @@ This directory owns reusable runtime and memory profiling targets. Correctness
 and regression experiments belong in `experiments/verification/`. Numerical
 error-audit runs belong in `experiments/numerics/`.
 
+For the f64 capacity route question, the workflow-level performance packet
+is [`f64-capacity-workflow/README.md`](f64-capacity-workflow/README.md).
+
 The default pattern is:
 
 1. run a concrete end-to-end target binary,
@@ -77,6 +80,35 @@ Candidate and predicate-count columns ending in `_if_capacity` are also
 computed only over rows where capacity ran.
 `sigma_count` is the number of candidate sigma words tested by the exhaustive
 search; it is not an optimization iteration count.
+
+For the current f64 capacity path, `sigma_count` is the number of emitted sigma
+words that reach the per-sigma solver. Each emitted sigma calls
+`symplectic::solve_orbit_sigma_saddle_point`, which builds a dense
+`DMatrix<f64>` KKT system and solves it through nalgebra
+`symmetric_eigen()`.
+
+Reference check from 2026-06-17:
+
+```bash
+cargo test -p symplectic --release bench_kkt_eigen_profile -- --ignored --nocapture
+```
+
+reported on 50,400 pentagon sigmas:
+
+```text
+Matrix build:              10.3ms  (2.0%)
+Eigendecomposition:       480.0ms  (94.2%)
+Rank detect + pinv:        12.6ms  (2.5%)
+Residual check:             6.6ms  (1.3%)
+Total:                    509.5ms
+Per-sigma average:         10.1us
+```
+
+Therefore a f64-capacity performance report should show at least
+`sigma_count`, `capacity_candidate_kkt_solve_ms`,
+`capacity_candidate_kkt_solve_ms / capacity_candidate_solve_ms`, and, when a
+naive comparison is useful, `F! / sigma_count`. Rerun the reference check before
+quoting exact timings as current evidence.
 
 The same rows also include routine-level subphase timers. Validation subphase
 timers are averaged over all ok rows. Capacity subphase timers are averaged only

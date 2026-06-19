@@ -17,6 +17,7 @@ pub struct F64CapacityReport {
     pub facet_intersection_false_count: usize,
     pub facet_intersection_indeterminate_count: usize,
     pub omega_indeterminate_count: usize,
+    pub near_minimizing_sigma_count: usize,
     pub min_action_gap: Option<f64>,
     pub indeterminate_overlaps_best_interval: bool,
 }

@@ -25,9 +25,6 @@ pub(crate) struct FamilySummaryRow {
     success: usize,
     failure: usize,
     success_rate: f64,
-    clean: usize,
-    degenerate_value_agrees: usize,
-    fallback_required: usize,
     indeterminate_overlap: usize,
     exact_audit_statuses: String,
     product_rounding_statuses: String,
@@ -62,6 +59,8 @@ pub(crate) struct FamilySummaryRow {
     max_abs_error: Option<f64>,
     median_gap: Option<f64>,
     min_gap: Option<f64>,
+    median_near_minimizing_sigma_count: Option<usize>,
+    max_near_minimizing_sigma_count: Option<usize>,
     median_vertex_indeterminate: Option<usize>,
     max_vertex_indeterminate: Option<usize>,
     median_near_singular_vertex: Option<usize>,
@@ -79,7 +78,17 @@ pub(crate) struct FamilySummaryRow {
     validation_reasons: String,
     exact_audit_reasons: String,
     failure_reasons: String,
-    trust_reasons: String,
+    output_capacity_value_statuses: String,
+    output_capacity_label_statuses: String,
+    output_minimizing_sigma_set_statuses: String,
+    output_low_action_list_completeness: String,
+    output_low_action_items_statuses: String,
+    output_fallback_recommended: String,
+    output_epistemic_reasons: String,
+    route_clean: usize,
+    route_degenerate_value_agrees: usize,
+    route_fallback_required: usize,
+    route_reasons: String,
 }
 
 #[derive(Default)]
@@ -93,9 +102,9 @@ struct FamilySummary {
     capacity_not_run_rows: usize,
     success: usize,
     failure: usize,
-    clean: usize,
-    degenerate_value_agrees: usize,
-    fallback_required: usize,
+    route_clean: usize,
+    route_degenerate_value_agrees: usize,
+    route_fallback_required: usize,
     indeterminate_overlap: usize,
     exact_audit_times_ms: Vec<f64>,
     origin_lp_max_min_lambdas: Vec<f64>,
@@ -107,6 +116,7 @@ struct FamilySummary {
     abs_errors: Vec<f64>,
     rel_errors: Vec<f64>,
     gaps: Vec<f64>,
+    near_minimizing_sigma_counts: Vec<usize>,
     vertex_indeterminate_counts: Vec<usize>,
     near_singular_vertex_counts: Vec<usize>,
     bounded_near_singular_vertex_counts: Vec<usize>,
@@ -135,7 +145,14 @@ struct FamilySummary {
     validation_reasons: BTreeMap<String, usize>,
     exact_audit_reasons: BTreeMap<String, usize>,
     failure_reasons: BTreeMap<String, usize>,
-    trust_reasons: BTreeMap<String, usize>,
+    output_capacity_value_statuses: BTreeMap<String, usize>,
+    output_capacity_label_statuses: BTreeMap<String, usize>,
+    output_minimizing_sigma_set_statuses: BTreeMap<String, usize>,
+    output_low_action_list_completeness: BTreeMap<String, usize>,
+    output_low_action_items_statuses: BTreeMap<String, usize>,
+    output_fallback_recommended: BTreeMap<String, usize>,
+    output_epistemic_reasons: BTreeMap<String, usize>,
+    route_reasons: BTreeMap<String, usize>,
 }
 
 pub(crate) fn summarize(rows: impl IntoIterator<Item = ScanRow>) -> Summary {
@@ -166,7 +183,7 @@ pub(crate) fn summarize(rows: impl IntoIterator<Item = ScanRow>) -> Summary {
 
 pub(crate) fn print_summary(summary: &Summary) {
     println!(
-        "family,validation_policy,capacity_method,rows,accepted_decisive,accepted_ambiguous,validation_rejected,validation_fallback_required,capacity_run_rows,capacity_not_run_rows,success,failure,success_rate,clean,degenerate_value_agrees,fallback_required,indeterminate_overlap,exact_audit_statuses,product_rounding_statuses,near_redundant_facet_removal_policies,near_redundant_facet_removal_statuses,origin_lp_statuses,max_product_rounding_minor_over_major,max_product_rounding_abs_change,max_removed_facet_count,max_near_redundant_facet_removal_delta_bound,max_capacity_ratio_upper_bound,max_volume_ratio_upper_bound,min_sys_ratio_lower_bound,max_sys_ratio_upper_bound,preprocessed_f64_vs_original_artifact_within_bound,preprocessed_audit_vs_original_artifact_within_bound,max_preprocessed_f64_vs_original_artifact_rel_error,max_preprocessed_audit_vs_original_artifact_rel_error,max_preprocessed_f64_vs_preprocessed_audit_rel_error,median_exact_audit_time_ms,max_exact_audit_time_ms,median_origin_lp_max_min_lambda,max_origin_lp_max_abs_residual,max_facets_without_definite_vertex,max_facets_without_possible_vertex,median_validation_bundle_time_ms,max_validation_bundle_time_ms,median_capacity_bundle_time_ms,max_capacity_bundle_time_ms,median_rel_error,max_rel_error,max_abs_error,median_gap,min_gap,median_vertex_indeterminate,max_vertex_indeterminate,median_near_singular_vertex,max_near_singular_vertex,median_bounded_near_singular_vertex,max_bounded_near_singular_vertex,median_ambiguous_vertex_incidence,max_ambiguous_vertex_incidence,median_facet_intersection_indeterminate,max_facet_intersection_indeterminate,median_omega_indeterminate,max_omega_indeterminate,median_kkt_indeterminate,max_kkt_indeterminate,validation_reasons,exact_audit_reasons,failure_reasons,trust_reasons"
+        "family,validation_policy,capacity_method,rows,accepted_decisive,accepted_ambiguous,validation_rejected,validation_fallback_required,capacity_run_rows,capacity_not_run_rows,success,failure,success_rate,output_capacity_value_statuses,output_capacity_label_statuses,output_minimizing_sigma_set_statuses,output_low_action_list_completeness,output_low_action_items_statuses,output_fallback_recommended,output_epistemic_reasons,indeterminate_overlap,exact_audit_statuses,product_rounding_statuses,near_redundant_facet_removal_policies,near_redundant_facet_removal_statuses,origin_lp_statuses,max_product_rounding_minor_over_major,max_product_rounding_abs_change,max_removed_facet_count,max_near_redundant_facet_removal_delta_bound,max_capacity_ratio_upper_bound,max_volume_ratio_upper_bound,min_sys_ratio_lower_bound,max_sys_ratio_upper_bound,preprocessed_f64_vs_original_artifact_within_bound,preprocessed_audit_vs_original_artifact_within_bound,max_preprocessed_f64_vs_original_artifact_rel_error,max_preprocessed_audit_vs_original_artifact_rel_error,max_preprocessed_f64_vs_preprocessed_audit_rel_error,median_exact_audit_time_ms,max_exact_audit_time_ms,median_origin_lp_max_min_lambda,max_origin_lp_max_abs_residual,max_facets_without_definite_vertex,max_facets_without_possible_vertex,median_validation_bundle_time_ms,max_validation_bundle_time_ms,median_capacity_bundle_time_ms,max_capacity_bundle_time_ms,median_rel_error,max_rel_error,max_abs_error,median_gap,min_gap,median_near_minimizing_sigma_count,max_near_minimizing_sigma_count,median_vertex_indeterminate,max_vertex_indeterminate,median_near_singular_vertex,max_near_singular_vertex,median_bounded_near_singular_vertex,max_bounded_near_singular_vertex,median_ambiguous_vertex_incidence,max_ambiguous_vertex_incidence,median_facet_intersection_indeterminate,max_facet_intersection_indeterminate,median_omega_indeterminate,max_omega_indeterminate,median_kkt_indeterminate,max_kkt_indeterminate,validation_reasons,exact_audit_reasons,failure_reasons,route_clean,route_degenerate_value_agrees,route_fallback_required,route_reasons"
     );
     for row in &summary.families {
         println!("{}", row.csv_line());
@@ -209,18 +226,70 @@ impl FamilySummary {
             *self.failure_reasons.entry(reason).or_insert(0) += 1;
         }
         match row.trust_class.as_str() {
-            "clean" => self.clean += 1,
-            "degenerate_value_agrees" => self.degenerate_value_agrees += 1,
-            "fallback_required" => self.fallback_required += 1,
+            "clean" => self.route_clean += 1,
+            "degenerate_value_agrees" => self.route_degenerate_value_agrees += 1,
+            "fallback_required" => self.route_fallback_required += 1,
             other => {
                 *self
-                    .trust_reasons
+                    .route_reasons
                     .entry(format!("unknown_trust_class:{other}"))
                     .or_default() += 1
             }
         }
         for reason in row.trust_reasons {
-            *self.trust_reasons.entry(reason).or_default() += 1;
+            *self.route_reasons.entry(reason).or_default() += 1;
+        }
+        *self
+            .output_capacity_value_statuses
+            .entry(
+                row.output_epistemics
+                    .capacity_value_status
+                    .label()
+                    .to_string(),
+            )
+            .or_default() += 1;
+        *self
+            .output_capacity_label_statuses
+            .entry(
+                row.output_epistemics
+                    .capacity_label_status
+                    .label()
+                    .to_string(),
+            )
+            .or_default() += 1;
+        *self
+            .output_minimizing_sigma_set_statuses
+            .entry(
+                row.output_epistemics
+                    .minimizing_sigma_set_status
+                    .label()
+                    .to_string(),
+            )
+            .or_default() += 1;
+        *self
+            .output_low_action_list_completeness
+            .entry(
+                row.output_epistemics
+                    .low_action_list_completeness
+                    .label()
+                    .to_string(),
+            )
+            .or_default() += 1;
+        *self
+            .output_low_action_items_statuses
+            .entry(
+                row.output_epistemics
+                    .low_action_items_status
+                    .label()
+                    .to_string(),
+            )
+            .or_default() += 1;
+        *self
+            .output_fallback_recommended
+            .entry(row.output_epistemics.fallback_recommended.to_string())
+            .or_default() += 1;
+        for reason in row.output_epistemics.reasons {
+            *self.output_epistemic_reasons.entry(reason).or_default() += 1;
         }
         if row.indeterminate_overlaps_best_interval {
             self.indeterminate_overlap += 1;
@@ -323,6 +392,10 @@ impl FamilySummary {
         if let Some(gap) = row.min_action_gap {
             self.gaps.push(gap);
         }
+        if row.outcome != "not_run" {
+            self.near_minimizing_sigma_counts
+                .push(row.near_minimizing_sigma_count);
+        }
         self.vertex_indeterminate_counts
             .push(row.vertex_indeterminate_count);
         self.near_singular_vertex_counts
@@ -366,6 +439,7 @@ impl FamilySummary {
         self.abs_errors.sort_by(f64::total_cmp);
         self.rel_errors.sort_by(f64::total_cmp);
         self.gaps.sort_by(f64::total_cmp);
+        self.near_minimizing_sigma_counts.sort_unstable();
         self.vertex_indeterminate_counts.sort_unstable();
         self.near_singular_vertex_counts.sort_unstable();
         self.bounded_near_singular_vertex_counts.sort_unstable();
@@ -395,9 +469,6 @@ impl FamilySummary {
             success: self.success,
             failure: self.failure,
             success_rate: ratio(self.success, self.rows),
-            clean: self.clean,
-            degenerate_value_agrees: self.degenerate_value_agrees,
-            fallback_required: self.fallback_required,
             indeterminate_overlap: self.indeterminate_overlap,
             exact_audit_statuses: format_counts(&self.exact_audit_statuses),
             product_rounding_statuses: format_counts(&self.product_rounding_statuses),
@@ -461,6 +532,8 @@ impl FamilySummary {
             max_abs_error: self.abs_errors.last().copied(),
             median_gap: median(&self.gaps),
             min_gap: self.gaps.first().copied(),
+            median_near_minimizing_sigma_count: median_usize(&self.near_minimizing_sigma_counts),
+            max_near_minimizing_sigma_count: self.near_minimizing_sigma_counts.last().copied(),
             median_vertex_indeterminate: median_usize(&self.vertex_indeterminate_counts),
             max_vertex_indeterminate: self.vertex_indeterminate_counts.last().copied(),
             median_near_singular_vertex: median_usize(&self.near_singular_vertex_counts),
@@ -490,7 +563,21 @@ impl FamilySummary {
             validation_reasons: format_counts(&self.validation_reasons),
             exact_audit_reasons: format_counts(&self.exact_audit_reasons),
             failure_reasons: format_counts(&self.failure_reasons),
-            trust_reasons: format_counts(&self.trust_reasons),
+            output_capacity_value_statuses: format_counts(&self.output_capacity_value_statuses),
+            output_capacity_label_statuses: format_counts(&self.output_capacity_label_statuses),
+            output_minimizing_sigma_set_statuses: format_counts(
+                &self.output_minimizing_sigma_set_statuses,
+            ),
+            output_low_action_list_completeness: format_counts(
+                &self.output_low_action_list_completeness,
+            ),
+            output_low_action_items_statuses: format_counts(&self.output_low_action_items_statuses),
+            output_fallback_recommended: format_counts(&self.output_fallback_recommended),
+            output_epistemic_reasons: format_counts(&self.output_epistemic_reasons),
+            route_clean: self.route_clean,
+            route_degenerate_value_agrees: self.route_degenerate_value_agrees,
+            route_fallback_required: self.route_fallback_required,
+            route_reasons: format_counts(&self.route_reasons),
         }
     }
 }
@@ -511,9 +598,13 @@ impl FamilySummaryRow {
             self.success.to_string(),
             self.failure.to_string(),
             format!("{:.6}", self.success_rate),
-            self.clean.to_string(),
-            self.degenerate_value_agrees.to_string(),
-            self.fallback_required.to_string(),
+            self.output_capacity_value_statuses.clone(),
+            self.output_capacity_label_statuses.clone(),
+            self.output_minimizing_sigma_set_statuses.clone(),
+            self.output_low_action_list_completeness.clone(),
+            self.output_low_action_items_statuses.clone(),
+            self.output_fallback_recommended.clone(),
+            self.output_epistemic_reasons.clone(),
             self.indeterminate_overlap.to_string(),
             self.exact_audit_statuses.clone(),
             self.product_rounding_statuses.clone(),
@@ -550,6 +641,8 @@ impl FamilySummaryRow {
             format_option(self.max_abs_error),
             format_option(self.median_gap),
             format_option(self.min_gap),
+            format_usize_option(self.median_near_minimizing_sigma_count),
+            format_usize_option(self.max_near_minimizing_sigma_count),
             format_usize_option(self.median_vertex_indeterminate),
             format_usize_option(self.max_vertex_indeterminate),
             format_usize_option(self.median_near_singular_vertex),
@@ -567,7 +660,10 @@ impl FamilySummaryRow {
             self.validation_reasons.clone(),
             self.exact_audit_reasons.clone(),
             self.failure_reasons.clone(),
-            self.trust_reasons.clone(),
+            self.route_clean.to_string(),
+            self.route_degenerate_value_agrees.to_string(),
+            self.route_fallback_required.to_string(),
+            self.route_reasons.clone(),
         ]
         .join(",")
     }

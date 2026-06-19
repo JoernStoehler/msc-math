@@ -34,6 +34,16 @@ impl CandidateSolveSummary {
         (self.admissible.len() >= 2).then(|| self.admissible[1].action - self.admissible[0].action)
     }
 
+    pub(crate) fn near_minimizing_admissible_count(&self, action_tolerance: f64) -> usize {
+        let Some(best) = self.admissible.first() else {
+            return 0;
+        };
+        self.admissible
+            .iter()
+            .take_while(|candidate| candidate.action - best.action <= action_tolerance)
+            .count()
+    }
+
     pub(crate) fn indeterminate_overlaps_best_interval(&self) -> bool {
         self.admissible
             .first()

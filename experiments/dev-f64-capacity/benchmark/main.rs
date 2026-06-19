@@ -74,9 +74,11 @@ fn benchmark_case(case: ScanCase, repetitions: usize) -> BenchmarkRow {
         rel_action_error,
         outcome: outcome_label(&report.outcome).to_string(),
         agreement_status: classification.agreement_status.label().to_string(),
-        trust_class: classification.trust_class.label().to_string(),
-        trust_reasons: classification.trust_reasons,
+        output_epistemics: classification.output_epistemics,
+        route_class: classification.trust_class.label().to_string(),
+        route_reasons: classification.trust_reasons,
         sigma_count: report.sigma_count,
+        near_minimizing_sigma_count: report.near_minimizing_sigma_count,
         exact_recompute_status: "not_attempted".to_string(),
     }
 }

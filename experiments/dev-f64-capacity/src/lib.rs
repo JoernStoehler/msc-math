@@ -4,6 +4,7 @@ mod capacity;
 mod cases;
 mod classify;
 mod decision_compare;
+mod edge_cases;
 mod generated_cases;
 mod geometry;
 mod near_redundant_facet_removal;
@@ -22,17 +23,19 @@ pub use capacity::{
     capacity_f64_only, capacity_f64_only_with_policy,
     capacity_f64_only_with_policy_and_method_profiled, capacity_f64_only_with_policy_profiled,
     F64CapacityMethod, F64CapacityOutcome, F64CapacityReport, F64CapacityTimingBreakdown,
-    F64FailureReason,
+    F64FailureReason, MINIMIZING_SIGMA_SET_ACTION_TOLERANCE,
 };
 pub use cases::{array_vertices_to_vectors, ScanCase};
 pub use classify::{
-    classify_report, AgreementStatus, Classification, TrustClass, ABS_ACTION_TOLERANCE,
-    REL_ACTION_TOLERANCE, TINY_GAP_THRESHOLD,
+    classify_report, output_epistemics_not_computed, AgreementStatus, CapacityLabelStatus,
+    Classification, LowActionItemsStatus, LowActionListCompleteness, OutputDecisionStatus,
+    OutputEpistemics, TrustClass, ABS_ACTION_TOLERANCE, REL_ACTION_TOLERANCE, TINY_GAP_THRESHOLD,
 };
 pub use decision_compare::{
     compare_f64_decisions, DecisionComparisonReport, DecisionComparisonRow, SingleMethodDecisionRow,
 };
-pub use generated_cases::generated_f64_cases;
+pub use edge_cases::edge_fixture_cases;
+pub use generated_cases::{generated_f64_cases, generated_f64_cases_with_source_filter};
 pub use geometry::F64CombinatoricsTiming;
 pub use near_redundant_facet_removal::{
     NearRedundantFacetRemoval, NearRedundantFacetRemovalPolicy, NearRedundantFacetRemovalReport,

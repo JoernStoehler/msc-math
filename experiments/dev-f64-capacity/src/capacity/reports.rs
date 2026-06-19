@@ -24,6 +24,7 @@ pub(crate) fn no_vertices_report(combinatorics: F64Combinatorics) -> F64Capacity
         facet_intersection_indeterminate_count: combinatorics
             .facet_intersection_indeterminate_count,
         omega_indeterminate_count: combinatorics.omega_indeterminate_count,
+        near_minimizing_sigma_count: 0,
         min_action_gap: None,
         indeterminate_overlaps_best_interval: false,
     }
@@ -48,6 +49,7 @@ pub(crate) fn empty_report(outcome: F64CapacityOutcome) -> F64CapacityReport {
         facet_intersection_false_count: 0,
         facet_intersection_indeterminate_count: 0,
         omega_indeterminate_count: 0,
+        near_minimizing_sigma_count: 0,
         min_action_gap: None,
         indeterminate_overlaps_best_interval: false,
     }

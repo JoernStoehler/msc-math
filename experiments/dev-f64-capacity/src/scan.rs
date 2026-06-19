@@ -1,10 +1,11 @@
 use crate::{
     audit_generated_case_exact, capacity_f64_only_with_policy_and_method_profiled, classify_report,
-    exact_audit_not_requested, generic, product, validate_f64_polytope_input_with_policy_profiled,
-    ExactAuditReport, F64CapacityMethod, F64CapacityReport, F64CapacityTimingBreakdown,
-    F64ValidationPolicy, F64ValidationReport, F64ValidationStatus, F64ValidationTimingBreakdown,
-    NearRedundantFacetRemovalPolicy, NearRedundantFacetRemovalReport,
-    NearRedundantFacetRemovalStatus, ProductRoundingReport, ScanCase, ScanRow,
+    exact_audit_not_requested, generic, output_epistemics_not_computed, product,
+    validate_f64_polytope_input_with_policy_profiled, ExactAuditReport, F64CapacityMethod,
+    F64CapacityReport, F64CapacityTimingBreakdown, F64ValidationPolicy, F64ValidationReport,
+    F64ValidationStatus, F64ValidationTimingBreakdown, NearRedundantFacetRemovalPolicy,
+    NearRedundantFacetRemovalReport, NearRedundantFacetRemovalStatus, OutputEpistemics,
+    ProductRoundingReport, ScanCase, ScanRow,
 };
 use std::time::Instant;
 
@@ -196,10 +197,11 @@ fn capacity_row(
             )
         })
         .flatten();
-    let (trust_class, trust_reasons) = validation_adjusted_trust(
+    let (trust_class, trust_reasons, output_epistemics) = validation_adjusted_trust(
         validation.status.clone(),
         classification.trust_class.label(),
         classification.trust_reasons,
+        classification.output_epistemics,
         &validation.reasons,
     );
 
@@ -280,6 +282,7 @@ fn capacity_row(
         agreement_status: classification.agreement_status.label().to_string(),
         trust_class,
         trust_reasons,
+        output_epistemics,
         f64_sigma: report.outcome.sigma(),
         audit_sigma_label,
         sigma_count: report.sigma_count,
@@ -296,6 +299,7 @@ fn capacity_row(
         facet_intersection_false_count: report.facet_intersection_false_count,
         facet_intersection_indeterminate_count: report.facet_intersection_indeterminate_count,
         omega_indeterminate_count: report.omega_indeterminate_count,
+        near_minimizing_sigma_count: report.near_minimizing_sigma_count,
         min_action_gap: report.min_action_gap,
         indeterminate_overlaps_best_interval: report.indeterminate_overlaps_best_interval,
     }
@@ -410,6 +414,7 @@ fn validation_only_row(
             .into_iter()
             .map(|reason| format!("validation:{reason}"))
             .collect(),
+        output_epistemics: output_epistemics_not_computed(),
         f64_sigma: None,
         audit_sigma_label,
         sigma_count: 0,
@@ -426,6 +431,7 @@ fn validation_only_row(
         facet_intersection_false_count: 0,
         facet_intersection_indeterminate_count: validation.facet_intersection_indeterminate_count,
         omega_indeterminate_count: validation.omega_indeterminate_count,
+        near_minimizing_sigma_count: 0,
         min_action_gap: None,
         indeterminate_overlaps_best_interval: false,
     }
@@ -480,8 +486,9 @@ fn validation_adjusted_trust(
     validation_status: F64ValidationStatus,
     capacity_trust_class: &str,
     mut trust_reasons: Vec<String>,
+    mut output_epistemics: OutputEpistemics,
     validation_reasons: &[String],
-) -> (String, Vec<String>) {
+) -> (String, Vec<String>, OutputEpistemics) {
     if validation_status != F64ValidationStatus::AcceptedDecisive {
         trust_reasons.push(format!("validation_status:{}", validation_status.label()));
         for reason in validation_reasons {
@@ -490,7 +497,10 @@ fn validation_adjusted_trust(
     }
     let trust_class = match validation_status {
         F64ValidationStatus::AcceptedDecisive => capacity_trust_class.to_string(),
-        F64ValidationStatus::AcceptedAmbiguous if capacity_trust_class == "clean" => {
+        F64ValidationStatus::AcceptedAmbiguous
+            if capacity_trust_class == "clean"
+                && validation_reasons_demote_clean(validation_reasons) =>
+        {
             "degenerate_value_agrees".to_string()
         }
         F64ValidationStatus::AcceptedAmbiguous => capacity_trust_class.to_string(),
@@ -498,7 +508,25 @@ fn validation_adjusted_trust(
             "fallback_required".to_string()
         }
     };
-    (trust_class, trust_reasons)
+    output_epistemics.fallback_recommended = trust_class == "fallback_required";
+    (trust_class, trust_reasons, output_epistemics)
+}
+
+fn validation_reasons_demote_clean(validation_reasons: &[String]) -> bool {
+    validation_reasons.iter().any(|reason| {
+        matches!(
+            reason.as_str(),
+            "origin_interior_indeterminate"
+                | "facet_extremality_indeterminate"
+                | "bounded_near_singular_vertex"
+                | "ambiguous_vertex_incidence"
+                | "facet_intersection_indeterminate"
+                | "combinatorics_failed"
+                | "no_primal_vertices"
+        ) || reason.starts_with("nonfinite_coordinate:")
+            || reason.starts_with("near_zero_dual_vertex:")
+            || reason.starts_with("near_duplicate_dual_vertices:")
+    })
 }
 
 #[derive(Clone, Copy, Debug)]
@@ -549,6 +577,58 @@ mod tests {
     use super::*;
     use nalgebra::Vector4;
     use symplectic::known_polytopes;
+
+    #[test]
+    fn accepted_ambiguous_validation_demotes_clean_only_for_route_relevant_reasons() {
+        let output_epistemics = output_epistemics_not_computed();
+        let (trust_class, trust_reasons, output_epistemics) = validation_adjusted_trust(
+            F64ValidationStatus::AcceptedAmbiguous,
+            "clean",
+            Vec::new(),
+            output_epistemics,
+            &["structural_product_origin_case".to_string()],
+        );
+
+        assert_eq!(trust_class, "clean");
+        assert!(!output_epistemics.fallback_recommended);
+        assert_eq!(
+            trust_reasons,
+            vec![
+                "validation_status:accepted_ambiguous",
+                "validation:structural_product_origin_case"
+            ]
+        );
+    }
+
+    #[test]
+    fn accepted_ambiguous_validation_demotes_clean_for_output_relevant_reasons() {
+        let output_epistemics = output_epistemics_not_computed();
+        let (trust_class, _trust_reasons, output_epistemics) = validation_adjusted_trust(
+            F64ValidationStatus::AcceptedAmbiguous,
+            "clean",
+            Vec::new(),
+            output_epistemics,
+            &["ambiguous_vertex_incidence".to_string()],
+        );
+
+        assert_eq!(trust_class, "degenerate_value_agrees");
+        assert!(!output_epistemics.fallback_recommended);
+    }
+
+    #[test]
+    fn fallback_validation_sets_row_level_fallback_recommendation() {
+        let output_epistemics = output_epistemics_not_computed();
+        let (trust_class, _trust_reasons, output_epistemics) = validation_adjusted_trust(
+            F64ValidationStatus::FallbackRequired,
+            "clean",
+            Vec::new(),
+            output_epistemics,
+            &["origin_interior_indeterminate".to_string()],
+        );
+
+        assert_eq!(trust_class, "fallback_required");
+        assert!(output_epistemics.fallback_recommended);
+    }
 
     #[test]
     fn scan_case_does_not_audit_by_default() {

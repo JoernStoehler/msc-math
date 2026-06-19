@@ -13,6 +13,11 @@ flow-graph f64/exact checks belong in `experiments/dev-flow-graph/` while they
 are flow-graph design triage, and belong here once they become a reusable
 f64/exact audit surface.
 
+The f64 capacity numerics packet is
+[`f64-capacity/README.md`](f64-capacity/README.md). Keep algorithm-local triage
+in `experiments/dev-f64-capacity/` until the audit variables become reusable
+methodology.
+
 The durable evidence artifact is `events.jsonl`. Each row is a structured event.
 The central row types are:
 

@@ -12,6 +12,19 @@ This experiment asks:
 The README is not evidence for the answer. Regenerate JSONL and summaries, read
 the measured f64 path, and decide from current artifacts.
 
+This experiment is the active development surface, not approval to migrate
+`experiments/sys-datascience/` or to use f64-only values in thesis-facing
+claims. Related packets own narrower questions:
+
+- `experiments/verification/f64-capacity/`: small manifest of expected f64
+  output behavior, including edge fixtures.
+- `experiments/numerics/f64-capacity/`: JSONL observations for f64-vs-exact or
+  stored-label numerical comparisons.
+- `experiments/performance/f64-capacity-workflow/`: workflow-shaped timing on
+  the verification manifest rows.
+Do not maintain a separate aggregate status report for these packets. Rerun the
+packet for the current question and inspect its native output files.
+
 ## Checkpoint Scope
 
 This checkpoint adds the development experiment packet for the following
@@ -34,20 +47,18 @@ remain visible. The formal implication from a valid containment bound to the
 reported distortion factors is recorded in `formal/`; the f64 computation of
 the bound is still an ordinary floating-point diagnostic.
 
-Current local runs support these family-level interpretations. Re-run the
-commands below before treating them as current evidence.
+Use these as family-level hypotheses to recheck after classifier, validation,
+or preprocessing changes:
 
-- Generic random rows are the strongest case for pure f64 and can be treated as
-  the main viability evidence for random empirical scans.
-- Random products should use product rounding and product sigma enumeration.
+- Generic random rows are expected to be the strongest case for pure f64 and
+  are the main viability evidence for random empirical scans.
+- Random products are the row family for product rounding and product sigma
+  enumeration.
 - Ascent product endpoints sometimes contain nearly redundant factor facets.
-  Product near-redundant facet removal resolved the one observed fallback row
-  in the current 200-row retained sample. On the other preprocessed rows,
-  generic near-redundant facet removal removed the same facets as product
-  near-redundant facet removal. It did not replace the product policy because
-  it refused the fallback row on 4D vertex/incidence indeterminacy.
-- HKO2024 and HKO-like highly degenerate inputs should remain degenerate stress
-  fixtures or exact-fallback cases, not targets for a clean f64-only claim.
+  Compare product and generic near-redundant facet removal on the same retained
+  endpoints before deciding which policy is sufficient.
+- HKO2024 and HKO-like highly degenerate inputs are degenerate stress fixtures
+  or exact-fallback cases, not targets for a clean f64-only claim.
 
 ## Evidence Surfaces
 
@@ -68,7 +79,7 @@ commands below before treating them as current evidence.
   facet presence/intersection. `strict` keeps the original origin predicate.
   `lp` also uses LPs for facet-existence and facet-intersection decisions.
   Those sub-millisecond geometry choices are retained as evidence surfaces;
-  default selection should prioritize trust and clarity once they are below the
+  default selection can prioritize trust and clarity once they are below the
   E2E cost floor.
 - `--capacity-method product_billiard_or_hk|transition_pruned_hk` selects the
   measured f64 sigma enumeration policy. `product_billiard_or_hk` is the scan
@@ -79,6 +90,11 @@ commands below before treating them as current evidence.
   comparison and fallback evidence surface.
 - `f64-capacity-scan --input-source artifacts` replays retained datascience rows
   and hard fixtures as an audit surface for the retained empirical population.
+- `f64-capacity-scan --input-source edge-fixtures` runs code-owned invalid,
+  product-rounding, and preprocessing edge rows. These rows are verification
+  fixtures, not population evidence.
+- `--input-source all` includes generated rows, retained artifacts, and edge
+  fixtures. Use a narrower input source for population-rate or timing evidence.
 - `f64-capacity-analyze` summarizes validation coverage, capacity outcomes,
   ambiguity counters, audit agreement, fallback causes, and timing.
 - `f64-capacity-near-singular` keeps the near-singular vertex diagnostic for
@@ -314,9 +330,34 @@ Rows contain both validation and capacity/audit fields.
 - Capacity runs only for `accepted_decisive` and `accepted_ambiguous` rows.
 - `sigma_count` counts the number of candidate sigma words tested by the
   exhaustive sigma search. It is not a sequential optimization iteration count.
-- `trust_class = clean` requires decisive validation and a clean capacity row.
-- `accepted_ambiguous` rows may be useful, but they cannot be classified as
-  `clean`.
+- `near_minimizing_sigma_count` counts admissible f64 candidates whose action
+  lies within `MINIMIZING_SIGMA_SET_ACTION_TOLERANCE` of the best action.
+  Candidates outside that band are excluded from the minimizing set by the f64
+  scan. A count of one means the emitted `f64_sigma` is the unique minimizer at
+  this tolerance; a count above one means f64 has not resolved which candidates
+  in the near-minimum band are true minimizers.
+- `trust_class = clean` means the output capacity is decided and no
+  output-level ambiguity changes the selected value, minimizing sigma set, or
+  low-action candidate completeness. It may still carry `benign_structural:*`
+  reasons.
+- `output_epistemics` is the primary structured interpretation object for f64
+  outputs. Read `f64_capacity`, `f64_sigma`, candidate counts, gaps, and
+  counters as output data; then read `output_epistemics` for whether the
+  capacity value is decided, the audit label status, whether the minimizing
+  sigma set is decided, whether the low-action list is complete, and whether
+  listed items are determinate. `fallback_recommended` is the final row-level
+  recommendation after validation adjustment, not a pure capacity-output field.
+  `f64_sigma` is one
+  emitted representative; `near_minimizing_sigma_count > 1` means the
+  minimizing set/tie class is not resolved by f64 even if the capacity value is
+  decided.
+  `output_epistemics.reasons` is limited to output/label epistemic reasons;
+  validation routing reasons remain in `validation_reasons` and route-summary
+  reasons remain in `trust_reasons`.
+- `trust_class` and `trust_reasons` are coarse routing summaries. They are not
+  the evidence schema and should not drive f64 numerics/correctness reports.
+- `accepted_ambiguous` validation rows are demoted only when the validation
+  reason can affect input validity or output completeness.
 - Analyzer columns named `*_validation_bundle_time_ms` time the complete f64
   validation stage. They are not origin-only sub-timers.
 - Analyzer columns named `*_capacity_bundle_time_ms` include only rows where
@@ -346,11 +387,10 @@ Use the analyzer to answer these questions by family:
 - Is f64 runtime low enough to make a datascience accelerator useful?
 
 Generic random rows are expected to be the strongest case for pure f64.
-Products of random polygons are thesis-relevant datascience inputs and should
-remain in the experiment matrix. HKO2024 is a highly degenerate stress fixture,
-not a typical datascience row; HKO-like generators may reasonably use the
-stronger f64-exact-fallback path instead of a reject-if-inadmissible f64-only
-path.
+Products of random polygons are thesis-relevant datascience inputs and remain
+in the experiment matrix. HKO2024 is a highly degenerate stress fixture, not a
+typical datascience row; HKO-like generators may reasonably use the stronger
+f64-exact-fallback path instead of a reject-if-inadmissible f64-only path.
 
 Known product rows may arrive with numerical off-block drift. Product
 preprocessing only rounds rows that are already block-structured within a
@@ -390,97 +430,38 @@ therefore report on the post-preprocessing row. Original-artifact labels remain
 comparison labels for the original row; they are not used as same-polytope
 labels after facet removal.
 
-## Current Local Run Notes
+## Local Run Policy
 
-These `/tmp` files are not tracked evidence. Re-run the commands before relying
-on the result.
+`/tmp` scan outputs are scratch artifacts. Do not cite pre-existing `/tmp`
+counts after classifier or schema changes. Delete stale local outputs and
+regenerate the specific smoke or evidence scan needed for the current question.
 
 Development runs should use `--source-id-filter` on one to five rows.
 Bounded family scans are evidence runs. Full retained scans are justified only
-when a thesis table or promotion decision needs full-population rates; do not
-run them merely to increase statistical power.
+when a thesis table or route question needs full-population rates; do not run
+them merely to increase statistical power.
 
-Current near-redundant facet-removal dev rows:
+After changing classification, output epistemics, validation policy, product
+rounding, or near-redundant facet removal, treat all older `/tmp` summaries as
+deleted for evidence purposes. Regenerate with the commands above and keep only
+the current output needed for review.
 
-- `/tmp/f64-generic-redundancy-target-none.jsonl`
-- `/tmp/f64-generic-redundancy-target-product.jsonl`
-- `/tmp/f64-generic-redundancy-target-generic.jsonl`
-- `/tmp/f64-generic-redundancy-ascent-product200-none.jsonl`
-- `/tmp/f64-generic-redundancy-ascent-product200-product.jsonl`
-- `/tmp/f64-generic-redundancy-ascent-product200-generic.jsonl`
-- `/tmp/f64-generic-redundancy-random20-generic.jsonl`
-- `/tmp/f64-generic-redundancy-random-product20-generic.jsonl`
+Historical local observations can suggest route hypotheses, but they are not
+current evidence after classifier or schema changes unless regenerated. Earlier
+local runs suggested:
 
-The targeted rows `ascent_product_60:F10`, `ascent_product_131:F10`, and
-`ascent_product_3222:F10` are mechanism checks, not population evidence. In the
-current runs, the no facet-removal scan classifies all three as
-`degenerate_value_agrees`. This changed after `bounded_near_singular` was
-tightened to require a feasible near-singular point. With
-`--near-redundant-facet-removal product` and
-`--near-redundant-facet-removal generic`, both policies remove the same
-facet from `ascent_product_60:F10` and `ascent_product_131:F10`, with
-`delta_bound < 8e-9`. Both preprocessed f64 values and preprocessed exact-audit
-values are inside the original-polytope distortion budget.
+- retained random/product scans had no fallback or disagreement on all `random`
+  rows and a large partial `random_product` prefix;
+- the old strict origin predicate sent exact-valid generated product rows to
+  f64 fallback, motivating the `lp_origin_vertex` policy;
+- full `lp` validation remained useful as a comparison and repair surface but
+  did not appear to improve the product KKT bottleneck;
+- product-aware `product_billiard_or_hk` reduced product candidate-solving cost
+  while preserving generic HK fallback for non-products.
 
-Bounded retained-product matrix:
-
-- `random_product`, 20-row sanity with `generic`: facet removal
-  triggers on 0 rows; all 20 remain `degenerate_value_agrees`.
-- `random`, 20-row sanity with `generic`: facet removal triggers
-  on 0 rows; all 20 remain `clean`.
-- `ascent_product_endpoint`, 200 rows: product near-redundant facet removal triggers on 4
-  rows and removes the one remaining `fallback_required` row. Generic
-  single-band facet removal triggers on 3 rows and leaves that same row as
-  `fallback_required` because the relevant 4D vertex/incidence geometry is
-  indeterminate. This is the current reason to keep the product-only policy in
-  addition to the generic one.
-
-Current local coverage artifacts:
-
-- `/tmp/f64-capacity-fixed-generator-generated20.jsonl`
-- `/tmp/f64-capacity-fixed-generator-generated20-summary.json`
-- `/tmp/f64-capacity-fixed-generator-artifacts200.jsonl`
-- `/tmp/f64-capacity-fixed-generator-artifacts200-summary.json`
-- `/tmp/f64-capacity-fixed-generator-hard-families-full.jsonl`
-- `/tmp/f64-capacity-fixed-generator-hard-families-full-summary.json`
-- `/tmp/f64-capacity-fixed-generator-artifacts-full.jsonl`
-- `/tmp/f64-capacity-fixed-generator-artifacts-partial14111-summary.json`
-- `/tmp/f64-capacity-fixed-generator-random-product-full.jsonl`
-
-Observed local wall-time scale for the current evidence bundle:
-
-- generated audited scan, 480 rows: about 4 minutes; measured f64 capacity
-  18.5 seconds, measured exact audit 128.6 seconds;
-- retained random plus most random-product rows: about 10 minutes before
-  interruption, 14,111 parseable rows; measured f64 capacity 679.6 seconds;
-- retained hard families, 8,186 rows: about 6.5 minutes; measured f64 capacity
-  368.6 seconds;
-- analyzer runs are negligible compared with scan runs.
-
-The interrupted retained random/product scan covered all `random` rows and
-10,015 `random_product` rows with no fallback or disagreement. A separate
-random-product-only partial reached 10,200 rows with no fallback or
-disagreement. Full retained `random_product` tail completion is background-run
-work, not an interactive blocker for the current policy decision.
-
-The old strict origin predicate left exact-valid generated product rows in f64
-fallback. Decision-level timing supported replacing that part by an LP origin
-decision while keeping vertex-scan facet presence/intersection. This is the
-`lp_origin_vertex` policy and is now the candidate default.
-
-Full `lp` remains useful as a comparison and repair surface. It also decides
-facet presence/intersection by LPs. On the local retained-artifact production
-profile it produced the same value-producing product/HKO behavior as
-`lp_origin_vertex`, but validation was slower and full-LP transition pruning
-did not improve the product KKT bottleneck.
-
-The current product bottleneck is not validation. With `lp_origin_vertex`,
-retained product rows are accepted, but generic HK candidate solving dominates
-runtime. The product-aware `product_billiard_or_hk` method cuts that cost
-substantially on retained products while preserving the generic HK fallback for
-non-products. Use the scan and benchmark commands above before relying on local
-runtime numbers. Reusable performance-comparison targets belong in
-`experiments/performance/` and are not part of this checkpoint.
+Regenerate the relevant scan or benchmark before relying on any of those
+historical observations as evidence. Reusable performance-comparison targets
+belong in `experiments/performance/` and are not part of this checkpoint.
 
 ## Promotion Readiness
 

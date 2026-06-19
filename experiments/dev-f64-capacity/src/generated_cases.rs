@@ -12,6 +12,17 @@ const MIN_PLANAR_GAP: f64 = 0.05;
 const MAX_PLANAR_GAP: f64 = std::f64::consts::PI - 0.05;
 
 pub fn generated_f64_cases(samples_per_facet: usize, seed: u64) -> Vec<ScanCase> {
+    generated_f64_cases_with_source_filter(samples_per_facet, seed, &[])
+}
+
+pub fn generated_f64_cases_with_source_filter(
+    samples_per_facet: usize,
+    seed: u64,
+    source_id_filter: &[String],
+) -> Vec<ScanCase> {
+    if !source_id_filter.is_empty() {
+        return generated_f64_cases_for_source_ids(seed, source_id_filter);
+    }
     let mut cases = Vec::new();
     for facet_count in 5..=12 {
         for sample in 0..samples_per_facet {
@@ -27,6 +38,71 @@ pub fn generated_f64_cases(samples_per_facet: usize, seed: u64) -> Vec<ScanCase>
         }
     }
     cases
+}
+
+fn generated_f64_cases_for_source_ids(seed: u64, source_id_filter: &[String]) -> Vec<ScanCase> {
+    let mut cases = Vec::new();
+    for source_id in source_id_filter {
+        let Some(spec) = GeneratedSourceId::parse(source_id, seed) else {
+            continue;
+        };
+        let case = match spec {
+            GeneratedSourceId::Random {
+                facet_count,
+                sample,
+            } => generated_random_case(facet_count, sample, seed),
+            GeneratedSourceId::Product {
+                q_facets,
+                p_facets,
+                attempt,
+            } => generated_product_case(q_facets, p_facets, attempt, seed),
+        };
+        if case.source_id == *source_id {
+            cases.push(case);
+        }
+    }
+    cases
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum GeneratedSourceId {
+    Random {
+        facet_count: usize,
+        sample: usize,
+    },
+    Product {
+        q_facets: usize,
+        p_facets: usize,
+        attempt: u64,
+    },
+}
+
+impl GeneratedSourceId {
+    fn parse(source_id: &str, seed: u64) -> Option<Self> {
+        let rest = source_id.strip_prefix(&format!("seed{seed}:"))?;
+        if let Some(rest) = rest.strip_prefix('F') {
+            let (facet_count, rest) = split_usize(rest, ":sample")?;
+            let (sample, _attempt) = split_usize(rest, ":attempt")?;
+            return Some(Self::Random {
+                facet_count,
+                sample,
+            });
+        }
+        let rest = rest.strip_prefix('q')?;
+        let (q_facets, rest) = split_usize(rest, ":p")?;
+        let (p_facets, rest) = split_usize(rest, ":attempt")?;
+        let attempt = rest.parse().ok()?;
+        Some(Self::Product {
+            q_facets,
+            p_facets,
+            attempt,
+        })
+    }
+}
+
+fn split_usize<'a>(text: &'a str, delimiter: &str) -> Option<(usize, &'a str)> {
+    let (value, rest) = text.split_once(delimiter)?;
+    Some((value.parse().ok()?, rest))
 }
 
 fn generated_random_case(facet_count: usize, sample: usize, seed: u64) -> ScanCase {
@@ -167,5 +243,17 @@ mod tests {
         let case = generated_random_case(8, 0, 99599604);
         assert_eq!(case.dual_vertices.len(), 8);
         assert!(SysLandscapePolytopeCache::from_f64_dual_vertices(case.dual_vertices).is_some());
+    }
+
+    #[test]
+    fn generated_source_id_filter_avoids_full_bank() {
+        let source_ids = vec![
+            "seed99540836:F5:sample0:attempt5000000008".to_string(),
+            "seed99540836:q4:p5:attempt405000000000".to_string(),
+        ];
+        let cases = generated_f64_cases_with_source_filter(1, 99540836, &source_ids);
+        assert_eq!(cases.len(), 2);
+        assert_eq!(cases[0].source_id, source_ids[0]);
+        assert_eq!(cases[1].source_id, source_ids[1]);
     }
 }

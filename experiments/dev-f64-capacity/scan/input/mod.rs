@@ -7,6 +7,7 @@ pub(crate) enum InputSource {
     All,
     Generated,
     Artifacts,
+    EdgeFixtures,
 }
 
 #[derive(Clone, Debug)]
@@ -28,13 +29,25 @@ pub(crate) fn load_cases(options: &LoadCaseOptions) -> Vec<ScanCase> {
         cases.extend(generated::generated_cases(
             options.generated_samples_per_facet,
             options.generated_seed,
+            &options.source_id_filter,
         ));
     }
     if matches!(
         options.input_source,
         InputSource::All | InputSource::Artifacts
     ) {
-        cases.extend(load_retained_artifact_cases(options.max_rows_per_family));
+        let artifact_row_limit = if options.source_id_filter.is_empty() {
+            options.max_rows_per_family
+        } else {
+            0
+        };
+        cases.extend(load_retained_artifact_cases(artifact_row_limit));
+    }
+    if matches!(
+        options.input_source,
+        InputSource::All | InputSource::EdgeFixtures
+    ) {
+        cases.extend(exp_dev_f64_capacity::edge_fixture_cases());
     }
     if !options.family_filter.is_empty() {
         cases.retain(|case| options.family_filter.contains(&case.family));
@@ -43,4 +56,39 @@ pub(crate) fn load_cases(options: &LoadCaseOptions) -> Vec<ScanCase> {
         cases.retain(|case| options.source_id_filter.contains(&case.source_id));
     }
     cases
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn source_id_filter_is_not_limited_by_artifact_family_cap() {
+        let cases = load_cases(&LoadCaseOptions {
+            input_source: InputSource::Artifacts,
+            max_rows_per_family: 1,
+            generated_samples_per_facet: 0,
+            generated_seed: 0,
+            family_filter: Vec::new(),
+            source_id_filter: vec!["ascent_product_0:F10".to_string()],
+        });
+
+        assert_eq!(cases.len(), 1);
+        assert_eq!(cases[0].source_id, "ascent_product_0:F10");
+    }
+
+    #[test]
+    fn edge_fixture_source_loads_named_edge_cases() {
+        let cases = load_cases(&LoadCaseOptions {
+            input_source: InputSource::EdgeFixtures,
+            max_rows_per_family: 1,
+            generated_samples_per_facet: 0,
+            generated_seed: 0,
+            family_filter: Vec::new(),
+            source_id_filter: vec!["edge:duplicate_dual_vertices".to_string()],
+        });
+
+        assert_eq!(cases.len(), 1);
+        assert_eq!(cases[0].source_id, "edge:duplicate_dual_vertices");
+    }
 }

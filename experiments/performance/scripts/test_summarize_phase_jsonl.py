@@ -133,6 +133,7 @@ class PhaseJsonlSummaryTests(unittest.TestCase):
                 "capacity_candidate_non_kkt_ms": 1.0,
                 "sigma_count": 42,
                 "admissible_f64_count": 5,
+                "near_minimizing_sigma_count": 4,
             },
         ]
 
@@ -144,9 +145,15 @@ class PhaseJsonlSummaryTests(unittest.TestCase):
         self.assertAlmostEqual(summary["capacity_bundle_time_ms_mean"], 10.0)
         self.assertAlmostEqual(summary["capacity_candidate_solve_ms_mean"], 9.0)
         self.assertAlmostEqual(summary["capacity_candidate_kkt_solve_ms_mean"], 8.0)
+        self.assertAlmostEqual(summary["capacity_candidate_kkt_solve_pct"], 88.88888888888889)
         self.assertAlmostEqual(summary["capacity_candidate_non_kkt_ms_mean"], 1.0)
         self.assertAlmostEqual(summary["capacity_sigma_count_mean"], 42.0)
+        self.assertAlmostEqual(
+            summary["factorial_over_capacity_sigma_count_mean"],
+            3628800.0 / 42.0,
+        )
         self.assertAlmostEqual(summary["admissible_f64_mean"], 5.0)
+        self.assertAlmostEqual(summary["near_minimizing_sigma_mean"], 4.0)
 
     def test_legacy_f64_capacity_field_names_are_still_summarized(self):
         rows = [
@@ -197,7 +204,10 @@ class PhaseJsonlSummaryTests(unittest.TestCase):
             phase_summary.write_csv(path, summary)
             text = path.read_text()
         self.assertIn("capacity_candidate_kkt_solve_ms_mean", text)
+        self.assertIn("capacity_candidate_kkt_solve_pct", text)
+        self.assertIn("factorial_over_capacity_sigma_count_mean", text)
         self.assertIn("capacity_candidate_non_kkt_ms_mean", text)
+        self.assertIn("near_minimizing_sigma_mean", text)
 
 
 if __name__ == "__main__":
