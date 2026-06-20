@@ -1,10 +1,105 @@
 # Local Behavior Prediction
 
-Draft method packet for local and semi-local `sys(a)` prediction diagnostics.
+Method packet for local and semi-local `sys(a)` prediction diagnostics.
 
 Status: exploratory. This packet reads run-local prepared outputs from
 `experiments/sys-datascience/tables/prepare-local-behavior.py`; it does not
-own capacity search or reusable joins.
+own capacity search or reusable joins. It is an interpretation and navigation
+surface, not thesis evidence by itself.
+
+## Research Question
+
+This packet asks how far local branch data at a base point `a0` predicts
+`sys(a0 + t d)` at finite radii.
+
+The downstream purpose is optimizer design and thesis wording. A gradient
+ascent method should use this packet to decide plausible step sizes, direction
+families, branch-window policies, and failure classifications before claiming
+that an optimizer reaches local-max-like endpoints.
+
+This packet is not a theorem route for arbitrary endpoint local maximality.
+The exact generic object is the active-germ / semialgebraic model in
+`research/sys-first-order-local-behavior.md`.
+
+## Artifact Map
+
+Run-local producers write raw point and sample data under the requested
+output directory. The prepare and analyze stages derive the following files:
+
+| Artifact | What to inspect |
+| --- | --- |
+| `local-behavior-pairs.jsonl` | Pair rows for `(a0, d, t, a0 + t d)`, including target-minimizer status at `a0`, observed `Delta sys`, branch-gradient prediction, and prediction error. |
+| `local-behavior-radius-summary.csv` | Radius and direction-family summaries. Start here for local-to-semilocal behavior and step-size planning. |
+| `local-behavior-branch-facts.jsonl` | Per-point branch facts derived from producer rows. Use this when a pair summary needs branch-level explanation. |
+| `local-behavior-branch-variation.jsonl` | Per-branch value variation between base and target. Use this for branch-function stability questions. |
+| `local-behavior-gradient-projections.jsonl` | Per-gradient projection diagnostics. Use this for prediction-quality and direction-alignment questions. |
+| `branch-stability-by-radius.png` | Visual summary of target-minimizer visibility by radius and direction family. |
+| `gradient-prediction-vs-observed.png` | Visual check of branch-gradient prediction quality against recomputed finite changes. |
+| `target-branch-status-at-base.png` | Status mix for where target minimizing branches were visible at `a0`. |
+
+Generated files are source-adjacent evidence for a run. The durable current
+interpretation belongs in this README because interpretation can become stale
+without the producer or analysis code becoming stale.
+
+## Interpretation Guards
+
+Treat these diagnostics as sampled finite-scale evidence, not as exact
+first-order branch coverage. The prepared rows track minimizer branch sets,
+candidate/near-active windows, KKT status, beta positivity diagnostics, and
+branch gradients. Compare those sets and statuses; the scalar `best_sigma`
+value alone is not enough.
+
+Important failure modes include zero-beta boundary germs, singular KKT systems,
+active continua, and repeated or redundant listed rows. In particular, a branch
+with `beta_i = 0` at the base point can have a right-hand germ with
+`beta_i(t) > 0`; dropping zero-beta coordinates can preserve the base HK value
+while losing a different first-order slope nearby.
+
+Near-active branch data is not automatically enough. Some finite-step target
+minimizers may be visible only in the wider base candidate/action window. The
+candidate window is also a noise source, so branch-window policy is a design
+variable that should be measured rather than assumed.
+
+## Prior Scratch Panels
+
+The following `/tmp` panels are recovery guidance only. They are useful for
+choosing the next run, but do not cite them as thesis evidence without
+regenerating a current retained panel.
+
+| Path | Role |
+| --- | --- |
+| `/tmp/sys-local-behavior-panel` | Larger local-neighborhood panel: `8` basepoints, radii `1e-6` through `1`, optimizer-like and random directions. |
+| `/tmp/sys-local-behavior-current-rerun-smoke` | Current-code smoke run from 2026-06-20: one top basepoint, radii `1e-6,1e-3`, zero failures. |
+| `/tmp/sys-random-pair-radii-panel` | Random-pair cross-check for strict minimizing branch sets and cross-evaluation action gaps. |
+
+Recovered prior from `/tmp/sys-local-behavior-panel`, checked by rerunning
+the current prepare/analyze scripts on 2026-06-20:
+
+- pair rows and target-status counts reproduced: `551` successful pairs,
+  `407` `same_min_branch_set`, `32` `target_min_in_base_near_active`, `24`
+  `target_min_in_base_candidate_window`, and `88`
+  `target_min_missing_from_base_candidate_window`;
+- behavior was stable in that panel through `1e-5`;
+- `1e-4..1e-3` was the first interesting transition range;
+- `1e-3` was mostly locally predictive, but the first candidate-window-only
+  cases already had larger prediction error;
+- `1e-2` showed semi-local branch-window and prediction-error effects,
+  especially for optimizer-like gradient directions;
+- `0.1` and `1` were no longer reliable local regimes in that panel, and
+  target-polytope construction failures appeared.
+
+Recovered prior from `/tmp/sys-random-pair-radii-panel`:
+
+- strict minimizing branch set equality can change at tiny radius because a
+  degenerate basepoint has extra tied branches;
+- a better local-to-semilocal marker is whether target strict minimizers have
+  positive cross-evaluation gap at `a0`;
+- in that panel, target strict minimizers had zero cross-evaluation gap through
+  `1e-3`, started to separate at `1e-2`, and broke much more strongly by
+  `0.1`.
+
+Use these priors to focus new runs around `1e-4,1e-3,1e-2` and to group
+analysis by target-minimizer status, not to skip regeneration.
 
 Typical local flow from repo root:
 
@@ -24,3 +119,40 @@ uv run --script experiments/sys-datascience/methods/local-behavior-prediction/an
 
 The report and figures are written under
 `/tmp/sys-local-behavior-smoke/prepared/local-behavior-prediction/` by default.
+
+## Current Disposition
+
+Use this packet as optimizer-design and thesis-wording guidance. It can
+support statements about what a regenerated finite panel observed under stated
+radii, direction families, and branch-window settings.
+
+Do not use this packet to claim true local maximality, theorem-level branch
+coverage, or that a gradient ascent method reaches local maxima on the
+quotient. Those claims require separate evidence.
+
+## Remaining Worthwhile Questions
+
+- Which radii give useful finite-step improvements without losing local branch
+  predictivity?
+- Which direction families remain predictive in same-min-branch,
+  near-active, candidate-window-only, and missing-candidate rows?
+- How wide should the branch/action window be before added branch coverage is
+  outweighed by overprediction and noise?
+- Are optimizer endpoint failures explained by same-branch smooth tails,
+  near-active ridge behavior, candidate-window-only branches, missing branches,
+  or target construction/domain failures?
+
+## Predicted Stability Under Rerun
+
+High for the smoke command if retained tables and local-behavior code are
+unchanged. Larger panels should preserve the qualitative radius questions but
+may change counts because selected basepoints, random directions, branch
+windows, and target-construction failures affect the status mix.
+
+## Reopen Triggers
+
+- retained tables are rebuilt;
+- `sys-local-behavior-produce`, `prepare-local-behavior.py`, or `analyze.py`
+  changes;
+- branch-window, KKT/status, or minimizer-set semantics change;
+- thesis wording asks for optimizer endpoint stability or local maximality.
