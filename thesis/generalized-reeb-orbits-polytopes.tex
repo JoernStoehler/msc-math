@@ -46,26 +46,28 @@ has
   A(\gamma)=T.
 \]
 
-A generalized Reeb orbit is \emph{simple} if \(\dot{\gamma}\) is piecewise
-constant, each constant value is one of the pure facet directions \(R_i\), and
-for each \(i\) the set
-\[
-  \{t\in[0,T]:\dot{\gamma}(t)=R_i\}
-\]
-is a single interval, possibly empty. Thus a simple orbit never uses a
-nontrivial convex combination of active facet directions, and it does not
-return to the same facet direction in separated time intervals.
+A generalized Reeb orbit is \emph{simple} if its periodic parametrization can
+be started so that, after changing \(\dot{\gamma}\) at finitely many
+breakpoints if necessary, there is a finite partition of \([0,T]\) into
+intervals on each of which \(\dot{\gamma}=R_i\) for some facet index \(i\), and
+for each \(i\) the union of the intervals with velocity \(R_i\) is connected,
+possibly empty. Thus a simple orbit uses only pure facet directions on its
+velocity intervals, and it does not return to the same facet direction in
+separated time intervals.
 
 \subsection{Words, dwell times, and closure}
 \label{subsec:generalized-reeb-orbits-polytopes-words}
 
 The finite computations later use the special case in which the velocity is
-piecewise constant and equal to a pure facet direction. A cyclic word
+piecewise constant and equal to a pure facet direction. In the active-word
+convention, the word contains exactly the distinct facet directions that occur
+with positive duration, and the base point is chosen at a velocity breakpoint.
+A cyclic word
 \[
   \sigma=(\sigma_1,\ldots,\sigma_m)
 \]
-together with dwell times \(\tau_k>0\) and a base point \(b=\gamma(0)\)
-describes the velocity data
+with distinct entries, together with dwell times \(\tau_k>0\) and a base point
+\(b=\gamma(0)\), describes the velocity data
 \[
   \dot{\gamma}(t)=R_{\sigma_k}
   \quad\text{for a time interval of length }\tau_k.
@@ -88,11 +90,14 @@ The period and action of a closed pure-word orbit are
 This convention is the free-period convention used in
 Theorem~\ref{thm:preliminaries-clarke-dual-action}.
 
-Different triples may describe the same geometric orbit. Removing zero-duration
-entries, if any are allowed, and cyclically shifting the remaining
-\((\text{facet},\text{duration})\)-pairs does not change the orbit, provided
-the base point is shifted to the corresponding point on the curve. Also,
-breakpoints of \(\dot{\gamma}\) are velocity changes, not necessarily changes
+The same geometric orbit has no preferred starting segment. Cyclically shifting
+the \((\text{facet},\text{duration})\)-pairs gives the same orbit, provided
+the base point is shifted to the corresponding point on the curve. If one uses
+a padded convention with all facets in a permutation and dwell times
+\(\tau_k\geq0\), then zero-duration entries are first deleted to recover the
+active word.
+
+Breakpoints of \(\dot{\gamma}\) are velocity changes, not necessarily changes
 in the minimal face containing \(\gamma(t)\): an orbit may move inside a
 nonsmooth face while switching from one active facet direction to another.
 

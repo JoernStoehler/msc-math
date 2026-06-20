@@ -45,6 +45,9 @@ Update rule: add or change a claim only with a source pointer or an explicit
   means piecewise-constant pure facet Reeb velocities with each facet direction
   used in one connected interval; finite word/dwell/base-point data are only
   candidate orbit data until closure and base-point feasibility are checked.
+  Current thesis prose uses an active-word convention with positive dwell
+  times; the legacy proof also uses a padded all-facet permutation with
+  zero-duration unused facets.
 
 ## Limit Of Smooth Bodies
 
