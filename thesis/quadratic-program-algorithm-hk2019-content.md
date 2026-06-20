@@ -36,10 +36,12 @@ Update rule: add or change a claim only with a source pointer or an explicit
 - The reader-facing section title is "The Haim--Kislev Quadratic Program".
   After first attribution, use "the quadratic program" or "QP" when the
   antecedent is clear.
-- The bibliography currently also has an `HK2017` entry for the same title; the
-  active thesis prose cites `HK2017` because the local source and citation
-  index use those anchors. Do not use year-based naming in reader-facing prose
-  merely because the filename still contains `hk2019`.
+- The active thesis prose cites `HK2017` because the local source and citation
+  index use that anchor for the 2017 arXiv source. The single thesis
+  bibliography entry with key `HK2017` carries the published GAFA 2019 metadata.
+  Do not reintroduce a separate `HK2019` key for the same paper, and do not use
+  year-based naming in reader-facing prose merely because the filename still
+  contains `hk2019`.
 
 ## Definition
 
