@@ -66,8 +66,11 @@ Update rule: add or change a claim only with a source pointer or an explicit
   it provides; leave the full proof to a later checkpoint unless the thesis
   structure changes.
 - Existing thesis text defines "simple" as a generalized Reeb orbit whose
-  derivative is piecewise constant, each constant value is a pure facet Reeb
-  vector, and each facet velocity occurs on a single interval, possibly empty.
-- This option supports the finite `(sigma, tau, b)` representation.
+  derivative can be represented by finitely many pure facet Reeb velocities
+  with each facet direction occurring in one connected interval, possibly not
+  at all. The active prose uses active words with positive dwell times and
+  mentions padded all-facet permutations only as an alternate encoding.
+- This supports the finite `(sigma, tau, b)` representation while preserving
+  the caveat that closure does not by itself recover a valid base point.
 - The main text must state the result and why it applies. Long proof details
   can move to an appendix if they interrupt the reading path.

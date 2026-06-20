@@ -1,8 +1,9 @@
 \section{Generalized Reeb Orbits On Polytopes}\label{sec:generalized-reeb-orbits-polytopes}
 
 The boundary of a polytope is not smooth, so the smooth Reeb vector field is
-replaced by a differential inclusion. This section records only the part of the
-nonsmooth theory needed to use the Haim--Kislev finite quadratic program.
+replaced by a differential inclusion. This section records the nonsmooth
+Reeb-orbit language needed to pass from the minimum-action formulation to the
+finite Haim--Kislev quadratic program.
 
 \subsection{Definition}\label{subsec:generalized-reeb-orbits-polytopes-definition}
 
@@ -47,22 +48,21 @@ has
 \]
 
 A generalized Reeb orbit is \emph{simple} if its periodic parametrization can
-be started so that, after changing \(\dot{\gamma}\) at finitely many
-breakpoints if necessary, there is a finite partition of \([0,T]\) into
-intervals on each of which \(\dot{\gamma}=R_i\) for some facet index \(i\), and
-for each \(i\) the union of the intervals with velocity \(R_i\) is connected,
-possibly empty. Thus a simple orbit uses only pure facet directions on its
-velocity intervals, and it does not return to the same facet direction in
-separated time intervals.
+be started so that \(\dot{\gamma}\), after changing values at finitely many
+breakpoints if necessary, is constant on finitely many intervals and each
+constant value is one of the pure facet directions \(R_i\). In addition, each
+facet direction occurs in one connected time interval, possibly not at all.
+Thus a simple orbit uses pure facet directions rather than nontrivial convex
+combinations, and it does not return to the same facet direction in separated
+time intervals.
 
 \subsection{Words, dwell times, and closure}
 \label{subsec:generalized-reeb-orbits-polytopes-words}
 
-The finite computations later use the special case in which the velocity is
-piecewise constant and equal to a pure facet direction. In the active-word
-convention, the word contains exactly the distinct facet directions that occur
-with positive duration, and the base point is chosen at a velocity breakpoint.
-A cyclic word
+The finite computation records a simple orbit by its facet directions, dwell
+times, and starting point. We use the \emph{active-word convention}: the word
+contains exactly the distinct facet directions that occur with positive
+duration, and the base point is chosen at a velocity breakpoint. A cyclic word
 \[
   \sigma=(\sigma_1,\ldots,\sigma_m)
 \]
@@ -79,7 +79,8 @@ Such data can represent a closed orbit only if the closing equation holds:
 The closing equation is necessary but not sufficient by itself; one must also
 recover a base point so that the resulting broken line lies on the prescribed
 facets in the prescribed order. Thus facet words are candidates for orbits, not
-orbits automatically.
+orbits automatically. The quadratic-program section below treats this as a
+feasibility condition and discards infeasible words.
 
 The period and action of a closed pure-word orbit are
 \[
@@ -91,9 +92,11 @@ This convention is the free-period convention used in
 Theorem~\ref{thm:preliminaries-clarke-dual-action}.
 
 The same geometric orbit has no preferred starting segment. Cyclically shifting
-the \((\text{facet},\text{duration})\)-pairs gives the same orbit, provided
-the base point is shifted to the corresponding point on the curve. If one uses
-a padded convention with all facets in a permutation and dwell times
+the \((\text{facet},\text{duration})\)-pairs gives the same orbit, provided the
+base point is shifted to the corresponding breakpoint on the curve. If an orbit
+is instead started inside a constant-velocity segment, that segment is split at
+the start time and then merged again when the active word is recovered. If one
+uses a padded convention with all facets in a permutation and dwell times
 \(\tau_k\geq0\), then zero-duration entries are first deleted to recover the
 active word.
 
@@ -104,18 +107,19 @@ nonsmooth face while switching from one active facet direction to another.
 \subsection{Existence of simple minimizers}
 \label{subsec:generalized-reeb-orbits-polytopes-existence-of-simple-minimizers}
 
-Haim--Kislev prove that for every convex polytope there is a
-minimum-action generalized Reeb orbit with a simple finite description
-\cite[Theorem~1.5]{HK2017}. Their statement uses a fixed interval and
-velocities that are positive multiples of \(Jn_i\). Translating to the
-contact-normalized, free-period convention of this thesis, one may choose a
-minimizer whose velocity is piecewise constant, whose pieces are positive-time
-pure facet directions \(R_i\), and in which each facet direction occurs in one
-connected time interval, possibly not at all.
+Haim--Kislev prove that every convex polytope has a minimum-action generalized
+Reeb orbit with a simple finite description \cite[Theorem~1.5]{HK2017}. After
+translating so that \(0\in\operatorname{int}(K)\) and writing the facets in the
+normalization above, their fixed-interval statement with velocities that are
+positive multiples of \(Jn_i\) becomes the following in our contact-normalized,
+free-period convention: at least one capacity-realizing orbit may be chosen
+with positive-time pure facet directions \(R_i\), each occurring in one
+connected interval.
 
 This is an existence theorem for at least one capacity minimizer. It is not a
 classification of all minimum-action generalized Reeb orbits. In particular,
 other minimizers may pass through nonsmooth faces and may use convex
-combinations of active facet directions. The finite Haim--Kislev quadratic
-program searches a family guaranteed to contain a capacity-realizing simple
-word; infeasible words or duplicate descriptions can still occur.
+combinations of active facet directions. Thus the finite Haim--Kislev
+quadratic program is justified as a capacity search because its search family
+contains a simple capacity minimizer, not because every minimizer or every word
+has this form. Infeasible words and duplicate descriptions can still occur.

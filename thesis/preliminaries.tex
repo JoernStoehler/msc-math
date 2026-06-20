@@ -84,7 +84,9 @@ variational viewpoint. The literature often states this bridge in a fixed
 \([0,1]\)-period normalization. We use a free-period normalization instead:
 the dual curves below have period \(T\), satisfy \(A(z)=T\), and are not
 centered by a condition such as \(\int z=0\). Translation is handled as a
-symmetry, not as a constraint.
+symmetry, not as a constraint. This is equivalent to the normalized formulation
+used by Haim--Kislev, but the numerical equalities below are written in the
+free-period convention used throughout this thesis.
 
 \begin{lemma}[Fenchel duality for the gauge]\label{lem:preliminaries-fenchel-duality}
 The Legendre--Fenchel conjugate of \(g_K^2\) is
@@ -226,9 +228,10 @@ preserved because
 \end{proof}
 
 \begin{theorem}[Clarke dual action principle]\label{thm:preliminaries-clarke-dual-action}
-For a convex body \(K\), the primal minimum over closed characteristics
-(generalized in the nonsmooth case) and the dual minimum
-\eqref{eq:preliminaries-dual-problem} agree:
+For a smooth convex body \(K\), and for polytopes after interpreting closed
+characteristics as generalized Reeb orbits in the sense of
+Section~\ref{sec:generalized-reeb-orbits-polytopes}, the primal minimum and the
+dual minimum \eqref{eq:preliminaries-dual-problem} agree:
 \[
   c_{\mathrm{EHZ}}(K)
   = \min_\gamma A(\gamma)
@@ -321,16 +324,18 @@ translate/rescale family by Lemma~\ref{lem:preliminaries-dual-symmetry}.
 Conversely, the argument above sends every dual critical point to a
 contact-normalized closed characteristic in its translate/rescale family.
 Therefore the infima over primal critical points and over dual critical points
-agree. A minimizer of the dual problem is a weak critical point by Clarke's
-variational principle; this is the point recorded in the nonsmooth
-dual-action statement used by Haim--Kislev \cite[Section~2]{HK2017}. Hence the
-dual minimum is attained among these dual critical points, and the primal and
-dual minima agree.
+agree. The remaining input is the existence part of Clarke's dual action
+principle: the constrained dual infimum is attained, and a dual minimizer is a
+weak critical point. This is the variational statement recorded in the
+nonsmooth dual-action setup used by Haim--Kislev
+\cite[Section~2]{HK2017}. Hence the dual minimum is attained among the dual
+critical points just considered, and the primal and dual minima agree.
 \end{proof}
 
 The point of the theorem is not just the equality of two numbers. The primal
 formulation constrains a curve to lie on \(\partial K\) and to satisfy a
 differential inclusion. The dual formulation removes the position constraint
-and makes the functional depend only on \(\dot{z}\). Haim--Kislev exploit this
-freedom to choose a capacity minimizer on a polytope with a finite, simple
-facet-word description \cite{HK2017}.
+and makes the functional depend only on \(\dot{z}\). In their equivalent
+fixed-period normalization, Haim--Kislev exploit this freedom to choose a
+capacity minimizer on a polytope with a finite, simple facet-word description
+\cite{HK2017}.
