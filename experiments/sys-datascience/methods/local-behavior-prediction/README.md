@@ -115,6 +115,34 @@ the current prepare/analyze scripts on 2026-06-20:
 - `0.1` and `1` were no longer reliable local regimes in that panel, and
   target-polytope construction failures appeared.
 
+Additional recovered legacy-session details:
+
+- The producer radius is the ambient `R^{4F}` Euclidean norm. Directions are
+  normalized by `sqrt(sum_i ||d_i||_{R^4}^2) = 1`, then sampled as
+  `a_i(t) = a_i + radius d_i`.
+- Same raw `R^{4F}` distances between retained `F=10` rows were estimated in
+  the order `3..5`, with medians around `4.43` for all retained `F=10`,
+  `4.56` for random generic rows, and `3.27` for random product rows. This is
+  only scale context; it does not make radii near `1` local.
+- The useful regime labels were not meant to name a pre-existing predictor.
+  They were meant to separate measured row statuses: same minimizing branch
+  set, target minimizer already in base near-active set, target minimizer only
+  in the wider base candidate/action window, missing from the base candidate
+  window, and prediction-error scale.
+- Candidate-window membership is not the same as "near finite nominal action."
+  The retained-orbit criterion can keep branches with large nominal action when
+  the action lower bound is within the gap, especially if the `q` error bound
+  is large relative to `|q|`.
+- The corrected pipeline deliberately keeps producer/prepare ownership
+  cost-based: producer owns computed point payloads and branch gradients it
+  already computes; cheap per-branch KKT/status diagnostics belong in prepare
+  or method analysis unless aggregate cost or reuse justifies promotion.
+- A reviewed cleanup fixed five concrete issues before the larger panel was
+  interpreted: non-generic minimizer-set status misclassification, hard-coded
+  near-active threshold, branch-stability plots mixing direction families,
+  close-radius sample-id collisions, and misleading `kkt_outcome: "feasible"`
+  wording.
+
 Recovered prior from `/tmp/sys-random-pair-radii-panel`:
 
 - strict minimizing branch set equality can change at tiny radius because a
