@@ -1,10 +1,10 @@
-# Quadratic Program Algorithm Content Notes
+# Quadratic Program Content Notes
 
 Status: section-local content companion for
 `thesis/quadratic-program-algorithm-hk2019.tex`. Not source truth.
 
-Purpose: gather the writing inventory for the HK2019 finite optimization
-algorithm section.
+Purpose: gather the writing inventory for the Haim--Kislev quadratic-program
+section.
 
 Overruled by: source papers, `formal/`, `crates/symplectic/`, revalidated
 legacy thesis material, experiment artifacts, and Jörn/Kai review.
@@ -17,7 +17,7 @@ Update rule: add or change a claim only with a source pointer or an explicit
 
 ## Session Scope
 
-- In scope: the Haim-Kislev quadratic-program statement and the mathematical
+- In scope: the Haim--Kislev quadratic-program statement and the mathematical
   reason it computes the EHZ capacity/minimum action for polytopes.
 - In scope: notation choices and conversion notes needed to state the standard
   result in the thesis convention.
@@ -31,16 +31,15 @@ Update rule: add or change a claim only with a source pointer or an explicit
 ## Purpose And Naming
 
 - Present the standard finite quadratic-program formulation for the minimizer
-  search. This is Haim-Kislev's work; the thesis work in this section is
+  search. This is Haim--Kislev's work; the thesis work in this section is
   explanatory and not a new algorithmic contribution.
-- First use can call this "Quadratic Program Algorithm Based On HK2019"; after
-  first use, use the shorter algorithmic name.
+- The reader-facing section title is "The Haim--Kislev Quadratic Program".
+  After first attribution, use "the quadratic program" or "QP" when the
+  antecedent is clear.
 - The bibliography currently also has an `HK2017` entry for the same title; the
-  journal-version GAFA citation is 2019 and should be preferred in
-  reader-facing naming unless a writer chooses otherwise.
-- Open naming decision: choose one reader-facing convention among `HK2017`,
-  `HK2019`, or "Haim-Kislev formula/algorithm", and make the bibliography match
-  that choice.
+  active thesis prose cites `HK2017` because the local source and citation
+  index use those anchors. Do not use year-based naming in reader-facing prose
+  merely because the filename still contains `hk2019`.
 
 ## Definition
 
@@ -51,10 +50,10 @@ Update rule: add or change a claim only with a source pointer or an explicit
   reconstruction formula.
 - State the input contract explicitly: the dual rows have already been checked
   to be extremal and bounded in the sense of the polytope preliminaries.
-- The capacity algorithm may use the computed primal vertex set and
+- The capacity computation may use the computed primal vertex set and
   vertex-facet incidence for feasibility and pruning, but mathematical
-  correctness is the HK2019 finite-search statement plus the preceding validity
-  checks.
+  correctness is the Haim--Kislev finite-search statement plus the preceding
+  validity checks.
 - Record the chosen thesis convention for dual vertices versus
   normals/heights, the action matrix, `Q`, `Qmax`, and the factor relating
   `Qmax` to `c_EHZ`. Existing formal notes use `c_EHZ = 1/(2 Qmax)` for their
@@ -74,6 +73,11 @@ Update rule: add or change a claim only with a source pointer or an explicit
 - Likely named claims: finite candidate reduction, equivalence between beta
   problem and generalized orbit action, existence of an optimum, and recovery
   of capacity/sys.
+- For the Lagrangian-product enumeration, state only a capacity-search result:
+  the restricted alternating \(q/p\)-block family contains a capacity
+  minimizer. Do not claim it classifies all minimum-action simple Reeb orbits;
+  the billiard bounce bound gives existence of one minimizer with at most three
+  bounces, not nonexistence of longer minimizers.
 
 ## Deferred Algorithmic Material
 

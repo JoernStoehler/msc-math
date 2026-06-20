@@ -1,4 +1,4 @@
-\section{Quadratic Program Algorithm Based On HK2019}
+\section{The Haim--Kislev Quadratic Program}
 \label{sec:quadratic-program-algorithm-hk2019}
 
 This section records the finite computation principle used later in the
@@ -8,6 +8,8 @@ finite list of quadratic programs over cyclic facet words
 Lagrangian products of planar polygons, the billiard interpretation gives a
 much smaller finite list, and this is the only part of the algorithm needed in
 Section~\ref{sec:rotated-regular-polygons}.
+After this first attribution, we call the resulting finite optimization problem
+the quadratic program, or QP when space is tight.
 
 \subsection{Finite enumeration for Lagrangian products}
 \label{subsec:quadratic-program-algorithm-hk2019-lagrangian-products}
@@ -25,22 +27,25 @@ of facets of the same type a two-facet block.
 \begin{theorem}[Finite enumeration for Lagrangian products]
 \label{thm:lagrangian-product-finite-enumeration}
 For a Lagrangian product \(K=K_q\times_L K_p\) of nondegenerate planar convex
-polygons, \(c_{\mathrm{EHZ}}(K)\) is obtained by applying the Haim--Kislev
-finite quadratic-program formula to cyclic words of the form
+polygons, \(c_{\mathrm{EHZ}}(K)\) is obtained by minimizing over the
+Haim--Kislev quadratic programs associated to cyclic words of the form
 \[
   \bigl([Q\mid QQ]\,[P\mid PP]\bigr)^k,
   \qquad k\in\{2,3\},
 \]
 where each \(Q\)-block is a one- or two-facet block in \(K_q\), each
 \(P\)-block is a one- or two-facet block in \(K_p\), distinct blocks use
-disjoint facets, and a two-facet block must use adjacent polygon edges.
+disjoint facets, and a two-facet block must use adjacent polygon edges. This is
+an exhaustive candidate family for the capacity value; it may contain
+overcounting or infeasible words, and it is not a classification of all
+minimum-action simple Reeb orbits.
 \end{theorem}
 
 \begin{proof}
 The Haim--Kislev formula reduces \(c_{\mathrm{EHZ}}(K)\) to a finite
 optimization over simple cyclic facet words \cite{HK2017}. Thus it remains to
-identify which simple words can occur for a Lagrangian product, and how many
-alternating \(q/p\)-blocks need be considered.
+find a finite subfamily that contains at least one capacity-realizing word for
+a Lagrangian product.
 
 On a \(q\)-facet of \(K_q\times_L K_p\), the Reeb vector is tangent to the
 \(p\)-factor; on a \(p\)-facet, it is tangent to the \(q\)-factor. Hence a
@@ -68,18 +73,23 @@ Thus \(k=1\) is excluded.
 
 The EHZ capacity of a Lagrangian product is also the length of the shortest
 closed \(K_p\)-billiard trajectory in \(K_q\), measured with the support
-function of \(K_p\) \cite{AAO2014,Rudolf2022}. The planar billiard reduction
-of Bezdek and Bezdek, in the form used for Minkowski billiards by Rudolf,
-implies that such a minimizing trajectory may be chosen with at most three
-bounce points \cite{BezdekBezdek2009,Rudolf2022}. Under the
+function of \(K_p\): Artstein--Avidan--Ostrover prove this for Lagrangian
+products \cite[Theorem~2.13]{AAO2014}, and Rudolf records the nonsmooth
+Minkowski-billiard form used here \cite[Theorem~1]{Rudolf2022}. The planar
+billiard reduction of Bezdek and Bezdek
+\cite[Theorem~1.1 and Lemma~2.4]{BezdekBezdek2009}, in the form used for
+Minkowski billiards by Rudolf \cite[Theorem~1]{Rudolf2022}, implies that one
+minimizing trajectory may be chosen with at most three bounce points. Under the
 Reeb-orbit--billiard correspondence, a bounce point is exactly a maximal
 interval of the Reeb orbit on which the \(q\)-coordinate is fixed and lies on
 the active \(K_q\)-edge or adjacent edge pair; in the facet word this is one
 \(q\)-block. The blocks alternate cyclically, so the number of \(p\)-blocks is
 the same as the number of \(q\)-blocks. Hence \(k\leq 3\). Combining this with
 \(k\neq 1\) gives \(k\in\{2,3\}\). Applying the Haim--Kislev quadratic program
-to exactly these alternating block words therefore gives the same minimum as
-the full Lagrangian-product problem.
+to this alternating-block candidate family therefore gives the same minimum as
+the full Lagrangian-product problem. This argument only proves that the
+restricted family contains a capacity minimizer; it does not exclude additional
+minimum-action simple Reeb orbits with more blocks.
 \end{proof}
 
 \begin{algorithm}[Lagrangian-product capacity enumeration]
@@ -91,9 +101,9 @@ pattern
 \[
   \bigl([Q\mid QQ]\,[P\mid PP]\bigr)^k,
 \]
-flatten the blocks to a facet word, and solve the corresponding
-Haim--Kislev quadratic program. The capacity is the minimum action among the
-feasible words.
+flatten the blocks to a facet word, discard infeasible words, and solve the
+corresponding Haim--Kislev quadratic program. The capacity is the minimum action
+among the feasible words in this candidate family.
 \end{algorithm}
 
 \subsection{General polytopes}

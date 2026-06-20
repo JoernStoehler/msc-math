@@ -16,10 +16,10 @@ Status: navigation cache for the active thesis surface.
   surface.
 - `generalized-reeb-orbits-polytopes-content.md`: section-local generalized
   Reeb orbit content notes.
-- `quadratic-program-algorithm-hk2019.tex`: HK2019 quadratic-program algorithm
-  thesis surface.
-- `quadratic-program-algorithm-hk2019-content.md`: section-local HK2019
-  algorithm content notes.
+- `quadratic-program-algorithm-hk2019.tex`: Haim--Kislev quadratic-program
+  thesis surface. The filename is historical; keep labels stable.
+- `quadratic-program-algorithm-hk2019-content.md`: section-local
+  quadratic-program content notes.
 - `flow-graph-algorithm-ch2021.tex`: CH2021 flow-graph algorithm thesis
   surface.
 - `flow-graph-algorithm-ch2021-content.md`: section-local content companion
