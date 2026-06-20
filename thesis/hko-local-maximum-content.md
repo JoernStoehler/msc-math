@@ -96,7 +96,6 @@ The HKO thesis-facing result is a packet, not only one theorem statement.
    Broader search work did not find a better local escape or general
    explanation.
    Source pointers: `research/sys-landscape.md`;
-   `research/sys-landscape-toolbox-audit.md`;
    `experiments/sys-landscape/`;
    `tasks/references/central-claim-control-packet-2026-06-01.md`.
 
@@ -385,7 +384,6 @@ What the thesis must not claim:
 Source pointers:
 - `experiments/hko-local-maximum/README.md`, "Result Strands";
 - `experiments/hko-local-maximum/empirical/README.md`;
-- `research/sys-landscape-toolbox-audit.md`, HKO-local perturbation row.
 
 ### 8. Core content and auxiliary asset decisions
 
@@ -755,7 +753,6 @@ Status:
 
 Source pointers:
 - `research/sys-landscape.md`.
-- `research/sys-landscape-toolbox-audit.md`, HKO-local perturbation row.
 - `tasks/references/central-claim-control-packet-2026-06-01.md`, HKO and
   black-box-datascience rows.
 

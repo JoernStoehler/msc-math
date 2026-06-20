@@ -78,6 +78,10 @@ starts/finals plus the other retained non-intermediate sources. The table stage
 records computed ascent occurrence context in
 `computed-polytope-observation-table.jsonl`.
 
+BUG: ascent run endpoints are not local maximizers of `sys(a)` right now. See
+`../methods/endpoint-local-max-diagnostic/README.md`: sampled retained ascent
+endpoints still have tiny improving quotient directions.
+
 Ascent producers also emit `*-ascent-events.jsonl` and
 `*-expensive-computations-cache.jsonl`. Those are the durable producer-side
 split between run metadata and reusable expensive capacity/orbit-search

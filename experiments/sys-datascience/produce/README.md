@@ -72,6 +72,10 @@ LICCA wave:
 - Both fixed-F cache files have complete `capacity`, `volume`, `sigmas`, and
   `orbit_scalars` payloads for every committed summary endpoint.
 
+BUG: ascent run endpoints are not local maximizers of `sys(a)` right now. See
+`../methods/endpoint-local-max-diagnostic/README.md`: sampled retained ascent
+endpoints still have tiny improving quotient directions.
+
 LICCA fixed-F ascent shard outputs for this branch live under:
 
 ```text

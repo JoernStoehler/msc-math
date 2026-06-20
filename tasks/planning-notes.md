@@ -424,8 +424,8 @@ Stop condition:
 - Stop the current data-science closeout when the method table rows needed by
   the thesis have terminal states, no candidate-proposer or validated new row is
   unresolved, and current method packet READMEs state thesis-use/caveats for
-  methods the thesis still mentions. Thesis content notes and the historical
-  toolbox audit may synthesize or remind; they do not close method rows. Rows
+  methods the thesis still mentions. Thesis content notes and historical
+  scratch/reference material may synthesize or remind; they do not close method rows. Rows
   may end as not applicable to this data/search interface, our-side failure and
   not worth further work, no candidate-proposer, candidate-proposer, or
   validated new row.

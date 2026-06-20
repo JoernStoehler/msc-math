@@ -205,7 +205,7 @@ optimization, visualization, and numerical search.
 Items above were extracted from:
 
 - the deleted local taxonomy snapshots formerly under `methods/taxonomies/`;
-- `research/sys-landscape-toolbox-audit.md`;
+- the deleted historical `research/sys-landscape-toolbox-audit.md`;
 - `experiments/sys-datascience/methods/future-method-ideas.md`;
 - `/tmp/AGENDA.md`;
 - standard textbook/common-practice method families from EDA, statistical
