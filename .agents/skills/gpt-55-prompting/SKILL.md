@@ -32,6 +32,12 @@ requirements; do not let generic guidance erase repo-local constraints.
 - Prefer rules that prevent the failure by changing the agent's usable context,
   success criteria, evidence, or checks, not by adding narrow process steps that
   only fit the example.
+- For difficult agent-facing text, use fresh-agent review when available and
+  worth the cost. Ask what was clear to that subagent, what it had to infer, what
+  it misread, what seemed obvious, irrelevant, unmotivated, or too strong, and
+  which constraints lack an argument that every best solution should satisfy
+  them. Do not ask the reviewer to theorize about what would be clear to future
+  agents; the reviewer's own read is the evidence.
 
 - Use `/tmp` scratch for nontrivial prompt drafting, review, or diagnosis before
   chat.

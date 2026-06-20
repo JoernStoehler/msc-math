@@ -1,34 +1,85 @@
 ---
 name: goal-tool
-description: Use before creating, updating, checkpointing, or completing `/goal`.
+description: Use before creating, updating, checkpointing, resuming, blocking, or completing `/goal`. This skill covers `/goal` mechanics and status accounting; use `scoping` to choose the target and `charter-writing` to write or review a charter.
 ---
 
 # /goal Tool
 
-## Bad
+`/goal` recalls the objective and accounts goal status. It is not the source of
+truth for a complex objective.
 
-- Replacing the real objective with a rewritten `/goal` objective can lead to failure of the real objective.
-- Rewriting/rephrasing the objective introduces drift, which again can lead to failure.
-- Omitting trade-off considerations and other forms of context makes the interpretation of the written objective unstable in long sessions, and so in long sessions the real objective can be failed.
-- Underspecified or implicit objectives where the executing agent is allowed to pick the interpretation drift toward the laziest interpretation over time often fail the implicit real objective due to the pressure to finish the goal.
-- Claims without epistemic status have ambiguous interpretation with regard to how much to question them, and so mere ideas can be misinterpreted as must-have constraints, or guesses can become assumed facts that propagate into future sessions via the repo.
-- Using the `/goal` tool creates a strong pressure towards conciseness, and does not allow easily editing out any imperfections, both of which trade off against conveying the real objective for no gain.
+Simple explicit objectives can fit in the `/goal` text. For nontrivial,
+long-running, high-cost, or easily confused work, point `/goal` to a charter
+instead of compressing the objective into the tool field.
 
-## Good
+Use `$scoping` if the target is still too large, vague, or possibly a useful
+precursor rather than the live problem. Use `$charter-writing` before writing or
+materially revising the charter.
 
-- Put the real objective in a charter file, which does not have any pressure towards conciseness and which is trivial to edit/iterate on/review-in-advance etc. Make `/goal` point to that charter file.
-- Emphasize strong conditions for success in the charter and the `/goal` snippet.
-- The charter preserves the real objective and the context needed for interpretation and properly marks epistemic status to not confuse necessary constraints with strongly expected properties with mere guesses.
-- The charter fleshes out stopping conditions that are robust to interpretation drift, which can come from the pressure to finish quickly or from boisterous overconfidence.
-- The charter does not try to plan ahead-of-time or break down the goal into easier checks or constrain the process by which the goal is achieved, instead it focuses on making the real objective explicit and robust. During execution / separately from charter-writing the agent will explore and plan and implement on the fly. The `/goal` loop just has to ensure that the agent does not hand in a failing deliverable without realizing it.
-- Part of robustness is to clarify that subagent or programmatic review steps need to actually pass, as otherwise agents often cut corners and merely amend the deliverable after a failing review step without re-running the review, and thereby they miss new or overlooked issues and fail the objective.
+Good `/goal` objective:
 
-- Example of a `/goal` snippet:
-  ```text
-  Execute the objective charter at <path>. Mark complete only under the charter's stopping conditions.
-  ```
+```text
+Execute the objective charter at <path>. Mark complete only under the charter's stopping conditions.
+```
 
-- Jörn cannot respond to questions while the loop runs, you can use, e.g., the status `blocked` if you need to pause and ask questions.
-- Ask upfront, before starting the loop, whether Jörn has any feedback / corrections / suggestions for additions for the charter. It's often easier to fix the objective in advance and catch misunderstandings than to re-run the loop from scratch after Jörn notices the deliverables fail the real objective hard.
+For high-stakes or easily confused work, include the objective phrase too:
 
-- The only purpose of `/goal` is to later recall the objective without any loss.
+```text
+Execute the objective charter at <path>: <short objective>. Mark complete only under the charter's stopping conditions.
+```
+
+## Before Creating `/goal`
+
+- Create `/goal` only when explicitly requested by Jörn or by system/developer
+  instructions.
+- For nontrivial, long-running, high-cost, or easily confused goals, make sure
+  the objective source is an appropriate charter or self-contained equivalent.
+- If the target is smaller than the live problem, confirm that the charter or
+  objective text declares that scope choice.
+- For a chartered or otherwise complex objective source, follow the
+  `$charter-writing` review gate. Do not proceed with an objective whose target,
+  scope, or expert judgment still needs Jörn.
+- Before starting a chartered `/goal` loop, ask Jörn for feedback, corrections,
+  or additions to the charter. It is usually cheaper to fix the objective before
+  the loop starts than to discover the mismatch after a long run; while the loop
+  runs, Jörn may not be available.
+
+## During `/goal`
+
+- Preserve the charter's objective, context, constraints, and stopping
+  conditions. Do not silently replace them with a cheaper local target.
+- If evidence shows the charter target is wrong or too low, do not complete
+  against the stale target. Stop and report the mismatch, re-scope or revise the
+  charter if current instructions allow it, or mark blocked only when the tool
+  rule applies.
+- After compaction or interruption, re-read the charter or objective source
+  before continuing. Reconstruct changed state from source truth, artifacts, and
+  tool state; do not trust earlier assistant confidence as source truth.
+- Use `blocked` only under the active `/goal` tool rule. Current rule: the same
+  blocker has repeated for at least three consecutive goal turns, no meaningful
+  progress is possible, and user input or external state is required.
+
+## Before Marking Complete
+
+Mark complete only when the objective source's stopping conditions are actually
+met.
+
+Do not mark complete because:
+
+- budget is nearly exhausted;
+- partial work is useful;
+- visible artifacts exist;
+- tests passed;
+- a useful precursor was completed;
+- the agent knows the next step.
+
+Compare the result to any declared scope choice. Important remaining work is
+acceptable only if it was deliberately out of scope and the target was
+completed.
+
+If the user or objective source requires subagent or programmatic review, it
+must pass after the final relevant changes or be explicitly superseded and
+accounted for.
+
+When completing a budgeted goal, report final token/time usage from the tool
+result.
