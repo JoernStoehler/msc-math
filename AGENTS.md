@@ -260,12 +260,14 @@ Use these as baseline commands. Verify locally when a command might be stale or
 too broad for the task.
 
 ```bash
-# Create local worktree
+# Create local worktree. Most worktrees need zero checked-out LFS data.
 git status --short
-git worktree add .worktrees/lemma-cleanup lemma-cleanup
+GIT_LFS_SKIP_SMUDGE=1 git worktree add .worktrees/lemma-cleanup -b lemma-cleanup main
 cd .worktrees/lemma-cleanup
-git lfs checkout
-git lfs pull --include path/to/file.jsonl # only if a required object is missing
+
+# Only for experiment-data/reproduction work:
+# git lfs checkout
+# git lfs pull --include path/to/file.jsonl
 
 # Merge after branch review and with Jörn's approval
 cd /workspaces/msc-math
