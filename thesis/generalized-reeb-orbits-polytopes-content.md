@@ -41,6 +41,10 @@ Update rule: add or change a claim only with a source pointer or an explicit
   `K = {x : <a_i,x> <= 1}`, `R_i = 2 J_0 a_i`, generalized Reeb inclusion,
   closure for pure facet words, and the action/period convention. Do not port
   the full simple-minimizer proof here.
+- Absorbed from `thesis/legacy/simple-minimizer-existence.tex`: simple orbit
+  means piecewise-constant pure facet Reeb velocities with each facet direction
+  used in one connected interval; finite word/dwell/base-point data are only
+  candidate orbit data until closure and base-point feasibility are checked.
 
 ## Limit Of Smooth Bodies
 
