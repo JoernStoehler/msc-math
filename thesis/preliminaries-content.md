@@ -95,6 +95,12 @@ Update rule: add or change a claim only with a source pointer or an explicit
   minimizer-is-critical bridge and the Euler--Lagrange equivalence wording;
   both were patched. Jörn review is still needed for the final free-period
   uncentered equivalence and normalization.
+- Jörn is reviewing the PDF built from commit `69fdbd29`. Review comments may
+  refer to that exact version even if later branch commits exist.
+- Once the active Clarke section has passed Jörn's review, delete
+  `thesis/legacy/clarkedual-action-principle.tex`; it should not remain as a
+  parallel source after its content and phrasing are absorbed into active
+  thesis text.
 
 ## Out Of Scope For This Session
 
