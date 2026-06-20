@@ -37,6 +37,10 @@ Update rule: add or change a claim only with a source pointer or an explicit
 - Ingredients to include: piecewise-linear curve, facets or dual vertices
   touched, beta/dwell times, closing condition, action, and what counts as an
   orbit word.
+- For the first Clarke checkpoint, keep this section to the bridge definitions:
+  `K = {x : <a_i,x> <= 1}`, `R_i = 2 J_0 a_i`, generalized Reeb inclusion,
+  closure for pure facet words, and the action/period convention. Do not port
+  the full simple-minimizer proof here.
 
 ## Limit Of Smooth Bodies
 
@@ -51,7 +55,9 @@ Update rule: add or change a claim only with a source pointer or an explicit
 
 - State and prove, or cite and supplement, the existence of simple
   minimum-action generalized Reeb orbits on polytopes.
-- Current decision: prove this in the thesis if retained.
+- Current checkpoint decision: cite the existence theorem and state exactly what
+  it provides; leave the full proof to a later checkpoint unless the thesis
+  structure changes.
 - Existing thesis text defines "simple" as a generalized Reeb orbit whose
   derivative is piecewise constant, each constant value is a pure facet Reeb
   vector, and each facet velocity occurs on a single interval, possibly empty.

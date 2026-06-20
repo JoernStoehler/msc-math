@@ -72,19 +72,29 @@ Update rule: add or change a claim only with a source pointer or an explicit
 
 ## Clarke Dual Action Principle
 
-- State the principle at the level needed for the thesis.
-- Do not decide proof depth by default. Current open choice: cite/state only,
-  give a proof sketch, or import a polished proof from legacy material after
-  revalidation.
+- Jörn clarified on 2026-06-20 that Clarke is a required thesis-facing
+  proof/exposition component: the literature is too compressed for the thesis
+  role this result plays.
+- The 2026-06-16 source-archeology result says to use
+  `thesis/legacy/clarkedual-action-principle.tex` and
+  `thesis/legacy/simple-minimizer-existence.tex` as primary old writing, while
+  treating older raw talk files as convention/pitfall archaeology only.
+- Preserve the recovered convention decisions: free period `T`, uncentered dual
+  problem, no `\int z = 0` constraint, and no untranslated HK2017 fixed-`[0,1]`
+  or `2 I_K` normalization. In the thesis convention, a contact-normalized Reeb
+  curve has `I_K = T = A`.
 - Name the function space, action functional, minimizer/existence statement,
   and the conclusion used later for polytopes.
 - Use it only for the part of the finite computation story it actually
-  justifies. Open decision: state exactly which later step it justifies:
-  existence of a minimum-action orbit, reduction to a closed
-  curve/action-minimization problem, the simple-minimizer route, or the
-  HK finite optimization theorem.
+  justifies: the bridge from primal minimum-action closed characteristics to
+  the dual curve problem in which the simple-minimizer argument is carried out.
 - Keep functional-analytic details only where needed for correctness and reader
-  pacing.
+  pacing. The Euler--Lagrange inclusion should cite Clarke rather than prove
+  nonsmooth calculus from scratch.
+- 2026-06-20 draft review: one math-risk subagent flagged the missing
+  minimizer-is-critical bridge and the Euler--Lagrange equivalence wording;
+  both were patched. Jörn review is still needed for the final free-period
+  uncentered equivalence and normalization.
 
 ## Out Of Scope For This Session
 

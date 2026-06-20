@@ -1,4 +1,336 @@
 \section{Preliminaries}\label{sec:preliminaries}
-\subsection{Polytopes}\label{subsec:preliminaries-polytopes}
-\subsection{Smooth Symplectic Geometry}\label{subsec:preliminaries-smooth-symplectic-geometry}
+
+This section fixes the notation used later for convex bodies, Reeb orbits, and
+Clarke's dual action principle. All convex bodies are compact convex subsets of
+\(\mathbb{R}^4\) with non-empty interior. Unless stated otherwise, we assume
+that the origin lies in the interior.
+
+\subsection{Convex and symplectic notation}\label{subsec:preliminaries-polytopes}
+
+We write \(\mathbb{R}^4\) with coordinates \((q_1,q_2,p_1,p_2)\). The standard
+complex structure is
+\[
+  J_0 =
+  \begin{pmatrix}
+    0 & -I_2 \\
+    I_2 & 0
+  \end{pmatrix},
+\]
+and the standard symplectic form is
+\[
+  \omega_0(u,v) = \langle J_0u,v\rangle
+  = \sum_{i=1}^2 (u_{q_i}v_{p_i}-u_{p_i}v_{q_i}).
+\]
+We use the standard primitive
+\[
+  \lambda_0 = \frac{1}{2}\sum_{i=1}^2(q_i\,dp_i-p_i\,dq_i).
+\]
+Thus, for an absolutely continuous closed curve
+\(\gamma\colon[0,T]\to\mathbb{R}^4\), its action is
+\begin{equation}\label{eq:preliminaries-action}
+  A(\gamma) \coloneqq \int_\gamma \lambda_0
+  = \frac{1}{2}\int_0^T
+    \langle -J_0\dot{\gamma}(t),\gamma(t)\rangle\,dt.
+\end{equation}
+This action is invariant under orientation-preserving reparametrization.
+
+For a convex body \(K\), the support function and gauge function are
+\[
+  h_K(y) \coloneqq \max_{x\in K}\langle x,y\rangle,
+  \qquad
+  g_K(x) \coloneqq \inf\{\lambda>0:x\in \lambda K\}.
+\]
+The boundary of \(K\) is the level set \(g_K=1\). We use the Hamiltonian
+\[
+  H_K(x) \coloneqq g_K(x)^2.
+\]
+When \(K\) is smooth, a Reeb orbit on \(\partial K\) is the contact-normalized
+Hamiltonian orbit
+\begin{equation}\label{eq:preliminaries-smooth-reeb-inclusion}
+  -J_0\dot{\gamma}(t) \in \partial H_K(\gamma(t)),
+  \qquad
+  H_K(\gamma(t))=1.
+\end{equation}
+Here \(\partial H_K\) denotes the convex subdifferential; in the smooth case it
+is the singleton \(\{\nabla H_K\}\). With this normalization the action of a
+Reeb orbit equals its period:
+\[
+  A(\gamma)=T.
+\]
+
+\subsection{EHZ capacity}\label{subsec:preliminaries-smooth-symplectic-geometry}
+
+For smooth convex bodies, the Ekeland--Hofer and Hofer--Zehnder capacities
+coincide. We use the resulting EHZ capacity in the form
+\begin{equation}\label{eq:preliminaries-ehz-capacity}
+  c_{\mathrm{EHZ}}(K)
+  = \min\{A(\gamma):\gamma
+    \text{ is a closed characteristic on }\partial K\}.
+\end{equation}
+Equivalently, the minimum may be taken over Reeb orbits, because every closed
+characteristic admits the contact-normalized Reeb parametrization and the
+action is reparametrization-invariant. The minimum exists and is positive; for
+the thesis we use this standard existence result as background
+\cite{Rabinowitz1978}. For nonsmooth convex bodies, and in particular for
+polytopes, the same capacity is obtained by approximation and by minimizing
+over generalized closed characteristics. The polytope version used later is
+spelled out in Section~\ref{sec:generalized-reeb-orbits-polytopes}.
+
 \subsection{Clarke dual action principle}\label{subsec:preliminaries-clarke-dual-action-principle}
+
+The finite Haim--Kislev formula used in
+Section~\ref{sec:quadratic-program-algorithm-hk2019} rests on a dual
+variational viewpoint. The literature often states this bridge in a fixed
+\([0,1]\)-period normalization. We use a free-period normalization instead:
+the dual curves below have period \(T\), satisfy \(A(z)=T\), and are not
+centered by a condition such as \(\int z=0\). Translation is handled as a
+symmetry, not as a constraint.
+
+\begin{lemma}[Fenchel duality for the gauge]\label{lem:preliminaries-fenchel-duality}
+The Legendre--Fenchel conjugate of \(g_K^2\) is
+\(\frac{1}{4}h_K^2\). Equivalently,
+\[
+  g_K^2(x) + \frac{1}{4}h_K^2(y) \geq \langle x,y\rangle
+\]
+for all \(x,y\in\mathbb{R}^4\), with equality if and only if
+\[
+  y\in \partial g_K^2(x)
+  \quad\Longleftrightarrow\quad
+  x\in \partial\bigl(\tfrac{1}{4}h_K^2\bigr)(y).
+\]
+\end{lemma}
+
+\begin{proof}
+For fixed \(y\), write \(x=\lambda u\) with \(\lambda\geq0\) and
+\(g_K(u)=1\). Since \(g_K(\lambda u)^2=\lambda^2\),
+\[
+  (g_K^2)^*(y)
+  = \sup_{\lambda\geq0}
+      \sup_{g_K(u)=1}\{\lambda\langle u,y\rangle-\lambda^2\}
+  = \sup_{\lambda\geq0}\{\lambda h_K(y)-\lambda^2\}
+  = \frac{1}{4}h_K(y)^2.
+\]
+The Fenchel inequality and the equality/subdifferential condition are the
+standard equality cases for a convex function and its conjugate.
+\end{proof}
+
+Define the dual functional on absolutely continuous closed curves
+\[
+  z\colon[0,T]\to\mathbb{R}^4
+\]
+by
+\begin{equation}\label{eq:preliminaries-dual-functional}
+  I_K(z) \coloneqq
+  \frac{1}{4}\int_0^T h_K^2(-J_0\dot{z}(t))\,dt.
+\end{equation}
+The dual problem is
+\begin{equation}\label{eq:preliminaries-dual-problem}
+  \min\{I_K(z):
+    z\in W^{1,2}([0,T],\mathbb{R}^4),\;
+    z(0)=z(T),\; T>0,\; A(z)=T\}.
+\end{equation}
+
+\begin{lemma}[Dual Euler--Lagrange condition]\label{lem:preliminaries-dual-euler-lagrange}
+A closed curve
+\[
+  z\in W^{1,2}([0,T],\mathbb{R}^4),
+  \qquad A(z)=T,
+\]
+is a critical point of the dual problem if and only if there are
+\(\nu\in\mathbb{R}\) and \(b\in\mathbb{R}^4\) such that
+\begin{equation}\label{eq:preliminaries-dual-euler-lagrange}
+  \nu z(t)+b
+  \in \partial\bigl(\tfrac{1}{4}h_K^2\bigr)(-J_0\dot{z}(t))
+  \quad\text{for a.e. }t.
+\end{equation}
+Equivalently,
+\[
+  -J_0\dot{z}(t)\in\partial g_K^2(\nu z(t)+b)
+  \quad\text{for a.e. }t.
+\]
+\end{lemma}
+
+\begin{proof}
+This is Clarke's nonsmooth Euler--Lagrange theorem for the constrained
+functional \(I_K\) \cite[Ch.~5]{Clarke1983}. Haim--Kislev use the same
+nonsmooth dual-action principle for polytopes in their preliminary section
+\cite[Section~2]{HK2017}. The calculation below identifies the resulting
+inclusion in our free-period normalization.
+
+Introduce a Lagrange multiplier \(\alpha\) for the constraint \(A(z)=T\) and
+consider
+\[
+  L(z,\dot{z})
+  = \frac{1}{4}h_K^2(-J_0\dot{z})
+    +\alpha\langle -J_0\dot{z},z\rangle.
+\]
+The Euler--Lagrange inclusion gives an absolutely continuous \(\xi\) with
+\[
+  \xi(t)\in\partial_{\dot{z}}L(z(t),\dot{z}(t)),
+  \qquad
+  \dot{\xi}(t)=\nabla_zL(z(t),\dot{z}(t)).
+\]
+The right-hand side is
+\(-\alpha J_0\dot{z}\). On the left-hand side, the chain rule for
+\(\frac{1}{4}h_K^2(-J_0\dot{z})\) gives
+\[
+  \partial_{\dot{z}}L
+  = J_0\,\partial\bigl(\tfrac{1}{4}h_K^2\bigr)(-J_0\dot{z})
+    +\alpha J_0z.
+\]
+Hence there is
+\(p(t)\in\partial(\tfrac{1}{4}h_K^2)(-J_0\dot{z}(t))\) with
+\[
+  J_0\dot{p}+\alpha J_0\dot{z}
+  =-\alpha J_0\dot{z}.
+\]
+Thus \(\dot{p}=-2\alpha\dot{z}\), so
+\[
+  p(t)=b-2\alpha z(t).
+\]
+Writing \(\nu=-2\alpha\) gives
+\eqref{eq:preliminaries-dual-euler-lagrange}. Fenchel duality gives the
+equivalent formulation. Conversely, the same Euler--Lagrange theorem says that
+this inclusion is sufficient for constrained criticality.
+\end{proof}
+
+\begin{lemma}[Scaling and translation]\label{lem:preliminaries-dual-symmetry}
+Let \(z\) be a critical point of the dual problem on \([0,T]\). For every
+\(\alpha>0\) and every \(b\in\mathbb{R}^4\), the curve
+\[
+  z'(t)=\alpha z(t/\alpha^2)+b,
+  \qquad 0\leq t\leq \alpha^2T,
+\]
+is again a critical point of the dual problem. Moreover
+\[
+  A(z')=\alpha^2A(z)=\alpha^2T,
+  \qquad
+  I_K(z')=I_K(z).
+\]
+\end{lemma}
+
+\begin{proof}
+Closure is immediate. The action identity follows by substituting
+\(s=t/\alpha^2\); the term containing the constant vector \(b\) integrates to
+zero because \(z\) is closed. For the dual functional,
+\[
+  I_K(z')
+  =\frac{1}{4}\int_0^{\alpha^2T}
+    h_K^2\!\left(-\frac{1}{\alpha}J_0\dot{z}(t/\alpha^2)\right)\,dt
+  =I_K(z),
+\]
+using the \(1\)-homogeneity of \(h_K\). The Euler--Lagrange inclusion is
+preserved because
+\(\partial(\frac14 h_K^2)(\lambda y)=\lambda
+\partial(\frac14 h_K^2)(y)\) for \(\lambda>0\).
+\end{proof}
+
+\begin{theorem}[Clarke dual action principle]\label{thm:preliminaries-clarke-dual-action}
+For a convex body \(K\), the primal minimum over closed characteristics
+(generalized in the nonsmooth case) and the dual minimum
+\eqref{eq:preliminaries-dual-problem} agree:
+\[
+  c_{\mathrm{EHZ}}(K)
+  = \min_\gamma A(\gamma)
+  = \min_z I_K(z).
+\]
+More precisely, every contact-normalized closed characteristic is a dual
+critical point, and every dual critical point has a translate/rescale in the
+sense of Lemma~\ref{lem:preliminaries-dual-symmetry} that is a
+contact-normalized closed characteristic.
+\end{theorem}
+
+\begin{proof}
+Let \(\gamma\) be a contact-normalized closed characteristic of period \(T\).
+Then \(g_K^2(\gamma)=1\),
+\(-J_0\dot{\gamma}\in\partial g_K^2(\gamma)\), and \(A(\gamma)=T\). By
+Lemma~\ref{lem:preliminaries-fenchel-duality},
+\[
+  \gamma(t)\in
+  \partial\bigl(\tfrac{1}{4}h_K^2\bigr)(-J_0\dot{\gamma}(t))
+  \quad\text{for a.e. }t.
+\]
+This is the dual Euler--Lagrange condition with \(\nu=1\) and \(b=0\).
+Thus \(\gamma\) is a dual critical point, and
+Lemma~\ref{lem:preliminaries-dual-symmetry} gives the whole
+translate/rescale family.
+
+Conversely, let \(z\) be a dual critical point of period \(T\). Choose
+\(\nu,b\) as in Lemma~\ref{lem:preliminaries-dual-euler-lagrange}. The
+equivalent inclusion gives
+\[
+  -J_0\dot{z}(t)\in\partial g_K^2(\nu z(t)+b).
+\]
+The multiplier \(\nu\) is nonzero. If \(\nu=0\), then closedness of \(z\) and
+convexity would imply \(0\in\partial g_K^2(b)\), hence \(b=0\), and then the
+dual Euler--Lagrange condition would force \(\dot{z}=0\), contradicting
+\(A(z)=T>0\).
+
+Set \(x(t)=\nu z(t)+b\). For almost every \(t\), the chain rule for the convex
+function \(g_K^2\) gives
+\[
+  \frac{d}{dt}g_K^2(x(t))
+  = \langle -J_0\dot{z}(t),\nu\dot{z}(t)\rangle
+  =0.
+\]
+Since \(z\) is closed, \(g_K^2(x(t))\) is constant; write
+\(g_K(x(t))=c>0\). Integrating the Fenchel equality gives
+\[
+  c^2T+I_K(z)
+  =\int_0^T\langle x(t),-J_0\dot{z}(t)\rangle\,dt
+  =2\nu A(z)=2\nu T.
+\]
+The left-hand side is positive, so \(\nu>0\).
+
+Define
+\[
+  \gamma(t)=\frac{\nu z(t/\nu)+b}{c},
+  \qquad 0\leq t\leq \nu T.
+\]
+Then \(g_K(\gamma)=1\). Using the \(2\)-homogeneity of \(g_K^2\),
+\(\partial g_K^2(x/c)=c^{-1}\partial g_K^2(x)\), so
+\[
+  -J_0\dot{\gamma}(t)
+  =-\frac{1}{c}J_0\dot{z}(t/\nu)
+  \in \partial g_K^2(\gamma(t)).
+\]
+Thus \(\gamma\) is a contact-normalized closed characteristic. A direct action
+computation gives
+\[
+  A(\gamma)=\frac{\nu^2}{c^2}A(z)=\frac{\nu^2}{c^2}T.
+\]
+Since \(\gamma\) is contact-normalized, \(A(\gamma)=\nu T\). Hence
+\(\nu=c^2\), and
+\[
+  \gamma(t)=c\,z(t/c^2)+\frac{b}{c},
+\]
+so \(\gamma\) lies in the translate/rescale family of \(z\).
+
+It remains to compare the values. For any contact-normalized closed
+characteristic \(\gamma\), Fenchel equality gives
+\[
+  g_K^2(\gamma)+\frac{1}{4}h_K^2(-J_0\dot{\gamma})
+  =\langle \gamma,-J_0\dot{\gamma}\rangle.
+\]
+After integration,
+\[
+  T+I_K(\gamma)=2A(\gamma)=2T.
+\]
+Thus \(I_K(\gamma)=T=A(\gamma)\). The value \(I_K\) is constant on the
+translate/rescale family by Lemma~\ref{lem:preliminaries-dual-symmetry}.
+Conversely, the argument above sends every dual critical point to a
+contact-normalized closed characteristic in its translate/rescale family.
+Therefore the infima over primal critical points and over dual critical points
+agree. A minimizer of the dual problem is a weak critical point by Clarke's
+variational principle; this is the point recorded in the nonsmooth
+dual-action statement used by Haim--Kislev \cite[Section~2]{HK2017}. Hence the
+dual minimum is attained among these dual critical points, and the primal and
+dual minima agree.
+\end{proof}
+
+The point of the theorem is not just the equality of two numbers. The primal
+formulation constrains a curve to lie on \(\partial K\) and to satisfy a
+differential inclusion. The dual formulation removes the position constraint
+and makes the functional depend only on \(\dot{z}\). Haim--Kislev exploit this
+freedom to choose a capacity minimizer on a polytope with a finite, simple
+facet-word description \cite{HK2017}.
