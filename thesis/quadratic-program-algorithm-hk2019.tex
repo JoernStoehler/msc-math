@@ -3,13 +3,147 @@
 
 This section records the finite computation principle used later in the
 thesis. Haim--Kislev's formula for polytopes reduces the EHZ capacity to a
-finite list of quadratic programs over cyclic facet words
+finite list of quadratic programs over ordered facet words
 \cite{HK2017}. For general polytopes this list is combinatorially large. For
 Lagrangian products of planar polygons, the billiard interpretation gives a
-much smaller finite list, and this is the only part of the algorithm needed in
+much smaller finite list; this finite-enumeration result is the part needed in
 Section~\ref{sec:rotated-regular-polygons}.
 After this first attribution, we call the resulting finite optimization problem
 the quadratic program, or QP when space is tight.
+
+\subsection{The finite quadratic program}
+\label{subsec:quadratic-program-algorithm-hk2019-general-polytopes}
+
+Let
+\[
+  K=\{x\in\mathbb{R}^4:\langle a_i,x\rangle\leq 1,\;
+    i=1,\ldots,F\}
+\]
+be a full-dimensional polytope with \(0\in\operatorname{int}(K)\), written as
+in Section~\ref{sec:generalized-reeb-orbits-polytopes}. Thus
+\(a_i=n_i/h_i\) if \(n_i\) is the outward unit normal to the \(i\)-th facet and
+\(h_i=h_K(n_i)>0\) is its height. Haim--Kislev state their formula in the
+\((n_i,h_i)\)-variables. We use the equivalent dual-vertex variables
+\[
+  \beta_i^{\mathrm{here}}=\beta_i^{\mathrm{HK}}h_i.
+\]
+The constraints then become
+\[
+  \beta_i\geq0,\qquad
+  \sum_i\beta_i=1,\qquad
+  \sum_i\beta_i a_i=0.
+\]
+
+For an ordered facet word
+\(\sigma=(\sigma_1,\ldots,\sigma_m)\) with distinct entries, define
+\[
+  M_\sigma
+  =
+  \left\{
+    \beta\in\mathbb{R}_{\geq0}^m:
+    \sum_{k=1}^m\beta_k=1,\;
+    \sum_{k=1}^m\beta_k a_{\sigma_k}=0
+  \right\}.
+\]
+The quadratic objective for this word is
+\begin{equation}\label{eq:quadratic-program-algorithm-hk2019-q}
+  Q_\sigma(\beta)
+  =
+  \sum_{1\leq j<k\leq m}
+    \beta_k\beta_j\,\omega_0(a_{\sigma_k},a_{\sigma_j}).
+\end{equation}
+This is the Haim--Kislev fixed-word order after translating their symplectic
+convention to \(\omega_0\). If one uses the opposite cyclic orientation of
+\(\sigma\), the displayed sum is written with the two arguments of
+\(\omega_0\) reversed. The global unpruned problem ranges over all ordered
+words, so this is a convention for naming the fixed word, not an extra
+geometric restriction.
+
+Let
+\[
+  Q_{\max}
+  =
+  \max_\sigma\ \max_{\beta\in M_\sigma} Q_\sigma(\beta),
+\]
+where \(\sigma\) ranges over ordered words with distinct facets. Equivalently,
+one may range over all permutations of all facets and allow zero weights; the
+zero-weight entries are then deleted to recover the active word. This is only
+an enumeration convention: HK's theorem is the full-permutation statement, and
+the active-word form is obtained by deleting unused zero-weight facets and
+reindexing the remaining entries. This formulation intentionally permits
+duplicates of the same geometric orbit, for example from changing the starting
+segment.
+
+\begin{theorem}[Haim--Kislev quadratic program]
+\label{thm:quadratic-program-algorithm-hk2019-hk-formula}
+For a full-dimensional convex polytope \(K\subset\mathbb{R}^4\),
+\[
+  c_{\mathrm{EHZ}}(K)=\frac{1}{2Q_{\max}}.
+\]
+\end{theorem}
+
+\begin{proof}
+This is Haim--Kislev's finite capacity formula
+\cite[Theorem~1.1]{HK2017}, rewritten from unit normals and heights to the
+dual vertices \(a_i=n_i/h_i\). The variable change above sends
+\[
+  \sum_i\beta_i^{\mathrm{HK}}h_i=1,\qquad
+  \sum_i\beta_i^{\mathrm{HK}}n_i=0
+\]
+to the constraints defining \(M_\sigma\), and sends the Haim--Kislev objective
+to \(Q_\sigma\). Their formula therefore reads
+\[
+  c_{\mathrm{EHZ}}(K)
+  =
+  \frac{1}{2}
+  \left[\max_\sigma\max_{\beta\in M_\sigma}Q_\sigma(\beta)\right]^{-1}.
+\]
+\end{proof}
+
+The normalization is compatible with our Reeb-orbit convention. Suppose a
+simple orbit is traversed in the active order
+\(\rho=(\rho_1,\ldots,\rho_m)\), with dwell times \(\tau_k>0\) and period
+\(T=\sum_k\tau_k\). The shoelace formula uses this traversal order, whereas
+\eqref{eq:quadratic-program-algorithm-hk2019-q} uses the Haim--Kislev
+fixed-word order. To compare them, set
+\[
+  \sigma=(\rho_m,\rho_{m-1},\ldots,\rho_1),
+  \qquad
+  \beta_k=\frac{\tau_{m+1-k}}{T}.
+\]
+Then \(\beta\in M_\sigma\), because the closure equation
+\(\sum_k\tau_kR_{\rho_k}=0\) and \(R_i=2J_0a_i\) imply
+\(\sum_k\beta_k a_{\sigma_k}=0\). Lemma~\ref{lem:preliminaries-shoelace}
+gives
+\[
+  2T
+  =
+  4T^2
+  \sum_{1\leq r<s\leq m}
+    \frac{\tau_r}{T}\frac{\tau_s}{T}\,
+    \omega_0(a_{\rho_r},a_{\rho_s})
+  =
+  4T^2Q_\sigma(\beta),
+  \qquad\text{so}\qquad
+  Q_\sigma(\beta)=\frac{1}{2T}.
+\]
+Thus maximizing \(Q_\sigma\) is the same normalization as minimizing the
+free-period action \(T=A(\gamma)\). The Haim--Kislev theorem is the part that
+rules out a larger value coming from the finite optimization and proves the
+global equality with the capacity.
+
+For a fixed word, it is often convenient to write the objective as a quadratic
+program
+\[
+  \text{maximize }\frac{1}{2}\beta^{\mathsf T}H_\sigma\beta
+  \quad\text{subject to}\quad
+  \beta\in M_\sigma,
+\]
+where \(H_\sigma\) is the symmetric matrix determined by
+\(\frac{1}{2}\beta^{\mathsf T}H_\sigma\beta=Q_\sigma(\beta)\). This section
+only fixes the standard finite problem. Later algorithmic sections decide how
+to enumerate words, discard impossible words, and solve the fixed-word
+quadratic programs.
 
 \subsection{Finite enumeration for Lagrangian products}
 \label{subsec:quadratic-program-algorithm-hk2019-lagrangian-products}
@@ -27,8 +161,8 @@ of facets of the same type a two-facet block.
 \begin{theorem}[Finite enumeration for Lagrangian products]
 \label{thm:lagrangian-product-finite-enumeration}
 For a Lagrangian product \(K=K_q\times_L K_p\) of nondegenerate planar convex
-polygons, \(c_{\mathrm{EHZ}}(K)\) is obtained by minimizing over the
-Haim--Kislev quadratic programs associated to cyclic words of the form
+polygons, \(c_{\mathrm{EHZ}}(K)\) is obtained by maximizing \(Q_\sigma\) over
+the Haim--Kislev quadratic programs associated to cyclic words of the form
 \[
   \bigl([Q\mid QQ]\,[P\mid PP]\bigr)^k,
   \qquad k\in\{2,3\},
@@ -42,10 +176,11 @@ minimum-action simple Reeb orbits.
 \end{theorem}
 
 \begin{proof}
-The Haim--Kislev formula reduces \(c_{\mathrm{EHZ}}(K)\) to a finite
-optimization over simple cyclic facet words \cite{HK2017}. Thus it remains to
-find a finite subfamily that contains at least one capacity-realizing word for
-a Lagrangian product.
+The Haim--Kislev quadratic program,
+Theorem~\ref{thm:quadratic-program-algorithm-hk2019-hk-formula}, reduces
+\(c_{\mathrm{EHZ}}(K)\) to a finite optimization over simple ordered facet
+words. Thus it remains to find a finite subfamily that contains at least one
+capacity-realizing word for a Lagrangian product.
 
 On a \(q\)-facet of \(K_q\times_L K_p\), the Reeb vector is tangent to the
 \(p\)-factor; on a \(p\)-facet, it is tangent to the \(q\)-factor. Hence a
@@ -102,20 +237,10 @@ pattern
   \bigl([Q\mid QQ]\,[P\mid PP]\bigr)^k,
 \]
 flatten the blocks to a facet word, discard infeasible words, and solve the
-corresponding Haim--Kislev quadratic program. The capacity is the minimum action
-among the feasible words in this candidate family.
+corresponding Haim--Kislev quadratic program. The capacity is
+\(1/(2Q_{\max})\), where \(Q_{\max}\) is the largest objective value among the
+feasible words in this candidate family.
 \end{algorithm}
-
-\subsection{General polytopes}
-\label{subsec:quadratic-program-algorithm-hk2019-general-polytopes}
-
-For a general four-dimensional polytope, the same Haim--Kislev formula
-\cite{HK2017} applies to cyclic words in arbitrary facets, with the usual
-adjacency pruning: if two consecutive facets do not intersect, that word cannot
-come from a simple orbit and may be discarded. The Lagrangian-product theorem
-above is stronger only because the product structure and the planar billiard
-bounce bound restrict the relevant words to the alternating two- and
-three-bounce lists.
 
 \subsection{Implementation status}
 \label{subsec:quadratic-program-algorithm-hk2019-implementation-status}

@@ -54,6 +54,15 @@ Update rule: add or change a claim only with a source pointer or an explicit
   to advertise as a new contribution.
 - HKO2024 as a ten-facet polytope example.
 - Volume of a polytope.
+- 2026-06-20 correction: these are not optional implementation details.
+  Active prose now includes
+  `subsec:preliminaries-polytope-finite-geometry`, covering normalized
+  \(H\)-representations, polar dual vertices, boundedness via positive
+  spanning, irredundancy via extremality of dual rows, exact vertex enumeration
+  from four active facets, vertex--facet incidence, face-incidence extraction,
+  and Hausdorff/fixed-facet local charts. This material is non-novel but needed
+  in multiple thesis sections and should remain thesis-facing, even if some
+  details later move to an appendix.
 
 ## Smooth Symplectic Geometry
 
@@ -79,6 +88,13 @@ Update rule: add or change a claim only with a source pointer or an explicit
   `thesis/legacy/clarkedual-action-principle.tex` and
   `thesis/legacy/simple-minimizer-existence.tex` as primary old writing, while
   treating older raw talk files as convention/pitfall archaeology only.
+- HK's `singular_capacity` citation is `AAO2014` in
+  `papers/hk2017/EHZ-polytopes.bbl`. The relevant source trail is
+  `AAO2014` Propositions 2.5 and 2.7 plus Lemmas 5.1 and 5.2: fixed-period
+  dual minimum, generalized closed-characteristic action equality, weak
+  critical-point correspondence, and minimizers weak critical. The active
+  thesis should not merely cite this correspondence; it should prove the
+  convention translation and Reeb correspondence in thesis notation.
 - Preserve the recovered convention decisions: free period `T`, uncentered dual
   problem, no `\int z = 0` constraint, and no untranslated HK2017 fixed-`[0,1]`
   or `2 I_K` normalization. In the thesis convention, a contact-normalized Reeb
@@ -86,21 +102,40 @@ Update rule: add or change a claim only with a source pointer or an explicit
 - Name the function space, action functional, minimizer/existence statement,
   and the conclusion used later for polytopes.
 - Use it only for the part of the finite computation story it actually
-  justifies: the bridge from primal minimum-action closed characteristics to
+  justifies: the reduction from primal minimum-action closed characteristics to
   the dual curve problem in which the simple-minimizer argument is carried out.
-- Keep functional-analytic details only where needed for correctness and reader
-  pacing. The Euler--Lagrange inclusion should cite Clarke rather than prove
-  nonsmooth calculus from scratch.
+- Keep only the general nonsmooth-analysis infrastructure outside the main
+  proof: existence of a dual minimizer and the validity of Clarke's nonsmooth
+  Lagrange multiplier rule. The active text should derive the free-period,
+  uncentered Euler--Lagrange relation, scaling/translation, Reeb
+  correspondence, and \(I_K=T=A\) normalization in thesis notation.
 - 2026-06-20 draft review: one math-risk subagent flagged the missing
-  minimizer-is-critical bridge and the Euler--Lagrange equivalence wording;
-  both were patched. Jörn review is still needed for the final free-period
-  uncentered equivalence and normalization.
+  minimizer-is-critical step and the Euler--Lagrange equivalence wording.
+  The active draft now avoids the unsupported "critical point iff" formulation
+  and cites the AAO/HK source trail explicitly. The remaining review boundary
+  is whether the only external analytic input has been narrowed enough:
+  existence of a dual minimizer plus Clarke's nonsmooth multiplier rule.
 - The PDF review built from commit `69fdbd29` was abandoned after little review
   happened. The next review target should be a polished branch-head PDF for the
   combined Clarke/simple-Reeb surface, not the old baseline.
-- Branch-head review should ask Jörn specifically whether the cited Clarke
-  Euler--Lagrange equivalence is acceptable in the free-period, uncentered
-  convention at the level of detail in the thesis proof.
+- Review boundary for branch-head PDF: whether the remaining cited analytic
+  input is acceptable at this level of detail, and whether the free-period,
+  uncentered derivation of weak criticality and the \(I_K=T=A\) normalization
+  are correct.
+- Legacy/PDF comparison on 2026-06-20 checked
+  `thesis/legacy/basic-definitions.tex`, the old `/tmp/pdf-source-a872` thesis
+  packet, and `/tmp/thesis_stoehler_20260216.pdf` against active preliminaries.
+  Active text now absorbs the useful low-cost preliminaries omissions:
+  standard \(J_0,\omega_0,\lambda_0\) identities, the standard capacity
+  axioms/background, and the symplectic-product capacity formula for normalized
+  symplectic capacities.
+- Deliberately not ported from old preliminaries in this checkpoint:
+  characteristic-line-field definitions and their reparametrization proof,
+  Stokes/symplectic-area motivation for action, full smooth/polytope orbit
+  existence theorem statements, and the Clarke symmetry-class uniqueness
+  remark. These are lower-priority polish or background candidates for the
+  preliminaries review surface; they should be reconsidered before deleting the
+  corresponding legacy source material.
 - Once the active Clarke section has passed Jörn's review, delete
   `thesis/legacy/clarkedual-action-principle.tex`; it should not remain as a
   parallel source after its content and phrasing are absorbed into active

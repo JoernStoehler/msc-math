@@ -45,11 +45,19 @@ Update rule: add or change a claim only with a source pointer or an explicit
 
 ## Definition
 
-- Define the finite optimization problem, variables, constraints, objective,
-  and reconstruction of the orbit.
-- Include sigma/orbit word, beta constraints, quadratic objective including
-  normalization/factor convention, admissibility conditions, and orbit
-  reconstruction formula.
+- Active draft now defines the finite optimization problem, variables,
+  constraints, objective, and normalization/factor convention in dual-vertex
+  coordinates.
+- Current convention: for a fixed word
+  \(\sigma=(\sigma_1,\ldots,\sigma_m)\),
+  \(M_\sigma=\{\beta\ge0:\sum\beta_k=1,\sum\beta_ka_{\sigma_k}=0\}\) and
+  \(Q_\sigma(\beta)=\sum_{j<k}\beta_k\beta_j
+  \omega_0(a_{\sigma_k},a_{\sigma_j})\). This is the HK fixed-word order from
+  `formal/hk2017-qp-conventions.tex`.
+- The active draft explains the sign/order comparison with the shoelace
+  formula by reversing the traversed orbit word. This should be reviewed
+  carefully because fixed-word orientation errors are high-impact for later
+  solver sections.
 - State the input contract explicitly: the dual rows have already been checked
   to be extremal and bounded in the sense of the polytope preliminaries.
 - The capacity computation may use the computed primal vertex set and
@@ -69,17 +77,31 @@ Update rule: add or change a claim only with a source pointer or an explicit
 
 ## Correctness
 
-- State and justify that the finite problem computes the intended minimum
-  action/capacity in the polytope setting, at the proof depth chosen for this
-  thesis section.
-- Likely named claims: finite candidate reduction, equivalence between beta
-  problem and generalized orbit action, existence of an optimum, and recovery
-  of capacity/sys.
+- The active theorem states HK2017's capacity formula, translated from
+  normals/heights to dual vertices, and gives the direct variable substitution.
+- The active explanatory paragraph checks normalization against the thesis
+  Reeb/action conventions: an actual simple orbit with period \(T\) gives
+  \(Q=1/(2T)\) after reversing the traversed word into HK fixed-word order.
+- Do not strengthen this into "every feasible QP point is already an actual
+  Reeb orbit." Arbitrary finite feasible points are part of HK's dual finite
+  formula; base-point recovery and later feasibility/pruning are separate
+  computational questions.
 - For the Lagrangian-product enumeration, state only a capacity-search result:
   the restricted alternating \(q/p\)-block family contains a capacity
   minimizer. Do not claim it classifies all minimum-action simple Reeb orbits;
   the billiard bounce bound gives existence of one minimizer with at most three
   bounces, not nonexistence of longer minimizers.
+- 2026-06-20 legacy/PDF comparison found the old KKT linear system,
+  well-definedness, non-maximizer warning, and unpruned solver correctness as
+  substantial old material not represented here. This is deliberate for this
+  checkpoint: the current section states the HK finite QP interface, while
+  optimizing/solving the QP belongs to the later QP algorithm checkpoint.
+- 2026-06-20 HK source comparison confirmed the active fixed-word
+  sign/order/factor convention against HK2017 and
+  `formal/hk2017-qp-conventions.tex`. It also flagged that active-word
+  enumeration is not literally HK's full-permutation theorem statement; active
+  prose now marks this as an enumeration convention obtained by deleting
+  zero-weight facets.
 
 ## Deferred Algorithmic Material
 

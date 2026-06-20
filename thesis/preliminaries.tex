@@ -21,10 +21,14 @@ and the standard symplectic form is
   \omega_0(u,v) = \langle J_0u,v\rangle
   = \sum_{i=1}^2 (u_{q_i}v_{p_i}-u_{p_i}v_{q_i}).
 \]
+We will use \(J_0^2=-I\), \(J_0^{\mathsf T}=-J_0\), and
+\(\omega_0(J_0u,J_0v)=\omega_0(u,v)\) without further comment.
 We use the standard primitive
 \[
   \lambda_0 = \frac{1}{2}\sum_{i=1}^2(q_i\,dp_i-p_i\,dq_i).
 \]
+Thus \(d\lambda_0=\omega_0\) and
+\(\lambda_0|_x(v)=\frac12\langle -J_0v,x\rangle\).
 Thus, for an absolutely continuous closed curve
 \(\gamma\colon[0,T]\to\mathbb{R}^4\), its action is
 \begin{equation}\label{eq:preliminaries-action}
@@ -33,6 +37,117 @@ Thus, for an absolutely continuous closed curve
     \langle -J_0\dot{\gamma}(t),\gamma(t)\rangle\,dt.
 \end{equation}
 This action is invariant under orientation-preserving reparametrization.
+
+\begin{lemma}[Symplectic shoelace formula]\label{lem:preliminaries-shoelace}
+Let \(z\colon[0,T]\to\mathbb{R}^4\) be a closed piecewise affine curve. Suppose
+that \(z\) has constant velocity \(w_k\) on consecutive intervals of length
+\(\ell_k\), for \(k=1,\ldots,m\). Then
+\begin{equation}\label{eq:preliminaries-shoelace}
+  2A(z)
+  =
+  \sum_{1\leq j<k\leq m}
+    \ell_j\ell_k\,\omega_0(w_j,w_k).
+\end{equation}
+In particular, the action of a closed pure-word Reeb orbit depends only on the
+cyclic velocity word and the dwell times, not on the base point.
+\end{lemma}
+
+\begin{proof}
+Write \(t_k=\sum_{j<k}\ell_j\). On the \(k\)-th interval,
+\[
+  z(t)=z(0)+\sum_{j<k}\ell_jw_j+(t-t_k)w_k.
+\]
+The contribution of \(z(0)\) to
+\(\int_0^T\langle -J_0\dot z,z\rangle\,dt\) vanishes because \(z\) is closed,
+so \(\sum_k\ell_kw_k=0\). The self-term
+\(\langle -J_0w_k,w_k\rangle\) vanishes by skew-symmetry. Hence
+\[
+  2A(z)
+  =
+  \sum_k
+    \ell_k\left\langle -J_0w_k,\sum_{j<k}\ell_jw_j\right\rangle
+  =
+  \sum_{j<k}\ell_j\ell_k\,\omega_0(w_j,w_k),
+\]
+using \(\omega_0(u,v)=\langle J_0u,v\rangle\).
+\end{proof}
+
+\subsection{Polytope representations and finite geometry}
+\label{subsec:preliminaries-polytope-finite-geometry}
+
+The thesis uses two equivalent finite descriptions of a full-dimensional
+polytope \(K\subset\mathbb{R}^4\) with \(0\in\operatorname{int}(K)\). An
+\(H\)-representation is an intersection of normalized halfspaces
+\[
+  K=\{x\in\mathbb{R}^4:\langle a_i,x\rangle\leq 1,\; i=1,\ldots,F\}.
+\]
+Here \(a_i=n_i/h_i\), where \(n_i\) is the outward unit normal and
+\(h_i=h_K(n_i)>0\) is the corresponding height. The same data are the vertices
+of the polar body
+\[
+  K^\circ=\operatorname{conv}\{a_1,\ldots,a_F\}
+\]
+when the inequalities are irredundant. Thus checking that a proposed dual-row
+list really describes an \(F\)-facet polytope has two parts: \(0\) must lie in
+the interior of \(\operatorname{conv}\{a_i\}\), which is equivalent to
+boundedness of \(K\), and every \(a_i\) must be an extreme point of that convex
+hull, which is equivalent to irredundancy of the normalized halfspace
+description.
+
+The finite vertex enumeration used in the implementation is the standard
+four-dimensional halfspace algorithm. For every four-element set
+\(I=\{i_1,i_2,i_3,i_4\}\), solve
+\[
+  \langle a_{i_j},x\rangle=1,
+  \qquad j=1,\ldots,4.
+\]
+If the system is singular, it contributes no isolated candidate vertex. If it
+has a solution \(x_I\), keep \(x_I\) exactly when it satisfies all inequalities
+\(\langle a_i,x_I\rangle\leq1\). Duplicate candidates are identified. This
+enumerates the vertex set of \(K\). At the same time it constructs the
+vertex--facet incidence matrix
+\[
+  \mathcal I_{v i}
+  =
+  \begin{cases}
+    1,&\langle a_i,v\rangle=1,\\
+    0,&\langle a_i,v\rangle<1,
+  \end{cases}
+\]
+where rows are vertices and columns are facets.
+
+This incidence matrix is the concrete face-incidence data used later. A facet
+is represented by the list of incident vertices in one column. Two facets
+intersect if some row is incident to both. In four dimensions, an edge is
+detected by two vertices sharing at least three incident facets, and a
+two-face is detected by two facets sharing at least three vertices. These
+are the incidence-only rules used by the current finite pipeline after the
+vertex--facet matrix has been constructed exactly; they are not numerical
+signed-distance tests. Degenerate inputs that need more than this incidence
+contract are treated separately in the relevant algorithm section.
+
+For generated dual rows, boundedness is checked before vertex enumeration.
+Equivalently, the dual rows positively span \(\mathbb{R}^4\):
+\[
+  d\neq0
+  \quad\Longrightarrow\quad
+  \langle a_i,d\rangle>0
+  \text{ for some }i.
+\]
+In four dimensions this can be checked from the one-dimensional kernels of
+triples of dual rows, together with the rank condition that the \(a_i\) span
+\(\mathbb{R}^4\). This is the boundedness test used by the exact polytope
+pipeline.
+
+We use the Hausdorff metric on compact convex sets for local and limiting
+statements. Near a polytope with a fixed number of irredundant facets, a
+labelled dual-row list gives local coordinates as long as the open conditions
+above persist: \(0\in\operatorname{int}\operatorname{conv}\{a_i\}\), all
+\(a_i\) remain extreme, and the relevant incidences do not change. Different
+facet labellings can represent the same unlabelled polytope. This is the
+topological background for local perturbation statements such as the
+Hausdorff-local ten-facet chart in
+Section~\ref{sec:hko-local-maximum}.
 
 For a convex body \(K\), the support function and gauge function are
 \[
@@ -76,11 +191,61 @@ polytopes, the same capacity is obtained by approximation and by minimizing
 over generalized closed characteristics. The polytope version used later is
 spelled out in Section~\ref{sec:generalized-reeb-orbits-polytopes}.
 
+As a symplectic capacity on convex bodies, \(c_{\mathrm{EHZ}}\) is monotone
+under inclusion, invariant under symplectomorphisms, and conformal:
+\[
+  c_{\mathrm{EHZ}}(\lambda K)=\lambda^2c_{\mathrm{EHZ}}(K)
+  \quad(\lambda>0).
+\]
+It is normalized by
+\[
+  c_{\mathrm{EHZ}}(B^4(r))=c_{\mathrm{EHZ}}(Z^4(r))=\pi r^2,
+\]
+where \(B^4(r)\) is the radius-\(r\) ball and
+\(Z^4(r)=B^2(r)\times\mathbb{R}^2\) is the symplectic cylinder. These axioms
+are used only as background; the finite computations below use the
+minimum-action and quadratic-program descriptions.
+
+The usual normalized-capacity axioms also fix the value of any normalized
+symplectic capacity on a symplectic product of planar convex domains. If
+\(A,B\subset\mathbb{R}^2\) are convex domains, viewed as subsets of the
+symplectic planes \((q_1,p_1)\) and \((q_2,p_2)\), write
+\[
+  A\times_S B
+  =
+  \{(q_1,q_2,p_1,p_2):(q_1,p_1)\in A,\ (q_2,p_2)\in B\}.
+\]
+Let \(c\) be any normalized symplectic capacity on convex domains. Then
+\begin{equation}\label{eq:preliminaries-symplectic-product-capacity}
+  c(A\times_S B)
+  =
+  \min\{\operatorname{area}(A),\operatorname{area}(B)\}.
+\end{equation}
+For smooth \(A\) and \(B\), Dacorogna--Moser gives area-preserving plane
+diffeomorphisms between them and disks of the same areas
+\cite{DacorognaMoser1990}. Hence \(A\times_SB\) is symplectomorphic, as a
+domain, to
+\(B^2(r_A)\times_S B^2(r_B)\), where
+\(\pi r_A^2=\operatorname{area}(A)\) and
+\(\pi r_B^2=\operatorname{area}(B)\). If \(r_A\leq r_B\), then
+\[
+  B^4(r_A)
+  \subset
+  B^2(r_A)\times_S B^2(r_B)
+  \subset
+  B^2(r_A)\times\mathbb{R}^2,
+\]
+and monotonicity plus normalization force all three capacities to be
+\(\pi r_A^2\). The case \(r_B\leq r_A\) is symmetric. In particular,
+\eqref{eq:preliminaries-symplectic-product-capacity} holds for nonsmooth
+convex \(A\) and \(B\) by the standard \(C^0\)-extension of symplectic
+capacities on convex domains, and therefore holds for \(c_{\mathrm{EHZ}}\).
+
 \subsection{Clarke dual action principle}\label{subsec:preliminaries-clarke-dual-action-principle}
 
 The finite Haim--Kislev formula used in
 Section~\ref{sec:quadratic-program-algorithm-hk2019} rests on a dual
-variational viewpoint. The literature often states this bridge in a fixed
+variational viewpoint. The literature often states this connection in a fixed
 \([0,1]\)-period normalization. We use a free-period normalization instead:
 the dual curves below have period \(T\), satisfy \(A(z)=T\), and are not
 centered by a condition such as \(\int z=0\). Translation is handled as a
@@ -132,13 +297,13 @@ The dual problem is
     z(0)=z(T),\; T>0,\; A(z)=T\}.
 \end{equation}
 
-\begin{lemma}[Dual Euler--Lagrange condition]\label{lem:preliminaries-dual-euler-lagrange}
+\begin{definition}[Weak dual critical curve]\label{def:preliminaries-weak-dual-critical}
 A closed curve
 \[
   z\in W^{1,2}([0,T],\mathbb{R}^4),
   \qquad A(z)=T,
 \]
-is a critical point of the dual problem if and only if there are
+is \emph{weak dual critical} if there are
 \(\nu\in\mathbb{R}\) and \(b\in\mathbb{R}^4\) such that
 \begin{equation}\label{eq:preliminaries-dual-euler-lagrange}
   \nu z(t)+b
@@ -150,60 +315,95 @@ Equivalently,
   -J_0\dot{z}(t)\in\partial g_K^2(\nu z(t)+b)
   \quad\text{for a.e. }t.
 \]
+\end{definition}
+
+We use one general result from Clarke's nonsmooth variational theory:
+minimizers of the dual action functional exist, and the nonsmooth Lagrange
+multiplier rule applies to the action constraint \cite[Ch.~5]{Clarke1983}.
+For nonsmooth convex bodies this is the variational input used by
+Artstein--Avidan--Ostrover and Haim--Kislev
+\cite[Propositions~2.5, 2.7 and Lemmas~5.1, 5.2]{AAO2014}
+\cite[Section~2]{HK2017}.
+
+Those sources state the dual problem in a fixed-\([0,1]\) normalization, with
+closed loops \(w\) satisfying \(A(w)=\frac12\). The passage to the free-period
+normalization above is by explicit rescaling. If \(z\) is defined on \([0,T]\)
+and satisfies \(A(z)=T\), then
+\[
+  w(s)=\frac{1}{\sqrt{2T}}\,z(Ts)
+\]
+satisfies \(A(w)=\frac12\) and \(I_K(w)=I_K(z)/2\). Conversely, if \(w\) is a
+fixed-period dual curve and \(c=2I_K(w)\), then
+\[
+  z(t)=\sqrt{2c}\,w(t/c),
+  \qquad 0\leq t\leq c,
+\]
+satisfies \(A(z)=c\) and \(I_K(z)=c\). Under the same rescaling, the fixed-period
+weak-critical equation used by Haim--Kislev becomes
+\eqref{eq:preliminaries-dual-euler-lagrange}. If a cited version fixes the
+translation freedom by imposing a centering condition on \(w\), this is only a
+choice of representative: \(A\), \(I_K\), and the weak-critical equation are
+translation-invariant after adjusting the constant \(b\). Thus the cited
+analytic input is the fixed-period existence and weak-criticality theorem; the
+rest of this subsection writes out the convention translation and Reeb
+correspondence in the free-period, uncentered notation used here.
+
+\begin{lemma}[Euler--Lagrange equation in thesis convention]
+\label{lem:preliminaries-dual-euler-lagrange}
+Every minimizer of the dual problem is weak dual critical in the sense of
+Definition~\ref{def:preliminaries-weak-dual-critical}.
 \end{lemma}
 
 \begin{proof}
-This is Clarke's nonsmooth Euler--Lagrange theorem for the constrained
-functional \(I_K\) \cite[Ch.~5]{Clarke1983}. Haim--Kislev use the same
-nonsmooth dual-action principle for polytopes in their preliminary section
-\cite[Section~2]{HK2017}. The calculation below identifies the resulting
-inclusion in our free-period normalization.
+Let \(z\) be a minimizer of the free-period dual problem, and rescale it to the
+fixed-\([0,1]\) curve \(w\) above. The fixed-period Clarke theorem gives the
+nonsmooth Euler--Lagrange inclusion for \(w\), with one multiplier for the
+constraint \(A(w)=\frac12\). Rescaling this inclusion back to \([0,T]\) gives
+the same equation for \(z\). We spell out the resulting equation in the
+free-period notation.
 
-Introduce a Lagrange multiplier \(\alpha\) for the constraint \(A(z)=T\) and
-consider
+There is \(\alpha\in\mathbb{R}\) such that \(z\) satisfies the nonsmooth
+Euler--Lagrange inclusion for
 \[
-  L(z,\dot{z})
-  = \frac{1}{4}h_K^2(-J_0\dot{z})
-    +\alpha\langle -J_0\dot{z},z\rangle.
+  L(z,\dot z)
+  =\frac14h_K^2(-J_0\dot z)
+    +\alpha\langle -J_0\dot z,z\rangle.
 \]
-The Euler--Lagrange inclusion gives an absolutely continuous \(\xi\) with
+Thus there is an absolutely continuous \(\xi\) with
 \[
-  \xi(t)\in\partial_{\dot{z}}L(z(t),\dot{z}(t)),
+  \xi(t)\in\partial_{\dot z}L(z(t),\dot z(t)),
   \qquad
-  \dot{\xi}(t)=\nabla_zL(z(t),\dot{z}(t)).
+  \dot\xi(t)=\nabla_z L(z(t),\dot z(t)).
 \]
-The right-hand side is
-\(-\alpha J_0\dot{z}\). On the left-hand side, the chain rule for
-\(\frac{1}{4}h_K^2(-J_0\dot{z})\) gives
+The right-hand side is \(-\alpha J_0\dot z\). On the left-hand side, the chain
+rule for \(\frac14h_K^2(-J_0\dot z)\) gives
 \[
-  \partial_{\dot{z}}L
-  = J_0\,\partial\bigl(\tfrac{1}{4}h_K^2\bigr)(-J_0\dot{z})
+  \partial_{\dot z}L
+  =J_0\,\partial\bigl(\tfrac14h_K^2\bigr)(-J_0\dot z)
     +\alpha J_0z.
 \]
 Hence there is
-\(p(t)\in\partial(\tfrac{1}{4}h_K^2)(-J_0\dot{z}(t))\) with
+\(p(t)\in\partial(\frac14h_K^2)(-J_0\dot z(t))\) with
 \[
-  J_0\dot{p}+\alpha J_0\dot{z}
-  =-\alpha J_0\dot{z}.
+  J_0\dot p+\alpha J_0\dot z=-\alpha J_0\dot z.
 \]
-Thus \(\dot{p}=-2\alpha\dot{z}\), so
+Since \(J_0\) is invertible, \(\dot p=-2\alpha\dot z\), and therefore
 \[
-  p(t)=b-2\alpha z(t).
+  p(t)=b-2\alpha z(t)
 \]
-Writing \(\nu=-2\alpha\) gives
-\eqref{eq:preliminaries-dual-euler-lagrange}. Fenchel duality gives the
-equivalent formulation. Conversely, the same Euler--Lagrange theorem says that
-this inclusion is sufficient for constrained criticality.
+for some constant \(b\in\mathbb{R}^4\). With \(\nu=-2\alpha\), this is exactly
+\eqref{eq:preliminaries-dual-euler-lagrange}. The equivalent formulation
+follows from Lemma~\ref{lem:preliminaries-fenchel-duality}.
 \end{proof}
 
 \begin{lemma}[Scaling and translation]\label{lem:preliminaries-dual-symmetry}
-Let \(z\) be a critical point of the dual problem on \([0,T]\). For every
+Let \(z\) be weak dual critical on \([0,T]\). For every
 \(\alpha>0\) and every \(b\in\mathbb{R}^4\), the curve
 \[
   z'(t)=\alpha z(t/\alpha^2)+b,
   \qquad 0\leq t\leq \alpha^2T,
 \]
-is again a critical point of the dual problem. Moreover
+is again weak dual critical. Moreover
 \[
   A(z')=\alpha^2A(z)=\alpha^2T,
   \qquad
@@ -227,7 +427,7 @@ preserved because
 \partial(\frac14 h_K^2)(y)\) for \(\lambda>0\).
 \end{proof}
 
-\begin{theorem}[Clarke dual action principle]\label{thm:preliminaries-clarke-dual-action}
+\begin{theorem}[Clarke dual action principle in free-period form]\label{thm:preliminaries-clarke-dual-action}
 For a smooth convex body \(K\), and for polytopes after interpreting closed
 characteristics as generalized Reeb orbits in the sense of
 Section~\ref{sec:generalized-reeb-orbits-polytopes}, the primal minimum and the
@@ -237,8 +437,8 @@ dual minimum \eqref{eq:preliminaries-dual-problem} agree:
   = \min_\gamma A(\gamma)
   = \min_z I_K(z).
 \]
-More precisely, every contact-normalized closed characteristic is a dual
-critical point, and every dual critical point has a translate/rescale in the
+More precisely, every contact-normalized closed characteristic is weak dual
+critical, and every weak dual critical curve has a translate/rescale in the
 sense of Lemma~\ref{lem:preliminaries-dual-symmetry} that is a
 contact-normalized closed characteristic.
 \end{theorem}
@@ -254,13 +454,13 @@ Lemma~\ref{lem:preliminaries-fenchel-duality},
   \quad\text{for a.e. }t.
 \]
 This is the dual Euler--Lagrange condition with \(\nu=1\) and \(b=0\).
-Thus \(\gamma\) is a dual critical point, and
+Thus \(\gamma\) is weak dual critical, and
 Lemma~\ref{lem:preliminaries-dual-symmetry} gives the whole
 translate/rescale family.
 
-Conversely, let \(z\) be a dual critical point of period \(T\). Choose
-\(\nu,b\) as in Lemma~\ref{lem:preliminaries-dual-euler-lagrange}. The
-equivalent inclusion gives
+Conversely, let \(z\) be weak dual critical of period \(T\). Choose
+\(\nu,b\) as in Definition~\ref{def:preliminaries-weak-dual-critical}. The
+equivalent inclusion in that definition gives
 \[
   -J_0\dot{z}(t)\in\partial g_K^2(\nu z(t)+b).
 \]
@@ -321,15 +521,14 @@ After integration,
 \]
 Thus \(I_K(\gamma)=T=A(\gamma)\). The value \(I_K\) is constant on the
 translate/rescale family by Lemma~\ref{lem:preliminaries-dual-symmetry}.
-Conversely, the argument above sends every dual critical point to a
+Conversely, the argument above sends every weak dual critical curve to a
 contact-normalized closed characteristic in its translate/rescale family.
-Therefore the infima over primal critical points and over dual critical points
-agree. The remaining input is the existence part of Clarke's dual action
-principle: the constrained dual infimum is attained, and a dual minimizer is a
-weak critical point. This is the variational statement recorded in the
-nonsmooth dual-action setup used by Haim--Kislev
-\cite[Section~2]{HK2017}. Hence the dual minimum is attained among the dual
-critical points just considered, and the primal and dual minima agree.
+Therefore the infima over contact-normalized closed characteristics and over
+weak dual critical curves agree. The nonsmooth existence part of Clarke's
+principle gives a minimizer of the dual problem, and
+Lemma~\ref{lem:preliminaries-dual-euler-lagrange} shows that such a minimizer
+is weak dual critical. Hence the dual minimum is attained among the curves just
+considered, and the primal and dual minima agree.
 \end{proof}
 
 The point of the theorem is not just the equality of two numbers. The primal
