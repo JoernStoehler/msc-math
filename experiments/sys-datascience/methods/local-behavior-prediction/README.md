@@ -21,6 +21,33 @@ This packet is not a theorem route for arbitrary endpoint local maximality.
 The exact generic object is the active-germ / semialgebraic model in
 `research/sys-first-order-local-behavior.md`.
 
+## Why This Slice Exists
+
+The thesis-success chain for this packet is:
+
+```text
+thesis success
+-> hostile sys data-science story must close
+-> the method table includes optimization, endpoint, and attractor-style rows
+-> those rows need meaningful perturbation, rerun, and local-neighborhood data
+-> current retained ascent data has endpoints and traces, not certified
+   local maxima or attractors
+-> first understand local and semi-local behavior of sys(a0 + t d)
+```
+
+Do not skip this step by assuming that an optimizer endpoint is a local
+maximum, an attractor, or a stable basin representative. Current endpoint
+diagnostics in `../endpoint-local-max-diagnostic/` show the opposite for the
+sampled retained endpoints: they still admit quotient ascent directions and
+tiny improving probes under that diagnostic.
+
+The point of this packet is therefore to determine perturbation scales,
+direction families, and branch-window regimes where finite changes
+`a0 -> a0 + t d` are locally interpretable. That information is upstream of
+later choices about perturb-and-rerun experiments, endpoint clustering,
+same-attractor return tests, basin-size estimates, and optimizer endpoint
+claims. It is not local-neighborhood analysis for its own sake.
+
 ## Artifact Map
 
 Run-local producers write raw point and sample data under the requested
