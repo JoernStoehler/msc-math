@@ -215,14 +215,58 @@ def correlation(rows: list[dict[str, Any]], x_field: str, y_field: str) -> float
     return float(np.corrcoef(xs, ys)[0, 1])
 
 
-def write_report(
-    path: Path,
+def fmt_value(value: Any) -> str:
+    if value is None:
+        return "NA"
+    if finite(value):
+        return f"{float(value):.3g}"
+    return str(value)
+
+
+def fmt_fraction(value: Any) -> str:
+    if not finite(value):
+        return "NA"
+    return f"{float(value):.3f}"
+
+
+def radius_summary_lines(summary: list[dict[str, Any]]) -> list[str]:
+    rows = sorted(
+        [row for row in summary if finite(row.get("radius"))],
+        key=lambda row: (float(row["radius"]), str(row.get("direction_family", ""))),
+    )
+    if not rows:
+        return ["No radius summary rows found."]
+
+    lines = [
+        "| radius | family | n | same_min | near | candidate | p90_abs_err | median_delta |",
+        "| ---: | --- | ---: | ---: | ---: | ---: | ---: | ---: |",
+    ]
+    for row in rows:
+        lines.append(
+            " | ".join(
+                [
+                    f"| {fmt_value(row.get('radius'))}",
+                    str(row.get("direction_family", "")),
+                    fmt_value(row.get("n")),
+                    fmt_fraction(row.get("min_branch_equal_fraction")),
+                    fmt_fraction(row.get("target_min_in_base_near_fraction")),
+                    fmt_fraction(row.get("target_min_in_base_candidate_fraction")),
+                    fmt_value(row.get("p90_abs_clarke_prediction_error")),
+                    fmt_value(row.get("median_observed_delta_sys")) + " |",
+                ]
+            )
+        )
+    return lines
+
+
+def analysis_summary_lines(
     pairs: list[dict[str, Any]],
     branch_variation: list[dict[str, Any]],
     gradient_projections: list[dict[str, Any]],
-    figures: list[Path],
-) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
+    summary: list[dict[str, Any]],
+    *,
+    markdown: bool = False,
+) -> list[str]:
     status_counts = Counter(row["target_branch_status_at_base"] for row in pairs)
     radii = sorted({row["radius"] for row in pairs if finite(row.get("radius"))})
     gradient_corr = correlation(gradient_projections, "branch_predicted_delta_sys", "observed_delta_sys")
@@ -235,23 +279,50 @@ def write_report(
     if values:
         median_variation = float(np.quantile(values, 0.5))
 
+    data_heading = "## Data" if markdown else "Data:"
+    observations_heading = "## Observations" if markdown else "Observations:"
+    radius_heading = "## Radius Summary" if markdown else "Radius summary:"
+    delta_label = "`Delta sys`" if markdown else "Delta sys"
     lines = [
-        "# Local Behavior Prediction Report",
-        "",
+        "Local behavior prediction",
         "Status: exploratory method artifact, not proof evidence.",
         "",
-        "## Data",
-        "",
+        data_heading,
         f"- successful pair rows: {len(pairs)}",
         f"- branch variation rows: {len(branch_variation)}",
         f"- gradient projection rows: {len(gradient_projections)}",
         f"- radii: {', '.join(f'{radius:.6g}' for radius in radii)}",
         "",
-        "## Observations",
-        "",
+        observations_heading,
         f"- Target branch status counts: {dict(status_counts)}.",
         f"- Median relative branch-function variation: {median_variation}.",
-        f"- Correlation between branch-gradient predicted and observed `Delta sys`: {gradient_corr}.",
+        f"- Correlation between branch-gradient predicted and observed {delta_label}: {gradient_corr}.",
+        "",
+        radius_heading,
+        *radius_summary_lines(summary),
+    ]
+    return lines
+
+
+def write_report(
+    path: Path,
+    pairs: list[dict[str, Any]],
+    branch_variation: list[dict[str, Any]],
+    gradient_projections: list[dict[str, Any]],
+    summary: list[dict[str, Any]],
+    figures: list[Path],
+) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    lines = [
+        "# Local Behavior Prediction Report",
+        "",
+        *analysis_summary_lines(
+            pairs,
+            branch_variation,
+            gradient_projections,
+            summary,
+            markdown=True,
+        )[1:],
         "",
         "## Figures",
         "",
@@ -295,9 +366,12 @@ def main() -> None:
         plot_target_status(pairs, out_dir),
     ]
     report = out_dir / "report.md"
-    write_report(report, pairs, branch_variation, gradient_projections, figures)
+    write_report(report, pairs, branch_variation, gradient_projections, summary, figures)
+    print("\n".join(analysis_summary_lines(pairs, branch_variation, gradient_projections, summary)))
+    print("")
+    print("Wrote:")
     for path in figures + [report]:
-        print(path)
+        print(f"- {path}")
 
 
 if __name__ == "__main__":
