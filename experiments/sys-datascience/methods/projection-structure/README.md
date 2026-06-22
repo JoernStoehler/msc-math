@@ -31,15 +31,10 @@ uv run --script experiments/sys-datascience/methods/projection-structure/analyze
 
 ## Observation
 
-Feature-space closure branch note: the script now defaults to all eligible
-geometry features instead of the old `80`-feature cap, and the shared feature
-selector includes new `omega_*` geometry columns plus two-face
-symplectic-area tail columns when all loaded rows have complete two-face
-ordering. Two-face ordering diagnostics are excluded from geometry inputs. The
-script now records metadata overlays for source/facet/product labels. The
-current artifact below was regenerated with this branch's method code against
-the full scoped random/product prepare output at `/tmp/sys-ds-random-only-full`,
-built with `sys-dataset --random-only`.
+This packet now uses all eligible geometry features by default, records which
+features were selected, and records the largest PCA loadings for PC1 and PC2.
+It also records source/facet/product metadata overlays so projection and
+cluster observations can be checked against sampling strata.
 
 Current full scoped random/product run:
 

@@ -34,15 +34,11 @@ uv run --script experiments/sys-datascience/methods/prediction-ranking/analyze.p
 
 ## Observation
 
-Feature-space closure branch note: the script now defaults to all eligible
-geometry features instead of the old `80`-feature cap, and the shared feature
-selector includes new `omega_*` geometry columns plus two-face
-symplectic-area tail columns when all loaded rows have complete two-face
-ordering. Two-face ordering diagnostics are excluded from geometry inputs.
-This branch also adds metadata-only baselines for source/facet/product
-provenance labels. The current artifact below was regenerated with this
-branch's method code against the full scoped random/product prepare output at
-`/tmp/sys-ds-random-only-full`, built with `sys-dataset --random-only`.
+This packet now uses all eligible geometry features by default, records which
+features were selected, and records the top random-forest feature importances.
+It also reports metadata-only baselines for source/facet/product provenance
+labels. Metadata baselines test source leakage and stratification; they are not
+candidate-proposer inputs.
 
 Current full scoped random/product run:
 
@@ -62,7 +58,7 @@ Current full scoped random/product run:
   `0.16535248208223238`, top-decile enrichment `0.296875`;
 - metadata-only random forest: `R^2 = -0.04953269595337528`, MAE
   `0.1800783042710761`, top-decile enrichment `0.296875`;
-- random-forest enrichment permutation p-value with `10` bounded permutations:
+- random-forest enrichment permutation p-value with `10` permutations:
   `0.09090909090909091`.
 
 This is a strong in-table prediction signal. It is not a validated
