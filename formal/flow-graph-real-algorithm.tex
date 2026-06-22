@@ -875,13 +875,21 @@ Theorem~\ref{thm:fg-real-capacity-correctness}.
 \begin{remark}[What this formal section does not yet cover]%
 \label{rem:fg-real-missing-work}
 This section is the idealized real-number algorithm surface.  It does not
-prove that the Rust implementation accepts exactly this class, it does
-not analyze f64 rounding.  The correctness theorem uses the nonempty
-facet-pair nonzero-\(\omega_0\) condition from
+prove that the Rust implementation accepts exactly this class, and it does
+not analyze f64 rounding.  It also does not cover the exact Rust singular
+fixed-set classifier: the theorem above uses finite-orbit regularity to avoid
+the relevant singular fixed-point equations, while Rust can classify singular
+fixed sets and treat nonpositive-action singular fixed sets as no-orbit
+outcomes.  That runtime boundary needs either a separate proof or a
+theorem-facing wrapper that rejects singular fixed maps.
+
+The correctness theorem uses the nonempty facet-pair nonzero-\(\omega_0\)
+condition from
 Definition~\ref{def:fg-nondegenerate-facet-presentation}.  This is the
 mathematical boundary currently targeted by the exact Rust rejection logic and
 is stronger than the local physical-transition condition needed in the proof of
 Lemma~\ref{lem:fg-local-transition-regularity-positive-sign}.
-The Rust correspondence and f64 analysis are separate implementation and
-numerical-analysis obligations.
+The Rust action-cutoff optimization, arbitrary bounded-irredundant input
+validation, Rust correspondence, and f64 analysis are separate implementation
+and numerical-analysis obligations.
 \end{remark}
