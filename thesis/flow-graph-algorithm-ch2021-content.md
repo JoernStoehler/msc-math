@@ -437,6 +437,32 @@ to review `formal/flow-graph-real-algorithm.tex` as a proof-development
 surface, decide which theorem route survives Jörn review, and then translate
 only that route into thesis prose.
 
+### Exact branch proof-coverage checkpoint
+
+This checkpoint is the repo-specific detector for the next Rust-versus-math
+decision. It is based on `exact_search.rs::search_closed_orbits_exact`,
+`exact_tube.rs::classify_closed_tube`, and
+`formal/flow-graph-real-algorithm.tex`.
+
+| Rust branch | Search meaning | Current proof coverage | Consequence |
+| --- | --- | --- | --- |
+| `build_tube` returns `Empty` | word contributes no retained orbit | covered by the active tube-domain route if `lem:fg-primitive-tubes-affine` and `lem:fg-tube-gluing` survive review | review math/code correspondence; no Rust change indicated |
+| nonsingular fixed point outside `start_polygon` | word contributes no orbit | covered by `lem:fg-closed-tube-fixed-points` if the polygon representation is correct | review polygon/halfspace correspondence; no Rust change indicated |
+| nonsingular fixed point with nonpositive action | `ZeroActionNoOrbit` | covered by capacity/action positivity conventions once `lem:fg-action-normalization` survives review | review action normalization; no Rust change indicated |
+| nonsingular fixed point with positive action but some reconstructed segment time nonpositive | `NonStrictNoOrbit` | covered by the strict-time definition in `def:fg-closed-tube-search-data`; code test `exact_segment_time_filter_rejects_zero_time_boundary_point` covers the repaired branch | no Rust change indicated unless review rejects strict-time filter route |
+| nonsingular fixed point with positive action and all reconstructed segment times positive | retained `PositiveOrbit` | covered by `lem:fg-closed-tube-fixed-points`, strict-time definition, and `lem:fg-action-normalization` if the primitive/gluing lemmas survive review | this is the intended exact positive-output path |
+| singular fixed equation with inconsistent affine constraints | `EmptyTube` | covered by the affine fixed-point equation statement in `lem:fg-closed-tube-fixed-points` if that lemma survives review | can remain part of the fixed-point lemma rather than a separate theorem branch |
+| singular fixed set whose fixed-polygon vertex actions are all nonpositive | `ZeroActionNoOrbit` | not covered by the current finite-orbit-regular theorem route, because that route excludes relevant long-word singular fixed equations | main fork: prove this refined singular classifier, make theorem-mode Rust reject it, or keep a two-layer claim |
+| singular fixed set with any positive-action vertex | `UnsupportedPositiveSingular` | explicit typed non-success, not an accepted capacity output | document as unsupported; no proof of capacity output needed |
+| no `PositiveOrbit` found after exhaustive search | panic at final `expect` | theorem route predicts this cannot happen on supported inputs because a simple capacity minimizer is represented | if a supported-input claim does not prove represented positive output, change Rust to typed unsupported instead of panic |
+
+The recommended next local proof attempt is narrow: prove or refute the
+singular fixed-polygon `ZeroActionNoOrbit` branch. If the proof is clean, the
+implementation theorem can move toward the Rust runtime boundary. If it is not
+clean, the thesis should keep the finite-orbit-regular theorem separate from
+the exact Rust caveat boundary, or Rust should add a theorem-mode rejection for
+singular fixed maps.
+
 Minimal next proof packet:
 
 1. Review `formal/flow-graph-real-algorithm.tex` for false statements, missing
