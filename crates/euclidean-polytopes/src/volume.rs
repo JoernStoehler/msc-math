@@ -52,11 +52,45 @@ pub fn volume_from_incidence_f64(
         "volume_from_incidence_f64 requires at least five facets for a full-dimensional bounded R^4 polytope"
     );
 
-    Ok(origin_star_volume(
+    Ok(origin_star_volume_and_centroid(vertices, incidence, "volume_from_incidence_f64").0)
+}
+
+/// Compute full-dimensional Euclidean volume and body centroid from known incidence.
+///
+/// This uses the same decomposition and assumptions as
+/// [`volume_from_incidence_f64`]. The centroid is the volume-weighted average
+/// of the 4-simplex centroids in the origin-star decomposition. It is a body
+/// centroid, not an arithmetic average of vertices.
+pub fn volume_and_centroid_from_incidence_f64(
+    vertices: &[Vector4<f64>],
+    incidence: &DMatrix<bool>,
+) -> Result<(f64, Vector4<f64>), F64GeometryError> {
+    assert_eq!(
+        incidence.nrows(),
+        vertices.len(),
+        "volume_and_centroid_from_incidence_f64 requires incidence rows to match vertices length"
+    );
+    validate_finite_vectors4("vertices", vertices)?;
+
+    assert!(
+        vertices.len() >= 5,
+        "volume_and_centroid_from_incidence_f64 requires at least five vertices for a full-dimensional R^4 polytope"
+    );
+    assert!(
+        incidence.ncols() >= 5,
+        "volume_and_centroid_from_incidence_f64 requires at least five facets for a full-dimensional bounded R^4 polytope"
+    );
+
+    let (volume, weighted_centroid) = origin_star_volume_and_centroid(
         vertices,
         incidence,
-        "volume_from_incidence_f64",
-    ))
+        "volume_and_centroid_from_incidence_f64",
+    );
+    assert!(
+        volume > 0.0,
+        "volume_and_centroid_from_incidence_f64 requires positive decomposed volume"
+    );
+    Ok((volume, weighted_centroid / volume))
 }
 
 /// Compute exact full-dimensional Euclidean volume from known vertex-facet incidence.
@@ -206,7 +240,11 @@ fn facet_vertices_from_incidence(incidence: &DMatrix<bool>) -> Vec<Vec<usize>> {
         .collect()
 }
 
-fn origin_star_volume(vertices: &[Vector4<f64>], incidence: &DMatrix<bool>, caller: &str) -> f64 {
+fn origin_star_volume_and_centroid(
+    vertices: &[Vector4<f64>],
+    incidence: &DMatrix<bool>,
+    caller: &str,
+) -> (f64, Vector4<f64>) {
     let facet_vertices = facet_vertices_from_incidence(incidence);
 
     for (facet_index, indices) in facet_vertices.iter().enumerate() {
@@ -221,7 +259,8 @@ fn origin_star_volume(vertices: &[Vector4<f64>], incidence: &DMatrix<bool>, call
         .map(|indices| mean_vertex(vertices, indices))
         .collect();
 
-    let mut total = 0.0;
+    let mut total_volume = 0.0;
+    let mut weighted_centroid = Vector4::zeros();
     for (facet_index, facet_centroid) in facet_centroids.iter().enumerate() {
         for neighbor_index in 0..incidence.ncols() {
             if facet_index == neighbor_index {
@@ -235,18 +274,25 @@ fn origin_star_volume(vertices: &[Vector4<f64>], incidence: &DMatrix<bool>, call
             }
 
             for k in 1..ordered.len() - 1 {
-                total += simplex_volume_5(
+                let simplex_volume = simplex_volume_5(
                     Vector4::zeros(),
                     *facet_centroid,
                     vertices[ordered[0]],
                     vertices[ordered[k]],
                     vertices[ordered[k + 1]],
                 );
+                let simplex_centroid = (*facet_centroid
+                    + vertices[ordered[0]]
+                    + vertices[ordered[k]]
+                    + vertices[ordered[k + 1]])
+                    / 5.0;
+                total_volume += simplex_volume;
+                weighted_centroid += simplex_volume * simplex_centroid;
             }
         }
     }
 
-    total
+    (total_volume, weighted_centroid)
 }
 
 fn origin_star_volume_exact<T: ExactScalar + 'static>(

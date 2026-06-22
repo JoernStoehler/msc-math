@@ -36,5 +36,5 @@ pub use predicates::{
 pub use random::sample_random_dual_vertices_f64;
 pub use volume::{
     facet_volume_and_centroid_from_incidence_f64, facet_volume_from_incidence_f64,
-    volume_from_incidence_exact, volume_from_incidence_f64,
+    volume_and_centroid_from_incidence_f64, volume_from_incidence_exact, volume_from_incidence_f64,
 };

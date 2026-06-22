@@ -61,6 +61,20 @@ struct PolytopeProvenanceTableRow<'a> {
     source_name: &'a str,
     root_group_id: &'a str,
     #[serde(skip_serializing_if = "Option::is_none")]
+    sample_seed: Option<u64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    sample_attempt: Option<u64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    sample_h_min: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    sample_h_max: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    product_k: Option<usize>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    product_m: Option<usize>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    product_bounces: Option<usize>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     seed_index: Option<usize>,
     #[serde(skip_serializing_if = "Option::is_none")]
     lineage_id: &'a Option<String>,
@@ -85,6 +99,13 @@ impl<'a> From<&'a ProvenanceRunRow> for PolytopeProvenanceTableRow<'a> {
             backend: &row.backend,
             source_name: &row.source_name,
             root_group_id: &row.root_group_id,
+            sample_seed: row.sample_seed,
+            sample_attempt: row.sample_attempt,
+            sample_h_min: row.sample_h_min,
+            sample_h_max: row.sample_h_max,
+            product_k: row.product_k,
+            product_m: row.product_m,
+            product_bounces: row.product_bounces,
             seed_index: row.seed_index,
             lineage_id: &row.lineage_id,
             parent_provenance_id: &row.parent_provenance_id,

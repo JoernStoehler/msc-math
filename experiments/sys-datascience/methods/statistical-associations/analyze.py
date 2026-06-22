@@ -18,7 +18,15 @@ from scipy import stats
 
 HERE = Path(__file__).resolve().parent
 sys.path.append(str(HERE.parent / "_shared"))
-from random_only import TABLES_DIR, load_trusted_random_tables, numeric_feature_names, write_json  # noqa: E402
+from random_only import (  # noqa: E402
+    TABLES_DIR,
+    dataset_label,
+    load_trusted_random_tables,
+    numeric_feature_names,
+    product_bucket,
+    provenance_by_poly_id,
+    write_json,
+)
 
 
 def parse_args() -> argparse.Namespace:
@@ -37,7 +45,9 @@ def covariate_family(name: str) -> str:
         return "combinatorial summaries"
     if name.startswith(("geom_", "edge_length_", "facet_volume_")):
         return "Euclidean geometry summaries"
-    if name.startswith(("allpair_", "ridge_abs_omega_", "ridge_symp_area_")):
+    if name.startswith(
+        ("allpair_", "omega_matrix_", "omega_sign_", "ridge_abs_omega_", "ridge_symp_area_")
+    ):
         return "symplectic/omega summaries"
     if name.startswith("transition_"):
         return "transition graph summaries"
@@ -56,6 +66,146 @@ def family_inventory(names: list[str]) -> dict[str, dict[str, object]]:
         entry["count"] = int(entry["count"]) + 1
         entry["features"].append(name)
     return dict(sorted(inventory.items()))
+
+
+def summary_stats(values: list[float]) -> dict[str, float | int]:
+    array = np.array(values, dtype=float)
+    return {
+        "rows": len(values),
+        "mean": float(np.mean(array)),
+        "median": float(np.median(array)),
+        "std": float(np.std(array)),
+        "min": float(np.min(array)),
+        "max": float(np.max(array)),
+        "q90": float(np.quantile(array, 0.9)),
+        "q99": float(np.quantile(array, 0.99)),
+    }
+
+
+def factor_test(groups: dict[str, list[float]]) -> dict[str, object]:
+    nonempty = {label: values for label, values in sorted(groups.items()) if values}
+    group_summaries = {
+        label: summary_stats(values) for label, values in nonempty.items()
+    }
+    values_by_group = list(nonempty.values())
+    all_values = [value for values in values_by_group for value in values]
+    result: dict[str, object] = {
+        "group_count": len(nonempty),
+        "row_count": len(all_values),
+        "groups": group_summaries,
+        "max_minus_min_group_mean": None,
+        "eta_squared": None,
+        "anova_f": None,
+        "anova_p": None,
+        "kruskal_h": None,
+        "kruskal_p": None,
+        "test_status": "not_tested",
+    }
+    if len(nonempty) < 2 or len(all_values) == 0:
+        result["test_status"] = "not_enough_nonempty_groups"
+        return result
+    group_means = [float(np.mean(values)) for values in values_by_group]
+    result["max_minus_min_group_mean"] = float(max(group_means) - min(group_means))
+    total_mean = float(np.mean(all_values))
+    total_ss = sum((value - total_mean) ** 2 for value in all_values)
+    between_ss = sum(
+        len(values) * (float(np.mean(values)) - total_mean) ** 2
+        for values in values_by_group
+    )
+    result["eta_squared"] = float(between_ss / total_ss) if total_ss > 0.0 else 0.0
+    if total_ss == 0.0:
+        result["test_status"] = "all_values_identical"
+        return result
+    if any(len(values) < 2 for values in values_by_group):
+        result["test_status"] = "summarized_only_group_too_small_for_tests"
+        return result
+    try:
+        anova = stats.f_oneway(*values_by_group)
+        result["anova_f"] = float(anova.statistic)
+        result["anova_p"] = float(anova.pvalue)
+    except Exception as error:
+        result["anova_error"] = str(error)
+    try:
+        kruskal = stats.kruskal(*values_by_group)
+        result["kruskal_h"] = float(kruskal.statistic)
+        result["kruskal_p"] = float(kruskal.pvalue)
+    except Exception as error:
+        result["kruskal_error"] = str(error)
+    result["test_status"] = "tested"
+    return result
+
+
+def first_numeric_field(
+    provenance_rows: list[dict[str, object]], field: str
+) -> int | float | None:
+    values = sorted(
+        {
+            row[field]
+            for row in provenance_rows
+            if isinstance(row.get(field), int | float)
+        }
+    )
+    if len(values) == 1:
+        return values[0]
+    return None
+
+
+def first_height_range(provenance_rows: list[dict[str, object]]) -> str | None:
+    ranges = sorted(
+        {
+            (float(row["sample_h_min"]), float(row["sample_h_max"]))
+            for row in provenance_rows
+            if isinstance(row.get("sample_h_min"), int | float)
+            and isinstance(row.get("sample_h_max"), int | float)
+        }
+    )
+    if len(ranges) == 1:
+        low, high = ranges[0]
+        return f"{low:g}:{high:g}"
+    if len(ranges) > 1:
+        return "multi:" + ",".join(f"{low:g}:{high:g}" for low, high in ranges)
+    return None
+
+
+def source_factor_tests(
+    rows: list[dict[str, object]], provenance_rows: list[dict[str, object]]
+) -> dict[str, object]:
+    provenance = provenance_by_poly_id(provenance_rows)
+    factors: dict[str, dict[str, list[float]]] = {
+        "capacity_source": {},
+        "dataset_label": {},
+        "facet_count": {},
+        "dataset_label_by_facet_count": {},
+        "product_bucket": {},
+        "product_bounces": {},
+        "sample_height_range": {},
+    }
+    for row in rows:
+        poly_id = str(row["poly_id"])
+        provenance_for_row = provenance.get(poly_id, [])
+        sys_value = float(row["sys"])
+        labels: dict[str, str | None] = {
+            "capacity_source": str(row.get("capacity_source", "")) or None,
+            "dataset_label": dataset_label(row, provenance_for_row),
+            "facet_count": f"F{row.get('facet_count')}",
+            "dataset_label_by_facet_count": (
+                f"{dataset_label(row, provenance_for_row)}:F{row.get('facet_count')}"
+            ),
+            "product_bucket": None,
+            "product_bounces": None,
+            "sample_height_range": first_height_range(provenance_for_row),
+        }
+        if row.get("capacity_source") == "random_product_sample":
+            labels["product_bucket"] = product_bucket(provenance_for_row)
+            bounces = first_numeric_field(provenance_for_row, "product_bounces")
+            labels["product_bounces"] = f"{int(bounces)}" if bounces is not None else None
+        for factor_name, label in labels.items():
+            if label is None:
+                continue
+            factors[factor_name].setdefault(label, []).append(sys_value)
+    return {
+        factor_name: factor_test(groups) for factor_name, groups in sorted(factors.items())
+    }
 
 
 def obvious_covariate_audit() -> dict[str, object]:
@@ -100,27 +250,29 @@ def obvious_covariate_audit() -> dict[str, object]:
             },
             {
                 "node": "pairwise symplectic form omega(a_i,a_j)",
-                "status": "covered",
+                "status": "covered in the current prepare schema, pending retained-table rerun for new columns",
                 "current_summaries": [
                     "all-pair absolute omega mean/std/min/max at volume one",
                     "zero fraction",
                     "ridge-restricted absolute omega summaries and small-value fractions",
+                    "omega matrix singular-value summaries",
+                    "permutation-invariant omega-sign out-degree summaries",
+                    "absolute normalized-omega summaries in the chosen Euclidean representative",
                 ],
+                "notes": "Normalized-omega summaries are not general Sp(4) invariants and should be interpreted as Euclidean-representative diagnostics.",
             },
             {
                 "node": "two-faces F_i cap F_j",
-                "status": "partially covered",
+                "status": "covered in the current prepare schema, pending retained-table rerun for new columns",
                 "current_summaries": [
                     "volume-one symplectic area mean/std/min/max over retained two-faces",
                     "sum",
                     "max share",
+                    "median and upper quantiles",
+                    "top-k tail share",
                     "zero and small-area fractions",
                 ],
-                "missing_summaries": [
-                    "median and upper quantiles",
-                    "top-k sums or tail shares",
-                    "separate factor/product-aware versions if useful",
-                ],
+                "notes": "The current implementation records incidence-ordering diagnostics; area summaries are over successfully ordered two-faces.",
             },
             {
                 "node": "face/vertex/edge/ridge incidence graph",
@@ -152,13 +304,14 @@ def obvious_covariate_audit() -> dict[str, object]:
             },
             {
                 "node": "source/generator metadata",
-                "status": "mostly handled outside scalar screening or missing",
+                "status": "handled by EDA and categorical factor tests where provenance fields are available",
                 "current_summaries": [
-                    "source-family and product-bucket EDA elsewhere",
+                    "source-family and product-bucket EDA",
+                    "ANOVA/Kruskal-style categorical factor tests in this packet",
                 ],
                 "missing_summaries": [
-                    "factor tests in this packet",
-                    "accepted-attempt or rejection-difficulty metadata if retained later",
+                    "accepted-attempt or rejection-difficulty metadata for old retained artifacts",
+                    "metadata-only prediction baselines",
                 ],
             },
         ],
@@ -166,8 +319,8 @@ def obvious_covariate_audit() -> dict[str, object]:
             "basic size counts such as facet, vertex, edge, ridge, and dual-vertex counts",
             "simple combinatorial summaries such as degrees, incidence counts, ridge sizes, and facet adjacency",
             "volume-normalized Euclidean summaries of dual vertices, edge lengths, and facet volumes",
-            "omega summaries over all facet pairs",
-            "ridge-level symplectic-area summaries, including volume-normalized sum/mean/max and small-area fractions",
+            "omega summaries over all facet pairs, including matrix/sign/alignment summaries in the current prepare schema",
+            "ridge-level symplectic-area summaries, including volume-normalized sum/mean/max, quantiles, top-k share, and small-area fractions in the current prepare schema",
             "transition-graph summaries from facet intersections and omega signs",
             "orbit/capacity-result summaries for already evaluated rows",
         ],
@@ -176,34 +329,39 @@ def obvious_covariate_audit() -> dict[str, object]:
             "raw flattened dual-vertex arrays, because they require an invariant featurization or an explicitly equivariant model before they answer what high sys corresponds to",
         ],
         "covered_elsewhere_not_as_univariate_numeric_covariates": [
-            "source family random_sample versus random_product_sample is handled in random-tail-eda and the mean-difference bootstrap in this packet",
-            "facet-count and product-bucket slice behavior is handled in random-tail-eda",
+            "source family random_sample versus random_product_sample is handled in random-tail-eda, categorical factor tests, and the mean-difference bootstrap in this packet",
+            "facet-count and product-bucket slice behavior is handled in random-tail-eda and categorical factor tests",
         ],
         "missing_or_partial_obvious_feature_families": [
-            "categorical product bucket k x m as a univariate factor rather than only as EDA slices",
-            "generator metadata such as accepted-attempt count or rejection difficulty, if retained in future tables",
+            "generator metadata such as accepted-attempt count or rejection difficulty in old retained artifacts",
             "additional invariant scalar summaries derived from a_k, such as height extrema, angular concentration beyond pairwise cosine summaries, nearest-neighbor statistics, and condition numbers beyond the current singular values",
-            "symplectic area divided by vol^0.5 for all 2-faces, not only retained ridge-level summaries",
+            "separate factor/product-aware versions of symplectic area summaries if source stratification shows value",
             "explicit product-structure or symmetry scores for deciding whether a generic row looks product-like",
             "local perturbation or sensitivity scalars, because those require non-gradient perturbation or local-behavior data outside the retained random/product table",
         ],
         "assessment": (
-            "The current screen is useful for retained invariant scalar summaries, "
-            "and it already includes several obvious omega and ridge symplectic-area "
-            "families. It is not a complete feature-engineering closure from a_k. "
-            "A stronger packet would enumerate candidate invariant feature families "
-            "from the dual vertices, implement the missing high-value ones in the "
-            "shared prepare stage, and only then rerun association screening and "
-            "the other black-box methods."
+            "The current screen is useful for scalar summaries already present in "
+            "the retained table it is run against. The branch-level coverage ledger "
+            "now controls whether omega, sign, normalized-alignment, two-face-area, "
+            "and source-metadata families are implemented, audited, or deferred. "
+            "Retained-table reruns are still required before updated feature-family "
+            "claims become thesis evidence."
         ),
     }
 
 
 def main() -> None:
     args = parse_args()
-    rows, _ = load_trusted_random_tables(args.tables_dir)
+    rows, provenance_rows = load_trusted_random_tables(args.tables_dir)
     y = np.array([float(row["sys"]) for row in rows], dtype=float)
     eligible_names = numeric_feature_names(rows, geometry_only=False)
+    post_capacity_names = [
+        name
+        for name in numeric_feature_names(
+            rows, geometry_only=False, include_post_capacity=True
+        )
+        if name.startswith("orbit_")
+    ]
     names = eligible_names[: args.max_features] if args.max_features else eligible_names
 
     associations = []
@@ -282,6 +440,8 @@ def main() -> None:
         "tested_scalar_covariates": [row["feature"] for row in associations],
         "skipped_constant_covariates": skipped_constant,
         "skipped_by_max_features": eligible_names[len(names) :],
+        "post_capacity_covariates_available_but_not_tested": post_capacity_names,
+        "source_factor_tests": source_factor_tests(rows, provenance_rows),
         "eligible_covariate_family_inventory": family_inventory(eligible_names),
         "tested_covariate_family_inventory": family_inventory(
             [row["feature"] for row in associations]
@@ -294,8 +454,10 @@ def main() -> None:
             "capacity_iterations",
             "sigma_gap_cutoff",
             "orbit_result_iterations_log1p",
+            "orbit_* post-capacity interpretation fields",
             "non-scalar JSON columns",
             "columns present as numeric values in less than 98% of retained rows",
+            "provenance/source metadata as numeric scalar covariates; these are handled by source_factor_tests",
         ],
         "top_associations": associations[:25],
         "max_abs_spearman": observed_max,

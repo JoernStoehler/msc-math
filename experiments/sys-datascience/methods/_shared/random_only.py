@@ -126,11 +126,31 @@ def dataset_label(polytope_row: dict[str, Any], provenance_rows: list[dict[str, 
     return ", ".join(datasets) if datasets else "-"
 
 
+def product_bucket(provenance_rows: list[dict[str, Any]]) -> str:
+    explicit = sorted(
+        {
+            f"{int(row['product_k'])}x{int(row['product_m'])}"
+            for row in provenance_rows
+            if isinstance(row.get("product_k"), int) and isinstance(row.get("product_m"), int)
+        }
+    )
+    if len(explicit) == 1:
+        return explicit[0]
+    if len(explicit) > 1:
+        return "multi:" + ",".join(explicit)
+    paths = sorted({str(row.get("path", "")) for row in provenance_rows if row.get("path")})
+    for path in paths:
+        if path.startswith("lp_"):
+            return path.removeprefix("lp_")
+    return "unknown"
+
+
 def numeric_feature_names(
     rows: list[dict[str, Any]],
     *,
     geometry_only: bool,
     min_present_fraction: float = 0.98,
+    include_post_capacity: bool = False,
 ) -> list[str]:
     excluded = {
         "sys",
@@ -153,13 +173,28 @@ def numeric_feature_names(
         "facet_",
         "edge_length_",
         "allpair_",
+        "omega_",
         "transition_",
+    )
+    geometry_diagnostics = {
+        "ridge_symp_area_ordered_face_count",
+        "ridge_symp_area_ordering_failure_count",
+        "ridge_symp_area_ordered_fraction",
+    }
+    all_two_face_orders_succeeded = all(
+        float(row.get("ridge_symp_area_ordered_fraction", 1.0)) == 1.0 for row in rows
     )
     names: list[str] = []
     threshold = max(1, int(len(rows) * min_present_fraction))
     keys = sorted({key for row in rows for key in row})
     for key in keys:
         if key in excluded:
+            continue
+        if key.startswith("orbit_") and not include_post_capacity:
+            continue
+        if key in geometry_diagnostics:
+            continue
+        if key.startswith("ridge_symp_area_volnorm_") and not all_two_face_orders_succeeded:
             continue
         if geometry_only and not key.startswith(geometry_prefixes):
             continue
@@ -182,4 +217,3 @@ def matrix_for(rows: list[dict[str, Any]], names: list[str]) -> list[list[float]
             values.append(float(value) if isinstance(value, int | float) else 0.0)
         matrix.append(values)
     return matrix
-

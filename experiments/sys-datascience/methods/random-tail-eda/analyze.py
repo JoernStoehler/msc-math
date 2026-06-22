@@ -23,6 +23,7 @@ from random_only import (  # noqa: E402
     TABLES_DIR,
     dataset_label,
     load_trusted_random_tables,
+    product_bucket,
     provenance_by_poly_id,
     write_json,
 )
@@ -101,12 +102,55 @@ def exponential_tail_extrapolations(values: list[float]) -> list[dict[str, float
     return results
 
 
-def product_bucket(provenance_rows: list[dict[str, object]]) -> str:
-    paths = sorted({str(row.get("path", "")) for row in provenance_rows if row.get("path")})
-    for path in paths:
-        if path.startswith("lp_"):
-            return path.removeprefix("lp_")
-    return "unknown"
+def source_parameter_availability(provenance_rows: list[dict[str, object]]) -> dict[str, object]:
+    fields = [
+        "sample_seed",
+        "sample_attempt",
+        "sample_h_min",
+        "sample_h_max",
+        "product_k",
+        "product_m",
+        "product_bounces",
+    ]
+    by_field = {
+        field: sum(1 for row in provenance_rows if field in row and row[field] is not None)
+        for field in fields
+    }
+    height_ranges = sorted(
+        {
+            (float(row["sample_h_min"]), float(row["sample_h_max"]))
+            for row in provenance_rows
+            if isinstance(row.get("sample_h_min"), int | float)
+            and isinstance(row.get("sample_h_max"), int | float)
+        }
+    )
+    product_buckets = sorted(
+        {
+            f"{int(row['product_k'])}x{int(row['product_m'])}"
+            for row in provenance_rows
+            if isinstance(row.get("product_k"), int) and isinstance(row.get("product_m"), int)
+        }
+    )
+    explicit_buckets_by_poly_id: dict[str, set[str]] = defaultdict(set)
+    for row in provenance_rows:
+        poly_id = str(row.get("poly_id", ""))
+        if (
+            poly_id
+            and isinstance(row.get("product_k"), int)
+            and isinstance(row.get("product_m"), int)
+        ):
+            explicit_buckets_by_poly_id[poly_id].add(
+                f"{int(row['product_k'])}x{int(row['product_m'])}"
+            )
+    return {
+        "provenance_rows": len(provenance_rows),
+        "rows_with_field": by_field,
+        "explicit_height_ranges": height_ranges,
+        "explicit_product_buckets": product_buckets,
+        "poly_ids_with_multiple_explicit_product_buckets": sum(
+            1 for buckets in explicit_buckets_by_poly_id.values() if len(buckets) > 1
+        ),
+    }
 
 
 def generator_contract() -> dict[str, object]:
@@ -249,6 +293,7 @@ def main() -> None:
         "row_count": len(rows),
         "research_questions": research_questions(),
         "generator_contract": generator_contract(),
+        "source_parameter_availability": source_parameter_availability(provenance_rows),
         "sys_gt_one": sum(1 for row in rows if float(row["sys"]) > 1.0),
         "overall_distribution": distribution_summary(sys_values),
         "overall_quantiles": quantiles(sys_values),

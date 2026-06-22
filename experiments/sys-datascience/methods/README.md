@@ -7,7 +7,11 @@ Read first:
 
 1. `../README.md`
 2. `../prepare/README.md`
-3. the relevant method folder `README.md`
+3. `random-only-closure-summary.md` for the current cross-method random-only
+   dashboard
+4. `random-only-method-dispositions.md` for random-only checklist-family
+   dispositions
+5. the relevant method folder `README.md`
 
 ## Current State
 
@@ -46,10 +50,14 @@ value after contamination risk.
 
 This README is not a result ledger. It records method-packet conventions and
 the current packet list. Method-table coverage is reviewed through current
-`methods/<method>/README.md` packets, with `method-coverage-checklist.md` used
+`methods/<method>/README.md` packets. `random-only-closure-summary.md`
+summarizes the current random-only cross-method state and remaining evidence
+gate. `random-only-method-dispositions.md` records random-only checklist-family
+run/defer/reject/out-of-scope decisions. `method-coverage-checklist.md` is used
 as a recall aid for rows that still need a packet, explicit abandonment,
-deferral with reason, inapplicability decision, or escalation. A packet list is
-not itself evidence that the method table is complete.
+deferral with reason, inapplicability decision, or escalation. A packet list,
+dashboard, or disposition ledger is not itself evidence that the method table is
+complete.
 
 Do not preserve old audit rows in this README just because a historical report
 named them. Extract old work only when it supports a current method-table row
@@ -164,3 +172,11 @@ evidence, or task queue.
 Read it when choosing or reviewing method-table coverage:
 
 - `method-coverage-checklist.md`
+
+For the current trusted random/product cross-method dashboard, read:
+
+- `random-only-closure-summary.md`
+
+For checklist-family dispositions in the trusted random/product scope, read:
+
+- `random-only-method-dispositions.md`

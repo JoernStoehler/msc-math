@@ -45,9 +45,9 @@ take absolute values, then summarize by `max`.
 
 Screen eligible scalar retained-table covariates against `sys` with Pearson
 and Spearman correlations. Use a permutation family-maximum check across all
-tested association features for the strongest rank association and a bootstrap
-confidence interval for the random-product minus generic-random mean `sys`
-difference.
+tested association features for the strongest rank association, categorical
+factor tests for source/provenance strata, and a bootstrap confidence interval
+for the random-product minus generic-random mean `sys` difference.
 
 Eligibility is defined by the shared random-only feature selector:
 
@@ -55,11 +55,21 @@ Eligibility is defined by the shared random-only feature selector:
   retained rows;
 - exclude the target `sys`, direct capacity/volume fields, capacity iteration
   diagnostics, `sigma_gap_cutoff`, `orbit_result_iterations_log1p`,
-  non-scalar JSON columns, and sparse numeric columns.
+  post-capacity `orbit_*` interpretation fields, non-scalar JSON columns, and
+  sparse numeric columns;
+- exclude two-face ordering diagnostics from clean covariate screens; exclude
+  two-face symplectic-area summaries if any loaded row reports incomplete
+  two-face ordering.
 
 The screen is exhaustive only for the already-engineered scalar numeric
 features stored by the shared prepare stage under this rule. It is not
 feature-engineering closure from `a_k`.
+
+Source and generator metadata are not treated as intrinsic geometric scalar
+features. They are handled separately as categorical factors in
+`source_factor_tests`, including source family, dataset label, facet count,
+source-by-facet, product bucket, product bounce count, and height range when
+those provenance fields are available.
 
 Canonization convention: first normalize to the volume-one representative
 before forming scale-sensitive geometric or symplectic summaries. This leaves
@@ -90,43 +100,64 @@ The artifact records:
 - `tested_covariate_family_inventory`;
 - `obvious_covariate_audit`;
 - `obvious_covariate_audit["first_layer_nodes"]`;
+- `source_factor_tests`;
 - `tested_scalar_covariates`;
 - `skipped_constant_covariates`;
 - `excluded_by_design`.
 
 ## Observation
 
-Current run on hydrated retained tables in this branch:
+Feature-space closure branch note: the current artifact was regenerated with
+this branch's method code against the full scoped random/product prepare output
+at `/tmp/sys-ds-random-only-full`, built with `sys-dataset --random-only`. It
+therefore includes the new omega matrix/sign, normalized-omega, two-face-tail,
+and explicit provenance columns for trusted random/product rows.
+
+Current full scoped random/product run:
 
 - rows: `14336`;
-- eligible scalar covariates: `122`;
-- nonconstant scalar covariates tested: `101`;
+- eligible scalar covariates: `110`;
+- nonconstant scalar covariates tested: `99`;
 - strongest absolute Spearman correlation: `0.9384368671850424`;
 - family-maximum permutation p-value: `0.004975124378109453`;
 - product-minus-generic mean `sys`: `0.04908416085647144`;
 - bootstrap 95% interval for that mean difference:
   `[0.04252389852783871, 0.055886616744594816]`.
+- source factor tests: `capacity_source`, `dataset_label`,
+  `dataset_label_by_facet_count`, `facet_count`, and `product_bucket` were
+  tested. `product_bounces` and `sample_height_range` are available but still
+  have too few nonempty groups for a meaningful factor test in this retained
+  random/product slice.
+- strongest source/facet group mean spread in this artifact:
+  `dataset_label_by_facet_count` max-minus-min group mean
+  `0.3265780723303283`; `facet_count` spread `0.30691591817614594`;
+  `product_bucket` spread `0.2750512503828982`;
+  `capacity_source` spread `0.04908416085647144`.
 
-The screened set is exhaustive relative to the current shared prepare-stage
-feature schema and the eligibility rule above. More importantly, the current
-engineered features cover several first-layer nodes:
+The retained artifact's screened set is exhaustive relative to the scoped
+random/product prepare schema and eligibility rule it was run against. The
+current branch prepare schema covers several first-layer nodes:
 
 - source object `a_k`: volume-one norms, centroid norm, coordinate standard
   deviations, pairwise Euclidean distances/cosines, centered singular values;
 - pairwise object `omega(a_i,a_j)`: all-pair absolute omega summaries at volume
-  one, zero fraction, and ridge-restricted summaries;
+  one, zero fraction, ridge-restricted summaries, omega matrix summaries,
+  omega-sign out-degree summaries, and normalized-omega summaries in the chosen
+  Euclidean representative;
 - two-face object `F_i cap F_j`: volume-one symplectic-area
-  mean/std/min/max/sum/max-share and zero/small-area fractions;
+  mean/std/min/max/sum/max-share, median, upper quantiles, top-k share, and
+  zero/small-area fractions, with incidence-ordering diagnostics;
 - incidence and transition graphs: counts, degrees, densities, adjacency and
   transition summaries;
 - capacity/orbit outputs: post-evaluation explanatory summaries only.
 
 Partially covered or missing first-layer-node work:
 
-- two-face symplectic-area summaries lack median/quantiles/top-k tail
-  summaries;
-- source/product bucket metadata is handled by EDA, not as factor tests here;
-- generator rejection/attempt metadata is not retained;
+- source/product bucket metadata is now handled by EDA and categorical factor
+  tests;
+- generator rejection/attempt metadata is not available in the canonical
+  retained random/product producer files; newer producer provenance can expose
+  optional `sample_attempt`;
 - explicit product-structure or symmetry scores are not implemented;
 - local perturbation/sensitivity scalars require separate non-gradient
   perturbation or local-behavior data.

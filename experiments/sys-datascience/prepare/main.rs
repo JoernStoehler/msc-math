@@ -3,6 +3,7 @@
 //! Input Artifacts: producer JSONL files under `experiments/sys-datascience/produce/`
 //! Output Artifacts: ad hoc output directory passed by `--out-dir`
 
+mod canonize;
 mod features;
 mod features_trace;
 mod load_caches;
@@ -16,6 +17,12 @@ fn main() {
     let paths = load_caches::parse_args();
     let total_started = Instant::now();
     eprintln!("Loading producer caches");
+    if paths.random_only {
+        eprintln!(
+            "Mode: random-only (max random rows: {:?}, max random-product rows: {:?})",
+            paths.max_random_rows, paths.max_random_product_rows
+        );
+    }
     let started = Instant::now();
     let caches = load_caches::load_caches(&paths);
     eprintln!(

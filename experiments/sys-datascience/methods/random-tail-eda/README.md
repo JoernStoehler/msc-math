@@ -56,7 +56,18 @@ uv run --script experiments/sys-datascience/methods/random-tail-eda/analyze.py
 
 ## Observation
 
-Current run on hydrated retained tables in this branch:
+Feature-space closure branch note: the provenance schema now exposes optional
+source/generator fields such as height range and product `(k,m,bounces)` when
+the producer row provides them. This script now prefers explicit product
+parameters over reparsing `path`, and records
+`source_parameter_availability` in its summary. The current artifact was
+regenerated with this branch's method code against the full scoped
+random/product prepare output at `/tmp/sys-ds-random-only-full`, built with
+`sys-dataset --random-only`. It includes the new explicit height range and
+product `(k,m,bounces)` provenance fields for the canonical random/product
+producer rows.
+
+Current full scoped random/product run:
 
 - rows: `14336`;
 - `sys > 1` rows: `0`;
@@ -71,6 +82,11 @@ Filtered tail summaries are stored in
 p99 are product-heavy (`6x6`, `5x6`, `5x5`, `4x6`) plus generic `F=12`. No
 filtered slice contains a `sys > 1` row. The largest observed value is still
 about `0.137` below the threshold `1`.
+
+`summary.json["source_parameter_availability"]` records explicit source
+parameters present in the scoped provenance rows. Canonical retained rows expose
+height range and product `(k,m,bounces)` where applicable; seed/attempt remain
+absent for these older canonical producer files.
 
 The source-backed generator contract is stored in
 `summary.json["generator_contract"]`. In production mode, generic random rows
