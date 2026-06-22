@@ -397,28 +397,23 @@ stability, and method use are audited.
 - disposition: separate method/panel packet, not base feature table, unless
   reusable row entities are promoted deliberately.
 
-## Current Next Round
+## Current State
 
-Value-of-information ranking for the next implementation/analysis round:
+The random/product-scoped rebuild and full method reruns completed on
+2026-06-22 using `prepare/build-random-only-slice.sh full` and
+`/tmp/sys-ds-random-only-full`. Current evidence covers the new omega,
+two-face-area, and explicit provenance columns for the trusted random/product
+slice.
 
-1. Rebuild random/product-scoped tables with the new omega, two-face area, and
-   explicit provenance columns, then rerun affected method analyses. Use the
-   tiered prepare path: `smoke` for fast prepare feedback, `method` for medium
-   method feedback, and full `--random-only` for the evidence gate. Method
-   scripts have now been rerun on the hydrated checked-in retained tables from
-   `/workspaces/msc-math/experiments/sys-datascience/prepare`, but those tables
-   still use the old prepare schema. A local all-source rebuild attempt on
-   2026-06-22 loaded ascent/continuation rows too and was stopped during table
-   construction after the local compute/memory guard fired; that was the wrong
-   gate for this random/product goal.
-2. After the prepare rebuild, rerun EDA/univariate/projection/prediction
-   packets again so omega matrix/sign/alignment, two-face-tail, and explicit
-   provenance fields are in the full-table artifacts.
-3. Decide after post-rebuild reruns whether source-stratification evidence is
-   sufficient, or whether a separate metadata/provenance packet is needed.
+Remaining next work:
 
-This ordering is a current working choice, not a proof that later rows are
-unimportant. Re-rank after each round using method results and review feedback.
+1. Run method/statistics review on the full scoped artifacts and packet
+   interpretation.
+2. Decide whether the scoped prepared table should be retained in repo/LFS or
+   kept as reproducible generated data.
+3. Only after review, promote selected claims into thesis prose. Do not claim
+   closure over gradient ascent, local maxima, attractors, basin structure, or
+   arbitrary random polytope distributions from this random/product slice.
 
 ## Review Log
 
@@ -585,3 +580,41 @@ unimportant. Re-rank after each round using method results and review feedback.
   `prepare/build-random-only-slice.sh smoke` for fast development,
   `prepare/build-random-only-slice.sh method` for method-feedback, and the
   `--random-only` LICCA script for the full evidence run.
+
+### 2026-06-22 Scoped Random/Product Full Rerun
+
+- fixed the prepare architecture so `sys-dataset --random-only` filters before
+  feature construction and skips ascent/continuation rows, computed-polytope
+  observation rows, and post-capacity orbit cache loading.
+- added explicit local prepare tiers:
+  - `prepare/build-random-only-slice.sh smoke`: `8` random + `10` product rows;
+  - `prepare/build-random-only-slice.sh method`: `512` random + `1024`
+    product rows;
+  - `prepare/build-random-only-slice.sh full`: all `4096` random + `10240`
+    product rows.
+- observed timings with hydrated canonical producer files from
+  `/workspaces/msc-math/experiments/sys-datascience/produce`:
+  - `smoke`: loaded `18` rows in `0.4s`, feature table rounded to `0.0s`;
+  - `method`: loaded `1536` rows in `0.5s`, feature table `1.2s`;
+  - `full`: loaded `14336` rows in `0.5s`, feature table `408.3s`, total
+    table build `409.1s`; memory stayed low in spot checks, so the remaining
+    cost is CPU-heavy geometry/face feature construction.
+- full scoped fingerprint:
+  - `14336` polytope rows, `14336` provenance rows;
+  - `0` computed-polytope observation rows and `0` ascent-run rows;
+  - source counts `random_sample = 4096`, `random_product_sample = 10240`;
+  - max `sys = 0.86258589584944`, `0` rows with `sys > 1`.
+- reran full method packets against `/tmp/sys-ds-random-only-full`:
+  - `random-tail-eda`: no positives, max `sys = 0.86258589584944`;
+  - `statistical-associations`: `110` eligible scalar covariates, `99`
+    nonconstant tested, max absolute Spearman `0.9384368671850424`,
+    family-max permutation p-value `0.004975124378109453`;
+  - `projection-structure`: `109` geometry features, PC1/`sys` correlation
+    `-0.4636669884808957`, top-25 anomaly overlap with top-2% `sys` rows `0`;
+  - `prediction-ranking`: `109` geometry features, `27` metadata features,
+    geometry random forest `R^2 = 0.9266078877149259`, metadata-only random
+    forest `R^2 = 0.0019535588595060993`.
+- evidence status: current full random/product method evidence for the new
+  prepare columns exists. Remaining gates are method/statistics review,
+  final disposition review, and deciding whether to retain the scoped prepared
+  table output or keep it as reproducible generated data.

@@ -74,8 +74,12 @@
       ]
     },
     "other scalar summaries": {
-      "count": 1,
+      "count": 5,
       "features": [
+        "ridge_abs_normalized_omega_max",
+        "ridge_abs_normalized_omega_mean",
+        "ridge_abs_normalized_omega_min",
+        "ridge_abs_normalized_omega_std",
         "ridge_zero_fraction"
       ]
     },
@@ -87,13 +91,26 @@
       ]
     },
     "symplectic/omega summaries": {
-      "count": 22,
+      "count": 39,
       "features": [
+        "allpair_abs_normalized_omega_max",
+        "allpair_abs_normalized_omega_mean",
+        "allpair_abs_normalized_omega_min",
+        "allpair_abs_normalized_omega_std",
         "allpair_abs_omega_vol1_max",
         "allpair_abs_omega_vol1_mean",
         "allpair_abs_omega_vol1_min",
         "allpair_abs_omega_vol1_std",
         "allpair_zero_fraction",
+        "omega_matrix_vol1_frobenius_norm",
+        "omega_matrix_vol1_nullity_1em10",
+        "omega_matrix_vol1_rank_1em10",
+        "omega_matrix_vol1_spectral_norm",
+        "omega_matrix_vol1_stable_rank",
+        "omega_sign_out_degree_max",
+        "omega_sign_out_degree_mean",
+        "omega_sign_out_degree_min",
+        "omega_sign_out_degree_std",
         "ridge_abs_omega_vol1_le_1em1_fraction",
         "ridge_abs_omega_vol1_le_1em2_fraction",
         "ridge_abs_omega_vol1_le_1em3_fraction",
@@ -107,9 +124,13 @@
         "ridge_symp_area_volnorm_max",
         "ridge_symp_area_volnorm_max_share",
         "ridge_symp_area_volnorm_mean",
+        "ridge_symp_area_volnorm_median",
         "ridge_symp_area_volnorm_min",
+        "ridge_symp_area_volnorm_q90",
+        "ridge_symp_area_volnorm_q95",
         "ridge_symp_area_volnorm_std",
         "ridge_symp_area_volnorm_sum",
+        "ridge_symp_area_volnorm_top3_share",
         "ridge_symp_area_volnorm_zero_fraction"
       ]
     },
@@ -125,7 +146,7 @@
       ]
     }
   },
-  "eligible_scalar_covariate_count": 89,
+  "eligible_scalar_covariate_count": 110,
   "excluded_by_design": [
     "sys",
     "capacity",
@@ -138,7 +159,7 @@
     "columns present as numeric values in less than 98% of retained rows",
     "provenance/source metadata as numeric scalar covariates; these are handled by source_factor_tests"
   ],
-  "feature_count": 79,
+  "feature_count": 99,
   "max_abs_spearman": 0.9384368671850424,
   "obvious_covariate_audit": {
     "assessment": "The current screen is useful for scalar summaries already present in the retained table it is run against. The branch-level coverage ledger now controls whether omega, sign, normalized-alignment, two-face-area, and source-metadata families are implemented, audited, or deferred. Retained-table reruns are still required before updated feature-family claims become thesis evidence.",
@@ -301,10 +322,11 @@
   ],
   "row_count": 14336,
   "screening_name": "univariate association screening",
-  "selected_scalar_covariate_count": 89,
+  "selected_scalar_covariate_count": 110,
   "skipped_by_max_features": [],
   "skipped_constant_covariates": [
     "is_simple",
+    "omega_matrix_vol1_rank_1em10",
     "simple_vertex_fraction",
     "vertex_degree_max",
     "vertex_degree_mean",
@@ -639,16 +661,37 @@
       "test_status": "tested"
     },
     "product_bounces": {
-      "anova_f": null,
-      "anova_p": null,
-      "eta_squared": null,
-      "group_count": 0,
-      "groups": {},
-      "kruskal_h": null,
-      "kruskal_p": null,
-      "max_minus_min_group_mean": null,
-      "row_count": 0,
-      "test_status": "not_enough_nonempty_groups"
+      "anova_f": 1711.6139809354408,
+      "anova_p": 0.0,
+      "eta_squared": 0.14323592240436978,
+      "group_count": 2,
+      "groups": {
+        "2": {
+          "max": 0.8536118881702471,
+          "mean": 0.23670914960010794,
+          "median": 0.19896806318106136,
+          "min": 1.3619216643341758e-05,
+          "q90": 0.5092553635946644,
+          "q99": 0.686693035411954,
+          "rows": 3979,
+          "std": 0.1813002380763239
+        },
+        "3": {
+          "max": 0.86258589584944,
+          "mean": 0.3976340640252165,
+          "median": 0.413721562954485,
+          "min": 9.601533052329054e-05,
+          "q90": 0.6513834676299932,
+          "q99": 0.7740543335220004,
+          "rows": 6261,
+          "std": 0.19824559282398105
+        }
+      },
+      "kruskal_h": 1483.0996594029457,
+      "kruskal_p": 0.0,
+      "max_minus_min_group_mean": 0.16092491442510856,
+      "row_count": 10240,
+      "test_status": "tested"
     },
     "product_bucket": {
       "anova_f": 217.9919016488702,
@@ -767,12 +810,23 @@
       "anova_f": null,
       "anova_p": null,
       "eta_squared": null,
-      "group_count": 0,
-      "groups": {},
+      "group_count": 1,
+      "groups": {
+        "0.8:1.2": {
+          "max": 0.86258589584944,
+          "mean": 0.32107874516607754,
+          "median": 0.3108413591329677,
+          "min": 2.0327844013814595e-06,
+          "q90": 0.6020490648950583,
+          "q99": 0.7521020122453151,
+          "rows": 14336,
+          "std": 0.20277472820849926
+        }
+      },
       "kruskal_h": null,
       "kruskal_p": null,
       "max_minus_min_group_mean": null,
-      "row_count": 0,
+      "row_count": 14336,
       "test_status": "not_enough_nonempty_groups"
     }
   },
@@ -844,35 +898,55 @@
       ]
     },
     "other scalar summaries": {
-      "count": 1,
+      "count": 5,
       "features": [
-        "ridge_zero_fraction"
+        "ridge_abs_normalized_omega_max",
+        "ridge_abs_normalized_omega_min",
+        "ridge_zero_fraction",
+        "ridge_abs_normalized_omega_mean",
+        "ridge_abs_normalized_omega_std"
       ]
     },
     "symplectic/omega summaries": {
-      "count": 22,
+      "count": 38,
       "features": [
         "ridge_symp_area_volnorm_sum",
         "ridge_symp_area_volnorm_max",
         "ridge_abs_omega_vol1_mean",
         "ridge_symp_area_volnorm_std",
+        "ridge_symp_area_volnorm_q95",
+        "omega_matrix_vol1_spectral_norm",
         "allpair_abs_omega_vol1_max",
         "ridge_abs_omega_vol1_max",
         "allpair_abs_omega_vol1_mean",
         "allpair_abs_omega_vol1_std",
         "ridge_abs_omega_vol1_std",
+        "omega_matrix_vol1_frobenius_norm",
+        "ridge_symp_area_volnorm_q90",
         "ridge_symp_area_volnorm_mean",
+        "ridge_symp_area_volnorm_top3_share",
         "ridge_symp_area_volnorm_max_share",
+        "omega_matrix_vol1_stable_rank",
+        "omega_matrix_vol1_nullity_1em10",
+        "allpair_abs_normalized_omega_mean",
+        "omega_sign_out_degree_mean",
+        "omega_sign_out_degree_min",
+        "omega_sign_out_degree_max",
+        "ridge_symp_area_volnorm_median",
         "allpair_zero_fraction",
+        "allpair_abs_normalized_omega_max",
+        "ridge_symp_area_volnorm_min",
         "allpair_abs_omega_vol1_min",
         "ridge_abs_omega_vol1_min",
-        "ridge_symp_area_volnorm_min",
+        "allpair_abs_normalized_omega_min",
         "ridge_symp_area_volnorm_zero_fraction",
         "ridge_symp_area_volnorm_le_1em2_fraction",
         "ridge_abs_omega_vol1_le_1em3_fraction",
         "ridge_symp_area_volnorm_le_1em3_fraction",
         "ridge_abs_omega_vol1_le_1em2_fraction",
         "ridge_abs_omega_vol1_le_1em1_fraction",
+        "allpair_abs_normalized_omega_std",
+        "omega_sign_out_degree_std",
         "ridge_symp_area_volnorm_le_1em1_fraction"
       ]
     },
@@ -893,6 +967,8 @@
     "ridge_symp_area_volnorm_max",
     "ridge_abs_omega_vol1_mean",
     "ridge_symp_area_volnorm_std",
+    "ridge_symp_area_volnorm_q95",
+    "omega_matrix_vol1_spectral_norm",
     "allpair_abs_omega_vol1_max",
     "ridge_abs_omega_vol1_max",
     "allpair_abs_omega_vol1_mean",
@@ -905,7 +981,9 @@
     "geom_vol1_pairwise_dist_mean",
     "edge_length_vol1_std",
     "geom_vol1_norm_min",
+    "omega_matrix_vol1_frobenius_norm",
     "edge_length_vol1_max",
+    "ridge_symp_area_volnorm_q90",
     "ridge_symp_area_volnorm_mean",
     "facet_volume_vol1_max",
     "facet_volume_vol1_std",
@@ -915,6 +993,7 @@
     "edge_length_vol1_mean",
     "facet_volume_vol1_mean",
     "edge_length_vol1_max_share",
+    "ridge_symp_area_volnorm_top3_share",
     "facet_volume_vol1_max_share",
     "ridge_symp_area_volnorm_max_share",
     "geom_vol1_coord_std_w",
@@ -923,9 +1002,11 @@
     "geom_vol1_coord_std_z",
     "geom_vol1_coord_std_x",
     "geom_vol1_coord_std_y",
+    "omega_matrix_vol1_stable_rank",
     "geom_vol1_sval_3",
     "dual_vertex_count",
     "facet_count",
+    "omega_matrix_vol1_nullity_1em10",
     "ridge_count",
     "edge_count",
     "edge_density",
@@ -942,14 +1023,23 @@
     "ridge_size_max",
     "ridge_size_min",
     "transition_out_degree_max",
+    "allpair_abs_normalized_omega_mean",
     "geom_cosine_std",
+    "omega_sign_out_degree_mean",
     "transition_out_degree_min",
     "transition_density",
+    "omega_sign_out_degree_min",
     "ridge_size_std",
+    "omega_sign_out_degree_max",
+    "ridge_symp_area_volnorm_median",
     "allpair_zero_fraction",
+    "allpair_abs_normalized_omega_max",
+    "ridge_abs_normalized_omega_max",
+    "ridge_symp_area_volnorm_min",
     "allpair_abs_omega_vol1_min",
     "ridge_abs_omega_vol1_min",
-    "ridge_symp_area_volnorm_min",
+    "allpair_abs_normalized_omega_min",
+    "ridge_abs_normalized_omega_min",
     "ridge_symp_area_volnorm_zero_fraction",
     "ridge_zero_fraction",
     "transition_bidirectional_given_facet_intersection_fraction",
@@ -964,7 +1054,11 @@
     "facet_neighbor_count_std",
     "geom_cosine_min",
     "geom_cosine_mean",
+    "ridge_abs_normalized_omega_mean",
     "edge_length_vol1_min",
+    "ridge_abs_normalized_omega_std",
+    "allpair_abs_normalized_omega_std",
+    "omega_sign_out_degree_std",
     "transition_out_degree_std",
     "ridge_symp_area_volnorm_le_1em1_fraction",
     "geom_vol1_sval_4"
@@ -994,9 +1088,23 @@
     {
       "feature": "ridge_symp_area_volnorm_std",
       "pearson_p": 4.099825905124919e-115,
-      "pearson_r": -0.18876631243083672,
+      "pearson_r": -0.1887663124308367,
       "spearman_p": 0.0,
       "spearman_rho": -0.8826106824527608
+    },
+    {
+      "feature": "ridge_symp_area_volnorm_q95",
+      "pearson_p": 1.3889571489041181e-98,
+      "pearson_r": -0.17466574156455628,
+      "spearman_p": 0.0,
+      "spearman_rho": -0.8785682247090743
+    },
+    {
+      "feature": "omega_matrix_vol1_spectral_norm",
+      "pearson_p": 4.680058239493886e-29,
+      "pearson_r": -0.0932438838461872,
+      "spearman_p": 0.0,
+      "spearman_rho": -0.8674559208954936
     },
     {
       "feature": "allpair_abs_omega_vol1_max",
@@ -1083,11 +1191,25 @@
       "spearman_rho": -0.8416610102626907
     },
     {
+      "feature": "omega_matrix_vol1_frobenius_norm",
+      "pearson_p": 1.797357472885335e-23,
+      "pearson_r": -0.08324507188257267,
+      "spearman_p": 0.0,
+      "spearman_rho": -0.8399369438243105
+    },
+    {
       "feature": "edge_length_vol1_max",
       "pearson_p": 5.17317313128735e-10,
       "pearson_r": -0.05186637543807765,
       "spearman_p": 0.0,
       "spearman_rho": -0.8375504508912952
+    },
+    {
+      "feature": "ridge_symp_area_volnorm_q90",
+      "pearson_p": 7.045475918495952e-159,
+      "pearson_r": -0.2215316067514006,
+      "spearman_p": 0.0,
+      "spearman_rho": -0.8315921078113317
     },
     {
       "feature": "ridge_symp_area_volnorm_mean",
@@ -1116,34 +1238,6 @@
       "pearson_r": -0.4797384770227627,
       "spearman_p": 0.0,
       "spearman_rho": -0.7931703401239669
-    },
-    {
-      "feature": "geom_vol1_sval_2",
-      "pearson_p": 0.0,
-      "pearson_r": -0.49970389598243337,
-      "spearman_p": 0.0,
-      "spearman_rho": -0.7927399520960204
-    },
-    {
-      "feature": "geom_vol1_pairwise_dist_std",
-      "pearson_p": 0.0,
-      "pearson_r": -0.5064084422058732,
-      "spearman_p": 0.0,
-      "spearman_rho": -0.7642982978887555
-    },
-    {
-      "feature": "edge_length_vol1_mean",
-      "pearson_p": 2.77606513063228e-28,
-      "pearson_r": -0.09192436179385782,
-      "spearman_p": 0.0,
-      "spearman_rho": -0.7572731462080102
-    },
-    {
-      "feature": "facet_volume_vol1_mean",
-      "pearson_p": 0.0,
-      "pearson_r": -0.5237064769307788,
-      "spearman_p": 0.0,
-      "spearman_rho": -0.7357383773405375
     }
   ]
 }

@@ -107,21 +107,17 @@ The artifact records:
 
 ## Observation
 
-Feature-space closure branch note: the shared prepare schema now adds omega
-matrix/sign columns, normalized-omega columns, and two-face symplectic-area
-ordering/tail columns. A tiny temp-table smoke verified that this script can
-consume the changed schema. The current artifact below was regenerated with
-this branch's method code against the hydrated checked-in retained tables from
-`/workspaces/msc-math/experiments/sys-datascience/prepare`, so
-`source_factor_tests` are now full-table results for the old retained schema.
-It still predates the prepare-stage rebuild with new omega matrix/sign,
-normalized-omega, two-face-tail, and explicit provenance columns.
+Feature-space closure branch note: the current artifact was regenerated with
+this branch's method code against the full scoped random/product prepare output
+at `/tmp/sys-ds-random-only-full`, built with `sys-dataset --random-only`. It
+therefore includes the new omega matrix/sign, normalized-omega, two-face-tail,
+and explicit provenance columns for trusted random/product rows.
 
-Current run on hydrated checked-in retained tables:
+Current full scoped random/product run:
 
 - rows: `14336`;
-- eligible scalar covariates: `89`;
-- nonconstant scalar covariates tested: `79`;
+- eligible scalar covariates: `110`;
+- nonconstant scalar covariates tested: `99`;
 - strongest absolute Spearman correlation: `0.9384368671850424`;
 - family-maximum permutation p-value: `0.004975124378109453`;
 - product-minus-generic mean `sys`: `0.04908416085647144`;
@@ -129,19 +125,18 @@ Current run on hydrated checked-in retained tables:
   `[0.04252389852783871, 0.055886616744594816]`.
 - source factor tests: `capacity_source`, `dataset_label`,
   `dataset_label_by_facet_count`, `facet_count`, and `product_bucket` were
-  tested; `product_bounces` and `sample_height_range` had too few nonempty
-  groups in the old retained schema.
+  tested. `product_bounces` and `sample_height_range` are available but still
+  have too few nonempty groups for a meaningful factor test in this retained
+  random/product slice.
 - strongest source/facet group mean spread in this artifact:
   `dataset_label_by_facet_count` max-minus-min group mean
   `0.3265780723303283`; `facet_count` spread `0.30691591817614594`;
   `product_bucket` spread `0.2750512503828982`;
   `capacity_source` spread `0.04908416085647144`.
 
-The retained artifact's screened set is exhaustive relative to the old retained
-prepare-stage schema and eligibility rule it was run against. It is not current
-evidence for the new branch prepare columns until the retained tables and this
-packet are rerun after rebuild. The current branch prepare schema is intended
-to cover several first-layer nodes:
+The retained artifact's screened set is exhaustive relative to the scoped
+random/product prepare schema and eligibility rule it was run against. The
+current branch prepare schema covers several first-layer nodes:
 
 - source object `a_k`: volume-one norms, centroid norm, coordinate standard
   deviations, pairwise Euclidean distances/cosines, centered singular values;
@@ -159,9 +154,10 @@ to cover several first-layer nodes:
 Partially covered or missing first-layer-node work:
 
 - source/product bucket metadata is now handled by EDA and categorical factor
-  tests, but old retained artifacts predate the new explicit provenance fields;
-- generator rejection/attempt metadata is not available in old retained
-  artifacts; newer producer provenance can expose optional `sample_attempt`;
+  tests;
+- generator rejection/attempt metadata is not available in the canonical
+  retained random/product producer files; newer producer provenance can expose
+  optional `sample_attempt`;
 - explicit product-structure or symmetry scores are not implemented;
 - local perturbation/sensitivity scalars require separate non-gradient
   perturbation or local-behavior data.

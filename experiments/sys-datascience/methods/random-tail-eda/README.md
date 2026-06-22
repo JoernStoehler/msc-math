@@ -61,13 +61,13 @@ source/generator fields such as height range and product `(k,m,bounces)` when
 the producer row provides them. This script now prefers explicit product
 parameters over reparsing `path`, and records
 `source_parameter_availability` in its summary. The current artifact was
-regenerated with this branch's method code against the hydrated checked-in
-retained tables from `/workspaces/msc-math/experiments/sys-datascience/prepare`.
-Those retained tables still predate the prepare-stage rebuild that would add
-the new explicit provenance fields; consequently the availability summary
-reports zero rows with `sample_*` or `product_*` fields in this artifact.
+regenerated with this branch's method code against the full scoped
+random/product prepare output at `/tmp/sys-ds-random-only-full`, built with
+`sys-dataset --random-only`. It includes the new explicit height range and
+product `(k,m,bounces)` provenance fields for the canonical random/product
+producer rows.
 
-Current run on hydrated checked-in retained tables:
+Current full scoped random/product run:
 
 - rows: `14336`;
 - `sys > 1` rows: `0`;
@@ -83,11 +83,10 @@ p99 are product-heavy (`6x6`, `5x6`, `5x5`, `4x6`) plus generic `F=12`. No
 filtered slice contains a `sys > 1` row. The largest observed value is still
 about `0.137` below the threshold `1`.
 
-`summary.json["source_parameter_availability"]` records that the old retained
-provenance rows do not yet contain explicit `sample_seed`, `sample_attempt`,
-`sample_h_min`, `sample_h_max`, `product_k`, `product_m`, or
-`product_bounces` fields. Product buckets in this artifact therefore still come
-from legacy `path` parsing.
+`summary.json["source_parameter_availability"]` records explicit source
+parameters present in the scoped provenance rows. Canonical retained rows expose
+height range and product `(k,m,bounces)` where applicable; seed/attempt remain
+absent for these older canonical producer files.
 
 The source-backed generator contract is stored in
 `summary.json["generator_contract"]`. In production mode, generic random rows

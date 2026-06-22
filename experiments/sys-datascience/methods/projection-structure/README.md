@@ -38,26 +38,23 @@ symplectic-area tail columns when all loaded rows have complete two-face
 ordering. Two-face ordering diagnostics are excluded from geometry inputs. The
 script now records metadata overlays for source/facet/product labels. The
 current artifact below was regenerated with this branch's method code against
-the hydrated checked-in retained tables from
-`/workspaces/msc-math/experiments/sys-datascience/prepare`, so metadata
-overlays are full-table results for the old retained schema. It still predates
-the prepare-stage rebuild with the new omega/two-face/provenance columns.
+the full scoped random/product prepare output at `/tmp/sys-ds-random-only-full`,
+built with `sys-dataset --random-only`.
 
-Current run on hydrated checked-in retained tables:
+Current full scoped random/product run:
 
 - rows: `14336`;
-- geometry features: `88`;
+- geometry features: `109`;
 - first five PCA explained-variance ratios:
-  `0.3898206499072291`, `0.22221957682055385`,
-  `0.15963593059038905`, `0.056606354072659314`,
-  `0.04365248795758812`;
-- PC1/`sys` correlation: `-0.46871789993085916`;
-- PC2/`sys` correlation: `0.21779070089156527`;
+  `0.351133867446898`, `0.2097027842622585`,
+  `0.17838138619847757`, `0.05255241762135098`,
+  `0.03744208973362901`;
+- PC1/`sys` correlation: `-0.4636669884808957`;
+- PC2/`sys` correlation: `0.2283293325852428`;
 - top 25 isolation-forest anomaly rows overlap with top 2% `sys` rows: `0`.
 - metadata overlays are recorded for `capacity_source`, `dataset_label`,
   `dataset_label_by_facet_count`, `facet_count`, `product_bucket`, and
-  `sample_height_range`. In this old schema, height range is `missing` for all
-  rows.
+  `sample_height_range`.
 
 K-means clusters separate some low/high-tail mass. The isolation-forest anomaly
 rows do not overlap the top `sys` tail in this run. This is in-table

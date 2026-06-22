@@ -41,37 +41,35 @@ symplectic-area tail columns when all loaded rows have complete two-face
 ordering. Two-face ordering diagnostics are excluded from geometry inputs.
 This branch also adds metadata-only baselines for source/facet/product
 provenance labels. The current artifact below was regenerated with this
-branch's method code against the hydrated checked-in retained tables from
-`/workspaces/msc-math/experiments/sys-datascience/prepare`, so metadata-only
-baselines are full-table results for the old retained schema. It still predates
-the prepare-stage rebuild with new omega/two-face/provenance columns.
+branch's method code against the full scoped random/product prepare output at
+`/tmp/sys-ds-random-only-full`, built with `sys-dataset --random-only`.
 
-Current run on hydrated checked-in retained tables:
+Current full scoped random/product run:
 
 - rows: `14336`;
-- geometry-only features: `88`;
-- metadata-only one-hot features: `26`;
+- geometry-only features: `109`;
+- metadata-only one-hot features: `27`;
 - grouped split: `capacity_source:facet_count`;
 - train rows: `8192`;
 - test rows: `6144`;
-- ridge: `R^2 = 0.5278029834784923`, MAE
-  `0.08913307407593929`, top-decile enrichment
-  `0.5593495934959349`;
-- random forest: `R^2 = 0.921983825923774`, MAE
-  `0.04059841487617869`, top-decile enrichment
-  `0.6341463414634146`;
-- metadata-only ridge: `R^2 = 0.12017539977683755`, MAE
-  `0.16535248208223238`, top-decile enrichment `0.296875`;
-- metadata-only random forest: `R^2 = -0.04953269595337506`, MAE
-  `0.1800783042710761`, top-decile enrichment `0.296875`;
+- ridge: `R^2 = 0.7823326289551743`, MAE
+  `0.0694758206886354`, top-decile enrichment
+  `0.6178861788617886`;
+- random forest: `R^2 = 0.9266078877149259`, MAE
+  `0.03970457208399192`, top-decile enrichment
+  `0.6682926829268293`;
+- metadata-only ridge: `R^2 = 0.30334429073518265`, MAE
+  `0.14266912157047226`, top-decile enrichment `0.2245475113122172`;
+- metadata-only random forest: `R^2 = 0.0019535588595060993`, MAE
+  `0.16758290080062851`, top-decile enrichment `0.14031357959075205`;
 - random-forest enrichment permutation p-value with `10` bounded permutations:
   `0.09090909090909091`.
 
 This is a strong in-table prediction signal. It is not a validated
 candidate-proposer because it did not rank unevaluated generated rows before
-their `sys` values were computed. In this old-schema rerun, metadata-only
-baselines are much weaker than geometry-only models, so the geometry signal is
-not explained away by source/facet/product labels alone.
+their `sys` values were computed. Metadata-only baselines are much weaker than
+geometry-only models, so the geometry signal is not explained away by
+source/facet/product labels alone.
 
 ## Validity Guards
 
