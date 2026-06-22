@@ -7,41 +7,6 @@ thesis prose.
 Live algorithm/control source:
 `crates/symplectic/src/algorithms/flow_graph/README.md`.
 
-## Live Thesis Blocked State
-
-This is the durable tracking place for the current FG thesis blockage. Future
-agents should read this section before discussing, drafting, or reviewing
-`thesis/flow-graph-algorithm-ch2021.tex`.
-
-The reader-facing FG chapter is blocked upstream. The empty scaffold in
-`thesis/flow-graph-algorithm-ch2021.tex` is not the active problem to solve by
-writing prose. The active problem is to reconstruct a correct theorem/proof
-route for the flow-graph capacity computation and check its correspondence with
-the current exact Rust implementation.
-
-Do not infer this blocked state from source code or tests. Source code and
-tests show implementation behavior; they do not record the thesis-level reason
-why reader-facing prose must wait.
-
-Current active surface:
-
-- recover and verify the mathematical FG theorem route;
-- separate theorem hypotheses from implementation input and rejection behavior;
-- compare the recovered proof route with `exact_search.rs`, `exact_tube.rs`,
-  and the flow-graph README contract;
-- record the resulting theorem/correspondence state before drafting thesis
-  prose.
-
-Current non-active surface:
-
-- publication prose in `thesis/flow-graph-algorithm-ch2021.tex`;
-- style review of that prose;
-- PDF review for this section.
-
-The chapter becomes active only after the theorem/proof route and Rust
-correspondence are stable enough to state what capacity claim the thesis can
-honestly make.
-
 The active `.tex` file currently contains only the scaffold. Do not use this
 file to write or approve reader-facing FG correctness prose. The next FG thesis
 work is proof recovery: compare the May tube proof material with the current
