@@ -60,6 +60,20 @@ def vector_summary(values: np.ndarray) -> dict[str, float | int]:
     }
 
 
+def top_loadings(
+    names: list[str], component: np.ndarray, *, count: int = 12
+) -> list[dict[str, float | str]]:
+    order = np.argsort(np.abs(component))[::-1][:count]
+    return [
+        {
+            "feature": names[int(idx)],
+            "loading": float(component[int(idx)]),
+            "abs_loading": float(abs(component[int(idx)])),
+        }
+        for idx in order
+    ]
+
+
 def summarize_by_label(
     labels: list[str], pcs: np.ndarray, y: np.ndarray, max_labels: int = 20
 ) -> dict[str, object]:
@@ -151,9 +165,8 @@ def label_counts(labels: list[str], max_labels: int = 12) -> dict[str, object]:
 def main() -> None:
     args = parse_args()
     rows, provenance_rows = load_trusted_random_tables(args.tables_dir)
-    names = numeric_feature_names(rows, geometry_only=True)
-    if args.max_features is not None:
-        names = names[: args.max_features]
+    eligible_names = numeric_feature_names(rows, geometry_only=True)
+    names = eligible_names[: args.max_features] if args.max_features else eligible_names
     x = np.array(matrix_for(rows, names), dtype=float)
     y = np.array([float(row["sys"]) for row in rows], dtype=float)
     args.out_dir.mkdir(parents=True, exist_ok=True)
@@ -208,7 +221,10 @@ def main() -> None:
 
     summary = {
         "row_count": len(rows),
+        "eligible_geometry_feature_count": len(eligible_names),
         "feature_count": len(names),
+        "feature_names": names,
+        "skipped_by_max_features": eligible_names[len(names) :],
         "pca_component_count": component_count,
         "explained_variance_ratio": [float(v) for v in pca.explained_variance_ratio_],
         "pc_sys_correlations": [
@@ -220,6 +236,10 @@ def main() -> None:
             f"pc{component + 1}": vector_summary(pcs[:, component])
             for component in range(component_count)
         },
+        "top_pc1_loadings": top_loadings(names, pca.components_[0]),
+        "top_pc2_loadings": top_loadings(names, pca.components_[1])
+        if component_count >= 2
+        else [],
         "metadata_overlays": metadata_overlays,
         "cluster_summaries": cluster_summaries,
         "top_25_anomaly_overlap_with_top_2pct_sys": anomaly_top_sys_overlap,

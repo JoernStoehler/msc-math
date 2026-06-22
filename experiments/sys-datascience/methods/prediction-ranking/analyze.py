@@ -63,6 +63,19 @@ def evaluate_model(model, x_train, y_train, x_test, y_test) -> dict[str, float |
     }
 
 
+def top_forest_importances(
+    names: list[str], model: RandomForestRegressor, *, count: int = 15
+) -> list[dict[str, float | str]]:
+    order = np.argsort(model.feature_importances_)[::-1][:count]
+    return [
+        {
+            "feature": names[int(idx)],
+            "importance": float(model.feature_importances_[int(idx)]),
+        }
+        for idx in order
+    ]
+
+
 def first_numeric_field(provenance_rows: list[dict[str, object]], field: str) -> str:
     values = sorted(
         {
@@ -148,9 +161,8 @@ def one_hot_matrix(
 def main() -> None:
     args = parse_args()
     rows, provenance_rows = load_trusted_random_tables(args.tables_dir)
-    names = numeric_feature_names(rows, geometry_only=True)
-    if args.max_features is not None:
-        names = names[: args.max_features]
+    eligible_names = numeric_feature_names(rows, geometry_only=True)
+    names = eligible_names[: args.max_features] if args.max_features else eligible_names
     x = np.array(matrix_for(rows, names), dtype=float)
     metadata_rows, metadata_fields = metadata_feature_rows(rows, provenance_rows)
     x_metadata, metadata_feature_names = one_hot_matrix(metadata_rows, metadata_fields)
@@ -215,7 +227,10 @@ def main() -> None:
     summary = {
         "row_count": len(rows),
         "provenance_rows": len(provenance_rows),
+        "eligible_geometry_feature_count": len(eligible_names),
         "geometry_feature_count": len(names),
+        "feature_names": names,
+        "skipped_by_max_features": eligible_names[len(names) :],
         "metadata_fields": metadata_fields,
         "metadata_feature_count": len(metadata_feature_names),
         "metadata_feature_names": metadata_feature_names,
@@ -225,6 +240,9 @@ def main() -> None:
         "forest_trees": args.forest_trees,
         "permutations": args.permutations,
         "results": results,
+        "random_forest_top_feature_importances": top_forest_importances(
+            names, models["random_forest_geometry_only"]
+        ),
         "random_forest_top_decile_enrichment_permutation_p": float(null_p),
         "candidate_proposer_disposition": (
             "no validated candidate-proposer: held-out ranking is an in-table "

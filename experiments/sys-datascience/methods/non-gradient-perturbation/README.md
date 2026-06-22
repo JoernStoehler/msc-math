@@ -2,15 +2,17 @@
 
 ## Research Question
 
-Does the bounded non-gradient perturbation route run on trusted random/product
-basepoints, and what happened in the current tiny smoke panel?
+Does the bounded random-direction perturbation route run on trusted
+random/product basepoints, and what happened in the current tiny smoke panel?
 
 ## Method
 
 Use the existing `sys-local-behavior-produce` binary with a trusted random-only
 polytope table and `--max-top-basepoints 0`, so basepoints are hash-selected
-controls rather than chosen by high `sys`. Directions are random. Radii are
-fixed before evaluation.
+controls rather than chosen by high `sys`. The producer currently emits both
+random directions and gradient-derived diagnostic directions. This packet
+counts only `random_unit_direction_*` rows as non-gradient perturbation
+evidence. Radii are fixed before evaluation.
 
 ## Inputs
 
@@ -52,21 +54,33 @@ uv run --script experiments/sys-datascience/methods/non-gradient-perturbation/an
 Current smoke run:
 
 - basepoints: `2`;
-- sample rows: `18`;
+- total producer sample rows: `18`;
 - successful samples: `18`;
 - failures: `0`;
-- target rows with `sys > 1`: `0`;
-- max target `sys`: `0.3449017308020992`;
-- positive-delta samples: `10`;
-- max observed `sys` increase: `0.0007923406490981111`.
+- direction labels:
+  `single_near_active_gradient` (`4`),
+  `negative_single_near_active_gradient` (`4`),
+  `near_active_maximin_direction` (`2`),
+  `random_unit_direction_0` (`4`),
+  `random_unit_direction_1` (`4`);
+- non-gradient random-direction rows counted for this packet: `8`;
+- random-direction target rows with `sys > 1`: `0`;
+- random-direction max target `sys`: `0.3443338973225082`;
+- random-direction positive-delta samples: `4`;
+- random-direction max observed `sys` increase: `0.00022450716950711547`.
 
-This smoke panel verifies that the non-gradient perturbation route runs and
-records no positive row in this tiny sample. It is intentionally too small to
-serve as broad perturbation coverage by itself.
+This smoke panel verifies that the producer can evaluate bounded random
+directions from hash-selected trusted basepoints and records no positive row in
+the admissible random-direction subset. It is intentionally too small to serve
+as broad perturbation coverage by itself. The gradient-derived direction rows
+are retained in the artifact only as producer diagnostics and are not counted
+as non-gradient evidence.
 
 ## Validity Guards
 
 - This is not a gradient-ascent, local-maximum, attractor, or basin experiment.
+- Rows whose direction label is gradient-derived are not counted for the
+  random-only thesis claim.
 - Hash-selected basepoints avoid top-tail selection, but the panel remains a
   bounded sample.
 - The existing producer recomputes capacity for target polytopes; failures are

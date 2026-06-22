@@ -44,13 +44,13 @@ built with `sys-dataset --random-only`.
 Current full scoped random/product run:
 
 - rows: `14336`;
-- geometry features: `109`;
+- geometry features: `88`;
 - first five PCA explained-variance ratios:
-  `0.351133867446898`, `0.2097027842622585`,
-  `0.17838138619847757`, `0.05255241762135098`,
-  `0.03744208973362901`;
-- PC1/`sys` correlation: `-0.4636669884808957`;
-- PC2/`sys` correlation: `0.2283293325852428`;
+  `0.38982064990722903`, `0.22221957682055385`,
+  `0.15963593059038902`, `0.056606354072659314`,
+  `0.043652487957588144`;
+- PC1/`sys` correlation: `-0.4687178999308592`;
+- PC2/`sys` correlation: `0.21779070089156558`;
 - top 25 isolation-forest anomaly rows overlap with top 2% `sys` rows: `0`.
 - metadata overlays are recorded for `capacity_source`, `dataset_label`,
   `dataset_label_by_facet_count`, `facet_count`, `product_bucket`, and

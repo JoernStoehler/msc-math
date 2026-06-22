@@ -1,6 +1,14 @@
 {
   "basepoint_rows": 2,
   "branch_gradient_rows": 5,
+  "direction_label_counts": {
+    "near_active_maximin_direction": 2,
+    "negative_single_near_active_gradient": 4,
+    "random_unit_direction_0": 4,
+    "random_unit_direction_1": 4,
+    "single_near_active_gradient": 4
+  },
+  "gradient_direction_rows_are_scope_diagnostics_only": "Rows with single_near_active_gradient, negative_single_near_active_gradient, or near_active_maximin_direction labels are not counted as non-gradient perturbation evidence.",
   "max_observed_delta_sys": 0.0007923406490981111,
   "max_target_sys": 0.3449017308020992,
   "panel_dir": "/tmp/sys-random-only-perturbation-smoke",
@@ -19,6 +27,28 @@
       "rows": 9
     }
   },
+  "random_direction_subset": {
+    "max_observed_delta_sys": 0.00022450716950711547,
+    "max_target_sys": 0.3443338973225082,
+    "positive_delta_samples": 4,
+    "radius_summary": {
+      "0.001": {
+        "max_delta_sys": 0.00022450716950711547,
+        "mean_delta_sys": 4.444507161506083e-05,
+        "positive_delta_fraction": 0.5,
+        "rows": 4
+      },
+      "1e-05": {
+        "max_delta_sys": 2.2461248763150365e-06,
+        "mean_delta_sys": 4.6225251280548885e-07,
+        "positive_delta_fraction": 0.5,
+        "rows": 4
+      }
+    },
+    "sample_rows": 8,
+    "sys_gt_one_targets": 0
+  },
+  "research_question": "Smoke-check bounded perturbations whose basepoints and directions are not selected by observed sys improvements; only random_unit_direction_* rows are treated as the non-gradient subset.",
   "sample_rows": 18,
   "status_counts": {
     "ok": 18
