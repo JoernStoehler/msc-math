@@ -30,6 +30,11 @@ Source-backed implementation facts that may matter for proof recovery:
   nonzero `omega_0` is only needed on geometrically possible trajectory
   transitions; the algorithm does not require every facet pair to have
   nonzero `omega_0`;
+- `formal/flow-graph-real-algorithm.tex` now uses that local
+  physical-transition nonzero-\(\omega_0\) condition in the idealized
+  real-number correctness theorem.  The Rust exact and f64 validators still
+  enforce the stronger implementation condition that every nonempty facet-pair
+  candidate has nonzero exact `omega_0`.
 - `research/tube-algorithm-raw-jorn-2026-05-04.md` records the raw tube model,
   including action as elapsed time along stored Reeb segments, tube gluing,
   action cutoff by a halfspace, and exhaustive simple-word search;
@@ -173,13 +178,14 @@ fixed start point and cyclic word and requires every segment time to be
 strictly positive. Positive total action alone is no longer enough for exact
 positive-orbit output.
 
-Remaining proof-recovery work is the hypothesis/correspondence map, not the
-existence of simple minimizers and not this strict-time filter. The current
-known audit targets are:
+Remaining proof-recovery work is the implementation-correspondence map, not the
+existence of simple minimizers, not this strict-time filter, and not the
+idealized local-\(\omega_0\) weakening. The current known audit targets are:
 
-- replace the recovered proof's pairwise nonzero `omega_0` hypothesis by the
-  accepted local condition on geometrically possible transitions, or state why
-  the proof still needs the stronger condition;
+- keep the theorem/code distinction explicit: the idealized theorem only
+  requires nonzero `omega_0` on physical facet transitions, while the current
+  Rust validators reject any nonempty facet-pair candidate with zero
+  `omega_0`;
 - compare dual-vertex general position in the recovered proof with the current
   fixture/data-generation assumptions;
 - compare finite-orbit regularity in the recovered proof with current exact
@@ -215,7 +221,7 @@ different proof status and different hypotheses.
 | CH2021 Type 1 flow-graph correspondence and smoothing-limit background | `thesis/generalized-reeb-orbits-polytopes.tex`, `subsec:generalized-reeb-orbits-polytopes-ch2021`; paper source `papers/ch2021/` | active thesis background; not by itself a proof that the Rust exact search computes capacity |
 | Transition feasibility for \(F_i\to F_j\) | `formal/search-pruning-correctness.tex`, `lem:transition-feasibility` | useful but wrapped in `unverified`; proof-status conflict with file header needs cleanup before thesis reliance |
 | Raw strict tube object and affine representation idea | `research/tube-algorithm-raw-jorn-2026-05-04.md` | raw Jörn note; source material, not polished theorem text |
-| Local nonzero-\(\omega_0\) clarification | `research/tube-algorithm.md` | accepted source note; theorem proof still needs corresponding local-hypothesis rewrite |
+| Local nonzero-\(\omega_0\) clarification | `research/tube-algorithm.md`; `formal/flow-graph-real-algorithm.tex`, `def:fg-nondegenerate-facet-presentation` and `lem:fg-local-transition-regularity-positive-sign` | accepted source note and active unverified formal theorem route; Rust validators still enforce a stronger facet-pair condition |
 | Primitive affine map, gluing, action restriction, closed fixed points | `git show 3d9e080f:formal/tube-algorithm.tex` and `git show 25dd8b9acb8aeaaa6aa3abd80fc6d95db00c4747:formal/tube-algorithm.tex` | recovered proof material; explicitly agent-written and unverified |
 | Zero-time boundary treatment | `git show 3d9e080f:formal/tube-algorithm.tex`, `lem:tube-zero-time-collapse`; current `exact_tube.rs` strict-time filter | older proof has explicit collapse lemma; current code filters instead of returning boundary points |
 | Short-word exclusion and finite-orbit regular route | `git show 25dd8b9acb8aeaaa6aa3abd80fc6d95db00c4747:formal/tube-algorithm.tex` | recovered unverified route using pairwise nonzero \(\omega_0\), dual-vertex general position, and long-word determinant regularity |
@@ -243,7 +249,16 @@ problems and use different hypotheses.
    - uses finite-orbit regularity only for length-at-least-\(5\) words;
    - proves a conditional capacity corollary under those assumptions.
 
-The current exact implementation contract is a third surface:
+The active idealized formal theorem in `formal/flow-graph-real-algorithm.tex`
+is a third surface:
+
+- it uses the local physical-transition nonzero-\(\omega_0\) condition;
+- it keeps dual-vertex general position and finite-orbit regularity as theorem
+  hypotheses;
+- it proves the idealized exact real-number search computes
+  \(c_{\mathrm{EHZ}}\) under those hypotheses.
+
+The current exact implementation contract is a fourth surface:
 
 - it rejects zero-\(\omega_0\) on every nonempty directed facet-pair candidate,
   which can be stronger than rejecting only trajectory-feasible transitions;
@@ -253,11 +268,10 @@ The current exact implementation contract is a third surface:
   resolving them;
 - it filters exact positive output by reconstructing strict segment times.
 
-Therefore the next theorem cannot be obtained by copying either recovered
-formal route unchanged. The shortest honest next proof task is a correspondence
-audit: choose one theorem route, then either strengthen the implementation
-contract to that route or rewrite the proof hypotheses to match the current
-exact contract.
+Therefore the next thesis-facing step is not to choose the local
+nonzero-\(\omega_0\) theorem route from scratch.  It is to compare the active
+idealized formal theorem with the current exact implementation contract and
+state the implementation theorem/caveat boundary honestly.
 
 ### Located math sources
 
@@ -330,14 +344,13 @@ These are the pieces that must be resolved before active thesis theorem prose.
    data and identify the exact hypothesis needed for the denominator. This is
    `lem:tube-primitive-affine-bijection` in recovered material.
 
-3. Local nonzero-\(\omega_0\) hypothesis:
-   decide whether the theorem uses the simple stronger all-pairs condition,
-   the intersecting-facet-pair condition, or the intended local transition
-   condition. If using the local condition, rewrite every use of pairwise
-   nonzero \(\omega_0\) in the recovered proof. The current code rejects
-   nonempty facet-pair zero-\(\omega_0\), which is stronger than the accepted
-   "geometrically possible transition" wording if nonempty-but-infeasible
-   facet pairs occur.
+3. Local nonzero-\(\omega_0\) implementation gap:
+   the active idealized formal theorem uses the local physical-transition
+   condition.  The current code rejects nonempty facet-pair zero-\(\omega_0\),
+   which is stronger than the theorem if nonempty-but-infeasible facet pairs
+   occur.  Decide at implementation/thesis time whether to keep that stronger
+   rejection boundary or to add a physical-transition validator and weaken the
+   Rust accepted-input class.
 
 4. Transition convention and signs:
    reconcile the transition definition/sign convention from
