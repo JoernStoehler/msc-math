@@ -708,8 +708,6 @@ Lemma~\ref{lem:fg-return-determinant-contraction} with
 \(\det(I-L)\).  Repeating this contraction reduces the odd case to
 \((A,B,C,D,E)\).  A direct exact computation from the displayed
 primitive-transition formula gives the basis-independent value
-% 2026-06-22 Codex checked the displayed determinant values by an exact
-% rational scratch implementation of the primitive linear maps.
 \[
   \det(I-L_{ABCDE})=-\frac{10643}{600}\ne0 .
 \]
@@ -729,6 +727,11 @@ the basis-independent value
 \[
   \det(I-L_{ACDE})=\frac{1}{168}\ne0 .
 \]
+% 2026-06-22 Codex rechecked the displayed pairing table and the two displayed
+% determinant values by an exact rational implementation of the primitive
+% linear maps.  The same check gives
+% \(\det(I-L_{ABACDE})=\det(I-L_{ACDE})=1/168\), matching the even-case
+% contraction step.
 
 Thus the determinant is a nonzero element of the rational function field for
 every \(k\ge5\).  Therefore, on every coordinate-minor chart, its expression
