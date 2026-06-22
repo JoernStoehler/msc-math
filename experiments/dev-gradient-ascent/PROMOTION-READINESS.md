@@ -239,26 +239,31 @@ The first such audit is:
 - summary scratch:
   `/tmp/dev-gradient-ascent-step-ranking-audit-threshold1e-4-summary.json`.
 
-On this small hard-state audit, candidate-window scoring usually ranks an
-observed above-threshold move in the top two generated direction/step pairs,
-but one narrow-gap state is a concrete counterexample: the best observed move
-is assigned a negative candidate-window prediction and is not in the
-candidate-window top two. Current method implication: candidate-window scoring
-has enough signal to keep as a repair candidate, but a prediction-gated
-first-order method would be unsafe without a domain/failure-mode guard or a
-fallback to observed finite replay.
+On this small selected audit, candidate-window scoring has useful ranking
+signal: across 40 traced states, it ranked the best recomputed improving checked
+move first in 39 states. The older near-active rule did so in 25 states.
 
-The counterexample is stronger than a small ranking miss: the candidate-window
-lower envelope can be dominated by a very large negative branch prediction while
-the recomputed finite step is ordinary and improving. The existing audit
-outputs above do not record the branch witness that caused the lower-envelope
-minimum, so do not classify this yet as a numerical derivative bug, a
-branch-domain/model-validity failure, or unavoidable pessimism from a wide
-candidate window. The current audit code now records that witness; before more
-broad local compute is spent, rerun only a tiny hard-state audit and inspect the
-winning candidate branch/orbit for the bad prediction. That gives the
-branch-level handle needed to investigate the failure mode; it does not by
-itself classify the failure.
+The same audit also shows that candidate-window scoring is not safe as a hard
+rejection rule. In
+`/tmp/dev-gradient-ascent-step-ranking-audit-threshold1e-4-narrow-gap-rank-0-check`,
+iteration 2, the generated move `near_active_maximin_direction` at step
+`0.001` has recomputed `Delta sys = +0.0007425813825379102`, above that row's
+acceptance cutoff `0.00009773304353618649`. Candidate-window scoring predicts
+`Delta sys = -15189216053351.336` for the same move and ranks it last among the
+six checked moves. The older near-active rule predicts
+`+0.0007413626661731293` and ranks it first. Current method implication:
+candidate-window scoring remains a live repair candidate, but a
+prediction-gated first-order method would be unsafe without a domain/failure
+guard or a fallback to observed finite replay.
+
+The existing audit outputs above do not record the branch witness that caused
+the lower-envelope minimum, so do not classify this yet as a numerical
+derivative bug, a branch-domain/model-validity failure, or unavoidable
+pessimism from a wide candidate window. The current audit code now records that
+witness; before more broad local compute is spent, rerun only this hard state
+and inspect the winning candidate branch/orbit for the bad prediction. That
+gives the branch-level handle needed to investigate the failure mode; it does
+not by itself classify the failure.
 
 ## Promotion Question
 

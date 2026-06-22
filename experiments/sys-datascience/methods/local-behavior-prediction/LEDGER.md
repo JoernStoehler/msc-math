@@ -250,20 +250,28 @@ First exhaustive replay/ranking audit outputs:
 - `/tmp/dev-gradient-ascent-step-ranking-audit-threshold1e-4-high-degeneracy-rank-1-check`;
 - `/tmp/dev-gradient-ascent-step-ranking-audit-threshold1e-4-summary.json`.
 
-Current qualitative read: candidate-window scoring usually ranks an observed
-above-threshold move near the top on this hard-state audit, but one narrow-gap
-state is a concrete counterexample where the best observed move has a negative
-candidate-window prediction and is not in the candidate-window top two. This
-keeps candidate-window scoring alive as a repair candidate, but rules out a
-pure prediction-gated first-order method without a fallback or explicit
+Current read from the summary scratch: across 40 traced states, the
+candidate-window scoring rule ranked the best recomputed improving checked move
+first in 39 states; the older near-active rule did so in 25 states. The
+candidate-window rule is therefore a live ranking repair candidate on this
+small selected audit.
+
+The same audit also has one state where that rule is not safe as a rejection
+gate. In
+`/tmp/dev-gradient-ascent-step-ranking-audit-threshold1e-4-narrow-gap-rank-0-check`,
+iteration 2, the generated move `near_active_maximin_direction` at step
+`0.001` has recomputed `Delta sys = +0.0007425813825379102`, above that row's
+acceptance cutoff `0.00009773304353618649`. The candidate-window rule predicts
+`Delta sys = -15189216053351.336` for the same move and ranks it last among the
+six checked moves, while the near-active rule predicts
+`+0.0007413626661731293` and ranks it first. This rules out a pure
+prediction-gated first-order method without a fallback or explicit
 failure-mode guard.
 
-The counterexample also exposed a missing witness in the retained audit output.
-The candidate-window score is a lower envelope over base candidate branches,
-and the bad state is driven by a very large negative candidate-window
-prediction. Current audit code records which candidate branch/orbit attains the
-lower-envelope minimum; before spending more broad local compute, rerun only a
-tiny hard-state audit and inspect that witness. That gives the branch-level
+The retained audit output does not record which candidate branch caused the
+large negative prediction. Current audit code records the branch/orbit witness
+attaining the lower-envelope minimum; before spending more broad local compute,
+rerun only this hard state and inspect that witness. That gives the branch-level
 handle needed to investigate numerical derivative pathologies,
 branch-domain/model invalidity, and ordinary pessimism from using a wide
 candidate window; it does not by itself classify the failure.
