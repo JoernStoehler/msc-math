@@ -136,8 +136,10 @@ Path-specific outcome contract:
   accepted as positive orbits for the displayed word.
 - Exact rejection reasons currently known are: invalid input shapes, a
   nonempty directed facet-pair candidate with `omega_0 = 0`, and a
-  positive-action singular fixed set. Full bounded-irredundant validation is
-  not part of this rejection boundary.
+  positive-action singular fixed set. If exhaustive exact search finishes
+  without finding any positive orbit, that is also returned as a typed
+  non-success instead of a panic. Full bounded-irredundant validation is not
+  part of this rejection boundary.
 - The exact closed-word implementation is not a literal copy of the singular
   branch in the active idealized algorithm. It solves nonsingular fixed-point
   equations exactly, classifies singular fixed-point sets exactly, accepts

@@ -51,6 +51,10 @@ pub enum ExactFlowGraphSearchError {
         min_action: Option<BigRational>,
         max_action: Option<BigRational>,
     },
+    NoPositiveOrbit {
+        checked_word_count: usize,
+        empty_or_no_orbit_count: usize,
+    },
 }
 
 pub fn search_closed_orbits_exact(
@@ -141,14 +145,16 @@ pub fn search_closed_orbits_exact(
     if let Some(error) = search_error {
         return Err(error);
     }
-    let capacity_action = positive_orbits
+    let Some(capacity_action) = positive_orbits
         .iter()
         .map(|orbit| orbit.action.clone())
         .min()
-        .expect(
-            "flow-graph invariant failed: exhaustive exact search found no orbit with action > 0; \
-             the mathematical existence assumption or implementation is wrong",
-        );
+    else {
+        return Err(ExactFlowGraphSearchError::NoPositiveOrbit {
+            checked_word_count,
+            empty_or_no_orbit_count,
+        });
+    };
     let action_cutoff = &capacity_action + &action_threshold;
     positive_orbits.retain(|orbit| orbit.action <= action_cutoff);
     positive_orbits.sort_by(|left, right| left.action.cmp(&right.action));
@@ -248,6 +254,23 @@ mod tests {
     fn exact_search_rejects_lagrangian_triangle_square_zero_omega_transition() {
         let fixture = known_polytopes::lagrangian_triangle_square();
         assert_exact_search_rejects_zero_omega_fixture(fixture);
+    }
+
+    #[test]
+    fn exact_search_rejects_when_exhaustive_search_finds_no_positive_orbit() {
+        let dual_vertices = vec![[q(1), q(0), q(0), q(0)], [q(0), q(1), q(0), q(0)]];
+        let facet_intersection_is_nonempty = nalgebra::DMatrix::from_element(2, 2, false);
+        let omega_signs = nalgebra::DMatrix::from_element(2, 2, 1);
+        let input = ExactFlatTubeInput {
+            dual_vertices: &dual_vertices,
+            facet_intersection_is_nonempty: &facet_intersection_is_nonempty,
+            omega_signs: &omega_signs,
+        };
+
+        assert!(matches!(
+            search_closed_orbits_exact(&input, q(0), ExactActionCutoffPolicy::Disabled),
+            Err(ExactFlowGraphSearchError::NoPositiveOrbit { .. })
+        ));
     }
 
     fn assert_exact_search_rejects_zero_omega_fixture(fixture: &known_polytopes::KnownPolytope) {

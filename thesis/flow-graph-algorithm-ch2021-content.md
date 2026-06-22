@@ -110,6 +110,8 @@ These are code facts, not theorem hypotheses.
   threshold, rejects nonempty facet-pair zero-\(\omega_0\) candidates, enumerates
   transition-pruned simple words, and treats
   `EmptyTube`, `ZeroActionNoOrbit`, and `NonStrictNoOrbit` as no-orbit outcomes.
+  If exhaustive search finds no positive orbit, it returns typed non-success
+  rather than panicking.
 - `exact_tube.rs` reconstructs segment times before returning `PositiveOrbit`.
   Positive total action alone is not enough.
 - `exact_tube.rs::solve_singular_fixed_tube` and
