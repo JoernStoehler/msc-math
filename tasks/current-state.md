@@ -93,6 +93,10 @@ source files.
   Current state: the retained LICCA datascience tables are in
   `experiments/sys-datascience/prepare/`; method rows that still
   matter need current evidence packets or explicit abandonment.
+  Current random/product-only wrapup state: scoped prepare sizes are merged,
+  but full current-schema random/product `prepare/`, full method rerun,
+  method/statistics review, and thesis-facing random-only closure prose remain
+  pending. See `experiments/sys-datascience/README.md`.
   High-risk fact: tried thesis-affecting results need repo-owned evidence,
   checks appropriate to their verdict, explicit caveats, and thesis-use
   disposition.

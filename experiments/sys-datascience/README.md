@@ -30,6 +30,17 @@ Current closure status: pending. The authoritative method-state surfaces are
 table exists only when current method packets record each standard-method
 disposition or deferral with enough evidence for the thesis wording above.
 
+Immediate random/product-only status after the 2026-06-22 wrapup:
+
+- scoped `smoke`, `method`, and `full` prepare sizes are available through
+  `prepare/build-random-only-slice.sh`;
+- full current-schema random/product `prepare/` has not been rerun after the
+  latest reusable feature additions;
+- the full method wave, method/statistics review, and thesis-facing
+  random-only closure prose are still pending;
+- centroid/translation canonization and broader `Sp(4)` feature/canonization
+  work remain next-session tasks, not completed wrapup work.
+
 Do not prewrite this slice as purely negative before retained evidence and
 documented deferrals or abandonments support the thesis claim. If a positive
 or conjectured-positive pattern appears, record it and escalate before
