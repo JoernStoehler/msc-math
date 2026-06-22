@@ -467,21 +467,10 @@ archaeology found the pre-code design constraint that singular fixed-point
 equations were unsupported when they "cannot be reduced or validated", not
 categorically unsupported.
 
-The actual decision surface is not "delete or keep". The current options are:
-
-1. Keep the singular classifier for diagnostics and f64 exact-resolution
-   behavior, and add a theorem-facing exact wrapper that rejects singular fixed
-   maps.
-2. Prove the singular fixed-polygon `ZeroActionNoOrbit` branch and include that
-   branch in the implementation theorem.
-3. Change the exact resolver itself to reject all singular fixed maps, after
-   replacing the diagnostic/f64 behavior that currently depends on the
-   classifier.
-
-Option 1 is the lowest-risk next implementation boundary because it preserves
-existing diagnostic behavior while giving the theorem a clean finite-orbit
-regular boundary. Option 2 is the proof-improvement path. Option 3 is a
-behavior change, not cleanup.
+This file should not carry the code-design option comparison. The thesis-side
+consequence is only that reader-facing prose must not identify the current
+finite-orbit-regular theorem route with the full Rust singular-classifier
+runtime boundary unless the nonpositive-action singular branch is proved.
 
 Minimal next proof packet:
 
