@@ -11,6 +11,10 @@ Source status:
   `.worktrees/f64-error-bound-audit/experiments/dev-f64-capacity/kkt_error_audit/`.
 - The scratch result cache was `/tmp/f64-policy-final/`; treat it as a
   regression oracle, not tracked source truth.
+- These scratch paths are historical pointers only. They may be absent after
+  workspace cleanup; do not try to recover deleted worktrees before resuming.
+  The durable resume state is this ledger, `README.md`, and
+  `docs/route-consumer-matrix.md`.
 
 ## Design Pattern Inventory
 
