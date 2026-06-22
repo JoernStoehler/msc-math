@@ -1,0 +1,158 @@
+% formal/flow-graph-ch2021-comparison.tex -- CH2021 versus this project
+%
+% Status: source-routed comparison scaffold, not a proof.  Mined from the
+% stale flow-graph-formal-axioms worktree on 2026-06-22.
+%
+% Purpose:
+%   Record which parts of CH2021 are inspiration or terminology for the
+%   flow-graph/tube work, and which parts are not imported as correctness
+%   arguments.  This file is a guardrail for future formal and thesis writing.
+%
+% CH2021 source anchors checked:
+%   papers/ch2021/s1_introduction_and_main_results.tex
+%     def:cro, Type 1/2/3 definition, thm:combtosmooth, thm:smoothtocomb,
+%     cor:computecehz.
+%   papers/ch2021/s2_type_1_reeb_orbits.tex
+%     def:linear_flow_graph, def:flow_graph_periodic_orbit,
+%     def:sfgp, prop:orbitbijection, the footnote after prop:orbitbijection.
+%   papers/ch2021/s6_smooth_combinatorial.tex
+%     lem:combtosmooth and the proof of thm:smoothtocomb.
+%
+% Project anchors:
+%   formal/flow-graph-real-algorithm.tex
+%     the current idealized real-number flow-graph/tube theorem surface.
+%   formal/flow-graph-capacity.tex
+%     def:flow-graph-capacity-search-axioms,
+%     thm:abstract-flow-graph-capacity,
+%     rem:flow-graph-proof-obligations.
+%   crates/symplectic/src/algorithms/flow_graph/README.md.
+
+% input by formal/main.tex -- no \documentclass
+
+\subsection{CH2021 Comparison}
+\label{sec:flow-graph-ch2021-comparison}
+
+CH2021 is a paper about combinatorial Reeb dynamics on symplectic
+four-polytopes, smoothings, rotation numbers, and finite computations of
+Reeb-orbit data.  This project uses some CH2021 language and geometric ideas,
+but its flow-graph capacity theorem is not a specialization of the CH2021
+capacity corollary.  The project route is the abstract route in
+Theorem~\ref{thm:abstract-flow-graph-capacity}: HK2017 supplies a simple
+capacity-achieving orbit, and the remaining work is to prove soundness and
+completeness of the project's closed-word/tube resolver.
+
+\begin{remark}[Non-transfer rule]\label{rem:ch2021-non-transfer-rule}
+Do not prove a thesis-facing flow-graph capacity claim by saying that CH2021 has
+a flow-graph algorithm and this project has a flow-graph implementation.  The
+shared phrase ``flow graph'' is not a proof bridge.  A CH2021 statement can be
+used only after checking that the objects, hypotheses, and output claim match
+the project statement being made.
+\end{remark}
+
+\begin{unverified}
+\begin{definition}[Comparison categories]\label{def:flow-graph-comparison-categories}
+For this comparison:
+\begin{itemize}
+  \item \emph{Paper-side object} means the object as stated in CH2021 source
+    files.
+  \item \emph{Project-side object} means the object used by the current
+    flow-graph formal scaffold or Rust work surface.
+  \item \emph{Imported} means the statement can be used as a source-backed
+    dependency after citation and notation translation.
+  \item \emph{Inspired} means the statement motivates terminology or design but
+    does not prove a project theorem.
+  \item \emph{Not used} means future thesis text should avoid making the
+    project depend on that statement unless a new explicit bridge is written.
+\end{itemize}
+\end{definition}
+\end{unverified}
+
+\begin{remark}[Comparison points]\label{rem:ch2021-project-comparison}
+The differences that matter for proof reuse are:
+\begin{description}
+  \item[Main computational target.]
+    CH2021 finds combinatorial Reeb orbits, actions, and rotation/CZ data, and
+    uses these to test Viterbo-related questions and compute capacity through
+    the CH2021 smooth-combinatorial route.  This project's flow-graph route
+    targets full EHZ capacity only after a supported exact theorem scope, or a
+    separate f64 exact-agreement acceptance scope, has been stated explicitly.
+    Its correctness theorem is organized by
+    Definition~\ref{def:flow-graph-capacity-search-axioms}.
+  \item[Capacity proof route.]
+    CH2021's capacity corollary uses the smooth-to-combinatorial theorem,
+    rotation bound, and Type 1/Type 2 alternatives.  This project uses
+    Theorem~\ref{thm:abstract-flow-graph-capacity}: HK2017 simple minimizers
+    plus resolver soundness/completeness.  CH2021's capacity corollary is not a
+    load-bearing input.
+  \item[Flow-graph nodes.]
+    In CH2021's 4d polytope flow graph, nodes are 2-faces and domains are those
+    2-faces.  In this project, closed words are facet words; primitive tubes use
+    triples of facets and have endpoint polygons on two-face charts.
+  \item[Periodic-orbit condition.]
+    In CH2021, a graph periodic orbit is a cycle plus a fixed point of the
+    composed affine flow map.  In this project, a closed word is resolved by
+    tube construction and a fixed-point problem on the starting two-face.  These
+    have the same broad fixed-point shape, but the resolver semantics are
+    project-specific.
+  \item[Type 1/2/3 classification.]
+    CH2021 classifies combinatorial Reeb orbits into Type 1, Type 2, and Type
+    3.  Type 1 avoids the 1-skeleton; Type 2 meets it only at finitely many
+    segment endpoints; Type 3 contains a bad 1-face.  The classification is not
+    part of the project capacity theorem.  The project must not introduce a
+    Type 2 obligation unless it explicitly switches to a CH2021-style capacity
+    claim.
+  \item[Finite search control.]
+    CH2021 controls finiteness with rotation bounds and segment-count
+    constraints.  The project search control is expressed through a finite
+    supported search domain~$D_K$, lower-bound certificates, and concrete
+    search proofs.
+  \item[Numerical implementation.]
+    CH2021 mentions computer implementation optimizations, but the paper
+    statements are not this repository's exact/f64 API contract.  The Rust paths
+    distinguish exact accepted output, f64 diagnostics, exact fallback, typed
+    rejection, retained words, and profiling/evidence surfaces.
+\end{description}
+\end{remark}
+
+\begin{remark}[What CH2021 can still contribute]\label{rem:ch2021-useful-inputs}
+The following CH2021 material remains useful for this project:
+\begin{enumerate}
+  \item the language of linear flow graphs, affine flow maps, composed action
+    functions, and fixed points of composed maps;
+  \item the geometric picture that transitions between 3-face Reeb segments can
+    be organized by two-face data;
+  \item examples and figures that help explain why a flow-graph picture is
+    natural;
+  \item warnings about lower-dimensional faces and degeneracies.
+\end{enumerate}
+Each use still needs a local bridge from CH2021 notation to the project's
+facet-word/tube notation before it supports theorem-strength text.
+\end{remark}
+
+\begin{remark}[What this project must prove locally]\label{rem:ch2021-local-obligations}
+The project must prove or explicitly assume the following locally:
+\begin{enumerate}
+  \item the supported closed-word/tube resolver is sound: every returned action
+    is the action of a generalized closed Reeb orbit;
+  \item the resolver is complete for the HK2017 simple capacity-achieving orbit
+    on the supported input class;
+  \item the finite supported search domain~$D_K$ contains the relevant simple
+    capacity-achieving word;
+  \item cached construction and action-cutoff search preserve the lower-bound
+    certificates required by Definition~\ref{def:flow-graph-capacity-search-axioms};
+  \item numerical accepted outputs agree with the exact semantic resolver, or
+    all output-relevant numerical predicates are resolved exactly.
+\end{enumerate}
+These are project obligations even when their geometric motivation came from
+CH2021.
+\end{remark}
+
+\begin{remark}[Thesis-writing guardrail]\label{rem:ch2021-thesis-guardrail}
+In thesis prose, it is safe to say that the algorithm is inspired by CH2021's
+flow-graph description of Type 1 combinatorial Reeb orbits, but only as
+geometric language and motivation, not as a Type 1 orbit model for this
+project.  It is not safe to say that CH2021 proves this implementation
+computes $c_{\mathrm{EHZ}}$ unless the thesis explicitly states and proves a
+bridge from the CH2021 hypotheses and orbit classification to this project's
+supported search domain and resolver.
+\end{remark}

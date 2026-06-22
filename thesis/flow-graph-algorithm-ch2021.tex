@@ -1,5 +1,149 @@
 \section{Flow-Graph Algorithm Based On CH2021}\label{sec:flow-graph-algorithm-ch2021}
+
+This section describes the flow-graph route developed during the project.  The
+construction is inspired by Chaidez--Hutchings \cite{CH2021}: Reeb segments are
+organized by two-dimensional faces, and closed candidates are detected by fixed
+points of affine return maps.  The correctness route used here is different.
+CH2021 supplies language and geometric motivation, while the capacity claim
+would have to be proved from the Haim--Kislev simple-minimizer theorem and the
+soundness and completeness of the tube resolver described below.
+
 \subsection{Definition}\label{subsec:flow-graph-algorithm-ch2021-definition}
+
+Let
+\[
+  K=\{x\in\mathbb R^4:\langle a_i,x\rangle\leq1,\;
+  i=1,\ldots,F\}
+\]
+be a compact full-dimensional polytope with facets \(F_i\).  On \(F_i\) the
+contact-normalized Reeb direction is \(R_i=2J_0a_i\), as in
+Section~\ref{sec:generalized-reeb-orbits-polytopes}.  A facet word records the
+facets used by a possible piecewise-affine Reeb orbit.  The flow-graph
+construction works locally with two-face charts.  For a triple of facets
+\((i,j,k)\), the primitive tube consists of points in \(F_i\cap F_j\) from
+which flowing in direction \(R_j\) reaches \(F_j\cap F_k\).
+
+When the relevant two-faces are supported and the transition denominator
+\(\langle a_k,R_j\rangle\) is nonzero, the transition time is an affine
+function on the start chart.  If \(x\in F_i\cap F_j\), it is determined by
+\[
+  x+\tau_j(x)R_j\in F_j\cap F_k .
+\]
+The primitive map and its action contribution are therefore
+\[
+  \Phi_{ijk}(x)=x+\tau_j(x)R_j,
+  \qquad
+  A_{ijk}(x)=\tau_j(x).
+\]
+Longer tubes are obtained by intersecting and composing compatible primitive
+tubes.  A closed word
+\[
+  \sigma=(\sigma_1,\ldots,\sigma_m)
+\]
+uses the raw tube word
+\[
+  \sigma^+=(\sigma_1,\ldots,\sigma_m,\sigma_1,\sigma_2)
+\]
+so that the first and last two-face charts agree.  Fixed points of the
+resulting affine return map are candidates for closed Reeb orbits, and the
+composed affine action gives the total Reeb time.
+
+The theorem-level trajectory object uses positive-time segments.  Zero-time
+tube records, positive-action singular fixed sets, geometrically possible
+zero-\(\omega_0\) transitions, and floating-point predicate decisions are not
+capacity values by themselves.  They must either be rejected, compressed into a
+positive-time trajectory, or accompanied by an exact certificate that justifies
+their use.
+
+\subsection{Relation to CH2021}\label{subsec:flow-graph-algorithm-ch2021-relation-to-ch2021}
+
+CH2021 studies combinatorial Reeb dynamics on four-dimensional symplectic
+polytopes.  Its flow graph has two-faces as nodes and affine maps between
+them, and it relates certain combinatorial orbits to smooth Reeb orbits on
+nearby smooth hypersurfaces.  This project uses the same general geometric
+picture, but not the same theorem as a black box.
+
+The distinction matters for the proof.  The search here is organized by facet
+words and tube data attached to pairs and triples of facets.  A thesis-facing
+capacity theorem for this algorithm must prove that the closed-word resolver is
+sound and complete for the relevant capacity-minimizing orbit.  It is not
+enough to say that both CH2021 and this project use a flow graph.  In
+particular, CH2021's Type 1/Type 2/Type 3 classification is not a load-bearing
+input for the conditional reduction below unless a separate bridge to the
+present search domain is added.
+
 \subsection{Correctness}\label{subsec:flow-graph-algorithm-ch2021-correctness}
+
+The cautious correctness target is a conditional reduction.  Fix a finite
+domain \(D_K\) of closed facet words and an exact resolver for those words.
+For each word, the resolver either returns no represented positive orbit,
+returns a finite set of positive action values, or rejects the word as
+unsupported.  A rejection is not a lower bound.
+
+\begin{proposition}[Conditional flow-graph capacity reduction]
+\label{prop:conditional-flow-graph-correctness}
+Suppose an exact flow-graph search on \(K\) returns a positive action \(A\) and
+the following conditions hold.
+\begin{enumerate}
+  \item The returned action \(A\) is the action of a generalized closed Reeb
+    orbit on \(\partial K\).
+  \item For every word in \(D_K\), the resolver has been semantically resolved,
+    or there is an exact lower-bound certificate proving that every positive
+    orbit represented by that word has action at least \(A\).  Whenever a
+    semantically resolved word has positive represented actions, all of those
+    actions are at least \(A\).
+  \item Some word in \(D_K\) represents a capacity-minimizing simple generalized
+    Reeb orbit, and the resolver returns the action of that orbit.
+\end{enumerate}
+Then \(A=c_{\mathrm{EHZ}}(K)\).
+\end{proposition}
+
+\begin{proof}
+The first condition gives \(A\geq c_{\mathrm{EHZ}}(K)\), because \(A\) is the
+action of an admissible generalized closed Reeb orbit.  By the third condition,
+the capacity is represented by a word in the search domain.  For that word, the
+second condition says that every represented positive action is at least \(A\),
+whether this is known by semantic resolution or by an exact lower-bound
+certificate.  Hence \(c_{\mathrm{EHZ}}(K)\geq A\), and the two inequalities give
+equality.
+\end{proof}
+
+The proposition is not yet a proof that the implemented search computes the
+capacity on a broad class of inputs.  It isolates the remaining proof
+obligations.  One must prove primitive-tube soundness, tube-intersection
+soundness, fixed-point soundness, completeness of the chosen word domain for a
+Haim--Kislev simple minimizer, and exact lower-bound certificates for any
+discarded unresolved families.  Direct exact enumeration is the cleanest
+mathematical target; caching and action cutoffs are performance optimizations
+until their equivalence to direct resolution or their lower-bound certificates
+are proved.
+
 \subsection{Performance optimization}\label{subsec:flow-graph-algorithm-ch2021-performance-optimization}
+
+The tube formulation exposes shared subproblems.  Many closed words contain the
+same shorter tube, so an implementation can cache primitive and composite
+tubes.  Once a positive action is known, action cutoffs can also restrict
+endpoint polygons before fixed-point solving.
+
+These optimizations should be separated from the mathematical target.  They
+support a capacity theorem only after proving that they preserve the semantic
+outcome of direct exact resolution, or after recording exact lower-bound
+certificates for the discarded families.  Equality between cutoff-enabled and
+cutoff-disabled runs on selected examples is useful regression evidence, but it
+is not itself such a certificate.
+
 \subsection{Empirical tests}\label{subsec:flow-graph-algorithm-ch2021-empirical-tests}
+
+The implementation has targeted tests for primitive tubes, tube composition,
+closed-word resolution, rejection cases, and comparisons with the
+Haim--Kislev quadratic program on selected examples.  These tests are
+falsification and regression evidence.  They do not replace the proof
+obligations in Proposition~\ref{prop:conditional-flow-graph-correctness}.
+
+The Haim--Kislev quadratic program is used only as a scalar comparison oracle:
+on eligible examples, the final capacity returned by exact flow-graph search
+can be compared with the independently computed quadratic-program capacity.
+It is not a word-level oracle for flow-graph retained words, because the two
+routes use different candidate conventions.  Floating-point flow-graph output
+is likewise diagnostic unless every output-relevant numerical predicate is
+proved to agree with exact semantics or is resolved by exact fallback.

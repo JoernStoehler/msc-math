@@ -1,0 +1,402 @@
+% formal/flow-graph-proof-risk.tex -- FG proof-risk and falsifier ledger
+%
+% Status: unverified developer-facing truth surface.  Mined from the stale
+% flow-graph-formal-axioms worktree on 2026-06-22.
+%
+% Purpose:
+%   Track the flow-graph/tube claims that must become true, assumed, or omitted
+%   before thesis-facing proof prose can claim that the FG route computes
+%   c_EHZ.  This is not Kai-facing writing.  It is the Jörn/GPT-5.5 surface for
+%   separating belief calibration, formalization, proofs, and empirical
+%   falsifiers.
+%
+% Source anchors:
+%   formal/flow-graph-capacity.tex
+%     def:flow-graph-capacity-search-axioms,
+%     thm:abstract-flow-graph-capacity,
+%     rem:flow-graph-proof-obligations.
+%   formal/flow-graph-ch2021-comparison.tex
+%     rem:ch2021-non-transfer-rule,
+%     rem:ch2021-local-obligations.
+%   crates/symplectic/src/algorithms/flow_graph/README.md
+%     Dependency Ledger, Proposition Ledger, Evidence Ledger.
+%   crates/symplectic/src/algorithms/flow_graph/* tests
+%     crate-local falsifiers for private tube internals.
+%
+% Salvage note:
+%   This file was ported without the stale worktree's Rust edits and without
+%   its draft verification binary.  Current Rust behavior and evidence status
+%   are governed by crates/symplectic/src/algorithms/flow_graph/README.md and
+%   the crate tests on main.
+
+% input by formal/main.tex -- no \documentclass
+
+\subsection{Flow-Graph Proof-Risk Ledger}
+\label{sec:flow-graph-proof-risk}
+
+The abstract theorem in
+Theorem~\ref{thm:abstract-flow-graph-capacity} is useful only after the
+closed-word/tube claims below are either proved, explicitly assumed as part of a
+supported input contract, or removed from the thesis-facing route.  This ledger
+records the current proof-risk state.  A verification suite is not a proof; its
+role is to quickly falsify wrong formulations before we write polished proof
+prose.
+
+\begin{remark}[Milestone success criterion]\label{rem:flow-graph-truth-surface-success}
+For the next FG milestone, every correctness claim needed by the thesis chapter
+should have one of the following states:
+\begin{enumerate}
+  \item proved in a checked formal/thesis source;
+  \item stated as a clear unverified claim with known hypotheses and a planned
+    proof route;
+  \item treated as an explicit supported-scope assumption or rejection case;
+  \item omitted from theorem-strength prose; or
+  \item attached to a targeted falsifier suite whose failure would change the
+    claim or its hypotheses.
+\end{enumerate}
+The intended reader for this milestone is Jörn and future GPT-5.5 agents, not
+the final thesis reader.
+\end{remark}
+
+\begin{remark}[Current FG theorem object]\label{rem:fg-current-theorem-object}
+The current exact theorem target is the closed-word realization of
+Definition~\ref{def:flow-graph-closed-word-realization}.  This choice is not a
+claim that every generalized Reeb orbit naturally comes with a unique word.  It
+is a proof target chosen because it matches the implemented tube construction:
+finite words, two-face entry and exit charts, affine Reeb segments on facets,
+positive segment times, and exact action values.
+
+\textbf{Included object.}  A represented trajectory is a closed-word
+realization: finitely many transition points, positive dwell times, one facet
+velocity per segment, consecutive segments meeting on the declared two-face,
+and action equal to the sum of dwell times.
+
+\textbf{Accepted theorem-strength output.}  The trajectory object and the
+accepted resolver output are different layers.  A positive-time realization is
+the semantic trajectory object.  Accepted capacity output additionally requires
+sound resolver semantics on the chosen search domain and the boundary in
+Definition~\ref{def:flow-graph-exact-accepted-output-contract}.  Zero-time
+tube records, words outside the tube-supported convention of
+Definition~\ref{def:flow-graph-supported-closed-word}, positive-action
+singular fixed-set outcomes, unsupported zero-$\omega_0$ transitions, and
+f64-only predicate decisions are not theorem-strength accepted output by
+default.  They must be compressed into positive-time realizations, rejected, or
+accompanied by an exact certification rule.
+
+\textbf{Open boundary.}  The realization definition records declared entry and
+exit two-faces.  It does not impose a first-hit or no-intermediate-contact
+condition inside each facet segment.  A later proof may keep this convention or
+refine the word when intermediate lower-dimensional contacts matter, but it
+must state that choice explicitly before making a theorem-strength
+completeness claim.
+
+\textbf{Corresponding implementation/evidence.}  The exact tube resolver,
+closed-word reconstruction tests, and verification rows are evidence about
+this object only insofar as they reconstruct finite orbit data with
+nonnegative segment times or compare exact resolver outputs under the
+flow-graph convention.  These checks do not by themselves certify that every
+segment time is positive.  Retained-word rows with zero-time tube records are
+implementation evidence, not direct members of the theorem object.
+
+\textbf{Thesis claim supported.}  This object supports a conditional exact
+flow-graph theorem: if the resolver is sound and complete for the chosen
+finite search domain and that domain contains a realization of a
+capacity-minimizing orbit, then the minimum returned positive action is
+$c_{\mathrm{EHZ}}(K)$.  It does not by itself prove that the current
+no-repeated-facet enumeration domain contains such a realization.
+\end{remark}
+
+\begin{remark}[Next FG chapter restart order]\label{rem:fg-chapter-restart-order}
+The next session that restarts the FG chapter should not begin by polishing
+prose.  The current ordered blocking tasks are:
+\begin{description}
+  \item[First: supported input contract.]
+    Use Definition~\ref{def:flow-graph-exact-accepted-output-contract} as the
+    current boundary, and either prove it for the chosen exact route or convert
+    its clauses into explicit thesis assumptions/rejections.  This decides what
+    the abstract theorem is allowed to claim and what must remain an experiment
+    diagnostic.
+  \item[Second: resolver semantics.]
+    Prove or explicitly assume the semantic resolver contract in
+    Definition~\ref{def:flow-graph-closed-word-resolver}.  This includes
+    primitive tube soundness (FG-PR-1), tube concatenation (FG-PR-2), and
+    fixed-point-to-orbit soundness (FG-PR-3).
+  \item[Third: completeness bridge.]
+    Split FG-PR-4 into its subclaims: HK2017 simple minimizer, existence of a
+    word~$\sigma_*\in D_K$ with a closed-word realization whose associated
+    curve is that minimizer, resolver return of that realization's action, and
+    supported genericity or rejection assumptions.
+  \item[Fourth: concrete search contracts.]
+    Decide which search procedure is thesis-facing.  Direct exact enumeration
+    is the simplest proof target once resolver semantics are explicit.  Cached
+    and cutoff search need checkable equivalence or lower-bound certificates.
+  \item[Fifth: f64 boundary.]
+    For the immediate FG chapter restart, treat f64 accepted-output semantics
+    as outside the exact theorem route unless a minimal exact-agreement
+    contract is written first.
+\end{description}
+\end{remark}
+
+\begin{unverified}
+\begin{remark}[Supported input contract is not closed]%
+\label{rem:fg-pr-supported-input-contract}
+\textbf{Status:} risky-unproved.
+
+Definition~\ref{def:flow-graph-exact-accepted-output-contract} is the current
+exact acceptance boundary.  It is still a scaffold: it records the rejection
+cases and certification obligations, but it does not prove that the Rust exact
+wrapper satisfies them on a broad input class.  The remaining work is to turn
+the exact input hypotheses, finite search domain~$D_K$, zero-transition
+rejection, singular fixed-set rejection, cutoff certificates, and f64 fallback
+boundary into checked lemmas or explicit thesis assumptions.  Until then,
+future thesis prose should not replace these hypotheses by the phrase
+``supported scope''.
+\end{remark}
+\end{unverified}
+
+\begin{unverified}
+\begin{definition}[Proof-risk status]\label{def:flow-graph-proof-risk-status}
+The status tags used below have the following meaning.
+\begin{description}
+  \item[trusted-scaffold.]
+    The statement is believed at high confidence and mainly needs formal
+    cleanup or citation alignment.
+  \item[high-belief-unproved.]
+    The statement is believed to be true under the displayed hypotheses, but no
+    checked proof is present.
+  \item[risky-unproved.]
+    The statement may be true, but its hypotheses or edge cases are not yet
+    precise enough for theorem-strength reliance.
+  \item[implementation-contract.]
+    The statement is about which outputs the current code accepts, rejects, or
+    resolves exactly; it needs tests and API documentation more than pure
+    mathematics.
+  \item[not-load-bearing.]
+    The statement may explain motivation or design, but the capacity theorem
+    must not depend on it.
+\end{description}
+\end{definition}
+\end{unverified}
+
+\begin{unverified}
+\begin{remark}[Claim FG-PR-1: primitive tube soundness]%
+\label{rem:fg-pr-primitive-tube-soundness}
+\textbf{Status:} high-belief-unproved.
+
+\textbf{Claim.}  For supported triples $(i,j,k)$ with nonzero transition
+$\omega_0(a_i,a_j)$ and $\omega_0(a_j,a_k)$ as required by the affine tube
+construction, the primitive tube for the raw word $(i,j,k)$ represents exactly
+the Reeb segments entering through $F_i\cap F_j$, flowing with velocity $R_j$,
+and leaving through $F_j\cap F_k$, subject to the stated action cutoff.
+
+\textbf{Why it matters.}  This is the base case for resolver soundness in
+Definition~\ref{def:flow-graph-capacity-search-axioms}.
+
+\textbf{Targeted falsifiers.}  Crate-local exact and f64 tests check or should check
+that primitive maps send start polygons into end polygons, preserve redundant
+forward/backward maps, and agree with direct segment action computations on
+deterministic supported cases.  The current exact private test for this claim is
+the primitive-segment semantics test in \texttt{exact\_tube.rs}.
+% Current grep target:
+% primitive_exact_tubes_have_direct_segment_semantics
+\end{remark}
+\end{unverified}
+
+\begin{unverified}
+\begin{remark}[Claim FG-PR-2: tube intersection is concatenation]%
+\label{rem:fg-pr-tube-intersection-concatenation}
+\textbf{Status:} high-belief-unproved.
+
+\textbf{Claim.}  For two exact nonempty tubes produced from the same flat
+polytope input, if the first tube's end two-face chart equals the second tube's
+start two-face chart and neither tube has been silently accepted after an
+unsupported transition, then their intersection/composition represents exactly
+the concatenated trajectory family that satisfies both tube constraints.  Empty
+intersections represent no such concatenated family.  The composed affine map
+is the composition of the affine maps.  The composed action function is the sum
+of the first action function and the second action function pulled back along
+the first map.  Any action cutoff used during composition must be recorded as
+an additional restriction, not as a proof that discarded families are impossible
+below the final minimum.
+
+\textbf{Why it matters.}  This turns primitive tube soundness into soundness for
+all resolved closed words.
+
+\textbf{Targeted falsifiers.}  Crate-local tests compare or should compare direct
+construction of longer words with manual primitive composition, including empty
+and nonempty outcomes and action values.  The current exact private test for
+this claim checks the nonempty exact F6 capacity word case in
+\texttt{exact\_tube.rs}.
+% Current grep target:
+% balanced_exact_tube_matches_left_associative_concatenation
+\end{remark}
+\end{unverified}
+
+\begin{unverified}
+\begin{remark}[Claim FG-PR-3: closed fixed points are closed Reeb orbits]%
+\label{rem:fg-pr-closed-fixed-point-soundness}
+\textbf{Status:} risky-unproved.
+
+\textbf{Claim.}  For a closed raw word
+$(s_0,s_1,\ldots,s_{m-1},s_0,s_1)$, every accepted positive-action fixed point
+of the composed tube map gives a generalized closed Reeb orbit on~$\partial K$
+with the returned action, after the zero-time boundary has been handled by
+compression, rejection, or a separate exact certificate.  Empty tubes,
+zero-action no-orbits, zero-time records outside the accepted boundary, and
+positive-action singular fixed sets are not silently converted into capacity
+values.
+
+\textbf{Why it matters.}  This is the most direct route to minimum-action
+soundness in the abstract axioms.
+
+\textbf{Targeted falsifiers.}  Crate-local tests reconstruct the
+piecewise-affine breakpoints for known positive exact closed words and check
+closure, on-facet conditions, inside-$K$ inequalities, segment times, and
+action.  The selected deterministic capacity-word tests require strict
+positive segment times, while more general tube-semantic checks use the
+implementation's nonnegative tube convention.  Current durable evidence is
+crate-local and development-local; a future verification packet should record
+public-output rows for positive exact action agreement, zero-action no-orbits,
+cutoff agreement, and unsupported zero-$\omega_0$ rejection if those rows are
+needed by retained thesis prose.
+\end{remark}
+\end{unverified}
+
+\begin{unverified}
+\begin{remark}[Claim FG-PR-4: resolver completeness for supported minimizers]%
+\label{rem:fg-pr-resolver-completeness}
+\textbf{Status:} risky-unproved.
+
+\textbf{Claim.}  On the supported input class, the closed-word/tube resolver
+returns the action of at least one HK2017 capacity-achieving simple minimizer
+which is the associated curve of a closed-word realization for some
+word~$\sigma_*\in D_K$.
+
+\textbf{Why it matters.}  This is the highest-risk local bridge from HK2017
+minimizers to the FG capacity theorem.
+
+\textbf{Sub-obligations.}  The current claim abbreviates several separate
+proof tasks:
+\begin{enumerate}
+  \item import the HK2017 capacity-achieving simple minimizer in the local
+    notation;
+  \item convert its itinerary to the closed facet word convention of
+    Definition~\ref{def:flow-graph-closed-word};
+  \item prove that some word~$\sigma_*\in D_K$ has a closed-word realization
+    whose associated curve is that minimizer;
+  \item prove that the tube resolver returns the action of that realization;
+    and
+  \item state which genericity failures are rejected rather than claimed.
+\end{enumerate}
+
+\textbf{Targeted falsifiers.}  Exact exhaustive FG search should agree with
+certified HK2017/QP scalar capacity on deterministic supported F5/F6 smoke
+cases and slower F7 confirmation cases.  Failures should be classified as a
+wrong resolver claim, wrong supported-scope hypothesis, or implementation bug.
+\end{remark}
+\end{unverified}
+
+\begin{unverified}
+\begin{remark}[Claim FG-PR-5: concrete searches satisfy the abstract axioms]%
+\label{rem:fg-pr-concrete-search-axioms}
+\textbf{Status:} risky-unproved until the semantic meaning of a resolved
+closed word is proved; high-belief-unproved for direct enumeration after that;
+risky-unproved for cached and cutoff searches.
+
+\textbf{Claim.}  Direct enumeration satisfies the abstract axioms when the
+resolver is sound and complete.  Cached construction and action-cutoff search
+satisfy the same axioms only when they preserve the minimum action and the
+lower-bound certificates required by
+Definition~\ref{def:flow-graph-capacity-search-axioms}.
+
+\textbf{Why it matters.}  This separates the mathematical capacity theorem from
+implementation scheduling and performance optimizations.
+
+\textbf{Targeted falsifiers.}  Exact cutoff-enabled search should match
+cutoff-disabled search on capacity and retained words for reviewed supported
+cases.  This is implementation evidence for extensional equality, not a proof
+that cutoff certificates are mathematically valid.  Retained-word tests must
+compare against full exact FG resolution, not against QP word conventions.
+\end{remark}
+\end{unverified}
+
+\begin{unverified}
+\begin{remark}[Claim FG-PR-6: f64 accepted output semantics]%
+\label{rem:fg-pr-f64-accepted-output}
+\textbf{Status:} implementation-contract.
+
+\textbf{Claim.}  The f64 route may return a theorem-strength accepted capacity
+only when every f64 result that can affect the returned action, retained-word
+set, rejection decision, or lower-bound certificate is known to agree with the
+corresponding exact semantic resolver outcome.  Exact agreement may be obtained
+by exact closed-word arithmetic, exact fallback for output-relevant
+indeterminacies, or a reviewed proof that the f64 predicate cannot affect the
+accepted output.  Otherwise the implementation must reject or report a
+diagnostic outcome rather than return a theorem-strength capacity value.
+
+\textbf{Why it matters.}  This is the boundary between the exact mathematical
+theorem and numerical implementation evidence.
+
+\textbf{Targeted falsifiers.}  The current f64 failure taxonomy remains local
+to \texttt{dev-flow-graph}.  It should move to \texttt{numerics} only when the
+question becomes reusable f64/exact methodology rather than FG-specific proof
+risk.
+\end{remark}
+\end{unverified}
+
+\begin{remark}[Claim FG-PR-7: CH2021 classification is not load-bearing]%
+\label{rem:fg-pr-ch2021-not-load-bearing}
+\textbf{Status:} not-load-bearing.
+
+The CH2021 Type 1/Type 2/Type 3 classification is not an input to the current
+FG capacity theorem.  It is safe as motivation and comparison material only in
+the sense of Remark~\ref{rem:ch2021-thesis-guardrail}.
+\end{remark}
+
+\begin{remark}[Current falsifier routing]\label{rem:fg-pr-falsifier-routing}
+Use three homes for falsifiers.
+\begin{enumerate}
+  \item Fast crate tests under
+    \texttt{crates/symplectic/src/algorithms/flow\_graph/} own checks that need
+    private tube internals.
+  \item A future \texttt{experiments/verification/flow-graph-proof-risk}
+    packet may own durable public-output JSONL rows keyed by
+    \texttt{claim\_id}.  No such packet is ported in this salvage commit.
+  \item \texttt{experiments/dev-flow-graph/} owns f64 failure taxonomy,
+    discovery, and visualization while those questions still move with the FG
+    algorithm design.
+\end{enumerate}
+\end{remark}
+
+\begin{remark}[Current evidence coverage by claim]\label{rem:fg-pr-evidence-coverage}
+The current falsifiers do not cover all proof-risk claims equally.
+\begin{description}
+  \item[FG-PR-1.]
+    Evidence home: crate-local private exact-tube tests.  The current grep
+    target is named in Claim FG-PR-1 above.  No durable public JSONL row by
+    design.
+  \item[FG-PR-2.]
+    Evidence home: crate-local private exact-tube tests.  The current grep
+    target is named in Claim FG-PR-2 above.  No durable public JSONL row by
+    design.
+  \item[FG-PR-3.]
+    Evidence homes: crate-local reconstruction tests and development-local
+    exact-resolution checks.  A promoted verification packet should distinguish
+    resolver consistency rows from independent geometric reconstruction rows.
+  \item[FG-PR-4.]
+    Evidence home: crate and development checks comparing exact FG capacity
+    with certified QP capacity on deterministic F5/F6 smoke cases and F7
+    full-mode confirmation.  These checks concern scalar capacity agreement,
+    not word semantics.
+  \item[FG-PR-5.]
+    Evidence home: crate and development checks comparing exact cutoff search
+    with exact search without cutoffs.  Cutoff counters only show that cutoff
+    intersections occurred; they are not lower-bound certificates.
+  \item[FG-PR-6.]
+    Evidence home: \texttt{experiments/dev-flow-graph}.  No durable
+    \texttt{experiments/verification} row by design in this milestone.
+  \item[FG-PR-7.]
+    Evidence home: CH2021 comparison notes and source anchors.  This is a
+    navigation guardrail, not an algorithm falsifier.
+\end{description}
+\end{remark}

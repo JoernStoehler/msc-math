@@ -1,0 +1,514 @@
+% formal/flow-graph-capacity.tex -- abstract flow-graph capacity theorem
+%
+% Status: unverified developer-facing proof scaffold, mined from the stale
+% flow-graph-formal-axioms worktree on 2026-06-22.
+%
+% Purpose:
+%   Separate the mathematical capacity theorem from implementation choices such
+%   as tube caching, traversal order, and action-cutoff scheduling.  The only
+%   load-bearing route to full capacity here is HK2017 minimizers plus sound
+%   and complete flow-graph closed-word resolution on a search domain that
+%   contains a capacity minimizer.
+%
+% Relation to formal/flow-graph-real-algorithm.tex:
+%   This file is the abstract semantic contract and proof-obligation scaffold.
+%   It does not replace the idealized real-number algorithm in
+%   formal/flow-graph-real-algorithm.tex, and it does not assert that the
+%   current Rust exact path satisfies the contract.
+%
+% Labels defined here:
+%   def:flow-graph-closed-word,
+%   def:flow-graph-supported-closed-word,
+%   def:flow-graph-closed-word-realization,
+%   def:flow-graph-closed-word-resolver,
+%   def:flow-graph-exact-accepted-output-contract,
+%   def:flow-graph-lower-bound-certificate,
+%   def:flow-graph-capacity-search-axioms,
+%   rem:flow-graph-supported-contract-open,
+%   fact:ehz-polytope-min-action,
+%   thm:abstract-flow-graph-capacity,
+%   rem:flow-graph-hk2017-role,
+%   alg:flow-graph-enumerate-all-closed-words,
+%   prop:enumerate-all-closed-words-satisfies-axioms,
+%   alg:flow-graph-cached-tube-search,
+%   prop:cached-tube-search-satisfies-axioms,
+%   alg:flow-graph-action-cutoff-search,
+%   prop:action-cutoff-search-satisfies-axioms,
+%   rem:flow-graph-proof-obligations
+%
+% Main dependencies:
+%   def:ehz-capacity (formal/symplectic-polytope-geometry.tex),
+%   def:simple-reeb-orbit (formal/reeb-orbit-recovery.tex),
+%   fact:hk2017 (formal/hk2017-qp-core.tex).
+%
+% This section deliberately does not use CH2021's Type 1/2/3 classification as
+% a correctness input.  CH2021 remains related background for flow-graph
+% language, not the proof that this project's tube search computes c_EHZ.
+
+% input by formal/main.tex -- no \documentclass
+
+\subsection{Semantic Flow-Graph Search}
+\label{sec:flow-graph-semantic-search}
+
+The flow-graph implementation should be proved correct in two stages.
+First, prove that any search satisfying semantic soundness and completeness
+axioms computes the EHZ capacity.  Second, prove that each concrete search
+procedure used by the implementation satisfies those axioms.  This keeps the
+capacity theorem independent of caching and traversal order.
+
+The theorem in this section is an exact mathematical statement.  A numerical
+implementation can use it only after proving that each accepted numerical
+output agrees with the corresponding exact semantic resolver outcome, or after
+falling back to exact resolution for every predicate that can affect the
+returned action set.
+
+\begin{unverified}
+\begin{definition}[Closed facet word]\label{def:flow-graph-closed-word}
+Let
+\[
+  K = \{x \in \mathbb{R}^4 :
+    \langle a_i, x \rangle \leq 1,\; i = 1,\ldots,F\}
+\]
+be a compact full-dimensional convex polytope with facets~$F_i$.
+A \emph{closed facet word} is a cyclic word
+\[
+  \sigma = (\sigma_1,\ldots,\sigma_m),
+  \qquad m \geq 2,
+\]
+of facet labels.  It represents the facet order used by a possible Reeb
+trajectory family.  The corresponding raw closed tube word is
+\[
+  \sigma^+ = (\sigma_1,\ldots,\sigma_m,\sigma_1,\sigma_2).
+\]
+The two repeated entries are bookkeeping for the starting and ending two-face
+charts.  A theorem that restricts to a smaller class of words, for example
+words with no repeated facet label before closure, must prove separately that a
+capacity-minimizing orbit is represented in that smaller search domain.  This
+is the theorem-level word convention.  Diagnostic retained-word outputs from
+the implementation may record additional data, such as zero-time segments or
+action-window retention, but those records are not automatically members of the
+supported search domain~$D_K$ used in the capacity theorem.
+\end{definition}
+\end{unverified}
+
+\begin{unverified}
+\begin{definition}[Tube-supported closed facet word]%
+\label{def:flow-graph-supported-closed-word}
+A closed facet word~$\sigma=(\sigma_1,\ldots,\sigma_m)$ is
+\emph{tube-supported} for~$K$ if the following exact checks hold for every
+cyclic index~$r$:
+\begin{enumerate}
+  \item the adjacent labels are distinct, and both
+    $E_{\sigma_{r-1}\sigma_r}
+      =F_{\sigma_{r-1}}\cap F_{\sigma_r}$
+    and
+    $E_{\sigma_r\sigma_{r+1}}
+      =F_{\sigma_r}\cap F_{\sigma_{r+1}}$
+    are two-dimensional faces of~$K$;
+  \item the transition denominator
+    $\langle a_{\sigma_{r+1}},R_{\sigma_r}\rangle$ is nonzero, so the equation
+    \[
+      x+\tau R_{\sigma_r}\in F_{\sigma_{r+1}}
+    \]
+    determines at most one affine time function~$\tau$ on the start chart
+    $E_{\sigma_{r-1}\sigma_r}$;
+  \item the primitive tube domain cut out by $\tau\geq0$, the end-chart
+    condition, and the inside-$K$ inequalities is an exact polygonal set,
+    possibly empty, rather than an unsupported degenerate family.
+\end{enumerate}
+This definition does not by itself accept positive-action singular closed-tube
+fixed sets or f64 predicate decisions.  Those are resolver-output questions.
+The present theorem scaffold allows the supported search domain~$D_K$ to be
+any finite set of closed facet words, but a concrete tube-resolver theorem must
+either restrict~$D_K$ to tube-supported words or attach explicit
+rejection/certificate semantics to the other words.
+\end{definition}
+\end{unverified}
+
+\begin{unverified}
+\begin{definition}[Closed-word realization]%
+\label{def:flow-graph-closed-word-realization}
+Let~$\sigma=(\sigma_1,\ldots,\sigma_m)$ be a closed facet word, with indices
+read cyclically modulo~$m$.  A \emph{closed-word realization} of~$\sigma$ is a
+tuple
+\[
+  (x_1,\ldots,x_m;\tau_1,\ldots,\tau_m)
+\]
+with $x_r\in K$ and $\tau_r>0$ such that, for every~$r$,
+\[
+  x_r\in F_{\sigma_{r-1}}\cap F_{\sigma_r},\qquad
+  x_r+\tau_r R_{\sigma_r}=x_{r+1}\in
+  F_{\sigma_r}\cap F_{\sigma_{r+1}} .
+\]
+The associated closed curve is the piecewise-affine curve which starts at
+$x_r$ on the $r$-th segment, moves with velocity~$R_{\sigma_r}$ for time
+$\tau_r$, and then continues cyclically.  Its represented action is
+\[
+  A(\sigma,x,\tau)=\sum_{r=1}^m \tau_r .
+\]
+This action formula uses the normalization
+$\lambda_0(R_{\sigma_r})=1$ on the facet~$F_{\sigma_r}$.
+The theorem-level realization uses positive-time pieces.  Zero-time tube
+records are implementation or diagnostic data unless they are compressed into a
+positive-time realization, rejected, or handled by a separate exact
+certification rule.
+
+The definition is deliberately finite: since both endpoints of the $r$-th
+segment lie in the face~$F_{\sigma_r}\cap K$, convexity implies that the whole
+segment lies in~$F_{\sigma_r}\cap K$.  Thus the associated curve satisfies the
+closure, Reeb-velocity, on-facet, and inside-$K$ checks used in
+Lemma~\ref{lem:finite-orbit-verification}.  Simplicity is a separate property;
+if the word repeats a facet label, it is not automatically simple in the sense
+of Definition~\ref{def:simple-reeb-orbit}.  This definition does not require
+the segment interior to avoid other facets.  Such a realization records the
+declared entry and exit faces of each piece; a theorem that needs first-hit
+combinatorics must add a no-intermediate-contact condition or refine the word.
+If an adjacent pair does not define a supported two-face chart for the tube
+construction, the resolver must reject the word or treat it outside the
+supported input contract.
+\end{definition}
+\end{unverified}
+
+\begin{unverified}
+\begin{definition}[Closed-word resolver]\label{def:flow-graph-closed-word-resolver}
+For a polytope~$K$, a \emph{closed-word resolver} is a partial procedure~$R$
+which takes a closed facet word~$\sigma$ and returns exactly one of the
+following outcomes:
+\begin{enumerate}
+  \item \emph{empty}: no represented closed orbit is produced for~$\sigma$;
+  \item \emph{unsupported}: the resolver refuses the word because a required
+    genericity or numerical-certification hypothesis is outside the supported
+    case;
+  \item \emph{positive actions}: a finite nonempty set
+    $A_R(K,\sigma) \subset (0,\infty)$ of action values.
+\end{enumerate}
+The resolver is a semantic object.  It does not specify whether the actions
+are obtained by direct closed-tube construction, cached tube intersections,
+fixed-point solving on endpoint polygons, exact arithmetic, or f64 predicates
+with exact fallback.
+
+The \emph{represented trajectory family} of~$\sigma$ is the set of
+closed-word realizations from
+Definition~\ref{def:flow-graph-closed-word-realization}.  The local tube
+proofs still have to show that the primitive tube construction, tube
+intersection/composition, and closed fixed-point solver compute this finite
+family and its action values.
+
+A supported resolver outcome is \emph{semantically resolved} if it has the
+following meaning for the represented trajectory family of~$\sigma$.
+\begin{enumerate}
+  \item \emph{empty} means that the represented family contains no positive
+    action generalized closed Reeb orbit.
+  \item \emph{positive actions} means that $A_R(K,\sigma)$ is exactly the set of
+    positive action values represented by the word, up to the equivalence
+    relation used to identify the same cyclic orbit.
+\end{enumerate}
+An \emph{unsupported} outcome is not semantically resolved and cannot be used
+as evidence for a lower bound.
+\end{definition}
+\end{unverified}
+
+\begin{unverified}
+\begin{definition}[Exact accepted output contract]%
+\label{def:flow-graph-exact-accepted-output-contract}
+Fix a compact full-dimensional polytope~$K$, a finite search domain~$D_K$ of
+closed facet words, and an exact closed-word resolver~$R$.  An exact
+flow-graph search has \emph{accepted theorem-strength output} only if all of
+the following hold.
+\begin{enumerate}
+  \item \emph{Exact input and word support.}
+    The halfspace input is a valid exact polytope input for the tube
+    construction.  The facet-intersection matrix and transition-sign data used
+    by the search are either certified exact preprocessing outputs or explicit
+    trusted input assumptions.  The search domain is finite.  Every word whose
+    outcome supports the returned action, retained-word output, lower-bound
+    exhaustiveness, or rejection decision is either tube-supported in the sense
+    of Definition~\ref{def:flow-graph-supported-closed-word} or has explicit
+    rejection/certificate semantics.
+  \item \emph{Current exact Rust word domain.}
+    If the current exact Rust resolver is the concrete route being claimed, the
+    search domain is restricted to words with pairwise distinct facet labels
+    before closure, unless the code is widened and the corresponding resolver
+    proof is updated.  The broader tube-supported definition is a mathematical
+    scaffold, not a claim about the present Rust domain.
+  \item \emph{No unsupported zero-transition geometry.}
+    A geometrically possible transition with zero transition denominator or
+    zero symplectic transition sign is not accepted as capacity data.  The
+    search must reject it, refine the supported contract, or provide an exact
+    replacement argument.
+  \item \emph{Resolver outcomes.}
+    For every word used in the capacity argument, the resolver outcome is
+    either semantically resolved in the sense of
+    Definition~\ref{def:flow-graph-closed-word-resolver}, or there is a
+    lower-bound certificate in the sense of
+    Definition~\ref{def:flow-graph-lower-bound-certificate}.  Unsupported
+    resolver outcomes are rejection cases, not lower bounds.
+  \item \emph{Positive outputs.}
+    Every positive action returned by the accepted output is the action of at
+    least one positive-time closed-word realization.  A positive exact tube
+    output with a zero-time primitive segment is accepted only after it is
+    compressed into a positive-time realization, rejected, or justified by a
+    separate exact certificate.  Empty tubes and zero-action no-orbit outcomes
+    are not capacity values.
+  \item \emph{Singular fixed sets.}
+    A positive-action singular closed-tube fixed set is rejected unless a
+    separate exact argument turns it into semantically resolved positive
+    actions or a lower-bound certificate.
+  \item \emph{Cutoffs and retained words.}
+    If the search discards unresolved trajectory families by an action cutoff,
+    the accepted output must include the corresponding lower-bound
+    certificates or prove equivalence to direct semantically resolved
+    enumeration.  Retained words above the minimum are implementation output
+    unless their exact resolver semantics are part of the accepted contract.
+  \item \emph{Numerical path.}
+    f64 predicate decisions are outside this exact contract unless every
+    predicate that can affect the returned action, retained words, rejection
+    decision, or lower-bound certificate agrees with exact semantics or is
+    resolved by exact fallback.
+\end{enumerate}
+This definition records the theorem-facing acceptance boundary.  It is not yet
+a proof that the current Rust wrapper satisfies the contract on any broad input
+class.
+\end{definition}
+\end{unverified}
+
+\begin{unverified}
+\begin{definition}[Lower-bound certificate]\label{def:flow-graph-lower-bound-certificate}
+A \emph{lower-bound certificate} for a word~$\sigma$ and action~$b$ is a
+checkable mathematical object proving that every positive-action generalized
+closed Reeb orbit in the represented trajectory family of~$\sigma$ has action
+at least~$b$.  For an action-cutoff implementation, a final accepted output
+must provide such certificates for every discarded unresolved family, or prove
+that its cutoff schedule is extensionally equivalent to a semantically resolved
+direct enumeration.  Counters, timing data, and equality with a smoke-test
+baseline are not lower-bound certificates.
+\end{definition}
+\end{unverified}
+
+\begin{unverified}
+\begin{definition}[Flow-graph capacity search axioms]%
+\label{def:flow-graph-capacity-search-axioms}
+Let~$K$ be a polytope for which the flow-graph route is claimed to be supported.
+Let~$D_K$ be a finite set of closed facet words, called the
+\emph{supported search domain}.  A search procedure~$S$ with closed-word
+resolver~$R$ satisfies the \emph{flow-graph capacity search axioms} on
+$(K,D_K)$ if the following hold.
+\begin{enumerate}
+  \item \emph{Termination and accepted support.}
+    The procedure terminates in an accepted state and returns a positive number
+    $a_S(K)$.  Unsupported resolver outcomes are not converted into action
+    values; an implementation may reject instead of accepting.  The accepted
+    state must satisfy the boundary in
+    Definition~\ref{def:flow-graph-exact-accepted-output-contract} for the
+    exact theorem route.
+  \item \emph{Minimum-action soundness.}
+    There exists a generalized closed Reeb orbit~$\gamma$ on~$\partial K$ with
+    symplectic action $a_S(K)$.  This may be checked by producing a
+    piecewise-affine generalized Reeb orbit and verifying the finite
+    conditions of Lemma~\ref{lem:finite-orbit-verification}.  Additional
+    simplicity claims need a separate check against
+    Definition~\ref{def:simple-reeb-orbit}.
+  \item \emph{Lower-bound exhaustiveness relative to the resolver.}
+    For every $\sigma \in D_K$, either the search has a semantically resolved
+    supported outcome from~$R(K,\sigma)$, or it has a certificate that every
+    represented positive action closed orbit for~$\sigma$ has action at
+    least~$a_S(K)$.  If the resolved outcome returns positive actions, then
+    every $a \in A_R(K,\sigma)$ satisfies $a \geq a_S(K)$.
+  \item \emph{Minimizer-domain completeness.}
+    There exist a word~$\sigma_*\in D_K$ and a closed-word realization of
+    $\sigma_*$ whose associated curve is a minimum-action generalized closed
+    Reeb orbit~$\gamma_*$ on~$\partial K$.  For that word~$\sigma_*$, the
+    resolver returns the action of~$\gamma_*$ as one of its positive actions.
+    If a later theorem uses the HK2017 simple minimizer, it must separately
+    prove that the chosen word convention and search domain represent that
+    minimizer.
+\end{enumerate}
+\end{definition}
+\end{unverified}
+
+\begin{remark}[Supported input contract is still open]%
+\label{rem:flow-graph-supported-contract-open}
+The phrase ``supported'' is not a theorem-ready hypothesis by itself.  Before
+this section can become thesis-facing proof text, the accepted-output boundary
+in Definition~\ref{def:flow-graph-exact-accepted-output-contract} must be
+proved for the chosen exact route or converted into explicit thesis
+assumptions.  Until then, the abstract theorem is a scaffold for organizing
+proof obligations, not a claim about all inputs accepted by the current Rust
+code.
+\end{remark}
+
+\begin{unverified}
+\begin{fact}[Polytope EHZ minimum-action characterization]%
+\label{fact:ehz-polytope-min-action}
+For the polytopes considered here,
+$c_{\mathrm{EHZ}}(K)$ is the minimum symplectic action of a generalized closed
+Reeb orbit on~$\partial K$.
+
+\textbf{Status.}  This is intended to be the local citation form of the
+polytope extension in Definition~\ref{def:ehz-capacity}.  It remains a
+citation-alignment item until the surrounding formal notes state the
+minimum-action characterization explicitly.
+\end{fact}
+\end{unverified}
+
+\begin{unverified}
+\begin{theorem}[Abstract flow-graph capacity theorem]%
+\label{thm:abstract-flow-graph-capacity}
+Let
+\[
+  K = \{x \in \mathbb{R}^4 :
+    \langle a_i, x \rangle \leq 1,\; i = 1,\ldots,F\}
+\]
+be a compact full-dimensional convex polytope.  Let~$D_K$ be a supported search
+domain for which a flow-graph search procedure~$S$ satisfies the flow-graph
+capacity search axioms of
+Definition~\ref{def:flow-graph-capacity-search-axioms}.  Then
+\[
+  a_S(K) = c_{\mathrm{EHZ}}(K).
+\]
+\end{theorem}
+
+\begin{proof}
+By minimum-action soundness, $a_S(K)$ is the action of a generalized closed
+Reeb orbit on~$\partial K$.  By
+Fact~\ref{fact:ehz-polytope-min-action},
+$a_S(K) \geq c_{\mathrm{EHZ}}(K)$.
+
+By minimizer-domain completeness, there is a word~$\sigma_*\in D_K$ with a
+closed-word realization whose associated curve~$\gamma_*$ is a
+capacity-achieving generalized closed Reeb orbit, and the resolver returns the
+action of this orbit for~$\sigma_*$.  Since~$\gamma_*$ is minimum-action, this
+action is $c_{\mathrm{EHZ}}(K)$.  By lower-bound exhaustiveness relative to the
+resolver,
+$c_{\mathrm{EHZ}}(K) \geq a_S(K)$.
+\end{proof}
+\end{unverified}
+
+\begin{remark}[Role of HK2017]\label{rem:flow-graph-hk2017-role}
+HK2017 supplies the expected source for a capacity-achieving minimizer; see
+Fact~\ref{fact:hk2017}.  The flow-graph-specific work
+is to prove that the supported tube convention and resolver contain a
+closed-word realization of a capacity-achieving orbit and return its action.
+This is not a reuse of a CH2021 Type 1/Type 2/Type 3 correctness theorem.
+\end{remark}
+
+\subsection{Concrete Search Procedures}
+\label{sec:flow-graph-concrete-searches}
+
+The following algorithm statements are proof targets for concrete
+implementations.  They should be read as semantic contracts, not as a complete
+description of current Rust control flow.
+
+\begin{unverified}
+\begin{algorithm}[Enumerate all closed words]%
+\label{alg:flow-graph-enumerate-all-closed-words}
+Given a supported polytope~$K$ and supported search domain~$D_K$, enumerate
+every word in~$D_K$.  Run the closed-word resolver~$R$ on each word.
+Reject the input if any resolver outcome is unsupported.  Otherwise return the
+minimum positive action produced by~$R$.  The implementation may also return
+retained words whose actions lie in a requested action window; this retained
+word output is separate from the capacity theorem.
+\end{algorithm}
+\end{unverified}
+
+\begin{unverified}
+\begin{proposition}[Direct enumeration satisfies the abstract axioms]%
+\label{prop:enumerate-all-closed-words-satisfies-axioms}
+Assume that every supported outcome returned by the closed-word resolver~$R$ on
+words in~$D_K$ is semantically resolved in the sense of
+Definition~\ref{def:flow-graph-closed-word-resolver}.  Assume also that there
+is a word~$\sigma_*\in D_K$ with a closed-word realization whose associated
+curve is capacity-achieving, and that~$R$ returns the action of this
+realization.
+If Algorithm~\ref{alg:flow-graph-enumerate-all-closed-words} terminates without
+an unsupported resolver outcome and with at least one positive action, then it
+satisfies the flow-graph capacity search axioms on~$(K,D_K)$.
+\end{proposition}
+
+\begin{proof}
+Termination and nonempty output are hypotheses.  Minimum-action soundness is the
+positive-action part of semantic resolution applied to the word which produced
+the returned minimum action.  Lower-bound exhaustiveness follows because every
+word in the supported search domain is explicitly enumerated and semantically
+resolved, and the returned action is the minimum over all positive resolver
+actions.
+Minimizer-domain completeness is the resolver completeness hypothesis for the
+capacity-achieving realization.
+\end{proof}
+\end{unverified}
+
+\begin{unverified}
+\begin{algorithm}[Cached tube search]\label{alg:flow-graph-cached-tube-search}
+Given a supported polytope~$K$ and supported search domain~$D_K$, build
+primitive tubes for length-three raw words, compose compatible partial tubes,
+and resolve closed words from the resulting tube data.  The procedure may choose
+any traversal order and any cache layout, provided that it returns the same
+minimum positive action and the same lower-bound certificates that would be
+obtained by Algorithm~\ref{alg:flow-graph-enumerate-all-closed-words} with the
+same resolver and search domain~$D_K$.
+\end{algorithm}
+\end{unverified}
+
+\begin{unverified}
+\begin{proposition}[Cached tube search satisfies the abstract axioms]%
+\label{prop:cached-tube-search-satisfies-axioms}
+Assume Algorithm~\ref{alg:flow-graph-enumerate-all-closed-words} satisfies the
+flow-graph capacity search axioms on~$(K,D_K)$.  If
+Algorithm~\ref{alg:flow-graph-cached-tube-search} returns the same minimum
+positive action and the same lower-bound certificates, and does not convert
+unsupported resolver outcomes into action values, then it also satisfies the
+flow-graph capacity search axioms on~$(K,D_K)$.
+\end{proposition}
+
+\begin{proof}
+The returned minimum action and lower-bound certificates are identical to those
+of direct enumeration.  Therefore minimum-action soundness and lower-bound
+exhaustiveness are inherited from direct enumeration.  The search domain and
+resolver are unchanged, so minimizer-domain completeness is unchanged.
+\end{proof}
+\end{unverified}
+
+\begin{unverified}
+\begin{algorithm}[Action-cutoff search]\label{alg:flow-graph-action-cutoff-search}
+Run a closed-word search while maintaining a current positive action bound.
+When a partial tube is restricted by an action cutoff, discard only trajectory
+families for which a certificate proves that every closed completion has action
+at least the returned minimum action.  Continue until every word in the
+supported search domain is either resolved or discarded by such a certified
+cutoff.  The final accepted output must include, at least semantically, the
+discard certificates needed for this lower-bound claim; an implementation
+counter saying that a cutoff was attempted is not such a certificate.
+\end{algorithm}
+\end{unverified}
+
+\begin{unverified}
+\begin{proposition}[Action-cutoff search satisfies the abstract axioms]%
+\label{prop:action-cutoff-search-satisfies-axioms}
+Assume Algorithm~\ref{alg:flow-graph-enumerate-all-closed-words} satisfies the
+flow-graph capacity search axioms on~$(K,D_K)$.  If
+Algorithm~\ref{alg:flow-graph-action-cutoff-search} returns the same minimum
+positive action as direct enumeration, and every action-cutoff discard is
+certified not to remove any represented closed orbit with action below that
+minimum, and unsupported resolver outcomes are not converted into action
+values, then the cutoff search satisfies the flow-graph capacity search axioms
+on~$(K,D_K)$.
+\end{proposition}
+\end{unverified}
+
+\begin{remark}[Current proof obligations]\label{rem:flow-graph-proof-obligations}
+The remaining flow-graph-specific mathematical work is not the abstract theorem
+above.  The real obligations are:
+\begin{enumerate}
+  \item prove closed-word resolver soundness for primitive tubes, tube
+    intersection, fixed-point solving, and action computation;
+  \item prove resolver completeness for the simple capacity-achieving orbit on
+    the supported input class;
+  \item prove that cached construction is extensionally equivalent to direct
+    closed-word resolution;
+  \item prove action-cutoff discards are certified, or keep cutoff search as an
+    implementation optimization not used in theorem-strength prose;
+  \item state the exact unsupported cases, such as geometrically possible
+    zero-$\omega_0$ transitions or positive-action singular fixed sets, before
+    claiming support for them.
+\end{enumerate}
+\end{remark}

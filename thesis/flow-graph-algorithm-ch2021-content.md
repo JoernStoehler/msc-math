@@ -35,6 +35,14 @@ Use these sources directly when drafting or reviewing the section.
   `lem:fg-dynamic-action-cutoffs-preserve-retained-output`,
   `lem:fg-nonpositive-fixed-set-no-strict-orbit`, and
   `thm:fg-real-capacity-correctness`.
+- Auxiliary flow-graph proof scaffolds, mined from the stale
+  `flow-graph-formal-axioms` worktree on 2026-06-22:
+  `formal/flow-graph-capacity.tex`,
+  `formal/flow-graph-ch2021-comparison.tex`, and
+  `formal/flow-graph-proof-risk.tex`.
+  These are unapproved developer-facing surfaces.  They organize semantic
+  contracts, CH2021 non-transfer guardrails, and proof-risk ordering; they do
+  not replace `formal/flow-graph-real-algorithm.tex`.
 - Flow-graph implementation/control surface:
   `crates/symplectic/src/algorithms/flow_graph/README.md`.
 - Exact Rust path:
@@ -49,9 +57,10 @@ Use these sources directly when drafting or reviewing the section.
   `research/tube-algorithm.md`, and historical formal source
   `git show 25dd8b9acb8aeaaa6aa3abd80fc6d95db00c4747:formal/tube-algorithm.tex`.
 
-`formal/flow-graph-real-algorithm.tex` and the historical formal files are
-agent-written proof-development surfaces. They are useful for reconstruction,
-but they are not accepted thesis proof until reviewed.
+`formal/flow-graph-real-algorithm.tex`, the auxiliary flow-graph scaffold
+files, and the historical formal files are agent-written proof-development
+surfaces. They are useful for reconstruction, but they are not accepted thesis
+proof until reviewed.
 
 ## Thesis Role
 
@@ -138,22 +147,29 @@ README, not in this thesis ledger.
 
 ## Drafting Gates
 
-Before drafting `thesis/flow-graph-algorithm-ch2021.tex`, complete these gates.
+Before promoting `thesis/flow-graph-algorithm-ch2021.tex` beyond the current
+conditional scaffold, complete these gates.
 
 1. Review `formal/flow-graph-real-algorithm.tex` for false statements, missing
    hypotheses, sign/orientation mistakes, and theorem/code mismatch.
-2. Decide the theorem route for reader-facing prose:
+2. Review the auxiliary files
+   `formal/flow-graph-capacity.tex`,
+   `formal/flow-graph-ch2021-comparison.tex`, and
+   `formal/flow-graph-proof-risk.tex` for consistency with the real-algorithm
+   surface and the Rust README.  In particular, keep the strict-time rejection
+   and typed no-positive-orbit behavior from current `main`.
+3. Decide the theorem route for reader-facing prose:
    finite-orbit regularity, a determinant-generic corollary, or a narrower
    implementation-status statement.
    If using the determinant-generic route, first close the relative-genericity
    gap recorded in `rem:fg-real-missing-work`.
-3. Write a theorem/input paragraph in mathematical language:
+4. Write a theorem/input paragraph in mathematical language:
    start from \(K\subset\mathbb R^4\) a bounded convex polytope with
    \(0\in\operatorname{int}K\). Keep rational data, matrices, validators, and
    f64 behavior in implementation paragraphs.
-4. State exact and f64 behavior separately.
-5. State HK/QP comparison as scalar comparison only.
-6. Check that no reader-facing sentence depends on hidden repo state through
+5. State exact and f64 behavior separately.
+6. State HK/QP comparison as scalar comparison only.
+7. Check that no reader-facing sentence depends on hidden repo state through
    words such as "current", "supported", "route", or "style".
 
 ## What Not To Import
