@@ -30,6 +30,8 @@ This skill owns Rust code, API, testing, review, and handoff conventions.
 
 ## Suggestions
 - Default to specific orchestrator functions. Use strategy/configuration enums when callers, experiments, provenance, serialization, or reviewability need a named strategy value.
+- For trustworthy computation work involving exact/f64 agreement, proof-backed predicates, error bounds, fallback, profiling, or observability, use `references/trustworthy-computation-patterns.md` as an ordered inventory of standard patterns GPT-5.5 already knows before inventing repo-local idioms. Treat that inventory as orientation, not as recommendations.
+- For planning trustworthy-computation work loops, use `references/trustworthy-computation-workflow-blocks.md` as a menu of familiar workflow blocks. Do not treat it as a required sequence or as complete.
 - For reusable Rust crates and substantial crate subtrees, prefer a consumer `README.md` and maintainer `DEVELOPMENT.md` once API or architecture decisions are nontrivial.
 - `README.md` should let a caller perform ordinary use without opening `src/`.
 - `DEVELOPMENT.md` should help a maintainer change internals without reconstructing current scope, API rationale, edit map, rejected/deferred approaches, and verification witnesses from code/tests/history.
