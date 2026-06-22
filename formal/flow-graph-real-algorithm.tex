@@ -1,0 +1,813 @@
+% formal/flow-graph-real-algorithm.tex
+%
+% Status: agent-written proof-development surface, unapproved by Jorn.
+% Purpose: define the idealized real-number flow-graph/tube algorithm and
+% isolate the correctness theorem needed before thesis prose is written.
+%
+% Primary recovery sources:
+% - research/tube-algorithm-raw-jorn-2026-05-04.md
+% - research/tube-algorithm.md
+% - git show 25dd8b9acb8aeaaa6aa3abd80fc6d95db00c4747:formal/tube-algorithm.tex
+% - formal/reeb-orbit-recovery.tex
+% - formal/hk2017-qp-core.tex
+
+\begin{unverified}
+\begin{fact}[Simple capacity minimizer]\label{fact:fg-simple-capacity-minimizer}
+% Source: thesis theorem thm:generalized-reeb-simple-minimizer, which records
+% the HK2017 simple-minimizer argument in thesis conventions.
+For every full-dimensional convex polytope
+\(K\subset\mathbb R^4\) with \(0\in\operatorname{int}K\),
+\(c_{\mathrm{EHZ}}(K)\) is achieved by a simple closed generalized Reeb
+orbit.
+\end{fact}
+\end{unverified}
+
+\begin{unverified}
+\begin{definition}[Flow-graph nondegenerate facet presentation]%
+\label{def:fg-nondegenerate-facet-presentation}
+Let
+\[
+  K=\{x\in\mathbb R^4:\langle a_i,x\rangle\leq 1,
+      \ i=1,\ldots,F\}
+\]
+be a full-dimensional convex polytope with \(0\in\operatorname{int}K\).
+Write \(F_i=K\cap\{\langle a_i,x\rangle=1\}\) and
+\(R_i=2J_0a_i\).
+Also write \(H_i=\{x:\langle a_i,x\rangle=1\}\).
+Assume each \(F_i\) is a genuine facet of \(K\).
+
+The facet presentation is \emph{flow-graph nondegenerate} if:
+\begin{enumerate}
+\item \(\omega_0(a_i,a_j)\ne0\) for all \(i\ne j\);
+\item every subset of at most four vectors among
+  \(a_1,\ldots,a_F\) is linearly independent.
+\end{enumerate}
+\end{definition}
+\end{unverified}
+
+\begin{unverified}
+\begin{definition}[Flow-graph transition sign]%
+\label{def:fg-transition-sign}
+For an ordered triple of facet indices \((p,i,n)\), say that
+\((p,i,n)\) has \emph{positive flow-graph transition sign} if
+\[
+  \langle R_p,a_i\rangle>0
+  \qquad\text{and}\qquad
+  \langle R_i,a_n\rangle>0.
+\]
+\end{definition}
+\end{unverified}
+
+\begin{unverified}
+\begin{definition}[Simple cyclic facet word]\label{def:fg-simple-cyclic-word}
+A \emph{simple cyclic facet word} is a finite cyclic equivalence class
+\[
+  [s_1,\ldots,s_k],
+  \qquad k\ge2,
+\]
+where cyclic rotations are identified and the listed facet indices are
+distinct.  In formulas we write a representative \((s_1,\ldots,s_k)\), but
+the word is the cyclic class.
+\end{definition}
+\end{unverified}
+
+\begin{unverified}
+\begin{definition}[Closed tube search data]\label{def:fg-closed-tube-search-data}
+Let \(s=(s_1,\ldots,s_{k+2})\) be a facet sequence.  A strict tube for this
+sequence is a Reeb trajectory segment whose breakpoints lie successively in
+\[
+  F_{s_1}\cap F_{s_2},\;
+  F_{s_2}\cap F_{s_3},\ldots,
+  F_{s_{k+1}}\cap F_{s_{k+2}},
+\]
+and whose \(r\)-th segment flows along \(R_{s_{r+1}}\) for time
+\(\tau_r>0\).
+
+For each facet pair \((i,j)\) used below, choose an affine coordinate chart
+\[
+  \psi_{ij}\colon\mathbb R^2\to H_i\cap H_j .
+\]
+The corresponding local face polygon is
+\[
+  P_{ij}=\{u\in\mathbb R^2:\psi_{ij}(u)\in K\}.
+\]
+The algorithm works with the closed search data associated to the inner
+segments of this strict object.  It consists of:
+\begin{itemize}
+\item a closed start polygon \(P_{\mathrm{start}}\) in an affine coordinate
+  chart for \(H_{s_1}\cap H_{s_2}\), contained in \(P_{s_1s_2}\);
+\item a closed end polygon \(P_{\mathrm{end}}\) in an affine coordinate chart
+  for \(H_{s_{k+1}}\cap H_{s_{k+2}}\), contained in
+  \(P_{s_{k+1}s_{k+2}}\);
+\item an affine map \(\Phi\colon\mathbb R^2\to\mathbb R^2\) with
+  \(\Phi(P_{\mathrm{start}})\subseteq P_{\mathrm{end}}\);
+\item an affine action function \(A\colon\mathbb R^2\to\mathbb R\).
+\end{itemize}
+It represents the closed inner candidate data if, for every
+\(u_1\in P_{\mathrm{start}}\), the breakpoints
+\[
+  x_r\in F_{s_r}\cap F_{s_{r+1}},
+  \qquad r=1,\ldots,k+1,
+\]
+are determined recursively by
+\[
+  x_1=\psi_{s_1s_2}(u_1),
+  \qquad
+  x_{r+1}=x_r+\tau_rR_{s_{r+1}},
+  \qquad
+  \tau_r\ge0,
+\]
+and satisfy
+\[
+  \psi_{s_{k+1}s_{k+2}}^{-1}(x_{k+1})=\Phi(u_1),
+  \qquad
+  A(u_1)=\sum_{r=1}^{k}\tau_r .
+\]
+Here \(\psi_{ij}\) denotes the chosen affine chart for
+\(H_i\cap H_j\).  The point \(u_1\) represents a strict inner tube exactly
+when all reconstructed segment times are positive.  For an open tube piece,
+raw one-sided membership also depends on compatible neighboring pieces; for a
+closed word these neighboring pieces are supplied by the same cyclic word.
+\end{definition}
+\end{unverified}
+
+\begin{unverified}
+\begin{definition}[Primitive flow-graph tube]%
+\label{def:fg-primitive-tube}
+Assume \((p,i,n)\) has positive flow-graph transition sign.  For
+\(x\in F_p\cap F_i\), define
+\[
+  \tau_{pin}(x)
+  =
+  \frac{1-\langle a_n,x\rangle}{\langle a_n,R_i\rangle},
+  \qquad
+  \varphi_{pin}(x)=x+\tau_{pin}(x)R_i .
+\]
+The primitive closed search data for \((p,i,n)\) is obtained by choosing
+facet-pair charts for \(H_p\cap H_i\) and \(H_i\cap H_n\), restricting
+the start coordinate to the closed set where \(x\in K\),
+\(\varphi_{pin}(x)\in K\), and \(\tau_{pin}(x)\geq0\), and by using the
+coordinate expression of \(\varphi_{pin}\) as the affine map and
+\(\tau_{pin}\) as the action function.
+\end{definition}
+\end{unverified}
+
+\begin{unverified}
+\begin{lemma}[Primitive tubes are affine closed search data]%
+\label{lem:fg-primitive-tubes-affine}
+For every triple \((p,i,n)\) with positive flow-graph transition sign, the
+primitive construction of Definition~\ref{def:fg-primitive-tube} defines
+closed tube search data in the sense of
+Definition~\ref{def:fg-closed-tube-search-data}.  Its strict points are
+exactly the points with \(\tau_{pin}>0\) for the inner primitive segment.
+The affine map is an affine bijection between the two ambient facet-pair
+planes.
+\end{lemma}
+
+\begin{proof}
+The denominator \(\langle a_n,R_i\rangle\) is positive by
+Definition~\ref{def:fg-transition-sign}, so \(\tau_{pin}\) is an affine
+function on \(F_p\cap F_i\).  The map
+\(\varphi_{pin}(x)=x+\tau_{pin}(x)R_i\) is affine and lands in the hyperplane
+\(\langle a_n,\cdot\rangle=1\).  Since \(R_i\) is tangent to \(F_i\), it also
+lands in the hyperplane \(\langle a_i,\cdot\rangle=1\).  Pulling back the
+halfspace inequalities of \(K\), the endpoint face inequalities, and
+\(\tau_{pin}\ge0\) gives a closed polygonal start domain.
+
+The inverse affine map is obtained by flowing backwards along \(R_i\).  For
+\(y\in H_i\cap H_n\), put
+\[
+  \sigma_{inp}(y)=
+  \frac{1-\langle a_p,y\rangle}{\langle a_p,R_i\rangle}.
+\]
+The denominator is nonzero because
+\[
+  \langle a_p,R_i\rangle
+  =-\langle R_p,a_i\rangle,
+\]
+and the last quantity is nonzero under the positive transition sign
+hypothesis.  The point \(y+\sigma_{inp}(y)R_i\) lies in \(H_i\cap H_p\), and
+if \(y=x+\tau_{pin}(x)R_i\) with \(x\in H_p\cap H_i\), then
+\(\sigma_{inp}(y)=-\tau_{pin}(x)\).  The same computation in the other
+direction gives the inverse relation on the two affine planes.
+
+For any start-domain point, the endpoint
+\(\varphi_{pin}(x)\) lies in \(K\) by definition of the start domain.  The
+whole segment lies in \(K\) because every defining inequality of \(K\) is
+affine along the segment and both endpoints are in \(K\).  The whole segment
+lies in \(H_i\) because \(R_i\) is tangent to \(H_i\).  Thus the primitive
+affine data represent exactly the closed primitive inner candidates, with
+action \(\tau_{pin}\).  The strict inner segment condition is exactly
+\(\tau_{pin}>0\).
+\end{proof}
+\end{unverified}
+
+\begin{unverified}
+\begin{lemma}[Gluing closed tube search data]\label{lem:fg-tube-gluing}
+If closed tube search data for \(s=(s_1,\ldots,s_{k+2})\) and
+\(t=(s_{k+1},s_{k+2},\ldots,s_{k+\ell+2})\) have matching middle
+facet-pair plane \(H_{s_{k+1}}\cap H_{s_{k+2}}\), write their data as
+\[
+  (P_1,\widehat P_1,\Phi_1,A_1),
+  \qquad
+  (P_2,\widehat P_2,\Phi_2,A_2).
+\]
+The concatenated start polygon is
+\[
+  P_1\cap\Phi_1^{-1}(P_2),
+\]
+the concatenated end polygon is
+\(\Phi_2(P_2\cap\Phi_1(P_1))\), the concatenated affine map is
+\(\Phi_2\circ\Phi_1\), and these data give the closed tube search data for the
+concatenated facet sequence.
+
+The action function of the concatenation is the sum of the first action
+function and the pullback of the second action function.
+\end{lemma}
+
+\begin{proof}
+Both pieces use the same affine coordinates on the shared facet-pair plane.
+A point in \(P_1\) survives exactly when \(\Phi_1(u)\in P_2\), which is the
+preimage condition above.  For such a point, the reconstructed endpoint of the
+first piece is the reconstructed start point of the second piece.  Hence
+concatenating the two breakpoint lists and segment-time lists gives a valid
+candidate for the concatenated sequence.  Its endpoint coordinate is
+\(\Phi_2(\Phi_1(u))\), and its action is
+\(A_1(u)+A_2(\Phi_1(u))\).
+
+Conversely, any candidate for the concatenated sequence restricts to a
+candidate for the first sequence and to a candidate for the second sequence,
+with the shared breakpoint giving the same middle coordinate.  Therefore its
+start coordinate lies in \(P_1\cap\Phi_1^{-1}(P_2)\), and its endpoint and
+action are given by the displayed formulas.  Since affine maps compose and
+affine functions are closed under pullback and addition, the glued data are
+again closed tube search data.
+\end{proof}
+\end{unverified}
+
+\begin{unverified}
+\begin{lemma}[Closed tube fixed points]\label{lem:fg-closed-tube-fixed-points}
+Let \(w=(s_1,\ldots,s_k)\) be a cyclic facet word and let the closed tube
+search data for
+\[
+  (s_1,\ldots,s_k,s_1,s_2)
+\]
+have start polygon \(P\), affine map \(\Phi(u)=Mu+b\), and action function
+\(A\).  The closed search-domain candidates for this word are exactly the
+points \(u\in P\) satisfying \(\Phi(u)=u\).  Such a fixed point represents a
+strict closed Reeb trajectory with cyclic word \(w\) exactly when every
+reconstructed segment time is positive.
+
+If \(I-M\) is invertible, there is at most one fixed point.  If \(I-M\) is
+singular, the fixed-point set can be empty, nonisolated, or positive
+dimensional; algebraically it is the intersection of \(P\) with the affine
+solution set of \((I-M)u=b\).
+\end{lemma}
+
+\begin{proof}
+A fixed point means that the concatenated tube starts and ends at the same
+point of \(F_{s_1}\cap F_{s_2}\).  This is precisely the closed search-domain
+condition.  The distinction between a closed search-domain point and the strict
+orbit represented by the displayed word is the strict positivity of all segment
+times, by Definition~\ref{def:fg-closed-tube-search-data}.  The final
+statements are the elementary linear algebra of \((I-M)u=b\).
+\end{proof}
+\end{unverified}
+
+\begin{unverified}
+\begin{lemma}[Flow-graph action normalization]\label{lem:fg-action-normalization}
+For a strict tube segment on \(F_i\) flowing for time \(\tau\) along
+\(R_i=2J_0a_i\), the symplectic action contribution is \(\tau\).  Hence the
+action function of a glued tube is the sum of the reconstructed segment times.
+\end{lemma}
+
+\begin{proof}
+This is the contact-normalized convention used for the generalized Reeb orbit
+model in this formal tree.  With the standard primitive
+\(\lambda_0=\frac12\omega_0(x,\cdot)\), the point of the segment lies on
+\(\langle a_i,x\rangle=1\), and the convention \(R_i=2J_0a_i\) gives
+\(\lambda_0(R_i)=1\).  Integrating \(\lambda_0(\dot\gamma)\) over a segment of
+duration \(\tau\) gives \(\tau\).  Additivity over glued segments gives the
+second statement.
+\end{proof}
+\end{unverified}
+
+\begin{unverified}
+\begin{lemma}[Simple support orbits give flow-graph fixed points]%
+\label{lem:fg-simple-support-orbit-represented}
+Let \(\gamma\) be a simple closed Reeb orbit whose support word
+\([s_1,\ldots,s_k]\) has positive dwell time on every listed facet.  If every
+adjacent triple of this support word has positive flow-graph transition sign,
+then \(\gamma\) determines a strict fixed point of the closed tube search data
+for \((s_1,\ldots,s_k,s_1,s_2)\), and the flow-graph action of that fixed point
+equals the Reeb action of \(\gamma\).
+\end{lemma}
+
+\begin{proof}
+Choose the breakpoint at which \(\gamma\) enters
+\(F_{s_1}\cap F_{s_2}\) as the start point.  Since the orbit has positive dwell
+time on every listed facet, its successive breakpoints lie on the two-faces
+\(F_{s_r}\cap F_{s_{r+1}}\), and each segment is obtained by flowing along
+\(R_{s_{r+1}}\) for a positive time.  The primitive construction recovers the
+same endpoint and segment time from each start point.  Gluing the primitives
+therefore reconstructs the whole closed orbit as a closed tube search-domain
+fixed point, and the positivity of the dwell times makes it strict.  The action
+identity follows from Lemma~\ref{lem:fg-action-normalization}.
+\end{proof}
+\end{unverified}
+
+\begin{unverified}
+\begin{algorithm}[Idealized exhaustive flow-graph tube search]%
+\label{alg:fg-real-exhaustive-search}
+Input: a polytope \(K\) with a flow-graph nondegenerate facet presentation in
+the sense of Definition~\ref{def:fg-nondegenerate-facet-presentation}, and a
+threshold \(\delta\ge0\).
+
+\begin{enumerate}
+\item Enumerate every simple cyclic facet word \(w=[s_1,\ldots,s_k]\) in the
+  sense of Definition~\ref{def:fg-simple-cyclic-word}.
+\item For each word, form the closed sequence
+  \((s_1,\ldots,s_k,s_1,s_2)\).  If one of its triples does not have positive
+  flow-graph transition sign, continue with no orbit for this word.
+\item Build the closed tube search data by gluing primitive tubes.  If the
+  resulting start polygon is empty, continue with no orbit for this word.
+\item Solve \(\Phi_w(u)=u\).  If the fixed-point equation is singular and
+  \(|w|\le4\), continue with no orbit for this word by
+  Lemma~\ref{lem:fg-short-words-no-positive-orbit}.  If it is singular and
+  \(|w|\ge5\), stop and report that the input is outside this algorithm's
+  regular case.
+\item Record a fixed point only when it lies in the closed start polygon and
+  every reconstructed segment time is positive.
+\item If no fixed point was recorded, return that no represented strict closed
+  trajectory was found.  Otherwise return the minimum recorded action and all
+  recorded strict closed trajectories with action at most this minimum plus
+  \(\delta\).
+\end{enumerate}
+\end{algorithm}
+\end{unverified}
+
+\begin{unverified}
+\begin{definition}[Finite-orbit regularity]\label{def:fg-finite-orbit-regularity}
+Assume the facet presentation is flow-graph nondegenerate in the sense of
+Definition~\ref{def:fg-nondegenerate-facet-presentation}.  Build the closed
+tube search data for every simple cyclic word that survives the transition-sign
+and nonempty-domain steps of Algorithm~\ref{alg:fg-real-exhaustive-search}.
+For such a word \(w\), write the affine tube map as \(\Phi_w(u)=M_wu+b_w\).
+
+The run is \emph{finite-orbit regular} if, for every enumerated word whose
+closed search domain is nonempty and whose length is at least five,
+\[
+  \det(I-M_w)\ne0.
+\]
+Words of length at most four are handled by the linear-dependence argument in
+Lemma~\ref{lem:fg-short-words-no-positive-orbit}.
+\end{definition}
+\end{unverified}
+
+\begin{unverified}
+\begin{lemma}[Short simple words have no positive-time fixed point]%
+\label{lem:fg-short-words-no-positive-orbit}
+Assume the dual vertices satisfy the linear-independence condition in
+Definition~\ref{def:fg-nondegenerate-facet-presentation}.  If a simple cyclic word
+has length at most four, then it has no strict positive-time closed Reeb
+trajectory.
+\end{lemma}
+
+\begin{proof}
+For a strict positive-time closed trajectory with cyclic word
+\((s_1,\ldots,s_k)\), closure gives
+\[
+  \sum_{r=1}^k \tau_r R_{s_r}=0
+  \qquad\text{with all }\tau_r>0.
+\]
+Since \(R_i=2J_0a_i\) and \(J_0\) is invertible, this is equivalent to a
+positive linear dependence among \(a_{s_1},\ldots,a_{s_k}\).  If \(k\le4\),
+this contradicts the assumed linear independence of every subset of at most
+four dual vertices.
+\end{proof}
+\end{unverified}
+
+\begin{unverified}
+\begin{lemma}[Primitive linear maps are symplectic]%
+\label{lem:fg-primitive-linear-maps-symplectic}
+Let \((p,i,n)\) be a primitive triple with
+\(\langle a_n,R_i\rangle\ne0\) and \(\omega_0(a_p,a_i)\ne0\).  Put
+\[
+  V_{pi}=\ker a_p\cap\ker a_i,
+  \qquad
+  V_{in}=\ker a_i\cap\ker a_n .
+\]
+The linear part
+\[
+  D_{pin}(\xi)=
+  \xi
+  -
+  \frac{\langle a_n,\xi\rangle}{\langle a_n,R_i\rangle}R_i
+\]
+maps \(V_{pi}\) to \(V_{in}\) and preserves the restriction of \(\omega_0\):
+\[
+  \omega_0(D_{pin}\xi,D_{pin}\eta)=\omega_0(\xi,\eta)
+  \qquad(\xi,\eta\in V_{pi}).
+\]
+Moreover \(V_{pi}\) is a two-dimensional symplectic vector space.  Hence every
+closed return map built from such primitive steps has determinant \(1\) on its
+two-dimensional start plane.
+\end{lemma}
+
+\begin{proof}
+For \(\xi\in V_{pi}\), the formula gives
+\[
+  \langle a_i,D_{pin}\xi\rangle=\langle a_i,\xi\rangle=0
+\]
+because \(R_i=2J_0a_i\) is tangent to \(H_i\), and
+\[
+  \langle a_n,D_{pin}\xi\rangle
+  =
+  \langle a_n,\xi\rangle
+  -
+  \frac{\langle a_n,\xi\rangle}{\langle a_n,R_i\rangle}
+  \langle a_n,R_i\rangle
+  =0.
+\]
+Thus \(D_{pin}\xi\in V_{in}\).
+
+For \(\xi,\eta\in V_{pi}\), both vectors lie in \(\ker a_i\).  Therefore the
+cross terms with \(R_i\) vanish:
+\[
+  \omega_0(R_i,\eta)=0,\qquad \omega_0(\xi,R_i)=0 .
+\]
+Also \(\omega_0(R_i,R_i)=0\).  Expanding the displayed formula for
+\(D_{pin}\) gives
+\[
+  \omega_0(D_{pin}\xi,D_{pin}\eta)=\omega_0(\xi,\eta).
+\]
+
+The tangent space \(V_{pi}\) has dimension two because \(a_p\) and \(a_i\) are
+linearly independent.  A vector lies in \(V_{pi}\) exactly when it is
+\(\omega_0\)-orthogonal to both \(R_p\) and \(R_i\).  Hence the symplectic
+orthogonal of \(V_{pi}\) is \(\operatorname{span}(R_p,R_i)\).  The
+restriction of \(\omega_0\) to \(V_{pi}\) is degenerate exactly when
+\(V_{pi}\cap\operatorname{span}(R_p,R_i)\) contains a nonzero vector.
+
+Write such a vector as \(\alpha R_p+\beta R_i\).  The conditions
+\(\alpha R_p+\beta R_i\in V_{pi}\) are
+\[
+  \beta\langle a_p,R_i\rangle=0,
+  \qquad
+  \alpha\langle a_i,R_p\rangle=0 .
+\]
+The hypothesis \(\omega_0(a_p,a_i)\ne0\) makes these two pairings nonzero, so
+\(\alpha=\beta=0\).  Thus \(V_{pi}\) is symplectic.  A closed return map is a
+composition of primitive linear maps and starts and ends on the same
+symplectic two-plane.  It preserves the symplectic area form on that plane, so
+its determinant is \(1\).
+\end{proof}
+\end{unverified}
+
+\begin{unverified}
+\begin{lemma}[Repeated section contraction]%
+\label{lem:fg-return-determinant-contraction}
+Let \(x,A,B,y\) be facet labels for which the primitive denominators below are
+nonzero.  In the linear primitive-transition notation of
+Lemma~\ref{lem:fg-primitive-linear-maps-symplectic},
+\[
+  D_{BAy}\,D_{ABA}\,D_{xAB} = D_{xAy}.
+\]
+Thus, at the level of the linear return map, replacing a consecutive subword
+\(x,A,B,A,y\) by \(x,A,y\) does not change the surrounding composed map.
+\end{lemma}
+
+\begin{proof}
+For \(\xi\in\ker a_x\cap\ker a_A\), write
+\[
+  \eta = D_{xAB}\xi
+  =
+  \xi
+  -
+  \frac{\langle a_B,\xi\rangle}{\langle a_B,R_A\rangle}R_A .
+\]
+Then \(\eta\in\ker a_A\cap\ker a_B\).  Since the next primitive step is
+\((A,B,A)\) and \(\eta\in\ker a_A\), its formula gives
+\(D_{ABA}\eta=\eta\).
+
+Applying the last step gives
+\[
+\begin{aligned}
+  D_{BAy}\eta
+  &=
+  \eta
+  -
+  \frac{\langle a_y,\eta\rangle}{\langle a_y,R_A\rangle}R_A  \\
+  &=
+  \xi
+  -
+  \frac{\langle a_B,\xi\rangle}{\langle a_B,R_A\rangle}R_A
+  -
+  \frac{
+    \langle a_y,\xi\rangle
+    -
+    \frac{\langle a_B,\xi\rangle}{\langle a_B,R_A\rangle}
+    \langle a_y,R_A\rangle}
+  {\langle a_y,R_A\rangle}R_A  \\
+  &=
+  \xi
+  -
+  \frac{\langle a_y,\xi\rangle}{\langle a_y,R_A\rangle}R_A
+  =
+  D_{xAy}\xi .
+\end{aligned}
+\]
+\end{proof}
+\end{unverified}
+
+\begin{unverified}
+\begin{lemma}[Long-word determinants are generically nonzero]%
+\label{lem:fg-long-word-determinants-open-dense}
+Fix a word length \(k\ge5\).  Let \(D_k\subset(\mathbb R^4)^k\) be the set of
+tuples \(b=(b_1,\ldots,b_k)\) for which
+\[
+  \langle b_{r+2},2J_0b_{r+1}\rangle\ne0,
+  \qquad r=1,\ldots,k,
+\]
+where indices are read cyclically.  On \(D_k\), the linear return map \(L_k\)
+on
+\[
+  \ker b_1\cap\ker b_2
+\]
+for the cyclic primitive sequence \((b_1,\ldots,b_k,b_1,b_2)\) depends
+rationally on the listed dual vertices.  Therefore, on each
+coordinate-minor chart for the varying facet-pair planes, the determinant
+\[
+  \det(I-L_k)
+\]
+is a rational function of the listed dual vertices.  This rational function is
+not the zero rational function.  Hence its nonzero locus is open dense in
+\(D_k\).
+\end{lemma}
+
+\begin{proof}
+The set \(D_k\) is open because it is defined by finitely many nonvanishing
+polynomial inequalities.  The denominator condition implies that every
+adjacent cyclic pair has nonzero symplectic pairing, after reindexing the
+displayed inequalities.  Hence the two covectors in each adjacent pair are
+linearly independent, so their common kernel is a two-dimensional plane.
+
+For the primitive step from
+\(\ker b_r\cap\ker b_{r+1}\) to
+\(\ker b_{r+1}\cap\ker b_{r+2}\), the linear map is
+\[
+  \xi\mapsto
+  \xi
+  -
+  \frac{\langle b_{r+2},\xi\rangle}
+       {\langle b_{r+2},2J_0b_{r+1}\rangle}
+  2J_0b_{r+1} .
+\]
+Its coefficients are rational functions of the involved dual vertices on the
+open set where the denominator is nonzero.  On a coordinate patch where a
+fixed \(2\times2\) minor of the two covectors defining each facet-pair plane
+is nonzero, choose the two free coordinate directions as a basis of that plane
+after solving the remaining two coordinates.  These basis vectors depend
+rationally on the listed dual vertices.  In these bases the primitive matrices
+and their finite composition have rational entries.  The determinant
+\(\det(I-L_k)\) is independent of the chosen basis of the start plane, so
+these local rational expressions agree on overlaps.
+
+It remains to prove that this rational function is not identically zero.
+Because different simple words of the same length differ only by relabeling
+the variables, it is enough to give one nonzero specialization for each
+length \(k\).  Also, changing the cyclic starting point conjugates the closed
+return map by an invertible primitive transition map, so it does not change
+\(\det(I-L_k)\).
+
+For this nonvanishing check, regard the determinant as a rational expression
+in formal vector variables \(b_1,\ldots,b_k\).  The expression is defined at
+any vector tuple where the denominators and coordinate-minor choices used above
+are nonzero.  If the rational expression were zero, every such evaluation would
+be zero.  Therefore it is enough to give one algebraic vector tuple for each
+length with nonzero determinant value.
+
+Use the five vectors
+\[
+\begin{aligned}
+ A&=(2,3,-4,-3),&
+ B&=(0,1,2,-1),&
+ C&=(-4,-3,0,-1),\\
+ D&=(4,-1,1,1),&
+ E&=(-4,2,-4,-4).
+\end{aligned}
+\]
+The pairings \(\langle q,2J_0p\rangle\) for unordered pairs are
+\[
+\begin{array}{c|cccccccccc}
+pq&AB&AC&AD&AE&BC&BD&BE&CD&CE&DE\\ \hline
+\langle q,2J_0p\rangle
+&8&-56&36&-60&8&-16&12&-16&60&-20 .
+\end{array}
+\]
+Thus all primitive denominators used below are nonzero.
+
+For odd \(k\ge5\), write \(k=2m+3\) with \(m\ge1\) and specialize the listed
+variables cyclically as
+\[
+  (A,B)^m,C,D,E .
+\]
+If \(m>1\), rotate the cyclic word to expose a subword \(E,A,B,A,B\) and apply
+Lemma~\ref{lem:fg-return-determinant-contraction} with
+\((x,A,B,y)=(E,A,B,B)\).  This removes one repeated \(A,B\) pair and preserves
+\(\det(I-L)\).  Repeating this contraction reduces the odd case to
+\((A,B,C,D,E)\).  A direct exact computation from the displayed
+primitive-transition formula gives the basis-independent value
+\[
+  \det(I-L_{ABCDE})=-\frac{10643}{600}\ne0 .
+\]
+
+For even \(k\ge6\), write \(k=2m+4\) with \(m\ge1\) and specialize the listed
+variables cyclically as
+\[
+  (A,B)^m,A,C,D,E .
+\]
+If \(m>1\), the same \(E,A,B,A,B\) contraction reduces to the case
+\((A,B,A,C,D,E)\).  In that case, rotate to expose the cyclic subword
+\(E,A,B,A,C\) and apply
+Lemma~\ref{lem:fg-return-determinant-contraction} with
+\((x,A,B,y)=(E,A,B,C)\).  This reduces the even case to \((A,C,D,E)\).  A
+direct exact computation from the displayed primitive-transition formula gives
+the basis-independent value
+\[
+  \det(I-L_{ACDE})=\frac{1}{168}\ne0 .
+\]
+
+Thus the determinant is a nonzero element of the rational function field for
+every \(k\ge5\).  Therefore, on every coordinate-minor chart, its expression
+can be written as \(P/Q\) with \(Q\ne0\) on the chart and with \(P\) not the
+zero polynomial.  The nonzero locus is the complement of the algebraic zero
+set \(\{P=0\}\) inside that chart, so it is open dense there.  These chartwise
+open dense loci agree on overlaps because they describe the same
+basis-independent determinant.  The coordinate-minor charts cover \(D_k\), so
+the nonzero determinant locus is open dense in \(D_k\).
+\end{proof}
+\end{unverified}
+
+\begin{unverified}
+\begin{fact}[Generic finite-orbit regularity]%
+\label{fact:fg-finite-orbit-regular-open-dense}
+Fix a facet count \(F\).  For every simple cyclic word \(w\) of length \(k\) at
+least five, pull back the primitive-denominator domain \(D_k\) and the
+determinant condition \(\det(I-M_w)\ne0\) to \((\mathbb R^4)^F\) by selecting
+the dual vertices listed in \(w\).  On the common intersection of these
+pulled-back primitive-denominator domains, the simultaneous determinant
+condition for all such words is open dense.
+
+If the dual vertices also satisfy the full flow-graph nondegeneracy condition
+from Definition~\ref{def:fg-nondegenerate-facet-presentation}, then every
+simple word lies in the corresponding pulled-back primitive-denominator
+domain.  Together with the short-word exclusion from
+Lemma~\ref{lem:fg-short-words-no-positive-orbit}, this simultaneous
+determinant condition implies finite-orbit regularity in the sense of
+Definition~\ref{def:fg-finite-orbit-regularity}.
+\end{fact}
+
+\begin{proof}
+There are only finitely many simple cyclic words for a fixed facet count
+\(F\).  Fix one word \(w=(s_1,\ldots,s_k)\) with \(k\ge5\).  Let
+\[
+  \pi_w:(\mathbb R^4)^F\to(\mathbb R^4)^k,\qquad
+  (a_1,\ldots,a_F)\mapsto(a_{s_1},\ldots,a_{s_k})
+\]
+be the coordinate projection for \(w\).  The pulled-back denominator domain is
+\(\pi_w^{-1}(D_k)\).
+
+Lemma~\ref{lem:fg-long-word-determinants-open-dense} says that, on \(D_k\),
+\(\det(I-M_w)\) is a rational function that is not identically zero.  Its
+pullback along \(\pi_w\) is again not identically zero on
+\(\pi_w^{-1}(D_k)\): choose a tuple in \(D_k\) where the determinant is
+nonzero and extend the listed vectors by arbitrary values for the remaining
+facet indices.  Hence the pulled-back nonzero locus is the complement of a
+proper algebraic zero set inside \(\pi_w^{-1}(D_k)\), and is open dense there.
+
+Intersect these open dense conditions over the finitely many words of length
+at least five.  This gives an open dense set on the common intersection of the
+pulled-back primitive-denominator domains.
+
+For a simple word, each denominator in \(D_k\) pairs two distinct dual
+vertices.  Flow-graph nondegeneracy includes pairwise
+nonzero-\(\omega_0\), so all those denominators are nonzero.  It also includes
+the linear-independence hypothesis used by
+Lemma~\ref{lem:fg-short-words-no-positive-orbit} for words of length at most
+four.  If all length-at-least-five determinant conditions are nonzero, then in
+particular they are nonzero for every length-at-least-five word whose closed
+search domain is nonempty.  This is exactly finite-orbit regularity.
+\end{proof}
+\end{unverified}
+
+\begin{unverified}
+\begin{proposition}[Correctness of idealized exhaustive FG search]%
+\label{prop:fg-real-search-correctness}
+For a polytope with a flow-graph nondegenerate facet presentation whose
+exhaustive flow-graph tube run is finite-orbit regular,
+Algorithm~\ref{alg:fg-real-exhaustive-search} either reports that no strict
+positive-time simple closed Reeb trajectory represented by a flow-graph tube
+word exists, or returns the minimum action among all such represented
+trajectories and returns exactly those represented trajectories with action at
+most \(c_{\mathrm{FG}}+\delta\), where \(c_{\mathrm{FG}}\) is that minimum
+action.
+In particular, under the finite-orbit regularity hypothesis the algorithm does
+not stop at the long-word singular rejection branch.
+\end{proposition}
+
+\begin{proof}
+There are finitely many simple cyclic words, so the enumeration terminates.
+Every enumerated word is built from primitive triples, and
+Lemmas~\ref{lem:fg-primitive-tubes-affine} and~\ref{lem:fg-tube-gluing} show
+that the glued closed search data represents exactly the closed
+nonnegative-time candidates for that word.  Lemma~\ref{lem:fg-closed-tube-fixed-points}
+identifies closed candidates with fixed points of the affine tube map and
+identifies strict Reeb trajectories with the fixed points whose reconstructed
+segment times are all positive.
+
+If a word contains a triple without positive flow-graph transition sign, then
+a strict positive-time representative cannot use that triple: flowing for
+positive time across the adjacent two-faces forces the two signs in
+Definition~\ref{def:fg-transition-sign}.  Hence skipping such a word does not
+remove a represented strict trajectory.
+
+For words of length at most four, Lemma~\ref{lem:fg-short-words-no-positive-orbit}
+excludes strict positive-time closed trajectories.  For words of length at
+least five, finite-orbit regularity makes every relevant fixed-point equation
+nonsingular.  Therefore each represented strict trajectory is either recorded
+for its cyclic word or correctly absent because its closed search domain is
+empty or its fixed point fails the strict segment-time test.  If no strict
+trajectory was recorded, the reported absence is correct.  Otherwise taking the
+minimum action and applying the final threshold filter gives exactly the stated
+output.
+\end{proof}
+\end{unverified}
+
+\begin{unverified}
+\begin{theorem}[Conditional capacity correctness of idealized FG search]%
+\label{thm:fg-real-capacity-correctness}
+Let \(K\subset\mathbb R^4\) be a full-dimensional convex polytope with
+\(0\in\operatorname{int}K\).  Fix a flow-graph nondegenerate facet
+presentation
+\[
+  K=\{x\in\mathbb R^4:\langle a_i,x\rangle\le1,\ i=1,\ldots,F\}.
+\]
+If the exhaustive flow-graph tube run for this presentation is finite-orbit
+regular, then Algorithm~\ref{alg:fg-real-exhaustive-search}, run on this
+presentation, returns
+\[
+  c_{\mathrm{FG}}=c_{\mathrm{EHZ}}(K).
+\]
+With threshold \(\delta\ge0\), it also returns every represented strict
+positive-time simple closed Reeb trajectory with action at most
+\(c_{\mathrm{EHZ}}(K)+\delta\).
+\end{theorem}
+
+\begin{proof}
+By Fact~\ref{fact:fg-simple-capacity-minimizer}, \(c_{\mathrm{EHZ}}(K)\) is
+achieved by a minimum-action simple closed Reeb orbit.  Use only the facets on
+which this orbit has positive dwell time, and write their cyclic order as the
+support word of the orbit.  This support word is a simple cyclic facet word in
+the sense of Definition~\ref{def:fg-simple-cyclic-word}.  The positive dwell
+times force the positive transition signs of every adjacent triple.  Hence
+Lemma~\ref{lem:fg-simple-support-orbit-represented} represents this orbit as
+a strict fixed point of the closed tube search data for that word, with the
+same action.
+
+Proposition~\ref{prop:fg-real-search-correctness} therefore records at least
+one trajectory with action \(c_{\mathrm{EHZ}}(K)\).  It records only strict
+closed Reeb trajectories, so none of its recorded actions can be less than
+\(c_{\mathrm{EHZ}}(K)\).  Hence the reported minimum is exactly
+\(c_{\mathrm{EHZ}}(K)\).  The threshold statement follows from the final
+filter in Proposition~\ref{prop:fg-real-search-correctness}.
+\end{proof}
+\end{unverified}
+
+\begin{unverified}
+\begin{corollary}[Generic capacity correctness of idealized FG search]%
+\label{cor:fg-real-capacity-correctness-generic}
+Fix a facet count \(F\).  On the open dense determinant locus from
+Fact~\ref{fact:fg-finite-orbit-regular-open-dense}, every flow-graph
+nondegenerate facet presentation with those \(F\) listed facets has a
+finite-orbit regular exhaustive flow-graph tube run.  Therefore
+Algorithm~\ref{alg:fg-real-exhaustive-search}, run on such a presentation,
+returns \(c_{\mathrm{EHZ}}(K)\).
+\end{corollary}
+
+\begin{proof}
+Fact~\ref{fact:fg-finite-orbit-regular-open-dense} gives finite-orbit
+regularity for the exhaustive run.  The capacity statement is then exactly
+Theorem~\ref{thm:fg-real-capacity-correctness}.
+\end{proof}
+\end{unverified}
+
+\begin{remark}[What this formal section does not yet cover]%
+\label{rem:fg-real-missing-work}
+This section is the idealized real-number algorithm surface.  It does not
+prove that the Rust implementation accepts exactly this class, it does
+not analyze f64 rounding, and it does not justify replacing the pairwise
+nonzero-\(\omega_0\) condition by the weaker local condition recorded in
+\texttt{research/tube-algorithm.md}.  Those are separate implementation and
+numerical-analysis obligations.
+\end{remark}
