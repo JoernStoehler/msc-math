@@ -52,8 +52,7 @@ restricted to relative-interior points of two-faces.
 
 The facet presentation is \emph{flow-graph nondegenerate} if:
 \begin{enumerate}
-\item whenever a physical facet transition \(F_i\to F_j\) with \(i\ne j\)
-  exists,
+\item whenever \(i\ne j\) and \(F_i\cap F_j\ne\emptyset\),
   \(\omega_0(a_i,a_j)\ne0\);
 \item every subset of at most four vectors among
   \(a_1,\ldots,a_F\) is linearly independent.
@@ -99,7 +98,8 @@ transition.  Since \(x-tR_i\in K\) for \(0\le t\le\varepsilon\), the
 \]
 Thus \(\langle a_j,R_i\rangle\ge0\).  The local nonzero-\(\omega_0\)
 condition in Definition~\ref{def:fg-nondegenerate-facet-presentation} excludes
-equality, because
+equality, because a physical transition has \(x\in F_i\cap F_j\), so the
+nonempty facet-pair condition applies, and
 \[
   \langle a_j,R_i\rangle=2\omega_0(a_i,a_j).
 \]
@@ -866,10 +866,12 @@ Theorem~\ref{thm:fg-real-capacity-correctness}.
 \label{rem:fg-real-missing-work}
 This section is the idealized real-number algorithm surface.  It does not
 prove that the Rust implementation accepts exactly this class, it does
-not analyze f64 rounding.  The correctness theorem uses the local
-physical-transition nonzero-\(\omega_0\) condition from
-Definition~\ref{def:fg-nondegenerate-facet-presentation}; the generic
-corollary still records a stronger open-dense sufficient denominator locus.
+not analyze f64 rounding.  The correctness theorem uses the nonempty
+facet-pair nonzero-\(\omega_0\) condition from
+Definition~\ref{def:fg-nondegenerate-facet-presentation}.  This matches the
+current exact Rust rejection boundary and is stronger than the local
+physical-transition condition needed in the proof of
+Lemma~\ref{lem:fg-local-transition-regularity-positive-sign}.
 The Rust correspondence and f64 analysis are separate implementation and
 numerical-analysis obligations.
 \end{remark}

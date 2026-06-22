@@ -30,11 +30,11 @@ Source-backed implementation facts that may matter for proof recovery:
   nonzero `omega_0` is only needed on geometrically possible trajectory
   transitions; the algorithm does not require every facet pair to have
   nonzero `omega_0`;
-- `formal/flow-graph-real-algorithm.tex` now uses that local
-  physical-transition nonzero-\(\omega_0\) condition in the idealized
-  real-number correctness theorem.  The Rust exact and f64 validators still
-  enforce the stronger implementation condition that every nonempty facet-pair
-  candidate has nonzero exact `omega_0`.
+- `formal/flow-graph-real-algorithm.tex` now uses the same nonempty
+  facet-pair nonzero-\(\omega_0\) condition as the Rust exact and f64
+  validators.  This condition implies the weaker physical-transition nonzero
+  condition needed in the proof.  It is stronger than the minimal local
+  condition recorded in `research/tube-algorithm.md`.
 - `research/tube-algorithm-raw-jorn-2026-05-04.md` records the raw tube model,
   including action as elapsed time along stored Reeb segments, tube gluing,
   action cutoff by a halfspace, and exhaustive simple-word search;
@@ -180,12 +180,14 @@ positive-orbit output.
 
 Remaining proof-recovery work is the implementation-correspondence map, not the
 existence of simple minimizers, not this strict-time filter, and not the
-idealized local-\(\omega_0\) weakening. The current known audit targets are:
+nonempty facet-pair nonzero-\(\omega_0\) condition. The current known audit
+targets are:
 
-- keep the theorem/code distinction explicit: the idealized theorem only
-  requires nonzero `omega_0` on physical facet transitions, while the current
-  Rust validators reject any nonempty facet-pair candidate with zero
-  `omega_0`;
+- keep the theorem/code distinction explicit for transition pruning:
+  physical transition feasibility is stronger than nonempty facet-pair plus
+  nonnegative `omega_0` unless a ridge/two-face sufficiency hypothesis applies;
+  Rust uses the coarser condition as pruning, so false positives are allowed
+  but false negatives would not be;
 - compare dual-vertex general position in the recovered proof with the current
   fixture/data-generation assumptions;
 - compare finite-orbit regularity in the recovered proof with current exact
@@ -221,7 +223,7 @@ different proof status and different hypotheses.
 | CH2021 Type 1 flow-graph correspondence and smoothing-limit background | `thesis/generalized-reeb-orbits-polytopes.tex`, `subsec:generalized-reeb-orbits-polytopes-ch2021`; paper source `papers/ch2021/` | active thesis background; not by itself a proof that the Rust exact search computes capacity |
 | Transition feasibility for \(F_i\to F_j\) | `formal/search-pruning-correctness.tex`, `lem:transition-feasibility` | useful but wrapped in `unverified`; proof-status conflict with file header needs cleanup before thesis reliance |
 | Raw strict tube object and affine representation idea | `research/tube-algorithm-raw-jorn-2026-05-04.md` | raw Jörn note; source material, not polished theorem text |
-| Local nonzero-\(\omega_0\) clarification | `research/tube-algorithm.md`; `formal/flow-graph-real-algorithm.tex`, `def:fg-nondegenerate-facet-presentation` and `lem:fg-local-transition-regularity-positive-sign` | accepted source note and active unverified formal theorem route; Rust validators still enforce a stronger facet-pair condition |
+| Local nonzero-\(\omega_0\) clarification | `research/tube-algorithm.md`; `formal/flow-graph-real-algorithm.tex`, `def:fg-nondegenerate-facet-presentation` and `lem:fg-local-transition-regularity-positive-sign` | accepted source note says the minimal condition is local; active unverified formal theorem and Rust validators use the stronger nonempty facet-pair condition |
 | Primitive affine map, gluing, action restriction, closed fixed points | `git show 3d9e080f:formal/tube-algorithm.tex` and `git show 25dd8b9acb8aeaaa6aa3abd80fc6d95db00c4747:formal/tube-algorithm.tex` | recovered proof material; explicitly agent-written and unverified |
 | Zero-time boundary treatment | `git show 3d9e080f:formal/tube-algorithm.tex`, `lem:tube-zero-time-collapse`; current `exact_tube.rs` strict-time filter | older proof has explicit collapse lemma; current code filters instead of returning boundary points |
 | Short-word exclusion and finite-orbit regular route | `git show 25dd8b9acb8aeaaa6aa3abd80fc6d95db00c4747:formal/tube-algorithm.tex` | recovered unverified route using pairwise nonzero \(\omega_0\), dual-vertex general position, and long-word determinant regularity |
@@ -252,7 +254,8 @@ problems and use different hypotheses.
 The active idealized formal theorem in `formal/flow-graph-real-algorithm.tex`
 is a third surface:
 
-- it uses the local physical-transition nonzero-\(\omega_0\) condition;
+- it uses the nonempty facet-pair nonzero-\(\omega_0\) condition, matching the
+  current Rust rejection boundary;
 - it keeps dual-vertex general position and finite-orbit regularity as theorem
   hypotheses;
 - it proves the idealized exact real-number search computes
@@ -344,13 +347,12 @@ These are the pieces that must be resolved before active thesis theorem prose.
    data and identify the exact hypothesis needed for the denominator. This is
    `lem:tube-primitive-affine-bijection` in recovered material.
 
-3. Local nonzero-\(\omega_0\) implementation gap:
-   the active idealized formal theorem uses the local physical-transition
-   condition.  The current code rejects nonempty facet-pair zero-\(\omega_0\),
-   which is stronger than the theorem if nonempty-but-infeasible facet pairs
-   occur.  Decide at implementation/thesis time whether to keep that stronger
-   rejection boundary or to add a physical-transition validator and weaken the
-   Rust accepted-input class.
+3. Local nonzero-\(\omega_0\) strength:
+   the active idealized formal theorem and current code use the nonempty
+   facet-pair condition.  This is stronger than the minimal local
+   physical-transition condition from `research/tube-algorithm.md`.  Do not
+   weaken the thesis theorem or validators unless a later task proves and tests
+   the physical-transition validator.
 
 4. Transition convention and signs:
    reconcile the transition definition/sign convention from
