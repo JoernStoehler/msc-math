@@ -29,7 +29,8 @@ Use these sources directly when drafting or reviewing the section.
   `def:fg-closed-tube-search-data`,
   `lem:fg-primitive-tubes-affine`,
   `lem:fg-tube-gluing`,
-  `lem:fg-closed-tube-fixed-points`, and
+  `lem:fg-closed-tube-fixed-points`,
+  `lem:fg-nonpositive-fixed-set-no-strict-orbit`, and
   `thm:fg-real-capacity-correctness`.
 - Flow-graph implementation/control surface:
   `crates/symplectic/src/algorithms/flow_graph/README.md`.
@@ -97,7 +98,7 @@ correspondence below is reviewed.
 | Local transition signs from nonzero \(\omega_0\). | Active proof-development labels `def:fg-nondegenerate-facet-presentation` and `lem:fg-local-transition-regularity-positive-sign`. | The current formal/Rust route uses the stronger nonempty facet-pair nonzero-\(\omega_0\) condition. Do not silently replace it by the weaker local trajectory condition. |
 | Closed tube search data and strict-time output. | `def:fg-closed-tube-search-data`; Rust `exact_tube.rs` has `NonStrictNoOrbit` and strict segment-time filtering. | Reader-facing prose must distinguish closed search domains \(\tau_r\ge0\) from returned orbits for a displayed word, which require \(\tau_r>0\). |
 | Primitive affine tubes, gluing, and fixed points. | `lem:fg-primitive-tubes-affine`, `lem:fg-tube-gluing`, `lem:fg-closed-tube-fixed-points`; unapproved proof-development text. | These are the main proof pieces to review before theorem-strength thesis prose. |
-| Singular fixed-point equations. | Rust classifies exact singular fixed sets; current finite-orbit-regular theorem route excludes relevant singular fixed maps. | Do not identify the finite-orbit-regular theorem route with the full Rust singular-classifier runtime boundary unless the nonpositive-action singular branch is proved. |
+| Singular fixed-point equations. | Rust classifies exact singular fixed sets; `lem:fg-nonpositive-fixed-set-no-strict-orbit` covers the no-orbit side for nonpositive-action fixed sets; the finite-orbit-regular theorem route still excludes relevant singular fixed maps from the capacity theorem. | Do not identify the finite-orbit-regular theorem route with the full Rust singular-classifier runtime boundary until the singular-classifier correspondence is reviewed. |
 | Exact implementation boundary. | `exact_search.rs`, `exact_tube.rs`, and flow-graph README. | State implementation behavior separately from mathematical theorem hypotheses. |
 | f64 behavior. | `f64_tube_search.rs` and flow-graph README. | State as approximate/numerical implementation behavior unless a later numerical-analysis task proves sound predicates. |
 | HK/QP comparison. | Exact accepted examples and verification code. | Use only for scalar capacity comparison on eligible examples; do not use as a word-level oracle. |

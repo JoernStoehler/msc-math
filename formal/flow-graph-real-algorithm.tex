@@ -350,6 +350,39 @@ second statement.
 \end{unverified}
 
 \begin{unverified}
+\begin{lemma}[Nonpositive fixed sets contain no strict orbit]%
+\label{lem:fg-nonpositive-fixed-set-no-strict-orbit}
+Let \(w=[s_1,\ldots,s_k]\) be a cyclic facet word and let the closed tube
+search data for
+\[
+  (s_1,\ldots,s_k,s_1,s_2)
+\]
+have start polygon \(P\), affine map \(\Phi\), and action function \(A\).  Let
+\[
+  C=\{u\in P:\Phi(u)=u\}
+\]
+be the closed fixed-point set.  If \(A(u)\le0\) for every \(u\in C\), then
+this closed tube has no strict represented orbit with cyclic word \(w\).
+
+In particular, if \(C\) is a compact convex polygon and \(A(v)\le0\) for every
+vertex \(v\) of \(C\), then the same conclusion holds.
+\end{lemma}
+
+\begin{proof}
+For a closed search-domain fixed point, the action \(A(u)\) is the sum of the
+reconstructed segment times by
+Definition~\ref{def:fg-closed-tube-search-data}.  Each reconstructed segment
+time is nonnegative.  If \(u\) represented a strict orbit for the displayed
+word, then every segment time would be positive, and hence \(A(u)>0\).  This
+contradicts \(A(u)\le0\).
+
+For the final statement, an affine function on a compact convex polygon attains
+its maximum at a vertex.  If all vertex values are nonpositive, then
+\(A(u)\le0\) for every \(u\in C\), so the first part applies.
+\end{proof}
+\end{unverified}
+
+\begin{unverified}
 \begin{lemma}[Simple support orbits give flow-graph fixed points]%
 \label{lem:fg-simple-support-orbit-represented}
 Let \(\gamma\) be a simple closed Reeb orbit whose support word
