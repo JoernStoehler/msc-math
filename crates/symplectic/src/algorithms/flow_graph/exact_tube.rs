@@ -882,6 +882,10 @@ fn solve_singular_fixed_tube(
     rhs: &Vec2,
     metrics: &mut ExactClosedTubeMetrics,
 ) -> ClosedClassification {
+    // The slow exact path classifies singular fixed sets so diagnostics can say
+    // whether the searched domain contains positive-action closed candidates.
+    // This is intentionally more informative than the theorem-facing
+    // finite-orbit-regular boundary, which may reject singular fixed maps.
     let rows = [(&lhs[0], &rhs[0]), (&lhs[1], &rhs[1])];
     let nonzero: Vec<(&Vec2, &R)> = rows
         .into_iter()
