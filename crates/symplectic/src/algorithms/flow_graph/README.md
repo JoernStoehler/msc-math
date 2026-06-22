@@ -142,8 +142,9 @@ Path-specific outcome contract:
   part of this rejection boundary.
 - The exact closed-word implementation is not a literal copy of the singular
   branch in the active idealized algorithm. It solves nonsingular fixed-point
-  equations exactly, classifies singular fixed-point sets exactly, accepts
-  zero-action singular cases as no-orbit outcomes, and rejects only
+  equations exactly. On the uncut tube, or on the tube remaining after an
+  action cutoff, it classifies singular fixed-point sets exactly, accepts
+  nonpositive-action singular fixed sets as no-orbit outcomes, and rejects
   positive-action singular fixed sets as unsupported.
 - The singular fixed-set classifier entered with the initial flow-graph work
   surface and serves two recorded purposes: positive-action singular fixed sets
@@ -154,8 +155,9 @@ Path-specific outcome contract:
 - Current options for the theorem/runtime boundary are:
   1. keep the classifier for diagnostics and f64 exact-resolution behavior, and
      add a theorem-facing exact wrapper that rejects singular fixed maps;
-  2. prove the nonpositive-action singular fixed-set branch and include it in
-     the implementation theorem;
+  2. review the nonpositive-action singular fixed-set lemma and the
+     cutoff-local classifier correspondence, then include that branch in the
+     implementation theorem;
   3. change the exact resolver itself to reject all singular fixed maps, after
      replacing the diagnostic/f64 behavior that currently depends on the
      classifier.

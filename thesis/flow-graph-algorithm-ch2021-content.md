@@ -117,7 +117,8 @@ These are code facts, not theorem hypotheses.
   Positive total action alone is not enough.
 - `exact_tube.rs::solve_singular_fixed_tube` and
   `exact_tube.rs::singular_fixed_polygon_result` classify singular fixed sets
-  exactly. Positive-action singular fixed sets become
+  exactly on the uncut tube or on the tube remaining after an action cutoff.
+  Positive-action singular fixed sets in that searched domain become
   `UnsupportedPositiveSingular`; nonpositive-action singular fixed sets become
   `ZeroActionNoOrbit`.
 - `f64_tube_search.rs::capacity_f64` resolves f64 closed-word errors with exact
