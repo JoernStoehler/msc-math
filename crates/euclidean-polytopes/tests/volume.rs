@@ -1,6 +1,7 @@
 use euclidean_polytopes::{
     facet_volume_and_centroid_from_incidence_f64, facet_volume_from_incidence_f64,
-    volume_from_incidence_exact, volume_from_incidence_f64, F64GeometryError,
+    volume_and_centroid_from_incidence_f64, volume_from_incidence_exact, volume_from_incidence_f64,
+    F64GeometryError,
 };
 use nalgebra::{DMatrix, Vector4};
 use num_rational::BigRational;
@@ -149,6 +150,33 @@ fn hypercube_incidence(vertices: &[Vector4<f64>], scale: f64) -> DMatrix<bool> {
             coordinate == scale
         } else {
             coordinate == -scale
+        }
+    })
+}
+
+fn axis_box(bounds: [(f64, f64); 4]) -> Vec<Vector4<f64>> {
+    let mut vertices = Vec::new();
+    for x0 in [bounds[0].0, bounds[0].1] {
+        for x1 in [bounds[1].0, bounds[1].1] {
+            for x2 in [bounds[2].0, bounds[2].1] {
+                for x3 in [bounds[3].0, bounds[3].1] {
+                    vertices.push(vf([x0, x1, x2, x3]));
+                }
+            }
+        }
+    }
+    vertices
+}
+
+fn axis_box_incidence(vertices: &[Vector4<f64>], bounds: &[(f64, f64); 4]) -> DMatrix<bool> {
+    DMatrix::from_fn(vertices.len(), 8, |vertex_index, facet_index| {
+        let coordinate_index = facet_index / 2;
+        let upper_facet = facet_index % 2 == 0;
+        let coordinate = vertices[vertex_index][coordinate_index];
+        if upper_facet {
+            coordinate == bounds[coordinate_index].1
+        } else {
+            coordinate == bounds[coordinate_index].0
         }
     })
 }
@@ -321,6 +349,47 @@ fn known_incidence_f64_agrees_with_exact_on_rational_fixtures() {
 
         assert_close(f64_volume, exact_volume, allowed_error);
     }
+}
+
+#[test]
+fn known_incidence_body_centroid_matches_centered_fixture_values() {
+    let (_, simplex_vertices) = centered_simplex();
+    let (simplex_volume, simplex_centroid) =
+        volume_and_centroid_from_incidence_f64(&simplex_vertices, &centered_simplex_incidence())
+            .expect("finite input");
+    assert_close(simplex_volume, 1.0 / 24.0, 1.0e-12);
+    assert_vector_close(simplex_centroid, Vector4::zeros(), 1.0e-12);
+
+    let (_, hypercube_vertices) = hypercube(1.0);
+    let (hypercube_volume, hypercube_centroid) = volume_and_centroid_from_incidence_f64(
+        &hypercube_vertices,
+        &hypercube_incidence(&hypercube_vertices, 1.0),
+    )
+    .expect("finite input");
+    assert_close(hypercube_volume, 16.0, 1.0e-10);
+    assert_vector_close(hypercube_centroid, Vector4::zeros(), 1.0e-12);
+
+    let (_, crosspolytope_vertices) = crosspolytope_radius_2();
+    let (crosspolytope_volume, crosspolytope_centroid) = volume_and_centroid_from_incidence_f64(
+        &crosspolytope_vertices,
+        &crosspolytope_radius_2_incidence(),
+    )
+    .expect("finite input");
+    assert_close(crosspolytope_volume, 32.0 / 3.0, 1.0e-10);
+    assert_vector_close(crosspolytope_centroid, Vector4::zeros(), 1.0e-12);
+}
+
+#[test]
+fn known_incidence_body_centroid_matches_shifted_axis_box_center() {
+    let bounds = [(-1.0, 3.0), (-2.0, 4.0), (-0.5, 1.5), (-3.0, 1.0)];
+    let vertices = axis_box(bounds);
+    let incidence = axis_box_incidence(&vertices, &bounds);
+
+    let (volume, centroid) =
+        volume_and_centroid_from_incidence_f64(&vertices, &incidence).expect("finite input");
+
+    assert_close(volume, 4.0 * 6.0 * 2.0 * 4.0, 1.0e-10);
+    assert_vector_close(centroid, vf([1.0, 1.0, 0.5, -1.0]), 1.0e-12);
 }
 
 /// Proposition: exact vertex-facet incidence is sufficient to compute the
