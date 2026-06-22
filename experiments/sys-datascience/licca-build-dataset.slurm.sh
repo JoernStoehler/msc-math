@@ -14,16 +14,21 @@
 #SBATCH --job-name=ds-table
 #SBATCH --partition=epyc
 #SBATCH --cpus-per-task=32
-#SBATCH --mem=16G
-#SBATCH --time=02:00:00
+#SBATCH --mem=64G
+#SBATCH --time=04:00:00
 #SBATCH --output=%x-%j.out
 
 # Resource justification:
 # - partition=epyc is the CPU-only production partition.
 # - The table builder parallelizes row feature construction with Rayon.
-# - 32 CPUs gives useful parallelism without taking a full 128-core node.
-# - 16G memory leaves room above the observed local 1G RSS table build.
-# - 2h wall time covers the current slow feature stage with slack.
+# - 32 CPUs gives useful parallelism without taking a full 128-core node and
+#   without multiplying memory pressure as much as a 64-thread first try.
+# - 64G is a bounded production request for the current feature branch. A local
+#   full rebuild on 2026-06-22 loaded the canonical producer caches and then hit
+#   the local compute/memory guard while building the table; the older 16G
+#   assumption is no longer trusted for the post-feature rebuild gate.
+# - 4h wall time covers the current slow feature stage with slack; cancel or
+#   resubmit only after inspecting sacct/log evidence against this estimate.
 
 set -euo pipefail
 

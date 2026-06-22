@@ -8,10 +8,15 @@ enough to motivate a separate generated-candidate follow-up?
 
 ## Method
 
-Use geometry-only features, excluding direct `sys`, capacity, volume, and
-capacity-derived fields from the proposer input. Evaluate ridge regression and
-random-forest regression on a grouped holdout split. Compare random-forest top
-decile enrichment to a small permutation-null sanity check.
+Use geometry-only features, excluding direct `sys`, capacity, volume,
+post-capacity orbit fields, and capacity-derived fields from the proposer
+input. Evaluate ridge regression and random-forest regression on a grouped
+holdout split. Compare random-forest top decile enrichment to a small
+permutation-null sanity check.
+
+Also run metadata-only ridge and random-forest baselines using source/facet and
+available provenance labels. These are leakage/source diagnostics, not geometry
+candidate-proposer inputs.
 
 ## Inputs
 
@@ -29,31 +34,51 @@ uv run --script experiments/sys-datascience/methods/prediction-ranking/analyze.p
 
 ## Observation
 
-Current run on hydrated retained tables in this branch:
+Feature-space closure branch note: the script now defaults to all eligible
+geometry features instead of the old `80`-feature cap, and the shared feature
+selector includes new `omega_*` geometry columns plus two-face
+symplectic-area tail columns when all loaded rows have complete two-face
+ordering. Two-face ordering diagnostics are excluded from geometry inputs.
+This branch also adds metadata-only baselines for source/facet/product
+provenance labels. The current artifact below was regenerated with this
+branch's method code against the hydrated checked-in retained tables from
+`/workspaces/msc-math/experiments/sys-datascience/prepare`, so metadata-only
+baselines are full-table results for the old retained schema. It still predates
+the prepare-stage rebuild with new omega/two-face/provenance columns.
+
+Current run on hydrated checked-in retained tables:
 
 - rows: `14336`;
-- geometry-only features: `80`;
+- geometry-only features: `88`;
+- metadata-only one-hot features: `26`;
 - grouped split: `capacity_source:facet_count`;
 - train rows: `8192`;
 - test rows: `6144`;
 - ridge: `R^2 = 0.5278029834784923`, MAE
-  `0.08913307407594219`, top-decile enrichment
+  `0.08913307407593929`, top-decile enrichment
   `0.5593495934959349`;
-- random forest: `R^2 = 0.9213458228927175`, MAE
-  `0.04077231570456351`, top-decile enrichment
-  `0.6325203252032521`;
+- random forest: `R^2 = 0.921983825923774`, MAE
+  `0.04059841487617869`, top-decile enrichment
+  `0.6341463414634146`;
+- metadata-only ridge: `R^2 = 0.12017539977683755`, MAE
+  `0.16535248208223238`, top-decile enrichment `0.296875`;
+- metadata-only random forest: `R^2 = -0.04953269595337506`, MAE
+  `0.1800783042710761`, top-decile enrichment `0.296875`;
 - random-forest enrichment permutation p-value with `10` bounded permutations:
   `0.09090909090909091`.
 
 This is a strong in-table prediction signal. It is not a validated
 candidate-proposer because it did not rank unevaluated generated rows before
-their `sys` values were computed.
+their `sys` values were computed. In this old-schema rerun, metadata-only
+baselines are much weaker than geometry-only models, so the geometry signal is
+not explained away by source/facet/product labels alone.
 
 ## Validity Guards
 
 - The held-out rows have already had `sys` computed; this is a candidate-ranking
   diagnostic, not a validated new-row proposer.
-- Metadata/provenance labels are not used as predictor features.
+- Metadata/provenance labels are not used in the geometry predictor. They are
+  used only in separately reported metadata-only baselines.
 - A validated proposer would need to rank unevaluated generated rows before
   computing their `sys`, followed by evaluation of those generated candidates.
 

@@ -2319,6 +2319,21 @@
     }
   ],
   "row_count": 14336,
+  "source_parameter_availability": {
+    "explicit_height_ranges": [],
+    "explicit_product_buckets": [],
+    "poly_ids_with_multiple_explicit_product_buckets": 0,
+    "provenance_rows": 14336,
+    "rows_with_field": {
+      "product_bounces": 0,
+      "product_k": 0,
+      "product_m": 0,
+      "sample_attempt": 0,
+      "sample_h_max": 0,
+      "sample_h_min": 0,
+      "sample_seed": 0
+    }
+  },
   "sys_gt_one": 0,
   "top_filtered_slices_by_p99": [
     {

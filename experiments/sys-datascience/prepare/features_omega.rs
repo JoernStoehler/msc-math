@@ -10,16 +10,33 @@ use super::features_helpers::{fraction_at_most, stats_or_zero};
 
 pub struct OmegaFields {
     pub transition: DMatrix<bool>,
+    pub omega_matrix_vol1_frobenius_norm: f64,
+    pub omega_matrix_vol1_spectral_norm: f64,
+    pub omega_matrix_vol1_stable_rank: f64,
+    pub omega_matrix_vol1_rank_1em10: f64,
+    pub omega_matrix_vol1_nullity_1em10: f64,
+    pub omega_sign_out_degree_mean: f64,
+    pub omega_sign_out_degree_std: f64,
+    pub omega_sign_out_degree_min: f64,
+    pub omega_sign_out_degree_max: f64,
     pub allpair_abs_omega_vol1_mean: f64,
     pub allpair_abs_omega_vol1_std: f64,
     pub allpair_abs_omega_vol1_min: f64,
     pub allpair_abs_omega_vol1_max: f64,
     pub allpair_zero_fraction: f64,
+    pub allpair_abs_normalized_omega_mean: f64,
+    pub allpair_abs_normalized_omega_std: f64,
+    pub allpair_abs_normalized_omega_min: f64,
+    pub allpair_abs_normalized_omega_max: f64,
     pub ridge_abs_omega_vol1_mean: f64,
     pub ridge_abs_omega_vol1_std: f64,
     pub ridge_abs_omega_vol1_min: f64,
     pub ridge_abs_omega_vol1_max: f64,
     pub ridge_zero_fraction: f64,
+    pub ridge_abs_normalized_omega_mean: f64,
+    pub ridge_abs_normalized_omega_std: f64,
+    pub ridge_abs_normalized_omega_min: f64,
+    pub ridge_abs_normalized_omega_max: f64,
     pub ridge_abs_omega_vol1_le_1em3_fraction: f64,
     pub ridge_abs_omega_vol1_le_1em2_fraction: f64,
     pub ridge_abs_omega_vol1_le_1em1_fraction: f64,
@@ -38,13 +55,51 @@ pub fn compute_omega_fields(
     facet_count: usize,
     omega_scale: f64,
 ) -> OmegaFields {
+    let omega_matrix = DMatrix::from_fn(facet_count, facet_count, |i, j| {
+        omega0(&duals[i], &duals[j]) * omega_scale
+    });
+    let omega_svd = omega_matrix.clone().svd(false, false);
+    let singular_values = omega_svd
+        .singular_values
+        .iter()
+        .copied()
+        .collect::<Vec<_>>();
+    let omega_matrix_vol1_frobenius_norm = singular_values
+        .iter()
+        .map(|value| value * value)
+        .sum::<f64>()
+        .sqrt();
+    let omega_matrix_vol1_spectral_norm = singular_values.iter().copied().fold(0.0, f64::max);
+    let omega_matrix_vol1_stable_rank = if omega_matrix_vol1_spectral_norm > 0.0 {
+        omega_matrix_vol1_frobenius_norm.powi(2) / omega_matrix_vol1_spectral_norm.powi(2)
+    } else {
+        0.0
+    };
+    let omega_matrix_vol1_rank_1em10 = singular_values
+        .iter()
+        .filter(|&&value| value > 1e-10)
+        .count() as f64;
+    let omega_matrix_vol1_nullity_1em10 = facet_count as f64 - omega_matrix_vol1_rank_1em10;
+
     let mut allpair_abs_omegas = Vec::new();
+    let mut allpair_abs_normalized_omegas = Vec::new();
     let mut allpair_zero_count = 0usize;
+    let mut omega_sign_out_degrees = vec![0.0; facet_count];
     for i in 0..facet_count {
         for j in (i + 1)..facet_count {
-            let value = omega0(&duals[i], &duals[j]).abs() * omega_scale;
-            if polytope.omega_signs[(i, j)] == 0 {
+            let raw_omega = omega0(&duals[i], &duals[j]);
+            let value = raw_omega.abs() * omega_scale;
+            let sign = polytope.omega_signs[(i, j)];
+            if sign == 0 {
                 allpair_zero_count += 1;
+            } else if sign > 0 {
+                omega_sign_out_degrees[i] += 1.0;
+            } else {
+                omega_sign_out_degrees[j] += 1.0;
+            }
+            let denom = duals[i].norm() * duals[j].norm();
+            if denom > 0.0 {
+                allpair_abs_normalized_omegas.push((raw_omega / denom).abs());
             }
             allpair_abs_omegas.push(value);
         }
@@ -53,6 +108,15 @@ pub fn compute_omega_fields(
         .iter()
         .map(|two_face| {
             omega0(&duals[two_face.facets[0]], &duals[two_face.facets[1]]).abs() * omega_scale
+        })
+        .collect::<Vec<_>>();
+    let ridge_abs_normalized_omegas = two_faces
+        .iter()
+        .filter_map(|two_face| {
+            let i = two_face.facets[0];
+            let j = two_face.facets[1];
+            let denom = duals[i].norm() * duals[j].norm();
+            (denom > 0.0).then(|| (omega0(&duals[i], &duals[j]) / denom).abs())
         })
         .collect::<Vec<_>>();
     let ridge_zero_count = two_faces
@@ -97,11 +161,29 @@ pub fn compute_omega_fields(
         allpair_abs_omega_vol1_max,
     ) = stats_or_zero(&allpair_abs_omegas);
     let (
+        allpair_abs_normalized_omega_mean,
+        allpair_abs_normalized_omega_std,
+        allpair_abs_normalized_omega_min,
+        allpair_abs_normalized_omega_max,
+    ) = stats_or_zero(&allpair_abs_normalized_omegas);
+    let (
         ridge_abs_omega_vol1_mean,
         ridge_abs_omega_vol1_std,
         ridge_abs_omega_vol1_min,
         ridge_abs_omega_vol1_max,
     ) = stats_or_zero(&ridge_abs_omegas);
+    let (
+        ridge_abs_normalized_omega_mean,
+        ridge_abs_normalized_omega_std,
+        ridge_abs_normalized_omega_min,
+        ridge_abs_normalized_omega_max,
+    ) = stats_or_zero(&ridge_abs_normalized_omegas);
+    let (
+        omega_sign_out_degree_mean,
+        omega_sign_out_degree_std,
+        omega_sign_out_degree_min,
+        omega_sign_out_degree_max,
+    ) = stats_or_zero(&omega_sign_out_degrees);
     let (
         transition_out_degree_mean,
         transition_out_degree_std,
@@ -112,6 +194,15 @@ pub fn compute_omega_fields(
 
     OmegaFields {
         transition,
+        omega_matrix_vol1_frobenius_norm,
+        omega_matrix_vol1_spectral_norm,
+        omega_matrix_vol1_stable_rank,
+        omega_matrix_vol1_rank_1em10,
+        omega_matrix_vol1_nullity_1em10,
+        omega_sign_out_degree_mean,
+        omega_sign_out_degree_std,
+        omega_sign_out_degree_min,
+        omega_sign_out_degree_max,
         allpair_abs_omega_vol1_mean,
         allpair_abs_omega_vol1_std,
         allpair_abs_omega_vol1_min,
@@ -121,6 +212,10 @@ pub fn compute_omega_fields(
         } else {
             0.0
         },
+        allpair_abs_normalized_omega_mean,
+        allpair_abs_normalized_omega_std,
+        allpair_abs_normalized_omega_min,
+        allpair_abs_normalized_omega_max,
         ridge_abs_omega_vol1_mean,
         ridge_abs_omega_vol1_std,
         ridge_abs_omega_vol1_min,
@@ -130,6 +225,10 @@ pub fn compute_omega_fields(
         } else {
             ridge_zero_count as f64 / two_faces.len() as f64
         },
+        ridge_abs_normalized_omega_mean,
+        ridge_abs_normalized_omega_std,
+        ridge_abs_normalized_omega_min,
+        ridge_abs_normalized_omega_max,
         ridge_abs_omega_vol1_le_1em3_fraction: fraction_at_most(&ridge_abs_omegas, 1e-3),
         ridge_abs_omega_vol1_le_1em2_fraction: fraction_at_most(&ridge_abs_omegas, 1e-2),
         ridge_abs_omega_vol1_le_1em1_fraction: fraction_at_most(&ridge_abs_omegas, 1e-1),

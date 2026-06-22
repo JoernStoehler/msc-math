@@ -56,7 +56,18 @@ uv run --script experiments/sys-datascience/methods/random-tail-eda/analyze.py
 
 ## Observation
 
-Current run on hydrated retained tables in this branch:
+Feature-space closure branch note: the provenance schema now exposes optional
+source/generator fields such as height range and product `(k,m,bounces)` when
+the producer row provides them. This script now prefers explicit product
+parameters over reparsing `path`, and records
+`source_parameter_availability` in its summary. The current artifact was
+regenerated with this branch's method code against the hydrated checked-in
+retained tables from `/workspaces/msc-math/experiments/sys-datascience/prepare`.
+Those retained tables still predate the prepare-stage rebuild that would add
+the new explicit provenance fields; consequently the availability summary
+reports zero rows with `sample_*` or `product_*` fields in this artifact.
+
+Current run on hydrated checked-in retained tables:
 
 - rows: `14336`;
 - `sys > 1` rows: `0`;
@@ -71,6 +82,12 @@ Filtered tail summaries are stored in
 p99 are product-heavy (`6x6`, `5x6`, `5x5`, `4x6`) plus generic `F=12`. No
 filtered slice contains a `sys > 1` row. The largest observed value is still
 about `0.137` below the threshold `1`.
+
+`summary.json["source_parameter_availability"]` records that the old retained
+provenance rows do not yet contain explicit `sample_seed`, `sample_attempt`,
+`sample_h_min`, `sample_h_max`, `product_k`, `product_m`, or
+`product_bounces` fields. Product buckets in this artifact therefore still come
+from legacy `path` parsing.
 
 The source-backed generator contract is stored in
 `summary.json["generator_contract"]`. In production mode, generic random rows

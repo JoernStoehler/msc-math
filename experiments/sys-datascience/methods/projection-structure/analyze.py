@@ -23,9 +23,12 @@ HERE = Path(__file__).resolve().parent
 sys.path.append(str(HERE.parent / "_shared"))
 from random_only import (  # noqa: E402
     TABLES_DIR,
+    dataset_label,
     load_trusted_random_tables,
     matrix_for,
     numeric_feature_names,
+    product_bucket,
+    provenance_by_poly_id,
     write_json,
 )
 
@@ -34,28 +37,150 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--tables-dir", type=Path, default=TABLES_DIR)
     parser.add_argument("--out-dir", type=Path, default=HERE / "artifacts")
-    parser.add_argument("--max-features", type=int, default=80)
+    parser.add_argument("--max-features", type=int, default=None)
     return parser.parse_args()
+
+
+def safe_corr(left: np.ndarray, right: np.ndarray) -> float | None:
+    if len(left) < 2 or np.std(left) == 0.0 or np.std(right) == 0.0:
+        return None
+    return float(np.corrcoef(left, right)[0, 1])
+
+
+def vector_summary(values: np.ndarray) -> dict[str, float | int]:
+    return {
+        "rows": int(len(values)),
+        "mean": float(np.mean(values)),
+        "std": float(np.std(values)),
+        "min": float(np.min(values)),
+        "max": float(np.max(values)),
+        "q10": float(np.quantile(values, 0.1)),
+        "median": float(np.median(values)),
+        "q90": float(np.quantile(values, 0.9)),
+    }
+
+
+def summarize_by_label(
+    labels: list[str], pcs: np.ndarray, y: np.ndarray, max_labels: int = 20
+) -> dict[str, object]:
+    grouped: dict[str, list[int]] = {}
+    for index, label in enumerate(labels):
+        grouped.setdefault(label, []).append(index)
+    entries = []
+    for label, indices in sorted(grouped.items(), key=lambda item: (-len(item[1]), item[0])):
+        if len(entries) >= max_labels:
+            break
+        idx = np.array(indices, dtype=int)
+        entries.append(
+            {
+                "label": label,
+                "rows": int(len(idx)),
+                "mean_sys": float(np.mean(y[idx])),
+                "max_sys": float(np.max(y[idx])),
+                "pc_means": [float(value) for value in np.mean(pcs[idx, :], axis=0)],
+                "pc_stds": [float(value) for value in np.std(pcs[idx, :], axis=0)],
+            }
+        )
+    return {
+        "group_count": len(grouped),
+        "shown_group_count": len(entries),
+        "groups": entries,
+    }
+
+
+def first_height_range(provenance_rows: list[dict[str, object]]) -> str:
+    ranges = sorted(
+        {
+            (float(row["sample_h_min"]), float(row["sample_h_max"]))
+            for row in provenance_rows
+            if isinstance(row.get("sample_h_min"), int | float)
+            and isinstance(row.get("sample_h_max"), int | float)
+        }
+    )
+    if len(ranges) == 1:
+        low, high = ranges[0]
+        return f"{low:g}:{high:g}"
+    if len(ranges) > 1:
+        return "multi:" + ",".join(f"{low:g}:{high:g}" for low, high in ranges)
+    return "missing"
+
+
+def metadata_labels(
+    rows: list[dict[str, object]], provenance_rows: list[dict[str, object]]
+) -> dict[str, list[str]]:
+    provenance = provenance_by_poly_id(provenance_rows)
+    labels = {
+        "capacity_source": [],
+        "dataset_label": [],
+        "facet_count": [],
+        "dataset_label_by_facet_count": [],
+        "product_bucket": [],
+        "sample_height_range": [],
+    }
+    for row in rows:
+        provenance_for_row = provenance.get(str(row["poly_id"]), [])
+        source = str(row.get("capacity_source", "missing"))
+        dataset = dataset_label(row, provenance_for_row)
+        facet = f"F{row.get('facet_count')}"
+        labels["capacity_source"].append(source)
+        labels["dataset_label"].append(dataset)
+        labels["facet_count"].append(facet)
+        labels["dataset_label_by_facet_count"].append(f"{dataset}:{facet}")
+        labels["product_bucket"].append(
+            product_bucket(provenance_for_row)
+            if source == "random_product_sample"
+            else "not_product"
+        )
+        labels["sample_height_range"].append(first_height_range(provenance_for_row))
+    return labels
+
+
+def label_counts(labels: list[str], max_labels: int = 12) -> dict[str, object]:
+    counts: dict[str, int] = {}
+    for label in labels:
+        counts[label] = counts.get(label, 0) + 1
+    entries = [
+        {"label": label, "rows": count}
+        for label, count in sorted(counts.items(), key=lambda item: (-item[1], item[0]))[
+            :max_labels
+        ]
+    ]
+    return {"group_count": len(counts), "groups": entries}
 
 
 def main() -> None:
     args = parse_args()
-    rows, _ = load_trusted_random_tables(args.tables_dir)
-    names = numeric_feature_names(rows, geometry_only=True)[: args.max_features]
+    rows, provenance_rows = load_trusted_random_tables(args.tables_dir)
+    names = numeric_feature_names(rows, geometry_only=True)
+    if args.max_features is not None:
+        names = names[: args.max_features]
     x = np.array(matrix_for(rows, names), dtype=float)
     y = np.array([float(row["sys"]) for row in rows], dtype=float)
     args.out_dir.mkdir(parents=True, exist_ok=True)
 
-    pca_pipe = make_pipeline(StandardScaler(), PCA(n_components=5, random_state=20260621))
+    component_count = min(5, x.shape[0], x.shape[1])
+    if component_count < 1:
+        raise SystemExit("Projection analysis needs at least one row and one feature")
+    pca_pipe = make_pipeline(
+        StandardScaler(), PCA(n_components=component_count, random_state=20260621)
+    )
     pcs = pca_pipe.fit_transform(x)
     pca = pca_pipe.named_steps["pca"]
+    metadata_by_name = metadata_labels(rows, provenance_rows)
+    metadata_overlays = {
+        name: summarize_by_label(values, pcs, y) for name, values in metadata_by_name.items()
+    }
 
     cluster_summaries = []
-    for k in [2, 3, 5, 8]:
-        labels = KMeans(n_clusters=k, n_init=20, random_state=20260621).fit_predict(pcs[:, :5])
+    for k in [value for value in [2, 3, 5, 8] if value <= len(rows)]:
+        cluster_labels = KMeans(n_clusters=k, n_init=20, random_state=20260621).fit_predict(
+            pcs
+        )
         entries = []
         for label in range(k):
-            values = y[labels == label]
+            cluster_mask = cluster_labels == label
+            values = y[cluster_mask]
+            cluster_indices = [index for index, selected in enumerate(cluster_mask) if selected]
             entries.append(
                 {
                     "cluster": label,
@@ -63,6 +188,10 @@ def main() -> None:
                     "mean_sys": float(np.mean(values)),
                     "max_sys": float(np.max(values)),
                     "top_decile_fraction": float(np.mean(values >= np.quantile(y, 0.9))),
+                    "metadata_composition": {
+                        name: label_counts([labels[index] for index in cluster_indices])
+                        for name, labels in metadata_by_name.items()
+                    },
                 }
             )
         cluster_summaries.append({"k": k, "clusters": entries})
@@ -72,7 +201,7 @@ def main() -> None:
         contamination=0.02,
         random_state=20260621,
     )
-    scores = -anomaly.fit(pcs[:, :5]).score_samples(pcs[:, :5])
+    scores = -anomaly.fit(pcs).score_samples(pcs)
     top_anomaly_idx = np.argsort(scores)[-25:][::-1]
     top_sys_idx = set(np.argsort(y)[-max(1, int(0.02 * len(y))) :])
     anomaly_top_sys_overlap = len(set(top_anomaly_idx) & top_sys_idx)
@@ -80,9 +209,18 @@ def main() -> None:
     summary = {
         "row_count": len(rows),
         "feature_count": len(names),
+        "pca_component_count": component_count,
         "explained_variance_ratio": [float(v) for v in pca.explained_variance_ratio_],
-        "pc1_sys_correlation": float(np.corrcoef(pcs[:, 0], y)[0, 1]),
-        "pc2_sys_correlation": float(np.corrcoef(pcs[:, 1], y)[0, 1]),
+        "pc_sys_correlations": [
+            safe_corr(pcs[:, component], y) for component in range(component_count)
+        ],
+        "pc1_sys_correlation": safe_corr(pcs[:, 0], y),
+        "pc2_sys_correlation": safe_corr(pcs[:, 1], y) if component_count >= 2 else None,
+        "pc_summaries": {
+            f"pc{component + 1}": vector_summary(pcs[:, component])
+            for component in range(component_count)
+        },
+        "metadata_overlays": metadata_overlays,
         "cluster_summaries": cluster_summaries,
         "top_25_anomaly_overlap_with_top_2pct_sys": anomaly_top_sys_overlap,
         "top_anomaly_rows": [
@@ -99,7 +237,8 @@ def main() -> None:
     import matplotlib.pyplot as plt
 
     fig, ax = plt.subplots(figsize=(6.2, 5.2))
-    scatter = ax.scatter(pcs[:, 0], pcs[:, 1], c=y, s=6, cmap="viridis", alpha=0.7)
+    pc2_values = pcs[:, 1] if component_count >= 2 else np.zeros(len(rows))
+    scatter = ax.scatter(pcs[:, 0], pc2_values, c=y, s=6, cmap="viridis", alpha=0.7)
     ax.set_xlabel("PC1")
     ax.set_ylabel("PC2")
     ax.set_title("Random-only geometry PCA colored by sys")
@@ -119,4 +258,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

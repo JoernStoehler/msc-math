@@ -18,6 +18,10 @@ canonization, feature computation, deduplication, or retained table shape
 changes. Prepare should be local by default because canonization and feature
 computation are cheap relative to capacity search; use LICCA only when the
 prepared table size or feature cost actually makes local runs impractical.
+For the current feature-closure branch, the full canonical retained-table
+rebuild is in that LICCA case: a local rebuild on 2026-06-22 reached table
+construction after loading the canonical producer caches and was stopped when
+the local compute/memory guard fired.
 
 `sys-datascience-prepare` is the prepare-stage command for the new run-local
 producer path. It consumes a producer output directory containing

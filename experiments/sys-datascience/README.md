@@ -70,7 +70,13 @@ Read these files for ordinary datascience work:
 - `produce/README.md`: accepted producer rows, caches, and LICCA rules.
 - `prepare/README.md`: prepare-stage ownership, retained prepared outputs, and
   fingerprints.
+- `feature-space-coverage-ledger.md`: current feature-object coverage,
+  audit status, invariance caveats, and next feature/method round.
 - `methods/README.md`: method packet conventions and current packet list.
+- `methods/random-only-closure-summary.md`: current cross-method dashboard for
+  the trusted random/product method slice and its remaining evidence gate.
+- `methods/random-only-method-dispositions.md`: run/defer/reject/out-of-scope
+  dispositions for checklist families in the trusted random/product scope.
 - `methods/method-coverage-checklist.md`: recall checklist for standard-method
   coverage while choosing, reviewing, or closing method-table rows.
 - relevant `methods/<method>/README.md`: durable state for that method packet.
@@ -196,6 +202,14 @@ caches with:
 experiments/sys-datascience/build-dataset.sh
 ```
 
+Current feature-closure branch operational note: the post-feature full retained
+rebuild should be run on LICCA, not retried locally by default. On 2026-06-22 a
+local canonical rebuild loaded `32610` polytopes, `22611` provenance rows, and
+`879235` computed-polytope observation rows, then was aborted during table
+construction after the local compute/memory guard fired. Use
+`licca-build-dataset.slurm.sh` for the next full rebuild gate, then rerun the
+method packets against the rebuilt retained tables.
+
 Other operational entry points:
 
 - `pipeline.local.sh`: local command map for focused smoke, shard, merge,
@@ -204,6 +218,9 @@ Other operational entry points:
   older full produce-to-table surface, not as a cheap command check.
 - `licca-build-dataset.slurm.sh`: LICCA retained-table rebuild from canonical
   producer files; distinct from the new run-local `produce`/`prepare` smoke.
+- `licca-post-feature-rebuild.md`: bounded handoff for the current
+  feature-closure rebuild gate, including branch/LFS preconditions, LICCA
+  submission, retrieval, and local method reruns.
 
 Refresh `prepare/` only after an intentional producer or prepare-stage
 change.
