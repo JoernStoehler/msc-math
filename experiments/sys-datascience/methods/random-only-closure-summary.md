@@ -10,14 +10,13 @@ For checklist-family dispositions, read
 `random-only-method-dispositions.md`. The checklist itself remains a recall aid,
 not a result ledger.
 
-Epistemic status on this branch: implementation and smoke coverage improved,
-and the main random-only method packets have been rerun with this branch's
-method code against the full scoped random/product prepare output at
-`/tmp/sys-ds-random-only-full`, built with `sys-dataset --random-only`. These
-artifacts include the new omega, two-face, and explicit provenance columns for
-trusted random/product rows. Do not use this file to claim final thesis closure
-until method/statistics review is recorded and remaining deferred families are
-accepted or revised.
+Epistemic status: implementation and smoke coverage exist, and the main
+random-only method packets were rerun against a reproducible scratch prepared
+table at `/tmp/sys-ds-random-only-full`, built with `sys-dataset
+--random-only`. The retained artifacts from that run include omega, two-face,
+and explicit provenance columns for trusted random/product rows. Do not use
+this file to claim final thesis closure until method/statistics review is
+recorded and remaining deferred families are accepted or revised.
 
 ## Current Data Slice
 
@@ -32,10 +31,11 @@ Current retained-table random-only fingerprint recorded by method packets:
 | `random_product_sample` | `10240` | `0` |
 | trusted random/product total | `14336` | `0` |
 
-Current branch caveat: the prepared input used for these artifacts lives at
-`/tmp/sys-ds-random-only-full`, not yet as a retained checked-in table. It is
-reproducible with `experiments/sys-datascience/prepare/build-random-only-slice.sh
-full` using hydrated canonical producer files.
+Prepared-input caveat: the prepared input used for these artifacts was a
+scratch table at `/tmp/sys-ds-random-only-full`, not a retained checked-in
+table. It is reproducible with
+`experiments/sys-datascience/prepare/build-random-only-slice.sh full` using
+hydrated canonical producer files.
 
 ## Method Summary
 
@@ -73,9 +73,9 @@ decisions, and the packet READMEs for evidence.
 ## Current Blocking Gate
 
 The next evidence gate is method/statistics review of the scoped full rerun,
-plus deciding whether the `/tmp/sys-ds-random-only-full` prepared input should
-be promoted or simply treated as reproducible generated data. Do not use the
-all-source retained-table rebuild for this goal by default.
+plus deciding whether the scratch prepared input should be promoted or simply
+treated as reproducible generated data. Do not use the all-source
+retained-table rebuild for this goal by default.
 
 ## Thesis Claim Status
 
@@ -86,7 +86,7 @@ Currently supported by scoped full random/product artifacts:
 - EDA/model artifacts found in-table structure but no validated generated
   candidate-proposer.
 
-Not yet supported for the updated branch:
+Not yet supported:
 
 - a final random-only method-table closure claim;
 - any ascent endpoint, local-maximum, attractor, basin, or continuation claim.

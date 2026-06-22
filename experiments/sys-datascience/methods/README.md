@@ -82,7 +82,7 @@ under `../prepare/` and build method-specific input matrices inside the method
 folder. Copy and adapt input-building code between methods when that is cheaper
 than maintaining shared helper code.
 
-Checked-in retained table facts on this branch:
+Checked-in retained table facts:
 
 - polytope rows: `32610`
 - computed-polytope observations: `879235`

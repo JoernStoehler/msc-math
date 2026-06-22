@@ -75,7 +75,7 @@ BUG: ascent run endpoints are not local maximizers of `sys(a)` right now. See
 `../methods/endpoint-local-max-diagnostic/README.md`: sampled retained ascent
 endpoints still have tiny improving quotient directions.
 
-LICCA fixed-F ascent shard outputs for this branch live under:
+LICCA fixed-F ascent shard outputs for the current production run live under:
 
 ```text
 licca-shards/general-computed-production-1024/
@@ -155,8 +155,7 @@ with the produced files.
 
 The smoke target is `8` generic random rows and `10` product rows. Production
 targets match the standalone random refresh counts: `4096` generic rows and
-`10240` product rows. Local smoke evidence on this branch after lazy work-unit
-generation:
+`10240` product rows. Local smoke evidence after lazy work-unit generation:
 
 - cold smoke: `18` computed payloads, `0` cache hits, `18` misses, max
   `sys=0.7163711008250128`, `0` rows with `sys > 1`;

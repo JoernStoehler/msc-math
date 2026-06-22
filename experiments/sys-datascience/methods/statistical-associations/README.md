@@ -107,11 +107,11 @@ The artifact records:
 
 ## Observation
 
-Feature-space closure branch note: the current artifact was regenerated with
-this branch's method code against the full scoped random/product prepare output
-at `/tmp/sys-ds-random-only-full`, built with `sys-dataset --random-only`. It
-therefore includes the new omega matrix/sign, normalized-omega, two-face-tail,
-and explicit provenance columns for trusted random/product rows.
+The current artifact was regenerated against a full scoped random/product
+scratch prepared table at `/tmp/sys-ds-random-only-full`, built with
+`sys-dataset --random-only`. It therefore includes omega matrix/sign,
+normalized-omega, two-face-tail, and explicit provenance columns for trusted
+random/product rows.
 
 Current full scoped random/product run:
 
@@ -136,7 +136,7 @@ Current full scoped random/product run:
 
 The retained artifact's screened set is exhaustive relative to the scoped
 random/product prepare schema and eligibility rule it was run against. The
-current branch prepare schema covers several first-layer nodes:
+current prepare schema covers several first-layer nodes:
 
 - source object `a_k`: volume-one norms, centroid norm, coordinate standard
   deviations, pairwise Euclidean distances/cosines, centered singular values;

@@ -78,7 +78,7 @@ Source summary:
 | random_sample | `4096` | `0` |
 | variable_f_ascent | `90` | `0` |
 
-Random-only observation from `--random-only` on this branch:
+Random-only observation from `--random-only`:
 
 - trusted random/product rows: `14336`;
 - provenance rows: `14336`;

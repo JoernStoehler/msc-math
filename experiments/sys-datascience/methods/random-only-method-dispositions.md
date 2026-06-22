@@ -7,14 +7,14 @@ method packet READMEs or artifacts. It records why a checklist family is
 currently considered run, pending rerun, deferred, rejected, or out of scope for
 the random-only feature-space closure goal.
 
-Epistemic status: current branch control surface. A full scoped random/product
-prepare rebuild and method rerun completed on 2026-06-22 using
-`/tmp/sys-ds-random-only-full`: `4096` random rows, `10240` random-product rows,
-zero ascent/continuation/computed-observation rows, max `sys =
-0.86258589584944`, and zero `sys > 1` rows. The prepared table is reproducible
-from `prepare/build-random-only-slice.sh full` but is not currently retained as
-a checked-in table artifact. The remaining closure gate is method/statistics
-review, not another schema-refresh rerun.
+Epistemic status: current random-only control surface. A full scoped
+random/product prepare rebuild and method rerun completed on 2026-06-22 using a
+scratch table at `/tmp/sys-ds-random-only-full`: `4096` random rows, `10240`
+random-product rows, zero ascent/continuation/computed-observation rows, max
+`sys = 0.86258589584944`, and zero `sys > 1` rows. The prepared table is
+reproducible from `prepare/build-random-only-slice.sh full` but is not
+currently retained as a checked-in table artifact. The remaining closure gate
+is method/statistics review, not another schema-refresh rerun.
 
 ## Disposition Vocabulary
 
@@ -26,7 +26,7 @@ review, not another schema-refresh rerun.
 - `run-pending-retention-decision`: current artifacts were produced from a
   reproducible `/tmp` prepared table; decide whether to retain the prepared
   table in repo/LFS or keep it as regenerated input.
-- `run-pending-rerun`: code/packet surface exists for this branch, but a
+- `run-pending-rerun`: code/packet surface exists, but a
   required rerun is still pending.
 - `smoke-only`: route works on a tiny panel but is not broad method coverage.
 - `defer`: plausible method family, lower current thesis value than reviewing
@@ -65,7 +65,7 @@ review, not another schema-refresh rerun.
 | --- | --- | --- | --- |
 | blind random generic sampling | `run-current-artifact` plus `run-pending-review` | `trusted-random-dataset/`, `random-tail-eda/`, `scan-sys-gt-1/` | `4096` generic random rows in the scoped full rerun; no positives. |
 | blind random Lagrangian-product sampling | `run-current-artifact` plus `run-pending-review` | `trusted-random-dataset/`, `random-tail-eda/`, `scan-sys-gt-1/` | `10240` product rows in the scoped full rerun; no positives. |
-| rejection/acceptance calibration | `run-current-artifact` | `produce/README.md`, `random-tail-eda/` generator contract | Producer contract records accepted samples and generator parameters; no full new producer run in this branch. |
+| rejection/acceptance calibration | `run-current-artifact` | `produce/README.md`, `random-tail-eda/` generator contract | Producer contract records accepted samples and generator parameters; no full new producer run was part of the retained method rerun. |
 | bounded non-gradient perturbation | `smoke-only` | `non-gradient-perturbation/` | Tiny hash-selected random-direction panel ran; larger panel deferred unless near-threshold/improvement evidence makes it high value. |
 | Latin-hypercube, space-filling, pattern search, Nelder-Mead, derivative-free trust-region, surrogate/local/global wrappers | `defer` | none | Plausible direct-search families, but no cheap faithful parameterization currently has higher value than reviewing the full scoped random/product evidence. Reopen if random-only model suggests a concrete low-dimensional proposer target. |
 | Bayesian/surrogate-guided optimization and branch-and-bound variants | `defer` | none | Higher setup cost and no current validated cheap acquisition/proxy; reopen only if supervised ranking produces a concrete generated-candidate loop. |
@@ -128,8 +128,9 @@ review, not another schema-refresh rerun.
 
 1. Method/statistics review must check the full scoped rerun artifacts and the
    interpretation in each packet.
-2. Decide whether `/tmp/sys-ds-random-only-full` should be retained as a
-   checked-in/LFS prepared table or remain a reproducible generated input.
+2. Decide whether the scratch prepared table used for the scoped rerun should
+   be retained as a checked-in/LFS prepared table or remain a reproducible
+   generated input.
 3. Thesis wording must not use this ledger to claim closure over gradient
    ascent, local maxima, attractors, basin structure, or arbitrary random
    polytope distributions.

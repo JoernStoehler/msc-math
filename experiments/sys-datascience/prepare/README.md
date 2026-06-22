@@ -79,7 +79,8 @@ CPU count, memory, and timeout, for example `--cpus-per-task=4 --mem=8G
 --time=00:20:00`.
 
 Normal prepare runs require the expensive payload for every producer metadata
-row. They do not run capacity search. Local smoke evidence on this branch:
+row. They do not run capacity search. Local smoke evidence for the current
+prepare path:
 `18` produced polytopes became `18` polytope-table rows and `18` provenance
 rows; `fingerprint-dataset.py` reported max `sys=0.7163711008250128` and
 `0` rows with `sys > 1`. Prepare also writes `prepare-stats.json` next to the

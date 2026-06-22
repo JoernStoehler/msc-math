@@ -49,7 +49,7 @@ because they duplicate the retained table data.
 
 ## Observation
 
-Current run on hydrated retained tables in this branch:
+Current run on hydrated retained tables:
 
 - trusted polytope rows: `14336`;
 - trusted provenance rows: `14336`;

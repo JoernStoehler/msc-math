@@ -56,16 +56,14 @@ uv run --script experiments/sys-datascience/methods/random-tail-eda/analyze.py
 
 ## Observation
 
-Feature-space closure branch note: the provenance schema now exposes optional
-source/generator fields such as height range and product `(k,m,bounces)` when
-the producer row provides them. This script now prefers explicit product
-parameters over reparsing `path`, and records
+The provenance schema exposes optional source/generator fields such as height
+range and product `(k,m,bounces)` when the producer row provides them. This
+script prefers explicit product parameters over reparsing `path`, and records
 `source_parameter_availability` in its summary. The current artifact was
-regenerated with this branch's method code against the full scoped
-random/product prepare output at `/tmp/sys-ds-random-only-full`, built with
-`sys-dataset --random-only`. It includes the new explicit height range and
-product `(k,m,bounces)` provenance fields for the canonical random/product
-producer rows.
+regenerated against a full scoped random/product scratch prepared table at
+`/tmp/sys-ds-random-only-full`, built with `sys-dataset --random-only`. It
+includes explicit height range and product `(k,m,bounces)` provenance fields for
+the canonical random/product producer rows.
 
 Current full scoped random/product run:
 

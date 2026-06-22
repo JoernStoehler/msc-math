@@ -163,7 +163,7 @@ Expected contents after rebuilding with the current table builder:
   provenance record keyed by `provenance_id`; records run-level and
   trajectory-summary fields. Random-sample provenance rows do not appear here.
 
-Checked-in retained-table fingerprint on this branch:
+Checked-in retained-table fingerprint:
 
 - polytope rows: `32610`
 - computed-polytope observations: `879235`
