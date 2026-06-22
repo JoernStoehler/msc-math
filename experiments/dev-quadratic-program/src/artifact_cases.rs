@@ -96,7 +96,8 @@ fn should_load_jsonl_family(
     family_filter: &[String],
     source_id_filter: &[String],
 ) -> bool {
-    family_filter_allows(family, family_filter) && !source_filter_selects_only_hko(source_id_filter)
+    family_filter_allows(family, family_filter)
+        && !source_filter_needs_no_jsonl_artifacts(source_id_filter)
 }
 
 fn filters_allow_case(
@@ -117,11 +118,13 @@ fn source_id_filter_allows(source_id: &str, source_id_filter: &[String]) -> bool
     source_id_filter.is_empty() || source_id_filter.iter().any(|item| item == source_id)
 }
 
-fn source_filter_selects_only_hko(source_id_filter: &[String]) -> bool {
+fn source_filter_needs_no_jsonl_artifacts(source_id_filter: &[String]) -> bool {
     !source_id_filter.is_empty()
-        && source_id_filter
-            .iter()
-            .all(|source_id| source_id == HKO_SOURCE_ID)
+        && source_id_filter.iter().all(|source_id| {
+            source_id == HKO_SOURCE_ID
+                || source_id.starts_with("edge:")
+                || source_id.starts_with("seed")
+        })
 }
 
 fn retained_artifact_row_cap(max_rows_per_family: usize, source_id_filter: &[String]) -> usize {
@@ -331,6 +334,22 @@ mod tests {
             load_retained_artifact_cases_filtered(1, &filter("random"), &filter(HKO_SOURCE_ID));
 
         assert!(cases.is_empty());
+    }
+
+    #[test]
+    fn non_artifact_source_filters_do_not_require_artifact_jsonl_payloads() {
+        assert!(load_retained_artifact_cases_filtered(
+            1,
+            &[],
+            &filter("edge:duplicate_dual_vertices")
+        )
+        .is_empty());
+        assert!(load_retained_artifact_cases_filtered(
+            1,
+            &[],
+            &filter("seed99540836:F5:sample0:attempt0")
+        )
+        .is_empty());
     }
 
     #[test]

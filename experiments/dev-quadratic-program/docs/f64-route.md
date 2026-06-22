@@ -308,9 +308,10 @@ Rows contain both validation and capacity/audit fields.
   containment/distortion bounds.
 - Capacity labels are object-specific:
   `original_artifact_capacity_label` is for the original artifact row,
-  `preprocessed_audit_capacity_label` is exact-backed capacity of the
-  post-preprocessing row when requested, and `preprocessed_f64_capacity` is the
-  measured f64 capacity of the post-preprocessing row.
+  `preprocessed_audit_capacity_label` is the reference-route comparison label
+  for the post-preprocessing row when requested, and
+  `preprocessed_f64_capacity` is the measured f64 capacity of the
+  post-preprocessing row.
 - `preprocessed_f64_vs_original_artifact_*` and
   `preprocessed_audit_vs_original_artifact_*` compare against the original row
   through the reported near-redundant-facet distortion bound when product

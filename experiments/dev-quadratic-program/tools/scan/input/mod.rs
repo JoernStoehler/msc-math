@@ -96,4 +96,19 @@ mod tests {
         assert_eq!(cases.len(), 1);
         assert_eq!(cases[0].source_id, "edge:duplicate_dual_vertices");
     }
+
+    #[test]
+    fn all_source_edge_filter_does_not_require_artifact_jsonl_payloads() {
+        let cases = load_cases(&LoadCaseOptions {
+            input_source: InputSource::All,
+            max_rows_per_family: 1,
+            generated_samples_per_facet: 0,
+            generated_seed: 0,
+            family_filter: Vec::new(),
+            source_id_filter: vec!["edge:duplicate_dual_vertices".to_string()],
+        });
+
+        assert_eq!(cases.len(), 1);
+        assert_eq!(cases[0].source_id, "edge:duplicate_dual_vertices");
+    }
 }
