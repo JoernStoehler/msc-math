@@ -847,11 +847,13 @@ filter in Proposition~\ref{prop:fg-real-search-correctness}.
 \begin{unverified}
 \begin{corollary}[Generic capacity correctness of idealized FG search]%
 \label{cor:fg-real-capacity-correctness-generic}
-Fix a facet count \(F\).  On the open dense sufficient generic locus from
-Fact~\ref{fact:fg-finite-orbit-regular-open-dense}, every flow-graph
-nondegenerate facet presentation with those \(F\) listed facets has a
-finite-orbit regular exhaustive flow-graph tube run.  Therefore
-Algorithm~\ref{alg:fg-real-exhaustive-search}, run on such a presentation,
+Fix a facet count \(F\).  Let \(G_F\) be the intersection of the
+primitive-denominator domain and determinant-nonzero conditions from
+Fact~\ref{fact:fg-finite-orbit-regular-open-dense}.  If a flow-graph
+nondegenerate facet presentation with \(F\) listed facets has its listed dual
+vertices in \(G_F\), then its exhaustive flow-graph tube run is
+finite-orbit regular.  Therefore
+Algorithm~\ref{alg:fg-real-exhaustive-search}, run on that presentation,
 returns \(c_{\mathrm{EHZ}}(K)\).
 \end{corollary}
 
