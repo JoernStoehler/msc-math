@@ -125,7 +125,7 @@ Current producer support for that next estimate:
 - `sys-local-behavior-produce` has `--basepoint-start` and
   `--basepoint-limit` for complete selected-basepoint shards;
 - shard runs preserve global `base_####` ids;
-- `experiments/sys-datascience/tables/combine-local-behavior-shards.py`
+- `experiments/sys-datascience/prepare/combine-local-behavior-shards.py`
   combines non-overlapping completed shards into one marked combined producer
   directory and rejects overlapping ranges or duplicate joined-row ids.
 

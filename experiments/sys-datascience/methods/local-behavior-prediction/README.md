@@ -158,7 +158,7 @@ cargo run --release -p exp-sys-landscape --bin sys-local-behavior-produce -- \
   --random-directions 1 \
   --radii 1e-4,1e-3,1e-2
 
-uv run --script experiments/sys-datascience/tables/prepare-local-behavior.py \
+uv run --script experiments/sys-datascience/prepare/prepare-local-behavior.py \
   /tmp/sys-local-behavior-source-smoke
 
 uv run --script experiments/sys-datascience/methods/local-behavior-prediction/analyze.py \
@@ -178,7 +178,7 @@ cargo run --release -p exp-sys-landscape --bin sys-local-behavior-produce -- \
   --random-directions 1 \
   --radii 1e-4,1e-3,1e-2,3e-2
 
-uv run --script experiments/sys-datascience/tables/combine-local-behavior-shards.py \
+uv run --script experiments/sys-datascience/prepare/combine-local-behavior-shards.py \
   --out-dir /tmp/sys-local-behavior-source-combined \
   /tmp/sys-local-behavior-source-shard-000 \
   /tmp/sys-local-behavior-source-shard-001
