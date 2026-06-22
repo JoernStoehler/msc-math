@@ -144,9 +144,8 @@ custom enumeration, or local proof packets:
   runs, and large scans where results are audited or not thesis-facing.
 - **f64 with exact fallback capacity:** f64 enumeration/solve first, then exact
   one-sigma solve for unresolved capacity-relevant candidates. This route is
-  only as strong as the f64 candidate filter plus fallback policy. It is the
-  practical route family to develop for consumers that want f64 speed but need
-  more than heuristic labels.
+  only as strong as the f64 candidate filter plus fallback policy. The active
+  route-development implementation lives in `src/fallback_route/`.
 - **Retained-candidate exact minimizer/gap-window capacity:** exact one-sigma
   solves/certification over the retained f64 candidate set. Proof-level over
   that retained set; global only when candidate filtering is separately safe
@@ -167,8 +166,9 @@ caller-owned adaptations of the shared paths above.
 
 ## Open Work For This Packet
 
-- Implement or copy-edit local route code only when the route matrix identifies
-  a consumer/evidence need that the existing crate bridge cannot answer.
+- Extend local route code only when owned consumers, audits, or the route
+  matrix identify a consumer/evidence need that the current dev-QP route cannot
+  answer.
 - Which expert controls should remain public for experiments, and which deep
   module paths are accidental imports?
 - Which route names and result fields should become stable public crate API

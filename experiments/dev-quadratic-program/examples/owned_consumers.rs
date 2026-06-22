@@ -7,12 +7,16 @@ use exp_dev_quadratic_program::{
 };
 use num_rational::BigRational;
 use num_traits::Zero;
+use symplectic::{
+    solve_orbit_sigma_saddle_point, CertifiedOrbitSetMode, OrbitAdmissibility, OrbitGuaranteeMode,
+};
 
 fn main() {
     let case = small_generated_case();
 
     let certified = certified_scalar_consumer(&case);
     let near_minimizers = near_minimizer_window_consumer(&case);
+    let fallback = retained_candidate_fallback_consumer(&case);
     let heuristic = heuristic_scan_consumer(&case);
     let timing = timing_only_consumer(&case);
 
@@ -28,6 +32,10 @@ fn main() {
         near_minimizers.capacity,
         near_minimizers.window_orbit_count,
         near_minimizers.exact_admissible_count
+    );
+    println!(
+        "retained_candidate_fallback capacity={:.12} exact_resolutions={} retained_orbits={}",
+        fallback.capacity, fallback.exact_resolutions, fallback.retained_orbit_count
     );
     println!(
         "heuristic_scan status={} capacity={:?} sigma={:?} indet={} failures={} route={}",
@@ -68,6 +76,42 @@ fn near_minimizer_window_consumer(case: &ScanCase) -> NearMinimizerWindow {
         capacity: exact.capacity,
         window_orbit_count: exact.orbits.len(),
         exact_admissible_count: exact.exact_admissible_count,
+    }
+}
+
+/// Consumer shape for callers that accept a retained f64 candidate set only
+/// after local exact fallback certifies that retained set.
+fn retained_candidate_fallback_consumer(case: &ScanCase) -> RetainedCandidateFallback {
+    let exact = exact_report(case, BigRational::zero());
+    let mut retained =
+        solve_orbit_sigma_saddle_point(&case.dual_vertices, &exact.minimizers[0].sigma)
+            .expect("owned consumer fixture should solve the retained sigma");
+    retained.admissibility = OrbitAdmissibility::IndeterminateF64;
+
+    let dual_vertices_exact = exact_binary64_dual_vertex_arrays(&case.dual_vertices);
+    let interval_result =
+        exp_dev_quadratic_program::fallback_route::aggregate_orbits_with_local_exact_fallback(
+            &dual_vertices_exact,
+            vec![retained.clone()],
+            1,
+            0.0,
+            OrbitGuaranteeMode::BoundSafe,
+        )
+        .expect("local exact fallback should certify the retained candidate");
+    let exact_set =
+        exp_dev_quadratic_program::fallback_route::aggregate_certified_orbits_with_local_exact_fallback(
+            &dual_vertices_exact,
+            vec![retained],
+            1,
+            BigRational::zero(),
+            CertifiedOrbitSetMode::MinimizersOnly,
+        )
+        .expect("local certified fallback should certify the retained candidate set");
+
+    RetainedCandidateFallback {
+        capacity: interval_result.capacity(),
+        exact_resolutions: exact_set.exact_resolutions,
+        retained_orbit_count: exact_set.orbits.len(),
     }
 }
 
@@ -163,6 +207,13 @@ struct NearMinimizerWindow {
     capacity: f64,
     window_orbit_count: usize,
     exact_admissible_count: usize,
+}
+
+#[derive(Debug)]
+struct RetainedCandidateFallback {
+    capacity: f64,
+    exact_resolutions: usize,
+    retained_orbit_count: usize,
 }
 
 #[derive(Debug)]
