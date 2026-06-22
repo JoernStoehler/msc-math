@@ -126,7 +126,7 @@ struct LocalGeometryProbeRow {
     step: f64,
     status: String,
     base_sys: f64,
-    predicted_directional_derivative: Option<f64>,
+    predicted_delta_per_step: Option<f64>,
     predicted_delta_sys: Option<f64>,
     recomputed_sys: Option<f64>,
     observed_delta_sys: Option<f64>,
@@ -217,7 +217,7 @@ struct EndpointDiagnosticRow {
     min_observed_delta: f64,
     min_observed_relative_delta: f64,
     effective_min_observed_delta: Option<f64>,
-    post_stop_positive_predicted_direction_found: Option<bool>,
+    post_stop_prediction_selected_step_found: Option<bool>,
     post_stop_predicted_delta_sys: Option<f64>,
     post_stop_observed_delta_sys: Option<f64>,
     post_stop_improvement_found: Option<bool>,
@@ -389,7 +389,7 @@ fn main() {
                     step: 0.0,
                     status: err,
                     base_sys: fixture.polytope.sys,
-                    predicted_directional_derivative: None,
+                    predicted_delta_per_step: None,
                     predicted_delta_sys: None,
                     recomputed_sys: None,
                     observed_delta_sys: None,
@@ -744,10 +744,10 @@ fn run_trace_and_endpoint_rows(
                     stop_threshold,
                     base.sys,
                     base.near_active_orbits.len(),
-                    "no_positive_predicted_step",
+                    "no_prediction_selected_step",
                     None,
                 ));
-                trace_stop_reason = "no_positive_predicted_step".to_string();
+                trace_stop_reason = "no_prediction_selected_step".to_string();
                 break;
             };
 
@@ -1278,7 +1278,7 @@ fn endpoint_diagnostic_row(
                 min_observed_delta: stop_threshold.absolute_delta,
                 min_observed_relative_delta: stop_threshold.relative_delta,
                 effective_min_observed_delta: Some(effective_min_observed_delta),
-                post_stop_positive_predicted_direction_found: Some(true),
+                post_stop_prediction_selected_step_found: Some(true),
                 post_stop_predicted_delta_sys: row.predicted_delta_sys,
                 post_stop_observed_delta_sys: row.observed_delta_sys,
                 post_stop_improvement_found: Some(improvement_found),
@@ -1311,15 +1311,15 @@ fn endpoint_diagnostic_row(
             min_observed_delta: stop_threshold.absolute_delta,
             min_observed_relative_delta: stop_threshold.relative_delta,
             effective_min_observed_delta: Some(effective_min_observed_delta),
-            post_stop_positive_predicted_direction_found: Some(false),
+            post_stop_prediction_selected_step_found: Some(false),
             post_stop_predicted_delta_sys: None,
             post_stop_observed_delta_sys: None,
             post_stop_improvement_found: Some(false),
             post_stop_threshold_improvement_found: Some(false),
-            diagnostic_status: "no_positive_predicted_post_stop_step".to_string(),
+            diagnostic_status: "no_prediction_selected_post_stop_step".to_string(),
             base_orbit_iterations: Some(base.capacity.iterations),
             target_orbit_iterations: None,
-            caveat: "finite direction set only; absence of a positive predicted step is not a local-maximum certificate"
+            caveat: "finite direction set only; absence of a prediction-selected step is not a local-maximum certificate"
                 .to_string(),
         },
     }
@@ -1348,7 +1348,7 @@ fn endpoint_failure_row(
         min_observed_delta: stop_threshold.absolute_delta,
         min_observed_relative_delta: stop_threshold.relative_delta,
         effective_min_observed_delta: final_sys.map(|sys| stop_threshold.effective_delta(sys)),
-        post_stop_positive_predicted_direction_found: None,
+        post_stop_prediction_selected_step_found: None,
         post_stop_predicted_delta_sys: None,
         post_stop_observed_delta_sys: None,
         post_stop_improvement_found: None,
@@ -1434,7 +1434,7 @@ fn endpoint_direction_scan_failure_row(
         step: 0.0,
         status: format!("{status}:{detail}"),
         base_sys,
-        predicted_directional_derivative: None,
+        predicted_delta_per_step: None,
         predicted_delta_sys: None,
         recomputed_sys: None,
         observed_delta_sys: None,
@@ -1566,7 +1566,7 @@ fn local_probe_row(
             "branch_model_prediction_failed".to_string(),
         );
     };
-    let predicted_directional_derivative = if step == 0.0 {
+    let predicted_delta_per_step = if step == 0.0 {
         0.0
     } else {
         predicted_delta / step
@@ -1629,7 +1629,7 @@ fn local_probe_row(
         step,
         status: "ok".to_string(),
         base_sys: base.sys,
-        predicted_directional_derivative: Some(predicted_directional_derivative),
+        predicted_delta_per_step: Some(predicted_delta_per_step),
         predicted_delta_sys: Some(predicted_delta),
         recomputed_sys: Some(target_state.sys),
         observed_delta_sys: Some(target_state.sys - base.sys),
@@ -1656,7 +1656,7 @@ fn failed_probe_row(
         step,
         status,
         base_sys: base.sys,
-        predicted_directional_derivative: None,
+        predicted_delta_per_step: None,
         predicted_delta_sys: None,
         recomputed_sys: None,
         observed_delta_sys: None,

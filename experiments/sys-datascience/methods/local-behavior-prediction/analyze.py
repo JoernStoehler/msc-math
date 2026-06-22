@@ -316,11 +316,11 @@ def candidate_window_summary_lines(summary: list[dict[str, Any]]) -> list[str]:
         ),
     )
     if not rows:
-        return ["No candidate-window prediction rows found."]
+        return ["No candidate-window evaluation rows found."]
 
     lines = [
-        "| dataset | family | role | radius | direction | n | producer_sign_miss | near_finite_sign_miss | candidate_finite_sign_miss | median_candidate_error |",
-        "| --- | --- | --- | ---: | --- | ---: | ---: | ---: | ---: | ---: |",
+        "| dataset | family | role | radius | direction | n | producer_n | producer_sign_miss | near_eval_n | near_eval_sign_miss | candidate_eval_n | candidate_eval_sign_miss | median_candidate_eval_error |",
+        "| --- | --- | --- | ---: | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
     ]
     for row in rows:
         lines.append(
@@ -332,9 +332,12 @@ def candidate_window_summary_lines(summary: list[dict[str, Any]]) -> list[str]:
                     fmt_value(row.get("radius")),
                     str(row.get("direction_family", "")),
                     fmt_value(row.get("n")),
+                    fmt_value(row.get("producer_sign_mismatch_comparable_n")),
                     fmt_fraction(row.get("producer_sign_mismatch_fraction")),
-                    fmt_fraction(row.get("near_active_finite_sign_mismatch_fraction")),
-                    fmt_fraction(row.get("candidate_window_finite_sign_mismatch_fraction")),
+                    fmt_value(row.get("near_active_finite_evaluation_sign_mismatch_comparable_n")),
+                    fmt_fraction(row.get("near_active_finite_evaluation_sign_mismatch_fraction")),
+                    fmt_value(row.get("candidate_window_finite_evaluation_sign_mismatch_comparable_n")),
+                    fmt_fraction(row.get("candidate_window_finite_evaluation_sign_mismatch_fraction")),
                     fmt_value(row.get("median_abs_candidate_window_finite_error")) + " |",
                 ]
             )
@@ -357,8 +360,8 @@ def candidate_gradient_summary_lines(summary: list[dict[str, Any]]) -> list[str]
         return ["No candidate-gradient prediction rows found."]
 
     lines = [
-        "| dataset | family | role | radius | direction | n | producer_sign_miss | candidate_gradient_sign_miss | p90_abs_err |",
-        "| --- | --- | --- | ---: | --- | ---: | ---: | ---: | ---: |",
+        "| dataset | family | role | radius | direction | n | producer_n | producer_sign_miss | candidate_gradient_n | candidate_gradient_sign_miss | p90_abs_err |",
+        "| --- | --- | --- | ---: | --- | ---: | ---: | ---: | ---: | ---: | ---: |",
     ]
     for row in rows:
         lines.append(
@@ -370,7 +373,9 @@ def candidate_gradient_summary_lines(summary: list[dict[str, Any]]) -> list[str]
                     fmt_value(row.get("radius")),
                     str(row.get("direction_family", "")),
                     fmt_value(row.get("n")),
+                    fmt_value(row.get("producer_sign_mismatch_comparable_n")),
                     fmt_fraction(row.get("producer_sign_mismatch_fraction")),
+                    fmt_value(row.get("candidate_gradient_sign_mismatch_comparable_n")),
                     fmt_fraction(row.get("candidate_gradient_sign_mismatch_fraction")),
                     fmt_value(row.get("p90_abs_candidate_gradient_error")) + " |",
                 ]
@@ -406,7 +411,7 @@ def analysis_summary_lines(
     observations_heading = "## Observations" if markdown else "Observations:"
     radius_heading = "## Radius Summary" if markdown else "Radius summary:"
     source_heading = "## Source/Radius Denominators" if markdown else "Source/radius denominators:"
-    candidate_heading = "## Candidate-Window Finite Prediction" if markdown else "Candidate-window finite prediction:"
+    candidate_heading = "## Candidate-Window Finite Evaluation" if markdown else "Candidate-window finite evaluation:"
     candidate_gradient_heading = (
         "## Candidate-Gradient Prediction" if markdown else "Candidate-gradient prediction:"
     )

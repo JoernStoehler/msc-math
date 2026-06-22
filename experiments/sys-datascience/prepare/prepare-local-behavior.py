@@ -531,7 +531,7 @@ def make_gradient_projections(
     return rows
 
 
-def make_candidate_window_predictions(
+def make_candidate_window_evaluations(
     pairs: list[dict[str, Any]],
     branch_variation: list[dict[str, Any]],
 ) -> list[dict[str, Any]]:
@@ -591,15 +591,15 @@ def make_candidate_window_predictions(
                 "near_active_min_sigma": near_min[1],
                 "candidate_window_min_target_delta_sys": candidate_min[0],
                 "candidate_window_min_sigma": candidate_min[1],
-                "near_active_finite_prediction_error": (
+                "near_active_finite_evaluation_error": (
                     observed - near_min[0] if finite(observed) and finite(near_min[0]) else None
                 ),
-                "candidate_window_finite_prediction_error": (
+                "candidate_window_finite_evaluation_error": (
                     observed - candidate_min[0] if finite(observed) and finite(candidate_min[0]) else None
                 ),
                 "producer_sign_mismatch": sign_mismatch(producer_predicted, observed),
-                "near_active_finite_sign_mismatch": sign_mismatch(near_min[0], observed),
-                "candidate_window_finite_sign_mismatch": sign_mismatch(candidate_min[0], observed),
+                "near_active_finite_evaluation_sign_mismatch": sign_mismatch(near_min[0], observed),
+                "candidate_window_finite_evaluation_sign_mismatch": sign_mismatch(candidate_min[0], observed),
             }
         )
     return rows
@@ -905,9 +905,12 @@ def write_candidate_window_summary(path: Path, rows: list[dict[str, Any]]) -> No
         "radius",
         "direction_family",
         "n",
+        "producer_sign_mismatch_comparable_n",
         "producer_sign_mismatch_fraction",
-        "near_active_finite_sign_mismatch_fraction",
-        "candidate_window_finite_sign_mismatch_fraction",
+        "near_active_finite_evaluation_sign_mismatch_comparable_n",
+        "near_active_finite_evaluation_sign_mismatch_fraction",
+        "candidate_window_finite_evaluation_sign_mismatch_comparable_n",
+        "candidate_window_finite_evaluation_sign_mismatch_fraction",
         "median_abs_near_active_finite_error",
         "median_abs_candidate_window_finite_error",
         "median_candidate_window_branch_count",
@@ -918,6 +921,13 @@ def write_candidate_window_summary(path: Path, rows: list[dict[str, Any]]) -> No
         writer.writeheader()
         for (dataset, family, role, radius, direction_family_name), group_rows in sorted(groups.items()):
             n = len(group_rows)
+            producer_sign_mismatches = [row.get("producer_sign_mismatch") for row in group_rows]
+            near_active_sign_mismatches = [
+                row.get("near_active_finite_evaluation_sign_mismatch") for row in group_rows
+            ]
+            candidate_window_sign_mismatches = [
+                row.get("candidate_window_finite_evaluation_sign_mismatch") for row in group_rows
+            ]
             writer.writerow(
                 {
                     "dataset": dataset,
@@ -926,31 +936,33 @@ def write_candidate_window_summary(path: Path, rows: list[dict[str, Any]]) -> No
                     "radius": radius,
                     "direction_family": direction_family_name,
                     "n": n,
-                    "producer_sign_mismatch_fraction": sum(
-                        row["producer_sign_mismatch"] for row in group_rows
-                    )
-                    / n,
-                    "near_active_finite_sign_mismatch_fraction": sum(
-                        row["near_active_finite_sign_mismatch"] for row in group_rows
-                    )
-                    / n,
-                    "candidate_window_finite_sign_mismatch_fraction": sum(
-                        row["candidate_window_finite_sign_mismatch"] for row in group_rows
-                    )
-                    / n,
+                    "producer_sign_mismatch_comparable_n": comparable_count(producer_sign_mismatches),
+                    "producer_sign_mismatch_fraction": true_fraction(producer_sign_mismatches),
+                    "near_active_finite_evaluation_sign_mismatch_comparable_n": comparable_count(
+                        near_active_sign_mismatches
+                    ),
+                    "near_active_finite_evaluation_sign_mismatch_fraction": true_fraction(
+                        near_active_sign_mismatches
+                    ),
+                    "candidate_window_finite_evaluation_sign_mismatch_comparable_n": comparable_count(
+                        candidate_window_sign_mismatches
+                    ),
+                    "candidate_window_finite_evaluation_sign_mismatch_fraction": true_fraction(
+                        candidate_window_sign_mismatches
+                    ),
                     "median_abs_near_active_finite_error": quantile(
                         [
-                            abs(row["near_active_finite_prediction_error"])
+                            abs(row["near_active_finite_evaluation_error"])
                             for row in group_rows
-                            if row.get("near_active_finite_prediction_error") is not None
+                            if row.get("near_active_finite_evaluation_error") is not None
                         ],
                         0.5,
                     ),
                     "median_abs_candidate_window_finite_error": quantile(
                         [
-                            abs(row["candidate_window_finite_prediction_error"])
+                            abs(row["candidate_window_finite_evaluation_error"])
                             for row in group_rows
-                            if row.get("candidate_window_finite_prediction_error") is not None
+                            if row.get("candidate_window_finite_evaluation_error") is not None
                         ],
                         0.5,
                     ),
@@ -980,7 +992,9 @@ def write_candidate_gradient_summary(path: Path, rows: list[dict[str, Any]]) -> 
         "radius",
         "direction_family",
         "n",
+        "producer_sign_mismatch_comparable_n",
         "producer_sign_mismatch_fraction",
+        "candidate_gradient_sign_mismatch_comparable_n",
         "candidate_gradient_sign_mismatch_fraction",
         "median_abs_candidate_gradient_error",
         "p90_abs_candidate_gradient_error",
@@ -992,6 +1006,10 @@ def write_candidate_gradient_summary(path: Path, rows: list[dict[str, Any]]) -> 
         writer.writeheader()
         for (dataset, family, role, radius, direction_family_name), group_rows in sorted(groups.items()):
             n = len(group_rows)
+            producer_sign_mismatches = [row.get("producer_sign_mismatch") for row in group_rows]
+            candidate_gradient_sign_mismatches = [
+                row.get("candidate_gradient_sign_mismatch") for row in group_rows
+            ]
             writer.writerow(
                 {
                     "dataset": dataset,
@@ -1000,14 +1018,14 @@ def write_candidate_gradient_summary(path: Path, rows: list[dict[str, Any]]) -> 
                     "radius": radius,
                     "direction_family": direction_family_name,
                     "n": n,
-                    "producer_sign_mismatch_fraction": sum(
-                        row["producer_sign_mismatch"] for row in group_rows
-                    )
-                    / n,
-                    "candidate_gradient_sign_mismatch_fraction": sum(
-                        row["candidate_gradient_sign_mismatch"] for row in group_rows
-                    )
-                    / n,
+                    "producer_sign_mismatch_comparable_n": comparable_count(producer_sign_mismatches),
+                    "producer_sign_mismatch_fraction": true_fraction(producer_sign_mismatches),
+                    "candidate_gradient_sign_mismatch_comparable_n": comparable_count(
+                        candidate_gradient_sign_mismatches
+                    ),
+                    "candidate_gradient_sign_mismatch_fraction": true_fraction(
+                        candidate_gradient_sign_mismatches
+                    ),
                     "median_abs_candidate_gradient_error": quantile(
                         [
                             abs(row["candidate_gradient_prediction_error"])
@@ -1039,9 +1057,20 @@ def max_radius(values: list[float]) -> float | None:
     return max(values) if values else None
 
 
-def sign_mismatch(predicted: Any, observed: Any) -> bool:
+def true_fraction(values: list[bool | None]) -> float | None:
+    comparable = [value for value in values if value is not None]
+    if not comparable:
+        return None
+    return sum(comparable) / len(comparable)
+
+
+def comparable_count(values: list[bool | None]) -> int:
+    return sum(value is not None for value in values)
+
+
+def sign_mismatch(predicted: Any, observed: Any) -> bool | None:
     if not finite(predicted) or not finite(observed):
-        return False
+        return None
     predicted_float = float(predicted)
     observed_float = float(observed)
     if abs(predicted_float) <= 1.0e-15 or abs(observed_float) <= 1.0e-15:
@@ -1130,6 +1159,7 @@ def write_start_breakdown(
                             if sign_mismatch(
                                 row.get("producer_predicted_delta_sys"), row.get("observed_delta_sys")
                             )
+                            is True
                         ]
                     ),
                     "max_successful_radius": max_radius(
@@ -1185,7 +1215,7 @@ def main() -> None:
     pairs = make_pairs(samples, computed, branch_facts, gradients)
     branch_variation = make_branch_variation(samples, computed, branch_facts)
     gradient_projections = make_gradient_projections(pairs, samples, computed, gradients)
-    candidate_window_predictions = make_candidate_window_predictions(pairs, branch_variation)
+    candidate_window_evaluations = make_candidate_window_evaluations(pairs, branch_variation)
     candidate_gradient_predictions = make_candidate_gradient_predictions(
         pairs, samples, candidate_gradients
     )
@@ -1197,8 +1227,8 @@ def main() -> None:
     write_jsonl(out_dir / "local-behavior-branch-variation.jsonl", branch_variation)
     write_jsonl(out_dir / "local-behavior-gradient-projections.jsonl", gradient_projections)
     write_jsonl(
-        out_dir / "local-behavior-candidate-window-predictions.jsonl",
-        candidate_window_predictions,
+        out_dir / "local-behavior-candidate-window-evaluations.jsonl",
+        candidate_window_evaluations,
     )
     write_jsonl(
         out_dir / "local-behavior-candidate-gradient-predictions.jsonl",
@@ -1209,7 +1239,7 @@ def main() -> None:
     write_source_radius_summary(out_dir / "local-behavior-source-radius-summary.csv", samples, pairs)
     write_candidate_window_summary(
         out_dir / "local-behavior-candidate-window-summary.csv",
-        candidate_window_predictions,
+        candidate_window_evaluations,
     )
     write_candidate_gradient_summary(
         out_dir / "local-behavior-candidate-gradient-summary.csv",

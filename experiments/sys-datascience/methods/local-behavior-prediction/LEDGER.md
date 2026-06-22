@@ -133,7 +133,7 @@ quoting rates from any source-stratified run, inspect
 `prepared/local-behavior-candidate-gradient-summary.csv`.
 
 For endpoint panels, inspect `local-behavior-candidate-window-summary.csv` and
-`local-behavior-candidate-window-predictions.jsonl` before blaming missing
+`local-behavior-candidate-window-evaluations.jsonl` before blaming missing
 candidate coverage. Those files compare finite target values over the base
 candidate window; they are not analytic candidate-window derivative rows.
 

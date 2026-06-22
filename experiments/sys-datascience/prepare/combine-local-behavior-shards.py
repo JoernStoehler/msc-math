@@ -173,7 +173,7 @@ def combine_stats(out_dir: Path, shard_dirs: list[Path], stats_rows: list[dict[s
         "local_state_capacity_ms": sum(
             stats.get("local_state_capacity_ms", 0.0) for stats in stats_rows
         ),
-        "wall_time_ms": sum(stats.get("wall_time_ms", 0.0) for stats in stats_rows),
+        "shard_wall_time_ms_sum": sum(stats.get("wall_time_ms", 0.0) for stats in stats_rows),
     }
 
 

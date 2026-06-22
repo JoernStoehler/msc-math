@@ -68,12 +68,13 @@ output directory. The prepare and analyze stages derive the following files:
 | `local-behavior-start-breakdown.csv` | Per-start first failure, near-active miss, candidate-window miss, and sign-mismatch radii. Use this before making independent-start claims. |
 | `local-behavior-candidate-gradient-predictions.jsonl` | Per-pair analytic prediction from the minimum over base candidate-window branch models, including base branch gaps. Candidate-branch derivatives use that branch's own action, not the base minimum action. Use this to test whether candidate-window gradients repair near-active prediction failures. |
 | `local-behavior-candidate-gradient-summary.csv` | Source/radius/direction summary of producer and candidate-gradient sign mismatches. |
-| `local-behavior-candidate-window-predictions.jsonl` | Per-pair finite comparison of observed `Delta sys` with the minimum target value over base candidate-window branches that remain target-admissible stationary branches. This is a finite branch-window diagnostic, not an analytic derivative table. |
+| `local-behavior-candidate-window-evaluations.jsonl` | Per-pair finite comparison of observed `Delta sys` with the minimum target value over base candidate-window branches that remain target-admissible stationary branches. This is a finite branch-window diagnostic, not an analytic derivative table. |
 | `local-behavior-candidate-window-summary.csv` | Source/radius/direction summary of producer, near-active finite, and candidate-window finite sign mismatches. |
 | `local-behavior-branch-facts.jsonl` | Per-point branch facts derived from producer rows. Use this when a pair summary needs branch-level explanation. |
 | `local-behavior-branch-variation.jsonl` | Per-branch value variation between base and target. Use this for branch-function stability questions. |
 | `local-behavior-gradient-projections.jsonl` | Per-gradient projection diagnostics. Use this for prediction-quality and direction-alignment questions. |
 | `branch-stability-by-radius.png` | Visual summary of target-minimizer status at the base point by radius and direction family. |
+| `sys-branch-variation-vs-radius.png` | Visual summary of branch-function variation size by radius. |
 | `gradient-prediction-vs-observed.png` | Visual check of branch-gradient prediction quality against recomputed finite changes. |
 | `target-branch-status-at-base.png` | Status mix for how target minimizing branches relate to base minimizer, near-active, and candidate-window sets. |
 
@@ -180,8 +181,9 @@ concatenates local-behavior JSONL files, deduplicates computed polytope payloads
 by `poly_id`, and writes a marked combined `produce-stats.json` with explicit
 shard intervals.
 
-The report and figures are written under
-`/tmp/sys-local-behavior-smoke/prepared/local-behavior-prediction/` by default.
+By default, the report and figures are written under
+`<prepared_dir>/local-behavior-prediction/`, where `<prepared_dir>` is the
+directory passed to `analyze.py`.
 
 ## Current Use
 
