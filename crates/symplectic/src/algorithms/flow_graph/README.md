@@ -25,6 +25,11 @@ proof text can overrule it. When they do, update this file or mark the mismatch.
   material, not the live control surface.
 - The current experiment package is `experiments/dev-flow-graph/`.
 - The thesis section is `thesis/flow-graph-algorithm-ch2021.tex`.
+- The current thesis blocked-state tracker is
+  `thesis/flow-graph-algorithm-ch2021-content.md`, section
+  "Live Thesis Blocked State". It records why the reader-facing FG chapter is
+  not the active work surface until theorem/proof reconstruction and Rust
+  correspondence are settled.
 
 ## Scope and Caveats
 
