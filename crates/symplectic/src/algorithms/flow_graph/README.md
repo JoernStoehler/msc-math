@@ -143,6 +143,14 @@ Path-specific outcome contract:
   equations exactly, classifies singular fixed-point sets exactly, accepts
   zero-action singular cases as no-orbit outcomes, and rejects only
   positive-action singular fixed sets as unsupported.
+- Do not remove the exact singular fixed-set classifier merely to match the
+  finite-orbit-regular proof route. The branch entered with the initial
+  flow-graph work surface and serves two recorded purposes: positive-action
+  singular fixed sets are explicit non-success outcomes, and the f64 wrapper and
+  unresolved-diagnostic experiment use exact closed-word resolution to classify
+  near-singular f64 closed-word errors. A theorem-mode wrapper may reject all
+  singular fixed maps, but that should be an added boundary, not a silent
+  deletion of the diagnostic classifier.
 - f64 accepted output has approximate actions and may include words accepted by
   f64 predicates directly. It is not covered by the exact strict segment-time
   contract unless the specific word is also resolved by exact closed-tube
