@@ -42,9 +42,10 @@ Source-backed implementation facts that may matter for proof recovery:
   segment time to be strictly positive before returning `PositiveOrbit`;
 - exact search rejects nonempty facet-pair zero-`omega_0` candidates before
   enumeration, including HKO and Lagrangian-product fixtures covered by tests;
-- f64 diagnostic output and `capacity_f64` are not exact certificates; direct
-  f64 positive words remain f64 outputs, while f64 error words receive exact
-  closed-word status only after exact resolution;
+- current f64 search output and `capacity_f64` are not exact certificates;
+  direct f64 positive words remain f64 outputs, while f64 error words receive
+  exact closed-word status only after exact resolution. A certified-f64 claim
+  would need explicit sound predicate or error-bound analysis;
 - exact flow-graph retained-word checks are flow-graph-internal and do not use
   HK/QP as a retained-word oracle.
 
@@ -188,10 +189,13 @@ targets are:
   nonnegative `omega_0` unless a ridge/two-face sufficiency hypothesis applies;
   Rust uses the coarser condition as pruning, so false positives are allowed
   but false negatives would not be;
-- compare dual-vertex general position in the recovered proof with the current
-  fixture/data-generation assumptions;
-- compare finite-orbit regularity in the recovered proof with current exact
-  rejection of `UnsupportedPositiveSingular`;
+- separate proof-convenience hypotheses from runtime rejection boundaries:
+  recovered proofs use dual-vertex general position and finite-orbit
+  regularity, while the exact implementation directly detects the downstream
+  exact singular fixed-point cases and reports positive-action singular fixed
+  sets as unsupported;
+- prove the generic determinant statement needed for the chosen theorem route,
+  or keep the theorem conditional on the explicit nonvanishing determinants;
 - reconcile positive transition signs with the current transition-matrix
   orientation;
 - prove the correspondence between the simple minimizers from
@@ -256,8 +260,8 @@ is a third surface:
 
 - it uses the nonempty facet-pair nonzero-\(\omega_0\) condition, matching the
   current Rust rejection boundary;
-- it keeps dual-vertex general position and finite-orbit regularity as theorem
-  hypotheses;
+- it currently uses a global linear-independence condition and finite-orbit
+  regularity as theorem hypotheses;
 - it proves the idealized exact real-number search computes
   \(c_{\mathrm{EHZ}}\) under those hypotheses.
 
@@ -265,10 +269,15 @@ The current exact implementation contract is a fourth surface:
 
 - it rejects zero-\(\omega_0\) on every nonempty directed facet-pair candidate,
   which can be stronger than rejecting only trajectory-feasible transitions;
-- it does not state or check dual-vertex general position as a named input
-  predicate;
-- it reports positive-action singular fixed sets as unsupported instead of
-  resolving them;
+- it does not need to name global dual-vertex general position at the API
+  boundary if the downstream exact nonzero-denominator and nonsingular
+  fixed-point cases are checked directly;
+- it handles the finite-orbit-regularity boundary operationally: nonsingular
+  fixed points are solved exactly, and positive-action singular fixed sets are
+  reported as unsupported instead of silently used as capacity values;
+- it is not a literal implementation of the active idealized algorithm's
+  singular branch: Rust also classifies singular fixed sets and accepts
+  exact zero-action singular cases as no-orbit outcomes;
 - it filters exact positive output by reconstructing strict segment times.
 
 Therefore the next thesis-facing step is not to choose the local
@@ -386,7 +395,10 @@ These are the pieces that must be resolved before active thesis theorem prose.
    - later recovered route: use dual-vertex general position, positive-time
      linear dependence, short-word exclusions, and finite-orbit regularity for
      length-at-least-five words.
-   Do not mix these routes silently.
+   Do not mix these routes silently.  The implementation-facing version should
+   prefer direct exact denominator/fixed-point checks and typed unsupported
+   outcomes when those are cheaper and clearer than exposing a global
+   general-position condition.
 
 10. Capacity conclusion:
     after the simple-minimizer theorem, prove that a capacity-realizing simple
@@ -404,9 +416,13 @@ These are the pieces that must be resolved before active thesis theorem prose.
     the theorem hypotheses unless explicitly made a representation theorem.
 
 12. f64 and QP/HK separation:
-    f64 diagnostics and QP/HK scalar comparisons are outside theorem proof.
-    They belong in implementation/evaluation prose after the theorem claim is
-    stable.
+    f64 predicates can support a theorem-level implementation claim only when
+    they are stated as sound predicates, for example a ternary
+    true/false/indeterminate predicate where true and false imply the exact
+    predicate result and indeterminate carries no decision.  The current f64
+    search and QP/HK scalar comparisons are outside the idealized theorem
+    proof.  They belong in implementation/evaluation prose after the theorem
+    claim is stable.
 
 ### Current theorem-drafting block
 

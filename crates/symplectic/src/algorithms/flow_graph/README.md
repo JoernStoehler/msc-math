@@ -15,8 +15,10 @@ proof text can overrule it. When they do, update this file or mark the mismatch.
 - Exact exhaustive search is supported as limited implementation evidence for
   deterministic exact-admissible four-dimensional rational polytopes satisfying
   the input predicates stated below.
-- The f64 path is the development path for larger flow-graph searches. It is
-  not an exact certificate by itself.
+- The f64 path is the approximate path for larger flow-graph searches. It is
+  not an exact certificate by itself. A future certified f64 claim would need
+  sound predicate contracts, for example true/false/indeterminate predicates
+  where true and false imply the exact predicate result.
 - `exact_tube.rs` contains exact rational closed-word/tube resolution for one
   selected word. `exact_search.rs` contains exact exhaustive search. The exact
   search has an explicit action-cutoff policy: disabled for baseline checks,
@@ -61,12 +63,21 @@ Exact implementation scope currently documented here:
 - typed rejection or caveat language for unsupported inputs and unresolved
   numerical cases.
 
+Formal-theorem alignment is a separate layer from this runtime contract. The
+active idealized theorem in `formal/flow-graph-real-algorithm.tex` currently
+uses global linear-independence and finite-orbit-regularity hypotheses. The
+Rust exact path does not validate those as named input predicates. It validates
+or rejects the downstream conditions it needs during exact tube construction
+and closed-word resolution: unsupported zero `omega_0`, singular primitive
+transition construction, and positive-action singular fixed sets.
+
 Explicit non-goals unless thesis review asks for them:
 
 - supporting Lagrangian products or HKO fixtures with nonempty facet-pair
   `omega_0 = 0` transitions;
 - implementing CH2021 rotation pruning;
-- turning f64 diagnostics into exact certificates without exact fallback;
+- treating f64 output as an exact certificate without exact fallback or a
+  proved sound-predicate/error-bound contract;
 - proving every dependency inside code or experiment documentation instead of
   putting mathematical proof in formal/thesis text.
 
@@ -127,10 +138,16 @@ Path-specific outcome contract:
   nonempty directed facet-pair candidate with `omega_0 = 0`, and a
   positive-action singular fixed set. Full bounded-irredundant validation is
   not part of this rejection boundary.
+- The exact closed-word implementation is not a literal copy of the singular
+  branch in the active idealized algorithm. It solves nonsingular fixed-point
+  equations exactly, classifies singular fixed-point sets exactly, accepts
+  zero-action singular cases as no-orbit outcomes, and rejects only
+  positive-action singular fixed sets as unsupported.
 - f64 accepted output has approximate actions and may include words accepted by
   f64 predicates directly. It is not covered by the exact strict segment-time
   contract unless the specific word is also resolved by exact closed-tube
-  arithmetic.
+  arithmetic, or a later numerical-analysis task proves the relevant f64
+  predicates sound against the exact predicates.
 - `capacity_f64` is the current f64 wrapper used by tests and experiments. It
   computes a diagnostic f64 closed-word search and resolves every f64
   closed-word error with exact flow-graph closed-word arithmetic. Direct f64
@@ -180,7 +197,7 @@ Status labels:
 | Transition pruning by nonempty facet pair and nonnegative `omega_0` is a necessary condition for physical transitions. | source-backed by `formal/search-pruning-correctness.tex`, `lem:transition-feasibility`; sufficiency needs the blocker-slack condition, and `cor:ridge-sufficiency` gives a ridge/two-face sufficient case | Rust transition matrix may enumerate extra words; exact tube resolution must decide emptiness/fixed points | do not call the transition matrix an exact physical-transition oracle unless the needed ridge/blocker condition is stated |
 | Rejection for forbidden `omega_0` direction is sound. | source-backed for code path; recovered-proof-unreviewed via `def:tube-positive-transition-signs` and `prop:tube-search-correctness-finite-orbit-regular` | transition matrix and primitive-tube construction | keep sign convention checks tied to `formal/search-pruning-correctness.tex` and `formal/flow-graph-real-algorithm.tex` before theorem-strength thesis use |
 | f64 rejection near small geometric `omega_0` is a numerical policy, not a theorem. | source-backed | input validation | test rejection behavior |
-| Singular closed-tube fixed-point cases are not silently capacity values. | implementation evidence | exact and f64 closed-word resolution | reject positive-action singular fixed sets unless start/end polygons are disjoint |
+| Singular closed-tube fixed-point cases are not silently capacity values. | source-backed by `exact_tube.rs::solve_singular_fixed_tube` and `singular_fixed_polygon_result`; f64 near-singular maps remain a numerical policy | exact closed-word resolution | thesis wording may use the runtime boundary "no unsupported positive-action singular fixed set"; do not equate it with finite-orbit regularity unless that weaker boundary is proved |
 | CH2021 rotation pruning is optional future work. | source-backed from legacy note | not in first implementation path | add only behind a flag after formula review |
 
 ## Proposition Ledger
@@ -363,9 +380,11 @@ Evidence limits for future thesis wording:
   arithmetic;
 - arbitrary raw bounded-irredundant input is not fully validated by the
   flow-graph exact path;
-- f64 diagnostics and `capacity_f64` are not exact certificates; only
-  individual f64 error words that pass the exact closed-word resolution boundary
-  receive exact closed-word status;
+- f64 search output and `capacity_f64` are not exact certificates under the
+  current contract; only individual f64 error words that pass the exact
+  closed-word resolution boundary receive exact closed-word status. A different
+  certified-f64 claim would require explicit sound predicate/error-bound
+  analysis;
 - performance, rotation pruning, and broader F7/F8 action-cutoff profiling are
   future work unless a later task needs stronger claims.
 
@@ -375,7 +394,8 @@ Evidence limits for future thesis wording:
 - Keep "tube" as a mathematical object name only when useful.
 - Keep CH2021 rotation pruning out of the first supported implementation path.
 - Keep exact and f64 paths conceptually separate. Do not imply that the f64 path
-  proves exact capacity values by itself.
+  proves exact capacity values by itself unless the relevant f64 predicates or
+  error bounds have been proved sound.
 - Keep experiments in `experiments/dev-flow-graph/`, not under
   `experiments/combinatorial-cells/`.
 
