@@ -105,6 +105,7 @@ correspondence below is reviewed.
 | Action cutoffs. | `lem:fg-action-cutoff-preserves-below-cutoff-fixed-points` and `lem:fg-dynamic-action-cutoffs-preserve-retained-output`; Rust `exact_search.rs` constructs the cutoff from the best exact positive action plus threshold, `exact_tube.rs::restrict_tube_to_action_cutoff` applies the exact action halfspace before fixed-point solving, and final search output filters against the final minimum. | This supports the exact action-cutoff optimization. It does not analyze f64 cutoffs or remove the separate finite-orbit/singular-classifier boundary. |
 | Primitive affine tubes, gluing, and fixed points. | `lem:fg-primitive-tubes-affine`, `lem:fg-tube-gluing`, `lem:fg-closed-tube-fixed-points`; unapproved proof-development text. | These are the main proof pieces to review before theorem-strength thesis prose. |
 | Singular fixed-point equations. | Rust classifies exact singular fixed sets; `lem:fg-nonpositive-fixed-set-no-strict-orbit` covers the no-orbit side for nonpositive-action fixed sets; the finite-orbit-regular theorem route still excludes relevant singular fixed maps from the capacity theorem. | Do not identify the finite-orbit-regular theorem route with the full Rust singular-classifier runtime boundary until the singular-classifier correspondence is reviewed. |
+| Determinant-generic regularity. | `fact:fg-finite-orbit-regular-open-dense`, `cor:fg-real-capacity-correctness-generic`, and `rem:fg-real-missing-work`. | The current corollary is relative to the ambient primitive-denominator domain. Do not state density inside the valid irredundant presentation space until the local openness/intersection argument is added or cited. |
 | Exact implementation boundary. | `exact_search.rs`, `exact_tube.rs`, and flow-graph README. | State implementation behavior separately from mathematical theorem hypotheses. |
 | f64 behavior. | `f64_tube_search.rs` and flow-graph README. | State as approximate/numerical implementation behavior unless a later numerical-analysis task proves sound predicates. |
 | HK/QP comparison. | Exact accepted examples and verification code. | Use only for scalar capacity comparison on eligible examples; do not use as a word-level oracle. |
@@ -143,6 +144,8 @@ Before drafting `thesis/flow-graph-algorithm-ch2021.tex`, complete these gates.
 2. Decide the theorem route for reader-facing prose:
    finite-orbit regularity, a determinant-generic corollary, or a narrower
    implementation-status statement.
+   If using the determinant-generic route, first close the relative-genericity
+   gap recorded in `rem:fg-real-missing-work`.
 3. Write a theorem/input paragraph in mathematical language:
    start from \(K\subset\mathbb R^4\) a bounded convex polytope with
    \(0\in\operatorname{int}K\). Keep rational data, matrices, validators, and

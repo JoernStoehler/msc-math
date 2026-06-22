@@ -70,6 +70,9 @@ Rust exact path does not validate those as named input predicates. It validates
 or rejects the downstream conditions it needs during exact tube construction
 and closed-word resolution: unsupported zero `omega_0`, singular primitive
 transition construction, and positive-action singular fixed sets.
+The determinant-generic corollary in the formal file is relative to the
+ambient primitive-denominator domain; it is not yet a relative-density theorem
+inside the valid irredundant presentation space.
 
 Explicit non-goals unless thesis review asks for them:
 
