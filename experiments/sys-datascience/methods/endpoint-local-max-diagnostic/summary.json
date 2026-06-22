@@ -1,7 +1,7 @@
 {
   "method": "endpoint-local-max-diagnostic",
-  "polytope_table": "experiments/sys-datascience/tables/polytope-table.jsonl",
-  "provenance_table": "experiments/sys-datascience/tables/polytope-provenance-table.jsonl",
+  "polytope_table": "experiments/sys-datascience/prepare/polytope-table.jsonl",
+  "provenance_table": "experiments/sys-datascience/prepare/polytope-provenance-table.jsonl",
   "active_orbit_rtol": 1e-9,
   "rank_rtol": 1e-9,
   "ascent_tol": 1e-9,

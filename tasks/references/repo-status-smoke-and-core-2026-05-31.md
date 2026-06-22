@@ -107,7 +107,7 @@ Rust/experiment smoke:
 - At the time of this reference, the old nested datascience path had no root
   README. The current lifted entry point is
   `experiments/sys-datascience/README.md`, with detailed entry points in
-  `produce/README.md`, `tables/README.md`, `methods/README.md`, and
+  `produce/README.md`, `prepare/README.md`, `methods/README.md`, and
   `smoke-pipeline.sh`.
 - The old `cargo check -p sys-landscape` command was stale and failed; use
   `cargo check -p exp-sys-landscape`.

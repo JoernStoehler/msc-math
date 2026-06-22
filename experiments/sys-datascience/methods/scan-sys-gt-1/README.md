@@ -17,9 +17,9 @@ Negative evidence is only table-scoped absence of a recorded positive row.
 
 ## Inputs
 
-- `../../tables/polytope-table.jsonl`
-- `../../tables/polytope-provenance-table.jsonl`
-- `../../tables/computed-polytope-observation-table.jsonl`
+- `../../prepare/polytope-table.jsonl`
+- `../../prepare/polytope-provenance-table.jsonl`
+- `../../prepare/computed-polytope-observation-table.jsonl`
 - `../../produce/ascent-general-computed-polytopes.jsonl`
 - `../../produce/ascent-product-computed-polytopes.jsonl`
 
@@ -37,7 +37,14 @@ uv run --script experiments/sys-datascience/methods/scan-sys-gt-1/analyze.py
 
 Run locally after retained-table rebuilds or producer computed-polytope refreshes.
 
-Smoke or LICCA merge review should scan the table-stage computed-polytope
+Random-only scoped run:
+
+```bash
+uv run --script experiments/sys-datascience/methods/scan-sys-gt-1/analyze.py \
+  --random-only
+```
+
+Smoke or LICCA merge review should scan the prepare-stage computed-polytope
 observation output and producer computed-polytope rows:
 
 ```bash
@@ -51,7 +58,7 @@ uv run --script experiments/sys-datascience/methods/scan-sys-gt-1/analyze.py \
 
 ## Observation
 
-These counts are from current retained tables on the datascience architecture
+These counts are from current retained prepared tables on the datascience architecture
 merge, plus the committed fixed-F ascent producer computed-polytopes files.
 
 - polytope rows: `32610`
@@ -70,6 +77,14 @@ Source summary:
 | random_product_sample | `10240` | `0` |
 | random_sample | `4096` | `0` |
 | variable_f_ascent | `90` | `0` |
+
+Random-only observation from `--random-only` on this branch:
+
+- trusted random/product rows: `14336`;
+- provenance rows: `14336`;
+- table rows with `sys > 1`: `0`;
+- `random_sample`: `4096` rows, `0` positive;
+- `random_product_sample`: `10240` rows, `0` positive.
 
 ## Interpretation
 
@@ -90,6 +105,8 @@ current fixed-F intermediate producer rows.
   artifacts, or other experiment folders unless passed explicitly.
 - This is not an exhaustive-search claim.
 - This does not close the hostile-landscape method table by itself.
+- With `--random-only`, the scan excludes ascent producer computed-polytopes and
+  reports only trusted random/product retained rows.
 
 ## Jörn Feedback
 
@@ -122,6 +139,9 @@ script is deterministic and only reads the retained table files named above.
 
 This packet supports the narrow statement that the retained datascience table
 contains no recorded positive `sys > 1` row.
+
+With `--random-only`, this packet supports the narrower random-only baseline
+scan used by the scoped random/product method table.
 
 It does not support a claim about producer-stage outputs, non-retained rows, or
 the nonexistence of positive examples.

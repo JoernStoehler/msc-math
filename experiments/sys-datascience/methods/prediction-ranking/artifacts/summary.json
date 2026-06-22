@@ -1,0 +1,26 @@
+{
+  "candidate_proposer_disposition": "no validated candidate-proposer: held-out ranking is an in-table geometry-only signal and did not generate or validate new rows",
+  "forest_trees": 80,
+  "geometry_feature_count": 80,
+  "grouping": "capacity_source:facet_count",
+  "permutations": 10,
+  "provenance_rows": 14336,
+  "random_forest_top_decile_enrichment_permutation_p": 0.09090909090909091,
+  "results": {
+    "random_forest_geometry_only": {
+      "mae": 0.04077231570456351,
+      "max_predicted_row_sys": 0.8157968784866683,
+      "r2": 0.9213458228927175,
+      "top_decile_enrichment": 0.6325203252032521
+    },
+    "ridge_geometry_only": {
+      "mae": 0.08913307407594219,
+      "max_predicted_row_sys": 0.8536118881702471,
+      "r2": 0.5278029834784923,
+      "top_decile_enrichment": 0.5593495934959349
+    }
+  },
+  "row_count": 14336,
+  "test_rows": 6144,
+  "train_rows": 8192
+}

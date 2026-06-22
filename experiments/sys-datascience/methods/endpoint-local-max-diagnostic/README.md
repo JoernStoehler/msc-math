@@ -22,8 +22,8 @@ derivative in ambient coordinates.
 
 ## Inputs
 
-- `../../tables/polytope-table.jsonl`
-- `../../tables/polytope-provenance-table.jsonl`
+- `../../prepare/polytope-table.jsonl`
+- `../../prepare/polytope-provenance-table.jsonl`
 
 The sample is deterministic:
 

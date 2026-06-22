@@ -1,0 +1,14 @@
+{
+  "dataset_counts": {
+    "random_product_sample": 10240,
+    "random_sample": 4096
+  },
+  "duplicate_polytope_rows": 0,
+  "excluded_label_hits": 0,
+  "input_tables_dir": "/workspaces/msc-math/.worktrees/random-only-sys-ds-clean/experiments/sys-datascience/prepare",
+  "max_sys": 0.86258589584944,
+  "min_sys": 2.0327844013814595e-06,
+  "sys_gt_one": 0,
+  "trusted_polytope_rows": 14336,
+  "trusted_provenance_rows": 14336
+}

@@ -10,7 +10,7 @@ Current examples:
 - `random-sample/`
 - `random-product-sample/`
 - `../sys-datascience/produce/`
-- `../sys-datascience/tables/`
+- `../sys-datascience/prepare/`
 - `../sys-datascience/methods/`
 
 These folders are not moved here. The point of this directory is to name the

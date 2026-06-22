@@ -64,11 +64,11 @@ path = "../sys-datascience/produce/continuation.rs"
 
 [[bin]]
 name = "sys-dataset"
-path = "../sys-datascience/tables/main.rs"
+path = "../sys-datascience/prepare/main.rs"
 
 [[bin]]
 name = "sys-datascience-prepare"
-path = "../sys-datascience/tables/prepare.rs"
+path = "../sys-datascience/prepare/prepare.rs"
 
 [[bin]]
 name = "sys-endpoint-local-max-diagnostic"

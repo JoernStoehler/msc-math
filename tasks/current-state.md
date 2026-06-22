@@ -91,7 +91,7 @@ source files.
   `experiments/sys-datascience/methods/<method>/README.md` packets.
   The method-coverage checklist is recall/context only, not source truth.
   Current state: the retained LICCA datascience tables are in
-  `experiments/sys-datascience/tables/`; method rows that still
+  `experiments/sys-datascience/prepare/`; method rows that still
   matter need current evidence packets or explicit abandonment.
   High-risk fact: tried thesis-affecting results need repo-owned evidence,
   checks appropriate to their verdict, explicit caveats, and thesis-use

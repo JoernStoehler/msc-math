@@ -1,0 +1,28 @@
+{
+  "basepoint_rows": 2,
+  "branch_gradient_rows": 5,
+  "max_observed_delta_sys": 0.0007923406490981111,
+  "max_target_sys": 0.3449017308020992,
+  "panel_dir": "/tmp/sys-random-only-perturbation-smoke",
+  "positive_delta_samples": 10,
+  "radius_summary": {
+    "0.001": {
+      "max_delta_sys": 0.0007923406490981111,
+      "mean_delta_sys": 5.0081943441211e-05,
+      "positive_delta_fraction": 0.5555555555555556,
+      "rows": 9
+    },
+    "1e-05": {
+      "max_delta_sys": 8.98870838603183e-06,
+      "mean_delta_sys": 7.728292897201919e-07,
+      "positive_delta_fraction": 0.5555555555555556,
+      "rows": 9
+    }
+  },
+  "sample_rows": 18,
+  "status_counts": {
+    "ok": 18
+  },
+  "successful_samples": 18,
+  "sys_gt_one_targets": 0
+}

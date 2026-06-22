@@ -113,13 +113,13 @@ pub struct DatasetPaths {
 fn print_help(program: &str) {
     println!(
         "\
-Build sys-landscape datascience tables from producer caches.
+Build sys-landscape datascience prepared tables from producer caches.
 
 Usage:
-  {program} --out-dir <tables-dir> [options]
+  {program} --out-dir <prepare-dir> [options]
 
 Method-wave output:
-  experiments/sys-datascience/tables
+  experiments/sys-datascience/prepare
 
 Options:
   --produce-dir <dir>              Read canonical producer filenames from <dir>
@@ -138,12 +138,12 @@ Options:
   --continuation <path>            Override continuation.jsonl
   --shared-cache <path>            Override shared-cache.jsonl
   --continuation-cache <path>      Override continuation-cache.jsonl
-  --out-dir <tables-dir>           Output directory for retained table files
+  --out-dir <prepare-dir>          Output directory for retained prepared tables
   --help                           Show this help
 
 If --out-dir is omitted, this command writes to a temporary smoke directory.
 Use that only for one-off scratch. For method waves, use an owned path under
-experiments/sys-datascience/tables/.
+experiments/sys-datascience/prepare/.
 "
     );
 }

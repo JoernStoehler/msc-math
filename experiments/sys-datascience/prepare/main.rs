@@ -54,7 +54,10 @@ fn main() {
         &provenance_run_rows,
         &caches.computed_polytope_observations,
     );
-    eprintln!("Wrote tables in {:.1}s", started.elapsed().as_secs_f64());
+    eprintln!(
+        "Wrote prepared tables in {:.1}s",
+        started.elapsed().as_secs_f64()
+    );
     eprintln!(
         "Total table build time {:.1}s",
         total_started.elapsed().as_secs_f64()

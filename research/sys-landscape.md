@@ -54,7 +54,7 @@ for older topic context.
 - Open constraints:
   - Keep local topic work in `experiments/` while algorithmic.
   - Use additive schema changes where feasible in the maintained datascience
-    table stage under `experiments/sys-datascience/tables/`.
+    table stage under `experiments/sys-datascience/prepare/`.
   - Treat direct continuation replacement as a measured comparison, not a blind rewrite.
 
 ## History

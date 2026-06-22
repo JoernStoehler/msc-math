@@ -21,8 +21,8 @@ else
   SCRIPT_DIR="$(cd -- "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 fi
 case "$SCRIPT_DIR" in
-  */experiments/sys-datascience/tables) ;;
-  *) echo "submit from experiments/sys-datascience/tables, got: $SCRIPT_DIR" >&2; exit 2 ;;
+  */experiments/sys-datascience/prepare) ;;
+  *) echo "submit from experiments/sys-datascience/prepare, got: $SCRIPT_DIR" >&2; exit 2 ;;
 esac
 REPO_ROOT="$(cd "$SCRIPT_DIR/../../../.." && pwd)"
 cd "$REPO_ROOT"

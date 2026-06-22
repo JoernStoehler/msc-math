@@ -12,11 +12,14 @@ import json
 from collections import defaultdict
 from pathlib import Path
 from typing import Any, Iterable
+import sys
 
 
 HERE = Path(__file__).resolve().parent
-TABLES_DIR = HERE.parent.parent / "tables"
+TABLES_DIR = HERE.parent.parent / "prepare"
 PRODUCE_DIR = HERE.parent.parent / "produce"
+sys.path.append(str(HERE.parent / "_shared"))
+from random_only import load_trusted_random_tables  # noqa: E402
 
 
 def parse_args() -> argparse.Namespace:
@@ -35,7 +38,7 @@ def parse_args() -> argparse.Namespace:
         "--computed-polytope-observation-table",
         type=Path,
         default=TABLES_DIR / "computed-polytope-observation-table.jsonl",
-        help="Table-stage computed-polytope observation JSONL file to count.",
+        help="Prepare-stage computed-polytope observation JSONL file to count.",
     )
     parser.add_argument(
         "--computed-polytopes",
@@ -47,6 +50,11 @@ def parse_args() -> argparse.Namespace:
             "Defaults to the canonical general/product producer files; pass one "
             "or more values to override that default."
         ),
+    )
+    parser.add_argument(
+        "--random-only",
+        action="store_true",
+        help="Restrict the table scan to trusted random/product rows and skip ascent producer rows.",
     )
     return parser.parse_args()
 
@@ -120,13 +128,16 @@ def scan_computed_polytope_file(path: Path) -> tuple[int, int, list[dict[str, An
 
 def main() -> None:
     args = parse_args()
-    computed_polytope_paths = args.computed_polytopes or [
-        PRODUCE_DIR / "ascent-general-computed-polytopes.jsonl",
-        PRODUCE_DIR / "ascent-product-computed-polytopes.jsonl",
-    ]
-
-    polytope_rows = load_jsonl(args.polytope_table)
-    provenance_rows = load_jsonl(args.provenance_table)
+    if args.random_only:
+        computed_polytope_paths = args.computed_polytopes or []
+        polytope_rows, provenance_rows = load_trusted_random_tables(args.polytope_table.parent)
+    else:
+        computed_polytope_paths = args.computed_polytopes or [
+            PRODUCE_DIR / "ascent-general-computed-polytopes.jsonl",
+            PRODUCE_DIR / "ascent-product-computed-polytopes.jsonl",
+        ]
+        polytope_rows = load_jsonl(args.polytope_table)
+        provenance_rows = load_jsonl(args.provenance_table)
     provenance = provenance_by_poly_id(provenance_rows)
 
     positives = scan_rows(
@@ -147,8 +158,8 @@ def main() -> None:
         if sys_value > 1.0:
             entry["sys_gt_1"] += 1
 
-    computed_observation_rows: list[dict[str, Any]] = load_jsonl(
-        args.computed_polytope_observation_table
+    computed_observation_rows: list[dict[str, Any]] = (
+        [] if args.random_only else load_jsonl(args.computed_polytope_observation_table)
     )
     computed_scan_rows = 0
     computed_scan_positive_rows = 0
@@ -161,6 +172,8 @@ def main() -> None:
 
     print("# scan-sys-gt-1")
     print()
+    if args.random_only:
+        print("- scope: `trusted random/product rows only`")
     print(f"- polytope rows: `{len(polytope_rows)}`")
     print(f"- provenance rows: `{len(provenance_rows)}`")
     print(f"- table rows with `sys > 1`: `{len(positives)}`")

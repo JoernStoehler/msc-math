@@ -45,8 +45,8 @@ Files in HEAD must have current value. Do not keep historical material only
 because it once existed.
 
 - `produce/`: owns row production code, producer caches, and producer outputs.
-- `tables/`: owns reusable table-column computation and the retained table
-  outputs under `tables/`.
+- `prepare/`: owns shared canonization, reusable feature computation, and the
+  retained prepared table outputs.
 - `methods/`: owns current method packets, one durable `README.md` per active
   method folder.
 
@@ -68,7 +68,7 @@ method artifacts, table fingerprints, and the method `README.md`.
 Read these files for ordinary datascience work:
 
 - `produce/README.md`: accepted producer rows, caches, and LICCA rules.
-- `tables/README.md`: table builder ownership, retained table outputs, and
+- `prepare/README.md`: prepare-stage ownership, retained prepared outputs, and
   fingerprints.
 - `methods/README.md`: method packet conventions and current packet list.
 - `methods/method-coverage-checklist.md`: recall checklist for standard-method
@@ -89,14 +89,18 @@ produce/  ->  prepare  ->  methods/
   computed polytope payloads, branch/action windows, and enough run metadata to
   reproduce how rows were sampled. It should not own method-facing rectangular
   feature shapes when those features can be derived cheaply downstream.
-- `prepare` is the shared downstream stage. In current HEAD its code and
-  retained outputs live under `tables/`, and the executable is
-  `sys-datascience-prepare`. This stage owns reusable row entities,
-  table-column computation, deliberate deduplication, and retained table
-  outputs. Promote preparation logic here when several methods would otherwise
-  reimplement the same joins, normalization, feature extraction, or consistency
-  checks. This is justified by repeated development/debugging cost, not only by
-  CPU time.
+- `prepare/` is the shared downstream stage. It owns reusable row entities,
+  canonization choices, reusable feature computation, deliberate deduplication,
+  and retained prepared table outputs. Promote preparation logic here when
+  several methods would otherwise reimplement the same joins, normalization,
+  feature extraction, or consistency checks. This is justified by repeated
+  development/debugging cost, not only by CPU time.
+  Operationally, this split gives two commands to run: produce expensive
+  polytopes/capacity payloads once, then recompute canonization and features as
+  needed. Prepare-stage canonization and feature computation should be local by
+  default because they are cheap compared with capacity search; use LICCA for
+  prepare only when table size or feature cost actually makes local runs
+  impractical.
 - `methods/` owns current method scripts, retained method artifacts, and
   method-packet README files. Methods answer one research question from
   producer/table data. They may do cheap method-specific projections,
@@ -106,18 +110,16 @@ produce/  ->  prepare  ->  methods/
 Consumers do not control producer outputs. If a method needs a rectangular
 input shape, build it inside the method folder unless concrete reuse, repeated
 implementation/debugging cost, or compute cost justifies promoting it to
-the shared prepare stage (`tables/` in current HEAD) or another explicitly
-shared prepare surface.
+the shared prepare stage or another explicitly shared prepare surface.
 
 Use these examples to place changes:
 
-- Adding a scalar column that several methods should reuse: edit the shared
-  prepare stage, currently `tables/`.
+- Adding a scalar column that several methods should reuse: edit `prepare/`.
 - Building PCA input columns from existing retained columns: build the input
   inside the PCA method folder.
 - Saving a PCA-specific transformed matrix: keep it under that method folder.
 - Changing which polytopes are retained: edit `produce/`, then rebuild
-  `tables/`.
+  `prepare/`.
 - Deleting old current-looking reports: delete from HEAD; git history is the
   archive.
 - Renaming a retained table: treat it as an API change and scan stale
@@ -129,18 +131,12 @@ to `produce/`, reusable retained data to the shared prepare stage, and
 method-specific inputs or artifacts to `methods/`. If a row entity changes,
 choose a table name for the new row entity rather than preserving the old name.
 
-Deferred cleanup: spawn a separate session to rename the on-disk
-`experiments/sys-datascience/tables/` folder to `prepare/`, so the directory
-name matches the stage and `sys-datascience-prepare` binary. Treat this as a
-path/API migration and update scripts, README files, map files, research notes,
-task notes, generated manifests, and retained-table commands together.
-
 ## Retained Tables
 
 Retained table output path:
 
 ```text
-experiments/sys-datascience/tables/
+experiments/sys-datascience/prepare/
 ```
 
 Expected contents after rebuilding with the current table builder:
@@ -155,7 +151,7 @@ Expected contents after rebuilding with the current table builder:
   materialized as feature rows in `polytope-table.jsonl`.
 - `polytope-provenance-table.jsonl`: one row per retained provenance record
   keyed by `provenance_id`; records how a retained polytope entered the
-  datascience tables, including source, role, optimizer, seed, path, and
+  datascience prepared tables, including source, role, optimizer, seed, path, and
   lineage.
 - `polytope-ascent-run-table.jsonl`: one row per ascent or continuation
   provenance record keyed by `provenance_id`; records run-level and
@@ -190,7 +186,7 @@ From repo root, check the retained tables with:
 
 ```bash
 uv run --script experiments/sys-datascience/fingerprint-dataset.py \
-  experiments/sys-datascience/tables
+  experiments/sys-datascience/prepare
 ```
 
 From repo root, build or refresh the retained tables from committed producer
@@ -209,7 +205,7 @@ Other operational entry points:
 - `licca-build-dataset.slurm.sh`: LICCA retained-table rebuild from canonical
   producer files; distinct from the new run-local `produce`/`prepare` smoke.
 
-Refresh `tables/` only after an intentional producer or table-stage
+Refresh `prepare/` only after an intentional producer or prepare-stage
 change.
 
 ## Thesis-Success Loop
@@ -272,8 +268,8 @@ diagnostic saying that such a rule might exist is not yet a candidate-proposer.
 
 1. Operational truth lives in these README files, not in chat history.
 2. Producer outputs live with the producer that owns their meaning.
-3. Accepted reusable columns and retained table output live in `tables/`.
-4. Ordinary methods read retained tables from `tables/` and build
+3. Accepted reusable columns and retained prepared output live in `prepare/`.
+4. Ordinary methods read retained prepared tables from `prepare/` and build
    method-specific rectangular inputs inside the method folder.
 5. Do not promote method-local input builders into shared code until a concrete
    reuse or compute-cost case exists.
@@ -306,5 +302,5 @@ If not, delete or leave it in git history.
 ## Stage Documentation
 
 - Producer stage: `produce/README.md`
-- Table stage and retained outputs: `tables/README.md`
+- Prepare stage and retained outputs: `prepare/README.md`
 - Method stage: `methods/README.md`

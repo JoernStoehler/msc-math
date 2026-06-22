@@ -1,0 +1,747 @@
+{
+  "eligible_covariate_family_inventory": {
+    "Euclidean geometry summaries": {
+      "count": 32,
+      "features": [
+        "edge_length_vol1_max",
+        "edge_length_vol1_max_share",
+        "edge_length_vol1_mean",
+        "edge_length_vol1_min",
+        "edge_length_vol1_std",
+        "facet_volume_vol1_max",
+        "facet_volume_vol1_max_share",
+        "facet_volume_vol1_mean",
+        "facet_volume_vol1_min",
+        "facet_volume_vol1_std",
+        "facet_volume_vol1_sum",
+        "geom_cosine_max",
+        "geom_cosine_mean",
+        "geom_cosine_min",
+        "geom_cosine_std",
+        "geom_vol1_centroid_norm",
+        "geom_vol1_coord_std_w",
+        "geom_vol1_coord_std_x",
+        "geom_vol1_coord_std_y",
+        "geom_vol1_coord_std_z",
+        "geom_vol1_norm_max",
+        "geom_vol1_norm_mean",
+        "geom_vol1_norm_min",
+        "geom_vol1_norm_std",
+        "geom_vol1_pairwise_dist_max",
+        "geom_vol1_pairwise_dist_mean",
+        "geom_vol1_pairwise_dist_min",
+        "geom_vol1_pairwise_dist_std",
+        "geom_vol1_sval_1",
+        "geom_vol1_sval_2",
+        "geom_vol1_sval_3",
+        "geom_vol1_sval_4"
+      ]
+    },
+    "basic counts": {
+      "count": 5,
+      "features": [
+        "dual_vertex_count",
+        "edge_count",
+        "facet_count",
+        "ridge_count",
+        "vertex_count"
+      ]
+    },
+    "combinatorial summaries": {
+      "count": 21,
+      "features": [
+        "edge_density",
+        "facet_neighbor_count_max",
+        "facet_neighbor_count_mean",
+        "facet_neighbor_count_min",
+        "facet_neighbor_count_std",
+        "facet_vertex_count_max",
+        "facet_vertex_count_mean",
+        "facet_vertex_count_min",
+        "facet_vertex_count_std",
+        "ridge_size_max",
+        "ridge_size_mean",
+        "ridge_size_min",
+        "ridge_size_std",
+        "vertex_degree_max",
+        "vertex_degree_mean",
+        "vertex_degree_min",
+        "vertex_degree_std",
+        "vertex_incident_facets_max",
+        "vertex_incident_facets_mean",
+        "vertex_incident_facets_min",
+        "vertex_incident_facets_std"
+      ]
+    },
+    "orbit/capacity-result summaries": {
+      "count": 33,
+      "features": [
+        "orbit_best_beta_margin",
+        "orbit_best_has_mu",
+        "orbit_best_has_xi",
+        "orbit_best_is_admissible_exact",
+        "orbit_best_is_indeterminate_f64",
+        "orbit_best_q_error_bound",
+        "orbit_cycle_abs_omega_le_1e1_fraction",
+        "orbit_cycle_abs_omega_le_1e2_fraction",
+        "orbit_cycle_abs_omega_le_1e3_fraction",
+        "orbit_cycle_abs_omega_max",
+        "orbit_cycle_abs_omega_mean",
+        "orbit_cycle_abs_omega_min",
+        "orbit_cycle_abs_omega_std",
+        "orbit_cycle_bidirectional_fraction",
+        "orbit_cycle_facet_intersection_fraction",
+        "orbit_cycle_transition_fraction",
+        "orbit_cycle_zero_fraction",
+        "orbit_kkt_available",
+        "orbit_result_returned_orbit_count",
+        "orbit_search_scalar_available",
+        "orbit_selected_norm_max",
+        "orbit_selected_norm_mean",
+        "orbit_selected_norm_min",
+        "orbit_selected_norm_std",
+        "orbit_selected_out_degree_max",
+        "orbit_selected_out_degree_mean",
+        "orbit_selected_out_degree_min",
+        "orbit_selected_out_degree_std",
+        "orbit_sigma_available",
+        "orbit_sigma_count",
+        "orbit_sigma_fraction",
+        "orbit_sigma_gap_cutoff",
+        "orbit_sigma_len"
+      ]
+    },
+    "other scalar summaries": {
+      "count": 1,
+      "features": [
+        "ridge_zero_fraction"
+      ]
+    },
+    "simplicity summaries": {
+      "count": 2,
+      "features": [
+        "is_simple",
+        "simple_vertex_fraction"
+      ]
+    },
+    "symplectic/omega summaries": {
+      "count": 22,
+      "features": [
+        "allpair_abs_omega_vol1_max",
+        "allpair_abs_omega_vol1_mean",
+        "allpair_abs_omega_vol1_min",
+        "allpair_abs_omega_vol1_std",
+        "allpair_zero_fraction",
+        "ridge_abs_omega_vol1_le_1em1_fraction",
+        "ridge_abs_omega_vol1_le_1em2_fraction",
+        "ridge_abs_omega_vol1_le_1em3_fraction",
+        "ridge_abs_omega_vol1_max",
+        "ridge_abs_omega_vol1_mean",
+        "ridge_abs_omega_vol1_min",
+        "ridge_abs_omega_vol1_std",
+        "ridge_symp_area_volnorm_le_1em1_fraction",
+        "ridge_symp_area_volnorm_le_1em2_fraction",
+        "ridge_symp_area_volnorm_le_1em3_fraction",
+        "ridge_symp_area_volnorm_max",
+        "ridge_symp_area_volnorm_max_share",
+        "ridge_symp_area_volnorm_mean",
+        "ridge_symp_area_volnorm_min",
+        "ridge_symp_area_volnorm_std",
+        "ridge_symp_area_volnorm_sum",
+        "ridge_symp_area_volnorm_zero_fraction"
+      ]
+    },
+    "transition graph summaries": {
+      "count": 6,
+      "features": [
+        "transition_bidirectional_given_facet_intersection_fraction",
+        "transition_density",
+        "transition_out_degree_max",
+        "transition_out_degree_mean",
+        "transition_out_degree_min",
+        "transition_out_degree_std"
+      ]
+    }
+  },
+  "eligible_scalar_covariate_count": 122,
+  "excluded_by_design": [
+    "sys",
+    "capacity",
+    "volume",
+    "capacity_iterations",
+    "sigma_gap_cutoff",
+    "orbit_result_iterations_log1p",
+    "non-scalar JSON columns",
+    "columns present as numeric values in less than 98% of retained rows"
+  ],
+  "feature_count": 101,
+  "max_abs_spearman": 0.9384368671850424,
+  "obvious_covariate_audit": {
+    "assessment": "The current screen is useful for retained invariant scalar summaries, and it already includes several obvious omega and ridge symplectic-area families. It is not a complete feature-engineering closure from a_k. A stronger packet would enumerate candidate invariant feature families from the dual vertices, implement the missing high-value ones in the shared prepare stage, and only then rerun association screening and the other black-box methods.",
+    "bad_feature_families_not_counted_as_evidence_of_coverage": [
+      "raw individual coordinates of a_k, because coordinate-level effects are not invariant under the relevant symmetries and are expected to be weak or uninterpretable",
+      "raw flattened dual-vertex arrays, because they require an invariant featurization or an explicitly equivariant model before they answer what high sys corresponds to"
+    ],
+    "conceptual_flow": [
+      "dual vertices a",
+      "normalize to the volume-one representative when scale is not the question",
+      "first-layer derived objects such as a itself, omega(a_i,a_j), two-faces, graphs, and orbit outputs",
+      "prepare-stage engineered scalar features f_i(a) that seem useful",
+      "univariate association screening of f_i(a) against sys(a)"
+    ],
+    "covered_elsewhere_not_as_univariate_numeric_covariates": [
+      "source family random_sample versus random_product_sample is handled in random-tail-eda and the mean-difference bootstrap in this packet",
+      "facet-count and product-bucket slice behavior is handled in random-tail-eda"
+    ],
+    "covered_invariant_feature_families": [
+      "basic size counts such as facet, vertex, edge, ridge, and dual-vertex counts",
+      "simple combinatorial summaries such as degrees, incidence counts, ridge sizes, and facet adjacency",
+      "volume-normalized Euclidean summaries of dual vertices, edge lengths, and facet volumes",
+      "omega summaries over all facet pairs",
+      "ridge-level symplectic-area summaries, including volume-normalized sum/mean/max and small-area fractions",
+      "transition-graph summaries from facet intersections and omega signs",
+      "orbit/capacity-result summaries for already evaluated rows"
+    ],
+    "feature_owner": "Current shared feature engineering lives in experiments/sys-datascience/prepare/features*.rs and is run by the sys-datascience-prepare binary.",
+    "first_layer_nodes": [
+      {
+        "current_summaries": [
+          "volume-one norms",
+          "centroid norm",
+          "coordinate standard deviations",
+          "pairwise Euclidean distances",
+          "pairwise cosines",
+          "centered singular values"
+        ],
+        "node": "facet-dual list a_k",
+        "notes": "Raw coordinates are not treated as explanatory evidence without invariantization or canonicalization.",
+        "status": "source object"
+      },
+      {
+        "current_summaries": [
+          "all-pair absolute omega mean/std/min/max at volume one",
+          "zero fraction",
+          "ridge-restricted absolute omega summaries and small-value fractions"
+        ],
+        "node": "pairwise symplectic form omega(a_i,a_j)",
+        "status": "covered"
+      },
+      {
+        "current_summaries": [
+          "volume-one symplectic area mean/std/min/max over retained two-faces",
+          "sum",
+          "max share",
+          "zero and small-area fractions"
+        ],
+        "missing_summaries": [
+          "median and upper quantiles",
+          "top-k sums or tail shares",
+          "separate factor/product-aware versions if useful"
+        ],
+        "node": "two-faces F_i cap F_j",
+        "status": "partially covered"
+      },
+      {
+        "current_summaries": [
+          "counts",
+          "degree/incidence/ridge-size summaries",
+          "facet-neighbor summaries"
+        ],
+        "node": "face/vertex/edge/ridge incidence graph",
+        "status": "covered"
+      },
+      {
+        "current_summaries": [
+          "density",
+          "bidirectional fraction",
+          "out-degree summaries"
+        ],
+        "node": "omega-sign transition graph",
+        "status": "covered"
+      },
+      {
+        "current_summaries": [
+          "sigma/orbit counts and fractions",
+          "selected-orbit norm and out-degree summaries",
+          "cycle omega summaries",
+          "KKT/best-orbit diagnostics"
+        ],
+        "node": "capacity/orbit outputs",
+        "status": "covered for post-evaluation explanation only"
+      },
+      {
+        "current_summaries": [
+          "source-family and product-bucket EDA elsewhere"
+        ],
+        "missing_summaries": [
+          "factor tests in this packet",
+          "accepted-attempt or rejection-difficulty metadata if retained later"
+        ],
+        "node": "source/generator metadata",
+        "status": "mostly handled outside scalar screening or missing"
+      }
+    ],
+    "missing_or_partial_obvious_feature_families": [
+      "categorical product bucket k x m as a univariate factor rather than only as EDA slices",
+      "generator metadata such as accepted-attempt count or rejection difficulty, if retained in future tables",
+      "additional invariant scalar summaries derived from a_k, such as height extrema, angular concentration beyond pairwise cosine summaries, nearest-neighbor statistics, and condition numbers beyond the current singular values",
+      "symplectic area divided by vol^0.5 for all 2-faces, not only retained ridge-level summaries",
+      "explicit product-structure or symmetry scores for deciding whether a generic row looks product-like",
+      "local perturbation or sensitivity scalars, because those require non-gradient perturbation or local-behavior data outside the retained random/product table"
+    ],
+    "normalization_convention": "Prefer volume-one normalization before forming scale-sensitive geometric or symplectic summaries. This leaves Sp(4) plus translations as the main invariance issue instead of also carrying scalings.",
+    "principle": "The sufficient local input is the facet-dual list a_k; every scalar covariate in this packet, including sys(a), is a derived feature. Coverage must therefore be judged by first-layer derived objects from a_k, their normalizations/transforms, and their scalar summaries; not by counting retained table columns."
+  },
+  "permutation_family_max_p": 0.004975124378109453,
+  "product_minus_random_mean_sys": 0.04908416085647144,
+  "product_minus_random_mean_sys_bootstrap_ci_95": [
+    0.04252389852783871,
+    0.055886616744594816
+  ],
+  "row_count": 14336,
+  "screening_name": "univariate association screening",
+  "selected_scalar_covariate_count": 122,
+  "skipped_by_max_features": [],
+  "skipped_constant_covariates": [
+    "is_simple",
+    "orbit_best_has_mu",
+    "orbit_best_has_xi",
+    "orbit_best_is_admissible_exact",
+    "orbit_best_is_indeterminate_f64",
+    "orbit_cycle_facet_intersection_fraction",
+    "orbit_cycle_transition_fraction",
+    "orbit_kkt_available",
+    "orbit_search_scalar_available",
+    "orbit_sigma_available",
+    "orbit_sigma_count",
+    "orbit_sigma_gap_cutoff",
+    "simple_vertex_fraction",
+    "vertex_degree_max",
+    "vertex_degree_mean",
+    "vertex_degree_min",
+    "vertex_degree_std",
+    "vertex_incident_facets_max",
+    "vertex_incident_facets_mean",
+    "vertex_incident_facets_min",
+    "vertex_incident_facets_std"
+  ],
+  "target": "sys",
+  "tested_covariate_family_inventory": {
+    "Euclidean geometry summaries": {
+      "count": 32,
+      "features": [
+        "geom_vol1_pairwise_dist_max",
+        "facet_volume_vol1_sum",
+        "geom_vol1_norm_mean",
+        "geom_vol1_norm_max",
+        "geom_vol1_pairwise_dist_mean",
+        "edge_length_vol1_std",
+        "geom_vol1_norm_min",
+        "edge_length_vol1_max",
+        "facet_volume_vol1_max",
+        "facet_volume_vol1_std",
+        "geom_vol1_sval_1",
+        "geom_vol1_sval_2",
+        "geom_vol1_pairwise_dist_std",
+        "edge_length_vol1_mean",
+        "facet_volume_vol1_mean",
+        "edge_length_vol1_max_share",
+        "facet_volume_vol1_max_share",
+        "geom_vol1_coord_std_w",
+        "geom_vol1_norm_std",
+        "geom_vol1_centroid_norm",
+        "geom_vol1_coord_std_z",
+        "geom_vol1_coord_std_x",
+        "geom_vol1_coord_std_y",
+        "geom_vol1_sval_3",
+        "geom_vol1_pairwise_dist_min",
+        "geom_cosine_std",
+        "geom_cosine_max",
+        "facet_volume_vol1_min",
+        "geom_cosine_min",
+        "geom_cosine_mean",
+        "edge_length_vol1_min",
+        "geom_vol1_sval_4"
+      ]
+    },
+    "basic counts": {
+      "count": 5,
+      "features": [
+        "dual_vertex_count",
+        "facet_count",
+        "ridge_count",
+        "edge_count",
+        "vertex_count"
+      ]
+    },
+    "combinatorial summaries": {
+      "count": 13,
+      "features": [
+        "edge_density",
+        "facet_neighbor_count_mean",
+        "facet_vertex_count_mean",
+        "ridge_size_mean",
+        "facet_neighbor_count_min",
+        "facet_vertex_count_min",
+        "facet_neighbor_count_max",
+        "facet_vertex_count_max",
+        "ridge_size_max",
+        "ridge_size_min",
+        "ridge_size_std",
+        "facet_vertex_count_std",
+        "facet_neighbor_count_std"
+      ]
+    },
+    "orbit/capacity-result summaries": {
+      "count": 22,
+      "features": [
+        "orbit_selected_out_degree_mean",
+        "orbit_sigma_fraction",
+        "orbit_best_beta_margin",
+        "orbit_cycle_abs_omega_min",
+        "orbit_cycle_abs_omega_mean",
+        "orbit_best_q_error_bound",
+        "orbit_cycle_abs_omega_le_1e1_fraction",
+        "orbit_selected_out_degree_max",
+        "orbit_selected_out_degree_min",
+        "orbit_sigma_len",
+        "orbit_cycle_abs_omega_le_1e3_fraction",
+        "orbit_cycle_abs_omega_le_1e2_fraction",
+        "orbit_cycle_bidirectional_fraction",
+        "orbit_cycle_zero_fraction",
+        "orbit_cycle_abs_omega_std",
+        "orbit_cycle_abs_omega_max",
+        "orbit_result_returned_orbit_count",
+        "orbit_selected_norm_mean",
+        "orbit_selected_norm_max",
+        "orbit_selected_out_degree_std",
+        "orbit_selected_norm_min",
+        "orbit_selected_norm_std"
+      ]
+    },
+    "other scalar summaries": {
+      "count": 1,
+      "features": [
+        "ridge_zero_fraction"
+      ]
+    },
+    "symplectic/omega summaries": {
+      "count": 22,
+      "features": [
+        "ridge_symp_area_volnorm_sum",
+        "ridge_symp_area_volnorm_max",
+        "ridge_abs_omega_vol1_mean",
+        "ridge_symp_area_volnorm_std",
+        "allpair_abs_omega_vol1_max",
+        "ridge_abs_omega_vol1_max",
+        "allpair_abs_omega_vol1_mean",
+        "allpair_abs_omega_vol1_std",
+        "ridge_abs_omega_vol1_std",
+        "ridge_symp_area_volnorm_mean",
+        "ridge_symp_area_volnorm_max_share",
+        "allpair_zero_fraction",
+        "allpair_abs_omega_vol1_min",
+        "ridge_abs_omega_vol1_min",
+        "ridge_symp_area_volnorm_min",
+        "ridge_symp_area_volnorm_zero_fraction",
+        "ridge_symp_area_volnorm_le_1em2_fraction",
+        "ridge_abs_omega_vol1_le_1em3_fraction",
+        "ridge_symp_area_volnorm_le_1em3_fraction",
+        "ridge_abs_omega_vol1_le_1em2_fraction",
+        "ridge_abs_omega_vol1_le_1em1_fraction",
+        "ridge_symp_area_volnorm_le_1em1_fraction"
+      ]
+    },
+    "transition graph summaries": {
+      "count": 6,
+      "features": [
+        "transition_out_degree_mean",
+        "transition_out_degree_max",
+        "transition_out_degree_min",
+        "transition_density",
+        "transition_bidirectional_given_facet_intersection_fraction",
+        "transition_out_degree_std"
+      ]
+    }
+  },
+  "tested_scalar_covariates": [
+    "ridge_symp_area_volnorm_sum",
+    "ridge_symp_area_volnorm_max",
+    "ridge_abs_omega_vol1_mean",
+    "ridge_symp_area_volnorm_std",
+    "allpair_abs_omega_vol1_max",
+    "ridge_abs_omega_vol1_max",
+    "allpair_abs_omega_vol1_mean",
+    "geom_vol1_pairwise_dist_max",
+    "facet_volume_vol1_sum",
+    "geom_vol1_norm_mean",
+    "allpair_abs_omega_vol1_std",
+    "ridge_abs_omega_vol1_std",
+    "geom_vol1_norm_max",
+    "geom_vol1_pairwise_dist_mean",
+    "edge_length_vol1_std",
+    "geom_vol1_norm_min",
+    "edge_length_vol1_max",
+    "ridge_symp_area_volnorm_mean",
+    "facet_volume_vol1_max",
+    "facet_volume_vol1_std",
+    "geom_vol1_sval_1",
+    "geom_vol1_sval_2",
+    "geom_vol1_pairwise_dist_std",
+    "edge_length_vol1_mean",
+    "facet_volume_vol1_mean",
+    "edge_length_vol1_max_share",
+    "facet_volume_vol1_max_share",
+    "ridge_symp_area_volnorm_max_share",
+    "geom_vol1_coord_std_w",
+    "geom_vol1_norm_std",
+    "geom_vol1_centroid_norm",
+    "geom_vol1_coord_std_z",
+    "geom_vol1_coord_std_x",
+    "geom_vol1_coord_std_y",
+    "geom_vol1_sval_3",
+    "dual_vertex_count",
+    "facet_count",
+    "ridge_count",
+    "edge_count",
+    "edge_density",
+    "vertex_count",
+    "facet_neighbor_count_mean",
+    "facet_vertex_count_mean",
+    "ridge_size_mean",
+    "geom_vol1_pairwise_dist_min",
+    "facet_neighbor_count_min",
+    "facet_vertex_count_min",
+    "transition_out_degree_mean",
+    "orbit_selected_out_degree_mean",
+    "orbit_sigma_fraction",
+    "orbit_best_beta_margin",
+    "orbit_cycle_abs_omega_min",
+    "facet_neighbor_count_max",
+    "facet_vertex_count_max",
+    "orbit_cycle_abs_omega_mean",
+    "ridge_size_max",
+    "ridge_size_min",
+    "orbit_best_q_error_bound",
+    "orbit_cycle_abs_omega_le_1e1_fraction",
+    "transition_out_degree_max",
+    "orbit_selected_out_degree_max",
+    "orbit_selected_out_degree_min",
+    "geom_cosine_std",
+    "orbit_sigma_len",
+    "orbit_cycle_abs_omega_le_1e3_fraction",
+    "orbit_cycle_abs_omega_le_1e2_fraction",
+    "orbit_cycle_bidirectional_fraction",
+    "orbit_cycle_zero_fraction",
+    "transition_out_degree_min",
+    "transition_density",
+    "orbit_cycle_abs_omega_std",
+    "ridge_size_std",
+    "allpair_zero_fraction",
+    "allpair_abs_omega_vol1_min",
+    "orbit_cycle_abs_omega_max",
+    "ridge_abs_omega_vol1_min",
+    "orbit_result_returned_orbit_count",
+    "ridge_symp_area_volnorm_min",
+    "ridge_symp_area_volnorm_zero_fraction",
+    "ridge_zero_fraction",
+    "transition_bidirectional_given_facet_intersection_fraction",
+    "ridge_symp_area_volnorm_le_1em2_fraction",
+    "ridge_abs_omega_vol1_le_1em3_fraction",
+    "ridge_symp_area_volnorm_le_1em3_fraction",
+    "ridge_abs_omega_vol1_le_1em2_fraction",
+    "geom_cosine_max",
+    "orbit_selected_norm_mean",
+    "facet_volume_vol1_min",
+    "ridge_abs_omega_vol1_le_1em1_fraction",
+    "facet_vertex_count_std",
+    "facet_neighbor_count_std",
+    "orbit_selected_norm_max",
+    "geom_cosine_min",
+    "geom_cosine_mean",
+    "edge_length_vol1_min",
+    "transition_out_degree_std",
+    "orbit_selected_out_degree_std",
+    "orbit_selected_norm_min",
+    "ridge_symp_area_volnorm_le_1em1_fraction",
+    "orbit_selected_norm_std",
+    "geom_vol1_sval_4"
+  ],
+  "top_associations": [
+    {
+      "feature": "ridge_symp_area_volnorm_sum",
+      "pearson_p": 6.671463067765021e-136,
+      "pearson_r": -0.2050393154151063,
+      "spearman_p": 0.0,
+      "spearman_rho": -0.9384368671850424
+    },
+    {
+      "feature": "ridge_symp_area_volnorm_max",
+      "pearson_p": 2.7429580354419954e-102,
+      "pearson_r": -0.17792917878486006,
+      "spearman_p": 0.0,
+      "spearman_rho": -0.8999068806842107
+    },
+    {
+      "feature": "ridge_abs_omega_vol1_mean",
+      "pearson_p": 3.926771619808223e-26,
+      "pearson_r": -0.08815021346329444,
+      "spearman_p": 0.0,
+      "spearman_rho": -0.899759378794322
+    },
+    {
+      "feature": "ridge_symp_area_volnorm_std",
+      "pearson_p": 4.099825905124919e-115,
+      "pearson_r": -0.18876631243083672,
+      "spearman_p": 0.0,
+      "spearman_rho": -0.8826106824527608
+    },
+    {
+      "feature": "allpair_abs_omega_vol1_max",
+      "pearson_p": 4.384609017388037e-29,
+      "pearson_r": -0.09329186103427506,
+      "spearman_p": 0.0,
+      "spearman_rho": -0.8634842075105128
+    },
+    {
+      "feature": "ridge_abs_omega_vol1_max",
+      "pearson_p": 4.981263937618582e-29,
+      "pearson_r": -0.09319797076464002,
+      "spearman_p": 0.0,
+      "spearman_rho": -0.8632848237128149
+    },
+    {
+      "feature": "allpair_abs_omega_vol1_mean",
+      "pearson_p": 1.2462842781143472e-23,
+      "pearson_r": -0.0835462999328938,
+      "spearman_p": 0.0,
+      "spearman_rho": -0.8611839836668105
+    },
+    {
+      "feature": "geom_vol1_pairwise_dist_max",
+      "pearson_p": 0.0,
+      "pearson_r": -0.5198528386895336,
+      "spearman_p": 0.0,
+      "spearman_rho": -0.8589249458440752
+    },
+    {
+      "feature": "facet_volume_vol1_sum",
+      "pearson_p": 0.0,
+      "pearson_r": -0.5094012640154729,
+      "spearman_p": 0.0,
+      "spearman_rho": -0.8586868158312636
+    },
+    {
+      "feature": "geom_vol1_norm_mean",
+      "pearson_p": 0.0,
+      "pearson_r": -0.5149031179235751,
+      "spearman_p": 0.0,
+      "spearman_rho": -0.8547765875225957
+    },
+    {
+      "feature": "allpair_abs_omega_vol1_std",
+      "pearson_p": 7.489143674838342e-47,
+      "pearson_r": -0.11963301066518467,
+      "spearman_p": 0.0,
+      "spearman_rho": -0.8469185828909486
+    },
+    {
+      "feature": "ridge_abs_omega_vol1_std",
+      "pearson_p": 1.6938608312771873e-44,
+      "pearson_r": -0.11648949924391123,
+      "spearman_p": 0.0,
+      "spearman_rho": -0.8452066362406739
+    },
+    {
+      "feature": "geom_vol1_norm_max",
+      "pearson_p": 0.0,
+      "pearson_r": -0.5002150493260309,
+      "spearman_p": 0.0,
+      "spearman_rho": -0.8444455004257725
+    },
+    {
+      "feature": "geom_vol1_pairwise_dist_mean",
+      "pearson_p": 0.0,
+      "pearson_r": -0.5181426411491498,
+      "spearman_p": 0.0,
+      "spearman_rho": -0.843826535146013
+    },
+    {
+      "feature": "edge_length_vol1_std",
+      "pearson_p": 1.9868408301013137e-13,
+      "pearson_r": -0.061331441331179744,
+      "spearman_p": 0.0,
+      "spearman_rho": -0.8418008989122491
+    },
+    {
+      "feature": "geom_vol1_norm_min",
+      "pearson_p": 0.0,
+      "pearson_r": -0.5131301430639297,
+      "spearman_p": 0.0,
+      "spearman_rho": -0.8416610102626907
+    },
+    {
+      "feature": "edge_length_vol1_max",
+      "pearson_p": 5.17317313128735e-10,
+      "pearson_r": -0.05186637543807765,
+      "spearman_p": 0.0,
+      "spearman_rho": -0.8375504508912952
+    },
+    {
+      "feature": "ridge_symp_area_volnorm_mean",
+      "pearson_p": 2.238929657634683e-231,
+      "pearson_r": -0.26635544291050345,
+      "spearman_p": 0.0,
+      "spearman_rho": -0.8136513667758478
+    },
+    {
+      "feature": "facet_volume_vol1_max",
+      "pearson_p": 0.0,
+      "pearson_r": -0.4745606892957378,
+      "spearman_p": 0.0,
+      "spearman_rho": -0.809578589769935
+    },
+    {
+      "feature": "facet_volume_vol1_std",
+      "pearson_p": 0.0,
+      "pearson_r": -0.47521504183712443,
+      "spearman_p": 0.0,
+      "spearman_rho": -0.8011193985391145
+    },
+    {
+      "feature": "geom_vol1_sval_1",
+      "pearson_p": 0.0,
+      "pearson_r": -0.4797384770227627,
+      "spearman_p": 0.0,
+      "spearman_rho": -0.7931703401239669
+    },
+    {
+      "feature": "geom_vol1_sval_2",
+      "pearson_p": 0.0,
+      "pearson_r": -0.49970389598243337,
+      "spearman_p": 0.0,
+      "spearman_rho": -0.7927399520960204
+    },
+    {
+      "feature": "geom_vol1_pairwise_dist_std",
+      "pearson_p": 0.0,
+      "pearson_r": -0.5064084422058732,
+      "spearman_p": 0.0,
+      "spearman_rho": -0.7642982978887555
+    },
+    {
+      "feature": "edge_length_vol1_mean",
+      "pearson_p": 2.77606513063228e-28,
+      "pearson_r": -0.09192436179385782,
+      "spearman_p": 0.0,
+      "spearman_rho": -0.7572731462080102
+    },
+    {
+      "feature": "facet_volume_vol1_mean",
+      "pearson_p": 0.0,
+      "pearson_r": -0.5237064769307788,
+      "spearman_p": 0.0,
+      "spearman_rho": -0.7357383773405375
+    }
+  ]
+}

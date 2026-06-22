@@ -1324,7 +1324,7 @@ fn print_usage() {
 }
 
 fn default_tables_dir() -> PathBuf {
-    PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../sys-datascience/tables")
+    PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../sys-datascience/prepare")
 }
 
 fn default_output_dir() -> PathBuf {

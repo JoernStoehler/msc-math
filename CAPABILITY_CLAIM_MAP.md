@@ -232,13 +232,13 @@ claim.
     bounded negative/search-usefulness claims.
   - Files:
     - `experiments/sys-datascience/README.md`
-    - `experiments/sys-datascience/tables/README.md`
-    - `experiments/sys-datascience/tables/main.rs`
+    - `experiments/sys-datascience/prepare/README.md`
+    - `experiments/sys-datascience/prepare/main.rs`
     - `experiments/sys-datascience/methods/README.md`
     - `experiments/sys-datascience/produce/README.md`
     - `experiments/sys-datascience/smoke-pipeline.sh`
-  - The datascience tables pipeline writes flat retained table files under
-    `experiments/sys-datascience/tables/`.
+  - The datascience prepare pipeline writes flat retained table files under
+    `experiments/sys-datascience/prepare/`.
   - Method packets consume retained tables and build method-local rectangular
     inputs when needed.
   - Method reports separate observation, inference, and thesis use.

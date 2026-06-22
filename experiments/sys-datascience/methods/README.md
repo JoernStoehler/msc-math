@@ -6,7 +6,7 @@ method table.
 Read first:
 
 1. `../README.md`
-2. `../tables/README.md`
+2. `../prepare/README.md`
 3. the relevant method folder `README.md`
 
 ## Current State
@@ -17,7 +17,24 @@ Current method packets in HEAD:
   retained endpoints.
 - `local-behavior-prediction/`: exploratory local and semi-local `sys(a)`
   branch-behavior prediction diagnostics from run-local prepared outputs.
+- `non-gradient-perturbation/`: smoke summary for bounded random-direction
+  perturbations of trusted random/product basepoints, without gradient-ascent
+  semantics.
+- `projection-structure/`: PCA, clustering, and anomaly diagnostics for
+  trusted random/product geometry features, interpreted as exploratory
+  in-table structure.
+- `prediction-ranking/`: geometry-only supervised prediction and held-out
+  ranking diagnostics for trusted random/product rows, interpreted as in-table
+  signal rather than a validated proposer.
+- `random-tail-eda/`: standard EDA over trusted random/product rows and their
+  obvious source/parameter filters, including generator-contract metadata,
+  quantiles, tail summaries, and plots.
 - `scan-sys-gt-1/`: baseline target-predicate scan over the retained tables.
+- `statistical-associations/`: univariate association screening of eligible
+  scalar covariates against `sys`, with permutation and bootstrap checks,
+  interpreted as explanatory evidence.
+- `trusted-random-dataset/`: shared input filter and row/provenance audit for
+  trusted random/product rows.
 
 Old PCA, clustering, regression, classification, supervised-alternative,
 exact/f64, prompt example, and review artifacts were deleted from HEAD because
@@ -25,13 +42,14 @@ they were stale, architecture-inconsistent, or cheaper to rerun cleanly than to
 maintain. Use git history only if a specific extraction has positive expected
 value after contamination risk.
 
-## Closure Role
+## Coverage Role
 
 This README is not a result ledger. It records method-packet conventions and
-the current packet list. Method-table closure is achieved by current
+the current packet list. Method-table coverage is reviewed through current
 `methods/<method>/README.md` packets, with `method-coverage-checklist.md` used
-only as a recall aid for rows that still need a packet, explicit abandonment,
-deferral with reason, inapplicability decision, or escalation.
+as a recall aid for rows that still need a packet, explicit abandonment,
+deferral with reason, inapplicability decision, or escalation. A packet list is
+not itself evidence that the method table is complete.
 
 Do not preserve old audit rows in this README just because a historical report
 named them. Extract old work only when it supports a current method-table row
@@ -52,7 +70,7 @@ abandonment, deferral, or escalation.
 ## Inputs
 
 Ordinary rectangular datascience methods should start from retained tables
-under `../tables/` and build method-specific input matrices inside the method
+under `../prepare/` and build method-specific input matrices inside the method
 folder. Copy and adapt input-building code between methods when that is cheaper
 than maintaining shared helper code.
 

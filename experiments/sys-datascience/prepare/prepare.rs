@@ -87,7 +87,7 @@ fn print_help(program: &str) {
 Prepare datascience tables from run-local producer outputs.
 
 Usage:
-  {program} --produce-dir <dir> --out-dir <tables-dir>
+  {program} --produce-dir <dir> --out-dir <prepare-dir>
 
 Inputs in <dir>:
   computed-polytopes.jsonl

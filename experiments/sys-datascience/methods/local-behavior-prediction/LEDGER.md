@@ -30,7 +30,7 @@ The evidence pipeline for finite local/semi-local behavior lives here:
 
 ```text
 produce:  experiments/sys-datascience/produce/local-behavior.rs
-prepare:  experiments/sys-datascience/tables/prepare-local-behavior.py
+prepare:  experiments/sys-datascience/prepare/prepare-local-behavior.py
 analyze:  experiments/sys-datascience/methods/local-behavior-prediction/
 ```
 

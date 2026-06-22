@@ -23,7 +23,7 @@ data-science pipeline lives at `experiments/sys-datascience/`.
   `experiments/sys-datascience/produce/README.md`; their default behavior is
   temp smoke output unless explicit output/cache paths are supplied.
 - `sys-dataset` writes tables to the `--out-dir` path. For method waves, use
-  `experiments/sys-datascience/tables/`; temp output is only for
+  `experiments/sys-datascience/prepare/`; temp output is only for
   one-off smoke/scratch runs.
 
 The tracked full-output JSONL files are evidence artifacts. Use compile checks

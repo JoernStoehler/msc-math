@@ -8,7 +8,7 @@
 # - fixed-F ascent producer caches ascent-general-cache.jsonl and ascent-product-cache.jsonl
 #
 # Output:
-# - experiments/sys-datascience/tables/
+# - experiments/sys-datascience/prepare/
 # - a table fingerprint printed at the end of the Slurm log
 
 #SBATCH --job-name=ds-table
@@ -38,12 +38,12 @@ echo "  repo:           $(git rev-parse --short HEAD)"
 echo "  cpus:           ${SLURM_CPUS_PER_TASK:-unknown}"
 echo "  rayon threads:  $RAYON_NUM_THREADS"
 echo "  cargo target:   $CARGO_TARGET_DIR"
-echo "  tables dir:     experiments/sys-datascience/tables"
+echo "  prepare dir:    experiments/sys-datascience/prepare"
 echo
 
 cargo run -p exp-sys-landscape --release --bin sys-dataset -- \
-    --out-dir experiments/sys-datascience/tables
+    --out-dir experiments/sys-datascience/prepare
 
 echo
 python3 experiments/sys-datascience/fingerprint-dataset.py \
-    experiments/sys-datascience/tables
+    experiments/sys-datascience/prepare

@@ -363,7 +363,7 @@ fn main() {
 
 fn parse_args() -> Args {
     let mut polytope_table =
-        PathBuf::from("experiments/sys-datascience/tables/polytope-table.jsonl");
+        PathBuf::from("experiments/sys-datascience/prepare/polytope-table.jsonl");
     let mut output_dir = None;
     let mut max_top_basepoints = DEFAULT_MAX_TOP_BASEPOINTS;
     let mut max_hash_basepoints = DEFAULT_MAX_HASH_BASEPOINTS;
@@ -454,7 +454,7 @@ Usage:
   {program} --out-dir <dir> [options]
 
 Inputs:
-  --polytope-table <path>             default: experiments/sys-datascience/tables/polytope-table.jsonl
+  --polytope-table <path>             default: experiments/sys-datascience/prepare/polytope-table.jsonl
 
 Selection:
   --max-top-basepoints <n>            default: {DEFAULT_MAX_TOP_BASEPOINTS}

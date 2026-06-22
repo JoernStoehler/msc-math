@@ -120,7 +120,7 @@ experiments, thesis sections, or later cleanup decisions may care about.
 | `geom/random-dual-vertices` | Candidate random dual-vertex generation and accepted-fixture policy. | `crates/euclidean-polytopes/src/random.rs`, `crates/symplectic/src/random.rs`, experiment producers | Euclidean sampler proposes candidates; acceptance and row policy live with callers. |
 | `geom/polar-and-incidence` | Exact polar vertices, vertex-facet incidence, faces, and facet-intersection data. | `crates/euclidean-polytopes/`, `crates/symplectic/src/geom/vertex_enumeration/` | Geometry source for QP pruning, volume, and validation surfaces. |
 | `data/polytope-records` | Reusable JSONL polytope/capacity/orbit record helpers. | `crates/symplectic/src/database.rs`, `crates/symplectic/src/dataset.rs` | Callers choose cache paths; no repo-wide canonical catalog is implied here. |
-| `data/sys-datascience-tables` | Maintained hostile-search producer caches and retained flat tables. | `experiments/sys-datascience/produce/`, `experiments/sys-datascience/tables/` | Method-local algorithms consume these via `experiments/sys-datascience/methods/`. |
+| `data/sys-datascience-tables` | Maintained hostile-search producer caches and retained flat tables. | `experiments/sys-datascience/produce/`, `experiments/sys-datascience/prepare/` | Method-local algorithms consume these via `experiments/sys-datascience/methods/`. |
 | `HKO/symmetry-quotient-certificate` | HKO theorem-local symmetry, quotient, and feasible-section certificate machinery. | `experiments/hko-local-maximum/theorem/`, `experiments/hko-local-maximum/smooth-only-rank-defect/`, `formal/hko-feasible-section-upper-branches.tex` | HKO-specific; not a generic symmetry-action library unless later promoted. |
 
 ## Lenses And Homes
@@ -136,7 +136,7 @@ such as `experiments/dev-<algo>/`, `experiments/<topic>/`, and
 | `numerics` | How do f64 decisions, tolerances, ambiguity handling, and exact/reference behavior compare? | the owning development packet while the question is method-coupled; QP/KKT uses `experiments/dev-quadratic-program/numerics-audit/` |
 | `performance` | What are the runtime, memory, counters, pruning wins, and scaling behavior? | `experiments/performance/` |
 | `correctness` | Do outputs or intermediate invariants satisfy the intended mathematical or software contract? | `experiments/verification/` for reusable experiment-level evidence, or crate tests when cheap and durable |
-| `data` | Which reusable records, caches, schemas, and retained tables are produced or consumed? | `crates/**` record helpers, `experiments/sys-datascience/produce/`, and `experiments/sys-datascience/tables/` |
+| `data` | Which reusable records, caches, schemas, and retained tables are produced or consumed? | `crates/**` record helpers, `experiments/sys-datascience/produce/`, and `experiments/sys-datascience/prepare/` |
 | `thesis-support` | Which evidence or machinery supports one theorem, figure, side result, or thesis slice? | the owning topic folder, e.g. `experiments/hko-local-maximum/` or `experiments/regular-products/` |
 | `formal` | Which proof-facing statements, exact derivations, or theorem-local certificates need formal tracking? | `formal/`, with links back from the owning experiment or research note |
 
@@ -167,7 +167,7 @@ on whether the owner is method development or retained-dataset analysis.
 | `experiments/dev-flow-graph/` | active flow-graph algorithm-development packet: frontier counts, endpoint/closed-word representation spikes, case-finding, mismatch visualization, and unresolved-word diagnostics before promotion into numerics, performance, or verification | `experiments/dev-flow-graph/README.md`, `crates/symplectic/src/algorithms/flow_graph/README.md`, `tasks/current-state.md`, `tasks/planning-notes.md` |
 | `experiments/dev-quadratic-program/` | active pure-`f64` capacity-development packet: generated and retained datascience-style scans, validation/capacity policy comparison, product preprocessing diagnostics, and promotion-readiness evidence before library or `sys-datascience` integration | `experiments/dev-quadratic-program/README.md`, `experiments/sys-datascience/README.md` |
 | `experiments/sys-landscape/` | hostile sys-search landscape legacy and producer surfaces: random/product searches, gradient ascent, variable-`F` continuation, and rejection calibration | `tasks/current-state.md`, `tasks/planning-notes.md`, `research/sys-landscape*.md`, `experiments/sys-datascience/README.md` |
-| `experiments/sys-datascience/` | maintained hostile `sys` search data-science pipeline: producer caches, retained tables, and method packets for the thesis method table | `experiments/sys-datascience/README.md`, `experiments/sys-datascience/produce/README.md`, `experiments/sys-datascience/tables/README.md`, `experiments/sys-datascience/methods/README.md` |
+| `experiments/sys-datascience/` | maintained hostile `sys` search data-science pipeline: producer caches, retained tables, and method packets for the thesis method table | `experiments/sys-datascience/README.md`, `experiments/sys-datascience/produce/README.md`, `experiments/sys-datascience/prepare/README.md`, `experiments/sys-datascience/methods/README.md` |
 | `experiments/regular-products/` | regular polygon product side result: broad rotated-product sweeps, pentagon empirical figures/viewer, and exact pentagon formula proof packet | `experiments/regular-products/README.md`, `thesis/rotated-regular-polygons-content.md` |
 | `experiments/dev-quadratic-program/numerics-audit/` | single-threaded numerical error audit: structured JSONL observations, f64-vs-oracle summaries, and generated reports for KKT variables and predicates | `experiments/dev-quadratic-program/numerics-audit/README.md`, `tasks/current-state.md`, `tasks/planning-notes.md` |
 | `experiments/verification/` | experiment-level correctness and regression evidence, minimum-set validation, orbit recovery, and reusable Sage validation experiments | `tasks/current-state.md`, `tasks/planning-notes.md`, `research/verification*.md`, `experiments/verification/README.md`, `experiments/verification/sage/README.md` |
@@ -211,7 +211,7 @@ Current helper families:
 | --- | --- |
 | step-bound event logic | implemented in `experiments/sys-landscape/src/step_bound.rs` and `experiments/combinatorial-cells/src/boundary_events.rs`; shared durable home is still an open boundary |
 | sys quotient / ascent scaffold | `experiments/sys-landscape/src/ascent.rs` and `datasets.rs` hold reusable landscape helpers, while individual binaries still own backend policy |
-| datascience producer/table plumbing | `experiments/sys-datascience/produce/` writes producer caches; `experiments/sys-datascience/tables/` loads/enriches/writes final tables; `experiments/sys-datascience/methods/` reads those tables |
+| datascience producer/table plumbing | `experiments/sys-datascience/produce/` writes producer caches; `experiments/sys-datascience/prepare/` loads/enriches/writes final tables; `experiments/sys-datascience/methods/` reads those tables |
 | exact HKO row bank and instrumented searches | `experiments/hko-local-maximum/src/exact_bank.rs` owns exact-bank constants; `instrumented_search.rs` owns local instrumented capacity helpers |
 | numerics audit helpers | `experiments/dev-quadratic-program/numerics-audit/src/lib.rs` indexes the audit runner, event schema, argument parsing, and output-directory helpers |
 | verification target plumbing | `experiments/verification/src/target_pool.rs` owns target selection; `io.rs` owns run modes and shared JSONL writers |
@@ -233,7 +233,7 @@ Current persisted-data classes:
 | shared polytope catalog rows | reusable polytope records with rational geometry, source, volume, capacity, and best-sigma-style data |
 | historical mirror catalogs | byte-identical copies of shared catalog content in different experiment areas observed in an earlier pass; current package notes give local ownership to at least `experiments/combinatorial-cells/polytopes.jsonl` |
 | topic-local transient caches | local caches that store intermediate search states and are not intended as shared catalogs |
-| datascience pipeline caches | maintained producer caches and final tables under `experiments/sys-datascience/`; see local `produce/`, `tables/`, and `methods/` READMEs |
+| datascience pipeline caches | maintained producer caches and prepared tables under `experiments/sys-datascience/`; see local `produce/`, `prepare/`, and `methods/` READMEs |
 | analysis outputs | experiment-owned JSONL files consumed by nearby `analyze.py` scripts |
 | resume artifacts | outputs that also serve as later-run inputs or resume sources |
 
@@ -264,7 +264,7 @@ Datascience pipeline exception:
 - `experiments/sys-datascience/produce/shared-cache.jsonl` and
   `continuation-cache.jsonl` are maintained producer-stage caches for the
   datascience pipeline, not mirrors of the old root `cache.jsonl`.
-- `experiments/sys-datascience/tables/` writes flat retained table
+- `experiments/sys-datascience/prepare/` writes flat retained table
   files next to the table builder: one polytope-level table, one provenance
   table, and one ascent-run table. Method scripts read these retained tables
   and build method-local rectangular inputs when needed.

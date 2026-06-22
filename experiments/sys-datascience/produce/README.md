@@ -28,9 +28,8 @@ predictor diagnostics. In particular,
 `poly_id`, while trace rows should record how points were sampled. Promote a
 branch feature into producer output only when its total compute cost or reuse
 value justifies fixing it at produce time. Ordinary per-branch KKT/status
-diagnostics that are cheap for the current panel belong in the shared prepare
-stage (`tables/` in current HEAD) or a method folder, even if they use exact
-arithmetic. A large repeated search loop can belong in produce when the
+diagnostics that are cheap for the current panel belong in `../prepare/` or a
+method folder, even if they use exact arithmetic. A large repeated search loop can belong in produce when the
 aggregate cost becomes material.
 
 Canonical file naming follows:
@@ -58,7 +57,7 @@ Current committed producer artifacts:
 The `*-ascent-events.jsonl`, `*-expensive-computations-cache.jsonl`,
 `ascent-events.jsonl`, and `expensive-computations-cache.jsonl` names describe
 the intended producer-side split for newer ascent outputs. They are not
-committed artifacts in current HEAD. Current retained tables still read the
+committed artifacts in current HEAD. Current prepared tables still read the
 endpoint/cache compatibility files above plus the committed
 `*-computed-polytopes.jsonl` files.
 
@@ -84,7 +83,7 @@ licca-shards/product-computed-production-1024/
 ```
 
 These shard files are producer-stage artifacts. Review and merge them into the
-canonical producer files before rebuilding `../tables/`.
+canonical producer files before rebuilding `../prepare/`.
 
 Use [merge-licca-ascent-shards.py](merge-licca-ascent-shards.py) to consolidate
 LICCA shard directories into branch-local merged producer files for review. It
@@ -264,7 +263,7 @@ them.
 
 For method waves, do not ask every method worker to regenerate or privately
 copy producer data. Build the shared table dataset under
-`experiments/sys-datascience/tables/` and let method workers
+`experiments/sys-datascience/prepare/` and let method workers
 build method-local rectangular inputs when needed. The current role rules live
 in `../README.md`.
 
@@ -310,7 +309,7 @@ python3 promote-licca-random-refresh.py
 python3 promote-licca-random-refresh.py --write
 ```
 
-Then rebuild `../tables/` from canonical producer files.
+Then rebuild `../prepare/` from canonical producer files.
 
 ## Smoke Path
 

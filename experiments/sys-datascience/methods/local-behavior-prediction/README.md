@@ -3,7 +3,7 @@
 Method packet for local and semi-local `sys(a)` prediction diagnostics.
 
 Status: exploratory. This packet reads run-local prepared outputs from
-`experiments/sys-datascience/tables/prepare-local-behavior.py`; it does not
+`experiments/sys-datascience/prepare/prepare-local-behavior.py`; it does not
 own capacity search or reusable joins. It is an interpretation and navigation
 surface, not thesis evidence by itself.
 
@@ -121,7 +121,7 @@ cargo run --release -p exp-sys-landscape --bin sys-local-behavior-produce -- \
   --random-directions 1 \
   --radii 1e-6,1e-3
 
-uv run --script experiments/sys-datascience/tables/prepare-local-behavior.py \
+uv run --script experiments/sys-datascience/prepare/prepare-local-behavior.py \
   /tmp/sys-local-behavior-smoke
 
 uv run --script experiments/sys-datascience/methods/local-behavior-prediction/analyze.py \
