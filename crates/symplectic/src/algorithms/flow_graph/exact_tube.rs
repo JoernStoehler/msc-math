@@ -1,8 +1,8 @@
 //! Exact closed-word resolver for the flow-graph algorithm.
 //!
-//! This module resolves one closed facet word from exact rational polytope
-//! data. It is meant as the fallback for f64 words whose f64 predicates are
-//! numerically indeterminate.
+//! This module resolves one closed facet word from exact rational flow-graph
+//! data. It is used both by exact exhaustive search and by the f64 wrapper when
+//! a diagnostic f64 word needs exact closed-word resolution.
 
 use nalgebra::DMatrix;
 use num_rational::BigRational;
@@ -15,8 +15,15 @@ type Mat2 = [[R; 2]; 2];
 
 #[derive(Clone, Copy, Debug)]
 pub struct ExactFlatTubeInput<'a> {
+    /// Exact rational facet normals in the flow-graph coordinate convention.
     pub dual_vertices: &'a [[BigRational; 4]],
+    /// Caller-supplied facet-pair intersection data.  The exact resolver checks
+    /// shape here, not boundedness, irredundancy, or semantic correctness of
+    /// this matrix against `dual_vertices`.
     pub facet_intersection_is_nonempty: &'a DMatrix<bool>,
+    /// Caller-supplied exact signs of `omega_0(a_i,a_j)`.  Shape is validated
+    /// locally; semantic agreement with `dual_vertices` belongs to the trusted
+    /// fixture/data-generation boundary recorded in the flow-graph README.
     pub omega_signs: &'a DMatrix<i8>,
 }
 
@@ -706,6 +713,11 @@ pub(crate) fn resolve_closed_word_exact_with_action_cutoff(
 pub(crate) fn validate_exact_input(
     input: &ExactFlatTubeInput<'_>,
 ) -> Result<(), ExactClosedTubeError> {
+    // This is only structural validation for the exact tube resolver.  It does
+    // not prove the formal theorem hypotheses, bounded irredundancy, or
+    // agreement between caller-supplied intersection/sign matrices and the
+    // facet normals.  Keep those assumptions visible in the README/support
+    // ledger rather than hiding them behind this function name.
     let facet_count = input.facet_count();
     if facet_count < 2
         || input.facet_intersection_is_nonempty.shape() != (facet_count, facet_count)
