@@ -344,11 +344,11 @@ def make_pairs(
         for gradient in gradients_by_basepoint[sample["basepoint_id"]]:
             grad = flat_vector_rows(gradient["sys_sigma_gradient"])
             branch_predictions.append(float(delta @ grad))
-        clarke_predicted_delta = min(branch_predictions) if branch_predictions else None
+        near_active_predicted_delta = min(branch_predictions) if branch_predictions else None
         observed_delta = sample.get("observed_delta_sys")
         prediction_error = (
-            observed_delta - clarke_predicted_delta
-            if observed_delta is not None and clarke_predicted_delta is not None
+            observed_delta - near_active_predicted_delta
+            if observed_delta is not None and near_active_predicted_delta is not None
             else None
         )
         status = target_branch_status(target_min, base_min, base_near, base_candidate)
@@ -372,9 +372,9 @@ def make_pairs(
                 "target_sys": sample["target_sys"],
                 "observed_delta_sys": observed_delta,
                 "producer_predicted_delta_sys": sample.get("predicted_delta_sys"),
-                "clarke_predicted_delta_sys": clarke_predicted_delta,
-                "clarke_prediction_error": prediction_error,
-                "clarke_prediction_abs_error": abs(prediction_error) if prediction_error is not None else None,
+                "near_active_predicted_delta_sys": near_active_predicted_delta,
+                "near_active_prediction_error": prediction_error,
+                "near_active_prediction_abs_error": abs(prediction_error) if prediction_error is not None else None,
                 "ambient_distance": float(np.linalg.norm(delta)),
                 "symmetry_quotient_distance": quotient_distance(
                     base_payload["dual_vertices"], target_payload["dual_vertices"]
@@ -705,8 +705,8 @@ def write_radius_summary(path: Path, pairs: list[dict[str, Any]]) -> None:
         "target_min_in_base_near_fraction",
         "median_ambient_distance",
         "median_symmetry_quotient_distance",
-        "median_abs_clarke_prediction_error",
-        "p90_abs_clarke_prediction_error",
+        "median_abs_near_active_prediction_error",
+        "p90_abs_near_active_prediction_error",
         "median_observed_delta_sys",
     ]
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -736,11 +736,11 @@ def write_radius_summary(path: Path, pairs: list[dict[str, Any]]) -> None:
                     "median_symmetry_quotient_distance": quantile(
                         [row["symmetry_quotient_distance"] for row in rows], 0.5
                     ),
-                    "median_abs_clarke_prediction_error": quantile(
-                        [row["clarke_prediction_abs_error"] for row in rows], 0.5
+                    "median_abs_near_active_prediction_error": quantile(
+                        [row["near_active_prediction_abs_error"] for row in rows], 0.5
                     ),
-                    "p90_abs_clarke_prediction_error": quantile(
-                        [row["clarke_prediction_abs_error"] for row in rows], 0.9
+                    "p90_abs_near_active_prediction_error": quantile(
+                        [row["near_active_prediction_abs_error"] for row in rows], 0.9
                     ),
                     "median_observed_delta_sys": quantile(
                         [row["observed_delta_sys"] for row in rows], 0.5

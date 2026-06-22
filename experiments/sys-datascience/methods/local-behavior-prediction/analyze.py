@@ -258,7 +258,7 @@ def radius_summary_lines(summary: list[dict[str, Any]]) -> list[str]:
                     fmt_fraction(row.get("min_branch_equal_fraction")),
                     fmt_fraction(row.get("target_min_in_base_near_fraction")),
                     fmt_fraction(row.get("target_min_in_base_candidate_fraction")),
-                    fmt_value(row.get("p90_abs_clarke_prediction_error")),
+                    fmt_value(row.get("p90_abs_near_active_prediction_error")),
                     fmt_value(row.get("median_observed_delta_sys")) + " |",
                 ]
             )

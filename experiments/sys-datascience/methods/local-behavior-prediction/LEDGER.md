@@ -49,7 +49,7 @@ Use exact finite predicates from prepared rows instead of vague branch words:
 - `target_branch_status_at_base`;
 - `min_branch_sets_intersect`;
 - recomputed finite `observed_delta_sys`;
-- `clarke_prediction_error` and `clarke_prediction_abs_error`.
+- `near_active_prediction_error` and `near_active_prediction_abs_error`.
 
 Near-active and candidate-window claims are meaningful only with the stated
 `branch_threshold_relative` and `action_window_relative`.
