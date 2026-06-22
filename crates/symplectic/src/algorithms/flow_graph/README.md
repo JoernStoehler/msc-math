@@ -26,13 +26,13 @@ proof text can overrule it. When they do, update this file or mark the mismatch.
 - The current experiment package is `experiments/dev-flow-graph/`.
 - The thesis section is `thesis/flow-graph-algorithm-ch2021.tex`.
 
-## Thesis-Facing Scope
+## Scope and Caveats
 
-The thesis-facing goal is not to make flow-graph capacity work on every
-geometrically interesting input. It is to make the implemented
-CH2021-derived flow-graph/tube route clear enough that its supported scope,
-evidence, and caveats can be checked without reconstructing the development
-history.
+The implemented flow-graph path is not meant to work on every geometrically
+interesting input. This section records the implemented CH2021-derived
+flow-graph/tube route, its checked scope, and its caveats so future proof and
+thesis work can start from explicit code behavior instead of reconstructed
+development history.
 
 Here "CH2021-derived flow-graph/tube route" means the implemented finite
 four-dimensional polytope model whose states are oriented two-faces
@@ -44,7 +44,7 @@ implementation proves the full CH2021 smoothing theorem, implements CH2021
 rotation pruning, handles Type 3/bad-face behavior, or supports all
 symplectic polytopes.
 
-Supported-scope target:
+Exact implementation scope currently documented here:
 
 - four-dimensional rational polytope data with exact rational dual facet
   normals;
@@ -311,12 +311,12 @@ Current evidence:
   empty tubes, exact zero-action no-orbits, exact positive orbits, exact
   unsupported singular outcomes, and exact positives below or at/above the QP
   capacity.
-- The thesis-readiness packet on branch `fg-thesis-readiness` added exact
-  rejection tests for the Lagrangian triangle product and Lagrangian
-  triangle-square zero-`omega_0` fixtures. On 2026-06-21,
+- On 2026-06-21, exact rejection tests were added for the Lagrangian triangle
+  product and Lagrangian triangle-square zero-`omega_0` fixtures.
   `cargo test -p symplectic --release --lib flow_graph` passed with 40 tests
-  passed, 6 ignored, and 0 failed. The packet also passed `cargo fmt --check`,
-  `cd thesis && latexmk && ./check-build.sh`, and `git diff --check`.
+  passed, 6 ignored, and 0 failed. The same checkpoint also passed
+  `cargo fmt --check`, `cd thesis && latexmk && ./check-build.sh`, and
+  `git diff --check`.
 
 Current analysis inventory:
 
@@ -352,7 +352,7 @@ Role of HK2017/QP comparison:
   implementation evidence, but not a proof of the flow-graph theorem, stopping
   rule, or exact tube arithmetic.
 
-Evidence limits for thesis wording:
+Evidence limits for future thesis wording:
 
 - the exact path is implementation evidence for the stated input class, not a
   standalone proof of the CH2021 capacity theorem, stopping rule, or tube
@@ -363,7 +363,7 @@ Evidence limits for thesis wording:
   individual f64 error words that pass the exact closed-word resolution boundary
   receive exact closed-word status;
 - performance, rotation pruning, and broader F7/F8 action-cutoff profiling are
-  future work unless thesis review asks for stronger claims.
+  future work unless a later task needs stronger claims.
 
 ## Decisions
 
