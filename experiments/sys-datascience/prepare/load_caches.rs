@@ -8,7 +8,7 @@ use exp_sys_landscape::{
 mod rows;
 use rows::{RandomProductRow, RandomSweepRow, ResultRow};
 use serde::de::DeserializeOwned;
-use std::collections::HashMap;
+use std::collections::{BTreeMap, HashMap};
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::path::{Path, PathBuf};
@@ -133,8 +133,9 @@ Method-wave output:
 
 Options:
   --random-only                   Load only random_sample and random_product_sample rows
-  --max-random-rows <n>           Development limit for random_sample rows
-  --max-random-product-rows <n>   Development limit for random_product_sample rows
+  --random-only-size <name>       Named random/product size: smoke, method, or full
+  --max-random-rows <n>           Override random_sample row count for development
+  --max-random-product-rows <n>   Override random_product_sample row count for development
   --produce-dir <dir>              Read canonical producer filenames from <dir>
   --random <path>                  Override random.jsonl
   --random-product <path>          Override random-product.jsonl
@@ -159,6 +160,15 @@ Use that only for one-off scratch. For method waves, use an owned path under
 experiments/sys-datascience/prepare/.
 "
     );
+}
+
+fn random_only_size_limits(name: &str) -> (Option<usize>, Option<usize>) {
+    match name {
+        "smoke" => (Some(8), Some(20)),
+        "method" => (Some(512), Some(1024)),
+        "full" => (None, None),
+        other => panic!("unknown --random-only-size {other}; expected smoke, method, or full"),
+    }
 }
 
 fn smoke_output_dir() -> PathBuf {
@@ -223,15 +233,23 @@ pub fn parse_args() -> DatasetPaths {
     let mut i = 1usize;
     while i < args.len() {
         let flag = args[i].as_str();
-        let value = args
-            .get(i + 1)
-            .unwrap_or_else(|| panic!("{flag} requires a value"));
         match flag {
             "--random-only" => {
                 random_only = true;
                 i += 1;
             }
+            "--random-only-size" => {
+                let value = args
+                    .get(i + 1)
+                    .unwrap_or_else(|| panic!("{flag} requires a value"));
+                random_only = true;
+                (max_random_rows, max_random_product_rows) = random_only_size_limits(value);
+                i += 2;
+            }
             "--max-random-rows" => {
+                let value = args
+                    .get(i + 1)
+                    .unwrap_or_else(|| panic!("{flag} requires a value"));
                 max_random_rows = Some(
                     value
                         .parse()
@@ -240,6 +258,9 @@ pub fn parse_args() -> DatasetPaths {
                 i += 2;
             }
             "--max-random-product-rows" => {
+                let value = args
+                    .get(i + 1)
+                    .unwrap_or_else(|| panic!("{flag} requires a value"));
                 max_random_product_rows =
                     Some(value.parse().unwrap_or_else(|e| {
                         panic!("parse --max-random-product-rows {value}: {e}")
@@ -247,6 +268,9 @@ pub fn parse_args() -> DatasetPaths {
                 i += 2;
             }
             "--produce-dir" => {
+                let value = args
+                    .get(i + 1)
+                    .unwrap_or_else(|| panic!("{flag} requires a value"));
                 let dir = PathBuf::from(value);
                 random_sample = dir.join("random.jsonl");
                 random_product = dir.join("random-product.jsonl");
@@ -265,58 +289,100 @@ pub fn parse_args() -> DatasetPaths {
                 i += 2;
             }
             "--random" => {
+                let value = args
+                    .get(i + 1)
+                    .unwrap_or_else(|| panic!("{flag} requires a value"));
                 random_sample = PathBuf::from(value);
                 i += 2;
             }
             "--random-product" => {
+                let value = args
+                    .get(i + 1)
+                    .unwrap_or_else(|| panic!("{flag} requires a value"));
                 random_product = PathBuf::from(value);
                 i += 2;
             }
             "--ascent" => {
+                let value = args
+                    .get(i + 1)
+                    .unwrap_or_else(|| panic!("{flag} requires a value"));
                 ascent_summary = PathBuf::from(value);
                 i += 2;
             }
             "--ascent-trace" => {
+                let value = args
+                    .get(i + 1)
+                    .unwrap_or_else(|| panic!("{flag} requires a value"));
                 ascent_trace = PathBuf::from(value);
                 i += 2;
             }
             "--ascent-cache" => {
+                let value = args
+                    .get(i + 1)
+                    .unwrap_or_else(|| panic!("{flag} requires a value"));
                 ascent_cache = PathBuf::from(value);
                 i += 2;
             }
             "--ascent-computed-polytopes" => {
+                let value = args
+                    .get(i + 1)
+                    .unwrap_or_else(|| panic!("{flag} requires a value"));
                 ascent_computed_polytopes = PathBuf::from(value);
                 i += 2;
             }
             "--ascent-product" => {
+                let value = args
+                    .get(i + 1)
+                    .unwrap_or_else(|| panic!("{flag} requires a value"));
                 ascent_product_summary = PathBuf::from(value);
                 i += 2;
             }
             "--ascent-product-trace" => {
+                let value = args
+                    .get(i + 1)
+                    .unwrap_or_else(|| panic!("{flag} requires a value"));
                 ascent_product_trace = PathBuf::from(value);
                 i += 2;
             }
             "--ascent-product-cache" => {
+                let value = args
+                    .get(i + 1)
+                    .unwrap_or_else(|| panic!("{flag} requires a value"));
                 ascent_product_cache = PathBuf::from(value);
                 i += 2;
             }
             "--ascent-product-computed-polytopes" => {
+                let value = args
+                    .get(i + 1)
+                    .unwrap_or_else(|| panic!("{flag} requires a value"));
                 ascent_product_computed_polytopes = PathBuf::from(value);
                 i += 2;
             }
             "--continuation" => {
+                let value = args
+                    .get(i + 1)
+                    .unwrap_or_else(|| panic!("{flag} requires a value"));
                 continuation_summary = PathBuf::from(value);
                 i += 2;
             }
             "--shared-cache" => {
+                let value = args
+                    .get(i + 1)
+                    .unwrap_or_else(|| panic!("{flag} requires a value"));
                 shared_cache = PathBuf::from(value);
                 i += 2;
             }
             "--continuation-cache" => {
+                let value = args
+                    .get(i + 1)
+                    .unwrap_or_else(|| panic!("{flag} requires a value"));
                 continuation_cache = PathBuf::from(value);
                 i += 2;
             }
             "--out-dir" => {
+                let value = args
+                    .get(i + 1)
+                    .unwrap_or_else(|| panic!("{flag} requires a value"));
                 out_dir = PathBuf::from(value);
                 i += 2;
             }
@@ -518,7 +584,7 @@ fn load_random_sample_rows(
 ) {
     let mut rows = read_jsonl::<RandomSweepRow>(path);
     if let Some(limit) = limit {
-        rows.truncate(limit);
+        stratified_prefix_sample(&mut rows, limit, |row| row.facet_count, |row| &row.name);
     }
     for row in rows {
         let poly_id = ensure_polytope(
@@ -582,7 +648,12 @@ fn load_random_product_rows(
 ) {
     let mut rows = read_jsonl::<RandomProductRow>(path);
     if let Some(limit) = limit {
-        rows.truncate(limit);
+        stratified_prefix_sample(
+            &mut rows,
+            limit,
+            |row| (row.k, row.m, row.bounces),
+            |row| &row.name,
+        );
     }
     for row in rows {
         let poly_id = ensure_polytope(
@@ -635,6 +706,39 @@ fn load_random_product_rows(
             trace_events: Vec::new(),
         });
     }
+}
+
+fn stratified_prefix_sample<T, K>(
+    rows: &mut Vec<T>,
+    limit: usize,
+    key: impl Fn(&T) -> K,
+    name: impl Fn(&T) -> &str,
+) where
+    K: Ord,
+{
+    if rows.len() <= limit {
+        return;
+    }
+    let mut strata = BTreeMap::<K, Vec<T>>::new();
+    for row in rows.drain(..) {
+        strata.entry(key(&row)).or_default().push(row);
+    }
+    for stratum in strata.values_mut() {
+        stratum.sort_by(|left, right| name(left).cmp(name(right)));
+    }
+
+    let stratum_count = strata.len().max(1);
+    let base = limit / stratum_count;
+    let mut remainder = limit % stratum_count;
+    let mut out = Vec::with_capacity(limit);
+    for stratum in strata.values_mut() {
+        let extra = usize::from(remainder > 0);
+        remainder = remainder.saturating_sub(extra);
+        let take = (base + extra).min(stratum.len());
+        out.extend(stratum.drain(..take));
+    }
+    out.sort_by(|left, right| name(left).cmp(name(right)));
+    *rows = out;
 }
 
 fn trace_events_by_name(path: &Path) -> HashMap<String, Vec<TraceEvent>> {

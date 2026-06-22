@@ -2,8 +2,8 @@
 # Build scoped random/product prepared tables for development or evidence runs.
 #
 # Modes:
-# - smoke: tiny prepare-stage feedback; validates schema and feature plumbing.
-# - method: medium method-feedback slice; useful before spending a full run.
+# - smoke: tiny stratified prepare-stage feedback; validates schema and feature plumbing.
+# - method: medium stratified method-feedback slice; useful before spending a full run.
 # - full: all trusted random/product rows; thesis evidence gate, prefer LICCA.
 
 set -euo pipefail
@@ -19,13 +19,13 @@ fi
 
 case "$MODE" in
   smoke)
-    LIMIT_ARGS=(--max-random-rows 8 --max-random-product-rows 10)
+    SIZE_ARGS=(--random-only-size smoke)
     ;;
   method)
-    LIMIT_ARGS=(--max-random-rows 512 --max-random-product-rows 1024)
+    SIZE_ARGS=(--random-only-size method)
     ;;
   full)
-    LIMIT_ARGS=()
+    SIZE_ARGS=(--random-only-size full)
     ;;
   *)
     echo "usage: $0 [smoke|method|full] [out-dir]" >&2
@@ -41,9 +41,8 @@ echo "  out_dir: $OUT_DIR"
 echo
 
 cargo run -p exp-sys-landscape --release --bin sys-dataset -- \
-  --random-only \
   --produce-dir "$PRODUCE_DIR" \
-  "${LIMIT_ARGS[@]}" \
+  "${SIZE_ARGS[@]}" \
   --out-dir "$OUT_DIR"
 
 echo

@@ -13,10 +13,11 @@ not a result ledger.
 Epistemic status: implementation and smoke coverage exist, and the main
 random-only method packets were rerun against a reproducible scratch prepared
 table at `/tmp/sys-ds-random-only-full`, built with `sys-dataset
---random-only`. The retained artifacts from that run include omega, two-face,
-and explicit provenance columns for trusted random/product rows. Do not use
-this file to claim final thesis closure until method/statistics review is
-recorded and remaining deferred families are accepted or revised.
+--random-only`. Since that rerun, prepare grew additional reusable omega/area
+summary columns. The checked-in method artifacts have therefore not yet been
+rerun against a full scoped prepared table with the latest schema. Do not use
+this file to claim final thesis closure until the full scoped current-schema
+rerun, method/statistics review, and deferred-family review are recorded.
 
 ## Current Data Slice
 
@@ -35,7 +36,8 @@ Prepared-input caveat: the prepared input used for these artifacts was a
 scratch table at `/tmp/sys-ds-random-only-full`, not a retained checked-in
 table. It is reproducible with
 `experiments/sys-datascience/prepare/build-random-only-slice.sh full` using
-hydrated canonical producer files.
+hydrated canonical producer files. Regenerate it before relying on current
+prepare-schema feature columns.
 
 ## Method Summary
 
@@ -72,10 +74,11 @@ decisions, and the packet READMEs for evidence.
 
 ## Current Blocking Gate
 
-The next evidence gate is method/statistics review of the scoped full rerun,
-plus deciding whether the scratch prepared input should be promoted or simply
-treated as reproducible generated data. Do not use the all-source
-retained-table rebuild for this goal by default.
+The next evidence gate is a full scoped random/product rerun against the
+current prepare schema, method/statistics review of the resulting artifacts, and
+a decision about whether the scratch prepared input should be promoted or
+treated as reproducible generated data. Do not use the all-source retained-table
+rebuild for this goal by default.
 
 ## Thesis Claim Status
 

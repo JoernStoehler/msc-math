@@ -18,33 +18,47 @@ canonization, feature computation, deduplication, or retained table shape
 changes. Prepare should be local by default because canonization and feature
 computation are cheap relative to capacity search; use LICCA only when the
 prepared table size or feature cost actually makes local runs impractical.
-For the current feature-closure branch, random/product development and evidence
-runs should be scoped before feature construction. Use:
+For random/product development and evidence runs, scope the dataset before
+feature construction. Use:
 
 ```bash
 experiments/sys-datascience/prepare/build-random-only-slice.sh smoke
 experiments/sys-datascience/prepare/build-random-only-slice.sh method
 ```
 
-`smoke` builds `8` generic random rows plus `10` product rows for fast
+`smoke` builds `8` generic random rows plus `20` product rows for fast
 prepare-stage feedback. `method` builds `512` generic random rows plus `1024`
 product rows for method-code feedback. The full random/product evidence run is
 the same scoped builder without row limits; prefer LICCA for that final gate.
 The earlier all-source retained-table rebuild path was too broad for this goal:
 it included ascent/continuation rows before feature construction.
 
-Current scoped local evidence after this fix:
+The size presets call `sys-dataset --random-only-size <smoke|method|full>`.
+Limited presets take deterministic stratified prefixes: generic rows are spread
+over `facet_count`, and product rows are spread over `(k, m, bounces)`. Prefixes
+within those homogeneous producer blocks are still ordinary random samples from
+that block; the stratification avoids accidentally testing only the first file
+blocks such as `facet_count = 5`.
 
-- `smoke` with hydrated producer files from the main checkout built `18`
+Current scoped local evidence after the random/product scoping fix:
+
+- `smoke` with hydrated producer files from the main checkout built `28`
   random/product rows, `0` computed-observation rows, and `0` ascent-run rows;
-  after compile, producer loading took `0.4s` and table construction rounded to
-  `0.0s`.
+  generic random rows covered facet counts `5..12` once each, product rows
+  covered each of the `20` `(k, m, bounces)` blocks once, table construction
+  took `1.7s`, and the fingerprint found max `sys = 0.7542347878889757`.
 - `method` with the same producer files built `1536` random/product rows,
-  `0` computed-observation rows, and `0` ascent-run rows; after compile,
-  producer loading took `0.5s` and table construction took `1.2s`.
+  `0` computed-observation rows, and `0` ascent-run rows; generic random rows
+  covered facet counts `5..12` with `64` rows each, product rows covered each
+  of the `20` `(k, m, bounces)` blocks with `51` or `52` rows each, table
+  construction took `40.9s`, and the fingerprint found max
+  `sys = 0.8247662746241669`.
 - The method-feedback slice was sufficient to run `random-tail-eda`,
   `statistical-associations`, `projection-structure`, and
   `prediction-ranking` in seconds with reduced permutation/tree counts.
+- A full local prepare rerun was not part of the wrapup cleanup after local CPU
+  warnings. Full current-schema evidence should be regenerated deliberately,
+  then fingerprinted and reviewed before thesis-facing method closure wording.
 
 `sys-datascience-prepare` is the prepare-stage command for the new run-local
 producer path. It consumes a producer output directory containing
