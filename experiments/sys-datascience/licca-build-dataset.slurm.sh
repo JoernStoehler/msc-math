@@ -1,11 +1,11 @@
 #!/bin/bash
-# Build the retained datascience tables on LICCA.
+# Build the random/product datascience tables on LICCA.
 # Submit from this directory with:
 #   sbatch licca-build-dataset.slurm.sh
 #
 # Inputs:
-# - canonical producer files under experiments/sys-datascience/produce/
-# - fixed-F ascent producer caches ascent-general-cache.jsonl and ascent-product-cache.jsonl
+# - random/product producer files and shared-cache payloads under
+#   experiments/sys-datascience/produce/
 #
 # Output:
 # - experiments/sys-datascience/prepare/
@@ -14,8 +14,8 @@
 #SBATCH --job-name=ds-table
 #SBATCH --partition=epyc
 #SBATCH --cpus-per-task=32
-#SBATCH --mem=64G
-#SBATCH --time=04:00:00
+#SBATCH --mem=32G
+#SBATCH --time=02:00:00
 #SBATCH --output=%x-%j.out
 
 # Resource justification:
@@ -23,12 +23,10 @@
 # - The table builder parallelizes row feature construction with Rayon.
 # - 32 CPUs gives useful parallelism without taking a full 128-core node and
 #   without multiplying memory pressure as much as a 64-thread first try.
-# - 64G is a bounded production request for the current feature branch. A local
-#   full rebuild on 2026-06-22 loaded the canonical producer caches and then hit
-#   the local compute/memory guard while building the table; the older 16G
-#   assumption is no longer trusted for the post-feature rebuild gate.
-# - 4h wall time covers the current slow feature stage with slack; cancel or
-#   resubmit only after inspecting sacct/log evidence against this estimate.
+# - This job uses --random-only, so feature construction is scoped to the
+#   4096 random + 10240 random-product rows needed by the current thesis slice.
+# - 32G/2h is a bounded first production request for the richer feature schema;
+#   cancel or resubmit only after inspecting sacct/log evidence.
 
 set -euo pipefail
 
@@ -44,9 +42,11 @@ echo "  cpus:           ${SLURM_CPUS_PER_TASK:-unknown}"
 echo "  rayon threads:  $RAYON_NUM_THREADS"
 echo "  cargo target:   $CARGO_TARGET_DIR"
 echo "  prepare dir:    experiments/sys-datascience/prepare"
+echo "  mode:           random-only"
 echo
 
 cargo run -p exp-sys-landscape --release --bin sys-dataset -- \
+    --random-only \
     --out-dir experiments/sys-datascience/prepare
 
 echo

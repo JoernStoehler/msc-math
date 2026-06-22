@@ -101,6 +101,9 @@ struct OrbitPayload {
 }
 
 pub struct DatasetPaths {
+    pub random_only: bool,
+    pub max_random_rows: Option<usize>,
+    pub max_random_product_rows: Option<usize>,
     pub random_sample: PathBuf,
     pub random_product: PathBuf,
     pub ascent_summary: PathBuf,
@@ -129,6 +132,9 @@ Method-wave output:
   experiments/sys-datascience/prepare
 
 Options:
+  --random-only                   Load only random_sample and random_product_sample rows
+  --max-random-rows <n>           Development limit for random_sample rows
+  --max-random-product-rows <n>   Development limit for random_product_sample rows
   --produce-dir <dir>              Read canonical producer filenames from <dir>
   --random <path>                  Override random.jsonl
   --random-product <path>          Override random-product.jsonl
@@ -168,6 +174,9 @@ fn smoke_output_dir() -> PathBuf {
 fn default_paths() -> DatasetPaths {
     let produce_dir = package_root().join("../sys-datascience/produce");
     DatasetPaths {
+        random_only: false,
+        max_random_rows: None,
+        max_random_product_rows: None,
         random_sample: produce_dir.join("random.jsonl"),
         random_product: produce_dir.join("random-product.jsonl"),
         ascent_summary: produce_dir.join("ascent-general-endpoints.jsonl"),
@@ -188,6 +197,9 @@ fn default_paths() -> DatasetPaths {
 
 pub fn parse_args() -> DatasetPaths {
     let defaults = default_paths();
+    let mut random_only = defaults.random_only;
+    let mut max_random_rows = defaults.max_random_rows;
+    let mut max_random_product_rows = defaults.max_random_product_rows;
     let mut random_sample = defaults.random_sample;
     let mut random_product = defaults.random_product;
     let mut ascent_summary = defaults.ascent_summary;
@@ -215,6 +227,25 @@ pub fn parse_args() -> DatasetPaths {
             .get(i + 1)
             .unwrap_or_else(|| panic!("{flag} requires a value"));
         match flag {
+            "--random-only" => {
+                random_only = true;
+                i += 1;
+            }
+            "--max-random-rows" => {
+                max_random_rows = Some(
+                    value
+                        .parse()
+                        .unwrap_or_else(|e| panic!("parse --max-random-rows {value}: {e}")),
+                );
+                i += 2;
+            }
+            "--max-random-product-rows" => {
+                max_random_product_rows =
+                    Some(value.parse().unwrap_or_else(|e| {
+                        panic!("parse --max-random-product-rows {value}: {e}")
+                    }));
+                i += 2;
+            }
             "--produce-dir" => {
                 let dir = PathBuf::from(value);
                 random_sample = dir.join("random.jsonl");
@@ -294,6 +325,9 @@ pub fn parse_args() -> DatasetPaths {
     }
 
     DatasetPaths {
+        random_only,
+        max_random_rows,
+        max_random_product_rows,
         random_sample,
         random_product,
         ascent_summary,
@@ -380,6 +414,9 @@ fn existing_paths<'a>(paths: impl IntoIterator<Item = &'a Path>) -> Vec<&'a Path
 }
 
 fn orbit_payloads(paths: &DatasetPaths) -> HashMap<String, OrbitPayload> {
+    if paths.random_only {
+        return HashMap::new();
+    }
     let cache_paths = existing_paths([
         paths.shared_cache.as_path(),
         paths.ascent_cache.as_path(),
@@ -477,8 +514,13 @@ fn load_random_sample_rows(
     polytopes: &mut HashMap<String, LoadedPolytopeRow>,
     provenance_rows: &mut Vec<LoadedProvenanceRow>,
     orbit_payloads: &HashMap<String, OrbitPayload>,
+    limit: Option<usize>,
 ) {
-    for row in read_jsonl::<RandomSweepRow>(path) {
+    let mut rows = read_jsonl::<RandomSweepRow>(path);
+    if let Some(limit) = limit {
+        rows.truncate(limit);
+    }
+    for row in rows {
         let poly_id = ensure_polytope(
             polytopes,
             orbit_payloads,
@@ -536,8 +578,13 @@ fn load_random_product_rows(
     polytopes: &mut HashMap<String, LoadedPolytopeRow>,
     provenance_rows: &mut Vec<LoadedProvenanceRow>,
     orbit_payloads: &HashMap<String, OrbitPayload>,
+    limit: Option<usize>,
 ) {
-    for row in read_jsonl::<RandomProductRow>(path) {
+    let mut rows = read_jsonl::<RandomProductRow>(path);
+    if let Some(limit) = limit {
+        rows.truncate(limit);
+    }
+    for row in rows {
         let poly_id = ensure_polytope(
             polytopes,
             orbit_payloads,
@@ -844,6 +891,9 @@ fn load_computed_polytope_observations(
     paths: &DatasetPaths,
     polytopes: &mut HashMap<String, LoadedPolytopeRow>,
 ) -> Vec<ComputedPolytopeObservationRow> {
+    if paths.random_only {
+        return Vec::new();
+    }
     let mut rows = Vec::new();
     load_computed_polytope_rows(&paths.ascent_computed_polytopes, polytopes, &mut rows);
     load_computed_polytope_rows(
@@ -917,8 +967,6 @@ fn load_computed_polytope_rows(
 
 pub fn load_caches(paths: &DatasetPaths) -> LoadedCaches {
     let orbit_payloads = orbit_payloads(paths);
-    let ascent_orbit_payloads = orbit_payloads_for_path(&paths.ascent_cache);
-    let ascent_product_orbit_payloads = orbit_payloads_for_path(&paths.ascent_product_cache);
     let mut polytopes = HashMap::<String, LoadedPolytopeRow>::new();
     let mut provenance_rows = Vec::<LoadedProvenanceRow>::new();
 
@@ -927,35 +975,41 @@ pub fn load_caches(paths: &DatasetPaths) -> LoadedCaches {
         &mut polytopes,
         &mut provenance_rows,
         &orbit_payloads,
+        paths.max_random_rows,
     );
     load_random_product_rows(
         &paths.random_product,
         &mut polytopes,
         &mut provenance_rows,
         &orbit_payloads,
+        paths.max_random_product_rows,
     );
-    load_ascent_rows(
-        &paths.ascent_summary,
-        &paths.ascent_trace,
-        &mut polytopes,
-        &mut provenance_rows,
-        &orbit_payloads,
-        &ascent_orbit_payloads,
-    );
-    load_ascent_product_rows(
-        &paths.ascent_product_summary,
-        &paths.ascent_product_trace,
-        &mut polytopes,
-        &mut provenance_rows,
-        &orbit_payloads,
-        &ascent_product_orbit_payloads,
-    );
-    load_continuation_rows(
-        &paths.continuation_summary,
-        &mut polytopes,
-        &mut provenance_rows,
-        &orbit_payloads,
-    );
+    if !paths.random_only {
+        let ascent_orbit_payloads = orbit_payloads_for_path(&paths.ascent_cache);
+        let ascent_product_orbit_payloads = orbit_payloads_for_path(&paths.ascent_product_cache);
+        load_ascent_rows(
+            &paths.ascent_summary,
+            &paths.ascent_trace,
+            &mut polytopes,
+            &mut provenance_rows,
+            &orbit_payloads,
+            &ascent_orbit_payloads,
+        );
+        load_ascent_product_rows(
+            &paths.ascent_product_summary,
+            &paths.ascent_product_trace,
+            &mut polytopes,
+            &mut provenance_rows,
+            &orbit_payloads,
+            &ascent_product_orbit_payloads,
+        );
+        load_continuation_rows(
+            &paths.continuation_summary,
+            &mut polytopes,
+            &mut provenance_rows,
+            &orbit_payloads,
+        );
+    }
     let computed_polytope_observations = load_computed_polytope_observations(paths, &mut polytopes);
 
     let mut polytope_rows = polytopes.into_values().collect::<Vec<_>>();

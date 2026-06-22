@@ -73,11 +73,10 @@ decisions, and the packet READMEs for evidence.
 
 ## Current Blocking Gate
 
-Prepare-stage retained-table rebuild and post-rebuild method reruns are the
-next evidence gate. For this branch, run the full retained-table rebuild on
-LICCA rather than retrying locally by default: a 2026-06-22 local rebuild loaded
-the canonical producer caches and was interrupted during table construction
-after the local compute/memory guard fired. Until the LICCA rebuild and
+Prepare-stage random/product rebuild and post-rebuild method reruns are the
+next evidence gate. Do not use the all-source retained-table rebuild for this
+goal by default. Use the scoped prepare tiers first (`smoke`, then `method`),
+then full `--random-only` on LICCA for evidence. Until the scoped rebuild and
 post-rebuild packet reruns are recorded, current artifacts support only the old
 retained schema plus method-side diagnostics, not the updated thesis-facing
 random/product datascience claim for new prepare columns.

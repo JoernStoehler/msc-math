@@ -401,14 +401,16 @@ stability, and method use are audited.
 
 Value-of-information ranking for the next implementation/analysis round:
 
-1. Rebuild retained tables with the new omega, two-face area, and explicit
-   provenance columns on LICCA, then rerun affected method analyses. Method
+1. Rebuild random/product-scoped tables with the new omega, two-face area, and
+   explicit provenance columns, then rerun affected method analyses. Use the
+   tiered prepare path: `smoke` for fast prepare feedback, `method` for medium
+   method feedback, and full `--random-only` for the evidence gate. Method
    scripts have now been rerun on the hydrated checked-in retained tables from
    `/workspaces/msc-math/experiments/sys-datascience/prepare`, but those tables
-   still use the old prepare schema. A local full rebuild attempt on 2026-06-22
-   loaded the canonical producer caches and was stopped during table
-   construction after the local compute/memory guard fired; do not spend more
-   local compute on this gate by default.
+   still use the old prepare schema. A local all-source rebuild attempt on
+   2026-06-22 loaded ascent/continuation rows too and was stopped during table
+   construction after the local compute/memory guard fired; that was the wrong
+   gate for this random/product goal.
 2. After the prepare rebuild, rerun EDA/univariate/projection/prediction
    packets again so omega matrix/sign/alignment, two-face-tail, and explicit
    provenance fields are in the full-table artifacts.
@@ -578,7 +580,8 @@ unimportant. Re-rank after each round using method results and review feedback.
   - the process had started `Building polytope table`.
 - stop reason: local compute/memory guard fired and the process was interrupted
   with Ctrl-C before any rebuilt retained tables were promoted.
-- operational disposition: the post-feature retained-table rebuild/full-method
-  rerun gate should move to `licca-build-dataset.slurm.sh`; local reruns should
-  stay limited to smoke or narrowed debug runs unless the resource situation
-  changes.
+- operational disposition: the post-feature table rebuild/full-method rerun
+  gate must be random/product scoped before feature construction. Use
+  `prepare/build-random-only-slice.sh smoke` for fast development,
+  `prepare/build-random-only-slice.sh method` for method-feedback, and the
+  `--random-only` LICCA script for the full evidence run.

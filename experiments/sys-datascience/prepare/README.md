@@ -18,10 +18,33 @@ canonization, feature computation, deduplication, or retained table shape
 changes. Prepare should be local by default because canonization and feature
 computation are cheap relative to capacity search; use LICCA only when the
 prepared table size or feature cost actually makes local runs impractical.
-For the current feature-closure branch, the full canonical retained-table
-rebuild is in that LICCA case: a local rebuild on 2026-06-22 reached table
-construction after loading the canonical producer caches and was stopped when
-the local compute/memory guard fired.
+For the current feature-closure branch, random/product development and evidence
+runs should be scoped before feature construction. Use:
+
+```bash
+experiments/sys-datascience/prepare/build-random-only-slice.sh smoke
+experiments/sys-datascience/prepare/build-random-only-slice.sh method
+```
+
+`smoke` builds `8` generic random rows plus `10` product rows for fast
+prepare-stage feedback. `method` builds `512` generic random rows plus `1024`
+product rows for method-code feedback. The full random/product evidence run is
+the same scoped builder without row limits; prefer LICCA for that final gate.
+The earlier all-source retained-table rebuild path was too broad for this goal:
+it included ascent/continuation rows before feature construction.
+
+Current scoped local evidence after this fix:
+
+- `smoke` with hydrated producer files from the main checkout built `18`
+  random/product rows, `0` computed-observation rows, and `0` ascent-run rows;
+  after compile, producer loading took `0.4s` and table construction rounded to
+  `0.0s`.
+- `method` with the same producer files built `1536` random/product rows,
+  `0` computed-observation rows, and `0` ascent-run rows; after compile,
+  producer loading took `0.5s` and table construction took `1.2s`.
+- The method-feedback slice was sufficient to run `random-tail-eda`,
+  `statistical-associations`, `projection-structure`, and
+  `prediction-ranking` in seconds with reduced permutation/tree counts.
 
 `sys-datascience-prepare` is the prepare-stage command for the new run-local
 producer path. It consumes a producer output directory containing

@@ -202,13 +202,16 @@ caches with:
 experiments/sys-datascience/build-dataset.sh
 ```
 
-Current feature-closure branch operational note: the post-feature full retained
-rebuild should be run on LICCA, not retried locally by default. On 2026-06-22 a
-local canonical rebuild loaded `32610` polytopes, `22611` provenance rows, and
-`879235` computed-polytope observation rows, then was aborted during table
-construction after the local compute/memory guard fired. Use
-`licca-build-dataset.slurm.sh` for the next full rebuild gate, then rerun the
-method packets against the rebuilt retained tables.
+Current feature-closure branch operational note: the post-feature evidence gate
+is random/product scoped. Do not rebuild the all-source retained table for this
+goal by default. Use `prepare/build-random-only-slice.sh smoke` for fast
+prepare feedback, `prepare/build-random-only-slice.sh method` for medium method
+feedback, and `licca-build-dataset.slurm.sh` for the full random/product
+evidence rebuild before rerunning method packets. A 2026-06-22 local all-source
+rebuild loaded `32610` polytopes, `22611` provenance rows, and `879235`
+computed-polytope observation rows, then was aborted during table construction
+after the local compute/memory guard fired; that broad rebuild was the wrong
+gate for this random/product goal.
 
 Other operational entry points:
 
@@ -218,6 +221,9 @@ Other operational entry points:
   older full produce-to-table surface, not as a cheap command check.
 - `licca-build-dataset.slurm.sh`: LICCA retained-table rebuild from canonical
   producer files; distinct from the new run-local `produce`/`prepare` smoke.
+- `prepare/build-random-only-slice.sh`: local scoped prepare tiers:
+  `smoke` (`8+10` rows), `method` (`512+1024` rows), and `full`
+  (`4096+10240` rows).
 - `licca-post-feature-rebuild.md`: bounded handoff for the current
   feature-closure rebuild gate, including branch/LFS preconditions, LICCA
   submission, retrieval, and local method reruns.

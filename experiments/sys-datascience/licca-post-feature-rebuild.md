@@ -1,8 +1,8 @@
 # LICCA Post-Feature Rebuild Gate
 
-Purpose: rebuild the retained sys-datascience tables after the feature-space
-closure branch adds new prepare columns, then rerun the random/product method
-packets against those rebuilt tables.
+Purpose: rebuild the random/product sys-datascience tables after the
+feature-space closure branch adds new prepare columns, then rerun the
+random/product method packets against those rebuilt tables.
 
 This is an evidence gate, not thesis evidence by itself. The method packet
 READMEs, artifacts, and `feature-space-coverage-ledger.md` must be updated
@@ -14,16 +14,18 @@ after the rebuilt tables are available.
   Running the job from an older commit is worse than not running it.
 - Canonical producer LFS files under `experiments/sys-datascience/produce/`
   are hydrated on LICCA.
-- Do not retry the full retained-table rebuild locally by default. A local
+- Do not retry the all-source retained-table rebuild locally by default. A local
   2026-06-22 rebuild loaded the canonical producer caches and was interrupted
   during table construction after the local compute/memory guard fired.
+- For development, use `prepare/build-random-only-slice.sh smoke` or
+  `prepare/build-random-only-slice.sh method` before any full evidence run.
 
 ## Resource BOTEC
 
-- work units: canonical retained-table build over `32610` loaded polytopes,
-  `22611` provenance rows, and `879235` computed-polytope observation rows.
+- work units: random/product scoped build over `4096` random rows and `10240`
+  random-product rows.
 - execution model: one Rayon/CPU-parallel Rust process plus JSONL output.
-- first production request: `32` CPUs, `64G`, `4h` on `epyc`.
+- first production request: `32` CPUs, `32G`, `2h` on `epyc`.
 - expected active Jörn time: one submission plus bounded status/log checks.
 - cancel/resubmit condition: if `sacct` or the log shows immediate setup
   failure with tiny `MaxRSS`, inspect paths/LFS/checkout before resubmitting;
