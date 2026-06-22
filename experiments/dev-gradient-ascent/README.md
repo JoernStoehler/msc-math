@@ -143,6 +143,14 @@ It writes:
 - `compute-budget-report.json`
 - `summary.json`
 
+Use `--write-step-ranking-audit` only for small hard panels. It writes
+`step-ranking-audit.jsonl`, which exhaustively recomputes every generated
+direction/step pair at each traced state and ranks the same finite moves by
+near-active and candidate-window predictions. Candidate-window rows include the
+branch/orbit witness attaining the lower-envelope prediction. This is for
+deciding whether a first-order model guides observed moves; it is not a normal
+broad-panel option.
+
 ## Branch Degeneracy Diagnostic
 
 This command is the first real-data diagnostic in the package. It reads the
@@ -297,6 +305,13 @@ to choose the near-active set for gradients and maximin directions. A wider
 action window can still be used internally to collect candidate orbits before
 filtering.
 
+Use `--direction-model near-active` for the original near-active first-order
+score. Use `--direction-model candidate-window` to score generated finite
+steps by the minimum over base candidate-window branch models with base branch
+gaps included. Add `--include-candidate-window-directions` only for the
+candidate-window maximin direction experiment; those step-indexed directions
+are tested only at the finite step used to generate them.
+
 ```bash
 cargo run -p exp-dev-gradient-ascent \
   --bin dev-gradient-ascent-local-geometry-probe -- \
@@ -306,7 +321,8 @@ cargo run -p exp-dev-gradient-ascent \
   --max-fixtures-per-label 1 \
   --trace-iterations 4 \
   --min-observed-delta 1e-3 \
-  --min-observed-relative-delta 0
+  --min-observed-relative-delta 0 \
+  --direction-model near-active
 ```
 
 The trace accepts a step only when the recomputed `sys` improvement is above

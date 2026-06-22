@@ -259,11 +259,127 @@ def radius_summary_lines(summary: list[dict[str, Any]]) -> list[str]:
     return lines
 
 
+def source_radius_summary_lines(summary: list[dict[str, Any]]) -> list[str]:
+    rows = sorted(
+        [row for row in summary if finite(row.get("radius"))],
+        key=lambda row: (
+            str(row.get("dataset", "")),
+            str(row.get("family", "")),
+            str(row.get("role", "")),
+            float(row["radius"]),
+            str(row.get("direction_family", "")),
+        ),
+    )
+    if not rows:
+        return ["No source/radius denominator rows found."]
+
+    lines = [
+        "| dataset | family | role | radius | direction | attempts | ok | failed | near | candidate |",
+        "| --- | --- | --- | ---: | --- | ---: | ---: | ---: | ---: | ---: |",
+    ]
+    for row in rows:
+        lines.append(
+            " | ".join(
+                [
+                    f"| {row.get('dataset', '')}",
+                    str(row.get("family", "")),
+                    str(row.get("role", "")),
+                    fmt_value(row.get("radius")),
+                    str(row.get("direction_family", "")),
+                    fmt_value(row.get("planned_attempts")),
+                    fmt_value(row.get("successful_pairs")),
+                    fmt_value(row.get("failed_attempts")),
+                    fmt_fraction(row.get("target_min_in_base_near_fraction_successful")),
+                    fmt_fraction(row.get("target_min_in_base_candidate_fraction_successful")) + " |",
+                ]
+            )
+        )
+    return lines
+
+
+def candidate_window_summary_lines(summary: list[dict[str, Any]]) -> list[str]:
+    rows = sorted(
+        [row for row in summary if finite(row.get("radius"))],
+        key=lambda row: (
+            str(row.get("dataset", "")),
+            str(row.get("family", "")),
+            str(row.get("role", "")),
+            float(row["radius"]),
+            str(row.get("direction_family", "")),
+        ),
+    )
+    if not rows:
+        return ["No candidate-window prediction rows found."]
+
+    lines = [
+        "| dataset | family | role | radius | direction | n | producer_sign_miss | near_finite_sign_miss | candidate_finite_sign_miss | median_candidate_error |",
+        "| --- | --- | --- | ---: | --- | ---: | ---: | ---: | ---: | ---: |",
+    ]
+    for row in rows:
+        lines.append(
+            " | ".join(
+                [
+                    f"| {row.get('dataset', '')}",
+                    str(row.get("family", "")),
+                    str(row.get("role", "")),
+                    fmt_value(row.get("radius")),
+                    str(row.get("direction_family", "")),
+                    fmt_value(row.get("n")),
+                    fmt_fraction(row.get("producer_sign_mismatch_fraction")),
+                    fmt_fraction(row.get("near_active_finite_sign_mismatch_fraction")),
+                    fmt_fraction(row.get("candidate_window_finite_sign_mismatch_fraction")),
+                    fmt_value(row.get("median_abs_candidate_window_finite_error")) + " |",
+                ]
+            )
+        )
+    return lines
+
+
+def candidate_gradient_summary_lines(summary: list[dict[str, Any]]) -> list[str]:
+    rows = sorted(
+        [row for row in summary if finite(row.get("radius"))],
+        key=lambda row: (
+            str(row.get("dataset", "")),
+            str(row.get("family", "")),
+            str(row.get("role", "")),
+            float(row["radius"]),
+            str(row.get("direction_family", "")),
+        ),
+    )
+    if not rows:
+        return ["No candidate-gradient prediction rows found."]
+
+    lines = [
+        "| dataset | family | role | radius | direction | n | producer_sign_miss | candidate_gradient_sign_miss | p90_abs_err |",
+        "| --- | --- | --- | ---: | --- | ---: | ---: | ---: | ---: |",
+    ]
+    for row in rows:
+        lines.append(
+            " | ".join(
+                [
+                    f"| {row.get('dataset', '')}",
+                    str(row.get("family", "")),
+                    str(row.get("role", "")),
+                    fmt_value(row.get("radius")),
+                    str(row.get("direction_family", "")),
+                    fmt_value(row.get("n")),
+                    fmt_fraction(row.get("producer_sign_mismatch_fraction")),
+                    fmt_fraction(row.get("candidate_gradient_sign_mismatch_fraction")),
+                    fmt_value(row.get("p90_abs_candidate_gradient_error")) + " |",
+                ]
+            )
+        )
+    return lines
+
+
 def analysis_summary_lines(
     pairs: list[dict[str, Any]],
     branch_variation: list[dict[str, Any]],
     gradient_projections: list[dict[str, Any]],
     summary: list[dict[str, Any]],
+    source_radius_summary: list[dict[str, Any]],
+    candidate_window_summary: list[dict[str, Any]],
+    candidate_gradient_summary: list[dict[str, Any]],
     *,
     markdown: bool = False,
 ) -> list[str]:
@@ -282,6 +398,11 @@ def analysis_summary_lines(
     data_heading = "## Data" if markdown else "Data:"
     observations_heading = "## Observations" if markdown else "Observations:"
     radius_heading = "## Radius Summary" if markdown else "Radius summary:"
+    source_heading = "## Source/Radius Denominators" if markdown else "Source/radius denominators:"
+    candidate_heading = "## Candidate-Window Finite Prediction" if markdown else "Candidate-window finite prediction:"
+    candidate_gradient_heading = (
+        "## Candidate-Gradient Prediction" if markdown else "Candidate-gradient prediction:"
+    )
     delta_label = "`Delta sys`" if markdown else "Delta sys"
     lines = [
         "Local behavior prediction",
@@ -300,6 +421,15 @@ def analysis_summary_lines(
         "",
         radius_heading,
         *radius_summary_lines(summary),
+        "",
+        source_heading,
+        *source_radius_summary_lines(source_radius_summary),
+        "",
+        candidate_heading,
+        *candidate_window_summary_lines(candidate_window_summary),
+        "",
+        candidate_gradient_heading,
+        *candidate_gradient_summary_lines(candidate_gradient_summary),
     ]
     return lines
 
@@ -310,6 +440,9 @@ def write_report(
     branch_variation: list[dict[str, Any]],
     gradient_projections: list[dict[str, Any]],
     summary: list[dict[str, Any]],
+    source_radius_summary: list[dict[str, Any]],
+    candidate_window_summary: list[dict[str, Any]],
+    candidate_gradient_summary: list[dict[str, Any]],
     figures: list[Path],
 ) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -321,6 +454,9 @@ def write_report(
             branch_variation,
             gradient_projections,
             summary,
+            source_radius_summary,
+            candidate_window_summary,
+            candidate_gradient_summary,
             markdown=True,
         )[1:],
         "",
@@ -358,6 +494,9 @@ def main() -> None:
     branch_variation = read_jsonl(prepared_dir / "local-behavior-branch-variation.jsonl")
     gradient_projections = read_jsonl(prepared_dir / "local-behavior-gradient-projections.jsonl")
     summary = read_csv(prepared_dir / "local-behavior-radius-summary.csv")
+    source_radius_summary = read_csv(prepared_dir / "local-behavior-source-radius-summary.csv")
+    candidate_window_summary = read_csv(prepared_dir / "local-behavior-candidate-window-summary.csv")
+    candidate_gradient_summary = read_csv(prepared_dir / "local-behavior-candidate-gradient-summary.csv")
 
     figures = [
         plot_branch_stability(summary, out_dir),
@@ -366,8 +505,30 @@ def main() -> None:
         plot_target_status(pairs, out_dir),
     ]
     report = out_dir / "report.md"
-    write_report(report, pairs, branch_variation, gradient_projections, summary, figures)
-    print("\n".join(analysis_summary_lines(pairs, branch_variation, gradient_projections, summary)))
+    write_report(
+        report,
+        pairs,
+        branch_variation,
+        gradient_projections,
+        summary,
+        source_radius_summary,
+        candidate_window_summary,
+        candidate_gradient_summary,
+        figures,
+    )
+    print(
+        "\n".join(
+            analysis_summary_lines(
+                pairs,
+                branch_variation,
+                gradient_projections,
+                summary,
+                source_radius_summary,
+                candidate_window_summary,
+                candidate_gradient_summary,
+            )
+        )
+    )
     print("")
     print("Wrote:")
     for path in figures + [report]:

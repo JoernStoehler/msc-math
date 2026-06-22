@@ -45,9 +45,14 @@ const DEFAULT_SEED: u64 = 0x5159_2026_0616;
 #[derive(Debug)]
 struct Args {
     polytope_table: PathBuf,
+    provenance_table: PathBuf,
     output_dir: PathBuf,
     max_top_basepoints: usize,
     max_hash_basepoints: usize,
+    source_datasets: Vec<String>,
+    starts_per_source: usize,
+    basepoint_start: usize,
+    basepoint_limit: Option<usize>,
     radii: Vec<f64>,
     branch_threshold_relative: f64,
     action_window_relative: f64,
@@ -64,10 +69,27 @@ struct PolytopeRow {
     dual_vertices_f64: Vec<[f64; 4]>,
 }
 
+#[derive(Clone, Debug, Deserialize)]
+struct ProvenanceRow {
+    provenance_id: String,
+    poly_id: String,
+    dataset: String,
+    family: Option<String>,
+    search_space: Option<String>,
+    role: Option<String>,
+    source_name: Option<String>,
+}
+
 #[derive(Clone, Debug)]
 struct SelectedBasepoint {
     row: PolytopeRow,
     selection_buckets: BTreeSet<String>,
+    provenance_id: Option<String>,
+    dataset: Option<String>,
+    family: Option<String>,
+    search_space: Option<String>,
+    role: Option<String>,
+    source_name: Option<String>,
 }
 
 #[derive(Debug)]
@@ -82,6 +104,8 @@ struct LocalState {
     near_active_orbits: Vec<OrbitKktData>,
     capacity_gradients: Vec<Vec<Vector4<f64>>>,
     sys_gradients: Vec<Vec<Vector4<f64>>>,
+    candidate_capacity_gradients: Vec<Vec<Vector4<f64>>>,
+    candidate_sys_gradients: Vec<Vec<Vector4<f64>>>,
     time_volume_ms: f64,
     time_capacity_ms: f64,
 }
@@ -96,6 +120,12 @@ struct DirectionSpec {
 #[derive(Debug, Serialize)]
 struct BasepointStateRow {
     basepoint_id: String,
+    provenance_id: Option<String>,
+    dataset: Option<String>,
+    family: Option<String>,
+    search_space: Option<String>,
+    role: Option<String>,
+    source_name: Option<String>,
     input_poly_id: String,
     base_poly_id: Option<String>,
     selection_buckets: Vec<String>,
@@ -131,6 +161,12 @@ struct BasepointStateRow {
 struct LocalBehaviorSampleRow {
     sample_id: String,
     basepoint_id: String,
+    provenance_id: Option<String>,
+    dataset: Option<String>,
+    family: Option<String>,
+    search_space: Option<String>,
+    role: Option<String>,
+    source_name: Option<String>,
     input_poly_id: String,
     base_poly_id: String,
     target_poly_id: Option<String>,
@@ -161,6 +197,32 @@ struct SampleOutcome {
 #[derive(Debug, Serialize)]
 struct BranchGradientRow {
     basepoint_id: String,
+    provenance_id: Option<String>,
+    dataset: Option<String>,
+    family: Option<String>,
+    search_space: Option<String>,
+    role: Option<String>,
+    source_name: Option<String>,
+    input_poly_id: String,
+    base_poly_id: String,
+    orbit_index: usize,
+    sigma: Vec<usize>,
+    action: f64,
+    relative_action_gap_from_min: f64,
+    capacity_gradient: Vec<[f64; 4]>,
+    sys_sigma_gradient: Vec<[f64; 4]>,
+    gradient_norm: f64,
+}
+
+#[derive(Debug, Serialize)]
+struct CandidateBranchGradientRow {
+    basepoint_id: String,
+    provenance_id: Option<String>,
+    dataset: Option<String>,
+    family: Option<String>,
+    search_space: Option<String>,
+    role: Option<String>,
+    source_name: Option<String>,
     input_poly_id: String,
     base_poly_id: String,
     orbit_index: usize,
@@ -175,10 +237,16 @@ struct BranchGradientRow {
 #[derive(Debug, Serialize)]
 struct ProduceStatsRow {
     polytope_table: String,
+    provenance_table: String,
     output_dir: String,
     max_top_basepoints: usize,
     max_hash_basepoints: usize,
+    source_datasets: Vec<String>,
+    starts_per_source: usize,
     selected_basepoints: usize,
+    total_selected_basepoints: usize,
+    basepoint_start: usize,
+    basepoint_limit: Option<usize>,
     radii: Vec<f64>,
     branch_threshold_relative: f64,
     action_window_relative: f64,
@@ -187,6 +255,7 @@ struct ProduceStatsRow {
     basepoint_rows: usize,
     sample_rows: usize,
     branch_gradient_rows: usize,
+    candidate_branch_gradient_rows: usize,
     computed_payload_rows: usize,
     failures: usize,
     sample_status_counts: BTreeMap<String, usize>,
@@ -205,15 +274,30 @@ fn main() {
 
     let computed_payload_path = args.output_dir.join("computed-polytopes.jsonl");
     let input_rows = read_jsonl::<PolytopeRow>(&args.polytope_table);
+    let provenance_rows = read_jsonl::<ProvenanceRow>(&args.provenance_table);
     let selected = select_basepoints(
         input_rows,
+        provenance_rows,
         args.max_top_basepoints,
         args.max_hash_basepoints,
+        &args.source_datasets,
+        args.starts_per_source,
+        args.seed,
     );
+    let total_selected_basepoints = selected.len();
+    let selected: Vec<(usize, SelectedBasepoint)> = selected
+        .into_iter()
+        .enumerate()
+        .skip(args.basepoint_start)
+        .take(args.basepoint_limit.unwrap_or(usize::MAX))
+        .collect();
 
     println!(
-        "local-behavior produce: basepoints={} radii={:?} random_directions={} output_dir={}",
+        "local-behavior produce: basepoints={} total_selected_basepoints={} basepoint_start={} basepoint_limit={:?} radii={:?} random_directions={} output_dir={}",
         selected.len(),
+        total_selected_basepoints,
+        args.basepoint_start,
+        args.basepoint_limit,
         args.radii,
         args.random_directions,
         args.output_dir.display()
@@ -224,10 +308,19 @@ fn main() {
     let mut basepoint_rows = Vec::new();
     let mut sample_rows = Vec::new();
     let mut branch_gradient_rows = Vec::new();
+    let mut candidate_branch_gradient_rows = Vec::new();
     let mut payload_rows = BTreeMap::new();
 
-    for (basepoint_index, basepoint) in selected.iter().enumerate() {
+    for (processed_index, (basepoint_index, basepoint)) in selected.iter().enumerate() {
         let basepoint_id = format!("base_{basepoint_index:04}");
+        println!(
+            "local-behavior basepoint {}/{} global_index={} input_poly_id={}",
+            processed_index + 1,
+            selected.len(),
+            basepoint_index,
+            basepoint.row.poly_id
+        );
+        flush_stdout();
         let base_state = compute_local_state_from_row(
             &basepoint.row,
             args.action_window_relative,
@@ -250,6 +343,11 @@ fn main() {
                     &args,
                 ));
                 branch_gradient_rows.extend(basepoint_branch_gradient_rows(
+                    &basepoint_id,
+                    basepoint,
+                    &base_state,
+                ));
+                candidate_branch_gradient_rows.extend(basepoint_candidate_branch_gradient_rows(
                     &basepoint_id,
                     basepoint,
                     &base_state,
@@ -296,6 +394,11 @@ fn main() {
             .join("local-behavior-branch-gradients.jsonl"),
         &branch_gradient_rows,
     );
+    write_jsonl(
+        args.output_dir
+            .join("local-behavior-candidate-branch-gradients.jsonl"),
+        &candidate_branch_gradient_rows,
+    );
     write_jsonl(computed_payload_path, &payload_rows);
 
     let failure_count = *failures.lock().expect("failure mutex poisoned")
@@ -305,10 +408,16 @@ fn main() {
             .count();
     let stats = ProduceStatsRow {
         polytope_table: args.polytope_table.display().to_string(),
+        provenance_table: args.provenance_table.display().to_string(),
         output_dir: args.output_dir.display().to_string(),
         max_top_basepoints: args.max_top_basepoints,
         max_hash_basepoints: args.max_hash_basepoints,
+        source_datasets: args.source_datasets.clone(),
+        starts_per_source: args.starts_per_source,
+        total_selected_basepoints,
         selected_basepoints: selected.len(),
+        basepoint_start: args.basepoint_start,
+        basepoint_limit: args.basepoint_limit,
         radii: args.radii.clone(),
         branch_threshold_relative: args.branch_threshold_relative,
         action_window_relative: args.action_window_relative,
@@ -317,6 +426,7 @@ fn main() {
         basepoint_rows: basepoint_rows.len(),
         sample_rows: sample_rows.len(),
         branch_gradient_rows: branch_gradient_rows.len(),
+        candidate_branch_gradient_rows: candidate_branch_gradient_rows.len(),
         computed_payload_rows: payload_rows.len(),
         failures: failure_count,
         sample_status_counts: count_by(&sample_rows, |row| row.status.as_str()),
@@ -352,10 +462,11 @@ fn main() {
     };
     write_json(args.output_dir.join("produce-stats.json"), &stats);
     println!(
-        "wrote basepoints={} samples={} branch_gradients={} computed_payloads={} failures={}",
+        "wrote basepoints={} samples={} branch_gradients={} candidate_branch_gradients={} computed_payloads={} failures={}",
         stats.basepoint_rows,
         stats.sample_rows,
         stats.branch_gradient_rows,
+        stats.candidate_branch_gradient_rows,
         stats.computed_payload_rows,
         stats.failures
     );
@@ -364,9 +475,15 @@ fn main() {
 fn parse_args() -> Args {
     let mut polytope_table =
         PathBuf::from("experiments/sys-datascience/prepare/polytope-table.jsonl");
+    let mut provenance_table =
+        PathBuf::from("experiments/sys-datascience/prepare/polytope-provenance-table.jsonl");
     let mut output_dir = None;
     let mut max_top_basepoints = DEFAULT_MAX_TOP_BASEPOINTS;
     let mut max_hash_basepoints = DEFAULT_MAX_HASH_BASEPOINTS;
+    let mut source_datasets = Vec::new();
+    let mut starts_per_source = 0usize;
+    let mut basepoint_start = 0usize;
+    let mut basepoint_limit = None;
     let mut radii = DEFAULT_RADII.to_vec();
     let mut branch_threshold_relative = DEFAULT_BRANCH_THRESHOLD_RELATIVE;
     let mut action_window_relative = DEFAULT_ACTION_WINDOW_RELATIVE;
@@ -387,6 +504,10 @@ fn parse_args() -> Args {
                 polytope_table = PathBuf::from(value());
                 i += 2;
             }
+            "--provenance-table" => {
+                provenance_table = PathBuf::from(value());
+                i += 2;
+            }
             "--out-dir" => {
                 output_dir = Some(PathBuf::from(value()));
                 i += 2;
@@ -397,6 +518,22 @@ fn parse_args() -> Args {
             }
             "--max-hash-basepoints" => {
                 max_hash_basepoints = parse_usize(value(), "--max-hash-basepoints");
+                i += 2;
+            }
+            "--source-datasets" => {
+                source_datasets = parse_string_list(value());
+                i += 2;
+            }
+            "--starts-per-source" => {
+                starts_per_source = parse_usize(value(), "--starts-per-source");
+                i += 2;
+            }
+            "--basepoint-start" => {
+                basepoint_start = parse_usize(value(), "--basepoint-start");
+                i += 2;
+            }
+            "--basepoint-limit" => {
+                basepoint_limit = Some(parse_usize(value(), "--basepoint-limit"));
                 i += 2;
             }
             "--radii" => {
@@ -434,9 +571,14 @@ fn parse_args() -> Args {
 
     Args {
         polytope_table,
+        provenance_table,
         output_dir: output_dir.expect("--out-dir is required"),
         max_top_basepoints,
         max_hash_basepoints,
+        source_datasets,
+        starts_per_source,
+        basepoint_start,
+        basepoint_limit,
         radii,
         branch_threshold_relative,
         action_window_relative,
@@ -455,23 +597,29 @@ Usage:
 
 Inputs:
   --polytope-table <path>             default: experiments/sys-datascience/prepare/polytope-table.jsonl
+  --provenance-table <path>           default: experiments/sys-datascience/prepare/polytope-provenance-table.jsonl
 
 Selection:
   --max-top-basepoints <n>            default: {DEFAULT_MAX_TOP_BASEPOINTS}
   --max-hash-basepoints <n>           default: {DEFAULT_MAX_HASH_BASEPOINTS}
+  --source-datasets <comma-list>      optional provenance dataset strata
+  --starts-per-source <n>             deterministic hash starts per source dataset
+  --basepoint-start <n>               global selected-basepoint offset for sharded runs; default: 0
+  --basepoint-limit <n>               optional selected-basepoint count for sharded runs
 
 Probe parameters:
   --radii <comma-list>                default: 1e-6,1e-5,1e-4,1e-3,1e-2
   --branch-threshold-relative <x>     default: {DEFAULT_BRANCH_THRESHOLD_RELATIVE}
   --action-window-relative <x>        default: {DEFAULT_ACTION_WINDOW_RELATIVE}
   --random-directions <n>             default: {DEFAULT_RANDOM_DIRECTIONS}
-  --seed <u64>                        default: {DEFAULT_SEED}
+  --seed <u64>                        source selection and random direction seed; default: {DEFAULT_SEED}
 
 Outputs:
   computed-polytopes.jsonl
   local-behavior-basepoints.jsonl
   local-behavior-samples.jsonl
   local-behavior-branch-gradients.jsonl
+  local-behavior-candidate-branch-gradients.jsonl
   produce-stats.json
 "
     );
@@ -505,6 +653,14 @@ fn parse_f64_list(raw: &str, flag: &str) -> Vec<f64> {
     values
 }
 
+fn parse_string_list(raw: &str) -> Vec<String> {
+    raw.split(',')
+        .map(str::trim)
+        .filter(|item| !item.is_empty())
+        .map(str::to_string)
+        .collect()
+}
+
 fn read_jsonl<T: for<'de> Deserialize<'de>>(path: &Path) -> Vec<T> {
     let file = File::open(path).unwrap_or_else(|err| panic!("open {}: {err}", path.display()));
     let reader = BufReader::new(file);
@@ -528,10 +684,18 @@ fn read_jsonl<T: for<'de> Deserialize<'de>>(path: &Path) -> Vec<T> {
 
 fn select_basepoints(
     mut rows: Vec<PolytopeRow>,
+    provenance_rows: Vec<ProvenanceRow>,
     max_top_basepoints: usize,
     max_hash_basepoints: usize,
+    source_datasets: &[String],
+    starts_per_source: usize,
+    seed: u64,
 ) -> Vec<SelectedBasepoint> {
     let mut selected: BTreeMap<String, SelectedBasepoint> = BTreeMap::new();
+    let rows_by_poly_id: BTreeMap<String, PolytopeRow> = rows
+        .iter()
+        .map(|row| (row.poly_id.clone(), row.clone()))
+        .collect();
 
     rows.sort_by(|a, b| {
         b.sys
@@ -539,24 +703,44 @@ fn select_basepoints(
             .then_with(|| a.poly_id.cmp(&b.poly_id))
     });
     for row in rows.iter().take(max_top_basepoints) {
-        add_selection(&mut selected, row.clone(), "top_sys");
+        add_legacy_selection(&mut selected, row.clone(), "top_sys");
     }
 
     rows.sort_by(|a, b| stable_hash_key(&a.poly_id).cmp(&stable_hash_key(&b.poly_id)));
     for row in rows.iter().take(max_hash_basepoints) {
-        add_selection(&mut selected, row.clone(), "hash_control");
+        add_legacy_selection(&mut selected, row.clone(), "hash_control");
+    }
+
+    if starts_per_source > 0 {
+        for dataset in source_datasets {
+            let mut provenance_for_dataset: Vec<&ProvenanceRow> = provenance_rows
+                .iter()
+                .filter(|row| row.dataset == *dataset)
+                .collect();
+            provenance_for_dataset.sort_by(|left, right| {
+                seeded_stable_hash_key(seed, &left.provenance_id)
+                    .cmp(&seeded_stable_hash_key(seed, &right.provenance_id))
+                    .then_with(|| left.provenance_id.cmp(&right.provenance_id))
+            });
+            for provenance in provenance_for_dataset.into_iter().take(starts_per_source) {
+                let Some(row) = rows_by_poly_id.get(&provenance.poly_id) else {
+                    continue;
+                };
+                add_provenance_selection(&mut selected, row.clone(), provenance);
+            }
+        }
     }
 
     selected.into_values().collect()
 }
 
-fn add_selection(
+fn add_legacy_selection(
     selected: &mut BTreeMap<String, SelectedBasepoint>,
     row: PolytopeRow,
     bucket: &str,
 ) {
     selected
-        .entry(row.poly_id.clone())
+        .entry(format!("poly:{}", row.poly_id))
         .and_modify(|entry| {
             entry.selection_buckets.insert(bucket.to_string());
         })
@@ -566,12 +750,46 @@ fn add_selection(
             SelectedBasepoint {
                 row,
                 selection_buckets: buckets,
+                provenance_id: None,
+                dataset: None,
+                family: None,
+                search_space: None,
+                role: None,
+                source_name: None,
+            }
+        });
+}
+
+fn add_provenance_selection(
+    selected: &mut BTreeMap<String, SelectedBasepoint>,
+    row: PolytopeRow,
+    provenance: &ProvenanceRow,
+) {
+    selected
+        .entry(format!("provenance:{}", provenance.provenance_id))
+        .or_insert_with(|| {
+            let mut buckets = BTreeSet::new();
+            buckets.insert("source_stratified".to_string());
+            buckets.insert(format!("dataset:{}", provenance.dataset));
+            SelectedBasepoint {
+                row,
+                selection_buckets: buckets,
+                provenance_id: Some(provenance.provenance_id.clone()),
+                dataset: Some(provenance.dataset.clone()),
+                family: provenance.family.clone(),
+                search_space: provenance.search_space.clone(),
+                role: provenance.role.clone(),
+                source_name: provenance.source_name.clone(),
             }
         });
 }
 
 fn stable_hash_key(raw: &str) -> [u8; 32] {
     *blake3::hash(raw.as_bytes()).as_bytes()
+}
+
+fn seeded_stable_hash_key(seed: u64, raw: &str) -> [u8; 32] {
+    stable_hash_key(&format!("{seed}:{raw}"))
 }
 
 fn compute_local_state_from_row(
@@ -623,6 +841,16 @@ fn compute_local_state_from_polytope(
             systolic_ratio_gradient_a(capacity.min_action, volume, capacity_gradient, &d_volume_da)
         })
         .collect();
+    let candidate_capacity_gradients =
+        capacity_subgradients_a(&polytope.dual_vertices_f64, &capacity.orbits)
+            .map_err(|err| format!("candidate_capacity_derivative_failed:{err:?}"))?;
+    let candidate_sys_gradients: Vec<Vec<Vector4<f64>>> = candidate_capacity_gradients
+        .iter()
+        .zip(capacity.orbits.iter())
+        .map(|(capacity_gradient, orbit)| {
+            systolic_ratio_gradient_a(orbit.action, volume, capacity_gradient, &d_volume_da)
+        })
+        .collect();
     Ok(LocalState {
         polytope,
         capacity,
@@ -634,6 +862,8 @@ fn compute_local_state_from_polytope(
         near_active_orbits,
         capacity_gradients: d_capacity_da,
         sys_gradients,
+        candidate_capacity_gradients,
+        candidate_sys_gradients,
         time_volume_ms,
         time_capacity_ms,
     })
@@ -912,6 +1142,12 @@ fn sample_row(
         row: LocalBehaviorSampleRow {
             sample_id: sample_id.clone(),
             basepoint_id: basepoint_id.to_string(),
+            provenance_id: basepoint.provenance_id.clone(),
+            dataset: basepoint.dataset.clone(),
+            family: basepoint.family.clone(),
+            search_space: basepoint.search_space.clone(),
+            role: basepoint.role.clone(),
+            source_name: basepoint.source_name.clone(),
             input_poly_id: basepoint.row.poly_id.clone(),
             base_poly_id: poly_id(&base.polytope),
             target_poly_id: Some(target_poly_id),
@@ -960,6 +1196,12 @@ fn failed_sample_row(
     LocalBehaviorSampleRow {
         sample_id,
         basepoint_id: basepoint_id.to_string(),
+        provenance_id: basepoint.provenance_id.clone(),
+        dataset: basepoint.dataset.clone(),
+        family: basepoint.family.clone(),
+        search_space: basepoint.search_space.clone(),
+        role: basepoint.role.clone(),
+        source_name: basepoint.source_name.clone(),
         input_poly_id: basepoint.row.poly_id.clone(),
         base_poly_id: poly_id(&base.polytope),
         target_poly_id: None,
@@ -994,6 +1236,12 @@ fn basepoint_state_row(
     let strict_min_branch_sigmas = strict_min_branch_sigmas(base);
     BasepointStateRow {
         basepoint_id: basepoint_id.to_string(),
+        provenance_id: basepoint.provenance_id.clone(),
+        dataset: basepoint.dataset.clone(),
+        family: basepoint.family.clone(),
+        search_space: basepoint.search_space.clone(),
+        role: basepoint.role.clone(),
+        source_name: basepoint.source_name.clone(),
         input_poly_id: basepoint.row.poly_id.clone(),
         base_poly_id: Some(poly_id(&base.polytope)),
         selection_buckets: sorted_buckets(&basepoint.selection_buckets),
@@ -1045,6 +1293,12 @@ fn failed_basepoint_state_row(
 ) -> BasepointStateRow {
     BasepointStateRow {
         basepoint_id: basepoint_id.to_string(),
+        provenance_id: basepoint.provenance_id.clone(),
+        dataset: basepoint.dataset.clone(),
+        family: basepoint.family.clone(),
+        search_space: basepoint.search_space.clone(),
+        role: basepoint.role.clone(),
+        source_name: basepoint.source_name.clone(),
         input_poly_id: basepoint.row.poly_id.clone(),
         base_poly_id: None,
         selection_buckets: sorted_buckets(&basepoint.selection_buckets),
@@ -1091,6 +1345,12 @@ fn basepoint_branch_gradient_rows(
         .map(
             |(orbit_index, ((orbit, capacity_gradient), sys_sigma_gradient))| BranchGradientRow {
                 basepoint_id: basepoint_id.to_string(),
+                provenance_id: basepoint.provenance_id.clone(),
+                dataset: basepoint.dataset.clone(),
+                family: basepoint.family.clone(),
+                search_space: basepoint.search_space.clone(),
+                role: basepoint.role.clone(),
+                source_name: basepoint.source_name.clone(),
                 input_poly_id: basepoint.row.poly_id.clone(),
                 base_poly_id: base_poly_id.clone(),
                 orbit_index,
@@ -1100,6 +1360,43 @@ fn basepoint_branch_gradient_rows(
                 capacity_gradient: vector_rows(capacity_gradient),
                 sys_sigma_gradient: vector_rows(sys_sigma_gradient),
                 gradient_norm: gradient_norm(sys_sigma_gradient),
+            },
+        )
+        .collect()
+}
+
+fn basepoint_candidate_branch_gradient_rows(
+    basepoint_id: &str,
+    basepoint: &SelectedBasepoint,
+    base: &LocalState,
+) -> Vec<CandidateBranchGradientRow> {
+    let base_poly_id = poly_id(&base.polytope);
+    base.capacity
+        .orbits
+        .iter()
+        .zip(base.candidate_capacity_gradients.iter())
+        .zip(base.candidate_sys_gradients.iter())
+        .enumerate()
+        .map(
+            |(orbit_index, ((orbit, capacity_gradient), sys_sigma_gradient))| {
+                CandidateBranchGradientRow {
+                    basepoint_id: basepoint_id.to_string(),
+                    provenance_id: basepoint.provenance_id.clone(),
+                    dataset: basepoint.dataset.clone(),
+                    family: basepoint.family.clone(),
+                    search_space: basepoint.search_space.clone(),
+                    role: basepoint.role.clone(),
+                    source_name: basepoint.source_name.clone(),
+                    input_poly_id: basepoint.row.poly_id.clone(),
+                    base_poly_id: base_poly_id.clone(),
+                    orbit_index,
+                    sigma: canonical_cycle(&orbit.sigma),
+                    action: orbit.action,
+                    relative_action_gap_from_min: orbit.action / base.capacity.min_action - 1.0,
+                    capacity_gradient: vector_rows(capacity_gradient),
+                    sys_sigma_gradient: vector_rows(sys_sigma_gradient),
+                    gradient_norm: gradient_norm(sys_sigma_gradient),
+                }
             },
         )
         .collect()

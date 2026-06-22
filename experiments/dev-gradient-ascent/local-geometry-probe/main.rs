@@ -40,6 +40,9 @@ struct Cli {
     out_dir: PathBuf,
     selection_threshold_relative: f64,
     action_window_relative: f64,
+    direction_model: DirectionModel,
+    include_candidate_window_directions: bool,
+    write_step_ranking_audit: bool,
     steps: Vec<f64>,
     endpoint_steps: Option<Vec<f64>>,
     max_fixtures_per_label: usize,
@@ -48,6 +51,30 @@ struct Cli {
     degeneracy_labels: Vec<String>,
     min_observed_delta: f64,
     min_observed_relative_delta: f64,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum DirectionModel {
+    NearActive,
+    CandidateWindow,
+}
+
+impl DirectionModel {
+    fn as_str(self) -> &'static str {
+        match self {
+            DirectionModel::NearActive => "near_active",
+            DirectionModel::CandidateWindow => "candidate_window",
+        }
+    }
+
+    fn method_variant(self) -> &'static str {
+        match self {
+            DirectionModel::NearActive => "iterative_observed_multi_direction_probe",
+            DirectionModel::CandidateWindow => {
+                "iterative_candidate_window_scored_multi_direction_probe"
+            }
+        }
+    }
 }
 
 #[derive(Clone, Debug, Deserialize)]
@@ -119,6 +146,7 @@ struct RunTraceRow {
     method_variant: String,
     branch_threshold_relative: f64,
     action_window_relative: f64,
+    direction_model: String,
     base_near_active_count: usize,
     target_near_active_count: Option<usize>,
     chosen_direction_label: Option<String>,
@@ -139,6 +167,39 @@ struct RunTraceRow {
     target_orbit_iterations: Option<u64>,
     accepted: bool,
     stop_reason: String,
+}
+
+#[derive(Serialize)]
+struct StepRankingAuditRow {
+    poly_id: String,
+    degeneracy_label: String,
+    iteration: usize,
+    direction_label: String,
+    step: f64,
+    status: String,
+    base_sys: f64,
+    effective_min_observed_delta: f64,
+    near_active_predicted_delta_sys: Option<f64>,
+    candidate_window_predicted_delta_sys: Option<f64>,
+    candidate_window_witness_orbit_index: Option<usize>,
+    candidate_window_witness_sigma: Option<Vec<usize>>,
+    candidate_window_witness_action: Option<f64>,
+    candidate_window_witness_relative_action_gap: Option<f64>,
+    candidate_window_witness_base_gap: Option<f64>,
+    candidate_window_witness_derivative: Option<f64>,
+    observed_delta_sys: Option<f64>,
+    target_sys: Option<f64>,
+    above_threshold_observed: Option<bool>,
+    positive_observed: Option<bool>,
+    near_active_prediction_positive: Option<bool>,
+    candidate_window_prediction_positive: Option<bool>,
+    observed_rank_desc: Option<usize>,
+    near_active_rank_desc: Option<usize>,
+    candidate_window_rank_desc: Option<usize>,
+    base_near_active_count: usize,
+    base_candidate_window_count: usize,
+    base_orbit_iterations: u64,
+    target_orbit_iterations: Option<u64>,
 }
 
 #[derive(Serialize)]
@@ -173,6 +234,8 @@ struct ComputeBudgetReport {
     diagnostic_dir: String,
     polytope_table: String,
     selection_threshold_relative: f64,
+    direction_model: String,
+    include_candidate_window_directions: bool,
     max_fixtures_per_label: usize,
     skip_fixtures_per_label: usize,
     degeneracy_labels: Vec<String>,
@@ -197,6 +260,8 @@ struct ComputeBudgetReport {
 #[derive(Serialize)]
 struct Summary {
     method: String,
+    direction_model: String,
+    include_candidate_window_directions: bool,
     selection_threshold_relative: f64,
     max_fixtures_per_label: usize,
     skip_fixtures_per_label: usize,
@@ -227,12 +292,28 @@ struct BaseState {
     sys: f64,
     near_active_orbits: Vec<OrbitKktData>,
     sys_gradients: Vec<Vec<Vector4<f64>>>,
+    candidate_orbits: Vec<OrbitKktData>,
+    candidate_sys_gradients: Vec<Vec<Vector4<f64>>>,
 }
 
 #[derive(Clone, Copy, Debug)]
 struct StopThreshold {
     absolute_delta: f64,
     relative_delta: f64,
+}
+
+#[derive(Clone, Debug)]
+struct ProbeDirection {
+    label: String,
+    vector: Vec<Vector4<f64>>,
+    only_step: Option<f64>,
+}
+
+impl ProbeDirection {
+    fn allows_step(&self, step: f64) -> bool {
+        self.only_step
+            .is_none_or(|allowed| steps_match(allowed, step))
+    }
 }
 
 impl StopThreshold {
@@ -276,15 +357,20 @@ fn main() {
         ) {
             Ok(base) => {
                 base_orbit_iterations += base.capacity.iterations;
-                let directions = probe_directions(&base);
-                for (direction_label, direction) in directions {
+                let directions =
+                    probe_directions(&base, &cli.steps, cli.include_candidate_window_directions);
+                for direction in directions {
                     for &step in &cli.steps {
+                        if !direction.allows_step(step) {
+                            continue;
+                        }
                         let row = local_probe_row(
                             fixture,
                             &base,
-                            &direction_label,
-                            &direction,
+                            &direction.label,
+                            &direction.vector,
                             step,
+                            cli.direction_model,
                             cli.action_window_relative,
                             cli.selection_threshold_relative,
                         );
@@ -327,6 +413,9 @@ fn main() {
         &probe_rows,
         cli.selection_threshold_relative,
         cli.action_window_relative,
+        cli.direction_model,
+        cli.include_candidate_window_directions,
+        cli.write_step_ranking_audit,
         &cli.steps,
         cli.endpoint_steps.as_deref().unwrap_or(&cli.steps),
         cli.trace_iterations,
@@ -338,6 +427,7 @@ fn main() {
     let trace_rows = trace_artifacts.trace_rows;
     let endpoint_rows = trace_artifacts.endpoint_rows;
     let endpoint_direction_scan_rows = trace_artifacts.endpoint_direction_scan_rows;
+    let step_ranking_audit_rows = trace_artifacts.step_ranking_audit_rows;
     write_jsonl(cli.out_dir.join("run-trace.jsonl"), &trace_rows)
         .expect("failed to write run-trace.jsonl");
     write_jsonl(
@@ -350,6 +440,13 @@ fn main() {
         &endpoint_direction_scan_rows,
     )
     .expect("failed to write endpoint-direction-scan.jsonl");
+    if cli.write_step_ranking_audit {
+        write_jsonl(
+            cli.out_dir.join("step-ranking-audit.jsonl"),
+            &step_ranking_audit_rows,
+        )
+        .expect("failed to write step-ranking-audit.jsonl");
+    }
 
     let failed_probe_rows = probe_rows
         .iter()
@@ -388,6 +485,8 @@ fn main() {
         diagnostic_dir: cli.diagnostic_dir.display().to_string(),
         polytope_table: cli.polytope_table.display().to_string(),
         selection_threshold_relative: cli.selection_threshold_relative,
+        direction_model: cli.direction_model.as_str().to_string(),
+        include_candidate_window_directions: cli.include_candidate_window_directions,
         max_fixtures_per_label: cli.max_fixtures_per_label,
         skip_fixtures_per_label: cli.skip_fixtures_per_label,
         degeneracy_labels: cli.degeneracy_labels.clone(),
@@ -413,6 +512,8 @@ fn main() {
 
     let summary = Summary {
         method: "dev-gradient-ascent-local-geometry-probe".to_string(),
+        direction_model: cli.direction_model.as_str().to_string(),
+        include_candidate_window_directions: cli.include_candidate_window_directions,
         selection_threshold_relative: cli.selection_threshold_relative,
         max_fixtures_per_label: cli.max_fixtures_per_label,
         skip_fixtures_per_label: cli.skip_fixtures_per_label,
@@ -508,6 +609,7 @@ struct TraceArtifacts {
     trace_rows: Vec<RunTraceRow>,
     endpoint_rows: Vec<EndpointDiagnosticRow>,
     endpoint_direction_scan_rows: Vec<LocalGeometryProbeRow>,
+    step_ranking_audit_rows: Vec<StepRankingAuditRow>,
 }
 
 fn run_trace_and_endpoint_rows(
@@ -515,6 +617,9 @@ fn run_trace_and_endpoint_rows(
     probe_rows: &[LocalGeometryProbeRow],
     branch_threshold_relative: f64,
     action_window_relative: f64,
+    direction_model: DirectionModel,
+    include_candidate_window_directions: bool,
+    write_step_ranking_audit: bool,
     steps: &[f64],
     endpoint_steps: &[f64],
     trace_iterations: usize,
@@ -523,6 +628,7 @@ fn run_trace_and_endpoint_rows(
     let mut rows = Vec::new();
     let mut endpoint_rows = Vec::new();
     let mut endpoint_direction_scan_rows = Vec::new();
+    let mut step_ranking_audit_rows = Vec::new();
     for fixture in fixtures {
         let mut current = match polytope_from_row(&fixture.polytope) {
             Ok(polytope) => polytope,
@@ -530,6 +636,7 @@ fn run_trace_and_endpoint_rows(
                 rows.push(trace_failure_row(
                     fixture,
                     0,
+                    direction_model,
                     branch_threshold_relative,
                     action_window_relative,
                     stop_threshold,
@@ -568,6 +675,7 @@ fn run_trace_and_endpoint_rows(
                         rows.push(trace_failure_row(
                             fixture,
                             iteration,
+                            direction_model,
                             branch_threshold_relative,
                             action_window_relative,
                             stop_threshold,
@@ -591,6 +699,7 @@ fn run_trace_and_endpoint_rows(
                     rows.push(trace_failure_row(
                         fixture,
                         iteration,
+                        direction_model,
                         branch_threshold_relative,
                         action_window_relative,
                         stop_threshold,
@@ -603,9 +712,23 @@ fn run_trace_and_endpoint_rows(
                     break;
                 }
             };
+            if write_step_ranking_audit {
+                step_ranking_audit_rows.extend(step_ranking_audit_rows_for_base(
+                    fixture,
+                    iteration,
+                    &base,
+                    steps,
+                    include_candidate_window_directions,
+                    action_window_relative,
+                    branch_threshold_relative,
+                    stop_threshold,
+                ));
+            }
             let Some(candidate) = best_line_search_step(
                 fixture,
                 iteration,
+                direction_model,
+                include_candidate_window_directions,
                 &base,
                 steps,
                 action_window_relative,
@@ -615,6 +738,7 @@ fn run_trace_and_endpoint_rows(
                 rows.push(trace_failure_row(
                     fixture,
                     iteration,
+                    direction_model,
                     branch_threshold_relative,
                     action_window_relative,
                     stop_threshold,
@@ -642,6 +766,8 @@ fn run_trace_and_endpoint_rows(
             &current,
             &trace_stop_reason,
             trace_iterations,
+            direction_model,
+            include_candidate_window_directions,
             branch_threshold_relative,
             action_window_relative,
             steps,
@@ -652,6 +778,8 @@ fn run_trace_and_endpoint_rows(
             &current,
             branch_threshold_relative,
             action_window_relative,
+            direction_model,
+            include_candidate_window_directions,
             endpoint_steps,
         ));
     }
@@ -663,6 +791,7 @@ fn run_trace_and_endpoint_rows(
         trace_rows: rows,
         endpoint_rows,
         endpoint_direction_scan_rows,
+        step_ranking_audit_rows,
     }
 }
 
@@ -672,9 +801,199 @@ struct TraceCandidate {
     accepted: bool,
 }
 
+fn step_ranking_audit_rows_for_base(
+    fixture: &Fixture,
+    iteration: usize,
+    base: &BaseState,
+    steps: &[f64],
+    include_candidate_window_directions: bool,
+    action_window_relative: f64,
+    branch_threshold_relative: f64,
+    stop_threshold: StopThreshold,
+) -> Vec<StepRankingAuditRow> {
+    let effective_min_observed_delta = stop_threshold.effective_delta(base.sys);
+    let mut rows = Vec::new();
+    for direction in probe_directions(base, steps, include_candidate_window_directions) {
+        for &step in steps {
+            if !direction.allows_step(step) {
+                continue;
+            }
+            rows.push(step_ranking_audit_row(
+                fixture,
+                iteration,
+                base,
+                &direction,
+                step,
+                action_window_relative,
+                branch_threshold_relative,
+                effective_min_observed_delta,
+            ));
+        }
+    }
+    assign_descending_ranks(&mut rows);
+    rows
+}
+
+fn step_ranking_audit_row(
+    fixture: &Fixture,
+    iteration: usize,
+    base: &BaseState,
+    direction: &ProbeDirection,
+    step: f64,
+    action_window_relative: f64,
+    branch_threshold_relative: f64,
+    effective_min_observed_delta: f64,
+) -> StepRankingAuditRow {
+    let near_active_predicted_delta_sys =
+        branch_model_predicted_delta(base, &direction.vector, step, DirectionModel::NearActive);
+    let candidate_window_prediction =
+        candidate_window_prediction_witness(base, &direction.vector, step);
+    let candidate_window_predicted_delta_sys = candidate_window_prediction
+        .as_ref()
+        .map(|witness| witness.predicted_delta);
+    let target_duals: Vec<Vector4<f64>> = base
+        .polytope
+        .dual_vertices_f64
+        .iter()
+        .zip(&direction.vector)
+        .map(|(dual, delta)| dual + step * delta)
+        .collect();
+
+    let mut status = "ok".to_string();
+    let mut target_sys = None;
+    let mut observed_delta_sys = None;
+    let mut target_orbit_iterations = None;
+
+    match SysLandscapePolytopeCache::from_f64_dual_vertices(target_duals) {
+        Some(target_polytope) => {
+            match capacity_auto_with_gap(
+                &target_polytope,
+                base.capacity.min_action * action_window_relative,
+            ) {
+                Ok(target_capacity) => {
+                    target_orbit_iterations = Some(target_capacity.iterations);
+                    match compute_active_sys_state(&target_polytope) {
+                        Some(target_state) => {
+                            let _target_near_active =
+                                near_active_orbits(&target_capacity, branch_threshold_relative);
+                            target_sys = Some(target_state.sys);
+                            observed_delta_sys = Some(target_state.sys - base.sys);
+                        }
+                        None => {
+                            status = "target_sys_failed".to_string();
+                        }
+                    }
+                }
+                Err(err) => {
+                    status = format!("target_capacity_failed:{err:?}");
+                }
+            }
+        }
+        None => {
+            status = "target_polytope_construction_failed".to_string();
+        }
+    }
+
+    StepRankingAuditRow {
+        poly_id: fixture.polytope.poly_id.clone(),
+        degeneracy_label: fixture.diagnostic.degeneracy_label.clone(),
+        iteration,
+        direction_label: direction.label.clone(),
+        step,
+        status,
+        base_sys: base.sys,
+        effective_min_observed_delta,
+        near_active_predicted_delta_sys,
+        candidate_window_predicted_delta_sys,
+        candidate_window_witness_orbit_index: candidate_window_prediction
+            .as_ref()
+            .map(|witness| witness.orbit_index),
+        candidate_window_witness_sigma: candidate_window_prediction
+            .as_ref()
+            .map(|witness| witness.sigma.clone()),
+        candidate_window_witness_action: candidate_window_prediction
+            .as_ref()
+            .map(|witness| witness.action),
+        candidate_window_witness_relative_action_gap: candidate_window_prediction
+            .as_ref()
+            .map(|witness| witness.relative_action_gap),
+        candidate_window_witness_base_gap: candidate_window_prediction
+            .as_ref()
+            .map(|witness| witness.base_gap),
+        candidate_window_witness_derivative: candidate_window_prediction
+            .as_ref()
+            .map(|witness| witness.derivative),
+        observed_delta_sys,
+        target_sys,
+        above_threshold_observed: observed_delta_sys
+            .map(|delta| delta > effective_min_observed_delta),
+        positive_observed: observed_delta_sys.map(|delta| delta > 0.0),
+        near_active_prediction_positive: near_active_predicted_delta_sys.map(|delta| delta > 0.0),
+        candidate_window_prediction_positive: candidate_window_predicted_delta_sys
+            .map(|delta| delta > 0.0),
+        observed_rank_desc: None,
+        near_active_rank_desc: None,
+        candidate_window_rank_desc: None,
+        base_near_active_count: base.near_active_orbits.len(),
+        base_candidate_window_count: base.candidate_orbits.len(),
+        base_orbit_iterations: base.capacity.iterations,
+        target_orbit_iterations,
+    }
+}
+
+fn assign_descending_ranks(rows: &mut [StepRankingAuditRow]) {
+    let observed = ranked_indices(
+        rows.iter()
+            .enumerate()
+            .filter_map(|(index, row)| row.observed_delta_sys.map(|value| (index, value)))
+            .collect(),
+    );
+    for (rank, index) in observed {
+        rows[index].observed_rank_desc = Some(rank);
+    }
+
+    let near_active = ranked_indices(
+        rows.iter()
+            .enumerate()
+            .filter_map(|(index, row)| {
+                row.near_active_predicted_delta_sys
+                    .map(|value| (index, value))
+            })
+            .collect(),
+    );
+    for (rank, index) in near_active {
+        rows[index].near_active_rank_desc = Some(rank);
+    }
+
+    let candidate_window = ranked_indices(
+        rows.iter()
+            .enumerate()
+            .filter_map(|(index, row)| {
+                row.candidate_window_predicted_delta_sys
+                    .map(|value| (index, value))
+            })
+            .collect(),
+    );
+    for (rank, index) in candidate_window {
+        rows[index].candidate_window_rank_desc = Some(rank);
+    }
+}
+
+fn ranked_indices(mut scored: Vec<(usize, f64)>) -> Vec<(usize, usize)> {
+    scored.retain(|(_, score)| score.is_finite());
+    scored.sort_by(|(_, left), (_, right)| right.total_cmp(left));
+    scored
+        .into_iter()
+        .enumerate()
+        .map(|(position, (index, _))| (position + 1, index))
+        .collect()
+}
+
 fn best_line_search_step(
     fixture: &Fixture,
     iteration: usize,
+    direction_model: DirectionModel,
+    include_candidate_window_directions: bool,
     base: &BaseState,
     steps: &[f64],
     action_window_relative: f64,
@@ -683,15 +1002,24 @@ fn best_line_search_step(
 ) -> Option<TraceCandidate> {
     let effective_min_observed_delta = stop_threshold.effective_delta(base.sys);
     let mut candidates = Vec::new();
-    for (direction_label, direction) in probe_directions(base) {
-        let predicted_derivative =
-            clarke_directional_derivative_a(&base.sys_gradients, &direction).ok()?;
-        if !predicted_derivative.is_finite() || predicted_derivative == 0.0 {
+    for direction in probe_directions(base, steps, include_candidate_window_directions) {
+        let best_predicted_delta = steps
+            .iter()
+            .filter(|step| direction.allows_step(**step))
+            .filter_map(|step| {
+                branch_model_predicted_delta(base, &direction.vector, *step, direction_model)
+            })
+            .filter(|delta| delta.is_finite())
+            .max_by(|a, b| a.total_cmp(b));
+        let Some(best_predicted_delta) = best_predicted_delta else {
+            continue;
+        };
+        if best_predicted_delta == 0.0 {
             continue;
         }
-        candidates.push((direction_label, direction, predicted_derivative));
+        candidates.push((direction, best_predicted_delta));
     }
-    candidates.sort_by(|(_, _, a), (_, _, b)| b.total_cmp(a));
+    candidates.sort_by(|(_, a), (_, b)| b.total_cmp(a));
 
     let mut attempts = 0usize;
     let mut rejected_steps = Vec::new();
@@ -701,20 +1029,28 @@ fn best_line_search_step(
     let mut last_rejected_predicted_delta = None;
     let mut last_rejected_observed_delta = None;
 
-    for (direction_label, direction, predicted_derivative) in candidates {
-        attempted_direction_labels.push(direction_label.clone());
-        last_direction_label = Some(direction_label.clone());
+    for (direction, _) in candidates {
+        attempted_direction_labels.push(direction.label.clone());
+        last_direction_label = Some(direction.label.clone());
         let rejected_count_before_direction = rejected_steps.len();
 
         for &step in steps {
-            let predicted_delta = step * predicted_derivative;
+            if !direction.allows_step(step) {
+                continue;
+            }
+            let Some(predicted_delta) =
+                branch_model_predicted_delta(base, &direction.vector, step, direction_model)
+            else {
+                rejected_steps.push(step);
+                continue;
+            };
             attempts += 1;
             last_rejected_predicted_delta = Some(predicted_delta);
             let target_duals: Vec<Vector4<f64>> = base
                 .polytope
                 .dual_vertices_f64
                 .iter()
-                .zip(&direction)
+                .zip(&direction.vector)
                 .map(|(dual, delta)| dual + step * delta)
                 .collect();
             let Some(target_polytope) =
@@ -748,12 +1084,13 @@ fn best_line_search_step(
                     poly_id: fixture.polytope.poly_id.clone(),
                     degeneracy_label: fixture.diagnostic.degeneracy_label.clone(),
                     iteration,
-                    method_variant: "iterative_observed_multi_direction_probe".to_string(),
+                    method_variant: direction_model.method_variant().to_string(),
                     branch_threshold_relative,
                     action_window_relative,
+                    direction_model: direction_model.as_str().to_string(),
                     base_near_active_count: base.near_active_orbits.len(),
                     target_near_active_count: Some(target_near_active.len()),
-                    chosen_direction_label: Some(direction_label),
+                    chosen_direction_label: Some(direction.label),
                     chosen_step: Some(step),
                     attempted_direction_labels,
                     rejected_direction_labels,
@@ -778,7 +1115,7 @@ fn best_line_search_step(
         }
 
         if rejected_steps.len() > rejected_count_before_direction {
-            rejected_direction_labels.push(direction_label);
+            rejected_direction_labels.push(direction.label);
         }
     }
 
@@ -787,9 +1124,10 @@ fn best_line_search_step(
             poly_id: fixture.polytope.poly_id.clone(),
             degeneracy_label: fixture.diagnostic.degeneracy_label.clone(),
             iteration,
-            method_variant: "iterative_observed_multi_direction_probe".to_string(),
+            method_variant: direction_model.method_variant().to_string(),
             branch_threshold_relative,
             action_window_relative,
+            direction_model: direction_model.as_str().to_string(),
             base_near_active_count: base.near_active_orbits.len(),
             target_near_active_count: None,
             chosen_direction_label: last_direction_label,
@@ -819,6 +1157,7 @@ fn best_line_search_step(
 fn trace_failure_row(
     fixture: &Fixture,
     iteration: usize,
+    direction_model: DirectionModel,
     branch_threshold_relative: f64,
     action_window_relative: f64,
     stop_threshold: StopThreshold,
@@ -831,9 +1170,10 @@ fn trace_failure_row(
         poly_id: fixture.polytope.poly_id.clone(),
         degeneracy_label: fixture.diagnostic.degeneracy_label.clone(),
         iteration,
-        method_variant: "iterative_best_predicted_probe".to_string(),
+        method_variant: direction_model.method_variant().to_string(),
         branch_threshold_relative,
         action_window_relative,
+        direction_model: direction_model.as_str().to_string(),
         base_near_active_count,
         target_near_active_count: None,
         chosen_direction_label: None,
@@ -865,6 +1205,8 @@ fn endpoint_diagnostic_row(
     final_polytope: &SysLandscapePolytopeCache,
     trace_stop_reason: &str,
     trace_iterations: usize,
+    direction_model: DirectionModel,
+    include_candidate_window_directions: bool,
     branch_threshold_relative: f64,
     action_window_relative: f64,
     steps: &[f64],
@@ -906,6 +1248,8 @@ fn endpoint_diagnostic_row(
     let candidate = best_line_search_step(
         fixture,
         trace_iterations,
+        direction_model,
+        include_candidate_window_directions,
         &base,
         steps,
         action_window_relative,
@@ -1024,6 +1368,8 @@ fn endpoint_direction_scan_rows_for_final_state(
     final_polytope: &SysLandscapePolytopeCache,
     branch_threshold_relative: f64,
     action_window_relative: f64,
+    direction_model: DirectionModel,
+    include_candidate_window_directions: bool,
     steps: &[f64],
 ) -> Vec<LocalGeometryProbeRow> {
     let active_state = match compute_active_sys_state(final_polytope) {
@@ -1054,15 +1400,19 @@ fn endpoint_direction_scan_rows_for_final_state(
     };
 
     let mut rows = Vec::new();
-    for (direction_label, direction) in probe_directions(&base) {
-        let scan_direction_label = format!("post_stop_{direction_label}");
+    for direction in probe_directions(&base, steps, include_candidate_window_directions) {
+        let scan_direction_label = format!("post_stop_{}", direction.label);
         for &step in steps {
+            if !direction.allows_step(step) {
+                continue;
+            }
             rows.push(local_probe_row(
                 fixture,
                 &base,
                 &scan_direction_label,
-                &direction,
+                &direction.vector,
                 step,
+                direction_model,
                 action_window_relative,
                 branch_threshold_relative,
             ));
@@ -1173,13 +1523,25 @@ fn compute_base_state_from_polytope(
             systolic_ratio_gradient_a(capacity.min_action, vol, capacity_gradient, &d_volume_da)
         })
         .collect();
+    let candidate_capacity_gradients =
+        capacity_subgradients_a(&polytope.dual_vertices_f64, &capacity.orbits)
+            .map_err(|err| format!("candidate_capacity_derivative_failed:{err:?}"))?;
+    let candidate_sys_gradients: Vec<Vec<Vector4<f64>>> = candidate_capacity_gradients
+        .iter()
+        .zip(capacity.orbits.iter())
+        .map(|(capacity_gradient, orbit)| {
+            systolic_ratio_gradient_a(orbit.action, vol, capacity_gradient, &d_volume_da)
+        })
+        .collect();
 
     Ok(BaseState {
         polytope,
+        candidate_orbits: capacity.orbits.clone(),
         capacity,
         sys,
         near_active_orbits,
         sys_gradients,
+        candidate_sys_gradients,
     })
 }
 
@@ -1189,22 +1551,26 @@ fn local_probe_row(
     direction_label: &str,
     direction: &[Vector4<f64>],
     step: f64,
+    direction_model: DirectionModel,
     action_window_relative: f64,
     branch_threshold_relative: f64,
 ) -> LocalGeometryProbeRow {
-    let predicted_directional_derivative =
-        match clarke_directional_derivative_a(&base.sys_gradients, direction) {
-            Ok(value) => value,
-            Err(err) => {
-                return failed_probe_row(
-                    fixture,
-                    base,
-                    direction_label,
-                    step,
-                    format!("directional_derivative_failed:{err:?}"),
-                );
-            }
-        };
+    let Some(predicted_delta) =
+        branch_model_predicted_delta(base, direction, step, direction_model)
+    else {
+        return failed_probe_row(
+            fixture,
+            base,
+            direction_label,
+            step,
+            "branch_model_prediction_failed".to_string(),
+        );
+    };
+    let predicted_directional_derivative = if step == 0.0 {
+        0.0
+    } else {
+        predicted_delta / step
+    };
     let target_duals: Vec<Vector4<f64>> = base
         .polytope
         .dual_vertices_f64
@@ -1264,7 +1630,7 @@ fn local_probe_row(
         status: "ok".to_string(),
         base_sys: base.sys,
         predicted_directional_derivative: Some(predicted_directional_derivative),
-        predicted_delta_sys: Some(step * predicted_directional_derivative),
+        predicted_delta_sys: Some(predicted_delta),
         recomputed_sys: Some(target_state.sys),
         observed_delta_sys: Some(target_state.sys - base.sys),
         target_near_active_count: Some(target_near_active.len()),
@@ -1303,23 +1669,176 @@ fn failed_probe_row(
     }
 }
 
-fn probe_directions(base: &BaseState) -> Vec<(String, Vec<Vector4<f64>>)> {
+fn branch_model_predicted_delta(
+    base: &BaseState,
+    direction: &[Vector4<f64>],
+    step: f64,
+    direction_model: DirectionModel,
+) -> Option<f64> {
+    match direction_model {
+        DirectionModel::NearActive => {
+            clarke_directional_derivative_a(&base.sys_gradients, direction)
+                .ok()
+                .map(|derivative| step * derivative)
+        }
+        DirectionModel::CandidateWindow => {
+            candidate_window_prediction_witness(base, direction, step)
+                .map(|witness| witness.predicted_delta)
+        }
+    }
+}
+
+#[derive(Clone, Debug)]
+struct CandidateWindowPredictionWitness {
+    orbit_index: usize,
+    sigma: Vec<usize>,
+    action: f64,
+    relative_action_gap: f64,
+    base_gap: f64,
+    derivative: f64,
+    predicted_delta: f64,
+}
+
+fn candidate_window_prediction_witness(
+    base: &BaseState,
+    direction: &[Vector4<f64>],
+    step: f64,
+) -> Option<CandidateWindowPredictionWitness> {
+    if base.candidate_orbits.len() != base.candidate_sys_gradients.len() {
+        return None;
+    }
+    let min_action = base.capacity.min_action;
+    base.candidate_orbits
+        .iter()
+        .zip(base.candidate_sys_gradients.iter())
+        .enumerate()
+        .filter_map(|(orbit_index, (orbit, gradient))| {
+            let action_ratio = orbit.action / min_action;
+            let base_gap = base.sys * (action_ratio * action_ratio - 1.0);
+            let derivative = gradient_direction_dot(gradient, direction)?;
+            let predicted_delta = base_gap + step * derivative;
+            predicted_delta
+                .is_finite()
+                .then(|| CandidateWindowPredictionWitness {
+                    orbit_index,
+                    sigma: orbit.sigma.clone(),
+                    action: orbit.action,
+                    relative_action_gap: action_ratio - 1.0,
+                    base_gap,
+                    derivative,
+                    predicted_delta,
+                })
+        })
+        .min_by(|a, b| a.predicted_delta.total_cmp(&b.predicted_delta))
+}
+
+fn gradient_direction_dot(gradient: &[Vector4<f64>], direction: &[Vector4<f64>]) -> Option<f64> {
+    if gradient.len() != direction.len() {
+        return None;
+    }
+    Some(
+        gradient
+            .iter()
+            .zip(direction)
+            .map(|(grad, delta)| grad.dot(delta))
+            .sum(),
+    )
+}
+
+fn probe_directions(
+    base: &BaseState,
+    steps: &[f64],
+    include_candidate_window_directions: bool,
+) -> Vec<ProbeDirection> {
     let mut directions = Vec::new();
     if let Some(first_gradient) = base.sys_gradients.first() {
         if let Some(direction) = normalize_direction(first_gradient) {
-            directions.push(("single_near_active_gradient".to_string(), direction.clone()));
-            directions.push((
-                "negative_single_near_active_gradient".to_string(),
-                direction.iter().map(|v| -*v).collect(),
-            ));
+            directions.push(ProbeDirection {
+                label: "single_near_active_gradient".to_string(),
+                vector: direction.clone(),
+                only_step: None,
+            });
+            directions.push(ProbeDirection {
+                label: "negative_single_near_active_gradient".to_string(),
+                vector: direction.iter().map(|v| -*v).collect(),
+                only_step: None,
+            });
         }
     }
     if base.sys_gradients.len() > 1 {
         if let Some(direction) = maximin_direction(&base.sys_gradients) {
-            directions.push(("near_active_maximin_direction".to_string(), direction));
+            directions.push(ProbeDirection {
+                label: "near_active_maximin_direction".to_string(),
+                vector: direction,
+                only_step: None,
+            });
+        }
+    }
+    if include_candidate_window_directions {
+        for &step in steps {
+            if let Some(direction) = candidate_window_maximin_direction(base, step) {
+                directions.push(ProbeDirection {
+                    label: format!("candidate_window_maximin_step_{}", format_step_label(step)),
+                    vector: direction,
+                    only_step: Some(step),
+                });
+            }
         }
     }
     directions
+}
+
+fn candidate_window_maximin_direction(base: &BaseState, step: f64) -> Option<Vec<Vector4<f64>>> {
+    if step <= 0.0 || base.candidate_orbits.len() != base.candidate_sys_gradients.len() {
+        return None;
+    }
+    let facet_count = base.candidate_sys_gradients.first()?.len();
+    let dim = facet_count * 4;
+    let min_action = base.capacity.min_action;
+    let mut vars = variables!();
+    let direction_vars: Vec<_> = (0..dim)
+        .map(|_| vars.add(variable().min(-1.0).max(1.0)))
+        .collect();
+    let t_var = vars.add(variable().min(f64::NEG_INFINITY));
+
+    let mut model = vars.maximise(Expression::from(t_var)).using(default_solver);
+    for (orbit, gradient) in base
+        .candidate_orbits
+        .iter()
+        .zip(base.candidate_sys_gradients.iter())
+    {
+        if gradient.len() != facet_count {
+            return None;
+        }
+        let action_ratio = orbit.action / min_action;
+        let base_gap = base.sys * (action_ratio * action_ratio - 1.0);
+        if !base_gap.is_finite() {
+            continue;
+        }
+        let flat = flatten_gradient(gradient);
+        let mut lhs = Expression::from(base_gap);
+        for (coeff, var) in flat.iter().zip(&direction_vars) {
+            if *coeff != 0.0 {
+                lhs += step * *coeff * *var;
+            }
+        }
+        model = model.with(constraint!(lhs >= t_var));
+    }
+
+    let solution = model.solve().ok()?;
+    let flat_direction: Vec<f64> = direction_vars
+        .iter()
+        .map(|var| solution.value(*var))
+        .collect();
+    normalize_direction(&unflatten_direction(&flat_direction))
+}
+
+fn format_step_label(step: f64) -> String {
+    format!("{step:.0e}").replace('+', "")
+}
+
+fn steps_match(left: f64, right: f64) -> bool {
+    (left - right).abs() <= 1.0e-15
 }
 
 fn maximin_direction(sys_gradients: &[Vec<Vector4<f64>>]) -> Option<Vec<Vector4<f64>>> {
@@ -1544,6 +2063,9 @@ fn parse_args() -> Cli {
         out_dir: default_output_dir(),
         selection_threshold_relative: DEFAULT_SELECTION_THRESHOLD_RELATIVE,
         action_window_relative: DEFAULT_ACTION_WINDOW_RELATIVE,
+        direction_model: DirectionModel::NearActive,
+        include_candidate_window_directions: false,
+        write_step_ranking_audit: false,
         steps: DEFAULT_STEPS.to_vec(),
         endpoint_steps: None,
         max_fixtures_per_label: DEFAULT_MAX_FIXTURES_PER_LABEL,
@@ -1585,6 +2107,19 @@ fn parse_args() -> Cli {
                     .expect("--action-window-relative requires an f64")
                     .parse()
                     .expect("--action-window-relative must be an f64");
+            }
+            "--direction-model" => {
+                cli.direction_model = parse_direction_model(
+                    &args
+                        .next()
+                        .expect("--direction-model requires near-active or candidate-window"),
+                );
+            }
+            "--include-candidate-window-directions" => {
+                cli.include_candidate_window_directions = true;
+            }
+            "--write-step-ranking-audit" => {
+                cli.write_step_ranking_audit = true;
             }
             "--steps" => {
                 cli.steps = args
@@ -1667,12 +2202,23 @@ fn print_usage() {
         "Usage: dev-gradient-ascent-local-geometry-probe --diagnostic-dir PATH \
          [--polytope-table PATH] [--out-dir PATH] \
          [--selection-threshold-relative F64] [--action-window-relative F64] \
+         [--direction-model near-active|candidate-window] \
+         [--include-candidate-window-directions] \
+         [--write-step-ranking-audit] \
          [--steps CSV] [--endpoint-steps CSV] \
          [--max-fixtures-per-label N] [--skip-fixtures-per-label N] \
          [--trace-iterations N] \
          [--degeneracy-labels CSV] [--min-observed-delta F64] \
          [--min-observed-relative-delta F64]"
     );
+}
+
+fn parse_direction_model(raw: &str) -> DirectionModel {
+    match raw {
+        "near-active" | "near_active" => DirectionModel::NearActive,
+        "candidate-window" | "candidate_window" => DirectionModel::CandidateWindow,
+        other => panic!("unsupported --direction-model value: {other}"),
+    }
 }
 
 fn default_tables_dir() -> PathBuf {

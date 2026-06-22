@@ -168,6 +168,98 @@ Known gaps:
 - no fixed-`F` datascience rerun has used the candidate method yet;
 - no reusable algorithm code has been promoted out of this development packet.
 
+Related local-behavior diagnostics in
+`experiments/sys-datascience/methods/local-behavior-prediction/` add a further
+promotion caveat. In the current endpoint/top-sys smoke output
+`/tmp/sys-local-behavior-ascent-top-candidate-gradient-fixed`, near-active
+first-order predicted signs fail on some endpoint directions even when the
+target minimizer is still inside the base candidate window. The
+candidate-window analytic model with base branch gaps and per-branch actions
+repairs those sign failures in this smoke output except for a case where the
+target minimizer is outside the candidate window. Inspect
+`local-behavior-candidate-gradient-summary.csv` and
+`local-behavior-candidate-gradient-predictions.jsonl` before treating
+near-active prediction as an endpoint acceptance or rejection rule. This points
+toward a candidate-window-aware recentered method, not promotion of the current
+near-active-only prediction model. The corrected endpoint/top window sweep in
+the local-behavior packet makes `action_window_relative = 0.01` the plausible
+next setting to test; narrower `0.003` misses too much on the smoke panel, and
+wider `0.03` increases candidate branch count and local-state cost without a
+source-stratified sign-prediction gain over `0.01`.
+
+A first candidate-window-scored dev runner has now been checked on the
+available retained-fixture overlap:
+`/tmp/dev-gradient-ascent-candidate-window-overlap-panel-aggregate`,
+`/tmp/dev-gradient-ascent-candidate-window-overlap-panel-endpoint-scan-report`,
+and
+`/tmp/dev-gradient-ascent-candidate-window-overlap-panel-run-trace-report`.
+This overlap panel has five selected fixtures, not the full older six-fixture
+panel, because one old large-gap random-product fixture is absent from the
+current polytope table. On this overlap panel, candidate-window scoring keeps
+endpoint scan rows below the configured relative threshold and removes the
+accepted negative-prediction trace rows. Treat this as a promising development
+check, not as promotion evidence: it changes scoring over the existing
+near-active direction family and still does not certify endpoint local
+maximality.
+
+The first candidate-window direction-generator variant is not promoted. It
+adds finite-step-indexed candidate-window maximin directions and tests each at
+the generating step. On the same five-fixture overlap output
+`/tmp/dev-gradient-ascent-candidate-window-directions-overlap-panel-*`, those
+new directions are not selected in the trace and increase endpoint scan rows
+and runtime without improving the endpoint-scan threshold-ratio diagnostic.
+This weakens the direction-generator branch of the repair path, not the
+candidate-window scoring branch.
+
+A lower-threshold candidate-window replay was checked on the same five-fixture
+overlap:
+
+- `/tmp/dev-gradient-ascent-candidate-window-threshold1e-4-overlap-panel-aggregate`;
+- `/tmp/dev-gradient-ascent-candidate-window-threshold1e-4-overlap-panel-endpoint-scan-report`;
+- `/tmp/dev-gradient-ascent-candidate-window-threshold1e-4-overlap-panel-run-trace-report`.
+
+This weakens the simple threshold-repair story. Lowering the relative
+acceptance threshold from `1e-3` to `1e-4` makes the checked traces continue to
+the iteration cap, but the post-stop endpoint scan still finds improvements
+above the lowered threshold. It also reintroduces a candidate-window prediction
+failure on the overlap panel. Current method implication: candidate-window
+scoring is still a plausible diagnostic and scoring repair, but it is not yet
+evidence for endpoint stability or for a clean first-order-guided method. The
+next discriminating test should be a matched exhaustive replay/ranking audit of
+generated direction/step pairs at hard trace states, comparing near-active and
+candidate-window rankings against recomputed observed improvements.
+
+The first such audit is:
+
+- `/tmp/dev-gradient-ascent-step-ranking-audit-threshold1e-4-large-gap-rank-0-check`;
+- `/tmp/dev-gradient-ascent-step-ranking-audit-threshold1e-4-narrow-gap-rank-0-check`;
+- `/tmp/dev-gradient-ascent-step-ranking-audit-threshold1e-4-narrow-gap-rank-1-check`;
+- `/tmp/dev-gradient-ascent-step-ranking-audit-threshold1e-4-high-degeneracy-rank-0-check`;
+- `/tmp/dev-gradient-ascent-step-ranking-audit-threshold1e-4-high-degeneracy-rank-1-check`;
+- summary scratch:
+  `/tmp/dev-gradient-ascent-step-ranking-audit-threshold1e-4-summary.json`.
+
+On this small hard-state audit, candidate-window scoring usually ranks an
+observed above-threshold move in the top two generated direction/step pairs,
+but one narrow-gap state is a concrete counterexample: the best observed move
+is assigned a negative candidate-window prediction and is not in the
+candidate-window top two. Current method implication: candidate-window scoring
+has enough signal to keep as a repair candidate, but a prediction-gated
+first-order method would be unsafe without a domain/failure-mode guard or a
+fallback to observed finite replay.
+
+The counterexample is stronger than a small ranking miss: the candidate-window
+lower envelope can be dominated by a very large negative branch prediction while
+the recomputed finite step is ordinary and improving. The existing audit
+outputs above do not record the branch witness that caused the lower-envelope
+minimum, so do not classify this yet as a numerical derivative bug, a
+branch-domain/model-validity failure, or unavoidable pessimism from a wide
+candidate window. The current audit code now records that witness; before more
+broad local compute is spent, rerun only a tiny hard-state audit and inspect the
+winning candidate branch/orbit for the bad prediction. That gives the
+branch-level handle needed to investigate the failure mode; it does not by
+itself classify the failure.
+
 ## Promotion Question
 
 Decision for Jörn/Kai:

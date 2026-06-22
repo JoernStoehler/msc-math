@@ -59,8 +59,17 @@ output directory. The prepare and analyze stages derive the following files:
 
 | Artifact | What to inspect |
 | --- | --- |
+| `local-behavior-starts.jsonl` | Prepared copy of producer basepoint rows, including provenance/source fields and basepoint failures. |
+| `local-behavior-sample-attempts.jsonl` | Prepared copy of every planned local sample attempt, including failed target construction or target-state rows. |
 | `local-behavior-pairs.jsonl` | Pair rows for `(a0, d, t, a0 + t d)`, including target-minimizer status at `a0`, observed `Delta sys`, branch-gradient prediction, and prediction error. |
 | `local-behavior-radius-summary.csv` | Radius and direction-family summaries. Start here for local-to-semilocal behavior and step-size planning. |
+| `local-behavior-start-summary.csv` | Source-stratified start counts and basepoint failures. |
+| `local-behavior-source-radius-summary.csv` | Source/radius/direction denominators: planned attempts, successful pairs, failures, and target-minimizer coverage fractions. |
+| `local-behavior-start-breakdown.csv` | Per-start first failure, near-active miss, candidate-window miss, and sign-mismatch radii. Use this before making independent-start claims. |
+| `local-behavior-candidate-gradient-predictions.jsonl` | Per-pair analytic prediction from the minimum over base candidate-window branch models, including base branch gaps. Candidate-branch derivatives use that branch's own action, not the base minimum action. Use this to test whether candidate-window gradients repair near-active prediction failures. |
+| `local-behavior-candidate-gradient-summary.csv` | Source/radius/direction summary of producer and candidate-gradient sign mismatches. |
+| `local-behavior-candidate-window-predictions.jsonl` | Per-pair finite comparison of observed `Delta sys` with the minimum target value over base candidate-window branches that remain target-admissible stationary branches. This is a finite branch-window diagnostic, not an analytic derivative table. |
+| `local-behavior-candidate-window-summary.csv` | Source/radius/direction summary of producer, near-active finite, and candidate-window finite sign mismatches. |
 | `local-behavior-branch-facts.jsonl` | Per-point branch facts derived from producer rows. Use this when a pair summary needs branch-level explanation. |
 | `local-behavior-branch-variation.jsonl` | Per-branch value variation between base and target. Use this for branch-function stability questions. |
 | `local-behavior-gradient-projections.jsonl` | Per-gradient projection diagnostics. Use this for prediction-quality and direction-alignment questions. |
@@ -91,6 +100,12 @@ minimizers may belong only to the wider base candidate/action window. The
 candidate window is also a noise source, so branch-window policy is a design
 variable that should be measured rather than assumed.
 
+For endpoint or high-`sys` panels, inspect the candidate-gradient predictions
+before weakening the whole first-order route. A non-minimizing candidate branch
+has a positive base gap, so its local model is `base_gap + t * derivative`,
+not just `t * derivative`; its derivative is the derivative of that branch's
+own `sys_sigma`, not the derivative of the base minimizing branch.
+
 ## Prior Scratch Inputs
 
 The following `/tmp` panels are recovery guidance only. They can inform
@@ -102,6 +117,10 @@ current retained panel and pointing to that output.
 | `/tmp/sys-local-behavior-panel` | Larger local-neighborhood panel used to choose follow-up radii and status predicates. |
 | `/tmp/sys-local-behavior-current-rerun-smoke` | Current-code smoke run from 2026-06-20. |
 | `/tmp/sys-random-pair-radii-panel` | Random-pair cross-check for strict minimizing branch sets and cross-evaluation action gaps. |
+| `/tmp/sys-local-behavior-random-source-shard-smoke` | Current sharded producer smoke for two `random_product_sample` starts. |
+| `/tmp/sys-local-behavior-random-source-shard-smoke-random` | Current sharded producer smoke for two `random_sample` starts. |
+| `/tmp/sys-local-behavior-random-source-shard-combined-smoke` | Combined smoke from the two shard outputs; prepare/analyze should run on this shape. |
+| `/tmp/sys-local-behavior-random-source-estimate-40starts` | First sharded random-source estimate covering all starts selected by the current `starts-per-source=20` source-stratified run. Use the prepared source/radius, start-breakdown, candidate-window, and candidate-gradient tables before quoting rates. |
 
 Reusable qualitative guidance from those scratch panels:
 
@@ -128,10 +147,53 @@ uv run --script experiments/sys-datascience/methods/local-behavior-prediction/an
   /tmp/sys-local-behavior-smoke/prepared
 ```
 
+Typical source-stratified random-start flow:
+
+```bash
+cargo run --release -p exp-sys-landscape --bin sys-local-behavior-produce -- \
+  --out-dir /tmp/sys-local-behavior-source-smoke \
+  --max-top-basepoints 0 --max-hash-basepoints 0 \
+  --source-datasets random_sample,random_product_sample \
+  --starts-per-source 10 \
+  --random-directions 1 \
+  --radii 1e-4,1e-3,1e-2
+
+uv run --script experiments/sys-datascience/tables/prepare-local-behavior.py \
+  /tmp/sys-local-behavior-source-smoke
+
+uv run --script experiments/sys-datascience/methods/local-behavior-prediction/analyze.py \
+  /tmp/sys-local-behavior-source-smoke/prepared
+```
+
+For larger source-stratified panels, shard the producer by selected basepoint
+index and combine completed shards before prepare/analyze:
+
+```bash
+cargo run --release -p exp-sys-landscape --bin sys-local-behavior-produce -- \
+  --out-dir /tmp/sys-local-behavior-source-shard-000 \
+  --max-top-basepoints 0 --max-hash-basepoints 0 \
+  --source-datasets random_sample,random_product_sample \
+  --starts-per-source 20 \
+  --basepoint-start 0 --basepoint-limit 2 \
+  --random-directions 1 \
+  --radii 1e-4,1e-3,1e-2,3e-2
+
+uv run --script experiments/sys-datascience/tables/combine-local-behavior-shards.py \
+  --out-dir /tmp/sys-local-behavior-source-combined \
+  /tmp/sys-local-behavior-source-shard-000 \
+  /tmp/sys-local-behavior-source-shard-001
+```
+
+The producer uses global `base_####` identifiers after sharding. The combiner
+rejects overlapping selected-basepoint ranges and duplicate joined-row ids,
+concatenates local-behavior JSONL files, deduplicates computed polytope payloads
+by `poly_id`, and writes a marked combined `produce-stats.json` with explicit
+shard intervals.
+
 The report and figures are written under
 `/tmp/sys-local-behavior-smoke/prepared/local-behavior-prediction/` by default.
 
-## Current Disposition
+## Current Use
 
 Use this packet as optimizer-design and thesis-wording guidance. It can
 support statements about what a regenerated finite panel observed under stated
