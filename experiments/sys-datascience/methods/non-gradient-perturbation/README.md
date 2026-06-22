@@ -46,8 +46,9 @@ uv run --script experiments/sys-datascience/methods/non-gradient-perturbation/an
 ## Retained Artifacts
 
 - `artifacts/summary.json` from the analysis script.
-- Producer panel rows live under the explicit `/tmp` or LICCA output directory
-  named in the command that generated them.
+- The producer panel rows are not retained in this packet. The summary records
+  the scratch `panel_dir` used for the smoke run; regenerate the panel with the
+  command above before rerunning the analyzer.
 
 ## Observation
 
