@@ -350,6 +350,55 @@ second statement.
 \end{unverified}
 
 \begin{unverified}
+\begin{lemma}[Action cutoffs preserve below-cutoff fixed points]%
+\label{lem:fg-action-cutoff-preserves-below-cutoff-fixed-points}
+Let a closed tube search datum for a cyclic word have start polygon \(P\),
+affine map \(\Phi\), and action function \(A\).  For \(B\in\mathbb R\), let
+\[
+  P_B=P\cap\{u:A(u)\le B\}.
+\]
+Then the fixed points of \(\Phi\) in \(P_B\) are exactly the fixed points of
+\(\Phi\) in \(P\) whose action is at most \(B\).
+\end{lemma}
+
+\begin{proof}
+This is immediate from the definition of \(P_B\).  A point \(u\) is in \(P_B\)
+and satisfies \(\Phi(u)=u\) if and only if \(u\in P\), \(A(u)\le B\), and
+\(\Phi(u)=u\).
+\end{proof}
+\end{unverified}
+
+\begin{unverified}
+\begin{lemma}[Dynamic action cutoffs preserve retained output]%
+\label{lem:fg-dynamic-action-cutoffs-preserve-retained-output}
+Fix a finite collection of closed tube search data and a threshold
+\(\delta\ge0\).  During an exhaustive search, suppose that after at least one
+strict closed trajectory has been found, the search restricts every later tube
+by the cutoff \(B=c_{\mathrm{known}}+\delta\), where \(c_{\mathrm{known}}\) is
+the least action among the strict trajectories already found.  Then these
+dynamic action cutoffs do not change the final minimum action and do not remove
+any strict trajectory whose action is at most the final minimum plus
+\(\delta\).
+\end{lemma}
+
+\begin{proof}
+Let \(c\) be the minimum action among all strict trajectories in the uncut
+finite search.  At every cutoff step, \(c\le c_{\mathrm{known}}\), because
+\(c_{\mathrm{known}}\) is the action of an already found strict trajectory.
+Therefore
+\[
+  c+\delta\le c_{\mathrm{known}}+\delta=B .
+\]
+By Lemma~\ref{lem:fg-action-cutoff-preserves-below-cutoff-fixed-points}, the
+cutoff keeps all fixed points with action at most \(B\).  In particular it
+keeps every trajectory with action at most \(c+\delta\), including every
+minimum-action trajectory that appears later in the enumeration.  Hence the
+final minimum and the retained set below final minimum plus \(\delta\) agree
+with the uncut exhaustive search.
+\end{proof}
+\end{unverified}
+
+\begin{unverified}
 \begin{lemma}[Nonpositive fixed sets contain no strict orbit]%
 \label{lem:fg-nonpositive-fixed-set-no-strict-orbit}
 Let \(w=[s_1,\ldots,s_k]\) be a cyclic facet word and let the closed tube
@@ -930,7 +979,7 @@ Definition~\ref{def:fg-nondegenerate-facet-presentation}.  This is the
 mathematical boundary currently targeted by the exact Rust rejection logic and
 is stronger than the local physical-transition condition needed in the proof of
 Lemma~\ref{lem:fg-local-transition-regularity-positive-sign}.
-The Rust action-cutoff optimization, arbitrary bounded-irredundant input
-validation, Rust correspondence, and f64 analysis are separate implementation
-and numerical-analysis obligations.
+Rust correspondence for the action-cutoff optimization, arbitrary
+bounded-irredundant input validation, broader Rust correspondence, and f64
+analysis are separate implementation and numerical-analysis obligations.
 \end{remark}
