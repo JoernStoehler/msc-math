@@ -2,7 +2,7 @@
 
 Section-local content companion for `thesis/appendix-numerics-proofs.tex`.
 Source truth is `formal/hk2017-qp-core.tex`,
-`formal/hk2017-qp-precision.tex`, and `experiments/numerics/README.md`.
+`formal/hk2017-qp-precision.tex`, and `experiments/dev-quadratic-program/numerics-audit/README.md`.
 
 ## Content Inventory
 

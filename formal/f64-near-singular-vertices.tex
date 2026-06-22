@@ -1,7 +1,7 @@
 % Agent-written proof note, not yet Jorn-reviewed.
 %
 % Purpose: record the bounded-vertex interpretation of near-singular 4-facet
-% systems seen by experiments/dev-f64-capacity.
+% systems seen by experiments/dev-quadratic-program.
 %
 % Labels defined here:
 %   def:bounded-relevant-vertices,
@@ -27,7 +27,7 @@ Let
   K(A)=\{x\in\R^4:\langle a_i,x\rangle\le 1,\ i=1,\ldots,F\},
 \]
 where the rows $a_i\in\R^4$ are the dual vertices used by
-\texttt{experiments/dev-f64-capacity}.  For a four-subset
+\texttt{experiments/dev-quadratic-program}.  For a four-subset
 $I=\{i_1,i_2,i_3,i_4\}$, write $A_I$ for the $4\times4$ matrix with rows
 $a_{i_j}$.
 
@@ -141,7 +141,7 @@ The perturbative statement is Lemma~\ref{lem:perturbed-bounded-exclusion}.
 \label{rem:f64-near-singular-experiment}
 The experiment command
 \[
-  \texttt{cargo run -p exp-dev-f64-capacity --release --bin f64-capacity-near-singular}
+  \texttt{cargo run -p exp-dev-quadratic-program --release --bin f64-capacity-near-singular}
 \]
 computes diagnostic versions of $r(A_I)$ and the least-norm least-squares
 solution for near-singular four-tuples.  These diagnostics are not yet formal

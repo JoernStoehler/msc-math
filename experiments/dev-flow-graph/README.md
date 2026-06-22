@@ -13,7 +13,7 @@ for durable evidence packets.
 The boundary is not "mentions numerics" versus "does not mention numerics".
 Keep numerical analysis here when it should move with changing flow-graph
 algorithm design, representation choices, supported cases, or failure
-diagnostics. Move or copy it into `experiments/numerics/` when the important
+diagnostics. Move or copy it into `experiments/dev-quadratic-program/numerics-audit/` when the important
 thing is reusable f64/exact methodology that should improve together across
 algorithms.
 
@@ -105,13 +105,13 @@ after the question has a stable evidence home.
 | `endpoint-spike/` | exact endpoint-set representation remains useful historical context for the current exact implementation | the crate exact path fully supersedes it and no active diagnostic reads it | git history, or a short note here if future agents still need the clue |
 | `closed-word-spike/` | selected generated words are still being used to understand exact closed-word behavior | a selected word becomes a stable regression or proposition witness | crate tests or `experiments/verification/` |
 | `discover-e2e/` | rows are being searched and bucketed for high-value examples | a row has a reviewed expected label and should stop being rediscovered | crate tests for cheap cases, `experiments/verification/` for slower artifact-backed suites |
-| `unresolved-diagnostic/` | f64 errors, exact tube resolution, exact one-sigma QP, geometric recovery, and HK2017 references are jointly needed for failure taxonomy | the question becomes reusable f64/exact methodology or stable error-path evidence | `experiments/numerics/` or `experiments/verification/` |
+| `unresolved-diagnostic/` | f64 errors, exact tube resolution, exact one-sigma QP, geometric recovery, and HK2017 references are jointly needed for failure taxonomy | the question becomes reusable f64/exact methodology or stable error-path evidence | `experiments/dev-quadratic-program/numerics-audit/` or `experiments/verification/` |
 | `visualize-tube/` | tube geometry needs inspection to debug a word or explain a mismatch | a selected image/data packet supports thesis exposition | owning thesis/topic asset packet |
 
 ## Promotion Targets
 
 - Move or copy cleaned f64/exact numerical behavior audits to
-  `experiments/numerics/` once the question is reusable numerical methodology
+  `experiments/dev-quadratic-program/numerics-audit/` once the question is reusable numerical methodology
   rather than flow-graph design triage.
 - Move or copy runtime, memory, counter, and profiling targets to
   `experiments/performance/` once the measured algorithm path is stable enough

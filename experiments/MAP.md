@@ -54,8 +54,9 @@ Current boundary facts:
   together.
 - Example: numerical analysis of `flow_graph` can belong in
   `experiments/dev-flow-graph/` when the analysis should move with changing
-  flow-graph algorithm design, or in `experiments/numerics/` when the analysis
-  should move with reusable f64/exact methodology shared across algorithms.
+  flow-graph algorithm design. QP/KKT numerical analysis belongs in
+  `experiments/dev-quadratic-program/numerics-audit/` while it remains coupled
+  to QP route development.
 - Copying and heavily editing algorithms across experiments is allowed.
   Extract shared code only when multiple current users should be modernized
   together or duplication is causing concrete error or maintenance risk.
@@ -76,7 +77,7 @@ Current boundary facts:
 | Home | Route here when |
 | --- | --- |
 | `experiments/dev-<algo>/` | active algorithm development, diagnostics, case-finding, and representation spikes before a settled downstream evidence home exists |
-| `experiments/numerics/` | f64 vs exact behavior, numerical stability, numerical-error audits, derivative/numerical validation, and reusable numerical methodology |
+| `experiments/dev-quadratic-program/numerics-audit/` | QP/KKT f64 vs exact behavior, numerical stability, numerical-error audits, and predicate comparisons coupled to QP route development |
 | `experiments/performance/` | runtime, memory, counters, profiling, and compute-budget measurement once the measured target is stable enough to profile as a target |
 | `experiments/verification/` | correctness/regression checks, capacity axioms, algorithm agreement, literature values, error paths, and slower artifact-backed validation |
 | `experiments/sys-datascience/` | hostile `sys` search data-science pipeline, retained tables, and method-table packets |
@@ -100,7 +101,7 @@ experiments, thesis sections, or later cleanup decisions may care about.
 | `QP/enumerate/unpruned` | General HK2017 sigma enumeration without transition pruning. | `crates/symplectic/src/algorithms/hk2017/enumeration.rs`, `crates/symplectic/src/algorithms/hk2017/permutations.rs`, `crates/symplectic/src/algorithms/hk2017/combinatorics.rs` | Checked against pruned enumeration in crate tests and correctness surfaces. |
 | `QP/enumerate/pruned` | HK2017 sigma enumeration pruned by facet-intersection and `omega_0` transition data. | `crates/symplectic/src/algorithms/hk2017/enumeration.rs`, `crates/symplectic/src/algorithms/facet_adjacency.rs` | Current ordinary general-polytope enumeration path. |
 | `QP/enumerate/billiard` | Lagrangian-product/billiard sigma enumeration simplification; feeds the same KKT/QP solve and aggregation layer. | `crates/symplectic/src/algorithms/billiard/` | Read with product/HKO/regular-product work; not a separate downstream solver stack. |
-| `QP/solve/kkt/f64` | One-sigma f64 KKT/QP solve. | `crates/symplectic/src/kkt/saddle_point_solver.rs`, `crates/symplectic/src/kkt/projection_solver.rs`, `crates/symplectic/src/kkt/qp_assembly.rs` | Numerical behavior belongs in `experiments/numerics/` when it is reusable. |
+| `QP/solve/kkt/f64` | One-sigma f64 KKT/QP solve. | `crates/symplectic/src/kkt/saddle_point_solver.rs`, `crates/symplectic/src/kkt/projection_solver.rs`, `crates/symplectic/src/kkt/qp_assembly.rs` | Numerical behavior belongs in `experiments/dev-quadratic-program/numerics-audit/` when it is reusable. |
 | `QP/solve/kkt/exact` | One-sigma exact KKT/QP solve. | `crates/symplectic/src/kkt/rational_solver.rs`, `crates/symplectic/src/exact/orbit.rs` | Exact one-sigma solve only; not a full exact capacity search by itself. |
 | `QP/capacity/f64` | Capacity route using f64 candidate solve/filtering only. | assembled from QP enumeration plus `QP/solve/kkt/f64` | Use only when f64-only ambiguity policy is intended by the caller or experiment. |
 | `QP/capacity/fallback` | Capacity route using f64 solve/filtering with exact fallback for candidates needed by the selected guarantee mode. | `crates/symplectic/src/algorithms/orbit_search.rs` | Current ordinary crate capacity style via `OrbitGuaranteeMode`. |
@@ -132,7 +133,7 @@ such as `experiments/dev-<algo>/`, `experiments/<topic>/`, and
 | Lens | Question | Usual home |
 | --- | --- | --- |
 | `library` | What is the clean reusable implementation/API for non-instrumented callers? | `crates/**`, with crate tests for cheap durable checks |
-| `numerics` | How do f64 decisions, tolerances, ambiguity handling, and exact/reference behavior compare? | `experiments/numerics/`, unless the numerical question is still coupled to active algorithm design |
+| `numerics` | How do f64 decisions, tolerances, ambiguity handling, and exact/reference behavior compare? | the owning development packet while the question is method-coupled; QP/KKT uses `experiments/dev-quadratic-program/numerics-audit/` |
 | `performance` | What are the runtime, memory, counters, pruning wins, and scaling behavior? | `experiments/performance/` |
 | `correctness` | Do outputs or intermediate invariants satisfy the intended mathematical or software contract? | `experiments/verification/` for reusable experiment-level evidence, or crate tests when cheap and durable |
 | `data` | Which reusable records, caches, schemas, and retained tables are produced or consumed? | `crates/**` record helpers, `experiments/sys-datascience/produce/`, and `experiments/sys-datascience/tables/` |
@@ -160,15 +161,15 @@ on whether the owner is method development or retained-dataset analysis.
 | Area | Current role | Related task/research surfaces |
 | --- | --- | --- |
 | `experiments/hko-local-maximum/` | HKO local-maximality experiments: theorem certificate tooling under `theorem/`, empirical support checks under `empirical/`, singular-row diagnostics, and shared topic helpers under `src/` | `tasks/current-state.md`, `tasks/planning-notes.md`, `experiments/hko-local-maximum/README.md` |
-| `experiments/algorithm-comparison/` | README-only routing and reasoning note for cross-algorithm comparisons; no active commands or evidence artifacts | `experiments/algorithm-comparison/README.md`, `experiments/dev-quadratic-program/README.md`, `experiments/performance/README.md`, `experiments/numerics/README.md`, `experiments/verification/README.md` |
+| `experiments/algorithm-comparison/` | README-only routing and reasoning note for cross-algorithm comparisons; no active commands or evidence artifacts | `experiments/algorithm-comparison/README.md`, `experiments/dev-quadratic-program/README.md`, `experiments/performance/README.md`, `experiments/dev-quadratic-program/numerics-audit/README.md`, `experiments/verification/README.md` |
 | `experiments/dev-quadratic-program/` | README-only coordination packet for QP/HK2017 library-surface and cleanup questions before code or evidence has a better home | `experiments/dev-quadratic-program/README.md`, `experiments/MAP.md` section `Algorithm Units`, `crates/symplectic/src/algorithms/hk2017/`, `crates/symplectic/src/algorithms/orbit_search.rs` |
 | `experiments/dev-gradient-ascent/` | active top-level development packet for a heuristic gradient-ascent method for nonsmooth high-dimensional `sys(a)`; owns question ledger, schema-smoke artifacts, and future method-development probes before promotion | `experiments/dev-gradient-ascent/README.md`, `experiments/sys-datascience/README.md`, `research/sys-first-order-local-behavior.md` |
 | `experiments/dev-flow-graph/` | active flow-graph algorithm-development packet: frontier counts, endpoint/closed-word representation spikes, case-finding, mismatch visualization, and unresolved-word diagnostics before promotion into numerics, performance, or verification | `experiments/dev-flow-graph/README.md`, `crates/symplectic/src/algorithms/flow_graph/README.md`, `tasks/current-state.md`, `tasks/planning-notes.md` |
-| `experiments/dev-f64-capacity/` | active pure-`f64` capacity-development packet: generated and retained datascience-style scans, validation/capacity policy comparison, product preprocessing diagnostics, and promotion-readiness evidence before library or `sys-datascience` integration | `experiments/dev-f64-capacity/README.md`, `experiments/sys-datascience/README.md` |
+| `experiments/dev-quadratic-program/` | active pure-`f64` capacity-development packet: generated and retained datascience-style scans, validation/capacity policy comparison, product preprocessing diagnostics, and promotion-readiness evidence before library or `sys-datascience` integration | `experiments/dev-quadratic-program/README.md`, `experiments/sys-datascience/README.md` |
 | `experiments/sys-landscape/` | hostile sys-search landscape legacy and producer surfaces: random/product searches, gradient ascent, variable-`F` continuation, and rejection calibration | `tasks/current-state.md`, `tasks/planning-notes.md`, `research/sys-landscape*.md`, `experiments/sys-datascience/README.md` |
 | `experiments/sys-datascience/` | maintained hostile `sys` search data-science pipeline: producer caches, retained tables, and method packets for the thesis method table | `experiments/sys-datascience/README.md`, `experiments/sys-datascience/produce/README.md`, `experiments/sys-datascience/tables/README.md`, `experiments/sys-datascience/methods/README.md` |
 | `experiments/regular-products/` | regular polygon product side result: broad rotated-product sweeps, pentagon empirical figures/viewer, and exact pentagon formula proof packet | `experiments/regular-products/README.md`, `thesis/rotated-regular-polygons-content.md` |
-| `experiments/numerics/` | single-threaded numerical error audit: structured JSONL observations, f64-vs-oracle summaries, and generated reports for KKT variables and predicates | `experiments/numerics/README.md`, `tasks/current-state.md`, `tasks/planning-notes.md` |
+| `experiments/dev-quadratic-program/numerics-audit/` | single-threaded numerical error audit: structured JSONL observations, f64-vs-oracle summaries, and generated reports for KKT variables and predicates | `experiments/dev-quadratic-program/numerics-audit/README.md`, `tasks/current-state.md`, `tasks/planning-notes.md` |
 | `experiments/verification/` | experiment-level correctness and regression evidence, minimum-set validation, orbit recovery, and reusable Sage validation experiments | `tasks/current-state.md`, `tasks/planning-notes.md`, `research/verification*.md`, `experiments/verification/README.md`, `experiments/verification/sage/README.md` |
 | `experiments/performance/` | shared runtime and memory profiling targets, reusable measurement practice, and post-processing scripts; generated outputs normally go under `/tmp` | `experiments/performance/README.md` |
 | `experiments/combinatorial-cells/` | combinatorial-cell exploration: boundary characterization, cell widths, convexity, multiple crossings, omega hypothesis, and gradient-discontinuity analysis | `experiments/combinatorial-cells/README.md` |
@@ -183,15 +184,15 @@ Topic helper crates already exist at:
 - `experiments/hko-local-maximum/src/lib.rs`
 - `experiments/dev-gradient-ascent/src/lib.rs`
 - `experiments/regular-products/src/lib.rs`
-- `experiments/numerics/src/lib.rs`
+- `experiments/dev-quadratic-program/numerics-audit/src/lib.rs`
 - `experiments/verification/src/lib.rs`
 - `experiments/sys-landscape/src/lib.rs`
-- `experiments/dev-f64-capacity/src/lib.rs`
+- `experiments/dev-quadratic-program/src/lib.rs`
 
 Current observed pattern:
 
-- `experiments/dev-gradient-ascent/`, `experiments/dev-f64-capacity/`,
-  `experiments/numerics/`, and `experiments/numerics/gradient/` are Rust-heavy
+- `experiments/dev-gradient-ascent/`, `experiments/dev-quadratic-program/`,
+  and `experiments/dev-quadratic-program/numerics-audit/` are Rust-heavy
   or feature-incubator packages where `src/` is an appropriate package surface.
 - `experiments/combinatorial-cells/`, `experiments/hko-local-maximum/`,
   `experiments/sys-landscape/`, and `experiments/verification/` expose
@@ -212,7 +213,7 @@ Current helper families:
 | sys quotient / ascent scaffold | `experiments/sys-landscape/src/ascent.rs` and `datasets.rs` hold reusable landscape helpers, while individual binaries still own backend policy |
 | datascience producer/table plumbing | `experiments/sys-datascience/produce/` writes producer caches; `experiments/sys-datascience/tables/` loads/enriches/writes final tables; `experiments/sys-datascience/methods/` reads those tables |
 | exact HKO row bank and instrumented searches | `experiments/hko-local-maximum/src/exact_bank.rs` owns exact-bank constants; `instrumented_search.rs` owns local instrumented capacity helpers |
-| numerics audit helpers | `experiments/numerics/src/lib.rs` indexes the audit runner, event schema, argument parsing, and output-directory helpers |
+| numerics audit helpers | `experiments/dev-quadratic-program/numerics-audit/src/lib.rs` indexes the audit runner, event schema, argument parsing, and output-directory helpers |
 | verification target plumbing | `experiments/verification/src/target_pool.rs` owns target selection; `io.rs` owns run modes and shared JSONL writers |
 
 ## Artifact And Data Patterns

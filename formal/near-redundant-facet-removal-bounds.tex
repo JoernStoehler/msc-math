@@ -1,7 +1,7 @@
 % Agent-written and not yet Jörn-reviewed.
 %
 % Purpose: record the mathematical contract used by near-redundant facet
-% removal in experiments/dev-f64-capacity.
+% removal in experiments/dev-quadratic-program.
 % This file proves the conditional implication from a valid delta bound to
 % capacity/volume/sys distortion bounds. It does not certify that an ordinary
 % f64 computation of delta_bound is outward-rounded.
@@ -328,7 +328,7 @@ The JSONL field
 \[
   \texttt{near\_redundant\_facet\_removal\_delta\_bound}
 \]
-in \texttt{experiments/dev-f64-capacity} is intended to satisfy the hypothesis of
+in \texttt{experiments/dev-quadratic-program} is intended to satisfy the hypothesis of
 Lemma~\ref{lem:hrep-facet-removal-containment}: for every removed original facet
 $j$ and every point $x$ in the simplified polytope $P_R$,
 \[

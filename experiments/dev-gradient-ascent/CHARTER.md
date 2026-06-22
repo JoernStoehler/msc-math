@@ -245,7 +245,7 @@ Jörn/Kai judgment.
 - Runtime profiling that belongs in `experiments/performance/`.
 - Solver correctness/regression checks that belong in `experiments/verification/`.
 - Derivative or numerical-error validation that belongs in
-  `experiments/numerics/`.
+  `experiments/dev-quadratic-program/numerics-audit/`.
 
 ## Dangers Of This Charter
 

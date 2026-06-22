@@ -113,7 +113,7 @@ source files.
   counterexample, or changed thesis dependency.
 
 - Numerics supports retained thesis text.
-  Source truth: `experiments/numerics/README.md`, `formal/hk2017-qp-*.tex`,
+  Source truth: `experiments/dev-quadratic-program/numerics-audit/README.md`, `formal/hk2017-qp-*.tex`,
   current thesis numerics files.
   Current state: exact/f64/indeterminate story is not a public certified solver
   claim; the active experiment is a structured error audit with JSONL raw

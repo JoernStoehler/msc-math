@@ -448,7 +448,7 @@ Closure summary:
 Status: active for retained numerics claims; deferred for broad solver
 formalization unless thesis wording needs it.
 
-Reread before use: `experiments/numerics/README.md`,
+Reread before use: `experiments/dev-quadratic-program/numerics-audit/README.md`,
 `formal/hk2017-qp-*.tex`, `thesis/numerics.tex`,
 `thesis/appendix-numerics-proofs.tex`.
 
@@ -456,7 +456,7 @@ Guidance:
 
 - First state the exact/f64/indeterminate boundary needed for retained
   experiments and thesis prose.
-- Use `experiments/numerics/` for current empirical error-audit runs; old
+- Use `experiments/dev-quadratic-program/numerics-audit/` for current empirical error-audit runs; old
   packet-style numerics paths are historical and available only through git
   history.
 - Use generic-case-first: explicit conditions, exact theorem/contract, f64

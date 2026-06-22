@@ -19,7 +19,7 @@ packet is [PROMOTION-READINESS.md](PROMOTION-READINESS.md).
 This package is not thesis evidence by itself. It is the development surface
 for producing object-level diagnostic results that can later be promoted into
 `experiments/sys-landscape/`, `experiments/performance/`,
-`experiments/verification/`, `experiments/numerics/`, or a final analysis
+`experiments/verification/`, `experiments/dev-quadratic-program/numerics-audit/`, or a final analysis
 packet.
 
 ## Thesis Role
@@ -693,7 +693,7 @@ would change later basepoints.
 - Keep active-development clutter out of the final thesis evidence packet.
 - Put runtime-only measurements in `experiments/performance/`.
 - Put correctness/regression checks in `experiments/verification/`.
-- Put derivative and numerical-error work in `experiments/numerics/`.
+- Put derivative and numerical-error work in `experiments/dev-quadratic-program/numerics-audit/`.
 
 ## Retired Nested Stub
 

@@ -148,7 +148,7 @@ README or source header that owns the producer. The high-risk refresh areas are:
 - `experiments/sys-landscape/`: random/product/ascent/continuation datasets,
   datascience producer caches, tables, method reports, and full-output search
   artifacts;
-- `experiments/numerics/`: canonical exactness, Sage feasibility,
+- `experiments/dev-quadratic-program/numerics-audit/`: canonical exactness, Sage feasibility,
   unknown-predicate, collection, and error-bound artifacts;
 - `experiments/combinatorial-cells/`: producer binaries that write tracked
   evidence and currently have no smoke modes;

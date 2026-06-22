@@ -465,24 +465,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "exp-dev-f64-capacity"
-version = "0.1.0"
-dependencies = [
- "euclidean-polytopes",
- "exp-sys-landscape",
- "good_lp",
- "nalgebra",
- "rand 0.8.5",
- "rand_chacha 0.3.1",
- "rand_distr",
- "serde",
- "serde_json",
- "symplectic",
- "tempfile",
- "tracing",
-]
-
-[[package]]
 name = "exp-dev-flow-graph"
 version = "0.1.0"
 dependencies = [
@@ -511,6 +493,42 @@ dependencies = [
 ]
 
 [[package]]
+name = "exp-dev-qp-numerics-audit"
+version = "0.1.0"
+dependencies = [
+ "nalgebra",
+ "num-rational",
+ "num-traits",
+ "serde",
+ "serde_json",
+ "symplectic",
+ "tempfile",
+]
+
+[[package]]
+name = "exp-dev-quadratic-program"
+version = "0.1.0"
+dependencies = [
+ "algebraic-numbers",
+ "euclidean-polytopes",
+ "exp-sys-landscape",
+ "good_lp",
+ "nalgebra",
+ "num-bigint",
+ "num-rational",
+ "num-traits",
+ "rand 0.8.5",
+ "rand_chacha 0.3.1",
+ "rand_distr",
+ "serde",
+ "serde_json",
+ "symplectic",
+ "tempfile",
+ "tracing",
+ "tracing-subscriber",
+]
+
+[[package]]
 name = "exp-hko-local-maximum"
 version = "0.1.0"
 dependencies = [
@@ -530,24 +548,10 @@ dependencies = [
 ]
 
 [[package]]
-name = "exp-numerics"
-version = "0.1.0"
-dependencies = [
- "nalgebra",
- "num-rational",
- "num-traits",
- "serde",
- "serde_json",
- "symplectic",
- "tempfile",
-]
-
-[[package]]
 name = "exp-performance"
 version = "0.1.0"
 dependencies = [
  "euclidean-polytopes",
- "exp-dev-f64-capacity",
  "nalgebra",
  "num-rational",
  "rand 0.8.5",
