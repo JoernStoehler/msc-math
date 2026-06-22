@@ -456,23 +456,32 @@ decision. It is based on `exact_search.rs::search_closed_orbits_exact`,
 | singular fixed set with any positive-action vertex | `UnsupportedPositiveSingular` | explicit typed non-success, not an accepted capacity output | document as unsupported; no proof of capacity output needed |
 | no `PositiveOrbit` found after exhaustive search | panic at final `expect` | theorem route predicts this cannot happen on supported inputs because a simple capacity minimizer is represented | if a supported-input claim does not prove represented positive output, change Rust to typed unsupported instead of panic |
 
-The singular classifier is a Chesterton fence, not an accidental later cleanup.
-It was already present in the initial flow-graph implementation commit
-`69b3a50a` and the same commit's README listed positive-action singular fixed
-sets as explicit rejection cases. The commit-era diagnostic tests and
-`experiments/dev-flow-graph/unresolved-diagnostic` also use
-`resolve_closed_word_exact` to classify f64 closed-word failures, separating
-exact empty tubes, exact zero-action no-orbits, exact positive orbits, and exact
-unsupported positive singular outcomes. Session-log archaeology found the
-pre-code design constraint that singular fixed-point equations were unsupported
-when they "cannot be reduced or validated", not categorically unsupported.
+The singular classifier was already present in the initial flow-graph
+implementation commit `69b3a50a`, and the same commit's README listed
+positive-action singular fixed sets as explicit rejection cases. The commit-era
+diagnostic tests and `experiments/dev-flow-graph/unresolved-diagnostic` also
+use `resolve_closed_word_exact` to classify f64 closed-word failures,
+separating exact empty tubes, exact zero-action no-orbits, exact positive
+orbits, and exact unsupported positive singular outcomes. Session-log
+archaeology found the pre-code design constraint that singular fixed-point
+equations were unsupported when they "cannot be reduced or validated", not
+categorically unsupported.
 
-The recommended next local proof attempt is therefore narrow: prove or refute
-the singular fixed-polygon `ZeroActionNoOrbit` branch. If the proof is clean,
-the implementation theorem can move toward the Rust runtime boundary. If it is
-not clean, keep the finite-orbit-regular theorem separate from the exact Rust
-caveat boundary, or add a theorem-mode wrapper that rejects singular fixed maps
-without deleting the diagnostic classifier.
+The actual decision surface is not "delete or keep". The current options are:
+
+1. Keep the singular classifier for diagnostics and f64 exact-resolution
+   behavior, and add a theorem-facing exact wrapper that rejects singular fixed
+   maps.
+2. Prove the singular fixed-polygon `ZeroActionNoOrbit` branch and include that
+   branch in the implementation theorem.
+3. Change the exact resolver itself to reject all singular fixed maps, after
+   replacing the diagnostic/f64 behavior that currently depends on the
+   classifier.
+
+Option 1 is the lowest-risk next implementation boundary because it preserves
+existing diagnostic behavior while giving the theorem a clean finite-orbit
+regular boundary. Option 2 is the proof-improvement path. Option 3 is a
+behavior change, not cleanup.
 
 Minimal next proof packet:
 
