@@ -4,7 +4,9 @@ use euclidean_polytopes::TwoFace;
 use nalgebra::{DMatrix, Vector4};
 use symplectic::geom::symplectic_form::omega0;
 
-use super::features_helpers::{fraction_at_most, max_share, stats_or_zero};
+use super::features_helpers::{
+    fraction_at_most, max_share, quantile_or_zero, stats_or_zero, top_k_share,
+};
 
 pub struct FaceSymplecticFields {
     pub ridge_symp_area_ordered_face_count: usize,
@@ -14,7 +16,9 @@ pub struct FaceSymplecticFields {
     pub ridge_symp_area_volnorm_std: f64,
     pub ridge_symp_area_volnorm_min: f64,
     pub ridge_symp_area_volnorm_max: f64,
+    pub ridge_symp_area_volnorm_q25: f64,
     pub ridge_symp_area_volnorm_median: f64,
+    pub ridge_symp_area_volnorm_q75: f64,
     pub ridge_symp_area_volnorm_q90: f64,
     pub ridge_symp_area_volnorm_q95: f64,
     pub ridge_symp_area_volnorm_sum: f64,
@@ -106,33 +110,6 @@ fn order_two_face_vertices_from_incidence(
     })
 }
 
-fn quantile_or_zero(values: &[f64], q: f64) -> f64 {
-    if values.is_empty() {
-        return 0.0;
-    }
-    let mut sorted = values.to_vec();
-    sorted.sort_by(|left, right| left.partial_cmp(right).unwrap());
-    let position = q.clamp(0.0, 1.0) * (sorted.len() - 1) as f64;
-    let lower = position.floor() as usize;
-    let upper = position.ceil() as usize;
-    if lower == upper {
-        sorted[lower]
-    } else {
-        let weight = position - lower as f64;
-        sorted[lower] * (1.0 - weight) + sorted[upper] * weight
-    }
-}
-
-fn top_k_share(values: &[f64], k: usize) -> f64 {
-    let total = values.iter().sum::<f64>();
-    if total <= 0.0 {
-        return 0.0;
-    }
-    let mut sorted = values.to_vec();
-    sorted.sort_by(|left, right| right.partial_cmp(left).unwrap());
-    sorted.iter().take(k).sum::<f64>() / total
-}
-
 pub fn compute_face_symplectic_fields(
     two_faces: &[TwoFace],
     vertices: &[Vector4<f64>],
@@ -172,8 +149,10 @@ pub fn compute_face_symplectic_fields(
         ridge_symp_area_volnorm_std,
         ridge_symp_area_volnorm_min,
         ridge_symp_area_volnorm_max,
-        ridge_symp_area_volnorm_median: quantile_or_zero(&ridge_symp_areas, 0.5),
-        ridge_symp_area_volnorm_q90: quantile_or_zero(&ridge_symp_areas, 0.9),
+        ridge_symp_area_volnorm_q25: quantile_or_zero(&ridge_symp_areas, 0.25),
+        ridge_symp_area_volnorm_median: quantile_or_zero(&ridge_symp_areas, 0.50),
+        ridge_symp_area_volnorm_q75: quantile_or_zero(&ridge_symp_areas, 0.75),
+        ridge_symp_area_volnorm_q90: quantile_or_zero(&ridge_symp_areas, 0.90),
         ridge_symp_area_volnorm_q95: quantile_or_zero(&ridge_symp_areas, 0.95),
         ridge_symp_area_volnorm_sum: ridge_symp_areas.iter().sum::<f64>(),
         ridge_symp_area_volnorm_max_share: max_share(&ridge_symp_areas),

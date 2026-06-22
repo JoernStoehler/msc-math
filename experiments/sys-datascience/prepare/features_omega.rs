@@ -6,7 +6,7 @@ use nalgebra::DMatrix;
 use symplectic::algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega;
 use symplectic::geom::symplectic_form::omega0;
 
-use super::features_helpers::{fraction_at_most, stats_or_zero};
+use super::features_helpers::{fraction_at_most, quantile_or_zero, stats_or_zero, top_k_share};
 
 pub struct OmegaFields {
     pub transition: DMatrix<bool>,
@@ -23,6 +23,11 @@ pub struct OmegaFields {
     pub allpair_abs_omega_vol1_std: f64,
     pub allpair_abs_omega_vol1_min: f64,
     pub allpair_abs_omega_vol1_max: f64,
+    pub allpair_abs_omega_vol1_q25: f64,
+    pub allpair_abs_omega_vol1_median: f64,
+    pub allpair_abs_omega_vol1_q75: f64,
+    pub allpair_abs_omega_vol1_q90: f64,
+    pub allpair_abs_omega_vol1_top3_share: f64,
     pub allpair_zero_fraction: f64,
     pub allpair_abs_normalized_omega_mean: f64,
     pub allpair_abs_normalized_omega_std: f64,
@@ -32,6 +37,11 @@ pub struct OmegaFields {
     pub ridge_abs_omega_vol1_std: f64,
     pub ridge_abs_omega_vol1_min: f64,
     pub ridge_abs_omega_vol1_max: f64,
+    pub ridge_abs_omega_vol1_q25: f64,
+    pub ridge_abs_omega_vol1_median: f64,
+    pub ridge_abs_omega_vol1_q75: f64,
+    pub ridge_abs_omega_vol1_q90: f64,
+    pub ridge_abs_omega_vol1_top3_share: f64,
     pub ridge_zero_fraction: f64,
     pub ridge_abs_normalized_omega_mean: f64,
     pub ridge_abs_normalized_omega_std: f64,
@@ -207,6 +217,11 @@ pub fn compute_omega_fields(
         allpair_abs_omega_vol1_std,
         allpair_abs_omega_vol1_min,
         allpair_abs_omega_vol1_max,
+        allpair_abs_omega_vol1_q25: quantile_or_zero(&allpair_abs_omegas, 0.25),
+        allpair_abs_omega_vol1_median: quantile_or_zero(&allpair_abs_omegas, 0.50),
+        allpair_abs_omega_vol1_q75: quantile_or_zero(&allpair_abs_omegas, 0.75),
+        allpair_abs_omega_vol1_q90: quantile_or_zero(&allpair_abs_omegas, 0.90),
+        allpair_abs_omega_vol1_top3_share: top_k_share(&allpair_abs_omegas, 3),
         allpair_zero_fraction: if total_pairs > 0.0 {
             allpair_zero_count as f64 / total_pairs
         } else {
@@ -220,6 +235,11 @@ pub fn compute_omega_fields(
         ridge_abs_omega_vol1_std,
         ridge_abs_omega_vol1_min,
         ridge_abs_omega_vol1_max,
+        ridge_abs_omega_vol1_q25: quantile_or_zero(&ridge_abs_omegas, 0.25),
+        ridge_abs_omega_vol1_median: quantile_or_zero(&ridge_abs_omegas, 0.50),
+        ridge_abs_omega_vol1_q75: quantile_or_zero(&ridge_abs_omegas, 0.75),
+        ridge_abs_omega_vol1_q90: quantile_or_zero(&ridge_abs_omegas, 0.90),
+        ridge_abs_omega_vol1_top3_share: top_k_share(&ridge_abs_omegas, 3),
         ridge_zero_fraction: if two_faces.is_empty() {
             0.0
         } else {
