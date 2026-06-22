@@ -198,6 +198,51 @@ Current persistence is intentionally limited to auth/runtime state and caches
 that were already part of the host contract: Claude, Codex, GitHub CLI, uv,
 TeX user trees, bash history, and the existing VS Code state volume.
 
+### Agent CLI Tool Bundle
+
+The Dockerfile installs a broad but ordinary set of small command-line tools in
+the common CLI layer: PDF/text inspection, shell linting/formatting, benchmarking
+and profiling, plotting, SQLite, Pandoc, process monitoring, and interactive
+navigation tools.
+
+Reason:
+
+- these tools are repeatedly useful for local agent work and should survive
+  container rebuilds;
+- installing them in the Dockerfile is simpler than post-create installation or
+  host bind mounts, because they are ordinary OS packages and not user state;
+- they live after the heavyweight TeX layer, so adding or removing them does
+  not invalidate the slowest dependency layers.
+
+Cost:
+
+- the image is larger and this layer takes longer to rebuild;
+- versions follow Ubuntu 24.04 apt repositories unless a tool is explicitly
+  pinned elsewhere.
+
+Ubuntu names `fd` and `bat` as `fdfind` and `batcat`; the Dockerfile adds
+`/usr/local/bin/fd` and `/usr/local/bin/bat` symlinks because agents commonly
+try the upstream command names.
+
+### DuckDB CLI
+
+DuckDB CLI is installed from the official prebuilt GitHub release because
+Ubuntu 24.04 does not package the CLI. The Dockerfile pins
+`DUCKDB_VERSION` and checks the downloaded zip against
+`DUCKDB_CLI_LINUX_AMD64_SHA256`.
+
+Reason:
+
+- DuckDB is useful for inspecting tabular experiment artifacts and method
+  packets without adding Python dependencies or ad hoc parsers;
+- a pinned Dockerfile install is more reproducible than a post-create download
+  or container-local manual install.
+
+Cost:
+
+- the build depends on GitHub release availability;
+- updating DuckDB requires changing both the version and SHA256.
+
 ## SageMath In The Local Devcontainer
 
 The local image now installs SageMath in the Dockerfile via the official

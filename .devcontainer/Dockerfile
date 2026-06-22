@@ -60,6 +60,26 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ripgrep \
     jq \
     gh \
+    time \
+    poppler-utils \
+    fd-find \
+    shellcheck \
+    shfmt \
+    hyperfine \
+    cmake \
+    ninja-build \
+    sqlite3 \
+    pandoc \
+    bc \
+    dc \
+    gnuplot-nox \
+    bat \
+    ltrace \
+    heaptrack \
+    btop \
+    sysstat \
+    fzf \
+    parallel \
     universal-ctags \
     tree \
     inotify-tools \
@@ -70,7 +90,25 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     qhull-bin \
     tmux \
     trash-cli \
+    unzip \
     && rm -rf /var/lib/apt/lists/*
+
+# Ubuntu uses Debian executable names for these packages; expose the upstream
+# command names agents commonly try.
+RUN ln -sf /usr/bin/fdfind /usr/local/bin/fd \
+    && ln -sf /usr/bin/batcat /usr/local/bin/bat
+
+# DuckDB CLI is not packaged in Ubuntu 24.04; install the official prebuilt CLI.
+ENV DUCKDB_VERSION=1.5.4
+ENV DUCKDB_CLI_LINUX_AMD64_SHA256=1f2fa724fb054b3dbe1a9cbd13de5b76997d850e7087ec762ba88db04e0180cf
+RUN set -eux; \
+    tmpdir="$(mktemp -d)"; \
+    curl -fsSL "https://github.com/duckdb/duckdb/releases/download/v${DUCKDB_VERSION}/duckdb_cli-linux-amd64.zip" -o "$tmpdir/duckdb.zip"; \
+    echo "${DUCKDB_CLI_LINUX_AMD64_SHA256}  $tmpdir/duckdb.zip" | sha256sum -c -; \
+    unzip -q "$tmpdir/duckdb.zip" -d "$tmpdir"; \
+    install -m 0755 "$tmpdir/duckdb" /usr/local/bin/duckdb; \
+    /bin/rm -rf "$tmpdir"; \
+    duckdb --version
 
 # VS Code tunnel CLI. post-create.sh refreshes this on container recreate
 # because this Docker layer can be cached even when the "latest" URL changes.
