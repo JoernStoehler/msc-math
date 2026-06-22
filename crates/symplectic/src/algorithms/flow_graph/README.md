@@ -55,8 +55,8 @@ Exact implementation scope currently documented here:
   fixture/data-generation path;
 - nonzero exact `omega_0` on every nonempty directed facet-pair candidate;
 - nonnegative exact action threshold;
-- no positive-action singular fixed set encountered by exact closed-word
-  resolution;
+- no singular fixed set with a positive-action closed candidate encountered by
+  exact closed-word resolution;
 - exact exhaustive search and retained-word semantics for that input class;
 - scalar capacity comparison against certified HK2017/QP as implementation
   evidence, not as a word-level oracle;
@@ -69,7 +69,8 @@ uses global linear-independence and finite-orbit-regularity hypotheses. The
 Rust exact path does not validate those as named input predicates. It validates
 or rejects the downstream conditions it needs during exact tube construction
 and closed-word resolution: unsupported zero `omega_0`, singular primitive
-transition construction, and positive-action singular fixed sets.
+transition construction, and singular fixed sets with positive-action closed
+candidates.
 The determinant-generic corollary in the formal file is relative to the
 ambient primitive-denominator domain; it is not yet a relative-density theorem
 inside the valid irredundant presentation space.
@@ -97,7 +98,8 @@ Target input:
 - exact `omega_0` signs for facet pairs;
 - nonzero exact `omega_0` on every nonempty directed facet-pair candidate;
 - nonnegative exact action threshold;
-- no positive-action singular fixed set during exact closed-word resolution;
+- no singular fixed set with a positive-action closed candidate during exact
+  closed-word resolution;
 - a numerical rejection policy for nearly zero `omega_0` on geometric
   transitions in the f64 path.
 
@@ -138,9 +140,9 @@ Path-specific outcome contract:
   segment time to be strictly positive; zero-time boundary fixed points are not
   accepted as positive orbits for the displayed word.
 - Exact rejection reasons currently known are: invalid input shapes, a
-  nonempty directed facet-pair candidate with `omega_0 = 0`, and a
-  positive-action singular fixed set. If exhaustive exact search finishes
-  without finding any positive orbit, that is also returned as a typed
+  nonempty directed facet-pair candidate with `omega_0 = 0`, and a singular
+  fixed set with a positive-action closed candidate. If exhaustive exact search
+  finishes without finding any positive orbit, that is also returned as a typed
   non-success instead of a panic. Full bounded-irredundant validation is not
   part of this rejection boundary.
 - The exact closed-word implementation is not a literal copy of the singular
@@ -148,13 +150,13 @@ Path-specific outcome contract:
   equations exactly. On the uncut tube, or on the tube remaining after an
   action cutoff, it classifies singular fixed-point sets exactly, accepts
   nonpositive-action singular fixed sets as no-orbit outcomes, and rejects
-  positive-action singular fixed sets as unsupported.
+  singular fixed sets with positive-action closed candidates as unsupported.
 - The singular fixed-set classifier entered with the initial flow-graph work
-  surface and serves two recorded purposes: positive-action singular fixed sets
-  are explicit non-success outcomes, and the f64 wrapper and
-  unresolved-diagnostic experiment use exact closed-word resolution to classify
-  near-singular f64 closed-word errors. This is not, by itself, proof coverage
-  for a theorem-level exact capacity claim.
+  surface and serves two recorded purposes: singular fixed sets with
+  positive-action closed candidates are explicit non-success outcomes, and the
+  f64 wrapper and unresolved-diagnostic experiment use exact closed-word
+  resolution to classify near-singular f64 closed-word errors. This is not, by
+  itself, proof coverage for a theorem-level exact capacity claim.
 - Current options for the theorem/runtime boundary are:
   1. keep the classifier for diagnostics and f64 exact-resolution behavior, and
      add a theorem-facing exact wrapper that rejects singular fixed maps;
@@ -177,9 +179,10 @@ Path-specific outcome contract:
   positive words remain f64 outputs; the exact resolution boundary applies only
   to f64 error words that are reclassified exactly. The wrapper returns a value
   only if exact resolution resolves all such error words without an exact
-  construction error or unsupported positive singular outcome, and at least one
-  positive orbit remains. Its returned action is the minimum of direct f64
-  positive words and exact-resolution positive words.
+  construction error or unsupported singular fixed set with a positive-action
+  closed candidate, and at least one positive orbit remains. Its returned
+  action is the minimum of direct f64 positive words and exact-resolution
+  positive words.
 - `capacity_exact` is the current exact rational search wrapper used by tests
   and experiments.
 - `diagnose_f64_closed_words` is the development/experiment function.
@@ -276,7 +279,7 @@ Separate rejection suite:
 
 - invalid input shapes;
 - exact nonempty facet-pair `omega_0 = 0` rejection;
-- exact positive-action singular fixed set.
+- exact singular fixed set with a positive-action closed candidate.
 
 Out of scope for this exact e2e suite:
 

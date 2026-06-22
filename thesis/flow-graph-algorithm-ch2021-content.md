@@ -79,7 +79,8 @@ review gates below.
   rational arithmetic, filters positive outputs by strict segment times, and
   reports retained FG words up to the exact action threshold.
 - Exact rejection/caveat behavior includes nonempty facet-pair
-  zero-\(\omega_0\) candidates and positive-action singular fixed sets.
+  zero-\(\omega_0\) candidates and singular fixed sets with positive-action
+  closed candidates.
 - HKO and Lagrangian-product zero-\(\omega_0\) examples are outside this
   implementation scope.
 - f64 output is approximate output, not an exact certificate. A theorem-level
@@ -125,9 +126,9 @@ These are code facts, not theorem hypotheses.
 - `exact_tube.rs::solve_singular_fixed_tube` and
   `exact_tube.rs::singular_fixed_polygon_result` classify singular fixed sets
   exactly on the uncut tube or on the tube remaining after an action cutoff.
-  Positive-action singular fixed sets in that searched domain become
-  `UnsupportedPositiveSingular`; nonpositive-action singular fixed sets become
-  `ZeroActionNoOrbit`.
+  Singular fixed sets with positive-action closed candidates in that searched
+  domain become `UnsupportedPositiveSingular`; nonpositive-action singular
+  fixed sets become `ZeroActionNoOrbit`.
 - `f64_tube_search.rs::capacity_f64` resolves f64 closed-word errors with exact
   closed-word arithmetic, but direct f64 positive words remain f64 outputs. If
   no positive orbit remains, it returns typed non-success rather than panicking.
