@@ -32,8 +32,10 @@ pub use decision_compare::{
 };
 pub use edge_cases::edge_fixture_cases;
 pub use exact_route::{
-    solve_exact_capacity_for_transition_pruned_sigmas, ExactCapacityError, ExactCapacityOrbit,
-    ExactCapacityReport,
+    exact_binary64_dual_vertex_arrays, exact_binary64_transition_matrix_assuming_origin_interior,
+    solve_exact_capacity_for_transition_pruned_sigmas,
+    try_exact_binary64_transition_matrix_assuming_origin_interior, ExactCapacityError,
+    ExactCapacityOrbit, ExactCapacityReport,
 };
 pub use f64_route::{
     capacity_f64_only, capacity_f64_only_with_policy,

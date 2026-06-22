@@ -30,6 +30,10 @@ Keep route-changing code local here before promoting stable contracts into
 - `tools/candidate_filter_audit/`: exact-all-visited-sigma audit that checks
   whether the f64 single-sigma solve discards exact-admissible positive-`Q`
   sigmas before fallback/certification can see them.
+- `examples/owned_consumers.rs`: caller-shaped examples owned by this dev
+  packet. They are not downstream evidence; they are cheap API and architecture
+  probes for route-result ergonomics, copy-editability, instrumentation
+  friction, and status/result clarity while route contracts are still changing.
 - `verification/`: route-specific expectation manifest and comparison tools.
 - `numerics/`: route-specific numerics event conversion and near-singular
   diagnostics.

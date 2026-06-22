@@ -1,7 +1,15 @@
-use nalgebra::DMatrix;
+use euclidean_polytopes::{
+    facet_intersection_is_nonempty_from_vertex_facet_incidence,
+    polar_vertices_exact_rational_assuming_origin_interior, PolarVerticesExact,
+};
+use nalgebra::{DMatrix, Vector4};
 use num_rational::BigRational;
 use num_traits::{One, Signed, ToPrimitive};
+use std::panic::{catch_unwind, AssertUnwindSafe};
+use symplectic::algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega;
 use symplectic::algorithms::hk2017::SimpleDirectedCyclesCanonical;
+use symplectic::exact::omega_signs_exact;
+use symplectic::geom::rational_arithmetic::f64_to_rational;
 use symplectic::kkt::rational_solver::solve_kkt_exact;
 
 #[derive(Clone, Debug, PartialEq)]
@@ -29,6 +37,53 @@ pub enum ExactCapacityError {
     InvalidTransitionMatrix,
     InvalidGap,
     NoAdmissibleOrbit,
+}
+
+pub fn exact_binary64_dual_vertex_arrays(dual_vertices: &[Vector4<f64>]) -> Vec<[BigRational; 4]> {
+    dual_vertices
+        .iter()
+        .map(|vertex| {
+            [
+                f64_to_rational(vertex[0]),
+                f64_to_rational(vertex[1]),
+                f64_to_rational(vertex[2]),
+                f64_to_rational(vertex[3]),
+            ]
+        })
+        .collect()
+}
+
+pub fn exact_binary64_transition_matrix_assuming_origin_interior(
+    dual_vertices_exact: &[[BigRational; 4]],
+) -> DMatrix<bool> {
+    try_exact_binary64_transition_matrix_assuming_origin_interior(dual_vertices_exact)
+        .expect("exact binary64 transition matrix construction failed")
+}
+
+pub fn try_exact_binary64_transition_matrix_assuming_origin_interior(
+    dual_vertices_exact: &[[BigRational; 4]],
+) -> Result<DMatrix<bool>, String> {
+    catch_unwind(AssertUnwindSafe(|| {
+        exact_binary64_transition_matrix_inner(dual_vertices_exact)
+    }))
+    .map_err(|_| "exact binary64 transition matrix construction panicked".to_string())
+}
+
+fn exact_binary64_transition_matrix_inner(
+    dual_vertices_exact: &[[BigRational; 4]],
+) -> DMatrix<bool> {
+    let dual_vectors = exact_dual_vertex_vectors(dual_vertices_exact);
+    let PolarVerticesExact {
+        vertex_facet_incidence,
+        ..
+    } = polar_vertices_exact_rational_assuming_origin_interior(&dual_vectors);
+    let facet_intersection_is_nonempty =
+        facet_intersection_is_nonempty_from_vertex_facet_incidence(&vertex_facet_incidence);
+    let omega_signs = omega_signs_exact(&dual_vectors);
+    build_transition_matrix_from_facet_intersections_and_omega(
+        &facet_intersection_is_nonempty,
+        &omega_signs,
+    )
 }
 
 /// Exact reference route over the complete visited transition-pruned sigma stream.
@@ -123,18 +178,24 @@ fn rational_to_f64(value: &BigRational) -> f64 {
     value.to_f64().unwrap_or(f64::NAN)
 }
 
+fn exact_dual_vertex_vectors(dual_vertices: &[[BigRational; 4]]) -> Vec<Vector4<BigRational>> {
+    dual_vertices
+        .iter()
+        .map(|vertex| {
+            Vector4::new(
+                vertex[0].clone(),
+                vertex[1].clone(),
+                vertex[2].clone(),
+                vertex[3].clone(),
+            )
+        })
+        .collect()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
-    use euclidean_polytopes::{
-        facet_intersection_is_nonempty_from_vertex_facet_incidence,
-        polar_vertices_exact_rational_assuming_origin_interior, PolarVerticesExact,
-    };
-    use nalgebra::Vector4;
     use num_traits::Zero;
-    use symplectic::algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega;
-    use symplectic::exact::omega_signs_exact;
-    use symplectic::geom::rational_arithmetic::f64_to_rational;
 
     #[test]
     fn exact_route_solves_small_generated_case_without_f64_candidate_filter() {
@@ -145,8 +206,9 @@ mod tests {
         )
         .pop()
         .expect("known generated case");
-        let dual_vertices_exact = exact_dual_vertex_arrays(&case.dual_vertices);
-        let transition = exact_binary64_transition_matrix(&dual_vertices_exact);
+        let dual_vertices_exact = exact_binary64_dual_vertex_arrays(&case.dual_vertices);
+        let transition =
+            exact_binary64_transition_matrix_assuming_origin_interior(&dual_vertices_exact);
 
         let report = solve_exact_capacity_for_transition_pruned_sigmas(
             &dual_vertices_exact,
@@ -159,48 +221,5 @@ mod tests {
         assert_eq!(report.exact_admissible_count, 2);
         assert_eq!(report.minimizers.len(), 1);
         assert_eq!(report.orbits, report.minimizers);
-    }
-
-    fn exact_dual_vertex_arrays(dual_vertices: &[Vector4<f64>]) -> Vec<[BigRational; 4]> {
-        dual_vertices
-            .iter()
-            .map(|vertex| {
-                [
-                    f64_to_rational(vertex[0]),
-                    f64_to_rational(vertex[1]),
-                    f64_to_rational(vertex[2]),
-                    f64_to_rational(vertex[3]),
-                ]
-            })
-            .collect()
-    }
-
-    fn exact_dual_vertex_vectors(dual_vertices: &[[BigRational; 4]]) -> Vec<Vector4<BigRational>> {
-        dual_vertices
-            .iter()
-            .map(|vertex| {
-                Vector4::new(
-                    vertex[0].clone(),
-                    vertex[1].clone(),
-                    vertex[2].clone(),
-                    vertex[3].clone(),
-                )
-            })
-            .collect()
-    }
-
-    fn exact_binary64_transition_matrix(dual_vertices_exact: &[[BigRational; 4]]) -> DMatrix<bool> {
-        let dual_vectors = exact_dual_vertex_vectors(dual_vertices_exact);
-        let PolarVerticesExact {
-            vertex_facet_incidence,
-            ..
-        } = polar_vertices_exact_rational_assuming_origin_interior(&dual_vectors);
-        let facet_intersection_is_nonempty =
-            facet_intersection_is_nonempty_from_vertex_facet_incidence(&vertex_facet_incidence);
-        let omega_signs = omega_signs_exact(&dual_vectors);
-        build_transition_matrix_from_facet_intersections_and_omega(
-            &facet_intersection_is_nonempty,
-            &omega_signs,
-        )
     }
 }
