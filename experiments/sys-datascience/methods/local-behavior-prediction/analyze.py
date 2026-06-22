@@ -73,6 +73,13 @@ def read_csv(path: Path) -> list[dict[str, Any]]:
     return rows
 
 
+def require_files(paths: list[Path]) -> None:
+    missing = [path for path in paths if not path.exists()]
+    if missing:
+        joined = "\n".join(f"- {path}" for path in missing)
+        raise SystemExit(f"missing required prepared local-behavior files:\n{joined}")
+
+
 def save_figure(fig, path: Path) -> Path:
     path.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(path)
@@ -489,6 +496,17 @@ def main() -> None:
 
     prepared_dir = args.prepared_dir.resolve()
     out_dir = args.out_dir.resolve() if args.out_dir else prepared_dir / "local-behavior-prediction"
+    require_files(
+        [
+            prepared_dir / "local-behavior-pairs.jsonl",
+            prepared_dir / "local-behavior-branch-variation.jsonl",
+            prepared_dir / "local-behavior-gradient-projections.jsonl",
+            prepared_dir / "local-behavior-radius-summary.csv",
+            prepared_dir / "local-behavior-source-radius-summary.csv",
+            prepared_dir / "local-behavior-candidate-window-summary.csv",
+            prepared_dir / "local-behavior-candidate-gradient-summary.csv",
+        ]
+    )
     setup()
     pairs = read_jsonl(prepared_dir / "local-behavior-pairs.jsonl")
     branch_variation = read_jsonl(prepared_dir / "local-behavior-branch-variation.jsonl")

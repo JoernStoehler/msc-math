@@ -34,6 +34,13 @@ def read_jsonl(path: Path) -> list[dict[str, Any]]:
     return rows
 
 
+def require_files(paths: list[Path]) -> None:
+    missing = [path for path in paths if not path.exists()]
+    if missing:
+        joined = "\n".join(f"- {path}" for path in missing)
+        raise SystemExit(f"missing required local-behavior input files:\n{joined}")
+
+
 def write_jsonl(path: Path, rows: list[dict[str, Any]]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", encoding="utf-8") as handle:
@@ -1142,6 +1149,15 @@ def main() -> None:
 
     run_dir = args.run_dir.resolve()
     out_dir = args.out_dir.resolve() if args.out_dir else run_dir / "prepared"
+    require_files(
+        [
+            run_dir / "computed-polytopes.jsonl",
+            run_dir / "local-behavior-basepoints.jsonl",
+            run_dir / "local-behavior-samples.jsonl",
+            run_dir / "local-behavior-branch-gradients.jsonl",
+            run_dir / "local-behavior-candidate-branch-gradients.jsonl",
+        ]
+    )
     computed_rows = read_jsonl(run_dir / "computed-polytopes.jsonl")
     basepoints = read_jsonl(run_dir / "local-behavior-basepoints.jsonl")
     samples = read_jsonl(run_dir / "local-behavior-samples.jsonl")

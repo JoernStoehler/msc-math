@@ -143,14 +143,6 @@ It writes:
 - `compute-budget-report.json`
 - `summary.json`
 
-Use `--write-step-ranking-audit` only for small hard panels. It writes
-`step-ranking-audit.jsonl`, which exhaustively recomputes every generated
-direction/step pair at each traced state and ranks the same finite moves by
-near-active and candidate-window predictions. Candidate-window rows include the
-branch/orbit witness attaining the lower-envelope prediction. This is for
-deciding whether a first-order model guides observed moves; it is not a normal
-broad-panel option.
-
 ## Branch Degeneracy Diagnostic
 
 This command is the first real-data diagnostic in the package. It reads the
@@ -306,11 +298,13 @@ action window can still be used internally to collect candidate orbits before
 filtering.
 
 Use `--direction-model near-active` for the original near-active first-order
-score. Use `--direction-model candidate-window` to score generated finite
-steps by the minimum over base candidate-window branch models with base branch
-gaps included. Add `--include-candidate-window-directions` only for the
-candidate-window maximin direction experiment; those step-indexed directions
-are tested only at the finite step used to generate them.
+score. Use `--direction-model candidate-window` to order generated directions
+by the best predicted finite step under the minimum over base candidate-window
+branch models with base branch gaps included; the runner still tests the
+configured step list in input order for the chosen direction. Add
+`--include-candidate-window-directions` only for the candidate-window maximin
+direction experiment; those step-indexed directions are tested only at the
+finite step used to generate them.
 
 ```bash
 cargo run -p exp-dev-gradient-ascent \
@@ -355,6 +349,15 @@ It writes:
 - `endpoint-direction-scan.jsonl`
 - `compute-budget-report.json`
 - `summary.json`
+
+With `--write-step-ranking-audit`, it also writes
+`step-ranking-audit.jsonl`. Use that flag only for small hard panels. The audit
+exhaustively recomputes every generated direction/step pair at each traced
+state and ranks the same finite moves by near-active and candidate-window
+predictions. Candidate-window rows include the branch/orbit witness attaining
+the lower-envelope prediction. This is for deciding whether a first-order model
+guides observed moves; it is not a normal broad-panel option and it is not the
+same as the runner's direction-first line search.
 
 Current checked smoke observation from the setup pass, using the branch
 diagnostic output described above:

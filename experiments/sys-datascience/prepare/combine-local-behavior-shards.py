@@ -35,7 +35,7 @@ def read_json(path: Path) -> dict[str, Any]:
 
 def iter_jsonl(path: Path):
     if not path.exists():
-        return
+        raise SystemExit(f"required shard file is missing: {path}")
     with path.open("r", encoding="utf-8") as handle:
         for line in handle:
             line = line.strip()
