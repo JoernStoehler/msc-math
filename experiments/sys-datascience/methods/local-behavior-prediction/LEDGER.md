@@ -93,7 +93,7 @@ Use the source-stratified path to estimate local branch coverage over sampled
 starts. The statistical unit is a provenance/start row, while expensive point
 payloads can still be cached by `poly_id`.
 
-First retained-evidence target:
+First evidence-building target:
 
 - sample from `polytope-provenance-table.jsonl`, initially
   `random_sample` and `random_product_sample`;
@@ -208,7 +208,7 @@ Candidate-window dev-gradient overlap outputs:
 - `/tmp/dev-gradient-ascent-candidate-window-overlap-panel-run-trace-report`;
 - `/tmp/dev-gradient-ascent-candidate-window-directions-overlap-panel-aggregate`;
 - `/tmp/dev-gradient-ascent-candidate-window-directions-overlap-panel-endpoint-scan-report`;
-- `/tmp/dev-gradient-ascent-candidate-window-directions-overlap-panel-run-trace-report`.
+- `/tmp/dev-gradient-ascent-candidate-window-directions-overlap-panel-run-trace-report`;
 - `/tmp/dev-gradient-ascent-candidate-window-threshold1e-4-overlap-panel-aggregate`;
 - `/tmp/dev-gradient-ascent-candidate-window-threshold1e-4-overlap-panel-endpoint-scan-report`;
 - `/tmp/dev-gradient-ascent-candidate-window-threshold1e-4-overlap-panel-run-trace-report`.
@@ -268,7 +268,7 @@ six checked moves, while the near-active rule predicts
 prediction-gated first-order method without a fallback or explicit
 failure-mode guard.
 
-The retained audit output does not record which candidate branch caused the
+The existing audit output does not record which candidate branch caused the
 large negative prediction. Current audit code records the branch/orbit witness
 attaining the lower-envelope minimum; before spending more broad local compute,
 rerun only this hard state and inspect that witness. That gives the branch-level
