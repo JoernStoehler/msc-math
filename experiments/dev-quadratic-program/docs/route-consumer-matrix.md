@@ -25,8 +25,8 @@ Source surfaces checked for this classification:
 Route development is caller-first:
 
 ```text
-consumer -> final output need -> acceptable route contract
-         -> internal predicates/bounds -> evidence/proof/performance
+consumer decision -> final output need -> acceptable route contract
+                  -> internal predicates/bounds -> evidence/proof/performance
 ```
 
 The one-sigma KKT predicate is an internal mechanism. It is useful only to the
@@ -35,6 +35,13 @@ fallback cost, or diagnostic evidence for a consumer.
 
 Do not collapse the route family into "the QP code" or "the trusted route".
 Different consumers can call or copy-edit different routes.
+
+Do not collapse downstream uses into broad ownership buckets such as
+`sys-datascience method packets`, `large search`, or `crate users`. The route
+contract depends on the decision the consumer is making. For example, a
+`sys > 1` threshold scan needs different capacity/`sys` reliability from a
+ranking diagnostic, branch-window diagnostic, timing run, or theorem-facing
+exact-value claim.
 
 ## Shared Route Contracts
 
@@ -58,24 +65,33 @@ predicate as falsified on HKO-like rows. Therefore ordinary fallback routes
 must not be described as generally certified until the f64 predicate contract
 or fallback policy is fixed.
 
-## Consumer Matrix
+## Consumer Decision Matrix
 
-Current known set. Add consumers when a new caller or thesis surface appears.
+Current known decision types. Add concrete consumers when a new method packet,
+caller, or thesis surface appears. A broad packet owner is not enough; name the
+decision that would change if capacity, `sys`, a predicate, a candidate set, or
+an orbit set is wrong.
 
 | Consumer/context | Final output needed | Acceptable uncertainty | Route fit | Current routing check |
 | --- | --- | --- | --- | --- |
 | KKT/numerics audits | truth tables, exact-vs-f64 rows, error terms, capacity sensitivity diagnostics | Yes, if explicit in the audit row | raw f64 one-sigma, candidate certified-f64 predicates, exact rational oracle | Must keep baseline current behavior separate from proposed theorem predicates |
 | Performance probes | timing/counter comparison for a named route | Yes, if route label is explicit | raw f64, heuristic f64 capacity, fallback, certified exact depending on benchmark | Timings are not correctness evidence unless paired with a route contract |
-| Large search / method development | many labels or candidate scores for exploration | Yes, if the method treats them as heuristic or records status | heuristic f64 capacity, possibly f64-with-rejection, sampled exact calibration | Do not silently reuse heuristic labels as certified thesis evidence |
-| `sys-datascience` producer payloads | expensive computed-polytope payload: capacity, sys, sigmas, orbit scalars, provenance | Depends on producer/method question; status must be explicit enough for downstream use | currently `capacity_auto`/`capacity_billiard` via `OrbitSearchResult` | `ComputedPolytopePayloadRow` stores `backend` but not a full route-contract label; before changing this producer, check whether the method consumer needs heuristic/fallback/certified status |
-| `sys-datascience` retained tables | method-facing rows and reusable features | Depends on method packet; table must not erase label semantics needed by the method | selected producer/table schema chosen by method-table design | `capacity_source` records dataset source, not certification strength; retained rows currently assume scalar capacity exists |
-| `sys-datascience` method packets | input labels/features appropriate to one method question | Yes, if method README states label semantics and caveats | any prepared table or method-local artifact with explicit semantics | Method packet owns the choice; route work should provide clear status, not force policy |
+| Heuristic large search and candidate scoring | many labels or candidate scores for exploration | Yes, if the method treats them as heuristic and records status | heuristic f64 capacity, possibly f64-with-rejection, sampled exact calibration | Do not silently reuse heuristic labels as certified thesis evidence |
+| `sys > 1` threshold scans (`scan-sys-gt-1`, random-tail positive counts, perturbation positive counts) | fast `sys` values plus enough threshold reliability that a genuine positive with meaningful margin is not hidden below 1 | Only for recorded-value EDA unless a threshold error/margin check is added | currently table/producer scalar scan over recorded `sys`; stronger claim needs capacity/volume error control or exact/certified recheck near threshold | `scan-sys-gt-1` README explicitly does not validate capacity, volume, or `sys`; do not upgrade it to a true-negative threshold claim |
+| Random/product tail EDA and filtered summaries | retained-sample distribution, quantiles, maxima, top rows, source/filter breakdowns | Sample-scoped uncertainty is explicit; numerical error matters most near tail/threshold and for top-row ordering | recorded table `sys` plus source contract; exact/certified recheck if thesis wording depends on tight top-tail margins | `random-tail-eda` reports finite retained sample facts, not universal random-model truth |
+| Geometry-only prediction/ranking diagnostics | held-out prediction quality and top-decile enrichment against already computed `sys` | Heuristic/in-table labels are acceptable if leakage and route status stay visible | prepared table labels for in-table diagnostics; validated proposer needs new unevaluated candidates | `prediction-ranking` explicitly says it is not a validated generated-row proposer |
+| Projection/anomaly exploratory structure | PCA/cluster/anomaly structure and overlap with high `sys` tail | Heuristic/in-table labels are acceptable if not promoted to proposer evidence | prepared table labels for exploratory geometry-feature analysis | `projection-structure` explicitly says anomaly/cluster labels are not candidate proposers |
+| Statistical association screening | scalar feature association with retained-table `sys` | In-table explanatory uncertainty acceptable; not feature-engineering closure | prepared table labels and feature schema audit | method owns feature-screen scope, but route work must not hide target-label status |
+| Trusted random/product input filter | selected retained rows and provenance exclusions | It audits row membership, not capacity truth | prepared table/provenance filters | `trusted-random-dataset` explicitly does not validate capacity or volume |
+| Local/semi-local branch behavior | finite-step `sys` changes, target-minimizer status, branch-gradient prediction, branch-window diagnostics | Yes, but branch-set/status semantics must be explicit | current local behavior producer rows, certified gap-window for load-bearing branch claims, exact one-sigma audits | scalar `best_sigma` alone is not enough; compare minimizer sets, candidate windows, KKT status, and branch gradients |
+| Endpoint local-max diagnostics | quotient first-order ascent direction, active/near-active gradients, tiny step probe | Heuristic diagnostic uncertainty acceptable; not theorem-level local maximality | recomputed active orbit data and numerical quotient slice | endpoint diagnostic is evidence against endpoint stability, not certified local-max proof |
+| `sys-datascience` producer payload generation | expensive computed-polytope payload: capacity, sys, sigmas, orbit scalars, provenance | Must preserve enough route/status for downstream decisions; exact need depends on the decision consuming the row | currently `capacity_auto`/`capacity_billiard` via `OrbitSearchResult` | `ComputedPolytopePayloadRow` stores `backend` but not a full route-contract label; producer schema should not erase route semantics |
+| `sys-datascience` retained table materialization | method-facing reusable rows and features | Must preserve label semantics needed by method packets | selected producer/table schema chosen by method-table design | `capacity_source` records dataset source, not certification strength; retained rows currently assume scalar capacity exists |
 | Verification / capacity axioms | expected scalar/list result for every in-scope test input, unless testing a failure path | No hidden uncertainty; explicit expected failure is allowed | f64+exact fallback only after f64 predicate is sound enough, certified exact minimizer/gap-window, or exact route | Do not use ordinary scalar `capacity()` as the only witness unless the checked route contract says that scalar is sufficient |
 | Flow-graph comparison | scalar certified QP capacity; sometimes gap-window exact orbit set | No hidden uncertainty | certified exact minimizer/gap-window over rational/stored inputs | Existing flow-graph exact tests use certified QP comparison; keep this separate from ordinary scalar route |
 | HKO/local proof packets | theorem-specific exact checks and human-readable verification | No hidden uncertainty in theorem claims | topic-local exact/Sage route; generic QP routes only as support/diagnostics | HKO-like f64 rows are diagnostics, not algebraic HKO evidence |
 | Regular polygon / pentagon product theorem-facing examples | exact result for the intended algebraic object | No rationalized binary64 substitute unless a transfer proof is supplied | algebraic/Sage route or explicit rational-to-algebraic transfer proof | Rational exact QP certifies the stored rational input, not the exact regular polygon unless separately connected |
 | Rational/stored examples and fixtures | exact result for the stored rational input | No hidden uncertainty | exact rational one-sigma/capacity aggregation, certified exact minimizer/gap-window | Need route label to distinguish stored-input exactness from algebraic-object exactness |
-| Gradient/local-behavior experiments | scalar sys, active/near-active branches, gradients, branch diagnostics | Usually yes, but branch semantics must be explicit | current `OrbitSearchResult`, certified gap-window for load-bearing branch sets, exact one-sigma audits | Current code uses `capacity()` and active-orbit tolerances; branch-set correctness depends on route status |
 | Crate ordinary API consumers | ergonomic capacity result with visible guarantee/failure mode | Depends on API chosen | multiple explicit route APIs, not one collapsed result type | `OrbitSearchResult::capacity()` is convenient but too easy to overread without route context |
 
 ## Current API / Schema Findings
@@ -113,6 +129,10 @@ These are inspection findings, not final design decisions.
 
 - Route work should first make the route contract explicit in the dev-QP
   packet before optimizing an internal predicate.
+- Consumer inventory must be decision-based, not owner-based. A method folder,
+  crate API, or experiment packet can contain threshold, ranking, branch,
+  timing, diagnostic, and theorem-facing decisions with different route
+  contracts.
 - A useful f64 predicate can be mostly `Indet` if final capacity/sys outputs
   are still isolated or exact fallback cost is reduced.
 - A high candidate-level decided rate is not a success metric by itself.
@@ -125,6 +145,17 @@ These are inspection findings, not final design decisions.
 - For datascience, route work should expose label/status semantics. The method
   packet chooses whether heuristic, certified, mixed, or rejected-row surfaces
   support its method question.
+- Do not reuse a result object merely because it has the fields a caller needs.
+  Prefer decision-specific rows or result structs when the guarantee differs:
+  heuristic scan rows, threshold-scan rows, branch diagnostic rows,
+  exact-over-retained-candidates results, exact-over-visited-sigma results, and
+  theorem/algebraic certificates are different contracts even when several
+  contain an action-like scalar.
+- Avoid field-alias methods and route labels whose names add guarantees the
+  data does not carry. A data container with `min_action` should not gain proof
+  strength through a method named `capacity`; route provenance labels should
+  identify route shape without words such as `safe` or `certified` unless the
+  named contract supplies that guarantee.
 
 ## Route-Design Review Gates
 
