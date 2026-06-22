@@ -675,6 +675,8 @@ Lemma~\ref{lem:fg-return-determinant-contraction} with
 \(\det(I-L)\).  Repeating this contraction reduces the odd case to
 \((A,B,C,D,E)\).  A direct exact computation from the displayed
 primitive-transition formula gives the basis-independent value
+% 2026-06-22 Codex checked the displayed determinant values by an exact
+% rational scratch implementation of the primitive linear maps.
 \[
   \det(I-L_{ABCDE})=-\frac{10643}{600}\ne0 .
 \]
@@ -825,12 +827,15 @@ positive-time simple closed Reeb trajectory with action at most
 
 \begin{proof}
 By Fact~\ref{fact:fg-simple-capacity-minimizer}, \(c_{\mathrm{EHZ}}(K)\) is
-achieved by a minimum-action simple closed Reeb orbit.  Use only the facets on
-which this orbit has positive dwell time, and write their cyclic order as the
-support word of the orbit.  This support word is a simple cyclic facet word in
-the sense of Definition~\ref{def:fg-simple-cyclic-word}.  The positive dwell
-times and Lemma~\ref{lem:fg-local-transition-regularity-positive-sign} force
-the positive transition signs of every adjacent triple.  Hence
+achieved by a minimum-action simple closed Reeb orbit.  Here simple is used in
+the active-word sense from the thesis simple-minimizer theorem: the orbit has
+a pure facet-direction description in which each used facet direction occurs
+in one connected positive-duration interval.  Use only those facets, and write
+their cyclic order as the support word of the orbit.  This support word is a
+simple cyclic facet word in the sense of
+Definition~\ref{def:fg-simple-cyclic-word}.  The positive dwell times and
+Lemma~\ref{lem:fg-local-transition-regularity-positive-sign} force the
+positive transition signs of every adjacent triple.  Hence
 Lemma~\ref{lem:fg-simple-support-orbit-represented} represents this orbit as
 a strict fixed point of the closed tube search data for that word, with the
 same action.
@@ -845,7 +850,7 @@ filter in Proposition~\ref{prop:fg-real-search-correctness}.
 \end{unverified}
 
 \begin{unverified}
-\begin{corollary}[Generic capacity correctness of idealized FG search]%
+\begin{corollary}[Determinant-generic capacity correctness of idealized FG search]%
 \label{cor:fg-real-capacity-correctness-generic}
 Fix a facet count \(F\).  Let \(G_F\) be the intersection of the
 primitive-denominator domain and determinant-nonzero conditions from
@@ -855,6 +860,9 @@ vertices in \(G_F\), then its exhaustive flow-graph tube run is
 finite-orbit regular.  Therefore
 Algorithm~\ref{alg:fg-real-exhaustive-search}, run on that presentation,
 returns \(c_{\mathrm{EHZ}}(K)\).
+The term determinant-generic is relative to this common
+primitive-denominator domain; this corollary does not assert density inside
+the space of valid irredundant facet presentations.
 \end{corollary}
 
 \begin{proof}
@@ -870,9 +878,9 @@ This section is the idealized real-number algorithm surface.  It does not
 prove that the Rust implementation accepts exactly this class, it does
 not analyze f64 rounding.  The correctness theorem uses the nonempty
 facet-pair nonzero-\(\omega_0\) condition from
-Definition~\ref{def:fg-nondegenerate-facet-presentation}.  This matches the
-current exact Rust rejection boundary and is stronger than the local
-physical-transition condition needed in the proof of
+Definition~\ref{def:fg-nondegenerate-facet-presentation}.  This is the
+mathematical boundary currently targeted by the exact Rust rejection logic and
+is stronger than the local physical-transition condition needed in the proof of
 Lemma~\ref{lem:fg-local-transition-regularity-positive-sign}.
 The Rust correspondence and f64 analysis are separate implementation and
 numerical-analysis obligations.
