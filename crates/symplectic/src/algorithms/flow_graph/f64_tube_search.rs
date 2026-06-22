@@ -159,11 +159,12 @@ impl<'a> FlatTubeInput<'a> {
         self.dual_vertices.len()
     }
 
-    /// Reject polytopes outside the generic affine-tube input class.
+    /// Reject polytopes outside the nonempty-facet-pair affine-tube input class.
     ///
     /// The primitive tube formula treats transitions as affine maps. If a
-    /// geometrically possible two-face has exact omega sign zero, that primitive
-    /// becomes relation-valued/free-time instead of a single affine map.
+    /// nonempty facet-pair candidate has exact omega sign zero, this validator
+    /// rejects the input before deciding whether the pair is a
+    /// trajectory-feasible transition.
     pub fn validate_no_geometric_zero_omega_transitions(&self) -> Result<(), F64TubeError> {
         for i in 0..self.facet_count() {
             for j in 0..self.facet_count() {
@@ -175,7 +176,7 @@ impl<'a> FlatTubeInput<'a> {
         Ok(())
     }
 
-    /// Reject geometrically possible transitions whose f64 omega is too small.
+    /// Reject nonempty facet-pair candidates whose f64 omega is too small.
     ///
     /// The f64 primitive formulas divide by omega. Near-zero values are rejected
     /// instead of tracked with large relative error bounds.

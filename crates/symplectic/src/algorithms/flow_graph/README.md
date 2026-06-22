@@ -51,7 +51,7 @@ Exact implementation scope currently documented here:
 - matching facet-intersection and exact `omega_0`-sign matrices;
 - bounded irredundant halfspace data supplied by the existing trusted
   fixture/data-generation path;
-- nonzero exact `omega_0` on every geometrically possible transition;
+- nonzero exact `omega_0` on every nonempty directed facet-pair candidate;
 - nonnegative exact action threshold;
 - no positive-action singular fixed set encountered by exact closed-word
   resolution;
@@ -63,7 +63,7 @@ Exact implementation scope currently documented here:
 
 Explicit non-goals unless thesis review asks for them:
 
-- supporting Lagrangian products or HKO fixtures with geometrically possible
+- supporting Lagrangian products or HKO fixtures with nonempty facet-pair
   `omega_0 = 0` transitions;
 - implementing CH2021 rotation pruning;
 - turning f64 diagnostics into exact certificates without exact fallback;
@@ -81,7 +81,7 @@ Target input:
   raw bounded-irredundant input;
 - facet-intersection data matching the facet count;
 - exact `omega_0` signs for facet pairs;
-- nonzero exact `omega_0` on every geometrically possible transition;
+- nonzero exact `omega_0` on every nonempty directed facet-pair candidate;
 - nonnegative exact action threshold;
 - no positive-action singular fixed set during exact closed-word resolution;
 - a numerical rejection policy for nearly zero `omega_0` on geometric
@@ -124,9 +124,9 @@ Path-specific outcome contract:
   segment time to be strictly positive; zero-time boundary fixed points are not
   accepted as positive orbits for the displayed word.
 - Exact rejection reasons currently known are: invalid input shapes, a
-  geometrically possible `omega_0 = 0` transition, and a positive-action
-  singular fixed set. Full bounded-irredundant validation is not part of this
-  rejection boundary.
+  nonempty directed facet-pair candidate with `omega_0 = 0`, and a
+  positive-action singular fixed set. Full bounded-irredundant validation is
+  not part of this rejection boundary.
 - f64 accepted output has approximate actions and may include words accepted by
   f64 predicates directly. It is not covered by the exact strict segment-time
   contract unless the specific word is also resolved by exact closed-tube
@@ -145,8 +145,8 @@ Path-specific outcome contract:
 - `diagnose_f64_closed_words` is the development/experiment function.
   It may return a candidate action together with per-word errors. Its output is
   not accepted capacity output.
-- f64 does not decide `omega_0 = 0`. It rejects when a geometrically possible
-  transition has `omega_0` too close to `0` for the f64 policy.
+- f64 does not decide `omega_0 = 0`. It rejects when a nonempty directed
+  facet-pair candidate has `omega_0` too close to `0` for the f64 policy.
 - f64 also rejects near-singular fixed-point problems unless earlier cheap
   checks make the word irrelevant.
 - Counts and timing are not API output. Use `tracing`, profiling, benchmarks,
@@ -169,9 +169,9 @@ Status labels:
 
 | statement | status | current use | next check |
 | --- | --- | --- | --- |
-| Minimum-action generalized Reeb orbits may be chosen simple. | source-backed by HK2017 Theorem 1.5 / `simple_loop_theorem`; thesis legacy restates as `thm:simple-minimizer` | reduces the capacity search to simple Reeb orbits | cite HK2017 in thesis prose; do not re-prove as an FG theorem |
-| A simple minimizer visits each facet direction at most once. | source-backed by HK2017 Theorem 1.5 / `simple_loop_theorem` | justifies searching facet words without repeated facet directions | prove only the FG correspondence between simple Reeb orbits and searched FG words |
-| Nonzero `omega_0` is required only for geometrically possible transitions, not for all facet pairs. | source-backed by `research/tube-algorithm.md` accepted clarification; implemented by exact and f64 validators | keeps zero `omega_0` on empty two-faces out of the rejection condition | adapt the recovered pairwise-nonzero proof if thesis theorem wording needs the weaker condition |
+| Minimum-action generalized Reeb orbits may be chosen simple. | active thesis theorem `thm:generalized-reeb-simple-minimizer`, sourced to HK2017 Theorem 1.5 / `simple_loop_theorem` | reduces the capacity search to simple Reeb orbits | cite `thm:generalized-reeb-simple-minimizer` in FG thesis prose |
+| A simple minimizer visits each facet direction at most once. | active thesis theorem `thm:generalized-reeb-simple-minimizer`, sourced to HK2017 Theorem 1.5 / `simple_loop_theorem` | justifies searching facet words without repeated facet directions | prove only the FG correspondence between simple Reeb orbits and searched FG words |
+| The intended mathematical condition needs nonzero `omega_0` only on geometrically possible trajectory transitions, not on all facet pairs. | source-backed by `research/tube-algorithm.md` accepted clarification; `exact_search.rs::validate_no_geometric_zero_omega_transition` and `f64_tube_search.rs::FlatTubeInput::validate_no_geometric_zero_omega_transitions` enforce the stronger condition on every nonempty directed facet-pair candidate | keeps zero `omega_0` on empty facet pairs out of the rejection condition; may still reject nonempty-but-infeasible facet pairs | adapt the recovered pairwise-nonzero proof and/or validators if thesis theorem wording needs the weaker local condition |
 | Empty tube implies every containing tube is empty. | source-backed by `research/tube-algorithm.md`; recovered-proof-unreviewed via `lem:tube-intersection` | pruning and cache interpretation | migrate the invariant into active proof text before theorem-strength thesis use |
 | Empty unclosed subtube makes the closed tube empty. | source-backed by `research/tube-algorithm.md`; recovered-proof-unreviewed via `lem:tube-intersection` | closed-word pruning | migrate the invariant into active proof text before theorem-strength thesis use |
 | Action equals elapsed flow time for the stored Reeb segments. | source-backed by `research/tube-algorithm-raw-jorn-2026-05-04.md`; recovered-proof-unreviewed via `def:tube-data` and `lem:tube-intersection` | action computation | migrate the normalization calculation into active proof text before theorem-strength thesis use |
@@ -234,7 +234,7 @@ Initial buckets:
 Separate rejection suite:
 
 - invalid input shapes;
-- exact geometrically possible `omega_0 = 0` transition;
+- exact nonempty facet-pair `omega_0 = 0` rejection;
 - exact positive-action singular fixed set.
 
 Out of scope for this exact e2e suite:
@@ -285,7 +285,7 @@ Current evidence:
   on an F6 polytope. A separate exact single-word test checks that adding an action
   cutoff can make a known higher-action F7 word empty.
 - Exact exhaustive search rejects invalid matrix shapes and inputs with a
-  geometrically possible zero-omega transition before enumeration. Full
+  nonempty facet-pair zero-omega candidate before enumeration. Full
   bounded-irredundant validation is still a remaining implementation task.
 - `tests_e2e_prediction.rs` now checks deterministic generated polytopes where
   diagnostic f64 search has closed-word errors: the diagnostic f64 best word
