@@ -7,6 +7,10 @@ Status: exploratory. This packet reads run-local prepared outputs from
 own capacity search or reusable joins. It is an interpretation and navigation
 surface, not thesis evidence by itself.
 
+Current question routing, predicate vocabulary, and open/closed research
+questions live in [LEDGER.md](LEDGER.md). Keep regenerated run outputs as the
+source for numerical observations.
+
 ## Research Question
 
 This packet asks how far local branch data at a base point `a0` predicts
@@ -60,9 +64,9 @@ output directory. The prepare and analyze stages derive the following files:
 | `local-behavior-branch-facts.jsonl` | Per-point branch facts derived from producer rows. Use this when a pair summary needs branch-level explanation. |
 | `local-behavior-branch-variation.jsonl` | Per-branch value variation between base and target. Use this for branch-function stability questions. |
 | `local-behavior-gradient-projections.jsonl` | Per-gradient projection diagnostics. Use this for prediction-quality and direction-alignment questions. |
-| `branch-stability-by-radius.png` | Visual summary of target-minimizer visibility by radius and direction family. |
+| `branch-stability-by-radius.png` | Visual summary of target-minimizer status at the base point by radius and direction family. |
 | `gradient-prediction-vs-observed.png` | Visual check of branch-gradient prediction quality against recomputed finite changes. |
-| `target-branch-status-at-base.png` | Status mix for where target minimizing branches were visible at `a0`. |
+| `target-branch-status-at-base.png` | Status mix for how target minimizing branches relate to base minimizer, near-active, and candidate-window sets. |
 
 Generated files are source-adjacent evidence for a run. The durable current
 interpretation belongs in this README because interpretation can become stale
@@ -83,78 +87,30 @@ with `beta_i = 0` at the base point can have a right-hand germ with
 while losing a different first-order slope nearby.
 
 Near-active branch data is not automatically enough. Some finite-step target
-minimizers may be visible only in the wider base candidate/action window. The
+minimizers may belong only to the wider base candidate/action window. The
 candidate window is also a noise source, so branch-window policy is a design
 variable that should be measured rather than assumed.
 
-## Prior Scratch Panels
+## Prior Scratch Inputs
 
-The following `/tmp` panels are recovery guidance only. They are useful for
-choosing the next run, but do not cite them as thesis evidence without
-regenerating a current retained panel.
+The following `/tmp` panels are recovery guidance only. They can inform
+parameter choices, but do not cite them as evidence without regenerating a
+current retained panel and pointing to that output.
 
 | Path | Role |
 | --- | --- |
-| `/tmp/sys-local-behavior-panel` | Larger local-neighborhood panel: `8` basepoints, radii `1e-6` through `1`, optimizer-like and random directions. |
-| `/tmp/sys-local-behavior-current-rerun-smoke` | Current-code smoke run from 2026-06-20: one top basepoint, radii `1e-6,1e-3`, zero failures. |
+| `/tmp/sys-local-behavior-panel` | Larger local-neighborhood panel used to choose follow-up radii and status predicates. |
+| `/tmp/sys-local-behavior-current-rerun-smoke` | Current-code smoke run from 2026-06-20. |
 | `/tmp/sys-random-pair-radii-panel` | Random-pair cross-check for strict minimizing branch sets and cross-evaluation action gaps. |
 
-Recovered prior from `/tmp/sys-local-behavior-panel`, checked by rerunning
-the current prepare/analyze scripts on 2026-06-20:
+Reusable qualitative guidance from those scratch panels:
 
-- pair rows and target-status counts reproduced: `551` successful pairs,
-  `407` `same_min_branch_set`, `32` `target_min_in_base_near_active`, `24`
-  `target_min_in_base_candidate_window`, and `88`
-  `target_min_missing_from_base_candidate_window`;
-- behavior was stable in that panel through `1e-5`;
-- `1e-4..1e-3` was the first interesting transition range;
-- `1e-3` was mostly locally predictive, but the first candidate-window-only
-  cases already had larger prediction error;
-- `1e-2` showed semi-local branch-window and prediction-error effects,
-  especially for optimizer-like gradient directions;
-- `0.1` and `1` were no longer reliable local regimes in that panel, and
-  target-polytope construction failures appeared.
-
-Additional recovered legacy-session details:
-
-- The producer radius is the ambient `R^{4F}` Euclidean norm. Directions are
-  normalized by `sqrt(sum_i ||d_i||_{R^4}^2) = 1`, then sampled as
-  `a_i(t) = a_i + radius d_i`.
-- Same raw `R^{4F}` distances between retained `F=10` rows were estimated in
-  the order `3..5`, with medians around `4.43` for all retained `F=10`,
-  `4.56` for random generic rows, and `3.27` for random product rows. This is
-  only scale context; it does not make radii near `1` local.
-- The useful regime labels were not meant to name a pre-existing predictor.
-  They were meant to separate measured row statuses: same minimizing branch
-  set, target minimizer already in base near-active set, target minimizer only
-  in the wider base candidate/action window, missing from the base candidate
-  window, and prediction-error scale.
-- Candidate-window membership is not the same as "near finite nominal action."
-  The retained-orbit criterion can keep branches with large nominal action when
-  the action lower bound is within the gap, especially if the `q` error bound
-  is large relative to `|q|`.
-- The corrected pipeline deliberately keeps producer/prepare ownership
-  cost-based: producer owns computed point payloads and branch gradients it
-  already computes; cheap per-branch KKT/status diagnostics belong in prepare
-  or method analysis unless aggregate cost or reuse justifies promotion.
-- A reviewed cleanup fixed five concrete issues before the larger panel was
-  interpreted: non-generic minimizer-set status misclassification, hard-coded
-  near-active threshold, branch-stability plots mixing direction families,
-  close-radius sample-id collisions, and misleading `kkt_outcome: "feasible"`
-  wording.
-
-Recovered prior from `/tmp/sys-random-pair-radii-panel`:
-
-- strict minimizing branch set equality can change at tiny radius because a
-  degenerate basepoint has extra tied branches;
-- a better local-to-semilocal marker is whether target strict minimizers have
-  positive cross-evaluation gap at `a0`;
-- in that panel, target strict minimizers had zero cross-evaluation gap through
-  `1e-3`, started to separate at `1e-2`, and broke much more strongly by
-  `0.1`.
-
-Use these priors to focus new runs around `1e-4,1e-3,1e-2` and to group
-analysis by target-minimizer status, not to skip regeneration.
+- radii around `1e-4,1e-3,1e-2` are worth checking first;
+- group by explicit target-minimizer status predicates, not by informal regime
+  labels;
+- candidate-window membership depends on the configured action window and is
+  not a branch-completeness certificate;
+- strict minimizing branch-set equality is brittle at degenerate basepoints.
 
 Typical local flow from repo root:
 

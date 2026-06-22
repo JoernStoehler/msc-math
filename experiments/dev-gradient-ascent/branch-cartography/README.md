@@ -9,6 +9,10 @@ not thesis evidence by itself.
 This subpacket asks how much information at a base point `a0` remains
 predictive for nearby, semi-local, or effectively unrelated points `a`.
 
+This is a prototype and reference surface for optimizer-facing branch
+cartography. Source-stratified local/semi-local evidence belongs in
+`experiments/sys-datascience/methods/local-behavior-prediction/`.
+
 The point shape is:
 
 ```text
@@ -18,6 +22,8 @@ The point shape is:
 The relevant data currently includes `sys(a)`, best and near-active sigma
 sets, branch candidate-window membership, transition changes, finite
 directional predictions, observed finite deltas, and orbit-search cost.
+Relative `sys` change is not stored as a separate field; compute it from
+`base_sys` and `target_sys` in `branch-cartography-samples.jsonl`.
 
 Gradient ascent is a downstream consumer: a fixed optimizer needs this
 knowledge because steps may cross branch-domain boundaries, ridges, cusps, or
@@ -60,6 +66,13 @@ cargo run -p exp-dev-gradient-ascent \
   --max-fixtures-per-label 1 \
   --random-directions 1
 ```
+
+Most worktrees are created with LFS smudge skipped. If
+`experiments/sys-datascience/tables/*.jsonl` is an LFS pointer file in the
+current worktree, either check out those table files with LFS for this worktree
+or pass `--polytope-table` and `--provenance-table` to the diagnostic command
+using a worktree that has the real table data. Pass the same real
+`--polytope-table` path to the cartography command.
 
 Defaults:
 
@@ -107,7 +120,7 @@ radius-summary rows, and a cache keyed by a stable point identifier.
 
 ## Useful Next Questions
 
-- At which step sizes do target best sigmas stop being visible in the base
+- At which step sizes do target best sigmas stop belonging to the base
   near-active set?
 - At which step sizes do candidate-window misses or transition-opened samples
   appear?

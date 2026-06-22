@@ -7,7 +7,6 @@ members = [
     "experiments/hko-local-maximum",
     "experiments/regular-products",
     "experiments/sys-landscape",
-    "experiments/local-sys-methods",
     "experiments/combinatorial-cells",
     "experiments/dev-flow-graph",
     "experiments/dev-f64-capacity",

@@ -1256,3 +1256,30 @@ fn write_json<T: Serialize>(path: PathBuf, value: &T) {
 fn flush_stdout() {
     std::io::stdout().flush().expect("flush stdout");
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn normalize_direction_rejects_bad_inputs() {
+        assert!(normalize_direction(&[]).is_none());
+        assert!(normalize_direction(&[Vector4::zeros()]).is_none());
+        assert!(normalize_direction(&[Vector4::new(f64::NAN, 0.0, 0.0, 0.0)]).is_none());
+    }
+
+    #[test]
+    fn normalize_direction_returns_unit_direction() {
+        let direction = vec![
+            Vector4::new(3.0, 4.0, 0.0, 0.0),
+            Vector4::new(0.0, 0.0, 12.0, 0.0),
+        ];
+        let normalized = normalize_direction(&direction).expect("nonzero finite direction");
+        let norm = normalized
+            .iter()
+            .map(|v| v.norm_squared())
+            .sum::<f64>()
+            .sqrt();
+        assert!((norm - 1.0).abs() < 1.0e-12);
+    }
+}
