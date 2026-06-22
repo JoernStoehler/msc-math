@@ -75,61 +75,16 @@ the finite endpoint condition. Current plausible next paths include:
 These are current examples, not a complete list. The next choice should be made
 by expected thesis value, not by the fact that this packet happens to exist.
 
-## Evidence
+## Evidence To Regenerate
 
-Current retained panel:
+This packet previously summarized a small setup-pass panel from run-local
+scratch outputs. Those outputs are not checked in here, so the branch alone does
+not carry retained evidence for the numerical claims. Regenerate the local
+geometry probe, aggregate report, endpoint scan report, and run-trace report
+into an intentionally retained artifact location before using this packet for a
+promotion decision.
 
-- aggregate output:
-  `/tmp/dev-gradient-ascent-current-retained-panel-aggregate-v3`;
-- endpoint scan magnitude output:
-  `/tmp/dev-gradient-ascent-current-retained-panel-endpoint-scan-report`;
-- run-trace behavior output:
-  `/tmp/dev-gradient-ascent-current-retained-panel-run-trace-report`;
-- source branch diagnostic:
-  `/tmp/dev-gradient-ascent-branch-diagnostic-allsafe-check`.
-
-Panel shape:
-
-- selected fixtures: `6`;
-- degeneracy counts:
-  `large_gap = 2`, `narrow_gap = 2`, `high_degeneracy = 2`;
-- successful run directories: `6`;
-- failed probe rows: `0`;
-- failed endpoint scan rows: `0`.
-
-Endpoint finite-scan result:
-
-- endpoint scan rows: `72`;
-- above-threshold endpoint scan rows: `0`;
-- positive-below-threshold endpoint scan rows: `46`;
-- nonpositive endpoint scan rows: `26`;
-- largest positive observed endpoint delta:
-  `7.383249465420239e-4`;
-- largest ratio to the effective endpoint threshold: about `0.756`;
-- per-regime largest ratios to threshold:
-  `large_gap = 0.723`, `narrow_gap = 0.756`, `high_degeneracy = 0.631`.
-
-Trace behavior result:
-
-- trace rows: `22`;
-- accepted rows: `16`;
-- method-stop rows: `6`;
-- accepted rows with negative predicted delta: `5`;
-- accepted rows after at least one earlier direction was rejected: `7`;
-- accepted rows with positive observed delta but negative predicted delta:
-  `5`.
-
-Compute budget:
-
-- aggregate wall time from compute-budget reports: about `1679s`;
-- per-regime wall times:
-  `large_gap = 569s`, `narrow_gap = 489s`, `high_degeneracy = 622s`;
-- endpoint scan target orbit iterations: `23664`;
-- trace target orbit iterations: `5332`.
-
-## What This Supports
-
-The current evidence supports the following claim shape:
+The claim shape to test is:
 
 ```text
 On a small retained panel covering the large-gap, narrow-gap, and
@@ -139,7 +94,7 @@ endpoints that pass the implemented finite endpoint scan at relative threshold
 maximin-only policy missed recomputed finite improvements.
 ```
 
-The evidence also supports keeping two design choices in the current
+The regenerated report should separately test two design choices in the current
 candidate:
 
 - try later generated directions after an earlier direction fails;
@@ -170,100 +125,27 @@ Known gaps:
 
 Related local-behavior diagnostics in
 `experiments/sys-datascience/methods/local-behavior-prediction/` add a further
-promotion caveat. In the current endpoint/top-sys smoke output
-`/tmp/sys-local-behavior-ascent-top-candidate-gradient-fixed`, near-active
-first-order predicted signs fail on some endpoint directions even when the
-target minimizer is still inside the base candidate window. The
-candidate-window analytic model with base branch gaps and per-branch actions
-repairs those sign failures in this smoke output except for a case where the
-target minimizer is outside the candidate window. Inspect
-`local-behavior-candidate-gradient-summary.csv` and
-`local-behavior-candidate-gradient-predictions.jsonl` before treating
-near-active prediction as an endpoint acceptance or rejection rule. This points
-toward a candidate-window-aware recentered method, not promotion of the current
-near-active-only prediction model. The corrected endpoint/top window sweep in
-the local-behavior packet makes `action_window_relative = 0.01` the plausible
-next setting to test; narrower `0.003` misses too much on the smoke panel, and
-wider `0.03` increases candidate branch count and local-state cost without a
-source-stratified sign-prediction gain over `0.01`.
+promotion caveat. Before treating near-active prediction as an endpoint
+acceptance or rejection rule, regenerate a retained local-behavior panel and
+inspect `local-behavior-candidate-gradient-summary.csv` plus
+`local-behavior-candidate-gradient-predictions.jsonl`. Those files test the
+candidate-window analytic model with base branch gaps included and with each
+candidate branch differentiated at its own action.
 
-A first candidate-window-scored dev runner has now been checked on the
-available retained-fixture overlap:
-`/tmp/dev-gradient-ascent-candidate-window-overlap-panel-aggregate`,
-`/tmp/dev-gradient-ascent-candidate-window-overlap-panel-endpoint-scan-report`,
-and
-`/tmp/dev-gradient-ascent-candidate-window-overlap-panel-run-trace-report`.
-This overlap panel has five selected fixtures, not the full older six-fixture
-panel, because one old large-gap random-product fixture is absent from the
-current polytope table. On this overlap panel, candidate-window scoring keeps
-endpoint scan rows below the configured relative threshold and removes the
-accepted negative-prediction trace rows. Treat this as a promising development
-check, not as promotion evidence: it changes scoring over the existing
-near-active direction family and still does not certify endpoint local
-maximality.
+The candidate-window-scored runner is now implemented for comparison. Treat it
+as a development variant, not promotion evidence, until its outputs are
+regenerated into a retained artifact location. The same applies to the
+finite-step-indexed candidate-window direction generator and to lower-threshold
+replays: session scratch runs are useful for choosing the next retained
+experiment, but they should not be cited from this tracked packet.
 
-The first candidate-window direction-generator variant is not promoted. It
-adds finite-step-indexed candidate-window maximin directions and tests each at
-the generating step. On the same five-fixture overlap output
-`/tmp/dev-gradient-ascent-candidate-window-directions-overlap-panel-*`, those
-new directions are not selected in the trace and increase endpoint scan rows
-and runtime without improving the endpoint-scan threshold-ratio diagnostic.
-This weakens the direction-generator branch of the repair path, not the
-candidate-window scoring branch.
-
-A lower-threshold candidate-window replay was checked on the same five-fixture
-overlap:
-
-- `/tmp/dev-gradient-ascent-candidate-window-threshold1e-4-overlap-panel-aggregate`;
-- `/tmp/dev-gradient-ascent-candidate-window-threshold1e-4-overlap-panel-endpoint-scan-report`;
-- `/tmp/dev-gradient-ascent-candidate-window-threshold1e-4-overlap-panel-run-trace-report`.
-
-This weakens the simple threshold-repair story. Lowering the relative
-acceptance threshold from `1e-3` to `1e-4` makes the checked traces continue to
-the iteration cap, but the post-stop endpoint scan still finds improvements
-above the lowered threshold. It also reintroduces a candidate-window prediction
-failure on the overlap panel. Current method implication: candidate-window
-scoring is still a plausible diagnostic and scoring repair, but it is not yet
-evidence for endpoint stability or for a clean first-order-guided method. The
-next discriminating test should be a matched exhaustive replay/ranking audit of
-generated direction/step pairs at hard trace states, comparing near-active and
-candidate-window rankings against recomputed observed improvements.
-
-The first such audit is:
-
-- `/tmp/dev-gradient-ascent-step-ranking-audit-threshold1e-4-large-gap-rank-0-check`;
-- `/tmp/dev-gradient-ascent-step-ranking-audit-threshold1e-4-narrow-gap-rank-0-check`;
-- `/tmp/dev-gradient-ascent-step-ranking-audit-threshold1e-4-narrow-gap-rank-1-check`;
-- `/tmp/dev-gradient-ascent-step-ranking-audit-threshold1e-4-high-degeneracy-rank-0-check`;
-- `/tmp/dev-gradient-ascent-step-ranking-audit-threshold1e-4-high-degeneracy-rank-1-check`;
-- summary scratch:
-  `/tmp/dev-gradient-ascent-step-ranking-audit-threshold1e-4-summary.json`.
-
-On this small selected audit, candidate-window scoring has useful ranking
-signal: across 40 traced states, it ranked the best recomputed improving checked
-move first in 39 states. The older near-active rule did so in 25 states.
-
-The same audit also shows that candidate-window scoring is not safe as a hard
-rejection rule. In
-`/tmp/dev-gradient-ascent-step-ranking-audit-threshold1e-4-narrow-gap-rank-0-check`,
-iteration 2, the generated move `near_active_maximin_direction` at step
-`0.001` has recomputed `Delta sys = +0.0007425813825379102`, above that row's
-acceptance cutoff `0.00009773304353618649`. Candidate-window scoring predicts
-`Delta sys = -15189216053351.336` for the same move and ranks it last among the
-six checked moves. The older near-active rule predicts
-`+0.0007413626661731293` and ranks it first. Current method implication:
-candidate-window scoring remains a live repair candidate, but a
-prediction-gated first-order method would be unsafe without a domain/failure
-guard or a fallback to observed finite replay.
-
-The existing audit outputs above do not record the branch witness that caused
-the lower-envelope minimum, so do not classify this yet as a numerical
-derivative bug, a branch-domain/model-validity failure, or unavoidable
-pessimism from a wide candidate window. The current audit code now records that
-witness; before more broad local compute is spent, rerun only this hard state
-and inspect the winning candidate branch/orbit for the bad prediction. That
-gives the branch-level handle needed to investigate the failure mode; it does
-not by itself classify the failure.
+The next discriminating retained test is a matched exhaustive replay/ranking
+audit of generated direction/step pairs at hard trace states, comparing
+near-active and candidate-window rankings against recomputed observed
+improvements. The audit code records the branch/orbit witness attaining the
+candidate-window lower-envelope prediction, which is needed to distinguish
+numerical derivative pathologies, branch-domain/model invalidity, and ordinary
+pessimism from using a wide candidate window.
 
 ## Promotion Question
 

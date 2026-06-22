@@ -106,23 +106,13 @@ has a positive base gap, so its local model is `base_gap + t * derivative`,
 not just `t * derivative`; its derivative is the derivative of that branch's
 own `sys_sigma`, not the derivative of the base minimizing branch.
 
-## Prior Scratch Inputs
+## Run Guidance
 
-The following `/tmp` panels are recovery guidance only. They can inform
-parameter choices, but do not cite them as evidence without regenerating a
-current retained panel and pointing to that output.
+Session scratch panels can inform parameter choices, but they are not project
+evidence. Regenerate the relevant producer, prepare, and analyze outputs before
+quoting rates or numerical conclusions.
 
-| Path | Role |
-| --- | --- |
-| `/tmp/sys-local-behavior-panel` | Larger local-neighborhood panel used to choose follow-up radii and status predicates. |
-| `/tmp/sys-local-behavior-current-rerun-smoke` | Current-code smoke run from 2026-06-20. |
-| `/tmp/sys-random-pair-radii-panel` | Random-pair cross-check for strict minimizing branch sets and cross-evaluation action gaps. |
-| `/tmp/sys-local-behavior-random-source-shard-smoke` | Current sharded producer smoke for two `random_product_sample` starts. |
-| `/tmp/sys-local-behavior-random-source-shard-smoke-random` | Current sharded producer smoke for two `random_sample` starts. |
-| `/tmp/sys-local-behavior-random-source-shard-combined-smoke` | Combined smoke from the two shard outputs; prepare/analyze should run on this shape. |
-| `/tmp/sys-local-behavior-random-source-estimate-40starts` | First sharded random-source estimate covering all starts selected by the current `starts-per-source=20` source-stratified run. Use the prepared source/radius, start-breakdown, candidate-window, and candidate-gradient tables before quoting rates. |
-
-Reusable qualitative guidance from those scratch panels:
+Reusable qualitative guidance to check in regenerated panels:
 
 - radii around `1e-4,1e-3,1e-2` are worth checking first;
 - group by explicit target-minimizer status predicates, not by informal regime
