@@ -159,11 +159,12 @@ impl<'a> FlatTubeInput<'a> {
         self.dual_vertices.len()
     }
 
-    /// Reject polytopes outside the generic affine-tube input class.
+    /// Reject polytopes outside the nonempty-facet-pair affine-tube input class.
     ///
     /// The primitive tube formula treats transitions as affine maps. If a
-    /// geometrically possible two-face has exact omega sign zero, that primitive
-    /// becomes relation-valued/free-time instead of a single affine map.
+    /// nonempty facet-pair candidate has exact omega sign zero, this validator
+    /// rejects the input before deciding whether the pair is a
+    /// trajectory-feasible transition.
     pub fn validate_no_geometric_zero_omega_transitions(&self) -> Result<(), F64TubeError> {
         for i in 0..self.facet_count() {
             for j in 0..self.facet_count() {
@@ -175,7 +176,7 @@ impl<'a> FlatTubeInput<'a> {
         Ok(())
     }
 
-    /// Reject geometrically possible transitions whose f64 omega is too small.
+    /// Reject nonempty facet-pair candidates whose f64 omega is too small.
     ///
     /// The f64 primitive formulas divide by omega. Near-zero values are rejected
     /// instead of tracked with large relative error bounds.
@@ -543,6 +544,7 @@ pub enum CapacityF64Error {
         sigma: Vec<usize>,
         action: BigRational,
     },
+    NoPositiveOrbit,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -998,6 +1000,11 @@ pub fn capacity_f64(
         })
         .collect();
 
+    // `capacity_f64` is a diagnostic mixed path.  Direct f64 positive words
+    // remain approximate f64 output.  Exact arithmetic is used only to classify
+    // f64 closed-word errors, so future callers must not treat the returned
+    // value as an exact certificate unless all retained words are independently
+    // resolved under an exact or proven-sound numerical boundary.
     for record in &diagnostic.closed_cycles {
         let F64ClosedCycleOutcome::Error(_) = record.outcome else {
             continue;
@@ -1011,8 +1018,11 @@ pub fn capacity_f64(
             })?;
         match result.outcome {
             ExactClosedWordOutcome::EmptyTube
-            | ExactClosedWordOutcome::ZeroActionNoOrbit { .. } => {}
+            | ExactClosedWordOutcome::ZeroActionNoOrbit { .. }
+            | ExactClosedWordOutcome::NonStrictNoOrbit { .. } => {}
             ExactClosedWordOutcome::PositiveOrbit { action, .. } => {
+                // This is an exact rescue of a word that f64 could not classify,
+                // not a validation of the direct f64-positive words above.
                 let action_f64 = action.to_f64().ok_or_else(|| {
                     CapacityF64Error::ExactActionNotRepresentable {
                         sigma: record.sigma.clone(),
@@ -1040,11 +1050,13 @@ pub fn capacity_f64(
         }
     }
 
-    let capacity_action = orbits
+    let Some(capacity_action) = orbits
         .iter()
         .map(|orbit| orbit.action)
         .min_by(f64::total_cmp)
-        .expect("flow-graph invariant failed: capacity_f64 found no orbit with action > 0");
+    else {
+        return Err(CapacityF64Error::NoPositiveOrbit);
+    };
     let action_cutoff = capacity_action + action_threshold;
     orbits.retain(|orbit| orbit.action <= action_cutoff + EPS_CONTAINS);
     orbits.sort_by(|left, right| left.action.total_cmp(&right.action));

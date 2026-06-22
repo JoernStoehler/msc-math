@@ -2,8 +2,8 @@
 //!
 //! Facet-intersection nonemptiness and omega signs are computed by
 //! geometry/exact validation code. This module adds the symplectic sign
-//! condition `omega_0(n_i, n_j) >= 0` to produce the directed transition
-//! relation used by HK2017 pruning and billiard enumeration.
+//! condition `omega_0(n_i, n_j) >= 0` to produce the directed pruning relation
+//! used by HK2017 pruning and billiard enumeration.
 //!
 //! Used by hk2017 and billiard algorithms for pruning infeasible permutations.
 //!
@@ -14,8 +14,14 @@ use nalgebra::DMatrix;
 #[cfg(test)]
 mod tests;
 
-/// Directed transition feasibility in the physical Reeb direction from flat inputs:
-/// `transition_is_allowed[(i,j)] = true` iff the transition F_i -> F_j is feasible.
+/// Directed transition pruning relation from flat inputs.
+///
+/// `transition_is_allowed[(i,j)] = true` means the pair passes the nonempty
+/// facet-intersection and nonnegative omega tests. This is a necessary
+/// condition for a physical Reeb transition in general. It is sufficient only
+/// with the extra blocker-slack/ridge hypotheses recorded in
+/// `formal/search-pruning-correctness.tex`, `lem:transition-feasibility` and
+/// `cor:ridge-sufficiency`.
 ///
 /// Combines two conditions:
 /// 1. Facet intersection nonemptiness: Fᵢ ∩ Fⱼ ≠ ∅

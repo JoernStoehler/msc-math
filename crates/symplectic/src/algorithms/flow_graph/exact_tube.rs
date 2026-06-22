@@ -1,8 +1,8 @@
 //! Exact closed-word resolver for the flow-graph algorithm.
 //!
-//! This module resolves one closed facet word from exact rational polytope
-//! data. It is meant as the fallback for f64 words whose f64 predicates are
-//! numerically indeterminate.
+//! This module resolves one closed facet word from exact rational flow-graph
+//! data. It is used both by exact exhaustive search and by the f64 wrapper when
+//! a diagnostic f64 word needs exact closed-word resolution.
 
 use nalgebra::DMatrix;
 use num_rational::BigRational;
@@ -15,8 +15,15 @@ type Mat2 = [[R; 2]; 2];
 
 #[derive(Clone, Copy, Debug)]
 pub struct ExactFlatTubeInput<'a> {
+    /// Exact rational facet normals in the flow-graph coordinate convention.
     pub dual_vertices: &'a [[BigRational; 4]],
+    /// Caller-supplied facet-pair intersection data.  The exact resolver checks
+    /// shape here, not boundedness, irredundancy, or semantic correctness of
+    /// this matrix against `dual_vertices`.
     pub facet_intersection_is_nonempty: &'a DMatrix<bool>,
+    /// Caller-supplied exact signs of `omega_0(a_i,a_j)`.  Shape is validated
+    /// locally; semantic agreement with `dual_vertices` belongs to the trusted
+    /// fixture/data-generation boundary recorded in the flow-graph README.
     pub omega_signs: &'a DMatrix<i8>,
 }
 
@@ -105,6 +112,10 @@ pub enum ExactClosedWordOutcome {
         action: Option<BigRational>,
         start_coords: Option<[BigRational; 2]>,
         singular_status: Option<&'static str>,
+    },
+    NonStrictNoOrbit {
+        action: BigRational,
+        start_coords: [BigRational; 2],
     },
     PositiveOrbit {
         action: BigRational,
@@ -197,6 +208,13 @@ fn scale4(c: &R, v: &Vec4) -> Vec4 {
 
 fn add4(a: &Vec4, b: &Vec4) -> Vec4 {
     [&a[0] + &b[0], &a[1] + &b[1], &a[2] + &b[2], &a[3] + &b[3]]
+}
+
+fn point_on_frame(frame: &FaceFrame, coords: &Vec2) -> Vec4 {
+    add4(
+        &frame.base,
+        &add4(&scale4(&coords[0], &frame.u), &scale4(&coords[1], &frame.v)),
+    )
 }
 
 impl ExactPolygon {
@@ -628,6 +646,9 @@ fn restrict_tube_to_action_cutoff(
         normal: tube.action_on_start.coeff.clone(),
         rhs: action_cutoff - &tube.action_on_start.constant,
     };
+    // Apply the exact retained-output cutoff before fixed-point solving.  Any
+    // later singular classification is therefore about the remaining searched
+    // domain, not necessarily the uncut closed tube.
     match tube
         .start_polygon
         .intersect_halfspace(action_halfspace, metrics)
@@ -647,6 +668,10 @@ enum ClosedClassification {
         action: Option<R>,
         point: Option<Vec2>,
         singular_status: Option<&'static str>,
+    },
+    NonStrictNoOrbit {
+        action: R,
+        point: Vec2,
     },
     PositiveOrbit {
         action: R,
@@ -688,6 +713,11 @@ pub(crate) fn resolve_closed_word_exact_with_action_cutoff(
 pub(crate) fn validate_exact_input(
     input: &ExactFlatTubeInput<'_>,
 ) -> Result<(), ExactClosedTubeError> {
+    // This is only structural validation for the exact tube resolver.  It does
+    // not prove the formal theorem hypotheses, bounded irredundancy, or
+    // agreement between caller-supplied intersection/sign matrices and the
+    // facet normals.  Keep those assumptions visible in the README/support
+    // ledger rather than hiding them behind this function name.
     let facet_count = input.facet_count();
     if facet_count < 2
         || input.facet_intersection_is_nonempty.shape() != (facet_count, facet_count)
@@ -740,7 +770,7 @@ fn classify_closed_tube(
             };
             let halfspaces = tube.start_polygon.halfspaces.len();
             let vertices = tube.start_polygon.vertices(metrics).len();
-            let classification = solve_closed_tube(&tube, metrics);
+            let classification = solve_closed_tube(input.dual_vertices, &tube, metrics);
             Ok(ExactClosedWordResult {
                 word,
                 outcome: classification.into_public()?,
@@ -764,6 +794,12 @@ impl ClosedClassification {
                 start_coords: point,
                 singular_status,
             }),
+            ClosedClassification::NonStrictNoOrbit { action, point } => {
+                Ok(ExactClosedWordOutcome::NonStrictNoOrbit {
+                    action,
+                    start_coords: point,
+                })
+            }
             ClosedClassification::PositiveOrbit { action, point } => {
                 Ok(ExactClosedWordOutcome::PositiveOrbit {
                     action,
@@ -787,6 +823,7 @@ impl ClosedClassification {
 }
 
 fn solve_closed_tube(
+    duals: &[Vec4],
     tube: &ExactTube,
     metrics: &mut ExactClosedTubeMetrics,
 ) -> ClosedClassification {
@@ -806,7 +843,11 @@ fn solve_closed_tube(
         }
         let action = tube.action_on_start.evaluate(&point);
         if action.is_positive() {
-            ClosedClassification::PositiveOrbit { action, point }
+            match all_segment_times_are_positive(duals, tube, &point) {
+                Some(true) => ClosedClassification::PositiveOrbit { action, point },
+                Some(false) => ClosedClassification::NonStrictNoOrbit { action, point },
+                None => ClosedClassification::ConstructionError,
+            }
         } else {
             ClosedClassification::ZeroActionNoOrbit {
                 action: Some(action),
@@ -819,12 +860,54 @@ fn solve_closed_tube(
     }
 }
 
+fn all_segment_times_are_positive(
+    duals: &[Vec4],
+    tube: &ExactTube,
+    start_coords: &Vec2,
+) -> Option<bool> {
+    // The tube polygon is closed (`tau >= 0`), but returned orbits use the
+    // strict displayed word and therefore require every segment time `tau > 0`.
+    let segment_count = tube.sequence.len().checked_sub(2)?;
+    let start_point = point_on_frame(&tube.start_frame, start_coords);
+    let mut point = start_point.clone();
+
+    for index in 0..segment_count {
+        let current = tube.sequence[index + 1];
+        let next = tube.sequence[index + 2];
+        let current_dual = duals.get(current)?;
+        let next_dual = duals.get(next)?;
+        let reeb = scale4(&q(2), &j_times(current_dual));
+        let denom = dot4(next_dual, &reeb);
+        if denom.is_zero() {
+            return None;
+        }
+        let tau = (R::one() - dot4(next_dual, &point)) / denom;
+        if !tau.is_positive() {
+            return Some(false);
+        }
+        point = add4(&point, &scale4(&tau, &reeb));
+    }
+
+    Some(point == start_point)
+}
+
 fn solve_singular_fixed_tube(
     tube: &ExactTube,
     lhs: &Mat2,
     rhs: &Vec2,
     metrics: &mut ExactClosedTubeMetrics,
 ) -> ClosedClassification {
+    // Slow exact callers use this branch to understand singular fixed-point
+    // equations, not to turn singular cases into certified capacity values.
+    // The theorem-facing finite-orbit-regular route may reject singular fixed
+    // maps before this point.  This diagnostic branch is kept because exact
+    // resolution of f64 error words and exact development checks need to
+    // distinguish:
+    // - no fixed points in the searched domain;
+    // - singular fixed sets whose action is everywhere nonpositive;
+    // - singular fixed sets containing positive-action closed candidates.
+    // Collapsing these cases into one rejection would make the slow exact path
+    // less useful and would hide unsupported positive-action singular cases.
     let rows = [(&lhs[0], &rhs[0]), (&lhs[1], &rhs[1])];
     let nonzero: Vec<(&Vec2, &R)> = rows
         .into_iter()
@@ -882,6 +965,11 @@ fn singular_fixed_polygon_result(
     singular_status: &'static str,
     metrics: &mut ExactClosedTubeMetrics,
 ) -> ClosedClassification {
+    // The fixed set is convex and the action is affine on the start polygon.
+    // Vertex signs therefore decide whether the searched fixed set contains a
+    // positive-action candidate.  Positive singular candidates remain
+    // unsupported; nonpositive singular fixed sets are reported as no-orbit
+    // outcomes for the displayed strict word.
     let actions: Vec<R> = fixed_polygon
         .vertices(metrics)
         .iter()
@@ -1086,7 +1174,8 @@ mod tests {
             };
             match result.outcome {
                 ExactClosedWordOutcome::EmptyTube
-                | ExactClosedWordOutcome::ZeroActionNoOrbit { .. } => {}
+                | ExactClosedWordOutcome::ZeroActionNoOrbit { .. }
+                | ExactClosedWordOutcome::NonStrictNoOrbit { .. } => {}
                 ExactClosedWordOutcome::PositiveOrbit { action, .. } => {
                     if action <= *action_cutoff {
                         let canonical = canonical_cyclic_word(sigma);
@@ -1304,6 +1393,56 @@ mod tests {
 
         assert!(metrics.action_cutoff_intersections > 0);
         assert!(matches!(result.outcome, ExactClosedWordOutcome::EmptyTube));
+    }
+
+    #[test]
+    fn exact_segment_time_filter_rejects_zero_time_boundary_point() {
+        let mut metrics = ExactClosedTubeMetrics::default();
+        let duals = vec![
+            [r(0), r(0), r(0), r(0)],
+            [r(0), r(0), r(1), r(0)],
+            [r(1), r(0), r(0), r(0)],
+        ];
+        let start_frame = FaceFrame {
+            first: 0,
+            second: 1,
+            base: [r(1), r(0), r(0), r(0)],
+            u: [r(0), r(1), r(0), r(0)],
+            v: [r(0), r(0), r(0), r(1)],
+            free: [1, 3],
+        };
+        let tube = ExactTube {
+            sequence: vec![0, 1, 2],
+            start_frame: start_frame.clone(),
+            end_frame: start_frame,
+            start_polygon: polygon(
+                vec![
+                    halfspace(1, 0, 1),
+                    halfspace(-1, 0, 1),
+                    halfspace(0, 1, 1),
+                    halfspace(0, -1, 1),
+                ],
+                &mut metrics,
+            )
+            .unwrap(),
+            start_to_end: Affine2 {
+                matrix: [[r(0), r(0)], [r(0), r(0)]],
+                offset: [r(0), r(0)],
+            },
+            action_on_start: AffineScalar {
+                coeff: [r(0), r(0)],
+                constant: r(1),
+            },
+        };
+
+        assert_eq!(
+            all_segment_times_are_positive(&duals, &tube, &[r(0), r(0)]),
+            Some(false)
+        );
+        assert!(matches!(
+            solve_closed_tube(&duals, &tube, &mut metrics),
+            ClosedClassification::NonStrictNoOrbit { .. }
+        ));
     }
 
     #[test]

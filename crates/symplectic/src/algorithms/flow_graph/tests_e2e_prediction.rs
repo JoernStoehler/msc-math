@@ -361,6 +361,9 @@ fn assert_exact_closed_word_resolver_clears_generated_closed_word_error_polytope
             ExactClosedWordOutcome::ZeroActionNoOrbit { .. } => {
                 summary.exact_zero_action_no_orbits += 1;
             }
+            ExactClosedWordOutcome::NonStrictNoOrbit { .. } => {
+                summary.exact_zero_action_no_orbits += 1;
+            }
             ExactClosedWordOutcome::PositiveOrbit { action, .. } => {
                 summary.exact_positive_orbits += 1;
                 let action = action.to_f64().expect("exact action to f64");
