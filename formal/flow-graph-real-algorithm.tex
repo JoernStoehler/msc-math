@@ -303,6 +303,33 @@ again closed tube search data.
 \end{unverified}
 
 \begin{unverified}
+\begin{lemma}[Empty subtubes stay empty under gluing]%
+\label{lem:fg-empty-subtube-pruning}
+In the notation of Lemma~\ref{lem:fg-tube-gluing}, if
+\[
+  P_1\cap\Phi_1^{-1}(P_2)=\emptyset,
+\]
+then the concatenated closed tube search data has empty start polygon and
+there is no closed search-domain candidate for the concatenated facet
+sequence.  More generally, any iterated gluing of closed tube search data has
+empty start polygon once one of its gluing stages has empty start polygon.
+\end{lemma}
+
+\begin{proof}
+The first statement is the start-polygon formula from
+Lemma~\ref{lem:fg-tube-gluing}.  A candidate for the concatenated sequence
+would have to restrict to a candidate for both pieces with matching middle
+coordinate, which is exactly the condition
+\(u\in P_1\cap\Phi_1^{-1}(P_2)\).  If this set is empty, no such candidate
+exists.
+
+For iterated gluing, apply the first statement at the first empty stage.  Every
+later glued tube has a start polygon obtained by imposing additional preimage
+conditions on an already empty start polygon, so it remains empty.
+\end{proof}
+\end{unverified}
+
+\begin{unverified}
 \begin{lemma}[Closed tube fixed points]\label{lem:fg-closed-tube-fixed-points}
 Let \(w=(s_1,\ldots,s_k)\) be a cyclic facet word and let the closed tube
 search data for

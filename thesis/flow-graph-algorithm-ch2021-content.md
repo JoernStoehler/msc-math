@@ -29,6 +29,7 @@ Use these sources directly when drafting or reviewing the section.
   `def:fg-closed-tube-search-data`,
   `lem:fg-primitive-tubes-affine`,
   `lem:fg-tube-gluing`,
+  `lem:fg-empty-subtube-pruning`,
   `lem:fg-closed-tube-fixed-points`,
   `lem:fg-action-cutoff-preserves-below-cutoff-fixed-points`,
   `lem:fg-dynamic-action-cutoffs-preserve-retained-output`,
@@ -100,6 +101,7 @@ correspondence below is reviewed.
 | Adjacent facet-pair pruning. | `alg:fg-real-exhaustive-search`; Rust `exact_search.rs` uses `build_transition_matrix_from_facet_intersections_and_omega`. | This is a necessary pruning condition. Do not describe the transition matrix as an exact physical-transition oracle. |
 | Local transition signs from nonzero \(\omega_0\). | Active proof-development labels `def:fg-nondegenerate-facet-presentation` and `lem:fg-local-transition-regularity-positive-sign`. | The current formal/Rust route uses the stronger nonempty facet-pair nonzero-\(\omega_0\) condition. Do not silently replace it by the weaker local trajectory condition. |
 | Closed tube search data and strict-time output. | `def:fg-closed-tube-search-data`; Rust `exact_tube.rs` has `NonStrictNoOrbit` and strict segment-time filtering. | Reader-facing prose must distinguish closed search domains \(\tau_r\ge0\) from returned orbits for a displayed word, which require \(\tau_r>0\). |
+| Empty subtube pruning and action normalization. | `lem:fg-empty-subtube-pruning` and `lem:fg-action-normalization`; Rust `exact_tube.rs::build_tube` returns empty for empty recursive subtubes and `exact_tube.rs::intersect_tubes` composes action by pullback and addition. | This supports exact closed-search pruning and action bookkeeping. It is not an f64 predicate-soundness claim. |
 | Action cutoffs. | `lem:fg-action-cutoff-preserves-below-cutoff-fixed-points` and `lem:fg-dynamic-action-cutoffs-preserve-retained-output`; Rust `exact_search.rs` constructs the cutoff from the best exact positive action plus threshold, `exact_tube.rs::restrict_tube_to_action_cutoff` applies the exact action halfspace before fixed-point solving, and final search output filters against the final minimum. | This supports the exact action-cutoff optimization. It does not analyze f64 cutoffs or remove the separate finite-orbit/singular-classifier boundary. |
 | Primitive affine tubes, gluing, and fixed points. | `lem:fg-primitive-tubes-affine`, `lem:fg-tube-gluing`, `lem:fg-closed-tube-fixed-points`; unapproved proof-development text. | These are the main proof pieces to review before theorem-strength thesis prose. |
 | Singular fixed-point equations. | Rust classifies exact singular fixed sets; `lem:fg-nonpositive-fixed-set-no-strict-orbit` covers the no-orbit side for nonpositive-action fixed sets; the finite-orbit-regular theorem route still excludes relevant singular fixed maps from the capacity theorem. | Do not identify the finite-orbit-regular theorem route with the full Rust singular-classifier runtime boundary until the singular-classifier correspondence is reviewed. |
