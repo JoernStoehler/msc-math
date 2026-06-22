@@ -206,9 +206,8 @@ caller-owned adaptations of the shared paths above.
 
 ## Promotion Rule
 
-Keep this directory README-only only while it is merely coordinating. If coupled
-QP development work needs code, data, timing, or verification artifacts, it is
-allowed to live here. Record why those artifacts should move together with QP
-method development rather than in `crates/`, a cross-cutting experiment home, or
-a topic folder. Promote importable kernels/routes into `crates/symplectic` only
+Coupled QP development work may keep code, data, timing, or verification
+artifacts here while those artifacts should move together with QP method
+development rather than in `crates/`, a cross-cutting experiment home, or a
+topic folder. Promote importable kernels/routes into `crates/symplectic` only
 after their contracts are stable enough for multiple consumers to call.

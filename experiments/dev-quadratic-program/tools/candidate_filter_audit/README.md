@@ -37,6 +37,14 @@ When `sigmas_truncated` is true, `exact_capacity`,
 examined sigma prefix. They are diagnostics for the capped run, not a global
 candidate-filter safety result for the case.
 
+Current measured status is recorded in `../../docs/route-consumer-matrix.md`.
+The first complete small/edge measurements found no false-discarded
+exact-positive sigmas on the targeted generated random/product cases or edge
+fixtures. The HKO rounded-f64 measurement only covered the first 500 pruned
+sigmas and is diagnostic, not exhaustive HKO evidence. Broad generated banks
+and uncapped HKO need targeted, exhaustive, or parallel audit design before
+claiming retained-candidate route safety.
+
 Example:
 
 ```bash
