@@ -12,8 +12,9 @@ proof text can overrule it. When they do, update this file or mark the mismatch.
 
 ## Current State
 
-- Exact exhaustive search is a thesis artifact target for exact-admissible
-  polytopes. It is not yet thesis-ready.
+- Exact exhaustive search is supported as limited implementation evidence for
+  deterministic exact-admissible four-dimensional rational polytopes satisfying
+  the input predicates stated below.
 - The f64 path is the intended production path for larger polytopes. It is not
   an exact certificate by itself.
 - `exact_tube.rs` contains exact rational closed-word/tube resolution for one
@@ -28,15 +29,33 @@ proof text can overrule it. When they do, update this file or mark the mismatch.
 ## Thesis-Facing Scope
 
 The thesis-facing goal is not to make flow-graph capacity work on every
-geometrically interesting input. It is to make the implemented CH2021-style
-route clear enough that its supported scope, evidence, and caveats can be
-checked without reconstructing the development history.
+geometrically interesting input. It is to make the implemented
+CH2021-derived flow-graph/tube route clear enough that its supported scope,
+evidence, and caveats can be checked without reconstructing the development
+history.
+
+Here "CH2021-derived flow-graph/tube route" means the implemented finite
+four-dimensional polytope model whose states are oriented two-faces
+`F_i cap F_j`, whose transition `(i,j) -> (j,k)` represents flowing along the
+Reeb direction of facet `j`, whose closed candidates are cyclic facet words
+expanded as `[s_0, ..., s_m, s_0, s_1]`, and whose candidate orbits are fixed
+points of the composed affine tube map. This phrase does not mean the
+implementation proves the full CH2021 smoothing theorem, implements CH2021
+rotation pruning, handles Type 3/bad-face behavior, or supports all
+symplectic polytopes.
 
 Supported-scope target:
 
-- exact-admissible deterministic polytopes where the current generic tube
-  assumptions hold;
-- exact exhaustive search and retained-word semantics for those polytopes;
+- four-dimensional rational polytope data with exact rational dual facet
+  normals;
+- matching facet-intersection and exact `omega_0`-sign matrices;
+- bounded irredundant halfspace data supplied by the existing trusted
+  fixture/data-generation path;
+- nonzero exact `omega_0` on every geometrically possible transition;
+- nonnegative exact action threshold;
+- no positive-action singular fixed set encountered by exact closed-word
+  resolution;
+- exact exhaustive search and retained-word semantics for that input class;
 - scalar capacity comparison against certified HK2017/QP as implementation
   evidence, not as a word-level oracle;
 - typed rejection or caveat language for unsupported inputs and unresolved
@@ -56,10 +75,15 @@ Explicit non-goals unless thesis review asks for them:
 Target input:
 
 - a 4-dimensional convex polytope represented by facet normals;
-- the dual vertices must define a bounded irredundant intersection of
-  halfspaces, as in the QP path;
-- facet-intersection data;
-- `omega_0` signs for facet pairs;
+- exact rational dual facet normals for the exact path;
+- the trusted fixture/data-generation path supplies bounded irredundant
+  halfspace data; the exact flow-graph path does not fully validate arbitrary
+  raw bounded-irredundant input;
+- facet-intersection data matching the facet count;
+- exact `omega_0` signs for facet pairs;
+- nonzero exact `omega_0` on every geometrically possible transition;
+- nonnegative exact action threshold;
+- no positive-action singular fixed set during exact closed-word resolution;
 - a numerical rejection policy for nearly zero `omega_0` on geometric
   transitions in the f64 path.
 
@@ -95,19 +119,27 @@ Search contract:
 Path-specific outcome contract:
 
 - Exact accepted output contains the exact capacity action, retained cyclic
-  facet words, and exact action for each retained word.
-- Exact rejection reasons currently known are: invalid bounded irredundant
-  halfspace input, a geometrically possible `omega_0 = 0` transition, and a
-  positive-action singular fixed set.
-- f64 accepted output has the same ordinary shape as exact accepted output, but
-  with approximate actions and a different error type.
+  facet words, and exact action for each retained word. Exact positive closed
+  words are filtered by reconstructing the segment times and requiring every
+  segment time to be strictly positive; zero-time boundary fixed points are not
+  accepted as positive orbits for the displayed word.
+- Exact rejection reasons currently known are: invalid input shapes, a
+  geometrically possible `omega_0 = 0` transition, and a positive-action
+  singular fixed set. Full bounded-irredundant validation is not part of this
+  rejection boundary.
+- f64 accepted output has approximate actions and may include words accepted by
+  f64 predicates directly. It is not covered by the exact strict segment-time
+  contract unless the specific word is also resolved by exact closed-tube
+  arithmetic.
 - `capacity_f64` is the current f64 wrapper used by tests and experiments. It
   computes a diagnostic f64 closed-word search and resolves every f64
-  closed-word error with exact flow-graph closed-word arithmetic. It returns a
-  value only if exact resolution resolves all such words without an exact
+  closed-word error with exact flow-graph closed-word arithmetic. Direct f64
+  positive words remain f64 outputs; the exact resolution boundary applies only
+  to f64 error words that are reclassified exactly. The wrapper returns a value
+  only if exact resolution resolves all such error words without an exact
   construction error or unsupported positive singular outcome. Its returned
-  action is the minimum of f64 positive words and exact-resolution positive
-  words.
+  action is the minimum of direct f64 positive words and exact-resolution
+  positive words.
 - `capacity_exact` is the current exact rational search wrapper used by tests
   and experiments.
 - `diagnose_f64_closed_words` is the development/experiment function.
@@ -154,17 +186,16 @@ It does not replace proofs.
 
 Status labels:
 
-- `target`: intended thesis-supporting proposition, not fully established yet.
-- `current evidence`: supported by existing code or tests, but not enough for
-  thesis reliance.
-- `future`: useful later, not required for the next exact e2e suite.
+- `implementation evidence`: supported by existing code or tests, but not a
+  proof of the mathematical theorem.
+- `future`: useful later, not required for the limited thesis packet.
 
 | id | proposition | evidence type | current status | next check |
 | --- | --- | --- | --- | --- |
-| P1 | For deterministic exact-admissible polytopes, exact exhaustive flow-graph search returns the same exact capacity as certified QP. | exact implementation evidence plus QP comparison evidence | target | build exact e2e suite using certified QP capacity |
-| P2 | For deterministic exact-admissible polytopes and a chosen action threshold, exact exhaustive flow-graph search returns exactly the cyclic flow-graph words with action `<= capacity + threshold` under the flow-graph convention, including zero-time segments. | exact implementation evidence | target | test retained-word completeness against the exact flow-graph enumeration, not against QP |
+| P1 | On selected generated exact-admissible polytopes, exact exhaustive flow-graph search returns the same scalar capacity as certified QP. | exact implementation evidence plus QP comparison evidence | implementation evidence for F5/F6 default tests and ignored F7 checks | broaden only if thesis asks for stronger empirical coverage |
+| P2 | On selected generated exact-admissible polytopes and chosen action thresholds, exact exhaustive flow-graph search returns the cyclic flow-graph words with action `<= capacity + threshold` that pass exact closed-tube resolution and the strict segment-time filter. | exact implementation evidence | implementation evidence from exact retained-word checks against full flow-graph resolution | keep retained-word checks flow-graph-internal unless an overlap convention with QP is defined |
 | P3 | On the overlap where both conventions apply, exact flow-graph retained words and certified QP gap-window orbits agree. | cross-algorithm sanity check | future | compare only after defining the overlap convention |
-| P4 | Expected-rejected polytopes are rejected for the expected concrete reason. | exact/f64 implementation evidence | target | maintain separate buckets for invalid halfspace input, exact `omega_0 = 0`, f64 near-zero `omega_0`, and singular fixed-point cases |
+| P4 | Expected-rejected polytopes are rejected for the expected concrete reason. | exact/f64 implementation evidence | implementation evidence for invalid input shapes, exact zero-`omega_0`, f64 near-zero `omega_0`, and selected unsupported cases | maintain separate buckets for future rejection cases |
 | P5 | f64 accepted output agrees with exact or QP after ordinary indeterminate predicates that could affect output are resolved exactly. | f64 implementation evidence plus exact/QP comparison evidence | future | define ordinary predicate fallback scope before adding broad f64 e2e tests |
 
 ## First Exact E2E Suite
@@ -172,7 +203,8 @@ Status labels:
 Purpose:
 
 - support P1 and P2;
-- test exact exhaustive search on deterministic exact-admissible polytopes;
+- test exact exhaustive search on selected deterministic exact-admissible
+  polytopes;
 - avoid f64 behavior and rejection behavior in this suite.
 
 For each polytope and action threshold:
@@ -198,7 +230,7 @@ Initial buckets:
 
 Separate rejection suite:
 
-- invalid bounded irredundant halfspace input;
+- invalid input shapes;
 - exact geometrically possible `omega_0 = 0` transition;
 - exact positive-action singular fixed set.
 
@@ -234,7 +266,9 @@ Current evidence:
 - `exact_tube.rs` has exact rational tests for polygon intersection and selected
   closed words. Current checked cases include a positive F7 word, a zero-action
   F7 word, and an F6 word where same-sigma QP has a critical point/action while
-  exact flow-graph tube arithmetic returns an empty tube.
+  exact flow-graph tube arithmetic returns an empty tube. Exact positive
+  closed-word output now reconstructs segment times and rejects non-strict
+  boundary fixed points before returning a positive orbit.
 - `exact_search.rs` has baseline rejection tests for exact exhaustive search.
   The proposition-style exact exhaustive tests currently live in the
   `exact_tube.rs` test module because they reuse closed-word fixtures and
@@ -277,6 +311,12 @@ Current evidence:
   empty tubes, exact zero-action no-orbits, exact positive orbits, exact
   unsupported singular outcomes, and exact positives below or at/above the QP
   capacity.
+- The thesis-readiness packet on branch `fg-thesis-readiness` added exact
+  rejection tests for the Lagrangian triangle product and Lagrangian
+  triangle-square zero-`omega_0` fixtures. On 2026-06-21,
+  `cargo test -p symplectic --release --lib flow_graph` passed with 40 tests
+  passed, 6 ignored, and 0 failed. The packet also passed `cargo fmt --check`,
+  `cd thesis && latexmk && ./check-build.sh`, and `git diff --check`.
 
 Current analysis inventory:
 
@@ -304,30 +344,26 @@ Role of HK2017/QP comparison:
   capacity returned by flow-graph with the final scalar capacity returned by
   HK2017/QP on the same exact-admissible polytope.
 - HK2017/QP is not a literal retained-word oracle for flow-graph. QP uses its
-  own candidate convention, including positive dwell-time filters, while
-  flow-graph allows zero-time segments in its tube convention.
+  own candidate convention. The exact flow-graph output reports words accepted
+  by exact closed-tube resolution and the strict segment-time filter.
 - QP has certified exact gap-window support, but retained-word comparisons must
   be restricted to the overlap where both algorithms' conventions apply.
 - Passing that comparison on diverse exact-admissible polytopes is strong
   implementation evidence, but not a proof of the flow-graph theorem, stopping
   rule, or exact tube arithmetic.
 
-Evidence still needed before thesis writeup can treat this as a finished
-algorithm artifact on the supported scope:
+Evidence limits for thesis wording:
 
-- focused unit tests for primitive tubes;
-- focused unit tests for tube intersection;
-- focused unit tests for action cutoff restriction;
-- broader fixed-point tests for closed tubes, including singular/rejected cases;
-- f64 rejection tests for nearly zero geometric `omega_0`;
-- exact-vs-f64 comparison on exact-admissible examples;
-- comparison to HK2017 on the same exact-admissible polytopes;
-- release-mode profiling with counts for polygon operations and word counts.
-- broader action-cutoff tests on F7/F8 polytopes and profiling for how much exact
-  cutoff pruning helps;
-
-These are scope-completion checks for the supported exact/f64 routes above.
-They are not requests to expand the supported input class.
+- the exact path is implementation evidence for the stated input class, not a
+  standalone proof of the CH2021 capacity theorem, stopping rule, or tube
+  arithmetic;
+- arbitrary raw bounded-irredundant input is not fully validated by the
+  flow-graph exact path;
+- f64 diagnostics and `capacity_f64` are not exact certificates; only
+  individual f64 error words that pass the exact closed-word resolution boundary
+  receive exact closed-word status;
+- performance, rotation pruning, and broader F7/F8 action-cutoff profiling are
+  future work unless thesis review asks for stronger claims.
 
 ## Decisions
 

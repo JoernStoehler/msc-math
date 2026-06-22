@@ -1,5 +1,119 @@
 \section{Flow-Graph Algorithm Based On CH2021}\label{sec:flow-graph-algorithm-ch2021}
-\subsection{Definition}\label{subsec:flow-graph-algorithm-ch2021-definition}
-\subsection{Correctness}\label{subsec:flow-graph-algorithm-ch2021-correctness}
-\subsection{Performance optimization}\label{subsec:flow-graph-algorithm-ch2021-performance-optimization}
-\subsection{Empirical tests}\label{subsec:flow-graph-algorithm-ch2021-empirical-tests}
+
+Chaidez--Hutchings associate a symplectic flow graph to a
+four-dimensional symplectic polytope and use it to compare combinatorial Reeb
+orbits on the polytope with Reeb orbits on smoothings
+\cite{CH2021}.  The implementation described here uses the same finite
+flow-graph picture as an exact search model for a restricted class of rational
+polytopes.  This gives the thesis a second implemented approach to the same
+scalar capacity question, based on a different finite model from the
+Haim--Kislev quadratic program.  The comparison is useful for checking selected
+examples, but the quadratic-program method remains the main computational
+method in the thesis: it has broader certified coverage here, while the
+flow-graph implementation has narrower hypotheses, explicit degeneracy
+rejections, and no demonstrated performance advantage.  The section is not a
+proof of the full Chaidez--Hutchings theorem.
+
+\subsection{Implemented model}\label{subsec:flow-graph-algorithm-ch2021-definition}
+
+Let \(X\subset \mathbb R^4\) be represented by exact rational dual facet
+normals.  The implementation works with oriented two-faces
+\[
+  F_i\cap F_j .
+\]
+A transition \((i,j)\to(j,k)\) represents flowing along the Reeb direction of
+facet \(j\), entering the two-face \(F_i\cap F_j\), and leaving through
+\(F_j\cap F_k\).  The corresponding primitive tube has word \([i,j,k]\).  It
+stores the set of allowed starting points in \(F_i\cap F_j\), the affine map to
+the exit two-face, and the affine action accumulated along facet \(j\).
+
+Longer tubes are formed by intersecting compatible primitive and composite
+tubes after pulling endpoint conditions back to the starting two-face.  A
+closed candidate is represented by a cyclic facet word
+\([s_0,\ldots,s_m]\), expanded during tube construction as
+\[
+  [s_0,\ldots,s_m,s_0,s_1].
+\]
+The exact closed-word resolver solves the fixed-point equation for the
+composed affine tube map on the starting two-face.  It then reconstructs the
+individual segment times.  A fixed point is accepted as a positive
+generalized Reeb orbit only when the total action is positive and every
+segment time in the displayed word is positive.  Empty tubes, zero-action
+fixed sets, and non-strict boundary fixed points are discarded for capacity
+output.
+
+\subsection{Supported exact inputs}\label{subsec:flow-graph-algorithm-ch2021-supported-inputs}
+
+The exact search is used only for four-dimensional rational polytope data with
+the following properties:
+
+\begin{itemize}
+  \item exact rational dual facet normals;
+  \item matching facet-intersection and exact \(\omega_0\)-sign matrices;
+  \item bounded irredundant halfspace data established before the flow-graph
+    search is run;
+  \item nonzero exact \(\omega_0\) on each nonempty two-face transition;
+  \item a nonnegative exact action threshold;
+  \item no singular closed-word fixed set for which the exact resolver finds a
+    nonempty positive-action fixed set.
+\end{itemize}
+
+These hypotheses are part of the implemented contract.  In particular, the
+flow-graph exact path does not fully validate arbitrary raw
+bounded-irredundant input.  Here a nonempty two-face transition means that the
+facet-intersection matrix marks the corresponding two-face as nonempty.  Inputs
+with zero \(\omega_0\) on such a transition are rejected before enumeration.
+This excludes the HKO example and the Lagrangian-product examples considered
+elsewhere in the thesis; the flow-graph implementation does not claim to solve
+those degeneracies.
+
+\subsection{Exact search and retained words}\label{subsec:flow-graph-algorithm-ch2021-correctness}
+
+For supported inputs, exact search enumerates simple closed facet words after
+transition pruning.  ``Simple'' means that, before closure, no facet is
+repeated.  Each word is resolved with exact rational tube arithmetic.  The
+minimum positive action is returned as the reported flow-graph action.  The
+retained output consists of exact flow-graph words with action at most
+\[
+  a_{\min}+\Delta ,
+\]
+where \(\Delta\ge 0\) is the requested exact action threshold.
+
+The retained-word convention is the flow-graph convention.  It records the
+cyclic facet words accepted by the exact tube resolver after the strict
+segment-time filter.  It is not identified with the retained orbit convention
+of the Haim--Kislev quadratic-program implementation.  The Haim--Kislev
+implementation is used here only for scalar capacity comparison on examples
+satisfying the input hypotheses above.
+
+The f64 implementation has a different status.  It is useful for diagnostics
+and for larger searches, and the wrapper used in tests resolves f64
+closed-word errors with exact closed-word arithmetic.  Nevertheless, f64 output
+is not treated as an exact capacity certificate.  A certified statement in this
+section refers to exact rational output, or to certified Haim--Kislev/QP scalar
+comparison checks, not to f64 arithmetic alone.
+
+\subsection{Checks and limitations}\label{subsec:flow-graph-algorithm-ch2021-empirical-tests}
+
+The implementation checks have two parts.  First, focused exact tests exercise the
+closed-tube arithmetic, polygon intersection, action cutoffs, zero-action
+cases, and selected positive closed words.  Second, generated polytopes
+satisfying the exact input hypotheses above are used as end-to-end examples.
+For the checked five- and six-facet examples, exact flow-graph search returns
+the same scalar capacity as the certified Haim--Kislev/QP aggregation.  The
+retained flow-graph words are
+checked against a full exact flow-graph resolution up to the chosen action
+threshold, rather than against QP retained words.
+
+Slower ignored tests record the same comparison pattern for a seven-facet
+generated example.  They are additional regression checks, not part of the
+baseline validation suite.  Separate rejection tests check that the exact
+search rejects HKO and Lagrangian-product inputs with zero \(\omega_0\) on a
+geometrically possible transition instead of returning capacity-like values for
+unsupported degeneracies.
+
+Thus the section provides implementation checks under the stated hypotheses,
+not a theorem that the code is a universal certified solver for all
+four-dimensional polytopes.  It does not implement CH2021 rotation pruning,
+does not prove the full Chaidez--Hutchings smoothing theory, and does not
+extend the flow-graph method to the HKO or Lagrangian-product degeneracies.

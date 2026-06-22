@@ -1011,7 +1011,8 @@ pub fn capacity_f64(
             })?;
         match result.outcome {
             ExactClosedWordOutcome::EmptyTube
-            | ExactClosedWordOutcome::ZeroActionNoOrbit { .. } => {}
+            | ExactClosedWordOutcome::ZeroActionNoOrbit { .. }
+            | ExactClosedWordOutcome::NonStrictNoOrbit { .. } => {}
             ExactClosedWordOutcome::PositiveOrbit { action, .. } => {
                 let action_f64 = action.to_f64().ok_or_else(|| {
                     CapacityF64Error::ExactActionNotRepresentable {

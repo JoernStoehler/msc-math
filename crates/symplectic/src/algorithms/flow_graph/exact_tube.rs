@@ -106,6 +106,10 @@ pub enum ExactClosedWordOutcome {
         start_coords: Option<[BigRational; 2]>,
         singular_status: Option<&'static str>,
     },
+    NonStrictNoOrbit {
+        action: BigRational,
+        start_coords: [BigRational; 2],
+    },
     PositiveOrbit {
         action: BigRational,
         start_coords: [BigRational; 2],
@@ -197,6 +201,13 @@ fn scale4(c: &R, v: &Vec4) -> Vec4 {
 
 fn add4(a: &Vec4, b: &Vec4) -> Vec4 {
     [&a[0] + &b[0], &a[1] + &b[1], &a[2] + &b[2], &a[3] + &b[3]]
+}
+
+fn point_on_frame(frame: &FaceFrame, coords: &Vec2) -> Vec4 {
+    add4(
+        &frame.base,
+        &add4(&scale4(&coords[0], &frame.u), &scale4(&coords[1], &frame.v)),
+    )
 }
 
 impl ExactPolygon {
@@ -648,6 +659,10 @@ enum ClosedClassification {
         point: Option<Vec2>,
         singular_status: Option<&'static str>,
     },
+    NonStrictNoOrbit {
+        action: R,
+        point: Vec2,
+    },
     PositiveOrbit {
         action: R,
         point: Vec2,
@@ -740,7 +755,7 @@ fn classify_closed_tube(
             };
             let halfspaces = tube.start_polygon.halfspaces.len();
             let vertices = tube.start_polygon.vertices(metrics).len();
-            let classification = solve_closed_tube(&tube, metrics);
+            let classification = solve_closed_tube(input.dual_vertices, &tube, metrics);
             Ok(ExactClosedWordResult {
                 word,
                 outcome: classification.into_public()?,
@@ -764,6 +779,12 @@ impl ClosedClassification {
                 start_coords: point,
                 singular_status,
             }),
+            ClosedClassification::NonStrictNoOrbit { action, point } => {
+                Ok(ExactClosedWordOutcome::NonStrictNoOrbit {
+                    action,
+                    start_coords: point,
+                })
+            }
             ClosedClassification::PositiveOrbit { action, point } => {
                 Ok(ExactClosedWordOutcome::PositiveOrbit {
                     action,
@@ -787,6 +808,7 @@ impl ClosedClassification {
 }
 
 fn solve_closed_tube(
+    duals: &[Vec4],
     tube: &ExactTube,
     metrics: &mut ExactClosedTubeMetrics,
 ) -> ClosedClassification {
@@ -806,7 +828,11 @@ fn solve_closed_tube(
         }
         let action = tube.action_on_start.evaluate(&point);
         if action.is_positive() {
-            ClosedClassification::PositiveOrbit { action, point }
+            match all_segment_times_are_positive(duals, tube, &point) {
+                Some(true) => ClosedClassification::PositiveOrbit { action, point },
+                Some(false) => ClosedClassification::NonStrictNoOrbit { action, point },
+                None => ClosedClassification::ConstructionError,
+            }
         } else {
             ClosedClassification::ZeroActionNoOrbit {
                 action: Some(action),
@@ -817,6 +843,37 @@ fn solve_closed_tube(
     } else {
         solve_singular_fixed_tube(tube, &lhs, &rhs, metrics)
     }
+}
+
+fn all_segment_times_are_positive(
+    duals: &[Vec4],
+    tube: &ExactTube,
+    start_coords: &Vec2,
+) -> Option<bool> {
+    // The tube polygon is closed (`tau >= 0`), but returned orbits use the
+    // strict displayed word and therefore require every segment time `tau > 0`.
+    let segment_count = tube.sequence.len().checked_sub(2)?;
+    let start_point = point_on_frame(&tube.start_frame, start_coords);
+    let mut point = start_point.clone();
+
+    for index in 0..segment_count {
+        let current = tube.sequence[index + 1];
+        let next = tube.sequence[index + 2];
+        let current_dual = duals.get(current)?;
+        let next_dual = duals.get(next)?;
+        let reeb = scale4(&q(2), &j_times(current_dual));
+        let denom = dot4(next_dual, &reeb);
+        if denom.is_zero() {
+            return None;
+        }
+        let tau = (R::one() - dot4(next_dual, &point)) / denom;
+        if !tau.is_positive() {
+            return Some(false);
+        }
+        point = add4(&point, &scale4(&tau, &reeb));
+    }
+
+    Some(point == start_point)
 }
 
 fn solve_singular_fixed_tube(
@@ -917,8 +974,8 @@ mod tests {
     use crate::algorithms::flow_graph::exact_search::{
         search_closed_orbits_exact, ExactActionCutoffPolicy, ExactFlowGraphOrbit,
     };
-    use crate::algorithms::hk2017::solve_pruned_hk2017_candidates;
     use crate::algorithms::hk2017::for_each_sigma_pruned_by_transition;
+    use crate::algorithms::hk2017::solve_pruned_hk2017_candidates;
     use crate::algorithms::{
         aggregate_certified_orbits_with_dual_vertices_exact, CertifiedOrbitSetMode,
     };
@@ -1086,7 +1143,8 @@ mod tests {
             };
             match result.outcome {
                 ExactClosedWordOutcome::EmptyTube
-                | ExactClosedWordOutcome::ZeroActionNoOrbit { .. } => {}
+                | ExactClosedWordOutcome::ZeroActionNoOrbit { .. }
+                | ExactClosedWordOutcome::NonStrictNoOrbit { .. } => {}
                 ExactClosedWordOutcome::PositiveOrbit { action, .. } => {
                     if action <= *action_cutoff {
                         let canonical = canonical_cyclic_word(sigma);
@@ -1307,6 +1365,56 @@ mod tests {
     }
 
     #[test]
+    fn exact_segment_time_filter_rejects_zero_time_boundary_point() {
+        let mut metrics = ExactClosedTubeMetrics::default();
+        let duals = vec![
+            [r(0), r(0), r(0), r(0)],
+            [r(0), r(0), r(1), r(0)],
+            [r(1), r(0), r(0), r(0)],
+        ];
+        let start_frame = FaceFrame {
+            first: 0,
+            second: 1,
+            base: [r(1), r(0), r(0), r(0)],
+            u: [r(0), r(1), r(0), r(0)],
+            v: [r(0), r(0), r(0), r(1)],
+            free: [1, 3],
+        };
+        let tube = ExactTube {
+            sequence: vec![0, 1, 2],
+            start_frame: start_frame.clone(),
+            end_frame: start_frame,
+            start_polygon: polygon(
+                vec![
+                    halfspace(1, 0, 1),
+                    halfspace(-1, 0, 1),
+                    halfspace(0, 1, 1),
+                    halfspace(0, -1, 1),
+                ],
+                &mut metrics,
+            )
+            .unwrap(),
+            start_to_end: Affine2 {
+                matrix: [[r(0), r(0)], [r(0), r(0)]],
+                offset: [r(0), r(0)],
+            },
+            action_on_start: AffineScalar {
+                coeff: [r(0), r(0)],
+                constant: r(1),
+            },
+        };
+
+        assert_eq!(
+            all_segment_times_are_positive(&duals, &tube, &[r(0), r(0)]),
+            Some(false)
+        );
+        assert!(matches!(
+            solve_closed_tube(&duals, &tube, &mut metrics),
+            ClosedClassification::NonStrictNoOrbit { .. }
+        ));
+    }
+
+    #[test]
     fn exact_accepted_f5_polytope_supports_p1_p2() {
         let case = deterministic_random_exact_case(5, 60);
         assert_exact_search_supports_p1_p2("generated_F5_attempt60_gap0", &case, q(0));
@@ -1407,5 +1515,4 @@ mod tests {
         assert_eq!(baseline.action_cutoff_word_count, 0);
         assert!(cutoff.action_cutoff_word_count > 0);
     }
-
 }

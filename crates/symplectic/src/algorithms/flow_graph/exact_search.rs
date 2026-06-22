@@ -106,7 +106,8 @@ pub fn search_closed_orbits_exact(
         };
         match outcome {
             ExactClosedWordOutcome::EmptyTube
-            | ExactClosedWordOutcome::ZeroActionNoOrbit { .. } => {
+            | ExactClosedWordOutcome::ZeroActionNoOrbit { .. }
+            | ExactClosedWordOutcome::NonStrictNoOrbit { .. } => {
                 empty_or_no_orbit_count += 1;
             }
             ExactClosedWordOutcome::PositiveOrbit { action, .. } => {
@@ -234,6 +235,22 @@ mod tests {
     #[test]
     fn exact_search_rejects_geometric_zero_omega_transition() {
         let fixture = known_polytopes::hko_pentagon();
+        assert_exact_search_rejects_zero_omega_fixture(fixture);
+    }
+
+    #[test]
+    fn exact_search_rejects_lagrangian_triangle_product_zero_omega_transition() {
+        let fixture = known_polytopes::lagrangian_triangle_product();
+        assert_exact_search_rejects_zero_omega_fixture(fixture);
+    }
+
+    #[test]
+    fn exact_search_rejects_lagrangian_triangle_square_zero_omega_transition() {
+        let fixture = known_polytopes::lagrangian_triangle_square();
+        assert_exact_search_rejects_zero_omega_fixture(fixture);
+    }
+
+    fn assert_exact_search_rejects_zero_omega_fixture(fixture: &known_polytopes::KnownPolytope) {
         let input = ExactFlatTubeInput {
             dual_vertices: &fixture.dual_vertices,
             facet_intersection_is_nonempty: &fixture.facet_intersection_is_nonempty,
