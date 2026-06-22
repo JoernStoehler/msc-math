@@ -651,7 +651,7 @@ mod tests {
                 near_redundant_facet_removal_delta: 1e-8,
             },
         );
-        assert_eq!(row.exact_audit_status, "exact_valid_capacity_success");
+        assert_eq!(row.exact_audit_status, "reference_route_capacity_success");
         assert!(row.audit_capacity_label.is_some());
         assert!(row.audit_sigma_label.is_some());
     }
@@ -770,7 +770,7 @@ mod tests {
         assert_eq!(row.volume_ratio_upper_bound.unwrap(), scale.powi(4));
         assert_eq!(row.sys_ratio_lower_bound.unwrap(), scale.powi(-4));
         assert_eq!(row.sys_ratio_upper_bound.unwrap(), scale.powi(4));
-        assert_eq!(row.exact_audit_status, "exact_valid_capacity_success");
+        assert_eq!(row.exact_audit_status, "reference_route_capacity_success");
         assert!(row.audit_capacity_label.is_some());
         assert_eq!(
             row.audit_capacity_label,

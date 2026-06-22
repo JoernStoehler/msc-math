@@ -369,10 +369,13 @@ Rows contain both validation and capacity/audit fields.
 - `audit_capacity_label` and `artifact_capacity_label` are comparison labels.
   They are not inputs to the measured f64 validation or capacity decisions.
 - `exact_audit_status` is `not_requested`,
-  `exact_valid_capacity_success`, `exact_valid_capacity_failure`,
-  `exact_validation_rejected`, or `exact_audit_error`.
-- `exact_audit_time_ms` and `exact_audit_reasons` describe exact audit only.
-  Exact audit is outside the measured f64 path.
+  `reference_route_capacity_success`, `reference_route_capacity_failure`,
+  `exact_validation_rejected`, or `exact_audit_error`. The reference route first
+  validates the stored binary64 input as exact rational geometry, then runs the
+  existing `capacity_auto` route; the status is a comparison label, not a
+  theorem-level exact capacity certificate.
+- `exact_audit_time_ms` and `exact_audit_reasons` describe this audit only.
+  The audit is outside the measured f64 path.
 
 ## Interpreting Results
 

@@ -89,7 +89,7 @@ fn retained_candidate_fallback_consumer(case: &ScanCase) -> RetainedCandidateFal
     retained.admissibility = OrbitAdmissibility::IndeterminateF64;
 
     let dual_vertices_exact = exact_binary64_dual_vertex_arrays(&case.dual_vertices);
-    let interval_result =
+    let _interval_result =
         exp_dev_quadratic_program::fallback_route::aggregate_orbits_with_local_exact_fallback(
             &dual_vertices_exact,
             vec![retained.clone()],
@@ -109,7 +109,7 @@ fn retained_candidate_fallback_consumer(case: &ScanCase) -> RetainedCandidateFal
         .expect("local certified fallback should certify the retained candidate set");
 
     RetainedCandidateFallback {
-        capacity: interval_result.min_action,
+        capacity: exact_set.capacity,
         exact_resolutions: exact_set.exact_resolutions,
         retained_orbit_count: exact_set.orbits.len(),
     }

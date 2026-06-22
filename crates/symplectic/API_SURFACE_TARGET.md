@@ -633,12 +633,12 @@ F64 capacity result conveniences:
 - Rejected: invented `upper_bound_orbit`, `upper_bound_sigma`, and
   `upper_bound_value` names. Real callers overwhelmingly use scalar capacity,
   best orbit, best sigma, and best beta data.
-- Rejected: `best_sigma` and `best_beta` convenience methods. They are only
-  projections of `best_orbit` and add indirection without owning result
-  semantics.
-- Chosen: keep `capacity` and `best_orbit` only. `best_orbit` owns the
-  result-level choice of which orbit is best; callers that need `sigma` or
-  `beta` use the public fields on the returned `F64Orbit`.
+- Rejected: a scalar `capacity()` convenience method on the route payload. It
+  hid that the returned scalar is the route-selected `min_action`, not a
+  self-standing certificate.
+- Chosen: expose the route-selected scalar as `min_action` and keep
+  `best_orbit`, `best_sigma`, and `best_beta` as convenience projections of the
+  same chosen orbit while the route result remains the public payload.
 
 F64 interval representation:
 

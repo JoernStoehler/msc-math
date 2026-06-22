@@ -17,8 +17,8 @@ pub struct ExactAuditReport {
 #[serde(rename_all = "snake_case")]
 pub enum ExactAuditStatus {
     NotRequested,
-    ExactValidCapacitySuccess,
-    ExactValidCapacityFailure,
+    ReferenceRouteCapacitySuccess,
+    ReferenceRouteCapacityFailure,
     ExactValidationRejected,
     ExactAuditError,
 }
@@ -27,8 +27,8 @@ impl ExactAuditStatus {
     pub fn label(&self) -> &'static str {
         match self {
             Self::NotRequested => "not_requested",
-            Self::ExactValidCapacitySuccess => "exact_valid_capacity_success",
-            Self::ExactValidCapacityFailure => "exact_valid_capacity_failure",
+            Self::ReferenceRouteCapacitySuccess => "reference_route_capacity_success",
+            Self::ReferenceRouteCapacityFailure => "reference_route_capacity_failure",
             Self::ExactValidationRejected => "exact_validation_rejected",
             Self::ExactAuditError => "exact_audit_error",
         }
@@ -83,14 +83,14 @@ fn audit_generated_case_exact_impl(dual_vertices: &[Vector4<f64>]) -> ExactAudit
         &cache.omega_signs,
     ) {
         Ok(result) => ExactAuditReport {
-            status: ExactAuditStatus::ExactValidCapacitySuccess,
+            status: ExactAuditStatus::ReferenceRouteCapacitySuccess,
             time_ms: 0.0,
             reasons: Vec::new(),
             capacity_label: Some(result.min_action),
             sigma_label: Some(result.best_sigma().to_vec()),
         },
         Err(err) => ExactAuditReport {
-            status: ExactAuditStatus::ExactValidCapacityFailure,
+            status: ExactAuditStatus::ReferenceRouteCapacityFailure,
             time_ms: 0.0,
             reasons: vec![format!("{err:?}")],
             capacity_label: None,
@@ -117,7 +117,10 @@ mod tests {
             -(first + second + third + fourth),
         ];
         let report = audit_generated_case_exact(&dual_vertices);
-        assert_eq!(report.status, ExactAuditStatus::ExactValidCapacitySuccess);
+        assert_eq!(
+            report.status,
+            ExactAuditStatus::ReferenceRouteCapacitySuccess
+        );
         assert!(report.capacity_label.is_some());
         assert!(report.sigma_label.is_some());
     }

@@ -44,33 +44,34 @@ pub fn load_retained_artifact_cases_filtered(
 ) -> Vec<ScanCase> {
     let produce = repo_root().join("experiments/sys-datascience/produce");
     let mut cases = Vec::new();
+    let row_cap = retained_artifact_row_cap(max_rows_per_family, source_id_filter);
 
     if should_load_jsonl_family("random", family_filter, source_id_filter) {
         cases.extend(load_random_rows(
             &produce.join("random.jsonl"),
             "random",
-            max_rows_per_family,
+            row_cap,
         ));
     }
     if should_load_jsonl_family("random_product", family_filter, source_id_filter) {
         cases.extend(load_random_product_rows(
             &produce.join("random-product.jsonl"),
             "random_product",
-            max_rows_per_family,
+            row_cap,
         ));
     }
     if should_load_jsonl_family("ascent_general_endpoint", family_filter, source_id_filter) {
         cases.extend(load_ascent_rows(
             &produce.join("ascent-general-endpoints.jsonl"),
             "ascent_general_endpoint",
-            max_rows_per_family,
+            row_cap,
         ));
     }
     if should_load_jsonl_family("ascent_product_endpoint", family_filter, source_id_filter) {
         cases.extend(load_ascent_rows(
             &produce.join("ascent-product-endpoints.jsonl"),
             "ascent_product_endpoint",
-            max_rows_per_family,
+            row_cap,
         ));
     }
     if filters_allow_case(HKO_FAMILY, HKO_SOURCE_ID, family_filter, source_id_filter) {
@@ -121,6 +122,14 @@ fn source_filter_selects_only_hko(source_id_filter: &[String]) -> bool {
         && source_id_filter
             .iter()
             .all(|source_id| source_id == HKO_SOURCE_ID)
+}
+
+fn retained_artifact_row_cap(max_rows_per_family: usize, source_id_filter: &[String]) -> usize {
+    if source_id_filter.is_empty() {
+        max_rows_per_family
+    } else {
+        0
+    }
 }
 
 pub fn hko_case() -> ScanCase {
@@ -322,5 +331,11 @@ mod tests {
             load_retained_artifact_cases_filtered(1, &filter("random"), &filter(HKO_SOURCE_ID));
 
         assert!(cases.is_empty());
+    }
+
+    #[test]
+    fn source_id_filter_disables_pre_filter_row_cap() {
+        assert_eq!(retained_artifact_row_cap(3, &[]), 3);
+        assert_eq!(retained_artifact_row_cap(3, &filter("random-42:F8")), 0);
     }
 }
