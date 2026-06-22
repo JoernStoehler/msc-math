@@ -194,15 +194,17 @@ targets are:
   regularity, while the exact implementation directly detects the downstream
   exact singular fixed-point cases and reports positive-action singular fixed
   sets as unsupported;
-- prove the generic determinant statement needed for the chosen theorem route,
-  or keep the theorem conditional on the explicit nonvanishing determinants;
+- keep the determinant-generic statement relative to the primitive-denominator
+  domain unless a later proof establishes density inside the space of valid
+  irredundant facet presentations;
 - reconcile positive transition signs with the current transition-matrix
   orientation;
-- prove the correspondence between the simple minimizers from
-  `thm:generalized-reeb-simple-minimizer` and the FG words enumerated by
-  `for_each_sigma_pruned_by_transition`;
-- migrate the tube gluing and action-cutoff lemmas from recovered material into
-  active proof text if theorem-strength thesis prose needs them.
+- review the active correspondence proof from
+  `thm:generalized-reeb-simple-minimizer` to the support words represented by
+  the idealized FG search;
+- add an action-cutoff lemma only if theorem-strength thesis prose needs to
+  discuss the Rust cutoff optimization, rather than only final threshold
+  filtering.
 
 ## Math Source Audit Before Theorem Drafting
 
@@ -281,9 +283,9 @@ The current exact implementation contract is a fourth surface:
 - it filters exact positive output by reconstructing strict segment times.
 
 Therefore the next thesis-facing step is not to choose the local
-nonzero-\(\omega_0\) theorem route from scratch.  It is to compare the active
-idealized formal theorem with the current exact implementation contract and
-state the implementation theorem/caveat boundary honestly.
+nonzero-\(\omega_0\) theorem route from scratch.  It is to review the active
+idealized formal theorem against the current exact implementation contract and
+then state the implementation theorem/caveat boundary honestly.
 
 ### Located math sources
 
@@ -343,18 +345,19 @@ state the implementation theorem/caveat boundary honestly.
   versions exclude them by regularity assumptions; current code reports
   unsupported positive singular outcomes.
 
-### Missing or unstable theorem pieces
+### Current theorem-piece status
 
-These are the pieces that must be resolved before active thesis theorem prose.
+These are the pieces that must be reviewed before active thesis theorem prose.
+Several are now present in `formal/flow-graph-real-algorithm.tex`, but that
+file is agent-written proof-development text and remains unapproved by Jörn.
 
 1. Tube definition and representation:
-   migrate a clean definition of the mathematical tube and represented affine
-   tube data. Do not redefine a tube as a breakpoint tuple.
+   present in `def:fg-closed-tube-search-data`; review that it preserves the
+   raw-source distinction between the mathematical tube and affine tube data.
 
 2. Primitive tube lemma:
-   recover the statement that a supported primitive triple gives affine tube
-   data and identify the exact hypothesis needed for the denominator. This is
-   `lem:tube-primitive-affine-bijection` in recovered material.
+   present in `def:fg-primitive-tube` and `lem:fg-primitive-tubes-affine`;
+   review the denominator/sign hypotheses against `exact_tube.rs`.
 
 3. Local nonzero-\(\omega_0\) strength:
    the active idealized formal theorem and current code use the nonempty
@@ -370,23 +373,24 @@ These are the pieces that must be resolved before active thesis theorem prose.
    `omega_signs[(current,next)] >= 0` checks.
 
 5. Tube gluing/intersection:
-   migrate `lem:tube-intersection`: compatible represented tubes glue by
-   composition, pullback/intersection of start polygons, and action addition.
-   This is where empty subtubes imply containing tubes are empty.
+   present in `lem:fg-tube-gluing`; review the compatibility, pullback,
+   intersection, and action-addition statements against current code.
 
 6. Action cutoff:
-   migrate `lem:tube-action-restriction`: reducing the action cutoff is an
-   affine halfspace restriction on the start polygon.
+   not separately formalized as a lemma in the active formal theorem. Current
+   algorithm/theorem wording uses threshold filtering after recording
+   trajectories, while Rust also has an action-cutoff optimization. Add a
+   separate action-cutoff lemma only if thesis prose needs to discuss that
+   optimization.
 
 7. Closed fixed points:
-   migrate `lem:tube-closed-fixed-point`: fixed points of the closed affine map
-   correspond to closed candidates for the displayed word. Keep the distinction
-   between closed-domain fixed points and positive-time orbits.
+   present in `lem:fg-closed-tube-fixed-points`; review that it keeps the
+   distinction between closed-domain fixed points and positive-time orbits.
 
 8. Zero-time behavior:
-   recover or replace `lem:tube-zero-time-collapse` from the earlier formal
-   version, and compare it to current strict segment-time filtering in
-   `exact_tube.rs`.
+   handled in the active route by strict segment-time filtering rather than by
+   recovering `lem:tube-zero-time-collapse`. Review whether the theorem needs
+   the collapse lemma; current exact code filters non-strict fixed points.
 
 9. Short-word and regularity strategy:
    choose one route:
@@ -401,12 +405,9 @@ These are the pieces that must be resolved before active thesis theorem prose.
    general-position condition.
 
 10. Capacity conclusion:
-    after the simple-minimizer theorem, prove that a capacity-realizing simple
-    orbit is represented by the chosen tube search under the selected
-    hypotheses. Do not list simple-minimizer existence as a hypothesis. The
-    active theorem already gives a simple minimizer; the FG proof obligation is
-    to show that the chosen tube search represents every capacity-realizing
-    simple orbit that satisfies the selected regularity/nonzero conditions.
+    present in `thm:fg-real-capacity-correctness`; review the bridge from
+    `thm:generalized-reeb-simple-minimizer` to the active-word support word.
+    Do not list simple-minimizer existence as a hypothesis.
 
 11. Exact Rust correspondence:
     after the mathematical theorem is stable, separately state what exact Rust
@@ -426,19 +427,18 @@ These are the pieces that must be resolved before active thesis theorem prose.
 
 ### Current theorem-drafting block
 
-Do not draft active theorem prose yet. The next useful durable step is to
-recover the lemma chain above into a formal/proof-facing file or a cleaner
-section-local proof skeleton. Only after that should the active FG theorem be
-written for Jörn review.
+Do not draft reader-facing theorem prose yet. The next useful durable step is
+to review `formal/flow-graph-real-algorithm.tex` as a proof-development
+surface, decide which theorem route survives Jörn review, and then translate
+only that route into thesis prose.
 
 Minimal next proof packet:
 
-1. Create a proof-facing FG/tube section that imports the active
-   generalized-Reeb notation and `thm:generalized-reeb-simple-minimizer`.
-2. Copy or restate only the recovered lemmas needed for primitive tubes,
-   gluing, action restriction, closed fixed points, and zero-time treatment,
-   preserving `unverified` status until reviewed.
-3. Choose exactly one regularity route for the theorem statement.
-4. Add a separate implementation-correspondence paragraph for the exact Rust
+1. Review `formal/flow-graph-real-algorithm.tex` for false statements, missing
+   hypotheses, and sign/orientation mistakes.
+2. Decide whether the thesis theorem uses finite-orbit regularity, a
+   determinant-generic denominator-domain corollary, or an implementation
+   boundary based on exact singular rejection.
+3. Add a separate implementation-correspondence paragraph for the exact Rust
    path, including stricter or different code predicates.
-5. Only then draft reader-facing thesis prose.
+4. Only then draft reader-facing thesis prose.
