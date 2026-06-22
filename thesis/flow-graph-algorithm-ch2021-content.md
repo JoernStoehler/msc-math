@@ -120,7 +120,8 @@ These are code facts, not theorem hypotheses.
   `UnsupportedPositiveSingular`; nonpositive-action singular fixed sets become
   `ZeroActionNoOrbit`.
 - `f64_tube_search.rs::capacity_f64` resolves f64 closed-word errors with exact
-  closed-word arithmetic, but direct f64 positive words remain f64 outputs.
+  closed-word arithmetic, but direct f64 positive words remain f64 outputs. If
+  no positive orbit remains, it returns typed non-success rather than panicking.
 
 The code-design comparison for singular fixed maps belongs in the flow-graph
 README, not in this thesis ledger.

@@ -544,6 +544,7 @@ pub enum CapacityF64Error {
         sigma: Vec<usize>,
         action: BigRational,
     },
+    NoPositiveOrbit,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -1042,11 +1043,13 @@ pub fn capacity_f64(
         }
     }
 
-    let capacity_action = orbits
+    let Some(capacity_action) = orbits
         .iter()
         .map(|orbit| orbit.action)
         .min_by(f64::total_cmp)
-        .expect("flow-graph invariant failed: capacity_f64 found no orbit with action > 0");
+    else {
+        return Err(CapacityF64Error::NoPositiveOrbit);
+    };
     let action_cutoff = capacity_action + action_threshold;
     orbits.retain(|orbit| orbit.action <= action_cutoff + EPS_CONTAINS);
     orbits.sort_by(|left, right| left.action.total_cmp(&right.action));

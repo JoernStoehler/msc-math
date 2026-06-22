@@ -172,9 +172,9 @@ Path-specific outcome contract:
   positive words remain f64 outputs; the exact resolution boundary applies only
   to f64 error words that are reclassified exactly. The wrapper returns a value
   only if exact resolution resolves all such error words without an exact
-  construction error or unsupported positive singular outcome. Its returned
-  action is the minimum of direct f64 positive words and exact-resolution
-  positive words.
+  construction error or unsupported positive singular outcome, and at least one
+  positive orbit remains. Its returned action is the minimum of direct f64
+  positive words and exact-resolution positive words.
 - `capacity_exact` is the current exact rational search wrapper used by tests
   and experiments.
 - `diagnose_f64_closed_words` is the development/experiment function.

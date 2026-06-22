@@ -1,13 +1,16 @@
 use super::{
-    build_tube_for_word_f64, cached_words_contain, closed_tube_for_sigma_f64, counts_by_plus_depth,
-    enumerate_transition_pruned_words, half_cache_depth, intersect_tubes_f64,
+    build_tube_for_word_f64, cached_words_contain, capacity_f64, closed_tube_for_sigma_f64,
+    counts_by_plus_depth, enumerate_transition_pruned_words, half_cache_depth, intersect_tubes_f64,
     is_simple_closable_word, primitive_tube_f64, split_closed_word_into_half_words,
-    word_has_allowed_transitions, F64TubeError, FlatTubeInput, DEFAULT_OMEGA_STABILITY_EPS,
+    word_has_allowed_transitions, CapacityF64Error, F64TubeError, FlatTubeInput,
+    DEFAULT_OMEGA_STABILITY_EPS,
 };
+use crate::algorithms::flow_graph::exact_tube::ExactFlatTubeInput;
 use crate::algorithms::hk2017::for_each_sigma_pruned_by_transition;
 use crate::algorithms::test_helpers::pruned_capacity_for_fixture;
 use crate::geom::known_polytopes;
 use nalgebra::DMatrix;
+use num_rational::BigRational;
 
 fn complete_transition_matrix(facet_count: usize) -> DMatrix<bool> {
     DMatrix::from_fn(facet_count, facet_count, |i, j| i != j)
@@ -191,6 +194,42 @@ fn input_precheck_rejects_geometric_small_f64_omega_transition() {
     assert_eq!(
         input.validate_f64_omega_stability(DEFAULT_OMEGA_STABILITY_EPS),
         Err(F64TubeError::NumericallyUnstableOmegaTransition)
+    );
+}
+
+#[test]
+fn capacity_f64_rejects_when_no_positive_orbit_is_found() {
+    let dual_vertices_f64 = vec![nalgebra::Vector4::x(), nalgebra::Vector4::y()];
+    let dual_vertices_exact = vec![
+        [
+            BigRational::from_integer(1.into()),
+            BigRational::from_integer(0.into()),
+            BigRational::from_integer(0.into()),
+            BigRational::from_integer(0.into()),
+        ],
+        [
+            BigRational::from_integer(0.into()),
+            BigRational::from_integer(1.into()),
+            BigRational::from_integer(0.into()),
+            BigRational::from_integer(0.into()),
+        ],
+    ];
+    let facet_intersection_is_nonempty = DMatrix::from_element(2, 2, false);
+    let omega_signs = DMatrix::from_element(2, 2, 1);
+    let input = FlatTubeInput::new(
+        &dual_vertices_f64,
+        &facet_intersection_is_nonempty,
+        &omega_signs,
+    );
+    let exact_input = ExactFlatTubeInput {
+        dual_vertices: &dual_vertices_exact,
+        facet_intersection_is_nonempty: &facet_intersection_is_nonempty,
+        omega_signs: &omega_signs,
+    };
+
+    assert_eq!(
+        capacity_f64(&input, &exact_input, 0.0),
+        Err(CapacityF64Error::NoPositiveOrbit)
     );
 }
 
