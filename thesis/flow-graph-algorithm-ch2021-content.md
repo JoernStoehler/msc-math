@@ -197,8 +197,11 @@ targets are:
 - keep the determinant-generic statement relative to the primitive-denominator
   domain unless a later proof establishes density inside the space of valid
   irredundant facet presentations;
-- reconcile positive transition signs with the current transition-matrix
-  orientation;
+- keep the positive transition sign convention tied to the code convention:
+  with \(\omega_0(u,v)=\langle J_0u,v\rangle\) and \(R_i=2J_0a_i\),
+  `omega_signs[(p,i)] > 0` is the sign of \(\langle R_p,a_i\rangle\);
+  the Rust `>=0` pruning check becomes strict on exact accepted inputs because
+  nonempty zero-\(\omega_0\) facet-pairs are rejected before enumeration;
 - review the active correspondence proof from
   `thm:generalized-reeb-simple-minimizer` to the support words represented by
   the idealized FG search;
@@ -367,10 +370,12 @@ file is agent-written proof-development text and remains unapproved by Jörn.
    the physical-transition validator.
 
 4. Transition convention and signs:
-   reconcile the transition definition/sign convention from
-   `formal/search-pruning-correctness.tex` with the FG primitive triple
-   convention `(p,i,n)` and the code's `omega_signs[(previous,current)] >= 0`,
-   `omega_signs[(current,next)] >= 0` checks.
+   checked against `exact_tube.rs::primitive_tube` and
+   `facet_adjacency.rs`: the signs agree with
+   `lem:fg-local-transition-regularity-positive-sign` under the repo
+   convention \(\omega_0(u,v)=\langle J_0u,v\rangle\).  Keep the separate
+   caveat that the transition matrix is a necessary-condition pruning
+   superset, not a physical-transition oracle.
 
 5. Tube gluing/intersection:
    present in `lem:fg-tube-gluing`; review the compatibility, pullback,
