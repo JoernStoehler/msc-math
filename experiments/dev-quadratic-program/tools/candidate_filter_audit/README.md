@@ -32,6 +32,11 @@ Use targeted source IDs for edit-loop work. Exact-all-sigma runs are
 case-dependent and can be too expensive for broad generated banks or HKO-like
 inputs.
 
+When `sigmas_truncated` is true, `exact_capacity`,
+`false_discard_exact_minimizer`, and `exact_minimizer_count` describe only the
+examined sigma prefix. They are diagnostics for the capped run, not a global
+candidate-filter safety result for the case.
+
 Example:
 
 ```bash

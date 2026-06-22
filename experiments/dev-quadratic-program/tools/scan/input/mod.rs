@@ -1,6 +1,6 @@
 mod generated;
 
-use exp_dev_quadratic_program::{load_retained_artifact_cases, ScanCase};
+use exp_dev_quadratic_program::{load_retained_artifact_cases_filtered, ScanCase};
 
 #[derive(Clone, Copy, Debug)]
 pub(crate) enum InputSource {
@@ -41,7 +41,11 @@ pub(crate) fn load_cases(options: &LoadCaseOptions) -> Vec<ScanCase> {
         } else {
             0
         };
-        cases.extend(load_retained_artifact_cases(artifact_row_limit));
+        cases.extend(load_retained_artifact_cases_filtered(
+            artifact_row_limit,
+            &options.family_filter,
+            &options.source_id_filter,
+        ));
     }
     if matches!(
         options.input_source,
@@ -63,18 +67,19 @@ mod tests {
     use super::*;
 
     #[test]
-    fn source_id_filter_is_not_limited_by_artifact_family_cap() {
+    fn hko_source_id_filter_does_not_require_artifact_jsonl_payloads() {
+        let hko = exp_dev_quadratic_program::hko_case();
         let cases = load_cases(&LoadCaseOptions {
             input_source: InputSource::Artifacts,
             max_rows_per_family: 1,
             generated_samples_per_facet: 0,
             generated_seed: 0,
             family_filter: Vec::new(),
-            source_id_filter: vec!["ascent_product_0:F10".to_string()],
+            source_id_filter: vec![hko.source_id.clone()],
         });
 
         assert_eq!(cases.len(), 1);
-        assert_eq!(cases[0].source_id, "ascent_product_0:F10");
+        assert_eq!(cases[0].source_id, hko.source_id);
     }
 
     #[test]

@@ -17,7 +17,9 @@ pub mod fallback_route;
 pub mod generic;
 pub mod product;
 
-pub use artifact_cases::{hko_case, load_retained_artifact_cases};
+pub use artifact_cases::{
+    hko_case, load_retained_artifact_cases, load_retained_artifact_cases_filtered,
+};
 pub use audit::{
     audit_generated_case_exact, exact_audit_not_requested, ExactAuditReport, ExactAuditStatus,
 };

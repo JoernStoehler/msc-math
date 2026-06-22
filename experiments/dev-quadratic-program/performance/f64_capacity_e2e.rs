@@ -1,5 +1,5 @@
 use exp_dev_quadratic_program::{
-    generated_f64_cases_with_source_filter, load_retained_artifact_cases,
+    generated_f64_cases_with_source_filter, load_retained_artifact_cases_filtered,
     scan_case_with_options_profiled, F64CapacityMethod, F64ValidationPolicy,
     NearRedundantFacetRemovalPolicy, ScanCase, ScanOptions, ScanRow, ScanTimingBreakdown,
 };
@@ -287,7 +287,11 @@ fn selected_cases(config: &Config) -> Vec<ScanCase> {
         } else {
             0
         };
-        cases.extend(load_retained_artifact_cases(max_rows_per_family));
+        cases.extend(load_retained_artifact_cases_filtered(
+            max_rows_per_family,
+            &[],
+            &config.source_id_filter,
+        ));
     }
     if matches!(
         config.input_cohort,
@@ -753,19 +757,20 @@ mod tests {
 
     #[test]
     fn source_id_filter_is_not_limited_by_mode_family_cap() {
+        let hko = exp_dev_quadratic_program::hko_case();
         let config = parse(&[
             "--mode",
             "smoke",
             "--input-cohort",
             "retained_artifacts",
             "--source-id-filter",
-            "ascent_product_0:F10",
+            &hko.source_id,
         ]);
 
         let cases = selected_cases(&config);
 
         assert_eq!(cases.len(), 1);
-        assert_eq!(cases[0].source_id, "ascent_product_0:F10");
+        assert_eq!(cases[0].source_id, hko.source_id);
     }
 
     #[test]

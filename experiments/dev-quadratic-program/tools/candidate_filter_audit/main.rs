@@ -301,7 +301,9 @@ fn audit_case(case: &ScanCase, args: &Args) -> (CaseSummaryRow, Vec<ExampleRow>)
             exact_minimizer_count,
             exact_capacity: exact_capacity_f64,
             min_false_discard_action,
-            note: None,
+            note: truncated.then_some(
+                "sigma stream truncated; exact_capacity and exact_minimizer fields are over examined sigmas only",
+            ),
         },
         false_discard_examples,
     )

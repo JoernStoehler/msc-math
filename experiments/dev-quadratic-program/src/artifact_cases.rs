@@ -5,6 +5,9 @@ use std::io::{BufRead, BufReader};
 use std::path::{Path, PathBuf};
 use symplectic::known_polytopes;
 
+const HKO_FAMILY: &str = "hko2024_f64";
+const HKO_SOURCE_ID: &str = "known_polytopes::hko_pentagon_rounded_f64";
+
 #[derive(Deserialize)]
 struct RandomRow {
     name: String,
@@ -31,37 +34,100 @@ struct AscentEndpointRow {
 }
 
 pub fn load_retained_artifact_cases(max_rows_per_family: usize) -> Vec<ScanCase> {
+    load_retained_artifact_cases_filtered(max_rows_per_family, &[], &[])
+}
+
+pub fn load_retained_artifact_cases_filtered(
+    max_rows_per_family: usize,
+    family_filter: &[String],
+    source_id_filter: &[String],
+) -> Vec<ScanCase> {
     let produce = repo_root().join("experiments/sys-datascience/produce");
     let mut cases = Vec::new();
-    cases.extend(load_random_rows(
-        &produce.join("random.jsonl"),
-        "random",
-        max_rows_per_family,
-    ));
-    cases.extend(load_random_product_rows(
-        &produce.join("random-product.jsonl"),
-        "random_product",
-        max_rows_per_family,
-    ));
-    cases.extend(load_ascent_rows(
-        &produce.join("ascent-general-endpoints.jsonl"),
-        "ascent_general_endpoint",
-        max_rows_per_family,
-    ));
-    cases.extend(load_ascent_rows(
-        &produce.join("ascent-product-endpoints.jsonl"),
-        "ascent_product_endpoint",
-        max_rows_per_family,
-    ));
-    cases.push(hko_case());
+
+    if should_load_jsonl_family("random", family_filter, source_id_filter) {
+        cases.extend(load_random_rows(
+            &produce.join("random.jsonl"),
+            "random",
+            max_rows_per_family,
+        ));
+    }
+    if should_load_jsonl_family("random_product", family_filter, source_id_filter) {
+        cases.extend(load_random_product_rows(
+            &produce.join("random-product.jsonl"),
+            "random_product",
+            max_rows_per_family,
+        ));
+    }
+    if should_load_jsonl_family("ascent_general_endpoint", family_filter, source_id_filter) {
+        cases.extend(load_ascent_rows(
+            &produce.join("ascent-general-endpoints.jsonl"),
+            "ascent_general_endpoint",
+            max_rows_per_family,
+        ));
+    }
+    if should_load_jsonl_family("ascent_product_endpoint", family_filter, source_id_filter) {
+        cases.extend(load_ascent_rows(
+            &produce.join("ascent-product-endpoints.jsonl"),
+            "ascent_product_endpoint",
+            max_rows_per_family,
+        ));
+    }
+    if filters_allow_case(HKO_FAMILY, HKO_SOURCE_ID, family_filter, source_id_filter) {
+        cases.push(hko_case());
+    }
+
     cases
+        .into_iter()
+        .filter(|case| {
+            filters_allow_case(
+                &case.family,
+                &case.source_id,
+                family_filter,
+                source_id_filter,
+            )
+        })
+        .collect()
+}
+
+fn should_load_jsonl_family(
+    family: &str,
+    family_filter: &[String],
+    source_id_filter: &[String],
+) -> bool {
+    family_filter_allows(family, family_filter) && !source_filter_selects_only_hko(source_id_filter)
+}
+
+fn filters_allow_case(
+    family: &str,
+    source_id: &str,
+    family_filter: &[String],
+    source_id_filter: &[String],
+) -> bool {
+    family_filter_allows(family, family_filter)
+        && source_id_filter_allows(source_id, source_id_filter)
+}
+
+fn family_filter_allows(family: &str, family_filter: &[String]) -> bool {
+    family_filter.is_empty() || family_filter.iter().any(|item| item == family)
+}
+
+fn source_id_filter_allows(source_id: &str, source_id_filter: &[String]) -> bool {
+    source_id_filter.is_empty() || source_id_filter.iter().any(|item| item == source_id)
+}
+
+fn source_filter_selects_only_hko(source_id_filter: &[String]) -> bool {
+    !source_id_filter.is_empty()
+        && source_id_filter
+            .iter()
+            .all(|source_id| source_id == HKO_SOURCE_ID)
 }
 
 pub fn hko_case() -> ScanCase {
     let hko = known_polytopes::hko_pentagon();
     ScanCase {
-        family: "hko2024_f64".to_string(),
-        source_id: "known_polytopes::hko_pentagon_rounded_f64".to_string(),
+        family: HKO_FAMILY.to_string(),
+        source_id: HKO_SOURCE_ID.to_string(),
         input_source: "hard_fixture".to_string(),
         generated_attempt: None,
         generator_seed: None,
@@ -221,4 +287,40 @@ fn selected_row_indices<T>(
         }
     }
     selected
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn filter(value: &str) -> Vec<String> {
+        vec![value.to_string()]
+    }
+
+    #[test]
+    fn hko_source_filter_loads_hard_fixture_without_artifact_jsonl() {
+        let cases = load_retained_artifact_cases_filtered(1, &[], &filter(HKO_SOURCE_ID));
+
+        assert_eq!(cases.len(), 1);
+        assert_eq!(cases[0].family, HKO_FAMILY);
+        assert_eq!(cases[0].source_id, HKO_SOURCE_ID);
+        assert_eq!(cases[0].input_source, "hard_fixture");
+    }
+
+    #[test]
+    fn hko_family_filter_loads_hard_fixture_without_artifact_jsonl() {
+        let cases = load_retained_artifact_cases_filtered(1, &filter(HKO_FAMILY), &[]);
+
+        assert_eq!(cases.len(), 1);
+        assert_eq!(cases[0].family, HKO_FAMILY);
+        assert_eq!(cases[0].input_source, "hard_fixture");
+    }
+
+    #[test]
+    fn family_and_source_filters_must_both_match() {
+        let cases =
+            load_retained_artifact_cases_filtered(1, &filter("random"), &filter(HKO_SOURCE_ID));
+
+        assert!(cases.is_empty());
+    }
 }
