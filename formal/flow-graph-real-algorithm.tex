@@ -36,9 +36,25 @@ Write \(F_i=K\cap\{\langle a_i,x\rangle=1\}\) and
 Also write \(H_i=\{x:\langle a_i,x\rangle=1\}\).
 Assume each \(F_i\) is a genuine facet of \(K\).
 
+A \emph{physical facet transition} \(F_i\to F_j\), for distinct facet indices
+\(i\ne j\), exists if there are \(x\in F_i\cap F_j\) and
+\(\varepsilon>0\) such that
+\[
+  x-tR_i\in K\cap H_i
+  \quad\text{and}\quad
+  x+tR_j\in K\cap H_j
+  \qquad(0\le t\le\varepsilon).
+\]
+This is the local breakpoint condition for a trajectory segment on \(F_i\)
+before the breakpoint and on \(F_j\) after the breakpoint.  The definition
+intentionally allows the breakpoint to lie on additional facets; it is not
+restricted to relative-interior points of two-faces.
+
 The facet presentation is \emph{flow-graph nondegenerate} if:
 \begin{enumerate}
-\item \(\omega_0(a_i,a_j)\ne0\) for all \(i\ne j\);
+\item whenever a physical facet transition \(F_i\to F_j\) with \(i\ne j\)
+  exists,
+  \(\omega_0(a_i,a_j)\ne0\);
 \item every subset of at most four vectors among
   \(a_1,\ldots,a_F\) is linearly independent.
 \end{enumerate}
@@ -56,6 +72,47 @@ For an ordered triple of facet indices \((p,i,n)\), say that
   \langle R_i,a_n\rangle>0.
 \]
 \end{definition}
+\end{unverified}
+
+\begin{unverified}
+\begin{lemma}[Local transition regularity gives positive transition signs]%
+\label{lem:fg-local-transition-regularity-positive-sign}
+Assume the facet presentation is flow-graph nondegenerate.  If a physical
+facet transition \(F_i\to F_j\) exists, then
+\[
+  \langle R_i,a_j\rangle>0 .
+\]
+Consequently, if a strict Reeb trajectory has positive dwell time on
+successive facets \(F_p,F_i,F_n\), then the triple \((p,i,n)\) has positive
+flow-graph transition sign.
+\end{lemma}
+
+\begin{proof}
+Let \(x\in F_i\cap F_j\) and \(\varepsilon>0\) witness the physical
+transition.  Since \(x-tR_i\in K\) for \(0\le t\le\varepsilon\), the
+\(j\)-th defining inequality gives
+\[
+  1-t\langle a_j,R_i\rangle
+  =
+  \langle a_j,x-tR_i\rangle
+  \le 1 .
+\]
+Thus \(\langle a_j,R_i\rangle\ge0\).  The local nonzero-\(\omega_0\)
+condition in Definition~\ref{def:fg-nondegenerate-facet-presentation} excludes
+equality, because
+\[
+  \langle a_j,R_i\rangle=2\omega_0(a_i,a_j).
+\]
+Hence \(\langle R_i,a_j\rangle=\langle a_j,R_i\rangle>0\).
+
+For a strict trajectory with positive dwell time on
+\(F_p,F_i,F_n\), the breakpoint from \(F_p\) to \(F_i\) is a physical
+transition \(F_p\to F_i\), and the breakpoint from \(F_i\) to \(F_n\) is a
+physical transition \(F_i\to F_n\).  Applying the first part to these two
+transitions gives
+\(\langle R_p,a_i\rangle>0\) and \(\langle R_i,a_n\rangle>0\), which is
+Definition~\ref{def:fg-transition-sign}.
+\end{proof}
 \end{unverified}
 
 \begin{unverified}
@@ -659,13 +716,12 @@ the dual vertices listed in \(w\).  On the common intersection of these
 pulled-back primitive-denominator domains, the simultaneous determinant
 condition for all such words is open dense.
 
-If the dual vertices also satisfy the full flow-graph nondegeneracy condition
-from Definition~\ref{def:fg-nondegenerate-facet-presentation}, then every
-simple word lies in the corresponding pulled-back primitive-denominator
-domain.  Together with the short-word exclusion from
-Lemma~\ref{lem:fg-short-words-no-positive-orbit}, this simultaneous
-determinant condition implies finite-orbit regularity in the sense of
-Definition~\ref{def:fg-finite-orbit-regularity}.
+For any flow-graph nondegenerate facet presentation in
+Definition~\ref{def:fg-nondegenerate-facet-presentation}, a word that survives
+the positive transition-sign test already has all primitive denominators
+nonzero.  Therefore, if every surviving length-at-least-five word also
+satisfies the corresponding determinant nonvanishing condition, then the
+exhaustive run is finite-orbit regular.
 \end{fact}
 
 \begin{proof}
@@ -690,14 +746,16 @@ Intersect these open dense conditions over the finitely many words of length
 at least five.  This gives an open dense set on the common intersection of the
 pulled-back primitive-denominator domains.
 
-For a simple word, each denominator in \(D_k\) pairs two distinct dual
-vertices.  Flow-graph nondegeneracy includes pairwise
-nonzero-\(\omega_0\), so all those denominators are nonzero.  It also includes
-the linear-independence hypothesis used by
-Lemma~\ref{lem:fg-short-words-no-positive-orbit} for words of length at most
-four.  If all length-at-least-five determinant conditions are nonzero, then in
-particular they are nonzero for every length-at-least-five word whose closed
-search domain is nonempty.  This is exactly finite-orbit regularity.
+For a flow-graph nondegenerate presentation, the linear-independence part of
+Definition~\ref{def:fg-nondegenerate-facet-presentation} is the hypothesis used
+by Lemma~\ref{lem:fg-short-words-no-positive-orbit} for words of length at
+most four.  For a length-at-least-five word that survives the transition-sign
+test, each primitive denominator is one of the strict inequalities in the
+positive transition-sign condition for an adjacent triple, hence is nonzero.
+Therefore the determinant condition is defined for every surviving
+length-at-least-five word.  If those determinant conditions are nonzero, then
+in particular they are nonzero for every surviving word whose closed search
+domain is nonempty.  This is exactly finite-orbit regularity.
 \end{proof}
 \end{unverified}
 
@@ -727,10 +785,11 @@ identifies strict Reeb trajectories with the fixed points whose reconstructed
 segment times are all positive.
 
 If a word contains a triple without positive flow-graph transition sign, then
-a strict positive-time representative cannot use that triple: flowing for
-positive time across the adjacent two-faces forces the two signs in
-Definition~\ref{def:fg-transition-sign}.  Hence skipping such a word does not
-remove a represented strict trajectory.
+a strict positive-time representative cannot use that triple: by
+Lemma~\ref{lem:fg-local-transition-regularity-positive-sign}, the two physical
+facet transitions adjacent to the middle facet would force the two strict signs
+in Definition~\ref{def:fg-transition-sign}.  Hence skipping such a word does
+not remove a represented strict trajectory.
 
 For words of length at most four, Lemma~\ref{lem:fg-short-words-no-positive-orbit}
 excludes strict positive-time closed trajectories.  For words of length at
@@ -770,7 +829,8 @@ achieved by a minimum-action simple closed Reeb orbit.  Use only the facets on
 which this orbit has positive dwell time, and write their cyclic order as the
 support word of the orbit.  This support word is a simple cyclic facet word in
 the sense of Definition~\ref{def:fg-simple-cyclic-word}.  The positive dwell
-times force the positive transition signs of every adjacent triple.  Hence
+times and Lemma~\ref{lem:fg-local-transition-regularity-positive-sign} force
+the positive transition signs of every adjacent triple.  Hence
 Lemma~\ref{lem:fg-simple-support-orbit-represented} represents this orbit as
 a strict fixed point of the closed tube search data for that word, with the
 same action.
@@ -787,7 +847,7 @@ filter in Proposition~\ref{prop:fg-real-search-correctness}.
 \begin{unverified}
 \begin{corollary}[Generic capacity correctness of idealized FG search]%
 \label{cor:fg-real-capacity-correctness-generic}
-Fix a facet count \(F\).  On the open dense determinant locus from
+Fix a facet count \(F\).  On the open dense sufficient generic locus from
 Fact~\ref{fact:fg-finite-orbit-regular-open-dense}, every flow-graph
 nondegenerate facet presentation with those \(F\) listed facets has a
 finite-orbit regular exhaustive flow-graph tube run.  Therefore
@@ -806,10 +866,10 @@ Theorem~\ref{thm:fg-real-capacity-correctness}.
 \label{rem:fg-real-missing-work}
 This section is the idealized real-number algorithm surface.  It does not
 prove that the Rust implementation accepts exactly this class, it does
-not analyze f64 rounding, and it does not justify replacing the pairwise
-nonzero-\(\omega_0\) condition by the weaker local condition recorded in
-\texttt{research/tube-algorithm.md}.  This local-\(\omega_0\) weakening is a
-deferred proof task, not a settled caveat of the intended final statement.
+not analyze f64 rounding.  The correctness theorem uses the local
+physical-transition nonzero-\(\omega_0\) condition from
+Definition~\ref{def:fg-nondegenerate-facet-presentation}; the generic
+corollary still records a stronger open-dense sufficient denominator locus.
 The Rust correspondence and f64 analysis are separate implementation and
 numerical-analysis obligations.
 \end{remark}
