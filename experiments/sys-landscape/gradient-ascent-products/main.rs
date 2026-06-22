@@ -359,7 +359,7 @@ fn process_seed(
 
     let total_time_ms = t0.elapsed().as_secs_f64() * 1000.0;
     let final_state = compute_active_sys_state(&best_polytope)?;
-    let final_capacity = final_state.capacity.capacity();
+    let final_capacity = final_state.capacity.min_action;
     let mut final_record = best_polytope.to_record();
     final_record = final_record.with_computed_fields(final_state.vol, 0.0, final_capacity, 0.0);
     final_record = final_record.with_sigmas(

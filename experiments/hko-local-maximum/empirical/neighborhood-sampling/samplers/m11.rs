@@ -135,7 +135,7 @@ fn safe_sys(polytope: &HkoPolytopeCache) -> Option<(f64, f64, f64)> {
         &polytope.omega_signs,
     )
     .ok()
-    .map(|r| r.capacity())
+    .map(|r| r.min_action)
     .unwrap_or(f64::NAN);
     if !cap.is_finite() {
         return None;
@@ -229,7 +229,7 @@ fn run_phase_b(base_dir: &std::path::Path, smoke: bool) {
         &polytope.omega_signs,
     )
     .expect("failed to compute HKO2024 baseline capacity")
-    .capacity();
+    .min_action;
     let sys_orig = cap_orig * cap_orig / (2.0 * vol_orig);
     println!("HKO2024 baseline: F={f}, sys={sys_orig:.10}");
 

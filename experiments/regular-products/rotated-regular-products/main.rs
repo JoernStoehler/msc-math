@@ -146,7 +146,7 @@ fn generate_heptagon_7x7() {
         .expect("billiard should accept Lagrangian product");
         let time_ms = start.elapsed().as_secs_f64() * 1000.0;
 
-        let cap = result.capacity();
+        let cap = result.min_action;
         let sys = cap * cap / (2.0 * vol); // [def:systolic-ratio]: sys = c_EHZ^2 / (2 vol)
         let Some(bounces) = bounce_count(&polytope, result.best_sigma()) else {
             continue;
@@ -219,7 +219,7 @@ fn generate_pentagon_5x5() {
         .expect("billiard should accept Lagrangian product");
         let time_ms = start.elapsed().as_secs_f64() * 1000.0;
 
-        let cap = result.capacity();
+        let cap = result.min_action;
         let sys = cap * cap / (2.0 * vol); // [def:systolic-ratio]: sys = c_EHZ^2 / (2 vol)
         let Some(bounces) = bounce_count(&polytope, result.best_sigma()) else {
             continue;
@@ -292,7 +292,7 @@ fn generate_polygon_pairs() {
             .expect("billiard should accept Lagrangian product");
             let time_ms = start.elapsed().as_secs_f64() * 1000.0;
 
-            let cap = result.capacity();
+            let cap = result.min_action;
             let sys = cap * cap / (2.0 * vol); // [def:systolic-ratio]: sys = c_EHZ^2 / (2 vol)
             let Some(bounces) = bounce_count(&polytope, result.best_sigma()) else {
                 continue;

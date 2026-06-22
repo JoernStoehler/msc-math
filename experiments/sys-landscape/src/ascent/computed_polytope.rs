@@ -80,12 +80,12 @@ impl ComputedPolytopeRecorder {
             became_run_final: meta.became_run_final,
             dual_vertices_rational: dual_vertices_rational_strings(polytope),
             facet_count: polytope.facet_count(),
-            capacity: capacity.capacity(),
+            capacity: capacity.min_action,
             volume,
             sys,
             sigmas: vec![SigmaAction {
                 perm: capacity.best_sigma().to_vec(),
-                action: capacity.capacity(),
+                action: capacity.min_action,
             }],
             orbit_scalars: orbit_scalars_from_result(capacity),
         });

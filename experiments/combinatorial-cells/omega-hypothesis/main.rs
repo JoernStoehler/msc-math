@@ -311,7 +311,7 @@ fn process_polytope(
             &polytope.omega_signs,
         )
         .ok()?;
-        cap = ehz_result.capacity();
+        cap = ehz_result.min_action;
         iterations = ehz_result.iterations;
         best_perm = ehz_result.best_sigma().to_vec();
     }

@@ -254,7 +254,7 @@ pub fn run(raw_args: &[String]) {
     .expect("billiard classification failed");
     let base_classification = classify_facets_from_dual_vertices(&base_polytope.dual_vertices_f64)
         .expect("base polytope should classify as Lagrangian product");
-    let base_cap = base_billiard.capacity();
+    let base_cap = base_billiard.min_action;
     let base_sys = base_cap * base_cap / (2.0 * base_vol);
     let base_bounces = bounce_count_from_sigma_for_facets(
         &base_classification.q_indices,
@@ -351,7 +351,7 @@ pub fn run(raw_args: &[String]) {
                 Some(k) => k,
                 None => continue,
             };
-            let cap = billiard.capacity();
+            let cap = billiard.min_action;
             let sys = cap * cap / (2.0 * vol);
 
             if sys > 1.0 {

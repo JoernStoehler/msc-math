@@ -127,7 +127,7 @@ fn profile_polytope(name: String, facet_count: usize, attempt: u64) -> Option<Pr
     .ok()?;
     let full_capacity_ms = full_capacity_started.elapsed().as_secs_f64() * 1000.0;
 
-    let capacity = capacity_result.capacity();
+    let capacity = capacity_result.min_action;
     let volume =
         exact_volume_from_incidence_as_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
     if volume <= 0.0 {

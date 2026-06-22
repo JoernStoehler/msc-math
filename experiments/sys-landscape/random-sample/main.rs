@@ -326,7 +326,7 @@ fn main() {
             .expect("capacity computation failed");
             let time_capacity_ms = start_cap.elapsed().as_secs_f64() * 1000.0;
 
-            let cap = ehz.capacity();
+            let cap = ehz.min_action;
             let sys = cap * cap / (2.0 * vol);
 
             // Insert into database

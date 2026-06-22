@@ -780,7 +780,7 @@ fn diagnostic_for_sample(sample: &SampleRow) -> DiagnosticRow {
         .iter()
         .map(|capacity_gradient| {
             systolic_ratio_gradient_a(
-                state.capacity.capacity(),
+                state.capacity.min_action,
                 state.vol,
                 capacity_gradient,
                 &d_volume_da,
@@ -978,7 +978,7 @@ fn diagnostic_for_sample(sample: &SampleRow) -> DiagnosticRow {
         input_capacity: sample.polytope.capacity,
         input_volume: sample.polytope.volume,
         input_sys: sample.polytope.sys,
-        recomputed_capacity: Some(state.capacity.capacity()),
+        recomputed_capacity: Some(state.capacity.min_action),
         recomputed_volume: Some(state.vol),
         recomputed_sys: Some(state.sys),
         recomputed_sys_delta: Some(state.sys - sample.polytope.sys),

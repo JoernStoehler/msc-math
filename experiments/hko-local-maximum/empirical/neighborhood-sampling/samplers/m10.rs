@@ -256,7 +256,7 @@ pub fn run(raw_args: &[String]) {
     .expect("capacity computation failed");
     let base_time_capacity_ms = start_cap.elapsed().as_secs_f64() * 1000.0;
 
-    let base_sys = base_result.capacity() * base_result.capacity() / (2.0 * base_vol);
+    let base_sys = base_result.min_action * base_result.min_action / (2.0 * base_vol);
 
     let base_row = PentagonPerturbRow {
         name: "hko_pentagon_base".to_string(),
@@ -266,7 +266,7 @@ pub fn run(raw_args: &[String]) {
         delta_dual_vertices: vec![[0.0; 4]; n_facets],
         eps: args.eps,
         volume: base_vol,
-        capacity: base_result.capacity(),
+        capacity: base_result.min_action,
         sys: base_sys,
         iterations: base_result.iterations,
         time_volume_ms: base_time_volume_ms,
@@ -310,7 +310,7 @@ pub fn run(raw_args: &[String]) {
         .expect("capacity computation failed");
         let time_capacity_ms = start_cap.elapsed().as_secs_f64() * 1000.0;
 
-        let cap = result.capacity();
+        let cap = result.min_action;
         let sys = cap * cap / (2.0 * vol);
 
         let row = PentagonPerturbRow {

@@ -202,8 +202,7 @@ impl Options {
     fn parse() -> Self {
         let package_root = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
         let packet_dir = package_root.join("theorem");
-        let default_input_path = package_root
-            .join("theorem/smoke-active-branch-diagnostic.json");
+        let default_input_path = package_root.join("theorem/smoke-active-branch-diagnostic.json");
         let mut input_path = None;
         let mut output_path = packet_dir.join("smoke-witness.json");
         let mut output_mode = "smoke";

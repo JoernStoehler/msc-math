@@ -66,12 +66,12 @@ fn assert_capacity(
         facet_intersection_is_nonempty,
         omega_signs,
     );
-    let diff = (result.capacity() - expected).abs();
+    let diff = (result.min_action - expected).abs();
     assert!(
         diff < tol,
         "{}: capacity {:.10} != expected {:.10} (diff {:.2e}, tol {:.2e})",
         name,
-        result.capacity(),
+        result.min_action,
         expected,
         diff,
         tol,
@@ -194,12 +194,12 @@ fn agrees_with_hk2017_hypercube() {
     let kp = known_polytopes::hypercube();
     let billiard = billiard_result_from_known("hypercube", kp);
     let hk = pruned_capacity_for_fixture(kp).unwrap();
-    let diff = (billiard.capacity() - hk.capacity()).abs();
+    let diff = (billiard.min_action - hk.min_action).abs();
     assert!(
         diff < 1e-8,
         "hypercube: billiard {:.10} != hk2017 {:.10} (diff {:.2e})",
-        billiard.capacity(),
-        hk.capacity(),
+        billiard.min_action,
+        hk.min_action,
         diff,
     );
 }
@@ -211,12 +211,12 @@ fn agrees_with_hk2017_triangle_product() {
     let kp = known_polytopes::lagrangian_triangle_product();
     let billiard = billiard_result_from_known("triangle_product", kp);
     let hk = pruned_capacity_for_fixture(kp).unwrap();
-    let diff = (billiard.capacity() - hk.capacity()).abs();
+    let diff = (billiard.min_action - hk.min_action).abs();
     assert!(
         diff < 1e-8,
         "triangle_product: billiard {:.10} != hk2017 {:.10} (diff {:.2e})",
-        billiard.capacity(),
-        hk.capacity(),
+        billiard.min_action,
+        hk.min_action,
         diff,
     );
 }
@@ -228,12 +228,12 @@ fn agrees_with_hk2017_triangle_square() {
     let kp = known_polytopes::lagrangian_triangle_square();
     let billiard = billiard_result_from_known("triangle_square", kp);
     let hk = pruned_capacity_for_fixture(kp).unwrap();
-    let diff = (billiard.capacity() - hk.capacity()).abs();
+    let diff = (billiard.min_action - hk.min_action).abs();
     assert!(
         diff < 1e-8,
         "triangle_square: billiard {:.10} != hk2017 {:.10} (diff {:.2e})",
-        billiard.capacity(),
-        hk.capacity(),
+        billiard.min_action,
+        hk.min_action,
         diff,
     );
 }
@@ -247,12 +247,12 @@ fn agrees_with_hk2017_hko_pentagon() {
     let kp = known_polytopes::hko_pentagon();
     let billiard = billiard_result_from_known("hko_pentagon", kp);
     let hk = pruned_capacity_for_fixture(kp).unwrap();
-    let diff = (billiard.capacity() - hk.capacity()).abs();
+    let diff = (billiard.min_action - hk.min_action).abs();
     assert!(
         diff < 1e-8,
         "hko_pentagon: billiard {:.10} != hk2017 {:.10} (diff {:.2e})",
-        billiard.capacity(),
-        hk.capacity(),
+        billiard.min_action,
+        hk.min_action,
         diff,
     );
 }
@@ -338,7 +338,7 @@ fn assert_result_properties(
     }
 
     assert!(
-        result.capacity() > 0.0,
+        result.min_action > 0.0,
         "{name}: billiard capacity should be positive"
     );
 }

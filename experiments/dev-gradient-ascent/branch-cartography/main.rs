@@ -817,7 +817,7 @@ fn point_record(
         selection_rank_within_label: fixture.selection_rank_within_label,
         status: status.to_string(),
         sys: Some(base.sys),
-        capacity: Some(base.capacity.capacity()),
+        capacity: Some(base.capacity.min_action),
         volume: Some(volume),
         min_action: Some(base.capacity.min_action),
         best_sigma: Some(base.capacity.best_sigma().to_vec()),
@@ -987,7 +987,7 @@ fn compute_base_state_from_polytope(
     if !vol.is_finite() || vol <= 0.0 {
         return Err("base_volume_failed".to_string());
     }
-    let sys = symplectic::systolic_ratio(capacity.capacity(), vol);
+    let sys = symplectic::systolic_ratio(capacity.min_action, vol);
     if !sys.is_finite() {
         return Err("base_sys_failed".to_string());
     }
@@ -1003,7 +1003,7 @@ fn compute_base_state_from_polytope(
     let sys_gradients: Vec<Vec<Vector4<f64>>> = d_capacity_da
         .iter()
         .map(|capacity_gradient| {
-            systolic_ratio_gradient_a(capacity.capacity(), vol, capacity_gradient, &d_volume_da)
+            systolic_ratio_gradient_a(capacity.min_action, vol, capacity_gradient, &d_volume_da)
         })
         .collect();
 

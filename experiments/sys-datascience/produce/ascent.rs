@@ -453,7 +453,7 @@ fn process_seed(
 
     let total_time_ms = t0.elapsed().as_secs_f64() * 1000.0;
     let final_state = compute_active_sys_state_cached(&best_polytope, expensive_cache)?;
-    let final_capacity = final_state.capacity.capacity();
+    let final_capacity = final_state.capacity.min_action;
     computed_polytopes.push(
         ComputedPolytopeMeta {
             became_run_final: true,

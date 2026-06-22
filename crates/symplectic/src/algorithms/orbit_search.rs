@@ -169,12 +169,6 @@ impl OrbitSearchResult {
             .unwrap_or(&self.orbits[0])
     }
 
-    /// Convenience scalar alias for ordinary callers that still think in terms
-    /// of one returned capacity value.
-    pub fn capacity(&self) -> f64 {
-        self.min_action
-    }
-
     /// Convenience access to the best orbit's sigma.
     pub fn best_sigma(&self) -> &[usize] {
         &self.best_orbit().sigma

@@ -23,9 +23,9 @@ fn simplex_capacity() {
     let kp = known_polytopes::simplex();
     let result = unpruned_capacity_for_fixture(kp).expect("simplex should have capacity");
     assert!(
-        (result.capacity() - kp.capacity).abs() < 1e-6,
+        (result.min_action - kp.capacity).abs() < 1e-6,
         "simplex capacity: got {}, expected {}",
-        result.capacity(),
+        result.min_action,
         kp.capacity
     );
 }
@@ -39,9 +39,9 @@ fn hypercube_capacity() {
     let kp = known_polytopes::hypercube();
     let result = unpruned_capacity_for_fixture(kp).expect("hypercube should have capacity");
     assert!(
-        (result.capacity() - kp.capacity).abs() < 1e-6,
+        (result.min_action - kp.capacity).abs() < 1e-6,
         "hypercube capacity: got {}, expected {}",
-        result.capacity(),
+        result.min_action,
         kp.capacity
     );
 }
@@ -56,9 +56,9 @@ fn lagrangian_triangle_product_capacity() {
     let result = unpruned_capacity_for_fixture(kp)
         .expect("lagrangian triangle product should have capacity");
     assert!(
-        (result.capacity() - kp.capacity).abs() < 1e-6,
+        (result.min_action - kp.capacity).abs() < 1e-6,
         "lagrangian triangle product capacity: got {}, expected {}",
-        result.capacity(),
+        result.min_action,
         kp.capacity
     );
 }
@@ -72,9 +72,9 @@ fn triangle_square_capacity() {
     let kp = known_polytopes::lagrangian_triangle_square();
     let result = pruned_capacity_for_fixture(kp).expect("Lagrangian triangle x square capacity");
     assert!(
-        (result.capacity() - kp.capacity).abs() < 1e-6,
+        (result.min_action - kp.capacity).abs() < 1e-6,
         "Lagrangian triangle x square: got {}, expected {}",
-        result.capacity(),
+        result.min_action,
         kp.capacity
     );
 }
@@ -88,9 +88,9 @@ fn symplectic_triangle_square_capacity() {
     let kp = known_polytopes::symplectic_triangle_square();
     let result = pruned_capacity_for_fixture(kp).expect("symplectic triangle x square capacity");
     assert!(
-        (result.capacity() - kp.capacity).abs() < 1e-6,
+        (result.min_action - kp.capacity).abs() < 1e-6,
         "symplectic triangle x square: got {}, expected {} (min formula)",
-        result.capacity(),
+        result.min_action,
         kp.capacity
     );
 }
@@ -232,13 +232,13 @@ fn billiard_agrees_with_hk2017_on_small_lagrangian_products() {
     ] {
         let hk = pruned_capacity_for_fixture(kp).expect("HK2017 capacity");
         let billiard = billiard_capacity_for_fixture(kp);
-        let rel_err = (hk.capacity() - billiard.capacity()).abs() / billiard.capacity();
+        let rel_err = (hk.min_action - billiard.min_action).abs() / billiard.min_action;
         assert!(
             rel_err < 1e-6,
             "{}: HK2017 ({}) != billiard ({}) capacity, rel_error = {:.2e}",
             kp.name,
-            hk.capacity(),
-            billiard.capacity(),
+            hk.min_action,
+            billiard.min_action,
             rel_err
         );
     }

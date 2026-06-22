@@ -194,7 +194,7 @@ fn profile_sample(
                     .elapsed(aggregate_ms)
                     .iterations(iterations)
                     .returned_orbits(result.orbits.len())
-                    .capacity(result.capacity())
+                    .capacity(result.min_action)
                     .best_sigma_len(result.best_sigma().len()),
             )?;
         }

@@ -301,7 +301,7 @@ fn validate_target(target: &Target) -> (AllMinimumSummaryRow, Vec<AllMinimumOrbi
         &target.geometry.omega_signs,
     ) {
         Ok(result) => {
-            let scalar_capacity = result.capacity();
+            let scalar_capacity = result.min_action;
             let scalar_error = (minimum_result.min_action - scalar_capacity).abs();
             summary.scalar_capacity = Some(scalar_capacity);
             summary.scalar_capacity_error = Some(scalar_error);

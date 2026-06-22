@@ -96,10 +96,10 @@ fn fd_capacity_derivatives(normals: &[Vector4<f64>], heights: &[f64]) -> Vec<f64
             let p_minus = perturbed_dual_vertices(normals, heights, k, -FD_EPS_CAP);
             let cap_plus = pruned_capacity_for_dual_vertices(&p_plus)
                 .expect("capacity +eps")
-                .capacity();
+                .min_action;
             let cap_minus = pruned_capacity_for_dual_vertices(&p_minus)
                 .expect("capacity -eps")
-                .capacity();
+                .min_action;
             (cap_plus - cap_minus) / (2.0 * FD_EPS_CAP)
         })
         .collect()
@@ -253,7 +253,7 @@ fn euler_homogeneity_capacity() {
         let (normals, heights) = normals_and_heights(&kp.dual_vertices_f64);
         let cap = pruned_capacity_for_fixture(kp)
             .expect("capacity")
-            .capacity();
+            .min_action;
 
         let d_cap = fd_capacity_derivatives(&normals, &heights);
         let euler_sum: f64 = heights.iter().zip(&d_cap).map(|(h, dc)| h * dc).sum();
@@ -326,7 +326,7 @@ fn fd_sys_height_euler() {
 
         let cap = pruned_capacity_for_fixture(kp)
             .expect("capacity")
-            .capacity();
+            .min_action;
         let vol = euclidean_volume_f64(&kp.vertices, &kp.vertex_facet_incidence);
         let sys = cap * cap / (2.0 * vol);
 
@@ -337,10 +337,10 @@ fn fd_sys_height_euler() {
                 let p_minus = perturbed_dual_vertices(&normals, &heights, k, -FD_EPS_CAP);
                 let cap_p = pruned_capacity_for_dual_vertices(&p_plus)
                     .expect("cap +eps")
-                    .capacity();
+                    .min_action;
                 let cap_m = pruned_capacity_for_dual_vertices(&p_minus)
                     .expect("cap -eps")
-                    .capacity();
+                    .min_action;
                 let vol_p = volume_for_dual_vertices(&p_plus);
                 let vol_m = volume_for_dual_vertices(&p_minus);
                 let sys_p = cap_p * cap_p / (2.0 * vol_p);

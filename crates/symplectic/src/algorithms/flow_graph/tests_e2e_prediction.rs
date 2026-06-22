@@ -259,7 +259,7 @@ fn assert_f64_exact_resolution_matches_qp_for_closed_word_error_case(case: Gener
             case.name
         )
     });
-    let qp_capacity = qp.capacity();
+    let qp_capacity = qp.min_action;
     let fg_capacity = flow.best_action.unwrap_or_else(|| {
         panic!(
             "{}: expected current f64 search to expose a candidate action",
@@ -324,7 +324,7 @@ fn assert_exact_closed_word_resolver_clears_generated_closed_word_error_polytope
         &generated.omega_signs,
     )
     .unwrap_or_else(|error| panic!("{}: QP reference failed: {error:?}", case.name));
-    let qp_capacity = qp.capacity();
+    let qp_capacity = qp.min_action;
     let flow = diagnose_f64_closed_words(&input, 0.0).unwrap_or_else(|error| {
         panic!(
             "{}: expected f64 search to produce diagnostics, got {error:?}",

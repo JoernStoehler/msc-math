@@ -340,7 +340,7 @@ fn qp_reference(polytope: &CellPolytopeCache) -> Result<(Option<f64>, Option<Vec
         OrbitGuaranteeMode::MinimaSafe,
     )
     .map_err(|error| format!("{error:?}"))?;
-    Ok((Some(result.capacity()), Some(result.best_sigma().to_vec())))
+    Ok((Some(result.min_action), Some(result.best_sigma().to_vec())))
 }
 
 fn rational_to_f64_lossy(value: &BigRational) -> f64 {

@@ -184,7 +184,7 @@ fn compute_capacity(polytope: &SysLandscapePolytopeCache, db: &mut Db) -> Option
         &polytope.omega_signs,
     )
     .ok()?;
-    let cap = r.capacity();
+    let cap = r.min_action;
     let record = db.entry(key).or_insert_with(|| polytope.to_record());
     record.capacity = Some(cap);
     if record.capacity_err.is_none() {
@@ -213,7 +213,7 @@ fn compute_capacity_result(
         &polytope.omega_signs,
     )
     .ok()?;
-    let cap = r.capacity();
+    let cap = r.min_action;
     let perm = r.best_sigma().to_vec();
     let record = db.entry(key).or_insert_with(|| polytope.to_record());
     record.capacity = Some(cap);

@@ -20,10 +20,10 @@ fn capacity_conformality_simplex() {
 
     let base_cap = unpruned_capacity_for_fixture(kp)
         .expect("simplex capacity")
-        .capacity();
+        .min_action;
     let scaled_cap = unpruned_capacity_for_dual_vertices(&scaled)
         .expect("scaled simplex capacity")
-        .capacity();
+        .min_action;
     let expected = scale * scale * base_cap;
     let relative_error = ((scaled_cap - expected) / expected).abs();
     assert!(
@@ -48,12 +48,12 @@ fn capacity_scales_quadratically() {
     let scale = std::f64::consts::E;
 
     let kp = known_polytopes::hypercube();
-    let unit_cap = unpruned_capacity_for_fixture(kp).unwrap().capacity();
+    let unit_cap = unpruned_capacity_for_fixture(kp).unwrap().min_action;
 
     let scaled_cube = crate::geom::test_utils::scaled_hypercube_dual_vertices_f64(scale);
     let scaled_cap = unpruned_capacity_for_dual_vertices(&scaled_cube)
         .unwrap()
-        .capacity();
+        .min_action;
 
     let expected = unit_cap * scale * scale;
     let relative_error = ((scaled_cap - expected) / expected).abs();

@@ -23,10 +23,10 @@ fn capacity_symplectomorphism_invariance_simplex() {
 
     let base_cap = unpruned_capacity_for_fixture(kp)
         .expect("simplex capacity")
-        .capacity();
+        .min_action;
     let transformed_cap = unpruned_capacity_for_dual_vertices(&transformed)
         .expect("transformed simplex capacity")
-        .capacity();
+        .min_action;
     let relative_error = ((transformed_cap - base_cap) / base_cap).abs();
     assert!(
         relative_error < 1e-6,

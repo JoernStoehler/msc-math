@@ -89,7 +89,7 @@ impl ExpensiveComputationCache {
             return None;
         }
         let capacity_result = compute_capacity_result(polytope)?;
-        let capacity = capacity_result.capacity();
+        let capacity = capacity_result.min_action;
         let sys = symplectic::systolic_ratio(capacity, volume);
         if !sys.is_finite() {
             return None;

@@ -127,7 +127,7 @@ fn main() {
             SweepMode::Minima => {
                 let result = collect_minima_safe_billiard_result(&polytope)
                     .expect("minima-safe billiard aggregation should succeed");
-                let capacity = result.capacity();
+                let capacity = result.min_action;
                 let sys = capacity * capacity / (2.0 * vol);
                 let tied_orbits = active_orbits(&result.orbits, result.min_action)
                     .into_iter()

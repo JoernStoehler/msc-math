@@ -917,8 +917,8 @@ mod tests {
     use crate::algorithms::flow_graph::exact_search::{
         search_closed_orbits_exact, ExactActionCutoffPolicy, ExactFlowGraphOrbit,
     };
-    use crate::algorithms::hk2017::solve_pruned_hk2017_candidates;
     use crate::algorithms::hk2017::for_each_sigma_pruned_by_transition;
+    use crate::algorithms::hk2017::solve_pruned_hk2017_candidates;
     use crate::algorithms::{
         aggregate_certified_orbits_with_dual_vertices_exact, CertifiedOrbitSetMode,
     };
@@ -1407,5 +1407,4 @@ mod tests {
         assert_eq!(baseline.action_cutoff_word_count, 0);
         assert!(cutoff.action_cutoff_word_count > 0);
     }
-
 }

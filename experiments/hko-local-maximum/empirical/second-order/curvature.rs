@@ -72,7 +72,7 @@ pub(crate) fn curvature_at_epsilon(
             &poly.omega_signs,
         )
         .ok()?
-        .capacity();
+        .min_action;
         let vol = euclidean_volume_f64(&poly.vertices, &poly.vertex_facet_incidence);
         if vol <= 0.0 {
             return None;
@@ -137,7 +137,7 @@ pub(crate) fn run_phase2(
                     &perturbed_poly.facet_intersection_is_nonempty,
                     &perturbed_poly.omega_signs,
                 ) {
-                    Ok(r) => r.capacity(),
+                    Ok(r) => r.min_action,
                     Err(_) => {
                         n_fail += 1;
                         continue;

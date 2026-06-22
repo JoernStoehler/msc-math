@@ -61,13 +61,13 @@ fn capacity_pruned(polytope: &VerificationPolytopeCache) -> f64 {
         &polytope.omega_signs,
     )
     .expect("pruned")
-    .capacity()
+    .min_action
 }
 
 fn capacity_unpruned(polytope: &VerificationPolytopeCache) -> f64 {
     capacity_unpruned_hk2017(&polytope.dual_vertices_f64, &polytope.dual_vertices)
         .expect("unpruned")
-        .capacity()
+        .min_action
 }
 
 fn maybe_billiard_capacity(polytope: &VerificationPolytopeCache) -> Option<f64> {
@@ -82,7 +82,7 @@ fn maybe_billiard_capacity(polytope: &VerificationPolytopeCache) -> Option<f64> 
             &polytope.omega_signs,
         )
         .expect("classification already succeeded")
-        .capacity(),
+        .min_action,
     )
 }
 

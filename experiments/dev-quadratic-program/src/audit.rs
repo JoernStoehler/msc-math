@@ -86,7 +86,7 @@ fn audit_generated_case_exact_impl(dual_vertices: &[Vector4<f64>]) -> ExactAudit
             status: ExactAuditStatus::ExactValidCapacitySuccess,
             time_ms: 0.0,
             reasons: Vec::new(),
-            capacity_label: Some(result.capacity()),
+            capacity_label: Some(result.min_action),
             sigma_label: Some(result.best_sigma().to_vec()),
         },
         Err(err) => ExactAuditReport {

@@ -22,9 +22,9 @@ fn unpruned_hk2017_candidates_aggregate_from_flat_dual_vertices() {
     .expect("simplex capacity");
 
     assert!(
-        (result.capacity() - kp.capacity).abs() < 1e-6,
+        (result.min_action - kp.capacity).abs() < 1e-6,
         "simplex capacity: got {}, expected {}",
-        result.capacity(),
+        result.min_action,
         kp.capacity
     );
     assert!(!result.best_sigma().is_empty());

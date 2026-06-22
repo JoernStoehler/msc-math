@@ -362,10 +362,10 @@ mod tests {
             sigma: result.best_sigma().to_vec(),
             beta: result.best_beta().to_vec(),
             beta_margin,
-            action: result.capacity(),
+            action: result.min_action,
             action_lower: result.min_action_lower,
             action_upper: result.min_action_upper,
-            q: 0.5 / result.capacity(),
+            q: 0.5 / result.min_action,
             q_error_bound: 0.0,
             mu: None,
             xi: None,
@@ -379,7 +379,7 @@ mod tests {
         let result = pruned_capacity_for_fixture(kp).expect("simplex capacity");
         let sigma = result.best_sigma();
         let beta = result.best_beta();
-        let action = result.capacity();
+        let action = result.min_action;
 
         let mut bad_sigma = sigma.to_vec();
         bad_sigma[0] = kp.facet_count();
@@ -420,9 +420,9 @@ mod tests {
             panic!("{name}: capacity computation failed");
         });
         assert!(
-            (result.capacity() - kp.capacity).abs() < 1e-4,
+            (result.min_action - kp.capacity).abs() < 1e-4,
             "{name}: capacity mismatch: got {}, expected {}",
-            result.capacity(),
+            result.min_action,
             kp.capacity
         );
 

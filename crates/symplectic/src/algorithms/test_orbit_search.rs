@@ -156,9 +156,9 @@ fn minimasafe_does_not_accept_spurious_square_product_minimum() {
 
     let best = result.best_orbit();
     assert!(
-        (result.capacity() - 2.0).abs() < 1e-6,
+        (result.min_action - 2.0).abs() < 1e-6,
         "MinimaSafe accepted a false square-product minimum: got {}, expected 2.0; best sigma={:?}, admissibility={:?}, beta_margin={}",
-        result.capacity(),
+        result.min_action,
         best.sigma,
         best.admissibility,
         best.beta_margin
@@ -189,9 +189,9 @@ fn minimasafe_accepts_exact_rational_scaled_cube() {
     .expect("MinimaSafe aggregation should succeed on exact rational cube");
 
     assert!(
-        (result.capacity() - 1.0).abs() < 1e-10,
+        (result.min_action - 1.0).abs() < 1e-10,
         "exact rational cube [-1/2,1/2]^4 should have capacity 1.0, got {}",
-        result.capacity()
+        result.min_action
     );
 }
 

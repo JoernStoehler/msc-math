@@ -105,9 +105,9 @@ fn kkt_nullspace_square_square_zero() {
 
     let result = unpruned_capacity(&dual_vertices);
     assert!(
-        (result.capacity() - 2.0).abs() < 1e-6,
+        (result.min_action - 2.0).abs() < 1e-6,
         "(4,4) at theta=0: got {}, expected 2.0",
-        result.capacity()
+        result.min_action
     );
 }
 
@@ -129,9 +129,9 @@ fn kkt_nullspace_square_square_near_zero() {
     let result = unpruned_capacity(&dual_vertices);
     // Capacity should be continuous near theta=0 -> close to 2.0.
     assert!(
-        (result.capacity() - 2.0).abs() < 0.01,
+        (result.min_action - 2.0).abs() < 0.01,
         "(4,4) at theta=0.125: got {}, expected ~2.0 (was 3.991 before fix)",
-        result.capacity()
+        result.min_action
     );
 }
 
@@ -152,15 +152,15 @@ fn kkt_nullspace_square_square_45deg() {
 
     let sqrt2_times2 = 2.0 * std::f64::consts::SQRT_2;
     assert!(
-        (result_hk.capacity() - sqrt2_times2).abs() < 1e-6,
+        (result_hk.min_action - sqrt2_times2).abs() < 1e-6,
         "(4,4) at theta=45 HK2017: got {}, expected 2*sqrt(2) ~ {}",
-        result_hk.capacity(),
+        result_hk.min_action,
         sqrt2_times2
     );
     assert!(
-        (result_bil.capacity() - sqrt2_times2).abs() < 1e-6,
+        (result_bil.min_action - sqrt2_times2).abs() < 1e-6,
         "(4,4) at theta=45 billiard: got {} (was 5.657 before fix), expected 2*sqrt(2) ~ {}",
-        result_bil.capacity(),
+        result_bil.min_action,
         sqrt2_times2
     );
 }
@@ -183,9 +183,9 @@ fn kkt_nullspace_triangle_square_zero() {
 
     let expected = 3.0 * std::f64::consts::SQRT_2 / 2.0; // 3*sqrt(2)/2 ~ 2.121
     assert!(
-        (result.capacity() - expected).abs() < 1e-6,
+        (result.min_action - expected).abs() < 1e-6,
         "(3,4) at theta=0: got {}, expected 3*sqrt(2)/2 ~ {} (was None before fix)",
-        result.capacity(),
+        result.min_action,
         expected
     );
 }
@@ -322,20 +322,18 @@ fn pentagon_capacity() {
     let result = pruned_capacity_for_fixture(kp).expect("pentagon capacity");
 
     assert!(
-        (result.capacity() - kp.capacity).abs() < 1e-6,
+        (result.min_action - kp.capacity).abs() < 1e-6,
         "pentagon: got {}, expected {}",
-        result.capacity(),
+        result.min_action,
         kp.capacity
     );
 
     // Verify sys > 1 (counterexample property).
     let vol = euclidean_volume_f64(&kp.vertices, &kp.vertex_facet_incidence);
-    let sys = result.capacity() * result.capacity() / (2.0 * vol);
+    let sys = result.min_action * result.min_action / (2.0 * vol);
     eprintln!(
         "Pentagon: capacity={:.6}, volume={:.6}, sys={:.6}",
-        result.capacity(),
-        vol,
-        sys
+        result.min_action, vol, sys
     );
     assert!(sys > 1.0, "pentagon should have sys > 1, got {}", sys);
 }

@@ -124,7 +124,6 @@ pub struct F64CapacityResult {
 }
 
 impl F64CapacityResult {
-    pub fn capacity(&self) -> Option<f64>;
     pub fn best_orbit(&self) -> Option<&F64Orbit>;
 }
 

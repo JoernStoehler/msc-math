@@ -313,7 +313,7 @@ fn compute_sys(
     )
     .ok()?;
 
-    let cap = ehz.capacity();
+    let cap = ehz.min_action;
     if !cap.is_finite() || cap <= 0.0 {
         return None;
     }

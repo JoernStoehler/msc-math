@@ -17,8 +17,8 @@ const EPS_NUMERICAL_ZERO: f64 = 1e-15;
 
 /// Relative tie tolerance for admissible orbit actions in the scalar capacity
 /// minimum. This keeps the nonsmooth direction model aligned with
-/// `OrbitSearchResult::capacity()`, which already ignores indeterminate
-/// candidates.
+/// `OrbitSearchResult::min_action`, which already ignores indeterminate
+/// candidates through the returned scalar route payload.
 const ACTIVE_ORBIT_RTOL: f64 = 1e-9;
 
 /// Shared local state for one ascent iteration.
@@ -56,7 +56,7 @@ pub fn compute_active_sys_state(polytope: &SysLandscapePolytopeCache) -> Option<
     if vol <= 0.0 {
         return None;
     }
-    let sys = systolic_ratio(capacity.capacity(), vol);
+    let sys = systolic_ratio(capacity.min_action, vol);
     sys.is_finite()
         .then_some(ActiveSysState { capacity, vol, sys })
 }
@@ -85,7 +85,7 @@ pub fn compute_sys_from_capacity(
     if vol <= 0.0 {
         return None;
     }
-    let cap = capacity.capacity();
+    let cap = capacity.min_action;
     let sys = systolic_ratio(cap, vol);
     sys.is_finite().then_some(sys)
 }
@@ -103,7 +103,7 @@ pub fn compute_sys_computation(polytope: &SysLandscapePolytopeCache) -> Option<S
         return None;
     }
     let capacity = compute_capacity_result(polytope)?;
-    let cap = capacity.capacity();
+    let cap = capacity.min_action;
     let sys = systolic_ratio(cap, vol);
     sys.is_finite()
         .then(|| SysComputation { capacity, vol, sys })
@@ -260,7 +260,7 @@ pub fn ascent_direction(
         .iter()
         .map(|capacity_gradient| {
             systolic_ratio_gradient_a(
-                state.capacity.capacity(),
+                state.capacity.min_action,
                 state.vol,
                 capacity_gradient,
                 &d_volume_da,

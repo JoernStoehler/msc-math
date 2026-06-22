@@ -167,7 +167,7 @@ fn classify_attempt(args: &Args, facet_count: usize, attempt: u64) -> Option<Row
         }
     };
     let qp_best_sigma = qp.best_sigma().to_vec();
-    let qp_capacity = qp.capacity();
+    let qp_capacity = qp.min_action;
 
     match diagnose_f64_closed_words(&input, 0.0) {
         Ok(flow) => {

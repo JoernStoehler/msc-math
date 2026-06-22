@@ -87,12 +87,12 @@ an orbit set is wrong.
 | Endpoint local-max diagnostics | quotient first-order ascent direction, active/near-active gradients, tiny step probe | Heuristic diagnostic uncertainty acceptable; not theorem-level local maximality | recomputed active orbit data and numerical quotient slice | endpoint diagnostic is evidence against endpoint stability, not certified local-max proof |
 | `sys-datascience` producer payload generation | expensive computed-polytope payload: capacity, sys, sigmas, orbit scalars, provenance | Must preserve enough route/status for downstream decisions; exact need depends on the decision consuming the row | currently `capacity_auto`/`capacity_billiard` via `OrbitSearchResult` | `ComputedPolytopePayloadRow` stores `backend` but not a full route-contract label; producer schema should not erase route semantics |
 | `sys-datascience` retained table materialization | method-facing reusable rows and features | Must preserve label semantics needed by method packets | selected producer/table schema chosen by method-table design | `capacity_source` records dataset source, not certification strength; retained rows currently assume scalar capacity exists |
-| Verification / capacity axioms | expected scalar/list result for every in-scope test input, unless testing a failure path | No hidden uncertainty; explicit expected failure is allowed | f64+exact fallback only after f64 predicate is sound enough, certified exact minimizer/gap-window, or exact route | Do not use ordinary scalar `capacity()` as the only witness unless the checked route contract says that scalar is sufficient |
+| Verification / capacity axioms | expected scalar/list result for every in-scope test input, unless testing a failure path | No hidden uncertainty; explicit expected failure is allowed | f64+exact fallback only after f64 predicate is sound enough, certified exact minimizer/gap-window, or exact route | Do not use ordinary scalar `min_action` as the only witness unless the checked route contract says that scalar is sufficient |
 | Flow-graph comparison | scalar certified QP capacity; sometimes gap-window exact orbit set | No hidden uncertainty | certified exact minimizer/gap-window over rational/stored inputs | Existing flow-graph exact tests use certified QP comparison; keep this separate from ordinary scalar route |
 | HKO/local proof packets | theorem-specific exact checks and human-readable verification | No hidden uncertainty in theorem claims | topic-local exact/Sage route; generic QP routes only as support/diagnostics | HKO-like f64 rows are diagnostics, not algebraic HKO evidence |
 | Regular polygon / pentagon product theorem-facing examples | exact result for the intended algebraic object | No rationalized binary64 substitute unless a transfer proof is supplied | algebraic/Sage route or explicit rational-to-algebraic transfer proof | Rational exact QP certifies the stored rational input, not the exact regular polygon unless separately connected |
 | Rational/stored examples and fixtures | exact result for the stored rational input | No hidden uncertainty | exact rational one-sigma/capacity aggregation, certified exact minimizer/gap-window | Need route label to distinguish stored-input exactness from algebraic-object exactness |
-| Crate ordinary API consumers | ergonomic capacity result with visible guarantee/failure mode | Depends on API chosen | multiple explicit route APIs, not one collapsed result type | `OrbitSearchResult::capacity()` is convenient but too easy to overread without route context |
+| Crate ordinary API consumers | ergonomic capacity result with visible guarantee/failure mode | Depends on API chosen | multiple explicit route APIs, not one collapsed result type | `OrbitSearchResult` now exposes the scalar as the field `min_action`; this is clearer than a method named `capacity`, but the result type still needs route context |
 
 ## Current API / Schema Findings
 
@@ -101,9 +101,9 @@ These are inspection findings, not final design decisions.
 - `OrbitSearchResult` is an interval/fallback scalar payload, not an exact
   certificate. It stores `min_action`, `min_action_lower`, `min_action_upper`,
   returned `OrbitKktData`, and iterations.
-- `OrbitSearchResult::capacity()` returns `min_action`. It is a convenience
-  scalar and does not by itself state whether the value is heuristic,
-  fallback-safe, exact-certified, or theorem-facing.
+- `OrbitSearchResult` exposes `min_action` as a field. It is the route's
+  selected scalar action and does not by itself state whether the value is
+  heuristic, fallback-safe, exact-certified, or theorem-facing.
 - `OrbitAdmissibility::AdmissibleF64` is currently produced by
   `classify_margin(min(beta))` with static f64 thresholds. The KKT error audit
   currently treats this predicate as falsified on HKO-like rows.

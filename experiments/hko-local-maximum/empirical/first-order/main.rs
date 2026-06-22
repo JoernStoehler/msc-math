@@ -814,7 +814,7 @@ fn safe_sys(polytope: &HkoPolytopeCache) -> Option<(f64, f64, f64)> {
         &polytope.omega_signs,
     )
     .ok()
-    .map(|r| r.capacity())
+    .map(|r| r.min_action)
     .unwrap_or(f64::NAN);
     if !cap.is_finite() {
         return None;
@@ -959,8 +959,8 @@ fn run_phase_a(base_dir: &std::path::Path, smoke: bool) {
     .expect("library capacity computation failed");
     println!(
         "  Library capacity: {:.10} (diff from known: {:.2e})",
-        lib_result.capacity(),
-        (lib_result.capacity() - known.capacity).abs()
+        lib_result.min_action,
+        (lib_result.min_action - known.capacity).abs()
     );
 
     // Instrumented HK2017
@@ -975,12 +975,12 @@ fn run_phase_a(base_dir: &std::path::Path, smoke: bool) {
     let time_instrumented_ms = t_instr.elapsed().as_secs_f64() * 1000.0;
 
     // Cross-check
-    let cap_diff = (instrumented.capacity - lib_result.capacity()).abs();
+    let cap_diff = (instrumented.capacity - lib_result.min_action).abs();
     assert!(
         cap_diff < 1e-8,
         "Capacity mismatch: instrumented={:.10}, library={:.10}",
         instrumented.capacity,
-        lib_result.capacity()
+        lib_result.min_action
     );
     println!(
         "  Instrumented capacity: {:.10} (matches library, diff={:.2e})",

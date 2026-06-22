@@ -183,7 +183,7 @@ impl ComputedPolytopeCache {
         };
         let time_capacity_ms = start_capacity.elapsed().as_secs_f64() * 1000.0;
 
-        let capacity = capacity_result.capacity();
+        let capacity = capacity_result.min_action;
         let sys = symplectic::systolic_ratio(capacity, volume);
         if !sys.is_finite() {
             return None;

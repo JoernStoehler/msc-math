@@ -1154,7 +1154,7 @@ fn compute_base_state_from_polytope(
     if !vol.is_finite() || vol <= 0.0 {
         return Err("base_volume_failed".to_string());
     }
-    let sys = symplectic::systolic_ratio(capacity.capacity(), vol);
+    let sys = symplectic::systolic_ratio(capacity.min_action, vol);
     if !sys.is_finite() {
         return Err("base_sys_failed".to_string());
     }
@@ -1170,7 +1170,7 @@ fn compute_base_state_from_polytope(
     let sys_gradients: Vec<Vec<Vector4<f64>>> = d_capacity_da
         .iter()
         .map(|capacity_gradient| {
-            systolic_ratio_gradient_a(capacity.capacity(), vol, capacity_gradient, &d_volume_da)
+            systolic_ratio_gradient_a(capacity.min_action, vol, capacity_gradient, &d_volume_da)
         })
         .collect();
 

@@ -109,7 +109,7 @@ fn retained_candidate_fallback_consumer(case: &ScanCase) -> RetainedCandidateFal
         .expect("local certified fallback should certify the retained candidate set");
 
     RetainedCandidateFallback {
-        capacity: interval_result.capacity(),
+        capacity: interval_result.min_action,
         exact_resolutions: exact_set.exact_resolutions,
         retained_orbit_count: exact_set.orbits.len(),
     }

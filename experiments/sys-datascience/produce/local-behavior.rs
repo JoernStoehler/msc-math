@@ -604,7 +604,7 @@ fn compute_local_state_from_polytope(
     if !volume.is_finite() || volume <= 0.0 {
         return Err("volume_failed".to_string());
     }
-    let sys = symplectic::systolic_ratio(capacity.capacity(), volume);
+    let sys = symplectic::systolic_ratio(capacity.min_action, volume);
     if !sys.is_finite() {
         return Err("sys_failed".to_string());
     }
@@ -620,7 +620,7 @@ fn compute_local_state_from_polytope(
     let sys_gradients: Vec<Vec<Vector4<f64>>> = d_capacity_da
         .iter()
         .map(|capacity_gradient| {
-            systolic_ratio_gradient_a(capacity.capacity(), volume, capacity_gradient, &d_volume_da)
+            systolic_ratio_gradient_a(capacity.min_action, volume, capacity_gradient, &d_volume_da)
         })
         .collect();
     Ok(LocalState {
@@ -882,7 +882,7 @@ fn sample_row(
     let target_poly_id = poly_id(&target_polytope);
     let target_state = compute_local_state_from_polytope(
         target_polytope,
-        base.capacity.capacity() * args.action_window_relative,
+        base.capacity.min_action * args.action_window_relative,
         args.branch_threshold_relative,
     );
     let Ok(target) = target_state else {
@@ -1000,7 +1000,7 @@ fn basepoint_state_row(
         facet_count: basepoint.row.facet_count,
         input_capacity: basepoint.row.capacity,
         input_sys: basepoint.row.sys,
-        recomputed_capacity: Some(base.capacity.capacity()),
+        recomputed_capacity: Some(base.capacity.min_action),
         recomputed_volume: Some(base.volume),
         recomputed_sys: Some(base.sys),
         branch_threshold_relative: args.branch_threshold_relative,
@@ -1123,7 +1123,7 @@ fn payload_from_state(state: &LocalState) -> ComputedPolytopePayloadRow {
         facet_count: state.polytope.facet_count(),
         backend: state.backend.clone(),
         volume: state.volume,
-        capacity: state.capacity.capacity(),
+        capacity: state.capacity.min_action,
         sys: state.sys,
         sigma_gap_cutoff: state.action_gap,
         sigmas: admissible_sigma_actions(&state.capacity),

@@ -155,7 +155,7 @@ fn pruned_matches_unpruned_simplex() {
     let result_unpruned = unpruned_capacity_for_fixture(kp).expect("unpruned capacity");
     let result_pruned = pruned_capacity_for_fixture(kp).expect("pruned capacity");
     assert!(
-        (result_unpruned.capacity() - result_pruned.capacity()).abs() < 1e-6,
+        (result_unpruned.min_action - result_pruned.min_action).abs() < 1e-6,
         "simplex: pruned and unpruned capacities differ"
     );
 }
@@ -175,7 +175,7 @@ fn pruned_matches_unpruned() {
     let result_pruned = pruned_capacity_for_fixture(kp).expect("pruned capacity");
 
     assert!(
-        (result_unpruned.capacity() - result_pruned.capacity()).abs() < 1e-6,
+        (result_unpruned.min_action - result_pruned.min_action).abs() < 1e-6,
         "pruned and unpruned capacities differ"
     );
 
@@ -215,12 +215,12 @@ fn pruned_matches_unpruned_random() {
                 let pruned = pruned_capacity_for_dual_vertices(dual_vertices).unwrap();
 
                 assert!(
-                    (unpruned.capacity() - pruned.capacity()).abs() < 1e-6,
+                    (unpruned.min_action - pruned.min_action).abs() < 1e-6,
                     "F={} seed={}: pruned {} vs unpruned {}",
                     facet_count,
                     seed,
-                    pruned.capacity(),
-                    unpruned.capacity()
+                    pruned.min_action,
+                    unpruned.min_action
                 );
 
                 assert!(

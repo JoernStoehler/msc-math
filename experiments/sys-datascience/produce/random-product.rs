@@ -307,7 +307,7 @@ fn main() {
             .expect("billiard should accept Lagrangian product");
             let time_capacity_ms = start_cap.elapsed().as_secs_f64() * 1000.0;
 
-            let cap = result.capacity();
+            let cap = result.min_action;
             let sys = cap * cap / (2.0 * vol);
             let Some(bounces) = bounce_count(&polytope, result.best_sigma()) else {
                 continue;

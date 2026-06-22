@@ -166,7 +166,7 @@ fn eval_sys_at_ray(
     if vol <= 0.0 {
         return None;
     }
-    let cap = ehz.capacity();
+    let cap = ehz.min_action;
     Some(cap * cap / (2.0 * vol))
 }
 
@@ -318,7 +318,7 @@ pub fn run(raw_args: &[String]) {
         &base_polytope.omega_signs,
     )
     .expect("capacity unavailable");
-    let base_sys = base_ehz.capacity().powi(2) / (2.0 * base_vol);
+    let base_sys = base_ehz.min_action.powi(2) / (2.0 * base_vol);
     println!("Base sys = {base_sys:.6} (should be ~1.047)");
     println!("Probing {n_directions} random directions...\n");
 

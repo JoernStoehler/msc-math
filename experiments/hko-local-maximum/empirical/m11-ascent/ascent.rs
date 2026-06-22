@@ -173,7 +173,7 @@ fn compute_capacity(polytope: &HkoPolytopeCache) -> Option<f64> {
         &polytope.omega_signs,
     )
     .ok()
-    .map(|r| r.capacity())
+    .map(|r| r.min_action)
 }
 
 fn compute_capacity_result(polytope: &HkoPolytopeCache) -> Option<(f64, Vec<usize>)> {
@@ -184,7 +184,7 @@ fn compute_capacity_result(polytope: &HkoPolytopeCache) -> Option<(f64, Vec<usiz
         &polytope.omega_signs,
     )
     .ok()?;
-    Some((r.capacity(), r.best_sigma().to_vec()))
+    Some((r.min_action, r.best_sigma().to_vec()))
 }
 
 /// Single gradient ascent phase: iterate until convergence or budget.
