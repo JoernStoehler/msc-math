@@ -15,8 +15,8 @@ proof text can overrule it. When they do, update this file or mark the mismatch.
 - Exact exhaustive search is supported as limited implementation evidence for
   deterministic exact-admissible four-dimensional rational polytopes satisfying
   the input predicates stated below.
-- The f64 path is the intended production path for larger polytopes. It is not
-  an exact certificate by itself.
+- The f64 path is the development path for larger flow-graph searches. It is
+  not an exact certificate by itself.
 - `exact_tube.rs` contains exact rational closed-word/tube resolution for one
   selected word. `exact_search.rs` contains exact exhaustive search. The exact
   search has an explicit action-cutoff policy: disabled for baseline checks,
@@ -68,7 +68,7 @@ Explicit non-goals unless thesis review asks for them:
 - implementing CH2021 rotation pruning;
 - turning f64 diagnostics into exact certificates without exact fallback;
 - proving every dependency inside code or experiment documentation instead of
-  routing proof obligations to formal/thesis text.
+  putting mathematical proof in formal/thesis text.
 
 ## Algorithm Contract
 
@@ -87,10 +87,10 @@ Target input:
 - a numerical rejection policy for nearly zero `omega_0` on geometric
   transitions in the f64 path.
 
-Target output:
+Target output shape:
 
-- the capacity action;
-- retained cyclic facet words with action at most `capacity + threshold`;
+- the reported flow-graph action;
+- retained cyclic facet words with action at most `reported action + threshold`;
 - the action for each retained word;
 - explicit rejection or undecided status when the input or numerical path is
   outside the supported case.
@@ -113,12 +113,12 @@ Search contract:
 - Reject words containing a geometrically impossible directed transition.
 - Cache or build partial tubes only when that changes current computation or
   evidence.
-- Return a capacity only after the search is exhaustive for the supported input
-  class and action threshold.
+- Return a reported flow-graph action only after the search is exhaustive for
+  the supported input class and action threshold.
 
 Path-specific outcome contract:
 
-- Exact accepted output contains the exact capacity action, retained cyclic
+- Exact accepted output contains the exact reported action, retained cyclic
   facet words, and exact action for each retained word. Exact positive closed
   words are filtered by reconstructing the segment times and requiring every
   segment time to be strictly positive; zero-time boundary fixed points are not
@@ -158,6 +158,8 @@ Status labels:
 
 - `source-backed`: supported by current code, tests, paper source, or an
   accepted durable note.
+- `recovered-proof-unreviewed`: appears in the recovered May formal proof
+  surface, but that file is agent-written and not accepted thesis proof.
 - `Jörn review needed`: accepted in chat or plausible, but not yet durable
   enough for thesis/code reliance.
 - `unproved`: known dependency without a checked proof in this repo.
@@ -167,14 +169,15 @@ Status labels:
 
 | statement | status | current use | next check |
 | --- | --- | --- | --- |
-| Simple Reeb orbits suffice for the retained capacity search target. | Jörn review needed | justifies simple-word enumeration | import chat/source proof into this file or formal note |
-| A simple orbit visits each facet at most once before closure. | Jörn review needed | pruning repeated facets | record proof or accepted reference |
-| Empty tube implies every containing tube is empty. | Jörn review needed | pruning and cache interpretation | write invariant precisely |
-| Empty unclosed subtube makes the closed tube empty. | Jörn review needed | closed-word pruning | write invariant precisely |
-| Action equals flow time for Reeb segments. | Jörn review needed | action computation | record proof using `lambda_0(R_j)=1` |
-| Extending a valid tube does not decrease action. | Jörn review needed | action cutoff pruning | state assumptions and proof |
+| Minimum-action generalized Reeb orbits may be chosen simple. | source-backed by HK2017 Theorem 1.5 / `simple_loop_theorem`; thesis legacy restates as `thm:simple-minimizer` | reduces the capacity search to simple Reeb orbits | cite HK2017 in thesis prose; do not re-prove as an FG theorem |
+| A simple minimizer visits each facet direction at most once. | source-backed by HK2017 Theorem 1.5 / `simple_loop_theorem` | justifies searching facet words without repeated facet directions | prove only the FG correspondence between simple Reeb orbits and searched FG words |
+| Nonzero `omega_0` is required only for geometrically possible transitions, not for all facet pairs. | source-backed by `research/tube-algorithm.md` accepted clarification; implemented by exact and f64 validators | keeps zero `omega_0` on empty two-faces out of the rejection condition | adapt the recovered pairwise-nonzero proof if thesis theorem wording needs the weaker condition |
+| Empty tube implies every containing tube is empty. | source-backed by `research/tube-algorithm.md`; recovered-proof-unreviewed via `lem:tube-intersection` | pruning and cache interpretation | migrate the invariant into active proof text before theorem-strength thesis use |
+| Empty unclosed subtube makes the closed tube empty. | source-backed by `research/tube-algorithm.md`; recovered-proof-unreviewed via `lem:tube-intersection` | closed-word pruning | migrate the invariant into active proof text before theorem-strength thesis use |
+| Action equals elapsed flow time for the stored Reeb segments. | source-backed by `research/tube-algorithm-raw-jorn-2026-05-04.md`; recovered-proof-unreviewed via `def:tube-data` and `lem:tube-intersection` | action computation | migrate the normalization calculation into active proof text before theorem-strength thesis use |
+| Restricting a valid tube by a smaller action cutoff is an affine halfspace restriction. | recovered-proof-unreviewed via `lem:tube-action-restriction` | action cutoff pruning | migrate the lemma into active proof text before theorem-strength thesis use |
 | Rejection for empty facet intersection is sound. | source-backed | transition matrix | keep tests around transition construction |
-| Rejection for forbidden `omega_0` direction is sound. | source-backed for code path; proof needs review | transition matrix | link proof/reference before thesis claim |
+| Rejection for forbidden `omega_0` direction is sound. | source-backed for code path; recovered-proof-unreviewed via `def:tube-positive-transition-signs` and `prop:tube-search-correctness-finite-orbit-regular` | transition matrix | reconcile sign convention before theorem-strength thesis use |
 | f64 rejection near small geometric `omega_0` is a numerical policy, not a theorem. | source-backed | input validation | test rejection behavior |
 | Singular closed-tube fixed-point cases are not silently capacity values. | implementation evidence | exact and f64 closed-word resolution | reject positive-action singular fixed sets unless start/end polygons are disjoint |
 | CH2021 rotation pruning is optional future work. | source-backed from legacy note | not in first implementation path | add only behind a flag after formula review |
@@ -348,8 +351,8 @@ Role of HK2017/QP comparison:
   by exact closed-tube resolution and the strict segment-time filter.
 - QP has certified exact gap-window support, but retained-word comparisons must
   be restricted to the overlap where both algorithms' conventions apply.
-- Passing that comparison on diverse exact-admissible polytopes is strong
-  implementation evidence, but not a proof of the flow-graph theorem, stopping
+- Passing that comparison on diverse exact-admissible polytopes is a useful
+  implementation check, but not a proof of the flow-graph theorem, stopping
   rule, or exact tube arithmetic.
 
 Evidence limits for future thesis wording:

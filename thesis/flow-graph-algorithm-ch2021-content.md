@@ -21,6 +21,18 @@ this file from the README, code, tests, and validation results.
 
 Source-backed implementation facts that may matter for proof recovery:
 
+- HK2017 Theorem 1.5 (`simple_loop_theorem` in
+  `papers/hk2017/EHZ-polytopes.tex`, indexed in `papers/citation-index.md`)
+  already proves that a minimum-action closed characteristic on a convex
+  polytope may be chosen simple; thesis legacy restates this as
+  `thm:simple-minimizer` in `thesis/legacy/simple-minimizer-existence.tex`;
+- `research/tube-algorithm.md` records Jörn's accepted clarification that
+  nonzero `omega_0` is only needed on geometrically possible trajectory
+  transitions; the algorithm does not require every facet pair to have
+  nonzero `omega_0`;
+- `research/tube-algorithm-raw-jorn-2026-05-04.md` records the raw tube model,
+  including action as elapsed time along stored Reeb segments, tube gluing,
+  action cutoff by a halfspace, and exhaustive simple-word search;
 - exact closed-word output now reconstructs segment times and requires every
   segment time to be strictly positive before returning `PositiveOrbit`;
 - exact search rejects geometrically possible zero-`omega_0` transitions before
@@ -67,12 +79,14 @@ Deleted history contains a larger formal surface:
 - cleanup/import commit:
   `69b3a50afa148c12bab18db2503b511b79ae4977`.
 
-That formal file was explicitly marked agent-written and unverified. It states
-conditional results such as `prop:tube-search-correctness-finite-orbit-regular`
-and `cor:tube-capacity-conditional`, with hypotheses including pairwise
-nonzero `omega_0`, dual-vertex general position, and finite-orbit regularity.
-Use it as recovery material to audit and migrate proof arguments, not as a
-direct thesis source.
+That formal file was explicitly marked agent-written and unverified. It
+contains useful proof material for tube construction, gluing, action cutoff,
+strict positive-time filtering, finite simple-word search, and conditional
+capacity correctness. Its stated theorem path uses stronger hypotheses than
+the live implementation intends: pairwise nonzero `omega_0`, dual-vertex
+general position, and finite-orbit regularity. Use it as recovery material to
+audit and migrate proof arguments, not as a direct thesis source and not as the
+final hypothesis list.
 
 ## Proof Recovery Audit Snapshot
 
@@ -96,10 +110,20 @@ fixed start point and cyclic word and requires every segment time to be
 strictly positive. Positive total action alone is no longer enough for exact
 positive-orbit output.
 
-Remaining proof-recovery work is the hypothesis map, not this strict-time
-filter: compare pairwise nonzero `omega_0` in the recovered proof with the
-current local/geometric nonzero-`omega_0` condition, dual-vertex general
-position with the current fixture/data-generation assumptions,
-finite-orbit-regular singular handling with `UnsupportedPositiveSingular`,
-positive transition signs with the current transition-matrix orientation, and
-simple-word enumeration with `for_each_sigma_pruned_by_transition`.
+Remaining proof-recovery work is the hypothesis/correspondence map, not the
+existence of simple minimizers and not this strict-time filter. The current
+known audit targets are:
+
+- replace the recovered proof's pairwise nonzero `omega_0` hypothesis by the
+  accepted local condition on geometrically possible transitions, or state why
+  the proof still needs the stronger condition;
+- compare dual-vertex general position in the recovered proof with the current
+  fixture/data-generation assumptions;
+- compare finite-orbit regularity in the recovered proof with current exact
+  rejection of `UnsupportedPositiveSingular`;
+- reconcile positive transition signs with the current transition-matrix
+  orientation;
+- prove the correspondence between HK2017 simple minimizers and the FG words
+  enumerated by `for_each_sigma_pruned_by_transition`;
+- migrate the tube gluing and action-cutoff lemmas from recovered material into
+  active proof text if theorem-strength thesis prose needs them.
