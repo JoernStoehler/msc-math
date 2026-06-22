@@ -66,6 +66,14 @@ the route target by itself. Predicate usefulness is downstream of scalar
 capacity/`sys`, near-minimum `(sigma, action)` output, fallback cost, or
 diagnostic value for a named consumer.
 
+Current f64 route caution: the current static-margin `AdmissibleF64` label is
+not a theorem-backed guarantee. `OrbitGuaranteeMode` exact fallback resolves
+`IndeterminateF64` candidates; it does not recheck candidates already accepted
+as `AdmissibleF64`. Current search state for theorem-backed f64 predicates and
+Q/action bounds lives in `tools/kkt_error_audit/SEARCH-LEDGER.md`. The separate
+candidate-filter question, whether f64 discards exact-positive sigmas before
+certification, is tracked in `tools/candidate_filter_audit/README.md`.
+
 Use `experiments/algorithm-comparison/README.md` for cross-algorithm comparison
 reasoning that points to performance, numerics, verification/correctness,
 topic, or thesis evidence homes.
