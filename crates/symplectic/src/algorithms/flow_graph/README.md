@@ -78,7 +78,10 @@ inside the valid irredundant presentation space.
 Explicit non-goals unless thesis review asks for them:
 
 - supporting Lagrangian products or HKO fixtures with nonempty facet-pair
-  `omega_0 = 0` transitions;
+  `omega_0 = 0` transitions. This is not just a missing tolerance choice:
+  those transitions break the current primitive-tube model where flowing along
+  the middle facet gives a unique affine map from the entry two-face to the
+  exit two-face;
 - implementing CH2021 rotation pruning;
 - treating f64 output as an exact certificate without exact fallback or a
   proved sound-predicate/error-bound contract;
