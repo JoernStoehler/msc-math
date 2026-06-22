@@ -209,7 +209,7 @@ claim.
     - `experiments/sys-datascience/produce/README.md`
     - `experiments/hko-local-maximum/theorem/exact-witness/README.md`
     - `experiments/hko-local-maximum/README.md`
-    - `experiments/numerics/README.md`
+    - `experiments/dev-quadratic-program/numerics-audit/README.md`
     - `experiments/combinatorial-cells/README.md`
     - `tasks/current-state.md`
     - `tasks/planning-notes.md`
@@ -321,21 +321,20 @@ claim.
       branches
     - HKO proof wording starts depending on this theorem route
 
-- We have a numerics audit experiment that supports solver diagnostics and
-  caveated numerical trust.
+- We have a QP/KKT numerics audit experiment that supports solver diagnostics
+  and caveated numerical trust.
   - Scope: structured f64-vs-oracle observations for retained KKT variables and
-    predicates, with explicit input-pair and oracle provenance. The old
-    packet-style numerics categories are historical and available only through
-    git history.
+    predicates, with explicit input-pair and oracle provenance. This audit is
+    coupled to QP route development and now lives under the dev-QP packet.
   - Files:
     - `tasks/current-state.md`
     - `tasks/planning-notes.md`
-    - `experiments/numerics/README.md`
-    - `experiments/numerics/`
+    - `experiments/dev-quadratic-program/numerics-audit/README.md`
+    - `experiments/dev-quadratic-program/numerics-audit/`
     - `formal/hk2017-qp-core.tex`
     - `formal/hk2017-qp-precision.tex`
-  - The current route is generic-case-first numerics plus exact/empirical
-    diagnostics and explicit caveats.
+  - The current route is QP/KKT diagnostics plus exact/empirical caveats; route
+    contract decisions live in `experiments/dev-quadratic-program/`.
   - This does not claim all public f64 capacity wrappers are fully certified
     numerical solvers.
   - Nuance:
