@@ -417,8 +417,9 @@ threshold \(\delta\ge0\).
 \item Enumerate every simple cyclic facet word \(w=[s_1,\ldots,s_k]\) in the
   sense of Definition~\ref{def:fg-simple-cyclic-word}.
 \item For each word, form the closed sequence
-  \((s_1,\ldots,s_k,s_1,s_2)\).  If one of its triples does not have positive
-  flow-graph transition sign, continue with no orbit for this word.
+  \((s_1,\ldots,s_k,s_1,s_2)\).  If one of its adjacent facet pairs has empty
+  intersection, or if one of its triples does not have positive flow-graph
+  transition sign, continue with no orbit for this word.
 \item Build the closed tube search data by gluing primitive tubes.  If the
   resulting start polygon is empty, continue with no orbit for this word.
 \item Solve \(\Phi_w(u)=u\).  If the fixed-point equation is singular and
@@ -440,8 +441,9 @@ threshold \(\delta\ge0\).
 \begin{definition}[Finite-orbit regularity]\label{def:fg-finite-orbit-regularity}
 Assume the facet presentation is flow-graph nondegenerate in the sense of
 Definition~\ref{def:fg-nondegenerate-facet-presentation}.  Build the closed
-tube search data for every simple cyclic word that survives the transition-sign
-and nonempty-domain steps of Algorithm~\ref{alg:fg-real-exhaustive-search}.
+tube search data for every simple cyclic word that survives the adjacent
+facet-pair, transition-sign, and nonempty-domain steps of
+Algorithm~\ref{alg:fg-real-exhaustive-search}.
 For such a word \(w\), write the affine tube map as \(\Phi_w(u)=M_wu+b_w\).
 
 The run is \emph{finite-orbit regular} if, for every enumerated word whose
@@ -822,8 +824,11 @@ identifies closed candidates with fixed points of the affine tube map and
 identifies strict Reeb trajectories with the fixed points whose reconstructed
 segment times are all positive.
 
-If a word contains a triple without positive flow-graph transition sign, then
-a strict positive-time representative cannot use that triple: by
+If a word contains an adjacent facet pair with empty intersection, then a
+strict positive-time representative cannot use that pair because its breakpoint
+would lie in that intersection.  If a word contains a triple without positive
+flow-graph transition sign, then a strict positive-time representative cannot
+use that triple: by
 Lemma~\ref{lem:fg-local-transition-regularity-positive-sign}, the two physical
 facet transitions adjacent to the middle facet would force the two strict signs
 in Definition~\ref{def:fg-transition-sign}.  Hence skipping such a word does
