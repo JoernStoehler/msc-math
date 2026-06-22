@@ -1000,6 +1000,11 @@ pub fn capacity_f64(
         })
         .collect();
 
+    // `capacity_f64` is a diagnostic mixed path.  Direct f64 positive words
+    // remain approximate f64 output.  Exact arithmetic is used only to classify
+    // f64 closed-word errors, so future callers must not treat the returned
+    // value as an exact certificate unless all retained words are independently
+    // resolved under an exact or proven-sound numerical boundary.
     for record in &diagnostic.closed_cycles {
         let F64ClosedCycleOutcome::Error(_) = record.outcome else {
             continue;
@@ -1016,6 +1021,8 @@ pub fn capacity_f64(
             | ExactClosedWordOutcome::ZeroActionNoOrbit { .. }
             | ExactClosedWordOutcome::NonStrictNoOrbit { .. } => {}
             ExactClosedWordOutcome::PositiveOrbit { action, .. } => {
+                // This is an exact rescue of a word that f64 could not classify,
+                // not a validation of the direct f64-positive words above.
                 let action_f64 = action.to_f64().ok_or_else(|| {
                     CapacityF64Error::ExactActionNotRepresentable {
                         sigma: record.sigma.clone(),

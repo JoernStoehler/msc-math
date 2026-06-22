@@ -639,6 +639,9 @@ fn restrict_tube_to_action_cutoff(
         normal: tube.action_on_start.coeff.clone(),
         rhs: action_cutoff - &tube.action_on_start.constant,
     };
+    // Apply the exact retained-output cutoff before fixed-point solving.  Any
+    // later singular classification is therefore about the remaining searched
+    // domain, not necessarily the uncut closed tube.
     match tube
         .start_polygon
         .intersect_halfspace(action_halfspace, metrics)

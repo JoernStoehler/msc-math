@@ -67,6 +67,9 @@ pub fn search_closed_orbits_exact(
     }
     validate_exact_input(input)
         .map_err(|error| ExactFlowGraphSearchError::InvalidInput { error })?;
+    // Zero omega on a nonempty facet pair is a structural unsupported case for
+    // the current exact FG route, not a numerical tolerance issue.  Lagrangian
+    // products and HKO-style product degeneracies are expected to fail here.
     validate_no_geometric_zero_omega_transition(input)?;
 
     let transition_is_allowed = build_transition_matrix_from_facet_intersections_and_omega(
@@ -85,6 +88,10 @@ pub fn search_closed_orbits_exact(
             return;
         }
         checked_word_count += 1;
+        // The cutoff policy is an exact speed-up, not a separate certificate:
+        // once a positive exact action is known, words whose whole closed-tube
+        // domain lies above best+threshold cannot contribute retained output.
+        // Tests compare the enabled policy against the disabled baseline.
         let action_cutoff = match action_cutoff_policy {
             ExactActionCutoffPolicy::Disabled => None,
             ExactActionCutoffPolicy::Enabled => confirmed_best_action
@@ -112,6 +119,9 @@ pub fn search_closed_orbits_exact(
             ExactClosedWordOutcome::EmptyTube
             | ExactClosedWordOutcome::ZeroActionNoOrbit { .. }
             | ExactClosedWordOutcome::NonStrictNoOrbit { .. } => {
+                // These are exact no-orbit outcomes for the displayed strict
+                // word.  They are counted for diagnostics but do not weaken an
+                // earlier positive candidate.
                 empty_or_no_orbit_count += 1;
             }
             ExactClosedWordOutcome::PositiveOrbit { action, .. } => {
@@ -132,6 +142,9 @@ pub fn search_closed_orbits_exact(
                 min_action,
                 max_action,
             } => {
+                // Positive-action singular fixed sets are deliberately typed
+                // non-success.  The exact slow path may diagnose them, but the
+                // search wrapper must not turn them into capacity values.
                 search_error = Some(ExactFlowGraphSearchError::UnsupportedPositiveSingular {
                     sigma: sigma.to_vec(),
                     singular_status,
