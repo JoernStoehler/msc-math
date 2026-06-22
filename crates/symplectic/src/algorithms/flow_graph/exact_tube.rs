@@ -882,10 +882,17 @@ fn solve_singular_fixed_tube(
     rhs: &Vec2,
     metrics: &mut ExactClosedTubeMetrics,
 ) -> ClosedClassification {
-    // The slow exact path classifies singular fixed sets so diagnostics can say
-    // whether the searched domain contains positive-action closed candidates.
-    // This is intentionally more informative than the theorem-facing
-    // finite-orbit-regular boundary, which may reject singular fixed maps.
+    // Slow exact callers use this branch to understand singular fixed-point
+    // equations, not to turn singular cases into certified capacity values.
+    // The theorem-facing finite-orbit-regular route may reject singular fixed
+    // maps before this point.  This diagnostic branch is kept because exact
+    // resolution of f64 error words and exact development checks need to
+    // distinguish:
+    // - no fixed points in the searched domain;
+    // - singular fixed sets whose action is everywhere nonpositive;
+    // - singular fixed sets containing positive-action closed candidates.
+    // Collapsing these cases into one rejection would make the slow exact path
+    // less useful and would hide unsupported positive-action singular cases.
     let rows = [(&lhs[0], &rhs[0]), (&lhs[1], &rhs[1])];
     let nonzero: Vec<(&Vec2, &R)> = rows
         .into_iter()
@@ -943,6 +950,11 @@ fn singular_fixed_polygon_result(
     singular_status: &'static str,
     metrics: &mut ExactClosedTubeMetrics,
 ) -> ClosedClassification {
+    // The fixed set is convex and the action is affine on the start polygon.
+    // Vertex signs therefore decide whether the searched fixed set contains a
+    // positive-action candidate.  Positive singular candidates remain
+    // unsupported; nonpositive singular fixed sets are reported as no-orbit
+    // outcomes for the displayed strict word.
     let actions: Vec<R> = fixed_polygon
         .vertices(metrics)
         .iter()
