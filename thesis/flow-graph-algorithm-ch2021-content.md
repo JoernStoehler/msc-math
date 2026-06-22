@@ -145,6 +145,22 @@ These are code facts, not theorem hypotheses.
 The code-design comparison for singular fixed maps belongs in the flow-graph
 README, not in this thesis ledger.
 
+## Future Evidence And Asset Prompts
+
+These prompts were mined from the obsolete `fg-ch2021-content-gaps` worktree on
+2026-06-22. They are future task prompts, not current thesis evidence.
+
+- If the thesis keeps a flow-graph performance claim, separate release-mode
+  counts for word enumeration, tube construction, exact search, f64 diagnostic
+  search, exact fallback, and action-cutoff enabled versus disabled behavior.
+  Unpromoted development counters should be described as diagnostics only.
+- A compact explanatory asset may be useful before drafting final reader-facing
+  prose. Candidate assets are an algorithm pipeline display, an
+  evidence/caveat table, or a reduced tube-visualization figure. CH2021's
+  `flow_graph.svg` or `.png` can serve only as background for their
+  terminology; it does not explain this project's tube implementation by
+  itself.
+
 ## Drafting Gates
 
 Before promoting `thesis/flow-graph-algorithm-ch2021.tex` beyond the current

@@ -129,6 +129,14 @@ Update rule: add or change a claim only with a source pointer or an explicit
   standard \(J_0,\omega_0,\lambda_0\) identities, the standard capacity
   axioms/background, and the symplectic-product capacity formula for normalized
   symplectic capacities.
+- Stale-branch mining on 2026-06-22 recovered the provenance detail behind
+  that PDF comparison: `/tmp/thesis_stoehler_20260216.pdf` matched rebuild
+  commit `a8724979698e1e2b98d5a0145184c65b08f809ed`, whose relevant source
+  files were `thesis/clarkedual-action-principle.tex`,
+  `thesis/simple-minimizer-existence.tex`, `thesis/basic-definitions.tex`,
+  `thesis/proofs.tex`, and `thesis/experiments/experiments.tex`. The current
+  descendants are in `thesis/legacy/`. This is source-routing information for
+  future cleanup, not thesis evidence.
 - Deliberately not ported from old preliminaries in this checkpoint:
   characteristic-line-field definitions and their reparametrization proof,
   Stokes/symplectic-area motivation for action, full smooth/polytope orbit
