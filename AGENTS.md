@@ -53,6 +53,12 @@ transfer, not presentation or narration.
 
 - Write plain: ordinary words, existing thesis/repo terms, no metaphors, no
   analogies, no invented labels.
+- Usually, Jörn has multiple Codex sessions open. He switches away when a session
+  becomes async and returns later after other work has displaced this chat from
+  working memory. Communication should make it cheap for Jörn to resume without
+  rereading the transcript, especially by making any required Jörn action easy to
+  find. Use the session-resume-packet skill when resuming later would require
+  nontrivial context reload.
 - Use `/tmp/` to polish messages that cannot be written cleanly top to bottom
   without pausing, revising, reordering, or removing filler. Then send the
   polished message.

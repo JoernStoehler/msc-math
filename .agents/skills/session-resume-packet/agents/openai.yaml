@@ -1,0 +1,7 @@
+interface:
+  display_name: "Session Resume Packet"
+  short_description: "Help Jörn resume a session"
+  default_prompt: "Use $session-resume-packet to write a session resume packet for Jörn."
+
+policy:
+  allow_implicit_invocation: true
