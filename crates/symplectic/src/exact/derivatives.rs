@@ -10,7 +10,8 @@ use nalgebra::Vector4;
 /// Compute the exact dual-vertex capacity gradient `∂c/∂a_k` from direct inputs.
 ///
 /// Caller contract:
-/// - `sigma` is a partial permutation of facet indices into `dual_vertices`;
+/// - `sigma` is an active traversal word, represented as a partial permutation
+///   of facet indices into `dual_vertices`;
 /// - `beta.len() == sigma.len()`;
 /// - `q > 0`;
 /// - `mu` and `q` come from the same one-sigma exact KKT solution.

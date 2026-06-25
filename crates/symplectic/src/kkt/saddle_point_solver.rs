@@ -16,9 +16,10 @@
 //! the capacity algorithm picks max Q, so near-zero Q candidates never win. The absolute
 //! threshold `E < 1e-6` is chosen relative to Q_max ≈ O(1), not relative to each candidate's Q.
 //!
-//! **Sign convention:** Q > 0 when σ follows the positive Reeb direction (where
-//! consecutive facets satisfy ω₀(n_{σ(k)}, n_{σ(k+1)}) ≥ 0). Callers pass
-//! permutations in natural order directly — no reversal needed.
+//! **Word convention:** σ is the active Reeb traversal order. With this convention
+//! Q > 0 when consecutive facets follow the positive Reeb direction
+//! (ω₀(n_{σ(k)}, n_{σ(k+1)}) ≥ 0). HK2017's displayed theorem uses the reversed
+//! ordered word.
 //!
 //! Mathematical correspondence: [lem:kkt], [lem:q-error-bound]
 

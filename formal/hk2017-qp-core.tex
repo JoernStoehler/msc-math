@@ -59,14 +59,15 @@
 % (5) Continuity issues for f64
 
 
-% ── 1. The HK2017 capacity problem ──────────────────────────────────
+% ── 1. The active-word HK2017 capacity problem ───────────────────────
 
-\begin{definition}[HK2017 capacity problem]\label{def:hk2017-problem}
+\begin{definition}[Active-word HK2017 capacity problem]\label{def:hk2017-problem}
 Let $K = \{x \in \mathbb{R}^4 : a_i^\top x \leq 1,\; i = 1,\ldots,F\}$
 be a convex polytope with dual vertices
 $a_1, \ldots, a_F \in \mathbb{R}^4$.
 For each subset $S \subseteq \{1, \ldots, F\}$ with $|S| = m \geq 2$
-and each cyclic permutation $\sigma$ of~$S$, define:
+and each cyclic permutation $\sigma$ of~$S$, written in active Reeb traversal
+order, define:
 \begin{itemize}
   \item \textbf{Action matrix}
     $H(\sigma) \in \mathbb{R}^{m \times m}$:
@@ -84,7 +85,7 @@ and each cyclic permutation $\sigma$ of~$S$, define:
     (normalization: $\sum \beta_i = 1$).
   \item $d = (0, 0, 0, 0, 1)^\top$.
 \end{itemize}
-The \emph{HK2017 capacity problem} is:
+The \emph{active-word HK2017 capacity problem} is:
 \begin{equation}\label{eq:hk2017-problem}
   Q_{\max}
   = \max_{\sigma}\;
@@ -96,6 +97,8 @@ The \emph{HK2017 capacity problem} is:
 where $\sigma$ ranges over all cyclic permutations of all subsets
 $S \subseteq \{1, \ldots, F\}$ with $|S| \geq 2$.
 The EHZ capacity is $c_{\mathrm{EHZ}}(K) = 1/(2\, Q_{\max})$.
+This is HK2017 Theorem~1.1 after translating normals/heights to dual vertices
+and reversing the ordered word used in HK2017's displayed objective.
 \end{definition}
 
 \begin{fact}[HK2017]\label{fact:hk2017}
@@ -105,7 +108,7 @@ The EHZ capacity is $c_{\mathrm{EHZ}}(K) = 1/(2\, Q_{\max})$.
 Any global maximizer $(\sigma^*, \beta^*)$
 of~\eqref{eq:hk2017-problem}
 corresponds to a minimum-action simple closed Reeb orbit on
-$\partial K$.
+$\partial K$, with $\sigma^*$ in active traversal order.
 \end{fact}
 
 

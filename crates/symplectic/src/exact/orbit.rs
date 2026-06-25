@@ -31,7 +31,8 @@ impl<F: ExactScalar + 'static> ExactOrbitKktData<F> {
 /// Solve the selected KKT system exactly for one sigma.
 ///
 /// Caller contract:
-/// - `sigma` is a partial permutation of facet indices into `dual_vertices`.
+/// - `sigma` is an active traversal word, represented as a partial permutation
+///   of facet indices into `dual_vertices`.
 ///
 /// Mathematical non-success:
 /// - returns `None` when the selected exact KKT system is inconsistent or has

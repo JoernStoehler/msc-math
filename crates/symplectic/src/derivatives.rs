@@ -50,7 +50,8 @@ pub enum DerivativeError {
 /// - `beta`: dwell-time coefficients from KktResult
 /// - `q`: Q value from KktResult.q_corrected
 /// - `mu`: closure multiplier (4 components) from KktResult.mu
-/// - `sigma`: cyclic facet sequence σ; entries must be valid distinct facet indices
+/// - `sigma`: active traversal facet sequence σ; entries must be valid distinct
+///   facet indices
 /// - `dual_vertices`: dual vertices a_i for all facets
 pub fn capacity_derivatives_a(
     beta: &[f64],

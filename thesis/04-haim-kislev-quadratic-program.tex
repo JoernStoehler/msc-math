@@ -45,19 +45,19 @@ For an ordered facet word
     \sum_{k=1}^m\beta_k a_{\sigma_k}=0
   \right\}.
 \]
-The quadratic objective for this word is
+The quadratic objective for this active word is
 \begin{equation}\label{eq:quadratic-program-algorithm-hk2019-q}
   Q_\sigma(\beta)
   =
   \sum_{1\leq j<k\leq m}
-    \beta_k\beta_j\,\omega_0(a_{\sigma_k},a_{\sigma_j}).
+    \beta_j\beta_k\,\omega_0(a_{\sigma_j},a_{\sigma_k}).
 \end{equation}
-This is the Haim--Kislev fixed-word order after translating their symplectic
-convention to \(\omega_0\). If one uses the opposite cyclic orientation of
-\(\sigma\), the displayed sum is written with the two arguments of
-\(\omega_0\) reversed. The global unpruned problem ranges over all ordered
-words, so this is a convention for naming the fixed word, not an extra
-geometric restriction.
+Here \(\sigma\) is written in the Reeb traversal order used in
+Section~\ref{sec:generalized-reeb-orbits-polytopes}. Haim--Kislev's displayed
+formula uses the reversed ordered word after translating their symplectic
+convention to \(\omega_0\). Since word reversal is a bijection on the ordered
+candidate family, the maximum is unchanged; the convention matters only when a
+single fixed word is interpreted.
 
 Let
 \[
@@ -90,8 +90,10 @@ dual vertices \(a_i=n_i/h_i\). The variable change above sends
   \sum_i\beta_i^{\mathrm{HK}}h_i=1,\qquad
   \sum_i\beta_i^{\mathrm{HK}}n_i=0
 \]
-to the constraints defining \(M_\sigma\), and sends the Haim--Kislev objective
-to \(Q_\sigma\). Their formula therefore reads
+to the constraints defining \(M_\sigma\). Their displayed objective uses the
+opposite word orientation from \eqref{eq:quadratic-program-algorithm-hk2019-q};
+replacing each ordered word by its reverse sends it to \(Q_\sigma\). Since
+reversal is a bijection on the words in the maximum, their formula reads
 \[
   c_{\mathrm{EHZ}}(K)
   =
@@ -102,17 +104,13 @@ to \(Q_\sigma\). Their formula therefore reads
 
 The normalization is compatible with our Reeb-orbit convention. Suppose a
 simple orbit is traversed in the active order
-\(\rho=(\rho_1,\ldots,\rho_m)\), with dwell times \(\tau_k>0\) and period
-\(T=\sum_k\tau_k\). The shoelace formula uses this traversal order, whereas
-\eqref{eq:quadratic-program-algorithm-hk2019-q} uses the Haim--Kislev
-fixed-word order. To compare them, set
+\(\sigma=(\sigma_1,\ldots,\sigma_m)\), with dwell times \(\tau_k>0\) and period
+\(T=\sum_k\tau_k\). Set
 \[
-  \sigma=(\rho_m,\rho_{m-1},\ldots,\rho_1),
-  \qquad
-  \beta_k=\frac{\tau_{m+1-k}}{T}.
+  \beta_k=\frac{\tau_k}{T}.
 \]
 Then \(\beta\in M_\sigma\), because the closure equation
-\(\sum_k\tau_kR_{\rho_k}=0\) and \(R_i=2J_0a_i\) imply
+\(\sum_k\tau_kR_{\sigma_k}=0\) and \(R_i=2J_0a_i\) imply
 \(\sum_k\beta_k a_{\sigma_k}=0\). Lemma~\ref{lem:preliminaries-shoelace}
 gives
 \[
@@ -121,7 +119,7 @@ gives
   4T^2
   \sum_{1\leq r<s\leq m}
     \frac{\tau_r}{T}\frac{\tau_s}{T}\,
-    \omega_0(a_{\rho_r},a_{\rho_s})
+    \omega_0(a_{\sigma_r},a_{\sigma_s})
   =
   4T^2Q_\sigma(\beta),
   \qquad\text{so}\qquad
@@ -132,8 +130,8 @@ free-period action \(T=A(\gamma)\). The Haim--Kislev theorem is the part that
 rules out a larger value coming from the finite optimization and proves the
 global equality with the capacity.
 
-For a fixed word, it is often convenient to write the objective as a quadratic
-program
+For a fixed active word, it is often convenient to write the objective as a
+quadratic program
 \[
   \text{maximize }\frac{1}{2}\beta^{\mathsf T}H_\sigma\beta
   \quad\text{subject to}\quad
@@ -142,15 +140,15 @@ program
 where \(H_\sigma\) is the symmetric matrix determined by
 \(\frac{1}{2}\beta^{\mathsf T}H_\sigma\beta=Q_\sigma(\beta)\). This section
 only fixes the standard finite problem. The next subsection explains how the
-project uses this fixed problem as an algorithmic interface.
+thesis uses this fixed problem as an algorithmic interface.
 
 \subsection{From the formula to computation}
 \label{subsec:quadratic-program-algorithm-hk2019-computation-layers}
 
 The Haim--Kislev theorem supplies the finite optimization problem, but it does
-not prescribe a single implementation route. In this thesis, the computations
-built on top of the theorem separate three choices: which words to visit, how
-to solve one fixed word, and what evidence level to attach to the output.
+not prescribe a single method for using it in later finite checks. In this
+thesis, later arguments separate three choices: which words to visit, how to
+solve one fixed active word, and what kind of evidence supports the output.
 
 The reference word family is the unpruned Haim--Kislev family: all ordered
 cyclic words with distinct facets. This is equivalent to the all-facet
@@ -174,25 +172,26 @@ the move imposes the corresponding sign condition on
 \(\omega_0(a_i,a_j)\). Failing one of these tests is therefore a certificate
 that the ordered pair cannot occur in that direction. Passing the tests is only
 a necessary condition for a physical transition; it is not itself a proof that
-the whole word has a valid base point. The fixed-word solve and, when needed,
-the base-point recovery check from
+the whole word has a valid base point. The one active-word solve and, when
+needed, the base-point recovery check from
 Lemma~\ref{lem:generalized-reeb-base-point-recovery} provide that later
 validation.
 
 For Lagrangian products we use a different enumeration route, described in
 Theorem~\ref{thm:lagrangian-product-finite-enumeration}. It feeds the same
-fixed-word quadratic programs but visits only the alternating block family that
+active-word quadratic programs but visits only the alternating block family that
 contains a capacity minimizer for such products.
 
-The fixed-word solve is a quadratic-program/KKT calculation. For exploratory
-and high-throughput experiments the project often uses floating-point KKT
-solves with explicit rejection or indeterminacy handling. For theorem-bearing
-finite certificates, the thesis does not rely on an unchecked floating-point
-answer: selected branches are reconstructed with exact rational or algebraic
+The active-word solve is a quadratic program, equivalently a KKT calculation.
+Exploratory finite checks may use numerical solves with explicit rejection or
+indeterminacy handling.
+
+The theorem-bearing finite certificates do not rely on unchecked floating-point
+answers. Selected branches are reconstructed with exact rational or algebraic
 arithmetic, and the HKO and rotated-pentagon certificates are verified in
-SageMath. The numerical behavior of the floating-point route is discussed
-separately in Section~\ref{sec:numerics}; the proof-bearing SageMath role is
-recorded in Appendix~\ref{app:sagemath-computations}.
+SageMath. The numerical behavior of the floating-point route is discussed in
+Section~\ref{sec:numerics}; the proof-bearing SageMath role is recorded in
+Appendix~\ref{app:sagemath-computations}.
 
 \subsection{Finite enumeration for Lagrangian products}
 \label{subsec:quadratic-program-algorithm-hk2019-lagrangian-products}

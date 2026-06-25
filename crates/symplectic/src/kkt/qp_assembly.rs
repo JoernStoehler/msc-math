@@ -15,10 +15,10 @@ use super::QP;
 use crate::geom::symplectic_form::omega0;
 use nalgebra::{DMatrix, DVector, Vector4};
 
-/// Assemble the QP {C, d, H} from dual vertices and a cyclic permutation.
+/// Assemble the QP {C, d, H} from dual vertices and an active traversal word.
 ///
-/// Given dual vertices a_i of K = {x : a_i^T x <= 1} and a permutation sigma
-/// of m facet indices, assembles:
+/// Given dual vertices a_i of K = {x : a_i^T x <= 1} and an active traversal
+/// word sigma of m facet indices, assembles:
 ///
 /// - **C** (5 x m): closure constraints (sum a_{sigma(i)} beta_i = 0, four rows)
 ///   plus normalization (sum beta_i = 1, one row). Note: when using dual vertices
@@ -85,7 +85,8 @@ pub fn build_qp_from_dual_vertices(dual_vertices: &[Vector4<f64>], perm: &[usize
     QP { c, d, h }
 }
 
-/// Assemble the augmented (m+5)x(m+5) KKT system from dual vertices and a permutation.
+/// Assemble the augmented (m+5)x(m+5) KKT system from dual vertices and an
+/// active traversal word.
 ///
 /// Builds the symmetric saddle-point matrix M and right-hand side b:
 ///

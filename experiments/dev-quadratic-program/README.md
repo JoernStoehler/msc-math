@@ -85,8 +85,8 @@ project, including the deferred project solver layer.
 
 The current HK2017-to-project convention audit itself lives in
 `formal/hk2017-qp-conventions.tex`. Use that file for normals/heights to
-dual-vertices conversion, the project `J_0`/`omega_0` convention, fixed-word QP
-orientation, and the current sign/order audit target.
+dual-vertices conversion, the project `J_0`/`omega_0` convention, active-word
+QP orientation, and the comparison with HK2017's reversed displayed word.
 
 This directory remains the coordination packet for QP route, naming, API, and
 cleanup questions. It should point to the formal convention note rather than

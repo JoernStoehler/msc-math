@@ -6,12 +6,14 @@ use tracing::{info, Level};
 use super::combinatorics::combinations;
 use super::permutations::for_each_cyclic_permutation;
 
-/// Visit every HK2017 sigma for a flat facet count, without transition pruning.
+/// Visit every active-word HK2017 candidate for a flat facet count, without
+/// transition pruning.
 pub fn for_each_sigma_unpruned_facet_count(facet_count: usize, mut visit: impl FnMut(&[usize])) {
     for_each_sigma_impl(facet_count, &mut visit)
 }
 
-/// Visit every HK2017 sigma that survives a flat directed transition matrix.
+/// Visit every active-word HK2017 candidate that survives a flat directed
+/// transition matrix.
 pub fn for_each_sigma_pruned_by_transition(
     transition_is_allowed: &DMatrix<bool>,
     mut visit: impl FnMut(&[usize]),
@@ -54,9 +56,9 @@ fn for_each_sigma_impl(facet_count: usize, visit: &mut dyn FnMut(&[usize])) {
     );
 }
 
-/// Visit each simple directed cycle exactly once, using HK2017 sigma convention.
+/// Visit each simple directed cycle exactly once, using active traversal order.
 ///
-/// Cyclic rotations represent the same HK2017 sigma. The canonical
+/// Cyclic rotations represent the same active word. The canonical
 /// representative starts at the smallest facet index in the cycle. During DFS,
 /// every later vertex must therefore be larger than the start vertex.
 ///
@@ -75,7 +77,7 @@ pub fn for_each_simple_directed_cycle_canonical(
     }
 }
 
-/// Iterator over simple directed cycles in canonical HK2017 sigma form.
+/// Iterator over simple directed cycles in canonical active-word form.
 ///
 /// Each yielded cycle is a `Vec<usize>` whose first entry is the smallest facet
 /// index in that cycle. Cycles have length at least two.

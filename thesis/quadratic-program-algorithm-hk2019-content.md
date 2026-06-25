@@ -21,7 +21,7 @@ Update rule: add or change a claim only with a source pointer or an explicit
   reason it computes the EHZ capacity/minimum action for polytopes.
 - In scope after the 2026-06-25 review: a compact bridge from the HK theorem to
   the project computation layers that later sections use: unpruned word
-  enumeration, transition pruning, product enumeration, fixed-word KKT solves,
+  enumeration, transition pruning, product enumeration, active-word KKT solves,
   and the distinction between f64 exploration and exact/Sage theorem evidence.
 - In scope: notation choices and conversion notes needed to state the standard
   result in the thesis convention.
@@ -56,13 +56,12 @@ Update rule: add or change a claim only with a source pointer or an explicit
 - Current convention: for a fixed word
   \(\sigma=(\sigma_1,\ldots,\sigma_m)\),
   \(M_\sigma=\{\beta\ge0:\sum\beta_k=1,\sum\beta_ka_{\sigma_k}=0\}\) and
-  \(Q_\sigma(\beta)=\sum_{j<k}\beta_k\beta_j
-  \omega_0(a_{\sigma_k},a_{\sigma_j})\). This is the HK fixed-word order from
-  `formal/hk2017-qp-conventions.tex`.
-- The active draft explains the sign/order comparison with the shoelace
-  formula by reversing the traversed orbit word. This should be reviewed
-  carefully because fixed-word orientation errors are high-impact for later
-  solver sections.
+  \(Q_\sigma(\beta)=\sum_{j<k}\beta_j\beta_k
+  \omega_0(a_{\sigma_j},a_{\sigma_k})\). Here \(\sigma\) is the active Reeb
+  traversal order.
+- The active draft explains the comparison with HK2017 by reversing the ordered
+  word in the HK display. This should be reviewed carefully because fixed-word
+  orientation errors are high-impact for later solver sections.
 - State the input contract explicitly: the dual rows have already been checked
   to be extremal and bounded in the sense of the polytope preliminaries.
 - The capacity computation may use the computed primal vertex set and
@@ -76,9 +75,9 @@ Update rule: add or change a claim only with a source pointer or an explicit
   must be converted deliberately.
 - Convention source: use `formal/hk2017-qp-conventions.tex` for the
   HK2017-to-project translation layer, especially normals/heights to dual
-  vertices, the project `J_0`/`omega_0` convention, fixed-word QP orientation,
-  and the current sign/order audit target. Cite HK2017/Haim--Kislev separately
-  for the theorem itself.
+  vertices, the project `J_0`/`omega_0` convention, active-word QP orientation,
+  and the word-reversal comparison to HK2017. Cite HK2017/Haim--Kislev
+  separately for the theorem itself.
 
 ## Correctness
 
@@ -86,7 +85,7 @@ Update rule: add or change a claim only with a source pointer or an explicit
   normals/heights to dual vertices, and gives the direct variable substitution.
 - The active explanatory paragraph checks normalization against the thesis
   Reeb/action conventions: an actual simple orbit with period \(T\) gives
-  \(Q=1/(2T)\) after reversing the traversed word into HK fixed-word order.
+  \(Q=1/(2T)\) in active traversal order.
 - Do not strengthen this into "every feasible QP point is already an actual
   Reeb orbit." Arbitrary finite feasible points are part of HK's dual finite
   formula; base-point recovery and later feasibility/pruning are separate
@@ -102,12 +101,10 @@ Update rule: add or change a claim only with a source pointer or an explicit
   checkpoint: the current section states the HK finite QP interface and a
   compact formula-to-computation bridge, while detailed optimizing/solving
   internals belong to later QP/numerics work.
-- 2026-06-20 HK source comparison confirmed the active fixed-word
-  sign/order/factor convention against HK2017 and
-  `formal/hk2017-qp-conventions.tex`. It also flagged that active-word
-  enumeration is not literally HK's full-permutation theorem statement; active
-  prose now marks this as an enumeration convention obtained by deleting
-  zero-weight facets.
+- 2026-06-25 convention decision: use active traversal / earlier-entry-first
+  order throughout the project and thesis. HK2017's displayed theorem uses the
+  reversed ordered word; active prose marks the reversal explicitly and uses
+  deletion of zero-weight facets as the enumeration convention.
 
 ## Deferred Algorithmic Material
 

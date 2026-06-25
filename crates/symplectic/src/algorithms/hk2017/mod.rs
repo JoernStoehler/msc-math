@@ -27,11 +27,12 @@ pub use enumeration::{
     for_each_simple_directed_cycle_canonical, SimpleDirectedCyclesCanonical,
 };
 
-/// Solve every HK2017 sigma candidate without transition pruning.
+/// Solve every active-word HK2017 candidate without transition pruning.
 ///
 /// Input contract: `dual_vertices` is the ordered facet-dual list for a
-/// bounded four-dimensional polytope. Candidate sigmas are generated over
-/// those facet indices and solved with the saddle-point KKT path.
+/// bounded four-dimensional polytope. Candidate sigmas are active Reeb
+/// traversal words generated over those facet indices and solved with the
+/// saddle-point KKT path.
 pub fn solve_unpruned_hk2017_candidates(
     dual_vertices: &[Vector4<f64>],
 ) -> Result<(Vec<OrbitKktData>, u64), OrbitSearchError> {
@@ -40,7 +41,8 @@ pub fn solve_unpruned_hk2017_candidates(
     })
 }
 
-/// Solve HK2017 sigma candidates allowed by a precomputed transition matrix.
+/// Solve active-word HK2017 candidates allowed by a precomputed transition
+/// matrix.
 ///
 /// Input contract: `transition_is_allowed[(i, j)]` describes the directed
 /// feasible transition relation for the same ordered facets as

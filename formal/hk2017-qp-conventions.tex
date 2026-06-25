@@ -16,10 +16,10 @@
 %   crates/symplectic/src/kkt/saddle_point_solver.rs
 %
 % Verification status:
-%   This note is the current source-backed audit for this convention layer, but
-%   it is not yet Jörn-reviewed final mathematical truth. In particular, it
-%   records existing sign/order hazards instead of silently repairing every
-%   dependent formal or Rust surface.
+%   This note records the current project convention after the 2026-06-25
+%   orientation decision: project sigma is active Reeb traversal order, while
+%   HK2017's displayed theorem uses the reversed ordered word. It is not a
+%   replacement for HK2017 or for proof of project-original solver correctness.
 
 % input by formal/main.tex -- do not add \documentclass or \begin{document}
 
@@ -104,23 +104,24 @@ becomes
     b_{\sigma(i)}b_{\sigma(j)}
     \omega_0(a_{\sigma(i)},a_{\sigma(j)}).
 \]
-This is the source-backed dual-vertex form that later QP notation should
-encode.
+This is the source-backed dual-vertex form of HK2017's displayed word
+orientation.  The project QP notation below uses the reversed active word.
 
-\subsection{Fixed-word QP convention}
-\label{subsec:hk2017-fixed-word-qp-convention}
+\subsection{Active-word QP convention}
+\label{subsec:hk2017-active-word-qp-convention}
 
 For a fixed ordered word
 \[
   \sigma=(\sigma(1),\ldots,\sigma(m)),
 \]
-the HK2017 order in the objective is later entry first, earlier entry second:
+the project convention is that \(\sigma\) records the active Reeb traversal
+order.  The objective is earlier entry first, later entry second:
 \[
   Q_\sigma(\beta)
   =
   \sum_{1\leq j<i\leq m}
     \beta_i\beta_j\,
-    \omega_0(a_{\sigma(i)},a_{\sigma(j)}).
+    \omega_0(a_{\sigma(j)},a_{\sigma(i)}).
 \]
 Here \(\beta\) denotes the project dual-vertex weight variable, i.e. the
 \(b\)-variable from Subsection~\ref{subsec:hk2017-normals-heights-dual-vertices},
@@ -143,16 +144,30 @@ Then
 \]
 
 If one writes \(Q_\sigma(\beta)=\frac12\beta^T H(\sigma)\beta\) with a
-symmetric matrix \(H(\sigma)\), the HK2017 fixed-word convention above is
-encoded by
+symmetric matrix \(H(\sigma)\), the active-word convention above is encoded by
 \[
   H_{ij}=H_{ji}
   =
-  \omega_0(a_{\sigma(j)},a_{\sigma(i)})
+  \omega_0(a_{\sigma(i)},a_{\sigma(j)})
   \quad\text{for } i<j.
 \]
-Equivalently, the matrix entry is \(\omega_0\) of the later word entry and the
-earlier word entry when the sum is expanded over \(i<j\).
+Equivalently, the matrix entry is \(\omega_0\) of the earlier word entry and the
+later word entry when the sum is expanded over \(i<j\).
+
+HK2017's displayed theorem uses the opposite orientation for a named word:
+\[
+  Q^{\mathrm{HK}}_\rho(\beta)
+  =
+  \sum_{1\leq j<i\leq m}
+    \beta_i\beta_j\,
+    \omega_0(a_{\rho(i)},a_{\rho(j)}).
+\]
+If \(\rho(i)=\sigma(m+1-i)\) and
+\(\beta^{\rho}_i=\beta^{\sigma}_{m+1-i}\), then
+\(Q^{\mathrm{HK}}_\rho(\beta^\rho)=Q_\sigma(\beta^\sigma)\).  Reversal is a
+bijection on the ordered candidate family, so the scalar maximum and the
+capacity formula are unchanged.  Fixed-word statements must nevertheless say
+which orientation the word name uses.
 
 The equivalence between the HK2017 all-facet-permutation formulation with zero
 dwell times and any project subset/cyclic-word formulation is a separate
@@ -160,52 +175,28 @@ enumeration-convention claim.  This note records the sign and scaling
 translation; the subset/cyclic-word equivalence should be owned by the QP core
 or algorithm statement that uses it.
 
-\subsection{Current mismatch and audit target}
-\label{subsec:hk2017-current-mismatch-audit}
+\subsection{Fixed-word caution}
+\label{subsec:hk2017-fixed-word-caution}
 
-Several existing project surfaces use a different fixed-word matrix convention
-or do not make the word-orientation convention explicit:
-\begin{itemize}
-  \item \texttt{formal/hk2017-qp-core.tex}, Definition
-    \texttt{def:hk2017-problem}, currently sets
-    \(H_{ij}=H_{ji}=\omega_0(a_{\sigma(i)},a_{\sigma(j)})\) for \(i<j\).
-  \item \texttt{formal/capacity-algorithms.tex}, Algorithm~\ref{alg:ehz},
-    uses the same earlier-entry-first symmetric matrix convention and returns
-    \((\max\beta^T H\beta)^{-1}\).
-  \item \texttt{formal/ehz-kkt-system.tex} is mixed: its setup and
-    Lemma~\ref{lem:H-quadratic} use the later-entry-first action sum, while
-    Lemma~\ref{lem:dual-vertex-qp} states an action matrix entry in the
-    earlier-entry-first order.
-  \item \texttt{crates/symplectic/src/kkt/rational\_solver.rs} constructs its
-    KKT matrix with \(H_{ij}=\omega_0(y_{\sigma(i)},y_{\sigma(j)})\) for
-    \(i<j\), while its result comment for exact \(Q(\beta)\) uses
-    \(\sum_{i>j}\beta_i\beta_j\omega_0(y_{\sigma(j)},y_{\sigma(i)})\).
-  \item The f64 assembly path in
-    \texttt{crates/symplectic/src/kkt/qp\_assembly.rs} builds the same
-    earlier-entry-first symmetric \(H\), while
-    \texttt{crates/symplectic/src/kkt/saddle\_point\_solver.rs} also contains a
-    direct \(Q(\beta)\) helper using the later-entry-first sum.
-\end{itemize}
-Because \(\omega_0\) is antisymmetric, these conventions are not identical for
-a fixed word.  They may define the same global scalar capacity after reversing
-word orientation everywhere, but fixed-word orbit reconstruction, derivative
-formulas, pruning, and gap-window semantics are sensitive to this distinction.
-There is also a normalization/factor convention to keep explicit:
+Because \(\omega_0\) is antisymmetric, the active-word convention and HK2017's
+displayed word convention are not identical for a fixed named word.  They define
+the same scalar capacity only after reversing word orientation in the whole
+candidate family.  Fixed-word orbit reconstruction, derivative formulas,
+pruning, certificates, and gap-window semantics are sensitive to this
+distinction. There is also a normalization/factor convention to keep explicit:
 \(Q_\sigma=\frac12\beta^TH\beta\) gives \(c_{\mathrm{EHZ}}=1/(2Q_{\max})\),
 whereas surfaces that optimize \(\beta^TH\beta\) return the reciprocal of that
 maximum.
 
 \begin{unverified}
-\begin{remark}[Audit target]\label{rem:hk2017-q-word-orientation-audit}
-Before thesis prose or code comments cite a fixed-word QP convention as
-HK2017-compatible, audit the dependent formal and Rust surfaces against the
-source-backed convention in
-Subsection~\ref{subsec:hk2017-fixed-word-qp-convention}.  In particular,
-decide whether each surface should be repaired to the HK2017 fixed-word
-orientation, or whether it intentionally uses reversed words and needs an
-explicit equivalence statement.  At the same time, record whether the local
-surface optimizes \(Q_\sigma\), \(\frac12\beta^TH\beta\), or \(\beta^TH\beta\),
-so that capacity reciprocals and factors of~\(2\) are not inferred from context.
+\begin{remark}[Word-orientation review target]\label{rem:hk2017-q-word-orientation-audit}
+Before thesis prose, formal lemmas, or code comments cite a fixed-word QP
+convention as HK2017-compatible, check whether the local word is active
+traversal order or HK2017 displayed order.  The project default is active
+traversal order; HK2017 comparison requires word reversal.  At the same time,
+record whether the local surface optimizes \(Q_\sigma\),
+\(\frac12\beta^TH\beta\), or \(\beta^TH\beta\), so that capacity reciprocals
+and factors of~\(2\) are not inferred from context.
 \end{remark}
 \end{unverified}
 
@@ -222,8 +213,9 @@ Rust comments may cite:
     \(J_0,\omega_0\) convention;
   \item Subsection~\ref{subsec:hk2017-normals-heights-dual-vertices} for the
     normals/heights-to-dual-vertices translation;
-  \item Subsection~\ref{subsec:hk2017-fixed-word-qp-convention} for the
-    source-backed fixed-word \(Q_\sigma\) convention;
+  \item Subsection~\ref{subsec:hk2017-active-word-qp-convention} for the
+    project active-word \(Q_\sigma\) convention and the HK2017 word-reversal
+    comparison;
   \item Remark~\ref{rem:hk2017-q-word-orientation-audit} when marking code or
     formal math that still needs the word-orientation audit.
 \end{itemize}

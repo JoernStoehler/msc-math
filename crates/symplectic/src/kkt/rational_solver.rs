@@ -47,9 +47,9 @@ pub struct ExactKktResult {
 /// Solve the KKT system exactly for a single (S, sigma) combinatorics.
 ///
 /// Given exact rational dual vertices y_i = n_i / h_i and a
-/// permutation `perm` (the sigma in the thesis), builds the (m+5) x (m+5) KKT
-/// matrix over Q and solves via the shared exact linear solver with null-space
-/// handling.
+/// active traversal word `perm` (the sigma in the thesis), builds the (m+5) x
+/// (m+5) KKT matrix over Q and solves via the shared exact linear solver with
+/// null-space handling.
 ///
 /// The dual vertex representation {y_i . x <= 1} has implicit height h_i = 1,
 /// so the eta block of the KKT matrix is all ones. This is mathematically

@@ -19,7 +19,8 @@
 
 % ── Setup: linear system referenced by the lemmas ──
 %
-% For a polytope K with dual vertices a_i and a pair (S, sigma),
+% For a polytope K with dual vertices a_i and an active-traversal pair
+% (S, sigma),
 % define the dual-vertex matrix A and action matrix H:
 %   A_{id} = a_{sigma(i),d},
 %   H_{ij} = omega_0(a_{sigma(j)}, a_{sigma(i)})  for i > j,
@@ -40,7 +41,7 @@
 % Notation updated to dual-vertex form; math unchanged
 \[
   \sum_{1 \leq j < i \leq |S|}
-    \beta_{\sigma(i)}\, \beta_{\sigma(j)}\,
+    \beta_i\, \beta_j\,
     \omega_0(a_{\sigma(j)},\, a_{\sigma(i)})
   = \tfrac{1}{2}\, \beta^\top H\, \beta.
 \]
@@ -54,9 +55,9 @@ For $i > j$,
 $H_{ij} = \omega_0(a_{\sigma(j)}, a_{\sigma(i)})$
 by definition of~$H$.
 Hence the double sum equals
-$\sum_{j < i} \beta_{\sigma(i)}\, \beta_{\sigma(j)}\, H_{ij}$.
+$\sum_{j < i} \beta_i\, \beta_j\, H_{ij}$.
 Since $H$ is symmetric with zero diagonal,
-$\sum_{j < i} \beta_{\sigma(i)} \beta_{\sigma(j)} H_{ij}
+$\sum_{j < i} \beta_i \beta_j H_{ij}
 = \tfrac{1}{2}\, \beta^\top H\, \beta$.
 \end{proof}
 \end{notationupdated}
@@ -201,10 +202,9 @@ The dwell-time fractions sum to one:
 $\mathbf{1}^\top \beta = 1$.
 
 \emph{Action.}
-The symplectic action contribution from the transition
-$\sigma(i) \to \sigma(j)$ is
+For \(j<i\), the pair contribution is
 $\beta_i\,\beta_j\,\omega_0(a_{\sigma(j)}, a_{\sigma(i)})$
-for $i > j$.
+in the active-word convention.
 By Lemma~\ref{lem:H-quadratic}, the total action equals
 $\tfrac{1}{2}\,\beta^\top H\,\beta$,
 where $H_{ij} = \omega_0(a_{\sigma(i)}, a_{\sigma(j)})$.

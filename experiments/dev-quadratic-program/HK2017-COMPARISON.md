@@ -35,8 +35,9 @@ HK2017's normals/heights notation.
   `K = { x : <a_i, x> <= 1 }`.
 - The variable change `b_i = beta_i h_i` turns HK2017's constraints into
   `b_i >= 0`, `sum b_i = 1`, and `sum b_i a_i = 0`.
-- The project convention for `J_0` and `omega_0`, and the fixed-word sign/order
-  audit, live in `formal/hk2017-qp-conventions.tex`.
+- The project convention for `J_0` and `omega_0`, the active-word QP
+  convention, and the comparison with HK2017's reversed displayed word live in
+  `formal/hk2017-qp-conventions.tex`.
 
 ## Formulation Differences To Audit
 
@@ -47,9 +48,9 @@ translation and presentation choices that must be made explicit.
   surfaces often use subsets, cyclic words, or implementation permutations.
   The equivalence between these representations should be owned by the QP core
   or algorithm statement that uses it.
-- Some project surfaces currently use a fixed-word matrix orientation opposite
-  to the source-backed HK2017 order. This may be globally equivalent after
-  reversing words, but it is not the same fixed-word convention.
+- The project convention is active traversal / earlier-entry-first order.
+  HK2017's displayed theorem uses the reversed word. Scalar maxima agree because
+  reversal is a bijection, but fixed-word statements must name their orientation.
 - Capacity factors must be named explicitly: a surface may optimize `Q`,
   `(1/2) beta^T H beta`, or `beta^T H beta`.
 
