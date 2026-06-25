@@ -79,11 +79,11 @@ identify their derivatives at the HKO point. The global rank, annihilation, and
 positive-convex-combination checks are exactly the finite first-order
 certificate on the quotient slice.
 
-Rust is used only to generate the finite witness file. SageMath reads that
-witness, reconstructs the exact algebraic data in memory, and checks the
-proof-facing equations. The full verifier packet is stored in
+Rust generates the finite witness file. SageMath reads that witness,
+reconstructs the exact algebraic data, and checks the proof-facing equations.
+The full verifier packet is stored in
 \path{experiments/hko-local-maximum/theorem/}. The mathematical implication
 from these checked equations to
 Theorem~\ref{thm:hko-ten-facet-local-maximum} is the finite upper-branch and
-slice argument above; it is not a property of the Rust search procedure.
-
+slice argument above; it does not depend on the search procedure that found the
+certificate.

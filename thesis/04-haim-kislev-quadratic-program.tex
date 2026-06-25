@@ -1,9 +1,9 @@
 \section{The Haim--Kislev Quadratic Program}
 \label{sec:quadratic-program-algorithm-hk2019}
 
-This section records the finite computation principle used later in the
-thesis. Haim--Kislev's formula for polytopes reduces the EHZ capacity to a
-finite list of quadratic programs over ordered facet words
+This section records the finite reduction used later in the thesis.
+Haim--Kislev's formula for polytopes reduces the EHZ capacity to a finite list
+of quadratic programs over ordered facet words
 \cite{HK2017}. For general polytopes this list is combinatorially large. For
 Lagrangian products of planar polygons, the billiard interpretation gives a
 much smaller finite list; this finite-enumeration result is the part needed in
@@ -76,7 +76,8 @@ segment.
 
 \begin{theorem}[Haim--Kislev quadratic program]
 \label{thm:quadratic-program-algorithm-hk2019-hk-formula}
-For a full-dimensional convex polytope \(K\subset\mathbb{R}^4\),
+For a full-dimensional convex polytope \(K\subset\mathbb{R}^4\) with
+\(0\in\operatorname{int}(K)\), written in the facet normalization above,
 \[
   c_{\mathrm{EHZ}}(K)=\frac{1}{2Q_{\max}}.
 \]
@@ -139,16 +140,17 @@ quadratic program
 \]
 where \(H_\sigma\) is the symmetric matrix determined by
 \(\frac{1}{2}\beta^{\mathsf T}H_\sigma\beta=Q_\sigma(\beta)\). This section
-only fixes the standard finite problem. The next subsection explains how the
-thesis uses this fixed problem as an algorithmic interface.
+only fixes the standard finite problem. The next subsection explains how later
+finite certificates use this fixed problem.
 
-\subsection{From the formula to computation}
+\subsection{From the formula to finite checks}
 \label{subsec:quadratic-program-algorithm-hk2019-computation-layers}
 
 The Haim--Kislev theorem supplies the finite optimization problem, but it does
-not prescribe a single method for using it in later finite checks. In this
-thesis, later arguments separate three choices: which words to visit, how to
-solve one fixed active word, and what kind of evidence supports the output.
+not prescribe a single proof layout for later finite checks. In this thesis,
+later arguments separate three choices: which words are still under
+consideration, what is checked for one fixed active word, and which exact
+assertions are needed to turn the finite list into a theorem.
 
 The reference word family is the unpruned Haim--Kislev family: all ordered
 cyclic words with distinct facets. This is equivalent to the all-facet
@@ -157,25 +159,25 @@ because a zero component of \(\beta\) contributes nothing to the constraints or
 to \(Q_\sigma\), and deleting it gives the corresponding shorter active word.
 Conversely, an active word can be padded by unused facets with zero weight.
 
-For a fixed active word, a capacity-relevant solution has \(\beta_k>0\) for
-each visited facet. If the maximum for a longer word is attained only with
-some \(\beta_k=0\), then the same value is represented by the shorter active
-word obtained by deleting that facet. Thus the one-word solvers used later
-solve the interior KKT equations for a fixed active word; boundary cases are
-handled by the surrounding enumeration rather than by treating zero dwell
-times as new orbits.
+For a fixed active word, a capacity-relevant simple orbit has \(\beta_k>0\) for
+each visited facet. If the maximum for a longer word is attained only with some
+\(\beta_k=0\), then the same value is represented by the shorter active word
+obtained by deleting that facet. Thus later fixed-word checks use the interior
+KKT equations when they claim a smooth branch for a chosen active word.
+Boundary maximizers belong to shorter active words, not to new zero-dwell
+orbits.
 
 The ordinary general-polytope search may prune the reference word family by
 directed transition tests. A simple orbit that moves from facet \(F_i\) to
 facet \(F_j\) must have a breakpoint in \(F_i\cap F_j\), and the direction of
 the move imposes the corresponding sign condition on
-\(\omega_0(a_i,a_j)\). Failing one of these tests is therefore a certificate
-that the ordered pair cannot occur in that direction. Passing the tests is only
-a necessary condition for a physical transition; it is not itself a proof that
-the whole word has a valid base point. The one active-word solve and, when
-needed, the base-point recovery check from
-Lemma~\ref{lem:generalized-reeb-base-point-recovery} provide that later
-validation.
+\(\omega_0(a_i,a_j)\). Stronger pruning may add other necessary transition
+checks, but every discarded pair must fail a necessary condition for that
+directed transition. Passing such tests is only a necessary condition for a
+physical transition; it is not itself a proof that the whole word has a valid
+base point. The fixed active-word solve and, when needed, the base-point
+recovery check from Lemma~\ref{lem:generalized-reeb-base-point-recovery}
+provide that later validation.
 
 For Lagrangian products we use a different enumeration route, described in
 Theorem~\ref{thm:lagrangian-product-finite-enumeration}. It feeds the same
@@ -183,14 +185,12 @@ active-word quadratic programs but visits only the alternating block family that
 contains a capacity minimizer for such products.
 
 The active-word solve is a quadratic program, equivalently a KKT calculation.
-Exploratory finite checks may use numerical solves with explicit rejection or
-indeterminacy handling.
-
-The theorem-bearing finite certificates do not rely on unchecked floating-point
-answers. Selected branches are reconstructed with exact rational or algebraic
-arithmetic, and the HKO and rotated-pentagon certificates are verified in
-SageMath. The numerical behavior of the floating-point route is discussed in
-Section~\ref{sec:numerics}; the proof-bearing SageMath role is recorded in
+For theorem-bearing finite certificates, the load-bearing claims are exact
+algebraic assertions: feasibility, positivity, branch formulas, sign decisions,
+rank statements, or inequalities. Numerical searches may suggest the finite
+list or the expected branch, but they are not used as proof unless replaced by
+such exact assertions. The numerical issues are discussed in
+Section~\ref{sec:numerics}; the exact certificate runs are recorded in
 Appendix~\ref{app:sagemath-computations}.
 
 \subsection{Finite enumeration for Lagrangian products}
@@ -209,8 +209,9 @@ of facets of the same type a two-facet block.
 \begin{theorem}[Finite enumeration for Lagrangian products]
 \label{thm:lagrangian-product-finite-enumeration}
 For a Lagrangian product \(K=K_q\times_L K_p\) of nondegenerate planar convex
-polygons, \(c_{\mathrm{EHZ}}(K)\) is obtained by maximizing \(Q_\sigma\) over
-the Haim--Kislev quadratic programs associated to cyclic words of the form
+polygons containing the origin in their interiors, \(c_{\mathrm{EHZ}}(K)\) is
+obtained by maximizing \(Q_\sigma\) over the Haim--Kislev quadratic programs
+associated to cyclic words of the form
 \[
   \bigl([Q\mid QQ]\,[P\mid PP]\bigr)^k,
   \qquad k\in\{2,3\},
@@ -246,13 +247,13 @@ Therefore every same-type run in a cyclic facet word has length one or two,
 and the maximal same-type runs alternate between \(q\)- and \(p\)-runs. A
 two-facet run must use adjacent polygon edges, because consecutive facets in a
 simple orbit share the breakpoint between the corresponding Reeb segments.
-Since the Haim--Kislev words are simple, distinct same-type blocks use disjoint
-facets; otherwise the flattened cyclic word would repeat a facet. A word with
-one \(q\)-block and one \(p\)-block cannot satisfy the positive closure
-equation: the \(q\)-part would require a positive combination of one normal, or
-of two adjacent edge normals, to vanish, and the same obstruction holds in the
-\(p\)-part. Adjacent outward normals of a convex polygon are not antiparallel.
-Thus \(k=1\) is excluded.
+Since active Haim--Kislev words have distinct facet entries, distinct same-type
+blocks use disjoint facets; otherwise the flattened cyclic word would repeat a
+facet. A word with one \(q\)-block and one \(p\)-block cannot satisfy the
+positive closure equation: the \(q\)-part would require a positive combination
+of one normal, or of two adjacent edge normals, to vanish, and the same
+obstruction holds in the \(p\)-part. Adjacent outward normals of a convex
+polygon are not antiparallel. Thus \(k=1\) is excluded.
 
 The EHZ capacity of a Lagrangian product is also the length of the shortest
 closed \(K_p\)-billiard trajectory in \(K_q\), measured with the support
@@ -290,12 +291,13 @@ corresponding Haim--Kislev quadratic program. The capacity is
 feasible words in this candidate family.
 \end{algorithm}
 
-\subsection{Implementation status}
+\subsection{Use in later certificates}
 \label{subsec:quadratic-program-algorithm-hk2019-implementation-status}
 
-The thesis uses this section as a mathematical interface, not as a complete
-software manual. The exact pentagon computation in
-Section~\ref{sec:rotated-regular-polygons} implements the specialized
+The later exact certificates use this section as a mathematical interface. The
+HKO local-maximum certificate uses selected active words to build exact upper
+branches. The rotated-pentagon certificate uses the specialized
 Lagrangian-product enumeration from
-Theorem~\ref{thm:lagrangian-product-finite-enumeration}, then verifies the
-resulting exact algebraic inequalities in SageMath.
+Theorem~\ref{thm:lagrangian-product-finite-enumeration}, then checks the exact
+algebraic inequalities needed to compare every surviving branch with the
+displayed one.
