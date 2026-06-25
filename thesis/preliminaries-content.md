@@ -60,9 +60,10 @@ Update rule: add or change a claim only with a source pointer or an explicit
   \(H\)-representations, polar dual vertices, boundedness via positive
   spanning, irredundancy via extremality of dual rows, exact vertex enumeration
   from four active facets, vertex--facet incidence, face-incidence extraction,
-  and Hausdorff/fixed-facet local charts. This material is non-novel but needed
-  in multiple thesis sections and should remain thesis-facing, even if some
-  details later move to an appendix.
+  Hausdorff/fixed-facet local charts, Lagrangian products with the \(q/p\)
+  facet split, and the volume conventions used by later certificates. This
+  material is non-novel but needed in multiple thesis sections and should
+  remain thesis-facing, even if some details later move to an appendix.
 
 ## Smooth Symplectic Geometry
 
@@ -126,9 +127,12 @@ Update rule: add or change a claim only with a source pointer or an explicit
   `thesis/legacy/basic-definitions.tex`, the old `/tmp/pdf-source-a872` thesis
   packet, and `/tmp/thesis_stoehler_20260216.pdf` against active preliminaries.
   Active text now absorbs the useful low-cost preliminaries omissions:
-  standard \(J_0,\omega_0,\lambda_0\) identities, the standard capacity
-  axioms/background, and the symplectic-product capacity formula for normalized
-  symplectic capacities.
+  standard \(J_0,\omega_0,\lambda_0\) identities, Stokes/symplectic-area
+  motivation for action, smooth characteristic/Reeb terminology, the standard
+  capacity axioms/background, the systolic-ratio symmetry group and invariance
+  lemma, Hausdorff continuity of \(c_{\mathrm{EHZ}}\) and \(\operatorname{sys}\),
+  and the symplectic-product capacity formula for normalized symplectic
+  capacities.
 - Stale-branch mining on 2026-06-22 recovered the provenance detail behind
   that PDF comparison: `/tmp/thesis_stoehler_20260216.pdf` matched rebuild
   commit `a8724979698e1e2b98d5a0145184c65b08f809ed`, whose relevant source
@@ -138,12 +142,12 @@ Update rule: add or change a claim only with a source pointer or an explicit
   descendants are in `thesis/legacy/`. This is source-routing information for
   future cleanup, not thesis evidence.
 - Deliberately not ported from old preliminaries in this checkpoint:
-  characteristic-line-field definitions and their reparametrization proof,
-  Stokes/symplectic-area motivation for action, full smooth/polytope orbit
-  existence theorem statements, and the Clarke symmetry-class uniqueness
-  remark. These are lower-priority polish or background candidates for the
-  preliminaries review surface; they should be reconsidered before deleting the
-  corresponding legacy source material.
+  full smooth/polytope orbit existence theorem statements, any longer
+  characteristic-line-field reparametrization proof beyond the basic Reeb
+  paragraph now active, and the Clarke symmetry-class uniqueness remark. These
+  are lower-priority polish or background candidates for the preliminaries
+  review surface; they should be reconsidered before deleting the corresponding
+  legacy source material.
 - Once the active Clarke section has passed Jörn's review, delete
   `thesis/legacy/clarkedual-action-principle.tex`; it should not remain as a
   parallel source after its content and phrasing are absorbed into active

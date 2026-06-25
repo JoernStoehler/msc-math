@@ -52,6 +52,51 @@ vertex--facet matrix has been constructed exactly; they are not numerical
 signed-distance tests. Degenerate inputs that need more than this incidence
 contract are treated separately in the relevant algorithm section.
 
+\begin{definition}[Lagrangian product and \(q/p\)-facets]
+\label{def:preliminaries-lagrangian-product}
+Write
+\[
+  \mathbb{R}^4=\mathbb{R}^2_q\oplus\mathbb{R}^2_p
+  =
+  \{(q_1,q_2,p_1,p_2)\}.
+\]
+For planar convex polygons \(K_q,K_p\subset\mathbb{R}^2\), both containing
+\(0\) in their interiors, their \emph{Lagrangian product} is
+\begin{equation}\label{eq:preliminaries-lagrangian-product}
+  K_q\times_L K_p
+  \coloneqq
+  \{(q_1,q_2,p_1,p_2):(q_1,q_2)\in K_q,\ (p_1,p_2)\in K_p\}.
+\end{equation}
+Equivalently, \(K_q\) is placed in the Lagrangian \(q\)-plane
+\(\mathbb{R}^2_q=\{(q_1,q_2,0,0)\}\), and \(K_p\) is placed in the
+Lagrangian \(p\)-plane \(\mathbb{R}^2_p=\{(0,0,p_1,p_2)\}\). This differs
+from the symplectic product notation in
+Section~\ref{subsec:preliminaries-smooth-symplectic-geometry}, where the two
+planar factors occupy the symplectic coordinate planes \((q_1,p_1)\) and
+\((q_2,p_2)\).
+
+If the polygon factors are written irredundantly as
+\begin{align*}
+  K_q&=\{q\in\mathbb{R}^2:\langle b_i,q\rangle\leq1,\ i=1,\ldots,F_q\},\\
+  K_p&=\{p\in\mathbb{R}^2:\langle c_j,p\rangle\leq1,\ j=1,\ldots,F_p\},
+\end{align*}
+then \(K_q\times_L K_p\) has the normalized halfspace description
+\begin{align*}
+  \langle (b_i,0,0),(q_1,q_2,p_1,p_2)\rangle&\leq1,\\
+  \langle (0,0,c_j),(q_1,q_2,p_1,p_2)\rangle&\leq1.
+\end{align*}
+Here \((b_i,0,0)=(b_{i,1},b_{i,2},0,0)\) and
+\((0,0,c_j)=(0,0,c_{j,1},c_{j,2})\). Thus the dual vertices of the product
+split into two coordinate blocks. A \emph{\(q\)-facet} is the facet defined by
+one of the lifted \(K_q\)-rows; geometrically it is an edge of \(K_q\) times
+the whole polygon \(K_p\). A \emph{\(p\)-facet} is defined by one of the lifted
+\(K_p\)-rows, and is \(K_q\) times an edge of \(K_p\). Later finite
+enumerations label all \(q\)-facets first and all \(p\)-facets afterwards,
+usually in counterclockwise order inside each planar factor. For example, a
+pentagon product has \(q\)-facet labels \(0,\ldots,4\) and \(p\)-facet labels
+\(5,\ldots,9\).
+\end{definition}
+
 For generated dual rows, boundedness is checked before vertex enumeration.
 Equivalently, the dual rows positively span \(\mathbb{R}^4\):
 \[
@@ -74,6 +119,35 @@ facet labellings can represent the same unlabelled polytope. This is the
 topological background for local perturbation statements such as the
 Hausdorff-local ten-facet chart in
 Section~\ref{sec:hko-local-maximum}.
+
+Throughout the thesis,
+\(\operatorname{vol}_4\) denotes Euclidean four-dimensional Lebesgue measure in
+the fixed coordinate convention \((q_1,q_2,p_1,p_2)\). For a 4-simplex
+\(\Delta=\operatorname{conv}(v_0,v_1,v_2,v_3,v_4)\),
+\[
+  \operatorname{vol}_4(\Delta)
+  =
+  \frac{1}{4!}
+  \left|
+    \det(v_1-v_0\mid v_2-v_0\mid v_3-v_0\mid v_4-v_0)
+  \right|.
+\]
+For a polytope, any finite decomposition into 4-simplices with overlaps only
+along lower-dimensional faces gives the same volume after summing these simplex
+volumes. This is the convention behind the exact volume rows used later; the
+first-order volume derivative formulas themselves are method-specific and are
+introduced only where they are needed.
+
+For planar convex sets \(Q\) and \(P\), placed in the \(q\)- and \(p\)-factors
+as above, Fubini's theorem gives
+\[
+  \operatorname{vol}_4(Q\times_L P)
+  =
+  \operatorname{area}(Q)\operatorname{area}(P).
+\]
+Here \(\operatorname{area}\) denotes ordinary two-dimensional Euclidean area.
+Planar rotations preserve this area, so the volume of a rotated Lagrangian
+product \(Q\times_L R(\theta)P\) is independent of \(\theta\).
 
 For a convex body \(K\), the support function and gauge function are
 \[
@@ -98,4 +172,3 @@ Reeb orbit equals its period:
 \[
   A(\gamma)=T.
 \]
-

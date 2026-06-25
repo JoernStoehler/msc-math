@@ -30,6 +30,46 @@ Thus, for an absolutely continuous closed curve
     \langle -J_0\dot{\gamma}(t),\gamma(t)\rangle\,dt.
 \end{equation}
 This action is invariant under orientation-preserving reparametrization.
+If \(\gamma\) bounds a smooth map \(u\colon D^2\to\mathbb{R}^4\), then Stokes'
+theorem gives
+\[
+  A(\gamma)=\int_{D^2}u^*\omega_0.
+\]
+Thus action is the signed symplectic area enclosed by the curve. For Reeb
+orbits this is the quantity that the EHZ capacity minimizes.
+
+Let \(K\subset\mathbb{R}^4\) be a smooth convex body with
+\(0\in\operatorname{int}(K)\). At \(x\in\partial K\), the restriction of
+\(\omega_0\) to the three-dimensional space \(T_x\partial K\) has a
+one-dimensional kernel,
+\[
+  \ell_x
+  =
+  \{v\in T_x\partial K:\omega_0(v,w)=0
+    \text{ for all }w\in T_x\partial K\}.
+\]
+This is the characteristic line. A \emph{closed characteristic} is a closed
+curve on \(\partial K\) whose velocity lies in the positive characteristic
+direction. We choose the positive direction by requiring
+\(\lambda_0(\dot{\gamma})>0\).
+
+The restriction \(\alpha=\lambda_0|_{\partial K}\) is a contact form. Its Reeb
+vector field \(R\) is the contact-normalized characteristic direction,
+\[
+  \alpha(R_x)=1,
+  \qquad
+  \omega_0(R_x,v)=0
+  \quad\text{for all }v\in T_x\partial K.
+\]
+A Reeb orbit is a periodic integral curve of \(R\). It is the same geometric
+object as a closed characteristic, with the parametrization fixed by
+\(\lambda_0(\dot{\gamma})=1\). Consequently, if \(\gamma\) is a Reeb orbit on
+\([0,T]\), then
+\[
+  A(\gamma)=\int_0^T\lambda_0(\dot{\gamma}(t))\,dt=T.
+\]
+This is the sense in which the action of a contact-normalized Reeb orbit is
+also its period.
 
 \begin{lemma}[Symplectic shoelace formula]\label{lem:preliminaries-shoelace}
 Let \(z\colon[0,T]\to\mathbb{R}^4\) be a closed piecewise affine curve. Suppose
@@ -64,4 +104,3 @@ so \(\sum_k\ell_kw_k=0\). The self-term
 \]
 using \(\omega_0(u,v)=\langle J_0u,v\rangle\).
 \end{proof}
-
