@@ -141,9 +141,58 @@ program
 \]
 where \(H_\sigma\) is the symmetric matrix determined by
 \(\frac{1}{2}\beta^{\mathsf T}H_\sigma\beta=Q_\sigma(\beta)\). This section
-only fixes the standard finite problem. Later algorithmic sections decide how
-to enumerate words, discard impossible words, and solve the fixed-word
-quadratic programs.
+only fixes the standard finite problem. The next subsection explains how the
+project uses this fixed problem as an algorithmic interface.
+
+\subsection{From the formula to computation}
+\label{subsec:quadratic-program-algorithm-hk2019-computation-layers}
+
+The Haim--Kislev theorem supplies the finite optimization problem, but it does
+not prescribe a single implementation route. In this thesis, the computations
+built on top of the theorem separate three choices: which words to visit, how
+to solve one fixed word, and what evidence level to attach to the output.
+
+The reference word family is the unpruned Haim--Kislev family: all ordered
+cyclic words with distinct facets. This is equivalent to the all-facet
+permutation formulation in Theorem~\ref{thm:quadratic-program-algorithm-hk2019-hk-formula},
+because a zero component of \(\beta\) contributes nothing to the constraints or
+to \(Q_\sigma\), and deleting it gives the corresponding shorter active word.
+Conversely, an active word can be padded by unused facets with zero weight.
+
+For a fixed active word, a capacity-relevant solution has \(\beta_k>0\) for
+each visited facet. If the maximum for a longer word is attained only with
+some \(\beta_k=0\), then the same value is represented by the shorter active
+word obtained by deleting that facet. Thus the one-word solvers used later
+solve the interior KKT equations for a fixed active word; boundary cases are
+handled by the surrounding enumeration rather than by treating zero dwell
+times as new orbits.
+
+The ordinary general-polytope search may prune the reference word family by
+directed transition tests. A simple orbit that moves from facet \(F_i\) to
+facet \(F_j\) must have a breakpoint in \(F_i\cap F_j\), and the direction of
+the move imposes the corresponding sign condition on
+\(\omega_0(a_i,a_j)\). Failing one of these tests is therefore a certificate
+that the ordered pair cannot occur in that direction. Passing the tests is only
+a necessary condition for a physical transition; it is not itself a proof that
+the whole word has a valid base point. The fixed-word solve and, when needed,
+the base-point recovery check from
+Lemma~\ref{lem:generalized-reeb-base-point-recovery} provide that later
+validation.
+
+For Lagrangian products we use a different enumeration route, described in
+Theorem~\ref{thm:lagrangian-product-finite-enumeration}. It feeds the same
+fixed-word quadratic programs but visits only the alternating block family that
+contains a capacity minimizer for such products.
+
+The fixed-word solve is a quadratic-program/KKT calculation. For exploratory
+and high-throughput experiments the project often uses floating-point KKT
+solves with explicit rejection or indeterminacy handling. For theorem-bearing
+finite certificates, the thesis does not rely on an unchecked floating-point
+answer: selected branches are reconstructed with exact rational or algebraic
+arithmetic, and the HKO and rotated-pentagon certificates are verified in
+SageMath. The numerical behavior of the floating-point route is discussed
+separately in Section~\ref{sec:numerics}; the proof-bearing SageMath role is
+recorded in Appendix~\ref{app:sagemath-computations}.
 
 \subsection{Finite enumeration for Lagrangian products}
 \label{subsec:quadratic-program-algorithm-hk2019-lagrangian-products}

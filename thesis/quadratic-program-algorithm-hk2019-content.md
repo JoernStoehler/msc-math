@@ -19,11 +19,16 @@ Update rule: add or change a claim only with a source pointer or an explicit
 
 - In scope: the Haim--Kislev quadratic-program statement and the mathematical
   reason it computes the EHZ capacity/minimum action for polytopes.
+- In scope after the 2026-06-25 review: a compact bridge from the HK theorem to
+  the project computation layers that later sections use: unpruned word
+  enumeration, transition pruning, product enumeration, fixed-word KKT solves,
+  and the distinction between f64 exploration and exact/Sage theorem evidence.
 - In scope: notation choices and conversion notes needed to state the standard
   result in the thesis convention.
-- Out of scope: the algorithms we developed to solve the quadratic programs.
-  Leave pruning, KKT solvers, exact arithmetic, f64 behavior, performance
-  optimization, and implementation tests to later algorithm/numerics sessions.
+- Out of scope here: detailed algorithms for solving the quadratic programs.
+  Leave KKT solver internals, exact arithmetic implementation, f64 error
+  analysis, performance optimization, and implementation tests to later
+  algorithm/numerics sections.
 - Out of scope: project-original improvements or insights on top of the HK
   finite formulation, except where a small convention is needed to make the
   standard result readable.
@@ -94,8 +99,9 @@ Update rule: add or change a claim only with a source pointer or an explicit
 - 2026-06-20 legacy/PDF comparison found the old KKT linear system,
   well-definedness, non-maximizer warning, and unpruned solver correctness as
   substantial old material not represented here. This is deliberate for this
-  checkpoint: the current section states the HK finite QP interface, while
-  optimizing/solving the QP belongs to the later QP algorithm checkpoint.
+  checkpoint: the current section states the HK finite QP interface and a
+  compact formula-to-computation bridge, while detailed optimizing/solving
+  internals belong to later QP/numerics work.
 - 2026-06-20 HK source comparison confirmed the active fixed-word
   sign/order/factor convention against HK2017 and
   `formal/hk2017-qp-conventions.tex`. It also flagged that active-word
@@ -108,6 +114,7 @@ Update rule: add or change a claim only with a source pointer or an explicit
 - Partial-word enumeration, pruning/admissibility checks, KKT solving,
   repeated/tied minimizer handling, accumulator/certainty status, and empirical
   tests belong to a later session about our algorithmic work.
-- When this section is drafted, mention implementation only as far as needed to
-  explain why later thesis sections can call this standard finite problem a
-  computational target.
+- The active subsection
+  `subsec:quadratic-program-algorithm-hk2019-computation-layers` is intended to
+  be the high-level reader bridge, not the detailed solver story. It should not
+  grow into a software manual.
