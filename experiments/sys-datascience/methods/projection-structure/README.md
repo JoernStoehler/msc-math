@@ -24,7 +24,7 @@ source stratification, not geometry features used to construct the projection.
 uv run --script experiments/sys-datascience/methods/projection-structure/analyze.py
 ```
 
-## Retained Artifacts
+## Generated Artifacts After Rerun
 
 - `artifacts/summary.json`
 - `artifacts/pca-sys.png`

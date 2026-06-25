@@ -37,7 +37,6 @@ struct PrepareStatsRow {
     polytope_rows: usize,
     provenance_rows: usize,
     computed_polytope_observation_rows: usize,
-    ascent_run_rows: usize,
     max_sys: Option<f64>,
     sys_gt_one: usize,
     build_polytope_table_ms: f64,
@@ -242,23 +241,8 @@ fn load_new_producer_outputs(produce_dir: &Path) -> LoadedCaches {
             product_bounces: None,
             seed_index: Some(row.attempt as usize),
             lineage_id: Some(format!("seed:{}:attempt:{}", row.seed, row.attempt)),
-            parent_provenance_id: None,
-            rq: None,
             path: None,
-            starting_f: None,
-            starting_sys: None,
-            reported_final_sys: None,
-            reported_delta: None,
-            sys_after_addition: None,
-            n_iterations: None,
-            n_phases: None,
-            best_strategy: None,
-            n_escape_overshoot: None,
-            n_escape_wiggle: None,
-            placement_direction: None,
-            facet_remained_active: None,
             total_time_ms: None,
-            trace_events: Vec::new(),
         });
     }
 
@@ -282,7 +266,7 @@ fn load_new_producer_outputs(produce_dir: &Path) -> LoadedCaches {
             poly_id: row.poly_id,
             dataset: "random_product_sample".to_string(),
             family: "lagrangian_product".to_string(),
-            role: "random_sample".to_string(),
+            role: "random_product_sample".to_string(),
             search_space: "lagrangian_product".to_string(),
             optimizer: "none".to_string(),
             backend: payload.backend.clone(),
@@ -300,23 +284,8 @@ fn load_new_producer_outputs(produce_dir: &Path) -> LoadedCaches {
                 "seed:{}:{}x{}:attempt:{}",
                 row.seed, row.k, row.m, row.attempt
             )),
-            parent_provenance_id: None,
-            rq: None,
             path: Some(format!("lp_{}x{}", row.k, row.m)),
-            starting_f: None,
-            starting_sys: None,
-            reported_final_sys: None,
-            reported_delta: None,
-            sys_after_addition: None,
-            n_iterations: None,
-            n_phases: None,
-            best_strategy: None,
-            n_escape_overshoot: None,
-            n_escape_wiggle: None,
-            placement_direction: None,
-            facet_remained_active: None,
             total_time_ms: None,
-            trace_events: Vec::new(),
         });
     }
 
@@ -376,10 +345,6 @@ fn main() {
         polytope_rows: polytope_rows.len(),
         provenance_rows: caches.provenance_rows.len(),
         computed_polytope_observation_rows: caches.computed_polytope_observations.len(),
-        ascent_run_rows: provenance_run_rows
-            .iter()
-            .filter(|row| row.optimizer.contains("gradient_ascent"))
-            .count(),
         max_sys: polytope_rows.iter().map(|row| row.sys).reduce(f64::max),
         sys_gt_one: polytope_rows.iter().filter(|row| row.sys > 1.0).count(),
         build_polytope_table_ms,

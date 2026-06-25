@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Build the current sys-landscape datascience prepared tables into the retained
-# prepare directory.
+# Build the current random/product sys-landscape datascience prepared tables
+# into the retained prepare directory.
 #
 # Default output:
 #   experiments/sys-datascience/prepare/
@@ -20,12 +20,15 @@ else
 fi
 mkdir -p "$TABLES_DIR"
 
-echo "Building sys-landscape datascience tables"
+echo "Building random/product sys-landscape datascience tables"
 echo "  repo:        $ROOT"
 echo "  prepare dir: $TABLES_DIR"
+echo "  mode:        random-only"
 echo
 
-cargo run -p exp-sys-landscape --release --bin sys-dataset -- --out-dir "$TABLES_DIR"
+cargo run -p exp-sys-landscape --release --bin sys-dataset -- \
+  --random-only \
+  --out-dir "$TABLES_DIR"
 
 echo
 echo "Wrote prepared tables: $TABLES_DIR"

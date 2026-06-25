@@ -90,7 +90,7 @@ implemented here.
 uv run --script experiments/sys-datascience/methods/statistical-associations/analyze.py
 ```
 
-## Retained Artifacts
+## Generated Artifacts After Rerun
 
 - `artifacts/summary.json`
 
@@ -159,8 +159,8 @@ Partially covered or missing first-layer-node work:
   retained random/product producer files; newer producer provenance can expose
   optional `sample_attempt`;
 - explicit product-structure or symmetry scores are not implemented;
-- local perturbation/sensitivity scalars require separate non-gradient
-  perturbation or local-behavior data.
+- local perturbation/sensitivity scalars are outside the current
+  random/product table.
 
 Raw coordinates of individual dual vertices are not a good substitute for this
 audit: coordinate-level effects are not invariant under the relevant symmetries,

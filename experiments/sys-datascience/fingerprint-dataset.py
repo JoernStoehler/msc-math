@@ -72,11 +72,9 @@ def fingerprint(tables_dir: Path) -> dict[str, Any]:
     polytope_path = tables_dir / "polytope-table.jsonl"
     computed_observation_path = tables_dir / "computed-polytope-observation-table.jsonl"
     provenance_path = tables_dir / "polytope-provenance-table.jsonl"
-    ascent_run_path = tables_dir / "polytope-ascent-run-table.jsonl"
     polytope_rows = load_jsonl(polytope_path)
     computed_observation_rows = load_jsonl(computed_observation_path)
     provenance_rows = load_jsonl(provenance_path)
-    ascent_run_rows = load_jsonl(ascent_run_path)
     sys_values = [float(row["sys"]) for row in polytope_rows]
     polytope_ids = {str(row["poly_id"]) for row in polytope_rows}
     nonmaterialized_observation_poly_ids = sum(
@@ -85,7 +83,6 @@ def fingerprint(tables_dir: Path) -> dict[str, Any]:
     hashes = {
         "polytope-table.jsonl": sha256(polytope_path),
         "polytope-provenance-table.jsonl": sha256(provenance_path),
-        "polytope-ascent-run-table.jsonl": sha256(ascent_run_path),
     }
     hashes["computed-polytope-observation-table.jsonl"] = sha256(computed_observation_path)
     max_sys = max(sys_values) if sys_values else None
@@ -96,13 +93,11 @@ def fingerprint(tables_dir: Path) -> dict[str, Any]:
         "computed_polytope_observation_rows": len(computed_observation_rows),
         "computed_polytope_observations_without_polytope_rows": nonmaterialized_observation_poly_ids,
         "provenance_rows": len(provenance_rows),
-        "ascent_run_rows": len(ascent_run_rows),
         "polytope_union_field_count": union_field_count(polytope_rows),
         "computed_polytope_observation_union_field_count": union_field_count(
             computed_observation_rows
         ),
         "provenance_union_field_count": union_field_count(provenance_rows),
-        "ascent_run_union_field_count": union_field_count(ascent_run_rows),
         "dataset_counts": count_by(provenance_rows, "dataset"),
         "polytope_capacity_source_counts": count_by(polytope_rows, "capacity_source"),
         "computed_polytope_observation_dataset_counts": count_by(
@@ -126,10 +121,6 @@ def fingerprint(tables_dir: Path) -> dict[str, Any]:
         require(
             stats.get("computed_polytope_observation_rows") == len(computed_observation_rows),
             "prepare-stats computed_polytope_observation_rows mismatch",
-        )
-        require(
-            stats.get("ascent_run_rows") == len(ascent_run_rows),
-            "prepare-stats ascent_run_rows mismatch",
         )
         require(stats.get("sys_gt_one") == sys_gt_one_count, "prepare-stats sys_gt_one mismatch")
         if max_sys is None:
@@ -163,7 +154,6 @@ def print_markdown(data: dict[str, Any]) -> None:
         f"`{data['computed_polytope_observations_without_polytope_rows']}`"
     )
     print(f"- provenance rows: `{data['provenance_rows']}`")
-    print(f"- ascent run rows: `{data['ascent_run_rows']}`")
     print(f"- prepare stats present: `{data['prepare_stats_present']}`")
     print(f"- polytope union fields: `{data['polytope_union_field_count']}`")
     print(
@@ -171,7 +161,6 @@ def print_markdown(data: dict[str, Any]) -> None:
         f"`{data['computed_polytope_observation_union_field_count']}`"
     )
     print(f"- provenance union fields: `{data['provenance_union_field_count']}`")
-    print(f"- ascent run union fields: `{data['ascent_run_union_field_count']}`")
     print(f"- max `sys`: `{data['max_sys']}`")
     print(f"- `sys > 1` rows: `{data['sys_gt_one_count']}`")
     print("- dataset counts:")

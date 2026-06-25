@@ -235,60 +235,7 @@ pub struct ProvenanceRunRow {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub lineage_id: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub parent_provenance_id: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub rq: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub path: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub starting_f: Option<usize>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub starting_sys: Option<f64>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub reported_final_sys: Option<f64>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub reported_delta: Option<f64>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub sys_after_addition: Option<f64>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub n_iterations: Option<usize>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub n_phases: Option<usize>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub best_strategy: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub n_escape_overshoot: Option<usize>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub n_escape_wiggle: Option<usize>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub placement_direction: Option<[f64; 4]>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub facet_remained_active: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub total_time_ms: Option<f64>,
-    pub trajectory_trace_available: f64,
-    pub trajectory_event_count: usize,
-    pub trajectory_phase_count: usize,
-    pub trajectory_mean_iters_per_phase: f64,
-    pub trajectory_overshoot_fraction: f64,
-    pub trajectory_overshoot_15_fraction: f64,
-    pub trajectory_overshoot_2_fraction: f64,
-    pub trajectory_overshoot_3_fraction: f64,
-    pub trajectory_t_fraction_mean: f64,
-    pub trajectory_t_fraction_std: f64,
-    pub trajectory_t_fraction_max: f64,
-    pub trajectory_t_actual_mean: f64,
-    pub trajectory_t_actual_std: f64,
-    pub trajectory_t_actual_max: f64,
-    pub trajectory_gradient_norm_mean: f64,
-    pub trajectory_gradient_norm_std: f64,
-    pub trajectory_gradient_norm_max: f64,
-    pub trajectory_delta_share_top1: f64,
-    pub trajectory_delta_share_top3: f64,
-    pub trajectory_restart_drop_mean: f64,
-    pub trajectory_restart_drop_max: f64,
-    pub trajectory_restart_drop_fraction: f64,
-    pub trajectory_efficiency_mean: f64,
-    pub trajectory_efficiency_std: f64,
-    pub trajectory_efficiency_max: f64,
 }

@@ -32,6 +32,8 @@
 //! - `--seed <u64>`                 RNG seed                                (default: 42)
 //! - `--samples-per-bucket <usize>` samples for each included pair bucket   (default: 10)
 //! - `--max-sides <usize>`          cap polygon sizes included in the run   (default: 6)
+//! - `--h-min <f64>`                minimum support height                  (default: 0.8)
+//! - `--h-max <f64>`                maximum support height                  (default: 1.2)
 //! - `--out <path>`                 output JSONL path                       (default: untracked temp)
 //! - `--cache <path>`               cache JSONL path                        (default: untracked temp)
 
@@ -81,6 +83,8 @@ struct Args {
     seed: u64,
     samples_per_bucket: usize,
     max_sides: usize,
+    h_min: f64,
+    h_max: f64,
     out: PathBuf,
     cache: PathBuf,
 }
@@ -107,6 +111,8 @@ fn parse_args_from(argv: impl IntoIterator<Item = impl Into<String>>) -> Args {
         .map(|(_, m)| *m)
         .max()
         .expect("pair list non-empty");
+    let mut h_min = H_MIN;
+    let mut h_max = H_MAX;
     let mut out = None;
     let mut cache = None;
 
@@ -136,6 +142,18 @@ fn parse_args_from(argv: impl IntoIterator<Item = impl Into<String>>) -> Args {
                 assert!(max_sides >= 3, "--max-sides must be at least 3");
                 i += 2;
             }
+            "--h-min" => {
+                h_min = need_value("--h-min")
+                    .parse()
+                    .expect("--h-min must be a finite f64");
+                i += 2;
+            }
+            "--h-max" => {
+                h_max = need_value("--h-max")
+                    .parse()
+                    .expect("--h-max must be a finite f64");
+                i += 2;
+            }
             "--out" => {
                 out = Some(PathBuf::from(need_value("--out")));
                 i += 2;
@@ -152,6 +170,8 @@ fn parse_args_from(argv: impl IntoIterator<Item = impl Into<String>>) -> Args {
         seed,
         samples_per_bucket,
         max_sides,
+        h_min,
+        h_max,
         out: out.unwrap_or_else(default_smoke_output_path),
         cache: cache.unwrap_or_else(default_smoke_cache_path),
     }
@@ -189,6 +209,15 @@ fn vertices_rational_strings(polytope: &SysLandscapePolytopeCache) -> Vec<[Strin
 
 fn main() {
     let args = parse_args();
+    assert!(
+        args.h_min.is_finite()
+            && args.h_max.is_finite()
+            && 0.0 < args.h_min
+            && args.h_min < args.h_max,
+        "height range must satisfy finite 0 < h_min < h_max, got h_min={}, h_max={}",
+        args.h_min,
+        args.h_max
+    );
     let t0 = Instant::now();
     let mut rng = ChaCha8Rng::seed_from_u64(args.seed);
     let pairs = included_pairs(args.max_sides);
@@ -217,15 +246,18 @@ fn main() {
 
     let mut total = 0usize;
     let mut cache_hits = 0usize;
+    let mut attempt: u64 = 0;
 
     for (k, m) in pairs {
         println!("Bucket ({k},{m}) with {} samples", args.samples_per_bucket);
 
         let mut accepted = 0usize;
         while accepted < args.samples_per_bucket {
+            let attempt_for_row = attempt;
+            attempt += 1;
             // Generate polygon pair using shared RNG (advances RNG regardless of acceptance)
-            let (qn, qh) = random_polygon_2d(k, H_MIN, H_MAX, &mut rng);
-            let (pn, ph) = random_polygon_2d(m, H_MIN, H_MAX, &mut rng);
+            let (qn, qh) = random_polygon_2d(k, args.h_min, args.h_max, &mut rng);
+            let (pn, ph) = random_polygon_2d(m, args.h_min, args.h_max, &mut rng);
 
             let polytope =
                 match SysLandscapePolytopeCache::from_lagrangian_product(&qn, &qh, &pn, &ph) {
@@ -265,11 +297,13 @@ fn main() {
                         k,
                         m,
                         facet_count: k + m,
+                        seed: Some(args.seed),
+                        attempt: Some(attempt_for_row),
                         dual_vertices: f64_dual_vertices(&polytope),
                         dual_vertices_rational: dual_vertices_rational_strings(&polytope),
                         vertices_rational: vertices_rational_strings(&polytope),
-                        h_min: H_MIN,
-                        h_max: H_MAX,
+                        h_min: args.h_min,
+                        h_max: args.h_max,
                         volume: vol,
                         capacity: cap,
                         sys,
@@ -339,11 +373,13 @@ fn main() {
                 k,
                 m,
                 facet_count: k + m,
+                seed: Some(args.seed),
+                attempt: Some(attempt_for_row),
                 dual_vertices: f64_dual_vertices(&polytope),
                 dual_vertices_rational: dual_vertices_rational_strings(&polytope),
                 vertices_rational: vertices_rational_strings(&polytope),
-                h_min: H_MIN,
-                h_max: H_MAX,
+                h_min: args.h_min,
+                h_max: args.h_max,
                 volume: vol,
                 capacity: cap,
                 sys,
@@ -382,6 +418,8 @@ mod tests {
         let args = parse_args_from(["sys-dataset-random-product"]);
         assert_eq!(args.seed, SEED);
         assert_eq!(args.samples_per_bucket, SAMPLES_PER_BUCKET);
+        assert_eq!(args.h_min, H_MIN);
+        assert_eq!(args.h_max, H_MAX);
         assert!(
             args.out
                 .to_string_lossy()
@@ -408,6 +446,10 @@ mod tests {
             "2",
             "--max-sides",
             "4",
+            "--h-min",
+            "0.6",
+            "--h-max",
+            "1.8",
             "--out",
             "tmp/out.jsonl",
             "--cache",
@@ -417,6 +459,8 @@ mod tests {
         assert_eq!(args.seed, 11);
         assert_eq!(args.samples_per_bucket, 2);
         assert_eq!(args.max_sides, 4);
+        assert_eq!(args.h_min, 0.6);
+        assert_eq!(args.h_max, 1.8);
         assert_eq!(args.out, PathBuf::from("tmp/out.jsonl"));
         assert_eq!(args.cache, PathBuf::from("tmp/cache.jsonl"));
     }

@@ -26,6 +26,8 @@
 //! - `--seed <u64>`            RNG seed                               (default: 42)
 //! - `--samples-per-f <usize>` samples for each included facet count  (default: plan value)
 //! - `--max-f <usize>`         cap facet counts included in the run   (default: 12)
+//! - `--h-min <f64>`           minimum support height                  (default: 0.8)
+//! - `--h-max <f64>`           maximum support height                  (default: 1.2)
 //! - `--out <path>`            output JSONL path                      (default: untracked temp)
 //! - `--cache <path>`          cache JSONL path                       (default: untracked temp)
 
@@ -62,6 +64,8 @@ struct Args {
     seed: u64,
     samples_per_f: Option<usize>,
     max_f: usize,
+    h_min: f64,
+    h_max: f64,
     out: PathBuf,
     cache: PathBuf,
 }
@@ -88,6 +92,8 @@ fn parse_args_from(argv: impl IntoIterator<Item = impl Into<String>>) -> Args {
         .map(|(f, _)| *f)
         .max()
         .expect("random plan should be non-empty");
+    let mut h_min = H_MIN;
+    let mut h_max = H_MAX;
     let mut out = None;
     let mut cache = None;
 
@@ -119,6 +125,18 @@ fn parse_args_from(argv: impl IntoIterator<Item = impl Into<String>>) -> Args {
                 assert!(max_f >= 5, "--max-f must be at least 5");
                 i += 2;
             }
+            "--h-min" => {
+                h_min = need_value("--h-min")
+                    .parse()
+                    .expect("--h-min must be a finite f64");
+                i += 2;
+            }
+            "--h-max" => {
+                h_max = need_value("--h-max")
+                    .parse()
+                    .expect("--h-max must be a finite f64");
+                i += 2;
+            }
             "--out" => {
                 out = Some(PathBuf::from(need_value("--out")));
                 i += 2;
@@ -135,6 +153,8 @@ fn parse_args_from(argv: impl IntoIterator<Item = impl Into<String>>) -> Args {
         seed,
         samples_per_f,
         max_f,
+        h_min,
+        h_max,
         out: out.unwrap_or_else(default_smoke_output_path),
         cache: cache.unwrap_or_else(default_smoke_cache_path),
     }
@@ -167,6 +187,15 @@ fn rational_vec4_to_strings(data: &[[BigRational; 4]]) -> Vec<[String; 4]> {
 
 fn main() {
     let args = parse_args();
+    assert!(
+        args.h_min.is_finite()
+            && args.h_max.is_finite()
+            && 0.0 < args.h_min
+            && args.h_min < args.h_max,
+        "height range must satisfy finite 0 < h_min < h_max, got h_min={}, h_max={}",
+        args.h_min,
+        args.h_max
+    );
     let t0 = Instant::now();
     let plan = sweep_plan(args.samples_per_f, args.max_f);
     assert!(
@@ -197,7 +226,10 @@ fn main() {
     let mut attempt: u64 = 0;
 
     for (facet_count, n_samples) in plan {
-        println!("F={facet_count:2}: generating {n_samples:2} samples (h in [{H_MIN}, {H_MAX}])");
+        println!(
+            "F={facet_count:2}: generating {n_samples:2} samples (h in [{}, {}])",
+            args.h_min, args.h_max
+        );
         let mut accepted = 0usize;
 
         while accepted < n_samples {
@@ -205,8 +237,8 @@ fn main() {
                 master_seed: args.seed,
                 attempt,
                 facet_count_target: facet_count,
-                h_min: H_MIN,
-                h_max: H_MAX,
+                h_min: args.h_min,
+                h_max: args.h_max,
             };
 
             // Try Source-based lookup first
@@ -237,6 +269,8 @@ fn main() {
                 let row = RandomSweepRow {
                     name: format!("random_F{facet_count}_{accepted}"),
                     facet_count,
+                    seed: Some(args.seed),
+                    attempt: Some(attempt),
                     dual_vertices: p
                         .dual_vertices_f64
                         .iter()
@@ -246,8 +280,8 @@ fn main() {
                         &record.dual_vertices_rational,
                     ),
                     vertices_rational: rational_vec4_to_strings(&record.vertices_rational),
-                    h_min: H_MIN,
-                    h_max: H_MAX,
+                    h_min: args.h_min,
+                    h_max: args.h_max,
                     volume: vol,
                     capacity: cap,
                     sys,
@@ -268,8 +302,8 @@ fn main() {
             // Cache miss: generate polytope
             let p = match SysLandscapePolytopeCache::generate_random(
                 facet_count,
-                H_MIN,
-                H_MAX,
+                args.h_min,
+                args.h_max,
                 args.seed,
                 attempt,
             ) {
@@ -315,6 +349,8 @@ fn main() {
             let row = RandomSweepRow {
                 name: format!("random_F{facet_count}_{accepted}"),
                 facet_count,
+                seed: Some(args.seed),
+                attempt: Some(attempt),
                 dual_vertices: p
                     .dual_vertices_f64
                     .iter()
@@ -322,8 +358,8 @@ fn main() {
                     .collect(),
                 dual_vertices_rational: rational_vec4_to_strings(&p.dual_vertices),
                 vertices_rational: rational_vec4_to_strings(&p.vertices),
-                h_min: H_MIN,
-                h_max: H_MAX,
+                h_min: args.h_min,
+                h_max: args.h_max,
                 volume: vol,
                 capacity: cap,
                 sys,
@@ -362,6 +398,8 @@ mod tests {
         let args = parse_args_from(["sys-dataset-random"]);
         assert_eq!(args.seed, SEED);
         assert_eq!(args.samples_per_f, None);
+        assert_eq!(args.h_min, H_MIN);
+        assert_eq!(args.h_max, H_MAX);
         assert!(
             args.out.to_string_lossy().contains("sys-dataset-random"),
             "default output path should use smoke temp dir: {:?}",
@@ -384,6 +422,10 @@ mod tests {
             "2",
             "--max-f",
             "6",
+            "--h-min",
+            "0.6",
+            "--h-max",
+            "1.8",
             "--out",
             "tmp/out.jsonl",
             "--cache",
@@ -393,6 +435,8 @@ mod tests {
         assert_eq!(args.seed, 7);
         assert_eq!(args.samples_per_f, Some(2));
         assert_eq!(args.max_f, 6);
+        assert_eq!(args.h_min, 0.6);
+        assert_eq!(args.h_max, 1.8);
         assert_eq!(args.out, PathBuf::from("tmp/out.jsonl"));
         assert_eq!(args.cache, PathBuf::from("tmp/cache.jsonl"));
     }

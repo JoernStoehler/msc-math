@@ -28,7 +28,7 @@ candidate-proposer inputs.
 uv run --script experiments/sys-datascience/methods/prediction-ranking/analyze.py
 ```
 
-## Retained Artifacts
+## Generated Artifacts After Rerun
 
 - `artifacts/summary.json`
 

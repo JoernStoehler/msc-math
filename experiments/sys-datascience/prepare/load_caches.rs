@@ -1,19 +1,17 @@
-//! Load producer outputs and merge them into unified datascience input rows.
+//! Load random/product producer outputs into unified datascience input rows.
 
 use blake3::Hasher;
-use exp_sys_landscape::{
-    package_root, rational_vec4_to_strings, ComputedPolytopeRow, SummaryRow, TraceRow,
-};
+use exp_sys_landscape::package_root;
 #[path = "../produce/rows.rs"]
 mod rows;
-use rows::{RandomProductRow, RandomSweepRow, ResultRow};
+use rows::{RandomProductRow, RandomSweepRow};
 use serde::de::DeserializeOwned;
 use std::collections::{BTreeMap, HashMap};
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::path::{Path, PathBuf};
 use std::time::{SystemTime, UNIX_EPOCH};
-use symplectic::database::{load_many, OrbitScalars, PolytopeRecord, SigmaAction};
+use symplectic::database::{OrbitScalars, SigmaAction};
 
 use crate::rows::ComputedPolytopeObservationRow;
 
@@ -30,19 +28,6 @@ pub struct LoadedPolytopeRow {
     pub sigma_gap_cutoff: Option<f64>,
     pub sigmas: Option<Vec<SigmaAction>>,
     pub orbit_scalars: Option<OrbitScalars>,
-}
-
-#[derive(Debug, Clone)]
-pub struct TraceEvent {
-    pub phase: usize,
-    pub iteration: usize,
-    pub step_type: String,
-    pub t_fraction: f64,
-    pub t_actual: f64,
-    pub sys_before: f64,
-    pub sys_after: f64,
-    pub delta_sys: f64,
-    pub gradient_norm: f64,
 }
 
 #[derive(Clone)]
@@ -66,23 +51,8 @@ pub struct LoadedProvenanceRow {
     pub product_bounces: Option<usize>,
     pub seed_index: Option<usize>,
     pub lineage_id: Option<String>,
-    pub parent_provenance_id: Option<String>,
-    pub rq: Option<String>,
     pub path: Option<String>,
-    pub starting_f: Option<usize>,
-    pub starting_sys: Option<f64>,
-    pub reported_final_sys: Option<f64>,
-    pub reported_delta: Option<f64>,
-    pub sys_after_addition: Option<f64>,
-    pub n_iterations: Option<usize>,
-    pub n_phases: Option<usize>,
-    pub best_strategy: Option<String>,
-    pub n_escape_overshoot: Option<usize>,
-    pub n_escape_wiggle: Option<usize>,
-    pub placement_direction: Option<[f64; 4]>,
-    pub facet_remained_active: Option<bool>,
     pub total_time_ms: Option<f64>,
-    pub trace_events: Vec<TraceEvent>,
 }
 
 pub struct LoadedCaches {
@@ -91,73 +61,34 @@ pub struct LoadedCaches {
     pub computed_polytope_observations: Vec<ComputedPolytopeObservationRow>,
 }
 
-#[derive(Clone)]
-struct OrbitPayload {
-    capacity: Option<f64>,
-    volume: Option<f64>,
-    sigmas: Option<Vec<SigmaAction>>,
-    sigma_gap_cutoff: Option<f64>,
-    orbit_scalars: Option<OrbitScalars>,
-}
-
 pub struct DatasetPaths {
-    pub random_only: bool,
     pub max_random_rows: Option<usize>,
     pub max_random_product_rows: Option<usize>,
     pub random_sample: PathBuf,
     pub random_product: PathBuf,
-    pub ascent_summary: PathBuf,
-    pub ascent_trace: PathBuf,
-    pub ascent_cache: PathBuf,
-    pub ascent_computed_polytopes: PathBuf,
-    pub ascent_product_summary: PathBuf,
-    pub ascent_product_trace: PathBuf,
-    pub ascent_product_cache: PathBuf,
-    pub ascent_product_computed_polytopes: PathBuf,
-    pub continuation_summary: PathBuf,
-    pub shared_cache: PathBuf,
-    pub continuation_cache: PathBuf,
     pub out_dir: PathBuf,
 }
 
 fn print_help(program: &str) {
     println!(
         "\
-Build sys-landscape datascience prepared tables from producer caches.
+Build random/product sys-landscape datascience prepared tables.
 
 Usage:
   {program} --out-dir <prepare-dir> [options]
 
-Method-wave output:
-  experiments/sys-datascience/prepare
-
 Options:
-  --random-only                   Load only random_sample and random_product_sample rows
-  --random-only-size <name>       Named random/product size: smoke, method, or full
+  --random-only                   Accepted for compatibility; this loader is always random/product only
+  --random-only-size <name>       Named size: smoke, method, or full
   --max-random-rows <n>           Override random_sample row count for development
   --max-random-product-rows <n>   Override random_product_sample row count for development
-  --produce-dir <dir>              Read canonical producer filenames from <dir>
-  --random <path>                  Override random.jsonl
-  --random-product <path>          Override random-product.jsonl
-  --ascent <path>                  Override ascent-general-endpoints.jsonl
-  --ascent-trace <path>            Override ascent-general-trace.jsonl
-  --ascent-cache <path>            Override ascent-general-cache.jsonl
-  --ascent-computed-polytopes <path>
-                                  Override ascent-general-computed-polytopes.jsonl
-  --ascent-product <path>          Override ascent-product-endpoints.jsonl
-  --ascent-product-trace <path>    Override ascent-product-trace.jsonl
-  --ascent-product-cache <path>    Override ascent-product-cache.jsonl
-  --ascent-product-computed-polytopes <path>
-                                  Override ascent-product-computed-polytopes.jsonl
-  --continuation <path>            Override continuation.jsonl
-  --shared-cache <path>            Override shared-cache.jsonl
-  --continuation-cache <path>      Override continuation-cache.jsonl
-  --out-dir <prepare-dir>          Output directory for retained prepared tables
-  --help                           Show this help
+  --produce-dir <dir>             Read random.jsonl and random-product.jsonl from <dir>
+  --random <path>                 Override random.jsonl
+  --random-product <path>         Override random-product.jsonl
+  --out-dir <prepare-dir>         Output directory for prepared tables
+  --help                          Show this help
 
 If --out-dir is omitted, this command writes to a temporary smoke directory.
-Use that only for one-off scratch. For method waves, use an owned path under
-experiments/sys-datascience/prepare/.
 "
     );
 }
@@ -184,45 +115,20 @@ fn smoke_output_dir() -> PathBuf {
 fn default_paths() -> DatasetPaths {
     let produce_dir = package_root().join("../sys-datascience/produce");
     DatasetPaths {
-        random_only: false,
         max_random_rows: None,
         max_random_product_rows: None,
         random_sample: produce_dir.join("random.jsonl"),
         random_product: produce_dir.join("random-product.jsonl"),
-        ascent_summary: produce_dir.join("ascent-general-endpoints.jsonl"),
-        ascent_trace: produce_dir.join("ascent-general-trace.jsonl"),
-        ascent_cache: produce_dir.join("ascent-general-cache.jsonl"),
-        ascent_computed_polytopes: produce_dir.join("ascent-general-computed-polytopes.jsonl"),
-        ascent_product_summary: produce_dir.join("ascent-product-endpoints.jsonl"),
-        ascent_product_trace: produce_dir.join("ascent-product-trace.jsonl"),
-        ascent_product_cache: produce_dir.join("ascent-product-cache.jsonl"),
-        ascent_product_computed_polytopes: produce_dir
-            .join("ascent-product-computed-polytopes.jsonl"),
-        continuation_summary: produce_dir.join("continuation.jsonl"),
-        shared_cache: produce_dir.join("shared-cache.jsonl"),
-        continuation_cache: produce_dir.join("continuation-cache.jsonl"),
         out_dir: smoke_output_dir(),
     }
 }
 
 pub fn parse_args() -> DatasetPaths {
     let defaults = default_paths();
-    let mut random_only = defaults.random_only;
     let mut max_random_rows = defaults.max_random_rows;
     let mut max_random_product_rows = defaults.max_random_product_rows;
     let mut random_sample = defaults.random_sample;
     let mut random_product = defaults.random_product;
-    let mut ascent_summary = defaults.ascent_summary;
-    let mut ascent_trace = defaults.ascent_trace;
-    let mut ascent_cache = defaults.ascent_cache;
-    let mut ascent_computed_polytopes = defaults.ascent_computed_polytopes;
-    let mut ascent_product_summary = defaults.ascent_product_summary;
-    let mut ascent_product_trace = defaults.ascent_product_trace;
-    let mut ascent_product_cache = defaults.ascent_product_cache;
-    let mut ascent_product_computed_polytopes = defaults.ascent_product_computed_polytopes;
-    let mut continuation_summary = defaults.continuation_summary;
-    let mut shared_cache = defaults.shared_cache;
-    let mut continuation_cache = defaults.continuation_cache;
     let mut out_dir = defaults.out_dir;
 
     let args: Vec<String> = std::env::args().collect();
@@ -235,14 +141,12 @@ pub fn parse_args() -> DatasetPaths {
         let flag = args[i].as_str();
         match flag {
             "--random-only" => {
-                random_only = true;
                 i += 1;
             }
             "--random-only-size" => {
                 let value = args
                     .get(i + 1)
                     .unwrap_or_else(|| panic!("{flag} requires a value"));
-                random_only = true;
                 (max_random_rows, max_random_product_rows) = random_only_size_limits(value);
                 i += 2;
             }
@@ -274,18 +178,6 @@ pub fn parse_args() -> DatasetPaths {
                 let dir = PathBuf::from(value);
                 random_sample = dir.join("random.jsonl");
                 random_product = dir.join("random-product.jsonl");
-                ascent_summary = dir.join("ascent-general-endpoints.jsonl");
-                ascent_trace = dir.join("ascent-general-trace.jsonl");
-                ascent_cache = dir.join("ascent-general-cache.jsonl");
-                ascent_computed_polytopes = dir.join("ascent-general-computed-polytopes.jsonl");
-                ascent_product_summary = dir.join("ascent-product-endpoints.jsonl");
-                ascent_product_trace = dir.join("ascent-product-trace.jsonl");
-                ascent_product_cache = dir.join("ascent-product-cache.jsonl");
-                ascent_product_computed_polytopes =
-                    dir.join("ascent-product-computed-polytopes.jsonl");
-                continuation_summary = dir.join("continuation.jsonl");
-                shared_cache = dir.join("shared-cache.jsonl");
-                continuation_cache = dir.join("continuation-cache.jsonl");
                 i += 2;
             }
             "--random" => {
@@ -302,83 +194,6 @@ pub fn parse_args() -> DatasetPaths {
                 random_product = PathBuf::from(value);
                 i += 2;
             }
-            "--ascent" => {
-                let value = args
-                    .get(i + 1)
-                    .unwrap_or_else(|| panic!("{flag} requires a value"));
-                ascent_summary = PathBuf::from(value);
-                i += 2;
-            }
-            "--ascent-trace" => {
-                let value = args
-                    .get(i + 1)
-                    .unwrap_or_else(|| panic!("{flag} requires a value"));
-                ascent_trace = PathBuf::from(value);
-                i += 2;
-            }
-            "--ascent-cache" => {
-                let value = args
-                    .get(i + 1)
-                    .unwrap_or_else(|| panic!("{flag} requires a value"));
-                ascent_cache = PathBuf::from(value);
-                i += 2;
-            }
-            "--ascent-computed-polytopes" => {
-                let value = args
-                    .get(i + 1)
-                    .unwrap_or_else(|| panic!("{flag} requires a value"));
-                ascent_computed_polytopes = PathBuf::from(value);
-                i += 2;
-            }
-            "--ascent-product" => {
-                let value = args
-                    .get(i + 1)
-                    .unwrap_or_else(|| panic!("{flag} requires a value"));
-                ascent_product_summary = PathBuf::from(value);
-                i += 2;
-            }
-            "--ascent-product-trace" => {
-                let value = args
-                    .get(i + 1)
-                    .unwrap_or_else(|| panic!("{flag} requires a value"));
-                ascent_product_trace = PathBuf::from(value);
-                i += 2;
-            }
-            "--ascent-product-cache" => {
-                let value = args
-                    .get(i + 1)
-                    .unwrap_or_else(|| panic!("{flag} requires a value"));
-                ascent_product_cache = PathBuf::from(value);
-                i += 2;
-            }
-            "--ascent-product-computed-polytopes" => {
-                let value = args
-                    .get(i + 1)
-                    .unwrap_or_else(|| panic!("{flag} requires a value"));
-                ascent_product_computed_polytopes = PathBuf::from(value);
-                i += 2;
-            }
-            "--continuation" => {
-                let value = args
-                    .get(i + 1)
-                    .unwrap_or_else(|| panic!("{flag} requires a value"));
-                continuation_summary = PathBuf::from(value);
-                i += 2;
-            }
-            "--shared-cache" => {
-                let value = args
-                    .get(i + 1)
-                    .unwrap_or_else(|| panic!("{flag} requires a value"));
-                shared_cache = PathBuf::from(value);
-                i += 2;
-            }
-            "--continuation-cache" => {
-                let value = args
-                    .get(i + 1)
-                    .unwrap_or_else(|| panic!("{flag} requires a value"));
-                continuation_cache = PathBuf::from(value);
-                i += 2;
-            }
             "--out-dir" => {
                 let value = args
                     .get(i + 1)
@@ -391,22 +206,10 @@ pub fn parse_args() -> DatasetPaths {
     }
 
     DatasetPaths {
-        random_only,
         max_random_rows,
         max_random_product_rows,
         random_sample,
         random_product,
-        ascent_summary,
-        ascent_trace,
-        ascent_cache,
-        ascent_computed_polytopes,
-        ascent_product_summary,
-        ascent_product_trace,
-        ascent_product_cache,
-        ascent_product_computed_polytopes,
-        continuation_summary,
-        shared_cache,
-        continuation_cache,
         out_dir,
     }
 }
@@ -431,14 +234,6 @@ fn read_jsonl<T: DeserializeOwned>(path: &Path) -> Vec<T> {
         .collect()
 }
 
-fn read_jsonl_if_exists<T: DeserializeOwned>(path: &Path) -> Vec<T> {
-    if path.exists() {
-        read_jsonl(path)
-    } else {
-        Vec::new()
-    }
-}
-
 fn poly_id_from_dual_vertices(dual_vertices_rational: &[[String; 4]]) -> String {
     let mut hasher = Hasher::new();
     for row in dual_vertices_rational {
@@ -450,136 +245,77 @@ fn poly_id_from_dual_vertices(dual_vertices_rational: &[[String; 4]]) -> String 
     hasher.finalize().to_hex().to_string()
 }
 
-fn orbit_payloads_from_paths(cache_paths: &[&Path]) -> HashMap<String, OrbitPayload> {
-    if cache_paths.is_empty() {
-        return HashMap::new();
-    }
-
-    let db = load_many(cache_paths).expect("load producer caches");
-    let mut out = HashMap::new();
-    for (_key, record) in db {
-        let poly_id =
-            poly_id_from_dual_vertices(&rational_vec4_to_strings(&record.dual_vertices_rational));
-        let sigma_gap_cutoff = sigma_gap_cutoff(&record);
-        out.insert(
-            poly_id,
-            OrbitPayload {
-                capacity: record.capacity,
-                volume: record.volume,
-                sigmas: record.sigmas,
-                sigma_gap_cutoff,
-                orbit_scalars: record.orbit_scalars,
-            },
-        );
-    }
-    out
-}
-
-fn existing_paths<'a>(paths: impl IntoIterator<Item = &'a Path>) -> Vec<&'a Path> {
-    paths.into_iter().filter(|path| path.exists()).collect()
-}
-
-fn orbit_payloads(paths: &DatasetPaths) -> HashMap<String, OrbitPayload> {
-    if paths.random_only {
-        return HashMap::new();
-    }
-    let cache_paths = existing_paths([
-        paths.shared_cache.as_path(),
-        paths.ascent_cache.as_path(),
-        paths.ascent_product_cache.as_path(),
-        paths.continuation_cache.as_path(),
-    ]);
-    orbit_payloads_from_paths(&cache_paths)
-}
-
-fn orbit_payloads_for_path(path: &Path) -> HashMap<String, OrbitPayload> {
-    let cache_paths = existing_paths([path]);
-    orbit_payloads_from_paths(&cache_paths)
-}
-
-fn sigma_gap_cutoff(record: &PolytopeRecord) -> Option<f64> {
-    let sigmas = record.sigmas.as_ref()?;
-    if sigmas.len() < 2 {
-        return Some(0.0);
-    }
-    let best = sigmas.first()?.action;
-    let next = sigmas.get(1)?.action;
-    Some(next - best)
-}
-
 fn ensure_polytope(
     polytopes: &mut HashMap<String, LoadedPolytopeRow>,
-    orbit_payloads: &HashMap<String, OrbitPayload>,
     dual_vertices_rational: Vec<[String; 4]>,
     facet_count: usize,
-    reported_capacity: f64,
+    capacity: f64,
     volume: f64,
     sys: f64,
     capacity_iterations: Option<u64>,
     capacity_source: &str,
 ) -> String {
     let poly_id = poly_id_from_dual_vertices(&dual_vertices_rational);
-    let orbit_payload = orbit_payloads.get(&poly_id);
-    let capacity = orbit_payload
-        .and_then(|row| row.capacity)
-        .unwrap_or(reported_capacity);
-    let volume = orbit_payload.and_then(|row| row.volume).unwrap_or(volume);
-    match polytopes.get_mut(&poly_id) {
-        Some(existing) => {
-            if existing.capacity_iterations.is_none() {
-                existing.capacity_iterations = capacity_iterations;
-            }
-            if existing.capacity <= 0.0 {
-                existing.capacity = capacity;
-            }
-            if existing.sigmas.is_none() {
-                existing.sigmas = orbit_payload.and_then(|row| row.sigmas.clone());
-            }
-            if existing.orbit_scalars.is_none() {
-                existing.orbit_scalars = orbit_payload.and_then(|row| row.orbit_scalars.clone());
-            }
-        }
-        None => {
-            polytopes.insert(
-                poly_id.clone(),
-                LoadedPolytopeRow {
-                    poly_id: poly_id.clone(),
-                    dual_vertices_rational,
-                    facet_count,
-                    capacity,
-                    volume,
-                    sys,
-                    capacity_iterations,
-                    capacity_source: capacity_source.to_string(),
-                    sigma_gap_cutoff: orbit_payload.and_then(|row| row.sigma_gap_cutoff),
-                    sigmas: orbit_payload.and_then(|row| row.sigmas.clone()),
-                    orbit_scalars: orbit_payload.and_then(|row| row.orbit_scalars.clone()),
-                },
-            );
-        }
-    }
+    polytopes
+        .entry(poly_id.clone())
+        .or_insert_with(|| LoadedPolytopeRow {
+            poly_id: poly_id.clone(),
+            dual_vertices_rational,
+            facet_count,
+            capacity,
+            volume,
+            sys,
+            capacity_iterations,
+            capacity_source: capacity_source.to_string(),
+            sigma_gap_cutoff: None,
+            sigmas: None,
+            orbit_scalars: None,
+        });
     poly_id
-}
-
-fn root_group(dataset: &str, source_name: &str, lineage_id: &str, name: &str) -> String {
-    if !lineage_id.is_empty() {
-        return lineage_id.to_string();
-    }
-    if !source_name.is_empty() {
-        return source_name.to_string();
-    }
-    format!("{dataset}:{name}")
 }
 
 fn provenance_id(dataset: &str, name: &str) -> String {
     format!("{dataset}:{name}")
 }
 
+fn empty_provenance(
+    provenance_id: String,
+    poly_id: String,
+    dataset: &str,
+    family: &str,
+    search_space: &str,
+    backend: &str,
+    source_name: String,
+) -> LoadedProvenanceRow {
+    LoadedProvenanceRow {
+        provenance_id,
+        poly_id,
+        dataset: dataset.to_string(),
+        family: family.to_string(),
+        role: "random_sample".to_string(),
+        search_space: search_space.to_string(),
+        optimizer: "none".to_string(),
+        backend: backend.to_string(),
+        source_name: source_name.clone(),
+        root_group_id: source_name,
+        sample_seed: None,
+        sample_attempt: None,
+        sample_h_min: None,
+        sample_h_max: None,
+        product_k: None,
+        product_m: None,
+        product_bounces: None,
+        seed_index: None,
+        lineage_id: None,
+        path: None,
+        total_time_ms: None,
+    }
+}
+
 fn load_random_sample_rows(
     path: &Path,
     polytopes: &mut HashMap<String, LoadedPolytopeRow>,
     provenance_rows: &mut Vec<LoadedProvenanceRow>,
-    orbit_payloads: &HashMap<String, OrbitPayload>,
     limit: Option<usize>,
 ) {
     let mut rows = read_jsonl::<RandomSweepRow>(path);
@@ -587,9 +323,11 @@ fn load_random_sample_rows(
         stratified_prefix_sample(&mut rows, limit, |row| row.facet_count, |row| &row.name);
     }
     for row in rows {
+        let name = row.name.clone();
+        let h_min = row.h_min;
+        let h_max = row.h_max;
         let poly_id = ensure_polytope(
             polytopes,
-            orbit_payloads,
             row.dual_vertices_rational,
             row.facet_count,
             row.capacity,
@@ -598,44 +336,24 @@ fn load_random_sample_rows(
             Some(row.iterations),
             "random_sample",
         );
-        provenance_rows.push(LoadedProvenanceRow {
-            provenance_id: provenance_id("random_sample", &row.name),
+        let mut provenance = empty_provenance(
+            provenance_id("random_sample", &name),
             poly_id,
-            dataset: "random_sample".to_string(),
-            family: "general".to_string(),
-            role: "random_sample".to_string(),
-            search_space: "general".to_string(),
-            optimizer: "none".to_string(),
-            backend: "ehz_capacity".to_string(),
-            source_name: row.name.clone(),
-            root_group_id: root_group("random_sample", &row.name, "", &row.name),
-            sample_seed: None,
-            sample_attempt: None,
-            sample_h_min: Some(row.h_min),
-            sample_h_max: Some(row.h_max),
-            product_k: None,
-            product_m: None,
-            product_bounces: None,
-            seed_index: None,
-            lineage_id: None,
-            parent_provenance_id: None,
-            rq: None,
-            path: None,
-            starting_f: None,
-            starting_sys: None,
-            reported_final_sys: None,
-            reported_delta: None,
-            sys_after_addition: None,
-            n_iterations: None,
-            n_phases: None,
-            best_strategy: None,
-            n_escape_overshoot: None,
-            n_escape_wiggle: None,
-            placement_direction: None,
-            facet_remained_active: None,
-            total_time_ms: None,
-            trace_events: Vec::new(),
-        });
+            "random_sample",
+            "general",
+            "general",
+            "ehz_capacity",
+            name,
+        );
+        provenance.sample_seed = row.seed;
+        provenance.sample_attempt = row.attempt;
+        provenance.sample_h_min = Some(h_min);
+        provenance.sample_h_max = Some(h_max);
+        provenance.seed_index = row.attempt.map(|attempt| attempt as usize);
+        if let (Some(seed), Some(attempt)) = (row.seed, row.attempt) {
+            provenance.lineage_id = Some(format!("seed:{seed}:attempt:{attempt}"));
+        }
+        provenance_rows.push(provenance);
     }
 }
 
@@ -643,7 +361,6 @@ fn load_random_product_rows(
     path: &Path,
     polytopes: &mut HashMap<String, LoadedPolytopeRow>,
     provenance_rows: &mut Vec<LoadedProvenanceRow>,
-    orbit_payloads: &HashMap<String, OrbitPayload>,
     limit: Option<usize>,
 ) {
     let mut rows = read_jsonl::<RandomProductRow>(path);
@@ -656,9 +373,14 @@ fn load_random_product_rows(
         );
     }
     for row in rows {
+        let name = row.name.clone();
+        let h_min = row.h_min;
+        let h_max = row.h_max;
+        let k = row.k;
+        let m = row.m;
+        let bounces = row.bounces;
         let poly_id = ensure_polytope(
             polytopes,
-            orbit_payloads,
             row.dual_vertices_rational,
             row.facet_count,
             row.capacity,
@@ -667,44 +389,29 @@ fn load_random_product_rows(
             Some(row.iterations),
             "random_product_sample",
         );
-        provenance_rows.push(LoadedProvenanceRow {
-            provenance_id: provenance_id("random_product_sample", &row.name),
+        let mut provenance = empty_provenance(
+            provenance_id("random_product_sample", &name),
             poly_id,
-            dataset: "random_product_sample".to_string(),
-            family: "lagrangian_product".to_string(),
-            role: "random_sample".to_string(),
-            search_space: "lagrangian_product".to_string(),
-            optimizer: "none".to_string(),
-            backend: "ehz_capacity_billiard".to_string(),
-            source_name: row.name.clone(),
-            root_group_id: root_group("random_product_sample", &row.name, "", &row.name),
-            sample_seed: None,
-            sample_attempt: None,
-            sample_h_min: Some(row.h_min),
-            sample_h_max: Some(row.h_max),
-            product_k: Some(row.k),
-            product_m: Some(row.m),
-            product_bounces: Some(row.bounces),
-            seed_index: None,
-            lineage_id: None,
-            parent_provenance_id: None,
-            rq: None,
-            path: Some(format!("lp_{}x{}", row.k, row.m)),
-            starting_f: None,
-            starting_sys: None,
-            reported_final_sys: None,
-            reported_delta: None,
-            sys_after_addition: None,
-            n_iterations: None,
-            n_phases: None,
-            best_strategy: None,
-            n_escape_overshoot: None,
-            n_escape_wiggle: None,
-            placement_direction: None,
-            facet_remained_active: None,
-            total_time_ms: None,
-            trace_events: Vec::new(),
-        });
+            "random_product_sample",
+            "lagrangian_product",
+            "lagrangian_product",
+            "ehz_capacity_billiard",
+            name,
+        );
+        provenance.role = "random_product_sample".to_string();
+        provenance.sample_seed = row.seed;
+        provenance.sample_attempt = row.attempt;
+        provenance.sample_h_min = Some(h_min);
+        provenance.sample_h_max = Some(h_max);
+        provenance.product_k = Some(k);
+        provenance.product_m = Some(m);
+        provenance.product_bounces = Some(bounces);
+        provenance.seed_index = row.attempt.map(|attempt| attempt as usize);
+        if let (Some(seed), Some(attempt)) = (row.seed, row.attempt) {
+            provenance.lineage_id = Some(format!("seed:{seed}:attempt:{attempt}"));
+        }
+        provenance.path = Some(format!("lp_{k}x{m}"));
+        provenance_rows.push(provenance);
     }
 }
 
@@ -729,392 +436,31 @@ fn stratified_prefix_sample<T, K>(
 
     let stratum_count = strata.len().max(1);
     let base = limit / stratum_count;
-    let mut remainder = limit % stratum_count;
-    let mut out = Vec::with_capacity(limit);
-    for stratum in strata.values_mut() {
-        let extra = usize::from(remainder > 0);
-        remainder = remainder.saturating_sub(extra);
-        let take = (base + extra).min(stratum.len());
-        out.extend(stratum.drain(..take));
+    let remainder = limit % stratum_count;
+    let mut sampled = Vec::with_capacity(limit);
+    for (index, (_, mut stratum)) in strata.into_iter().enumerate() {
+        let take = (base + usize::from(index < remainder)).min(stratum.len());
+        sampled.extend(stratum.drain(..take));
     }
-    out.sort_by(|left, right| name(left).cmp(name(right)));
-    *rows = out;
-}
-
-fn trace_events_by_name(path: &Path) -> HashMap<String, Vec<TraceEvent>> {
-    read_jsonl_if_exists::<TraceRow>(path).into_iter().fold(
-        HashMap::<String, Vec<TraceEvent>>::new(),
-        |mut acc, row| {
-            acc.entry(row.name.clone()).or_default().push(TraceEvent {
-                phase: row.phase,
-                iteration: row.iteration,
-                step_type: row.step_type,
-                t_fraction: row.t_fraction,
-                t_actual: row.t_actual,
-                sys_before: row.sys_before,
-                sys_after: row.sys_after,
-                delta_sys: row.delta_sys,
-                gradient_norm: row.gradient_norm,
-            });
-            acc
-        },
-    )
-}
-
-fn load_ascent_rows(
-    summary_path: &Path,
-    trace_path: &Path,
-    polytopes: &mut HashMap<String, LoadedPolytopeRow>,
-    provenance_rows: &mut Vec<LoadedProvenanceRow>,
-    orbit_payloads: &HashMap<String, OrbitPayload>,
-    ascent_orbit_payloads: &HashMap<String, OrbitPayload>,
-) {
-    let trace_events = trace_events_by_name(trace_path);
-    for row in read_jsonl::<SummaryRow>(summary_path) {
-        let payload = require_endpoint_payload(
-            "gradient_ascent_general",
-            &row.name,
-            &row.final_dual_vertices_rational,
-            row.final_capacity,
-            row.final_volume,
-            row.final_sys,
-            ascent_orbit_payloads,
-        );
-        let poly_id = ensure_polytope(
-            polytopes,
-            orbit_payloads,
-            row.final_dual_vertices_rational.clone(),
-            row.facet_count,
-            payload.capacity,
-            payload.volume,
-            row.final_sys,
-            None,
-            "gradient_ascent_general",
-        );
-        provenance_rows.push(LoadedProvenanceRow {
-            provenance_id: provenance_id("gradient_ascent_general", &row.name),
-            poly_id,
-            dataset: "gradient_ascent_general".to_string(),
-            family: "general".to_string(),
-            role: "ascent_endpoint".to_string(),
-            search_space: "general".to_string(),
-            optimizer: "gradient_ascent".to_string(),
-            backend: "ehz_capacity".to_string(),
-            source_name: row.source_name.clone(),
-            root_group_id: root_group(
-                "gradient_ascent_general",
-                &row.source_name,
-                &row.lineage_id,
-                &row.name,
-            ),
-            sample_seed: None,
-            sample_attempt: None,
-            sample_h_min: None,
-            sample_h_max: None,
-            product_k: None,
-            product_m: None,
-            product_bounces: None,
-            seed_index: Some(row.seed_index),
-            lineage_id: (!row.lineage_id.is_empty()).then_some(row.lineage_id.clone()),
-            parent_provenance_id: None,
-            rq: None,
-            path: None,
-            starting_f: Some(row.facet_count),
-            starting_sys: Some(row.starting_sys),
-            reported_final_sys: Some(row.final_sys),
-            reported_delta: Some(row.total_delta),
-            sys_after_addition: None,
-            n_iterations: Some(row.n_gradient_iters_total),
-            n_phases: Some(row.n_ascent_phases),
-            best_strategy: Some(row.best_strategy.clone()),
-            n_escape_overshoot: Some(row.n_escape_overshoot),
-            n_escape_wiggle: Some(row.n_escape_wiggle),
-            placement_direction: None,
-            facet_remained_active: None,
-            total_time_ms: Some(row.total_time_ms),
-            trace_events: trace_events.get(&row.name).cloned().unwrap_or_default(),
-        });
-    }
-}
-
-fn load_ascent_product_rows(
-    summary_path: &Path,
-    trace_path: &Path,
-    polytopes: &mut HashMap<String, LoadedPolytopeRow>,
-    provenance_rows: &mut Vec<LoadedProvenanceRow>,
-    orbit_payloads: &HashMap<String, OrbitPayload>,
-    ascent_product_orbit_payloads: &HashMap<String, OrbitPayload>,
-) {
-    let trace_events = trace_events_by_name(trace_path);
-    for row in read_jsonl::<SummaryRow>(summary_path) {
-        let payload = require_endpoint_payload(
-            "gradient_ascent_products",
-            &row.name,
-            &row.final_dual_vertices_rational,
-            row.final_capacity,
-            row.final_volume,
-            row.final_sys,
-            ascent_product_orbit_payloads,
-        );
-        let poly_id = ensure_polytope(
-            polytopes,
-            orbit_payloads,
-            row.final_dual_vertices_rational.clone(),
-            row.facet_count,
-            payload.capacity,
-            payload.volume,
-            row.final_sys,
-            None,
-            "gradient_ascent_products",
-        );
-        provenance_rows.push(LoadedProvenanceRow {
-            provenance_id: provenance_id("gradient_ascent_products", &row.name),
-            poly_id,
-            dataset: "gradient_ascent_products".to_string(),
-            family: "lagrangian_product".to_string(),
-            role: "ascent_endpoint".to_string(),
-            search_space: "lagrangian_product".to_string(),
-            optimizer: "projected_gradient_ascent".to_string(),
-            backend: "ehz_capacity".to_string(),
-            source_name: row.source_name.clone(),
-            root_group_id: root_group(
-                "gradient_ascent_products",
-                &row.source_name,
-                &row.lineage_id,
-                &row.name,
-            ),
-            sample_seed: None,
-            sample_attempt: None,
-            sample_h_min: None,
-            sample_h_max: None,
-            product_k: None,
-            product_m: None,
-            product_bounces: None,
-            seed_index: Some(row.seed_index),
-            lineage_id: (!row.lineage_id.is_empty()).then_some(row.lineage_id.clone()),
-            parent_provenance_id: None,
-            rq: None,
-            path: None,
-            starting_f: Some(row.facet_count),
-            starting_sys: Some(row.starting_sys),
-            reported_final_sys: Some(row.final_sys),
-            reported_delta: Some(row.total_delta),
-            sys_after_addition: None,
-            n_iterations: Some(row.n_gradient_iters_total),
-            n_phases: Some(row.n_ascent_phases),
-            best_strategy: Some(row.best_strategy.clone()),
-            n_escape_overshoot: Some(row.n_escape_overshoot),
-            n_escape_wiggle: Some(row.n_escape_wiggle),
-            placement_direction: None,
-            facet_remained_active: None,
-            total_time_ms: Some(row.total_time_ms),
-            trace_events: trace_events.get(&row.name).cloned().unwrap_or_default(),
-        });
-    }
-}
-
-fn load_continuation_rows(
-    path: &Path,
-    polytopes: &mut HashMap<String, LoadedPolytopeRow>,
-    provenance_rows: &mut Vec<LoadedProvenanceRow>,
-    orbit_payloads: &HashMap<String, OrbitPayload>,
-) {
-    for row in read_jsonl::<ResultRow>(path) {
-        let poly_id = ensure_polytope(
-            polytopes,
-            orbit_payloads,
-            row.final_dual_vertices_rational.clone(),
-            row.final_dual_vertices_rational.len(),
-            0.0,
-            0.0,
-            row.final_sys,
-            None,
-            "variable_f_ascent",
-        );
-        let parent_provenance_id = row
-            .direct_parent_trial
-            .as_ref()
-            .map(|parent| provenance_id("variable_f_ascent", parent));
-        provenance_rows.push(LoadedProvenanceRow {
-            provenance_id: provenance_id("variable_f_ascent", &row.name),
-            poly_id,
-            dataset: "variable_f_ascent".to_string(),
-            family: "general".to_string(),
-            role: "continuation_endpoint".to_string(),
-            search_space: "general".to_string(),
-            optimizer: "gradient_ascent".to_string(),
-            backend: "ehz_capacity".to_string(),
-            source_name: row.source_name.clone(),
-            root_group_id: root_group(
-                "variable_f_ascent",
-                &row.source_name,
-                &row.lineage_id,
-                &row.name,
-            ),
-            sample_seed: None,
-            sample_attempt: None,
-            sample_h_min: None,
-            sample_h_max: None,
-            product_k: None,
-            product_m: None,
-            product_bounces: None,
-            seed_index: None,
-            lineage_id: (!row.lineage_id.is_empty()).then_some(row.lineage_id.clone()),
-            parent_provenance_id,
-            rq: Some(row.rq.clone()),
-            path: Some(row.path.clone()),
-            starting_f: Some(row.starting_f),
-            starting_sys: Some(row.starting_sys),
-            reported_final_sys: Some(row.final_sys),
-            reported_delta: Some(row.delta_vs_source),
-            sys_after_addition: row.sys_after_addition,
-            n_iterations: Some(row.n_iterations),
-            n_phases: Some(row.n_phases),
-            best_strategy: None,
-            n_escape_overshoot: None,
-            n_escape_wiggle: None,
-            placement_direction: row.placement_direction,
-            facet_remained_active: row.facet_remained_active,
-            total_time_ms: Some(row.total_time_ms),
-            trace_events: Vec::new(),
-        });
-    }
-}
-
-fn sigma_gap_cutoff_from_sigmas(sigmas: &[SigmaAction]) -> Option<f64> {
-    if sigmas.is_empty() {
-        return None;
-    }
-    if sigmas.len() < 2 {
-        return Some(0.0);
-    }
-    Some(sigmas[1].action - sigmas[0].action)
-}
-
-fn load_computed_polytope_observations(
-    paths: &DatasetPaths,
-    polytopes: &mut HashMap<String, LoadedPolytopeRow>,
-) -> Vec<ComputedPolytopeObservationRow> {
-    if paths.random_only {
-        return Vec::new();
-    }
-    let mut rows = Vec::new();
-    load_computed_polytope_rows(&paths.ascent_computed_polytopes, polytopes, &mut rows);
-    load_computed_polytope_rows(
-        &paths.ascent_product_computed_polytopes,
-        polytopes,
-        &mut rows,
-    );
-    rows.sort_by(|a, b| a.result_id.cmp(&b.result_id));
-    rows
-}
-
-fn load_computed_polytope_rows(
-    path: &Path,
-    polytopes: &mut HashMap<String, LoadedPolytopeRow>,
-    out: &mut Vec<ComputedPolytopeObservationRow>,
-) {
-    for row in read_jsonl_if_exists::<ComputedPolytopeRow>(path) {
-        let poly_id = poly_id_from_dual_vertices(&row.dual_vertices_rational);
-        let materialize_polytope =
-            row.role == "start" || row.role == "final" || row.became_run_final;
-        if materialize_polytope {
-            match polytopes.get_mut(&poly_id) {
-                Some(existing) => {
-                    if existing.sigmas.is_none() {
-                        existing.sigmas = Some(row.sigmas.clone());
-                    }
-                    if existing.orbit_scalars.is_none() {
-                        existing.orbit_scalars = Some(row.orbit_scalars.clone());
-                    }
-                    if existing.sigma_gap_cutoff.is_none() {
-                        existing.sigma_gap_cutoff = sigma_gap_cutoff_from_sigmas(&row.sigmas);
-                    }
-                }
-                None => {
-                    polytopes.insert(
-                        poly_id.clone(),
-                        LoadedPolytopeRow {
-                            poly_id: poly_id.clone(),
-                            dual_vertices_rational: row.dual_vertices_rational,
-                            facet_count: row.facet_count,
-                            capacity: row.capacity,
-                            volume: row.volume,
-                            sys: row.sys,
-                            capacity_iterations: None,
-                            capacity_source: row.dataset.clone(),
-                            sigma_gap_cutoff: sigma_gap_cutoff_from_sigmas(&row.sigmas),
-                            sigmas: Some(row.sigmas.clone()),
-                            orbit_scalars: Some(row.orbit_scalars.clone()),
-                        },
-                    );
-                }
-            }
-        }
-        out.push(ComputedPolytopeObservationRow {
-            result_id: row.result_id,
-            poly_id,
-            dataset: row.dataset,
-            run_id: row.run_id,
-            seed_index: row.seed_index,
-            phase: row.phase,
-            iteration: row.iteration,
-            role: row.role,
-            step_type: row.step_type,
-            t_fraction: row.t_fraction,
-            t_actual: row.t_actual,
-            accepted_in_iteration: row.accepted_in_iteration,
-            became_run_final: row.became_run_final,
-        });
-    }
+    sampled.sort_by(|left, right| name(left).cmp(name(right)));
+    rows.extend(sampled);
 }
 
 pub fn load_caches(paths: &DatasetPaths) -> LoadedCaches {
-    let orbit_payloads = orbit_payloads(paths);
-    let mut polytopes = HashMap::<String, LoadedPolytopeRow>::new();
-    let mut provenance_rows = Vec::<LoadedProvenanceRow>::new();
-
+    let mut polytopes = HashMap::new();
+    let mut provenance_rows = Vec::new();
     load_random_sample_rows(
         &paths.random_sample,
         &mut polytopes,
         &mut provenance_rows,
-        &orbit_payloads,
         paths.max_random_rows,
     );
     load_random_product_rows(
         &paths.random_product,
         &mut polytopes,
         &mut provenance_rows,
-        &orbit_payloads,
         paths.max_random_product_rows,
     );
-    if !paths.random_only {
-        let ascent_orbit_payloads = orbit_payloads_for_path(&paths.ascent_cache);
-        let ascent_product_orbit_payloads = orbit_payloads_for_path(&paths.ascent_product_cache);
-        load_ascent_rows(
-            &paths.ascent_summary,
-            &paths.ascent_trace,
-            &mut polytopes,
-            &mut provenance_rows,
-            &orbit_payloads,
-            &ascent_orbit_payloads,
-        );
-        load_ascent_product_rows(
-            &paths.ascent_product_summary,
-            &paths.ascent_product_trace,
-            &mut polytopes,
-            &mut provenance_rows,
-            &orbit_payloads,
-            &ascent_product_orbit_payloads,
-        );
-        load_continuation_rows(
-            &paths.continuation_summary,
-            &mut polytopes,
-            &mut provenance_rows,
-            &orbit_payloads,
-        );
-    }
-    let computed_polytope_observations = load_computed_polytope_observations(paths, &mut polytopes);
 
     let mut polytope_rows = polytopes.into_values().collect::<Vec<_>>();
     polytope_rows.sort_by(|a, b| a.poly_id.cmp(&b.poly_id));
@@ -1123,55 +469,6 @@ pub fn load_caches(paths: &DatasetPaths) -> LoadedCaches {
     LoadedCaches {
         polytopes: polytope_rows,
         provenance_rows,
-        computed_polytope_observations,
+        computed_polytope_observations: Vec::new(),
     }
-}
-
-struct RequiredEndpointPayload {
-    capacity: f64,
-    volume: f64,
-}
-
-fn require_endpoint_payload(
-    dataset: &str,
-    name: &str,
-    final_dual_vertices_rational: &[[String; 4]],
-    final_capacity: f64,
-    final_volume: f64,
-    final_sys: f64,
-    orbit_payloads: &HashMap<String, OrbitPayload>,
-) -> RequiredEndpointPayload {
-    let poly_id = poly_id_from_dual_vertices(final_dual_vertices_rational);
-    let payload = orbit_payloads.get(&poly_id).unwrap_or_else(|| {
-        panic!("{dataset}:{name}: missing producer-cache row for endpoint {poly_id}")
-    });
-    let capacity = payload
-        .capacity
-        .unwrap_or_else(|| panic!("{dataset}:{name}: producer-cache row lacks capacity"));
-    let volume = payload
-        .volume
-        .unwrap_or_else(|| panic!("{dataset}:{name}: producer-cache row lacks volume"));
-    if payload.sigmas.is_none() {
-        panic!("{dataset}:{name}: producer-cache row lacks sigmas");
-    }
-    if payload.orbit_scalars.is_none() {
-        panic!("{dataset}:{name}: producer-cache row lacks orbit scalars");
-    }
-    if final_capacity > 0.0 && (final_capacity - capacity).abs() > 1e-9 {
-        panic!(
-            "{dataset}:{name}: summary final_capacity {final_capacity} disagrees with cache capacity {capacity}"
-        );
-    }
-    if final_volume > 0.0 && (final_volume - volume).abs() > 1e-9 {
-        panic!(
-            "{dataset}:{name}: summary final_volume {final_volume} disagrees with cache volume {volume}"
-        );
-    }
-    let sys = capacity * capacity / (2.0 * volume);
-    if (sys - final_sys).abs() > 1e-8 {
-        panic!(
-            "{dataset}:{name}: summary final_sys {final_sys} disagrees with cache-derived sys {sys}"
-        );
-    }
-    RequiredEndpointPayload { capacity, volume }
 }

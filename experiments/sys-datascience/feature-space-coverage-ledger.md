@@ -32,8 +32,9 @@ stability, and method use are audited.
   high `sys` tail in trusted random/product rows?
 - current status: `implemented-new` for Frobenius norm, spectral norm, stable
   rank, and numerical rank/nullity at threshold `1e-10`; `absent` for
-  characteristic-polynomial coefficients and Pfaffian-derived features. Existing
-  retained JSONL tables have not yet been regenerated with these columns.
+  characteristic-polynomial coefficients and Pfaffian-derived features.
+  Current-schema scratch tables have been regenerated with these columns;
+  reviewed retained-table closure remains pending.
 - valid transforms: singular values; numerical rank/nullity; Frobenius norm;
   spectral norm; stable rank; characteristic-polynomial coefficients if stable;
   `abs(pfaffian)` or `pfaffian^2` for even facet count.
@@ -57,14 +58,13 @@ stability, and method use are audited.
 - evidence commands/artifacts: implemented in `prepare/features_omega.rs`,
   `prepare/features.rs`, and `prepare/rows.rs`; `cargo check -p
   exp-sys-landscape` passed; `cargo fmt --check -p exp-sys-landscape` passed
-  after formatting; temp-output `ASCENT_BUDGET_SECS=1
-  experiments/sys-datascience/pipeline.local.sh smoke` passed and produced
+  after formatting; temp-output `experiments/sys-datascience/pipeline.local.sh smoke` passed and produced
   smoke rows containing the new omega matrix columns. The shared method feature
   selector was updated to include `omega_*` columns as geometry features, and a
   selector smoke on `/tmp/tmp.tgQtP6g6T7/tables` found representative new omega
   columns among `105` geometry features.
-- disposition: implementation and temp-output schema smoke passed; retained
-  table rebuild and method analysis pending.
+- disposition: implementation, temp-output schema smoke, full scratch rebuild,
+  and full method rerun passed; method/statistics review remains pending.
 - reopen triggers: translation canonization changes; omega computation changes;
   a method promotes an omega matrix invariant to candidate-proposer evidence.
 
@@ -78,8 +78,8 @@ stability, and method use are audited.
   statistics; `candidate-existing-unaudited` for zero fractions and transition
   density/out-degree summaries in `features_omega.rs`; `absent` for sorted full
   degree multisets, triad/cycle counts, and richer restricted sign summaries.
-  Existing retained JSONL tables have not yet been regenerated with the new
-  columns.
+  Current-schema scratch tables have been regenerated with the new columns;
+  reviewed retained-table closure remains pending.
 - valid transforms: zero fractions; permutation-invariant orientation graph
   summaries; sorted out-degree/in-degree multisets; triad/cycle counts;
   summaries restricted to facet-intersection or ridge pairs.
@@ -95,15 +95,14 @@ stability, and method use are audited.
 - evidence commands/artifacts: new out-degree summaries implemented in
   `prepare/features_omega.rs`, `prepare/features.rs`, and `prepare/rows.rs`;
   `cargo check -p exp-sys-landscape` passed; `cargo fmt --check -p
-  exp-sys-landscape` passed after formatting; temp-output `ASCENT_BUDGET_SECS=1
-  experiments/sys-datascience/pipeline.local.sh smoke` passed and produced
+  exp-sys-landscape` passed after formatting; temp-output `experiments/sys-datascience/pipeline.local.sh smoke` passed and produced
   smoke rows containing the new omega-sign out-degree columns. The shared
   method feature selector was updated to include `omega_*` columns as geometry
   features. Existing zero/transition fields still need audit before use as
   coverage.
-- disposition: implementation and temp-output schema smoke passed for first
-  all-pair sign summary slice; retained table rebuild and method analysis
-  pending.
+- disposition: implementation, temp-output schema smoke, full scratch rebuild,
+  and full method rerun passed for the first all-pair sign summary slice;
+  method/statistics review remains pending.
 - reopen triggers: canonical facet ordering is introduced; transition graph
   semantics change; method evidence suggests sign-orientation structure matters.
 
@@ -115,8 +114,8 @@ stability, and method use are audited.
   representative explain high `sys` rows better than raw omega magnitudes?
 - current status: `implemented-new` for all-pair and ridge-restricted
   mean/std/min/max of absolute normalized omega; `absent` for quantiles and
-  concentration summaries. Existing retained JSONL tables have not yet been
-  regenerated with these columns.
+  concentration summaries. Current-schema scratch tables have been regenerated
+  with these columns; reviewed retained-table closure remains pending.
 - valid transforms: all-pair and ridge-restricted absolute summaries; quantiles
   and concentration over complete pair/ridge sets; sign-sensitive summaries only
   through permutation-invariant graph/matrix summaries.
@@ -133,14 +132,14 @@ stability, and method use are audited.
 - evidence commands/artifacts: implemented in `prepare/features_omega.rs`,
   `prepare/features.rs`, and `prepare/rows.rs`; `cargo check -p
   exp-sys-landscape` passed; `cargo fmt --check -p exp-sys-landscape` passed
-  after formatting; temp-output `ASCENT_BUDGET_SECS=1
-  experiments/sys-datascience/pipeline.local.sh smoke` passed and produced
+  after formatting; temp-output `experiments/sys-datascience/pipeline.local.sh smoke` passed and produced
   smoke rows containing the new normalized omega columns. A tiny
   `statistical-associations` smoke against that temp table ran with
   `--max-features 20 --permutations 2`; it verifies schema consumption only,
   not thesis evidence.
-- disposition: implementation and temp-output schema smoke passed; retained
-  table rebuild, non-`Sp(4)` caveat propagation, and method analysis pending.
+- disposition: implementation, temp-output schema smoke, full scratch rebuild,
+  and full method rerun passed; non-`Sp(4)` caveat review and method/statistics
+  review remain pending.
 - reopen triggers: translation canonization or Euclidean representative changes.
 
 ### Two-Face Symplectic Area Tails
@@ -152,8 +151,8 @@ stability, and method use are audited.
 - current status: `implemented-new` for incidence-cycle ordering diagnostics,
   median, q90, q95, and top-3 share; `candidate-existing-unaudited` for the
   older mean/std/min/max/sum/max-share and small-threshold fractions until full
-  retained-data rerun and review. Existing retained JSONL tables have not yet
-  been regenerated with the new columns.
+  retained-data review. Current-schema scratch tables have been regenerated
+  with the new columns; reviewed retained-table closure remains pending.
 - valid transforms: median; quantiles; top-k shares; concentration; small-area
   fractions; comparison to Euclidean two-face area if added.
 - invalid/risky transforms: using area tails without validating two-face
@@ -171,14 +170,14 @@ stability, and method use are audited.
   fallback, records ordered-face count, ordering-failure count, and ordered
   fraction, and computes median/q90/q95/top-3 share over successfully ordered
   faces. `cargo check -p exp-sys-landscape` passed; `cargo fmt --check -p
-  exp-sys-landscape` passed; temp-output `ASCENT_BUDGET_SECS=1
-  experiments/sys-datascience/pipeline.local.sh smoke` passed. The smoke table
+  exp-sys-landscape` passed; temp-output `experiments/sys-datascience/pipeline.local.sh smoke` passed. The smoke table
   had `0` ordering failures and ordered fraction `1.0` for all `4` rows. Shared
   method feature selection excludes ordering-diagnostic columns from geometry
   inputs and excludes `ridge_symp_area_volnorm_*` inputs whenever any loaded row
   has `ridge_symp_area_ordered_fraction != 1.0`.
-- disposition: implementation and temp-output schema/ordering smoke passed;
-  retained table rebuild and method analysis pending.
+- disposition: implementation, temp-output schema/ordering smoke, full scratch
+  rebuild, and full method rerun passed; method/statistics review remains
+  pending.
 - reopen triggers: face reconstruction code changes; degenerate two-face cases
   appear; thesis wording relies on area-tail interpretation.
 
@@ -194,8 +193,9 @@ stability, and method use are audited.
   `product_k`, `product_m`, and `product_bounces`; availability depends on the
   producer row type and loader path. Canonical old producer rows expose height
   range and product `(k,m,bounces)` but not seed/attempt; newer run-local
-  producer metadata can expose seed/attempt. Existing retained JSONL tables
-  have not yet been regenerated with these columns.
+  producer metadata can expose seed/attempt. Current-schema scratch tables have
+  been regenerated with these columns; reviewed retained-table closure remains
+  pending.
 - valid transforms: explicit join/encoding from producer/provenance rows;
   source/facet-count/product-bucket stratification; within-stratum summaries and
   residuals; grouped validation.
@@ -217,14 +217,14 @@ stability, and method use are audited.
   categorical-factor summaries in `methods/statistical-associations/analyze.py`;
   metadata-only baselines in `methods/prediction-ranking/analyze.py`. `cargo
   check -p exp-sys-landscape` passed; `cargo fmt --check -p exp-sys-landscape`
-  passed; temp-output `ASCENT_BUDGET_SECS=1
-  experiments/sys-datascience/pipeline.local.sh smoke` passed. Smoke provenance
+  passed; temp-output `experiments/sys-datascience/pipeline.local.sh smoke` passed. Smoke provenance
   rows contained explicit `sample_h_min`, `sample_h_max`, `product_k`,
   `product_m`, and `product_bounces` where available. Temp method smokes
   verified EDA availability diagnostics, association factor-test output, and
   metadata-only prediction baselines.
-- disposition: implementation and temp-output schema/method smokes passed;
-  retained table rebuild and full stratified method analysis pending.
+- disposition: implementation, temp-output schema/method smokes, full scratch
+  rebuild, and full stratified method rerun passed; method/statistics review
+  remains pending.
 - reopen triggers: generator parameters change; new random family added; thesis
   wording makes source- or parameter-stability claims.
 
@@ -378,32 +378,12 @@ stability, and method use are audited.
 - data/leakage status: pre-capacity geometry input but high interpretation risk.
 - disposition: audit/baseline only.
 
-### Non-Gradient Perturbation Panels
-
-- feature object: fixed random-base/random-direction/radius panels
-  `a_2 = a_1 + t d` with non-gradient directions.
-- thesis question: can bounded non-gradient perturbations find improvements or
-  candidate-proposer structure?
-- current status: method-packet surface exists in `methods/non-gradient-perturbation/`;
-  not a base prepared-table row family.
-- valid transforms: radius response curves; improvement distributions;
-  feature-delta/sys-delta association; grouped by basepoint/source/radius.
-- invalid/risky transforms: treating path rows as independent samples; hidden
-  gradient-derived directions; ascent terminology.
-- invariance/symmetry: depends on perturbation coordinate convention and
-  basepoint generation.
-- data/leakage status: allowed in random-only scope only for fixed non-gradient
-  random directions/radii.
-- disposition: separate method/panel packet, not base feature table, unless
-  reusable row entities are promoted deliberately.
-
 ## Current State
 
-The random/product-scoped rebuild and full method reruns completed on
-2026-06-22 using `prepare/build-random-only-slice.sh full` and
-`/tmp/sys-ds-random-only-full`. Current evidence covers the new omega,
-two-face-area, and explicit provenance columns for the trusted random/product
-slice.
+The active datascience slice is restricted to random/product polytopes. The
+old ascent, continuation, local-behavior, and perturbation panels were removed
+from the active surface during the random-slice cleanup. Feature coverage here
+therefore concerns reusable columns on retained random/product rows.
 
 Remaining next work:
 
@@ -412,10 +392,39 @@ Remaining next work:
 2. Decide whether the scoped prepared table should be retained in repo/LFS or
    kept as reproducible generated data.
 3. Only after review, promote selected claims into thesis prose. Do not claim
-   closure over gradient ascent, local maxima, attractors, basin structure, or
-   arbitrary random polytope distributions from this random/product slice.
+   closure over arbitrary random polytope distributions from this retained
+   random/product sample.
 
 ## Review Log
+
+### 2026-06-25 Random-Slice Cleanup And Current-Schema Rerun
+
+- milestone: cleanup the datascience slice so the active surface focuses on
+  random polytopes and random Lagrangian-product polytopes.
+- removed abandoned fixed-F ascent, continuation, endpoint-diagnostic,
+  local-behavior, and perturbation files from the active
+  `experiments/sys-datascience/` surface.
+- simplified canonical and run-local prepare provenance so random/product
+  tables no longer expose trajectory/ascent columns.
+- retained compatibility output `computed-polytope-observation-table.jsonl` as
+  an empty file because scan/fingerprint tooling expects the filename.
+- full current-schema scratch prepare:
+  `/tmp/sys-ds-random-only-full-current`;
+  `14336` polytope rows, `14336` provenance rows, `0`
+  computed-polytope observation rows, max `sys = 0.86258589584944`, and `0`
+  rows with `sys > 1`.
+- full current-schema method artifacts:
+  `/tmp/sys-ds-full-current/`.
+  The active method reruns found no `sys > 1` row and no validated
+  candidate-proposer. Geometry-only prediction retained a strong in-table
+  signal, but it did not rank unevaluated generated rows before `sys`
+  computation.
+- checks during cleanup:
+  - `cargo check -p exp-sys-landscape`;
+  - full random/product prepare and active method reruns against hydrated
+    canonical producer data from `/workspaces/msc-math`.
+- remaining gates: method/statistics review, packet README integration, and a
+  retention decision for the full prepared table.
 
 ### 2026-06-22 Checkpoint Review
 
@@ -554,32 +563,6 @@ Remaining next work:
   prepare schema plus branch method-side diagnostics. It is not evidence for
   the new omega matrix/sign/alignment, two-face-tail, or explicit provenance
   prepare columns until prepare is rebuilt and the packets are rerun.
-
-### 2026-06-22 Aborted Local Post-Feature Rebuild
-
-- attempted a full canonical retained-table rebuild in this branch with:
-
-  ```bash
-  cargo run -p exp-sys-landscape --release --bin sys-dataset -- \
-    --produce-dir /workspaces/msc-math/experiments/sys-datascience/produce \
-    --out-dir /tmp/sys-ds-branch-prepare-rebuild
-  ```
-
-- observed before interrupt:
-  - producer caches loaded in about `79.6s`;
-  - `32610` polytopes and `22611` provenance rows loaded;
-  - `879235` computed-polytope observation rows loaded;
-  - capacity-source counts printed as `random_sample = 4096`,
-    `random_product_sample = 10240`, `gradient_ascent_general = 9533`,
-    `gradient_ascent_products = 8651`, and `variable_f_ascent = 90`;
-  - the process had started `Building polytope table`.
-- stop reason: local compute/memory guard fired and the process was interrupted
-  with Ctrl-C before any rebuilt retained tables were promoted.
-- operational disposition: the post-feature table rebuild/full-method rerun
-  gate must be random/product scoped before feature construction. Use
-  `prepare/build-random-only-slice.sh smoke` for fast development,
-  `prepare/build-random-only-slice.sh method` for method-feedback, and the
-  `--random-only` LICCA script for the full evidence run.
 
 ### 2026-06-22 Scoped Random/Product Full Rerun
 

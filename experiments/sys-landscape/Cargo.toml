@@ -43,36 +43,12 @@ name = "sys-datascience-produce"
 path = "../sys-datascience/produce/main.rs"
 
 [[bin]]
-name = "sys-local-behavior-produce"
-path = "../sys-datascience/produce/local-behavior.rs"
-
-[[bin]]
-name = "sys-kkt-payload-profile"
-path = "../sys-datascience/produce/kkt-payload-profile.rs"
-
-[[bin]]
-name = "sys-dataset-ascent"
-path = "../sys-datascience/produce/ascent.rs"
-
-[[bin]]
-name = "sys-dataset-ascent-product"
-path = "../sys-datascience/produce/ascent-product.rs"
-
-[[bin]]
-name = "sys-dataset-continuation"
-path = "../sys-datascience/produce/continuation.rs"
-
-[[bin]]
 name = "sys-dataset"
 path = "../sys-datascience/prepare/main.rs"
 
 [[bin]]
 name = "sys-datascience-prepare"
 path = "../sys-datascience/prepare/prepare.rs"
-
-[[bin]]
-name = "sys-endpoint-local-max-diagnostic"
-path = "../sys-datascience/methods/endpoint-local-max-diagnostic/main.rs"
 
 [lints]
 workspace = true

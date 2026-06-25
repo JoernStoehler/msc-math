@@ -102,8 +102,7 @@ cd "$HOME/msc-math"
 tar -czf "$HOME/sys-ds-feature-closure-prepare-${table_jid}.tgz" \
   experiments/sys-datascience/prepare/polytope-table.jsonl \
   experiments/sys-datascience/prepare/polytope-provenance-table.jsonl \
-  experiments/sys-datascience/prepare/computed-polytope-observation-table.jsonl \
-  experiments/sys-datascience/prepare/polytope-ascent-run-table.jsonl
+  experiments/sys-datascience/prepare/computed-polytope-observation-table.jsonl
 sha256sum "$HOME/sys-ds-feature-closure-prepare-${table_jid}.tgz"
 ```
 

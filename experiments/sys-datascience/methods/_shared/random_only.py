@@ -15,7 +15,6 @@ TABLES_DIR = SYS_DATASCIENCE_DIR / "prepare"
 TRUSTED_DATASETS = {
     "random_sample",
     "random_product_sample",
-    "random_non_gradient_perturbation",
 }
 EXCLUDED_DATASET_WORDS = ("ascent", "continuation", "gradient")
 EXCLUDED_OPTIMIZER_WORDS = ("ascent", "gradient", "continuation")

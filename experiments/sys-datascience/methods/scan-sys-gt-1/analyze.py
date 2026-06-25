@@ -17,7 +17,6 @@ import sys
 
 HERE = Path(__file__).resolve().parent
 TABLES_DIR = HERE.parent.parent / "prepare"
-PRODUCE_DIR = HERE.parent.parent / "produce"
 sys.path.append(str(HERE.parent / "_shared"))
 from random_only import load_trusted_random_tables  # noqa: E402
 
@@ -47,14 +46,13 @@ def parse_args() -> argparse.Namespace:
         default=None,
         help=(
             "Producer computed-polytopes JSONL file to scan for raw sys values. "
-            "Defaults to the canonical general/product producer files; pass one "
-            "or more values to override that default."
+            "No producer files are scanned unless this option is passed."
         ),
     )
     parser.add_argument(
         "--random-only",
         action="store_true",
-        help="Restrict the table scan to trusted random/product rows and skip ascent producer rows.",
+        help="Restrict the table scan to trusted random/product rows.",
     )
     return parser.parse_args()
 
@@ -132,10 +130,7 @@ def main() -> None:
         computed_polytope_paths = args.computed_polytopes or []
         polytope_rows, provenance_rows = load_trusted_random_tables(args.polytope_table.parent)
     else:
-        computed_polytope_paths = args.computed_polytopes or [
-            PRODUCE_DIR / "ascent-general-computed-polytopes.jsonl",
-            PRODUCE_DIR / "ascent-product-computed-polytopes.jsonl",
-        ]
+        computed_polytope_paths = args.computed_polytopes or []
         polytope_rows = load_jsonl(args.polytope_table)
         provenance_rows = load_jsonl(args.provenance_table)
     provenance = provenance_by_poly_id(provenance_rows)

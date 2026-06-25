@@ -18,7 +18,7 @@
 # - partition=epyc is the CPU-only production partition.
 # - 32 CPUs matches the table build resource class and leaves room for Rayon
 #   inside capacity/orbit code without asking for a full node.
-# - 16G memory leaves headroom above the observed 1.4G table/ascent RSS class.
+# - 16G memory leaves headroom above the observed random/product table RSS.
 # - 2h wall time is deliberately conservative for 4096 generic random rows plus
 #   10240 product rows; timeout wastes a partial review target but does not
 #   damage canonical producer files.

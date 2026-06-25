@@ -337,7 +337,7 @@ def obvious_covariate_audit() -> dict[str, object]:
             "additional invariant scalar summaries derived from a_k, such as height extrema, angular concentration beyond pairwise cosine summaries, nearest-neighbor statistics, and condition numbers beyond the current singular values",
             "separate factor/product-aware versions of symplectic area summaries if source stratification shows value",
             "explicit product-structure or symmetry scores for deciding whether a generic row looks product-like",
-            "local perturbation or sensitivity scalars, because those require non-gradient perturbation or local-behavior data outside the retained random/product table",
+            "local perturbation or sensitivity scalars, because those are outside the retained random/product table",
         ],
         "assessment": (
             "The current screen is useful for scalar summaries already present in "

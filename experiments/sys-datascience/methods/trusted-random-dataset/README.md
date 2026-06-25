@@ -8,9 +8,8 @@ method wave?
 ## Method
 
 This packet applies the shared trusted input filter from `../_shared/`.
-Included datasets are `random_sample`, `random_product_sample`, and future
-`random_non_gradient_perturbation` rows. Rows with gradient, ascent, or
-continuation provenance are excluded.
+Included datasets are `random_sample` and `random_product_sample`. Rows with
+non-random/product provenance are excluded.
 
 ## Inputs
 
@@ -40,7 +39,7 @@ uv run --script experiments/sys-datascience/methods/trusted-random-dataset/analy
   --write-filtered
 ```
 
-## Retained Artifacts
+## Generated Artifacts After Rerun
 
 - `artifacts/summary.json`
 
@@ -63,8 +62,7 @@ Current run on hydrated retained tables:
 ## Validity Guards
 
 - This packet does not validate capacity or volume computations.
-- This packet does not include ascent startpoints, endpoints, traces, or
-  continuation rows.
+- This packet is scoped to random/product rows only.
 - The retained random/product row count is table-scoped.
 
 ## Current Disposition
@@ -73,8 +71,8 @@ Use as the input contract for random-only method packets.
 
 ## Remaining Worthwhile Questions
 
-Rerun after retained tables are rebuilt or after non-gradient perturbation rows
-are promoted into a retained table.
+Rerun after retained tables are rebuilt or after a new random/product producer
+family is promoted into the retained table.
 
 ## Predicted Stability Under Rerun
 
@@ -83,10 +81,10 @@ High on unchanged retained tables.
 ## Thesis Use
 
 Supports the statement that the random-only method table used an explicit
-trusted input filter and did not silently include ascent data.
+trusted input filter.
 
 ## Reopen Triggers
 
 - retained tables are rebuilt;
-- new trusted non-gradient datasets are added;
+- new trusted random/product datasets are added;
 - provenance schema changes.

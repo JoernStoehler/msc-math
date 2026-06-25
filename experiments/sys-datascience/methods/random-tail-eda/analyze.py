@@ -197,7 +197,7 @@ def generator_contract() -> dict[str, object]:
             "generic facet counts outside 5..12",
             "product side counts outside 3..6",
             "alternative random distributions",
-            "gradient/ascent/continuation/attractor parameters",
+            "optimizer or trajectory parameters",
         ],
     }
 

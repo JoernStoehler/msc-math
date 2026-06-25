@@ -46,7 +46,7 @@ negative and descriptive claims are tied to the actual sampling distributions.
 uv run --script experiments/sys-datascience/methods/random-tail-eda/analyze.py
 ```
 
-## Retained Artifacts
+## Generated Artifacts After Rerun
 
 - `artifacts/summary.json`
 - `artifacts/sys-histogram.png`
