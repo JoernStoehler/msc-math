@@ -1,7 +1,7 @@
 # Generalized Reeb Orbits Content Notes
 
 Status: section-local content companion for
-`thesis/generalized-reeb-orbits-polytopes.tex`. Not source truth.
+`thesis/03-generalized-reeb-orbits-polytopes.tex`. Not source truth.
 
 Purpose: gather the writing inventory for explaining why finite polytope
 computations compute the relevant symplectic quantity.

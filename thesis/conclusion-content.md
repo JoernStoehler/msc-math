@@ -1,6 +1,6 @@
 # Conclusion Content Notes
 
-Status: section-local content companion for `thesis/conclusion.tex`. Not source
+Status: section-local content companion for `thesis/14-conclusion.tex`. Not source
 truth.
 
 Purpose: gather the conclusion inventory before final prose is written.

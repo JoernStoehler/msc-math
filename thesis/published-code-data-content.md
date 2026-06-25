@@ -1,6 +1,6 @@
 # Published Code And Data Content Notes
 
-Status: section-local content companion for `thesis/published-code-data.tex`.
+Status: section-local content companion for `thesis/12-published-code-data.tex`.
 Not source truth.
 
 Purpose: gather the publication and reproducibility claims before final prose is

@@ -1,6 +1,6 @@
 # Use Of AI Content Notes
 
-Status: section-local content companion for `thesis/use-of-ai.tex`. Not source
+Status: section-local content companion for `thesis/13-use-of-ai.tex`. Not source
 truth.
 
 Purpose: gather the factual AI-use inventory and evidence boundaries before

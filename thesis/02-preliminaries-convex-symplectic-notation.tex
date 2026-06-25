@@ -1,0 +1,67 @@
+\subsection{Convex and symplectic notation}\label{subsec:preliminaries-polytopes}
+
+We write \(\mathbb{R}^4\) with coordinates \((q_1,q_2,p_1,p_2)\). The standard
+complex structure is
+\[
+  J_0 =
+  \begin{pmatrix}
+    0 & -I_2 \\
+    I_2 & 0
+  \end{pmatrix},
+\]
+and the standard symplectic form is
+\[
+  \omega_0(u,v) = \langle J_0u,v\rangle
+  = \sum_{i=1}^2 (u_{q_i}v_{p_i}-u_{p_i}v_{q_i}).
+\]
+We will use \(J_0^2=-I\), \(J_0^{\mathsf T}=-J_0\), and
+\(\omega_0(J_0u,J_0v)=\omega_0(u,v)\) without further comment.
+We use the standard primitive
+\[
+  \lambda_0 = \frac{1}{2}\sum_{i=1}^2(q_i\,dp_i-p_i\,dq_i).
+\]
+Thus \(d\lambda_0=\omega_0\) and
+\(\lambda_0|_x(v)=\frac12\langle -J_0v,x\rangle\).
+Thus, for an absolutely continuous closed curve
+\(\gamma\colon[0,T]\to\mathbb{R}^4\), its action is
+\begin{equation}\label{eq:preliminaries-action}
+  A(\gamma) \coloneqq \int_\gamma \lambda_0
+  = \frac{1}{2}\int_0^T
+    \langle -J_0\dot{\gamma}(t),\gamma(t)\rangle\,dt.
+\end{equation}
+This action is invariant under orientation-preserving reparametrization.
+
+\begin{lemma}[Symplectic shoelace formula]\label{lem:preliminaries-shoelace}
+Let \(z\colon[0,T]\to\mathbb{R}^4\) be a closed piecewise affine curve. Suppose
+that \(z\) has constant velocity \(w_k\) on consecutive intervals of length
+\(\ell_k\), for \(k=1,\ldots,m\). Then
+\begin{equation}\label{eq:preliminaries-shoelace}
+  2A(z)
+  =
+  \sum_{1\leq j<k\leq m}
+    \ell_j\ell_k\,\omega_0(w_j,w_k).
+\end{equation}
+In particular, the action of a closed pure-word Reeb orbit depends only on the
+cyclic velocity word and the dwell times, not on the base point.
+\end{lemma}
+
+\begin{proof}
+Write \(t_k=\sum_{j<k}\ell_j\). On the \(k\)-th interval,
+\[
+  z(t)=z(0)+\sum_{j<k}\ell_jw_j+(t-t_k)w_k.
+\]
+The contribution of \(z(0)\) to
+\(\int_0^T\langle -J_0\dot z,z\rangle\,dt\) vanishes because \(z\) is closed,
+so \(\sum_k\ell_kw_k=0\). The self-term
+\(\langle -J_0w_k,w_k\rangle\) vanishes by skew-symmetry. Hence
+\[
+  2A(z)
+  =
+  \sum_k
+    \ell_k\left\langle -J_0w_k,\sum_{j<k}\ell_jw_j\right\rangle
+  =
+  \sum_{j<k}\ell_j\ell_k\,\omega_0(w_j,w_k),
+\]
+using \(\omega_0(u,v)=\langle J_0u,v\rangle\).
+\end{proof}
+

@@ -1,6 +1,6 @@
 # Visualization In 3D Content Notes
 
-Status: section-local content companion for `thesis/visualization-3d.tex`. Not
+Status: section-local content companion for `thesis/10-visualization-3d.tex`. Not
 source truth.
 
 Purpose: gather the visualization side-result inventory before final prose and

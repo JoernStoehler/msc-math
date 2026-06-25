@@ -1,7 +1,7 @@
 # Quadratic Program Content Notes
 
 Status: section-local content companion for
-`thesis/quadratic-program-algorithm-hk2019.tex`. Not source truth.
+`thesis/04-haim-kislev-quadratic-program.tex`. Not source truth.
 
 Purpose: gather the writing inventory for the Haim--Kislev quadratic-program
 section.

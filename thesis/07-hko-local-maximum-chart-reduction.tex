@@ -1,0 +1,102 @@
+\clearpage
+\subsection{Reduction to the certificate}
+\label{subsec:hko-local-maximum-decision-problem}
+
+The proof is local, and the first step is not computational. The following
+elementary reduction is the bridge from the Hausdorff theorem statement to the
+dual-vertex coordinates used by the certificate.
+
+\begin{lemma}[Hausdorff-local ten-facet chart]
+\label{lem:hko-hausdorff-local-ten-facet-chart}
+After shrinking the Hausdorff neighborhood of \(K_{\mathrm{HKO}}\) in
+\(\mathcal P_{10}\), every nearby polytope admits a numbering of its ten polar
+vertices
+\[
+  K(a)=
+  \{x\in\mathbb R^4:\langle a_i,x\rangle\le 1,\ i=1,\ldots,10\},
+  \qquad
+  a=(a_1,\ldots,a_{10})\in(\mathbb R^4)^{10}.
+\]
+After a permutation of the HKO index set, \(a_i\) is close to the corresponding
+HKO polar vertex. These finitely many labelled charts cover the Hausdorff-local
+ten-facet stratum. In each chart the supporting inequalities stay
+facet-defining, boundedness and nonempty interior persist, and the HKO face
+combinatorics is unchanged. Conversely, a sufficiently small coordinate
+neighborhood of any ordered HKO dual-vertex list parametrizes its labelled part
+of this Hausdorff-local stratum.
+\end{lemma}
+
+\begin{proof}
+The centered HKO representative contains the origin in its interior. After
+shrinking the Hausdorff neighborhood, the origin remains in the interior of
+every nearby polytope, and polarity is continuous on this neighborhood. Thus a
+polytope in \(\mathcal P_{10}\) has ten facets if and only if its polar has ten
+vertices.
+
+Since \(K_{\mathrm{HKO}}\) is simple, its polar
+\(K_{\mathrm{HKO}}^\circ\) is a simplicial polytope with ten vertices. Choose
+pairwise disjoint small neighborhoods of these ten vertices. For each vertex,
+choose a linear functional in the interior of its normal cone. If a ten-vertex
+polytope \(L\) is sufficiently Hausdorff-close to \(K_{\mathrm{HKO}}^\circ\),
+then the maximizer of the corresponding functional on \(L\) is a vertex in the
+chosen neighborhood. Since \(L\) has exactly ten vertices, each neighborhood
+contains exactly one vertex and there are no other vertices. Numbering the ten
+polar vertices of \(L\) is therefore the same as choosing one of the finitely
+many permutations of these neighborhoods; it is not a canonical operation.
+Applying this to \(L=K^\circ\), every Hausdorff-near
+\(K\in\mathcal P_{10}\) is represented by one of the resulting labelled
+ten-dual-vertex charts.
+
+It remains only to shrink to the stable simple-polytope chart. We use the
+standard local stability of simple labelled \(H\)-representations: after
+shrinking the labelled coefficients, a simple polytope keeps the same face
+lattice. In the present chart this is witnessed by finitely many open
+conditions. At \(K_{\mathrm{HKO}}\), each vertex is the transverse intersection
+of its four incident supporting hyperplanes, every nonincident inequality has
+strict slack at that vertex, the labelled inequalities are irredundant, and
+each nonface four-tuple of supporting hyperplanes is infeasible, so no new
+vertex can appear from a nonface four-tuple. These determinant, slack,
+irredundancy, nonface-infeasibility, boundedness, and origin-interior
+conditions remain true for all sufficiently small labelled perturbations, so the
+HKO face combinatorics is unchanged in each labelled chart. Conversely, small
+perturbations of any ordered HKO polar-vertex list keeping these same open
+conditions give the corresponding labelled part of the local stratum after
+shrinking once more.
+\end{proof}
+
+This local stability statement is separate from the SageMath certificate: the
+certificate begins only after the Hausdorff-local problem has been put in one of
+these labelled dual-vertex coordinates. The systolic ratio and the equality
+statement are invariant under relabelling the ten inequalities. Hence, by
+Lemma~\ref{lem:hko-hausdorff-local-ten-facet-chart}, the same coordinate-local
+conclusion in each chart of the finite cover proves the stated local result in
+\(\mathcal P_{10}\).
+
+In a labelled chart, the continuous \(G_{\operatorname{sys}}\)-action induces
+a smooth local action on the dual-vertex coordinates. A translation by
+\(y\in\mathbb R^4\) sends
+\[
+  a_i\mapsto \frac{a_i}{1+\langle a_i,y\rangle},
+\]
+positive scaling by \(\rho>0\) sends \(a_i\mapsto \rho^{-1}a_i\), and a
+linear symplectic map \(M\) sends \(a_i\mapsto M^{-T}a_i\). Differentiating
+this induced action at \(K_{\mathrm{HKO}}\) gives a \(15\)-dimensional
+orbit tangent space \(T_{\mathrm{orb}}\subset(\mathbb R^4)^{10}\).
+
+Choose a linear complement \(S\) to \(T_{\mathrm{orb}}\). The exact verifier
+checks that \(\dim T_{\mathrm{orb}}=15\), so \(\dim S=25\). After shrinking the
+neighborhoods, the map
+\[
+  (g,s)\longmapsto g\cdot(a_{\mathrm{HKO}}+s)
+\]
+from a neighborhood of the identity in
+\(\mathbb R^4\rtimes(\mathbb R_{>0}\times Sp(4,\mathbb R)^0)\) and a
+neighborhood of \(0\) in \(S\) is a local diffeomorphism onto a neighborhood of
+\(a_{\mathrm{HKO}}\) in the chart. After shrinking, each nearby point has a
+unique representation \(g\cdot(a_{\mathrm{HKO}}+s)\) with \(g\) near the
+identity and \(s\in S\) small. Thus it is enough to prove that
+\(\operatorname{sys}\) has a strict local maximum on \(a_{\mathrm{HKO}}+S\). If
+equality holds near HKO, the slice component must be \(s=0\), and the polytope
+lies in the \(G_{\operatorname{sys}}\)-orbit. The converse inclusion in the
+theorem follows from Lemma~\ref{lem:hko-systolic-ratio-invariance}.
+

@@ -4,7 +4,7 @@ Status: thesis-local content-gathering notes, not source truth.
 
 Purpose: gather the HKO result packet, source pointers, evidence status, and
 remaining review gates needed to draft and review
-`thesis/hko-local-maximum.tex`.
+`thesis/07-hko-local-maximum.tex`.
 
 Overruled by: `FACTSHEET.md`, exact artifacts and local documentation in
 `experiments/hko-local-maximum/`, formal proof files, task files, and Jörn/Kai
@@ -18,7 +18,7 @@ Update rule: add or change a claim only with a source pointer or an explicit
 `needs source` marker.
 
 Current draft checkpoint, 2026-06-15:
-- `thesis/hko-local-maximum.tex` is an integrated theorem-strength draft, not
+- `thesis/07-hko-local-maximum.tex` is an integrated theorem-strength draft, not
   final thesis text.
 - Local checks run in the source draft worktree after the latest substantive
   edits: exact Sage verifier, thesis build/check, formal build, JSONL
@@ -64,7 +64,7 @@ The HKO thesis-facing result is a packet, not only one theorem statement.
    Source pointers: `experiments/hko-local-maximum/README.md`;
    `experiments/hko-local-maximum/theorem/README.md`;
    `tasks/references/central-claim-control-packet-2026-06-01.md`;
-   `thesis/hko-local-maximum.tex`.
+   `thesis/07-hko-local-maximum.tex`.
 
 3. Exact certificate:
    Rust writes finite verifier input; SageMath computes exact algebraic data
@@ -168,7 +168,7 @@ The HKO non-writing work is currently split into four packets.
 
 4. Thesis-writing companion finalization:
    this file now records the intended writing structure and review gate. An
-   integrated thesis draft exists in `thesis/hko-local-maximum.tex`. After Kai
+   integrated thesis draft exists in `thesis/07-hko-local-maximum.tex`. After Kai
    theorem review, update the status markers and revise that draft instead of
    treating this companion as source truth.
 
@@ -219,7 +219,7 @@ implication from the finite predicate to local maximality, and the scope
 control around the result.
 
 Current status: this is the working checklist for
-`thesis/hko-local-maximum.tex`. It should be refreshed if the theorem wording,
+`thesis/07-hko-local-maximum.tex`. It should be refreshed if the theorem wording,
 row certificate, or Kai review outcome changes.
 
 Classification rule:
@@ -252,7 +252,7 @@ Source pointers:
 - `formal/hko-feasible-section-upper-branches.tex`,
   `lem:hko-capacity-normalization`, `lem:hko-full-chart-volume-row`, and
   `rem:hko-hausdorff-theorem-domain`;
-- `thesis/hko-local-maximum.tex`, `lem:hko-hausdorff-local-ten-facet-chart`;
+- `thesis/07-hko-local-maximum.tex`, `lem:hko-hausdorff-local-ten-facet-chart`;
 - `experiments/hko-local-maximum/README.md`, "Current Status";
 - `experiments/hko-local-maximum/theorem/README.md`, "Theorem Target".
 
@@ -392,10 +392,10 @@ Source pointers:
 
 Status:
 - the core content now has an integrated theorem-strength draft in
-  `thesis/hko-local-maximum.tex`, but it is not final thesis text until the
+  `thesis/07-hko-local-maximum.tex`, but it is not final thesis text until the
   review gate accepts the theorem wording;
 - the auxiliary assets below are not yet created;
-- the next work should update this same companion or `thesis/hko-local-maximum.tex`,
+- the next work should update this same companion or `thesis/07-hko-local-maximum.tex`,
   not create another planning surface.
 
 Asset decision status:
@@ -762,7 +762,7 @@ Source pointers:
 
 Missing:
 - Decide how much search/context belongs in the HKO section versus
-  `thesis/black-box-datascience.tex`.
+  `thesis/08-black-box-datascience.tex`.
 
 ## Non-Writing Blockers
 

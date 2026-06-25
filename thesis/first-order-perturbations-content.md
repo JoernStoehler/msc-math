@@ -1,7 +1,7 @@
 # First-Order Perturbations Content Notes
 
 Status: section-local content companion for
-`thesis/first-order-perturbations.tex`. Not source truth.
+`thesis/06-first-order-perturbations.tex`. Not source truth.
 
 Purpose: gather the writing inventory for the general first-order perturbation
 machinery used in gradient-like search, concept formation, and later proof

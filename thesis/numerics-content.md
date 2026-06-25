@@ -1,6 +1,6 @@
 # Numerics Content Notes
 
-Section-local content companion for `thesis/numerics.tex`.
+Section-local content companion for `thesis/11-numerics.tex`.
 Source truth for empirical numerics is `experiments/dev-quadratic-program/numerics-audit/README.md`.
 Source truth for the generic-case numerical contract is
 `formal/hk2017-qp-core.tex` and `formal/hk2017-qp-precision.tex`.

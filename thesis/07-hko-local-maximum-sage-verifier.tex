@@ -1,0 +1,162 @@
+\subsubsection*{How the Sage verifier represents the certificate}
+
+The hand proof has reduced the theorem to the finite predicate just listed.
+SageMath is used for that finite predicate because the checks are exact
+algebraic equalities, inequalities, ranks, and kernel computations. The script
+\path{verify.sage.py} is fail-closed: every proof-facing assertion goes through
+an explicit check, and a failed check raises an exception instead of producing
+a successful certificate summary. The excerpts below are shortened to show the
+proof-facing checks; the executable source file is the reference
+implementation.
+
+\begin{verbatim}
+def check(condition, message):
+    if not bool(condition):
+        raise ValueError(f"verification failed: {message}")
+\end{verbatim}
+
+The verifier first reconstructs the ordered field and the HKO dual vertices
+from formulas, rather than trusting floating-point coordinates from the Rust
+generator. The field is \(Q(t)\), where \(t\) is the real root in \((0,1)\) of
+\(t^4-10t^2+5\), i.e. \(t=\tan(\pi/5)\).
+
+\begin{verbatim}
+def exact_hko_geometry():
+    ring = PolynomialRing(QQ, "x")
+    x = ring.gen()
+    polynomial = x**4 - 10 * x**2 + 5
+    K = NumberField(
+        polynomial, "t",
+        embedding=AA.polynomial_root(polynomial, RIF(0, 1)),
+    )
+    t = K.gen()
+    sqrt5 = (QQ(5) - t**2) / 2
+    alpha = (QQ(3) - sqrt5) / 2
+    beta = t * (QQ(1) + sqrt5) / 2
+    sec36 = sqrt5 - 1
+    ...
+    return K, t, sqrt5, duals
+\end{verbatim}
+
+The proof-relevant finite choices read from \path{witness.json} are the words
+\(\sigma\), the selected five-column minors, and the beta coordinates that are
+kept fixed in the feasible section. The witness also contains floating-point
+hints. These hints guide the search for exact beta candidates and are recorded
+for diagnostics, but they do not decide whether a row is accepted. A row is
+accepted only after exact checks: closure plus normalization, strict beta
+positivity in the chosen real embedding, invertibility of the selected minor,
+equality with the HKO action, the differentiated feasible-section equation,
+the derivative formula for \(D\operatorname{sys}\), and annihilation of every
+symmetry tangent column.
+
+\begin{verbatim}
+def beta_is_valid(K, duals, sigma, beta, q_min):
+    C = constraint_matrix(K, duals, sigma)
+    e = vector(K, [0, 0, 0, 0, 1])
+    return (
+        C * beta == e
+        and all(entry > K(0) for entry in beta)
+        and q_value(duals, sigma, beta) == q_min
+    )
+\end{verbatim}
+
+The search routine forms the beta coordinates as exact polynomials in the
+fixed beta variables. It uses the floating-point entries from the witness to
+generate and order rational values and algebraic roots to try. A candidate is
+returned only when \verb|beta_is_valid| accepts it in the exact field.
+
+\begin{verbatim}
+def verify_entry(..., sym_cols, entry):
+    C = constraint_matrix(K, duals, sigma)
+    e = vector(K, [0, 0, 0, 0, 1])
+    check(C * beta == e, "closure")
+    check(all(b > K(0) for b in beta), "beta > 0")
+    minor = C[:, minor_columns]
+    check(minor.det() != K(0), "minor det")
+    check(q == q_min, "q_min")
+    check(action == action_min, "HKO action")
+    verify_d_beta(...)
+    ...
+    check(d_sys == recomputed_d_sys, "D sys")
+    for column in sym_cols:
+        check(d_sys.dot_product(column) == K(0), "symmetry")
+    return d_sys
+\end{verbatim}
+
+After all rows have been checked, the final quotient certificate is a pure
+linear-algebra assertion over the same ordered field. The verified rows must
+have rank \(25\). Their left kernel must contain a vector whose entries are all
+strictly positive after a possible sign change. Normalizing that vector gives
+the coefficients \(\lambda_\sigma\), and the verifier checks exactly that they
+sum to \(1\) and combine the rows to zero.
+
+\begin{verbatim}
+def compute_convex_coefficients(K, verified_rows):
+    M = matrix(K, [list(row) for row in verified_rows])
+    check(M.rank() == 25, "rank 25")
+    kernel = M.transpose().right_kernel().basis()
+    check(len(kernel) == 1, "one left-kernel line")
+    lambdas = list(kernel[0])
+    if all(entry < K(0) for entry in lambdas):
+        lambdas = [-entry for entry in lambdas]
+    check(all(entry > K(0) for entry in lambdas), "positive")
+    total = sum(lambdas, K(0))
+    lambdas = vector(K, [entry / total for entry in lambdas])
+    check(sum(lambdas, K(0)) == K(1), "sum 1")
+    zero = vector(K, [0 for _ in range(M.ncols())])
+    check(lambdas * M == zero, "weighted sum 0")
+    return M, lambdas
+\end{verbatim}
+
+The top-level verifier wires these checks together. It checks the packet
+identity, reconstructs HKO and the symmetry tangent space, checks the requested
+ambient and quotient dimensions, verifies all 26 entries, computes the convex
+coefficients, and writes the successful summary only after these checks have
+passed.
+
+\begin{verbatim}
+entries = [
+    compute_entry(K, duals, volume, volume_row,
+                  action_min, q_min, row)
+    for row in witness["entries"]
+]
+verified_rows = [
+    verify_entry(K, duals, volume, volume_row,
+                 action_min, q_min, symmetry_columns, entry)
+    for entry in entries
+]
+row_matrix, lambdas = compute_convex_coefficients(
+    K, verified_rows
+)
+\end{verbatim}
+
+The successful run records the proof-facing summary values used above: 26
+verified rows, ambient dimension \(40\), row rank \(25\), and symmetry rank
+\(15\). During the run, Sage also computes and checks positive exact
+coefficients \(\lambda_\sigma\) with
+\(\sum_\sigma \lambda_\sigma=1\) and
+\(\sum_\sigma \lambda_\sigma r_\sigma=0\). These are the computational inputs
+to the hand proof of Theorem~\ref{thm:hko-ten-facet-local-maximum}.
+
+\begin{proof}[Proof of Theorem~\ref{thm:hko-ten-facet-local-maximum}]
+Lemma~\ref{lem:hko-hausdorff-local-ten-facet-chart} reduces the Hausdorff-local
+statement in \(\mathcal P_{10}\) to the labelled dual-vertex charts. In such a
+chart, the induced action of \(G_{\operatorname{sys}}\) has tangent space
+\(T_{\mathrm{orb}}\). The rank computation for this tangent space gives the
+inverse-function-theorem slice \(a_{\mathrm{HKO}}+S\), so it is enough to prove
+strict local maximality on that slice.
+
+The finite certificate gives the required strict slice maximum. Its selected
+feasible upper branches touch \(\operatorname{sys}\) at \(a_{\mathrm{HKO}}\).
+Their derivative rows annihilate \(T_{\mathrm{orb}}\), span the cotangent space
+of the slice, and admit a strictly positive convex relation summing to zero.
+The finite first-order criterion above therefore makes every sufficiently small
+nonzero slice perturbation decrease the systolic ratio. Thus every sufficiently
+small perturbation has systolic ratio at most
+\(\operatorname{sys}(K_{\mathrm{HKO}})\). If equality holds, strictness on the
+slice forces the slice coordinate to vanish, so the perturbation is in the
+\(G_{\operatorname{sys}}\)-orbit of \(K_{\mathrm{HKO}}\). Conversely, every
+polytope in that orbit has the same systolic ratio by
+Lemma~\ref{lem:hko-systolic-ratio-invariance}.
+\end{proof}
+

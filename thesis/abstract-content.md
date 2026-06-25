@@ -1,6 +1,6 @@
 # Abstract Content Notes
 
-Status: section-local content companion for `thesis/abstract.tex`. Not source
+Status: section-local content companion for `thesis/00-abstract.tex`. Not source
 truth.
 
 Purpose: gather the final abstract inventory before the abstract is written.

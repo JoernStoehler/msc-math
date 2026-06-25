@@ -1,6 +1,6 @@
 # Introduction Content Notes
 
-Status: section-local content companion for `thesis/introduction.tex`. Not
+Status: section-local content companion for `thesis/01-introduction.tex`. Not
 source truth.
 
 Purpose: gather the introduction inventory and pacing notes before final prose

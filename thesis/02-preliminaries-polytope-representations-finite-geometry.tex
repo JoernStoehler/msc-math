@@ -1,0 +1,101 @@
+\subsection{Polytope representations and finite geometry}
+\label{subsec:preliminaries-polytope-finite-geometry}
+
+The thesis uses two equivalent finite descriptions of a full-dimensional
+polytope \(K\subset\mathbb{R}^4\) with \(0\in\operatorname{int}(K)\). An
+\(H\)-representation is an intersection of normalized halfspaces
+\[
+  K=\{x\in\mathbb{R}^4:\langle a_i,x\rangle\leq 1,\; i=1,\ldots,F\}.
+\]
+Here \(a_i=n_i/h_i\), where \(n_i\) is the outward unit normal and
+\(h_i=h_K(n_i)>0\) is the corresponding height. The same data are the vertices
+of the polar body
+\[
+  K^\circ=\operatorname{conv}\{a_1,\ldots,a_F\}
+\]
+when the inequalities are irredundant. Thus checking that a proposed dual-row
+list really describes an \(F\)-facet polytope has two parts: \(0\) must lie in
+the interior of \(\operatorname{conv}\{a_i\}\), which is equivalent to
+boundedness of \(K\), and every \(a_i\) must be an extreme point of that convex
+hull, which is equivalent to irredundancy of the normalized halfspace
+description.
+
+The finite vertex enumeration used in the implementation is the standard
+four-dimensional halfspace algorithm. For every four-element set
+\(I=\{i_1,i_2,i_3,i_4\}\), solve
+\[
+  \langle a_{i_j},x\rangle=1,
+  \qquad j=1,\ldots,4.
+\]
+If the system is singular, it contributes no isolated candidate vertex. If it
+has a solution \(x_I\), keep \(x_I\) exactly when it satisfies all inequalities
+\(\langle a_i,x_I\rangle\leq1\). Duplicate candidates are identified. This
+enumerates the vertex set of \(K\). At the same time it constructs the
+vertex--facet incidence matrix
+\[
+  \mathcal I_{v i}
+  =
+  \begin{cases}
+    1,&\langle a_i,v\rangle=1,\\
+    0,&\langle a_i,v\rangle<1,
+  \end{cases}
+\]
+where rows are vertices and columns are facets.
+
+This incidence matrix is the concrete face-incidence data used later. A facet
+is represented by the list of incident vertices in one column. Two facets
+intersect if some row is incident to both. In four dimensions, an edge is
+detected by two vertices sharing at least three incident facets, and a
+two-face is detected by two facets sharing at least three vertices. These
+are the incidence-only rules used by the current finite pipeline after the
+vertex--facet matrix has been constructed exactly; they are not numerical
+signed-distance tests. Degenerate inputs that need more than this incidence
+contract are treated separately in the relevant algorithm section.
+
+For generated dual rows, boundedness is checked before vertex enumeration.
+Equivalently, the dual rows positively span \(\mathbb{R}^4\):
+\[
+  d\neq0
+  \quad\Longrightarrow\quad
+  \langle a_i,d\rangle>0
+  \text{ for some }i.
+\]
+In four dimensions this can be checked from the one-dimensional kernels of
+triples of dual rows, together with the rank condition that the \(a_i\) span
+\(\mathbb{R}^4\). This is the boundedness test used by the exact polytope
+pipeline.
+
+We use the Hausdorff metric on compact convex sets for local and limiting
+statements. Near a polytope with a fixed number of irredundant facets, a
+labelled dual-row list gives local coordinates as long as the open conditions
+above persist: \(0\in\operatorname{int}\operatorname{conv}\{a_i\}\), all
+\(a_i\) remain extreme, and the relevant incidences do not change. Different
+facet labellings can represent the same unlabelled polytope. This is the
+topological background for local perturbation statements such as the
+Hausdorff-local ten-facet chart in
+Section~\ref{sec:hko-local-maximum}.
+
+For a convex body \(K\), the support function and gauge function are
+\[
+  h_K(y) \coloneqq \max_{x\in K}\langle x,y\rangle,
+  \qquad
+  g_K(x) \coloneqq \inf\{\lambda>0:x\in \lambda K\}.
+\]
+The boundary of \(K\) is the level set \(g_K=1\). We use the Hamiltonian
+\[
+  H_K(x) \coloneqq g_K(x)^2.
+\]
+When \(K\) is smooth, a Reeb orbit on \(\partial K\) is the contact-normalized
+Hamiltonian orbit
+\begin{equation}\label{eq:preliminaries-smooth-reeb-inclusion}
+  -J_0\dot{\gamma}(t) \in \partial H_K(\gamma(t)),
+  \qquad
+  H_K(\gamma(t))=1.
+\end{equation}
+Here \(\partial H_K\) denotes the convex subdifferential; in the smooth case it
+is the singleton \(\{\nabla H_K\}\). With this normalization the action of a
+Reeb orbit equals its period:
+\[
+  A(\gamma)=T.
+\]
+

@@ -1,0 +1,89 @@
+\subsection{Exact finite certificate}
+\label{subsec:hko-local-maximum-computation-with-sagemath}
+
+The exact certificate proves the slice statement by upper branches. As in the
+finite-capacity computation from
+Section~\ref{sec:quadratic-program-algorithm-hk2019}, a word \(\sigma\) fixes
+a cyclic facet sequence, and the coefficients \(\beta\) are the feasible
+weights that produce an admissible action for that sequence. For each selected
+word \(\sigma\), the certificate contains exact data defining a feasible
+section \(\beta_\sigma(a)\). The corresponding function
+\[
+  U_\sigma(a)
+\]
+is a smooth upper bound for \(\operatorname{sys}(K(a))\) near the HKO point,
+and satisfies
+\[
+  U_\sigma(a_{\mathrm{HKO}})
+  =
+  \operatorname{sys}(K_{\mathrm{HKO}}).
+\]
+These feasible sections are not required to be optimizing branches for nearby
+parameters. They are used only as upper branches touching the systolic ratio
+at HKO.
+
+This point is essential for the HKO certificate. The 26-row certificate uses
+both nonsingular six-facet data and singular seven-facet data; the
+nonsingular active rows alone do not span the \(25\)-dimensional quotient
+slice. The proof therefore does not differentiate nearby KKT-critical
+optimizers. Instead, for each selected word it fixes enough beta coordinates
+so that the closure and normalization equations have an invertible minor. This
+gives a smooth feasible beta section and hence a differentiable upper branch
+even when the KKT system for an optimizing branch is singular.
+
+The finite first-order criterion is the following. Let
+\(r_\sigma=D U_\sigma(a_{\mathrm{HKO}})\). If the selected rows annihilate the
+symmetry tangent space, have ambient row rank \(25\), and admit positive
+coefficients \(\lambda_\sigma\) with
+\[
+  \sum_\sigma\lambda_\sigma=1,
+  \qquad
+  \sum_\sigma\lambda_\sigma r_\sigma=0,
+\]
+then every nonzero transverse direction has some upper branch with strictly
+negative first derivative. Indeed, the ambient coordinate space has dimension
+\(40\), and the symmetry tangent space has dimension \(15\), so rank \(25\)
+rows that vanish on the symmetry tangent space span the cotangent space of any
+transverse slice. Since the selected set is finite and the upper branches are
+smooth, the first-order decrease has a uniform negative margin on the compact
+unit sphere in the slice. Hence \(\operatorname{sys}\) decreases for every
+sufficiently small nonzero transverse perturbation.
+
+The finite certificate is a list of exact assertions over the ordered number
+field determined by the real root \(0<t<1\) of
+\[
+  t^4-10t^2+5=0.
+\]
+It records the following proof-facing facts:
+\[
+\begin{array}{ll}
+\text{ambient dimension} & 40\\
+\text{selected feasible sections} & 26\\
+\text{symmetry tangent rank} & 15\\
+\text{upper-branch row rank} & 25\\
+\text{convex certificate} &
+  \lambda_\sigma>0,\quad
+  \sum_\sigma\lambda_\sigma=1,\quad
+  \sum_\sigma\lambda_\sigma r_\sigma=0.
+\end{array}
+\]
+The certificate also checks positivity, closure and normalization of each beta
+vector, invertibility of the selected feasible-section minor, equality of each
+selected branch action with the HKO action, the feasible-section derivative
+equation, the derivative row formula for \(U_\sigma\), and annihilation of the
+symmetry tangent space. These checks enter the proof in three places. The
+field, HKO geometry, capacity, volume, and volume derivative checks identify
+the base point and the normalization used for \(\operatorname{sys}\). The
+rowwise checks give the smooth feasible upper branches \(U_\sigma\) and
+identify their derivatives at the HKO point. The global rank, annihilation, and
+positive-convex-combination checks are exactly the finite first-order
+certificate on the quotient slice.
+
+Rust is used only to generate the finite witness file. SageMath reads that
+witness, reconstructs the exact algebraic data in memory, and checks the
+proof-facing equations. The full verifier packet is stored in
+\path{experiments/hko-local-maximum/theorem/}. The mathematical implication
+from these checked equations to
+Theorem~\ref{thm:hko-ten-facet-local-maximum} is the finite upper-branch and
+slice argument above; it is not a property of the Rust search procedure.
+

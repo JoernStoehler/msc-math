@@ -1,7 +1,7 @@
 # Flow-Graph Thesis Support Ledger
 
 Status: section-local support ledger for
-`thesis/flow-graph-algorithm-ch2021.tex`.
+`thesis/05-flow-graph-algorithm-ch2021.tex`.
 
 This file is not thesis prose, not a proof file, and not a Rust design log. Its
 job is to keep the thesis-writing boundary clear until the flow-graph section is
@@ -17,7 +17,7 @@ surviving theorem/caveat boundary into thesis prose.
 Use these sources directly when drafting or reviewing the section.
 
 - Active thesis background:
-  `thesis/generalized-reeb-orbits-polytopes.tex`.
+  `thesis/03-generalized-reeb-orbits-polytopes.tex`.
   Checked labels:
   `thm:generalized-reeb-simple-minimizer` and
   `subsec:generalized-reeb-orbits-polytopes-ch2021`.
@@ -163,7 +163,7 @@ These prompts were mined from the obsolete `fg-ch2021-content-gaps` worktree on
 
 ## Drafting Gates
 
-Before promoting `thesis/flow-graph-algorithm-ch2021.tex` beyond the current
+Before promoting `thesis/05-flow-graph-algorithm-ch2021.tex` beyond the current
 conditional scaffold, complete these gates.
 
 1. Review `formal/flow-graph-real-algorithm.tex` for false statements, missing

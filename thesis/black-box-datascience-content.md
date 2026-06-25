@@ -1,6 +1,6 @@
 # Black-Box Data-Science Content Notes
 
-Status: section-local content companion for `thesis/black-box-datascience.tex`.
+Status: section-local content companion for `thesis/08-black-box-datascience.tex`.
 Not source truth.
 
 Purpose: gather the data-science search-result writing inventory, result

@@ -1,7 +1,7 @@
 # SageMath Computations Appendix Content Notes
 
 Status: section-local content companion for
-`thesis/appendix-sagemath-computations.tex`. Not source truth.
+`thesis/c-sagemath-computations.tex`. Not source truth.
 
 Purpose: gather appendix-level SageMath computation material.
 

@@ -19,6 +19,14 @@ polished prose, TeX structure, labels, figures, and local comments that prevent
 the source from misrepresenting proof status. Do not use them as durable
 planning ledgers or content-control dashboards.
 
+Keep thesis source splits semantic and demand-driven. The file containing a
+`\section{...}` command should also keep the short section opening and any
+small local connective prose. Move material into a separate `.tex` file only
+after it has grown into a substantial independent unit, such as a long proof,
+certificate, verifier explanation, evidence packet, or subsection likely to be
+edited or reviewed independently. Do not split every short subsection or
+opening paragraph merely to make section files contain only `\input` lines.
+
 Section-local `*-content.md` companions are the durable "what to say" surface.
 Use them for content inventory, claim/support/caveat notes, source pointers,
 fallback branches, review gates, and open writing decisions. These files are

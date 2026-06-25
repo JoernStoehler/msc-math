@@ -1,0 +1,85 @@
+\subsection{EHZ capacity}\label{subsec:preliminaries-smooth-symplectic-geometry}
+
+For smooth convex bodies, the Ekeland--Hofer and Hofer--Zehnder capacities
+coincide. We use the resulting EHZ capacity in the form
+\begin{equation}\label{eq:preliminaries-ehz-capacity}
+  c_{\mathrm{EHZ}}(K)
+  = \min\{A(\gamma):\gamma
+    \text{ is a closed characteristic on }\partial K\}.
+\end{equation}
+Equivalently, the minimum may be taken over Reeb orbits, because every closed
+characteristic admits the contact-normalized Reeb parametrization and the
+action is reparametrization-invariant. The minimum exists and is positive; for
+the thesis we use this standard existence result as background
+\cite{Rabinowitz1978}. For nonsmooth convex bodies, and in particular for
+polytopes, the same capacity is obtained by approximation and by minimizing
+over generalized closed characteristics. The polytope version used later is
+spelled out in Section~\ref{sec:generalized-reeb-orbits-polytopes}.
+
+As a symplectic capacity on convex bodies, \(c_{\mathrm{EHZ}}\) is monotone
+under inclusion, invariant under symplectomorphisms, and conformal:
+\[
+  c_{\mathrm{EHZ}}(\lambda K)=\lambda^2c_{\mathrm{EHZ}}(K)
+  \quad(\lambda>0).
+\]
+It is normalized by
+\[
+  c_{\mathrm{EHZ}}(B^4(r))=c_{\mathrm{EHZ}}(Z^4(r))=\pi r^2,
+\]
+where \(B^4(r)\) is the radius-\(r\) ball and
+\(Z^4(r)=B^2(r)\times\mathbb{R}^2\) is the symplectic cylinder. These axioms
+are used only as background; the finite computations below use the
+minimum-action and quadratic-program descriptions.
+
+In dimension four we measure the normalized capacity-to-volume ratio by
+\begin{equation}\label{eq:preliminaries-systolic-ratio}
+  \operatorname{sys}(K)
+  \coloneqq
+  \frac{c_{\mathrm{EHZ}}(K)^2}{2\operatorname{vol}_4(K)}.
+\end{equation}
+With this normalization, Viterbo's conjecture for four-dimensional convex
+bodies says
+\[
+  \operatorname{sys}(K)\leq 1,
+  \qquad\text{equivalently}\qquad
+  c_{\mathrm{EHZ}}(K)^2\leq 2\operatorname{vol}_4(K)
+\]
+\cite{Viterbo2000}. Later sections use
+\(\operatorname{sys}\) for this ratio for polytopes as well, via the same
+capacity value discussed above.
+
+The usual normalized-capacity axioms also fix the value of any normalized
+symplectic capacity on a symplectic product of planar convex domains. If
+\(A,B\subset\mathbb{R}^2\) are convex domains, viewed as subsets of the
+symplectic planes \((q_1,p_1)\) and \((q_2,p_2)\), write
+\[
+  A\times_S B
+  =
+  \{(q_1,q_2,p_1,p_2):(q_1,p_1)\in A,\ (q_2,p_2)\in B\}.
+\]
+Let \(c\) be any normalized symplectic capacity on convex domains. Then
+\begin{equation}\label{eq:preliminaries-symplectic-product-capacity}
+  c(A\times_S B)
+  =
+  \min\{\operatorname{area}(A),\operatorname{area}(B)\}.
+\end{equation}
+For smooth \(A\) and \(B\), Dacorogna--Moser gives area-preserving plane
+diffeomorphisms between them and disks of the same areas
+\cite{DacorognaMoser1990}. Hence \(A\times_SB\) is symplectomorphic, as a
+domain, to
+\(B^2(r_A)\times_S B^2(r_B)\), where
+\(\pi r_A^2=\operatorname{area}(A)\) and
+\(\pi r_B^2=\operatorname{area}(B)\). If \(r_A\leq r_B\), then
+\[
+  B^4(r_A)
+  \subset
+  B^2(r_A)\times_S B^2(r_B)
+  \subset
+  B^2(r_A)\times\mathbb{R}^2,
+\]
+and monotonicity plus normalization force all three capacities to be
+\(\pi r_A^2\). The case \(r_B\leq r_A\) is symmetric. In particular,
+\eqref{eq:preliminaries-symplectic-product-capacity} holds for nonsmooth
+convex \(A\) and \(B\) by the standard \(C^0\)-extension of symplectic
+capacities on convex domains, and therefore holds for \(c_{\mathrm{EHZ}}\).
+

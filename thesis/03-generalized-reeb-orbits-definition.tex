@@ -1,0 +1,51 @@
+\subsection{Definition}\label{subsec:generalized-reeb-orbits-polytopes-definition}
+
+Let
+\[
+  K=\{x\in\mathbb{R}^4:\langle a_i,x\rangle\leq 1,\; i=1,\ldots,F\}
+\]
+be a full-dimensional polytope with \(0\in\operatorname{int}(K)\). We assume
+that this \(H\)-representation is irredundant, so the facet corresponding to
+\(a_i\) is
+\[
+  F_i=\{x\in K:\langle a_i,x\rangle=1\}.
+\]
+In this normalization the contact-normalized Reeb direction on \(F_i\) is
+\begin{equation}\label{eq:generalized-reeb-facet-vector}
+  R_i=2J_0a_i.
+\end{equation}
+Indeed \(R_i\) is tangent to \(F_i\), because
+\(\langle a_i,J_0a_i\rangle=0\), and for \(x\in F_i\),
+\[
+  \lambda_0|_x(R_i)
+  =\frac{1}{2}\langle -J_0R_i,x\rangle
+  =\langle a_i,x\rangle
+  =1.
+\]
+
+A \emph{generalized Reeb orbit} on \(K\) is a curve
+\(\gamma\in W^{1,2}([0,T],\mathbb{R}^4)\) with \(T>0\),
+\(\gamma(0)=\gamma(T)\), image contained in \(\partial K\), and
+\begin{equation}\label{eq:generalized-reeb-inclusion}
+  \dot{\gamma}(t)
+  \in \operatorname{conv}\{R_i:\gamma(t)\in F_i\}
+  \quad\text{for a.e. }t\in[0,T].
+\end{equation}
+This is the polytope form of the Hamiltonian inclusion
+\(-J_0\dot{\gamma}\in\partial g_K^2(\gamma)\), translated into the
+contact-normalized Reeb directions. Since every \(R_i\) in the active convex
+hull satisfies \(\lambda_0(R_i)=1\) at \(\gamma(t)\), a generalized Reeb orbit
+has
+\[
+  A(\gamma)=T.
+\]
+
+A generalized Reeb orbit is \emph{simple} if its periodic parametrization can
+be started so that \(\dot{\gamma}\), after changing values at finitely many
+breakpoints if necessary, is constant on finitely many intervals and each
+constant value is one of the pure facet directions \(R_i\). In addition, each
+facet direction occurs in one connected time interval, possibly not at all.
+Thus a simple orbit uses pure facet directions rather than nontrivial convex
+combinations, and it does not return to the same facet direction in separated
+time intervals.
+

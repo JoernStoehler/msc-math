@@ -1,6 +1,6 @@
 # Preliminaries Content Notes
 
-Status: section-local content companion for `thesis/preliminaries.tex`. Not
+Status: section-local content companion for `thesis/02-preliminaries.tex`. Not
 source truth.
 
 Purpose: gather the definitions, source pointers, and proof-placement notes

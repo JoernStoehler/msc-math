@@ -1,7 +1,7 @@
 # Data-Science Appendix Content Notes
 
 Status: section-local content companion for
-`thesis/appendix-datascience-results.tex`. Not source truth.
+`thesis/a-datascience-results.tex`. Not source truth.
 
 Purpose: gather appendix-level material for detailed data-science experiment
 results.

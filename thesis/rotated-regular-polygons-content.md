@@ -4,7 +4,7 @@ Status: thesis-local content-gathering notes, not source truth.
 
 Purpose: gather the rotated-regular-polygons side-result packet, source
 pointers, proof status, exact computation record, and writing guidance needed
-to draft `thesis/rotated-regular-polygons.tex`.
+to draft `thesis/09-rotated-regular-polygons.tex`.
 
 Overruled by: `FACTSHEET.md`, exact artifacts in
 `experiments/regular-products/`, formal proof files,
@@ -21,7 +21,7 @@ Update rule: add or change a claim only with a source pointer or an explicit
 
 Use this file as a writing dashboard, not as a linear report.
 
-1. **Write first:** open `thesis/rotated-regular-polygons.tex` and this
+1. **Write first:** open `thesis/09-rotated-regular-polygons.tex` and this
    companion side by side. Start from `Drafting Map By Thesis Subsection`
    below, not from the detailed source sections.
 2. **Proof status:** the exact Sage certificate proves the open half-domain
@@ -48,7 +48,7 @@ The most useful sections during writing are:
 
 ## Drafting Map By Thesis Subsection
 
-This section mirrors `thesis/rotated-regular-polygons.tex`.
+This section mirrors `thesis/09-rotated-regular-polygons.tex`.
 
 ### Empirical Curves
 
@@ -163,7 +163,7 @@ The thesis-facing side result is a packet, not only one formula.
    `experiments/regular-products/pentagon-rotation-formula-proof/executable_proof.thesis-excerpts.md`;
    `experiments/regular-products/README.md`;
    `formal/pentagon-rotation-capacity.tex`;
-   `thesis/rotated-regular-polygons.tex`.
+   `thesis/09-rotated-regular-polygons.tex`.
 
 2. Active branch calculation:
    On $0 \le \theta \le \pi/10$, the active 2-bounce branch has action
@@ -221,7 +221,7 @@ The thesis-facing side result is a packet, not only one formula.
    pentagon product.
 
    Source pointers:
-   `thesis/rotated-regular-polygons.tex`;
+   `thesis/09-rotated-regular-polygons.tex`;
    `experiments/regular-products/`;
    `experiments/regular-products/rotated-regular-products/README.md`.
 
@@ -232,17 +232,17 @@ certificate; sampled sweeps are sanity checks and explanatory figures.
 
 Keep product-related thesis material separated by role:
 
-1. `thesis/rotated-regular-polygons.tex`:
+1. `thesis/09-rotated-regular-polygons.tex`:
    the regular-product side result. This section owns the pentagon formula, the
    body-level Sage proof architecture, selected empirical motivation figures,
    and the endpoint/symmetry close.
 
-2. `thesis/black-box-datascience.tex`:
+2. `thesis/08-black-box-datascience.tex`:
    black-box and search-method evidence. Product random samples and product
    gradient-ascent runs may appear there as negative search evidence, but the
    pentagon formula theorem is not part of the black-box result.
 
-3. `thesis/published-code-data.tex`:
+3. `thesis/12-published-code-data.tex`:
    reproducibility promises and artifact pointers. This is the right place to
    mention the durable proof stdout artifact
    `experiments/regular-products/pentagon-rotation-formula-proof/executable_proof.full.stdout.txt`.
@@ -324,10 +324,10 @@ Use this table to keep the proof sources separated while writing.
 
 | Proof component | Current status | Main source |
 | --- | --- | --- |
-| Formula target on `0 <= theta <= pi/5` | active thesis prose present; theorem-strength wording still needs Jörn/Kai acceptance | `thesis/rotated-regular-polygons.tex`; `executable_proof.sage.py`; `executable_proof.full.stdout.txt` |
-| Reduction to `0 <= theta <= pi/5` | active thesis prose present | `thesis/rotated-regular-polygons.tex`; `formal/lagrangian-product-rotation-symmetry.tex`, label `lem:rotation-fundamental-domain` |
-| Further reduction to `0 <= theta <= pi/10` | active thesis prose present | `thesis/rotated-regular-polygons.tex`; `formal/lagrangian-product-rotation-symmetry.tex`, label `lem:odd-regular-factor-swap-mirror` |
-| Finite reduction to 2- and 3-bounce raw sigmas | active thesis-facing theorem present; theorem-strength route still needs Jörn/Kai mathematical acceptance | `thesis/quadratic-program-algorithm-hk2019.tex`, label `thm:lagrangian-product-finite-enumeration`; source material in `formal/billiard-capacity-algorithm.tex` and `thesis/legacy/lagrangian-product-algorithm-proof.tex` |
+| Formula target on `0 <= theta <= pi/5` | active thesis prose present; theorem-strength wording still needs Jörn/Kai acceptance | `thesis/09-rotated-regular-polygons.tex`; `executable_proof.sage.py`; `executable_proof.full.stdout.txt` |
+| Reduction to `0 <= theta <= pi/5` | active thesis prose present | `thesis/09-rotated-regular-polygons.tex`; `formal/lagrangian-product-rotation-symmetry.tex`, label `lem:rotation-fundamental-domain` |
+| Further reduction to `0 <= theta <= pi/10` | active thesis prose present | `thesis/09-rotated-regular-polygons.tex`; `formal/lagrangian-product-rotation-symmetry.tex`, label `lem:odd-regular-factor-swap-mirror` |
+| Finite reduction to 2- and 3-bounce raw sigmas | active thesis-facing theorem present; theorem-strength route still needs Jörn/Kai mathematical acceptance | `thesis/04-haim-kislev-quadratic-program.tex`, label `thm:lagrangian-product-finite-enumeration`; source material in `formal/billiard-capacity-algorithm.tex` and `thesis/legacy/lagrangian-product-algorithm-proof.tex` |
 | Pentagon normalization | ready | `formal/pentagon-rotation-capacity.tex`, definition of `P_5`; `executable_proof.sage.py`, functions `pentagon_normals` and `dual_vertices` |
 | Volume invariance and volume value | ready as a simple mathematical argument | `formal/pentagon-rotation-capacity.tex`, active-branch calculation; `executable_proof.sage.py`, function `systolic_ratio_prefactor` |
 | Capacity-to-systolic-ratio conversion | ready, checked by Sage preflight | `sys = c_EHZ^2/(2 vol)`; `executable_proof.sage.py`, function `systolic_ratio_prefactor` |
@@ -338,8 +338,8 @@ Use this table to keep the proof sources separated while writing.
 | KKT branch classification | ready as exact Sage assertion | `executable_proof.sage.py`, function `classify_sigma` |
 | Open half-domain lower bound | ready from full Sage run | `executable_proof.sage.py`; `executable_proof.full.stdout.txt` is the source for exact counts |
 | Thesis code excerpts for the Sage bridge | ready as non-runnable quote material | `executable_proof.thesis-excerpts.md`; verify against `executable_proof.sage.py` before final quoting |
-| Endpoints `theta=0`, `theta=pi/10` | active thesis prose present with `CH2021` citation | `thesis/rotated-regular-polygons.tex`; Chaidez-Hutchings `CH2021` continuity statement; `formal/combinatorial-boundary-regularity.tex`, label `prop:sys-continuous` |
-| Mirror to `pi/10 <= theta <= pi/5` | active thesis prose present | `thesis/rotated-regular-polygons.tex`; `formal/lagrangian-product-rotation-symmetry.tex`, label `lem:odd-regular-factor-swap-mirror` |
+| Endpoints `theta=0`, `theta=pi/10` | active thesis prose present with `CH2021` citation | `thesis/09-rotated-regular-polygons.tex`; Chaidez-Hutchings `CH2021` continuity statement; `formal/combinatorial-boundary-regularity.tex`, label `prop:sys-continuous` |
+| Mirror to `pi/10 <= theta <= pi/5` | active thesis prose present | `thesis/09-rotated-regular-polygons.tex`; `formal/lagrangian-product-rotation-symmetry.tex`, label `lem:odd-regular-factor-swap-mirror` |
 
 This table is also the best answer to the question “what should Kai trust?”:
 the open-domain lower bound is the exact Sage certificate; the endpoints and
@@ -671,7 +671,7 @@ Recommended body-level order:
    single facets and ordered adjacent-facet pairs, then pruned by exact
    transition signs that are constant on the open half-domain.
    The active thesis now states the compact finite-candidate theorem in
-   `thesis/quadratic-program-algorithm-hk2019.tex`, label
+   `thesis/04-haim-kislev-quadratic-program.tex`, label
    `thm:lagrangian-product-finite-enumeration`. The theorem-strength use of
    that compact import still needs Jörn/Kai mathematical acceptance. The
    enumeration code proves only that the script checked the listed candidates;
@@ -919,4 +919,4 @@ Remaining review work:
 
 4. Optional appendix review:
    if detailed Sage output is moved to
-   `thesis/appendix-sagemath-computations.tex`.
+   `thesis/c-sagemath-computations.tex`.
