@@ -173,7 +173,7 @@ on whether the owner is method development or retained-dataset analysis.
 | `experiments/verification/` | experiment-level correctness and regression evidence, minimum-set validation, orbit recovery, and reusable Sage validation experiments | `tasks/current-state.md`, `tasks/planning-notes.md`, `research/verification*.md`, `experiments/verification/README.md`, `experiments/verification/sage/README.md` |
 | `experiments/performance/` | shared runtime and memory profiling targets, reusable measurement practice, and post-processing scripts; generated outputs normally go under `/tmp` | `experiments/performance/README.md` |
 | `experiments/combinatorial-cells/` | combinatorial-cell exploration: boundary characterization, cell widths, convexity, multiple crossings, omega hypothesis, and gradient-discontinuity analysis | `experiments/combinatorial-cells/README.md` |
-| `experiments/crosspolytope/` | one-off crosspolytope computation and checkpointing | `research/crosspolytope.md` |
+| `experiments/crosspolytope/` | one-off crosspolytope computation and checkpointing | `experiments/crosspolytope/README.md` |
 | `experiments/visualization/` | visualization data/PNG generation and browser rendering assets for negative-exploration support | `experiments/visualization/README.md`, `thesis/visualization-3d-content.md` |
 
 ## Helper Crates

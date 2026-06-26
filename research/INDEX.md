@@ -67,7 +67,7 @@ obligations.
 | --- | --- | --- |
 | HKO2024 local maximality | `experiments/hko-local-maximum/README.md`, `experiments/hko-local-maximum/theorem/README.md`, `experiments/hko-local-maximum/smooth-only-rank-defect/README.md` | `tasks/definition-of-success.md`, `tasks/current-state.md`, `tasks/planning-notes.md` |
 | Hostile sys-search landscape | active: `experiments/sys-datascience/README.md`, `experiments/sys-datascience/methods/README.md`; context: `sys-landscape.md` | datascience README files and method packets own current state; research notes are context only |
-| Crosspolytope capacity | `crosspolytope.md` | `tasks/current-state.md`, `tasks/planning-notes.md` if thesis cites the computation |
+| Crosspolytope capacity | `experiments/crosspolytope/README.md` | `tasks/current-state.md`, `tasks/planning-notes.md` if thesis cites the computation |
 | Visualization negative exploration | `experiments/visualization/README.md`, `thesis/visualization-3d-content.md` | `tasks/planning-notes.md` if included as standalone or supporting material |
 | Pentagon rotation formula | `experiments/regular-products/README.md`; `thesis/rotated-regular-polygons-content.md`; `experiments/regular-products/pentagon-rotation-formula-proof/` | `thesis/rotated-regular-polygons.tex` and final thesis review gates |
 | Numerical and algorithmic method story | `experiments/dev-quadratic-program/numerics-audit/README.md`, `formal/hk2017-qp-core.tex`, `formal/hk2017-qp-precision.tex`, `experiments/verification/README.md` | `tasks/definition-of-success.md`, `tasks/current-state.md`, `tasks/planning-notes.md` |
@@ -85,7 +85,7 @@ obligations.
 | Sys first-order local behavior | `sys-first-order-local-behavior.md` | generic smooth case, non-generic active-germ classification, and semialgebraic fallback status |
 | Tube algorithm | `tube-algorithm-raw-jorn-2026-05-04.md`, `tube-algorithm.md` | raw Jörn source note plus routing/clarification note before rewriting old TeX or Rust surfaces |
 | Verification | `experiments/verification/README.md` | validation evidence and orbit-recovery interpretation |
-| Standalone topics | `crosspolytope.md`; `experiments/visualization/README.md`; `experiments/combinatorial-cells/README.md` | topic-local result interpretation |
+| Standalone topics | `experiments/crosspolytope/README.md`; `experiments/visualization/README.md`; `experiments/combinatorial-cells/README.md` | topic-local result interpretation |
 
 ## Handshake With Other Surfaces
 

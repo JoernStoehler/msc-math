@@ -1,28 +1,28 @@
-# Crosspolytope Research Note
+# Crosspolytope Computation
 
-## Scope
-
-This note owns the research-facing state for the one-off 4D crosspolytope
+This package owns the crosspolytope-facing state for the one-off 4D crosspolytope
 (hyperoctahedron, 16 facets) capacity computation. Code, runs, and artifacts
 stay under `experiments/crosspolytope/`.
 
-## Current State
+## Scope
 
-The experiment supplies a numeric capacity certificate for
+The experiment provides a numeric capacity certificate for
 `crates/symplectic/src/geom/known_polytopes.rs` and a fast regression in
 `crates/symplectic/src/algorithms/hk2017/tests_literature.rs`.
 
-The binary in `experiments/crosspolytope/main/main.rs` does not use the public
-`ehz_capacity` API because that path lacked the hooks needed for symmetry
-reduction and checkpointed backtracking. The current binary performs:
+## Current State
+
+The binary in `main/main.rs` does not use the public `ehz_capacity` API because
+that path lacked the hooks needed for symmetry reduction and checkpointed
+backtracking. The current binary performs:
 - directed-graph search over admissible facet cycles rather than `(m-1)!`
   permutation enumeration;
-- symmetry reduction using `Aut(crosspolytope) ∩ Sp(4, R)` to keep one
-  canonical subset per orbit;
+- symmetry reduction using `Aut(crosspolytope) ∩ Sp(4, R)` to keep one canonical
+  subset per orbit;
 - JSON checkpointing by subset size so interrupted runs can restart from the
   last completed `m`.
 
-The current local output is `experiments/crosspolytope/main/crosspolytope.jsonl`:
+The current local output is `main/crosspolytope.jsonl`:
 - `facet_count = 16`, `iterations = 31,779,448`;
 - `search_complete_through_m = 13`;
 - `best_subset = [0, 3, 12, 15]`,
@@ -38,8 +38,8 @@ The current local output is `experiments/crosspolytope/main/crosspolytope.jsonl`
 - `crates/symplectic/src/algorithms/hk2017/tests_literature.rs` contains a fast
   correctness certificate (`crosspolytope_upper_bound`) based on the same
   minimizing orbit.
-- `research/crosspolytope.md` references this experiment as the empirical
-  source for the result and symmetry discussion.
+- This package remains the local computational source for the result and symmetry
+  discussion in downstream notes.
 
 Scope caveat:
 - Search is high-confidence complete only through subset size 13. `m = 14..16`
@@ -55,27 +55,27 @@ Scope caveat:
     machinery and local output artifacts.
 - Keep the custom KKT-complete flow in-package rather than reusing only library
   public APIs.
-  - Reason: the library path at this stage lacks symmetry hooks and
-    checkpointing required for feasible runtime at `F = 16`.
+  - Reason: the library path at this stage lacks symmetry hooks and checkpointing
+    required for feasible runtime at `F = 16`.
 - Use symmetry reduction with canonical representatives per subset orbit.
   - Decision point: the group intersection is fixed to
     `Aut(crosspolytope) ∩ Sp(4, R)` (order 32).
 - Run in release mode only.
-  - `MAX_SUBSET_SIZE = 13` in `main.rs` is a pragmatic cutoff despite
-    non-proven tail optimality.
+  - `MAX_SUBSET_SIZE = 13` in `main.rs` is a pragmatic cutoff despite non-proven
+    tail optimality.
   - This avoids several-hour runs at larger `m` while preserving the best known
     action at `m = 4`.
 - Treat `crosspolytope_upper_bound` as a fast upper-bound certificate.
-  - It demonstrates feasible orbit action `4.0` (`beta = 1/4`) in tests; it
-    does not itself prove global optimality without the symmetry-reduced
-    enumeration from this experiment.
-- Preserve output only at `experiments/crosspolytope/main/crosspolytope.jsonl`.
+  - It demonstrates feasible orbit action `4.0` (`beta = 1/4`) in tests; it does
+    not itself prove global optimality without the symmetry-reduced enumeration
+    from this experiment.
+- Preserve output only at `main/crosspolytope.jsonl`.
   - This is the single durable local artifact used by downstream files.
 
 ## History
 
-- Rejected or delayed route: no full exhaustive `m = 14..16` continuation in
-  the current run.
+- Rejected or delayed route: no full exhaustive `m = 14..16` continuation in the
+  current run.
 - Rejected or delayed route: no attempt to move this topic into an earlier
   `research/` namespace design.
 
@@ -93,9 +93,9 @@ Next work packet:
    - derive a mathematical exclusion argument for `m = 14..16`, or
    - extend this binary and run with a larger cap.
 2. To continue compute:
-   - edit `experiments/crosspolytope/main/main.rs` (`MAX_SUBSET_SIZE`);
+   - edit `main/main.rs` (`MAX_SUBSET_SIZE`);
    - run `cargo run -p crosspolytope --release --bin crosspolytope`;
-   - verify `experiments/crosspolytope/main/crosspolytope.jsonl` for
+   - verify `main/crosspolytope.jsonl` for
      `search_complete_through_m`, best orbit, and `time_capacity_ms`.
 3. If the capacity candidate changes:
    - update `crates/symplectic/src/geom/known_polytopes.rs` and

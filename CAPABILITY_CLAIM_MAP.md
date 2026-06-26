@@ -388,7 +388,7 @@ claim.
     `experiments/crosspolytope`, with symmetry reduction and checkpointed
     backtracking.
   - Files:
-    - `research/crosspolytope.md`
+    - `experiments/crosspolytope/README.md`
     - `experiments/crosspolytope/main/main.rs`
     - `experiments/crosspolytope/main/crosspolytope.jsonl`
     - `crates/symplectic/src/geom/known_polytopes.rs`
