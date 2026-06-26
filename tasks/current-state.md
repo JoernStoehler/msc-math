@@ -214,9 +214,8 @@ source files.
 
 ## Submission/Admin
 
-- `tasks/submit-thesis/` stores downloaded MNTF forms and markdown conversions
-  from 2026-04-24.
-  Refresh by: read `tasks/submit-thesis/README.md` and recheck the official
+- `submit/` stores downloaded MNTF forms and markdown conversions from 2026-04-24.
+  Refresh by: read `submit/README.md` and recheck the official
   MNTF page before final handin.
 
 - Registration form was recorded as filled and signed by Kai. Jörn confirmed
@@ -226,5 +225,5 @@ source files.
 
 - Zenodo is the leading non-GitHub preservation candidate because Kai named it.
   arXiv/outreach are post-Kai-review candidates unless promoted.
-  Refresh by: checking `tasks/submit-thesis/README.md` and current advisor
+  Refresh by: checking `submit/README.md` and current advisor
   context.

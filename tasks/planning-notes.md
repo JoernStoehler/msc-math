@@ -522,15 +522,15 @@ Guidance:
 Status: active external-clock work area; not a substitute for thesis-content
 readiness.
 
-Reread before use: `tasks/submit-thesis/`, current official university pages,
+Reread before use: `submit/`, current official university pages,
 preservation target docs.
 
 Guidance:
 
 - Prepare external-clock actions when cheap.
 - Do not use submission work as evidence for thesis-content readiness.
-- Use `tasks/submit-thesis/README.md` for downloaded forms, local markdown
-  conversions, source URLs, and checked preservation links.
+- Use `submit/README.md` for downloaded forms, local markdown conversions, source
+  URLs, and checked preservation links.
 - Verify official handin facts close to final submission.
 - Choose preservation target before final archive.
 - Keep arXiv/outreach post-Kai-review unless Jörn/Kai promote them.

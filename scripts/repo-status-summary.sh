@@ -53,7 +53,7 @@ CHECK_PATHS=(
   'formal/**/*.tex'
   'formal/bibliography.bib'
   'formal/.latexmkrc'
-  'tasks/submit-thesis/**/*.pdf'
+  'submit/**/*.pdf'
   '.devcontainer/**'
   'scripts/**'
   ':(exclude)scripts/repo-status-summary.sh'
@@ -204,7 +204,7 @@ echo "- experiments/sys-landscape/"
 echo "- experiments/dev-quadratic-program/numerics-audit/"
 echo "- experiments/combinatorial-cells/"
 echo "- experiments/crosspolytope/ and experiments/visualization/"
-echo "- tasks/submit-thesis/"
+echo "- submit/"
 echo
 
 echo "LFS payloads:"

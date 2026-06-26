@@ -154,7 +154,7 @@ README or source header that owns the producer. The high-risk refresh areas are:
   evidence and currently have no smoke modes;
 - `experiments/crosspolytope/` and `experiments/visualization/`: inspect local
   entrypoints before running because they are likely artifact producers;
-- `tasks/submit-thesis/`: official forms and web/admin facts require current
+- `submit/`: official forms and web/admin facts require current
   source checks close to final submission.
 
 If one of these areas changes, update the owning research note or experiment

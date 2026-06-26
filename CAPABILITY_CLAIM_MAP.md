@@ -473,7 +473,7 @@ claim.
     - `tasks/definition-of-success.md`
     - `tasks/current-state.md`
     - `tasks/planning-notes.md`
-    - `tasks/submit-thesis/README.md`
+    - `submit/README.md`
   - Thesis correctness must not depend on runtime links into `experiments/`,
     `formal/`, or `crates/`.
   - Publication assets and final wording must be copied, cited, or summarized

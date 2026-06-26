@@ -115,5 +115,5 @@ Interner Vermerk:
   extra CD" option.
 - TODO(source-refresh): if the university expects a USB stick rather than a CD
   for the repo or PDF bundle, record that current instruction in
-  `tasks/submit-thesis/README.md` and treat the PDF form's CD wording as
+  `submit/README.md` and treat the PDF form's CD wording as
   historical form wording.
