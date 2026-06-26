@@ -8,7 +8,7 @@ STATUS_FILE="${1:-}"
 
 usage() {
   cat <<'EOF'
-Usage: scripts/repo-status-summary.sh [tasks/references/repo-status-*.md]
+Usage: scripts/repo-status-summary.sh [scripts/repo-status/repo-status-*.md]
 
 Read-only orientation helper. It compares current HEAD and working tree state
 against a dated repo-status reference, reports check-affecting and
@@ -16,7 +16,7 @@ orientation-affecting changed paths, repeats the generated-data freshness
 caveat and high-risk artifact-refresh areas, and summarizes Git LFS payload
 presence.
 
-With no argument, uses the newest tasks/references/repo-status-*.md file by
+With no argument, uses the newest scripts/repo-status/repo-status-*.md file by
 filename.
 EOF
 }
@@ -77,7 +77,7 @@ ORIENTATION_PATHS=(
 
 if [[ -z "$STATUS_FILE" ]]; then
   STATUS_FILE="$(
-    find tasks/references -maxdepth 1 -type f -name 'repo-status-*.md' -print |
+    find scripts/repo-status -maxdepth 1 -type f -name 'repo-status-*.md' -print |
       sort |
       tail -n 1
   )"

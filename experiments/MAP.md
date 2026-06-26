@@ -221,7 +221,7 @@ Current helper families:
 Generated artifacts stay beside the producer that writes them.
 
 Freshness status is not owned by this map. The latest repo-status pass is
-`tasks/references/repo-status-smoke-and-core-2026-05-31.md`: selected
+`scripts/repo-status/repo-status-smoke-and-core-2026-05-31.md`: selected
 commands/builds passed, but full artifact-refreshing producers were not run and
 tracked experiment datasets, figures, and generated reports are not thereby
 proven fresh.

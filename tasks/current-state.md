@@ -152,7 +152,7 @@ source files.
   change.
 
 - Core smoke and selected verification passed on 2026-05-31.
-  Source: `tasks/references/repo-status-smoke-and-core-2026-05-31.md`.
+  Source: `scripts/repo-status/repo-status-smoke-and-core-2026-05-31.md`.
   Quick check: run `scripts/repo-status-summary.sh` to compare current `HEAD`
   and working-tree cleanliness against that dated reference.
   Scope: formatting, workspace check, algebraic-numbers tests/clippy/example,

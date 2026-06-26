@@ -23,11 +23,11 @@ Use it before asking whether old test/build results still apply:
 scripts/repo-status-summary.sh
 ```
 
-By default it uses the newest `tasks/references/repo-status-*.md` file by
+By default it uses the newest `scripts/repo-status/repo-status-*.md` file by
 filename. Pass a status reference path to check against a specific dated report:
 
 ```bash
-scripts/repo-status-summary.sh tasks/references/repo-status-smoke-and-core-2026-05-31.md
+scripts/repo-status-summary.sh scripts/repo-status/repo-status-smoke-and-core-2026-05-31.md
 ```
 
 This is a read-only summary. It does not run tests, refresh datasets, or prove
