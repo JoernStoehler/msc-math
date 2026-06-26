@@ -176,7 +176,6 @@ claim.
     over all polytopes.
   - Files:
     - `experiments/verification/README.md`
-    - `research/verification.md`
     - `tasks/current-state.md`
     - `tasks/planning-notes.md`
     - `experiments/verification/correctness/`

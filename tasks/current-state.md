@@ -177,8 +177,8 @@ source files.
 
 - Selected validation evidence exists for capacity algorithms and orbit
   recovery.
-  Source truth: `research/verification.md`, `experiments/verification/`.
-  Current state: `research/verification.md` records `28` selected polytopes,
+  Source truth: `experiments/verification/README.md`, `experiments/verification/`.
+  Current state: `experiments/verification/README.md` records `28` selected polytopes,
   `469` trusted minima, and full reconstruction success for all `469` minima.
   Refresh when: solver code, target pool, schema, tolerances, or thesis wording
   changes.
