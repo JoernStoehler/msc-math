@@ -146,8 +146,8 @@ source files.
   source truth before depending on a stronger claim.
 
 - Exact arithmetic replacement is merged.
-  Source: `tasks/references/exact-arithmetic-replacement-2026-05-10.md`,
-  `crates/algebraic-numbers/`.
+  Source: `crates/algebraic-numbers/README.md`,
+  `crates/algebraic-numbers/DEVELOPMENT.md`, and crate source/tests.
   Refresh when: exact scalar API, linear algebra API, or exact validation claims
   change.
 
