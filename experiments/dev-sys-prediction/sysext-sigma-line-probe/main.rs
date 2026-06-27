@@ -14,7 +14,8 @@ use std::io::{BufRead, BufReader, BufWriter, Write};
 use std::path::{Path, PathBuf};
 use std::time::{Instant, SystemTime, UNIX_EPOCH};
 use symplectic::derivatives::{
-    capacity_subgradients_a, systolic_ratio_gradient_a, volume_derivatives_a,
+    capacity_derivatives_a, capacity_subgradients_a, systolic_ratio_gradient_a,
+    volume_derivatives_a,
 };
 use symplectic::{
     aggregate_orbits_with_dual_vertices_exact, classify_facets_from_dual_vertices,
@@ -40,6 +41,7 @@ struct Cli {
     action_window_relative: f64,
     raw_action_window_relative: f64,
     max_raw_sysext_per_bucket: usize,
+    compute_target_sys_sigma: bool,
     degeneracy_label: String,
     steps: Vec<f64>,
 }
@@ -76,6 +78,8 @@ struct Fixture {
 struct BaseState {
     polytope: SysLandscapePolytopeCache,
     capacity: OrbitSearchResult,
+    volume: f64,
+    volume_gradient: Vec<Vector4<f64>>,
     sys: f64,
     near_active_orbits: Vec<OrbitKktData>,
     sys_gradients: Vec<Vec<Vector4<f64>>>,
@@ -123,6 +127,16 @@ struct LineProbeRow {
     t: f64,
     status: String,
     action: Option<f64>,
+    base_action: Option<f64>,
+    predicted_action: Option<f64>,
+    action_derivative: Option<f64>,
+    action_prediction_error: Option<f64>,
+    actual_sys_sigma: Option<f64>,
+    base_sys_sigma: Option<f64>,
+    predicted_sys_sigma: Option<f64>,
+    fixed_sigma_prediction_error: Option<f64>,
+    fixed_sigma_derivative: Option<f64>,
+    target_volume: Option<f64>,
     beta_margin: Option<f64>,
     beta_positive: Option<bool>,
     q_corrected: Option<f64>,
@@ -190,6 +204,7 @@ fn main() {
                 &sigma,
                 &direction,
                 t,
+                cli.compute_target_sys_sigma,
             ));
         }
     }
@@ -324,6 +339,7 @@ fn line_probe_row(
     sigma: &[usize],
     direction: &[Vector4<f64>],
     t: f64,
+    compute_target_sys_sigma: bool,
 ) -> LineProbeRow {
     let target_duals: Vec<Vector4<f64>> = base
         .polytope
@@ -332,9 +348,70 @@ fn line_probe_row(
         .zip(direction)
         .map(|(dual, delta)| dual + t * delta)
         .collect();
+    let target_volume = if compute_target_sys_sigma {
+        let Some(target_polytope) =
+            SysLandscapePolytopeCache::from_f64_dual_vertices(target_duals.clone())
+        else {
+            return failed_line_probe_row(
+                fixture,
+                direction_label,
+                sigma_source,
+                sigma,
+                t,
+                "target_polytope_construction_failed".to_string(),
+            );
+        };
+        let volume = exact_volume_from_incidence_as_f64(
+            &target_polytope.vertices,
+            &target_polytope.vertex_facet_incidence,
+        );
+        if !volume.is_finite() || volume <= 0.0 {
+            return failed_line_probe_row(
+                fixture,
+                direction_label,
+                sigma_source,
+                sigma,
+                t,
+                "target_volume_failed".to_string(),
+            );
+        }
+        Some(volume)
+    } else {
+        None
+    };
+    let base_prediction = fixed_sigma_base_prediction(base, sigma, direction);
     match solve_raw_sysext_kkt_for_dual_vertices(&target_duals, sigma) {
         Ok(raw) => {
             let action = 0.5 / raw.q_corrected;
+            let actual_sys_sigma =
+                target_volume.map(|volume| symplectic::systolic_ratio(action, volume));
+            let (
+                base_action,
+                predicted_action,
+                action_derivative,
+                action_prediction_error,
+                base_sys_sigma,
+                fixed_sigma_derivative,
+                predicted_sys_sigma,
+            ) = base_prediction
+                .as_ref()
+                .map(|prediction| {
+                    let predicted_action =
+                        prediction.base_action + t * prediction.action_derivative;
+                    (
+                        Some(prediction.base_action),
+                        Some(predicted_action),
+                        Some(prediction.action_derivative),
+                        Some(predicted_action - action),
+                        Some(prediction.base_sys_sigma),
+                        Some(prediction.sys_derivative),
+                        Some(prediction.base_sys_sigma + t * prediction.sys_derivative),
+                    )
+                })
+                .unwrap_or((None, None, None, None, None, None, None));
+            let fixed_sigma_prediction_error = predicted_sys_sigma
+                .zip(actual_sys_sigma)
+                .map(|(predicted, actual)| predicted - actual);
             let beta_margin = raw.beta.iter().copied().fold(f64::INFINITY, f64::min);
             let mu = <[f64; 4]>::try_from(raw.mu.as_slice()).ok();
             LineProbeRow {
@@ -346,6 +423,16 @@ fn line_probe_row(
                 t,
                 status: "ok".to_string(),
                 action: Some(action),
+                base_action,
+                predicted_action,
+                action_derivative,
+                action_prediction_error,
+                actual_sys_sigma,
+                base_sys_sigma,
+                predicted_sys_sigma,
+                fixed_sigma_prediction_error,
+                fixed_sigma_derivative,
+                target_volume,
                 beta_margin: Some(beta_margin),
                 beta_positive: Some(beta_margin > 0.0),
                 q_corrected: Some(raw.q_corrected),
@@ -356,24 +443,101 @@ fn line_probe_row(
                 mu,
             }
         }
-        Err(status) => LineProbeRow {
-            poly_id: fixture.polytope.poly_id.clone(),
-            degeneracy_label: fixture.diagnostic.degeneracy_label.clone(),
-            direction_label: direction_label.to_string(),
-            sigma_source: sigma_source.to_string(),
-            sigma: sigma.to_vec(),
-            t,
-            status,
-            action: None,
-            beta_margin: None,
-            beta_positive: None,
-            q_corrected: None,
-            residual_norm: None,
-            n_positive: None,
-            n_negative: None,
-            n_zero: None,
-            mu: None,
+        Err(status) => {
+            failed_line_probe_row(fixture, direction_label, sigma_source, sigma, t, status)
+        }
+    }
+}
+
+#[derive(Clone, Debug)]
+struct FixedSigmaBasePrediction {
+    base_action: f64,
+    action_derivative: f64,
+    base_sys_sigma: f64,
+    sys_derivative: f64,
+}
+
+fn fixed_sigma_base_prediction(
+    base: &BaseState,
+    sigma: &[usize],
+    direction: &[Vector4<f64>],
+) -> Option<FixedSigmaBasePrediction> {
+    let raw =
+        solve_raw_sysext_kkt_for_dual_vertices(&base.polytope.dual_vertices_f64, sigma).ok()?;
+    let action = 0.5 / raw.q_corrected;
+    let base_sys_sigma = symplectic::systolic_ratio(action, base.volume);
+    if !base_sys_sigma.is_finite() {
+        return None;
+    }
+    let d_capacity_da = capacity_derivatives_a(
+        &raw.beta,
+        raw.q_corrected,
+        &raw.mu,
+        sigma,
+        &base.polytope.dual_vertices_f64,
+    );
+    let action_derivative = gradient_direction_dot(&d_capacity_da, direction)?;
+    let d_sys_da =
+        systolic_ratio_gradient_a(action, base.volume, &d_capacity_da, &base.volume_gradient);
+    let sys_derivative = gradient_direction_dot(&d_sys_da, direction)?;
+    (action_derivative.is_finite() && sys_derivative.is_finite()).then_some(
+        FixedSigmaBasePrediction {
+            base_action: action,
+            action_derivative,
+            base_sys_sigma,
+            sys_derivative,
         },
+    )
+}
+
+fn gradient_direction_dot(gradient: &[Vector4<f64>], direction: &[Vector4<f64>]) -> Option<f64> {
+    if gradient.len() != direction.len() {
+        return None;
+    }
+    Some(
+        gradient
+            .iter()
+            .zip(direction)
+            .map(|(grad, delta)| grad.dot(delta))
+            .sum(),
+    )
+}
+
+fn failed_line_probe_row(
+    fixture: &Fixture,
+    direction_label: &str,
+    sigma_source: &str,
+    sigma: &[usize],
+    t: f64,
+    status: String,
+) -> LineProbeRow {
+    LineProbeRow {
+        poly_id: fixture.polytope.poly_id.clone(),
+        degeneracy_label: fixture.diagnostic.degeneracy_label.clone(),
+        direction_label: direction_label.to_string(),
+        sigma_source: sigma_source.to_string(),
+        sigma: sigma.to_vec(),
+        t,
+        status,
+        action: None,
+        base_action: None,
+        predicted_action: None,
+        action_derivative: None,
+        action_prediction_error: None,
+        actual_sys_sigma: None,
+        base_sys_sigma: None,
+        predicted_sys_sigma: None,
+        fixed_sigma_prediction_error: None,
+        fixed_sigma_derivative: None,
+        target_volume: None,
+        beta_margin: None,
+        beta_positive: None,
+        q_corrected: None,
+        residual_norm: None,
+        n_positive: None,
+        n_negative: None,
+        n_zero: None,
+        mu: None,
     }
 }
 
@@ -481,6 +645,8 @@ fn compute_base_state_from_row(
     Ok(BaseState {
         polytope,
         capacity,
+        volume: vol,
+        volume_gradient: d_volume_da,
         sys,
         near_active_orbits,
         sys_gradients,
@@ -626,6 +792,7 @@ fn parse_args() -> Cli {
         action_window_relative: DEFAULT_ACTION_WINDOW_RELATIVE,
         raw_action_window_relative: DEFAULT_RAW_ACTION_WINDOW_RELATIVE,
         max_raw_sysext_per_bucket: DEFAULT_MAX_RAW_SYSEXT_PER_BUCKET,
+        compute_target_sys_sigma: false,
         degeneracy_label: "high_degeneracy".to_string(),
         steps: DEFAULT_STEPS.to_vec(),
     };
@@ -654,6 +821,9 @@ fn parse_args() -> Cli {
             }
             "--max-raw-sysext-per-bucket" => {
                 cli.max_raw_sysext_per_bucket = parse_usize_arg(&mut args, &arg);
+            }
+            "--compute-target-sys-sigma" => {
+                cli.compute_target_sys_sigma = true;
             }
             "--degeneracy-label" => {
                 cli.degeneracy_label = args.next().expect("--degeneracy-label requires a label");
@@ -701,6 +871,7 @@ fn print_usage() {
          [--polytope-table PATH] [--out-dir PATH] \
          [--selection-threshold-relative F64] [--action-window-relative F64] \
          [--raw-action-window-relative F64] [--max-raw-sysext-per-bucket N] \
+         [--compute-target-sys-sigma] \
          [--degeneracy-label LABEL] [--steps CSV]"
     );
 }

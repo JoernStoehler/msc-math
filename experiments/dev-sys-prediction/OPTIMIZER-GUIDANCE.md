@@ -84,6 +84,17 @@ Trace fields to record:
 Use raw `sysext_sigma` only as an offline diagnostic or as a cheap line probe
 for a small selected set of sigmas.
 
+For cheap source-error decomposition, first use fixed-sigma action prediction
+error:
+
+```text
+action_sigma(a0) + t D action_sigma(a0)[u] - action_sigma(a0 + t u)
+```
+
+This avoids target branch enumeration and target volume. Computing actual
+`sys_sigma(a0 + t u)` additionally needs target volume; in the current exact
+volume path that is much slower and should be sampled sparsely.
+
 Default beta policy for optimizer-facing direction constraints:
 
 ```text

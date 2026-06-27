@@ -207,6 +207,80 @@ line probe shows beta_margin approaching zero within the contemplated radius.
 Do not let far-invalid raw branches constrain direction choice.
 ```
 
+## Fixed-Sigma Prediction Error
+
+The line probe now also separates fixed-sigma linearization error from full
+lower-envelope/window error.
+
+Cheap action-only run:
+
+```bash
+cargo run -p exp-dev-sys-prediction --release --bin dev-sysext-sigma-line-probe -- \
+  --diagnostic-dir /tmp/dev-gradient-ascent-branch-diagnostic-allsafe-check \
+  --polytope-table /tmp/dev-sys-prediction-fixture-panel.jsonl \
+  --out-dir /tmp/dev-sysext-fixed-action-error-highdeg \
+  --selection-threshold-relative 0.01 \
+  --degeneracy-label high_degeneracy \
+  --steps -1e-2,-3e-3,-1e-3,-3e-4,-1e-4,0,1e-4,3e-4,1e-3,3e-3,1e-2 \
+  --max-raw-sysext-per-bucket 3 \
+  --raw-action-window-relative 0.05
+```
+
+This avoids target volume and target branch enumeration. It computes, for each
+fixed sigma,
+
+```text
+predicted_action_sigma(a0 + t u)
+  = action_sigma(a0) + t D action_sigma(a0)[u]
+
+action_prediction_error
+  = predicted_action_sigma(a0 + t u) - action_sigma(a0 + t u)
+```
+
+Result:
+
+- rows: 187 total, 184 `ok`, 3 `nonpositive_q`;
+- elapsed time: `315ms` excluding release compile;
+- median absolute action error:
+  - `1.83e-8` at `|t|=1e-4`;
+  - `1.83e-6` at `|t|=1e-3`;
+  - `1.8e-4` to `2.7e-4` at `|t|=1e-2`;
+- max absolute action error:
+  - about `1.0e-7` at `|t|=1e-4`;
+  - about `1.0e-5` at `|t|=1e-3`;
+  - about `1.0e-3` at `|t|=1e-2`.
+
+This is the first clean evidence that fixed-branch KKT/action
+linearization error is small and roughly second-order on this line. It does not
+include target volume effects.
+
+Tiny sys-value fixed-sigma run:
+
+```bash
+cargo run -p exp-dev-sys-prediction --release --bin dev-sysext-sigma-line-probe -- \
+  --diagnostic-dir /tmp/dev-gradient-ascent-branch-diagnostic-allsafe-check \
+  --polytope-table /tmp/dev-sys-prediction-fixture-panel.jsonl \
+  --out-dir /tmp/dev-sysext-fixed-sys-error-highdeg-small \
+  --selection-threshold-relative 0.01 \
+  --degeneracy-label high_degeneracy \
+  --steps -1e-3,0,1e-3 \
+  --max-raw-sysext-per-bucket 0 \
+  --compute-target-sys-sigma
+```
+
+This computes target volume and therefore actual
+`sys_sigma(a0 + t u)`. It is much more expensive: `30` rows took `29.2s`.
+
+For the ten admissible low-action sigmas at `t = +/-1e-3`:
+
+- median absolute fixed-sigma `sys` prediction error: about `1.6e-6`;
+- max absolute fixed-sigma `sys` prediction error: about `5.34e-6`;
+- max absolute action prediction error in the same rows: about `1.03e-5`.
+
+So for this line and radius, the lower-envelope errors of order `5e-6` are
+compatible with fixed-branch linearization error; this tiny sample does not
+show a need to blame missing sigma-window effects.
+
 ## Sigmalow Count Audit
 
 Cheap audit over the existing branch diagnostic:
