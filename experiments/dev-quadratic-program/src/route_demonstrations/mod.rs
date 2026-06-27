@@ -17,6 +17,9 @@
 //!   that pruning miss on the same fixture.
 //! - `conservative_pruning_count_blowup`: keeping indeterminate transitions can
 //!   substantially increase the sigma stream before any KKT solve runs.
+//! - `beta_margin_indeterminate`: a literal f64 `beta > 0` check can reject an
+//!   exactly positive KKT point whose smallest beta is below the route's f64
+//!   decision scale.
 //! - `f64_value_not_certificate`: a correct-looking f64 scalar can still leave
 //!   the minimizing set undecided.
 //! - `retained_candidate_fallback_limit`: exact fallback over retained
@@ -28,6 +31,7 @@
 //! in `experiments/performance/src/bin/capacity_route_costs.rs`, because it
 //! needs runtime and hardware context instead of a unit-test assertion.
 
+mod beta_margin_indeterminate;
 mod conservative_pruning_count_blowup;
 mod conservative_pruning_still_f64;
 mod f64_value_not_certificate;
