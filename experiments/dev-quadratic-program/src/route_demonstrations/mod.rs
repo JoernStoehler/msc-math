@@ -15,6 +15,8 @@
 //!   transition and return the wrong capacity.
 //! - `conservative_pruning_still_f64`: keeping indeterminate transitions fixes
 //!   that pruning miss on the same fixture.
+//! - `conservative_pruning_count_blowup`: keeping indeterminate transitions can
+//!   substantially increase the sigma stream before any KKT solve runs.
 //! - `f64_value_not_certificate`: a correct-looking f64 scalar can still leave
 //!   the minimizing set undecided.
 //! - `retained_candidate_fallback_limit`: exact fallback over retained
@@ -26,6 +28,7 @@
 //! in `experiments/performance/src/bin/capacity_route_costs.rs`, because it
 //! needs runtime and hardware context instead of a unit-test assertion.
 
+mod conservative_pruning_count_blowup;
 mod conservative_pruning_still_f64;
 mod f64_value_not_certificate;
 mod guarded_route_safe_refusal;
