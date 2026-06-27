@@ -2,6 +2,8 @@
 
 Status: active development packet for semi-local prediction of `sys(a)`.
 
+Current producer and smoke observations are in `CURRENT-RESULTS.md`.
+
 This packet is separate from `experiments/dev-gradient-ascent/`. The gradient
 ascent packet owns optimizer behavior: how to choose steps that reach good
 local maxima. This packet owns predictive local models: how well we can
@@ -137,6 +139,20 @@ visible in the base candidate window. If not, record the source:
 - branch was raw-KKT singular or numerically unstable at base;
 - branch was outside the action window;
 - branch was not visited by the candidate enumeration route.
+
+Related empirical hypothesis:
+
+```text
+For random a0, random direction da, and random moderate scale t, the set
+sigmalow(a0 + t da) = {sigma : action_sigma <= min_action * (1 + threshold)}
+is usually small.
+```
+
+This is plausible for generic random samples because near action ties should be
+rare, but it can fail at structured product-like points or optimizer endpoints.
+It should be measured independently from raw `sysext_sigma` behavior: a small
+returned low-action set can coexist with many beta-invalid raw KKT critical
+branches.
 
 ### Beta-Domain Boundary
 
