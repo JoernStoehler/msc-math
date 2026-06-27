@@ -1798,11 +1798,12 @@ fn align_first_trace_rows_with_probe_rows(
     probe_rows: &[LocalGeometryProbeRow],
 ) {
     for row in rows {
-        if row.iteration != 0 || row.chosen_direction_label.is_none() || row.chosen_step.is_none() {
+        if row.iteration != 0 {
             continue;
         }
-        let direction = row.chosen_direction_label.as_ref().unwrap();
-        let step = row.chosen_step.unwrap();
+        let (Some(direction), Some(step)) = (&row.chosen_direction_label, row.chosen_step) else {
+            continue;
+        };
         if let Some(probe) = probe_rows.iter().find(|probe| {
             probe.poly_id == row.poly_id
                 && probe.direction_label == *direction
