@@ -94,6 +94,12 @@ Choose directions inside a finite trust region and evaluate actual recomputed
 `sys` on a step grid. This model predicts branch switching without trying to
 stay inside the current cell.
 
+The natural nonlinear fixed-window comparator is not a new model: evaluate the
+same base candidate sigmas at the target and take
+`min_sigma sys_sigma(a0 + d)`. The decomposition reports this as the
+base-window exact envelope; its remaining error against true `sys(a0 + d)` is
+exactly the sigma-window error.
+
 ### Sysext Lower Envelope
 
 Use raw KKT critical branches, including beta-invalid branches, when they are
