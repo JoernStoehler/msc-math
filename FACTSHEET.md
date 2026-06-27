@@ -101,6 +101,11 @@ maintenance low. The numbers are stable and can be out of order.
     Tube/CH2021 role to match the support available in the relevant thesis,
     research, and source files.
 
+13. Thesis success does not require completing every possible side effort, such
+    as interesting side routes, broad cleanup programs, publication-grade
+    extensions, or post-thesis dissemination ideas, unless retained thesis
+    claims or promises depend on them.
+
 ## HKO Proof Support
 
 20. The needed HKO form must close. The theorem is known true in project
@@ -126,6 +131,12 @@ maintenance low. The numbers are stable and can be out of order.
 24. We do not have raw local maximality. Agents should inspect the HKO theorem
     and source files for exact local-maximality wording instead of asking
     broad external-context questions about it.
+
+25. If retained thesis or HKO wording relies on arbitrary-polytope first-order
+    behavior, the accepted route needs support for the non-generic
+    arbitrary-polytope case, or the thesis must weaken or caveat the claim. A
+    generic smooth-branch or Danskin-style statement is not a substitute for
+    that non-generic support.
 
 ## Data Science And Search
 
@@ -217,6 +228,11 @@ maintenance low. The numbers are stable and can be out of order.
       that must be preserved instead of regenerated. Saved data can still be
       useful as a regression test, depending on the artifact.
 
+39.2. Reruns can support retained experiment claims when they support exactly
+      the claim made in the thesis. A public certified solver claim needs
+      certification support. Broad solver formalization is not a default thesis
+      requirement unless retained thesis wording depends on it.
+
 ## Thesis Writing And Prose
 
 40. All models Jörn tried write very badly by default for thesis prose:
@@ -241,55 +257,11 @@ maintenance low. The numbers are stable and can be out of order.
 45. AI-use disclosure is required in substance. The final disclosure length,
     tone, and level of detail remain Jörn's decision.
 
-## Agent Work And Planning
-
-50. Agents should minimize Jörn's total time. Do not replace this with proxies
-    or partial summands such as minimizing reading time, typing time, thinking
-    time, context switching time, waiting time, review time, number of
-    interruptions, or message length. Task-definition cost is part of task
-    cost; if available agent work would consume more total Jörn time than it
-    saves, it is better to have no active agent for that work.
-
-50.1. For quick cost/value BOTECs, Jörn said that `$1` per Jörn minute feels
-      roughly right as an estimate or intuition.
+## Agent Limits And Advisor Risk
 
 51. Agents can lessen the workload for Jörn/Kai by finding, flagging, and
     sometimes fixing errors, but they cannot replace Jörn/Kai acceptance where
     acceptance is required.
-
-52. There is no stable one-size process for thesis work. Prose, notes, code,
-    review, experiments, and parallel agents should be chosen case by case.
-
-53. Do not combine source transfer with new reasoning when that would make
-    review harder. For example, first copy or summarize what a source says,
-    then separately argue what follows from it. Jörn said mixing these steps
-    often causes confusion and errors that are hard to recover from except by
-    rollback.
-
-54. Long tasks often need to be re-scoped once their real size becomes clear.
-    Ending a session early is acceptable when it records the current state,
-    what changed in scope, and the concrete next step; it is not a reason to
-    abandon ownership silently.
-
-54.1. Recording reasoning has often incurred large cost, while rederiving it
-      has often incurred little cost. Once a plan is settled or discussed with
-      Jörn, preserve only the durable consequences that will matter later:
-      Jörn-confirmed facts, current-state changes, planning-note changes, or
-      source-file rewrites. If the settled task is worked on immediately,
-      preserving the transient reasoning in the repo may be unnecessary.
-
-56. Standard tasks such as fixing LaTeX errors, exploring the repo, gathering
-    relevant files, or producing a quick source report are reliable from very
-    straightforward requests and do not need setup such as a reviewer subagent.
-
-57. It is a live risk that important project knowledge is hidden or scattered
-    enough that bounded source gathering and navigation aids can help. Jörn was
-    unsure about the stronger version of this claim, so this should not be
-    treated as a settled universal fact.
-
-58. Do not introduce rigid labels, YAML, tags, or companion tables before they
-    solve a real problem. Start with prose and grep unless structure clearly
-    reduces total Jörn time or prevents likely errors.
 
 60. Unless there is newer evidence, the main advisor-facing problem is still
     that the thesis is incomplete, not a specific subtle objection from Kai or
@@ -310,9 +282,9 @@ maintenance low. The numbers are stable and can be out of order.
 71. Jörn has long-term memories of the project, chats with other agents, and
     external discussions with Kai that agents cannot inspect from the repo.
 
-72. Even if the repo is insufficient to answer a question, agents should first
-    know what the repo says so the question is easier to pose to Jörn and
-    easier for Jörn to answer.
+72. Advisor/context decisions may make a story sufficient, optional, or future;
+    they do not by themselves settle theorem wording, proof correctness, final
+    prose readiness, or submission readiness.
 
 73. If Kai or Elizabeth give blocker feedback on clarity, proof support, scope,
     or submission readiness, agents should treat it as a real blocker unless
