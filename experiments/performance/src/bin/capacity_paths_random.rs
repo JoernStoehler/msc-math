@@ -1,35 +1,18 @@
-use euclidean_polytopes::{
-    facet_intersection_is_nonempty_from_vertex_facet_incidence,
-    polar_vertices_exact_rational_assuming_origin_interior, PolarVerticesExact,
-};
-use exp_dev_quadratic_program::{
-    capacity_f64_only_with_policy_and_method_profiled, F64CapacityMethod, F64CapacityOutcome,
-    F64ValidationPolicy,
-};
+use exp_dev_quadratic_program::F64CapacityOutcome;
 use exp_performance::args::{selected_run_mode, split_inline_arg, take_value, RunMode};
+use exp_performance::capacity_route_support::{
+    accepted_fixture, capacity_fixture_from_dual_vertices, f64_transition_pruned_once,
+    pruned_f64_then_exact_once, CapacityFixture, DEFAULT_H_MAX, DEFAULT_H_MIN, DEFAULT_SEED,
+};
 use exp_performance::jsonl::JsonlWriter;
 use exp_performance::output_dir::prepare_out_dir;
-use nalgebra::{DMatrix, Vector4};
-use num_rational::BigRational;
 use serde::Serialize;
 use std::env;
 use std::path::PathBuf;
 use std::process::ExitCode;
 use std::time::Instant;
-use symplectic::algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega;
-use symplectic::exact::omega_signs_exact;
-use symplectic::geom::rational_arithmetic::f64_to_rational;
-use symplectic::random::generate_dual_vertices;
-use symplectic::{
-    aggregate_orbits_with_dual_vertices_exact, solve_pruned_hk2017_candidates, OrbitGuaranteeMode,
-    OrbitKktData,
-};
 
 const TARGET_NAME: &str = "capacity-paths-random";
-const SEED: u64 = 42;
-const H_MIN: f64 = 0.5;
-const H_MAX: f64 = 2.0;
-const MAX_ATTEMPTS_PER_SAMPLE: u64 = 10_000;
 
 #[derive(Clone, Debug, Serialize)]
 struct Config {
@@ -40,14 +23,6 @@ struct Config {
     h_min: f64,
     h_max: f64,
     out_dir: Option<PathBuf>,
-}
-
-#[derive(Clone)]
-struct Geometry {
-    dual_vertices_f64: Vec<Vector4<f64>>,
-    dual_vertices_exact: Vec<[BigRational; 4]>,
-    facet_intersection_is_nonempty: DMatrix<bool>,
-    omega_signs: DMatrix<i8>,
 }
 
 #[derive(Serialize)]
@@ -62,6 +37,18 @@ struct MetadataRow {
 }
 
 #[derive(Serialize)]
+struct SetupEvent {
+    target: &'static str,
+    mode: RunMode,
+    facet_count: usize,
+    sample: usize,
+    seed: u64,
+    fixture_attempts: u64,
+    exact_transition_ms: f64,
+    allowed_transitions: usize,
+}
+
+#[derive(Serialize)]
 struct PathEvent {
     target: &'static str,
     mode: RunMode,
@@ -69,6 +56,7 @@ struct PathEvent {
     sample: usize,
     seed: u64,
     path: &'static str,
+    measurement_scope: &'static str,
     elapsed_ms: f64,
     status: &'static str,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -110,13 +98,21 @@ fn run() -> Result<PathBuf, String> {
     let out_dir = prepare_out_dir(config.out_dir.clone(), TARGET_NAME, config.mode.as_str())?;
     write_metadata(&config, &out_dir)?;
 
-    let mut events = JsonlWriter::create(&out_dir.join("path-events.jsonl"))?;
+    let mut setup_events = JsonlWriter::create(&out_dir.join("setup-events.jsonl"))?;
+    let mut path_events = JsonlWriter::create(&out_dir.join("path-events.jsonl"))?;
     for &facet_count in &config.facet_counts {
         for sample in 0..config.samples {
-            profile_sample(&config, facet_count, sample, &mut events)?;
+            profile_sample(
+                &config,
+                facet_count,
+                sample,
+                &mut setup_events,
+                &mut path_events,
+            )?;
         }
     }
-    events.flush()?;
+    setup_events.flush()?;
+    path_events.flush()?;
     Ok(out_dir)
 }
 
@@ -138,89 +134,63 @@ fn profile_sample(
     config: &Config,
     facet_count: usize,
     sample: usize,
-    events: &mut JsonlWriter,
+    setup_events: &mut JsonlWriter,
+    path_events: &mut JsonlWriter,
 ) -> Result<(), String> {
-    let dual_vertices = accepted_fixture(config, facet_count, sample)?;
-    let geometry = exact_geometry(dual_vertices);
-    let fallback = pruned_hk_exact(config, facet_count, sample, &geometry);
-    let fallback_capacity = fallback.capacity;
-    events.write(&fallback)?;
+    let accepted = accepted_fixture(facet_count, sample, config.seed, config.h_min, config.h_max)?;
+    let setup_start = Instant::now();
+    let fixture = capacity_fixture_from_dual_vertices(accepted.dual_vertices_f64)?;
+    let exact_transition_ms = elapsed_ms(setup_start);
+    let allowed_transitions = fixture
+        .transition_is_allowed
+        .iter()
+        .filter(|&&allowed| allowed)
+        .count();
+    setup_events.write(&SetupEvent {
+        target: TARGET_NAME,
+        mode: config.mode,
+        facet_count,
+        sample,
+        seed: config.seed,
+        fixture_attempts: accepted.fixture_attempts,
+        exact_transition_ms,
+        allowed_transitions,
+    })?;
 
-    let mut f64_event = f64_hk(config, facet_count, sample, &geometry.dual_vertices_f64);
+    let fallback = pruned_hk_exact(config, facet_count, sample, &fixture);
+    let fallback_capacity = fallback.capacity;
+    path_events.write(&fallback)?;
+
+    let mut f64_event = f64_hk(config, facet_count, sample, &fixture);
     f64_event.capacity_abs_diff_from_fallback = match (f64_event.capacity, fallback_capacity) {
         (Some(left), Some(right)) => Some((left - right).abs()),
         _ => None,
     };
-    events.write(&f64_event)
-}
-
-fn accepted_fixture(
-    config: &Config,
-    facet_count: usize,
-    sample: usize,
-) -> Result<Vec<Vector4<f64>>, String> {
-    let first_attempt = facet_count as u64 * 1_000_000 + sample as u64 * MAX_ATTEMPTS_PER_SAMPLE;
-    for offset in 0..MAX_ATTEMPTS_PER_SAMPLE {
-        if let Ok(dual_vertices) = generate_dual_vertices(
-            facet_count,
-            config.h_min,
-            config.h_max,
-            config.seed,
-            first_attempt + offset,
-        ) {
-            return Ok(dual_vertices);
-        }
-    }
-    Err(format!(
-        "no accepted fixture for F={facet_count}, sample={sample}"
-    ))
-}
-
-fn exact_geometry(dual_vertices_f64: Vec<Vector4<f64>>) -> Geometry {
-    let dual_vertices_exact = exact_dual_vertex_arrays(&dual_vertices_f64);
-    let dual_vertices_exact_vectors = exact_dual_vertex_vectors(&dual_vertices_exact);
-    let PolarVerticesExact {
-        vertex_facet_incidence,
-        ..
-    } = polar_vertices_exact_rational_assuming_origin_interior(&dual_vertices_exact_vectors);
-    let facet_intersection_is_nonempty =
-        facet_intersection_is_nonempty_from_vertex_facet_incidence(&vertex_facet_incidence);
-    let omega_signs = omega_signs_exact(&dual_vertices_exact_vectors);
-    Geometry {
-        dual_vertices_f64,
-        dual_vertices_exact,
-        facet_intersection_is_nonempty,
-        omega_signs,
-    }
+    path_events.write(&f64_event)
 }
 
 fn pruned_hk_exact(
     config: &Config,
     facet_count: usize,
     sample: usize,
-    geometry: &Geometry,
+    fixture: &CapacityFixture,
 ) -> PathEvent {
     let started = Instant::now();
-    let transition_is_allowed = build_transition_matrix_from_facet_intersections_and_omega(
-        &geometry.facet_intersection_is_nonempty,
-        &geometry.omega_signs,
-    );
-    match solve_pruned_hk2017_candidates(&geometry.dual_vertices_f64, &transition_is_allowed)
-        .and_then(|(orbits, iterations)| aggregate(geometry, orbits, iterations))
-    {
-        Ok((capacity, iterations, raw_orbits, returned_orbits)) => PathEvent {
+    match pruned_f64_then_exact_once(fixture) {
+        Ok(result) => PathEvent {
             target: TARGET_NAME,
             mode: config.mode,
             facet_count,
             sample,
             seed: config.seed,
             path: "exact_transition_pruned_f64_then_exact_fallback",
+            measurement_scope: "after_exact_transition_setup",
             elapsed_ms: elapsed_ms(started),
             status: "ok",
-            capacity: Some(capacity),
-            iterations: Some(iterations),
-            raw_orbits: Some(raw_orbits),
-            returned_orbits: Some(returned_orbits),
+            capacity: Some(result.capacity),
+            iterations: Some(result.iterations),
+            raw_orbits: Some(result.raw_orbits),
+            returned_orbits: Some(result.returned_orbits),
             sigma_count: None,
             admissible_f64_count: None,
             indeterminate_f64_count: None,
@@ -232,45 +202,21 @@ fn pruned_hk_exact(
             facet_count,
             sample,
             "exact_transition_pruned_f64_then_exact_fallback",
+            "after_exact_transition_setup",
             elapsed_ms(started),
             format!("{error:?}"),
         ),
     }
 }
 
-fn aggregate(
-    geometry: &Geometry,
-    orbits: Vec<OrbitKktData>,
-    iterations: u64,
-) -> Result<(f64, u64, usize, usize), symplectic::OrbitSearchError> {
-    let raw_orbits = orbits.len();
-    let result = aggregate_orbits_with_dual_vertices_exact(
-        &geometry.dual_vertices_exact,
-        orbits,
-        iterations,
-        0.0,
-        OrbitGuaranteeMode::MinimaSafe,
-    )?;
-    Ok((
-        result.min_action,
-        iterations,
-        raw_orbits,
-        result.orbits.len(),
-    ))
-}
-
 fn f64_hk(
     config: &Config,
     facet_count: usize,
     sample: usize,
-    dual_vertices: &[Vector4<f64>],
+    fixture: &CapacityFixture,
 ) -> PathEvent {
     let started = Instant::now();
-    let (report, _) = capacity_f64_only_with_policy_and_method_profiled(
-        dual_vertices,
-        F64ValidationPolicy::LpOriginVertex,
-        F64CapacityMethod::TransitionPrunedHk,
-    );
+    let report = f64_transition_pruned_once(fixture);
     let elapsed_ms = elapsed_ms(started);
     match report.outcome {
         F64CapacityOutcome::Success { capacity, .. } => PathEvent {
@@ -280,6 +226,7 @@ fn f64_hk(
             sample,
             seed: config.seed,
             path: "f64_transition_pruned_hk",
+            measurement_scope: "full_f64_route_after_fixture_setup",
             elapsed_ms,
             status: "ok",
             capacity: Some(capacity),
@@ -297,6 +244,7 @@ fn f64_hk(
             facet_count,
             sample,
             "f64_transition_pruned_hk",
+            "full_f64_route_after_fixture_setup",
             elapsed_ms,
             format!("{reason:?}"),
         ),
@@ -308,6 +256,7 @@ fn error_event(
     facet_count: usize,
     sample: usize,
     path: &'static str,
+    measurement_scope: &'static str,
     elapsed_ms: f64,
     error: String,
 ) -> PathEvent {
@@ -318,6 +267,7 @@ fn error_event(
         sample,
         seed: config.seed,
         path,
+        measurement_scope,
         elapsed_ms,
         status: "error",
         capacity: None,
@@ -334,29 +284,6 @@ fn error_event(
 
 fn elapsed_ms(started: Instant) -> f64 {
     started.elapsed().as_secs_f64() * 1000.0
-}
-
-fn exact_dual_vertex_arrays(dual_vertices: &[Vector4<f64>]) -> Vec<[BigRational; 4]> {
-    dual_vertices
-        .iter()
-        .map(|a| {
-            [
-                f64_to_rational(a[0]),
-                f64_to_rational(a[1]),
-                f64_to_rational(a[2]),
-                f64_to_rational(a[3]),
-            ]
-        })
-        .collect()
-}
-
-fn exact_dual_vertex_vectors(
-    dual_vertices_exact: &[[BigRational; 4]],
-) -> Vec<Vector4<BigRational>> {
-    dual_vertices_exact
-        .iter()
-        .map(|a| Vector4::new(a[0].clone(), a[1].clone(), a[2].clone(), a[3].clone()))
-        .collect()
 }
 
 fn parse_args(args: impl Iterator<Item = String>) -> Result<Config, String> {
@@ -395,9 +322,9 @@ fn config_for_mode(mode: RunMode) -> Config {
         mode,
         facet_counts,
         samples,
-        seed: SEED,
-        h_min: H_MIN,
-        h_max: H_MAX,
+        seed: DEFAULT_SEED,
+        h_min: DEFAULT_H_MIN,
+        h_max: DEFAULT_H_MAX,
         out_dir: None,
     }
 }
@@ -435,4 +362,29 @@ Options:\n\
   --mode MODE          Named run mode: smoke or production [default: smoke]\n\
   --out-dir PATH       Output directory [default: /tmp/msc-math-performance/<target>-<mode>-<time>-pid<PID>]\n\
   --help               Print this help text"
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn parse(values: &[&str]) -> Config {
+        parse_args(values.iter().map(|value| value.to_string())).unwrap()
+    }
+
+    #[test]
+    fn smoke_mode_is_default() {
+        let config = parse(&[]);
+        assert_eq!(config.mode, RunMode::Smoke);
+        assert_eq!(config.facet_counts, vec![6]);
+        assert_eq!(config.samples, 1);
+    }
+
+    #[test]
+    fn production_mode_profiles_f6_and_f10() {
+        let config = parse(&["--mode", "production"]);
+        assert_eq!(config.mode, RunMode::Production);
+        assert_eq!(config.facet_counts, vec![6, 10]);
+        assert_eq!(config.samples, 5);
+    }
 }

@@ -92,15 +92,18 @@ The binary writes:
 
 - `metadata.jsonl`: target, mode, facet counts, sample count, generator seed,
   and height range;
-- `path-events.jsonl`: one row per `(facet_count, sample, path)` with elapsed
-  time, capacity, candidate counts, and f64-vs-fallback absolute capacity
-  difference when both paths succeeded.
+- `setup-events.jsonl`: one row per fixture with accepted-fixture attempts,
+  exact transition setup time, and allowed transition count;
+- `path-events.jsonl`: one row per `(facet_count, sample, path)` with
+  measurement scope, elapsed time, capacity, candidate counts, and
+  f64-vs-fallback absolute capacity difference when both paths succeeded.
 
 Interpretation boundaries:
 
-- Fixture generation and exact fixture geometry construction are outside the
-  per-path timer. This target measures capacity-route work on already selected
-  random fixtures.
+- Fixture generation and exact transition setup are outside the per-path timer
+  and recorded separately. The fallback row uses
+  `after_exact_transition_setup`; the f64 row uses
+  `full_f64_route_after_fixture_setup`.
 - Measurements are local-machine wall-clock timings. Compare only paired runs
   with the same mode and source revision.
 - On ordinary random F=10 fixtures, current evidence says both paths spend
@@ -174,17 +177,19 @@ Repeat with `--path fallback` for the exact-fallback route.
 
 The binary writes `profile-summary.jsonl` with the path, measurement scope,
 fixture selector, repetition count, elapsed time, per-repetition time, and last
-capacity. The profiled loop excludes fixture acquisition. For f64/fallback
-rows, use enough repetitions that the repeated capacity loop dominates one-time
-setup. The exact route is guarded to `--repetitions 1` because the F=10 exact
-row is slow enough that repeated exact timing is usually the wrong tool.
+capacity. The profiled loop excludes fixture acquisition. The f64 row uses
+`full_f64_route`; fallback and exact rows use `after_exact_transition_setup`.
+For f64/fallback rows, use enough repetitions that the repeated capacity loop
+dominates one-time setup. The exact route is guarded to `--repetitions 1`
+because the F=10 exact row is slow enough that repeated exact timing is usually
+the wrong tool.
 
-Known hotspot from the 2026-06-25 F=10/sample-1 run:
+Observed hotspot in one local 2026-06-25 F=10/sample-1 callgrind run, to be
+rechecked with the command above when it matters:
 
-- Both `f64` and `fallback` spent about 93-94% of callgrind instruction refs in
+- Both `f64` and `fallback` spent most callgrind instruction refs in
   `solve_kkt_for_dual_vertices` / `solve_saddle_point`.
-- `SymmetricEigen::new` was the largest single self-cost visible in callgrind,
-  about 12%.
+- `SymmetricEigen::new` was the largest single self-cost visible in that run.
 - KKT matrix assembly, transition-pruned enumeration, f64 combinatorics, and
   exact fallback aggregation were each small on that input.
 

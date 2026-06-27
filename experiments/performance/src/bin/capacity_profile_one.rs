@@ -1,8 +1,8 @@
 use exp_performance::args::{split_inline_arg, take_value};
 use exp_performance::capacity_route_support::{
-    accepted_fixture, capacity_fixture_from_dual_vertices, exact_geometry_from_dual_vertices,
-    exact_transition_pruned_once, f64_transition_pruned_from_dual_vertices,
-    pruned_f64_then_exact_from_geometry, CapacityPath, DEFAULT_H_MAX, DEFAULT_H_MIN, DEFAULT_SEED,
+    accepted_fixture, capacity_fixture_from_dual_vertices, exact_transition_pruned_once,
+    f64_transition_pruned_from_dual_vertices, pruned_f64_then_exact_once, CapacityPath,
+    DEFAULT_H_MAX, DEFAULT_H_MIN, DEFAULT_SEED,
 };
 use exp_performance::jsonl::JsonlWriter;
 use exp_performance::output_dir::prepare_out_dir;
@@ -73,10 +73,10 @@ fn run() -> Result<PathBuf, String> {
         CapacityPath::F64TransitionPrunedHk => {
             let started = Instant::now();
             for _ in 0..config.repetitions {
-                last = Some(f64_transition_pruned_from_dual_vertices(
+                let capacity = black_box(f64_transition_pruned_from_dual_vertices(
                     &accepted.dual_vertices_f64,
                 ));
-                black_box(last);
+                last = Some(capacity);
             }
             write_summary(
                 &config,
@@ -86,11 +86,15 @@ fn run() -> Result<PathBuf, String> {
             )?;
         }
         CapacityPath::ExactTransitionPrunedF64ThenExactFallback => {
-            let geometry = exact_geometry_from_dual_vertices(accepted.dual_vertices_f64);
+            let fixture = capacity_fixture_from_dual_vertices(accepted.dual_vertices_f64)?;
             let started = Instant::now();
             for _ in 0..config.repetitions {
-                last = Some(pruned_f64_then_exact_from_geometry(&geometry));
-                black_box(last);
+                let capacity = black_box(
+                    pruned_f64_then_exact_once(&fixture)
+                        .map_err(|error| format!("fallback route failed: {error:?}"))?
+                        .capacity,
+                );
+                last = Some(capacity);
             }
             write_summary(
                 &config,
@@ -105,8 +109,8 @@ fn run() -> Result<PathBuf, String> {
             for _ in 0..config.repetitions {
                 let report = exact_transition_pruned_once(&fixture)
                     .map_err(|error| format!("exact route failed: {error:?}"))?;
-                last = Some(report.capacity);
-                black_box(last);
+                let capacity = black_box(report.capacity);
+                last = Some(capacity);
             }
             write_summary(
                 &config,
@@ -237,7 +241,7 @@ Options:\n\
 fn measurement_scope(path: CapacityPath) -> &'static str {
     match path {
         CapacityPath::F64TransitionPrunedHk => "full_f64_route",
-        CapacityPath::ExactTransitionPrunedF64ThenExactFallback => "after_exact_geometry_setup",
+        CapacityPath::ExactTransitionPrunedF64ThenExactFallback => "after_exact_transition_setup",
         CapacityPath::ExactTransitionPrunedSigmas => "after_exact_transition_setup",
     }
 }

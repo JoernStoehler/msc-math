@@ -1,7 +1,3 @@
-use euclidean_polytopes::{
-    facet_intersection_is_nonempty_from_vertex_facet_incidence,
-    polar_vertices_exact_rational_assuming_origin_interior, PolarVerticesExact,
-};
 use exp_dev_quadratic_program::{
     capacity_f64_only_with_policy_and_method_profiled, exact_binary64_dual_vertex_arrays,
     solve_exact_capacity_for_transition_pruned_sigmas,
@@ -11,9 +7,6 @@ use exp_dev_quadratic_program::{
 use nalgebra::{DMatrix, Vector4};
 use num_rational::BigRational;
 use serde::Serialize;
-use symplectic::algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega;
-use symplectic::exact::omega_signs_exact;
-use symplectic::geom::rational_arithmetic::f64_to_rational;
 use symplectic::random::generate_dual_vertices;
 use symplectic::{
     aggregate_orbits_with_dual_vertices_exact, solve_pruned_hk2017_candidates, OrbitGuaranteeMode,
@@ -69,13 +62,6 @@ pub struct CapacityFixture {
     pub transition_is_allowed: DMatrix<bool>,
 }
 
-pub struct ExactGeometry {
-    pub dual_vertices_f64: Vec<Vector4<f64>>,
-    pub dual_vertices_exact: Vec<[BigRational; 4]>,
-    pub facet_intersection_is_nonempty: DMatrix<bool>,
-    pub omega_signs: DMatrix<i8>,
-}
-
 pub struct FallbackRouteResult {
     pub capacity: f64,
     pub iterations: u64,
@@ -117,24 +103,6 @@ pub fn capacity_fixture_from_dual_vertices(
         dual_vertices_exact,
         transition_is_allowed,
     })
-}
-
-pub fn exact_geometry_from_dual_vertices(dual_vertices_f64: Vec<Vector4<f64>>) -> ExactGeometry {
-    let dual_vertices_exact = exact_dual_vertex_arrays(&dual_vertices_f64);
-    let dual_vertices_exact_vectors = exact_dual_vertex_vectors(&dual_vertices_exact);
-    let PolarVerticesExact {
-        vertex_facet_incidence,
-        ..
-    } = polar_vertices_exact_rational_assuming_origin_interior(&dual_vertices_exact_vectors);
-    let facet_intersection_is_nonempty =
-        facet_intersection_is_nonempty_from_vertex_facet_incidence(&vertex_facet_incidence);
-    let omega_signs = omega_signs_exact(&dual_vertices_exact_vectors);
-    ExactGeometry {
-        dual_vertices_f64,
-        dual_vertices_exact,
-        facet_intersection_is_nonempty,
-        omega_signs,
-    }
 }
 
 pub fn exact_transition_pruned_once(
@@ -180,20 +148,6 @@ pub fn pruned_f64_then_exact_with_transition(
     })
 }
 
-pub fn pruned_f64_then_exact_from_geometry(geometry: &ExactGeometry) -> f64 {
-    let transition_is_allowed = build_transition_matrix_from_facet_intersections_and_omega(
-        &geometry.facet_intersection_is_nonempty,
-        &geometry.omega_signs,
-    );
-    pruned_f64_then_exact_with_transition(
-        &geometry.dual_vertices_f64,
-        &geometry.dual_vertices_exact,
-        &transition_is_allowed,
-    )
-    .expect("pruned f64 then exact fallback")
-    .capacity
-}
-
 pub fn f64_transition_pruned_once(fixture: &CapacityFixture) -> F64CapacityReport {
     capacity_f64_only_with_policy_and_method_profiled(
         &fixture.dual_vertices_f64,
@@ -215,27 +169,4 @@ pub fn f64_transition_pruned_from_dual_vertices(dual_vertices: &[Vector4<f64>]) 
             panic!("f64 route failed: {reason:?}")
         }
     }
-}
-
-fn exact_dual_vertex_arrays(dual_vertices: &[Vector4<f64>]) -> Vec<[BigRational; 4]> {
-    dual_vertices
-        .iter()
-        .map(|a| {
-            [
-                f64_to_rational(a[0]),
-                f64_to_rational(a[1]),
-                f64_to_rational(a[2]),
-                f64_to_rational(a[3]),
-            ]
-        })
-        .collect()
-}
-
-fn exact_dual_vertex_vectors(
-    dual_vertices_exact: &[[BigRational; 4]],
-) -> Vec<Vector4<BigRational>> {
-    dual_vertices_exact
-        .iter()
-        .map(|a| Vector4::new(a[0].clone(), a[1].clone(), a[2].clone(), a[3].clone()))
-        .collect()
 }
