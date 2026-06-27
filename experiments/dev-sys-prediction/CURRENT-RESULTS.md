@@ -73,6 +73,29 @@ High-degeneracy smoke:
 - candidate-window ranking matched observed ranking for all rows;
 - elapsed time: `33.9s` for one fixture and five directions.
 
+Second high-degeneracy radius:
+
+```bash
+cargo run -p exp-dev-sys-prediction --release --bin dev-sys-prediction-cloud -- \
+  --diagnostic-dir /tmp/dev-gradient-ascent-branch-diagnostic-allsafe-check \
+  --polytope-table /tmp/dev-sys-prediction-fixture-panel.jsonl \
+  --out-dir /tmp/dev-sys-prediction-cloud-highdeg-r1e-3 \
+  --selection-threshold-relative 0.01 \
+  --degeneracy-labels high_degeneracy \
+  --max-fixtures-per-label 1 \
+  --steps 1e-3 \
+  --trace-iterations 1
+```
+
+At radius `1e-3`:
+
+- rows: 5;
+- max absolute near-active prediction error: `3.5599586188991357e-03`;
+- max absolute candidate-window prediction error: `5.343851513233289e-06`;
+- near-active ranking did not match observed ranking;
+- candidate-window ranking matched observed ranking for all rows;
+- elapsed time: `29.5s` for one fixture and five directions.
+
 The high-degeneracy result is the important signal. The broad near-active set
 is not a good finite-step predictor at this basepoint and radius, while the
 low-action candidate-window lower-envelope prediction is excellent. This
@@ -145,21 +168,84 @@ For this fixture and line, the low-action candidate-window model was highly
 predictive and the fixed-sigma sysext branches behaved smoothly. That does not
 yet test beta-invalid raw sysext branches.
 
-## Next Required Work
+Raw sysext bucket run:
 
-The current producer answers the low-action candidate-window question for one
-basepoint and one radius. It does not yet answer the raw sysext question.
+```bash
+cargo run -p exp-dev-sys-prediction --release --bin dev-sysext-sigma-line-probe -- \
+  --diagnostic-dir /tmp/dev-gradient-ascent-branch-diagnostic-allsafe-check \
+  --polytope-table /tmp/dev-sys-prediction-fixture-panel.jsonl \
+  --out-dir /tmp/dev-sysext-sigma-line-highdeg-raw \
+  --selection-threshold-relative 0.01 \
+  --degeneracy-label high_degeneracy \
+  --steps -1e-3,-3e-4,-1e-4,0,1e-4,3e-4,1e-3 \
+  --max-raw-sysext-per-bucket 3 \
+  --raw-action-window-relative 0.05
+```
 
-The next pass should extend the line microprobe to beta-invalid or barely valid
-raw sysext branches:
+Result:
 
-Candidate sigma sources:
+- rows: 119;
+- statuses: all `ok`;
+- elapsed time: `327ms` excluding release compile;
+- three `raw_invalid_near_boundary_*` sigmas had beta margins between about
+  `-0.00421` and `-0.00187` over the line and stayed beta-invalid;
+- three `raw_low_action_*` sigmas had tiny action values but beta margins
+  around `-250` to `-400`, so they are numerically smooth but mathematically
+  irrelevant for `sys`;
+- this reproduces the scratch failure mode: raw all-sysext lower envelopes need
+  beta gating, because far-invalid branches can dominate value comparisons.
 
-- candidate-window witness sigma for a prediction row;
-- target best sigma from recomputed `sys(a0 + t u)`;
-- raw sysext branches from the scratch sprint once packet-local raw KKT
-  enumeration is moved into this packet.
+For the checked line, a conservative optimizer-facing policy is:
 
-This would directly test whether beta-domain failures are smooth/algebraic
-line behavior of individual branches, rather than a property of the whole
-low-action branch set.
+```text
+Use returned admissible low-action branches for prediction.
+Use beta-invalid sysext branches only in offline diagnostics unless a local
+line probe shows beta_margin approaching zero within the contemplated radius.
+Do not let far-invalid raw branches constrain direction choice.
+```
+
+## Sigmalow Count Audit
+
+Cheap audit over the existing branch diagnostic:
+
+```bash
+jq -s 'map(select(.failure == null)) |
+  {rows:length,
+   by_threshold:(group_by(.threshold_relative) |
+     map({threshold:.[0].threshold_relative,
+          rows:length,
+          min:(map(.near_active_count)|min),
+          median:(map(.near_active_count)|sort|.[length/2|floor]),
+          max:(map(.near_active_count)|max),
+          avg:(map(.near_active_count)|add/length)}))}' \
+  /tmp/dev-gradient-ascent-branch-diagnostic-allsafe-check/branch-set-diagnostic.jsonl
+```
+
+Result:
+
+- threshold `1e-12`, `1e-9`, `1e-6`: median `1`, max `4`;
+- threshold `1e-3`: median `2`, max `4`;
+- threshold `1e-2`: median `4`, max `13`;
+- random-sample rows specifically had average low-action count `1.2` and max
+  `3`, while optimized/top-sys-style rows supplied the high-degeneracy examples.
+
+This supports the current working hypothesis: generic random points usually
+have small returned low-action sigma sets, while structured or optimized points
+can have larger sets and are the important stress cases for optimizer design.
+
+## Remaining Unknowns
+
+The current packet is enough to guide the next optimizer iteration, but it is
+not a broad statistical study.
+
+Future prediction work, if reopened, should test:
+
+- more fixtures and directions for the `sigmalow(a)` count hypothesis;
+- target-best sigma sources directly in the sysext line probe;
+- candidate-window prediction on optimizer trace endpoints where the optimizer
+  actually stalls;
+- beta-invalid sysext branches whose beta margin is much closer to zero than
+  the checked `-0.002` to `-0.004` examples.
+
+These are diagnostic-strengthening tasks, not blockers for returning to
+optimizer design under the current layer-1 goal.

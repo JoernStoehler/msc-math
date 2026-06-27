@@ -24,6 +24,8 @@ use symplectic::{
 
 const DEFAULT_SELECTION_THRESHOLD_RELATIVE: f64 = 1.0e-2;
 const DEFAULT_ACTION_WINDOW_RELATIVE: f64 = 1.0e-2;
+const DEFAULT_RAW_ACTION_WINDOW_RELATIVE: f64 = 5.0e-2;
+const DEFAULT_MAX_RAW_SYSEXT_PER_BUCKET: usize = 3;
 const DEFAULT_STEPS: &[f64] = &[-1.0e-3, -3.0e-4, -1.0e-4, 0.0, 1.0e-4, 3.0e-4, 1.0e-3];
 const EPS_EIGEN_FLOOR: f64 = 1.0e-12;
 const EPS_KKT_RESIDUAL: f64 = 1.0e-6;
@@ -36,6 +38,8 @@ struct Cli {
     out_dir: PathBuf,
     selection_threshold_relative: f64,
     action_window_relative: f64,
+    raw_action_window_relative: f64,
+    max_raw_sysext_per_bucket: usize,
     degeneracy_label: String,
     steps: Vec<f64>,
 }
@@ -86,6 +90,14 @@ struct RawKktResult {
     n_positive: usize,
     n_negative: usize,
     n_zero: usize,
+}
+
+#[derive(Clone, Debug)]
+struct RawBranchAtBase {
+    sigma: Vec<usize>,
+    action: f64,
+    beta_margin: f64,
+    beta_positive: bool,
 }
 
 #[derive(Serialize)]
@@ -165,7 +177,7 @@ fn main() {
             .expect("base state has no near-active gradient"),
     )
     .expect("failed to normalize first near-active gradient");
-    let sigmas = sigmas_to_probe(&base);
+    let sigmas = sigmas_to_probe(&base, &cli);
 
     let mut rows = Vec::new();
     for (source, sigma) in sigmas {
@@ -200,7 +212,7 @@ fn main() {
     println!("{}", cli.out_dir.display());
 }
 
-fn sigmas_to_probe(base: &BaseState) -> Vec<(String, Vec<usize>)> {
+fn sigmas_to_probe(base: &BaseState, cli: &Cli) -> Vec<(String, Vec<usize>)> {
     let mut out = Vec::new();
     let mut seen = BTreeSet::new();
     let best = base.capacity.best_sigma().to_vec();
@@ -211,7 +223,97 @@ fn sigmas_to_probe(base: &BaseState) -> Vec<(String, Vec<usize>)> {
             out.push((format!("near_active_{idx}"), orbit.sigma.clone()));
         }
     }
+    for (source, sigma) in raw_sysext_sigmas_to_probe(base, cli) {
+        if seen.insert(sigma.clone()) {
+            out.push((source, sigma));
+        }
+    }
     out
+}
+
+fn raw_sysext_sigmas_to_probe(base: &BaseState, cli: &Cli) -> Vec<(String, Vec<usize>)> {
+    let mut raw = raw_sysext_branches_at_base(base);
+    if raw.is_empty() {
+        return Vec::new();
+    }
+    let action_cutoff = base.capacity.min_action * (1.0 + cli.raw_action_window_relative.max(0.0));
+    let mut out = Vec::new();
+    let mut seen = BTreeSet::new();
+
+    raw.sort_by(|a, b| a.action.total_cmp(&b.action));
+    for (idx, branch) in raw
+        .iter()
+        .filter(|branch| branch.action <= action_cutoff)
+        .take(cli.max_raw_sysext_per_bucket)
+        .enumerate()
+    {
+        if seen.insert(branch.sigma.clone()) {
+            out.push((format!("raw_low_action_{idx}"), branch.sigma.clone()));
+        }
+    }
+
+    raw.sort_by(|a, b| a.beta_margin.abs().total_cmp(&b.beta_margin.abs()));
+    for (idx, branch) in raw
+        .iter()
+        .filter(|branch| branch.beta_positive)
+        .take(cli.max_raw_sysext_per_bucket)
+        .enumerate()
+    {
+        if seen.insert(branch.sigma.clone()) {
+            out.push((
+                format!("raw_positive_near_boundary_{idx}"),
+                branch.sigma.clone(),
+            ));
+        }
+    }
+
+    raw.sort_by(|a, b| b.beta_margin.total_cmp(&a.beta_margin));
+    for (idx, branch) in raw
+        .iter()
+        .filter(|branch| !branch.beta_positive)
+        .take(cli.max_raw_sysext_per_bucket)
+        .enumerate()
+    {
+        if seen.insert(branch.sigma.clone()) {
+            out.push((
+                format!("raw_invalid_near_boundary_{idx}"),
+                branch.sigma.clone(),
+            ));
+        }
+    }
+
+    out
+}
+
+fn raw_sysext_branches_at_base(base: &BaseState) -> Vec<RawBranchAtBase> {
+    let transition_is_allowed =
+        symplectic::algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega(
+            &base.polytope.facet_intersection_is_nonempty,
+            &base.polytope.omega_signs,
+        );
+    let mut branches = Vec::new();
+    symplectic::algorithms::hk2017::for_each_sigma_pruned_by_transition(
+        &transition_is_allowed,
+        |sigma| {
+            let Ok(raw) =
+                solve_raw_sysext_kkt_for_dual_vertices(&base.polytope.dual_vertices_f64, sigma)
+            else {
+                return;
+            };
+            let action = 0.5 / raw.q_corrected;
+            if !action.is_finite() {
+                return;
+            }
+            let beta_margin = raw.beta.iter().copied().fold(f64::INFINITY, f64::min);
+            branches.push(RawBranchAtBase {
+                sigma: sigma.to_vec(),
+                action,
+                beta_margin,
+                beta_positive: beta_margin > 0.0,
+            });
+        },
+    );
+    branches
 }
 
 fn line_probe_row(
@@ -522,6 +624,8 @@ fn parse_args() -> Cli {
         out_dir: default_output_dir(),
         selection_threshold_relative: DEFAULT_SELECTION_THRESHOLD_RELATIVE,
         action_window_relative: DEFAULT_ACTION_WINDOW_RELATIVE,
+        raw_action_window_relative: DEFAULT_RAW_ACTION_WINDOW_RELATIVE,
+        max_raw_sysext_per_bucket: DEFAULT_MAX_RAW_SYSEXT_PER_BUCKET,
         degeneracy_label: "high_degeneracy".to_string(),
         steps: DEFAULT_STEPS.to_vec(),
     };
@@ -544,6 +648,12 @@ fn parse_args() -> Cli {
             }
             "--action-window-relative" => {
                 cli.action_window_relative = parse_f64_arg(&mut args, &arg);
+            }
+            "--raw-action-window-relative" => {
+                cli.raw_action_window_relative = parse_f64_arg(&mut args, &arg);
+            }
+            "--max-raw-sysext-per-bucket" => {
+                cli.max_raw_sysext_per_bucket = parse_usize_arg(&mut args, &arg);
             }
             "--degeneracy-label" => {
                 cli.degeneracy_label = args.next().expect("--degeneracy-label requires a label");
@@ -590,8 +700,16 @@ fn print_usage() {
         "Usage: dev-sysext-sigma-line-probe --diagnostic-dir PATH \
          [--polytope-table PATH] [--out-dir PATH] \
          [--selection-threshold-relative F64] [--action-window-relative F64] \
+         [--raw-action-window-relative F64] [--max-raw-sysext-per-bucket N] \
          [--degeneracy-label LABEL] [--steps CSV]"
     );
+}
+
+fn parse_usize_arg(args: &mut impl Iterator<Item = String>, name: &str) -> usize {
+    args.next()
+        .unwrap_or_else(|| panic!("{name} requires a usize"))
+        .parse()
+        .unwrap_or_else(|_| panic!("{name} must be a usize"))
 }
 
 fn load_jsonl<T: for<'de> Deserialize<'de>>(path: &Path) -> Vec<T> {
