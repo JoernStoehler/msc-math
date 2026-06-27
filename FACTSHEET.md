@@ -276,8 +276,13 @@ maintenance low. The numbers are stable and can be out of order.
       the repo, because he does not know what feedback is currently recorded in
       the repo. Agents should inspect the repo-recorded feedback context before
       asking a narrower question. A 2026-06-03 scan found no obvious current
-      unprocessed Kai/Elizabeth blocker in the inspected repo surfaces; see
-      `tasks/references/advisor-feedback-context-2026-06-03.md`.
+      unprocessed Kai/Elizabeth blocker in `FACTSHEET.md`,
+      `thesis/DEVELOPMENT.md`, direct Kai/Elizabeth/advisor/review hits under
+      `thesis/`, `research/`, and `tasks/`, and local hits in
+      `thesis/numerics.tex`, `thesis/hko-local-maximum.tex`, and
+      `research/tube-algorithm.md`. That scan did not inspect local Codex logs,
+      external mail/chat/calendar sources, or current official university
+      sources.
 
 71. Jörn has long-term memories of the project, chats with other agents, and
     external discussions with Kai that agents cannot inspect from the repo.

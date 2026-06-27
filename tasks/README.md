@@ -6,16 +6,10 @@ Live task files:
 - `current-state.md`: current state, source paths, refresh triggers.
 - `planning-notes.md`: route choices, rejected routes, invalidation triggers.
 
-Dated references:
-
-- `references/*.md` stores only dated material whose expected future value is
-  high enough to justify future reading and staleness costs.
-- Dated references are not the live planning layer and are not source truth.
-- Prefer deleting or not committing transient planning reports after extracting
-  durable consequences. Git history is the normal quarantine.
-- Use retained dated references only to avoid expensive rederivation or
-  repeated Jörn feedback, then refresh affected claims from source files and the
-  live task files before executing work or making stronger claims.
+Do not add dated process-reference files here. If process guidance is still
+live, put it in `AGENTS.md` or the relevant skill. If a thesis-control packet
+has a domain owner, put it with that owner. Otherwise delete the transient note;
+git history is the normal quarantine.
 
 Old topic task files are not live authorities. Do not use them to choose or
 prioritize work. They were deleted during this migration; use git history for

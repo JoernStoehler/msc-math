@@ -39,9 +39,9 @@ handling.
 - I want calibration or problem modeling, but the agent turns that into
   implementation planning or approval-seeking.
 
-Planning-specific repeated failures live in
-`tasks/references/recurring-agent-feedback-2026-06-01.md`; project-wide rules
-live in `AGENTS.md`.
+Project-wide chat rules live in `AGENTS.md`; planning-specific target choice
+guidance lives in `.agents/skills/scoping/SKILL.md`; derailed-session recovery
+guidance lives in `.agents/skills/stalled-session-recovery/SKILL.md`.
 
 ## Start Fresh
 
@@ -250,6 +250,7 @@ process repair, implementation, evaluation, and review request.
 ## Related Files
 
 - `AGENTS.md`: project-wide agent rules.
-- `tasks/references/recurring-agent-feedback-2026-06-01.md`: repeated agent
-  feedback I should not need to retype.
+- `.agents/skills/scoping/SKILL.md`: choosing or reviewing the objective.
+- `.agents/skills/stalled-session-recovery/SKILL.md`: recovering derailed chat
+  sessions.
 - `tasks/README.md`: live task model and durable thesis-planning surfaces.

@@ -47,6 +47,16 @@ Before treating a slice as the target, check:
 - What larger, smaller, or differently routed targets are plausible?
 - What uncertainty controls the choice, and can the repo answer it cheaply?
 
+For high-level roadmap, next-packet, or other recommendation work, establish
+the decision test before presenting the recommendation as usable:
+
+- what decision the planning work is making;
+- what success measure ranks the alternatives;
+- which alternatives are being compared;
+- which claims are source-backed facts versus agent judgment;
+- which risks, missing facts, or stale checks could change the recommendation;
+- what review target and review standard will check the recommendation.
+
 If the target is deliberately smaller than the live problem, make explicit:
 
 - the larger objective;

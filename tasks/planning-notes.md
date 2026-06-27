@@ -24,10 +24,8 @@ source surfaces and update this file, or ask a focused question.
 
 Planning hygiene:
 
-- For high-level roadmap or next-packet planning, also read
-  `tasks/references/planning-agent-memory-2026-06-01.md`. That dated reference
-  records failure modes and review expectations for planning agents; this file
-  keeps only the short operational rules.
+- For high-level roadmap or next-packet planning, apply the `$scoping` decision
+  test before treating a recommendation as usable.
 - Treat unreviewed planning output as likely low quality. Common failure modes:
   missing reasoning breadcrumbs, false epistemic signals such as overconfidence,
   action lists that merely look like progress while ignoring opportunity cost,
@@ -226,7 +224,7 @@ section.
 Current central-section control state, 2026-06-01:
 
 - Durable control packet:
-  `tasks/references/central-claim-control-packet-2026-06-01.md`.
+  `thesis/central-claim-control.md`.
 - Scope: `thesis/abstract.tex`, `thesis/introduction.tex`,
   `thesis/hko-local-maximum.tex`, `thesis/black-box-datascience.tex`, and
   `thesis/conclusion.tex`.

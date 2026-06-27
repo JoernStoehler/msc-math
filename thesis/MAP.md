@@ -67,6 +67,9 @@ Status: navigation cache for the active thesis surface.
 - `c-sagemath-computations.tex`: SageMath computation appendix thesis surface.
 - `appendix-sagemath-computations-content.md`: section-local SageMath appendix
   content notes.
+- `central-claim-control.md`: thesis-wide content companion for central claims,
+  support sources, caveats, paragraph placement, and review gates. Not source
+  truth; use the named source files before relying on claims.
 - `preamble.tex`: additional LaTeX preamble definitions.
 - `bibliography.bib`: thesis bibliography.
 

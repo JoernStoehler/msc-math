@@ -1,11 +1,12 @@
-Status: durable control packet for central thesis claims. Not source truth.
+Status: thesis-wide content companion for central thesis claims. Not source
+truth.
 Purpose: make the next central thesis writing packet possible without hidden
 overclaim or live chat clarification.
 Overruled by: active thesis files, research notes, experiment artifacts, formal
 proof files, official sources, and accepted Jörn/Kai decisions.
 Origin: copied from `/tmp/central-claim-control-packet.md` on 2026-06-01 after
 review and fixes. The `/tmp` copy is disposable; this file is the durable
-project reference.
+thesis-working surface.
 
 # Central Claim-Control Packet
 

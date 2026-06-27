@@ -63,7 +63,7 @@ The HKO thesis-facing result is a packet, not only one theorem statement.
    and the induced sys-symmetry orbit/dimension explicit.
    Source pointers: `experiments/hko-local-maximum/README.md`;
    `experiments/hko-local-maximum/theorem/README.md`;
-   `tasks/references/central-claim-control-packet-2026-06-01.md`;
+   `thesis/central-claim-control.md`;
    `thesis/07-hko-local-maximum.tex`.
 
 3. Exact certificate:
@@ -98,7 +98,7 @@ The HKO thesis-facing result is a packet, not only one theorem statement.
    explanation.
    Source pointers: `research/sys-landscape.md`;
    `experiments/sys-landscape/`;
-   `tasks/references/central-claim-control-packet-2026-06-01.md`.
+   `thesis/central-claim-control.md`.
 
 Guard: do not collapse items 3--6 into item 2. They are thesis-facing result
 components with different claim strengths.
@@ -757,7 +757,7 @@ Status:
 
 Source pointers:
 - `research/sys-landscape.md`.
-- `tasks/references/central-claim-control-packet-2026-06-01.md`, HKO and
+- `thesis/central-claim-control.md`, HKO and
   black-box-datascience rows.
 
 Missing:
