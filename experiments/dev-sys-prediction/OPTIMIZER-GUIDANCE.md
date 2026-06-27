@@ -83,6 +83,13 @@ or second-order correction; the latter argues for recomputing/expanding the
 branch window and treating the current radius as outside the single-anchor
 model's reliable region.
 
+Large-step stress checks at `t = 1e-1` and `t = 1e0` reinforce this. By
+`t = 1e-1`, one tested direction already failed target polytope construction
+and all valid targets decreased `sys`. By `t = 1e0`, total prediction errors
+were order one and the fixed winning branch action/volume split was unavailable
+on most valid rows. These radii are useful as rejection/trust-region evidence,
+not as normal local prediction samples.
+
 Trace fields to record:
 
 - base best sigma;

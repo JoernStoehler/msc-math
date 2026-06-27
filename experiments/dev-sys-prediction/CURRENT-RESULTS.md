@@ -375,6 +375,65 @@ Taylor error; it is base-window/sigma-set error. The base-window exact envelope
 is higher than true target `sys`, meaning a target winner outside the exact
 base window became relevant.
 
+Large-step stress checks:
+
+```bash
+cargo run -p exp-dev-sys-prediction --release --bin dev-sys-prediction-cloud -- \
+  --diagnostic-dir /tmp/dev-gradient-ascent-branch-diagnostic-allsafe-check \
+  --polytope-table /tmp/dev-sys-prediction-fixture-panel.jsonl \
+  --out-dir /tmp/dev-sys-prediction-decomp-highdeg-r1e-1 \
+  --selection-threshold-relative 0.01 \
+  --degeneracy-labels high_degeneracy \
+  --max-fixtures-per-label 1 \
+  --steps 1e-1 \
+  --trace-iterations 1
+```
+
+At `t = 1e-1`:
+
+- rows: 5 total, 4 `ok`, 1 `target_polytope_construction_failed`;
+- all 4 valid target points decreased `sys`;
+- max absolute total prediction error: `4.42e-2`;
+- max absolute linearization error: `4.42e-2`;
+- max absolute sigma-set error: `6.59e-3`;
+- sum residual: `0` on all valid rows;
+- max absolute action part: `3.11e-2`;
+- max absolute volume part: `4.07e-3`;
+- max absolute interaction residual: `1.68e-2`.
+
+So on this large radius the checked failure is mostly fixed-window
+linearization/action curvature, with one smaller sigma-window contribution.
+The maximin direction did not produce a target polytope.
+
+```bash
+cargo run -p exp-dev-sys-prediction --release --bin dev-sys-prediction-cloud -- \
+  --diagnostic-dir /tmp/dev-gradient-ascent-branch-diagnostic-allsafe-check \
+  --polytope-table /tmp/dev-sys-prediction-fixture-panel.jsonl \
+  --out-dir /tmp/dev-sys-prediction-decomp-highdeg-r1e0 \
+  --selection-threshold-relative 0.01 \
+  --degeneracy-labels high_degeneracy \
+  --max-fixtures-per-label 1 \
+  --steps 1e0 \
+  --trace-iterations 1
+```
+
+At `t = 1e0`:
+
+- rows: 5 total, 4 `ok`, 1 `target_polytope_construction_failed`;
+- all 4 valid target points decreased `sys`;
+- max absolute total prediction error: `1.69`;
+- max absolute linearization error: `1.76`;
+- max absolute sigma-set error: `0.386`;
+- sum residual: at most `2.8e-17` on valid rows;
+- the fixed-winner action/volume split was available on only 1 of the 4 valid
+  rows; for the other rows, the predicted winning fixed branch no longer had a
+  usable target-side decomposition under the current audit.
+
+The `t = 1e0` result should be read as "single-anchor first-order prediction is
+far outside its reliable region", not as a refined source attribution. The
+combined envelope identity still closes, but the action/volume split is no
+longer robust enough to explain every row.
+
 ## Sigmalow Count Audit
 
 Cheap audit over the existing branch diagnostic:
