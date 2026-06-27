@@ -8,11 +8,11 @@ use symplectic::{known_polytopes, solve_orbit_sigma_saddle_point, OrbitAdmissibi
 
 /// Demonstrates that `beta > 0` is a genuine numerical decision.
 ///
-/// The exact KKT point for this HKO sigma has all beta coordinates positive, but
-/// the smallest exact beta is about 2e-17. The f64 solve rounds the minimum
-/// beta margin to zero. A literal `beta_i > 0.0` filter would discard the
-/// exactly positive orbit; the guarded f64 route keeps it as indeterminate for
-/// exact fallback instead.
+/// The exact rational KKT point for this sigma over the binary64-rounded HKO
+/// fixture has all beta coordinates positive, but the smallest exact beta is
+/// about 2e-17. The f64 solve rounds the minimum beta margin to zero. A literal
+/// `beta_i > 0.0` filter would discard the exactly positive orbit; the guarded
+/// f64 route keeps it as indeterminate for exact fallback instead.
 #[test]
 fn literal_beta_positive_check_can_reject_exactly_positive_orbit() {
     let dual_vertices = &known_polytopes::hko_pentagon().dual_vertices_f64;

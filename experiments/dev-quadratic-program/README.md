@@ -155,7 +155,13 @@ custom enumeration, or local proof packets:
   read, run, and copy-edit it when they need a simpler heuristic and do not
   care about the missing numerical guarantees. The current literal-f64
   demonstration uses strict f64 facet/transition predicates and shows a real
-  transition edge being pruned by roundoff.
+  transition edge being pruned by roundoff. The exact comparisons in the HKO
+  demonstrations use the binary64-rounded fixture, not algebraic HKO
+  coordinates. They currently separate three KKT-level f64 issues: tiny
+  positive beta values that must stay indeterminate, near-singular systems
+  where f64 accepts a sigma rejected by exact binary64 rational KKT, and
+  `q_error_bound` values that are residual diagnostics rather than total
+  binary64-exact error certificates.
 - **f64 with exact fallback capacity:** f64 enumeration/solve first, then exact
   one-sigma solve for unresolved capacity-relevant candidates. This route is
   only as strong as the f64 candidate filter plus fallback policy. The active

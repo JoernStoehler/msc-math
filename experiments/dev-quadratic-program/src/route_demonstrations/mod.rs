@@ -20,6 +20,10 @@
 //! - `beta_margin_indeterminate`: a literal f64 `beta > 0` check can reject an
 //!   exactly positive KKT point whose smallest beta is below the route's f64
 //!   decision scale.
+//! - `near_singular_kkt_false_positive`: a near-singular KKT system can make
+//!   f64 accept a sigma that exact binary64 rational KKT rejects.
+//! - `q_error_bound_not_certificate`: the current f64 KKT q-error bound is not
+//!   a total error certificate against exact binary64 rational KKT.
 //! - `f64_value_not_certificate`: a correct-looking f64 scalar can still leave
 //!   the minimizing set undecided.
 //! - `retained_candidate_fallback_limit`: exact fallback over retained
@@ -37,6 +41,8 @@ mod conservative_pruning_still_f64;
 mod f64_value_not_certificate;
 mod guarded_route_safe_refusal;
 mod literal_f64_pruning;
+mod near_singular_kkt_false_positive;
+mod q_error_bound_not_certificate;
 mod retained_candidate_fallback_limit;
 
 use nalgebra::Vector4;
