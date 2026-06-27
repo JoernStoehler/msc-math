@@ -8,8 +8,9 @@ mod exact_route;
 mod f64_route;
 mod generated_cases;
 mod geometry;
-mod naive_f64_route;
 mod near_redundant_facet_removal;
+#[cfg(test)]
+mod route_demonstrations;
 mod rows;
 mod scan;
 mod validation;
@@ -48,7 +49,6 @@ pub use f64_route::{
 };
 pub use generated_cases::{generated_f64_cases, generated_f64_cases_with_source_filter};
 pub use geometry::F64CombinatoricsTiming;
-pub use naive_f64_route::{capacity_naive_f64, NaiveF64Capacity};
 pub use near_redundant_facet_removal::{
     NearRedundantFacetRemoval, NearRedundantFacetRemovalPolicy, NearRedundantFacetRemovalReport,
     NearRedundantFacetRemovalStatus,

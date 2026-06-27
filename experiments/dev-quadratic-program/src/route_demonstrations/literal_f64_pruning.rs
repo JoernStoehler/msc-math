@@ -6,16 +6,16 @@ use symplectic::kkt::projection_solver::{
 use symplectic::omega0;
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct NaiveF64Capacity {
-    pub capacity: f64,
-    pub sigma: Vec<usize>,
+struct LiteralF64Capacity {
+    capacity: f64,
+    sigma: Vec<usize>,
 }
 
 /// Deliberately careless f64 realization of the transition-pruned HK2017 route.
 ///
-/// This is a control path for experiments. It does not use exact arithmetic,
-/// tolerances, indeterminate states, fallback, or diagnostic counters.
-pub fn capacity_naive_f64(dual_vertices: &[Vector4<f64>]) -> Option<NaiveF64Capacity> {
+/// This demonstration route does not use exact arithmetic, tolerances,
+/// indeterminate states, fallback, or diagnostic counters.
+fn capacity_literal_f64(dual_vertices: &[Vector4<f64>]) -> Option<LiteralF64Capacity> {
     if dual_vertices.len() < 5
         || dual_vertices
             .iter()
@@ -24,7 +24,7 @@ pub fn capacity_naive_f64(dual_vertices: &[Vector4<f64>]) -> Option<NaiveF64Capa
         return None;
     }
     let transition_is_allowed = literal_transition_matrix(dual_vertices);
-    let mut best: Option<NaiveF64Capacity> = None;
+    let mut best: Option<LiteralF64Capacity> = None;
     for sigma in SimpleDirectedCyclesCanonical::new(&transition_is_allowed) {
         let Some(action) = naive_action_for_sigma(dual_vertices, &sigma) else {
             continue;
@@ -33,7 +33,7 @@ pub fn capacity_naive_f64(dual_vertices: &[Vector4<f64>]) -> Option<NaiveF64Capa
             .as_ref()
             .is_none_or(|current| action < current.capacity)
         {
-            best = Some(NaiveF64Capacity {
+            best = Some(LiteralF64Capacity {
                 capacity: action,
                 sigma,
             });
@@ -178,7 +178,7 @@ mod tests {
                 -0.5152232850628169,
             ),
         ];
-        let naive = capacity_naive_f64(&dual_vertices).expect("naive route returns a value");
+        let naive = capacity_literal_f64(&dual_vertices).expect("naive route returns a value");
         let exact = exact_reference(&dual_vertices);
         let report = naive_random_miss_report(&dual_vertices);
         eprintln!("{report}");
@@ -192,7 +192,7 @@ mod tests {
     }
 
     fn assert_matches_exact_reference(dual_vertices: &[Vector4<f64>]) {
-        let naive = capacity_naive_f64(dual_vertices).expect("naive route returns a value");
+        let naive = capacity_literal_f64(dual_vertices).expect("naive route returns a value");
         let exact = exact_reference(dual_vertices);
         assert!(
             (naive.capacity - exact.capacity).abs() < 1e-10,
