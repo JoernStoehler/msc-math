@@ -306,8 +306,8 @@ sigma_set_error
     - true sys(a1)
 ```
 
-The row also decomposes the predicted winning fixed branch into action and
-volume pieces:
+The row also decomposes the branch selected by the base-window linear model
+into action and volume pieces:
 
 ```text
 action part:  sys(predicted_action, actual_volume) - sys(actual_action, actual_volume)
@@ -337,7 +337,7 @@ Result:
 - sigma-set error: `0` on all rows;
 - sum residual: `0` on all rows.
 
-Within the predicted winning branch:
+Within the branch selected by the base-window linear model:
 
 - max absolute action part: `4.13e-6`;
 - max absolute volume part: `4.57e-7`;
@@ -432,9 +432,10 @@ At `t = 1e0`:
 - max absolute linearization error: `1.76`;
 - max absolute sigma-set error: `0.386`;
 - sum residual: at most `2.8e-17` on valid rows;
-- the fixed-winner action/volume split was available on only 1 of the 4 valid
-  rows; for the other rows, the predicted winning fixed branch no longer had a
-  usable target-side decomposition under the current audit.
+- the selected-branch action/volume split was available on only 1 of the 4
+  valid rows; for the other rows, the branch selected by the base-window linear
+  model no longer had a usable target-side decomposition under the current
+  audit.
 
 The `t = 1e0` result should be read as "single-anchor first-order prediction is
 far outside its reliable region", not as a refined source attribution. The
@@ -503,10 +504,10 @@ The source transition is radius-dependent:
 - at `t = 1e0`, 3 rows were sigma-set dominated, but this radius is already
   outside the useful local-prediction regime.
 
-Within the fixed winning branch, action/capacity curvature was consistently
-larger than volume curvature at small and moderate radii. For example, at
-`t = 1e-2`, the max absolute action part was `5.18e-4`, while the max absolute
-volume part was `1.16e-4`.
+Within the branch selected by the base-window linear model, action/capacity
+curvature was consistently larger than volume curvature at small and moderate
+radii. For example, at `t = 1e-2`, the max absolute action part was `5.18e-4`,
+while the max absolute volume part was `1.16e-4`.
 
 Updated interpretation:
 
@@ -514,7 +515,7 @@ Updated interpretation:
 For this panel, small radii are explained by smooth fixed-branch error.
 Incoming/missing-window branches are rare below 1e-2 but become a real
 intermediate-radius failure mode. Very large radii fail both as local Taylor
-models and as stable fixed-winner action/volume decompositions.
+models and as stable selected-branch action/volume decompositions.
 ```
 
 ## Sigmalow Count Audit

@@ -2122,7 +2122,7 @@ fn probe_directions(
         }
     }
     if base.sys_gradients.len() > 1 {
-        if let Some(direction) = maximin_direction(&base.sys_gradients) {
+        if let Some(direction) = box_lp_normalized_direction(&base.sys_gradients) {
             directions.push(ProbeDirection {
                 label: "near_active_box_lp_normalized_direction".to_string(),
                 vector: direction,
@@ -2132,7 +2132,7 @@ fn probe_directions(
     }
     if include_candidate_window_directions {
         for &step in steps {
-            if let Some(direction) = candidate_window_maximin_direction(base, step) {
+            if let Some(direction) = candidate_window_box_lp_normalized_direction(base, step) {
                 directions.push(ProbeDirection {
                     label: format!(
                         "candidate_window_box_lp_normalized_step_{}",
@@ -2191,7 +2191,10 @@ fn deterministic_random_direction(facet_count: usize, seed: usize) -> Option<Vec
     normalize_direction(&direction)
 }
 
-fn candidate_window_maximin_direction(base: &BaseState, step: f64) -> Option<Vec<Vector4<f64>>> {
+fn candidate_window_box_lp_normalized_direction(
+    base: &BaseState,
+    step: f64,
+) -> Option<Vec<Vector4<f64>>> {
     if step <= 0.0 || base.candidate_orbits.len() != base.candidate_sys_gradients.len() {
         return None;
     }
@@ -2244,7 +2247,7 @@ fn steps_match(left: f64, right: f64) -> bool {
     (left - right).abs() <= 1.0e-15
 }
 
-fn maximin_direction(sys_gradients: &[Vec<Vector4<f64>>]) -> Option<Vec<Vector4<f64>>> {
+fn box_lp_normalized_direction(sys_gradients: &[Vec<Vector4<f64>>]) -> Option<Vec<Vector4<f64>>> {
     let facet_count = sys_gradients.first()?.len();
     let dim = facet_count * 4;
     let mut vars = variables!();

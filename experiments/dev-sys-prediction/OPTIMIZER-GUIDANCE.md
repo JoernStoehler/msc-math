@@ -91,8 +91,8 @@ model's reliable region.
 Large-step stress checks at `t = 1e-1` and `t = 1e0` reinforce this. By
 `t = 1e-1`, one tested direction already failed target polytope construction
 and all valid targets decreased `sys`. By `t = 1e0`, total prediction errors
-were order one and the fixed winning branch action/volume split was unavailable
-on most valid rows. These radii are useful stress checks for expected error
+were order one and the selected-branch action/volume split was unavailable on
+most valid rows. These radii are useful stress checks for expected error
 growth, not normal local prediction samples.
 
 Trace fields to record:
@@ -105,7 +105,7 @@ Trace fields to record:
 - whether target best sigma was visible in the base candidate window;
 - whether target best sigma was visible in the base near-active set;
 - near-active count at base and target;
-- min beta margin in returned branches.
+- min beta margin in returned branches;
 - when running offline audits, the decomposition fields
   `decomposition_linearization_error`, `decomposition_sigma_set_error`, and
   `decomposition_sum_residual`.

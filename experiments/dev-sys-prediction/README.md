@@ -202,8 +202,9 @@ packet with failure modes and initial hypotheses.
 
 ## Initial Hypotheses
 
-- Candidate-window lower-envelope is better than active maximin near
-  high-degeneracy branch switching, but overconstrains large-gap points.
+- Candidate-window lower-envelope is better than the active box-LP-normalized
+  maximin heuristic near high-degeneracy branch switching, but overconstrains
+  large-gap points.
 - Value-only soft-min can produce strong first jumps but can stall after branch
   set changes.
 - Raw all-sysext lower-envelope is too conservative because far beta-invalid
