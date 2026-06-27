@@ -34,14 +34,12 @@ and angled directions. Max absolute error was about `5.3e-8` at `1e-4` and
 
 This is the useful model to carry into optimizer instrumentation.
 
-## What Failed
+## What Not To Infer
 
-Broad near-active/Clarke prediction over the threshold `0.01` active set was
-misleading on the high-degeneracy fixture. It ranked directions incorrectly and
-had max absolute error about `3.6e-4` at `1e-4` and `3.6e-3` at `1e-3`.
-
-Interpretation: a large low-action set should not be treated as the exact
-`sigmaset(a0)` for finite-step prediction. Base gaps matter.
+The prediction-cloud producer still emits copied debug columns for a no-gap
+near-active calculation over a thresholded branch window. Ignore those columns
+for research interpretation. Nobody proposed ignoring base gaps, and their
+failure should not be counted as evidence for the prediction question.
 
 Raw all-sysext lower envelopes should not constrain optimizer directions.
 Fixed-sigma probes found raw branches with tiny action values and beta margins
@@ -60,9 +58,9 @@ The optimizer should test at least:
   policy.
 
 The prediction-cloud evidence did not show random/angled directions beating the
-best candidate-window-ranked direction on the checked fixture. It did show that
-the candidate-window model correctly distinguishes good positive directions
-from bad negative/random directions.
+best candidate-window-ranked direction on the checked fixture. The current
+evidence only supports using those directions as a finite cloud to test and
+rank with the base-gap lower envelope.
 
 ## Step Policy
 
@@ -109,10 +107,9 @@ inside the default optimizer loop.
 Single-anchor candidate-window prediction is useful enough to instrument next.
 History-aware or point-cloud surrogates should be deferred.
 
-Reason: the current failure was not lack of history. The candidate-window
-single-anchor model already predicted the finite direction ranking correctly on
-the checked hard fixture, while the cost bottleneck came from recomputing actual
-`sys` for validation.
+Reason: the candidate-window single-anchor model already predicted the finite
+direction ranking correctly on the checked hard fixture, while the cost
+bottleneck came from recomputing actual `sys` for validation.
 
 Reopen history/point-cloud models only if optimizer traces show repeated cases
 where:

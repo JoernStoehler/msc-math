@@ -1,7 +1,7 @@
 # Dev Sys Prediction Current Results
 
-Status: first producer and smoke evidence. This is not yet a closure decision
-for the layer-2 goal.
+Status: producer smoke evidence plus optimizer-facing interpretation. This is
+not a broad statistical study.
 
 ## Producer
 
@@ -58,18 +58,14 @@ branches.
 Large-gap smoke:
 
 - rows: 4;
-- max absolute active/near prediction error: `5.334050949198921e-08`;
 - max absolute candidate-window prediction error: `5.334050949198921e-08`;
-- near-active ranking matched observed ranking for all rows;
 - candidate-window ranking matched observed ranking for all rows;
 - elapsed time: `33.6s` for one fixture and four directions.
 
 High-degeneracy smoke:
 
 - rows: 5;
-- max absolute near-active prediction error: `3.555148172480823e-04`;
 - max absolute candidate-window prediction error: `5.334050949198921e-08`;
-- near-active ranking did not match observed ranking;
 - candidate-window ranking matched observed ranking for all rows;
 - elapsed time: `33.9s` for one fixture and five directions.
 
@@ -90,16 +86,23 @@ cargo run -p exp-dev-sys-prediction --release --bin dev-sys-prediction-cloud -- 
 At radius `1e-3`:
 
 - rows: 5;
-- max absolute near-active prediction error: `3.5599586188991357e-03`;
 - max absolute candidate-window prediction error: `5.343851513233289e-06`;
-- near-active ranking did not match observed ranking;
 - candidate-window ranking matched observed ranking for all rows;
 - elapsed time: `29.5s` for one fixture and five directions.
 
-The high-degeneracy result is the important signal. The broad near-active set
-is not a good finite-step predictor at this basepoint and radius, while the
-low-action candidate-window lower-envelope prediction is excellent. This
-supports separating:
+The meaningful high-degeneracy result is narrow: the tested first-order lower
+envelope with base branch gaps,
+
+```text
+min_sigma (gap_sigma(a0) + t <grad sys_sigma(a0), u>)
+```
+
+predicted the observed finite-step ranking and deltas accurately on the tested
+directions and two radii. The run also had copied debug columns for a no-gap
+near-active calculation; those columns are not interpreted here because ignoring
+the base gaps was not a serious proposed model.
+
+The evidence supports separating:
 
 - behavior of the returned low-action sigma set
   `action <= min_action(a0) * (1 + threshold)`;
