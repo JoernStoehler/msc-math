@@ -32,7 +32,10 @@ worked on the checked high-degeneracy fixture at both `t = 1e-4` and
 and angled directions. Max absolute error was about `5.3e-8` at `1e-4` and
 `5.3e-6` at `1e-3`.
 
-This is the useful model to carry into optimizer instrumentation.
+This is the useful model to carry into optimizer instrumentation. The broader
+recorded characterization is a candidate-window predictor audit over the
+default near-active direction cloud, not a candidate-window-selected optimizer
+trace.
 
 ## What Not To Infer
 
@@ -51,8 +54,10 @@ the beta-positive `sys` minimum.
 The optimizer should test at least:
 
 - first active gradient direction;
-- near-active maximin direction when several actual minimizers are tied;
-- candidate-window lower-envelope direction when branch gaps are small;
+- near-active box-LP-normalized maximin heuristic when several actual
+  minimizers are tied;
+- candidate-window box-LP-normalized lower-envelope direction when branch gaps
+  are small;
 - one or more angled perturbations of the best predicted direction;
 - occasional random directions as a diagnostic, not necessarily as the main
   policy.
@@ -64,11 +69,11 @@ rank with the base-gap lower envelope.
 
 ## Step Policy
 
-Use candidate-window predictions to rank a small radius grid, then verify with
-actual recomputed `sys` line search. Do not trust the prediction as acceptance
-proof.
+Use candidate-window predictions to estimate direction/radius quality, then
+verify with actual recomputed `sys` before accepting a step. Do not trust the
+prediction as acceptance proof.
 
-The current decomposition supports this trust-region policy:
+The current decomposition supports an empirical error model:
 
 - at `t = 1e-3` on the checked high-degeneracy fixture, the full prediction
   error was explained by fixed-branch linearization error; the base candidate
@@ -87,8 +92,8 @@ Large-step stress checks at `t = 1e-1` and `t = 1e0` reinforce this. By
 `t = 1e-1`, one tested direction already failed target polytope construction
 and all valid targets decreased `sys`. By `t = 1e0`, total prediction errors
 were order one and the fixed winning branch action/volume split was unavailable
-on most valid rows. These radii are useful as rejection/trust-region evidence,
-not as normal local prediction samples.
+on most valid rows. These radii are useful stress checks for expected error
+growth, not normal local prediction samples.
 
 Trace fields to record:
 
@@ -98,6 +103,7 @@ Trace fields to record:
 - observed delta after recomputed `sys`;
 - target best sigma;
 - whether target best sigma was visible in the base candidate window;
+- whether target best sigma was visible in the base near-active set;
 - near-active count at base and target;
 - min beta margin in returned branches.
 - when running offline audits, the decomposition fields
@@ -152,8 +158,8 @@ where:
 
 - target best sigma was not visible in the base candidate window;
 - candidate-window prediction ranks directions incorrectly at useful radii;
-- or finite accepted steps systematically exceed the local branch-linear trust
-  region.
+- or finite accepted steps systematically exceed the local branch-linear error
+  regime seen in prediction audits.
 
 ## Current Closure Decision
 

@@ -1,7 +1,7 @@
 # Dev Sys Prediction Current Results
 
-Status: producer smoke evidence plus optimizer-facing interpretation. This is
-not a broad statistical study.
+Status: producer smoke evidence, a 160-row local characterization panel, and
+optimizer-facing interpretation. This is not an exhaustive statistical study.
 
 ## Producer
 
@@ -42,6 +42,13 @@ The compact fixture panel used for these smoke runs was:
 It was extracted from the retained datascience polytope table. The producer can
 read a compact panel through the existing `--polytope-table` argument, so smoke
 runs do not need to parse the full retained table.
+
+The `/tmp` panel is scratch, not durable source truth. To regenerate a smoke
+fixture panel from durable data, hydrate
+`experiments/sys-datascience/prepare/polytope-table.jsonl` and run the producer
+directly against that table with `--max-fixtures-per-label 1`. Current summary
+outputs include selected fixture IDs and requested labels with no selected
+fixture, so a future smoke panel can be reconstructed without trusting `/tmp`.
 
 ## Observations
 
@@ -362,7 +369,7 @@ Result:
 - max absolute sigma-set error: `1.38e-3`;
 - sum residual: `0` on all rows.
 
-The interesting row is the maximin direction:
+The interesting row is the near-active box-LP-normalized direction:
 
 ```text
 total prediction error:  +1.3319e-3
@@ -403,7 +410,7 @@ At `t = 1e-1`:
 
 So on this large radius the checked failure is mostly fixed-window
 linearization/action curvature, with one smaller sigma-window contribution.
-The maximin direction did not produce a target polytope.
+The near-active box-LP-normalized direction did not produce a target polytope.
 
 ```bash
 cargo run -p exp-dev-sys-prediction --release --bin dev-sys-prediction-cloud -- \
@@ -449,6 +456,13 @@ cargo run -p exp-dev-sys-prediction --release --bin dev-sys-prediction-cloud -- 
   --steps 1e-4,3e-4,1e-3,3e-3,1e-2,3e-2,1e-1,1e0 \
   --trace-iterations 1
 ```
+
+This command uses the default near-active direction model and does not add
+candidate-window-generated directions. The candidate-window lower-envelope
+predictions and decompositions are still present in `prediction-cloud.jsonl`
+for every tested near-active/random/angled direction. The run should therefore
+be read as a candidate-window predictor audit over a near-active direction
+cloud, not as a candidate-window-selected optimizer trace.
 
 Coverage:
 
@@ -535,7 +549,7 @@ can have larger sets and are the important stress cases for optimizer design.
 ## Remaining Unknowns
 
 The current packet is enough to guide the next optimizer iteration, but it is
-not a broad statistical study.
+not an exhaustive statistical study.
 
 Future prediction work, if reopened, should test:
 

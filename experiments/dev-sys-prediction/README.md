@@ -123,7 +123,8 @@ For each direction `u` and step `t`, record:
 actual_delta_sys = sys(a0 + t u) - sys(a0)
 predicted_delta_lower_envelope
 target_best_sigma
-target_best_sigma_visible_at_base
+target_best_sigma_visible_in_base_near_active_set
+target_best_sigma_visible_in_base_candidate_window
 base/target beta margins
 model_error = actual_delta_sys - predicted_delta_lower_envelope
 ```
@@ -248,6 +249,12 @@ cargo run -p exp-dev-sys-prediction --release --bin dev-sys-prediction-cloud -- 
   --steps 1e-4,3e-4,1e-3,3e-3,1e-2,3e-2,1e-1,1e0 \
   --trace-iterations 1
 ```
+
+By default this is a near-active direction-cloud run. It still writes
+candidate-window lower-envelope prediction columns for every tested row in
+`prediction-cloud.jsonl`; it is not a candidate-window-selected trace unless
+`--direction-model candidate-window` and usually
+`--include-candidate-window-directions` are also supplied.
 
 Increase or reduce `--max-fixtures-per-label`, `--skip-fixtures-per-label`, and
 `--steps` ad hoc. The important invariant is that reports state the exact

@@ -133,6 +133,7 @@ struct LocalGeometryProbeRow {
     observed_delta_sys: Option<f64>,
     target_near_active_count: Option<usize>,
     target_best_sigma_in_base_near_active_set: Option<bool>,
+    target_best_sigma_in_base_candidate_window: Option<bool>,
     base_near_active_count: usize,
     base_returned_orbit_count: usize,
     base_orbit_iterations: u64,
@@ -263,6 +264,10 @@ struct ComputeBudgetReport {
     skip_fixtures_per_label: usize,
     degeneracy_labels: Vec<String>,
     selected_fixtures: usize,
+    eligible_diagnostic_counts_by_label: BTreeMap<String, usize>,
+    selected_counts_by_label: BTreeMap<String, usize>,
+    missing_polytope_counts_by_label: BTreeMap<String, usize>,
+    requested_labels_with_no_selected_fixture: Vec<String>,
     probe_rows: usize,
     run_trace_rows: usize,
     endpoint_diagnostic_rows: usize,
@@ -290,6 +295,10 @@ struct Summary {
     skip_fixtures_per_label: usize,
     degeneracy_labels: Vec<String>,
     selected_fixtures: usize,
+    eligible_diagnostic_counts_by_label: BTreeMap<String, usize>,
+    selected_counts_by_label: BTreeMap<String, usize>,
+    missing_polytope_counts_by_label: BTreeMap<String, usize>,
+    requested_labels_with_no_selected_fixture: Vec<String>,
     probe_rows: usize,
     run_trace_rows: usize,
     endpoint_diagnostic_rows: usize,
@@ -304,6 +313,7 @@ struct Summary {
     endpoint_line_search_status_counts: BTreeMap<String, usize>,
     endpoint_direction_scan_status_counts: BTreeMap<String, usize>,
     endpoint_direction_scan_threshold_counts: BTreeMap<String, usize>,
+    write_step_ranking_audit: bool,
     out_dir: String,
     caveat: String,
 }
@@ -325,6 +335,14 @@ struct BaseState {
 struct StopThreshold {
     absolute_delta: f64,
     relative_delta: f64,
+}
+
+#[derive(Clone, Debug)]
+struct SelectionDiagnostics {
+    eligible_counts_by_label: BTreeMap<String, usize>,
+    selected_counts_by_label: BTreeMap<String, usize>,
+    missing_polytope_counts_by_label: BTreeMap<String, usize>,
+    requested_labels_with_no_selected_fixture: Vec<String>,
 }
 
 #[derive(Clone, Debug)]
@@ -367,6 +385,13 @@ fn main() {
         cli.max_fixtures_per_label,
         cli.skip_fixtures_per_label,
         &cli.degeneracy_labels,
+    );
+    let selection_diagnostics = selection_diagnostics(
+        &diagnostic_rows,
+        &polytope_by_id,
+        cli.selection_threshold_relative,
+        &cli.degeneracy_labels,
+        &fixtures,
     );
 
     let fixture_rows: Vec<FixtureRow> = fixtures.iter().map(fixture_row).collect();
@@ -420,6 +445,7 @@ fn main() {
                     observed_delta_sys: None,
                     target_near_active_count: None,
                     target_best_sigma_in_base_near_active_set: None,
+                    target_best_sigma_in_base_candidate_window: None,
                     base_near_active_count: 0,
                     base_returned_orbit_count: 0,
                     base_orbit_iterations: 0,
@@ -440,7 +466,6 @@ fn main() {
         cli.action_window_relative,
         cli.direction_model,
         cli.include_candidate_window_directions,
-        cli.write_step_ranking_audit,
         &cli.steps,
         cli.endpoint_steps.as_deref().unwrap_or(&cli.steps),
         cli.trace_iterations,
@@ -465,6 +490,11 @@ fn main() {
         &endpoint_direction_scan_rows,
     )
     .expect("failed to write endpoint-direction-scan.jsonl");
+    write_jsonl(
+        cli.out_dir.join("prediction-cloud.jsonl"),
+        &step_ranking_audit_rows,
+    )
+    .expect("failed to write prediction-cloud.jsonl");
     if cli.write_step_ranking_audit {
         write_jsonl(
             cli.out_dir.join("step-ranking-audit.jsonl"),
@@ -472,11 +502,6 @@ fn main() {
         )
         .expect("failed to write step-ranking-audit.jsonl");
     }
-    write_jsonl(
-        cli.out_dir.join("prediction-cloud.jsonl"),
-        &step_ranking_audit_rows,
-    )
-    .expect("failed to write prediction-cloud.jsonl");
 
     let failed_probe_rows = probe_rows
         .iter()
@@ -521,6 +546,14 @@ fn main() {
         skip_fixtures_per_label: cli.skip_fixtures_per_label,
         degeneracy_labels: cli.degeneracy_labels.clone(),
         selected_fixtures: fixtures.len(),
+        eligible_diagnostic_counts_by_label: selection_diagnostics.eligible_counts_by_label.clone(),
+        selected_counts_by_label: selection_diagnostics.selected_counts_by_label.clone(),
+        missing_polytope_counts_by_label: selection_diagnostics
+            .missing_polytope_counts_by_label
+            .clone(),
+        requested_labels_with_no_selected_fixture: selection_diagnostics
+            .requested_labels_with_no_selected_fixture
+            .clone(),
         probe_rows: probe_rows.len(),
         run_trace_rows: trace_rows.len(),
         endpoint_diagnostic_rows: endpoint_rows.len(),
@@ -549,6 +582,11 @@ fn main() {
         skip_fixtures_per_label: cli.skip_fixtures_per_label,
         degeneracy_labels: cli.degeneracy_labels.clone(),
         selected_fixtures: fixtures.len(),
+        eligible_diagnostic_counts_by_label: selection_diagnostics.eligible_counts_by_label,
+        selected_counts_by_label: selection_diagnostics.selected_counts_by_label,
+        missing_polytope_counts_by_label: selection_diagnostics.missing_polytope_counts_by_label,
+        requested_labels_with_no_selected_fixture: selection_diagnostics
+            .requested_labels_with_no_selected_fixture,
         probe_rows: probe_rows.len(),
         run_trace_rows: trace_rows.len(),
         endpoint_diagnostic_rows: endpoint_rows.len(),
@@ -569,6 +607,7 @@ fn main() {
                 relative_delta: cli.min_observed_relative_delta,
             },
         ),
+        write_step_ranking_audit: cli.write_step_ranking_audit,
         out_dir: cli.out_dir.display().to_string(),
         caveat: "finite single-anchor prediction cloud only; this does not certify endpoint local maximality"
             .to_string(),
@@ -635,6 +674,47 @@ fn select_fixtures(
     selected
 }
 
+fn selection_diagnostics(
+    diagnostic_rows: &[DiagnosticRow],
+    polytopes: &HashMap<String, PolytopeRow>,
+    threshold: f64,
+    degeneracy_labels: &[String],
+    fixtures: &[Fixture],
+) -> SelectionDiagnostics {
+    let wanted: BTreeSet<&str> = degeneracy_labels.iter().map(String::as_str).collect();
+    let mut eligible_counts_by_label = BTreeMap::new();
+    let mut missing_polytope_counts_by_label = BTreeMap::new();
+    for row in diagnostic_rows
+        .iter()
+        .filter(|row| row.failure.is_none())
+        .filter(|row| wanted.contains(row.degeneracy_label.as_str()))
+        .filter(|row| (row.threshold_relative - threshold).abs() <= 1.0e-15)
+    {
+        *eligible_counts_by_label
+            .entry(row.degeneracy_label.clone())
+            .or_insert(0) += 1;
+        if !polytopes.contains_key(&row.poly_id) {
+            *missing_polytope_counts_by_label
+                .entry(row.degeneracy_label.clone())
+                .or_insert(0) += 1;
+        }
+    }
+
+    let selected_counts_by_label = count_fixture_degeneracy(fixtures);
+    let requested_labels_with_no_selected_fixture = degeneracy_labels
+        .iter()
+        .filter(|label| selected_counts_by_label.get(*label).copied().unwrap_or(0) == 0)
+        .cloned()
+        .collect();
+
+    SelectionDiagnostics {
+        eligible_counts_by_label,
+        selected_counts_by_label,
+        missing_polytope_counts_by_label,
+        requested_labels_with_no_selected_fixture,
+    }
+}
+
 struct TraceArtifacts {
     trace_rows: Vec<RunTraceRow>,
     endpoint_rows: Vec<EndpointDiagnosticRow>,
@@ -649,7 +729,6 @@ fn run_trace_and_endpoint_rows(
     action_window_relative: f64,
     direction_model: DirectionModel,
     include_candidate_window_directions: bool,
-    write_step_ranking_audit: bool,
     steps: &[f64],
     endpoint_steps: &[f64],
     trace_iterations: usize,
@@ -742,18 +821,16 @@ fn run_trace_and_endpoint_rows(
                     break;
                 }
             };
-            if write_step_ranking_audit {
-                step_ranking_audit_rows.extend(step_ranking_audit_rows_for_base(
-                    fixture,
-                    iteration,
-                    &base,
-                    steps,
-                    include_candidate_window_directions,
-                    action_window_relative,
-                    branch_threshold_relative,
-                    stop_threshold,
-                ));
-            }
+            step_ranking_audit_rows.extend(step_ranking_audit_rows_for_base(
+                fixture,
+                iteration,
+                &base,
+                steps,
+                include_candidate_window_directions,
+                action_window_relative,
+                branch_threshold_relative,
+                stop_threshold,
+            ));
             let Some(candidate) = best_line_search_step(
                 fixture,
                 iteration,
@@ -1289,16 +1366,9 @@ fn best_line_search_step(
         last_direction_label = Some(direction.label.clone());
         let rejected_count_before_direction = rejected_steps.len();
 
-        for &step in steps {
-            if !direction.allows_step(step) {
-                continue;
-            }
-            let Some(predicted_delta) =
-                branch_model_predicted_delta(base, &direction.vector, step, direction_model)
-            else {
-                rejected_steps.push(step);
-                continue;
-            };
+        for (step, predicted_delta) in
+            predicted_steps_for_direction(base, &direction, steps, direction_model)
+        {
             attempts += 1;
             last_rejected_predicted_delta = Some(predicted_delta);
             let target_duals: Vec<Vector4<f64>> = base
@@ -1407,6 +1477,26 @@ fn best_line_search_step(
         target_polytope: base.polytope.clone(),
         accepted: false,
     })
+}
+
+fn predicted_steps_for_direction(
+    base: &BaseState,
+    direction: &ProbeDirection,
+    steps: &[f64],
+    direction_model: DirectionModel,
+) -> Vec<(f64, f64)> {
+    let mut scored_steps: Vec<(f64, f64)> = steps
+        .iter()
+        .copied()
+        .filter(|step| direction.allows_step(*step))
+        .filter_map(|step| {
+            branch_model_predicted_delta(base, &direction.vector, step, direction_model)
+                .filter(|delta| delta.is_finite())
+                .map(|delta| (step, delta))
+        })
+        .collect();
+    scored_steps.sort_by(|(_, left), (_, right)| right.total_cmp(left));
+    scored_steps
 }
 
 fn trace_failure_row(
@@ -1695,6 +1785,7 @@ fn endpoint_direction_scan_failure_row(
         observed_delta_sys: None,
         target_near_active_count: None,
         target_best_sigma_in_base_near_active_set: None,
+        target_best_sigma_in_base_candidate_window: None,
         base_near_active_count: 0,
         base_returned_orbit_count: 0,
         base_orbit_iterations: 0,
@@ -1878,6 +1969,10 @@ fn local_probe_row(
         .near_active_orbits
         .iter()
         .any(|orbit| orbit.sigma == target_best_sigma);
+    let target_best_sigma_in_base_candidate_window = base
+        .candidate_orbits
+        .iter()
+        .any(|orbit| orbit.sigma == target_best_sigma);
 
     LocalGeometryProbeRow {
         poly_id: fixture.polytope.poly_id.clone(),
@@ -1892,6 +1987,9 @@ fn local_probe_row(
         observed_delta_sys: Some(target_state.sys - base.sys),
         target_near_active_count: Some(target_near_active.len()),
         target_best_sigma_in_base_near_active_set: Some(target_best_sigma_in_base_near_active_set),
+        target_best_sigma_in_base_candidate_window: Some(
+            target_best_sigma_in_base_candidate_window,
+        ),
         base_near_active_count: base.near_active_orbits.len(),
         base_returned_orbit_count: base.capacity.orbits.len(),
         base_orbit_iterations: base.capacity.iterations,
@@ -1919,6 +2017,7 @@ fn failed_probe_row(
         observed_delta_sys: None,
         target_near_active_count: None,
         target_best_sigma_in_base_near_active_set: None,
+        target_best_sigma_in_base_candidate_window: None,
         base_near_active_count: base.near_active_orbits.len(),
         base_returned_orbit_count: base.capacity.orbits.len(),
         base_orbit_iterations: base.capacity.iterations,
@@ -2025,7 +2124,7 @@ fn probe_directions(
     if base.sys_gradients.len() > 1 {
         if let Some(direction) = maximin_direction(&base.sys_gradients) {
             directions.push(ProbeDirection {
-                label: "near_active_maximin_direction".to_string(),
+                label: "near_active_box_lp_normalized_direction".to_string(),
                 vector: direction,
                 only_step: None,
             });
@@ -2035,7 +2134,10 @@ fn probe_directions(
         for &step in steps {
             if let Some(direction) = candidate_window_maximin_direction(base, step) {
                 directions.push(ProbeDirection {
-                    label: format!("candidate_window_maximin_step_{}", format_step_label(step)),
+                    label: format!(
+                        "candidate_window_box_lp_normalized_step_{}",
+                        format_step_label(step)
+                    ),
                     vector: direction,
                     only_step: Some(step),
                 });
@@ -2366,7 +2468,7 @@ fn parse_args() -> Cli {
         action_window_relative: DEFAULT_ACTION_WINDOW_RELATIVE,
         direction_model: DirectionModel::NearActive,
         include_candidate_window_directions: false,
-        write_step_ranking_audit: true,
+        write_step_ranking_audit: false,
         steps: DEFAULT_STEPS.to_vec(),
         endpoint_steps: None,
         max_fixtures_per_label: DEFAULT_MAX_FIXTURES_PER_LABEL,
