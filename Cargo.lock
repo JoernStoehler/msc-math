@@ -529,6 +529,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "exp-dev-sys-prediction"
+version = "0.1.0"
+dependencies = [
+ "exp-sys-landscape",
+ "good_lp",
+ "nalgebra",
+ "serde",
+ "serde_json",
+ "symplectic",
+]
+
+[[package]]
 name = "exp-hko-local-maximum"
 version = "0.1.0"
 dependencies = [

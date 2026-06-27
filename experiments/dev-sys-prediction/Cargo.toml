@@ -1,0 +1,23 @@
+[package]
+name = "exp-dev-sys-prediction"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "dev-sys-prediction-cloud"
+path = "prediction-cloud/main.rs"
+
+[[bin]]
+name = "dev-sysext-sigma-line-probe"
+path = "sysext-sigma-line-probe/main.rs"
+
+[lints]
+workspace = true
+
+[dependencies]
+exp-sys-landscape = { path = "../sys-landscape" }
+good_lp.workspace = true
+nalgebra.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+symplectic.workspace = true
