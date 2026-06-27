@@ -1,9 +1,14 @@
 # Random-Polytope Datascience Prepare
 
 This directory owns the shared prepare stage for the active
-random/product sys-datascience slice: load producer outputs, canonize
-representatives, compute reusable geometry features, and write prepared tables
-for method packets.
+random/product sys-datascience slice: load producer outputs, compute reusable
+feature columns, and write prepared tables for method packets.
+
+Current active features use feature-local normalizations, mainly volume-one
+scaling, instead of rewriting the prepared row into a single canonical
+representative. The checked-in `canonize.rs` contains translation helpers for
+volume-one/body-centroid representatives, but the active `features.rs` table
+builder does not currently apply that translation canonization.
 
 The active prepare path is random/product only. Old ascent and continuation
 prepared-table uses are obsolete for this thesis slice.

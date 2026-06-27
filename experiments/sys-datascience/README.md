@@ -14,6 +14,11 @@ the retained ascent endpoints should not be treated as local maxima. Use git
 history if an old ascent artifact is needed for archaeology; do not route new
 datascience work through those files.
 
+Legacy bounded random/ascent/continuation observations may still be useful as
+context for other thesis sections, but they are not active method-table rows
+for this random-polytope slice and do not support local-maximality,
+exhaustive-search, or candidate-proposer claims here.
+
 ## Data Flow
 
 ```text
@@ -93,7 +98,10 @@ Read first:
 Current closure status: pending. The next evidence gate is a full
 current-schema random/product prepare rerun, rerun of the active method
 packets, method/statistics review, and a decision about whether the prepared
-full table is retained or regenerated on demand.
+full table is retained or regenerated on demand. The 2026-06-25 full scratch
+rerun lives under `/tmp/sys-ds-random-only-full-current` and
+`/tmp/sys-ds-full-current`; keep durable packet conclusions in
+`methods/<method>/README.md`, not only in `/tmp`.
 
 Escalate before unrelated cleanup if a method records a trusted `sys > 1` row
 or a credible candidate-proposer.

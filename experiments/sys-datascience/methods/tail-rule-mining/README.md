@@ -1,0 +1,281 @@
+# tail-rule-mining
+
+## Research Question
+
+Can a simple interpretable rule learned from geometry-only features isolate the
+upper `sys` tail of the trusted random/product sample better than source and
+generator/stratum labels alone?
+
+This is a standard high-tail rule-mining diagnostic. It is not a validated
+candidate-proposer because every row in the train and test table already has
+`sys` computed.
+
+## Method
+
+Train shallow decision-tree classifiers for two in-table labels:
+
+- top decile: `sys` at or above the full-table 90th percentile;
+- top five percent: `sys` at or above the full-table 95th percentile.
+
+The geometry-only tree uses the shared random-only geometry feature selector.
+It also runs the same tree diagnostic on disjoint engineered feature families:
+
+- `symplectic_omega_only`: ridge symplectic-area, ridge/all-pair omega, and
+  omega-matrix summaries;
+- `euclidean_size_spread_only`: volume-normalized Euclidean norm, distance,
+  singular-value, edge-length, facet-volume, and cosine summaries;
+- `combinatorial_counts_only`: counts, incidence summaries, ridge sizes, and
+  edge density;
+- `transition_graph_only`: transition-graph summaries.
+
+Two categorical baselines separate different concerns:
+
+- `strata_only`: `capacity_source`, `facet_count`, and product bucket. These
+  are sampling strata. `facet_count` is also an interpretable
+  geometric/combinatorial feature, not mere provenance.
+- `generator_provenance_only`: `capacity_source`, product bounce count, and
+  height range. These are controls for source/generator provenance available in
+  the retained table.
+
+Rows are split by `capacity_source:facet_count` with the same grouped-holdout
+convention as `prediction-ranking/`.
+
+For each tree, record grouped-holdout precision, recall, enrichment over the
+base rate, and the highest-probability leaves. Leaf rules are reported as
+interpretable diagnostics only. A stability sweep reruns the comparison across
+several grouped splits, tree depths, and minimum leaf sizes.
+
+## Inputs
+
+- trusted random-only rows from `../_shared/random_only.py`
+- `../../prepare/polytope-table.jsonl`
+- `../../prepare/polytope-provenance-table.jsonl`
+
+## Command
+
+```bash
+uv run --script experiments/sys-datascience/methods/tail-rule-mining/analyze.py
+```
+
+For scratch prepared tables:
+
+```bash
+uv run --script experiments/sys-datascience/methods/tail-rule-mining/analyze.py \
+  --tables-dir /tmp/sys-ds-random-only-full-current \
+  --out-dir /tmp/sys-ds-full-current/tail-rule-mining
+```
+
+## Generated Artifacts After Rerun
+
+- `summary.json`
+- `leaf-rules.tsv`
+- `stability-runs.tsv`
+- `stability-split-features.tsv`
+- `bucket-interpretation-diagnostics.tsv`
+
+`summary.json` also records fixed coarse baselines and a label-permutation
+null check for the single grouped split. It includes the first rows of
+`bucket-interpretation-diagnostics.tsv` for navigation, but the TSV is the
+recomputed source for bucket-level interpretation.
+
+## Observation
+
+Current full scoped random/product run, using
+`/tmp/sys-ds-random-only-full-current` as input and writing
+`/tmp/sys-ds-full-current/tail-rule-mining`:
+
+- rows: `14336`;
+- geometry-only features: `121`;
+- symplectic/omega features: `56`;
+- Euclidean size/spread features: `32`;
+- combinatorial/count features: `17`;
+- transition-graph features: `6`;
+- strata-only one-hot features: `21`;
+- generator-provenance-only one-hot features: `6`;
+- grouped split: `capacity_source:facet_count`;
+- train rows: `9216`;
+- test rows: `5120`;
+- top-decile threshold: `0.6020490648950583`;
+- top-5% threshold: `0.6624200460861029`.
+
+Single grouped-holdout tree results:
+
+| label | feature source | precision | recall | enrichment over holdout base rate | selected rows |
+| --- | --- | ---: | ---: | ---: | ---: |
+| top decile | geometry only | `0.3878116343490305` | `0.835820895522388` | `5.927150948856824` | `722` |
+| top decile | symplectic/omega only | `0.3878116343490305` | `0.835820895522388` | `5.927150948856824` | `722` |
+| top decile | Euclidean size/spread only | `0.4331896551724138` | `0.6` | `6.620689655172414` | `464` |
+| top decile | transition graph only | `0.08422214049282825` | `0.6835820895522388` | `1.2872159979799422` | `2719` |
+| top decile | combinatorial/count only | `0.0` | `0.0` | `0.0` | `0` |
+| top decile | strata only | `0.0` | `0.0` | `0.0` | `0` |
+| top decile | generator provenance only | `0.11760154738878142` | `0.9074626865671642` | `1.7973729033748087` | `2585` |
+| top 5% | geometry only | `0.22827687776141384` | `0.950920245398773` | `7.170414810665268` | `679` |
+| top 5% | symplectic/omega only | `0.22627737226277372` | `0.950920245398773` | `7.10760825757915` | `685` |
+| top 5% | Euclidean size/spread only | `0.2570093457943925` | `0.6748466257668712` | `8.072931597958831` | `428` |
+| top 5% | transition graph only | `0.040266106442577033` | `0.7055214723926381` | `1.2648003986870822` | `2856` |
+| top 5% | combinatorial/count only | `0.0` | `0.0` | `0.0` | `0` |
+| top 5% | strata only | `0.037353515625` | `0.9386503067484663` | `1.1733128834355828` | `4096` |
+| top 5% | generator provenance only | `0.057640232108317216` | `0.9141104294478528` | `1.8105398061017433` | `2585` |
+
+Fixed coarse baselines:
+
+| label | rule | scope | precision | recall | enrichment | selected rows |
+| --- | --- | --- | ---: | ---: | ---: | ---: |
+| top decile | product rows | full table | `0.11748046875` | `0.8389121338912134` | `1.1744769874476988` | `10240` |
+| top decile | product rows | grouped holdout | `0.076171875` | `0.9313432835820895` | `1.164179104477612` | `4096` |
+| top decile | generic rows | full table | `0.056396484375` | `0.16108786610878661` | `0.5638075313807531` | `4096` |
+| top decile | facet count `>= 10` | full table | `0.18501420454545456` | `0.7266387726638772` | `1.8496259667807786` | `5632` |
+| top decile | facet count `>= 10` | grouped holdout | `0.0` | `0.0` | `0.0` | `0` |
+| top 5% | product rows | full table | `0.06064453125` | `0.8661087866108786` | `1.2125523012552302` | `10240` |
+| top 5% | product rows | grouped holdout | `0.037353515625` | `0.9386503067484663` | `1.1733128834355828` | `4096` |
+| top 5% | generic rows | full table | `0.0234375` | `0.13389121338912133` | `0.4686192468619247` | `4096` |
+| top 5% | facet count `>= 10` | full table | `0.09481534090909091` | `0.7447698744769874` | `1.895777862305059` | `5632` |
+| top 5% | facet count `>= 10` | grouped holdout | `0.0` | `0.0` | `0.0` | `0` |
+
+The geometry-rule enrichment is much larger than direct product-vs-generic
+selection. Facet count `>= 10` is enriched on the full table, but the grouped
+holdout split used here contains no `facet_count >= 10` rows, so it is not a
+valid holdout comparator for this particular split.
+
+### Bucket Interpretation Diagnostics
+
+`bucket-interpretation-diagnostics.tsv` is the durable surface for
+source/facet-bucket interpretation. It is regenerated from the current
+prepared table and should be preferred over copying one-off interpretation
+numbers into this README.
+
+Each row fixes `capacity_source` and `facet_count`, chooses a within-bucket
+top-decile or top-5% `sys` label, and reports the row-level association
+`K -> (sys(K), f(K))` for a small set of interpretable scalar quantities. The
+artifact includes:
+
+- `mathematical_quantity`: prose definition of `f(K)`;
+- `spearman_with_sys`: rank association inside the bucket;
+- `feature_tail_rule`: whether the lowest or highest 15% of `f(K)` was used;
+- `precision`, `recall`, `base_rate`, and `enrichment` for that one-scalar
+  within-bucket rule.
+
+The currently included quantities are:
+
+- total and mean volume-normalized symplectic areas of primal two-faces,
+  computed as `0.5 * |sum_i omega0(v_i, v_{i+1})| / sqrt(volume)` over
+  cyclically ordered two-face vertices;
+- volume-normalized symplectic pairings of facet normals, including the
+  spectral norm of the matrix `sqrt(volume) * omega0(a_i, a_j)`;
+- selected Euclidean size/spread controls.
+
+Use this artifact to choose a simple bucket for discussion, then verify the
+feature definition in `prepare/features_face_symplectic.rs`,
+`prepare/features_omega.rs`, or the relevant feature module before presenting
+the result. Do not treat a bucket row as a mechanism or theorem; it is an
+empirical association computed from the current retained table.
+
+The highest-precision geometry leaves use normalized ridge symplectic-area and
+omega-matrix stable-rank/spectral-norm features. The best top-decile geometry
+leaf has `55` test rows, positive rate `0.7272727272727273`, mean `sys`
+`0.6511412387550054`, and max `sys` `0.7988226871046541`. The best top-5%
+geometry leaf has only `22` test rows, positive rate `0.7727272727272727`,
+mean `sys` `0.6978122767310648`, and max `sys` `0.7988226871046541`.
+
+Stability sweep:
+
+- `8` grouped resplits;
+- depths `3`, `4`, and `5`;
+- minimum leaf fractions `0.01`, `0.015`, and `0.025`;
+- `1008` fitted tree/configuration rows across two labels and seven feature
+  sources.
+
+Across paired stability configurations:
+
+| label | comparison | left win fraction | median enrichment difference |
+| --- | --- | ---: | ---: |
+| top decile | symplectic/omega over Euclidean size/spread | `0.8611111111111112` | `0.4563622947733501` |
+| top decile | symplectic/omega over strata | `1.0` | `3.221063011457373` |
+| top decile | symplectic/omega over generator provenance | `1.0` | `1.593895555559562` |
+| top 5% | symplectic/omega over Euclidean size/spread | `0.9444444444444444` | `0.7801239992376704` |
+| top 5% | symplectic/omega over strata | `1.0` | `4.39227211208452` |
+| top 5% | symplectic/omega over generator provenance | `1.0` | `2.6261442869912535` |
+
+The symplectic/omega block is the most stable feature family in this sweep.
+Its most stable split features are ridge symplectic-area summaries and
+omega-matrix stable-rank/spectral-norm summaries. The Euclidean size/spread
+block also carries substantial high-tail signal; on the single grouped split it
+has higher precision/enrichment but lower recall than the symplectic/omega
+block. Its most stable split features include edge-length spread, facet-volume
+sum, and volume-normalized singular-value summaries.
+
+Permutation-null check on the single grouped split, with `32` train-label
+permutations per label/source:
+
+| label | feature source | observed enrichment | null median | null max | permutation p-value |
+| --- | --- | ---: | ---: | ---: | ---: |
+| top decile | geometry only | `5.927150948856824` | `1.042921148816081` | `3.754527610088515` | `0.030303030303030304` |
+| top decile | symplectic/omega only | `5.927150948856824` | `1.0159125406923284` | `8.984267849939492` | `0.06060606060606061` |
+| top decile | Euclidean size/spread only | `6.620689655172414` | `1.0049881020137241` | `3.638948116560057` | `0.030303030303030304` |
+| top 5% | geometry only | `7.170414810665268` | `0.9156306690941566` | `2.789397636023403` | `0.030303030303030304` |
+| top 5% | symplectic/omega only | `7.10760825757915` | `1.0388972992804795` | `3.61630465872409` | `0.030303030303030304` |
+| top 5% | Euclidean size/spread only | `8.072931597958831` | `1.0211520314251694` | `3.766119944910479` | `0.030303030303030304` |
+
+With only `32` permutations, the smallest possible reported p-value is
+`1 / 33 = 0.030303030303030304`. The symplectic/omega top-decile null has one
+high outlier, so this check is a guard against obvious label-leakage/overfit
+rather than a precise significance estimate.
+
+Interpretation: shallow geometry-only rules robustly isolate high-tail regions
+better than the sampled strata and available generator-provenance controls in
+this retained table. The signal is not localized to one column: the
+symplectic/omega feature family is strongest under the stability sweep, while
+Euclidean size/spread features are also informative. This is an in-table
+interpretability diagnostic, not a validated candidate-proposer.
+
+## Validity Guards
+
+- This is in-table rule mining, not a generated-candidate proposer.
+- Categorical baseline trees are diagnostics for sampled strata and available
+  generator provenance. They cannot be used as geometry candidate rules.
+- `facet_count` is not mere nuisance metadata; it is grouped with
+  `strata_only` because it is both a sampling input and an interpretable
+  geometric/combinatorial feature.
+- Tree rules are unstable under correlated features. Use them as compact
+  diagnostics of visible high-tail structure, not as mathematical explanations.
+- A validated proposer would need to apply a frozen geometry-only rule to newly
+  generated unevaluated rows before their `sys` values are computed.
+
+## Current Disposition
+
+Run-pending-review trial method. The current scratch run is successful and
+needs method/statistics review before thesis use.
+
+## Interpretation Boundaries
+
+- This packet supports only retained-table high-tail enrichment, not discovery
+  of a new `sys > 1` row.
+- This packet does not show that a rule will enrich newly generated rows before
+  `sys` is computed.
+- The stable split features overlap with ridge and omega features from the
+  scalar-association packet, so this packet should be treated as a local
+  rule-shaped view of that high-tail signal.
+- Euclidean size/spread features also carry high-tail signal in this packet.
+  The current artifacts do not decide whether the Euclidean signal is
+  independent of the symplectic/omega signal or a correlated proxy for it.
+- The result is scoped to the current retained random/product producer
+  contract. New random distributions, broader height/facet/product ranges, or
+  independent producer reruns reopen the packet.
+
+## Predicted Stability Under Rerun
+
+Moderate on unchanged retained tables. Shallow trees are deliberately
+interpretable but can select different correlated features after feature-schema
+changes.
+
+## Thesis Use
+
+Potentially supports a statement that interpretable high-tail rule mining was
+tried and did not by itself validate a candidate-proposer.
+
+## Reopen Triggers
+
+- retained tables are rebuilt;
+- geometry feature schema changes;
+- a leaf rule is promoted into a generated-candidate experiment;
+- thesis wording asks for claims beyond retained-table high-tail enrichment.

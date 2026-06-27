@@ -45,14 +45,13 @@ artifact by default.
 
 ## Observation
 
-Previous full scoped random/product runs found:
+Current full scoped random/product run against
+`/tmp/sys-ds-random-only-full-current` found:
 
 - trusted random/product rows: `14336`;
 - `random_sample`: `4096` rows, `0` positives;
 - `random_product_sample`: `10240` rows, `0` positives;
-- max `sys`: below `1`.
-
-These numbers must be refreshed after the current-schema prepare rerun.
+- table rows with `sys > 1`: `0`.
 
 ## Validity Guards
 
@@ -63,7 +62,8 @@ These numbers must be refreshed after the current-schema prepare rerun.
 
 ## Current Disposition
 
-Run-pending-rerun baseline method-table row.
+Baseline method-table row: current scoped random/product retained tables contain
+no recorded row with `sys > 1`.
 
 ## Remaining Worthwhile Questions
 
@@ -77,7 +77,7 @@ High if rerun against unchanged retained tables and unchanged `sys` schema.
 ## Thesis Use
 
 Supports the narrow statement that the retained random/product table contains
-no recorded positive `sys > 1` row, after the current-schema rerun confirms it.
+no recorded positive `sys > 1` row.
 
 ## Reopen Triggers
 

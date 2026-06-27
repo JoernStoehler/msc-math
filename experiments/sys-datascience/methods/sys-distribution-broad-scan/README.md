@@ -29,11 +29,12 @@ Current local run:
 - 14336 random-only rows;
 - 18 buckets;
 - 80 logit-transformed SciPy candidate families;
-- 75-78 successful fits per bucket after timeouts/failures;
-- screening tables:
-  - `/tmp/sys-ds-shape-20260625/broad-scan/tables/family-screening-summary.md`
-  - `/tmp/sys-ds-shape-20260625/broad-scan/tables/family-screening-summary.tsv`
-  - `/tmp/sys-ds-shape-20260625/broad-scan/tables/family-bucket-screening-matrix.tsv`
+- 0.25 test fraction with RNG seed `20260625`;
+- up to 2 seconds per fit;
+- fit/failure tables:
+  - `/tmp/sys-ds-shape-20260625/broad-scan/tables/family-failure-summary.md`
+  - `/tmp/sys-ds-shape-20260625/broad-scan/tables/family-failure-summary.tsv`
+  - `/tmp/sys-ds-shape-20260625/broad-scan/tables/family-bucket-fit-matrix.tsv`
 - ECDF overview plots:
   - `/tmp/sys-ds-shape-20260625/broad-scan/overview/generic-broad-scan-ecdf.png`
   - `/tmp/sys-ds-shape-20260625/broad-scan/overview/product-broad-scan-ecdf.png`

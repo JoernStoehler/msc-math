@@ -22,6 +22,8 @@ Read first:
 - `projection-structure/`: PCA, clustering, and anomaly diagnostics for
   geometry features.
 - `prediction-ranking/`: supervised in-table prediction/ranking diagnostics.
+- `tail-rule-mining/`: shallow decision-tree high-tail rule diagnostics with
+  geometry-only versus strata/provenance-control grouped-holdout comparison.
 - `sys-distribution-broad-scan/`: broad SciPy distribution scan for fixed-bucket
   marginal laws of `sys(a)`, using logit-transformed families as proposal
   generation only.
@@ -30,6 +32,9 @@ Read first:
   model comparisons.
 - `high-sys-tail-diagnostic/`: upper-tail-only diagnostics for fixed-bucket
   high-`sys` behavior, including excess-tail fits and endpoint estimates.
+- `distribution-sensitivity/` and `random-axis-diagnostic/`: exploratory
+  variant-comparison scripts. They are not active method-table rows until two
+  or more prepared random/product variants exist and are reviewed.
 
 The old ascent endpoint, local-behavior, continuation, and perturbation packets
 are not active in this slice. Use git history for archaeology only.
