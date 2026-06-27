@@ -188,6 +188,28 @@ struct StepRankingAuditRow {
     candidate_window_witness_relative_action_gap: Option<f64>,
     candidate_window_witness_base_gap: Option<f64>,
     candidate_window_witness_derivative: Option<f64>,
+    decomposition_predicted_sys: Option<f64>,
+    decomposition_actual_sys: Option<f64>,
+    decomposition_total_prediction_error: Option<f64>,
+    decomposition_base_window_exact_sys: Option<f64>,
+    decomposition_linearization_error: Option<f64>,
+    decomposition_sigma_set_error: Option<f64>,
+    decomposition_sum_error: Option<f64>,
+    decomposition_sum_residual: Option<f64>,
+    fixed_winner_actual_action: Option<f64>,
+    fixed_winner_predicted_action: Option<f64>,
+    fixed_winner_action_error: Option<f64>,
+    fixed_winner_actual_volume: Option<f64>,
+    fixed_winner_predicted_volume: Option<f64>,
+    fixed_winner_volume_error: Option<f64>,
+    fixed_winner_actual_sys: Option<f64>,
+    fixed_winner_predicted_sys_full: Option<f64>,
+    fixed_winner_predicted_sys_actual_action_linear_volume: Option<f64>,
+    fixed_winner_predicted_sys_linear_action_actual_volume: Option<f64>,
+    fixed_winner_sys_error_full: Option<f64>,
+    fixed_winner_sys_error_action_part: Option<f64>,
+    fixed_winner_sys_error_volume_part: Option<f64>,
+    fixed_winner_sys_error_interaction_residual: Option<f64>,
     observed_delta_sys: Option<f64>,
     target_sys: Option<f64>,
     above_threshold_observed: Option<bool>,
@@ -290,6 +312,8 @@ struct Summary {
 struct BaseState {
     polytope: SysLandscapePolytopeCache,
     capacity: OrbitSearchResult,
+    volume: f64,
+    volume_gradient: Vec<Vector4<f64>>,
     sys: f64,
     near_active_orbits: Vec<OrbitKktData>,
     sys_gradients: Vec<Vec<Vector4<f64>>>,
@@ -869,8 +893,9 @@ fn step_ranking_audit_row(
     let mut target_sys = None;
     let mut observed_delta_sys = None;
     let mut target_orbit_iterations = None;
+    let mut decomposition = None;
 
-    match SysLandscapePolytopeCache::from_f64_dual_vertices(target_duals) {
+    match SysLandscapePolytopeCache::from_f64_dual_vertices(target_duals.clone()) {
         Some(target_polytope) => {
             match capacity_auto_with_gap(
                 &target_polytope,
@@ -884,6 +909,15 @@ fn step_ranking_audit_row(
                                 near_active_orbits(&target_capacity, branch_threshold_relative);
                             target_sys = Some(target_state.sys);
                             observed_delta_sys = Some(target_state.sys - base.sys);
+                            decomposition = candidate_window_decomposition(
+                                base,
+                                &target_duals,
+                                target_state.vol,
+                                target_state.sys,
+                                &direction.vector,
+                                step,
+                                candidate_window_prediction.as_ref(),
+                            );
                         }
                         None => {
                             status = "target_sys_failed".to_string();
@@ -929,6 +963,76 @@ fn step_ranking_audit_row(
         candidate_window_witness_derivative: candidate_window_prediction
             .as_ref()
             .map(|witness| witness.derivative),
+        decomposition_predicted_sys: decomposition.as_ref().map(|d| d.predicted_sys),
+        decomposition_actual_sys: decomposition.as_ref().map(|d| d.actual_sys),
+        decomposition_total_prediction_error: decomposition
+            .as_ref()
+            .map(|d| d.total_prediction_error),
+        decomposition_base_window_exact_sys: decomposition
+            .as_ref()
+            .and_then(|d| d.base_window_exact_sys),
+        decomposition_linearization_error: decomposition
+            .as_ref()
+            .and_then(|d| d.linearization_error),
+        decomposition_sigma_set_error: decomposition.as_ref().and_then(|d| d.sigma_set_error),
+        decomposition_sum_error: decomposition.as_ref().and_then(|d| d.sum_error),
+        decomposition_sum_residual: decomposition.as_ref().and_then(|d| d.sum_residual),
+        fixed_winner_actual_action: decomposition
+            .as_ref()
+            .and_then(|d| d.fixed_winner.as_ref())
+            .map(|w| w.actual_action),
+        fixed_winner_predicted_action: decomposition
+            .as_ref()
+            .and_then(|d| d.fixed_winner.as_ref())
+            .map(|w| w.predicted_action),
+        fixed_winner_action_error: decomposition
+            .as_ref()
+            .and_then(|d| d.fixed_winner.as_ref())
+            .map(|w| w.action_error),
+        fixed_winner_actual_volume: decomposition
+            .as_ref()
+            .and_then(|d| d.fixed_winner.as_ref())
+            .map(|w| w.actual_volume),
+        fixed_winner_predicted_volume: decomposition
+            .as_ref()
+            .and_then(|d| d.fixed_winner.as_ref())
+            .map(|w| w.predicted_volume),
+        fixed_winner_volume_error: decomposition
+            .as_ref()
+            .and_then(|d| d.fixed_winner.as_ref())
+            .map(|w| w.volume_error),
+        fixed_winner_actual_sys: decomposition
+            .as_ref()
+            .and_then(|d| d.fixed_winner.as_ref())
+            .map(|w| w.actual_sys),
+        fixed_winner_predicted_sys_full: decomposition
+            .as_ref()
+            .and_then(|d| d.fixed_winner.as_ref())
+            .map(|w| w.predicted_sys_full),
+        fixed_winner_predicted_sys_actual_action_linear_volume: decomposition
+            .as_ref()
+            .and_then(|d| d.fixed_winner.as_ref())
+            .map(|w| w.predicted_sys_actual_action_linear_volume),
+        fixed_winner_predicted_sys_linear_action_actual_volume: decomposition
+            .as_ref()
+            .and_then(|d| d.fixed_winner.as_ref())
+            .map(|w| w.predicted_sys_linear_action_actual_volume),
+        fixed_winner_sys_error_full: decomposition
+            .as_ref()
+            .and_then(|d| d.fixed_winner.as_ref())
+            .map(|w| w.sys_error_full),
+        fixed_winner_sys_error_action_part: decomposition
+            .as_ref()
+            .and_then(|d| d.fixed_winner.as_ref())
+            .map(|w| w.sys_error_action_part),
+        fixed_winner_sys_error_volume_part: decomposition
+            .as_ref()
+            .and_then(|d| d.fixed_winner.as_ref())
+            .map(|w| w.sys_error_volume_part),
+        fixed_winner_sys_error_interaction_residual: decomposition
+            .as_ref()
+            .and_then(|d| d.fixed_winner.as_ref())
+            .map(|w| w.sys_error_interaction_residual),
         observed_delta_sys,
         target_sys,
         above_threshold_observed: observed_delta_sys
@@ -945,6 +1049,151 @@ fn step_ranking_audit_row(
         base_orbit_iterations: base.capacity.iterations,
         target_orbit_iterations,
     }
+}
+
+#[derive(Clone, Debug)]
+struct PredictionDecomposition {
+    predicted_sys: f64,
+    actual_sys: f64,
+    total_prediction_error: f64,
+    base_window_exact_sys: Option<f64>,
+    linearization_error: Option<f64>,
+    sigma_set_error: Option<f64>,
+    sum_error: Option<f64>,
+    sum_residual: Option<f64>,
+    fixed_winner: Option<FixedWinnerDecomposition>,
+}
+
+#[derive(Clone, Debug)]
+struct FixedWinnerDecomposition {
+    actual_action: f64,
+    predicted_action: f64,
+    action_error: f64,
+    actual_volume: f64,
+    predicted_volume: f64,
+    volume_error: f64,
+    actual_sys: f64,
+    predicted_sys_full: f64,
+    predicted_sys_actual_action_linear_volume: f64,
+    predicted_sys_linear_action_actual_volume: f64,
+    sys_error_full: f64,
+    sys_error_action_part: f64,
+    sys_error_volume_part: f64,
+    sys_error_interaction_residual: f64,
+}
+
+fn candidate_window_decomposition(
+    base: &BaseState,
+    target_duals: &[Vector4<f64>],
+    target_volume: f64,
+    actual_sys: f64,
+    direction: &[Vector4<f64>],
+    step: f64,
+    witness: Option<&CandidateWindowPredictionWitness>,
+) -> Option<PredictionDecomposition> {
+    let witness = witness?;
+    let predicted_sys = base.sys + witness.predicted_delta;
+    let total_prediction_error = predicted_sys - actual_sys;
+
+    let base_window_exact_sys = exact_base_window_sys_at_target(base, target_duals, target_volume);
+    let linearization_error = base_window_exact_sys.map(|exact| predicted_sys - exact);
+    let sigma_set_error = base_window_exact_sys.map(|exact| exact - actual_sys);
+    let sum_error = linearization_error
+        .zip(sigma_set_error)
+        .map(|(left, right)| left + right);
+    let sum_residual = sum_error.map(|sum| total_prediction_error - sum);
+    let fixed_winner =
+        fixed_winner_decomposition(base, target_duals, target_volume, direction, step, witness);
+
+    Some(PredictionDecomposition {
+        predicted_sys,
+        actual_sys,
+        total_prediction_error,
+        base_window_exact_sys,
+        linearization_error,
+        sigma_set_error,
+        sum_error,
+        sum_residual,
+        fixed_winner,
+    })
+}
+
+fn exact_base_window_sys_at_target(
+    base: &BaseState,
+    target_duals: &[Vector4<f64>],
+    target_volume: f64,
+) -> Option<f64> {
+    base.candidate_orbits
+        .iter()
+        .filter_map(|orbit| fixed_sigma_action(target_duals, &orbit.sigma))
+        .map(|action| symplectic::systolic_ratio(action, target_volume))
+        .filter(|sys| sys.is_finite())
+        .min_by(|a, b| a.total_cmp(b))
+}
+
+fn fixed_winner_decomposition(
+    base: &BaseState,
+    target_duals: &[Vector4<f64>],
+    target_volume: f64,
+    direction: &[Vector4<f64>],
+    step: f64,
+    witness: &CandidateWindowPredictionWitness,
+) -> Option<FixedWinnerDecomposition> {
+    let base_orbit = base.candidate_orbits.get(witness.orbit_index)?;
+    let actual_action = fixed_sigma_action(target_duals, &base_orbit.sigma)?;
+    let base_capacity_gradient =
+        capacity_subgradients_a(&base.polytope.dual_vertices_f64, &[base_orbit.clone()])
+            .ok()?
+            .into_iter()
+            .next()?;
+    let action_derivative = gradient_direction_dot(&base_capacity_gradient, direction)?;
+    let predicted_action = base_orbit.action + step * action_derivative;
+    let action_error = predicted_action - actual_action;
+
+    let volume_derivative = gradient_direction_dot(&base.volume_gradient, direction)?;
+    let predicted_volume = base.volume + step * volume_derivative;
+    if predicted_volume <= 0.0 || !predicted_volume.is_finite() {
+        return None;
+    }
+    let volume_error = predicted_volume - target_volume;
+
+    let actual_sys = symplectic::systolic_ratio(actual_action, target_volume);
+    let predicted_sys_full = base.sys + witness.predicted_delta;
+    let predicted_sys_actual_action_linear_volume =
+        symplectic::systolic_ratio(actual_action, predicted_volume);
+    let predicted_sys_linear_action_actual_volume =
+        symplectic::systolic_ratio(predicted_action, target_volume);
+
+    let sys_error_full = predicted_sys_full - actual_sys;
+    let sys_error_action_part = predicted_sys_linear_action_actual_volume - actual_sys;
+    let sys_error_volume_part = predicted_sys_actual_action_linear_volume - actual_sys;
+    let sys_error_interaction_residual =
+        sys_error_full - sys_error_action_part - sys_error_volume_part;
+
+    Some(FixedWinnerDecomposition {
+        actual_action,
+        predicted_action,
+        action_error,
+        actual_volume: target_volume,
+        predicted_volume,
+        volume_error,
+        actual_sys,
+        predicted_sys_full,
+        predicted_sys_actual_action_linear_volume,
+        predicted_sys_linear_action_actual_volume,
+        sys_error_full,
+        sys_error_action_part,
+        sys_error_volume_part,
+        sys_error_interaction_residual,
+    })
+}
+
+fn fixed_sigma_action(dual_vertices: &[Vector4<f64>], sigma: &[usize]) -> Option<f64> {
+    let outcome =
+        symplectic::kkt::saddle_point_solver::solve_kkt_for_dual_vertices(dual_vertices, sigma);
+    let result = outcome.feasible()?;
+    let action = 0.5 / result.q_corrected;
+    action.is_finite().then_some(action)
 }
 
 fn assign_descending_ranks(rows: &mut [StepRankingAuditRow]) {
@@ -1544,6 +1793,8 @@ fn compute_base_state_from_polytope(
         polytope,
         candidate_orbits: capacity.orbits.clone(),
         capacity,
+        volume: vol,
+        volume_gradient: d_volume_da,
         sys,
         near_active_orbits,
         sys_gradients,

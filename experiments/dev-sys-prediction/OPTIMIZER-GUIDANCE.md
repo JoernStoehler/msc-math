@@ -68,6 +68,21 @@ Use candidate-window predictions to rank a small radius grid, then verify with
 actual recomputed `sys` line search. Do not trust the prediction as acceptance
 proof.
 
+The current decomposition supports this trust-region policy:
+
+- at `t = 1e-3` on the checked high-degeneracy fixture, the full prediction
+  error was explained by fixed-branch linearization error; the base candidate
+  window still contained the target minimizer;
+- at `t = 1e-2`, one tested direction had a much larger error dominated by
+  sigma-window loss: the exact envelope over the base candidate window was
+  higher than the true target `sys`.
+
+So the optimizer should distinguish "Taylor error inside the known window" from
+"target winner outside the known window". The former argues for smaller steps
+or second-order correction; the latter argues for recomputing/expanding the
+branch window and treating the current radius as outside the single-anchor
+model's reliable region.
+
 Trace fields to record:
 
 - base best sigma;
@@ -78,6 +93,9 @@ Trace fields to record:
 - whether target best sigma was visible in the base candidate window;
 - near-active count at base and target;
 - min beta margin in returned branches.
+- when running offline audits, the decomposition fields
+  `decomposition_linearization_error`, `decomposition_sigma_set_error`, and
+  `decomposition_sum_residual`.
 
 ## Sysext Policy
 

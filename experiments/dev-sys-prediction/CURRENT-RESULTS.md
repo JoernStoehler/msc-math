@@ -281,6 +281,100 @@ So for this line and radius, the lower-envelope errors of order `5e-6` are
 compatible with fixed-branch linearization error; this tiny sample does not
 show a need to blame missing sigma-window effects.
 
+## Three-Source Decomposition
+
+The prediction-cloud producer now decomposes each lower-envelope prediction
+error into:
+
+```text
+prediction_error
+  = predicted_sys(a1) - actual_sys(a1)
+
+linearization_error
+  = base-window linear envelope at a1
+    - base-window exact envelope at a1
+
+sigma_set_error
+  = base-window exact envelope at a1
+    - true sys(a1)
+```
+
+The row also decomposes the predicted winning fixed branch into action and
+volume pieces:
+
+```text
+action part:  sys(predicted_action, actual_volume) - sys(actual_action, actual_volume)
+volume part:  sys(actual_action, predicted_volume) - sys(actual_action, actual_volume)
+interaction: remaining nonlinear/cross term
+```
+
+Sanity check at `t = 1e-3`:
+
+```bash
+cargo run -p exp-dev-sys-prediction --release --bin dev-sys-prediction-cloud -- \
+  --diagnostic-dir /tmp/dev-gradient-ascent-branch-diagnostic-allsafe-check \
+  --polytope-table /tmp/dev-sys-prediction-fixture-panel.jsonl \
+  --out-dir /tmp/dev-sys-prediction-decomp-highdeg-r1e-3 \
+  --selection-threshold-relative 0.01 \
+  --degeneracy-labels high_degeneracy \
+  --max-fixtures-per-label 1 \
+  --steps 1e-3 \
+  --trace-iterations 1
+```
+
+Result:
+
+- rows: 5;
+- max absolute total prediction error: `5.34e-6`;
+- max absolute linearization error: `5.34e-6`;
+- sigma-set error: `0` on all rows;
+- sum residual: `0` on all rows.
+
+Within the predicted winning branch:
+
+- max absolute action part: `4.13e-6`;
+- max absolute volume part: `4.57e-7`;
+- max absolute interaction residual: `1.67e-6`.
+
+So at `t=1e-3` on this basepoint, the observed lower-envelope error is explained
+by fixed-branch linearization error, mostly action/capacity curvature rather
+than volume curvature, with no observed sigma-window loss.
+
+Sanity check at `t = 1e-2`:
+
+```bash
+cargo run -p exp-dev-sys-prediction --release --bin dev-sys-prediction-cloud -- \
+  --diagnostic-dir /tmp/dev-gradient-ascent-branch-diagnostic-allsafe-check \
+  --polytope-table /tmp/dev-sys-prediction-fixture-panel.jsonl \
+  --out-dir /tmp/dev-sys-prediction-decomp-highdeg-r1e-2 \
+  --selection-threshold-relative 0.01 \
+  --degeneracy-labels high_degeneracy \
+  --max-fixtures-per-label 1 \
+  --steps 1e-2 \
+  --trace-iterations 1
+```
+
+Result:
+
+- rows: 5;
+- max absolute total prediction error: `1.33e-3`;
+- max absolute linearization error: `5.23e-4`;
+- max absolute sigma-set error: `1.38e-3`;
+- sum residual: `0` on all rows.
+
+The interesting row is the maximin direction:
+
+```text
+total prediction error:  +1.3319e-3
+linearization error:     -4.3813e-5
+sigma-set error:         +1.3757e-3
+```
+
+So at `t=1e-2`, the largest error in this small check is not fixed-branch
+Taylor error; it is base-window/sigma-set error. The base-window exact envelope
+is higher than true target `sys`, meaning a target winner outside the exact
+base window became relevant.
+
 ## Sigmalow Count Audit
 
 Cheap audit over the existing branch diagnostic:
