@@ -14,6 +14,11 @@ the retained ascent endpoints should not be treated as local maxima. Use git
 history if an old ascent artifact is needed for archaeology; do not route new
 datascience work through those files.
 
+Legacy bounded random/ascent/continuation observations that are still worth
+preserving live in `experiments/sys-landscape/legacy-ascent-continuation-debt.md`.
+They are context only. They are not active method-table rows and do not support
+local-maximality, exhaustive-search, or candidate-proposer claims.
+
 ## Data Flow
 
 ```text

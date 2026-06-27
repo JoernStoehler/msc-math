@@ -107,7 +107,7 @@ const N_WIGGLES: usize = 5;
 /// enough to cross boundaries often, while still small enough to keep most
 /// perturbed polytopes constructible. See
 /// `experiments/combinatorial-cells/README.md` and
-/// `research/sys-landscape.md`.
+/// `experiments/sys-landscape/legacy-ascent-continuation-debt.md`.
 /// If changed: much smaller (e.g. 0.01) reduces boundary-crossing probability and escape
 /// effectiveness. Much larger (e.g. 0.2) risks producing degenerate polytopes
 /// (SysLandscapePolytopeCache::from_f64_dual_vertices failure) or landing too far from the current optimum.

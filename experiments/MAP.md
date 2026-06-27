@@ -67,8 +67,9 @@ Current boundary facts:
   packages, `src/lib.rs` should stay a thin index over named modules.
 - Slow validation, broad random sweeps, and generated evidence datasets stay
   here unless they become fast crate tests.
-- Research interpretation belongs in `research/`; execution-facing package
-  notes can live beside the experiment.
+- Interpretation belongs with the owner that future work should update:
+  usually the local experiment README, method packet, formal note, or thesis
+  companion.
 - Thesis publication assets are copied or owned by `thesis/`; thesis
   correctness must not depend on runtime links into `experiments/`.
 
@@ -166,7 +167,7 @@ on whether the owner is method development or retained-dataset analysis.
 | `experiments/dev-gradient-ascent/` | active top-level development packet for a heuristic gradient-ascent method for nonsmooth high-dimensional `sys(a)`; owns question ledger, schema-smoke artifacts, and future method-development probes before promotion | `experiments/dev-gradient-ascent/README.md`, `experiments/sys-datascience/README.md`, `research/sys-first-order-local-behavior.md` |
 | `experiments/dev-flow-graph/` | active flow-graph algorithm-development packet: frontier counts, endpoint/closed-word representation spikes, case-finding, mismatch visualization, and unresolved-word diagnostics before promotion into numerics, performance, or verification | `experiments/dev-flow-graph/README.md`, `crates/symplectic/src/algorithms/flow_graph/README.md`, `tasks/current-state.md`, `tasks/planning-notes.md` |
 | `experiments/dev-quadratic-program/` | active pure-`f64` capacity-development packet: generated and retained datascience-style scans, validation/capacity policy comparison, product preprocessing diagnostics, and promotion-readiness evidence before library or `sys-datascience` integration | `experiments/dev-quadratic-program/README.md`, `experiments/sys-datascience/README.md` |
-| `experiments/sys-landscape/` | hostile sys-search landscape legacy and producer surfaces: random/product searches, gradient ascent, variable-`F` continuation, and rejection calibration | `tasks/current-state.md`, `tasks/planning-notes.md`, `research/sys-landscape*.md`, `experiments/sys-datascience/README.md` |
+| `experiments/sys-landscape/` | hostile sys-search landscape legacy and producer surfaces: random/product searches, gradient ascent, variable-`F` continuation, and rejection calibration | `experiments/sys-landscape/README.md`, `experiments/sys-landscape/legacy-ascent-continuation-debt.md`, `experiments/sys-datascience/README.md` |
 | `experiments/sys-datascience/` | maintained hostile `sys` search data-science pipeline: producer caches, retained tables, and method packets for the thesis method table | `experiments/sys-datascience/README.md`, `experiments/sys-datascience/produce/README.md`, `experiments/sys-datascience/prepare/README.md`, `experiments/sys-datascience/methods/README.md` |
 | `experiments/regular-products/` | regular polygon product side result: broad rotated-product sweeps, pentagon empirical figures/viewer, and exact pentagon formula proof packet | `experiments/regular-products/README.md`, `thesis/rotated-regular-polygons-content.md` |
 | `experiments/dev-quadratic-program/numerics-audit/` | single-threaded numerical error audit: structured JSONL observations, f64-vs-oracle summaries, and generated reports for KKT variables and predicates | `experiments/dev-quadratic-program/numerics-audit/README.md`, `tasks/current-state.md`, `tasks/planning-notes.md` |

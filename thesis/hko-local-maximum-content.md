@@ -96,7 +96,9 @@ The HKO thesis-facing result is a packet, not only one theorem statement.
 6. Search/context result:
    Broader search work did not find a better local escape or general
    explanation.
-   Source pointers: `research/sys-landscape.md`;
+   Source pointers: `experiments/sys-datascience/README.md`;
+   `experiments/sys-datascience/methods/README.md`;
+   `experiments/sys-landscape/legacy-ascent-continuation-debt.md`;
    `experiments/sys-landscape/`;
    `thesis/central-claim-control.md`.
 
@@ -756,7 +758,9 @@ Status:
   principal hostile-search table unless explicitly used as controls.
 
 Source pointers:
-- `research/sys-landscape.md`.
+- `experiments/sys-datascience/README.md`.
+- `experiments/sys-datascience/methods/README.md`.
+- `experiments/sys-landscape/legacy-ascent-continuation-debt.md`.
 - `thesis/central-claim-control.md`, HKO and
   black-box-datascience rows.
 

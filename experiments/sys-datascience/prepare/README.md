@@ -72,6 +72,24 @@ uv run --script experiments/sys-datascience/fingerprint-dataset.py \
   experiments/sys-datascience/prepare
 ```
 
+## Identity And Provenance Contract
+
+The prepared random/product tables keep polytope identity separate from sample
+or state provenance:
+
+- `poly_id` identifies the canonicalized ordered dual-vertex geometry and is
+  stable across producer rows that produce the same polytope.
+- provenance rows carry source metadata such as `root_group_id` and
+  `lineage_id`.
+- exact rational geometry payloads such as `dual_vertices_rational` stay with
+  the polytope identity rather than with a one-off method-local matrix.
+- optimizer or local-system rows may need additional state-level identity, but
+  that belongs to a reopened producer design, not to the retained
+  random/product prepared schema.
+
+Do not replace this with a single wide table unless there is a current owner
+for the provenance loss and migration cost. Add schema fields when possible.
+
 ## Code Ownership
 
 - `main.rs` orchestrates canonical producer-file loading for retained tables.

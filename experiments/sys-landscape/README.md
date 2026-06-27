@@ -1,9 +1,12 @@
 # Sys-Landscape
 
 This package owns hostile-landscape search experiment binaries and legacy
-producer surfaces interpreted in `research/sys-landscape.md`,
-`tasks/current-state.md`, and `tasks/planning-notes.md`. The maintained
-data-science pipeline lives at `experiments/sys-datascience/`.
+producer surfaces. The maintained data-science pipeline lives at
+`experiments/sys-datascience/`.
+
+Legacy ascent and continuation observations that are still worth preserving are
+summarized in `legacy-ascent-continuation-debt.md`. They are not active
+data-science method rows.
 
 ## Rust Command Contract
 

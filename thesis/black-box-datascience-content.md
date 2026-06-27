@@ -6,8 +6,10 @@ Not source truth.
 Purpose: gather the data-science search-result writing inventory, result
 taxonomy, and open decisions before final prose is written.
 
-Overruled by: `experiments/sys-landscape/`, `research/sys-landscape*.md`, task
-files, generated tables/figures, and Jörn/Kai review.
+Overruled by: `experiments/sys-datascience/`,
+`experiments/sys-datascience/methods/`,
+`experiments/sys-landscape/legacy-ascent-continuation-debt.md`, task files,
+generated tables/figures, and Jörn/Kai review.
 
 Lifecycle: keep while the section is being assembled. After the section is
 stable, delete this file or reduce it to a short maintenance index.
