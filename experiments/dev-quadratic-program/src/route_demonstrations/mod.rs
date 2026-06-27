@@ -22,10 +22,9 @@
 //! - `guarded_route_safe_refusal`: guarded routes should reject or request
 //!   fallback rather than inventing a scalar on invalid/ambiguous inputs.
 //!
-//! The exact-all-visited route still needs a good executable cost
-//! demonstration. A timing assertion in a unit test would be brittle; use a
-//! performance target or an ignored/manual demo when the needed cost threshold
-//! is clear.
+//! The cost demonstration for the exact transition-pruned reference route lives
+//! in `experiments/performance/src/bin/capacity_route_costs.rs`, because it
+//! needs runtime and hardware context instead of a unit-test assertion.
 
 mod conservative_pruning_still_f64;
 mod f64_value_not_certificate;

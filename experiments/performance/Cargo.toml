@@ -19,6 +19,10 @@ path = "src/bin/capacity_paths_random.rs"
 name = "capacity-profile-one"
 path = "src/bin/capacity_profile_one.rs"
 
+[[bin]]
+name = "capacity-route-costs"
+path = "src/bin/capacity_route_costs.rs"
+
 [lints]
 workspace = true
 

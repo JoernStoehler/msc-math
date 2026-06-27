@@ -32,6 +32,15 @@ Changing facet counts, sample counts, height ranges, or graph density is a
 different experiment variant. Add a named mode or change the mode constants in a
 worktree so the variant is visible in the code diff.
 
+Do not force one performance tool to answer all capacity-route questions:
+
+- use `capacity-route-costs` for paired exact-vs-f64 route rows with shared
+  fixture context, capacities, route counts, hardware context, and load context;
+- use `capacity-profile-one` for repeated timing or perf/callgrind attribution
+  of one selected path on one fixture;
+- use `capacity-paths-random` when the question only compares the two ordinary
+  f64-based scalar capacity paths over several random fixtures.
+
 ## Targets
 
 ### `capacity-paths-random`
@@ -46,8 +55,9 @@ It compares only these two paths:
 
 - `f64_transition_pruned_hk`: pure-f64 route from
   `experiments/dev-quadratic-program/src/f64_route/`;
-- `pruned_hk_exact_fallback`: transition-pruned HK2017 candidate generation
-  plus `aggregate_orbits_with_dual_vertices_exact(..., MinimaSafe)`.
+- `exact_transition_pruned_f64_then_exact_fallback`: exact transition-pruned
+  HK2017 candidate generation plus
+  `aggregate_orbits_with_dual_vertices_exact(..., MinimaSafe)`.
 
 It deliberately does not include wrappers that differ only by experiment
 ownership, product billiard routing on generic random non-products, unpruned
@@ -102,7 +112,8 @@ Interpretation boundaries:
 
 This target repeats one capacity path on one deterministic random fixture. It
 is the stable command to wrap with `perf`, `cargo flamegraph`, or callgrind
-after `capacity-paths-random` identifies the route/input worth attributing.
+after `capacity-paths-random` or `capacity-route-costs` identifies the
+route/input worth attributing.
 
 Build once:
 
@@ -132,6 +143,17 @@ target/release/capacity-profile-one \
   --out-dir /tmp/capacity-profile-one-fallback
 ```
 
+Run the exact transition-pruned route once:
+
+```bash
+target/release/capacity-profile-one \
+  --path exact \
+  --facet-count 6 \
+  --sample 0 \
+  --repetitions 1 \
+  --out-dir /tmp/capacity-profile-one-exact
+```
+
 Callgrind example:
 
 ```bash
@@ -150,12 +172,12 @@ callgrind_annotate --inclusive=yes --threshold=1 \
 
 Repeat with `--path fallback` for the exact-fallback route.
 
-The binary writes `profile-summary.jsonl` with the path, fixture selector,
-repetition count, elapsed time, per-repetition time, and last capacity. The
-profiled loop excludes fixture acquisition and exact fixture geometry
-construction, but the process still performs those steps before timing begins.
-Callgrind totals therefore include a small one-time setup cost; use enough
-repetitions that the repeated capacity loop dominates.
+The binary writes `profile-summary.jsonl` with the path, measurement scope,
+fixture selector, repetition count, elapsed time, per-repetition time, and last
+capacity. The profiled loop excludes fixture acquisition. For f64/fallback
+rows, use enough repetitions that the repeated capacity loop dominates one-time
+setup. The exact route is guarded to `--repetitions 1` because the F=10 exact
+row is slow enough that repeated exact timing is usually the wrong tool.
 
 Known hotspot from the 2026-06-25 F=10/sample-1 run:
 
@@ -170,6 +192,69 @@ This is empirical evidence for the named fixture and revision, not a theorem
 about all random polytopes. Re-run the target after KKT solver changes,
 candidate-generation changes, or when the sampled fixtures have many
 indeterminate near-minimum candidates.
+
+### `capacity-route-costs`
+
+This target is the paired executable cost demonstration for the capacity-route
+ladder in `experiments/dev-quadratic-program/src/route_demonstrations/`. It
+compares the current small set of materially different scalar routes on the
+same deterministic random fixtures:
+
+- `exact_transition_pruned_sigmas`: exact rational KKT over every sigma visited
+  by the exact transition-pruned graph;
+- `exact_transition_pruned_f64_then_exact_fallback`: f64 KKT candidate solve
+  over the exact transition-pruned graph, followed by exact fallback
+  aggregation;
+- `f64_transition_pruned_hk`: pure-f64 transition-pruned route.
+
+Run the smoke measurement:
+
+```bash
+cargo run -p exp-performance --release --bin capacity-route-costs -- \
+  --mode smoke \
+  --out-dir /tmp/capacity-route-costs-smoke
+```
+
+Run the standard random F=6/F=10 measurement:
+
+```bash
+cargo run -p exp-performance --release --bin capacity-route-costs -- \
+  --mode production \
+  --out-dir /tmp/capacity-route-costs-production
+```
+
+Production mode uses one deterministic fixture for each of F=6 and F=10. The
+exact row runs once. The fast f64-based rows run 1000 repetitions and report
+both total wall time and per-call wall time, because single sub-millisecond
+measurements are noise-dominated. On a 2026-06-27 AMD Ryzen 5 1600X
+devcontainer run, the F=10 exact row took about 79s, so repeated F=10 samples
+are deliberately not the default.
+
+The binary prints hardware and load context to stdout and writes:
+
+- `metadata.jsonl`: target, mode, fixture parameters, hardware context, and
+  initial load average;
+- `setup-events.jsonl`: one row per fixture for fixture attempts, exact
+  transition setup time, and allowed transition count;
+- `path-events.jsonl`: one row per measured route with measurement scope,
+  repetition count, total wall time, per-call wall time, process CPU time when
+  `/proc/self/stat` and `getconf CLK_TCK` are available, load average before
+  and after the route, capacity, visited counts, and difference from the
+  exact-transition-pruned reference.
+
+Interpretation boundaries:
+
+- There is no timing assertion. Absolute timings are local-machine evidence;
+  use the printed hardware, load average, and process-CPU/wall ratio to reject
+  noisy runs.
+- Fixture acquisition and exact transition setup are recorded separately. Exact
+  and exact-transition-fallback rows use `after_exact_transition_setup`; the
+  pure-f64 row uses `full_f64_route` because it intentionally runs its own f64
+  combinatorics and transition construction.
+- `exact_transition_pruned_sigmas` is exact over the transition-pruned sigma
+  stream. It is not an unpruned exact-every-HK-sigma route.
+- This target is for paired comparison and context. Use `capacity-profile-one`
+  plus perf/callgrind for detailed attribution of one selected path.
 
 ### Datascience f64 capacity targets moved
 

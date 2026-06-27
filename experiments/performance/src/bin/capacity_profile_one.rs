@@ -1,62 +1,19 @@
-use euclidean_polytopes::{
-    facet_intersection_is_nonempty_from_vertex_facet_incidence,
-    polar_vertices_exact_rational_assuming_origin_interior, PolarVerticesExact,
-};
-use exp_dev_quadratic_program::{
-    capacity_f64_only_with_policy_and_method_profiled, F64CapacityMethod, F64CapacityOutcome,
-    F64ValidationPolicy,
-};
 use exp_performance::args::{split_inline_arg, take_value};
+use exp_performance::capacity_route_support::{
+    accepted_fixture, capacity_fixture_from_dual_vertices, exact_geometry_from_dual_vertices,
+    exact_transition_pruned_once, f64_transition_pruned_from_dual_vertices,
+    pruned_f64_then_exact_from_geometry, CapacityPath, DEFAULT_H_MAX, DEFAULT_H_MIN, DEFAULT_SEED,
+};
 use exp_performance::jsonl::JsonlWriter;
 use exp_performance::output_dir::prepare_out_dir;
-use nalgebra::{DMatrix, Vector4};
-use num_rational::BigRational;
 use serde::Serialize;
 use std::env;
 use std::hint::black_box;
 use std::path::PathBuf;
 use std::process::ExitCode;
 use std::time::Instant;
-use symplectic::algorithms::facet_adjacency::build_transition_matrix_from_facet_intersections_and_omega;
-use symplectic::exact::omega_signs_exact;
-use symplectic::geom::rational_arithmetic::f64_to_rational;
-use symplectic::random::generate_dual_vertices;
-use symplectic::{
-    aggregate_orbits_with_dual_vertices_exact, solve_pruned_hk2017_candidates, OrbitGuaranteeMode,
-    OrbitKktData,
-};
 
 const TARGET_NAME: &str = "capacity-profile-one";
-const SEED: u64 = 42;
-const H_MIN: f64 = 0.5;
-const H_MAX: f64 = 2.0;
-const MAX_ATTEMPTS_PER_SAMPLE: u64 = 10_000;
-
-#[derive(Clone, Copy, Debug, Eq, PartialEq, Serialize)]
-#[serde(rename_all = "snake_case")]
-enum CapacityPath {
-    F64TransitionPrunedHk,
-    PrunedHkExactFallback,
-}
-
-impl CapacityPath {
-    fn parse(value: &str) -> Result<Self, String> {
-        match value {
-            "f64_transition_pruned_hk" | "f64" => Ok(Self::F64TransitionPrunedHk),
-            "pruned_hk_exact_fallback" | "fallback" => Ok(Self::PrunedHkExactFallback),
-            other => Err(format!(
-                "--path must be f64_transition_pruned_hk/f64 or pruned_hk_exact_fallback/fallback, got {other}"
-            )),
-        }
-    }
-
-    fn label(self) -> &'static str {
-        match self {
-            Self::F64TransitionPrunedHk => "f64_transition_pruned_hk",
-            Self::PrunedHkExactFallback => "pruned_hk_exact_fallback",
-        }
-    }
-}
 
 #[derive(Clone, Debug, Serialize)]
 struct Config {
@@ -70,17 +27,11 @@ struct Config {
     out_dir: Option<PathBuf>,
 }
 
-struct Geometry {
-    dual_vertices_f64: Vec<Vector4<f64>>,
-    dual_vertices_exact: Vec<[BigRational; 4]>,
-    facet_intersection_is_nonempty: DMatrix<bool>,
-    omega_signs: DMatrix<i8>,
-}
-
 #[derive(Serialize)]
 struct SummaryRow {
     target: &'static str,
     path: &'static str,
+    measurement_scope: &'static str,
     facet_count: usize,
     sample: usize,
     repetitions: usize,
@@ -109,24 +60,77 @@ fn run() -> Result<PathBuf, String> {
     let config = parse_args(env::args().skip(1))?;
     validate_config(&config)?;
     let out_dir = prepare_out_dir(config.out_dir.clone(), TARGET_NAME, config.path.label())?;
-    let dual_vertices = accepted_fixture(&config)?;
-    let geometry = exact_geometry(dual_vertices);
+    let accepted = accepted_fixture(
+        config.facet_count,
+        config.sample,
+        config.seed,
+        config.h_min,
+        config.h_max,
+    )?;
 
-    let started = Instant::now();
     let mut last = None;
-    for _ in 0..config.repetitions {
-        last = Some(match config.path {
-            CapacityPath::F64TransitionPrunedHk => f64_hk(&geometry.dual_vertices_f64),
-            CapacityPath::PrunedHkExactFallback => pruned_hk_exact(&geometry),
-        });
-        black_box(last);
+    match config.path {
+        CapacityPath::F64TransitionPrunedHk => {
+            let started = Instant::now();
+            for _ in 0..config.repetitions {
+                last = Some(f64_transition_pruned_from_dual_vertices(
+                    &accepted.dual_vertices_f64,
+                ));
+                black_box(last);
+            }
+            write_summary(
+                &config,
+                &out_dir,
+                started.elapsed().as_secs_f64() * 1000.0,
+                last,
+            )?;
+        }
+        CapacityPath::ExactTransitionPrunedF64ThenExactFallback => {
+            let geometry = exact_geometry_from_dual_vertices(accepted.dual_vertices_f64);
+            let started = Instant::now();
+            for _ in 0..config.repetitions {
+                last = Some(pruned_f64_then_exact_from_geometry(&geometry));
+                black_box(last);
+            }
+            write_summary(
+                &config,
+                &out_dir,
+                started.elapsed().as_secs_f64() * 1000.0,
+                last,
+            )?;
+        }
+        CapacityPath::ExactTransitionPrunedSigmas => {
+            let fixture = capacity_fixture_from_dual_vertices(accepted.dual_vertices_f64)?;
+            let started = Instant::now();
+            for _ in 0..config.repetitions {
+                let report = exact_transition_pruned_once(&fixture)
+                    .map_err(|error| format!("exact route failed: {error:?}"))?;
+                last = Some(report.capacity);
+                black_box(last);
+            }
+            write_summary(
+                &config,
+                &out_dir,
+                started.elapsed().as_secs_f64() * 1000.0,
+                last,
+            )?;
+        }
     }
-    let elapsed_ms = started.elapsed().as_secs_f64() * 1000.0;
 
+    Ok(out_dir)
+}
+
+fn write_summary(
+    config: &Config,
+    out_dir: &std::path::Path,
+    elapsed_ms: f64,
+    last: Option<f64>,
+) -> Result<(), String> {
     let mut writer = JsonlWriter::create(&out_dir.join("profile-summary.jsonl"))?;
     writer.write(&SummaryRow {
         target: TARGET_NAME,
         path: config.path.label(),
+        measurement_scope: measurement_scope(config.path),
         facet_count: config.facet_count,
         sample: config.sample,
         repetitions: config.repetitions,
@@ -137,115 +141,18 @@ fn run() -> Result<PathBuf, String> {
         per_repetition_ms: elapsed_ms / config.repetitions as f64,
         last_capacity: last.expect("repetitions is positive"),
     })?;
-    writer.flush()?;
-    Ok(out_dir)
-}
-
-fn accepted_fixture(config: &Config) -> Result<Vec<Vector4<f64>>, String> {
-    let first_attempt =
-        config.facet_count as u64 * 1_000_000 + config.sample as u64 * MAX_ATTEMPTS_PER_SAMPLE;
-    for offset in 0..MAX_ATTEMPTS_PER_SAMPLE {
-        if let Ok(dual_vertices) = generate_dual_vertices(
-            config.facet_count,
-            config.h_min,
-            config.h_max,
-            config.seed,
-            first_attempt + offset,
-        ) {
-            return Ok(dual_vertices);
-        }
-    }
-    Err(format!(
-        "no accepted fixture for F={}, sample={}",
-        config.facet_count, config.sample
-    ))
-}
-
-fn exact_geometry(dual_vertices_f64: Vec<Vector4<f64>>) -> Geometry {
-    let dual_vertices_exact = exact_dual_vertex_arrays(&dual_vertices_f64);
-    let dual_vertices_exact_vectors = exact_dual_vertex_vectors(&dual_vertices_exact);
-    let PolarVerticesExact {
-        vertex_facet_incidence,
-        ..
-    } = polar_vertices_exact_rational_assuming_origin_interior(&dual_vertices_exact_vectors);
-    let facet_intersection_is_nonempty =
-        facet_intersection_is_nonempty_from_vertex_facet_incidence(&vertex_facet_incidence);
-    let omega_signs = omega_signs_exact(&dual_vertices_exact_vectors);
-    Geometry {
-        dual_vertices_f64,
-        dual_vertices_exact,
-        facet_intersection_is_nonempty,
-        omega_signs,
-    }
-}
-
-fn pruned_hk_exact(geometry: &Geometry) -> f64 {
-    let transition_is_allowed = build_transition_matrix_from_facet_intersections_and_omega(
-        &geometry.facet_intersection_is_nonempty,
-        &geometry.omega_signs,
-    );
-    let (orbits, iterations) =
-        solve_pruned_hk2017_candidates(&geometry.dual_vertices_f64, &transition_is_allowed)
-            .expect("pruned candidate solve");
-    aggregate(geometry, orbits, iterations)
-}
-
-fn aggregate(geometry: &Geometry, orbits: Vec<OrbitKktData>, iterations: u64) -> f64 {
-    aggregate_orbits_with_dual_vertices_exact(
-        &geometry.dual_vertices_exact,
-        orbits,
-        iterations,
-        0.0,
-        OrbitGuaranteeMode::MinimaSafe,
-    )
-    .expect("aggregate")
-    .min_action
-}
-
-fn f64_hk(dual_vertices: &[Vector4<f64>]) -> f64 {
-    let (report, _) = capacity_f64_only_with_policy_and_method_profiled(
-        dual_vertices,
-        F64ValidationPolicy::LpOriginVertex,
-        F64CapacityMethod::TransitionPrunedHk,
-    );
-    match report.outcome {
-        F64CapacityOutcome::Success { capacity, .. } => capacity,
-        F64CapacityOutcome::Failure { reason } => panic!("f64 route failed: {reason:?}"),
-    }
-}
-
-fn exact_dual_vertex_arrays(dual_vertices: &[Vector4<f64>]) -> Vec<[BigRational; 4]> {
-    dual_vertices
-        .iter()
-        .map(|a| {
-            [
-                f64_to_rational(a[0]),
-                f64_to_rational(a[1]),
-                f64_to_rational(a[2]),
-                f64_to_rational(a[3]),
-            ]
-        })
-        .collect()
-}
-
-fn exact_dual_vertex_vectors(
-    dual_vertices_exact: &[[BigRational; 4]],
-) -> Vec<Vector4<BigRational>> {
-    dual_vertices_exact
-        .iter()
-        .map(|a| Vector4::new(a[0].clone(), a[1].clone(), a[2].clone(), a[3].clone()))
-        .collect()
+    writer.flush()
 }
 
 fn parse_args(args: impl Iterator<Item = String>) -> Result<Config, String> {
     let mut config = Config {
-        path: CapacityPath::PrunedHkExactFallback,
+        path: CapacityPath::ExactTransitionPrunedF64ThenExactFallback,
         facet_count: 10,
         sample: 1,
         repetitions: 100,
-        seed: SEED,
-        h_min: H_MIN,
-        h_max: H_MAX,
+        seed: DEFAULT_SEED,
+        h_min: DEFAULT_H_MIN,
+        h_max: DEFAULT_H_MAX,
         out_dir: None,
     };
     let mut args = args.peekable();
@@ -294,6 +201,12 @@ fn validate_config(config: &Config) -> Result<(), String> {
     if config.repetitions == 0 {
         return Err("--repetitions must be positive".to_string());
     }
+    if config.path == CapacityPath::ExactTransitionPrunedSigmas && config.repetitions > 1 {
+        return Err(
+            "--path exact is slow; use --repetitions 1 unless you intentionally edit this guard"
+                .to_string(),
+        );
+    }
     if !config.h_min.is_finite()
         || !config.h_max.is_finite()
         || config.h_min <= 0.0
@@ -313,10 +226,49 @@ fn usage() -> &'static str {
         --path f64 --facet-count 10 --sample 1 --repetitions 100 --out-dir /tmp/capacity-profile-one-f64\n\
 \n\
 Options:\n\
-  --path PATH           f64_transition_pruned_hk/f64 or pruned_hk_exact_fallback/fallback [default: fallback]\n\
+  --path PATH           f64_transition_pruned_hk/f64, exact_transition_pruned_f64_then_exact_fallback/fallback, or exact_transition_pruned_sigmas/exact [default: fallback]\n\
   --facet-count N      Random fixture facet count [default: 10]\n\
   --sample N           Deterministic random fixture sample index [default: 1]\n\
-  --repetitions N      Repetitions after fixture construction [default: 100]\n\
+  --repetitions N      Repetitions after fixture construction [default: 100; exact path requires 1]\n\
   --out-dir PATH       Output directory [default: /tmp/msc-math-performance/<target>-<path>-<time>-pid<PID>]\n\
   --help               Print this help text"
+}
+
+fn measurement_scope(path: CapacityPath) -> &'static str {
+    match path {
+        CapacityPath::F64TransitionPrunedHk => "full_f64_route",
+        CapacityPath::ExactTransitionPrunedF64ThenExactFallback => "after_exact_geometry_setup",
+        CapacityPath::ExactTransitionPrunedSigmas => "after_exact_transition_setup",
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn parse(values: &[&str]) -> Config {
+        parse_args(values.iter().map(|value| value.to_string())).unwrap()
+    }
+
+    #[test]
+    fn parses_existing_path_aliases() {
+        assert_eq!(
+            parse(&["--path", "f64"]).path,
+            CapacityPath::F64TransitionPrunedHk
+        );
+        assert_eq!(
+            parse(&["--path", "fallback"]).path,
+            CapacityPath::ExactTransitionPrunedF64ThenExactFallback
+        );
+        assert_eq!(
+            parse(&["--path", "exact"]).path,
+            CapacityPath::ExactTransitionPrunedSigmas
+        );
+    }
+
+    #[test]
+    fn exact_path_rejects_repeated_default_benchmarking() {
+        let config = parse(&["--path", "exact", "--repetitions", "2"]);
+        assert!(validate_config(&config).is_err());
+    }
 }
