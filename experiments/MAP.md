@@ -18,7 +18,7 @@ Map maintenance:
 ## Status
 
 - State: split from the old root `ARCHITECTURE.md`.
-- Last updated: 2026-06-13.
+- Last updated: 2026-06-27.
 - Source surfaces: `experiments/**/Cargo.toml`, `experiments/**/src/lib.rs`,
   local `README.md` files, experiment entrypoints, `research/*.md`, and the
   task progress files.
@@ -164,6 +164,7 @@ on whether the owner is method development or retained-dataset analysis.
 | `experiments/algorithm-comparison/` | README-only routing and reasoning note for cross-algorithm comparisons; no active commands or evidence artifacts | `experiments/algorithm-comparison/README.md`, `experiments/dev-quadratic-program/README.md`, `experiments/performance/README.md`, `experiments/dev-quadratic-program/numerics-audit/README.md`, `experiments/verification/README.md` |
 | `experiments/dev-quadratic-program/` | README-only coordination packet for QP/HK2017 library-surface and cleanup questions before code or evidence has a better home | `experiments/dev-quadratic-program/README.md`, `experiments/MAP.md` section `Algorithm Units`, `crates/symplectic/src/algorithms/hk2017/`, `crates/symplectic/src/algorithms/orbit_search.rs` |
 | `experiments/dev-gradient-ascent/` | active top-level development packet for a heuristic gradient-ascent method for nonsmooth high-dimensional `sys(a)`; owns question ledger, schema-smoke artifacts, and future method-development probes before promotion | `experiments/dev-gradient-ascent/README.md`, `experiments/sys-datascience/README.md`, `research/sys-first-order-local-behavior.md` |
+| `experiments/dev-sys-prediction/` | active development packet for semi-local prediction of `sys(a0 + da)`: lower-envelope branch models, direction-cloud prediction error, candidate-window completeness, and beta-domain diagnostics before optimizer or thesis-evidence promotion | `experiments/dev-sys-prediction/README.md`, `experiments/dev-gradient-ascent/README.md`, `research/sys-first-order-local-behavior.md` |
 | `experiments/dev-flow-graph/` | active flow-graph algorithm-development packet: frontier counts, endpoint/closed-word representation spikes, case-finding, mismatch visualization, and unresolved-word diagnostics before promotion into numerics, performance, or verification | `experiments/dev-flow-graph/README.md`, `crates/symplectic/src/algorithms/flow_graph/README.md`, `tasks/current-state.md`, `tasks/planning-notes.md` |
 | `experiments/dev-quadratic-program/` | active pure-`f64` capacity-development packet: generated and retained datascience-style scans, validation/capacity policy comparison, product preprocessing diagnostics, and promotion-readiness evidence before library or `sys-datascience` integration | `experiments/dev-quadratic-program/README.md`, `experiments/sys-datascience/README.md` |
 | `experiments/sys-landscape/` | hostile sys-search landscape legacy and producer surfaces: random/product searches, gradient ascent, variable-`F` continuation, and rejection calibration | `tasks/current-state.md`, `tasks/planning-notes.md`, `research/sys-landscape*.md`, `experiments/sys-datascience/README.md` |
