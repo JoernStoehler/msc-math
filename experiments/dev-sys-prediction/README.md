@@ -214,13 +214,41 @@ packet with failure modes and initial hypotheses.
 
 ## Smoke Boundary
 
-A first mergeable producer should be small:
+Use the same producer for smoke and larger local characterization. Keep this
+simple: change only the cutoff-style arguments instead of adding a separate
+runner.
 
-- one compact fixture panel;
-- one direction cloud around each fixture;
-- one or two radius grids;
-- JSONL outputs under `/tmp` by default;
-- no LICCA dependency.
+Small smoke check:
 
-Broader retained-sample or LICCA runs should wait until the schema and
-interpretation of the smoke output are stable.
+```bash
+cargo run -p exp-dev-sys-prediction --release --bin dev-sys-prediction-cloud -- \
+  --diagnostic-dir /tmp/dev-gradient-ascent-branch-diagnostic-allsafe-check \
+  --polytope-table /tmp/dev-sys-prediction-fixture-panel.jsonl \
+  --out-dir /tmp/dev-sys-prediction-cloud-smoke \
+  --selection-threshold-relative 0.01 \
+  --degeneracy-labels high_degeneracy \
+  --max-fixtures-per-label 1 \
+  --steps 1e-3,1e-2 \
+  --trace-iterations 1
+```
+
+Local characterization run, assuming the LFS-backed prepared polytope table is
+hydrated:
+
+```bash
+git lfs pull --include='experiments/sys-datascience/prepare/polytope-table.jsonl'
+
+cargo run -p exp-dev-sys-prediction --release --bin dev-sys-prediction-cloud -- \
+  --diagnostic-dir /tmp/dev-gradient-ascent-branch-diagnostic-allsafe-check \
+  --polytope-table experiments/sys-datascience/prepare/polytope-table.jsonl \
+  --out-dir /tmp/dev-sys-prediction-decomp-panel-prod \
+  --selection-threshold-relative 0.01 \
+  --degeneracy-labels high_degeneracy,narrow_gap,large_gap \
+  --max-fixtures-per-label 4 \
+  --steps 1e-4,3e-4,1e-3,3e-3,1e-2,3e-2,1e-1,1e0 \
+  --trace-iterations 1
+```
+
+Increase or reduce `--max-fixtures-per-label`, `--skip-fixtures-per-label`, and
+`--steps` ad hoc. The important invariant is that reports state the exact
+fixture count, labels, radii, table path, and elapsed time.

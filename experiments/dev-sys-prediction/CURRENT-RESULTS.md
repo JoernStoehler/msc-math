@@ -434,6 +434,75 @@ far outside its reliable region", not as a refined source attribution. The
 combined envelope identity still closes, but the action/volume split is no
 longer robust enough to explain every row.
 
+Broader local characterization run:
+
+```bash
+git lfs pull --include='experiments/sys-datascience/prepare/polytope-table.jsonl'
+
+cargo run -p exp-dev-sys-prediction --release --bin dev-sys-prediction-cloud -- \
+  --diagnostic-dir /tmp/dev-gradient-ascent-branch-diagnostic-allsafe-check \
+  --polytope-table experiments/sys-datascience/prepare/polytope-table.jsonl \
+  --out-dir /tmp/dev-sys-prediction-decomp-panel-prod-lfs-20260627 \
+  --selection-threshold-relative 0.01 \
+  --degeneracy-labels high_degeneracy,narrow_gap,large_gap \
+  --max-fixtures-per-label 4 \
+  --steps 1e-4,3e-4,1e-3,3e-3,1e-2,3e-2,1e-1,1e0 \
+  --trace-iterations 1
+```
+
+Coverage:
+
+- selected fixtures: 4 total, with 3 `high_degeneracy`, 1 `narrow_gap`, and no
+  available `large_gap` fixture at threshold `0.01` in the hydrated prepared
+  polytope table;
+- rows: 160 prediction rows, 153 `ok`, 7
+  `target_polytope_construction_failed`;
+- elapsed time: `703.9s`;
+- decomposition identity residual: at most `2.8e-17` on decomposed rows.
+
+Per-radius summary over all labels:
+
+```text
+t        ok/decomp  median |err|   max |err|     max |lin|     max |sigma-set|
+1e-4     20/20      2.87e-8       6.25e-8      6.25e-8      0
+3e-4     20/20      2.58e-7       5.63e-7      5.63e-7      0
+1e-3     20/20      8.05e-7       6.24e-6      6.24e-6      0
+3e-3     20/20      5.30e-6       5.59e-5      5.59e-5      0
+1e-2     20/20      5.53e-5       1.33e-3      6.10e-4      1.38e-3
+3e-2     19/19      2.58e-4       2.69e-2      5.24e-3      2.75e-2
+1e-1     19/19      9.21e-3       1.54e-1      5.02e-2      1.59e-1
+1e0      15/14      3.03e-1       1.78e0       3.38e0       1.98e0
+```
+
+Error-source counts on the 152 decomposed `ok` rows:
+
+- linearization dominated: 140 rows;
+- sigma-set/window dominated: 12 rows;
+- nonzero sigma-set/window error above `1e-12`: 22 rows.
+
+The source transition is radius-dependent:
+
+- through `t = 3e-3`, every decomposed row had sigma-set error `0`;
+- at `t = 1e-2`, 1 row was sigma-set dominated;
+- at `t = 3e-2`, 1 row was sigma-set dominated;
+- at `t = 1e-1`, 7 rows were sigma-set dominated;
+- at `t = 1e0`, 3 rows were sigma-set dominated, but this radius is already
+  outside the useful local-prediction regime.
+
+Within the fixed winning branch, action/capacity curvature was consistently
+larger than volume curvature at small and moderate radii. For example, at
+`t = 1e-2`, the max absolute action part was `5.18e-4`, while the max absolute
+volume part was `1.16e-4`.
+
+Updated interpretation:
+
+```text
+For this panel, small radii are explained by smooth fixed-branch error.
+Incoming/missing-window branches are rare below 1e-2 but become a real
+intermediate-radius failure mode. Very large radii fail both as local Taylor
+models and as stable fixed-winner action/volume decompositions.
+```
+
 ## Sigmalow Count Audit
 
 Cheap audit over the existing branch diagnostic:
