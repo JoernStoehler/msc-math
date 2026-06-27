@@ -1,32 +1,38 @@
-//! Projection-based solver for the constrained QP.
+//! Projection-based solvers for constrained QP stationarity.
 //!
-//! Solves: max (1/2) beta^T H beta  subject to  C beta = d, beta > 0.
+//! The primary surface solves the critical-point equation for
+//! `Q(beta) = (1/2) beta^T H beta` subject to `C beta = d`.
+//! Positivity `beta > 0` is a separate question.
 //!
 //! # Algorithm
 //!
-//! **Step 1 -- Solve constraints.** C beta = d -> particular solution beta0, null-space
-//! basis V. If inconsistent: return False.
+//! **Step 1 -- Solve constraints.** C beta = d -> particular solution beta0,
+//! null-space basis V. If inconsistent, the critical-point surface returns
+//! `NoConstraintSolution` and the legacy `Solution` surface returns `False`.
 //!
 //! **Step 2 -- Project objective.** Form the reduced Hessian H' = V^T H V and
 //! reduced right-hand side b' = -V^T H beta0. Solve H' alpha = b' via
 //! eigendecomposition, partitioning eigenvalues into retained
 //! (|lambda| > threshold) and null (|lambda| <= threshold).
 //!
-//! **Step 3 -- Compose search space.** The full solution is beta = beta0 + V(alpha0 + W gamma),
-//! where W are the null-space eigenvectors of H'. These directions don't change Q
-//! but can change beta -- so they're the search space for finding beta > 0.
+//! **Step 3 -- Compose critical set.** The full critical set is
+//! beta = beta0 + V(alpha0 + W gamma), where W are the null-space eigenvectors
+//! of H'. These directions don't change Q but can change beta.
 //!
-//! **Step 4 -- Max-margin search.** Find gamma maximizing min_k beta_k via
-//! `beta_feasibility::find_max_margin`. Classify the verdict from the margin.
+//! **Step 4 -- Optional max-margin search.** `solve_projected` preserves the
+//! older behavior by finding gamma maximizing min_k beta_k via
+//! `beta_feasibility::find_max_margin`. `solve_projected_critical_point` stops
+//! before this step.
 //!
 //! **Step 5 -- Compute Q.** Q = (1/2) beta^T H beta, constant over the solution set.
 //!
 //! Mathematical correspondence: [lem:kkt], Part C.2 of algorithm design
 
 use super::beta_feasibility;
-use super::constraint_solver;
+use super::constraint_solver::{self, ConstraintSolveError};
+use super::qp_assembly::build_qp_from_dual_vertices;
 use super::{classify_margin, Solution, Verdict, EPS_EIGEN_FLOOR, QP};
-use nalgebra::{DMatrix, DVector};
+use nalgebra::{DMatrix, DVector, Vector4};
 
 /// Eigenvalue threshold for the reduced Hessian H'.
 ///
@@ -44,6 +50,98 @@ use nalgebra::{DMatrix, DVector};
 /// so they may need independent tuning in the future. Kept separate to allow
 /// independent adjustment.
 const EPS_EIGEN_THRESHOLD: f64 = 1e-3;
+const EPS_PROJECTED_STATIONARITY: f64 = 1e-8;
+
+/// Critical point of `Q` on the affine constraint space `C beta = d`.
+///
+/// This result deliberately does not decide `beta > 0`. If
+/// `flat_direction_count > 0`, the critical set is affine: `beta` is one
+/// representative and flat directions can change beta without changing Q.
+/// `q_error_bound` is a residual-based bound for the computed projected
+/// stationarity problem: when finite, it bounds the Q-value gap caused by the
+/// reported stationarity residual in the retained eigenspace. It is not an
+/// exact-arithmetic certificate for the input data. It is `None` when accepted
+/// near-flat residuals do not give a finite global value bound.
+#[derive(Clone, Debug)]
+pub struct ProjectedCriticalPointData {
+    pub q: f64,
+    pub q_error_bound: Option<f64>,
+    pub beta: Vec<f64>,
+    pub flat_direction_count: usize,
+    pub stationarity_residual: f64,
+    pub constraint_residual: f64,
+    pub min_beta: f64,
+}
+
+/// Outcome of solving projected stationarity for `Q` on `C beta = d`.
+#[derive(Clone, Debug)]
+pub enum ProjectedCriticalPoint {
+    Found(ProjectedCriticalPointData),
+    NoConstraintSolution {
+        residual: f64,
+    },
+    NoCriticalPoint {
+        stationarity_residual: f64,
+        flat_direction_count: usize,
+    },
+}
+
+struct ProjectedCriticalPointParts {
+    q: f64,
+    q_error_bound: Option<f64>,
+    beta: DVector<f64>,
+    flat_directions: DMatrix<f64>,
+    stationarity_residual: f64,
+    constraint_residual: f64,
+}
+
+enum ProjectedCriticalPointPartsError {
+    NoConstraintSolution {
+        residual: f64,
+    },
+    NoCriticalPoint {
+        stationarity_residual: f64,
+        flat_direction_count: usize,
+    },
+}
+
+/// Solve only the projected stationarity equation for the action/Q critical point.
+///
+/// This computes `V^T H V alpha = -V^T H beta0` after solving
+/// `C beta = d`, and returns one representative of the critical affine set.
+/// It does not run the max-margin LP and does not classify `beta > 0`.
+pub fn solve_projected_critical_point(qp: &QP) -> ProjectedCriticalPoint {
+    match solve_projected_critical_point_parts(qp) {
+        Ok(parts) => ProjectedCriticalPoint::Found(ProjectedCriticalPointData {
+            q: parts.q,
+            q_error_bound: parts.q_error_bound,
+            beta: parts.beta.as_slice().to_vec(),
+            flat_direction_count: parts.flat_directions.ncols(),
+            stationarity_residual: parts.stationarity_residual,
+            constraint_residual: parts.constraint_residual,
+            min_beta: parts.beta.iter().copied().fold(f64::INFINITY, f64::min),
+        }),
+        Err(ProjectedCriticalPointPartsError::NoConstraintSolution { residual }) => {
+            ProjectedCriticalPoint::NoConstraintSolution { residual }
+        }
+        Err(ProjectedCriticalPointPartsError::NoCriticalPoint {
+            stationarity_residual,
+            flat_direction_count,
+        }) => ProjectedCriticalPoint::NoCriticalPoint {
+            stationarity_residual,
+            flat_direction_count,
+        },
+    }
+}
+
+/// Assemble the dual-vertex QP for `perm` and solve projected stationarity.
+pub fn solve_projected_critical_point_for_dual_vertices(
+    dual_vertices: &[Vector4<f64>],
+    perm: &[usize],
+) -> ProjectedCriticalPoint {
+    let qp = build_qp_from_dual_vertices(dual_vertices, perm);
+    solve_projected_critical_point(&qp)
+}
 
 /// Solve the QP via constraint projection.
 ///
@@ -53,11 +151,9 @@ const EPS_EIGEN_THRESHOLD: f64 = 1e-3;
 /// [lem:kkt]: KKT conditions characterize the EHZ capacity optimum; this solver applies them via constraint projection.
 pub fn solve_projected(qp: &QP) -> Solution {
     let m = qp.c.ncols();
-
-    // Step 1: Solve constraints.
-    let constraint_sol = match constraint_solver::solve_constraints(&qp.c, &qp.d) {
-        Ok(sol) => sol,
-        Err(_err) => {
+    let parts = match solve_projected_critical_point_parts(qp) {
+        Ok(parts) => parts,
+        Err(_) => {
             return Solution {
                 verdict: Verdict::False,
                 q: 0.0,
@@ -67,24 +163,47 @@ pub fn solve_projected(qp: &QP) -> Solution {
         }
     };
 
+    // Existing API resolves positivity by optimizing over the flat critical set.
+    let margin_result = beta_feasibility::find_max_margin(&parts.beta, &parts.flat_directions);
+    let margin = margin_result.margin;
+    let verdict = classify_margin(margin);
+    let q = q_value_from_dvec(&qp.h, &margin_result.beta);
+
+    Solution {
+        verdict,
+        q,
+        beta: margin_result.beta.as_slice().to_vec(),
+        margin,
+    }
+}
+
+fn solve_projected_critical_point_parts(
+    qp: &QP,
+) -> Result<ProjectedCriticalPointParts, ProjectedCriticalPointPartsError> {
+    let m = qp.c.ncols();
+    let constraint_sol =
+        constraint_solver::solve_constraints(&qp.c, &qp.d).map_err(|err| match err {
+            ConstraintSolveError::Inconsistent { residual } => {
+                ProjectedCriticalPointPartsError::NoConstraintSolution { residual }
+            }
+        })?;
+
     let beta0 = &constraint_sol.x0;
     let v = &constraint_sol.null_basis;
     let k = v.ncols();
 
-    // Special case: k = 0 (unique beta from constraints).
     if k == 0 {
-        let q = q_value_from_dvec(&qp.h, beta0);
-        let margin = beta0.iter().copied().fold(f64::INFINITY, f64::min);
-        let verdict = classify_margin(margin);
-        return Solution {
-            verdict,
-            q,
-            beta: beta0.as_slice().to_vec(),
-            margin,
-        };
+        let constraint_residual = (&qp.c * beta0 - &qp.d).norm();
+        return Ok(ProjectedCriticalPointParts {
+            q: q_value_from_dvec(&qp.h, beta0),
+            q_error_bound: Some(0.0),
+            beta: beta0.clone(),
+            flat_directions: DMatrix::zeros(m, 0),
+            stationarity_residual: 0.0,
+            constraint_residual,
+        });
     }
 
-    // Step 2: Project and optimize.
     // Reduced Hessian: H' = V^T H V (k x k symmetric).
     let hv = &qp.h * v;
     let h_prime = v.transpose() * &hv;
@@ -95,7 +214,6 @@ pub fn solve_projected(qp: &QP) -> Solution {
     let h_beta0 = &qp.h * beta0;
     let b_prime = -(v.transpose() * &h_beta0);
 
-    // Eigendecompose H' = P Lambda P^T.
     let eig = h_prime.clone().symmetric_eigen();
     let eigenvalues = &eig.eigenvalues;
     let eigenvectors = &eig.eigenvectors;
@@ -108,7 +226,6 @@ pub fn solve_projected(qp: &QP) -> Solution {
         lambda_max * EPS_EIGEN_THRESHOLD
     };
 
-    // Particular solution for H' alpha = b' using retained eigenvalues (pseudoinverse).
     let mut alpha0 = DVector::zeros(k);
     for i in 0..k {
         if eigenvalues[i].abs() > threshold {
@@ -118,19 +235,37 @@ pub fn solve_projected(qp: &QP) -> Solution {
         }
     }
 
-    // Null-space directions of H' (columns of W in alpha-space).
+    let projected_stationarity_residual = (&h_prime * &alpha0 - &b_prime).norm();
+
     let null_indices: Vec<usize> = (0..k)
         .filter(|&i| eigenvalues[i].abs() <= threshold)
         .collect();
+    let retained_min_abs_eigenvalue = (0..k)
+        .filter_map(|i| {
+            let abs = eigenvalues[i].abs();
+            (abs > threshold).then_some(abs)
+        })
+        .fold(f64::INFINITY, f64::min);
+    let q_error_bound = q_error_bound_from_projected_residual(
+        projected_stationarity_residual,
+        if retained_min_abs_eigenvalue.is_finite() {
+            Some(retained_min_abs_eigenvalue)
+        } else {
+            None
+        },
+        null_indices.len(),
+    );
+    if projected_stationarity_residual > EPS_PROJECTED_STATIONARITY {
+        return Err(ProjectedCriticalPointPartsError::NoCriticalPoint {
+            stationarity_residual: projected_stationarity_residual,
+            flat_direction_count: null_indices.len(),
+        });
+    }
 
-    // Step 3: Compose search space.
-    // beta_base = beta0 + V * alpha0 (the "optimized" particular solution).
     let beta_base = beta0 + v * &alpha0;
 
-    // V_search = V * W_alpha (m x |null_indices|).
-    // These are the directions in beta-space that don't change Q.
     let n_null = null_indices.len();
-    let v_search = if n_null > 0 {
+    let flat_directions = if n_null > 0 {
         let mut w_alpha = DMatrix::zeros(k, n_null);
         for (j, &idx) in null_indices.iter().enumerate() {
             let col = eigenvectors.column(idx);
@@ -142,26 +277,36 @@ pub fn solve_projected(qp: &QP) -> Solution {
     } else {
         DMatrix::zeros(m, 0)
     };
+    let q = q_value_from_dvec(&qp.h, &beta_base);
+    let constraint_residual = (&qp.c * &beta_base - &qp.d).norm();
 
-    // Step 4: Max-margin search.
-    let margin_result = beta_feasibility::find_max_margin(&beta_base, &v_search);
-
-    // Step 5: Compute Q.
-    let q = q_value_from_dvec(&qp.h, &margin_result.beta);
-    let margin = margin_result.margin;
-    let verdict = classify_margin(margin);
-
-    Solution {
-        verdict,
+    Ok(ProjectedCriticalPointParts {
         q,
-        beta: margin_result.beta.as_slice().to_vec(),
-        margin,
-    }
+        q_error_bound,
+        beta: beta_base,
+        flat_directions,
+        stationarity_residual: projected_stationarity_residual,
+        constraint_residual,
+    })
 }
 
 /// Compute Q = (1/2) beta^T H beta from DVector (internal helper).
 fn q_value_from_dvec(h: &DMatrix<f64>, beta: &DVector<f64>) -> f64 {
     0.5 * beta.dot(&(h * beta))
+}
+
+fn q_error_bound_from_projected_residual(
+    residual: f64,
+    retained_min_abs_eigenvalue: Option<f64>,
+    flat_direction_count: usize,
+) -> Option<f64> {
+    if residual == 0.0 {
+        return Some(0.0);
+    }
+    if flat_direction_count > 0 {
+        return None;
+    }
+    retained_min_abs_eigenvalue.map(|lambda_min| 0.5 * residual * residual / lambda_min)
 }
 
 #[cfg(test)]
@@ -170,7 +315,8 @@ mod tests {
     use super::super::{Verdict, QP};
     use super::*;
     use crate::geom::known_polytopes;
-    use nalgebra::{DMatrix, DVector};
+    use crate::kkt::saddle_point_solver::{solve_kkt_for_dual_vertices, KktOutcome};
+    use nalgebra::{DMatrix, DVector, Vector4};
 
     // Tests for projection_solver: projection-based QP solver correctness.
     //
@@ -272,6 +418,46 @@ mod tests {
             "Q should be 0 when H = 0, got {}",
             sol.q
         );
+    }
+
+    #[test]
+    fn critical_point_reports_flat_action_family_without_lp() {
+        let c = DMatrix::from_row_slice(1, 2, &[1.0, 1.0]);
+        let d = DVector::from_column_slice(&[1.0]);
+        let h = DMatrix::zeros(2, 2);
+        let qp = QP { c, d, h };
+
+        let critical = solve_projected_critical_point(&qp);
+
+        let ProjectedCriticalPoint::Found(data) = critical else {
+            panic!("expected flat critical family, got {critical:?}");
+        };
+        assert_eq!(data.flat_direction_count, 1);
+        assert!(data.q.abs() < 1e-12);
+        assert_eq!(data.q_error_bound, Some(0.0));
+        assert!(data.stationarity_residual < 1e-12);
+        assert!(data.constraint_residual < 1e-12);
+        assert!((data.beta.iter().sum::<f64>() - 1.0).abs() < 1e-12);
+    }
+
+    #[test]
+    fn critical_point_rejects_linear_reduced_objective() {
+        let c = DMatrix::from_row_slice(1, 2, &[1.0, 1.0]);
+        let d = DVector::from_column_slice(&[1.0]);
+        let h = DMatrix::from_diagonal(&DVector::from_column_slice(&[1.0, -1.0]));
+        let qp = QP { c, d, h };
+
+        let critical = solve_projected_critical_point(&qp);
+
+        let ProjectedCriticalPoint::NoCriticalPoint {
+            stationarity_residual,
+            flat_direction_count,
+        } = critical
+        else {
+            panic!("expected no projected critical point, got {critical:?}");
+        };
+        assert_eq!(flat_direction_count, 1);
+        assert!(stationarity_residual > 0.1);
     }
 
     // ── Mathematical proposition tests ──
@@ -469,19 +655,18 @@ mod tests {
 
     // ── Cross-variant tests: projection solver vs saddle-point solver ──
 
-    /// Both solvers agree on capacity for the simplex.
+    /// Projection critical point and saddle-point KKT agree on a simplex sigma.
     #[test]
-    #[ignore] // Test body not implemented — needs cross-solver comparison logic
-    fn capacity_agrees_on_simplex() {
-        // TODO: Implement cross-solver comparison: run both augmented-system and
-        // projection solver on the simplex, verify they agree on capacity.
+    fn critical_point_agrees_with_saddle_kkt_on_simplex_sigma() {
+        let simplex = known_polytopes::simplex();
+        assert_projection_critical_point_agrees_with_saddle(simplex.dual_vertices_f64.as_slice());
     }
 
-    /// Both solvers agree on capacity for the hypercube.
+    /// Projection critical point and saddle-point KKT agree on a hypercube sigma.
     #[test]
-    #[ignore] // Test body not implemented — needs cross-solver comparison logic
-    fn capacity_agrees_on_hypercube() {
-        // TODO: Implement cross-solver comparison for the hypercube.
+    fn critical_point_agrees_with_saddle_kkt_on_hypercube_sigma() {
+        let hypercube = known_polytopes::hypercube();
+        assert_projection_critical_point_agrees_with_saddle(hypercube.dual_vertices_f64.as_slice());
     }
 
     /// Projection solver finds positive Q on simplex with exhaustive search over
@@ -555,5 +740,85 @@ mod tests {
                 (sol.q - q_check).abs()
             );
         }
+    }
+
+    fn assert_projection_critical_point_agrees_with_saddle(dual_vertices: &[Vector4<f64>]) {
+        let f = dual_vertices.len();
+        let mut checked = false;
+        for size in 2..=f.min(6) {
+            for_each_combination(f, size, &mut |subset| {
+                if checked {
+                    return;
+                }
+                let mut sigma = subset.to_vec();
+                for_each_permutation(&mut sigma, &mut |sigma| {
+                    if checked {
+                        return;
+                    }
+                    let KktOutcome::Feasible(kkt) =
+                        solve_kkt_for_dual_vertices(dual_vertices, sigma)
+                    else {
+                        return;
+                    };
+
+                    let qp = build_qp_from_dual_vertices(dual_vertices, sigma);
+                    let critical = solve_projected_critical_point(&qp);
+                    let ProjectedCriticalPoint::Found(data) = critical else {
+                        panic!(
+                            "saddle-point KKT found feasible sigma {sigma:?}, \
+                             projection critical-point solve returned {critical:?}"
+                        );
+                    };
+
+                    assert!(
+                        (data.q - kkt.q_corrected).abs() < 1e-8,
+                        "projection Q {} and saddle Q {} disagree for sigma {:?}",
+                        data.q,
+                        kkt.q_corrected,
+                        sigma
+                    );
+                    assert!(
+                        (0.5 / data.q - 0.5 / kkt.q_corrected).abs() < 1e-8,
+                        "projection action and saddle action disagree for sigma {:?}",
+                        sigma
+                    );
+                    assert!(
+                        data.stationarity_residual < 1e-8,
+                        "projected stationarity residual {:.2e} for sigma {:?}",
+                        data.stationarity_residual,
+                        sigma
+                    );
+                    assert!(
+                        data.constraint_residual < 1e-8,
+                        "constraint residual {:.2e} for sigma {:?}",
+                        data.constraint_residual,
+                        sigma
+                    );
+                    assert!(
+                        data.q_error_bound.is_some_and(|bound| bound < 1e-12),
+                        "expected small finite projection Q error bound for sigma {:?}, got {:?}",
+                        sigma,
+                        data.q_error_bound
+                    );
+                    checked = true;
+                });
+            });
+        }
+        assert!(checked, "expected at least one saddle-feasible sigma");
+    }
+
+    fn for_each_permutation(values: &mut [usize], f: &mut impl FnMut(&[usize])) {
+        fn recurse(values: &mut [usize], start: usize, f: &mut impl FnMut(&[usize])) {
+            if start == values.len() {
+                f(values);
+                return;
+            }
+            for i in start..values.len() {
+                values.swap(start, i);
+                recurse(values, start + 1, f);
+                values.swap(start, i);
+            }
+        }
+        recurse(values, 0, f);
     }
 }

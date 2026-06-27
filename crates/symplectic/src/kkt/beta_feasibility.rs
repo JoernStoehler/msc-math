@@ -49,6 +49,13 @@ pub struct MarginResult {
 /// - The returned margin equals min(beta) exactly.
 /// - For all k, the margin is the certified global optimum.
 pub fn find_max_margin(beta0: &DVector<f64>, null_basis: &DMatrix<f64>) -> MarginResult {
+    if null_basis.ncols() == 0 {
+        return MarginResult {
+            margin: beta0.iter().copied().fold(f64::INFINITY, f64::min),
+            alpha: DVector::zeros(0),
+            beta: beta0.clone(),
+        };
+    }
     find_max_margin_lp(beta0, null_basis)
 }
 

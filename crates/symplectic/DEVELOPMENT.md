@@ -1,5 +1,30 @@
 # symplectic Development Notes
 
+## KKT/QP Solver Split
+
+`src/kkt/saddle_point_solver.rs` solves the augmented KKT matrix and remains
+the main HK2017 one-sigma path.
+
+`src/kkt/projection_solver.rs` has two projection surfaces:
+
+- `solve_projected_critical_point`: solves only the projected stationarity
+  equation for `Q` on `C beta = d`. It returns one representative, the critical
+  value, flat-direction count, and residuals. It deliberately does not decide
+  `beta > 0` and does not run the max-margin LP.
+- `solve_projected`: preserves the older positivity-solving behavior by running
+  max-margin over flat critical directions before returning `Solution`.
+
+Use the critical-point surface for f64 diagnostic/value experiments where beta
+positivity is a later resolver decision. Use `solve_projected` only when the
+caller really wants the route-local f64 positivity verdict immediately.
+
+`ProjectedCriticalPointData::q_error_bound` is a residual-based bound for the
+computed projected stationarity problem. It bounds the Q-value gap caused by
+the reported stationarity residual in the retained eigenspace. It is not an
+exact-arithmetic certificate for the input polytope, and it is intentionally
+`None` when accepted near-flat residuals leave a nonzero linear term along
+flat directions.
+
 ## Profiling And Coverage
 
 Use `experiments/performance/` for reusable profiling targets, JSONL outputs,

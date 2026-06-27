@@ -4,9 +4,11 @@ This directory owns reusable runtime and memory profiling targets. Correctness
 and regression experiments belong in `experiments/verification/`. Numerical
 error-audit runs belong in `experiments/dev-quadratic-program/numerics-audit/`.
 
-For the f64 capacity route question, the workflow-level performance packet has
-moved to
+For datascience-style f64 capacity workflow questions, the workflow-level
+performance packet has moved to
 [`../dev-quadratic-program/performance/README.md`](../dev-quadratic-program/performance/README.md).
+For direct generic random-polytope route comparison, use `capacity-paths-random`
+below.
 
 The default pattern is:
 
@@ -32,10 +34,147 @@ worktree so the variant is visible in the code diff.
 
 ## Targets
 
-### f64 capacity targets moved
+### `capacity-paths-random`
 
-The f64 capacity performance binaries, f64-specific summarizers, and manifest
-workflow wrapper now live in
+This target answers the recurring question:
+
+- on deterministic random four-dimensional polytopes, how fast are the two
+  generic scalar capacity paths?
+- do they return the same f64 capacity on the sampled fixtures?
+
+It compares only these two paths:
+
+- `f64_transition_pruned_hk`: pure-f64 route from
+  `experiments/dev-quadratic-program/src/f64_route/`;
+- `pruned_hk_exact_fallback`: transition-pruned HK2017 candidate generation
+  plus `aggregate_orbits_with_dual_vertices_exact(..., MinimaSafe)`.
+
+It deliberately does not include wrappers that differ only by experiment
+ownership, product billiard routing on generic random non-products, unpruned
+HK2017, or flow-graph development paths. Use a separate target when those are
+the question.
+
+Run a smoke comparison:
+
+```bash
+cargo run -p exp-performance --release --bin capacity-paths-random -- \
+  --mode smoke \
+  --out-dir /tmp/capacity-paths-random-smoke
+```
+
+Run the standard F=6/F=10 comparison:
+
+```bash
+cargo run -p exp-performance --release --bin capacity-paths-random -- \
+  --mode production \
+  --out-dir /tmp/capacity-paths-random-production
+```
+
+Summarize:
+
+```bash
+python3 experiments/performance/scripts/summarize_capacity_paths_random.py \
+  /tmp/capacity-paths-random-production \
+  --csv /tmp/capacity-paths-random-production/summary.csv
+```
+
+The binary writes:
+
+- `metadata.jsonl`: target, mode, facet counts, sample count, generator seed,
+  and height range;
+- `path-events.jsonl`: one row per `(facet_count, sample, path)` with elapsed
+  time, capacity, candidate counts, and f64-vs-fallback absolute capacity
+  difference when both paths succeeded.
+
+Interpretation boundaries:
+
+- Fixture generation and exact fixture geometry construction are outside the
+  per-path timer. This target measures capacity-route work on already selected
+  random fixtures.
+- Measurements are local-machine wall-clock timings. Compare only paired runs
+  with the same mode and source revision.
+- On ordinary random F=10 fixtures, current evidence says both paths spend
+  almost all route time in the same per-sigma f64 KKT solve. Exact fallback
+  aggregation is usually not the observed bottleneck unless indeterminate
+  candidates overlap the minimum.
+
+### `capacity-profile-one`
+
+This target repeats one capacity path on one deterministic random fixture. It
+is the stable command to wrap with `perf`, `cargo flamegraph`, or callgrind
+after `capacity-paths-random` identifies the route/input worth attributing.
+
+Build once:
+
+```bash
+cargo build -p exp-performance --release --bin capacity-profile-one
+```
+
+Run direct wall-clock timing for the pure-f64 route:
+
+```bash
+target/release/capacity-profile-one \
+  --path f64 \
+  --facet-count 10 \
+  --sample 1 \
+  --repetitions 100 \
+  --out-dir /tmp/capacity-profile-one-f64
+```
+
+Run direct wall-clock timing for the fallback route:
+
+```bash
+target/release/capacity-profile-one \
+  --path fallback \
+  --facet-count 10 \
+  --sample 1 \
+  --repetitions 100 \
+  --out-dir /tmp/capacity-profile-one-fallback
+```
+
+Callgrind example:
+
+```bash
+valgrind --tool=callgrind \
+  --callgrind-out-file=/tmp/capacity-profile-one-f64.callgrind \
+  target/release/capacity-profile-one \
+    --path f64 \
+    --facet-count 10 \
+    --sample 1 \
+    --repetitions 10 \
+    --out-dir /tmp/capacity-profile-one-f64-callgrind
+
+callgrind_annotate --inclusive=yes --threshold=1 \
+  /tmp/capacity-profile-one-f64.callgrind
+```
+
+Repeat with `--path fallback` for the exact-fallback route.
+
+The binary writes `profile-summary.jsonl` with the path, fixture selector,
+repetition count, elapsed time, per-repetition time, and last capacity. The
+profiled loop excludes fixture acquisition and exact fixture geometry
+construction, but the process still performs those steps before timing begins.
+Callgrind totals therefore include a small one-time setup cost; use enough
+repetitions that the repeated capacity loop dominates.
+
+Known hotspot from the 2026-06-25 F=10/sample-1 run:
+
+- Both `f64` and `fallback` spent about 93-94% of callgrind instruction refs in
+  `solve_kkt_for_dual_vertices` / `solve_saddle_point`.
+- `SymmetricEigen::new` was the largest single self-cost visible in callgrind,
+  about 12%.
+- KKT matrix assembly, transition-pruned enumeration, f64 combinatorics, and
+  exact fallback aggregation were each small on that input.
+
+This is empirical evidence for the named fixture and revision, not a theorem
+about all random polytopes. Re-run the target after KKT solver changes,
+candidate-generation changes, or when the sampled fixtures have many
+indeterminate near-minimum candidates.
+
+### Datascience f64 capacity targets moved
+
+The datascience f64 capacity performance binaries, f64-specific summarizers,
+and manifest workflow wrapper now live in
 `experiments/dev-quadratic-program/performance/`.
 
 ### `hk2017-pruned-f64`

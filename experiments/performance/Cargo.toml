@@ -11,12 +11,21 @@ path = "src/bin/hk2017_pruned_f64.rs"
 name = "hk2017-cycle-enumeration"
 path = "src/bin/hk2017_cycle_enumeration.rs"
 
+[[bin]]
+name = "capacity-paths-random"
+path = "src/bin/capacity_paths_random.rs"
+
+[[bin]]
+name = "capacity-profile-one"
+path = "src/bin/capacity_profile_one.rs"
+
 [lints]
 workspace = true
 
 [dependencies]
 symplectic.workspace = true
 euclidean-polytopes.workspace = true
+exp-dev-quadratic-program = { path = "../dev-quadratic-program" }
 nalgebra.workspace = true
 serde.workspace = true
 serde_json.workspace = true

@@ -150,6 +150,12 @@ custom enumeration, or local proof packets:
   one-sigma solves returning the best f64 scalar with diagnostics. Empirical
   route only. Shared by random exploration, f64 viability checks, performance
   runs, and large scans where results are audited or not thesis-facing.
+- **Naive f64 capacity:** intentionally careless transition-pruned f64 control
+  route. It uses literal f64 facet/transition predicates, projected critical
+  points, and literal `beta > 0`, `Q > 0` checks, then returns only the minimum
+  `(capacity, sigma)`. It has no exact arithmetic, no tolerances, no
+  indeterminate state, no fallback, and no diagnostics. Use it only to learn
+  what breaks in the naive mathematical algorithm.
 - **f64 with exact fallback capacity:** f64 enumeration/solve first, then exact
   one-sigma solve for unresolved capacity-relevant candidates. This route is
   only as strong as the f64 candidate filter plus fallback policy. The active
