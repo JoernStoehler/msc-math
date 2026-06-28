@@ -19,6 +19,10 @@ path = "produce/prediction-cloud-compat.rs"
 name = "dev-sysext-sigma-line-probe"
 path = "sysext-sigma-line-probe/main.rs"
 
+[[bin]]
+name = "dev-sysext-beta-boundary-scan"
+path = "sysext-beta-boundary-scan/main.rs"
+
 [lints]
 workspace = true
 
