@@ -32,8 +32,11 @@ def direction_class(label):
         return "negative_policy"
     if label == "single_near_active_gradient":
         return "single_policy_gradient"
-    if label == "near_active_maximin_direction":
-        return "near_active_maximin"
+    if label in {
+        "near_active_box_lp_normalized_direction",
+        "near_active_maximin_direction",
+    }:
+        return "near_active_box_lp"
     return label
 
 
@@ -68,6 +71,7 @@ def feature_row(row):
     total_error = row.get("decomposition_total_prediction_error")
     observed_delta = row.get("observed_delta_sys")
     predicted_delta = row.get("candidate_window_predicted_delta_sys")
+    predicted_gap_to_second = row.get("candidate_window_predicted_gap_to_second")
     return {
         "poly_id": row.get("poly_id"),
         "degeneracy_label": row.get("degeneracy_label"),
@@ -100,12 +104,8 @@ def feature_row(row):
         ),
         "candidate_window_witness_action": row.get("candidate_window_witness_action"),
         "candidate_window_witness_derivative": row.get("candidate_window_witness_derivative"),
-        "candidate_window_predicted_gap_to_second": row.get(
-            "candidate_window_predicted_gap_to_second"
-        ),
-        "abs_candidate_window_predicted_gap_to_second": abs_or_none(
-            row.get("candidate_window_predicted_gap_to_second")
-        ),
+        "candidate_window_predicted_gap_to_second": predicted_gap_to_second,
+        "abs_candidate_window_predicted_gap_to_second": abs_or_none(predicted_gap_to_second),
         "candidate_window_second_orbit_index": row.get("candidate_window_second_orbit_index"),
         "candidate_window_second_sigma": " ".join(
             str(x) for x in row.get("candidate_window_second_sigma") or []
@@ -323,7 +323,12 @@ def write_csv(path, rows, fieldnames=None):
     if fieldnames is None:
         fieldnames = sorted(set().union(*(row.keys() for row in rows))) if rows else []
     with path.open("w", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=fieldnames, extrasaction="ignore")
+        writer = csv.DictWriter(
+            handle,
+            fieldnames=fieldnames,
+            extrasaction="ignore",
+            lineterminator="\n",
+        )
         writer.writeheader()
         for row in rows:
             writer.writerow(row)
