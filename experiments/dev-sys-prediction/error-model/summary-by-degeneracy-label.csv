@@ -1,0 +1,3 @@
+construction_or_domain_failures,decomposed_ok_rows,degeneracy_label,max_abs_linearization_error,max_abs_prediction_error,max_abs_relative_error_to_base_sys,max_abs_sigma_set_error,median_abs_prediction_error,median_abs_relative_error_to_observed_delta,ok_rows,p90_abs_prediction_error,rows,sigma_window_rows,smooth_linearization_rows,unknown_decomposition_rows
+5,115,high_degeneracy,1.7765139954390785,1.7765139954390785,1.8219220203455007,1.1769477603694825,7.259351786137458e-06,0.004392200926099251,115,0.07289575359497405,120,10,104,1
+2,38,narrow_gap,3.3786664850219568,1.4021373241023365,1.5239560512038128,1.9765291609196203,2.035199888772432e-05,0.005120167396740712,38,0.037160014234421286,40,2,36,0

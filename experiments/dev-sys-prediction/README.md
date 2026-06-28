@@ -131,9 +131,13 @@ predicted_delta_lower_envelope
 target_best_sigma
 target_best_sigma_visible_in_base_near_active_set
 target_best_sigma_visible_in_base_candidate_window
-base/target beta margins
+predicted best-versus-second lower-envelope gap
 model_error = actual_delta_sys - predicted_delta_lower_envelope
 ```
+
+Beta margins for the predicted winner and target winner are still desired
+future trace fields; they are not part of the current prediction-cloud row
+schema.
 
 This answers whether current optimizer failures are direction-limited or
 step-radius-limited.
@@ -266,3 +270,14 @@ candidate-window lower-envelope prediction columns for every tested row in
 Increase or reduce `--max-fixtures-per-label`, `--skip-fixtures-per-label`, and
 `--steps` ad hoc. The important invariant is that reports state the exact
 fixture count, labels, radii, table path, and elapsed time.
+
+Fast analyzer-only smoke check:
+
+```bash
+python3 experiments/dev-sys-prediction/analyze_prediction_error_model.py \
+  --prediction-cloud experiments/dev-sys-prediction/error-model-smoke/prediction-cloud-smoke.jsonl \
+  --out-dir /tmp/dev-sys-prediction-error-model-smoke
+```
+
+The smoke fixture is for development coverage of the analysis script only. It
+is not evidence for the prediction question.

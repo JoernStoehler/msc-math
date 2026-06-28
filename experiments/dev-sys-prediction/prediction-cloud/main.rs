@@ -189,6 +189,10 @@ struct StepRankingAuditRow {
     candidate_window_witness_relative_action_gap: Option<f64>,
     candidate_window_witness_base_gap: Option<f64>,
     candidate_window_witness_derivative: Option<f64>,
+    candidate_window_predicted_gap_to_second: Option<f64>,
+    candidate_window_second_orbit_index: Option<usize>,
+    candidate_window_second_sigma: Option<Vec<usize>>,
+    candidate_window_second_predicted_delta_sys: Option<f64>,
     decomposition_predicted_sys: Option<f64>,
     decomposition_actual_sys: Option<f64>,
     decomposition_total_prediction_error: Option<f64>,
@@ -213,6 +217,11 @@ struct StepRankingAuditRow {
     fixed_winner_sys_error_interaction_residual: Option<f64>,
     observed_delta_sys: Option<f64>,
     target_sys: Option<f64>,
+    target_near_active_count: Option<usize>,
+    target_best_sigma: Option<Vec<usize>>,
+    target_best_sigma_in_base_near_active_set: Option<bool>,
+    target_best_sigma_in_base_candidate_window: Option<bool>,
+    target_best_sigma_matches_candidate_window_witness: Option<bool>,
     above_threshold_observed: Option<bool>,
     positive_observed: Option<bool>,
     near_active_prediction_positive: Option<bool>,
@@ -969,6 +978,10 @@ fn step_ranking_audit_row(
     let mut status = "ok".to_string();
     let mut target_sys = None;
     let mut observed_delta_sys = None;
+    let mut target_near_active_count = None;
+    let mut target_best_sigma = None;
+    let mut target_best_sigma_in_base_near_active_set = None;
+    let mut target_best_sigma_in_base_candidate_window = None;
     let mut target_orbit_iterations = None;
     let mut decomposition = None;
 
@@ -980,10 +993,24 @@ fn step_ranking_audit_row(
             ) {
                 Ok(target_capacity) => {
                     target_orbit_iterations = Some(target_capacity.iterations);
+                    let best_sigma = target_capacity.best_sigma().to_vec();
+                    target_best_sigma_in_base_near_active_set = Some(
+                        base.near_active_orbits
+                            .iter()
+                            .any(|orbit| orbit.sigma == best_sigma),
+                    );
+                    target_best_sigma_in_base_candidate_window = Some(
+                        base.candidate_orbits
+                            .iter()
+                            .any(|orbit| orbit.sigma == best_sigma),
+                    );
+                    target_best_sigma = Some(best_sigma);
                     match compute_active_sys_state(&target_polytope) {
                         Some(target_state) => {
-                            let _target_near_active =
-                                near_active_orbits(&target_capacity, branch_threshold_relative);
+                            target_near_active_count = Some(
+                                near_active_orbits(&target_capacity, branch_threshold_relative)
+                                    .len(),
+                            );
                             target_sys = Some(target_state.sys);
                             observed_delta_sys = Some(target_state.sys - base.sys);
                             decomposition = candidate_window_decomposition(
@@ -1040,6 +1067,18 @@ fn step_ranking_audit_row(
         candidate_window_witness_derivative: candidate_window_prediction
             .as_ref()
             .map(|witness| witness.derivative),
+        candidate_window_predicted_gap_to_second: candidate_window_prediction
+            .as_ref()
+            .and_then(|witness| witness.predicted_gap_to_second),
+        candidate_window_second_orbit_index: candidate_window_prediction
+            .as_ref()
+            .and_then(|witness| witness.second_orbit_index),
+        candidate_window_second_sigma: candidate_window_prediction
+            .as_ref()
+            .and_then(|witness| witness.second_sigma.clone()),
+        candidate_window_second_predicted_delta_sys: candidate_window_prediction
+            .as_ref()
+            .and_then(|witness| witness.second_predicted_delta),
         decomposition_predicted_sys: decomposition.as_ref().map(|d| d.predicted_sys),
         decomposition_actual_sys: decomposition.as_ref().map(|d| d.actual_sys),
         decomposition_total_prediction_error: decomposition
@@ -1112,6 +1151,14 @@ fn step_ranking_audit_row(
             .map(|w| w.sys_error_interaction_residual),
         observed_delta_sys,
         target_sys,
+        target_near_active_count,
+        target_best_sigma: target_best_sigma.clone(),
+        target_best_sigma_in_base_near_active_set,
+        target_best_sigma_in_base_candidate_window,
+        target_best_sigma_matches_candidate_window_witness: target_best_sigma
+            .as_ref()
+            .zip(candidate_window_prediction.as_ref())
+            .map(|(target_sigma, witness)| *target_sigma == witness.sigma),
         above_threshold_observed: observed_delta_sys
             .map(|delta| delta > effective_min_observed_delta),
         positive_observed: observed_delta_sys.map(|delta| delta > 0.0),
@@ -2054,6 +2101,10 @@ struct CandidateWindowPredictionWitness {
     base_gap: f64,
     derivative: f64,
     predicted_delta: f64,
+    predicted_gap_to_second: Option<f64>,
+    second_orbit_index: Option<usize>,
+    second_sigma: Option<Vec<usize>>,
+    second_predicted_delta: Option<f64>,
 }
 
 fn candidate_window_prediction_witness(
@@ -2065,7 +2116,8 @@ fn candidate_window_prediction_witness(
         return None;
     }
     let min_action = base.capacity.min_action;
-    base.candidate_orbits
+    let mut candidates: Vec<CandidateWindowPredictionWitness> = base
+        .candidate_orbits
         .iter()
         .zip(base.candidate_sys_gradients.iter())
         .enumerate()
@@ -2084,9 +2136,22 @@ fn candidate_window_prediction_witness(
                     base_gap,
                     derivative,
                     predicted_delta,
+                    predicted_gap_to_second: None,
+                    second_orbit_index: None,
+                    second_sigma: None,
+                    second_predicted_delta: None,
                 })
         })
-        .min_by(|a, b| a.predicted_delta.total_cmp(&b.predicted_delta))
+        .collect();
+    candidates.sort_by(|a, b| a.predicted_delta.total_cmp(&b.predicted_delta));
+    let mut winner = candidates.first()?.clone();
+    if let Some(second) = candidates.get(1) {
+        winner.predicted_gap_to_second = Some(second.predicted_delta - winner.predicted_delta);
+        winner.second_orbit_index = Some(second.orbit_index);
+        winner.second_sigma = Some(second.sigma.clone());
+        winner.second_predicted_delta = Some(second.predicted_delta);
+    }
+    Some(winner)
 }
 
 fn gradient_direction_dot(gradient: &[Vector4<f64>], direction: &[Vector4<f64>]) -> Option<f64> {
