@@ -586,7 +586,10 @@ replay identifiers for construction/domain failures.
 
 ## Sigmalow Count Audit
 
-Cheap audit over the existing branch diagnostic:
+Cheap audit over the scratch branch diagnostic at
+`/tmp/dev-gradient-ascent-branch-diagnostic-allsafe-check`. This is useful
+historical context for optimizer design, but it should be regenerated from a
+durable branch diagnostic before citation.
 
 ```bash
 jq -s 'map(select(.failure == null)) |

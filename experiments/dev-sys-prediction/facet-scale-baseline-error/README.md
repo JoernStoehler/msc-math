@@ -12,13 +12,11 @@ high-`sys` panel.
 
 Inputs:
 
-- source table:
-  `experiments/sys-datascience/prepare/polytope-table.jsonl`;
 - compact selected panel:
   `polytope-panel.jsonl`;
 - facet counts: `F=6,10,12`;
 - selected rows per facet count: `2`, highest `sys` rows available in the
-  prepared table;
+  prepared table when this packet was produced;
 - prediction branch window: relative action window `0.01`;
 - radii: `1e-4,1e-3,1e-2,3e-2`.
 
@@ -58,13 +56,17 @@ high-degeneracy, and `F=12` rows are narrow-gap.
 
 ## Regeneration
 
-The prepared table is LFS-backed:
+The checked packet is reproduced from the tracked compact panel and tracked
+diagnostic outputs in this directory. The prepared table is LFS-backed and can
+be used to refresh the panel, but doing so changes the experiment input if the
+prepared schema/table has changed.
 
 ```bash
 git lfs pull --include='experiments/sys-datascience/prepare/polytope-table.jsonl,experiments/sys-datascience/prepare/polytope-provenance-table.jsonl'
 ```
 
-Select the compact panel:
+Refresh the compact panel only when intentionally rerunning this packet against
+the current prepared table:
 
 ```bash
 python3 experiments/dev-sys-prediction/facet-scale-baseline-error/select_panel.py
@@ -110,8 +112,6 @@ python3 experiments/dev-sys-prediction/facet-scale-baseline-error/summarize_pane
 
 Generated tables:
 
-- `summaries/global-scale-by-facet.csv`: global and per-coordinate scale by
-  facet count;
 - `summaries/branch-window-by-facet.csv`: branch-window size by facet count and
   threshold;
 - `summaries/prediction-error-by-facet-step.csv`: prediction error and
@@ -129,10 +129,10 @@ less faithful to regeneration.
 ## Interpretation
 
 The useful calibration is qualitative. Median per-coordinate RMS is stable
-across the checked facet counts, while flattened norms grow with `sqrt(F)`.
+across the checked compact panel, while flattened norms grow with `sqrt(F)`.
 The same absolute radius is therefore a smaller per-coordinate perturbation at
-larger `F`, but current evidence does not justify replacing the shared
-absolute grid by a purely `F`-scaled grid.
+larger `F` on this panel, but current evidence does not justify replacing the
+shared absolute grid by a purely `F`-scaled grid.
 
 The checked panel supports treating radii through `1e-2` as the shared local
 grid for the next prediction-error sessions. The `3e-2` radius is a stress

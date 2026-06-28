@@ -3,27 +3,22 @@
 
 import argparse
 import csv
-import itertools
 import json
 import math
 from collections import Counter, defaultdict
 from pathlib import Path
 
 
-ROOT = Path(__file__).resolve().parents[3]
 PACKET = Path(__file__).resolve().parent
-DEFAULT_TABLE = ROOT / "experiments" / "sys-datascience" / "prepare" / "polytope-table.jsonl"
 
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--source-table", type=Path, default=DEFAULT_TABLE)
     parser.add_argument("--panel", type=Path, default=PACKET / "polytope-panel.jsonl")
     parser.add_argument("--branch-dir", type=Path, required=True)
     parser.add_argument("--prediction-dir", type=Path, required=True)
     parser.add_argument("--out-dir", type=Path, default=PACKET / "summaries")
     parser.add_argument("--facet-counts", default="6,10,12")
-    parser.add_argument("--distance-sample", type=int, default=128)
     return parser.parse_args()
 
 
@@ -107,46 +102,6 @@ def scale_row(row):
         "geom_pairwise_max": row.get("geom_vol1_pairwise_dist_max"),
         "geom_norm_mean": row.get("geom_vol1_norm_mean"),
     }
-
-
-def source_scale(rows, facet_counts, distance_sample):
-    by_facet = defaultdict(list)
-    for row in rows:
-        facet_count = int(row["facet_count"])
-        if facet_count in facet_counts:
-            by_facet[facet_count].append(row)
-
-    output = []
-    for facet_count in facet_counts:
-        rows_f = sorted(by_facet[facet_count], key=lambda row: row["poly_id"])
-        scales = [scale_row(row) for row in rows_f]
-        sampled = rows_f[:distance_sample]
-        distances = []
-        for left, right in itertools.combinations(sampled, 2):
-            left_flat = flat_vertices(left)
-            right_flat = flat_vertices(right)
-            distances.append(
-                math.sqrt(sum((a - b) * (a - b) for a, b in zip(left_flat, right_flat)))
-            )
-        output.append(
-            {
-                "facet_count": facet_count,
-                "source_rows": len(rows_f),
-                "median_flat_norm": median([row["flat_norm"] for row in scales]),
-                "median_coord_rms": median([row["coord_rms"] for row in scales]),
-                "median_internal_pairwise_dist": median(
-                    [row["geom_pairwise_mean"] for row in scales]
-                ),
-                "median_internal_pairwise_max": median(
-                    [row["geom_pairwise_max"] for row in scales]
-                ),
-                "sampled_polytope_pairs": len(distances),
-                "median_inter_polytope_dist": median(distances),
-                "p90_inter_polytope_dist": quantile(distances, 0.9),
-                "unit_direction_coord_rms": 1.0 / math.sqrt(4.0 * facet_count),
-            }
-        )
-    return output
 
 
 def branch_summary(branch_dir, poly_id_to_facet):
@@ -308,11 +263,9 @@ def write_csv(path, rows):
 def main():
     args = parse_args()
     facet_counts = [int(value) for value in args.facet_counts.split(",") if value]
-    source_rows = list(load_jsonl(args.source_table))
     panel_rows = list(load_jsonl(args.panel))
     poly_id_to_facet = {row["poly_id"]: int(row["facet_count"]) for row in panel_rows}
 
-    scale_rows = source_scale(source_rows, facet_counts, args.distance_sample)
     panel_scale_rows = [scale_row(row) for row in panel_rows]
     branch_rows = branch_summary(args.branch_dir, poly_id_to_facet)
     prediction_rows = prediction_summary(args.prediction_dir, poly_id_to_facet)
@@ -321,7 +274,6 @@ def main():
     stale_summary = args.out_dir / "SUMMARY.md"
     if stale_summary.exists():
         stale_summary.unlink()
-    write_csv(args.out_dir / "global-scale-by-facet.csv", scale_rows)
     write_csv(args.out_dir / "panel-scale.csv", panel_scale_rows)
     write_csv(args.out_dir / "branch-window-by-facet.csv", branch_rows)
     write_csv(args.out_dir / "prediction-error-by-facet-step.csv", prediction_rows)
