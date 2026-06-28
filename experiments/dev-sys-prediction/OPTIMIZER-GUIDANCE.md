@@ -73,6 +73,15 @@ Use candidate-window predictions to estimate direction/radius quality, then
 verify with actual recomputed `sys` before accepting a step. Do not trust the
 prediction as acceptance proof.
 
+Schema-upgraded prediction audits support two additional diagnostics. If the
+target best sigma is outside the base candidate window, treat that as a branch
+window warning and recompute/expand the branch window before relying on the
+single-anchor model. This warning is not an exact source classifier at large
+radii: some rows with target-best outside the base window were still dominated
+by smooth fixed-window linearization error. The predicted best-versus-second
+lower-envelope gap is also useful trace context, but it is not monotone enough
+in the current panel to be an acceptance rule.
+
 The current decomposition supports an empirical error model:
 
 - at `t = 1e-3` on the checked high-degeneracy fixture, the full prediction
@@ -100,12 +109,18 @@ Trace fields to record:
 - base best sigma;
 - candidate-window branch count;
 - predicted lower-envelope delta for every attempted direction/radius;
+- predicted best-versus-second branch gap in the lower-envelope model;
+- predicted winning branch base action gap and derivative;
 - observed delta after recomputed `sys`;
 - target best sigma;
 - whether target best sigma was visible in the base candidate window;
 - whether target best sigma was visible in the base near-active set;
 - near-active count at base and target;
-- min beta margin in returned branches;
+- min beta margin in returned branches, and especially for the predicted
+  winner if cheap;
+- base facet count and geometry scale/radius-calibration fields once Session A
+  settles which ones matter;
+- construction/domain failure reason with replay identifiers;
 - when running offline audits, the decomposition fields
   `decomposition_linearization_error`, `decomposition_sigma_set_error`, and
   `decomposition_sum_residual`.

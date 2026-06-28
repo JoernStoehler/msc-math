@@ -518,6 +518,64 @@ intermediate-radius failure mode. Very large radii fail both as local Taylor
 models and as stable selected-branch action/volume decompositions.
 ```
 
+## Local Feature Error Model
+
+A reproducible analysis layer over the schema-upgraded 160-row panel is in
+`error-model/REPORT.md`. Regenerate the producer output with the command below,
+then regenerate the checked analysis tables with:
+
+```bash
+python3 experiments/dev-sys-prediction/analyze_prediction_error_model.py \
+  --prediction-cloud /tmp/sys-prediction-error-model-upgraded-160/prediction-cloud.jsonl \
+  --out-dir experiments/dev-sys-prediction/error-model
+```
+
+The feature table and summaries are descriptive, not a fitted statistical
+model. The current panel supports stratification mainly by radius and source
+class:
+
+- `t`, absolute predicted/observed delta, and step-scaled quantities explain
+  most visible error magnitude in this tiny panel;
+- candidate-window count, near-active count, and base `sys` do not show a
+  useful standalone signal here;
+- predicted witness base gap has a moderate rank association with error, but
+  the sample is too small and too structured to treat it as a reliable
+  predictor;
+- the ranked sigma-window cases for incoming-branch/source tracing are in
+  `error-model/sigma-window-dominated-cases.csv`.
+
+Schema-upgraded rerun:
+
+```bash
+cargo run -p exp-dev-sys-prediction --release --bin dev-sys-prediction-cloud -- \
+  --diagnostic-dir /tmp/dev-gradient-ascent-branch-diagnostic-allsafe-check \
+  --polytope-table experiments/sys-datascience/prepare/polytope-table.jsonl \
+  --out-dir /tmp/sys-prediction-error-model-upgraded-160 \
+  --selection-threshold-relative 0.01 \
+  --degeneracy-labels high_degeneracy,narrow_gap,large_gap \
+  --max-fixtures-per-label 4 \
+  --steps 1e-4,3e-4,1e-3,3e-3,1e-2,3e-2,1e-1,1e0 \
+  --trace-iterations 1
+```
+
+The rerun reproduced the old row/source counts: 160 rows, 153 `ok`, 7 target
+polytope construction failures, 140 smooth-linearization rows, 12 sigma-window
+rows, and 1 `ok` row without full decomposition. The first target best sigma
+outside the base candidate window occurred at `t = 1e-2`, exactly on the first
+sigma-window-dominated row. Across all radii, every sigma-window-dominated row
+had `target_best_sigma_in_base_candidate_window = false` and
+`target_best_sigma_matches_candidate_window_witness = false`, but these fields
+are warning signals rather than exact source classifiers: 10
+smooth-linearization-dominated rows and 1 unknown-decomposition row also had
+the target best sigma outside the base candidate window.
+
+Predicted best-versus-second lower-envelope gap had a visible association with
+error in this panel (`Spearman ~= 0.48` for absolute total prediction error),
+but it is not monotone enough to use as an acceptance rule. Future predictor or
+optimizer traces still need beta margins for the predicted winner and nearby
+branches, base facet count, geometry scale/radius-calibration fields, and
+replay identifiers for construction/domain failures.
+
 ## Sigmalow Count Audit
 
 Cheap audit over the existing branch diagnostic:

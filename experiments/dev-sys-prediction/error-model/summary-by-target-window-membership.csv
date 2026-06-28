@@ -1,0 +1,4 @@
+construction_or_domain_failures,decomposed_ok_rows,max_abs_linearization_error,max_abs_prediction_error,max_abs_relative_error_to_base_sys,max_abs_sigma_set_error,median_abs_prediction_error,median_abs_relative_error_to_observed_delta,ok_rows,p90_abs_prediction_error,rows,sigma_window_rows,smooth_linearization_rows,target_best_sigma_in_base_candidate_window,unknown_decomposition_rows
+0,23,3.3786664850219568,1.6918412294312566,1.7612888298920895,1.9765291609196203,0.12479906574533173,0.7630465160624758,23,1.1585617514191802,23,12,10,False,1
+7,0,,,,,,,0,,7,0,0,,0
+0,130,1.7765139954390785,1.7765139954390785,1.8219220203455007,0.0,3.849263261912483e-06,0.002155911179465701,130,0.0021596154888407354,130,0,130,True,0
