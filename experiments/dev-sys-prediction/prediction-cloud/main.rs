@@ -46,6 +46,7 @@ struct Cli {
     write_step_ranking_audit: bool,
     steps: Vec<f64>,
     endpoint_steps: Option<Vec<f64>>,
+    skip_endpoint_diagnostics: bool,
     max_fixtures_per_label: usize,
     skip_fixtures_per_label: usize,
     trace_iterations: usize,
@@ -129,11 +130,18 @@ struct LocalGeometryProbeRow {
     base_sys: f64,
     predicted_delta_per_step: Option<f64>,
     predicted_delta_sys: Option<f64>,
+    candidate_window_predicted_delta_sys: Option<f64>,
+    decomposition_total_prediction_error: Option<f64>,
+    decomposition_linearization_error: Option<f64>,
+    decomposition_sigma_set_error: Option<f64>,
+    decomposition_sum_residual: Option<f64>,
     recomputed_sys: Option<f64>,
     observed_delta_sys: Option<f64>,
     target_near_active_count: Option<usize>,
     target_best_sigma_in_base_near_active_set: Option<bool>,
     target_best_sigma_in_base_candidate_window: Option<bool>,
+    target_best_sigma_base_relative_action_gap: Option<f64>,
+    target_best_sigma_base_sys_gap: Option<f64>,
     base_near_active_count: usize,
     base_returned_orbit_count: usize,
     base_orbit_iterations: u64,
@@ -291,6 +299,7 @@ struct ComputeBudgetReport {
     endpoint_scan_target_orbit_iterations: u64,
     failed_probe_rows: usize,
     failed_endpoint_direction_scan_rows: usize,
+    skip_endpoint_diagnostics: bool,
     elapsed_ms: f64,
 }
 
@@ -322,6 +331,7 @@ struct Summary {
     endpoint_line_search_status_counts: BTreeMap<String, usize>,
     endpoint_direction_scan_status_counts: BTreeMap<String, usize>,
     endpoint_direction_scan_threshold_counts: BTreeMap<String, usize>,
+    skip_endpoint_diagnostics: bool,
     write_step_ranking_audit: bool,
     out_dir: String,
     caveat: String,
@@ -450,11 +460,18 @@ fn main() {
                     base_sys: fixture.polytope.sys,
                     predicted_delta_per_step: None,
                     predicted_delta_sys: None,
+                    candidate_window_predicted_delta_sys: None,
+                    decomposition_total_prediction_error: None,
+                    decomposition_linearization_error: None,
+                    decomposition_sigma_set_error: None,
+                    decomposition_sum_residual: None,
                     recomputed_sys: None,
                     observed_delta_sys: None,
                     target_near_active_count: None,
                     target_best_sigma_in_base_near_active_set: None,
                     target_best_sigma_in_base_candidate_window: None,
+                    target_best_sigma_base_relative_action_gap: None,
+                    target_best_sigma_base_sys_gap: None,
                     base_near_active_count: 0,
                     base_returned_orbit_count: 0,
                     base_orbit_iterations: 0,
@@ -482,6 +499,7 @@ fn main() {
             absolute_delta: cli.min_observed_delta,
             relative_delta: cli.min_observed_relative_delta,
         },
+        cli.skip_endpoint_diagnostics,
     );
     let trace_rows = trace_artifacts.trace_rows;
     let endpoint_rows = trace_artifacts.endpoint_rows;
@@ -577,6 +595,7 @@ fn main() {
         endpoint_scan_target_orbit_iterations,
         failed_probe_rows,
         failed_endpoint_direction_scan_rows,
+        skip_endpoint_diagnostics: cli.skip_endpoint_diagnostics,
         elapsed_ms: t0.elapsed().as_secs_f64() * 1000.0,
     };
     write_json(cli.out_dir.join("compute-budget-report.json"), &report)
@@ -616,6 +635,7 @@ fn main() {
                 relative_delta: cli.min_observed_relative_delta,
             },
         ),
+        skip_endpoint_diagnostics: cli.skip_endpoint_diagnostics,
         write_step_ranking_audit: cli.write_step_ranking_audit,
         out_dir: cli.out_dir.display().to_string(),
         caveat: "finite single-anchor prediction cloud only; this does not certify endpoint local maximality"
@@ -742,6 +762,7 @@ fn run_trace_and_endpoint_rows(
     endpoint_steps: &[f64],
     trace_iterations: usize,
     stop_threshold: StopThreshold,
+    skip_endpoint_diagnostics: bool,
 ) -> TraceArtifacts {
     let mut rows = Vec::new();
     let mut endpoint_rows = Vec::new();
@@ -877,27 +898,29 @@ fn run_trace_and_endpoint_rows(
             }
         }
 
-        endpoint_rows.push(endpoint_diagnostic_row(
-            fixture,
-            &current,
-            &trace_stop_reason,
-            trace_iterations,
-            direction_model,
-            include_candidate_window_directions,
-            branch_threshold_relative,
-            action_window_relative,
-            steps,
-            stop_threshold,
-        ));
-        endpoint_direction_scan_rows.extend(endpoint_direction_scan_rows_for_final_state(
-            fixture,
-            &current,
-            branch_threshold_relative,
-            action_window_relative,
-            direction_model,
-            include_candidate_window_directions,
-            endpoint_steps,
-        ));
+        if !skip_endpoint_diagnostics {
+            endpoint_rows.push(endpoint_diagnostic_row(
+                fixture,
+                &current,
+                &trace_stop_reason,
+                trace_iterations,
+                direction_model,
+                include_candidate_window_directions,
+                branch_threshold_relative,
+                action_window_relative,
+                steps,
+                stop_threshold,
+            ));
+            endpoint_direction_scan_rows.extend(endpoint_direction_scan_rows_for_final_state(
+                fixture,
+                &current,
+                branch_threshold_relative,
+                action_window_relative,
+                direction_model,
+                include_candidate_window_directions,
+                endpoint_steps,
+            ));
+        }
     }
 
     if trace_iterations == 1 {
@@ -1828,11 +1851,18 @@ fn endpoint_direction_scan_failure_row(
         base_sys,
         predicted_delta_per_step: None,
         predicted_delta_sys: None,
+        candidate_window_predicted_delta_sys: None,
+        decomposition_total_prediction_error: None,
+        decomposition_linearization_error: None,
+        decomposition_sigma_set_error: None,
+        decomposition_sum_residual: None,
         recomputed_sys: None,
         observed_delta_sys: None,
         target_near_active_count: None,
         target_best_sigma_in_base_near_active_set: None,
         target_best_sigma_in_base_candidate_window: None,
+        target_best_sigma_base_relative_action_gap: None,
+        target_best_sigma_base_sys_gap: None,
         base_near_active_count: 0,
         base_returned_orbit_count: 0,
         base_orbit_iterations: 0,
@@ -2021,6 +2051,17 @@ fn local_probe_row(
         .candidate_orbits
         .iter()
         .any(|orbit| orbit.sigma == target_best_sigma);
+    let target_best_base_gap = base_gap_for_sigma(base, &target_best_sigma);
+    let candidate_window_prediction = candidate_window_prediction_witness(base, direction, step);
+    let decomposition = candidate_window_decomposition(
+        base,
+        &target_polytope.dual_vertices_f64,
+        target_state.vol,
+        target_state.sys,
+        direction,
+        step,
+        candidate_window_prediction.as_ref(),
+    );
 
     LocalGeometryProbeRow {
         poly_id: fixture.polytope.poly_id.clone(),
@@ -2031,6 +2072,17 @@ fn local_probe_row(
         base_sys: base.sys,
         predicted_delta_per_step: Some(predicted_delta_per_step),
         predicted_delta_sys: Some(predicted_delta),
+        candidate_window_predicted_delta_sys: candidate_window_prediction
+            .as_ref()
+            .map(|witness| witness.predicted_delta),
+        decomposition_total_prediction_error: decomposition
+            .as_ref()
+            .map(|row| row.total_prediction_error),
+        decomposition_linearization_error: decomposition
+            .as_ref()
+            .and_then(|row| row.linearization_error),
+        decomposition_sigma_set_error: decomposition.as_ref().and_then(|row| row.sigma_set_error),
+        decomposition_sum_residual: decomposition.as_ref().and_then(|row| row.sum_residual),
         recomputed_sys: Some(target_state.sys),
         observed_delta_sys: Some(target_state.sys - base.sys),
         target_near_active_count: Some(target_near_active.len()),
@@ -2038,6 +2090,9 @@ fn local_probe_row(
         target_best_sigma_in_base_candidate_window: Some(
             target_best_sigma_in_base_candidate_window,
         ),
+        target_best_sigma_base_relative_action_gap: target_best_base_gap
+            .map(|gap| gap.relative_action_gap),
+        target_best_sigma_base_sys_gap: target_best_base_gap.map(|gap| gap.sys_gap),
         base_near_active_count: base.near_active_orbits.len(),
         base_returned_orbit_count: base.capacity.orbits.len(),
         base_orbit_iterations: base.capacity.iterations,
@@ -2061,11 +2116,18 @@ fn failed_probe_row(
         base_sys: base.sys,
         predicted_delta_per_step: None,
         predicted_delta_sys: None,
+        candidate_window_predicted_delta_sys: None,
+        decomposition_total_prediction_error: None,
+        decomposition_linearization_error: None,
+        decomposition_sigma_set_error: None,
+        decomposition_sum_residual: None,
         recomputed_sys: None,
         observed_delta_sys: None,
         target_near_active_count: None,
         target_best_sigma_in_base_near_active_set: None,
         target_best_sigma_in_base_candidate_window: None,
+        target_best_sigma_base_relative_action_gap: None,
+        target_best_sigma_base_sys_gap: None,
         base_near_active_count: base.near_active_orbits.len(),
         base_returned_orbit_count: base.capacity.orbits.len(),
         base_orbit_iterations: base.capacity.iterations,
@@ -2105,6 +2167,26 @@ struct CandidateWindowPredictionWitness {
     second_orbit_index: Option<usize>,
     second_sigma: Option<Vec<usize>>,
     second_predicted_delta: Option<f64>,
+}
+
+#[derive(Clone, Copy, Debug)]
+struct BaseSigmaGap {
+    relative_action_gap: f64,
+    sys_gap: f64,
+}
+
+fn base_gap_for_sigma(base: &BaseState, sigma: &[usize]) -> Option<BaseSigmaGap> {
+    let orbit = base
+        .candidate_orbits
+        .iter()
+        .find(|orbit| orbit.sigma == sigma)?;
+    let action_ratio = orbit.action / base.capacity.min_action;
+    let relative_action_gap = action_ratio - 1.0;
+    let sys_gap = base.sys * (action_ratio * action_ratio - 1.0);
+    relative_action_gap.is_finite().then_some(BaseSigmaGap {
+        relative_action_gap,
+        sys_gap,
+    })
 }
 
 fn candidate_window_prediction_witness(
@@ -2540,6 +2622,7 @@ fn parse_args() -> Cli {
         write_step_ranking_audit: false,
         steps: DEFAULT_STEPS.to_vec(),
         endpoint_steps: None,
+        skip_endpoint_diagnostics: false,
         max_fixtures_per_label: DEFAULT_MAX_FIXTURES_PER_LABEL,
         skip_fixtures_per_label: 0,
         trace_iterations: DEFAULT_TRACE_ITERATIONS,
@@ -2610,6 +2693,9 @@ fn parse_args() -> Cli {
                         .collect(),
                 );
             }
+            "--skip-endpoint-diagnostics" => {
+                cli.skip_endpoint_diagnostics = true;
+            }
             "--max-fixtures-per-label" => {
                 cli.max_fixtures_per_label = args
                     .next()
@@ -2677,7 +2763,7 @@ fn print_usage() {
          [--direction-model near-active|candidate-window] \
          [--include-candidate-window-directions] \
          [--write-step-ranking-audit] \
-         [--steps CSV] [--endpoint-steps CSV] \
+         [--steps CSV] [--endpoint-steps CSV] [--skip-endpoint-diagnostics] \
          [--max-fixtures-per-label N] [--skip-fixtures-per-label N] \
          [--trace-iterations N] \
          [--degeneracy-labels CSV] [--min-observed-delta F64] \

@@ -1,0 +1,16 @@
+{
+  "command": "dev-gradient-ascent-branch-diagnostic",
+  "polytope_table": "experiments/dev-sys-prediction/facet-scale-baseline-error/polytope-panel.jsonl",
+  "provenance_table": "experiments/sys-datascience/prepare/polytope-provenance-table.jsonl",
+  "selected_rows": 6,
+  "thresholds_relative": [
+    1e-6,
+    0.001,
+    0.01
+  ],
+  "max_action_gap_relative": 0.01,
+  "successful_recomputations": 6,
+  "failed_recomputations": 0,
+  "total_orbit_iterations": 35052,
+  "elapsed_ms": 3021.357495
+}

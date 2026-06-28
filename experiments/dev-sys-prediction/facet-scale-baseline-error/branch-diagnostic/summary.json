@@ -1,0 +1,31 @@
+{
+  "method": "dev-gradient-ascent-branch-diagnostic",
+  "selected_rows": 6,
+  "diagnostic_rows": 18,
+  "successful_recomputations": 6,
+  "failed_recomputations": 0,
+  "thresholds_relative": [
+    1e-6,
+    0.001,
+    0.01
+  ],
+  "max_action_gap_relative": 0.01,
+  "selection_bucket_counts": {
+    "gradient_ascent_products": 2,
+    "random_product_sample": 3,
+    "random_sample": 1,
+    "top_sys": 6
+  },
+  "dataset_counts": {
+    "gradient_ascent_products": 2,
+    "random_product_sample": 3,
+    "random_sample": 1
+  },
+  "degeneracy_counts": {
+    "high_degeneracy": 2,
+    "large_gap": 11,
+    "narrow_gap": 5
+  },
+  "out_dir": "experiments/dev-sys-prediction/facet-scale-baseline-error/branch-diagnostic",
+  "caveat": "branch/degeneracy diagnostic only; this does not certify local maximality"
+}

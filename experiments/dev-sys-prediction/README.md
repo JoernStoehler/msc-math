@@ -4,6 +4,8 @@ Status: active development packet for semi-local prediction of `sys(a)`.
 
 Current producer and smoke observations are in `CURRENT-RESULTS.md`.
 Current guidance back to optimizer work is in `OPTIMIZER-GUIDANCE.md`.
+Facet-count radius and baseline-error calibration is in
+`facet-scale-baseline-error/README.md`.
 
 This packet is separate from `experiments/dev-gradient-ascent/`. The gradient
 ascent packet owns optimizer behavior: how to choose steps that reach good

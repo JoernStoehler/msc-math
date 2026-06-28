@@ -1,0 +1,4 @@
+facet_count,source_rows,median_flat_norm,median_coord_rms,median_internal_pairwise_dist,median_internal_pairwise_max,sampled_polytope_pairs,median_inter_polytope_dist,p90_inter_polytope_dist,unit_direction_coord_rms
+6,1536,2.49948,0.510204,5.21151,7.2355,8128,3.23558,3.89915,0.204124
+10,20754,3.23665,0.51176,3.24034,4.91485,8128,4.40908,4.98038,0.158114
+12,1536,3.53424,0.510124,3.06141,4.73225,8128,3.86589,5.26589,0.144338
