@@ -549,6 +549,11 @@ radius and source class:
 
 Schema-upgraded rerun:
 
+This exact rerun also needs the scratch branch diagnostic at
+`/tmp/dev-gradient-ascent-branch-diagnostic-allsafe-check`. Treat it as a
+historical reproduction recipe unless that diagnostic is regenerated or made
+durable.
+
 ```bash
 cargo run -p exp-dev-sys-prediction --release --bin dev-sys-prediction-cloud -- \
   --diagnostic-dir /tmp/dev-gradient-ascent-branch-diagnostic-allsafe-check \

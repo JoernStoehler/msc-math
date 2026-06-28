@@ -11,8 +11,7 @@ from collections import Counter, defaultdict
 from pathlib import Path
 
 
-HERE = Path(__file__).resolve().parent
-DEFAULT_OUTPUT_DIR = HERE / "error-model"
+DEFAULT_OUTPUT_DIR = Path("/tmp/dev-sys-prediction-error-model-analysis")
 
 
 def finite(value):
