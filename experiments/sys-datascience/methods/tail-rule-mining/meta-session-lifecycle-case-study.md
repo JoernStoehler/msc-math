@@ -13,8 +13,13 @@ extrapolation from one packet is limited.
 - Parent session thread: `019f08c5-67bd-7f81-b143-71ea0dbf06db`
 - Parent rollout log:
   `/home/vscode/.codex/sessions/2026/06/27/rollout-2026-06-27T11-09-42-019f08c5-67bd-7f81-b143-71ea0dbf06db.jsonl`
-- Packet commit:
+- Packet/result commit:
   `1662e38f Add sys-datascience tail rule mining packet`
+- Original lifecycle-case-study commit:
+  `288f6fd2 Document tail-rule-mining session lifecycle`
+- The file was later renamed from `meta-session-lifecycle.md` to
+  `meta-session-lifecycle-case-study.md` to make clear that it is an example,
+  not a maintained lifecycle surface.
 
 Useful transcript extraction commands:
 
@@ -41,13 +46,25 @@ jq -r '[.updated_at,.id,.thread_name] | @tsv' \
 
 Relevant probe threads included:
 
-- `019f09bf-e2ba-7d31-b192-a3bf33ebddc8`
-- `019f09cf-e960-70b0-90f8-887fdd185474`
-- `019f09dc-0999-7231-9ca8-f88ef7cc483a`
-- `019f09e5-1c97-7ac3-a6ff-4489dfbe85a2`
-- `019f09e6-fe9b-7731-8a62-82ec8547c5bc`
-- `019f09e8-de77-7950-8f3c-774aefd60007`
-- `019f0a0b-3804-7072-9a35-f7665a12ddfb`
+- `019f09bf-e2ba-7d31-b192-a3bf33ebddc8`:
+  `/home/vscode/.codex/sessions/2026/06/27/rollout-2026-06-27T15-43-18-019f09bf-e2ba-7d31-b192-a3bf33ebddc8.jsonl`
+- `019f09cf-e960-70b0-90f8-887fdd185474`:
+  `/home/vscode/.codex/sessions/2026/06/27/rollout-2026-06-27T16-00-48-019f09cf-e960-70b0-90f8-887fdd185474.jsonl`
+- `019f09dc-0999-7231-9ca8-f88ef7cc483a`:
+  `/home/vscode/.codex/sessions/2026/06/27/rollout-2026-06-27T16-14-03-019f09dc-0999-7231-9ca8-f88ef7cc483a.jsonl`
+- `019f09e5-1c97-7ac3-a6ff-4489dfbe85a2`:
+  `/home/vscode/.codex/sessions/2026/06/27/rollout-2026-06-27T16-23-57-019f09e5-1c97-7ac3-a6ff-4489dfbe85a2.jsonl`
+- `019f09e6-fe9b-7731-8a62-82ec8547c5bc`:
+  `/home/vscode/.codex/sessions/2026/06/27/rollout-2026-06-27T16-26-01-019f09e6-fe9b-7731-8a62-82ec8547c5bc.jsonl`
+- `019f09e8-de77-7950-8f3c-774aefd60007`:
+  `/home/vscode/.codex/sessions/2026/06/27/rollout-2026-06-27T16-28-04-019f09e8-de77-7950-8f3c-774aefd60007.jsonl`
+- `019f0a0b-3804-7072-9a35-f7665a12ddfb`:
+  `/home/vscode/.codex/sessions/2026/06/27/rollout-2026-06-27T17-05-35-019f0a0b-3804-7072-9a35-f7665a12ddfb.jsonl`
+
+The parent session was compacted at `2026-06-27T15:03:35Z` and
+`2026-06-27T17:01:22Z`. Late-session summaries therefore include some
+compaction-mediated reconstruction; use the rollout logs above when the exact
+sequence matters.
 
 ## Approximate Timeline
 
@@ -65,11 +82,17 @@ agent-labor accounting.
 | 15:39-16:13 | Process-knowledge question | Jörn asks how to make future agents give similar interpretations. Discussion rejects static result prose as too stale/sticky. | Durable process should prefer self-explaining code, executable inputs/outputs, navigation, and transferable process knowledge. |
 | 15:43-16:28 | Fresh-agent probes | Multiple no-context or low-context agents try to explain the packet. Early output invents "omega-regular two-face geometry"; later outputs improve but still choose examples poorly. | Cold-read behavior is a real validation surface when future agents need to reuse a packet. |
 | 16:33-17:05 | `experiment-interpretation` skill repair | Jörn reviews the skill, pushing from hard constraints and introspective labels toward observable failure outcomes and abstract-to-concrete guidance. | Skill text improved when grounded in observed failure modes, not in plausible generic prompting rules. |
-| 17:05-17:13 | Behavioral test | A fresh agent reads the revised skill and packet, then produces a forwardable message Jörn says is good enough. | Mechanical skill validation is insufficient; one behavioral cold-read test caught remaining flaws but showed the skill crossed the usefulness threshold. |
+| 17:05-17:13 | Behavioral test | A fresh agent reads the revised skill and packet, then produces a forwardable message Jörn says is good enough. The message still had flaws, including saying "random-only rows" while meaning the random/product table. | Mechanical skill validation is insufficient; one behavioral cold-read test caught remaining flaws but showed the skill crossed the usefulness threshold. |
 | 17:13-17:15 | Commit | Commit `1662e38f` records the packet, sys-datascience README updates, and interpretation skill. | Commit once the packet has executable method, interpretation artifact, navigation, and validation status. |
 | 17:15-17:30 | Follow-up scoping | Discussion separates better interpretation, falsification, proposer utility, known high-`sys` classes, ball-likeness, and Euclidean two-face area controls. | Do cheap controls that distinguish interpretations before building a serious proposer. |
 | 17:28 | Delegation prompt | Jörn asks for a session-agent packet. The prompt assigns Euclidean two-face area and `A_symp/A_euclidean` controls to a separate worktree. | Independent controls can be delegated once the packet architecture and question are clear. |
 | 17:37-17:44 | Meta-process discussion | Jörn questions whether a new lifecycle skill is justified. A scratch note is written, then the better idea becomes a packet-local lifecycle example. | The transferable knowledge may be "copy the packet architecture and cold-read validation loop", not a broad new abstract skill. |
+
+Earlier in the session, subagents also reviewed other sys-datascience method
+READMEs before this packet was mature. The lesson is not "never delegate before
+the trial method is complete"; it is narrower: do not delegate an independent
+follow-up method that depends on interpreting the new pattern until the pattern
+has an evaluable artifact and a clear question.
 
 ## What Future Agents Should Notice
 
