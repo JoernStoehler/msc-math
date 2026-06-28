@@ -46,7 +46,7 @@ Navigation/thesis/formal smoke:
 - map/cache/status-marker inventory scans passed;
 - `thesis/main.tex` read successfully and still inputs active scaffold files;
 - thesis placeholder scan found scaffold/TODO-heavy active thesis files, as
-  already stated in `tasks/current-state.md`;
+  was stated in the then-current task cache;
 - formal status-marker scan found many `unverified` and `TODO: JÖRN` markers,
   matching the developer-facing role of `formal/`;
 - experiment README command-contract scan confirmed full/canonical/tracked
@@ -114,9 +114,8 @@ Rust/experiment smoke:
 
 ## Cache Consequences
 
-- No contradiction was found for `tasks/current-state.md`,
-  `tasks/planning-notes.md`, `thesis/MAP.md`, the then-current research index,
-  `crates/MAP.md`, or `experiments/MAP.md`.
+- No contradiction was found for the then-current task cache, `thesis/MAP.md`,
+  the then-current research index, `crates/MAP.md`, or `experiments/MAP.md`.
 - `CAPABILITY_CLAIM_MAP.md` and local datascience docs were updated to record
   the `smoke-pipeline.sh` runtime caveat.
 - These checks support current cache claims for exact arithmetic,
@@ -158,6 +157,6 @@ README or source header that owns the producer. The high-risk refresh areas are:
   source checks close to final submission.
 
 If one of these areas changes, update the owning local note or experiment
-README first, then update `tasks/current-state.md` and/or
+README first, then update the affected owner-local status note and/or
 `CAPABILITY_CLAIM_MAP.md` only if near-term thesis routing or reusable repo
 capability changed.

@@ -7,8 +7,7 @@ remaining review gates needed to draft and review
 `thesis/07-hko-local-maximum.tex`.
 
 Overruled by: `FACTSHEET.md`, exact artifacts and local documentation in
-`experiments/hko-local-maximum/`, formal proof files, task files, and Jörn/Kai
-review.
+`experiments/hko-local-maximum/`, formal proof files, and Jörn/Kai review.
 
 Lifecycle: keep while the HKO thesis section is being assembled. After the
 section is stable, either delete this file or reduce it to a short maintenance
@@ -666,7 +665,6 @@ Source pointers:
   draft of the feasible-section upper-branch lemmas.
 - `experiments/hko-local-maximum/smooth-only-rank-defect/summary.json` for
   singular-row motivation.
-- `tasks/current-state.md`, HKO local maximality row.
 
 Missing:
 - Kai acceptance of theorem-strength wording.
@@ -789,8 +787,7 @@ Missing:
    `experiments/hko-local-maximum/empirical/README.md`.
 
 4. Get required Kai review for theorem-strength wording.
-   Source pointers: `tasks/definition-of-success.md`;
-   `FACTSHEET.md` items 20--22.
+   Source pointers: `FACTSHEET.md` items 20--22.
 
 ## Fallback Branches
 
@@ -810,7 +807,8 @@ If the formal implication has a real gap:
 
 If exact work changes theorem wording:
 - Refresh this file from `experiments/hko-local-maximum/`, exact artifacts,
-  formal proof files, and task files before drafting final thesis prose.
+  formal proof files, and accepted Jörn/Kai decisions before drafting final
+  thesis prose.
 
 ## Review Gates
 

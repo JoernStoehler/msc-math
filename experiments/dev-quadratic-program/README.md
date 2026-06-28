@@ -74,6 +74,27 @@ Q/action bounds lives in `tools/kkt_error_audit/SEARCH-LEDGER.md`. The separate
 candidate-filter question, whether f64 discards exact-positive sigmas before
 certification, is tracked in `tools/candidate_filter_audit/README.md`.
 
+Exact/certified route caution: current code history includes a false exact
+fallback caused by a floating relative pivot threshold in exact KKT solving.
+Current regression evidence lives in `crates/symplectic/src/kkt/rational_solver.rs`
+(`f64_square_product_bad_sigma_rejected_by_exact_rank`). Current exact fallback
+and certified aggregation guards check beta length, `beta_i > 0`, `Q > 0`,
+exact normalization, and exact closure in
+`crates/symplectic/src/algorithms/orbit_search.rs` and this packet's local
+`src/fallback_route/`. Revalidate those guards before relying on a stronger
+exact/certified capacity claim.
+
+`q_error_bound` is a code/formal obligation, not a thesis-writing task. The
+current f64 KKT result stores `q_error_bound` and `q_corrected` for auditing,
+but the bound is not a thesis-facing certificate. Regression evidence lives in
+`src/route_demonstrations/q_error_bound_not_certificate.rs`; search/audit
+status lives in `tools/kkt_error_audit/SEARCH-LEDGER.md`. Source truth is
+`crates/symplectic/src/kkt/saddle_point_solver.rs`,
+`crates/symplectic/src/kkt/test_saddle_point_solver.rs`, and
+`formal/hk2017-qp-precision.tex`. When the bound is replaced or the algorithm
+changes, update the regression evidence and this route-development note before
+using the result in thesis-facing numerics prose.
+
 Use `experiments/algorithm-comparison/README.md` for cross-algorithm comparison
 reasoning that points to performance, numerics, verification/correctness,
 topic, or thesis evidence homes.

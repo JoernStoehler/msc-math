@@ -106,6 +106,7 @@ This repo does not use nested `AGENTS.md` files.
 |-- AGENTS.md
 |-- JOERN.md
 |-- FACTSHEET.md
+|-- README.md
 |-- Cargo.toml
 |-- CAPABILITY_CLAIM_MAP.md
 |-- thesis/
@@ -166,11 +167,6 @@ This repo does not use nested `AGENTS.md` files.
 |   |-- tables/
 |   `-- methods/
 |-- papers/<abbreviationYear>/
-|-- tasks/
-|   |-- README.md
-|   |-- definition-of-success.md
-|   |-- current-state.md
-|   `-- planning-notes.md
 |-- submit/
 |   |-- README.md
 |   |-- *.md
@@ -194,16 +190,17 @@ This repo does not use nested `AGENTS.md` files.
 ```
 
 Start here:
+- `README.md`: project target, first-entry navigation, and final-readiness
+  frame.
 - `FACTSHEET.md`: Jörn-confirmed project facts. Use it unless newer
   Jörn/Kai/source truth contradicts it.
-- `tasks/README.md`: live task model, steering, and final thesis-done checks.
 - `submit/README.md`: submission/admin source files and official-form cache.
 - Slice entry points: `thesis/MAP.md`, `experiments/MAP.md`,
   `crates/<crate>/MAP.md`, and owner-local README/MAP/content files.
 
 Trust model:
-- Source files, tests, data, owner-local notes, task files, and thesis text
-  overrule maps and summaries.
+- Source files, tests, data, owner-local notes, accepted Jörn/Kai decisions,
+  and thesis text overrule maps and summaries.
 - `CAPABILITY_CLAIM_MAP.md` is a non-authoritative cache of high-level
   capability claims.
 - `MAP.md` files are navigation caches, not authoritative sources.
@@ -251,7 +248,8 @@ Documentation:
   generic reasoning GPT-5.5 can reconstruct.
 - Knowledge should live where future agents need it: code, comments, TeX,
   experiment artifacts, formal notes, thesis companions, experiment READMEs,
-  crate documentation, task files, generated outputs, or local documentation.
+  crate documentation, generated outputs, owner-local task notes, or local
+  documentation.
   Keep documentation lean, current, and easy to verify. Delete or demote
   obsolete notes; git history is enough for historical material.
 

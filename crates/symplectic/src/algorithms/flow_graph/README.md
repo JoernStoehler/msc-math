@@ -451,9 +451,6 @@ Evidence limits for future thesis wording:
 Project sources:
 
 - `AGENTS.md`
-- `tasks/definition-of-success.md`
-- `tasks/current-state.md`
-- `tasks/planning-notes.md`
 - `tube-algorithm-legacy-source-note.md`
 - `tube-algorithm-raw-jorn-2026-05-04.md`
 - `thesis/flow-graph-algorithm-ch2021.tex`

@@ -3,8 +3,8 @@
 ## Role
 
 This file is a non-authoritative cache of high-level repo-capability claims.
-Source files, tests, data, owner-local notes, task progress files, and thesis
-text overrule this file.
+Source files, tests, data, owner-local notes, accepted Jörn/Kai decisions, and
+thesis text overrule this file.
 
 Use this file to answer "what can the repo currently rely on?" without
 reconstructing the claim, scope, support, caveats, and refresh triggers from
@@ -39,7 +39,7 @@ Prefer the lowest-ceremony true statement that preserves verification:
 - keep nuanced subclaims shallow; promote them to their own row only when they
   become repeated capability questions
 - point durable references to source files, tests, data, owner-local notes, or
-  task progress files, not to internal map labels
+  accepted decisions, not to internal map labels
 
 When refreshing, start from source truth and update only rows affected by the
 task unless doing an explicit whole-map audit. If a support command fails,
@@ -84,15 +84,14 @@ claim.
     - `crates/euclidean-polytopes/DEVELOPMENT.md`
     - `crates/euclidean-polytopes/src/`
     - `crates/euclidean-polytopes/tests/`
-    - `tasks/current-state.md`
-    - `tasks/planning-notes.md`
   - Tests cover extreme points, faces, polar vertices, random sampling, and
     volume behavior.
     - `cargo test -p euclidean-polytopes`
   - This crate is not for EHZ capacity, Reeb dynamics, symplectic signs, KKT
     assembly, orbit search, or thesis experiment workflow code.
   - (partial) polar enumeration performance and follow-up work may still
-    matter; route those through `tasks/planning-notes.md`.
+    matter; route those through crate README/DEVELOPMENT files, owner-local
+    notes, or implementation files.
   - Refresh when:
     - Euclidean public APIs change
     - polar, volume, incidence, or representation contracts change
@@ -163,6 +162,9 @@ claim.
     - some deep public paths are experiment-facing in practice but not settled
       as long-term public API.
     - f64 capacity behavior is not exact-real proof.
+    - exact/certified capacity paths have a prior false exact-fallback
+      regression; read `experiments/dev-quadratic-program/README.md` before
+      relying on a stronger exact/certified claim.
   - Refresh when:
     - solver semantics change
     - capacity result semantics change
@@ -176,15 +178,13 @@ claim.
     over all polytopes.
   - Files:
     - `experiments/verification/README.md`
-    - `tasks/current-state.md`
-    - `tasks/planning-notes.md`
     - `experiments/verification/correctness/`
     - `experiments/verification/all-minimum/`
     - `experiments/verification/orbit-recovery/`
   - The verification package documents which commands refresh tracked evidence
     and which checks are safe smoke/compile checks.
-  - Current research summary records 28 selected polytopes, 469 trusted minima,
-    and full reconstruction success for all 469 minima.
+  - `experiments/verification/README.md` records 28 selected polytopes, 469
+    trusted minima, and full reconstruction success for all 469 minima.
   - Stored proposition rows can be checked without refreshing the producer.
     - `cargo test -p dev-capacity-validation --bin axioms-correctness --release`
   - Nuance:
@@ -210,8 +210,6 @@ claim.
     - `experiments/hko-local-maximum/README.md`
     - `experiments/dev-quadratic-program/numerics-audit/README.md`
     - `experiments/combinatorial-cells/README.md`
-    - `tasks/current-state.md`
-    - `tasks/planning-notes.md`
   - Agent rule: prefer `--help`, compile checks, or documented smoke modes for
     quick command validation.
   - (partial) command-contract normalization is uneven. Some packages have
@@ -258,8 +256,6 @@ claim.
     symmetries; broad HKO local maximality remains conjectural in current repo
     classification.
   - Files:
-    - `tasks/current-state.md`
-    - `tasks/planning-notes.md`
     - `experiments/hko-local-maximum/README.md`
     - `experiments/hko-local-maximum/theorem/README.md`
     - `experiments/hko-local-maximum/smooth-only-rank-defect/README.md`
@@ -300,14 +296,12 @@ claim.
     semialgebraic evaluator material belongs in boundary discussion or
     future/follow-up unless HKO proof wording needs it.
   - Files:
-    - `tasks/current-state.md`
-    - `tasks/planning-notes.md`
     - `formal/sys-first-order-local-behavior.md`
-    - `thesis/first-order-perturbations.tex`
+    - `thesis/06-first-order-perturbations.tex`
     - `thesis/legacy/sys-first-order-regular-case.tex`
     - `formal/capacity-smoothness-classification.tex`
     - `formal/capacity-boundary-subdifferential.tex`
-  - The task progress files record the broad theorem classification as
+  - The current formal note records the broad theorem classification as
     `ONLY-HEAVY`.
   - Generic smooth-branch or Danskin-envelope statements are not substitutes
     for the compute-once arbitrary-polytope evaluator.
@@ -326,8 +320,6 @@ claim.
     predicates, with explicit input-pair and oracle provenance. This audit is
     coupled to QP route development and now lives under the dev-QP packet.
   - Files:
-    - `tasks/current-state.md`
-    - `tasks/planning-notes.md`
     - `experiments/dev-quadratic-program/numerics-audit/README.md`
     - `experiments/dev-quadratic-program/numerics-audit/`
     - `formal/hk2017-qp-core.tex`
@@ -469,9 +461,8 @@ claim.
     - `thesis/main.tex`
     - `thesis/MAP.md`
     - `thesis/DEVELOPMENT.md`
-    - `tasks/definition-of-success.md`
-    - `tasks/current-state.md`
-    - `tasks/planning-notes.md`
+    - `README.md`
+    - `FACTSHEET.md`
     - `submit/README.md`
   - Thesis correctness must not depend on runtime links into `experiments/`,
     `formal/`, or `crates/`.
@@ -486,27 +477,6 @@ claim.
     - figure or publication assets change
     - build contract changes
     - submission requirements change
-
-- We have a map/task/owner-local knowledge layer for routing work.
-  - Scope: maps route navigation; the task progress files own current success
-    conditions, state summaries, and route reasoning; thesis companions,
-    formal notes, experiment READMEs, and crate docs own local interpretation
-    or proof-route state; source files and data own source truth.
-  - Files:
-    - `tasks/README.md`
-    - `tasks/definition-of-success.md`
-    - `tasks/current-state.md`
-    - `tasks/planning-notes.md`
-    - `thesis/central-claim-control.md`
-    - `crates/MAP.md`
-    - `experiments/MAP.md`
-  - This layer helps agents route work, but it is not itself proof, code truth,
-    or final thesis truth.
-  - Refresh when:
-    - map/task conventions change
-    - task progress conventions, current state, or route reasoning changes
-    - owner-local routing or central claim-control changes thesis story routing
-    - final thesis-done checks change
 
 ## Cross-Claim Refresh Clusters
 
@@ -543,7 +513,7 @@ claim.
 - Formal note promotion.
   - Recheck:
     - local `formal/*.tex` status comments and `unverified` environments
-    - topic task progress file
+    - topic owner-local progress note
     - thesis/code comments that cite the promoted statement
 
 ## Refresh Recipe
@@ -558,11 +528,9 @@ claim.
   - `rg --files experiments | rg '(^|/)(README\.md|Cargo\.toml|[^/]+\.(rs|py))$'`
 - Check durable crate implementation and tests:
   - `rg --files crates | rg '(^|/)(README\.md|DEVELOPMENT\.md|.*FEATURES.*\.md|[^/]+\.rs)$'`
-- Compare thesis stories and task progress files:
+- Compare thesis story routing:
   - `sed -n '1,220p' thesis/central-claim-control.md`
-  - `sed -n '1,220p' tasks/current-state.md`
-  - `sed -n '1,220p' tasks/planning-notes.md`
 - Search targeted status surfaces for drift:
-  - `rg -n "Epistemic status|Status:|\[blocked\]|\[active\]|\[done\]" tasks thesis formal experiments crates -g '*.md'`
+  - `rg -n "Epistemic status|Status:|\[blocked\]|\[active\]|\[done\]" thesis formal experiments crates -g '*.md'`
   - `rg -n -e 'begin\{unverified\}' -e 'TODO: JÖRN' -e 'Status:' formal -g '*.tex'`
   - `rg -n "full-output|tracked evidence|smoke|canonical|--full" experiments -g README.md`

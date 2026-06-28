@@ -7,8 +7,7 @@ pointers, proof status, exact computation record, and writing guidance needed
 to draft `thesis/09-rotated-regular-polygons.tex`.
 
 Overruled by: `FACTSHEET.md`, exact artifacts in
-`experiments/regular-products/`, formal proof files,
-task files, and Jörn/Kai review.
+`experiments/regular-products/`, formal proof files, and Jörn/Kai review.
 
 Lifecycle: keep while the rotated-regular-polygons thesis section is being
 assembled. After the section is stable, either delete this file or reduce it to

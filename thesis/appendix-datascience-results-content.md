@@ -9,7 +9,7 @@ results.
 Overruled by: `experiments/sys-datascience/`,
 `experiments/sys-datascience/methods/`,
 `experiments/sys-landscape/legacy-ascent-continuation-debt.md`, generated
-tables/figures, task files, and Jörn/Kai review.
+tables/figures, and Jörn/Kai review.
 
 Lifecycle: keep while the appendix is being assembled. After the appendix is
 stable, delete this file or reduce it to a short maintenance note.

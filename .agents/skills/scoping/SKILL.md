@@ -31,10 +31,11 @@ thesis-success impact. The point is not quantified ceremony; it is to avoid
 choosing the easiest coherent artifact when it leaves the live bottleneck
 intact.
 
-For thesis-scope choices, inspect repo source truth before asking Jörn:
-`FACTSHEET.md`, `tasks/README.md`, `tasks/current-state.md`,
-`tasks/planning-notes.md`, and the relevant slice `MAP.md`, `README.md`, or
-source artifacts. Treat maps as navigation caches, not source truth.
+For thesis-scope choices, inspect repo orientation and source surfaces before
+asking Jörn: `README.md`, `FACTSHEET.md`,
+`thesis/central-claim-control.md`, and the relevant slice `MAP.md`,
+`README.md`, content companion, or source artifact. Treat maps and central
+claim-control as navigation caches, not source truth.
 
 Before treating a slice as the target, check:
 

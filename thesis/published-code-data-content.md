@@ -6,8 +6,8 @@ Not source truth.
 Purpose: gather the publication and reproducibility claims before final prose is
 written.
 
-Overruled by: final repository state, archive/submission task files,
-`FACTSHEET.md`, and Jörn/Kai review.
+Overruled by: final repository state, `submit/`, `FACTSHEET.md`, and Jörn/Kai
+review.
 
 Lifecycle: keep while publication mechanics are unsettled. After the section is
 stable, delete this file or reduce it to a short maintenance note.

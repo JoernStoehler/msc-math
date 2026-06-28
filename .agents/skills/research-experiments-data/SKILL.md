@@ -29,8 +29,8 @@ Put interpretation where future work should update it. Common owners are:
 - `formal/` notes or TeX files for proof-route and developer-facing
   mathematical interpretation;
 - crate `README.md` or `DEVELOPMENT.md` files for reusable code contracts;
-- `tasks/current-state.md` and `tasks/planning-notes.md` for cross-surface
-  current-state caches and route reasoning.
+- thesis-wide control surfaces only when the state does not have a narrower
+  owner.
 
 Do not recreate a top-level `research/` ownership layer. Create a separate
 owner-local note only when inline README/prose would become too large or mix
@@ -41,7 +41,7 @@ unrelated purposes.
 - owner-local notes describe what experiments are for and interpret their
   results. Before interpreting results or planning follow-up experiments, use
   the relevant README, method packet, thesis companion, formal note, or task
-  cache rather than inferring purpose from experiment artifacts alone.
+  context rather than inferring purpose from experiment artifacts alone.
 - sibling experiments should be mostly independent from each other, to facilitate rapid development
 - data is located next to the producer
 - do not patch-edit generated `.jsonl`, `.csv`, or figure outputs; regenerate

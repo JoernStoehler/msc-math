@@ -199,11 +199,11 @@ first-order branch-completeness proof.
 HKO is not a shortcut around this theory. It is a hard instance of it.
 Current HKO evidence has many active orbits, symmetry quotients, a smooth-only
 rank defect, and singular positive-beta rows handled by feasible sections. The
-formal HKO second-order route uses a
-smooth/min-envelope argument that the task progress files already reject as a
-substitute for arbitrary closed-value behavior. The HKO smooth-only rank-defect
-summary records that the current diagnostic has 150 active rows, split into 44
-nonsingular and 106 singular rows, so the active surface is not a single smooth
+formal HKO second-order route uses a smooth/min-envelope argument that this
+note rejects as a substitute for arbitrary closed-value behavior.
+The HKO smooth-only rank-defect summary records that the current diagnostic
+has 150 active rows, split into 44 nonsingular and 106 singular rows, so the
+active surface is not a single smooth
 branch.
 
 The `beta_k = 0` case is central for HKO because some listed combinatorics

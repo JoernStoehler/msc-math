@@ -6,8 +6,8 @@ truth.
 Purpose: gather the factual AI-use inventory and evidence boundaries before
 final prose is written.
 
-Overruled by: task files, Codex/session-log analyses, final disclosure
-requirements, and Jörn/Kai review.
+Overruled by: Codex/session-log analyses, final disclosure requirements, and
+Jörn/Kai review.
 
 Lifecycle: keep while the AI-use section is unsettled. After the section is
 stable, delete this file or reduce it to a short maintenance note.

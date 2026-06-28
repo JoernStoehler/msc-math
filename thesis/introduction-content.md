@@ -7,7 +7,7 @@ Purpose: gather the introduction inventory and pacing notes before final prose
 is written.
 
 Overruled by: `FACTSHEET.md`, final theorem statements, retained thesis
-sections, task files, and Jörn/Kai review.
+sections, and Jörn/Kai review.
 
 Lifecycle: keep while the introduction is unwritten. After the introduction is
 stable, delete this file or reduce it to a short maintenance note.

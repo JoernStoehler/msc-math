@@ -8,7 +8,7 @@ taxonomy, and open decisions before final prose is written.
 
 Overruled by: `experiments/sys-datascience/`,
 `experiments/sys-datascience/methods/`,
-`experiments/sys-landscape/legacy-ascent-continuation-debt.md`, task files,
+`experiments/sys-landscape/legacy-ascent-continuation-debt.md`,
 generated tables/figures, and Jörn/Kai review.
 
 Lifecycle: keep while the section is being assembled. After the section is

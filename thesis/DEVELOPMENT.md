@@ -34,8 +34,8 @@ not source truth; they organize thesis writing from source truth.
 
 Use `/tmp` for temporary planning, reasoning, phrasing alternatives, and prompt
 packets. Use normal repo files as source truth for what is available to say:
-`formal/`, `experiments/`, `crates/`, thesis companions, and task files where
-appropriate.
+`formal/`, `experiments/`, `crates/`, thesis companions, and owner-local notes
+where appropriate.
 
 When editing a thesis section, migrate durable section-planning comments from
 `.tex` to the companion before or during prose work. Prune scaffold provenance,

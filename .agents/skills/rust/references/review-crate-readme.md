@@ -46,8 +46,8 @@ established from the checked surfaces, say that it is unverifiable from reviewed
 context instead of inventing project intent.
 
 Treat current caller, intended main path, and witness evidence as established
-only by explicit README text, tests/examples, public API usage, task files, or
-named downstream callers inspected in this review.
+only by explicit README text, tests/examples, public API usage, owner-local
+task notes, or named downstream callers inspected in this review.
 
 ## Review Criteria
 

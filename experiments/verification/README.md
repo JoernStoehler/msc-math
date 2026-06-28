@@ -3,8 +3,7 @@
 This package is the experiment-level correctness and regression home for local
 Rust validation commands, capacity algorithms, minimum-orbit result semantics,
 and geometric orbit recovery. This README owns verification interpretation;
-broader task files may still mention verification state until the task-surface
-migration is complete.
+other owner-local notes may point here when they need verification state.
 
 Use crate tests for fast local API regressions. Use
 `experiments/dev-quadratic-program/numerics-audit/` for structured QP/KKT
