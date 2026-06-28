@@ -520,19 +520,22 @@ models and as stable selected-branch action/volume decompositions.
 
 ## Local Feature Error Model
 
-A reproducible analysis layer over the schema-upgraded 160-row panel is in
-`error-model/REPORT.md`. Regenerate the producer output with the command below,
-then regenerate the checked analysis tables with:
+`analyze_prediction_error_model.py` summarizes a prediction-cloud JSONL into
+feature and aggregate CSVs. The schema-upgraded 160-row panel discussed below
+was produced in `/tmp`, so its analyzer output is not tracked as durable
+evidence. Regenerate the producer output with the command below, then write
+fresh analysis tables to `/tmp` unless the input prediction cloud is also made
+durable:
 
 ```bash
 python3 experiments/dev-sys-prediction/analyze_prediction_error_model.py \
   --prediction-cloud /tmp/sys-prediction-error-model-upgraded-160/prediction-cloud.jsonl \
-  --out-dir experiments/dev-sys-prediction/error-model
+  --out-dir /tmp/sys-prediction-error-model-analysis
 ```
 
-The feature table and summaries are descriptive, not a fitted statistical
-model. The current panel supports stratification mainly by radius and source
-class:
+The generated feature table and summaries are descriptive, not a fitted
+statistical model. The current scratch panel supports stratification mainly by
+radius and source class:
 
 - `t`, absolute predicted/observed delta, and step-scaled quantities explain
   most visible error magnitude in this tiny panel;
@@ -541,8 +544,8 @@ class:
 - predicted witness base gap has a moderate rank association with error, but
   the sample is too small and too structured to treat it as a reliable
   predictor;
-- the ranked sigma-window cases for incoming-branch/source tracing are in
-  `error-model/sigma-window-dominated-cases.csv`.
+- ranked sigma-window cases are useful for incoming-branch/source tracing, but
+  should be regenerated from a durable prediction cloud before citing.
 
 Schema-upgraded rerun:
 

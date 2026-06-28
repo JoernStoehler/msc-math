@@ -43,6 +43,6 @@
     12
   ],
   "rows_per_facet": 2,
-  "source_table": "/workspaces/msc-math/.worktrees/facet-scale-baseline-prediction/experiments/sys-datascience/prepare/polytope-table.jsonl",
+  "source_table": "experiments/sys-datascience/prepare/polytope-table.jsonl",
   "total_selected_rows": 6
 }

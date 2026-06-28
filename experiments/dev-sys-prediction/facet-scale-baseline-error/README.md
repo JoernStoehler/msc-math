@@ -106,14 +106,17 @@ python3 experiments/dev-sys-prediction/facet-scale-baseline-error/summarize_pane
   --out-dir experiments/dev-sys-prediction/facet-scale-baseline-error/summaries
 ```
 
-## Results
+## Outputs
 
 Generated tables:
 
-- `summaries/global-scale-by-facet.csv`;
-- `summaries/branch-window-by-facet.csv`;
-- `summaries/prediction-error-by-facet-step.csv`;
-- `summaries/SUMMARY.md`.
+- `summaries/global-scale-by-facet.csv`: global and per-coordinate scale by
+  facet count;
+- `summaries/branch-window-by-facet.csv`: branch-window size by facet count and
+  threshold;
+- `summaries/prediction-error-by-facet-step.csv`: prediction error and
+  target-winner visibility by facet count and radius;
+- `summaries/panel-scale.csv`: selected basepoint scale fields.
 
 When `--trace-iterations 0 --skip-endpoint-diagnostics` is used,
 `run-trace.jsonl`, `prediction-cloud.jsonl`, and endpoint JSONL files are
@@ -123,64 +126,24 @@ The empty files are retained because the producer writes its standard artifact
 set even for local-only runs; deleting them would make the checked-in packet
 less faithful to regeneration.
 
-Global coordinate scale:
+## Interpretation
 
-- Median per-coordinate RMS is essentially stable across the retained counts:
-  about `0.510` for `F=6,10,12`.
-- Median flattened norm grows with `sqrt(F)`: `2.50` at `F=6`, `3.24` at
-  `F=10`, `3.53` at `F=12`.
-- Median sampled inter-polytope flattened distance is much larger than tested
-  radii: `3.24` at `F=6`, `4.41` at `F=10`, `3.87` at `F=12`.
-- A fixed `t=1e-2` is therefore tiny globally, but not identical as a
-  per-coordinate perturbation: unit-direction coordinate RMS is `0.204` at
-  `F=6`, `0.158` at `F=10`, and `0.144` at `F=12`.
+The useful calibration is qualitative. Median per-coordinate RMS is stable
+across the checked facet counts, while flattened norms grow with `sqrt(F)`.
+The same absolute radius is therefore a smaller per-coordinate perturbation at
+larger `F`, but current evidence does not justify replacing the shared
+absolute grid by a purely `F`-scaled grid.
 
-Branch windows at relative threshold `0.01`:
+The checked panel supports treating radii through `1e-2` as the shared local
+grid for the next prediction-error sessions. The `3e-2` radius is a stress
+radius: it exposes construction failure or branch-window breakdown in this
+small panel. The detailed counts and error magnitudes live in
+`summaries/prediction-error-by-facet-step.csv`.
 
-- `F=6`: both selected rows are large-gap; median near-active count `1`.
-- `F=10`: both selected rows are high-degeneracy; median near-active count `8`,
-  max `10`.
-- `F=12`: both selected rows are narrow-gap; median near-active count `3.5`.
-
-Prediction/error behavior:
-
-- No base recomputation failures occurred in `branch-diagnostic`.
-- The local finite-radius cloud selected `6` fixtures and wrote `112` rows.
-  `111` rows were valid; one `F=10`, `t=3e-2` row failed target-polytope
-  construction.
-- At `t=1e-2`, median absolute candidate-window total error was:
-  `3.5e-3` for `F=6`, `3.1e-5` for `F=10`, and `5.3e-5` for `F=12`.
-- At `t=3e-2`, median absolute total error was:
-  `6.7e-2` for `F=6`, `2.7e-4` for `F=10` over valid rows, and `6.9e-4` for
-  `F=12`; max errors were much larger, up to `0.414` for `F=6` and `0.033`
-  for `F=12`.
-- The dominant failure mode is not one monotone function of `F`. It depends on
-  branch-window coverage. In the selected `F=6` large-gap rows, sigma-window
-  error appears at `1e-2` and dominates by `3e-2`. In the selected `F=10`
-  high-degeneracy rows, `1e-2` remains accurate and `3e-2` starts showing one
-  construction failure and one large max error. In the selected `F=12`
-  narrow-gap rows, median behavior remains good at `3e-2`, but max error shows
-  window breakdown.
-
-Target-winner base gaps:
-
-- The summary columns `target_best_not_in_base_window`,
-  `median_target_best_base_sys_gap`, `p90_target_best_base_sys_gap`, and
-  `max_target_best_base_sys_gap` answer: for the sigma that is minimal at
-  `a0+t*u`, how far above the base minimum was that sigma at `a0`?
-- At `t<=1e-3`, every valid `F=6` and `F=10` target winner was already in the
-  base candidate window; the recorded median base sys gap is `0`. For `F=12`,
-  five rows already have target winners outside the base candidate window even
-  at small radii, although the resulting prediction error remains tiny at
-  `1e-4` and `1e-3`.
-- At `t=1e-2`, target winners outside the base candidate window appear in
-  `5/8` valid `F=6` rows, `1/10` `F=10` rows, and `5/10` `F=12` rows. Among
-  rows where the target winner is visible at base, p90 base sys gap is `0` for
-  `F=6`, `0.01098` for `F=10`, and `0.00397` for `F=12`.
-- At `t=3e-2`, the outside-window counts are `5/8`, `2/9` valid `F=10` rows,
-  and `5/10`. This is the cleanest reason to treat `3e-2` as a stress radius:
-  the target minimizer often no longer belongs to the base branch window used
-  for prediction.
+The dominant failure mode is not one monotone function of `F`. It depends on
+branch-window coverage and is confounded with degeneracy regime in this panel:
+selected `F=6` rows are large-gap, selected `F=10` rows high-degeneracy, and
+selected `F=12` rows narrow-gap.
 
 Statistical uncertainty:
 

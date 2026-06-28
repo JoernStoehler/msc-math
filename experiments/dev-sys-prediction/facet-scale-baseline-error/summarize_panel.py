@@ -305,14 +305,6 @@ def write_csv(path, rows):
             writer.writerow({key: fmt(row.get(key)) for key in fields})
 
 
-def markdown_table(rows, columns):
-    lines = ["| " + " | ".join(columns) + " |"]
-    lines.append("| " + " | ".join("---" for _ in columns) + " |")
-    for row in rows:
-        lines.append("| " + " | ".join(fmt(row.get(column)) for column in columns) + " |")
-    return "\n".join(lines)
-
-
 def main():
     args = parse_args()
     facet_counts = [int(value) for value in args.facet_counts.split(",") if value]
@@ -326,72 +318,14 @@ def main():
     prediction_rows = prediction_summary(args.prediction_dir, poly_id_to_facet)
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
+    stale_summary = args.out_dir / "SUMMARY.md"
+    if stale_summary.exists():
+        stale_summary.unlink()
     write_csv(args.out_dir / "global-scale-by-facet.csv", scale_rows)
     write_csv(args.out_dir / "panel-scale.csv", panel_scale_rows)
     write_csv(args.out_dir / "branch-window-by-facet.csv", branch_rows)
     write_csv(args.out_dir / "prediction-error-by-facet-step.csv", prediction_rows)
 
-    report = [
-        "# Facet-Count Scale And Baseline Prediction Summary",
-        "",
-        "Generated summary. See `README.md` for interpretation and caveats.",
-        "",
-        "## Global scale by facet count",
-        "",
-        markdown_table(
-            scale_rows,
-            [
-                "facet_count",
-                "source_rows",
-                "median_flat_norm",
-                "median_coord_rms",
-                "median_inter_polytope_dist",
-                "unit_direction_coord_rms",
-            ],
-        ),
-        "",
-        "## Branch window at threshold 0.01",
-        "",
-        markdown_table(
-            [row for row in branch_rows if abs(row["threshold_relative"] - 0.01) < 1e-15],
-            [
-                "facet_count",
-                "rows",
-                "failures",
-                "median_near_active_count",
-                "max_near_active_count",
-                "labels",
-            ],
-        ),
-        "",
-        "## Prediction error by facet count and radius",
-        "",
-        markdown_table(
-            prediction_rows,
-            [
-                "facet_count",
-                "step",
-                "model_source",
-                "rows",
-                "ok_rows",
-                "failure_rows",
-                "mean_abs_total_error",
-                "median_abs_total_error",
-                "normal_se_mean_abs_total_error",
-                "p90_abs_total_error",
-                "max_abs_total_error",
-                "median_abs_active_model_error",
-                "median_abs_linearization_error",
-                "median_abs_sigma_set_error",
-                "target_best_not_in_base_window",
-                "median_target_best_base_sys_gap",
-                "p90_target_best_base_sys_gap",
-                "catch_probability_for_5pct_tail",
-            ],
-        ),
-        "",
-    ]
-    (args.out_dir / "SUMMARY.md").write_text("\n".join(report).rstrip() + "\n")
     print(args.out_dir)
 
 

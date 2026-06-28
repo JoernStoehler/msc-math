@@ -27,6 +27,14 @@ def load_jsonl(path):
                 yield json.loads(line)
 
 
+def display_path(path):
+    path = path.resolve()
+    try:
+        return str(path.relative_to(ROOT))
+    except ValueError:
+        return str(path)
+
+
 def main():
     args = parse_args()
     facet_counts = [int(value) for value in args.facet_counts.split(",") if value]
@@ -63,7 +71,7 @@ def main():
     with summary_path.open("w") as handle:
         json.dump(
             {
-                "source_table": str(args.polytope_table),
+                "source_table": display_path(args.polytope_table),
                 "facet_counts": facet_counts,
                 "rows_per_facet": args.rows_per_facet,
                 "total_selected_rows": len(selected),
