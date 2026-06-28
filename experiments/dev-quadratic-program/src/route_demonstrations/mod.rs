@@ -32,6 +32,13 @@
 //!   fallback rather than inventing a scalar on invalid/ambiguous inputs.
 //! - `lp_transition_policy_no_edge_advantage`: LP facet-pair transitions are a
 //!   tried f64 route variant with no observed edge-fixture advantage so far.
+//! - `product_rounding_changes_input`: product rounding solves tiny f64
+//!   off-block drift by explicitly changing the input, without a stored
+//!   capacity-distortion bound.
+//! - `near_redundant_removal_is_bounded_surrogate`: near-redundant facet
+//!   removal can replace ambiguous direct f64 output by a bounded surrogate.
+//! - `product_billiard_reduces_product_sigma_count`: product/billiard
+//!   enumeration is a product-specialized speedup measured by visited sigmas.
 //!
 //! The cost demonstration for the exact transition-pruned reference route lives
 //! in `experiments/performance/src/bin/capacity_route_costs.rs`, because it
@@ -44,7 +51,10 @@ mod f64_value_not_certificate;
 mod guarded_route_safe_refusal;
 mod literal_f64_pruning;
 mod lp_transition_policy_no_edge_advantage;
+mod near_redundant_removal_is_bounded_surrogate;
 mod near_singular_kkt_false_positive;
+mod product_billiard_reduces_product_sigma_count;
+mod product_rounding_changes_input;
 mod q_error_bound_not_certificate;
 mod retained_candidate_fallback_limit;
 

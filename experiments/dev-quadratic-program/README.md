@@ -164,7 +164,15 @@ custom enumeration, or local proof packets:
   binary64-exact error certificates. The LP transition-policy demonstration
   records a tried f64 variant: using LP facet-pair tests instead of vertex-scan
   facet-pair tests has no observed advantage on the current edge fixtures and
-  adds ambiguity on the near-redundant product fixture.
+  adds ambiguity on the near-redundant product fixture. The product
+  preprocessing demonstrations record two intentional changed-input routes:
+  product rounding handles tiny off-block f64 drift but has no stored
+  capacity-distortion bound, while near-redundant facet removal computes a
+  bounded surrogate that can simplify direct f64 outputs with unresolved
+  near-minimum ambiguity.
+  The product/billiard demonstration records the product-specialized speedup by
+  comparing visited sigma counts against generic transition-pruned HK on a
+  product fixture.
 - **f64 with exact fallback capacity:** f64 enumeration/solve first, then exact
   one-sigma solve for unresolved capacity-relevant candidates. This route is
   only as strong as the f64 candidate filter plus fallback policy. The active
