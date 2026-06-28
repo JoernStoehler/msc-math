@@ -161,7 +161,10 @@ custom enumeration, or local proof packets:
   positive beta values that must stay indeterminate, near-singular systems
   where f64 accepts a sigma rejected by exact binary64 rational KKT, and
   `q_error_bound` values that are residual diagnostics rather than total
-  binary64-exact error certificates.
+  binary64-exact error certificates. The LP transition-policy demonstration
+  records a tried f64 variant: using LP facet-pair tests instead of vertex-scan
+  facet-pair tests has no observed advantage on the current edge fixtures and
+  adds ambiguity on the near-redundant product fixture.
 - **f64 with exact fallback capacity:** f64 enumeration/solve first, then exact
   one-sigma solve for unresolved capacity-relevant candidates. This route is
   only as strong as the f64 candidate filter plus fallback policy. The active

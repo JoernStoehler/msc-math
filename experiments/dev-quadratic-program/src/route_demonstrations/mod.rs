@@ -30,6 +30,8 @@
 //!   candidates is exact only for the candidate set it receives.
 //! - `guarded_route_safe_refusal`: guarded routes should reject or request
 //!   fallback rather than inventing a scalar on invalid/ambiguous inputs.
+//! - `lp_transition_policy_no_edge_advantage`: LP facet-pair transitions are a
+//!   tried f64 route variant with no observed edge-fixture advantage so far.
 //!
 //! The cost demonstration for the exact transition-pruned reference route lives
 //! in `experiments/performance/src/bin/capacity_route_costs.rs`, because it
@@ -41,6 +43,7 @@ mod conservative_pruning_still_f64;
 mod f64_value_not_certificate;
 mod guarded_route_safe_refusal;
 mod literal_f64_pruning;
+mod lp_transition_policy_no_edge_advantage;
 mod near_singular_kkt_false_positive;
 mod q_error_bound_not_certificate;
 mod retained_candidate_fallback_limit;
