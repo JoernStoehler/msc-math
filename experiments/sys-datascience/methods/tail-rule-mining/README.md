@@ -77,7 +77,7 @@ uv run --script experiments/sys-datascience/methods/tail-rule-mining/analyze.py 
   --out-dir /tmp/sys-ds-full-current/tail-rule-mining
 ```
 
-## Generated Artifacts After Rerun
+## Generated Artifact Contract
 
 - `summary.json`
 - `leaf-rules.tsv`
@@ -90,17 +90,37 @@ uv run --script experiments/sys-datascience/methods/tail-rule-mining/analyze.py 
 - `summary.json`
 - `bucket-control-rules.tsv`
 - `euclidean-area-deciles.tsv`
+- `outside-small-face-audit.tsv`
+- `conditional-omega-rules.tsv`
+- `matched-outside-small-face-omega.tsv`
+- `outside-small-face-examples.tsv`
+- `headline-summary.tsv`
+
+For the current `32768`-row LICCA interpretation below, the local retained
+output packets are:
+
+- `/tmp/sys-ds-two-face-control-tail-rule-9846319-trimmed-top1`
+- `/tmp/sys-ds-two-face-control-well-rounded-9846319`
+
+Those packets are the checked generated artifacts for the current numbers in
+this README. The commands below reproduce them from the matching prepared table
+at `/tmp/sys-ds-two-face-control-prepare-9846319`; if that scratch prepared
+table is unavailable, first rebuild or retrieve the LICCA prepared table for
+commit `f4525347`.
 
 `summary.json` also records fixed coarse baselines and a label-permutation
 null check for the single grouped split. It includes the first rows of
 `bucket-interpretation-diagnostics.tsv` for navigation, but the TSV is the
 recomputed source for bucket-level interpretation.
 
-## Observation
+## Historical Scratch Run
 
-Current full scoped random/product run after adding Euclidean two-face area
-controls, using `/tmp/sys-ds-random-only-full.EbpaS8` as input and writing
-`/tmp/sys-ds-two-face-euclidean-control-tail-rule-full`:
+This section records the earlier full scoped random/product scratch run after
+adding Euclidean two-face area controls, using
+`/tmp/sys-ds-random-only-full.EbpaS8` as input and writing
+`/tmp/sys-ds-two-face-euclidean-control-tail-rule-full`. It is retained as a
+stability/provenance check. The LICCA targeted production rerun below is the
+current interpretation source.
 
 - rows: `14336`;
 - geometry-only features: `146`;
@@ -321,7 +341,7 @@ Bucket-local Euclidean-control command:
 ```bash
 uv run --script experiments/sys-datascience/methods/tail-rule-mining/analyze_two_face_controls.py \
   --tables-dir /tmp/sys-ds-two-face-control-prepare-9846319 \
-  --out-dir /tmp/sys-ds-two-face-control-two-face-controls-9846319
+  --out-dir /tmp/sys-ds-two-face-control-well-rounded-9846319
 ```
 
 This rerun adds a top-1% label. On the single grouped holdout:
@@ -386,18 +406,88 @@ but the current Euclidean two-face control experiment mainly downgrades the
 specific primal two-face area pattern from "Lagrangian orientation evidence" to
 "mostly Euclidean small-face evidence, with limited residual generic signal."
 
+Immediate follow-up diagnostics on the same prepared table sharpen the
+subpopulation claim. The result is not "all high-`sys` rows are low Euclidean
+area"; it is that the extreme tail is heavily concentrated in the lowest
+Euclidean-area bands, with a small outside-small-face population.
+
+For top 1%, the share of positives inside the lowest 20% of
+`ridge_euclidean_area_volnorm_sum` is:
+
+| bucket | positives inside / total | fraction inside |
+| --- | ---: | ---: |
+| product `F=10` | `70 / 82` | `0.854` |
+| product `F=11` | `32 / 41` | `0.780` |
+| product `F=12` | `28 / 41` | `0.683` |
+| generic `F=10` | `61 / 82` | `0.744` |
+| generic `F=11` | `27 / 41` | `0.659` |
+| generic `F=12` | `22 / 41` | `0.537` |
+
+Using the lowest 30% as the small-face regime makes the concentration stronger:
+top-1% positives inside are `79 / 82`, `37 / 41`, and `34 / 41` for product
+`F=10,11,12`, and `68 / 82`, `32 / 41`, and `28 / 41` for generic
+`F=10,11,12`. For the sharper top-quarter-percent label, product `F=10`,
+product `F=11`, and generic `F=12` have no positives outside the lowest 30%;
+generic `F=10` still has `4 / 21` outside.
+
+The boundary sensitivity is monotone in the expected direction, not an artifact
+of exactly choosing `20%`: for top 1%, the lowest `10%` already contains
+between `37%` and `66%` of positives depending on bucket; the lowest `40%`
+contains at least `88%` of positives in every bucket, and at least `95%` in
+four of six buckets. Thus the evidence is for concentration in the small-area
+side of the bucket distribution, not for a sharp canonical cutoff.
+
+The tail ladder in generic `F=10` supports an approach-to-regime reading, but
+not a universal characterization. Counts by Euclidean-area decile are:
+
+| label | D1 | D2 | D3 | D4 | D5 | D6 | D7 | D8 | D9 | D10 |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| top decile | `330` | `172` | `116` | `76` | `54` | `27` | `22` | `15` | `8` | `0` |
+| top 5% | `195` | `84` | `54` | `31` | `18` | `11` | `9` | `4` | `4` | `0` |
+| top 1% | `45` | `16` | `7` | `4` | `5` | `3` | `1` | `0` | `1` | `0` |
+| top 0.5% | `21` | `8` | `3` | `2` | `4` | `3` | `0` | `0` | `0` | `0` |
+| top 0.25% | `11` | `5` | `1` | `1` | `2` | `1` | `0` | `0` | `0` | `0` |
+
+The conditional omega diagnostic suggests a possible second filter inside the
+outside-small-face rows, but the denominators are small. For top 1% outside the
+lowest 30% Euclidean-area rows, the lowest 15% of omega-matrix spectral norm
+captures `12 / 14` generic `F=10`, `6 / 9` generic `F=11`, `9 / 13` generic
+`F=12`, and `7 / 7` product `F=12` positives. A matched-control check compares
+those outside-small-face positives to non-tail rows from the same Euclidean
+area deciles, choosing controls by nearest Euclidean area and not by omega. In
+that comparison, the high-tail rows usually have lower omega medians; examples
+for the lowest-30% boundary are generic `F=10` median `15.49` versus matched
+control median `19.83`, generic `F=11` median `15.52` versus `18.96`, generic
+`F=12` median `16.79` versus `18.38`, and product `F=12` median `13.05`
+versus `15.90`. This supports a follow-up hypothesis that outside-small-face
+high-tail rows are still relatively low-omega rows, but it is not yet a stable
+taxonomy because some cells contain only a handful of positives.
+
+Current interpretation after well-rounding:
+
+- The main class is low Euclidean primal two-face area. It explains most of the
+  top tail, and its concentration sharpens at more extreme thresholds.
+- There is not yet evidence for a broad large-Euclidean-area high-`sys` class;
+  outside-small-face examples mostly sit in Euclidean deciles `3` to `6`, not
+  in the largest-area deciles.
+- The outside-small-face population is real enough to avoid universal wording,
+  especially in generic `F=10` and `F=12`.
+- Low omega-matrix spectral norm may be the next useful discriminator for that
+  outside population, but this is a small-count lead, not a completed
+  explanation.
+
 The full default stability/permutation analysis on the `32768`-row prepared
 table was started locally but stopped during the stability sweep because it was
 too slow for an interactive pass. The trimmed rerun above is the durable local
 artifact for this production table; a full production stability rerun should be
 done as a batch job if needed.
 
-Interpretation: shallow geometry-only rules robustly isolate high-tail regions
-better than the sampled strata and available generator-provenance controls in
-this retained table. The signal is not localized to one column: the
-symplectic/omega feature family is strongest under the stability sweep, while
-Euclidean size/spread features are also informative. This is an in-table
-interpretability diagnostic, not a validated candidate-proposer.
+Interpretation of the historical scratch run: shallow geometry-only rules
+robustly isolate high-tail regions better than the sampled strata and available
+generator-provenance controls in that retained table. The later LICCA
+Euclidean-control diagnostics refine the mechanism-level reading: the primal
+two-face area pattern is mostly small Euclidean two-face area, while
+facet-normal omega remains a separate lead.
 
 ## Validity Guards
 
@@ -414,8 +504,9 @@ interpretability diagnostic, not a validated candidate-proposer.
 
 ## Current Disposition
 
-Run-pending-review trial method. The current scratch run is successful and
-needs method/statistics review before thesis use.
+Merged trial method on `sys-ds-random-method-integration`. The current LICCA
+targeted production run is successful and gives a thesis-usable retained-table
+association, with the caveats below. It is not a proposer validation.
 
 ## Interpretation Boundaries
 
@@ -423,12 +514,11 @@ needs method/statistics review before thesis use.
   of a new `sys > 1` row.
 - This packet does not show that a rule will enrich newly generated rows before
   `sys` is computed.
-- The stable split features overlap with ridge and omega features from the
-  scalar-association packet, so this packet should be treated as a local
-  rule-shaped view of that high-tail signal.
-- Euclidean size/spread features also carry high-tail signal in this packet.
-  The current artifacts do not decide whether the Euclidean signal is
-  independent of the symplectic/omega signal or a correlated proxy for it.
+- The primal two-face area signal is mostly explained by small Euclidean
+  two-face area; do not present it as direct Lagrangian-orientation evidence.
+- Facet-normal omega-matrix features remain a separate lead, especially for the
+  small outside-low-Euclidean-area population, but the current counts do not
+  establish a stable second high-`sys` class.
 - The result is scoped to the current retained random/product producer
   contract. New random distributions, broader height/facet/product ranges, or
   independent producer reruns reopen the packet.
@@ -442,7 +532,23 @@ changes.
 ## Thesis Use
 
 Potentially supports a statement that interpretable high-tail rule mining was
-tried and did not by itself validate a candidate-proposer.
+tried and did not by itself validate a candidate-proposer. The two-face control
+result is also useful as a cautionary example: a symplectic-looking feature can
+be a sharper proxy for an ordinary Euclidean small-face regime.
+
+## Expansion Leads
+
+These are outside the current well-rounded packet unless thesis planning
+chooses them explicitly:
+
+- cluster/taxonomize high-`sys` rows to test whether the outside-small-face
+  population is a stable second class;
+- inspect representative geometry for low-Euclidean high-tail,
+  outside-low-Euclidean high-tail, and low-Euclidean non-tail rows;
+- run a larger targeted production plan if the outside-small-face/low-omega
+  lead becomes thesis-relevant;
+- freeze a rule and test it as a generated-candidate proposer before computing
+  `sys` on selected rows.
 
 ## Reopen Triggers
 
