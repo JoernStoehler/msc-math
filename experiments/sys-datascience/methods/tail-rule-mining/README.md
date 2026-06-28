@@ -92,6 +92,7 @@ uv run --script experiments/sys-datascience/methods/tail-rule-mining/analyze.py 
 - `euclidean-area-deciles.tsv`
 - `outside-small-face-audit.tsv`
 - `conditional-omega-rules.tsv`
+- `matched-outside-small-face-omega.tsv`
 - `outside-small-face-examples.tsv`
 
 `summary.json` also records fixed coarse baselines and a label-permutation
@@ -413,6 +414,13 @@ top-1% positives inside are `79 / 82`, `37 / 41`, and `34 / 41` for product
 product `F=11`, and generic `F=12` have no positives outside the lowest 30%;
 generic `F=10` still has `4 / 21` outside.
 
+The boundary sensitivity is monotone in the expected direction, not an artifact
+of exactly choosing `20%`: for top 1%, the lowest `10%` already contains
+between `37%` and `66%` of positives depending on bucket; the lowest `40%`
+contains at least `88%` of positives in every bucket, and at least `95%` in
+four of six buckets. Thus the evidence is for concentration in the small-area
+side of the bucket distribution, not for a sharp canonical cutoff.
+
 The tail ladder in generic `F=10` supports an approach-to-regime reading, but
 not a universal characterization. Counts by Euclidean-area decile are:
 
@@ -428,10 +436,16 @@ The conditional omega diagnostic suggests a possible second filter inside the
 outside-small-face rows, but the denominators are small. For top 1% outside the
 lowest 30% Euclidean-area rows, the lowest 15% of omega-matrix spectral norm
 captures `12 / 14` generic `F=10`, `6 / 9` generic `F=11`, `9 / 13` generic
-`F=12`, and `7 / 7` product `F=12` positives. This supports a follow-up
-hypothesis that outside-small-face high-tail rows are still low-omega rows, but
-it is not yet a stable taxonomy because some cells contain only a handful of
-positives.
+`F=12`, and `7 / 7` product `F=12` positives. A matched-control check compares
+those outside-small-face positives to non-tail rows from the same Euclidean
+area deciles, choosing controls by nearest Euclidean area and not by omega. In
+that comparison, the high-tail rows usually have lower omega medians; examples
+for the lowest-30% boundary are generic `F=10` median `15.49` versus matched
+control median `19.83`, generic `F=11` median `15.52` versus `18.96`, generic
+`F=12` median `16.79` versus `18.38`, and product `F=12` median `13.05`
+versus `15.90`. This supports a follow-up hypothesis that outside-small-face
+high-tail rows are still relatively low-omega rows, but it is not yet a stable
+taxonomy because some cells contain only a handful of positives.
 
 Current interpretation after well-rounding:
 

@@ -40,7 +40,7 @@ LABELS = {
     "top_quarter_percent": 0.9975,
 }
 
-SMALL_FACE_FRACTIONS = [0.2, 0.3]
+SMALL_FACE_FRACTIONS = [0.1, 0.2, 0.3, 0.4]
 
 PROFILE_FEATURES = {
     "sys": "sys",
@@ -505,6 +505,85 @@ def conditional_omega_for_bucket(
     return rows
 
 
+def matched_outside_small_face_omega_for_bucket(
+    *,
+    bucket_rows: list[dict[str, object]],
+    capacity_source: str,
+    facet_count: int,
+    euclidean_bands: int,
+) -> list[dict[str, object]]:
+    sys_values = np.array([float(row["sys"]) for row in bucket_rows], dtype=float)
+    euclidean_values = np.array(
+        [float(row[FEATURES["euclidean_area_sum"]]) for row in bucket_rows], dtype=float
+    )
+    omega_values = np.array(
+        [float(row[FEATURES["omega_spectral_norm"]]) for row in bucket_rows], dtype=float
+    )
+    deciles = euclidean_decile_indices(euclidean_values, euclidean_bands)
+    rows: list[dict[str, object]] = []
+    for label, quantile in LABELS.items():
+        target = sys_values >= np.quantile(sys_values, quantile)
+        for small_fraction in SMALL_FACE_FRACTIONS:
+            small_face = euclidean_values <= np.quantile(euclidean_values, small_fraction)
+            outside_target = target & ~small_face
+            outside_control_pool = ~target & ~small_face
+            if not np.any(outside_target):
+                continue
+            matched_control = np.zeros(len(bucket_rows), dtype=bool)
+            for decile in sorted(set(deciles[outside_target])):
+                target_indices = np.where(outside_target & (deciles == decile))[0]
+                available_controls = set(
+                    int(index)
+                    for index in np.where(outside_control_pool & (deciles == decile))[0]
+                )
+                if not available_controls:
+                    continue
+                for target_index in target_indices:
+                    if not available_controls:
+                        break
+                    chosen = min(
+                        available_controls,
+                        key=lambda control_index: abs(
+                            euclidean_values[control_index]
+                            - euclidean_values[target_index]
+                        ),
+                    )
+                    available_controls.remove(chosen)
+                    matched_control[chosen] = True
+            comparison_mask = outside_target | matched_control
+            if not np.any(matched_control):
+                continue
+            selected = np.zeros(len(bucket_rows), dtype=bool)
+            selected[comparison_mask] = omega_values[comparison_mask] <= np.median(
+                omega_values[comparison_mask]
+            )
+            rows.append(
+                {
+                    "capacity_source": capacity_source,
+                    "facet_count": facet_count,
+                    "rows": int(np.sum(comparison_mask)),
+                    "label": label,
+                    "sys_threshold": float(np.quantile(sys_values, quantile)),
+                    "small_face_fraction": small_fraction,
+                    "outside_positive_rows": int(np.sum(outside_target)),
+                    "matched_control_rows": int(np.sum(matched_control)),
+                    "positive_omega_median": float(np.median(omega_values[outside_target])),
+                    "matched_control_omega_median": float(
+                        np.median(omega_values[matched_control])
+                    ),
+                    "positive_omega_mean": float(np.mean(omega_values[outside_target])),
+                    "matched_control_omega_mean": float(np.mean(omega_values[matched_control])),
+                    "positive_euclidean_area_decile_mean": float(np.mean(deciles[outside_target])),
+                    "matched_control_euclidean_area_decile_mean": float(
+                        np.mean(deciles[matched_control])
+                    ),
+                    "rule": "omega_spectral_norm_below_comparison_median",
+                    **metrics(outside_target[comparison_mask], selected[comparison_mask]),
+                }
+            )
+    return rows
+
+
 def outside_small_face_examples_for_bucket(
     *,
     bucket_rows: list[dict[str, object]],
@@ -571,6 +650,7 @@ def main() -> None:
     decile_rows: list[dict[str, object]] = []
     outside_small_face_rows: list[dict[str, object]] = []
     conditional_omega_rows: list[dict[str, object]] = []
+    matched_outside_omega_rows: list[dict[str, object]] = []
     outside_example_rows: list[dict[str, object]] = []
     bucket_counts: list[dict[str, object]] = []
     for capacity_source, facet_count in bucket_keys:
@@ -623,6 +703,14 @@ def main() -> None:
                 euclidean_bands=args.euclidean_bands,
             )
         )
+        matched_outside_omega_rows.extend(
+            matched_outside_small_face_omega_for_bucket(
+                bucket_rows=bucket_rows,
+                capacity_source=capacity_source,
+                facet_count=facet_count,
+                euclidean_bands=args.euclidean_bands,
+            )
+        )
         outside_example_rows.extend(
             outside_small_face_examples_for_bucket(
                 bucket_rows=bucket_rows,
@@ -644,6 +732,10 @@ def main() -> None:
     write_tsv(args.out_dir / "euclidean-area-deciles.tsv", decile_rows)
     write_tsv(args.out_dir / "outside-small-face-audit.tsv", outside_small_face_rows)
     write_tsv(args.out_dir / "conditional-omega-rules.tsv", conditional_omega_rows)
+    write_tsv(
+        args.out_dir / "matched-outside-small-face-omega.tsv",
+        matched_outside_omega_rows,
+    )
     write_tsv(args.out_dir / "outside-small-face-examples.tsv", outside_example_rows)
     write_json(
         args.out_dir / "summary.json",
@@ -658,6 +750,7 @@ def main() -> None:
             "euclidean_decile_row_count": len(decile_rows),
             "outside_small_face_audit_row_count": len(outside_small_face_rows),
             "conditional_omega_rule_count": len(conditional_omega_rows),
+            "matched_outside_small_face_omega_count": len(matched_outside_omega_rows),
             "outside_small_face_example_count": len(outside_example_rows),
         },
     )
@@ -668,6 +761,7 @@ def main() -> None:
     print(f"- euclidean decile rows: `{len(decile_rows)}`")
     print(f"- outside-small-face audit rows: `{len(outside_small_face_rows)}`")
     print(f"- conditional omega rows: `{len(conditional_omega_rows)}`")
+    print(f"- matched outside-small-face omega rows: `{len(matched_outside_omega_rows)}`")
     print(f"- outside-small-face examples: `{len(outside_example_rows)}`")
     print(f"Wrote `{args.out_dir}`")
 
