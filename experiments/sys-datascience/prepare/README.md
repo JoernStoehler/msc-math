@@ -59,11 +59,18 @@ prepare output after the job finishes.
 Current method-facing files:
 
 - `polytope-table.jsonl`: one row per retained random/product polytope, with
-  defining dual vertices, capacity, volume, `sys`, and reusable features;
+  volume-one dual vertices, volume-one capacity/action values, unchanged `sys`,
+  and reusable features;
 - `polytope-provenance-table.jsonl`: one row per retained random/product
-  provenance record;
-- `computed-polytope-observation-table.jsonl`: empty for this active slice,
-  retained as a compatibility output for existing scan/fingerprint tooling.
+  provenance record.
+
+`polytope-table.jsonl` is the method-facing table. It does not carry raw
+producer geometry. The prepare stage reconstructs the producer polytope,
+normalizes to the volume-one representative, and computes feature groups from
+that representative. Consequently `volume` is `1.0`, `capacity` and
+`sys` are the volume-one evaluation values. Raw producer geometry and orbit
+search payloads remain in producer artifacts and are joined by `poly_id` when
+source inspection is needed.
 
 Check prepared outputs with:
 

@@ -11,9 +11,6 @@ use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::path::{Path, PathBuf};
 use std::time::{SystemTime, UNIX_EPOCH};
-use symplectic::database::{OrbitScalars, SigmaAction};
-
-use crate::rows::ComputedPolytopeObservationRow;
 
 #[derive(Clone)]
 pub struct LoadedPolytopeRow {
@@ -23,11 +20,7 @@ pub struct LoadedPolytopeRow {
     pub capacity: f64,
     pub volume: f64,
     pub sys: f64,
-    pub capacity_iterations: Option<u64>,
     pub capacity_source: String,
-    pub sigma_gap_cutoff: Option<f64>,
-    pub sigmas: Option<Vec<SigmaAction>>,
-    pub orbit_scalars: Option<OrbitScalars>,
 }
 
 #[derive(Clone)]
@@ -58,7 +51,6 @@ pub struct LoadedProvenanceRow {
 pub struct LoadedCaches {
     pub polytopes: Vec<LoadedPolytopeRow>,
     pub provenance_rows: Vec<LoadedProvenanceRow>,
-    pub computed_polytope_observations: Vec<ComputedPolytopeObservationRow>,
 }
 
 pub struct DatasetPaths {
@@ -252,7 +244,6 @@ fn ensure_polytope(
     capacity: f64,
     volume: f64,
     sys: f64,
-    capacity_iterations: Option<u64>,
     capacity_source: &str,
 ) -> String {
     let poly_id = poly_id_from_dual_vertices(&dual_vertices_rational);
@@ -265,11 +256,7 @@ fn ensure_polytope(
             capacity,
             volume,
             sys,
-            capacity_iterations,
             capacity_source: capacity_source.to_string(),
-            sigma_gap_cutoff: None,
-            sigmas: None,
-            orbit_scalars: None,
         });
     poly_id
 }
@@ -333,7 +320,6 @@ fn load_random_sample_rows(
             row.capacity,
             row.volume,
             row.sys,
-            Some(row.iterations),
             "random_sample",
         );
         let mut provenance = empty_provenance(
@@ -386,7 +372,6 @@ fn load_random_product_rows(
             row.capacity,
             row.volume,
             row.sys,
-            Some(row.iterations),
             "random_product_sample",
         );
         let mut provenance = empty_provenance(
@@ -469,6 +454,5 @@ pub fn load_caches(paths: &DatasetPaths) -> LoadedCaches {
     LoadedCaches {
         polytopes: polytope_rows,
         provenance_rows,
-        computed_polytope_observations: Vec::new(),
     }
 }

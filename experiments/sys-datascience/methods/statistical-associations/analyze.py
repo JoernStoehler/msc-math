@@ -51,8 +51,6 @@ def covariate_family(name: str) -> str:
         return "symplectic/omega summaries"
     if name.startswith("transition_"):
         return "transition graph summaries"
-    if name.startswith("orbit_"):
-        return "orbit/capacity-result summaries"
     if name in {"is_simple", "simple_vertex_fraction"}:
         return "simplicity summaries"
     return "other scalar summaries"
@@ -220,7 +218,7 @@ def obvious_covariate_audit() -> dict[str, object]:
         "conceptual_flow": [
             "dual vertices a",
             "normalize to the volume-one representative when scale is not the question",
-            "first-layer derived objects such as a itself, omega(a_i,a_j), two-faces, graphs, and orbit outputs",
+            "first-layer derived objects such as a itself, omega(a_i,a_j), two-faces, and graphs",
             "prepare-stage engineered scalar features f_i(a) that seem useful",
             "univariate association screening of f_i(a) against sys(a)",
         ],
@@ -239,7 +237,7 @@ def obvious_covariate_audit() -> dict[str, object]:
                 "node": "facet-dual list a_k",
                 "status": "source object",
                 "current_summaries": [
-                    "volume-one norms",
+                    "norms in the prepared volume-one representative",
                     "centroid norm",
                     "coordinate standard deviations",
                     "pairwise Euclidean distances",
@@ -252,7 +250,7 @@ def obvious_covariate_audit() -> dict[str, object]:
                 "node": "pairwise symplectic form omega(a_i,a_j)",
                 "status": "covered in the current prepare schema, pending retained-table rerun for new columns",
                 "current_summaries": [
-                    "all-pair absolute omega mean/std/min/max at volume one",
+                    "all-pair absolute omega mean/std/min/max",
                     "zero fraction",
                     "ridge-restricted absolute omega summaries and small-value fractions",
                     "omega matrix singular-value summaries",
@@ -265,7 +263,7 @@ def obvious_covariate_audit() -> dict[str, object]:
                 "node": "two-faces F_i cap F_j",
                 "status": "covered in the current prepare schema, pending retained-table rerun for new columns",
                 "current_summaries": [
-                    "volume-one symplectic area mean/std/min/max over retained two-faces",
+                    "symplectic area mean/std/min/max over retained two-faces",
                     "sum",
                     "max share",
                     "median and upper quantiles",
@@ -294,13 +292,9 @@ def obvious_covariate_audit() -> dict[str, object]:
             },
             {
                 "node": "capacity/orbit outputs",
-                "status": "covered for post-evaluation explanation only",
-                "current_summaries": [
-                    "sigma/orbit counts and fractions",
-                    "selected-orbit norm and out-degree summaries",
-                    "cycle omega summaries",
-                    "KKT/best-orbit diagnostics",
-                ],
+                "status": "deferred to a separate post-evaluation interpretation packet",
+                "current_summaries": [],
+                "notes": "The active random/product method table intentionally does not serialize sigma/orbit diagnostics.",
             },
             {
                 "node": "source/generator metadata",
@@ -318,11 +312,10 @@ def obvious_covariate_audit() -> dict[str, object]:
         "covered_invariant_feature_families": [
             "basic size counts such as facet, vertex, edge, ridge, and dual-vertex counts",
             "simple combinatorial summaries such as degrees, incidence counts, ridge sizes, and facet adjacency",
-            "volume-normalized Euclidean summaries of dual vertices, edge lengths, and facet volumes",
+            "Euclidean summaries of prepared dual vertices, edge lengths, and facet volumes",
             "omega summaries over all facet pairs, including matrix/sign/alignment summaries in the current prepare schema",
-            "ridge-level symplectic-area summaries, including volume-normalized sum/mean/max, quantiles, top-k share, and small-area fractions in the current prepare schema",
+            "ridge-level symplectic-area summaries, including sum/mean/max, quantiles, top-k share, and small-area fractions in the current prepare schema",
             "transition-graph summaries from facet intersections and omega signs",
-            "orbit/capacity-result summaries for already evaluated rows",
         ],
         "bad_feature_families_not_counted_as_evidence_of_coverage": [
             "raw individual coordinates of a_k, because coordinate-level effects are not invariant under the relevant symmetries and are expected to be weak or uninterpretable",
@@ -355,13 +348,6 @@ def main() -> None:
     rows, provenance_rows = load_trusted_random_tables(args.tables_dir)
     y = np.array([float(row["sys"]) for row in rows], dtype=float)
     eligible_names = numeric_feature_names(rows, geometry_only=False)
-    post_capacity_names = [
-        name
-        for name in numeric_feature_names(
-            rows, geometry_only=False, include_post_capacity=True
-        )
-        if name.startswith("orbit_")
-    ]
     names = eligible_names[: args.max_features] if args.max_features else eligible_names
 
     associations = []
@@ -440,7 +426,6 @@ def main() -> None:
         "tested_scalar_covariates": [row["feature"] for row in associations],
         "skipped_constant_covariates": skipped_constant,
         "skipped_by_max_features": eligible_names[len(names) :],
-        "post_capacity_covariates_available_but_not_tested": post_capacity_names,
         "source_factor_tests": source_factor_tests(rows, provenance_rows),
         "eligible_covariate_family_inventory": family_inventory(eligible_names),
         "tested_covariate_family_inventory": family_inventory(
@@ -451,10 +436,6 @@ def main() -> None:
             "sys",
             "capacity",
             "volume",
-            "capacity_iterations",
-            "sigma_gap_cutoff",
-            "orbit_result_iterations_log1p",
-            "orbit_* post-capacity interpretation fields",
             "non-scalar JSON columns",
             "columns present as numeric values in less than 98% of retained rows",
             "provenance/source metadata as numeric scalar covariates; these are handled by source_factor_tests",

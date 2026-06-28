@@ -144,8 +144,8 @@ stability, and method use are audited.
 
 ### Two-Face Symplectic Area Tails
 
-- feature object: volume-normalized symplectic areas of reconstructed primal
-  two-face polygons.
+- feature object: symplectic areas of reconstructed primal two-face polygons in
+  the prepared volume-one representative.
 - thesis question: do natural two-dimensional symplectic face areas explain the
   high `sys` tail?
 - current status: `implemented-new` for incidence-cycle ordering diagnostics,
@@ -173,7 +173,7 @@ stability, and method use are audited.
   exp-sys-landscape` passed; temp-output `experiments/sys-datascience/pipeline.local.sh smoke` passed. The smoke table
   had `0` ordering failures and ordered fraction `1.0` for all `4` rows. Shared
   method feature selection excludes ordering-diagnostic columns from geometry
-  inputs and excludes `ridge_symp_area_volnorm_*` inputs whenever any loaded row
+  inputs and excludes `ridge_symp_area_*` inputs whenever any loaded row
   has `ridge_symp_area_ordered_fraction != 1.0`.
 - disposition: implementation, temp-output schema/ordering smoke, full scratch
   rebuild, and full method rerun passed; method/statistics review remains
@@ -288,12 +288,12 @@ stability, and method use are audited.
   cycle/triad motifs, graph spectra, and orbit-compatibility summaries.
 - valid transforms: SCC count/largest share; source/sink counts; cycle/triad
   counts; spectra if cost/interpretability is acceptable; orbit-overlap
-  summaries only in post-capacity interpretation packets.
+  summaries only in post-evaluation interpretation packets.
 - invalid/risky transforms: generic graph feature dumping without a question;
   mixing orbit-selected summaries into clean proposer features.
 - invariance/symmetry: graph summaries must be facet-permutation invariant;
   graph construction depends on omega signs and facet intersections.
-- data/leakage status: pre-capacity for graph-only features; post-capacity if
+- data/leakage status: pre-evaluation for graph-only features; post-evaluation if
   compared to selected orbits.
 - methods expected to consume it: `projection-structure`, `prediction-ranking`,
   `statistical-associations`; orbit comparisons only in interpretation packets.
@@ -346,29 +346,29 @@ stability, and method use are audited.
 
 ### Action Spectrum, Sigma, Orbit, And KKT Outputs
 
-- feature object: post-capacity sigma/action lists, selected orbit facets,
+- feature object: post-evaluation sigma/action lists, selected orbit facets,
   cycle diagnostics, and KKT/orbit-search scalars.
 - thesis question: how should computed capacity evidence be interpreted and
   audited?
-- current status: `candidate-existing-unaudited` for current orbit fields in
-  `features_orbit.rs`.
+- current status: deferred; these are not serialized into the active
+  random/product `polytope-table.jsonl`.
 - valid transforms: cutoff-aware availability, counts, first values, gaps,
   selected-vs-global comparisons, KKT diagnostics, and leakage-audit summaries.
 - invalid/risky transforms: generic quantiles of truncated/censored action
-  lists; using post-capacity fields as clean pre-evaluation proposer features.
+  lists; using post-evaluation fields as clean pre-evaluation proposer features.
 - invariance/symmetry: depends on orbit representation and search output; must
   record censoring/cutoff semantics.
-- data/leakage status: post-capacity interpretation/leakage only.
-- disposition: keep separate from clean proposer feature sets; audit only when
-  interpretation packet needs it.
+- data/leakage status: post-evaluation interpretation/leakage only.
+- disposition: keep separate from the active clean proposer table; add a
+  dedicated interpretation table only when a method packet needs it.
 
-### Raw Coordinates And Flattened Dual Vertices
+### Canonical Dual Vertex Coordinates
 
-- feature object: raw `dual_vertices_f64` and `dual_vertices_flat_f64`.
+- feature object: canonical volume-one `dual_vertices_f64`.
 - thesis question: baseline black-box input or leakage/generator audit, not a
   direct geometric explanation.
 - current status: `candidate-existing-unaudited`; raw arrays are retained in
-  `polytope-table.jsonl`.
+  `polytope-table.jsonl` only as structured inspectability data.
 - valid transforms: grouped-CV black-box baselines; PCA/exploratory diagnostics;
   invariant/equivariant models if later designed.
 - invalid/risky transforms: coordinate-level univariate explanation; treating
@@ -406,13 +406,13 @@ Remaining next work:
   `experiments/sys-datascience/` surface.
 - simplified canonical and run-local prepare provenance so random/product
   tables no longer expose trajectory/ascent columns.
-- retained compatibility output `computed-polytope-observation-table.jsonl` as
-  an empty file because scan/fingerprint tooling expects the filename.
+- later schema cleanup removed the empty compatibility output
+  `computed-polytope-observation-table.jsonl`; active prepared tables are now
+  only `polytope-table.jsonl` and `polytope-provenance-table.jsonl`.
 - full current-schema scratch prepare:
   `/tmp/sys-ds-random-only-full-current`;
-  `14336` polytope rows, `14336` provenance rows, `0`
-  computed-polytope observation rows, max `sys = 0.86258589584944`, and `0`
-  rows with `sys > 1`.
+  `14336` polytope rows, `14336` provenance rows, max
+  `sys = 0.86258589584944`, and `0` rows with `sys > 1`.
 - full current-schema method artifacts:
   `/tmp/sys-ds-full-current/`.
   The active method reruns found no `sys > 1` row and no validated
@@ -444,8 +444,8 @@ Remaining next work:
   - two-face ordering diagnostics are excluded from geometry-feature inputs;
   - two-face symplectic-area summaries are excluded from clean method inputs if
     any loaded row reports incomplete two-face ordering;
-  - clean univariate association screening excludes post-capacity `orbit_*`
-    fields and reports them separately as available-but-not-tested;
+  - post-evaluation orbit fields are not serialized into the active prepared
+    table;
   - product-bucket EDA labels multi-bucket provenance explicitly instead of
     silently selecting the first bucket;
   - product/source metadata consumption is recorded as implemented for
@@ -460,8 +460,8 @@ Remaining next work:
     diagnostics are present in rows but not selected as geometry features;
   - `random-tail-eda` smoke on `/tmp/tmp.Hitoz0vCai/tables`;
   - `statistical-associations` smoke on `/tmp/tmp.Hitoz0vCai/tables` with
-    `--max-features 20 --permutations 2`, verifying `orbit_*` fields are
-    reported as available but not tested.
+    `--max-features 20 --permutations 2`, verifying clean scalar screens still
+    run.
 - still not thesis evidence: full retained-table rebuild and full method reruns
   remain pending; after the later 2026-06-22 local rebuild attempt, this gate
   is routed to the LICCA handoff rather than local full rebuild.
@@ -568,7 +568,7 @@ Remaining next work:
 
 - fixed the prepare architecture so `sys-dataset --random-only` filters before
   feature construction and skips ascent/continuation rows, computed-polytope
-  observation rows, and post-capacity orbit cache loading.
+  observation rows, and post-evaluation orbit cache loading.
 - added explicit local prepare tiers:
   - `prepare/build-random-only-slice.sh smoke`: `8` random + `10` product rows;
   - `prepare/build-random-only-slice.sh method`: `512` random + `1024`
@@ -584,7 +584,6 @@ Remaining next work:
     cost is CPU-heavy geometry/face feature construction.
 - full scoped fingerprint:
   - `14336` polytope rows, `14336` provenance rows;
-  - `0` computed-polytope observation rows and `0` ascent-run rows;
   - source counts `random_sample = 4096`, `random_product_sample = 10240`;
   - max `sys = 0.86258589584944`, `0` rows with `sys > 1`.
 - reran full method packets against `/tmp/sys-ds-random-only-full`:

@@ -48,8 +48,7 @@ step_scan_sys_gt_1() {
   uv run --script experiments/sys-datascience/methods/scan-sys-gt-1/analyze.py \
     --polytope-table "$TABLES_DIR/polytope-table.jsonl" \
     --provenance-table "$TABLES_DIR/polytope-provenance-table.jsonl" \
-    --random-only \
-    --computed-polytope-observation-table "$TABLES_DIR/computed-polytope-observation-table.jsonl"
+    --random-only
 }
 
 step_build_tables() {

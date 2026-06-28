@@ -12,22 +12,22 @@ pub struct FaceSymplecticFields {
     pub ridge_symp_area_ordered_face_count: usize,
     pub ridge_symp_area_ordering_failure_count: usize,
     pub ridge_symp_area_ordered_fraction: f64,
-    pub ridge_symp_area_volnorm_mean: f64,
-    pub ridge_symp_area_volnorm_std: f64,
-    pub ridge_symp_area_volnorm_min: f64,
-    pub ridge_symp_area_volnorm_max: f64,
-    pub ridge_symp_area_volnorm_q25: f64,
-    pub ridge_symp_area_volnorm_median: f64,
-    pub ridge_symp_area_volnorm_q75: f64,
-    pub ridge_symp_area_volnorm_q90: f64,
-    pub ridge_symp_area_volnorm_q95: f64,
-    pub ridge_symp_area_volnorm_sum: f64,
-    pub ridge_symp_area_volnorm_max_share: f64,
-    pub ridge_symp_area_volnorm_top3_share: f64,
-    pub ridge_symp_area_volnorm_zero_fraction: f64,
-    pub ridge_symp_area_volnorm_le_1em3_fraction: f64,
-    pub ridge_symp_area_volnorm_le_1em2_fraction: f64,
-    pub ridge_symp_area_volnorm_le_1em1_fraction: f64,
+    pub ridge_symp_area_mean: f64,
+    pub ridge_symp_area_std: f64,
+    pub ridge_symp_area_min: f64,
+    pub ridge_symp_area_max: f64,
+    pub ridge_symp_area_q25: f64,
+    pub ridge_symp_area_median: f64,
+    pub ridge_symp_area_q75: f64,
+    pub ridge_symp_area_q90: f64,
+    pub ridge_symp_area_q95: f64,
+    pub ridge_symp_area_sum: f64,
+    pub ridge_symp_area_max_share: f64,
+    pub ridge_symp_area_top3_share: f64,
+    pub ridge_symp_area_zero_fraction: f64,
+    pub ridge_symp_area_le_1em3_fraction: f64,
+    pub ridge_symp_area_le_1em2_fraction: f64,
+    pub ridge_symp_area_le_1em1_fraction: f64,
 }
 
 fn two_face_symplectic_area(vertices: &[Vector4<f64>]) -> f64 {
@@ -114,7 +114,6 @@ pub fn compute_face_symplectic_fields(
     two_faces: &[TwoFace],
     vertices: &[Vector4<f64>],
     incidence: &DMatrix<bool>,
-    volume_scale: f64,
 ) -> FaceSymplecticFields {
     let mut ridge_symp_areas = Vec::new();
     let mut ordering_failure_count = 0usize;
@@ -128,14 +127,10 @@ pub fn compute_face_symplectic_fields(
             .iter()
             .map(|&vertex| vertices[vertex])
             .collect::<Vec<_>>();
-        ridge_symp_areas.push(two_face_symplectic_area(&two_face_vertices) / volume_scale);
+        ridge_symp_areas.push(two_face_symplectic_area(&two_face_vertices));
     }
-    let (
-        ridge_symp_area_volnorm_mean,
-        ridge_symp_area_volnorm_std,
-        ridge_symp_area_volnorm_min,
-        ridge_symp_area_volnorm_max,
-    ) = stats_or_zero(&ridge_symp_areas);
+    let (ridge_symp_area_mean, ridge_symp_area_std, ridge_symp_area_min, ridge_symp_area_max) =
+        stats_or_zero(&ridge_symp_areas);
 
     FaceSymplecticFields {
         ridge_symp_area_ordered_face_count: ridge_symp_areas.len(),
@@ -145,21 +140,21 @@ pub fn compute_face_symplectic_fields(
         } else {
             ridge_symp_areas.len() as f64 / two_faces.len() as f64
         },
-        ridge_symp_area_volnorm_mean,
-        ridge_symp_area_volnorm_std,
-        ridge_symp_area_volnorm_min,
-        ridge_symp_area_volnorm_max,
-        ridge_symp_area_volnorm_q25: quantile_or_zero(&ridge_symp_areas, 0.25),
-        ridge_symp_area_volnorm_median: quantile_or_zero(&ridge_symp_areas, 0.50),
-        ridge_symp_area_volnorm_q75: quantile_or_zero(&ridge_symp_areas, 0.75),
-        ridge_symp_area_volnorm_q90: quantile_or_zero(&ridge_symp_areas, 0.90),
-        ridge_symp_area_volnorm_q95: quantile_or_zero(&ridge_symp_areas, 0.95),
-        ridge_symp_area_volnorm_sum: ridge_symp_areas.iter().sum::<f64>(),
-        ridge_symp_area_volnorm_max_share: max_share(&ridge_symp_areas),
-        ridge_symp_area_volnorm_top3_share: top_k_share(&ridge_symp_areas, 3),
-        ridge_symp_area_volnorm_zero_fraction: fraction_at_most(&ridge_symp_areas, 1e-12),
-        ridge_symp_area_volnorm_le_1em3_fraction: fraction_at_most(&ridge_symp_areas, 1e-3),
-        ridge_symp_area_volnorm_le_1em2_fraction: fraction_at_most(&ridge_symp_areas, 1e-2),
-        ridge_symp_area_volnorm_le_1em1_fraction: fraction_at_most(&ridge_symp_areas, 1e-1),
+        ridge_symp_area_mean,
+        ridge_symp_area_std,
+        ridge_symp_area_min,
+        ridge_symp_area_max,
+        ridge_symp_area_q25: quantile_or_zero(&ridge_symp_areas, 0.25),
+        ridge_symp_area_median: quantile_or_zero(&ridge_symp_areas, 0.50),
+        ridge_symp_area_q75: quantile_or_zero(&ridge_symp_areas, 0.75),
+        ridge_symp_area_q90: quantile_or_zero(&ridge_symp_areas, 0.90),
+        ridge_symp_area_q95: quantile_or_zero(&ridge_symp_areas, 0.95),
+        ridge_symp_area_sum: ridge_symp_areas.iter().sum::<f64>(),
+        ridge_symp_area_max_share: max_share(&ridge_symp_areas),
+        ridge_symp_area_top3_share: top_k_share(&ridge_symp_areas, 3),
+        ridge_symp_area_zero_fraction: fraction_at_most(&ridge_symp_areas, 1e-12),
+        ridge_symp_area_le_1em3_fraction: fraction_at_most(&ridge_symp_areas, 1e-3),
+        ridge_symp_area_le_1em2_fraction: fraction_at_most(&ridge_symp_areas, 1e-2),
+        ridge_symp_area_le_1em1_fraction: fraction_at_most(&ridge_symp_areas, 1e-1),
     }
 }

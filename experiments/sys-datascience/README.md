@@ -56,10 +56,7 @@ experiments/sys-datascience/prepare/
 Active table files:
 
 - `polytope-table.jsonl`: one row per retained random/product polytope;
-- `polytope-provenance-table.jsonl`: producer/source metadata for those rows;
-- `computed-polytope-observation-table.jsonl`: currently empty for the
-  random/product prepare path, retained only because existing tooling expects
-  the filename.
+- `polytope-provenance-table.jsonl`: producer/source metadata for those rows.
 
 Build or refresh the retained random/product tables from canonical producer
 files:
@@ -95,10 +92,10 @@ Read first:
 - `methods/random-only-method-dispositions.md`
 - relevant `methods/<method>/README.md`
 
-Current closure status: pending. The next evidence gate is a full
-current-schema random/product prepare rerun, rerun of the active method
-packets, method/statistics review, and a decision about whether the prepared
-full table is retained or regenerated on demand.
+Current closure status: pending review. The current-schema random/product
+prepare rerun and active method-packet reruns have been performed on the
+retained full table. The prepared full table is retained because regeneration is
+multi-minute work.
 
 Escalate before unrelated cleanup if a method records a trusted `sys > 1` row
 or a credible candidate-proposer.

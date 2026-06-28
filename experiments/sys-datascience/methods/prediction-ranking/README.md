@@ -8,11 +8,11 @@ enough to motivate a separate generated-candidate follow-up?
 
 ## Method
 
-Use geometry-only features, excluding direct `sys`, capacity, volume,
-post-capacity orbit fields, and capacity-derived fields from the proposer
-input. Evaluate ridge regression and random-forest regression on a grouped
-holdout split. Compare random-forest top decile enrichment to a small
-permutation-null sanity check.
+Use geometry-only prepared feature columns as proposer input. Exclude the target
+`sys`, prepared evaluation columns such as `capacity` and `volume`,
+and capacity-derived diagnostics. Evaluate ridge regression and random-forest
+regression on a grouped holdout split. Compare random-forest top decile
+enrichment to a small permutation-null sanity check.
 
 Also run metadata-only ridge and random-forest baselines using source/facet and
 available provenance labels. These are leakage/source diagnostics, not geometry

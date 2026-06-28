@@ -24,7 +24,7 @@ produce
 prepare/canonize
   -> transform representatives to quotient out symmetries of sys(a) as well as we can
 prepare/features
-  -> first-layer derived objects: a, omega(a_i,a_j), two-faces, graphs, orbit outputs, metadata
+  -> first-layer derived objects: a, omega(a_i,a_j), two-faces, graphs, metadata
   -> transforms/summaries: absolute value, restrictions, max/mean/quantiles/fractions/top-k
 methods
   -> univariate association screening of prepared scalar features f_i(a) against sys(a)
@@ -37,7 +37,7 @@ In current HEAD, prepare-stage feature code lives under
 `sys-datascience-prepare` binary.
 
 The audit starts from first-layer derived objects, not final scalar column
-names. A scalar like `allpair_abs_omega_vol1_max` is a composition: derive the
+names. A scalar like `allpair_abs_omega_max` is a composition: derive the
 pairwise object `omega(a_i,a_j)`, normalize to the volume-one representative,
 take absolute values, then summarize by `max`.
 
@@ -53,10 +53,8 @@ Eligibility is defined by the shared random-only feature selector:
 
 - include scalar numeric columns present as numeric values in at least `98%` of
   retained rows;
-- exclude the target `sys`, direct capacity/volume fields, capacity iteration
-  diagnostics, `sigma_gap_cutoff`, `orbit_result_iterations_log1p`,
-  post-capacity `orbit_*` interpretation fields, non-scalar JSON columns, and
-  sparse numeric columns;
+- exclude the target `sys`, prepared evaluation columns such as `capacity` and
+  `volume`, non-scalar JSON columns, and sparse numeric columns;
 - exclude two-face ordering diagnostics from clean covariate screens; exclude
   two-face symplectic-area summaries if any loaded row reports incomplete
   two-face ordering.
@@ -136,20 +134,22 @@ Current full scoped random/product run:
 
 The retained artifact's screened set is exhaustive relative to the scoped
 random/product prepare schema and eligibility rule it was run against. The
-current prepare schema covers several first-layer nodes:
+current prepare schema covers several first-layer nodes. The prepared polytope
+table is already in the volume-one representative, so column names do not
+repeat that normalization.
 
-- source object `a_k`: volume-one norms, centroid norm, coordinate standard
+- source object `a_k`: norms, centroid norm, coordinate standard
   deviations, pairwise Euclidean distances/cosines, centered singular values;
-- pairwise object `omega(a_i,a_j)`: all-pair absolute omega summaries at volume
-  one, zero fraction, ridge-restricted summaries, omega matrix summaries,
-  omega-sign out-degree summaries, and normalized-omega summaries in the chosen
-  Euclidean representative;
-- two-face object `F_i cap F_j`: volume-one symplectic-area
-  mean/std/min/max/sum/max-share, median, upper quantiles, top-k share, and
-  zero/small-area fractions, with incidence-ordering diagnostics;
+- pairwise object `omega(a_i,a_j)`: all-pair absolute omega summaries, zero
+  fraction, ridge-restricted summaries, omega matrix summaries, omega-sign
+  out-degree summaries, and normalized-omega summaries in the chosen Euclidean
+  representative;
+- two-face object `F_i cap F_j`: symplectic-area mean/std/min/max/sum/max-share,
+  median, upper quantiles, top-k share, and zero/small-area fractions, with
+  incidence-ordering diagnostics;
 - incidence and transition graphs: counts, degrees, densities, adjacency and
   transition summaries;
-- capacity/orbit outputs: post-evaluation explanatory summaries only.
+- capacity outputs: post-evaluation explanatory summaries only.
 
 Partially covered or missing first-layer-node work:
 
@@ -172,9 +172,9 @@ Missing or separately handled families should mostly be added to shared
 prediction/ranking, clustering, anomaly checks, and other black-box methods
 should reuse the same representatives and feature map.
 
-The strongest associations are negative correlations between
-volume-normalized ridge symplectic-area, omega, and size features and `sys`.
-The strongest current covariate is `ridge_symp_area_volnorm_sum` with Spearman
+The strongest associations are negative correlations between prepared ridge
+symplectic-area, omega, and size features and `sys`.
+The strongest current covariate is `ridge_symp_area_sum` with Spearman
 correlation `-0.9384368671850424`. These are useful interpretation signals,
 but this packet does not turn them into a generated-row candidate-proposer.
 

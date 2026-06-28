@@ -36,7 +36,6 @@ test -s "$TABLES_DIR/polytope-provenance-table.jsonl"
 uv run --script "$ROOT/experiments/sys-datascience/methods/scan-sys-gt-1/analyze.py" \
   --polytope-table "$TABLES_DIR/polytope-table.jsonl" \
   --provenance-table "$TABLES_DIR/polytope-provenance-table.jsonl" \
-  --computed-polytope-observation-table "$TABLES_DIR/computed-polytope-observation-table.jsonl" \
   --random-only
 
 echo

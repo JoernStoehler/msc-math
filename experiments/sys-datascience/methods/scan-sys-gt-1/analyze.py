@@ -34,12 +34,6 @@ def parse_args() -> argparse.Namespace:
         default=TABLES_DIR / "polytope-provenance-table.jsonl",
     )
     parser.add_argument(
-        "--computed-polytope-observation-table",
-        type=Path,
-        default=TABLES_DIR / "computed-polytope-observation-table.jsonl",
-        help="Prepare-stage computed-polytope observation JSONL file to count.",
-    )
-    parser.add_argument(
         "--computed-polytopes",
         type=Path,
         action="append",
@@ -153,9 +147,6 @@ def main() -> None:
         if sys_value > 1.0:
             entry["sys_gt_1"] += 1
 
-    computed_observation_rows: list[dict[str, Any]] = (
-        [] if args.random_only else load_jsonl(args.computed_polytope_observation_table)
-    )
     computed_scan_rows = 0
     computed_scan_positive_rows = 0
     computed_scan_positives: list[dict[str, Any]] = []
@@ -207,12 +198,6 @@ def main() -> None:
     for label in sorted(source_summary):
         entry = source_summary[label]
         print(f"| {label} | `{entry['rows']}` | `{entry['sys_gt_1']}` |")
-
-    if computed_observation_rows:
-        print()
-        print("## Computed-Polytope Observations")
-        print()
-        print(f"- computed-polytope observation rows: `{len(computed_observation_rows)}`")
 
 
 if __name__ == "__main__":

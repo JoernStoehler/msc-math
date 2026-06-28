@@ -149,15 +149,11 @@ def numeric_feature_names(
     *,
     geometry_only: bool,
     min_present_fraction: float = 0.98,
-    include_post_capacity: bool = False,
 ) -> list[str]:
     excluded = {
         "sys",
         "capacity",
         "volume",
-        "capacity_iterations",
-        "sigma_gap_cutoff",
-        "orbit_result_iterations_log1p",
     }
     geometry_prefixes = (
         "geom_",
@@ -189,11 +185,9 @@ def numeric_feature_names(
     for key in keys:
         if key in excluded:
             continue
-        if key.startswith("orbit_") and not include_post_capacity:
-            continue
         if key in geometry_diagnostics:
             continue
-        if key.startswith("ridge_symp_area_volnorm_") and not all_two_face_orders_succeeded:
+        if key.startswith("ridge_symp_area_") and not all_two_face_orders_succeeded:
             continue
         if geometry_only and not key.startswith(geometry_prefixes):
             continue

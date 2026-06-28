@@ -1,4 +1,4 @@
-//! Dual-vertex decoding and flattened coordinate feature columns.
+//! Dual-vertex decoding and inspectability columns.
 
 use nalgebra::Vector4;
 use num_rational::BigRational;
@@ -10,7 +10,6 @@ use super::features_helpers::{parse_rational, rational_to_f64};
 pub struct DualVertexFields {
     pub dual_vertex_count: usize,
     pub dual_vertices_f64: Vec<[f64; 4]>,
-    pub dual_vertices_flat_f64: Vec<f64>,
 }
 
 fn dual_vertices_big(row: &LoadedPolytopeRow) -> Vec<[BigRational; 4]> {
@@ -20,26 +19,22 @@ fn dual_vertices_big(row: &LoadedPolytopeRow) -> Vec<[BigRational; 4]> {
         .collect()
 }
 
-pub fn dual_vertices_f64(row: &LoadedPolytopeRow) -> (Vec<Vector4<f64>>, DualVertexFields) {
+pub fn raw_dual_vertices_f64(row: &LoadedPolytopeRow) -> Vec<Vector4<f64>> {
     let rationals = dual_vertices_big(row);
-    let arrays = rationals
+    rationals
         .iter()
-        .map(|vertex| std::array::from_fn(|i| rational_to_f64(&vertex[i])))
-        .collect::<Vec<_>>();
-    let vectors = arrays
+        .map(|vertex| std::array::from_fn::<_, 4, _>(|i| rational_to_f64(&vertex[i])))
+        .map(|vertex| Vector4::from_row_slice(&vertex))
+        .collect()
+}
+
+pub fn dual_vertex_fields(dual_vertices: &[Vector4<f64>]) -> DualVertexFields {
+    let arrays = dual_vertices
         .iter()
-        .map(|vertex| Vector4::from_row_slice(vertex))
+        .map(|vertex| std::array::from_fn(|i| vertex[i]))
         .collect::<Vec<_>>();
-    let flat = arrays
-        .iter()
-        .flat_map(|vertex| vertex.iter().copied())
-        .collect::<Vec<_>>();
-    (
-        vectors,
-        DualVertexFields {
-            dual_vertex_count: arrays.len(),
-            dual_vertices_f64: arrays,
-            dual_vertices_flat_f64: flat,
-        },
-    )
+    DualVertexFields {
+        dual_vertex_count: arrays.len(),
+        dual_vertices_f64: arrays,
+    }
 }

@@ -129,8 +129,8 @@ Results:
 - top rows are mostly product rows, especially `4x4` and `3x4`; the top generic
   row in this run had `sys = 0.6011427102454201`;
 - the strongest geometry-only feature associations were stable across all four
-  variants: volume-normalized ridge symplectic-area summaries dominated
-  (`ridge_symp_area_volnorm_sum/max/mean/q90/q95/std`), all negatively
+  variants: prepared ridge symplectic-area summaries dominated
+  (`ridge_symp_area_sum/max/mean/q90/q95/std`), all negatively
   associated with `sys`.
 
 Matched-source diagnostic:
@@ -266,19 +266,19 @@ New method:
    - Across 121 geometry features, median interval `eta^2` is
      `0.0010107798485778205`; q90 is `0.015674433963631034`; max is
      `0.46778361798100765`.
-   - The top interval-sensitive feature is `geom_vol1_norm_std`; mean values
+   - The top interval-sensitive feature is `geom_norm_std`; mean values
      in the pilot rows:
      - narrow `[0.95,1.05]`: `0.098825`;
      - default `[0.8,1.2]`: `0.400342`;
      - wide `[0.5,2.0]`: `1.480616`.
-   - Other interval-sensitive features include `geom_vol1_norm_max`,
-     `ridge_abs_omega_vol1_top3_share`,
-     `allpair_abs_omega_vol1_top3_share`, and
-     `geom_vol1_pairwise_dist_std`.
+   - Other interval-sensitive features include `geom_norm_max`,
+     `ridge_abs_omega_top3_share`,
+     `allpair_abs_omega_top3_share`, and
+     `geom_pairwise_dist_std`.
 
 6. The dominant `sys`-associated feature family from the earlier method,
-   `ridge_symp_area_volnorm_*`, barely moves under height interval in this
-   pilot. For example, mean `ridge_symp_area_volnorm_sum` in the matched pilot
+   `ridge_symp_area_*`, barely moves under height interval in this
+   pilot. For example, mean `ridge_symp_area_sum` in the matched pilot
    rows:
    - narrow: `35.101117`;
    - default: `35.107272`;
@@ -345,7 +345,7 @@ Do not run a larger height-interval sensitivity experiment yet. Next, work on
 either:
 - top-tail anatomy and bucket-focused hostile sampling, especially product
   buckets and larger `F`; or
-- feature interpretation around `ridge_symp_area_volnorm_*`, because this is
+- feature interpretation around `ridge_symp_area_*`, because this is
   the most stable signal seen so far.
 
 ## 2026-06-25 - Marginal `sys` broad distribution scan

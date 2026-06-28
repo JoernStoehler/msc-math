@@ -15,7 +15,6 @@ counts. Positive evidence would be at least one retained table row with
 
 - `../../prepare/polytope-table.jsonl`
 - `../../prepare/polytope-provenance-table.jsonl`
-- `../../prepare/computed-polytope-observation-table.jsonl`
 
 The script can scan additional producer computed-polytope JSONL files if passed
 explicitly with `--computed-polytopes`, but the active random/product slice does
@@ -34,7 +33,6 @@ For scratch prepared tables:
 uv run --script experiments/sys-datascience/methods/scan-sys-gt-1/analyze.py \
   --polytope-table "$TABLES_DIR/polytope-table.jsonl" \
   --provenance-table "$TABLES_DIR/polytope-provenance-table.jsonl" \
-  --computed-polytope-observation-table "$TABLES_DIR/computed-polytope-observation-table.jsonl" \
   --random-only
 ```
 

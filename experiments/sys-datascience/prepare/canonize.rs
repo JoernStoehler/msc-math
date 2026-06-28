@@ -6,10 +6,68 @@
 
 use nalgebra::DMatrix;
 use nalgebra::Vector4;
+use symplectic::database::SigmaAction;
 
 use euclidean_polytopes::volume_and_centroid_from_incidence_f64;
 
 const MIN_TRANSLATION_DENOMINATOR: f64 = 1e-12;
+
+/// Active prepare normalization: `x' = volume^(-1/4) x`.
+///
+/// For normalized inequalities `<a_i, x> <= 1`, this sends
+/// `a_i` to `volume^(1/4) a_i`. Capacity/action values scale like
+/// `volume^(-1/2)`, while `sys = capacity^2 / (2 volume)` is unchanged.
+#[derive(Clone, Copy, Debug)]
+pub struct VolumeOneTransform {
+    pub primal_scale: f64,
+    pub dual_scale: f64,
+    pub action_scale: f64,
+}
+
+impl VolumeOneTransform {
+    pub fn from_volume(volume: f64) -> Self {
+        assert!(
+            volume.is_finite() && volume > 0.0,
+            "volume-one transform needs positive finite volume, got {volume}"
+        );
+        let dual_scale = volume.powf(0.25);
+        let primal_scale = dual_scale.recip();
+        let action_scale = volume.powf(-0.5);
+        Self {
+            primal_scale,
+            dual_scale,
+            action_scale,
+        }
+    }
+
+    pub fn apply_dual_vertices(&self, dual_vertices: &[Vector4<f64>]) -> Vec<Vector4<f64>> {
+        dual_vertices
+            .iter()
+            .map(|dual| dual * self.dual_scale)
+            .collect()
+    }
+
+    pub fn apply_primal_vertices(&self, vertices: &[Vector4<f64>]) -> Vec<Vector4<f64>> {
+        vertices
+            .iter()
+            .map(|vertex| vertex * self.primal_scale)
+            .collect()
+    }
+
+    pub fn apply_action_value(&self, value: f64) -> f64 {
+        value * self.action_scale
+    }
+
+    pub fn apply_sigmas(&self, sigmas: &[SigmaAction]) -> Vec<SigmaAction> {
+        sigmas
+            .iter()
+            .map(|sigma| SigmaAction {
+                perm: sigma.perm.clone(),
+                action: self.apply_action_value(sigma.action),
+            })
+            .collect()
+    }
+}
 
 #[derive(Clone, Debug)]
 pub struct TranslationCanonization {
@@ -144,6 +202,20 @@ mod tests {
 
         assert!(canonization.min_denominator > 0.0);
         assert_translated_facets_are_normalized(&polytope, &canonization, 1.0);
+    }
+
+    #[test]
+    fn volume_one_transform_scales_duals_vertices_and_actions() {
+        let transform = VolumeOneTransform::from_volume(16.0);
+        assert!((transform.primal_scale - 0.5).abs() < 1e-12);
+        assert!((transform.dual_scale - 2.0).abs() < 1e-12);
+        assert!((transform.action_scale - 0.25).abs() < 1e-12);
+
+        let duals = transform.apply_dual_vertices(&[Vector4::new(1.0, 2.0, 3.0, 4.0)]);
+        let vertices = transform.apply_primal_vertices(&[Vector4::new(2.0, 4.0, 6.0, 8.0)]);
+        assert_eq!(duals[0], Vector4::new(2.0, 4.0, 6.0, 8.0));
+        assert_eq!(vertices[0], Vector4::new(1.0, 2.0, 3.0, 4.0));
+        assert!((transform.apply_action_value(12.0) - 3.0).abs() < 1e-12);
     }
 
     fn shifted_box_cache() -> SysLandscapePolytopeCache {

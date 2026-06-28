@@ -16,7 +16,6 @@ mod producer_rows;
 use exp_sys_landscape::ComputedPolytopePayloadRow;
 use load_caches::{LoadedCaches, LoadedPolytopeRow, LoadedProvenanceRow};
 use producer_rows::{DatascienceRandomProductSampleRow, DatascienceRandomSampleRow};
-use rows::ComputedPolytopeObservationRow;
 use serde::de::DeserializeOwned;
 use serde::Serialize;
 use std::collections::{HashMap, HashSet};
@@ -36,7 +35,6 @@ struct PrepareStatsRow {
     out_dir: String,
     polytope_rows: usize,
     provenance_rows: usize,
-    computed_polytope_observation_rows: usize,
     max_sys: Option<f64>,
     sys_gt_one: usize,
     build_polytope_table_ms: f64,
@@ -167,11 +165,7 @@ fn ensure_polytope(
             capacity: payload.capacity,
             volume: payload.volume,
             sys: payload.sys,
-            capacity_iterations: Some(payload.orbit_scalars.iterations),
             capacity_source: capacity_source.to_string(),
-            sigma_gap_cutoff: Some(payload.sigma_gap_cutoff),
-            sigmas: Some(payload.sigmas.clone()),
-            orbit_scalars: Some(payload.orbit_scalars.clone()),
         });
 }
 
@@ -305,7 +299,6 @@ fn load_new_producer_outputs(produce_dir: &Path) -> LoadedCaches {
     LoadedCaches {
         polytopes: polytope_rows,
         provenance_rows,
-        computed_polytope_observations: Vec::<ComputedPolytopeObservationRow>::new(),
     }
 }
 
@@ -332,19 +325,13 @@ fn main() {
     );
 
     let provenance_run_rows = features_trace::build_provenance_run_table(&caches.provenance_rows);
-    write_database::write_database(
-        &args.out_dir,
-        &polytope_rows,
-        &provenance_run_rows,
-        &caches.computed_polytope_observations,
-    );
+    write_database::write_database(&args.out_dir, &polytope_rows, &provenance_run_rows);
     let wall_time_ms = total_started.elapsed().as_secs_f64() * 1000.0;
     let stats = PrepareStatsRow {
         produce_dir: args.produce_dir.display().to_string(),
         out_dir: args.out_dir.display().to_string(),
         polytope_rows: polytope_rows.len(),
         provenance_rows: caches.provenance_rows.len(),
-        computed_polytope_observation_rows: caches.computed_polytope_observations.len(),
         max_sys: polytope_rows.iter().map(|row| row.sys).reduce(f64::max),
         sys_gt_one: polytope_rows.iter().filter(|row| row.sys > 1.0).count(),
         build_polytope_table_ms,

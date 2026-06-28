@@ -32,10 +32,6 @@ fn main() {
         caches.polytopes.len(),
         caches.provenance_rows.len()
     );
-    eprintln!(
-        "Loaded {} computed-polytope observation rows",
-        caches.computed_polytope_observations.len()
-    );
     eprintln!("Capacity sources: {:?}", capacity_source_counts(&caches));
     eprintln!("Building polytope table");
     let started = Instant::now();
@@ -53,12 +49,7 @@ fn main() {
     );
     eprintln!("Writing tables to {}", paths.out_dir.display());
     let started = Instant::now();
-    write_database::write_database(
-        &paths.out_dir,
-        &polytope_rows,
-        &provenance_run_rows,
-        &caches.computed_polytope_observations,
-    );
+    write_database::write_database(&paths.out_dir, &polytope_rows, &provenance_run_rows);
     eprintln!(
         "Wrote prepared tables in {:.1}s",
         started.elapsed().as_secs_f64()
