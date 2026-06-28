@@ -6,8 +6,8 @@ source truth.
 Purpose: gather the visualization side-result inventory before final prose and
 figure selection.
 
-Overruled by: visualization artifacts, experiments/research notes, active
-figure files copied into `thesis/`, and Jörn/Kai review.
+Overruled by: visualization artifacts, experiment READMEs and owner-local
+notes, active figure files copied into `thesis/`, and Jörn/Kai review.
 
 Lifecycle: keep while the visualization section is being assembled. After the
 section is stable, delete this file or reduce it to a short maintenance note.

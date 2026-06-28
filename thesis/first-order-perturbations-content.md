@@ -7,8 +7,8 @@ Purpose: gather the writing inventory for the general first-order perturbation
 machinery used in gradient-like search, concept formation, and later proof
 work.
 
-Overruled by: `research/`, `formal/`, `experiments/hko-local-maximum/`,
-`crates/`, and Jörn/Kai review.
+Overruled by: `formal/sys-first-order-local-behavior.md`, other `formal/`
+sources, `experiments/hko-local-maximum/`, `crates/`, and Jörn/Kai review.
 
 Lifecycle: keep while the section is being assembled. After the section is
 stable, delete this file or reduce it to a short maintenance index.

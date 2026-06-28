@@ -121,8 +121,8 @@ Planning-note statuses:
 Status: active.
 Evidence: `tasks/definition-of-success.md`, `tasks/current-state.md`,
 `thesis/MAP.md`, active `thesis/*.tex` scaffold state, `thesis/DEVELOPMENT.md`
-questionnaire notes, `research/INDEX.md`, and the relevant HKO/hostile
-research notes named below.
+questionnaire notes, `thesis/central-claim-control.md`, and the relevant
+HKO/hostile source surfaces named below.
 
 Deliverable ordering:
 
@@ -201,9 +201,9 @@ Visible risks / uncertainty:
 - The minimal section-control artifact is a best-guess intermediate. It is
   overhead if Jörn can write a section directly from existing sources faster
   than an agent can prepare useful working material.
-- HKO and hostile landscape are prioritized because current task/research notes
-  treat them as retained central stories. Advisor feedback or Jörn's scope
-  decision can change that.
+- HKO and hostile landscape are prioritized because current task and
+  owner-local notes treat them as retained central stories. Advisor feedback or
+  Jörn's scope decision can change that.
 - The hostile method-table shape needs source refresh from
   `experiments/sys-datascience/README.md`, `methods/README.md`,
   `methods/method-coverage-checklist.md`, current method packet READMEs, and
@@ -359,7 +359,7 @@ Guidance:
 Status: active for generic thesis exposition; stale-check-needed before any
 claim to solve the full arbitrary-polytope theorem.
 
-Reread before use: `research/sys-first-order-local-behavior.md`,
+Reread before use: `formal/sys-first-order-local-behavior.md`,
 `thesis/first-order-perturbations.tex`, relevant formal notes.
 
 Guidance:
@@ -390,8 +390,8 @@ Acceptance guard:
 Status: active while hostile landscape remains retained thesis spine.
 
 Reread before use: `experiments/sys-datascience/README.md` and
-`experiments/sys-datascience/methods/README.md`. Older research notes
-are context only unless cross-thesis wording is being audited.
+`experiments/sys-datascience/methods/README.md`. Older notes are context only
+unless cross-thesis wording is being audited.
 
 Guidance:
 
@@ -469,8 +469,9 @@ Guidance:
   old algorithm boxes or numerical appendix prose.
 - Flow-graph algorithm work starts from
   `crates/symplectic/src/algorithms/flow_graph/README.md`. The older
-  `research/tube-algorithm*.md` files are legacy/imported source material, not
-  the live control surface. Before starting implementation, check whether
+  `crates/symplectic/src/algorithms/flow_graph/tube-algorithm*.md` files are
+  legacy/imported source material, not the live control surface. Before starting
+  implementation, check whether
   `thesis/flow-graph-algorithm-ch2021.tex` or another active thesis file still
   retains flow-graph/tube content.
 

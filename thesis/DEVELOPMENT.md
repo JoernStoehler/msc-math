@@ -34,7 +34,7 @@ not source truth; they organize thesis writing from source truth.
 
 Use `/tmp` for temporary planning, reasoning, phrasing alternatives, and prompt
 packets. Use normal repo files as source truth for what is available to say:
-`research/`, `experiments/`, `formal/`, `crates/`, and task files where
+`formal/`, `experiments/`, `crates/`, thesis companions, and task files where
 appropriate.
 
 When editing a thesis section, migrate durable section-planning comments from
@@ -54,7 +54,7 @@ companion as `needs source` as well.
 - Spoil each section's point early so readers can see the claim, support, and
   caveat before reading details.
 - Keep execution status, ownership, commands, and final verification gates in
-  tasks or research notes rather than in structural TeX files.
+  tasks or owner-local notes rather than in structural TeX files.
 - Section planning test: claim, support, caveat, and pointer to proof, artifact,
   or appendix. This is a check, not a required format. Notation, orientation,
   summary tables, soft intuition, and appendix reference material may need a

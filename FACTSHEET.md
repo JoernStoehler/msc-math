@@ -278,11 +278,12 @@ maintenance low. The numbers are stable and can be out of order.
       asking a narrower question. A 2026-06-03 scan found no obvious current
       unprocessed Kai/Elizabeth blocker in `FACTSHEET.md`,
       `thesis/DEVELOPMENT.md`, direct Kai/Elizabeth/advisor/review hits under
-      `thesis/`, `research/`, and `tasks/`, and local hits in
-      `thesis/numerics.tex`, `thesis/hko-local-maximum.tex`, and
-      `research/tube-algorithm.md`. That scan did not inspect local Codex logs,
-      external mail/chat/calendar sources, or current official university
-      sources.
+      then-current `thesis/`, `research/`, and `tasks/`, and local hits in
+      `thesis/numerics.tex`, `thesis/hko-local-maximum.tex`, and the tube
+      algorithm source note now at
+      `crates/symplectic/src/algorithms/flow_graph/tube-algorithm-legacy-source-note.md`.
+      That scan did not inspect local Codex logs, external mail/chat/calendar
+      sources, or current official university sources.
 
 71. Jörn has long-term memories of the project, chats with other agents, and
     external discussions with Kai that agents cannot inspect from the repo.

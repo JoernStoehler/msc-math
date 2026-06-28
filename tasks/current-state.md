@@ -1,6 +1,6 @@
 # Current State
 
-Cache only. Source files, tests, data, research notes, official forms, and
+Cache only. Source files, tests, data, owner-local notes, official forms, and
 accepted Jörn/Kai decisions overrule it.
 
 Keep only state that helps choose near-term thesis work, prevents a false thesis
@@ -30,7 +30,7 @@ source files.
 - Current accepted scope frame: HKO local maximality and hostile `sys`-search
   landscape are the main thesis story blocks treated as sufficient.
   Evidence: migrated cache from the old task files, especially historical
-  writing-task notes, plus `research/INDEX.md`.
+  writing-task notes, plus `thesis/central-claim-control.md`.
   Refresh when: Jörn/Kai changes scope or retained thesis claims change.
 
 - Jörn stated on 2026-06-01 that the following thesis content areas are all
@@ -43,11 +43,7 @@ source files.
   to make those readable. See `FACTSHEET.md` item 8 for clarified descriptions.
   Refresh when: Jörn explicitly changes the thesis content scope.
 
-## Research Stories
-
-- `research/INDEX.md` is the thesis story index.
-  Authority: topic research notes, proof-bearing sources, and accepted Jörn/Kai
-  decisions overrule it.
+## Thesis Story Sources
 
 - HKO local maximality is thesis spine.
   Source truth: `experiments/hko-local-maximum/README.md`, the current
@@ -106,7 +102,7 @@ source files.
   Refresh when: retained hostile-landscape wording or endpoint datasets change.
 
 - Sys first-order generic row-chart writing is active.
-  Source truth: `research/sys-first-order-local-behavior.md`,
+  Source truth: `formal/sys-first-order-local-behavior.md`,
   `thesis/first-order-perturbations.tex`, formal notes.
   Current state: broad compute-once evaluator is classified as `ONLY-HEAVY`;
   generic smooth case is the readable thesis route.
@@ -128,8 +124,10 @@ source files.
   from competitors, and adjacency/pruning assumptions.
   Flow-graph/tube cache: current live control surface is
   `crates/symplectic/src/algorithms/flow_graph/README.md`. The older
-  `research/tube-algorithm-raw-jorn-2026-05-04.md` and
-  `research/tube-algorithm.md` files are legacy/imported source material.
+  `crates/symplectic/src/algorithms/flow_graph/tube-algorithm-raw-jorn-2026-05-04.md`
+  and
+  `crates/symplectic/src/algorithms/flow_graph/tube-algorithm-legacy-source-note.md`
+  files are legacy/imported source material.
   Old thesis/formal/Rust tube surfaces are stale unless rewritten from the live
   flow-graph surface and source truth.
   Refresh when: numerical appendix route, solver story, derivative/projection
@@ -167,8 +165,8 @@ source files.
 
 - Exact/certified validation has a known audit risk.
   Source truth: `crates/symplectic/src/kkt/rational_solver.rs`,
-  `crates/symplectic/src/algorithms/orbit_search.rs`, current tests and
-  research notes.
+  `crates/symplectic/src/algorithms/orbit_search.rs`, current tests, and
+  owner-local notes.
   Current state: a previous weak audit missed a high-severity exact/certified
   mismatch. False exact fallback was caused by floating relative pivot threshold
   in exact KKT solving. Boundary revalidation checks include beta length,
@@ -186,7 +184,7 @@ source files.
 - LFS-tracked `.jsonl` artifacts may be preserved artifacts, historical records,
   or future/follow-up material; they must not silently support thesis claims.
   Refresh by: checking retained thesis claim usage and the owning experiment or
-  research note.
+  owner-local note.
 
 - `euclidean-polytopes` is merged and owns ordinary `R^4` convex geometry.
   Source truth: `crates/euclidean-polytopes/README.md`,

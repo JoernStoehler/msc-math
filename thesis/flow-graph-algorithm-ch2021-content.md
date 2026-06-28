@@ -53,8 +53,9 @@ Use these sources directly when drafting or reviewing the section.
 - Experiment/evidence routing:
   `experiments/dev-flow-graph/README.md` and `experiments/MAP.md`.
 - Raw/recovered tube sources:
-  `research/tube-algorithm-raw-jorn-2026-05-04.md`,
-  `research/tube-algorithm.md`, and historical formal source
+  `crates/symplectic/src/algorithms/flow_graph/tube-algorithm-raw-jorn-2026-05-04.md`,
+  `crates/symplectic/src/algorithms/flow_graph/tube-algorithm-legacy-source-note.md`,
+  and historical formal source
   `git show 25dd8b9acb8aeaaa6aa3abd80fc6d95db00c4747:formal/tube-algorithm.tex`.
 
 `formal/flow-graph-real-algorithm.tex`, the auxiliary flow-graph scaffold

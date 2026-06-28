@@ -142,6 +142,7 @@ This repo does not use nested `AGENTS.md` files.
 |   |-- main.tex
 |   |-- preamble.tex
 |   |-- bibliography.bib
+|   |-- *.md
 |   `-- *.tex
 |-- experiments/
 |   |-- MAP.md
@@ -159,9 +160,6 @@ This repo does not use nested `AGENTS.md` files.
 |   |   |-- *.jsonl
 |   |   `-- figures/
 |   `-- verification/sage/
-|-- research/
-|   |-- INDEX.md
-|   |-- *.md
 |-- experiments/sys-datascience/
 |   |-- README.md
 |   |-- produce/
@@ -202,11 +200,11 @@ Start here:
 - `tasks/README.md`: live task model, steering, submission/admin source files,
   and final thesis-done checks.
 - Slice entry points: `thesis/MAP.md`, `experiments/MAP.md`,
-  `crates/<crate>/MAP.md`, and `research/INDEX.md`.
+  `crates/<crate>/MAP.md`, and owner-local README/MAP/content files.
 
 Trust model:
-- Source files, tests, data, research notes, task files, and thesis text overrule
-  maps and summaries.
+- Source files, tests, data, owner-local notes, task files, and thesis text
+  overrule maps and summaries.
 - `CAPABILITY_CLAIM_MAP.md` is a non-authoritative cache of high-level
   capability claims.
 - `MAP.md` files are navigation caches, not authoritative sources.
@@ -253,9 +251,10 @@ Documentation:
   decisions, evidence, sharp edges, and expensive checks; do not spell out
   generic reasoning GPT-5.5 can reconstruct.
 - Knowledge should live where future agents need it: code, comments, TeX,
-  experiment artifacts, research notes, task files, generated outputs, or local
-  documentation. Keep documentation lean, current, and easy to verify. Delete or
-  demote obsolete notes; git history is enough for historical material.
+  experiment artifacts, formal notes, thesis companions, experiment READMEs,
+  crate documentation, task files, generated outputs, or local documentation.
+  Keep documentation lean, current, and easy to verify. Delete or demote
+  obsolete notes; git history is enough for historical material.
 
 ## Environment and commands
 

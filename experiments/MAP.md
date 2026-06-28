@@ -5,11 +5,11 @@ experiment artifact patterns. It is descriptive, not a task tracker.
 
 Map maintenance:
 - Source truth is package manifests, entrypoints, local READMEs, helper crates,
-  generated artifact locations, research notes, and task progress files.
+  generated artifact locations, owner-local notes, and task progress files.
 - To check staleness, compare affected sections against those sources with
   targeted `rg`, `rg --files`, manifests, and local package headers.
-- To refresh, update navigation and provenance facts; route thesis
-  interpretation to `research/` and task state to `tasks/`.
+- To refresh, update navigation and provenance facts; route interpretation to
+  the owner future work should update and task state to `tasks/`.
 - Keep entries short; point to source files instead of duplicating details.
 -->
 
@@ -20,7 +20,7 @@ Map maintenance:
 - State: split from the old root `ARCHITECTURE.md`.
 - Last updated: 2026-06-27.
 - Source surfaces: `experiments/**/Cargo.toml`, `experiments/**/src/lib.rs`,
-  local `README.md` files, experiment entrypoints, `research/*.md`, and the
+  local `README.md` files, experiment entrypoints, owner-local notes, and the
   task progress files.
 - Refresh when: topic packages move, helper-crate boundaries change, artifact
   ownership changes, or retained thesis-facing experiments change.
@@ -31,8 +31,7 @@ Map maintenance:
 - Agent question: which experiment topic package, helper crate, artifact
   pattern, or provenance surface should I inspect first?
 - Authority: package manifests, experiment entrypoints, local helper crates,
-  retained research interpretation notes, and task progress files overrule this
-  map.
+  owner-local interpretation notes, and task progress files overrule this map.
 - Non-authority: this file does not decide thesis claim strength, canonical data
   ownership, or which future/follow-up experiments should run.
 
@@ -139,7 +138,7 @@ such as `experiments/dev-<algo>/`, `experiments/<topic>/`, and
 | `correctness` | Do outputs or intermediate invariants satisfy the intended mathematical or software contract? | `experiments/verification/` for reusable experiment-level evidence, or crate tests when cheap and durable |
 | `data` | Which reusable records, caches, schemas, and retained tables are produced or consumed? | `crates/**` record helpers, `experiments/sys-datascience/produce/`, and `experiments/sys-datascience/prepare/` |
 | `thesis-support` | Which evidence or machinery supports one theorem, figure, side result, or thesis slice? | the owning topic folder, e.g. `experiments/hko-local-maximum/` or `experiments/regular-products/` |
-| `formal` | Which proof-facing statements, exact derivations, or theorem-local certificates need formal tracking? | `formal/`, with links back from the owning experiment or research note |
+| `formal` | Which proof-facing statements, exact derivations, or theorem-local certificates need formal tracking? | `formal/`, with links back from the owning experiment or owner-local note |
 
 Routing rule: route by the question that should own future changes. Reusable
 algorithm behavior belongs in the cross-cutting homes above. If an algorithm
@@ -164,15 +163,15 @@ on whether the owner is method development or retained-dataset analysis.
 | `experiments/hko-local-maximum/` | HKO local-maximality experiments: theorem certificate tooling under `theorem/`, empirical support checks under `empirical/`, singular-row diagnostics, and shared topic helpers under `src/` | `tasks/current-state.md`, `tasks/planning-notes.md`, `experiments/hko-local-maximum/README.md` |
 | `experiments/algorithm-comparison/` | README-only routing and reasoning note for cross-algorithm comparisons; no active commands or evidence artifacts | `experiments/algorithm-comparison/README.md`, `experiments/dev-quadratic-program/README.md`, `experiments/performance/README.md`, `experiments/dev-quadratic-program/numerics-audit/README.md`, `experiments/verification/README.md` |
 | `experiments/dev-quadratic-program/` | README-only coordination packet for QP/HK2017 library-surface and cleanup questions before code or evidence has a better home | `experiments/dev-quadratic-program/README.md`, `experiments/MAP.md` section `Algorithm Units`, `crates/symplectic/src/algorithms/hk2017/`, `crates/symplectic/src/algorithms/orbit_search.rs` |
-| `experiments/dev-gradient-ascent/` | active top-level development packet for a heuristic gradient-ascent method for nonsmooth high-dimensional `sys(a)`; owns question ledger, schema-smoke artifacts, and future method-development probes before promotion | `experiments/dev-gradient-ascent/README.md`, `experiments/sys-datascience/README.md`, `research/sys-first-order-local-behavior.md` |
-| `experiments/dev-sys-prediction/` | active development packet for semi-local prediction of `sys(a0 + da)`: lower-envelope branch models, direction-cloud prediction error, candidate-window completeness, and beta-domain diagnostics before optimizer or thesis-evidence promotion | `experiments/dev-sys-prediction/README.md`, `experiments/dev-gradient-ascent/README.md`, `research/sys-first-order-local-behavior.md` |
+| `experiments/dev-gradient-ascent/` | active top-level development packet for a heuristic gradient-ascent method for nonsmooth high-dimensional `sys(a)`; owns question ledger, schema-smoke artifacts, and future method-development probes before promotion | `experiments/dev-gradient-ascent/README.md`, `experiments/sys-datascience/README.md`, `formal/sys-first-order-local-behavior.md` |
+| `experiments/dev-sys-prediction/` | active development packet for semi-local prediction of `sys(a0 + da)`: lower-envelope branch models, direction-cloud prediction error, candidate-window completeness, and beta-domain diagnostics before optimizer or thesis-evidence promotion | `experiments/dev-sys-prediction/README.md`, `experiments/dev-gradient-ascent/README.md`, `formal/sys-first-order-local-behavior.md` |
 | `experiments/dev-flow-graph/` | active flow-graph algorithm-development packet: frontier counts, endpoint/closed-word representation spikes, case-finding, mismatch visualization, and unresolved-word diagnostics before promotion into numerics, performance, or verification | `experiments/dev-flow-graph/README.md`, `crates/symplectic/src/algorithms/flow_graph/README.md`, `tasks/current-state.md`, `tasks/planning-notes.md` |
 | `experiments/dev-quadratic-program/` | active pure-`f64` capacity-development packet: generated and retained datascience-style scans, validation/capacity policy comparison, product preprocessing diagnostics, and promotion-readiness evidence before library or `sys-datascience` integration | `experiments/dev-quadratic-program/README.md`, `experiments/sys-datascience/README.md` |
 | `experiments/sys-landscape/` | hostile sys-search landscape legacy and producer surfaces: random/product searches, gradient ascent, variable-`F` continuation, and rejection calibration | `experiments/sys-landscape/README.md`, `experiments/sys-landscape/legacy-ascent-continuation-debt.md`, `experiments/sys-datascience/README.md` |
 | `experiments/sys-datascience/` | maintained hostile `sys` search data-science pipeline: producer caches, retained tables, and method packets for the thesis method table | `experiments/sys-datascience/README.md`, `experiments/sys-datascience/produce/README.md`, `experiments/sys-datascience/prepare/README.md`, `experiments/sys-datascience/methods/README.md` |
 | `experiments/regular-products/` | regular polygon product side result: broad rotated-product sweeps, pentagon empirical figures/viewer, and exact pentagon formula proof packet | `experiments/regular-products/README.md`, `thesis/rotated-regular-polygons-content.md` |
 | `experiments/dev-quadratic-program/numerics-audit/` | single-threaded numerical error audit: structured JSONL observations, f64-vs-oracle summaries, and generated reports for KKT variables and predicates | `experiments/dev-quadratic-program/numerics-audit/README.md`, `tasks/current-state.md`, `tasks/planning-notes.md` |
-| `experiments/verification/` | experiment-level correctness and regression evidence, minimum-set validation, orbit recovery, and reusable Sage validation experiments | `tasks/current-state.md`, `tasks/planning-notes.md`, `research/verification*.md`, `experiments/verification/README.md`, `experiments/verification/sage/README.md` |
+| `experiments/verification/` | experiment-level correctness and regression evidence, minimum-set validation, orbit recovery, and reusable Sage validation experiments | `tasks/current-state.md`, `tasks/planning-notes.md`, `experiments/verification/README.md`, `experiments/verification/sage/README.md` |
 | `experiments/performance/` | shared runtime and memory profiling targets, reusable measurement practice, and post-processing scripts; generated outputs normally go under `/tmp` | `experiments/performance/README.md` |
 | `experiments/combinatorial-cells/` | combinatorial-cell exploration: boundary characterization, cell widths, convexity, multiple crossings, omega hypothesis, and gradient-discontinuity analysis | `experiments/combinatorial-cells/README.md` |
 | `experiments/crosspolytope/` | one-off crosspolytope computation and checkpointing | `experiments/crosspolytope/README.md` |
@@ -250,10 +249,10 @@ Historical shared-catalog mirror cluster from the old architecture pass:
 These three files were byte-identical on 2026-04-16 with SHA-256
 `8679b89763a10bf1380410f288845f03bcdc8e365035aa31235ff00c9cc07363`.
 Byte identity is an observation, not a settled canonical-path policy. Current
-code still reads these paths in some validation surfaces, but current research
-notes also describe `experiments/combinatorial-cells/polytopes.jsonl` as the
-canonical local cache for that package. Do not infer repo-wide canonical
-ownership from either fact without checking the current task or research note.
+code still reads these paths in some validation surfaces, but owner-local notes
+also describe `experiments/combinatorial-cells/polytopes.jsonl` as the canonical
+local cache for that package. Do not infer repo-wide canonical ownership from
+either fact without checking the current task or owner-local note.
 
 Local-cache exception:
 
@@ -277,10 +276,11 @@ There is no repo-wide generated dataflow map. For artifact provenance, use
 targeted search and local source inspection:
 
 ```bash
-rg -n "<artifact-name>|Input Artifacts:|Output Artifacts:" experiments thesis research tasks
+rg -n "<artifact-name>|Input Artifacts:|Output Artifacts:" experiments thesis formal tasks crates
 ```
 
-Then read the producer entrypoint, nearby analyzer, and relevant research note.
+Then read the producer entrypoint, nearby analyzer, and relevant owner-local
+note.
 
 ## Open Edges
 

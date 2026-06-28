@@ -6,7 +6,7 @@
 //!
 //! The flow-graph algorithm work surface lives under `flow_graph/`. Its local
 //! README is the current algorithm contract/status surface; the old tube notes
-//! under `research/` are legacy/imported source material.
+//! under `flow_graph/` are legacy/imported source material.
 //!
 //! # Correctness invariant
 //!

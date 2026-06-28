@@ -115,7 +115,7 @@ Rust/experiment smoke:
 ## Cache Consequences
 
 - No contradiction was found for `tasks/current-state.md`,
-  `tasks/planning-notes.md`, `thesis/MAP.md`, `research/INDEX.md`,
+  `tasks/planning-notes.md`, `thesis/MAP.md`, the then-current research index,
   `crates/MAP.md`, or `experiments/MAP.md`.
 - `CAPABILITY_CLAIM_MAP.md` and local datascience docs were updated to record
   the `smoke-pipeline.sh` runtime caveat.
@@ -157,7 +157,7 @@ README or source header that owns the producer. The high-risk refresh areas are:
 - `submit/`: official forms and web/admin facts require current
   source checks close to final submission.
 
-If one of these areas changes, update the owning research note or experiment
+If one of these areas changes, update the owning local note or experiment
 README first, then update `tasks/current-state.md` and/or
 `CAPABILITY_CLAIM_MAP.md` only if near-term thesis routing or reusable repo
 capability changed.

@@ -6,7 +6,7 @@ reports, draft prose, and later thesis notation aligned.
 
 Recovered from the sys local-behavior source session rollout at
 `2026-06-16T09:51:43Z`; adjusted to preserve the later active-germ warning in
-`research/sys-first-order-local-behavior.md`.
+`formal/sys-first-order-local-behavior.md`.
 
 ## Objects
 

@@ -67,7 +67,7 @@ ORIENTATION_PATHS=(
   'CAPABILITY_CLAIM_MAP.md'
   'tasks/*.md'
   'tasks/**/*.md'
-  'research/INDEX.md'
+  'thesis/central-claim-control.md'
   'experiments/MAP.md'
   'crates/MAP.md'
   'thesis/MAP.md'

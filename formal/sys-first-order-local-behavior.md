@@ -1,6 +1,7 @@
 <!--
 Purpose: classify the local first-order behavior object needed for sys in a fixed row chart.
-Context: draft research note for `tasks/planning-notes.md`; no task status change is implied.
+Context: developer-facing proof-route note for the first-order perturbation
+section and related formal work; no task status change is implied.
 -->
 
 # Sys First-Order Local Behavior

@@ -77,7 +77,8 @@ Canonical all-minimum and orbit-recovery runs reported:
      `solve_orbit_sigma_with_dual_vertices`, and `ehz_capacity` agreement
      checks are the minimum reproducible cross-implementation check surface.
    - Runtime tolerances are empirical stability tolerances, not absolute proof margins.
-5. Do not recreate legacy `research/**` directories inside `experiments/`; tracking should be through notes only, with local notes currently taking precedence.
+5. Do not recreate a legacy top-level `research/` ownership layer inside
+   `experiments/`; tracking should be through owner-local notes.
 
 ### History
 

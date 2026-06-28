@@ -53,7 +53,7 @@ Keep a fact only if it changes a future decision, prevents a likely agent
 mistake, records Jörn/Kai/external assessment, or gives a concrete resume/check
 condition.
 
-Source truth stays in thesis files, code, tests, data, research notes,
+Source truth stays in thesis files, code, tests, data, owner-local notes,
 experiment artifacts, official forms, and accepted Jörn/Kai decisions. Task
 files may summarize those surfaces; summaries never overrule source truth.
 

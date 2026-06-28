@@ -3,8 +3,8 @@
 ## Role
 
 This file is a non-authoritative cache of high-level repo-capability claims.
-Source files, tests, data, research notes, task progress files, and thesis text
-overrule this file.
+Source files, tests, data, owner-local notes, task progress files, and thesis
+text overrule this file.
 
 Use this file to answer "what can the repo currently rely on?" without
 reconstructing the claim, scope, support, caveats, and refresh triggers from
@@ -38,8 +38,8 @@ Prefer the lowest-ceremony true statement that preserves verification:
   artifact-refreshing commands
 - keep nuanced subclaims shallow; promote them to their own row only when they
   become repeated capability questions
-- point durable references to source files, tests, data, research notes, or task
-  progress files, not to internal map labels
+- point durable references to source files, tests, data, owner-local notes, or
+  task progress files, not to internal map labels
 
 When refreshing, start from source truth and update only rows affected by the
 task unless doing an explicit whole-map audit. If a support command fails,
@@ -258,15 +258,15 @@ claim.
     symmetries; broad HKO local maximality remains conjectural in current repo
     classification.
   - Files:
-    - `research/hko-local-maximum-status.md`
-    - `research/hko-local-maximum.md`
-    - `research/hko-local-maximum-exact-witness.md`
     - `tasks/current-state.md`
     - `tasks/planning-notes.md`
     - `experiments/hko-local-maximum/README.md`
+    - `experiments/hko-local-maximum/theorem/README.md`
+    - `experiments/hko-local-maximum/smooth-only-rank-defect/README.md`
+    - `formal/hko-feasible-section-upper-branches.tex`
+    - `thesis/hko-local-maximum-content.md`
     - `experiments/hko-local-maximum/theorem/exact-witness/`
     - `experiments/hko-local-maximum/theorem/feasible-section-certificate/`
-    - `formal/hko-feasible-section-upper-branches.tex`
   - The current theorem-facing certificate is the feasible-section certificate:
     26 exact rows, exact row rank `25`, exact symmetry tangent rank `15`,
     positive lambdas, and exact lambda-weighted row sum `0`.
@@ -302,7 +302,7 @@ claim.
   - Files:
     - `tasks/current-state.md`
     - `tasks/planning-notes.md`
-    - `research/sys-first-order-local-behavior.md`
+    - `formal/sys-first-order-local-behavior.md`
     - `thesis/first-order-perturbations.tex`
     - `thesis/legacy/sys-first-order-regular-case.tex`
     - `formal/capacity-smoothness-classification.tex`
@@ -355,7 +355,6 @@ claim.
     under `experiments/combinatorial-cells`.
   - Files:
     - `experiments/combinatorial-cells/README.md`
-    - `research/combinatorial-cells.md`
     - `experiments/combinatorial-cells/src/lib.rs`
     - `experiments/combinatorial-cells/boundary-characterization/`
     - `experiments/combinatorial-cells/cell-widths/`
@@ -414,7 +413,8 @@ claim.
   - Scope: experiment-local presentation pipeline, not reusable library API and
     not proof surface.
   - Files:
-    - `research/visualization.md`
+    - `experiments/visualization/README.md`
+    - `thesis/visualization-3d-content.md`
     - `experiments/visualization/main/main.rs`
     - `experiments/visualization/main/models.rs`
     - `experiments/visualization/main/orbit_collection.rs`
@@ -487,17 +487,17 @@ claim.
     - build contract changes
     - submission requirements change
 
-- We have a map/task/research knowledge layer for routing work.
+- We have a map/task/owner-local knowledge layer for routing work.
   - Scope: maps route navigation; the task progress files own current success
-    conditions, state summaries, and route reasoning; research notes own
-    interpretation and proof-route state; source files and data own source
-    truth.
+    conditions, state summaries, and route reasoning; thesis companions,
+    formal notes, experiment READMEs, and crate docs own local interpretation
+    or proof-route state; source files and data own source truth.
   - Files:
     - `tasks/README.md`
     - `tasks/definition-of-success.md`
     - `tasks/current-state.md`
     - `tasks/planning-notes.md`
-    - `research/INDEX.md`
+    - `thesis/central-claim-control.md`
     - `crates/MAP.md`
     - `experiments/MAP.md`
   - This layer helps agents route work, but it is not itself proof, code truth,
@@ -505,7 +505,7 @@ claim.
   - Refresh when:
     - map/task conventions change
     - task progress conventions, current state, or route reasoning changes
-    - research index changes thesis story routing
+    - owner-local routing or central claim-control changes thesis story routing
     - final thesis-done checks change
 
 ## Cross-Claim Refresh Clusters
@@ -559,10 +559,10 @@ claim.
 - Check durable crate implementation and tests:
   - `rg --files crates | rg '(^|/)(README\.md|DEVELOPMENT\.md|.*FEATURES.*\.md|[^/]+\.rs)$'`
 - Compare thesis stories and task progress files:
-  - `sed -n '1,220p' research/INDEX.md`
+  - `sed -n '1,220p' thesis/central-claim-control.md`
   - `sed -n '1,220p' tasks/current-state.md`
   - `sed -n '1,220p' tasks/planning-notes.md`
 - Search targeted status surfaces for drift:
-  - `rg -n "Epistemic status|Status:|\[blocked\]|\[active\]|\[done\]" tasks research -g '*.md'`
+  - `rg -n "Epistemic status|Status:|\[blocked\]|\[active\]|\[done\]" tasks thesis formal experiments crates -g '*.md'`
   - `rg -n -e 'begin\{unverified\}' -e 'TODO: JÖRN' -e 'Status:' formal -g '*.tex'`
   - `rg -n "full-output|tracked evidence|smoke|canonical|--full" experiments -g README.md`

@@ -23,7 +23,7 @@ proof text can overrule it. When they do, update this file or mark the mismatch.
   selected word. `exact_search.rs` contains exact exhaustive search. The exact
   search has an explicit action-cutoff policy: disabled for baseline checks,
   enabled to use action cutoffs after an exact action `> 0` is known.
-- The old `research/tube-algorithm*.md` files are legacy/imported source
+- The co-located `tube-algorithm*.md` files are legacy/imported source
   material, not the live control surface.
 - The current experiment package is `experiments/dev-flow-graph/`.
 - The thesis section is `thesis/flow-graph-algorithm-ch2021.tex`.
@@ -217,7 +217,7 @@ Status labels:
 | --- | --- | --- | --- |
 | Minimum-action generalized Reeb orbits may be chosen simple. | active thesis theorem `thm:generalized-reeb-simple-minimizer`, sourced to HK2017 Theorem 1.5 / `simple_loop_theorem` | reduces the capacity search to simple Reeb orbits | cite `thm:generalized-reeb-simple-minimizer` in FG thesis prose |
 | A simple minimizer visits each facet direction at most once. | active thesis theorem `thm:generalized-reeb-simple-minimizer`, sourced to HK2017 Theorem 1.5 / `simple_loop_theorem` | justifies searching facet words without repeated facet directions | prove only the FG correspondence between simple Reeb orbits and searched FG words |
-| The Rust exact/f64 input class rejects zero `omega_0` on every nonempty distinct facet-pair candidate. | source-backed by `exact_search.rs::validate_no_geometric_zero_omega_transition`, `f64_tube_search.rs::FlatTubeInput::validate_no_geometric_zero_omega_transitions`, and formalized in `formal/flow-graph-real-algorithm.tex`, `def:fg-nondegenerate-facet-presentation`; this condition implies the local physical-transition nonzero condition used by `lem:fg-local-transition-regularity-positive-sign` | implementation/theorem alignment for the supported path; this may reject more polytopes than the minimal local trajectory condition in `research/tube-algorithm.md` | keep this stronger condition in thesis implementation-scope wording unless validators are deliberately weakened |
+| The Rust exact/f64 input class rejects zero `omega_0` on every nonempty distinct facet-pair candidate. | source-backed by `exact_search.rs::validate_no_geometric_zero_omega_transition`, `f64_tube_search.rs::FlatTubeInput::validate_no_geometric_zero_omega_transitions`, and formalized in `formal/flow-graph-real-algorithm.tex`, `def:fg-nondegenerate-facet-presentation`; this condition implies the local physical-transition nonzero condition used by `lem:fg-local-transition-regularity-positive-sign` | implementation/theorem alignment for the supported path; this may reject more polytopes than the minimal local trajectory condition in `tube-algorithm-legacy-source-note.md` | keep this stronger condition in thesis implementation-scope wording unless validators are deliberately weakened |
 | Empty tube implies every containing tube is empty. | active proof-development label `lem:fg-empty-subtube-pruning`; code path `exact_tube.rs::build_tube` returns empty when a recursive subtube is empty | pruning and cache interpretation | keep this tied to closed search-domain emptiness, not to f64 predicate certainty |
 | Empty unclosed subtube makes the closed tube empty. | active proof-development label `lem:fg-empty-subtube-pruning`; code path `exact_tube.rs::intersect_tubes` returns empty when the pulled-back gluing domain is empty | closed-word pruning | keep this tied to the gluing-domain formula from `lem:fg-tube-gluing` |
 | Action equals elapsed flow time for the stored Reeb segments. | active proof-development label `lem:fg-action-normalization` | action computation | cite only after the contact-normalization convention is fixed in the surrounding text |
@@ -454,8 +454,8 @@ Project sources:
 - `tasks/definition-of-success.md`
 - `tasks/current-state.md`
 - `tasks/planning-notes.md`
-- `research/tube-algorithm.md`
-- `research/tube-algorithm-raw-jorn-2026-05-04.md`
+- `tube-algorithm-legacy-source-note.md`
+- `tube-algorithm-raw-jorn-2026-05-04.md`
 - `thesis/flow-graph-algorithm-ch2021.tex`
 - `papers/ch2021/`
 
