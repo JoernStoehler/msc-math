@@ -90,6 +90,9 @@ uv run --script experiments/sys-datascience/methods/tail-rule-mining/analyze.py 
 - `summary.json`
 - `bucket-control-rules.tsv`
 - `euclidean-area-deciles.tsv`
+- `outside-small-face-audit.tsv`
+- `conditional-omega-rules.tsv`
+- `outside-small-face-examples.tsv`
 
 `summary.json` also records fixed coarse baselines and a label-permutation
 null check for the single grouped split. It includes the first rows of
@@ -321,7 +324,7 @@ Bucket-local Euclidean-control command:
 ```bash
 uv run --script experiments/sys-datascience/methods/tail-rule-mining/analyze_two_face_controls.py \
   --tables-dir /tmp/sys-ds-two-face-control-prepare-9846319 \
-  --out-dir /tmp/sys-ds-two-face-control-two-face-controls-9846319
+  --out-dir /tmp/sys-ds-two-face-control-well-rounded-9846319
 ```
 
 This rerun adds a top-1% label. On the single grouped holdout:
@@ -385,6 +388,63 @@ primal two-face area result: it may still be a symplectic-structure diagnostic,
 but the current Euclidean two-face control experiment mainly downgrades the
 specific primal two-face area pattern from "Lagrangian orientation evidence" to
 "mostly Euclidean small-face evidence, with limited residual generic signal."
+
+Immediate follow-up diagnostics on the same prepared table sharpen the
+subpopulation claim. The result is not "all high-`sys` rows are low Euclidean
+area"; it is that the extreme tail is heavily concentrated in the lowest
+Euclidean-area bands, with a small outside-small-face population.
+
+For top 1%, the share of positives inside the lowest 20% of
+`ridge_euclidean_area_volnorm_sum` is:
+
+| bucket | positives inside / total | fraction inside |
+| --- | ---: | ---: |
+| product `F=10` | `70 / 82` | `0.854` |
+| product `F=11` | `32 / 41` | `0.780` |
+| product `F=12` | `28 / 41` | `0.683` |
+| generic `F=10` | `61 / 82` | `0.744` |
+| generic `F=11` | `27 / 41` | `0.659` |
+| generic `F=12` | `22 / 41` | `0.537` |
+
+Using the lowest 30% as the small-face regime makes the concentration stronger:
+top-1% positives inside are `79 / 82`, `37 / 41`, and `34 / 41` for product
+`F=10,11,12`, and `68 / 82`, `32 / 41`, and `28 / 41` for generic
+`F=10,11,12`. For the sharper top-quarter-percent label, product `F=10`,
+product `F=11`, and generic `F=12` have no positives outside the lowest 30%;
+generic `F=10` still has `4 / 21` outside.
+
+The tail ladder in generic `F=10` supports an approach-to-regime reading, but
+not a universal characterization. Counts by Euclidean-area decile are:
+
+| label | D1 | D2 | D3 | D4 | D5 | D6 | D7 | D8 | D9 | D10 |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| top decile | `330` | `172` | `116` | `76` | `54` | `27` | `22` | `15` | `8` | `0` |
+| top 5% | `195` | `84` | `54` | `31` | `18` | `11` | `9` | `4` | `4` | `0` |
+| top 1% | `45` | `16` | `7` | `4` | `5` | `3` | `1` | `0` | `1` | `0` |
+| top 0.5% | `21` | `8` | `3` | `2` | `4` | `3` | `0` | `0` | `0` | `0` |
+| top 0.25% | `11` | `5` | `1` | `1` | `2` | `1` | `0` | `0` | `0` | `0` |
+
+The conditional omega diagnostic suggests a possible second filter inside the
+outside-small-face rows, but the denominators are small. For top 1% outside the
+lowest 30% Euclidean-area rows, the lowest 15% of omega-matrix spectral norm
+captures `12 / 14` generic `F=10`, `6 / 9` generic `F=11`, `9 / 13` generic
+`F=12`, and `7 / 7` product `F=12` positives. This supports a follow-up
+hypothesis that outside-small-face high-tail rows are still low-omega rows, but
+it is not yet a stable taxonomy because some cells contain only a handful of
+positives.
+
+Current interpretation after well-rounding:
+
+- The main class is low Euclidean primal two-face area. It explains most of the
+  top tail, and its concentration sharpens at more extreme thresholds.
+- There is not yet evidence for a broad large-Euclidean-area high-`sys` class;
+  outside-small-face examples mostly sit in Euclidean deciles `3` to `6`, not
+  in the largest-area deciles.
+- The outside-small-face population is real enough to avoid universal wording,
+  especially in generic `F=10` and `F=12`.
+- Low omega-matrix spectral norm may be the next useful discriminator for that
+  outside population, but this is a small-count lead, not a completed
+  explanation.
 
 The full default stability/permutation analysis on the `32768`-row prepared
 table was started locally but stopped during the stability sweep because it was
