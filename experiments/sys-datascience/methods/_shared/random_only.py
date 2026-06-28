@@ -187,7 +187,13 @@ def numeric_feature_names(
             continue
         if key in geometry_diagnostics:
             continue
-        if key.startswith("ridge_symp_area_") and not all_two_face_orders_succeeded:
+        if key.startswith(
+            (
+                "ridge_symp_area_",
+                "ridge_euclidean_area_",
+                "ridge_symp_over_euclidean_area_",
+            )
+        ) and not all_two_face_orders_succeeded:
             continue
         if geometry_only and not key.startswith(geometry_prefixes):
             continue

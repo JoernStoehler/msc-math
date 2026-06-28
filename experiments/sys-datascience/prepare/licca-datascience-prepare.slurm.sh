@@ -24,7 +24,7 @@ case "$SCRIPT_DIR" in
   */experiments/sys-datascience/prepare) ;;
   *) echo "submit from experiments/sys-datascience/prepare, got: $SCRIPT_DIR" >&2; exit 2 ;;
 esac
-REPO_ROOT="$(cd "$SCRIPT_DIR/../../../.." && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
 cd "$REPO_ROOT"
 
 if [[ -z "${DATASCIENCE_PRODUCE_DIR:-}" ]]; then

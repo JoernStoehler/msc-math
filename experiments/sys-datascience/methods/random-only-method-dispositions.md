@@ -55,6 +55,7 @@ remaining closure gate is review and packet README integration.
 | --- | --- | --- | --- |
 | ridge regression | `run-pending-review` | `prediction-ranking/` | Current geometry-only ridge model ran. |
 | random forest regression | `run-pending-review` | `prediction-ranking/` | Current geometry-only RF model ran. |
+| shallow high-tail decision-tree rules | `run-pending-review` | `tail-rule-mining/` | Current trial run found grouped-holdout geometry-only high-tail enrichment beyond product-vs-generic, strata/provenance controls, and a small permutation-null guard; review before thesis use. |
 | metadata-only prediction baselines | `run-pending-review` | `prediction-ranking/` | Current metadata-only baselines ran. |
 | high-tail classification and classifier variants | `defer` | none | No positive class exists; near-tail classification mostly duplicates ranking until a generated-candidate follow-up is promoted. |
 | generated-candidate proposer loop | `defer` | none | Reopen if rerun ranking evidence has enough expected thesis value to justify producing new candidates. |
@@ -86,6 +87,7 @@ remaining closure gate is review and packet README integration.
 | bandits or reinforcement learning | `reject` | No online environment or reward loop is defined. |
 | MCMC/Bayesian posterior families | `reject` | No probabilistic model is currently part of the thesis claim. |
 | multi-fidelity optimization | `reject` | No cheaper faithful proxy for `sys` is established. |
+| distribution-variant sensitivity rows | `defer` | `distribution-sensitivity/` and `random-axis-diagnostic/` need multiple prepared random/product variants; the active retained table has only the current producer contract. |
 
 ## Current Gaps Before Closure
 

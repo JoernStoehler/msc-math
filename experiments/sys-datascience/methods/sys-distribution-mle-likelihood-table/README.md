@@ -40,3 +40,20 @@ Outputs:
 - `bucket-best-readable-summary.md`: human-readable bucket winner table with
   selected reference models;
 - `summary.json`: same information in JSON.
+
+Current local run:
+
+- artifact directory: `/tmp/sys-ds-shape-20260625/mle-transform-table`;
+- status in `summary.json`: `all_data_approximate_mle_transformed_likelihood_table`;
+- 14336 rows across 18 fixed buckets;
+- 8 transforms: `identity`, `logit`, `log`, `log1m`, `neglog1m`, `sqrt`,
+  `square`, and `cloglog`;
+- 80 SciPy distributions, giving 640 candidate transform/family models;
+- 11520 model-table rows plus header in `mle-likelihood-table.tsv`;
+- bucket winners are mixed across transforms/families, with `square+mielke`
+  winning the most buckets in this run.
+
+Interpretation guard: this is an all-data approximate MLE likelihood table.
+Use it as an exploratory upper bound on same-row model discrimination, not as
+held-out predictive evidence and not as a claim that any winning family is the
+true distribution.

@@ -43,21 +43,23 @@ candidate-proposer inputs.
 Current full scoped random/product run:
 
 - rows: `14336`;
-- geometry-only features: `88`;
-- metadata-only one-hot features: `26`;
+- geometry-only features: `121`;
+- metadata-only one-hot features: `27`;
 - grouped split: `capacity_source:facet_count`;
 - train rows: `8192`;
 - test rows: `6144`;
-- ridge: `R^2 = 0.5278029834786313`, MAE
-  `0.08913307407593929`, top-decile enrichment
-  `0.5593495934959349`;
-- random forest: `R^2 = 0.9219838259237741`, MAE
-  `0.04059841487617869`, top-decile enrichment
-  `0.6341463414634146`;
-- metadata-only ridge: `R^2 = 0.12017539977683755`, MAE
-  `0.16535248208223238`, top-decile enrichment `0.296875`;
-- metadata-only random forest: `R^2 = -0.04953269595337528`, MAE
-  `0.1800783042710761`, top-decile enrichment `0.296875`;
+- ridge: `R^2 = 0.7735964249383396`, MAE
+  `0.0693694046813973`, top-decile enrichment
+  `0.6276422764227643`;
+- random forest: `R^2 = 0.927284952889666`, MAE
+  `0.039484291990222124`, top-decile enrichment
+  `0.6650406504065041`;
+- metadata-only ridge: `R^2 = 0.30334429073518265`, MAE
+  `0.14266912157047226`, top-decile enrichment
+  `0.2245475113122172`;
+- metadata-only random forest: `R^2 = 0.0019535588595063214`, MAE
+  `0.16758290080062851`, top-decile enrichment
+  `0.14031357959075205`;
 - random-forest enrichment permutation p-value with `10` permutations:
   `0.09090909090909091`.
 

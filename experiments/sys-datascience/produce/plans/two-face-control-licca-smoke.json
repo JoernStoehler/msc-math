@@ -1,0 +1,13 @@
+{
+  "random": [
+    { "facet_count": 10, "rows": 128 },
+    { "facet_count": 11, "rows": 128 },
+    { "facet_count": 12, "rows": 128 }
+  ],
+  "random_product": [
+    { "k": 4, "m": 6, "rows": 128 },
+    { "k": 5, "m": 5, "rows": 128 },
+    { "k": 5, "m": 6, "rows": 128 },
+    { "k": 6, "m": 6, "rows": 128 }
+  ]
+}

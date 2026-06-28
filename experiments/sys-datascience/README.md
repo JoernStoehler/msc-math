@@ -95,7 +95,9 @@ Read first:
 Current closure status: pending review. The current-schema random/product
 prepare rerun and active method-packet reruns have been performed on the
 retained full table. The prepared full table is retained because regeneration is
-multi-minute work.
+multi-minute work. The 2026-06-25 full scratch rerun lives under
+`/tmp/sys-ds-random-only-full-current` and `/tmp/sys-ds-full-current`; keep
+durable packet conclusions in `methods/<method>/README.md`, not only in `/tmp`.
 
 Escalate before unrelated cleanup if a method records a trusted `sys > 1` row
 or a credible candidate-proposer.

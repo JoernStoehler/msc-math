@@ -39,13 +39,13 @@ cluster observations can be checked against sampling strata.
 Current full scoped random/product run:
 
 - rows: `14336`;
-- geometry features: `88`;
+- geometry features: `121`;
 - first five PCA explained-variance ratios:
-  `0.38982064990722903`, `0.22221957682055385`,
-  `0.15963593059038902`, `0.056606354072659314`,
-  `0.043652487957588144`;
-- PC1/`sys` correlation: `-0.4687178999308592`;
-- PC2/`sys` correlation: `0.21779070089156558`;
+  `0.3660157443947346`, `0.2150412240203447`,
+  `0.1634577737911154`, `0.05505638294650266`,
+  `0.03536274285061944`;
+- PC1/`sys` correlation: `-0.39717020130020897`;
+- PC2/`sys` correlation: `0.309396953214776`;
 - top 25 isolation-forest anomaly rows overlap with top 2% `sys` rows: `0`.
 - metadata overlays are recorded for `capacity_source`, `dataset_label`,
   `dataset_label_by_facet_count`, `facet_count`, `product_bucket`, and

@@ -55,7 +55,13 @@ def parse_producers(raw: str) -> list[str]:
     return producers
 
 
-def validate(produce_dir: Path, mode: str, producers_raw: str) -> dict[str, Any]:
+def validate(
+    produce_dir: Path,
+    mode: str,
+    producers_raw: str,
+    expected_random_rows: int | None = None,
+    expected_random_product_rows: int | None = None,
+) -> dict[str, Any]:
     payload_path = produce_dir / "computed-polytopes.jsonl"
     stats_path = produce_dir / "produce-stats.json"
 
@@ -79,7 +85,11 @@ def validate(produce_dir: Path, mode: str, producers_raw: str) -> dict[str, Any]
     )
     sample_rows = [*random_rows, *product_rows]
 
-    expected = EXPECTED[mode]
+    expected = dict(EXPECTED[mode])
+    if expected_random_rows is not None:
+        expected[PRODUCER_FILES["random"]] = expected_random_rows
+    if expected_random_product_rows is not None:
+        expected[PRODUCER_FILES["random-product"]] = expected_random_product_rows
     for producer in producers:
         filename = PRODUCER_FILES[producer]
         row_count = len(random_rows) if producer == "random" else len(product_rows)
@@ -175,9 +185,17 @@ def main() -> None:
         required=True,
         help="Comma-separated producer list.",
     )
+    parser.add_argument("--expected-random-rows", type=int)
+    parser.add_argument("--expected-random-product-rows", type=int)
     args = parser.parse_args()
 
-    result = validate(args.produce_dir, args.mode, args.producers)
+    result = validate(
+        args.produce_dir,
+        args.mode,
+        args.producers,
+        args.expected_random_rows,
+        args.expected_random_product_rows,
+    )
     print("# Datascience Produce Validation")
     print()
     for key, value in result.items():

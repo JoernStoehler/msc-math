@@ -114,22 +114,23 @@ random/product rows.
 Current full scoped random/product run:
 
 - rows: `14336`;
-- eligible scalar covariates: `110`;
-- nonconstant scalar covariates tested: `99`;
+- eligible scalar covariates: `122`;
+- nonconstant scalar covariates tested: `111`;
 - strongest absolute Spearman correlation: `0.9384368671850424`;
 - family-maximum permutation p-value: `0.004975124378109453`;
 - product-minus-generic mean `sys`: `0.04908416085647144`;
 - bootstrap 95% interval for that mean difference:
   `[0.04252389852783871, 0.055886616744594816]`.
 - source factor tests: `capacity_source`, `dataset_label`,
-  `dataset_label_by_facet_count`, `facet_count`, and `product_bucket` were
-  tested. `product_bounces` and `sample_height_range` are available but still
-  have too few nonempty groups for a meaningful factor test in this retained
+  `dataset_label_by_facet_count`, `facet_count`, `product_bucket`, and
+  `product_bounces` were tested. `sample_height_range` is available but still
+  has too few nonempty groups for a meaningful factor test in this retained
   random/product slice.
 - strongest source/facet group mean spread in this artifact:
   `dataset_label_by_facet_count` max-minus-min group mean
   `0.3265780723303283`; `facet_count` spread `0.30691591817614594`;
   `product_bucket` spread `0.2750512503828982`;
+  `product_bounces` spread `0.16092491442510856`;
   `capacity_source` spread `0.04908416085647144`.
 
 The retained artifact's screened set is exhaustive relative to the scoped

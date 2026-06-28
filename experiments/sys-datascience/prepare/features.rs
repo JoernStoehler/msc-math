@@ -156,6 +156,44 @@ fn enrich_row(row: &LoadedPolytopeRow) -> PolytopeTableRow {
         ridge_symp_area_le_1em3_fraction: face_symplectic_fields.ridge_symp_area_le_1em3_fraction,
         ridge_symp_area_le_1em2_fraction: face_symplectic_fields.ridge_symp_area_le_1em2_fraction,
         ridge_symp_area_le_1em1_fraction: face_symplectic_fields.ridge_symp_area_le_1em1_fraction,
+        ridge_euclidean_area_mean: face_symplectic_fields.ridge_euclidean_area_mean,
+        ridge_euclidean_area_std: face_symplectic_fields.ridge_euclidean_area_std,
+        ridge_euclidean_area_min: face_symplectic_fields.ridge_euclidean_area_min,
+        ridge_euclidean_area_max: face_symplectic_fields.ridge_euclidean_area_max,
+        ridge_euclidean_area_q25: face_symplectic_fields.ridge_euclidean_area_q25,
+        ridge_euclidean_area_median: face_symplectic_fields.ridge_euclidean_area_median,
+        ridge_euclidean_area_q75: face_symplectic_fields.ridge_euclidean_area_q75,
+        ridge_euclidean_area_q90: face_symplectic_fields.ridge_euclidean_area_q90,
+        ridge_euclidean_area_q95: face_symplectic_fields.ridge_euclidean_area_q95,
+        ridge_euclidean_area_sum: face_symplectic_fields.ridge_euclidean_area_sum,
+        ridge_euclidean_area_max_share: face_symplectic_fields.ridge_euclidean_area_max_share,
+        ridge_euclidean_area_top3_share: face_symplectic_fields.ridge_euclidean_area_top3_share,
+        ridge_euclidean_area_zero_fraction: face_symplectic_fields
+            .ridge_euclidean_area_zero_fraction,
+        ridge_euclidean_area_le_1em3_fraction: face_symplectic_fields
+            .ridge_euclidean_area_le_1em3_fraction,
+        ridge_euclidean_area_le_1em2_fraction: face_symplectic_fields
+            .ridge_euclidean_area_le_1em2_fraction,
+        ridge_euclidean_area_le_1em1_fraction: face_symplectic_fields
+            .ridge_euclidean_area_le_1em1_fraction,
+        ridge_symp_over_euclidean_area_mean: face_symplectic_fields
+            .ridge_symp_over_euclidean_area_mean,
+        ridge_symp_over_euclidean_area_std: face_symplectic_fields
+            .ridge_symp_over_euclidean_area_std,
+        ridge_symp_over_euclidean_area_min: face_symplectic_fields
+            .ridge_symp_over_euclidean_area_min,
+        ridge_symp_over_euclidean_area_max: face_symplectic_fields
+            .ridge_symp_over_euclidean_area_max,
+        ridge_symp_over_euclidean_area_q25: face_symplectic_fields
+            .ridge_symp_over_euclidean_area_q25,
+        ridge_symp_over_euclidean_area_median: face_symplectic_fields
+            .ridge_symp_over_euclidean_area_median,
+        ridge_symp_over_euclidean_area_q75: face_symplectic_fields
+            .ridge_symp_over_euclidean_area_q75,
+        ridge_symp_over_euclidean_area_q90: face_symplectic_fields
+            .ridge_symp_over_euclidean_area_q90,
+        ridge_symp_over_euclidean_area_q95: face_symplectic_fields
+            .ridge_symp_over_euclidean_area_q95,
         ridge_symp_area_ordered_face_count: face_symplectic_fields
             .ridge_symp_area_ordered_face_count,
         ridge_symp_area_ordering_failure_count: face_symplectic_fields

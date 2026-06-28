@@ -61,7 +61,7 @@ range and product `(k,m,bounces)` when the producer row provides them. This
 script prefers explicit product parameters over reparsing `path`, and records
 `source_parameter_availability` in its summary. The current artifact was
 regenerated against a full scoped random/product scratch prepared table at
-`/tmp/sys-ds-random-only-full`, built with `sys-dataset --random-only`. It
+`/tmp/sys-ds-random-only-full-current`, built with `sys-dataset --random-only`. It
 includes explicit height range and product `(k,m,bounces)` provenance fields for
 the canonical random/product producer rows.
 
