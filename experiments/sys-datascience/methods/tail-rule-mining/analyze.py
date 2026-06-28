@@ -32,15 +32,15 @@ from random_only import (  # noqa: E402
 )
 
 
-def parse_args() -> argparse.Namespace:
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--tables-dir", type=Path, default=TABLES_DIR)
     parser.add_argument("--out-dir", type=Path, default=HERE / "artifacts")
     parser.add_argument("--max-depth", type=int, default=4)
     parser.add_argument("--min-leaf-fraction", type=float, default=0.015)
     parser.add_argument("--random-state", type=int, default=20260627)
-    parser.add_argument("--stability-runs", type=int, default=8)
-    parser.add_argument("--permutations", type=int, default=32)
+    parser.add_argument("--stability-runs", type=int, default=0)
+    parser.add_argument("--permutations", type=int, default=0)
     parser.add_argument(
         "--min-bucket-rows",
         type=int,
@@ -61,7 +61,7 @@ def parse_args() -> argparse.Namespace:
         default=[0.01, 0.015, 0.025],
         help="Minimum leaf fractions for split/hyperparameter stability checks.",
     )
-    return parser.parse_args()
+    return parser.parse_args(argv)
 
 
 def first_numeric_field(provenance_rows: list[dict[str, object]], field: str) -> str:
@@ -775,8 +775,7 @@ def write_leaf_table(path: Path, rows: list[dict[str, object]]) -> None:
             writer.writerow({field: row.get(field) for field in fields})
 
 
-def main() -> None:
-    args = parse_args()
+def run(args: argparse.Namespace) -> None:
     rows, provenance_rows = load_trusted_random_tables(args.tables_dir)
     geometry_names = numeric_feature_names(rows, geometry_only=True)
     family_names = {
@@ -956,6 +955,10 @@ def main() -> None:
         )
     print(f"- stability configurations: `{len(stability_rows)}`")
     print(f"Wrote `{args.out_dir}`")
+
+
+def main(argv: list[str] | None = None) -> None:
+    run(parse_args(argv))
 
 
 if __name__ == "__main__":

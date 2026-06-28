@@ -57,6 +57,12 @@ several grouped splits, tree depths, and minimum leaf sizes.
 uv run --script experiments/sys-datascience/methods/tail-rule-mining/analyze.py
 ```
 
+Run the expensive stability/permutation layer separately:
+
+```bash
+uv run --script experiments/sys-datascience/methods/tail-rule-mining/analyze_stability.py
+```
+
 For scratch prepared tables:
 
 ```bash
@@ -295,9 +301,7 @@ Local trimmed analysis command:
 ```bash
 uv run --script experiments/sys-datascience/methods/tail-rule-mining/analyze.py \
   --tables-dir /tmp/sys-ds-two-face-control-prepare-9846319 \
-  --out-dir /tmp/sys-ds-two-face-control-tail-rule-9846319-trimmed-top1 \
-  --stability-runs 0 \
-  --permutations 0
+  --out-dir /tmp/sys-ds-two-face-control-tail-rule-9846319-trimmed-top1
 ```
 
 This rerun adds a top-1% label. On the single grouped holdout:
