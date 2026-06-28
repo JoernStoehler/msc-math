@@ -275,6 +275,70 @@ With only `32` permutations, the smallest possible reported p-value is
 high outlier, so this check is a guard against obvious label-leakage/overfit
 rather than a precise significance estimate.
 
+### LICCA Targeted Production Rerun
+
+Jörn ran the targeted replication plan on LICCA from commit `f4525347`.
+The prepared table has `32768` rows, max `sys`
+`0.8978751217405233`, and no `sys > 1` rows. Bucket sizes:
+
+| source | facet count | rows |
+| --- | ---: | ---: |
+| random product | `10` | `8192` |
+| random product | `11` | `4096` |
+| random product | `12` | `4096` |
+| random generic | `10` | `8192` |
+| random generic | `11` | `4096` |
+| random generic | `12` | `4096` |
+
+Local trimmed analysis command:
+
+```bash
+uv run --script experiments/sys-datascience/methods/tail-rule-mining/analyze.py \
+  --tables-dir /tmp/sys-ds-two-face-control-prepare-9846319 \
+  --out-dir /tmp/sys-ds-two-face-control-tail-rule-9846319-trimmed-top1 \
+  --stability-runs 0 \
+  --permutations 0
+```
+
+This rerun adds a top-1% label. On the single grouped holdout:
+
+| label | feature source | hits / selected / positives | precision | recall | enrichment |
+| --- | --- | ---: | ---: | ---: | ---: |
+| top decile | symplectic/omega only | `1013 / 3134 / 1228` | `0.3232291001914486` | `0.8249185667752443` | `4.312528971935419` |
+| top decile | Euclidean size/spread only | `613 / 1495 / 1228` | `0.4100334448160535` | `0.499185667752443` | `5.4706742344187465` |
+| top 5% | symplectic/omega only | `434 / 1942 / 572` | `0.223480947476828` | `0.7587412587412588` | `6.401244481574039` |
+| top 5% | Euclidean size/spread only | `380 / 1862 / 572` | `0.20408163265306123` | `0.6643356643356644` | `5.845582988440132` |
+| top 1% | geometry only | `71 / 1352 / 102` | `0.05251479289940828` | `0.696078431372549` | `8.43531732219515` |
+| top 1% | symplectic/omega only | `72 / 1448 / 102` | `0.049723756906077346` | `0.7058823529411765` | `7.987000324991875` |
+| top 1% | Euclidean size/spread only | `34 / 1101 / 102` | `0.030881017257039057` | `0.3333333333333333` | `4.960339085679685` |
+
+For the clean generic bucket `capacity_source=random_sample, facet_count=10`,
+within-bucket top-1% has `82` positives among `8192` rows. The lowest 15% of
+symplectic two-face mean selects `65 / 1229 / 82` hits
+(enrichment `5.284`); symplectic two-face sum selects `63 / 1229 / 82`
+(enrichment `5.121`). Euclidean two-face sum selects `55 / 1229 / 82`
+(enrichment `4.471`), and Euclidean two-face mean selects `53 / 1229 / 82`
+(enrichment `4.308`). Ratio summaries are much weaker: the mean
+`A_symp / A_euclidean` selects `22 / 1229 / 82` hits
+(enrichment `1.788`), and the median ratio selects `19 / 1229 / 82`
+(enrichment `1.544`).
+
+Interpretation for the row-level maps `K -> (sys(K), f(K))`: Euclidean
+two-face area is a genuine high-tail correlate, especially for broad top-decile
+selection where it gives the highest precision/enrichment by selecting fewer
+rows. It does not beat the symplectic/omega block for top 5% or top 1%, and in
+generic `F=10` the original small symplectic-area association survives after
+Euclidean two-face size is visible. The ratio `A_symp / A_euclidean` is not the
+main signal here. This points to a mixed pattern: there is ordinary
+small-face/roundness evidence, but the stronger top-tail signal still comes
+from symplectic-area and omega quantities, not from Euclidean size alone.
+
+The full default stability/permutation analysis on the `32768`-row prepared
+table was started locally but stopped during the stability sweep because it was
+too slow for an interactive pass. The trimmed rerun above is the durable local
+artifact for this production table; a full production stability rerun should be
+done as a batch job if needed.
+
 Interpretation: shallow geometry-only rules robustly isolate high-tail regions
 better than the sampled strata and available generator-provenance controls in
 this retained table. The signal is not localized to one column: the

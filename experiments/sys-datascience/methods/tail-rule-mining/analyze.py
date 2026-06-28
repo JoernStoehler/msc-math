@@ -327,7 +327,11 @@ def bucket_interpretation_diagnostics(
             rho = spearman_rank_correlation(feature_values, sys_values)
             if rho is None:
                 continue
-            for quantile_name, quantile_value in [("top_decile", 0.9), ("top_five_percent", 0.95)]:
+            for quantile_name, quantile_value in [
+                ("top_decile", 0.9),
+                ("top_five_percent", 0.95),
+                ("top_one_percent", 0.99),
+            ]:
                 threshold = float(np.quantile(sys_values, quantile_value))
                 target = sys_values >= threshold
                 if rho >= 0.0:
@@ -812,6 +816,7 @@ def main() -> None:
     labels = {
         "top_decile": float(np.quantile(y, 0.9)),
         "top_five_percent": float(np.quantile(y, 0.95)),
+        "top_one_percent": float(np.quantile(y, 0.99)),
     }
 
     method_summaries: dict[str, dict[str, object]] = {}
