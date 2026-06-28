@@ -143,6 +143,8 @@ def select_within_euclidean_bands(
 ) -> tuple[np.ndarray, str, float | None]:
     rho = spearman(values, sys_values)
     selected = np.zeros(len(values), dtype=bool)
+    if rho is None:
+        return selected, "constant_within_euclidean_bands", None
     quantiles = np.quantile(euclidean_values, np.linspace(0.0, 1.0, band_count + 1))
     for band_index in range(band_count):
         if band_index == band_count - 1:
@@ -157,7 +159,7 @@ def select_within_euclidean_bands(
         if len(band_indices) == 0:
             continue
         select_count = max(1, int(round(len(band_indices) * tail_fraction)))
-        if rho is not None and rho >= 0.0:
+        if rho >= 0.0:
             ordered = band_indices[np.argsort(values[band_indices], kind="mergesort")]
             chosen = ordered[-select_count:]
             tail = "highest_within_euclidean_bands"
@@ -529,6 +531,7 @@ def matched_outside_small_face_omega_for_bucket(
             outside_control_pool = ~target & ~small_face
             if not np.any(outside_target):
                 continue
+            matched_target = np.zeros(len(bucket_rows), dtype=bool)
             matched_control = np.zeros(len(bucket_rows), dtype=bool)
             for decile in sorted(set(deciles[outside_target])):
                 target_indices = np.where(outside_target & (deciles == decile))[0]
@@ -549,8 +552,9 @@ def matched_outside_small_face_omega_for_bucket(
                         ),
                     )
                     available_controls.remove(chosen)
+                    matched_target[target_index] = True
                     matched_control[chosen] = True
-            comparison_mask = outside_target | matched_control
+            comparison_mask = matched_target | matched_control
             if not np.any(matched_control):
                 continue
             selected = np.zeros(len(bucket_rows), dtype=bool)
@@ -565,20 +569,24 @@ def matched_outside_small_face_omega_for_bucket(
                     "label": label,
                     "sys_threshold": float(np.quantile(sys_values, quantile)),
                     "small_face_fraction": small_fraction,
-                    "outside_positive_rows": int(np.sum(outside_target)),
+                    "candidate_outside_positive_rows": int(np.sum(outside_target)),
+                    "outside_positive_rows": int(np.sum(matched_target)),
+                    "unmatched_outside_positive_rows": int(
+                        np.sum(outside_target & ~matched_target)
+                    ),
                     "matched_control_rows": int(np.sum(matched_control)),
-                    "positive_omega_median": float(np.median(omega_values[outside_target])),
+                    "positive_omega_median": float(np.median(omega_values[matched_target])),
                     "matched_control_omega_median": float(
                         np.median(omega_values[matched_control])
                     ),
-                    "positive_omega_mean": float(np.mean(omega_values[outside_target])),
+                    "positive_omega_mean": float(np.mean(omega_values[matched_target])),
                     "matched_control_omega_mean": float(np.mean(omega_values[matched_control])),
-                    "positive_euclidean_area_decile_mean": float(np.mean(deciles[outside_target])),
+                    "positive_euclidean_area_decile_mean": float(np.mean(deciles[matched_target])),
                     "matched_control_euclidean_area_decile_mean": float(
                         np.mean(deciles[matched_control])
                     ),
                     "rule": "omega_spectral_norm_below_comparison_median",
-                    **metrics(outside_target[comparison_mask], selected[comparison_mask]),
+                    **metrics(matched_target[comparison_mask], selected[comparison_mask]),
                 }
             )
     return rows

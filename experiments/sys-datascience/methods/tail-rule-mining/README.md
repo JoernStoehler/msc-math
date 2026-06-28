@@ -77,7 +77,7 @@ uv run --script experiments/sys-datascience/methods/tail-rule-mining/analyze.py 
   --out-dir /tmp/sys-ds-full-current/tail-rule-mining
 ```
 
-## Generated Artifacts After Rerun
+## Generated Artifact Contract
 
 - `summary.json`
 - `leaf-rules.tsv`
@@ -95,6 +95,18 @@ uv run --script experiments/sys-datascience/methods/tail-rule-mining/analyze.py 
 - `matched-outside-small-face-omega.tsv`
 - `outside-small-face-examples.tsv`
 - `headline-summary.tsv`
+
+For the current `32768`-row LICCA interpretation below, the local retained
+output packets are:
+
+- `/tmp/sys-ds-two-face-control-tail-rule-9846319-trimmed-top1`
+- `/tmp/sys-ds-two-face-control-well-rounded-9846319`
+
+Those packets are the checked generated artifacts for the current numbers in
+this README. The commands below reproduce them from the matching prepared table
+at `/tmp/sys-ds-two-face-control-prepare-9846319`; if that scratch prepared
+table is unavailable, first rebuild or retrieve the LICCA prepared table for
+commit `f4525347`.
 
 `summary.json` also records fixed coarse baselines and a label-permutation
 null check for the single grouped split. It includes the first rows of
