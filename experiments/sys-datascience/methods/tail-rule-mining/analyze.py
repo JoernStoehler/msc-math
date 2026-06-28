@@ -32,15 +32,21 @@ from random_only import (  # noqa: E402
 )
 
 
-def parse_args() -> argparse.Namespace:
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--tables-dir", type=Path, default=TABLES_DIR)
     parser.add_argument("--out-dir", type=Path, default=HERE / "artifacts")
     parser.add_argument("--max-depth", type=int, default=4)
     parser.add_argument("--min-leaf-fraction", type=float, default=0.015)
     parser.add_argument("--random-state", type=int, default=20260627)
-    parser.add_argument("--stability-runs", type=int, default=8)
-    parser.add_argument("--permutations", type=int, default=32)
+    parser.add_argument("--stability-runs", type=int, default=0)
+    parser.add_argument("--permutations", type=int, default=0)
+    parser.add_argument(
+        "--min-bucket-rows",
+        type=int,
+        default=100,
+        help="Minimum rows for within-bucket scalar interpretation diagnostics.",
+    )
     parser.add_argument(
         "--stability-depths",
         type=int,
@@ -55,7 +61,7 @@ def parse_args() -> argparse.Namespace:
         default=[0.01, 0.015, 0.025],
         help="Minimum leaf fractions for split/hyperparameter stability checks.",
     )
-    return parser.parse_args()
+    return parser.parse_args(argv)
 
 
 def first_numeric_field(provenance_rows: list[dict[str, object]], field: str) -> str:
@@ -136,6 +142,7 @@ def one_hot_matrix(
 def feature_family(name: str) -> str | None:
     if (
         name.startswith("ridge_symp_area_")
+        or name.startswith("ridge_symp_over_euclidean_area_")
         or name.startswith("ridge_abs_omega_")
         or name.startswith("ridge_abs_normalized_omega_")
         or name.startswith("allpair_abs_omega_")
@@ -151,6 +158,7 @@ def feature_family(name: str) -> str | None:
         or name.startswith("geom_cosine_")
         or name.startswith("edge_length_")
         or name.startswith("facet_volume_")
+        or name.startswith("ridge_euclidean_area_")
     ):
         return "euclidean_size_spread"
     if (
@@ -247,6 +255,34 @@ INTERPRETABLE_FEATURES = {
         "mean over cyclically ordered primal two-faces R of "
         "0.5 * |sum_i omega0(v_i, v_{i+1})| / sqrt(volume)"
     ),
+    "ridge_euclidean_area_volnorm_sum": (
+        "sum over cyclically ordered primal two-faces R of Euclidean polygon "
+        "area in R^4 divided by sqrt(volume)"
+    ),
+    "ridge_euclidean_area_volnorm_mean": (
+        "mean over cyclically ordered primal two-faces R of Euclidean polygon "
+        "area in R^4 divided by sqrt(volume)"
+    ),
+    "ridge_symp_over_euclidean_area_mean": (
+        "mean over cyclically ordered primal two-faces R with nonzero "
+        "Euclidean area of symplectic polygon area divided by Euclidean "
+        "polygon area"
+    ),
+    "ridge_symp_over_euclidean_area_q25": (
+        "25th percentile over cyclically ordered primal two-faces R with "
+        "nonzero Euclidean area of symplectic polygon area divided by "
+        "Euclidean polygon area"
+    ),
+    "ridge_symp_over_euclidean_area_median": (
+        "median over cyclically ordered primal two-faces R with nonzero "
+        "Euclidean area of symplectic polygon area divided by Euclidean "
+        "polygon area"
+    ),
+    "ridge_symp_over_euclidean_area_q75": (
+        "75th percentile over cyclically ordered primal two-faces R with "
+        "nonzero Euclidean area of symplectic polygon area divided by "
+        "Euclidean polygon area"
+    ),
     "omega_matrix_vol1_spectral_norm": (
         "largest singular value of the facet-normal matrix "
         "sqrt(volume) * omega0(a_i, a_j)"
@@ -264,7 +300,9 @@ INTERPRETABLE_FEATURES = {
 }
 
 
-def bucket_interpretation_diagnostics(rows: list[dict[str, object]]) -> list[dict[str, object]]:
+def bucket_interpretation_diagnostics(
+    rows: list[dict[str, object]], *, min_bucket_rows: int
+) -> list[dict[str, object]]:
     diagnostics: list[dict[str, object]] = []
     bucket_keys = sorted(
         {
@@ -279,7 +317,7 @@ def bucket_interpretation_diagnostics(rows: list[dict[str, object]]) -> list[dic
             if str(row.get("capacity_source", "missing")) == capacity_source
             and int(row.get("facet_count", 0)) == facet_count
         ]
-        if len(bucket_rows) < 100:
+        if len(bucket_rows) < min_bucket_rows:
             continue
         sys_values = np.array([float(row["sys"]) for row in bucket_rows], dtype=float)
         for feature, mathematical_quantity in INTERPRETABLE_FEATURES.items():
@@ -289,7 +327,11 @@ def bucket_interpretation_diagnostics(rows: list[dict[str, object]]) -> list[dic
             rho = spearman_rank_correlation(feature_values, sys_values)
             if rho is None:
                 continue
-            for quantile_name, quantile_value in [("top_decile", 0.9), ("top_five_percent", 0.95)]:
+            for quantile_name, quantile_value in [
+                ("top_decile", 0.9),
+                ("top_five_percent", 0.95),
+                ("top_one_percent", 0.99),
+            ]:
                 threshold = float(np.quantile(sys_values, quantile_value))
                 target = sys_values >= threshold
                 if rho >= 0.0:
@@ -733,8 +775,7 @@ def write_leaf_table(path: Path, rows: list[dict[str, object]]) -> None:
             writer.writerow({field: row.get(field) for field in fields})
 
 
-def main() -> None:
-    args = parse_args()
+def run(args: argparse.Namespace) -> None:
     rows, provenance_rows = load_trusted_random_tables(args.tables_dir)
     geometry_names = numeric_feature_names(rows, geometry_only=True)
     family_names = {
@@ -774,6 +815,7 @@ def main() -> None:
     labels = {
         "top_decile": float(np.quantile(y, 0.9)),
         "top_five_percent": float(np.quantile(y, 0.95)),
+        "top_one_percent": float(np.quantile(y, 0.99)),
     }
 
     method_summaries: dict[str, dict[str, object]] = {}
@@ -830,7 +872,9 @@ def main() -> None:
         min_leaf_fractions=args.stability_min_leaf_fractions,
         base_random_state=args.random_state,
     )
-    bucket_diagnostic_rows = bucket_interpretation_diagnostics(rows)
+    bucket_diagnostic_rows = bucket_interpretation_diagnostics(
+        rows, min_bucket_rows=args.min_bucket_rows
+    )
 
     all_leaves.sort(
         key=lambda row: (
@@ -861,6 +905,7 @@ def main() -> None:
         "stability_runs": args.stability_runs,
         "stability_depths": args.stability_depths,
         "stability_min_leaf_fractions": args.stability_min_leaf_fractions,
+        "min_bucket_rows": args.min_bucket_rows,
         "stability_summary": summarize_stability(stability_rows),
         "stability_feature_summary": summarize_feature_stability(stability_feature_rows),
         "coarse_baselines": coarse_baselines(
@@ -910,6 +955,10 @@ def main() -> None:
         )
     print(f"- stability configurations: `{len(stability_rows)}`")
     print(f"Wrote `{args.out_dir}`")
+
+
+def main(argv: list[str] | None = None) -> None:
+    run(parse_args(argv))
 
 
 if __name__ == "__main__":

@@ -57,6 +57,18 @@ several grouped splits, tree depths, and minimum leaf sizes.
 uv run --script experiments/sys-datascience/methods/tail-rule-mining/analyze.py
 ```
 
+Run the expensive stability/permutation layer separately:
+
+```bash
+uv run --script experiments/sys-datascience/methods/tail-rule-mining/analyze_stability.py
+```
+
+Run the bucket-local Euclidean two-face control diagnostic separately:
+
+```bash
+uv run --script experiments/sys-datascience/methods/tail-rule-mining/analyze_two_face_controls.py
+```
+
 For scratch prepared tables:
 
 ```bash
@@ -73,6 +85,12 @@ uv run --script experiments/sys-datascience/methods/tail-rule-mining/analyze.py 
 - `stability-split-features.tsv`
 - `bucket-interpretation-diagnostics.tsv`
 
+`analyze_two_face_controls.py` writes a separate packet:
+
+- `summary.json`
+- `bucket-control-rules.tsv`
+- `euclidean-area-deciles.tsv`
+
 `summary.json` also records fixed coarse baselines and a label-permutation
 null check for the single grouped split. It includes the first rows of
 `bucket-interpretation-diagnostics.tsv` for navigation, but the TSV is the
@@ -80,14 +98,14 @@ recomputed source for bucket-level interpretation.
 
 ## Observation
 
-Current full scoped random/product run, using
-`/tmp/sys-ds-random-only-full-current` as input and writing
-`/tmp/sys-ds-full-current/tail-rule-mining`:
+Current full scoped random/product run after adding Euclidean two-face area
+controls, using `/tmp/sys-ds-random-only-full.EbpaS8` as input and writing
+`/tmp/sys-ds-two-face-euclidean-control-tail-rule-full`:
 
 - rows: `14336`;
-- geometry-only features: `121`;
-- symplectic/omega features: `56`;
-- Euclidean size/spread features: `32`;
+- geometry-only features: `146`;
+- symplectic/omega features: `65`;
+- Euclidean size/spread features: `48`;
 - combinatorial/count features: `17`;
 - transition-graph features: `6`;
 - strata-only one-hot features: `21`;
@@ -104,12 +122,12 @@ Single grouped-holdout tree results:
 | --- | --- | ---: | ---: | ---: | ---: |
 | top decile | geometry only | `0.3878116343490305` | `0.835820895522388` | `5.927150948856824` | `722` |
 | top decile | symplectic/omega only | `0.3878116343490305` | `0.835820895522388` | `5.927150948856824` | `722` |
-| top decile | Euclidean size/spread only | `0.4331896551724138` | `0.6` | `6.620689655172414` | `464` |
+| top decile | Euclidean size/spread only | `0.36006825938566556` | `0.6298507462686567` | `5.503132800163008` | `586` |
 | top decile | transition graph only | `0.08422214049282825` | `0.6835820895522388` | `1.2872159979799422` | `2719` |
 | top decile | combinatorial/count only | `0.0` | `0.0` | `0.0` | `0` |
 | top decile | strata only | `0.0` | `0.0` | `0.0` | `0` |
 | top decile | generator provenance only | `0.11760154738878142` | `0.9074626865671642` | `1.7973729033748087` | `2585` |
-| top 5% | geometry only | `0.22827687776141384` | `0.950920245398773` | `7.170414810665268` | `679` |
+| top 5% | geometry only | `0.23123123123123124` | `0.9447852760736196` | `7.263214134379778` | `666` |
 | top 5% | symplectic/omega only | `0.22627737226277372` | `0.950920245398773` | `7.10760825757915` | `685` |
 | top 5% | Euclidean size/spread only | `0.2570093457943925` | `0.6748466257668712` | `8.072931597958831` | `428` |
 | top 5% | transition graph only | `0.040266106442577033` | `0.7055214723926381` | `1.2648003986870822` | `2856` |
@@ -160,6 +178,11 @@ The currently included quantities are:
 - total and mean volume-normalized symplectic areas of primal two-faces,
   computed as `0.5 * |sum_i omega0(v_i, v_{i+1})| / sqrt(volume)` over
   cyclically ordered two-face vertices;
+- total and mean volume-normalized Euclidean polygon areas of the same primal
+  two-faces in `R^4`;
+- summary quantiles of the per-two-face ratio
+  `symplectic polygon area / Euclidean polygon area`, computed only when the
+  Euclidean area is nonzero;
 - volume-normalized symplectic pairings of facet normals, including the
   spectral norm of the matrix `sqrt(volume) * omega0(a_i, a_j)`;
 - selected Euclidean size/spread controls.
@@ -177,6 +200,55 @@ leaf has `55` test rows, positive rate `0.7272727272727273`, mean `sys`
 geometry leaf has only `22` test rows, positive rate `0.7727272727272727`,
 mean `sys` `0.6978122767310648`, and max `sys` `0.7988226871046541`.
 
+### Euclidean Two-Face Control
+
+The added Euclidean two-face area controls make the old interpretation sharper:
+small Euclidean two-face area is a real high-tail correlate, but it does not
+match the symplectic-area block on this full retained table.
+
+On the single grouped holdout, `symplectic_omega_only` still selects the same
+top-decile rows as `geometry_only`: `280/722` selected rows are top-decile
+hits, for precision `0.3878116343490305`, recall `0.835820895522388`, and
+enrichment `5.927150948856824`. The Euclidean size/spread block, now including
+Euclidean two-face area, selects `211/586` hits, for precision
+`0.36006825938566556`, recall `0.6298507462686567`, and enrichment
+`5.503132800163008`. For the top-5% label, Euclidean size/spread has higher
+precision/enrichment (`110/428`, enrichment `8.072931597958831`) but lower
+recall than `symplectic_omega_only` (`155/685`, enrichment
+`7.10760825757915`).
+
+In the stability sweep, `symplectic_omega_only` beats
+`euclidean_size_spread_only` in enrichment in `61/72` paired top-decile
+configurations, with median enrichment difference `0.4602026808551354`, and in
+`66/72` paired top-5% configurations, with median difference
+`0.86743321125401`. Within the Euclidean block, the new
+`ridge_euclidean_area_volnorm_sum` is repeatedly selected
+(`11.5` mean splits per run for top decile and `14.875` for top 5%), so
+ordinary two-face size is not a negligible control.
+
+The clean generic bucket `capacity_source=random_sample, facet_count=10`
+contains `512` rows. For its within-bucket top-decile label, low symplectic
+two-face area sum selects `36/77` hits (`52` positives in the bucket; base rate
+`0.1015625`; enrichment `4.603396603396603`). Low Euclidean two-face area sum
+selects `28/77` hits (enrichment `3.5804195804195804`). The symplectic-over-
+Euclidean ratio is much weaker: the mean ratio selects `11/77` hits
+(enrichment `1.4065934065934065`), and the median ratio selects `13/77` hits
+(enrichment `1.6623376623376624`). For the top-5% label in the same bucket,
+low symplectic area mean selects `21/77` hits (`26` positives; enrichment
+`5.37062937062937`), low Euclidean area mean selects `17/77` hits
+(enrichment `4.347652347652348`), and the ratio summaries are at or near
+baseline.
+
+Interpretation: the row-level map
+`K -> (sys(K), ridge_symp_area_volnorm_sum(K))` still carries information not
+explained by simply exposing Euclidean two-face size. However, the ratio
+`A_symp/A_euclidean` is not the main signal in these diagnostics. The pattern
+therefore looks like a mixture: high `sys` rows tend to have smaller ordinary
+two-face size, which is ball/roundness-like, and an even stronger small
+symplectic-area association visible after the Euclidean-size control is added.
+This is still retained-table association evidence, not evidence that a
+Lagrangian-product/HKO proposer works.
+
 Stability sweep:
 
 - `8` grouped resplits;
@@ -189,10 +261,10 @@ Across paired stability configurations:
 
 | label | comparison | left win fraction | median enrichment difference |
 | --- | --- | ---: | ---: |
-| top decile | symplectic/omega over Euclidean size/spread | `0.8611111111111112` | `0.4563622947733501` |
+| top decile | symplectic/omega over Euclidean size/spread | `0.8472222222222222` | `0.4602026808551354` |
 | top decile | symplectic/omega over strata | `1.0` | `3.221063011457373` |
 | top decile | symplectic/omega over generator provenance | `1.0` | `1.593895555559562` |
-| top 5% | symplectic/omega over Euclidean size/spread | `0.9444444444444444` | `0.7801239992376704` |
+| top 5% | symplectic/omega over Euclidean size/spread | `0.9166666666666666` | `0.86743321125401` |
 | top 5% | symplectic/omega over strata | `1.0` | `4.39227211208452` |
 | top 5% | symplectic/omega over generator provenance | `1.0` | `2.6261442869912535` |
 
@@ -210,9 +282,9 @@ permutations per label/source:
 | label | feature source | observed enrichment | null median | null max | permutation p-value |
 | --- | --- | ---: | ---: | ---: | ---: |
 | top decile | geometry only | `5.927150948856824` | `1.042921148816081` | `3.754527610088515` | `0.030303030303030304` |
-| top decile | symplectic/omega only | `5.927150948856824` | `1.0159125406923284` | `8.984267849939492` | `0.06060606060606061` |
-| top decile | Euclidean size/spread only | `6.620689655172414` | `1.0049881020137241` | `3.638948116560057` | `0.030303030303030304` |
-| top 5% | geometry only | `7.170414810665268` | `0.9156306690941566` | `2.789397636023403` | `0.030303030303030304` |
+| top decile | symplectic/omega only | `5.927150948856824` | `1.0414954231775087` | `2.5055052605823342` | `0.030303030303030304` |
+| top decile | Euclidean size/spread only | `5.503132800163008` | `0.9710810782954318` | `2.056551704208869` | `0.030303030303030304` |
+| top 5% | geometry only | `7.263214134379778` | `0.8590409299299467` | `13.801821899981409` | `0.06060606060606061` |
 | top 5% | symplectic/omega only | `7.10760825757915` | `1.0388972992804795` | `3.61630465872409` | `0.030303030303030304` |
 | top 5% | Euclidean size/spread only | `8.072931597958831` | `1.0211520314251694` | `3.766119944910479` | `0.030303030303030304` |
 
@@ -220,6 +292,105 @@ With only `32` permutations, the smallest possible reported p-value is
 `1 / 33 = 0.030303030303030304`. The symplectic/omega top-decile null has one
 high outlier, so this check is a guard against obvious label-leakage/overfit
 rather than a precise significance estimate.
+
+### LICCA Targeted Production Rerun
+
+Jörn ran the targeted replication plan on LICCA from commit `f4525347`.
+The prepared table has `32768` rows, max `sys`
+`0.8978751217405233`, and no `sys > 1` rows. Bucket sizes:
+
+| source | facet count | rows |
+| --- | ---: | ---: |
+| random product | `10` | `8192` |
+| random product | `11` | `4096` |
+| random product | `12` | `4096` |
+| random generic | `10` | `8192` |
+| random generic | `11` | `4096` |
+| random generic | `12` | `4096` |
+
+Local trimmed analysis command:
+
+```bash
+uv run --script experiments/sys-datascience/methods/tail-rule-mining/analyze.py \
+  --tables-dir /tmp/sys-ds-two-face-control-prepare-9846319 \
+  --out-dir /tmp/sys-ds-two-face-control-tail-rule-9846319-trimmed-top1
+```
+
+Bucket-local Euclidean-control command:
+
+```bash
+uv run --script experiments/sys-datascience/methods/tail-rule-mining/analyze_two_face_controls.py \
+  --tables-dir /tmp/sys-ds-two-face-control-prepare-9846319 \
+  --out-dir /tmp/sys-ds-two-face-control-two-face-controls-9846319
+```
+
+This rerun adds a top-1% label. On the single grouped holdout:
+
+| label | feature source | hits / selected / positives | precision | recall | enrichment |
+| --- | --- | ---: | ---: | ---: | ---: |
+| top decile | symplectic/omega only | `1013 / 3134 / 1228` | `0.3232291001914486` | `0.8249185667752443` | `4.312528971935419` |
+| top decile | Euclidean size/spread only | `613 / 1495 / 1228` | `0.4100334448160535` | `0.499185667752443` | `5.4706742344187465` |
+| top 5% | symplectic/omega only | `434 / 1942 / 572` | `0.223480947476828` | `0.7587412587412588` | `6.401244481574039` |
+| top 5% | Euclidean size/spread only | `380 / 1862 / 572` | `0.20408163265306123` | `0.6643356643356644` | `5.845582988440132` |
+| top 1% | geometry only | `71 / 1352 / 102` | `0.05251479289940828` | `0.696078431372549` | `8.43531732219515` |
+| top 1% | symplectic/omega only | `72 / 1448 / 102` | `0.049723756906077346` | `0.7058823529411765` | `7.987000324991875` |
+| top 1% | Euclidean size/spread only | `34 / 1101 / 102` | `0.030881017257039057` | `0.3333333333333333` | `4.960339085679685` |
+
+The deeper bucket-local control changes the interpretation of the two-face
+area pattern. The raw symplectic two-face area rule is stronger than raw
+Euclidean two-face area, but most of that advantage does not survive direct
+Euclidean matching/residualization.
+
+In the clean generic bucket `capacity_source=random_sample, facet_count=10`,
+within-bucket top-1% has `82` positives among `8192` rows:
+
+| row-level rule, selecting 15% of rows | hits / selected / positives | enrichment |
+| --- | ---: | ---: |
+| lowest symplectic two-face area sum | `63 / 1229 / 82` | `5.121` |
+| lowest Euclidean two-face area sum | `55 / 1229 / 82` | `4.471` |
+| lowest symplectic area within Euclidean-area deciles | `42 / 1230 / 82` | `3.411` |
+| lowest residual of symplectic area after Euclidean area | `35 / 1229 / 82` | `2.845` |
+| lowest mean `A_symp / A_euclidean` | `22 / 1229 / 82` | `1.788` |
+
+The Euclidean-area decile view makes the dominant effect visible. In the same
+generic `F=10` bucket, the lowest Euclidean-area decile contains `45 / 82`
+top-1% rows and the second decile contains `16 / 82`; the largest two deciles
+contain none. The top-1% positive rate falls from `45 / 820` in the smallest
+Euclidean-area decile to `0 / 819` and `0 / 820` in the largest two deciles.
+
+Across all six source/facet buckets, raw symplectic area remains a strong
+high-tail correlate, but the Euclidean-controlled version is much weaker:
+
+| label | bucket | raw Euclidean area | raw symplectic area | symplectic matched within Euclidean bands | symplectic residual after Euclidean area | mean `A_symp / A_euclidean` |
+| --- | --- | ---: | ---: | ---: | ---: | ---: |
+| top 1% | generic `F=10` | `4.47` | `5.12` | `3.41` | `2.85` | `1.79` |
+| top 1% | generic `F=11` | `3.41` | `4.55` | `3.41` | `0.81` | `2.11` |
+| top 1% | generic `F=12` | `3.41` | `5.04` | `3.57` | `0.00` | `1.62` |
+| top 1% | product `F=10` | `5.20` | `6.18` | `1.54` | `0.08` | `0.49` |
+| top 1% | product `F=11` | `4.71` | `4.55` | `1.62` | `0.32` | `0.97` |
+| top 1% | product `F=12` | `3.57` | `4.06` | `1.62` | `0.81` | `1.79` |
+
+Interpretation for the row-level maps `K -> (sys(K), f(K))`: the primal
+two-face area pattern is primarily an ordinary Euclidean small-face/roundness
+pattern. The raw symplectic area sum sharpens that pattern because it is a
+strongly correlated smaller-area statistic, not because individual primal
+two-faces have a robustly predictive small symplectic restriction relative to
+their Euclidean area. The ratio `A_symp / A_euclidean` is weak, and the
+residual "symplectic area smaller than expected for Euclidean area" signal is
+absent in product buckets and only moderate in the clean generic `F=10` bucket.
+
+The separate facet-normal omega-matrix spectral norm remains highly predictive
+in several buckets. That should not be folded into the same explanation as the
+primal two-face area result: it may still be a symplectic-structure diagnostic,
+but the current Euclidean two-face control experiment mainly downgrades the
+specific primal two-face area pattern from "Lagrangian orientation evidence" to
+"mostly Euclidean small-face evidence, with limited residual generic signal."
+
+The full default stability/permutation analysis on the `32768`-row prepared
+table was started locally but stopped during the stability sweep because it was
+too slow for an interactive pass. The trimmed rerun above is the durable local
+artifact for this production table; a full production stability rerun should be
+done as a batch job if needed.
 
 Interpretation: shallow geometry-only rules robustly isolate high-tail regions
 better than the sampled strata and available generator-provenance controls in
