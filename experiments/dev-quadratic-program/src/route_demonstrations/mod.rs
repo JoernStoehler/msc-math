@@ -7,6 +7,7 @@ mod beta_margin_indeterminate;
 mod conservative_pruning_count_blowup;
 mod conservative_pruning_still_f64;
 mod f64_value_not_certificate;
+mod fallback_guarantee_modes_have_different_scopes;
 mod guarded_route_safe_refusal;
 mod literal_f64_pruning;
 mod lp_transition_policy_no_edge_advantage;

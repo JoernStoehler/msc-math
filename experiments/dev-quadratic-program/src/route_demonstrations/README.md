@@ -45,6 +45,9 @@ cargo test -p exp-dev-quadratic-program route_demonstrations --lib
   minimizing set undecided.
 - `retained_candidate_fallback_limit`: exact fallback over retained candidates
   is exact only for the candidate set it receives.
+- `fallback_guarantee_modes_have_different_scopes`: `BoundSafe`,
+  `MinimaSafe`, and `AllSafe` resolve different subsets of retained
+  indeterminate candidates.
 - `guarded_route_safe_refusal`: guarded routes should reject or request fallback
   rather than inventing a scalar on invalid or ambiguous inputs.
 - `lp_transition_policy_no_edge_advantage`: LP facet-pair transitions are a
