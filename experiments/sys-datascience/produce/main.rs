@@ -11,7 +11,7 @@ use exp_sys_landscape::{
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use rayon::prelude::*;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use std::collections::BTreeSet;
 use std::fs::File;
 use std::io::{BufWriter, Write};
@@ -62,6 +62,7 @@ struct Args {
     base_cache: PathBuf,
     seed: u64,
     plan_only: bool,
+    plan_file: Option<PathBuf>,
 }
 
 #[derive(Clone)]
@@ -102,6 +103,27 @@ struct ComputedWorkUnit {
     random_product: Option<DatascienceRandomProductSampleRow>,
 }
 
+#[derive(Debug, Deserialize)]
+struct ProducePlan {
+    #[serde(default)]
+    random: Vec<RandomPlanBucket>,
+    #[serde(default)]
+    random_product: Vec<RandomProductPlanBucket>,
+}
+
+#[derive(Debug, Deserialize)]
+struct RandomPlanBucket {
+    facet_count: usize,
+    rows: usize,
+}
+
+#[derive(Debug, Deserialize)]
+struct RandomProductPlanBucket {
+    k: usize,
+    m: usize,
+    rows: usize,
+}
+
 #[derive(Serialize)]
 struct ProduceStatsRow {
     mode: String,
@@ -133,6 +155,7 @@ fn parse_args_from(argv: impl IntoIterator<Item = impl Into<String>>) -> Args {
     let mut base_cache = None;
     let mut seed = SEED;
     let mut plan_only = false;
+    let mut plan_file = None;
 
     let mut i = 1usize;
     while i < argv.len() {
@@ -179,6 +202,10 @@ fn parse_args_from(argv: impl IntoIterator<Item = impl Into<String>>) -> Args {
                 plan_only = true;
                 i += 1;
             }
+            "--plan-file" => {
+                plan_file = Some(PathBuf::from(value()));
+                i += 2;
+            }
             "--help" | "-h" => {
                 print_help(
                     argv.first()
@@ -199,6 +226,7 @@ fn parse_args_from(argv: impl IntoIterator<Item = impl Into<String>>) -> Args {
         base_cache: base_cache.expect("--base-cache is required"),
         seed,
         plan_only,
+        plan_file,
     }
 }
 
@@ -209,7 +237,8 @@ Run datascience producers into a reviewable output directory.
 
 Usage:
   {program} --mode smoke|production --producers <list> --output-dir <dir> \\
-    --parallelism <n> --base-cache <computed-polytopes.jsonl> [--seed <u64>] [--plan-only]
+    --parallelism <n> --base-cache <computed-polytopes.jsonl> [--seed <u64>] \\
+    [--plan-file <json>] [--plan-only]
 
 Producers:
   random,random-product
@@ -272,11 +301,17 @@ fn should_log_plan_progress(accepted: usize, target: usize) -> bool {
     accepted == 1 || accepted == target || accepted % 128 == 0
 }
 
-fn random_work(mode: Mode) -> Vec<WorkSpec> {
+fn load_plan(path: &PathBuf) -> ProducePlan {
+    let handle =
+        File::open(path).unwrap_or_else(|e| panic!("open plan file {}: {e}", path.display()));
+    serde_json::from_reader(handle)
+        .unwrap_or_else(|e| panic!("parse plan file {}: {e}", path.display()))
+}
+
+fn random_work_from_counts(counts: impl IntoIterator<Item = (usize, usize)>) -> Vec<WorkSpec> {
     let started = std::time::Instant::now();
-    let samples_per_f = generic_samples_per_f(mode);
     let mut work = Vec::new();
-    for &facet_count in GENERIC_FACETS {
+    for (facet_count, samples_per_f) in counts {
         println!("planning random F={facet_count}: target={samples_per_f}");
         flush_stdout();
         for sample_index in 0..samples_per_f {
@@ -301,6 +336,16 @@ fn random_work(mode: Mode) -> Vec<WorkSpec> {
     work
 }
 
+fn random_work(mode: Mode) -> Vec<WorkSpec> {
+    let samples_per_f = generic_samples_per_f(mode);
+    random_work_from_counts(
+        GENERIC_FACETS
+            .iter()
+            .copied()
+            .map(|facet_count| (facet_count, samples_per_f)),
+    )
+}
+
 fn random_seed(seed: u64, facet_count: usize, sample_index: usize, attempt: u64) -> [u8; 32] {
     let mut material = Vec::new();
     material.extend_from_slice(&seed.to_le_bytes());
@@ -320,11 +365,12 @@ fn product_seed(seed: u64, k: usize, m: usize, sample_index: usize, attempt: u64
     blake3::derive_key("datascience-random-product", &material)
 }
 
-fn random_product_work(mode: Mode) -> Vec<WorkSpec> {
+fn random_product_work_from_counts(
+    counts: impl IntoIterator<Item = (usize, usize, usize)>,
+) -> Vec<WorkSpec> {
     let started = std::time::Instant::now();
-    let samples_per_bucket = product_samples_per_bucket(mode);
     let mut work = Vec::new();
-    for &(k, m) in PRODUCT_PAIRS {
+    for (k, m, samples_per_bucket) in counts {
         println!("planning random-product {k}x{m}: target={samples_per_bucket}");
         flush_stdout();
         for sample_index in 0..samples_per_bucket {
@@ -348,6 +394,16 @@ fn random_product_work(mode: Mode) -> Vec<WorkSpec> {
     );
     flush_stdout();
     work
+}
+
+fn random_product_work(mode: Mode) -> Vec<WorkSpec> {
+    let samples_per_bucket = product_samples_per_bucket(mode);
+    random_product_work_from_counts(
+        PRODUCT_PAIRS
+            .iter()
+            .copied()
+            .map(|(k, m)| (k, m, samples_per_bucket)),
+    )
 }
 
 fn generate_random_polytope(
@@ -516,21 +572,43 @@ fn main() {
         &[args.base_cache.clone()],
         Some(payload_path.clone()),
     );
+    let plan = args.plan_file.as_ref().map(load_plan);
     let mut work = Vec::new();
-    if args.producers.contains(&Producer::Random) {
-        work.extend(random_work(args.mode));
-    }
-    if args.producers.contains(&Producer::RandomProduct) {
-        work.extend(random_product_work(args.mode));
+    if let Some(plan) = &plan {
+        if args.producers.contains(&Producer::Random) {
+            work.extend(random_work_from_counts(
+                plan.random
+                    .iter()
+                    .map(|bucket| (bucket.facet_count, bucket.rows)),
+            ));
+        }
+        if args.producers.contains(&Producer::RandomProduct) {
+            work.extend(random_product_work_from_counts(
+                plan.random_product
+                    .iter()
+                    .map(|bucket| (bucket.k, bucket.m, bucket.rows)),
+            ));
+        }
+    } else {
+        if args.producers.contains(&Producer::Random) {
+            work.extend(random_work(args.mode));
+        }
+        if args.producers.contains(&Producer::RandomProduct) {
+            work.extend(random_product_work(args.mode));
+        }
     }
 
     println!(
-        "datascience produce: mode={:?} producers={:?} work_units={} parallelism={} base_cache={} plan_only={}",
+        "datascience produce: mode={:?} producers={:?} work_units={} parallelism={} base_cache={} plan_file={} plan_only={}",
         args.mode,
         args.producers,
         work.len(),
         args.parallelism,
         args.base_cache.display(),
+        args.plan_file
+            .as_ref()
+            .map(|path| path.display().to_string())
+            .unwrap_or_else(|| "<none>".to_string()),
         args.plan_only
     );
     report_work_plan(&work);
@@ -666,12 +744,15 @@ mod tests {
             "--base-cache",
             "/tmp/base.jsonl",
             "--plan-only",
+            "--plan-file",
+            "/tmp/plan.json",
         ]);
         assert_eq!(args.mode, Mode::Smoke);
         assert!(args.producers.contains(&Producer::Random));
         assert!(args.producers.contains(&Producer::RandomProduct));
         assert_eq!(args.parallelism, 1);
         assert!(args.plan_only);
+        assert_eq!(args.plan_file, Some(PathBuf::from("/tmp/plan.json")));
     }
 
     #[test]
@@ -684,5 +765,39 @@ mod tests {
             product_samples_per_bucket(Mode::Production) * PRODUCT_PAIRS.len(),
             10240
         );
+    }
+
+    #[test]
+    fn explicit_counts_build_targeted_work() {
+        let random = random_work_from_counts([(10, 2), (12, 1)]);
+        assert_eq!(random.len(), 3);
+        assert!(matches!(
+            &random[0],
+            WorkSpec::Random {
+                facet_count: 10,
+                sample_index: 0,
+                ..
+            }
+        ));
+        assert!(matches!(
+            &random[2],
+            WorkSpec::Random {
+                facet_count: 12,
+                sample_index: 0,
+                ..
+            }
+        ));
+
+        let product = random_product_work_from_counts([(4, 6, 2)]);
+        assert_eq!(product.len(), 2);
+        assert!(matches!(
+            &product[1],
+            WorkSpec::RandomProduct {
+                k: 4,
+                m: 6,
+                sample_index: 1,
+                ..
+            }
+        ));
     }
 }

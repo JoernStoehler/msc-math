@@ -40,6 +40,7 @@ MODE="$DATASCIENCE_MODE"
 PRODUCERS="$DATASCIENCE_PRODUCERS"
 OUTPUT_DIR="${DATASCIENCE_OUTPUT_DIR:-$SCRIPT_DIR/licca-runs/datascience-produce-${MODE}-${SLURM_JOB_ID}}"
 PLAN_ONLY="${DATASCIENCE_PLAN_ONLY:-0}"
+PLAN_FILE="${DATASCIENCE_PLAN_FILE:-}"
 
 case "$MODE" in
   smoke|production) ;;
@@ -67,6 +68,7 @@ echo "  mode:        $MODE"
 echo "  producers:   $PRODUCERS"
 echo "  cpus:        ${SLURM_CPUS_PER_TASK}"
 echo "  plan only:   $PLAN_ONLY"
+echo "  plan file:   ${PLAN_FILE:-<none>}"
 echo "  output dir:  $OUTPUT_DIR"
 echo "  base cache:  $BASE_CACHE"
 echo "  cargo target:$CARGO_TARGET_DIR"
@@ -91,6 +93,9 @@ cmd=(
 )
 if [[ "$PLAN_ONLY" == "1" ]]; then
   cmd+=(--plan-only)
+fi
+if [[ -n "$PLAN_FILE" ]]; then
+  cmd+=(--plan-file "$PLAN_FILE")
 fi
 
 "${cmd[@]}"
