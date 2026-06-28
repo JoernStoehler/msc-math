@@ -1,6 +1,6 @@
 ---
 name: research-experiments-data
-description: Use when Codex writes, edits, reviews, or delegates research notes, experiment design, experiment execution code, data/report/figure provenance, generated artifacts, or experiment-result interpretation in this repo.
+description: Use when Codex writes, edits, reviews, or delegates owner-local interpretation notes, experiment design, experiment execution code, data/report/figure provenance, generated artifacts, or experiment-result interpretation in this repo.
 ---
 
 # Research Experiments Data

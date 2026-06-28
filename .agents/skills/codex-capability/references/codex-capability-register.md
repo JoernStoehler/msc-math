@@ -55,7 +55,7 @@ Use these labels when adding rows.
   typos/formatting only.
 - `representative example`: realistic example supplied to capture a recurring
   pattern; not necessarily an actual logged session.
-- `repo-local evidence`: task files, research notes, commits, review notes,
+- `repo-local evidence`: task files, owner-local notes, commits, review notes,
   or failed-route notes in this repository.
 - `external evidence`: public benchmarks, system cards, papers, user reports,
   or deep-research summaries.

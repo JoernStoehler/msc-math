@@ -54,7 +54,7 @@ Check:
 - the description triggers on the intended future tasks and avoids nearby
   false positives
 - the body names the source truth or says when source truth is missing
-- the skill does not duplicate a task file, map file, research note, or
+- the skill does not duplicate a task file, map file, owner-local note, or
   another skill
 - the skill does not invite agents to do extra harness, planning, or review
   work during unrelated tasks

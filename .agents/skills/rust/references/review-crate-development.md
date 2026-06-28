@@ -42,8 +42,8 @@ points, examples, and tests index. Read deeper only when needed to verify a
 maintainer claim. For task/context evidence, inspect only files explicitly
 referenced by the review request or by DEVELOPMENT.md. If DEVELOPMENT.md names a
 caller symbol, package, task id, or experiment path, run at most one targeted
-`rg` for that exact name/path within `experiments/`, `tasks/`, and `research/`;
-otherwise mark caller context unverifiable from reviewed context.
+`rg` for that exact name/path within `experiments/`, `tasks/`, `formal/`, and
+`thesis/`; otherwise mark caller context unverifiable from reviewed context.
 
 Do not review implementation correctness or redesign the crate except where
 DEVELOPMENT.md makes a maintainability, scope, verification, or API-shape claim

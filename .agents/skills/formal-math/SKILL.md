@@ -1,6 +1,6 @@
 ---
 name: formal-math
-description: Use when Codex writes, edits, reviews, or delegates review of mathematical writing in this repo, especially `formal/*.tex`, research proof notes, theorem statements, proof sketches, verification-status comments, or code comments that claim correspondence with formal mathematics.
+description: Use when Codex writes, edits, reviews, or delegates review of mathematical writing in this repo, especially `formal/*.tex`, owner-local proof notes, theorem statements, proof sketches, verification-status comments, or code comments that claim correspondence with formal mathematics.
 ---
 
 # Formal Math Conventions
@@ -33,7 +33,7 @@ description: Use when Codex writes, edits, reviews, or delegates review of mathe
 ## Feedback from Subagents
 - Subagents are cheaper, faster, but less reliable than Jörn. 
 - They have a high false-negative and false-positive rate, but the true-positives and true-negatives are still useful signals / Bayesian evidence / elevate-to-attention flags. So check the positives they mention to exclude false-positive complaints.
-- Tell the review subagent the review surface, the relevant latex sources, potentially relevant context like rust files or research notes when usefulness is being reviewed, and a prioritization of what aspects you care about most to least. Don't reexplain quality standards, just reference this skill.
+- Tell the review subagent the review surface, the relevant latex sources, potentially relevant context like rust files or owner-local notes when usefulness is being reviewed, and a prioritization of what aspects you care about most to least. Don't reexplain quality standards, just reference this skill.
 - Ask the subagent to indicate confidence, encourage it to include more positives since we take care of false-positives in a second pass.
 - Review-prompt lessons are recorded in `references/review-prompt-learnings.md`.
 

@@ -38,8 +38,8 @@ interaction effects, and combinations.
   explanation.
 - **Literate programming:** organize code and explanation so the reader can
   follow the reasoning behind the computation. In this repo, use this idea
-  lightly: proof-sized reasoning usually belongs in `formal/` or research notes,
-  with code comments naming the local proposition and reference.
+  lightly: proof-sized reasoning usually belongs in `formal/` or owner-local
+  notes, with code comments naming the local proposition and reference.
 - **Comment the why, not the what:** use comments for proof obligations,
   invariants, choices among plausible designs, and non-obvious numerical
   assumptions. Avoid comments that restate the syntax.

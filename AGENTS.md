@@ -170,12 +170,11 @@ This repo does not use nested `AGENTS.md` files.
 |   |-- README.md
 |   |-- definition-of-success.md
 |   |-- current-state.md
-|   |-- planning-notes.md
-|   |-- submit-thesis/
-|   |   |-- README.md
-|   |   |-- *.md
-|   |   `-- *.pdf
-|   |-- references/*.md
+|   `-- planning-notes.md
+|-- submit/
+|   |-- README.md
+|   |-- *.md
+|   `-- *.pdf
 |-- .agents/skills/<skill>/
 |   |-- SKILL.md
 |   |-- agents/openai.yaml
@@ -197,8 +196,8 @@ This repo does not use nested `AGENTS.md` files.
 Start here:
 - `FACTSHEET.md`: Jörn-confirmed project facts. Use it unless newer
   Jörn/Kai/source truth contradicts it.
-- `tasks/README.md`: live task model, steering, submission/admin source files,
-  and final thesis-done checks.
+- `tasks/README.md`: live task model, steering, and final thesis-done checks.
+- `submit/README.md`: submission/admin source files and official-form cache.
 - Slice entry points: `thesis/MAP.md`, `experiments/MAP.md`,
   `crates/<crate>/MAP.md`, and owner-local README/MAP/content files.
 
