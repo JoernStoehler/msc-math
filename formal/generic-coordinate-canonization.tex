@@ -1,0 +1,275 @@
+\begin{unverified}
+Status: agent-written proof note for the coordinate canonization search. It is
+not reviewed by Jörn. The theorem is an exact-arithmetic generic statement.
+The Rust implementation is an f64 prototype and only approximates this
+construction.
+\end{unverified}
+
+\subsection{Generic coordinate canonization by a symplectic frame}
+\label{sec:generic-coordinate-canonization}
+
+This note isolates the part of the canonization problem that remains after the
+polytope has already been scale-fixed and centered. The row covectors are
+represented as column vectors in the fixed coordinate convention
+\((q_1,q_2,p_1,p_2)\). Let \(V=\mathbb R^4\) with standard symplectic matrix
+\(J\), and write
+\[
+  \omega(u,v)=u^T Jv
+\]
+for this coordinate-level pairing of represented covectors. A row list is
+\[
+  A=(a_1,\ldots,a_F)\in (V^*)^F.
+\]
+
+\begin{definition}[Omega row signatures]
+\label{def:omega-row-signatures}
+For a row list \(A\), define the skew matrix
+\[
+  \Omega(A)_{ij}=\omega(a_i,a_j).
+\]
+The row signature of index \(i\) is the sorted tuple
+\[
+  \sigma_i(A)=\operatorname{sort}\{\Omega(A)_{ij}:1\le j\le F\}.
+\]
+The sort order is fixed once and for all.
+\end{definition}
+
+\begin{definition}[Polynomial omega row signatures]
+\label{def:polynomial-omega-row-signatures}
+For \(1\le k\le F\), define
+\[
+  p_{i,k}(A)=\sum_{j=1}^F \Omega(A)_{ij}^k.
+\]
+Let
+\[
+  p_i(A)=(p_{i,1}(A),\ldots,p_{i,F}(A)).
+\]
+The vector \(p_i(A)\) is symmetric in the entries of row \(i\) of
+\(\Omega(A)\). Therefore it depends only on the multiset underlying
+\(\sigma_i(A)\).
+\end{definition}
+
+\begin{definition}[Generic row-labeling domain]
+\label{def:generic-row-labeling-domain}
+Let \(U_{\mathrm{label}}\subset (V^*)^F\) be the set of row lists such that the
+tuples \(\sigma_1(A),\ldots,\sigma_F(A)\) are pairwise distinct. For
+\(A\in U_{\mathrm{label}}\), let
+\[
+  \pi_A=(i_1,\ldots,i_F)
+\]
+be the unique ordering satisfying
+\[
+  \sigma_{i_1}(A)<\sigma_{i_2}(A)<\cdots<\sigma_{i_F}(A)
+\]
+in lexicographic tuple order. Define the ordered list
+\[
+  B_A=(b_1,\ldots,b_F)=(a_{i_1},\ldots,a_{i_F}).
+\]
+\end{definition}
+
+\begin{lemma}[The row-labeling condition is open dense]
+\label{lem:generic-coordinate-labeling-open-dense}
+For \(F\ge 3\), the set \(U_{\mathrm{label}}\) contains a Zariski-open dense
+subset of \((V^*)^F\). In particular, \(U_{\mathrm{label}}\) is dense in the
+Euclidean topology. It is also Euclidean open.
+\end{lemma}
+
+\begin{proof}
+For each pair \(r\ne s\), consider the condition
+\[
+  p_r(A)\ne p_s(A).
+\]
+It is the union, over \(1\le k\le F\), of the polynomial nonvanishing
+conditions \(p_{r,k}(A)-p_{s,k}(A)\ne 0\). We first check that this union is not
+empty. Choose \(a_r=e_1\), \(a_s=e_2\), and one further row \(a_t=e_3\). Put all
+other rows equal to \(0\). Then \(\omega(e_1,e_3)=1\) and
+\(\omega(e_2,e_3)=0\), so \(p_{r,2}(A)\ne p_{s,2}(A)\). Therefore, for every
+pair \(r\ne s\), the polynomial differences \(p_{r,k}-p_{s,k}\) are not all
+identically zero.
+
+The intersection over all pairs \(r\ne s\) of these nonvanishing unions is
+therefore Zariski open dense. On this intersection, the power sums of the row
+multisets differ for every pair of rows, so the sorted row signatures
+\(\sigma_i(A)\) are pairwise distinct. Hence this Zariski-open dense set is
+contained in \(U_{\mathrm{label}}\).
+
+Finally, \(U_{\mathrm{label}}\) is Euclidean open because the finitely many
+sorted tuples vary continuously as unordered multisets, and pairwise distinct
+compact tuples have a positive separation.
+\end{proof}
+
+\begin{definition}[Symplectic Gram--Schmidt for an ordered quadruple]
+\label{def:symplectic-gram-schmidt-quadruple}
+For an ordered quadruple \((u_1,u_2,u_3,u_4)\), set
+\[
+  q_1=u_1.
+\]
+If \(\omega(q_1,u_2)\ne 0\), set
+\[
+  p_1=\frac{u_2}{\omega(q_1,u_2)}.
+\]
+Define
+\[
+  \Pi(v)=v-\omega(v,p_1)q_1+\omega(v,q_1)p_1.
+\]
+Set
+\[
+  q_2=\Pi(u_3).
+\]
+If \(\omega(q_2,\Pi(u_4))\ne 0\), set
+\[
+  p_2=\frac{\Pi(u_4)}{\omega(q_2,\Pi(u_4))}.
+\]
+When both denominators are nonzero and \(q_2\ne 0\), the quadruple succeeds and
+produces
+\[
+  F=[q_1\ q_2\ p_1\ p_2].
+\]
+\end{definition}
+
+\begin{definition}[Generic coordinate-section domain and representative]
+\label{def:generic-coordinate-section}
+Let \(U\subset (V^*)^F\) be the set of row lists satisfying:
+\begin{enumerate}
+  \item \(A\in U_{\mathrm{label}}\);
+  \item \(a_1,\ldots,a_F\) span \(V^*\);
+  \item the lexicographic scan of ordered quadruples from \(B_A\) has a first
+    successful quadruple under
+    Definition~\ref{def:symplectic-gram-schmidt-quadruple}.
+\end{enumerate}
+For \(A\in U\), let \(F_A\) be the frame from that first successful quadruple.
+Define
+\[
+  C(A)=\bigl(F_A^{-1}b_1,\ldots,F_A^{-1}b_F\bigr).
+\]
+This is a coordinate row list, not an invariant matrix.
+\end{definition}
+
+\begin{lemma}[The coordinate-section domain is open dense]
+\label{lem:generic-coordinate-section-open-dense}
+For \(F\ge 4\), the set \(U\) from
+Definition~\ref{def:generic-coordinate-section} is Euclidean open dense in
+\((V^*)^F\).
+\end{lemma}
+
+\begin{proof}
+The labeling condition is open dense by
+Lemma~\ref{lem:generic-coordinate-labeling-open-dense}. The spanning condition
+is also open dense for \(F\ge 4\): its complement is defined by the vanishing of
+all \(4\times4\) minors of the \(F\times4\) row matrix, and at least one such
+minor is not identically zero.
+
+It remains to check that a spanning row list has at least one successful
+ordered quadruple. Choose four rows that form a basis of \(V^*\). The
+restriction of \(\omega\) to their span is nondegenerate because their span is
+all of \(V^*\). Hence among the four rows there is an ordered pair with
+nonzero \(\omega\)-pairing. After the first hyperbolic pair is chosen, the
+symplectic orthogonal quotient has dimension two and is nondegenerate. The
+projections of the remaining basis rows span that quotient, so some ordering of
+them has nonzero \(\omega\)-pairing after projection. Therefore the exhaustive
+ordered-quadruple scan succeeds.
+
+Thus, on the spanning locus, the third item in
+Definition~\ref{def:generic-coordinate-section} is automatic. The set \(U\) is
+therefore the intersection of the open dense labeling and spanning conditions.
+\end{proof}
+
+\begin{lemma}[The frame is symplectic]
+\label{lem:generic-coordinate-frame-symplectic}
+For \(A\in U\), the matrix \(F_A\) satisfies
+\[
+  F_A^TJF_A=J.
+\]
+\end{lemma}
+
+\begin{proof}
+By construction, \(\omega(q_1,p_1)=1\). The map \(\Pi\) subtracts the
+\(\langle q_1,p_1\rangle\) components, so
+\[
+  \omega(\Pi(v),q_1)=\omega(\Pi(v),p_1)=0
+\]
+for every \(v\). Hence \(q_2=\Pi(u_3)\) and \(\Pi(u_4)\) are symplectically
+orthogonal to \(q_1\) and \(p_1\). The normalization defining \(p_2\) gives
+\(\omega(q_2,p_2)=1\). Skew-symmetry gives the remaining diagonal zero entries,
+and the orthogonality just proved gives the off-block zero entries. In the
+ordered basis \((q_1,q_2,p_1,p_2)\), the matrix of \(\omega\) is \(J\).
+\end{proof}
+
+\begin{lemma}[Permutation equivariance of the row labeling]
+\label{lem:generic-coordinate-labeling-permutation-equivariant}
+For \(A\in U_{\mathrm{label}}\) and any permutation \(\tau\in S_F\), the ordered
+list \(B_{\tau A}\) equals \(B_A\).
+\end{lemma}
+
+\begin{proof}
+The matrix \(\Omega(\tau A)\) is obtained from \(\Omega(A)\) by simultaneous
+row-column permutation. Therefore the row signature attached to a facet moves
+with that facet. Since the signatures are pairwise distinct, sorting them
+recovers the same ordered list of covectors.
+\end{proof}
+
+\begin{lemma}[Symplectic equivariance of the selected frame]
+\label{lem:generic-coordinate-frame-symplectic-equivariant}
+Let \(R\in Sp(4)\), and let
+\[
+  R^{-T}A=(R^{-T}a_1,\ldots,R^{-T}a_F).
+\]
+If \(A\in U\), then \(R^{-T}A\in U\), \(B_{R^{-T}A}=R^{-T}B_A\), and
+\[
+  F_{R^{-T}A}=R^{-T}F_A.
+\]
+\end{lemma}
+
+\begin{proof}
+For all \(i,j\),
+\[
+  \omega(R^{-T}a_i,R^{-T}a_j)
+  =a_i^T R^{-1}JR^{-T}a_j
+  =a_i^TJa_j
+  =\omega(a_i,a_j).
+\]
+Thus the row signatures are unchanged and the same ordered labels are selected.
+The lexicographic quadruple scan is therefore the same scan applied to the
+transformed ordered list. Symplectic Gram--Schmidt commutes with \(R^{-T}\)
+because its formulas use vector addition, scalar multiplication, and
+\(\omega\)-pairings, all of which are preserved by \(R^{-T}\). Hence the first
+successful quadruple is the transformed first successful quadruple and
+\(F_{R^{-T}A}=R^{-T}F_A\).
+\end{proof}
+
+\begin{proposition}[Generic coordinate canonization]
+\label{prop:generic-coordinate-canonization}
+For \(A\in U\), the representative \(C(A)\) is invariant under
+\[
+  Sp(4)\times S_F.
+\]
+Equivalently, the construction gives a generic coordinate representative for
+the symplectic and facet-permutation action.
+\end{proposition}
+
+\begin{proof}
+Permutation invariance follows from
+Lemma~\ref{lem:generic-coordinate-labeling-permutation-equivariant}: the ordered
+list \(B_A\) is unchanged by input permutation, so the selected frame and
+coordinate rows are unchanged.
+
+For \(R\in Sp(4)\), Lemma~\ref{lem:generic-coordinate-frame-symplectic-equivariant}
+gives \(B_{R^{-T}A}=R^{-T}B_A\) and \(F_{R^{-T}A}=R^{-T}F_A\). For each ordered
+row \(b_i\),
+\[
+  F_{R^{-T}A}^{-1}R^{-T}b_i
+  =(R^{-T}F_A)^{-1}R^{-T}b_i
+  =F_A^{-1}b_i.
+\]
+Thus \(C(R^{-T}A)=C(A)\).
+\end{proof}
+
+\begin{remark}[Generic, not universal]
+\label{rem:generic-coordinate-canonization-not-universal}
+The current construction is not a universal section. It depends on the generic
+condition that omega row signatures are distinct. Symmetric or near-symmetric
+inputs can have signature ties, and then signature sorting is not a canonical
+labeling algorithm. A universal version must replace
+Definition~\ref{def:generic-row-labeling-domain} by a full canonical-labeling
+or tie-backtracking rule.
+\end{remark}

@@ -465,6 +465,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "exp-dev-canonization-t-search"
+version = "0.1.0"
+dependencies = [
+ "euclidean-polytopes",
+ "exp-sys-landscape",
+ "nalgebra",
+ "rand 0.8.5",
+ "rand_chacha 0.3.1",
+ "serde",
+ "serde_json",
+ "symplectic",
+]
+
+[[package]]
 name = "exp-dev-flow-graph"
 version = "0.1.0"
 dependencies = [
