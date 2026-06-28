@@ -11,6 +11,8 @@
 //!
 //! Current executable rungs:
 //!
+//! - `unpruned_enumeration_count_blowup`: unpruned HK enumeration is a
+//!   count-level reference route, not an ordinary capacity route.
 //! - `literal_f64_pruning`: literal f64 predicates can silently prune a real
 //!   transition and return the wrong capacity.
 //! - `conservative_pruning_still_f64`: keeping indeterminate transitions fixes
@@ -57,6 +59,7 @@ mod product_billiard_reduces_product_sigma_count;
 mod product_rounding_changes_input;
 mod q_error_bound_not_certificate;
 mod retained_candidate_fallback_limit;
+mod unpruned_enumeration_count_blowup;
 
 use nalgebra::Vector4;
 

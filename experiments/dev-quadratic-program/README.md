@@ -153,7 +153,11 @@ custom enumeration, or local proof packets:
 - **Route demonstrations:** executable examples of why tempting simpler
   routes fail. Nobody currently plans to import this code; future consumers can
   read, run, and copy-edit it when they need a simpler heuristic and do not
-  care about the missing numerical guarantees. The current literal-f64
+  care about the missing numerical guarantees. The unpruned-enumeration
+  demonstration records count-only evidence that exhaustive HK traversal is a
+  reference route, not an ordinary capacity route: F=10 already has 1,112,073
+  active words before any KKT solve, over 100x the exact-pruned HKO F=10 stream.
+  The current literal-f64
   demonstration uses strict f64 facet/transition predicates and shows a real
   transition edge being pruned by roundoff. The exact comparisons in the HKO
   demonstrations use the binary64-rounded fixture, not algebraic HKO
