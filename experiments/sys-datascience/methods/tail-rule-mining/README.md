@@ -94,17 +94,21 @@ uv run --script experiments/sys-datascience/methods/tail-rule-mining/analyze.py 
 - `conditional-omega-rules.tsv`
 - `matched-outside-small-face-omega.tsv`
 - `outside-small-face-examples.tsv`
+- `headline-summary.tsv`
 
 `summary.json` also records fixed coarse baselines and a label-permutation
 null check for the single grouped split. It includes the first rows of
 `bucket-interpretation-diagnostics.tsv` for navigation, but the TSV is the
 recomputed source for bucket-level interpretation.
 
-## Observation
+## Historical Scratch Run
 
-Current full scoped random/product run after adding Euclidean two-face area
-controls, using `/tmp/sys-ds-random-only-full.EbpaS8` as input and writing
-`/tmp/sys-ds-two-face-euclidean-control-tail-rule-full`:
+This section records the earlier full scoped random/product scratch run after
+adding Euclidean two-face area controls, using
+`/tmp/sys-ds-random-only-full.EbpaS8` as input and writing
+`/tmp/sys-ds-two-face-euclidean-control-tail-rule-full`. It is retained as a
+stability/provenance check. The LICCA targeted production rerun below is the
+current interpretation source.
 
 - rows: `14336`;
 - geometry-only features: `146`;
@@ -466,12 +470,12 @@ too slow for an interactive pass. The trimmed rerun above is the durable local
 artifact for this production table; a full production stability rerun should be
 done as a batch job if needed.
 
-Interpretation: shallow geometry-only rules robustly isolate high-tail regions
-better than the sampled strata and available generator-provenance controls in
-this retained table. The signal is not localized to one column: the
-symplectic/omega feature family is strongest under the stability sweep, while
-Euclidean size/spread features are also informative. This is an in-table
-interpretability diagnostic, not a validated candidate-proposer.
+Interpretation of the historical scratch run: shallow geometry-only rules
+robustly isolate high-tail regions better than the sampled strata and available
+generator-provenance controls in that retained table. The later LICCA
+Euclidean-control diagnostics refine the mechanism-level reading: the primal
+two-face area pattern is mostly small Euclidean two-face area, while
+facet-normal omega remains a separate lead.
 
 ## Validity Guards
 
@@ -488,8 +492,9 @@ interpretability diagnostic, not a validated candidate-proposer.
 
 ## Current Disposition
 
-Run-pending-review trial method. The current scratch run is successful and
-needs method/statistics review before thesis use.
+Merged trial method on `sys-ds-random-method-integration`. The current LICCA
+targeted production run is successful and gives a thesis-usable retained-table
+association, with the caveats below. It is not a proposer validation.
 
 ## Interpretation Boundaries
 
@@ -497,12 +502,11 @@ needs method/statistics review before thesis use.
   of a new `sys > 1` row.
 - This packet does not show that a rule will enrich newly generated rows before
   `sys` is computed.
-- The stable split features overlap with ridge and omega features from the
-  scalar-association packet, so this packet should be treated as a local
-  rule-shaped view of that high-tail signal.
-- Euclidean size/spread features also carry high-tail signal in this packet.
-  The current artifacts do not decide whether the Euclidean signal is
-  independent of the symplectic/omega signal or a correlated proxy for it.
+- The primal two-face area signal is mostly explained by small Euclidean
+  two-face area; do not present it as direct Lagrangian-orientation evidence.
+- Facet-normal omega-matrix features remain a separate lead, especially for the
+  small outside-low-Euclidean-area population, but the current counts do not
+  establish a stable second high-`sys` class.
 - The result is scoped to the current retained random/product producer
   contract. New random distributions, broader height/facet/product ranges, or
   independent producer reruns reopen the packet.
@@ -516,7 +520,23 @@ changes.
 ## Thesis Use
 
 Potentially supports a statement that interpretable high-tail rule mining was
-tried and did not by itself validate a candidate-proposer.
+tried and did not by itself validate a candidate-proposer. The two-face control
+result is also useful as a cautionary example: a symplectic-looking feature can
+be a sharper proxy for an ordinary Euclidean small-face regime.
+
+## Expansion Leads
+
+These are outside the current well-rounded packet unless thesis planning
+chooses them explicitly:
+
+- cluster/taxonomize high-`sys` rows to test whether the outside-small-face
+  population is a stable second class;
+- inspect representative geometry for low-Euclidean high-tail,
+  outside-low-Euclidean high-tail, and low-Euclidean non-tail rows;
+- run a larger targeted production plan if the outside-small-face/low-omega
+  lead becomes thesis-relevant;
+- freeze a rule and test it as a generated-candidate proposer before computing
+  `sys` on selected rows.
 
 ## Reopen Triggers
 

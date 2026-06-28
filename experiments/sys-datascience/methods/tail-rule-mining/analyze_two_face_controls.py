@@ -636,6 +636,68 @@ def outside_small_face_examples_for_bucket(
     return rows
 
 
+def headline_summary_rows(
+    *,
+    outside_small_face_rows: list[dict[str, object]],
+    decile_rows: list[dict[str, object]],
+    matched_outside_omega_rows: list[dict[str, object]],
+) -> list[dict[str, object]]:
+    rows: list[dict[str, object]] = []
+    for row in outside_small_face_rows:
+        if row["label"] != "top_one_percent":
+            continue
+        rows.append(
+            {
+                "section": "top_one_percent_small_face_concentration",
+                "capacity_source": row["capacity_source"],
+                "facet_count": row["facet_count"],
+                "small_face_fraction": row["small_face_fraction"],
+                "positives_inside": row["positive_small_face_rows"],
+                "positives_total": row["positives"],
+                "fraction_inside": row["positive_fraction_in_small_face"],
+                "outside_positive_rate": row["outside_small_face_positive_rate"],
+            }
+        )
+    for label in LABELS:
+        decile_counts = [
+            row
+            for row in decile_rows
+            if row["capacity_source"] == "random_sample"
+            and row["facet_count"] == 10
+            and row["label"] == label
+        ]
+        if not decile_counts:
+            continue
+        summary_row: dict[str, object] = {
+            "section": "generic_f10_euclidean_decile_ladder",
+            "capacity_source": "random_sample",
+            "facet_count": 10,
+            "label": label,
+        }
+        for row in decile_counts:
+            summary_row[f"decile_{row['euclidean_area_sum_decile']}_positives"] = row[
+                "positives"
+            ]
+        rows.append(summary_row)
+    for row in matched_outside_omega_rows:
+        if row["label"] != "top_one_percent" or row["small_face_fraction"] != 0.3:
+            continue
+        rows.append(
+            {
+                "section": "top_one_percent_outside_low30_matched_omega",
+                "capacity_source": row["capacity_source"],
+                "facet_count": row["facet_count"],
+                "outside_positive_rows": row["outside_positive_rows"],
+                "matched_control_rows": row["matched_control_rows"],
+                "positive_omega_median": row["positive_omega_median"],
+                "matched_control_omega_median": row["matched_control_omega_median"],
+                "positive_omega_mean": row["positive_omega_mean"],
+                "matched_control_omega_mean": row["matched_control_omega_mean"],
+            }
+        )
+    return rows
+
+
 def main() -> None:
     args = parse_args()
     rows, provenance_rows = load_trusted_random_tables(args.tables_dir)
@@ -737,6 +799,12 @@ def main() -> None:
         matched_outside_omega_rows,
     )
     write_tsv(args.out_dir / "outside-small-face-examples.tsv", outside_example_rows)
+    headline_rows = headline_summary_rows(
+        outside_small_face_rows=outside_small_face_rows,
+        decile_rows=decile_rows,
+        matched_outside_omega_rows=matched_outside_omega_rows,
+    )
+    write_tsv(args.out_dir / "headline-summary.tsv", headline_rows)
     write_json(
         args.out_dir / "summary.json",
         {
@@ -752,6 +820,7 @@ def main() -> None:
             "conditional_omega_rule_count": len(conditional_omega_rows),
             "matched_outside_small_face_omega_count": len(matched_outside_omega_rows),
             "outside_small_face_example_count": len(outside_example_rows),
+            "headline_summary_row_count": len(headline_rows),
         },
     )
     print("# two-face Euclidean control diagnostics")
@@ -763,6 +832,7 @@ def main() -> None:
     print(f"- conditional omega rows: `{len(conditional_omega_rows)}`")
     print(f"- matched outside-small-face omega rows: `{len(matched_outside_omega_rows)}`")
     print(f"- outside-small-face examples: `{len(outside_example_rows)}`")
+    print(f"- headline summary rows: `{len(headline_rows)}`")
     print(f"Wrote `{args.out_dir}`")
 
 
