@@ -30,8 +30,16 @@ cargo run -p exp-dev-sys-prediction --release \
   --out-dir /tmp/dev-sys-prediction-panel-smoke
 ```
 
+`local-small.json` uses the default prepared sys-datascience table instead;
+hydrate `experiments/sys-datascience/prepare/polytope-table.jsonl` before
+running that larger local config in a fresh worktree.
+
 The config carries the compute-relevant run scale. Current fields are:
 
+- `polytope_table`: input prepared-table or compact panel JSONL path; defaults
+  to the LFS-backed sys-datascience prepared table;
+- `source`: capacity-source filter used when selecting basepoints from the
+  input table; defaults to `random_sample`;
 - `buckets`: per-facet basepoint counts and beta-boundary row counts;
 - `steps`: perturbation radii for `a = a0 + t u`;
 - `sys_cache_inputs`: optional extra JSONL cache files for expensive full
@@ -42,13 +50,18 @@ The config carries the compute-relevant run scale. Current fields are:
 
 Core identity outputs are:
 
-- `basepoints.jsonl`: selected basepoints and provenance;
+- `basepoints.jsonl`: selected basepoint identities;
+- `basepoint-event-panel/basepoint-provenance-panel.jsonl`: basepoint
+  selection provenance;
 - `states.jsonl`: base and target polytope states;
 - `events.jsonl`: perturbation-target relations.
 
 Observation/detail outputs such as `local-geometry-probe.jsonl`,
 `prediction-cloud.jsonl`, branch annotations, beta-boundary rows, and
-`dataset-summary.json` support current analysis and run auditing.
+`dataset-summary.json` support current analysis and run auditing. The
+perturbation-detail files live under
+`basepoint-event-panel/perturbation-cloud/`; the root-level identity rows are
+copies for quick joins and provenance checks.
 
 Code ownership is deliberately shallow:
 

@@ -3055,7 +3055,7 @@ fn parse_args_from(argv: impl IntoIterator<Item = impl Into<String>>) -> Cli {
                     .expect("--min-observed-relative-delta must be an f64");
             }
             "--help" | "-h" => {
-                print_usage();
+                print_usage(&cli.program_name);
                 std::process::exit(0);
             }
             other => panic!("unsupported argument: {other}"),
@@ -3063,15 +3063,16 @@ fn parse_args_from(argv: impl IntoIterator<Item = impl Into<String>>) -> Cli {
     }
 
     if cli.diagnostic_dir.as_os_str().is_empty() {
-        print_usage();
+        print_usage(&cli.program_name);
         panic!("--diagnostic-dir is required");
     }
     cli
 }
 
-fn print_usage() {
+fn print_usage(program_name: &str) {
+    let command_name = command_name_from_args(program_name);
     eprintln!(
-        "Usage: dev-sys-prediction-produce --diagnostic-dir PATH \
+        "Usage: {command_name} --diagnostic-dir PATH \
          [--polytope-table PATH] [--out-dir PATH] \
          [--selection-threshold-relative F64] [--action-window-relative F64] \
          [--direction-model near-active|candidate-window] \
