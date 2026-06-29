@@ -76,7 +76,8 @@ do not patch-edit them by hand.
 
 ## Observation
 
-Current integrated full retained run on `/tmp/ds-integrated-full`:
+Current integrated full retained run on the retained invariant table under
+`../../prepare`:
 
 - rows: `14336`;
 - invariant features: `39`;

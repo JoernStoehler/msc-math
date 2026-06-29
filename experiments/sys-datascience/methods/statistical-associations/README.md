@@ -90,7 +90,8 @@ The artifact records:
 
 Current integrated full retained run:
 
-- input: `/tmp/ds-integrated-full`, `14336` trusted random/product rows;
+- input: retained invariant table under `../../prepare`, `14336` trusted
+  random/product rows;
 - active polytope fields: `45`, with `0` forbidden legacy fields;
 - eligible scalar covariates: `39`;
 - nonconstant scalar covariates tested: `29`;

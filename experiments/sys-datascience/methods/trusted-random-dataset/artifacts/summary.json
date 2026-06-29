@@ -5,7 +5,7 @@
   },
   "duplicate_polytope_rows": 0,
   "excluded_label_hits": 0,
-  "input_tables_dir": "/tmp/ds-integrated-full",
+  "input_tables_dir": "experiments/sys-datascience/prepare",
   "max_sys": 0.86258589584944,
   "min_sys": 2.0327844013814595e-06,
   "sys_gt_one": 0,

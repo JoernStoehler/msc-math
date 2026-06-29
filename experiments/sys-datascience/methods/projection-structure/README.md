@@ -33,9 +33,10 @@ uv run --script experiments/sys-datascience/methods/projection-structure/analyze
 
 Current integrated full retained run:
 
-- input: `/tmp/ds-integrated-full`, `14336` trusted random/product rows;
+- input: retained invariant table under `../../prepare`, `14336` trusted
+  random/product rows;
 - invariant features: `39`;
-- PC1/`sys` correlation: `0.4644434019289048`;
+- PC1/`sys` correlation: `0.4644434019289053`;
 - top-25 isolation-forest anomaly rows overlapping the top `2%` `sys` rows:
   `0`.
 

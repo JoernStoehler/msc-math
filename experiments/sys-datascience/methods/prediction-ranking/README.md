@@ -36,17 +36,18 @@ uv run --script experiments/sys-datascience/methods/prediction-ranking/analyze.p
 
 Current integrated full retained run:
 
-- input: `/tmp/ds-integrated-full`, `14336` trusted random/product rows;
+- input: retained invariant table under `../../prepare`, `14336` trusted
+  random/product rows;
 - invariant features: `39`;
 - metadata one-hot features: `27`;
-- ridge invariant features: `R^2 = 0.33176388192095596`, MAE
-  `0.11248710283335754`, top-decile enrichment
+- ridge invariant features: `R^2 = 0.331763881921196`, MAE
+  `0.11248710283336094`, top-decile enrichment
   `0.44390243902439025`;
-- random forest invariant features: `R^2 = 0.8868448894965251`, MAE
-  `0.04904701343747995`, top-decile enrichment
-  `0.608130081300813`;
-- metadata-only random forest: `R^2 = 0.0019535588595058773`, MAE
-  `0.16758290080062851`, top-decile enrichment
+- random forest invariant features: `R^2 = 0.8851660223047897`, MAE
+  `0.04945926962386865`, top-decile enrichment
+  `0.6032520325203252`;
+- metadata-only random forest: `R^2 = 0.008602803529270675`, MAE
+  `0.16710778800406892`, top-decile enrichment
   `0.14031357959075205`;
 - random-forest enrichment permutation p-value with `10` permutations:
   `0.09090909090909091`.

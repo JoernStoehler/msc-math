@@ -2,45 +2,45 @@
   "candidate_proposer_disposition": "no validated candidate-proposer: held-out ranking is an in-table invariant-feature signal and did not generate or validate new rows",
   "eligible_invariant_feature_count": 39,
   "feature_names": [
-    "edge_count",
-    "edge_density",
     "facet_count",
-    "facet_neighbor_count_max",
-    "facet_neighbor_count_mean",
-    "facet_neighbor_count_min",
-    "facet_neighbor_count_std",
-    "facet_vertex_count_max",
-    "facet_vertex_count_mean",
-    "facet_vertex_count_min",
-    "facet_vertex_count_std",
-    "is_simple",
+    "vertex_count",
+    "edge_count",
     "ridge_count",
-    "ridge_size_max",
+    "is_simple",
+    "simple_vertex_fraction",
+    "edge_density",
+    "vertex_incident_facets_mean",
+    "vertex_incident_facets_std",
+    "vertex_incident_facets_min",
+    "vertex_incident_facets_max",
+    "vertex_degree_mean",
+    "vertex_degree_std",
+    "vertex_degree_min",
+    "vertex_degree_max",
     "ridge_size_mean",
-    "ridge_size_min",
     "ridge_size_std",
-    "ridge_symp_area_max_over_volume_sqrt",
-    "ridge_symp_area_max_share",
+    "ridge_size_min",
+    "ridge_size_max",
+    "facet_vertex_count_mean",
+    "facet_vertex_count_std",
+    "facet_vertex_count_min",
+    "facet_vertex_count_max",
+    "facet_neighbor_count_mean",
+    "facet_neighbor_count_std",
+    "facet_neighbor_count_min",
+    "facet_neighbor_count_max",
     "ridge_symp_area_mean_over_volume_sqrt",
-    "ridge_symp_area_median_over_volume_sqrt",
+    "ridge_symp_area_std_over_volume_sqrt",
     "ridge_symp_area_min_over_volume_sqrt",
+    "ridge_symp_area_max_over_volume_sqrt",
     "ridge_symp_area_q25_over_volume_sqrt",
+    "ridge_symp_area_median_over_volume_sqrt",
     "ridge_symp_area_q75_over_volume_sqrt",
     "ridge_symp_area_q90_over_volume_sqrt",
     "ridge_symp_area_q95_over_volume_sqrt",
-    "ridge_symp_area_std_over_volume_sqrt",
     "ridge_symp_area_sum_over_volume_sqrt",
-    "ridge_symp_area_top3_share",
-    "simple_vertex_fraction",
-    "vertex_count",
-    "vertex_degree_max",
-    "vertex_degree_mean",
-    "vertex_degree_min",
-    "vertex_degree_std",
-    "vertex_incident_facets_max",
-    "vertex_incident_facets_mean",
-    "vertex_incident_facets_min",
-    "vertex_incident_facets_std"
+    "ridge_symp_area_max_share",
+    "ridge_symp_area_top3_share"
   ],
   "forest_trees": 80,
   "grouping": "capacity_source:facet_count",
@@ -90,88 +90,88 @@
   "random_forest_top_feature_importances": [
     {
       "feature": "ridge_symp_area_sum_over_volume_sqrt",
-      "importance": 0.8435475538163385
+      "importance": 0.8451380489500879
     },
     {
       "feature": "ridge_symp_area_std_over_volume_sqrt",
-      "importance": 0.09583228051222765
+      "importance": 0.09285724849663536
     },
     {
       "feature": "ridge_size_min",
-      "importance": 0.01623384292772419
-    },
-    {
-      "feature": "ridge_symp_area_median_over_volume_sqrt",
-      "importance": 0.004522955576216697
-    },
-    {
-      "feature": "ridge_symp_area_q25_over_volume_sqrt",
-      "importance": 0.0044527414302177395
+      "importance": 0.016246285199301595
     },
     {
       "feature": "ridge_symp_area_max_over_volume_sqrt",
-      "importance": 0.004350462364722689
+      "importance": 0.005305815261883284
     },
     {
-      "feature": "ridge_symp_area_top3_share",
-      "importance": 0.0038334948693557534
+      "feature": "ridge_symp_area_median_over_volume_sqrt",
+      "importance": 0.004543569812646205
+    },
+    {
+      "feature": "ridge_symp_area_q25_over_volume_sqrt",
+      "importance": 0.004338107312311303
     },
     {
       "feature": "ridge_symp_area_q75_over_volume_sqrt",
-      "importance": 0.003822630728133482
+      "importance": 0.0039039562022312718
     },
     {
-      "feature": "ridge_symp_area_q90_over_volume_sqrt",
-      "importance": 0.003712839590543213
+      "feature": "ridge_symp_area_top3_share",
+      "importance": 0.003883742596886448
     },
     {
       "feature": "ridge_symp_area_q95_over_volume_sqrt",
-      "importance": 0.003434237881762653
+      "importance": 0.0036641956572902225
+    },
+    {
+      "feature": "ridge_symp_area_q90_over_volume_sqrt",
+      "importance": 0.003597256072979015
     },
     {
       "feature": "ridge_symp_area_max_share",
-      "importance": 0.0033492782540147517
+      "importance": 0.0034512909913707217
     },
     {
       "feature": "ridge_symp_area_mean_over_volume_sqrt",
-      "importance": 0.003179613370696685
+      "importance": 0.0033503708766682216
     },
     {
       "feature": "ridge_symp_area_min_over_volume_sqrt",
-      "importance": 0.002458424154974882
+      "importance": 0.0025819464350366975
     },
     {
       "feature": "ridge_size_std",
-      "importance": 0.0015378593813775352
+      "importance": 0.0017334519030854805
     },
     {
-      "feature": "edge_count",
-      "importance": 0.0008780644955692147
+      "feature": "edge_density",
+      "importance": 0.0010830068916839774
     }
   ],
   "results": {
     "random_forest_invariant_features": {
-      "mae": 0.04904701343747995,
+      "mae": 0.04945926962386865,
       "max_predicted_row_sys": 0.7957602955129961,
-      "r2": 0.8868448894965251,
-      "top_decile_enrichment": 0.608130081300813
+      "r2": 0.8851660223047897,
+      "top_decile_enrichment": 0.6032520325203252
     },
     "random_forest_metadata_only": {
-      "mae": 0.16758290080062851,
-      "max_predicted_row_sys": 0.6568368480701366,
-      "r2": 0.0019535588595058773,
+      "mae": 0.16710778800406892,
+      "max_predicted_row_sys": 0.7634743444882954,
+      "r2": 0.008602803529270675,
       "top_decile_enrichment": 0.14031357959075205
     },
     "ridge_invariant_features": {
-      "mae": 0.11248710283335754,
+      "mae": 0.11248710283336094,
       "max_predicted_row_sys": 0.8536118881702471,
-      "r2": 0.33176388192095596,
+      "r2": 0.331763881921196,
       "top_decile_enrichment": 0.44390243902439025
     },
     "ridge_metadata_only": {
-      "mae": 0.14266912157047226,
-      "max_predicted_row_sys": 0.7754689397376794,
-      "r2": 0.30334429073518265,
+      "mae": 0.1426691215704994,
+      "max_predicted_row_sys": 0.8075171348565293,
+      "r2": 0.3033442907349574,
       "top_decile_enrichment": 0.2245475113122172
     }
   },

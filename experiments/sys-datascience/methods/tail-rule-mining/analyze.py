@@ -700,10 +700,16 @@ def write_tsv(path: Path, rows: list[dict[str, object]]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     fields = list(rows[0].keys())
     with path.open("w", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=fields, delimiter="\t")
+        writer = csv.DictWriter(handle, fieldnames=fields, delimiter="\t", lineterminator="\n")
         writer.writeheader()
         for row in rows:
-            writer.writerow(row)
+            writer.writerow({field: tsv_value(row.get(field)) for field in fields})
+
+
+def tsv_value(value: object) -> object:
+    if value is None or value == "":
+        return "NA"
+    return value
 
 
 def write_leaf_table(path: Path, rows: list[dict[str, object]]) -> None:
@@ -723,10 +729,10 @@ def write_leaf_table(path: Path, rows: list[dict[str, object]]) -> None:
         "rule",
     ]
     with path.open("w", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=fields, delimiter="\t")
+        writer = csv.DictWriter(handle, fieldnames=fields, delimiter="\t", lineterminator="\n")
         writer.writeheader()
         for row in rows:
-            writer.writerow({field: row.get(field) for field in fields})
+            writer.writerow({field: tsv_value(row.get(field)) for field in fields})
 
 
 def run(args: argparse.Namespace) -> None:
