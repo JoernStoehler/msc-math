@@ -14,5 +14,6 @@ not be reported as a meaningful axis. Use larger independent samples,
 bootstrap/subsampling, and effect sizes for uncertainty.
 
 The method reports tail summaries, pairwise distribution tests for `sys`, top
-rows, and the overlap of strongest geometry-only scalar associations with
-`sys`.
+rows, and the overlap of strongest active invariant scalar associations with
+`sys`. Top-row output no longer includes legacy `capacity` or `volume` fields
+from the active invariant-only table.

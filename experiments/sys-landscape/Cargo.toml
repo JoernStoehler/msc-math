@@ -50,6 +50,10 @@ path = "../sys-datascience/prepare/main.rs"
 name = "sys-datascience-prepare"
 path = "../sys-datascience/prepare/prepare.rs"
 
+[[bin]]
+name = "sys-datascience-invariant-feature-check"
+path = "../sys-datascience/prepare/invariant_feature_check.rs"
+
 [lints]
 workspace = true
 

@@ -20,10 +20,10 @@ Read first:
   filters.
 - `statistical-associations/`: scalar association screening against `sys`.
 - `projection-structure/`: PCA, clustering, and anomaly diagnostics for
-  geometry features.
+  active invariant scalar features.
 - `prediction-ranking/`: supervised in-table prediction/ranking diagnostics.
 - `tail-rule-mining/`: shallow decision-tree high-tail rule diagnostics with
-  geometry-only versus strata/provenance-control grouped-holdout comparison.
+  invariant-feature versus strata/provenance-control grouped-holdout comparison.
 - `sys-distribution-broad-scan/`: broad SciPy distribution scan for fixed-bucket
   marginal laws of `sys(a)`, using logit-transformed families as proposal
   generation only.
@@ -58,6 +58,10 @@ filtering lives in `_shared/random_only.py`.
 Checked-in retained table facts are stale until the current-schema full
 random/product prepare rerun and method rerun complete. Do not use method
 packet artifacts as final thesis closure before that gate.
+
+Active `polytope-table.jsonl` rows are invariant-only. Legacy method artifacts
+that depend on raw Euclidean, omega-matrix, transition, capacity, or volume
+fields are stale unless explicitly rerun against an older schema for archaeology.
 
 ## Packet Convention
 

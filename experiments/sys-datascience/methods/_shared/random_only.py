@@ -147,7 +147,7 @@ def product_bucket(provenance_rows: list[dict[str, Any]]) -> str:
 def numeric_feature_names(
     rows: list[dict[str, Any]],
     *,
-    geometry_only: bool,
+    invariant_only: bool,
     min_present_fraction: float = 0.98,
 ) -> list[str]:
     excluded = {
@@ -155,23 +155,23 @@ def numeric_feature_names(
         "capacity",
         "volume",
     }
-    geometry_prefixes = (
-        "geom_",
-        "dual_vertex_count",
+    invariant_exact = {
+        "facet_count",
         "vertex_count",
         "edge_count",
         "ridge_count",
+        "is_simple",
         "simple_vertex_fraction",
         "edge_density",
+    }
+    invariant_prefixes = (
         "vertex_",
-        "ridge_",
-        "facet_",
-        "edge_length_",
-        "allpair_",
-        "omega_",
-        "transition_",
+        "ridge_size_",
+        "ridge_symp_area_",
+        "facet_vertex_count_",
+        "facet_neighbor_count_",
     )
-    geometry_diagnostics = {
+    invariant_diagnostics = {
         "ridge_symp_area_ordered_face_count",
         "ridge_symp_area_ordering_failure_count",
         "ridge_symp_area_ordered_fraction",
@@ -185,17 +185,11 @@ def numeric_feature_names(
     for key in keys:
         if key in excluded:
             continue
-        if key in geometry_diagnostics:
+        if key in invariant_diagnostics:
             continue
-        if key.startswith(
-            (
-                "ridge_symp_area_",
-                "ridge_euclidean_area_",
-                "ridge_symp_over_euclidean_area_",
-            )
-        ) and not all_two_face_orders_succeeded:
+        if key.startswith("ridge_symp_area_") and not all_two_face_orders_succeeded:
             continue
-        if geometry_only and not key.startswith(geometry_prefixes):
+        if invariant_only and key not in invariant_exact and not key.startswith(invariant_prefixes):
             continue
         present = 0
         for row in rows:

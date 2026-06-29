@@ -329,7 +329,7 @@ def main() -> None:
     intervals = {row["_meta"]["interval"] for row in rows}
     if len(intervals) < 2:
         raise SystemExit("need at least two height intervals for height-axis diagnostics")
-    features = numeric_feature_names(rows, geometry_only=True)
+    features = numeric_feature_names(rows, invariant_only=True)
 
     factor_rows = {
         "interval": rows,
@@ -359,7 +359,7 @@ def main() -> None:
         "bootstrap_samples": args.bootstrap_samples,
         "sys_factor_effects": factor_effects,
         "sys_height_interval_effect_by_bucket": bucket_interval_effects,
-        "geometry_feature_effect_summary": {
+        "invariant_feature_effect_summary": {
             "height_interval": feature_effect_summary(rows, features, "interval"),
             "dataset": feature_effect_summary(rows, features, "dataset"),
             "bucket": feature_effect_summary(rows, features, "bucket"),
@@ -381,7 +381,7 @@ def main() -> None:
     print("# random-axis-diagnostic")
     print()
     print(f"- rows: `{len(rows)}`")
-    print(f"- geometry features analyzed: `{len(features)}`")
+    print(f"- invariant features analyzed: `{len(features)}`")
     print(f"- bootstrap samples per cell/statistic: `{args.bootstrap_samples}`")
     print()
     print("## Sys Effect Sizes")
@@ -396,11 +396,11 @@ def main() -> None:
             f"{p if p is not None else 'NA'} | {json.dumps(effect['levels'])} |"
         )
     print()
-    print("## Geometry Feature Effect Summary")
+    print("## Invariant Feature Effect Summary")
     print()
     print("| factor | median eta^2 | q90 eta^2 | max eta^2 |")
     print("| --- | ---: | ---: | ---: |")
-    for name, item in summary["geometry_feature_effect_summary"].items():
+    for name, item in summary["invariant_feature_effect_summary"].items():
         print(
             f"| {name} | {item.get('median_eta_squared', 'NA')} | "
             f"{item.get('q90_eta_squared', 'NA')} | {item.get('max_eta_squared', 'NA')} |"

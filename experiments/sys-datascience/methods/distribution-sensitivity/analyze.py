@@ -116,9 +116,8 @@ def top_rows(
                 "poly_id": poly_id,
                 "sys": float(row["sys"]),
                 "gap_from_one": float(1.0 - float(row["sys"])),
-                "capacity": float(row["capacity"]),
-                "volume": float(row["volume"]),
                 "facet_count": row.get("facet_count"),
+                "capacity_source": row.get("capacity_source"),
                 "dataset": groups["dataset"],
                 "product_bucket": groups["product_bucket"],
                 "height_ranges": sample_height_ranges(prov),
@@ -149,7 +148,7 @@ def grouped_summaries(
 def feature_associations(
     rows: list[dict[str, Any]], top_features: int
 ) -> list[dict[str, Any]]:
-    names = numeric_feature_names(rows, geometry_only=True)
+    names = numeric_feature_names(rows, invariant_only=True)
     sys_values = np.array([float(row["sys"]) for row in rows], dtype=float)
     scored = []
     for name in names:

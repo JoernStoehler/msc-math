@@ -4,8 +4,8 @@
 //! Output Artifacts: ad hoc output directory passed by `--out-dir`
 
 mod canonize;
-mod features;
 mod features_trace;
+mod invariant_features;
 mod load_caches;
 mod rows;
 mod write_database;
@@ -33,11 +33,11 @@ fn main() {
         caches.provenance_rows.len()
     );
     eprintln!("Capacity sources: {:?}", capacity_source_counts(&caches));
-    eprintln!("Building polytope table");
+    eprintln!("Building invariant polytope table");
     let started = Instant::now();
-    let polytope_rows = features::build_polytope_table(&caches.polytopes);
+    let polytope_rows = invariant_features::build_polytope_table(&caches.polytopes);
     eprintln!(
-        "Built polytope table in {:.1}s",
+        "Built invariant polytope table in {:.1}s",
         started.elapsed().as_secs_f64()
     );
     eprintln!("Building provenance/run table");

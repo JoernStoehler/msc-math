@@ -165,7 +165,7 @@ def label_counts(labels: list[str], max_labels: int = 12) -> dict[str, object]:
 def main() -> None:
     args = parse_args()
     rows, provenance_rows = load_trusted_random_tables(args.tables_dir)
-    eligible_names = numeric_feature_names(rows, geometry_only=True)
+    eligible_names = numeric_feature_names(rows, invariant_only=True)
     names = eligible_names[: args.max_features] if args.max_features else eligible_names
     x = np.array(matrix_for(rows, names), dtype=float)
     y = np.array([float(row["sys"]) for row in rows], dtype=float)
@@ -221,7 +221,7 @@ def main() -> None:
 
     summary = {
         "row_count": len(rows),
-        "eligible_geometry_feature_count": len(eligible_names),
+        "eligible_invariant_feature_count": len(eligible_names),
         "feature_count": len(names),
         "feature_names": names,
         "skipped_by_max_features": eligible_names[len(names) :],
@@ -261,7 +261,7 @@ def main() -> None:
     scatter = ax.scatter(pcs[:, 0], pc2_values, c=y, s=6, cmap="viridis", alpha=0.7)
     ax.set_xlabel("PC1")
     ax.set_ylabel("PC2")
-    ax.set_title("Random-only geometry PCA colored by sys")
+    ax.set_title("Random-only invariant-feature PCA colored by sys")
     fig.colorbar(scatter, ax=ax, label="sys")
     fig.tight_layout()
     fig.savefig(args.out_dir / "pca-sys.png", dpi=160)
@@ -270,7 +270,7 @@ def main() -> None:
     print("# projection-structure")
     print()
     print(f"- rows: `{len(rows)}`")
-    print(f"- geometry features: `{len(names)}`")
+    print(f"- invariant features: `{len(names)}`")
     print(f"- PC1/sys correlation: `{summary['pc1_sys_correlation']}`")
     print(f"- top anomaly overlap with top 2% sys rows: `{anomaly_top_sys_overlap}`")
     print(f"Wrote `{args.out_dir}`")

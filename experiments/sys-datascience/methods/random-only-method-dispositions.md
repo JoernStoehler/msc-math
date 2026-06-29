@@ -53,9 +53,9 @@ remaining closure gate is review and packet README integration.
 
 | Checklist family | Current disposition | Packet/source | Reason and reopen trigger |
 | --- | --- | --- | --- |
-| ridge regression | `run-pending-review` | `prediction-ranking/` | Current geometry-only ridge model ran. |
-| random forest regression | `run-pending-review` | `prediction-ranking/` | Current geometry-only RF model ran. |
-| shallow high-tail decision-tree rules | `run-pending-review` | `tail-rule-mining/` | Current trial run found grouped-holdout geometry-only high-tail enrichment beyond product-vs-generic, strata/provenance controls, and a small permutation-null guard; review before thesis use. |
+| ridge regression | `run-pending-review` | `prediction-ranking/` | Current invariant-feature ridge model needs rerun/review under the active schema. |
+| random forest regression | `run-pending-review` | `prediction-ranking/` | Current invariant-feature RF model needs rerun/review under the active schema. |
+| shallow high-tail decision-tree rules | `run-pending-review` | `tail-rule-mining/` | Current invariant-feature tree run needs rerun/review under the active schema; older geometry-family artifacts are stale. |
 | metadata-only prediction baselines | `run-pending-review` | `prediction-ranking/` | Current metadata-only baselines ran. |
 | high-tail classification and classifier variants | `defer` | none | No positive class exists; near-tail classification mostly duplicates ranking until a generated-candidate follow-up is promoted. |
 | generated-candidate proposer loop | `defer` | none | Reopen if rerun ranking evidence has enough expected thesis value to justify producing new candidates. |
@@ -75,7 +75,7 @@ remaining closure gate is review and packet README integration.
 | --- | --- | --- | --- |
 | Pearson/Spearman rank screening | `run-pending-review` | `statistical-associations/` | Current scalar screen ran on `111` nonconstant covariates. |
 | source/facet/product factor tests | `run-pending-review` | `statistical-associations/` | Current factor tests ran with current provenance fields. |
-| omega and two-face scalar hypotheses | `run-pending-review` | `prepare/`, `statistical-associations/` | Current association screen includes omega and two-face features. |
+| ridge symplectic-area scalar hypotheses | `run-pending-review` | `prepare/`, `statistical-associations/` | Active association screen includes invariant ridge symplectic-area features. |
 | Kendall, partial correlation, FDR variants | `defer` | none | Add only if the active rerun promotes a scalar effect needing robustness checks. |
 
 ## Rejected Or Out Of Scope

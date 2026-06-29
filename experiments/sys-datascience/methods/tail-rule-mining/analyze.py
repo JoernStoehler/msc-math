@@ -140,37 +140,25 @@ def one_hot_matrix(
 
 
 def feature_family(name: str) -> str | None:
+    if name.startswith("ridge_symp_area_"):
+        return "ridge_symp_area"
     if (
-        name.startswith("ridge_symp_area_")
-        or name.startswith("ridge_symp_over_euclidean_area_")
-        or name.startswith("ridge_abs_omega_")
-        or name.startswith("ridge_abs_normalized_omega_")
-        or name.startswith("allpair_abs_omega_")
-        or name.startswith("allpair_abs_normalized_omega_")
-        or name.startswith("omega_matrix_")
-        or name.startswith("omega_sign_")
-        or name.startswith("allpair_zero_fraction")
-        or name.startswith("ridge_zero_fraction")
-    ):
-        return "symplectic_omega"
-    if (
-        name.startswith("geom_")
-        or name.startswith("geom_cosine_")
-        or name.startswith("edge_length_")
-        or name.startswith("facet_volume_")
-        or name.startswith("ridge_euclidean_area_")
-    ):
-        return "euclidean_size_spread"
-    if (
-        name in {"dual_vertex_count", "vertex_count", "edge_count", "ridge_count"}
+        name
+        in {
+            "facet_count",
+            "vertex_count",
+            "edge_count",
+            "ridge_count",
+            "is_simple",
+            "simple_vertex_fraction",
+            "edge_density",
+        }
+        or name.startswith("vertex_")
         or name.startswith("facet_neighbor_count_")
         or name.startswith("facet_vertex_count_")
         or name.startswith("ridge_size_")
-        or name == "edge_density"
     ):
-        return "combinatorial_counts"
-    if name.startswith("transition_"):
-        return "transition_graph"
+        return "combinatorial_invariants"
     return None
 
 
@@ -247,55 +235,22 @@ def spearman_rank_correlation(left: np.ndarray, right: np.ndarray) -> float | No
 
 
 INTERPRETABLE_FEATURES = {
-    "ridge_symp_area_sum": (
+    "ridge_symp_area_sum_over_volume_sqrt": (
         "sum over cyclically ordered primal two-faces R of "
-        "0.5 * |sum_i omega0(v_i, v_{i+1})| / sqrt(volume)"
+        "0.5 * |sum_i omega0(v_i, v_{i+1})| normalized by sqrt(volume)"
     ),
-    "ridge_symp_area_mean": (
+    "ridge_symp_area_mean_over_volume_sqrt": (
         "mean over cyclically ordered primal two-faces R of "
-        "0.5 * |sum_i omega0(v_i, v_{i+1})| / sqrt(volume)"
+        "0.5 * |sum_i omega0(v_i, v_{i+1})| normalized by sqrt(volume)"
     ),
-    "ridge_euclidean_area_sum": (
-        "sum over cyclically ordered primal two-faces R of Euclidean polygon "
-        "area in R^4 divided by sqrt(volume)"
+    "ridge_symp_area_max_over_volume_sqrt": (
+        "maximum cyclically ordered primal two-face symplectic area normalized by sqrt(volume)"
     ),
-    "ridge_euclidean_area_mean": (
-        "mean over cyclically ordered primal two-faces R of Euclidean polygon "
-        "area in R^4 divided by sqrt(volume)"
+    "ridge_symp_area_median_over_volume_sqrt": (
+        "median cyclically ordered primal two-face symplectic area normalized by sqrt(volume)"
     ),
-    "ridge_symp_over_euclidean_area_mean": (
-        "mean over cyclically ordered primal two-faces R with nonzero "
-        "Euclidean area of symplectic polygon area divided by Euclidean "
-        "polygon area"
-    ),
-    "ridge_symp_over_euclidean_area_q25": (
-        "25th percentile over cyclically ordered primal two-faces R with "
-        "nonzero Euclidean area of symplectic polygon area divided by "
-        "Euclidean polygon area"
-    ),
-    "ridge_symp_over_euclidean_area_median": (
-        "median over cyclically ordered primal two-faces R with nonzero "
-        "Euclidean area of symplectic polygon area divided by Euclidean "
-        "polygon area"
-    ),
-    "ridge_symp_over_euclidean_area_q75": (
-        "75th percentile over cyclically ordered primal two-faces R with "
-        "nonzero Euclidean area of symplectic polygon area divided by "
-        "Euclidean polygon area"
-    ),
-    "omega_matrix_spectral_norm": (
-        "largest singular value of the facet-normal matrix "
-        "sqrt(volume) * omega0(a_i, a_j)"
-    ),
-    "ridge_abs_omega_mean": (
-        "mean over adjacent facet pairs of sqrt(volume) * |omega0(a_i, a_j)|"
-    ),
-    "facet_volume_sum": (
-        "sum over facets of Euclidean facet volume divided by volume^(3/4)"
-    ),
-    "geom_pairwise_dist_mean": (
-        "mean pairwise Euclidean distance between dual vertices after multiplying "
-        "dual coordinates by volume^(1/4)"
+    "ridge_symp_area_q90_over_volume_sqrt": (
+        "90th percentile cyclically ordered primal two-face symplectic area normalized by sqrt(volume)"
     ),
 }
 
@@ -579,13 +534,12 @@ def summarize_stability(rows: list[dict[str, object]]) -> dict[str, object]:
         }
     labels = sorted({str(row["label"]) for row in rows})
     comparisons = [
-        ("geometry_only", "symplectic_omega_only"),
-        ("geometry_only", "euclidean_size_spread_only"),
-        ("geometry_only", "strata_only"),
-        ("geometry_only", "generator_provenance_only"),
-        ("symplectic_omega_only", "euclidean_size_spread_only"),
-        ("symplectic_omega_only", "strata_only"),
-        ("symplectic_omega_only", "generator_provenance_only"),
+        ("invariant_features", "ridge_symp_area_only"),
+        ("invariant_features", "strata_only"),
+        ("invariant_features", "generator_provenance_only"),
+        ("ridge_symp_area_only", "combinatorial_invariants_only"),
+        ("ridge_symp_area_only", "strata_only"),
+        ("ridge_symp_area_only", "generator_provenance_only"),
     ]
     for label in labels:
         for left, right in comparisons:
@@ -777,17 +731,15 @@ def write_leaf_table(path: Path, rows: list[dict[str, object]]) -> None:
 
 def run(args: argparse.Namespace) -> None:
     rows, provenance_rows = load_trusted_random_tables(args.tables_dir)
-    geometry_names = numeric_feature_names(rows, geometry_only=True)
+    invariant_names = numeric_feature_names(rows, invariant_only=True)
     family_names = {
-        family: [name for name in geometry_names if feature_family(name) == family]
+        family: [name for name in invariant_names if feature_family(name) == family]
         for family in [
-            "symplectic_omega",
-            "euclidean_size_spread",
-            "combinatorial_counts",
-            "transition_graph",
+            "ridge_symp_area",
+            "combinatorial_invariants",
         ]
     }
-    x_geometry = matrix_for_names(rows, geometry_names)
+    x_invariant = matrix_for_names(rows, invariant_names)
     strata_fields = ["capacity_source", "facet_count", "product_bucket"]
     generator_provenance_fields = [
         "capacity_source",
@@ -810,7 +762,7 @@ def run(args: argparse.Namespace) -> None:
         ]
     )
     splitter = GroupShuffleSplit(n_splits=1, test_size=0.25, random_state=args.random_state)
-    train_idx, test_idx = next(splitter.split(x_geometry, y, groups))
+    train_idx, test_idx = next(splitter.split(x_invariant, y, groups))
     min_samples_leaf = max(10, int(len(train_idx) * args.min_leaf_fraction))
     labels = {
         "top_decile": float(np.quantile(y, 0.9)),
@@ -821,26 +773,26 @@ def run(args: argparse.Namespace) -> None:
     method_summaries: dict[str, dict[str, object]] = {}
     all_leaves: list[dict[str, object]] = []
     x_by_source = {
-        "geometry_only": x_geometry,
-        "symplectic_omega_only": matrix_for_names(rows, family_names["symplectic_omega"]),
-        "euclidean_size_spread_only": matrix_for_names(
-            rows, family_names["euclidean_size_spread"]
+        "invariant_features": x_invariant,
+        "ridge_symp_area_only": matrix_for_names(rows, family_names["ridge_symp_area"]),
+        "combinatorial_invariants_only": matrix_for_names(
+            rows, family_names["combinatorial_invariants"]
         ),
-        "combinatorial_counts_only": matrix_for_names(
-            rows, family_names["combinatorial_counts"]
-        ),
-        "transition_graph_only": matrix_for_names(rows, family_names["transition_graph"]),
         "strata_only": x_strata,
         "generator_provenance_only": x_generator_provenance,
     }
     feature_names_by_source = {
-        "geometry_only": geometry_names,
-        "symplectic_omega_only": family_names["symplectic_omega"],
-        "euclidean_size_spread_only": family_names["euclidean_size_spread"],
-        "combinatorial_counts_only": family_names["combinatorial_counts"],
-        "transition_graph_only": family_names["transition_graph"],
+        "invariant_features": invariant_names,
+        "ridge_symp_area_only": family_names["ridge_symp_area"],
+        "combinatorial_invariants_only": family_names["combinatorial_invariants"],
         "strata_only": strata_names,
         "generator_provenance_only": generator_provenance_names,
+    }
+    x_by_source = {source: x for source, x in x_by_source.items() if x.shape[1] > 0}
+    feature_names_by_source = {
+        source: names
+        for source, names in feature_names_by_source.items()
+        if source in x_by_source
     }
     for label_name, threshold in labels.items():
         for source, x in x_by_source.items():
@@ -887,7 +839,7 @@ def run(args: argparse.Namespace) -> None:
     summary = {
         "row_count": len(rows),
         "provenance_rows": len(provenance_rows),
-        "geometry_feature_count": len(geometry_names),
+        "invariant_feature_count": len(invariant_names),
         "feature_family_counts": {
             family: len(names) for family, names in sorted(family_names.items())
         },
@@ -941,7 +893,7 @@ def run(args: argparse.Namespace) -> None:
     print("# tail-rule-mining")
     print()
     print(f"- rows: `{len(rows)}`")
-    print(f"- geometry features: `{len(geometry_names)}`")
+    print(f"- invariant features: `{len(invariant_names)}`")
     for family, names in sorted(family_names.items()):
         print(f"- {family} features: `{len(names)}`")
     print(f"- strata features: `{len(strata_names)}`")

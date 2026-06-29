@@ -161,7 +161,7 @@ def one_hot_matrix(
 def main() -> None:
     args = parse_args()
     rows, provenance_rows = load_trusted_random_tables(args.tables_dir)
-    eligible_names = numeric_feature_names(rows, geometry_only=True)
+    eligible_names = numeric_feature_names(rows, invariant_only=True)
     names = eligible_names[: args.max_features] if args.max_features else eligible_names
     x = np.array(matrix_for(rows, names), dtype=float)
     metadata_rows, metadata_fields = metadata_feature_rows(rows, provenance_rows)
@@ -181,8 +181,8 @@ def main() -> None:
     y_train, y_test = y[train_idx], y[test_idx]
 
     models = {
-        "ridge_geometry_only": make_pipeline(StandardScaler(), Ridge(alpha=1.0)),
-        "random_forest_geometry_only": RandomForestRegressor(
+        "ridge_invariant_features": make_pipeline(StandardScaler(), Ridge(alpha=1.0)),
+        "random_forest_invariant_features": RandomForestRegressor(
             n_estimators=args.forest_trees,
             min_samples_leaf=10,
             random_state=20260621,
@@ -219,7 +219,7 @@ def main() -> None:
         model.fit(x_train, shuffled)
         pred = model.predict(x_test)
         null_enrichment.append(top_decile_enrichment(y_test, pred))
-    observed = results["random_forest_geometry_only"]["top_decile_enrichment"]
+    observed = results["random_forest_invariant_features"]["top_decile_enrichment"]
     null_p = (sum(1 for value in null_enrichment if value >= observed) + 1) / (
         len(null_enrichment) + 1
     )
@@ -227,8 +227,8 @@ def main() -> None:
     summary = {
         "row_count": len(rows),
         "provenance_rows": len(provenance_rows),
-        "eligible_geometry_feature_count": len(eligible_names),
-        "geometry_feature_count": len(names),
+        "eligible_invariant_feature_count": len(eligible_names),
+        "invariant_feature_count": len(names),
         "feature_names": names,
         "skipped_by_max_features": eligible_names[len(names) :],
         "metadata_fields": metadata_fields,
@@ -241,17 +241,17 @@ def main() -> None:
         "permutations": args.permutations,
         "results": results,
         "random_forest_top_feature_importances": top_forest_importances(
-            names, models["random_forest_geometry_only"]
+            names, models["random_forest_invariant_features"]
         ),
         "random_forest_top_decile_enrichment_permutation_p": float(null_p),
         "candidate_proposer_disposition": (
             "no validated candidate-proposer: held-out ranking is an in-table "
-            "geometry-only signal and did not generate or validate new rows"
+            "invariant-feature signal and did not generate or validate new rows"
         ),
         "metadata_baseline_disposition": (
-            "metadata-only models are leakage/source diagnostics, not geometry "
-            "candidate-proposers; compare them to geometry-only models after "
-            "retained-table reruns"
+            "metadata-only models are leakage/source diagnostics, not "
+            "invariant-feature candidate-proposers; compare them to "
+            "invariant-feature models after retained-table reruns"
         ),
     }
     write_json(args.out_dir / "summary.json", summary)
@@ -259,7 +259,7 @@ def main() -> None:
     print("# prediction-ranking")
     print()
     print(f"- rows: `{len(rows)}`")
-    print(f"- geometry features: `{len(names)}`")
+    print(f"- invariant features: `{len(names)}`")
     print(f"- metadata features: `{len(metadata_feature_names)}`")
     for name, result in results.items():
         print(

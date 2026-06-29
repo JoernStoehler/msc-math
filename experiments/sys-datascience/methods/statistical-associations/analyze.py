@@ -39,18 +39,14 @@ def parse_args() -> argparse.Namespace:
 
 
 def covariate_family(name: str) -> str:
-    if name in {"facet_count", "dual_vertex_count", "vertex_count", "edge_count", "ridge_count"}:
+    if name in {"facet_count", "vertex_count", "edge_count", "ridge_count"}:
         return "basic counts"
-    if name.startswith(("vertex_", "edge_density", "ridge_size_", "facet_vertex_", "facet_neighbor_")):
-        return "combinatorial summaries"
-    if name.startswith(("geom_", "edge_length_", "facet_volume_")):
-        return "Euclidean geometry summaries"
     if name.startswith(
-        ("allpair_", "omega_matrix_", "omega_sign_", "ridge_abs_omega_", "ridge_symp_area_")
+        ("vertex_", "edge_density", "ridge_size_", "facet_vertex_", "facet_neighbor_")
     ):
-        return "symplectic/omega summaries"
-    if name.startswith("transition_"):
-        return "transition graph summaries"
+        return "combinatorial summaries"
+    if name.startswith("ridge_symp_area_"):
+        return "ridge symplectic-area summaries"
     if name in {"is_simple", "simple_vertex_fraction"}:
         return "simplicity summaries"
     return "other scalar summaries"
@@ -209,136 +205,78 @@ def source_factor_tests(
 def obvious_covariate_audit() -> dict[str, object]:
     return {
         "principle": (
-            "The sufficient local input is the facet-dual list a_k; every scalar "
-            "covariate in this packet, including sys(a), is a derived feature. "
-            "Coverage must therefore be judged by first-layer derived objects "
-            "from a_k, their normalizations/transforms, and their scalar "
-            "summaries; not by counting retained table columns."
+            "The active method-facing polytope table is invariant-only. Coverage "
+            "is judged relative to fields serialized by "
+            "prepare/rows.rs::PolytopeTableRow, not by historical raw Euclidean, "
+            "omega-matrix, transition, capacity, or volume columns."
         ),
         "conceptual_flow": [
-            "dual vertices a",
-            "normalize to the volume-one representative when scale is not the question",
-            "first-layer derived objects such as a itself, omega(a_i,a_j), two-faces, and graphs",
-            "prepare-stage engineered scalar features f_i(a) that seem useful",
-            "univariate association screening of f_i(a) against sys(a)",
+            "prepare writes invariant scalar rows",
+            "methods select eligible scalar invariant covariates",
+            "univariate association screening compares each covariate against sys(a)",
+            "capacity_source and provenance fields are handled as metadata factors",
         ],
         "feature_owner": (
-            "Current shared feature engineering lives in "
-            "experiments/sys-datascience/prepare/features*.rs and is run by the "
-            "sys-datascience-prepare binary."
-        ),
-        "normalization_convention": (
-            "Prefer volume-one normalization before forming scale-sensitive "
-            "geometric or symplectic summaries. This leaves Sp(4) plus translations "
-            "as the main invariance issue instead of also carrying scalings."
+            "Current active row fields are defined in "
+            "experiments/sys-datascience/prepare/rows.rs::PolytopeTableRow."
         ),
         "first_layer_nodes": [
             {
-                "node": "facet-dual list a_k",
-                "status": "source object",
+                "node": "incidence and face-lattice summaries",
+                "status": "covered in the active invariant schema",
                 "current_summaries": [
-                    "norms in the prepared volume-one representative",
-                    "centroid norm",
-                    "coordinate standard deviations",
-                    "pairwise Euclidean distances",
-                    "pairwise cosines",
-                    "centered singular values",
-                ],
-                "notes": "Raw coordinates are not treated as explanatory evidence without invariantization or canonicalization.",
-            },
-            {
-                "node": "pairwise symplectic form omega(a_i,a_j)",
-                "status": "covered in the current prepare schema, pending retained-table rerun for new columns",
-                "current_summaries": [
-                    "all-pair absolute omega mean/std/min/max",
-                    "zero fraction",
-                    "ridge-restricted absolute omega summaries and small-value fractions",
-                    "omega matrix singular-value summaries",
-                    "permutation-invariant omega-sign out-degree summaries",
-                    "absolute normalized-omega summaries in the chosen Euclidean representative",
-                ],
-                "notes": "Normalized-omega summaries are not general Sp(4) invariants and should be interpreted as Euclidean-representative diagnostics.",
-            },
-            {
-                "node": "two-faces F_i cap F_j",
-                "status": "covered in the current prepare schema, pending retained-table rerun for new columns",
-                "current_summaries": [
-                    "symplectic area mean/std/min/max over retained two-faces",
-                    "sum",
-                    "max share",
-                    "median and upper quantiles",
-                    "top-k tail share",
-                    "zero and small-area fractions",
-                ],
-                "notes": "The current implementation records incidence-ordering diagnostics; area summaries are over successfully ordered two-faces.",
-            },
-            {
-                "node": "face/vertex/edge/ridge incidence graph",
-                "status": "covered",
-                "current_summaries": [
-                    "counts",
-                    "degree/incidence/ridge-size summaries",
-                    "facet-neighbor summaries",
+                    "facet, vertex, edge, and ridge counts",
+                    "simplicity and simple-vertex fraction",
+                    "edge density",
+                    "vertex incidence and degree summaries",
+                    "ridge-size summaries",
+                    "facet vertex-count and neighbor-count summaries",
                 ],
             },
             {
-                "node": "omega-sign transition graph",
-                "status": "covered",
+                "node": "primal two-face symplectic area",
+                "status": "covered in the active invariant schema",
                 "current_summaries": [
-                    "density",
-                    "bidirectional fraction",
-                    "out-degree summaries",
+                    "ordered-face count and ordering diagnostics",
+                    "mean/std/min/max",
+                    "quartiles, median, q90, and q95",
+                    "sum, max share, and top-3 share",
                 ],
             },
             {
-                "node": "capacity/orbit outputs",
-                "status": "deferred to a separate post-evaluation interpretation packet",
+                "node": "capacity/orbit outputs and source metadata",
+                "status": "not scalar covariates in the active method-facing table",
                 "current_summaries": [],
-                "notes": "The active random/product method table intentionally does not serialize sigma/orbit diagnostics.",
-            },
-            {
-                "node": "source/generator metadata",
-                "status": "handled by EDA and categorical factor tests where provenance fields are available",
-                "current_summaries": [
-                    "source-family and product-bucket EDA",
-                    "ANOVA/Kruskal-style categorical factor tests in this packet",
-                ],
-                "missing_summaries": [
-                    "accepted-attempt or rejection-difficulty metadata for old retained artifacts",
-                    "metadata-only prediction baselines",
-                ],
+                "notes": "capacity_source remains available for grouping and factor tests; capacity and volume are not active covariates.",
             },
         ],
         "covered_invariant_feature_families": [
-            "basic size counts such as facet, vertex, edge, ridge, and dual-vertex counts",
-            "simple combinatorial summaries such as degrees, incidence counts, ridge sizes, and facet adjacency",
-            "Euclidean summaries of prepared dual vertices, edge lengths, and facet volumes",
-            "omega summaries over all facet pairs, including matrix/sign/alignment summaries in the current prepare schema",
-            "ridge-level symplectic-area summaries, including sum/mean/max, quantiles, top-k share, and small-area fractions in the current prepare schema",
-            "transition-graph summaries from facet intersections and omega signs",
+            "basic counts",
+            "simplicity summaries",
+            "vertex incidence and degree summaries",
+            "ridge-size summaries",
+            "facet vertex-count and neighbor-count summaries",
+            "ridge symplectic-area summaries normalized by sqrt(volume)",
         ],
         "bad_feature_families_not_counted_as_evidence_of_coverage": [
-            "raw individual coordinates of a_k, because coordinate-level effects are not invariant under the relevant symmetries and are expected to be weak or uninterpretable",
-            "raw flattened dual-vertex arrays, because they require an invariant featurization or an explicitly equivariant model before they answer what high sys corresponds to",
+            "legacy raw Euclidean coordinate, edge-length, facet-volume, and ridge-Euclidean-area fields",
+            "legacy all-pair omega, omega-matrix, normalized-omega, and transition-graph fields",
+            "capacity and volume, because they are no longer method-facing active covariates",
         ],
         "covered_elsewhere_not_as_univariate_numeric_covariates": [
-            "source family random_sample versus random_product_sample is handled in random-tail-eda, categorical factor tests, and the mean-difference bootstrap in this packet",
-            "facet-count and product-bucket slice behavior is handled in random-tail-eda and categorical factor tests",
+            "capacity_source is handled in random-tail-eda, categorical factor tests, and the mean-difference bootstrap in this packet",
+            "product-bucket and height-range behavior are handled from provenance when those fields are available",
         ],
         "missing_or_partial_obvious_feature_families": [
-            "generator metadata such as accepted-attempt count or rejection difficulty in old retained artifacts",
-            "additional invariant scalar summaries derived from a_k, such as height extrema, angular concentration beyond pairwise cosine summaries, nearest-neighbor statistics, and condition numbers beyond the current singular values",
-            "separate factor/product-aware versions of symplectic area summaries if source stratification shows value",
+            "additional invariant scalar summaries not currently serialized by PolytopeTableRow",
+            "separate factor/product-aware versions of ridge symplectic-area summaries if source stratification shows value",
             "explicit product-structure or symmetry scores for deciding whether a generic row looks product-like",
-            "local perturbation or sensitivity scalars, because those are outside the retained random/product table",
         ],
         "assessment": (
-            "The current screen is useful for scalar summaries already present in "
-            "the retained table it is run against. The branch-level coverage ledger "
-            "now controls whether omega, sign, normalized-alignment, two-face-area, "
-            "and source-metadata families are implemented, audited, or deferred. "
-            "Retained-table reruns are still required before updated feature-family "
-            "claims become thesis evidence."
+            "The current screen is useful for active invariant scalar summaries "
+            "already present in the retained table it is run against. Historical "
+            "non-invariant feature-family artifacts must be treated as stale under "
+            "the invariant-only schema."
         ),
     }
 
@@ -347,7 +285,7 @@ def main() -> None:
     args = parse_args()
     rows, provenance_rows = load_trusted_random_tables(args.tables_dir)
     y = np.array([float(row["sys"]) for row in rows], dtype=float)
-    eligible_names = numeric_feature_names(rows, geometry_only=False)
+    eligible_names = numeric_feature_names(rows, invariant_only=True)
     names = eligible_names[: args.max_features] if args.max_features else eligible_names
 
     associations = []
@@ -434,8 +372,7 @@ def main() -> None:
         "obvious_covariate_audit": obvious_covariate_audit(),
         "excluded_by_design": [
             "sys",
-            "capacity",
-            "volume",
+            "legacy capacity and volume columns if present",
             "non-scalar JSON columns",
             "columns present as numeric values in less than 98% of retained rows",
             "provenance/source metadata as numeric scalar covariates; these are handled by source_factor_tests",

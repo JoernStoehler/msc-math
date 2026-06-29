@@ -15,6 +15,12 @@ into conclusions. Entries should distinguish:
 - what interpretations are allowed or not allowed;
 - what uncertainty controls the next batch.
 
+Schema note: entries before the invariant-only table migration may mention
+raw Euclidean, omega-matrix, transition, `capacity`, or `volume` method
+features. Those names are historical observations under older prepared-table
+schemas, not active method-facing covariates. The active table contract is in
+`prepare/README.md` and `prepare/invariant_features.rs`.
+
 ## 2026-06-25 - Post-milestone-0 next-batch brainstorm
 
 Worktree: `/workspaces/msc-math/.worktrees/random-datascience-slice`

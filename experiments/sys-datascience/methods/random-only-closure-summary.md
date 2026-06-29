@@ -39,7 +39,7 @@ thesis use if producer data or feature schema changes again.
 | scalar association screening | `statistical-associations/` | univariate association and source/factor checks | statistics review |
 | projections and structure | `projection-structure/` | PCA, clustering, anomaly diagnostics | interpretation review |
 | supervised ranking | `prediction-ranking/` | in-table signal and held-out ranking diagnostics | proposer-language review |
-| interpretable tail rules | `tail-rule-mining/` | shallow geometry-only versus strata/provenance-control high-tail rules | method/statistics review |
+| interpretable tail rules | `tail-rule-mining/` | shallow invariant-feature versus strata/provenance-control high-tail rules | method/statistics review |
 
 Removed from the active slice: ascent endpoint diagnostics, local-behavior
 prediction, continuation, and perturbation panels.
@@ -59,9 +59,9 @@ Currently supported by 2026-06-25 current-schema scratch artifacts:
 - the scoped random/product table had no recorded `sys > 1` row;
 - EDA/model artifacts found in-table structure but no validated
   generated-candidate proposer.
-- the trial tail-rule method found geometry-only high-tail enrichment beyond
-  strata/provenance controls on grouped holdouts, but still only as an
-  in-table diagnostic.
+- the old trial tail-rule method found geometry-only high-tail enrichment beyond
+  strata/provenance controls on grouped holdouts, but those artifacts predate
+  the invariant-only active schema and need rerun before thesis use.
 
 Not yet supported:
 

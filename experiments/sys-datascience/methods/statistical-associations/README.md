@@ -10,36 +10,23 @@ This is the standard univariate association-screening question: screen one
 scalar covariate at a time against the target scalar, then inspect the strongest
 correlations and their scope limits.
 
-The minimum local input is the facet-dual list `a_k`. Every scalar here,
-including `sys(a)`, is computed from `a`. Therefore the relevant coverage
-question is not "how many columns were screened?" but "does the engineered
-feature map from `a_k` include the obvious invariant or geometrically meaningful
-scalars?"
+The active method-facing `polytope-table.jsonl` is invariant-only, with fields
+defined by `prepare/rows.rs::PolytopeTableRow`. Legacy raw Euclidean,
+omega-matrix, transition, `capacity`, and `volume` columns are not active
+covariates.
 
 Conceptually the flow is:
 
 ```text
-produce
-  -> polytopes of interest plus cached expensive polytope computations
-prepare/canonize
-  -> transform representatives to quotient out symmetries of sys(a) as well as we can
-prepare/features
-  -> first-layer derived objects: a, omega(a_i,a_j), two-faces, graphs, metadata
-  -> transforms/summaries: absolute value, restrictions, max/mean/quantiles/fractions/top-k
+prepare
+  -> invariant scalar rows plus provenance metadata
 methods
-  -> univariate association screening of prepared scalar features f_i(a) against sys(a)
+  -> univariate association screening of active invariant scalar features f_i(a) against sys(a)
 ```
 
-This packet currently runs the last step on the engineered scalar features
-already present in the retained table, and records gaps in the prepare stages.
-In current HEAD, prepare-stage feature code lives under
-`experiments/sys-datascience/prepare/features*.rs` and is run by the
-`sys-datascience-prepare` binary.
-
-The audit starts from first-layer derived objects, not final scalar column
-names. A scalar like `allpair_abs_omega_max` is a composition: derive the
-pairwise object `omega(a_i,a_j)`, normalize to the volume-one representative,
-take absolute values, then summarize by `max`.
+This packet currently runs the last step on the invariant scalar features
+already present in the retained table, and records gaps relative to the active
+row schema.
 
 ## Method
 
@@ -53,8 +40,9 @@ Eligibility is defined by the shared random-only feature selector:
 
 - include scalar numeric columns present as numeric values in at least `98%` of
   retained rows;
-- exclude the target `sys`, prepared evaluation columns such as `capacity` and
-  `volume`, non-scalar JSON columns, and sparse numeric columns;
+- exclude the target `sys`, non-scalar JSON/string columns, sparse numeric
+  columns, legacy `capacity`/`volume` columns, and non-active legacy feature
+  prefixes if an older table is passed;
 - exclude two-face ordering diagnostics from clean covariate screens; exclude
   two-face symplectic-area summaries if any loaded row reports incomplete
   two-face ordering.
@@ -69,18 +57,13 @@ features. They are handled separately as categorical factors in
 source-by-facet, product bucket, product bounce count, and height range when
 those provenance fields are available.
 
-Canonization convention: first normalize to the volume-one representative
-before forming scale-sensitive geometric or symplectic summaries. This leaves
-`Sp(4)` plus translations as the main invariance issue instead of also carrying
-scalings. Further canonization, such as a translation convention based on a
-Hausdorff-continuous center, is a prepare-stage design option but is not yet
-implemented here.
+`capacity_source` remains metadata for grouping and source-factor tests. It is
+not treated as an intrinsic scalar invariant feature.
 
 ## Inputs
 
 - trusted random-only rows from `../trusted-random-dataset/`
-- feature columns from the shared prepare stage, currently
-  `../../prepare/features*.rs` and `../../prepare/polytope-table.jsonl`
+- feature columns from `../../prepare/polytope-table.jsonl`
 
 ## Command
 
@@ -105,79 +88,35 @@ The artifact records:
 
 ## Observation
 
-The current artifact was regenerated against a full scoped random/product
-scratch prepared table at `/tmp/sys-ds-random-only-full`, built with
-`sys-dataset --random-only`. It therefore includes omega matrix/sign,
-normalized-omega, two-face-tail, and explicit provenance columns for trusted
-random/product rows.
+No current full retained-table interpretation is recorded here until the
+invariant-only schema is rerun. Earlier numeric blocks were removed because they
+predated the active schema and mixed deleted non-invariant feature families with
+current invariant features.
 
-Current full scoped random/product run:
+Under the active invariant schema, current method-facing scalar families are:
 
-- rows: `14336`;
-- eligible scalar covariates: `122`;
-- nonconstant scalar covariates tested: `111`;
-- strongest absolute Spearman correlation: `0.9384368671850424`;
-- family-maximum permutation p-value: `0.004975124378109453`;
-- product-minus-generic mean `sys`: `0.04908416085647144`;
-- bootstrap 95% interval for that mean difference:
-  `[0.04252389852783871, 0.055886616744594816]`.
-- source factor tests: `capacity_source`, `dataset_label`,
-  `dataset_label_by_facet_count`, `facet_count`, `product_bucket`, and
-  `product_bounces` were tested. `sample_height_range` is available but still
-  has too few nonempty groups for a meaningful factor test in this retained
-  random/product slice.
-- strongest source/facet group mean spread in this artifact:
-  `dataset_label_by_facet_count` max-minus-min group mean
-  `0.3265780723303283`; `facet_count` spread `0.30691591817614594`;
-  `product_bucket` spread `0.2750512503828982`;
-  `product_bounces` spread `0.16092491442510856`;
-  `capacity_source` spread `0.04908416085647144`.
+- basic counts and simplicity summaries;
+- vertex incidence and degree summaries;
+- ridge-size summaries;
+- facet vertex-count and neighbor-count summaries;
+- ridge symplectic-area summaries normalized by `sqrt(volume)`;
+- `capacity_source` and provenance fields only as grouping/factor metadata.
 
-The retained artifact's screened set is exhaustive relative to the scoped
-random/product prepare schema and eligibility rule it was run against. The
-current prepare schema covers several first-layer nodes. The prepared polytope
-table is already in the volume-one representative, so column names do not
-repeat that normalization.
+Partially covered or missing work under the active schema:
 
-- source object `a_k`: norms, centroid norm, coordinate standard
-  deviations, pairwise Euclidean distances/cosines, centered singular values;
-- pairwise object `omega(a_i,a_j)`: all-pair absolute omega summaries, zero
-  fraction, ridge-restricted summaries, omega matrix summaries, omega-sign
-  out-degree summaries, and normalized-omega summaries in the chosen Euclidean
-  representative;
-- two-face object `F_i cap F_j`: symplectic-area mean/std/min/max/sum/max-share,
-  median, upper quantiles, top-k share, and zero/small-area fractions, with
-  incidence-ordering diagnostics;
-- incidence and transition graphs: counts, degrees, densities, adjacency and
-  transition summaries;
-- capacity outputs: post-evaluation explanatory summaries only.
-
-Partially covered or missing first-layer-node work:
-
-- source/product bucket metadata is now handled by EDA and categorical factor
-  tests;
-- generator rejection/attempt metadata is not available in the canonical
-  retained random/product producer files; newer producer provenance can expose
+- generator rejection/attempt metadata is only available when provenance exposes
   optional `sample_attempt`;
 - explicit product-structure or symmetry scores are not implemented;
-- local perturbation/sensitivity scalars are outside the current
-  random/product table.
+- additional invariant scalar summaries would need to be added deliberately to
+  `PolytopeTableRow` and its producers.
 
-Raw coordinates of individual dual vertices are not a good substitute for this
-audit: coordinate-level effects are not invariant under the relevant symmetries,
-and flattened `a_k` arrays require an invariant featurization or an explicitly
-equivariant model before they answer what high `sys` corresponds to.
+Missing or separately handled families should be added to
+`prepare/rows.rs::PolytopeTableRow` or its producers only when they are intended
+to be active invariant method-facing fields.
 
-Missing or separately handled families should mostly be added to shared
-`prepare/canonize` or `prepare/features`, because projection,
-prediction/ranking, clustering, anomaly checks, and other black-box methods
-should reuse the same representatives and feature map.
-
-The strongest associations are negative correlations between prepared ridge
-symplectic-area, omega, and size features and `sys`.
-The strongest current covariate is `ridge_symp_area_sum` with Spearman
-correlation `-0.9384368671850424`. These are useful interpretation signals,
-but this packet does not turn them into a generated-row candidate-proposer.
+After rerun, interpret the strongest active scalar associations as explanatory
+signals only. This packet does not turn them into a generated-row
+candidate-proposer.
 
 ## Validity Guards
 
@@ -185,8 +124,7 @@ but this packet does not turn them into a generated-row candidate-proposer.
   unevaluated candidate-proposer.
 - Many correlated table columns are screened; the permutation check is a
   coarse guard, not a formal model-selection theorem.
-- Capacity-derived columns are allowed here as post-evaluation explanatory
-  features, not as pre-evaluation proposer features.
+- Capacity and volume columns are not active method-facing covariates.
 - Exhaustiveness is only prepare-schema-relative. Changing canonization or
   adding derived invariant geometric, combinatorial, or symplectic scalar
   summaries to the shared prepare stage would reopen this packet and the other
@@ -203,13 +141,9 @@ validated.
 
 ## Remaining Worthwhile Questions
 
-- Build a small feature-map audit for invariant scalars derivable from `a_k`,
-  then decide which missing families have enough value to implement in
-  `prepare/features`.
-- Record which symmetries `prepare/canonize` quotients out and which remain
-  only partially handled.
-- In particular, decide whether to add all-2-face symplectic-area summaries
-  normalized by `vol^{1/2}`.
+- Build a small feature-map audit for additional invariant scalars derivable
+  from the producer geometry, then decide which missing families have enough
+  value to implement in `prepare/invariant_features.rs`.
 - Promote only associations that are strong, stable, and convertible into a
   pre-evaluation ranking rule.
 

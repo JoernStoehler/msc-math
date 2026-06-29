@@ -68,12 +68,49 @@ def union_field_count(rows: list[dict[str, Any]]) -> int:
     return len({key for row in rows for key in row})
 
 
+FORBIDDEN_ACTIVE_POLYTOPE_FIELDS = {
+    "capacity",
+    "volume",
+    "dual_vertex_count",
+    "dual_vertices_f64",
+}
+
+FORBIDDEN_ACTIVE_POLYTOPE_PREFIXES = (
+    "geom_",
+    "edge_length_",
+    "facet_volume_",
+    "ridge_euclidean_area_",
+    "ridge_symp_over_euclidean_area_",
+    "allpair_",
+    "omega_",
+    "ridge_abs_omega_",
+    "ridge_abs_normalized_omega_",
+    "transition_",
+)
+
+
+def forbidden_active_polytope_fields(rows: list[dict[str, Any]]) -> list[str]:
+    keys = {key for row in rows for key in row}
+    return sorted(
+        key
+        for key in keys
+        if key in FORBIDDEN_ACTIVE_POLYTOPE_FIELDS
+        or key.startswith(FORBIDDEN_ACTIVE_POLYTOPE_PREFIXES)
+    )
+
+
 def fingerprint(tables_dir: Path) -> dict[str, Any]:
     polytope_path = tables_dir / "polytope-table.jsonl"
     provenance_path = tables_dir / "polytope-provenance-table.jsonl"
     polytope_rows = load_jsonl(polytope_path)
     provenance_rows = load_jsonl(provenance_path)
     sys_values = [float(row["sys"]) for row in polytope_rows]
+    forbidden_fields = forbidden_active_polytope_fields(polytope_rows)
+    require(
+        not forbidden_fields,
+        "active polytope table contains non-invariant/legacy fields: "
+        + ", ".join(forbidden_fields[:20]),
+    )
     hashes = {
         "polytope-table.jsonl": sha256(polytope_path),
         "polytope-provenance-table.jsonl": sha256(provenance_path),
@@ -85,6 +122,7 @@ def fingerprint(tables_dir: Path) -> dict[str, Any]:
         "polytope_rows": len(polytope_rows),
         "provenance_rows": len(provenance_rows),
         "polytope_union_field_count": union_field_count(polytope_rows),
+        "active_polytope_forbidden_field_count": len(forbidden_fields),
         "provenance_union_field_count": union_field_count(provenance_rows),
         "dataset_counts": count_by(provenance_rows, "dataset"),
         "polytope_capacity_source_counts": count_by(polytope_rows, "capacity_source"),
@@ -129,6 +167,10 @@ def print_markdown(data: dict[str, Any]) -> None:
     print(f"- provenance rows: `{data['provenance_rows']}`")
     print(f"- prepare stats present: `{data['prepare_stats_present']}`")
     print(f"- polytope union fields: `{data['polytope_union_field_count']}`")
+    print(
+        "- active polytope forbidden fields: "
+        f"`{data['active_polytope_forbidden_field_count']}`"
+    )
     print(f"- provenance union fields: `{data['provenance_union_field_count']}`")
     print(f"- max `sys`: `{data['max_sys']}`")
     print(f"- `sys > 1` rows: `{data['sys_gt_one_count']}`")

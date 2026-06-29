@@ -4,8 +4,8 @@
 //! does not run capacity search.
 
 mod canonize;
-mod features;
 mod features_trace;
+mod invariant_features;
 mod load_caches;
 mod rows;
 mod write_database;
@@ -317,10 +317,10 @@ fn main() {
     );
 
     let started = Instant::now();
-    let polytope_rows = features::build_polytope_table(&caches.polytopes);
+    let polytope_rows = invariant_features::build_polytope_table(&caches.polytopes);
     let build_polytope_table_ms = started.elapsed().as_secs_f64() * 1000.0;
     eprintln!(
-        "Built polytope table in {:.1}s",
+        "Built invariant polytope table in {:.1}s",
         build_polytope_table_ms / 1000.0
     );
 
