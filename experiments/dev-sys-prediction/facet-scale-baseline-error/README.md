@@ -87,7 +87,7 @@ Run the finite-radius local prediction cloud with candidate-window
 decomposition columns written into `local-geometry-probe.jsonl`:
 
 ```bash
-cargo run -p exp-dev-sys-prediction --release --bin dev-sys-prediction-cloud -- \
+cargo run -p exp-dev-sys-prediction --release --bin dev-sys-prediction-produce -- \
   --diagnostic-dir experiments/dev-sys-prediction/facet-scale-baseline-error/branch-diagnostic \
   --polytope-table experiments/dev-sys-prediction/facet-scale-baseline-error/polytope-panel.jsonl \
   --out-dir experiments/dev-sys-prediction/facet-scale-baseline-error/local-decomp-cloud \

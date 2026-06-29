@@ -546,6 +546,7 @@ dependencies = [
 name = "exp-dev-sys-prediction"
 version = "0.1.0"
 dependencies = [
+ "exp-dev-gradient-ascent",
  "exp-sys-landscape",
  "good_lp",
  "nalgebra",

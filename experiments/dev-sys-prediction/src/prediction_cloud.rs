@@ -1,12 +1,14 @@
-//! Prediction-cloud producer tied to the branch degeneracy diagnostic.
-//!
-//! This command consumes a `dev-gradient-ascent-branch-diagnostic` output
-//! directory, selects representative classified basepoints, and compares
-//! single-anchor branch predictions with recomputed `sys(a0 + t d)` over a
-//! finite direction/radius cloud.
+// Prediction-cloud producer tied to the branch degeneracy diagnostic.
+//
+// This command consumes a `dev-gradient-ascent-branch-diagnostic` output
+// directory, selects representative classified basepoints, and compares
+// single-anchor branch predictions with recomputed `sys(a0 + t d)` over a
+// finite direction/radius cloud.
 
+use crate::schema::{BasepointRow, PerturbationEventRow, StateRow};
 use exp_sys_landscape::{
-    compute_active_sys_state, exact_volume_from_incidence_as_f64, SysLandscapePolytopeCache,
+    compute_active_sys_state, compute_active_sys_state_cached, exact_volume_from_incidence_as_f64,
+    poly_id_from_dual_vertices, ExpensiveComputationCache, SysLandscapePolytopeCache,
 };
 use good_lp::{constraint, default_solver, variable, variables, Expression, Solution, SolverModel};
 use nalgebra::Vector4;
@@ -36,6 +38,7 @@ const DEFAULT_MIN_OBSERVED_RELATIVE_DELTA: f64 = 0.0;
 
 #[derive(Debug)]
 struct Cli {
+    program_name: String,
     diagnostic_dir: PathBuf,
     polytope_table: PathBuf,
     out_dir: PathBuf,
@@ -47,6 +50,8 @@ struct Cli {
     steps: Vec<f64>,
     endpoint_steps: Option<Vec<f64>>,
     skip_endpoint_diagnostics: bool,
+    sys_cache_inputs: Vec<PathBuf>,
+    sys_cache_output: Option<PathBuf>,
     max_fixtures_per_label: usize,
     skip_fixtures_per_label: usize,
     trace_iterations: usize,
@@ -123,15 +128,26 @@ struct FixtureRow {
 #[derive(Serialize)]
 struct LocalGeometryProbeRow {
     poly_id: String,
+    sample_id: String,
+    base_state_id: String,
+    target_state_id: Option<String>,
+    target_dual_vertices_f64: Vec<[f64; 4]>,
     degeneracy_label: String,
     direction_label: String,
     step: f64,
     status: String,
     base_sys: f64,
     predicted_delta_per_step: Option<f64>,
+    direction_model_predicted_delta_sys: Option<f64>,
     predicted_delta_sys: Option<f64>,
     candidate_window_predicted_delta_sys: Option<f64>,
     decomposition_total_prediction_error: Option<f64>,
+    decomposition_fixed_sigma_linearization_error: Option<f64>,
+    decomposition_inside_window_selection_error: Option<f64>,
+    decomposition_window_miss_error: Option<f64>,
+    decomposition_capacity_linearization_error: Option<f64>,
+    decomposition_volume_linearization_error: Option<f64>,
+    decomposition_capacity_volume_interaction_error: Option<f64>,
     decomposition_linearization_error: Option<f64>,
     decomposition_sigma_set_error: Option<f64>,
     decomposition_sum_residual: Option<f64>,
@@ -205,6 +221,12 @@ struct StepRankingAuditRow {
     decomposition_actual_sys: Option<f64>,
     decomposition_total_prediction_error: Option<f64>,
     decomposition_base_window_exact_sys: Option<f64>,
+    decomposition_fixed_sigma_linearization_error: Option<f64>,
+    decomposition_inside_window_selection_error: Option<f64>,
+    decomposition_window_miss_error: Option<f64>,
+    decomposition_capacity_linearization_error: Option<f64>,
+    decomposition_volume_linearization_error: Option<f64>,
+    decomposition_capacity_volume_interaction_error: Option<f64>,
     decomposition_linearization_error: Option<f64>,
     decomposition_sigma_set_error: Option<f64>,
     decomposition_sum_error: Option<f64>,
@@ -297,6 +319,9 @@ struct ComputeBudgetReport {
     endpoint_target_orbit_iterations: u64,
     endpoint_scan_base_orbit_iterations: u64,
     endpoint_scan_target_orbit_iterations: u64,
+    sys_cache_hits: usize,
+    sys_cache_misses: usize,
+    sys_cache_used_rows: usize,
     failed_probe_rows: usize,
     failed_endpoint_direction_scan_rows: usize,
     skip_endpoint_diagnostics: bool,
@@ -331,6 +356,9 @@ struct Summary {
     endpoint_line_search_status_counts: BTreeMap<String, usize>,
     endpoint_direction_scan_status_counts: BTreeMap<String, usize>,
     endpoint_direction_scan_threshold_counts: BTreeMap<String, usize>,
+    sys_cache_hits: usize,
+    sys_cache_misses: usize,
+    sys_cache_used_rows: usize,
     skip_endpoint_diagnostics: bool,
     write_step_ranking_audit: bool,
     out_dir: String,
@@ -385,10 +413,11 @@ impl StopThreshold {
     }
 }
 
-fn main() {
-    let cli = parse_args();
+pub fn run_from_args(argv: impl IntoIterator<Item = impl Into<String>>) {
+    let cli = parse_args_from(argv);
     fs::create_dir_all(&cli.out_dir).expect("failed to create output directory");
     let t0 = Instant::now();
+    let command_name = command_name_from_args(&cli.program_name);
 
     let diagnostic_rows: Vec<DiagnosticRow> =
         load_jsonl(&cli.diagnostic_dir.join("branch-set-diagnostic.jsonl"));
@@ -414,9 +443,13 @@ fn main() {
     );
 
     let fixture_rows: Vec<FixtureRow> = fixtures.iter().map(fixture_row).collect();
+    let basepoint_rows: Vec<BasepointRow> = fixtures.iter().map(basepoint_sample_row).collect();
+    let mut state_rows = Vec::new();
+    let mut event_rows = Vec::new();
     let mut probe_rows = Vec::new();
     let mut base_orbit_iterations = 0u64;
     let mut target_orbit_iterations = 0u64;
+    let sys_cache = ExpensiveComputationCache::load(&cli.sys_cache_inputs);
 
     for fixture in &fixtures {
         match compute_base_state_from_row(
@@ -425,6 +458,7 @@ fn main() {
             cli.selection_threshold_relative,
         ) {
             Ok(base) => {
+                state_rows.push(base_state_row(fixture));
                 base_orbit_iterations += base.capacity.iterations;
                 let directions =
                     probe_directions(&base, &cli.steps, cli.include_candidate_window_directions);
@@ -442,7 +476,10 @@ fn main() {
                             cli.direction_model,
                             cli.action_window_relative,
                             cli.selection_threshold_relative,
+                            &sys_cache,
                         );
+                        state_rows.extend(state_rows_for_probe(&row, &base));
+                        event_rows.push(event_row_for_probe(&row));
                         if let Some(iterations) = row.target_orbit_iterations {
                             target_orbit_iterations += iterations;
                         }
@@ -453,15 +490,26 @@ fn main() {
             Err(err) => {
                 probe_rows.push(LocalGeometryProbeRow {
                     poly_id: fixture.polytope.poly_id.clone(),
+                    sample_id: sample_id(fixture),
+                    base_state_id: base_state_id(fixture),
+                    target_state_id: None,
+                    target_dual_vertices_f64: Vec::new(),
                     degeneracy_label: fixture.diagnostic.degeneracy_label.clone(),
                     direction_label: "base_state".to_string(),
                     step: 0.0,
                     status: err,
                     base_sys: fixture.polytope.sys,
                     predicted_delta_per_step: None,
+                    direction_model_predicted_delta_sys: None,
                     predicted_delta_sys: None,
                     candidate_window_predicted_delta_sys: None,
                     decomposition_total_prediction_error: None,
+                    decomposition_fixed_sigma_linearization_error: None,
+                    decomposition_inside_window_selection_error: None,
+                    decomposition_window_miss_error: None,
+                    decomposition_capacity_linearization_error: None,
+                    decomposition_volume_linearization_error: None,
+                    decomposition_capacity_volume_interaction_error: None,
                     decomposition_linearization_error: None,
                     decomposition_sigma_set_error: None,
                     decomposition_sum_residual: None,
@@ -483,6 +531,15 @@ fn main() {
 
     write_jsonl(cli.out_dir.join("fixture-selection.jsonl"), &fixture_rows)
         .expect("failed to write fixture-selection.jsonl");
+    write_jsonl(cli.out_dir.join("basepoints.jsonl"), &basepoint_rows)
+        .expect("failed to write basepoints.jsonl");
+    write_jsonl(
+        cli.out_dir.join("states.jsonl"),
+        &dedup_state_rows(state_rows),
+    )
+    .expect("failed to write states.jsonl");
+    write_jsonl(cli.out_dir.join("events.jsonl"), &event_rows)
+        .expect("failed to write events.jsonl");
     write_jsonl(cli.out_dir.join("local-geometry-probe.jsonl"), &probe_rows)
         .expect("failed to write local-geometry-probe.jsonl");
     let trace_artifacts = run_trace_and_endpoint_rows(
@@ -500,6 +557,7 @@ fn main() {
             relative_delta: cli.min_observed_relative_delta,
         },
         cli.skip_endpoint_diagnostics,
+        &sys_cache,
     );
     let trace_rows = trace_artifacts.trace_rows;
     let endpoint_rows = trace_artifacts.endpoint_rows;
@@ -562,8 +620,21 @@ fn main() {
         .iter()
         .filter_map(|row| row.target_orbit_iterations)
         .sum::<u64>();
+    if let Some(path) = &cli.sys_cache_output {
+        if let Some(parent) = path.parent() {
+            fs::create_dir_all(parent).unwrap_or_else(|err| {
+                panic!(
+                    "failed to create sys cache output parent {}: {err}",
+                    parent.display()
+                )
+            });
+        }
+        write_jsonl(path, &sys_cache.used_rows()).expect("failed to write sys cache output");
+    }
+    let cache_stats = sys_cache.stats();
+    let cache_used_rows = sys_cache.used_rows().len();
     let report = ComputeBudgetReport {
-        command: "dev-sys-prediction-cloud".to_string(),
+        command: command_name.clone(),
         diagnostic_dir: cli.diagnostic_dir.display().to_string(),
         polytope_table: cli.polytope_table.display().to_string(),
         selection_threshold_relative: cli.selection_threshold_relative,
@@ -593,6 +664,9 @@ fn main() {
         endpoint_target_orbit_iterations,
         endpoint_scan_base_orbit_iterations,
         endpoint_scan_target_orbit_iterations,
+        sys_cache_hits: cache_stats.hits,
+        sys_cache_misses: cache_stats.misses,
+        sys_cache_used_rows: cache_used_rows,
         failed_probe_rows,
         failed_endpoint_direction_scan_rows,
         skip_endpoint_diagnostics: cli.skip_endpoint_diagnostics,
@@ -602,7 +676,7 @@ fn main() {
         .expect("failed to write compute-budget-report.json");
 
     let summary = Summary {
-        method: "dev-sys-prediction-cloud".to_string(),
+        method: command_name,
         direction_model: cli.direction_model.as_str().to_string(),
         include_candidate_window_directions: cli.include_candidate_window_directions,
         selection_threshold_relative: cli.selection_threshold_relative,
@@ -635,6 +709,9 @@ fn main() {
                 relative_delta: cli.min_observed_relative_delta,
             },
         ),
+        sys_cache_hits: cache_stats.hits,
+        sys_cache_misses: cache_stats.misses,
+        sys_cache_used_rows: cache_used_rows,
         skip_endpoint_diagnostics: cli.skip_endpoint_diagnostics,
         write_step_ranking_audit: cli.write_step_ranking_audit,
         out_dir: cli.out_dir.display().to_string(),
@@ -744,6 +821,123 @@ fn selection_diagnostics(
     }
 }
 
+fn sample_id(fixture: &Fixture) -> String {
+    format!(
+        "basepoint:prepared-table-branch-window:{}:{}:{}",
+        fixture.diagnostic.degeneracy_label,
+        fixture.selection_rank_within_label,
+        fixture.polytope.poly_id
+    )
+}
+
+fn base_state_id(fixture: &Fixture) -> String {
+    format!("state:{}", fixture.polytope.poly_id)
+}
+
+fn state_id_from_duals(duals: &[Vector4<f64>]) -> String {
+    format!("state:{}", poly_id_from_dual_vertices(duals))
+}
+
+fn basepoint_sample_row(fixture: &Fixture) -> BasepointRow {
+    BasepointRow {
+        basepoint_id: sample_id(fixture),
+        basepoint_kind: "prepared_table_branch_window".to_string(),
+        basepoint_state_id: base_state_id(fixture),
+        basepoint_poly_id: fixture.polytope.poly_id.clone(),
+        selection_label: fixture.diagnostic.degeneracy_label.clone(),
+        selection_rank_within_label: fixture.selection_rank_within_label,
+        branch_threshold_relative: fixture.diagnostic.threshold_relative,
+        input_facet_count: fixture.diagnostic.input_facet_count,
+        input_sys: fixture.diagnostic.input_sys,
+    }
+}
+
+fn base_state_row(fixture: &Fixture) -> StateRow {
+    StateRow {
+        state_id: base_state_id(fixture),
+        basepoint_id: sample_id(fixture),
+        role: "base".to_string(),
+        parent_state_id: None,
+        poly_id: Some(fixture.polytope.poly_id.clone()),
+        direction_label: None,
+        step: None,
+        status: "ok".to_string(),
+        dual_vertices_f64: fixture.polytope.dual_vertices_f64.clone(),
+    }
+}
+
+fn state_rows_for_probe(row: &LocalGeometryProbeRow, base: &BaseState) -> Vec<StateRow> {
+    let mut rows = vec![StateRow {
+        state_id: row.base_state_id.clone(),
+        basepoint_id: row.sample_id.clone(),
+        role: "base".to_string(),
+        parent_state_id: None,
+        poly_id: Some(row.poly_id.clone()),
+        direction_label: None,
+        step: None,
+        status: "ok".to_string(),
+        dual_vertices_f64: f64_dual_vertices(&base.polytope),
+    }];
+    if let Some(target_state_id) = &row.target_state_id {
+        rows.push(StateRow {
+            state_id: target_state_id.clone(),
+            basepoint_id: row.sample_id.clone(),
+            role: "prediction_target".to_string(),
+            parent_state_id: Some(row.base_state_id.clone()),
+            poly_id: target_state_id
+                .strip_prefix("state:")
+                .map(ToString::to_string),
+            direction_label: Some(row.direction_label.clone()),
+            step: Some(row.step),
+            status: row.status.clone(),
+            dual_vertices_f64: row.target_dual_vertices_f64.clone(),
+        });
+    }
+    rows
+}
+
+fn event_row_for_probe(row: &LocalGeometryProbeRow) -> PerturbationEventRow {
+    PerturbationEventRow {
+        event_id: format!(
+            "event:{}:prediction_target:{}:{:.17e}",
+            row.sample_id, row.direction_label, row.step
+        ),
+        basepoint_id: row.sample_id.clone(),
+        event_kind: "prediction_target".to_string(),
+        base_state_id: row.base_state_id.clone(),
+        target_state_id: row.target_state_id.clone(),
+        direction_label: row.direction_label.clone(),
+        step: row.step,
+        status: row.status.clone(),
+    }
+}
+
+fn dedup_state_rows(rows: Vec<StateRow>) -> Vec<StateRow> {
+    let mut by_id = BTreeMap::new();
+    for row in rows {
+        let key = format!(
+            "{}|{}|{}|{}|{}",
+            row.basepoint_id,
+            row.state_id,
+            row.role,
+            row.direction_label.as_deref().unwrap_or(""),
+            row.step
+                .map(|step| format!("{step:.17e}"))
+                .unwrap_or_default()
+        );
+        by_id.entry(key).or_insert(row);
+    }
+    by_id.into_values().collect()
+}
+
+fn f64_dual_vertices(polytope: &SysLandscapePolytopeCache) -> Vec<[f64; 4]> {
+    polytope
+        .dual_vertices_f64
+        .iter()
+        .map(|v| [v[0], v[1], v[2], v[3]])
+        .collect()
+}
+
 struct TraceArtifacts {
     trace_rows: Vec<RunTraceRow>,
     endpoint_rows: Vec<EndpointDiagnosticRow>,
@@ -763,6 +957,7 @@ fn run_trace_and_endpoint_rows(
     trace_iterations: usize,
     stop_threshold: StopThreshold,
     skip_endpoint_diagnostics: bool,
+    sys_cache: &ExpensiveComputationCache,
 ) -> TraceArtifacts {
     let mut rows = Vec::new();
     let mut endpoint_rows = Vec::new();
@@ -919,6 +1114,7 @@ fn run_trace_and_endpoint_rows(
                 direction_model,
                 include_candidate_window_directions,
                 endpoint_steps,
+                sys_cache,
             ));
         }
     }
@@ -1110,6 +1306,22 @@ fn step_ranking_audit_row(
         decomposition_base_window_exact_sys: decomposition
             .as_ref()
             .and_then(|d| d.base_window_exact_sys),
+        decomposition_fixed_sigma_linearization_error: decomposition
+            .as_ref()
+            .and_then(|d| d.fixed_sigma_linearization_error),
+        decomposition_inside_window_selection_error: decomposition
+            .as_ref()
+            .and_then(|d| d.inside_window_selection_error),
+        decomposition_window_miss_error: decomposition.as_ref().and_then(|d| d.window_miss_error),
+        decomposition_capacity_linearization_error: decomposition
+            .as_ref()
+            .and_then(|d| d.capacity_linearization_error),
+        decomposition_volume_linearization_error: decomposition
+            .as_ref()
+            .and_then(|d| d.volume_linearization_error),
+        decomposition_capacity_volume_interaction_error: decomposition
+            .as_ref()
+            .and_then(|d| d.capacity_volume_interaction_error),
         decomposition_linearization_error: decomposition
             .as_ref()
             .and_then(|d| d.linearization_error),
@@ -1204,6 +1416,12 @@ struct PredictionDecomposition {
     actual_sys: f64,
     total_prediction_error: f64,
     base_window_exact_sys: Option<f64>,
+    fixed_sigma_linearization_error: Option<f64>,
+    inside_window_selection_error: Option<f64>,
+    window_miss_error: Option<f64>,
+    capacity_linearization_error: Option<f64>,
+    volume_linearization_error: Option<f64>,
+    capacity_volume_interaction_error: Option<f64>,
     linearization_error: Option<f64>,
     sigma_set_error: Option<f64>,
     sum_error: Option<f64>,
@@ -1251,12 +1469,28 @@ fn candidate_window_decomposition(
     let sum_residual = sum_error.map(|sum| total_prediction_error - sum);
     let fixed_winner =
         fixed_winner_decomposition(base, target_duals, target_volume, direction, step, witness);
+    let fixed_sigma_linearization_error = fixed_winner.as_ref().map(|row| row.sys_error_full);
+    let inside_window_selection_error = fixed_winner
+        .as_ref()
+        .zip(base_window_exact_sys)
+        .map(|(row, exact)| row.actual_sys - exact);
+    let capacity_linearization_error = fixed_winner.as_ref().map(|row| row.sys_error_action_part);
+    let volume_linearization_error = fixed_winner.as_ref().map(|row| row.sys_error_volume_part);
+    let capacity_volume_interaction_error = fixed_winner
+        .as_ref()
+        .map(|row| row.sys_error_interaction_residual);
 
     Some(PredictionDecomposition {
         predicted_sys,
         actual_sys,
         total_prediction_error,
         base_window_exact_sys,
+        fixed_sigma_linearization_error,
+        inside_window_selection_error,
+        window_miss_error: sigma_set_error,
+        capacity_linearization_error,
+        volume_linearization_error,
+        capacity_volume_interaction_error,
         linearization_error,
         sigma_set_error,
         sum_error,
@@ -1786,8 +2020,9 @@ fn endpoint_direction_scan_rows_for_final_state(
     direction_model: DirectionModel,
     include_candidate_window_directions: bool,
     steps: &[f64],
+    sys_cache: &ExpensiveComputationCache,
 ) -> Vec<LocalGeometryProbeRow> {
-    let active_state = match compute_active_sys_state(final_polytope) {
+    let active_state = match compute_active_sys_state_cached(final_polytope, sys_cache) {
         Some(state) => state,
         None => {
             return vec![endpoint_direction_scan_failure_row(
@@ -1830,6 +2065,7 @@ fn endpoint_direction_scan_rows_for_final_state(
                 direction_model,
                 action_window_relative,
                 branch_threshold_relative,
+                sys_cache,
             ));
         }
     }
@@ -1844,15 +2080,26 @@ fn endpoint_direction_scan_failure_row(
 ) -> LocalGeometryProbeRow {
     LocalGeometryProbeRow {
         poly_id: fixture.polytope.poly_id.clone(),
+        sample_id: sample_id(fixture),
+        base_state_id: base_state_id(fixture),
+        target_state_id: None,
+        target_dual_vertices_f64: Vec::new(),
         degeneracy_label: fixture.diagnostic.degeneracy_label.clone(),
         direction_label: "post_stop_direction_scan".to_string(),
         step: 0.0,
         status: format!("{status}:{detail}"),
         base_sys,
         predicted_delta_per_step: None,
+        direction_model_predicted_delta_sys: None,
         predicted_delta_sys: None,
         candidate_window_predicted_delta_sys: None,
         decomposition_total_prediction_error: None,
+        decomposition_fixed_sigma_linearization_error: None,
+        decomposition_inside_window_selection_error: None,
+        decomposition_window_miss_error: None,
+        decomposition_capacity_linearization_error: None,
+        decomposition_volume_linearization_error: None,
+        decomposition_capacity_volume_interaction_error: None,
         decomposition_linearization_error: None,
         decomposition_sigma_set_error: None,
         decomposition_sum_residual: None,
@@ -1980,6 +2227,7 @@ fn local_probe_row(
     direction_model: DirectionModel,
     action_window_relative: f64,
     branch_threshold_relative: f64,
+    sys_cache: &ExpensiveComputationCache,
 ) -> LocalGeometryProbeRow {
     let Some(predicted_delta) =
         branch_model_predicted_delta(base, direction, step, direction_model)
@@ -1989,6 +2237,8 @@ fn local_probe_row(
             base,
             direction_label,
             step,
+            None,
+            Vec::new(),
             "branch_model_prediction_failed".to_string(),
         );
     };
@@ -2004,6 +2254,11 @@ fn local_probe_row(
         .zip(direction)
         .map(|(dual, delta)| dual + step * delta)
         .collect();
+    let target_state_id = state_id_from_duals(&target_duals);
+    let target_dual_vertices_f64 = target_duals
+        .iter()
+        .map(|v| [v[0], v[1], v[2], v[3]])
+        .collect::<Vec<_>>();
     let Some(target_polytope) = SysLandscapePolytopeCache::from_f64_dual_vertices(target_duals)
     else {
         return failed_probe_row(
@@ -2011,6 +2266,8 @@ fn local_probe_row(
             base,
             direction_label,
             step,
+            Some(target_state_id),
+            target_dual_vertices_f64,
             "target_polytope_construction_failed".to_string(),
         );
     };
@@ -2025,11 +2282,13 @@ fn local_probe_row(
                 base,
                 direction_label,
                 step,
+                Some(target_state_id),
+                target_dual_vertices_f64,
                 format!("target_capacity_failed:{err:?}"),
             );
         }
     };
-    let target_state = match compute_active_sys_state(&target_polytope) {
+    let target_state = match compute_active_sys_state_cached(&target_polytope, sys_cache) {
         Some(state) => state,
         None => {
             return failed_probe_row(
@@ -2037,6 +2296,8 @@ fn local_probe_row(
                 base,
                 direction_label,
                 step,
+                Some(target_state_id),
+                target_dual_vertices_f64,
                 "target_sys_failed".to_string(),
             );
         }
@@ -2065,12 +2326,17 @@ fn local_probe_row(
 
     LocalGeometryProbeRow {
         poly_id: fixture.polytope.poly_id.clone(),
+        sample_id: sample_id(fixture),
+        base_state_id: base_state_id(fixture),
+        target_state_id: Some(target_state_id),
+        target_dual_vertices_f64,
         degeneracy_label: fixture.diagnostic.degeneracy_label.clone(),
         direction_label: direction_label.to_string(),
         step,
         status: "ok".to_string(),
         base_sys: base.sys,
         predicted_delta_per_step: Some(predicted_delta_per_step),
+        direction_model_predicted_delta_sys: Some(predicted_delta),
         predicted_delta_sys: Some(predicted_delta),
         candidate_window_predicted_delta_sys: candidate_window_prediction
             .as_ref()
@@ -2078,6 +2344,24 @@ fn local_probe_row(
         decomposition_total_prediction_error: decomposition
             .as_ref()
             .map(|row| row.total_prediction_error),
+        decomposition_fixed_sigma_linearization_error: decomposition
+            .as_ref()
+            .and_then(|row| row.fixed_sigma_linearization_error),
+        decomposition_inside_window_selection_error: decomposition
+            .as_ref()
+            .and_then(|row| row.inside_window_selection_error),
+        decomposition_window_miss_error: decomposition
+            .as_ref()
+            .and_then(|row| row.window_miss_error),
+        decomposition_capacity_linearization_error: decomposition
+            .as_ref()
+            .and_then(|row| row.capacity_linearization_error),
+        decomposition_volume_linearization_error: decomposition
+            .as_ref()
+            .and_then(|row| row.volume_linearization_error),
+        decomposition_capacity_volume_interaction_error: decomposition
+            .as_ref()
+            .and_then(|row| row.capacity_volume_interaction_error),
         decomposition_linearization_error: decomposition
             .as_ref()
             .and_then(|row| row.linearization_error),
@@ -2105,19 +2389,32 @@ fn failed_probe_row(
     base: &BaseState,
     direction_label: &str,
     step: f64,
+    target_state_id: Option<String>,
+    target_dual_vertices_f64: Vec<[f64; 4]>,
     status: String,
 ) -> LocalGeometryProbeRow {
     LocalGeometryProbeRow {
         poly_id: fixture.polytope.poly_id.clone(),
+        sample_id: sample_id(fixture),
+        base_state_id: base_state_id(fixture),
+        target_state_id,
+        target_dual_vertices_f64,
         degeneracy_label: fixture.diagnostic.degeneracy_label.clone(),
         direction_label: direction_label.to_string(),
         step,
         status,
         base_sys: base.sys,
         predicted_delta_per_step: None,
+        direction_model_predicted_delta_sys: None,
         predicted_delta_sys: None,
         candidate_window_predicted_delta_sys: None,
         decomposition_total_prediction_error: None,
+        decomposition_fixed_sigma_linearization_error: None,
+        decomposition_inside_window_selection_error: None,
+        decomposition_window_miss_error: None,
+        decomposition_capacity_linearization_error: None,
+        decomposition_volume_linearization_error: None,
+        decomposition_capacity_volume_interaction_error: None,
         decomposition_linearization_error: None,
         decomposition_sigma_set_error: None,
         decomposition_sum_residual: None,
@@ -2610,8 +2907,13 @@ fn count_probe_threshold_outcomes(
     counts
 }
 
-fn parse_args() -> Cli {
+fn parse_args_from(argv: impl IntoIterator<Item = impl Into<String>>) -> Cli {
+    let argv = argv.into_iter().map(Into::into).collect::<Vec<String>>();
     let mut cli = Cli {
+        program_name: argv
+            .first()
+            .cloned()
+            .unwrap_or_else(|| "dev-sys-prediction-panel:perturbation-cloud".to_string()),
         diagnostic_dir: PathBuf::new(),
         polytope_table: default_tables_dir().join("polytope-table.jsonl"),
         out_dir: default_output_dir(),
@@ -2623,6 +2925,8 @@ fn parse_args() -> Cli {
         steps: DEFAULT_STEPS.to_vec(),
         endpoint_steps: None,
         skip_endpoint_diagnostics: false,
+        sys_cache_inputs: Vec::new(),
+        sys_cache_output: None,
         max_fixtures_per_label: DEFAULT_MAX_FIXTURES_PER_LABEL,
         skip_fixtures_per_label: 0,
         trace_iterations: DEFAULT_TRACE_ITERATIONS,
@@ -2635,7 +2939,7 @@ fn parse_args() -> Cli {
         min_observed_relative_delta: DEFAULT_MIN_OBSERVED_RELATIVE_DELTA,
     };
 
-    let mut args = std::env::args().skip(1);
+    let mut args = argv.into_iter().skip(1);
     while let Some(arg) = args.next() {
         match arg.as_str() {
             "--diagnostic-dir" => {
@@ -2695,6 +2999,16 @@ fn parse_args() -> Cli {
             }
             "--skip-endpoint-diagnostics" => {
                 cli.skip_endpoint_diagnostics = true;
+            }
+            "--sys-cache-input" => {
+                cli.sys_cache_inputs.push(PathBuf::from(
+                    args.next().expect("--sys-cache-input requires a path"),
+                ));
+            }
+            "--sys-cache-output" => {
+                cli.sys_cache_output = Some(PathBuf::from(
+                    args.next().expect("--sys-cache-output requires a path"),
+                ));
             }
             "--max-fixtures-per-label" => {
                 cli.max_fixtures_per_label = args
@@ -2757,18 +3071,26 @@ fn parse_args() -> Cli {
 
 fn print_usage() {
     eprintln!(
-        "Usage: dev-sys-prediction-cloud --diagnostic-dir PATH \
+        "Usage: dev-sys-prediction-produce --diagnostic-dir PATH \
          [--polytope-table PATH] [--out-dir PATH] \
          [--selection-threshold-relative F64] [--action-window-relative F64] \
          [--direction-model near-active|candidate-window] \
          [--include-candidate-window-directions] \
          [--write-step-ranking-audit] \
+         [--sys-cache-input PATH] [--sys-cache-output PATH] \
          [--steps CSV] [--endpoint-steps CSV] [--skip-endpoint-diagnostics] \
          [--max-fixtures-per-label N] [--skip-fixtures-per-label N] \
          [--trace-iterations N] \
          [--degeneracy-labels CSV] [--min-observed-delta F64] \
          [--min-observed-relative-delta F64]"
     );
+}
+
+fn command_name_from_args(program_name: &str) -> String {
+    Path::new(program_name)
+        .file_name()
+        .map(|name| name.to_string_lossy().into_owned())
+        .unwrap_or_else(|| "dev-sys-prediction-panel:perturbation-cloud".to_string())
 }
 
 fn parse_direction_model(raw: &str) -> DirectionModel {
@@ -2789,7 +3111,7 @@ fn default_output_dir() -> PathBuf {
         .expect("system clock before UNIX_EPOCH")
         .as_millis();
     std::env::temp_dir().join(format!(
-        "dev-sys-prediction-cloud-{}-{stamp}",
+        "dev-sys-prediction-perturbation-cloud-{}-{stamp}",
         std::process::id()
     ))
 }
@@ -2815,6 +3137,9 @@ fn load_jsonl<T: for<'de> Deserialize<'de>>(path: &Path) -> Vec<T> {
 }
 
 fn write_jsonl<P: AsRef<Path>, T: Serialize>(path: P, rows: &[T]) -> std::io::Result<()> {
+    if let Some(parent) = path.as_ref().parent() {
+        fs::create_dir_all(parent)?;
+    }
     let file = File::create(path)?;
     let mut writer = BufWriter::new(file);
     for row in rows {
@@ -2825,6 +3150,9 @@ fn write_jsonl<P: AsRef<Path>, T: Serialize>(path: P, rows: &[T]) -> std::io::Re
 }
 
 fn write_json<P: AsRef<Path>, T: Serialize>(path: P, value: &T) -> std::io::Result<()> {
+    if let Some(parent) = path.as_ref().parent() {
+        fs::create_dir_all(parent)?;
+    }
     let file = File::create(path)?;
     let writer = BufWriter::new(file);
     serde_json::to_writer_pretty(writer, value)?;

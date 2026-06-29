@@ -10,6 +10,8 @@ use std::io::{BufWriter, Write};
 use std::path::{Path, PathBuf};
 use std::time::{SystemTime, UNIX_EPOCH};
 
+pub mod branch_diagnostic;
+
 pub const THRESHOLDS_RELATIVE: &[f64] = &[1.0e-9, 1.0e-6, 1.0e-3, 1.0e-2];
 
 #[derive(Clone, Debug)]

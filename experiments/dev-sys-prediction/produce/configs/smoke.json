@@ -1,0 +1,7 @@
+{
+  "polytope_table": "experiments/dev-sys-prediction/facet-scale-baseline-error/polytope-panel.jsonl",
+  "buckets": [
+    { "facet_count": 6, "basepoints": 1, "beta_boundary_rows": 1 }
+  ],
+  "steps": [0.001]
+}

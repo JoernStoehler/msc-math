@@ -4,8 +4,16 @@ version = "0.1.0"
 edition = "2021"
 
 [[bin]]
+name = "dev-sys-prediction-panel"
+path = "produce/dataset-panel.rs"
+
+[[bin]]
+name = "dev-sys-prediction-produce"
+path = "produce/prediction-cloud.rs"
+
+[[bin]]
 name = "dev-sys-prediction-cloud"
-path = "prediction-cloud/main.rs"
+path = "produce/prediction-cloud-compat.rs"
 
 [[bin]]
 name = "dev-sysext-sigma-line-probe"
@@ -15,6 +23,7 @@ path = "sysext-sigma-line-probe/main.rs"
 workspace = true
 
 [dependencies]
+exp-dev-gradient-ascent = { path = "../dev-gradient-ascent" }
 exp-sys-landscape = { path = "../sys-landscape" }
 good_lp.workspace = true
 nalgebra.workspace = true
