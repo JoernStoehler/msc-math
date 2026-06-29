@@ -1,14 +1,14 @@
 {
-  "method": "dev-sys-prediction-cloud",
+  "method": "dev-sys-prediction-produce",
   "direction_model": "near_active",
   "include_candidate_window_directions": false,
   "selection_threshold_relative": 0.01,
-  "max_fixtures_per_label": 99,
+  "max_fixtures_per_label": 2,
   "skip_fixtures_per_label": 0,
   "degeneracy_labels": [
+    "high_degeneracy",
     "large_gap",
-    "narrow_gap",
-    "high_degeneracy"
+    "narrow_gap"
   ],
   "selected_fixtures": 6,
   "eligible_diagnostic_counts_by_label": {
@@ -44,8 +44,11 @@
   "endpoint_line_search_status_counts": {},
   "endpoint_direction_scan_status_counts": {},
   "endpoint_direction_scan_threshold_counts": {},
+  "sys_cache_hits": 0,
+  "sys_cache_misses": 111,
+  "sys_cache_used_rows": 111,
   "skip_endpoint_diagnostics": true,
   "write_step_ranking_audit": false,
-  "out_dir": "experiments/dev-sys-prediction/facet-scale-baseline-error/local-decomp-cloud",
+  "out_dir": "/tmp/dev-sys-prediction-refresh-local-decomp",
   "caveat": "finite single-anchor prediction cloud only; this does not certify endpoint local maximality"
 }

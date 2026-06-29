@@ -435,7 +435,8 @@ def write_summary(path, panel_scale_rows, branch_rows, prediction_rows):
             "median_abs_error": row["median_abs_total_error"],
             "p90_abs_error": row["p90_abs_total_error"],
             "max_abs_error": row["max_abs_total_error"],
-            "median_combined_linearization": row["median_abs_linearization_error"],
+            "median_fixed_sigma": row["median_abs_fixed_sigma_linearization_error"],
+            "median_inside_window": row["median_abs_inside_window_selection_error"],
             "median_window_miss": row["median_abs_window_miss_error"],
             "target_best_missed": row["target_best_not_in_base_window"],
         }
@@ -457,12 +458,10 @@ branch diagnostic rows, and local finite-radius prediction rows.
 
 ## Prediction Error By Radius
 
-{markdown_table(prediction_display, ["F", "t", "ok/fail", "median_abs_error", "p90_abs_error", "max_abs_error", "median_combined_linearization", "median_window_miss", "target_best_missed"])}
+{markdown_table(prediction_display, ["F", "t", "ok/fail", "median_abs_error", "p90_abs_error", "max_abs_error", "median_fixed_sigma", "median_inside_window", "median_window_miss", "target_best_missed"])}
 
-This retained packet predates the full split into fixed-sigma linearization and
-inside-window branch-selection error. Its `combined_linearization` column is
-the older base-window first-order term. Regenerated rows expose the full
-fixed-sigma / inside-window / window-miss split in the CSV output.
+The CSV output also exposes the full decomposition into fixed-sigma
+linearization, inside-window branch-selection, and window-miss terms.
 """
     path.write_text(text)
 
@@ -602,7 +601,11 @@ def main():
             args.panel,
             args.branch_dir / "branch-set-diagnostic.jsonl",
             args.branch_dir / "fixture-selection.jsonl",
+            args.prediction_dir / "summary.json",
             args.prediction_dir / "fixture-selection.jsonl",
+            args.prediction_dir / "basepoints.jsonl",
+            args.prediction_dir / "states.jsonl",
+            args.prediction_dir / "events.jsonl",
             args.prediction_dir / "local-geometry-probe.jsonl",
             args.prediction_dir / "prediction-cloud.jsonl",
             args.prediction_dir / "run-trace.jsonl",

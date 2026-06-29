@@ -93,8 +93,7 @@ cargo run -p exp-dev-gradient-ascent --release --bin dev-gradient-ascent-branch-
   --thresholds-relative 1e-6,1e-3,1e-2
 ```
 
-Run the finite-radius local prediction cloud with candidate-window
-decomposition columns written into `local-geometry-probe.jsonl`:
+Run the finite-radius local prediction cloud:
 
 ```bash
 cargo run -p exp-dev-sys-prediction --release --bin dev-sys-prediction-produce -- \
@@ -102,12 +101,16 @@ cargo run -p exp-dev-sys-prediction --release --bin dev-sys-prediction-produce -
   --polytope-table experiments/dev-sys-prediction/facet-scale-baseline-error/polytope-panel.jsonl \
   --out-dir experiments/dev-sys-prediction/facet-scale-baseline-error/local-decomp-cloud \
   --selection-threshold-relative 0.01 \
-  --degeneracy-labels large_gap,narrow_gap,high_degeneracy \
-  --max-fixtures-per-label 99 \
+  --action-window-relative 0.01 \
+  --degeneracy-labels high_degeneracy,large_gap,narrow_gap \
+  --max-fixtures-per-label 2 \
   --steps 1e-4,1e-3,1e-2,3e-2 \
   --trace-iterations 0 \
-  --skip-endpoint-diagnostics
+  --skip-endpoint-diagnostics \
+  --direction-model near-active
 ```
+
+New panels should use `dev-sys-prediction-panel`; see `../produce/README.md`.
 
 Summarize:
 
@@ -138,6 +141,10 @@ When `--trace-iterations 0 --skip-endpoint-diagnostics` is used,
 `run-trace.jsonl`, `prediction-cloud.jsonl`, and endpoint JSONL files are
 expected to be empty. The local finite-radius rows are in
 `local-decomp-cloud/local-geometry-probe.jsonl`.
+The same directory also retains `summary.json` plus `basepoints.jsonl`,
+`states.jsonl`, and `events.jsonl` from the current producer so the local
+prediction rows are inspectable without reconstructing identity/provenance
+from code.
 The empty files are retained because the producer writes its standard artifact
 set even for local-only runs; deleting them would make the checked-in packet
 less faithful to regeneration.
@@ -159,10 +166,9 @@ small panel. The detailed counts and error magnitudes live in
 The dominant failure mode is not one monotone function of `F`. It depends on
 branch-window coverage and is confounded with degeneracy regime in this panel:
 selected `F=6` rows are large-gap, selected `F=10` rows high-degeneracy, and
-selected `F=12` rows narrow-gap. Older retained rows use
-`decomposition_linearization_error` for the sum of fixed-sigma linearization
-and inside-window branch-selection error; regenerated rows expose those terms
-separately.
+selected `F=12` rows narrow-gap. The retained local prediction rows expose the
+full decomposition into fixed-sigma linearization, inside-window branch
+selection, and window-miss terms.
 
 Statistical uncertainty:
 
