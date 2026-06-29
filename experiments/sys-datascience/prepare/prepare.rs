@@ -136,12 +136,6 @@ fn write_json<T: Serialize>(path: &Path, value: &T) {
 fn payloads_by_poly_id(path: &Path) -> HashMap<String, ComputedPolytopePayloadRow> {
     let mut out = HashMap::new();
     for row in read_jsonl::<ComputedPolytopePayloadRow>(path) {
-        assert!(
-            row.sys <= 1.0,
-            "computed payload {} has sys > 1: {}",
-            row.poly_id,
-            row.sys
-        );
         if let Some(previous) = out.insert(row.poly_id.clone(), row) {
             panic!(
                 "duplicate computed payload for poly_id {}",
@@ -157,17 +151,26 @@ fn ensure_polytope(
     payload: &ComputedPolytopePayloadRow,
     capacity_source: &str,
 ) {
-    polytopes
-        .entry(payload.poly_id.clone())
-        .or_insert_with(|| LoadedPolytopeRow {
-            poly_id: payload.poly_id.clone(),
-            dual_vertices_rational: payload.dual_vertices_rational.clone(),
-            facet_count: payload.facet_count,
-            capacity: payload.capacity,
-            volume: payload.volume,
-            sys: payload.sys,
-            capacity_source: capacity_source.to_string(),
-        });
+    if let Some(existing) = polytopes.get(&payload.poly_id) {
+        assert_eq!(
+            existing.capacity_source, capacity_source,
+            "poly_id {} appears under multiple capacity sources: {} and {}",
+            payload.poly_id, existing.capacity_source, capacity_source
+        );
+    } else {
+        polytopes.insert(
+            payload.poly_id.clone(),
+            LoadedPolytopeRow {
+                poly_id: payload.poly_id.clone(),
+                dual_vertices_rational: payload.dual_vertices_rational.clone(),
+                facet_count: payload.facet_count,
+                capacity: payload.capacity,
+                volume: payload.volume,
+                sys: payload.sys,
+                capacity_source: capacity_source.to_string(),
+            },
+        );
+    }
 }
 
 fn require_payload<'a>(

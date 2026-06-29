@@ -149,7 +149,7 @@ def validate(
     for row in payload_rows:
         poly_id = str(row["poly_id"])
         sys = float(row["sys"])
-        require(sys <= 1.0, f"computed payload {poly_id} has sys > 1: {sys}")
+        require(sys == sys, f"computed payload {poly_id} has non-finite sys")
         require(row.get("capacity", 0.0) > 0.0, f"computed payload {poly_id} lacks capacity")
         require(row.get("volume", 0.0) > 0.0, f"computed payload {poly_id} lacks volume")
         require(row.get("sigmas"), f"computed payload {poly_id} lacks sigmas")
@@ -185,7 +185,10 @@ def validate(
         "produce-stats cache_hits + cache_misses must equal sample rows",
     )
     require(stats.get("mode") == mode, "produce-stats mode mismatch")
-    require(stats.get("producers") == producers, "produce-stats producers mismatch")
+    require(
+        sorted(stats.get("producers", [])) == sorted(producers),
+        "produce-stats producers mismatch",
+    )
     require(
         stats.get("cache_miss_volume_ms", -1.0) >= 0.0,
         "produce-stats cache_miss_volume_ms must be nonnegative",

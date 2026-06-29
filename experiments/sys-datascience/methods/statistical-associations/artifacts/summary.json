@@ -1,0 +1,906 @@
+{
+  "eligible_covariate_family_inventory": {
+    "basic counts": {
+      "count": 4,
+      "features": [
+        "edge_count",
+        "facet_count",
+        "ridge_count",
+        "vertex_count"
+      ]
+    },
+    "combinatorial summaries": {
+      "count": 21,
+      "features": [
+        "edge_density",
+        "facet_neighbor_count_max",
+        "facet_neighbor_count_mean",
+        "facet_neighbor_count_min",
+        "facet_neighbor_count_std",
+        "facet_vertex_count_max",
+        "facet_vertex_count_mean",
+        "facet_vertex_count_min",
+        "facet_vertex_count_std",
+        "ridge_size_max",
+        "ridge_size_mean",
+        "ridge_size_min",
+        "ridge_size_std",
+        "vertex_degree_max",
+        "vertex_degree_mean",
+        "vertex_degree_min",
+        "vertex_degree_std",
+        "vertex_incident_facets_max",
+        "vertex_incident_facets_mean",
+        "vertex_incident_facets_min",
+        "vertex_incident_facets_std"
+      ]
+    },
+    "ridge symplectic-area summaries": {
+      "count": 12,
+      "features": [
+        "ridge_symp_area_max_over_volume_sqrt",
+        "ridge_symp_area_max_share",
+        "ridge_symp_area_mean_over_volume_sqrt",
+        "ridge_symp_area_median_over_volume_sqrt",
+        "ridge_symp_area_min_over_volume_sqrt",
+        "ridge_symp_area_q25_over_volume_sqrt",
+        "ridge_symp_area_q75_over_volume_sqrt",
+        "ridge_symp_area_q90_over_volume_sqrt",
+        "ridge_symp_area_q95_over_volume_sqrt",
+        "ridge_symp_area_std_over_volume_sqrt",
+        "ridge_symp_area_sum_over_volume_sqrt",
+        "ridge_symp_area_top3_share"
+      ]
+    },
+    "simplicity summaries": {
+      "count": 2,
+      "features": [
+        "is_simple",
+        "simple_vertex_fraction"
+      ]
+    }
+  },
+  "eligible_scalar_covariate_count": 39,
+  "excluded_by_design": [
+    "sys",
+    "legacy capacity and volume columns if present",
+    "non-scalar JSON columns",
+    "columns present as numeric values in less than 98% of retained rows",
+    "provenance/source metadata as numeric scalar covariates; these are handled by source_factor_tests"
+  ],
+  "feature_count": 29,
+  "max_abs_spearman": 0.9384368671850424,
+  "obvious_covariate_audit": {
+    "assessment": "The current screen is useful for active invariant scalar summaries already present in the retained table it is run against. Historical non-invariant feature-family artifacts must be treated as stale under the invariant-only schema.",
+    "bad_feature_families_not_counted_as_evidence_of_coverage": [
+      "legacy raw Euclidean coordinate, edge-length, facet-volume, and ridge-Euclidean-area fields",
+      "legacy all-pair omega, omega-matrix, normalized-omega, and transition-graph fields",
+      "capacity and volume, because they are no longer method-facing active covariates"
+    ],
+    "conceptual_flow": [
+      "prepare writes invariant scalar rows",
+      "methods select eligible scalar invariant covariates",
+      "univariate association screening compares each covariate against sys(a)",
+      "capacity_source and provenance fields are handled as metadata factors"
+    ],
+    "covered_elsewhere_not_as_univariate_numeric_covariates": [
+      "capacity_source is handled in random-tail-eda, categorical factor tests, and the mean-difference bootstrap in this packet",
+      "product-bucket and height-range behavior are handled from provenance when those fields are available"
+    ],
+    "covered_invariant_feature_families": [
+      "basic counts",
+      "simplicity summaries",
+      "vertex incidence and degree summaries",
+      "ridge-size summaries",
+      "facet vertex-count and neighbor-count summaries",
+      "ridge symplectic-area summaries normalized by sqrt(volume)"
+    ],
+    "feature_owner": "Current active row fields are defined in experiments/sys-datascience/prepare/rows.rs::PolytopeTableRow.",
+    "first_layer_nodes": [
+      {
+        "current_summaries": [
+          "facet, vertex, edge, and ridge counts",
+          "simplicity and simple-vertex fraction",
+          "edge density",
+          "vertex incidence and degree summaries",
+          "ridge-size summaries",
+          "facet vertex-count and neighbor-count summaries"
+        ],
+        "node": "incidence and face-lattice summaries",
+        "status": "covered in the active invariant schema"
+      },
+      {
+        "current_summaries": [
+          "ordered-face count and ordering diagnostics",
+          "mean/std/min/max",
+          "quartiles, median, q90, and q95",
+          "sum, max share, and top-3 share"
+        ],
+        "node": "primal two-face symplectic area",
+        "status": "covered in the active invariant schema"
+      },
+      {
+        "current_summaries": [],
+        "node": "capacity/orbit outputs and source metadata",
+        "notes": "capacity_source remains available for grouping and factor tests; capacity and volume are not active covariates.",
+        "status": "not scalar covariates in the active method-facing table"
+      }
+    ],
+    "missing_or_partial_obvious_feature_families": [
+      "additional invariant scalar summaries not currently serialized by PolytopeTableRow",
+      "separate factor/product-aware versions of ridge symplectic-area summaries if source stratification shows value",
+      "explicit product-structure or symmetry scores for deciding whether a generic row looks product-like"
+    ],
+    "principle": "The active method-facing polytope table is invariant-only. Coverage is judged relative to fields serialized by prepare/rows.rs::PolytopeTableRow, not by historical raw Euclidean, omega-matrix, transition, capacity, or volume columns."
+  },
+  "permutation_family_max_p": 0.004975124378109453,
+  "product_minus_random_mean_sys": 0.04908416085647144,
+  "product_minus_random_mean_sys_bootstrap_ci_95": [
+    0.04252389852783871,
+    0.055886616744594816
+  ],
+  "row_count": 14336,
+  "screening_name": "univariate association screening",
+  "selected_scalar_covariate_count": 39,
+  "skipped_by_max_features": [],
+  "skipped_constant_covariates": [
+    "is_simple",
+    "simple_vertex_fraction",
+    "vertex_degree_max",
+    "vertex_degree_mean",
+    "vertex_degree_min",
+    "vertex_degree_std",
+    "vertex_incident_facets_max",
+    "vertex_incident_facets_mean",
+    "vertex_incident_facets_min",
+    "vertex_incident_facets_std"
+  ],
+  "source_factor_tests": {
+    "capacity_source": {
+      "anova_f": 173.4806357298561,
+      "anova_p": 2.1764428735314808e-39,
+      "eta_squared": 0.01195801256508992,
+      "group_count": 2,
+      "groups": {
+        "random_product_sample": {
+          "max": 0.86258589584944,
+          "mean": 0.3351027911250693,
+          "median": 0.3317963347941877,
+          "min": 1.3619216643341758e-05,
+          "q90": 0.6187679876946559,
+          "q99": 0.7605131314929529,
+          "rows": 10240,
+          "std": 0.20725555379714025
+        },
+        "random_sample": {
+          "max": 0.8595596058028344,
+          "mean": 0.28601863026859786,
+          "median": 0.26888849053967523,
+          "min": 2.0327844013814595e-06,
+          "q90": 0.5589426213791506,
+          "q99": 0.7051562080127824,
+          "rows": 4096,
+          "std": 0.18655698494410525
+        }
+      },
+      "kruskal_h": 156.17292000802263,
+      "kruskal_p": 7.760341246225724e-36,
+      "max_minus_min_group_mean": 0.04908416085647144,
+      "row_count": 14336,
+      "test_status": "tested"
+    },
+    "dataset_label": {
+      "anova_f": 173.4806357298561,
+      "anova_p": 2.1764428735314808e-39,
+      "eta_squared": 0.01195801256508992,
+      "group_count": 2,
+      "groups": {
+        "random_product_sample": {
+          "max": 0.86258589584944,
+          "mean": 0.3351027911250693,
+          "median": 0.3317963347941877,
+          "min": 1.3619216643341758e-05,
+          "q90": 0.6187679876946559,
+          "q99": 0.7605131314929529,
+          "rows": 10240,
+          "std": 0.20725555379714025
+        },
+        "random_sample": {
+          "max": 0.8595596058028344,
+          "mean": 0.28601863026859786,
+          "median": 0.26888849053967523,
+          "min": 2.0327844013814595e-06,
+          "q90": 0.5589426213791506,
+          "q99": 0.7051562080127824,
+          "rows": 4096,
+          "std": 0.18655698494410525
+        }
+      },
+      "kruskal_h": 156.17292000802263,
+      "kruskal_p": 7.760341246225724e-36,
+      "max_minus_min_group_mean": 0.04908416085647144,
+      "row_count": 14336,
+      "test_status": "tested"
+    },
+    "dataset_label_by_facet_count": {
+      "anova_f": 226.73873308113548,
+      "anova_p": 0.0,
+      "eta_squared": 0.18143927768846752,
+      "group_count": 15,
+      "groups": {
+        "random_product_sample:F10": {
+          "max": 0.8437955079134134,
+          "mean": 0.3841615778041655,
+          "median": 0.3935913958039864,
+          "min": 9.601533052329054e-05,
+          "q90": 0.6358362518931353,
+          "q99": 0.7661623726851504,
+          "rows": 2048,
+          "std": 0.19657373702447162
+        },
+        "random_product_sample:F11": {
+          "max": 0.86258589584944,
+          "mean": 0.44070530918217976,
+          "median": 0.46953390477604806,
+          "min": 0.0014421949035220163,
+          "q90": 0.6694336396369927,
+          "q99": 0.7926715918074011,
+          "rows": 1024,
+          "std": 0.19304694937192077
+        },
+        "random_product_sample:F12": {
+          "max": 0.8536118881702471,
+          "mean": 0.4773043971571597,
+          "median": 0.5118341795064609,
+          "min": 0.002305048917497889,
+          "q90": 0.7082581054962026,
+          "q99": 0.7953654853608568,
+          "rows": 1024,
+          "std": 0.1945375442862958
+        },
+        "random_product_sample:F6": {
+          "max": 0.6464199674959318,
+          "mean": 0.20225314677426154,
+          "median": 0.1646792184708195,
+          "min": 0.00019185378973742608,
+          "q90": 0.4520867242113684,
+          "q99": 0.582817150221969,
+          "rows": 1024,
+          "std": 0.16272616328075545
+        },
+        "random_product_sample:F7": {
+          "max": 0.7119073397957835,
+          "mean": 0.24225139211621793,
+          "median": 0.2172055346546281,
+          "min": 0.00023580152631749206,
+          "q90": 0.49206190816317874,
+          "q99": 0.6233418842980923,
+          "rows": 1024,
+          "std": 0.17402571573601128
+        },
+        "random_product_sample:F8": {
+          "max": 0.8141002333029529,
+          "mean": 0.29204129847000393,
+          "median": 0.2836672816917881,
+          "min": 1.3619216643341758e-05,
+          "q90": 0.5555716601375936,
+          "q99": 0.7100768401267551,
+          "rows": 2048,
+          "std": 0.19160576845485638
+        },
+        "random_product_sample:F9": {
+          "max": 0.8381244889295797,
+          "mean": 0.31805395673626774,
+          "median": 0.3039540683260036,
+          "min": 2.9797217476647493e-05,
+          "q90": 0.5955612006446798,
+          "q99": 0.7360053586626809,
+          "rows": 2048,
+          "std": 0.20027089662637165
+        },
+        "random_sample:F10": {
+          "max": 0.8595596058028344,
+          "mean": 0.358634406346493,
+          "median": 0.3551419854028116,
+          "min": 0.0046854202529284916,
+          "q90": 0.5948021501689152,
+          "q99": 0.7452045217693715,
+          "rows": 512,
+          "std": 0.17700709944959073
+        },
+        "random_sample:F11": {
+          "max": 0.7835927061265431,
+          "mean": 0.37608206136661837,
+          "median": 0.37525429234969465,
+          "min": 0.0025336082365968408,
+          "q90": 0.608504163087549,
+          "q99": 0.7003930316589259,
+          "rows": 512,
+          "std": 0.17511377236115686
+        },
+        "random_sample:F12": {
+          "max": 0.8247662746241669,
+          "mean": 0.4183179346946126,
+          "median": 0.43124195692292056,
+          "min": 6.889885865753428e-05,
+          "q90": 0.6327039735761916,
+          "q99": 0.7495601135920165,
+          "rows": 512,
+          "std": 0.17485909177920383
+        },
+        "random_sample:F5": {
+          "max": 0.714410363898728,
+          "mean": 0.15072632482683143,
+          "median": 0.10238006147413739,
+          "min": 0.00031794754526907963,
+          "q90": 0.35604027629944995,
+          "q99": 0.552804678653608,
+          "rows": 512,
+          "std": 0.13643289436100867
+        },
+        "random_sample:F6": {
+          "max": 0.6908550887351059,
+          "mean": 0.18717966325273616,
+          "median": 0.1522705441666668,
+          "min": 0.0007178417111975786,
+          "q90": 0.4036306508685569,
+          "q99": 0.6053907199166203,
+          "rows": 512,
+          "std": 0.14516302696224492
+        },
+        "random_sample:F7": {
+          "max": 0.7458522392903429,
+          "mean": 0.24119497591335637,
+          "median": 0.2073987726986883,
+          "min": 0.0007774649952312588,
+          "q90": 0.4845712668241673,
+          "q99": 0.6732769603218991,
+          "rows": 512,
+          "std": 0.16591100550330032
+        },
+        "random_sample:F8": {
+          "max": 0.7448532509168573,
+          "mean": 0.2617253500264316,
+          "median": 0.22179622303996438,
+          "min": 2.0327844013814595e-06,
+          "q90": 0.5074311627754989,
+          "q99": 0.6860007855295533,
+          "rows": 512,
+          "std": 0.17028714044193638
+        },
+        "random_sample:F9": {
+          "max": 0.7811353314855473,
+          "mean": 0.29428832572170366,
+          "median": 0.29492005770193896,
+          "min": 0.0007479595851122088,
+          "q90": 0.5178827755320022,
+          "q99": 0.6734386267406084,
+          "rows": 512,
+          "std": 0.16738330383200772
+        }
+      },
+      "kruskal_h": 2561.7551959639095,
+      "kruskal_p": 0.0,
+      "max_minus_min_group_mean": 0.3265780723303283,
+      "row_count": 14336,
+      "test_status": "tested"
+    },
+    "facet_count": {
+      "anova_f": 435.35564841373645,
+      "anova_p": 0.0,
+      "eta_squared": 0.1753901397755817,
+      "group_count": 8,
+      "groups": {
+        "F10": {
+          "max": 0.8595596058028344,
+          "mean": 0.379056143512631,
+          "median": 0.3859202289430095,
+          "min": 9.601533052329054e-05,
+          "q90": 0.6300224392916851,
+          "q99": 0.7648811974261125,
+          "rows": 2560,
+          "std": 0.19308949157979846
+        },
+        "F11": {
+          "max": 0.86258589584944,
+          "mean": 0.41916422657699265,
+          "median": 0.43503762623148695,
+          "min": 0.0014421949035220163,
+          "q90": 0.6532155501347598,
+          "q99": 0.7803531441635214,
+          "rows": 1536,
+          "std": 0.1897218947415628
+        },
+        "F12": {
+          "max": 0.8536118881702471,
+          "mean": 0.45764224300297734,
+          "median": 0.4838940075120184,
+          "min": 6.889885865753428e-05,
+          "q90": 0.6891887800456385,
+          "q99": 0.7877136776382744,
+          "rows": 1536,
+          "std": 0.19024984983579707
+        },
+        "F5": {
+          "max": 0.714410363898728,
+          "mean": 0.15072632482683143,
+          "median": 0.10238006147413739,
+          "min": 0.00031794754526907963,
+          "q90": 0.35604027629944995,
+          "q99": 0.552804678653608,
+          "rows": 512,
+          "std": 0.13643289436100867
+        },
+        "F6": {
+          "max": 0.6908550887351059,
+          "mean": 0.19722865226708644,
+          "median": 0.1592890668711287,
+          "min": 0.00019185378973742608,
+          "q90": 0.4407378171748711,
+          "q99": 0.5964508454190581,
+          "rows": 1536,
+          "std": 0.15725074043207493
+        },
+        "F7": {
+          "max": 0.7458522392903429,
+          "mean": 0.24189925338193075,
+          "median": 0.21248171667772825,
+          "min": 0.00023580152631749206,
+          "q90": 0.49173929278521344,
+          "q99": 0.6308990442680251,
+          "rows": 1536,
+          "std": 0.17136423706256726
+        },
+        "F8": {
+          "max": 0.8141002333029529,
+          "mean": 0.2859781087812895,
+          "median": 0.26848597672890284,
+          "min": 2.0327844013814595e-06,
+          "q90": 0.5468890004689639,
+          "q99": 0.70970240162965,
+          "rows": 2560,
+          "std": 0.187927665661351
+        },
+        "F9": {
+          "max": 0.8381244889295797,
+          "mean": 0.31330083053335495,
+          "median": 0.3018860615070915,
+          "min": 2.9797217476647493e-05,
+          "q90": 0.5844365426316329,
+          "q99": 0.73243966494891,
+          "rows": 2560,
+          "std": 0.19437219076702197
+        }
+      },
+      "kruskal_h": 2495.0699185817284,
+      "kruskal_p": 0.0,
+      "max_minus_min_group_mean": 0.30691591817614594,
+      "row_count": 14336,
+      "test_status": "tested"
+    },
+    "product_bounces": {
+      "anova_f": 1711.6139809354408,
+      "anova_p": 0.0,
+      "eta_squared": 0.14323592240436978,
+      "group_count": 2,
+      "groups": {
+        "2": {
+          "max": 0.8536118881702471,
+          "mean": 0.23670914960010794,
+          "median": 0.19896806318106136,
+          "min": 1.3619216643341758e-05,
+          "q90": 0.5092553635946644,
+          "q99": 0.686693035411954,
+          "rows": 3979,
+          "std": 0.1813002380763239
+        },
+        "3": {
+          "max": 0.86258589584944,
+          "mean": 0.3976340640252165,
+          "median": 0.413721562954485,
+          "min": 9.601533052329054e-05,
+          "q90": 0.6513834676299932,
+          "q99": 0.7740543335220004,
+          "rows": 6261,
+          "std": 0.19824559282398105
+        }
+      },
+      "kruskal_h": 1483.0996594029457,
+      "kruskal_p": 0.0,
+      "max_minus_min_group_mean": 0.16092491442510856,
+      "row_count": 10240,
+      "test_status": "tested"
+    },
+    "product_bucket": {
+      "anova_f": 217.9919016488702,
+      "anova_p": 0.0,
+      "eta_squared": 0.16092018073597267,
+      "group_count": 10,
+      "groups": {
+        "3x3": {
+          "max": 0.6464199674959318,
+          "mean": 0.20225314677426154,
+          "median": 0.1646792184708195,
+          "min": 0.00019185378973742608,
+          "q90": 0.4520867242113684,
+          "q99": 0.582817150221969,
+          "rows": 1024,
+          "std": 0.16272616328075545
+        },
+        "3x4": {
+          "max": 0.7119073397957835,
+          "mean": 0.24225139211621793,
+          "median": 0.2172055346546281,
+          "min": 0.00023580152631749206,
+          "q90": 0.49206190816317874,
+          "q99": 0.6233418842980923,
+          "rows": 1024,
+          "std": 0.17402571573601128
+        },
+        "3x5": {
+          "max": 0.7650778325167292,
+          "mean": 0.2767353814552264,
+          "median": 0.25244251762083897,
+          "min": 1.3619216643341758e-05,
+          "q90": 0.5347633709308431,
+          "q99": 0.7096775504202664,
+          "rows": 1024,
+          "std": 0.1875724787050099
+        },
+        "3x6": {
+          "max": 0.8073487367323776,
+          "mean": 0.29134582672678244,
+          "median": 0.27074810956539375,
+          "min": 2.9797217476647493e-05,
+          "q90": 0.5647083198299105,
+          "q99": 0.709943299843636,
+          "rows": 1024,
+          "std": 0.19396962389517938
+        },
+        "4x4": {
+          "max": 0.8141002333029529,
+          "mean": 0.3073472154847814,
+          "median": 0.30799076032340256,
+          "min": 0.0006529850395571487,
+          "q90": 0.5711793479425233,
+          "q99": 0.7101813936783582,
+          "rows": 1024,
+          "std": 0.19435422313776507
+        },
+        "4x5": {
+          "max": 0.8381244889295797,
+          "mean": 0.34476208674575315,
+          "median": 0.33478389703699807,
+          "min": 0.0010676457371832514,
+          "q90": 0.6244175058822509,
+          "q99": 0.7398593752520595,
+          "rows": 1024,
+          "std": 0.20289406265294507
+        },
+        "4x6": {
+          "max": 0.8292665551981732,
+          "mean": 0.3686564605889701,
+          "median": 0.37265113067792266,
+          "min": 9.601533052329054e-05,
+          "q90": 0.6260253386361622,
+          "q99": 0.7536984975801959,
+          "rows": 1024,
+          "std": 0.19547288243274527
+        },
+        "5x5": {
+          "max": 0.8437955079134134,
+          "mean": 0.3996666950193608,
+          "median": 0.4127981325580254,
+          "min": 0.0014871974285491458,
+          "q90": 0.6487449730096356,
+          "q99": 0.7795319814867729,
+          "rows": 1024,
+          "std": 0.1964484743876941
+        },
+        "5x6": {
+          "max": 0.86258589584944,
+          "mean": 0.44070530918217976,
+          "median": 0.46953390477604806,
+          "min": 0.0014421949035220163,
+          "q90": 0.6694336396369927,
+          "q99": 0.7926715918074011,
+          "rows": 1024,
+          "std": 0.19304694937192077
+        },
+        "6x6": {
+          "max": 0.8536118881702471,
+          "mean": 0.4773043971571597,
+          "median": 0.5118341795064609,
+          "min": 0.002305048917497889,
+          "q90": 0.7082581054962026,
+          "q99": 0.7953654853608568,
+          "rows": 1024,
+          "std": 0.1945375442862958
+        }
+      },
+      "kruskal_h": 1618.5330333777893,
+      "kruskal_p": 0.0,
+      "max_minus_min_group_mean": 0.2750512503828982,
+      "row_count": 10240,
+      "test_status": "tested"
+    },
+    "sample_height_range": {
+      "anova_f": null,
+      "anova_p": null,
+      "eta_squared": null,
+      "group_count": 1,
+      "groups": {
+        "0.8:1.2": {
+          "max": 0.86258589584944,
+          "mean": 0.32107874516607754,
+          "median": 0.3108413591329677,
+          "min": 2.0327844013814595e-06,
+          "q90": 0.6020490648950583,
+          "q99": 0.7521020122453151,
+          "rows": 14336,
+          "std": 0.20277472820849926
+        }
+      },
+      "kruskal_h": null,
+      "kruskal_p": null,
+      "max_minus_min_group_mean": null,
+      "row_count": 14336,
+      "test_status": "not_enough_nonempty_groups"
+    }
+  },
+  "target": "sys",
+  "tested_covariate_family_inventory": {
+    "basic counts": {
+      "count": 4,
+      "features": [
+        "facet_count",
+        "ridge_count",
+        "edge_count",
+        "vertex_count"
+      ]
+    },
+    "combinatorial summaries": {
+      "count": 13,
+      "features": [
+        "edge_density",
+        "facet_neighbor_count_mean",
+        "facet_vertex_count_mean",
+        "ridge_size_mean",
+        "facet_neighbor_count_min",
+        "facet_vertex_count_min",
+        "facet_neighbor_count_max",
+        "facet_vertex_count_max",
+        "ridge_size_max",
+        "ridge_size_min",
+        "ridge_size_std",
+        "facet_vertex_count_std",
+        "facet_neighbor_count_std"
+      ]
+    },
+    "ridge symplectic-area summaries": {
+      "count": 12,
+      "features": [
+        "ridge_symp_area_sum_over_volume_sqrt",
+        "ridge_symp_area_max_over_volume_sqrt",
+        "ridge_symp_area_std_over_volume_sqrt",
+        "ridge_symp_area_q95_over_volume_sqrt",
+        "ridge_symp_area_q90_over_volume_sqrt",
+        "ridge_symp_area_mean_over_volume_sqrt",
+        "ridge_symp_area_top3_share",
+        "ridge_symp_area_max_share",
+        "ridge_symp_area_q75_over_volume_sqrt",
+        "ridge_symp_area_q25_over_volume_sqrt",
+        "ridge_symp_area_median_over_volume_sqrt",
+        "ridge_symp_area_min_over_volume_sqrt"
+      ]
+    }
+  },
+  "tested_scalar_covariates": [
+    "ridge_symp_area_sum_over_volume_sqrt",
+    "ridge_symp_area_max_over_volume_sqrt",
+    "ridge_symp_area_std_over_volume_sqrt",
+    "ridge_symp_area_q95_over_volume_sqrt",
+    "ridge_symp_area_q90_over_volume_sqrt",
+    "ridge_symp_area_mean_over_volume_sqrt",
+    "ridge_symp_area_top3_share",
+    "ridge_symp_area_max_share",
+    "ridge_symp_area_q75_over_volume_sqrt",
+    "facet_count",
+    "ridge_count",
+    "edge_count",
+    "edge_density",
+    "vertex_count",
+    "facet_neighbor_count_mean",
+    "facet_vertex_count_mean",
+    "ridge_size_mean",
+    "facet_neighbor_count_min",
+    "facet_vertex_count_min",
+    "facet_neighbor_count_max",
+    "facet_vertex_count_max",
+    "ridge_size_max",
+    "ridge_size_min",
+    "ridge_symp_area_q25_over_volume_sqrt",
+    "ridge_size_std",
+    "ridge_symp_area_median_over_volume_sqrt",
+    "ridge_symp_area_min_over_volume_sqrt",
+    "facet_vertex_count_std",
+    "facet_neighbor_count_std"
+  ],
+  "top_associations": [
+    {
+      "feature": "ridge_symp_area_sum_over_volume_sqrt",
+      "pearson_p": 6.671463067765021e-136,
+      "pearson_r": -0.20503931541510628,
+      "spearman_p": 0.0,
+      "spearman_rho": -0.9384368671850424
+    },
+    {
+      "feature": "ridge_symp_area_max_over_volume_sqrt",
+      "pearson_p": 2.7429580354419954e-102,
+      "pearson_r": -0.17792917878486006,
+      "spearman_p": 0.0,
+      "spearman_rho": -0.8999068806842107
+    },
+    {
+      "feature": "ridge_symp_area_std_over_volume_sqrt",
+      "pearson_p": 4.099825905124919e-115,
+      "pearson_r": -0.1887663124308367,
+      "spearman_p": 0.0,
+      "spearman_rho": -0.8826106824527608
+    },
+    {
+      "feature": "ridge_symp_area_q95_over_volume_sqrt",
+      "pearson_p": 1.3889571489041181e-98,
+      "pearson_r": -0.17466574156455628,
+      "spearman_p": 0.0,
+      "spearman_rho": -0.8785682247090743
+    },
+    {
+      "feature": "ridge_symp_area_q90_over_volume_sqrt",
+      "pearson_p": 7.045475918495952e-159,
+      "pearson_r": -0.2215316067514006,
+      "spearman_p": 0.0,
+      "spearman_rho": -0.8315921078113317
+    },
+    {
+      "feature": "ridge_symp_area_mean_over_volume_sqrt",
+      "pearson_p": 2.238929657634683e-231,
+      "pearson_r": -0.26635544291050345,
+      "spearman_p": 0.0,
+      "spearman_rho": -0.8136513667758478
+    },
+    {
+      "feature": "ridge_symp_area_top3_share",
+      "pearson_p": 0.0,
+      "pearson_r": -0.6933977822617701,
+      "spearman_p": 0.0,
+      "spearman_rho": -0.6974391578198946
+    },
+    {
+      "feature": "ridge_symp_area_max_share",
+      "pearson_p": 0.0,
+      "pearson_r": -0.6586964811771674,
+      "spearman_p": 0.0,
+      "spearman_rho": -0.6615073409434175
+    },
+    {
+      "feature": "ridge_symp_area_q75_over_volume_sqrt",
+      "pearson_p": 0.0,
+      "pearson_r": -0.3186724178557774,
+      "spearman_p": 0.0,
+      "spearman_rho": -0.569552483181396
+    },
+    {
+      "feature": "facet_count",
+      "pearson_p": 0.0,
+      "pearson_r": 0.4173405666590523,
+      "spearman_p": 0.0,
+      "spearman_rho": 0.41384284275874594
+    },
+    {
+      "feature": "ridge_count",
+      "pearson_p": 0.0,
+      "pearson_r": 0.4155571534537329,
+      "spearman_p": 0.0,
+      "spearman_rho": 0.41309209505658595
+    },
+    {
+      "feature": "edge_count",
+      "pearson_p": 0.0,
+      "pearson_r": 0.41412728719508524,
+      "spearman_p": 0.0,
+      "spearman_rho": 0.4130072007609477
+    },
+    {
+      "feature": "edge_density",
+      "pearson_p": 0.0,
+      "pearson_r": -0.35463605601386455,
+      "spearman_p": 0.0,
+      "spearman_rho": -0.4130072007609477
+    },
+    {
+      "feature": "vertex_count",
+      "pearson_p": 0.0,
+      "pearson_r": 0.41412728719508524,
+      "spearman_p": 0.0,
+      "spearman_rho": 0.4130072007609477
+    },
+    {
+      "feature": "facet_neighbor_count_mean",
+      "pearson_p": 0.0,
+      "pearson_r": 0.41087339549316526,
+      "spearman_p": 0.0,
+      "spearman_rho": 0.4089464034519172
+    },
+    {
+      "feature": "facet_vertex_count_mean",
+      "pearson_p": 0.0,
+      "pearson_r": 0.41087339549316526,
+      "spearman_p": 0.0,
+      "spearman_rho": 0.4089464034519172
+    },
+    {
+      "feature": "ridge_size_mean",
+      "pearson_p": 0.0,
+      "pearson_r": 0.39893615404717336,
+      "spearman_p": 0.0,
+      "spearman_rho": 0.4089464034519172
+    },
+    {
+      "feature": "facet_neighbor_count_min",
+      "pearson_p": 0.0,
+      "pearson_r": 0.38169698896302695,
+      "spearman_p": 0.0,
+      "spearman_rho": 0.37533815739119136
+    },
+    {
+      "feature": "facet_vertex_count_min",
+      "pearson_p": 0.0,
+      "pearson_r": 0.38169698896302695,
+      "spearman_p": 0.0,
+      "spearman_rho": 0.37533815739119136
+    },
+    {
+      "feature": "facet_neighbor_count_max",
+      "pearson_p": 0.0,
+      "pearson_r": 0.32667865256651535,
+      "spearman_p": 0.0,
+      "spearman_rho": 0.3306453375883095
+    },
+    {
+      "feature": "facet_vertex_count_max",
+      "pearson_p": 0.0,
+      "pearson_r": 0.32667865256651535,
+      "spearman_p": 0.0,
+      "spearman_rho": 0.3306453375883095
+    },
+    {
+      "feature": "ridge_size_max",
+      "pearson_p": 1.7940396433672414e-308,
+      "pearson_r": 0.3060342214143648,
+      "spearman_p": 0.0,
+      "spearman_rho": 0.3077777869595533
+    },
+    {
+      "feature": "ridge_size_min",
+      "pearson_p": 2.1939309021944938e-281,
+      "pearson_r": 0.29281508164387715,
+      "spearman_p": 3.7464495140751305e-270,
+      "spearman_rho": 0.287120070607449
+    },
+    {
+      "feature": "ridge_symp_area_q25_over_volume_sqrt",
+      "pearson_p": 1.2677517419861074e-106,
+      "pearson_r": -0.18166935870903222,
+      "spearman_p": 3.072551044041399e-143,
+      "spearman_rho": -0.21045904824310865
+    },
+    {
+      "feature": "ridge_size_std",
+      "pearson_p": 6.926404131263823e-111,
+      "pearson_r": 0.185268636173892,
+      "spearman_p": 3.5188815972410535e-115,
+      "spearman_rho": 0.18882066182180804
+    }
+  ]
+}

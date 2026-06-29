@@ -346,7 +346,7 @@ def main() -> None:
     ax.hist(sys_values, bins=60, color="#4c78a8", alpha=0.85)
     ax.axvline(1.0, color="#c44e52", linewidth=1.2)
     ax.set_xlabel("sys")
-    ax.set_ylabel("random-only rows")
+    ax.set_ylabel("random/product rows")
     ax.set_title("Trusted random/product sys distribution")
     fig.tight_layout()
     fig.savefig(args.out_dir / "sys-histogram.png", dpi=160)

@@ -3,7 +3,7 @@
 # requires-python = ">=3.12"
 # ///
 
-"""Build and audit the trusted random-only method input tables."""
+"""Build and audit the trusted random/product method input tables."""
 
 from __future__ import annotations
 

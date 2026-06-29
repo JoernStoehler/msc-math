@@ -261,7 +261,7 @@ def main() -> None:
     scatter = ax.scatter(pcs[:, 0], pc2_values, c=y, s=6, cmap="viridis", alpha=0.7)
     ax.set_xlabel("PC1")
     ax.set_ylabel("PC2")
-    ax.set_title("Random-only invariant-feature PCA colored by sys")
+    ax.set_title("Random/product invariant-feature PCA colored by sys")
     fig.colorbar(scatter, ax=ax, label="sys")
     fig.tight_layout()
     fig.savefig(args.out_dir / "pca-sys.png", dpi=160)

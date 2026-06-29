@@ -1,8 +1,8 @@
 //! Load random/product producer outputs into unified datascience input rows.
 
 use crate::producer_rows::{DatascienceSampleSource, RandomProductRow, RandomSweepRow};
-use blake3::Hasher;
-use exp_sys_landscape::package_root;
+use exp_sys_landscape::{package_root, poly_id_from_dual_vertices};
+use nalgebra::Vector4;
 use serde::de::DeserializeOwned;
 use std::collections::{BTreeMap, HashMap};
 use std::fs::File;
@@ -217,6 +217,12 @@ fn read_jsonl<T: DeserializeOwned>(path: &Path) -> Vec<T> {
             if line.trim().is_empty() {
                 None
             } else {
+                if line_idx == 0 && line.starts_with("version https://git-lfs.github.com/spec/") {
+                    panic!(
+                        "{} is a Git LFS pointer; hydrate retained producer data with git lfs checkout/pull or use the run-local producer path",
+                        path.display()
+                    );
+                }
                 Some(serde_json::from_str::<T>(&line).unwrap_or_else(|e| {
                     panic!("parse {} line {}: {e}", path.display(), line_idx + 1)
                 }))
@@ -225,19 +231,17 @@ fn read_jsonl<T: DeserializeOwned>(path: &Path) -> Vec<T> {
         .collect()
 }
 
-fn poly_id_from_dual_vertices(dual_vertices_rational: &[[String; 4]]) -> String {
-    let mut hasher = Hasher::new();
-    for row in dual_vertices_rational {
-        for coord in row {
-            hasher.update(coord.as_bytes());
-            hasher.update(&[0]);
-        }
-    }
-    hasher.finalize().to_hex().to_string()
+fn poly_id_from_f64_rows(dual_vertices: &[[f64; 4]]) -> String {
+    let dual_vertices = dual_vertices
+        .iter()
+        .map(|row| Vector4::new(row[0], row[1], row[2], row[3]))
+        .collect::<Vec<_>>();
+    poly_id_from_dual_vertices(&dual_vertices)
 }
 
 fn ensure_polytope(
     polytopes: &mut HashMap<String, LoadedPolytopeRow>,
+    dual_vertices: Vec<[f64; 4]>,
     dual_vertices_rational: Vec<[String; 4]>,
     facet_count: usize,
     capacity: f64,
@@ -245,7 +249,7 @@ fn ensure_polytope(
     sys: f64,
     capacity_source: &str,
 ) -> String {
-    let poly_id = poly_id_from_dual_vertices(&dual_vertices_rational);
+    let poly_id = poly_id_from_f64_rows(&dual_vertices);
     polytopes
         .entry(poly_id.clone())
         .or_insert_with(|| LoadedPolytopeRow {
@@ -319,6 +323,7 @@ fn load_random_sample_rows(
         let h_max = row.h_max;
         let poly_id = ensure_polytope(
             polytopes,
+            row.dual_vertices,
             row.dual_vertices_rational,
             row.facet_count,
             row.capacity,
@@ -379,6 +384,7 @@ fn load_random_product_rows(
         let bounces = row.bounces;
         let poly_id = ensure_polytope(
             polytopes,
+            row.dual_vertices,
             row.dual_vertices_rational,
             row.facet_count,
             row.capacity,

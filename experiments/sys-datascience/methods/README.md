@@ -56,9 +56,10 @@ method-specific matrices inside the method folder. Shared random/product input
 filtering lives in `_shared/random_only.py`.
 
 Current-schema full random/product prepare and method reruns have completed on
-scratch outputs under `/tmp/ds-integrated-*`. Use the method README
-observations for current integrated invariant-schema numbers; regenerate
-checked artifacts deliberately before thesis-facing citation.
+scratch outputs under `/tmp/ds-integrated-*`. Compact generated summaries are
+tracked under each method's `artifacts/` directory when the README cites current
+integrated invariant-schema numbers; regenerate checked artifacts deliberately
+before thesis-facing citation.
 
 Active `polytope-table.jsonl` rows are invariant-only. Legacy method artifacts
 that depend on raw Euclidean, omega-matrix, transition, capacity, or volume

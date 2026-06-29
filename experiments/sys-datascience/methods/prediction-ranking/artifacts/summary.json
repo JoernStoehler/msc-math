@@ -1,0 +1,182 @@
+{
+  "candidate_proposer_disposition": "no validated candidate-proposer: held-out ranking is an in-table invariant-feature signal and did not generate or validate new rows",
+  "eligible_invariant_feature_count": 39,
+  "feature_names": [
+    "edge_count",
+    "edge_density",
+    "facet_count",
+    "facet_neighbor_count_max",
+    "facet_neighbor_count_mean",
+    "facet_neighbor_count_min",
+    "facet_neighbor_count_std",
+    "facet_vertex_count_max",
+    "facet_vertex_count_mean",
+    "facet_vertex_count_min",
+    "facet_vertex_count_std",
+    "is_simple",
+    "ridge_count",
+    "ridge_size_max",
+    "ridge_size_mean",
+    "ridge_size_min",
+    "ridge_size_std",
+    "ridge_symp_area_max_over_volume_sqrt",
+    "ridge_symp_area_max_share",
+    "ridge_symp_area_mean_over_volume_sqrt",
+    "ridge_symp_area_median_over_volume_sqrt",
+    "ridge_symp_area_min_over_volume_sqrt",
+    "ridge_symp_area_q25_over_volume_sqrt",
+    "ridge_symp_area_q75_over_volume_sqrt",
+    "ridge_symp_area_q90_over_volume_sqrt",
+    "ridge_symp_area_q95_over_volume_sqrt",
+    "ridge_symp_area_std_over_volume_sqrt",
+    "ridge_symp_area_sum_over_volume_sqrt",
+    "ridge_symp_area_top3_share",
+    "simple_vertex_fraction",
+    "vertex_count",
+    "vertex_degree_max",
+    "vertex_degree_mean",
+    "vertex_degree_min",
+    "vertex_degree_std",
+    "vertex_incident_facets_max",
+    "vertex_incident_facets_mean",
+    "vertex_incident_facets_min",
+    "vertex_incident_facets_std"
+  ],
+  "forest_trees": 80,
+  "grouping": "capacity_source:facet_count",
+  "invariant_feature_count": 39,
+  "metadata_baseline_disposition": "metadata-only models are leakage/source diagnostics, not invariant-feature candidate-proposers; compare them to invariant-feature models after retained-table reruns",
+  "metadata_feature_count": 27,
+  "metadata_feature_names": [
+    "capacity_source=random_product_sample",
+    "capacity_source=random_sample",
+    "dataset_label=random_product_sample",
+    "dataset_label=random_sample",
+    "facet_count=F10",
+    "facet_count=F11",
+    "facet_count=F12",
+    "facet_count=F5",
+    "facet_count=F6",
+    "facet_count=F7",
+    "facet_count=F8",
+    "facet_count=F9",
+    "product_bucket=3x3",
+    "product_bucket=3x4",
+    "product_bucket=3x5",
+    "product_bucket=3x6",
+    "product_bucket=4x4",
+    "product_bucket=4x5",
+    "product_bucket=4x6",
+    "product_bucket=5x5",
+    "product_bucket=5x6",
+    "product_bucket=6x6",
+    "product_bucket=not_product",
+    "product_bounces=2",
+    "product_bounces=3",
+    "product_bounces=not_product",
+    "sample_height_range=0.8:1.2"
+  ],
+  "metadata_fields": [
+    "capacity_source",
+    "dataset_label",
+    "facet_count",
+    "product_bucket",
+    "product_bounces",
+    "sample_height_range"
+  ],
+  "permutations": 10,
+  "provenance_rows": 14336,
+  "random_forest_top_decile_enrichment_permutation_p": 0.09090909090909091,
+  "random_forest_top_feature_importances": [
+    {
+      "feature": "ridge_symp_area_sum_over_volume_sqrt",
+      "importance": 0.8435475538163385
+    },
+    {
+      "feature": "ridge_symp_area_std_over_volume_sqrt",
+      "importance": 0.09583228051222765
+    },
+    {
+      "feature": "ridge_size_min",
+      "importance": 0.01623384292772419
+    },
+    {
+      "feature": "ridge_symp_area_median_over_volume_sqrt",
+      "importance": 0.004522955576216697
+    },
+    {
+      "feature": "ridge_symp_area_q25_over_volume_sqrt",
+      "importance": 0.0044527414302177395
+    },
+    {
+      "feature": "ridge_symp_area_max_over_volume_sqrt",
+      "importance": 0.004350462364722689
+    },
+    {
+      "feature": "ridge_symp_area_top3_share",
+      "importance": 0.0038334948693557534
+    },
+    {
+      "feature": "ridge_symp_area_q75_over_volume_sqrt",
+      "importance": 0.003822630728133482
+    },
+    {
+      "feature": "ridge_symp_area_q90_over_volume_sqrt",
+      "importance": 0.003712839590543213
+    },
+    {
+      "feature": "ridge_symp_area_q95_over_volume_sqrt",
+      "importance": 0.003434237881762653
+    },
+    {
+      "feature": "ridge_symp_area_max_share",
+      "importance": 0.0033492782540147517
+    },
+    {
+      "feature": "ridge_symp_area_mean_over_volume_sqrt",
+      "importance": 0.003179613370696685
+    },
+    {
+      "feature": "ridge_symp_area_min_over_volume_sqrt",
+      "importance": 0.002458424154974882
+    },
+    {
+      "feature": "ridge_size_std",
+      "importance": 0.0015378593813775352
+    },
+    {
+      "feature": "edge_count",
+      "importance": 0.0008780644955692147
+    }
+  ],
+  "results": {
+    "random_forest_invariant_features": {
+      "mae": 0.04904701343747995,
+      "max_predicted_row_sys": 0.7957602955129961,
+      "r2": 0.8868448894965251,
+      "top_decile_enrichment": 0.608130081300813
+    },
+    "random_forest_metadata_only": {
+      "mae": 0.16758290080062851,
+      "max_predicted_row_sys": 0.6568368480701366,
+      "r2": 0.0019535588595058773,
+      "top_decile_enrichment": 0.14031357959075205
+    },
+    "ridge_invariant_features": {
+      "mae": 0.11248710283335754,
+      "max_predicted_row_sys": 0.8536118881702471,
+      "r2": 0.33176388192095596,
+      "top_decile_enrichment": 0.44390243902439025
+    },
+    "ridge_metadata_only": {
+      "mae": 0.14266912157047226,
+      "max_predicted_row_sys": 0.7754689397376794,
+      "r2": 0.30334429073518265,
+      "top_decile_enrichment": 0.2245475113122172
+    }
+  },
+  "row_count": 14336,
+  "skipped_by_max_features": [],
+  "test_rows": 6144,
+  "train_rows": 8192
+}

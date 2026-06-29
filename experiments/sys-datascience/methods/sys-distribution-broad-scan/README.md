@@ -26,7 +26,7 @@ uv run --script experiments/sys-datascience/methods/sys-distribution-broad-scan/
 
 Current local run:
 
-- 14336 random-only rows;
+- 14336 trusted random/product rows;
 - 18 buckets;
 - 80 logit-transformed SciPy candidate families;
 - 0.25 test fraction with RNG seed `20260625`;
@@ -52,5 +52,5 @@ Screening-table convention:
 - `ok`: the error is at most 75% of the DKW band.
 
 The DKW comparison here is a screening diagnostic, not a formal goodness-of-fit
-test after model selection. Use `sys-distribution-honest-holdout/` for
-evaluation claims.
+test after model selection. Evaluation claims would need a separate held-out
+packet; no such packet is active here.

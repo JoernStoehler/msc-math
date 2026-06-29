@@ -1,4 +1,4 @@
-"""Shared helpers for random-only sys-datascience method packets."""
+"""Shared helpers for trusted random/product sys-datascience method packets."""
 
 from __future__ import annotations
 
@@ -19,6 +19,54 @@ TRUSTED_DATASETS = {
 EXCLUDED_DATASET_WORDS = ("ascent", "continuation", "gradient")
 EXCLUDED_OPTIMIZER_WORDS = ("ascent", "gradient", "continuation")
 
+ACTIVE_INVARIANT_NUMERIC_FEATURES = (
+    "facet_count",
+    "vertex_count",
+    "edge_count",
+    "ridge_count",
+    "is_simple",
+    "simple_vertex_fraction",
+    "edge_density",
+    "vertex_incident_facets_mean",
+    "vertex_incident_facets_std",
+    "vertex_incident_facets_min",
+    "vertex_incident_facets_max",
+    "vertex_degree_mean",
+    "vertex_degree_std",
+    "vertex_degree_min",
+    "vertex_degree_max",
+    "ridge_size_mean",
+    "ridge_size_std",
+    "ridge_size_min",
+    "ridge_size_max",
+    "facet_vertex_count_mean",
+    "facet_vertex_count_std",
+    "facet_vertex_count_min",
+    "facet_vertex_count_max",
+    "facet_neighbor_count_mean",
+    "facet_neighbor_count_std",
+    "facet_neighbor_count_min",
+    "facet_neighbor_count_max",
+    "ridge_symp_area_mean_over_volume_sqrt",
+    "ridge_symp_area_std_over_volume_sqrt",
+    "ridge_symp_area_min_over_volume_sqrt",
+    "ridge_symp_area_max_over_volume_sqrt",
+    "ridge_symp_area_q25_over_volume_sqrt",
+    "ridge_symp_area_median_over_volume_sqrt",
+    "ridge_symp_area_q75_over_volume_sqrt",
+    "ridge_symp_area_q90_over_volume_sqrt",
+    "ridge_symp_area_q95_over_volume_sqrt",
+    "ridge_symp_area_sum_over_volume_sqrt",
+    "ridge_symp_area_max_share",
+    "ridge_symp_area_top3_share",
+)
+
+ACTIVE_INVARIANT_DIAGNOSTIC_FIELDS = (
+    "ridge_symp_area_ordered_face_count",
+    "ridge_symp_area_ordering_failure_count",
+    "ridge_symp_area_ordered_fraction",
+)
+
 
 def load_jsonl(path: Path) -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
@@ -26,6 +74,11 @@ def load_jsonl(path: Path) -> list[dict[str, Any]]:
         for line_number, line in enumerate(handle, start=1):
             if not line.strip():
                 continue
+            if line_number == 1 and line.startswith("version https://git-lfs.github.com/spec/"):
+                raise SystemExit(
+                    f"{path} is a Git LFS pointer; hydrate retained experiment data with git lfs checkout/pull "
+                    "or pass a run-local tables directory"
+                )
             row = json.loads(line)
             if not isinstance(row, dict):
                 raise SystemExit(f"Expected JSON object in {path}:{line_number}")
@@ -38,6 +91,11 @@ def iter_jsonl(path: Path) -> Iterable[dict[str, Any]]:
         for line_number, line in enumerate(handle, start=1):
             if not line.strip():
                 continue
+            if line_number == 1 and line.startswith("version https://git-lfs.github.com/spec/"):
+                raise SystemExit(
+                    f"{path} is a Git LFS pointer; hydrate retained experiment data with git lfs checkout/pull "
+                    "or pass a run-local tables directory"
+                )
             row = json.loads(line)
             if not isinstance(row, dict):
                 raise SystemExit(f"Expected JSON object in {path}:{line_number}")
@@ -150,6 +208,9 @@ def numeric_feature_names(
     invariant_only: bool,
     min_present_fraction: float = 0.98,
 ) -> list[str]:
+    if invariant_only:
+        return active_invariant_numeric_feature_names(rows, min_present_fraction)
+
     excluded = {
         "sys",
         "capacity",
@@ -189,8 +250,6 @@ def numeric_feature_names(
             continue
         if key.startswith("ridge_symp_area_") and not all_two_face_orders_succeeded:
             continue
-        if invariant_only and key not in invariant_exact and not key.startswith(invariant_prefixes):
-            continue
         present = 0
         for row in rows:
             value = row.get(key)
@@ -198,6 +257,46 @@ def numeric_feature_names(
                 present += 1
         if present >= threshold:
             names.append(key)
+    return names
+
+
+def active_invariant_numeric_feature_names(
+    rows: list[dict[str, Any]],
+    min_present_fraction: float = 0.98,
+) -> list[str]:
+    if not rows:
+        return []
+    ordering_failures = [
+        row.get("poly_id", f"row:{index}")
+        for index, row in enumerate(rows)
+        if int(row.get("ridge_symp_area_ordering_failure_count", 0)) != 0
+        or float(row.get("ridge_symp_area_ordered_fraction", 1.0)) != 1.0
+    ]
+    if ordering_failures:
+        preview = ", ".join(str(poly_id) for poly_id in ordering_failures[:5])
+        raise SystemExit(
+            "active invariant feature schema requires complete two-face ordering; "
+            f"{len(ordering_failures)} rows failed, examples: {preview}"
+        )
+
+    threshold = max(1, int(len(rows) * min_present_fraction))
+    names: list[str] = []
+    missing: list[str] = []
+    for key in ACTIVE_INVARIANT_NUMERIC_FEATURES:
+        present = 0
+        for row in rows:
+            value = row.get(key)
+            if isinstance(value, int | float) and value == value:
+                present += 1
+        if present >= threshold:
+            names.append(key)
+        else:
+            missing.append(key)
+    if missing:
+        raise SystemExit(
+            "active invariant feature schema is missing required numeric fields: "
+            + ", ".join(missing)
+        )
     return names
 
 

@@ -20,6 +20,11 @@ Build the retained random/product table in place:
 experiments/sys-datascience/build-dataset.sh
 ```
 
+This retained rebuild reads LFS-tracked producer files under `produce/`.
+Hydrate those files first with `git lfs checkout`/`git lfs pull` when working in
+a no-smudge worktree. Use the run-local producer smoke below when the goal is
+to test source/provenance plumbing without retained LFS data.
+
 Build scratch slices for development or evidence runs:
 
 ```bash
@@ -41,9 +46,24 @@ Limited presets take deterministic stratified prefixes:
 containing `computed-polytopes.jsonl` plus producer metadata files:
 
 ```bash
+cargo run -p exp-sys-landscape --release --bin sys-datascience-produce -- \
+  --mode smoke \
+  --producers random,random-product \
+  --output-dir /tmp/ds-produce-smoke-cold \
+  --parallelism 4 \
+  --base-cache /tmp/ds-produce-smoke-cache.jsonl
+
+uv run --script experiments/sys-datascience/produce/validate-datascience-produced.py \
+  --produce-dir /tmp/ds-produce-smoke-cold \
+  --mode smoke \
+  --producers random,random-product
+
 cargo run -p exp-sys-landscape --release --bin sys-datascience-prepare -- \
   --produce-dir /tmp/ds-produce-smoke-cold \
   --out-dir /tmp/ds-prepare-smoke
+
+uv run --script experiments/sys-datascience/fingerprint-dataset.py \
+  /tmp/ds-prepare-smoke
 ```
 
 On LICCA, `licca-datascience-prepare.slurm.sh` runs only the prebuilt

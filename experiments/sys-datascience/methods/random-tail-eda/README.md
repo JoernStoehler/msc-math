@@ -28,7 +28,7 @@ unstable tail extrapolations.
 ## Method
 
 Direct scan, quantiles, top-row inspection, histogram, and top-tail plot over
-the trusted random-only input. The same EDA/tail summary is applied to
+the trusted random/product input. The same EDA/tail summary is applied to
 overlapping filters by source family, facet count, source-family/facet-count
 pair, and random-product polygon-pair bucket. The packet also records the
 source-backed generator contract for the retained random/product sample, so the
@@ -60,8 +60,8 @@ The provenance schema exposes optional source/generator fields such as height
 range and product `(k,m,bounces)` when the producer row provides them. This
 script prefers explicit product parameters over reparsing `path`, and records
 `source_parameter_availability` in its summary. The current integrated check was
-rerun against `/tmp/ds-integrated-full`; a scratch artifact copy was written to
-`/tmp/ds-integrated-tail-eda`.
+rerun against `/tmp/ds-integrated-full`; the compact summary is retained as
+`artifacts/summary.json`.
 
 Current full scoped random/product run:
 

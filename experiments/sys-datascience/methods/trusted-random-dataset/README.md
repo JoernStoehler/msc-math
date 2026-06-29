@@ -67,7 +67,7 @@ Current run on hydrated retained tables:
 
 ## Current Disposition
 
-Use as the input contract for random-only method packets.
+Use as the input contract for trusted random/product method packets.
 
 ## Remaining Worthwhile Questions
 
@@ -80,7 +80,7 @@ High on unchanged retained tables.
 
 ## Thesis Use
 
-Supports the statement that the random-only method table used an explicit
+Supports the statement that the random/product method table used an explicit
 trusted input filter.
 
 ## Reopen Triggers

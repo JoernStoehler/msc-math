@@ -16,7 +16,7 @@ source stratification, not invariant features used to construct the projection.
 
 ## Inputs
 
-- trusted random-only rows from `../trusted-random-dataset/`
+- trusted random/product rows from `../trusted-random-dataset/`
 
 ## Command
 
@@ -79,5 +79,5 @@ held-out proposer claim.
 ## Reopen Triggers
 
 - retained table columns change;
-- a new random-only dataset is added;
+- a new random/product dataset is added;
 - a projection rule is promoted into a generated-candidate experiment.

@@ -62,7 +62,7 @@ not treated as an intrinsic scalar invariant feature.
 
 ## Inputs
 
-- trusted random-only rows from `../trusted-random-dataset/`
+- trusted random/product rows from `../trusted-random-dataset/`
 - feature columns from `../../prepare/polytope-table.jsonl`
 
 ## Command
@@ -174,5 +174,5 @@ not claim that the obvious feature map from `a_k` is complete.
   shared prepare-stage schema;
 - categorical source/product-bucket factors are promoted from EDA slices to a
   model or factor association test;
-- a new random-only dataset is added;
+- a new random/product dataset is added;
 - thesis wording promotes a scalar association to a stronger claim.

@@ -32,7 +32,16 @@ def parse_args() -> argparse.Namespace:
 
 def load_jsonl(path: Path) -> list[dict[str, Any]]:
     with path.open() as handle:
-        return [json.loads(line) for line in handle if line.strip()]
+        rows = []
+        for line_number, line in enumerate(handle, start=1):
+            if not line.strip():
+                continue
+            if line_number == 1 and line.startswith("version https://git-lfs.github.com/spec/"):
+                raise SystemExit(
+                    f"{path} is a Git LFS pointer; hydrate retained experiment data with git lfs checkout/pull"
+                )
+            rows.append(json.loads(line))
+        return rows
 
 
 def load_json(path: Path) -> dict[str, Any]:

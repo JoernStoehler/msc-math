@@ -33,7 +33,7 @@ Train shallow decision-tree classifiers for three labels:
 Feature sources:
 
 - `invariant_features`: all active numeric invariant covariates selected by
-  the shared random-only selector;
+  the shared trusted random/product selector;
 - `ridge_symp_area_only`: ridge symplectic-area summaries only;
 - `combinatorial_invariants_only`: counts, simplicity, incidence summaries,
   ridge sizes, facet-neighbor summaries, and edge density;
@@ -41,10 +41,10 @@ Feature sources:
 - `generator_provenance_only`: `capacity_source`, product bounce count, and
   sample height range.
 
-Rows are split by `capacity_source:facet_count`, matching the other
-random-only method packets. Outputs report grouped-holdout precision, recall,
-enrichment over base rate, leaf rules, stability summaries, coarse baselines,
-and a permutation-null diagnostic when requested.
+Rows are split by `capacity_source:facet_count`, matching the other trusted
+random/product method packets. Outputs report grouped-holdout precision,
+recall, enrichment over base rate, leaf rules, stability summaries, coarse
+baselines, and a permutation-null diagnostic when requested.
 
 ## Command
 
@@ -96,15 +96,16 @@ Current integrated full retained run on `/tmp/ds-integrated-full`:
   `18.806244260789715`.
 
 In this run the shallow tree signal is carried by the ridge symplectic-area
-invariants; coarse strata/provenance controls are much weaker. This is still
-in-table evidence, not a generated-candidate proposer.
+invariants, while separately reported coarse strata/provenance feature sets are
+much weaker. This is still in-table evidence, not a generated-candidate
+proposer.
 
 ## Interpretation Contract
 
-Use this packet to ask whether simple invariant covariates carry tail signal
-beyond coarse source/stratum controls. Do not claim that a leaf rule is a
-mechanism, theorem, or unevaluated-row proposer without a separate generated
-candidate experiment.
+Use this packet to compare simple invariant covariates with coarse
+source/stratum feature sets as tail-signal diagnostics. Do not claim that a
+leaf rule is a mechanism, theorem, or unevaluated-row proposer without a
+separate generated candidate experiment.
 
 Feature definitions for the active numeric inputs are owned by
 `../../prepare/invariant_features.rs` and

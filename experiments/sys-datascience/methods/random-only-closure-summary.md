@@ -58,9 +58,10 @@ Currently supported by the integrated invariant-schema rerun:
 - EDA/model artifacts found in-table structure but no validated
   generated-candidate proposer.
 - the integrated invariant-schema rerun found high-tail enrichment from ridge
-  symplectic-area invariants beyond strata/provenance controls on grouped
-  holdouts, but this remains in-table evidence rather than a validated
-  generated-candidate proposer.
+  symplectic-area invariants, while separately reported coarse
+  strata/provenance feature sets were much weaker on grouped holdouts. This
+  remains in-table evidence rather than a validated generated-candidate
+  proposer.
 
 Not yet supported:
 

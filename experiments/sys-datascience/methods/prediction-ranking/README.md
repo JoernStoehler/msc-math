@@ -20,7 +20,7 @@ candidate-proposer inputs.
 
 ## Inputs
 
-- trusted random-only rows from `../trusted-random-dataset/`
+- trusted random/product rows from `../trusted-random-dataset/`
 
 ## Command
 
@@ -51,9 +51,10 @@ Current integrated full retained run:
 - random-forest enrichment permutation p-value with `10` permutations:
   `0.09090909090909091`.
 
-The invariant-feature random forest recovers strong in-table signal, and the
-metadata-only baseline does not explain it away. Metadata baselines test source
-leakage and stratification; they are not candidate-proposer inputs.
+The invariant-feature random forest recovers strong in-table signal. The
+metadata-only random-forest baseline is much weaker; metadata-only ridge is a
+separate leakage/source diagnostic, not a conditional control model. Metadata
+features are not candidate-proposer inputs.
 
 A strong held-out prediction signal is still only in-table evidence. A
 validated proposer would have to rank unevaluated generated rows before their
@@ -93,5 +94,5 @@ claim on the trusted random/product data.
 ## Reopen Triggers
 
 - retained table columns change;
-- a new random-only dataset is added;
+- a new random/product dataset is added;
 - model output is promoted to a generated-candidate experiment.
