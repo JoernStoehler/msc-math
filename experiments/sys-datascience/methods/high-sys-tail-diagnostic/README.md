@@ -19,7 +19,7 @@ Command:
 
 ```bash
 uv run --script experiments/sys-datascience/methods/high-sys-tail-diagnostic/analyze.py \
-  --tables-dir /workspaces/msc-math/experiments/sys-datascience/prepare \
+  --tables-dir experiments/sys-datascience/prepare \
   --out-dir /tmp/sys-ds-tail-20260625/high-sys-tail \
   --bootstrap-count 200
 ```
@@ -37,7 +37,7 @@ Outputs:
 - `figures/product-survival.png`;
 - `figures/endpoint-by-bucket.png`.
 
-Current local run:
+Current scratch run:
 
 - artifact directory: `/tmp/sys-ds-tail-20260625/high-sys-tail`;
 - status in `summary.json`: `high_sys_tail_diagnostic`;
@@ -47,6 +47,10 @@ Current local run:
 - tail-fit rows: 108 table rows, covering GPD and exponential fits for each
   bucket/threshold cell;
 - endpoint bootstrap count: 200.
+
+No compact artifact is currently retained in this packet directory. Rerun and
+promote selected outputs deliberately before using this as thesis-facing
+evidence.
 
 Interpretation guard: with 512 generic rows and 1024 product rows per bucket,
 the top 5% contains only 26 or 52 points. Use the table for patterns and

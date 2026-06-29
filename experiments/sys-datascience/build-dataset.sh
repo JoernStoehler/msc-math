@@ -23,7 +23,7 @@ mkdir -p "$TABLES_DIR"
 echo "Building random/product sys-landscape datascience tables"
 echo "  repo:        $ROOT"
 echo "  prepare dir: $TABLES_DIR"
-echo "  mode:        random-only"
+echo "  mode:        random/product retained"
 echo
 
 cargo run -p exp-sys-landscape --release --bin sys-dataset -- \

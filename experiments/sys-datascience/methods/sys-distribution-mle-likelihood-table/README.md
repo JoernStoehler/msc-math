@@ -19,7 +19,7 @@ Command:
 
 ```bash
 uv run --script experiments/sys-datascience/methods/sys-distribution-mle-likelihood-table/analyze.py \
-  --tables-dir /workspaces/msc-math/experiments/sys-datascience/prepare \
+  --tables-dir experiments/sys-datascience/prepare \
   --out-dir /tmp/sys-ds-shape-20260625/mle-transform-table \
   --max-fit-seconds 3
 ```
@@ -41,7 +41,7 @@ Outputs:
   selected reference models;
 - `summary.json`: same information in JSON.
 
-Current local run:
+Current scratch run:
 
 - artifact directory: `/tmp/sys-ds-shape-20260625/mle-transform-table`;
 - status in `summary.json`: `all_data_approximate_mle_transformed_likelihood_table`;
@@ -52,6 +52,10 @@ Current local run:
 - 11520 model-table rows plus header in `mle-likelihood-table.tsv`;
 - bucket winners are mixed across transforms/families, with `square+mielke`
   winning the most buckets in this run.
+
+No compact artifact is currently retained in this packet directory. Rerun and
+promote selected outputs deliberately before using this as thesis-facing
+evidence.
 
 Interpretation guard: this is an all-data approximate MLE likelihood table.
 Use it as an exploratory upper bound on same-row model discrimination, not as

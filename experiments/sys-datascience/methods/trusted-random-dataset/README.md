@@ -2,7 +2,7 @@
 
 ## Research Question
 
-Which retained table rows are trusted for the random-only sys-datascience
+Which retained table rows are trusted for the random/product sys-datascience
 method wave?
 
 ## Method

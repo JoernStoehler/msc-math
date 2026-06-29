@@ -6,9 +6,8 @@ additional method result. Source truth remains each method packet README,
 method artifacts, retained table fingerprints, and the feature-space ledger.
 
 Epistemic status: the active packets have been rerun under the invariant
-feature contract, and durable method READMEs record the current integrated
-numbers. The full scratch prepare output used for the integrated rerun lives
-under `/tmp/ds-integrated-full`. This summary is a navigation dashboard; thesis
+feature contract, and durable method READMEs record the current numbers from
+the retained invariant tables. This summary is a navigation dashboard; thesis
 wording still needs separate judgment about which results are worth claiming.
 
 ## Active Data Slice
@@ -16,7 +15,7 @@ wording still needs separate judgment about which results are worth claiming.
 Trusted rows are defined by `trusted-random-dataset/` and shared helper code in
 `_shared/random_only.py`.
 
-Current full scoped random/product counts from the integrated invariant rerun:
+Current retained random/product counts from the invariant table:
 
 | dataset | rows | `sys > 1` rows |
 | --- | ---: | ---: |

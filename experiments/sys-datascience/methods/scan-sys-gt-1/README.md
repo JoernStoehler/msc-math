@@ -43,7 +43,7 @@ artifact by default.
 
 ## Observation
 
-Current full scoped random/product run against `/tmp/ds-integrated-full` found:
+Current retained random/product run against `../../prepare` found:
 
 - trusted random/product rows: `14336`;
 - `random_sample`: `4096` rows, `0` positives;

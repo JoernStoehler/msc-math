@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Low-friction smoke run for the random/product sys-landscape datascience
-# produce -> prepare surface. All outputs go to a temp directory.
+# source-object produce -> validate -> prepare surface. All outputs go to a
+# temp directory.
 
 set -euo pipefail
 
@@ -13,22 +14,21 @@ mkdir -p "$PRODUCE_DIR" "$TABLES_DIR"
 
 echo "Smoke workspace: $WORKDIR"
 
-cargo run -p exp-sys-landscape --bin sys-dataset-random -- \
-  --max-f 5 \
-  --samples-per-f 1 \
-  --out "$PRODUCE_DIR/random.jsonl" \
-  --cache "$PRODUCE_DIR/shared-cache.jsonl"
+cargo run -p exp-sys-landscape --bin sys-datascience-produce -- \
+  --mode smoke \
+  --producers random,random-product \
+  --output-dir "$PRODUCE_DIR" \
+  --parallelism "${DATASCIENCE_SMOKE_PARALLELISM:-4}" \
+  --base-cache "$PRODUCE_DIR/base-cache.jsonl"
 
-cargo run -p exp-sys-landscape --bin sys-dataset-random-product -- \
-  --max-sides 3 \
-  --samples-per-bucket 1 \
-  --out "$PRODUCE_DIR/random-product.jsonl" \
-  --cache "$PRODUCE_DIR/shared-cache.jsonl"
+uv run --script "$ROOT/experiments/sys-datascience/produce/validate-datascience-produced.py" \
+  --produce-dir "$PRODUCE_DIR" \
+  --mode smoke \
+  --producers random,random-product
 
-cargo run -p exp-sys-landscape --bin sys-dataset -- \
-  --random-only \
-  --out-dir "$TABLES_DIR" \
-  --produce-dir "$PRODUCE_DIR"
+cargo run -p exp-sys-landscape --bin sys-datascience-prepare -- \
+  --produce-dir "$PRODUCE_DIR" \
+  --out-dir "$TABLES_DIR"
 
 test -s "$TABLES_DIR/polytope-table.jsonl"
 test -s "$TABLES_DIR/polytope-provenance-table.jsonl"

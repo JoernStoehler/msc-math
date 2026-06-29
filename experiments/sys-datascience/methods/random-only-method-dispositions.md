@@ -6,12 +6,11 @@ artifacts.
 
 Epistemic status: current control surface after removing non-invariant active
 features and abandoned ascent/continuation/local-behavior surfaces from the
-active datascience slice. The full invariant-schema random/product prepare
-rerun and active method reruns completed as scratch artifacts under
-`/tmp/ds-integrated-full` and `/tmp/ds-integrated-*`; method READMEs record the
-current integrated numbers. The remaining gate before thesis use is human-level
-interpretation of whether these packets support a thesis-facing claim, not
-schema repair.
+active datascience slice. The retained random/product tables and active method
+artifacts have been regenerated under the invariant schema; method READMEs
+record the current numbers. The remaining gate before thesis use is
+human-level interpretation of whether these packets support a thesis-facing
+claim, not schema repair.
 
 ## Disposition Vocabulary
 

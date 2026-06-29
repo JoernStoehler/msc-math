@@ -19,12 +19,12 @@ Command:
 
 ```bash
 uv run --script experiments/sys-datascience/methods/sys-distribution-broad-scan/analyze.py \
-  --tables-dir /workspaces/msc-math/experiments/sys-datascience/prepare \
+  --tables-dir experiments/sys-datascience/prepare \
   --out-dir /tmp/sys-ds-shape-20260625/broad-scan \
   --max-fit-seconds 2
 ```
 
-Current local run:
+Current scratch run:
 
 - 14336 trusted random/product rows;
 - 18 buckets;
@@ -38,6 +38,10 @@ Current local run:
 - ECDF overview plots:
   - `/tmp/sys-ds-shape-20260625/broad-scan/overview/generic-broad-scan-ecdf.png`
   - `/tmp/sys-ds-shape-20260625/broad-scan/overview/product-broad-scan-ecdf.png`
+
+No compact artifact is currently retained in this packet directory. Rerun and
+promote selected outputs deliberately before using this as thesis-facing
+evidence.
 
 Interpretation: this scan is broad enough to avoid the earlier artificial
 three/seven-family bottleneck. It is not a claim that the held-out winner is

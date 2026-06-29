@@ -59,9 +59,8 @@ uv run --script experiments/sys-datascience/methods/random-tail-eda/analyze.py
 The provenance schema exposes optional source/generator fields such as height
 range and product `(k,m,bounces)` when the producer row provides them. This
 script prefers explicit product parameters over reparsing `path`, and records
-`source_parameter_availability` in its summary. The current integrated check was
-rerun against `/tmp/ds-integrated-full`; the compact summary is retained as
-`artifacts/summary.json`.
+`source_parameter_availability` in its summary. The current retained-table
+check is summarized in `artifacts/summary.json`.
 
 Current full scoped random/product run:
 
@@ -119,7 +118,7 @@ sample-size forecast.
 
 ## Current Disposition
 
-Baseline random-only negative result if the run records no `sys > 1` row.
+Baseline random/product negative result if the run records no `sys > 1` row.
 
 ## Remaining Worthwhile Questions
 

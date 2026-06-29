@@ -93,10 +93,10 @@ Read first:
 - relevant `methods/<method>/README.md`
 
 Current closure status: active packets have been rerun under the invariant
-feature contract. The full scratch prepare output used for the integrated rerun
-lives under `/tmp/ds-integrated-full`; method READMEs record the current
-numbers. Keep durable packet conclusions in `methods/<method>/README.md`, not
-only in `/tmp`.
+feature contract. Retained tables live under `prepare/`, and compact generated
+method summaries are tracked under `methods/<method>/artifacts/` when a README
+cites current numbers. Keep durable packet conclusions in
+`methods/<method>/README.md`, not only in `/tmp`.
 
 Escalate before unrelated cleanup if a method records a trusted `sys > 1` row
 or a credible candidate-proposer.

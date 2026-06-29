@@ -24,6 +24,9 @@ Read first:
 - `prediction-ranking/`: supervised in-table prediction/ranking diagnostics.
 - `tail-rule-mining/`: shallow decision-tree high-tail rule diagnostics with
   invariant-feature versus strata/provenance-control grouped-holdout comparison.
+
+Exploratory fixed-bucket distribution-shape packets:
+
 - `sys-distribution-broad-scan/`: broad SciPy distribution scan for fixed-bucket
   marginal laws of `sys(a)`, using logit-transformed families as proposal
   generation only.
@@ -32,6 +35,12 @@ Read first:
   model comparisons.
 - `high-sys-tail-diagnostic/`: upper-tail-only diagnostics for fixed-bucket
   high-`sys` behavior, including excess-tail fits and endpoint estimates.
+
+These fixed-bucket packets are retained as exploratory side packets. Their
+current README summaries describe scratch runs; they are not part of the
+current invariant-feature method rerun gate until compact artifacts are
+promoted into the packet directories.
+
 - `distribution-sensitivity/` and `random-axis-diagnostic/`: exploratory
   variant-comparison scripts. They are not active method-table rows until two
   or more prepared random/product variants exist and are reviewed.
@@ -56,9 +65,9 @@ method-specific matrices inside the method folder. Shared random/product input
 filtering lives in `_shared/random_only.py`.
 
 Current-schema full random/product prepare and method reruns have completed on
-scratch outputs under `/tmp/ds-integrated-*`. Compact generated summaries are
-tracked under each method's `artifacts/` directory when the README cites current
-integrated invariant-schema numbers; regenerate checked artifacts deliberately
+the retained invariant tables under `../prepare/`. Compact generated summaries
+are tracked under each method's `artifacts/` directory when the README cites
+current invariant-schema numbers; regenerate checked artifacts deliberately
 before thesis-facing citation.
 
 Active `polytope-table.jsonl` rows are invariant-only. Legacy method artifacts
