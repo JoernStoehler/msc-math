@@ -7,6 +7,8 @@ mod canonize;
 mod features_trace;
 mod invariant_features;
 mod load_caches;
+#[path = "../produce/rows.rs"]
+mod producer_rows;
 mod rows;
 mod write_database;
 

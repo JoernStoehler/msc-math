@@ -6,6 +6,8 @@
 
 mod invariant_features;
 mod load_caches;
+#[path = "../produce/rows.rs"]
+mod producer_rows;
 mod rows;
 
 use nalgebra::{Matrix4, Vector4};

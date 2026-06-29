@@ -1,10 +1,8 @@
 //! Load random/product producer outputs into unified datascience input rows.
 
+use crate::producer_rows::{DatascienceSampleSource, RandomProductRow, RandomSweepRow};
 use blake3::Hasher;
 use exp_sys_landscape::package_root;
-#[path = "../produce/rows.rs"]
-mod rows;
-use rows::{DatascienceSampleSource, RandomProductRow, RandomSweepRow};
 use serde::de::DeserializeOwned;
 use std::collections::{BTreeMap, HashMap};
 use std::fs::File;
