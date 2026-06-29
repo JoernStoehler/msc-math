@@ -34,15 +34,30 @@ uv run --script experiments/sys-datascience/methods/prediction-ranking/analyze.p
 
 ## Observation
 
-No current full retained-table interpretation is recorded here until the
-invariant-only schema is rerun. This packet records selected invariant
-features, top random-forest feature importances, and metadata-only baselines.
-Metadata baselines test source leakage and stratification; they are not
-candidate-proposer inputs.
+Current integrated full retained run:
 
-After rerun, a strong held-out prediction signal is still only in-table
-evidence. A validated proposer would have to rank unevaluated generated rows
-before their `sys` values are computed.
+- input: `/tmp/ds-integrated-full`, `14336` trusted random/product rows;
+- invariant features: `39`;
+- metadata one-hot features: `27`;
+- ridge invariant features: `R^2 = 0.33176388192095596`, MAE
+  `0.11248710283335754`, top-decile enrichment
+  `0.44390243902439025`;
+- random forest invariant features: `R^2 = 0.8868448894965251`, MAE
+  `0.04904701343747995`, top-decile enrichment
+  `0.608130081300813`;
+- metadata-only random forest: `R^2 = 0.0019535588595058773`, MAE
+  `0.16758290080062851`, top-decile enrichment
+  `0.14031357959075205`;
+- random-forest enrichment permutation p-value with `10` permutations:
+  `0.09090909090909091`.
+
+The invariant-feature random forest recovers strong in-table signal, and the
+metadata-only baseline does not explain it away. Metadata baselines test source
+leakage and stratification; they are not candidate-proposer inputs.
+
+A strong held-out prediction signal is still only in-table evidence. A
+validated proposer would have to rank unevaluated generated rows before their
+`sys` values are computed.
 
 ## Validity Guards
 

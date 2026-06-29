@@ -59,9 +59,10 @@ Currently supported by 2026-06-25 current-schema scratch artifacts:
 - the scoped random/product table had no recorded `sys > 1` row;
 - EDA/model artifacts found in-table structure but no validated
   generated-candidate proposer.
-- the old trial tail-rule method found geometry-only high-tail enrichment beyond
-  strata/provenance controls on grouped holdouts, but those artifacts predate
-  the invariant-only active schema and need rerun before thesis use.
+- the integrated invariant-schema rerun found high-tail enrichment from ridge
+  symplectic-area invariants beyond strata/provenance controls on grouped
+  holdouts, but this remains in-table evidence rather than a validated
+  generated-candidate proposer.
 
 Not yet supported:
 

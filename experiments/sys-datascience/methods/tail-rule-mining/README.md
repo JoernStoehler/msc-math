@@ -74,6 +74,31 @@ uv run --script experiments/sys-datascience/methods/tail-rule-mining/analyze.py 
 These artifacts are generated outputs. Regenerate them from the current table;
 do not patch-edit them by hand.
 
+## Observation
+
+Current integrated full retained run on `/tmp/ds-integrated-full`:
+
+- rows: `14336`;
+- invariant features: `39`;
+- ridge symplectic-area features: `12`;
+- combinatorial invariant features: `27`;
+- top-decile, invariant features: precision `0.47674418604651164`,
+  recall `0.7343283582089553`, enrichment `7.286358903158626`;
+- top-decile, ridge symplectic-area only: same precision/recall/enrichment as
+  all invariant features;
+- top-decile, generator provenance only: precision `0.11760154738878142`,
+  recall `0.9074626865671642`, enrichment `1.7973729033748087`;
+- top-five-percent, ridge symplectic-area only: precision
+  `0.32175925925925924`, recall `0.852760736196319`, enrichment
+  `10.106793910474892`;
+- top-one-percent, ridge symplectic-area only: precision
+  `0.08080808080808081`, recall `0.36363636363636365`, enrichment
+  `18.806244260789715`.
+
+In this run the shallow tree signal is carried by the ridge symplectic-area
+invariants; coarse strata/provenance controls are much weaker. This is still
+in-table evidence, not a generated-candidate proposer.
+
 ## Interpretation Contract
 
 Use this packet to ask whether simple invariant covariates carry tail signal

@@ -88,10 +88,20 @@ The artifact records:
 
 ## Observation
 
-No current full retained-table interpretation is recorded here until the
-invariant-only schema is rerun. Earlier numeric blocks were removed because they
-predated the active schema and mixed deleted non-invariant feature families with
-current invariant features.
+Current integrated full retained run:
+
+- input: `/tmp/ds-integrated-full`, `14336` trusted random/product rows;
+- active polytope fields: `45`, with `0` forbidden legacy fields;
+- eligible scalar covariates: `39`;
+- nonconstant scalar covariates tested: `29`;
+- strongest absolute Spearman correlation: `0.9384368671850424`;
+- family-maximum permutation p-value with `200` permutations:
+  `0.004975124378109453`;
+- product-minus-generic mean `sys`: `0.04908416085647144`.
+
+This is current retained-table evidence for the invariant-only schema. It is
+not evidence for removed raw Euclidean, raw omega, transition, `capacity`, or
+`volume` covariates.
 
 Under the active invariant schema, current method-facing scalar families are:
 
@@ -114,9 +124,8 @@ Missing or separately handled families should be added to
 `prepare/rows.rs::PolytopeTableRow` or its producers only when they are intended
 to be active invariant method-facing fields.
 
-After rerun, interpret the strongest active scalar associations as explanatory
-signals only. This packet does not turn them into a generated-row
-candidate-proposer.
+Interpret the strongest active scalar associations as explanatory signals only.
+This packet does not turn them into a generated-row candidate-proposer.
 
 ## Validity Guards
 

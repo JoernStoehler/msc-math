@@ -31,10 +31,17 @@ uv run --script experiments/sys-datascience/methods/projection-structure/analyze
 
 ## Observation
 
-No current full retained-table interpretation is recorded here until the
-invariant-only schema is rerun. This packet records selected invariant
-features, large PCA loadings, source/facet/product metadata overlays, k-means
-cluster summaries, and isolation-forest anomaly overlap with high `sys` tails.
+Current integrated full retained run:
+
+- input: `/tmp/ds-integrated-full`, `14336` trusted random/product rows;
+- invariant features: `39`;
+- PC1/`sys` correlation: `0.4644434019289048`;
+- top-25 isolation-forest anomaly rows overlapping the top `2%` `sys` rows:
+  `0`.
+
+The projection packet records selected invariant features, large PCA loadings,
+source/facet/product metadata overlays, k-means cluster summaries, and
+isolation-forest anomaly overlap with high `sys` tails.
 
 Any cluster, projection, or anomaly pattern is in-table exploratory evidence
 only unless promoted to a separate proposer experiment that ranks unevaluated
