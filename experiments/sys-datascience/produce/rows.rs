@@ -2,15 +2,40 @@
 
 use serde::{Deserialize, Serialize};
 
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(tag = "producer", rename_all = "kebab-case")]
+pub enum DatascienceSampleSource {
+    Random {
+        facet_count: usize,
+        h_min: f64,
+        h_max: f64,
+        #[serde(skip_serializing_if = "Option::is_none")]
+        seed: Option<u64>,
+        #[serde(skip_serializing_if = "Option::is_none")]
+        sample_index: Option<usize>,
+        #[serde(skip_serializing_if = "Option::is_none")]
+        attempt: Option<u64>,
+    },
+    RandomProduct {
+        k: usize,
+        m: usize,
+        h_min: f64,
+        h_max: f64,
+        #[serde(skip_serializing_if = "Option::is_none")]
+        seed: Option<u64>,
+        #[serde(skip_serializing_if = "Option::is_none")]
+        sample_index: Option<usize>,
+        #[serde(skip_serializing_if = "Option::is_none")]
+        attempt: Option<u64>,
+        bounces: usize,
+    },
+}
+
 #[derive(Debug, Serialize, Deserialize)]
 pub struct DatascienceRandomSampleRow {
     pub name: String,
     pub poly_id: String,
-    pub facet_count: usize,
-    pub seed: u64,
-    pub attempt: u64,
-    pub h_min: f64,
-    pub h_max: f64,
+    pub source: DatascienceSampleSource,
     pub sys: f64,
 }
 
@@ -18,15 +43,9 @@ pub struct DatascienceRandomSampleRow {
 pub struct DatascienceRandomProductSampleRow {
     pub name: String,
     pub poly_id: String,
-    pub k: usize,
-    pub m: usize,
     pub facet_count: usize,
-    pub seed: u64,
-    pub attempt: u64,
-    pub h_min: f64,
-    pub h_max: f64,
+    pub source: DatascienceSampleSource,
     pub sys: f64,
-    pub bounces: usize,
 }
 
 #[derive(Debug, Serialize, Deserialize)]

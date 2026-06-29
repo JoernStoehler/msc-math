@@ -4,7 +4,7 @@ use blake3::Hasher;
 use exp_sys_landscape::package_root;
 #[path = "../produce/rows.rs"]
 mod rows;
-use rows::{RandomProductRow, RandomSweepRow};
+use rows::{DatascienceSampleSource, RandomProductRow, RandomSweepRow};
 use serde::de::DeserializeOwned;
 use std::collections::{BTreeMap, HashMap};
 use std::fs::File;
@@ -35,6 +35,7 @@ pub struct LoadedProvenanceRow {
     pub backend: String,
     pub source_name: String,
     pub root_group_id: String,
+    pub source: Option<serde_json::Value>,
     pub sample_seed: Option<u64>,
     pub sample_attempt: Option<u64>,
     pub sample_h_min: Option<f64>,
@@ -285,6 +286,7 @@ fn empty_provenance(
         backend: backend.to_string(),
         source_name: source_name.clone(),
         root_group_id: source_name,
+        source: None,
         sample_seed: None,
         sample_attempt: None,
         sample_h_min: None,
@@ -297,6 +299,10 @@ fn empty_provenance(
         path: None,
         total_time_ms: None,
     }
+}
+
+fn source_value(source: &DatascienceSampleSource) -> serde_json::Value {
+    serde_json::to_value(source).expect("serialize datascience sample source")
 }
 
 fn load_random_sample_rows(
@@ -335,6 +341,14 @@ fn load_random_sample_rows(
         provenance.sample_attempt = row.attempt;
         provenance.sample_h_min = Some(h_min);
         provenance.sample_h_max = Some(h_max);
+        provenance.source = Some(source_value(&DatascienceSampleSource::Random {
+            facet_count: row.facet_count,
+            h_min,
+            h_max,
+            seed: row.seed,
+            sample_index: None,
+            attempt: row.attempt,
+        }));
         provenance.seed_index = row.attempt.map(|attempt| attempt as usize);
         if let (Some(seed), Some(attempt)) = (row.seed, row.attempt) {
             provenance.lineage_id = Some(format!("seed:{seed}:attempt:{attempt}"));
@@ -391,6 +405,16 @@ fn load_random_product_rows(
         provenance.product_k = Some(k);
         provenance.product_m = Some(m);
         provenance.product_bounces = Some(bounces);
+        provenance.source = Some(source_value(&DatascienceSampleSource::RandomProduct {
+            k,
+            m,
+            h_min,
+            h_max,
+            seed: row.seed,
+            sample_index: None,
+            attempt: row.attempt,
+            bounces,
+        }));
         provenance.seed_index = row.attempt.map(|attempt| attempt as usize);
         if let (Some(seed), Some(attempt)) = (row.seed, row.attempt) {
             provenance.lineage_id = Some(format!("seed:{seed}:attempt:{attempt}"));

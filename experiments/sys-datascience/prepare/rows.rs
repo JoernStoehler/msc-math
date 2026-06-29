@@ -64,6 +64,8 @@ pub struct ProvenanceRunRow {
     pub source_name: String,
     pub root_group_id: String,
     #[serde(skip_serializing_if = "Option::is_none")]
+    pub source: Option<serde_json::Value>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sample_seed: Option<u64>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub sample_attempt: Option<u64>,

@@ -23,7 +23,9 @@ use symplectic::classify_facets_from_dual_vertices;
 use symplectic::geom::polygon::random_polygon_2d;
 
 mod rows;
-use rows::{DatascienceRandomProductSampleRow, DatascienceRandomSampleRow};
+use rows::{
+    DatascienceRandomProductSampleRow, DatascienceRandomSampleRow, DatascienceSampleSource,
+};
 
 const SEED: u64 = 42;
 const H_MIN: f64 = 0.8;
@@ -70,12 +72,16 @@ enum WorkSpec {
     Random {
         name: String,
         facet_count: usize,
+        h_min: f64,
+        h_max: f64,
         sample_index: usize,
     },
     RandomProduct {
         name: String,
         k: usize,
         m: usize,
+        h_min: f64,
+        h_max: f64,
         sample_index: usize,
     },
 }
@@ -106,6 +112,8 @@ struct ComputedWorkUnit {
 #[derive(Debug, Deserialize)]
 struct ProducePlan {
     #[serde(default)]
+    buckets: Vec<PlanBucket>,
+    #[serde(default)]
     random: Vec<RandomPlanBucket>,
     #[serde(default)]
     random_product: Vec<RandomProductPlanBucket>,
@@ -114,6 +122,10 @@ struct ProducePlan {
 #[derive(Debug, Deserialize)]
 struct RandomPlanBucket {
     facet_count: usize,
+    #[serde(default = "default_h_min")]
+    h_min: f64,
+    #[serde(default = "default_h_max")]
+    h_max: f64,
     rows: usize,
 }
 
@@ -121,7 +133,41 @@ struct RandomPlanBucket {
 struct RandomProductPlanBucket {
     k: usize,
     m: usize,
+    #[serde(default = "default_h_min")]
+    h_min: f64,
+    #[serde(default = "default_h_max")]
+    h_max: f64,
     rows: usize,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(tag = "producer", rename_all = "kebab-case")]
+enum PlanBucket {
+    Random {
+        facet_count: usize,
+        #[serde(default = "default_h_min")]
+        h_min: f64,
+        #[serde(default = "default_h_max")]
+        h_max: f64,
+        rows: usize,
+    },
+    RandomProduct {
+        k: usize,
+        m: usize,
+        #[serde(default = "default_h_min")]
+        h_min: f64,
+        #[serde(default = "default_h_max")]
+        h_max: f64,
+        rows: usize,
+    },
+}
+
+fn default_h_min() -> f64 {
+    H_MIN
+}
+
+fn default_h_max() -> f64 {
+    H_MAX
 }
 
 #[derive(Serialize)]
@@ -297,6 +343,43 @@ fn product_samples_per_bucket(mode: Mode) -> usize {
     }
 }
 
+fn work_from_plan_buckets<'a>(
+    buckets: impl IntoIterator<Item = &'a PlanBucket>,
+    producers: &BTreeSet<Producer>,
+) -> Vec<WorkSpec> {
+    let mut work = Vec::new();
+    let mut random_counts = Vec::new();
+    let mut product_counts = Vec::new();
+    for bucket in buckets {
+        match bucket {
+            PlanBucket::Random {
+                facet_count,
+                h_min,
+                h_max,
+                rows,
+            } => {
+                if producers.contains(&Producer::Random) {
+                    random_counts.push((*facet_count, *h_min, *h_max, *rows));
+                }
+            }
+            PlanBucket::RandomProduct {
+                k,
+                m,
+                h_min,
+                h_max,
+                rows,
+            } => {
+                if producers.contains(&Producer::RandomProduct) {
+                    product_counts.push((*k, *m, *h_min, *h_max, *rows));
+                }
+            }
+        }
+    }
+    work.extend(random_work_from_counts(random_counts));
+    work.extend(random_product_work_from_counts(product_counts));
+    work
+}
+
 fn should_log_plan_progress(accepted: usize, target: usize) -> bool {
     accepted == 1 || accepted == target || accepted % 128 == 0
 }
@@ -308,21 +391,42 @@ fn load_plan(path: &PathBuf) -> ProducePlan {
         .unwrap_or_else(|e| panic!("parse plan file {}: {e}", path.display()))
 }
 
-fn random_work_from_counts(counts: impl IntoIterator<Item = (usize, usize)>) -> Vec<WorkSpec> {
+fn validate_height_interval(h_min: f64, h_max: f64) {
+    assert!(
+        h_min.is_finite() && h_max.is_finite() && 0.0 < h_min && h_min < h_max,
+        "height interval must satisfy finite 0 < h_min < h_max, got [{h_min}, {h_max}]"
+    );
+}
+
+fn height_key(h_min: f64, h_max: f64) -> String {
+    format!("{h_min}_{h_max}").replace('.', "p")
+}
+
+fn random_work_from_counts(
+    counts: impl IntoIterator<Item = (usize, f64, f64, usize)>,
+) -> Vec<WorkSpec> {
     let started = std::time::Instant::now();
     let mut work = Vec::new();
-    for (facet_count, samples_per_f) in counts {
-        println!("planning random F={facet_count}: target={samples_per_f}");
+    for (facet_count, h_min, h_max, samples_per_f) in counts {
+        validate_height_interval(h_min, h_max);
+        println!("planning random F={facet_count} h=[{h_min},{h_max}]: target={samples_per_f}");
         flush_stdout();
         for sample_index in 0..samples_per_f {
             work.push(WorkSpec::Random {
-                name: format!("random_F{facet_count}_{sample_index}"),
+                name: format!(
+                    "random_F{facet_count}_h{}_{sample_index}",
+                    height_key(h_min, h_max)
+                ),
                 facet_count,
+                h_min,
+                h_max,
                 sample_index,
             });
             let planned = sample_index + 1;
             if should_log_plan_progress(planned, samples_per_f) {
-                println!("planning random F={facet_count}: planned={planned}/{samples_per_f}");
+                println!(
+                    "planning random F={facet_count} h=[{h_min},{h_max}]: planned={planned}/{samples_per_f}"
+                );
                 flush_stdout();
             }
         }
@@ -342,47 +446,76 @@ fn random_work(mode: Mode) -> Vec<WorkSpec> {
         GENERIC_FACETS
             .iter()
             .copied()
-            .map(|facet_count| (facet_count, samples_per_f)),
+            .map(|facet_count| (facet_count, H_MIN, H_MAX, samples_per_f)),
     )
 }
 
-fn random_seed(seed: u64, facet_count: usize, sample_index: usize, attempt: u64) -> [u8; 32] {
+fn random_seed(
+    seed: u64,
+    facet_count: usize,
+    h_min: f64,
+    h_max: f64,
+    sample_index: usize,
+    attempt: u64,
+) -> [u8; 32] {
     let mut material = Vec::new();
     material.extend_from_slice(&seed.to_le_bytes());
     material.extend_from_slice(&(facet_count as u64).to_le_bytes());
+    material.extend_from_slice(&h_min.to_le_bytes());
+    material.extend_from_slice(&h_max.to_le_bytes());
     material.extend_from_slice(&(sample_index as u64).to_le_bytes());
     material.extend_from_slice(&attempt.to_le_bytes());
     blake3::derive_key("datascience-random-generic", &material)
 }
 
-fn product_seed(seed: u64, k: usize, m: usize, sample_index: usize, attempt: u64) -> [u8; 32] {
+fn product_seed(
+    seed: u64,
+    k: usize,
+    m: usize,
+    h_min: f64,
+    h_max: f64,
+    sample_index: usize,
+    attempt: u64,
+) -> [u8; 32] {
     let mut material = Vec::new();
     material.extend_from_slice(&seed.to_le_bytes());
     material.extend_from_slice(&(k as u64).to_le_bytes());
     material.extend_from_slice(&(m as u64).to_le_bytes());
+    material.extend_from_slice(&h_min.to_le_bytes());
+    material.extend_from_slice(&h_max.to_le_bytes());
     material.extend_from_slice(&(sample_index as u64).to_le_bytes());
     material.extend_from_slice(&attempt.to_le_bytes());
     blake3::derive_key("datascience-random-product", &material)
 }
 
 fn random_product_work_from_counts(
-    counts: impl IntoIterator<Item = (usize, usize, usize)>,
+    counts: impl IntoIterator<Item = (usize, usize, f64, f64, usize)>,
 ) -> Vec<WorkSpec> {
     let started = std::time::Instant::now();
     let mut work = Vec::new();
-    for (k, m, samples_per_bucket) in counts {
-        println!("planning random-product {k}x{m}: target={samples_per_bucket}");
+    for (k, m, h_min, h_max, samples_per_bucket) in counts {
+        validate_height_interval(h_min, h_max);
+        println!(
+            "planning random-product {k}x{m} h=[{h_min},{h_max}]: target={samples_per_bucket}"
+        );
         flush_stdout();
         for sample_index in 0..samples_per_bucket {
             work.push(WorkSpec::RandomProduct {
-                name: format!("random_{k}x{m}_{sample_index}"),
+                name: format!(
+                    "random_{k}x{m}_h{}_{sample_index}",
+                    height_key(h_min, h_max)
+                ),
                 k,
                 m,
+                h_min,
+                h_max,
                 sample_index,
             });
             let planned = sample_index + 1;
             if should_log_plan_progress(planned, samples_per_bucket) {
-                println!("planning random-product {k}x{m}: planned={planned}/{samples_per_bucket}");
+                println!(
+                    "planning random-product {k}x{m} h=[{h_min},{h_max}]: planned={planned}/{samples_per_bucket}"
+                );
                 flush_stdout();
             }
         }
@@ -402,19 +535,28 @@ fn random_product_work(mode: Mode) -> Vec<WorkSpec> {
         PRODUCT_PAIRS
             .iter()
             .copied()
-            .map(|(k, m)| (k, m, samples_per_bucket)),
+            .map(|(k, m)| (k, m, H_MIN, H_MAX, samples_per_bucket)),
     )
 }
 
 fn generate_random_polytope(
     seed: u64,
     facet_count: usize,
+    h_min: f64,
+    h_max: f64,
     sample_index: usize,
 ) -> Option<(SysLandscapePolytopeCache, u64)> {
     for attempt in 0.. {
-        let mut rng = ChaCha8Rng::from_seed(random_seed(seed, facet_count, sample_index, attempt));
+        let mut rng = ChaCha8Rng::from_seed(random_seed(
+            seed,
+            facet_count,
+            h_min,
+            h_max,
+            sample_index,
+            attempt,
+        ));
         if let Some(polytope) =
-            SysLandscapePolytopeCache::sample_random(facet_count, H_MIN, H_MAX, &mut rng)
+            SysLandscapePolytopeCache::sample_random(facet_count, h_min, h_max, &mut rng)
         {
             return Some((polytope, attempt));
         }
@@ -426,12 +568,22 @@ fn generate_product_polytope(
     seed: u64,
     k: usize,
     m: usize,
+    h_min: f64,
+    h_max: f64,
     sample_index: usize,
 ) -> Option<(SysLandscapePolytopeCache, u64)> {
     for attempt in 0.. {
-        let mut rng = ChaCha8Rng::from_seed(product_seed(seed, k, m, sample_index, attempt));
-        let (qn, qh) = random_polygon_2d(k, H_MIN, H_MAX, &mut rng);
-        let (pn, ph) = random_polygon_2d(m, H_MIN, H_MAX, &mut rng);
+        let mut rng = ChaCha8Rng::from_seed(product_seed(
+            seed,
+            k,
+            m,
+            h_min,
+            h_max,
+            sample_index,
+            attempt,
+        ));
+        let (qn, qh) = random_polygon_2d(k, h_min, h_max, &mut rng);
+        let (pn, ph) = random_polygon_2d(m, h_min, h_max, &mut rng);
         if let Some(polytope) =
             SysLandscapePolytopeCache::from_lagrangian_product(&qn, &qh, &pn, &ph)
         {
@@ -450,9 +602,12 @@ fn compute_work_unit(
         WorkSpec::Random {
             name,
             facet_count,
+            h_min,
+            h_max,
             sample_index,
         } => {
-            let (polytope, attempt) = generate_random_polytope(seed, facet_count, sample_index)?;
+            let (polytope, attempt) =
+                generate_random_polytope(seed, facet_count, h_min, h_max, sample_index)?;
             let poly_id = poly_id(&polytope);
             let payload = cache.compute(&polytope, CapacityBackend::Auto)?;
             Some(ComputedWorkUnit {
@@ -462,11 +617,14 @@ fn compute_work_unit(
                 random: Some(DatascienceRandomSampleRow {
                     name,
                     poly_id,
-                    facet_count,
-                    seed,
-                    attempt,
-                    h_min: H_MIN,
-                    h_max: H_MAX,
+                    source: DatascienceSampleSource::Random {
+                        facet_count,
+                        h_min,
+                        h_max,
+                        seed: Some(seed),
+                        sample_index: Some(sample_index),
+                        attempt: Some(attempt),
+                    },
                     sys: payload.sys,
                 }),
                 random_product: None,
@@ -476,9 +634,12 @@ fn compute_work_unit(
             name,
             k,
             m,
+            h_min,
+            h_max,
             sample_index,
         } => {
-            let (polytope, attempt) = generate_product_polytope(seed, k, m, sample_index)?;
+            let (polytope, attempt) =
+                generate_product_polytope(seed, k, m, h_min, h_max, sample_index)?;
             let poly_id = poly_id(&polytope);
             let payload = cache.compute(&polytope, CapacityBackend::Billiard)?;
             let classification = classify_facets_from_dual_vertices(&polytope.dual_vertices_f64)
@@ -496,15 +657,18 @@ fn compute_work_unit(
                 random_product: Some(DatascienceRandomProductSampleRow {
                     name,
                     poly_id,
-                    k,
-                    m,
                     facet_count: polytope.facet_count(),
-                    seed,
-                    attempt,
-                    h_min: H_MIN,
-                    h_max: H_MAX,
+                    source: DatascienceSampleSource::RandomProduct {
+                        k,
+                        m,
+                        h_min,
+                        h_max,
+                        seed: Some(seed),
+                        sample_index: Some(sample_index),
+                        attempt: Some(attempt),
+                        bounces,
+                    },
                     sys: payload.sys,
-                    bounces,
                 }),
             })
         }
@@ -575,19 +739,21 @@ fn main() {
     let plan = args.plan_file.as_ref().map(load_plan);
     let mut work = Vec::new();
     if let Some(plan) = &plan {
-        if args.producers.contains(&Producer::Random) {
-            work.extend(random_work_from_counts(
-                plan.random
-                    .iter()
-                    .map(|bucket| (bucket.facet_count, bucket.rows)),
-            ));
-        }
-        if args.producers.contains(&Producer::RandomProduct) {
-            work.extend(random_product_work_from_counts(
-                plan.random_product
-                    .iter()
-                    .map(|bucket| (bucket.k, bucket.m, bucket.rows)),
-            ));
+        if !plan.buckets.is_empty() {
+            work.extend(work_from_plan_buckets(&plan.buckets, &args.producers));
+        } else {
+            if args.producers.contains(&Producer::Random) {
+                work.extend(random_work_from_counts(plan.random.iter().map(|bucket| {
+                    (bucket.facet_count, bucket.h_min, bucket.h_max, bucket.rows)
+                })));
+            }
+            if args.producers.contains(&Producer::RandomProduct) {
+                work.extend(random_product_work_from_counts(
+                    plan.random_product.iter().map(|bucket| {
+                        (bucket.k, bucket.m, bucket.h_min, bucket.h_max, bucket.rows)
+                    }),
+                ));
+            }
         }
     } else {
         if args.producers.contains(&Producer::Random) {
@@ -769,12 +935,14 @@ mod tests {
 
     #[test]
     fn explicit_counts_build_targeted_work() {
-        let random = random_work_from_counts([(10, 2), (12, 1)]);
+        let random = random_work_from_counts([(10, 0.8, 1.2, 2), (12, 0.6, 1.4, 1)]);
         assert_eq!(random.len(), 3);
         assert!(matches!(
             &random[0],
             WorkSpec::Random {
                 facet_count: 10,
+                h_min: 0.8,
+                h_max: 1.2,
                 sample_index: 0,
                 ..
             }
@@ -783,18 +951,65 @@ mod tests {
             &random[2],
             WorkSpec::Random {
                 facet_count: 12,
+                h_min: 0.6,
+                h_max: 1.4,
                 sample_index: 0,
                 ..
             }
         ));
 
-        let product = random_product_work_from_counts([(4, 6, 2)]);
+        let product = random_product_work_from_counts([(4, 6, 0.7, 1.3, 2)]);
         assert_eq!(product.len(), 2);
         assert!(matches!(
             &product[1],
             WorkSpec::RandomProduct {
                 k: 4,
                 m: 6,
+                h_min: 0.7,
+                h_max: 1.3,
+                sample_index: 1,
+                ..
+            }
+        ));
+    }
+
+    #[test]
+    fn unnamed_plan_buckets_build_targeted_work() {
+        let producers = parse_producers("random,random-product");
+        let buckets = [
+            PlanBucket::Random {
+                facet_count: 8,
+                h_min: 0.8,
+                h_max: 1.2,
+                rows: 1,
+            },
+            PlanBucket::RandomProduct {
+                k: 3,
+                m: 5,
+                h_min: 0.6,
+                h_max: 1.4,
+                rows: 2,
+            },
+        ];
+        let work = work_from_plan_buckets(&buckets, &producers);
+        assert_eq!(work.len(), 3);
+        assert!(matches!(
+            &work[0],
+            WorkSpec::Random {
+                facet_count: 8,
+                h_min: 0.8,
+                h_max: 1.2,
+                sample_index: 0,
+                ..
+            }
+        ));
+        assert!(matches!(
+            &work[2],
+            WorkSpec::RandomProduct {
+                k: 3,
+                m: 5,
+                h_min: 0.6,
+                h_max: 1.4,
                 sample_index: 1,
                 ..
             }

@@ -66,7 +66,8 @@ Current method-facing files:
   identity/target fields, source metadata needed by methods, and invariant
   feature columns;
 - `polytope-provenance-table.jsonl`: one row per retained random/product
-  provenance record.
+  provenance record. Run-local and canonical random/product provenance rows
+  include a nested `source` object when source bucket data is available.
 
 `polytope-table.jsonl` is the method-facing table. This is a schema-breaking
 contract relative to the old volume-one representative table: it no longer
@@ -134,8 +135,11 @@ or state provenance:
 
 - `poly_id` identifies the canonicalized ordered dual-vertex geometry and is
   stable across producer rows that produce the same polytope.
-- provenance rows carry source metadata such as `root_group_id` and
-  `lineage_id`.
+- provenance rows carry source metadata such as `root_group_id`,
+  `lineage_id`, and `source`. `source` is the structured sampling-event
+  descriptor; existing flat columns such as `sample_h_min`, `sample_h_max`,
+  `product_k`, and `product_m` are compatibility/access columns derived from
+  the same source data.
 - exact rational geometry payloads such as `dual_vertices_rational` stay with
   the polytope identity rather than with a one-off method-local matrix.
 - optimizer or local-system rows may need additional state-level identity, but

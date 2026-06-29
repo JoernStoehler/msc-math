@@ -15,7 +15,9 @@ mod producer_rows;
 
 use exp_sys_landscape::ComputedPolytopePayloadRow;
 use load_caches::{LoadedCaches, LoadedPolytopeRow, LoadedProvenanceRow};
-use producer_rows::{DatascienceRandomProductSampleRow, DatascienceRandomSampleRow};
+use producer_rows::{
+    DatascienceRandomProductSampleRow, DatascienceRandomSampleRow, DatascienceSampleSource,
+};
 use serde::de::DeserializeOwned;
 use serde::Serialize;
 use std::collections::{HashMap, HashSet};
@@ -192,6 +194,10 @@ fn provenance_id(dataset: &str, name: &str) -> String {
     format!("{dataset}:{name}")
 }
 
+fn source_value(source: &DatascienceSampleSource) -> serde_json::Value {
+    serde_json::to_value(source).expect("serialize datascience sample source")
+}
+
 fn load_new_producer_outputs(produce_dir: &Path) -> LoadedCaches {
     let payloads = payloads_by_poly_id(&produce_dir.join("computed-polytopes.jsonl"));
     let random_rows = read_jsonl_if_exists::<DatascienceRandomSampleRow>(
@@ -215,6 +221,32 @@ fn load_new_producer_outputs(produce_dir: &Path) -> LoadedCaches {
         );
         let payload = require_payload(&payloads, "random_sample", &row.name, &row.poly_id, row.sys);
         ensure_polytope(&mut polytopes, payload, "random_sample");
+        let DatascienceSampleSource::Random {
+            facet_count: source_facet_count,
+            h_min,
+            h_max,
+            seed,
+            sample_index,
+            attempt,
+        } = row.source
+        else {
+            panic!("random sample {} has non-random source", row.name);
+        };
+        assert_eq!(
+            source_facet_count, payload.facet_count,
+            "random sample {} source facet_count disagrees with payload",
+            row.name
+        );
+        let source = DatascienceSampleSource::Random {
+            facet_count: source_facet_count,
+            h_min,
+            h_max,
+            seed,
+            sample_index,
+            attempt,
+        };
+        let seed = seed.expect("run-local random source must include seed");
+        let attempt = attempt.expect("run-local random source must include attempt");
         provenance_rows.push(LoadedProvenanceRow {
             provenance_id,
             poly_id: row.poly_id,
@@ -226,15 +258,16 @@ fn load_new_producer_outputs(produce_dir: &Path) -> LoadedCaches {
             backend: payload.backend.clone(),
             source_name: row.name.clone(),
             root_group_id: format!("random_sample:{}", row.name),
-            sample_seed: Some(row.seed),
-            sample_attempt: Some(row.attempt),
-            sample_h_min: Some(row.h_min),
-            sample_h_max: Some(row.h_max),
+            source: Some(source_value(&source)),
+            sample_seed: Some(seed),
+            sample_attempt: Some(attempt),
+            sample_h_min: Some(h_min),
+            sample_h_max: Some(h_max),
             product_k: None,
             product_m: None,
             product_bounces: None,
-            seed_index: Some(row.attempt as usize),
-            lineage_id: Some(format!("seed:{}:attempt:{}", row.seed, row.attempt)),
+            seed_index: Some(attempt as usize),
+            lineage_id: Some(format!("seed:{seed}:attempt:{attempt}")),
             path: None,
             total_time_ms: None,
         });
@@ -255,6 +288,31 @@ fn load_new_producer_outputs(produce_dir: &Path) -> LoadedCaches {
             row.sys,
         );
         ensure_polytope(&mut polytopes, payload, "random_product_sample");
+        let DatascienceSampleSource::RandomProduct {
+            k,
+            m,
+            h_min,
+            h_max,
+            seed,
+            sample_index,
+            attempt,
+            bounces,
+        } = row.source
+        else {
+            panic!("random-product sample {} has non-product source", row.name);
+        };
+        let source = DatascienceSampleSource::RandomProduct {
+            k,
+            m,
+            h_min,
+            h_max,
+            seed,
+            sample_index,
+            attempt,
+            bounces,
+        };
+        let seed = seed.expect("run-local random-product source must include seed");
+        let attempt = attempt.expect("run-local random-product source must include attempt");
         provenance_rows.push(LoadedProvenanceRow {
             provenance_id,
             poly_id: row.poly_id,
@@ -266,19 +324,17 @@ fn load_new_producer_outputs(produce_dir: &Path) -> LoadedCaches {
             backend: payload.backend.clone(),
             source_name: row.name.clone(),
             root_group_id: format!("random_product_sample:{}", row.name),
-            sample_seed: Some(row.seed),
-            sample_attempt: Some(row.attempt),
-            sample_h_min: Some(row.h_min),
-            sample_h_max: Some(row.h_max),
-            product_k: Some(row.k),
-            product_m: Some(row.m),
-            product_bounces: Some(row.bounces),
-            seed_index: Some(row.attempt as usize),
-            lineage_id: Some(format!(
-                "seed:{}:{}x{}:attempt:{}",
-                row.seed, row.k, row.m, row.attempt
-            )),
-            path: Some(format!("lp_{}x{}", row.k, row.m)),
+            source: Some(source_value(&source)),
+            sample_seed: Some(seed),
+            sample_attempt: Some(attempt),
+            sample_h_min: Some(h_min),
+            sample_h_max: Some(h_max),
+            product_k: Some(k),
+            product_m: Some(m),
+            product_bounces: Some(bounces),
+            seed_index: Some(attempt as usize),
+            lineage_id: Some(format!("seed:{seed}:{k}x{m}:attempt:{attempt}")),
+            path: Some(format!("lp_{k}x{m}")),
             total_time_ms: None,
         });
     }

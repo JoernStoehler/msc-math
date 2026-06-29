@@ -47,6 +47,8 @@ struct PolytopeProvenanceTableRow<'a> {
     source_name: &'a str,
     root_group_id: &'a str,
     #[serde(skip_serializing_if = "Option::is_none")]
+    source: &'a Option<serde_json::Value>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     sample_seed: Option<u64>,
     #[serde(skip_serializing_if = "Option::is_none")]
     sample_attempt: Option<u64>,
@@ -83,6 +85,7 @@ impl<'a> From<&'a ProvenanceRunRow> for PolytopeProvenanceTableRow<'a> {
             backend: &row.backend,
             source_name: &row.source_name,
             root_group_id: &row.root_group_id,
+            source: &row.source,
             sample_seed: row.sample_seed,
             sample_attempt: row.sample_attempt,
             sample_h_min: row.sample_h_min,

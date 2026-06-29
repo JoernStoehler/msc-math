@@ -55,6 +55,43 @@ def parse_producers(raw: str) -> list[str]:
     return producers
 
 
+def sample_source(row: dict[str, Any], expected_producer: str) -> dict[str, Any]:
+    source = row.get("source")
+    require(isinstance(source, dict), f"sample {row.get('name')} lacks source object")
+    require(
+        source.get("producer") == expected_producer,
+        f"sample {row.get('name')} source producer {source.get('producer')!r} != {expected_producer!r}",
+    )
+    h_min = source.get("h_min")
+    h_max = source.get("h_max")
+    require(
+        isinstance(h_min, int | float) and isinstance(h_max, int | float) and 0.0 < h_min < h_max,
+        f"sample {row.get('name')} source has invalid height interval",
+    )
+    require(isinstance(source.get("seed"), int), f"sample {row.get('name')} source lacks seed")
+    require(
+        isinstance(source.get("sample_index"), int),
+        f"sample {row.get('name')} source lacks sample_index",
+    )
+    require(
+        isinstance(source.get("attempt"), int),
+        f"sample {row.get('name')} source lacks attempt",
+    )
+    if expected_producer == "random":
+        require(
+            isinstance(source.get("facet_count"), int),
+            f"sample {row.get('name')} random source lacks facet_count",
+        )
+    else:
+        require(isinstance(source.get("k"), int), f"sample {row.get('name')} source lacks k")
+        require(isinstance(source.get("m"), int), f"sample {row.get('name')} source lacks m")
+        require(
+            isinstance(source.get("bounces"), int),
+            f"sample {row.get('name')} source lacks bounces",
+        )
+    return source
+
+
 def validate(
     produce_dir: Path,
     mode: str,
@@ -120,6 +157,10 @@ def validate(
 
     for row in sample_rows:
         poly_id = str(row["poly_id"])
+        expected_producer = (
+            "random-product" if row in product_rows else "random"
+        )
+        sample_source(row, expected_producer)
         require(poly_id in payload_by_id, f"sample {row['name']} missing payload {poly_id}")
         payload_sys = float(payload_by_id[poly_id]["sys"])
         sample_sys = float(row["sys"])

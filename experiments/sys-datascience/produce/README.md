@@ -26,9 +26,9 @@ Canonical committed producer artifacts:
 The current retained random target is:
 
 - `4096` generic random rows: `512` accepted samples for each facet count
-  `F=5..12`;
+  `F=5..12` at height interval `[0.8, 1.2]`;
 - `10240` random Lagrangian-product rows: `1024` accepted samples for each
-  polygon-pair bucket with `3 <= k <= m <= 6`;
+  polygon-pair bucket with `3 <= k <= m <= 6` at height interval `[0.8, 1.2]`;
 - total standalone random/product rows: `14336`.
 
 Both current producers use height interval `[0.8, 1.2]`, seed `42`, and
@@ -47,6 +47,32 @@ cargo run -p exp-sys-landscape --release --bin sys-datascience-produce -- \
   --parallelism 4 \
   --base-cache /tmp/ds-produce-empty-cache.jsonl
 ```
+
+Each run-local sample row stores a nested `source` object. The source object is
+the sampling-event descriptor: producer family, bucket parameters, seed,
+sample index, and rejection attempt. For example:
+
+```json
+{"producer":"random","facet_count":8,"h_min":0.8,"h_max":1.2,"seed":42,"sample_index":17,"attempt":0}
+{"producer":"random-product","k":3,"m":5,"h_min":0.6,"h_max":1.4,"seed":42,"sample_index":17,"attempt":0,"bounces":4}
+```
+
+For targeted run-local samples, pass an unnamed bucket plan:
+
+```json
+{
+  "buckets": [
+    {"producer": "random", "facet_count": 8, "h_min": 0.8, "h_max": 1.2, "rows": 32},
+    {"producer": "random", "facet_count": 8, "h_min": 0.6, "h_max": 1.4, "rows": 32},
+    {"producer": "random-product", "k": 3, "m": 5, "h_min": 0.8, "h_max": 1.2, "rows": 32}
+  ]
+}
+```
+
+The bucket identity is the tuple of fields. Names are generated
+deterministically from that tuple and the sample index. Older plan files with
+separate `random` and `random_product` count arrays are still accepted; missing
+height fields default to `[0.8, 1.2]`.
 
 Production mode uses the retained row counts above:
 
@@ -91,6 +117,6 @@ fingerprint/inspect prepare output
 retrieve and review artifacts locally
 ```
 
-For production-size diagnostics, set `DATASCIENCE_PLAN_ONLY=1`. This runs the
-same producer work-plan construction and row-count reporting, then exits before
+For production-size diagnostics, pass `--plan-only`. This runs the same
+producer work-plan construction and row-count reporting, then exits before
 capacity computation and before writing producer JSONL rows.

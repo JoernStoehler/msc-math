@@ -16,6 +16,7 @@ pub fn build_provenance_run_table(rows: &[LoadedProvenanceRow]) -> Vec<Provenanc
             backend: row.backend.clone(),
             source_name: row.source_name.clone(),
             root_group_id: row.root_group_id.clone(),
+            source: row.source.clone(),
             sample_seed: row.sample_seed,
             sample_attempt: row.sample_attempt,
             sample_h_min: row.sample_h_min,
