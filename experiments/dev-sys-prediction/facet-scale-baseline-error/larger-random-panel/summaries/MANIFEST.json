@@ -8,6 +8,13 @@
       "sha256": "ed8abfcc84f2a8462186c2b11c02225e8c2b6f8458b49b82784956d2146a3082"
     },
     {
+      "bytes": 78619442,
+      "expected_empty": false,
+      "jsonl_rows": 14336,
+      "path": "/workspaces/msc-math/.worktrees/sys-prediction-integration/experiments/sys-datascience/prepare/polytope-table.jsonl",
+      "sha256": "5167ce3b4b3e8682bd07e19ae7aa389af38388da781fef22a732880592434fe1"
+    },
+    {
       "bytes": 14343,
       "expected_empty": false,
       "jsonl_rows": 24,
@@ -99,6 +106,13 @@
       "sha256": "dac3e92a9a07425923e080cd1d03e100762353842aad741b579c7bc3964b802f"
     },
     {
+      "bytes": 525,
+      "expected_empty": false,
+      "jsonl_rows": null,
+      "path": "larger-random-panel/summaries/random-sample-global-scale.csv",
+      "sha256": "896e4f7e6f38fc493ff277aa94ea0b3c55289e3d35b660cbf4f17c05d140b469"
+    },
+    {
       "bytes": 246,
       "expected_empty": false,
       "jsonl_rows": null,
@@ -113,11 +127,11 @@
       "sha256": "ddf9844f97bb6b39f75681f43fb797581b91637524a1bd389a297facd008d1e0"
     },
     {
-      "bytes": 2732,
+      "bytes": 3583,
       "expected_empty": false,
       "jsonl_rows": null,
       "path": "larger-random-panel/summaries/SUMMARY.md",
-      "sha256": "2fd457239b445d406cdfd6a1195451d47517e7692741f5906f1750708335c7d1"
+      "sha256": "17eec8ec179041c81125f00d0ebe94ebc1b24ee8bc1af3c0aa591f67a00a4bd4"
     },
     {
       "bytes": 5228,

@@ -139,7 +139,9 @@ Generated tables:
   threshold;
 - `summaries/prediction-error-by-facet-step.csv`: prediction error and
   target-winner visibility by facet count and radius;
-- `summaries/panel-scale.csv`: selected basepoint scale fields.
+- `summaries/panel-scale.csv`: selected basepoint scale fields;
+- `summaries/random-sample-global-scale.csv`: flattened-coordinate norm and
+  iid pair-distance quantiles for the prepared `random_sample` distribution;
 - `summaries/prediction-error-by-radius.svg`: dependency-free audit plot of
   median and max absolute prediction error against radius.
 
@@ -168,11 +170,13 @@ rows, and about `725s` walltime on the local devcontainer run.
 
 ## Interpretation
 
-The useful calibration is qualitative. Median per-coordinate RMS is stable
-across the checked compact panel, while flattened norms grow with `sqrt(F)`.
-The same absolute radius is therefore a smaller per-coordinate perturbation at
-larger `F` on this panel, but current evidence does not justify replacing the
-shared absolute grid by a purely `F`-scaled grid.
+The useful calibration is qualitative. In the prepared `random_sample` source,
+median iid pair distances in flattened dual-vertex coordinates are close across
+the checked facet counts: about `14.0` for `F=6`, `12.3` for `F=10`, and
+`11.9` for `F=12`. Thus the absolute `t` grid is comparable across these
+facet counts; there is no need to replace it by an `F`-relative grid for this
+packet. The generated `random-sample-global-scale.csv` table records the
+underlying norm and iid-pair-distance quantiles.
 
 The checked panel supports treating radii through `1e-2` as the shared local
 grid for the next prediction-error sessions. The `3e-2` radius is a stress
@@ -217,21 +221,14 @@ For the next prediction-error-model sessions, use a shared absolute grid first:
 ```
 
 Use `3e-2` as a stress radius, not as the default local radius. It is useful for
-detecting target construction failures and window-miss breakdown, but the
-selected panel already shows failures or large errors there.
+detecting the start of window-miss behavior, but in the larger random-sample
+comparison panel the largest missed-window absolute error was only about
+`6e-3`.
 
-Record normalization columns with every later panel:
-
-```text
-t
-t / median_flat_norm(F)
-t / median_inter_polytope_dist(F)
-t / sqrt(4F)              # per-coordinate RMS displacement for unit directions
-```
-
-Current evidence does not justify replacing the shared absolute grid by a
-purely `F`-scaled grid. It does justify reporting normalized radii, because
-the same absolute `t` has smaller per-coordinate RMS at larger `F`.
+Keep reporting `t` as an absolute flattened-coordinate radius. For audit, also
+keep the global-scale table generated from `random_sample`; for `F=6,10,12`,
+`t=1e-2` is about `7e-4` to `8e-4` of the median iid pair distance and
+`t=3e-2` is about `2e-3` to `2.5e-3`.
 
 Conservative defaults by facet count:
 

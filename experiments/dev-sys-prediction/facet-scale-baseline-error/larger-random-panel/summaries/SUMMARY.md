@@ -11,6 +11,17 @@ branch diagnostic rows, and local finite-radius prediction rows.
 | 10 | 8 | 8.45564 | 1.33695 |  |
 | 12 | 8 | 7.78793 | 1.12409 |  |
 
+## Random-Sample Global Scale
+
+| facet_count | source | rows | median_flat_norm | p10_flat_norm | p90_flat_norm | median_iid_pair_distance | p10_iid_pair_distance | p90_iid_pair_distance | radius_1e_2_over_median_iid_pair_distance | radius_3e_2_over_median_iid_pair_distance |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 6 | random_sample | 512 | 9.2454 | 7.14079 | 15.3407 | 14.0114 | 10.5126 | 21.4489 | 0.000713704 | 0.00214111 |
+| 10 | random_sample | 512 | 8.32987 | 7.08823 | 12.0552 | 12.3297 | 10.1485 | 16.7359 | 0.00081105 | 0.00243315 |
+| 12 | random_sample | 512 | 8.09026 | 7.27619 | 11.0577 | 11.9247 | 10.186 | 16.1666 | 0.000838593 | 0.00251578 |
+
+The `t` grid is absolute in flattened dual-vertex coordinates. The global-scale
+table compares it to iid pair distances in the configured random sample source.
+
 ## Branch Window Snapshot
 
 | F | threshold | rows | median_returned_orbits | median_near_active | max_near_active | labels |

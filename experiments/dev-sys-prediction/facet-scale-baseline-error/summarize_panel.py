@@ -7,6 +7,7 @@ import hashlib
 import html
 import json
 import math
+import random
 from collections import Counter, defaultdict
 from pathlib import Path
 
@@ -21,6 +22,14 @@ def parse_args():
     parser.add_argument("--prediction-dir", type=Path, required=True)
     parser.add_argument("--out-dir", type=Path, default=PACKET / "summaries")
     parser.add_argument("--facet-counts", default="6,10,12")
+    parser.add_argument(
+        "--global-scale-table",
+        type=Path,
+        default=Path("experiments/sys-datascience/prepare/polytope-table.jsonl"),
+    )
+    parser.add_argument("--global-scale-source", default="random_sample")
+    parser.add_argument("--global-scale-pairs", type=int, default=20_000)
+    parser.add_argument("--global-scale-seed", type=int, default=20260629)
     return parser.parse_args()
 
 
@@ -94,6 +103,14 @@ def flat_vertices(row):
     return [coord for vertex in row["dual_vertices_f64"] for coord in vertex]
 
 
+def euclidean_norm(flat):
+    return math.sqrt(sum(coord * coord for coord in flat))
+
+
+def euclidean_dist(left, right):
+    return math.sqrt(sum((x - y) * (x - y) for x, y in zip(left, right)))
+
+
 def first_present(row, *keys):
     for key in keys:
         if row.get(key) is not None:
@@ -129,7 +146,7 @@ def sha256_file(path):
 
 def scale_row(row):
     flat = flat_vertices(row)
-    norm = math.sqrt(sum(x * x for x in flat))
+    norm = euclidean_norm(flat)
     facet_count = int(row["facet_count"])
     coord_rms = norm / math.sqrt(len(flat))
     return {
@@ -141,6 +158,51 @@ def scale_row(row):
         "geom_pairwise_max": row.get("geom_vol1_pairwise_dist_max"),
         "geom_norm_mean": row.get("geom_vol1_norm_mean"),
     }
+
+
+def global_scale_summary(table_path, source, facet_counts, pair_samples, seed):
+    rows_by_facet = defaultdict(list)
+    wanted = set(facet_counts)
+    for row in load_jsonl(table_path):
+        facet_count = int(row["facet_count"])
+        if facet_count in wanted and row.get("capacity_source") == source:
+            rows_by_facet[facet_count].append(flat_vertices(row))
+
+    rng = random.Random(seed)
+    output = []
+    for facet_count in sorted(wanted):
+        rows = rows_by_facet.get(facet_count, [])
+        norms = [euclidean_norm(row) for row in rows]
+        distances = []
+        if len(rows) >= 2:
+            for _ in range(pair_samples):
+                left_index = rng.randrange(len(rows))
+                right_index = rng.randrange(len(rows) - 1)
+                if right_index >= left_index:
+                    right_index += 1
+                distances.append(euclidean_dist(rows[left_index], rows[right_index]))
+        median_dist = median(distances)
+        output.append(
+            {
+                "facet_count": facet_count,
+                "source": source,
+                "rows": len(rows),
+                "pair_samples": pair_samples if len(rows) >= 2 else 0,
+                "median_flat_norm": median(norms),
+                "p10_flat_norm": quantile(norms, 0.1),
+                "p90_flat_norm": quantile(norms, 0.9),
+                "median_iid_pair_distance": median_dist,
+                "p10_iid_pair_distance": quantile(distances, 0.1),
+                "p90_iid_pair_distance": quantile(distances, 0.9),
+                "radius_1e_2_over_median_iid_pair_distance": (
+                    1e-2 / median_dist if median_dist else None
+                ),
+                "radius_3e_2_over_median_iid_pair_distance": (
+                    3e-2 / median_dist if median_dist else None
+                ),
+            }
+        )
+    return output
 
 
 def branch_summary(branch_dir, poly_id_to_facet):
@@ -403,7 +465,7 @@ def write_manifest(path, source_paths, summary_paths):
     path.write_text(json.dumps({"artifacts": rows}, indent=2, sort_keys=True) + "\n")
 
 
-def write_summary(path, panel_scale_rows, branch_rows, prediction_rows):
+def write_summary(path, panel_scale_rows, global_scale_rows, branch_rows, prediction_rows):
     scale_by_facet = defaultdict(list)
     for row in panel_scale_rows:
         scale_by_facet[row["facet_count"]].append(row)
@@ -457,6 +519,13 @@ branch diagnostic rows, and local finite-radius prediction rows.
 ## Scale By Facet Count
 
 {markdown_table(scale_rows, ["F", "basepoints", "median_flat_norm", "median_coord_rms", "median_pairwise_mean"])}
+
+## Random-Sample Global Scale
+
+{markdown_table(global_scale_rows, ["facet_count", "source", "rows", "median_flat_norm", "p10_flat_norm", "p90_flat_norm", "median_iid_pair_distance", "p10_iid_pair_distance", "p90_iid_pair_distance", "radius_1e_2_over_median_iid_pair_distance", "radius_3e_2_over_median_iid_pair_distance"])}
+
+The `t` grid is absolute in flattened dual-vertex coordinates. The global-scale
+table compares it to iid pair distances in the configured random sample source.
 
 ## Branch Window Snapshot
 
@@ -596,25 +665,35 @@ def main():
     poly_id_to_facet = {row["poly_id"]: int(row["facet_count"]) for row in panel_rows}
 
     panel_scale_rows = [scale_row(row) for row in panel_rows]
+    global_scale_rows = global_scale_summary(
+        args.global_scale_table,
+        args.global_scale_source,
+        facet_counts,
+        args.global_scale_pairs,
+        args.global_scale_seed,
+    )
     branch_rows = branch_summary(args.branch_dir, poly_id_to_facet)
     prediction_rows = prediction_summary(args.prediction_dir, poly_id_to_facet)
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
     panel_scale_path = args.out_dir / "panel-scale.csv"
+    global_scale_path = args.out_dir / "random-sample-global-scale.csv"
     branch_path = args.out_dir / "branch-window-by-facet.csv"
     prediction_path = args.out_dir / "prediction-error-by-facet-step.csv"
     summary_path = args.out_dir / "SUMMARY.md"
     manifest_path = args.out_dir / "MANIFEST.json"
     figure_path = args.out_dir / "prediction-error-by-radius.svg"
     write_csv(panel_scale_path, panel_scale_rows)
+    write_csv(global_scale_path, global_scale_rows)
     write_csv(branch_path, branch_rows)
     write_csv(prediction_path, prediction_rows)
-    write_summary(summary_path, panel_scale_rows, branch_rows, prediction_rows)
+    write_summary(summary_path, panel_scale_rows, global_scale_rows, branch_rows, prediction_rows)
     write_prediction_svg(figure_path, prediction_rows)
     write_manifest(
         manifest_path,
         [
             args.panel,
+            args.global_scale_table,
             args.branch_dir / "branch-set-diagnostic.jsonl",
             args.branch_dir / "fixture-selection.jsonl",
             args.prediction_dir / "summary.json",
@@ -628,7 +707,14 @@ def main():
             args.prediction_dir / "endpoint-diagnostic.jsonl",
             args.prediction_dir / "endpoint-direction-scan.jsonl",
         ],
-        [panel_scale_path, branch_path, prediction_path, summary_path, figure_path],
+        [
+            panel_scale_path,
+            global_scale_path,
+            branch_path,
+            prediction_path,
+            summary_path,
+            figure_path,
+        ],
     )
 
     print(args.out_dir)
