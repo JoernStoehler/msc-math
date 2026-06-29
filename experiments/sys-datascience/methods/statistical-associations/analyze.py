@@ -19,10 +19,10 @@ from scipy import stats
 HERE = Path(__file__).resolve().parent
 sys.path.append(str(HERE.parent / "_shared"))
 from random_only import (  # noqa: E402
+    active_invariant_numeric_feature_names,
     TABLES_DIR,
     dataset_label,
     load_trusted_random_tables,
-    numeric_feature_names,
     product_bucket,
     provenance_by_poly_id,
     write_json,
@@ -285,7 +285,7 @@ def main() -> None:
     args = parse_args()
     rows, provenance_rows = load_trusted_random_tables(args.tables_dir)
     y = np.array([float(row["sys"]) for row in rows], dtype=float)
-    eligible_names = numeric_feature_names(rows, invariant_only=True)
+    eligible_names = active_invariant_numeric_feature_names(rows)
     names = eligible_names[: args.max_features] if args.max_features else eligible_names
 
     associations = []

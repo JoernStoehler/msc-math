@@ -4,7 +4,9 @@ use euclidean_polytopes::TwoFace;
 use nalgebra::{DMatrix, Vector4};
 use symplectic::geom::symplectic_form::omega0;
 
-use super::features_helpers::{max_share, quantile_or_zero, stats_or_zero, top_k_share};
+use super::features_helpers::{
+    fraction_at_most, max_share, quantile_or_zero, stats_or_zero, top_k_share,
+};
 
 pub struct FaceSymplecticFields {
     pub ridge_symp_area_ordered_face_count: usize,
@@ -22,6 +24,12 @@ pub struct FaceSymplecticFields {
     pub ridge_symp_area_sum: f64,
     pub ridge_symp_area_max_share: f64,
     pub ridge_symp_area_top3_share: f64,
+    pub ridge_symp_area_le_1em3_over_volume_sqrt_fraction: f64,
+    pub ridge_symp_area_le_1em2_over_volume_sqrt_fraction: f64,
+    pub ridge_symp_area_le_1em1_over_volume_sqrt_fraction: f64,
+    pub ridge_symp_area_entropy: f64,
+    pub ridge_symp_area_effective_face_count: f64,
+    pub ridge_symp_area_normalized_entropy: f64,
 }
 
 fn two_face_symplectic_area(vertices: &[Vector4<f64>]) -> f64 {
@@ -108,6 +116,7 @@ pub fn compute_face_symplectic_fields(
     two_faces: &[TwoFace],
     vertices: &[Vector4<f64>],
     incidence: &DMatrix<bool>,
+    volume_sqrt: f64,
 ) -> FaceSymplecticFields {
     let mut ridge_symp_areas = Vec::new();
     let mut ordering_failure_count = 0usize;
@@ -125,6 +134,32 @@ pub fn compute_face_symplectic_fields(
     }
     let (ridge_symp_area_mean, ridge_symp_area_std, ridge_symp_area_min, ridge_symp_area_max) =
         stats_or_zero(&ridge_symp_areas);
+    let normalized_areas = ridge_symp_areas
+        .iter()
+        .map(|area| area / volume_sqrt)
+        .collect::<Vec<_>>();
+    let total_area = ridge_symp_areas.iter().sum::<f64>();
+    let ridge_symp_area_entropy = if total_area <= 0.0 {
+        0.0
+    } else {
+        ridge_symp_areas
+            .iter()
+            .filter_map(|area| {
+                let probability = area / total_area;
+                (probability > 0.0).then_some(-probability * probability.ln())
+            })
+            .sum::<f64>()
+    };
+    let ridge_symp_area_effective_face_count = if total_area <= 0.0 {
+        0.0
+    } else {
+        ridge_symp_area_entropy.exp()
+    };
+    let ridge_symp_area_normalized_entropy = if ridge_symp_areas.len() <= 1 {
+        0.0
+    } else {
+        ridge_symp_area_entropy / (ridge_symp_areas.len() as f64).ln()
+    };
 
     FaceSymplecticFields {
         ridge_symp_area_ordered_face_count: ridge_symp_areas.len(),
@@ -146,5 +181,20 @@ pub fn compute_face_symplectic_fields(
         ridge_symp_area_sum: ridge_symp_areas.iter().sum::<f64>(),
         ridge_symp_area_max_share: max_share(&ridge_symp_areas),
         ridge_symp_area_top3_share: top_k_share(&ridge_symp_areas, 3),
+        ridge_symp_area_le_1em3_over_volume_sqrt_fraction: fraction_at_most(
+            &normalized_areas,
+            1e-3,
+        ),
+        ridge_symp_area_le_1em2_over_volume_sqrt_fraction: fraction_at_most(
+            &normalized_areas,
+            1e-2,
+        ),
+        ridge_symp_area_le_1em1_over_volume_sqrt_fraction: fraction_at_most(
+            &normalized_areas,
+            1e-1,
+        ),
+        ridge_symp_area_entropy,
+        ridge_symp_area_effective_face_count,
+        ridge_symp_area_normalized_entropy,
     }
 }

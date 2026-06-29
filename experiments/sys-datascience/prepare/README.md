@@ -89,12 +89,11 @@ Current method-facing files:
   provenance record. Run-local and canonical random/product provenance rows
   include a nested `source` object when source bucket data is available.
 
-`polytope-table.jsonl` is the method-facing table. This is a schema-breaking
-contract relative to the old volume-one representative table: it no longer
-exports raw dual vertices, capacity, volume, Euclidean representative features,
-omega magnitudes of normalized dual rows, or transition features. Raw producer
-geometry, volume, capacity, and orbit search payloads remain in producer
-artifacts and are joined by `poly_id` when source inspection is needed.
+`polytope-table.jsonl` is the method-facing table. It exports only
+identity/target/source fields and invariant feature columns. Raw dual vertices,
+capacity, volume, Euclidean representative features, omega magnitudes of
+normalized dual rows, and transition features remain in producer artifacts and
+are joined by `poly_id` only when source inspection is needed.
 
 The active columns are:
 

@@ -2,114 +2,256 @@
 
 ## Research Question
 
-Can a shallow, interpretable rule learned from active invariant features isolate
-the upper `sys` tail of the trusted random/product sample better than source,
-stratum, or generator-provenance labels alone?
+Root search question:
 
-This is an in-table diagnostic. It is not a validated candidate proposer,
-because train and test rows already have computed `sys` values.
+> Can cheap invariant features guide search effort toward higher `sys`, possibly
+> enough to justify a later generated-candidate proposer test?
 
-## Current Schema
+This packet does **not** validate a generated-candidate proposer and does not
+estimate top-`1e-6` cheap-tail behavior or a `sys > 1` hit probability.
 
-The active `polytope-table.jsonl` is invariant-only. This packet consumes:
+Retained-table question answered here:
 
-- combinatorial invariant columns;
-- ridge symplectic two-face area summaries normalized by `volume.sqrt()`;
-- categorical controls built from `capacity_source`, `facet_count`, product
-  bucket, product bounce count, and sample height range.
+> In the already evaluated random/product table, do current invariant prepared
+> features enrich for the high observed `sys` tail, and do ridge symplectic
+> two-face summaries survive source/facet/provenance and combinatorial controls?
 
-The old Euclidean size/spread, all-pair omega, omega-matrix,
-transition-graph, `capacity`, and `volume` method inputs are not active. Their
-historical results live in git history rather than this README.
+The high-tail labels are quantiles of the retained evaluated table or retained
+evaluation scope. Every evaluated row already has `sys` computed, so this is a
+retained-table diagnostic, not unevaluated-candidate validation.
+
+## Feature Set
+
+This method uses only current active invariant prepared features plus
+categorical controls. The exact numeric feature tuple is
+`ACTIVE_INVARIANT_NUMERIC_FEATURES` in
+`experiments/sys-datascience/methods/_shared/random_only.py`.
+
+The producer definitions for ridge symplectic area fields are in
+`experiments/sys-datascience/prepare/features_face_symplectic.rs`, assembled
+into method-facing rows by
+`experiments/sys-datascience/prepare/invariant_features.rs` and
+`experiments/sys-datascience/prepare/rows.rs`.
+
+Active invariant numeric families:
+
+- combinatorial counts and incidence summaries;
+- ridge symplectic two-face area summaries divided by `sqrt(volume)`;
+- ridge symplectic area concentration summaries such as max/top-3 share;
+- ridge symplectic small-area fractions at normalized thresholds `1e-3`,
+  `1e-2`, and `1e-1`;
+- ridge symplectic entropy, effective face count, and normalized entropy.
+
+Controls:
+
+- `capacity_source`;
+- `facet_count`;
+- product bucket;
+- product bounce count;
+- sample height range.
+
+Non-invariant coordinate features are intentionally not used: raw coordinate
+norms, pairwise Euclidean distances, singular values, Euclidean facet/ridge
+volumes, raw omega matrices, and raw `volume` are not method inputs.
 
 ## Method
 
-Train shallow decision-tree classifiers for three labels:
+The method is an adversarial retained-table filter-overlap screen. It defines
+cheap filters from invariant features and controls, then measures how much each
+filter overlaps the high-`sys` tail. Single-column filters are the
+one-feature special case; shallow tree leaves are conjunction filters such as
+`X1 <= a and X2 > b`.
 
-- top decile: `sys` at or above the full-table 90th percentile;
-- top five percent: `sys` at or above the full-table 95th percentile;
-- top one percent: `sys` at or above the full-table 99th percentile.
+Before analysis, the script checks that:
 
-Feature sources:
+- `poly_id` is present and unique;
+- `sys` is finite;
+- `capacity_source` is a current random/product source;
+- `facet_count` is an integer;
+- every retained polytope has exactly one provenance row;
+- provenance fields needed by source/product controls are present;
+- required current invariant features are present and finite.
 
-- `invariant_features`: all active numeric invariant covariates selected by
-  the shared trusted random/product selector;
-- `ridge_symp_area_only`: ridge symplectic-area summaries only;
-- `combinatorial_invariants_only`: counts, simplicity, incidence summaries,
-  ridge sizes, facet-neighbor summaries, and edge density;
-- `strata_only`: `capacity_source`, `facet_count`, and product bucket;
-- `generator_provenance_only`: `capacity_source`, product bounce count, and
-  sample height range.
+Outputs:
 
-Rows are split by `capacity_source:facet_count`, matching the other trusted
-random/product method packets. Outputs report grouped-holdout precision,
-recall, enrichment over base rate, leaf rules, stability summaries, coarse
-baselines, and a permutation-null diagnostic when requested.
+1. **Single-feature tail filters.** For each active invariant numeric feature,
+   the script evaluates low/high 10%, 15%, 20%, and 30% filters. For one-hot
+   categorical controls, it evaluates category membership rules. Holdout rows
+   use thresholds and directions frozen on a disjoint hash split.
 
-## Command
+2. **Shallow tree filters.** Grouped-holdout decision trees test multi-feature
+   conjunction filters over each feature family and control family.
+
+3. **Feature-set predictive power.** Balanced logistic models and shallow
+   trees compare predeclared feature tuples on a grouped train/test split.
+   Output columns distinguish the train-score threshold fraction from the
+   actual held-out selected fraction.
+
+4. **Retained-table budget sanity.** Fitted scores rank held-out rows, and
+   finite retained-table prefixes such as 0.2%, 0.5%, and 1% are checked for
+   whether they contain the best observed held-out `sys` rows. This is not a
+   top-`1e-6` generated-candidate statement.
+
+5. **Feature attribution and redundancy.** For each active invariant numeric
+   feature, raw single-feature enrichment is compared with residualized
+   enrichment after source/facet/provenance controls, strongest combinatorial
+   controls, strongest other-family invariant controls, and strongest non-self
+   invariant controls.
+
+## Commands
+
+Build a current invariant random/product prepared table:
 
 ```bash
-uv run --script experiments/sys-datascience/methods/tail-rule-mining/analyze.py
+PRODUCE_DIR=/workspaces/msc-math/experiments/sys-datascience/produce \
+  experiments/sys-datascience/prepare/build-random-only-slice.sh full \
+  /tmp/sys-ds-tail-invariant-current-full
 ```
 
-Smoke against a scratch prepared table:
+Development smoke run:
 
 ```bash
 uv run --script experiments/sys-datascience/methods/tail-rule-mining/analyze.py \
-  --tables-dir /tmp/ds-prepare-invariant-smoke \
-  --out-dir /tmp/ds-method-tail-smoke \
+  --tables-dir /tmp/sys-ds-tail-invariant-current-full \
+  --out-dir /tmp/sys-ds-tail-invariant-smoke \
+  --max-rows 1024 \
+  --max-filter-features 64 \
   --stability-runs 0 \
-  --permutations 0 \
-  --min-bucket-rows 2
+  --permutations 0
 ```
 
-## Generated Artifacts
+Full local diagnostic:
 
-Retained compact artifacts:
+```bash
+rm -rf /tmp/sys-ds-tail-invariant-analysis
+uv run --script experiments/sys-datascience/methods/tail-rule-mining/analyze.py \
+  --tables-dir /tmp/sys-ds-tail-invariant-current-full \
+  --out-dir /tmp/sys-ds-tail-invariant-analysis \
+  --stability-runs 0 \
+  --permutations 0
+```
 
-- `summary.json`
-- `leaf-rules.tsv`
-- `bucket-interpretation-diagnostics.tsv`
+Run production/full data generation only after smoke validation. Generated
+artifacts are not tracked in this method directory; regenerate them from the
+current prepared table.
 
-Additional rerun outputs such as `stability-runs.tsv` and
-`stability-split-features.tsv` are generated by the analyzer when retained by
-the caller, but are not currently tracked in this packet. Regenerate generated
-outputs from the current table; do not patch-edit them by hand.
+## Current Full Run
 
-## Observation
+Production prepare command run locally:
 
-Current integrated full retained run on the retained invariant table under
-`../../prepare`:
+```bash
+rm -rf /tmp/sys-ds-tail-invariant-current-full /tmp/sys-ds-tail-invariant-analysis
+PRODUCE_DIR=/workspaces/msc-math/experiments/sys-datascience/produce \
+  experiments/sys-datascience/prepare/build-random-only-slice.sh full \
+  /tmp/sys-ds-tail-invariant-current-full
+```
 
-- rows: `14336`;
-- invariant features: `39`;
-- ridge symplectic-area features: `12`;
-- combinatorial invariant features: `27`;
-- top-decile, invariant features: precision `0.47674418604651164`,
-  recall `0.7343283582089553`, enrichment `7.286358903158626`;
-- top-decile, ridge symplectic-area only: same precision/recall/enrichment as
-  all invariant features;
-- top-decile, generator provenance only: precision `0.11760154738878142`,
-  recall `0.9074626865671642`, enrichment `1.7973729033748087`;
-- top-five-percent, ridge symplectic-area only: precision
-  `0.32175925925925924`, recall `0.852760736196319`, enrichment
-  `10.106793910474892`;
-- top-one-percent, ridge symplectic-area only: precision
-  `0.08080808080808081`, recall `0.36363636363636365`, enrichment
-  `18.806244260789715`.
+Production analysis command run locally:
 
-In this run the shallow tree signal is carried by the ridge symplectic-area
-invariants, while separately reported coarse strata/provenance feature sets are
-much weaker. This is still in-table evidence, not a generated-candidate
-proposer.
+```bash
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 \
+  uv run --script experiments/sys-datascience/methods/tail-rule-mining/analyze.py \
+  --tables-dir /tmp/sys-ds-tail-invariant-current-full \
+  --out-dir /tmp/sys-ds-tail-invariant-analysis \
+  --stability-runs 0 \
+  --permutations 0
+```
 
-## Interpretation Contract
+Prepared table:
 
-Use this packet to compare simple invariant covariates with coarse
-source/stratum feature sets as tail-signal diagnostics. Do not claim that a
-leaf rule is a mechanism, theorem, or unevaluated-row proposer without a
-separate generated candidate experiment.
+- path: `/tmp/sys-ds-tail-invariant-current-full`;
+- `polytope-table.jsonl`: 14,336 rows, sha256
+  `49825d7636246f71f4ebd419cf0ccbc86e39e6b7f43d4b03e889bb85e4887aea`;
+- `polytope-provenance-table.jsonl`: 14,336 rows, sha256
+  `6ff88a5accce9a7ec7e5a494107350b0974b2ce0268ea44caae36a18a7494ef2`;
+- source counts: 4,096 generic random rows and 10,240 random product rows;
+- emitted polytope fields: 51;
+- raw `volume` is not emitted by the current invariant method-facing table;
+- maximum observed `sys`: `0.86258589584944`;
+- rows with `sys > 1`: 0.
 
-Feature definitions for the active numeric inputs are owned by
-`../../prepare/invariant_features.rs` and
-`../../prepare/features_face_symplectic.rs`.
+Analysis output:
+
+- path: `/tmp/sys-ds-tail-invariant-analysis`;
+- preflight:
+  `passed_current_invariant_schema_structural_provenance_feature_check`;
+- `summary.json` records feature counts, artifact row counts, preflight status,
+  and candidate-proposer disposition for the run;
+- permutations and stability reruns were disabled for this local production
+  pass.
+
+### Reading The Run
+
+Use the generated TSV/JSON artifacts as the source of truth for detailed
+rankings, effect sizes, budget-prefix behavior, and attribution rows. This
+README records the run provenance and interpretation boundaries only.
+
+Stable facts from the recorded prepared table:
+
+- exact table: `/tmp/sys-ds-tail-invariant-current-full`;
+- maximum observed `sys`: `0.86258589584944`;
+- rows with `sys > 1`: 0.
+
+Stable boundaries for this run:
+
+- all high-tail labels are retained-table labels; every row being evaluated
+  already has `sys`;
+- `feature-set-predictive-power.tsv` is the source for held-out predictive
+  metrics by feature set and model;
+- `single-feature-filter-holdout-top-by-scope-label.tsv` is the source for
+  frozen-threshold single-feature filters;
+- `retained-table-budget-sanity.tsv` is the source for finite retained-table
+  prefix behavior;
+- `feature-attribution-redundancy.tsv` is the source for residualized
+  attribution checks;
+- no artifact in this packet validates a generated-candidate proposer,
+  estimates top-`1e-6` cheap-feature behavior, or estimates a `sys > 1` hit
+  probability.
+
+## Artifact Contract
+
+`analyze.py` writes:
+
+- `summary.json`;
+- `tree-filter-leaves.tsv`;
+- `bucket-interpretation-diagnostics.tsv`;
+- `single-feature-filter-leaderboard.tsv`;
+- `single-feature-filter-holdout-rules.tsv`;
+- `single-feature-filter-holdout-top-by-scope-label.tsv`;
+- `feature-set-predictive-power.tsv`;
+- `retained-table-budget-sanity.tsv`;
+- `feature-attribution-redundancy.tsv`;
+- `stability-runs.tsv` when `--stability-runs > 0`;
+- `stability-split-features.tsv` when `--stability-runs > 0`.
+
+Use `single-feature-filter-leaderboard.tsv` as descriptive retained-table
+ranking only. Use `single-feature-filter-holdout-rules.tsv` when discussing
+per-filter thresholds whose direction and threshold were fixed on a disjoint
+train split. Do not present post-hoc best rows as multiple-comparison-corrected
+validation.
+
+Use `feature-set-predictive-power.tsv` for the question "does this invariant
+feature tuple predict the retained high tail?" Compare rows using
+`actual_test_selection_fraction` when budget size matters. Use
+`retained-table-budget-sanity.tsv` only as a finite-table budget sanity check.
+Use `feature-attribution-redundancy.tsv` for the attribution question "does this
+invariant feature still enrich the retained high tail after residualizing
+against these controls?"
+
+## Current Status
+
+The method has been rewired to the current invariant schema, the prepare stage
+emits additional invariant ridge symplectic-area distribution summaries, and
+the local full current-schema invariant run above has been recorded.
+
+## Interpretation Rules
+
+- If no `sys > 1` rows are present, state the exact table and maximum `sys`;
+  do not generalize beyond that table.
+- Do not present retained-table enrichment as generated-candidate validation.
+- Do not extrapolate retained-table 0.1%, 0.2%, 0.5%, or 1% prefix behavior to
+  top-`1e-6` generated-candidate behavior.
+- Treat source/facet/provenance-only lift as generator/debugging information,
+  not a geometry mechanism.
+- Check `feature-attribution-redundancy.tsv` before making any mechanism or
+  construction-hint statement from a raw feature filter.

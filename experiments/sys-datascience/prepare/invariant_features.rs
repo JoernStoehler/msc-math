@@ -67,6 +67,7 @@ pub fn invariant_row_from_dual_vertices(
         &two_faces,
         &polytope.vertices_f64,
         incidence,
+        volume_sqrt,
     );
 
     PolytopeTableRow {
@@ -147,6 +148,17 @@ pub fn invariant_row_from_dual_vertices(
         ),
         ridge_symp_area_max_share: face_symplectic_fields.ridge_symp_area_max_share,
         ridge_symp_area_top3_share: face_symplectic_fields.ridge_symp_area_top3_share,
+        ridge_symp_area_le_1em3_over_volume_sqrt_fraction: face_symplectic_fields
+            .ridge_symp_area_le_1em3_over_volume_sqrt_fraction,
+        ridge_symp_area_le_1em2_over_volume_sqrt_fraction: face_symplectic_fields
+            .ridge_symp_area_le_1em2_over_volume_sqrt_fraction,
+        ridge_symp_area_le_1em1_over_volume_sqrt_fraction: face_symplectic_fields
+            .ridge_symp_area_le_1em1_over_volume_sqrt_fraction,
+        ridge_symp_area_entropy: face_symplectic_fields.ridge_symp_area_entropy,
+        ridge_symp_area_effective_face_count: face_symplectic_fields
+            .ridge_symp_area_effective_face_count,
+        ridge_symp_area_normalized_entropy: face_symplectic_fields
+            .ridge_symp_area_normalized_entropy,
     }
 }
 
@@ -258,6 +270,27 @@ pub fn numeric_invariant_row_fields(row: &PolytopeTableRow) -> Vec<(&'static str
         ),
         ("ridge_symp_area_max_share", row.ridge_symp_area_max_share),
         ("ridge_symp_area_top3_share", row.ridge_symp_area_top3_share),
+        (
+            "ridge_symp_area_le_1em3_over_volume_sqrt_fraction",
+            row.ridge_symp_area_le_1em3_over_volume_sqrt_fraction,
+        ),
+        (
+            "ridge_symp_area_le_1em2_over_volume_sqrt_fraction",
+            row.ridge_symp_area_le_1em2_over_volume_sqrt_fraction,
+        ),
+        (
+            "ridge_symp_area_le_1em1_over_volume_sqrt_fraction",
+            row.ridge_symp_area_le_1em1_over_volume_sqrt_fraction,
+        ),
+        ("ridge_symp_area_entropy", row.ridge_symp_area_entropy),
+        (
+            "ridge_symp_area_effective_face_count",
+            row.ridge_symp_area_effective_face_count,
+        ),
+        (
+            "ridge_symp_area_normalized_entropy",
+            row.ridge_symp_area_normalized_entropy,
+        ),
     ]
 }
 

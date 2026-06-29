@@ -1,4 +1,4 @@
-"""Shared helpers for trusted random/product sys-datascience method packets."""
+"""Shared helpers for random-only sys-datascience method packets."""
 
 from __future__ import annotations
 
@@ -6,6 +6,8 @@ import json
 from collections import defaultdict
 from pathlib import Path
 from typing import Any, Iterable
+
+import numpy as np
 
 
 METHODS_DIR = Path(__file__).resolve().parents[1]
@@ -59,12 +61,12 @@ ACTIVE_INVARIANT_NUMERIC_FEATURES = (
     "ridge_symp_area_sum_over_volume_sqrt",
     "ridge_symp_area_max_share",
     "ridge_symp_area_top3_share",
-)
-
-ACTIVE_INVARIANT_DIAGNOSTIC_FIELDS = (
-    "ridge_symp_area_ordered_face_count",
-    "ridge_symp_area_ordering_failure_count",
-    "ridge_symp_area_ordered_fraction",
+    "ridge_symp_area_le_1em3_over_volume_sqrt_fraction",
+    "ridge_symp_area_le_1em2_over_volume_sqrt_fraction",
+    "ridge_symp_area_le_1em1_over_volume_sqrt_fraction",
+    "ridge_symp_area_entropy",
+    "ridge_symp_area_effective_face_count",
+    "ridge_symp_area_normalized_entropy",
 )
 
 
@@ -76,8 +78,8 @@ def load_jsonl(path: Path) -> list[dict[str, Any]]:
                 continue
             if line_number == 1 and line.startswith("version https://git-lfs.github.com/spec/"):
                 raise SystemExit(
-                    f"{path} is a Git LFS pointer; hydrate retained experiment data with git lfs checkout/pull "
-                    "or pass a run-local tables directory"
+                    f"{path} is a Git LFS pointer; hydrate retained experiment data with "
+                    "git lfs checkout/pull or pass a run-local tables directory"
                 )
             row = json.loads(line)
             if not isinstance(row, dict):
@@ -93,8 +95,8 @@ def iter_jsonl(path: Path) -> Iterable[dict[str, Any]]:
                 continue
             if line_number == 1 and line.startswith("version https://git-lfs.github.com/spec/"):
                 raise SystemExit(
-                    f"{path} is a Git LFS pointer; hydrate retained experiment data with git lfs checkout/pull "
-                    "or pass a run-local tables directory"
+                    f"{path} is a Git LFS pointer; hydrate retained experiment data with "
+                    "git lfs checkout/pull or pass a run-local tables directory"
                 )
             row = json.loads(line)
             if not isinstance(row, dict):
@@ -202,64 +204,6 @@ def product_bucket(provenance_rows: list[dict[str, Any]]) -> str:
     return "unknown"
 
 
-def numeric_feature_names(
-    rows: list[dict[str, Any]],
-    *,
-    invariant_only: bool,
-    min_present_fraction: float = 0.98,
-) -> list[str]:
-    if invariant_only:
-        return active_invariant_numeric_feature_names(rows, min_present_fraction)
-
-    excluded = {
-        "sys",
-        "capacity",
-        "volume",
-    }
-    invariant_exact = {
-        "facet_count",
-        "vertex_count",
-        "edge_count",
-        "ridge_count",
-        "is_simple",
-        "simple_vertex_fraction",
-        "edge_density",
-    }
-    invariant_prefixes = (
-        "vertex_",
-        "ridge_size_",
-        "ridge_symp_area_",
-        "facet_vertex_count_",
-        "facet_neighbor_count_",
-    )
-    invariant_diagnostics = {
-        "ridge_symp_area_ordered_face_count",
-        "ridge_symp_area_ordering_failure_count",
-        "ridge_symp_area_ordered_fraction",
-    }
-    all_two_face_orders_succeeded = all(
-        float(row.get("ridge_symp_area_ordered_fraction", 1.0)) == 1.0 for row in rows
-    )
-    names: list[str] = []
-    threshold = max(1, int(len(rows) * min_present_fraction))
-    keys = sorted({key for row in rows for key in row})
-    for key in keys:
-        if key in excluded:
-            continue
-        if key in invariant_diagnostics:
-            continue
-        if key.startswith("ridge_symp_area_") and not all_two_face_orders_succeeded:
-            continue
-        present = 0
-        for row in rows:
-            value = row.get(key)
-            if isinstance(value, int | float) and value == value:
-                present += 1
-        if present >= threshold:
-            names.append(key)
-    return names
-
-
 def active_invariant_numeric_feature_names(
     rows: list[dict[str, Any]],
     min_present_fraction: float = 0.98,
@@ -286,7 +230,7 @@ def active_invariant_numeric_feature_names(
         present = 0
         for row in rows:
             value = row.get(key)
-            if isinstance(value, int | float) and value == value:
+            if isinstance(value, int | float) and np.isfinite(float(value)):
                 present += 1
         if present >= threshold:
             names.append(key)
@@ -306,6 +250,10 @@ def matrix_for(rows: list[dict[str, Any]], names: list[str]) -> list[list[float]
         values: list[float] = []
         for name in names:
             value = row.get(name)
-            values.append(float(value) if isinstance(value, int | float) else 0.0)
+            values.append(
+                float(value)
+                if isinstance(value, int | float) and np.isfinite(float(value))
+                else 0.0
+            )
         matrix.append(values)
     return matrix

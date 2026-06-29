@@ -22,9 +22,9 @@ from scipy import stats
 HERE = Path(__file__).resolve().parent
 sys.path.append(str(HERE.parent / "_shared"))
 from random_only import (  # noqa: E402
+    active_invariant_numeric_feature_names,
     dataset_label,
     load_trusted_random_tables,
-    numeric_feature_names,
     product_bucket,
     provenance_by_poly_id,
     write_json,
@@ -329,7 +329,7 @@ def main() -> None:
     intervals = {row["_meta"]["interval"] for row in rows}
     if len(intervals) < 2:
         raise SystemExit("need at least two height intervals for height-axis diagnostics")
-    features = numeric_feature_names(rows, invariant_only=True)
+    features = active_invariant_numeric_feature_names(rows)
 
     factor_rows = {
         "interval": rows,

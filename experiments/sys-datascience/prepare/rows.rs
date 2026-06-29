@@ -49,6 +49,12 @@ pub struct PolytopeTableRow {
     pub ridge_symp_area_sum_over_volume_sqrt: f64,
     pub ridge_symp_area_max_share: f64,
     pub ridge_symp_area_top3_share: f64,
+    pub ridge_symp_area_le_1em3_over_volume_sqrt_fraction: f64,
+    pub ridge_symp_area_le_1em2_over_volume_sqrt_fraction: f64,
+    pub ridge_symp_area_le_1em1_over_volume_sqrt_fraction: f64,
+    pub ridge_symp_area_entropy: f64,
+    pub ridge_symp_area_effective_face_count: f64,
+    pub ridge_symp_area_normalized_entropy: f64,
 }
 
 #[derive(Debug, Serialize)]
