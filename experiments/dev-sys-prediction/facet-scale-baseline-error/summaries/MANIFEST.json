@@ -1,0 +1,102 @@
+{
+  "artifacts": [
+    {
+      "bytes": 45968,
+      "expected_empty": false,
+      "jsonl_rows": 6,
+      "path": "polytope-panel.jsonl",
+      "sha256": "ace1355edb88baffa5c8d05f6eee9ad29472ef16e29c93e3e1e4c9d358f1a719"
+    },
+    {
+      "bytes": 10958,
+      "expected_empty": false,
+      "jsonl_rows": 18,
+      "path": "branch-diagnostic/branch-set-diagnostic.jsonl",
+      "sha256": "a9e80c8b2c40feae6b5919d061edcd9ba51e0a8459e0bd532331d6d16b1c9d11"
+    },
+    {
+      "bytes": 2383,
+      "expected_empty": false,
+      "jsonl_rows": 6,
+      "path": "branch-diagnostic/fixture-selection.jsonl",
+      "sha256": "716b5aef012e7f063f2c9f24a7b715cdc4ef0bb7d2c9a026fd847423349229a5"
+    },
+    {
+      "bytes": 2031,
+      "expected_empty": false,
+      "jsonl_rows": 6,
+      "path": "local-decomp-cloud/fixture-selection.jsonl",
+      "sha256": "3da6faa26aeb1f85e445f466b87ac22fd0f5983b559a7665c484cb5a9027e404"
+    },
+    {
+      "bytes": 109895,
+      "expected_empty": false,
+      "jsonl_rows": 112,
+      "path": "local-decomp-cloud/local-geometry-probe.jsonl",
+      "sha256": "50979b83bbd657af393f2d2078cb5eb23ee085e017d5b91450d03dcd6ba7a981"
+    },
+    {
+      "bytes": 0,
+      "expected_empty": true,
+      "jsonl_rows": 0,
+      "path": "local-decomp-cloud/prediction-cloud.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "expected_empty": true,
+      "jsonl_rows": 0,
+      "path": "local-decomp-cloud/run-trace.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "expected_empty": true,
+      "jsonl_rows": 0,
+      "path": "local-decomp-cloud/endpoint-diagnostic.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "expected_empty": true,
+      "jsonl_rows": 0,
+      "path": "local-decomp-cloud/endpoint-direction-scan.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 743,
+      "expected_empty": false,
+      "jsonl_rows": null,
+      "path": "summaries/panel-scale.csv",
+      "sha256": "92ccb5e88f2cf616da7b25ef0d62ae8e4aea8bc27b9202e80022b1b5d2b5e932"
+    },
+    {
+      "bytes": 461,
+      "expected_empty": false,
+      "jsonl_rows": null,
+      "path": "summaries/branch-window-by-facet.csv",
+      "sha256": "318a874f66c4634006510f15d3b9d81a3d507ecfd010270eb278dbba86cc29fd"
+    },
+    {
+      "bytes": 4009,
+      "expected_empty": false,
+      "jsonl_rows": null,
+      "path": "summaries/prediction-error-by-facet-step.csv",
+      "sha256": "ae10e1498fb8938946f82d04599840195ed867f800cab414963dd3db349afd56"
+    },
+    {
+      "bytes": 2452,
+      "expected_empty": false,
+      "jsonl_rows": null,
+      "path": "summaries/SUMMARY.md",
+      "sha256": "15f7d361027b0094ef52d79a647bfa643b1707f6de33e33b393bac421b9229ca"
+    },
+    {
+      "bytes": 5338,
+      "expected_empty": false,
+      "jsonl_rows": null,
+      "path": "summaries/prediction-error-by-radius.svg",
+      "sha256": "6182c27ccee552db6c206447c1aa24eca1539279efde505178384404aed5a71e"
+    }
+  ]
+}

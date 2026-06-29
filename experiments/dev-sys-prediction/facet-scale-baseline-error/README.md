@@ -112,7 +112,7 @@ cargo run -p exp-dev-sys-prediction --release --bin dev-sys-prediction-produce -
 Summarize:
 
 ```bash
-python3 experiments/dev-sys-prediction/facet-scale-baseline-error/summarize_panel.py \
+uv run --script experiments/dev-sys-prediction/facet-scale-baseline-error/summarize_panel.py \
   --branch-dir experiments/dev-sys-prediction/facet-scale-baseline-error/branch-diagnostic \
   --prediction-dir experiments/dev-sys-prediction/facet-scale-baseline-error/local-decomp-cloud \
   --out-dir experiments/dev-sys-prediction/facet-scale-baseline-error/summaries
@@ -122,11 +122,17 @@ python3 experiments/dev-sys-prediction/facet-scale-baseline-error/summarize_pane
 
 Generated tables:
 
+- `summaries/SUMMARY.md`: compact human/GPT-readable table of the current
+  scale, branch-window, and prediction-error patterns;
+- `summaries/MANIFEST.json`: row counts, byte sizes, SHA-256 hashes, and
+  expected-empty status for source and summary artifacts;
 - `summaries/branch-window-by-facet.csv`: branch-window size by facet count and
   threshold;
 - `summaries/prediction-error-by-facet-step.csv`: prediction error and
   target-winner visibility by facet count and radius;
 - `summaries/panel-scale.csv`: selected basepoint scale fields.
+- `summaries/prediction-error-by-radius.svg`: dependency-free audit plot of
+  median and max absolute prediction error against radius.
 
 When `--trace-iterations 0 --skip-endpoint-diagnostics` is used,
 `run-trace.jsonl`, `prediction-cloud.jsonl`, and endpoint JSONL files are

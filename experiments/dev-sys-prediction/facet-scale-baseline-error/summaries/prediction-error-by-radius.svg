@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="420" viewBox="0 0 760 420">
+<style>text{font-family:Arial,sans-serif;font-size:12px} .label{font-size:13px} .title{font-size:16px;font-weight:700}</style>
+<rect width="100%" height="100%" fill="white"/>
+<text class="title" x="72" y="22">Prediction error by radius</text>
+<line x1="72" y1="358" x2="732" y2="358" stroke="#333"/>
+<line x1="72" y1="32" x2="72" y2="358" stroke="#333"/>
+<line x1="72.0" y1="32" x2="72.0" y2="358" stroke="#eee"/>
+<text x="72.0" y="378" text-anchor="middle">0.0001</text>
+<line x1="338.4" y1="32" x2="338.4" y2="358" stroke="#eee"/>
+<text x="338.4" y="378" text-anchor="middle">0.001</text>
+<line x1="604.9" y1="32" x2="604.9" y2="358" stroke="#eee"/>
+<text x="604.9" y="378" text-anchor="middle">0.01</text>
+<line x1="732.0" y1="32" x2="732.0" y2="358" stroke="#eee"/>
+<text x="732.0" y="378" text-anchor="middle">0.03</text>
+<line x1="72" y1="358.0" x2="732" y2="358.0" stroke="#eee"/>
+<text x="64" y="362.0" text-anchor="end">1e-9</text>
+<line x1="72" y1="321.8" x2="732" y2="321.8" stroke="#eee"/>
+<text x="64" y="325.8" text-anchor="end">1e-8</text>
+<line x1="72" y1="285.6" x2="732" y2="285.6" stroke="#eee"/>
+<text x="64" y="289.6" text-anchor="end">1e-7</text>
+<line x1="72" y1="249.3" x2="732" y2="249.3" stroke="#eee"/>
+<text x="64" y="253.3" text-anchor="end">1e-6</text>
+<line x1="72" y1="213.1" x2="732" y2="213.1" stroke="#eee"/>
+<text x="64" y="217.1" text-anchor="end">1e-5</text>
+<line x1="72" y1="176.9" x2="732" y2="176.9" stroke="#eee"/>
+<text x="64" y="180.9" text-anchor="end">1e-4</text>
+<line x1="72" y1="140.7" x2="732" y2="140.7" stroke="#eee"/>
+<text x="64" y="144.7" text-anchor="end">1e-3</text>
+<line x1="72" y1="104.4" x2="732" y2="104.4" stroke="#eee"/>
+<text x="64" y="108.4" text-anchor="end">1e-2</text>
+<line x1="72" y1="68.2" x2="732" y2="68.2" stroke="#eee"/>
+<text x="64" y="72.2" text-anchor="end">1e-1</text>
+<line x1="72" y1="32.0" x2="732" y2="32.0" stroke="#eee"/>
+<text x="64" y="36.0" text-anchor="end">1e0</text>
+<polyline points="72.0,294.6 338.4,222.0 604.9,120.9 732.0,74.4" fill="none" stroke="#1f77b4" stroke-width="2.5"/>
+<polyline points="72.0,261.8 338.4,189.3 604.9,64.1 732.0,45.9" fill="none" stroke="#1f77b4" stroke-width="1.5" stroke-dasharray="5 4"/>
+<circle cx="72.0" cy="294.6" r="3" fill="#1f77b4"/>
+<circle cx="72.0" cy="261.8" r="2.5" fill="white" stroke="#1f77b4" stroke-width="1.5"/>
+<circle cx="338.4" cy="222.0" r="3" fill="#1f77b4"/>
+<circle cx="338.4" cy="189.3" r="2.5" fill="white" stroke="#1f77b4" stroke-width="1.5"/>
+<circle cx="604.9" cy="120.9" r="3" fill="#1f77b4"/>
+<circle cx="604.9" cy="64.1" r="2.5" fill="white" stroke="#1f77b4" stroke-width="1.5"/>
+<circle cx="732.0" cy="74.4" r="3" fill="#1f77b4"/>
+<circle cx="732.0" cy="45.9" r="2.5" fill="white" stroke="#1f77b4" stroke-width="1.5"/>
+<polyline points="72.0,295.7 338.4,254.3 604.9,195.1 732.0,161.1" fill="none" stroke="#d62728" stroke-width="2.5"/>
+<polyline points="72.0,292.9 338.4,220.5 604.9,136.2 732.0,88.9" fill="none" stroke="#d62728" stroke-width="1.5" stroke-dasharray="5 4"/>
+<circle cx="72.0" cy="295.7" r="3" fill="#d62728"/>
+<circle cx="72.0" cy="292.9" r="2.5" fill="white" stroke="#d62728" stroke-width="1.5"/>
+<circle cx="338.4" cy="254.3" r="3" fill="#d62728"/>
+<circle cx="338.4" cy="220.5" r="2.5" fill="white" stroke="#d62728" stroke-width="1.5"/>
+<circle cx="604.9" cy="195.1" r="3" fill="#d62728"/>
+<circle cx="604.9" cy="136.2" r="2.5" fill="white" stroke="#d62728" stroke-width="1.5"/>
+<circle cx="732.0" cy="161.1" r="3" fill="#d62728"/>
+<circle cx="732.0" cy="88.9" r="2.5" fill="white" stroke="#d62728" stroke-width="1.5"/>
+<polyline points="72.0,323.6 338.4,251.1 604.9,186.9 732.0,146.4" fill="none" stroke="#2ca02c" stroke-width="2.5"/>
+<polyline points="72.0,312.8 338.4,240.4 604.9,168.0 732.0,85.5" fill="none" stroke="#2ca02c" stroke-width="1.5" stroke-dasharray="5 4"/>
+<circle cx="72.0" cy="323.6" r="3" fill="#2ca02c"/>
+<circle cx="72.0" cy="312.8" r="2.5" fill="white" stroke="#2ca02c" stroke-width="1.5"/>
+<circle cx="338.4" cy="251.1" r="3" fill="#2ca02c"/>
+<circle cx="338.4" cy="240.4" r="2.5" fill="white" stroke="#2ca02c" stroke-width="1.5"/>
+<circle cx="604.9" cy="186.9" r="3" fill="#2ca02c"/>
+<circle cx="604.9" cy="168.0" r="2.5" fill="white" stroke="#2ca02c" stroke-width="1.5"/>
+<circle cx="732.0" cy="146.4" r="3" fill="#2ca02c"/>
+<circle cx="732.0" cy="85.5" r="2.5" fill="white" stroke="#2ca02c" stroke-width="1.5"/>
+<rect x="594" y="24" width="138" height="92" fill="white" stroke="#ddd"/>
+<line x1="602" y1="40" x2="626" y2="40" stroke="#1f77b4" stroke-width="2.5"/>
+<text x="634" y="44">F=6 median</text>
+<line x1="602" y1="60" x2="626" y2="60" stroke="#d62728" stroke-width="2.5"/>
+<text x="634" y="64">F=10 median</text>
+<line x1="602" y1="80" x2="626" y2="80" stroke="#2ca02c" stroke-width="2.5"/>
+<text x="634" y="84">F=12 median</text>
+<line x1="602" y1="104" x2="626" y2="104" stroke="#555" stroke-width="1.5" stroke-dasharray="5 4"/>
+<text x="634" y="108">max</text>
+<text class="label" x="402.0" y="402" text-anchor="middle">radius t</text>
+<text class="label" transform="translate(18 195.0) rotate(-90)" text-anchor="middle">absolute prediction error</text>
+<text x="72" y="416">Log-log; solid = median, dashed = max per (F,t).</text>
+</svg>
