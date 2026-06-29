@@ -113,11 +113,11 @@
       "sha256": "2fed1dcdf4803b01b7ec0f270e3a31ad4a9e23bb77a54fc5b5ddda6b77b4e441"
     },
     {
-      "bytes": 2359,
+      "bytes": 2897,
       "expected_empty": false,
       "jsonl_rows": null,
       "path": "summaries/SUMMARY.md",
-      "sha256": "57b71baaa725e6385b2c7fde279ab2a2b7a06247b8b98347e6a99b2d0039b2a7"
+      "sha256": "101ae58c10611845316cc00016c65c702748bc55a7004a4b6902daa4b970e503"
     },
     {
       "bytes": 5338,

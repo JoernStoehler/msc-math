@@ -462,6 +462,16 @@ branch diagnostic rows, and local finite-radius prediction rows.
 
 The CSV output also exposes the full decomposition into fixed-sigma
 linearization, inside-window branch-selection, and window-miss terms.
+
+Interpretation notes for this retained panel:
+
+- `median_inside_window` is zero in every `(F,t)` bucket: the predicted branch
+  is also the exact best branch inside the base candidate window on these rows.
+- `target_best_missed` is a membership diagnostic, not an effect size. Use
+  `window_miss` to measure the error contribution from missed target behavior.
+- `F=12` has frequent target-best membership misses but near-zero window-miss
+  at small radii, so those misses should not be read as large prediction
+  failures by themselves.
 """
     path.write_text(text)
 
