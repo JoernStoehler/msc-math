@@ -21,7 +21,7 @@ current schema and should be recovered from git history only for archaeology.
   edge density;
 - invariance status: exact face-lattice invariants, hence invariant under
   `Sp(4) x R_+ x R^4 x Perm(F)` as geometric polytope invariants;
-- active consumers: all random-only method packets through
+- active consumers: all trusted random/product method packets through
   `methods/_shared/random_only.py`.
 
 ### Symplectic Two-Face Area Invariants

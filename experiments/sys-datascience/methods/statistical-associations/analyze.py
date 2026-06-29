@@ -4,7 +4,7 @@
 # dependencies = ["numpy", "scipy"]
 # ///
 
-"""Random-only univariate association screening."""
+"""Trusted random/product univariate association screening."""
 
 from __future__ import annotations
 

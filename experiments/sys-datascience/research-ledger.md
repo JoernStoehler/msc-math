@@ -365,12 +365,12 @@ a useful active method surface. The active scan fits many SciPy continuous
 families to `logit(sys)` and transforms them back to `(0,1)`, recording fit
 failures instead of silently shrinking the family set.
 
-Data source for the current local large random-only table:
+Data source for the current local large random/product table:
 
 - `/workspaces/msc-math/experiments/sys-datascience/prepare`
 - `random_sample`: 4096 rows;
 - `random_product_sample`: 10240 rows;
-- total random-only rows: 14336.
+- total random/product rows: 14336.
 
 Command:
 

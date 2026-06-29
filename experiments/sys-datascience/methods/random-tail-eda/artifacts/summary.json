@@ -2264,7 +2264,7 @@
       "Which parameter families should be sampled if the goal is to increase tail mass near sys=1?"
     ],
     "pooled_tail_forecast_decision_grade": false,
-    "reason": "The retained random-only sample has no sys > 1 rows, max sys is about 0.137 below threshold, and the 99th percentile is about 0.248 below threshold. Tail extrapolations vary by orders of magnitude and are not decision-grade."
+    "reason": "The retained random/product sample has no sys > 1 rows, max sys is about 0.137 below threshold, and the 99th percentile is about 0.248 below threshold. Tail extrapolations vary by orders of magnitude and are not decision-grade."
   },
   "overall_distribution": {
     "gap_from_one_at_max": 0.13741410415056,

@@ -4,7 +4,7 @@
 # dependencies = ["numpy", "scikit-learn"]
 # ///
 
-"""Random-only held-out prediction and candidate-ranking checks."""
+"""Trusted random/product held-out prediction and candidate-ranking checks."""
 
 from __future__ import annotations
 

@@ -4,7 +4,7 @@
 # dependencies = ["matplotlib", "numpy"]
 # ///
 
-"""Random-only tail summaries and simple EDA plots."""
+"""Trusted random/product tail summaries and simple EDA plots."""
 
 from __future__ import annotations
 
@@ -318,7 +318,7 @@ def main() -> None:
         "interpretation": {
             "pooled_tail_forecast_decision_grade": False,
             "reason": (
-                "The retained random-only sample has no sys > 1 rows, max sys is "
+                "The retained random/product sample has no sys > 1 rows, max sys is "
                 "about 0.137 below threshold, and the 99th percentile is about "
                 "0.248 below threshold. Tail extrapolations vary by orders of "
                 "magnitude and are not decision-grade."

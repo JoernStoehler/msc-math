@@ -36,7 +36,7 @@ tested association features for the strongest rank association, categorical
 factor tests for source/provenance strata, and a bootstrap confidence interval
 for the random-product minus generic-random mean `sys` difference.
 
-Eligibility is defined by the shared random-only feature selector:
+Eligibility is defined by the shared trusted random/product feature selector:
 
 - include scalar numeric columns present as numeric values in at least `98%` of
   retained rows;

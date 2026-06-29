@@ -4,7 +4,7 @@
 # dependencies = ["numpy", "scikit-learn"]
 # ///
 
-"""Random-only high-tail rule-mining diagnostic."""
+"""Trusted random/product high-tail rule-mining diagnostic."""
 
 from __future__ import annotations
 

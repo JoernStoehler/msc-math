@@ -42,7 +42,7 @@ echo "  cpus:           ${SLURM_CPUS_PER_TASK:-unknown}"
 echo "  rayon threads:  $RAYON_NUM_THREADS"
 echo "  cargo target:   $CARGO_TARGET_DIR"
 echo "  prepare dir:    experiments/sys-datascience/prepare"
-echo "  mode:           random-only"
+echo "  mode:           random/product"
 echo
 
 cargo run -p exp-sys-landscape --release --bin sys-dataset -- \

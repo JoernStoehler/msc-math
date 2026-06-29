@@ -34,7 +34,7 @@ case "$MODE" in
 esac
 
 cd "$ROOT"
-echo "Building random-only sys-datascience prepare slice"
+echo "Building random/product sys-datascience prepare slice"
 echo "  mode:    $MODE"
 echo "  produce: $PRODUCE_DIR"
 echo "  out_dir: $OUT_DIR"

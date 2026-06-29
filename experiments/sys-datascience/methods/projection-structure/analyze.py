@@ -4,7 +4,7 @@
 # dependencies = ["matplotlib", "numpy", "scikit-learn"]
 # ///
 
-"""Random-only projection, clustering, and anomaly checks."""
+"""Trusted random/product projection, clustering, and anomaly checks."""
 
 from __future__ import annotations
 
