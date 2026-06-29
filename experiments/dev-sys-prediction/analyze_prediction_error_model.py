@@ -45,13 +45,22 @@ def error_source(row):
         if status and "construction_failed" in status:
             return "construction_or_domain_failure"
         return "non_ok_failure"
-    lin = row.get("decomposition_linearization_error")
-    sigma = row.get("decomposition_sigma_set_error")
-    if not finite(lin) or not finite(sigma):
+    fixed = first_present(row, "decomposition_fixed_sigma_linearization_error")
+    inside = first_present(row, "decomposition_inside_window_selection_error")
+    window = first_present(row, "decomposition_window_miss_error", "decomposition_sigma_set_error")
+    if not finite(window):
         return "unknown_decomposition"
-    if abs(sigma) > abs(lin):
-        return "sigma_window"
+    smooth = sum(abs(value) for value in [fixed, inside] if finite(value))
+    if abs(window) > smooth:
+        return "window_miss"
     return "smooth_linearization"
+
+
+def first_present(row, *keys):
+    for key in keys:
+        if row.get(key) is not None:
+            return row.get(key)
+    return None
 
 
 def safe_ratio(numerator, denominator, eps=1e-12):
@@ -70,7 +79,22 @@ def feature_row(row):
     total_error = row.get("decomposition_total_prediction_error")
     observed_delta = row.get("observed_delta_sys")
     predicted_delta = row.get("candidate_window_predicted_delta_sys")
+    direction_model_predicted_delta = first_present(
+        row, "direction_model_predicted_delta_sys", "predicted_delta_sys"
+    )
     predicted_gap_to_second = row.get("candidate_window_predicted_gap_to_second")
+    fixed_sigma_linearization = first_present(
+        row, "decomposition_fixed_sigma_linearization_error"
+    )
+    inside_window_selection = first_present(row, "decomposition_inside_window_selection_error")
+    window_miss = first_present(
+        row, "decomposition_window_miss_error", "decomposition_sigma_set_error"
+    )
+    capacity_linearization = first_present(row, "decomposition_capacity_linearization_error")
+    volume_linearization = first_present(row, "decomposition_volume_linearization_error")
+    capacity_volume_interaction = first_present(
+        row, "decomposition_capacity_volume_interaction_error"
+    )
     return {
         "poly_id": row.get("poly_id"),
         "degeneracy_label": row.get("degeneracy_label"),
@@ -82,6 +106,7 @@ def feature_row(row):
         "base_sys": row.get("base_sys"),
         "target_sys": row.get("target_sys"),
         "observed_delta_sys": observed_delta,
+        "direction_model_predicted_delta_sys": direction_model_predicted_delta,
         "candidate_window_predicted_delta_sys": predicted_delta,
         "prediction_error": total_error,
         "abs_prediction_error": abs_or_none(total_error),
@@ -89,6 +114,18 @@ def feature_row(row):
         "abs_relative_error_to_observed_delta": abs_or_none(safe_ratio(total_error, observed_delta)),
         "relative_error_to_base_sys": safe_ratio(total_error, row.get("base_sys")),
         "abs_relative_error_to_base_sys": abs_or_none(safe_ratio(total_error, row.get("base_sys"))),
+        "fixed_sigma_linearization_error": fixed_sigma_linearization,
+        "abs_fixed_sigma_linearization_error": abs_or_none(fixed_sigma_linearization),
+        "inside_window_selection_error": inside_window_selection,
+        "abs_inside_window_selection_error": abs_or_none(inside_window_selection),
+        "window_miss_error": window_miss,
+        "abs_window_miss_error": abs_or_none(window_miss),
+        "capacity_linearization_error": capacity_linearization,
+        "abs_capacity_linearization_error": abs_or_none(capacity_linearization),
+        "volume_linearization_error": volume_linearization,
+        "abs_volume_linearization_error": abs_or_none(volume_linearization),
+        "capacity_volume_interaction_error": capacity_volume_interaction,
+        "abs_capacity_volume_interaction_error": abs_or_none(capacity_volume_interaction),
         "linearization_error": row.get("decomposition_linearization_error"),
         "abs_linearization_error": abs_or_none(row.get("decomposition_linearization_error")),
         "sigma_set_error": row.get("decomposition_sigma_set_error"),
@@ -186,7 +223,7 @@ def summarize_group(rows, group_fields):
                     "construction_or_domain_failure"
                 ],
                 "smooth_linearization_rows": source_counts["smooth_linearization"],
-                "sigma_window_rows": source_counts["sigma_window"],
+                "window_miss_rows": source_counts["window_miss"],
                 "unknown_decomposition_rows": source_counts["unknown_decomposition"],
                 "median_abs_prediction_error": percentile(
                     [row.get("abs_prediction_error") for row in decomp_rows], 0.5
@@ -197,11 +234,23 @@ def summarize_group(rows, group_fields):
                 "max_abs_prediction_error": percentile(
                     [row.get("abs_prediction_error") for row in decomp_rows], 1.0
                 ),
-                "max_abs_linearization_error": percentile(
-                    [row.get("abs_linearization_error") for row in decomp_rows], 1.0
+                "max_abs_fixed_sigma_linearization_error": percentile(
+                    [row.get("abs_fixed_sigma_linearization_error") for row in decomp_rows], 1.0
                 ),
-                "max_abs_sigma_set_error": percentile(
-                    [row.get("abs_sigma_set_error") for row in decomp_rows], 1.0
+                "max_abs_inside_window_selection_error": percentile(
+                    [row.get("abs_inside_window_selection_error") for row in decomp_rows], 1.0
+                ),
+                "max_abs_window_miss_error": percentile(
+                    [row.get("abs_window_miss_error") for row in decomp_rows], 1.0
+                ),
+                "max_abs_capacity_linearization_error": percentile(
+                    [row.get("abs_capacity_linearization_error") for row in decomp_rows], 1.0
+                ),
+                "max_abs_volume_linearization_error": percentile(
+                    [row.get("abs_volume_linearization_error") for row in decomp_rows], 1.0
+                ),
+                "max_abs_capacity_volume_interaction_error": percentile(
+                    [row.get("abs_capacity_volume_interaction_error") for row in decomp_rows], 1.0
                 ),
                 "median_abs_relative_error_to_observed_delta": percentile(
                     [
@@ -287,8 +336,22 @@ def correlation_rows(rows):
     }
     targets = {
         "abs_prediction_error": [row.get("abs_prediction_error") for row in decomp],
-        "abs_linearization_error": [row.get("abs_linearization_error") for row in decomp],
-        "abs_sigma_set_error": [row.get("abs_sigma_set_error") for row in decomp],
+        "abs_fixed_sigma_linearization_error": [
+            row.get("abs_fixed_sigma_linearization_error") for row in decomp
+        ],
+        "abs_inside_window_selection_error": [
+            row.get("abs_inside_window_selection_error") for row in decomp
+        ],
+        "abs_window_miss_error": [row.get("abs_window_miss_error") for row in decomp],
+        "abs_capacity_linearization_error": [
+            row.get("abs_capacity_linearization_error") for row in decomp
+        ],
+        "abs_volume_linearization_error": [
+            row.get("abs_volume_linearization_error") for row in decomp
+        ],
+        "abs_capacity_volume_interaction_error": [
+            row.get("abs_capacity_volume_interaction_error") for row in decomp
+        ],
     }
     out = []
     for target_name, target_values in targets.items():
@@ -364,17 +427,17 @@ def main():
         ),
     }
     correlations = correlation_rows(rows)
-    sigma_cases = sorted(
+    window_miss_cases = sorted(
         [
             dict(row, rank=0)
             for row in rows
-            if row["source_class"] == "sigma_window"
-            and finite(row.get("abs_sigma_set_error"))
-            and row["abs_sigma_set_error"] > 1e-12
+            if row["source_class"] == "window_miss"
+            and finite(row.get("abs_window_miss_error"))
+            and row["abs_window_miss_error"] > 1e-12
         ],
-        key=lambda row: -(row.get("abs_sigma_set_error") or 0.0),
+        key=lambda row: -(row.get("abs_window_miss_error") or 0.0),
     )
-    for index, row in enumerate(sigma_cases, start=1):
+    for index, row in enumerate(window_miss_cases, start=1):
         row["rank"] = index
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
@@ -385,7 +448,7 @@ def main():
     for name, summary_rows in summaries.items():
         write_csv(args.out_dir / f"summary-{name.replace('_', '-')}.csv", summary_rows)
     write_csv(args.out_dir / "correlations.csv", correlations)
-    write_csv(args.out_dir / "sigma-window-dominated-cases.csv", sigma_cases)
+    write_csv(args.out_dir / "window-miss-dominated-cases.csv", window_miss_cases)
 
 if __name__ == "__main__":
     main()

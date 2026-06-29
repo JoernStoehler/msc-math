@@ -36,14 +36,24 @@ Common terms:
 - `t`: absolute Euclidean step length in flattened dual-vertex coordinates.
 - `candidate-window lower envelope`: the base-window model
   `min_sigma(gap_sigma(a0) + t D sys_sigma(a0)[u])`.
+- `candidate_window_predicted_delta_sys`: the predicted delta for this
+  lower-envelope model.
+- `direction_model_predicted_delta_sys`: the model used to propose the tested
+  direction; older rows call this `predicted_delta_sys`. Do not use it as the
+  candidate-window prediction unless the direction model was explicitly the
+  candidate-window model.
 - `total error`: predicted target `sys` from that lower-envelope model minus
   recomputed target `sys`.
-- `linearization error`: error from linearly approximating the fixed base
-  branch window at the target point.
-- `sigma-window error`: difference between the exact best `sys` inside the
+- `fixed-sigma linearization error`: error from linearly approximating the
+  predicted winning branch itself.
+- `inside-window selection error`: error from choosing the predicted winning
+  branch instead of the exact best branch inside the base candidate window.
+- `window-miss error`: difference between the exact best `sys` inside the
   base branch window and the recomputed target `sys`; nonzero values mean the
   base window missed the target behavior even if fixed-branch linearization was
   good.
+- `capacity/volume/interaction errors`: split the fixed-sigma linearization
+  error using `sys_sigma(a)=c_sigma(a)^2/(2 vol(a))`.
 - `target_best_not_in_base_window`: count of valid rows where the target
   minimizer was not among base candidate-window sigmas.
 - `target_best_base_sys_gap`: for visible target winners, how much larger the
@@ -143,7 +153,10 @@ small panel. The detailed counts and error magnitudes live in
 The dominant failure mode is not one monotone function of `F`. It depends on
 branch-window coverage and is confounded with degeneracy regime in this panel:
 selected `F=6` rows are large-gap, selected `F=10` rows high-degeneracy, and
-selected `F=12` rows narrow-gap.
+selected `F=12` rows narrow-gap. Older retained rows use
+`decomposition_linearization_error` for the sum of fixed-sigma linearization
+and inside-window branch-selection error; regenerated rows expose those terms
+separately.
 
 Statistical uncertainty:
 
@@ -168,7 +181,7 @@ For the next prediction-error-model sessions, use a shared absolute grid first:
 ```
 
 Use `3e-2` as a stress radius, not as the default local radius. It is useful for
-detecting target construction failures and sigma-window breakdown, but the
+detecting target construction failures and window-miss breakdown, but the
 selected panel already shows failures or large errors there.
 
 Record normalization columns with every later panel:

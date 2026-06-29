@@ -88,6 +88,26 @@ def flat_vertices(row):
     return [coord for vertex in row["dual_vertices_f64"] for coord in vertex]
 
 
+def first_present(row, *keys):
+    for key in keys:
+        if row.get(key) is not None:
+            return row.get(key)
+    return None
+
+
+def abs_first_present(row, *keys):
+    value = first_present(row, *keys)
+    return abs(value) if value is not None and math.isfinite(value) else None
+
+
+def abs_delta_between(row, predicted_key, observed_key, *fallback_predicted_keys):
+    predicted = first_present(row, predicted_key, *fallback_predicted_keys)
+    observed = row.get(observed_key)
+    if predicted is None or observed is None:
+        return None
+    return abs(predicted - observed)
+
+
 def scale_row(row):
     flat = flat_vertices(row)
     norm = math.sqrt(sum(x * x for x in flat))
@@ -169,6 +189,32 @@ def prediction_summary(prediction_dir, poly_id_to_facet):
             for row in ok
             if row.get("decomposition_linearization_error") is not None
         ]
+        fixed_abs = [
+            abs_first_present(row, "decomposition_fixed_sigma_linearization_error")
+            for row in ok
+        ]
+        inside_abs = [
+            abs_first_present(row, "decomposition_inside_window_selection_error")
+            for row in ok
+        ]
+        window_abs = [
+            abs_first_present(
+                row, "decomposition_window_miss_error", "decomposition_sigma_set_error"
+            )
+            for row in ok
+        ]
+        capacity_abs = [
+            abs_first_present(row, "decomposition_capacity_linearization_error")
+            for row in ok
+        ]
+        volume_abs = [
+            abs_first_present(row, "decomposition_volume_linearization_error")
+            for row in ok
+        ]
+        interaction_abs = [
+            abs_first_present(row, "decomposition_capacity_volume_interaction_error")
+            for row in ok
+        ]
         sigma_abs = [
             abs(row["decomposition_sigma_set_error"])
             for row in ok
@@ -180,10 +226,13 @@ def prediction_summary(prediction_dir, poly_id_to_facet):
             if row.get("fixed_winner_sys_error_full") is not None
         ]
         active_model_abs = [
-            abs(row["predicted_delta_sys"] - row["observed_delta_sys"])
+            abs_delta_between(
+                row,
+                "direction_model_predicted_delta_sys",
+                "observed_delta_sys",
+                "predicted_delta_sys",
+            )
             for row in ok
-            if row.get("predicted_delta_sys") is not None
-            and row.get("observed_delta_sys") is not None
         ]
         target_base_sys_gaps = [
             row.get("target_best_sigma_base_sys_gap")
@@ -215,6 +264,30 @@ def prediction_summary(prediction_dir, poly_id_to_facet):
                 "max_abs_total_error": max(total_abs, default=None),
                 "median_abs_active_model_error": median(active_model_abs),
                 "max_abs_active_model_error": max(active_model_abs, default=None),
+                "median_abs_fixed_sigma_linearization_error": median(fixed_abs),
+                "max_abs_fixed_sigma_linearization_error": max(
+                    [v for v in fixed_abs if v is not None], default=None
+                ),
+                "median_abs_inside_window_selection_error": median(inside_abs),
+                "max_abs_inside_window_selection_error": max(
+                    [v for v in inside_abs if v is not None], default=None
+                ),
+                "median_abs_window_miss_error": median(window_abs),
+                "max_abs_window_miss_error": max(
+                    [v for v in window_abs if v is not None], default=None
+                ),
+                "median_abs_capacity_linearization_error": median(capacity_abs),
+                "max_abs_capacity_linearization_error": max(
+                    [v for v in capacity_abs if v is not None], default=None
+                ),
+                "median_abs_volume_linearization_error": median(volume_abs),
+                "max_abs_volume_linearization_error": max(
+                    [v for v in volume_abs if v is not None], default=None
+                ),
+                "median_abs_capacity_volume_interaction_error": median(interaction_abs),
+                "max_abs_capacity_volume_interaction_error": max(
+                    [v for v in interaction_abs if v is not None], default=None
+                ),
                 "median_abs_linearization_error": median(linear_abs),
                 "max_abs_linearization_error": max(linear_abs, default=None),
                 "median_abs_sigma_set_error": median(sigma_abs),

@@ -16,14 +16,18 @@ optimizer policy should consume that forecast.
 The current motivating problem is branch switching near lower-dimensional
 cells. At a point `a0`, a branch can be inactive but close enough that a finite
 step crosses into a region where it becomes the minimum. A purely active-branch
-gradient model can miss this. A semi-local lower-envelope model keeps base
-branch gaps:
+gradient model can miss this. The checked calibration rows currently use the
+admissible candidate-window version of the semi-local lower-envelope model,
+which keeps base branch gaps:
 
 ```text
-sys(a0 + da) ~= min_sigma (sysext_sigma(a0) + <grad sysext_sigma(a0), da>)
+delta_model(d)
+  = min_sigma (sys_sigma(a0) - sys(a0) + <grad sys_sigma(a0), d>)
 ```
 
 where the candidate sigma set is a finite window around the current minimum.
+Raw `sysext_sigma` lower envelopes are related diagnostics, not the main
+checked calibration surface in the current facet-scale packet.
 
 ## Thesis Role
 
@@ -99,8 +103,9 @@ stay inside the current cell.
 The natural nonlinear fixed-window comparator is not a new model: evaluate the
 same base candidate sigmas at the target and take
 `min_sigma sys_sigma(a0 + d)`. The decomposition reports this as the
-base-window exact envelope; its remaining error against true `sys(a0 + d)` is
-exactly the sigma-window error.
+base-window exact envelope. Its remaining error against true `sys(a0 + d)` is
+the window-miss error: the amount explained by a target minimizer outside the
+base candidate window.
 
 ### Sysext Lower Envelope
 
@@ -134,12 +139,18 @@ target_best_sigma
 target_best_sigma_visible_in_base_near_active_set
 target_best_sigma_visible_in_base_candidate_window
 predicted best-versus-second lower-envelope gap
-model_error = actual_delta_sys - predicted_delta_lower_envelope
+model_error = predicted_delta_lower_envelope - actual_delta_sys
 ```
 
 Beta margins for the predicted winner and target winner are still desired
 future trace fields; they are not part of the current prediction-cloud row
 schema.
+
+In generated local-geometry rows, use
+`candidate_window_predicted_delta_sys` for this model. The
+`direction_model_predicted_delta_sys` field records whichever direction model
+was used to propose the row; the older alias `predicted_delta_sys` is retained
+for compatibility and should not be read as the candidate-window prediction.
 
 This answers whether current optimizer failures are direction-limited or
 step-radius-limited.

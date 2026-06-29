@@ -85,17 +85,17 @@ in the current panel to be an acceptance rule.
 The current decomposition supports an empirical error model:
 
 - at `t = 1e-3` on the checked high-degeneracy fixture, the full prediction
-  error was explained by fixed-branch linearization error; the base candidate
-  window still contained the target minimizer;
+  error was explained inside the base candidate window; the target minimizer
+  was still visible there;
 - at `t = 1e-2`, one tested direction had a much larger error dominated by
-  sigma-window loss: the exact envelope over the base candidate window was
+  window-miss loss: the exact envelope over the base candidate window was
   higher than the true target `sys`.
 
-So the optimizer should distinguish "Taylor error inside the known window" from
-"target winner outside the known window". The former argues for smaller steps
-or second-order correction; the latter argues for recomputing/expanding the
-branch window and treating the current radius as outside the single-anchor
-model's reliable region.
+So the optimizer should distinguish fixed-sigma Taylor error, exact branch
+selection inside the known window, and target winners outside the known window.
+The first argues for smaller steps or second-order correction; the last argues
+for recomputing/expanding the branch window and treating the current radius as
+outside the single-anchor model's reliable region.
 
 Large-step stress checks at `t = 1e-1` and `t = 1e0` reinforce this. By
 `t = 1e-1`, one tested direction already failed target polytope construction
@@ -122,8 +122,15 @@ Trace fields to record:
   settles which ones matter;
 - construction/domain failure reason with replay identifiers;
 - when running offline audits, the decomposition fields
-  `decomposition_linearization_error`, `decomposition_sigma_set_error`, and
-  `decomposition_sum_residual`.
+  `decomposition_fixed_sigma_linearization_error`,
+  `decomposition_inside_window_selection_error`,
+  `decomposition_window_miss_error`,
+  `decomposition_capacity_linearization_error`,
+  `decomposition_volume_linearization_error`,
+  `decomposition_capacity_volume_interaction_error`, and
+  `decomposition_sum_residual`. Older retained rows may only have the
+  compatibility aliases `decomposition_linearization_error` and
+  `decomposition_sigma_set_error`.
 
 ## Sysext Policy
 
