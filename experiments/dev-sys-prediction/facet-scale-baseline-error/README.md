@@ -8,6 +8,12 @@ how absolute flattened-coordinate radii compare across facet counts, and where
 the current lower-envelope linear prediction starts to fail on a small
 high-`sys` panel.
 
+The main checked panel remains the six-basepoint high-`sys` calibration panel.
+The `larger-random-panel/` directory is a follow-up comparison panel with
+`8` deterministic `random_sample` basepoints per facet count. It tests whether
+the headline error-decomposition pattern was only a tiny high-`sys` panel
+artifact.
+
 ## Scope
 
 Inputs:
@@ -149,6 +155,17 @@ The empty files are retained because the producer writes its standard artifact
 set even for local-only runs; deleting them would make the checked-in packet
 less faithful to regeneration.
 
+The larger comparison panel is reproduced by:
+
+```bash
+cargo run -p exp-dev-sys-prediction --release --bin dev-sys-prediction-panel -- \
+  --config experiments/dev-sys-prediction/facet-scale-baseline-error/larger-random-panel/config.json \
+  --out-dir experiments/dev-sys-prediction/facet-scale-baseline-error/larger-random-panel
+```
+
+Its retained `dataset-summary.json` reports `24` basepoints, `408` local probe
+rows, and about `725s` walltime on the local devcontainer run.
+
 ## Interpretation
 
 The useful calibration is qualitative. Median per-coordinate RMS is stable
@@ -169,6 +186,13 @@ selected `F=6` rows are large-gap, selected `F=10` rows high-degeneracy, and
 selected `F=12` rows narrow-gap. The retained local prediction rows expose the
 full decomposition into fixed-sigma linearization, inside-window branch
 selection, and window-miss terms.
+
+The larger random-sample comparison panel supports the mechanism-level part of
+this interpretation: the inside-window selection term stays zero in every
+`(F,t)` bucket, and nonzero window-miss effects appear only at the stress
+radius in a few rows. It does not reproduce the high-`sys` panel's extreme
+`F=6` stress-radius errors, so those should be treated as panel-specific tail
+events, not as a stable `F=6` claim.
 
 Statistical uncertainty:
 

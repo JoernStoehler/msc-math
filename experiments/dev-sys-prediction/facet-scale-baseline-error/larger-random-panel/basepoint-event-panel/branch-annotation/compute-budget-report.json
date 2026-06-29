@@ -1,0 +1,14 @@
+{
+  "command": "dev-gradient-ascent-branch-diagnostic",
+  "polytope_table": "/tmp/dev-sys-prediction-production-panel/basepoint-event-panel/basepoint-polytope-panel.jsonl",
+  "provenance_table": "/tmp/dev-sys-prediction-production-panel/basepoint-event-panel/basepoint-provenance-panel.jsonl",
+  "selected_rows": 24,
+  "thresholds_relative": [
+    0.01
+  ],
+  "max_action_gap_relative": 0.01,
+  "successful_recomputations": 24,
+  "failed_recomputations": 0,
+  "total_orbit_iterations": 67174,
+  "elapsed_ms": 34726.798840999996
+}

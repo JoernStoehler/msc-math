@@ -1,0 +1,4 @@
+facet_count,threshold_relative,rows,failures,median_returned_orbit_count,median_near_active_count,max_near_active_count,labels
+6,0.01,8,0,1,1,2,large_gap:6 narrow_gap:2
+10,0.01,8,0,1,1,1,large_gap:8
+12,0.01,8,0,1.5,1.5,2,large_gap:4 narrow_gap:4
