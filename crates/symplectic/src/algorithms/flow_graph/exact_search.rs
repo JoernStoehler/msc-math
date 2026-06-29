@@ -23,6 +23,9 @@ pub struct ExactFlowGraphSearchResult {
     pub checked_word_count: usize,
     pub empty_or_no_orbit_count: usize,
     pub action_cutoff_word_count: usize,
+    /// Execution metric only: how often the exact tube resolver intersected
+    /// a word domain with the active action cutoff.
+    pub action_cutoff_intersection_count: u64,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -50,6 +53,10 @@ pub enum ExactFlowGraphSearchError {
         singular_status: &'static str,
         min_action: Option<BigRational>,
         max_action: Option<BigRational>,
+    },
+    UnsupportedNonLengthThreeSingular {
+        sigma: Vec<usize>,
+        singular_status: &'static str,
     },
     NoPositiveOrbit {
         checked_word_count: usize,
@@ -81,6 +88,7 @@ pub fn search_closed_orbits_exact(
     let mut empty_or_no_orbit_count = 0usize;
     let mut checked_word_count = 0usize;
     let mut action_cutoff_word_count = 0usize;
+    let mut action_cutoff_intersection_count = 0u64;
     let mut search_error = None;
 
     for_each_sigma_pruned_by_transition(&transition_is_allowed, |sigma| {
@@ -101,12 +109,12 @@ pub fn search_closed_orbits_exact(
         if action_cutoff.is_some() {
             action_cutoff_word_count += 1;
         }
-        let outcome = match resolve_closed_word_exact_with_action_cutoff(
+        let (result, metrics) = match resolve_closed_word_exact_with_action_cutoff(
             input,
             sigma,
             action_cutoff.as_ref(),
         ) {
-            Ok((result, _metrics)) => result.outcome,
+            Ok((result, metrics)) => (result, metrics),
             Err(error) => {
                 search_error = Some(ExactFlowGraphSearchError::WordResolution {
                     sigma: sigma.to_vec(),
@@ -115,14 +123,35 @@ pub fn search_closed_orbits_exact(
                 return;
             }
         };
+        action_cutoff_intersection_count += metrics.action_cutoff_intersections;
+        let outcome = result.outcome;
         match outcome {
-            ExactClosedWordOutcome::EmptyTube
-            | ExactClosedWordOutcome::ZeroActionNoOrbit { .. }
-            | ExactClosedWordOutcome::NonStrictNoOrbit { .. } => {
+            ExactClosedWordOutcome::EmptyTube | ExactClosedWordOutcome::NonStrictNoOrbit { .. } => {
                 // These are exact no-orbit outcomes for the displayed strict
                 // word.  They are counted for diagnostics but do not weaken an
                 // earlier positive candidate.
                 empty_or_no_orbit_count += 1;
+            }
+            ExactClosedWordOutcome::ZeroActionNoOrbit {
+                singular_status: Some("length_three_zero_time"),
+                ..
+            }
+            | ExactClosedWordOutcome::ZeroActionNoOrbit {
+                singular_status: None,
+                ..
+            } => {
+                empty_or_no_orbit_count += 1;
+            }
+            ExactClosedWordOutcome::ZeroActionNoOrbit {
+                singular_status: Some(singular_status),
+                ..
+            } => {
+                search_error = Some(
+                    ExactFlowGraphSearchError::UnsupportedNonLengthThreeSingular {
+                        sigma: sigma.to_vec(),
+                        singular_status,
+                    },
+                );
             }
             ExactClosedWordOutcome::PositiveOrbit { action, .. } => {
                 if confirmed_best_action
@@ -179,6 +208,7 @@ pub fn search_closed_orbits_exact(
         checked_word_count,
         empty_or_no_orbit_count,
         action_cutoff_word_count,
+        action_cutoff_intersection_count,
     })
 }
 
@@ -208,6 +238,23 @@ fn validate_no_geometric_zero_omega_transition(
 }
 
 #[cfg(test)]
+fn exact_search_accepts_no_orbit_outcome(outcome: &ExactClosedWordOutcome) -> bool {
+    matches!(
+        outcome,
+        ExactClosedWordOutcome::EmptyTube
+            | ExactClosedWordOutcome::NonStrictNoOrbit { .. }
+            | ExactClosedWordOutcome::ZeroActionNoOrbit {
+                singular_status: None,
+                ..
+            }
+            | ExactClosedWordOutcome::ZeroActionNoOrbit {
+                singular_status: Some("length_three_zero_time"),
+                ..
+            }
+    )
+}
+
+#[cfg(test)]
 mod tests {
     use super::*;
     use crate::algorithms::flow_graph::exact_tube::ExactFlatTubeInput;
@@ -216,6 +263,24 @@ mod tests {
 
     fn q(n: i64) -> BigRational {
         BigRational::from_integer(n.into())
+    }
+
+    #[test]
+    fn exact_search_accepts_only_proved_singular_no_orbit_outcomes() {
+        assert!(exact_search_accepts_no_orbit_outcome(
+            &ExactClosedWordOutcome::ZeroActionNoOrbit {
+                action: Some(q(0)),
+                start_coords: None,
+                singular_status: Some("length_three_zero_time"),
+            }
+        ));
+        assert!(!exact_search_accepts_no_orbit_outcome(
+            &ExactClosedWordOutcome::ZeroActionNoOrbit {
+                action: Some(q(0)),
+                start_coords: None,
+                singular_status: Some("singular_fixed_line"),
+            }
+        ));
     }
 
     #[test]

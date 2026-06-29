@@ -827,6 +827,10 @@ fn solve_closed_tube(
     tube: &ExactTube,
     metrics: &mut ExactClosedTubeMetrics,
 ) -> ClosedClassification {
+    if let Some(classification) = solve_length_three_closed_tube(duals, tube, metrics) {
+        return classification;
+    }
+
     let m = &tube.start_to_end.matrix;
     let lhs = [
         [&m[0][0] - R::one(), m[0][1].clone()],
@@ -858,6 +862,80 @@ fn solve_closed_tube(
     } else {
         solve_singular_fixed_tube(tube, &lhs, &rhs, metrics)
     }
+}
+
+fn solve_length_three_closed_tube(
+    duals: &[Vec4],
+    tube: &ExactTube,
+    metrics: &mut ExactClosedTubeMetrics,
+) -> Option<ClosedClassification> {
+    if tube.sequence.len() != 5
+        || tube.sequence[0] != tube.sequence[3]
+        || tube.sequence[1] != tube.sequence[4]
+    {
+        return None;
+    }
+    let [i, j, k] = [tube.sequence[0], tube.sequence[1], tube.sequence[2]];
+    let [a_i, a_j, a_k] = [duals.get(i)?, duals.get(j)?, duals.get(k)?];
+    if !linear_independent3(a_i, a_j, a_k) {
+        return None;
+    }
+
+    // For a primitive closed word (i,j,k,i,j), fixed points satisfy
+    // tau_j a_j + tau_k a_k + tau_i a_i = 0.  Independence of the three
+    // normals forces all segment times to be zero, so the fixed set is the
+    // triple-facet intersection inside the start face and has zero action.
+    let facet_k_on_start = Halfspace {
+        normal: [
+            dot4(a_k, &tube.start_frame.u),
+            dot4(a_k, &tube.start_frame.v),
+        ],
+        rhs: R::one() - dot4(a_k, &tube.start_frame.base),
+    };
+    let fixed_polygon = match tube
+        .start_polygon
+        .intersect_halfspace(facet_k_on_start.clone(), metrics)
+    {
+        PolygonOutcome::Empty => return Some(ClosedClassification::EmptyTube),
+        PolygonOutcome::Nonempty(polygon) => polygon,
+    };
+    let fixed_polygon = match fixed_polygon.intersect_halfspace(
+        Halfspace {
+            normal: [
+                -facet_k_on_start.normal[0].clone(),
+                -facet_k_on_start.normal[1].clone(),
+            ],
+            rhs: -facet_k_on_start.rhs,
+        },
+        metrics,
+    ) {
+        PolygonOutcome::Empty => return Some(ClosedClassification::EmptyTube),
+        PolygonOutcome::Nonempty(polygon) => polygon,
+    };
+    if fixed_polygon.vertices(metrics).is_empty() {
+        return Some(ClosedClassification::EmptyTube);
+    }
+    Some(ClosedClassification::ZeroActionNoOrbit {
+        action: Some(R::zero()),
+        point: None,
+        singular_status: Some("length_three_zero_time"),
+    })
+}
+
+fn linear_independent3(a: &Vec4, b: &Vec4, c: &Vec4) -> bool {
+    for r in 0..4 {
+        for s in (r + 1)..4 {
+            for t in (s + 1)..4 {
+                let det = &a[r] * (&b[s] * &c[t] - &b[t] * &c[s])
+                    - &a[s] * (&b[r] * &c[t] - &b[t] * &c[r])
+                    + &a[t] * (&b[r] * &c[s] - &b[s] * &c[r]);
+                if !det.is_zero() {
+                    return true;
+                }
+            }
+        }
+    }
+    false
 }
 
 fn all_segment_times_are_positive(
@@ -899,10 +977,9 @@ fn solve_singular_fixed_tube(
 ) -> ClosedClassification {
     // Slow exact callers use this branch to understand singular fixed-point
     // equations, not to turn singular cases into certified capacity values.
-    // The theorem-facing finite-orbit-regular route may reject singular fixed
-    // maps before this point.  This diagnostic branch is kept because exact
-    // resolution of f64 error words and exact development checks need to
-    // distinguish:
+    // Length-three structural zero-time cases are handled before this generic
+    // singular branch.  The remaining branch is kept because exact resolution
+    // of f64 error words and exact development checks need to distinguish:
     // - no fixed points in the searched domain;
     // - singular fixed sets whose action is everywhere nonpositive;
     // - singular fixed sets containing positive-action closed candidates.
@@ -1374,6 +1451,23 @@ mod tests {
     }
 
     #[test]
+    fn length_three_closed_word_is_zero_time_no_orbit() {
+        let case = deterministic_random_exact_case(5, 60);
+        let (result, _) = resolve_closed_word_exact(&case.input(), &[0, 2, 4]).unwrap();
+
+        match result.outcome {
+            ExactClosedWordOutcome::ZeroActionNoOrbit {
+                action,
+                singular_status: Some("length_three_zero_time"),
+                ..
+            } => {
+                assert_eq!(action, Some(BigRational::zero()));
+            }
+            other => panic!("expected length-three zero-time no-orbit, got {other:?}"),
+        }
+    }
+
+    #[test]
     fn exact_closed_word_empty_when_same_sigma_qp_has_critical_point_f6_attempt3() {
         let case = deterministic_random_exact_case(6, 3);
         let (result, _) = resolve_closed_word_exact(&case.input(), &[1, 5, 2, 4, 3]).unwrap();
@@ -1442,6 +1536,42 @@ mod tests {
         assert!(matches!(
             solve_closed_tube(&duals, &tube, &mut metrics),
             ClosedClassification::NonStrictNoOrbit { .. }
+        ));
+    }
+
+    #[test]
+    fn exact_singular_positive_fixed_set_is_unsupported() {
+        let mut metrics = ExactClosedTubeMetrics::default();
+        let frame = FaceFrame {
+            first: 0,
+            second: 1,
+            base: [r(0), r(0), r(0), r(0)],
+            u: [r(1), r(0), r(0), r(0)],
+            v: [r(0), r(1), r(0), r(0)],
+            free: [0, 1],
+        };
+        let tube = ExactTube {
+            sequence: vec![0, 1, 0],
+            start_frame: frame.clone(),
+            end_frame: frame,
+            start_polygon: unit_square(&mut metrics),
+            start_to_end: Affine2 {
+                matrix: [[r(1), r(0)], [r(0), r(1)]],
+                offset: [r(0), r(0)],
+            },
+            action_on_start: AffineScalar {
+                coeff: [r(0), r(0)],
+                constant: r(1),
+            },
+        };
+
+        assert!(matches!(
+            solve_closed_tube(&[], &tube, &mut metrics),
+            ClosedClassification::UnsupportedPositiveSingular {
+                singular_status: "singular_all_points",
+                min_action,
+                max_action,
+            } if min_action == Some(r(1)) && max_action == Some(r(1))
         ));
     }
 
@@ -1544,6 +1674,8 @@ mod tests {
         assert_eq!(cutoff.orbits, baseline.orbits);
         assert_eq!(cutoff.checked_word_count, baseline.checked_word_count);
         assert_eq!(baseline.action_cutoff_word_count, 0);
+        assert_eq!(baseline.action_cutoff_intersection_count, 0);
         assert!(cutoff.action_cutoff_word_count > 0);
+        assert!(cutoff.action_cutoff_intersection_count > 0);
     }
 }

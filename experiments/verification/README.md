@@ -35,6 +35,15 @@ The verification package is organized into three roles:
   cross-checks minimum-action values against `ehz_capacity`.
 - `orbit-recovery/`: validates those trusted rows with KKT rebuild and `recover_and_verify`, checking
   closure, facet adherence, inside-`K` compliance, and action error.
+- `flow-graph-proof-risk/`: records public-output falsifier rows for the exact
+  flow-graph proof-risk ledger. It compares exact FG capacity and retained
+  words against current exact HK/QP aggregation and direct exact closed-word
+  resolution, checks cutoff-enabled versus cutoff-disabled exact search output,
+  checks that a retained positive word resolves directly, and checks that known
+  zero-omega fixtures are rejected rather than accepted. It also replays a
+  structural hypercube word whose exact singular positive fixed set must be
+  typed unsupported rather than accepted as a capacity output. Private tube
+  semantics beyond those public outcomes remain crate-local checks.
 
 Canonical evidence packets currently tracked in checked-in sources are:
 
@@ -42,6 +51,9 @@ Canonical evidence packets currently tracked in checked-in sources are:
 - `experiments/verification/all-minimum/main.rs` plus `all-minimum.jsonl` and
   `all-minimum-orbits.jsonl` for canonical minimum rows.
 - `experiments/verification/orbit-recovery/main.rs` plus `orbit-recovery*.jsonl` for reconstruction checks.
+- `experiments/verification/flow-graph-proof-risk/main.rs`, which produces
+  mode-specific `flow-graph-proof-risk/*.jsonl` outputs for exact flow-graph
+  proof-risk falsifiers.
 
 Canonical all-minimum and orbit-recovery runs reported:
 
@@ -54,6 +66,14 @@ Canonical all-minimum and orbit-recovery runs reported:
 
 - `all-minimum` is the generator of trusted minima, not a full geometric ground-truth verifier.
 - `orbit-recovery` is the geometric validator for those trusted minima.
+- `flow-graph-proof-risk` is an executable test suite that writes JSONL rows
+  keyed by `claim_id` and `check_id`. Passing rows are evidence and regression
+  falsifiers only. They do not prove tube semantics, do not certify that the
+  finite FG search domain is complete for all capacity minimizers, and do not
+  turn cutoff execution metrics into lower-bound certificates. Positive-action
+  singular fixed-set rejection is checked both by crate-local exact-tube tests
+  and by a public-output replay on a structural hypercube fixture; this is not
+  evidence that random generated polytopes should hit exact singularity.
 - The trust boundary is explicit: algorithm changes to shared solver code should refresh both
   `all-minimum` and `orbit-recovery` outputs before cached claims are reused.
 - After data refreshes, `correctness` remains the package-level property gate for
@@ -128,6 +148,14 @@ Canonical all-minimum and orbit-recovery runs reported:
 - `axioms-orbit-recovery` defaults to smoke mode. It consumes
   `all-minimum/smoke-all-minimum-orbits.jsonl` and writes the smoke recovery
   outputs. Use `--full` only after the full all-minimum outputs are current.
+- `flow-graph-proof-risk` defaults to smoke mode and writes
+  `flow-graph-proof-risk/smoke-flow-graph-proof-risk.jsonl`. Smoke mode checks
+  deterministic exact-admissible generated cases `F5` attempt `60` and `F6`
+  attempt `3`, current zero-omega rejection fixtures, the structural hypercube
+  positive-singular rejection row, a structural length-three zero-time row, and
+  direct F7 closed-word edge rows that do not require exhaustive F7 search. Use
+  `-- --full` to also run exhaustive `F7` attempt `31` search and write
+  `flow-graph-proof-risk/flow-graph-proof-risk.jsonl`.
 - `experiments/verification/sage/README.md` documents Sage validation helpers.
 
 Tracked JSONL files in this package are evidence artifacts. Use `--help`,

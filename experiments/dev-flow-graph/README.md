@@ -92,6 +92,47 @@ uv run --script experiments/dev-flow-graph/visualize-tube/render.py --input /tmp
 - `visualize-tube/`: Rust JSON producer plus Python matplotlib renderer for
   tube-debugging and future thesis figures.
 
+## Current Analysis Notes
+
+### Exact singular fixed-set boundary
+
+Current question: whether theorem-facing exact flow-graph search needs a
+general lemma for nonpositive-action singular fixed sets, or whether the
+ordinary generated singularities are a smaller structural class.
+
+Scratch scan command used a temporary Rust probe over the modern exact resolver:
+generated polytopes from `MASTER_SEED=20260605`, `H_MIN=0.5`, `H_MAX=2.0`,
+transition-pruned exact closed words, bucketed by word length and exact
+resolver outcome.
+
+Observed selected cases:
+
+- `F5` attempts `60`, `73`, `77`: every length-three nonempty word resolved as
+  `length_three_zero_time`; length-four no-orbit words were regular; length-five
+  words contained the positive orbit or empty tubes.
+- `F6` attempt `3`: same pattern, plus length-six empty words.
+- `F7` attempt `31`: length-three had 8 `length_three_zero_time` and 3 empty
+  words; longer words had regular zero no-orbits, positives, or empty tubes.
+- first 25 valid generated `F5` attempts scanned through attempt `429`:
+  `len=3`: 101 `length_three_zero_time`; `len=4`: 88 regular zero no-orbits;
+  `len=5`: 25 positive and 21 empty; zero other singular statuses and zero
+  positive singular statuses.
+
+Interpretation:
+
+- Rejecting every singular fixed map is too strong: ordinary generated cases
+  routinely contain structural length-three zero-time fixed lines.
+- After splitting out the length-three zero-time lemma, the sampled generated
+  cases showed no remaining nonpositive singular fixed-set statuses.
+- The theorem-facing exact search therefore accepts only the proved
+  `length_three_zero_time` singular no-orbit class, rejects positive-action
+  singular fixed sets, and rejects any other singular no-orbit status until a
+  broader lemma is actually needed.
+- Stable regression evidence was promoted to
+  `experiments/verification/flow-graph-proof-risk`: rows
+  `length_three_word_is_zero_time_no_orbit` and
+  `positive_singular_word_is_typed_unsupported`.
+
 ## Promotion Ledger
 
 Treat this table as a routing ledger, not as a statement that evidence has

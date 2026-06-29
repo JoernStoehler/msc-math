@@ -120,7 +120,8 @@ prose.  The current ordered blocking tasks are:
     Prove or explicitly assume the semantic resolver contract in
     Definition~\ref{def:flow-graph-closed-word-resolver}.  This includes
     primitive tube soundness (FG-PR-1), tube concatenation (FG-PR-2), and
-    fixed-point-to-orbit soundness (FG-PR-3).
+    fixed-point-to-orbit soundness (FG-PR-3), including the rejection boundary
+    for positive-action singular fixed sets.
   \item[Third: completeness bridge.]
     Split FG-PR-4 into its subclaims: HK2017 simple minimizer, existence of a
     word~$\sigma_*\in D_K$ with a closed-word realization whose associated
@@ -148,9 +149,12 @@ cases and certification obligations, but it does not prove that the Rust exact
 wrapper satisfies them on a broad input class.  The remaining work is to turn
 the exact input hypotheses, finite search domain~$D_K$, zero-transition
 rejection, singular fixed-set rejection, cutoff certificates, and f64 fallback
-boundary into checked lemmas or explicit thesis assumptions.  Until then,
-future thesis prose should not replace these hypotheses by the phrase
-``supported scope''.
+boundary into checked lemmas or explicit thesis assumptions.  The current
+verification packet contains a structural hypercube replay for positive-action
+singular rejection, but that is a regression falsifier for the code boundary,
+not a proof that generic generated polytopes exercise the singular stratum.
+Until then, future thesis prose should not replace these hypotheses by the
+phrase ``supported scope''.
 \end{remark}
 \end{unverified}
 
@@ -244,7 +248,10 @@ with the returned action, after the zero-time boundary has been handled by
 compression, rejection, or a separate exact certificate.  Empty tubes,
 zero-action no-orbits, zero-time records outside the accepted boundary, and
 positive-action singular fixed sets are not silently converted into capacity
-values.
+values.  The current exact search boundary accepts the structural
+length-three zero-time case from Lemma~\ref{lem:fg-length-three-zero-time} as a
+no-orbit outcome, but treats other singular no-orbit statuses as unsupported
+unless a separate lemma covers them.
 
 \textbf{Why it matters.}  This is the most direct route to minimum-action
 soundness in the abstract axioms.
@@ -254,12 +261,67 @@ piecewise-affine breakpoints for known positive exact closed words and check
 closure, on-facet conditions, inside-$K$ inequalities, segment times, and
 action.  The selected deterministic capacity-word tests require strict
 positive segment times, while more general tube-semantic checks use the
-implementation's nonnegative tube convention.  Current durable evidence is
-crate-local and development-local; a future verification packet should record
-public-output rows for positive exact action agreement, zero-action no-orbits,
-cutoff agreement, and unsupported zero-$\omega_0$ rejection if those rows are
-needed by retained thesis prose.
+implementation's nonnegative tube convention.  Lemma
+\ref{lem:fg-length-three-zero-time} explains the structural zero-action
+length-three singular fixed lines seen in generated cases.  A crate-local
+classifier test checks that a singular fixed set with positive action is typed
+as unsupported rather than accepted.  The verification packet
+\texttt{experiments/verification/flow-graph-proof-risk} records public-output
+rows for positive exact action agreement, zero-action no-orbits, and
+unsupported zero-$\omega_0$ rejection.  It also replays the hypercube word
+\texttt{[0,4,1,5]}, whose exact outcome is a positive-action singular fixed
+set typed as unsupported.  These rows are not independent geometric
+reconstructions.
 \end{remark}
+\end{unverified}
+
+\begin{unverified}
+\begin{lemma}[Length-three closed words have only zero-time fixed points]%
+\label{lem:fg-length-three-zero-time}
+\textbf{Status:} high-belief-unproved.
+
+Let \(K\subset \mathbb{R}^4\) be described by facet covectors
+\(a_r\) with facets \(H_r=\{x\mid \langle a_r,x\rangle=1\}\).
+Consider a primitive closed flow-graph word
+\[
+  (i,j,k,i,j)
+\]
+whose three primitive transitions are defined by the exact tube
+construction, and assume that \(a_i,a_j,a_k\) are linearly independent.
+Then every fixed point of the composed closed tube has zero time on all
+three segments.  The fixed set, if nonempty, is the part of
+\[
+  H_i\cap H_j\cap H_k\cap K
+\]
+inside the start face \(H_i\cap H_j\).  In particular its action is
+identically zero, so this length-three word contributes no positive-action
+closed Reeb orbit for the displayed strict word.
+
+\begin{proof}
+Let \(x\in H_i\cap H_j\) be a fixed point of the closed tube.  Write the
+three segment times for the flows along facets \(j,k,i\) as
+\(\tau_j,\tau_k,\tau_i\geq 0\).  With the flow-graph convention used by the
+exact implementation, the Reeb direction on facet \(r\) is \(2Ja_r\).  The
+fixed-point equation is therefore
+\[
+  x+2\tau_jJa_j+2\tau_kJa_k+2\tau_iJa_i=x .
+\]
+Since \(J\) is invertible, this is equivalent to
+\[
+  \tau_j a_j+\tau_k a_k+\tau_i a_i=0 .
+\]
+The linear independence of \(a_i,a_j,a_k\) gives
+\(\tau_i=\tau_j=\tau_k=0\).
+
+If all three segment times are zero, each primitive next-facet condition says
+that the same point already lies on the next facet.  Thus a fixed point lies
+in \(H_i\cap H_j\cap H_k\cap K\).  Conversely, any point of this triple
+facet intersection that lies in the closed tube domain satisfies all three
+next-facet equations with zero time and is fixed by the composed map.  The
+action is the sum of the three segment times, hence it is \(0\) on the whole
+fixed set.
+\end{proof}
+\end{lemma}
 \end{unverified}
 
 \begin{unverified}
@@ -359,9 +421,10 @@ Use three homes for falsifiers.
   \item Fast crate tests under
     \texttt{crates/symplectic/src/algorithms/flow\_graph/} own checks that need
     private tube internals.
-  \item A future \texttt{experiments/verification/flow-graph-proof-risk}
-    packet may own durable public-output JSONL rows keyed by
-    \texttt{claim\_id}.  No such packet is ported in this salvage commit.
+  \item \texttt{experiments/verification/flow-graph-proof-risk} owns
+    public-output JSONL rows keyed by \texttt{claim\_id}.  These rows compare
+    exact search outputs against exact resolver and certified HK2017/QP outputs;
+    they do not inspect private tube internals.
   \item \texttt{experiments/dev-flow-graph/} owns f64 failure taxonomy,
     discovery, and visualization while those questions still move with the FG
     algorithm design.
@@ -380,17 +443,21 @@ The current falsifiers do not cover all proof-risk claims equally.
     target is named in Claim FG-PR-2 above.  No durable public JSONL row by
     design.
   \item[FG-PR-3.]
-    Evidence homes: crate-local reconstruction tests and development-local
-    exact-resolution checks.  A promoted verification packet should distinguish
-    resolver consistency rows from independent geometric reconstruction rows.
+    Evidence homes: crate-local reconstruction and classifier tests, plus
+    public verification rows for retained positive words, zero-action no-orbits,
+    zero-\(\omega_0\) rejection, structural length-three zero-time no-orbits,
+    and structural hypercube positive-singular rejection.  The public
+    positive-word row is resolver consistency evidence, not an independent
+    geometric reconstruction.
   \item[FG-PR-4.]
-    Evidence home: crate and development checks comparing exact FG capacity
-    with certified QP capacity on deterministic F5/F6 smoke cases and F7
-    full-mode confirmation.  These checks concern scalar capacity agreement,
-    not word semantics.
+    Evidence home: public verification rows comparing exact FG capacity with
+    certified QP capacity on deterministic F5/F6 smoke cases and F7 full-mode
+    confirmation.  These checks concern scalar capacity agreement, not word
+    semantics.
   \item[FG-PR-5.]
-    Evidence home: crate and development checks comparing exact cutoff search
-    with exact search without cutoffs.  Cutoff counters only show that cutoff
+    Evidence home: public verification rows comparing exact retained-word
+    output with direct exact resolution and comparing exact cutoff search with
+    exact search without cutoffs.  Cutoff counters only show that cutoff
     intersections occurred; they are not lower-bound certificates.
   \item[FG-PR-6.]
     Evidence home: \texttt{experiments/dev-flow-graph}.  No durable

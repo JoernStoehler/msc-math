@@ -143,34 +143,32 @@ Path-specific outcome contract:
   segment time to be strictly positive; zero-time boundary fixed points are not
   accepted as positive orbits for the displayed word.
 - Exact rejection reasons currently known are: invalid input shapes, a
-  nonempty directed facet-pair candidate with `omega_0 = 0`, and a singular
-  fixed set with a positive-action closed candidate. If exhaustive exact search
-  finishes without finding any positive orbit, that is also returned as a typed
-  non-success instead of a panic. Full bounded-irredundant validation is not
-  part of this rejection boundary.
+  nonempty directed facet-pair candidate with `omega_0 = 0`, a singular fixed
+  set with a positive-action closed candidate, and any non-length-three
+  singular no-orbit outcome not covered by the structural zero-time lemma. If
+  exhaustive exact search finishes without finding any positive orbit, that is
+  also returned as a typed non-success instead of a panic. Full
+  bounded-irredundant validation is not part of this rejection boundary.
 - The exact closed-word implementation is not a literal copy of the singular
   branch in the active idealized algorithm. It solves nonsingular fixed-point
-  equations exactly. On the uncut tube, or on the tube remaining after an
-  action cutoff, it classifies singular fixed-point sets exactly, accepts
-  nonpositive-action singular fixed sets as no-orbit outcomes, and rejects
-  singular fixed sets with positive-action closed candidates as unsupported.
+  equations exactly. Length-three closed words with independent facet normals
+  are handled as structural zero-time no-orbit cases. On the uncut tube, or on
+  the tube remaining after an action cutoff, the remaining singular branch
+  classifies fixed-point sets exactly, accepts nonpositive-action singular
+  fixed sets as no-orbit outcomes, and rejects singular fixed sets with
+  positive-action closed candidates as unsupported.
 - The singular fixed-set classifier entered with the initial flow-graph work
   surface and serves two recorded purposes: singular fixed sets with
   positive-action closed candidates are explicit non-success outcomes, and the
   f64 wrapper and unresolved-diagnostic experiment use exact closed-word
   resolution to classify near-singular f64 closed-word errors. This is not, by
   itself, proof coverage for a theorem-level exact capacity claim.
-- Current options for the theorem/runtime boundary are:
-  1. keep the classifier for diagnostics and f64 exact-resolution behavior, and
-     add a theorem-facing exact wrapper that rejects singular fixed maps;
-  2. review the nonpositive-action singular fixed-set lemma and the
-     cutoff-local classifier correspondence, then include that branch in the
-     implementation theorem;
-  3. change the exact resolver itself to reject all singular fixed maps, after
-     replacing the diagnostic/f64 behavior that currently depends on the
-     classifier.
-  Option 1 is the lowest-risk next implementation boundary. Option 2 is the
-  proof-improvement path. Option 3 is a behavior change, not cleanup.
+- Current theorem/runtime boundary direction: do not reject all singular fixed
+  maps. Deterministic generated polytopes routinely contain length-three
+  zero-time singular fixed lines. Exact search accepts that proved structural
+  case as no-orbit, rejects positive-action singular fixed sets, and rejects
+  any remaining singular no-orbit status until a broader nonpositive-singular
+  lemma is proved.
 - f64 accepted output has approximate actions and may include words accepted by
   f64 predicates directly. It is not covered by the exact strict segment-time
   contract unless the specific word is also resolved by exact closed-tube

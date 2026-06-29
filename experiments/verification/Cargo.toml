@@ -18,6 +18,10 @@ path = "orbit-recovery/main.rs"
 name = "axioms-all-minimum"
 path = "all-minimum/main.rs"
 
+[[bin]]
+name = "flow-graph-proof-risk"
+path = "flow-graph-proof-risk/main.rs"
+
 [lints]
 workspace = true
 
