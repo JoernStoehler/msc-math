@@ -135,7 +135,7 @@ uv run --script experiments/sys-datascience/methods/prediction-ranking/analyze.p
 After reruns, update:
 
 - affected method packet READMEs;
-- `methods/random-only-closure-summary.md`;
-- `methods/random-only-method-dispositions.md`;
+- `methods/trusted-random-product-closure-summary.md`;
+- `methods/trusted-random-product-method-dispositions.md`;
 - `feature-space-coverage-ledger.md`;
 - review records for the method/statistics and thesis-claim gates.

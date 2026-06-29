@@ -1,4 +1,4 @@
-# Random-Only Method Dispositions
+# Trusted Random/Product Method Dispositions
 
 Purpose: disposition ledger for active checklist families scoped to trusted
 random/product rows. This is not a replacement for method packet READMEs or

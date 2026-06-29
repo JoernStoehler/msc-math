@@ -46,13 +46,12 @@ negative and descriptive claims are tied to the actual sampling distributions.
 uv run --script experiments/sys-datascience/methods/random-tail-eda/analyze.py
 ```
 
-## Generated Artifacts After Rerun
+## Retained Artifacts
 
 - `artifacts/summary.json`
-- `artifacts/sys-histogram.png`
-- `artifacts/sys-tail.png`
-- `artifacts/generic-by-f.png`
-- `artifacts/product-by-bucket.png`
+
+The script can generate diagnostic plots during reruns, but only the compact
+JSON summary is retained in git for the current packet.
 
 ## Observation
 

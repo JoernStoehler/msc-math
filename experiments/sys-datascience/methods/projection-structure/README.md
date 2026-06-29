@@ -24,10 +24,12 @@ source stratification, not invariant features used to construct the projection.
 uv run --script experiments/sys-datascience/methods/projection-structure/analyze.py
 ```
 
-## Generated Artifacts After Rerun
+## Retained Artifacts
 
 - `artifacts/summary.json`
-- `artifacts/pca-sys.png`
+
+The script can generate diagnostic plots during reruns, but only the compact
+JSON summary is retained in git for the current packet.
 
 ## Observation
 

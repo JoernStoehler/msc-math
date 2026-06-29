@@ -1,4 +1,4 @@
-# Random-Only Method Closure Summary
+# Trusted Random/Product Method Closure Summary
 
 Purpose: current cross-method dashboard for the trusted random/product
 `sys` datascience slice. This is a navigation and disposition summary, not an

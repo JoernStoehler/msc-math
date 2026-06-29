@@ -7,8 +7,8 @@ Read first:
 
 1. `../README.md`
 2. `../prepare/README.md`
-3. `random-only-closure-summary.md`
-4. `random-only-method-dispositions.md`
+3. `trusted-random-product-closure-summary.md`
+4. `trusted-random-product-method-dispositions.md`
 5. the relevant method folder `README.md`
 
 ## Current Method Packets

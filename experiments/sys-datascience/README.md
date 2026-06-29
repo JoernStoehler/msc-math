@@ -88,8 +88,8 @@ Read first:
 - `prepare/README.md`
 - `feature-space-coverage-ledger.md`
 - `methods/README.md`
-- `methods/random-only-closure-summary.md`
-- `methods/random-only-method-dispositions.md`
+- `methods/trusted-random-product-closure-summary.md`
+- `methods/trusted-random-product-method-dispositions.md`
 - relevant `methods/<method>/README.md`
 
 Current closure status: active packets have been rerun under the invariant
