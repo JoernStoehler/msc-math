@@ -1088,3 +1088,48 @@ fn failed_row(
         action_cutoff_intersection_count: None,
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn row_by_check_id<'a>(rows: &'a [ProofRiskRow], check_id: &str) -> &'a ProofRiskRow {
+        rows.iter()
+            .find(|row| row.check_id == check_id)
+            .unwrap_or_else(|| panic!("missing proof-risk row {check_id}"))
+    }
+
+    #[test]
+    fn generated_rows_document_singular_schema() {
+        let rows = specific_closed_word_rows("full", PRODUCER_COMMAND_FULL);
+
+        let positive_singular =
+            row_by_check_id(&rows, "positive_singular_word_is_typed_unsupported");
+        assert!(positive_singular.passed);
+        assert_eq!(
+            positive_singular.outcome_kind,
+            Some("unsupported_positive_singular")
+        );
+        assert_eq!(
+            positive_singular.singular_status,
+            Some("singular_all_points")
+        );
+        assert_eq!(
+            positive_singular.singular_min_action_exact.as_deref(),
+            Some("4")
+        );
+        assert_eq!(
+            positive_singular.singular_max_action_exact.as_deref(),
+            Some("4")
+        );
+        assert!(positive_singular.outcome_action_exact.is_none());
+
+        let length_three = row_by_check_id(&rows, "length_three_word_is_zero_time_no_orbit");
+        assert!(length_three.passed);
+        assert_eq!(length_three.outcome_kind, Some("zero_action_no_orbit"));
+        assert_eq!(length_three.singular_status, Some("length_three_zero_time"));
+        assert_eq!(length_three.outcome_action_exact.as_deref(), Some("0"));
+        assert!(length_three.singular_min_action_exact.is_none());
+        assert!(length_three.singular_max_action_exact.is_none());
+    }
+}

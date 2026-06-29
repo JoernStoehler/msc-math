@@ -1278,6 +1278,53 @@ mod tests {
         expected
     }
 
+    #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
+    enum ExactOutcomeBucket {
+        EmptyTube,
+        ZeroActionRegular,
+        ZeroActionLengthThree,
+        ZeroActionOtherSingular,
+        NonStrictNoOrbit,
+        PositiveOrbit,
+        UnsupportedPositiveSingular,
+    }
+
+    fn exact_outcome_bucket(outcome: &ExactClosedWordOutcome) -> ExactOutcomeBucket {
+        match outcome {
+            ExactClosedWordOutcome::EmptyTube => ExactOutcomeBucket::EmptyTube,
+            ExactClosedWordOutcome::ZeroActionNoOrbit {
+                singular_status: Some("length_three_zero_time"),
+                ..
+            } => ExactOutcomeBucket::ZeroActionLengthThree,
+            ExactClosedWordOutcome::ZeroActionNoOrbit {
+                singular_status: Some(_),
+                ..
+            } => ExactOutcomeBucket::ZeroActionOtherSingular,
+            ExactClosedWordOutcome::ZeroActionNoOrbit {
+                singular_status: None,
+                ..
+            } => ExactOutcomeBucket::ZeroActionRegular,
+            ExactClosedWordOutcome::NonStrictNoOrbit { .. } => ExactOutcomeBucket::NonStrictNoOrbit,
+            ExactClosedWordOutcome::PositiveOrbit { .. } => ExactOutcomeBucket::PositiveOrbit,
+            ExactClosedWordOutcome::UnsupportedPositiveSingular { .. } => {
+                ExactOutcomeBucket::UnsupportedPositiveSingular
+            }
+        }
+    }
+
+    fn assert_bucket_count(
+        counts: &BTreeMap<(usize, ExactOutcomeBucket), usize>,
+        word_len: usize,
+        bucket: ExactOutcomeBucket,
+        expected: usize,
+    ) {
+        assert_eq!(
+            counts.get(&(word_len, bucket)).copied().unwrap_or(0),
+            expected,
+            "unexpected count for length {word_len} bucket {bucket:?}"
+        );
+    }
+
     fn assert_exact_search_supports_p1_p2(
         case_name: &str,
         case: &ExactCaseData,
@@ -1573,6 +1620,58 @@ mod tests {
                 max_action,
             } if min_action == Some(r(1)) && max_action == Some(r(1))
         ));
+    }
+
+    #[test]
+    fn generated_f5_outcome_taxonomy_documents_supported_boundary() {
+        let case = deterministic_random_exact_case(5, 60);
+        let input = case.input();
+        let transition_is_allowed = build_transition_matrix_from_facet_intersections_and_omega(
+            input.facet_intersection_is_nonempty,
+            input.omega_signs,
+        );
+        let mut counts = BTreeMap::new();
+
+        for_each_sigma_pruned_by_transition(&transition_is_allowed, |sigma| {
+            let (result, _) = resolve_closed_word_exact(&input, sigma)
+                .unwrap_or_else(|error| panic!("exact resolver failed for {sigma:?}: {error:?}"));
+            *counts
+                .entry((sigma.len(), exact_outcome_bucket(&result.outcome)))
+                .or_insert(0) += 1;
+        });
+
+        assert_bucket_count(&counts, 3, ExactOutcomeBucket::ZeroActionLengthThree, 4);
+        assert_bucket_count(&counts, 4, ExactOutcomeBucket::ZeroActionRegular, 3);
+        assert_bucket_count(&counts, 5, ExactOutcomeBucket::EmptyTube, 2);
+        assert_bucket_count(&counts, 5, ExactOutcomeBucket::PositiveOrbit, 1);
+
+        assert_bucket_count(&counts, 3, ExactOutcomeBucket::ZeroActionOtherSingular, 0);
+        assert_bucket_count(&counts, 4, ExactOutcomeBucket::ZeroActionOtherSingular, 0);
+        assert_bucket_count(&counts, 5, ExactOutcomeBucket::ZeroActionOtherSingular, 0);
+        assert_bucket_count(
+            &counts,
+            3,
+            ExactOutcomeBucket::UnsupportedPositiveSingular,
+            0,
+        );
+        assert_bucket_count(
+            &counts,
+            4,
+            ExactOutcomeBucket::UnsupportedPositiveSingular,
+            0,
+        );
+        assert_bucket_count(
+            &counts,
+            5,
+            ExactOutcomeBucket::UnsupportedPositiveSingular,
+            0,
+        );
+        assert_bucket_count(&counts, 3, ExactOutcomeBucket::NonStrictNoOrbit, 0);
+        assert_bucket_count(&counts, 4, ExactOutcomeBucket::NonStrictNoOrbit, 0);
+        assert_bucket_count(&counts, 5, ExactOutcomeBucket::NonStrictNoOrbit, 0);
+
+        let total_words: usize = counts.values().sum();
+        assert_eq!(total_words, 10);
     }
 
     #[test]

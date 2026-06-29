@@ -137,6 +137,16 @@ Search contract:
 
 Path-specific outcome contract:
 
+| condition | exact-path behavior | current support |
+| --- | --- | --- |
+| nonempty directed facet-pair candidate has exact `omega_0 = 0` | reject before reporting a capacity | validator and proof-risk row |
+| length-three closed word `[i,j,k,i,j]` with independent normals | return structural zero-action no-orbit with `length_three_zero_time` | formal note `lem:fg-length-three-zero-time`, exact tests, proof-risk row |
+| nonsingular fixed point with zero action or nonpositive segment time | return no-orbit, not a capacity word | exact resolver tests |
+| nonsingular fixed point with positive action and all segment times positive | accept as a closed orbit candidate; retained only if within the requested action window | exact E2E tests and proof-risk rows |
+| singular fixed set with positive-action candidate | reject as unsupported; do not silently use it as a capacity value | exact test and proof-risk row |
+| singular no-orbit status other than `length_three_zero_time` | reject at exact-search boundary until a broader lemma is proved | exact-search boundary tests |
+| exact action cutoff | speedup after a positive exact action is known; not an independent certificate | cutoff-vs-disabled tests and proof-risk rows |
+
 - Exact accepted output contains the exact reported action, retained cyclic
   facet words, and exact action for each retained word. Exact positive closed
   words are filtered by reconstructing the segment times and requiring every
