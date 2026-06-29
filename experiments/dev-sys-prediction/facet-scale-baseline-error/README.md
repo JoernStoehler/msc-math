@@ -3,16 +3,19 @@
 Status: compact empirical calibration packet for future
 `dev-sys-prediction` radius-grid and normalization choices.
 
-This packet answers a practical question, not an optimizer-design question:
+This packet answers practical calibration questions for predictor and optimizer
+design:
 how absolute flattened-coordinate radii compare across facet counts, and where
-the current lower-envelope linear prediction starts to fail on a small
-high-`sys` panel.
+the current lower-envelope linear prediction starts to fail on high-`sys` and
+random-sample panels.
 
 The main checked panel remains the six-basepoint high-`sys` calibration panel.
 The `larger-random-panel/` directory is a follow-up comparison panel with
 `8` deterministic `random_sample` basepoints per facet count. It tests whether
 the headline error-decomposition pattern was only a tiny high-`sys` panel
 artifact.
+The `t1e1-extensions/` directory tests the optimizer-scale radius `1e-1`
+without rerunning the full grid.
 
 ## Scope
 
@@ -24,7 +27,8 @@ Inputs:
 - selected rows per facet count: `2`, highest `sys` rows available in the
   prepared table when this packet was produced;
 - prediction branch window: relative action window `0.01`;
-- radii: `1e-4,1e-3,1e-2,3e-2`.
+- main retained radii: `1e-4,1e-3,1e-2,3e-2`;
+- optimizer-scale extension radius: `1e-1`.
 
 The producer direction vectors are normalized in flattened `R^(4F)` dual-vertex
 coordinate space. Thus `t` is an absolute Euclidean step length. Per coordinate,
@@ -198,6 +202,16 @@ radius in a few rows. It does not reproduce the high-`sys` panel's extreme
 `F=6` stress-radius errors, so those should be treated as panel-specific tail
 events, not as a stable `F=6` claim.
 
+The `1e-1` extension splits the optimizer-facing story. On the larger
+random-sample panel, `1e-1` remains usable for coarse screening: median
+absolute errors are about `8e-4` to `1e-3`, p90 errors about `4e-3` to `6e-3`,
+and max errors about `1.5e-2` to `5.5e-2`. On the high-`sys` panel, `1e-1`
+is not uniformly safe: it produces construction failures and large tail errors
+up to order `1`. Therefore `1e-1` is a useful optimizer-scale trial radius
+only with recomputation/backtracking or a trust-region policy; it should not be
+treated as a reliable one-shot prediction radius on adversarial high-`sys`
+points.
+
 Statistical uncertainty:
 
 - The table reports `mean_abs_total_error`, sample `sd_abs_total_error`, and
@@ -214,29 +228,30 @@ Statistical uncertainty:
 
 ## Radius Recommendation
 
-For the next prediction-error-model sessions, use a shared absolute grid first:
+For local prediction-error sessions, use this shared absolute grid:
 
 ```text
-1e-4, 3e-4, 1e-3, 3e-3, 1e-2
+1e-3, 1e-2, 3e-2
 ```
 
-Use `3e-2` as a stress radius, not as the default local radius. It is useful for
-detecting the start of window-miss behavior, but in the larger random-sample
-comparison panel the largest missed-window absolute error was only about
-`6e-3`.
+Use `1e-4` only for smoke/plumbing or explicit slope checks; it is usually too
+small to distinguish prediction policies. Use `3e-2` as the local stress
+radius. Use `1e-1` as an optimizer-scale stress radius, not as a guaranteed
+local-prediction radius.
 
 Keep reporting `t` as an absolute flattened-coordinate radius. For audit, also
 keep the global-scale table generated from `random_sample`; for `F=6,10,12`,
-`t=1e-2` is about `7e-4` to `8e-4` of the median iid pair distance and
-`t=3e-2` is about `2e-3` to `2.5e-3`.
+`t=1e-2` is about `7e-4` to `8e-4` of the median iid pair distance,
+`t=3e-2` is about `2e-3` to `2.5e-3`, and `t=1e-1` is still below `1%`.
 
-Conservative defaults by facet count:
+Recommended roles:
 
-| `F` | default local grid | stress grid |
-| --- | --- | --- |
-| 6 | `1e-4,3e-4,1e-3,3e-3,1e-2` | add `3e-2` only for breakdown checks |
-| 10 | `1e-4,3e-4,1e-3,3e-3,1e-2` | add `3e-2` for stress/error tails |
-| 12 | `1e-4,3e-4,1e-3,3e-3,1e-2` | add `3e-2` for stress/error tails |
+| role | radii |
+| --- | --- |
+| smoke | `1e-2` |
+| local prediction audit | `1e-3,1e-2,3e-2` |
+| slope check | `1e-4,1e-3,1e-2,3e-2` |
+| optimizer-scale screening audit | add `1e-1` |
 
 ## Thesis-Authoring Use
 
@@ -245,12 +260,17 @@ high-`sys` calibration panel, absolute radii through `1e-2` stayed in the
 useful local regime for the current lower-envelope prediction model, while
 `3e-2` exposed construction failures or large model-error tails.
 
+For optimizer-method notes, it can also support: `1e-1` can be useful as a
+large candidate step on random-sample panels, but high-`sys` stress rows show
+that it requires verification/backtracking rather than prediction-only
+acceptance.
+
 Do not cite it as:
 
 - a statistical estimate of prediction error over the full search
   distribution;
 - evidence that `F=6`, `F=10`, and `F=12` differ for facet-count reasons alone;
-- optimizer evidence;
+- optimizer endpoint evidence;
 - a tail-risk bound.
 
 ## Residual Risks

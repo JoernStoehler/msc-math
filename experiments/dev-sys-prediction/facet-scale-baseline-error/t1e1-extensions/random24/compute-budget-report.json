@@ -1,0 +1,44 @@
+{
+  "command": "dev-sys-prediction-produce",
+  "diagnostic_dir": "experiments/dev-sys-prediction/facet-scale-baseline-error/larger-random-panel/basepoint-event-panel/branch-annotation",
+  "polytope_table": "experiments/dev-sys-prediction/facet-scale-baseline-error/larger-random-panel/basepoint-event-panel/basepoint-polytope-panel.jsonl",
+  "selection_threshold_relative": 0.01,
+  "direction_model": "near_active",
+  "include_candidate_window_directions": false,
+  "max_fixtures_per_label": 99,
+  "skip_fixtures_per_label": 0,
+  "degeneracy_labels": [
+    "large_gap",
+    "narrow_gap"
+  ],
+  "selected_fixtures": 24,
+  "eligible_diagnostic_counts_by_label": {
+    "large_gap": 18,
+    "narrow_gap": 6
+  },
+  "selected_counts_by_label": {
+    "large_gap": 18,
+    "narrow_gap": 6
+  },
+  "missing_polytope_counts_by_label": {},
+  "requested_labels_with_no_selected_fixture": [],
+  "probe_rows": 102,
+  "run_trace_rows": 0,
+  "endpoint_diagnostic_rows": 0,
+  "endpoint_direction_scan_rows": 0,
+  "base_orbit_iterations": 67174,
+  "target_orbit_iterations": 313244,
+  "trace_base_orbit_iterations": 0,
+  "trace_target_orbit_iterations": 0,
+  "endpoint_base_orbit_iterations": 0,
+  "endpoint_target_orbit_iterations": 0,
+  "endpoint_scan_base_orbit_iterations": 0,
+  "endpoint_scan_target_orbit_iterations": 0,
+  "sys_cache_hits": 0,
+  "sys_cache_misses": 102,
+  "sys_cache_used_rows": 102,
+  "failed_probe_rows": 0,
+  "failed_endpoint_direction_scan_rows": 0,
+  "skip_endpoint_diagnostics": true,
+  "elapsed_ms": 204214.57563900002
+}
