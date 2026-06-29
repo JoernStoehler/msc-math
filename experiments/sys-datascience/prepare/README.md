@@ -133,7 +133,7 @@ uv run --script experiments/sys-datascience/fingerprint-dataset.py \
 The prepared random/product tables keep polytope identity separate from sample
 or state provenance:
 
-- `poly_id` identifies the canonicalized ordered dual-vertex geometry and is
+- `poly_id` identifies the producer's ordered normalized-dual geometry and is
   stable across producer rows that produce the same polytope.
 - provenance rows carry source metadata such as `root_group_id`,
   `lineage_id`, and `source`. `source` is the structured sampling-event
@@ -151,7 +151,7 @@ for the provenance loss and migration cost. Add schema fields when possible.
 
 ## Code Ownership
 
-- `main.rs` orchestrates canonical producer-file loading for retained tables.
+- `main.rs` orchestrates retained producer-file loading.
 - `prepare.rs` consumes run-local producer directories.
 - `load_caches.rs` loads the canonical random/product producer files.
 - `invariant_features.rs` computes the active method-facing invariant feature

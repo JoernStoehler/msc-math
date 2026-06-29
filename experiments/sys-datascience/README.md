@@ -27,8 +27,8 @@ produce/  ->  prepare/  ->  methods/
 
 - `produce/` owns random/product row production and cached expensive
   polytope/capacity payloads.
-- `prepare/` owns canonization, reusable geometry features, provenance joins,
-  and retained prepared tables.
+- `prepare/` owns invariant feature computation, provenance joins, and retained
+  prepared tables.
 - `methods/` owns method packets over the prepared random/product tables.
 
 ## Current Random Distributions
@@ -92,12 +92,11 @@ Read first:
 - `methods/random-only-method-dispositions.md`
 - relevant `methods/<method>/README.md`
 
-Current closure status: pending review. The current-schema random/product
-prepare rerun and active method-packet reruns have been performed on the
-retained full table. The prepared full table is retained because regeneration is
-multi-minute work. The 2026-06-25 full scratch rerun lives under
-`/tmp/sys-ds-random-only-full-current` and `/tmp/sys-ds-full-current`; keep
-durable packet conclusions in `methods/<method>/README.md`, not only in `/tmp`.
+Current closure status: active packets have been rerun under the invariant
+feature contract. The full scratch prepare output used for the integrated rerun
+lives under `/tmp/ds-integrated-full`; method READMEs record the current
+numbers. Keep durable packet conclusions in `methods/<method>/README.md`, not
+only in `/tmp`.
 
 Escalate before unrelated cleanup if a method records a trusted `sys > 1` row
 or a credible candidate-proposer.

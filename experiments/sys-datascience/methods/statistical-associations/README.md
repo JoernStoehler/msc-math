@@ -134,10 +134,10 @@ This packet does not turn them into a generated-row candidate-proposer.
 - Many correlated table columns are screened; the permutation check is a
   coarse guard, not a formal model-selection theorem.
 - Capacity and volume columns are not active method-facing covariates.
-- Exhaustiveness is only prepare-schema-relative. Changing canonization or
-  adding derived invariant geometric, combinatorial, or symplectic scalar
-  summaries to the shared prepare stage would reopen this packet and the other
-  black-box methods that consume prepared features.
+- Exhaustiveness is only prepare-schema-relative. Changing the invariant
+  feature contract or adding derived invariant geometric, combinatorial, or
+  symplectic scalar summaries to the shared prepare stage would reopen this
+  packet and the other black-box methods that consume prepared features.
 - Categorical factors and engineered raw-dual-vertex features need their own
   encoding or feature-production step; the count of screened scalar columns is
   not evidence that those families were covered.
@@ -169,7 +169,7 @@ not claim that the obvious feature map from `a_k` is complete.
 ## Reopen Triggers
 
 - prepared table columns change;
-- prepare-stage canonization changes;
+- the active invariant-feature contract changes;
 - an obvious derived scalar covariate is identified but not present in the
   shared prepare-stage schema;
 - categorical source/product-bucket factors are promoted from EDA slices to a

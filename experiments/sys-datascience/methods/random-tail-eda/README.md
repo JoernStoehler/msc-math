@@ -59,11 +59,9 @@ uv run --script experiments/sys-datascience/methods/random-tail-eda/analyze.py
 The provenance schema exposes optional source/generator fields such as height
 range and product `(k,m,bounces)` when the producer row provides them. This
 script prefers explicit product parameters over reparsing `path`, and records
-`source_parameter_availability` in its summary. The current artifact was
-regenerated against a full scoped random/product scratch prepared table at
-`/tmp/sys-ds-random-only-full-current`, built with `sys-dataset --random-only`. It
-includes explicit height range and product `(k,m,bounces)` provenance fields for
-the canonical random/product producer rows.
+`source_parameter_availability` in its summary. The current integrated check was
+rerun against `/tmp/ds-integrated-full`; a scratch artifact copy was written to
+`/tmp/ds-integrated-tail-eda`.
 
 Current full scoped random/product run:
 
@@ -77,14 +75,14 @@ Current full scoped random/product run:
 
 Filtered tail summaries are stored in
 `summary.json["filtered_tail_summaries"]`. The top retained filtered slices by
-p99 are product-heavy (`6x6`, `5x6`, `5x5`, `4x6`) plus generic `F=12`. No
-filtered slice contains a `sys > 1` row. The largest observed value is still
-about `0.137` below the threshold `1`.
+p99 are product-heavy (`6x6`, `5x6`) plus facet-count `F=12` views. No filtered
+slice contains a `sys > 1` row. The largest observed value is still about
+`0.137` below the threshold `1`.
 
 `summary.json["source_parameter_availability"]` records explicit source
-parameters present in the scoped provenance rows. Canonical retained rows expose
-height range and product `(k,m,bounces)` where applicable; seed/attempt remain
-absent for these older canonical producer files.
+parameters present in the scoped provenance rows. Retained rows expose height
+range and product `(k,m,bounces)` where applicable; seed/attempt remain absent
+for these older retained producer files.
 
 The source-backed generator contract is stored in
 `summary.json["generator_contract"]`. In production mode, generic random rows

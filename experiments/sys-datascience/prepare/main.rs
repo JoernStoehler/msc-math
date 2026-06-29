@@ -3,7 +3,6 @@
 //! Input Artifacts: producer JSONL files under `experiments/sys-datascience/produce/`
 //! Output Artifacts: ad hoc output directory passed by `--out-dir`
 
-mod canonize;
 mod features_trace;
 mod invariant_features;
 mod load_caches;

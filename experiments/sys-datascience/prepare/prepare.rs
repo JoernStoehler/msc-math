@@ -3,7 +3,6 @@
 //! This command consumes producer metadata plus computed-polytope payloads. It
 //! does not run capacity search.
 
-mod canonize;
 mod features_trace;
 mod invariant_features;
 mod load_caches;
