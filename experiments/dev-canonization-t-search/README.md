@@ -1,8 +1,30 @@
 # Coordinate Canonization `T` Search Packet
 
-This packet is a prototype and decision aid for canonicalizing random
+Status: frozen self-contained development packet as of 2026-06-29.
+
+This packet found and tested a useful generic coordinate canonizer for random
 polytope facet-normal rows. It is intentionally not wired into
-`experiments/sys-datascience/prepare`.
+`experiments/sys-datascience/prepare`, and future agents should not treat it as
+the next default integration target.
+
+The method is still worth keeping: it gives a clean generic construction,
+stochastic tests for sampled
+\(Sp(4)\times \mathbb R_+\times \mathbb R^4\times S_F\) actions, reusable
+samplers, and a compact proof note. The reason it is frozen is downstream
+value, not mathematical failure. A later sys-datascience comparison found that
+volume-one plus analytic-center translation captured most of the observed
+method-quality movement on the current random/product method slice, while the
+full symplectic-frame representative added little over centering. Moreover,
+Euclidean features after this full canonizer are measured in an
+arbitrary-but-canonical facet-derived symplectic frame; they are invariant on
+the generic success domain, but their geometric meaning is weaker than features
+designed directly as invariants, or Euclidean features after an intrinsic
+quadratic/ellipsoid normalization. Current sys-datascience therefore uses
+direct invariant features rather than this full generic representative.
+
+Keep this packet runnable. Do not extend it unless the new work is specifically
+about coordinate representatives \(T\), a better \(Sp(4)\) frame choice, or
+reusing its stochastic group-action harness.
 
 The target is a coordinate representative. Given normalized inequalities
 \[
@@ -25,9 +47,9 @@ invariant on the success domain of \(C\). Carefully designed invariant features
 are still preferable when available, but the canonical representative reduces
 the amount of feature-specific symmetry work needed during exploration.
 
-## Current Candidate
+## Frozen Candidate
 
-Current best registered candidate:
+Best registered coordinate-representative candidate:
 
 ```text
 volume_one_omega_labeled_symplectic_frame
@@ -219,28 +241,50 @@ test the Lie-algebra directions near the identity. The unit tests verify that
 the Lie algebra samples satisfy \(X^TJ+JX=0\), that exponentials are
 symplectic, and that the full sampler is not restricted to the block subgroup.
 
-## Recommendation
+## Freeze Recommendation
 
-Develop this candidate toward integration, but do not wire it into
-`sys-datascience/prepare` in this packet.
+Do not integrate this full coordinate representative into
+`sys-datascience/prepare` as the next step.
 
-Reasons:
+What worked:
 
-- There is a clean generic correctness theorem for the hard
+- The packet gives a generic correctness theorem for the hard
   \(Sp(4)\times S_F\) part.
 - The f64 prototype is stable on ordinary random rows in the current stochastic
   tests.
-- Runtime is negligible compared with one `sys()` call for `F=6,10,12`.
+- Runtime of \(T\) itself is negligible compared with one `sys()` call for
+  `F=6,10,12`.
 - The implementation has explicit non-success statuses for generic-condition
   failure instead of silently choosing arbitrary tied labels.
 
-Before integration, add tests or design decisions for:
+Why it is frozen rather than integrated:
 
-- deliberately symmetric and near-symmetric inputs;
-- whether prepare should drop, mark, or fallback-canonicalize non-success rows;
-- exact reproducibility of volume/center/canonicalization across machines;
-- feature-table provenance fields recording candidate label, status, metric
-  version, and tolerances.
+- The current sys-datascience need is not “make every arbitrary coordinate
+  feature invariant at any cost”; it is to design features whose mathematical
+  meaning survives the symmetry group and to test those invariance claims.
+- Facet permutation canonization is low-value for method tables, because
+  features that depend on incidental facet index order are usually bad feature
+  designs even after deterministic relabeling.
+- The symplectic-frame section chooses a frame from generic omega labels and
+  the first successful facet quadruple. This is canonical on the generic domain,
+  but Euclidean quantities after that step mean “Euclidean in this
+  facet-derived canonical frame,” not “Euclidean in an intrinsic metric of the
+  body.”
+- A later scratch comparison on the sys-datascience method-sized random/product
+  slice showed that scale+analytic-center translation captured the useful
+  method-quality movement observed there. Full frame canonization mostly
+  matched the centered variant: top associations and random-forest importances
+  stayed omega/ridge-area based, and full canonization did not clearly improve
+  the current method packets enough to justify the extra semantics and
+  genericity boundary.
 
-The correct integration posture is “generic canonical representative with
-observable non-success,” not “universal canonical form.”
+If this line is reopened, the most promising new branch is probably not more
+polish on the current omega-label/facet-frame construction. It is an intrinsic
+quadratic-form route: choose a canonical positive definite object from the
+polytope, such as a barrier Hessian, body/vertex covariance, or John/Löwner
+ellipsoid, then use Williamson normalization. That would better match the
+intuition “turn symplectic ellipsoids into standard representatives so Euclidean
+norms become meaningful.”
+
+The correct integration posture, if ever revived, is “generic canonical
+representative with observable non-success,” not “universal canonical form.”
