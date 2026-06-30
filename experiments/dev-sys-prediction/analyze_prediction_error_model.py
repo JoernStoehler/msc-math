@@ -152,7 +152,7 @@ def feature_row(row):
         "candidate_window_witness_sigma": " ".join(
             str(x) for x in row.get("candidate_window_witness_sigma") or []
         ),
-        "target_near_active_count": row.get("target_near_active_count"),
+        "target_cached_scalar_near_active_count": row.get("target_cached_scalar_near_active_count"),
         "target_best_sigma": " ".join(str(x) for x in row.get("target_best_sigma") or []),
         "target_best_sigma_in_base_near_active_set": row.get(
             "target_best_sigma_in_base_near_active_set"
@@ -324,7 +324,9 @@ def correlation_rows(rows):
         ],
         "abs_observed_delta": [abs_or_none(row.get("observed_delta_sys")) for row in decomp],
         "base_sys": [row.get("base_sys") for row in decomp],
-        "target_near_active_count": [row.get("target_near_active_count") for row in decomp],
+        "target_cached_scalar_near_active_count": [
+            row.get("target_cached_scalar_near_active_count") for row in decomp
+        ],
         "target_best_sigma_in_base_candidate_window": [
             row.get("target_best_sigma_in_base_candidate_window_number") for row in decomp
         ],

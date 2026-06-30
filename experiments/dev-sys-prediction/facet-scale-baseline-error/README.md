@@ -9,13 +9,14 @@ how absolute flattened-coordinate radii compare across facet counts, and where
 the current lower-envelope linear prediction starts to fail on high-`sys` and
 random-sample panels.
 
-The main checked panel remains the six-basepoint high-`sys` calibration panel.
-The `larger-random-panel/` directory is a follow-up comparison panel with
-`8` deterministic `random_sample` basepoints per facet count. It tests whether
-the headline error-decomposition pattern was only a tiny high-`sys` panel
-artifact.
-The `t1e1-extensions/` directory tests the optimizer-scale radius `1e-1`
-without rerunning the full grid.
+The retained run is `runs/production/`, produced from
+`../produce/configs/production.json`. It uses `8` deterministic
+`random_sample` basepoints per checked facet count and the configured radius
+grid, including `1e-1`.
+
+The older compact high-`sys` panel remains in `local-decomp-cloud/` and
+`summaries/` as a selected stress comparison. It is not the production
+generation path.
 
 ## Scope
 
@@ -24,11 +25,10 @@ Inputs:
 - compact selected panel:
   `polytope-panel.jsonl`;
 - facet counts: `F=6,10,12`;
-- selected rows per facet count: `2`, highest `sys` rows available in the
-  prepared table when this packet was produced;
+- selected rows per facet count: `8`, chosen by deterministic seeded ordering
+  from the configured `random_sample` table;
 - prediction branch window: relative action window `0.01`;
-- main retained radii: `1e-4,1e-3,1e-2,3e-2`;
-- optimizer-scale extension radius: `1e-1`.
+- production retained radii: `1e-4,1e-3,1e-2,3e-2,1e-1`.
 
 The producer direction vectors are normalized in flattened `R^(4F)` dual-vertex
 coordinate space. Thus `t` is an absolute Euclidean step length. Per coordinate,
@@ -68,6 +68,9 @@ Common terms:
   minimizer was not among base candidate-window sigmas.
 - `target_best_base_sys_gap`: for visible target winners, how much larger the
   target-winning branch value was than `sys(a0)` at the base point.
+- `target_cached_scalar_near_active_count`: count of near-active sigmas inside
+  the cached scalar sysext payload for the target. This is not a separate
+  target action-window enumeration.
 
 Do not read this packet as evidence that one facet count is intrinsically
 easier or harder than another. In this selected high-`sys` panel, facet count
@@ -76,59 +79,25 @@ high-degeneracy, and `F=12` rows are narrow-gap.
 
 ## Regeneration
 
-The checked packet is reproduced from the tracked compact panel and tracked
-diagnostic outputs in this directory. The prepared table is LFS-backed and can
-be used to refresh the panel, but doing so changes the experiment input if the
-prepared schema/table has changed.
+New panels use `dev-sys-prediction-panel`; see `../produce/README.md`.
+The retained production panel is reproduced by:
 
 ```bash
-git lfs pull --include='experiments/sys-datascience/prepare/polytope-table.jsonl,experiments/sys-datascience/prepare/polytope-provenance-table.jsonl'
+git lfs pull --include='experiments/sys-datascience/produce/random.jsonl'
+
+cargo run -p exp-dev-sys-prediction --release --bin dev-sys-prediction-panel -- \
+  --config experiments/dev-sys-prediction/produce/configs/production.json \
+  --out-dir experiments/dev-sys-prediction/facet-scale-baseline-error/runs/production
 ```
-
-Refresh the compact panel only when intentionally rerunning this packet against
-the current prepared table:
-
-```bash
-python3 experiments/dev-sys-prediction/facet-scale-baseline-error/select_panel.py
-```
-
-Run the branch-window diagnostic:
-
-```bash
-cargo run -p exp-dev-gradient-ascent --release --bin dev-gradient-ascent-branch-diagnostic -- \
-  --polytope-table experiments/dev-sys-prediction/facet-scale-baseline-error/polytope-panel.jsonl \
-  --provenance-table experiments/sys-datascience/prepare/polytope-provenance-table.jsonl \
-  --out-dir experiments/dev-sys-prediction/facet-scale-baseline-error/branch-diagnostic \
-  --max-rows 99 \
-  --thresholds-relative 1e-6,1e-3,1e-2
-```
-
-Run the finite-radius local prediction cloud:
-
-```bash
-cargo run -p exp-dev-sys-prediction --release --bin dev-sys-prediction-produce -- \
-  --diagnostic-dir experiments/dev-sys-prediction/facet-scale-baseline-error/branch-diagnostic \
-  --polytope-table experiments/dev-sys-prediction/facet-scale-baseline-error/polytope-panel.jsonl \
-  --out-dir experiments/dev-sys-prediction/facet-scale-baseline-error/local-decomp-cloud \
-  --selection-threshold-relative 0.01 \
-  --action-window-relative 0.01 \
-  --degeneracy-labels high_degeneracy,large_gap,narrow_gap \
-  --max-fixtures-per-label 2 \
-  --steps 1e-4,1e-3,1e-2,3e-2 \
-  --trace-iterations 0 \
-  --skip-endpoint-diagnostics \
-  --direction-model near-active
-```
-
-New panels should use `dev-sys-prediction-panel`; see `../produce/README.md`.
 
 Summarize:
 
 ```bash
 uv run --script experiments/dev-sys-prediction/facet-scale-baseline-error/summarize_panel.py \
-  --branch-dir experiments/dev-sys-prediction/facet-scale-baseline-error/branch-diagnostic \
-  --prediction-dir experiments/dev-sys-prediction/facet-scale-baseline-error/local-decomp-cloud \
-  --out-dir experiments/dev-sys-prediction/facet-scale-baseline-error/summaries
+  --panel experiments/dev-sys-prediction/facet-scale-baseline-error/runs/production/basepoint-event-panel/basepoint-polytope-panel.jsonl \
+  --branch-dir experiments/dev-sys-prediction/facet-scale-baseline-error/runs/production/basepoint-event-panel/branch-annotation \
+  --prediction-dir experiments/dev-sys-prediction/facet-scale-baseline-error/runs/production/basepoint-event-panel/perturbation-cloud \
+  --out-dir experiments/dev-sys-prediction/facet-scale-baseline-error/runs/production/summaries
 ```
 
 ## Outputs
@@ -138,21 +107,22 @@ Generated tables:
 - `summaries/SUMMARY.md`: compact human/GPT-readable table of the current
   scale, branch-window, and prediction-error patterns;
 - `summaries/MANIFEST.json`: row counts, byte sizes, SHA-256 hashes, and
-  expected-empty status for source and summary artifacts;
+  expected-empty status for retained run artifacts;
 - `summaries/branch-window-by-facet.csv`: branch-window size by facet count and
   threshold;
 - `summaries/prediction-error-by-facet-step.csv`: prediction error and
   target-winner visibility by facet count and radius;
 - `summaries/panel-scale.csv`: selected basepoint scale fields;
 - `summaries/random-sample-global-scale.csv`: flattened-coordinate norm and
-  iid pair-distance quantiles for the prepared `random_sample` distribution;
+  iid pair-distance quantiles for the `produce/random.jsonl` `random_sample`
+  distribution;
 - `summaries/prediction-error-by-radius.svg`: dependency-free audit plot of
   median and max absolute prediction error against radius.
 
-When `--trace-iterations 0 --skip-endpoint-diagnostics` is used,
+When `trace_iterations = 0` and endpoint diagnostics are skipped by the panel,
 `run-trace.jsonl`, `prediction-cloud.jsonl`, and endpoint JSONL files are
 expected to be empty. The local finite-radius rows are in
-`local-decomp-cloud/local-geometry-probe.jsonl`.
+`runs/production/basepoint-event-panel/perturbation-cloud/local-geometry-probe.jsonl`.
 The same directory also retains `summary.json` plus `basepoints.jsonl`,
 `states.jsonl`, and `events.jsonl` from the current producer so the local
 prediction rows are inspectable without reconstructing identity/provenance
@@ -161,20 +131,13 @@ The empty files are retained because the producer writes its standard artifact
 set even for local-only runs; deleting them would make the checked-in packet
 less faithful to regeneration.
 
-The larger comparison panel is reproduced by:
-
-```bash
-cargo run -p exp-dev-sys-prediction --release --bin dev-sys-prediction-panel -- \
-  --config experiments/dev-sys-prediction/facet-scale-baseline-error/larger-random-panel/config.json \
-  --out-dir experiments/dev-sys-prediction/facet-scale-baseline-error/larger-random-panel
-```
-
-Its retained `dataset-summary.json` reports `24` basepoints, `408` local probe
-rows, and about `725s` walltime on the local devcontainer run.
+Its retained `dataset-summary.json` reports the selected basepoints, local
+probe rows, cache reuse, and walltime for the last checked run.
 
 ## Interpretation
 
-The useful calibration is qualitative. In the prepared `random_sample` source,
+The useful calibration is qualitative. In the `produce/random.jsonl`
+`random_sample` source,
 median iid pair distances in flattened dual-vertex coordinates are close across
 the checked facet counts: about `14.0` for `F=6`, `12.3` for `F=10`, and
 `11.9` for `F=12`. Thus the absolute `t` grid is comparable across these
@@ -195,22 +158,18 @@ selected `F=12` rows narrow-gap. The retained local prediction rows expose the
 full decomposition into fixed-sigma linearization, inside-window branch
 selection, and window-miss terms.
 
-The larger random-sample comparison panel supports the mechanism-level part of
+The production random-sample panel supports the mechanism-level part of
 this interpretation: the inside-window selection term stays zero in every
 `(F,t)` bucket, and nonzero window-miss effects appear only at the stress
 radius in a few rows. It does not reproduce the high-`sys` panel's extreme
 `F=6` stress-radius errors, so those should be treated as panel-specific tail
 events, not as a stable `F=6` claim.
 
-The `1e-1` extension splits the optimizer-facing story. On the larger
-random-sample panel, `1e-1` remains usable for coarse screening: median
-absolute errors are about `8e-4` to `1e-3`, p90 errors about `4e-3` to `6e-3`,
-and max errors about `1.5e-2` to `5.5e-2`. On the high-`sys` panel, `1e-1`
-is not uniformly safe: it produces construction failures and large tail errors
-up to order `1`. Therefore `1e-1` is a useful optimizer-scale trial radius
-only with recomputation/backtracking or a trust-region policy; it should not be
-treated as a reliable one-shot prediction radius on adversarial high-`sys`
-points.
+At `1e-1`, the production random-sample panel remains useful as a coarse
+stress radius, not a reliable one-shot prediction guarantee. The selected
+high-`sys` panel showed much larger tails and construction failures at that
+radius, so optimizer-scale use of `1e-1` still needs recomputation,
+backtracking, or a trust-region policy.
 
 Statistical uncertainty:
 

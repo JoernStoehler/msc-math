@@ -30,22 +30,29 @@ cargo run -p exp-dev-sys-prediction --release \
   --out-dir /tmp/dev-sys-prediction-panel-smoke
 ```
 
-`local-small.json` uses the default prepared sys-datascience table instead;
-hydrate `experiments/sys-datascience/prepare/polytope-table.jsonl` before
-running that larger local config in a fresh worktree.
+Run the retained production panel with:
+
+```bash
+git lfs pull --include='experiments/sys-datascience/produce/random.jsonl'
+
+cargo run -p exp-dev-sys-prediction --release \
+  --bin dev-sys-prediction-panel -- \
+  --config experiments/dev-sys-prediction/produce/configs/production.json \
+  --out-dir experiments/dev-sys-prediction/facet-scale-baseline-error/runs/production
+```
 
 The config carries the compute-relevant run scale. Current fields are:
 
-- `polytope_table`: input prepared-table or compact panel JSONL path; defaults
-  to the LFS-backed sys-datascience prepared table;
+- `polytope_table`: input geometry JSONL path, either a sys-datascience
+  producer file such as `produce/random.jsonl` or a compact retained panel;
 - `source`: capacity-source filter used when selecting basepoints from the
   input table; defaults to `random_sample`;
 - `buckets`: per-facet basepoint counts and beta-boundary row counts;
 - `steps`: perturbation radii for `a = a0 + t u`;
-- `sys_cache_inputs`: optional extra JSONL cache files for expensive full
-  orbit searches;
-- `sys_cache_output`: optional cache output path; defaults to
-  `<out-dir>/sys-computation-cache.jsonl`;
+- `sysext_cache_inputs`: optional extra JSONL cache files for expensive
+  target `sysext` rows;
+- `sysext_cache_output`: optional cache output path; defaults to
+  `<out-dir>/sysext-cache.jsonl`;
 - `trace_iterations`: optional trace depth, usually omitted for smoke panels.
 
 Core identity outputs are:
@@ -66,20 +73,27 @@ copies for quick joins and provenance checks.
 Code ownership is deliberately shallow:
 
 - `src/panel.rs`: config parsing, stage orchestration, and summary assembly;
-- `src/basepoints.rs`: prepared-table basepoint selection and provenance rows;
+- `src/basepoints.rs`: geometry-table basepoint selection and provenance rows;
 - `src/prediction_cloud.rs`: perturbations, target `sys` recomputation, and
   prediction-error rows;
 - `src/panel_analysis.rs`: summary slices over produced perturbation and
   beta-boundary rows;
-- `src/panel_cache.rs`: richer full-orbit cache path resolution;
+- `src/panel_cache.rs`: `sysext` cache path resolution;
 - `src/panel_io.rs`: packet-local JSON/JSONL helpers;
 - `src/schema.rs`: basepoint/state/event identity rows;
 - `src/sysext_beta_boundary_scan.rs`: beta-boundary report rows.
 
-The active `sys` cache stores the richer full-orbit computation payload used by
-prediction diagnostics, not just scalar `sys`. It is an acceleration artifact,
-not the dataset identity. The default output cache is also loaded as an input,
-so rerunning the same output directory reuses prior expensive searches. Change
-counts and radii in `produce/configs/*.json` for smoke versus larger local
-runs. `local-small.json` is a larger local development config, not a retained
-production panel recipe.
+The active cache stores one `sysext` row per target polytope: geometry key,
+facet count, volume, minimum action, scalar `sys`, iteration count, and
+`sigma_results` entries with `sigma`, `action`, and `beta_positive`. The
+`beta_positive` flag is retained to document that the branch scan is not
+silently restricted to valid `beta>0` sys branches. Gradients, direction
+choices, prediction windows, and summary tables are derived outputs, not cache
+state.
+
+The cache is an acceleration artifact, not dataset identity. The default
+output cache is also loaded as an input, and cache misses append immediately,
+so rerunning the same output directory reuses prior expensive target searches.
+Keep the durable generation surface to `produce/configs/smoke.json` and
+`produce/configs/production.json`; change counts and radii there instead of
+adding special-case run folders.

@@ -550,6 +550,7 @@ dependencies = [
  "exp-sys-landscape",
  "good_lp",
  "nalgebra",
+ "num-rational",
  "serde",
  "serde_json",
  "symplectic",

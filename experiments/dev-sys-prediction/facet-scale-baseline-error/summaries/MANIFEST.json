@@ -8,11 +8,11 @@
       "sha256": "ace1355edb88baffa5c8d05f6eee9ad29472ef16e29c93e3e1e4c9d358f1a719"
     },
     {
-      "bytes": 78619442,
+      "bytes": 53045675,
       "expected_empty": false,
-      "jsonl_rows": 14336,
-      "path": "/workspaces/msc-math/.worktrees/sys-prediction-integration/experiments/sys-datascience/prepare/polytope-table.jsonl",
-      "sha256": "5167ce3b4b3e8682bd07e19ae7aa389af38388da781fef22a732880592434fe1"
+      "jsonl_rows": 4096,
+      "path": "/workspaces/msc-math/.worktrees/sys-prediction-integration/experiments/sys-datascience/produce/random.jsonl",
+      "sha256": "a21ac62ba5c9496ef631d3cce74e8b663764516b76e9d4725f1e517d8dd55f9f"
     },
     {
       "bytes": 10958,
@@ -29,11 +29,11 @@
       "sha256": "716b5aef012e7f063f2c9f24a7b715cdc4ef0bb7d2c9a026fd847423349229a5"
     },
     {
-      "bytes": 1590,
+      "bytes": 1631,
       "expected_empty": false,
       "jsonl_rows": null,
       "path": "local-decomp-cloud/summary.json",
-      "sha256": "eab646469c2e532c5c366105d4324d76423910f85122d4e51497b9f571553870"
+      "sha256": "4044ac57bbb32ce6db0cc1dbf05372eba4efa6af0e84aecff6ed2d45a69747f2"
     },
     {
       "bytes": 2031,
@@ -64,11 +64,11 @@
       "sha256": "7802b318669f9e991bef3241af68aec788d691f5ecb5ba676dc6122fcc4368e6"
     },
     {
-      "bytes": 288746,
+      "bytes": 290313,
       "expected_empty": false,
       "jsonl_rows": 112,
       "path": "local-decomp-cloud/local-geometry-probe.jsonl",
-      "sha256": "27e2a193c6af516418679ba8a201625c0f53b5d2a839cb0c845e31dba98f7631"
+      "sha256": "c114c590c06e354cb827b44991cf44956520e56bf8a54a707ee3ccc3380e9c60"
     },
     {
       "bytes": 0,
@@ -99,6 +99,13 @@
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     {
+      "bytes": 2692904,
+      "expected_empty": false,
+      "jsonl_rows": 111,
+      "path": "local-decomp-cloud/sysext-cache.jsonl",
+      "sha256": "437e374b712d786cd4c8d5f3f76a577ca4f7b90e94a70913f94d1bc933377a48"
+    },
+    {
       "bytes": 743,
       "expected_empty": false,
       "jsonl_rows": null,
@@ -110,7 +117,7 @@
       "expected_empty": false,
       "jsonl_rows": null,
       "path": "summaries/random-sample-global-scale.csv",
-      "sha256": "896e4f7e6f38fc493ff277aa94ea0b3c55289e3d35b660cbf4f17c05d140b469"
+      "sha256": "0c168232111ebad84dbd6c8fef433aa2b9249d4d7c6366def6408ec6937ac3fe"
     },
     {
       "bytes": 461,
@@ -131,7 +138,7 @@
       "expected_empty": false,
       "jsonl_rows": null,
       "path": "summaries/SUMMARY.md",
-      "sha256": "ca3d3a7341ebd73635bd079c2c4cadfebf545e5eed6d545d73882500297acac8"
+      "sha256": "65c530f55e1f0b7a28cdd6dda9a5d92c8ecf9109bc038a91d63e8515676ce06c"
     },
     {
       "bytes": 5338,

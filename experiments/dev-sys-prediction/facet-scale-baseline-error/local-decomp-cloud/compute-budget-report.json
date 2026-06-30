@@ -1,16 +1,16 @@
 {
-  "command": "dev-sys-prediction-cloud",
+  "command": "dev-sys-prediction-produce",
   "diagnostic_dir": "experiments/dev-sys-prediction/facet-scale-baseline-error/branch-diagnostic",
   "polytope_table": "experiments/dev-sys-prediction/facet-scale-baseline-error/polytope-panel.jsonl",
   "selection_threshold_relative": 0.01,
   "direction_model": "near_active",
   "include_candidate_window_directions": false,
-  "max_fixtures_per_label": 99,
+  "max_fixtures_per_label": 2,
   "skip_fixtures_per_label": 0,
   "degeneracy_labels": [
+    "high_degeneracy",
     "large_gap",
-    "narrow_gap",
-    "high_degeneracy"
+    "narrow_gap"
   ],
   "selected_fixtures": 6,
   "eligible_diagnostic_counts_by_label": {
@@ -37,8 +37,11 @@
   "endpoint_target_orbit_iterations": 0,
   "endpoint_scan_base_orbit_iterations": 0,
   "endpoint_scan_target_orbit_iterations": 0,
+  "sysext_cache_hits": 0,
+  "sysext_cache_misses": 111,
+  "sysext_cache_used_rows": 111,
   "failed_probe_rows": 1,
   "failed_endpoint_direction_scan_rows": 0,
   "skip_endpoint_diagnostics": true,
-  "elapsed_ms": 234724.759195
+  "elapsed_ms": 180793.392783
 }

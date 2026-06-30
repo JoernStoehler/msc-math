@@ -12,10 +12,6 @@ name = "dev-sys-prediction-produce"
 path = "produce/prediction-cloud.rs"
 
 [[bin]]
-name = "dev-sys-prediction-cloud"
-path = "produce/prediction-cloud-compat.rs"
-
-[[bin]]
 name = "dev-sysext-sigma-line-probe"
 path = "sysext-sigma-line-probe/main.rs"
 
@@ -31,6 +27,7 @@ exp-dev-gradient-ascent = { path = "../dev-gradient-ascent" }
 exp-sys-landscape = { path = "../sys-landscape" }
 good_lp.workspace = true
 nalgebra.workspace = true
+num-rational.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 symplectic.workspace = true

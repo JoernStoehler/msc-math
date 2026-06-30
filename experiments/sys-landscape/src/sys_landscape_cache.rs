@@ -143,6 +143,43 @@ impl SysLandscapePolytopeCache {
         ))
     }
 
+    /// Reconstructs a cached polytope after a previous validated construction.
+    ///
+    /// This is a shape-only trust boundary: it checks matrix/vector dimensions
+    /// but does not recompute vertices, incidence, omega signs, or rational/f64
+    /// agreement. Use only for cache payloads produced from an existing
+    /// `SysLandscapePolytopeCache`.
+    pub fn from_trusted_parts(
+        dual_vertices: Vec<[BigRational; 4]>,
+        vertices: Vec<[BigRational; 4]>,
+        vertex_facet_incidence: DMatrix<bool>,
+        facet_intersection_is_nonempty: DMatrix<bool>,
+        omega_signs: DMatrix<i8>,
+        dual_vertices_f64: Vec<Vector4<f64>>,
+        vertices_f64: Vec<Vector4<f64>>,
+    ) -> Option<Self> {
+        if dual_vertices.len() != dual_vertices_f64.len()
+            || vertices.len() != vertices_f64.len()
+            || vertex_facet_incidence.ncols() != dual_vertices.len()
+            || vertex_facet_incidence.nrows() != vertices.len()
+            || facet_intersection_is_nonempty.ncols() != dual_vertices.len()
+            || facet_intersection_is_nonempty.nrows() != dual_vertices.len()
+            || omega_signs.ncols() != dual_vertices.len()
+            || omega_signs.nrows() != dual_vertices.len()
+        {
+            return None;
+        }
+        Some(Self {
+            dual_vertices,
+            vertices,
+            vertex_facet_incidence,
+            facet_intersection_is_nonempty,
+            omega_signs,
+            dual_vertices_f64,
+            vertices_f64,
+        })
+    }
+
     pub fn facet_count(&self) -> usize {
         self.dual_vertices.len()
     }

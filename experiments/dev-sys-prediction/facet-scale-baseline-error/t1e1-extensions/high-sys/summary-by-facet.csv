@@ -1,4 +1,0 @@
-panel,facet_count,step,ok_rows,failure_rows,status_counts,median_abs_total_error,p90_abs_total_error,max_abs_total_error,max_abs_fixed_sigma_linearization_error,max_abs_inside_window_selection_error,max_abs_window_miss_error,target_best_not_in_base_window
-high-sys,6,0.1,7,3,ok:25 target_polytope_construction_failed:3,0.2824041862981308,1.1804284485255752,1.1904237734513492,0.7099113667424097,0,1.883676265317469,4
-high-sys,10,0.1,9,3,ok:25 target_polytope_construction_failed:3,0.02270754664270136,0.07097781891237895,0.15410659002012828,0.050195626135441596,0.0021848696589743533,0.15865128446367127,5
-high-sys,12,0.1,9,3,ok:25 target_polytope_construction_failed:3,0.005690644730740102,0.1590038849170183,0.16958441811901104,0.01611981890588632,0,0.17906816966095596,5

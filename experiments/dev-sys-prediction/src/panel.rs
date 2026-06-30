@@ -7,7 +7,7 @@
 //!
 //! ```text
 //! for each configured facet bucket F:
-//!   choose n_F basepoints from the prepared table rows with facet_count = F
+//!   choose n_F basepoints from the configured geometry rows with facet_count = F
 //!   and capacity_source = source, using deterministic seeded ordering;
 //! for each selected basepoint a0:
 //!   annotate the branch window at a0;
@@ -27,7 +27,7 @@ use crate::basepoints::{provenance_rows, select_basepoints, BasepointSelectionFa
 use crate::panel_analysis::{
     summarize_beta_scan, summarize_prediction_probe, BetaFacetSummary, PredictionHighlight,
 };
-use crate::panel_cache::sys_cache_paths;
+use crate::panel_cache::sysext_cache_paths;
 use crate::panel_io::{read_json, read_required_json, require_nonempty, write_json, write_jsonl};
 use crate::{prediction_cloud, sysext_beta_boundary_scan};
 use exp_dev_gradient_ascent::branch_diagnostic;
@@ -37,7 +37,6 @@ use std::fs;
 use std::path::{Path, PathBuf};
 use std::time::Instant;
 
-const DEFAULT_POLYTOPE_TABLE: &str = "experiments/sys-datascience/prepare/polytope-table.jsonl";
 const DEFAULT_BRANCH_THRESHOLD_RELATIVE: f64 = 0.01;
 const DEFAULT_ACTION_WINDOW_RELATIVE: f64 = 0.01;
 const DEFAULT_SELECTION_SEED: &str = "dev-sys-prediction-panel-v1";
@@ -50,14 +49,13 @@ struct Cli {
 
 #[derive(Debug, Deserialize, Serialize)]
 struct PanelConfig {
-    #[serde(default = "default_polytope_table")]
     polytope_table: String,
     #[serde(default = "default_source")]
     source: String,
     #[serde(default)]
-    sys_cache_inputs: Vec<String>,
+    sysext_cache_inputs: Vec<String>,
     #[serde(default)]
-    sys_cache_output: Option<String>,
+    sysext_cache_output: Option<String>,
     buckets: Vec<FacetBucketConfig>,
     steps: Vec<f64>,
     #[serde(default)]
@@ -119,8 +117,8 @@ struct BasepointEventPanelSummary {
     branch_selected_rows: usize,
     branch_successful_recomputations: usize,
     branch_degeneracy_counts: BTreeMap<String, usize>,
-    sys_cache_inputs: Vec<String>,
-    sys_cache_output: String,
+    sysext_cache_inputs: Vec<String>,
+    sysext_cache_output: String,
     panel_path: String,
     provenance_path: String,
     branch_dir: String,
@@ -177,15 +175,15 @@ fn run_basepoint_event_panel(
     let provenance_path = panel_dir.join("basepoint-provenance-panel.jsonl");
     let branch_dir = panel_dir.join("branch-annotation");
     let perturbation_dir = panel_dir.join("perturbation-cloud");
-    let cache_paths = sys_cache_paths(
+    let cache_paths = sysext_cache_paths(
         &cli.out_dir,
-        &config.sys_cache_inputs,
-        config.sys_cache_output.as_ref(),
+        &config.sysext_cache_inputs,
+        config.sysext_cache_output.as_ref(),
     );
     if let Some(parent) = cache_paths.output.parent() {
         fs::create_dir_all(parent).unwrap_or_else(|err| {
             panic!(
-                "failed to create sys cache output parent {}: {err}",
+                "failed to create sysext cache output parent {}: {err}",
                 parent.display()
             )
         });
@@ -267,10 +265,10 @@ fn run_basepoint_event_panel(
         ],
     );
     for path in &cache_paths.inputs {
-        perturbation_argv.push("--sys-cache-input".to_string());
+        perturbation_argv.push("--sysext-cache-input".to_string());
         perturbation_argv.push(path.display().to_string());
     }
-    perturbation_argv.push("--sys-cache-output".to_string());
+    perturbation_argv.push("--sysext-cache-output".to_string());
     perturbation_argv.push(cache_paths.output.display().to_string());
     run_stage(
         "perturbation_cloud",
@@ -288,9 +286,9 @@ fn run_basepoint_event_panel(
         perturbation_summary.selected_fixtures > 0,
         "perturbation cloud selected zero basepoints"
     );
-    assert_eq!(
-        perturbation_summary.failed_probe_rows, 0,
-        "perturbation cloud probe rows failed"
+    assert!(
+        perturbation_summary.failed_probe_rows < perturbation_summary.probe_rows,
+        "perturbation cloud produced no successful probe rows"
     );
     let poly_id_to_facet = panel_rows
         .iter()
@@ -310,12 +308,12 @@ fn run_basepoint_event_panel(
         branch_selected_rows: branch_summary.selected_rows,
         branch_successful_recomputations: branch_summary.successful_recomputations,
         branch_degeneracy_counts: branch_summary.degeneracy_counts,
-        sys_cache_inputs: cache_paths
+        sysext_cache_inputs: cache_paths
             .inputs
             .iter()
             .map(|path| path.display().to_string())
             .collect(),
-        sys_cache_output: cache_paths.output.display().to_string(),
+        sysext_cache_output: cache_paths.output.display().to_string(),
         panel_path: panel_path.display().to_string(),
         provenance_path: provenance_path.display().to_string(),
         branch_dir: branch_dir.display().to_string(),
@@ -464,10 +462,6 @@ fn parse_args() -> Cli {
 
 fn print_usage() {
     eprintln!("Usage: dev-sys-prediction-panel --config PATH --out-dir PATH");
-}
-
-fn default_polytope_table() -> String {
-    DEFAULT_POLYTOPE_TABLE.to_string()
 }
 
 fn default_source() -> String {

@@ -1,42 +1,41 @@
 {
-  "method": "dev-sys-prediction-produce",
+  "method": "dev-sys-prediction-panel:perturbation-cloud",
   "direction_model": "near_active",
   "include_candidate_window_directions": false,
   "selection_threshold_relative": 0.01,
-  "max_fixtures_per_label": 2,
+  "max_fixtures_per_label": 24,
   "skip_fixtures_per_label": 0,
   "degeneracy_labels": [
-    "high_degeneracy",
     "large_gap",
-    "narrow_gap"
+    "narrow_gap",
+    "high_degeneracy"
   ],
-  "selected_fixtures": 6,
+  "selected_fixtures": 24,
   "eligible_diagnostic_counts_by_label": {
-    "high_degeneracy": 2,
-    "large_gap": 2,
-    "narrow_gap": 2
+    "large_gap": 14,
+    "narrow_gap": 10
   },
   "selected_counts_by_label": {
-    "high_degeneracy": 2,
-    "large_gap": 2,
-    "narrow_gap": 2
+    "large_gap": 14,
+    "narrow_gap": 10
   },
   "missing_polytope_counts_by_label": {},
-  "requested_labels_with_no_selected_fixture": [],
-  "probe_rows": 112,
+  "requested_labels_with_no_selected_fixture": [
+    "high_degeneracy"
+  ],
+  "probe_rows": 530,
   "run_trace_rows": 0,
   "endpoint_diagnostic_rows": 0,
   "endpoint_direction_scan_rows": 0,
-  "failed_probe_rows": 1,
+  "failed_probe_rows": 10,
   "failed_endpoint_direction_scan_rows": 0,
   "degeneracy_counts": {
-    "high_degeneracy": 2,
-    "large_gap": 2,
-    "narrow_gap": 2
+    "large_gap": 14,
+    "narrow_gap": 10
   },
   "status_counts": {
-    "ok": 111,
-    "target_polytope_construction_failed": 1
+    "ok": 520,
+    "target_polytope_construction_failed": 10
   },
   "trace_stop_reason_counts": {},
   "trace_line_search_status_counts": {},
@@ -45,10 +44,10 @@
   "endpoint_direction_scan_status_counts": {},
   "endpoint_direction_scan_threshold_counts": {},
   "sysext_cache_hits": 0,
-  "sysext_cache_misses": 111,
-  "sysext_cache_used_rows": 111,
+  "sysext_cache_misses": 520,
+  "sysext_cache_used_rows": 520,
   "skip_endpoint_diagnostics": true,
   "write_step_ranking_audit": false,
-  "out_dir": "experiments/dev-sys-prediction/facet-scale-baseline-error/local-decomp-cloud",
+  "out_dir": "experiments/dev-sys-prediction/facet-scale-baseline-error/runs/production/basepoint-event-panel/perturbation-cloud",
   "caveat": "finite single-anchor prediction cloud only; this does not certify endpoint local maximality"
 }

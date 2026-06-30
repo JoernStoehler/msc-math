@@ -14,6 +14,41 @@ pub(crate) struct PolytopeRow {
     pub(crate) dual_vertices_f64: Vec<[f64; 4]>,
 }
 
+#[derive(Clone, Debug, Deserialize)]
+struct InputPolytopeRow {
+    // Accept the sys-datascience producer schema (`name`, `dual_vertices`) and
+    // the normalized panel schema (`poly_id`, `dual_vertices_f64`).
+    poly_id: Option<String>,
+    name: Option<String>,
+    facet_count: usize,
+    capacity_source: Option<String>,
+    capacity: f64,
+    volume: f64,
+    sys: f64,
+    #[serde(alias = "dual_vertices")]
+    dual_vertices_f64: Vec<[f64; 4]>,
+}
+
+impl InputPolytopeRow {
+    fn normalize(self, default_source: &str) -> PolytopeRow {
+        let poly_id = self
+            .poly_id
+            .or(self.name)
+            .expect("input polytope row must have poly_id or name");
+        PolytopeRow {
+            poly_id,
+            facet_count: self.facet_count,
+            capacity_source: self
+                .capacity_source
+                .unwrap_or_else(|| default_source.to_string()),
+            capacity: self.capacity,
+            volume: self.volume,
+            sys: self.sys,
+            dual_vertices_f64: self.dual_vertices_f64,
+        }
+    }
+}
+
 #[derive(Serialize)]
 pub(crate) struct ProvenanceRow {
     poly_id: String,
@@ -51,7 +86,10 @@ pub(crate) fn select_basepoints(
         .keys()
         .map(|facet_count| (*facet_count, Vec::new()))
         .collect::<BTreeMap<_, Vec<PolytopeRow>>>();
-    for row in load_jsonl::<PolytopeRow>(polytope_table) {
+    for row in load_jsonl::<InputPolytopeRow>(polytope_table)
+        .into_iter()
+        .map(|row| row.normalize(source))
+    {
         if wanted.contains(&row.facet_count) && row.capacity_source == source {
             by_facet.entry(row.facet_count).or_default().push(row);
         }

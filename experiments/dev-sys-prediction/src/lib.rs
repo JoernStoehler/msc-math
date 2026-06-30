@@ -6,3 +6,4 @@ mod panel_io;
 pub mod prediction_cloud;
 pub mod schema;
 pub mod sysext_beta_boundary_scan;
+mod sysext_cache;

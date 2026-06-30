@@ -1,0 +1,151 @@
+{
+  "artifacts": [
+    {
+      "bytes": 22700,
+      "expected_empty": false,
+      "jsonl_rows": 24,
+      "path": "runs/production/basepoint-event-panel/basepoint-polytope-panel.jsonl",
+      "sha256": "2f5287ed9e50dcf6c860bc2e8760cfb180a9ac0c2d4f7191a67a7df893424c5c"
+    },
+    {
+      "bytes": 53045675,
+      "expected_empty": false,
+      "jsonl_rows": 4096,
+      "path": "/workspaces/msc-math/.worktrees/sys-prediction-integration/experiments/sys-datascience/produce/random.jsonl",
+      "sha256": "a21ac62ba5c9496ef631d3cce74e8b663764516b76e9d4725f1e517d8dd55f9f"
+    },
+    {
+      "bytes": 12918,
+      "expected_empty": false,
+      "jsonl_rows": 24,
+      "path": "runs/production/basepoint-event-panel/branch-annotation/branch-set-diagnostic.jsonl",
+      "sha256": "e5bac1c40e5dadf756f831dcf01ea063a980ec2c09a8d05fcdd4d94a35206bc4"
+    },
+    {
+      "bytes": 8557,
+      "expected_empty": false,
+      "jsonl_rows": 24,
+      "path": "runs/production/basepoint-event-panel/branch-annotation/fixture-selection.jsonl",
+      "sha256": "9a35959e84d2beed3f4c65bbc524b383873384cd85fd750972bac2ae3c05e384"
+    },
+    {
+      "bytes": 1643,
+      "expected_empty": false,
+      "jsonl_rows": null,
+      "path": "runs/production/basepoint-event-panel/perturbation-cloud/summary.json",
+      "sha256": "4b45f54ee2919fe29908ed17fb402f49a996ed4daf90b6acff6bbdcbaec3ab96"
+    },
+    {
+      "bytes": 6560,
+      "expected_empty": false,
+      "jsonl_rows": 24,
+      "path": "runs/production/basepoint-event-panel/perturbation-cloud/fixture-selection.jsonl",
+      "sha256": "25292a74d88009bcf1f7f30c41e7e498f14c2492e9870bd5f896d4c4cd518f00"
+    },
+    {
+      "bytes": 8862,
+      "expected_empty": false,
+      "jsonl_rows": 24,
+      "path": "runs/production/basepoint-event-panel/perturbation-cloud/basepoints.jsonl",
+      "sha256": "9528cc1a1f067c74962bc1b7067e4edb8f4ac12b02040766fcb35e41f3e40ac8"
+    },
+    {
+      "bytes": 654727,
+      "expected_empty": false,
+      "jsonl_rows": 554,
+      "path": "runs/production/basepoint-event-panel/perturbation-cloud/states.jsonl",
+      "sha256": "7f6c5f5e5fdaae734a171c8b26385cf5094f663cb6ed7c6f07555db5e457e591"
+    },
+    {
+      "bytes": 259452,
+      "expected_empty": false,
+      "jsonl_rows": 530,
+      "path": "runs/production/basepoint-event-panel/perturbation-cloud/events.jsonl",
+      "sha256": "f7892f2818846a7c20720ee3246abeebfddaf85be5b62ece81569afb5eb863bd"
+    },
+    {
+      "bytes": 1254806,
+      "expected_empty": false,
+      "jsonl_rows": 530,
+      "path": "runs/production/basepoint-event-panel/perturbation-cloud/local-geometry-probe.jsonl",
+      "sha256": "1a954c288ec0bd691f942683802e052a190fd485b35c371630f9fb41bd467075"
+    },
+    {
+      "bytes": 0,
+      "expected_empty": true,
+      "jsonl_rows": 0,
+      "path": "runs/production/basepoint-event-panel/perturbation-cloud/prediction-cloud.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "expected_empty": true,
+      "jsonl_rows": 0,
+      "path": "runs/production/basepoint-event-panel/perturbation-cloud/run-trace.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "expected_empty": true,
+      "jsonl_rows": 0,
+      "path": "runs/production/basepoint-event-panel/perturbation-cloud/endpoint-diagnostic.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "expected_empty": true,
+      "jsonl_rows": 0,
+      "path": "runs/production/basepoint-event-panel/perturbation-cloud/endpoint-direction-scan.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 12010922,
+      "expected_empty": false,
+      "jsonl_rows": 520,
+      "path": "runs/production/sysext-cache.jsonl",
+      "sha256": "8ee0983e66c7883622369de0e82d8e7b1b1c91fbcb5182ad0ee75e1fd8071bd7"
+    },
+    {
+      "bytes": 1027,
+      "expected_empty": false,
+      "jsonl_rows": null,
+      "path": "runs/production/summaries/panel-scale.csv",
+      "sha256": "3ae040bca01d5879df0144dc6c1c3fd2535c3dcdd5dc2ffa3001cf935f509705"
+    },
+    {
+      "bytes": 525,
+      "expected_empty": false,
+      "jsonl_rows": null,
+      "path": "runs/production/summaries/random-sample-global-scale.csv",
+      "sha256": "0c168232111ebad84dbd6c8fef433aa2b9249d4d7c6366def6408ec6937ac3fe"
+    },
+    {
+      "bytes": 246,
+      "expected_empty": false,
+      "jsonl_rows": null,
+      "path": "runs/production/summaries/branch-window-by-facet.csv",
+      "sha256": "c27dbba4850077cbc97c95b1c50cf4e6ced7bf91598c22393358b48fd245a973"
+    },
+    {
+      "bytes": 5929,
+      "expected_empty": false,
+      "jsonl_rows": null,
+      "path": "runs/production/summaries/prediction-error-by-facet-step.csv",
+      "sha256": "01c3b138745087005728da324b87f95b84bb72d3919ec3b604a7eb34c22d9bd2"
+    },
+    {
+      "bytes": 3820,
+      "expected_empty": false,
+      "jsonl_rows": null,
+      "path": "runs/production/summaries/SUMMARY.md",
+      "sha256": "ad9a4d7a79db71e1b57e8f6e57af542e4fba032fe358a545fd59dd6d4de182c8"
+    },
+    {
+      "bytes": 5953,
+      "expected_empty": false,
+      "jsonl_rows": null,
+      "path": "runs/production/summaries/prediction-error-by-radius.svg",
+      "sha256": "615c001b5fdffb331092c94f8906df26260b1f2487cb5431daa0eabb33929ce8"
+    }
+  ]
+}

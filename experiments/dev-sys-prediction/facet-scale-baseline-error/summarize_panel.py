@@ -25,7 +25,7 @@ def parse_args():
     parser.add_argument(
         "--global-scale-table",
         type=Path,
-        default=Path("experiments/sys-datascience/prepare/polytope-table.jsonl"),
+        default=Path("experiments/sys-datascience/produce/random.jsonl"),
     )
     parser.add_argument("--global-scale-source", default="random_sample")
     parser.add_argument("--global-scale-pairs", type=int, default=20_000)
@@ -100,7 +100,10 @@ def compact(values):
 
 
 def flat_vertices(row):
-    return [coord for vertex in row["dual_vertices_f64"] for coord in vertex]
+    vertices = row.get("dual_vertices_f64", row.get("dual_vertices"))
+    if vertices is None:
+        raise KeyError("row must have dual_vertices_f64 or dual_vertices")
+    return [coord for vertex in vertices for coord in vertex]
 
 
 def euclidean_norm(flat):
@@ -150,7 +153,7 @@ def scale_row(row):
     facet_count = int(row["facet_count"])
     coord_rms = norm / math.sqrt(len(flat))
     return {
-        "poly_id": row["poly_id"],
+        "poly_id": first_present(row, "poly_id", "name"),
         "facet_count": facet_count,
         "flat_norm": norm,
         "coord_rms": coord_rms,
@@ -165,7 +168,8 @@ def global_scale_summary(table_path, source, facet_counts, pair_samples, seed):
     wanted = set(facet_counts)
     for row in load_jsonl(table_path):
         facet_count = int(row["facet_count"])
-        if facet_count in wanted and row.get("capacity_source") == source:
+        capacity_source = row.get("capacity_source", "random_sample")
+        if facet_count in wanted and capacity_source == source:
             rows_by_facet[facet_count].append(flat_vertices(row))
 
     rng = random.Random(seed)
@@ -689,24 +693,31 @@ def main():
     write_csv(prediction_path, prediction_rows)
     write_summary(summary_path, panel_scale_rows, global_scale_rows, branch_rows, prediction_rows)
     write_prediction_svg(figure_path, prediction_rows)
+    source_paths = [
+        args.panel,
+        args.global_scale_table,
+        args.branch_dir / "branch-set-diagnostic.jsonl",
+        args.branch_dir / "fixture-selection.jsonl",
+        args.prediction_dir / "summary.json",
+        args.prediction_dir / "fixture-selection.jsonl",
+        args.prediction_dir / "basepoints.jsonl",
+        args.prediction_dir / "states.jsonl",
+        args.prediction_dir / "events.jsonl",
+        args.prediction_dir / "local-geometry-probe.jsonl",
+        args.prediction_dir / "prediction-cloud.jsonl",
+        args.prediction_dir / "run-trace.jsonl",
+        args.prediction_dir / "endpoint-diagnostic.jsonl",
+        args.prediction_dir / "endpoint-direction-scan.jsonl",
+    ]
+    for sysext_cache_path in [
+        args.prediction_dir / "sysext-cache.jsonl",
+        args.prediction_dir.parent.parent / "sysext-cache.jsonl",
+    ]:
+        if sysext_cache_path.exists():
+            source_paths.append(sysext_cache_path)
     write_manifest(
         manifest_path,
-        [
-            args.panel,
-            args.global_scale_table,
-            args.branch_dir / "branch-set-diagnostic.jsonl",
-            args.branch_dir / "fixture-selection.jsonl",
-            args.prediction_dir / "summary.json",
-            args.prediction_dir / "fixture-selection.jsonl",
-            args.prediction_dir / "basepoints.jsonl",
-            args.prediction_dir / "states.jsonl",
-            args.prediction_dir / "events.jsonl",
-            args.prediction_dir / "local-geometry-probe.jsonl",
-            args.prediction_dir / "prediction-cloud.jsonl",
-            args.prediction_dir / "run-trace.jsonl",
-            args.prediction_dir / "endpoint-diagnostic.jsonl",
-            args.prediction_dir / "endpoint-direction-scan.jsonl",
-        ],
+        source_paths,
         [
             panel_scale_path,
             global_scale_path,

@@ -1,0 +1,24 @@
+{
+  "method": "dev-gradient-ascent-branch-diagnostic",
+  "selected_rows": 24,
+  "diagnostic_rows": 24,
+  "successful_recomputations": 24,
+  "failed_recomputations": 0,
+  "thresholds_relative": [
+    0.01
+  ],
+  "max_action_gap_relative": 0.01,
+  "selection_bucket_counts": {
+    "random_sample": 24,
+    "top_sys": 24
+  },
+  "dataset_counts": {
+    "random_sample": 24
+  },
+  "degeneracy_counts": {
+    "large_gap": 14,
+    "narrow_gap": 10
+  },
+  "out_dir": "experiments/dev-sys-prediction/facet-scale-baseline-error/runs/production/basepoint-event-panel/branch-annotation",
+  "caveat": "branch/degeneracy diagnostic only; this does not certify local maximality"
+}

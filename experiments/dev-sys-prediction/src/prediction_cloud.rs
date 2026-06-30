@@ -6,9 +6,9 @@
 // finite direction/radius cloud.
 
 use crate::schema::{BasepointRow, PerturbationEventRow, StateRow};
+use crate::sysext_cache::{SysextCache, SysextCacheOutcome, TargetSysextError};
 use exp_sys_landscape::{
-    compute_active_sys_state, compute_active_sys_state_cached, exact_volume_from_incidence_as_f64,
-    poly_id_from_dual_vertices, ExpensiveComputationCache, SysLandscapePolytopeCache,
+    exact_volume_from_incidence_as_f64, poly_id_from_dual_vertices, SysLandscapePolytopeCache,
 };
 use good_lp::{constraint, default_solver, variable, variables, Expression, Solution, SolverModel};
 use nalgebra::Vector4;
@@ -17,6 +17,7 @@ use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::fs::{self, File};
 use std::io::{BufRead, BufReader, BufWriter, Write};
 use std::path::{Path, PathBuf};
+use std::sync::{Mutex, OnceLock};
 use std::time::{Instant, SystemTime, UNIX_EPOCH};
 use symplectic::derivatives::{
     capacity_subgradients_a, clarke_directional_derivative_a, systolic_ratio_gradient_a,
@@ -35,6 +36,7 @@ const DEFAULT_MAX_FIXTURES_PER_LABEL: usize = 1;
 const DEFAULT_TRACE_ITERATIONS: usize = 1;
 const DEFAULT_MIN_OBSERVED_DELTA: f64 = 0.0;
 const DEFAULT_MIN_OBSERVED_RELATIVE_DELTA: f64 = 0.0;
+const PROFILE_ENV: &str = "DEV_SYS_PREDICTION_PROFILE";
 
 #[derive(Debug)]
 struct Cli {
@@ -50,8 +52,8 @@ struct Cli {
     steps: Vec<f64>,
     endpoint_steps: Option<Vec<f64>>,
     skip_endpoint_diagnostics: bool,
-    sys_cache_inputs: Vec<PathBuf>,
-    sys_cache_output: Option<PathBuf>,
+    sysext_cache_inputs: Vec<PathBuf>,
+    sysext_cache_output: Option<PathBuf>,
     max_fixtures_per_label: usize,
     skip_fixtures_per_label: usize,
     trace_iterations: usize,
@@ -153,7 +155,7 @@ struct LocalGeometryProbeRow {
     decomposition_sum_residual: Option<f64>,
     recomputed_sys: Option<f64>,
     observed_delta_sys: Option<f64>,
-    target_near_active_count: Option<usize>,
+    target_cached_scalar_near_active_count: Option<usize>,
     target_best_sigma_in_base_near_active_set: Option<bool>,
     target_best_sigma_in_base_candidate_window: Option<bool>,
     target_best_sigma_base_relative_action_gap: Option<f64>,
@@ -174,7 +176,7 @@ struct RunTraceRow {
     action_window_relative: f64,
     direction_model: String,
     base_near_active_count: usize,
-    target_near_active_count: Option<usize>,
+    target_cached_scalar_near_active_count: Option<usize>,
     chosen_direction_label: Option<String>,
     chosen_step: Option<f64>,
     attempted_direction_labels: Vec<String>,
@@ -247,7 +249,7 @@ struct StepRankingAuditRow {
     fixed_winner_sys_error_interaction_residual: Option<f64>,
     observed_delta_sys: Option<f64>,
     target_sys: Option<f64>,
-    target_near_active_count: Option<usize>,
+    target_cached_scalar_near_active_count: Option<usize>,
     target_best_sigma: Option<Vec<usize>>,
     target_best_sigma_in_base_near_active_set: Option<bool>,
     target_best_sigma_in_base_candidate_window: Option<bool>,
@@ -319,9 +321,9 @@ struct ComputeBudgetReport {
     endpoint_target_orbit_iterations: u64,
     endpoint_scan_base_orbit_iterations: u64,
     endpoint_scan_target_orbit_iterations: u64,
-    sys_cache_hits: usize,
-    sys_cache_misses: usize,
-    sys_cache_used_rows: usize,
+    sysext_cache_hits: usize,
+    sysext_cache_misses: usize,
+    sysext_cache_used_rows: usize,
     failed_probe_rows: usize,
     failed_endpoint_direction_scan_rows: usize,
     skip_endpoint_diagnostics: bool,
@@ -356,9 +358,9 @@ struct Summary {
     endpoint_line_search_status_counts: BTreeMap<String, usize>,
     endpoint_direction_scan_status_counts: BTreeMap<String, usize>,
     endpoint_direction_scan_threshold_counts: BTreeMap<String, usize>,
-    sys_cache_hits: usize,
-    sys_cache_misses: usize,
-    sys_cache_used_rows: usize,
+    sysext_cache_hits: usize,
+    sysext_cache_misses: usize,
+    sysext_cache_used_rows: usize,
     skip_endpoint_diagnostics: bool,
     write_step_ranking_audit: bool,
     out_dir: String,
@@ -397,6 +399,101 @@ struct ProbeDirection {
     label: String,
     vector: Vec<Vector4<f64>>,
     only_step: Option<f64>,
+}
+
+#[derive(Default)]
+struct PredictionProfiler {
+    compute_base_state_calls: u64,
+    compute_base_state_ns: u128,
+    local_probe_calls: u64,
+    local_probe_ns: u128,
+    target_state_lookup_calls: u64,
+    target_state_lookup_ns: u128,
+    target_state_miss_compute_calls: u64,
+    target_state_miss_compute_ns: u128,
+    decomposition_calls: u64,
+    decomposition_ns: u128,
+    exact_base_window_calls: u64,
+    exact_base_window_ns: u128,
+    fixed_winner_calls: u64,
+    fixed_winner_ns: u128,
+    fixed_sigma_action_calls: u64,
+    fixed_sigma_action_ns: u128,
+}
+
+static PROFILE: OnceLock<Mutex<PredictionProfiler>> = OnceLock::new();
+
+fn profile_enabled() -> bool {
+    std::env::var_os(PROFILE_ENV).is_some()
+}
+
+fn profile() -> Option<&'static Mutex<PredictionProfiler>> {
+    profile_enabled().then(|| PROFILE.get_or_init(|| Mutex::new(PredictionProfiler::default())))
+}
+
+fn record_profile(update: impl FnOnce(&mut PredictionProfiler)) {
+    if let Some(profile) = profile() {
+        update(&mut profile.lock().expect("prediction profile poisoned"));
+    }
+}
+
+fn record_local_probe_elapsed(started: &Instant) {
+    record_profile(|profile| {
+        profile.local_probe_ns += started.elapsed().as_nanos();
+    });
+}
+
+fn record_target_state_lookup(outcome: Option<SysextCacheOutcome>, elapsed_ns: u128) {
+    record_profile(|profile| {
+        profile.target_state_lookup_calls += 1;
+        profile.target_state_lookup_ns += elapsed_ns;
+        if outcome == Some(SysextCacheOutcome::MissComputed) {
+            profile.target_state_miss_compute_calls += 1;
+            profile.target_state_miss_compute_ns += elapsed_ns;
+        }
+    });
+}
+
+fn profile_elapsed_ns(started: Instant) -> u128 {
+    started.elapsed().as_nanos()
+}
+
+fn print_profile() {
+    if !profile_enabled() {
+        return;
+    }
+    let Some(profile) = PROFILE.get() else {
+        return;
+    };
+    let profile = profile.lock().expect("prediction profile poisoned");
+    eprintln!(
+        "{{\"prediction_profile\":{{\
+         \"compute_base_state_calls\":{},\"compute_base_state_ms\":{:.3},\
+         \"local_probe_calls\":{},\"local_probe_ms\":{:.3},\
+         \"target_state_lookup_calls\":{},\"target_state_lookup_ms\":{:.3},\
+         \"target_state_miss_compute_calls\":{},\"target_state_miss_compute_ms\":{:.3},\
+         \"decomposition_calls\":{},\"decomposition_ms\":{:.3},\
+         \"exact_base_window_calls\":{},\"exact_base_window_ms\":{:.3},\
+         \"fixed_winner_calls\":{},\"fixed_winner_ms\":{:.3},\
+         \"fixed_sigma_action_calls\":{},\"fixed_sigma_action_ms\":{:.3}\
+         }}}}",
+        profile.compute_base_state_calls,
+        profile.compute_base_state_ns as f64 / 1.0e6,
+        profile.local_probe_calls,
+        profile.local_probe_ns as f64 / 1.0e6,
+        profile.target_state_lookup_calls,
+        profile.target_state_lookup_ns as f64 / 1.0e6,
+        profile.target_state_miss_compute_calls,
+        profile.target_state_miss_compute_ns as f64 / 1.0e6,
+        profile.decomposition_calls,
+        profile.decomposition_ns as f64 / 1.0e6,
+        profile.exact_base_window_calls,
+        profile.exact_base_window_ns as f64 / 1.0e6,
+        profile.fixed_winner_calls,
+        profile.fixed_winner_ns as f64 / 1.0e6,
+        profile.fixed_sigma_action_calls,
+        profile.fixed_sigma_action_ns as f64 / 1.0e6,
+    );
 }
 
 impl ProbeDirection {
@@ -449,7 +546,8 @@ pub fn run_from_args(argv: impl IntoIterator<Item = impl Into<String>>) {
     let mut probe_rows = Vec::new();
     let mut base_orbit_iterations = 0u64;
     let mut target_orbit_iterations = 0u64;
-    let sys_cache = ExpensiveComputationCache::load(&cli.sys_cache_inputs);
+    let sysext_cache =
+        SysextCache::load(&cli.sysext_cache_inputs, cli.sysext_cache_output.as_deref());
 
     for fixture in &fixtures {
         match compute_base_state_from_row(
@@ -476,7 +574,7 @@ pub fn run_from_args(argv: impl IntoIterator<Item = impl Into<String>>) {
                             cli.direction_model,
                             cli.action_window_relative,
                             cli.selection_threshold_relative,
-                            &sys_cache,
+                            &sysext_cache,
                         );
                         state_rows.extend(state_rows_for_probe(&row, &base));
                         event_rows.push(event_row_for_probe(&row));
@@ -515,7 +613,7 @@ pub fn run_from_args(argv: impl IntoIterator<Item = impl Into<String>>) {
                     decomposition_sum_residual: None,
                     recomputed_sys: None,
                     observed_delta_sys: None,
-                    target_near_active_count: None,
+                    target_cached_scalar_near_active_count: None,
                     target_best_sigma_in_base_near_active_set: None,
                     target_best_sigma_in_base_candidate_window: None,
                     target_best_sigma_base_relative_action_gap: None,
@@ -557,7 +655,7 @@ pub fn run_from_args(argv: impl IntoIterator<Item = impl Into<String>>) {
             relative_delta: cli.min_observed_relative_delta,
         },
         cli.skip_endpoint_diagnostics,
-        &sys_cache,
+        &sysext_cache,
     );
     let trace_rows = trace_artifacts.trace_rows;
     let endpoint_rows = trace_artifacts.endpoint_rows;
@@ -620,19 +718,8 @@ pub fn run_from_args(argv: impl IntoIterator<Item = impl Into<String>>) {
         .iter()
         .filter_map(|row| row.target_orbit_iterations)
         .sum::<u64>();
-    if let Some(path) = &cli.sys_cache_output {
-        if let Some(parent) = path.parent() {
-            fs::create_dir_all(parent).unwrap_or_else(|err| {
-                panic!(
-                    "failed to create sys cache output parent {}: {err}",
-                    parent.display()
-                )
-            });
-        }
-        write_jsonl(path, &sys_cache.used_rows()).expect("failed to write sys cache output");
-    }
-    let cache_stats = sys_cache.stats();
-    let cache_used_rows = sys_cache.used_rows().len();
+    let cache_stats = sysext_cache.stats();
+    let cache_used_rows = sysext_cache.used_rows().len();
     let report = ComputeBudgetReport {
         command: command_name.clone(),
         diagnostic_dir: cli.diagnostic_dir.display().to_string(),
@@ -664,9 +751,9 @@ pub fn run_from_args(argv: impl IntoIterator<Item = impl Into<String>>) {
         endpoint_target_orbit_iterations,
         endpoint_scan_base_orbit_iterations,
         endpoint_scan_target_orbit_iterations,
-        sys_cache_hits: cache_stats.hits,
-        sys_cache_misses: cache_stats.misses,
-        sys_cache_used_rows: cache_used_rows,
+        sysext_cache_hits: cache_stats.hits,
+        sysext_cache_misses: cache_stats.misses,
+        sysext_cache_used_rows: cache_used_rows,
         failed_probe_rows,
         failed_endpoint_direction_scan_rows,
         skip_endpoint_diagnostics: cli.skip_endpoint_diagnostics,
@@ -709,9 +796,9 @@ pub fn run_from_args(argv: impl IntoIterator<Item = impl Into<String>>) {
                 relative_delta: cli.min_observed_relative_delta,
             },
         ),
-        sys_cache_hits: cache_stats.hits,
-        sys_cache_misses: cache_stats.misses,
-        sys_cache_used_rows: cache_used_rows,
+        sysext_cache_hits: cache_stats.hits,
+        sysext_cache_misses: cache_stats.misses,
+        sysext_cache_used_rows: cache_used_rows,
         skip_endpoint_diagnostics: cli.skip_endpoint_diagnostics,
         write_step_ranking_audit: cli.write_step_ranking_audit,
         out_dir: cli.out_dir.display().to_string(),
@@ -720,6 +807,7 @@ pub fn run_from_args(argv: impl IntoIterator<Item = impl Into<String>>) {
     };
     write_json(cli.out_dir.join("summary.json"), &summary).expect("failed to write summary.json");
 
+    print_profile();
     println!("{}", cli.out_dir.display());
 }
 
@@ -957,7 +1045,7 @@ fn run_trace_and_endpoint_rows(
     trace_iterations: usize,
     stop_threshold: StopThreshold,
     skip_endpoint_diagnostics: bool,
-    sys_cache: &ExpensiveComputationCache,
+    sysext_cache: &SysextCache,
 ) -> TraceArtifacts {
     let mut rows = Vec::new();
     let mut endpoint_rows = Vec::new();
@@ -1003,8 +1091,8 @@ fn run_trace_and_endpoint_rows(
             let action_gap = if iteration == 0 {
                 fixture.polytope.capacity * action_window_relative
             } else {
-                match compute_active_sys_state(&current) {
-                    Some(state) => state.capacity.min_action * action_window_relative,
+                match sysext_cache.compute(&current) {
+                    Some(state) => state.min_action * action_window_relative,
                     None => {
                         rows.push(trace_failure_row(
                             fixture,
@@ -1055,6 +1143,7 @@ fn run_trace_and_endpoint_rows(
                 action_window_relative,
                 branch_threshold_relative,
                 stop_threshold,
+                sysext_cache,
             ));
             let Some(candidate) = best_line_search_step(
                 fixture,
@@ -1066,6 +1155,7 @@ fn run_trace_and_endpoint_rows(
                 action_window_relative,
                 branch_threshold_relative,
                 stop_threshold,
+                sysext_cache,
             ) else {
                 rows.push(trace_failure_row(
                     fixture,
@@ -1105,6 +1195,7 @@ fn run_trace_and_endpoint_rows(
                 action_window_relative,
                 steps,
                 stop_threshold,
+                sysext_cache,
             ));
             endpoint_direction_scan_rows.extend(endpoint_direction_scan_rows_for_final_state(
                 fixture,
@@ -1114,7 +1205,7 @@ fn run_trace_and_endpoint_rows(
                 direction_model,
                 include_candidate_window_directions,
                 endpoint_steps,
-                sys_cache,
+                sysext_cache,
             ));
         }
     }
@@ -1145,6 +1236,7 @@ fn step_ranking_audit_rows_for_base(
     action_window_relative: f64,
     branch_threshold_relative: f64,
     stop_threshold: StopThreshold,
+    sysext_cache: &SysextCache,
 ) -> Vec<StepRankingAuditRow> {
     let effective_min_observed_delta = stop_threshold.effective_delta(base.sys);
     let mut rows = Vec::new();
@@ -1162,6 +1254,7 @@ fn step_ranking_audit_rows_for_base(
                 action_window_relative,
                 branch_threshold_relative,
                 effective_min_observed_delta,
+                sysext_cache,
             ));
         }
     }
@@ -1178,6 +1271,7 @@ fn step_ranking_audit_row(
     action_window_relative: f64,
     branch_threshold_relative: f64,
     effective_min_observed_delta: f64,
+    sysext_cache: &SysextCache,
 ) -> StepRankingAuditRow {
     let near_active_predicted_delta_sys =
         branch_model_predicted_delta(base, &direction.vector, step, DirectionModel::NearActive);
@@ -1197,22 +1291,21 @@ fn step_ranking_audit_row(
     let mut status = "ok".to_string();
     let mut target_sys = None;
     let mut observed_delta_sys = None;
-    let mut target_near_active_count = None;
+    let mut target_cached_scalar_near_active_count = None;
     let mut target_best_sigma = None;
     let mut target_best_sigma_in_base_near_active_set = None;
     let mut target_best_sigma_in_base_candidate_window = None;
     let mut target_orbit_iterations = None;
     let mut decomposition = None;
 
-    match SysLandscapePolytopeCache::from_f64_dual_vertices(target_duals.clone()) {
-        Some(target_polytope) => {
-            match capacity_auto_with_gap(
-                &target_polytope,
-                base.capacity.min_action * action_window_relative,
-            ) {
-                Ok(target_capacity) => {
-                    target_orbit_iterations = Some(target_capacity.iterations);
-                    let best_sigma = target_capacity.best_sigma().to_vec();
+    match sysext_cache.polytope_from_dual_vertices(&target_duals) {
+        Some(target_polytope) => match sysext_cache.compute(&target_polytope) {
+            Some(target_state) => {
+                target_orbit_iterations = Some(target_state.iterations);
+                if let Some(best_sigma) = target_state.best_sigma().map(Vec::from) {
+                    target_cached_scalar_near_active_count = Some(
+                        target_state.cached_scalar_near_active_count(branch_threshold_relative),
+                    );
                     target_best_sigma_in_base_near_active_set = Some(
                         base.near_active_orbits
                             .iter()
@@ -1224,34 +1317,23 @@ fn step_ranking_audit_row(
                             .any(|orbit| orbit.sigma == best_sigma),
                     );
                     target_best_sigma = Some(best_sigma);
-                    match compute_active_sys_state(&target_polytope) {
-                        Some(target_state) => {
-                            target_near_active_count = Some(
-                                near_active_orbits(&target_capacity, branch_threshold_relative)
-                                    .len(),
-                            );
-                            target_sys = Some(target_state.sys);
-                            observed_delta_sys = Some(target_state.sys - base.sys);
-                            decomposition = candidate_window_decomposition(
-                                base,
-                                &target_duals,
-                                target_state.vol,
-                                target_state.sys,
-                                &direction.vector,
-                                step,
-                                candidate_window_prediction.as_ref(),
-                            );
-                        }
-                        None => {
-                            status = "target_sys_failed".to_string();
-                        }
-                    }
                 }
-                Err(err) => {
-                    status = format!("target_capacity_failed:{err:?}");
-                }
+                target_sys = Some(target_state.sys);
+                observed_delta_sys = Some(target_state.sys - base.sys);
+                decomposition = candidate_window_decomposition(
+                    base,
+                    &target_duals,
+                    target_state.volume,
+                    target_state.sys,
+                    &direction.vector,
+                    step,
+                    candidate_window_prediction.as_ref(),
+                );
             }
-        }
+            None => {
+                status = "target_sys_failed".to_string();
+            }
+        },
         None => {
             status = "target_polytope_construction_failed".to_string();
         }
@@ -1386,7 +1468,7 @@ fn step_ranking_audit_row(
             .map(|w| w.sys_error_interaction_residual),
         observed_delta_sys,
         target_sys,
-        target_near_active_count,
+        target_cached_scalar_near_active_count,
         target_best_sigma: target_best_sigma.clone(),
         target_best_sigma_in_base_near_active_set,
         target_best_sigma_in_base_candidate_window,
@@ -1456,6 +1538,7 @@ fn candidate_window_decomposition(
     step: f64,
     witness: Option<&CandidateWindowPredictionWitness>,
 ) -> Option<PredictionDecomposition> {
+    let profile_started = Instant::now();
     let witness = witness?;
     let predicted_sys = base.sys + witness.predicted_delta;
     let total_prediction_error = predicted_sys - actual_sys;
@@ -1480,7 +1563,7 @@ fn candidate_window_decomposition(
         .as_ref()
         .map(|row| row.sys_error_interaction_residual);
 
-    Some(PredictionDecomposition {
+    let out = Some(PredictionDecomposition {
         predicted_sys,
         actual_sys,
         total_prediction_error,
@@ -1496,7 +1579,12 @@ fn candidate_window_decomposition(
         sum_error,
         sum_residual,
         fixed_winner,
-    })
+    });
+    record_profile(|profile| {
+        profile.decomposition_calls += 1;
+        profile.decomposition_ns += profile_elapsed_ns(profile_started);
+    });
+    out
 }
 
 fn exact_base_window_sys_at_target(
@@ -1504,12 +1592,19 @@ fn exact_base_window_sys_at_target(
     target_duals: &[Vector4<f64>],
     target_volume: f64,
 ) -> Option<f64> {
-    base.candidate_orbits
+    let profile_started = Instant::now();
+    let out = base
+        .candidate_orbits
         .iter()
         .filter_map(|orbit| fixed_sigma_action(target_duals, &orbit.sigma))
         .map(|action| symplectic::systolic_ratio(action, target_volume))
         .filter(|sys| sys.is_finite())
-        .min_by(|a, b| a.total_cmp(b))
+        .min_by(|a, b| a.total_cmp(b));
+    record_profile(|profile| {
+        profile.exact_base_window_calls += 1;
+        profile.exact_base_window_ns += profile_elapsed_ns(profile_started);
+    });
+    out
 }
 
 fn fixed_winner_decomposition(
@@ -1520,6 +1615,7 @@ fn fixed_winner_decomposition(
     step: f64,
     witness: &CandidateWindowPredictionWitness,
 ) -> Option<FixedWinnerDecomposition> {
+    let profile_started = Instant::now();
     let base_orbit = base.candidate_orbits.get(witness.orbit_index)?;
     let actual_action = fixed_sigma_action(target_duals, &base_orbit.sigma)?;
     let base_capacity_gradient =
@@ -1551,7 +1647,7 @@ fn fixed_winner_decomposition(
     let sys_error_interaction_residual =
         sys_error_full - sys_error_action_part - sys_error_volume_part;
 
-    Some(FixedWinnerDecomposition {
+    let out = Some(FixedWinnerDecomposition {
         actual_action,
         predicted_action,
         action_error,
@@ -1566,15 +1662,26 @@ fn fixed_winner_decomposition(
         sys_error_action_part,
         sys_error_volume_part,
         sys_error_interaction_residual,
-    })
+    });
+    record_profile(|profile| {
+        profile.fixed_winner_calls += 1;
+        profile.fixed_winner_ns += profile_elapsed_ns(profile_started);
+    });
+    out
 }
 
 fn fixed_sigma_action(dual_vertices: &[Vector4<f64>], sigma: &[usize]) -> Option<f64> {
+    let profile_started = Instant::now();
     let outcome =
         symplectic::kkt::saddle_point_solver::solve_kkt_for_dual_vertices(dual_vertices, sigma);
     let result = outcome.feasible()?;
     let action = 0.5 / result.q_corrected;
-    action.is_finite().then_some(action)
+    let out = action.is_finite().then_some(action);
+    record_profile(|profile| {
+        profile.fixed_sigma_action_calls += 1;
+        profile.fixed_sigma_action_ns += profile_elapsed_ns(profile_started);
+    });
+    out
 }
 
 fn assign_descending_ranks(rows: &mut [StepRankingAuditRow]) {
@@ -1635,6 +1742,7 @@ fn best_line_search_step(
     action_window_relative: f64,
     branch_threshold_relative: f64,
     stop_threshold: StopThreshold,
+    sysext_cache: &SysextCache,
 ) -> Option<TraceCandidate> {
     let effective_min_observed_delta = stop_threshold.effective_delta(base.sys);
     let mut candidates = Vec::new();
@@ -1682,25 +1790,15 @@ fn best_line_search_step(
                 .zip(&direction.vector)
                 .map(|(dual, delta)| dual + step * delta)
                 .collect();
-            let Some(target_polytope) =
-                SysLandscapePolytopeCache::from_f64_dual_vertices(target_duals)
+            let Some(target_polytope) = sysext_cache.polytope_from_dual_vertices(&target_duals)
             else {
                 rejected_steps.push(step);
                 continue;
             };
-            let Ok(target_capacity) = capacity_auto_with_gap(
-                &target_polytope,
-                base.capacity.min_action * action_window_relative,
-            ) else {
+            let Some(target_state) = sysext_cache.compute(&target_polytope) else {
                 rejected_steps.push(step);
                 continue;
             };
-            let Some(target_state) = compute_active_sys_state(&target_polytope) else {
-                rejected_steps.push(step);
-                continue;
-            };
-            let target_near_active =
-                near_active_orbits(&target_capacity, branch_threshold_relative);
             let observed_delta = target_state.sys - base.sys;
             if observed_delta <= effective_min_observed_delta {
                 rejected_steps.push(step);
@@ -1718,7 +1816,9 @@ fn best_line_search_step(
                     action_window_relative,
                     direction_model: direction_model.as_str().to_string(),
                     base_near_active_count: base.near_active_orbits.len(),
-                    target_near_active_count: Some(target_near_active.len()),
+                    target_cached_scalar_near_active_count: Some(
+                        target_state.cached_scalar_near_active_count(branch_threshold_relative),
+                    ),
                     chosen_direction_label: Some(direction.label),
                     chosen_step: Some(step),
                     attempted_direction_labels,
@@ -1734,7 +1834,7 @@ fn best_line_search_step(
                     base_sys: base.sys,
                     target_sys: Some(target_state.sys),
                     base_orbit_iterations: base.capacity.iterations,
-                    target_orbit_iterations: Some(target_capacity.iterations),
+                    target_orbit_iterations: Some(target_state.iterations),
                     accepted: true,
                     stop_reason: "accepted_observed_delta_above_threshold".to_string(),
                 },
@@ -1758,7 +1858,7 @@ fn best_line_search_step(
             action_window_relative,
             direction_model: direction_model.as_str().to_string(),
             base_near_active_count: base.near_active_orbits.len(),
-            target_near_active_count: None,
+            target_cached_scalar_near_active_count: None,
             chosen_direction_label: last_direction_label,
             chosen_step: None,
             attempted_direction_labels,
@@ -1824,7 +1924,7 @@ fn trace_failure_row(
         action_window_relative,
         direction_model: direction_model.as_str().to_string(),
         base_near_active_count,
-        target_near_active_count: None,
+        target_cached_scalar_near_active_count: None,
         chosen_direction_label: None,
         chosen_step: None,
         attempted_direction_labels: Vec::new(),
@@ -1860,8 +1960,9 @@ fn endpoint_diagnostic_row(
     action_window_relative: f64,
     steps: &[f64],
     stop_threshold: StopThreshold,
+    sysext_cache: &SysextCache,
 ) -> EndpointDiagnosticRow {
-    let active_state = match compute_active_sys_state(final_polytope) {
+    let active_state = match sysext_cache.compute(final_polytope) {
         Some(state) => state,
         None => {
             return endpoint_failure_row(
@@ -1877,7 +1978,7 @@ fn endpoint_diagnostic_row(
     };
     let base = match compute_base_state_from_polytope(
         final_polytope.clone(),
-        active_state.capacity.min_action * action_window_relative,
+        active_state.min_action * action_window_relative,
         branch_threshold_relative,
     ) {
         Ok(base) => base,
@@ -1904,6 +2005,7 @@ fn endpoint_diagnostic_row(
         action_window_relative,
         branch_threshold_relative,
         stop_threshold,
+        sysext_cache,
     );
 
     match candidate {
@@ -2020,9 +2122,9 @@ fn endpoint_direction_scan_rows_for_final_state(
     direction_model: DirectionModel,
     include_candidate_window_directions: bool,
     steps: &[f64],
-    sys_cache: &ExpensiveComputationCache,
+    sysext_cache: &SysextCache,
 ) -> Vec<LocalGeometryProbeRow> {
-    let active_state = match compute_active_sys_state_cached(final_polytope, sys_cache) {
+    let active_state = match sysext_cache.compute(final_polytope) {
         Some(state) => state,
         None => {
             return vec![endpoint_direction_scan_failure_row(
@@ -2035,7 +2137,7 @@ fn endpoint_direction_scan_rows_for_final_state(
     };
     let base = match compute_base_state_from_polytope(
         final_polytope.clone(),
-        active_state.capacity.min_action * action_window_relative,
+        active_state.min_action * action_window_relative,
         branch_threshold_relative,
     ) {
         Ok(base) => base,
@@ -2065,7 +2167,7 @@ fn endpoint_direction_scan_rows_for_final_state(
                 direction_model,
                 action_window_relative,
                 branch_threshold_relative,
-                sys_cache,
+                sysext_cache,
             ));
         }
     }
@@ -2105,7 +2207,7 @@ fn endpoint_direction_scan_failure_row(
         decomposition_sum_residual: None,
         recomputed_sys: None,
         observed_delta_sys: None,
-        target_near_active_count: None,
+        target_cached_scalar_near_active_count: None,
         target_best_sigma_in_base_near_active_set: None,
         target_best_sigma_in_base_candidate_window: None,
         target_best_sigma_base_relative_action_gap: None,
@@ -2133,7 +2235,8 @@ fn align_first_trace_rows_with_probe_rows(
                 && probe.direction_label == *direction
                 && (probe.step - step).abs() <= 1.0e-15
         }) {
-            row.target_near_active_count = probe.target_near_active_count;
+            row.target_cached_scalar_near_active_count =
+                probe.target_cached_scalar_near_active_count;
             row.predicted_delta_sys = probe.predicted_delta_sys;
             row.observed_delta_sys = probe.observed_delta_sys;
             row.target_sys = probe.recomputed_sys;
@@ -2168,6 +2271,7 @@ fn compute_base_state_from_polytope(
     action_gap: f64,
     branch_threshold_relative: f64,
 ) -> Result<BaseState, String> {
+    let profile_started = Instant::now();
     let capacity = capacity_auto_with_gap(&polytope, action_gap)
         .map_err(|err| format!("base_capacity_failed:{err:?}"))?;
     let vol =
@@ -2205,7 +2309,7 @@ fn compute_base_state_from_polytope(
         })
         .collect();
 
-    Ok(BaseState {
+    let out = Ok(BaseState {
         polytope,
         candidate_orbits: capacity.orbits.clone(),
         capacity,
@@ -2215,7 +2319,12 @@ fn compute_base_state_from_polytope(
         near_active_orbits,
         sys_gradients,
         candidate_sys_gradients,
-    })
+    });
+    record_profile(|profile| {
+        profile.compute_base_state_calls += 1;
+        profile.compute_base_state_ns += profile_elapsed_ns(profile_started);
+    });
+    out
 }
 
 fn local_probe_row(
@@ -2227,11 +2336,16 @@ fn local_probe_row(
     direction_model: DirectionModel,
     action_window_relative: f64,
     branch_threshold_relative: f64,
-    sys_cache: &ExpensiveComputationCache,
+    sysext_cache: &SysextCache,
 ) -> LocalGeometryProbeRow {
+    let profile_started = Instant::now();
+    record_profile(|profile| {
+        profile.local_probe_calls += 1;
+    });
     let Some(predicted_delta) =
         branch_model_predicted_delta(base, direction, step, direction_model)
     else {
+        record_local_probe_elapsed(&profile_started);
         return failed_probe_row(
             fixture,
             base,
@@ -2259,24 +2373,18 @@ fn local_probe_row(
         .iter()
         .map(|v| [v[0], v[1], v[2], v[3]])
         .collect::<Vec<_>>();
-    let Some(target_polytope) = SysLandscapePolytopeCache::from_f64_dual_vertices(target_duals)
-    else {
-        return failed_probe_row(
-            fixture,
-            base,
-            direction_label,
-            step,
-            Some(target_state_id),
-            target_dual_vertices_f64,
-            "target_polytope_construction_failed".to_string(),
-        );
-    };
-    let target_capacity = match capacity_auto_with_gap(
-        &target_polytope,
-        base.capacity.min_action * action_window_relative,
-    ) {
-        Ok(capacity) => capacity,
-        Err(err) => {
+    let target_state_started = Instant::now();
+    let target_lookup = match sysext_cache.compute_from_dual_vertices(&target_duals) {
+        Ok(lookup) => {
+            record_target_state_lookup(
+                Some(lookup.outcome),
+                profile_elapsed_ns(target_state_started),
+            );
+            lookup
+        }
+        Err(TargetSysextError::ConstructionFailed) => {
+            record_target_state_lookup(None, profile_elapsed_ns(target_state_started));
+            record_local_probe_elapsed(&profile_started);
             return failed_probe_row(
                 fixture,
                 base,
@@ -2284,13 +2392,12 @@ fn local_probe_row(
                 step,
                 Some(target_state_id),
                 target_dual_vertices_f64,
-                format!("target_capacity_failed:{err:?}"),
+                "target_polytope_construction_failed".to_string(),
             );
         }
-    };
-    let target_state = match compute_active_sys_state_cached(&target_polytope, sys_cache) {
-        Some(state) => state,
-        None => {
+        Err(TargetSysextError::SysFailed) => {
+            record_target_state_lookup(None, profile_elapsed_ns(target_state_started));
+            record_local_probe_elapsed(&profile_started);
             return failed_probe_row(
                 fixture,
                 base,
@@ -2302,8 +2409,21 @@ fn local_probe_row(
             );
         }
     };
-    let target_near_active = near_active_orbits(&target_capacity, branch_threshold_relative);
-    let target_best_sigma = target_capacity.best_sigma().to_vec();
+    let target_state = target_lookup.state;
+    let Some(target_best_sigma) = target_state.best_sigma().map(Vec::from) else {
+        record_local_probe_elapsed(&profile_started);
+        return failed_probe_row(
+            fixture,
+            base,
+            direction_label,
+            step,
+            Some(target_state_id),
+            target_dual_vertices_f64,
+            "target_cache_missing_sigma_results".to_string(),
+        );
+    };
+    let target_cached_scalar_near_active_count =
+        target_state.cached_scalar_near_active_count(branch_threshold_relative);
     let target_best_sigma_in_base_near_active_set = base
         .near_active_orbits
         .iter()
@@ -2316,15 +2436,15 @@ fn local_probe_row(
     let candidate_window_prediction = candidate_window_prediction_witness(base, direction, step);
     let decomposition = candidate_window_decomposition(
         base,
-        &target_polytope.dual_vertices_f64,
-        target_state.vol,
+        &target_duals,
+        target_state.volume,
         target_state.sys,
         direction,
         step,
         candidate_window_prediction.as_ref(),
     );
 
-    LocalGeometryProbeRow {
+    let out = LocalGeometryProbeRow {
         poly_id: fixture.polytope.poly_id.clone(),
         sample_id: sample_id(fixture),
         base_state_id: base_state_id(fixture),
@@ -2369,7 +2489,7 @@ fn local_probe_row(
         decomposition_sum_residual: decomposition.as_ref().and_then(|row| row.sum_residual),
         recomputed_sys: Some(target_state.sys),
         observed_delta_sys: Some(target_state.sys - base.sys),
-        target_near_active_count: Some(target_near_active.len()),
+        target_cached_scalar_near_active_count: Some(target_cached_scalar_near_active_count),
         target_best_sigma_in_base_near_active_set: Some(target_best_sigma_in_base_near_active_set),
         target_best_sigma_in_base_candidate_window: Some(
             target_best_sigma_in_base_candidate_window,
@@ -2380,8 +2500,10 @@ fn local_probe_row(
         base_near_active_count: base.near_active_orbits.len(),
         base_returned_orbit_count: base.capacity.orbits.len(),
         base_orbit_iterations: base.capacity.iterations,
-        target_orbit_iterations: Some(target_capacity.iterations),
-    }
+        target_orbit_iterations: Some(target_state.iterations),
+    };
+    record_local_probe_elapsed(&profile_started);
+    out
 }
 
 fn failed_probe_row(
@@ -2420,7 +2542,7 @@ fn failed_probe_row(
         decomposition_sum_residual: None,
         recomputed_sys: None,
         observed_delta_sys: None,
-        target_near_active_count: None,
+        target_cached_scalar_near_active_count: None,
         target_best_sigma_in_base_near_active_set: None,
         target_best_sigma_in_base_candidate_window: None,
         target_best_sigma_base_relative_action_gap: None,
@@ -2925,8 +3047,8 @@ fn parse_args_from(argv: impl IntoIterator<Item = impl Into<String>>) -> Cli {
         steps: DEFAULT_STEPS.to_vec(),
         endpoint_steps: None,
         skip_endpoint_diagnostics: false,
-        sys_cache_inputs: Vec::new(),
-        sys_cache_output: None,
+        sysext_cache_inputs: Vec::new(),
+        sysext_cache_output: None,
         max_fixtures_per_label: DEFAULT_MAX_FIXTURES_PER_LABEL,
         skip_fixtures_per_label: 0,
         trace_iterations: DEFAULT_TRACE_ITERATIONS,
@@ -3000,14 +3122,14 @@ fn parse_args_from(argv: impl IntoIterator<Item = impl Into<String>>) -> Cli {
             "--skip-endpoint-diagnostics" => {
                 cli.skip_endpoint_diagnostics = true;
             }
-            "--sys-cache-input" => {
-                cli.sys_cache_inputs.push(PathBuf::from(
-                    args.next().expect("--sys-cache-input requires a path"),
+            "--sysext-cache-input" => {
+                cli.sysext_cache_inputs.push(PathBuf::from(
+                    args.next().expect("--sysext-cache-input requires a path"),
                 ));
             }
-            "--sys-cache-output" => {
-                cli.sys_cache_output = Some(PathBuf::from(
-                    args.next().expect("--sys-cache-output requires a path"),
+            "--sysext-cache-output" => {
+                cli.sysext_cache_output = Some(PathBuf::from(
+                    args.next().expect("--sysext-cache-output requires a path"),
                 ));
             }
             "--max-fixtures-per-label" => {
@@ -3078,7 +3200,7 @@ fn print_usage(program_name: &str) {
          [--direction-model near-active|candidate-window] \
          [--include-candidate-window-directions] \
          [--write-step-ranking-audit] \
-         [--sys-cache-input PATH] [--sys-cache-output PATH] \
+         [--sysext-cache-input PATH] [--sysext-cache-output PATH] \
          [--steps CSV] [--endpoint-steps CSV] [--skip-endpoint-diagnostics] \
          [--max-fixtures-per-label N] [--skip-fixtures-per-label N] \
          [--trace-iterations N] \
