@@ -23,6 +23,7 @@ EXPECTED = {
 PRODUCER_FILES = {
     "random": "random-samples.jsonl",
     "random-product": "random-product-samples.jsonl",
+    "known-hko-reference": "reference-samples.jsonl",
 }
 
 
@@ -62,6 +63,16 @@ def sample_source(row: dict[str, Any], expected_producer: str) -> dict[str, Any]
         source.get("producer") == expected_producer,
         f"sample {row.get('name')} source producer {source.get('producer')!r} != {expected_producer!r}",
     )
+    if expected_producer == "known-hko-reference":
+        require(
+            source.get("fixture") == "hko_pentagon",
+            f"sample {row.get('name')} reference source fixture is not hko_pentagon",
+        )
+        require(
+            source.get("role") == "reference_holdout",
+            f"sample {row.get('name')} reference source role is not reference_holdout",
+        )
+        return source
     h_min = source.get("h_min")
     h_max = source.get("h_max")
     require(
@@ -120,7 +131,12 @@ def validate(
         if "random-product" in producers
         else []
     )
-    sample_rows = [*random_rows, *product_rows]
+    reference_rows = (
+        load_jsonl(produce_dir / PRODUCER_FILES["known-hko-reference"])
+        if "known-hko-reference" in producers
+        else []
+    )
+    sample_rows = [*random_rows, *product_rows, *reference_rows]
 
     expected = dict(EXPECTED[mode])
     if expected_random_rows is not None:
@@ -129,7 +145,13 @@ def validate(
         expected[PRODUCER_FILES["random-product"]] = expected_random_product_rows
     for producer in producers:
         filename = PRODUCER_FILES[producer]
-        row_count = len(random_rows) if producer == "random" else len(product_rows)
+        if producer == "random":
+            row_count = len(random_rows)
+        elif producer == "random-product":
+            row_count = len(product_rows)
+        else:
+            row_count = len(reference_rows)
+            expected[filename] = 1
         require(
             row_count == expected[filename],
             f"{filename} row count {row_count} != expected {expected[filename]}",
@@ -157,9 +179,12 @@ def validate(
 
     for row in sample_rows:
         poly_id = str(row["poly_id"])
-        expected_producer = (
-            "random-product" if row in product_rows else "random"
-        )
+        if row in product_rows:
+            expected_producer = "random-product"
+        elif row in reference_rows:
+            expected_producer = "known-hko-reference"
+        else:
+            expected_producer = "random"
         sample_source(row, expected_producer)
         require(poly_id in payload_by_id, f"sample {row['name']} missing payload {poly_id}")
         payload_sys = float(payload_by_id[poly_id]["sys"])
@@ -174,6 +199,10 @@ def validate(
     require(
         stats.get("random_product_rows") == len(product_rows),
         "produce-stats random_product_rows mismatch",
+    )
+    require(
+        stats.get("reference_rows", 0) == len(reference_rows),
+        "produce-stats reference_rows mismatch",
     )
     require(
         stats.get("computed_payload_rows") == len(payload_rows),
@@ -212,6 +241,7 @@ def validate(
         "producers": ",".join(producers),
         "random_rows": len(random_rows),
         "random_product_rows": len(product_rows),
+        "reference_rows": len(reference_rows),
         "computed_payload_rows": len(payload_rows),
         "cache_hits": stats.get("cache_hits"),
         "cache_misses": stats.get("cache_misses"),

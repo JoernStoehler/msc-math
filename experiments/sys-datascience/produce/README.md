@@ -8,9 +8,10 @@ surface. They should not be used for the current thesis datascience chapter.
 
 ## Active Producers
 
-- `sys-datascience-produce`: run-local random/product producer that writes a
+- `sys-datascience-produce`: run-local random/product/reference producer that writes a
   reviewable output directory with `computed-polytopes.jsonl`,
-  `random-samples.jsonl`, `random-product-samples.jsonl`, and
+  `random-samples.jsonl`, `random-product-samples.jsonl`,
+  optional `reference-samples.jsonl`, and
   `produce-stats.json`.
 - `sys-dataset-random`: older standalone generic random producer for
   canonical `random.jsonl`.
@@ -73,6 +74,20 @@ The bucket identity is the tuple of fields. Names are generated
 deterministically from that tuple and the sample index. Older plan files with
 separate `random` and `random_product` count arrays are still accepted; missing
 height fields default to `[0.8, 1.2]`.
+
+The known HKO pentagon can be emitted as a one-row reference/holdout source:
+
+```bash
+cargo run -p exp-sys-landscape --release --bin sys-datascience-produce -- \
+  --mode smoke \
+  --producers known-hko-reference \
+  --output-dir /tmp/ds-produce-hko \
+  --parallelism 1 \
+  --base-cache /tmp/ds-produce-hko-cache.jsonl
+```
+
+This writes `reference-samples.jsonl` with source
+`known-hko-reference`. It is not part of random/product production counts.
 
 Production mode uses the retained row counts above:
 

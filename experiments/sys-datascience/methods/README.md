@@ -24,6 +24,8 @@ Read first:
 - `prediction-ranking/`: supervised in-table prediction/ranking diagnostics.
 - `tail-rule-mining/`: shallow decision-tree high-tail rule diagnostics with
   invariant-feature versus strata/provenance-control grouped-holdout comparison.
+- `hko-reference-coverage/`: scores the known HKO reference/holdout row against
+  retained random/product invariant-feature support without training on HKO.
 
 Exploratory fixed-bucket distribution-shape packets:
 

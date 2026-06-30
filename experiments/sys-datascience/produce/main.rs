@@ -20,11 +20,13 @@ use std::sync::atomic::{AtomicUsize, Ordering};
 use std::sync::Mutex;
 use symplectic::algorithms::billiard::bounce_count_from_sigma_for_facets;
 use symplectic::classify_facets_from_dual_vertices;
+use symplectic::geom::known_polytopes;
 use symplectic::geom::polygon::random_polygon_2d;
 
 mod rows;
 use rows::{
-    DatascienceRandomProductSampleRow, DatascienceRandomSampleRow, DatascienceSampleSource,
+    DatascienceRandomProductSampleRow, DatascienceRandomSampleRow, DatascienceReferenceSampleRow,
+    DatascienceSampleSource,
 };
 
 const SEED: u64 = 42;
@@ -54,6 +56,7 @@ enum Mode {
 enum Producer {
     Random,
     RandomProduct,
+    KnownHkoReference,
 }
 
 struct Args {
@@ -84,6 +87,9 @@ enum WorkSpec {
         h_max: f64,
         sample_index: usize,
     },
+    KnownHkoReference {
+        name: String,
+    },
 }
 
 impl WorkSpec {
@@ -97,6 +103,9 @@ impl WorkSpec {
             Self::RandomProduct { name, k, m, .. } => {
                 format!("{name} pair={k}x{m}")
             }
+            Self::KnownHkoReference { name } => {
+                format!("{name} fixture=hko_pentagon")
+            }
         }
     }
 }
@@ -107,6 +116,7 @@ struct ComputedWorkUnit {
     poly_id: String,
     random: Option<DatascienceRandomSampleRow>,
     random_product: Option<DatascienceRandomProductSampleRow>,
+    reference: Option<DatascienceReferenceSampleRow>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -178,6 +188,7 @@ struct ProduceStatsRow {
     parallelism: usize,
     random_rows: usize,
     random_product_rows: usize,
+    reference_rows: usize,
     computed_payload_rows: usize,
     cache_hits: usize,
     cache_misses: usize,
@@ -287,12 +298,13 @@ Usage:
     [--plan-file <json>] [--plan-only]
 
 Producers:
-  random,random-product
+  random,random-product,known-hko-reference
 
 Outputs:
   computed-polytopes.jsonl
   random-samples.jsonl
   random-product-samples.jsonl
+  reference-samples.jsonl
 "
     );
 }
@@ -306,6 +318,9 @@ fn parse_producers(raw: &str) -> BTreeSet<Producer> {
             }
             "random-product" => {
                 producers.insert(Producer::RandomProduct);
+            }
+            "known-hko-reference" => {
+                producers.insert(Producer::KnownHkoReference);
             }
             "" => {}
             other => panic!("unknown producer {other:?}"),
@@ -326,7 +341,14 @@ fn producer_name(producer: Producer) -> &'static str {
     match producer {
         Producer::Random => "random",
         Producer::RandomProduct => "random-product",
+        Producer::KnownHkoReference => "known-hko-reference",
     }
+}
+
+fn known_hko_reference_work() -> Vec<WorkSpec> {
+    vec![WorkSpec::KnownHkoReference {
+        name: "hko_pentagon".to_string(),
+    }]
 }
 
 fn generic_samples_per_f(mode: Mode) -> usize {
@@ -628,6 +650,7 @@ fn compute_work_unit(
                     sys: payload.sys,
                 }),
                 random_product: None,
+                reference: None,
             })
         }
         WorkSpec::RandomProduct {
@@ -670,6 +693,34 @@ fn compute_work_unit(
                     },
                     sys: payload.sys,
                 }),
+                reference: None,
+            })
+        }
+        WorkSpec::KnownHkoReference { name } => {
+            let fixture = known_polytopes::hko_pentagon();
+            let polytope = SysLandscapePolytopeCache::from_rational_parts(
+                fixture.dual_vertices.clone(),
+                fixture.vertices.clone(),
+            )
+            .expect("HKO fixture should build sys-landscape cache");
+            let poly_id = poly_id(&polytope);
+            let payload = cache.compute(&polytope, CapacityBackend::Billiard)?;
+            Some(ComputedWorkUnit {
+                producer: Producer::KnownHkoReference,
+                label: format!("{name} fixture=hko_pentagon"),
+                poly_id: poly_id.clone(),
+                random: None,
+                random_product: None,
+                reference: Some(DatascienceReferenceSampleRow {
+                    name,
+                    poly_id,
+                    source: DatascienceSampleSource::KnownHkoReference {
+                        fixture: fixture.name.to_string(),
+                        source: fixture.source.to_string(),
+                        role: "reference_holdout".to_string(),
+                    },
+                    sys: payload.sys,
+                }),
             })
         }
     }
@@ -709,13 +760,16 @@ fn flush_stdout() {
 
 fn report_work_plan(work: &[WorkSpec]) {
     println!(
-        "work plan: units={} random_units={} random_product_units={}",
+        "work plan: units={} random_units={} random_product_units={} reference_units={}",
         work.len(),
         work.iter()
             .filter(|unit| matches!(unit, WorkSpec::Random { .. }))
             .count(),
         work.iter()
             .filter(|unit| matches!(unit, WorkSpec::RandomProduct { .. }))
+            .count(),
+        work.iter()
+            .filter(|unit| matches!(unit, WorkSpec::KnownHkoReference { .. }))
             .count()
     );
     flush_stdout();
@@ -754,6 +808,12 @@ fn main() {
                     }),
                 ));
             }
+            if args.producers.contains(&Producer::KnownHkoReference) {
+                work.extend(known_hko_reference_work());
+            }
+        }
+        if !plan.buckets.is_empty() && args.producers.contains(&Producer::KnownHkoReference) {
+            work.extend(known_hko_reference_work());
         }
     } else {
         if args.producers.contains(&Producer::Random) {
@@ -761,6 +821,9 @@ fn main() {
         }
         if args.producers.contains(&Producer::RandomProduct) {
             work.extend(random_product_work(args.mode));
+        }
+        if args.producers.contains(&Producer::KnownHkoReference) {
+            work.extend(known_hko_reference_work());
         }
     }
 
@@ -827,10 +890,12 @@ fn main() {
         let left = match a.producer {
             Producer::Random => &a.random.as_ref().expect("random row").name,
             Producer::RandomProduct => &a.random_product.as_ref().expect("product row").name,
+            Producer::KnownHkoReference => &a.reference.as_ref().expect("reference row").name,
         };
         let right = match b.producer {
             Producer::Random => &b.random.as_ref().expect("random row").name,
             Producer::RandomProduct => &b.random_product.as_ref().expect("product row").name,
+            Producer::KnownHkoReference => &b.reference.as_ref().expect("reference row").name,
         };
         a.producer.cmp(&b.producer).then_with(|| left.cmp(right))
     });
@@ -843,6 +908,10 @@ fn main() {
         .iter()
         .filter_map(|row| row.random_product.as_ref())
         .collect();
+    let reference_rows: Vec<_> = computed
+        .iter()
+        .filter_map(|row| row.reference.as_ref())
+        .collect();
     let payload_rows: Vec<ComputedPolytopePayloadRow> = cache.used_rows();
 
     if args.producers.contains(&Producer::Random) {
@@ -852,6 +921,12 @@ fn main() {
         write_jsonl(
             args.output_dir.join("random-product-samples.jsonl"),
             &random_product_rows,
+        );
+    }
+    if args.producers.contains(&Producer::KnownHkoReference) {
+        write_jsonl(
+            args.output_dir.join("reference-samples.jsonl"),
+            &reference_rows,
         );
     }
     write_jsonl(payload_path, &payload_rows);
@@ -869,6 +944,7 @@ fn main() {
         parallelism: args.parallelism,
         random_rows: random_rows.len(),
         random_product_rows: random_product_rows.len(),
+        reference_rows: reference_rows.len(),
         computed_payload_rows: payload_rows.len(),
         cache_hits: stats.hits,
         cache_misses: stats.misses,
@@ -880,9 +956,10 @@ fn main() {
     };
     write_json(args.output_dir.join("produce-stats.json"), &produce_stats);
     println!(
-        "wrote random={} random_product={} computed_payloads={} cache_hits={} cache_misses={} failures={}",
+        "wrote random={} random_product={} reference={} computed_payloads={} cache_hits={} cache_misses={} failures={}",
         random_rows.len(),
         random_product_rows.len(),
+        reference_rows.len(),
         payload_rows.len(),
         stats.hits,
         stats.misses,
@@ -919,6 +996,25 @@ mod tests {
         assert_eq!(args.parallelism, 1);
         assert!(args.plan_only);
         assert_eq!(args.plan_file, Some(PathBuf::from("/tmp/plan.json")));
+    }
+
+    #[test]
+    fn parse_accepts_known_hko_reference_producer() {
+        let args = parse_args_from([
+            "sys-datascience-produce",
+            "--mode",
+            "smoke",
+            "--producers",
+            "known-hko-reference",
+            "--output-dir",
+            "/tmp/out",
+            "--parallelism",
+            "1",
+            "--base-cache",
+            "/tmp/base.jsonl",
+        ]);
+        assert!(args.producers.contains(&Producer::KnownHkoReference));
+        assert_eq!(known_hko_reference_work().len(), 1);
     }
 
     #[test]

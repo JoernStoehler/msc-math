@@ -18,6 +18,9 @@ TRUSTED_DATASETS = {
     "random_sample",
     "random_product_sample",
 }
+REFERENCE_HOLDOUT_DATASETS = {
+    "known_hko_reference",
+}
 EXCLUDED_DATASET_WORDS = ("ascent", "continuation", "gradient")
 EXCLUDED_OPTIMIZER_WORDS = ("ascent", "gradient", "continuation")
 
@@ -161,6 +164,18 @@ def is_trusted_random_polytope(
     return not has_excluded_optimizer(provenance_rows)
 
 
+def is_reference_holdout_polytope(
+    polytope_row: dict[str, Any], provenance_rows: list[dict[str, Any]]
+) -> bool:
+    datasets = datasets_for(polytope_row, provenance_rows)
+    if not datasets:
+        return False
+    if not datasets.issubset(REFERENCE_HOLDOUT_DATASETS):
+        return False
+    roles = {str(row.get("role", "")) for row in provenance_rows if row.get("role")}
+    return roles == {"reference_holdout"}
+
+
 def load_trusted_random_tables(
     tables_dir: Path = TABLES_DIR,
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
@@ -178,6 +193,25 @@ def load_trusted_random_tables(
         row for row in provenance_rows if str(row.get("poly_id", "")) in trusted_poly_ids
     ]
     return trusted_polytopes, trusted_provenance
+
+
+def load_reference_holdout_tables(
+    tables_dir: Path = TABLES_DIR,
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    polytope_rows = load_jsonl(tables_dir / "polytope-table.jsonl")
+    provenance_rows = load_jsonl(tables_dir / "polytope-provenance-table.jsonl")
+    provenance = provenance_by_poly_id(provenance_rows)
+
+    reference_poly_ids = {
+        str(row["poly_id"])
+        for row in polytope_rows
+        if is_reference_holdout_polytope(row, provenance.get(str(row["poly_id"]), []))
+    }
+    reference_polytopes = [row for row in polytope_rows if str(row["poly_id"]) in reference_poly_ids]
+    reference_provenance = [
+        row for row in provenance_rows if str(row.get("poly_id", "")) in reference_poly_ids
+    ]
+    return reference_polytopes, reference_provenance
 
 
 def dataset_label(polytope_row: dict[str, Any], provenance_rows: list[dict[str, Any]]) -> str:
@@ -207,6 +241,7 @@ def product_bucket(provenance_rows: list[dict[str, Any]]) -> str:
 def active_invariant_numeric_feature_names(
     rows: list[dict[str, Any]],
     min_present_fraction: float = 0.98,
+    require_all: bool = True,
 ) -> list[str]:
     if not rows:
         return []
@@ -236,7 +271,7 @@ def active_invariant_numeric_feature_names(
             names.append(key)
         else:
             missing.append(key)
-    if missing:
+    if missing and require_all:
         raise SystemExit(
             "active invariant feature schema is missing required numeric fields: "
             + ", ".join(missing)

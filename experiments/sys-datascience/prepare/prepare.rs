@@ -15,7 +15,8 @@ mod producer_rows;
 use exp_sys_landscape::ComputedPolytopePayloadRow;
 use load_caches::{LoadedCaches, LoadedPolytopeRow, LoadedProvenanceRow};
 use producer_rows::{
-    DatascienceRandomProductSampleRow, DatascienceRandomSampleRow, DatascienceSampleSource,
+    DatascienceRandomProductSampleRow, DatascienceRandomSampleRow, DatascienceReferenceSampleRow,
+    DatascienceSampleSource,
 };
 use serde::de::DeserializeOwned;
 use serde::Serialize;
@@ -91,6 +92,7 @@ Usage:
 Inputs in <dir>:
   computed-polytopes.jsonl
   random-samples.jsonl and/or random-product-samples.jsonl
+  reference-samples.jsonl
 "
     );
 }
@@ -207,6 +209,9 @@ fn load_new_producer_outputs(produce_dir: &Path) -> LoadedCaches {
     );
     let product_rows = read_jsonl_if_exists::<DatascienceRandomProductSampleRow>(
         &produce_dir.join("random-product-samples.jsonl"),
+    );
+    let reference_rows = read_jsonl_if_exists::<DatascienceReferenceSampleRow>(
+        &produce_dir.join("reference-samples.jsonl"),
     );
 
     let mut polytopes = HashMap::new();
@@ -337,6 +342,62 @@ fn load_new_producer_outputs(produce_dir: &Path) -> LoadedCaches {
             seed_index: Some(attempt as usize),
             lineage_id: Some(format!("seed:{seed}:{k}x{m}:attempt:{attempt}")),
             path: Some(format!("lp_{k}x{m}")),
+            total_time_ms: None,
+        });
+    }
+
+    for row in reference_rows {
+        sample_poly_ids.insert(row.poly_id.clone());
+        let provenance_id = provenance_id("known_hko_reference", &row.name);
+        assert!(
+            provenance_ids.insert(provenance_id.clone()),
+            "duplicate provenance_id {provenance_id}"
+        );
+        let payload = require_payload(
+            &payloads,
+            "known_hko_reference",
+            &row.name,
+            &row.poly_id,
+            row.sys,
+        );
+        ensure_polytope(&mut polytopes, payload, "known_hko_reference");
+        let DatascienceSampleSource::KnownHkoReference {
+            fixture,
+            source,
+            role,
+        } = row.source
+        else {
+            panic!("reference sample {} has non-reference source", row.name);
+        };
+        assert_eq!(fixture, "hko_pentagon", "unexpected reference fixture");
+        assert_eq!(role, "reference_holdout", "unexpected reference role");
+        let source_row = DatascienceSampleSource::KnownHkoReference {
+            fixture,
+            source,
+            role: role.clone(),
+        };
+        provenance_rows.push(LoadedProvenanceRow {
+            provenance_id,
+            poly_id: row.poly_id,
+            dataset: "known_hko_reference".to_string(),
+            family: "known_reference".to_string(),
+            role,
+            search_space: "hko_pentagon".to_string(),
+            optimizer: "none".to_string(),
+            backend: payload.backend.clone(),
+            source_name: row.name.clone(),
+            root_group_id: "known_hko_reference:hko_pentagon".to_string(),
+            source: Some(source_value(&source_row)),
+            sample_seed: None,
+            sample_attempt: None,
+            sample_h_min: None,
+            sample_h_max: None,
+            product_k: None,
+            product_m: None,
+            product_bounces: None,
+            seed_index: None,
+            lineage_id: Some("known_hko_reference:hko_pentagon".to_string()),
+            path: Some("known_hko_reference/hko_pentagon".to_string()),
             total_time_ms: None,
         });
     }

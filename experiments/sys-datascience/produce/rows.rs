@@ -29,6 +29,11 @@ pub enum DatascienceSampleSource {
         attempt: Option<u64>,
         bounces: usize,
     },
+    KnownHkoReference {
+        fixture: String,
+        source: String,
+        role: String,
+    },
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -44,6 +49,14 @@ pub struct DatascienceRandomProductSampleRow {
     pub name: String,
     pub poly_id: String,
     pub facet_count: usize,
+    pub source: DatascienceSampleSource,
+    pub sys: f64,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct DatascienceReferenceSampleRow {
+    pub name: String,
+    pub poly_id: String,
     pub source: DatascienceSampleSource,
     pub sys: f64,
 }

@@ -66,6 +66,25 @@ uv run --script experiments/sys-datascience/fingerprint-dataset.py \
   /tmp/ds-prepare-smoke
 ```
 
+For the known HKO reference/holdout row:
+
+```bash
+cargo run -p exp-sys-landscape --release --bin sys-datascience-produce -- \
+  --mode smoke \
+  --producers known-hko-reference \
+  --output-dir /tmp/ds-produce-hko \
+  --parallelism 1 \
+  --base-cache /tmp/ds-produce-hko-cache.jsonl
+
+cargo run -p exp-sys-landscape --release --bin sys-datascience-prepare -- \
+  --produce-dir /tmp/ds-produce-hko \
+  --out-dir /tmp/ds-prepare-hko
+```
+
+Prepared HKO rows use `capacity_source = known_hko_reference` and provenance
+`role = reference_holdout`. Shared trusted-random method filters exclude this
+dataset by default; score it only through reference-aware packets.
+
 On LICCA, `licca-datascience-prepare.slurm.sh` runs only the prebuilt
 `sys-datascience-prepare` binary. Build before submitting:
 
@@ -88,6 +107,8 @@ Current method-facing files:
 - `polytope-provenance-table.jsonl`: one row per retained random/product
   provenance record. Run-local and canonical random/product provenance rows
   include a nested `source` object when source bucket data is available.
+  Run-local reference prepares can additionally contain `known_hko_reference`
+  provenance rows for holdout scoring.
 
 `polytope-table.jsonl` is the method-facing table. It exports only
 identity/target/source fields and invariant feature columns. Raw dual vertices,
