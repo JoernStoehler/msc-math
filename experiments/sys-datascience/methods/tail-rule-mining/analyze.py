@@ -13,6 +13,7 @@ import csv
 import hashlib
 from pathlib import Path
 import sys
+from typing import Callable
 
 import numpy as np
 from sklearn.linear_model import LogisticRegression
@@ -1710,6 +1711,241 @@ def write_tsv(path: Path, rows: list[dict[str, object]]) -> None:
             writer.writerow(row)
 
 
+def metric_float(row: dict[str, object], key: str, default: float = 0.0) -> float:
+    value = row.get(key)
+    if isinstance(value, int | float):
+        return float(value)
+    if isinstance(value, str) and value:
+        try:
+            return float(value)
+        except ValueError:
+            return default
+    return default
+
+
+def metric_int(row: dict[str, object], key: str, default: int = 0) -> int:
+    value = row.get(key)
+    if isinstance(value, int) and not isinstance(value, bool):
+        return value
+    if isinstance(value, float) and value.is_integer():
+        return int(value)
+    if isinstance(value, str) and value:
+        try:
+            return int(float(value))
+        except ValueError:
+            return default
+    return default
+
+
+def pct(value: float) -> str:
+    return f"{100.0 * value:.1f}%"
+
+
+def selected_hits(row: dict[str, object]) -> str:
+    return f"{metric_int(row, 'hits')}/{metric_int(row, 'selected')}"
+
+
+def top_rows_by_metric(
+    rows: list[dict[str, object]],
+    *,
+    count: int,
+    predicate: Callable[[dict[str, object]], bool],
+) -> list[dict[str, object]]:
+    selected = [row for row in rows if predicate(row)]
+    selected.sort(
+        key=lambda row: (
+            -metric_float(row, "enrichment"),
+            -metric_float(row, "precision"),
+            -metric_float(row, "recall"),
+            metric_int(row, "selected"),
+            str(row.get("feature_set", row.get("feature", ""))),
+            str(row.get("model", "")),
+        )
+    )
+    return selected[:count]
+
+
+def attribution_rows_for_filter(
+    attribution_rows: list[dict[str, object]],
+    filter_row: dict[str, object],
+) -> list[dict[str, object]]:
+    desired_controls = {
+        "none",
+        "source_facet_provenance_controls",
+        "strongest_combinatorial_controls",
+        "source_facet_provenance_plus_strongest_combinatorial",
+        "strongest_nonself_prepared_controls",
+    }
+    matches = [
+        row
+        for row in attribution_rows
+        if row.get("scope") == filter_row.get("scope")
+        and row.get("label_scope") == filter_row.get("label_scope")
+        and row.get("tail_label") == filter_row.get("tail_label")
+        and row.get("feature") == filter_row.get("feature")
+        and metric_float(row, "requested_selection_fraction")
+        == metric_float(filter_row, "requested_selection_fraction")
+        and row.get("control_set") in desired_controls
+        and metric_int(row, "selected") > 0
+    ]
+    control_order = {
+        "none": 0,
+        "source_facet_provenance_controls": 1,
+        "strongest_combinatorial_controls": 2,
+        "source_facet_provenance_plus_strongest_combinatorial": 3,
+        "strongest_nonself_prepared_controls": 4,
+    }
+    matches.sort(key=lambda row: control_order[str(row["control_set"])])
+    return matches
+
+
+def print_interpretation_checklist(
+    *,
+    out_dir: Path,
+    y: np.ndarray,
+    predictive_power_rows: list[dict[str, object]],
+    single_filter_top_rows: list[dict[str, object]],
+    budget_sanity_rows: list[dict[str, object]],
+    attribution_rows: list[dict[str, object]],
+    stability_rows: list[dict[str, object]],
+    permutations: int,
+) -> None:
+    print()
+    print("## Computed Interpretation Checklist")
+    print()
+    sys_gt_one = int(np.sum(y > 1.0))
+    print(f"- max sys: `{float(np.max(y))}`; rows with sys > 1: `{sys_gt_one}`")
+    print(
+        "- scope: retained-table diagnostics only; no generated-candidate, "
+        "top-1e-6, or sys>1 hit-probability validation"
+    )
+    print(
+        f"- source artifacts: `{out_dir / 'feature-set-predictive-power.tsv'}`, "
+        f"`{out_dir / 'single-feature-filter-holdout-top-by-scope-label.tsv'}`, "
+        f"`{out_dir / 'feature-attribution-redundancy.tsv'}`, "
+        f"`{out_dir / 'retained-table-budget-sanity.tsv'}`"
+    )
+
+    top_feature_sets = top_rows_by_metric(
+        predictive_power_rows,
+        count=5,
+        predicate=lambda row: row.get("tail_label") == "top_10_percent"
+        and metric_int(row, "selected") > 0,
+    )
+    print()
+    print("### Held-Out Feature-Set Rows")
+    if not top_feature_sets:
+        print("- none with selected held-out rows")
+    for row in top_feature_sets:
+        print(
+            "- "
+            f"{row['feature_set']} / {row['model']} / train-tail "
+            f"{pct(metric_float(row, 'train_score_selection_fraction'))}: "
+            f"hits/selected `{selected_hits(row)}`, "
+            f"precision `{metric_float(row, 'precision'):.3g}`, "
+            f"recall `{metric_float(row, 'recall'):.3g}`, "
+            f"enrichment `{metric_float(row, 'enrichment'):.3g}`, "
+            f"actual held-out fraction `{pct(metric_float(row, 'actual_test_selection_fraction'))}`"
+        )
+
+    top_filters = top_rows_by_metric(
+        single_filter_top_rows,
+        count=5,
+        predicate=lambda row: row.get("tail_label") == "top_10_percent"
+        and row.get("scope_type") in {"full_table", "capacity_source"}
+        and not (row.get("scope_type") == "full_table" and row.get("label_scope") == "scope_local")
+        and metric_int(row, "selected") > 0,
+    )
+    print()
+    print("### Held-Out Single-Feature Filters")
+    if not top_filters:
+        print("- none with selected held-out rows")
+    for row in top_filters:
+        print(
+            "- "
+            f"{row['scope']} / {row['label_scope']} / {row['feature']} / {row['direction']} "
+            f"{pct(metric_float(row, 'requested_selection_fraction'))}: "
+            f"hits/selected `{selected_hits(row)}`, "
+            f"precision `{metric_float(row, 'precision'):.3g}`, "
+            f"recall `{metric_float(row, 'recall'):.3g}`, "
+            f"enrichment `{metric_float(row, 'enrichment'):.3g}`, "
+            f"spearman-fit `{metric_float(row, 'spearman_fit'):.3g}`"
+        )
+
+    print()
+    print("### Attribution Checks For Top Single-Feature Filters")
+    seen_features: set[tuple[object, object, object]] = set()
+    printed = 0
+    for filter_row in top_filters:
+        key = (
+            filter_row.get("scope"),
+            filter_row.get("label_scope"),
+            filter_row.get("tail_label"),
+            filter_row.get("feature"),
+        )
+        if key in seen_features:
+            continue
+        seen_features.add(key)
+        controls = attribution_rows_for_filter(attribution_rows, filter_row)
+        if not controls:
+            continue
+        parts = [
+            f"{row['control_set']}={metric_float(row, 'enrichment'):.3g}"
+            for row in controls
+        ]
+        print(
+            f"- {filter_row['scope']} / {filter_row['label_scope']} / "
+            f"{filter_row['feature']}: "
+            + ", ".join(parts)
+        )
+        printed += 1
+        if printed >= 3:
+            break
+    if printed == 0:
+        print("- no matching attribution rows for the top printed filters")
+
+    print()
+    print("### Retained-Table Budget Sanity")
+    budget_rows = [
+        row
+        for row in budget_sanity_rows
+        if row.get("target") == "top_1_sys_rows"
+        and row.get("score_fit_label") == "top_10_percent"
+        and metric_float(row, "budget_fraction") <= 0.01
+    ]
+    for budget in [0.001, 0.002, 0.005, 0.01]:
+        rows_for_budget = [
+            row
+            for row in budget_rows
+            if abs(metric_float(row, "budget_fraction") - budget) < 1e-12
+        ]
+        if not rows_for_budget:
+            continue
+        retained = [
+            row for row in rows_for_budget if bool(row.get("best_sys_retained"))
+        ]
+        best_rank = min(metric_int(row, "best_sys_score_rank", 10**9) for row in rows_for_budget)
+        best_max_sys = max(metric_float(row, "max_sys_retained") for row in rows_for_budget)
+        if retained:
+            examples = ", ".join(
+                f"{row['feature_set']}/{row['model']}" for row in retained[:3]
+            )
+            print(
+                f"- budget `{pct(budget)}`: best held-out sys retained by "
+                f"`{len(retained)}` score(s), e.g. {examples}; best score rank `{best_rank}`"
+            )
+        else:
+            print(
+                f"- budget `{pct(budget)}`: best held-out sys not retained; "
+                f"best score rank `{best_rank}`, best retained sys `{best_max_sys}`"
+            )
+
+    print()
+    print(
+        f"- stability rows: `{len(stability_rows)}`; permutation count: `{permutations}`"
+    )
+
+
 def write_leaf_table(path: Path, rows: list[dict[str, object]]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     fields = [
@@ -2002,18 +2238,23 @@ def run(args: argparse.Namespace) -> None:
     print(f"- strata features: `{len(strata_names)}`")
     print(f"- generator provenance features: `{len(generator_provenance_names)}`")
     print(f"- permutations: `{args.permutations}`")
-    for key, result in tree_filter_summaries.items():
-        metrics = result["test_metrics"]
-        print(
-            f"- {key}: precision=`{metrics['precision']}`, recall=`{metrics['recall']}`, "
-            f"enrichment=`{metrics['enrichment']}`, selected=`{metrics['selected']}`"
-        )
+    print(f"- tree-filter summary rows in summary.json: `{len(tree_filter_summaries)}`")
     print(f"- stability configurations: `{len(stability_rows)}`")
     print(f"- single-feature descriptive filters: `{len(single_filter_rows)}`")
     print(f"- single-feature holdout filters: `{len(single_filter_holdout_rows)}`")
     print(f"- feature-set predictive rows: `{len(predictive_power_rows)}`")
     print(f"- retained-table budget sanity rows: `{len(budget_sanity_rows)}`")
     print(f"- feature attribution/redundancy rows: `{len(attribution_rows)}`")
+    print_interpretation_checklist(
+        out_dir=args.out_dir,
+        y=y,
+        predictive_power_rows=predictive_power_rows,
+        single_filter_top_rows=single_filter_top_rows,
+        budget_sanity_rows=budget_sanity_rows,
+        attribution_rows=attribution_rows,
+        stability_rows=stability_rows,
+        permutations=args.permutations,
+    )
     print(f"Wrote `{args.out_dir}`")
 
 
