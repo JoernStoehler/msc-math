@@ -1485,6 +1485,45 @@ mod tests {
     }
 
     #[test]
+    fn exact_positive_closed_word_reconstructs_positive_time_reeb_orbit_conditions() {
+        let case = deterministic_random_exact_case(6, 3);
+        assert_positive_closed_word_reconstructs(
+            "generated_F6_attempt3_capacity_word",
+            &case,
+            &[1, 2, 4, 5, 3],
+            true,
+        );
+
+        let case = deterministic_random_exact_case(7, 31);
+        assert_positive_closed_word_reconstructs(
+            "generated_F7_attempt31_capacity_word",
+            &case,
+            &[0, 1, 5, 6, 4, 2],
+            true,
+        );
+    }
+
+    #[test]
+    fn primitive_exact_tubes_have_direct_segment_semantics() {
+        let case = deterministic_random_exact_case(6, 3);
+        assert_primitive_tubes_have_segment_semantics(
+            "generated_F6_attempt3_capacity_word",
+            &case,
+            &[1, 2, 4, 5, 3, 1, 2],
+        );
+    }
+
+    #[test]
+    fn balanced_exact_tube_matches_left_associative_concatenation() {
+        let case = deterministic_random_exact_case(6, 3);
+        assert_balanced_tube_matches_left_associative(
+            "generated_F6_attempt3_capacity_word",
+            &case,
+            &[1, 2, 4, 5, 3, 1, 2],
+        );
+    }
+
+    #[test]
     fn exact_closed_word_resolves_zero_action_f7_attempt31() {
         let case = deterministic_random_exact_case(7, 31);
         let (result, _) = resolve_closed_word_exact(&case.input(), &[0, 4, 2, 6]).unwrap();
@@ -1776,5 +1815,332 @@ mod tests {
         assert_eq!(baseline.action_cutoff_intersection_count, 0);
         assert!(cutoff.action_cutoff_word_count > 0);
         assert!(cutoff.action_cutoff_intersection_count > 0);
+    }
+
+    fn assert_positive_closed_word_reconstructs(
+        case_name: &str,
+        case: &ExactCaseData,
+        sigma: &[usize],
+        require_strictly_positive_segment_times: bool,
+    ) {
+        let duals = exact_case_dual_vectors(case);
+        let mut word = sigma.to_vec();
+        word.push(sigma[0]);
+        word.push(sigma[1]);
+        let mut metrics = ExactClosedTubeMetrics::default();
+        let tube = match build_tube(
+            &duals,
+            &case.facet_intersection_is_nonempty,
+            &case.omega_signs,
+            &word,
+            &mut metrics,
+        )
+        .expect("supported exact closed word")
+        {
+            PolygonOutcomeTube::Nonempty(tube) => tube,
+            PolygonOutcomeTube::Empty => panic!("{case_name}: closed tube was empty"),
+        };
+        let ClosedClassification::PositiveOrbit {
+            action,
+            point: start_coords,
+        } = solve_closed_tube(&duals, &tube, &mut metrics)
+        else {
+            panic!("{case_name}: closed tube did not solve to a positive orbit");
+        };
+
+        assert!(
+            tube.start_polygon.contains(&start_coords, &mut metrics),
+            "{case_name}: fixed point is outside the start polygon"
+        );
+        let start_point = point_from_frame_coords(&tube.start_frame, &start_coords);
+        let mut point = start_point.clone();
+        let mut breakpoints = vec![point.clone()];
+        let mut action_sum = R::zero();
+        for segment_index in 0..word.len() - 2 {
+            let previous = word[segment_index];
+            let current = word[segment_index + 1];
+            let next = word[segment_index + 2];
+            assert_eq!(
+                dot4(&duals[previous], &point),
+                R::one(),
+                "{case_name}: breakpoint {segment_index} is not on previous facet"
+            );
+            assert_eq!(
+                dot4(&duals[current], &point),
+                R::one(),
+                "{case_name}: breakpoint {segment_index} is not on current facet"
+            );
+            assert_inside_polytope(case_name, &duals, &point);
+
+            let reeb = scale4(&q(2), &j_times(&duals[current]));
+            let denom = dot4(&duals[next], &reeb);
+            assert!(
+                !denom.is_zero(),
+                "{case_name}: segment {segment_index} has singular transition"
+            );
+            let tau = (R::one() - dot4(&duals[next], &point)) / denom;
+            assert!(
+                !tau.is_negative(),
+                "{case_name}: segment {segment_index} has negative time {tau}"
+            );
+            if require_strictly_positive_segment_times {
+                assert!(
+                    tau.is_positive(),
+                    "{case_name}: segment {segment_index} has zero time but this check certifies theorem-level positive-time evidence"
+                );
+            }
+            point = add4(&point, &scale4(&tau, &reeb));
+            action_sum += tau;
+            breakpoints.push(point.clone());
+        }
+        assert_eq!(
+            point, start_point,
+            "{case_name}: reconstructed orbit does not close"
+        );
+        assert_eq!(
+            action_sum, action,
+            "{case_name}: reconstructed action differs from closed-tube action"
+        );
+        for (breakpoint_index, breakpoint) in breakpoints.iter().enumerate() {
+            assert_inside_polytope(case_name, &duals, breakpoint);
+            let first = word[breakpoint_index];
+            let second = word[breakpoint_index + 1];
+            assert_eq!(
+                dot4(&duals[first], breakpoint),
+                R::one(),
+                "{case_name}: breakpoint {breakpoint_index} is not on first two-face facet"
+            );
+            assert_eq!(
+                dot4(&duals[second], breakpoint),
+                R::one(),
+                "{case_name}: breakpoint {breakpoint_index} is not on second two-face facet"
+            );
+        }
+    }
+
+    fn assert_inside_polytope(case_name: &str, duals: &[Vec4], point: &Vec4) {
+        for (facet, dual) in duals.iter().enumerate() {
+            assert!(
+                dot4(dual, point) <= R::one(),
+                "{case_name}: point violates facet {facet}"
+            );
+        }
+    }
+
+    fn exact_case_dual_vectors(case: &ExactCaseData) -> Vec<Vec4> {
+        case.dual_vertices
+            .iter()
+            .map(|a| [a[0].clone(), a[1].clone(), a[2].clone(), a[3].clone()])
+            .collect()
+    }
+
+    fn point_from_frame_coords(frame: &FaceFrame, coords: &Vec2) -> Vec4 {
+        add4(
+            &frame.base,
+            &add4(&scale4(&coords[0], &frame.u), &scale4(&coords[1], &frame.v)),
+        )
+    }
+
+    fn assert_primitive_tubes_have_segment_semantics(
+        case_name: &str,
+        case: &ExactCaseData,
+        word: &[usize],
+    ) {
+        let duals = exact_case_dual_vectors(case);
+        for start in 0..word.len() - 2 {
+            let facets = [word[start], word[start + 1], word[start + 2]];
+            let mut metrics = ExactClosedTubeMetrics::default();
+            let tube = match primitive_tube(
+                &duals,
+                &case.facet_intersection_is_nonempty,
+                &case.omega_signs,
+                facets,
+                &mut metrics,
+            )
+            .expect("supported primitive tube")
+            {
+                PolygonOutcomeTube::Nonempty(tube) => tube,
+                PolygonOutcomeTube::Empty => {
+                    panic!("{case_name}: primitive tube {facets:?} was empty")
+                }
+            };
+
+            for start_coords in tube.start_polygon.vertices(&mut metrics) {
+                assert_primitive_segment_semantics(
+                    case_name,
+                    &duals,
+                    facets,
+                    &tube,
+                    &start_coords,
+                    &mut metrics,
+                );
+            }
+        }
+    }
+
+    fn assert_primitive_segment_semantics(
+        case_name: &str,
+        duals: &[Vec4],
+        facets: [usize; 3],
+        tube: &ExactTube,
+        start_coords: &Vec2,
+        metrics: &mut ExactClosedTubeMetrics,
+    ) {
+        let [previous, current, next] = facets;
+        let start_point = point_from_frame_coords(&tube.start_frame, start_coords);
+        assert_eq!(
+            dot4(&duals[previous], &start_point),
+            R::one(),
+            "{case_name}: primitive {facets:?} start point is not on previous facet"
+        );
+        assert_eq!(
+            dot4(&duals[current], &start_point),
+            R::one(),
+            "{case_name}: primitive {facets:?} start point is not on current facet"
+        );
+        assert_inside_polytope(case_name, duals, &start_point);
+
+        let end_coords = tube.start_to_end.apply(start_coords);
+        let PolygonOutcome::Nonempty(end_face) = face_polygon(duals, &tube.end_frame, metrics)
+        else {
+            panic!("{case_name}: primitive {facets:?} end face was empty");
+        };
+        assert!(
+            end_face.contains(&end_coords, metrics),
+            "{case_name}: primitive {facets:?} affine image is outside end face polygon"
+        );
+        let end_point = point_from_frame_coords(&tube.end_frame, &end_coords);
+        assert_eq!(
+            dot4(&duals[current], &end_point),
+            R::one(),
+            "{case_name}: primitive {facets:?} end point is not on current facet"
+        );
+        assert_eq!(
+            dot4(&duals[next], &end_point),
+            R::one(),
+            "{case_name}: primitive {facets:?} end point is not on next facet"
+        );
+        assert_inside_polytope(case_name, duals, &end_point);
+
+        let action = tube.action_on_start.evaluate(start_coords);
+        assert!(
+            !action.is_negative(),
+            "{case_name}: primitive {facets:?} has negative segment action {action}"
+        );
+        let reeb = scale4(&q(2), &j_times(&duals[current]));
+        let direct_end = add4(&start_point, &scale4(&action, &reeb));
+        assert_eq!(
+            direct_end, end_point,
+            "{case_name}: primitive {facets:?} affine map disagrees with direct Reeb segment"
+        );
+    }
+
+    fn assert_balanced_tube_matches_left_associative(
+        case_name: &str,
+        case: &ExactCaseData,
+        word: &[usize],
+    ) {
+        let duals = exact_case_dual_vectors(case);
+        let mut balanced_metrics = ExactClosedTubeMetrics::default();
+        let balanced = expect_nonempty_tube(
+            case_name,
+            "balanced",
+            build_tube(
+                &duals,
+                &case.facet_intersection_is_nonempty,
+                &case.omega_signs,
+                word,
+                &mut balanced_metrics,
+            ),
+        );
+        let mut left_metrics = ExactClosedTubeMetrics::default();
+        let left = build_tube_left_associative(&duals, case, word, &mut left_metrics)
+            .unwrap_or_else(|error| panic!("{case_name}: left-associative tube failed: {error}"));
+
+        assert_eq!(balanced.sequence, left.sequence);
+        assert_eq!(balanced.start_frame.pair(), left.start_frame.pair());
+        assert_eq!(balanced.end_frame.pair(), left.end_frame.pair());
+        assert_eq!(balanced.start_to_end.matrix, left.start_to_end.matrix);
+        assert_eq!(balanced.start_to_end.offset, left.start_to_end.offset);
+        assert_eq!(
+            balanced.action_on_start.coeff, left.action_on_start.coeff,
+            "{case_name}: composed action coefficients differ"
+        );
+        assert_eq!(
+            balanced.action_on_start.constant, left.action_on_start.constant,
+            "{case_name}: composed action constants differ"
+        );
+        assert_eq!(
+            polygon_vertices_sorted(&balanced.start_polygon, &mut balanced_metrics),
+            polygon_vertices_sorted(&left.start_polygon, &mut left_metrics),
+            "{case_name}: balanced and left-associative tube domains differ"
+        );
+    }
+
+    fn build_tube_left_associative(
+        duals: &[Vec4],
+        case: &ExactCaseData,
+        word: &[usize],
+        metrics: &mut ExactClosedTubeMetrics,
+    ) -> Result<ExactTube, &'static str> {
+        if word.len() < 3 {
+            return Err("word too short");
+        }
+        let mut tube = expect_nonempty_tube(
+            "left_associative",
+            "first primitive",
+            primitive_tube(
+                duals,
+                &case.facet_intersection_is_nonempty,
+                &case.omega_signs,
+                [word[0], word[1], word[2]],
+                metrics,
+            ),
+        );
+        for start in 1..word.len() - 2 {
+            let next = expect_nonempty_tube(
+                "left_associative",
+                "next primitive",
+                primitive_tube(
+                    duals,
+                    &case.facet_intersection_is_nonempty,
+                    &case.omega_signs,
+                    [word[start], word[start + 1], word[start + 2]],
+                    metrics,
+                ),
+            );
+            tube = expect_nonempty_tube(
+                "left_associative",
+                "intersection",
+                intersect_tubes(&tube, &next, metrics),
+            );
+        }
+        Ok(tube)
+    }
+
+    fn expect_nonempty_tube(
+        case_name: &str,
+        stage: &str,
+        result: Result<PolygonOutcomeTube, ()>,
+    ) -> ExactTube {
+        match result.expect("supported exact tube operation") {
+            PolygonOutcomeTube::Nonempty(tube) => tube,
+            PolygonOutcomeTube::Empty => panic!("{case_name}: {stage} tube was empty"),
+        }
+    }
+
+    fn polygon_vertices_sorted(
+        polygon: &ExactPolygon,
+        metrics: &mut ExactClosedTubeMetrics,
+    ) -> Vec<Vec2> {
+        let mut vertices = polygon.vertices(metrics);
+        vertices.sort();
+        vertices
+    }
+
+    impl Affine2 {
+        fn apply(&self, point: &Vec2) -> Vec2 {
+            add2(&mat_vec(&self.matrix, point), &self.offset)
+        }
     }
 }
