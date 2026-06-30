@@ -16,6 +16,10 @@ description: Use when Codex writes, edits, reviews, or delegates owner-local int
 - track carefully the current prioritized subquestions/subgoals, in particular distinguish exploring the feasibility of an idea, strengthening the evidence of a weak result, aiming to falsify, aiming to distinguish between hypotheses, producing evidence that is more legible even though it contains no new/additional information, refactoring/cleaning the experiment for long-term maintainability, and so on. Often multiple subgoals can be pursued at once - but not always all of them.
 - experiments should be reproducible from scratch given all related owner-local
   notes and artifacts
+- do not make README prose a second source of truth for generated metrics.
+  Durable notes should record scope, provenance, source pointers, and
+  interpretation boundaries; detailed per-run rows should live in generated
+  artifacts or generated compact reports.
 - repo state: current experiment work is organized around mostly settled main
   and side-result lines of inquiry; each experiment should support one line of
   inquiry unless an owner-local note explains otherwise
@@ -48,6 +52,9 @@ unrelated purposes.
   them or document the needed refresh
 - if tracked generated data changes unexpectedly, stop and report the file and
   command
+- if repeated readers need a readable interpretation table, prefer generating
+  that table/report from the artifacts over copying selected artifact rows into
+  hand-maintained README prose
 - use script-like python and rust binaries, make the pipeline simple and reproducible and documented
 - for development, provide smoke paths (smoke input data, smoke output data, smoke parameter settings)
 - for large datasets, provide a Slurm job script to be run on LICCA

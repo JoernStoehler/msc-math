@@ -29,6 +29,26 @@ Interpret current artifacts from current code:
 Use `$research-experiments-data` as the nearby experiment-artifact convention
 skill when editing or reviewing durable experiment files.
 
+## Artifact-Derived Prose
+
+Generated artifacts and current code are the source of truth for detailed
+metric rows. Do not hand-maintain README/report paragraphs that duplicate TSV,
+JSON, or numeric values extracted from figures unless that prose is generated
+from the artifact. A paragraph that restates artifact rows by hand is a
+stale-risk surface: check it against the artifact, replace it with a source
+pointer, or generate it from the artifact.
+
+Durable experiment prose should usually carry the question, data slice,
+command/artifact path, measured quantity, strength boundary, and
+interpretation guardrails. Detailed rankings, budget-prefix behavior,
+per-feature metric rows, and attribution tables should live in generated
+artifacts or generated compact reports. Quick chat interpretation may summarize
+artifact rows, but say which artifact/run it came from.
+
+This is not a ban on interpretation prose. It is a source-truth rule: if the
+claim is meant to be durable and would go stale when a TSV row changes, either
+generate it or point to the artifact instead of maintaining a second copy.
+
 ## What Good Looks Like
 
 A useful interpretation lets Jörn evaluate the result without reconstructing
@@ -122,6 +142,8 @@ Prefer durable surfaces that future agents can re-evaluate:
 - executable inputs, arguments, and generated outputs;
 - README navigation to commands, artifacts, entry points, and source
   definitions;
+- generated compact reports when detailed metrics need a readable prose/table
+  view across runs;
 - concise report/thesis prose only when it names the slice, command/artifact,
   measured quantity, strength, and epistemic boundary.
 
