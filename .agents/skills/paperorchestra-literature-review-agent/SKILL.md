@@ -1,6 +1,6 @@
 ---
 name: paperorchestra-literature-review-agent
-description: Step 3 of the PaperOrchestra pipeline (arXiv:2604.05018). Execute the literature search strategy from outline.json — discover candidate papers via web search, verify them through Semantic Scholar (Levenshtein > 70 fuzzy title match, temporal cutoff, dedup by paperId), cross-corroborate against Crossref + OpenAlex to flag hallucinated citations, build a BibTeX file, and draft Introduction + Related Work using ≥90% of the verified pool. Runs in parallel with the plotting-agent. TRIGGER when the orchestrator delegates Step 3 or when the user asks to "find citations for my paper", "draft the related work", or "build the bibliography".
+description: Step 3 of the PaperOrchestra pipeline (arXiv:2604.05018). Execute the literature search strategy from outline.json — discover candidate papers via web search, verify them through Semantic Scholar (Levenshtein above 70 fuzzy title match, temporal cutoff, dedup by paperId), cross-corroborate against Crossref + OpenAlex to flag hallucinated citations, build a BibTeX file, and draft Introduction + Related Work using ≥90% of the verified pool. Runs in parallel with the plotting-agent. TRIGGER when the orchestrator delegates Step 3 or when the user asks to "find citations for my paper", "draft the related work", or "build the bibliography".
 ---
 
 # Literature Review Agent (Step 3)
