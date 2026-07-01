@@ -89,12 +89,16 @@ From `outline.json`:
   - The cluster's `sota_investigation_mission` becomes a search query
   - All `limitation_search_queries` (1-3 each)
 
-For each query, **use your host's web search tool** (e.g., `WebSearch` in
-Claude Code, `@web` in Cursor, the search tool in Antigravity). Collect the
-top ~10 candidates per query: title, abstract snippet, source URL.
+For each query, **use your host's web search tool**. In Codex, use the `web`
+search/open tools. In other hosts this may be Claude Code `WebSearch`, Cursor
+`@web`, or an Antigravity search tool. Collect the top ~10 candidates per
+query: title, abstract snippet, source URL.
 
 If your host supports parallel sub-tasks, fire up to 10 concurrent search
-queries. If not, run sequentially — slower but functionally equivalent.
+queries. In Codex, use subagents for this only when the query set is large
+enough to justify review/merge overhead; otherwise batch web searches in the
+host. If parallelism is unavailable, run sequentially — slower but functionally
+equivalent.
 
 #### Optional: Exa as a Phase 1 backend
 

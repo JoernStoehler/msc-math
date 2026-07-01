@@ -15,6 +15,11 @@ The paper highlights this step as one of the largest contributors to overall
 quality: refinement alone accounts for +19% (CVPR) and +22% (ICLR) absolute
 acceptance-rate improvement (Fig. 4). Get this step right.
 
+In Codex for this repo, use GPT-5.5 for reviewer and revision calls by default.
+Use cheaper/faster subagents only for bounded side checks, not for accepting
+final writing quality. Writing-style, motivation, per-section overview, and
+claim-support failures are first-class review findings, not cosmetic polish.
+
 ## Inputs
 
 - `workspace/drafts/paper.tex` — output of Step 4

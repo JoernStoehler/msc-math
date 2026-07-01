@@ -15,6 +15,14 @@ matplotlib code with your own LLM, render via your Bash/Python tool,
 optionally critique the rendered PNG with your vision model, redraw, and
 finally caption.
 
+In Codex for this repo, prefer local reproducible figure producers first:
+matplotlib for plots, the bundled diagram renderer or hand-written matplotlib
+patches for schematic diagrams, and existing thesis/experiment plotting scripts
+when they already own the figure. Use PaperBanana/Gemini only when configured
+and useful for a diagram/bitmap figure. Use Codex image generation only for
+bitmap assets where a generated visual is appropriate; do not use it for plots
+or proof/data figures that should be reproducible from local data.
+
 ## Inputs
 
 - `workspace/outline.json` — specifically the `plotting_plan` array
@@ -70,8 +78,9 @@ finally caption.
        --out       workspace/figures/<figure_id>.png
    ```
 
-   **Otherwise** — write a matplotlib script and run it via your Bash tool,
-   or use the bundled helper:
+   **Otherwise** — write a matplotlib script and run it via your Bash/shell
+   tool, reuse an existing local plotting script when one already owns the
+   figure, or use the bundled helper:
    ```bash
    python .agents/skills/paperorchestra-plotting-agent/scripts/render_matplotlib.py \
        --spec spec.json \

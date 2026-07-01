@@ -1,6 +1,6 @@
 ---
 name: paperorchestra-agent-research-aggregator
-description: Pre-pipeline aggregator that scans AI agent cache directories (.claude, .cursor, .antigravity, .openclaw) or any user-specified directory for experimentation logs, extracts insights and numeric results, and formats them as PaperOrchestra-ready inputs (idea.md + experimental_log.md). TRIGGER when the user says "aggregate my agent logs for paper writing", "extract experiments from my coding agent history", "prepare PaperOrchestra inputs from my cache", "turn my agent logs into a paper", mentions a folder or directory they want to use as the basis for a paper, or wants to run PaperOrchestra but only has scattered agent experiment histories rather than structured inputs. Run this BEFORE paper-orchestra. Also called automatically by paper-orchestra when workspace/inputs/idea.md or workspace/inputs/experimental_log.md are missing.
+description: Pre-pipeline aggregator that scans AI agent cache directories (~/.codex, .claude, .cursor, .antigravity, .openclaw) or any user-specified directory for experimentation logs, extracts insights and numeric results, and formats them as PaperOrchestra-ready inputs (idea.md + experimental_log.md). TRIGGER when the user says "aggregate my agent logs for paper writing", "extract experiments from my coding agent history", "prepare PaperOrchestra inputs from my cache", "turn my agent logs into a paper", mentions a folder or directory they want to use as the basis for a paper, or wants to run PaperOrchestra but only has scattered agent experiment histories rather than structured inputs. Run this BEFORE paper-orchestra. Also called automatically by paper-orchestra when workspace/inputs/idea.md or workspace/inputs/experimental_log.md are missing.
 ---
 
 # agent-research-aggregator
@@ -27,9 +27,9 @@ experimentation artifacts from AI coding-agent cache directories and synthesizes
 them into the structured `(I, E)` input pair the PaperOrchestra pipeline expects.
 
 ```
-[.claude/]  [.cursor/]  [.antigravity/]  [.openclaw/]
-      │            │              │               │
-      └────────────┴──────────────┴───────────────┘
+[~/.codex/] [.claude/] [.cursor/] [.antigravity/] [.openclaw/]
+      │           │          │           │              │
+      └───────────┴──────────┴───────────┴──────────────┘
                           │
                     Phase 1: Discovery
                   (discover_logs.py)
@@ -67,9 +67,9 @@ run `paper-orchestra` on the same workspace.
 | Parameter | Required | Default | Description |
 |---|---|---|---|
 | `--search-roots` | no | cwd, `~` | Comma-separated directories to scan for agent caches |
-| `--agents` | no | all | Comma-separated subset: `claude,cursor,antigravity,openclaw` |
+| `--agents` | no | all | Comma-separated subset: `codex,claude,cursor,antigravity,openclaw` |
 | `--workspace` | no | `./workspace` | PaperOrchestra workspace root |
-| `--depth` | no | 4 | Max directory scan depth (prevents runaway scans on large home dirs) |
+| `--depth` | no | 6 | Max directory scan depth (prevents runaway scans on large home dirs; Codex rollout paths need depth 5) |
 | `--since` | no | none | Only include logs modified after this date (ISO 8601: `2025-01-01`) |
 
 The user specifies these when invoking the skill, or you may ask them for
@@ -87,6 +87,16 @@ python .agents/skills/paperorchestra-agent-research-aggregator/scripts/discover_
     --agents <agents> \
     --depth <depth> \
     --since <since> \
+    --out workspace/ara/discovered_logs.json
+```
+
+For Codex-first projects, include the project root and the Codex home cache:
+
+```bash
+python .agents/skills/paperorchestra-agent-research-aggregator/scripts/discover_logs.py \
+    --search-roots /workspaces/msc-math \
+    --agents codex \
+    --depth 6 \
     --out workspace/ara/discovered_logs.json
 ```
 
@@ -148,9 +158,21 @@ For each batch:
 
 1. **Read** the log files in the batch (the script's `--list` output tells you
    which file paths to read).
+   - For Codex rollout logs (`rollout-*.jsonl`), do not pass raw JSONL directly
+     to the extraction LLM. First produce a compact chat-level excerpt:
+     ```bash
+     python .agents/skills/paperorchestra-agent-research-aggregator/scripts/codex_rollout_excerpt.py \
+         /path/to/rollout-....jsonl > /tmp/codex-rollout-excerpt.txt
+     ```
+     Include clipped tool calls or outputs only when file paths, commands, or
+     result text from tools are needed for the extraction:
+     ```bash
+     python .agents/skills/paperorchestra-agent-research-aggregator/scripts/codex_rollout_excerpt.py \
+         --include-tool-calls --include-tool-outputs /path/to/rollout-....jsonl
+     ```
 2. **Apply the extraction prompt** from `references/extraction-prompt.md` as
    your system message.
-3. **Pass the raw log text** as the user message.
+3. **Pass the raw log text or prepared excerpt** as the user message.
 4. **Collect the structured JSON** the LLM returns (see schema in the prompt).
 5. **Append** to `workspace/ara/raw_experiments.json`.
 
@@ -326,7 +348,7 @@ Tell the user exactly which two files are still needed, then offer to run
 
 ## Hard rules (never violate)
 
-1. **Never write to agent cache directories.** This skill is read-only on `.claude/`, `.cursor/`, `.antigravity/`, `.openclaw/`.
+1. **Never write to agent cache directories.** This skill is read-only on `~/.codex/`, `.claude/`, `.cursor/`, `.antigravity/`, `.openclaw/`.
 2. **Never include personal information** (emails, names, credentials, API keys) in generated `idea.md` or `experimental_log.md`. The extraction prompt instructs the LLM to strip PII; double-check before handoff.
 3. **Never fabricate results.** If a metric appears in only one log with low confidence, mark it `[UNVERIFIED]` in the table rather than silently including it.
 4. **Never proceed past Phase 1 without user confirmation** of the discovered file list if the scan found > 50 files.

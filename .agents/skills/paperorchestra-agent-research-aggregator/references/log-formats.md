@@ -5,6 +5,73 @@ which files are most likely to contain experiment data.
 
 ---
 
+## Codex (`~/.codex/`)
+
+Codex stores local session metadata and rollout JSONL logs under `~/.codex`.
+For PaperOrchestra aggregation, Codex logs are high value but noisy: they
+contain user steering, assistant drafts, tool calls, subagent summaries,
+corrections, and abandoned attempts. Treat them as interaction provenance and
+experiment-history evidence, not as direct mathematical source truth.
+
+### Rollout logs — HIGH VALUE
+
+```
+~/.codex/sessions/YYYY/MM/DD/rollout-<timestamp>-<thread-id>.jsonl
+~/.codex/archived_sessions/rollout-<timestamp>-<thread-id>.jsonl
+```
+
+Useful JSONL events:
+
+- `payload.type == "user_message"`: strong evidence for what the user supplied,
+  requested, corrected, accepted, or rejected.
+- `payload.type == "agent_message"`: user-visible assistant progress/final
+  messages, including compact summaries of work performed.
+- `payload.type == "message"` with `payload.role == "assistant"`: assistant
+  messages, often including final answers in older logs.
+- `payload.type == "function_call"` / `function_call_output`: tool activity.
+  Prefer summaries over raw tool output unless the output is itself a result.
+- `type == "session_meta"` and `payload.type == "turn_context"`: cwd, git,
+  fork/subagent metadata, and project filtering.
+- Subagent completion notifications: useful compact evidence for delegated
+  reviews or extraction tasks.
+
+Extraction priority inside a Codex rollout:
+
+1. User messages that define research questions, corrections, accepted wording,
+   or source-truth distinctions.
+2. Final/user-visible assistant summaries that state completed work and
+   artifacts.
+3. Subagent completion summaries.
+4. Tool-call summaries and command outputs only when they contain experiment
+   results, numeric values, proof/certificate status, or file paths needed for
+   evidence.
+5. Raw tool dumps and compile logs only when the failure/result is the point.
+
+Use `scripts/codex_rollout_excerpt.py` before LLM extraction. It emits the
+chat-level view above and drops tool calls and large tool outputs unless
+explicitly requested.
+
+Do not treat an assistant proposal as accepted unless the log shows user
+acceptance, later use, or a durable artifact supporting it. Do not treat a user
+message as complete provenance for offline Jörn thinking; it is only source
+truth for what entered that session.
+
+### Session index — MEDIUM VALUE
+
+```
+~/.codex/session_index.jsonl
+```
+
+The index helps identify session ids, names, and update times. It is a routing
+surface, not experiment evidence by itself.
+
+### Project filtering
+
+`discover_logs.py` infers a Codex project from `cwd` fields in the rollout
+prefix. Worktrees under the same repository may appear as separate project
+labels. For thesis-wide aggregation, include the main repo and relevant local
+worktrees deliberately.
+
 ## Claude Code (`.claude/`)
 
 Claude Code stores all persistent state under `.claude/` at the project root
@@ -209,7 +276,8 @@ of which agent produced them:
 When logs exceed the batch size budget, process in this order:
 
 1. Memory files (`.claude/memory/`, `.openclaw/memory/`)
-2. Chat history / conversation logs with tool outputs
+2. Codex rollout user/final/subagent summaries and other chat history /
+   conversation logs with tool outputs
 3. `metrics.json`, `eval.json`, structured result files
 4. Jupyter notebooks (`.ipynb`)
 5. Training logs (`run_*.log`, `train_*.log`)

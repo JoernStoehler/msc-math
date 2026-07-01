@@ -3,16 +3,16 @@
 discover_logs.py — Phase 1 of agent-research-aggregator.
 
 Scans known AI agent cache directories (.claude, .cursor, .antigravity,
-.openclaw) plus general project files for experimentation logs.
+.openclaw, ~/.codex) plus general project files for experimentation logs.
 
 Outputs a JSON manifest that downstream scripts and LLM calls use to decide
 which files to read.
 
 Usage:
     python discover_logs.py \\
-        --search-roots . ~ \\
-        --agents claude,cursor,antigravity,openclaw \\
-        --depth 4 \\
+        --search-roots . \\
+        --agents codex,claude,cursor,antigravity,openclaw \\
+        --depth 6 \\
         --since 2025-01-01 \\
         --out workspace/ara/discovered_logs.json
 """
@@ -81,6 +81,16 @@ AGENT_SPECS = {
         ],
         "root_files": [],
         "priority_dirs": ["sessions", "memory"],
+    },
+    "codex": {
+        "cache_dirs": [],
+        "global_dirs": [os.path.expanduser("~/.codex")],
+        "patterns": [
+            "sessions/*/*/*/rollout-*.jsonl",
+            "archived_sessions/rollout-*.jsonl",
+        ],
+        "root_files": [],
+        "priority_dirs": ["sessions", "archived_sessions"],
     },
 }
 
@@ -247,14 +257,54 @@ def decode_claude_project_path(dir_name: str) -> str | None:
     return None
 
 
+def infer_codex_project(path: Path) -> str | None:
+    """
+    Infer the project cwd from a Codex rollout JSONL file.
+
+    Codex stores project context in session_meta and turn_context payloads.
+    Read only a bounded prefix so discovery stays cheap even for long logs.
+    """
+    if path.suffix != ".jsonl":
+        return None
+    try:
+        with path.open("r", encoding="utf-8", errors="replace") as f:
+            for i, line in enumerate(f):
+                if i >= 200:
+                    break
+                try:
+                    event = json.loads(line)
+                except json.JSONDecodeError:
+                    continue
+                payload = event.get("payload")
+                if not isinstance(payload, dict):
+                    continue
+                candidates = [
+                    payload.get("cwd"),
+                    (payload.get("git") or {}).get("cwd")
+                    if isinstance(payload.get("git"), dict) else None,
+                ]
+                for candidate in candidates:
+                    if isinstance(candidate, str) and candidate:
+                        return candidate
+    except OSError:
+        return None
+    return None
+
+
 def infer_project(path: Path, search_root: Path, agent: str) -> str:
     """
     Infer a human-readable project label for a file.
 
     For Claude Code logs stored under ~/.claude/projects/<encoded-path>/,
     decode the project directory name back to the original path.
+    For Codex rollout logs, read the logged cwd when present.
     For all other files, use the search root name or a top-level subdirectory.
     """
+    if agent == "codex":
+        codex_project = infer_codex_project(path)
+        if codex_project:
+            return codex_project
+
     try:
         rel = path.relative_to(Path.home() / ".claude" / "projects")
         top = rel.parts[0] if rel.parts else ""
@@ -277,9 +327,9 @@ def infer_project(path: Path, search_root: Path, agent: str) -> str:
 def main():
     parser = argparse.ArgumentParser(description="Discover AI agent experiment logs")
     parser.add_argument("--search-roots", default=".", help="Comma-separated root dirs to scan")
-    parser.add_argument("--agents", default="claude,cursor,antigravity,openclaw",
+    parser.add_argument("--agents", default="codex,claude,cursor,antigravity,openclaw",
                         help="Comma-separated agent types to scan")
-    parser.add_argument("--depth", type=int, default=4, help="Max directory depth")
+    parser.add_argument("--depth", type=int, default=6, help="Max directory depth")
     parser.add_argument("--since", default=None,
                         help="ISO 8601 date; only include files modified after this")
     parser.add_argument("--out", required=True, help="Output JSON path")
@@ -376,6 +426,12 @@ def main():
             sys.exit(1)
         deduped = filtered
 
+    # Recompute counts after deduplication and optional project filtering.
+    filtered_agent_counts: dict[str, int] = {}
+    for e in deduped:
+        agent = e.get("agent", "unknown")
+        filtered_agent_counts[agent] = filtered_agent_counts.get(agent, 0) + 1
+
     # Build output manifest
     manifest = {
         "generated_at": datetime.now(tz=timezone.utc).isoformat(),
@@ -386,7 +442,7 @@ def main():
         "selected_project": args.project,
         "total_files": len(deduped),
         "total_size_bytes": sum(e["size_bytes"] for e in deduped),
-        "by_agent": agent_counts,
+        "by_agent": filtered_agent_counts,
         "by_project": {p: len(paths) for p, paths in by_project.items()},
         "files": deduped,
     }
@@ -422,7 +478,7 @@ def main():
     print(f"Total size   : {sum(e['size_bytes'] for e in deduped) / 1024:.1f} KB")
     print()
     print("By agent:")
-    for agent, count in sorted(agent_counts.items()):
+    for agent, count in sorted(filtered_agent_counts.items()):
         print(f"  {agent:20s} {count:4d} files")
     print()
     print("Priority breakdown:")

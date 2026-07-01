@@ -66,12 +66,16 @@ Reference for the orchestrator. Source: arXiv:2604.05018, §4 and Fig. 1.
 
 - **Steps 2 and 3 are independent** and have no shared state. They MUST run in
   parallel when the host supports it. If not, run Step 3 first because its
-  wall-time floor is set by Semantic Scholar's 1 QPS verification limit.
+  wall-time floor is set by Semantic Scholar's 1 QPS verification limit. In
+  Codex, this means separate subagents for Plotting and Literature Review when
+  available.
 - Within Step 2: figure rendering jobs are independent and can be parallelized
   per `figure_id`. The VLM critique loop within a single figure is sequential
   (render → critique → redraw).
 - Within Step 3: candidate **discovery** is parallel (10 concurrent web search
-  workers in the paper, but the host can use whatever its tool supports).
+  workers in the paper, but the host can use whatever its tool supports). In
+  Codex, batch native web searches in the host for small query sets and use
+  subagents for larger fanout when the summaries will be easy to merge.
   Candidate **verification** via Semantic Scholar must be sequential at ≤1 QPS
   to respect the public API rate limit. See `s2-api-cookbook.md`.
 

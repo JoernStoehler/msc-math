@@ -8,8 +8,9 @@ want a research-paper-focused search backend with better signal-to-noise
 than general web search.
 
 > **Exa is opt-in.** The literature-review-agent's default Phase 1 path is
-> "use your host agent's native web search tool" (`WebSearch` in Claude
-> Code, `@web` in Cursor, the search tool in Antigravity, etc.). That
+> "use your host agent's native web search tool" (Codex `web` tools,
+> `WebSearch` in Claude Code, `@web` in Cursor, the search tool in Antigravity,
+> etc.). That
 > requires zero configuration and no API key. Use Exa only if you want
 > to.
 
@@ -234,7 +235,7 @@ by Semantic Scholar's 1 QPS verification limit, not by Exa.
 
 | Use case | Recommended backend |
 |---|---|
-| Claude Code, Cursor, Antigravity (have native web search) | host's native search (free, integrated) |
+| Codex, Claude Code, Cursor, Antigravity (have native web search) | host's native search (free, integrated) |
 | Aider, OpenCode, generic CLI agents | Exa (gives them search) |
 | Batch reproducible runs | Exa (deterministic backend) |
 | Research-paper-heavy queries | Exa (better academic signal) |

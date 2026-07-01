@@ -1,7 +1,7 @@
 # Host Integration Guide
 
 How to run the paper-orchestra skill pack under different coding agents.
-**No API keys are required for any of these.** Each host uses its own native
+**No API keys are required for the default path.** Each host uses its own native
 tools (LLM, web search, fetch, bash, file I/O) to execute the skills.
 
 ## What the host needs to provide
@@ -24,6 +24,43 @@ reasoning quality — see `paper-fidelity.md`).
 If the host lacks web search, the Literature Review Agent runs in degraded
 mode: it uses only any user-provided BibTeX in `workspace/inputs/` and emits
 a TODO marker if Intro/Related Work cannot be cited.
+
+---
+
+## Codex
+
+This repository's local integration target is Codex with repo-local skills under
+`.agents/skills/`.
+
+1. Start Codex in the project root or a worktree rooted at this repository.
+2. Use the imported `paperorchestra-*` skills directly from `.agents/skills/`.
+   Do not install or symlink them into another host's skill directory.
+3. Scaffold and validate the workspace with the bundled scripts:
+   ```bash
+   python .agents/skills/paperorchestra-paper-orchestra/scripts/init_workspace.py --out workspace/
+   python .agents/skills/paperorchestra-paper-orchestra/scripts/validate_inputs.py --workspace workspace/
+   ```
+4. Run the pre-pipeline aggregator when `idea.md` or `experimental_log.md` is
+   missing. For Codex logs, use `--agents codex` and include `~/.codex` in the
+   search roots:
+   ```bash
+   python .agents/skills/paperorchestra-agent-research-aggregator/scripts/discover_logs.py \
+       --search-roots /workspaces/msc-math \
+       --agents codex \
+       --depth 6 \
+       --out workspace/ara/discovered_logs.json
+   ```
+5. Use Codex subagents for independent workstreams: Step 2 Plotting and Step 3
+   Literature Review can run concurrently; Step 3 candidate-discovery queries
+   can also be fanned out when useful. Keep Semantic Scholar verification
+   sequential at the documented rate limit.
+6. Use Codex's web search/fetch tools for literature discovery and source
+   checks. Use shell commands for deterministic scripts and `latexmk`.
+7. Use Codex/GPT-5.5 for thesis-sensitive synthesis, writing, and review.
+   Faster subagents are appropriate for bounded log extraction or search
+   fanout whose summaries are reviewed before use.
+8. If the active Codex surface cannot pass images into an LLM call, run
+   Section Writing in text-only mode using figure filenames and captions.
 
 ---
 

@@ -8,7 +8,9 @@ Source: arXiv:2604.05018, App. D.3 ("Citation Verification") and App. B
 The paper uses 10 concurrent workers to fan out search-grounded LLM calls
 ("Gemini-3-Flash with Google Search grounding"). For our host-agent
 implementation, the equivalent is: spawn up to 10 concurrent search queries
-using the host's native web search tool.
+using the host's native web search tool. In Codex, use the `web` search/open
+tools directly for small query sets, and use subagents only when the query
+fanout is large enough that parallelism beats review overhead.
 
 ### Inputs
 

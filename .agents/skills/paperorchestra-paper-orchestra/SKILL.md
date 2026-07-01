@@ -49,8 +49,20 @@ Step 5: Content Refine   ──▶  final/paper.tex + final/paper.pdf   (~5-7 ca
 ```
 
 Step 2 and Step 3 are independent and **MUST run in parallel** when your host
-supports parallel sub-agents. If not, run Step 3 first (it has the longer wall
-time due to Semantic Scholar rate limits) and Step 2 second.
+supports parallel sub-agents. In Codex, use `multi_agent_v1` subagents for
+these two independent workstreams when available. If parallel subagents are not
+available, run Step 3 first (it has the longer wall time due to Semantic Scholar
+rate limits) and Step 2 second.
+
+## Local Codex Host Policy
+
+For this repo, Codex/GPT-5.5 is the default host model for outline synthesis,
+section writing, refinement, literature-review drafting, and any
+theorem-sensitive or thesis-claim-sensitive reasoning. Use faster small
+subagents only for bounded extraction, classification, search fanout, or
+mechanical checks whose output will be reviewed by the host. Do not call an
+external agent CLI from inside the pipeline unless Jörn explicitly enables that
+surface for the run.
 
 ## Critical pre-instruction (read once, apply always)
 
@@ -126,9 +138,8 @@ Parse `outline.json`. Extract:
 - `outline.plotting_plan` → drives Step 2
 - `outline.intro_related_work_plan` → drives Step 3
 
-If your host supports parallel sub-agents (Claude Code's Agent tool with multiple
-concurrent calls; Cursor's parallel agents; Antigravity's worker pool), spawn
-**two concurrent sub-tasks**:
+If your host supports parallel sub-agents, spawn **two concurrent sub-tasks**.
+In Codex, use `multi_agent_v1` and keep each subtask's output contract narrow:
 
 - Sub-task A: load `.agents/skills/paperorchestra-plotting-agent/SKILL.md`, execute the plotting plan,
   produce `workspace/figures/<figure_id>.png` for every entry, plus

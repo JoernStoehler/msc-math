@@ -14,6 +14,12 @@ manuscript"). Do NOT split this into per-section calls — the paper
 explicitly designs it as one comprehensive call so the model can maintain
 global coherence across sections.
 
+In Codex for this repo, make that single writing call with GPT-5.5. Do not
+replace it with per-section drafting during the PaperOrchestra trial unless the
+trial is explicitly being modified after evaluation. If the active Codex surface
+cannot provide image inputs to the writing call, use the documented text-only
+fallback with figure filenames and captions.
+
 ## Inputs
 
 - `workspace/outline.json` — the master plan
