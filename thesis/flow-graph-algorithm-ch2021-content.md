@@ -65,14 +65,23 @@ proof until reviewed.
 
 ## Thesis Role
 
-The FG section should explain a second serious capacity algorithm developed in
-the project. Its thesis value is:
+The FG section should present a second capacity algorithm developed in the
+project. Its thesis value is theorem-level, subject to the proof gates below:
 
-- completeness: the thesis records the implemented flow-graph/tube approach;
-- verification: FG gives an independent algorithmic comparison against the
-  HK/QP scalar capacity route on eligible examples;
-- motivation: the section explains why QP remains the practical workhorse
-  despite the FG implementation.
+- correctness theorem: the idealized exact flow-graph/tube algorithm computes
+  \(c_{\mathrm{EHZ}}\) for a generic class of four-dimensional polytopes, stated
+  as an open dense finite-orbit-regular/nondegenerate condition;
+- implementation: the project implements the exact flow-graph/tube route and
+  uses exact rational arithmetic for theorem-relevant predicates. The current
+  public FG capacity-search wrapper is rational. Full algebraic FG capacity
+  search and algebraic FG-vs-QP agreement are intentionally out of scope for
+  thesis reliance;
+- verification: exact FG gives an independent scalar comparison against the
+  HK/QP capacity route on eligible examples, increasing confidence that neither
+  implementation path is carrying a shared local bug;
+- positioning: QP remains the practical workhorse for the main thesis
+  computations, while FG is an independent algorithm/correctness contribution
+  with narrower supported inputs and more expensive exact semantics.
 
 Do not frame FG as a universal certified solver, as support for HKO or
 Lagrangian-product degeneracies, or as a performance replacement for QP.
@@ -82,8 +91,12 @@ Lagrangian-product degeneracies, or as a performance replacement for QP.
 The following claims are the current draft-planning boundary, subject to the
 review gates below.
 
-- The exact FG path is a rational implementation for selected four-dimensional
-  rational polytope inputs.
+- The theorem target is the idealized exact flow-graph/tube algorithm:
+  for flow-graph-nondegenerate four-dimensional polytopes satisfying a generic
+  finite-orbit-regular condition, exhaustive simple-word tube search returns
+  \(c_{\mathrm{EHZ}}\).
+- The exact FG capacity-search path is a rational implementation for selected
+  four-dimensional rational polytope inputs.
 - The exact path enumerates transition-pruned simple cyclic facet words,
   constructs affine tube data, solves closed-word fixed-point equations using
   rational arithmetic, filters positive outputs by strict segment times, and
@@ -99,8 +112,9 @@ review gates below.
 - HK/QP is scalar comparison for eligible examples. It is not a retained-word
   oracle for FG words.
 
-The exact theorem wording is not settled. Do not write that FG computes
-\(c_{\mathrm{EHZ}}\) for the Rust runtime boundary until the formal/Rust
+The exact theorem wording is now directed toward the generic correctness route,
+not a mere implementation-status section. Do not write that the full Rust
+runtime boundary computes \(c_{\mathrm{EHZ}}\) until the formal/Rust
 correspondence below is reviewed.
 
 ## Mathematical Support Ledger
@@ -110,13 +124,14 @@ correspondence below is reviewed.
 | A capacity-realizing generalized Reeb orbit can be chosen simple. | Active theorem `thm:generalized-reeb-simple-minimizer`; source notes cite HK2017 Theorem 1.5. | Do not assume simple minimizers as an FG hypothesis; cite the active thesis theorem. |
 | CH2021 flow-graph/tube background. | Active background at `subsec:generalized-reeb-orbits-polytopes-ch2021`, plus `papers/ch2021/`. | This motivates the construction. It is not by itself a proof that the Rust exact search computes capacity. |
 | Adjacent facet-pair pruning. | `alg:fg-real-exhaustive-search`; Rust `exact_search.rs` uses `build_transition_matrix_from_facet_intersections_and_omega`. | This is a necessary pruning condition. Do not describe the transition matrix as an exact physical-transition oracle. |
-| Local transition signs from nonzero \(\omega_0\). | Active proof-development labels `def:fg-nondegenerate-facet-presentation` and `lem:fg-local-transition-regularity-positive-sign`. | The current formal/Rust route uses the stronger nonempty facet-pair nonzero-\(\omega_0\) condition. Do not silently replace it by the weaker local trajectory condition. |
+| Local transition signs from nonzero \(\omega_0\). | Active proof-development labels `def:fg-nondegenerate-facet-presentation` and `lem:fg-local-transition-regularity-positive-sign`; Jörn reviewed the sign convention on 2026-07-01. | The current formal/Rust route uses the stronger nonempty facet-pair nonzero-\(\omega_0\) condition. Do not silently replace it by the weaker local trajectory condition. This is formal-support material, not prose Kai needs to read in full. |
 | Closed tube search data and strict-time output. | `def:fg-closed-tube-search-data`; Rust `exact_tube.rs` has `NonStrictNoOrbit` and strict segment-time filtering. | Reader-facing prose must distinguish closed search domains \(\tau_r\ge0\) from returned orbits for a displayed word, which require \(\tau_r>0\). |
 | Empty subtube pruning and action normalization. | `lem:fg-empty-subtube-pruning` and `lem:fg-action-normalization`; Rust `exact_tube.rs::build_tube` returns empty for empty recursive subtubes and `exact_tube.rs::intersect_tubes` composes action by pullback and addition. | This supports exact closed-search pruning and action bookkeeping. It is not an f64 predicate-soundness claim. |
 | Action cutoffs. | `lem:fg-action-cutoff-preserves-below-cutoff-fixed-points` and `lem:fg-dynamic-action-cutoffs-preserve-retained-output`; Rust `exact_search.rs` constructs the cutoff from the best exact positive action plus threshold, `exact_tube.rs::restrict_tube_to_action_cutoff` applies the exact action halfspace before fixed-point solving, and final search output filters against the final minimum. | This supports the exact action-cutoff optimization. It does not analyze f64 cutoffs or remove the separate finite-orbit/singular-classifier boundary. |
 | Primitive affine tubes, gluing, and fixed points. | `lem:fg-primitive-tubes-affine`, `lem:fg-tube-gluing`, `lem:fg-closed-tube-fixed-points`; unapproved proof-development text. | These are the main proof pieces to review before theorem-strength thesis prose. |
 | Singular fixed-point equations. | Rust classifies exact singular fixed sets; `lem:fg-nonpositive-fixed-set-no-strict-orbit` covers the no-orbit side for nonpositive-action fixed sets; the finite-orbit-regular theorem route still excludes relevant singular fixed maps from the capacity theorem. | Do not identify the finite-orbit-regular theorem route with the full Rust singular-classifier runtime boundary until the singular-classifier correspondence is reviewed. |
-| Determinant-generic regularity. | `fact:fg-finite-orbit-regular-open-dense`, `cor:fg-real-capacity-correctness-generic`, and `rem:fg-real-missing-work`. | The current corollary is relative to the ambient primitive-denominator domain. Do not state density inside the valid irredundant presentation space until the local openness/intersection argument is added or cited. |
+| Short simple words. | `lem:fg-short-words-no-positive-orbit` lets the idealized theorem skip all simple words of length at most four under linear independence. Rust now validates linear independence up to size four and skips those words at exact-search boundary; the closed-word resolver still keeps `length_three_zero_time` as a diagnostic/test outcome. | This closes the short-word formal/Rust mismatch for the theorem-facing exact search. Keep the length-three resolver tests as demonstrations that zero-time singular fixed sets exist and are not capacity candidates. |
+| Determinant-generic regularity. | `fact:fg-finite-orbit-regular-open-dense`, `prop:fg-presentation-chamber-genericity`, and `cor:fg-real-capacity-correctness-generic`; Jörn reviewed the chamber model on 2026-07-01. | The current formal route states density relative to a fixed ordered normalized irredundant presentation chamber that is open in dual-row coordinates. It uses all-pair nonzero-\(\omega_0\) for a clean domain; this is more restrictive than necessary but accepted for the thesis theorem. |
 | Exact implementation boundary. | `exact_search.rs`, `exact_tube.rs`, and flow-graph README. | State implementation behavior separately from mathematical theorem hypotheses. |
 | f64 behavior. | `f64_tube_search.rs` and flow-graph README. | State as approximate/numerical implementation behavior unless a later numerical-analysis task proves sound predicates. |
 | HK/QP comparison. | Exact accepted examples and verification code. | Use only for scalar capacity comparison on eligible examples; do not use as a word-level oracle. |
@@ -164,8 +179,8 @@ These prompts were mined from the obsolete `fg-ch2021-content-gaps` worktree on
 
 ## Drafting Gates
 
-Before promoting `thesis/05-flow-graph-algorithm-ch2021.tex` beyond the current
-conditional scaffold, complete these gates.
+Before treating `thesis/05-flow-graph-algorithm-ch2021.tex` as final
+theorem-strength prose, complete these gates.
 
 1. Review `formal/flow-graph-real-algorithm.tex` for false statements, missing
    hypotheses, sign/orientation mistakes, and theorem/code mismatch.
@@ -175,11 +190,11 @@ conditional scaffold, complete these gates.
    `formal/flow-graph-proof-risk.tex` for consistency with the real-algorithm
    surface and the Rust README.  In particular, keep the strict-time rejection
    and typed no-positive-orbit behavior from current `main`.
-3. Decide the theorem route for reader-facing prose:
-   finite-orbit regularity, a determinant-generic corollary, or a narrower
-   implementation-status statement.
-   If using the determinant-generic route, first close the relative-genericity
-   gap recorded in `rem:fg-real-missing-work`.
+3. Close the generic theorem route for reader-facing prose:
+   use finite-orbit regularity plus a determinant-generic/open-dense corollary.
+   First close the relative-genericity gap recorded in
+   `rem:fg-real-missing-work`, or state the open dense condition relative to
+   the exact parameter domain actually proved.
 4. Write a theorem/input paragraph in mathematical language:
    start from \(K\subset\mathbb R^4\) a bounded convex polytope with
    \(0\in\operatorname{int}K\). Keep rational data, matrices, validators, and

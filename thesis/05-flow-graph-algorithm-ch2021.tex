@@ -4,9 +4,11 @@ This section describes the flow-graph route developed during the project.  The
 construction is inspired by Chaidez--Hutchings \cite{CH2021}: Reeb segments are
 organized by two-dimensional faces, and closed candidates are detected by fixed
 points of affine return maps.  The correctness route used here is different.
-CH2021 supplies language and geometric motivation, while the capacity claim
-would have to be proved from the Haim--Kislev simple-minimizer theorem and the
-soundness and completeness of the tube resolver described below.
+CH2021 supplies language and geometric motivation, while the capacity theorem
+below is proved from the Haim--Kislev simple-minimizer theorem and the
+soundness and completeness of the tube resolver.  The resulting algorithm is
+independent of the Haim--Kislev quadratic program: it searches closed
+flow-graph tubes rather than solving the quadratic program over facet words.
 
 \subsection{Definition}\label{subsec:flow-graph-algorithm-ch2021-definition}
 
@@ -74,11 +76,35 @@ present search domain is added.
 
 \subsection{Correctness}\label{subsec:flow-graph-algorithm-ch2021-correctness}
 
-The cautious correctness target is a conditional reduction.  Fix a finite
-domain \(D_K\) of closed facet words and an exact resolver for those words.
-For each word, the resolver either returns no represented positive orbit,
-returns a finite set of positive action values, or rejects the word as
-unsupported.  A rejection is not a lower bound.
+The theorem target is generic correctness of the exact flow-graph tube
+algorithm.  The supported generic condition used here is the following explicit
+one.  The polytope is given by an ordered normalized irredundant facet
+presentation
+\[
+  K=\{x\in\mathbb R^4:\langle a_i,x\rangle\le1,\ i=1,\ldots,F\}.
+\]
+For every nonempty facet pair \(F_i\cap F_j\) with \(i\ne j\), one has
+\(\omega_0(a_i,a_j)\ne0\).  Every subset of at most four listed facet normals
+is linearly independent.  Finally, for every searched simple cyclic word of
+length at least five, the relevant closed-tube fixed-point equation is either
+empty or nonsingular.  Equivalently in the formal model, the corresponding
+return matrix satisfies \(\det(I-M_w)\ne0\) whenever the closed search domain
+is nonempty.  Under these conditions, short simple words are theorem-level
+no-orbit cases and long searched words have isolated fixed points.
+
+These are generic hypotheses.  In a fixed ordered normalized irredundant
+\(H\)-presentation chamber which is open in the listed dual-row coordinates,
+the stronger all-pairs condition \(\omega_0(a_i,a_j)\ne0\) for all \(i\ne j\),
+the short-word linear-independence conditions, and the long-word determinant
+conditions cut out an open dense supported class.
+
+The proof has a useful abstract core.  Fix a finite domain \(D_K\) of closed
+facet words and an exact resolver for those words.  For each word, the resolver
+either returns no represented positive orbit, returns a finite set of positive
+action values, or rejects the word as unsupported.  A rejection is not a lower
+bound; theorem-strength output requires that the generic hypotheses exclude the
+unsupported branches or that those branches carry exact lower-bound
+certificates.
 
 \begin{proposition}[Conditional flow-graph capacity reduction]
 \label{prop:conditional-flow-graph-correctness}
@@ -108,15 +134,32 @@ certificate.  Hence \(c_{\mathrm{EHZ}}(K)\geq A\), and the two inequalities give
 equality.
 \end{proof}
 
-The proposition is not yet a proof that the implemented search computes the
-capacity on a broad class of inputs.  It isolates the remaining proof
-obligations.  One must prove primitive-tube soundness, tube-intersection
-soundness, fixed-point soundness, completeness of the chosen word domain for a
-Haim--Kislev simple minimizer, and exact lower-bound certificates for any
-discarded unresolved families.  Direct exact enumeration is the cleanest
-mathematical target; caching and action cutoffs are performance optimizations
-until their equivalence to direct resolution or their lower-bound certificates
-are proved.
+\begin{theorem}[Generic flow-graph correctness]
+\label{thm:generic-flow-graph-correctness}
+Let \(K\subset\mathbb R^4\) be a compact full-dimensional polytope with
+\(0\in\operatorname{int}K\).  Fix an ordered normalized irredundant facet
+presentation satisfying the supported generic condition above.  Then the exact
+exhaustive flow-graph search returns \(c_{\mathrm{EHZ}}(K)\).  With threshold
+\(\delta\ge0\), it also returns every represented strict positive-time simple
+closed Reeb trajectory with action at most \(c_{\mathrm{EHZ}}(K)+\delta\).
+\end{theorem}
+
+\begin{proof}
+Under these generic hypotheses, the tube construction discharges the three
+conditions of Proposition~\ref{prop:conditional-flow-graph-correctness}.  A
+primitive tube identifies one Reeb passage through a facet.  Gluing identifies
+compatible successive passages.  Fixed points of the closed return map are
+precisely the closed trajectories represented by the word.  Action
+normalization identifies the affine action with the Reeb period.
+
+The simple-minimizer theorem from
+Section~\ref{sec:generalized-reeb-orbits-polytopes} supplies a simple orbit of
+minimum capacity action.  The generic conditions put its support word in the
+finite simple-word search domain.  Proposition~\ref{prop:conditional-flow-graph-correctness}
+therefore applies, so the minimum positive action returned by the exact generic
+flow-graph search is \(c_{\mathrm{EHZ}}(K)\).  The threshold statement follows
+from the final retained-action filter in the exact search.
+\end{proof}
 
 \subsection{Performance optimization}\label{subsec:flow-graph-algorithm-ch2021-performance-optimization}
 

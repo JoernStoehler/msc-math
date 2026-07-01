@@ -148,7 +148,6 @@ after the question has a stable evidence home.
 | `discover-e2e/` | rows are being searched and bucketed for high-value examples | a row has a reviewed expected label and should stop being rediscovered | crate tests for cheap cases, `experiments/verification/` for slower artifact-backed suites |
 | `unresolved-diagnostic/` | f64 errors, exact tube resolution, exact one-sigma QP, geometric recovery, and HK2017 references are jointly needed for failure taxonomy | the question becomes reusable f64/exact methodology or stable error-path evidence | `experiments/dev-quadratic-program/numerics-audit/` or `experiments/verification/` |
 | `visualize-tube/` | tube geometry needs inspection to debug a word or explain a mismatch | a selected image/data packet supports thesis exposition | owning thesis/topic asset packet |
-
 ## Promotion Targets
 
 - Move or copy cleaned f64/exact numerical behavior audits to

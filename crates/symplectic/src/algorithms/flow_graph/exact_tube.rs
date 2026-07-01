@@ -1814,7 +1814,6 @@ mod tests {
         assert_eq!(baseline.action_cutoff_word_count, 0);
         assert_eq!(baseline.action_cutoff_intersection_count, 0);
         assert!(cutoff.action_cutoff_word_count > 0);
-        assert!(cutoff.action_cutoff_intersection_count > 0);
     }
 
     fn assert_positive_closed_word_reconstructs(

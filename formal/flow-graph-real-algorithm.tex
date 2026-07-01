@@ -876,6 +876,61 @@ domain is nonempty.  This is exactly finite-orbit regularity.
 \end{unverified}
 
 \begin{unverified}
+\begin{proposition}[Presentation-chamber genericity]%
+\label{prop:fg-presentation-chamber-genericity}
+Fix a facet count \(F\).  Let
+\[
+  \mathcal C\subset(\mathbb R^4)^F
+\]
+be a nonempty Euclidean-open set of ordered normalized dual-row lists
+\(A=(a_1,\ldots,a_F)\) such that every \(A\in\mathcal C\) defines a bounded
+full-dimensional polytope \(K(A)\) with \(0\in\operatorname{int}K(A)\), and
+all \(F\) listed inequalities are irredundant.  Then the subset of
+\(\mathcal C\) on which
+\begin{enumerate}
+\item \(\omega_0(a_i,a_j)\ne0\) for every distinct pair \(i\ne j\);
+\item every subset of at most four listed facet normals is linearly
+  independent; and
+\item every simple cyclic word of length at least five which survives the
+  flow-graph transition tests has \(\det(I-M_w)\ne0\)
+\end{enumerate}
+contains a Euclidean-open dense subset of \(\mathcal C\).  On that open dense
+subset, Algorithm~\ref{alg:fg-real-exhaustive-search} returns
+\(c_{\mathrm{EHZ}}(K(A))\).
+\end{proposition}
+
+\begin{proof}
+The first two conditions are finite algebraic nonvanishing conditions on
+\((\mathbb R^4)^F\): the functions are the bilinear pairings
+\(\omega_0(a_i,a_j)\) and the \(r\times r\) minors of each \(r\)-element
+sublist for \(1\le r\le4\).  Their nonzero loci are Euclidean open.  They are
+dense in \(\mathcal C\) provided the corresponding polynomials do not vanish
+identically on \(\mathcal C\); for a Euclidean-open nonempty chamber this
+follows because a nonzero polynomial cannot vanish on an open set.
+
+For the determinant conditions, apply
+Fact~\ref{fact:fg-finite-orbit-regular-open-dense} to the finite set of simple
+cyclic words with \(F\) labels.  The all-pair nonzero-\(\omega_0\) condition
+puts every chamber point in the common primitive-denominator domain needed for
+these determinant rational functions, whether or not the corresponding facet
+pairs are geometrically adjacent.  The proof of
+Fact~\ref{fact:fg-finite-orbit-regular-open-dense} shows that each determinant
+nonvanishing condition is the complement of a proper algebraic zero set on
+that domain.  Restricting finitely many such open dense conditions to the
+Euclidean-open chamber \(\mathcal C\) remains open dense.
+
+The resulting open dense subset of \(\mathcal C\) consists of flow-graph
+nondegenerate facet presentations in the sense needed by
+Definition~\ref{def:fg-nondegenerate-facet-presentation}, because all-pair
+nonzero-\(\omega_0\) implies the nonempty-pair condition stated there and the
+linear-independence condition is included explicitly.  The determinant
+conditions give finite-orbit regularity by
+Fact~\ref{fact:fg-finite-orbit-regular-open-dense}.  Hence the capacity
+statement is exactly Theorem~\ref{thm:fg-real-capacity-correctness}.
+\end{proof}
+\end{unverified}
+
+\begin{unverified}
 \begin{proposition}[Correctness of idealized exhaustive FG search]%
 \label{prop:fg-real-search-correctness}
 For a polytope with a flow-graph nondegenerate facet presentation whose
@@ -978,8 +1033,9 @@ finite-orbit regular.  Therefore
 Algorithm~\ref{alg:fg-real-exhaustive-search}, run on that presentation,
 returns \(c_{\mathrm{EHZ}}(K)\).
 The term determinant-generic is relative to this common
-primitive-denominator domain; this corollary does not assert density inside
-the space of valid irredundant facet presentations.
+primitive-denominator domain.  Proposition~\ref{prop:fg-presentation-chamber-genericity}
+is the corresponding chamber-relative statement for fixed ordered normalized
+irredundant \(H\)-presentation chambers.
 \end{corollary}
 
 \begin{proof}
@@ -1007,17 +1063,25 @@ mathematical boundary currently targeted by the exact Rust rejection logic and
 is stronger than the local physical-transition condition needed in the proof of
 Lemma~\ref{lem:fg-local-transition-regularity-positive-sign}.
 
-The determinant-generic corollary is also not yet the final relative-genericity
-statement one would want for thesis prose.  To upgrade it, one still has to
-prove or cite the local openness of the valid irredundant \(H\)-presentation
-space in the dual-vertex coordinates used here, then intersect that open
-presentation space with the all-pair nonzero-\(\omega_0\), linear-independence,
-primitive-denominator, and determinant-nonzero loci.  Without that extra
-presentation-space argument, the formal text only proves genericity relative
-to the ambient primitive-denominator domain used in
-Fact~\ref{fact:fg-finite-orbit-regular-open-dense}.
+Proposition~\ref{prop:fg-presentation-chamber-genericity} states the
+relative-genericity upgrade for a fixed ordered normalized irredundant
+\(H\)-presentation chamber that is Euclidean open in the listed dual-row
+coordinates.  The chamber model and the choice to impose all-pair
+nonzero-\(\omega_0\), rather than only the nonempty-pair condition from
+Definition~\ref{def:fg-nondegenerate-facet-presentation}, were reviewed by
+Jörn on 2026-07-01.  The all-pair condition is deliberately stronger than
+necessary, but acceptable for the thesis genericity statement.
 
 Arbitrary bounded-irredundant input validation, broader Rust correspondence,
 and f64 analysis are separate implementation and numerical-analysis
 obligations.
+
+The Rust exact search now mirrors the short-word branch of
+Algorithm~\ref{alg:fg-real-exhaustive-search}: it validates linear
+independence for every subset of at most four listed facet normals, rejects the
+input if this theorem-facing contract fails, and skips simple words of length
+at most four as no-orbit outcomes.  The closed-word resolver still retains the
+structural length-three zero-time diagnostic, because it is useful for tests
+and for understanding why short singular fixed sets should not be treated as
+capacity candidates.
 \end{remark}

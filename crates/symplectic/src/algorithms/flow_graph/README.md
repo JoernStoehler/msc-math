@@ -12,9 +12,17 @@ proof text can overrule it. When they do, update this file or mark the mismatch.
 
 ## Current State
 
-- Exact exhaustive search is supported as limited implementation evidence for
-  deterministic exact-admissible four-dimensional rational polytopes satisfying
-  the input predicates stated below.
+- Thesis role decision: the FG route is intended as a generic correctness
+  theorem for an exact flow-graph/tube algorithm, not merely as a status
+  section. The theorem target is: for a flow-graph-nondegenerate
+  four-dimensional polytope in the open dense finite-orbit-regular class, the
+  exact exhaustive tube search returns `c_EHZ`.
+- The current public exact FG capacity-search implementation is rational
+  (`BigRational`) and provides implementation evidence on deterministic
+  exact-admissible four-dimensional rational polytopes satisfying the input
+  predicates stated below. Full algebraic FG capacity search and algebraic
+  FG-vs-QP agreement are intentionally out of scope for the thesis-bearing
+  implementation claim.
 - The f64 path is the approximate path for larger flow-graph searches. It is
   not an exact certificate by itself. A future certified f64 claim would need
   sound predicate contracts, for example true/false/indeterminate predicates
@@ -64,16 +72,19 @@ Exact implementation scope currently documented here:
   numerical cases.
 
 Formal-theorem alignment is a separate layer from this runtime contract. The
-active idealized theorem in `formal/flow-graph-real-algorithm.tex` currently
-uses global linear-independence and finite-orbit-regularity hypotheses. The
-Rust exact path does not validate those as named input predicates. It validates
-or rejects the downstream conditions it needs during exact tube construction
-and closed-word resolution: unsupported zero `omega_0`, singular primitive
-transition construction, and singular fixed sets with positive-action closed
-candidates.
-The determinant-generic corollary in the formal file is relative to the
-ambient primitive-denominator domain; it is not yet a relative-density theorem
-inside the valid irredundant presentation space.
+active idealized theorem in `formal/flow-graph-real-algorithm.tex` uses global
+linear-independence and finite-orbit-regularity hypotheses. The theorem target
+is the generic/open-dense version of that idealized route. The Rust exact path
+does not validate those as named input predicates. It validates or rejects the
+downstream conditions it needs during exact tube construction and closed-word
+resolution: unsupported zero `omega_0`, singular primitive transition
+construction, and singular fixed sets with positive-action closed candidates.
+The formal file now also states a chamber-relative genericity proposition for
+fixed ordered normalized irredundant `H`-presentation chambers that are open in
+the listed dual-row coordinates. That proposition deliberately uses all-pair
+nonzero `omega_0` for a clean open-dense domain; this is stronger than the
+runtime nonempty-pair rejection scope. Jörn reviewed this choice on 2026-07-01
+and accepted the extra restriction for the thesis genericity statement.
 
 Explicit non-goals unless thesis review asks for them:
 
@@ -140,7 +151,7 @@ Path-specific outcome contract:
 | condition | exact-path behavior | current support |
 | --- | --- | --- |
 | nonempty directed facet-pair candidate has exact `omega_0 = 0` | reject before reporting a capacity | validator and proof-risk row |
-| length-three closed word `[i,j,k,i,j]` with independent normals | return structural zero-action no-orbit with `length_three_zero_time` | formal note `lem:fg-length-three-zero-time`, exact tests, proof-risk row |
+| length-three closed word `[i,j,k,i,j]` with independent normals | exact search skips it under the short-word theorem; direct closed-word resolution still returns structural zero-action no-orbit with `length_three_zero_time` for diagnostics | formal note `lem:fg-length-three-zero-time`, exact tests, proof-risk row |
 | nonsingular fixed point with zero action or nonpositive segment time | return no-orbit, not a capacity word | exact resolver tests |
 | nonsingular fixed point with positive action and all segment times positive | accept as a closed orbit candidate; retained only if within the requested action window | exact E2E tests and proof-risk rows |
 | singular fixed set with positive-action candidate | reject as unsupported; do not silently use it as a capacity value | exact test and proof-risk row |
@@ -153,12 +164,14 @@ Path-specific outcome contract:
   segment time to be strictly positive; zero-time boundary fixed points are not
   accepted as positive orbits for the displayed word.
 - Exact rejection reasons currently known are: invalid input shapes, a
-  nonempty directed facet-pair candidate with `omega_0 = 0`, a singular fixed
-  set with a positive-action closed candidate, and any non-length-three
-  singular no-orbit outcome not covered by the structural zero-time lemma. If
-  exhaustive exact search finishes without finding any positive orbit, that is
-  also returned as a typed non-success instead of a panic. Full
-  bounded-irredundant validation is not part of this rejection boundary.
+  nonempty directed facet-pair candidate with `omega_0 = 0`, failure of the
+  linear-independence input contract for subsets of at most four listed facet
+  normals, a singular fixed set with a positive-action closed candidate, and
+  any non-length-three singular no-orbit outcome not covered by the structural
+  zero-time lemma. If exhaustive exact search finishes without finding any
+  positive orbit, that is also returned as a typed non-success instead of a
+  panic. Full bounded-irredundant validation is not part of this rejection
+  boundary.
 - The exact closed-word implementation is not a literal copy of the singular
   branch in the active idealized algorithm. It solves nonsingular fixed-point
   equations exactly. Length-three closed words with independent facet normals
@@ -235,6 +248,7 @@ Status labels:
 | Rejection for forbidden `omega_0` direction is sound. | source-backed for code path; active proof-development labels `def:fg-transition-sign`, `lem:fg-local-transition-regularity-positive-sign`, and `prop:fg-real-search-correctness` | transition matrix and primitive-tube construction | keep sign convention checks tied to `formal/search-pruning-correctness.tex` and `formal/flow-graph-real-algorithm.tex` before theorem-strength thesis use |
 | f64 rejection near small geometric `omega_0` is a numerical policy, not a theorem. | source-backed | input validation | test rejection behavior |
 | Singular closed-tube fixed-point cases are not silently capacity values. | source-backed by `exact_tube.rs::solve_singular_fixed_tube` and `singular_fixed_polygon_result`; active proof-development label `lem:fg-nonpositive-fixed-set-no-strict-orbit` covers the nonpositive-action no-orbit side; f64 near-singular maps remain a numerical policy | exact closed-word resolution | review the positive-action singular rejection/correspondence before theorem-strength thesis use; do not equate the classifier with finite-orbit regularity |
+| The idealized theorem skips all simple words of length at most four under the linear-independence hypothesis. | active proof-development label `lem:fg-short-words-no-positive-orbit`; `exact_search.rs` validates linear independence up to size four and skips short words as no-orbit outcomes; `exact_tube.rs` keeps `length_three_zero_time` as a direct resolver diagnostic | formal/Rust correspondence for the generic theorem route | keep both tests: search-boundary short-word skip and direct length-three zero-time resolver diagnostic |
 | CH2021 rotation pruning is optional future work. | source-backed from legacy note | not in first implementation path | add only behind a flag after formula review |
 
 ## Proposition Ledger

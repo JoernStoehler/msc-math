@@ -59,6 +59,7 @@ struct UnresolvedSummary {
     indeterminate_polygon_errors: usize,
     exact_empty_tubes: usize,
     exact_zero_action_no_orbits: usize,
+    exact_non_strict_no_orbits: usize,
     exact_positive_orbits: usize,
     exact_unsupported_positive_singular: usize,
     exact_tube_errors: usize,
@@ -83,6 +84,9 @@ enum ExactTubeSummary {
     ZeroActionNoOrbit {
         action_decimal: Option<f64>,
         singular_status: Option<String>,
+    },
+    NonStrictNoOrbit {
+        action_decimal: f64,
     },
     PositiveOrbit {
         action_decimal: f64,
@@ -259,6 +263,7 @@ impl UnresolvedSummary {
         match exact_tube {
             ExactTubeSummary::EmptyTube => self.exact_empty_tubes += 1,
             ExactTubeSummary::ZeroActionNoOrbit { .. } => self.exact_zero_action_no_orbits += 1,
+            ExactTubeSummary::NonStrictNoOrbit { .. } => self.exact_non_strict_no_orbits += 1,
             ExactTubeSummary::PositiveOrbit { action_decimal, .. } => {
                 self.exact_positive_orbits += 1;
                 match qp_capacity {
@@ -289,6 +294,11 @@ fn exact_tube_summary(input: &ExactFlatTubeInput<'_>, sigma: &[usize]) -> ExactT
                 action_decimal: action.as_ref().map(rational_to_f64_lossy),
                 singular_status: singular_status.map(str::to_string),
             },
+            ExactClosedWordOutcome::NonStrictNoOrbit { action, .. } => {
+                ExactTubeSummary::NonStrictNoOrbit {
+                    action_decimal: rational_to_f64_lossy(&action),
+                }
+            }
             ExactClosedWordOutcome::PositiveOrbit { action, .. } => {
                 ExactTubeSummary::PositiveOrbit {
                     action_decimal: rational_to_f64_lossy(&action),

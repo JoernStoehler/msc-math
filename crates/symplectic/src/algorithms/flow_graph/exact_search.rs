@@ -6,6 +6,8 @@ use crate::algorithms::flow_graph::exact_tube::{
     ExactClosedWordOutcome, ExactFlatTubeInput,
 };
 use crate::algorithms::hk2017::for_each_sigma_pruned_by_transition;
+use algebraic_numbers::rank;
+use nalgebra::DMatrix;
 use num_rational::BigRational;
 use num_traits::Signed;
 
@@ -54,6 +56,9 @@ pub enum ExactFlowGraphSearchError {
         min_action: Option<BigRational>,
         max_action: Option<BigRational>,
     },
+    UnsupportedLinearlyDependentFacetPresentation {
+        facets: Vec<usize>,
+    },
     UnsupportedNonLengthThreeSingular {
         sigma: Vec<usize>,
         singular_status: &'static str,
@@ -78,6 +83,7 @@ pub fn search_closed_orbits_exact(
     // the current exact FG route, not a numerical tolerance issue.  Lagrangian
     // products and HKO-style product degeneracies are expected to fail here.
     validate_no_geometric_zero_omega_transition(input)?;
+    validate_linear_independence_up_to_four(input)?;
 
     let transition_is_allowed = build_transition_matrix_from_facet_intersections_and_omega(
         input.facet_intersection_is_nonempty,
@@ -96,6 +102,16 @@ pub fn search_closed_orbits_exact(
             return;
         }
         checked_word_count += 1;
+        // The theorem-facing exact search uses the HK2017 simple-minimizer
+        // route plus the flow-graph linear-independence input contract. Under
+        // that contract, simple words of length at most four cannot carry a
+        // strict positive-time closed trajectory. Keeping this skip at the
+        // search boundary avoids making capacity output depend on singular
+        // zero-time closed-tube diagnostics such as length-three fixed lines.
+        if sigma.len() <= 4 {
+            empty_or_no_orbit_count += 1;
+            return;
+        }
         // The cutoff policy is an exact speed-up, not a separate certificate:
         // once a positive exact action is known, words whose whole closed-tube
         // domain lies above best+threshold cannot contribute retained output.
@@ -237,6 +253,51 @@ fn validate_no_geometric_zero_omega_transition(
     Ok(())
 }
 
+fn validate_linear_independence_up_to_four(
+    input: &ExactFlatTubeInput<'_>,
+) -> Result<(), ExactFlowGraphSearchError> {
+    let facet_count = input.facet_count();
+    for size in 1..=facet_count.min(4) {
+        let mut subset = Vec::with_capacity(size);
+        if let Some(dependent) = first_dependent_subset(input, 0, size, &mut subset) {
+            return Err(
+                ExactFlowGraphSearchError::UnsupportedLinearlyDependentFacetPresentation {
+                    facets: dependent,
+                },
+            );
+        }
+    }
+    Ok(())
+}
+
+fn first_dependent_subset(
+    input: &ExactFlatTubeInput<'_>,
+    start: usize,
+    target_size: usize,
+    subset: &mut Vec<usize>,
+) -> Option<Vec<usize>> {
+    if subset.len() == target_size {
+        return (subset_rank(input, subset) < target_size).then(|| subset.clone());
+    }
+
+    let remaining_slots = target_size - subset.len();
+    for facet in start..=input.facet_count() - remaining_slots {
+        subset.push(facet);
+        if let Some(dependent) = first_dependent_subset(input, facet + 1, target_size, subset) {
+            return Some(dependent);
+        }
+        subset.pop();
+    }
+    None
+}
+
+fn subset_rank(input: &ExactFlatTubeInput<'_>, subset: &[usize]) -> usize {
+    let matrix = DMatrix::from_fn(subset.len(), 4, |row, col| {
+        input.dual_vertices[subset[row]][col].clone()
+    });
+    rank(&matrix)
+}
+
 #[cfg(test)]
 fn exact_search_accepts_no_orbit_outcome(outcome: &ExactClosedWordOutcome) -> bool {
     matches!(
@@ -281,6 +342,60 @@ mod tests {
                 singular_status: Some("singular_fixed_line"),
             }
         ));
+    }
+
+    #[test]
+    fn exact_search_rejects_when_short_word_skip_hypothesis_fails() {
+        let dual_vertices = vec![
+            [q(1), q(0), q(0), q(0)],
+            [q(0), q(1), q(0), q(0)],
+            [q(0), q(0), q(1), q(0)],
+            [q(1), q(1), q(0), q(0)],
+        ];
+        let facet_intersection_is_nonempty = nalgebra::DMatrix::from_element(4, 4, false);
+        let omega_signs = nalgebra::DMatrix::from_element(4, 4, 1);
+        let input = ExactFlatTubeInput {
+            dual_vertices: &dual_vertices,
+            facet_intersection_is_nonempty: &facet_intersection_is_nonempty,
+            omega_signs: &omega_signs,
+        };
+
+        assert_eq!(
+            search_closed_orbits_exact(&input, q(0), ExactActionCutoffPolicy::Disabled),
+            Err(
+                ExactFlowGraphSearchError::UnsupportedLinearlyDependentFacetPresentation {
+                    facets: vec![0, 1, 3],
+                }
+            )
+        );
+    }
+
+    #[test]
+    fn exact_search_skips_all_short_words_under_linear_independence_contract() {
+        let dual_vertices = vec![
+            [q(1), q(0), q(0), q(0)],
+            [q(0), q(1), q(0), q(0)],
+            [q(0), q(0), q(1), q(0)],
+            [q(0), q(0), q(0), q(1)],
+        ];
+        let facet_intersection_is_nonempty = nalgebra::DMatrix::from_element(4, 4, true);
+        let omega_signs = nalgebra::DMatrix::from_element(4, 4, 1);
+        let input = ExactFlatTubeInput {
+            dual_vertices: &dual_vertices,
+            facet_intersection_is_nonempty: &facet_intersection_is_nonempty,
+            omega_signs: &omega_signs,
+        };
+
+        let Err(ExactFlowGraphSearchError::NoPositiveOrbit {
+            checked_word_count,
+            empty_or_no_orbit_count,
+        }) = search_closed_orbits_exact(&input, q(0), ExactActionCutoffPolicy::Disabled)
+        else {
+            panic!("short-word-only input should not report a positive orbit");
+        };
+
+        assert!(checked_word_count > 0);
+        assert_eq!(checked_word_count, empty_or_no_orbit_count);
     }
 
     #[test]
