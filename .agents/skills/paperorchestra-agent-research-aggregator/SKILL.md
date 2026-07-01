@@ -25,6 +25,11 @@ The skill is intentionally a pre-pass — it is cheap to skip and should only ru
 A pre-processing skill for PaperOrchestra (arXiv:2604.05018). Reads scattered
 experimentation artifacts from AI coding-agent cache directories and synthesizes
 them into the structured `(I, E)` input pair the PaperOrchestra pipeline expects.
+For thesis-scale projects, the `(I, E)` pair is only the downstream
+PaperOrchestra interface. The aggregator must first collect project context and
+classify thesis strands at their actual support level. Read
+`references/thesis-aggregation-context.md` before Phase 1 when the target is a
+thesis, monograph-like manuscript, or multi-strand research project.
 
 ```
 [~/.codex/] [.claude/] [.cursor/] [.antigravity/] [.openclaw/]
@@ -107,12 +112,28 @@ show it to the user immediately.
 **If no logs are found at all:** stop and ask the user to specify
 `--search-roots` or point you at a directory that contains agent cache folders.
 
+For thesis-scale projects, also build a small source/context manifest from repo
+navigation surfaces before extraction. Inspect the project entry points that
+own current facts and writing structure, for example `FACTSHEET.md`,
+`thesis/MAP.md`, experiment READMEs/reports, thesis content companions, and
+any committed AI-use provenance packet. Write the chosen sources to
+`workspace/ara/thesis-source-manifest.json` or record them in the audit report.
+
 ---
 
 ## Phase 1.5 — Project Selection (mandatory)
 
 **A paper can only be written from a single project. You must ask the user
 which project to use before any LLM processing begins.**
+
+For a thesis or predecessor-repo migration, this is not always true. If the
+user or discovery output shows that one thesis spans current and predecessor
+project labels, do not silently choose only one label. Propose a reviewed
+multi-label scope, explain why each label belongs, and record the final scope
+in `workspace/ara/thesis-source-manifest.json` or
+`workspace/ara/included_scope_manifest.json`. Inclusion in this scope only means
+"candidate source to inspect"; whether it becomes central, support, background,
+or excluded is decided after extraction/classification.
 
 1. Display the numbered project list from the discovery summary, e.g.:
    ```
@@ -154,6 +175,13 @@ the side of inclusion — the extraction prompt is conservative.
 Process discovered logs in **batches** (group by agent type; keep batches under
 ~50 KB of raw text to stay within context limits):
 
+For thesis-scale projects, Phase 2 should extract both experiment/result records
+and project-context records. In addition to numeric results, ask extraction
+subagents to capture section roles, reader/audience constraints, accepted or
+rejected framings, source-truth distinctions, theorem/proof status, unfinished
+routes, and do-not-claim warnings. Use targeted raw-log spot checks for
+high-value questions rather than dumping all logs into one context.
+
 For each batch:
 
 1. **Read** the log files in the batch (the script's `--list` output tells you
@@ -189,6 +217,11 @@ Run this in `--validate-only` mode to check the combined JSON is well-formed
 and meets the minimum schema (`experiments` array non-empty, each entry has
 `hypothesis` or `method` or `results`). Fix any malformed entries before Phase 3.
 
+For thesis runs, also validate that every thesis strand has an explicit support
+level or role. If the records mix theorem proof, executable certificate,
+empirical evidence, verification support, unfinished diagnostics, and AI-use
+provenance without distinction, stop and fix extraction before synthesis.
+
 ---
 
 ## Phase 3 — Synthesis (LLM-assisted)
@@ -219,6 +252,15 @@ The LLM must return a `synthesis.json` with keys:
 - `open_questions` — questions that remain unanswered in the logs
 
 Save to `workspace/ara/synthesis.json`.
+
+For thesis-scale projects, do not synthesize directly from raw experiment
+records into a paper-shaped narrative if that would lose structure. First
+produce a reviewable `workspace/ara/thesis-strand-classification.md` (or JSON
+equivalent) that lists each strand, current claim/role, evidence type, sources,
+PaperOrchestra role, do-not-claim notes, and open gates. Synthesis should use
+that classification to preserve support levels. It is acceptable to extend
+`synthesis.json` with thesis-specific keys such as `thesis_structure`,
+`strand_classification`, `drafting_constraints`, and `do_not_claim`.
 
 > **Note:** By this point, the user has already selected a single project in
 > Phase 1.5. The synthesis should represent one coherent research thread. If
@@ -281,6 +323,19 @@ Follows the PaperOrchestra Experimental Log format (App. D.3):
 <iteration_history as an ordered narrative, if present>
 ```
 
+For thesis-scale projects, the upstream formatter may be too rigid. If it would
+turn all evidence into `Raw Numeric Data` or force a misleading paper title,
+write thesis-aware adapter files manually or with a local formatter. The adapter
+files should preserve:
+
+- proof-facing results as proof results;
+- executable certificates as certificate evidence;
+- empirical/data-science searches as bounded empirical evidence;
+- verification/regression packets as trust/support evidence;
+- unfinished or background routes as caveated context;
+- AI-use provenance as disclosure/drafting constraint, not a mathematical
+  contribution.
+
 After running the script, **review both files** with the user:
 
 1. Read `workspace/inputs/idea.md` aloud and ask: "Does this accurately capture
@@ -313,6 +368,16 @@ contains:
 
 Show the report to the user. If the data quality section lists warnings, discuss
 them before running paper-orchestra — garbage in, garbage out.
+
+For thesis-scale projects, the audit must also report:
+
+- which repo context files were inspected;
+- which project labels or predecessor repos were included;
+- which targeted raw-log spot checks were run or intentionally skipped, with a
+  value/cost reason;
+- support-level classification warnings;
+- material demoted from central result to support/background/disclosure;
+- open gates needing Jörn/Kai/source review.
 
 ---
 

@@ -10,6 +10,15 @@ experiment records extracted from multiple AI coding-agent log files. Your task
 is to consolidate them into a single coherent research narrative suitable for
 academic paper writing.
 
+The target may be a thesis or multi-strand proof-by-computation project rather
+than a single conference paper. In that case, do not force all material into one
+benchmark-style method/results story. Preserve thesis structure, section roles,
+support levels, reader priorities, and do-not-claim boundaries. The downstream
+`idea.md` and `experimental_log.md` are an adapter interface, not a reason to
+flatten theorem proofs, executable certificates, empirical evidence,
+verification support, unfinished background, and AI-use disclosure into one
+kind of result.
+
 The extraction was done automatically — records may contain:
 - Redundant entries for the same experiment from different log files
 - Overlapping iterations of the same method
@@ -21,7 +30,7 @@ complete picture of the research being done.
 
 ## Output schema
 
-Return a single JSON object with exactly these keys:
+Return a single JSON object with at least these keys:
 
 ```json
 {
@@ -68,9 +77,27 @@ Return a single JSON object with exactly these keys:
   "data_quality_warnings": [
     "<Warning 1: e.g., 'Table 2 numbers appear only in one log with low confidence'>",
     "<Warning 2>"
+  ],
+  "thesis_structure": [
+    {
+      "strand": "<section/result/foundation name>",
+      "current_role": "<what this strand does in the thesis>",
+      "support_level": "<proof/certificate/empirical/verification/foundation/unfinished/disclosure>",
+      "paperorchestra_role": "<central result | support | context | caveat | drafting constraint | do not foreground>",
+      "do_not_claim": ["<unsafe claim>"],
+      "open_gates": ["<remaining review or source-truth gate>"]
+    }
+  ],
+  "drafting_constraints": [
+    "<constraint downstream writers must follow>"
   ]
 }
 ```
+
+If the caller requires strict upstream schema compatibility, the extra
+thesis-specific keys may be omitted from the final JSON only after their content
+has been written to a sidecar file such as
+`workspace/ara/thesis-strand-classification.md`.
 
 ## Consolidation rules
 
@@ -86,6 +113,10 @@ Return a single JSON object with exactly these keys:
   `research_question_count` to that number and list them all (comma-separated)
   in the `research_question` field. The calling agent will pause and ask the
   user which to target. Do NOT try to merge unrelated research questions.
+- For a thesis-scale target, multiple strands are expected. Do not count them
+  as unrelated merely because they have different evidence types. Instead,
+  preserve them in `thesis_structure` and write one thesis-level objective plus
+  strand-specific roles.
 
 ### Results tables
 - Create one table per experimental condition / dataset.
@@ -94,6 +125,11 @@ Return a single JSON object with exactly these keys:
 - Mark cells as `"N/A"` if a baseline was not evaluated on that dataset.
 - Mark cells as `"[UNVERIFIED]"` if the number came from a single low-confidence
   source.
+- For thesis-scale targets, do not put every number into `results_tables`.
+  Put proof/certificate evidence, empirical search evidence, verification
+  support, AI-use coverage, and unfinished diagnostics in separate roles or
+  sidecar sections. Omit or demote tables that would make support material look
+  like a central result.
 
 ### Iteration history
 - Only include iterations that represent meaningful changes (hyperparameter
@@ -118,6 +154,10 @@ Return a single JSON object with exactly these keys:
 4. **No SOTA claims without evidence.** Do not write "state-of-the-art" or
    "best known" unless the logs explicitly show a comparison against a named
    published baseline on a public benchmark.
+5. **Preserve support levels.** Do not turn empirical evidence into proof, proof
+   certificates into ordinary benchmark results, verification/regression support
+   into a thesis theorem, unfinished material into completed results, or AI-use
+   provenance into a mathematical contribution.
 
 ## Output format
 

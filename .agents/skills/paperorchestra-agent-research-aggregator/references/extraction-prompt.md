@@ -14,6 +14,13 @@ packets, Sage/Rust/Python computations, data-science method packets, numerical
 audits, and accepted/rejected research directions as extractable experiment
 records when they support the paper or thesis.
 
+For thesis-scale projects, also extract project context. Capture what sections
+or strands exist, what role each strand plays, what the reader/advisor priorities
+are, which claims are proof-level versus empirical or verification support, what
+is unfinished/background material, and what downstream writers must not claim.
+Do not decide up front that a strand is irrelevant; collect it and classify its
+support level.
+
 ## What you MUST extract
 
 Return a single JSON object with one key: `"experiments"` — an array of
@@ -69,6 +76,19 @@ run with different hyperparameters), group them as one experiment with an
 }
 ```
 
+For thesis-scale projects, add these extra keys when the log supports them:
+
+```json
+{
+  "thesis_strand": "<HKO | pentagon | sys-datascience | HK2017 | FG/CH2021 | Clarke/foundations | numerics | AI-use | other>",
+  "support_level": "<theorem/proof | executable proof/exact certificate | empirical/data-science evidence | verification/regression support | exposition/foundation | unfinished/background | drafting/disclosure constraint>",
+  "paperorchestra_role": "<central result | supporting evidence | methodology/context | caveat/open gate | drafting constraint | do not foreground>",
+  "do_not_claim": ["<unsafe downstream claim>"],
+  "open_gates": ["<Jörn/Kai/source review still needed>"],
+  "reader_context": "<audience or motivation context if stated>"
+}
+```
+
 ## Extraction rules
 
 ### Numeric results
@@ -120,6 +140,12 @@ run with different hyperparameters), group them as one experiment with an
   rejection itself is important as a failed attempt or warning.
 - Unreviewed draft prose as a result claim unless the log shows user acceptance
   or another source supports it.
+- AI-use provenance as a mathematical or scientific contribution. Extract it as
+  disclosure, trust, and drafting context unless the user explicitly asks for an
+  AI-methodology result.
+- Unfinished diagnostic tables as thesis-facing result tables. Extract them as
+  unfinished/background or verification/regression support unless current
+  sources promote them.
 
 ## Output format
 
