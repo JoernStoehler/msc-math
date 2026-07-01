@@ -93,6 +93,9 @@ package-lock.json
 # Local secrets (machine-specific, not shared)
 .env
 
+# Local AI-use provenance checks may contain absolute session-log paths
+experiments/ai-use/artifacts/
+
 # Profiling artifacts
 perf*.data
 perf*.data.old
