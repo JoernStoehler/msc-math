@@ -90,6 +90,9 @@ package-lock.json
 # Legacy local agent settings (machine-specific, not shared)
 .claude/settings.local.json
 
+# Local secrets (machine-specific, not shared)
+.env
+
 # Profiling artifacts
 perf*.data
 perf*.data.old
