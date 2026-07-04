@@ -1,0 +1,2 @@
+Reading inline script metadata from `experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/check_no_target_fields.py`
+checked 3 pre-target JSONL artifact(s): no forbidden keys

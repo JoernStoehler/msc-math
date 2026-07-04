@@ -1,0 +1,51 @@
+    Finished `release` profile [optimized] target(s) in 0.08s
+     Running `experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/target/release/extreme-scalar-rejection-proposer --config experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/configs/100k-promising-scalars-durable.json`
+feature-first candidate-cache pipeline stage=All config_path=experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/configs/100k-promising-scalars-durable.json seed=271828 candidates_per_bucket=10000 limit_total=None baseline_policy=per_selection_matched baseline_replicates=1 rule_set=promising-scalars selection_rules=10 selection_feature=ridge_symp_area_sum_over_volume_sqrt selection_direction=low jobs=12 chunk_rows=5000 out_dir=experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/100k-promising-scalars
+stage=geometry_cache status=started rows=100000 jobs=12 chunk_rows=5000
+stage=geometry_cache completed=5000/100000
+stage=geometry_cache completed=10000/100000
+stage=geometry_cache completed=15000/100000
+stage=geometry_cache completed=20000/100000
+stage=geometry_cache completed=25000/100000
+stage=geometry_cache completed=30000/100000
+stage=geometry_cache completed=35000/100000
+stage=geometry_cache completed=40000/100000
+stage=geometry_cache completed=45000/100000
+stage=geometry_cache completed=50000/100000
+stage=geometry_cache completed=55000/100000
+stage=geometry_cache completed=60000/100000
+stage=geometry_cache completed=65000/100000
+stage=geometry_cache completed=70000/100000
+stage=geometry_cache completed=75000/100000
+stage=geometry_cache completed=80000/100000
+stage=geometry_cache completed=85000/100000
+stage=geometry_cache completed=90000/100000
+stage=geometry_cache completed=95000/100000
+stage=geometry_cache completed=100000/100000
+stage=geometry_cache status=wrote rows=100000 wall_seconds=1.785
+stage=feature_table status=started jobs=12 chunk_rows=5000
+stage=feature_table completed=5000
+stage=feature_table completed=10000
+stage=feature_table completed=15000
+stage=feature_table completed=20000
+stage=feature_table completed=25000
+stage=feature_table completed=30000
+stage=feature_table completed=35000
+stage=feature_table completed=40000
+stage=feature_table completed=45000
+stage=feature_table completed=50000
+stage=feature_table completed=55000
+stage=feature_table completed=60000
+stage=feature_table completed=65000
+stage=feature_table completed=70000
+stage=feature_table completed=75000
+stage=feature_table completed=80000
+stage=feature_table completed=85000
+stage=feature_table completed=90000
+stage=feature_table completed=95000
+stage=feature_table completed=100000
+stage=feature_table status=wrote rows=100000 wall_seconds=3.202
+stage=pre_sys_selection status=wrote feature_rows=100000 selection_sets=30 selected_rows_sum_over_sets=1200 unique_selected_rows=485 unique_baseline_rows=1195 selection_rows=1675 wall_seconds=21.615
+stage=sys_evaluation status=started missing_rows=1675 cached_rows=0 jobs=12
+stage=sys_evaluation status=appended rows=1675 wall_seconds=65.033
+stage=report status=wrote evaluated_current=1675 wall_seconds=0.625

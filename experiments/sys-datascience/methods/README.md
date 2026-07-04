@@ -29,6 +29,8 @@ Read first:
 - `hko-ridge-source-smoke/`: source-reproducible fixed-HKO ridge-area smoke
   packet used as sys-datascience mechanism/reference evidence. It does not own
   HKO local-maximality claims.
+- `extreme-scalar-rejection-proposer/`: generated random-product scalar-filter
+  proposer with a compact tracked 100k `promising-scalars` packet.
 
 Exploratory fixed-bucket distribution-shape packets:
 

@@ -1,0 +1,126 @@
+# Extreme Scalar Rejection Proposer
+
+## Question
+
+Can frozen scalar-feature rules select promising random-product candidates
+before capacity or `sys` is computed?
+
+This packet tests the generated-candidate proposer stage: generate random
+Lagrangian-product candidates, compute cheap scalar features, freeze selected
+and matched-baseline candidate ids before `sys`, and evaluate `sys` only for
+that selected-or-baseline union.
+
+Current tracked evidence is the compact 100k `promising-scalars` packet under
+`artifacts/100k-promising-scalars/`. The compact packet intentionally omits the
+full generated geometry and feature caches. Regenerate them from the durable
+config when row-level geometry or full-feature inspection is needed.
+
+Evidence-stage boundary:
+
+- `../statistical-associations/` screens many retained-table scalar covariates
+  against already computed `sys`.
+- `../tail-rule-mining/` reports retained-table low/high single-feature
+  filters on rows whose `sys` values are already known.
+- This packet evaluates a generated-candidate scalar-filter proposer: scalar
+  selection happens before `sys` is computed for the selected-or-baseline union.
+
+## Runner
+
+Durable 100k packet command:
+
+```bash
+cargo run --manifest-path experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/Cargo.toml --release -- \
+  --config experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/configs/100k-promising-scalars-durable.json
+```
+
+The durable config writes to
+`experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/100k-promising-scalars/`.
+
+Stages:
+
+- `geometry`: writes `candidate-geometry-cache.jsonl`.
+- `features`: writes `candidate-feature-table.jsonl`.
+- `selection`: freezes selected and baseline candidates in
+  `selected-candidates-before-sys.jsonl` and records `selection-plan.json`.
+- `sys`: evaluates only selected or baseline candidate ids and writes
+  `sys-evaluation-cache.jsonl`.
+- `reports`: writes `selection-summary.tsv`, `evaluation-report.json`, and
+  `pipeline-summary.json`.
+
+Reports read frozen `selection-plan.json` and
+`selected-candidates-before-sys.jsonl` instead of recomputing selection
+semantics from current CLI/config arguments.
+
+The runner supports default single-rule mode, explicit multi-rule mode, and the
+curated `promising-scalars` rule set used by the tracked 100k packet. Scalar
+rules are allowlisted accessors over `CandidateFeatureRow` fields, not JSON
+reflection.
+
+## Compact Artifact
+
+Tracked artifact:
+
+- `artifacts/100k-promising-scalars/README.md`: provenance, audit state, and
+  interpretation boundary.
+- `prompt.md`: executor packet brief.
+- `command-output.txt`: captured runner output.
+- `resolved-run-config.json`: resolved run configuration.
+- `selected-candidates-before-sys.jsonl`: 1675 selected-or-baseline rows frozen
+  before `sys`.
+- `selection-plan.json`: frozen selection rules, budgets, and union counts.
+- `sys-evaluation-cache.jsonl`: 1675 evaluated selected-or-baseline rows.
+- `selection-summary.tsv`: per-selection and union matched summaries.
+- `evaluation-report.json` and `pipeline-summary.json`: compact generated
+  reports.
+- `target-field-audit.txt`: target-field audit output from before trimming the
+  full pre-target caches.
+
+Omitted generated caches:
+
+- `candidate-geometry-cache.jsonl`: about 406 MB in the source run.
+- `candidate-feature-table.jsonl`: about 241 MB in the source run.
+
+The omitted caches are not required to read the compact result reports. They are
+required to rerun the exact three-file target-field audit recorded in
+`target-field-audit.txt`. The artifact README records the local `/tmp` cache
+location used as non-required provenance if those files still exist.
+
+## Current Evidence
+
+Recorded run date: 2026-07-01.
+
+100k `promising-scalars` compact packet:
+
+- 30 selection sets from the current `promising-scalars` rule set.
+- 1200 selected rows summed over sets.
+- 485 unique selected rows.
+- 1195 unique baseline rows.
+- 1675 unique selected-or-baseline rows.
+- Runner output reports `cached_rows=0` for the `sys` stage and appended 1675
+  rows.
+- Target-field audit passed before cache trimming:
+  `checked 3 pre-target JSONL artifact(s): no forbidden keys`.
+- Maximum evaluated `sys`: `0.867546058507634`.
+- Maximum selected `sys`: `0.867546058507634`.
+- No evaluated candidate had `sys > 1`.
+
+Interpretation boundary:
+
+- This is 100k generated random-product candidate evidence for the configured
+  `promising-scalars` rule set, not a theorem and not evidence outside this
+  generator/configuration.
+- Interpret comparisons through the per-selection and matched-baseline rows in
+  `selection-summary.tsv`; avoid pooled proposer claims.
+- The run supports the claim that the current scalar rules can be evaluated as
+  pre-`sys` generated-candidate proposers at 100k scale. It does not by itself
+  support a near-counterexample claim.
+
+## Boundaries
+
+This packet is random-product only. Generic random candidates should reuse the
+same stage artifact names and add source fields rather than widening the
+evaluated retained-table pipeline.
+
+The direct geometry stage is product-specific. If this packet is extended
+beyond Lagrangian products, do not reuse the direct product vertex and incidence
+construction.

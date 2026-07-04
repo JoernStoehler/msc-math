@@ -1,0 +1,16 @@
+{
+  "stage": "all",
+  "out_dir": "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/100k-promising-scalars",
+  "seed": 271828,
+  "candidates_per_bucket": 10000,
+  "baseline_policy": "per_selection_matched",
+  "baseline_replicates": 1,
+  "selection": {
+    "rule_set": "promising-scalars",
+    "global_top": [10],
+    "per_bucket_top": [10],
+    "percentile_cutoffs": [0.0001]
+  },
+  "jobs": 12,
+  "chunk_rows": 5000
+}
