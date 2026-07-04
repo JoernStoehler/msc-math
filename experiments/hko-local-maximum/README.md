@@ -19,9 +19,9 @@ Sage reconstructs and verifies the exact algebraic objects.
 
 The formal implication has been agent-line-checked against the verifier
 propositions. Jörn quick-reviewed the rebuilt formal PDF on 2026-06-05 and
-spotted no gaps. Final thesis theorem wording still needs the final wording/Kai
-review gate. The empirical folders are support and sanity checks, not proof
-substitutes.
+spotted no gaps. Later review of the integrated thesis PDF may still request
+wording or proof-framing changes. The empirical folders are support and sanity
+checks, not proof substitutes.
 
 ## Result Strands
 
