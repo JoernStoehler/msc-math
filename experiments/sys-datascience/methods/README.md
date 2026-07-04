@@ -26,6 +26,9 @@ Read first:
   invariant-feature versus strata/provenance-control grouped-holdout comparison.
 - `hko-reference-coverage/`: scores the known HKO reference/holdout row against
   retained random/product invariant-feature support without training on HKO.
+- `hko-ridge-source-smoke/`: source-reproducible fixed-HKO ridge-area smoke
+  packet used as sys-datascience mechanism/reference evidence. It does not own
+  HKO local-maximality claims.
 
 Exploratory fixed-bucket distribution-shape packets:
 

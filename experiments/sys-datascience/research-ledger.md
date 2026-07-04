@@ -354,6 +354,27 @@ either:
 - feature interpretation around `ridge_symp_area_*`, because this is
   the most stable signal seen so far.
 
+## 2026-07-04 - Source-reproducible HKO ridge-area smoke
+
+Owner: `methods/hko-ridge-source-smoke/`.
+
+Status: source-reproducible sys-datascience mechanism/reference smoke packet.
+
+This packet replaces the nonmergeable `hko-ridge-area-packet` routing attempt.
+The old branch wrote sys-datascience-motivated ridge-area smoke work under
+`experiments/hko-local-maximum/`; do not merge it as HKO-local evidence.
+`hko-ridge-source-smoke/` instead generates the HKO row and eight deterministic
+dual-vertex perturbations from tracked sys-datascience method code, recomputes
+`sys`, and computes `ridge_symp_area_*` summaries through the shared prepare
+feature helper.
+
+Current smoke result: all 8 perturbations have lower `sys` than HKO. The
+`sum`, `max`, `q95`, `q90`, and `mean` ridge-area summaries normalized by
+`sqrt(volume)` increase for all 8 perturbations, while
+`ridge_symp_area_std_over_volume_sqrt` decreases for all 8. This is weak
+local-reference evidence for interpreting the ridge-area feature family, not
+evidence for HKO local maximality and not candidate-proposer validation.
+
 ## 2026-06-25 - Marginal `sys` broad distribution scan
 
 Current exploratory distribution-screen method:
