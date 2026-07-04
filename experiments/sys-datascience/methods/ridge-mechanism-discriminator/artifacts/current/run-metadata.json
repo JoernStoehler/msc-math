@@ -1,0 +1,23 @@
+{
+  "boundaries": [
+    "Generated-candidate proposer evidence is limited to rules frozen before sys evaluation.",
+    "Conditional concentration rows are diagnostic-only because the split is mined after sys values are known.",
+    "No HKO-distance or flank claims are used."
+  ],
+  "inputs": {
+    "feature_cache": "/tmp/sys-ds-100k-promising-scalars-large-caches/candidate-feature-table.jsonl",
+    "feature_cache_required": true,
+    "promising_scalars_artifact": "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/100k-promising-scalars",
+    "ridge_1m_summary": "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/ridge-tail-1m-summary",
+    "tail_rule_mining_artifacts": "/tmp/sys-ds-tail-invariant-analysis"
+  },
+  "row_counts": {
+    "conditional_concentration_rows": 88,
+    "conditional_low_ridge_rows_joined": 387,
+    "discriminator_rows": 165,
+    "feature_cache_rows_joined": 1675,
+    "hypothesis_rollup_rows": 5,
+    "selected_candidates_before_sys": 1675,
+    "sys_evaluation_cache": 1675
+  }
+}

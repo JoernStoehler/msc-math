@@ -31,6 +31,9 @@ Read first:
   HKO local-maximality claims.
 - `extreme-scalar-rejection-proposer/`: generated random-product scalar-filter
   proposer with a compact tracked 100k `promising-scalars` packet.
+- `ridge-mechanism-discriminator/`: compact diagnostic table combining retained
+  tail-rule diagnostics and generated ridge/proposer summaries to distinguish
+  ridge-magnitude, concentration, proxy, small-area, and Goodhart explanations.
 
 Exploratory fixed-bucket distribution-shape packets:
 

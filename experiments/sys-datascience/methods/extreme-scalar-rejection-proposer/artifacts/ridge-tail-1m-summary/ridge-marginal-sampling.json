@@ -1,0 +1,5 @@
+{
+  "candidate_feature_rows": 1000000,
+  "histogram_weight_per_sampled_row": 4,
+  "sampled_rows": 250000
+}
