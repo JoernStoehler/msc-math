@@ -1,7 +1,128 @@
-\section[Main Result: Data-Science Search]{Main Result:\\Black-Box Data-Science\\Tools Are Insufficient}\label{sec:black-box-datascience}
-\subsection{Algorithm for random polytopes}\label{subsec:black-box-datascience-algorithm-for-random-polytopes}
-\subsection{Algorithm for gradient ascent}\label{subsec:black-box-datascience-algorithm-for-gradient-ascent}
-\subsection{Rows: polytopes}\label{subsec:black-box-datascience-rows-polytopes}
-\subsection{Columns: symplectic invariants and metadata}\label{subsec:black-box-datascience-columns-symplectic-invariants-and-metadata}
-\subsection{Result types}\label{subsec:black-box-datascience-result-types}
-\subsection{Methods: data-science toolbox}\label{subsec:black-box-datascience-methods-data-science-toolbox}
+\section[Main Result: Data-Science Search]{Main Result:\\A Bounded Negative\\Data-Science Search}\label{sec:black-box-datascience}
+
+The preceding sections study the Haim--Kislev--Ostrover construction and its
+local behavior.  This section records a different kind of evidence.  We ask
+whether an ordinary data-science loop, applied to random polytopes and random
+Lagrangian products, finds either a new polytope with systolic ratio larger than
+\(1\) or a reproducible rule that should be used to look for one.
+
+The conclusion is negative in a bounded sense.  In the retained random/product
+table, none of the \(14336\) rows has systolic ratio larger than \(1\).  The
+method packets applied to this table do recover structure in the already
+computed values of the systolic ratio, but they do not validate a new source of
+counterexamples.  A separate frozen scalar-filter run over generated
+random-product candidates also stayed below the threshold.  Thus the result is
+not a theorem that random search cannot succeed; it is evidence that this
+black-box route did not produce a new source of examples.
+The contribution is a controlled negative benchmark: it separates explanation
+of already computed values from evidence for a new way to find counterexamples.
+
+\subsection{The retained random/product table}
+\label{subsec:black-box-datascience-retained-random-product-table}
+
+The active search surface has two row families.  The first consists of generic
+random polytopes with \(F=5,\ldots,12\) facets, with \(512\) accepted samples
+for each facet count.  The second consists of random Lagrangian products of
+polygons, with \(1024\) accepted samples for each pair \(3\leq k\leq m\leq 6\)
+of side counts.  Both producers use seed \(42\), height interval
+\([0.8,1.2]\), and rejection until a valid polytope is produced.
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{lrr}
+\toprule
+row family & rows & \(>1\)\\
+\midrule
+generic random polytopes & \(4096\) & \(0\)\\
+random Lagrangian products & \(10240\) & \(0\)\\
+\midrule
+total & \(14336\) & \(0\)\\
+\bottomrule
+\end{tabular}
+\caption{Retained finite random/product sample used in the data-science search.}
+\label{tab:black-box-datascience-retained-sample}
+\end{table}
+
+This table is the main negative datum of the section.  It should be read with
+its sampling contract.  The sample does not vary the seed, height interval,
+facet-count range, product side-count range, or random model.  Therefore it
+supports a finite-sample statement about the retained table, not a statement
+about all random polytopes or all random Lagrangian products.
+
+\subsection{Invariant descriptors and provenance}
+\label{subsec:black-box-datascience-invariant-features-and-provenance}
+
+For the statistical analysis, the numerical descriptors are invariant
+quantities of the polytope: combinatorial quantities from the face lattice and
+symplectic two-face area statistics normalized by the square root of the volume.
+The construction history of a row is kept separately.  This distinction matters
+because a model that predicts the systolic ratio from sampling provenance is
+less interesting than a model that finds geometry.
+
+The descriptor set is intentionally conservative.  It does not use raw
+Euclidean representative coordinates or sign/cutoff features.  Those quantities
+may still be useful in future work, but they need separate invariance and
+boundary diagnostics before they can support the same interpretation.
+
+\subsection{What counted as progress}
+\label{subsec:black-box-datascience-result-types}
+
+There are three different success levels.
+
+First, the strongest outcome would be a validated new row with systolic ratio
+larger than \(1\).  No row in the retained random/product table has this
+property.
+
+Second, a method could be a candidate proposer: it could freeze a rule that
+selects new candidate polytopes before their systolic ratios are computed, and
+the selected candidates could then be evaluated.  This is stronger than finding
+an association inside a table whose target values are already known.
+
+Third, a method can still be useful as an in-table diagnostic.  Such a method
+may explain variation in the retained table, identify where the high tail is
+concentrated, or suggest a future frozen rule.  It does not by itself produce a
+new candidate source.
+
+\subsection{Method outcomes}
+\label{subsec:black-box-datascience-method-outcomes}
+
+The direct scan found no row with systolic ratio larger than \(1\).  Descriptive
+tail diagnostics found that the largest retained value was about \(0.863\), and
+that the high tail is concentrated in particular product-heavy or high-facet
+views.  These are overlapping views of the same retained rows, not independent
+searches.
+
+The model-based diagnostics show in-table predictability, not search success.
+Invariant descriptors predicted the already computed systolic ratio much better
+than provenance-only baselines.  Scalar association, projection, clustering,
+anomaly, and shallow rule diagnostics likewise found structure in the retained
+table.  The ridge symplectic-area descriptors were especially visible in the
+scalar and rule-based diagnostics.  This helps interpret the sampled table, but
+it is not yet a candidate-proposer claim: the ranked rows already had their
+systolic ratios computed.
+
+The generated-candidate follow-up is closer to the desired search interface.
+In the current scalar-filter packet, the selection rules were frozen before
+systolic ratios were computed.  The run generated \(100000\) random-product
+candidates and then evaluated the candidates selected by the frozen rules
+together with a baseline comparison set, \(1675\) rows in total.  No evaluated
+candidate had systolic ratio larger than \(1\); the largest evaluated value was
+about \(0.868\).  This supports the same bounded conclusion for that generator
+and rule set, not a theorem about all scalar rules or all random-product
+generators.
+
+Mechanism diagnostics give empirical evidence about which ridge-area
+explanations are currently most plausible.  Ridge symplectic-area descriptors
+help explain high retained values, but not enough to produce near-threshold
+candidates.  Purely combinatorial or product-bucket explanations are too crude.
+Generated per-bucket low-ridge rules improved mean systolic ratio over matched
+baselines, but selected maxima stayed below \(1\).  Some concentration splits
+were found only after target values were known, so their proper role is to seed
+a possible future frozen rule, not to serve as evidence that a valid proposer
+already exists.
+
+The old fixed-facet ascent, continuation, endpoint-stability, and
+local-behavior surfaces are not part of this active method table.  They are
+kept as historical context for future work, but the current chapter does not
+use them as local-maximality evidence, exhaustive-search evidence, or
+candidate-proposer evidence.
