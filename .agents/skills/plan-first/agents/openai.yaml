@@ -1,7 +1,0 @@
-interface:
-  display_name: "Plan First"
-  short_description: "Plan before implementation"
-  default_prompt: "Use $plan-first to produce a polished plan before implementation."
-
-policy:
-  allow_implicit_invocation: false
