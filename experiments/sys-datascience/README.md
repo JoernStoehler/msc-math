@@ -90,6 +90,8 @@ Read first:
 - `methods/README.md`
 - `methods/trusted-random-product-closure-summary.md`
 - `methods/trusted-random-product-method-dispositions.md`
+- `coordination/README.md` for active cross-session research coordination,
+  workflow roles, topic maps, and spawn/rescope/stop state
 - relevant `methods/<method>/README.md`
 
 Current closure status: active packets have been rerun under the invariant
