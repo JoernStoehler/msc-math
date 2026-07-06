@@ -1,0 +1,15 @@
+answer	flag	max_sys	p99_sys	p_sys_gt_1	positive_count_sys_gt_1	posterior_predictive_at_least_one_1m	question	row_count	unstable_flag
+validated_no_positive_record_below_one	distribution_free_retained_sample_fact	0.86258589584944001	0.75210201224531514	NA	0	NA	retained_table_anchor	14336	NA
+jeffreys_beta_0.5_0.5	prior_sensitive_not_distribution_free	NA	NA	NA	NA	0.88111506910266524	zero_positive_only_1m	NA	NA
+uniform_beta_1_1	prior_sensitive_not_distribution_free	NA	NA	NA	NA	0.98586564424205914	zero_positive_only_1m	NA	NA
+pessimistic_beta_0.1_1000	prior_sensitive_not_distribution_free	NA	NA	NA	NA	0.34247998638056254	zero_positive_only_1m	NA	NA
+skeptical_beta_0.01_10000	prior_sensitive_not_distribution_free	NA	NA	NA	NA	0.036707939710417303	zero_positive_only_1m	NA	NA
+pooled:all exponential_excess q=0.8	model_dominated	NA	NA	0.0014143262799894997	NA	1	tail_extrapolation_1m	NA	yes
+pooled:all exponential_excess q=0.9	model_dominated	NA	NA	0.00035959344953277853	NA	1	tail_extrapolation_1m	NA	yes
+pooled:all exponential_excess q=0.95	model_dominated	NA	NA	8.9072858805755952e-05	NA	1	tail_extrapolation_1m	NA	yes
+dataset:random_sample exponential_excess q=0.8	model_dominated	NA	NA	0.0010466994624533999	NA	1	tail_extrapolation_1m	NA	no
+dataset:random_sample exponential_excess q=0.9	model_dominated	NA	NA	0.00013566118224216339	NA	1	tail_extrapolation_1m	NA	no
+dataset:random_sample exponential_excess q=0.95	model_dominated	NA	NA	6.7043330576802221e-05	NA	1	tail_extrapolation_1m	NA	no
+dataset:random_product_sample exponential_excess q=0.8	model_dominated	NA	NA	0.0015101738024939921	NA	1	tail_extrapolation_1m	NA	no
+dataset:random_product_sample exponential_excess q=0.9	model_dominated	NA	NA	0.00034529383624974132	NA	1	tail_extrapolation_1m	NA	no
+Do not treat 1M accepted samples as a well-calibrated rational blind scale-up under the current retained generator. A controlled large run is rational only as a deliberately model-dominated probe or after focusing/generator-axis work.	current_strongest_conclusion	NA	NA	NA	NA	NA	decision	NA	NA

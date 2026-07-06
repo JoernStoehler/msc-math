@@ -45,6 +45,9 @@ Exploratory fixed-bucket distribution-shape packets:
   model comparisons.
 - `high-sys-tail-diagnostic/`: upper-tail-only diagnostics for fixed-bucket
   high-`sys` behavior, including excess-tail fits and endpoint estimates.
+- `tail-survival-1m-posterior/`: survival summaries and zero-positive/tail-model
+  sensitivity for deciding whether `1M` accepted samples is a rational
+  current-generator scale-up.
 
 These fixed-bucket packets are retained as exploratory side packets. Their
 current README summaries describe scratch runs; they are not part of the
