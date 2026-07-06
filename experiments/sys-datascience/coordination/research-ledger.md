@@ -52,10 +52,13 @@ The next high-value work is probably not more single-feature ridge-sum scale-up
 or rerunning the same `promising-scalars` sweep alone. More useful candidates
 are:
 
+- use the 2026-07-06 method-surface scout result to move toward bounded
+  thesis-use interpretation/writeup readiness for the retained method-table
+  claim;
 - use the promoted ridge mechanism discriminator as the current compact source
   for the central empirical feature story;
-- broaden the method surface only where cheap missing standard methods may
-  change thesis wording;
+- broaden the method surface only where stronger thesis wording would require
+  cheap missing standard methods or new producer/distribution evidence;
 - identify what separates high selected low-ridge candidates from mediocre
   selected low-ridge candidates only if a topic owner can freeze one
   conjunction rule before independent validation;

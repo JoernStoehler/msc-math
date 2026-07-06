@@ -32,6 +32,28 @@ strong "all standard data-science methods" closure. The main value here is
 identifying cheap high-information packets and deciding when a seed deserves a
 topic owner.
 
+2026-07-06 bounded scout result: for the current working milestone, do not
+launch new method or producer runs before thesis-use interpretation. The
+bounded method-table claim can be supported as a claim about the retained
+random/product table and named current method packets. Stronger claims would
+require separate packets:
+
+- broad standard-method coverage would require the parked tiny retained-table
+  baseline packet;
+- broader random-distribution coverage would require a producer/distribution
+  design packet and later generated data;
+- calibrated hit-rate or density language would require tail/model work stronger
+  than the current model-sensitive evidence;
+- positive generated-candidate proposer language would require independent
+  generated-candidate validation beyond the current scalar-filter boundary
+  evidence.
+
+Current default next session: bounded thesis-use interpretation/writeup
+readiness for the data-science chapter. Its output should be a claim wording
+ladder and source map for the retained claim, plus explicit statements that the
+stronger claims above remain parked unless thesis wording changes. It should
+not run models or producers.
+
 Owner-readiness/status: active surface-scout seed. Use this when the immediate
 question is which sessions to spawn/rescope/stop, not when a concrete packet is
 already ready.
@@ -91,6 +113,18 @@ Current method-surface disposition table:
 | HKO reference/local geometry | HKO coverage and parked HKO ridge packet | smoke/mixed | mechanism and HKO-local wording | parked | HKO-local topic explicitly reopened |
 | broader distributions and producer variants | height/facet/product/generic variants | limited or deferred | broader random-distribution claims | parked | thesis wants claims beyond current producer contract |
 | missing ordinary baselines | lasso/elastic-net, boosting, GAM/splines, density/mixture/one-class variants | mostly not run | broad standard-method closure | audit first | thesis wording needs stronger ordinary-method breadth |
+
+## Claim Wording Ladder
+
+| Claim strength | Current status | Supporting sources | Missing work if promoted |
+| --- | --- | --- | --- |
+| retained random/product table has no recorded trusted `sys > 1` row | source-backed for current retained table | `../../methods/scan-sys-gt-1/`, `../../methods/trusted-random-dataset/`, `../../methods/trusted-random-product-closure-summary.md` | none for table-scoped absence; refresh if retained tables change |
+| named current method packets found in-table structure but no validated candidate-proposer | supported with caveats | `../../methods/README.md`, `../../methods/trusted-random-product-method-dispositions.md`, current method packet READMEs | thesis-use interpretation and wording; no new run needed for bounded wording |
+| data-science slice found no new source of `sys > 1` examples and no validated candidate-proposer, beyond known HKO/structured examples | plausible bounded thesis wording | `../../../../thesis/central-claim-control.md`, `../../../../thesis/black-box-datascience-content.md`, retained method sources above | writing packet must name the retained scope and caveats |
+| ordinary data-science methods broadly fail on this table | not currently licensed as broad wording | current retained method packets cover several families | run or explicitly reject the parked tiny standard-method baseline |
+| arbitrary random distributions or producer variants do not find positives | not supported | current producer contract only | design and run new producer/distribution packet |
+| calibrated probability/density of `sys > 1` under current or broader generators | not supported as calibrated claim | `../../methods/tail-survival-1m-posterior/` gives model-sensitive evidence | stronger tail/backtest/model packet and thesis-level acceptance |
+| positive generated-candidate proposer exists | not supported | current generated-candidate scalar filters are boundary evidence only | independent proposer validation with frozen rule and selected-before-`sys` candidates |
 
 Cheap discriminators:
 
