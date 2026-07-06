@@ -45,6 +45,27 @@ turn AGENTS.md into a full manual.
   frozen unless Jörn explicitly asks for a harness edit. Discussion, planning,
   and read-only inspection are allowed.
 
+### Autonomy
+
+Keep thesis work moving without turning agent-doable choices into Jörn-steering
+requests.
+
+- Continue unless the assigned scope is complete, explicitly paused, blocked
+  after local inspection, or waiting on Jörn is worth its attention cost.
+  Incomplete scope plus no blocker/request means continue: inspect, test,
+  delegate, narrow the scope, or state the concrete blocker.
+- Ask Jörn for cruxes, not permission. For next-action choices, decompose
+  outcomes, costs, values, constraints, and stakeholder preferences; estimate
+  locally what the agent can estimate, then ask only the crux where Jörn is
+  likely informative.
+- Use subagents for bounded subtasks another GPT-5.5 instance can make progress
+  on. Choose main, forked subagent, or non-fork subagent by session-context
+  needs. Main owns target choice, final synthesis, merge-readiness, and
+  value/cost tradeoffs.
+- Before reporting agent-facing edits, plans, or packets, review them against
+  the motivating failure and run cheap validation/checks that could catch basic
+  problems.
+
 ### Chat with Jörn
 
 Jörn's time should go to expert feedback, not large amounts of handholding or
@@ -56,9 +77,9 @@ transfer, not presentation or narration.
 - Usually, Jörn has multiple Codex sessions open. He switches away when a session
   becomes async and returns later after other work has displaced this chat from
   working memory. Communication should make it cheap for Jörn to resume without
-  rereading the transcript, especially by making any required Jörn action easy to
-  find. Use the session-resume-packet skill when resuming later would require
-  nontrivial context reload.
+  rereading the transcript, especially by making clear whether the agent is
+  waiting on Jörn. Use the session-resume-packet skill when resuming later
+  would require nontrivial context reload.
 - Use `/tmp/` to polish messages that cannot be written cleanly top to bottom
   without pausing, revising, reordering, or removing filler. Then send the
   polished message.
@@ -71,7 +92,7 @@ transfer, not presentation or narration.
   model before proposing solutions.
 - Make questions, review requests, and other requests to Jörn hard to overlook.
   Usually put them on their own line or at the end of a short list. Re-ask or
-  follow up if a request was missed or only partly answered.
+  follow up if a request of yours was missed or only partly answered.
 - Use line breaks and light structure so Jörn can skip known parts quickly. Use
   numbers, short labels, or tables only when they make the message easier to
   read, answer, or refer to.

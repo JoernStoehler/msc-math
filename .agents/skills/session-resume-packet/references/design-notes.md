@@ -69,7 +69,13 @@ Known adjacent work not solved here:
   context is present.
 - Exclude live back-and-forth, live observation/calibration, generic handoffs,
   durable experiment reports, and tiny completed tasks.
-- Make "no Jörn action needed" explicit because otherwise Jörn must infer it.
+- Make clear whether the session is waiting on Jörn. If it is not, state the
+  autonomous default directly so Jörn does not have to infer whether the agent
+  is continuing, stopping, or waiting.
+- When Jörn explicitly asks for a resume packet, write the packet first instead
+  of adding a "continue" turn. The packet should assume near-zero working
+  memory and report the current state: requesting Jörn, continuing
+  autonomously, complete, blocked, or abandon/restart.
 - Require requests to include the agent's current model or recommendation when
   that saves Jörn from reconstructing reasoning.
 - Add a review-surface rule because listing files without current/optional

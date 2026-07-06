@@ -70,9 +70,19 @@ Name tempting outputs that are useful but insufficient when the risk is real:
 current-state reports, first diagnostic scripts, one tested hypothesis, one
 passing test, open-question lists, or plans that postpone the core decision.
 
-Ask Jörn when the missing input is expert judgment or stakeholder priority and
-the cost/value case is not obvious. Do not ask permission questions when repo
-inspection or ordinary agent work can resolve the uncertainty.
+Ask Jörn only when the missing input is expert judgment, stakeholder priority,
+private or cross-session context, or another crux whose value exceeds
+autonomous work after accounting for Jörn attention cost. Do not ask permission
+questions when repo inspection or ordinary agent work can resolve the
+uncertainty.
+
+When several next actions are plausible, decompose the choice into predicted
+outcomes, costs, values, constraints, and stakeholder preferences. Estimate
+locally what the agent can estimate. Ask Jörn only about the crux component
+where his mathematical taste, private context, cross-session context, or value
+aggregation is likely informative. Prefer conditional crux questions such as
+"If proposal A returns outcome X, how valuable is that information for thesis
+planning?" over normative questions such as "Should I do A?"
 
 ## Boundaries
 

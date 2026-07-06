@@ -42,9 +42,11 @@ work that conforms to `AGENTS.md` guidelines.
 
 ## Recover With Jörn
 
-- If many beliefs may be stale or misinterpreted, ask Jörn to mark each item as
-  either "does not need further discussion" or "needs further discussion".
-  Silence is not an answer. Discuss marked items afterward.
+- If many beliefs may be stale or misinterpreted, first reduce them locally to
+  the smallest set whose truth would change the work and cannot be checked by
+  repo inspection or ordinary reasoning. Only then ask Jörn to mark each item
+  as either "settled enough" or "needs further discussion". Silence is not an
+  answer. Discuss marked items afterward.
 - For open questions where the answer space is not a claim list, use normal
   focused discussion with enough context. Give options when they help, and leave
   room for "other" when the space is not closed.
@@ -63,7 +65,7 @@ work that conforms to `AGENTS.md` guidelines.
 
 When the stalled surface includes substantial unmerged or unapproved work, do
 not treat the whole messy branch, diff, scratch set, or discussion as the next
-review unit by default. First ask whether progress can be recovered by
+review unit by default. First identify whether progress can be recovered by
 extracting a smaller natural checkpoint:
 
 - Identify a coherent packet that is already nearly finished and likely
@@ -76,13 +78,15 @@ extracting a smaller natural checkpoint:
   checkpoints only while each next packet is similarly natural and close to
   mergeable.
 - Once the remainder is incomplete, low-confidence, or no longer close to a
-  reviewable packet, discuss it as "how do we continue this work into something
-  useful", not as a mergeable checkpoint.
+  reviewable packet, continue autonomously only where the next step is clear.
+  Ask Jörn only for the missing judgment that blocks a useful recovery path; do
+  not ask him to steer merely because several agent-doable branches exist.
 
 Do not use this as permission to perform another broad branch transformation.
 It applies only when there is a nearly finished checkpoint to extract; if the
 work is too contaminated or only tiny artificial slices are available, stop and
-plan or ask for the missing judgment instead.
+plan locally, or ask for the missing judgment only when local planning cannot
+resolve the next useful recovery path.
 
 ## Observed High-Cost Failure Modes
 
