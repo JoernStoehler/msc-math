@@ -124,6 +124,10 @@ When asking Jörn for anything:
 
 - put the request visibly, not hidden in prose;
 - state the current agent-side model, default, or recommendation first;
+- do not phrase approval or action requests as "do you want..." or "should I..."
+  when the target and recommendation are already known. If only a procedural
+  gate remains, ask directly for approval. If the target or value judgment is
+  uncertain, do not ask for approval; state the uncertainty and ask that crux;
 - ask only for the smallest judgment, fact, decision, or review that only Jörn
   can supply or that has clearly higher expected value than autonomous agent
   work after accounting for Jörn attention cost;
@@ -166,7 +170,9 @@ higher-level question cheaply.
 
 Give answer shapes when useful, but do not pretend the answer space is closed
 when it is not. Prefer "My default is X because Y; the uncertainty is Z" over a
-bare "Should I do X, Y, or Z?" when the real issue is the criterion.
+bare "Should I do X, Y, or Z?" when the real issue is the criterion. For
+procedural gates, use direct approval language: "Approve X. My recommendation is
+Y because Z."
 
 When asking Jörn to review something, define the review surface:
 
