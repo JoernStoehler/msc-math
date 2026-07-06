@@ -69,9 +69,11 @@ Known adjacent work not solved here:
   context is present.
 - Exclude live back-and-forth, live observation/calibration, generic handoffs,
   durable experiment reports, and tiny completed tasks.
-- Make clear whether the session is waiting on Jörn. If it is not, state the
-  autonomous default directly so Jörn does not have to infer whether the agent
-  is continuing, stopping, or waiting.
+- Split control state, resumption model, and execution cursor. The control
+  state says whether the session is waiting, continuing, stopping, complete, or
+  blocked. The resumption model reloads the objective, active scope, status, and
+  thesis-relevant reason to continue. An immediate local next action is only an
+  optional execution cursor; it must not substitute for the resumption model.
 - When Jörn explicitly asks for a resume packet, write the packet first instead
   of adding a "continue" turn. The packet should assume near-zero working
   memory and report the current state: requesting Jörn, continuing
@@ -92,6 +94,9 @@ from the agent's own failures during that session:
 - premature `<proposed_plan>` while Jörn was still adding observations;
 - conversion of observations into rules before Jörn requested synthesis;
 - correction messages that assumed Jörn could mentally patch the transcript.
+- a later packet failure where "next I will read file X" satisfied a procedural
+  next-action cue while omitting the planning horizon needed for thesis-success
+  resumption.
 
 Non-durable draft artifacts were prepared in `/tmp` during the creating
 session. They were useful for iteration but are not source truth for future

@@ -58,7 +58,7 @@ action, not for completeness, polish, or showing effort.
 
 The scarce resource is Jörn attention. Include a fact only when it helps him
 resume, answer a visible request, review a narrow surface, avoid a likely wrong
-conclusion, or understand what will happen next.
+conclusion, or audit a continuation that is otherwise easy to misread.
 
 ## Before Writing
 
@@ -105,10 +105,9 @@ just to write an ordinary packet.
 
 ## Packet Contract
 
-Make the session state hard to miss. In the first few lines, state whether the
-session is waiting on Jörn. If not, state "Not waiting on Jörn" and give the
-autonomous default: continue, stop, or resume later with a named next action.
-State the default directly instead of naming optional alternatives.
+Make the session state hard to miss. In the first few lines, state the control
+state: awaiting Jörn, continuing autonomously, complete, blocked, stopping, or
+only checkpointing. If the session is not waiting on Jörn, say so directly.
 
 State:
 
@@ -117,8 +116,13 @@ State:
 - the full session objective, active focus/subscope, and status within that
   slice/task;
 - what changed since Jörn last held the context, if that matters;
-- what the agent is waiting on from Jörn, if anything; otherwise what the agent
-  will do by default or why the work is stopping.
+- what the agent is waiting on from Jörn, if anything; otherwise the default
+  continuation at the active scope or why the work is stopping.
+
+Do not let an immediate local step substitute for the resumption model. A line
+such as "next I will read file X" may be useful as an execution cursor, but it
+does not by itself explain the session objective, active focus, status,
+uncertainty, or thesis-relevant reason to continue.
 
 When asking Jörn for anything:
 
@@ -140,9 +144,9 @@ patch. Say what to ignore and restate the smallest complete replacement.
 
 ## Writing Guidance
 
-Build the packet around resumption state and default continuation. If the
-session is not waiting on Jörn, say so early; do not make him infer that silence
-means no action.
+Build the packet around resumption state and default continuation at the active
+scope. If the session is not waiting on Jörn, say so early; do not make him
+infer that silence means no action.
 
 Assume Jörn is returning cold. Reload the smallest state needed for safe
 resumption:
@@ -153,6 +157,10 @@ resumption:
 - what changed since the last context Jörn likely held;
 - why the requested answer/review matters, if the session is waiting on Jörn;
   otherwise why the default continuation or stop condition is correct.
+
+Treat immediate procedural actions as optional execution cursors. Include one
+only when it helps Jörn audit or predict the continuation; place it after the
+resumption model, and do not use it as the answer to what the session is about.
 
 Do not make Jörn dereference code symbols when the question is mathematical,
 architectural, or thesis-scope. Translate code names back into the controlling
@@ -193,6 +201,7 @@ Before sending, check:
 - Is every included fact used by the action, status, or resumption safety?
 - Did you translate symbols/files into the controlling math, design, or thesis
   issue?
+- Does the packet give a resumption model rather than only an execution cursor?
 - Would this still work if Jörn remembered nothing from the last turn?
 
 ## Output Shape
@@ -201,12 +210,13 @@ For nontrivial packets, short headings usually help. Common parts:
 
 - **State:** current status, task, and whether the session is waiting on Jörn.
 - **Jörn request / default:** the visible question or review request if waiting
-  on Jörn; otherwise "Not waiting on Jörn" plus the autonomous default.
+  on Jörn; otherwise "Not waiting on Jörn" plus the default continuation at the
+  active scope.
 - **Reload:** only the context needed to answer, review, or resume safely.
 - **Evidence / validation:** only checks, files, or facts used by the request
   or status.
-- **Next:** what you will do after Jörn answers, or what the agent default is
-  if the session is not waiting on Jörn.
+- **Execution cursor:** optional immediate local next step, included only when it
+  adds useful auditability beyond the state/default and reload context.
 
 Do not include git status, file lists, command logs, or unrelated discoveries
 unless they change Jörn's action or the safety of resuming.
