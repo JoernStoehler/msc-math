@@ -9,6 +9,26 @@ Scope: methods that propose or filter unevaluated candidate polytopes before
 `sys` is computed, including rejection-based scalar filters, multi-feature
 filters, and feature-first generated-candidate pipelines.
 
+Status block:
+
+- topic-status: boundary evidence reached; topic seed
+- spawn-status: reopen only for a specific rescue rule, new candidate source,
+  or thesis-writing need
+- next-role: topic owner if reopened
+- next-action: freeze one conjunction-rule design or park scalar-filter
+  proposers for now
+- review-gate: no proposer overclaim; generated candidates must be selected
+  before `sys`; normal review before thesis use
+- belief-update-owner: generated-candidate topic owner; research-map steward for
+  cross-topic propagation
+- last-reviewed: 2026-07-04 topic-owner review; 2026-07-06 workflow hardening
+  pass added status metadata only
+- source-of-truth: `../../methods/extreme-scalar-rejection-proposer/`
+- stale-if: runner configs/artifact paths change, new generated-candidate
+  evidence lands, or thesis wording needs proposer claims
+- allowed-downstream-use: planning boundary evidence and prompt seed; not a
+  positive proposer claim
+
 Current belief: low ridge-area sum is a real bucket-local enrichment signal,
 and the current `promising-scalars` generated-candidate rule set is executable
 at 100k scale with selection frozen before `sys`. The 100k durable packet did

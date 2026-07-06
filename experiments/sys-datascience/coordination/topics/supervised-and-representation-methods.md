@@ -9,6 +9,26 @@ Scope: in-table prediction, ranking, classification, feature representation,
 PCA/clustering/anomaly methods, and standard data-science methods not yet
 covered enough for thesis wording.
 
+Status block:
+
+- topic-status: conditional seed
+- spawn-status: spawn only if thesis wording needs broader ordinary-method
+  coverage or a supervised model suggests a concrete generated-candidate filter
+- next-role: topic owner only under that condition
+- next-action: missing-standard-method audit or feature-family ablation prompt
+- review-gate: in-table performance does not validate generated-candidate
+  proposers; grouped holdout/source controls required for model claims
+- belief-update-owner: supervised-methods topic owner; research-map steward for
+  cross-topic propagation
+- last-reviewed: 2026-07-04 parked closure plan; 2026-07-06 workflow hardening
+  pass added status metadata only
+- source-of-truth: prediction, projection, tail-rule, and association method
+  packets listed below
+- stale-if: thesis wording asks for broader standard-method closure, new
+  in-table packets land, or feature families change
+- allowed-downstream-use: ordinary-method coverage planning and prompt seed; not
+  proposer validation
+
 Current belief: existing supervised/in-table methods expose structure but do
 not validate proposers. Some cheap standard methods may still be missing if the
 thesis wants broader "ordinary data-science methods" wording.

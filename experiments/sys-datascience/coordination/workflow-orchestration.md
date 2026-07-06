@@ -2,7 +2,8 @@
 
 Use: operational conventions for running the sys-datascience thesis slice with
 parallel sessions and subagents. This file describes how agents coordinate.
-Read `workflow-design-rationale.md` for why this workflow is predicted to work.
+Read `workflow-design-rationale.md` for why this workflow is predicted to work
+and why it is still speculative.
 
 ## Roles
 
@@ -76,6 +77,48 @@ file. Then:
 - interpretation reviewers read the packet artifacts, the motivating topic
   file, and any cross-topic files whose hypotheses the result might affect.
 
+## Launch Control
+
+`next-session-candidates.md` is a decision board, not an execution queue.
+Before doing more than short triage or launching a row, a session should state:
+
+- the current thesis milestone in ordinary terms;
+- why this work advances that milestone;
+- why it beats the best currently parked or conditional alternative;
+- what will be recorded in `active-work.md` if work starts.
+
+If the answer is unclear, do not keep launching packets to make the board
+smaller. Either do a bounded surface-scout pass, ask one crux question, or park
+the row with the reason.
+
+## Jörn-Crux Rule
+
+Some gates depend on thesis wording, HKO-local authority, or another Jörn-level
+priority. Before asking Jörn, infer the plausible thesis sentence or decision
+from repo material and current coordination surfaces. Ask only if the launch
+choice changes under plausible alternatives, and ask one concrete crux question
+instead of a bundle.
+
+If the choice does not change, record the assumption in the relevant topic file
+or packet prompt and proceed or park without spending Jörn attention.
+
+## Surface-Scout Intake
+
+A surface scout product should not only rank already-listed rows. It should
+also look for omitted high-value directions and make the unknowns explicit. A
+useful scout pass records:
+
+- omitted source interfaces, producers, distributions, or candidate generators;
+- omitted geometric, statistical, optimization, and representation method
+  families;
+- possible thesis sentences each direction could affect;
+- launch/park/reject status with value, cost, and evidence that would change the
+  status;
+- dependencies between questions, including cases where answering one question
+  changes the value of another;
+- directions considered but not detailed because the scout ran out of promising
+  approaches or expected value.
+
 ## Downstream Uses
 
 - A topic lead resumes after compaction or a deep dive by rereading its own
@@ -104,6 +147,10 @@ file. Then:
 - Update topic files for local topic beliefs, hypotheses, packet prompts, and
   topic-owner resumption state.
 - Update `next-session-candidates.md` for current spawn/rescope/stop state.
+- Update `parked-and-rejected.md` for rediscovery-only ideas that should not be
+  treated as current session-decision candidates.
+- Update `active-work.md` for active owners, branches/worktrees, blocking
+  cruxes, and review/merge state.
 - Update `research-ledger.md` when a topic-level result changes cross-topic
   beliefs, thesis wording, or global prioritization.
 - Update `process-learnings.md` when a workflow failure or success changes

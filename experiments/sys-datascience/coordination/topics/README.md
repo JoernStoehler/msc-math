@@ -11,7 +11,8 @@ example, an append-only learning log is fine if the topic owner wants low
 maintenance cost and accepts higher later reading/reduction cost; a compact
 current-belief summary is better if many other sessions need quick orientation.
 
-Topic maps should use this structure when useful:
+Topic maps linked from `../next-session-candidates.md` should include a compact
+status block. Other topic maps should use this structure when useful:
 
 ```text
 Use / maintenance model:
@@ -25,6 +26,8 @@ Status block:
   belief-update-owner:
   last-reviewed:
   source-of-truth:
+  stale-if:
+  allowed-downstream-use:
 Current belief:
 Evidence sources:
 Adjacent topics to read:
@@ -39,8 +42,10 @@ Owner-readiness/status:
 
 Use the status block when a topic may be read by surface scouts or fresh topic
 owners. Keep prose flexible, but keep status values short enough to compare and
-grep. For ready prompts, state whether the prompt is `executor-ready`,
-`reviewer-ready`, `topic-owner-ready`, `audit-ready`, or `workflow-test-only`.
+grep. If a linked topic omits the block, the next topic-owner or steward pass
+should add it before treating the file as launch-ready. For ready prompts, state
+whether the prompt is `executor-ready`, `reviewer-ready`, `topic-owner-ready`,
+`audit-ready`, or `workflow-test-only`.
 
 When a topic matures into its own experiment folder or method packet, keep this
 map as the routing surface and link the new owner-local files.

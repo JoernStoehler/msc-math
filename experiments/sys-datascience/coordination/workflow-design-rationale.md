@@ -6,6 +6,10 @@ it is designed to avoid. It is optimized for agents who need to reason about
 whether to follow, adapt, or replace the workflow. Update it when process
 evidence changes, not after every packet.
 
+Status: this is a working prediction, not a validated process guarantee. Use
+`process-learnings.md`, fresh-agent review results, and future workflow-test
+packets to revise it when observed behavior differs from the prediction.
+
 ## Core Prediction
 
 The sys-datascience slice is research under uncertainty, not a linear software
@@ -160,6 +164,11 @@ Review should ask:
 - Are mixed/tainted results preserved without letting bad claims propagate?
 - Is the packet worth merging, parking, rewriting, or discarding?
 - Did the work update topic beliefs, global prioritization, or neither?
+- In hindsight, was this packet worth launching relative to the best alternative
+  available at launch time?
+- Should similar packets be repeated, stopped, split, or rescoped?
+- Which higher-level thesis milestone did this packet advance or fail to
+  advance?
 
 For small documentation-only changes, self-review can be enough. For code,
 data, or thesis-relevant interpretation packets, use a reviewer when the cost

@@ -39,6 +39,28 @@ Return:
    edits would reduce future errors.
 ```
 
+## Surface Scout
+
+```text
+You are a fresh sys-datascience surface scout. Do not execute experiments.
+
+Read the coordination README and workflow orchestration, then inspect the
+current ledger, decision board, and topic files.
+
+Return:
+1. Current thesis milestone or the smallest set of plausible milestones if the
+   material does not fix one.
+2. Omitted source interfaces, producers, distributions, geometric/statistical
+   method families, and thesis sentences that may matter.
+3. Candidate sessions or topic-owner seeds with launch/park/reject status,
+   rough value/cost distribution, evidence that would change the status, and
+   dependencies on other questions.
+4. Which single session should be spawned, stopped, split, merged, or rescoped
+   next, and why it beats the best alternative.
+5. Material-design findings: what was clear, what had to be inferred, and what
+   edits would reduce future workflow errors.
+```
+
 ## Packet Executor
 
 ```text
@@ -84,6 +106,11 @@ Review:
 4. Are claims separated by epistemic status?
 5. Should this be merged, parked, rewritten, discarded, or reviewed further?
 6. What topic/global/process surfaces should or should not be updated?
+7. In hindsight, was this packet worth launching relative to the best
+   alternative, and should similar packets be repeated, stopped, split, or
+   rescoped?
+8. Which higher-level thesis milestone did this packet advance or fail to
+   advance?
 
 For parked commits, prefer read-only commands:
 git ls-tree -r <commit> -- <packet-path>

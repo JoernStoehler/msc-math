@@ -8,6 +8,26 @@ changes how other datascience topics should reason.
 Scope: relation between the known HKO example/reference row, local HKO
 perturbations, ridge-area features, and random/product generated data.
 
+Status block:
+
+- topic-status: parked sys-datascience reference topic; HKO-local conclusions
+  outside this coordination surface unless explicitly reopened
+- spawn-status: parked
+- next-role: reviewer or topic owner only after explicit HKO-local decision
+- next-action: review HKO reference/smoke packets or design corrected HKO-local
+  perturbation packet only if reopened
+- review-gate: HKO-local conclusions need their own review; do not import old
+  tainted distance/flank claims
+- belief-update-owner: HKO-reference topic owner; HKO-local owner for local
+  maximality claims; research-map steward for sys-datascience propagation
+- last-reviewed: 2026-07-06 workflow hardening pass added status metadata only
+- source-of-truth: `../../methods/hko-reference-coverage/` and
+  `../../methods/hko-ridge-source-smoke/`
+- stale-if: corrected HKO-local perturbation evidence, normalization fixes, or
+  HKO-local slice decisions land
+- allowed-downstream-use: reference/context evidence for sys-datascience
+  mechanisms; not HKO-local maximality evidence
+
 Current belief: HKO is useful as a reference point, but current HKO/ridge work
 inside sys-datascience is smoke-scale or reference-coverage evidence. The
 HKO-local relation should be a separate topic, not folded into scalar-proposer

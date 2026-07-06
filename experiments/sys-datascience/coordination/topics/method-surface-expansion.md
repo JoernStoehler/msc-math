@@ -8,6 +8,25 @@ files, but should still preserve why a seed is promising or not worth spawning.
 Scope: broad idea generation over possible data-science methodologies,
 experiment designs, and missing topic areas for the full sys-datascience slice.
 
+Status block:
+
+- topic-status: active surface-scout seed
+- spawn-status: use for spawn/rescope/stop decisions before broad execution
+- next-role: surface scout or design scout
+- next-action: separate retained-contract wording from broader producer-axis and
+  standard-method evidence needs
+- review-gate: no blind new producer/model run until a thesis sentence and one
+  producer or method axis are named
+- belief-update-owner: surface scout or research-map steward
+- last-reviewed: 2026-07-04 method-surface audit; 2026-07-06 workflow hardening
+  pass added status metadata only
+- source-of-truth: `../../methods/README.md`, current topic maps, and method
+  disposition/checklist files listed below
+- stale-if: thesis wording changes, new method packets land, or the retained
+  random/product source contract changes
+- allowed-downstream-use: session-design and method-surface prioritization; not
+  a claim that all standard methods have been exhausted
+
 Current belief: the method surface is adequate for narrow wording but not for
 strong "all standard data-science methods" closure. The main value here is
 identifying cheap high-information packets and deciding when a seed deserves a

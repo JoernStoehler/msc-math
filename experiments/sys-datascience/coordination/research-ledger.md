@@ -14,8 +14,9 @@ distributions.
 ## Current Belief State
 
 - Source-backed table fact: the retained random/product prepared table contains
-  no trusted `sys > 1` row. Source: `../methods/README.md`, method packet
-  READMEs, and retained table scans.
+  no trusted `sys > 1` row. Source: `../methods/scan-sys-gt-1/README.md` and
+  `../methods/trusted-random-dataset/README.md`; `../methods/README.md`
+  indexes the retained method packets.
 - Reviewed empirical inference: low
   `ridge_symp_area_sum_over_volume_sqrt` is a real generated-candidate
   enrichment signal within product buckets. Source:
@@ -67,9 +68,9 @@ are:
 
 ## Current Launch Board
 
-Use `next-session-candidates.md` for the current spawn/rescope/stop queue. This
-ledger keeps the belief state and open discriminators that explain why the
-launch board has that shape.
+Use `next-session-candidates.md` for the current spawn/rescope/stop decision
+board. It is not a queue to drain. This ledger keeps the belief state and open
+discriminators that explain why the decision board has that shape.
 
 ## Open Discriminators
 

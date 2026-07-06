@@ -9,6 +9,27 @@ Scope: mathematical and geometric interpretation of invariant scalar features,
 especially ridge symplectic two-face area summaries, combinatorial structure,
 and how these might relate to `sys`.
 
+Status block:
+
+- topic-status: promoted diagnostic available; mechanism theorem absent
+- spawn-status: reopen if current milestone needs mechanism wording or a frozen
+  concentration-rule validation plan
+- next-role: topic owner if reopened
+- next-action: synthesize thesis-safe ridge mechanism wording or freeze one
+  concentration-rule validation plan
+- review-gate: diagnostic-only unless independently validated; no proposer
+  claim from post-`sys` splits
+- belief-update-owner: mechanism topic owner; research-map steward for
+  cross-topic propagation
+- last-reviewed: 2026-07-04 topic-owner update; 2026-07-06 workflow hardening
+  pass added status metadata only
+- source-of-truth: `../../methods/ridge-mechanism-discriminator/` plus feature
+  code listed below
+- stale-if: ridge feature definitions, discriminator artifacts, HKO reference
+  evidence, or thesis mechanism wording change
+- allowed-downstream-use: empirical mechanism diagnostics and prompt seed; not a
+  theorem or validated candidate proposer
+
 Current belief: ridge-area summaries are empirically important, but the project
 does not yet have a mechanism theorem. Current claims should stay empirical
 unless a mathematical argument is developed.

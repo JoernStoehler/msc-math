@@ -58,7 +58,8 @@ artifacts.
 
 Update: topic files now use owner-readiness/status, adjacent-topic pointers,
 and ready-packet versus needs-sharpening sections where useful.
-`next-session-candidates.md` carries the compact launch/status board.
+`next-session-candidates.md` carries the compact current session-decision
+board; rediscovery-only ideas belong in `parked-and-rejected.md`.
 Parked-packet review guidance now includes read-only commit inspection
 commands.
 

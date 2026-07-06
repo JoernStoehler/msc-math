@@ -8,6 +8,25 @@ decisions.
 Scope: empirical survival curves, extreme-value/tail models, zero-positive
 posteriors, and compute-scale decisions for blind or focused large random runs.
 
+Status block:
+
+- topic-status: clean packet merged; topic parked
+- spawn-status: reopen only if scale-up wording, 1M+ run design, or
+  thesis-facing rare-event interpretation matters
+- next-role: topic owner if reopened
+- next-action: interpret `tail-survival-1m-posterior` for thesis wording or
+  design a bucket-level tail backtest
+- review-gate: probability estimates are model-sensitive; no calibrated blind
+  hit-rate claim without stronger evidence
+- belief-update-owner: tail topic owner; research-map steward for run-scale
+  prioritization
+- last-reviewed: 2026-07-06 workflow hardening pass added status metadata only
+- source-of-truth: `../../methods/tail-survival-1m-posterior/`
+- stale-if: new tail packet, new large run, corrected HKO-local evidence, or
+  thesis scale-up wording lands
+- allowed-downstream-use: scale-up caveats, zero-positive evidence, and prompt
+  seed; not calibrated rare-event probability
+
 Current belief: zero positives in the retained table is a stable fact, but
 probability estimates for `sys > 1` under larger blind runs are model-dominated.
 The clean `tail-survival-1m-posterior` packet is now the current entry point for
