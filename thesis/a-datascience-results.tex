@@ -1,1 +1,118 @@
 \section{Data-Science Experiment Results}\label{app:datascience-results}
+
+This appendix records the experiment packets behind
+Section~\ref{sec:black-box-datascience}.  It is not a separate search surface.
+The active scope is the retained random/product data-science slice and the
+bounded generated scalar-proposer follow-up.  The old ascent, continuation,
+endpoint-stability, and local-behavior packets are historical context only for
+this chapter.
+
+\subsection{Retained random/product input}
+
+All retained-table method packets use the same trusted random/product input
+filter.  The retained table has \(14336\) trusted rows: \(4096\) generic random
+polytopes and \(10240\) random Lagrangian products.  It has no duplicate
+polytope rows, no excluded-label hits, maximum observed systolic ratio about
+\(0.863\), and no row with systolic ratio larger than \(1\).  Its median
+systolic ratio is about \(0.311\), and its \(99\)th percentile is about
+\(0.752\).
+
+The generic random rows use facet counts \(F=5,\ldots,12\), with \(512\)
+accepted samples for each facet count.  The random Lagrangian-product rows use
+polygon-pair buckets \(3\leq k\leq m\leq 6\), with \(1024\) accepted samples
+for each bucket.  Both use seed \(42\), height interval \([0.8,1.2]\), and
+rejection until a valid polytope is produced.
+
+\subsection{Retained-table diagnostics}
+
+The retained-table diagnostics ask what can be learned after the systolic ratio
+has already been computed for every retained row.  They can explain the sampled
+table and suggest future rules, but they do not by themselves validate a
+candidate proposer.
+
+\paragraph{Trusted input filter.}
+The input-filter packet fixes the data slice: \(14336\) trusted random/product
+rows, no duplicates, and no retained row with systolic ratio \(>1\).  This row
+audit does not validate the capacity or volume computations by itself.
+
+\paragraph{Direct scan and tail EDA.}
+The direct scan and tail summaries support the finite-table negative statement.
+The largest retained value is about \(0.863\), and no obvious filtered slice
+contains a positive row.  The filtered slices are overlapping views of the same
+rows, not independent confirmations.
+
+\paragraph{Scalar associations.}
+The scalar-association packet screens active invariant scalar covariates
+against the systolic ratio with Pearson and Spearman correlations.  The
+strongest absolute Spearman correlation in the current run is about \(0.938\).
+This is explanatory evidence for engineered invariant features, not a
+generated-row proposer.
+
+\paragraph{Projection, clustering, and anomaly checks.}
+The projection packet runs PCA, clustering, anomaly scoring, and
+source/facet/product overlays on active invariant features.  The current PCA
+first coordinate has correlation about \(0.464\) with the systolic ratio, while
+the top \(25\) anomaly rows do not overlap the top \(2\%\) systolic-ratio tail.
+No cluster, projection, or anomaly score is a proposer unless it is promoted to
+a pre-evaluation rule.
+
+\paragraph{Supervised prediction and ranking.}
+The prediction packet compares ridge and random-forest predictions from active
+invariant features with provenance baselines.  The current invariant-feature
+random forest has \(R^2\) about \(0.885\), while the metadata-only random
+forest has \(R^2\) about \(0.009\).  This supports a geometry-signal diagnostic,
+not search success.
+
+\paragraph{Tail-rule mining.}
+The tail-rule packet studies single-feature filters, shallow decision-tree
+filters, grouped holdout diagnostics, and residualized feature attribution on
+retained rows.  It records that ridge symplectic-area summaries are useful in
+retained-table high-tail diagnostics.  Because every retained row already has
+its systolic ratio computed, these rules are not generated-candidate
+validation.
+
+The common boundary is important.  These diagnostics can justify statements
+such as ``the current invariant features explain part of the retained table''
+or ``ridge symplectic-area summaries are visible in the high tail.''  They do
+not justify statements such as ``random search cannot find a counterexample,''
+``the retained table validates a new candidate proposer,'' or ``the listed
+features exhaust the useful invariants of the input polytopes.''
+
+\subsection{Generated-candidate scalar proposer}
+
+The generated scalar-proposer packet tests a stronger interface.  It generates
+random Lagrangian-product candidates, computes cheap scalar features, freezes
+selected candidates and a matched baseline before evaluating the systolic
+ratio, and then evaluates only that selected-or-baseline union.
+
+In the current \(100000\)-candidate packet, the frozen rule set produced
+\(485\) unique selected rows and \(1195\) unique baseline rows, for \(1675\)
+unique selected-or-baseline rows.  No evaluated candidate had systolic ratio
+larger than \(1\).  The maximum evaluated value, and the maximum selected
+value, was about \(0.868\).
+
+This is real pre-evaluation evidence for the configured random-product
+generator and scalar rule set.  It does not validate a proposer for finding
+\(>1\) examples, does not support a near-counterexample claim, and does not
+generalize to all scalar rules or all random-product generators.
+
+\subsection{Mechanism and reference diagnostics}
+
+The mechanism and reference packets are interpretation aids, not independent
+positive search results.  The ridge-mechanism diagnostic compares explanations
+for the observed high-tail behavior.  Its current interpretation is that low
+ridge-area magnitude is a bucket-local empirical signal, product and
+combinatorial confounding remains substantial, and generated low-ridge rules
+can improve mean systolic ratio over matched baselines without moving selected
+maxima above \(1\).
+
+The HKO reference and ridge-source smoke packets compare the current feature
+language with the known Haim--Kislev--Ostrover example.  In the reference
+coverage packet, the HKO example has systolic ratio about \(1.047\), above the
+retained random/product maximum, but it is not far outside the retained
+invariant-feature cloud.  The ridge-source smoke packet recomputes HKO and a
+small deterministic perturbation set from source and sees the perturbations
+lower the systolic ratio while increasing the ridge-area sum.  These packets
+help interpret why ridge-area quantities are plausible diagnostics.  They do
+not own the HKO local-maximality claim and do not turn the random/product table
+into a proof about nearby examples.
