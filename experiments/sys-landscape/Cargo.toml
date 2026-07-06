@@ -55,6 +55,10 @@ name = "sys-datascience-invariant-feature-check"
 path = "../sys-datascience/prepare/invariant_feature_check.rs"
 
 [[bin]]
+name = "sys-datascience-feature-cost"
+path = "../sys-datascience/prepare/feature_cost.rs"
+
+[[bin]]
 name = "sys-datascience-hko-ridge-source-smoke"
 path = "../sys-datascience/methods/hko-ridge-source-smoke/main.rs"
 

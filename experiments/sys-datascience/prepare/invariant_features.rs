@@ -35,45 +35,68 @@ use euclidean_polytopes::{
     edges_from_vertex_facet_incidence, two_faces_from_vertex_facet_incidence,
     vertex_facets_from_vertex_facet_incidence,
 };
-use exp_sys_landscape::SysLandscapePolytopeCache;
+use exp_sys_landscape::{exact_volume_from_incidence_as_f64, SysLandscapePolytopeCache};
 use nalgebra::Vector4;
 use rayon::prelude::*;
+use std::time::{Duration, Instant};
 
 fn divide_by_volume_sqrt(value: f64, volume_sqrt: f64) -> f64 {
     value / volume_sqrt
 }
 
-pub fn invariant_row_from_dual_vertices(
-    poly_id: String,
-    dual_vertices: Vec<Vector4<f64>>,
-    volume: f64,
-    sys: f64,
-) -> PolytopeTableRow {
-    assert!(
-        volume.is_finite() && volume > 0.0,
-        "invariant row needs positive finite volume, got {volume}"
-    );
-    let volume_sqrt = volume.sqrt();
-    let polytope = SysLandscapePolytopeCache::from_f64_dual_vertices(dual_vertices)
-        .unwrap_or_else(|| panic!("reconstruct invariant-feature polytope {poly_id}"));
-    let facet_count = polytope.facet_count();
-    let incidence = &polytope.vertex_facet_incidence;
-    let vertex_facets = vertex_facets_from_vertex_facet_incidence(incidence);
-    let edges = edges_from_vertex_facet_incidence(incidence);
-    let two_faces = two_faces_from_vertex_facet_incidence(incidence);
-    let skeleton_fields =
-        features_skeleton::compute_skeleton_fields(&polytope, &vertex_facets, &edges, &two_faces);
-    let face_symplectic_fields = features_face_symplectic::compute_face_symplectic_fields(
-        &two_faces,
-        &polytope.vertices_f64,
-        incidence,
-        volume_sqrt,
-    );
+#[derive(Clone, Debug, Default)]
+pub struct InvariantFeatureTimings {
+    pub decode_dual_vertices_ms: f64,
+    pub reconstruct_polytope_ms: f64,
+    pub volume_recompute_ms: f64,
+    pub cached_volume_sqrt_ms: f64,
+    pub face_lattice_ms: f64,
+    pub skeleton_summary_ms: f64,
+    pub ridge_symplectic_area_summary_ms: f64,
+    pub row_assembly_ms: f64,
+}
 
+impl InvariantFeatureTimings {
+    pub fn standard_prepare_feature_time_ms(&self) -> f64 {
+        self.decode_dual_vertices_ms
+            + self.reconstruct_polytope_ms
+            + self.cached_volume_sqrt_ms
+            + self.face_lattice_ms
+            + self.skeleton_summary_ms
+            + self.ridge_symplectic_area_summary_ms
+            + self.row_assembly_ms
+    }
+
+    pub fn feature_first_total_with_volume_recompute_ms(&self) -> f64 {
+        self.standard_prepare_feature_time_ms() + self.volume_recompute_ms
+    }
+}
+
+#[derive(Clone, Debug)]
+pub struct ProfiledInvariantFeatureRow {
+    pub row: PolytopeTableRow,
+    pub cached_volume: f64,
+    pub recomputed_volume: f64,
+    pub timings: InvariantFeatureTimings,
+}
+
+fn elapsed_ms(duration: Duration) -> f64 {
+    duration.as_secs_f64() * 1000.0
+}
+
+fn polytope_table_row_from_parts(
+    poly_id: String,
+    facet_count: usize,
+    capacity_source: String,
+    sys: f64,
+    volume_sqrt: f64,
+    skeleton_fields: features_skeleton::SkeletonFields,
+    face_symplectic_fields: features_face_symplectic::FaceSymplecticFields,
+) -> PolytopeTableRow {
     PolytopeTableRow {
         poly_id,
         facet_count,
-        capacity_source: "diagnostic_synthetic".to_string(),
+        capacity_source,
         sys,
         vertex_count: skeleton_fields.vertex_count,
         edge_count: skeleton_fields.edge_count,
@@ -162,6 +185,44 @@ pub fn invariant_row_from_dual_vertices(
     }
 }
 
+pub fn invariant_row_from_dual_vertices(
+    poly_id: String,
+    dual_vertices: Vec<Vector4<f64>>,
+    volume: f64,
+    sys: f64,
+) -> PolytopeTableRow {
+    assert!(
+        volume.is_finite() && volume > 0.0,
+        "invariant row needs positive finite volume, got {volume}"
+    );
+    let volume_sqrt = volume.sqrt();
+    let polytope = SysLandscapePolytopeCache::from_f64_dual_vertices(dual_vertices)
+        .unwrap_or_else(|| panic!("reconstruct invariant-feature polytope {poly_id}"));
+    let facet_count = polytope.facet_count();
+    let incidence = &polytope.vertex_facet_incidence;
+    let vertex_facets = vertex_facets_from_vertex_facet_incidence(incidence);
+    let edges = edges_from_vertex_facet_incidence(incidence);
+    let two_faces = two_faces_from_vertex_facet_incidence(incidence);
+    let skeleton_fields =
+        features_skeleton::compute_skeleton_fields(&polytope, &vertex_facets, &edges, &two_faces);
+    let face_symplectic_fields = features_face_symplectic::compute_face_symplectic_fields(
+        &two_faces,
+        &polytope.vertices_f64,
+        incidence,
+        volume_sqrt,
+    );
+
+    polytope_table_row_from_parts(
+        poly_id,
+        facet_count,
+        "diagnostic_synthetic".to_string(),
+        sys,
+        volume_sqrt,
+        skeleton_fields,
+        face_symplectic_fields,
+    )
+}
+
 fn invariant_row_from_loaded_row(row: &LoadedPolytopeRow) -> PolytopeTableRow {
     let raw_dual_vertices = features_dual_vertices::raw_dual_vertices_f64(row);
     let mut output = invariant_row_from_dual_vertices(
@@ -172,6 +233,76 @@ fn invariant_row_from_loaded_row(row: &LoadedPolytopeRow) -> PolytopeTableRow {
     );
     output.capacity_source = row.capacity_source.clone();
     output
+}
+
+pub fn profile_invariant_row_from_loaded_row(
+    row: &LoadedPolytopeRow,
+) -> ProfiledInvariantFeatureRow {
+    assert!(
+        row.volume.is_finite() && row.volume > 0.0,
+        "profiled invariant row needs positive finite volume, got {}",
+        row.volume
+    );
+    let mut timings = InvariantFeatureTimings::default();
+
+    let started = Instant::now();
+    let raw_dual_vertices = features_dual_vertices::raw_dual_vertices_f64(row);
+    timings.decode_dual_vertices_ms = elapsed_ms(started.elapsed());
+
+    let started = Instant::now();
+    let polytope = SysLandscapePolytopeCache::from_f64_dual_vertices(raw_dual_vertices)
+        .unwrap_or_else(|| panic!("reconstruct invariant-feature polytope {}", row.poly_id));
+    timings.reconstruct_polytope_ms = elapsed_ms(started.elapsed());
+
+    let started = Instant::now();
+    let recomputed_volume =
+        exact_volume_from_incidence_as_f64(&polytope.vertices, &polytope.vertex_facet_incidence);
+    timings.volume_recompute_ms = elapsed_ms(started.elapsed());
+
+    let started = Instant::now();
+    let volume_sqrt = row.volume.sqrt();
+    timings.cached_volume_sqrt_ms = elapsed_ms(started.elapsed());
+
+    let started = Instant::now();
+    let facet_count = polytope.facet_count();
+    let incidence = &polytope.vertex_facet_incidence;
+    let vertex_facets = vertex_facets_from_vertex_facet_incidence(incidence);
+    let edges = edges_from_vertex_facet_incidence(incidence);
+    let two_faces = two_faces_from_vertex_facet_incidence(incidence);
+    timings.face_lattice_ms = elapsed_ms(started.elapsed());
+
+    let started = Instant::now();
+    let skeleton_fields =
+        features_skeleton::compute_skeleton_fields(&polytope, &vertex_facets, &edges, &two_faces);
+    timings.skeleton_summary_ms = elapsed_ms(started.elapsed());
+
+    let started = Instant::now();
+    let face_symplectic_fields = features_face_symplectic::compute_face_symplectic_fields(
+        &two_faces,
+        &polytope.vertices_f64,
+        incidence,
+        volume_sqrt,
+    );
+    timings.ridge_symplectic_area_summary_ms = elapsed_ms(started.elapsed());
+
+    let started = Instant::now();
+    let feature_row = polytope_table_row_from_parts(
+        row.poly_id.clone(),
+        facet_count,
+        row.capacity_source.clone(),
+        row.sys,
+        volume_sqrt,
+        skeleton_fields,
+        face_symplectic_fields,
+    );
+    timings.row_assembly_ms = elapsed_ms(started.elapsed());
+
+    ProfiledInvariantFeatureRow {
+        row: feature_row,
+        cached_volume: row.volume,
+        recomputed_volume,
+        timings,
+    }
 }
 
 pub fn build_polytope_table(rows: &[LoadedPolytopeRow]) -> Vec<PolytopeTableRow> {

@@ -168,6 +168,68 @@ uv run --script experiments/sys-datascience/fingerprint-dataset.py \
   experiments/sys-datascience/prepare
 ```
 
+## Feature Cost Profiler
+
+Use `sys-datascience-feature-cost` when a method packet needs per-polytope cost
+for the current invariant feature families before adding method-local timing
+boilerplate.
+
+Smoke command, independent of retained LFS producer files:
+
+```bash
+cargo run -p exp-sys-landscape --release --bin sys-datascience-feature-cost -- \
+  --synthetic-smoke \
+  --out-dir /tmp/sys-ds-feature-cost-smoke
+```
+
+Retained producer sample command, after hydrating `produce/random*.jsonl`:
+
+```bash
+cargo run -p exp-sys-landscape --release --bin sys-datascience-feature-cost -- \
+  --random-only-size smoke \
+  --max-polytopes 10 \
+  --out-dir /tmp/sys-ds-feature-cost-smoke
+```
+
+Use `--max-polytopes all` only when deliberately spending the larger run. The
+command is sequential so that per-row timings remain easy to interpret.
+`--retained-produce-dir` overrides the retained cache directory containing
+`random.jsonl` and `random-product.jsonl`. This is intentionally different from
+`sys-datascience-prepare --produce-dir`, which consumes run-local producer
+outputs with `computed-polytopes.jsonl`.
+
+Generated files:
+
+- `feature-cost-per-polytope.jsonl`: one row per profiled polytope, with
+  `poly_id`, `capacity_source`, `facet_count`, product bucket fields when
+  available, group timings in milliseconds, total timings, cached/recomputed
+  volume, and selected invariant feature values for sanity checks.
+- `feature-cost-group-summary.tsv`: aggregate timing summary by `bucket` and
+  feature group, plus the `all` bucket.
+- `feature-cost-run-summary.json`: input mode, row counts, output paths, and
+  the timing-boundary note.
+
+Timing boundaries:
+
+- JSONL rows use the direct field names `standard_prepare_feature_time_ms`,
+  `volume_recompute_ms`, and
+  `feature_first_total_with_volume_recompute_ms`.
+- TSV summary rows use shorter group labels:
+  `standard_prepare_feature_total`,
+  `volume_recompute_from_dual_vertices`, and
+  `feature_first_total_with_volume_recompute`.
+- `standard_prepare_feature_time_ms` is a component sum for the current prepare
+  feature path: decode dual vertices, reconstruct the polytope from dual
+  vertices, enumerate the face lattice, compute skeleton summaries, compute
+  ridge symplectic-area summaries, and assemble the output row. It uses the
+  producer-cached volume for normalization, as the current prepared table does.
+  It is not a clean wall-time replay, because the profiler also runs exact
+  volume recomputation before the later component timings.
+- `volume_recompute_ms` measures exact volume recomputation from the
+  reconstructed dual-vertex geometry. This is not currently paid by prepare
+  when producer volume is already cached, but it is the relevant extra cost for
+  feature-first proposer code that starts from dual vertices only.
+
 ## Identity And Provenance Contract
 
 The prepared random/product tables keep polytope identity separate from sample
