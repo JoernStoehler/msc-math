@@ -41,8 +41,8 @@ The thesis-facing claim should be bounded:
   prediction, and tail-rule diagnostics found structure but no validated new
   `sys > 1` row;
 - frozen scalar generated-candidate packet over `100000` random-product
-  candidates selected and evaluated `1675` selected-or-baseline rows and found
-  no evaluated candidate with `sys > 1`;
+  candidates evaluated `1675` selected-or-baseline rows after selection was
+  frozen, and found no evaluated candidate with `sys > 1`;
 - ridge/mechanism diagnostics give empirical hints for future frozen rules, but
   post-`sys` diagnostic splits are not candidate-proposer claims.
 
@@ -126,7 +126,7 @@ controls, not as candidate-proposer inputs.
   retained-table ranking, but it is still scoped to its generator, rule set, and
   candidate budget.
 - If a real positive result appears, report it honestly and escalate to Jörn. It
-  may falsify the current "insufficient" main result and justify follow-up.
+  may falsify the current negative main result and justify follow-up.
 - Filter obvious false positives, for example a model finding a within-table
   association because `sys` was regressed against `sys`.
 
