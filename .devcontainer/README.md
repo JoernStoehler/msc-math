@@ -99,6 +99,7 @@ Access methods (see Architecture section above):
 | Script | Purpose |
 |--------|---------|
 | `host-devcontainer-rebuild.sh` | Rebuild image + recreate container |
+| `host-update-vscode-tunnel.sh` | Refresh `code-tunnel` inside the existing container without rebuild/recreate |
 | `host-vscode-tunnel.sh` | Start VS Code tunnel into container |
 | `warmup-cache.sh` | Background cache warmer (Rust + Python deps) |
 
@@ -179,6 +180,19 @@ Cost:
 
 The host rebuild script prints `code-tunnel --version` after recreate so the
 update is visible in the rebuild log.
+
+For a VS Code tunnel CLI update without rebuilding or recreating the container,
+run from the host:
+
+```bash
+bash .devcontainer/host-update-vscode-tunnel.sh
+```
+
+The script discovers the existing devcontainer by its Docker label, copies the
+latest stable VS Code CLI to `/usr/local/bin/code-tunnel`, and verifies the
+installed binary by copying it back out. It works for stopped containers. If a
+tunnel process is already running, restart that tunnel process after the update;
+the container itself is not started, stopped, rebuilt, or recreated.
 
 ### Cache persistence
 
