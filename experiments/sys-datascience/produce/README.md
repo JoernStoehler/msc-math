@@ -75,6 +75,30 @@ deterministically from that tuple and the sample index. Older plan files with
 separate `random` and `random_product` count arrays are still accepted; missing
 height fields default to `[0.8, 1.2]`.
 
+The current high-complexity LICCA diagnostic smoke is:
+
+```text
+plans/two-face-control-licca-smoke.json
+```
+
+Its companion rationale is:
+
+```text
+plans/two-face-control-licca-smoke.md
+```
+
+It uses distinct non-power-of-two per-bucket counts so source/bucket/count
+mixups are visible. Validate it with `--expected-plan-file`, not only family
+totals:
+
+```bash
+python3 experiments/sys-datascience/produce/validate-datascience-produced.py \
+  --produce-dir "$SMOKE_DIR" \
+  --mode smoke \
+  --producers random,random-product \
+  --expected-plan-file experiments/sys-datascience/produce/plans/two-face-control-licca-smoke.json
+```
+
 The known HKO pentagon can be emitted as a one-row reference/holdout source:
 
 ```bash
