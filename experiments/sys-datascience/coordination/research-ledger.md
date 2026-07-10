@@ -45,20 +45,62 @@ distributions.
   methods expose structure but do not by themselves validate
   unevaluated-candidate proposers. Source: `../methods/README.md` and method
   packet READMEs.
+- 2026-07-08 first-wave planning result: P1 standard-repertoire disposition
+  audit says P2 tiny retained-table missing baseline is the minimum executor
+  for broad retained-table ordinary-method wording. P3 producer/distribution
+  scout says no blind producer run should launch now; the only current producer
+  launch candidate is the high-complexity bucket-extension plan, behind a
+  separate compute packet. Source:
+  `first-wave-p1-p3-results-2026-07-08.md`.
+- 2026-07-08 P2 result: lasso/elastic-net, gradient boosting,
+  high-tail-classification, and feature-family-ablation baselines ran on the
+  rebuilt current-schema retained table. They found no `sys > 1` row and no
+  generated-candidate proposer, while confirming strong in-table ridge
+  symplectic-area signal. Source: `p2-synthesis-2026-07-08.md` and
+  `../methods/standard-baseline-p2/review.md`.
+- 2026-07-08 P5 audit: mechanism/tail wording can be made thesis-safe as
+  empirical diagnostic wording and scale-up caveat wording. Ridge
+  symplectic-area features are a bucket-local empirical signal with controls
+  caveat, not a mechanism theorem or proposer. Tail/density language remains
+  model-sensitive. Source:
+  `p5-mechanism-tail-thesis-use-audit-2026-07-08.md`.
+- 2026-07-08 bounded retained-table source map: a thesis-writing agent can now
+  use a source-mapped fallback story for the retained random/product
+  method-table claim, but this does not close broader producer/distribution,
+  proposer, density, or mechanism-theorem claims. Source:
+  `bounded-retained-table-source-map-writeup-2026-07-08.md`.
+- 2026-07-08 P4 generated-candidate closure: scalar-filter generated-candidate
+  proposers remain boundary evidence, not a positive construction route. The
+  compact 100k packet found no `sys > 1` row among selected-or-baseline
+  evaluated candidates, and a future two-feature rescue should be frozen before
+  independent validation rather than launched as an adaptive rescue. Source:
+  `p4-generated-candidate-closure-2026-07-08.md`.
+- 2026-07-08 high-complexity producer compute packet: the only currently
+  prepared producer-axis execution candidate is smoke-first LICCA execution of
+  the generic `F=10,11,12` and product `4x6,5x5,5x6,6x6` plan. This is not
+  evidence until smoke, production, prepare, fingerprint, and review complete.
+  Source: `high-complexity-producer-compute-packet-2026-07-08.md`.
 
 ## Live Prioritization State
 
-The next high-value work is probably not more single-feature ridge-sum scale-up
-or rerunning the same `promising-scalars` sweep alone. More useful candidates
-are:
+The next high-value work is probably not more single-feature ridge-sum scale-up,
+rerunning the same `promising-scalars` sweep alone, or immediately writing the
+bounded retained-claim story as if it closed the full slice. More useful
+candidates are:
 
-- use the 2026-07-06 method-surface scout result to move toward bounded
-  thesis-use interpretation/writeup readiness for the retained method-table
-  claim;
+- use `bounded-retained-table-source-map-writeup-2026-07-08.md` as the
+  fallback story input if retained-table wording is enough;
+- execute `high-complexity-producer-compute-packet-2026-07-08.md` through a
+  LICCA operator if broader producer-axis evidence is still worth buying;
+- keep bounded thesis-use interpretation/writeup readiness for the retained
+  method-table claim as a fallback or subpacket, not as automatic full-slice
+  closure; it closes the full slice only after explicit Jörn or thesis-control
+  downgrade;
 - use the promoted ridge mechanism discriminator as the current compact source
   for the central empirical feature story;
-- broaden the method surface only where stronger thesis wording would require
-  cheap missing standard methods or new producer/distribution evidence;
+- use P2 as the current broad retained-table standard-method coverage update;
+  treat new producer/distribution evidence as unrun until the compute packet
+  produces validated artifacts;
 - identify what separates high selected low-ridge candidates from mediocre
   selected low-ridge candidates only if a topic owner can freeze one
   conjunction rule before independent validation;
@@ -87,8 +129,9 @@ discriminators that explain why the decision board has that shape.
   independent evaluation, or are current scalar filters mainly explanatory?
 - Does HKO sit at an extremal point for the same ridge-area features seen in
   random/product data, or is the apparent relation local and non-general?
-- Do standard supervised or high-tail methods add a thesis-useful result beyond
-  the already-observed scalar/ridge story?
+- Does the bounded retained-table source map make the remaining full-slice gap
+  small enough to park producer expansion, or should the prepared
+  high-complexity producer packet be run?
 - Which observed correlations are consequences of product
   bucket/combinatorial structure rather than symplectic geometry?
 
@@ -99,8 +142,14 @@ discriminators that explain why the decision board has that shape.
   `../methods/hko-ridge-source-smoke/` as the current sys-datascience entry
   points. Treat HKO-local perturbation/ridge work as a separate topic unless
   explicitly reopened.
-- Standard-method closure: parked unless thesis wording needs stronger
-  ordinary-method coverage than the named existing packets.
+- Standard-method closure: P2 completed the compact missing retained-table
+  baseline. Use it with P1 dispositions for retained-table ordinary-method
+  wording, not for broader random-distribution or proposer claims.
+- Producer/distribution expansion: parked except the high-complexity
+  bucket-extension candidate named by P3. The compute packet exists; the run
+  itself has not happened.
+- Mechanism/tail thesis-use: P5 completed. Use empirical diagnostic wording and
+  scale-up caveat wording; do not promote to theorem/proposer/density language.
 - Two-feature selected-tail rescue: needs one frozen rule and an independent
   validation plan before execution.
 

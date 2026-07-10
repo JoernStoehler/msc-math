@@ -15,14 +15,15 @@ Status block:
 - spawn-status: reopen if current milestone needs mechanism wording or a frozen
   concentration-rule validation plan
 - next-role: topic owner if reopened
-- next-action: synthesize thesis-safe ridge mechanism wording or freeze one
-  concentration-rule validation plan
+- next-action: use P5 wording boundary in bounded retained-table source-map;
+  reopen only for a frozen concentration-rule validation plan
 - review-gate: diagnostic-only unless independently validated; no proposer
   claim from post-`sys` splits
 - belief-update-owner: mechanism topic owner; research-map steward for
   cross-topic propagation
 - last-reviewed: 2026-07-04 topic-owner update; 2026-07-06 workflow hardening
-  pass added status metadata only
+  pass added status metadata only; 2026-07-08 P5 audit added thesis-use wording
+  boundary
 - source-of-truth: `../../methods/ridge-mechanism-discriminator/` plus feature
   code listed below
 - stale-if: ridge feature definitions, discriminator artifacts, HKO reference
@@ -33,6 +34,12 @@ Status block:
 Current belief: ridge-area summaries are empirically important, but the project
 does not yet have a mechanism theorem. Current claims should stay empirical
 unless a mathematical argument is developed.
+
+2026-07-08 P5 audit: thesis-safe wording may say ridge symplectic two-face area
+summaries are useful empirical coordinates and that low ridge magnitude is a
+bucket-local empirical signal with controls caveat. It must also say this is
+not a mechanism theorem and not generated-candidate validation. Source:
+`../p5-mechanism-tail-thesis-use-audit-2026-07-08.md`.
 
 Owner-readiness/status: topic seed, ready for a topic research lead if Jörn
 wants a mechanism-focused session.

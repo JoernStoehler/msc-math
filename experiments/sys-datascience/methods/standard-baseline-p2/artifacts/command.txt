@@ -1,0 +1,1 @@
+experiments/sys-datascience/methods/standard-baseline-p2/analyze.py --tables-dir /tmp/sys-ds-p2-current-full

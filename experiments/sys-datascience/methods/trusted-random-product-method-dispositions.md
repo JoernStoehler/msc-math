@@ -54,10 +54,13 @@ claim, not schema repair.
 | Checklist family | Current disposition | Packet/source | Reason and reopen trigger |
 | --- | --- | --- | --- |
 | ridge regression | `current-invariant-run` | `prediction-ranking/` | Current invariant-feature ridge model ran under the active schema. |
+| lasso and elastic-net regression | `current-invariant-run` | `standard-baseline-p2/` | P2 ran sparse/shrinkage linear baselines under grouped holdout. |
 | random forest regression | `current-invariant-run` | `prediction-ranking/` | Current invariant-feature RF model ran under the active schema; it is in-table signal, not yet a generated-candidate proposer. |
+| gradient boosting regression | `current-invariant-run` | `standard-baseline-p2/` | P2 ran histogram gradient boosting regression under grouped holdout. |
 | shallow high-tail decision-tree rules | `current-invariant-run` | `tail-rule-mining/` | Current invariant-feature tree run completed under the active schema; older geometry-family artifacts are stale. |
+| high-tail classification and classifier variants | `current-invariant-run` | `standard-baseline-p2/` | P2 ran elastic-net logistic and histogram gradient boosting high-tail classifiers. Labels are retained-table high-tail labels, not positives or generated-candidate validation. |
+| feature-family ablation | `current-invariant-run` | `standard-baseline-p2/` | P2 compared combinatorial-count and ridge symplectic-area feature families under grouped holdout. |
 | metadata-only prediction baselines | `current-invariant-run` | `prediction-ranking/` | Current metadata-only baselines ran. |
-| high-tail classification and classifier variants | `defer` | none | No positive class exists; near-tail classification mostly duplicates ranking until a generated-candidate follow-up is promoted. |
 | generated-candidate proposer loop | `defer` | none | Reopen if rerun ranking evidence has enough expected thesis value to justify producing new candidates. |
 
 ## Unsupervised, Density, And Anomaly Methods
@@ -95,4 +98,6 @@ claim, not schema repair.
    distribution-design batch is run and reviewed.
 2. Do not claim a generated-candidate proposer until an unevaluated-row ranking
    experiment is designed and run.
-3. Decide thesis wording separately from method-packet readiness.
+3. Decide whether P2 is enough for the intended broad retained-table
+   standard-method wording; it does not close broader distributions.
+4. Decide thesis wording separately from method-packet readiness.

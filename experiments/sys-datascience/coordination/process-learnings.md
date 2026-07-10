@@ -5,6 +5,102 @@ that should influence future sys-datascience agent behavior. It is optimized
 for surface scouts, topic owners, and prompt writers. Add entries when an
 incident reveals a reusable failure mode or prompt/workflow improvement.
 
+## 2026-07-08: Parent-Loop Launch Needs Active Gates And Probe Evidence
+
+Observation: the previous default route toward bounded thesis-use writeup could
+be read as full-slice closeout even though broader method/distribution/proposer
+work remained expected. Fresh-agent and adversarial workflow probes found that
+the launch material also permitted six bypasses: stopping after only a plan,
+local downgrade to bounded fallback, shallow launch of runnable packets,
+executor output becoming thesis evidence without a separate review verdict,
+low-value Jörn should-questions, and broad "no new source" wording from
+retained-table evidence.
+
+Update: `autonomous-parent-loop.md` is now the launch-control surface for a
+full-slice parent. It requires a first control pass, packet cards with exact
+claim/source/evaluation/protocol/alternative fields, separate review verdicts
+before thesis-evidence use, explicit Jörn or thesis-control downgrade before
+bounded fallback can close the full slice, and workflow-test preservation under
+`workflow-evaluations/`. A focused re-probe resolved the six bypasses above.
+The first read-only wave then launched P1/P3 successfully and synthesized a
+then-current default: run P2 tiny retained-table missing baseline next. P2 then ran,
+produced artifacts, received a separate review verdict, and was synthesized
+without turning in-table evidence into proposer or broader-distribution
+wording. The remaining workflow risk is no longer "can the parent launch the
+first design wave" or "can P2 execution/review/synthesis complete"; it is "can
+the parent choose and execute the next wording/proposer/producer branch without
+drifting or overclaiming."
+
+Future prompt implication: parent-loop prompts should include the active gates
+directly. Workflow-test probes are valid even with zero thesis-merge value, but
+their conclusions must be recorded as process evidence and not as
+sys-datascience research evidence.
+
+## 2026-07-08: Intermediate Artifacts Are Not Turn Boundaries
+
+Observation: during the workflow/process design pass, the parent session
+stopped after producing useful intermediate artifacts and wrote a final-shaped
+status message without a concrete request. Jörn had to spend attention
+distinguishing "local milestone complete" from "agent stopped early because it
+had something to report." This is the same costly failure mode as premature
+status reports: the scoped objective remains incomplete, but the session pings
+Jörn as if a decision or review were required.
+
+Update: parent-loop work should continue after intermediate packets until the
+current scoped milestone is complete, explicitly blocked by an external-access
+step, or a concrete Jörn crux is identified. If an artifact is useful but not a
+completion point, update the coordination state and keep going. If an
+external-access blocker exists, name the blocked action and the prepared
+handoff, not a vague request for review.
+
+Future prompt implication: before ending a nontrivial sys-datascience turn,
+agents should check: "Did I complete the scoped milestone, hit a real blocker,
+or formulate one concrete crux?" If not, they should continue with inspection,
+execution, review, synthesis, or state updates.
+
+## 2026-07-08: Compute Packets Need Actual Smoke, Not Only Plan-Only
+
+Observation: the high-complexity producer compute packet initially passed
+plan-only checks but still contained two operator-facing command bugs. First,
+it copied `produce/shared-cache.jsonl` into `sys-datascience-produce
+--base-cache`, but that file is the old family-cache schema and lacks
+`poly_id`; the unified producer expects computed-polytope payload rows. Second,
+the post-prepare `scan-sys-gt-1` command failed without `numpy` even though the
+fingerprint command passed.
+
+Update: for compute handoffs, run the cheapest actual smoke path that exercises
+the same wrapper/cache/output/validation/prepare/fingerprint commands before
+declaring the packet ready. Plan-only is useful for row counts and work-unit
+shape, but it does not validate cache schema, writer behavior, post-processing
+dependencies, or command composition.
+
+Future prompt implication: a compute-packet owner should record both
+plan-only counts and at least one actual smoke/validation result when the
+smoke cost is reasonable. If actual smoke is too expensive, the packet should
+say exactly which command paths remain untested.
+
+## 2026-07-09: Smoke Config Choices Must Be Repo Artifacts
+
+Observation: during the LICCA smoke handoff, the session reused an inherited
+`128`-rows-per-bucket smoke plan without first writing down the smoke objective
+or comparing configurations. Later chat corrections proposed alternatives, but
+chat-only design does not fix the workflow. It leaves no config file for LICCA,
+no durable rationale for future agents, and no validator check for the property
+that motivated the design.
+
+Update: smoke configs that matter for repeated or external runs need three
+repo artifacts before they are handed off: a plan JSON, a companion rationale
+or README section explaining the objective and why the config beats relevant
+alternatives, and a validator command that checks the diagnostic property. For
+the high-complexity producer smoke, the active files are
+`../produce/plans/two-face-control-licca-smoke.json`,
+`../produce/plans/two-face-control-licca-smoke.md`, and
+`../produce/validate-datascience-produced.py --expected-plan-file`.
+
+Future prompt implication: do not answer "use config X" from chat reasoning
+alone when the next actor will run commands externally. First make the config
+and validation path real, then hand off the command.
+
 ## 2026-07-04: End-To-End Workflow-Test Chain Worked
 
 Observation: a fresh global scout selected `generated-candidate-proposers`, a

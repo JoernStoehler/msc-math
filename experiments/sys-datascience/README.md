@@ -5,8 +5,9 @@ to random polytopes and random Lagrangian-product polytopes.
 
 The active thesis question is:
 
-> On the retained random/product samples and ordinary data-science methods, do
-> we see a `sys > 1` example or a credible candidate-proposer for finding one?
+> On the retained and named extension random/product samples and ordinary
+> data-science methods, do we see a `sys > 1` example, a credible
+> candidate-proposer for finding one, or thesis-useful structure?
 
 The old fixed-F ascent and continuation runs are not part of this active slice.
 They were confusing for this chapter because endpoint diagnostics showed that
@@ -43,7 +44,10 @@ Current retained producer contract:
 
 This is a finite sample from these distributions, not a universal random-model
 claim. Broader height intervals, independent seeds, other facet-count ranges,
-or new distributions are future producer changes.
+or new distributions are separate producer changes. The only currently prepared
+producer extension is the smoke-first high-complexity generic/product bucket
+packet under `coordination/high-complexity-producer-compute-packet-2026-07-08.md`;
+it is not evidence until executed and reviewed.
 
 ## Retained Tables
 
@@ -84,6 +88,11 @@ uv run --script experiments/sys-datascience/fingerprint-dataset.py \
 
 Read first:
 
+- `agent-memory-and-expansion-plan.md` for the agent-facing interpretation of
+  why the current retained wave is a fallback rather than full data-science
+  closure, and how to plan broader method/distribution/proposer work.
+- `coordination/autonomous-parent-loop.md` for launching or reviewing an
+  autonomous parent loop over the full sys-datascience slice.
 - `produce/README.md`
 - `prepare/README.md`
 - `feature-space-coverage-ledger.md`
@@ -99,6 +108,12 @@ feature contract. Retained tables live under `prepare/`, and compact generated
 method summaries are tracked under `methods/<method>/artifacts/` when a README
 cites current numbers. Keep durable packet conclusions in
 `methods/<method>/README.md`, not only in `/tmp`.
+
+Current coordination status: the bounded retained-table source map, P4
+generated-candidate closure note, and high-complexity producer compute packet
+exist under `coordination/`. The bounded retained story is a fallback, not
+automatic full-slice closure. The compute packet is a prepared LICCA handoff,
+not a completed run.
 
 Escalate before unrelated cleanup if a method records a trusted `sys > 1` row
 or a credible candidate-proposer.

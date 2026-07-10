@@ -12,16 +12,18 @@ covered enough for thesis wording.
 Status block:
 
 - topic-status: conditional seed
-- spawn-status: spawn only if thesis wording needs broader ordinary-method
-  coverage or a supervised model suggests a concrete generated-candidate filter
-- next-role: topic owner only under that condition
-- next-action: missing-standard-method audit or feature-family ablation prompt
+- spawn-status: P2 completed; spawn only for review or if thesis wording needs
+  stronger comparative model claims
+- next-role: interpretation reviewer or topic owner only if reopened
+- next-action: use P2 review in P5 mechanism/tail thesis-use audit
 - review-gate: in-table performance does not validate generated-candidate
   proposers; grouped holdout/source controls required for model claims
 - belief-update-owner: supervised-methods topic owner; research-map steward for
   cross-topic propagation
 - last-reviewed: 2026-07-04 parked closure plan; 2026-07-06 workflow hardening
-  pass added status metadata only
+  pass added status metadata only; 2026-07-08 P1 audit promoted P2 as the
+  minimum retained-table executor for broad ordinary-method wording; 2026-07-08
+  P2 completed
 - source-of-truth: prediction, projection, tail-rule, and association method
   packets listed below
 - stale-if: thesis wording asks for broader standard-method closure, new
@@ -30,17 +32,17 @@ Status block:
   proposer validation
 
 Current belief: existing supervised/in-table methods expose structure but do
-not validate proposers. Some cheap standard methods may still be missing if the
-thesis wants broader "ordinary data-science methods" wording.
+not validate proposers. P2 completed the missing retained-table executor for
+broader ordinary-method wording and found no positive/proposer.
 
 Owner-readiness/status: seed; spawn only if thesis wording needs broader
 standard-method coverage or if a supervised model suggests a genuinely new
 generated-candidate filter.
 
-2026-07-04 parked closure plan: if this topic reopens for wording breadth, the
-first executor should be one tiny retained-table baseline packet covering
-lasso/elastic-net, gradient boosting, high-tail classification, and
-feature-family ablation. Do not run SVM/kNN/kernel, neural/autoencoder,
+2026-07-08 P2 update: P2 ran lasso/elastic-net, gradient boosting, high-tail
+classification, and feature-family ablation. It confirmed strong in-table
+ridge symplectic-area signal and did not validate a proposer. Do not run
+SVM/kNN/kernel, neural/autoencoder,
 Bayesian/GP, density/mixture/one-class, direct-search/optimization, or broader
 random-distribution work unless a new thesis sentence or source interface makes
 them relevant. Retained-table models never validate generated-candidate
@@ -78,11 +80,9 @@ Cheap discriminators:
 
 Ready packet prompts:
 
-- Tiny retained-table standard baseline. `parked-conditional`.
-  Launch only if thesis wording needs broader ordinary-method coverage.
-  Scope: lasso/elastic-net, gradient boosting, high-tail classification, and
-  feature-family ablation under grouped holdout. Stop after one compact
-  deterministic summary; no new feature engineering and no proposer claim.
+- Tiny retained-table standard baseline. `completed`.
+  Source: `../../methods/standard-baseline-p2/` and
+  `../../methods/standard-baseline-p2/review.md`.
 
 Needs topic-owner sharpening:
 

@@ -5,9 +5,16 @@ parallel sessions and subagents. This file describes how agents coordinate.
 Read `workflow-design-rationale.md` for why this workflow is predicted to work
 and why it is still speculative.
 
-## Roles
+For a full-slice parent kickoff, read `autonomous-parent-loop.md` first. This
+file supplies the coordination mechanics used inside that loop.
 
-This agent helps Jörn decide what research sessions to spawn, stop, split,
+## Labor Modes
+
+These are labor modes, not person-like roles. One GPT-5.5 session can combine
+several modes when the needed files, math, code, and quality criteria overlap.
+The parent loop decides which labor mix is useful and owns synthesis.
+
+Surface-scout labor helps decide what research sessions to spawn, stop, split,
 merge, or rescope across the whole sys-datascience thesis slice. It keeps a
 global view, looks for missing topic areas, notices opportunity-cost issues,
 and turns vague uncertainties into candidate topic seeds. It does not execute
@@ -18,15 +25,16 @@ considered topics are not worth spawning yet.
 
 Handle: `surface scout` or `global research scout`.
 
-This agent maintains the cross-topic research state: recent global belief
-state, live hypotheses, evidence/update traces, open discriminators, parked or
-tainted work, and prioritization-relevant uncertainty. It should be
-source-linked and conservative about cross-topic conclusions. It should not
-record every brainstormed idea or local experiment detail.
+Research-map steward labor maintains the cross-topic research state: recent
+global belief state, live hypotheses, evidence/update traces, open
+discriminators, parked or tainted work, and prioritization-relevant
+uncertainty. It should be source-linked and conservative about cross-topic
+conclusions. It should not record every brainstormed idea or local experiment
+detail.
 
 Handle: `research-map steward`.
 
-This agent owns one research topic after it has become worth sustained
+Topic-owner labor owns one research topic after it has become worth sustained
 attention. It develops the local ontology of questions and hypotheses, designs
 packet-sized experiments, interprets reviewed packet results in that topic, and
 keeps the topic's local notes coherent. It can spawn packet executors and
@@ -34,25 +42,25 @@ reviewers.
 
 Handle: `topic owner` or `topic research lead`.
 
-This agent executes one bounded experiment or code packet end to end. It
-receives the motivating question, relevant context, expected artifacts, review
-standard, and stopping condition. It writes code/data/docs needed to reproduce
-and interpret the packet, then reports externally relevant results, changed
-files, commands, and risks.
+Packet-executor labor executes one bounded experiment or code packet end to
+end. It receives the motivating question, relevant context, expected artifacts,
+review standard, and stopping condition. It writes code/data/docs needed to
+reproduce and interpret the packet, then reports externally relevant results,
+changed files, commands, and risks.
 
 Handle: `packet executor`.
 
-This agent reviews a packet for whether it should update topic beliefs, be
-revised, be parked, be rewritten, or be discarded. It checks code correctness,
-reproducibility, artifacts, provenance, interpretation claims, and whether the
-packet actually answers its motivating question.
+Packet-reviewer labor reviews a packet for whether it should update topic
+beliefs, be revised, be parked, be rewritten, or be discarded. It checks code
+correctness, reproducibility, artifacts, provenance, interpretation claims, and
+whether the packet actually answers its motivating question.
 
 Handle: `packet reviewer`.
 
-This agent focuses on what a packet result means after code/artifacts are
-plausibly correct. It extracts belief updates, caveats, implications for other
-hypotheses, and next discriminating questions. It should be willing to say
-"this result is real but not globally important."
+Interpretation-reviewer labor focuses on what a packet result means after
+code/artifacts are plausibly correct. It extracts belief updates, caveats,
+implications for other hypotheses, and next discriminating questions. It should
+be willing to say "this result is real but not globally important."
 
 Handle: `interpretation reviewer`.
 
@@ -88,8 +96,9 @@ Before doing more than short triage or launching a row, a session should state:
 - what will be recorded in `active-work.md` if work starts.
 
 If the answer is unclear, do not keep launching packets to make the board
-smaller. Either do a bounded surface-scout pass, ask one crux question, or park
-the row with the reason.
+smaller. Either do a bounded surface-scout pass, ask one crux question after
+cheap local branches are no longer worth exploring, or park the row with the
+reason.
 
 ## Jörn-Crux Rule
 
@@ -101,6 +110,11 @@ instead of a bundle.
 
 If the choice does not change, record the assumption in the relevant topic file
 or packet prompt and proceed or park without spending Jörn attention.
+
+Do not ask "Should we use bounded fallback or pursue stronger coverage?" while
+the local default is still to build the broader expansion plan. First use repo
+evidence, scouts, and cheap branch exploration to identify the concrete
+territory-level uncertainty that changes packet ranking or claim strength.
 
 ## Surface-Scout Intake
 
@@ -163,7 +177,10 @@ useful scout pass records:
 2. A topic owner sharpens the seed into a packet objective, expected evidence,
    likely costs, and interpretation boundaries.
 3. A packet executor runs the packet in a worktree or subagent-owned branch.
-4. A packet reviewer checks code, artifacts, provenance, and claims.
+4. A packet reviewer checks code, artifacts, provenance, and claims, producing
+   a named review verdict artifact or clearly labeled review section separate
+   from executor output when the result may affect thesis wording or global
+   belief state.
 5. An interpretation reviewer or topic owner extracts belief updates and
    caveats.
 6. The topic owner decides whether the packet should cause topic-level belief
@@ -185,6 +202,9 @@ Process evidence to report:
 Use `Workflow-test: yes` only when the packet is selected mainly to learn about
 the workflow or prompt material rather than because its research output is a
 priority.
+
+Preserve workflow-test prompts, raw-response pointers, parent interpretations,
+and material-change or no-change verdicts under `workflow-evaluations/`.
 
 ## Storage Rules
 

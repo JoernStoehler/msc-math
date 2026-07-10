@@ -1,0 +1,49 @@
+{
+  "artifacts": [
+    "summary.json",
+    "regression-metrics.tsv",
+    "high-tail-classification-metrics.tsv",
+    "feature-family-ablation.tsv",
+    "linear-top-coefficients.tsv",
+    "command.txt"
+  ],
+  "candidate_proposer_disposition": "no validated candidate-proposer: P2 uses already evaluated retained rows and does not rank unevaluated generated candidates",
+  "feature_count": 45,
+  "feature_family_counts": {
+    "combinatorial_counts": 27,
+    "ridge_symp_area": 18
+  },
+  "grouping": "capacity_source:facet_count",
+  "max_iter": 300,
+  "max_sys": 0.86258589584944,
+  "packet": "standard-baseline-p2",
+  "provenance_row_count": 14336,
+  "row_count": 14336,
+  "rows_with_sys_gt_1": 0,
+  "tables_dir": "/tmp/sys-ds-p2-current-full",
+  "tail_cutoff_from_train": 0.5697652833472453,
+  "tail_quantile": 0.9,
+  "test_group_counts": {
+    "random_product_sample:F10": 2048,
+    "random_product_sample:F12": 1024,
+    "random_product_sample:F8": 2048,
+    "random_sample:F12": 512
+  },
+  "test_rows": 5632,
+  "thesis_boundary": "standard-method retained-table coverage only; no arbitrary random distribution, calibrated hit-rate, or generated-candidate claim",
+  "top_score_fraction": 0.1,
+  "train_group_counts": {
+    "random_product_sample:F11": 1024,
+    "random_product_sample:F6": 1024,
+    "random_product_sample:F7": 1024,
+    "random_product_sample:F9": 2048,
+    "random_sample:F10": 512,
+    "random_sample:F11": 512,
+    "random_sample:F5": 512,
+    "random_sample:F6": 512,
+    "random_sample:F7": 512,
+    "random_sample:F8": 512,
+    "random_sample:F9": 512
+  },
+  "train_rows": 8704
+}

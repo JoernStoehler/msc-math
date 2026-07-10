@@ -15,14 +15,15 @@ Status block:
 - spawn-status: reopen only for a specific rescue rule, new candidate source,
   or thesis-writing need
 - next-role: topic owner if reopened
-- next-action: freeze one conjunction-rule design or park scalar-filter
-  proposers for now
+- next-action: keep scalar-filter proposers parked; if reopened, freeze one
+  conjunction-rule design before independent validation
 - review-gate: no proposer overclaim; generated candidates must be selected
   before `sys`; normal review before thesis use
 - belief-update-owner: generated-candidate topic owner; research-map steward for
   cross-topic propagation
 - last-reviewed: 2026-07-04 topic-owner review; 2026-07-06 workflow hardening
-  pass added status metadata only
+  pass added status metadata only; 2026-07-08 P4 generated-candidate closure
+  parked scalar-filter proposers for the current thesis story
 - source-of-truth: `../../methods/extreme-scalar-rejection-proposer/`
 - stale-if: runner configs/artifact paths change, new generated-candidate
   evidence lands, or thesis wording needs proposer claims
@@ -33,15 +34,18 @@ Current belief: low ridge-area sum is a real bucket-local enrichment signal,
 and the current `promising-scalars` generated-candidate rule set is executable
 at 100k scale with selection frozen before `sys`. The 100k durable packet did
 not find a near-counterexample: maximum evaluated `sys` was about 0.868 and no
-evaluated row had `sys > 1`. Stronger proposer claims need either a rule that
-survives the selected-tail goodhart problem or evidence from a different
-candidate source.
+evaluated row had `sys > 1`. P4 closes scalar-filter generated-candidate
+proposers for the current thesis story. Stronger proposer claims need either a
+rule frozen before independent validation that survives the selected-tail
+goodhart problem, or evidence from a different candidate source.
 
 Owner-readiness/status: topic seed, ready for a topic owner. The durable 100k
 promising-scalars packet is complete enough to use as the current boundary
 evidence. A topic-owner review on 2026-07-04 recommended "sharpen first" for
 the two-feature rescue idea rather than launching a mixed design/execution
-packet immediately.
+packet immediately. P4 on 2026-07-08 made that the active closure decision for
+the current story: do not launch a rescue unless proposer wording becomes
+important enough to justify a frozen independent validation plan.
 
 Current implementation boundary: the existing
 `extreme-scalar-rejection-proposer` runner supports scalar-rule unions over
@@ -57,6 +61,7 @@ Evidence sources:
 - `../../methods/extreme-scalar-rejection-proposer/artifacts/100k-promising-scalars/README.md`
 - `../../methods/extreme-scalar-rejection-proposer/artifacts/100k-promising-scalars/selection-summary.tsv`
 - `../../methods/extreme-scalar-rejection-proposer/configs/100k-promising-scalars-durable.json`
+- `../p4-generated-candidate-closure-2026-07-08.md`
 - `../../prepare/feature_cost.rs`, infrastructure for measuring feature cost
 
 Candidate hypotheses:
