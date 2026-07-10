@@ -92,12 +92,15 @@ claim, not schema repair.
 | multi-fidelity optimization | `reject` | No cheaper faithful proxy for `sys` is established. |
 | distribution-variant sensitivity rows | `defer` | `distribution-sensitivity/` and `random-axis-diagnostic/` need multiple prepared random/product variants; the active retained table has only the current producer contract. |
 
-## Current Gaps Before Closure
+## Exploration Boundaries
 
 1. Do not claim closure over arbitrary random distributions unless a new
    distribution-design batch is run and reviewed.
 2. Do not claim a generated-candidate proposer until an unevaluated-row ranking
    experiment is designed and run.
-3. Decide whether P2 is enough for the intended broad retained-table
-   standard-method wording; it does not close broader distributions.
-4. Decide thesis wording separately from method-packet readiness.
+3. P2 closes the previously missing executor for the named retained-table
+   standard repertoire. Reopen method execution only when a stronger exact
+   claim makes a deferred family relevant; this does not close broader
+   distributions or every possible method.
+4. Decide the thesis claim separately from method-packet readiness, using
+   `../coordination/exploration-handoff.md`.

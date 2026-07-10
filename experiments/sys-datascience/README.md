@@ -44,10 +44,10 @@ Current retained producer contract:
 
 This is a finite sample from these distributions, not a universal random-model
 claim. Broader height intervals, independent seeds, other facet-count ranges,
-or new distributions are separate producer changes. The only currently prepared
-producer extension is the smoke-first high-complexity generic/product bucket
-packet under `coordination/high-complexity-producer-compute-packet-2026-07-08.md`;
-it is not evidence until executed and reviewed.
+or new distributions are separate producer changes. No producer extension is
+currently selected for execution. The exploration phase must tie any proposed
+extension to an exact claim, cost, review gate, and stopping rule before compute
+begins.
 
 ## Retained Tables
 
@@ -88,19 +88,15 @@ uv run --script experiments/sys-datascience/fingerprint-dataset.py \
 
 Read first:
 
-- `agent-memory-and-expansion-plan.md` for the agent-facing interpretation of
-  why the current retained wave is a fallback rather than full data-science
-  closure, and how to plan broader method/distribution/proposer work.
-- `coordination/autonomous-parent-loop.md` for launching or reviewing an
-  autonomous parent loop over the full sys-datascience slice.
+- `coordination/exploration-handoff.md` for the normalized active state, exact
+  exploration inputs, and stopping conditions.
 - `produce/README.md`
 - `prepare/README.md`
 - `feature-space-coverage-ledger.md`
 - `methods/README.md`
 - `methods/trusted-random-product-closure-summary.md`
 - `methods/trusted-random-product-method-dispositions.md`
-- `coordination/README.md` for active cross-session research coordination,
-  workflow roles, topic maps, and spawn/rescope/stop state
+- `coordination/README.md` for the coordination ownership boundary
 - relevant `methods/<method>/README.md`
 
 Current closure status: active packets have been rerun under the invariant
@@ -109,11 +105,9 @@ method summaries are tracked under `methods/<method>/artifacts/` when a README
 cites current numbers. Keep durable packet conclusions in
 `methods/<method>/README.md`, not only in `/tmp`.
 
-Current coordination status: the bounded retained-table source map, P4
-generated-candidate closure note, and high-complexity producer compute packet
-exist under `coordination/`. The bounded retained story is a fallback, not
-automatic full-slice closure. The compute packet is a prepared LICCA handoff,
-not a completed run.
+Current coordination status: Phase 0 normalization is complete. The bounded
+retained story is a fallback, not automatic full-slice closure. No broader
+producer run is selected; use the exploration handoff before further research.
 
 Escalate before unrelated cleanup if a method records a trusted `sys > 1` row
 or a credible candidate-proposer.

@@ -125,9 +125,11 @@ Recovered into this branch:
   especially shortened Sage excerpts versus the external full verifier.
 - Corrected data-science LICCA smoke plan from `0a389f58`.
 - The formerly dirty `datascience-agent-memory` state, checkpointed as
-  `bb0e538e`: 35 files mixing reviewed P2 evidence, exploration, proposed
-  compute, workflow evaluation, and stale coordination. Status: recovered;
-  file-level normalization still required.
+  `bb0e538e`, was normalized at file level. The reviewed P2 packet and canonical
+  method dispositions remain. Superseded wave syntheses, proposed compute,
+  workflow evaluation, prompt/orchestration material, and stale registries were
+  removed after their current source-backed boundaries were consolidated into
+  `experiments/sys-datascience/coordination/exploration-handoff.md`.
 - Data-science chapter and appendix drafts from `black-box-ds-review`; stale
   conflicting claim-control edits were not imported. Status: recovered prose
   source predating P2, not merge-ready thesis text.
@@ -135,9 +137,14 @@ Recovered into this branch:
   explicit 2026-07-10 instruction.
 
 The P2 packet at
-`experiments/sys-datascience/methods/standard-baseline-p2/` reproduced without
-artifact diffs on 2026-07-10 from the recorded `/tmp` inputs whose hashes match
-its README. Its scratch-only input location remains a durability defect.
+`experiments/sys-datascience/methods/standard-baseline-p2/` has a durable input
+contract: its current-schema prepared table is deterministically rebuilt from
+the named tracked Git LFS producer objects and checked against recorded table
+hashes. A duplicate prepared table is not retained solely for P2. Status:
+reviewed retained-table evidence; no generated-candidate or broader-distribution
+claim. On 2026-07-10 a fresh full rebuild reproduced both table hashes, and the
+P2 summary plus four TSV artifacts reproduced byte-for-byte; the command record
+matched after removing the verification-only output-directory argument.
 
 Recovery is now bounded to the known ownerless HKO and data-science surfaces.
 Do not mine `thesis-gpt55-*`, PaperOrchestra, old HKO writing-test/workflow
@@ -158,7 +165,7 @@ evidence, not a preferred fix.
 | Flow graph/CH2021 | substantial conditional draft | `thesis/05-*`, companion, flow-graph crate/experiment/formal sources | final theorem/algorithm role and honest support wording |
 | First-order perturbations | scaffold | `thesis/first-order-perturbations-content.md`, `formal/sys-first-order-local-behavior.md` | supported general method and arbitrary-polytope boundary |
 | HKO local maximum | internally reviewed candidate | HKO sources in recovery checkpoint | integrated PDF and Jörn/Kai theorem/framing review |
-| Data-science search | recovered mixed state plus draft | `experiments/sys-datascience/README.md`, methods/coordination sources | normalization, research closure, demonstration, source-backed rewrite |
+| Data-science search | Phase 0 normalized; exploration not started | `experiments/sys-datascience/coordination/exploration-handoff.md`, method packets and producer contracts | research closure, demonstration, source-backed rewrite |
 | Rotated regular polygons | substantial theorem/certificate draft | `experiments/regular-products/`, `thesis/09-*` | finite-enumeration gate, proof framing, empirical asset polish |
 | 3D visualization | heading only | `experiments/visualization/`, thesis companion | concise exploratory exposition and selected assets |
 | Numerics | heading only | numerics companion, audit/verification sources | truthful minimal exact/f64/indeterminate/Sage story |
@@ -200,10 +207,9 @@ QP, flow-graph, HKO, rotated-polygon, or first-order chapters.
 
 ## Dependency And Ownership Shape
 
-1. Normalize recovered data-science state only far enough that every recovered
-   file needed by a current claim is classified and reproducible. Delete or
-   demote obsolete process material; do not require a disposition for irrelevant
-   archaeology.
+1. Data-science Phase 0 normalization is complete. Start fresh exploration from
+   `experiments/sys-datascience/coordination/exploration-handoff.md`; do not
+   revive recovered coordination as execution state.
 2. Review HKO as an integrated candidate. Reopen proof development only on a
    concrete mathematical/source finding.
 3. Use separate durable handoffs for data-science recovery/freeze,
@@ -245,12 +251,12 @@ Use `agent-checkable`, `Jörn`, `Kai`, `external`, or `settled`.
 | C4 | Jörn | Should data science remain framed as a main result? | compare final supported claim with thesis architecture | title and thesis emphasis |
 | C5 | agent-checkable, then Jörn math | What arbitrary-polytope first-order statement is supported beyond generic smooth branches? | formal/source audit with explicit theorem and fallback wording | first-order and HKO/search bridges |
 | C6 | agent-checkable, then Jörn scope | What final role/support strength should flow graph/CH2021 have? | theorem/code/evidence audit with concrete chapter alternatives | flow-graph chapter and conclusion |
-| C7 | agent-checkable | Can P2 reproduce from a durable current-schema input rather than `/tmp`? | regenerate/promote the exact input and verify hashes/artifact diff | P2 evidence promotion |
+| C7 | settled | P2 current-schema input is source-reproducible from named tracked producer objects; no surviving `/tmp` input is required. | reopen only if producer objects, prepare schema, or artifacts change | P2 evidence promotion |
 | C8 | Jörn | What AI-use disclosure length and emphasis is desired? | short source-backed alternatives | AI section and abstract |
 | C9 | Jörn | Has Kai received a full PDF, and what review state is current? | Jörn/mail state when scheduling M1/M2 | external review sequencing, not a deadline assumption |
 | C10 | Jörn | What final archive target and artifact set should be used? | prepared options near finalization | code/data section and release |
 | C11 | agent external check + Jörn state | What are the current official submission requirements, and has the registration note been handed to the Prüfungsamt? | refresh official sources; ask only the private completed-action state | M2/M3 hand-in checklist |
-| C12 | agent-checkable | Which recovered data-science workflow/coordination files are needed for the next bounded phase? | fresh use test against the exact phase; delete/demote the rest | prevent recovered process bulk from driving work |
+| C12 | settled | Only the consolidated exploration handoff is active coordination; packet evidence and producer/prepare contracts stay with their owners. | reopen only if a unique source-backed decision is shown missing from the handoff or owner | prevent recovered process bulk from driving work |
 | C13 | settled | Cite the literature while retaining the detailed Clarke/simple-minimizer proofs and explanations already developed; Jörn is satisfied with them and Kai agreed to include the proofs already available. | Jörn decision, 2026-07-10 | do not replace the existing proof presentation with citation-only prose |
 
 Open research under C3, C5, or C6 stops when the alternatives' retained wording
