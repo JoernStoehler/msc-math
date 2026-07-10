@@ -71,10 +71,11 @@ after a newer explicit Jörn scope decision. In particular:
 
 HKO's required trust shape comes from `FACTSHEET.md` items 20--25: Rust may
 generate a witness, SageMath must verify it in a standard human-readable way,
-LaTeX must justify the verifier algorithm and show that the certificate implies
-the theorem, and the final framing must be acceptable to Jörn/Kai. The target
-is the exact local statement in the HKO sources, not raw ambient strict local
-maximality.
+and LaTeX must justify the verifier algorithm and show that the certificate
+implies the theorem. The target is the exact local statement in the HKO
+sources, not raw ambient strict local maximality. Jörn's prior route/framing
+discussions are sufficient for integration; ordinary final-PDF advisor review
+may still produce revisions.
 
 The long-horizon reproduction target comes from `FACTSHEET.md` items 35--38.4:
 source-to-data-to-figure-to-PDF instructions; byte-identical expectations or an
@@ -252,7 +253,7 @@ Use `agent-checkable`, `Jörn`, `Kai`, `external`, or `settled`.
 
 | ID | Status | Crux or uncertainty | What resolves it | Downstream effect |
 | --- | --- | --- | --- | --- |
-| C1 | Jörn/Kai | Accept HKO theorem wording, equality-orbit phrasing, local chart bridge, and computation-as-proof framing. | integrated PDF review against the named exact/formal sources | HKO, abstract, introduction, conclusion |
+| C1 | settled for integration | HKO theorem wording, equality-orbit phrasing, local chart bridge, and computation-as-proof framing have no known unresolved decision. | reopen only for concrete integrated-PDF feedback or a newly identified implication gap | HKO may be integrated; ordinary final review still applies |
 | C2 | Jörn/Kai | Is the Lagrangian-product finite-enumeration theorem sufficiently proved and cited? | focused source/math review | pentagon theorem and QP chapter |
 | C3 | settled | Existing evidence supports a controlled negative search benchmark and bucket-local low-ridge enrichment, but no route to `sys > 1`; no additional dataset or same-generator scale-up has a named thesis purpose. | reopen only for a concrete new hypothesis or thesis statement that existing artifacts cannot answer | proceed to demonstration without LICCA work |
 | C4 | Jörn | Should data science remain framed as a main result? | compare final supported claim with thesis architecture | title and thesis emphasis |
@@ -263,7 +264,7 @@ Use `agent-checkable`, `Jörn`, `Kai`, `external`, or `settled`.
 | C9 | Jörn | Has Kai received a full PDF, and what review state is current? | Jörn/mail state when scheduling M1/M2 | external review sequencing, not a deadline assumption |
 | C10 | Jörn | What final archive target and artifact set should be used? | prepared options near finalization | code/data section and release |
 | C11 | agent external check + Jörn state | What are the current official submission requirements, and has the registration note been handed to the Prüfungsamt? | refresh official sources; ask only the private completed-action state | M2/M3 hand-in checklist |
-| C12 | settled | The consolidated exploration handoff is the only active research-control surface; P1 decisions live in the canonical method-disposition ledger, the competing top-level ledger was removed, owner packets retain evidence, and `experiments/sys-datascience/LICCA.md` marks every retained cluster script dormant. | reopen only if a unique source-backed decision is shown missing from the handoff or owner | prevent recovered process bulk from driving work |
+| C12 | settled | The consolidated exploration result governs the current phase; earlier coordination and research-ledger material is preserved as reference rather than current execution authority, owner packets retain evidence, and `experiments/sys-datascience/LICCA.md` marks every retained cluster script dormant. | reopen research only for a concrete hypothesis or thesis statement that current artifacts cannot answer; audit recovery-only material separately | proceed to demonstration without letting old launch state drive work |
 | C13 | settled | Cite the literature while retaining the detailed Clarke/simple-minimizer proofs and explanations already developed; Jörn is satisfied with them and Kai agreed to include the proofs already available. | Jörn decision, 2026-07-10 | do not replace the existing proof presentation with citation-only prose |
 
 Open research under C5 or C6, or any future reopening of C3, stops when the alternatives' retained wording
