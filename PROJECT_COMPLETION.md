@@ -180,8 +180,11 @@ HK2017 convention audit. The free-period multiplier and reconstruction factors
 now follow by explicit rescaling of HK2017 Lemma 2.1; the simple-minimizer
 compactness and cyclic-merging steps are explicit. The thesis and formal builds
 passed, and a bounded independent mathematical review found no high-severity
-error after two citation/exposition findings were corrected. Status:
-internally reviewed candidate. C13 is settled: cite the literature for
+error after two citation/exposition findings were corrected. Status: requires
+a preservation audit because the correction replaced one local nonsmooth
+multiplier derivation with the exact cited HK2017 equation; mathematical
+cleanup must not remove proof/explanation Jörn intended to retain. C13 is
+settled: cite the literature for
 attribution and analytic inputs while retaining the detailed proofs and
 explanations already developed, accepted by Jörn, and agreed with Kai for
 inclusion. Do not compress the existing proof presentation into citations.
