@@ -177,17 +177,24 @@ The consolidated integration PDF built cleanly at 58 pages on 2026-07-10 with
 The Clarke/simple-minimizer foundation packet was source-audited on 2026-07-10
 against HK2017, AAO2014, the active symplectic conventions, and the local
 HK2017 convention audit. The free-period multiplier and reconstruction factors
-now follow by explicit rescaling of HK2017 Lemma 2.1; the simple-minimizer
-compactness and cyclic-merging steps are explicit. The thesis and formal builds
-passed, and a bounded independent mathematical review found no high-severity
-error after two citation/exposition findings were corrected. Status: requires
-a preservation audit because the correction replaced one local nonsmooth
-multiplier derivation with the exact cited HK2017 equation; mathematical
-cleanup must not remove proof/explanation Jörn intended to retain. C13 is
-settled: cite the literature for
-attribution and analytic inputs while retaining the detailed proofs and
-explanations already developed, accepted by Jörn, and agreed with Kai for
-inclusion. Do not compress the existing proof presentation into citations.
+are checked both by explicit rescaling of HK2017 Lemma 2.1 and by the detailed
+free-period multiplier derivation retained in the thesis; the latter follows
+the proof of AAO2014 Lemma 5.2 while deriving the thesis normalization locally.
+The simple-minimizer compactness and cyclic-merging steps are explicit. The
+thesis and formal builds passed, and a bounded independent mathematical review
+found no high-severity error after two citation/exposition findings were
+corrected. The subsequent preservation audit compared the pre-audit active
+text, the Jörn-approved legacy proof, the active companions, HK2017, and the
+AAO2014 proof. It restored the lost step-by-step multiplier calculation without
+presenting the nonsmooth multiplier rule itself as locally proved. C13 is
+settled: cite the literature for attribution and analytic inputs while
+retaining the detailed proofs and explanations already developed, accepted by
+Jörn, and agreed with Kai for inclusion. Do not compress the existing proof
+presentation into citations. Status: internally reviewed candidate; only the
+ordinary integrated reader review remains. A fresh independent mathematical
+review of the preservation repair found no error in the constraint
+qualification, signs, homogeneity factors, or multiplier normalization; its
+one optional source-precision observation was incorporated.
 This packet does not change the simple-minimizer theorem strength used by the
 QP, flow-graph, HKO, rotated-polygon, or first-order chapters.
 

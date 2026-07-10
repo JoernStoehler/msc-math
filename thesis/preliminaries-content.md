@@ -113,16 +113,21 @@ Update rule: add or change a claim only with a source pointer or an explicit
 - 2026-06-20 draft review: one math-risk subagent flagged the missing
   minimizer-is-critical step and the Euler--Lagrange equivalence wording.
   The active draft now avoids the unsupported "critical point iff" formulation
-  and cites the AAO/HK source trail explicitly. The remaining review boundary
-  is whether the only external analytic input has been narrowed enough:
-  existence of a dual minimizer plus Clarke's nonsmooth multiplier rule.
+  and cites the AAO/HK source trail explicitly.
+- Jörn settled the proof-detail boundary on 2026-07-10: cite the literature and
+  retain the detailed proofs and explanations already developed and agreed
+  with Kai. The preservation audit therefore keeps only the general nonsmooth
+  analytic input external---existence and the multiplier/Euler--Lagrange rule,
+  as used in the proof of AAO2014 Lemma 5.2---while deriving the free-period,
+  uncentered multiplier equation and its coefficient step by step in the active
+  thesis. The short HK2017 rescaling remains as an independent convention
+  check, not as a replacement for that derivation.
 - The PDF review built from commit `69fdbd29` was abandoned after little review
   happened. The next review target should be a polished branch-head PDF for the
   combined Clarke/simple-Reeb surface, not the old baseline.
-- Review boundary for branch-head PDF: whether the remaining cited analytic
-  input is acceptable at this level of detail, and whether the free-period,
-  uncentered derivation of weak criticality and the \(I_K=T=A\) normalization
-  are correct.
+- Remaining review boundary for the branch-head PDF: ordinary integrated
+  reader review of the free-period, uncentered derivation and the
+  \(I_K=T=A\) normalization. The citation-versus-proof policy itself is settled.
 - Legacy/PDF comparison on 2026-06-20 checked
   `thesis/legacy/basic-definitions.tex`, the old `/tmp/pdf-source-a872` thesis
   packet, and `/tmp/thesis_stoehler_20260216.pdf` against active preliminaries.

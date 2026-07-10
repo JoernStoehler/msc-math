@@ -122,24 +122,64 @@ Definition~\ref{def:preliminaries-weak-dual-critical}.
 \end{lemma}
 
 \begin{proof}
-Let \(z\) be a minimizer of the free-period dual problem, and rescale it to the
-fixed-\([0,1]\) curve \(w\) above. This \(w\) is a fixed-period minimizer:
-every fixed-period competitor maps by the converse rescaling to a free-period
-competitor, and the two objective values differ by the constant factor \(2\).
-The fixed-period Clarke theorem therefore gives the nonsmooth Euler--Lagrange
-inclusion for \(w\). In Haim--Kislev's notation this is
+Let \(z\) be a minimizer of the free-period dual problem, with period \(T\).
+In particular, \(z\) minimizes \(I_K\) among the closed curves of this fixed
+period satisfying \(A(z)=T\). On the space of periodic \(W^{1,2}\)-curves the
+action constraint is regular at \(z\): its derivative in the radial direction
+is
 \[
-  8I_K(w)w+a\in\partial h_K^2(-J_0\dot w)
+  DA(z)[z]=2A(z)=2T\neq0.
 \]
-for a constant \(a\in\mathbb{R}^4\). Since
-\(w(s)=z(Ts)/\sqrt{2T}\), the \(2\)-homogeneity of \(h_K^2\) gives
+Clarke's nonsmooth Lagrange multiplier rule and Euler--Lagrange inclusion,
+in the form used in the proof of
+\cite[Lemma~5.2]{AAO2014}, therefore apply with a scalar multiplier
+\(\alpha\). Regularity of the constraint lets us normalize the coefficient of
+the objective to one.
+Absorbing the harmless factor \(1/2\) from the definition of \(A\) into
+\(\alpha\), consider the integrand
 \[
-  \frac{I_K(z)}{T}z(t)+\sqrt{\frac{2}{T}}\,\frac a4
-  \in
-  \partial\bigl(\tfrac14h_K^2\bigr)(-J_0\dot z(t)).
+  L(z,\dot z)
+  =\frac14h_K^2(-J_0\dot z)
+   +\alpha\langle-J_0\dot z,z\rangle.
 \]
-Thus \(z\) is weak dual critical with \(\nu=I_K(z)/T\). The equivalent
-formulation follows from Lemma~\ref{lem:preliminaries-fenchel-duality}.
+The cited nonsmooth argument yields a measurable selection
+\[
+  p(t)\in
+  \partial\bigl(\tfrac14h_K^2\bigr)(-J_0\dot z(t))
+\]
+for which the weak Euler--Lagrange identity is, in distributional form,
+\[
+  \frac{d}{dt}\bigl(J_0p(t)+\alpha J_0z(t)\bigr)
+  =-\alpha J_0\dot z(t)
+  \quad\text{for a.e. }t.
+\]
+The quadratic growth of \(h_K^2\) gives \(p\in L^2\). The right-hand side also
+lies in \(L^2\), so the expression in parentheses, and hence \(p\), has an
+absolutely continuous representative.
+Here we used \((-J_0)^\mathsf{T}=J_0\) in the subdifferential chain rule.
+Since \(J_0\) is invertible, the last display is equivalent to
+\[
+  \dot p(t)=-2\alpha\dot z(t).
+\]
+Integration gives \(p(t)=b-2\alpha z(t)\) for a constant
+\(b\in\mathbb{R}^4\). Thus \eqref{eq:preliminaries-dual-euler-lagrange}
+holds with \(\nu=-2\alpha\).
+
+The value of this multiplier is fixed by the normalization rather than left
+implicit. The function \(\frac14h_K^2\) is convex and \(2\)-homogeneous, so
+every
+\(p\in\partial(\frac14h_K^2)(y)\) satisfies
+\(\langle p,y\rangle=\frac12h_K^2(y)\). Pairing the inclusion with
+\(-J_0\dot z\), integrating, and using that \(z\) is closed gives
+\[
+  2I_K(z)
+  =\int_0^T\langle\nu z(t)+b,-J_0\dot z(t)\rangle\,dt
+  =2\nu A(z)
+  =2\nu T.
+\]
+Consequently \(\nu=I_K(z)/T\), in agreement with the explicit rescaling of
+Haim--Kislev's fixed-period equation above. The equivalent formulation follows
+from Lemma~\ref{lem:preliminaries-fenchel-duality}.
 \end{proof}
 
 \begin{lemma}[Scaling and translation]\label{lem:preliminaries-dual-symmetry}
