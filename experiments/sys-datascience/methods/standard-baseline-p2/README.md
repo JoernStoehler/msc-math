@@ -41,20 +41,32 @@ Feature-family ablations fit the same gradient boosting models on:
 
 ## Command
 
-Current-schema table rebuild used for the recorded run:
+Build the current-schema input from the tracked canonical producer artifacts.
+The prepared output may be scratch because it is a deterministic derived table:
 
 ```bash
-rm -rf /tmp/sys-ds-p2-current-full
+TABLES_DIR="$(mktemp -d /tmp/sys-ds-p2-current-full.XXXXXX)"
 experiments/sys-datascience/prepare/build-random-only-slice.sh full \
-  /tmp/sys-ds-p2-current-full
+  "$TABLES_DIR"
 ```
 
-Recorded analysis command:
+The recorded input is source-reproducible from these Git LFS producer objects:
+
+- `../../produce/random.jsonl`: sha256
+  `a21ac62ba5c9496ef631d3cce74e8b663764516b76e9d4725f1e517d8dd55f9f`;
+- `../../produce/random-product.jsonl`: sha256
+  `66bf82010e92e0f26b0df226f4e6c0eef05d21eb22a0967c7f669530f6545736`.
+
+The derived tables must have the hashes recorded under **Current Status**
+below. This contract avoids tracking a second copy of the 14,336-row prepared
+table solely for P2 while removing any dependency on a surviving `/tmp` path.
+
+Analysis command:
 
 ```bash
 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 \
   uv run --script experiments/sys-datascience/methods/standard-baseline-p2/analyze.py \
-  --tables-dir /tmp/sys-ds-p2-current-full
+  --tables-dir "$TABLES_DIR"
 ```
 
 The default `prepare/` LFS table in this worktree has hash
@@ -76,52 +88,27 @@ without `--tables-dir`.
 
 ## Current Status
 
-P2 has a current-schema full retained-table run.
+P2 has a reviewed current-schema full retained-table run. A fresh rebuild from
+the tracked producer objects was checked during Phase 0 normalization.
 
 Prepared table:
 
-- path: `/tmp/sys-ds-p2-current-full`;
 - `polytope-table.jsonl`: 14,336 rows, sha256
   `49825d7636246f71f4ebd419cf0ccbc86e39e6b7f43d4b03e889bb85e4887aea`;
 - `polytope-provenance-table.jsonl`: 14,336 rows, sha256
   `6ff88a5accce9a7ec7e5a494107350b0974b2ce0268ea44caae36a18a7494ef2`;
 - feature count: 45 active invariant numeric features, split as 27
   combinatorial-count features and 18 ridge symplectic-area features;
+- grouping: `capacity_source:facet_count`;
 - maximum observed `sys`: `0.86258589584944`;
 - rows with `sys > 1`: 0.
 
-Grouped holdout:
-
-- grouping: `capacity_source:facet_count`;
-- train/test rows: 8,704 / 5,632;
-- train-derived top-10% high-tail cutoff: `0.5697652833472453`.
-
-Main retained-table results:
-
-- lasso regression: `R^2 = 0.6110233222992789`, MAE
-  `0.10476866676771376`;
-- elastic-net regression: `R^2 = 0.620742184420513`, MAE
-  `0.10287766814738514`;
-- histogram gradient boosting regression: `R^2 = 0.8784238138483205`, MAE
-  `0.05203365520874717`;
-- elastic-net logistic high-tail classifier: ROC-AUC
-  `0.8737068187147978`, average precision `0.55296791481307`;
-- histogram gradient boosting high-tail classifier: ROC-AUC
-  `0.9359727673037687`, average precision `0.7034314626146508`.
-
-Feature-family ablation says the held-out signal is almost entirely in the
-ridge symplectic-area feature family under this split:
-
-- ridge-only gradient boosting regression: `R^2 = 0.8872276246501958`;
-- combinatorial-only gradient boosting regression: `R^2 =
-  0.04314696727456602`;
-- ridge-only high-tail classifier average precision:
-  `0.7054296104152254`;
-- combinatorial-only high-tail classifier average precision:
-  `0.19185015669933783`.
-
-Use generated artifacts for detailed metrics and coefficient rows; this README
-records only run provenance and interpretation boundaries.
+Use the generated artifacts for train/test counts, cutoffs, model metrics,
+feature-family ablations, and coefficient rows. The reviewed interpretation is
+only that P2 closes the named missing retained-table standard baselines without
+producing a positive row or a validated generated-candidate proposer. Ridge
+symplectic-area features carry most of the held-out association under this
+split, but that is diagnostic and does not establish a geometric mechanism.
 
 ## Interpretation Rules
 

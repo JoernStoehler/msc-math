@@ -21,9 +21,10 @@ symplectic-area features, but it remains in-table evidence.
 - Artifacts: `artifacts/summary.json`, `regression-metrics.tsv`,
   `high-tail-classification-metrics.tsv`, `feature-family-ablation.tsv`,
   `linear-top-coefficients.tsv`, `command.txt`.
-- Input table: `/tmp/sys-ds-p2-current-full`, built from retained producer
-  files because the in-place prepared LFS table is stale relative to the active
-  invariant schema.
+- Input table: deterministic current-schema rebuild from the tracked retained
+  producer objects under the contract in `README.md`. The recorded run used a
+  scratch output path because the in-place prepared LFS table is stale; no
+  surviving scratch state is required.
 - Input hashes:
   - `polytope-table.jsonl`:
     `49825d7636246f71f4ebd419cf0ccbc86e39e6b7f43d4b03e889bb85e4887aea`;
@@ -31,6 +32,11 @@ symplectic-area features, but it remains in-table evidence.
     `6ff88a5accce9a7ec7e5a494107350b0974b2ce0268ea44caae36a18a7494ef2`.
 - Re-run completed cleanly after fixing the scikit-learn 1.9 logistic API and
   convergence warning.
+- Phase 0 normalization check, 2026-07-10: a fresh full prepared-table rebuild
+  from the two named tracked producer objects reproduced both input hashes.
+  Rerunning P2 reproduced `summary.json` and all four TSV artifacts
+  byte-for-byte. `command.txt` also matched after removing the
+  verification-only `--out-dir` argument.
 
 ## Claim Boundary
 
