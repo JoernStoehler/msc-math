@@ -56,9 +56,9 @@ These decisions survived normalization and constrain C3:
 - **Producer coverage:** evidence covers only the current retained producer
   contract in `../produce/README.md`. The recovered high-complexity proposal
   was never run and is not evidence. Its 51-row two-face-control smoke plan
-  remains under `../produce/plans/` as reusable plumbing validation if a fresh
-  exploration decision selects those axes; the smoke itself cannot answer a
-  research question.
+  remains under `../produce/plans/` as a dormant reusable plumbing design. It
+  becomes actionable only if a fresh exploration decision selects those axes;
+  the smoke itself cannot answer a research question.
 
 ## Exact Inputs For Exploration
 
@@ -71,8 +71,9 @@ Read these sources in order:
 4. `../methods/standard-baseline-p2/README.md`, its artifacts, and `review.md`;
 5. `../methods/README.md` and only the owning packet READMEs/artifacts needed to
    check a proposed claim or open method family;
-6. `../produce/README.md`, `../prepare/README.md`, and current plan files under
-   `../produce/plans/` when assessing a new producer or data axis.
+6. `../produce/README.md`, `../prepare/README.md`, and the dormant-plan status
+   under `../produce/plans/README.md` when assessing a new producer or data
+   axis. Do not treat a saved plan as a selected action.
 
 Do not treat old coordination files, worktrees, `/tmp`, or the recovered thesis
 draft as current state.

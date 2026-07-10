@@ -123,7 +123,8 @@ Recovered into this branch:
   sentence to say that no increase was found above numerical resolution. The
   remaining C1 gate is stakeholder acceptance of the theorem/framing,
   especially shortened Sage excerpts versus the external full verifier.
-- Corrected data-science LICCA smoke plan from `0a389f58`.
+- Corrected data-science LICCA smoke design from `0a389f58`, retained only as a
+  dormant reusable plan conditional on a fresh C3 decision.
 - The formerly dirty `datascience-agent-memory` state, checkpointed as
   `bb0e538e`, was normalized at file level. The reviewed P2 packet and canonical
   method dispositions remain. Superseded wave syntheses, proposed compute,
@@ -256,7 +257,7 @@ Use `agent-checkable`, `Jörn`, `Kai`, `external`, or `settled`.
 | C9 | Jörn | Has Kai received a full PDF, and what review state is current? | Jörn/mail state when scheduling M1/M2 | external review sequencing, not a deadline assumption |
 | C10 | Jörn | What final archive target and artifact set should be used? | prepared options near finalization | code/data section and release |
 | C11 | agent external check + Jörn state | What are the current official submission requirements, and has the registration note been handed to the Prüfungsamt? | refresh official sources; ask only the private completed-action state | M2/M3 hand-in checklist |
-| C12 | settled | Only the consolidated exploration handoff is active coordination; packet evidence and producer/prepare contracts stay with their owners. | reopen only if a unique source-backed decision is shown missing from the handoff or owner | prevent recovered process bulk from driving work |
+| C12 | settled | Only the consolidated exploration handoff is active coordination; the P1 family-by-family decisions live in the canonical method-disposition ledger, and packet evidence plus producer/prepare contracts stay with their owners. | reopen only if a unique source-backed decision is shown missing from the handoff or owner | prevent recovered process bulk from driving work |
 | C13 | settled | Cite the literature while retaining the detailed Clarke/simple-minimizer proofs and explanations already developed; Jörn is satisfied with them and Kai agreed to include the proofs already available. | Jörn decision, 2026-07-10 | do not replace the existing proof presentation with citation-only prose |
 
 Open research under C3, C5, or C6 stops when the alternatives' retained wording

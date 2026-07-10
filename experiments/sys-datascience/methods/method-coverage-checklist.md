@@ -12,6 +12,11 @@ a method packet `README.md` with the method-specific question, inputs, leakage
 guards, observations, caveats, current disposition, thesis use, and reopen
 trigger.
 
+Current family-by-family dispositions, including explicit reasons for feasible
+methods that were not executed, live in
+`trusted-random-product-method-dispositions.md`. The `open` labels below are
+recall prompts, not unresolved-work claims.
+
 Disposition words below are planning hints only:
 
 - `open`: not currently closed on the retained tables.

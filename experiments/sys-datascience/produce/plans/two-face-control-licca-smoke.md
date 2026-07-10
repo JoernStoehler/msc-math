@@ -1,7 +1,9 @@
 # Two-Face Control LICCA Smoke Plan
 
-Use: LICCA smoke plan for the high-complexity two-face-control producer packet.
-This plan tests producer plumbing, not research-scale evidence.
+Status: dormant reusable LICCA smoke design. It is not selected for execution.
+A fresh C3 exploration decision must first select the associated producer axes
+and justify a current compute/review packet. If reactivated, this plan tests
+producer plumbing, not research-scale evidence.
 
 Plan file:
 
@@ -11,18 +13,20 @@ experiments/sys-datascience/produce/plans/two-face-control-licca-smoke.json
 
 ## Objective
 
-Choose the smallest useful smoke plan for:
+Conditional objective if C3 reactivates the proposal: test the smallest useful
+smoke plan for:
 
 - Slurm submission and environment export;
 - `--plan-file` parsing;
 - both producer families;
-- every intended high-complexity bucket;
+- every bucket in the dormant high-complexity replication proposal;
 - multiple sample indices per bucket;
 - nonuniform bucket counts so bucket/source mixups are detectable;
 - producer output, validation, prepare, and fingerprint.
 
 The objective is not to estimate high-tail behavior or produce thesis evidence.
-Production does that after smoke passes.
+Passing this smoke would not authorize production; a separate current
+production decision and review gate would still be required.
 
 ## Chosen Counts
 
@@ -45,7 +49,7 @@ total: 51 rows
 
 Under these smoke-design constraints:
 
-1. every active production bucket appears;
+1. every bucket in the dormant replication proposal appears;
 2. every bucket count is distinct;
 3. every bucket count is at least `3`;
 4. no bucket count is a power of two;
@@ -76,8 +80,8 @@ while preserving the exact high-complexity bucket set.
 
 ## Required Validation
 
-This plan only works as a diagnostic smoke if validation checks the exact
-bucket vector. Family totals alone are insufficient.
+If reactivated, this plan works as a diagnostic smoke only when validation
+checks the exact bucket vector. Family totals alone are insufficient.
 
 Use:
 

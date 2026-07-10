@@ -75,7 +75,13 @@ deterministically from that tuple and the sample index. Older plan files with
 separate `random` and `random_product` count arrays are still accepted; missing
 height fields default to `[0.8, 1.2]`.
 
-The current high-complexity LICCA diagnostic smoke is:
+The high-complexity two-face-control files are dormant reusable plans, not a
+current execution packet. They may be used only after a fresh C3 exploration
+decision selects the named generic/product bucket extension, supplies a current
+cost and review gate, and prepares a separate LICCA handoff. Plan status is
+summarized in `plans/README.md`.
+
+The dormant diagnostic smoke plan is:
 
 ```text
 plans/two-face-control-licca-smoke.json
@@ -87,9 +93,9 @@ Its companion rationale is:
 plans/two-face-control-licca-smoke.md
 ```
 
-It uses distinct non-power-of-two per-bucket counts so source/bucket/count
-mixups are visible. Validate it with `--expected-plan-file`, not only family
-totals:
+If C3 reactivates this proposal, its distinct non-power-of-two per-bucket counts
+make source/bucket/count mixups visible. Validation must then use
+`--expected-plan-file`, not only family totals:
 
 ```bash
 python3 experiments/sys-datascience/produce/validate-datascience-produced.py \
@@ -145,7 +151,8 @@ export CARGO_TARGET_DIR=/hpc/gpfs2/scratch/u/stoehljo/cargo-target
 cargo build --release -p exp-sys-landscape --bin sys-datascience-produce
 ```
 
-The intended execution flow is:
+No LICCA job is currently selected. After a fresh C3 decision and a reviewed
+job-specific handoff, the generic producer lifecycle is:
 
 ```text
 build producer binary
