@@ -4,7 +4,6 @@
 
 Master thesis by Jörn Stöhler, University of Augsburg.
 Advisor: Kai Cieliebak. Second advisor: Elizabeth Gaar.
-Deadline: finished PDF to Kai by 16.6.2026.
 Topic: Probing Viterbo's Conjecture.
 
 Planned deliverables:

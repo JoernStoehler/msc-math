@@ -20,7 +20,9 @@ maintenance low. The numbers are stable and can be out of order.
 
 ## Thesis Submission
 
-1. 9.6.2026 is a good deadline for sending the finished PDF to Kai.
+1. The previous June 2026 dates for sending the finished PDF to Kai are stale
+   and are not active planning constraints. Jörn confirmed this on 2026-07-10;
+   no replacement hard deadline is currently recorded here.
 
 2. Official submission facts need to be refreshed from current MNTF sources
    before relying on 2026-04-24 downloaded forms or old deadline text.
