@@ -14,7 +14,8 @@ The recovered `bb0e538e` files were normalized as follows.
 | Standard-method disposition updates and method routing | retained | `../methods/trusted-random-product-method-dispositions.md`, `../methods/README.md` |
 | P1/P3/P4/P5 and P2 coordination syntheses | consolidated here where they still constrain the next phase; deleted as superseded coordination | owning method packets and the disposition table |
 | Proposed high-complexity producer run | deleted as an unexecuted proposal, not evidence or a selected next action | current producer contracts and plan files under `../produce/` |
-| Recovery-only autonomous parent-loop instructions, workflow probes, and intermediate process notes | not promoted into the integration tree; retained at `bb0e538e` for later audit | current phase authority is this file |
+| Recovery-only autonomous parent-loop instructions and intermediate planning state | not promoted after file-level audit because their launch milestone is superseded | current phase authority is this file; see `recovery-audit-2026-07-10.md` |
+| GPT-5.5 parent-loop workflow probes | retained as a compact index to half-tested historical material, not current launch state or experiment evidence | `workflow-evaluations/2026-07-08-parent-loop-probes.md`, exact prototype at `bb0e538e` |
 | Coordination files already present on `main`, including prompt templates, process learnings, topic ledgers, research ledgers, and session boards | preserved without asserting that every launch recommendation remains current | this file governs the current phase; owning packets remain evidence source truth |
 | Bounded writeup draft | deleted; it was pre-thesis coordination prose and would duplicate artifact-derived claims | owning packet artifacts and READMEs |
 

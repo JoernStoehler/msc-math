@@ -135,9 +135,11 @@ Recovered into this branch:
   `bb0e538e`, was normalized at file level. The reviewed P2 packet and canonical
   method dispositions remain. Coordination material already present on `main`
   is preserved; `exploration-result.md` identifies the current phase authority
-  without declaring all earlier material valueless. Additional recovery-only
-  wave syntheses, proposed compute, autonomous-loop material, and workflow
-  probes remain at `bb0e538e` for a separate value and consolidation audit.
+  without declaring all earlier material valueless. The subsequent file-level
+  audit in `coordination/recovery-audit-2026-07-10.md` preserves the abandoned
+  workflow as half-tested GPT-5.5 material at `bb0e538e`, with a compact probe
+  index. It records why absorbed syntheses and superseded execution state remain
+  historical. Any GPT-5.6 workflow will be designed from scratch.
 - Data-science chapter and appendix drafts from `black-box-ds-review`; stale
   conflicting claim-control edits were not imported. Status: recovered prose
   source predating P2, not merge-ready thesis text.
@@ -264,7 +266,7 @@ Use `agent-checkable`, `Jörn`, `Kai`, `external`, or `settled`.
 | C9 | Jörn | Has Kai received a full PDF, and what review state is current? | Jörn/mail state when scheduling M1/M2 | external review sequencing, not a deadline assumption |
 | C10 | Jörn | What final archive target and artifact set should be used? | prepared options near finalization | code/data section and release |
 | C11 | agent external check + Jörn state | What are the current official submission requirements, and has the registration note been handed to the Prüfungsamt? | refresh official sources; ask only the private completed-action state | M2/M3 hand-in checklist |
-| C12 | settled | The consolidated exploration result governs the current phase; earlier coordination and research-ledger material is preserved as reference rather than current execution authority, owner packets retain evidence, and `experiments/sys-datascience/LICCA.md` marks every retained cluster script dormant. | reopen research only for a concrete hypothesis or thesis statement that current artifacts cannot answer; audit recovery-only material separately | proceed to demonstration without letting old launch state drive work |
+| C12 | settled | The consolidated exploration result governs the current phase; earlier coordination material is preserved as reference, the additional `bb0e538e` checkpoint has a completed file-level recovery audit, owner packets retain evidence, and every retained cluster script is dormant. | reopen research only for a concrete hypothesis or thesis statement that current artifacts cannot answer; consult historical recovery files only for a named missing role | proceed to demonstration without letting old launch state drive work |
 | C13 | settled | Cite the literature while retaining the detailed Clarke/simple-minimizer proofs and explanations already developed; Jörn is satisfied with them and Kai agreed to include the proofs already available. | Jörn decision, 2026-07-10 | do not replace the existing proof presentation with citation-only prose |
 
 Open research under C5 or C6, or any future reopening of C3, stops when the alternatives' retained wording
