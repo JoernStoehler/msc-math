@@ -16,6 +16,8 @@ Primary deliverables:
 
 ## Project Entry Points
 
+- `PROJECT_COMPLETION.md`: live project-completion objective, consolidated
+  recovery checkpoint, required surface, crux register, and completion gates.
 - `FACTSHEET.md`: Jörn-confirmed project facts and external/Jörn/Kai
   constraints.
 - `AGENTS.md`: Codex operating rules and detailed repo navigation.
