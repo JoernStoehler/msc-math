@@ -167,8 +167,8 @@ evidence, not a preferred fix.
 | Bibliography/assets | partially integrated | thesis bibliography and producing owners | every retained citation/table/figure/reference resolves |
 | Advisor/submission/archive | external state incomplete | `FACTSHEET.md`, `submit/`, current official sources, Jörn/mail state | Kai flow, registration, hand-in, accepted archive complete |
 
-The latest pre-integration PDF baseline checked on 2026-07-09 built cleanly at
-52 pages. Run and record a new integration build before relying on that fact.
+The consolidated integration PDF built cleanly at 58 pages on 2026-07-10 with
+`cd thesis && latexmk && ./check-build.sh`.
 
 ## Dependency And Ownership Shape
 
