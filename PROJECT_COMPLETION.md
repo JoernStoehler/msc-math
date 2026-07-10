@@ -181,9 +181,12 @@ now follow by explicit rescaling of HK2017 Lemma 2.1; the simple-minimizer
 compactness and cyclic-merging steps are explicit. The thesis and formal builds
 passed, and a bounded independent mathematical review found no high-severity
 error after two citation/exposition findings were corrected. Status:
-internally reviewed candidate, pending the exposition boundary in C13. This
-packet does not change the simple-minimizer theorem strength used by the QP,
-flow-graph, HKO, rotated-polygon, or first-order chapters.
+internally reviewed candidate. C13 is settled: cite the literature for
+attribution and analytic inputs while retaining the detailed proofs and
+explanations already developed, accepted by Jörn, and agreed with Kai for
+inclusion. Do not compress the existing proof presentation into citations.
+This packet does not change the simple-minimizer theorem strength used by the
+QP, flow-graph, HKO, rotated-polygon, or first-order chapters.
 
 ## Dependency And Ownership Shape
 
@@ -238,7 +241,7 @@ Use `agent-checkable`, `Jörn`, `Kai`, `external`, or `settled`.
 | C10 | Jörn | What final archive target and artifact set should be used? | prepared options near finalization | code/data section and release |
 | C11 | agent external check + Jörn state | What are the current official submission requirements, and has the registration note been handed to the Prüfungsamt? | refresh official sources; ask only the private completed-action state | M2/M3 hand-in checklist |
 | C12 | agent-checkable | Which recovered data-science workflow/coordination files are needed for the next bounded phase? | fresh use test against the exact phase; delete/demote the rest | prevent recovered process bulk from driving work |
-| C13 | Jörn | Is the Clarke/simple-minimizer proof-detail boundary acceptable: cite fixed-period attainment, minimizers being weak critical, and the weak-critical/characteristic correspondence, while proving the free-period rescaling, reconstruction, and simple-curve reduction in thesis notation? | review Theorems 2.10 and 3.3 and their proofs in PDF pages 12--21 | shared foundation for QP, flow graph, HKO, rotated polygons, and first-order exposition |
+| C13 | settled | Cite the literature while retaining the detailed Clarke/simple-minimizer proofs and explanations already developed; Jörn is satisfied with them and Kai agreed to include the proofs already available. | Jörn decision, 2026-07-10 | do not replace the existing proof presentation with citation-only prose |
 
 Open research under C3, C5, or C6 stops when the alternatives' retained wording
 and evidence are explicit, another iteration is unlikely to change the thesis
