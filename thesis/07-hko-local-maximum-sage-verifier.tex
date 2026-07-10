@@ -1,13 +1,15 @@
 \subsubsection*{How the Sage verifier represents the certificate}
 
-The hand proof has reduced the theorem to the finite predicate just listed.
+This subsection records the trust boundary for the computation used above. The
+hand proof has reduced the theorem to the finite predicate just listed.
 SageMath is used for that finite predicate because the checks are exact
-algebraic equalities, inequalities, ranks, and kernel computations. The script
-\path{verify.sage.py} is fail-closed: every proof-facing assertion goes through
-an explicit check, and a failed check raises an exception instead of producing
-a successful certificate summary. The excerpts below are shortened to show the
-proof-facing checks; the executable source file is the reference
-implementation.
+algebraic equalities, inequalities, ranks, and kernel computations. It does not
+prove the Hausdorff-local theorem by itself; it checks the finite row and
+quotient predicates that the hand proof uses. The script \path{verify.sage.py}
+is fail-closed: every proof-facing assertion goes through an explicit check,
+and a failed check raises an exception instead of producing a successful
+certificate summary. The excerpts below are shortened to show the proof-facing
+checks; the executable source file is the reference implementation.
 
 \begin{verbatim}
 def check(condition, message):
@@ -15,10 +17,10 @@ def check(condition, message):
         raise ValueError(f"verification failed: {message}")
 \end{verbatim}
 
-The verifier first reconstructs the ordered field and the HKO dual vertices
-from formulas, rather than trusting floating-point coordinates from the Rust
-generator. The field is \(Q(t)\), where \(t\) is the real root in \((0,1)\) of
-\(t^4-10t^2+5\), i.e. \(t=\tan(\pi/5)\).
+The verifier first constructs the ordered field and the HKO dual vertices from
+the exact formulas used in the hand proof, rather than trusting floating-point
+coordinates from the Rust generator. The field is \(Q(t)\), where \(t\) is the
+real root in \((0,1)\) of \(t^4-10t^2+5\), i.e. \(t=\tan(\pi/5)\).
 
 \begin{verbatim}
 def exact_hko_geometry():
@@ -43,11 +45,11 @@ The proof-relevant finite choices read from \path{witness.json} are the words
 kept fixed in the feasible section. The witness also contains floating-point
 hints. These hints guide the search for exact beta candidates and are recorded
 for diagnostics, but they do not decide whether a row is accepted. A row is
-accepted only after exact checks: closure plus normalization, strict beta
-positivity in the chosen real embedding, invertibility of the selected minor,
-equality with the HKO action, the differentiated feasible-section equation,
-the derivative formula for \(D\operatorname{sys}\), and annihilation of every
-symmetry tangent column.
+accepted only after exact checks against the formulas from the hand proof:
+closure plus normalization, strict beta positivity in the chosen real
+embedding, invertibility of the selected minor, equality with the HKO action,
+the differentiated feasible-section equation, the derivative formula for
+\(D\operatorname{sys}\), and annihilation of every symmetry tangent column.
 
 \begin{verbatim}
 def beta_is_valid(K, duals, sigma, beta, q_min):
@@ -60,8 +62,22 @@ def beta_is_valid(K, duals, sigma, beta, q_min):
     )
 \end{verbatim}
 
-The search routine forms the beta coordinates as exact polynomials in the
-fixed beta variables. It uses the floating-point entries from the witness to
+For a selected word, Sage forms the feasible section by the standard block
+solve. If \(C_\sigma(a)\beta=e\) and the selected columns are split as
+\(C=[C_I\ C_J]\), then the fixed coordinates \(u=\beta_J\) determine
+\[
+  \beta_I(u)=C_I^{-1}(e-C_Ju),\qquad \beta_J(u)=u.
+\]
+The code implements this formula over the exact polynomial ring in the fixed
+beta variables.
+
+\begin{verbatim}
+C_I = C[:, minor_columns]
+C_J = C[:, fixed_indices]
+beta_I = C_I_S.inverse() * (e_S - C_J_S * vector(S, variables))
+\end{verbatim}
+
+The search routine then uses the floating-point entries from the witness to
 generate and order rational values and algebraic roots to try. A candidate is
 returned only when \verb|beta_is_valid| accepts it in the exact field.
 
@@ -80,7 +96,6 @@ def verify_entry(..., sym_cols, entry):
     check(d_sys == recomputed_d_sys, "D sys")
     for column in sym_cols:
         check(d_sys.dot_product(column) == K(0), "symmetry")
-    return d_sys
 \end{verbatim}
 
 After all rows have been checked, the final quotient certificate is a pure
@@ -109,10 +124,10 @@ def compute_convex_coefficients(K, verified_rows):
 \end{verbatim}
 
 The top-level verifier wires these checks together. It checks the packet
-identity, reconstructs HKO and the symmetry tangent space, checks the requested
-ambient and quotient dimensions, verifies all 26 entries, computes the convex
-coefficients, and writes the successful summary only after these checks have
-passed.
+identity, constructs the exact HKO data and symmetry tangent space from the
+hand-supplied formulas, checks the requested ambient and quotient dimensions,
+verifies all 26 entries, computes the convex coefficients, and writes the
+successful summary only after these checks have passed.
 
 \begin{verbatim}
 entries = [
@@ -120,9 +135,11 @@ entries = [
                   action_min, q_min, row)
     for row in witness["entries"]
 ]
-verified_rows = [
+for entry in entries:
     verify_entry(K, duals, volume, volume_row,
                  action_min, q_min, symmetry_columns, entry)
+verified_rows = [
+    entry["d_sys"]
     for entry in entries
 ]
 row_matrix, lambdas = compute_convex_coefficients(
@@ -138,24 +155,9 @@ coefficients \(\lambda_\sigma\) with
 \(\sum_\sigma \lambda_\sigma r_\sigma=0\). These are the computational inputs
 to the hand proof of Theorem~\ref{thm:hko-ten-facet-local-maximum}.
 
-\begin{proof}[Proof of Theorem~\ref{thm:hko-ten-facet-local-maximum}]
-Lemma~\ref{lem:hko-hausdorff-local-ten-facet-chart} reduces the Hausdorff-local
-statement in \(\mathcal P_{10}\) to the labelled dual-vertex charts. In such a
-chart, the induced action of \(G_{\operatorname{sys}}\) has tangent space
-\(T_{\mathrm{orb}}\). The rank computation for this tangent space gives the
-inverse-function-theorem slice \(a_{\mathrm{HKO}}+S\), so it is enough to prove
-strict local maximality on that slice.
-
-The finite certificate gives the required strict slice maximum. Its selected
-feasible upper branches touch \(\operatorname{sys}\) at \(a_{\mathrm{HKO}}\).
-Their derivative rows annihilate \(T_{\mathrm{orb}}\), span the cotangent space
-of the slice, and admit a strictly positive convex relation summing to zero.
-The finite first-order criterion above therefore makes every sufficiently small
-nonzero slice perturbation decrease the systolic ratio. Thus every sufficiently
-small perturbation has systolic ratio at most
-\(\operatorname{sys}(K_{\mathrm{HKO}})\). If equality holds, strictness on the
-slice forces the slice coordinate to vanish, so the perturbation is in the
-\(G_{\operatorname{sys}}\)-orbit of \(K_{\mathrm{HKO}}\). Conversely, every
-polytope in that orbit has the same systolic ratio by
-Lemma~\ref{lem:preliminaries-systolic-ratio-invariance}.
-\end{proof}
+Thus the theorem does not rely on Rust correctness or on floating-point search
+correctness. Rust generates the finite witness input that tells Sage which
+words, minors, fixed beta coordinates, and hints to try. Sage accepts only
+after the exact row and quotient predicates over the ordered field have passed.
+The theorem then uses those checked predicates together with the chart,
+feasible-section, and quotient-slice arguments above.

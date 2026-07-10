@@ -2,23 +2,27 @@
 
 Status: thesis-local content-gathering notes, not source truth.
 
-Purpose: gather the HKO result packet, source pointers, evidence status, and
-remaining review gates needed to draft and review
+Purpose: maintain HKO result-packet source pointers, evidence status, and
+review-risk notes for the current HKO chapter
 `thesis/07-hko-local-maximum.tex`.
 
 Overruled by: `FACTSHEET.md`, exact artifacts and local documentation in
 `experiments/hko-local-maximum/`, formal proof files, and Jörn/Kai review.
 
-Lifecycle: keep while the HKO thesis section is being assembled. After the
-section is stable, either delete this file or reduce it to a short maintenance
-index. Do not cite this file as evidence in thesis prose.
+Lifecycle: keep while these source pointers and review-risk notes are useful.
+If the active HKO chapter no longer needs this companion, either delete this
+file or reduce it to a short maintenance index. Do not cite this file as
+evidence in thesis prose.
 
 Update rule: add or change a claim only with a source pointer or an explicit
 `needs source` marker.
 
-Current draft checkpoint, 2026-06-15:
-- `thesis/07-hko-local-maximum.tex` is an integrated theorem-strength draft, not
-  final thesis text.
+Current HKO chapter checkpoint, 2026-06-15:
+- `thesis/07-hko-local-maximum.tex` is the HKO chapter proposed for `main`. It
+  contains a theorem-strength proof route and is suitable for repo integration
+  under the HKO branch acceptance criteria. This does not claim that the
+  complete thesis PDF is ready to print or submit; the integrated PDF still
+  needs later Jörn/Kai review.
 - Local checks run in the source draft worktree after the latest substantive
   edits: exact Sage verifier, thesis build/check, formal build, JSONL
   empirical summaries, touched Rust binary compile, stale-wording scan, one
@@ -35,12 +39,12 @@ Current draft checkpoint, 2026-06-15:
   theorem-risking concern in `lem:hko-hausdorff-local-ten-facet-chart`, the
   quotient-slice paragraph, or the theorem proof close after the latest
   revisions.
-- The remaining high-value gate is Jörn/Kai judgment on whether the
-  theorem-strength wording, the equality-set/orbit formulation, and the
-  standard simple-polytope stability bridge are acceptable for final thesis use.
-- Do not weaken the theorem merely because approval is pending. The current
-  state is theorem-strength draft; later integrated-PDF review may still request
-  wording or proof-framing changes.
+- Remaining later Jörn/Kai feedback is ordinary integrated-PDF review risk:
+  theorem wording, equality-set/orbit phrasing, or the simple-polytope
+  stability bridge may still be edited before final thesis release.
+- Do not weaken the theorem merely because later review may request edits. Keep
+  the theorem-strength wording unless a concrete review finds a real implication
+  gap.
 
 ## Result Packet
 
@@ -138,9 +142,11 @@ components with different claim strengths.
   and correctness explanation, over pseudocode by default.
 - Full code and full data live in the repo. Passages of code and data may go in
   the main text when logically important or useful as sanity checks.
-- Open decision: how much code/data belongs in main text versus appendix versus
-  repo-only. Current leaning from the scaffold: full code/data in the repo,
-  important passages in main text, appendix only if it improves readability.
+- Current draft placement: selected Sage snippets appear in
+  `thesis/07-hko-local-maximum-sage-verifier.tex`, proof-facing predicate prose
+  appears in `thesis/07-hko-local-maximum-exact-certificate.tex`, and full
+  verifier/witness/summary data remain repo artifacts. Reopen placement only if
+  integrated-PDF review finds a concrete readability problem.
 
 ### Empirical Tests
 
@@ -166,11 +172,12 @@ The HKO non-writing work is currently split into four packets.
    `verify.sage.py` reads `witness.json`, computes exact algebraic data
    internally, and checks the exact finite certificate predicate.
 
-4. Thesis-writing companion finalization:
-   this file now records the intended writing structure and review gate. An
-   integrated thesis draft exists in `thesis/07-hko-local-maximum.tex`. After Kai
-   theorem review, update the status markers and revise that draft instead of
-   treating this companion as source truth.
+4. Thesis-writing companion maintenance:
+   this file records source pointers, intended writing structure, and review
+   risks for the current HKO chapter in `thesis/07-hko-local-maximum.tex`.
+   If later integrated-PDF/Jörn/Kai review changes the theorem wording, update
+   these status markers and revise the active thesis draft instead of treating
+   this companion as source truth.
 
 Do not treat this file as source truth for final theorem-strength HKO writing.
 Use the active thesis text, formal proof files, exact verifier artifacts, and
@@ -184,7 +191,7 @@ local maximality in the `F=10` Hausdorff-topology polytope space modulo
 symmetries.
 
 Source pointers:
-- `formal/main.pdf`, section "HKO Feasible-Section Upper Branches".
+- `formal/main.tex`, build with `cd formal/ && latexmk` for PDF review.
 - `formal/hko-feasible-section-upper-branches.tex`.
 - `experiments/hko-local-maximum/theorem/verification-summary.json`.
 
@@ -217,9 +224,9 @@ has to supply the mathematical setup, the
 implication from the finite predicate to local maximality, and the scope
 control around the result.
 
-Current status: this is the working checklist for
-`thesis/07-hko-local-maximum.tex`. It should be refreshed if the theorem wording,
-row certificate, or Kai review outcome changes.
+Current status: this is a maintenance checklist for the current HKO chapter
+`thesis/07-hko-local-maximum.tex`. It should be refreshed if theorem wording,
+row certificate, or integrated-PDF/Jörn/Kai review outcomes change.
 
 Classification rule:
 - core thesis content is prose or theorem/proof text that the HKO section must
@@ -371,6 +378,10 @@ Source pointers:
 - `formal/hko-feasible-section-upper-branches.tex`,
   `rem:hko-feasible-section-derivative-data`.
 
+Review workflow:
+- use `$hko-sage-verifier-review` when reviewing whether the Sage verifier and
+  thesis explanation are mutually readable and cheap to audit.
+
 ### 7. Empirical context
 
 What the thesis may include after the theorem proof:
@@ -390,18 +401,19 @@ Source pointers:
 ### 8. Core content and auxiliary asset decisions
 
 Status:
-- the core content now has an integrated theorem-strength draft in
-  `thesis/07-hko-local-maximum.tex`;
-- the auxiliary assets below are not yet created;
+- `thesis/07-hko-local-maximum.tex` now contains the HKO theorem-strength
+  chapter text proposed for `main`;
+- the exact-certificate prose and selected Sage snippets are implemented draft
+  material in the active HKO thesis subfiles and should be reviewed there;
+- the optional figure assets below remain candidates unless explicitly promoted;
 - the next work should update this same companion or `thesis/07-hko-local-maximum.tex`,
   not create another planning surface.
 
 Asset decision status:
-- current recommendation: first draft the core thesis content below, then
-  create only the verification-interface table and maybe the compact facts
-  display;
-- do not create code snippets, raw witness excerpts, or figures before the
-  thesis prose shows a concrete need for them;
+- current recommendation: review the active thesis prose/snippets before adding
+  more auxiliary material;
+- do not add raw witness excerpts or figures unless the active thesis prose
+  shows a concrete need for them;
 - the finite-difference formula sanity-check script/report previously in the
   feasible-section folder was deleted from the active worktree because it was
   not thesis evidence and kept causing category confusion.
@@ -451,10 +463,26 @@ Core thesis content, not auxiliary assets:
    `formal/hko-feasible-section-upper-branches.tex`,
    `lem:hko-feasible-section-upper-branch`.
 
+PDF-review precision pressure, 2026-07-08:
+- If a proof-sketch sentence specifies a count, uniqueness, fixed choice,
+  labelled object, or finite reduction, check whether that precision is doing
+  work and whether the nearby proof text makes the answer cheap.
+- First concrete instance: the proof sketch and chart lemma said a
+  Hausdorff-local ten-facet neighborhood was covered by finitely many labelled
+  dual-vertex charts. The current proof only needs one fixed chart: choose
+  disjoint neighborhoods of the ten polar vertices of
+  `K_{\mathrm{HKO}}^\circ`, indexed by the verifier's HKO labelling; every
+  sufficiently nearby ten-vertex polar has exactly one vertex in each
+  neighborhood. The active thesis text now says this directly.
+
 Recommended auxiliary assets:
 
 1. Verification-interface table.
-   Status: draft below, not thesis-ready. Priority: high.
+   Status: implemented in prose/code-snippet form across
+   `thesis/07-hko-local-maximum-exact-certificate.tex` and
+   `thesis/07-hko-local-maximum-sage-verifier.tex`; use the draft below only as
+   a review aid. Priority: high only if integrated-PDF review finds the current
+   interface hard to audit.
    Shape: `Proof obligation | Sage check | Formal proof use`.
    Purpose: make the bridge between the verifier and proof auditable. This is
    better than a raw code listing because it is organized by mathematical
@@ -595,9 +623,9 @@ Deferred auxiliary assets:
    becomes too dense.
 
 3. Selected Sage code snippets.
-   Defer until the thesis prose exists. Candidate snippets are field/root
-   pinning, row verification, and convex-certificate verification. Use snippets
-   only to support a stated mathematical predicate, not to replace it.
+   Implemented in `thesis/07-hko-local-maximum-sage-verifier.tex`. Review
+   whether they support the stated mathematical predicate; do not add more
+   snippets unless they reduce audit cost.
 
 4. Nonsingular-endpoint geometric figure.
    Defer. The geometric point should first be handled as prose in the
@@ -677,7 +705,6 @@ Status:
 Source pointers:
 - `experiments/hko-local-maximum/theorem/README.md`.
 - `experiments/hko-local-maximum/theorem/verification-summary.json`.
-- `experiments/hko-local-maximum/smooth-only-rank-defect/summary.json`.
 - `experiments/hko-local-maximum/smooth-only-rank-defect/summary.json`.
 
 Current checked theorem-facing facts:
@@ -765,8 +792,8 @@ Missing:
 
 ## Finalization Tasks
 
-1. Decide final theorem wording.
-   The intended wording is local maximality in the `F=10`
+1. Review retained theorem wording in the integrated PDF.
+   The current wording is local maximality in the `F=10`
    Hausdorff-topology polytope space, with local equality set equal to the
    orbit under the systolic-ratio symmetries generated by translations,
    scaling, and linear symplectic maps. Broad HKO local maximality should
@@ -789,14 +816,15 @@ Missing:
 
 ## Fallback Branches
 
-If the retained integrated-PDF wording keeps the theorem route:
+If current or later review keeps the theorem route:
 - State theorem-strength local maximality in the `F=10` Hausdorff-topology
   polytope space, with equality precisely on the systolic-ratio symmetry orbit.
 - Present the exact generator/verifier/proof chain as the main support.
 - Present empirical checks as confirmation and broader context.
 - Keep broader local-stability language conjectural unless separately proved.
 
-If the formal implication has a real gap:
+Conditional fallback only if a future review finds a real formal-implication
+gap:
 - Do not state theorem-strength local maximality.
 - State exact feasible-section certificate status and the remaining formal
   blocker.
@@ -866,6 +894,6 @@ identifies a real mathematical gap, use the gap-handling branch above.
    as context, not as the proof of the theorem.
 
 7. End with scope and fallback wording.
-   If the formal review is accepted, the section may state the theorem-strength
-   ten-facet quotient result. If the formal review finds a gap, state the exact
-   certificate and the named remaining implication blocker instead.
+   If review keeps the theorem route, the section may state the theorem-strength
+   ten-facet quotient result. If review finds a gap, state the exact certificate
+   and the named remaining implication blocker instead.

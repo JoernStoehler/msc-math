@@ -57,6 +57,17 @@ nearby HK2017 branches.
 The verifier uses explicit exceptions, not Python `assert`, so the checks are
 not stripped by optimized Python mode.
 
+The witness file is an interface for exact verification, not a floating-point
+proof object:
+
+| Witness data | Trust role |
+| --- | --- |
+| `packet`, `witness_version`, `certificate_goal` | Packet identity and expected dimensions/counts checked by Sage. |
+| `sigma`, `minor_columns_exact`, `fixed_beta_indices` | Proof-facing finite choices for each feasible-section chart. |
+| `fixed_beta_values_f64` | Candidate-ordering hints; Sage reconstructs exact values over the ordered field before acceptance. |
+| `action_f64`, `q_f64`, `beta_f64`, `d_sys_flat_f64`, `lambda_hint_f64`, `source_*` | Diagnostics and provenance only; they are not trusted as proof data. |
+| `verification-summary.json` | Output of the exact verifier after all row, rank, and convex-certificate checks pass. |
+
 The feasible-section rows, including the singular seven-facet rows, are checked
 as explicit feasible upper branches. The certificate does not justify singular
 rows as nearby optimizing KKT branches and does not trust f64 KKT-derived

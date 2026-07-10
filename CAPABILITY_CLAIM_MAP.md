@@ -250,8 +250,10 @@ claim.
     - thesis-use decisions change
 
 - We have a current HKO local-maximum theorem route with a verified exact
-  feasible-section certificate, while final theorem wording remains gated by
-  Kai review.
+  feasible-section certificate. Later integrated-PDF/Jörn/Kai review may still
+  request theorem-wording or proof-framing edits, but that ordinary final-review
+  risk is not by itself a blocker for using the current HKO chapter as thesis
+  text.
   - Scope: HKO2024 `M_10` local-maximality story modulo natural `sys`
     symmetries; broad HKO local maximality remains conjectural in current repo
     classification.
@@ -269,7 +271,9 @@ claim.
   - The exact Sage certificate verifies. The formal implication from that
     finite predicate to quotient-local maximality has been agent-line-checked;
     Jörn quick-reviewed the rebuilt PDF on 2026-06-05 and spotted no gaps.
-    The remaining gate is final theorem wording/Kai review.
+    Later integrated-PDF/Jörn/Kai review may still edit theorem wording or proof
+    framing, but there is no repo-recorded Kai-review blocker for using the
+    current theorem-strength HKO chapter.
   - The older widened representative-row witness remains a partial historical
     surface, not the theorem-facing certificate.
   - First-order numerical support, second-order evidence, neighborhood

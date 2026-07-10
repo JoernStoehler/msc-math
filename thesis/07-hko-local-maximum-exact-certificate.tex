@@ -1,15 +1,23 @@
 \subsection{Exact finite certificate}
 \label{subsec:hko-local-maximum-computation-with-sagemath}
 
-The exact certificate proves the slice statement by upper branches. As in the
-finite-capacity computation from
+The role of the exact certificate is to prove the strict transverse-slice
+statement left by the chart and quotient reduction. It does this by upper
+branches. As in the finite-capacity computation from
 Section~\ref{sec:quadratic-program-algorithm-hk2019}, a word \(\sigma\) fixes
 a cyclic facet sequence, and the coefficients \(\beta\) are the feasible
-weights that produce an admissible action for that sequence. For each selected
-word \(\sigma\), the certificate contains exact data defining a feasible
-section \(\beta_\sigma(a)\). The corresponding function
+weights that produce an admissible action for that sequence. A feasible action
+gives an upper bound for the EHZ capacity, and therefore an upper bound for
+\(\operatorname{sys}\) after the fixed volume normalization. For each selected
+word \(\sigma\), the serialized witness records finite choices for a
+feasible-section chart; the Sage verifier reconstructs the exact data defining
+the section \(\beta_\sigma(a)\). With
 \[
-  U_\sigma(a)
+  A_\sigma(a)=\frac{1}{2Q_\sigma(a,\beta_\sigma(a))},
+\]
+the corresponding function
+\[
+  U_\sigma(a)=\frac{A_\sigma(a)^2}{2\operatorname{vol}_4(K(a))}
 \]
 is a smooth upper bound for \(\operatorname{sys}(K(a))\) near the HKO point,
 and satisfies
@@ -72,18 +80,42 @@ vector, invertibility of the selected feasible-section minor, equality of each
 selected branch action with the HKO action, the feasible-section derivative
 equation, the derivative row formula for \(U_\sigma\), and annihilation of the
 symmetry tangent space. These checks enter the proof in three places. The
-field, HKO geometry, capacity, volume, and volume derivative checks identify
-the base point and the normalization used for \(\operatorname{sys}\). The
-rowwise checks give the smooth feasible upper branches \(U_\sigma\) and
-identify their derivatives at the HKO point. The global rank, annihilation, and
+hand-derived field, HKO geometry, capacity, volume, and volume-derivative
+formulas set the base point and the normalization used for
+\(\operatorname{sys}\). The rowwise checks give the smooth feasible upper
+branches \(U_\sigma\) and identify their derivatives at the HKO point by
+checking the finite rows against those formulas. The rank, annihilation, and
 positive-convex-combination checks are exactly the finite first-order
 certificate on the quotient slice.
 
 Rust generates the finite witness file. SageMath reads that witness,
-reconstructs the exact algebraic data, and checks the proof-facing equations.
+constructs the exact algebraic data from the hand-supplied formulas, and checks
+the proof-facing equations.
 The full verifier packet is stored in
 \path{experiments/hko-local-maximum/theorem/}. The mathematical implication
 from these checked equations to
 Theorem~\ref{thm:hko-ten-facet-local-maximum} is the finite upper-branch and
 slice argument above; it does not depend on the search procedure that found the
 certificate.
+
+\begin{proof}[Proof of Theorem~\ref{thm:hko-ten-facet-local-maximum}]
+Lemma~\ref{lem:hko-hausdorff-local-ten-facet-chart} reduces the Hausdorff-local
+statement in \(\mathcal P_{10}\) to the fixed labelled dual-vertex chart. In this
+chart, the induced action of \(G_{\operatorname{sys}}\) has tangent space
+\(T_{\mathrm{orb}}\). The rank computation for this tangent space gives the
+inverse-function-theorem slice \(a_{\mathrm{HKO}}+S\), so it is enough to prove
+strict local maximality on that slice.
+
+The finite certificate gives the required strict slice maximum. Its selected
+feasible upper branches touch \(\operatorname{sys}\) at \(a_{\mathrm{HKO}}\).
+Their derivative rows annihilate \(T_{\mathrm{orb}}\), span the cotangent space
+of the slice, and admit a strictly positive convex relation summing to zero.
+The finite first-order criterion above therefore makes every sufficiently small
+nonzero slice perturbation decrease the systolic ratio. Thus every sufficiently
+small perturbation has systolic ratio at most
+\(\operatorname{sys}(K_{\mathrm{HKO}})\). If equality holds, strictness on the
+slice forces the slice coordinate to vanish, so the perturbation is in the
+\(G_{\operatorname{sys}}\)-orbit of \(K_{\mathrm{HKO}}\). Conversely, every
+polytope in that orbit has the same systolic ratio by
+Lemma~\ref{lem:preliminaries-systolic-ratio-invariance}.
+\end{proof}

@@ -19,8 +19,6 @@
 %   beta sections. The beta sections need not be optimizing or KKT-critical
 %   for nearby parameters; they are used only to give upper branches for sys.
 
-\begin{unverified}
-
 \subsection{Feasible HK2017 beta sections as upper branches}
 \label{sec:hko-feasible-section-upper-branches}
 
@@ -351,8 +349,8 @@ and
   -
   \frac{A(a_0)^2}{2V(a_0)^2}\,DV(a_0)[h].
 \]
-This is the row that the feasible-section certificate should use.  It need
-not agree with the KKT-derived row printed by the current f64 diagnostic.
+This row is defined by the explicit feasible section and is independent of any
+KKT-derived diagnostic row.
 \end{remark}
 
 \subsection{Upper directional derivatives from selected upper branches}
@@ -635,5 +633,3 @@ after shrinking. Concretely, this uses finitely many open determinant, slack,
 irredundancy, boundedness, and origin-interior conditions for the ten labelled
 facets. This geometric reduction is independent of the Sage certificate.
 \end{remark}
-
-\end{unverified}

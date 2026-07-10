@@ -34,6 +34,12 @@ Status: navigation cache for the active thesis surface.
   perturbation content notes.
 - `07-hko-local-maximum.tex`: contains the HKO `\section`, opening, theorem
   statement, and inputs the `07-hko-local-maximum-*` semantic subfiles.
+  The active subfiles are `07-hko-local-maximum-chart-reduction.tex`
+  (Hausdorff/chart and quotient reduction),
+  `07-hko-local-maximum-exact-certificate.tex` (finite exact certificate and
+  proof close), `07-hko-local-maximum-sage-verifier.tex` (Sage verifier
+  explanation), and `07-hko-local-maximum-empirical-tests.tex` (supporting
+  empirical context).
 - `hko-local-maximum-content.md`: section-local content-gathering notes for
   the HKO result packet. Not source truth; use its source pointers before
   relying on claims.

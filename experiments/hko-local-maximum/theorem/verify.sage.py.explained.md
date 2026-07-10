@@ -3,8 +3,10 @@
 Status: explanatory source listing for `verify.sage.py`.
 
 Purpose: show how the executable SageMath verifier corresponds to the
-mathematical certificate described in `thesis/hko-local-maximum.tex`,
-`formal/hko-feasible-section-upper-branches.tex`, and this directory's
+mathematical certificate described in `thesis/07-hko-local-maximum.tex`,
+especially `thesis/07-hko-local-maximum-exact-certificate.tex` and
+`thesis/07-hko-local-maximum-sage-verifier.tex`, in
+`formal/hko-feasible-section-upper-branches.tex`, and in this directory's
 `README.md`.
 
 This file quotes the whole current script in order. The prose before each code
@@ -127,11 +129,31 @@ def unit_vector(K, coord):
     return vector(K, entries)
 
 
+def check_minor_fixed_partition(sigma, minor_columns, fixed_indices):
+    word_indices = set(range(len(sigma)))
+    minor_index_set = set(minor_columns)
+    fixed_index_set = set(fixed_indices)
+    check(len(minor_columns) == 5, "selected minor must have five columns")
+    check(len(minor_index_set) == len(minor_columns), "selected minor columns must be unique")
+    check(len(fixed_index_set) == len(fixed_indices), "fixed beta indices must be unique")
+    check(
+        len(minor_columns) + len(fixed_indices) == len(sigma),
+        "minor and fixed beta index lists must have complementary lengths",
+    )
+    check(minor_index_set.isdisjoint(fixed_index_set), "minor and fixed beta indices must be disjoint")
+    check(minor_index_set | fixed_index_set == word_indices, "minor and fixed beta indices must cover the word indices")
+
+
 def constraint_matrix(K, duals, sigma):
-    return matrix(K, [[duals[facet][row] for facet in sigma] for row in range(4)] + [[K(1) for _ in sigma]])
+    # C_sigma beta = e encodes the four closure equations and the
+    # normalization sum_j beta_j = 1.
+    closure_rows = [[duals[facet][coord] for facet in sigma] for coord in range(4)]
+    normalization_row = [K(1) for _ in sigma]
+    return matrix(K, closure_rows + [normalization_row])
 
 
 def q_value(duals, sigma, beta):
+    # HK2017 quadratic form Q_sigma(beta) for the chosen cyclic facet word.
     return sum(
         beta[i] * beta[j] * omega(duals[sigma[j]], duals[sigma[i]])
         for i in range(1, len(sigma))
@@ -140,6 +162,7 @@ def q_value(duals, sigma, beta):
 
 
 def volume_data(K, sqrt5, duals):
+    # Exact HKO volume and D volume row in the full ten-dual-vertex chart.
     volume = QQ(25) * (QQ(5) + sqrt5) / QQ(32)
     scalar = QQ(25) / QQ(32) + QQ(5) * sqrt5 / QQ(16)
     volume_row = []
@@ -196,6 +219,9 @@ def flatten_columns(columns):
 def symmetry_basis(K, duals):
     labels = []
     columns = []
+
+    # Translation by y sends a_i to a_i/(1 + <a_i,y>), so the infinitesimal
+    # translation column in coordinate direction k is -a_{i,k} a_i.
     for coord in range(4):
         labels.append(f"translation_e{coord}")
         entries = []
@@ -215,6 +241,7 @@ def symmetry_basis(K, duals):
         generator_checks.append({"label": label, "is_sp4": (X.transpose() * J + J * X).is_zero()})
         labels.append(label)
         entries = []
+        # For M = Id + epsilon X, the dual vertex changes by -X^T a_i.
         for dual in duals:
             entries.extend(list(-(X.transpose()) * dual))
         columns.append(vector(K, entries))
@@ -267,13 +294,21 @@ def univariate_from_multivariate(K, S, poly, solve_idx):
 
 
 def beta_polynomials(K, duals, sigma, minor_columns, fixed_indices):
+    check_minor_fixed_partition(sigma, minor_columns, fixed_indices)
+
     S = PolynomialRing(K, [f"free_{idx}" for idx in fixed_indices])
     variables = S.gens()
     C = constraint_matrix(K, duals, sigma)
     e = vector(K, [0, 0, 0, 0, 1])
+
+    # Split the closure/normalization matrix as C = [C_I C_J].  The columns
+    # in I are solved from the equations, while the columns in J are kept as
+    # the free fixed-beta coordinates u.
     C_I = C[:, minor_columns]
     C_J = C[:, fixed_indices]
 
+    # Over K[u], the feasible section is the standard block solve
+    #     beta_I(u) = C_I^{-1}(e - C_J u),     beta_J(u) = u.
     C_I_S = matrix(S, C_I.nrows(), C_I.ncols(), [S(entry) for entry in C_I.list()])
     C_J_S = matrix(S, C_J.nrows(), C_J.ncols(), [S(entry) for entry in C_J.list()])
     e_S = vector(S, [S(entry) for entry in e])
@@ -295,10 +330,16 @@ def substitute_beta(K, beta_poly, variables, free_values):
 def beta_is_valid(K, duals, sigma, beta, q_min):
     C = constraint_matrix(K, duals, sigma)
     e = vector(K, [0, 0, 0, 0, 1])
-    return C * beta == e and all(entry > K(0) for entry in beta) and q_value(duals, sigma, beta) == q_min
+    closure_and_normalization_ok = C * beta == e
+    positive_beta_ok = all(entry > K(0) for entry in beta)
+    hko_action_ok = q_value(duals, sigma, beta) == q_min
+    return closure_and_normalization_ok and positive_beta_ok and hko_action_ok
 
 
 def find_free_values(K, duals, witness_row, beta_poly, S, variables, q_min):
+    # This is candidate recovery, not a proof step. Floating-point hints only
+    # choose rational/algebraic values to try; beta_is_valid performs the exact
+    # acceptance check.
     q_poly = S(q_value(duals, witness_row["sigma"], beta_poly) - q_min)
     fixed_hints = witness_row["fixed_beta_values_f64"]
     nfree = len(variables)
@@ -362,11 +403,16 @@ The f64 row from the witness is not trusted; it is used only to report
 
 ```python
 def d_beta_matrix(K, duals, sigma, beta, minor_columns, fixed_indices):
+    check_minor_fixed_partition(sigma, minor_columns, fixed_indices)
+
     C = constraint_matrix(K, duals, sigma)
     C_I = C[:, minor_columns]
+    check(C_I.det() != K(0), "selected feasible-section minor must be invertible")
     ambient_dimension = len(duals) * 4
     rows = [[K(0) for _ in range(ambient_dimension)] for _ in sigma]
 
+    # Differentiate C(a) beta(a) = e while keeping beta_J fixed:
+    #     C_I beta_I'(h) = -(D C(a)[h]) beta.
     for flat_idx in range(ambient_dimension):
         facet = flat_idx // 4
         coord = flat_idx % 4
@@ -384,6 +430,7 @@ def d_beta_matrix(K, duals, sigma, beta, minor_columns, fixed_indices):
 
 
 def d_q_row(K, duals, sigma, beta, d_beta):
+    # Differentiate Q_sigma(a,beta(a)) in each ambient dual-vertex coordinate.
     ambient_dimension = len(duals) * 4
     row = []
     for flat_idx in range(ambient_dimension):
@@ -407,6 +454,8 @@ def d_q_row(K, duals, sigma, beta, d_beta):
 
 
 def compute_entry(K, duals, volume, volume_row, action_min, q_min, witness_row):
+    # Build the exact row candidate from the witness choices.  verify_entry
+    # below rechecks the proof-facing equalities before the row is used.
     sigma = witness_row["sigma"]
     minor_columns = witness_row["minor_columns_exact"]
     fixed_indices = witness_row["fixed_beta_indices"]
@@ -415,7 +464,9 @@ def compute_entry(K, duals, volume, volume_row, action_min, q_min, witness_row):
     d_beta = d_beta_matrix(K, duals, sigma, beta, minor_columns, fixed_indices)
     q = q_value(duals, sigma, beta)
     d_q = d_q_row(K, duals, sigma, beta, d_beta)
+    # Since A = 1/(2Q), the row below is D A at the HKO point.
     d_action = vector(K, [-(entry) / (2 * q**2) for entry in d_q])
+    # For sys = A^2/(2 vol), this is D sys in the full dual-vertex chart.
     d_sys = vector(
         K,
         [
@@ -472,16 +523,10 @@ def check_witness_rows(witness, facet_count):
         sigma = row["sigma"]
         minor_columns = row["minor_columns_exact"]
         fixed_indices = row["fixed_beta_indices"]
-        expected_indices = list(range(len(sigma)))
         check_partial_permutation(sigma, facet_count)
-        check(len(minor_columns) == 5, "selected minor must have five columns")
         check(sorted(minor_columns) == list(minor_columns), "minor columns must be sorted")
         check(sorted(fixed_indices) == list(fixed_indices), "fixed beta indices must be sorted")
-        check(
-            sorted(minor_columns + fixed_indices) == expected_indices,
-            "minor columns and fixed beta indices must be complementary",
-        )
-        check(set(minor_columns).isdisjoint(set(fixed_indices)), "minor and fixed beta indices must be disjoint")
+        check_minor_fixed_partition(sigma, minor_columns, fixed_indices)
         check(
             len(row["fixed_beta_values_f64"]) == len(fixed_indices),
             "fixed beta value hint count must match fixed beta index count",
@@ -507,6 +552,8 @@ def verify_d_beta(K, duals, sigma, beta, d_beta, fixed_indices):
 
 
 def verify_entry(K, duals, volume, volume_row, action_min, q_min, symmetry_columns, entry):
+    # Exact row-level gate: after this returns, entry["d_sys"] is a checked
+    # derivative row for one feasible upper branch.
     sigma = entry["sigma"]
     minor_columns = entry["minor_columns"]
     fixed_indices = entry["fixed_beta_indices"]
@@ -546,7 +593,6 @@ def verify_entry(K, duals, volume, volume_row, action_min, q_min, symmetry_colum
     check(d_sys == recomputed_d_sys, "D sys row must match differentiated systolic-ratio formula")
     for column in symmetry_columns:
         check(d_sys.dot_product(column) == K(0), "D sys row must annihilate each symmetry tangent column")
-    return d_sys
 ```
 
 ## Quotient Certificate
@@ -559,6 +605,8 @@ left-kernel vector normalized to sum to `1` is the convex relation
 
 ```python
 def compute_convex_coefficients(K, verified_rows):
+    # Quotient-slice certificate: the checked rows span a 25-dimensional
+    # cotangent space and contain zero in their positive convex hull.
     row_matrix = matrix(K, [list(row) for row in verified_rows])
     rank = row_matrix.rank()
     check(rank == 25, "verified rows must have rank 25")
@@ -620,10 +668,9 @@ def main():
         compute_entry(K, duals, volume, volume_row, action_min, q_min, row)
         for row in witness["entries"]
     ]
-    verified_rows = [
+    for entry in entries:
         verify_entry(K, duals, volume, volume_row, action_min, q_min, symmetry_columns, entry)
-        for entry in entries
-    ]
+    verified_rows = [entry["d_sys"] for entry in entries]
     row_matrix, lambdas = compute_convex_coefficients(K, verified_rows)
 
     summary = {
@@ -672,9 +719,11 @@ if __name__ == "__main__":
 
 This file supports two thesis-facing uses:
 
-1. A prose bridge in `thesis/hko-local-maximum.tex` or the Sage appendix can
-   cite this packet and summarize the proof obligation map, without asking Kai
-   to reconstruct the script from raw source order.
+1. A prose bridge in `thesis/07-hko-local-maximum.tex`, especially
+   `thesis/07-hko-local-maximum-exact-certificate.tex` and
+   `thesis/07-hko-local-maximum-sage-verifier.tex`, can cite this packet and
+   summarize the proof obligation map, without asking Kai to reconstruct the
+   script from raw source order.
 2. If the thesis includes a full source listing, this file is the safer source:
    it quotes the whole executable script and places each block next to its
    mathematical role.
