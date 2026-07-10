@@ -118,7 +118,11 @@ Recovered into this branch:
   `formal/hko-feasible-section-upper-branches.tex`, and
   `thesis/07-hko-local-maximum*.tex`. The exact Sage verifier, HKO thesis build,
   and formal build passed during the 2026-07-10 recovery audit. Status:
-  internally reviewed candidate, not Jörn/Kai accepted.
+  internally reviewed candidate, not Jörn/Kai accepted. A subsequent
+  integrated source/PDF review found no proof gap; it corrected one empirical
+  sentence to say that no increase was found above numerical resolution. The
+  remaining C1 gate is stakeholder acceptance of the theorem/framing,
+  especially shortened Sage excerpts versus the external full verifier.
 - Corrected data-science LICCA smoke plan from `0a389f58`.
 - The formerly dirty `datascience-agent-memory` state, checkpointed as
   `bb0e538e`: 35 files mixing reviewed P2 evidence, exploration, proposed
