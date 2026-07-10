@@ -1,7 +1,8 @@
 #!/bin/bash
-# Build the random/product datascience tables on LICCA.
-# Submit from this directory with:
-#   sbatch licca-build-dataset.slurm.sh
+# Status: dormant legacy in-place retained-table reproduction helper. It is not
+# an active research or submission handoff. Prefer the run-local prepare script
+# for new work; use this only for an explicit reproduction/schema-refresh task
+# with comparison rules. See LICCA.md.
 #
 # Inputs:
 # - random/product producer files and shared-cache payloads under
@@ -25,8 +26,8 @@
 #   without multiplying memory pressure as much as a 64-thread first try.
 # - This job uses --random-only, so feature construction is scoped to the
 #   4096 random + 10240 random-product rows needed by the current thesis slice.
-# - 32G/2h is a bounded first production request for the richer feature schema;
-#   cancel or resubmit only after inspecting sacct/log evidence.
+# - The historical 32G/2h request is retained as provenance, not a current
+#   resource recommendation. A new handoff must reassess it.
 
 set -euo pipefail
 

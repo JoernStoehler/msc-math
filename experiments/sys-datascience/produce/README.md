@@ -141,9 +141,11 @@ python3 experiments/sys-datascience/produce/validate-datascience-produced.py \
 
 ## LICCA
 
-Use `licca-datascience-produce.slurm.sh` only for random/product production.
-Build the binary on the login node before submitting so Slurm time measures the
-producer job, not Rust compilation:
+`licca-datascience-produce.slurm.sh` is dormant run-local infrastructure; no
+submission is selected. See `../LICCA.md`. If a fresh C3 decision selects a
+random/product producer job, the new job-specific handoff must reassess
+resources and build the binary on the login node before submission so Slurm
+time measures the producer job, not Rust compilation:
 
 ```bash
 cd "$HOME/msc-math"

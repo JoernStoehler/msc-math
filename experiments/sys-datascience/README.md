@@ -108,6 +108,7 @@ cites current numbers. Keep durable packet conclusions in
 Current coordination status: Phase 0 normalization is complete. The bounded
 retained story is a fallback, not automatic full-slice closure. No broader
 producer run is selected; use the exploration handoff before further research.
+No LICCA job is selected; `LICCA.md` classifies the retained dormant scripts.
 
 Escalate before unrelated cleanup if a method records a trusted `sys > 1` row
 or a credible candidate-proposer.

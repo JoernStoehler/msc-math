@@ -18,6 +18,10 @@ The recovered `bb0e538e` files were normalized as follows.
 | Topic ledgers, research ledger, and next-session board | deleted because their launch state was stale and their source-backed boundaries are below | owning method packets and current producer/prepare documentation |
 | Bounded writeup draft | deleted; it was pre-thesis coordination prose and would duplicate artifact-derived claims | owning packet artifacts and READMEs |
 
+The later normalization audit also deleted the competing top-level 2026-06-25
+research ledger. Its result details already had method-packet owners; its unique
+still-current Jörn decision about generator scope is preserved below.
+
 The retained P2 packet is evidence about already evaluated rows only. It found
 no `sys > 1` row and did not validate a rule that selects unevaluated generated
 candidates. Its feature-family results are diagnostic associations under one
@@ -27,6 +31,12 @@ grouped holdout, not a geometric mechanism.
 
 These decisions survived normalization and constrain C3:
 
+- **Generator is an experimental variable:** Jörn agreed on 2026-06-25 that
+  data gathering should cover random generators deliberately and method
+  summaries must name the generator that produced the rows. This decision does
+  not select a new distribution or run. Seed remains reproducibility metadata,
+  as recorded by `../methods/random-axis-diagnostic/` and
+  `../methods/distribution-sensitivity/`.
 - **Retained-table standard repertoire:** P2 supplies the previously missing
   lasso/elastic-net, gradient-boosting, high-tail classification, and
   feature-family-ablation executor. Together with the source-linked rows in
@@ -74,9 +84,11 @@ Read these sources in order:
 6. `../produce/README.md`, `../prepare/README.md`, and the dormant-plan status
    under `../produce/plans/README.md` when assessing a new producer or data
    axis. Do not treat a saved plan as a selected action.
+7. `../LICCA.md` only after exploration selects a C3 producer run or a distinct
+   reproduction task requires external compute.
 
-Do not treat old coordination files, worktrees, `/tmp`, or the recovered thesis
-draft as current state.
+Do not treat old coordination files, the deleted top-level research ledger,
+worktrees, `/tmp`, or the recovered thesis draft as current state.
 
 ## Exploration Question
 

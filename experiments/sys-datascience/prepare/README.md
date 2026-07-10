@@ -85,8 +85,11 @@ Prepared HKO rows use `capacity_source = known_hko_reference` and provenance
 `role = reference_holdout`. Shared trusted-random method filters exclude this
 dataset by default; score it only through reference-aware packets.
 
-On LICCA, `licca-datascience-prepare.slurm.sh` runs only the prebuilt
-`sys-datascience-prepare` binary. Build before submitting:
+`licca-datascience-prepare.slurm.sh` is dormant run-local infrastructure; no
+submission is selected. See `../LICCA.md`. If a selected C3 producer run or a
+distinct reproduction task needs LICCA prepare, a new job-specific handoff must
+reassess resources. The script runs only the prebuilt
+`sys-datascience-prepare` binary, so build before any approved submission:
 
 ```bash
 cd "$HOME/msc-math"

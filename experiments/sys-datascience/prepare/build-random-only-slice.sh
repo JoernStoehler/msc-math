@@ -4,7 +4,8 @@
 # Modes:
 # - smoke: tiny stratified prepare-stage feedback; validates schema and feature plumbing.
 # - method: medium stratified method-feedback slice; useful before spending a full run.
-# - full: all trusted random/product rows; thesis evidence gate, prefer LICCA.
+# - full: all trusted random/product rows; deterministic evidence/reproduction
+#   input. Use LICCA only through a newly selected C3 or reproduction handoff.
 
 set -euo pipefail
 

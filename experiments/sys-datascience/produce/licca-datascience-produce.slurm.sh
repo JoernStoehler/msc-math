@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Status: dormant run-local producer infrastructure. This file is not an active
+# submission handoff. Use only after a fresh C3 decision and job-specific LICCA
+# review; see ../LICCA.md.
 #SBATCH --job-name=ds-produce
 #SBATCH --partition=epyc
 #SBATCH --nodes=1
@@ -11,9 +14,8 @@
 
 set -euo pipefail
 
-# Defaults are production-shaped and bounded. Smoke submissions should override
-# partition, CPU count, memory, and time; e.g. `--partition=test --cpus-per-task=4
-# --mem=8G --time=00:20:00`.
+# The SBATCH values are dormant historical defaults, not a current resource
+# recommendation. A new handoff must review or override them for its job size.
 
 if [[ -n "${SLURM_SUBMIT_DIR:-}" ]]; then
   SCRIPT_DIR="$(cd -- "$SLURM_SUBMIT_DIR" && pwd)"
