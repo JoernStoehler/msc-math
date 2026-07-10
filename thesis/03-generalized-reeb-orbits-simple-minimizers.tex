@@ -106,8 +106,10 @@ contiguous segment and satisfies
   \qquad
   I_K(z')=I_K(z).
 \]
-Repeating this operation gives a closed piecewise affine curve in which each
-pure Reeb vector occurs in at most one interval.
+Repeating this operation, and merging adjacent equal-velocity intervals,
+gives a closed piecewise affine curve in which each pure Reeb vector occurs in
+at most one interval. Here adjacency is understood cyclically, since the curve
+is closed.
 \end{lemma}
 
 \begin{proof}
@@ -163,11 +165,15 @@ Let \(z_n\) be closed simple piecewise-Reeb curves whose periods satisfy
 \end{lemma}
 
 \begin{proof}
-Each curve is determined up to translation by a permutation of the finitely many
-facet directions, normalized dwell times in the simplex, and its period. Since
+Choose the initial point of each periodic curve at a breakpoint, and insert
+zero dwell times for unused facet directions. Each curve is then determined up
+to translation by a permutation of the finitely many facet directions, dwell
+times in the simplex of total mass \(T_n\), and its period. Since
 the periods eventually lie in a compact interval \([T/2,2T]\), a subsequence of
 these finite-dimensional data converges. Translating the starting points gives
-convergence of the curves. Some limiting dwell times may be zero; deleting
+uniform convergence after identifying each domain with \([0,1]\) by linear
+time rescaling. Closure passes to the limit because
+\(\sum_i\tau_iR_{\sigma(i)}=0\) for every curve. Some limiting dwell times may be zero; deleting
 those zero-duration entries recovers the active word of the limiting simple
 curve. The action is continuous in the dwell-time data by
 Lemma~\ref{lem:preliminaries-shoelace}. Since the remaining positive-duration
@@ -245,4 +251,3 @@ active facet directions. Thus the finite Haim--Kislev quadratic program is
 justified as a capacity search because its search family contains a simple
 capacity minimizer, not because every minimizer or every word has this form.
 Infeasible words and duplicate descriptions can still occur.
-

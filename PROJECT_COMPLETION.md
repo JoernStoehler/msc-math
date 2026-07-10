@@ -152,8 +152,8 @@ evidence, not a preferred fix.
 | --- | --- | --- | --- |
 | Abstract | empty | central accepted thesis claims | write last from accepted wording |
 | Introduction | heading only | `thesis/introduction-content.md` plus completed chapters | motivation, results, and reader map |
-| Preliminaries | substantial draft | `thesis/02-*`, `thesis/preliminaries-content.md`, cited papers | Clarke normalization/source audit and reader review |
-| Generalized Reeb orbits | substantial draft | `thesis/03-*`, companion, formal/cited sources | simple-minimizer proof and citation review |
+| Preliminaries | internally reviewed foundation candidate | `thesis/02-*`, `thesis/preliminaries-content.md`, cited papers | C13 and integrated reader review |
+| Generalized Reeb orbits | internally reviewed foundation candidate | `thesis/03-*`, formal/cited sources | C13 and integrated reader review |
 | Haim--Kislev QP | substantial draft | `thesis/04-*`, companion, HK2017 and product sources | convention/orientation and finite-enumeration acceptance |
 | Flow graph/CH2021 | substantial conditional draft | `thesis/05-*`, companion, flow-graph crate/experiment/formal sources | final theorem/algorithm role and honest support wording |
 | First-order perturbations | scaffold | `thesis/first-order-perturbations-content.md`, `formal/sys-first-order-local-behavior.md` | supported general method and arbitrary-polytope boundary |
@@ -173,6 +173,17 @@ evidence, not a preferred fix.
 
 The consolidated integration PDF built cleanly at 58 pages on 2026-07-10 with
 `cd thesis && latexmk && ./check-build.sh`.
+
+The Clarke/simple-minimizer foundation packet was source-audited on 2026-07-10
+against HK2017, AAO2014, the active symplectic conventions, and the local
+HK2017 convention audit. The free-period multiplier and reconstruction factors
+now follow by explicit rescaling of HK2017 Lemma 2.1; the simple-minimizer
+compactness and cyclic-merging steps are explicit. The thesis and formal builds
+passed, and a bounded independent mathematical review found no high-severity
+error after two citation/exposition findings were corrected. Status:
+internally reviewed candidate, pending the exposition boundary in C13. This
+packet does not change the simple-minimizer theorem strength used by the QP,
+flow-graph, HKO, rotated-polygon, or first-order chapters.
 
 ## Dependency And Ownership Shape
 
@@ -227,6 +238,7 @@ Use `agent-checkable`, `Jörn`, `Kai`, `external`, or `settled`.
 | C10 | Jörn | What final archive target and artifact set should be used? | prepared options near finalization | code/data section and release |
 | C11 | agent external check + Jörn state | What are the current official submission requirements, and has the registration note been handed to the Prüfungsamt? | refresh official sources; ask only the private completed-action state | M2/M3 hand-in checklist |
 | C12 | agent-checkable | Which recovered data-science workflow/coordination files are needed for the next bounded phase? | fresh use test against the exact phase; delete/demote the rest | prevent recovered process bulk from driving work |
+| C13 | Jörn | Is the Clarke/simple-minimizer proof-detail boundary acceptable: cite fixed-period attainment, minimizers being weak critical, and the weak-critical/characteristic correspondence, while proving the free-period rescaling, reconstruction, and simple-curve reduction in thesis notation? | review Theorems 2.10 and 3.3 and their proofs in PDF pages 12--21 | shared foundation for QP, flow graph, HKO, rotated polygons, and first-order exposition |
 
 Open research under C3, C5, or C6 stops when the alternatives' retained wording
 and evidence are explicit, another iteration is unlikely to change the thesis

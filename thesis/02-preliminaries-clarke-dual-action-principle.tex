@@ -74,18 +74,21 @@ Equivalently,
 \]
 \end{definition}
 
-We use one general result from Clarke's nonsmooth variational theory:
-minimizers of the dual action functional exist, and the nonsmooth Lagrange
-multiplier rule applies to the action constraint \cite[Ch.~5]{Clarke1983}.
-For nonsmooth convex bodies this is the variational input used by
-Artstein--Avidan--Ostrover and Haim--Kislev
-\cite[Propositions~2.5, 2.7 and Lemmas~5.1, 5.2]{AAO2014}
-\cite[Section~2]{HK2017}.
+We use two results from Clarke's nonsmooth variational theory: the fixed-period
+dual minimum is attained, and every minimizer satisfies the weak
+Euler--Lagrange inclusion. For nonsmooth convex bodies, these are recorded in
+Artstein--Avidan--Ostrover \cite[Proposition~2.5 and Lemma~5.2]{AAO2014}. Their
+Lemma~5.1 gives the correspondence between weak critical curves and generalized
+closed characteristics, from which Proposition~2.7 identifies the dual and
+generalized-characteristic minima. Haim--Kislev state the same input in the
+normalization used below \cite[Lemma~2.1]{HK2017}. The underlying nonsmooth
+multiplier theory is due to Clarke \cite[Ch.~5]{Clarke1983}.
 
-Those sources state the dual problem in a fixed-\([0,1]\) normalization, with
-closed loops \(w\) satisfying \(A(w)=\frac12\). The passage to the free-period
-normalization above is by explicit rescaling. If \(z\) is defined on \([0,T]\)
-and satisfies \(A(z)=T\), then
+Haim--Kislev state the dual problem on \([0,1]\), with closed loops \(w\)
+satisfying \(A(w)=\frac12\). Artstein--Avidan--Ostrover use the equivalent
+\([0,2\pi]\), action-one normalization. The passage from the Haim--Kislev
+convention to the free-period normalization above is by explicit rescaling. If
+\(z\) is defined on \([0,T]\) and satisfies \(A(z)=T\), then
 \[
   w(s)=\frac{1}{\sqrt{2T}}\,z(Ts)
 \]
@@ -97,13 +100,20 @@ fixed-period dual curve and \(c=2I_K(w)\), then
 \]
 satisfies \(A(z)=c\) and \(I_K(z)=c\). Under the same rescaling, the fixed-period
 weak-critical equation used by Haim--Kislev becomes
-\eqref{eq:preliminaries-dual-euler-lagrange}. If a cited version fixes the
-translation freedom by imposing a centering condition on \(w\), this is only a
-choice of representative: \(A\), \(I_K\), and the weak-critical equation are
-translation-invariant after adjusting the constant \(b\). Thus the cited
-analytic input is the fixed-period existence and weak-criticality theorem; the
-rest of this subsection writes out the convention translation and Reeb
-correspondence in the free-period, uncentered notation used here.
+\eqref{eq:preliminaries-dual-euler-lagrange}. More explicitly, Haim--Kislev
+write
+\[
+  8I_K(w)w+a\in\partial h_K^2(-J_0\dot w).
+\]
+After dividing by \(4\) and rescaling from \(w\) to \(z\), this has
+\eqref{eq:preliminaries-dual-euler-lagrange} with
+\(\nu=I_K(z)/T\); the constant vector is rescaled as well. If a cited version
+fixes the translation freedom by imposing a centering condition on \(w\), this
+is only a choice of representative: \(A\), \(I_K\), and the weak-critical
+equation are translation-invariant after adjusting the constant \(b\). Thus
+the cited analytic input is the fixed-period existence and weak-criticality
+theorem; the rest of this subsection writes out the convention translation and
+Reeb correspondence in the free-period, uncentered notation used here.
 
 \begin{lemma}[Euler--Lagrange equation in thesis convention]
 \label{lem:preliminaries-dual-euler-lagrange}
@@ -113,44 +123,23 @@ Definition~\ref{def:preliminaries-weak-dual-critical}.
 
 \begin{proof}
 Let \(z\) be a minimizer of the free-period dual problem, and rescale it to the
-fixed-\([0,1]\) curve \(w\) above. The fixed-period Clarke theorem gives the
-nonsmooth Euler--Lagrange inclusion for \(w\), with one multiplier for the
-constraint \(A(w)=\frac12\). Rescaling this inclusion back to \([0,T]\) gives
-the same equation for \(z\). We spell out the resulting equation in the
-free-period notation.
-
-There is \(\alpha\in\mathbb{R}\) such that \(z\) satisfies the nonsmooth
-Euler--Lagrange inclusion for
+fixed-\([0,1]\) curve \(w\) above. This \(w\) is a fixed-period minimizer:
+every fixed-period competitor maps by the converse rescaling to a free-period
+competitor, and the two objective values differ by the constant factor \(2\).
+The fixed-period Clarke theorem therefore gives the nonsmooth Euler--Lagrange
+inclusion for \(w\). In Haim--Kislev's notation this is
 \[
-  L(z,\dot z)
-  =\frac14h_K^2(-J_0\dot z)
-    +\alpha\langle -J_0\dot z,z\rangle.
+  8I_K(w)w+a\in\partial h_K^2(-J_0\dot w)
 \]
-Thus there is an absolutely continuous \(\xi\) with
+for a constant \(a\in\mathbb{R}^4\). Since
+\(w(s)=z(Ts)/\sqrt{2T}\), the \(2\)-homogeneity of \(h_K^2\) gives
 \[
-  \xi(t)\in\partial_{\dot z}L(z(t),\dot z(t)),
-  \qquad
-  \dot\xi(t)=\nabla_z L(z(t),\dot z(t)).
+  \frac{I_K(z)}{T}z(t)+\sqrt{\frac{2}{T}}\,\frac a4
+  \in
+  \partial\bigl(\tfrac14h_K^2\bigr)(-J_0\dot z(t)).
 \]
-The right-hand side is \(-\alpha J_0\dot z\). On the left-hand side, the chain
-rule for \(\frac14h_K^2(-J_0\dot z)\) gives
-\[
-  \partial_{\dot z}L
-  =J_0\,\partial\bigl(\tfrac14h_K^2\bigr)(-J_0\dot z)
-    +\alpha J_0z.
-\]
-Hence there is
-\(p(t)\in\partial(\frac14h_K^2)(-J_0\dot z(t))\) with
-\[
-  J_0\dot p+\alpha J_0\dot z=-\alpha J_0\dot z.
-\]
-Since \(J_0\) is invertible, \(\dot p=-2\alpha\dot z\), and therefore
-\[
-  p(t)=b-2\alpha z(t)
-\]
-for some constant \(b\in\mathbb{R}^4\). With \(\nu=-2\alpha\), this is exactly
-\eqref{eq:preliminaries-dual-euler-lagrange}. The equivalent formulation
-follows from Lemma~\ref{lem:preliminaries-fenchel-duality}.
+Thus \(z\) is weak dual critical with \(\nu=I_K(z)/T\). The equivalent
+formulation follows from Lemma~\ref{lem:preliminaries-fenchel-duality}.
 \end{proof}
 
 \begin{lemma}[Scaling and translation]\label{lem:preliminaries-dual-symmetry}
@@ -181,7 +170,14 @@ zero because \(z\) is closed. For the dual functional,
 using the \(1\)-homogeneity of \(h_K\). The Euler--Lagrange inclusion is
 preserved because
 \(\partial(\frac14 h_K^2)(\lambda y)=\lambda
-\partial(\frac14 h_K^2)(y)\) for \(\lambda>0\).
+\partial(\frac14 h_K^2)(y)\) for \(\lambda>0\). More precisely, if
+\(\nu z+B\) realizes the inclusion for \(z\), then
+\[
+  \frac{\nu}{\alpha^2}z'
+  +\left(\frac{B}{\alpha}-\frac{\nu b}{\alpha^2}\right)
+  \in
+  \partial\bigl(\tfrac14h_K^2\bigr)(-J_0\dot z').
+\]
 \end{proof}
 
 \begin{theorem}[Clarke dual action principle in free-period form]\label{thm:preliminaries-clarke-dual-action}
@@ -222,9 +218,16 @@ equivalent inclusion in that definition gives
   -J_0\dot{z}(t)\in\partial g_K^2(\nu z(t)+b).
 \]
 The multiplier \(\nu\) is nonzero. If \(\nu=0\), then closedness of \(z\) and
-convexity would imply \(0\in\partial g_K^2(b)\), hence \(b=0\), and then the
-dual Euler--Lagrange condition would force \(\dot{z}=0\), contradicting
-\(A(z)=T>0\).
+the inclusion give
+\[
+  -J_0\dot z(t)\in\partial g_K^2(b),
+  \qquad
+  \frac1T\int_0^T-J_0\dot z(t)\,dt=0.
+\]
+The set \(\partial g_K^2(b)\) is closed and convex, so it contains the average
+zero. Hence \(b\) minimizes \(g_K^2\), which forces \(b=0\). Since
+\(\partial g_K^2(0)=\{0\}\), the inclusion would then force \(\dot z=0\),
+contradicting \(A(z)=T>0\).
 
 Set \(x(t)=\nu z(t)+b\). For almost every \(t\), the chain rule for the convex
 function \(g_K^2\) gives
