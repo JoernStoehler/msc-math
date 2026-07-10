@@ -40,7 +40,7 @@ claim, not schema repair.
 | --- | --- | --- | --- |
 | target predicate scan | `current-invariant-run` | `scan-sys-gt-1/` | Current invariant full run found zero `sys > 1`. |
 | target distribution, quantiles, tail summaries | `current-invariant-run` | `random-tail-eda/` | Current-schema EDA exists; review tail-language limits before thesis use. |
-| source/facet/product/seed/height summaries | `current-invariant-run` | `random-tail-eda/`, `statistical-associations/`, `prediction-ranking/`, `projection-structure/` | Source/facet/product diagnostics exist. The retained contract has one seed and one height interval, so seed/height contrasts require a future C3 producer-axis decision. |
+| source/facet/product/seed/height summaries | `current-invariant-run` | `random-tail-eda/`, `statistical-associations/`, `prediction-ranking/`, `projection-structure/` | Source/facet/product diagnostics exist. The retained contract has one seed and one height interval, so seed/height contrasts require a future producer-axis research decision. |
 | missingness, duplicates, schema, row-count checks | `current-invariant-run` | `trusted-random-dataset/` | Current invariant full run has `14336` trusted rows, no duplicates, and zero excluded labels. |
 | outlier and near-miss inspection | `current-invariant-run` | `random-tail-eda/`, `projection-structure/` | Current top row has `sys = 0.86258589584944`; near-miss language still needs thesis-level judgment. |
 | scatter/pairwise, histogram/density/box/tail, heatmap/matrix views | `park-low-value` | existing tabular artifacts | Feasible, but plotting the same retained summaries has low value until an exact thesis claim needs a figure; generated tables remain the metric source. |
@@ -69,8 +69,8 @@ claim, not schema repair.
 | blind random Lagrangian-product sampling | `current-invariant-run` | `trusted-random-dataset/`, `random-tail-eda/`, `scan-sys-gt-1/` | Current full run included `10240` product rows and no positives. |
 | producer rejection/acceptance calibration | `current-reviewed-packet` | `../produce/README.md`, producer metadata | Current producers record accepted samples and rejection attempts under their fixed contracts; broader calibration belongs to a new producer-axis question. |
 | independent same-distribution reruns | `park-low-value` | none | Useful for stability only after a current fact or claim is named as needing it; another seed does not broaden the producer model. |
-| broader height intervals, facet ranges, product side ranges, or new distributions | `future-work` | none | These could support stronger producer-axis wording only after a fresh C3 decision names the distribution and exact claim. |
-| Latin-hypercube and other space-filling designs | `future-work` | `../produce/` | No continuous parameter domain, sampling measure, or claim is fixed. Reopen only through a fresh C3 producer-axis decision. |
+| broader height intervals, facet ranges, product side ranges, or new distributions | `future-work` | none | These could support stronger producer-axis wording only after a new research decision names the distribution and exact claim. |
+| Latin-hypercube and other space-filling designs | `future-work` | `../produce/` | No continuous parameter domain, sampling measure, or claim is fixed. Reopen only through a new producer-axis research decision. |
 | rejection sampling with cheap scalar predicates | `current-reviewed-packet` | `extreme-scalar-rejection-proposer/` | Frozen scalar rules were evaluated before `sys` on generated candidates; this is negative boundary evidence, not a positive proposer. |
 | local pattern/generalized-pattern/MADS and Nelder--Mead search | `future-work` | none | These require a candidate parameterization and generated-candidate evaluation loop; they are not retrospective retained-table methods. |
 | derivative-free trust-region, local interpolation/quadratic search | `future-work` | none | No continuous local candidate interface or validated cheap objective is fixed. |
@@ -157,5 +157,6 @@ claim, not schema repair.
    standard repertoire. Reopen method execution only when a stronger exact
    claim makes a deferred family relevant; this does not close broader
    distributions or every possible method.
-4. Decide the thesis claim separately from method-packet readiness, using
-   `../coordination/exploration-handoff.md`.
+4. Use `../coordination/exploration-result.md` for the cross-method
+   interpretation and the boundary between completed exploration and
+   demonstration.

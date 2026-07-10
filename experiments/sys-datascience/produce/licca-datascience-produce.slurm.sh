@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Status: dormant run-local producer infrastructure. This file is not an active
-# submission handoff. Use only after a fresh C3 decision and job-specific LICCA
+# submission handoff. Use only after a new named research decision and job-specific LICCA
 # review; see ../LICCA.md.
 #SBATCH --job-name=ds-produce
 #SBATCH --partition=epyc

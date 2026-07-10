@@ -47,7 +47,22 @@ The thesis-facing claim should be bounded:
   post-`sys` diagnostic splits are not candidate-proposer claims.
 
 Current chapter role: report a controlled failure mode of ordinary random search
-and data-science wrappers, not a mathematical nonexistence theorem.
+and data-science wrappers, together with the strongest positive structure they
+did recover. The main transferable pattern is bucket-local: low total or mean
+symplectic area of the primal two-faces, normalized by `sqrt(volume)`, selects
+generated random-product candidates with higher mean `sys` than matched
+baselines. It does not lift the selected maximum beyond the observed
+sub-threshold plateau. Source:
+`experiments/sys-datascience/methods/ridge-mechanism-discriminator/` and its
+generated scalar-proposer inputs. This is not a mathematical nonexistence
+theorem or a demonstrated route to `sys > 1`.
+
+Exploration closed on 2026-07-10 without selecting another dataset. The dormant
+same-generator replication plan answers no remaining research question.
+Post-target ridge-area concentration/entropy splits remain future-rule seeds,
+not a reason to delay demonstration or writing. Cross-method interpretation and
+the reopening boundary live in
+`experiments/sys-datascience/coordination/exploration-result.md`.
 
 ## Active Producers
 

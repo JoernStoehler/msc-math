@@ -1,7 +1,7 @@
 # Two-Face Control LICCA Smoke Plan
 
 Status: dormant reusable LICCA smoke design. It is not selected for execution.
-A fresh C3 exploration decision must first select the associated producer axes
+A new research decision must first select the associated producer axes
 and justify a current compute/review packet. If reactivated, this plan tests
 producer plumbing, not research-scale evidence.
 
@@ -13,7 +13,7 @@ experiments/sys-datascience/produce/plans/two-face-control-licca-smoke.json
 
 ## Objective
 
-Conditional objective if C3 reactivates the proposal: test the smallest useful
+Conditional objective if new research reactivates the proposal: test the smallest useful
 smoke plan for:
 
 - Slurm submission and environment export;

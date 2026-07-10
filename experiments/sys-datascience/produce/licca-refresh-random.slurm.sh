@@ -1,7 +1,7 @@
 #!/bin/bash
 # Status: dormant standalone retained-producer refresh helper. It is not a
 # current research or reproduction handoff. Reactivate only after a selected
-# C3/reproduction task defines comparison and promotion rules; see ../LICCA.md.
+# research/reproduction task defines comparison and promotion rules; see ../LICCA.md.
 # This job writes review targets, not canonical producer files.
 
 #SBATCH --job-name=ds-random

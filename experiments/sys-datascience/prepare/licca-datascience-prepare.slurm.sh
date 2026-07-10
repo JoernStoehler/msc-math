@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Status: dormant run-local prepare infrastructure. This file is not an active
-# submission handoff. Use only for a selected C3 producer run or explicit
+# submission handoff. Use only for a selected producer run or explicit
 # reproduction task after job-specific LICCA review; see ../LICCA.md.
 #SBATCH --job-name=ds-prepare
 #SBATCH --partition=epyc

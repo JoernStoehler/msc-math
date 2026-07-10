@@ -88,8 +88,8 @@ uv run --script experiments/sys-datascience/fingerprint-dataset.py \
 
 Read first:
 
-- `coordination/exploration-handoff.md` for the normalized active state, exact
-  exploration inputs, and stopping conditions.
+- `coordination/exploration-result.md` for the completed interpretation,
+  research stopping decision, and demonstration boundary.
 - `produce/README.md`
 - `prepare/README.md`
 - `feature-space-coverage-ledger.md`
@@ -105,10 +105,11 @@ method summaries are tracked under `methods/<method>/artifacts/` when a README
 cites current numbers. Keep durable packet conclusions in
 `methods/<method>/README.md`, not only in `/tmp`.
 
-Current coordination status: Phase 0 normalization is complete. The bounded
-retained story is a fallback, not automatic full-slice closure. No broader
-producer run is selected; use the exploration handoff before further research.
-No LICCA job is selected; `LICCA.md` classifies the retained dormant scripts.
+Current coordination status: exploration is complete. Existing evidence
+supports a controlled negative search benchmark plus a bucket-local low-ridge
+generated-candidate enrichment result, but no route to `sys > 1`. No further
+dataset or LICCA job has a named research purpose. Demonstration/polish is next;
+`LICCA.md` classifies the retained dormant scripts.
 
 Escalate before unrelated cleanup if a method records a trusted `sys > 1` row
 or a credible candidate-proposer.

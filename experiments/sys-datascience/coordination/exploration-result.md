@@ -1,8 +1,8 @@
-# Sys-Datascience Exploration Handoff
+# Sys-Datascience Exploration Result
 
-Status: Phase 0 normalization complete. This is the canonical owner-local input
-for the next exploration phase. It records no new research result and does not
-authorize thesis wording.
+Status: exploration completed on 2026-07-10. This is the canonical owner-local
+result and the input for demonstration/polish. It interprets existing evidence;
+it records no new experiment and does not by itself authorize thesis wording.
 
 ## Recovered Checkpoint Disposition
 
@@ -29,7 +29,7 @@ grouped holdout, not a geometric mechanism.
 
 ## Current Source-Backed Decisions
 
-These decisions survived normalization and constrain C3:
+These decisions survived normalization and governed the exploration decision:
 
 - **Generator is an experimental variable:** Jörn agreed on 2026-06-25 that
   data gathering should cover random generators deliberately and method
@@ -74,7 +74,7 @@ These decisions survived normalization and constrain C3:
 
 Read these sources in order:
 
-1. `../../../PROJECT_COMPLETION.md`, especially hard data-science scope and C3;
+1. `../../../PROJECT_COMPLETION.md`, especially hard data-science scope and the settled C3 boundary;
 2. `../README.md` for the retained producer boundary and data flow;
 3. `../methods/trusted-random-product-method-dispositions.md` and
    `../methods/method-coverage-checklist.md` for repertoire coverage;
@@ -84,22 +84,36 @@ Read these sources in order:
 6. `../produce/README.md`, `../prepare/README.md`, and the dormant-plan status
    under `../produce/plans/README.md` when assessing a new producer or data
    axis. Do not treat a saved plan as a selected action.
-7. `../LICCA.md` only after exploration selects a C3 producer run or a distinct
+7. `../LICCA.md` only after new research selects a producer run or a distinct
    reproduction task requires external compute.
 
 Do not treat old coordination files, the deleted top-level research ledger,
 worktrees, `/tmp`, or the recovered thesis draft as current state.
 
-## Exploration Question
+## Exploration Result
 
-Determine the strongest source-backed data-science claim worth carrying into
-demonstration and thesis writeup after:
+The existing work supports a controlled search benchmark with both negative and
+positive information:
 
-- confirming that every feasible standard-method family relevant to that claim
-  is run, source-backed as already covered, or explicitly parked/rejected with
-  a concrete interface or value reason; and
-- deciding whether any additional producer/data axis is likely to change the
-  retained claim enough to justify its compute and review cost.
+- The named retained random/product table and the frozen generated-candidate
+  scalar packet contain no `sys > 1` row.
+- Ordinary invariant-feature methods recover substantial structure in already
+  evaluated `sys` values. This is explanatory evidence, not search success.
+- The clearest transferable structure is bucket-local: selecting random-product
+  candidates with low total or mean symplectic area of their primal two-faces,
+  normalized by `sqrt(volume)`, increases selected mean `sys` relative to
+  matched generated baselines. Pure combinatorial-count rules collapse, while
+  pooled ridge effects weaken under source/product/combinatorial controls. The
+  source is `../methods/ridge-mechanism-discriminator/` and its generated
+  scalar-proposer inputs.
+- This transfer does not extend to the desired extreme. The generated selected
+  maxima remain near the existing sub-threshold plateau, so the rule is not a
+  demonstrated way to find `sys > 1` examples.
+- Normalized ridge-area entropy and low maximum/top-three area share are
+  plausible refinements only because they were selected after inspecting the
+  evaluated candidates. Their effect is heterogeneous across buckets. A fresh
+  frozen-rule run could test transfer, but it is unlikely to change the main
+  thesis conclusion enough to repay its compute and review cost.
 
 The bounded fallback is only: on the named retained random/product table, the
 named method packets found no `sys > 1` example and no validated
@@ -107,21 +121,26 @@ generated-candidate proposer. Exploration must not silently promote this to
 arbitrary-distribution, calibrated-density, mechanism, or exhaustive-toolbox
 language.
 
-## Stopping Conditions
+No additional dataset is selected. The dormant high-complexity replication plan
+adds rows in already covered buckets under the same generator and therefore
+answers no remaining research question. A genuinely different generator also
+has no current named hypothesis or thesis sentence to test. Reopen data
+collection only when such a question is explicit.
 
-Stop the exploration phase and hand off to demonstration only when all of the
-following hold:
+## Why Exploration Stops Here
 
-- the disposition table covers every feasible method family relevant to the
-  proposed retained wording;
-- any proposed additional data or producer run names the exact claim it could
-  change, its source contract, cost, review gate, and stop rule;
-- the alternatives are explicit: bounded retained-table claim versus each
-  stronger claim that still needs data or stakeholder choice;
-- another method or data iteration is unlikely to change the thesis choice
-  enough to repay its compute, review, and Jörn-attention cost;
-- any remaining choice is a concrete Jörn crux rather than agent-accessible
-  evidence work.
+The method-disposition table covers the feasible standard families relevant to
+the retained search. The surviving positive pattern, its controls, and its
+failure at the extreme are explicit. Neither another method family nor another
+same-generator scale-up is likely to change the thesis account enough to repay
+its cost. The remaining work is to make the existing evidence legible and
+reproducible, not to accumulate more rows.
+
+Demonstration/polish should select a compact table or figure for the search
+outcomes and the low-ridge transfer result, generate detailed numbers from the
+owning artifacts, document source-to-output provenance, and keep post-hoc
+concentration diagnostics visibly separate from frozen generated-candidate
+evidence.
 
 Escalate immediately for independent verification if a trusted row has
 `sys > 1`. Do not start thesis prose, polish figures, or execute a broad compute

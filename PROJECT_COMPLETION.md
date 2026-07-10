@@ -124,13 +124,13 @@ Recovered into this branch:
   remaining C1 gate is stakeholder acceptance of the theorem/framing,
   especially shortened Sage excerpts versus the external full verifier.
 - Corrected data-science LICCA smoke design from `0a389f58`, retained only as a
-  dormant reusable plan conditional on a fresh C3 decision.
+  dormant reusable plan conditional on a new named research decision.
 - The formerly dirty `datascience-agent-memory` state, checkpointed as
   `bb0e538e`, was normalized at file level. The reviewed P2 packet and canonical
   method dispositions remain. Superseded wave syntheses, proposed compute,
   workflow evaluation, prompt/orchestration material, and stale registries were
   removed after their current source-backed boundaries were consolidated into
-  `experiments/sys-datascience/coordination/exploration-handoff.md`.
+  `experiments/sys-datascience/coordination/exploration-result.md`.
 - Data-science chapter and appendix drafts from `black-box-ds-review`; stale
   conflicting claim-control edits were not imported. Status: recovered prose
   source predating P2, not merge-ready thesis text.
@@ -166,7 +166,7 @@ evidence, not a preferred fix.
 | Flow graph/CH2021 | substantial conditional draft | `thesis/05-*`, companion, flow-graph crate/experiment/formal sources | final theorem/algorithm role and honest support wording |
 | First-order perturbations | scaffold | `thesis/first-order-perturbations-content.md`, `formal/sys-first-order-local-behavior.md` | supported general method and arbitrary-polytope boundary |
 | HKO local maximum | internally reviewed candidate | HKO sources in recovery checkpoint | integrated PDF and Jörn/Kai theorem/framing review |
-| Data-science search | Phase 0 normalized; exploration not started | `experiments/sys-datascience/coordination/exploration-handoff.md`, method packets and producer contracts | research closure, demonstration, source-backed rewrite |
+| Data-science search | exploration complete; demonstration next | `experiments/sys-datascience/coordination/exploration-result.md`, method packets and producer contracts | reproducible demonstration, then source-backed rewrite |
 | Rotated regular polygons | substantial theorem/certificate draft | `experiments/regular-products/`, `thesis/09-*` | finite-enumeration gate, proof framing, empirical asset polish |
 | 3D visualization | heading only | `experiments/visualization/`, thesis companion | concise exploratory exposition and selected assets |
 | Numerics | heading only | numerics companion, audit/verification sources | truthful minimal exact/f64/indeterminate/Sage story |
@@ -208,15 +208,15 @@ QP, flow-graph, HKO, rotated-polygon, or first-order chapters.
 
 ## Dependency And Ownership Shape
 
-1. Data-science Phase 0 normalization is complete. Start fresh exploration from
-   `experiments/sys-datascience/coordination/exploration-handoff.md`; do not
-   revive recovered coordination as execution state.
+1. Data-science exploration is complete. Start demonstration/polish from
+   `experiments/sys-datascience/coordination/exploration-result.md`; do not
+   revive recovered coordination or launch data collection without a new named
+   research question.
 2. Review HKO as an integrated candidate. Reopen proof development only on a
    concrete mathematical/source finding.
-3. Use separate durable handoffs for data-science recovery/freeze,
-   exploration/research, demonstration/reproduction, and thesis writeup. The
-   exploration phase must disposition the feasible standard repertoire and
-   decide whether more data/producer axes change an exact retained claim.
+3. Keep data-science demonstration/reproduction separate from thesis writeup.
+   Demonstration selects legible source-generated tables/figures and verifies
+   their provenance; it does not reopen method or producer exploration.
 4. Review Clarke/simple minimizers, then QP conventions and the product
    finite-enumeration theorem. These unlock reliable first-order, HKO, and
    pentagon exposition.
@@ -248,7 +248,7 @@ Use `agent-checkable`, `Jörn`, `Kai`, `external`, or `settled`.
 | --- | --- | --- | --- | --- |
 | C1 | Jörn/Kai | Accept HKO theorem wording, equality-orbit phrasing, local chart bridge, and computation-as-proof framing. | integrated PDF review against the named exact/formal sources | HKO, abstract, introduction, conclusion |
 | C2 | Jörn/Kai | Is the Lagrangian-product finite-enumeration theorem sufficiently proved and cited? | focused source/math review | pentagon theorem and QP chapter |
-| C3 | agent evidence, then Jörn | Which exact data-science claim is the target after satisfying the required method/data coverage: the current bounded retained random/product claim, or a broader producer-axis claim requiring LICCA work? | normalized claim ladder, method dispositions, missing-data assessment, costed alternatives | research stopping rule and LICCA requirement |
+| C3 | settled | Existing evidence supports a controlled negative search benchmark and bucket-local low-ridge enrichment, but no route to `sys > 1`; no additional dataset or same-generator scale-up has a named thesis purpose. | reopen only for a concrete new hypothesis or thesis statement that existing artifacts cannot answer | proceed to demonstration without LICCA work |
 | C4 | Jörn | Should data science remain framed as a main result? | compare final supported claim with thesis architecture | title and thesis emphasis |
 | C5 | agent-checkable, then Jörn math | What arbitrary-polytope first-order statement is supported beyond generic smooth branches? | formal/source audit with explicit theorem and fallback wording | first-order and HKO/search bridges |
 | C6 | agent-checkable, then Jörn scope | What final role/support strength should flow graph/CH2021 have? | theorem/code/evidence audit with concrete chapter alternatives | flow-graph chapter and conclusion |
@@ -260,7 +260,7 @@ Use `agent-checkable`, `Jörn`, `Kai`, `external`, or `settled`.
 | C12 | settled | The consolidated exploration handoff is the only active research-control surface; P1 decisions live in the canonical method-disposition ledger, the competing top-level ledger was removed, owner packets retain evidence, and `experiments/sys-datascience/LICCA.md` marks every retained cluster script dormant. | reopen only if a unique source-backed decision is shown missing from the handoff or owner | prevent recovered process bulk from driving work |
 | C13 | settled | Cite the literature while retaining the detailed Clarke/simple-minimizer proofs and explanations already developed; Jörn is satisfied with them and Kai agreed to include the proofs already available. | Jörn decision, 2026-07-10 | do not replace the existing proof presentation with citation-only prose |
 
-Open research under C3, C5, or C6 stops when the alternatives' retained wording
+Open research under C5 or C6, or any future reopening of C3, stops when the alternatives' retained wording
 and evidence are explicit, another iteration is unlikely to change the thesis
 choice enough to repay its cost, and any remaining stakeholder choice is put to
 Jörn. One diagnostic, one method wave, or one theorem attempt is not closure by

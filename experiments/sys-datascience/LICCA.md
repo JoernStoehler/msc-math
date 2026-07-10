@@ -5,9 +5,9 @@ infrastructure, not execution handoffs and not evidence.
 
 | Surface | Status | Reactivation gate |
 | --- | --- | --- |
-| `produce/licca-datascience-produce.slurm.sh` | dormant run-local producer infrastructure | a fresh C3 decision names the producer axis, claim, budget, outputs, stopping rule, and review gate |
-| `prepare/licca-datascience-prepare.slurm.sh` | dormant run-local prepare infrastructure | a selected C3 producer run or a distinct reproduction task supplies a reviewed input/output contract |
-| `produce/licca-refresh-random.slurm.sh` and `produce/promote-licca-random-refresh.py` | dormant standalone retained-producer refresh/promotion helpers | a selected reproduction/refresh task states comparison and promotion rules, or C3 explicitly selects a new retained sample |
+| `produce/licca-datascience-produce.slurm.sh` | dormant run-local producer infrastructure | a new research decision names the producer axis, claim, budget, outputs, stopping rule, and review gate |
+| `prepare/licca-datascience-prepare.slurm.sh` | dormant run-local prepare infrastructure | a selected producer run or a distinct reproduction task supplies a reviewed input/output contract |
+| `produce/licca-refresh-random.slurm.sh` and `produce/promote-licca-random-refresh.py` | dormant standalone retained-producer refresh/promotion helpers | a selected reproduction/refresh task states comparison and promotion rules, or new research explicitly selects a retained sample |
 | `licca-build-dataset.slurm.sh` | dormant legacy in-place table rebuild helper | an explicit retained-table reproduction/schema-refresh task; prefer the run-local prepare script for new work |
 | `produce/plans/` | dormant producer designs | status and gates are recorded in `produce/plans/README.md` |
 

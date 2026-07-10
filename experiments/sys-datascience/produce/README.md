@@ -76,7 +76,7 @@ separate `random` and `random_product` count arrays are still accepted; missing
 height fields default to `[0.8, 1.2]`.
 
 The high-complexity two-face-control files are dormant reusable plans, not a
-current execution packet. They may be used only after a fresh C3 exploration
+current execution packet. They may be used only after a new research
 decision selects the named generic/product bucket extension, supplies a current
 cost and review gate, and prepares a separate LICCA handoff. Plan status is
 summarized in `plans/README.md`.
@@ -93,9 +93,9 @@ Its companion rationale is:
 plans/two-face-control-licca-smoke.md
 ```
 
-If C3 reactivates this proposal, its distinct non-power-of-two per-bucket counts
-make source/bucket/count mixups visible. Validation must then use
-`--expected-plan-file`, not only family totals:
+If new research reactivates this proposal, its distinct non-power-of-two
+per-bucket counts make source/bucket/count mixups visible. Validation must then
+use `--expected-plan-file`, not only family totals:
 
 ```bash
 python3 experiments/sys-datascience/produce/validate-datascience-produced.py \
@@ -142,7 +142,7 @@ python3 experiments/sys-datascience/produce/validate-datascience-produced.py \
 ## LICCA
 
 `licca-datascience-produce.slurm.sh` is dormant run-local infrastructure; no
-submission is selected. See `../LICCA.md`. If a fresh C3 decision selects a
+submission is selected. See `../LICCA.md`. If a new research decision selects a
 random/product producer job, the new job-specific handoff must reassess
 resources and build the binary on the login node before submission so Slurm
 time measures the producer job, not Rust compilation:
@@ -153,7 +153,7 @@ export CARGO_TARGET_DIR=/hpc/gpfs2/scratch/u/stoehljo/cargo-target
 cargo build --release -p exp-sys-landscape --bin sys-datascience-produce
 ```
 
-No LICCA job is currently selected. After a fresh C3 decision and a reviewed
+No LICCA job is currently selected. After a new named research decision and a reviewed
 job-specific handoff, the generic producer lifecycle is:
 
 ```text
