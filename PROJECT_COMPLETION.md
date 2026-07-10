@@ -120,19 +120,23 @@ Recovered into this branch:
   `formal/hko-feasible-section-upper-branches.tex`, and
   `thesis/07-hko-local-maximum*.tex`. The exact Sage verifier, HKO thesis build,
   and formal build passed during the 2026-07-10 recovery audit. Status:
-  internally reviewed candidate, not Jörn/Kai accepted. A subsequent
-  integrated source/PDF review found no proof gap; it corrected one empirical
-  sentence to say that no increase was found above numerical resolution. The
-  remaining C1 gate is stakeholder acceptance of the theorem/framing,
-  especially shortened Sage excerpts versus the external full verifier.
+  internally reviewed integration candidate. Jörn accepted the proof route and
+  repeatedly discussed theorem/framing choices with the HKO writing sessions;
+  no known theorem/framing decision blocks integration. A subsequent integrated
+  source/PDF review found no proof gap and corrected one empirical sentence to
+  say that no increase was found above numerical resolution. Later whole-PDF
+  review by Jörn or Kai may still request ordinary presentation revisions,
+  including the balance between shortened Sage excerpts and the external full
+  verifier.
 - Corrected data-science LICCA smoke design from `0a389f58`, retained only as a
   dormant reusable plan conditional on a new named research decision.
 - The formerly dirty `datascience-agent-memory` state, checkpointed as
   `bb0e538e`, was normalized at file level. The reviewed P2 packet and canonical
-  method dispositions remain. Superseded wave syntheses, proposed compute,
-  workflow evaluation, prompt/orchestration material, and stale registries were
-  removed after their current source-backed boundaries were consolidated into
-  `experiments/sys-datascience/coordination/exploration-result.md`.
+  method dispositions remain. Coordination material already present on `main`
+  is preserved; `exploration-result.md` identifies the current phase authority
+  without declaring all earlier material valueless. Additional recovery-only
+  wave syntheses, proposed compute, autonomous-loop material, and workflow
+  probes remain at `bb0e538e` for a separate value and consolidation audit.
 - Data-science chapter and appendix drafts from `black-box-ds-review`; stale
   conflicting claim-control edits were not imported. Status: recovered prose
   source predating P2, not merge-ready thesis text.
@@ -167,7 +171,7 @@ evidence, not a preferred fix.
 | Haim--Kislev QP | substantial draft | `thesis/04-*`, companion, HK2017 and product sources | convention/orientation and finite-enumeration acceptance |
 | Flow graph/CH2021 | substantial conditional draft | `thesis/05-*`, companion, flow-graph crate/experiment/formal sources | final theorem/algorithm role and honest support wording |
 | First-order perturbations | scaffold | `thesis/first-order-perturbations-content.md`, `formal/sys-first-order-local-behavior.md` | supported general method and arbitrary-polytope boundary |
-| HKO local maximum | internally reviewed candidate | HKO sources in recovery checkpoint | integrated PDF and Jörn/Kai theorem/framing review |
+| HKO local maximum | internally reviewed integration candidate | HKO sources in recovery checkpoint | integrated whole-PDF review; no known theorem/framing decision blocks integration |
 | Data-science search | exploration complete; demonstration next | `experiments/sys-datascience/coordination/exploration-result.md`, method packets and producer contracts | reproducible demonstration, then source-backed rewrite |
 | Rotated regular polygons | substantial theorem/certificate draft | `experiments/regular-products/`, `thesis/09-*` | finite-enumeration gate, proof framing, empirical asset polish |
 | 3D visualization | heading only | `experiments/visualization/`, thesis companion | concise exploratory exposition and selected assets |

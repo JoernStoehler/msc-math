@@ -14,13 +14,13 @@ The recovered `bb0e538e` files were normalized as follows.
 | Standard-method disposition updates and method routing | retained | `../methods/trusted-random-product-method-dispositions.md`, `../methods/README.md` |
 | P1/P3/P4/P5 and P2 coordination syntheses | consolidated here where they still constrain the next phase; deleted as superseded coordination | owning method packets and the disposition table |
 | Proposed high-complexity producer run | deleted as an unexecuted proposal, not evidence or a selected next action | current producer contracts and plan files under `../produce/` |
-| Autonomous parent-loop instructions, prompt templates, workflow probes, process notes, and active-session registry | deleted as process state | none; git history is sufficient |
-| Topic ledgers, research ledger, and next-session board | deleted because their launch state was stale and their source-backed boundaries are below | owning method packets and current producer/prepare documentation |
+| Recovery-only autonomous parent-loop instructions, workflow probes, and intermediate process notes | not promoted into the integration tree; retained at `bb0e538e` for later audit | current phase authority is this file |
+| Coordination files already present on `main`, including prompt templates, process learnings, topic ledgers, research ledgers, and session boards | preserved without asserting that every launch recommendation remains current | this file governs the current phase; owning packets remain evidence source truth |
 | Bounded writeup draft | deleted; it was pre-thesis coordination prose and would duplicate artifact-derived claims | owning packet artifacts and READMEs |
 
-The later normalization audit also deleted the competing top-level 2026-06-25
-research ledger. Its result details already had method-packet owners; its unique
-still-current Jörn decision about generator scope is preserved below.
+The top-level 2026-06-25 research ledger is preserved from `main`. Its result
+details also have method-packet owners; its still-current Jörn decision about
+generator scope is preserved below.
 
 The retained P2 packet is evidence about already evaluated rows only. It found
 no `sys > 1` row and did not validate a rule that selects unevaluated generated
@@ -87,8 +87,9 @@ Read these sources in order:
 7. `../LICCA.md` only after new research selects a producer run or a distinct
    reproduction task requires external compute.
 
-Do not treat old coordination files, the deleted top-level research ledger,
-worktrees, `/tmp`, or the recovered thesis draft as current state.
+Do not treat prior coordination files, the top-level research ledger,
+worktrees, `/tmp`, or the recovered thesis draft as current execution state.
+They remain available as planning or recovery inputs where relevant.
 
 ## Exploration Result
 
