@@ -15,6 +15,17 @@ Establish:
 - the claims the packet may support and prohibited stronger conclusions;
 - evidence or review that could materially change the conclusion.
 
+Before honoring a saved status, phase label, launch contract, or stopping rule,
+establish whether it had authority to settle the transition. At a claimed
+research-phase boundary, explicitly identify and disposition each current
+instruction, accepted stakeholder decision, or higher-authority owner fact that
+requires further work or withholds closure. If one contradicts agent-authored
+closure, surface the conflict and do not carry the closure forward or use a
+narrower saved contract to reject the work it may require. Recovered state,
+proposals, control caches, and agent-authored closure do not themselves resolve
+such a conflict. A bounded packet may still be ready for one use while the
+broader research phase remains open.
+
 The contexts and criteria below are recurring examples, not a complete
 classification. Select, combine, adapt, or add checks according to what the
 consumer needs. Do not expand every plausible criterion into work; make
