@@ -42,10 +42,14 @@ Start with the same cases as the verification packet:
 
 - clean generated and retained generic rows;
 - product rows with `near_minimizing_sigma_count > 1`;
-- ascent endpoint rows;
 - HKO/HKO-like fallback-visible rows;
 - edge fixtures for invalid input, product rounding drift, and
   near-redundant-facet preprocessing visibility.
+
+The former ascent endpoint cases are deliberately absent: their retained input
+artifacts were retired, so the current verification manifest cannot identify
+or reproduce them. Add ascent cases again only with current, owned inputs and a
+route-specific comparison contract.
 
 Add only route-relevant cases:
 
