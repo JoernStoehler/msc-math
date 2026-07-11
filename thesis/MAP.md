@@ -8,6 +8,10 @@ Status: navigation cache for the active thesis surface.
   no legacy thesis prose.
 - `00-abstract.tex`: abstract thesis surface.
 - `abstract-content.md`: section-local abstract content notes.
+- `ai-use-disclosure.tex`: unnumbered front-matter factual disclosure of
+  material AI assistance, author responsibility, and provenance limits.
+- `ai-use-disclosure-content.md`: content companion for the factual disclosure
+  page. It is separate from section 13's research-method reflection.
 - `01-introduction.tex`: introduction thesis surface.
 - `introduction-content.md`: section-local introduction content notes.
 - `02-preliminaries.tex`: contains `\section{Preliminaries}`, the section
@@ -60,8 +64,10 @@ Status: navigation cache for the active thesis surface.
 - `12-published-code-data.tex`: published code and data thesis surface.
 - `published-code-data-content.md`: section-local publication/reproducibility
   content notes.
-- `13-use-of-ai.tex`: AI-use thesis surface.
-- `use-of-ai-content.md`: section-local AI-use content notes.
+- `13-use-of-ai.tex`: numbered discussion of AI use in mathematical research,
+  its impact on the research process, and lessons for future work.
+- `use-of-ai-content.md`: section-local content notes for that research-method
+  discussion; not the factual disclosure companion.
 - `14-conclusion.tex`: conclusion thesis surface.
 - `conclusion-content.md`: section-local conclusion content notes.
 - `a-datascience-results.tex`: data-science appendix thesis surface.

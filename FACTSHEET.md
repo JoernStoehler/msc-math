@@ -75,7 +75,9 @@ maintenance low. The numbers are stable and can be out of order.
    8.7. Code/data/reproducibility story: explain what code/data support the
    thesis and how the claimed results can be reproduced.
 
-   8.8. Use-of-AI disclosure: disclose AI use at the level Jörn decides.
+   8.8. AI-use artifacts: include the factual disclosure and the numbered
+        research-process reflection described in item 45, at the final length
+        and level of detail Jörn decides.
 
    8.9. Visualization as exploration: include 3d visualization as exploratory
    support, not as a central result.
@@ -256,8 +258,18 @@ maintenance low. The numbers are stable and can be out of order.
 44. Formal `unverified` blocks are proof-route material, not accepted thesis
     proof.
 
-45. AI-use disclosure is required in substance. The final disclosure length,
-    tone, and level of detail remain Jörn's decision.
+45. The thesis has two distinct AI-facing artifacts:
+
+    45.1. An unnumbered factual AI-use disclosure page states the material forms
+          of AI assistance, Jörn's responsibility for retained claims, and the
+          provenance limits needed for honest attribution.
+
+    45.2. Numbered section 13 discusses how AI was used in mathematical
+          research, its impact on the research process, and lessons for future
+          work.
+
+    Neither artifact substitutes for the other. Their final length, tone, and
+    level of detail remain Jörn's decision.
 
 ## Agent Limits And Advisor Risk
 
