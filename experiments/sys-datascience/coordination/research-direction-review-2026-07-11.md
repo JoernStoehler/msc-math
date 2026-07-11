@@ -1,343 +1,240 @@
-# Sys-Datascience Research-Direction Review
+# Sys-Datascience Broad-First Research Review
 
 Date: 2026-07-11.
 
-Status: Jörn research-taste review surface. This is decision support, not a
-backlog, launch queue, phase authority, or source of generated metrics. Comment
-by ID when that is convenient. Owners and generated artifacts remain source
-truth for evidence.
+Status: current research-taste and portfolio review surface. This is the
+exhaustive set of directions seriously brainstormed or reassessed in this
+session, not a launch queue. Generated artifacts and producers remain the
+source of detailed metrics. Comment by ID when useful.
 
-## Purpose And Coverage
+## Correction And Purpose
 
-This report separates observations, questions, hypotheses, experiment ideas,
-predicted outcomes, value judgments, and stakeholder cruxes instead of forcing
-them into one ontology. It records:
+The first review organized the research program around a replicated ridge-area
+enrichment result. Jörn correctly objected that this was too narrow. Existing
+evidence already implies a sharper correction:
 
-- every object-level alternative directly compared by the parent during the
-  2026-07-11 forward-test/exploration session;
-- serious inherited directions that were read and reassessed during that
-  session;
-- rejected method families only as clusters when they lacked a current
-  experimental interface.
+- normalized ridge-area sum is not unique even within its family: mean is
+  rank-equivalent to sum inside fixed product buckets, while max, standard
+  deviation, and upper quantiles select different and comparably promising
+  candidates;
+- the active invariant map contains essentially only combinatorial summaries
+  and symplectic two-face-area summaries, so it cannot identify whether ridge
+  features are unique among natural geometric descriptions;
+- many models were tested against this narrow vocabulary. That is not broad
+  feature discovery;
+- viable search objects exist outside the retained table: constrained product
+  coordinates, fixed-facet dual-vertex coordinates, nonsmooth local search,
+  combinatorial boundary moves, and structured low-dimensional families.
 
-It does not claim that every inherited topic was newly brainstormed in this
-session. The broad method checklist is not expanded into one item per feasible
-tool: feasibility without a question, interface, or decision role is not a
-research direction.
+The portfolio therefore keeps three objectives distinct:
 
-The intended use is for Jörn to add mathematical taste, likely Kai interest,
-project-level scope knowledge, and criticism of the probability/value model.
-The most useful feedback is often an ID plus a short reaction such as “more
-mathematical than you think,” “Kai will not care,” “wrong model of the random
-generator,” or “worth 20 agent-hours before deciding.”
+1. find a verified sys > 1 example efficiently;
+2. discover robust competing empirical structure, especially cases the
+   ridge/combinatorial picture cannot explain;
+3. produce observations, counterexamples, and conjectures that help a pure
+   mathematician understand the systolic ratio mechanistically.
 
-## Current Evidence Anchors
+A run may serve several objectives, but secondary questions must be fixed
+before inspection rather than narrated from the winning row.
 
-- `O-TABLE`: the retained trusted random/product table contains no recorded
-  `sys > 1` row. This is a table-scoped observation, not arbitrary-generator
-  evidence.
-- `O-RIDGE`: low normalized total symplectic two-face area is a replicated
-  within-product-bucket enrichment signal. Product/combinatorial confounding is
-  substantial, but the strongest pure-proxy interpretation is not supported.
-- `O-CONC`: the new frozen rule selecting low ridge-area maximum share within
-  the lowest ridge-sum tail passed its predeclared descriptive incremental
-  enrichment criterion on a fresh 100k random-product sample. Source:
-  `../methods/extreme-scalar-rejection-proposer/artifacts/100k-ridge-concentration-validation/`.
-- `O-THRESH`: the new packet found no `sys > 1`; the selected maximum remains
-  sub-threshold. The rule is validated for enrichment under one generator, not
-  for reaching or extrapolating to 1.
-- `O-TAIL`: current tail extrapolation is model-dominated. Existing evidence
-  does not support a calibrated hit rate or impossibility claim.
-- `O-METHOD`: the retained-table repertoire is explicitly executed or
-  dispositioned for narrow named-method wording. More in-table models cannot by
-  themselves validate generated candidates or repair narrow generator scope.
+## Evidence Boundary
 
-Calibration note: “independent validation” here means a rule derived from old
-target-bearing diagnostics was frozen and tested pre-target on a fresh sample.
-It does not mean statistical feature independence, cross-generator validation,
-or theorem-level mechanism evidence. A more conservative description is
-“independently replicated pre-target sub-threshold enrichment under the named
-random-product generator.”
+Current source anchors are the producer/prepared-table contracts, packets
+indexed by ../methods/README.md, and these cross-slice owners:
 
-## Decision And Taste Cruxes
+- ../../sys-landscape/ and ../../dev-gradient-ascent/ for general/local search;
+- ../../dev-sys-prediction/ for HK action branches and local diagnostics;
+- ../../combinatorial-cells/ for boundary crossings and cell transitions;
+- ../../regular-products/ for structured low-dimensional families;
+- ../../hko-local-maximum/ and the local HKO reference packets for deliberately
+  separated theorem and empirical surfaces.
 
-| ID | Question | Why Jörn/Kai input matters | Current assessment |
-| --- | --- | --- | --- |
-| `D-TERM` | Should “candidate-proposer for finding `sys > 1`” include any validated sub-threshold enrichment rule? | This is thesis vocabulary and reader expectation. | Reserve the threshold-directed phrase for evidence bearing on reaching 1; call `O-CONC` an independently validated sub-threshold enrichment rule. |
-| `D-DATA` | What additional data, if any, are needed to satisfy `../../../FACTSHEET.md` 34.1? | The fact sheet requires more data but deliberately leaves the dataset choice owner-local. The new 100k run is more data for replication, but not broader generator coverage. | Unsettled independently of `D-TERM`. A naming choice cannot close it. |
-| `D-ROLE` | What current evidence and support belong to the required major random/gradient search story? | `../../../FACTSHEET.md` 30 settles that the method remains major; current sys-datascience coordination excludes ascent by folder scope. | Requires a bounded cross-slice source audit before declaring the overall search story feature-complete; the audit does not reopen whether the method is required. |
-| `D-PORTFOLIO` | If one more evidence-producing packet is affordable, which research family deserves it? | This depends heavily on mathematical taste, Kai interest, and opportunity cost against HKO, first-order, flow graph, and writing. | General generator/data-axis design currently dominates another same-generator ridge packet. Frozen-rule transfer is one possible subroute, not the predetermined question. Mathematical mechanism/HKO scouts may change the ranking cheaply. |
-| `D-GENERATOR` | Which alternative random-polytope distribution is mathematically meaningful rather than an arbitrary implementation knob? | Jörn is more likely to know what geometry is natural; Kai-interest depends on the choice. | Agents should first produce a technically feasible shortlist, then ask for this crux. |
-| `D-MECHANISM` | Is the ridge/concentration pattern a clue worth mathematical conjecture work or only an empirical regularity? | Geometric plausibility and thesis interest are expert-taste questions. | Spend bounded agent-only reasoning first; escalate only concrete predictions or inequality routes. |
-| `D-EMPHASIS` | Would Kai value one clean generator-transfer result more than a polished bounded benchmark with the current replicated enrichment phenomenon? | This is an external-reader value model, not inferable from metrics. | High-leverage Jörn judgment after the cheap scouts below. |
+The reviewed fresh 100k ridge-concentration packet establishes one frozen,
+pre-target, sub-threshold enrichment rule under the named random-product
+generator. It contains no sys > 1 row. It does not establish that sum is the
+best primitive, that the rule transfers generators, or that ridge geometry is
+a mechanism.
 
-### Correction To The Parent's Earlier Routing
+The retained table has 14,336 evaluated rows and only two substantive feature
+families. Historical representative-dependent features suggest a broader
+latent geometry/concentration axis, but they are not current invariant
+evidence.
 
-The earlier C3 framing coupled `D-TERM` to `D-PORTFOLIO`: choose narrow
-terminology and route directly to demonstration, or call the rule a proposer
-and run more research. That was too quick. Terminology does not change the
-evidence, settle `D-DATA`, or determine whether another packet has positive
-expected value. The questions are separated here.
+Evidence labels below: G means observation/hypothesis generation; M means
+possible mechanism evidence only after a frozen discriminating prediction and
+matched/interventional falsification; T begins only with an exact proof or
+certificate in its mathematical owner.
 
-## Research Questions
+## Current Observations And Hypotheses
 
-| ID | Question | Current answer / status |
+| ID | Statement | Assessment and status |
 | --- | --- | --- |
-| `Q-PROP` | Does low ridge-area maximum share add pre-target selection value inside the low normalized ridge-sum tail on fresh generated candidates? | Answered descriptively for one frozen random-product rule by `E-CASCADE`; cross-generator and threshold-directed versions remain open. |
-| `Q-GENERATOR` | Which conclusions about tails, features, support, and candidate selection depend materially on the generator/data axis? | Open. This is broader than transfer of the current ridge rule. |
-| `Q-TRANSFER` | Is the ridge-sum/concentration rule a product-generator regularity or a more general geometric signal? | Open, conditional on a meaningful generator/interface; one subquestion under `Q-GENERATOR`. |
-| `Q-GRADIENT` | What supported role does random/gradient search have in the final project-level data-science story? | Open at the integration level; sys-datascience folder scope does not answer it. |
-| `Q-MECHANISM` | What geometric property, if any, connects distributed low symplectic two-face area to higher `sys`? | Open. Current data support an association and falsify some simple stories, not a mechanism. |
-| `Q-HKO` | Is HKO extreme for the same correctly normalized ridge/concentration quantities? | Open; current HKO evidence is reference/smoke only. |
-| `Q-THRESH` | Does any supported rule move candidates toward `sys = 1`, rather than merely enrich a sub-threshold range? | Current answer is no. Tail and scale-up routes remain model-sensitive. |
-| `Q-CLOSE` | Is any cheap unrun packet likely to change a retained thesis claim or important research decision? | No evidence-producing packet is selected. The bounded scouts in the portfolio section are intended to improve this answer before more compute. |
+| O-NOHIT | No trusted retained or newly evaluated row has sys > 1. | Direct table/packet observation; not impossibility or zero-mass evidence. |
+| O-RIDGE-FAMILY | Low symplectic two-face-area magnitude enriches higher sys within product buckets. | Replicated under the named generator; G, not mechanism. |
+| O-NOT-UNIQUE | Sum is not a uniquely supported ridge statistic. | Mean is redundant within fixed buckets; max/std/q95 are serious competing directions. |
+| O-FEATURE-BOTTLENECK | Current ablation is effectively ridge summaries versus combinatorics. | Direct schema fact; prohibits a broad uniqueness claim. |
+| O-SEARCH-INTERFACES | Legitimate continuous and discrete candidate objects exist outside the table. | Direct code fact; several old rejections were table-scoped. |
+| O-INCIDENCE-PANEL | A compact incidence-graph family did not distinguish all four frozen discordant pairs. | Executed negative F1B scout; stop this definition unless independent mathematics predicts a narrower stratum. |
+| O-PRODUCT-BRANCH-TIES | On the post-target panel, both lower-`sys` product matches have four exact cyclic action-word classes while their higher-`sys` matches have one. | Executed M0 hypothesis seed; cyclic-class contract repaired and reviewed; generic evidence blocks a universal monotone story. |
+| O-FIRST-BOUNDARY | The current first-boundary atlas exposes omega flips, selected-word changes, gradient kinks, and important exceptions, but no single transition type explains them. | Executed M3 existing-data scout; `G` only, with incidence and symmetric-gradient witnesses retained. |
+| H-RIDGE-MAG | There are two or three independent ridge directions: magnitude, dispersion/upper tail, and concentration. | Plausible; F0 tests it cheaply. |
+| H-SPATIAL | Incidence arrangement of two-face areas adds information lost by scalar summaries. | Plausible and mathematically natural; untested. |
+| H-BRANCH | High sys is associated with balanced/crowded HK action branches or tie strata. | High mathematical value; untested and vulnerable to circularity. |
+| H-MULTIPLE-PHENOTYPES | Comparatively high sys occurs through several structural regimes. | Open; quality-diversity and residual exemplars can distinguish it. |
+| H-ADAPTIVE | Direct adaptive search gains more threshold progress per exact evaluation than another scalar filter. | Plausible; requires an equal-budget comparison. |
+| H-GENERATOR | Tail shape, feature ranking, and search paths depend materially on generator choice. | Open and decision-relevant. |
+| H-TIE-EXTREMA | Interesting extrema or stalls concentrate near branch/combinatorial transition strata. | Pure-math-interesting; needs response evidence and counterexamples. |
 
-## Hypotheses And Current Beliefs
+## Feature And Empirical-Discovery Directions
 
-| ID | Hypothesis | Current belief and evidence boundary | Status / what would change it |
-| --- | --- | --- | --- |
-| `H-RIDGE` | Low normalized total symplectic two-face area genuinely enriches high `sys` inside fixed product buckets. | Supported empirically by retained and generated-candidate evidence. Not cross-generator or theorem evidence. | Retain. Falsified or narrowed by failure on new product buckets/seeds or a correct control showing no residual signal. |
-| `H-CONC` | Conditional on the low ridge-sum tail, more distributed ridge area improves candidate quality. | Exact low-maximum-share rule replicated on one fresh sample; two buckets had the opposite mean direction. Broader entropy/top-share language remains post-hoc. | Partly supported. Cross-generator transfer or another pre-specified replication would strengthen robustness; mechanism claims need more. |
-| `H-PROXY` | Ridge magnitude/concentration is mainly product-bucket or combinatorial structure. | Strong pure-proxy version is weakened because bucket-local enrichment survives. Major confounding remains. | Mixed. Cross-generator transfer and mathematical analysis are more informative than more pooled regressions. |
-| `H-GOODHART` | More extreme single-scalar ridge filtering plateaus or Goodharts before reaching 1. | Plausible from prior 1M and 100k evidence. The concentration add-on shows the selected tail was not fully exhausted, but still gives no threshold trend. | Partly supported. A cheap threshold curve could sharpen it; another blind run adds little. |
-| `H-SMALLFRAC` | Fractions of very small ridge areas explain the signal. | Existing diagnostic evidence is weak or negative. | Unlikely; no packet justified without a new mathematical prediction. |
-| `H-GENERATOR` | Generator choice materially affects tail behavior and whether the ridge rule transfers. | Open. Height interval was an interpretable but weak `sys` axis; bucket/family effects were larger. Direction distributions and alternative polytope models remain untested. | High-value uncertainty because either transfer or failure changes the thesis interpretation. |
-| `H-HKO` | The HKO example is extreme for the same correctly normalized ridge/concentration quantities. | Weak smoke/reference seed only. Old distance/flank claims are tainted by normalization. | Cheap corrected reference-rank check can raise or lower mechanism priority. HKO local maximality remains a separate owner. |
-| `H-TAIL` | Current generator tails bend or terminate below 1 rather than continuing exponentially. | Plausible but model-sensitive. | Do not promote without new tail observations or a falsifying bucket-level backtest. |
-| `H-TINY-MASS` | Current generators have nonzero but extremely small mass above 1 near structured regions. | Open and not distinguished from zero by current data. | Only a new generator/targeted source or a justified large sequential run is informative. |
-| `H-SUPERVISED` | Additional standard models mostly relearn bucket/combinatorial structure; occasionally they may suggest a new interaction. | Moderately likely. P2 already covers the main missing baselines. Model success remains in-table until converted into one frozen generated rule. | Low current priority; reopen only for an exact wording need or genuinely new rule. |
-| `H-TOPTAIL` | Direct geometric inspection of top selected candidates can produce a sharper falsifiable mechanism hypothesis. | Plausible, but vulnerable to post-hoc storytelling. | Worth a bounded scout only with a required measured object, prediction, and falsifier. |
+These ask what else organizes sys. They are not candidate proposers until a
+rule is frozen and tested on candidates selected before target evaluation.
 
-## Directions Directly Compared In This Session
+| ID | Direction and question | Assessment and status |
+| --- | --- | --- |
+| F0-FAMILY-QUOTIENT | Identify exact identities/correlation classes; compare family-level conditional and grouped stability. | Executed. Sum/mean are rank-equivalent within product buckets; entropy/effective-count/normalized-entropy are rank-equivalent; other magnitude/tail selectors overlap only partially. This narrows but does not close F1/F2. |
+| F1-INVARIANT-MAP | Design a small predeclared set of feature families with explicit symplectic, translation, scale, and relabeling contracts. | Most inventions will be redundant; one incidence-aware family may add information. Open after F0. |
+| F1A-FACE-LATTICE | Richer flag/cd-index-type counts, incidence spectra/kernels, motifs, symmetry, and product/decomposability. | May add residual structure or merely recode buckets. Candidate under F1. |
+| F1B-AREA-FIELD | Treat two-face areas as a field on the incidence graph: assortativity, Laplacian energy, low-area components, load balance, adjacent contrasts. | First compact incidence-aware panel executed negative: no statistic had one direction across all four pairs. Broader definitions are conditional, not an automatic queue. |
+| F1C-INCIDENCE-PAIRINGS | Translation-safe symplectic pairings of primal differences/incident edge vectors over invariant incidence-defined tuples. | Principled replacement for historically strong representative-dependent pairings. High upside, nontrivial contract. |
+| F1D-DISTRIBUTION-SHAPE | Add only nonredundant CV/skew/Gini/Lorenz/trimmed-tail summaries. | Cheap but high fishing risk. Conditional after F0. |
+| F1E-SYMPLECTIC-MOMENTS | Symplectic covariance/inertia or symplectic eigenvalues of a centered geometric measure. | Could capture global shape; definition and measure may make it ill-posed. Design hypothesis only. |
+| F1F-CAPACITY-BOUNDS | Cheap geometric/capacity bounds and slack as multi-fidelity signals. | Could direct search/suggest inequalities; target leakage and cost must be separated. Interface scout needed. |
+| F1G-CANONICAL-COORDS | Use the working generic coordinate canonizer for invariant coordinate features. | Broadens generic support; canonical-frame artifacts and nongeneric failures are serious. Conditional. |
+| F1H-INVARIANT-LEARNING | Face-graph/set representation learning from invariant attributes. | Lower priority before explicit families because the table is small and no raw equivariant representation is settled. Parked. |
+| F2-GUARDED-DISCOVERY | Compare families with nested source/facet/product splits, stability selection, upper-tail models, negative controls, and untouched holdout. | May find residual structure or justify uniqueness only within an expanded map. Conditional on F0/F1. |
+| F3-DISCORDANT-PAIRS | Match source/bucket/combinatorics/ridge summaries but seek divergent sys, and reverse matches. | Executed as target-free pair construction followed by post-target ranking. Useful inspection seeds; q10/q25/q50 dependence and non-geometric matching boundary are explicit. |
+| F4-RESIDUAL-EXEMPLARS | Preserve stable high/low cross-fitted residuals and diverse top-sys examples. | Executed with two cross-fitted model families and weak leave-bucket-out sign stress. Useful model-specific inspection seeds, not omitted-feature evidence. |
+| F5-SUBGROUP-DISCOVERY | Find minimum-support regimes where relationships differ. | Can reveal strata; high false-discovery risk. Conditional inside F2. |
+| F6-SYMBOLIC-ENVELOPE | Seek simple invariant expressions that bound/stratify sys, then adversarially falsify them. | Better math payoff than a small black-box score gain; numerology risk. Structured/held-out domains only. |
+| F7-TAIL-MODELS | Quantile, exceedance, or distributional models rather than mean-only prediction. | Endpoint-aligned but still in-table ranking; sparse/model-sensitive. Conditional inside F2. |
+| F8-FAIR-PRETARGET | Freeze the best non-ridge/interaction rule and compare equal-budget selection with best ridge-family, union, and matched random controls. | Directly asks whether anything rivals ridge as a proposer. Run only after discovery degrees of freedom close. |
+| F9-GENERATOR-TRANSFER | Test family rankings and frozen rules on one meaningful alternative source. | Separates geometry from generator regularity. Conditional on I0. |
 
-### `E-CASCADE` — frozen ridge-concentration validation
+## Direct Search Directions
 
-- Kind: executed experiment.
-- Question: `Q-PROP`, whether low maximum share adds selection value inside the
-  low ridge-sum tail.
-- Prior outcome model: pass gives an independently replicated sub-threshold
-  rule; heterogeneous/failing buckets demote the post-hoc lead; any `sys > 1`
-  triggers immediate escalation.
-- Result/status: executed, passed its descriptive rule, reviewed. Supports
-  `H-CONC` narrowly and triggered the current taste review.
-- Value/cost assessment: high information per local runtime because it changed
-  the retained “no validated rule” boundary. Repeating nearby variants now has
-  sharply diminishing value.
+These may use sys or its branch structure. That is legitimate direct search,
+but not independently validated pre-target prediction.
 
-### `E-ALTGEN` — new generator or data axis
+| ID | Candidate object and method | Assessment and status |
+| --- | --- | --- |
+| S0-IID-LOCAL-ADAPTIVE | Equal exact-budget product comparison: IID, multi-start branch-aware local ascent, and one adaptive population method; retain maxima, threshold progress, diversity, invalidity, genealogy. | Highest near-term direct-search VOI. Tests local/adaptive value and scalar-filter opportunity cost at once. Leading bounded execution candidate after interface/budget audit. |
+| S1-LOCAL-BASIN | Multi-start nonsmooth local search/basin hopping in fixed-F dual coordinates. | Existing interface and exact reevaluation; endpoints are not certified maxima. One S0 arm or later generic search. |
+| S2-SPLITTING | Adaptive multilevel splitting/subset simulation with rising sys levels and valid mutations. | Direct rare-event method; genealogy is informative. Probability estimates require correct weighting. Alternative S0 arm. |
+| S3-CEM | Cross-entropy adaptation in positive cyclic angle gaps plus log-heights, quotienting scale/rotation. | Cheap if parameterization is stable; premature collapse risk. Leading S0 adaptive arm. |
+| S4-EVOLUTIONARY | CMA-ES, differential evolution, or annealing in constrained product coordinates. | Robust baseline; raw generic coordinates waste budget on gauge. Viable, below one CEM/splitting probe. |
+| S5-ACTIVE-SURROGATE | Exploit, uncertain, and diverse acquisition arms over a legitimate parameterization. | Guards familiar-support exploitation; high-dimensional quotient geometry is fragile. Conditional. |
+| S6-QUALITY-DIVERSITY | MAP-Elites/novelty archive over meaningful descriptors, fitness=sys. | Seeks multiple high-sys phenotypes and counterexamples to one-mechanism stories. Existing-row archive first. |
+| S7-BOUNDARY-TRAVERSAL | Deliberately cross incidence/omega/combinatorial boundaries from good candidates. | May escape cell-local stalls and supplies transition anatomy; multiple crossings complicate it. Interface exists, adapter absent. |
+| S8-FACET-CONTINUATION | Add a barely nonredundant facet, reoptimize, optionally prune. | Tests whether complexity opens tail paths; invalidity/changing charts are costly. Conditional after fixed-F diagnosis. |
+| S9-STRUCTURED-CONTINUATION | Continue regular-product angles/supports or another low-dimensional family. | Narrower search but high exact-math potential. Mine existing data first. |
+| S10-BRANCH-INVERSE-DESIGN | Choose intended HK near-active branches and optimize the lower envelope/volume while checking branch takeover. | Mechanistically direct; repeated obstructions may suggest inequalities. Machinery exists, adapter absent. |
+| S11-BRANCH-AND-BOUND | Certified/global optimization on a truly low-dimensional structured family. | Strong potential guarantee; infeasible generically. Park behind S9. |
+| S12-DEEP-GENERATION | Learned generation over variable unordered facet sets. | Data/interface/invariance burden dominates. Low priority. |
+| S13-NO-HONEST-OBJECT | Generic RL, sequence/time-series models, plain MCMC, or fashionable topology without a state/proposal/decision question. | Rejected until a concrete object and comparison exist. |
 
-- Kind: experiment family, not yet a runnable packet.
-- Question: `Q-GENERATOR`; whether tail behavior, feature associations,
-  interesting support regions, or candidate-selection rules depend on the
-  source model. Frozen ridge-rule transfer is one possible comparison, not the
-  whole direction.
-- Candidate axes considered: existing generic versus product generation,
-  direction distributions, concentrated/heavy-tailed height laws, facet/product
-  support ranges, rejection/admissibility conditioning, space-filling designs,
-  and alternative random-polytope models.
-- Predicted outcomes: most likely some effects are generator-conditional while
-  the absence of threshold hits persists; robust feature/rule behavior would
-  strengthen the geometric-interest case; a qualitatively different tail or
-  `sys > 1` row is less likely but decisive.
-- Status: compared and parked pending a design/interface scout. Choosing an
-  arbitrary generator merely to add rows would be low-value.
-- Value/cost assessment: potentially the highest evidence value after
-  `E-CASCADE`, but higher design/implementation cost. Both success and failure
-  are thesis-useful.
+Product search must parameterize positive cyclic angle gaps summing to 2 pi
+plus log-heights, quotient common scale/rotation, and treat construction
+failure as infeasible. Generic dual coordinates carry Sp(4), scale,
+translation, and permutation redundancy; global distances/surrogates must not
+learn that gauge.
 
-### `E-HIGHCOMPLEX` — larger facet/product buckets under the same generator
+## Mathematics-Informing Directions
 
-- Kind: proposed support-expansion experiment; dormant plan exists.
-- Question: whether the effect and tail change with combinatorial complexity.
-- Predicted outcomes: likely no `sys > 1` and continued heterogeneous
-  enrichment; a clear upward complexity trend would change scale-up priorities.
-- Status: compared and parked. The existing 51-row plan is plumbing smoke, not
-  research evidence.
-- Value/cost assessment: lower information than cross-generator transfer unless
-  a specific complexity trend or retained claim is named.
+| ID | Mathematical question | Assessment and status |
+| --- | --- | --- |
+| M0-ACTION-SPECTRUM | Do normalized HK action gaps, near-minimizer multiplicity/entropy, support sizes, beta margins, or branch-window visibility distinguish high sys after matching? | Tiny post-target panel executed. Product four-class-versus-one pattern is a reviewed `G` hypothesis seed; generic results are mixed/window-sensitive. Next only a small untouched product test separating symmetry ties from competing branches. |
+| M1-MECHANISM-TOURNAMENT | Force ridge magnitude, concentration, proxy, branch crowding, symmetry/tie, and generator-artifact hypotheses to make conflicting predictions. | Highest route toward mechanism; hypotheses must not flex. After F3/F4/M0. |
+| M2-STRUCTURED-PHASES | Map regular-product parameters to sys, orbit signature, action gap, and combinatorial type; seek piecewise regimes/transition curves. | Extremely high if a formula/conjecture emerges. Mine existing data first; at most one exact follow-up. |
+| M3-TRANSITION-ATLAS | Which combinatorial crossings align with branch switches, kinks, derivative changes, or failures? | Existing first-boundary data mined. Retains omega-flip/selected-word/kink hypotheses plus explicit incidence, symmetric-gradient, and failure exceptions; no mechanism claim or automatic new run. |
+| M4-ACTIVE-GERMS | Which directional-response and branch/germ types are needed on generic, product, and HKO-like panels? | Could sharpen a formal statement or yield a minimal obstruction. Finite sampling never proves completeness. |
+| M5-MINIMAL-WITNESSES | Remove/merge facets, project toward symmetry, or rationally simplify an exemplar while preserving its phenomenon. | Highly usable concrete mathematics; greedy minimal is not global minimal. Depends on F3/F4/M3/S6. |
+| M6-SYMBOLIC-STRUCTURED | Recover exact/piecewise relations in a natural low-D family, calibrated on a known exact case and held-out parameters. | Exceptional potential; generic symbolic regression is numerology. Conditional on M2; T requires proof. |
+| M7-SYMMETRY-STRATA | Compare multiplicities, flat directions, and transverse response near symmetry strata versus ordinary/high-tail points. | Connects HKO/regular products to search; coordinate distance is not quotient distance. Negative controls first. |
+| M8-SHAPE-NEIGHBORHOODS | Under several invariant metrics, is the observed landscape one tail or several robust regimes/bridges? | Useful only if stable across metrics/source balancing. Embedding topology is not moduli topology. Medium priority. |
+| M9-BASIN-ECOLOGY | Do diverse starts converge to repeated combinatorial/orbit endpoint types, and what transitions recur? | Informs attractor conjectures; optimizer artifacts are not geometry. Audit old traces first; secondary S0 question. |
+| M10-TAIL-PATHS | Which geometric/combinatorial/branch changes recur as splitting/CEM levels rise? | Repeated paths generate hypotheses; divergence refutes one-feature stories. Predeclare trace fields in S0; G only. |
+| M11-CONJECTURE-FALSIFICATION | Keep only 3--5 quantified conjectures with distinct predictions, plausible proof routes, and cheap counterexample searches. | High leverage for Jörn; prune aggressively. Synthesis layer, not an idea dump. |
+| M12-OPERATION-TRANSFER | Test products, rotations, truncations, facet births, or symmetry breaking while controlling other structure. | Closer to mechanism; may reveal monotonicity failures/inequalities. One named operation and falsifier at a time. |
+| M13-CONFUSION-ATLAS | Preserve predictor disagreement, matched-feature/divergent-target pairs, branch takeovers, failed invariance, and unexpected transitions. | Compact explanation debt for mathematics and QA. Examples, not polished presentation. |
 
-### `E-MOREMODELS` — additional retained-table method families
+## Generator, Provenance, And Integration Directions
 
-- Kind: method-surface expansion.
-- Question: whether another standard model changes the named-method story or
-  proposes a genuinely new rule.
-- Predicted outcome: mostly confirmation of bucket/ridge structure; low chance
-  of a distinct interpretable rule.
-- Status: compared and rejected for the current claim. P2 and the disposition
-  ledger already cover narrow method-table wording.
-- Value/cost assessment: low; method count does not repair generator scope or
-  validate candidates.
+| ID | Assessment and status |
+| --- | --- |
+| I0-GENERATOR-DESIGN | Name a mathematically meaningful generator contrast before rows. High value; agents produce a technical shortlist, then ask Jörn only if naturalness remains decisive. |
+| I1-HIGH-COMPLEXITY | Larger facet/product buckets under the same generator. Parked unless a named complexity/support question exists. |
+| I2-HEIGHT-AXIS | Wider height laws. Demoted by the existing weak pilot relative to a different generator or adaptive search. |
+| I3-TAIL-BACKTEST | Bucket-level survival/backtest and sequential stopping. Useful only for a probability/compute-allocation claim. |
+| I4-BLIND-SCALE | Another blind same-generator 1M. Rejected now; likely repeats sub-threshold evidence. |
+| I5-MORE-TABLE-MODELS | More standard estimators on current columns. Rejected as a program; use only inside a named F2 comparison. |
+| I6-GRADIENT-INTEGRATION | Audit the project-level random/gradient story required by FACTSHEET 30. High project value; folder scope cannot settle it. |
+| I7-HKO-REFERENCE | Correctly normalized HKO ranks and branch anatomy. Potentially valuable, but HKO local maximality stays separately owned. |
+| I8-REBUILD | Repeat full source-to-table/P2 reconstruction. Rejected as redundant given Git identity, hashes, artifacts, and reviewed 2026-07-10 rebuild. |
+| I9-DEMONSTRATION | Determine future table/figure roles and source inputs. Parked until exploration stops; no polish or thesis prose now. |
 
-### `E-BLINDSCALE` — another blind 1M, single-ridge, or same-rule scale-up
+## Ordering And Current Value Judgment
 
-- Kind: compute experiment.
-- Question: whether more rows under the same generator find `sys > 1` or sharpen
-  the plateau.
-- Predicted outcome: more sub-threshold rows and model-sensitive negative
-  evidence, with no threshold discovery.
-- Status: compared and rejected now.
-- Value/cost assessment: low compared with transfer or mechanism scouts. Reopen
-  only with a threshold-directed hypothesis and sequential stopping rule.
+The corrected ordering is broad-first, with bounded parallel scouts. Current
+execution state is:
 
-### `V-REBUILD` — repeat the full source-to-table/P2 rebuild
+1. F0, F3, F4, the compact F1B panel, M0 panel inspection, and existing-data
+   M3 atlas are executed. F1B stopped negative; M0 retained one bounded product
+   hypothesis; F0 prevents treating ridge sum as unique.
+2. Finish the process-calibration and packet integration review, then run the
+   already-audited S0 equal-budget product comparison if its fixed budget still
+   dominates the remaining cheap alternatives. Ridge selection is one arm, not
+   the program.
+3. In parallel only after one research-lead workflow is validated, mine existing
+   regular-product material for M2 and audit I6. Do not produce a dataset merely
+   to brainstorm.
+4. Use S0/M0/M2/M3 outcomes to select at most one of F2/F8, M1/M4/M5/M6, or a
+   broader S family. Do not launch all feasible continuations.
 
-- Kind: evidence-maintenance action, not research.
-- Status: explicitly rejected as redundant. Git identity and the 2026-07-10
-  reviewed rebuild already resolved the material uncertainty.
+Current priority classes:
 
-## Inherited Directions And New Cross-Slice Syntheses
+- completed bounded scouts: F0, F3, F4, compact F1B, M0 panel, existing-data M3;
+- remaining immediate/cheap: existing-data M2 and I6;
+- leading bounded execution: S0, using CEM or splitting and retaining traces
+  for M9/M10;
+- high-upside follow-up: F1B/F1C, M0, M1, M4, M5, M6;
+- conditional broadening: F8/F9, S6--S10, I0;
+- parked/rejected now: more ridge-rule variants, blind scale-up, arbitrary
+  generator knobs, model-count expansion, deep generation, method names
+  without objects.
 
-Most rows below are inherited serious directions reassessed from the topic maps
-and ledgers. `E-TRANSFER-SCOUT`, `E-TRANSFER-RUN`, and `E-GRADIENT-AUDIT` are
-new decompositions or cross-slice inferences made during this review, not saved
-historical plans. The higher priority assigned to `E-HKO-RANK` is also a new
-value judgment rather than its inherited launch status.
+## Decision Cruxes For Jörn
 
-| ID | Direction | Predicted outcomes / decision update | Current status and dependency | Value assessment |
-| --- | --- | --- | --- | --- |
-| `E-DIST-DESIGN` | Compare meaningful generator/data axes and name the exact scientific question before producing rows. | May select rule transfer, tail/support comparison, feature-stability comparison, or no worthwhile new axis. Prevents arbitrary data collection. | Inherited design direction, explicitly resurfaced in this session; precedes any new generator run. | High information, low initial cost. |
-| `E-TRANSFER-SCOUT` | Determine whether the frozen rule can be applied faithfully to one meaningful non-product generator. | Finds a cheap exact interface, an expensive interface, or a mismatch that makes rule transfer the wrong question. | New subroute synthesized here; conditional on `E-DIST-DESIGN` selecting transfer as the relevant comparison. | High information if transfer is selected, but not a substitute for broader design. |
-| `E-TRANSFER-RUN` | Execute the frozen rule on a genuinely different generator. | Likely weakening/heterogeneity supports a product-family regularity; persistence strengthens geometry/mechanism claims; positive row escalates. | New subroute; conditional on `E-DIST-DESIGN`, `E-TRANSFER-SCOUT`, and `D-GENERATOR`. | High prospective evidence value if transfer is the chosen question and interface cost is bounded. |
-| `E-GRADIENT-AUDIT` | Audit the project-level random/gradient search story after ascent/endpoint surfaces were removed from active sys-datascience scope. | Existing evidence may support a negative algorithm-development story, require one cheap corrected rerun, or reveal a major unsupported retained role. | New cross-slice source/readiness inference; launch before calling the overall data-science result feature-complete. | High project value; guards against scope-by-folder error. |
-| `E-HKO-RANK` | Check HKO reference ranks under correctly normalized ridge magnitude and concentration features. | Extremality raises shared-mechanism priority; non-extremality separates the stories; normalization failure parks the route honestly. | Inherited parked/sharpen direction; this report newly judges a cheap discriminator likely worthwhile after Jörn review. | Potentially high Kai/thesis interest, low compute. |
-| `E-HKO-LOCAL` | Corrected HKO-local perturbation/ridge packet. | Could test a shared local mechanism or show the random-product pattern is unrelated. | Park behind `E-HKO-RANK`, correct normalization, and HKO-local ownership. | High possible math value, but scope/taint risk if launched early. |
-| `E-MECH-IDEATE` | Bounded mathematical mechanism/conjecture pass on total ridge area, maximum share, capacity, and volume. | Concrete predictions/inequality routes justify one experiment or proof check; vague causal prose stops the line. | Launchable as agent-only thinking; Jörn reviews only concrete candidates. | High upside per cost and counters “feature storytelling.” |
-| `E-GEOM-INSPECT` | Inspect selected candidate faces/ridges/concentration/degeneracy. | Likely generates hypotheses; may reveal a simple structural pattern or only post-hoc anecdotes. | Needs a required measured object, out-of-sample prediction, and falsifier. | Medium; useful only as hypothesis generation, not evidence promotion. |
-| `E-THRESH-CURVE` | Vary the low-ridge selection strength within buckets. | Flattening/degradation supports `H-GOODHART`; monotone improvement makes targeted scale-up more valuable. | Park unless precise plateau wording or an almost-free cache path matters. Must precede a large same-family scale-up. | Medium-low now; cheap falsifier before expensive `E-BLINDSCALE`. |
-| `E-THIRD-FEATURE` | Freeze another two-feature/representation rescue. | Most likely another heterogeneous sub-threshold gain; failure risks researcher-degrees-of-freedom without changing the thesis. | Park. Reopen only if `E-MECH-IDEATE`, transfer, or a held-out model predicts one exact new rule. | Low now; current family is near marginal-value exhaustion. |
-| `E-RESIDUAL` | Further ridge/combinatorial residual audit. | Could sharpen whether the effect survives a named adjustment set. | Largely addressed; reopen only for stronger mechanism wording. | Low-medium, depending on the exact claim. |
-| `E-TAIL-BACKTEST` | Bucket-level tail backtest or thesis-use audit of the clean survival packet. | Likely confirms model sensitivity; a falsified model can prevent bad scale decisions. | Park unless probability/scale-up wording matters. | Low for discovery, medium for guarding a claimed tail statement. |
-| `E-CDF` | Compare bucket CDF/quantile trajectories rather than named universal marginal families. | Likely yields more stable descriptive structure than distribution-family identity. | Historical serious follow-up, not selected now. | Medium only if distributional shape enters the thesis. |
-| `E-HEIGHT` | Larger height-interval sensitivity study. | Likely moves dispersion features more than `sys`/ridge signal; higher buckets may show top-tail instability. | Demoted. Existing pilot made simple interval widening a weak next axis. | Low relative to a new generator. |
-| `E-TOPTAIL` | Top-tail anatomy and bucket-focused hostile sampling. | May identify structured geometry or only restate known ridge features. | Partly superseded; reopen through `E-GEOM-INSPECT` or a named high-complexity hypothesis. | Medium as a scout, low as blind sampling. |
-| `E-METHOD-RANK` | Rank methods by whether they changed research decisions. | Produces anti-sprawl guidance, not new evidence. | Effectively completed enough through dispositions and the current review. | Maintenance value only. |
+No immediate Jörn answer is needed for the cheap broad-first work. Useful later
+cruxes are:
 
-## Clustered Rejections Or Interface-Dependent Families
+| ID | Crux | Agent work that precedes it |
+| --- | --- | --- |
+| D-MATH-VALUE | Which concrete anomaly, structured rule, or branch hypothesis is likely to interest Kai and repay proof work? | Examples/predictions from F3/F4/M0/M2/M3. |
+| D-GENERATOR | Which feasible alternative distribution is mathematically natural enough for transfer evidence? | I0 shortlist with conditioning and cost. |
+| D-PORTFOLIO | Prefer direct threshold search, mechanism/conjecture work, or stop for integration? | Cost/outcome comparison after scouts and S0 audit. |
+| D-WORDING | What thesis term describes independently validated sub-threshold enrichment? | Evidence is fixed; terminology does not route research. |
 
-These were considered through the method surface but are not live experiments:
+## Stop And Claim Rules
 
-- SVM, kNN, kernels, additional ensembles, neural networks, autoencoders,
-  Gaussian processes, density/mixture/one-class models: reject until an exact
-  thesis sentence or distinct frozen generated rule needs them.
-- Pattern search, Nelder--Mead, derivative-free trust regions, Bayesian
-  optimization, and other black-box search: no current candidate
-  parameterization, constraints, budget, or faithful cheap objective. Reopen
-  only when a low-dimensional family supplies that interface.
-- RL, bandits, MCMC, time series, and sequence models: no corresponding online,
-  posterior, or temporal object in the active question.
-- Seed-effect studies: reject as an end in themselves. Seeds are reproducibility
-  metadata; another seed is useful only for uncertainty in a promoted claim.
-- Old ascent/continuation/local-behavior packets: not evidence for the active
-  random-product table. Their possible project-level role is handled by
-  `E-GRADIENT-AUDIT`, not silent revival.
-- Plot variants and presentation polish: later communication work, not evidence
-  generation.
+- Stop unrelated work if current exploration produces a trusted new sys > 1
+  candidate/source beyond known HKO/rotated-pentagon and declared
+  reference/control inputs, or a credible new independently validated
+  threshold-directed proposer; give Jörn exact evidence pointers. Encountering
+  an expected known-positive artifact is not a discovery.
+- Correlation, prediction, search traces, and empirical phase boundaries are
+  not mechanism evidence without a frozen discriminator that defeats plausible
+  alternatives.
+- No empirical direction supplies theorem evidence.
+- Do not collect data without a named question and outcome-dependent decision.
+- Stop a family when no cheap packet can change a retained claim/decision and
+  record why expensive work is parked.
 
-## Dependency And Ordering Logic
+## Review Record
 
-1. `D-TERM` and `D-DATA` are independent. Vocabulary can be settled now;
-   research routing still needs the data/portfolio judgment.
-2. `E-DIST-DESIGN -> D-GENERATOR -> one selected generator question`. If the
-   question is frozen-rule transfer, continue through
-   `E-TRANSFER-SCOUT -> E-TRANSFER-RUN`. This is cheaper than implementing or
-   running an arbitrary distribution and avoids narrowing generator work in
-   advance.
-3. `E-MECH-IDEATE` and `E-HKO-RANK` can change which evidence packet is worth
-   running. If they produce no sharp prediction, stop rather than manufacture a
-   mechanism experiment.
-4. `E-GEOM-INSPECT -> one frozen prediction -> E-THIRD-FEATURE` only when the
-   inspection yields a rule that can be stated before new targets. Broad feature
-   browsing does not justify another validation run.
-5. `E-THRESH-CURVE -> E-BLINDSCALE`. A cheap curve should attempt to falsify
-   monotone improvement before paying for a larger same-generator run.
-6. `E-HKO-RANK -> E-HKO-LOCAL`. Do not pay the local-perturbation and ownership
-   cost until the reference discriminator supports a shared mechanism.
-7. `E-TAIL-BACKTEST -> sequential stopping design -> E-BLINDSCALE` only when a
-   retained probability or compute-allocation claim requires it.
-8. `E-GRADIENT-AUDIT` precedes any claim that the project-level data-science
-   search story is feature-complete. Folder exclusion is not project closure.
-
-## Portfolio-Level Assessment
-
-The random-product/ridge family has produced a real and interesting empirical
-result. It has also received enough attention that another nearby feature or
-seed has low marginal value. The main hyperfocus risk is continuing to exploit
-the cheapest working pipeline while generator coverage, gradient-search role,
-and mathematical meaning remain less resolved.
-
-If no further evidence packet is desired, the honest result is already useful:
-a bounded negative search benchmark plus one independently replicated
-sub-threshold enrichment phenomenon. But direct demonstration should follow a
-deliberate resolution of `D-DATA` and `D-ROLE`, not merely a vocabulary choice.
-
-If one additional evidence packet is allowed, the current ranking is:
-
-1. one packet selected by the general generator/data-axis design; frozen-rule
-   transfer to a meaningful non-product generator is the current leading
-   subroute, not a foregone conclusion;
-2. HKO/ridge reference discriminator if Jörn judges the possible geometric
-   bridge especially interesting;
-3. one experiment predicted by a concrete mathematical mechanism pass;
-4. higher-complexity same-family support only if a sharp trend hypothesis
-   emerges;
-5. another ridge-feature or blind scale-up packet only after cheaper
-   discriminators reverse the current low-value assessment.
-
-The recommended low-cost work before selecting that packet is not a parallel
-compute campaign: `E-DIST-DESIGN`, `E-GRADIENT-AUDIT`, `E-HKO-RANK`, and
-`E-MECH-IDEATE` are bounded design/source/reasoning scouts. If distribution
-design selects rule transfer, `E-TRANSFER-SCOUT` follows. Their purpose is to
-make one later packet better chosen or to show that none is worth running.
-
-## Fallacy And Overconfidence Audit
-
-- **Vocabulary as evidence:** naming the rule a proposer does not change its
-  measured support or the value of another experiment.
-- **Scope by folder:** excluding gradient work from this directory does not show
-  that the thesis's random/gradient search story is complete.
-- **Binary positive/negative framing:** the same packet is positive evidence for
-  structure and negative evidence for threshold reach.
-- **Replication inflation:** one held-out fresh sample is meaningful; it is not
-  broad validation across generators.
-- **Method-count substitution:** a closed named-method table does not compensate
-  for narrow source distributions.
-- **Cheap-compute bias:** repeated easy random-product packets can crowd out
-  harder but more thesis-relevant questions.
-- **Mechanism storytelling:** a geometrically named feature plus stable
-  association is not a causal explanation or theorem.
-- **Premature chapter optimization:** having a writable bounded story does not
-  prove that it is the highest-value final story.
-- **Checklist reification:** feasible tools and dormant plans do not become a
-  research queue.
-- **Central-work avoidance:** even high-value data-science work must be compared
-  with HKO, first-order, flow graph, and thesis-writing opportunity costs.
-
-## Highest-Leverage Jörn Annotations
-
-The report is usable with comments anywhere, but these judgments would change
-priorities most:
-
-1. `D-DATA`: does the new independent 100k packet satisfy the intended “more
-   data” requirement for this thesis result, or was broader generator coverage
-   part of what you meant?
-2. `D-ROLE` / `E-GRADIENT-AUDIT`: which current evidence and support should
-   carry the required gradient-search role in the final search story?
-3. `D-GENERATOR`: after agents produce a feasible shortlist, which random
-   polytope models are mathematically meaningful to compare?
-4. `D-MECHANISM`: does the ridge/concentration phenomenon sound worth a bounded
-   conjecture/mechanism effort?
-5. `D-EMPHASIS`: is Kai more likely to value a generator-transfer comparison or
-   the current bounded benchmark plus a clean mathematical interpretation?
-6. Any experiment ID whose expected thesis value or likely outcome is badly
-   misestimated.
-
-## Primary Sources
-
-- `../../../FACTSHEET.md`, items 30--34.2;
-- `../../../PROJECT_COMPLETION.md`, C3 and the data-science surface;
-- `research-ledger.md` and `next-session-candidates.md`;
-- topic files under `topics/`;
-- `../methods/trusted-random-product-method-dispositions.md`;
-- `../methods/extreme-scalar-rejection-proposer/artifacts/100k-ridge-concentration-validation/review.md`;
-- the historical owner ledger at `../research-ledger.md` for generator-axis and
-  distribution-shape directions.
+The parent synthesized three bounded read-only audits: feature breadth and
+redundancy; direct-search interfaces/methods; and pure-mathematics insight
+routes. They were separate so implementation constraints and mathematical
+value could each receive real attention. The parent owns ordering and
+value/cost judgments. Final review must check both the object-level exploration
+and whether the workflow caused omission, ritual work, or renewed hyperfocus.

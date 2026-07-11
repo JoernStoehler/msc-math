@@ -134,8 +134,9 @@ Recovered into this branch:
 - The formerly dirty `datascience-agent-memory` state, checkpointed as
   `bb0e538e`, was normalized at file level. The reviewed P2 packet and canonical
   method dispositions remain. Coordination material already present on `main`
-  is preserved; `exploration-result.md` identifies the current phase authority
-  without declaring all earlier material valueless. The subsequent file-level
+  is preserved; `exploration-result.md` now records why the recovery closure is
+  not current phase authority without declaring its bounded evidence valueless.
+  The subsequent file-level
   audit in `coordination/recovery-audit-2026-07-10.md` preserves the abandoned
   workflow as half-tested GPT-5.5 material at `bb0e538e`, with a compact probe
   index. It records why absorbed syntheses and superseded execution state remain
@@ -175,7 +176,7 @@ evidence, not a preferred fix.
 | Flow graph/CH2021 | substantial conditional draft | `thesis/05-*`, companion, flow-graph crate/experiment/formal sources | final theorem/algorithm role and honest support wording |
 | First-order perturbations | scaffold | `thesis/first-order-perturbations-content.md`, `formal/sys-first-order-local-behavior.md` | supported general method and arbitrary-polytope boundary |
 | HKO local maximum | internally reviewed integration candidate | HKO sources in recovery checkpoint | integrated whole-PDF review; no known theorem/framing decision blocks integration |
-| Data-science search | exploration reopened; research portfolio under Jörn taste review after independent sub-threshold enrichment | direction review, independent ridge-concentration packet, current coordination ledger, method packets and producer contracts | settle C3a--C3c, then select at most one evidence packet or route deliberately to reproducible demonstration |
+| Data-science search | broad-first exploration active after ridge-centered portfolio correction | broad direction review, feature/exemplar/structured-data scouts, direct-search interface audit, reviewed method packets and producer contracts | satisfy corrected exploration completion contract, then perform reproducible demonstration readiness |
 | Rotated regular polygons | substantial theorem/certificate draft | `experiments/regular-products/`, `thesis/09-*` | finite-enumeration gate, proof framing, empirical asset polish |
 | 3D visualization | heading only | `experiments/visualization/`, thesis companion | concise exploratory exposition and selected assets |
 | Numerics | heading only | numerics companion, audit/verification sources | truthful minimal exact/f64/indeterminate/Sage story |
@@ -217,11 +218,12 @@ QP, flow-graph, HKO, rotated-polygon, or first-order chapters.
 
 ## Dependency And Ownership Shape
 
-1. Data-science exploration is paused for Jörn's review of
+1. Data-science broad-first exploration is active under
    `experiments/sys-datascience/coordination/research-direction-review-2026-07-11.md`.
-   Terminology, additional-data sufficiency, and the project-level gradient
-   role are separate cruxes. Do not launch another evidence packet until that
-   review has improved the portfolio choice.
+   Current cheap work compares feature breadth, unexplained exemplars,
+   structured/transition evidence, and direct-search interfaces before another
+   target-evaluation packet. Do not route to demonstration from terminology or
+   the recovery agent's closure judgment.
 2. Review HKO as an integrated candidate. Reopen proof development only on a
    concrete mathematical/source finding.
 3. Keep data-science demonstration/reproduction separate from thesis writeup.
@@ -258,9 +260,10 @@ Use `agent-checkable`, `Jörn`, `Kai`, `external`, or `settled`.
 | --- | --- | --- | --- | --- |
 | C1 | settled for integration | HKO theorem wording, equality-orbit phrasing, local chart bridge, and computation-as-proof framing have no known unresolved decision. | reopen only for concrete integrated-PDF feedback or a newly identified implication gap | HKO may be integrated; ordinary final review still applies |
 | C2 | Jörn/Kai | Is the Lagrangian-product finite-enumeration theorem sufficiently proved and cited? | focused source/math review | pentagon theorem and QP chapter |
-| C3a | Jörn | Does an independently validated rule for sub-threshold `sys` enrichment count as a candidate-proposer in the thesis vocabulary, or is that term reserved for evidence bearing on reaching `sys > 1`? | choose terminology; this does not by itself settle research routing | final data-science wording |
-| C3b | agent-checkable, then Jörn taste | Does the new 100k replication satisfy the intended additional-data requirement, or is a broader generator comparison needed and worth its opportunity cost? | technical transfer shortlist plus Jörn's mathematical/Kai-value assessment | exploration stop and demonstration inputs |
-| C3c | agent-checkable, then Jörn scope | What current random/gradient evidence belongs to the required project-level search story? | bounded cross-slice source/readiness audit, then Jörn's thesis-role judgment | data-science feature-completion claim and chapter emphasis |
+| C3a | agent-checkable | Which current feature directions are independent, what natural invariant families are missing, and which examples contradict the current ridge/combinatorial picture? | feature quotient, invariant-map design, and matched/residual exemplar audit | empirical claim breadth and next feature packet |
+| C3b | agent-checkable, then Jörn taste | Which technically viable route has highest thesis value: direct adaptive threshold search, a mechanism/conjecture packet, or generator transfer? | cheap existing-data scouts and equal-budget search interface/cost comparison; ask Jörn only on mathematical/Kai value | exploration portfolio and stop decision |
+| C3c | agent-checkable, then Jörn scope | What current random/gradient evidence belongs to the required project-level search story? | bounded cross-slice source/readiness audit, then Jörn only if chapter role remains stakeholder-dependent | data-science feature-completion claim and chapter emphasis |
+| C3d | Jörn wording, later | What thesis term should describe independently validated sub-threshold enrichment? | choose terminology after evidence stabilizes; this does not route research | final data-science wording |
 | C4 | Jörn | Should data science remain framed as a main result? | compare final supported claim with thesis architecture | title and thesis emphasis |
 | C5 | agent-checkable, then Jörn math | What arbitrary-polytope first-order statement is supported beyond generic smooth branches? | formal/source audit with explicit theorem and fallback wording | first-order and HKO/search bridges |
 | C6 | agent-checkable, then Jörn scope | What final role/support strength should flow graph/CH2021 have? | theorem/code/evidence audit with concrete chapter alternatives | flow-graph chapter and conclusion |
@@ -269,7 +272,7 @@ Use `agent-checkable`, `Jörn`, `Kai`, `external`, or `settled`.
 | C9 | Jörn | Has Kai received a full PDF, and what review state is current? | Jörn/mail state when scheduling M1/M2 | external review sequencing, not a deadline assumption |
 | C10 | Jörn | What final archive target and artifact set should be used? | prepared options near finalization | code/data section and release |
 | C11 | agent external check + Jörn state | What are the current official submission requirements, and has the registration note been handed to the Prüfungsamt? | refresh official sources; ask only the private completed-action state | M2/M3 hand-in checklist |
-| C12 | settled | The consolidated exploration result governs the current phase; earlier coordination material is preserved as reference, the additional `bb0e538e` checkpoint has a completed file-level recovery audit, owner packets retain evidence, and every retained cluster script is dormant. | reopen research only for a concrete hypothesis or thesis statement that current artifacts cannot answer; consult historical recovery files only for a named missing role | proceed to demonstration without letting old launch state drive work |
+| C12 | settled correction | The recovery agent's exploration closure is not phase authority. Its bounded retained-table evidence and the completed `bb0e538e` audit remain valid inputs; the corrected broad-first direction review and completion contract govern current exploration. | reopen the recovery material only for named evidence; close current exploration by the corrected value/cost gate | prevents premature demonstration and historical launch-state reuse |
 | C13 | settled | Cite the literature while retaining the detailed Clarke/simple-minimizer proofs and explanations already developed; Jörn is satisfied with them and Kai agreed to include the proofs already available. | Jörn decision, 2026-07-10 | do not replace the existing proof presentation with citation-only prose |
 
 Open research under C5 or C6, or any future reopening of C3, stops when the alternatives' retained wording

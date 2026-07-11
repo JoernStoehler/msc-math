@@ -28,6 +28,13 @@ This packet currently runs the last step on the invariant scalar features
 already present in the retained table, and records gaps relative to the active
 row schema.
 
+It also owns a first-pass feature-family quotient audit. That audit checks a
+declared set of producer/simple-polytope identities, screens ridge-feature rank
+redundancy, and asks which ridge rules remain distinct in the frozen
+generated-candidate extreme selections. It is not an exhaustive algebraic
+quotient or an empirical screen of every feature pair. It prevents the most
+important known redundancies from inflating apparent geometric coverage.
+
 ## Method
 
 Screen eligible scalar retained-table covariates against `sys` with Pearson
@@ -71,9 +78,30 @@ not treated as an intrinsic scalar invariant feature.
 uv run --script experiments/sys-datascience/methods/statistical-associations/analyze.py
 ```
 
+The current quotient artifact uses the same reviewed current-schema rebuild as
+`../standard-baseline-p2/`. Rebuild it and run the audit with:
+
+```bash
+TABLES_DIR="$(mktemp -d /tmp/sys-ds-feature-quotient.XXXXXX)"
+experiments/sys-datascience/prepare/build-random-only-slice.sh full \
+  "$TABLES_DIR"
+uv run --script \
+  experiments/sys-datascience/methods/statistical-associations/analyze_feature_family_quotient.py \
+  --tables-dir "$TABLES_DIR"
+```
+
+The quotient script fails if a declared exact identity exceeds its recorded
+floating tolerance. It reads the frozen selection-overlap matrix from
+`../ridge-mechanism-discriminator/artifacts/current/` by default; pass
+`--selection-overlap` only to audit another explicitly identified proposer
+packet.
+
 ## Generated Artifacts After Rerun
 
 - `artifacts/summary.json`
+- `artifacts/feature-family-quotient.json`
+- `artifacts/feature-family-rank-pairs.tsv`
+- `artifacts/feature-family-selection-overlap.tsv`
 
 The artifact records:
 
@@ -85,6 +113,10 @@ The artifact records:
 - `tested_scalar_covariates`;
 - `skipped_constant_covariates`;
 - `excluded_by_design`.
+
+The quotient JSON records input paths and hashes, declared identity assertions,
+bucket composition, thresholds, audit scope, and interpretation boundaries.
+The two TSVs own the detailed rank-pair and frozen-selection overlap rows.
 
 ## Observation
 
@@ -128,6 +160,16 @@ to be active invariant method-facing fields.
 Interpret the strongest active scalar associations as explanatory signals only.
 This packet does not turn them into a generated-row candidate-proposer.
 
+The current first-pass audit observes that the retained slice is entirely
+simple and verifies the declared combinatorial identities listed in the JSON.
+Within every fixed random-product bucket, ridge-area sum and mean are
+rank-equivalent; entropy, effective face count, and normalized entropy are also
+rank-equivalent. Other ridge magnitude summaries are strongly correlated but
+have materially different frozen extreme selections. This is not evidence that
+all other algebraic or empirical redundancies have been found. Use the generated
+artifacts for the declared identities, ridge correlations, and overlaps rather
+than copying those rows into coordination prose.
+
 ## Validity Guards
 
 - Scalar associations are explanatory evidence unless they define a held-out or
@@ -142,6 +184,18 @@ This packet does not turn them into a generated-row candidate-proposer.
 - Categorical factors and engineered raw-dual-vertex features need their own
   encoding or feature-production step; the count of screened scalar columns is
   not evidence that those families were covered.
+- Declared combinatorial identities reported by the audit are conditional on
+  the audited slice being entirely simple. The script records and checks that
+  condition before asserting the simple-four-polytope identities. It does not
+  search exhaustively for other identities.
+- The generated pooled-rank columns first replace each feature by fractional
+  ranks inside each source/facet or product bucket, then compute Spearman
+  correlation after pooling rows. They are row-weighted descriptive summaries,
+  not aggregated per-bucket correlations, a causal adjustment, an
+  equal-bucket-weight estimator, or a substitute for grouped holdout.
+- The selection-overlap rows inherit the upstream frozen 100k random-product
+  packet's generator and rule boundaries. They show whether extreme selectors
+  chose the same candidates, not whether any selector can find `sys > 1`.
 
 ## Current Disposition
 
@@ -152,8 +206,9 @@ validated.
 ## Remaining Worthwhile Questions
 
 - Build a small feature-map audit for additional invariant scalars derivable
-  from the producer geometry, then decide which missing families have enough
-  value to implement in `prepare/invariant_features.rs`.
+  from the producer geometry outside the audited ridge-area multiset and
+  count summaries, then decide which missing families have enough value to
+  implement in `prepare/invariant_features.rs`.
 - Promote only associations that are strong, stable, and convertible into a
   pre-evaluation ranking rule.
 
@@ -170,6 +225,9 @@ not claim that the obvious feature map from `a_k` is complete.
 ## Reopen Triggers
 
 - prepared table columns change;
+- the trusted slice stops being entirely simple or its bucket definitions
+  change;
+- the frozen proposer selection-overlap artifact changes;
 - the active invariant-feature contract changes;
 - an obvious derived scalar covariate is identified but not present in the
   shared prepare-stage schema;

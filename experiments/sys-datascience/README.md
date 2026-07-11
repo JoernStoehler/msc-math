@@ -88,8 +88,10 @@ uv run --script experiments/sys-datascience/fingerprint-dataset.py \
 
 Read first:
 
-- `coordination/exploration-result.md` for the completed interpretation,
-  research stopping decision, and demonstration boundary.
+- `coordination/research-direction-review-2026-07-11.md` for the current
+  broad-first portfolio and status;
+- `coordination/exploration-result.md` for the audit of the recovery agent's
+  premature exploration closure;
 - `produce/README.md`
 - `prepare/README.md`
 - `feature-space-coverage-ledger.md`
@@ -105,11 +107,16 @@ method summaries are tracked under `methods/<method>/artifacts/` when a README
 cites current numbers. Keep durable packet conclusions in
 `methods/<method>/README.md`, not only in `/tmp`.
 
-Current coordination status: exploration is complete. Existing evidence
-supports a controlled negative search benchmark plus a bucket-local low-ridge
-generated-candidate enrichment result, but no route to `sys > 1`. No further
-dataset or LICCA job has a named research purpose. Demonstration/polish is next;
-`LICCA.md` classifies the retained dormant scripts.
+Current coordination status: broad-first exploration is active. Existing
+evidence supports a controlled negative hostile-search benchmark plus
+sub-threshold enrichment under one random-product generator, but the current
+feature map is narrow and direct-search and mathematics-informing routes remain
+under review. `LICCA.md` classifies the retained dormant scripts; none is
+selected merely because exploration is open.
 
-Escalate before unrelated cleanup if a method records a trusted `sys > 1` row
-or a credible candidate-proposer.
+Escalate before unrelated work only when an active method produces a trusted
+new `sys > 1` candidate or source beyond the already-known HKO/rotated-pentagon
+family and declared reference/control rows, or produces a credible new
+candidate-proposer. A known positive reference is expected comparison or
+plumbing evidence unless its value, provenance, or relation to the active
+question is newly surprising.

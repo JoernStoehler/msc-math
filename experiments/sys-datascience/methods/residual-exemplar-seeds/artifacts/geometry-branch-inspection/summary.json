@@ -1,0 +1,29 @@
+{
+  "method": "residual-exemplar-incidence-inspection-v1",
+  "evidence_class": "post-target_G_hypothesis_seed",
+  "panel_path": "experiments/sys-datascience/methods/residual-exemplar-seeds/artifacts/inspection-panel.tsv",
+  "table_path": "/tmp/sys-ds-p2-normalization-full/polytope-table.jsonl",
+  "provenance_path": "/tmp/sys-ds-p2-normalization-full/polytope-provenance-table.jsonl",
+  "producer_paths": [
+    "experiments/sys-datascience/produce/random.jsonl",
+    "experiments/sys-datascience/produce/random-product.jsonl"
+  ],
+  "panel_sha256": "10e875c391f24c48f43ea307d8a2b02423ddbac3348398ba3299ed6dd305320b",
+  "table_sha256": "49825d7636246f71f4ebd419cf0ccbc86e39e6b7f43d4b03e889bb85e4887aea",
+  "provenance_sha256": "6ff88a5accce9a7ec7e5a494107350b0974b2ce0268ea44caae36a18a7494ef2",
+  "producer_sha256": [
+    "a21ac62ba5c9496ef631d3cce74e8b663764516b76e9d4725f1e517d8dd55f9f",
+    "66bf82010e92e0f26b0df226f4e6c0eef05d21eb22a0967c7f669530f6545736"
+  ],
+  "panel_record_count": 10,
+  "distinct_polytope_count": 14,
+  "successful_rows": 14,
+  "failures": {},
+  "invariance_contract": [
+    "node identity is an unordered pair of containing facets; all summaries are invariant to facet and vertex relabeling",
+    "node weight is unsigned symplectic two-face area divided by sqrt(volume), invariant under Sp(4), translation, and positive scaling up to f64 reconstruction",
+    "two nodes are adjacent exactly when their reconstructed two-faces share at least two vertices (a polytope edge)",
+    "top quartile uses ceil(face_count/4), ordered by normalized area with face index only as an exact-tie breaker"
+  ],
+  "target_boundary": "panel selection used sys/residuals; geometry summaries do not consume sys but remain post-selection G evidence and are not proposer validation or mechanism"
+}

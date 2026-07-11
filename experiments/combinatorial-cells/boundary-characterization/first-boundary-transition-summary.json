@@ -1,0 +1,264 @@
+{
+  "all_successful_by_event": {
+    "incidence_flip": {
+      "cyclic_selected_best_sigma_changes": 1,
+      "dihedral_sensitivity_selected_best_sigma_changes": 1,
+      "raw_selected_best_sigma_changes": 1,
+      "rows": 2957
+    },
+    "omega_flip": {
+      "cyclic_selected_best_sigma_changes": 317,
+      "dihedral_sensitivity_selected_best_sigma_changes": 317,
+      "raw_selected_best_sigma_changes": 317,
+      "rows": 2674
+    }
+  },
+  "all_successful_polytope_level_by_event": {
+    "incidence_flip": {
+      "polytopes_with_a_successful_probe": 870,
+      "polytopes_with_any_cyclic_selected_best_sigma_change": 1
+    },
+    "omega_flip": {
+      "polytopes_with_a_successful_probe": 797,
+      "polytopes_with_any_cyclic_selected_best_sigma_change": 181
+    }
+  },
+  "by_facet_count_and_event": {
+    "10": {
+      "incidence_flip": {
+        "cyclic_selected_best_sigma_changes": 0,
+        "dihedral_sensitivity_selected_best_sigma_changes": 0,
+        "raw_selected_best_sigma_changes": 0,
+        "rows": 219
+      },
+      "omega_flip": {
+        "cyclic_selected_best_sigma_changes": 8,
+        "dihedral_sensitivity_selected_best_sigma_changes": 8,
+        "raw_selected_best_sigma_changes": 8,
+        "rows": 129
+      }
+    },
+    "5": {
+      "incidence_flip": {
+        "cyclic_selected_best_sigma_changes": 1,
+        "dihedral_sensitivity_selected_best_sigma_changes": 1,
+        "raw_selected_best_sigma_changes": 1,
+        "rows": 444
+      },
+      "omega_flip": {
+        "cyclic_selected_best_sigma_changes": 122,
+        "dihedral_sensitivity_selected_best_sigma_changes": 122,
+        "raw_selected_best_sigma_changes": 122,
+        "rows": 502
+      }
+    },
+    "6": {
+      "incidence_flip": {
+        "cyclic_selected_best_sigma_changes": 0,
+        "dihedral_sensitivity_selected_best_sigma_changes": 0,
+        "raw_selected_best_sigma_changes": 0,
+        "rows": 521
+      },
+      "omega_flip": {
+        "cyclic_selected_best_sigma_changes": 66,
+        "dihedral_sensitivity_selected_best_sigma_changes": 66,
+        "raw_selected_best_sigma_changes": 66,
+        "rows": 607
+      }
+    },
+    "7": {
+      "incidence_flip": {
+        "cyclic_selected_best_sigma_changes": 0,
+        "dihedral_sensitivity_selected_best_sigma_changes": 0,
+        "raw_selected_best_sigma_changes": 0,
+        "rows": 620
+      },
+      "omega_flip": {
+        "cyclic_selected_best_sigma_changes": 51,
+        "dihedral_sensitivity_selected_best_sigma_changes": 51,
+        "raw_selected_best_sigma_changes": 51,
+        "rows": 631
+      }
+    },
+    "8": {
+      "incidence_flip": {
+        "cyclic_selected_best_sigma_changes": 0,
+        "dihedral_sensitivity_selected_best_sigma_changes": 0,
+        "raw_selected_best_sigma_changes": 0,
+        "rows": 743
+      },
+      "omega_flip": {
+        "cyclic_selected_best_sigma_changes": 49,
+        "dihedral_sensitivity_selected_best_sigma_changes": 49,
+        "raw_selected_best_sigma_changes": 49,
+        "rows": 550
+      }
+    },
+    "9": {
+      "incidence_flip": {
+        "cyclic_selected_best_sigma_changes": 0,
+        "dihedral_sensitivity_selected_best_sigma_changes": 0,
+        "raw_selected_best_sigma_changes": 0,
+        "rows": 410
+      },
+      "omega_flip": {
+        "cyclic_selected_best_sigma_changes": 21,
+        "dihedral_sensitivity_selected_best_sigma_changes": 21,
+        "raw_selected_best_sigma_changes": 21,
+        "rows": 255
+      }
+    }
+  },
+  "claim_boundaries": [
+    "Rows are multiple directions per polytope, not independent polytope draws.",
+    "A small before/after delta does not prove continuity.",
+    "A selected best-sigma change does not enumerate all tied minima and is not a mechanism or theorem.",
+    "The cached action gap belongs to the starting polytope and returned branch set, not the immediate pre-boundary point or a global branch certificate.",
+    "Gradient representatives can be unstable at symmetric or tied points.",
+    "The repeated-crossing stress artifact is excluded; no repeated-transition rate is supported."
+  ],
+  "crossing_status": {
+    "epsilon_classes": {
+      "crossing_failed": 2,
+      "default_floor": 8,
+      "default_fraction": 5623
+    },
+    "failed": 2,
+    "rows": 5633,
+    "successful": 5631
+  },
+  "exception_counts": {
+    "crossing_failed": 2,
+    "epsilon_floor": 8,
+    "incidence_selected_best_sigma_change": 1,
+    "large_angle_without_selected_best_sigma_change": 6,
+    "selected_best_sigma_change_below_angle_threshold": 6,
+    "symmetric_large_angle_anomaly": 2
+  },
+  "gradient_angle_by_cyclic_selected_best_sigma_change": {
+    "false": {
+      "angle_change_deg": {
+        "max": 179.99427042212733,
+        "median": 0.001933540971297116,
+        "p90": 0.008122041188479224,
+        "p99": 0.027618926512321004
+      },
+      "rows": 5313
+    },
+    "true": {
+      "angle_change_deg": {
+        "max": 131.0289416792249,
+        "median": 10.983367837506373,
+        "p90": 41.202367353012306,
+        "p99": 96.55112219616875
+      },
+      "rows": 318
+    }
+  },
+  "gradient_angle_threshold_sensitivity": {
+    "0.01": {
+      "cyclic_selected_best_sigma_changes": 318,
+      "omega_flips": 480,
+      "rows": 680
+    },
+    "0.1": {
+      "cyclic_selected_best_sigma_changes": 312,
+      "omega_flips": 314,
+      "rows": 318
+    },
+    "1.0": {
+      "cyclic_selected_best_sigma_changes": 286,
+      "omega_flips": 287,
+      "rows": 288
+    },
+    "10.0": {
+      "cyclic_selected_best_sigma_changes": 165,
+      "omega_flips": 166,
+      "rows": 167
+    }
+  },
+  "inputs": [
+    {
+      "bytes": 3335111,
+      "path": "experiments/combinatorial-cells/boundary-characterization/combinatorial-boundaries-anatomy.jsonl",
+      "rows": 6671,
+      "sha256": "899894a23876f3869841e72fb7c4ff795c2be3e651263398f686c4a376e139a4"
+    },
+    {
+      "bytes": 3391530,
+      "path": "experiments/combinatorial-cells/boundary-characterization/combinatorial-boundaries-crossing.jsonl",
+      "rows": 5633,
+      "sha256": "fcffb630ada26435410f3c6c9ee94d758fc5a799c71857da3931fe3f2e254896"
+    },
+    {
+      "bytes": 2737083,
+      "path": "experiments/combinatorial-cells/boundary-characterization/combinatorial-boundaries-gradient.jsonl",
+      "rows": 5631,
+      "sha256": "42fe7d52e91e19c87a0064e85b7a50c6f7fb63d7c862179afc5c518e33f80c05"
+    }
+  ],
+  "join_checks": {
+    "all_input_hashes_match_reviewed_identity": true,
+    "anatomy_unique_keys": 6671,
+    "crossing_keys_missing_from_anatomy": 0,
+    "crossing_unique_keys": 5633,
+    "gradient_keys_missing_from_crossing": 0,
+    "gradient_unique_keys": 5631,
+    "key_fields": [
+      "polytope_name",
+      "direction_type",
+      "direction_index"
+    ],
+    "successful_crossing_keys_equal_gradient_keys": true
+  },
+  "question": "Do first omega-sign and incidence crossings differ in the selected cyclic best sigma and gradient response?",
+  "random_only_by_event": {
+    "incidence_flip": {
+      "cyclic_selected_best_sigma_changes": 1,
+      "dihedral_sensitivity_selected_best_sigma_changes": 1,
+      "raw_selected_best_sigma_changes": 1,
+      "rows": 2952
+    },
+    "omega_flip": {
+      "cyclic_selected_best_sigma_changes": 313,
+      "dihedral_sensitivity_selected_best_sigma_changes": 313,
+      "raw_selected_best_sigma_changes": 313,
+      "rows": 2661
+    }
+  },
+  "random_only_polytope_level_by_event": {
+    "incidence_flip": {
+      "polytopes_with_a_successful_probe": 868,
+      "polytopes_with_any_cyclic_selected_best_sigma_change": 1
+    },
+    "omega_flip": {
+      "polytopes_with_a_successful_probe": 794,
+      "polytopes_with_any_cyclic_selected_best_sigma_change": 179
+    }
+  },
+  "reviewed_analysis_contract": {
+    "angle_exception_threshold_deg": 0.1,
+    "default_crossing_epsilon_fraction": 0.0001,
+    "epsilon_floor": 1e-08,
+    "expected_input_sha256": {
+      "combinatorial-boundaries-anatomy.jsonl": "899894a23876f3869841e72fb7c4ff795c2be3e651263398f686c4a376e139a4",
+      "combinatorial-boundaries-crossing.jsonl": "fcffb630ada26435410f3c6c9ee94d758fc5a799c71857da3931fe3f2e254896",
+      "combinatorial-boundaries-gradient.jsonl": "42fe7d52e91e19c87a0064e85b7a50c6f7fb63d7c862179afc5c518e33f80c05"
+    },
+    "known_polytope_names": [
+      "hko_pentagon",
+      "hypercube",
+      "simplex"
+    ]
+  },
+  "schema_version": 2,
+  "selected_best_sigma_equivalence_audit": {
+    "cyclic_selected_best_sigma_changes": 318,
+    "cyclic_vs_dihedral_selected_sigma_disagreements": 0,
+    "dihedral_sensitivity_selected_best_sigma_changes": 318,
+    "interpretation": "Cyclic rotation is the intended closed-cycle sensitivity. Reversal is reported only as a sensitivity check; this analyzer does not assert that reversal preserves the oriented characteristic.",
+    "producer_orbit_changed_flag_vs_raw_selected_sigma_disagreements": 0,
+    "raw_selected_best_sigma_changes": 318,
+    "raw_vs_cyclic_selected_sigma_disagreements": 0
+  }
+}

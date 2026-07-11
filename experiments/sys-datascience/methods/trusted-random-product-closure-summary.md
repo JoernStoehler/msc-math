@@ -72,7 +72,8 @@ Not yet supported:
 
 - retained tables are rebuilt or producer data changes;
 - a new random/product distribution is added;
-- a method reports `sys > 1`, near-threshold behavior requiring escalation, or
-  a credible candidate-proposer;
+- an active method produces a new `sys > 1` candidate/source beyond declared
+  known-positive reference/control inputs, near-threshold behavior requiring
+  escalation, or a credible new candidate-proposer;
 - thesis wording asks for broader random distributions or stronger statistical
   interpretation.

@@ -1,0 +1,38 @@
+{
+  "method": "residual-exemplar-geometry-branch-summary-v1",
+  "evidence_class": "post-target_G_hypothesis_seed",
+  "input_sha256": {
+    "panel": "10e875c391f24c48f43ea307d8a2b02423ddbac3348398ba3299ed6dd305320b",
+    "geometry": "8fe4a331954af875d0fe481cd8f3331a18311252d923b35917795c8d4963e106",
+    "branches": "ee57aae79714a01e01b2fb8c0e44c56cb8cb93ba47d4a015ae85de767baff87a"
+  },
+  "contract": {
+    "geometry_metrics": [
+      "adjacent_abs_difference_mean",
+      "adjacent_endpoint_pearson",
+      "top_quartile_induced_edge_count",
+      "top_quartile_component_count",
+      "top_quartile_internal_edge_fraction"
+    ],
+    "branch_windows_relative": [
+      1e-12,
+      1e-06,
+      0.001,
+      0.01
+    ],
+    "pair_order": "low_sys_then_high_sys; sys was already used to select and order the panel",
+    "sigma_word_contract": {
+      "returned_orbit_count": "raw number returned by the orbit solver",
+      "near_active_raw_orbits": "raw admissible returned words within the action window",
+      "near_active_cyclic_classes": "distinct cyclic classes represented by the lexicographically smallest rotation of each nonempty raw word"
+    }
+  },
+  "observations": {
+    "pair_count": 4,
+    "pairs_with_more_near_active_cyclic_classes_at_low_sys_1e_3": 3,
+    "pairs_tied_near_active_cyclic_classes_1e_3": 1,
+    "product_pairs_with_four_exact_cyclic_classes_low_and_one_exact_cyclic_class_high": 2,
+    "geometry_metrics_showing_same_strict_direction_all_pairs": []
+  },
+  "interpretation_boundary": "descriptive only: the panel and pair ordering are post-target, action spectra are target-cost diagnostics, and neither family is an independently validated proposer or mechanism"
+}

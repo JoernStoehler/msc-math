@@ -1,0 +1,27 @@
+left	right	spearman_overall	spearman_pooled_within_source_bucket_fractional_ranks	spearman_pooled_within_product_bucket_fractional_ranks	interpretation
+ridge_symp_area_effective_face_count	ridge_symp_area_entropy	1.0	1.0	1.0	global monotone identity
+ridge_symp_area_effective_face_count	ridge_symp_area_normalized_entropy	0.7100108518700693	0.9967024595842076	1.0	rank equivalence in fixed-ridge-count product buckets
+ridge_symp_area_entropy	ridge_symp_area_normalized_entropy	0.7100108518700693	0.9967024595842076	1.0	rank equivalence in fixed-ridge-count product buckets
+ridge_symp_area_mean_over_volume_sqrt	ridge_symp_area_sum_over_volume_sqrt	0.8795971040452065	0.9969958808263705	1.0	exact rank equivalence in fixed-ridge-count product buckets
+ridge_symp_area_q95_over_volume_sqrt	ridge_symp_area_std_over_volume_sqrt	0.9905331201184381	0.9775457424286003	0.9795888571990558	high empirical rank correlation; not an identity
+ridge_symp_area_max_over_volume_sqrt	ridge_symp_area_std_over_volume_sqrt	0.9798683398876328	0.9771160440514998	0.9774334163328803	high empirical rank correlation; not an identity
+ridge_symp_area_mean_over_volume_sqrt	ridge_symp_area_std_over_volume_sqrt	0.9544265478975189	0.9514173418916921	0.9613273449234676	high empirical rank correlation; not an identity
+ridge_symp_area_std_over_volume_sqrt	ridge_symp_area_sum_over_volume_sqrt	0.9120538097833437	0.9527564522977353	0.9613273449234676	high empirical rank correlation; not an identity
+ridge_symp_area_mean_over_volume_sqrt	ridge_symp_area_q95_over_volume_sqrt	0.9498777576148772	0.9361857341546507	0.9439828483745799	high empirical rank correlation; not an identity
+ridge_symp_area_q95_over_volume_sqrt	ridge_symp_area_sum_over_volume_sqrt	0.9119041823356611	0.936804619495429	0.9439828483745799	high empirical rank correlation; not an identity
+ridge_symp_area_q90_over_volume_sqrt	ridge_symp_area_std_over_volume_sqrt	0.9666466784992876	0.9336590934560313	0.9395715625223519	high empirical rank correlation; not an identity
+ridge_symp_area_max_over_volume_sqrt	ridge_symp_area_q95_over_volume_sqrt	0.9633020073719484	0.9356763573114053	0.9390305749767542	high empirical rank correlation; not an identity
+ridge_symp_area_effective_face_count	ridge_symp_area_top3_share	-0.9485510936467867	-0.9410598125650037	-0.9358855706037382	high empirical rank correlation; not an identity
+ridge_symp_area_entropy	ridge_symp_area_top3_share	-0.9485510936467867	-0.9410598125650037	-0.9358855706037382	high empirical rank correlation; not an identity
+ridge_symp_area_normalized_entropy	ridge_symp_area_top3_share	-0.7603949338472208	-0.9387011242539979	-0.9358855706037382	high empirical rank correlation; not an identity
+ridge_symp_area_q90_over_volume_sqrt	ridge_symp_area_q95_over_volume_sqrt	0.9633799481810508	0.9289113455645567	0.9331481273692869	high empirical rank correlation; not an identity
+ridge_symp_area_max_over_volume_sqrt	ridge_symp_area_mean_over_volume_sqrt	0.9114734044311026	0.9211216912385402	0.9307999729543667	high empirical rank correlation; not an identity
+ridge_symp_area_max_over_volume_sqrt	ridge_symp_area_sum_over_volume_sqrt	0.9235459610089266	0.9225883663795378	0.9307999729543667	high empirical rank correlation; not an identity
+ridge_symp_area_mean_over_volume_sqrt	ridge_symp_area_q90_over_volume_sqrt	0.9672400427829998	0.9218423002752539	0.9260042334239325	high empirical rank correlation; not an identity
+ridge_symp_area_q90_over_volume_sqrt	ridge_symp_area_sum_over_volume_sqrt	0.8771720297004458	0.9217472030803501	0.9260042334239325	high empirical rank correlation; not an identity
+ridge_symp_area_max_over_volume_sqrt	ridge_symp_area_q90_over_volume_sqrt	0.916475166427714	0.8715263687040559	0.8782004103783707	high empirical rank correlation; not an identity
+ridge_symp_area_effective_face_count	ridge_symp_area_std_over_volume_sqrt	-0.9044770987037072	-0.874058282139208	-0.8627001198054504	high empirical rank correlation; not an identity
+ridge_symp_area_entropy	ridge_symp_area_std_over_volume_sqrt	-0.9044770987037072	-0.874058282139208	-0.8627001198054504	high empirical rank correlation; not an identity
+ridge_symp_area_max_share	ridge_symp_area_top3_share	0.9453471579901784	0.8611535591430147	0.8408182579111148	high empirical rank correlation; not an identity
+ridge_symp_area_std_over_volume_sqrt	ridge_symp_area_top3_share	0.9015432870040531	0.8335978127416354	0.8165504458364538	high empirical rank correlation; not an identity
+ridge_symp_area_le_1em2_over_volume_sqrt_fraction	ridge_symp_area_le_1em3_over_volume_sqrt_fraction	0.9125463900355152	0.3721396291664012	0.3626089321819631	high empirical rank correlation; not an identity

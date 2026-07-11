@@ -32,6 +32,13 @@ pub struct FaceSymplecticFields {
     pub ridge_symp_area_normalized_entropy: f64,
 }
 
+#[derive(Clone, Debug)]
+pub struct OrderedTwoFaceSymplecticArea {
+    pub facets: [usize; 2],
+    pub vertices: Vec<usize>,
+    pub area: f64,
+}
+
 fn two_face_symplectic_area(vertices: &[Vector4<f64>]) -> f64 {
     if vertices.len() < 3 {
         return 0.0;
@@ -112,13 +119,16 @@ fn order_two_face_vertices_from_incidence(
     })
 }
 
-pub fn compute_face_symplectic_fields(
+/// Return the successfully ordered two-faces and their unsigned symplectic
+/// areas. The face identity is the unordered containing-facet pair; the vertex
+/// order is cyclic but its starting point and orientation are not canonical.
+/// The unsigned area is invariant under either choice.
+pub fn ordered_two_face_symplectic_areas(
     two_faces: &[TwoFace],
     vertices: &[Vector4<f64>],
     incidence: &DMatrix<bool>,
-    volume_sqrt: f64,
-) -> FaceSymplecticFields {
-    let mut ridge_symp_areas = Vec::new();
+) -> (Vec<OrderedTwoFaceSymplecticArea>, usize) {
+    let mut ordered = Vec::new();
     let mut ordering_failure_count = 0usize;
     for two_face in two_faces {
         let Some(ordered_vertices) = order_two_face_vertices_from_incidence(incidence, two_face)
@@ -130,8 +140,27 @@ pub fn compute_face_symplectic_fields(
             .iter()
             .map(|&vertex| vertices[vertex])
             .collect::<Vec<_>>();
-        ridge_symp_areas.push(two_face_symplectic_area(&two_face_vertices));
+        ordered.push(OrderedTwoFaceSymplecticArea {
+            facets: two_face.facets,
+            vertices: ordered_vertices,
+            area: two_face_symplectic_area(&two_face_vertices),
+        });
     }
+    (ordered, ordering_failure_count)
+}
+
+pub fn compute_face_symplectic_fields(
+    two_faces: &[TwoFace],
+    vertices: &[Vector4<f64>],
+    incidence: &DMatrix<bool>,
+    volume_sqrt: f64,
+) -> FaceSymplecticFields {
+    let (ordered_faces, ordering_failure_count) =
+        ordered_two_face_symplectic_areas(two_faces, vertices, incidence);
+    let ridge_symp_areas = ordered_faces
+        .iter()
+        .map(|face| face.area)
+        .collect::<Vec<_>>();
     let (ridge_symp_area_mean, ridge_symp_area_std, ridge_symp_area_min, ridge_symp_area_max) =
         stats_or_zero(&ridge_symp_areas);
     let normalized_areas = ridge_symp_areas

@@ -1,0 +1,160 @@
+{
+  "epistemic_status": "post-target exploratory inspection candidates (G only); analysis-chosen rules; no demonstrated feature-map failure, proposer, mechanism, causal, transfer, or theorem claim",
+  "inputs": {
+    "active_features": 45,
+    "bucket_counts": {
+      "generic-F10": 512,
+      "generic-F11": 512,
+      "generic-F12": 512,
+      "generic-F5": 512,
+      "generic-F6": 512,
+      "generic-F7": 512,
+      "generic-F8": 512,
+      "generic-F9": 512,
+      "product-3x3": 1024,
+      "product-3x4": 1024,
+      "product-3x5": 1024,
+      "product-3x6": 1024,
+      "product-4x4": 1024,
+      "product-4x5": 1024,
+      "product-4x6": 1024,
+      "product-5x5": 1024,
+      "product-5x6": 1024,
+      "product-6x6": 1024
+    },
+    "capacity_source_counts": {
+      "random_product_sample": 10240,
+      "random_sample": 4096
+    },
+    "combinatorial_features": 27,
+    "provenance_sha256": "6ff88a5accce9a7ec7e5a494107350b0974b2ce0268ea44caae36a18a7494ef2",
+    "ridge_features": 18,
+    "table_sha256": "49825d7636246f71f4ebd419cf0ccbc86e39e6b7f43d4b03e889bb85e4887aea",
+    "trusted_rows": 14336
+  },
+  "inspection_panel_rows": 10,
+  "max_sys": 0.86258589584944,
+  "pair_contract": {
+    "caliper_status": "analysis-chosen after an initial scout and fixed only for this bounded inspection; not predeclared confirmatory evidence",
+    "generic_arm": "exact facet bucket; same mutual neighbor under full-summary+compact-ridge and PCA-summary+PCA-ridge maps",
+    "generic_bucket_groups": 8,
+    "primary_max_sys_gap_by_arm": {
+      "generic_caliper": 0.1596611198041194,
+      "product_exact_summary": 0.2724153082523256
+    },
+    "primary_quantile": 0.25,
+    "primary_selected_counts": {
+      "generic_caliper": 30,
+      "product_exact_summary": 41
+    },
+    "primary_sys_gap_ge_0_1_counts": {
+      "generic_caliper": 4,
+      "product_exact_summary": 6
+    },
+    "product_arm": "exact bucket and exact current combinatorial summaries; same mutual neighbor under compact-ridge and full-ridge-PCA maps",
+    "product_eligible_exact_summary_strata": 10,
+    "product_eligible_rows": 10240,
+    "robust_candidate_counts": {
+      "generic_caliper": 187,
+      "product_exact_summary": 324
+    },
+    "sensitivity_quantiles": [
+      0.1,
+      0.25,
+      0.5
+    ],
+    "sensitivity_results": {
+      "generic_caliper": {
+        "q10": {
+          "max_sys_gap": 0.08487049334216254,
+          "selected_pairs": 9,
+          "sys_gap_ge_0_1_pairs": 0
+        },
+        "q25": {
+          "max_sys_gap": 0.1596611198041194,
+          "selected_pairs": 30,
+          "sys_gap_ge_0_1_pairs": 4
+        },
+        "q50": {
+          "max_sys_gap": 0.3596119519096147,
+          "selected_pairs": 68,
+          "sys_gap_ge_0_1_pairs": 19
+        }
+      },
+      "product_exact_summary": {
+        "q10": {
+          "max_sys_gap": 0.005499514455338583,
+          "selected_pairs": 8,
+          "sys_gap_ge_0_1_pairs": 0
+        },
+        "q25": {
+          "max_sys_gap": 0.2724153082523256,
+          "selected_pairs": 41,
+          "sys_gap_ge_0_1_pairs": 6
+        },
+        "q50": {
+          "max_sys_gap": 0.28076699992140536,
+          "selected_pairs": 127,
+          "sys_gap_ge_0_1_pairs": 23
+        }
+      }
+    },
+    "target_use": "pair construction and calipers are target-free; sys is used only for post-formation ranking",
+    "thresholds": {
+      "generic_caliper:q10": {
+        "metric_a": 0.19633568066029153,
+        "metric_b": 0.2223845811797851
+      },
+      "generic_caliper:q25": {
+        "metric_a": 0.3118800421788803,
+        "metric_b": 0.3327626990248279
+      },
+      "generic_caliper:q50": {
+        "metric_a": 0.593361505589459,
+        "metric_b": 0.44652979501076023
+      },
+      "product_exact_summary:q10": {
+        "metric_a": 0.06756498881690602,
+        "metric_b": 0.043202472749425076
+      },
+      "product_exact_summary:q25": {
+        "metric_a": 0.09917643221938732,
+        "metric_b": 0.0625617294195521
+      },
+      "product_exact_summary:q50": {
+        "metric_a": 0.14945935339759076,
+        "metric_b": 0.10741648949072345
+      }
+    }
+  },
+  "question": "Which retained rows are useful post-target inspection candidates where the current invariant summaries or two ordinary models leave target variation unexplained?",
+  "residual_contract": {
+    "candidate_abs_median_ge_0_2_and_lbo_agreement_counts": {
+      "generic_caliper": 65,
+      "product_exact_summary": 112
+    },
+    "candidate_abs_median_ge_0_2_counts": {
+      "generic_caliper": 65,
+      "product_exact_summary": 112
+    },
+    "candidate_counts": {
+      "generic_caliper": 672,
+      "product_exact_summary": 1862
+    },
+    "candidate_lbo_agreement_counts": {
+      "generic_caliper": 660,
+      "product_exact_summary": 1838
+    },
+    "candidate_threshold": "absolute median OOF residual >= 0.1",
+    "leave_bucket_out": "weak extrapolation stress only: both model residual signs must agree with OOF sign; not independent validation, omitted-feature evidence, or generator transfer",
+    "models": [
+      "standardized ridge alpha=10",
+      "histogram gradient boosting"
+    ],
+    "oof": "model-specific consistency check: two fixed seeds; five-fold cross-fitting stratified by exact source bucket; all four residual signs must agree",
+    "oof_sign_consistent_and_abs_median_ge_0_1_rows": 2534,
+    "oof_sign_consistent_and_leave_bucket_out_agreement_rows": 7940,
+    "oof_sign_consistent_rows": 8755
+  },
+  "sys_gt_1_rows": 0
+}

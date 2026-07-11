@@ -1,0 +1,12 @@
+left	right	intersection	jaccard	selected_rows_each	interpretation
+ridge_symp_area_mean_over_volume_sqrt	ridge_symp_area_sum_over_volume_sqrt	100	1.0	100	identical extreme selection
+ridge_symp_area_mean_over_volume_sqrt	ridge_symp_area_max_over_volume_sqrt	14	0.075269	100	distinct extreme selection despite family correlation
+ridge_symp_area_mean_over_volume_sqrt	ridge_symp_area_std_over_volume_sqrt	1	0.005025	100	distinct extreme selection despite family correlation
+ridge_symp_area_mean_over_volume_sqrt	ridge_symp_area_q95_over_volume_sqrt	10	0.052632	100	distinct extreme selection despite family correlation
+ridge_symp_area_max_over_volume_sqrt	ridge_symp_area_std_over_volume_sqrt	39	0.242236	100	distinct extreme selection despite family correlation
+ridge_symp_area_max_over_volume_sqrt	ridge_symp_area_q95_over_volume_sqrt	28	0.162791	100	distinct extreme selection despite family correlation
+ridge_symp_area_std_over_volume_sqrt	ridge_symp_area_q95_over_volume_sqrt	30	0.176471	100	distinct extreme selection despite family correlation
+ridge_symp_area_q90_over_volume_sqrt	ridge_symp_area_q95_over_volume_sqrt	12	0.06383	100	distinct extreme selection despite family correlation
+facet_count	vertex_count	100	1.0	100	identical under configured global/per-bucket rules; counts are fixed inside each product bucket
+facet_count	edge_count	100	1.0	100	identical under configured global/per-bucket rules; counts are fixed inside each product bucket
+facet_count	ridge_count	100	1.0	100	identical under configured global/per-bucket rules; counts are fixed inside each product bucket

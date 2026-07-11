@@ -1,40 +1,20 @@
 # Sys-Datascience Active Work
 
-Use: short-lived operational registry for active sys-datascience coordination,
-topic-owner, and packet work. This file prevents duplicated ownership and lost
-merge/review state. It is not a backlog, launch queue, belief ledger, or source
-of experiment metrics.
+Use: short-lived ownership registry, not a backlog or evidence source. Remove
+entries after merge, durable parking, discard, or handoff.
 
-Add an entry when a session, subagent, branch, or worktree starts work that
-another sys-datascience session might otherwise duplicate or depend on. Delete
-the entry after the work is merged, parked with a durable pointer, discarded, or
-handed off somewhere else.
+## Current Active Entries
 
-Each active entry should include:
-
-- owner/session handle;
-- branch or worktree;
-- started date;
-- current milestone in ordinary thesis terms;
-- owned files or packet surface;
-- blocking crux, if any;
-- review/merge state;
-- durable handoff or parking pointer when closed.
-
-Current active entries:
-
-- Owner/session: `/root`, forward-test and exploration session
-- Branch/worktree: `sys-datascience-forward-test` / `.worktrees/sys-datascience-forward-test`
+- Owner/session: /root, forward-test and exploration session
+- Branch/worktree: sys-datascience-forward-test /
+  .worktrees/sys-datascience-forward-test
 - Started: 2026-07-11
-- Current milestone: research-direction/value-of-information review for Jörn
-  after independently validated sub-threshold enrichment; no further evidence
-  packet selected
-- Owned surface: `.agents/skills/research-experiments-data/` and
-  `experiments/sys-datascience/` control, producer, method, artifact, and
-  interpretation files needed by this task
-- Blocking crux: Jörn feedback on the separated terminology, additional-data,
-  gradient-role, mathematical-interest, and Kai-value judgments in
-  `research-direction-review-2026-07-11.md`
-- Review/merge state: active; harness commit separated; object-level packet and
-  control-surface update internally reviewed, awaiting Jörn's research-taste
-  feedback
+- Milestone: process-calibrated broad exploration; fixed equal-budget product
+  search is the next bounded execution packet
+- Active work: integrate reviewed F0/F3/F4/F1B/M0/M3 scouts; implement and
+  review S0 IID/local/CEM comparison; reassess remaining portfolio afterward
+- Owned surface: the in-scope experiment workflow harness and sys-datascience
+  code, data, artifacts, and coordination needed by the task
+- Blocking crux: none
+- Review state: active; harness is separated; broad scout packet has combined
+  review plus focused fresh M0 repair/acceptance review; S0 not yet executed

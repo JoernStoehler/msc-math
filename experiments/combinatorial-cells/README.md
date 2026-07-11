@@ -15,6 +15,12 @@ polytopes.
 - `gradient-discontinuity/analyze.py` is an analyzer, not a Rust producer
   binary. It reads boundary-characterization and cell-width outputs and writes
   interpretive figures under `gradient-discontinuity/`.
+- `boundary-characterization/analyze_transition_atlas.py` joins the retained
+  anatomy, crossing, and gradient artifacts on their unique direction key. It
+  writes a compact generated summary, exception ledger, and readable report in
+  the same folder. It does not consume the repeated-crossing stress artifact.
+  Regenerate it with
+  `python3 experiments/combinatorial-cells/boundary-characterization/analyze_transition_atlas.py`.
 - These binaries do not currently have smoke modes. Do not run them as quick
   command checks unless intentionally refreshing the tracked artifacts.
 - For compile-only checks, use `cargo test -p exp-combinatorial-cells
@@ -31,6 +37,15 @@ polytopes.
 - `cell-widths/combinatorial-boundaries-profiling.jsonl`: 66,230 rows.
 - `convexity/combinatorial-boundaries-convexity.jsonl`: 19,060 rows.
 - `omega-hypothesis/omega-obstacle.jsonl`: 953 rows.
+
+The current first-boundary join and its interpretation are generated in
+`boundary-characterization/first-boundary-transition-report.md`; exact input
+hashes, key-coverage checks, selected-sigma equivalence sensitivity, and detailed counts
+remain in `first-boundary-transition-summary.json`. The companion exception
+artifact preserves the incidence selected-best-sigma witness, symmetric
+gradient anomalies, epsilon-floor/fallback checks, crossing failures, and
+threshold-discordant rows. The analyzer refuses changed input hashes until its
+copied epsilon policy and exception interpretation are reviewed again.
 
 Older counts and conclusions from early notes must be revalidated against
 current artifacts before reuse as numeric claims.
@@ -54,6 +69,20 @@ current artifacts before reuse as numeric claims.
 - Do not infer continuity of first-boundary `sys` from samples alone.
 - Do not assume a single-boundary model for multi-step behavior.
 - Do not assume monotonicity for repeated `sys` improvements.
+- The first-boundary atlas supports hypothesis generation about omega-sign
+  crossings, changes of the cyclically canonicalized producer-selected best
+  sigma, and gradient kinks. It is not mechanism evidence: the selected sigma
+  does not enumerate tied minima, most omega flips do not change it, the
+  incidence exception remains a required witness, and symmetric points can
+  have unstable gradient representatives.
+- Selected-sigma strings are audited under raw, cyclic, and
+  reversal-inclusive sensitivities in the generated summary. Reversal is not
+  asserted as an equivalence of oriented characteristics. The cached action gap
+  belongs to the starting polytope and returned branch set, not the immediate
+  pre-boundary point or every possible branch.
+- Do not infer repeated-transition rates from `multiple-crossings`; its
+  construction failures are informative censoring and it lacks per-step
+  producer-selected best-sigma identities.
 
 ## Revive Conditions
 

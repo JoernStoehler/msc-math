@@ -85,8 +85,11 @@ struct BranchSetDiagnosticRow {
     min_action: Option<f64>,
     returned_orbit_count: Option<usize>,
     admissible_orbit_count: Option<usize>,
-    near_active_count: Option<usize>,
-    near_active_sigma_lengths: Vec<usize>,
+    near_active_raw_orbit_count: Option<usize>,
+    near_active_raw_sigma_lengths: Vec<usize>,
+    near_active_raw_sigmas: Vec<Vec<usize>>,
+    near_active_distinct_cyclic_class_count: Option<usize>,
+    near_active_canonical_cyclic_sigmas: Vec<Vec<usize>>,
     action_gap_to_second: Option<f64>,
     action_gap_to_last_near_active: Option<f64>,
     degeneracy_label: String,
@@ -216,7 +219,7 @@ struct RecomputedState {
     min_action: f64,
     returned_orbit_count: usize,
     orbit_iterations: u64,
-    admissible_actions_and_lengths: Vec<(f64, usize)>,
+    admissible_actions_and_sigmas: Vec<(f64, Vec<usize>)>,
 }
 
 fn recompute_state(
@@ -235,7 +238,7 @@ fn recompute_state(
         .map_err(|err| format!("failed_to_compute_capacity_with_gap:{err:?}"))?;
     let sys = compute_sys_from_capacity(&polytope, &capacity)
         .ok_or_else(|| "failed_to_compute_sys_from_capacity".to_string())?;
-    let mut admissible_actions_and_lengths: Vec<(f64, usize)> = capacity
+    let mut admissible_actions_and_sigmas: Vec<(f64, Vec<usize>)> = capacity
         .orbits
         .iter()
         .filter(|orbit| {
@@ -244,16 +247,16 @@ fn recompute_state(
                 OrbitAdmissibility::AdmissibleF64 | OrbitAdmissibility::AdmissibleExact
             )
         })
-        .map(|orbit| (orbit.action, orbit.sigma.len()))
+        .map(|orbit| (orbit.action, orbit.sigma.clone()))
         .collect();
-    admissible_actions_and_lengths.sort_by(|a, b| a.0.total_cmp(&b.0));
+    admissible_actions_and_sigmas.sort_by(|a, b| a.0.total_cmp(&b.0));
 
     Ok(RecomputedState {
         sys,
         min_action: capacity.min_action,
         returned_orbit_count: capacity.orbits.len(),
         orbit_iterations: capacity.iterations,
-        admissible_actions_and_lengths,
+        admissible_actions_and_sigmas,
     })
 }
 
@@ -311,20 +314,24 @@ fn branch_diagnostic_row(
     match state {
         Ok(state) => {
             let cutoff = state.min_action * (1.0 + threshold);
-            let near_active: Vec<(f64, usize)> = state
-                .admissible_actions_and_lengths
+            let near_active: Vec<(f64, Vec<usize>)> = state
+                .admissible_actions_and_sigmas
                 .iter()
-                .copied()
+                .cloned()
                 .filter(|(action, _)| *action <= cutoff)
                 .collect();
             let action_gap_to_second = state
-                .admissible_actions_and_lengths
+                .admissible_actions_and_sigmas
                 .get(1)
                 .map(|(action, _)| action - state.min_action);
             let action_gap_to_last_near_active = near_active
                 .last()
                 .map(|(action, _)| action - state.min_action);
-            let degeneracy_label = degeneracy_label(near_active.len());
+            let near_active_raw_sigmas: Vec<Vec<usize>> =
+                near_active.iter().map(|(_, sigma)| sigma.clone()).collect();
+            let near_active_canonical_cyclic_sigmas =
+                distinct_cyclic_class_representatives(&near_active_raw_sigmas);
+            let degeneracy_label = degeneracy_label(near_active_canonical_cyclic_sigmas.len());
             BranchSetDiagnosticRow {
                 poly_id: row.polytope.poly_id.clone(),
                 selection_buckets,
@@ -336,12 +343,17 @@ fn branch_diagnostic_row(
                 threshold_relative: threshold,
                 min_action: Some(state.min_action),
                 returned_orbit_count: Some(state.returned_orbit_count),
-                admissible_orbit_count: Some(state.admissible_actions_and_lengths.len()),
-                near_active_count: Some(near_active.len()),
-                near_active_sigma_lengths: near_active
+                admissible_orbit_count: Some(state.admissible_actions_and_sigmas.len()),
+                near_active_raw_orbit_count: Some(near_active_raw_sigmas.len()),
+                near_active_raw_sigma_lengths: near_active_raw_sigmas
                     .iter()
-                    .map(|(_, sigma_len)| *sigma_len)
+                    .map(Vec::len)
                     .collect(),
+                near_active_raw_sigmas,
+                near_active_distinct_cyclic_class_count: Some(
+                    near_active_canonical_cyclic_sigmas.len(),
+                ),
+                near_active_canonical_cyclic_sigmas,
                 action_gap_to_second,
                 action_gap_to_last_near_active,
                 degeneracy_label,
@@ -361,8 +373,11 @@ fn branch_diagnostic_row(
             min_action: None,
             returned_orbit_count: None,
             admissible_orbit_count: None,
-            near_active_count: None,
-            near_active_sigma_lengths: Vec::new(),
+            near_active_raw_orbit_count: None,
+            near_active_raw_sigma_lengths: Vec::new(),
+            near_active_raw_sigmas: Vec::new(),
+            near_active_distinct_cyclic_class_count: None,
+            near_active_canonical_cyclic_sigmas: Vec::new(),
             action_gap_to_second: None,
             action_gap_to_last_near_active: None,
             degeneracy_label: "inconclusive".to_string(),
@@ -372,12 +387,73 @@ fn branch_diagnostic_row(
     }
 }
 
+/// Returns the lexicographically smallest cyclic rotation of a nonempty sigma word.
+///
+/// All `word.len()` rotations are compared, so repeated minima need no separate
+/// tie-breaking assumption. The result is one deterministic representative of
+/// the cyclic class; it does not alter the raw word returned by the orbit solver.
+fn canonical_cyclic_rotation(word: &[usize]) -> Vec<usize> {
+    assert!(
+        !word.is_empty(),
+        "sigma words must be nonempty to have a cyclic rotation"
+    );
+    (0..word.len())
+        .map(|start| {
+            word.iter()
+                .cycle()
+                .skip(start)
+                .take(word.len())
+                .copied()
+                .collect()
+        })
+        .min()
+        .expect("nonempty sigma has at least one rotation")
+}
+
+fn distinct_cyclic_class_representatives(words: &[Vec<usize>]) -> Vec<Vec<usize>> {
+    words
+        .iter()
+        .map(|word| canonical_cyclic_rotation(word))
+        .collect::<BTreeSet<_>>()
+        .into_iter()
+        .collect()
+}
+
 fn degeneracy_label(near_active_count: usize) -> String {
     match near_active_count {
         0 => "inconclusive".to_string(),
         1 => "large_gap".to_string(),
         2..=4 => "narrow_gap".to_string(),
         _ => "high_degeneracy".to_string(),
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{canonical_cyclic_rotation, distinct_cyclic_class_representatives};
+
+    #[test]
+    fn canonical_rotation_identifies_all_rotations() {
+        assert_eq!(canonical_cyclic_rotation(&[3, 1, 2]), vec![1, 2, 3]);
+        assert_eq!(canonical_cyclic_rotation(&[2, 3, 1]), vec![1, 2, 3]);
+        assert_eq!(canonical_cyclic_rotation(&[1, 2, 3]), vec![1, 2, 3]);
+    }
+
+    #[test]
+    fn canonical_rotation_handles_repeated_minima() {
+        assert_eq!(canonical_cyclic_rotation(&[2, 1, 3, 1]), vec![1, 2, 1, 3]);
+        assert_eq!(canonical_cyclic_rotation(&[1, 3, 1, 2]), vec![1, 2, 1, 3]);
+    }
+
+    #[test]
+    fn distinct_representatives_deduplicate_rotations_only() {
+        let representatives = distinct_cyclic_class_representatives(&[
+            vec![3, 1, 2],
+            vec![2, 3, 1],
+            vec![2, 1, 3],
+            vec![1, 3, 2],
+        ]);
+        assert_eq!(representatives, vec![vec![1, 2, 3], vec![1, 3, 2]]);
     }
 }
 

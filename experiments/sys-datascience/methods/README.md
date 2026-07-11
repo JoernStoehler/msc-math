@@ -39,6 +39,9 @@ Read first:
 - `ridge-mechanism-discriminator/`: compact diagnostic table combining retained
   tail-rule diagnostics and generated ridge/proposer summaries to distinguish
   ridge-magnitude, concentration, proxy, small-area, and Goodhart explanations.
+- `residual-exemplar-seeds/`: target-free matched-pair construction plus
+  post-target model-consistent residual inspection candidates for bounded
+  geometry/HK-branch hypothesis formation; exploratory (`G`) only.
 
 Exploratory fixed-bucket distribution-shape packets:
 
@@ -113,5 +116,8 @@ named row group. A method folder `README.md` should record:
 Do not use `report.md` as durable method state. Extract current value into the
 method `README.md`, then delete disposable reports.
 
-Escalate before unrelated work continues if a method records a trusted
-`sys > 1` row or a credible generated-candidate proposer.
+Escalate before unrelated work continues if a method produces a trusted new
+`sys > 1` candidate or source beyond the already-known HKO/rotated-pentagon
+family and declared reference/control inputs, or a credible new
+generated-candidate proposer. Encountering an expected known-positive row while
+auditing or scoring references is not a discovery trigger.

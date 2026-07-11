@@ -1,0 +1,19 @@
+{
+  "command": "dev-gradient-ascent-branch-diagnostic",
+  "polytope_table": "experiments/sys-datascience/methods/residual-exemplar-seeds/artifacts/geometry-branch-inspection/branch-input-table.jsonl",
+  "provenance_table": "experiments/sys-datascience/methods/residual-exemplar-seeds/artifacts/geometry-branch-inspection/branch-input-provenance.jsonl",
+  "selected_rows": 14,
+  "thresholds_relative": [
+    1e-12,
+    1e-9,
+    1e-6,
+    0.0001,
+    0.001,
+    0.01
+  ],
+  "max_action_gap_relative": 0.01,
+  "successful_recomputations": 14,
+  "failed_recomputations": 0,
+  "total_orbit_iterations": 17104,
+  "elapsed_ms": 11767.389633
+}

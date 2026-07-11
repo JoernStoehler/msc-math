@@ -1,0 +1,146 @@
+{
+  "all_rows_simple": true,
+  "all_two_face_orderings_complete": true,
+  "artifacts": {
+    "rank_pairs": "feature-family-rank-pairs.tsv",
+    "selection_overlap": "feature-family-selection-overlap.tsv"
+  },
+  "audit_scope": {
+    "declared_identities": "producer formulas plus simple-four-polytope identities selected before this run; other identities were not searched exhaustively",
+    "empirical_pairs": "ridge-feature pairs meeting the fixed rank-correlation threshold; non-ridge empirical pair discovery is outside this packet",
+    "status": "first pass, not a complete algebraic or empirical quotient"
+  },
+  "bucket_counts": {
+    "random_product_sample:3x3": 1024,
+    "random_product_sample:3x4": 1024,
+    "random_product_sample:3x5": 1024,
+    "random_product_sample:3x6": 1024,
+    "random_product_sample:4x4": 1024,
+    "random_product_sample:4x5": 1024,
+    "random_product_sample:4x6": 1024,
+    "random_product_sample:5x5": 1024,
+    "random_product_sample:5x6": 1024,
+    "random_product_sample:6x6": 1024,
+    "random_sample:facet_10": 512,
+    "random_sample:facet_11": 512,
+    "random_sample:facet_12": 512,
+    "random_sample:facet_5": 512,
+    "random_sample:facet_6": 512,
+    "random_sample:facet_7": 512,
+    "random_sample:facet_8": 512,
+    "random_sample:facet_9": 512
+  },
+  "dataset_counts": {
+    "random_product_sample": 10240,
+    "random_sample": 4096
+  },
+  "declared_identity_count": 14,
+  "identity_assertions": [
+    {
+      "assertion": "passed",
+      "identity": "ridge area sum = mean * ordered face count",
+      "max_abs_error": 1.1368683772161603e-13
+    },
+    {
+      "assertion": "passed",
+      "identity": "effective face count = exp(entropy)",
+      "max_abs_error": 0.0
+    },
+    {
+      "assertion": "passed",
+      "identity": "normalized entropy = entropy / log(ordered face count)",
+      "max_abs_error": 0.0
+    },
+    {
+      "assertion": "passed",
+      "identity": "edge density = 2E/(V(V-1))",
+      "max_abs_error": 0.0
+    },
+    {
+      "assertion": "passed",
+      "identity": "vertex degree mean = 2E/V",
+      "max_abs_error": 0.0
+    },
+    {
+      "assertion": "passed",
+      "identity": "E = 2V",
+      "max_abs_error": 0.0
+    },
+    {
+      "assertion": "passed",
+      "identity": "R = V + F",
+      "max_abs_error": 0.0
+    },
+    {
+      "assertion": "passed",
+      "identity": "R * ridge size mean = 6V",
+      "max_abs_error": 2.842170943040401e-14
+    },
+    {
+      "assertion": "passed",
+      "identity": "F * facet vertex mean = 4V",
+      "max_abs_error": 1.4210854715202004e-14
+    },
+    {
+      "assertion": "passed",
+      "identity": "F * facet neighbor mean = 2R",
+      "max_abs_error": 0.0
+    },
+    {
+      "assertion": "passed",
+      "identity": "facet neighbor mean = facet vertex mean / 2 + 2",
+      "max_abs_error": 1.7763568394002505e-15
+    },
+    {
+      "assertion": "passed",
+      "identity": "facet neighbor std = facet vertex std / 2",
+      "max_abs_error": 4.440892098500626e-16
+    },
+    {
+      "assertion": "passed",
+      "identity": "facet neighbor min = facet vertex min / 2 + 2",
+      "max_abs_error": 0.0
+    },
+    {
+      "assertion": "passed",
+      "identity": "facet neighbor max = facet vertex max / 2 + 2",
+      "max_abs_error": 0.0
+    }
+  ],
+  "identity_tolerance": 2e-12,
+  "inputs": {
+    "polytope_table": {
+      "path": "<tables-dir>/polytope-table.jsonl",
+      "sha256": "49825d7636246f71f4ebd419cf0ccbc86e39e6b7f43d4b03e889bb85e4887aea"
+    },
+    "provenance_table": {
+      "path": "<tables-dir>/polytope-provenance-table.jsonl",
+      "sha256": "6ff88a5accce9a7ec7e5a494107350b0974b2ce0268ea44caae36a18a7494ef2"
+    },
+    "selection_overlap": {
+      "path": "../ridge-mechanism-discriminator/artifacts/current/scalar_feature_overlap_matrix.tsv",
+      "sha256": "931728b2a3bd6d31b585f43421eedd34098e7410632dc07bf8f2514663600a4b"
+    }
+  },
+  "interpretation": {
+    "boundary": "This first pass checks declared identities and ridge-feature rank redundancy; it is not a complete quotient of the engineered schema, does not establish a mechanism or complete the invariant feature map, and does not validate a sys>1 proposer.",
+    "pooled_fractional_rank_calculation": "Each feature is converted to fractional ranks separately inside each source/facet or product bucket; Spearman correlation is then computed after pooling rows. This is row-weighted, not an aggregation of per-bucket correlations.",
+    "ridge_groups": [
+      "magnitude and upper-tail level",
+      "concentration and evenness",
+      "small-area threshold fractions (weak/discrete diagnostics)"
+    ],
+    "selection_boundary": "Selection overlaps describe the frozen 100-of-100k random-product selection sets recorded by the upstream proposer packet."
+  },
+  "provenance": {
+    "prepared_table_builder": "../../prepare/build-random-only-slice.sh full <tables-dir>",
+    "prepared_table_contract": "../standard-baseline-p2/README.md",
+    "selection_overlap_owner": "../ridge-mechanism-discriminator/README.md"
+  },
+  "question": "Which declared current-schema identities hold, and which ridge features are rank-equivalent or strongly correlated on this slice?",
+  "rank_pair_count": 26,
+  "rank_pair_threshold": 0.9,
+  "row_count": 14336,
+  "schema": "sys-datascience.feature-family-quotient.v2",
+  "selection_overlap_pair_count": 11
+}

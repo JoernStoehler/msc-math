@@ -1,0 +1,22 @@
+[workspace]
+
+[package]
+name = "residual-exemplar-geometry-inspection"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+csv = "1"
+euclidean-polytopes = { path = "../../../../../crates/euclidean-polytopes" }
+exp-sys-landscape = { path = "../../../../sys-landscape" }
+nalgebra = "0.33"
+num-rational = "0.4"
+num-traits = "0.2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+sha2 = "0.10"
+symplectic = { path = "../../../../../crates/symplectic" }
+
+[[bin]]
+name = "residual-exemplar-geometry-inspection"
+path = "main.rs"

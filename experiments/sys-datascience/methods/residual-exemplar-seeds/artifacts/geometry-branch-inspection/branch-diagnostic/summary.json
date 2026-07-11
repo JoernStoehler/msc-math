@@ -1,0 +1,32 @@
+{
+  "method": "dev-gradient-ascent-branch-diagnostic",
+  "selected_rows": 14,
+  "diagnostic_rows": 84,
+  "successful_recomputations": 14,
+  "failed_recomputations": 0,
+  "thresholds_relative": [
+    1e-12,
+    1e-9,
+    1e-6,
+    0.0001,
+    0.001,
+    0.01
+  ],
+  "max_action_gap_relative": 0.01,
+  "selection_bucket_counts": {
+    "random_product_sample": 6,
+    "random_sample": 8,
+    "top_sys": 14
+  },
+  "dataset_counts": {
+    "random_product_sample": 6,
+    "random_sample": 8
+  },
+  "degeneracy_counts": {
+    "high_degeneracy": 1,
+    "large_gap": 58,
+    "narrow_gap": 25
+  },
+  "out_dir": "experiments/sys-datascience/methods/residual-exemplar-seeds/artifacts/geometry-branch-inspection/branch-diagnostic",
+  "caveat": "branch/degeneracy diagnostic only; this does not certify local maximality"
+}
