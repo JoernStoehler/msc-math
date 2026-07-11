@@ -24,15 +24,6 @@ struct RandomProductRow {
     capacity: f64,
 }
 
-#[derive(Deserialize)]
-struct AscentEndpointRow {
-    name: String,
-    facet_count: usize,
-    final_dual_vertices: Vec<[f64; 4]>,
-    #[serde(default)]
-    final_capacity: f64,
-}
-
 pub fn load_retained_artifact_cases(max_rows_per_family: usize) -> Vec<ScanCase> {
     load_retained_artifact_cases_filtered(max_rows_per_family, &[], &[])
 }
@@ -57,20 +48,6 @@ pub fn load_retained_artifact_cases_filtered(
         cases.extend(load_random_product_rows(
             &produce.join("random-product.jsonl"),
             "random_product",
-            row_cap,
-        ));
-    }
-    if should_load_jsonl_family("ascent_general_endpoint", family_filter, source_id_filter) {
-        cases.extend(load_ascent_rows(
-            &produce.join("ascent-general-endpoints.jsonl"),
-            "ascent_general_endpoint",
-            row_cap,
-        ));
-    }
-    if should_load_jsonl_family("ascent_product_endpoint", family_filter, source_id_filter) {
-        cases.extend(load_ascent_rows(
-            &produce.join("ascent-product-endpoints.jsonl"),
-            "ascent_product_endpoint",
             row_cap,
         ));
     }
@@ -201,31 +178,6 @@ fn load_random_product_rows(
         .collect()
 }
 
-fn load_ascent_rows(path: &Path, family: &str, max_rows_per_family: usize) -> Vec<ScanCase> {
-    read_jsonl::<AscentEndpointRow>(path)
-        .into_iter()
-        .take(row_limit(max_rows_per_family))
-        .map(|row| ScanCase {
-            family: family.to_string(),
-            source_id: format!("{}:F{}", row.name, row.facet_count),
-            input_source: "artifact_replay".to_string(),
-            generated_attempt: None,
-            generator_seed: None,
-            requested_facet_count: Some(row.facet_count),
-            dual_vertices: if family == "ascent_product_endpoint" {
-                round_known_product_dual_vertices(&array_vertices_to_vectors(
-                    &row.final_dual_vertices,
-                ))
-            } else {
-                array_vertices_to_vectors(&row.final_dual_vertices)
-            },
-            audit_capacity_label: (row.final_capacity > 0.0).then_some(row.final_capacity),
-            artifact_capacity_label: (row.final_capacity > 0.0).then_some(row.final_capacity),
-            audit_sigma_label: None,
-        })
-        .collect()
-}
-
 fn read_jsonl<T: for<'de> Deserialize<'de>>(path: &Path) -> Vec<T> {
     let file = File::open(path).unwrap_or_else(|e| panic!("open {}: {e}", path.display()));
     let reader = BufReader::new(file);
@@ -243,14 +195,6 @@ fn read_jsonl<T: for<'de> Deserialize<'de>>(path: &Path) -> Vec<T> {
             })
         })
         .collect()
-}
-
-fn row_limit(max_rows_per_family: usize) -> usize {
-    if max_rows_per_family == 0 {
-        usize::MAX
-    } else {
-        max_rows_per_family
-    }
 }
 
 fn select_spread_by_facet_count<T>(
@@ -356,5 +300,15 @@ mod tests {
     fn source_id_filter_disables_pre_filter_row_cap() {
         assert_eq!(retained_artifact_row_cap(3, &[]), 3);
         assert_eq!(retained_artifact_row_cap(3, &filter("random-42:F8")), 0);
+    }
+
+    #[test]
+    fn default_artifact_scan_uses_only_retained_families() {
+        let families = load_retained_artifact_cases(1)
+            .into_iter()
+            .map(|case| case.family)
+            .collect::<Vec<_>>();
+
+        assert_eq!(families, ["random", "random_product", HKO_FAMILY]);
     }
 }

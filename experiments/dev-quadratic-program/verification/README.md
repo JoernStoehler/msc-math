@@ -47,11 +47,14 @@ The first manifest covers:
   exact minimizing-sigma set is intentionally unresolved by f64;
 - retained clean random baseline;
 - retained product tie, with the same intentional f64 equality boundary;
-- retained generic ascent endpoint;
-- retained product-shaped ascent endpoint;
 - HKO-like fallback-visible stress row;
 - edge fixtures for duplicate vertices, missing origin interior, product
   rounding drift, and near-redundant product facet removal.
 
 Edge fixtures are code-owned rows in `exp-dev-quadratic-program`; they are not a
 separate status packet.
+
+The former fixed-F generic and product ascent endpoint cases are deliberately
+absent. The sys-datascience owner removed those artifacts from its active
+producer contract and marks them as archaeology-only; this packet does not
+depend on deleted, untracked inputs.

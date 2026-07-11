@@ -92,48 +92,6 @@
       }
     },
     {
-      "case_id": "retained_ascent_general_0",
-      "run": "artifacts",
-      "source_id": "ascent_0:F10",
-      "reason": "actual ascent endpoint, generic-shaped",
-      "claim_scope": "full",
-      "expect": {
-        "family": "ascent_general_endpoint",
-        "validation_status": "accepted_decisive",
-        "outcome": "success",
-        "output_epistemics.capacity_value_status": "decided",
-        "output_epistemics.capacity_label_status": "label_agrees",
-        "output_epistemics.minimizing_sigma_set_status": "decided",
-        "near_minimizing_sigma_count": { "equals": 1 },
-        "output_epistemics.low_action_list_completeness": "complete",
-        "output_epistemics.low_action_items_status": "determinate",
-        "output_epistemics.fallback_recommended": false,
-        "exact_audit_status": "not_requested",
-        "rel_action_error": { "max": 1e-10 }
-      }
-    },
-    {
-      "case_id": "retained_ascent_product_0",
-      "run": "artifacts",
-      "source_id": "ascent_product_0:F10",
-      "reason": "actual ascent endpoint, product-shaped with benign f64 structural diagnostics",
-      "claim_scope": "full",
-      "expect": {
-        "family": "ascent_product_endpoint",
-        "validation_status": "accepted_ambiguous",
-        "outcome": "success",
-        "output_epistemics.capacity_value_status": "decided",
-        "output_epistemics.capacity_label_status": "label_agrees",
-        "output_epistemics.minimizing_sigma_set_status": "decided",
-        "near_minimizing_sigma_count": { "equals": 1 },
-        "output_epistemics.low_action_list_completeness": "complete",
-        "output_epistemics.low_action_items_status": "determinate",
-        "output_epistemics.fallback_recommended": false,
-        "exact_audit_status": "not_requested",
-        "rel_action_error": { "max": 1e-10 }
-      }
-    },
-    {
       "case_id": "hko_fallback_visible",
       "run": "artifacts",
       "source_id": "known_polytopes::hko_pentagon_rounded_f64",

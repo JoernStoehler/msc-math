@@ -57,9 +57,6 @@ or preprocessing changes:
   are the main viability evidence for random empirical scans.
 - Random products are the row family for product rounding and product sigma
   enumeration.
-- Ascent product endpoints sometimes contain nearly redundant factor facets.
-  Compare product and generic near-redundant facet removal on the same retained
-  endpoints before deciding which policy is sufficient.
 - HKO2024 and HKO-like highly degenerate inputs are degenerate stress fixtures
   or exact-fallback cases, not targets for a clean f64-only claim.
 
@@ -135,51 +132,6 @@ cargo run -p exp-dev-quadratic-program --release --bin f64-capacity-analyze -- \
   --json-output /tmp/f64-capacity-smoke-summary.json
 ```
 
-Targeted development scan:
-
-Use named rows for debugging mechanism changes. Prefer one row, or a small
-diverse set, before running family-level scans.
-
-```bash
-cargo run -p exp-dev-quadratic-program --release --bin f64-capacity-scan -- \
-  --input-source artifacts \
-  --max-rows-per-family 0 \
-  --source-id-filter ascent_product_60:F10,ascent_product_131:F10,ascent_product_3222:F10 \
-  --output /tmp/f64-capacity-dev-rows.jsonl
-```
-
-Targeted near-redundant facet-removal comparison:
-
-```bash
-cargo run -p exp-dev-quadratic-program --release --bin f64-capacity-scan -- \
-  --input-source artifacts \
-  --max-rows-per-family 0 \
-  --family-filter ascent_product_endpoint \
-  --source-id-filter ascent_product_60:F10,ascent_product_131:F10,ascent_product_3222:F10 \
-  --output /tmp/f64-capacity-product-facet-removal-off.jsonl
-cargo run -p exp-dev-quadratic-program --release --bin f64-capacity-scan -- \
-  --input-source artifacts \
-  --max-rows-per-family 0 \
-  --family-filter ascent_product_endpoint \
-  --source-id-filter ascent_product_60:F10,ascent_product_131:F10,ascent_product_3222:F10 \
-  --near-redundant-facet-removal product \
-  --near-redundant-facet-removal-delta 1e-8 \
-  --audit-preprocessed all \
-  --output /tmp/f64-capacity-product-facet-removal-on.jsonl
-cargo run -p exp-dev-quadratic-program --release --bin f64-capacity-scan -- \
-  --input-source artifacts \
-  --max-rows-per-family 0 \
-  --family-filter ascent_product_endpoint \
-  --source-id-filter ascent_product_60:F10,ascent_product_131:F10,ascent_product_3222:F10 \
-  --near-redundant-facet-removal generic \
-  --near-redundant-facet-removal-delta 1e-8 \
-  --audit-preprocessed all \
-  --output /tmp/f64-capacity-generic-facet-removal-on.jsonl
-cargo run -p exp-dev-quadratic-program --release --bin f64-capacity-analyze -- \
-  --input /tmp/f64-capacity-generic-facet-removal-on.jsonl \
-  --json-output /tmp/f64-capacity-generic-facet-removal-on-summary.json
-```
-
 Full generated scan:
 
 ```bash
@@ -234,16 +186,6 @@ cargo run -p exp-dev-quadratic-program --release --bin f64-capacity-scan -- \
 cargo run -p exp-dev-quadratic-program --release --bin f64-capacity-analyze -- \
   --input /tmp/f64-capacity-artifacts-full.jsonl \
   --json-output /tmp/f64-capacity-artifacts-full-summary.json
-```
-
-Targeted hard-family retained scan:
-
-```bash
-cargo run -p exp-dev-quadratic-program --release --bin f64-capacity-scan -- \
-  --input-source artifacts \
-  --family-filter ascent_general_endpoint,ascent_product_endpoint,hko2024_f64 \
-  --max-rows-per-family 0 \
-  --output /tmp/f64-capacity-artifacts-hard-families.jsonl
 ```
 
 Full-LP artifact subset:
@@ -401,9 +343,9 @@ f64-exact-fallback path instead of a reject-if-inadmissible f64-only path.
 
 Known product rows may arrive with numerical off-block drift. Product
 preprocessing only rounds rows that are already block-structured within a
-relative minor-block tolerance. Retained `random_product` and
-`ascent_product_endpoint` rows are rounded at load time because their producers
-own the product structure. If a product-labeled retained row is not
+relative minor-block tolerance. Retained `random_product` rows are rounded at
+load time because their producer owns the product structure. If a
+product-labeled retained row is not
 block-structured within the tolerance, loading fails instead of silently
 projecting it to a different polytope.
 
