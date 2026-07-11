@@ -53,6 +53,11 @@ tests when useful; rank them by expected project value, recurrence, cost,
 confidence, and side effects when priorities differ. Do not turn every one-off
 error into a permanent rule.
 
+Translate model and process learning into the surfaces that can actually
+change: Jörn's behavior, ordinary repo files or structure, and harness files.
+Say when the evidence supports no change to a surface; a model-capability update
+is an input to these decisions, not itself an intervention.
+
 Do not say there was nothing to learn merely because the outcome was good.
 Silence is justified only when outcome and process were effectively perfect and
 that perfection was itself expected. Do not invent a fault to fill a category,
