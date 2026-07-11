@@ -21,4 +21,19 @@ Each active entry should include:
 - review/merge state;
 - durable handoff or parking pointer when closed.
 
-Current active entries: none recorded in this file.
+Current active entries:
+
+- Owner/session: `/root`, forward-test and exploration session
+- Branch/worktree: `sys-datascience-forward-test` / `.worktrees/sys-datascience-forward-test`
+- Started: 2026-07-11
+- Current milestone: independently validated sub-threshold enrichment proposer;
+  paused at Jörn terminology/role crux before any further packet or
+  demonstration routing
+- Owned surface: `.agents/skills/research-experiments-data/` and
+  `experiments/sys-datascience/` control, producer, method, artifact, and
+  interpretation files needed by this task
+- Blocking crux: whether “candidate-proposer” includes validated sub-threshold
+  enrichment and whether this result warrants one further bounded exploration
+  packet
+- Review/merge state: active; harness commit separated; object-level packet and
+  control-surface update internally reviewed, awaiting Jörn's crux answer

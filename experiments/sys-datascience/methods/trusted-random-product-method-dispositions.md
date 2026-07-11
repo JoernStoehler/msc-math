@@ -104,7 +104,7 @@ claim, not schema repair.
 | multilayer perceptrons, autoencoders, learned representations | `park-low-value` | none | The retained scalar table is small, correlated, and already modeled well enough for its bounded role; learned representations weaken interpretability without fixing proposer validation. |
 | feature-family ablation | `current-invariant-run` | `standard-baseline-p2/` | P2 compared combinatorial-count and ridge symplectic-area feature families under grouped holdout. |
 | metadata-only prediction baselines | `current-invariant-run` | `prediction-ranking/` | Current metadata-only baselines ran. |
-| generated-candidate proposer loop | `future-work` | none | Reopen only with one frozen rule, independent selection-before-`sys` validation, and enough expected thesis value to justify producing candidates. |
+| generated-candidate proposer loop | `current-reviewed-packet` | `extreme-scalar-rejection-proposer/artifacts/100k-ridge-concentration-validation/` | One frozen two-stage rule passed its independent sub-threshold enrichment criterion. It did not find `sys > 1`; Jörn must settle whether thesis vocabulary calls this a candidate-proposer or reserves that term for threshold-directed evidence. |
 
 ## Unsupervised, Density, And Anomaly Methods
 
@@ -151,8 +151,9 @@ claim, not schema repair.
 
 1. Do not claim closure over arbitrary random distributions unless a new
    distribution-design batch is run and reviewed.
-2. Do not claim a generated-candidate proposer until an unevaluated-row ranking
-   experiment is designed and run.
+2. The reviewed ridge-concentration packet supports one exact independently
+   generated sub-threshold enrichment rule. Do not promote it to a proposer for
+   finding `sys > 1`, a mechanism, or transfer beyond its generator.
 3. P2 closes the previously missing executor for the named retained-table
    standard repertoire. Reopen method execution only when a stronger exact
    claim makes a deferred family relevant; this does not close broader

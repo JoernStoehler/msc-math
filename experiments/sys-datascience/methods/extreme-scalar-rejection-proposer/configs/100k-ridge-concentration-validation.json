@@ -1,0 +1,21 @@
+{
+  "stage": "geometry",
+  "out_dir": "experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/100k-ridge-concentration-validation",
+  "seed": 1618033,
+  "candidates_per_bucket": 10000,
+  "baseline_policy": "per_selection_matched",
+  "baseline_replicates": 1,
+  "selection": {
+    "per_bucket_cascade": {
+      "primary_feature": "ridge_symp_area_sum_over_volume_sqrt",
+      "primary_direction": "low",
+      "primary_fraction": 0.01,
+      "secondary_feature": "ridge_symp_area_max_share",
+      "secondary_direction": "low",
+      "secondary_fraction": 0.5,
+      "emit_stage_1_comparator": true
+    }
+  },
+  "jobs": 12,
+  "chunk_rows": 5000
+}

@@ -441,6 +441,59 @@ struct SelectionRuleReport {
     percentile_cutoffs: Vec<f64>,
 }
 
+#[derive(Clone, Debug)]
+struct PerBucketCascade {
+    primary_feature: ScalarFeature,
+    primary_direction: SelectionDirection,
+    primary_fraction: f64,
+    secondary_feature: ScalarFeature,
+    secondary_direction: SelectionDirection,
+    secondary_fraction: f64,
+    emit_stage_1_comparator: bool,
+}
+
+#[derive(Clone, PartialEq, Serialize, Deserialize)]
+struct PerBucketCascadeReport {
+    scope: String,
+    rounding: String,
+    primary_feature: String,
+    primary_direction: String,
+    primary_fraction: f64,
+    secondary_feature: String,
+    secondary_direction: String,
+    secondary_fraction: f64,
+    emit_stage_1_comparator: bool,
+}
+
+impl PerBucketCascade {
+    fn report(&self) -> PerBucketCascadeReport {
+        PerBucketCascadeReport {
+            scope: "actual_bucket_id".to_string(),
+            rounding: "ceil_min_one".to_string(),
+            primary_feature: self.primary_feature.name().to_string(),
+            primary_direction: self.primary_direction.as_str().to_string(),
+            primary_fraction: self.primary_fraction,
+            secondary_feature: self.secondary_feature.name().to_string(),
+            secondary_direction: self.secondary_direction.as_str().to_string(),
+            secondary_fraction: self.secondary_fraction,
+            emit_stage_1_comparator: self.emit_stage_1_comparator,
+        }
+    }
+
+    fn rules(&self) -> Vec<SelectionRule> {
+        vec![
+            SelectionRule::single(self.primary_feature, self.primary_direction, &[], &[], &[]),
+            SelectionRule::single(
+                self.secondary_feature,
+                self.secondary_direction,
+                &[],
+                &[],
+                &[],
+            ),
+        ]
+    }
+}
+
 #[derive(Clone)]
 struct Args {
     config_path: Option<PathBuf>,
@@ -458,6 +511,7 @@ struct Args {
     rule_set: String,
     baseline_policy: String,
     selection_rules: Vec<SelectionRule>,
+    per_bucket_cascade: Option<PerBucketCascade>,
     use_legacy_default_rule_alias: bool,
     jobs: usize,
     chunk_rows: usize,
@@ -488,6 +542,19 @@ struct SelectionConfigFile {
     global_top: Option<Vec<usize>>,
     per_bucket_top: Option<Vec<usize>>,
     percentile_cutoffs: Option<Vec<f64>>,
+    per_bucket_cascade: Option<PerBucketCascadeConfigFile>,
+}
+
+#[derive(Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct PerBucketCascadeConfigFile {
+    primary_feature: String,
+    primary_direction: String,
+    primary_fraction: f64,
+    secondary_feature: String,
+    secondary_direction: String,
+    secondary_fraction: f64,
+    emit_stage_1_comparator: bool,
 }
 
 #[derive(Clone, Deserialize)]
@@ -546,6 +613,8 @@ struct ResolvedSelectionConfig {
     per_bucket_top: Vec<usize>,
     percentile_cutoffs: Vec<f64>,
     rules: Vec<SelectionRuleReport>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    per_bucket_cascade: Option<PerBucketCascadeReport>,
 }
 
 #[derive(Clone, Serialize, Deserialize)]
@@ -583,7 +652,7 @@ struct RunMetadata {
     report_semantics: String,
 }
 
-#[derive(Clone, Serialize, Deserialize)]
+#[derive(Clone, Default, Serialize, Deserialize)]
 struct ProductSource {
     producer: String,
     k: usize,
@@ -626,7 +695,7 @@ struct CandidateGeometryRow {
     time_geometry_ms: f64,
 }
 
-#[derive(Clone, Serialize, Deserialize)]
+#[derive(Clone, Default, Serialize, Deserialize)]
 struct CandidateFeatureRow {
     schema: String,
     candidate_id: String,
@@ -767,6 +836,8 @@ struct SelectionPlanReport {
     baseline_replicates: usize,
     rule_set: String,
     rules: Vec<SelectionRuleReport>,
+    #[serde(default)]
+    per_bucket_cascade: Option<PerBucketCascadeReport>,
     selection_feature: String,
     selection_direction: String,
     global_top: Vec<usize>,
@@ -853,6 +924,7 @@ struct SelectionSet {
     direction: SelectionDirection,
     requested_budget: String,
     indices: Vec<usize>,
+    require_disjoint_baseline: bool,
 }
 
 struct ProductGeometry {
@@ -994,6 +1066,47 @@ fn validate_percentile_vec(values: Vec<f64>) -> Vec<f64> {
     values
 }
 
+fn validate_fraction(value: f64, field: &str) -> f64 {
+    assert!(
+        value.is_finite() && value > 0.0 && value <= 1.0,
+        "{field} must be finite and in (0, 1]"
+    );
+    value
+}
+
+fn validate_cascade_conflicts(selection: &SelectionConfigFile) {
+    if selection.per_bucket_cascade.is_some() {
+        assert!(
+            selection.rule_set.is_none()
+                && selection.selection_feature.is_none()
+                && selection.selection_direction.is_none()
+                && selection.selection_rules.is_none()
+                && selection.global_top.is_none()
+                && selection.per_bucket_top.is_none()
+                && selection.percentile_cutoffs.is_none(),
+            "selection.per_bucket_cascade cannot be combined with ordinary scalar-rule selection fields"
+        );
+    }
+}
+
+fn parse_per_bucket_cascade(config: PerBucketCascadeConfigFile) -> PerBucketCascade {
+    PerBucketCascade {
+        primary_feature: ScalarFeature::parse(&config.primary_feature),
+        primary_direction: SelectionDirection::parse(&config.primary_direction),
+        primary_fraction: validate_fraction(
+            config.primary_fraction,
+            "selection.per_bucket_cascade.primary_fraction",
+        ),
+        secondary_feature: ScalarFeature::parse(&config.secondary_feature),
+        secondary_direction: SelectionDirection::parse(&config.secondary_direction),
+        secondary_fraction: validate_fraction(
+            config.secondary_fraction,
+            "selection.per_bucket_cascade.secondary_fraction",
+        ),
+        emit_stage_1_comparator: config.emit_stage_1_comparator,
+    }
+}
+
 fn parse_config_selection_rules(
     rules: Vec<SelectionRuleConfigFile>,
 ) -> Vec<(ScalarFeature, SelectionDirection)> {
@@ -1014,6 +1127,13 @@ fn parse_config_selection_rules(
 
 fn parse_args() -> Args {
     let overrides = parse_cli_overrides();
+    let cli_has_scalar_selection_override = overrides.global_top.is_some()
+        || overrides.per_bucket_top.is_some()
+        || overrides.percentile_cutoffs.is_some()
+        || overrides.selection_feature.is_some()
+        || overrides.selection_direction.is_some()
+        || overrides.rule_set.is_some()
+        || overrides.explicit_selection_rules.is_some();
     let config = overrides.config_path.as_deref().map(read_config_file);
 
     let mut stage = Stage::All;
@@ -1030,6 +1150,7 @@ fn parse_args() -> Args {
     let mut selection_direction = DEFAULT_SELECTION_DIRECTION;
     let mut rule_set = "single".to_string();
     let mut explicit_selection_rules = None::<Vec<(ScalarFeature, SelectionDirection)>>;
+    let mut per_bucket_cascade = None::<PerBucketCascade>;
     let mut jobs = std::thread::available_parallelism().map_or(1, usize::from);
     let mut chunk_rows = DEFAULT_CHUNK_ROWS;
 
@@ -1056,6 +1177,14 @@ fn parse_args() -> Args {
             baseline_replicates = validate_positive_usize(value, "baseline_replicates");
         }
         if let Some(selection) = config.selection {
+            validate_cascade_conflicts(&selection);
+            if let Some(value) = selection.per_bucket_cascade {
+                per_bucket_cascade = Some(parse_per_bucket_cascade(value));
+                rule_set = "per-bucket-cascade".to_string();
+                let cascade = per_bucket_cascade.as_ref().expect("cascade was set");
+                selection_feature = cascade.primary_feature;
+                selection_direction = cascade.primary_direction;
+            }
             if let Some(value) = selection.rule_set {
                 rule_set = value;
             }
@@ -1138,15 +1267,23 @@ fn parse_args() -> Args {
         baseline_policy, "per_selection_matched",
         "only baseline_policy=per_selection_matched is implemented"
     );
-    let selection_rules = build_selection_rules(
-        &rule_set,
-        explicit_selection_rules,
-        selection_feature,
-        selection_direction,
-        &global_top,
-        &per_bucket_top,
-        &percentile_cutoffs,
+    assert!(
+        per_bucket_cascade.is_none() || !cli_has_scalar_selection_override,
+        "selection.per_bucket_cascade cannot be combined with ordinary scalar-rule CLI overrides"
     );
+    let selection_rules = if let Some(cascade) = &per_bucket_cascade {
+        cascade.rules()
+    } else {
+        build_selection_rules(
+            &rule_set,
+            explicit_selection_rules,
+            selection_feature,
+            selection_direction,
+            &global_top,
+            &per_bucket_top,
+            &percentile_cutoffs,
+        )
+    };
     let use_legacy_default_rule_alias = rule_set == "single"
         && selection_rules.len() == 1
         && selection_rules[0].feature == DEFAULT_SELECTION_FEATURE
@@ -1167,6 +1304,7 @@ fn parse_args() -> Args {
         rule_set,
         baseline_policy,
         selection_rules,
+        per_bucket_cascade,
         use_legacy_default_rule_alias,
         jobs,
         chunk_rows,
@@ -1805,7 +1943,105 @@ fn sort_selection_indices(
     });
 }
 
+fn fraction_count(row_count: usize, fraction: f64) -> usize {
+    if row_count == 0 {
+        0
+    } else {
+        ((fraction * row_count as f64).ceil() as usize)
+            .max(1)
+            .min(row_count)
+    }
+}
+
+fn cascade_fraction_label(fraction: f64) -> String {
+    format!("{fraction:.6}").replace('.', "p")
+}
+
+fn per_bucket_cascade_selection_sets(
+    features: &[CandidateFeatureRow],
+    cascade: &PerBucketCascade,
+) -> Vec<SelectionSet> {
+    let primary_rule = SelectionRule::single(
+        cascade.primary_feature,
+        cascade.primary_direction,
+        &[],
+        &[],
+        &[],
+    );
+    let secondary_rule = SelectionRule::single(
+        cascade.secondary_feature,
+        cascade.secondary_direction,
+        &[],
+        &[],
+        &[],
+    );
+    let mut buckets = BTreeMap::<String, Vec<usize>>::new();
+    for (index, row) in features.iter().enumerate() {
+        buckets
+            .entry(row.bucket_id.clone())
+            .or_default()
+            .push(index);
+    }
+
+    let mut stage_1 = Vec::new();
+    let mut cascade_indices = Vec::new();
+    for mut bucket in buckets.into_values() {
+        sort_selection_indices(&mut bucket, features, &primary_rule);
+        bucket.truncate(fraction_count(bucket.len(), cascade.primary_fraction));
+        stage_1.extend(bucket.iter().copied());
+        sort_selection_indices(&mut bucket, features, &secondary_rule);
+        bucket.truncate(fraction_count(bucket.len(), cascade.secondary_fraction));
+        cascade_indices.extend(bucket);
+    }
+
+    let primary_label = format!(
+        "{}_{}",
+        cascade.primary_direction.as_str(),
+        cascade.primary_feature.name()
+    );
+    let secondary_label = format!(
+        "{}_{}",
+        cascade.secondary_direction.as_str(),
+        cascade.secondary_feature.name()
+    );
+    let primary_fraction_label = cascade_fraction_label(cascade.primary_fraction);
+    let secondary_fraction_label = cascade_fraction_label(cascade.secondary_fraction);
+    let mut sets = Vec::new();
+    if cascade.emit_stage_1_comparator {
+        sets.push(SelectionSet {
+            id: format!("per_bucket_{primary_label}_fraction_{primary_fraction_label}"),
+            kind: "per_bucket_cascade_stage_1_comparator".to_string(),
+            feature: cascade.primary_feature,
+            direction: cascade.primary_direction,
+            requested_budget: format!(
+                "per_bucket_fraction={:.6};rounding=ceil_min_one",
+                cascade.primary_fraction
+            ),
+            indices: stage_1,
+            require_disjoint_baseline: true,
+        });
+    }
+    sets.push(SelectionSet {
+        id: format!(
+            "per_bucket_{primary_label}_fraction_{primary_fraction_label}_then_{secondary_label}_fraction_{secondary_fraction_label}"
+        ),
+        kind: "per_bucket_two_stage_cascade".to_string(),
+        feature: cascade.primary_feature,
+        direction: cascade.primary_direction,
+        requested_budget: format!(
+            "primary_per_bucket_fraction={:.6};secondary_within_primary_fraction={:.6};rounding=ceil_min_one",
+            cascade.primary_fraction, cascade.secondary_fraction
+        ),
+        indices: cascade_indices,
+        require_disjoint_baseline: true,
+    });
+    sets
+}
+
 fn selection_sets(features: &[CandidateFeatureRow], args: &Args) -> Vec<SelectionSet> {
+    if let Some(cascade) = &args.per_bucket_cascade {
+        return per_bucket_cascade_selection_sets(features, cascade);
+    }
     let mut sets = Vec::new();
     for rule in &args.selection_rules {
         let mut global = (0..features.len()).collect::<Vec<_>>();
@@ -1819,6 +2055,7 @@ fn selection_sets(features: &[CandidateFeatureRow], args: &Args) -> Vec<Selectio
                 direction: rule.direction,
                 requested_budget: budget.to_string(),
                 indices: global.iter().take(*budget).copied().collect(),
+                require_disjoint_baseline: false,
             });
         }
         for percentile in &rule.percentile_cutoffs {
@@ -1833,6 +2070,7 @@ fn selection_sets(features: &[CandidateFeatureRow], args: &Args) -> Vec<Selectio
                 direction: rule.direction,
                 requested_budget: format!("{percentile:.4}"),
                 indices: global.iter().take(count).copied().collect(),
+                require_disjoint_baseline: false,
             });
         }
         for budget in &rule.per_bucket_top {
@@ -1851,6 +2089,7 @@ fn selection_sets(features: &[CandidateFeatureRow], args: &Args) -> Vec<Selectio
                 direction: rule.direction,
                 requested_budget: budget.to_string(),
                 indices,
+                require_disjoint_baseline: false,
             });
         }
     }
@@ -1881,17 +2120,30 @@ fn baseline_indices_for_selection(
         let mut pool = (0..features.len())
             .filter(|idx| features[*idx].bucket_id == bucket_id && !selected.contains(idx))
             .collect::<Vec<_>>();
-        if pool.len() < count {
+        if pool.len() < count && !selection.require_disjoint_baseline {
             pool = (0..features.len())
                 .filter(|idx| features[*idx].bucket_id == bucket_id)
                 .collect::<Vec<_>>();
         }
+        assert!(
+            pool.len() >= count,
+            "bucket {bucket_id} has {count} selected rows but only {} eligible baseline candidates",
+            pool.len()
+        );
         pool.sort_by(|&left, &right| {
             hash_for_baseline(&selection.id, replicate, &features[left].candidate_id).cmp(
                 &hash_for_baseline(&selection.id, replicate, &features[right].candidate_id),
             )
         });
-        out.extend(pool.into_iter().take(count));
+        let matched = pool.into_iter().take(count).collect::<Vec<_>>();
+        assert_eq!(matched.len(), count, "baseline count must match selection");
+        if selection.require_disjoint_baseline {
+            assert!(
+                matched.iter().all(|idx| !selected.contains(idx)),
+                "baseline must be disjoint from selected rows"
+            );
+        }
+        out.extend(matched);
     }
     out
 }
@@ -2173,7 +2425,7 @@ fn selection_summary_rows_from_plan(
             selected_bucket_counts: bucket_counts_from_selection_rows(&selected_rows),
         });
     }
-    if plan.rules.len() > 1 {
+    if plan.rules.len() > 1 && plan.per_bucket_cascade.is_none() {
         let selected_rows = selection_rows
             .iter()
             .filter(|row| !row.selection_ids.is_empty())
@@ -2234,6 +2486,11 @@ fn warn_if_report_args_differ_from_plan(args: &Args, plan: &SelectionPlanReport)
         || args.baseline_replicates != plan.baseline_replicates
         || args.rule_set != plan.rule_set
         || current_rules != plan.rules
+        || args
+            .per_bucket_cascade
+            .as_ref()
+            .map(PerBucketCascade::report)
+            != plan.per_bucket_cascade
         || args.global_top != plan.global_top
         || args.per_bucket_top != plan.per_bucket_top
         || args.percentile_cutoffs != plan.percentile_cutoffs;
@@ -2334,6 +2591,10 @@ fn resolved_run_config(args: &Args) -> ResolvedRunConfig {
             per_bucket_top: args.per_bucket_top.clone(),
             percentile_cutoffs: args.percentile_cutoffs.clone(),
             rules: selection_rule_reports(&args.selection_rules),
+            per_bucket_cascade: args
+                .per_bucket_cascade
+                .as_ref()
+                .map(PerBucketCascade::report),
         },
         jobs: args.jobs,
         chunk_rows: args.chunk_rows,
@@ -2562,7 +2823,12 @@ fn run_selection_stage(args: &Args) {
         .map(|selection| selection.indices.len())
         .sum::<usize>();
     let plan = SelectionPlanReport {
-        schema: "sys-datascience.extreme-scalar-rejection-proposer.selection-plan.v2".to_string(),
+        schema: if args.per_bucket_cascade.is_some() {
+            "sys-datascience.extreme-scalar-rejection-proposer.selection-plan.v3"
+        } else {
+            "sys-datascience.extreme-scalar-rejection-proposer.selection-plan.v2"
+        }
+        .to_string(),
         metadata: Some(run_metadata(&args.baseline_policy)),
         seed: args.seed,
         candidates_per_bucket: args.candidates_per_bucket,
@@ -2572,6 +2838,10 @@ fn run_selection_stage(args: &Args) {
         baseline_replicates: args.baseline_replicates,
         rule_set: args.rule_set.clone(),
         rules: selection_rule_reports(&args.selection_rules),
+        per_bucket_cascade: args
+            .per_bucket_cascade
+            .as_ref()
+            .map(PerBucketCascade::report),
         selection_feature: args.selection_feature.name().to_string(),
         selection_direction: args.selection_direction.as_str().to_string(),
         global_top: args.global_top.clone(),
@@ -2857,5 +3127,186 @@ fn main() {
             }
         }
         stage => run_stage(&args, stage),
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn feature_row(
+        bucket: &str,
+        candidate: &str,
+        primary: f64,
+        secondary: f64,
+    ) -> CandidateFeatureRow {
+        CandidateFeatureRow {
+            candidate_id: candidate.to_string(),
+            name: candidate.to_string(),
+            poly_id: candidate.to_string(),
+            bucket_id: bucket.to_string(),
+            ridge_symp_area_sum_over_volume_sqrt: primary,
+            ridge_symp_area_max_share: secondary,
+            ..CandidateFeatureRow::default()
+        }
+    }
+
+    fn cascade(primary_fraction: f64, secondary_fraction: f64) -> PerBucketCascade {
+        PerBucketCascade {
+            primary_feature: ScalarFeature::RidgeSympAreaSumOverVolumeSqrt,
+            primary_direction: SelectionDirection::Low,
+            primary_fraction,
+            secondary_feature: ScalarFeature::RidgeSympAreaMaxShare,
+            secondary_direction: SelectionDirection::Low,
+            secondary_fraction,
+            emit_stage_1_comparator: true,
+        }
+    }
+
+    fn selected_candidate_ids(
+        features: &[CandidateFeatureRow],
+        selection: &SelectionSet,
+    ) -> Vec<String> {
+        selection
+            .indices
+            .iter()
+            .map(|index| features[*index].candidate_id.clone())
+            .collect()
+    }
+
+    #[test]
+    fn cascade_is_bucket_local_and_secondary_only_ranks_primary_tail() {
+        let features = vec![
+            feature_row("a", "a1", 1.0, 9.0),
+            feature_row("a", "a2", 2.0, 8.0),
+            feature_row("a", "a3", 3.0, 0.0),
+            feature_row("a", "a4", 4.0, 1.0),
+            feature_row("b", "b1", 1.0, 7.0),
+            feature_row("b", "b2", 2.0, 6.0),
+            feature_row("b", "b3", 3.0, 0.0),
+            feature_row("b", "b4", 4.0, 1.0),
+        ];
+        let selections = per_bucket_cascade_selection_sets(&features, &cascade(0.5, 0.5));
+        assert_eq!(selections.len(), 2);
+        assert_eq!(
+            selected_candidate_ids(&features, &selections[0]),
+            vec!["a1", "a2", "b1", "b2"]
+        );
+        assert_eq!(
+            selected_candidate_ids(&features, &selections[1]),
+            vec!["a2", "b2"]
+        );
+    }
+
+    #[test]
+    fn cascade_uses_ceil_min_one_and_candidate_id_ties() {
+        let mut features = Vec::new();
+        for index in (0..100).rev() {
+            features.push(feature_row("n100", &format!("n100-{index:03}"), 1.0, 1.0));
+        }
+        for index in (0..101).rev() {
+            features.push(feature_row("n101", &format!("n101-{index:03}"), 1.0, 1.0));
+        }
+        let selections = per_bucket_cascade_selection_sets(&features, &cascade(0.01, 0.5));
+        assert_eq!(selected_candidate_ids(&features, &selections[0]).len(), 3);
+        assert_eq!(
+            selected_candidate_ids(&features, &selections[1]),
+            vec!["n100-000", "n101-000"]
+        );
+    }
+
+    #[test]
+    fn cascade_membership_is_invariant_under_input_reordering() {
+        let forward = vec![
+            feature_row("a", "a", 1.0, 2.0),
+            feature_row("a", "b", 2.0, 1.0),
+            feature_row("a", "c", 3.0, 0.0),
+            feature_row("a", "d", 4.0, 3.0),
+        ];
+        let mut reversed = forward.clone();
+        reversed.reverse();
+        let forward_sets = per_bucket_cascade_selection_sets(&forward, &cascade(0.5, 0.5));
+        let reversed_sets = per_bucket_cascade_selection_sets(&reversed, &cascade(0.5, 0.5));
+        for set_index in 0..2 {
+            assert_eq!(
+                selected_candidate_ids(&forward, &forward_sets[set_index]),
+                selected_candidate_ids(&reversed, &reversed_sets[set_index])
+            );
+        }
+    }
+
+    #[test]
+    fn matched_baseline_is_exact_bucket_matched_disjoint_and_deterministic() {
+        let features = (0..8)
+            .map(|index| {
+                let bucket = if index < 4 { "a" } else { "b" };
+                feature_row(bucket, &format!("candidate-{index}"), index as f64, 0.0)
+            })
+            .collect::<Vec<_>>();
+        let selection = SelectionSet {
+            id: "test-selection".to_string(),
+            kind: "test".to_string(),
+            feature: ScalarFeature::RidgeSympAreaSumOverVolumeSqrt,
+            direction: SelectionDirection::Low,
+            requested_budget: "two-per-bucket".to_string(),
+            indices: vec![0, 1, 4, 5],
+            require_disjoint_baseline: true,
+        };
+        let first = baseline_indices_for_selection(&features, &selection, 0);
+        let repeated = baseline_indices_for_selection(&features, &selection, 0);
+        assert_eq!(first, repeated);
+        assert_eq!(first.len(), selection.indices.len());
+        assert!(first.iter().all(|index| !selection.indices.contains(index)));
+        let counts = first.iter().fold(BTreeMap::new(), |mut counts, index| {
+            *counts
+                .entry(features[*index].bucket_id.clone())
+                .or_insert(0usize) += 1;
+            counts
+        });
+        assert_eq!(counts.get("a"), Some(&2));
+        assert_eq!(counts.get("b"), Some(&2));
+    }
+
+    #[test]
+    fn cascade_config_denies_unknown_fields_and_scalar_conflicts() {
+        let unknown = r#"{
+            "per_bucket_cascade": {
+                "primary_feature": "ridge_symp_area_sum_over_volume_sqrt",
+                "primary_direction": "low",
+                "primary_fraction": 0.01,
+                "secondary_feature": "ridge_symp_area_max_share",
+                "secondary_direction": "low",
+                "secondary_fraction": 0.5,
+                "emit_stage_1_comparator": true,
+                "unexpected": 1
+            }
+        }"#;
+        assert!(serde_json::from_str::<SelectionConfigFile>(unknown).is_err());
+
+        let conflict = r#"{
+            "selection_feature": "ridge_symp_area_sum_over_volume_sqrt",
+            "per_bucket_cascade": {
+                "primary_feature": "ridge_symp_area_sum_over_volume_sqrt",
+                "primary_direction": "low",
+                "primary_fraction": 0.01,
+                "secondary_feature": "ridge_symp_area_max_share",
+                "secondary_direction": "low",
+                "secondary_fraction": 0.5,
+                "emit_stage_1_comparator": true
+            }
+        }"#;
+        let config = serde_json::from_str::<SelectionConfigFile>(conflict).unwrap();
+        assert!(std::panic::catch_unwind(|| validate_cascade_conflicts(&config)).is_err());
+    }
+
+    #[test]
+    fn cascade_metadata_records_scope_rounding_steps_and_comparator() {
+        let report = cascade(0.01, 0.5).report();
+        assert_eq!(report.scope, "actual_bucket_id");
+        assert_eq!(report.rounding, "ceil_min_one");
+        assert_eq!(report.primary_fraction, 0.01);
+        assert_eq!(report.secondary_fraction, 0.5);
+        assert!(report.emit_stage_1_comparator);
+        assert_eq!(report.secondary_feature, "ridge_symp_area_max_share");
     }
 }

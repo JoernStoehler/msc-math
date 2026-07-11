@@ -13,6 +13,17 @@ distributions.
 
 ## Current Belief State
 
+- Reviewed independent evidence: on a new 100k random-product candidate sample,
+  a rule frozen before `sys` first selected the lowest 1% per bucket by
+  normalized total ridge area and then the lower half by ridge-area maximum
+  share. It passed its predeclared descriptive incremental-enrichment criterion
+  against the stage-1 complement. No evaluated row exceeded 1. Source:
+  `../methods/extreme-scalar-rejection-proposer/artifacts/100k-ridge-concentration-validation/`.
+- Current terminology boundary: this is a credible independently validated
+  sub-threshold enrichment proposer. It is not evidence that the rule finds or
+  credibly extrapolates to `sys > 1`. Jörn must decide which meaning of
+  “candidate-proposer” the thesis result uses before phase routing continues.
+
 - Source-backed table fact: the retained random/product prepared table contains
   no trusted `sys > 1` row. Source: `../methods/scan-sys-gt-1/README.md` and
   `../methods/trusted-random-dataset/README.md`; `../methods/README.md`
@@ -47,6 +58,11 @@ distributions.
   packet READMEs.
 
 ## Live Prioritization State
+
+Pause new packets. The independent enrichment result triggered the explicit
+Jörn escalation condition. After Jörn settles terminology and thesis role,
+compare at most one claim-changing follow-up against direct demonstration
+routing; do not resume the older board as a queue.
 
 The next high-value work is probably not more single-feature ridge-sum scale-up
 or rerunning the same `promising-scalars` sweep alone. More useful candidates

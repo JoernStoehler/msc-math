@@ -10,10 +10,12 @@ Lagrangian-product candidates, compute cheap scalar features, freeze selected
 and matched-baseline candidate ids before `sys`, and evaluate `sys` only for
 that selected-or-baseline union.
 
-Current tracked evidence is the compact 100k `promising-scalars` packet under
-`artifacts/100k-promising-scalars/`. The compact packet intentionally omits the
-full generated geometry and feature caches. Regenerate them from the durable
-config when row-level geometry or full-feature inspection is needed.
+Current tracked evidence includes the original 100k `promising-scalars` packet
+and the independent frozen ridge-concentration validation under
+`artifacts/100k-ridge-concentration-validation/`. The latter tests whether a
+concentration add-on improves on the low-ridge scalar boundary. Both compact
+packets intentionally omit full generated geometry and feature caches;
+regenerate them from their durable configs when row-level inspection is needed.
 
 Evidence-stage boundary:
 
@@ -86,6 +88,15 @@ required to rerun the exact three-file target-field audit recorded in
 location used as non-required provenance if those files still exist.
 
 ## Current Evidence
+
+2026-07-11 independent ridge-concentration validation:
+
+- a fresh 100k random-product sample tested one rule frozen before `sys`;
+- the predeclared descriptive incremental-enrichment criterion passed;
+- no evaluated candidate had `sys > 1`;
+- `artifacts/100k-ridge-concentration-validation/review.md` records the review
+  and the unresolved terminology boundary between a validated sub-threshold
+  enrichment proposer and a proposer for finding `sys > 1`.
 
 Recorded run date: 2026-07-01.
 

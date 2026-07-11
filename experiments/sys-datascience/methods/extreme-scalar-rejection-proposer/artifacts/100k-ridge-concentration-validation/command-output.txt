@@ -1,0 +1,158 @@
+   Compiling proc-macro2 v1.0.106
+   Compiling unicode-ident v1.0.24
+   Compiling quote v1.0.46
+   Compiling autocfg v1.5.1
+   Compiling libm v0.2.16
+   Compiling serde_core v1.0.228
+   Compiling num-traits v0.2.19
+   Compiling cfg-if v1.0.4
+   Compiling serde v1.0.228
+   Compiling syn v2.0.118
+   Compiling libc v0.2.186
+   Compiling syn v1.0.109
+   Compiling fnv v1.0.7
+   Compiling strsim v0.10.0
+   Compiling ident_case v1.0.1
+   Compiling zerocopy v0.8.52
+   Compiling paste v1.0.15
+   Compiling once_cell v1.21.4
+   Compiling bytemuck v1.25.0
+   Compiling safe_arch v0.7.4
+   Compiling getrandom v0.2.17
+   Compiling num-integer v0.1.46
+   Compiling matrixmultiply v0.3.10
+   Compiling zmij v1.0.21
+   Compiling darling_core v0.14.4
+   Compiling serde_derive v1.0.228
+   Compiling crossbeam-utils v0.8.21
+   Compiling rand_core v0.6.4
+   Compiling darling_macro v0.14.4
+   Compiling wide v0.7.33
+   Compiling darling v0.14.4
+   Compiling ppv-lite86 v0.2.21
+   Compiling derive_builder_core v0.11.2
+   Compiling tracing-core v0.1.36
+   Compiling approx v0.5.1
+   Compiling shlex v2.0.1
+   Compiling find-msvc-tools v0.1.9
+   Compiling thiserror v1.0.69
+   Compiling lazy_static v1.5.0
+   Compiling serde_json v1.0.150
+   Compiling num-complex v0.4.6
+   Compiling num-bigint v0.4.6
+   Compiling rawpointer v0.2.1
+   Compiling either v1.16.0
+   Compiling simba v0.9.1
+   Compiling cc v1.2.65
+   Compiling num-rational v0.4.2
+   Compiling derive_builder_macro v0.11.2
+   Compiling rand_chacha v0.3.1
+   Compiling nalgebra-macros v0.2.2
+   Compiling thiserror-impl v1.0.69
+   Compiling memchr v2.8.2
+   Compiling itoa v1.0.18
+   Compiling rustix v1.1.4
+   Compiling getrandom v0.4.3
+   Compiling typenum v1.20.1
+   Compiling clarabel v0.11.1
+   Compiling enum_dispatch v0.3.13
+   Compiling nalgebra v0.33.3
+   Compiling crossbeam-epoch v0.9.18
+   Compiling rand v0.8.6
+   Compiling derive_builder v0.11.2
+   Compiling blake3 v1.8.5
+   Compiling itertools v0.11.0
+   Compiling serde-big-array v0.5.1
+   Compiling tracing-attributes v0.1.31
+   Compiling amd v0.2.2
+   Compiling rayon-core v1.13.0
+   Compiling bitflags v2.13.0
+   Compiling pin-project-lite v0.2.17
+   Compiling log v0.4.33
+   Compiling linux-raw-sys v0.12.1
+   Compiling tracing-log v0.2.0
+   Compiling tracing v0.1.44
+   Compiling rand_distr v0.4.3
+   Compiling crossbeam-deque v0.8.6
+   Compiling sharded-slab v0.1.7
+   Compiling thread_local v1.1.9
+   Compiling cpufeatures v0.3.0
+   Compiling nu-ansi-term v0.50.3
+   Compiling fastrand v2.4.1
+   Compiling constant_time_eq v0.4.2
+   Compiling arrayref v0.3.9
+   Compiling arrayvec v0.7.7
+   Compiling smallvec v1.15.2
+   Compiling good_lp v1.15.2
+   Compiling tracing-subscriber v0.3.23
+   Compiling tempfile v3.27.0
+   Compiling wait-timeout v0.2.1
+   Compiling algebraic-numbers v0.1.0 (/workspaces/msc-math/.worktrees/sys-datascience-forward-test/crates/algebraic-numbers)
+   Compiling rayon v1.12.0
+   Compiling euclidean-polytopes v0.1.0 (/workspaces/msc-math/.worktrees/sys-datascience-forward-test/crates/euclidean-polytopes)
+   Compiling symplectic v0.1.0 (/workspaces/msc-math/.worktrees/sys-datascience-forward-test/crates/symplectic)
+   Compiling exp-sys-landscape v0.1.0 (/workspaces/msc-math/.worktrees/sys-datascience-forward-test/experiments/sys-landscape)
+   Compiling extreme-scalar-rejection-proposer v0.1.0 (/workspaces/msc-math/.worktrees/sys-datascience-forward-test/experiments/sys-datascience/methods/extreme-scalar-rejection-proposer)
+    Finished `release` profile [optimized] target(s) in 37.81s
+     Running `experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/target/release/extreme-scalar-rejection-proposer --config experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/configs/100k-ridge-concentration-validation.json --stage geometry`
+feature-first candidate-cache pipeline stage=Geometry config_path=experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/configs/100k-ridge-concentration-validation.json seed=1618033 candidates_per_bucket=10000 limit_total=None baseline_policy=per_selection_matched baseline_replicates=1 rule_set=per-bucket-cascade selection_rules=2 selection_feature=ridge_symp_area_sum_over_volume_sqrt selection_direction=low jobs=12 chunk_rows=5000 out_dir=experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/100k-ridge-concentration-validation
+stage=geometry_cache status=started rows=100000 jobs=12 chunk_rows=5000
+stage=geometry_cache completed=5000/100000
+stage=geometry_cache completed=10000/100000
+stage=geometry_cache completed=15000/100000
+stage=geometry_cache completed=20000/100000
+stage=geometry_cache completed=25000/100000
+stage=geometry_cache completed=30000/100000
+stage=geometry_cache completed=35000/100000
+stage=geometry_cache completed=40000/100000
+stage=geometry_cache completed=45000/100000
+stage=geometry_cache completed=50000/100000
+stage=geometry_cache completed=55000/100000
+stage=geometry_cache completed=60000/100000
+stage=geometry_cache completed=65000/100000
+stage=geometry_cache completed=70000/100000
+stage=geometry_cache completed=75000/100000
+stage=geometry_cache completed=80000/100000
+stage=geometry_cache completed=85000/100000
+stage=geometry_cache completed=90000/100000
+stage=geometry_cache completed=95000/100000
+stage=geometry_cache completed=100000/100000
+stage=geometry_cache status=wrote rows=100000 wall_seconds=1.751
+    Finished `release` profile [optimized] target(s) in 0.08s
+     Running `experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/target/release/extreme-scalar-rejection-proposer --config experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/configs/100k-ridge-concentration-validation.json --stage features`
+feature-first candidate-cache pipeline stage=Features config_path=experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/configs/100k-ridge-concentration-validation.json seed=1618033 candidates_per_bucket=10000 limit_total=None baseline_policy=per_selection_matched baseline_replicates=1 rule_set=per-bucket-cascade selection_rules=2 selection_feature=ridge_symp_area_sum_over_volume_sqrt selection_direction=low jobs=12 chunk_rows=5000 out_dir=experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/100k-ridge-concentration-validation
+stage=feature_table status=started jobs=12 chunk_rows=5000
+stage=feature_table completed=5000
+stage=feature_table completed=10000
+stage=feature_table completed=15000
+stage=feature_table completed=20000
+stage=feature_table completed=25000
+stage=feature_table completed=30000
+stage=feature_table completed=35000
+stage=feature_table completed=40000
+stage=feature_table completed=45000
+stage=feature_table completed=50000
+stage=feature_table completed=55000
+stage=feature_table completed=60000
+stage=feature_table completed=65000
+stage=feature_table completed=70000
+stage=feature_table completed=75000
+stage=feature_table completed=80000
+stage=feature_table completed=85000
+stage=feature_table completed=90000
+stage=feature_table completed=95000
+stage=feature_table completed=100000
+stage=feature_table status=wrote rows=100000 wall_seconds=3.125
+    Finished `release` profile [optimized] target(s) in 0.08s
+     Running `experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/target/release/extreme-scalar-rejection-proposer --config experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/configs/100k-ridge-concentration-validation.json --stage selection`
+feature-first candidate-cache pipeline stage=Selection config_path=experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/configs/100k-ridge-concentration-validation.json seed=1618033 candidates_per_bucket=10000 limit_total=None baseline_policy=per_selection_matched baseline_replicates=1 rule_set=per-bucket-cascade selection_rules=2 selection_feature=ridge_symp_area_sum_over_volume_sqrt selection_direction=low jobs=12 chunk_rows=5000 out_dir=experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/100k-ridge-concentration-validation
+stage=pre_sys_selection status=wrote feature_rows=100000 selection_sets=2 selected_rows_sum_over_sets=1500 unique_selected_rows=1000 unique_baseline_rows=1492 selection_rows=2490 wall_seconds=4.150
+    Finished `release` profile [optimized] target(s) in 0.10s
+     Running `experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/target/release/extreme-scalar-rejection-proposer --config experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/configs/100k-ridge-concentration-validation.json --stage sys`
+feature-first candidate-cache pipeline stage=Sys config_path=experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/configs/100k-ridge-concentration-validation.json seed=1618033 candidates_per_bucket=10000 limit_total=None baseline_policy=per_selection_matched baseline_replicates=1 rule_set=per-bucket-cascade selection_rules=2 selection_feature=ridge_symp_area_sum_over_volume_sqrt selection_direction=low jobs=12 chunk_rows=5000 out_dir=experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/100k-ridge-concentration-validation
+stage=sys_evaluation status=started missing_rows=2490 cached_rows=0 jobs=12
+stage=sys_evaluation status=appended rows=2490 wall_seconds=65.818
+    Finished `release` profile [optimized] target(s) in 0.08s
+     Running `experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/target/release/extreme-scalar-rejection-proposer --config experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/configs/100k-ridge-concentration-validation.json --stage reports`
+feature-first candidate-cache pipeline stage=Reports config_path=experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/configs/100k-ridge-concentration-validation.json seed=1618033 candidates_per_bucket=10000 limit_total=None baseline_policy=per_selection_matched baseline_replicates=1 rule_set=per-bucket-cascade selection_rules=2 selection_feature=ridge_symp_area_sum_over_volume_sqrt selection_direction=low jobs=12 chunk_rows=5000 out_dir=experiments/sys-datascience/methods/extreme-scalar-rejection-proposer/artifacts/100k-ridge-concentration-validation
+stage=report status=wrote evaluated_current=2490 wall_seconds=0.582

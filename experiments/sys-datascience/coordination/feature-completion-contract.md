@@ -1,9 +1,10 @@
 # Sys-Datascience Feature-Completion Contract
 
-Status: contract for the next bounded session. It turns the completed
-exploration result into a reviewable handoff for demonstration/polish. It does
-not assert in advance that every packet is ready, authorize new research, or
-authorize thesis wording.
+Status: superseded as current launch authority on 2026-07-11. Exploration
+reopened and produced a reviewed independent sub-threshold enrichment proposer.
+Reuse the relevant readiness questions only after Jörn settles the resulting
+terminology/role crux; this contract does not authorize demonstration while that
+phase decision is open.
 
 Lifecycle: while this review is active, this file defines its target and
 boundaries. After completion, update the coordination entry points to the

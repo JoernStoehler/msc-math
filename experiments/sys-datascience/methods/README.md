@@ -32,8 +32,10 @@ Read first:
 - `hko-ridge-source-smoke/`: source-reproducible fixed-HKO ridge-area smoke
   packet used as sys-datascience mechanism/reference evidence. It does not own
   HKO local-maximality claims.
-- `extreme-scalar-rejection-proposer/`: generated random-product scalar-filter
-  proposer with a compact tracked 100k `promising-scalars` packet.
+- `extreme-scalar-rejection-proposer/`: generated random-product proposer with
+  the original 100k scalar boundary packet and a reviewed independent frozen
+  ridge-concentration validation. The latter validates sub-threshold
+  enrichment; its thesis terminology/role awaits Jörn.
 - `ridge-mechanism-discriminator/`: compact diagnostic table combining retained
   tail-rule diagnostics and generated ridge/proposer summaries to distinguish
   ridge-magnitude, concentration, proxy, small-area, and Goodhart explanations.

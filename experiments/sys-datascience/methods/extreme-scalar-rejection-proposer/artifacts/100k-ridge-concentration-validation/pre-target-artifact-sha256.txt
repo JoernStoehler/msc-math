@@ -1,0 +1,3 @@
+3b988b954c7169561c985be0a6855d728da3b4bec300040799817dc9a63a9234  candidate-geometry-cache.jsonl
+d00c4c51cfd46572ffadb176de537485b0aa593393e0cf69f11dc6dbc961ea4b  candidate-feature-table.jsonl
+58ba9b40889335271d7002a11de2eabada7f5b9a93f6be40ab25fed0e8ebaec7  selected-candidates-before-sys.jsonl

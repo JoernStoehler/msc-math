@@ -1,8 +1,12 @@
 # Sys-Datascience Exploration Result
 
-Status: exploration completed on 2026-07-10. This is the canonical owner-local
-result and the input for demonstration/polish. It interprets existing evidence;
-it records no new experiment and does not by itself authorize thesis wording.
+Status: superseded as phase authority on 2026-07-11. This file preserves the
+recovery agent's 2026-07-10 interpretation and remains useful for the bounded
+retained-table account. It did not reconcile the higher-authority requirement
+for more data. The independently generated ridge-concentration validation under
+`../methods/extreme-scalar-rejection-proposer/artifacts/100k-ridge-concentration-validation/`
+now supplies reviewed sub-threshold proposer evidence and creates a Jörn
+terminology/role crux recorded in `research-ledger.md`.
 
 ## Recovered Checkpoint Disposition
 

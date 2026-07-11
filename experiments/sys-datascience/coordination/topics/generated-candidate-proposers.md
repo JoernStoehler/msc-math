@@ -11,43 +11,38 @@ filters, and feature-first generated-candidate pipelines.
 
 Status block:
 
-- topic-status: boundary evidence reached; topic seed
-- spawn-status: reopen only for a specific rescue rule, new candidate source,
-  or thesis-writing need
-- next-role: topic owner if reopened
-- next-action: freeze one conjunction-rule design or park scalar-filter
-  proposers for now
+- topic-status: independent sub-threshold enrichment validated; Jörn crux
+- spawn-status: paused; do not launch another packet before Jörn's terminology
+  and thesis-role decision
+- next-role: parent session after Jörn answer
+- next-action: either select one claim-changing follow-up or route the reviewed
+  packet to demonstration
 - review-gate: no proposer overclaim; generated candidates must be selected
   before `sys`; normal review before thesis use
 - belief-update-owner: generated-candidate topic owner; research-map steward for
   cross-topic propagation
-- last-reviewed: 2026-07-04 topic-owner review; 2026-07-06 workflow hardening
-  pass added status metadata only
+- last-reviewed: 2026-07-11 independent validation and split
+  technical/interpretation review
 - source-of-truth: `../../methods/extreme-scalar-rejection-proposer/`
 - stale-if: runner configs/artifact paths change, new generated-candidate
   evidence lands, or thesis wording needs proposer claims
-- allowed-downstream-use: planning boundary evidence and prompt seed; not a
-  positive proposer claim
+- allowed-downstream-use: evidence for the exact frozen sub-threshold enrichment
+  rule; not a proposer for finding `sys > 1` until Jörn chooses that vocabulary
 
-Current belief: low ridge-area sum is a real bucket-local enrichment signal,
-and the current `promising-scalars` generated-candidate rule set is executable
-at 100k scale with selection frozen before `sys`. The 100k durable packet did
-not find a near-counterexample: maximum evaluated `sys` was about 0.868 and no
-evaluated row had `sys > 1`. Stronger proposer claims need either a rule that
-survives the selected-tail goodhart problem or evidence from a different
-candidate source.
+Current belief: low ridge-area sum is a real bucket-local enrichment signal. On
+a fresh 100k generated sample, the frozen add-on selecting low ridge-area
+maximum share within the lowest 1% ridge-sum tail passed its predeclared
+descriptive incremental-enrichment criterion. No evaluated row had `sys > 1`.
+This is reviewed generated-candidate evidence for sub-threshold enrichment, not
+threshold reach, mechanism, or cross-generator transfer.
 
-Owner-readiness/status: topic seed, ready for a topic owner. The durable 100k
-promising-scalars packet is complete enough to use as the current boundary
-evidence. A topic-owner review on 2026-07-04 recommended "sharpen first" for
-the two-feature rescue idea rather than launching a mixed design/execution
-packet immediately.
+Owner-readiness/status: reviewed packet at a Jörn terminology/role gate. Source:
+`../../methods/extreme-scalar-rejection-proposer/artifacts/100k-ridge-concentration-validation/`.
 
-Current implementation boundary: the existing
-`extreme-scalar-rejection-proposer` runner supports scalar-rule unions over
-features and per-bucket/global scalar filters. It does not currently provide a
-settled two-feature conjunction-rule interface. Treat conjunction rules as a
-design/implementation packet unless a later runner README says otherwise.
+Current implementation boundary: the runner supports scalar-rule unions and a
+typed two-stage per-bucket cascade with a stage-1 comparator. The cascade
+interface records both frozen steps and rejects conflicting scalar-selection
+configuration.
 
 Evidence sources:
 
@@ -57,6 +52,7 @@ Evidence sources:
 - `../../methods/extreme-scalar-rejection-proposer/artifacts/100k-promising-scalars/README.md`
 - `../../methods/extreme-scalar-rejection-proposer/artifacts/100k-promising-scalars/selection-summary.tsv`
 - `../../methods/extreme-scalar-rejection-proposer/configs/100k-promising-scalars-durable.json`
+- `../../methods/extreme-scalar-rejection-proposer/artifacts/100k-ridge-concentration-validation/review.md`
 - `../../prepare/feature_cost.rs`, infrastructure for measuring feature cost
 
 Candidate hypotheses:

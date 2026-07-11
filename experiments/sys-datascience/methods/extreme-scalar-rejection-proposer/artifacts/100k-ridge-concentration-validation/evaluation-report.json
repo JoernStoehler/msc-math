@@ -1,0 +1,175 @@
+{
+  "schema": "sys-datascience.extreme-scalar-rejection-proposer.evaluation-report.v2",
+  "question": "Does the per-bucket-cascade scalar-filter rule configuration enrich high sys random-product candidates when selection is made before target evaluation?",
+  "metadata": {
+    "geometry_generator": {
+      "schema": "sys-datascience.extreme-scalar-rejection-proposer.candidate-geometry.v2",
+      "generator": "random_lagrangian_product_from_2d_h_representations",
+      "h_min": 0.8,
+      "h_max": 1.2,
+      "product_pairs": [
+        [
+          3,
+          3
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          3,
+          5
+        ],
+        [
+          3,
+          6
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          4,
+          5
+        ],
+        [
+          4,
+          6
+        ],
+        [
+          5,
+          5
+        ],
+        [
+          5,
+          6
+        ],
+        [
+          6,
+          6
+        ]
+      ],
+      "candidate_id_key": "random-product:seed{seed}:{k}x{m}:h0p8_1p2:sample{sample_index}"
+    },
+    "feature_schema": {
+      "schema": "sys-datascience.extreme-scalar-rejection-proposer.candidate-feature.v2",
+      "available_scalar_features": [
+        "facet_count",
+        "vertex_count",
+        "edge_count",
+        "ridge_count",
+        "volume",
+        "simple_vertex_fraction",
+        "edge_density",
+        "vertex_incident_facets_mean",
+        "vertex_incident_facets_std",
+        "vertex_incident_facets_min",
+        "vertex_incident_facets_max",
+        "vertex_degree_mean",
+        "vertex_degree_std",
+        "vertex_degree_min",
+        "vertex_degree_max",
+        "ridge_size_mean",
+        "ridge_size_std",
+        "ridge_size_min",
+        "ridge_size_max",
+        "facet_vertex_count_mean",
+        "facet_vertex_count_std",
+        "facet_vertex_count_min",
+        "facet_vertex_count_max",
+        "facet_neighbor_count_mean",
+        "facet_neighbor_count_std",
+        "facet_neighbor_count_min",
+        "facet_neighbor_count_max",
+        "ridge_symp_area_ordered_fraction",
+        "ridge_symp_area_mean_over_volume_sqrt",
+        "ridge_symp_area_std_over_volume_sqrt",
+        "ridge_symp_area_min_over_volume_sqrt",
+        "ridge_symp_area_max_over_volume_sqrt",
+        "ridge_symp_area_q25_over_volume_sqrt",
+        "ridge_symp_area_median_over_volume_sqrt",
+        "ridge_symp_area_q75_over_volume_sqrt",
+        "ridge_symp_area_q90_over_volume_sqrt",
+        "ridge_symp_area_q95_over_volume_sqrt",
+        "ridge_symp_area_sum_over_volume_sqrt",
+        "ridge_symp_area_max_share",
+        "ridge_symp_area_top3_share",
+        "ridge_symp_area_le_1em3_over_volume_sqrt_fraction",
+        "ridge_symp_area_le_1em2_over_volume_sqrt_fraction",
+        "ridge_symp_area_le_1em1_over_volume_sqrt_fraction",
+        "ridge_symp_area_entropy",
+        "ridge_symp_area_effective_face_count",
+        "ridge_symp_area_normalized_entropy"
+      ],
+      "source_cache_fields": [
+        "vertices",
+        "vertex_facet_incidence",
+        "volume"
+      ]
+    },
+    "selection_semantics": "selection reads the frozen candidate-feature-table.jsonl and writes selected-candidates-before-sys.jsonl plus selection-plan.json",
+    "baseline_policy": "per_selection_matched",
+    "sys_cache": {
+      "schema": "sys-datascience.extreme-scalar-rejection-proposer.evaluated-target.v2",
+      "reuse_key": "candidate_id; poly_id is recorded for human compatibility checks",
+      "reuse_contract": "sys-evaluation-cache.jsonl is append/resume by candidate_id and is intentionally reusable across selection configs that name the same candidate ids"
+    },
+    "cache_lifecycle": "artifact-producing stages overwrite their own files except sys, which appends missing candidate ids; cleanup is manual with rm -rf <out-dir>",
+    "report_semantics": "reports read frozen selection-plan.json and selected-candidates-before-sys.jsonl instead of recomputing selection semantics from current CLI/config arguments"
+  },
+  "architecture_status": "stage artifacts are rerunnable independently; geometry and feature construction stream in chunks; selection holds only compact feature rows; sys evaluation streams geometry and appends only missing selected/baseline candidate ids",
+  "stage_interface": "--config <path> --stage all|geometry|features|selection|sys|reports; CLI flags remain smoke/override conveniences",
+  "deterministic_output_status": "row ordering, candidate ids, selections, baselines, and hashes are deterministic for fixed args; time_*_ms and wall-clock log fields are timing-only and vary with jobs/load",
+  "feature_cache_usage_status": "features use cached vertices, vertex_facet_incidence, and volume from candidate-geometry-cache.jsonl; feature generation does not reconstruct SysLandscapePolytopeCache from dual_vertices",
+  "sys_cache_status": "sys evaluation must reconstruct SysLandscapePolytopeCache from cached dual_vertices because capacity_billiard requires exact dual vertices, facet-intersection, and omega-sign matrices not stored in the f64 geometry JSONL; reruns skip candidate ids already present in sys-evaluation-cache.jsonl; this cache is intentionally reusable by candidate_id across compatible selection configs",
+  "seed": 1618033,
+  "h_min": 0.8,
+  "h_max": 1.2,
+  "candidates_per_bucket": 10000,
+  "limit_total": null,
+  "product_buckets": 10,
+  "jobs": 12,
+  "chunk_rows": 5000,
+  "candidate_geometry_rows": 100000,
+  "feature_rows": 100000,
+  "pre_target_selection_rows": 2490,
+  "evaluated_rows_for_current_selection": 2490,
+  "sys_evaluation_cache_rows_total": 2490,
+  "baseline_policy": "per_selection_matched",
+  "baseline_replicates": 1,
+  "rule_set": "per-bucket-cascade",
+  "selection_rules": [
+    {
+      "selection_feature": "ridge_symp_area_sum_over_volume_sqrt",
+      "selection_direction": "low",
+      "global_top": [],
+      "per_bucket_top": [],
+      "percentile_cutoffs": []
+    },
+    {
+      "selection_feature": "ridge_symp_area_max_share",
+      "selection_direction": "low",
+      "global_top": [],
+      "per_bucket_top": [],
+      "percentile_cutoffs": []
+    }
+  ],
+  "selection_sets": 2,
+  "selected_rows_sum_over_sets": 1500,
+  "unique_selected_rows": 1000,
+  "unique_baseline_rows": 1492,
+  "unique_selected_or_baseline_rows": 2490,
+  "selection_feature": "ridge_symp_area_sum_over_volume_sqrt",
+  "selection_direction": "low",
+  "max_sys_evaluated_current_selection": 0.9023838838805844,
+  "max_sys_selected": 0.9023838838805844,
+  "missing_sys_rows_for_current_selection": 0,
+  "candidate_geometry_cache_blake3": "8b2057256e8ba539a31a02a5342f39da066094618e2586a99b9d419e5af7576a",
+  "candidate_feature_table_blake3": "0afa67e011afae70e289cbeb855eb5b6ac0cf8c59d53e8f0fe574e319eae6afa",
+  "selected_candidates_before_sys_blake3": "e6da77b64423d5fe99c9eaf9a7082146efd768b56eb0cea8d8c7f0ce210a48d5",
+  "sys_evaluation_cache_blake3": "1277f672330cd19f6dcd810c8662bf5bc84a74b43c564543c91b20e71b0af74a",
+  "selection_summary_blake3": "7671b61d7ddbf2891b083b786491b5c6544477ffe4ceb320baa60173004c7e86",
+  "selection_plan_blake3": "b093699f6c12f2c5bad27f276e0e535f1c28a9afed4b12b76c8d0b7f5836d799",
+  "resolved_run_config_blake3": "83f388aa5b44675eda1a9394a2648dd24a1a7f846731dbcfc05b06b8fd2b6112",
+  "pipeline_summary_status": "pipeline-summary.json is a duplicate legacy alias of evaluation-report.json for older packet readers"
+}
