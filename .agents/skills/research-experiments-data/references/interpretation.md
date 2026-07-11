@@ -20,6 +20,14 @@ artifact identity from current code, inputs, hashes, or reviewed verification.
 Recompute only when a material uncertainty remains; do not reuse stale prose or
 rerun an expensive producer merely by default.
 
+Interpret threshold events relative to the packet's declared inputs and
+question. Before escalating a positive row or artifact, distinguish a newly
+produced candidate or new source from a known positive reference/control that
+was included deliberately. An expected known positive can validate plumbing or
+provide comparison evidence; its mere presence is not a discovery. Escalate it
+only when its value, provenance, or relation to the active question is itself
+new or inconsistent.
+
 Use the parent skill when editing durable files. Detailed metric rows belong in
 generated artifacts or generated reports, not hand-maintained prose copies.
 Durable prose should record the question, data slice, producer/artifact path,
