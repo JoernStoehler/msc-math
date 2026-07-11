@@ -82,6 +82,20 @@ fn exact_resolution_upgrades_known_winner() {
 }
 
 #[test]
+fn exact_action_is_rounded_after_exact_reciprocal() {
+    let q = frac(11, 6);
+    let action = exact_action_f64_from_q(&q);
+    let round_q_then_divide = 0.5 / rational_to_f64(&q);
+
+    assert_eq!(action, rational_to_f64(&frac(3, 11)));
+    assert_ne!(
+        action.to_bits(),
+        round_q_then_divide.to_bits(),
+        "q = 11/6 distinguishes exact reciprocal conversion from rounding q first"
+    );
+}
+
+#[test]
 fn sigma_stream_info_tracing_matches_plain_result() {
     let kp = known_polytopes::simplex();
     let dual_vertices = &kp.dual_vertices_f64;

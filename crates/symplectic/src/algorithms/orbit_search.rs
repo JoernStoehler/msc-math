@@ -356,7 +356,7 @@ fn exact_orbit_from_sigma_with_dual_vertices_exact(
     }
     let beta: Vec<f64> = exact.beta.iter().map(rational_to_f64).collect();
     let beta_margin = beta.iter().copied().fold(f64::INFINITY, f64::min);
-    let action = 0.5 / exact.q_exact_f64;
+    let action = exact_action_f64_from_q(&exact.q_exact);
 
     Some(OrbitKktData {
         sigma: sigma.to_vec(),
@@ -378,6 +378,10 @@ fn exact_orbit_from_sigma_with_dual_vertices_exact(
 
 fn exact_action_from_q(q_exact: &BigRational) -> BigRational {
     BigRational::one() / (q_exact.clone() + q_exact.clone())
+}
+
+fn exact_action_f64_from_q(q_exact: &BigRational) -> f64 {
+    rational_to_f64(&exact_action_from_q(q_exact))
 }
 
 fn certified_orbit_from_sigma_with_dual_vertices_exact(
