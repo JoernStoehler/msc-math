@@ -5,10 +5,10 @@ set -euo pipefail
 
 PORT="${1:-8080}"
 DIR="$(cd "$(dirname "$0")" && pwd)"
-EXPERIMENTS="$DIR/../.."
+MANIFEST="$DIR/../../Cargo.toml"
 
 echo "Building visualization binary..."
-cargo build --release --manifest-path "$EXPERIMENTS/Cargo.toml" --bin visualization -q
+cargo build --release --manifest-path "$MANIFEST" --bin visualization -q
 
 echo "Generating polytope data..."
 VIZ_DATA="$DIR/data"
@@ -16,7 +16,8 @@ mkdir -p "$VIZ_DATA"
 for name in simplex hypercube crosspolytope hko_pentagon \
             lagrangian_triangle_product symplectic_triangle_product \
             lagrangian_tri_sq symplectic_tri_sq; do
-    "$EXPERIMENTS/target/release/visualization" "$name" "$VIZ_DATA/$name.json"
+    cargo run --release --quiet --manifest-path "$MANIFEST" --bin visualization -- \
+        "$name" "$VIZ_DATA/$name.json"
 done
 
 echo "Embedding data into viewer..."

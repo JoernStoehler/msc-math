@@ -16,6 +16,10 @@ const DISPLACEMENT_EPS: f64 = 0.02;
 /// Max facet count for orbit computation.
 const MAX_FACETS_FOR_ORBIT: usize = 12;
 
+/// Tolerance for checking that simulated segments remain on their declared
+/// facet and inside all half-spaces `a_i · x <= 1`.
+const EPS_TRAJECTORY_BOUNDARY: f64 = 1e-6;
+
 /// Recover a Reeb orbit and convert it to a visualization trajectory.
 fn orbit_to_viz_trajectory(
     dual_vertices: &[Vector4<f64>],
@@ -68,7 +72,13 @@ fn two_face_displacement_directions(
     last_facet: usize,
 ) -> Vec<Vector4<f64>> {
     let n0 = dual_vertices[first_facet].normalize();
-    let n1 = dual_vertices[last_facet].normalize();
+    let n1_raw = dual_vertices[last_facet].normalize();
+    let n1_orthogonal = n1_raw - n0.dot(&n1_raw) * n0;
+    let normal_basis = if n1_orthogonal.norm() > 1e-8 {
+        vec![n0, n1_orthogonal.normalize()]
+    } else {
+        vec![n0]
+    };
 
     let candidates = [
         Vector4::new(1.0, 0.0, 0.0, 0.0),
@@ -79,8 +89,10 @@ fn two_face_displacement_directions(
 
     let mut basis: Vec<Vector4<f64>> = Vec::new();
     for e in &candidates {
-        let mut v: Vector4<f64> = e - n0.dot(e) * n0;
-        v -= n1.dot(&v) * n1;
+        let mut v = *e;
+        for normal in &normal_basis {
+            v -= normal.dot(&v) * normal;
+        }
         for b in &basis {
             v -= b.dot(&v) * b;
         }
@@ -93,6 +105,23 @@ fn two_face_displacement_directions(
         }
     }
     basis
+}
+
+fn segments_satisfy_boundary(
+    dual_vertices: &[Vector4<f64>],
+    segments: &[reeb_trajectory::ReebSegment],
+) -> bool {
+    segments.iter().all(|segment| {
+        let Some(facet_normal) = dual_vertices.get(segment.facet) else {
+            return false;
+        };
+        [&segment.start, &segment.end].into_iter().all(|point| {
+            (facet_normal.dot(point) - 1.0).abs() <= EPS_TRAJECTORY_BOUNDARY
+                && dual_vertices
+                    .iter()
+                    .all(|normal| normal.dot(point) <= 1.0 + EPS_TRAJECTORY_BOUNDARY)
+        })
+    })
 }
 
 /// Generate displaced trajectories by perturbing the base point of an orbit.
@@ -149,6 +178,13 @@ fn generate_displaced_trajectories(
             );
             continue;
         }
+        if !segments_satisfy_boundary(dual_vertices, &traj.segments) {
+            eprintln!(
+                "  displaced v{}: trajectory failed facet-boundary check",
+                i + 1
+            );
+            continue;
+        }
 
         trajectories.push(VizTrajectory {
             label: format!("displaced v{} (ε={})", i + 1, DISPLACEMENT_EPS),
@@ -189,6 +225,10 @@ fn generate_placeholder_trajectory(
         let traj = reeb_trajectory::simulate_with(dual_vertices, centroid, fi, 100, 1e-6);
 
         if !traj.segments.is_empty() {
+            if !segments_satisfy_boundary(dual_vertices, &traj.segments) {
+                eprintln!("  placeholder candidate on facet {fi} failed boundary check");
+                continue;
+            }
             return vec![VizTrajectory {
                 label: "placeholder trajectory".to_string(),
                 start_facet: fi,
@@ -310,4 +350,25 @@ pub(crate) fn generate_trajectories(
     }
 
     (trajectories, Some(min_action))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::two_face_displacement_directions;
+    use nalgebra::Vector4;
+
+    #[test]
+    fn displacement_directions_are_tangent_to_both_nonorthogonal_facets() {
+        let normals = [
+            Vector4::new(1.0, 0.0, 0.0, 0.0),
+            Vector4::new(1.0, 1.0, 0.0, 0.0),
+        ];
+        let directions = two_face_displacement_directions(&normals, 0, 1);
+
+        assert_eq!(directions.len(), 2);
+        for direction in directions {
+            assert!(normals[0].dot(&direction).abs() < 1e-12);
+            assert!(normals[1].dot(&direction).abs() < 1e-12);
+        }
+    }
 }

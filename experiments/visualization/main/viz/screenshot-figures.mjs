@@ -23,88 +23,12 @@ const FIGURES_DIR = resolve(__dirname, '..');
 
 // Viewport matches a thesis-friendly aspect ratio (4:3, 800x600)
 const VIEWPORT = { width: 800, height: 600 };
-const BASE_URL = 'http://localhost:8080';
+const BASE_URL = process.env.VIZ_BASE_URL || 'http://localhost:8080';
 
-// Figures to generate. Each entry produces one PNG.
-//
-// Camera and north pole are chosen per-polytope for balanced framing.
-// The diagonal pole (1,1,1,1)/2 avoids aligning with any axis, giving
-// a more balanced stereographic projection where no edges go to infinity.
-//
-// trajectoryIndex: which single trajectory to show (null = hide all)
+// Thesis figures to generate. Each entry produces one PNG. The first gives a
+// structural view of projected two-faces; the second keeps the projected HKO
+// one-skeleton visible while emphasizing one recovered minimum-action orbit.
 const FIGURES = [
-  // ---- Polytope structure (edges only, no trajectories) ----
-  //
-  // maxRadius=6 clips far arcs for tighter framing.
-  // Separate edge/trajectory figures so trajectories are clearly visible.
-  {
-    name: 'viz-hypercube-edges',
-    polytope: 'hypercube',
-    showEdges: true,
-    showRidges: false,
-    showVertices: true,
-    trajectoryIndex: null,
-    northPole: 'e4',
-    maxRadius: 6,
-    camera: { x: 4, y: 3, z: 5 },
-  },
-  {
-    name: 'viz-hko-pentagon-edges',
-    polytope: 'hko_pentagon',
-    showEdges: true,
-    showRidges: false,
-    showVertices: true,
-    trajectoryIndex: null,
-    northPole: 'e4',
-    maxRadius: 6,
-    camera: { x: 4, y: 3, z: 5 },
-  },
-  // ---- Single Reeb trajectories (no edges, trajectory clearly visible) ----
-  {
-    name: 'viz-hypercube-traj',
-    polytope: 'hypercube',
-    showEdges: false,
-    showRidges: false,
-    showVertices: true,
-    trajectoryIndex: 0,
-    northPole: 'e4',
-    maxRadius: 6,
-    camera: { x: 4, y: 3, z: 5 },
-  },
-  {
-    name: 'viz-simplex-traj',
-    polytope: 'simplex',
-    showEdges: false,
-    showRidges: false,
-    showVertices: true,
-    trajectoryIndex: 0,
-    northPole: 'e4',
-    maxRadius: 6,
-    camera: { x: 4, y: 3, z: 5 },
-  },
-  {
-    name: 'viz-hko-pentagon-traj',
-    polytope: 'hko_pentagon',
-    showEdges: false,
-    showRidges: false,
-    showVertices: true,
-    trajectoryIndex: 0,
-    northPole: 'e4',
-    maxRadius: 6,
-    camera: { x: 4, y: 3, z: 5 },
-  },
-  {
-    name: 'viz-lagrangian-tri-product-traj',
-    polytope: 'lagrangian_triangle_product',
-    showEdges: false,
-    showRidges: false,
-    showVertices: true,
-    trajectoryIndex: 0,
-    northPole: 'e4',
-    maxRadius: 6,
-    camera: { x: 4, y: 3, z: 5 },
-  },
-  // ---- Overview: hypercube with ridges ----
   {
     name: 'viz-hypercube-ridges',
     polytope: 'hypercube',
@@ -114,7 +38,21 @@ const FIGURES = [
     trajectoryIndex: null,
     northPole: 'e4',
     maxRadius: 6,
-    camera: { x: 4, y: 3, z: 5 },
+    camera: { x: 2.6, y: 1.95, z: 3.25 },
+  },
+  {
+    name: 'viz-hko-pentagon-min-orbit',
+    polytope: 'hko_pentagon',
+    showEdges: true,
+    showRidges: false,
+    showVertices: true,
+    trajectoryIndex: 0,
+    northPole: 'e4',
+    maxRadius: 6,
+    structureColor: 0x4b5563,
+    trajectoryColor: 0x6d28d9,
+    edgeOpacity: 0.65,
+    camera: { x: 3.2, y: 2.4, z: 4.0 },
   },
 ];
 
@@ -144,6 +82,12 @@ async function main() {
     if (fig.maxRadius) {
       await page.evaluate((r) => { MAX_RADIUS = r; }, fig.maxRadius);
     }
+
+    await page.evaluate(({ structureColor, trajectoryColor, edgeOpacity }) => {
+      STRUCTURE_COLOR_OVERRIDE = structureColor ?? null;
+      TRAJECTORY_COLOR_OVERRIDE = trajectoryColor ?? null;
+      EDGE_OPACITY = edgeOpacity ?? 0.7;
+    }, fig);
 
     // Set north pole preset (calls rebuildScene with new MAX_RADIUS)
     await page.evaluate((preset) => setNorthPolePreset(preset), fig.northPole);
