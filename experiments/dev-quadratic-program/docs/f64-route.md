@@ -21,8 +21,8 @@ questions:
 
 - `verification/`: small manifest of expected f64 output behavior, including
   edge fixtures.
-- `numerics/`: JSONL observations for f64-vs-exact or stored-label numerical
-  comparisons.
+- `numerics/`: JSONL observations for f64-vs-reference-route or stored-label
+  numerical comparisons.
 - `performance/`: f64-specific timing binaries, summarizers, and
   workflow-shaped timing on the verification manifest rows.
 Do not maintain a separate aggregate status report for these packets. Rerun the
@@ -64,8 +64,9 @@ or preprocessing changes:
 
 - `f64-capacity-scan --input-source generated` generates rounded f64 inputs,
   validates them with f64 predicates, and runs f64 capacity only when validation
-  accepts the row.  Pass `--audit-generated all` to exact-audit generated rows
-  after the f64 decision has been recorded.
+  accepts the row. Pass `--audit-generated all` to validate generated geometry
+  exactly and record the mixed reference-route comparison label after the f64
+  decision has been recorded.
 - `generated_random_f64` is a rejection-sampled source: raw independent f64
   dual-vertex samples are drawn until the exact-backed datascience cache accepts
   the H-rep. The accepted raw attempt id is recorded in `generated_attempt`;
@@ -261,8 +262,10 @@ Rows contain both validation and capacity/audit fields.
   the numeric error fields remain populated when labels exist, but the
   `*_within_bound` field is unavailable because no rounding distortion bound is
   reported. These are not same-polytope equality checks.
-- `preprocessed_f64_vs_preprocessed_audit_*` is the same-polytope f64-vs-exact
-  comparison when exact audit of the preprocessed row is requested.
+- `preprocessed_f64_vs_preprocessed_audit_*` is the same-polytope comparison
+  between the f64 result and the fresh mixed reference-route label when the
+  legacy-named audit of the preprocessed row is requested. It is not an exact
+  capacity error.
 - `validation_reasons` records f64 validation predicates and does not replace
   raw counters.
 - `origin_status` and `facet_extremality_status` are tri-state strings:
@@ -364,8 +367,9 @@ geometry because then the f64 vertex list is not a trusted list of all vertices
 of the facet being tested.
 
 The default is `--near-redundant-facet-removal none`. Use
-`--audit-preprocessed all` to exact-audit the preprocessed row after the
-measured f64 decision has been recorded. The formal implication from a valid
+`--audit-preprocessed all` to validate the preprocessed geometry exactly and
+record its mixed reference-route comparison label after the measured f64
+decision. The formal implication from a valid
 `delta_bound` to the reported capacity, volume, and sys distortion factors is
 recorded in `formal/near-redundant-facet-removal-bounds.tex`
 (`rem:near-redundant-facet-removal-experiment-contract` and
