@@ -1,11 +1,11 @@
 {
-  "description": "Small f64 capacity verification/audit packet. It separates expectation status, f64 output scope, and evidence support. Full cases expect fully decided checked f64 outputs; limited cases expect intentionally limited f64 epistemics such as unresolved product minimizer ties, visible fallback, or preprocessing edge visibility.",
+  "description": "Small f64 capacity verification packet. It separates expectation status, f64 output scope, and comparison-label source. Full cases expect fully decided checked f64 outputs; limited cases expect intentionally limited f64 epistemics such as unresolved product minimizer ties, visible fallback, or preprocessing edge visibility.",
   "cases": [
     {
       "case_id": "generated_clean_random_f5",
       "run": "generated",
       "source_id": "seed99540836:F5:sample0:attempt5000000008",
-      "reason": "generated generic baseline with exact audit",
+      "reason": "generated generic baseline with fresh reference-route comparison",
       "claim_scope": "full",
       "expect": {
         "family": "generated_random_f64",
@@ -18,7 +18,7 @@
         "output_epistemics.low_action_list_completeness": "complete",
         "output_epistemics.low_action_items_status": "determinate",
         "output_epistemics.fallback_recommended": false,
-        "exact_audit_status": "exact_valid_capacity_success",
+        "exact_audit_status": "reference_route_capacity_success",
         "rel_action_error": { "max": 1e-10 }
       }
     },
@@ -26,7 +26,7 @@
       "case_id": "generated_product_tie_q4_p5",
       "run": "generated",
       "source_id": "seed99540836:q4:p5:attempt405000000000",
-      "reason": "generated product row where f64 decides the value and intentionally leaves exact minimizer equality unresolved",
+      "reason": "generated product row where f64 decides the value but leaves the true minimizing-sigma set unresolved",
       "claim_scope": "limited",
       "expect": {
         "family": "generated_product_f64",
@@ -42,7 +42,7 @@
         "output_epistemics.reasons": {
           "contains": "output_minimizing_sigma_set_undecided:multiple_near_minimizing_sigmas"
         },
-        "exact_audit_status": "exact_valid_capacity_success",
+        "exact_audit_status": "reference_route_capacity_success",
         "rel_action_error": { "max": 1e-10 }
       }
     },
@@ -193,7 +193,7 @@
         "output_epistemics.fallback_recommended": true,
         "trust_class": "fallback_required",
         "preprocessed_audit_vs_original_artifact_within_bound": false,
-        "exact_audit_status": "exact_valid_capacity_success"
+        "exact_audit_status": "reference_route_capacity_success"
       }
     }
   ]

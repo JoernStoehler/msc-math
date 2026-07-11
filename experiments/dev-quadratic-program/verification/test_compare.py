@@ -159,8 +159,9 @@ class F64CapacityCompareTest(unittest.TestCase):
                     "minimizing_sigma_set_status": "decided",
                     "near_minimizing_sigma_count": 1,
                     "fallback_recommended": False,
-                    "rel_action_error": 0.0,
-                    "support_kind": "stored_label",
+                    "comparison_label_rel_difference": 0.0,
+                    "exact_geometry_validation_status": "not_requested",
+                    "comparison_label_kind": "stored_artifact_label",
                     "exact_audit_status": "not_requested",
                 },
             }
@@ -174,7 +175,35 @@ class F64CapacityCompareTest(unittest.TestCase):
                 written = rows_path.read_text(encoding="utf-8").strip()
 
         self.assertIn('"expectation_status": "met"', written)
-        self.assertIn('"support_kind": "stored_label"', written)
+        self.assertIn('"comparison_label_kind": "stored_artifact_label"', written)
+
+    def test_reference_route_label_is_not_reported_as_exact_support(self):
+        row = {
+            "source_id": "row-1",
+            "audit_capacity_label": 2.25,
+            "exact_audit_status": "reference_route_capacity_success",
+        }
+
+        summary = compare.observed_summary(row)
+
+        self.assertEqual(summary["exact_geometry_validation_status"], "accepted")
+        self.assertEqual(
+            summary["comparison_label_kind"],
+            "fresh_reference_route_capacity_label",
+        )
+        self.assertNotIn("support_kind", summary)
+
+    def test_exact_geometry_rejection_is_reported_without_capacity_label(self):
+        row = {
+            "source_id": "row-1",
+            "audit_capacity_label": None,
+            "exact_audit_status": "exact_validation_rejected",
+        }
+
+        summary = compare.observed_summary(row)
+
+        self.assertEqual(summary["exact_geometry_validation_status"], "rejected")
+        self.assertEqual(summary["comparison_label_kind"], "no_capacity_label")
 
 
 if __name__ == "__main__":

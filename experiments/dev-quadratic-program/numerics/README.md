@@ -1,22 +1,25 @@
 # f64 Capacity Numerics Lens
 
 This packet converts the f64 verification manifest scans into numerics events.
-It evaluates capacity agreement where an exact audit exists, records stored
-label differences separately, and emits scan-row diagnostics that expose
-indeterminacy, fallback, and preprocessing behavior.
+It records capacity differences from fresh reference-route or stored artifact
+labels and emits scan-row diagnostics that expose indeterminacy, fallback, and
+preprocessing behavior.
 
-The exact-audit rows are direct f64-vs-exact comparisons. Retained rows with
-stored artifact labels are route diagnostics unless they run a fresh exact audit
-on the same row being measured. Verification owns the expectation and claim-scope
-check. Numerics owns quantitative f64-vs-exact capacity loss, stored-label
-differences, and numeric scan diagnostics for the same f64 path.
+Fresh reference-route labels are not exact-capacity oracles. Their producer
+validates the binary64 input as exact rational geometry, then calls the mixed
+`capacity_auto` route, which includes binary64 route selection and candidate
+generation before exact action aggregation. The event field
+`exact_geometry_validation_status` preserves the exact geometry-validation fact
+separately; it does not strengthen the capacity label. Retained rows have only
+stored artifact labels. Verification owns the expectation and claim-scope
+check. Numerics owns label-difference and scan diagnostics for the f64 path.
 
 ## Current Variables
 
 The producer emits these observations for every verification manifest row:
 
-- capacity, with exact-audit error fields when the row has fresh exact audit;
-- stored-label capacity differences when the row only has a retained label;
+- capacity, with comparison-label difference fields when a fresh
+  reference-route or stored artifact label exists;
 - `near_minimizing_sigma_count`, `min_action_gap`, and `sigma_count`;
 - KKT admissible, indeterminate, inadmissible, and numerical-failure counts;
 - vertex, near-singular, bounded-near-singular, ambiguous-incidence,
@@ -59,10 +62,10 @@ Add only route-relevant cases:
 
 ## Interpretation
 
-The numerics lens supports calibrated empirical claims about capacity loss,
-stored-label differences, and where the f64 scan reports indeterminacy. It does
-not certify f64 capacity globally and should not reimplement the exact
-correctness suite.
+The numerics lens supports calibrated empirical claims about agreement with the
+named comparison routes and where the f64 scan reports indeterminacy. It does
+not measure f64 error against an exact-capacity oracle, certify f64 capacity
+globally, or reimplement the exact correctness suite.
 
 Ranking preservation and gradient/ascent step-decision comparisons belong here
 only if f64-native search remains a live route question.
@@ -83,10 +86,12 @@ The stable output is `events.jsonl` plus the processed CSV summaries written by
 the shared numerics summarizer. Any generated Markdown report is only a
 same-run reading aid; do not carry it forward as source truth.
 
-The current version emits capacity-level exact-vs-f64 observations for
-exact-audit manifest cases, stored-label comparison diagnostics for retained
-manifest cases, and scan-row diagnostics for indeterminacy, candidate counts,
-origin LP residuals, product rounding, and near-redundant preprocessing.
+The current version emits fresh reference-route comparison diagnostics for
+requested generated and preprocessed cases, stored-label comparison diagnostics
+for retained manifest cases, and scan-row diagnostics for indeterminacy,
+candidate counts, origin LP residuals, product rounding, and near-redundant
+preprocessing. These capacity events intentionally have no `oracle_kind`,
+`exact`, `abs_error`, or `rel_error` fields.
 
 Next useful additions are traced candidate-level variables: action intervals,
 beta margins, q/error bounds, KKT residuals, exact/f64 predicate pairs, and

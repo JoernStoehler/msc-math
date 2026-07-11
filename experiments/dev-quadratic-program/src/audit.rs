@@ -4,6 +4,11 @@ use serde::{Deserialize, Serialize};
 use std::panic::{catch_unwind, AssertUnwindSafe};
 use std::time::Instant;
 
+/// Result of the generated-case reference route.
+///
+/// The historical type and row-field names say "exact audit", but the capacity
+/// label is not an exact-capacity oracle. The route validates the binary64 input
+/// as exact rational geometry, then calls the mixed `capacity_auto` route.
 #[derive(Clone, Debug)]
 pub struct ExactAuditReport {
     pub status: ExactAuditStatus,
@@ -23,6 +28,25 @@ pub enum ExactAuditStatus {
     ExactAuditError,
 }
 
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum ExactGeometryValidationStatus {
+    NotRequested,
+    Accepted,
+    Rejected,
+    Unknown,
+}
+
+impl ExactGeometryValidationStatus {
+    pub fn label(&self) -> &'static str {
+        match self {
+            Self::NotRequested => "not_requested",
+            Self::Accepted => "accepted",
+            Self::Rejected => "rejected",
+            Self::Unknown => "unknown",
+        }
+    }
+}
+
 impl ExactAuditStatus {
     pub fn label(&self) -> &'static str {
         match self {
@@ -31,6 +55,18 @@ impl ExactAuditStatus {
             Self::ReferenceRouteCapacityFailure => "reference_route_capacity_failure",
             Self::ExactValidationRejected => "exact_validation_rejected",
             Self::ExactAuditError => "exact_audit_error",
+        }
+    }
+
+    /// Exact geometry validation is separate from the mixed capacity route.
+    pub fn exact_geometry_validation_status(&self) -> ExactGeometryValidationStatus {
+        match self {
+            Self::NotRequested => ExactGeometryValidationStatus::NotRequested,
+            Self::ReferenceRouteCapacitySuccess | Self::ReferenceRouteCapacityFailure => {
+                ExactGeometryValidationStatus::Accepted
+            }
+            Self::ExactValidationRejected => ExactGeometryValidationStatus::Rejected,
+            Self::ExactAuditError => ExactGeometryValidationStatus::Unknown,
         }
     }
 }
@@ -145,5 +181,33 @@ mod tests {
         assert_eq!(report.status, ExactAuditStatus::NotRequested);
         assert_eq!(report.time_ms, 0.0);
         assert!(report.capacity_label.is_none());
+    }
+
+    #[test]
+    fn exact_geometry_validation_is_separate_from_reference_route_capacity() {
+        assert_eq!(
+            ExactAuditStatus::ReferenceRouteCapacitySuccess
+                .exact_geometry_validation_status()
+                .label(),
+            "accepted"
+        );
+        assert_eq!(
+            ExactAuditStatus::ReferenceRouteCapacityFailure
+                .exact_geometry_validation_status()
+                .label(),
+            "accepted"
+        );
+        assert_eq!(
+            ExactAuditStatus::ExactValidationRejected
+                .exact_geometry_validation_status()
+                .label(),
+            "rejected"
+        );
+        assert_eq!(
+            ExactAuditStatus::ExactAuditError
+                .exact_geometry_validation_status()
+                .label(),
+            "unknown"
+        );
     }
 }
