@@ -15,16 +15,15 @@ Before launching any row, name the current thesis milestone, compare this row
 against the best parked or conditional alternative, and record active ownership
 in `active-work.md` if work starts.
 
-Current default: wait for Jörn's one terminology/role decision. The reviewed
-independent ridge-concentration packet validates sub-threshold enrichment but
-does not provide evidence for reaching `sys > 1`. Do not launch another packet
-or route to demonstration until Jörn decides whether “candidate-proposer” names
-this enrichment role and whether one follow-up exploration packet is worth its
-cost.
+Current default: wait for Jörn's review of
+`research-direction-review-2026-07-11.md`. The report separates terminology,
+additional-data sufficiency, the project-level gradient role, and the expected
+value of another packet. Do not launch another evidence packet or route to
+demonstration merely from the terminology choice.
 
 | Topic | Current stance | Next role | Next action | Launch/review gate | Topic file |
 | --- | --- | --- | --- | --- | --- |
-| ridge-concentration proposer decision | active Jörn crux | parent session after Jörn answer | either select one bounded follow-up question or freeze the reviewed result as demonstration input | no new packet before terminology/role decision; no presentation design or thesis prose | `research-ledger.md` |
+| research portfolio review | active Jörn taste review | parent session after Jörn feedback | sharpen bounded scouts and select at most one evidence-producing packet, or deliberately route to demonstration | terminology alone does not settle routing; no presentation design or thesis prose | `research-direction-review-2026-07-11.md` |
 | feature-complete demonstration input | parked behind proposer decision | packet-readiness session | reassess selected code, data, provenance, interpretation, and fresh-session usability | only after exploration routing is settled | `feature-completion-contract.md` |
 | bounded method-table thesis use | later, after demonstration/polish | interpretation reviewer or thesis-writing session | turn the demonstrated claim ladder into source-mapped chapter wording and decide whether any stronger claim is actually needed | no arbitrary-random, broad-standard-method, calibrated-density, or positive-proposer claim without separate evidence | `topics/method-surface-expansion.md` |
 | geometric feature mechanisms | near-term candidate only if current milestone needs mechanism wording | topic owner if reopened | write one frozen concentration-rule validation plan, or synthesize thesis-safe ridge mechanism wording | diagnostic-only unless independently validated; no proposer claim from post-`sys` split | `topics/geometric-feature-mechanisms.md` |

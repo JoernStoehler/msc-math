@@ -21,8 +21,9 @@ distributions.
   `../methods/extreme-scalar-rejection-proposer/artifacts/100k-ridge-concentration-validation/`.
 - Current terminology boundary: this is a credible independently validated
   sub-threshold enrichment proposer. It is not evidence that the rule finds or
-  credibly extrapolates to `sys > 1`. Jörn must decide which meaning of
-  “candidate-proposer” the thesis result uses before phase routing continues.
+  credibly extrapolates to `sys > 1`. Jörn should choose the thesis vocabulary,
+  but that choice does not settle additional-data sufficiency or research
+  routing. See `research-direction-review-2026-07-11.md`.
 
 - Source-backed table fact: the retained random/product prepared table contains
   no trusted `sys > 1` row. Source: `../methods/scan-sys-gt-1/README.md` and
@@ -59,10 +60,11 @@ distributions.
 
 ## Live Prioritization State
 
-Pause new packets. The independent enrichment result triggered the explicit
-Jörn escalation condition. After Jörn settles terminology and thesis role,
-compare at most one claim-changing follow-up against direct demonstration
-routing; do not resume the older board as a queue.
+Pause new evidence packets. The independent enrichment result triggered the
+explicit Jörn escalation condition. Use
+`research-direction-review-2026-07-11.md` to improve the portfolio choice; then
+compare at most one claim-changing follow-up against deliberate demonstration
+routing. Do not resume the older board as a queue.
 
 The next high-value work is probably not more single-feature ridge-sum scale-up
 or rerunning the same `promising-scalars` sweep alone. More useful candidates

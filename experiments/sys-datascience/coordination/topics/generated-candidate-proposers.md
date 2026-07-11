@@ -11,10 +11,9 @@ filters, and feature-first generated-candidate pipelines.
 
 Status block:
 
-- topic-status: independent sub-threshold enrichment validated; Jörn crux
-- spawn-status: paused; do not launch another packet before Jörn's terminology
-  and thesis-role decision
-- next-role: parent session after Jörn answer
+- topic-status: independent sub-threshold enrichment validated; portfolio review
+- spawn-status: no further proposer packet before the cross-family value review
+- next-role: parent session after Jörn feedback
 - next-action: either select one claim-changing follow-up or route the reviewed
   packet to demonstration
 - review-gate: no proposer overclaim; generated candidates must be selected
@@ -27,7 +26,7 @@ Status block:
 - stale-if: runner configs/artifact paths change, new generated-candidate
   evidence lands, or thesis wording needs proposer claims
 - allowed-downstream-use: evidence for the exact frozen sub-threshold enrichment
-  rule; not a proposer for finding `sys > 1` until Jörn chooses that vocabulary
+  rule; not threshold-directed evidence regardless of the chosen vocabulary
 
 Current belief: low ridge-area sum is a real bucket-local enrichment signal. On
 a fresh 100k generated sample, the frozen add-on selecting low ridge-area

@@ -6,7 +6,8 @@ retained-table account. It did not reconcile the higher-authority requirement
 for more data. The independently generated ridge-concentration validation under
 `../methods/extreme-scalar-rejection-proposer/artifacts/100k-ridge-concentration-validation/`
 now supplies reviewed sub-threshold proposer evidence and creates a Jörn
-terminology/role crux recorded in `research-ledger.md`.
+research-portfolio review recorded in
+`research-direction-review-2026-07-11.md` and `research-ledger.md`.
 
 ## Recovered Checkpoint Disposition
 

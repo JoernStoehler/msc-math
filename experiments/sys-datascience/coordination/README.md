@@ -4,9 +4,10 @@ This directory contains both the current handoff between data-science phases
 and coordination material preserved from `main`. It is not a second source for
 experiment results.
 
-Current phase: exploration is paused at a Jörn terminology/role crux after the
+Current phase: exploration is paused for Jörn's research-taste review after the
 reviewed independent ridge-concentration packet validated sub-threshold
-enrichment. Read `research-ledger.md` and the packet review under
+enrichment. Read `research-direction-review-2026-07-11.md`, `research-ledger.md`,
+and the packet review under
 `../methods/extreme-scalar-rejection-proposer/artifacts/100k-ridge-concentration-validation/`.
 Generated metrics and packet-local interpretation remain under `../methods/`;
 producer and prepared-table contracts remain under `../produce/` and

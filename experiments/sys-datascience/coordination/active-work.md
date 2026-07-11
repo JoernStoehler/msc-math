@@ -26,14 +26,15 @@ Current active entries:
 - Owner/session: `/root`, forward-test and exploration session
 - Branch/worktree: `sys-datascience-forward-test` / `.worktrees/sys-datascience-forward-test`
 - Started: 2026-07-11
-- Current milestone: independently validated sub-threshold enrichment proposer;
-  paused at Jörn terminology/role crux before any further packet or
-  demonstration routing
+- Current milestone: research-direction/value-of-information review for Jörn
+  after independently validated sub-threshold enrichment; no further evidence
+  packet selected
 - Owned surface: `.agents/skills/research-experiments-data/` and
   `experiments/sys-datascience/` control, producer, method, artifact, and
   interpretation files needed by this task
-- Blocking crux: whether “candidate-proposer” includes validated sub-threshold
-  enrichment and whether this result warrants one further bounded exploration
-  packet
+- Blocking crux: Jörn feedback on the separated terminology, additional-data,
+  gradient-role, mathematical-interest, and Kai-value judgments in
+  `research-direction-review-2026-07-11.md`
 - Review/merge state: active; harness commit separated; object-level packet and
-  control-surface update internally reviewed, awaiting Jörn's crux answer
+  control-surface update internally reviewed, awaiting Jörn's research-taste
+  feedback

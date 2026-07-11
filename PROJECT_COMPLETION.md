@@ -175,7 +175,7 @@ evidence, not a preferred fix.
 | Flow graph/CH2021 | substantial conditional draft | `thesis/05-*`, companion, flow-graph crate/experiment/formal sources | final theorem/algorithm role and honest support wording |
 | First-order perturbations | scaffold | `thesis/first-order-perturbations-content.md`, `formal/sys-first-order-local-behavior.md` | supported general method and arbitrary-polytope boundary |
 | HKO local maximum | internally reviewed integration candidate | HKO sources in recovery checkpoint | integrated whole-PDF review; no known theorem/framing decision blocks integration |
-| Data-science search | exploration reopened; credible sub-threshold enrichment proposer under Jörn terminology review | independent ridge-concentration packet, current coordination ledger, method packets and producer contracts | settle C3 terminology/role, then finish exploration or route to reproducible demonstration |
+| Data-science search | exploration reopened; research portfolio under Jörn taste review after independent sub-threshold enrichment | direction review, independent ridge-concentration packet, current coordination ledger, method packets and producer contracts | settle C3a--C3c, then select at most one evidence packet or route deliberately to reproducible demonstration |
 | Rotated regular polygons | substantial theorem/certificate draft | `experiments/regular-products/`, `thesis/09-*` | finite-enumeration gate, proof framing, empirical asset polish |
 | 3D visualization | heading only | `experiments/visualization/`, thesis companion | concise exploratory exposition and selected assets |
 | Numerics | heading only | numerics companion, audit/verification sources | truthful minimal exact/f64/indeterminate/Sage story |
@@ -217,11 +217,11 @@ QP, flow-graph, HKO, rotated-polygon, or first-order chapters.
 
 ## Dependency And Ownership Shape
 
-1. Data-science exploration is paused at C3 after an independently generated
-   frozen rule validated sub-threshold enrichment. Do not route to
-   demonstration or launch another packet until Jörn settles whether this
-   counts as a candidate-proposer in the thesis result vocabulary and whether
-   its value warrants one further exploration packet.
+1. Data-science exploration is paused for Jörn's review of
+   `experiments/sys-datascience/coordination/research-direction-review-2026-07-11.md`.
+   Terminology, additional-data sufficiency, and the project-level gradient
+   role are separate cruxes. Do not launch another evidence packet until that
+   review has improved the portfolio choice.
 2. Review HKO as an integrated candidate. Reopen proof development only on a
    concrete mathematical/source finding.
 3. Keep data-science demonstration/reproduction separate from thesis writeup.
@@ -258,7 +258,9 @@ Use `agent-checkable`, `Jörn`, `Kai`, `external`, or `settled`.
 | --- | --- | --- | --- | --- |
 | C1 | settled for integration | HKO theorem wording, equality-orbit phrasing, local chart bridge, and computation-as-proof framing have no known unresolved decision. | reopen only for concrete integrated-PDF feedback or a newly identified implication gap | HKO may be integrated; ordinary final review still applies |
 | C2 | Jörn/Kai | Is the Lagrangian-product finite-enumeration theorem sufficiently proved and cited? | focused source/math review | pentagon theorem and QP chapter |
-| C3 | Jörn | Does an independently validated rule for sub-threshold `sys` enrichment count as a candidate-proposer in the thesis result vocabulary, or is that term reserved for evidence bearing on reaching `sys > 1`? | choose the terminology and whether the new reviewed packet merits one further bounded exploration packet or routes directly to demonstration | final data-science claim, exploration stop, and demonstration inputs |
+| C3a | Jörn | Does an independently validated rule for sub-threshold `sys` enrichment count as a candidate-proposer in the thesis vocabulary, or is that term reserved for evidence bearing on reaching `sys > 1`? | choose terminology; this does not by itself settle research routing | final data-science wording |
+| C3b | agent-checkable, then Jörn taste | Does the new 100k replication satisfy the intended additional-data requirement, or is a broader generator comparison needed and worth its opportunity cost? | technical transfer shortlist plus Jörn's mathematical/Kai-value assessment | exploration stop and demonstration inputs |
+| C3c | agent-checkable, then Jörn scope | What current random/gradient evidence belongs to the required project-level search story? | bounded cross-slice source/readiness audit, then Jörn's thesis-role judgment | data-science feature-completion claim and chapter emphasis |
 | C4 | Jörn | Should data science remain framed as a main result? | compare final supported claim with thesis architecture | title and thesis emphasis |
 | C5 | agent-checkable, then Jörn math | What arbitrary-polytope first-order statement is supported beyond generic smooth branches? | formal/source audit with explicit theorem and fallback wording | first-order and HKO/search bridges |
 | C6 | agent-checkable, then Jörn scope | What final role/support strength should flow graph/CH2021 have? | theorem/code/evidence audit with concrete chapter alternatives | flow-graph chapter and conclusion |

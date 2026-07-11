@@ -3,8 +3,8 @@
 Status: superseded as current launch authority on 2026-07-11. Exploration
 reopened and produced a reviewed independent sub-threshold enrichment proposer.
 Reuse the relevant readiness questions only after Jörn settles the resulting
-terminology/role crux; this contract does not authorize demonstration while that
-phase decision is open.
+research-portfolio cruxes; this contract does not authorize demonstration while
+that phase decision is open.
 
 Lifecycle: while this review is active, this file defines its target and
 boundaries. After completion, update the coordination entry points to the

@@ -44,11 +44,13 @@ near-counterexample, geometric mechanism, statistical significance, calibrated
 hit rate, monotone extrapolation, arbitrary-generator transfer, or thesis-level
 method/data closure.
 
-The result creates a terminology and thesis-role crux. It supersedes “no
+The result creates a terminology crux. It supersedes “no
 validated proposer” if that phrase includes validated sub-threshold enrichment.
 It does not supersede “no proposer for finding `sys > 1`” if that phrase is
 reserved for evidence bearing on reaching or credibly extrapolating to the
-threshold. Jörn must choose that vocabulary before phase routing is finalized.
+threshold. Jörn should choose that vocabulary, but the separate additional-data
+and research-routing questions are assessed in
+`../../../../coordination/research-direction-review-2026-07-11.md`.
 
 ## Review Architecture
 
