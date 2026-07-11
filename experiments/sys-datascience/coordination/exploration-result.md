@@ -138,7 +138,9 @@ same-generator scale-up is likely to change the thesis account enough to repay
 its cost. The remaining work is to make the existing evidence legible and
 reproducible, not to accumulate more rows.
 
-Demonstration/polish should select a compact table or figure for the search
+Use `feature-completion-contract.md` first to verify that the existing code,
+data, provenance, and interpretation form a usable input to demonstration.
+Demonstration/polish should then select a compact table or figure for the search
 outcomes and the low-ridge transfer result, generate detailed numbers from the
 owning artifacts, document source-to-output provenance, and keep post-hoc
 concentration diagnostics visibly separate from frozen generated-candidate

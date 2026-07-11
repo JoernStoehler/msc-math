@@ -1,4 +1,0 @@
-interface:
-  display_name: "Experiment Interpretation"
-  short_description: "Interpret experiment results for Jörn"
-  default_prompt: "Use $experiment-interpretation to interpret this experiment result for Jörn."

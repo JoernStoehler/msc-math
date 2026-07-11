@@ -1,19 +1,16 @@
----
-name: experiment-interpretation
-description: Use when Codex interprets, summarizes, reviews, or communicates experiment results for Jörn, especially data-science, numerical, generated-artifact, method-packet, or thesis-evidence results where raw columns, model outputs, plots, metrics, or feature names must be translated into mathematical or domain claims. Use when writing or revising experiment README/report interpretation sections, answering Jörn's "what pattern did this find?" questions, or checking whether an experiment result is thesis-usable. Do not use for pure reruns, code refactors, or artifact generation with no result interpretation.
----
-
 # Experiment Interpretation
 
-Use this skill when the task is not merely to report that an experiment ran,
+Use this reference when the task is not merely to report that an experiment ran,
 but to help Jörn understand what the result says and whether it matters for the
 thesis.
 
 The skill improves answers by making the claim evaluable in one pass. It does
 not make weak experiments strong, turn associations into mechanisms, or replace
 current artifact inspection. If data, code, or feature definitions may have
-changed, inspect or recompute the current artifacts instead of reusing old
-interpretation prose.
+changed, inspect current artifacts instead of reusing old interpretation prose.
+First establish artifact identity from current code, inputs, hashes, or
+existing reviewed verification; recompute only when a material uncertainty
+remains.
 
 ## Source Truth
 
@@ -26,8 +23,8 @@ Interpret current artifacts from current code:
 - thesis/research text only when the question is about thesis-facing meaning or
   already accepted interpretation.
 
-Use `$research-experiments-data` as the nearby experiment-artifact convention
-skill when editing or reviewing durable experiment files.
+Use the core experiment conventions in the parent `SKILL.md` when editing or
+reviewing durable experiment files.
 
 ## Artifact-Derived Prose
 

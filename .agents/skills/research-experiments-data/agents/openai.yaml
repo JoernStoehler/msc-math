@@ -1,0 +1,4 @@
+interface:
+  display_name: "Research Experiments and Data"
+  short_description: "Run, interpret, and hand off experiment work"
+  default_prompt: "Use $research-experiments-data to work on this experiment and load only the task-specific references it needs."

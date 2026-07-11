@@ -9,6 +9,10 @@ Generated metrics and packet-local interpretation remain under `../methods/`;
 producer and prepared-table contracts remain under `../produce/` and
 `../prepare/`.
 
+`feature-completion-contract.md` defines the next bounded review that prepares
+the existing code, data, provenance, and interpretation for demonstration. It
+does not reopen exploration or include presentation and thesis writing.
+
 `exploration-result.md` governs the current phase and next action. The other
 coordination files preserve prior workflow design, process learnings, prompt
 templates, topic maps, and planning state from `main`; they may remain useful,

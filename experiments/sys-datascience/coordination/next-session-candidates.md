@@ -15,14 +15,16 @@ Before launching any row, name the current thesis milestone, compare this row
 against the best parked or conditional alternative, and record active ownership
 in `active-work.md` if work starts.
 
-Current default if no new Jörn crux changes the milestone: start bounded
-thesis-use interpretation/writeup readiness for the retained method-table
-claim. The output should be source-mapped claim wording and explicit caveats,
-not a model or producer run.
+Current default if no new Jörn crux changes the milestone: execute
+`feature-completion-contract.md`. First make the existing code, data,
+provenance, and interpretation a reviewed input to demonstration/polish; keep
+presentation design and thesis writeup as later phases. The output is a bounded
+readiness verdict and exact repairs, not a model or producer run.
 
 | Topic | Current stance | Next role | Next action | Launch/review gate | Topic file |
 | --- | --- | --- | --- | --- | --- |
-| bounded method-table thesis use | current default after 2026-07-06 scout | interpretation reviewer or thesis-writing session | turn the claim ladder into source-mapped chapter wording and decide whether any stronger claim is actually needed | no arbitrary-random, broad-standard-method, calibrated-density, or positive-proposer claim without separate evidence | `topics/method-surface-expansion.md` |
+| feature-complete demonstration input | current default after exploration closure | packet-readiness session | assess and, where bounded, repair code, data, provenance, interpretation, and fresh-session usability under `feature-completion-contract.md` | no new producer/method work; no presentation design or thesis prose | `feature-completion-contract.md` |
+| bounded method-table thesis use | later, after demonstration/polish | interpretation reviewer or thesis-writing session | turn the demonstrated claim ladder into source-mapped chapter wording and decide whether any stronger claim is actually needed | no arbitrary-random, broad-standard-method, calibrated-density, or positive-proposer claim without separate evidence | `topics/method-surface-expansion.md` |
 | geometric feature mechanisms | near-term candidate only if current milestone needs mechanism wording | topic owner if reopened | write one frozen concentration-rule validation plan, or synthesize thesis-safe ridge mechanism wording | diagnostic-only unless independently validated; no proposer claim from post-`sys` split | `topics/geometric-feature-mechanisms.md` |
 | method-surface expansion: broader distributions | scout result recorded; parked unless stronger wording is needed | design scout | separate retained-contract wording from broader producer-axis evidence needs | design-only; no blind new producer run | `topics/method-surface-expansion.md` |
 | generated candidate proposers | boundary evidence reached; reopen only for a specific rescue or new source | topic owner only if reopened | one-rule two-feature sharpening, or close scalar-filter proposers for now | use compact 100k packet as boundary evidence; no proposer overclaim | `topics/generated-candidate-proposers.md` |

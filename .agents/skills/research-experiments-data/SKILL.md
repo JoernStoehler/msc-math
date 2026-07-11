@@ -1,62 +1,74 @@
 ---
 name: research-experiments-data
-description: Use when Codex writes, edits, reviews, or delegates owner-local interpretation notes, experiment design, experiment execution code, data/report/figure provenance, generated artifacts, or experiment-result interpretation in this repo.
+description: Use when Codex designs, implements, runs, reviews, interprets, documents, or delegates experiment work; changes experiment data, generated artifacts, reports, figures, provenance, or owner-local research state; or assesses whether an experiment packet can serve a downstream consumer. Provides shared conventions and routes to task-specific references for interpretation, packet readiness, and workflow refinement.
 ---
 
 # Research Experiments Data
 
-## Owner-Local Interpretation Notes
+This skill supplies conventions shared by experiment work. Read only the
+task-specific references that apply:
 
-- the audience is future agents, and indirectly (via chat) Jörn
-- write plainly, focus on content, make reasoning traceable by providing arguments and intermediate steps instead of just conclusions whenever the elevated hypothesis alone is not obviously true already
-- track the epistemic status of claims
-- link the relevant owner and task surfaces when an interpretation note changes
-  what future agents must find or do
-- split experiments when it becomes hard to achieve multiple purposes/answer multiple questions in one experiment, copy and edit code cheaply
-- track carefully the current prioritized subquestions/subgoals, in particular distinguish exploring the feasibility of an idea, strengthening the evidence of a weak result, aiming to falsify, aiming to distinguish between hypotheses, producing evidence that is more legible even though it contains no new/additional information, refactoring/cleaning the experiment for long-term maintainability, and so on. Often multiple subgoals can be pursued at once - but not always all of them.
-- experiments should be reproducible from scratch given all related owner-local
-  notes and artifacts
-- do not make README prose a second source of truth for generated metrics.
-  Durable notes should record scope, provenance, source pointers, and
-  interpretation boundaries; detailed per-run rows should live in generated
-  artifacts or generated compact reports.
-- repo state: current experiment work is organized around mostly settled main
-  and side-result lines of inquiry; each experiment should support one line of
-  inquiry unless an owner-local note explains otherwise
+- read `references/interpretation.md` when translating outputs into evaluable
+  mathematical or domain claims, including claim-level thesis usability;
+- read `references/packet-readiness.md` when judging whether a combined packet
+  can serve a downstream consumer;
+- read both when interpretation is one component of a packet handoff;
+- read `references/workflow-learning.md` only during explicitly authorized
+  experiment-workflow refinement;
+- use the relevant language, thesis-asset, or LICCA skill when those surfaces
+  are involved.
 
-Put interpretation where future work should update it. Common owners are:
+## Owner-Local Research State
 
-- experiment or method-packet `README.md` files for experiment-local purpose,
-  result interpretation, provenance, and follow-up constraints;
-- `thesis/*-content.md` companions for thesis-facing writing inventory, source
-  pointers, caveats, fallback branches, and review gates;
-- `formal/` notes or TeX files for proof-route and developer-facing
-  mathematical interpretation;
-- crate `README.md` or `DEVELOPMENT.md` files for reusable code contracts;
-- thesis-wide control surfaces only when the state does not have a narrower
-  owner.
+Write for the future agent that will update or use the experiment, and
+indirectly for Jörn. Keep reasoning traceable when a conclusion is not obvious,
+and preserve the epistemic status of claims.
 
-Do not recreate a top-level `research/` ownership layer. Create a separate
-owner-local note only when inline README/prose would become too large or mix
-unrelated purposes.
+Before designing follow-up work or interpreting results, read the current
+owner-local question and downstream purpose. Useful distinctions can include
+feasibility exploration, falsification, discriminating hypotheses,
+strengthening weak evidence, making existing evidence legible, or maintaining
+the implementation. These examples are not a required classification; record
+the distinctions that affect actual choices.
 
-## Experiments
+Put durable knowledge where future work should update it. Common owners include:
 
-- owner-local notes describe what experiments are for and interpret their
-  results. Before interpreting results or planning follow-up experiments, use
-  the relevant README, method packet, thesis companion, formal note, or task
-  context rather than inferring purpose from experiment artifacts alone.
-- sibling experiments should be mostly independent from each other, to facilitate rapid development
-- data is located next to the producer
-- do not patch-edit generated `.jsonl`, `.csv`, or figure outputs; regenerate
-  them or document the needed refresh
-- if tracked generated data changes unexpectedly, stop and report the file and
-  command
-- if repeated readers need a readable interpretation table, prefer generating
-  that table/report from the artifacts over copying selected artifact rows into
-  hand-maintained README prose
-- use script-like python and rust binaries, make the pipeline simple and reproducible and documented
-- for development, provide smoke paths (smoke input data, smoke output data, smoke parameter settings)
-- for large datasets, provide a Slurm job script to be run on LICCA
-- shared code is owned by the parent of the experiments that use it
-- we use JSONL for data, because agents can manipulate it easily, and it is flexible enough for the Rust row types we have
+- experiment or method-packet `README.md` files for local purpose, provenance,
+  interpretation, disposition, and reopen constraints;
+- generated artifacts or generated compact reports for detailed per-run rows;
+- `thesis/*-content.md` companions for thesis-facing inventory, source pointers,
+  caveats, and writing gates;
+- `formal/` notes or TeX for proof development;
+- crate documentation for reusable code contracts;
+- a broader control surface only when no narrower owner can hold the state.
+
+Link other owner or task surfaces when a change affects what they must find or
+do. Do not create a top-level `research/` ownership layer. Split an experiment
+or note when its purposes or update cycles interfere; do not split merely to
+fit a fixed template.
+
+## Reproducibility And Artifacts
+
+- Keep data beside its producer unless an existing broader data owner applies.
+- A result used by later research or the thesis needs a source-to-artifact
+  route reproducible under the comparison contract appropriate to that use.
+- Do not patch-edit generated JSONL, CSV, tables, or figures. Regenerate them,
+  or document the required refresh when regeneration is outside the task.
+- If tracked generated data changes unexpectedly, stop and identify the file
+  and command before treating the change as evidence.
+- Do not make hand-maintained README prose a second source of detailed generated
+  metrics. Point to the artifact or generate the readable table/report.
+- Prefer simple runnable producers and analyzers using the repo's supported
+  environment. Document the entry command, inputs, outputs, and non-obvious
+  dependencies.
+- Provide a cheap smoke path when it materially reduces development or review
+  cost; do not retain smoke artifacts that have no downstream use.
+- Use LICCA and a Slurm script when the selected computation actually requires
+  cluster execution; use `$licca` before preparing commands for Jörn.
+- JSONL is the default for flexible row-oriented experiment data when it fits
+  the producer and consumers. Use another format when its semantics or tooling
+  are materially better, and keep that choice legible.
+- Put shared code at the narrowest common owner of the experiments that use it.
+
+Detailed experiment facts and metrics belong to their owners, not to this
+skill. Revise this skill only for conventions that transfer across experiments.
