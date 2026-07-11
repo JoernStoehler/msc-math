@@ -71,7 +71,9 @@ For this comparison:
 The differences that matter for proof reuse are:
 \begin{description}
   \item[Main computational target.]
-    CH2021 finds combinatorial Reeb orbits, actions, and rotation/CZ data, and
+    CH2021 finds combinatorial Reeb orbits and actions, and for Type~1 orbits
+    also defines rotation/CZ data.  Type~2 rotation and CZ data are not
+    defined.  The paper
     uses these to test Viterbo-related questions and compute capacity through
     the CH2021 smooth-combinatorial route.  This project's flow-graph route
     targets full EHZ capacity only after a supported exact theorem scope, or a
@@ -102,8 +104,10 @@ The differences that matter for proof reuse are:
     Type 2 obligation unless it explicitly switches to a CH2021-style capacity
     claim.
   \item[Finite search control.]
-    CH2021 controls finiteness with rotation bounds and segment-count
-    constraints.  The project search control is expressed through a finite
+    CH2021 controls the capacity search with the rotation-derived bound
+    \(\sum_F c_F\leq2\), which bounds the relevant segment count; an action
+    cutoff alone does not bound arbitrarily long helical words.  The project
+    search control is expressed through a finite
     supported search domain~$D_K$, lower-bound certificates, and concrete
     search proofs.
   \item[Numerical implementation.]
@@ -112,6 +116,10 @@ The differences that matter for proof reuse are:
     distinguish exact accepted output, f64 diagnostics, exact fallback, typed
     rejection, retained words, and profiling/evidence surfaces.
 \end{description}
+CH2021's statement that symplectic polytopes are generic is distinct from the
+project's determinant-generic theorem.  In particular, density of the
+paper's stronger condition excluding Type~2 orbits below an action bound is
+conjectural there, not an imported open-dense result for this project.
 \end{remark}
 
 \begin{remark}[What CH2021 can still contribute]\label{rem:ch2021-useful-inputs}

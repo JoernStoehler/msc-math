@@ -1,8 +1,11 @@
 % formal/flow-graph-real-algorithm.tex
 %
-% Status: agent-written proof-development surface, unapproved by Jorn.
+% Status: complete idealized-theorem proof chain, independently agent-reviewed.
+% Jörn confirmed on 2026-07-11 that both correctness and chamber genericity
+% have been proved and should be retained.  Final thesis/advisor review and
+% Rust correspondence are tracked separately.
 % Purpose: define the idealized real-number flow-graph/tube algorithm and
-% isolate the correctness theorem needed before thesis prose is written.
+% support the corresponding correctness and genericity results in the thesis.
 %
 % Primary recovery sources:
 % - crates/symplectic/src/algorithms/flow_graph/tube-algorithm-raw-jorn-2026-05-04.md
@@ -144,16 +147,16 @@ For each facet pair \((i,j)\) used below, choose an affine coordinate chart
 \[
   \psi_{ij}\colon\mathbb R^2\to H_i\cap H_j .
 \]
-The corresponding local face polygon is
+The corresponding facet-pair section is
 \[
   P_{ij}=\{u\in\mathbb R^2:\psi_{ij}(u)\in K\}.
 \]
 The algorithm works with the closed search data associated to the inner
 segments of this strict object.  It consists of:
 \begin{itemize}
-\item a closed start polygon \(P_{\mathrm{start}}\) in an affine coordinate
+  \item a closed start polygon \(P_{\mathrm{start}}\) in an affine coordinate
   chart for \(H_{s_1}\cap H_{s_2}\), contained in \(P_{s_1s_2}\);
-\item a closed end polygon \(P_{\mathrm{end}}\) in an affine coordinate chart
+  \item a closed end polygon \(P_{\mathrm{end}}\) in an affine coordinate chart
   for \(H_{s_{k+1}}\cap H_{s_{k+2}}\), contained in
   \(P_{s_{k+1}s_{k+2}}\);
 \item an affine map \(\Phi\colon\mathbb R^2\to\mathbb R^2\) with
@@ -273,8 +276,15 @@ The concatenated start polygon is
 \[
   P_1\cap\Phi_1^{-1}(P_2),
 \]
-the concatenated end polygon is
-\(\Phi_2(P_2\cap\Phi_1(P_1))\), the concatenated affine map is
+the concatenated end polygon is the actual image of the surviving start
+domain,
+\[
+  \Phi_2\!\left(\Phi_1(P_1\cap\Phi_1^{-1}(P_2))\right)
+  =\Phi_2\!\left(\Phi_1(P_1)\cap P_2\right).
+\]
+The equality is the elementary identity
+\(f(P\cap f^{-1}(Q))=f(P)\cap Q\) and does not require injectivity.
+The concatenated affine map is
 \(\Phi_2\circ\Phi_1\), and these data give the closed tube search data for the
 concatenated facet sequence.
 
@@ -470,15 +480,19 @@ equals the Reeb action of \(\gamma\).
 \end{lemma}
 
 \begin{proof}
-Choose the breakpoint at which \(\gamma\) enters
+Choose the breakpoint at which \(\gamma\) changes from the direction
+\(R_{s_1}\) to \(R_{s_2}\) at a point of
 \(F_{s_1}\cap F_{s_2}\) as the start point.  Since the orbit has positive dwell
-time on every listed facet, its successive breakpoints lie on the two-faces
+time on every listed facet, its successive breakpoints lie in the facet-pair
+sections
 \(F_{s_r}\cap F_{s_{r+1}}\), and each segment is obtained by flowing along
 \(R_{s_{r+1}}\) for a positive time.  The primitive construction recovers the
 same endpoint and segment time from each start point.  Gluing the primitives
 therefore reconstructs the whole closed orbit as a closed tube search-domain
 fixed point, and the positivity of the dwell times makes it strict.  The action
 identity follows from Lemma~\ref{lem:fg-action-normalization}.
+The breakpoint may lie on additional facets; neither the construction nor this
+argument requires it to lie in the relative interior of a two-face.
 \end{proof}
 \end{unverified}
 
@@ -814,7 +828,11 @@ the basis-independent value
 Thus the determinant is a nonzero element of the rational function field for
 every \(k\ge5\).  Therefore, on every coordinate-minor chart, its expression
 can be written as \(P/Q\) with \(Q\ne0\) on the chart and with \(P\) not the
-zero polynomial.  The nonzero locus is the complement of the algebraic zero
+zero polynomial whenever the chart is nonempty.  The common denominator
+domain is a nonempty Zariski-open subset of the irreducible affine parameter
+space, so a nonzero rational function cannot vanish identically after
+restriction to a nonempty coordinate-minor chart.  The nonzero locus is the
+complement of the algebraic zero
 set \(\{P=0\}\) inside that chart, so it is open dense there.  These chartwise
 open dense loci agree on overlaps because they describe the same
 basis-independent determinant.  The coordinate-minor charts cover \(D_k\), so
@@ -936,7 +954,7 @@ statement is exactly Theorem~\ref{thm:fg-real-capacity-correctness}.
 For a polytope with a flow-graph nondegenerate facet presentation whose
 exhaustive flow-graph tube run is finite-orbit regular,
 Algorithm~\ref{alg:fg-real-exhaustive-search} either reports that no strict
-positive-time simple closed Reeb trajectory represented by a flow-graph tube
+positive-time simple pure-facet closed Reeb trajectory represented by a flow-graph tube
 word exists, or returns the minimum action among all such represented
 trajectories and returns exactly those represented trajectories with action at
 most \(c_{\mathrm{FG}}+\delta\), where \(c_{\mathrm{FG}}\) is that minimum
@@ -993,7 +1011,7 @@ presentation, returns
   c_{\mathrm{FG}}=c_{\mathrm{EHZ}}(K).
 \]
 With threshold \(\delta\ge0\), it also returns every represented strict
-positive-time simple closed Reeb trajectory with action at most
+positive-time simple pure-facet closed Reeb trajectory with action at most
 \(c_{\mathrm{EHZ}}(K)+\delta\).
 \end{theorem}
 
