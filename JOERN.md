@@ -39,9 +39,10 @@ handling.
 - I want calibration or problem modeling, but the agent turns that into
   implementation planning or approval-seeking.
 
-Project-wide chat rules live in `AGENTS.md`; planning-specific target choice
-guidance lives in `.agents/skills/scoping/SKILL.md`; derailed-session recovery
-guidance lives in `.agents/skills/stalled-session-recovery/SKILL.md`.
+Project-wide chat and autonomy rules live in `AGENTS.md`. The snippets below are
+explicit Jörn steering when pasted; they are not active project instructions by
+themselves. Removed GPT-5.5 planning and recovery controls remain in the
+pre-GPT-5.6 harness commit named by `$gpt-56-harness`.
 
 ## Start Fresh
 
@@ -250,7 +251,3 @@ process repair, implementation, evaluation, and review request.
 ## Related Files
 
 - `AGENTS.md`: project-wide agent rules.
-- `.agents/skills/scoping/SKILL.md`: choosing or reviewing the objective.
-- `.agents/skills/stalled-session-recovery/SKILL.md`: recovering derailed chat
-  sessions.
-- `tasks/README.md`: live task model and durable thesis-planning surfaces.

@@ -61,6 +61,9 @@ Current boundary facts:
 - Most experiment code is script-like. Helper `.rs` files live beside the
   binary or in the smallest shared parent directory that contains all binaries
   using them.
+- Experiment plot producers use `experiments/figure_config.py` when its shared
+  thesis-width styling fits. Figure captions state observations before their
+  interpretation so readers can separate the visible evidence from the claim.
 - `src/` marks a Rust-heavy package or crate-incubator surface. In those
   packages, `src/lib.rs` should stay a thin index over named modules.
 - Slow validation, broad random sweeps, and generated evidence datasets stay

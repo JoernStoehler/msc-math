@@ -27,6 +27,31 @@ reconstructs the HKO source objects and verifies them over the ordered number
 field `Q(t)`, where `t` is the unique real root of
 `t^4 - 10 t^2 + 5` in `(0,1)`, equivalently `t = tan(pi/5)`.
 
+## Explainability Contract
+
+The verifier must remain cheaply auditable by a mathematically strong reader
+with little programming background. Code, the explained listing, and thesis
+prose should make the following visible without asking the reader to trust an
+unexplained implementation:
+
+- the mathematical meaning of every proof-facing computation and local
+  assertion;
+- separation of verification gates from candidate construction and data
+  extraction;
+- the split `C=[C_I\ C_J]` and the resulting formulas
+  `beta_I(u)=C_I^{-1}(e-C_Ju)` and `beta_J(u)=u` used for feasible sections;
+- the boundary between Rust/f64 candidate selection and Sage exact acceptance;
+- agreement of formulas, symbols, dimensions, signs, paths, and source-truth
+  roles across code, documentation, and thesis prose;
+- why each thesis code excerpt is shown, which routine code is omitted, and
+  why the selected excerpts expose the acceptance predicate and trust boundary.
+
+Code readability and thesis exposition are coupled: a code change is useful
+when it exposes a proof invariant and materially reduces the prose required to
+explain the verifier. `verify.sage.py.explained.md` maps the full source to
+proof obligations; it is an explanation of the executable check, not a second
+proof or an independent derivation of the formulas.
+
 ## Theorem Target
 
 The intended theorem target is local maximality of HKO2024 in the ten-facet

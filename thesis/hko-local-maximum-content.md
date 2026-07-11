@@ -378,9 +378,12 @@ Source pointers:
 - `formal/hko-feasible-section-upper-branches.tex`,
   `rem:hko-feasible-section-derivative-data`.
 
-Review workflow:
-- use `$hko-sage-verifier-review` when reviewing whether the Sage verifier and
-  thesis explanation are mutually readable and cheap to audit.
+Review requirement:
+- review the Sage verifier and thesis explanation together against the
+  explainability and trust-boundary contract in
+  `experiments/hko-local-maximum/theorem/README.md`;
+- ensure selected snippets expose the mathematical acceptance predicate and
+  justify both their inclusion and the omission of routine code.
 
 ### 7. Empirical context
 

@@ -37,8 +37,8 @@ Update rule: add or change a claim only with a source pointer or an explicit
   These estimates help readers distinguish cheap sanity checks from expensive
   full reproduction and are evidence that the reproducibility promise has been
   thought through.
-- Caveat: the repo documentation is optimized mostly for GPT-5.5 agents as
-  readers/operators, not primarily for human readers.
+- Caveat: the repo documentation is optimized mostly for capable current
+  GPT-5.6 agents as readers/operators, not primarily for human readers.
 - Maintenance philosophy: code clarity wins by default; optimize only when
   tracing, profiling, benchmarking, or final consumers show that performance is
   material for a retained thesis computation.

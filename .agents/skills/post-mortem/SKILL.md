@@ -1,25 +1,24 @@
 ---
 name: post-mortem
-description: Use when Jörn asks for a postmortem, session reflection, lessons learned, avoidable work analysis, or follow-up suggestions after a Codex session.
+description: Use only when Jörn asks for a postmortem, session reflection, lessons learned, avoidable-work analysis, or follow-up suggestions after a Codex session.
 ---
 
 # Post-Mortem
 
-Make the session auditable without forcing Jörn to reread the chat.
+Make the session auditable without requiring the chat transcript. Record the
+outcome, current state when relevant, and important surprises.
 
-First take stock: outcome, current state if relevant, and anything that went
-surprisingly right or wrong.
+For important outcomes, distinguish:
 
-Then attribute important outcomes. Because all future agents are GPT-5.5 and
-model weights are not controllable, do not stop at "the agent/model failed."
-Attribute to controllable repo/process surfaces and counterfactuals where you
-believe the attribution is true. Keep attribution distinct from proposed fixes.
+- observed evidence;
+- causal attribution and its confidence;
+- the counterfactual that would have changed the outcome.
 
-Assess necessary, wasted, and avoidable work, including Jörn attention cost when
-useful.
+Include model capability when it is genuinely explanatory, but also identify
+controllable repo or workflow surfaces. Assess necessary, wasted, and avoidable
+work, including Jörn's attention cost when useful.
 
-Include suggestions only when Jörn asks for them or the request includes
-follow-up suggestions. Rank them by expected value, cost, confidence, and side
-effects when useful.
-
-Do not take follow-up actions from a postmortem unless Jörn explicitly asks.
+Include follow-up suggestions only when requested. Treat ranking by expected
+value, cost, confidence, and side effects as a useful option, not a required
+schema, and keep proposed fixes distinct from causal attribution. Do not
+execute follow-up actions from a postmortem without a separate request.

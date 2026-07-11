@@ -609,8 +609,8 @@ paragraph / sentence basis). But the ultimate flow of motivation is thesis
 success => thesis state + thesis TODOs => work that needs to be done in the
 thesis, and in the rest of the repo, and externally (e.g. some TODO in some
 .tex file should mention that the thesis has to be submitted eventually).
-[$project-quality](/workspaces/msc-math/.agents/skills/project-quality/SKILL.md)
-is another thing that sort of tracks process knowledge, as does DEVELOPMENT.md,
+The project-wide quality and tracking guidance now retained in `AGENTS.md` is
+another thing that sort of tracks process knowledge, as does DEVELOPMENT.md,
 which isn't like a once-done task but augments many of the tasks by providing
 context and learnings and a default background with which to interpret the raw
 task descriptions

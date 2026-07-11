@@ -14,26 +14,33 @@ Planned deliverables:
 ## Rules
 
 These rules override default agent behavior where this thesis project needs a
-more specific operating mode. They exist to fix common agent failures, not to
-turn AGENTS.md into a full manual.
+more specific operating mode. Keep this file focused on project-wide facts and
+boundaries; conditional workflows belong in skills or owner-local files.
 
 - Every session must serve thesis success. If the relation to thesis success is
   unclear, ask. Task definitions should explain how the task increases expected
   thesis success. Push back when a task or scope looks worse than an
   alternative. It is fine to make progress on an established task before all
   downstream uses are understood; restore thesis-level context during review so
-  goal drift is caught.
+  goal drift is caught. Producing the literal requested artifact is not success
+  when it does not satisfy the assigned thesis outcome.
 
 - Agents own their work, even while the goal is still being chosen, scoped, or
   clarified. Jörn is available as mathematical expert, thesis stakeholder, and
   prompt/harness/agent-engineering expert. Agents should otherwise cover the
   roles needed to complete the work: developer, reviewer, tester, progress
   tracker, interviewer, devops operator, mathematician, and similar roles.
+  Expert difficulty alone is not a reason to hand a choice to Jörn. Ask when
+  the crux depends on external/private context, Jörn's taste, or another fact he
+  is substantially more likely to know.
 
 - Jörn has elevated access to LICCA, the devcontainer CLI, other Codex sessions,
   and mail. Everything else in the repo or local environment is available to
   agents directly. Do not ask Jörn to do accessible local/repo work; for the
   elevated resources, ask Jörn instead of treating access as impossible.
+  Runtime sandbox or approval settings remove tool barriers; they do not expand
+  the task's permission boundaries for Main, destructive work, or external
+  actions.
 
 - Main must remain blocker-free so new sessions can spawn and merge independent
   work. Read-only inspection on Main is fine. Do not make repo-tracked changes
@@ -42,7 +49,9 @@ turn AGENTS.md into a full manual.
 
 - Harness files (`AGENTS.md`, `.agents/skills/**`, `.codex/agents/**`) are
   frozen unless Jörn explicitly asks for a harness edit. Discussion, planning,
-  and read-only inspection are allowed.
+  and read-only inspection are allowed. An explicit harness-edit task
+  authorizes its in-scope worktree edits and commits. A committed harness edit
+  on Main is the marker that Jörn's harness review/merge gate passed.
 
 ### Autonomy
 
@@ -57,13 +66,14 @@ requests.
   outcomes, costs, values, constraints, and stakeholder preferences; estimate
   locally what the agent can estimate, then ask only the crux where Jörn is
   likely informative.
-- Use subagents for bounded subtasks another GPT-5.5 instance can make progress
-  on. Choose main, forked subagent, or non-fork subagent by session-context
-  needs. Main owns target choice, final synthesis, merge-readiness, and
-  value/cost tradeoffs.
-- Before reporting agent-facing edits, plans, or packets, review them against
-  the motivating failure and run cheap validation/checks that could catch basic
-  problems.
+- Use subagents for bounded subtasks that divide cleanly. Choose main, forked
+  subagent, or fresh subagent by context and independence needs. Main owns
+  target choice, dependency order, final synthesis, merge-readiness, and
+  value/cost tradeoffs. Treat model/decomposition choices as empirical, not a
+  fixed Sol/Terra/Luna routing map.
+- A maintenance or repair request does not by itself authorize redesigning the
+  accepted objective, constraints, or workflow. Change them only when current
+  evidence makes that necessary for the requested outcome.
 
 ### Chat with Jörn
 
@@ -92,6 +102,10 @@ transfer, not presentation or narration.
 - Make questions, review requests, and other requests to Jörn hard to overlook.
   Usually put them on their own line or at the end of a short list. Re-ask or
   follow up if a request of yours was missed or only partly answered.
+- Put every question or request that needs Jörn's answer in the final channel;
+  commentary does not ping him and he may not read it. Final answers must be
+  self-contained: do not assume Jörn saw commentary, tool input, tool output,
+  or facts buried in command output.
 - Use line breaks and light structure so Jörn can skip known parts quickly. Use
   numbers, short labels, or tables only when they make the message easier to
   read, answer, or refer to.
@@ -104,7 +118,8 @@ transfer, not presentation or narration.
 - Make list type clear when ambiguity matters: exhaustive list, examples,
   current known set, priority order, or another ordinary description.
 - Communicate current state, history summaries, problem models, and useful
-  alternatives. Do not narrate process unless the process itself is the relevant
+  alternatives. Report phase changes or blockers when they help coordination;
+  do not narrate routine process unless the process itself is the relevant
   state.
 - Communicate epistemic status when it matters. Bayesian/LessWrong-style here
   means graded belief, expected value, and clear quantities. English phrases are
@@ -197,8 +212,8 @@ This repo does not use nested `AGENTS.md` files.
 |   |-- references/*.md
 |   `-- scripts/
 |-- .codex/
-|   |-- agents/<agent>.toml
-|   `-- config.toml
+|   `-- agents/<agent>.toml
+|      (optional project roles; user/IDE settings stay in ~/.codex/config.toml)
 |-- .worktrees/
 |-- .devcontainer/
 |   |-- README.md
@@ -228,6 +243,9 @@ Trust model:
   maintainer-facing notes.
 
 Important boundaries:
+- Across the project, four-dimensional coordinates use the order
+  `(q1, q2, p1, p2)`. Prefer coordinate-free notation when the order is
+  irrelevant.
 - `thesis/` is publishable thesis text. It is self-contained; assets and text
   are copied deliberately instead of linked from `experiments/` or `formal/`.
   `thesis/main.tex` inputs active text. `thesis/legacy/` is source material
@@ -260,18 +278,32 @@ Experiment routing:
   producers and evidence when the local README says the topic owns them.
 
 Documentation:
-- Write for Codex GPT-5.5 agents, not weaker hypothetical agents. Use your own
-  current model as the proxy for what future GPT-5.5 agents can know. If you
+- Write for capable current GPT-5.6 agents, not weaker hypothetical agents. Use
+  your own current model as the proxy for standard knowledge. If you
   know a standard term, library, or reasoning step, assume future agents can know
   it too. Document repo-specific facts, local conventions, source-truth links,
   decisions, evidence, sharp edges, and expensive checks; do not spell out
-  generic reasoning GPT-5.5 can reconstruct.
+  generic reasoning current models can reconstruct. If a task intentionally
+  uses a smaller model, put extra task structure in that prompt rather than in
+  durable project documentation for every reader.
 - Knowledge should live where future agents need it: code, comments, TeX,
   experiment artifacts, formal notes, thesis companions, experiment READMEs,
   crate documentation, generated outputs, owner-local task notes, or local
   documentation.
   Keep documentation lean, current, and easy to verify. Delete or demote
   obsolete notes; git history is enough for historical material.
+- Keep task state and accepted external decisions in the repo when future work
+  depends on them. For expensive or non-obvious checks, preserve the source
+  pointers, commands, assumptions, intermediate results, and status needed to
+  reproduce or reassess the result; do not preserve raw process that adds no
+  checking value. Distinguish empirical from theoretical support and direct
+  observation from inference when that changes what downstream work may claim.
+- Use stable, grep-able terminology, symbols, labels, filenames, and
+  cross-references. Avoid unstable line-number references; keep files
+  single-concern when that materially improves discovery and maintenance.
+- A passing test, verifier, benchmark, or review is evidence only for what it
+  actually checks. Assess whether its conditions support the claimed result and
+  whether an incomplete or corrupted artifact could pass it.
 
 ## Environment and commands
 
@@ -309,7 +341,7 @@ cargo check -p exp-sys-landscape
 
 # Python
 # `python` is absent on Ubuntu 24.04; `python3` lacks undeclared packages.
-uv run --with pyyaml --script /home/vscode/.codex/skills/.system/skill-creator/scripts/quick_validate.py .agents/skills/stalled-session-recovery
+uv run --with pyyaml --script /home/vscode/.codex/skills/.system/skill-creator/scripts/quick_validate.py .agents/skills/gpt-56-harness
 uv run --script experiments/sys-landscape/random-sample/analyze.py # PEP 723 inline dependencies
 
 # Profiling

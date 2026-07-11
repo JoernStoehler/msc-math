@@ -5,70 +5,54 @@ description: Use when Codex designs, implements, runs, reviews, interprets, docu
 
 # Research Experiments Data
 
-This skill supplies conventions shared by experiment work. Read only the
-task-specific references that apply:
+Read only the task-specific references that apply:
 
-- read `references/interpretation.md` when translating outputs into evaluable
-  mathematical or domain claims, including claim-level thesis usability;
-- read `references/packet-readiness.md` when judging whether a combined packet
-  can serve a downstream consumer;
-- read both when interpretation is one component of a packet handoff;
-- read `references/workflow-learning.md` only during explicitly authorized
+- `references/interpretation.md` for mathematical/domain claims and thesis
+  usability;
+- `references/packet-readiness.md` for whether a combined packet can serve a
+  downstream consumer;
+- both when interpretation is part of a packet handoff;
+- `references/workflow-learning.md` only during explicitly authorized
   experiment-workflow refinement;
-- use the relevant language, thesis-asset, or LICCA skill when those surfaces
-  are involved.
+- the relevant language, thesis-asset, or LICCA skill for those surfaces.
 
-## Owner-Local Research State
+## Purpose And Ownership
 
-Write for the future agent that will update or use the experiment, and
-indirectly for Jörn. Keep reasoning traceable when a conclusion is not obvious,
-and preserve the epistemic status of claims.
+- Read the owner-local question and downstream use before inferring purpose
+  from artifacts. Distinguish purposes that affect choices, such as feasibility,
+  falsification, hypothesis discrimination, evidence strengthening,
+  legibility, and maintenance; do not force a fixed taxonomy.
+- Put local purpose, provenance, interpretation, disposition, and reopen
+  constraints in the experiment or method-packet README; detailed rows in
+  generated artifacts/reports; thesis inventory and caveats in thesis
+  companions; proof development in `formal/`; reusable contracts in crate docs.
+- Link another owner when a result changes what its future work must find or do.
+  Do not create a top-level `research/` ownership layer.
+- Split experiments when their questions or update cycles interfere. Sibling
+  experiments normally consume shared data rather than push into each other.
+  Promote code or data to their narrowest shared parent after multiple current
+  consumers need it or duplication creates a concrete risk, not speculatively.
 
-Before designing follow-up work or interpreting results, read the current
-owner-local question and downstream purpose. Useful distinctions can include
-feasibility exploration, falsification, discriminating hypotheses,
-strengthening weak evidence, making existing evidence legible, or maintaining
-the implementation. These examples are not a required classification; record
-the distinctions that affect actual choices.
+## Reproduction And Artifacts
 
-Put durable knowledge where future work should update it. Common owners include:
+- Keep data beside its producer unless an established broader owner applies.
+  Preserve the command, inputs, parameters, non-obvious dependencies, and
+  comparison contract needed for downstream use.
+- Do not patch generated JSONL, CSV, tables, or figures. Regenerate them or
+  record the missing refresh. Stop and identify unexpected tracked changes
+  before treating them as evidence.
+- Do not maintain README prose as a second store of generated metrics. Point to
+  the artifact or generate a compact readable report.
+- Provide a cheap smoke path when it materially reduces development/review cost
+  and checks the relevant input, output, parameter, or resume contract. Do not
+  retain smoke artifacts without downstream use.
+- Use `$licca` before preparing commands for a run that belongs on LICCA.
 
-- experiment or method-packet `README.md` files for local purpose, provenance,
-  interpretation, disposition, and reopen constraints;
-- generated artifacts or generated compact reports for detailed per-run rows;
-- `thesis/*-content.md` companions for thesis-facing inventory, source pointers,
-  caveats, and writing gates;
-- `formal/` notes or TeX for proof development;
-- crate documentation for reusable code contracts;
-- a broader control surface only when no narrower owner can hold the state.
+JSONL currently works well for row-oriented heterogeneous records because it
+streams and diffs cleanly, composes with Rust row types, and is directly
+inspectable by agents. This is a design rationale, not a timeless mandate:
+choose or migrate to another format when its task-specific properties are
+better, and inspect current producers and consumers for the de-facto format.
 
-Link other owner or task surfaces when a change affects what they must find or
-do. Do not create a top-level `research/` ownership layer. Split an experiment
-or note when its purposes or update cycles interfere; do not split merely to
-fit a fixed template.
-
-## Reproducibility And Artifacts
-
-- Keep data beside its producer unless an existing broader data owner applies.
-- A result used by later research or the thesis needs a source-to-artifact
-  route reproducible under the comparison contract appropriate to that use.
-- Do not patch-edit generated JSONL, CSV, tables, or figures. Regenerate them,
-  or document the required refresh when regeneration is outside the task.
-- If tracked generated data changes unexpectedly, stop and identify the file
-  and command before treating the change as evidence.
-- Do not make hand-maintained README prose a second source of detailed generated
-  metrics. Point to the artifact or generate the readable table/report.
-- Prefer simple runnable producers and analyzers using the repo's supported
-  environment. Document the entry command, inputs, outputs, and non-obvious
-  dependencies.
-- Provide a cheap smoke path when it materially reduces development or review
-  cost; do not retain smoke artifacts that have no downstream use.
-- Use LICCA and a Slurm script when the selected computation actually requires
-  cluster execution; use `$licca` before preparing commands for Jörn.
-- JSONL is the default for flexible row-oriented experiment data when it fits
-  the producer and consumers. Use another format when its semantics or tooling
-  are materially better, and keep that choice legible.
-- Put shared code at the narrowest common owner of the experiments that use it.
-
-Detailed experiment facts and metrics belong to their owners, not to this
-skill. Revise this skill only for conventions that transfer across experiments.
+Detailed experiment facts belong to their owners, not this skill. Revise this
+skill only for conventions that transfer across experiments.

@@ -37,15 +37,15 @@ if command -v npm >/dev/null 2>&1; then
   npm install -g pyright
   # Codex CLI (OpenAI). Runtime state (auth.json, history, sessions, log)
   # lives in ~/.codex, which is bind-mounted from /srv/devhome/.codex so it
-  # persists across rebuilds and stays outside any git tree. Repo-tracked
-  # project config at /workspaces/msc-math/.codex/ is loaded natively by
-  # Codex's project-config walk once trust is set (see below).
+  # persists across rebuilds and stays outside any git tree. This project's
+  # IDE-owned settings remain there; repo-local skills and optional custom
+  # agents live in their tracked project directories.
   npm install -g @openai/codex
 fi
 
 # Codex: idempotently seed a trust entry for the msc-math project root in the
-# machine-local ~/.codex/config.toml. Without this entry Codex silently ignores
-# repo-level .codex/config.toml, .codex/agents/, and project skills. The file
+# machine-local ~/.codex/config.toml. Trust enables project-scoped Codex
+# customization. The file
 # is inside the /srv/devhome/.codex bind mount so this append survives rebuilds
 # and stays out of any git tree. Append-if-not-present for idempotency.
 mkdir -p /home/vscode/.codex

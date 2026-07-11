@@ -1,4 +1,0 @@
-interface:
-  display_name: "Stalled Session Recovery"
-  short_description: "Recover derailed chat sessions"
-  default_prompt: "Use $stalled-session-recovery to recover this stalled or derailed chat session."

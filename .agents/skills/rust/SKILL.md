@@ -1,45 +1,52 @@
 ---
 name: rust
-description: Use when Codex writes, edits, reviews, or delegates Rust work in this repo, especially crates, Rust experiments, API targets, tests, benches, numerical code, or Rust comments that claim mathematical meaning.
+description: Use for Rust work whose project-specific mathematical, numerical, observability, performance, or reusable-crate documentation contracts matter. Ordinary Rust style is left to the agent's judgment.
 ---
 
-# Rust Conventions
+# Rust Project Contracts
 
-This skill owns Rust code, API, testing, review, and handoff conventions.
+Rust supports thesis computations and reusable geometry code. Choose local code
+structure with ordinary Rust judgment; this skill owns only project-specific
+contracts.
 
-## Instrumental Objectives
-- Rust should help the thesis succeed: mathematically faithful, contract-explicit, verifiable, and maintainable by GPT-5.5.
-- GPT-5.5 is the operational reader and writer. Do not write `.rs` files to teach Kai, Python programmers, Rust beginners, pre-GPT-5.5 agents, or unusually expert Rust-core developers.
-- Code is read more often than written, coding is cheap, and performance matters only in profiled hotspots. Prefer local clarity and concrete variants over byte-saving, speculation, or premature optimization.
+## Mathematics And Numerics
 
-## Conventions
-- Prefer simple functional Rust: simple control flow, simple data types, simple signatures, and standard crate patterns such as `Vector4<f64>`, `&[Vector4<f64>]`, and `Vec<Vec<usize>>`.
-- Choose Rust representations by local readability. Standard types, aliases, tuples, structs, wrapper structs, traits,
-  data structures or invariant-enforcing smart constructors are all acceptable tools to help a fresh GPT-5.5 reader
-  understand the declaration and call sites. Prefer definitions near the functions that produce or consume them, prefer
-  descriptive variable names and common types, and avoid abstractions that misleadingly imply invariants they do not enforce.
-- For observability, use ordinary `tracing` spans/events in hot production code with subscribers in profile binaries. Keep tracing opt-in, ignorable, and out of return types and stdout data paths such as JSONL.
-- Do not invent custom tracing, profiling, benchmarking, or metrics plumbing when standard Rust tools or established repo tooling fit.
-- Shape APIs around mathematical operations and experiment workflows. Keep exact, f64, experiment, and helper surfaces separate when contracts differ; duplicate specialized flows when clearer than a shared abstraction.
-- Put context-dependent propositions on producer/consumer function contracts, not on data containers pretending to prove them.
-- Public math/numerics APIs state input/output contracts. Classify important conditions as validated here, assumed after a named validation boundary, valid mathematical non-success, or theorem-backed output guarantee.
-- Use explicit result/outcome enums when callers must distinguish mathematical outcomes; avoid ambiguous `Option`.
-- f64 APIs state approximation, error-bound, indeterminate-result, and heuristic-guess semantics explicitly.
-- Cite formal labels, proof notes, or API targets where math/code correspondence is not obvious. Include reasoning traces and invariants when they improve verification.
-- Put unresolved API decisions in the relevant API target or task file.
+- Shape APIs around mathematical operations and experiment workflows. Keep
+  exact, f64, experiment, and helper surfaces separate where their contracts
+  differ. Exact arithmetic often serves as the executable reference for f64
+  audits.
+- Put context-dependent propositions on producer or consumer contracts rather
+  than on data containers that do not establish them.
+- Public mathematical and numerical APIs state input and output contracts.
+  Distinguish conditions validated locally, assumed after a named validation
+  boundary, valid mathematical non-success, and theorem-backed guarantees.
+- Use explicit outcomes when callers must distinguish mathematical cases.
+  State whether f64 values are approximations, bounded results, indeterminate
+  results, or heuristic guesses.
+- Cite formal labels, proof notes, or API targets where code/math
+  correspondence is not evident. Proof-sized reasoning belongs in `formal/` or
+  an owner-local note, with code naming the relevant proposition or source.
+- For a nontrivial specification-to-code path, keep a direct/reference
+  implementation or another semantic witness when practical, and review the
+  implementation against the mathematical contract rather than relying only on
+  compilation or surface tests.
+- When exploring numerical error guarantees, make candidate definitions and
+  assumptions explicit enough to compare them, and use exact/reference or
+  adversarial checks to distinguish a valid bound from a merely plausible one.
 
-## Suggestions
-- Default to specific orchestrator functions. Use strategy/configuration enums when callers, experiments, provenance, serialization, or reviewability need a named strategy value.
-- For trustworthy computation work involving exact/f64 agreement, proof-backed predicates, error bounds, fallback, profiling, or observability, use `references/trustworthy-computation-patterns.md` as an ordered inventory of standard patterns GPT-5.5 already knows before inventing repo-local idioms. Treat that inventory as orientation, not as recommendations.
-- For planning trustworthy-computation work loops, use `references/trustworthy-computation-workflow-blocks.md` as a menu of familiar workflow blocks. Do not treat it as a required sequence or as complete.
-- For reusable Rust crates and substantial crate subtrees, prefer a consumer `README.md` and maintainer `DEVELOPMENT.md` once API or architecture decisions are nontrivial.
-- `README.md` should let a caller perform ordinary use without opening `src/`.
-- `DEVELOPMENT.md` should help a maintainer change internals without reconstructing current scope, API rationale, edit map, rejected/deferred approaches, and verification witnesses from code/tests/history.
+## Runtime Evidence
 
-## Suggested Workflows
-- Spike subagents/worktrees: for uncertain Rust/API shapes, try small concrete variants before theorizing. Prefer parallel subagent or worktree spikes when alternatives are cheap and independent. Give subagents a bounded objective, named files or ownership, and the expected output. Record the objective and comparison before promoting the result.
-- API proposals: keep unapproved proposals as reviewable diffs or `/tmp` reports. In isolated branches, commits are useful history, not API approval.
-- Tests and refactors: add fast crate tests, `clippy`, and smoke checks for public behavior, numerical helpers, regressions, and router/classifier decisions. Keep slow reusable-crate correctness tests in crate tests; use experiments for slow experiment-workflow suites. During risky refactors, keep old/new behavior comparable until tests and review justify removing the old path. Mark intentionally red or ignored tests with the reason and removal condition.
-- Public API review: when a Rust change adds or changes exported crate API, public rustdoc/README API docs, or checked examples used as API guidance, review the changed public surface for KISS/YAGNI before reporting success. Ground the review in the diff, current call sites/tests, and any API target or task file naming the intended caller. Prefer removing wrappers, aliases, recoverable error variants for programmer bugs, one-sided conveniences, avoidable example clones/unwraps, and abstractions without a current caller.
-- Crate docs review: for Rust crate `README.md` or `DEVELOPMENT.md` review, use `references/review-crate-readme.md` and `references/review-crate-development.md` as reusable critic prompts; pass the crate path and checked surfaces.
-- Review and handoff: name exact review surfaces, required cwd, package/crate, files changed, source-of-truth files or labels, contracts touched, verification run, unchecked risks, and decisions reserved for Jörn.
+- Measure or profile before investing in performance tradeoffs. Optimize the
+  measured hotspot and check whether the change mattered.
+- Use ordinary `tracing` spans and events when production observability is
+  useful. Keep tracing opt-in, ignorable, and out of return values and stdout
+  data paths such as JSONL.
+
+## Reusable Crate Documentation
+
+Use a consumer `README.md` and maintainer `DEVELOPMENT.md` once a reusable
+crate's API or architecture decisions are nontrivial. README should support
+ordinary use without opening `src/`; DEVELOPMENT should preserve current scope,
+API rationale, edit locations, important rejected/deferred approaches, and the
+meaning of verification witnesses. For focused review, read
+`references/crate-documentation-review.md`.

@@ -51,16 +51,9 @@ created one extra active indirection after the trigger had already fired. Since
 the skill itself says when not to use it, the added live guidance is only mildly
 harmful in false-positive triggers and more useful in normal triggers.
 
-Known adjacent work not solved here:
-
-- The branch adds one compact AGENTS.md bullet for session-switching context.
-  Tune that bullet if it over-triggers packet writing or fails to make agents
-  model Jörn's multi-session workflow.
-- A separate chat-quality rescue skill, if AGENTS.md remains too weak.
-- Replacement or narrowing of `stalled-session-recovery`, which may be harmful
-  because it can trigger meta-recovery during live discussion.
-- Forward-testing this skill on more real transcripts and adding examples if
-  agents still fail after reading it.
+The project now keeps the multi-session premise in `AGENTS.md` and the packet
+contract here. Add examples or stronger production guidance only if GPT-5.6
+packets fail after reading the reduced skill.
 
 ## Design Choices
 
@@ -122,5 +115,5 @@ only.
 If packets are good but Jörn still has to remember to ask for them, revisit the
 AGENTS.md session-switching bullet and the skill metadata trigger.
 
-If agents keep switching into meta-recovery during live discussion, revise or
-remove `stalled-session-recovery` before creating another broad recovery skill.
+If agents switch into meta-recovery during live discussion, tighten this
+skill's trigger before creating another broad recovery surface.

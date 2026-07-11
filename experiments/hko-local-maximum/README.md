@@ -23,8 +23,8 @@ spotted no gaps. Later review of the integrated thesis PDF may still request
 wording or proof-framing changes. The empirical folders are support and sanity
 checks, not proof substitutes.
 
-For coupled review of the Sage verifier and thesis-facing explanation, use
-`$hko-sage-verifier-review`.
+The verifier's owner-local explainability and trust-boundary contract is in
+`theorem/README.md`; use it when reviewing code together with thesis prose.
 
 ## Result Strands
 

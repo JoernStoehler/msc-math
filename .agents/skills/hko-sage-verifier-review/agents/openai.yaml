@@ -1,4 +1,0 @@
-interface:
-  display_name: "HKO Sage Verifier Review"
-  short_description: "Review HKO verifier/thesis auditability"
-  default_prompt: "Use $hko-sage-verifier-review to review the HKO Sage verifier and thesis explanation together."

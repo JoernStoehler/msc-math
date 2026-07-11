@@ -112,10 +112,10 @@ Checked 2026-07-10 against integration base `49fc7e59`.
 
 Recovered into this branch:
 
-- HKO candidate from `hko-finish-freeze-v3`/`8c38094c`, including its bundled
-  `hko-sage-verifier-review` live-test skill. Jörn approved recovering the
-  skill directory on 2026-07-10 but explicitly did not review or approve its
-  wording. Source truth for the HKO result:
+- HKO candidate from `hko-finish-freeze-v3`/`8c38094c`. Its temporary bundled
+  reviewer skill was removed during the GPT-5.6 migration after the durable
+  explainability and trust-boundary contract moved to the HKO owner-local
+  theorem README and thesis content note. Source truth for the HKO result:
   `experiments/hko-local-maximum/README.md`,
   `experiments/hko-local-maximum/theorem/`,
   `formal/hko-feasible-section-upper-branches.tex`, and

@@ -1,7 +1,0 @@
-interface:
-  display_name: "Planning Strategy"
-  short_description: "Plan costly route choices"
-  default_prompt: "Use $planning-strategy to choose the route, success criteria, stop criteria, and delegation boundary before acting."
-
-policy:
-  allow_implicit_invocation: true
