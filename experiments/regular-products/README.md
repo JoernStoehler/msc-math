@@ -23,7 +23,7 @@ Read only the row that matches your task.
 
 | Task | Minimum read path | Stop before opening |
 | --- | --- | --- |
-| Write the thesis section | `thesis/rotated-regular-polygons-content.md`, then `thesis/rotated-regular-polygons.tex` | Sage source, generated JSONL/PNG/HTML, stale formal draft |
+| Write the thesis section | `thesis/rotated-regular-polygons-content.md`, then `thesis/09-rotated-regular-polygons.tex` | Sage source, generated JSONL/PNG/HTML, stale formal draft |
 | Check the exact proof result | `pentagon-rotation-formula-proof/README.md`, then `pentagon-rotation-formula-proof/executable_proof.full.stdout.txt` | empirical folders |
 | Inspect the proof code | `pentagon-rotation-formula-proof/README.md`, then `pentagon-rotation-formula-proof/executable_proof.sage.py` | generated artifacts |
 | Choose figures | `pentagon-rotation-empirics/README.md`, then the ranked figure list in `thesis/rotated-regular-polygons-content.md` | exact proof source |
@@ -52,7 +52,7 @@ Open them only when a README or thesis companion points to a specific detail.
 
 | File or folder | Role | Current value | Maintenance risk |
 | --- | --- | --- | --- |
-| `thesis/rotated-regular-polygons.tex` | Active thesis section | Contains the current theorem/proof draft for the pentagon formula and selected empirical figures | Needs final Jörn/Kai mathematical and presentation review |
+| `thesis/09-rotated-regular-polygons.tex` | Active thesis section | Contains the current theorem/proof draft for the pentagon formula and selected empirical figures | Needs final Jörn/Kai mathematical and presentation review |
 | `thesis/rotated-regular-polygons-content.md` | Thesis writing companion | Best current human/agent guide to theorem, proof route, figures, and wording risks | Not source truth; delete or shrink after prose stabilizes |
 | `pentagon-rotation-formula-proof/executable_proof.sage.py` | Exact proof source | Source truth for the open half-domain executable certificate | If edited, rerun the full proof and refresh stdout |
 | `pentagon-rotation-formula-proof/executable_proof.full.stdout.txt` | Full proof run output | Source truth for exact run output, status counts, and runtime | Do not hand-edit |
@@ -123,16 +123,17 @@ Small Rust helpers shared by the regular-product producers:
 
 Use this split while writing:
 
-1. `thesis/rotated-regular-polygons.tex` owns the regular-product side result:
+1. `thesis/09-rotated-regular-polygons.tex` owns the regular-product side result:
    formula, proof architecture, selected empirical figures, and
    endpoint/symmetry close.
-2. `thesis/black-box-datascience.tex` may mention product samples and broad
+2. `thesis/08-black-box-datascience.tex` may mention product samples and broad
    regular-product sweeps as hostile-search context. It should not own the
    pentagon formula theorem.
-3. `thesis/published-code-data.tex` should point to durable reproduction
+3. `thesis/12-published-code-data.tex` should point to durable reproduction
    artifacts such as the proof script and stdout.
-4. `thesis/appendix-sagemath-computations.tex` may contain code excerpts if
-   the main text needs an appendix.
+4. No standalone SageMath appendix is active. Verifier explanations stay with
+   the theorem sections, and Section 12 owns the compact reproduction pointers;
+   reopen an appendix only for a concrete reader need not met there.
 
 ## Knowledge-Base Notes
 
@@ -145,7 +146,7 @@ Use this split while writing:
    companion still points to specific calculations in it.
 3. **Avoid hidden source truth:** if a claim is about code behavior, check the
    producer script or exact proof script. If a claim is about final thesis
-   wording, check `thesis/rotated-regular-polygons.tex`; use
+   wording, check `thesis/09-rotated-regular-polygons.tex`; use
    `thesis/rotated-regular-polygons-content.md` for drafting guidance.
 4. **Generated artifacts:** do not patch-edit JSONL, HTML, or PNG outputs.
    Regenerate them with the commands below when source behavior changes.

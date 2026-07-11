@@ -916,6 +916,7 @@ Remaining review work:
    exact proof-by-computation framing and whether the accepted status
    explanation is enough for trust.
 
-4. Optional appendix review:
-   if detailed Sage output is moved to
-   `thesis/c-sagemath-computations.tex`.
+4. Reproduction review:
+   keep proof detail with this theorem and packet-level rerun/identity facts in
+   `thesis/12-published-code-data.tex`; reopen an appendix only for a concrete
+   reader need not served by those locations.

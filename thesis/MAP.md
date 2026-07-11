@@ -73,12 +73,8 @@ Status: navigation cache for the active thesis surface.
 - `a-datascience-results.tex`: data-science appendix thesis surface.
 - `appendix-datascience-results-content.md`: section-local data-science appendix
   content notes.
-- `b-numerics-proofs.tex`: numerics appendix thesis surface.
-- `appendix-numerics-proofs-content.md`: section-local numerics appendix
-  content notes.
-- `c-sagemath-computations.tex`: SageMath computation appendix thesis surface.
-- `appendix-sagemath-computations-content.md`: section-local SageMath appendix
-  content notes.
+- `appendix-numerics-proofs-content.md`: decision record for omitting the
+  numerics-proofs appendix.
 - `central-claim-control.md`: thesis-wide content companion for central claims,
   support sources, caveats, paragraph placement, and review gates. Not source
   truth; use the named source files before relying on claims.
@@ -111,9 +107,9 @@ Status: navigation cache for the active thesis surface.
   `legacy/general-case-algorithm-proof.tex`, and
   `legacy/pruned-general-case-algorithm.tex`: likely source material for
   `02-preliminaries.tex`, `03-generalized-reeb-orbits-polytopes.tex`,
-  `04-haim-kislev-quadratic-program.tex`, and `b-numerics-proofs.tex`.
+  and `04-haim-kislev-quadratic-program.tex`.
 - `legacy/appendix-numerical.tex` and `legacy/numerical-story.md`: likely
-  source material for `11-numerics.tex` and `b-numerics-proofs.tex`.
+  source material for `11-numerics.tex`.
 - `legacy/experiments.tex`: likely source material for
   `08-black-box-datascience.tex`, `09-rotated-regular-polygons.tex`, and
   `10-visualization-3d.tex`.

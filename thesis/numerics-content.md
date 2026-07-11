@@ -1,97 +1,52 @@
 # Numerics Content Notes
 
-Section-local content companion for `thesis/11-numerics.tex`.
-Source truth for empirical numerics is `experiments/dev-quadratic-program/numerics-audit/README.md`.
-Source truth for the generic-case numerical contract is
-`formal/hk2017-qp-core.tex` and `formal/hk2017-qp-precision.tex`.
+Section-local companion for `thesis/11-numerics.tex`.  Kai's requested role is
+one high-level trust-boundary paragraph, not a numerical-analysis chapter.
 
-## Pacing
+## Claim-to-source map
 
-- Kai preference: numerics is interesting for about one high-level paragraph in
-  the main text, not more.
-- Detailed proofs and intermediate bounds belong in the appendix.
-- Do not mix numerical-analysis language into symplectic definitions or exact
-  algorithm proofs.
-- Treat numerics as a support layer after the exact mathematical computation
-  story.
-- The main reader problem is separating theorem-level exact computation from
-  empirical f64 diagnostics. Do not spend the paragraph on implementation
-  mechanics unless they change claim strength.
+| Reader-facing claim | Source truth | Strength and boundary |
+| --- | --- | --- |
+| The HKO theorem uses an exact SageMath finite check; Rust/f64 data only select or order candidates. | `experiments/hko-local-maximum/theorem/README.md`, `verify.sage.py`, and `thesis/07-hko-local-maximum-exact-certificate.tex` | Theorem-facing after combination with the hand proof. The verifier reconstructs exact algebraic objects and does not trust f64 acceptance. |
+| The rotated-pentagon lower bound uses exact algebraic sign and branch checks. | `experiments/regular-products/pentagon-rotation-formula-proof/README.md`, `executable_proof.sage.py`, its full stdout artifact, and `thesis/09-rotated-regular-polygons-exact-certificate.tex` | Theorem-facing executable certificate after the finite-enumeration reduction. Empirical plots are not proof inputs. |
+| Rust has exact rational KKT-stationarity reference routines and candidate-local exact fallback. | `crates/symplectic/src/kkt/rational_solver.rs`, `crates/symplectic/src/algorithms/orbit_search.rs`, and its exact-fallback tests | Exact equations and positivity for each resolved rational-input word. It does not establish the per-word maximum, recheck every retained word, or prove that an earlier f64 generator retained every minimizer. |
+| Selected f64 QP paths use route-local true/false/indeterminate classifications. | `crates/symplectic/src/kkt/mod.rs`, `experiments/dev-quadratic-program/src/f64_route/orbit.rs`, and `route_demonstrations/` | Static-margin numerical labels, not theorem-backed predicates. Consumers reject, propagate, or resolve indeterminate candidates according to their own contract. |
+| The f64 flow-graph wrapper exactly resolves error words but not direct f64 positive words. | Numerical boundary in `crates/symplectic/src/algorithms/flow_graph/README.md` | Mixed approximate/exact workflow; its f64 return is not an exact certificate. The exact rational flow-graph path has a separate contract. |
+| Generic perturbation and residual estimates are conditional and do not certify the current public f64 solver. | `formal/hk2017-qp-precision.tex`, current KKT API documentation, and `experiments/dev-quadratic-program/src/route_demonstrations/q_error_bound_not_certificate.rs` | Developer-facing framework with explicit gaps and unvalidated constants. Do not promote it to an appendix theorem or a total error guarantee. |
+| The numerics audit compares f64 KKT quantities and predicates with typed reference oracles on a fixed emitted context bank. | `experiments/dev-quadratic-program/numerics-audit/README.md`, producer source, and generated `report.md` | Empirical regression/robustness evidence only. HKO rows use exact arithmetic on the stored binary64 values, not the algebraic HKO object. |
 
-## Content Inventory
+## Audit identity and recomputation
 
-- Exact arithmetic path: rational or algebraic data is used to implement
-  mathematically meaningful helper operations slowly but without numerical
-  error.
-- These helpers are separated so later computations can reuse them instead of
-  re-encoding the same mathematics.
-- Floating-point fast path: the same mathematical algorithms are mapped to
-  `f64` linear algebra where practical.
-- Discontinuous predicates are treated as trinary `true`, `false`, or
-  `indeterminate` decisions with error margins.
-- `indeterminate` means the numerical evidence is not strong enough to decide
-  the mathematical predicate; this differs from invalid input errors and
-  unrecovered assertion failures.
-- Logical use of indeterminate values: use cancellations such as
-  `false and indeterminate = false`, and simplify searches only from decided
-  values.
-- Do not claim a relational abstract interpreter unless a retained proof adds
-  it. Relations such as two individually indeterminate predicates whose
-  disjunction is forced true are outside the current method.
-- Include empirical error measurements and exact comparisons where the f64 path
-  is used to rerun experiments.
-- Include proven error bounds only at the strength needed by retained thesis
-  claims.
-- Keep the numerics audit oracle separate from runtime exact fallback. The
-  audit compares f64 outputs with exact or mathematical-identity references;
-  runtime exact resolution belongs only to code paths that actually implement
-  it, such as selected flow-graph surfaces.
+No quantitative audit metric is retained in `11-numerics.tex`, so the thesis
+does not depend on a cached `/tmp` artifact.  The current deterministic evidence
+producer is:
 
-## Numerical Mechanisms And Thesis Use
+```bash
+cargo run -p exp-dev-qp-numerics-audit --release --bin audit-numerical-errors -- \
+  --mode evidence --out-dir /tmp/numerics-audit-evidence
+python3 experiments/dev-quadratic-program/numerics-audit/scripts/summarize_observations.py \
+  /tmp/numerics-audit-evidence
+```
 
-| Mechanism | Why it appears | What it gives | Cost or alternative | Best context |
-| --- | --- | --- | --- | --- |
-| Exact rational or algebraic computation | Theorem-level finite checks cannot depend on f64 signs near discontinuities. | Proof-bearing finite certificates and exact predicate values. | Slow and specialized; not a high-throughput search engine. | HKO theorem packets, regular-product certificates, small exact audits. |
-| SageMath exact verification | Some finite certificates are easier to express and audit in a CAS than in Rust, especially with algebraic fields and root isolation. | Independent exact reconstruction, algebraic comparisons, and theorem-facing verification artifacts. | Slower and less integrated into high-throughput Rust workflows; best used for selected proof packets. | HKO feasible-section verification, regular-product executable proofs, final exact checks. |
-| Pure f64 computation with rejection | Large data-science and method-development runs need many well-behaved rows more than they need answers on every input. | Fast datasets whose accepted rows satisfy numerical preconditions. | Rejects uncertain polytopes; unsuitable when the interesting objects are degenerate or near predicate boundaries. | Broad search, regression, and method-table experiments on mostly generic inputs. |
-| Trinary predicate logic | Positivity, rank, and sign predicates are discontinuous, so near-zero f64 values should not become mathematical facts. | Decided values can be used safely; `indeterminate` records that the computation did not decide. | Propagating indeterminacy complicates consumers; some workflows need rejection or exact fallback. | Capacity and search code that branches on numerical predicates. |
-| Lazy exact fallback | Some consumers need an answer on a delicate input instead of rejecting it. | Resolves selected indeterminate cases without running exact arithmetic everywhere. | Only useful where exact fallback exists for the needed predicate or quantity; not a current broad guarantee. | Small or load-bearing cases, especially when a thesis claim depends on the result. |
-| Error bounds | A proof or a certificate needs a quantitative link between f64 residuals and exact quantities. | Conditional statements such as "under these margins, this sign/value is stable." | Requires generic hypotheses and constants; broad non-generic coverage is harder. | Appendix-level generic-case numerical contract. |
-| Empirical f64-vs-exact measurement | Readers need to know whether the implemented f64 path behaves as expected on the emitted context bank. | Error magnitudes, predicate disagreement counts, and conditioning diagnostics. | Empirical support is not a theorem and depends on context selection. | Numerics audit reports and compact thesis support tables. |
+The producer records `input_pair_kind`, `oracle_kind`, object, sigma, and sample
+policy in every relevant row.  Any later quantitative thesis sentence must name
+its context denominator and oracle kind and point to an identified generated
+report.  In particular, `exact_binary64_input` must not be rewritten as
+algebraic HKO evidence.
 
-The useful thesis message is the combination, not one mechanism alone. Rust
-exact arithmetic and SageMath exact verification carry theorem-level finite
-checks. Pure f64 with rejection is good for high-throughput, well-behaved data.
-Trinary logic and lazy fallback describe what happens when f64 branch decisions
-are delicate. Error bounds and empirical measurements explain why the accepted
-f64 computations are trusted.
+## Deliberate omissions
 
-The current numerics audit supports the empirical part on an emitted context
-bank. The exact-rational simplex/hypercube contexts currently show no predicate
-disagreements. The HKO rows are same-binary64-input diagnostics and currently
-expose beta-positivity disagreements; they are not algebraic HKO evidence.
-Use the generated report sections as the source for thesis-facing empirical
-facts: `Emitted Context Bank`, `Oracle-Backed f64 Measurements`,
-`Predicate Agreement Diagnostics`, and `Conditioning And Solver Diagnostics
-Without Oracle`.
-
-Good main-text asset candidate: a compact table with the rows above and columns
-for source truth, thesis use, and caveat. Good explanatory figure candidate: a
-small flow diagram showing f64 computation, trinary decision/rejection,
-optional exact resolution where implemented, and exact-oracle audit. Poor asset
-candidates: raw JSONL/CSV screenshots, histograms from four contexts, or a
-standalone HKO disagreement plot.
-
-## Claim Boundaries
-
-- Supported by current source truth: emitted-context f64-vs-oracle diagnostics,
-  exact-rational agreement for the retained rational fixtures, same-binary64
-  HKO diagnostics, and the generic-case proof framework in the formal notes.
-- Not supported by current source truth: broad public-solver certification,
-  algebraic HKO validation from the numerics audit, old gradient-validation
-  aggregates, old unknown-predicate aggregate evidence, old Sage feasibility
-  packets, and broad packet-style error-bound claims.
-- Flow-graph f64 rejection and exact-resolution evidence is a separate source
-  surface. Use `crates/symplectic/src/algorithms/flow_graph/README.md` before
-  making flow-graph thesis claims; do not import those claims from the numerics
-  audit.
+- No figure or table is used: one paragraph solves the reader problem without
+  adding a second visual explanation of trust levels.
+- The numerics-proofs appendix is omitted.  The available generic precision
+  notes contain explicit gaps and do not support a reader-facing
+  certified-solver result.
+- The SageMath certificate appendix is omitted.  Its trust-boundary table
+  duplicated Sections 7 and 9.  The unique reproduction facts belong in
+  Section 12 with the code and data account.
+- Reopen the numerics-proofs appendix only for a named thesis claim whose
+  numerical proof cannot be understood at its owning section.  Reopen a
+  SageMath appendix only when verifier detail cannot be placed with the theorem
+  it serves or in the code/data reproduction account.  Reopen quantitative
+  audit reporting only when a named thesis sentence benefits and the generated
+  artifact identity and denominator are durable.
