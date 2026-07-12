@@ -3646,10 +3646,13 @@ fn build_run_provenance(cli: &Cli) -> RunProvenance {
 fn input_identity(role: &str, path: &Path, repo_root: &Path) -> InputIdentity {
     let bytes = fs::read(path)
         .unwrap_or_else(|error| panic!("failed to hash input {}: {error}", path.display()));
+    let identity_path = path
+        .canonicalize()
+        .unwrap_or_else(|error| panic!("failed to resolve input {}: {error}", path.display()));
     InputIdentity {
         role: role.to_string(),
         observed_path: path.display().to_string(),
-        portable_path: portable_path(path, repo_root),
+        portable_path: portable_path(&identity_path, repo_root),
         blake3: blake3::hash(&bytes).to_hex().to_string(),
     }
 }
@@ -3965,5 +3968,19 @@ mod tests {
         assert!(!dir.join("run-provenance.json").exists());
         assert!(dir.join("unrelated.txt").exists());
         fs::remove_dir_all(dir).unwrap();
+    }
+
+    #[test]
+    fn canonical_in_repo_input_gets_portable_repo_path() {
+        let manifest = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+        let repo_root = manifest.ancestors().nth(2).unwrap();
+        let source = manifest
+            .join("local-geometry-probe/main.rs")
+            .canonicalize()
+            .unwrap();
+        assert_eq!(
+            portable_path(&source, repo_root),
+            "repo:experiments/dev-gradient-ascent/local-geometry-probe/main.rs"
+        );
     }
 }
