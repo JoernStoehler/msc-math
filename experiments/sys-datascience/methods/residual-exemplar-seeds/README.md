@@ -183,32 +183,34 @@ validate it from this packet alone. It can reopen if an independently motivated
 mathematical definition predicts which product bucket should exhibit the
 connectivity effect.
 
-The M0 action anatomy does yield a discriminating hypothesis. The branch
-diagnostic preserves raw solver-returned orbit words and counts separately from
-cyclic classes. For every nonempty raw sigma word, its canonical representative
-is the lexicographically smallest of all cyclic rotations; distinct canonical
-representatives are the distinct cyclic classes. In both matched product pairs
-the lower-`sys` member has four distinct cyclic classes tied at the minimum to
-relative tolerance `1e-12`, while the higher-`sys` member has one near-active
-cyclic class even at the `1e-2` window. The low product residual exemplar
-likewise has four exact cyclic classes and the high product residual exemplar
-has one, although those exemplars are not a matched pair. The four canonical
-representatives differ by swaps of two facet pairs; they are not
-cyclic-rotation duplicates. This supports a bounded product-family hypothesis:
-fourfold order-choice ties mark a different low-`sys` action regime from the
-unique-minimizer regime. It does not establish why the tie occurs or that
-breaking it raises `sys`.
+The M0 action anatomy initially appeared to yield a branch-multiplicity
+hypothesis. The diagnostic preserves raw solver-returned orbit words and counts
+separately from cyclic classes. In both matched product pairs the lower-`sys`
+member has four cyclic classes tied at the minimum through the `1e-2` window,
+while the higher member has one. A low and high product residual exemplar repeat
+the `4` versus `1` pattern, but are not a matched pair.
 
-The generic evidence is weaker and window-dependent: one matched pair changes
-from a single cyclic class to a second only at the `1e-3` window, while the
-other is tied at one throughout; a high positive residual reaches five
-near-active cyclic classes only at `1e-2`. Thus a generator-agnostic monotone
-“more branches means lower `sys`” story is already prohibited. M0 should
-continue only as a small untouched product test that distinguishes
-algebraic/product symmetry ties from genuinely competing HK branches. M1 may
-retain this product tie regime as one arm competing against ridge
-magnitude/concentration and generator structure; the current packet is not
-mechanism evidence.
+The `4` is not evidence for four distinct capacity-value branches. Each set of
+four words is produced by independently ordering two adjacent same-type facet
+pairs. On a Lagrangian product, same-type dual vertices lie in a Lagrangian
+subspace. Swapping adjacent same-type entries and the corresponding beta
+coordinates preserves the feasible HK quadratic program and its optimum: the
+only internal order-sensitive symplectic pairing is zero. The product enumerator
+emits both orders of every pair block, while this diagnostic quotients only
+cyclic rotation. Two independent pair blocks therefore force a `2^2 = 4`
+count; quotienting same-type block permutations is predicted to reduce both
+low-product counts to one. No symmetry of the particular random factors is
+required.
+
+The surviving observed contrast is different: both lower-`sys` matched product
+members use a two-bounce pattern with two singleton and two two-facet blocks,
+while both higher members use a three-bounce all-singleton pattern. The
+producer-owned `product_bounces` field records this distinction. This is still
+a post-target two-pair observation, not evidence for a population association
+or a mechanism. Generic cyclic-class counts use a different geometric
+interface and do not repair the product overcount. Any continuation should
+first use the existing product bounce field across the retained distribution;
+quotient-aware branch competition is a separate question.
 
 The entire inspection is post-target `G`: `sys` and model residuals selected
 the panel, and HK action spectra are target-cost diagnostics. None of these

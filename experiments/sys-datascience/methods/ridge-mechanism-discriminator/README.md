@@ -109,7 +109,8 @@ small-area fractions have near-zero or negative mean-`sys` deltas overall, and
 many per-bucket median splits do not separate rows because the fractions are
 discrete.
 
-Extreme-tail Goodharting survives as a caution. The low-ridge generated tails
+The possibility of extreme-tail Goodharting survives only as a caution, not an
+observed selection-pressure curve. The low-ridge generated tails
 are enriched, but selected maxima remain below `sys = 1`: the 1M per-bucket
 low-sum summary tops out near `0.866920080910149`, and the 100k
 `promising-scalars` union tops out at `0.867546058507634`.

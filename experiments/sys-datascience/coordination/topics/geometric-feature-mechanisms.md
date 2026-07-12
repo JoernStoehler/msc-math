@@ -119,11 +119,13 @@ Candidate hypotheses:
   low-ridge selected candidates. Predicts: concentration features split high
   selected rows from mediocre selected rows. Falsified by: no within-selected
   association after bucket control.
-- Extreme low-ridge filtering Goodharts. Measured object: selected mean/max
-  `sys` as the low-ridge threshold becomes more extreme. Explains: 1M
-  enrichment without near-counterexample behavior. Predicts: threshold curves
-  flatten or degrade in the extreme tail. Falsified by: monotone improvement
-  with stronger filtering.
+- Extreme low-ridge filtering may saturate, lose within-tail resolution, or
+  reverse. Existing generated packets observe enrichment at extreme selections
+  and an incremental concentration effect inside a lowest-1% sum tail. They do
+  not sample broad nested ridge-sum bands and therefore do not identify a
+  selection-pressure curve. A real test would compare frozen,
+  bucket-stratified bands and distinguish sustained ordering, saturation,
+  reversal, mixture, and insufficient resolution.
 - HKO shares the ridge-area mechanism but not the current random-product support
   route. Measured object: HKO invariant-feature ranks and corrected HKO-local
   perturbation features. Explains: possible HKO/ridge relation. Predicts:
@@ -174,10 +176,11 @@ Ready packet prompts:
   low-ridge candidates from mediocre selected candidates. Output should be a
   per-bucket diagnostic table and frozen-rule recommendation, labeled
   diagnostic-only unless evaluated on independent generated candidates.
-- Threshold-curve Goodhart check. `executor-ready after config scale is chosen`.
-  Objective: distinguish monotone low-ridge improvement from extreme-tail
-  Goodharting by varying low-ridge selection strength with target-field audit
-  and bucket-matched summaries.
+- Threshold-curve proxy-pressure check. `parked pending a decision that needs the curve`.
+  Objective, if a later decision requires it: vary low-ridge selection strength
+  with target-field audit and bucket-stratified summaries to distinguish
+  sustained ordering, saturation, reversal, mixture, and insufficient
+  resolution.
 - HKO ridge-rank repair/review. `reviewer-ready`.
   Objective: decide whether HKO ridge extremality is reliable enough to inform
   mechanism hypotheses. Exclude parked HKO-distance/flank claims until
