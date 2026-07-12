@@ -426,6 +426,7 @@ def msg(mid, role, session, log, time, norm, shingles, tokens=10):
         "normalized_text_id": norm,
         "char_count": 100,
         "token_count": tokens,
+        "reuse_eligible": True,
         "winnowed_fingerprint_ids": shingles,
     }
 
@@ -601,3 +602,115 @@ def test_prompt_reuse_5000_by_5000_exact_broadcast_suppressed_without_pairs():
     stats = __import__("collections").Counter()
     assert r.prompt_reuse(rows, exact_frequency_ceiling=1000, stats=stats) == []
     assert stats["exact_frequency_ceiling_suppressed"] == 1
+
+
+def test_task_start_sampling_frame_root_continuation_metadata_and_first_prompt():
+    root = {
+        "record_type": "session",
+        "source_log_id": "lr",
+        "event_ordinal": 1,
+        "session_id": "root",
+        "timestamp": "2026-01-01T00:00:00Z",
+        "cwd_path_id": "cwd",
+        "repo_path_id": "repo",
+        "model_ids": ["model"],
+        "model_eras": ["gpt-5.6"],
+        "model_providers": ["openai"],
+    }
+    child = {
+        "record_type": "session",
+        "source_log_id": "lc",
+        "event_ordinal": 1,
+        "session_id": "child",
+        "timestamp": "2026-01-01T00:01:00Z",
+        "worktree_path_id": "tree",
+    }
+    lineage = {
+        "record_type": "lineage",
+        "source_log_id": "lc",
+        "session_id": "child",
+        "parent_session_id": "root",
+    }
+    first = msg("first", "user", "root", "lr", "2026-01-01T00:00:01Z", "n1", ["1"])
+    later = msg("later", "user", "root", "lr", "2026-01-01T00:00:02Z", "n2", ["2"])
+    handoff = msg("handoff", "user", "child", "lc", "2026-01-01T00:01:01Z", "n3", ["3"])
+    first["model_id_at_event"] = "event-model"
+    first["model_era_at_event"] = "gpt-5.6"
+    first["model_provider_at_event"] = "openai"
+    got = r.derive([root, child, lineage, later, handoff, first])
+    start = typ(got, "task_start_candidate")
+    continuation = typ(got, "task_continuation_candidate")
+    assert (
+        len(start) == 1
+        and start[0]["message_id"] == "first"
+        and not start[0]["eligible"]
+        and start[0]["eligible_for_sampling_frame"]
+    )
+    assert (
+        start[0]["root_status"] == "no_parent_observed_in_input"
+        and start[0]["cwd_path_id"] == "cwd"
+        and start[0]["model_era_at_event"] == "gpt-5.6"
+        and start[0]["session_observed_model_ids"] == ["model"]
+    )
+    assert (
+        len(continuation) == 1
+        and continuation[0]["parent_session_id"] == "root"
+        and continuation[0]["root_status"] == "explicit_non_root"
+    )
+
+
+def test_task_start_excludes_subagent_delivery_and_unknown_prompt_time():
+    session = {
+        "record_type": "session",
+        "source_log_id": "l",
+        "event_ordinal": 1,
+        "session_id": "s",
+        "timestamp": None,
+    }
+    delivery = msg("d", "user", "s", "l", "2026-01-01T00:00:01Z", "n", ["1"])
+    delivery["message_origin"] = "nonhuman_agent"
+    delivery["delivery_kind"] = "subagent_delivery"
+    unknown = msg("u", "user", "s", "l", None, "n2", ["2"])
+    assert r.task_start_candidates([session, delivery, unknown]) == []
+
+
+def test_task_start_short_prompt_and_duplicate_session_ids_stay_per_log():
+    sessions = [
+        {
+            "record_type": "session",
+            "source_log_id": "l1",
+            "session_id": "same",
+            "timestamp": "2026-01-01T00:00:00Z",
+            "cwd_path_id": "c1",
+        },
+        {
+            "record_type": "session",
+            "source_log_id": "l2",
+            "session_id": "same",
+            "timestamp": "2026-01-01T00:00:00Z",
+            "cwd_path_id": "c2",
+        },
+    ]
+    p1 = msg("p1", "user", "same", "l1", "2026-01-01T00:00:01Z", "short1", [], 1)
+    p1["reuse_eligible"] = False
+    p2 = msg("p2", "user", "same", "l2", "2026-01-01T00:00:01Z", "short2", [], 1)
+    p2["reuse_eligible"] = False
+    got = r.task_start_candidates([*sessions, p1, p2], window_bounded=True)
+    assert len(got) == 2 and {x["cwd_path_id"] for x in got} == {"c1", "c2"}
+    assert all(
+        x["collection_window_bounded"] and x["frame_status"] == "candidate_not_episode"
+        for x in got
+    )
+
+
+def test_one_token_exact_is_task_frame_only_not_prompt_reuse():
+    source = msg("agent-short", "agent", "a", "la", "2026-01-01T00:00:01Z", "exact-short", [], 1)
+    target = msg("user-short", "user", "u", "lu", "2026-01-01T00:00:02Z", "exact-short", [], 1)
+    source["reuse_eligible"] = False
+    target["reuse_eligible"] = False
+    session = {"record_type":"session","source_log_id":"lu","session_id":"u","timestamp":"2026-01-01T00:00:00Z"}
+    got = r.derive([session, source, target])
+    assert typ(got, "prompt_reuse_candidate") == []
+    starts = typ(got, "task_start_candidate")
+    assert len(starts) == 1 and starts[0]["message_id"] == "user-short"
+    assert starts[0]["eligible_for_sampling_frame"]

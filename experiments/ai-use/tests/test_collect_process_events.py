@@ -394,6 +394,7 @@ def test_cli_manifest_provenance_and_no_paths(tmp_path):
     )
     assert manifest["config"]["include_message_fingerprints"] is False
     assert manifest["config"]["message_min_chars"] == 40
+    assert manifest["config"]["message_fingerprint_mode"] == "reuse"
     assert "/secret" not in out.read_text() and "/secret" not in json.dumps(manifest)
     first = manifest["input_inventory"]["hash"]
     with (root / "rollout.jsonl").open("a") as handle:
@@ -630,11 +631,15 @@ def test_claude_message_blocks_and_short_threshold(tmp_path):
         path, "claude", KEY, include_message_fingerprints=True, message_min_chars=20
     )
     messages = [r for r in rows if r["record_type"] == "message_fingerprint"]
-    assert [r["role"] for r in messages] == ["user", "agent"]
+    assert [r["role"] for r in messages] == ["user", "agent", "user"]
     assert (
         stats["messages_below_threshold"] == 1 and stats["message_blocks_excluded"] == 3
     )
-    assert all(r["shingle_size"] == 5 and r["char_count"] >= 20 for r in messages)
+    assert all(r["shingle_size"] == 5 for r in messages)
+    assert (
+        messages[-1]["reuse_eligible"] is False
+        and messages[-1]["winnowed_fingerprint_ids"] == []
+    )
 
 
 def test_message_fingerprints_opt_in_default_unchanged(tmp_path):
@@ -734,3 +739,319 @@ def test_private_outputs_and_key_permissions(tmp_path):
         os.umask(old_umask)
     assert (out.stat().st_mode & 0o777) == 0o600
     assert (manifest.stat().st_mode & 0o777) == 0o600
+
+
+def test_codex_session_model_cwd_repository_metadata(tmp_path):
+    path = tmp_path / "codex-meta.jsonl"
+    write(
+        path,
+        [
+            {
+                "timestamp": "2026-01-01T00:00:00Z",
+                "type": "session_meta",
+                "payload": {
+                    "id": "child",
+                    "model_provider": "openai",
+                    "cwd": "/repo/.worktrees/topic/subdir",
+                    "git": {"repository_url": "https://private.example/repo.git"},
+                    "forked_from_id": "parent",
+                },
+            },
+            {
+                "timestamp": "2026-01-01T00:00:01Z",
+                "type": "turn_context",
+                "payload": {
+                    "cwd": "/repo/.worktrees/topic/subdir",
+                    "model": "gpt-5.6-sol",
+                },
+            },
+            {
+                "timestamp": "2026-01-01T00:00:02Z",
+                "payload": {
+                    "type": "function_call",
+                    "name": "exec_command",
+                    "call_id": "c",
+                    "arguments": json.dumps({"cmd": "git status"}),
+                },
+            },
+        ],
+    )
+    rows, stats = c.extract(path, "codex", KEY)
+    session = next(r for r in rows if r["record_type"] == "session")
+    assert {
+        "cwd_path_id",
+        "repo_path_id",
+        "worktree_path_id",
+        "repository_id",
+    } <= session.keys()
+    assert session["model_eras"] == ["gpt-5.6"] and session["model_providers"] == [
+        "openai"
+    ]
+    assert len(session["model_ids"]) == len(session["model_provider_ids"]) == 1
+    assert (
+        stats["sessions_model_present"]
+        == stats["sessions_provider_present"]
+        == stats["sessions_cwd_present"]
+        == 1
+    )
+    assert not any(
+        raw in json.dumps(session)
+        for raw in ["/repo", "private.example", "gpt-5.6-sol"]
+    )
+    assert any(r["record_type"] == "lineage" for r in rows)
+
+
+def test_claude_session_model_cwd_and_missingness(tmp_path):
+    claude = tmp_path / "claude-meta.jsonl"
+    write(
+        claude,
+        [
+            {
+                "timestamp": "2026-01-01T00:00:00Z",
+                "sessionId": "s",
+                "cwd": "/repo/.worktrees/c",
+                "message": {
+                    "role": "assistant",
+                    "model": "claude-haiku-4-5-20251001",
+                    "content": [
+                        {
+                            "type": "tool_use",
+                            "id": "u",
+                            "name": "Bash",
+                            "input": {"command": "git status"},
+                        }
+                    ],
+                },
+            }
+        ],
+    )
+    rows, stats = c.extract(claude, "claude", KEY)
+    session = next(r for r in rows if r["record_type"] == "session")
+    assert session["model_eras"] == ["claude-4.5"] and session["model_providers"] == [
+        "anthropic"
+    ]
+    assert {"cwd_path_id", "repo_path_id", "worktree_path_id"} <= session.keys()
+    assert stats["sessions_model_present"] == 1
+
+    missing = tmp_path / "missing.jsonl"
+    write(
+        missing,
+        [
+            {
+                "timestamp": "2026-01-01T00:00:00Z",
+                "payload": {
+                    "type": "function_call",
+                    "name": "exec_command",
+                    "call_id": "c",
+                    "arguments": json.dumps({"cmd": "git status"}),
+                },
+            }
+        ],
+    )
+    missing_rows, missing_stats = c.extract(missing, "codex", KEY)
+    missing_session = next(r for r in missing_rows if r["record_type"] == "session")
+    assert (
+        missing_session["model_ids"]
+        == missing_session["model_eras"]
+        == missing_session["model_providers"]
+        == []
+    )
+    assert (
+        missing_stats["sessions_model_missing"]
+        == missing_stats["sessions_provider_missing"]
+        == missing_stats["sessions_cwd_missing"]
+        == 1
+    )
+
+
+def test_claude_sidechain_task_delivery_and_lineage(tmp_path):
+    path = tmp_path / "agent-a2.jsonl"
+    write(
+        path,
+        [
+            {
+                "timestamp": "2026-01-01T00:00:00Z",
+                "type": "user",
+                "sessionId": "root-session",
+                "agentId": "agent-a2",
+                "isSidechain": True,
+                "cwd": "/repo",
+                "message": {
+                    "role": "user",
+                    "content": "Inspect the bounded collector behavior and report the exact structural result.",
+                },
+            },
+            {
+                "timestamp": "2026-01-01T00:00:01Z",
+                "type": "assistant",
+                "sessionId": "root-session",
+                "agentId": "agent-a2",
+                "isSidechain": True,
+                "cwd": "/repo",
+                "message": {
+                    "role": "assistant",
+                    "model": "claude-haiku-4-5-20251001",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "The bounded collector behavior is structurally correct for this fixture.",
+                        }
+                    ],
+                },
+            },
+        ],
+    )
+    rows, stats = c.extract(
+        path, "claude", KEY, include_message_fingerprints=True, message_min_chars=20
+    )
+    session = next(r for r in rows if r["record_type"] == "session")
+    lineage = next(r for r in rows if r["record_type"] == "lineage")
+    prompt = next(
+        r
+        for r in rows
+        if r["record_type"] == "message_fingerprint" and r["role"] == "user"
+    )
+    assert session["session_kind"] == "sidechain" and stats["sessions_sidechain"] == 1
+    assert (
+        lineage["session_id"] == session["session_id"]
+        and lineage["parent_session_id"] != session["session_id"]
+    )
+    assert (prompt["message_origin"], prompt["delivery_kind"]) == (
+        "nonhuman_agent",
+        "subagent_delivery",
+    )
+
+
+def test_short_direct_prompt_is_task_visible(tmp_path):
+    path = tmp_path / "short.jsonl"
+    write(
+        path,
+        [
+            {
+                "timestamp": "2026-01-01T00:00:00Z",
+                "type": "session_meta",
+                "payload": {"id": "s"},
+            },
+            {
+                "timestamp": "2026-01-01T00:00:01Z",
+                "payload": {"type": "user_message", "message": "Fix this."},
+            },
+            {
+                "timestamp": "2026-01-01T00:00:02Z",
+                "payload": {
+                    "type": "user_message",
+                    "message": "Please fix this collector behavior and preserve the exact structural evidence.",
+                },
+            },
+        ],
+    )
+    rows, stats = c.extract(
+        path, "codex", KEY, include_message_fingerprints=True, message_min_chars=20
+    )
+    prompts = [r for r in rows if r["record_type"] == "message_fingerprint"]
+    assert (
+        len(prompts) == 2
+        and prompts[0]["reuse_eligible"] is False
+        and prompts[1]["reuse_eligible"] is True
+    )
+    assert (
+        prompts[0]["winnowed_fingerprint_ids"] == []
+        and prompts[0]["message_origin"] == "human_user_candidate"
+    )
+    assert stats["messages_below_threshold"] == 1
+    only = tmp_path / "only-short.jsonl"
+    write(
+        only,
+        [
+            {
+                "timestamp": "2026-01-01T00:00:00Z",
+                "payload": {"type": "user_message", "message": "Do it."},
+            }
+        ],
+    )
+    only_rows, _ = c.extract(
+        only, "codex", KEY, include_message_fingerprints=True, message_min_chars=20
+    )
+    assert any(
+        r["record_type"] == "message_fingerprint" and r["reuse_eligible"] is False
+        for r in only_rows
+    )
+
+
+def test_prompt_time_model_switch_and_post_end_metadata_exclusion(tmp_path):
+    path = tmp_path / "switch.jsonl"
+    write(
+        path,
+        [
+            {
+                "timestamp": "2025-12-31T23:59:00Z",
+                "type": "session_meta",
+                "payload": {"id": "s", "cwd": "/baseline", "model_provider": "openai"},
+            },
+            {
+                "timestamp": "2025-12-31T23:59:30Z",
+                "type": "turn_context",
+                "payload": {"cwd": "/baseline", "model": "gpt-5.6-terra"},
+            },
+            {
+                "timestamp": "2026-01-01T00:01:00Z",
+                "payload": {
+                    "type": "user_message",
+                    "message": "Please inspect the first bounded task prompt and record its model era.",
+                },
+            },
+            {
+                "timestamp": "2026-01-01T00:02:00Z",
+                "type": "turn_context",
+                "payload": {"cwd": "/in-window", "model": "gpt-5.6-sol"},
+            },
+            {
+                "timestamp": "2026-01-01T00:03:00Z",
+                "payload": {
+                    "type": "user_message",
+                    "message": "Please inspect the second bounded task prompt and record its model era.",
+                },
+            },
+            {
+                "timestamp": "2026-02-01T00:00:00Z",
+                "type": "turn_context",
+                "payload": {"cwd": "/post-end-secret", "model": "gpt-9.9-future"},
+            },
+        ],
+    )
+    rows, stats = c.extract(
+        path,
+        "codex",
+        KEY,
+        c.parse_time("2026-01-01T00:00:00Z"),
+        c.parse_time("2026-02-01T00:00:00Z"),
+        include_message_fingerprints=True,
+        message_min_chars=20,
+    )
+    prompts = [r for r in rows if r["record_type"] == "message_fingerprint"]
+    assert [r["model_era_at_event"] for r in prompts] == ["gpt-5.6", "gpt-5.6"]
+    assert prompts[0]["model_id_at_event"] != prompts[1]["model_id_at_event"]
+    assert all(r["model_metadata_provenance"] == "codex_turn_context" for r in prompts)
+    session = next(r for r in rows if r["record_type"] == "session")
+    assert session["metadata_before_window"] is True and len(session["model_ids"]) == 2
+    assert "gpt-9.9" not in session[
+        "model_eras"
+    ] and "/post-end-secret" not in json.dumps(rows)
+    assert stats["metadata_before_window"] == 2
+
+
+def test_message_fingerprint_modes_default_reuse_and_task_frame(tmp_path):
+    path = tmp_path / "modes.jsonl"
+    raw = "Please inspect this sufficiently long task prompt and preserve the exact bounded evidence."
+    write(path, [{"timestamp":"2026-01-01T00:00:00Z","payload":{"type":"user_message","message":raw}}])
+    default_rows, default_stats = c.extract(path, "codex", KEY, include_message_fingerprints=True, message_min_chars=20)
+    reuse = next(r for r in default_rows if r["record_type"] == "message_fingerprint")
+    assert reuse["reuse_eligible"] is True and reuse["winnowed_fingerprint_ids"]
+    assert reuse["shingle_size"] == 5 and default_stats["message_mode_reuse_emitted"] == 1
+
+    frame_rows, frame_stats = c.extract(path, "codex", KEY, include_message_fingerprints=True, message_min_chars=20, message_fingerprint_mode="task-frame")
+    frame = next(r for r in frame_rows if r["record_type"] == "message_fingerprint")
+    assert frame["reuse_eligible"] is False
+    assert not ({"winnowed_fingerprint_ids","shingle_size","winnow_window"} & frame.keys())
+    assert frame_stats["message_mode_task-frame_emitted"] == 1
+    assert raw not in json.dumps(frame_rows)

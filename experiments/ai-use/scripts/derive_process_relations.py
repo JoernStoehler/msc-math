@@ -24,6 +24,8 @@ TYPES = {
     "file_transferred",
     "file_deleted",
     "prompt_reuse_candidate",
+    "task_start_candidate",
+    "task_continuation_candidate",
 }
 
 
@@ -199,6 +201,11 @@ def prompt_reuse(
     stats=None,
 ):
     stats = stats if stats is not None else Counter()
+    sidechains = {
+        (x.get("source_log_id"), x.get("session_id"))
+        for x in rows
+        if x.get("record_type") == "session" and x.get("session_kind") == "sidechain"
+    }
     messages = [
         x
         for x in rows
@@ -213,12 +220,19 @@ def prompt_reuse(
                 and x.get("message_origin") == "human_user_candidate"
             )
         )
+        and (x.get("source_log_id"), x.get("session_id")) not in sidechains
     ]
     groups = {}
     for m in messages:
         shingles = tuple(sorted(set(m.get("winnowed_fingerprint_ids") or [])))
         role = "agent" if m["role"] in {"agent", "assistant"} else "user"
-        key = (role, m.get("normalized_text_id"), shingles, m.get("token_count"))
+        key = (
+            role,
+            m.get("normalized_text_id"),
+            shingles,
+            m.get("token_count"),
+            bool(m.get("reuse_eligible")),
+        )
         groups.setdefault(
             key,
             {
@@ -226,21 +240,25 @@ def prompt_reuse(
                 "normalized_text_id": key[1],
                 "shingles": set(shingles),
                 "token_count": key[3],
+                "reuse_eligible": key[4],
                 "members": [],
             },
         )["members"].append(m)
     sources = [g for g in groups.values() if g["role"] == "agent"]
     targets = [g for g in groups.values() if g["role"] == "user"]
+    stats["reuse_ineligible_sources_suppressed"] += sum(
+        len(g["members"]) for g in sources if not g["reuse_eligible"]
+    )
     exact, posting, df = defaultdict(list), defaultdict(list), Counter()
     for i, g in enumerate(sources):
-        if g["normalized_text_id"]:
+        if g["reuse_eligible"] and g["normalized_text_id"]:
             exact[g["normalized_text_id"]].append(i)
-        for shingle in g["shingles"]:
+        for shingle in g["shingles"] if g["reuse_eligible"] else ():
             # Session prevalence, not grouped-document count: broadcasts of an
             # identical template must still make its shingles non-distinctive.
             df[shingle] += len({m.get("session_id") for m in g["members"]})
     for i, g in enumerate(sources):
-        for shingle in g["shingles"]:
+        for shingle in g["shingles"] if g["reuse_eligible"] else ():
             if df[shingle] <= max_shingle_df:
                 posting[shingle].append(i)
     stats["high_prevalence_shingles_suppressed"] += sum(
@@ -248,8 +266,11 @@ def prompt_reuse(
     )
     result = []
     for target in targets:
+        if not target["reuse_eligible"]:
+            stats["reuse_ineligible_targets_suppressed"] += len(target["members"])
+            continue
         overlap_counts = Counter()
-        for shingle in target["shingles"]:
+        for shingle in target["shingles"] if target["reuse_eligible"] else ():
             if df[shingle] <= max_shingle_df:
                 overlap_counts.update(posting.get(shingle, []))
         candidates = set(exact.get(target["normalized_text_id"], [])) | {
@@ -409,7 +430,125 @@ def prompt_reuse(
     return result
 
 
-def derive(rows, selected=None, reuse_config=None):
+def task_start_candidates(rows, window_bounded=False):
+    """First direct human prompt per session; a sampling frame, not boundaries."""
+    sessions = {
+        (x.get("source_log_id"), x.get("session_id")): x
+        for x in rows
+        if x.get("record_type") == "session"
+    }
+    parents = {
+        (x.get("source_log_id"), x.get("session_id")): x.get("parent_session_id")
+        for x in rows
+        if x.get("record_type") == "lineage"
+    }
+    prompts = defaultdict(list)
+    for row in rows:
+        if (
+            row.get("record_type") == "message_fingerprint"
+            and row.get("role") == "user"
+            and row.get("message_origin") == "human_user_candidate"
+            and row.get("delivery_kind") == "direct_user_prompt"
+        ):
+            prompts[(row.get("source_log_id"), row.get("session_id"))].append(row)
+    result = []
+    metadata = (
+        "cwd_path_id",
+        "repo_path_id",
+        "worktree_path_id",
+        "repository_id",
+        "model_ids",
+        "model_eras",
+        "model_providers",
+        "model_provider_ids",
+    )
+    for (source_log_id, session_id), candidates in prompts.items():
+        session = sessions.get((source_log_id, session_id))
+        candidates = [x for x in candidates if when(x.get("timestamp")) is not None]
+        if not session or not candidates:
+            continue
+        first = min(
+            candidates,
+            key=lambda x: (
+                when(x["timestamp"]),
+                x.get("event_ordinal", 0),
+                x.get("message_id", ""),
+            ),
+        )
+        session_time = when(session.get("timestamp"))
+        prompt_time = when(first.get("timestamp"))
+        chronology = prompt_time is not None and (
+            session_time is None or session_time <= prompt_time
+        )
+        parent = parents.get((source_log_id, session_id))
+        root = parent is None
+        kind = "task_start_candidate" if root else "task_continuation_candidate"
+        fields = {
+            "session_id": session_id,
+            "source_log_id": first.get("source_log_id"),
+            "message_id": first.get("message_id"),
+            "prompt_timestamp": first.get("timestamp"),
+            "session_timestamp": session.get("timestamp"),
+            "root_status": "no_parent_observed_in_input"
+            if root
+            else "explicit_non_root",
+            "parent_status": "no_parent_observed_in_input"
+            if root
+            else "parent_observed",
+            "parent_session_id": parent,
+            "collection_window_bounded": bool(window_bounded),
+            "frame_status": "candidate_not_episode",
+            "eligible_for_sampling_frame": chronology,
+            "sampling_frame_note": "candidate_denominator_not_episode_boundary",
+        }
+        fields.update({k: session[k] for k in metadata if k in session})
+        fields["session_observed_model_ids"] = fields.pop("model_ids", [])
+        fields["session_observed_model_eras"] = fields.pop("model_eras", [])
+        fields["session_observed_model_providers"] = fields.pop("model_providers", [])
+        fields["session_observed_model_provider_ids"] = fields.pop(
+            "model_provider_ids", []
+        )
+        for key in (
+            "model_id_at_event",
+            "model_era_at_event",
+            "model_metadata_provenance",
+            "model_provider_at_event",
+            "model_provider_id_at_event",
+        ):
+            if key in first:
+                fields[key] = first[key]
+        se = {
+            "event_id": digest(
+                {
+                    "source_log_id": session.get("source_log_id"),
+                    "event_ordinal": session.get("event_ordinal"),
+                    "record_type": "session",
+                }
+            ),
+            "source_log_id": session.get("source_log_id"),
+            "timestamp": session.get("timestamp"),
+            "evidence_status": {"issued": True, "command_outcome": "unknown"},
+        }
+        me = {
+            "event_id": first.get("message_id"),
+            "source_log_id": first.get("source_log_id"),
+            "timestamp": first.get("timestamp"),
+            "evidence_status": {"issued": True, "command_outcome": "unknown"},
+        }
+        result.append(
+            rel(
+                kind,
+                [se, me],
+                fields,
+                "medium" if root else "high",
+                False,
+                "candidate_not_episode",
+            )
+        )
+    return result
+
+
+def derive(rows, selected=None, reuse_config=None, frame_config=None):
     wanted = selected or TYPES
     out = []
     for row in rows:
@@ -729,6 +868,11 @@ def derive(rows, selected=None, reuse_config=None):
                 )
     if "prompt_reuse_candidate" in wanted:
         out.extend(prompt_reuse(rows, **(reuse_config or {})))
+    out.extend(
+        x
+        for x in task_start_candidates(rows, **(frame_config or {}))
+        if x["relation_type"] in wanted
+    )
     # IDs are content-derived; collapse exact duplicates.
     return sorted(
         {x["relation_id"]: x for x in out}.values(),
@@ -788,7 +932,13 @@ def main():
         "ambiguity_group_cap": a.reuse_ambiguity_group_cap,
         "stats": reuse_stats,
     }
-    relations = derive(rows, selected, reuse_config)
+    window = source.get("window") if isinstance(source.get("window"), dict) else {}
+    frame_config = {
+        "window_bounded": bool(
+            window.get("start") is not None or window.get("end") is not None
+        )
+    }
+    relations = derive(rows, selected, reuse_config, frame_config)
     data = "".join(json.dumps(x, sort_keys=True) + "\n" for x in relations)
     private_write(a.output, data)
     propagated = {
@@ -812,6 +962,7 @@ def main():
         "relation_types": sorted(selected or TYPES),
         "prompt_reuse_config": {k: v for k, v in reuse_config.items() if k != "stats"},
         "prompt_reuse_suppressions": dict(sorted(reuse_stats.items())),
+        "task_frame_config": frame_config,
         "rows": len(relations),
         "by_relation_type": dict(
             sorted(Counter(x["relation_type"] for x in relations).items())

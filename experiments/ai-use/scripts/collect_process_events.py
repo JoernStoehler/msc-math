@@ -9,6 +9,8 @@ import json
 import os
 import re
 import shlex
+import sqlite3
+import tempfile
 import unicodedata
 from collections import Counter
 from datetime import datetime
@@ -110,6 +112,23 @@ def classify_message_origin(role: str, text: str, source: str) -> tuple[str, str
     return "human_user_candidate", "direct_user_prompt"
 
 
+def model_era(model: str) -> str:
+    gpt = re.search(r"\bgpt-(\d+(?:\.\d+)?)", model, re.I)
+    if gpt:
+        return "gpt-" + gpt.group(1)
+    claude = re.search(r"\bclaude-(?:[a-z]+-)?(\d+)[-.](\d+)", model, re.I)
+    if claude:
+        return f"claude-{claude.group(1)}.{claude.group(2)}"
+    return "unknown"
+
+
+def safe_provider(provider: str) -> str:
+    normalized = provider.casefold()
+    return (
+        normalized if normalized in {"openai", "anthropic", "azure_openai"} else "other"
+    )
+
+
 def visible_messages(
     event: dict[str, Any], source: str
 ) -> tuple[list[tuple[str, str, str, str]], Counter[str]]:
@@ -180,6 +199,20 @@ def visible_messages(
         (role, text, *classify_message_origin(role, text, source))
         for role, text in raw_found
     ]
+    if (
+        source == "claude"
+        and event.get("isSidechain") is True
+        and isinstance(event.get("agentId"), str)
+    ):
+        found = [
+            (role, text, "nonhuman_agent", "subagent_delivery")
+            if role == "user"
+            else (role, text, origin, delivery)
+            for role, text, origin, delivery in found
+        ]
+        coverage["message_schema_claude_sidechain"] += sum(
+            role == "user" for role, *_ in found
+        )
     return found, coverage
 
 
@@ -599,7 +632,10 @@ def extract(
     content_hash: str | None = None,
     include_message_fingerprints: bool = False,
     message_min_chars: int = 40,
+    message_fingerprint_mode: str = "reuse",
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    if message_fingerprint_mode not in {"task-frame", "reuse"}:
+        raise ValueError("message_fingerprint_mode must be 'task-frame' or 'reuse'")
     rows, calls, stats = [], {}, Counter()
     variants, included_variants = Counter(), Counter()
     session_id, session_timestamp, session_cwd, known_parent, parent_in_range = (
@@ -610,14 +646,35 @@ def extract(
         False,
     )
     session_ordinal = 0
+    session_repo_identity: str | None = None
+    explicit_models: set[str] = set()
+    explicit_providers: set[str] = set()
+    current_model: str | None = None
+    current_provider: str | None = None
+    current_model_provenance: str | None = None
+    session_is_sidechain = False
     source_log_id = pseudonym(
         key, "source_log", source + "\0" + (content_hash or file_hash(path))
     )
     bounded = start is not None or end is not None
+    metadata_before_window_used = False
     seen_messages: dict[tuple[str, str, str], int] = {}
     with path.open(encoding="utf-8", errors="replace") as handle:
         for line_no, line in enumerate(handle, 1):
             stats["events_scanned"] += 1
+            if bounded:
+                prefix = line[:512]
+                timestamp_match = re.match(r'\{"timestamp":"([^"]+)"', prefix)
+                prefix_when = parse_time(timestamp_match.group(1)) if timestamp_match else None
+                if prefix_when is not None:
+                    after_window = end is not None and prefix_when >= end
+                    before_window = start is not None and prefix_when < start
+                    codex_baseline = source == "codex" and (
+                        '"type":"session_meta"' in prefix or '"type":"turn_context"' in prefix
+                    )
+                    if after_window or (before_window and not codex_baseline):
+                        stats["events_outside_window_prefiltered"] += 1
+                        continue
             try:
                 event = json.loads(line)
             except json.JSONDecodeError:
@@ -659,7 +716,17 @@ def extract(
                     variant = "claude_" + "+".join(kinds)
             if variant:
                 variants[variant] += 1
-            if source == "codex" and event.get("type") == "session_meta":
+            metadata_allowed = not bounded or (
+                when is not None and (end is None or when < end)
+            )
+            metadata_before = bool(metadata_allowed and start and when and when < start)
+            metadata_event = False
+            if (
+                source == "codex"
+                and event.get("type") == "session_meta"
+                and metadata_allowed
+            ):
+                metadata_event = True
                 git_meta = (
                     payload.get("git") if isinstance(payload.get("git"), dict) else {}
                 )
@@ -669,6 +736,20 @@ def extract(
                     payload.get("cwd") or git_meta.get("cwd"),
                 )
                 session_ordinal = line_no
+                repository_url = git_meta.get("repository_url")
+                if isinstance(repository_url, str):
+                    session_repo_identity = repository_url
+                provider = payload.get("model_provider") or payload.get("provider")
+                if isinstance(provider, str):
+                    explicit_providers.add(provider)
+                    current_provider = provider
+                meta_model = payload.get("model")
+                if isinstance(meta_model, str):
+                    explicit_models.add(meta_model)
+                    current_model, current_model_provenance = (
+                        meta_model,
+                        "codex_session_meta",
+                    )
                 parent = payload.get("forked_from_id")
                 sub = (
                     payload.get("source", {}).get("subagent", {})
@@ -683,19 +764,75 @@ def extract(
                 )
                 if parent:
                     known_parent = parent
+            if (
+                source == "codex"
+                and event.get("type") == "turn_context"
+                and metadata_allowed
+            ):
+                metadata_event = True
+                context_cwd = payload.get("cwd")
+                if isinstance(context_cwd, str):
+                    session_cwd = context_cwd
+                context_model = payload.get("model")
+                if isinstance(context_model, str):
+                    explicit_models.add(context_model)
+                    current_model, current_model_provenance = (
+                        context_model,
+                        "codex_turn_context",
+                    )
+            if source == "claude" and metadata_allowed:
+                metadata_event = True
+                root_session = event.get("sessionId")
+                sidechain = event.get("isSidechain") is True and isinstance(
+                    event.get("agentId"), str
+                )
+                if sidechain:
+                    session_is_sidechain = True
+                    session_id = str(event["agentId"])
+                    if isinstance(root_session, str):
+                        known_parent = root_session
+                elif isinstance(root_session, str):
+                    session_id = root_session
+                if session_timestamp is None:
+                    session_timestamp, session_ordinal = timestamp, line_no
+                claude_cwd = event.get("cwd")
+                if isinstance(claude_cwd, str):
+                    session_cwd = claude_cwd
+                message_obj = (
+                    event.get("message")
+                    if isinstance(event.get("message"), dict)
+                    else {}
+                )
+                claude_model = message_obj.get("model") or event.get("model")
+                if isinstance(claude_model, str):
+                    explicit_models.add(claude_model)
+                    current_model, current_model_provenance = (
+                        claude_model,
+                        "claude_message",
+                    )
+                explicit_providers.add("anthropic")
+                current_provider = "anthropic"
+            if metadata_event:
+                if metadata_before:
+                    metadata_before_window_used = True
+                    stats["metadata_before_window"] += 1
+                else:
+                    stats["metadata_in_window"] += 1
             if bounded and when is None:
                 stats["unknown_timestamps_excluded"] += 1
                 continue
             in_range = not ((start and when < start) or (end and when >= end))
-            if event.get("type") == "session_meta" and known_parent and in_range:
+            if (
+                known_parent
+                and in_range
+                and (event.get("type") == "session_meta" or source == "claude")
+            ):
                 parent_in_range = True
             if not in_range:
                 continue
             stats["events_in_range"] += 1
             if variant:
                 included_variants[variant] += 1
-            if source == "claude":
-                session_id = str(event.get("sessionId") or session_id)
             if include_message_fingerprints:
                 messages, message_coverage = visible_messages(event, source)
                 stats.update(message_coverage)
@@ -707,9 +844,10 @@ def extract(
                 ) in enumerate(messages):
                     stats["message_candidates"] += 1
                     normalized = normalize_visible_text(text)
-                    if len(normalized) < message_min_chars:
+                    above_reuse_threshold = len(normalized) >= message_min_chars
+                    reuse_eligible = message_fingerprint_mode == "reuse" and above_reuse_threshold
+                    if not above_reuse_threshold:
                         stats["messages_below_threshold"] += 1
-                        continue
                     normalized_id = pseudonym(key, "normalized_message", normalized)
                     # Collapse only parallel schema representations at the same
                     # timestamp. Later repetitions remain separate chronology.
@@ -753,15 +891,45 @@ def extract(
                             "normalized_text_id": normalized_id,
                             "char_count": len(normalized),
                             "token_count": len(tokens),
-                            "shingle_size": 5,
-                            "winnow_window": 4,
+                            "reuse_eligible": reuse_eligible,
+                            "shingle_size": 5 if message_fingerprint_mode == "reuse" else None,
+                            "winnow_window": 4 if message_fingerprint_mode == "reuse" else None,
                             "winnowed_fingerprint_ids": winnowed_fingerprints(
                                 tokens, key
-                            ),
+                            )
+                            if reuse_eligible
+                            else [],
                         }
                     )
+                    message_row = rows[-1]
+                    if message_fingerprint_mode == "task-frame":
+                        message_row.pop("shingle_size", None)
+                        message_row.pop("winnow_window", None)
+                        message_row.pop("winnowed_fingerprint_ids", None)
+                    if current_model:
+                        message_row["model_id_at_event"] = pseudonym(
+                            key, "model", current_model
+                        )
+                        message_row["model_era_at_event"] = model_era(current_model)
+                        message_row["model_metadata_provenance"] = (
+                            current_model_provenance
+                        )
+                        stats["message_model_at_event_present"] += 1
+                    else:
+                        stats["message_model_at_event_missing"] += 1
+                    if current_provider:
+                        message_row["model_provider_at_event"] = safe_provider(
+                            current_provider
+                        )
+                        message_row["model_provider_id_at_event"] = pseudonym(
+                            key, "model_provider", current_provider
+                        )
+                        stats["message_provider_at_event_present"] += 1
+                    else:
+                        stats["message_provider_at_event_missing"] += 1
                     seen_messages[dedup_key] = len(rows) - 1
                     stats["message_fingerprints_emitted"] += 1
+                    stats[f"message_mode_{message_fingerprint_mode}_emitted"] += 1
                     stats[f"message_origin_{message_origin}"] += 1
                     stats[f"message_delivery_{delivery_kind}"] += 1
             blocks: list[tuple[str, str, str, object]] = []
@@ -904,24 +1072,86 @@ def extract(
                     "metadata_outside_window": bounded and not parent_in_range,
                 },
             )
+        session_row = {
+            "record_type": "session",
+            "source": source,
+            "source_log_id": source_log_id,
+            "event_ordinal": session_ordinal,
+            "session_id": pseudonym(key, "session", session_id),
+            "timestamp": session_timestamp,
+            "confidence": "high" if session_timestamp else "medium",
+            "model_ids": sorted(
+                pseudonym(key, "model", model) for model in explicit_models
+            ),
+            "model_eras": sorted({model_era(model) for model in explicit_models}),
+            "model_providers": sorted(
+                {safe_provider(provider) for provider in explicit_providers}
+            ),
+            "model_provider_ids": sorted(
+                pseudonym(key, "model_provider", provider)
+                for provider in explicit_providers
+            ),
+            "metadata_before_window": metadata_before_window_used,
+            "session_kind": "sidechain"
+            if session_is_sidechain
+            else "primary_or_unknown",
+        }
+        if session_cwd:
+            session_row["cwd_path_id"] = path_id(key, session_cwd, session_cwd)
+            marker = f"{os.sep}.worktrees{os.sep}"
+            if marker in os.path.normpath(session_cwd):
+                repo_root, worktree_tail = os.path.normpath(session_cwd).split(
+                    marker, 1
+                )
+                worktree_root = repo_root + marker + worktree_tail.split(os.sep, 1)[0]
+                session_row["repo_path_id"] = path_id(key, repo_root, repo_root)
+                session_row["worktree_path_id"] = path_id(
+                    key, worktree_root, worktree_root
+                )
+            else:
+                session_row["repo_path_id"] = path_id(key, session_cwd, session_cwd)
+        if session_repo_identity:
+            session_row["repository_id"] = pseudonym(
+                key, "repository", session_repo_identity
+            )
         rows.insert(
             0,
-            {
-                "record_type": "session",
-                "source": source,
-                "source_log_id": source_log_id,
-                "event_ordinal": session_ordinal,
-                "session_id": pseudonym(key, "session", session_id),
-                "timestamp": session_timestamp,
-                "confidence": "high" if session_timestamp else "medium",
-            },
+            session_row,
         )
+        stats[
+            "sessions_model_present" if explicit_models else "sessions_model_missing"
+        ] += 1
+        stats[
+            "sessions_provider_present"
+            if explicit_providers
+            else "sessions_provider_missing"
+        ] += 1
+        stats["sessions_cwd_present" if session_cwd else "sessions_cwd_missing"] += 1
+        stats[
+            "sessions_sidechain"
+            if session_is_sidechain
+            else "sessions_primary_or_unknown"
+        ] += 1
     for label in (
         "outcome_succeeded",
         "outcome_failed",
         "outcome_reported",
         "outcome_wrapper_completed",
         "unmatched_outputs",
+        "sessions_model_present",
+        "sessions_model_missing",
+        "sessions_provider_present",
+        "sessions_provider_missing",
+        "sessions_cwd_present",
+        "sessions_cwd_missing",
+        "sessions_sidechain",
+        "sessions_primary_or_unknown",
+        "metadata_before_window",
+        "metadata_in_window",
+        "message_model_at_event_present",
+        "message_model_at_event_missing",
+        "message_provider_at_event_present",
+        "message_provider_at_event_missing",
     ):
         stats[label] += 0
     stats["schema_variants_scanned"] = dict(variants)
@@ -944,7 +1174,11 @@ def log_paths(
 
 
 def file_hash(path: Path) -> str:
-    return "sha256:" + hashlib.sha256(path.read_bytes()).hexdigest()
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return "sha256:" + digest.hexdigest()
 
 
 def inventory_hash(items: list[tuple[str, str]]) -> str:
@@ -975,6 +1209,28 @@ def private_write_text(path: Path, text: str) -> None:
         os.close(fd)
 
 
+def private_write_lines(path: Path, lines: Any) -> tuple[str, int]:
+    """Stream private text lines and return their SHA-256 and count."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    flags = os.O_WRONLY | os.O_CREAT | getattr(os, "O_CLOEXEC", 0) | getattr(os, "O_NOFOLLOW", 0)
+    fd = os.open(path, flags, 0o600)
+    digest, count = hashlib.sha256(), 0
+    try:
+        os.fchmod(fd, 0o600)
+        os.ftruncate(fd, 0)
+        with os.fdopen(fd, "wb", closefd=False) as handle:
+            for line in lines:
+                encoded = line.encode("utf-8")
+                handle.write(encoded)
+                digest.update(encoded)
+                count += 1
+            handle.flush()
+            os.fsync(handle.fileno())
+    finally:
+        os.close(fd)
+    return "sha256:" + digest.hexdigest(), count
+
+
 def main() -> None:
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--codex-root", action="append", type=Path, default=[])
@@ -987,6 +1243,11 @@ def main() -> None:
     p.add_argument("--include-empty-tool-calls", action="store_true")
     p.add_argument("--include-message-fingerprints", action="store_true")
     p.add_argument("--message-min-chars", type=int, default=40)
+    p.add_argument(
+        "--message-fingerprint-mode",
+        choices=("task-frame", "reuse"),
+        default="reuse",
+    )
     args = p.parse_args()
     if not args.codex_root and not args.claude_root:
         p.error("at least one explicit source root is required")
@@ -1007,12 +1268,23 @@ def main() -> None:
     key = args.key_file.read_bytes()
     if not key:
         p.error("--key-file must not be empty")
-    all_rows = []
+    args.out.parent.mkdir(parents=True, exist_ok=True)
+    spool_fd, spool_name = tempfile.mkstemp(prefix=".process-events-", suffix=".sqlite", dir=args.out.parent)
+    os.fchmod(spool_fd, 0o600)
+    os.close(spool_fd)
+    spool = sqlite3.connect(spool_name)
+    spool.execute("PRAGMA journal_mode=OFF")
+    spool.execute("PRAGMA synchronous=OFF")
+    spool.execute("CREATE TABLE rows (timestamp TEXT, source TEXT, session_id TEXT, record_type TEXT, call_id TEXT, source_log_id TEXT, event_ordinal INTEGER, sequence INTEGER PRIMARY KEY, json TEXT)")
+    sequence = 0
     totals = Counter()
     variants = Counter()
     included_variants = Counter()
     files_by_source = Counter()
     included_by_source = Counter()
+    record_types = Counter()
+    action_types = Counter()
+    action_confidences = Counter()
     inventory = []
     for path, source in log_paths(args.codex_root, args.claude_root):
         digest = file_hash(path)
@@ -1028,30 +1300,45 @@ def main() -> None:
             digest,
             args.include_message_fingerprints,
             args.message_min_chars,
+            args.message_fingerprint_mode,
         )
-        all_rows.extend(rows)
+        for row in rows:
+            encoded = json.dumps(row, sort_keys=True) + "\n"
+            spool.execute(
+                "INSERT INTO rows VALUES (?,?,?,?,?,?,?,?,?)",
+                (
+                    row.get("timestamp") or "",
+                    row["source"],
+                    row["session_id"],
+                    row["record_type"],
+                    row.get("call_id", ""),
+                    row.get("source_log_id", ""),
+                    int(row.get("event_ordinal") or 0),
+                    sequence,
+                    encoded,
+                ),
+            )
+            sequence += 1
+            record_types[row["record_type"]] += 1
+            row_actions = list(row.get("actions", [])) + [
+                action
+                for nested in row.get("nested_commands", [])
+                for action in nested.get("actions", [])
+            ]
+            action_types.update(action["action"] for action in row_actions)
+            action_confidences.update(action["confidence"] for action in row_actions)
+        spool.commit()
         if rows:
             included_by_source[source] += 1
         variants.update(stats.pop("schema_variants_scanned", {}))
         included_variants.update(stats.pop("schema_variants_included", {}))
         totals.update(stats)
-    all_rows.sort(
-        key=lambda r: (
-            r.get("timestamp") or "",
-            r["source"],
-            r["session_id"],
-            r["record_type"],
-            r.get("call_id", ""),
-        )
+    ordered = spool.execute(
+        "SELECT json FROM rows ORDER BY timestamp,source,session_id,record_type,call_id,source_log_id,event_ordinal,sequence"
     )
-    data = "".join(json.dumps(r, sort_keys=True) + "\n" for r in all_rows)
-    private_write_text(args.out, data)
-    actions = [a for r in all_rows for a in r.get("actions", [])] + [
-        a
-        for r in all_rows
-        for n in r.get("nested_commands", [])
-        for a in n.get("actions", [])
-    ]
+    output_hash, output_rows = private_write_lines(args.out, (row[0] for row in ordered))
+    spool.close()
+    os.unlink(spool_name)
     per_source = {
         source: {
             "count": sum(s == source for s, _ in inventory),
@@ -1075,23 +1362,20 @@ def main() -> None:
             "include_empty_tool_calls": args.include_empty_tool_calls,
             "include_message_fingerprints": args.include_message_fingerprints,
             "message_min_chars": args.message_min_chars,
+            "message_fingerprint_mode": args.message_fingerprint_mode,
             "message_shingle_size": 5,
             "message_winnow_window": 4,
         },
         "key_fingerprint": "sha256:" + hashlib.sha256(key).hexdigest()[:16],
         "script_hash": file_hash(Path(__file__)),
-        "output_hash": "sha256:" + hashlib.sha256(data.encode()).hexdigest(),
-        "rows": len(all_rows),
+        "output_hash": output_hash,
+        "rows": output_rows,
         "coverage": dict(sorted(totals.items())),
         "schema_variants_scanned": dict(sorted(variants.items())),
         "schema_variants_included": dict(sorted(included_variants.items())),
-        "by_record_type": dict(
-            sorted(Counter(r["record_type"] for r in all_rows).items())
-        ),
-        "by_action": dict(sorted(Counter(a["action"] for a in actions).items())),
-        "by_action_confidence": dict(
-            sorted(Counter(a["confidence"] for a in actions).items())
-        ),
+        "by_record_type": dict(sorted(record_types.items())),
+        "by_action": dict(sorted(action_types.items())),
+        "by_action_confidence": dict(sorted(action_confidences.items())),
     }
     target = args.manifest or args.out.with_suffix(args.out.suffix + ".manifest.json")
     private_write_text(target, json.dumps(manifest, indent=2, sort_keys=True) + "\n")
