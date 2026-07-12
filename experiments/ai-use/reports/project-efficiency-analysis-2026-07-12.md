@@ -163,6 +163,37 @@ effort with much longer contexts. Whether that multiplication was worth its
 mathematical output is a separate value question; the current logs cannot
 collapse it into a truthful productivity number.
 
+## Was GPT-5.6 itself wasteful?
+
+The answer supported by this data is: **not established; the deployment was
+wasteful-looking, but the model was not isolated as the cause**.
+
+The model change and the workflow change are confounded. During July 11–12,
+5.6 models account for essentially all recorded tokens, but the same interval
+also introduced the 5.4× rollout multiplier, a 5.1× increase in high/xhigh
+effort share, and 32.2× more long-context requests. The migration task's root
+prompt explicitly prioritized correctness over token efficiency. That is
+evidence of an intentional expensive policy, not evidence that 5.6 needed the
+expense for equal work.
+
+The token fields also show that this was not mainly verbose final answers:
+99.8% of burst tokens are input/context tokens. The dominant cost is therefore
+replayed parent context, tool output, and delegated-session context, not a
+large amount of 5.6-generated answer text. Cache reuse improved, so even this
+context-heavy behavior is not evidence of a cache failure.
+
+There is a weak descriptive signal that pre-burst Sol rollouts were larger
+than pre-burst GPT-5.5 rollouts (6.68M versus 4.31M tokens per rollout), but
+those are different tasks and effort mixtures. It cannot identify a model
+effect. No current log field says whether a Sol result was accepted, corrected,
+or superior to a 5.5 result.
+
+Therefore the actionable conclusion is to restrict the expensive **policy**
+now—fan-out, high effort, and inherited context—not to conclude that 5.6 is
+intrinsically wasteful. A model-level conclusion requires matched trials: the
+same bounded task and source packet, fixed delegation depth, 5.5 versus 5.6,
+and an acceptance/value record for each result.
+
 The dominant parent-task concentration is:
 
 | Parent thread | Short task description from its root prompt | Burst tokens | Share |
