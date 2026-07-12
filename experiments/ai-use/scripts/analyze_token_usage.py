@@ -47,6 +47,14 @@ DEFAULT_ROOTS = (
     "/home/vscode/.codex/sessions",
     "/home/vscode/.codex/archived_sessions",
 )
+SHADOW_PRICES = {
+    "gpt-5.5": (5.00, 0.50, 30.00),
+    "gpt-5.6-sol": (5.00, 0.50, 30.00),
+    "gpt-5.6-terra": (2.50, 0.25, 15.00),
+    "gpt-5.6-luna": (1.00, 0.10, 6.00),
+    "gpt-5.4-mini": (0.75, 0.075, 4.50),
+}
+LONG_CONTEXT_THRESHOLD = 272_000
 
 
 @dataclass(frozen=True)
@@ -293,6 +301,63 @@ def aggregate(events: list[UsageEvent]) -> dict[str, list[dict[str, Any]]]:
     return groups
 
 
+def shadow_cost_rows(events: list[UsageEvent]) -> list[dict[str, Any]]:
+    """Estimate public API-equivalent cost; this is not subscription billing."""
+    groups: dict[tuple[str, str, str], dict[str, Any]] = {}
+    for event in events:
+        prices = SHADOW_PRICES.get(event.model)
+        if prices is None:
+            continue
+        input_price, cached_price, output_price = prices
+        input_tokens = event.usage[1]
+        cached_tokens = event.usage[2]
+        output_tokens = event.usage[3]
+        uncached_tokens = input_tokens - cached_tokens
+        long_context = input_tokens > LONG_CONTEXT_THRESHOLD
+        input_multiplier = 2.0 if long_context else 1.0
+        output_multiplier = 1.5 if long_context else 1.0
+        key = (event.date, event.model, event.effort)
+        row = groups.setdefault(
+            key,
+            {
+                "date": event.date,
+                "model": event.model,
+                "effort": event.effort,
+                "events": 0,
+                "input_tokens": 0,
+                "cached_input_tokens": 0,
+                "uncached_input_tokens": 0,
+                "output_tokens": 0,
+                "long_context_requests": 0,
+                "baseline_cost_usd": 0.0,
+                "long_context_cost_usd": 0.0,
+                "input_price_per_million": input_price,
+                "cached_input_price_per_million": cached_price,
+                "output_price_per_million": output_price,
+            },
+        )
+        row["events"] += 1
+        row["input_tokens"] += input_tokens
+        row["cached_input_tokens"] += cached_tokens
+        row["uncached_input_tokens"] += uncached_tokens
+        row["output_tokens"] += output_tokens
+        row["long_context_requests"] += int(long_context)
+        row["baseline_cost_usd"] += (
+            uncached_tokens / 1_000_000 * input_price
+            + cached_tokens / 1_000_000 * cached_price
+            + output_tokens / 1_000_000 * output_price
+        )
+        row["long_context_cost_usd"] += (
+            (uncached_tokens / 1_000_000 * input_price
+             + cached_tokens / 1_000_000 * cached_price) * input_multiplier
+            + output_tokens / 1_000_000 * output_price * output_multiplier
+        )
+    for row in groups.values():
+        row["baseline_cost_usd"] = round(row["baseline_cost_usd"], 6)
+        row["long_context_cost_usd"] = round(row["long_context_cost_usd"], 6)
+    return sorted(groups.values(), key=lambda row: (row["date"], row["model"], row["effort"]))
+
+
 def write_csv(path: Path, rows: list[dict[str, Any]]) -> None:
     if not rows:
         path.write_text("\n", encoding="utf-8")
@@ -300,6 +365,8 @@ def write_csv(path: Path, rows: list[dict[str, Any]]) -> None:
     preferred = [
         "date", "model", "effort", "source", "depth", "rollout_id", "path", "events", "rollouts",
         *USAGE_KEYS, "uncached_input_tokens", "cache_hit_rate",
+        "long_context_requests", "baseline_cost_usd", "long_context_cost_usd",
+        "input_price_per_million", "cached_input_price_per_million", "output_price_per_million",
     ]
     fields = [field for field in preferred if any(field in row for row in rows)]
     with path.open("w", encoding="utf-8", newline="") as handle:
@@ -367,11 +434,13 @@ def main() -> None:
     args = parse_args()
     events, stats = collect_events(args.roots, args.start, args.end, args.cutoff, set(args.exclude_thread_id))
     groups = aggregate(events)
+    cost_rows = shadow_cost_rows(events)
     args.out_dir.mkdir(parents=True, exist_ok=True)
     write_csv(args.out_dir / "daily.csv", groups["daily"])
     write_csv(args.out_dir / "model-effort.csv", groups["model_effort"])
     write_csv(args.out_dir / "lineage.csv", groups["lineage"])
     write_csv(args.out_dir / "rollout-daily.csv", groups["rollout_daily"])
+    write_csv(args.out_dir / "shadow-cost.csv", cost_rows)
     metadata = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "roots": [str(root) for root in args.roots],
@@ -380,6 +449,23 @@ def main() -> None:
         "cutoff": args.cutoff,
         "excluded_thread_ids": args.exclude_thread_id,
         "stats": stats,
+        "shadow_pricing": {
+            "as_of": "2026-07-12",
+            "long_context_threshold_tokens": LONG_CONTEXT_THRESHOLD,
+            "long_context_input_multiplier": 2.0,
+            "long_context_output_multiplier": 1.5,
+            "rates_usd_per_million": {
+                model: {"input": prices[0], "cached_input": prices[1], "output": prices[2]}
+                for model, prices in SHADOW_PRICES.items()
+            },
+            "sources": [
+                "https://developers.openai.com/api/docs/models/gpt-5.5",
+                "https://developers.openai.com/api/docs/models/gpt-5.6-sol",
+                "https://developers.openai.com/api/docs/models/gpt-5.6-terra",
+                "https://developers.openai.com/api/docs/models/gpt-5.6-luna",
+                "https://developers.openai.com/api/docs/models/gpt-5.4-mini",
+            ],
+        },
         "notes": [
             "Totals use last_token_usage from token-count events.",
             "Repeated records with identical cumulative total_token_usage are skipped.",
