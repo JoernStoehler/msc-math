@@ -15,23 +15,93 @@ import argparse
 import calendar
 import csv
 import json
-import sys
+import subprocess
 from collections import Counter
-from datetime import date, timedelta
+from datetime import date
 from pathlib import Path
 from typing import Any
 
-SCRIPT_DIR = Path(__file__).resolve().parent
-sys.path.insert(0, str(SCRIPT_DIR))
-from analyze_project_efficiency import (  # noqa: E402
-    diff_summary,
-    json_text,
-    read_csv,
-    required_surface_states,
-    run_git,
-    snapshot_commit,
-    write_csv,
-)
+
+def run_git(*args: str) -> str:
+    return subprocess.run(
+        ["git", *args], check=True, text=True, capture_output=True
+    ).stdout.strip()
+
+
+def read_csv(path: Path) -> list[dict[str, str]]:
+    with path.open(newline="", encoding="utf-8") as handle:
+        return list(csv.DictReader(handle))
+
+
+def write_csv(path: Path, rows: list[dict[str, Any]]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    if not rows:
+        path.write_text("\n", encoding="utf-8")
+        return
+    with path.open("w", newline="", encoding="utf-8") as handle:
+        writer = csv.DictWriter(handle, fieldnames=list(rows[0]))
+        writer.writeheader()
+        writer.writerows(rows)
+
+
+def json_text(value: Any) -> str:
+    return json.dumps(value, sort_keys=True, ensure_ascii=False)
+
+
+def snapshot_commit(target: str, git_ref: str) -> str | None:
+    return run_git("rev-list", "-1", f"--before={target} 23:59:59 UTC", git_ref) or None
+
+
+def required_surface_states(commit: str) -> dict[str, int]:
+    try:
+        text = run_git("show", f"{commit}:PROJECT_COMPLETION.md")
+    except subprocess.CalledProcessError:
+        return {"completion_ledger_unavailable": 1}
+    states: Counter[str] = Counter()
+    in_table = False
+    for line in text.splitlines():
+        if line == "## Required Surface":
+            in_table = True
+            continue
+        if in_table and line.startswith("## "):
+            break
+        if not in_table or not line.startswith("|") or "---" in line:
+            continue
+        fields = [field.strip() for field in line.strip("|").split("|")]
+        if len(fields) >= 4 and fields[0] != "Surface":
+            states[fields[1]] += 1
+    return dict(sorted(states.items()))
+
+
+def diff_summary(previous: str | None, current: str) -> dict[str, Any]:
+    if not previous:
+        return {
+            "commits_since_previous_snapshot": "",
+            "changed_files_since_previous_snapshot": "",
+            "thesis_files_changed": "",
+            "experiment_files_changed": "",
+            "harness_files_changed": "",
+            "other_files_changed": "",
+            "commit_subjects": "",
+        }
+    commits = run_git("log", "--format=%H%x09%s", f"{previous}..{current}").splitlines()
+    files = run_git("diff", "--name-only", f"{previous}..{current}").splitlines()
+    counts = Counter(
+        "thesis" if path.startswith("thesis/") else
+        "experiment" if path.startswith("experiments/") else
+        "harness" if path.startswith(".agents/") or path.startswith(".codex/") else
+        "other"
+        for path in files
+    )
+    return {
+        "commits_since_previous_snapshot": len(commits),
+        "changed_files_since_previous_snapshot": len(files),
+        "thesis_files_changed": counts["thesis"],
+        "experiment_files_changed": counts["experiment"],
+        "harness_files_changed": counts["harness"],
+        "other_files_changed": counts["other"],
+        "commit_subjects": " || ".join(line.split("\t", 1)[1] for line in commits),
+    }
 
 
 def parse_args() -> argparse.Namespace:
@@ -63,10 +133,6 @@ def month_bounds(month: str, start: date, end: date) -> tuple[str, str, str]:
     first = max(date(year, number, 1), start)
     last = min(date(year, number, calendar.monthrange(year, number)[1]), end)
     return month, first.isoformat(), last.isoformat()
-
-
-def aggregate(rows: list[dict[str, str]], month: str, key: str) -> int:
-    return sum(int(row[key]) for row in rows if row["date"].startswith(month))
 
 
 def main() -> None:
