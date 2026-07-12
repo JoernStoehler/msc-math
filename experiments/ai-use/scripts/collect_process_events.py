@@ -94,6 +94,12 @@ SUBAGENT_ENVELOPE = re.compile(
     re.MULTILINE,
 )
 SYSTEM_REMINDER = re.compile(r"</?system-reminder>|<system-reminder\b", re.I)
+CODEX_AGENTS_CONTEXT = re.compile(
+    r"^(?:<user_instructions>\s*# AGENTS\.md\b.*?</user_instructions>|"
+    r"# AGENTS\.md instructions for .+?<INSTRUCTIONS>.*?</INSTRUCTIONS>"
+    r"(?:\s*<environment_context>.*?</environment_context>)?)\s*$",
+    re.DOTALL,
+)
 
 
 def classify_message_origin(role: str, text: str, source: str) -> tuple[str, str]:
@@ -102,6 +108,8 @@ def classify_message_origin(role: str, text: str, source: str) -> tuple[str, str
     # The multiline envelope is checked before whitespace normalization.
     if source == "codex" and SUBAGENT_ENVELOPE.match(text.strip()):
         return "nonhuman_agent", "subagent_delivery"
+    if source == "codex" and CODEX_AGENTS_CONTEXT.match(text.strip()):
+        return "nonhuman_injected", "system_injection"
     if source == "claude" and SYSTEM_REMINDER.search(text):
         stripped = text.strip().casefold()
         if stripped.startswith("<system-reminder") and stripped.endswith(
@@ -659,6 +667,49 @@ def extract(
     bounded = start is not None or end is not None
     metadata_before_window_used = False
     seen_messages: dict[tuple[str, str, str], int] = {}
+    # Some older Codex rollouts place the initial user request before the first
+    # session_meta row. Establish identity and event-time model metadata before
+    # assigning those messages to a session.
+    if source == "codex":
+        with path.open(encoding="utf-8", errors="replace") as metadata_handle:
+            for metadata_line_no, metadata_line in enumerate(metadata_handle, 1):
+                try:
+                    metadata_event = json.loads(metadata_line)
+                except json.JSONDecodeError:
+                    continue
+                if metadata_event.get("type") != "session_meta":
+                    continue
+                metadata_timestamp = metadata_event.get("timestamp")
+                metadata_when = parse_time(metadata_timestamp)
+                if end is not None and (
+                    metadata_when is None or metadata_when >= end
+                ):
+                    continue
+                metadata_payload = metadata_event.get("payload")
+                if not isinstance(metadata_payload, dict):
+                    continue
+                metadata_git = metadata_payload.get("git")
+                if not isinstance(metadata_git, dict):
+                    metadata_git = {}
+                session_id = str(metadata_payload.get("id") or session_id)
+                session_timestamp = metadata_timestamp
+                session_ordinal = metadata_line_no
+                session_cwd = metadata_payload.get("cwd") or metadata_git.get("cwd")
+                repository_url = metadata_git.get("repository_url")
+                if isinstance(repository_url, str):
+                    session_repo_identity = repository_url
+                provider = metadata_payload.get("model_provider") or metadata_payload.get(
+                    "provider"
+                )
+                if isinstance(provider, str):
+                    explicit_providers.add(provider)
+                    current_provider = provider
+                meta_model = metadata_payload.get("model")
+                if isinstance(meta_model, str):
+                    explicit_models.add(meta_model)
+                    current_model = meta_model
+                    current_model_provenance = "codex_session_meta"
+                break
     with path.open(encoding="utf-8", errors="replace") as handle:
         for line_no, line in enumerate(handle, 1):
             stats["events_scanned"] += 1
@@ -730,12 +781,11 @@ def extract(
                 git_meta = (
                     payload.get("git") if isinstance(payload.get("git"), dict) else {}
                 )
-                session_id, session_timestamp, session_cwd = (
-                    str(payload.get("id") or session_id),
-                    timestamp,
-                    payload.get("cwd") or git_meta.get("cwd"),
-                )
-                session_ordinal = line_no
+                session_id = str(payload.get("id") or session_id)
+                session_cwd = payload.get("cwd") or git_meta.get("cwd")
+                if session_timestamp is None:
+                    session_timestamp = timestamp
+                    session_ordinal = line_no
                 repository_url = git_meta.get("repository_url")
                 if isinstance(repository_url, str):
                     session_repo_identity = repository_url

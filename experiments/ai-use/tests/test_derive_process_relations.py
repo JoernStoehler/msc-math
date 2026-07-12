@@ -674,6 +674,32 @@ def test_task_start_excludes_subagent_delivery_and_unknown_prompt_time():
     assert r.task_start_candidates([session, delivery, unknown]) == []
 
 
+def test_task_start_uses_source_order_when_envelope_trails_embedded_prompt():
+    session = {
+        "record_type": "session",
+        "source_log_id": "l",
+        "event_ordinal": 10,
+        "session_id": "s",
+        "timestamp": "2026-01-01T00:00:00.019Z",
+    }
+    prompt = msg(
+        "p",
+        "user",
+        "s",
+        "l",
+        "2026-01-01T00:00:00.009Z",
+        "n",
+        ["1"],
+    )
+    prompt["event_ordinal"] = 10
+    got = r.task_start_candidates([session, prompt])
+    assert len(got) == 1 and got[0]["eligible_for_sampling_frame"]
+
+    prompt["event_ordinal"] = 9
+    got = r.task_start_candidates([session, prompt])
+    assert len(got) == 1 and not got[0]["eligible_for_sampling_frame"]
+
+
 def test_task_start_short_prompt_and_duplicate_session_ids_stay_per_log():
     sessions = [
         {

@@ -334,6 +334,61 @@ def test_lineage_metadata_before_window_is_preserved(tmp_path):
     assert lineage["metadata_outside_window"] is True
 
 
+def test_repeated_codex_metadata_preserves_session_start(tmp_path):
+    path = tmp_path / "resumed.jsonl"
+    write(
+        path,
+        [
+            {
+                "timestamp": "2026-01-01T00:00:00Z",
+                "type": "session_meta",
+                "payload": {"id": "s", "cwd": "/repo"},
+            },
+            {
+                "timestamp": "2026-01-01T00:00:01Z",
+                "type": "response_item",
+                "payload": {
+                    "type": "message",
+                    "role": "user",
+                    "content": [{"type": "input_text", "text": "task"}],
+                },
+            },
+            {
+                "timestamp": "2026-01-01T00:01:00Z",
+                "type": "session_meta",
+                "payload": {"id": "s", "cwd": "/repo/continued"},
+            },
+        ],
+    )
+    rows, _ = c.extract(path, "codex", KEY, include_message_fingerprints=True)
+    session = next(r for r in rows if r["record_type"] == "session")
+    assert session["timestamp"] == "2026-01-01T00:00:00Z"
+    assert session["event_ordinal"] == 1
+
+
+def test_codex_prompt_before_metadata_uses_real_session_identity(tmp_path):
+    path = tmp_path / "legacy-order.jsonl"
+    write(
+        path,
+        [
+            {
+                "timestamp": "2026-01-01T00:00:00Z",
+                "payload": {"type": "user_message", "message": "Implement the task."},
+            },
+            {
+                "timestamp": "2026-01-01T00:00:01Z",
+                "type": "session_meta",
+                "payload": {"id": "real-session", "model": "gpt-5.5"},
+            },
+        ],
+    )
+    rows, _ = c.extract(path, "codex", KEY, include_message_fingerprints=True)
+    session = next(r for r in rows if r["record_type"] == "session")
+    prompt = next(r for r in rows if r["record_type"] == "message_fingerprint")
+    assert prompt["session_id"] == session["session_id"]
+    assert prompt["model_era_at_event"] == "gpt-5.5"
+
+
 def test_cli_manifest_provenance_and_no_paths(tmp_path):
     root = tmp_path / "logs"
     root.mkdir()
@@ -522,6 +577,14 @@ def test_message_fingerprints_roles_dedup_edits_and_privacy(tmp_path):
 def test_message_origin_envelopes_and_repeat_chronology(tmp_path):
     path = tmp_path / "origin.jsonl"
     envelope = "Message Type: NEW_TASK\nTask name: /root/a\nSender: /root\nPayload:\nPerform the bounded extraction task and report evidence."
+    agents_context = """# AGENTS.md instructions for /repo
+
+<INSTRUCTIONS>
+# AGENTS.md
+Project instructions mention implementation and benchmarks.
+</INSTRUCTIONS><environment_context>
+  <cwd>/repo</cwd>
+</environment_context>"""
     ordinary = (
         "Please perform the bounded extraction task and report the evidence clearly."
     )
@@ -539,7 +602,7 @@ def test_message_origin_envelopes_and_repeat_chronology(tmp_path):
             },
             {
                 "timestamp": "2026-01-01T00:00:02Z",
-                "payload": {"type": "user_message", "message": ordinary},
+                "payload": {"type": "user_message", "message": agents_context},
             },
             {
                 "timestamp": "2026-01-01T00:00:03Z",
@@ -547,6 +610,10 @@ def test_message_origin_envelopes_and_repeat_chronology(tmp_path):
             },
             {
                 "timestamp": "2026-01-01T00:00:04Z",
+                "payload": {"type": "user_message", "message": ordinary},
+            },
+            {
+                "timestamp": "2026-01-01T00:00:05Z",
                 "payload": {
                     "type": "agent_message",
                     "message": "I completed the bounded extraction task and preserved the requested evidence.",
@@ -560,6 +627,7 @@ def test_message_origin_envelopes_and_repeat_chronology(tmp_path):
     messages = [r for r in rows if r["record_type"] == "message_fingerprint"]
     assert [(r["message_origin"], r["delivery_kind"]) for r in messages] == [
         ("nonhuman_agent", "subagent_delivery"),
+        ("nonhuman_injected", "system_injection"),
         ("human_user_candidate", "direct_user_prompt"),
         ("human_user_candidate", "direct_user_prompt"),
         ("agent", "agent_output"),
@@ -567,10 +635,17 @@ def test_message_origin_envelopes_and_repeat_chronology(tmp_path):
     repeats = [
         r
         for r in messages
-        if r["normalized_text_id"] == messages[1]["normalized_text_id"]
+        if r["normalized_text_id"] == messages[2]["normalized_text_id"]
     ]
-    assert [r["event_ordinal"] for r in repeats] == [3, 4]
+    assert [r["event_ordinal"] for r in repeats] == [4, 5]
     assert stats["message_delivery_subagent_delivery"] == 1
+    assert stats["message_delivery_system_injection"] == 1
+    assert c.classify_message_origin(
+        "user",
+        "<user_instructions>\n# AGENTS.md instructions for /repo\n"
+        "legacy instructions</user_instructions>",
+        "codex",
+    ) == ("nonhuman_injected", "system_injection")
 
 
 def test_claude_message_blocks_and_short_threshold(tmp_path):

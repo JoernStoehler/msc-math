@@ -477,8 +477,15 @@ def task_start_candidates(rows, window_bounded=False):
         )
         session_time = when(session.get("timestamp"))
         prompt_time = when(first.get("timestamp"))
+        session_ordinal = session.get("event_ordinal")
+        prompt_ordinal = first.get("event_ordinal")
+        source_order_valid = (
+            isinstance(session_ordinal, int)
+            and isinstance(prompt_ordinal, int)
+            and session_ordinal <= prompt_ordinal
+        )
         chronology = prompt_time is not None and (
-            session_time is None or session_time <= prompt_time
+            session_time is None or session_time <= prompt_time or source_order_valid
         )
         parent = parents.get((source_log_id, session_id))
         root = parent is None
