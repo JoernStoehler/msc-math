@@ -96,6 +96,7 @@ scratch space from the prompt and logs.
 | `reports/token-usage-analysis-2026-07-12.md` | Diagnostic interpretation of recent Codex token usage, cache reuse, lineage, and shadow API-equivalent cost. |
 | `reports/token-usage-lifetime-analysis-2026-07-12.md` | Full visible Codex-archive analysis with monthly aggregation and lifetime caveats. |
 | `reports/project-efficiency-pilot-2026-07-12.md` | Three-snapshot pilot joining Codex resource proxies with integrated thesis/project state. |
+| `reports/project-efficiency-june-to-july-2026-07-12.md` | Interval-level June 1 to July 1 resource-cost and qualitative thesis-surface value comparison. |
 | `prompts/ai-provenance-investigation-prompt.md` | Prompt used to rerun the provenance investigation in a fresh session. |
 | `scripts/collect_log_inventory.py` | Deterministically inventories visible Codex/Claude session logs. |
 | `scripts/check_report_evidence.py` | Checks absolute evidence paths cited by a report and writes a JSON check artifact. |
