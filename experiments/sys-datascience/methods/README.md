@@ -45,6 +45,8 @@ Read first:
 - `equal-budget-product-search/`: parked target-free S0 prototype for a fixed
   `5 x 5` IID/local/CEM comparison. It has no real-run artifacts or empirical
   result and must not be resumed without a new portfolio decision.
+- `product-bounce-distribution/`: exact-`(k,m)` descriptive distribution and
+  ridge-adjustment packet for 2- versus 3-bounce retained random products.
 
 Exploratory fixed-bucket distribution-shape packets:
 
