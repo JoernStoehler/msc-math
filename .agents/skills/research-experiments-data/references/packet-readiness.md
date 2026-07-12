@@ -17,9 +17,9 @@ Establish:
 
 Before honoring a saved status, phase label, launch contract, or stopping rule,
 establish whether it had authority to settle the transition. At a claimed
-research-phase boundary, explicitly identify and disposition each current
-instruction, accepted stakeholder decision, or higher-authority owner fact that
-requires further work or withholds closure. If one contradicts agent-authored
+research-phase boundary, identify and disposition each known current
+instruction, accepted stakeholder decision, or higher-authority owner fact
+materially relevant to the claimed transition. If one contradicts agent-authored
 closure, surface the conflict and do not carry the closure forward or use a
 narrower saved contract to reject the work it may require. Recovered state,
 proposals, control caches, and agent-authored closure do not themselves resolve
