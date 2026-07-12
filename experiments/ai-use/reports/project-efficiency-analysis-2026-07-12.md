@@ -51,6 +51,55 @@ The month-end Git/resource/value records are in
 \* Mapped shadow cost excludes historical labels without a pinned pricing map;
 “not mapped” is not zero cost. The actual subscription cost is zero.
 
+## Why July became expensive
+
+The June-to-July comparison identifies a leading cause rather than merely a
+correlation:
+
+| Metric | June | July through 12 | Change |
+|---|---:|---:|---:|
+| Tokens per active day | 398.0M | 650.7M | +63% |
+| Rollouts per active day | 32.2 | 60.7 | +89% |
+| Tokens per rollout | 12.36M | 10.72M | −13% |
+| Subagent token share | 43.9% | 77.5% | +33.6 percentage points |
+| High or xhigh effort share | 17.7% | 56.3% | +38.6 percentage points |
+| Cache-hit share | 95.88% | 97.23% | +1.35 percentage points |
+| Mapped shadow cost per million total tokens | $0.787 | $0.658 baseline / $0.713 long-context adjusted | lower in July |
+
+This points primarily to more parallel calls and a much more high-effort,
+subagent-heavy workflow. The average rollout actually became smaller, while
+the number of rollouts grew sharply. July was not made expensive by a collapse
+in cache reuse: absolute uncached input fell from 490.0M tokens in June to
+197.5M in July despite the high July total. The model mixture also became
+cheaper on average because Terra and Luna appeared; Sol and GPT-5.5 have the
+same mapped rates in the current shadow model.
+
+A repository-read proxy provides no evidence that July's increase came from a
+worsening read pattern. In raw tool-call arguments, June had approximately
+30,327 `sed`, 17,376 `git`, and 8,563 `rg` command occurrences; July had 9,485,
+5,289, and 3,304 respectively. Per active day, `sed` and `git` occurrences
+were lower in July and `rg` was similar. This is only a command-text proxy: it
+does not reconstruct exact file bytes, cache keys, or tool-output tokens, so it
+cannot rule out all repeated-content effects. It does rule out a simple claim
+that July had more visible repository-read commands per day.
+
+The proxy can be regenerated with:
+
+```bash
+uv run --script experiments/ai-use/scripts/analyze_rollout_tool_patterns.py \
+  --rollout-csv /tmp/codex-token-usage-lifetime-refresh/rollout-daily.csv \
+  --start 2026-06-01 --end 2026-07-12 \
+  --out-dir /tmp/codex-rollout-tool-patterns
+```
+
+The practical compensation order is therefore:
+
+1. cap or stage subagent fan-out;
+2. reserve high/xhigh effort for questions where it produces a measured gain;
+3. keep Sol/5.5 and long-context use selective;
+4. investigate exact repeated tool-output content only if the first three
+   controls do not restore the budget.
+
 ## Durable value ledger
 
 One qualitative support unit means a material, source-backed improvement to a
