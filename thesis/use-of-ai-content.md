@@ -19,6 +19,9 @@ Recorded sessions establish observed requests, actions, reviews, and handoffs;
 Git establishes retained artifact states and branch integration; surviving
 tests and code establish only what they directly check. Jörn's retrospective
 account supplies subjective and offline context and is identified as such.
+Episode output, later artifact evidence, and final integration are assessed
+separately and are not attributed to the same agent episode unless recorded
+lineage establishes that link.
 
 The investigation stopped when the four reader-facing questions below had
 enough evidence to decide whether they belonged in the section. Broader event
@@ -83,22 +86,56 @@ Run costs, retained only to avoid flattening unlike quantities:
 Do not sum these token categories or translate them into monetary cost without
 the applicable pricing and cache rules.
 
+### Mathematical labor types
+
+Claim: selected cases distinguish useful review, obligation extraction,
+empirical falsification, and candidate generation from completion of a proof or
+production of a new mathematical object. They do not estimate comparative
+success rates between labor types.
+
+Sources:
+
+- FG/CH2021 theorem-gap review on 2026-07-01: source-paper inspection found the
+  Type-2 capacity boundary; formal/Rust short-word and singular-boundary
+  mismatches; overstated algebraic support; and underspecified theorem
+  hypotheses. Corrections merged in `fcd8545a`. The formal theorem remained
+  explicitly unverified, so this is a durable review result rather than proof
+  completion.
+- Local-systolic-behavior episode: an attempted proof route produced a
+  transition diagnostic showing how a target sigma absent at the base point
+  could appear after perturbation. It did not establish finite-distance
+  completeness or error bounds. The package was later removed/migrated by
+  `0c905a96`.
+- Gradient-ascent validity episode: empirical diagnostics showed selected
+  endpoints remained improvable, contradicting their interpretation as
+  converged local maxima. No replacement theorem, proof-ready definitions, or
+  durable formal artifact was produced.
+- Candidate-proposer episode: low two-face-area rules produced candidate rows
+  and upper-tail enrichment after correction of a pooled-control bug, but no
+  selected row exceeded one. The episode's branch was abandoned; the maintained
+  scalar/ridge proposer later evaluated 100,000 candidates, selected 485 plus
+  1,195 baselines, and remained sub-threshold with maximum about 0.868. Do not
+  attribute the maintained packet to the abandoned episode.
+
+Selection boundary: these are deliberately informative complete cases. They
+are not a random or exchangeable sample and cannot establish a ranked capability
+frontier or proof-success frequency.
+
 ### Breadth, selection, and integration
 
-Claim: cheap parallel production increased the importance of prioritization,
-verification, stopping, and integration. The record supports coexistence, not
-a measured causal bottleneck coefficient.
+Claim: increased parallel production coincided with more work on prioritization,
+verification, stopping, and integration. The record supports coexistence, not a
+measured causal bottleneck coefficient or an unmeasured cost comparison.
 
 Sources:
 
 - Sys-data-science root session `019f50cf...` on 2026-07-11--12: 30
   structurally linked descendants, about nine object-level lines, explicit
   reprioritizations and stops, and an equal-budget S0 implementation with 7,312
-  inserted lines. Commits `8d60eb79`, `b5074ff3`, `07efc22b`, and `1fcc728e`
-  survive on branch/worktree `sys-datascience-forward-test` but were not
-  ancestors of Main when checked on 2026-07-12. The real target run had not
-  occurred. These are candidate supply and option value, not accepted empirical
-  thesis results.
+  inserted lines. The commits were initially branch-only and later reconciled
+  into Main as bounded research state by `43ac70b4`. The real target run had not
+  occurred. This establishes integrated candidate supply and negative/partial
+  research state, not a completed forward experiment.
 - Profiling episode on 2026-06-08--09: the record contains useful measurements
   together with an overconfident recommendation and contaminated handoff;
   factual rewrite, fresh audit, and a provenance decision preceded retained

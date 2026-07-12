@@ -94,25 +94,54 @@ For mathematical software, a test suite is therefore not valuable merely
 because it exists.  It is evidence only for failures that its fixtures and
 oracles could detect.
 
+\subsection{Different tasks exposed different limits}
+
+The record does not support one score for ``mathematical reasoning.''  In one
+source-anchored review of a proposed flow-graph theorem, an agent found
+consequential mismatches between the cited paper, the formal statement, the
+Rust implementation, and the thesis claim.  The resulting corrections were
+merged and narrowed the theorem's hypotheses and implementation boundary.  The
+same episode did not prove the theorem, which remained explicitly unverified.
+This is evidence that review found valuable defects in that case, not that
+review is generally more reliable than proof generation.
+
+The selected difficult proof-development episodes had a different outcome.  An
+attempt to understand local behavior of the systolic ratio produced an
+executable transition diagnostic for one failure mechanism, but not the sought
+finite-neighborhood theorem.  A convergence-validity investigation showed that
+computed endpoints could remain improvable, undermining their interpretation
+as converged local maxima; it did not produce a replacement theorem or proof.
+Thus agents helped turn informal concerns into obligations, counterchecks, and
+empirical falsifications.  These selected cases do not estimate how often an
+agent can prove a theorem, but they separate useful diagnostic progress from
+proof completion.
+
+Candidate generation showed a similar distinction.  A data-science proposer
+exported actual polytope candidates and enriched the upper tail of the observed
+systolic ratios after a control bug was corrected.  It produced neither a new
+ratio above one nor a new mathematical conjecture, and the development branch
+was later replaced by a maintained proposer with the same bounded status.
+Generating candidates under an executable proxy was useful; deciding whether
+the proxy answered the research question and whether the result deserved
+integration remained a separate step.
+
 \subsection{Breadth makes selection and integration more important}
 
-Agents made it cheap to pursue several computational or mathematical leads in
-parallel.  A recorded data-science episode near the end of the project, for
+Agents increased the number of computational or mathematical leads that could
+be pursued in parallel.  A recorded data-science episode near the end of the project, for
 example, branched into roughly nine object-level lines of work and thirty
 structurally linked descendant sessions.  It produced thousands of lines of
 candidate implementation together with no-go results, repairs, and several
-preserved commits.  At the time of this analysis those commits remained on a
-development branch rather than in the thesis's main line, and the principal
-forward experiment had not been run on its real target.  This created useful
-options, but output volume would badly overstate integrated thesis
-value.
+preserved commits.  This work was later integrated as bounded research state,
+but the principal forward experiment had not been run on its real target.
+Thus output volume would badly overstate the empirical conclusion reached.
 
 The same issue appeared at smaller scale in profiling work: technically useful
 measurements were accompanied by an overconfident recommendation and a
 contaminated handoff, so the factual artifact had to be separated from its
 interpretation and reviewed afresh.  These episodes changed what needed scarce
-attention.  Once producing another implementation, search, or analysis became
-cheap, the important choices were increasingly which question to pursue, what
+attention.  As producing another implementation, search, or analysis became
+easier, the important choices were increasingly which question to pursue, what
 would discriminate success from a convincing failure, and whether the result
 deserved the human work required for review and integration.
 
@@ -145,7 +174,7 @@ The project led me to the following working principles.
   forward.
 
   \item Evaluate a portfolio by retained evidence and human attention, not by
-  generated code, session count, or apparent labor saved.  Cheap breadth is
+  generated code, session count, or apparent labor saved.  Increased breadth is
   valuable only when weak lines are stopped and promising ones are integrated.
 
   \item Re-test workflow assumptions after a model change.  Tactics for reducing
