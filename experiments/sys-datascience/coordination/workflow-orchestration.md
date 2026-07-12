@@ -30,7 +30,13 @@ This agent owns one research topic after it has become worth sustained
 attention. It develops the local ontology of questions and hypotheses, designs
 packet-sized experiments, interprets reviewed packet results in that topic, and
 keeps the topic's local notes coherent. It can spawn packet executors and
-reviewers.
+reviewers and integrates their outputs rather than forwarding raw packets.
+Within its initial resource envelope it owns local sequence and day-to-day
+choices. It returns to the parent when evidence changes cross-topic priority,
+resources must expand, the work drifts from its question, a Jörn-level crux
+remains, or a claim is ready for promotion. It does not own cross-topic
+opportunity cost, indefinite continuation, final thesis claims, or merge
+authority.
 
 Handle: `topic owner` or `topic research lead`.
 
@@ -91,6 +97,13 @@ If the answer is unclear, do not keep launching packets to make the board
 smaller. Either do a bounded surface-scout pass, ask one crux question, or park
 the row with the reason.
 
+When two or more substantial lines compete, compare them at the next material
+boundary rather than continuing whichever result arrived most recently. Keep
+evidence strength, possible thesis value, information value, cost, and
+decisiveness distinct. A comparison may remain qualitative when numbers would
+be invented. Do not interrupt productive lines on a fixed schedule merely to
+perform portfolio administration.
+
 ## Jörn-Crux Rule
 
 Some gates depend on thesis wording, HKO-local authority, or another Jörn-level
@@ -98,6 +111,13 @@ priority. Before asking Jörn, infer the plausible thesis sentence or decision
 from repo material and current coordination surfaces. Ask only if the launch
 choice changes under plausible alternatives, and ask one concrete crux question
 instead of a bundle.
+
+Complete agent-doable feasibility, cost, outcome, and evidence reasoning first.
+Then ask for the specific mathematical, stakeholder, taste, private-context, or
+elevated-access quantity Jörn is better placed to supply, with enough context
+and the decision consequences of plausible answers. Do not disguise an
+undecomposed portfolio decision as a yes/no "should" question. Do not split a
+genuinely coupled crux merely to satisfy a one-question form.
 
 If the choice does not change, record the assumption in the relevant topic file
 or packet prompt and proceed or park without spending Jörn attention.
@@ -173,6 +193,14 @@ useful scout pass records:
 
 Packets may stop early when the result is decisive, when the implementation
 shows the idea is malformed, or when opportunity cost dominates further polish.
+
+When a lead designates a probe as potentially retainable and a rerun or later
+repair would be material, use the cheap smoke path to check whichever evidence
+contract parts are already knowable: source identity, reproduction command and
+parameters, output schema, artifact identity, and reviewer entry path. Scale
+the checklist to anticipated cost; disposable probes need none of it. Record
+intentional omissions and repair genuinely new requirements discovered during
+interpretation rather than pretending the preflight was exhaustive.
 
 Workflow-test prompts and reports should carry this visible header:
 

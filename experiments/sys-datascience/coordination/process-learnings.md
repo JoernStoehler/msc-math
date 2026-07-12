@@ -5,6 +5,39 @@ that should influence future sys-datascience agent behavior. It is optimized
 for surface scouts, topic owners, and prompt writers. Add entries when an
 incident reveals a reusable failure mode or prompt/workflow improvement.
 
+## 2026-07-12: Research-Line Leads Helped, But Portfolio Control Drifted
+
+Observation: the broad exploration session initially routed many small
+executor, follow-up, review, and status decisions through the parent. Jörn
+repeatedly had to point out stale opportunity-cost comparisons, an unfinished
+batch decision, composite "should" questions, and turns that ended while useful
+parent or child work remained. Later ridge, covariance, optimizer, and
+triangle--hexagon work was organized as longer-lived research lines whose leads
+integrated bounded child work. Those lines returned more coherent evidence and
+interpretation, but they also ran later, with more mature questions and code;
+the session does not identify how much cost the organization saved or whether
+it caused the improvement.
+
+Observed review benefit: independent reviews found claim-bearing defects in a
+covariance statistic, candidate-window behavior, provenance and artifact
+identity, a proof direction, reproduction instructions, and authority wording.
+These catches justify preserving risk-based review at promotion boundaries;
+they do not show that the total review allocation was optimal.
+
+Observed late-contract burden: some potentially retained packets needed repair
+or reruns because commands, identity, hashes, or artifact schema were settled
+after the scientific output. This supports a bounded trial of checking the
+evidence contract at smoke scale once a probe becomes potentially retainable,
+not a provenance gate for disposable exploration.
+
+Resulting best guesses and their adaptation boundaries are in
+`workflow-design-rationale.md`; the current operating policy is in
+`workflow-orchestration.md`. Epistemic limit: this incident does not establish
+causal or efficiency results and does not justify a fixed model-routing table,
+exhaustive orchestration telemetry, review of every packet, or a broad
+resume-time process audit. Prefer naturally occurring comparisons and add
+measurement only when a live decision needs it.
+
 ## 2026-07-04: End-To-End Workflow-Test Chain Worked
 
 Observation: a fresh global scout selected `generated-candidate-proposers`, a
