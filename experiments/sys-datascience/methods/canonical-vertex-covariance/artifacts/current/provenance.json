@@ -1,0 +1,54 @@
+{
+  "artifacts": {
+    "per_polytope.jsonl_sha256": "88cba83c48996309d6f4f050adb44413d449acb873d3222c515040087a7c8301",
+    "report.json_sha256": "385bbed4982fd0bb902f83e7dcacce6cd6a2e16d62ca6dc5eac87a468e340375"
+  },
+  "command": "uv run --script experiments/sys-datascience/methods/canonical-vertex-covariance/analyze.py",
+  "inputs": [
+    {
+      "hydrated": true,
+      "path": "experiments/sys-datascience/produce/random.jsonl",
+      "sha256": "a21ac62ba5c9496ef631d3cce74e8b663764516b76e9d4725f1e517d8dd55f9f",
+      "tracked_lfs": {
+        "oid_sha256": "a21ac62ba5c9496ef631d3cce74e8b663764516b76e9d4725f1e517d8dd55f9f",
+        "size": "53045675"
+      }
+    },
+    {
+      "hydrated": true,
+      "path": "experiments/sys-datascience/produce/random-product.jsonl",
+      "sha256": "66bf82010e92e0f26b0df226f4e6c0eef05d21eb22a0967c7f669530f6545736",
+      "tracked_lfs": {
+        "oid_sha256": "66bf82010e92e0f26b0df226f4e6c0eef05d21eb22a0967c7f669530f6545736",
+        "size": "73814237"
+      }
+    },
+    {
+      "hydrated": true,
+      "path": "experiments/sys-datascience/prepare/polytope-table.jsonl",
+      "sha256": "607c8731fa03d190d497edc3e8f1b4cca88f7d238260cce527680f568bc33d59",
+      "tracked_lfs": {
+        "oid_sha256": "607c8731fa03d190d497edc3e8f1b4cca88f7d238260cce527680f568bc33d59",
+        "size": "24250539"
+      }
+    },
+    {
+      "hydrated": true,
+      "path": "experiments/sys-datascience/prepare/polytope-provenance-table.jsonl",
+      "sha256": "6ff88a5accce9a7ec7e5a494107350b0974b2ce0268ea44caae36a18a7494ef2",
+      "tracked_lfs": {
+        "oid_sha256": "6ff88a5accce9a7ec7e5a494107350b0974b2ce0268ea44caae36a18a7494ef2",
+        "size": "7732016"
+      }
+    }
+  ],
+  "producer": {
+    "git_tracking": "untracked",
+    "path": "experiments/sys-datascience/methods/canonical-vertex-covariance/analyze.py",
+    "sha256": "9318fd66a7d0832d4b91f6f9f54e52ffece9098763c75832f9fdd57ba5b9b33b"
+  },
+  "reproducibility_boundary": "All four retained inputs must be hydrated rather than Git-LFS pointer files. If any is a pointer, the script stops before treating it as evidence.",
+  "self_test_command": "uv run --script experiments/sys-datascience/methods/canonical-vertex-covariance/analyze.py --self-test",
+  "source_input_status": "",
+  "source_revision": "8eb3c66d2a38830f7b6e44f08e9c0b984eb9474d"
+}
