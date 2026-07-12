@@ -1,0 +1,74 @@
+{
+  "schema": "ridge-endpoint-smoke.capacity-implementation-manifest.v1",
+  "repo_commit": "37805d568121b2cf7790097254258e844c47bede",
+  "cargo_lock_sha256": "114de998da19fd6eac384903414c8a1835bad43b8db3acd3a4d1db8ea3eb6e17",
+  "implementation_files": [
+    {
+      "path": "experiments/sys-landscape/src/lib.rs",
+      "sha256": "1b504f7674a756431eba1f2a01fce6660184c801d4733d9b2da463d1a1bfc75a"
+    },
+    {
+      "path": "crates/symplectic/src/lib.rs",
+      "sha256": "d17714edbed8318f2b840c5e2c9e423ad81eaf22da49c7631e5ae46ef7d8405f"
+    },
+    {
+      "path": "crates/symplectic/src/algorithms/mod.rs",
+      "sha256": "9b6bf25c198f75a4615a308aef4ccb70ef9213a12a1d0fbdad89c6cb941c057d"
+    },
+    {
+      "path": "crates/symplectic/src/algorithms/billiard/mod.rs",
+      "sha256": "4aec230f92c2a2a4e7bbfc067eda4cf18f2e41503b9dc81d8e5e078cde06ebb0"
+    },
+    {
+      "path": "crates/symplectic/src/algorithms/billiard/block_enumeration.rs",
+      "sha256": "805c1c666a915255d26b26aed8da8238027490391058081abd8f8912c0f25f31"
+    },
+    {
+      "path": "crates/symplectic/src/algorithms/billiard/facet_classification.rs",
+      "sha256": "8a49747d6ad7aa55461a6dd9d379dcd5c84dde357702fce32e2f8e5dda53e95e"
+    },
+    {
+      "path": "crates/symplectic/src/algorithms/facet_adjacency.rs",
+      "sha256": "0f80eaf391a052791fdb531ba92ba473ddcf0a43bdc83018c9b04e4e248f4708"
+    },
+    {
+      "path": "crates/symplectic/src/algorithms/orbit_search.rs",
+      "sha256": "49c46104c6a1d55caa596e8dc4339a56e347991fb83c0ecba704be915c9a2777"
+    },
+    {
+      "path": "crates/symplectic/src/kkt/rational_solver.rs",
+      "sha256": "672c460410fbc682d8b332fc6a0865258ec6fbb1dcfafd51f048c975d3a91bc8"
+    },
+    {
+      "path": "crates/symplectic/src/kkt/mod.rs",
+      "sha256": "77c65c646a3d98d4fb3073f22d6d61dfcf739929c3ff5d66c6a755ffbb096b7b"
+    },
+    {
+      "path": "crates/symplectic/src/kkt/saddle_point_solver.rs",
+      "sha256": "28887475749b57d201407aede81678d00e8a6960155cb746b9a046744c242571"
+    },
+    {
+      "path": "crates/symplectic/src/kkt/qp_assembly.rs",
+      "sha256": "59cff48aa8ee2d5b627d1081e068419e6cb86c0c765948c185c40d4e6095a1af"
+    },
+    {
+      "path": "crates/symplectic/src/kkt/beta_feasibility.rs",
+      "sha256": "88ba56293e4b24e52f8eb7ff8fc5301b96880789f36666903d6ee944270ef878"
+    },
+    {
+      "path": "crates/symplectic/src/geom/mod.rs",
+      "sha256": "34139bf1692dcc44462f2448b56896633c88ddaf37578a3013ae3dd6a456c7de"
+    },
+    {
+      "path": "crates/symplectic/src/geom/symplectic_form.rs",
+      "sha256": "8efd7e8efbca8794bb80ea7fcac71a958f5e26803cdcb357e258dbe60b5ffe68"
+    },
+    {
+      "path": "crates/symplectic/src/geom/rational_arithmetic.rs",
+      "sha256": "5782b7210fb880d7532304ce323fa2f86848558b01d2eeb9b39a5bf07cdcc216"
+    }
+  ],
+  "implementation_closure_sha256": "52eb2d7d710ee87a0b3a3f4c3f44fbb6e4873b8246d79194a081d9d6e531d5a1",
+  "ordinary_contract": "classify -> transition matrix -> solve_billiard_candidates -> aggregate_orbits_with_dual_vertices_exact(MinimaSafe)",
+  "certificate_contract": "aggregate_certified_orbits_with_dual_vertices_exact(MinimizersOnly) over the same f64-enumerated billiard candidate stream"
+}

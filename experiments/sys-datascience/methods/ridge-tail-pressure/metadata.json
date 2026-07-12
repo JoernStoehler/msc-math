@@ -1,0 +1,33 @@
+{
+  "command": "python3 analyze.py --out-dir .",
+  "ridge_feature": "ridge_symp_area_sum_over_volume_sqrt",
+  "q_levels": [
+    0.1,
+    0.05,
+    0.02,
+    0.01
+  ],
+  "input_sha256": {
+    "tracked_retained_table": "607c8731fa03d190d497edc3e8f1b4cca88f7d238260cce527680f568bc33d59",
+    "tracked_random_product_producer": "66bf82010e92e0f26b0df226f4e6c0eef05d21eb22a0967c7f669530f6545736",
+    "one_m_snapshot/selection-plan.json": "4bf777f56fcb07fe18163863594ca90e047f0e402ae7cc4b0e5ea179d6d6e68d",
+    "one_m_snapshot/selected-candidates-before-sys.jsonl": "1ea72e528e4d65776e217e1017e835f949c56ef2dadccaf83f6d0aa34e119587",
+    "one_m_snapshot/sys-evaluation-cache.jsonl": "c07825434c9b12e2774619dadaf5ba8876f02406e891c9c3713a15de6c2c4914",
+    "tracked_100k_validation/sys-evaluation-cache.jsonl": "a938349e24603710a61964875e276417f418cfdd4f95e042a58dcb4b69f6f413",
+    "tracked_100k_validation/selection-plan.json": "3f87a89b8d0e54a4580c20a1df04a5f2ddc9a786041b671bce57cbb417bb7c8a",
+    "optional_full_1m_feature_table_identity_audit_expected": "9af141c74510ea5309b77ebc4abd0190b4c6a6f6efd9c5d2d67c3059c25af36d"
+  },
+  "selection_plan_provenance": {
+    "one_m": {
+      "path": "generated-input-snapshot/one-m-ridge-sum/selection-plan.json",
+      "sha256": "4bf777f56fcb07fe18163863594ca90e047f0e402ae7cc4b0e5ea179d6d6e68d",
+      "semantics": "seed=271828; 100000 candidates/bucket; frozen pre-target per-bucket low ridge-sum top-10 (q=1e-4); one matched baseline replicate"
+    },
+    "concentration_100k_stage1": {
+      "path": "../../extreme-scalar-rejection-proposer/artifacts/100k-ridge-concentration-validation/selection-plan.json",
+      "sha256": "3f87a89b8d0e54a4580c20a1df04a5f2ddc9a786041b671bce57cbb417bb7c8a",
+      "semantics": "seed=1618033; 10000 candidates/bucket; frozen pre-target stage-1 low ridge-sum fraction .01, ceil_min_one; one matched baseline replicate"
+    }
+  },
+  "boundary": "Retained same-q diagnostics are post-sys observational associations. The 1M data contain 1,000,000 feature rows but only 466 evaluated selected/baseline rows; its selection comparison is pre-sys selection with matched baselines, not a population tail-overlap estimate. No sys>1 probability is estimated."
+}

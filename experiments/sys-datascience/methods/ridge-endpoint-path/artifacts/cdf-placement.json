@@ -1,0 +1,79 @@
+{
+  "cache_role": "frozen 1M ridge-sum candidate-feature table supplied by --cache",
+  "cache_sha256": "9af141c74510ea5309b77ebc4abd0190b4c6a6f6efd9c5d2d67c3059c25af36d",
+  "comparison": "count frozen rows with R <= candidate R within exact product bucket",
+  "rows": [
+    {
+      "candidate_id": "ridge-endpoint-3x6-q01",
+      "bucket": "3x6",
+      "edge_formula_r": 11.301776905190875,
+      "frozen_bucket_rows": 100000,
+      "frozen_count_le": 1001,
+      "frozen_empirical_cdf_le": 0.01001,
+      "rarity_bits_censored_lower_bound": null
+    },
+    {
+      "candidate_id": "ridge-endpoint-3x6-q001",
+      "bucket": "3x6",
+      "edge_formula_r": 10.955292837190573,
+      "frozen_bucket_rows": 100000,
+      "frozen_count_le": 101,
+      "frozen_empirical_cdf_le": 0.00101,
+      "rarity_bits_censored_lower_bound": null
+    },
+    {
+      "candidate_id": "ridge-endpoint-3x6-q0001",
+      "bucket": "3x6",
+      "edge_formula_r": 10.726592837214973,
+      "frozen_bucket_rows": 100000,
+      "frozen_count_le": 11,
+      "frozen_empirical_cdf_le": 0.00011,
+      "rarity_bits_censored_lower_bound": null
+    },
+    {
+      "candidate_id": "ridge-endpoint-3x6-endpoint",
+      "bucket": "3x6",
+      "edge_formula_r": 9.797958971132713,
+      "frozen_bucket_rows": 100000,
+      "frozen_count_le": 0,
+      "frozen_empirical_cdf_le": 0.0,
+      "rarity_bits_censored_lower_bound": 16.609640474436812
+    },
+    {
+      "candidate_id": "ridge-endpoint-4x4-q01",
+      "bucket": "4x4",
+      "edge_formula_r": 10.920458917858735,
+      "frozen_bucket_rows": 100000,
+      "frozen_count_le": 1001,
+      "frozen_empirical_cdf_le": 0.01001,
+      "rarity_bits_censored_lower_bound": null
+    },
+    {
+      "candidate_id": "ridge-endpoint-4x4-q001",
+      "bucket": "4x4",
+      "edge_formula_r": 10.000093522258798,
+      "frozen_bucket_rows": 100000,
+      "frozen_count_le": 100,
+      "frozen_empirical_cdf_le": 0.001,
+      "rarity_bits_censored_lower_bound": null
+    },
+    {
+      "candidate_id": "ridge-endpoint-4x4-q0001",
+      "bucket": "4x4",
+      "edge_formula_r": 9.33513422859976,
+      "frozen_bucket_rows": 100000,
+      "frozen_count_le": 11,
+      "frozen_empirical_cdf_le": 0.00011,
+      "rarity_bits_censored_lower_bound": null
+    },
+    {
+      "candidate_id": "ridge-endpoint-4x4-endpoint",
+      "bucket": "4x4",
+      "edge_formula_r": 8.0,
+      "frozen_bucket_rows": 100000,
+      "frozen_count_le": 0,
+      "frozen_empirical_cdf_le": 0.0,
+      "rarity_bits_censored_lower_bound": 16.609640474436812
+    }
+  ]
+}

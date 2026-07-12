@@ -1,0 +1,2 @@
+selection	strata	selected_n	baseline_n	mean_selected_sys	mean_baseline_sys	bucket_equal_weight_mean_difference	bucket_bootstrap95_low	bucket_bootstrap95_high	buckets_positive_mean_difference	selected_max_sys	baseline_max_sys	evaluated_cache_rows	feature_join_rows
+per_bucket_low_sum_top_10	10	100	100	0.6083754873384173	0.3606665181110442	0.247708969227373	0.17171943863160052	0.3235122862559673	10	0.8669200809101494	0.8017365316435817	466	466

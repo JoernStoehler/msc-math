@@ -1,0 +1,34 @@
+{
+  "schema": "ridge-endpoint-smoke.certified-minimizers.v1",
+  "scope": "f64-enumerated billiard stream for the frozen q01 candidate; not an all-sigma symbolic enumeration",
+  "candidate_id": "ridge-endpoint-3x6-q01",
+  "poly_id": "da3a0d58e17f9104223c3503a36d2feff4e09096125c215293b6c009bae6f158",
+  "candidates_sha256": "889fd728923465269e2cb0587c834ef253d84edc6af8ed9eaa070360852c7c61",
+  "capacity_manifest_sha256": "827bc8a18dbca1c809f5534dd9c8ae9972bf665e99f8e91f13fd0ec043ca2997",
+  "ordinary_capacity": 5.851067096898951,
+  "certified_capacity": 5.8510670968989515,
+  "certified_capacity_exact": "4805970830822047804630130065382950860590066355953200082737243253217998571649657875633147020836864/821383646987948252599476974935743855580962501797711025874405257825978773070633687065300311459187",
+  "agreement_absolute_error": 8.881784197001252e-16,
+  "agreement_tolerance": 1e-12,
+  "minimizer_sigmas": [
+    [
+      0,
+      7,
+      1,
+      3,
+      2,
+      5
+    ],
+    [
+      0,
+      8,
+      2,
+      6,
+      1,
+      4
+    ]
+  ],
+  "candidate_iterations": 468,
+  "exact_resolutions": 68,
+  "enumerated_stream_scope": "solve_billiard_candidates from current facet classification and omega-aware transition matrix"
+}

@@ -1,0 +1,2 @@
+comparison	strata	equal_bucket_mean_difference	bucket_bootstrap95_low	bucket_bootstrap95_high	buckets_higher_at_1m	buckets_lower_at_1m	interpretation
+independent pre-sys selected runs; 100k stage-1 q=.01 versus 1M q=.0001	10	-0.027679257297765252	-0.06940409928569806	0.020406938033543494	4	6	heterogeneity diagnostic only: different q and independent generated runs preclude a same-pressure persistence curve.
