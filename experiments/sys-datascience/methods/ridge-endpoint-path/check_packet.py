@@ -5,6 +5,8 @@ import hashlib
 import json
 import math
 from pathlib import Path
+from pathlib import PurePosixPath
+import subprocess
 
 
 ROOT = Path(__file__).resolve().parent
@@ -30,9 +32,32 @@ def digest(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def digest_bytes(contents):
+    return hashlib.sha256(contents).hexdigest()
+
+
 def require(condition, message):
     if not condition:
         raise AssertionError(message)
+
+
+def require_relative_repo_path(path):
+    require(isinstance(path, str), f"manifest source path is not a string: {path!r}")
+    repo_path = PurePosixPath(path)
+    require(path and not repo_path.is_absolute() and ".." not in repo_path.parts,
+            f"manifest source path is not repository-relative: {path!r}")
+    return repo_path
+
+
+def git_bytes(repo_root, commit, path):
+    result = subprocess.run(
+        ["git", "-C", str(repo_root), "show", f"{commit}:{path}"],
+        check=False,
+        capture_output=True,
+    )
+    require(result.returncode == 0,
+            f"manifest source is unavailable at retained commit {commit}: {path}")
+    return result.stdout
 
 
 def main():
@@ -90,17 +115,31 @@ def main():
     require(abs(certificate["ordinary_capacity"] - q01["capacity"]) <= certificate["agreement_tolerance"],
             "q01 certificate does not agree with ordinary capacity")
 
-    require(not any(Path(item["path"]).is_absolute() for item in manifest["implementation_files"]),
-            "manifest stores an absolute implementation path")
-    require(manifest["cargo_lock_sha256"] == digest(ROOT / "Cargo.lock"),
-            "manifest Cargo.lock hash mismatch")
     repo_root = ROOT.parents[3]
+    repo_commit = manifest["repo_commit"]
+    require(isinstance(repo_commit, str) and len(repo_commit) == 40
+            and all(character in "0123456789abcdef" for character in repo_commit),
+            "manifest repo_commit is not a full lowercase Git object ID")
+    commit_check = subprocess.run(
+        ["git", "-C", str(repo_root), "cat-file", "-e", f"{repo_commit}^{{commit}}"],
+        check=False,
+        capture_output=True,
+    )
+    require(commit_check.returncode == 0,
+            f"manifest retained commit is unavailable: {repo_commit}")
+
+    require(manifest["cargo_lock_sha256"] == digest(ROOT / "Cargo.lock"),
+            "manifest retained Cargo.lock hash mismatch")
     closure_parts = []
+    current_drift = []
     for item in manifest["implementation_files"]:
-        implementation_path = repo_root / item["path"]
-        require(implementation_path.is_file(), f'manifest source missing: {item["path"]}')
-        require(digest(implementation_path) == item["sha256"],
-                f'manifest source hash mismatch: {item["path"]}')
+        implementation_path = require_relative_repo_path(item["path"])
+        historical_digest = digest_bytes(git_bytes(repo_root, repo_commit, implementation_path))
+        require(historical_digest == item["sha256"],
+                f'manifest source hash mismatch at retained commit: {item["path"]}')
+        current_path = repo_root / implementation_path
+        if not current_path.is_file() or digest(current_path) != item["sha256"]:
+            current_drift.append(item["path"])
         closure_parts.extend((item["path"], "\n", item["sha256"], "\n"))
     require(hashlib.sha256("".join(closure_parts).encode()).hexdigest()
             == manifest["implementation_closure_sha256"],
@@ -120,6 +159,9 @@ def main():
             "summary manifest hash mismatch")
     require(summary["evaluator_source_sha256"] == source_digest,
             "summary evaluator source hash mismatch")
+    if current_drift:
+        print("ridge-endpoint-path: current checkout differs from retained implementation "
+              f"at {repo_commit}: {', '.join(current_drift)}")
     print("ridge-endpoint-path: frozen eight-row identity and linkage checks pass")
 
 

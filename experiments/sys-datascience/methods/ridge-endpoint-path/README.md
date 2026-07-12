@@ -45,7 +45,9 @@ Source is intentionally small:
 - `refresh_summary_links.py`: provenance-only summary-link refresher; makes no
   target calls.
 - `check_packet.py`: no-target-call identity/linkage check for the retained
-  packet.
+  packet. It checks the packet-local retained `Cargo.lock` and reads the
+  implementation closure from the manifest's recorded Git commit, rather than
+  treating later checkout changes as corruption of the retained run.
 
 Generated evidence is retained under `artifacts/`. In particular,
 `target-evaluation.jsonl`, `target-summary.json`,
@@ -91,8 +93,13 @@ Do not use this packet as evidence of:
 
 ## Reproduction and checks
 
-All commands run from this directory and resolve repository code through the
-current checkout rather than an embedded worktree path.
+All commands run from this directory. `cargo` resolves repository code through
+the current checkout. The retained-packet check verifies the immutable
+packet-local `Cargo.lock` and uses Git object bytes at
+`capacity-implementation-manifest.json`'s `repo_commit` for the capacity
+implementation closure; that commit must remain available locally. It may
+print a non-failing current-checkout drift diagnostic when implementation paths
+have changed since the retained run.
 
 ```bash
 cargo check --locked
