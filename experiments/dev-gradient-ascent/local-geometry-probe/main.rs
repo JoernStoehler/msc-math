@@ -5,7 +5,9 @@
 //! finite steps of `sys(a0 + t d)` along branch-derived directions.
 
 use exp_sys_landscape::{
-    compute_active_sys_state, exact_volume_from_incidence_as_f64, SysLandscapePolytopeCache,
+    compute_active_sys_state, compute_step_bound_detailed, compute_sys_from_capacity,
+    dual_vertices_rational_strings, exact_volume_from_incidence_as_f64, poly_id_from_dual_vertices,
+    EventType, SysLandscapePolytopeCache,
 };
 use good_lp::{constraint, default_solver, variable, variables, Expression, Solution, SolverModel};
 use nalgebra::Vector4;
@@ -14,6 +16,7 @@ use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::fs::{self, File};
 use std::io::{BufRead, BufReader, BufWriter, Write};
 use std::path::{Path, PathBuf};
+use std::process::Command;
 use std::time::{Instant, SystemTime, UNIX_EPOCH};
 use symplectic::derivatives::{
     capacity_subgradients_a, clarke_directional_derivative_a, systolic_ratio_gradient_a,
@@ -32,6 +35,9 @@ const DEFAULT_MAX_FIXTURES_PER_LABEL: usize = 1;
 const DEFAULT_TRACE_ITERATIONS: usize = 2;
 const DEFAULT_MIN_OBSERVED_DELTA: f64 = 0.0;
 const DEFAULT_MIN_OBSERVED_RELATIVE_DELTA: f64 = 0.0;
+const GEOMETRIC_STEP_FACTOR: f64 = 2.0;
+const GEOMETRIC_MAX_EXPANSIONS: usize = 8;
+const GEOMETRIC_MAX_BACKTRACKS: usize = 8;
 
 #[derive(Debug)]
 struct Cli {
@@ -43,6 +49,10 @@ struct Cli {
     direction_model: DirectionModel,
     include_candidate_window_directions: bool,
     write_step_ranking_audit: bool,
+    audit_iterations: Option<BTreeSet<usize>>,
+    audit_step_policies: Vec<AuditStepPolicy>,
+    audit_direction_limit: Option<usize>,
+    audit_policy_proposal_limit: Option<usize>,
     steps: Vec<f64>,
     endpoint_steps: Option<Vec<f64>>,
     max_fixtures_per_label: usize,
@@ -57,6 +67,23 @@ struct Cli {
 enum DirectionModel {
     NearActive,
     CandidateWindow,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum AuditStepPolicy {
+    Fixed,
+    Geometric,
+    BoundaryScaled,
+}
+
+impl AuditStepPolicy {
+    fn as_str(self) -> &'static str {
+        match self {
+            Self::Fixed => "fixed",
+            Self::Geometric => "geometric",
+            Self::BoundaryScaled => "boundary_scaled",
+        }
+    }
 }
 
 impl DirectionModel {
@@ -119,6 +146,79 @@ struct FixtureRow {
 }
 
 #[derive(Serialize)]
+struct AuditedStateRow {
+    state_id: String,
+    source_poly_id: String,
+    source_degeneracy_label: String,
+    source_selection_rank_within_label: usize,
+    iteration: usize,
+    role: String,
+    /// Immediate predecessor geometry hash. In audit mode every reached trace
+    /// base is emitted, so a non-null predecessor resolves to another row in
+    /// this file.
+    predecessor_state_id: Option<String>,
+    dual_vertices_f64: Vec<[f64; 4]>,
+    dual_vertices_rational: Vec<[String; 4]>,
+    base_sys: f64,
+    min_action: f64,
+    branch_threshold_relative: f64,
+    action_window_relative: f64,
+    action_window_absolute: f64,
+    min_observed_delta: f64,
+    min_observed_relative_delta: f64,
+}
+
+#[derive(Serialize)]
+struct AuditStateStatusRow {
+    poly_id: String,
+    degeneracy_label: String,
+    selection_rank_within_label: usize,
+    requested_iteration: usize,
+    status: String,
+    state_id: Option<String>,
+    trace_stop_reason: String,
+}
+
+#[derive(Serialize)]
+struct RunProvenance {
+    full_cli_args: Vec<String>,
+    parameters: RunParameters,
+    inputs: Vec<InputIdentity>,
+    source: SourceIdentity,
+}
+
+#[derive(Serialize)]
+struct RunParameters {
+    selection_threshold_relative: f64,
+    action_window_relative: f64,
+    steps: Vec<f64>,
+    endpoint_steps: Option<Vec<f64>>,
+    trace_iterations: usize,
+    audit_iterations: Option<Vec<usize>>,
+    audit_step_policies: Vec<String>,
+    audit_direction_limit: Option<usize>,
+    audit_policy_proposal_limit: Option<usize>,
+    min_observed_delta: f64,
+    min_observed_relative_delta: f64,
+}
+
+#[derive(Serialize)]
+struct InputIdentity {
+    role: String,
+    observed_path: String,
+    portable_path: String,
+    blake3: String,
+}
+
+#[derive(Serialize)]
+struct SourceIdentity {
+    repo_head: Option<String>,
+    worktree_diff_blake3: String,
+    source_file: String,
+    source_file_blake3: String,
+}
+
+#[derive(Serialize)]
 struct LocalGeometryProbeRow {
     poly_id: String,
     degeneracy_label: String,
@@ -176,15 +276,30 @@ struct StepRankingAuditRow {
     iteration: usize,
     direction_label: String,
     step: f64,
+    move_key: String,
+    audit_step_policy: String,
+    policy_proposal_order: usize,
+    policy_evaluation_order: usize,
+    exact_evaluation_order: usize,
+    exact_evaluation_reused: bool,
+    boundary_t_max: Option<f64>,
+    boundary_event: Option<String>,
     status: String,
     base_sys: f64,
     effective_min_observed_delta: f64,
     near_active_predicted_delta_sys: Option<f64>,
     candidate_window_predicted_delta_sys: Option<f64>,
-    candidate_window_witness_orbit_index: Option<usize>,
+    /// Index in the nominal-action-filtered analytic candidate list.
+    candidate_window_witness_filtered_orbit_index: Option<usize>,
     candidate_window_witness_sigma: Option<Vec<usize>>,
+    candidate_window_witness_admissibility: Option<OrbitAdmissibility>,
     candidate_window_witness_action: Option<f64>,
+    candidate_window_witness_action_lower: Option<f64>,
+    candidate_window_witness_action_upper: Option<f64>,
     candidate_window_witness_relative_action_gap: Option<f64>,
+    candidate_window_witness_q: Option<f64>,
+    candidate_window_witness_q_error_bound: Option<f64>,
+    candidate_window_witness_beta_margin: Option<f64>,
     candidate_window_witness_base_gap: Option<f64>,
     candidate_window_witness_derivative: Option<f64>,
     observed_delta_sys: Option<f64>,
@@ -231,11 +346,17 @@ struct EndpointDiagnosticRow {
 #[derive(Serialize)]
 struct ComputeBudgetReport {
     command: String,
+    run_provenance_path: String,
+    run_provenance_blake3: String,
     diagnostic_dir: String,
     polytope_table: String,
     selection_threshold_relative: f64,
     direction_model: String,
     include_candidate_window_directions: bool,
+    audit_iterations: Option<Vec<usize>>,
+    audit_step_policies: Vec<String>,
+    audit_direction_limit: Option<usize>,
+    audit_policy_proposal_limit: Option<usize>,
     max_fixtures_per_label: usize,
     skip_fixtures_per_label: usize,
     degeneracy_labels: Vec<String>,
@@ -244,6 +365,9 @@ struct ComputeBudgetReport {
     run_trace_rows: usize,
     endpoint_diagnostic_rows: usize,
     endpoint_direction_scan_rows: usize,
+    audited_state_rows: usize,
+    selected_audited_state_rows: usize,
+    audit_state_status_rows: usize,
     base_orbit_iterations: u64,
     target_orbit_iterations: u64,
     trace_base_orbit_iterations: u64,
@@ -260,8 +384,14 @@ struct ComputeBudgetReport {
 #[derive(Serialize)]
 struct Summary {
     method: String,
+    run_provenance_path: String,
+    run_provenance_blake3: String,
     direction_model: String,
     include_candidate_window_directions: bool,
+    audit_iterations: Option<Vec<usize>>,
+    audit_step_policies: Vec<String>,
+    audit_direction_limit: Option<usize>,
+    audit_policy_proposal_limit: Option<usize>,
     selection_threshold_relative: f64,
     max_fixtures_per_label: usize,
     skip_fixtures_per_label: usize,
@@ -271,6 +401,9 @@ struct Summary {
     run_trace_rows: usize,
     endpoint_diagnostic_rows: usize,
     endpoint_direction_scan_rows: usize,
+    audited_state_rows: usize,
+    selected_audited_state_rows: usize,
+    audit_state_status_counts: BTreeMap<String, usize>,
     failed_probe_rows: usize,
     failed_endpoint_direction_scan_rows: usize,
     degeneracy_counts: BTreeMap<String, usize>,
@@ -326,6 +459,15 @@ impl StopThreshold {
 fn main() {
     let cli = parse_args();
     fs::create_dir_all(&cli.out_dir).expect("failed to create output directory");
+    reset_owned_output_files(&cli.out_dir);
+    let run_provenance = build_run_provenance(&cli);
+    let run_provenance_blake3 = blake3::hash(
+        &serde_json::to_vec(&run_provenance).expect("failed to serialize run provenance"),
+    )
+    .to_hex()
+    .to_string();
+    write_json(cli.out_dir.join("run-provenance.json"), &run_provenance)
+        .expect("failed to write run-provenance.json");
     let t0 = Instant::now();
 
     let diagnostic_rows: Vec<DiagnosticRow> =
@@ -349,65 +491,72 @@ fn main() {
     let mut base_orbit_iterations = 0u64;
     let mut target_orbit_iterations = 0u64;
 
-    for fixture in &fixtures {
-        match compute_base_state_from_row(
-            &fixture.polytope,
-            cli.action_window_relative,
-            cli.selection_threshold_relative,
-        ) {
-            Ok(base) => {
-                base_orbit_iterations += base.capacity.iterations;
-                let directions =
-                    probe_directions(&base, &cli.steps, cli.include_candidate_window_directions);
-                for direction in directions {
-                    for &step in &cli.steps {
-                        if !direction.allows_step(step) {
-                            continue;
+    if cli.audit_iterations.is_none() {
+        for fixture in &fixtures {
+            match compute_base_state_from_row(
+                &fixture.polytope,
+                cli.action_window_relative,
+                cli.selection_threshold_relative,
+            ) {
+                Ok(base) => {
+                    base_orbit_iterations += base.capacity.iterations;
+                    let directions = probe_directions(
+                        &base,
+                        &cli.steps,
+                        cli.include_candidate_window_directions,
+                    );
+                    for direction in directions {
+                        for &step in &cli.steps {
+                            if !direction.allows_step(step) {
+                                continue;
+                            }
+                            let row = local_probe_row(
+                                fixture,
+                                &base,
+                                &direction.label,
+                                &direction.vector,
+                                step,
+                                cli.direction_model,
+                                cli.action_window_relative,
+                                cli.selection_threshold_relative,
+                            );
+                            if let Some(iterations) = row.target_orbit_iterations {
+                                target_orbit_iterations += iterations;
+                            }
+                            probe_rows.push(row);
                         }
-                        let row = local_probe_row(
-                            fixture,
-                            &base,
-                            &direction.label,
-                            &direction.vector,
-                            step,
-                            cli.direction_model,
-                            cli.action_window_relative,
-                            cli.selection_threshold_relative,
-                        );
-                        if let Some(iterations) = row.target_orbit_iterations {
-                            target_orbit_iterations += iterations;
-                        }
-                        probe_rows.push(row);
                     }
                 }
-            }
-            Err(err) => {
-                probe_rows.push(LocalGeometryProbeRow {
-                    poly_id: fixture.polytope.poly_id.clone(),
-                    degeneracy_label: fixture.diagnostic.degeneracy_label.clone(),
-                    direction_label: "base_state".to_string(),
-                    step: 0.0,
-                    status: err,
-                    base_sys: fixture.polytope.sys,
-                    predicted_delta_per_step: None,
-                    predicted_delta_sys: None,
-                    recomputed_sys: None,
-                    observed_delta_sys: None,
-                    target_near_active_count: None,
-                    target_best_sigma_in_base_near_active_set: None,
-                    base_near_active_count: 0,
-                    base_returned_orbit_count: 0,
-                    base_orbit_iterations: 0,
-                    target_orbit_iterations: None,
-                });
+                Err(err) => {
+                    probe_rows.push(LocalGeometryProbeRow {
+                        poly_id: fixture.polytope.poly_id.clone(),
+                        degeneracy_label: fixture.diagnostic.degeneracy_label.clone(),
+                        direction_label: "base_state".to_string(),
+                        step: 0.0,
+                        status: err,
+                        base_sys: fixture.polytope.sys,
+                        predicted_delta_per_step: None,
+                        predicted_delta_sys: None,
+                        recomputed_sys: None,
+                        observed_delta_sys: None,
+                        target_near_active_count: None,
+                        target_best_sigma_in_base_near_active_set: None,
+                        base_near_active_count: 0,
+                        base_returned_orbit_count: 0,
+                        base_orbit_iterations: 0,
+                        target_orbit_iterations: None,
+                    });
+                }
             }
         }
     }
 
     write_jsonl(cli.out_dir.join("fixture-selection.jsonl"), &fixture_rows)
         .expect("failed to write fixture-selection.jsonl");
-    write_jsonl(cli.out_dir.join("local-geometry-probe.jsonl"), &probe_rows)
-        .expect("failed to write local-geometry-probe.jsonl");
+    if cli.audit_iterations.is_none() {
+        write_jsonl(cli.out_dir.join("local-geometry-probe.jsonl"), &probe_rows)
+            .expect("failed to write local-geometry-probe.jsonl");
+    }
     let trace_artifacts = run_trace_and_endpoint_rows(
         &fixtures,
         &probe_rows,
@@ -419,6 +568,10 @@ fn main() {
         &cli.steps,
         cli.endpoint_steps.as_deref().unwrap_or(&cli.steps),
         cli.trace_iterations,
+        cli.audit_iterations.as_ref(),
+        &cli.audit_step_policies,
+        cli.audit_direction_limit,
+        cli.audit_policy_proposal_limit,
         StopThreshold {
             absolute_delta: cli.min_observed_delta,
             relative_delta: cli.min_observed_relative_delta,
@@ -428,24 +581,37 @@ fn main() {
     let endpoint_rows = trace_artifacts.endpoint_rows;
     let endpoint_direction_scan_rows = trace_artifacts.endpoint_direction_scan_rows;
     let step_ranking_audit_rows = trace_artifacts.step_ranking_audit_rows;
+    let audited_state_rows = trace_artifacts.audited_state_rows;
+    let audit_state_status_rows = trace_artifacts.audit_state_status_rows;
     write_jsonl(cli.out_dir.join("run-trace.jsonl"), &trace_rows)
         .expect("failed to write run-trace.jsonl");
-    write_jsonl(
-        cli.out_dir.join("endpoint-diagnostic.jsonl"),
-        &endpoint_rows,
-    )
-    .expect("failed to write endpoint-diagnostic.jsonl");
-    write_jsonl(
-        cli.out_dir.join("endpoint-direction-scan.jsonl"),
-        &endpoint_direction_scan_rows,
-    )
-    .expect("failed to write endpoint-direction-scan.jsonl");
-    if cli.write_step_ranking_audit {
+    if cli.audit_iterations.is_none() {
+        write_jsonl(
+            cli.out_dir.join("endpoint-diagnostic.jsonl"),
+            &endpoint_rows,
+        )
+        .expect("failed to write endpoint-diagnostic.jsonl");
+        write_jsonl(
+            cli.out_dir.join("endpoint-direction-scan.jsonl"),
+            &endpoint_direction_scan_rows,
+        )
+        .expect("failed to write endpoint-direction-scan.jsonl");
+    }
+    if cli.write_step_ranking_audit || cli.audit_iterations.is_some() {
         write_jsonl(
             cli.out_dir.join("step-ranking-audit.jsonl"),
             &step_ranking_audit_rows,
         )
         .expect("failed to write step-ranking-audit.jsonl");
+    }
+    if cli.audit_iterations.is_some() {
+        write_jsonl(cli.out_dir.join("states.jsonl"), &audited_state_rows)
+            .expect("failed to write states.jsonl");
+        write_jsonl(
+            cli.out_dir.join("audit-state-status.jsonl"),
+            &audit_state_status_rows,
+        )
+        .expect("failed to write audit-state-status.jsonl");
     }
 
     let failed_probe_rows = probe_rows
@@ -482,11 +648,24 @@ fn main() {
         .sum::<u64>();
     let report = ComputeBudgetReport {
         command: "dev-gradient-ascent-local-geometry-probe".to_string(),
+        run_provenance_path: "run-provenance.json".to_string(),
+        run_provenance_blake3: run_provenance_blake3.clone(),
         diagnostic_dir: cli.diagnostic_dir.display().to_string(),
         polytope_table: cli.polytope_table.display().to_string(),
         selection_threshold_relative: cli.selection_threshold_relative,
         direction_model: cli.direction_model.as_str().to_string(),
         include_candidate_window_directions: cli.include_candidate_window_directions,
+        audit_iterations: cli
+            .audit_iterations
+            .as_ref()
+            .map(|iterations| iterations.iter().copied().collect()),
+        audit_step_policies: cli
+            .audit_step_policies
+            .iter()
+            .map(|policy| policy.as_str().to_string())
+            .collect(),
+        audit_direction_limit: cli.audit_direction_limit,
+        audit_policy_proposal_limit: cli.audit_policy_proposal_limit,
         max_fixtures_per_label: cli.max_fixtures_per_label,
         skip_fixtures_per_label: cli.skip_fixtures_per_label,
         degeneracy_labels: cli.degeneracy_labels.clone(),
@@ -495,6 +674,12 @@ fn main() {
         run_trace_rows: trace_rows.len(),
         endpoint_diagnostic_rows: endpoint_rows.len(),
         endpoint_direction_scan_rows: endpoint_direction_scan_rows.len(),
+        audited_state_rows: audited_state_rows.len(),
+        selected_audited_state_rows: audited_state_rows
+            .iter()
+            .filter(|row| row.role == "selected_audit_state")
+            .count(),
+        audit_state_status_rows: audit_state_status_rows.len(),
         base_orbit_iterations,
         target_orbit_iterations,
         trace_base_orbit_iterations,
@@ -512,8 +697,21 @@ fn main() {
 
     let summary = Summary {
         method: "dev-gradient-ascent-local-geometry-probe".to_string(),
+        run_provenance_path: "run-provenance.json".to_string(),
+        run_provenance_blake3,
         direction_model: cli.direction_model.as_str().to_string(),
         include_candidate_window_directions: cli.include_candidate_window_directions,
+        audit_iterations: cli
+            .audit_iterations
+            .as_ref()
+            .map(|iterations| iterations.iter().copied().collect()),
+        audit_step_policies: cli
+            .audit_step_policies
+            .iter()
+            .map(|policy| policy.as_str().to_string())
+            .collect(),
+        audit_direction_limit: cli.audit_direction_limit,
+        audit_policy_proposal_limit: cli.audit_policy_proposal_limit,
         selection_threshold_relative: cli.selection_threshold_relative,
         max_fixtures_per_label: cli.max_fixtures_per_label,
         skip_fixtures_per_label: cli.skip_fixtures_per_label,
@@ -523,6 +721,12 @@ fn main() {
         run_trace_rows: trace_rows.len(),
         endpoint_diagnostic_rows: endpoint_rows.len(),
         endpoint_direction_scan_rows: endpoint_direction_scan_rows.len(),
+        audited_state_rows: audited_state_rows.len(),
+        selected_audited_state_rows: audited_state_rows
+            .iter()
+            .filter(|row| row.role == "selected_audit_state")
+            .count(),
+        audit_state_status_counts: count_audit_state_statuses(&audit_state_status_rows),
         failed_probe_rows,
         failed_endpoint_direction_scan_rows,
         degeneracy_counts: count_fixture_degeneracy(&fixtures),
@@ -610,6 +814,8 @@ struct TraceArtifacts {
     endpoint_rows: Vec<EndpointDiagnosticRow>,
     endpoint_direction_scan_rows: Vec<LocalGeometryProbeRow>,
     step_ranking_audit_rows: Vec<StepRankingAuditRow>,
+    audited_state_rows: Vec<AuditedStateRow>,
+    audit_state_status_rows: Vec<AuditStateStatusRow>,
 }
 
 fn run_trace_and_endpoint_rows(
@@ -623,12 +829,19 @@ fn run_trace_and_endpoint_rows(
     steps: &[f64],
     endpoint_steps: &[f64],
     trace_iterations: usize,
+    audit_iterations: Option<&BTreeSet<usize>>,
+    audit_step_policies: &[AuditStepPolicy],
+    audit_direction_limit: Option<usize>,
+    audit_policy_proposal_limit: Option<usize>,
     stop_threshold: StopThreshold,
 ) -> TraceArtifacts {
     let mut rows = Vec::new();
     let mut endpoint_rows = Vec::new();
     let mut endpoint_direction_scan_rows = Vec::new();
     let mut step_ranking_audit_rows = Vec::new();
+    let mut audited_state_rows = Vec::new();
+    let mut audit_state_status_rows = Vec::new();
+    let iteration_limit = trace_iteration_limit(trace_iterations, audit_iterations);
     for fixture in fixtures {
         let mut current = match polytope_from_row(&fixture.polytope) {
             Ok(polytope) => polytope,
@@ -645,27 +858,39 @@ fn run_trace_and_endpoint_rows(
                     "initial_polytope_failed",
                     Some(err.clone()),
                 ));
-                endpoint_rows.push(endpoint_failure_row(
-                    fixture,
-                    "initial_polytope_failed",
-                    "endpoint_not_run_initial_polytope_failed",
-                    None,
-                    None,
-                    stop_threshold,
-                    None,
-                ));
-                endpoint_direction_scan_rows.push(endpoint_direction_scan_failure_row(
-                    fixture,
-                    "initial_polytope_failed",
-                    0.0,
-                    err,
-                ));
+                if audit_iterations.is_none() {
+                    endpoint_rows.push(endpoint_failure_row(
+                        fixture,
+                        "initial_polytope_failed",
+                        "endpoint_not_run_initial_polytope_failed",
+                        None,
+                        None,
+                        stop_threshold,
+                        None,
+                    ));
+                    endpoint_direction_scan_rows.push(endpoint_direction_scan_failure_row(
+                        fixture,
+                        "initial_polytope_failed",
+                        0.0,
+                        err,
+                    ));
+                } else if let Some(iterations) = audit_iterations {
+                    audit_state_status_rows.extend(audit_state_status_rows_for_fixture(
+                        fixture,
+                        iterations,
+                        &BTreeMap::new(),
+                        "initial_polytope_failed",
+                    ));
+                }
                 continue;
             }
         };
         let mut trace_stop_reason = "trace_iteration_limit".to_string();
+        let mut current_state_id = state_id_for_polytope(&current);
+        let mut predecessor_state_id = None;
+        let mut reached_audit_state_ids = BTreeMap::new();
 
-        for iteration in 0..trace_iterations {
+        for iteration in 0..iteration_limit {
             let action_gap = if iteration == 0 {
                 fixture.polytope.capacity * action_window_relative
             } else {
@@ -712,17 +937,49 @@ fn run_trace_and_endpoint_rows(
                     break;
                 }
             };
-            if write_step_ranking_audit {
+            let audit_this_iteration =
+                audit_iterations.is_some_and(|iterations| iterations.contains(&iteration));
+            if audit_iterations.is_some() {
+                let role = if audit_this_iteration {
+                    "selected_audit_state"
+                } else {
+                    "trace_lineage_state"
+                };
+                audited_state_rows.push(audited_state_row(
+                    fixture,
+                    iteration,
+                    &base,
+                    current_state_id.clone(),
+                    predecessor_state_id.clone(),
+                    role,
+                    branch_threshold_relative,
+                    action_window_relative,
+                    action_gap,
+                    stop_threshold,
+                ));
+            }
+            if audit_this_iteration {
+                reached_audit_state_ids.insert(iteration, current_state_id.clone());
+            }
+            if write_step_ranking_audit || audit_this_iteration {
                 step_ranking_audit_rows.extend(step_ranking_audit_rows_for_base(
                     fixture,
                     iteration,
                     &base,
                     steps,
+                    audit_step_policies,
+                    audit_direction_limit,
+                    audit_policy_proposal_limit,
+                    direction_model,
                     include_candidate_window_directions,
                     action_window_relative,
                     branch_threshold_relative,
                     stop_threshold,
                 ));
+            }
+            if is_last_selected_audit(iteration, audit_iterations) {
+                trace_stop_reason = "last_selected_audit_complete".to_string();
+                break;
             }
             let Some(candidate) = best_line_search_step(
                 fixture,
@@ -754,37 +1011,48 @@ fn run_trace_and_endpoint_rows(
             let accepted = candidate.accepted;
             rows.push(candidate.row);
             if accepted {
+                predecessor_state_id = Some(current_state_id);
                 current = candidate.target_polytope;
+                current_state_id = state_id_for_polytope(&current);
             } else {
                 trace_stop_reason = "line_search_all_steps_below_min_observed_delta".to_string();
                 break;
             }
         }
 
-        endpoint_rows.push(endpoint_diagnostic_row(
-            fixture,
-            &current,
-            &trace_stop_reason,
-            trace_iterations,
-            direction_model,
-            include_candidate_window_directions,
-            branch_threshold_relative,
-            action_window_relative,
-            steps,
-            stop_threshold,
-        ));
-        endpoint_direction_scan_rows.extend(endpoint_direction_scan_rows_for_final_state(
-            fixture,
-            &current,
-            branch_threshold_relative,
-            action_window_relative,
-            direction_model,
-            include_candidate_window_directions,
-            endpoint_steps,
-        ));
+        if audit_iterations.is_none() {
+            endpoint_rows.push(endpoint_diagnostic_row(
+                fixture,
+                &current,
+                &trace_stop_reason,
+                trace_iterations,
+                direction_model,
+                include_candidate_window_directions,
+                branch_threshold_relative,
+                action_window_relative,
+                steps,
+                stop_threshold,
+            ));
+            endpoint_direction_scan_rows.extend(endpoint_direction_scan_rows_for_final_state(
+                fixture,
+                &current,
+                branch_threshold_relative,
+                action_window_relative,
+                direction_model,
+                include_candidate_window_directions,
+                endpoint_steps,
+            ));
+        } else if let Some(iterations) = audit_iterations {
+            audit_state_status_rows.extend(audit_state_status_rows_for_fixture(
+                fixture,
+                iterations,
+                &reached_audit_state_ids,
+                &trace_stop_reason,
+            ));
+        }
     }
 
-    if trace_iterations == 1 {
+    if audit_iterations.is_none() && trace_iterations == 1 {
         align_first_trace_rows_with_probe_rows(&mut rows, probe_rows);
     }
     TraceArtifacts {
@@ -792,7 +1060,96 @@ fn run_trace_and_endpoint_rows(
         endpoint_rows,
         endpoint_direction_scan_rows,
         step_ranking_audit_rows,
+        audited_state_rows,
+        audit_state_status_rows,
     }
+}
+
+fn trace_iteration_limit(
+    ordinary_limit: usize,
+    audit_iterations: Option<&BTreeSet<usize>>,
+) -> usize {
+    audit_iterations
+        .and_then(|iterations| iterations.last().copied())
+        .map_or(ordinary_limit, |last| last + 1)
+}
+
+fn is_last_selected_audit(iteration: usize, audit_iterations: Option<&BTreeSet<usize>>) -> bool {
+    audit_iterations
+        .and_then(|iterations| iterations.last())
+        .is_some_and(|last| iteration == *last)
+}
+
+fn state_id_for_polytope(polytope: &SysLandscapePolytopeCache) -> String {
+    format!(
+        "state:{}",
+        poly_id_from_dual_vertices(&polytope.dual_vertices_f64)
+    )
+}
+
+#[allow(clippy::too_many_arguments)]
+fn audited_state_row(
+    fixture: &Fixture,
+    iteration: usize,
+    base: &BaseState,
+    state_id: String,
+    predecessor_state_id: Option<String>,
+    role: &str,
+    branch_threshold_relative: f64,
+    action_window_relative: f64,
+    action_window_absolute: f64,
+    stop_threshold: StopThreshold,
+) -> AuditedStateRow {
+    AuditedStateRow {
+        state_id,
+        source_poly_id: fixture.polytope.poly_id.clone(),
+        source_degeneracy_label: fixture.diagnostic.degeneracy_label.clone(),
+        source_selection_rank_within_label: fixture.selection_rank_within_label,
+        iteration,
+        role: role.to_string(),
+        predecessor_state_id,
+        dual_vertices_f64: base
+            .polytope
+            .dual_vertices_f64
+            .iter()
+            .map(|dual| [dual[0], dual[1], dual[2], dual[3]])
+            .collect(),
+        dual_vertices_rational: dual_vertices_rational_strings(&base.polytope),
+        base_sys: base.sys,
+        min_action: base.capacity.min_action,
+        branch_threshold_relative,
+        action_window_relative,
+        action_window_absolute,
+        min_observed_delta: stop_threshold.absolute_delta,
+        min_observed_relative_delta: stop_threshold.relative_delta,
+    }
+}
+
+fn audit_state_status_rows_for_fixture(
+    fixture: &Fixture,
+    requested_iterations: &BTreeSet<usize>,
+    reached_state_ids: &BTreeMap<usize, String>,
+    trace_stop_reason: &str,
+) -> Vec<AuditStateStatusRow> {
+    requested_iterations
+        .iter()
+        .map(|&requested_iteration| {
+            let state_id = reached_state_ids.get(&requested_iteration).cloned();
+            AuditStateStatusRow {
+                poly_id: fixture.polytope.poly_id.clone(),
+                degeneracy_label: fixture.diagnostic.degeneracy_label.clone(),
+                selection_rank_within_label: fixture.selection_rank_within_label,
+                requested_iteration,
+                status: if state_id.is_some() {
+                    "selected".to_string()
+                } else {
+                    "unreached_trace_stopped".to_string()
+                },
+                state_id,
+                trace_stop_reason: trace_stop_reason.to_string(),
+            }
+        })
+        .collect()
 }
 
 struct TraceCandidate {
@@ -806,6 +1163,10 @@ fn step_ranking_audit_rows_for_base(
     iteration: usize,
     base: &BaseState,
     steps: &[f64],
+    audit_step_policies: &[AuditStepPolicy],
+    audit_direction_limit: Option<usize>,
+    audit_policy_proposal_limit: Option<usize>,
+    direction_model: DirectionModel,
     include_candidate_window_directions: bool,
     action_window_relative: f64,
     branch_threshold_relative: f64,
@@ -813,25 +1174,336 @@ fn step_ranking_audit_rows_for_base(
 ) -> Vec<StepRankingAuditRow> {
     let effective_min_observed_delta = stop_threshold.effective_delta(base.sys);
     let mut rows = Vec::new();
-    for direction in probe_directions(base, steps, include_candidate_window_directions) {
-        for &step in steps {
-            if !direction.allows_step(step) {
-                continue;
+    let directions = audit_ordered_directions(
+        base,
+        steps,
+        direction_model,
+        include_candidate_window_directions,
+    );
+    let directions = directions
+        .into_iter()
+        .take(audit_direction_limit.unwrap_or(usize::MAX));
+    let policies = if audit_step_policies.is_empty() {
+        &[AuditStepPolicy::Fixed][..]
+    } else {
+        audit_step_policies
+    };
+    let mut exact_cache: HashMap<MoveCacheKey, CachedExactStep> = HashMap::new();
+    let mut next_exact_evaluation_order = 1usize;
+
+    for &policy in policies {
+        let mut policy_order = 0usize;
+        for direction in directions.clone() {
+            if audit_policy_proposal_limit.is_some_and(|limit| policy_order >= limit) {
+                break;
             }
-            rows.push(step_ranking_audit_row(
-                fixture,
-                iteration,
-                base,
-                &direction,
-                step,
-                action_window_relative,
-                branch_threshold_relative,
-                effective_min_observed_delta,
-            ));
+            let boundary = compute_step_bound_detailed(&base.polytope, &direction.vector);
+            match policy {
+                AuditStepPolicy::Fixed => {
+                    for &step in steps {
+                        if audit_policy_proposal_limit.is_some_and(|limit| policy_order >= limit) {
+                            break;
+                        }
+                        if direction.allows_step(step) {
+                            push_audit_step(
+                                &mut rows,
+                                &mut exact_cache,
+                                &mut next_exact_evaluation_order,
+                                &mut policy_order,
+                                fixture,
+                                iteration,
+                                base,
+                                &direction,
+                                step,
+                                policy,
+                                &boundary,
+                                action_window_relative,
+                                branch_threshold_relative,
+                                effective_min_observed_delta,
+                            );
+                        }
+                    }
+                }
+                AuditStepPolicy::BoundaryScaled => {
+                    if boundary.t_max.is_finite() && boundary.t_max > 0.0 {
+                        for factor in [0.1, 0.25, 0.5, 0.75, 0.95, 1.5, 2.0, 3.0] {
+                            if audit_policy_proposal_limit
+                                .is_some_and(|limit| policy_order >= limit)
+                            {
+                                break;
+                            }
+                            let step = factor * boundary.t_max;
+                            if step.is_finite() && direction.allows_step(step) {
+                                push_audit_step(
+                                    &mut rows,
+                                    &mut exact_cache,
+                                    &mut next_exact_evaluation_order,
+                                    &mut policy_order,
+                                    fixture,
+                                    iteration,
+                                    base,
+                                    &direction,
+                                    step,
+                                    policy,
+                                    &boundary,
+                                    action_window_relative,
+                                    branch_threshold_relative,
+                                    effective_min_observed_delta,
+                                );
+                            }
+                        }
+                    }
+                }
+                AuditStepPolicy::Geometric => {
+                    if audit_policy_proposal_limit.is_some_and(|limit| policy_order >= limit) {
+                        continue;
+                    }
+                    let Some(&initial_step) = steps.first() else {
+                        continue;
+                    };
+                    if !direction.allows_step(initial_step) {
+                        continue;
+                    }
+                    let initial_delta = push_audit_step(
+                        &mut rows,
+                        &mut exact_cache,
+                        &mut next_exact_evaluation_order,
+                        &mut policy_order,
+                        fixture,
+                        iteration,
+                        base,
+                        &direction,
+                        initial_step,
+                        policy,
+                        &boundary,
+                        action_window_relative,
+                        branch_threshold_relative,
+                        effective_min_observed_delta,
+                    );
+                    if initial_delta.is_some_and(|delta| delta > 0.0) {
+                        let mut previous_delta = initial_delta.unwrap();
+                        let mut step = initial_step;
+                        for _ in 0..GEOMETRIC_MAX_EXPANSIONS {
+                            if audit_policy_proposal_limit
+                                .is_some_and(|limit| policy_order >= limit)
+                            {
+                                break;
+                            }
+                            step *= GEOMETRIC_STEP_FACTOR;
+                            if !step.is_finite() || !direction.allows_step(step) {
+                                break;
+                            }
+                            let delta = push_audit_step(
+                                &mut rows,
+                                &mut exact_cache,
+                                &mut next_exact_evaluation_order,
+                                &mut policy_order,
+                                fixture,
+                                iteration,
+                                base,
+                                &direction,
+                                step,
+                                policy,
+                                &boundary,
+                                action_window_relative,
+                                branch_threshold_relative,
+                                effective_min_observed_delta,
+                            );
+                            let Some(delta) = delta else { break };
+                            if delta <= 0.0 || delta <= previous_delta {
+                                break;
+                            }
+                            previous_delta = delta;
+                        }
+                    } else {
+                        let mut step = initial_step;
+                        for _ in 0..GEOMETRIC_MAX_BACKTRACKS {
+                            if audit_policy_proposal_limit
+                                .is_some_and(|limit| policy_order >= limit)
+                            {
+                                break;
+                            }
+                            step /= GEOMETRIC_STEP_FACTOR;
+                            if step <= 0.0 || !direction.allows_step(step) {
+                                break;
+                            }
+                            let delta = push_audit_step(
+                                &mut rows,
+                                &mut exact_cache,
+                                &mut next_exact_evaluation_order,
+                                &mut policy_order,
+                                fixture,
+                                iteration,
+                                base,
+                                &direction,
+                                step,
+                                policy,
+                                &boundary,
+                                action_window_relative,
+                                branch_threshold_relative,
+                                effective_min_observed_delta,
+                            );
+                            if delta.is_some_and(|delta| delta > 0.0) {
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
     assign_descending_ranks(&mut rows);
     rows
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+struct MoveCacheKey {
+    step_bits: u64,
+    direction_bits: Vec<u64>,
+}
+
+#[derive(Clone)]
+struct ExactStepEvaluation {
+    status: String,
+    observed_delta_sys: Option<f64>,
+    target_sys: Option<f64>,
+    target_orbit_iterations: Option<u64>,
+}
+
+#[derive(Clone)]
+struct CachedExactStep {
+    exact_evaluation_order: usize,
+    evaluation: ExactStepEvaluation,
+}
+
+fn audit_ordered_directions(
+    base: &BaseState,
+    steps: &[f64],
+    direction_model: DirectionModel,
+    include_candidate_window_directions: bool,
+) -> Vec<ProbeDirection> {
+    let ordering_step = steps.first().copied().unwrap_or(0.0);
+    let mut indexed: Vec<_> = probe_directions(base, steps, include_candidate_window_directions)
+        .into_iter()
+        .enumerate()
+        .collect();
+    indexed.sort_by(|(left_index, left), (right_index, right)| {
+        let left_score =
+            branch_model_predicted_delta(base, &left.vector, ordering_step, direction_model)
+                .filter(|score| score.is_finite());
+        let right_score =
+            branch_model_predicted_delta(base, &right.vector, ordering_step, direction_model)
+                .filter(|score| score.is_finite());
+        right_score
+            .partial_cmp(&left_score)
+            .unwrap_or(std::cmp::Ordering::Equal)
+            .then_with(|| left_index.cmp(right_index))
+    });
+    indexed
+        .into_iter()
+        .map(|(_, direction)| direction)
+        .collect()
+}
+
+#[allow(clippy::too_many_arguments)]
+fn push_audit_step(
+    rows: &mut Vec<StepRankingAuditRow>,
+    exact_cache: &mut HashMap<MoveCacheKey, CachedExactStep>,
+    next_exact_evaluation_order: &mut usize,
+    policy_order: &mut usize,
+    fixture: &Fixture,
+    iteration: usize,
+    base: &BaseState,
+    direction: &ProbeDirection,
+    step: f64,
+    policy: AuditStepPolicy,
+    boundary: &exp_sys_landscape::BoundaryEvent,
+    action_window_relative: f64,
+    branch_threshold_relative: f64,
+    effective_min_observed_delta: f64,
+) -> Option<f64> {
+    *policy_order += 1;
+    let key = move_cache_key(direction, step);
+    let (cached, reused) = cached_exact_step(exact_cache, next_exact_evaluation_order, key, || {
+        evaluate_exact_step(
+            base,
+            direction,
+            step,
+            action_window_relative,
+            branch_threshold_relative,
+        )
+    });
+    let observed_delta = cached.evaluation.observed_delta_sys;
+    rows.push(step_ranking_audit_row(
+        fixture,
+        iteration,
+        base,
+        direction,
+        step,
+        policy,
+        *policy_order,
+        cached.exact_evaluation_order,
+        reused,
+        boundary,
+        action_window_relative,
+        effective_min_observed_delta,
+        cached.evaluation,
+    ));
+    observed_delta
+}
+
+fn cached_exact_step<F>(
+    exact_cache: &mut HashMap<MoveCacheKey, CachedExactStep>,
+    next_exact_evaluation_order: &mut usize,
+    key: MoveCacheKey,
+    evaluate: F,
+) -> (CachedExactStep, bool)
+where
+    F: FnOnce() -> ExactStepEvaluation,
+{
+    match exact_cache.get(&key) {
+        Some(cached) => (cached.clone(), true),
+        None => {
+            let cached = CachedExactStep {
+                exact_evaluation_order: *next_exact_evaluation_order,
+                evaluation: evaluate(),
+            };
+            *next_exact_evaluation_order += 1;
+            exact_cache.insert(key, cached.clone());
+            (cached, false)
+        }
+    }
+}
+
+fn move_cache_key(direction: &ProbeDirection, step: f64) -> MoveCacheKey {
+    MoveCacheKey {
+        step_bits: step.to_bits(),
+        direction_bits: direction
+            .vector
+            .iter()
+            .flat_map(|vector| vector.iter().map(|coordinate| coordinate.to_bits()))
+            .collect(),
+    }
+}
+
+fn move_key(direction: &ProbeDirection, step: f64) -> String {
+    format!("{}:{:016x}", direction.label, step.to_bits())
+}
+
+fn boundary_event_label(event: &EventType) -> String {
+    match event {
+        EventType::IncidenceFlip {
+            vertex_index,
+            new_facet,
+        } => format!("incidence_flip:vertex={vertex_index}:facet={new_facet}"),
+        EventType::OmegaFlip { facet_i, facet_j } => {
+            format!("omega_flip:facet_i={facet_i}:facet_j={facet_j}")
+        }
+        EventType::DualVertexDegen { facet } => {
+            format!("dual_vertex_degeneracy:facet={facet}")
+        }
+        EventType::Unbounded => "unbounded".to_string(),
+    }
 }
 
 fn step_ranking_audit_row(
@@ -840,9 +1512,14 @@ fn step_ranking_audit_row(
     base: &BaseState,
     direction: &ProbeDirection,
     step: f64,
+    policy: AuditStepPolicy,
+    policy_order: usize,
+    exact_evaluation_order: usize,
+    exact_evaluation_reused: bool,
+    boundary: &exp_sys_landscape::BoundaryEvent,
     action_window_relative: f64,
-    branch_threshold_relative: f64,
     effective_min_observed_delta: f64,
+    exact: ExactStepEvaluation,
 ) -> StepRankingAuditRow {
     let near_active_predicted_delta_sys =
         branch_model_predicted_delta(base, &direction.vector, step, DirectionModel::NearActive);
@@ -851,48 +1528,12 @@ fn step_ranking_audit_row(
     let candidate_window_predicted_delta_sys = candidate_window_prediction
         .as_ref()
         .map(|witness| witness.predicted_delta);
-    let target_duals: Vec<Vector4<f64>> = base
-        .polytope
-        .dual_vertices_f64
-        .iter()
-        .zip(&direction.vector)
-        .map(|(dual, delta)| dual + step * delta)
-        .collect();
-
-    let mut status = "ok".to_string();
-    let mut target_sys = None;
-    let mut observed_delta_sys = None;
-    let mut target_orbit_iterations = None;
-
-    match SysLandscapePolytopeCache::from_f64_dual_vertices(target_duals) {
-        Some(target_polytope) => {
-            match capacity_auto_with_gap(
-                &target_polytope,
-                base.capacity.min_action * action_window_relative,
-            ) {
-                Ok(target_capacity) => {
-                    target_orbit_iterations = Some(target_capacity.iterations);
-                    match compute_active_sys_state(&target_polytope) {
-                        Some(target_state) => {
-                            let _target_near_active =
-                                near_active_orbits(&target_capacity, branch_threshold_relative);
-                            target_sys = Some(target_state.sys);
-                            observed_delta_sys = Some(target_state.sys - base.sys);
-                        }
-                        None => {
-                            status = "target_sys_failed".to_string();
-                        }
-                    }
-                }
-                Err(err) => {
-                    status = format!("target_capacity_failed:{err:?}");
-                }
-            }
-        }
-        None => {
-            status = "target_polytope_construction_failed".to_string();
-        }
-    }
+    let ExactStepEvaluation {
+        status,
+        observed_delta_sys,
+        target_sys,
+        target_orbit_iterations,
+    } = exact;
 
     StepRankingAuditRow {
         poly_id: fixture.polytope.poly_id.clone(),
@@ -900,23 +1541,49 @@ fn step_ranking_audit_row(
         iteration,
         direction_label: direction.label.clone(),
         step,
+        move_key: move_key(direction, step),
+        audit_step_policy: policy.as_str().to_string(),
+        policy_proposal_order: policy_order,
+        policy_evaluation_order: policy_order,
+        exact_evaluation_order,
+        exact_evaluation_reused,
+        boundary_t_max: boundary.t_max.is_finite().then_some(boundary.t_max),
+        boundary_event: Some(boundary_event_label(&boundary.event)),
         status,
         base_sys: base.sys,
         effective_min_observed_delta,
         near_active_predicted_delta_sys,
         candidate_window_predicted_delta_sys,
-        candidate_window_witness_orbit_index: candidate_window_prediction
+        candidate_window_witness_filtered_orbit_index: candidate_window_prediction
             .as_ref()
             .map(|witness| witness.orbit_index),
         candidate_window_witness_sigma: candidate_window_prediction
             .as_ref()
             .map(|witness| witness.sigma.clone()),
+        candidate_window_witness_admissibility: candidate_window_prediction
+            .as_ref()
+            .map(|witness| witness.admissibility),
         candidate_window_witness_action: candidate_window_prediction
             .as_ref()
             .map(|witness| witness.action),
+        candidate_window_witness_action_lower: candidate_window_prediction
+            .as_ref()
+            .map(|witness| witness.action_lower),
+        candidate_window_witness_action_upper: candidate_window_prediction
+            .as_ref()
+            .map(|witness| witness.action_upper),
         candidate_window_witness_relative_action_gap: candidate_window_prediction
             .as_ref()
             .map(|witness| witness.relative_action_gap),
+        candidate_window_witness_q: candidate_window_prediction
+            .as_ref()
+            .map(|witness| witness.q),
+        candidate_window_witness_q_error_bound: candidate_window_prediction
+            .as_ref()
+            .map(|witness| witness.q_error_bound),
+        candidate_window_witness_beta_margin: candidate_window_prediction
+            .as_ref()
+            .map(|witness| witness.beta_margin),
         candidate_window_witness_base_gap: candidate_window_prediction
             .as_ref()
             .map(|witness| witness.base_gap),
@@ -937,6 +1604,60 @@ fn step_ranking_audit_row(
         base_near_active_count: base.near_active_orbits.len(),
         base_candidate_window_count: base.candidate_orbits.len(),
         base_orbit_iterations: base.capacity.iterations,
+        target_orbit_iterations,
+    }
+}
+
+fn evaluate_exact_step(
+    base: &BaseState,
+    direction: &ProbeDirection,
+    step: f64,
+    action_window_relative: f64,
+    _branch_threshold_relative: f64,
+) -> ExactStepEvaluation {
+    let target_duals: Vec<Vector4<f64>> = base
+        .polytope
+        .dual_vertices_f64
+        .iter()
+        .zip(&direction.vector)
+        .map(|(dual, delta)| dual + step * delta)
+        .collect();
+    let Some(target_polytope) = SysLandscapePolytopeCache::from_f64_dual_vertices(target_duals)
+    else {
+        return ExactStepEvaluation {
+            status: "target_polytope_construction_failed".to_string(),
+            observed_delta_sys: None,
+            target_sys: None,
+            target_orbit_iterations: None,
+        };
+    };
+    let target_capacity = match capacity_auto_with_gap(
+        &target_polytope,
+        base.capacity.min_action * action_window_relative,
+    ) {
+        Ok(capacity) => capacity,
+        Err(err) => {
+            return ExactStepEvaluation {
+                status: format!("target_capacity_failed:{err:?}"),
+                observed_delta_sys: None,
+                target_sys: None,
+                target_orbit_iterations: None,
+            };
+        }
+    };
+    let target_orbit_iterations = Some(target_capacity.iterations);
+    let Some(target_sys) = compute_sys_from_capacity(&target_polytope, &target_capacity) else {
+        return ExactStepEvaluation {
+            status: "target_sys_failed".to_string(),
+            observed_delta_sys: None,
+            target_sys: None,
+            target_orbit_iterations,
+        };
+    };
+    ExactStepEvaluation {
+        status: "ok".to_string(),
+        observed_delta_sys: Some(target_sys - base.sys),
+        target_sys: Some(target_sys),
         target_orbit_iterations,
     }
 }
@@ -1066,13 +1787,14 @@ fn best_line_search_step(
                 rejected_steps.push(step);
                 continue;
             };
-            let Some(target_state) = compute_active_sys_state(&target_polytope) else {
+            let Some(target_sys) = compute_sys_from_capacity(&target_polytope, &target_capacity)
+            else {
                 rejected_steps.push(step);
                 continue;
             };
             let target_near_active =
                 near_active_orbits(&target_capacity, branch_threshold_relative);
-            let observed_delta = target_state.sys - base.sys;
+            let observed_delta = target_sys - base.sys;
             if observed_delta <= effective_min_observed_delta {
                 rejected_steps.push(step);
                 last_rejected_observed_delta = Some(observed_delta);
@@ -1103,7 +1825,7 @@ fn best_line_search_step(
                     predicted_delta_sys: Some(predicted_delta),
                     observed_delta_sys: Some(observed_delta),
                     base_sys: base.sys,
-                    target_sys: Some(target_state.sys),
+                    target_sys: Some(target_sys),
                     base_orbit_iterations: base.capacity.iterations,
                     target_orbit_iterations: Some(target_capacity.iterations),
                     accepted: true,
@@ -1523,20 +2245,25 @@ fn compute_base_state_from_polytope(
             systolic_ratio_gradient_a(capacity.min_action, vol, capacity_gradient, &d_volume_da)
         })
         .collect();
+    // Aggregation retains candidates whose action interval intersects its gap.
+    // The analytic model is defined by the explicitly requested window in the
+    // producer's nominal action, so filter before differentiating.
+    let candidate_orbits = candidate_window_orbits(&capacity, action_gap);
     let candidate_capacity_gradients =
-        capacity_subgradients_a(&polytope.dual_vertices_f64, &capacity.orbits)
+        capacity_subgradients_a(&polytope.dual_vertices_f64, &candidate_orbits)
             .map_err(|err| format!("candidate_capacity_derivative_failed:{err:?}"))?;
     let candidate_sys_gradients: Vec<Vec<Vector4<f64>>> = candidate_capacity_gradients
         .iter()
-        .zip(capacity.orbits.iter())
+        .zip(candidate_orbits.iter())
         .map(|(capacity_gradient, orbit)| {
             systolic_ratio_gradient_a(orbit.action, vol, capacity_gradient, &d_volume_da)
         })
         .collect();
+    debug_assert_eq!(candidate_orbits.len(), candidate_sys_gradients.len());
 
     Ok(BaseState {
         polytope,
-        candidate_orbits: capacity.orbits.clone(),
+        candidate_orbits,
         capacity,
         sys,
         near_active_orbits,
@@ -1692,8 +2419,14 @@ fn branch_model_predicted_delta(
 struct CandidateWindowPredictionWitness {
     orbit_index: usize,
     sigma: Vec<usize>,
+    admissibility: OrbitAdmissibility,
     action: f64,
+    action_lower: f64,
+    action_upper: f64,
     relative_action_gap: f64,
+    q: f64,
+    q_error_bound: f64,
+    beta_margin: f64,
     base_gap: f64,
     derivative: f64,
     predicted_delta: f64,
@@ -1722,8 +2455,14 @@ fn candidate_window_prediction_witness(
                 .then(|| CandidateWindowPredictionWitness {
                     orbit_index,
                     sigma: orbit.sigma.clone(),
+                    admissibility: orbit.admissibility,
                     action: orbit.action,
+                    action_lower: orbit.action_lower,
+                    action_upper: orbit.action_upper,
                     relative_action_gap: action_ratio - 1.0,
+                    q: orbit.q,
+                    q_error_bound: orbit.q_error_bound,
+                    beta_margin: orbit.beta_margin,
                     base_gap,
                     derivative,
                     predicted_delta,
@@ -1890,6 +2629,25 @@ fn near_active_orbits(result: &OrbitSearchResult, threshold_relative: f64) -> Ve
     active
 }
 
+fn candidate_window_orbits(result: &OrbitSearchResult, action_gap: f64) -> Vec<OrbitKktData> {
+    let cutoff = result.min_action + action_gap.max(0.0);
+    // This only absorbs ordinary f64 rounding at the explicitly requested
+    // boundary; it is deliberately much smaller than experiment action gaps.
+    let tolerance = 64.0 * f64::EPSILON * cutoff.abs().max(1.0);
+    result
+        .orbits
+        .iter()
+        .filter(|orbit| {
+            matches!(
+                orbit.admissibility,
+                OrbitAdmissibility::AdmissibleF64 | OrbitAdmissibility::AdmissibleExact
+            )
+        })
+        .filter(|orbit| orbit.action.is_finite() && orbit.action <= cutoff + tolerance)
+        .cloned()
+        .collect()
+}
+
 fn capacity_auto_with_gap(
     polytope: &SysLandscapePolytopeCache,
     action_gap: f64,
@@ -2013,6 +2771,14 @@ fn count_trace_line_search_statuses(rows: &[RunTraceRow]) -> BTreeMap<String, us
     counts
 }
 
+fn count_audit_state_statuses(rows: &[AuditStateStatusRow]) -> BTreeMap<String, usize> {
+    let mut counts = BTreeMap::new();
+    for row in rows {
+        *counts.entry(row.status.clone()).or_insert(0) += 1;
+    }
+    counts
+}
+
 fn count_endpoint_statuses(rows: &[EndpointDiagnosticRow]) -> BTreeMap<String, usize> {
     let mut counts = BTreeMap::new();
     for row in rows {
@@ -2066,6 +2832,10 @@ fn parse_args() -> Cli {
         direction_model: DirectionModel::NearActive,
         include_candidate_window_directions: false,
         write_step_ranking_audit: false,
+        audit_iterations: None,
+        audit_step_policies: vec![AuditStepPolicy::Fixed],
+        audit_direction_limit: None,
+        audit_policy_proposal_limit: None,
         steps: DEFAULT_STEPS.to_vec(),
         endpoint_steps: None,
         max_fixtures_per_label: DEFAULT_MAX_FIXTURES_PER_LABEL,
@@ -2120,6 +2890,37 @@ fn parse_args() -> Cli {
             }
             "--write-step-ranking-audit" => {
                 cli.write_step_ranking_audit = true;
+            }
+            "--audit-iterations" => {
+                cli.audit_iterations =
+                    Some(parse_audit_iterations(&args.next().expect(
+                        "--audit-iterations requires comma-separated integers",
+                    )));
+            }
+            "--audit-step-policies" => {
+                cli.audit_step_policies = parse_audit_step_policies(
+                    &args
+                        .next()
+                        .expect("--audit-step-policies requires comma-separated policies"),
+                );
+            }
+            "--audit-direction-limit" => {
+                let limit: usize = args
+                    .next()
+                    .expect("--audit-direction-limit requires a positive integer")
+                    .parse()
+                    .expect("--audit-direction-limit must be a positive integer");
+                assert!(limit > 0, "--audit-direction-limit must be positive");
+                cli.audit_direction_limit = Some(limit);
+            }
+            "--audit-policy-proposal-limit" => {
+                let limit: usize = args
+                    .next()
+                    .expect("--audit-policy-proposal-limit requires a positive integer")
+                    .parse()
+                    .expect("--audit-policy-proposal-limit must be a positive integer");
+                assert!(limit > 0, "--audit-policy-proposal-limit must be positive");
+                cli.audit_policy_proposal_limit = Some(limit);
             }
             "--steps" => {
                 cli.steps = args
@@ -2205,12 +3006,53 @@ fn print_usage() {
          [--direction-model near-active|candidate-window] \
          [--include-candidate-window-directions] \
          [--write-step-ranking-audit] \
+         [--audit-iterations CSV] \
+         [--audit-step-policies fixed,geometric,boundary-scaled] \
+         [--audit-direction-limit N] \
+         [--audit-policy-proposal-limit N] \
          [--steps CSV] [--endpoint-steps CSV] \
          [--max-fixtures-per-label N] [--skip-fixtures-per-label N] \
          [--trace-iterations N] \
          [--degeneracy-labels CSV] [--min-observed-delta F64] \
          [--min-observed-relative-delta F64]"
     );
+}
+
+fn parse_audit_iterations(raw: &str) -> BTreeSet<usize> {
+    let iterations: BTreeSet<usize> = raw
+        .split(',')
+        .filter(|value| !value.is_empty())
+        .map(|value| {
+            value
+                .parse()
+                .expect("--audit-iterations entries must be nonnegative integers")
+        })
+        .collect();
+    assert!(
+        !iterations.is_empty(),
+        "--audit-iterations requires at least one iteration"
+    );
+    iterations
+}
+
+fn parse_audit_step_policies(raw: &str) -> Vec<AuditStepPolicy> {
+    let mut policies = Vec::new();
+    for value in raw.split(',').filter(|value| !value.is_empty()) {
+        let policy = match value {
+            "fixed" => AuditStepPolicy::Fixed,
+            "geometric" => AuditStepPolicy::Geometric,
+            "boundary-scaled" | "boundary_scaled" => AuditStepPolicy::BoundaryScaled,
+            other => panic!("unsupported --audit-step-policies value: {other}"),
+        };
+        if !policies.contains(&policy) {
+            policies.push(policy);
+        }
+    }
+    assert!(
+        !policies.is_empty(),
+        "--audit-step-policies requires at least one policy"
+    );
+    policies
 }
 
 fn parse_direction_model(raw: &str) -> DirectionModel {
@@ -2234,6 +3076,107 @@ fn default_output_dir() -> PathBuf {
         "dev-gradient-ascent-local-geometry-probe-{}-{stamp}",
         std::process::id()
     ))
+}
+
+fn build_run_provenance(cli: &Cli) -> RunProvenance {
+    let repo_root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .ancestors()
+        .nth(2)
+        .expect("experiment crate must be nested under the repository root")
+        .to_path_buf();
+    let diagnostic_input = cli.diagnostic_dir.join("branch-set-diagnostic.jsonl");
+    RunProvenance {
+        full_cli_args: std::env::args().collect(),
+        parameters: RunParameters {
+            selection_threshold_relative: cli.selection_threshold_relative,
+            action_window_relative: cli.action_window_relative,
+            steps: cli.steps.clone(),
+            endpoint_steps: cli.endpoint_steps.clone(),
+            trace_iterations: cli.trace_iterations,
+            audit_iterations: cli
+                .audit_iterations
+                .as_ref()
+                .map(|iterations| iterations.iter().copied().collect()),
+            audit_step_policies: cli
+                .audit_step_policies
+                .iter()
+                .map(|policy| policy.as_str().to_string())
+                .collect(),
+            audit_direction_limit: cli.audit_direction_limit,
+            audit_policy_proposal_limit: cli.audit_policy_proposal_limit,
+            min_observed_delta: cli.min_observed_delta,
+            min_observed_relative_delta: cli.min_observed_relative_delta,
+        },
+        inputs: vec![
+            input_identity("branch_set_diagnostic", &diagnostic_input, &repo_root),
+            input_identity("polytope_table", &cli.polytope_table, &repo_root),
+        ],
+        source: source_identity(&repo_root),
+    }
+}
+
+fn input_identity(role: &str, path: &Path, repo_root: &Path) -> InputIdentity {
+    let bytes = fs::read(path)
+        .unwrap_or_else(|error| panic!("failed to hash input {}: {error}", path.display()));
+    InputIdentity {
+        role: role.to_string(),
+        observed_path: path.display().to_string(),
+        portable_path: portable_path(path, repo_root),
+        blake3: blake3::hash(&bytes).to_hex().to_string(),
+    }
+}
+
+fn portable_path(path: &Path, repo_root: &Path) -> String {
+    match path.strip_prefix(repo_root) {
+        Ok(relative) => format!("repo:{}", relative.display()),
+        Err(_) => format!(
+            "external-blake3-input:{}",
+            path.file_name().unwrap_or_default().to_string_lossy()
+        ),
+    }
+}
+
+fn source_identity(repo_root: &Path) -> SourceIdentity {
+    let source_file =
+        PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("local-geometry-probe/main.rs");
+    let source_bytes = fs::read(&source_file)
+        .unwrap_or_else(|error| panic!("failed to hash source {}: {error}", source_file.display()));
+    SourceIdentity {
+        repo_head: git_stdout(repo_root, ["rev-parse", "HEAD"]),
+        worktree_diff_blake3: blake3::hash(&git_stdout_bytes(
+            repo_root,
+            ["diff", "--binary", "--no-ext-diff"],
+        ))
+        .to_hex()
+        .to_string(),
+        source_file: portable_path(&source_file, repo_root),
+        source_file_blake3: blake3::hash(&source_bytes).to_hex().to_string(),
+    }
+}
+
+fn git_stdout<const N: usize>(repo_root: &Path, args: [&str; N]) -> Option<String> {
+    let output = Command::new("git")
+        .current_dir(repo_root)
+        .args(args)
+        .output()
+        .ok()?;
+    output
+        .status
+        .success()
+        .then(|| String::from_utf8_lossy(&output.stdout).trim().to_string())
+}
+
+fn git_stdout_bytes<const N: usize>(repo_root: &Path, args: [&str; N]) -> Vec<u8> {
+    let output = Command::new("git")
+        .current_dir(repo_root)
+        .args(args)
+        .output()
+        .expect("failed to identify the worktree diff");
+    assert!(
+        output.status.success(),
+        "failed to identify the worktree diff"
+    );
+    output.stdout
 }
 
 fn load_jsonl<T: for<'de> Deserialize<'de>>(path: &Path) -> Vec<T> {
@@ -2271,4 +3214,226 @@ fn write_json<P: AsRef<Path>, T: Serialize>(path: P, value: &T) -> std::io::Resu
     let writer = BufWriter::new(file);
     serde_json::to_writer_pretty(writer, value)?;
     Ok(())
+}
+
+/// Remove only files owned by this command so a reused output directory cannot
+/// mix normal-mode and audit-mode artifacts from different runs.
+fn reset_owned_output_files(out_dir: &Path) {
+    for name in [
+        "fixture-selection.jsonl",
+        "local-geometry-probe.jsonl",
+        "run-trace.jsonl",
+        "endpoint-diagnostic.jsonl",
+        "endpoint-direction-scan.jsonl",
+        "step-ranking-audit.jsonl",
+        "states.jsonl",
+        "audit-state-status.jsonl",
+        "run-provenance.json",
+        "compute-budget-report.json",
+        "summary.json",
+    ] {
+        let path = out_dir.join(name);
+        if let Err(error) = fs::remove_file(&path) {
+            assert_eq!(
+                error.kind(),
+                std::io::ErrorKind::NotFound,
+                "failed to remove stale owned output {}: {error}",
+                path.display()
+            );
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::cell::Cell;
+
+    fn test_fixture() -> Fixture {
+        Fixture {
+            diagnostic: DiagnosticRow {
+                poly_id: "fixture-poly".to_string(),
+                selection_buckets: Vec::new(),
+                datasets: Vec::new(),
+                input_facet_count: 0,
+                input_sys: 0.0,
+                threshold_relative: 0.001,
+                near_active_count: None,
+                degeneracy_label: "narrow_gap".to_string(),
+                failure: None,
+            },
+            polytope: PolytopeRow {
+                poly_id: "fixture-poly".to_string(),
+                capacity: 1.0,
+                sys: 1.0,
+                dual_vertices_f64: Vec::new(),
+            },
+            selection_rank_within_label: 0,
+        }
+    }
+
+    fn orbit(
+        sigma: usize,
+        action: f64,
+        action_lower: f64,
+        admissibility: OrbitAdmissibility,
+    ) -> OrbitKktData {
+        OrbitKktData {
+            sigma: vec![sigma],
+            beta: vec![1.0],
+            beta_margin: 1.0,
+            action,
+            action_lower,
+            action_upper: action,
+            q: 1.0,
+            q_error_bound: 0.0,
+            mu: Some([0.0; 4]),
+            xi: Some(0.0),
+            admissibility,
+        }
+    }
+
+    #[test]
+    fn candidate_window_uses_nominal_action_and_admissibility() {
+        let result = OrbitSearchResult {
+            orbits: vec![
+                orbit(0, 1.0, 1.0, OrbitAdmissibility::AdmissibleF64),
+                orbit(1, 1.01, 1.01, OrbitAdmissibility::AdmissibleExact),
+                // Its interval intersects the requested window, but its
+                // nominal action is far outside it.
+                orbit(2, 10.0, 1.005, OrbitAdmissibility::AdmissibleF64),
+                orbit(3, 1.005, 1.005, OrbitAdmissibility::IndeterminateF64),
+            ],
+            min_action: 1.0,
+            min_action_lower: 1.0,
+            min_action_upper: 1.0,
+            iterations: 4,
+        };
+
+        let retained = candidate_window_orbits(&result, 0.01);
+        let retained_sigma: Vec<_> = retained.iter().map(|orbit| orbit.sigma[0]).collect();
+        assert_eq!(retained_sigma, vec![0, 1]);
+    }
+
+    #[test]
+    fn candidate_window_tolerates_roundoff_at_requested_boundary() {
+        let cutoff = 1.01;
+        let result = OrbitSearchResult {
+            orbits: vec![orbit(
+                0,
+                cutoff + 8.0 * f64::EPSILON,
+                cutoff,
+                OrbitAdmissibility::AdmissibleF64,
+            )],
+            min_action: 1.0,
+            min_action_lower: 1.0,
+            min_action_upper: 1.0,
+            iterations: 1,
+        };
+
+        assert_eq!(candidate_window_orbits(&result, 0.01).len(), 1);
+    }
+
+    #[test]
+    fn audit_iterations_are_sorted_and_deduplicated() {
+        assert_eq!(parse_audit_iterations("4,0,2,2"), BTreeSet::from([0, 2, 4]));
+    }
+
+    #[test]
+    fn selective_audit_runs_through_last_selected_base_then_stops() {
+        let selected = BTreeSet::from([0, 4, 8]);
+        assert_eq!(trace_iteration_limit(2, Some(&selected)), 9);
+        assert!(!is_last_selected_audit(7, Some(&selected)));
+        assert!(is_last_selected_audit(8, Some(&selected)));
+        assert_eq!(trace_iteration_limit(2, None), 2);
+    }
+
+    #[test]
+    fn audit_step_policies_preserve_order_and_deduplicate() {
+        assert_eq!(
+            parse_audit_step_policies("geometric,fixed,geometric,boundary-scaled"),
+            vec![
+                AuditStepPolicy::Geometric,
+                AuditStepPolicy::Fixed,
+                AuditStepPolicy::BoundaryScaled,
+            ]
+        );
+    }
+
+    #[test]
+    fn rejected_audit_has_deterministic_nonempty_status_rows() {
+        let requested = BTreeSet::from([1, 3]);
+        let reached = BTreeMap::from([(1, "state:one".to_string())]);
+        let rows = audit_state_status_rows_for_fixture(
+            &test_fixture(),
+            &requested,
+            &reached,
+            "line_search_all_steps_below_min_observed_delta",
+        );
+
+        assert_eq!(rows.len(), 2);
+        assert_eq!(rows[0].requested_iteration, 1);
+        assert_eq!(rows[0].status, "selected");
+        assert_eq!(rows[0].state_id.as_deref(), Some("state:one"));
+        assert_eq!(rows[1].requested_iteration, 3);
+        assert_eq!(rows[1].status, "unreached_trace_stopped");
+        assert!(rows[1].state_id.is_none());
+        assert_eq!(
+            rows[1].trace_stop_reason,
+            "line_search_all_steps_below_min_observed_delta"
+        );
+    }
+
+    #[test]
+    fn audit_exact_step_cache_reuses_capacity_evaluation() {
+        let mut cache = HashMap::new();
+        let mut next_order = 1;
+        let key = MoveCacheKey {
+            step_bits: 1,
+            direction_bits: vec![2, 3],
+        };
+        let evaluations = Cell::new(0usize);
+        let first = cached_exact_step(&mut cache, &mut next_order, key.clone(), || {
+            evaluations.set(evaluations.get() + 1);
+            ExactStepEvaluation {
+                status: "ok".to_string(),
+                observed_delta_sys: Some(0.25),
+                target_sys: Some(1.25),
+                target_orbit_iterations: Some(7),
+            }
+        });
+        let second = cached_exact_step(&mut cache, &mut next_order, key, || {
+            panic!("cached move must not recompute its capacity")
+        });
+
+        assert!(!first.1);
+        assert!(second.1);
+        assert_eq!(evaluations.get(), 1);
+        assert_eq!(
+            first.0.exact_evaluation_order,
+            second.0.exact_evaluation_order
+        );
+        assert_eq!(next_order, 2);
+    }
+
+    #[test]
+    fn reset_owned_outputs_removes_stale_mode_specific_files_only() {
+        let dir = std::env::temp_dir().join(format!(
+            "dev-gradient-ascent-reset-owned-{}",
+            std::process::id()
+        ));
+        fs::create_dir_all(&dir).unwrap();
+        fs::write(dir.join("endpoint-diagnostic.jsonl"), b"stale\n").unwrap();
+        fs::write(dir.join("states.jsonl"), b"stale\n").unwrap();
+        fs::write(dir.join("run-provenance.json"), b"stale\n").unwrap();
+        fs::write(dir.join("unrelated.txt"), b"keep\n").unwrap();
+
+        reset_owned_output_files(&dir);
+
+        assert!(!dir.join("endpoint-diagnostic.jsonl").exists());
+        assert!(!dir.join("states.jsonl").exists());
+        assert!(!dir.join("run-provenance.json").exists());
+        assert!(dir.join("unrelated.txt").exists());
+        fs::remove_dir_all(dir).unwrap();
+    }
 }

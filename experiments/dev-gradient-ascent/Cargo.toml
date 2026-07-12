@@ -42,6 +42,7 @@ path = "run-trace-report/main.rs"
 workspace = true
 
 [dependencies]
+blake3.workspace = true
 exp-sys-landscape = { path = "../sys-landscape" }
 good_lp.workspace = true
 nalgebra.workspace = true

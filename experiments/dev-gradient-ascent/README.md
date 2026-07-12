@@ -290,8 +290,16 @@ It writes:
 - `run-trace.jsonl`
 - `endpoint-diagnostic.jsonl`
 - `endpoint-direction-scan.jsonl`
+- `run-provenance.json`
 - `compute-budget-report.json`
 - `summary.json`
+
+`run-provenance.json` records the full CLI argument vector, all step/threshold
+and audit parameters, BLAKE3 identities for both consumed JSONL inputs, and
+the repository head, worktree-diff hash, and producer-source hash. The two
+JSON reports repeat the provenance file name and its BLAKE3 hash. Paths inside
+the repository are stored as `repo:` paths; external inputs have a portable
+content identity even when their observed `/tmp` path is unavailable later.
 
 With `--write-step-ranking-audit`, it also writes
 `step-ranking-audit.jsonl`. Use that flag only for small hard panels. The audit
@@ -301,6 +309,55 @@ predictions. Candidate-window rows include the branch/orbit witness attaining
 the lower-envelope prediction. This is for deciding whether a first-order model
 guides observed moves; it is not a normal broad-panel option and it is not the
 same as the runner's direction-first line search.
+
+For an iteration-selective hard-state freeze, use `--audit-iterations 0,4,8`.
+This mode skips the initial probe matrix and audits only the named trace bases.
+It writes every reached trace base to `states.jsonl`: named bases have role
+`selected_audit_state`, and intervening bases have role `trace_lineage_state`.
+Thus each non-null `predecessor_state_id` resolves to another row in that file.
+The exact rational representation of the stored f64 geometry, f64 geometry,
+and threshold fields are recorded for every such row. `audit-state-status.jsonl`
+has one deterministic row per requested iteration and fixture: it distinguishes
+a selected state from one unreached because the trace stopped or was rejected.
+The mode stops before line search at the last named iteration. It deliberately
+does not produce normal-mode endpoint diagnostics or endpoint direction scans.
+Iterations before the last named audit still execute the normal trace policy so
+that later selected bases are reached; `--trace-iterations` does not limit this
+selective path.
+
+In that audit mode, `--audit-step-policies fixed,geometric,boundary-scaled`
+compares step schedulers without changing the trace used to reach a selected
+base. `fixed` uses the configured `--steps` order. `geometric` starts at the
+first configured step, doubles while exact improvement increases, and halves
+after an unsuccessful initial move. `boundary-scaled` evaluates the legacy
+fractions `0.1,0.25,0.5,0.75,0.95` and overshoots `1.5,2,3` of the finite first
+combinatorial boundary distance. Audit rows include proposal order, the shared
+exact-evaluation order, cache-reuse status, boundary event, both prediction
+scores, and exact observed change. Multiple policies share exact target
+evaluations in memory; filter to `exact_evaluation_reused == false` to recover
+the union evaluation cost. Candidate-window predictions order directions but
+never suppress the exact fallback probes.
+
+For a smallest discriminating policy check, `--audit-direction-limit 1`
+restricts the audit to the highest-scored generated direction. This is a
+state-local comparison control, recorded in the summary and compute-budget
+report; it does not alter the trace direction generator. Combine it with
+`--audit-policy-proposal-limit 4` to bound each policy to its first four
+state-local proposals; the policy order remains recorded so the finite
+anytime comparison does not imply a larger policy search.
+
+The command removes its own known output files before each run. Reusing an
+output directory therefore cannot leave stale normal-mode endpoint files next
+to audit-mode state files, or stale audit files next to a normal run. Without
+`--audit-iterations`, normal mode retains its usual probe, trace, endpoint
+diagnostic, and endpoint direction-scan outputs; audit step-policy flags do
+not alter its trace policy.
+
+Candidate-window analytics use admissible branches whose nominal action lies
+inside the explicitly requested window. Orbit aggregation can conservatively
+return additional interval-overlap candidates; those are not differentiated
+as if they belonged to the nominal analytic window. Audit witness indices are
+indices in this filtered analytic candidate list.
 
 Regenerate this probe before quoting fixture counts, prediction/observation
 pairs, trace stop reasons, endpoint statuses, or compute cost. The artifact

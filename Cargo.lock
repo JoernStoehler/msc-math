@@ -496,6 +496,7 @@ dependencies = [
 name = "exp-dev-gradient-ascent"
 version = "0.1.0"
 dependencies = [
+ "blake3",
  "exp-sys-landscape",
  "good_lp",
  "nalgebra",
