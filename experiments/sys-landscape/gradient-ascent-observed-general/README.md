@@ -26,6 +26,91 @@ newline-terminated JSON row per source file, shared schema and parameters
 and accepted moves, trace/endpoint statuses, finite attempt statuses, and the
 aggregate costs. It writes [`artifacts/summary.json`](artifacts/summary.json).
 
+## Fresh-session reproduction contract
+
+This is a source-to-raw-to-retained procedure.  Run it from a clean checkout
+at the source identity recorded below; do **not** write a fresh run into the
+tracked `artifacts/` directory.  The retained panel was introduced in commit
+`dadf7aa824e3d0cd237f45d666ae894b86c600fe`.  At that commit, and at the
+current version of this packet, the producer and analyzer SHA-256 digests are
+respectively
+`2642d4390939ba9d43f6515bfdd0add16263d65564c2a45d4a1fd015220fa9e9` and
+`703212db0d3d501f7bdced290c29e024022b034ca84b335fa6558939ace806cb`.
+
+First record the checkout identity and reject local changes to the producer,
+analyzer, or dependency lockfile.  If the commit is not the retained-panel
+commit, matching the two source hashes above establishes the relevant
+producer/analyzer identity; also retain the recorded `Cargo.lock` hash and
+full commit ID with the new raw directory.
+
+```bash
+git rev-parse HEAD
+git status --short -- \
+  Cargo.lock \
+  experiments/sys-landscape/gradient-ascent-observed-general/main.rs \
+  experiments/sys-landscape/gradient-ascent-observed-general/analyze_retained_panel.py
+sha256sum \
+  Cargo.lock \
+  experiments/sys-landscape/gradient-ascent-observed-general/main.rs \
+  experiments/sys-landscape/gradient-ascent-observed-general/analyze_retained_panel.py
+```
+
+Build the exact binary once, then make one independently named, one-row raw
+file for every seed.  `--out` is mandatory here so the output location and
+input naming are independent of the binary's timestamped default.
+
+```bash
+set -euo pipefail
+packet=experiments/sys-landscape/gradient-ascent-observed-general
+run_dir=/tmp/observed-general-retained-panel-42-53-reproduction
+raw_dir="$run_dir/raw"
+retained_dir="$run_dir/retained"
+rm -rf "$run_dir"
+mkdir -p "$raw_dir"
+
+cargo build -p exp-sys-landscape --release \
+  --bin sys-gradient-ascent-observed-general
+for seed in $(seq 42 53); do
+  cargo run -p exp-sys-landscape --release \
+    --bin sys-gradient-ascent-observed-general -- \
+    --seed "$seed" --retained-preflight --out "$raw_dir/seed-$seed.jsonl"
+done
+python3 "$packet/analyze_retained_panel.py" \
+  --input-dir "$raw_dir" --out-dir "$retained_dir"
+```
+
+The analyzer is the retention gate: it rejects a missing, extra, misnamed, or
+non-single-row raw file before it writes the concatenation.  Check both that
+the analyzer's retained JSONL is the exact byte concatenation of these raw
+inputs and that its summary describes this run directory and all twelve seeds.
+
+```bash
+cat "$raw_dir"/seed-{42..53}.jsonl >"$run_dir/manual-concatenation.jsonl"
+cmp -- "$run_dir/manual-concatenation.jsonl" "$retained_dir/retained-panel.jsonl"
+test "$(wc -l <"$retained_dir/retained-panel.jsonl")" -eq 12
+python3 - "$retained_dir/summary.json" "$raw_dir" <<'PY'
+import json
+import sys
+
+summary = json.load(open(sys.argv[1], encoding="utf-8"))
+assert summary["input_directory"] == sys.argv[2]
+assert summary["validated_seeds"] == list(range(42, 54))
+assert summary["run_count"] == summary["completed_runs"] == 12
+assert summary["failed_runs"] == 0
+assert summary["operational_failure_count"] == 0
+PY
+sha256sum "$raw_dir"/seed-{42..53}.jsonl \
+  "$retained_dir/retained-panel.jsonl" "$retained_dir/summary.json"
+```
+
+Do not require byte identity with the tracked panel or summary: elapsed-time
+fields (and the summary's absolute input-directory field) are run-specific.
+The required identities are (1) the recorded source/lockfile identity, and
+(2) within the fresh run, the exact raw-to-retained concatenation above.  Use
+the analyzer's validation and its resulting statuses—not a byte comparison to
+the historical artifact—to decide whether a fresh panel satisfies the same
+retention contract.
+
 ## Fixed run parameters
 
 Every row records `run_mode = retained_preflight`, a one-element seed list,
