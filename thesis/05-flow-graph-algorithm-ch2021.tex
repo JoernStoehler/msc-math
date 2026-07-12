@@ -3,10 +3,10 @@
 
 This section develops a second finite algorithm for
 \(c_{\mathrm{EHZ}}\) in dimension four.  Its geometric starting point is the
-symplectic flow graph of Chaidez--Hutchings \cite{CH2021}: facet-pair sections
-are used as sections, Reeb passages through facets give
-affine maps between sections, and a closed trajectory is a fixed point of a
-composed return map.  The correctness proof here is different from the
+symplectic flow graph of Chaidez--Hutchings \cite{CH2021}.  Facet-pair
+intersections provide two-dimensional local sections.  Reeb passages through
+facets give affine maps between sections, and a closed trajectory is a fixed
+point of a composed return map.  The correctness proof here is different from the
 smooth--combinatorial route in \cite{CH2021}.  It uses the simple-minimizer
 Theorem~\ref{thm:generalized-reeb-simple-minimizer} and proves directly that an
 exhaustive tube search contains such a minimizer.
@@ -117,6 +117,35 @@ gives the strict-time condition.  Since
 \(\lambda_0(R_i)=1\) on \(F_i\), the sum of the elapsed times is the Reeb
 action.
 \end{proof}
+
+Figure~\ref{fig:flow-graph-tube-example} shows the two complementary views used
+by the construction.  The first places one closed orbit on the projected
+polytope boundary.  The second follows the same word through the
+two-dimensional polygons \(P_{ij}\).  Each local panel uses its own affine coordinates: the blue polygon
+is the full section \(P_{ij}\), the coloured polygon is the cross-section of
+the surviving tube, and the black cross is the breakpoint of the closed
+orbit.  The start and return panels use the same facet pair.  Thus the
+return-map fixed-point equation is visible as the return of the black cross to
+its initial local coordinates.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.40\linewidth]{figures/flow-graph/flow-graph-f6-projection.pdf}
+
+  \small (a) Projected polytope and closed orbit.
+
+  \medskip
+  \includegraphics[width=0.86\linewidth]{figures/flow-graph/flow-graph-f6-tube-sequence.pdf}
+
+  \small (b) The same word in successive local sections.
+  \normalsize
+  \caption{Two views of the deterministic six-facet example with facet word
+    \(\sigma=(1,2,4,5,3)\).  Panel (a) is a geometry-distorting radial and
+    stereographic projection.  In (b), coordinates and scales differ between
+    panels; the arrows show the affine passages, and the black cross returns to
+    its initial coordinates.  Both views are explanatory, not proof input.}
+  \label{fig:flow-graph-tube-example}
+\end{figure}
 
 \subsection{Exhaustive search and correctness}
 \label{subsec:flow-graph-algorithm-ch2021-correctness}
