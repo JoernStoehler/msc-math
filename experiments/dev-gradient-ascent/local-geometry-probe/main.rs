@@ -408,6 +408,8 @@ struct ComputeBudgetReport {
     iterative_proposal_limit: usize,
     iterative_ablation_proposal_rows: usize,
     iterative_ablation_outcome_rows: usize,
+    iterative_ablation_base_orbit_iterations: u64,
+    iterative_ablation_target_orbit_iterations: u64,
     max_fixtures_per_label: usize,
     skip_fixtures_per_label: usize,
     degeneracy_labels: Vec<String>,
@@ -773,6 +775,14 @@ fn main() {
         iterative_proposal_limit: cli.iterative_proposal_limit,
         iterative_ablation_proposal_rows: iterative_proposal_rows.len(),
         iterative_ablation_outcome_rows: iterative_outcome_rows.len(),
+        iterative_ablation_base_orbit_iterations: iterative_outcome_rows
+            .iter()
+            .map(|row| row.base_orbit_iterations)
+            .sum(),
+        iterative_ablation_target_orbit_iterations: iterative_outcome_rows
+            .iter()
+            .map(|row| row.target_orbit_iterations)
+            .sum(),
         max_fixtures_per_label: cli.max_fixtures_per_label,
         skip_fixtures_per_label: cli.skip_fixtures_per_label,
         degeneracy_labels: cli.degeneracy_labels.clone(),
