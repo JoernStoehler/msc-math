@@ -15,6 +15,15 @@ Verdict: Luna accepted this as a descriptive retained-random-product packet.
 - The one ridge adjustment is a transparent descriptive check, not a model
   search. Its partial attenuation cannot establish ridge mediation or a
   mechanism.
+- The all-row class-minimum audit reconstructed every retained producer row.
+  Where the stored producer capacity was classified as two or three bounces,
+  its value agreed with the corresponding exactly certified class winner from
+  the existing f64 solved candidate stream; the detailed identity check is in
+  `artifacts/class-minima-summary.json`.
+- `A_2` is present on all 10,240 rows. `A_3` is null on rows with no admissible
+  three-bounce candidate returned by that f64 solved stream; null is an
+  availability state, not zero, infinity, or a conclusion about an exhaustive
+  global candidate space.
 
 The packet may support only the descriptive association stated in `README.md`.
 It may not be used as a proposer, causal, capacity-branch, or geometric

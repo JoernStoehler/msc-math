@@ -1,0 +1,317 @@
+{
+  "definitions": {
+    "A_b": "exact minimum action among admissible candidates returned by the existing f64 solved billiard stream with b bounce blocks, then exactly certified",
+    "normalized_three_minus_two_gap": "(A3-A2)/A2; null when either class has no admissible solved candidate",
+    "ties": "all exact minimizer sigmas returned by CertifiedOrbitSetMode::MinimizersOnly"
+  },
+  "inference_boundary": "This is a re-evaluation of retained rows, not generated-candidate validation, a causal mechanism result, or an exhaustive global enumeration theorem about generic product polytopes. Null class minima report absence of an admissible candidate in the existing f64 solved stream for that class and must not be treated as a numerical value.",
+  "input": "experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima.jsonl",
+  "observations": {
+    "active_vertex_counts": {
+      "2": {
+        "by_active_vertex_count": {
+          "6": 35565
+        },
+        "minimizer_words": 35565
+      },
+      "3": {
+        "by_active_vertex_count": {
+          "6": 9134,
+          "8": 690
+        },
+        "minimizer_words": 9824
+      }
+    },
+    "angular_gap_association": {
+      "complete_class_rows": 9455,
+      "definition": "Pearson association with (A3-A2)/A2 among rows where both exact class minima exist; min cyclic normal-angle gap in either product factor.",
+      "p_min_gap_vs_normalized_gap_pearson": -0.017187947035317095,
+      "product_min_gap_vs_normalized_gap_pearson": -0.02394639407590602,
+      "q_min_gap_vs_normalized_gap_pearson": -0.03921768958727044
+    },
+    "by_bucket": {
+      "3x3": {
+        "class_minimum_availability": {
+          "2": {
+            "absent": 0,
+            "present": 1024
+          },
+          "3": {
+            "absent": 306,
+            "present": 718
+          },
+          "both": {
+            "absent": 306,
+            "present": 718
+          }
+        },
+        "complete_class_rows": 718,
+        "mean_log_action_ratio": -0.11515004884856869,
+        "mean_normalized_three_minus_two_gap": -0.10266837881122372,
+        "producer_bounce_log_sys_decomposition": {
+          "capacity_contribution": 0.29033453084156235,
+          "definition": "mean(log sys)_3 - mean(log sys)_2 = 2[mean(log capacity)_3 - mean(log capacity)_2] - [mean(log(2 volume))_3 - mean(log(2 volume))_2]",
+          "three_minus_two_mean_log_sys": 1.2600109502510666,
+          "volume_contribution": 0.9696764194095033
+        },
+        "rows": 1024
+      },
+      "3x4": {
+        "class_minimum_availability": {
+          "2": {
+            "absent": 0,
+            "present": 1024
+          },
+          "3": {
+            "absent": 210,
+            "present": 814
+          },
+          "both": {
+            "absent": 210,
+            "present": 814
+          }
+        },
+        "complete_class_rows": 814,
+        "mean_log_action_ratio": -0.06593177588993028,
+        "mean_normalized_three_minus_two_gap": -0.05302786292345373,
+        "producer_bounce_log_sys_decomposition": {
+          "capacity_contribution": 0.18657161147046164,
+          "definition": "mean(log sys)_3 - mean(log sys)_2 = 2[mean(log capacity)_3 - mean(log capacity)_2] - [mean(log(2 volume))_3 - mean(log(2 volume))_2]",
+          "three_minus_two_mean_log_sys": 0.979989530371302,
+          "volume_contribution": 0.7934179189008406
+        },
+        "rows": 1024
+      },
+      "3x5": {
+        "class_minimum_availability": {
+          "2": {
+            "absent": 0,
+            "present": 1024
+          },
+          "3": {
+            "absent": 134,
+            "present": 890
+          },
+          "both": {
+            "absent": 134,
+            "present": 890
+          }
+        },
+        "complete_class_rows": 890,
+        "mean_log_action_ratio": -0.024499779006903605,
+        "mean_normalized_three_minus_two_gap": -0.005319828826740087,
+        "producer_bounce_log_sys_decomposition": {
+          "capacity_contribution": 0.22094413615101338,
+          "definition": "mean(log sys)_3 - mean(log sys)_2 = 2[mean(log capacity)_3 - mean(log capacity)_2] - [mean(log(2 volume))_3 - mean(log(2 volume))_2]",
+          "three_minus_two_mean_log_sys": 1.1040452471782995,
+          "volume_contribution": 0.8831011110272851
+        },
+        "rows": 1024
+      },
+      "3x6": {
+        "class_minimum_availability": {
+          "2": {
+            "absent": 0,
+            "present": 1024
+          },
+          "3": {
+            "absent": 96,
+            "present": 928
+          },
+          "both": {
+            "absent": 96,
+            "present": 928
+          }
+        },
+        "complete_class_rows": 928,
+        "mean_log_action_ratio": -0.012441261047946002,
+        "mean_normalized_three_minus_two_gap": 0.0007976015443327645,
+        "producer_bounce_log_sys_decomposition": {
+          "capacity_contribution": 0.1993917810760295,
+          "definition": "mean(log sys)_3 - mean(log sys)_2 = 2[mean(log capacity)_3 - mean(log capacity)_2] - [mean(log(2 volume))_3 - mean(log(2 volume))_2]",
+          "three_minus_two_mean_log_sys": 0.9807807366652261,
+          "volume_contribution": 0.781388955589196
+        },
+        "rows": 1024
+      },
+      "4x4": {
+        "class_minimum_availability": {
+          "2": {
+            "absent": 0,
+            "present": 1024
+          },
+          "3": {
+            "absent": 28,
+            "present": 996
+          },
+          "both": {
+            "absent": 28,
+            "present": 996
+          }
+        },
+        "complete_class_rows": 996,
+        "mean_log_action_ratio": 0.03292595093000188,
+        "mean_normalized_three_minus_two_gap": 0.22234177966571053,
+        "producer_bounce_log_sys_decomposition": {
+          "capacity_contribution": 0.25672599479089486,
+          "definition": "mean(log sys)_3 - mean(log sys)_2 = 2[mean(log capacity)_3 - mean(log capacity)_2] - [mean(log(2 volume))_3 - mean(log(2 volume))_2]",
+          "three_minus_two_mean_log_sys": 0.8710547667923947,
+          "volume_contribution": 0.6143287720015005
+        },
+        "rows": 1024
+      },
+      "4x5": {
+        "class_minimum_availability": {
+          "2": {
+            "absent": 0,
+            "present": 1024
+          },
+          "3": {
+            "absent": 9,
+            "present": 1015
+          },
+          "both": {
+            "absent": 9,
+            "present": 1015
+          }
+        },
+        "complete_class_rows": 1015,
+        "mean_log_action_ratio": 0.010955727344876987,
+        "mean_normalized_three_minus_two_gap": 0.11756621621392711,
+        "producer_bounce_log_sys_decomposition": {
+          "capacity_contribution": 0.25709158074283645,
+          "definition": "mean(log sys)_3 - mean(log sys)_2 = 2[mean(log capacity)_3 - mean(log capacity)_2] - [mean(log(2 volume))_3 - mean(log(2 volume))_2]",
+          "three_minus_two_mean_log_sys": 0.9045205068857383,
+          "volume_contribution": 0.6474289261429016
+        },
+        "rows": 1024
+      },
+      "4x6": {
+        "class_minimum_availability": {
+          "2": {
+            "absent": 0,
+            "present": 1024
+          },
+          "3": {
+            "absent": 2,
+            "present": 1022
+          },
+          "both": {
+            "absent": 2,
+            "present": 1022
+          }
+        },
+        "complete_class_rows": 1022,
+        "mean_log_action_ratio": 0.00430464370319975,
+        "mean_normalized_three_minus_two_gap": 0.015767307862471217,
+        "producer_bounce_log_sys_decomposition": {
+          "capacity_contribution": 0.1859795637341488,
+          "definition": "mean(log sys)_3 - mean(log sys)_2 = 2[mean(log capacity)_3 - mean(log capacity)_2] - [mean(log(2 volume))_3 - mean(log(2 volume))_2]",
+          "three_minus_two_mean_log_sys": 0.7082028853750766,
+          "volume_contribution": 0.5222233216409276
+        },
+        "rows": 1024
+      },
+      "5x5": {
+        "class_minimum_availability": {
+          "2": {
+            "absent": 0,
+            "present": 1024
+          },
+          "3": {
+            "absent": 0,
+            "present": 1024
+          },
+          "both": {
+            "absent": 0,
+            "present": 1024
+          }
+        },
+        "complete_class_rows": 1024,
+        "mean_log_action_ratio": 0.00590329279834593,
+        "mean_normalized_three_minus_two_gap": 0.021930571776197685,
+        "producer_bounce_log_sys_decomposition": {
+          "capacity_contribution": 0.19461763165764667,
+          "definition": "mean(log sys)_3 - mean(log sys)_2 = 2[mean(log capacity)_3 - mean(log capacity)_2] - [mean(log(2 volume))_3 - mean(log(2 volume))_2]",
+          "three_minus_two_mean_log_sys": 0.7174084054041115,
+          "volume_contribution": 0.5227907737464657
+        },
+        "rows": 1024
+      },
+      "5x6": {
+        "class_minimum_availability": {
+          "2": {
+            "absent": 0,
+            "present": 1024
+          },
+          "3": {
+            "absent": 0,
+            "present": 1024
+          },
+          "both": {
+            "absent": 0,
+            "present": 1024
+          }
+        },
+        "complete_class_rows": 1024,
+        "mean_log_action_ratio": -0.0032009754209017032,
+        "mean_normalized_three_minus_two_gap": 0.0002813251751401933,
+        "producer_bounce_log_sys_decomposition": {
+          "capacity_contribution": 0.14992652225442482,
+          "definition": "mean(log sys)_3 - mean(log sys)_2 = 2[mean(log capacity)_3 - mean(log capacity)_2] - [mean(log(2 volume))_3 - mean(log(2 volume))_2]",
+          "three_minus_two_mean_log_sys": 0.5537517798599143,
+          "volume_contribution": 0.40382525760549104
+        },
+        "rows": 1024
+      },
+      "6x6": {
+        "class_minimum_availability": {
+          "2": {
+            "absent": 0,
+            "present": 1024
+          },
+          "3": {
+            "absent": 0,
+            "present": 1024
+          },
+          "both": {
+            "absent": 0,
+            "present": 1024
+          }
+        },
+        "complete_class_rows": 1024,
+        "mean_log_action_ratio": 0.005961703469307635,
+        "mean_normalized_three_minus_two_gap": 0.008453781775661882,
+        "producer_bounce_log_sys_decomposition": {
+          "capacity_contribution": 0.16026903096203915,
+          "definition": "mean(log sys)_3 - mean(log sys)_2 = 2[mean(log capacity)_3 - mean(log capacity)_2] - [mean(log(2 volume))_3 - mean(log(2 volume))_2]",
+          "three_minus_two_mean_log_sys": 0.4764235829753669,
+          "volume_contribution": 0.3161545520133271
+        },
+        "rows": 1024
+      }
+    },
+    "class_minimum_availability": {
+      "2": {
+        "absent": 0,
+        "present": 10240
+      },
+      "3": {
+        "absent": 785,
+        "present": 9455
+      },
+      "both": {
+        "absent": 785,
+        "present": 9455
+      }
+    },
+    "producer_capacity_class_winner_identity": {
+      "definition": "stored producer capacity compared to the exactly certified minimum in its stored producer_bounces class; match tolerance 1e-10*(1+abs(stored_capacity))",
+      "matches": 10240,
+      "mismatches": [],
+      "missing_stored_class_minimum": [],
+      "rows": 10240
+    }
+  },
+  "row_count": 10240
+}

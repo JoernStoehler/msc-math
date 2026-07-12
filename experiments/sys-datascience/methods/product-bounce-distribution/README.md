@@ -6,10 +6,14 @@ Among retained `random_product_sample` rows, how is producer-owned
 `product_bounces` (2 versus 3) associated with the conditional `sys`
 distribution after exact `(product_k, product_m)` bucketing?
 
-This is an existing-data descriptive packet. It performs no capacity or
-geometry evaluations. In particular, it does **not** interpret the four cyclic
-orderings inspected in low product rows as four capacity-value branches: they
-are forced orderings inside two same-type pair blocks.
+This packet has two retained-data components. `analyze.py` is the original
+prepared-table description and performs no capacity or geometry evaluations.
+`class-minima.rs` reconstructs the already-retained product rows, runs the
+existing f64 solved billiard candidate stream, and exactly certifies its
+admissible two- and three-bounce class minima. It is not a generated-candidate
+experiment or an exhaustive global enumeration. In particular, it does
+**not** interpret forced cyclic orderings inside two same-type pair blocks as
+independent capacity-value branches.
 
 ## Input Contract And Command
 
@@ -38,6 +42,38 @@ The rebuild contract and producer-object hashes are owned by
 machine-readable `summary.json`. Quantiles are linearly interpolated from all
 retained rows within each exact `(k,m)` bucket. Lower-tail membership is
 `sys <= q10`; upper-tail membership is `sys >= q90` or `sys >= q95`.
+
+The exact class-minimum artifact uses the raw retained producer input (not the
+prepared table, which intentionally omits dual geometry):
+
+```bash
+mkdir -p experiments/sys-datascience/methods/product-bounce-distribution/artifacts
+cargo run -p exp-sys-landscape --release \
+  --bin sys-datascience-product-bounce-class-minima -- \
+  --input experiments/sys-datascience/produce/random-product.jsonl \
+  --output experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima.jsonl
+python3 experiments/sys-datascience/methods/product-bounce-distribution/summarize_class_minima.py \
+  --input experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima.jsonl \
+  --out experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima-summary.json
+python3 experiments/sys-datascience/methods/product-bounce-distribution/write_class_minima_provenance.py \
+  --input experiments/sys-datascience/produce/random-product.jsonl \
+  --class-minima experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima.jsonl \
+  --summary experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima-summary.json \
+  --out experiments/sys-datascience/methods/product-bounce-distribution/artifacts/class-minima-provenance.json
+```
+
+The runner parses the stored exact dual/vertex coordinates, reconstructs the
+facet relations, runs the existing f64 solved billiard candidate stream, then
+uses `CertifiedOrbitSetMode::MinimizersOnly` to exactly certify its admissible
+candidates separately in each bounce class.
+The detailed JSONL records every returned exact minimizer sigma, active-vertex
+count, and the formula `(A3-A2)/A2`. A null `A_b` means no admissible solved
+candidate was present in that f64 solved stream for that retained row; it is
+not a zero or a numerical estimate. The generated summary retains the per-bucket
+producer-bounce log-`sys` capacity/volume decomposition and the angular-gap
+association only as descriptive observations. The portable provenance artifact
+records repository-relative paths, full SHA-256 values, command, tool versions,
+and source revision.
 
 ## Observation
 
@@ -79,3 +115,9 @@ metadata, and the ridge regression is observational.
 This packet is usable as a constraint on future product-sampling or mechanism
 questions. Reopen only for a separately pre-specified comparison design that
 can support one of the prohibited stronger claims.
+
+For the exact class-minimum audit, the allowed conclusion is narrower: it
+describes the existing candidate API on these already evaluated rows, including
+where a class has no admissible solved candidate. It does not establish a
+generic two-versus-three-bounce theorem, a branch-takeover mechanism, or a
+causal explanation for the producer-metadata association.
