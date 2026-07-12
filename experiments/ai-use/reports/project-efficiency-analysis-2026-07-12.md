@@ -188,6 +188,14 @@ those are different tasks and effort mixtures. It cannot identify a model
 effect. No current log field says whether a Sol result was accepted, corrected,
 or superior to a 5.5 result.
 
+There is nevertheless a real model-conditioned fan-out signal, not just a
+vague workflow label. Across June 1–July 12, restricting to parent lineages
+with at least 1M recorded tokens, Sol roots had a median of 4.5 rollout files
+and a mean of 12.5, while GPT-5.5 roots had a median of 1 and a mean of 5.4.
+This comparison is still confounded by task selection and harness changes, but
+it establishes that the observed 5.6-era agents actually spawned larger trees.
+It does not establish that the trees were low-value.
+
 Therefore the actionable conclusion is to restrict the expensive **policy**
 now—fan-out, high effort, and inherited context—not to conclude that 5.6 is
 intrinsically wasteful. A model-level conclusion requires matched trials: the
