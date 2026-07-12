@@ -1,7 +1,7 @@
 # Iterative Step-Policy Ablation
 
-Status: bounded retained optimizer-development packet; results pending the
-first reviewed two-start run.
+Status: bounded retained optimizer-development packet; the two-start gate is
+closed and no further optimizer run is currently warranted.
 
 ## Question and decision rule
 
@@ -14,9 +14,10 @@ All variants start from the same deterministic rows, use the established
 direction set, and differ only in step scheduling. Each start-policy pair gets
 the same exact target-evaluation budget. Base-state orbit searches are recorded
 separately and do not consume that proposal budget. Each iteration may spend at
-most four proposals before accepting its best above-threshold move. Fixed uses
-the configured step in candidate-window direction order. Dyadic doubles while
-the exact improvement grows and halves after an unsuccessful initial proposal.
+most four proposals. It accepts the best tested step for the first
+candidate-window-ordered direction yielding an above-threshold move. Fixed uses
+the configured step in that direction order. Dyadic doubles while the exact
+improvement grows and halves after an unsuccessful initial proposal.
 Boundary-scaled checks the legacy ordered fractions of the first finite
 combinatorial boundary.
 
@@ -50,3 +51,31 @@ cargo run --release -p exp-dev-gradient-ascent \
 
 Development smoke used one start and two exact evaluations per policy. Its
 `/tmp` output checks plumbing only and is not retained evidence.
+
+## Result and disposition
+
+The source-qualified retained run is in [`artifacts/`](artifacts/). Read
+`iterative-policy-outcomes.jsonl` for the six trajectory outcomes,
+`iterative-policy-proposals.jsonl` for every charged exact evaluation, and
+`compute-budget-report.json` plus `run-provenance.json` for costs and identity.
+
+Dyadic expand/backtrack improved more than fixed step on both starts under the
+common eight-evaluation cap. Boundary-scaled behavior split by start: it found
+no improving move on the prior hard start and stopped after its four available
+first-boundary proposals, but it slightly exceeded dyadic on the other start.
+All 44 proposal evaluations completed without a recorded failure or nonfinite
+observed delta. The artifact records target- and base-orbit search costs; the
+second start was much more expensive than the first despite the same exact
+proposal cap.
+
+The predeclared strict selection rule therefore fails. Retain dyadic as a
+robust improvement over the current fixed-step control on this two-start panel,
+but do not select it as a general/default policy and do not claim dominance
+over boundary scaling. This packet supports a start-dependent step-scale
+decision only; it says nothing about endpoints or local maxima.
+
+Park this line. Reopen with a larger frozen panel only if a downstream method
+must choose one default scheduler, or if a concrete trajectory failure needs
+to distinguish the dyadic and boundary regimes. That would be the next
+expensive decision; the current packet does not justify running it merely to
+strengthen presentation.

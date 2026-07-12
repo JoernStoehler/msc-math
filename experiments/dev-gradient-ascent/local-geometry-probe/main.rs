@@ -520,7 +520,7 @@ fn main() {
     reset_owned_output_files(&cli.out_dir);
     let run_provenance = build_run_provenance(&cli);
     let run_provenance_blake3 = blake3::hash(
-        &serde_json::to_vec(&run_provenance).expect("failed to serialize run provenance"),
+        &serde_json::to_vec_pretty(&run_provenance).expect("failed to serialize run provenance"),
     )
     .to_hex()
     .to_string();
@@ -3992,5 +3992,18 @@ mod tests {
             portable_path(&source, repo_root),
             "repo:experiments/dev-gradient-ascent/local-geometry-probe/main.rs"
         );
+    }
+
+    #[test]
+    fn pretty_json_hash_bytes_match_written_artifact() {
+        let path = std::env::temp_dir().join(format!(
+            "dev-gradient-ascent-json-hash-{}.json",
+            std::process::id()
+        ));
+        let value = BTreeMap::from([("answer", 42)]);
+        let expected = serde_json::to_vec_pretty(&value).unwrap();
+        write_json(&path, &value).unwrap();
+        assert_eq!(fs::read(&path).unwrap(), expected);
+        fs::remove_file(path).unwrap();
     }
 }
