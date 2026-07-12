@@ -95,6 +95,8 @@ scratch space from the prompt and logs.
 | `reports/session-log-import-report-2026-07-01.md` | Import/coverage report referenced by the synthesis. |
 | `prompts/ai-provenance-investigation-prompt.md` | Prompt used to rerun the provenance investigation in a fresh session. |
 | `scripts/collect_log_inventory.py` | Deterministically inventories visible Codex/Claude session logs. |
+| `scripts/collect_process_events.py` | Extracts private keyed-pseudonymous structural process events from local Codex/Claude JSONL. |
+| `scripts/derive_process_relations.py` | Joins structural events into auditable candidate lifecycle relations. |
 | `scripts/check_report_evidence.py` | Checks absolute evidence paths cited by a report and writes a JSON check artifact. |
 
 Generated check artifacts go under `artifacts/`; this directory is ignored
@@ -122,6 +124,70 @@ Check the scripts themselves:
 ```bash
 python3 -m py_compile experiments/ai-use/scripts/*.py
 ```
+
+Build a private structural process dataset for a dated coverage window:
+
+```bash
+mkdir -p experiments/ai-use/artifacts
+umask 077
+openssl rand 32 > experiments/ai-use/artifacts/process-events.hmac-key
+python3 experiments/ai-use/scripts/collect_process_events.py \
+  --codex-root /home/vscode/.codex/sessions \
+  --codex-root /home/vscode/.codex/archived_sessions \
+  --claude-root /home/vscode/.claude/projects/-workspaces-msc-math \
+  --claude-root /home/vscode/.claude/projects/-workspaces-msc-viterbo \
+  --key-file experiments/ai-use/artifacts/process-events.hmac-key \
+  --start 2026-01-01T00:00:00Z \
+  --out experiments/ai-use/artifacts/process-events.jsonl
+```
+
+The output and its adjacent manifest remain ignored local-audit artifacts. The
+extractor keeps domain-separated keyed pseudonyms instead of transcript text, prompts,
+shell commands, absolute log paths, worktree paths, branch names, or commit
+identifiers. Keep the HMAC key private and stable across only those authorized runs
+that need to be joined. The pseudonyms prevent casual/dictionary recovery without the
+key, but the local rows remain sensitive because timestamps, action patterns, and
+cross-row linkage can still identify work. Do not commit or publish the dataset, its
+key, row-level excerpts, or identifying derived tables.
+
+The collector recognizes explicit session lineage and conservative structural actions
+such as worktree creation/removal, real merges and cherry-picks, commits, branch
+deletion, and file transfer/deletion. It records authoritative exit status where the
+log exposes one and otherwise distinguishes wrapper completion or an unverified
+reported outcome. Dynamic shell constructs, heredoc bodies, unparseable segments, and
+unmatched tool outputs are excluded or downgraded and counted in the manifest rather
+than guessed.
+
+This is a candidate-event dataset, not a semantic history. In particular, a worktree
+removal does not establish failure, a file transfer does not establish vetted salvage,
+a merge does not establish mathematical acceptance, and absence of an event does not
+establish abandonment. Add semantic relations downstream with an explicit denominator,
+auditable evidence pointers, and a labeled validation sample; do not make the collector
+infer them from keywords.
+
+Derive the initial symbolic relation layer from a private event dataset:
+
+```bash
+python3 experiments/ai-use/scripts/derive_process_relations.py \
+  --input experiments/ai-use/artifacts/process-events.jsonl \
+  --input-manifest experiments/ai-use/artifacts/process-events.jsonl.manifest.json \
+  --output experiments/ai-use/artifacts/process-relations.jsonl
+```
+
+The relation layer currently exposes explicit session lineage, worktree creation and
+removal, later sessions operating in a created worktree, cleanup performed by a session
+other than the creator, created branches later named in merge commands, and structural
+file transfer/deletion. Relations preserve whether commands were merely issued, their
+wrapper completed, or an authoritative exit status reported success/failure. They are
+still candidates: matching identifiers and chronology do not establish why work was
+retained, removed, or transferred.
+
+Only authoritative per-command success can enter an eligible lifecycle denominator.
+Current Codex `functions.exec` logs commonly expose only enclosing-wrapper completion;
+the relation filter retains those chronological lifecycle candidates for validation
+but marks them `wrapper_completed_unverified` and ineligible. Claude Bash results with
+an explicit non-error tool status provide stronger command evidence, except where a
+compound shell command prevents the final status from establishing an earlier action.
 
 The last smoke run before committing this packet found 5,880 visible Codex and
 Claude logs in the local environment and wrote the inventory to `/tmp`, not to
