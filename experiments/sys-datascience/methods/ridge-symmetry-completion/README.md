@@ -14,6 +14,9 @@ stronger, optional question of whether that competitor is actually minimizing
 at the sampled interior angles. It does not estimate a population frequency or
 validate a general proposer.
 
+The promoted argument and its exact theorem boundary are checked in the
+[independent mathematical review](INDEPENDENT_MATHEMATICAL_REVIEW.md).
+
 The frozen points are one-third and two-thirds of the remaining angular gap:
 
 - `delta1 = 0.4929785313028738`;
