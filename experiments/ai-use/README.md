@@ -96,6 +96,7 @@ scratch space from the prompt and logs.
 | `prompts/ai-provenance-investigation-prompt.md` | Prompt used to rerun the provenance investigation in a fresh session. |
 | `scripts/collect_log_inventory.py` | Deterministically inventories visible Codex/Claude session logs. |
 | `scripts/check_report_evidence.py` | Checks absolute evidence paths cited by a report and writes a JSON check artifact. |
+| `scripts/analyze_token_usage.py` | Aggregates raw Codex token-count events by date, model, effort, and subagent lineage; optionally produces a diagnostic plot. |
 
 Generated check artifacts go under `artifacts/`; this directory is ignored
 because it can contain local absolute session-log paths.
@@ -122,6 +123,21 @@ Check the scripts themselves:
 ```bash
 python3 -m py_compile experiments/ai-use/scripts/*.py
 ```
+
+Diagnose recorded Codex usage and cache reuse:
+
+```bash
+uv run --script experiments/ai-use/scripts/analyze_token_usage.py \
+  --start 2026-07-04 --end 2026-07-12 \
+  --out-dir /tmp/codex-token-usage --plot
+```
+
+The producer writes daily, model/effort, lineage, and rollout-level CSV files,
+plus `summary.json` and an optional `token-usage-overview.png`. It groups by
+the UTC timestamp of each raw `token_count` event, uses `last_token_usage`,
+and skips duplicate records whose cumulative usage is unchanged. The output is
+diagnostic evidence, not a billing estimate or a causal measure of research
+impact; do not add it to the thesis without a separate reader/use decision.
 
 The last smoke run before committing this packet found 5,880 visible Codex and
 Claude logs in the local environment and wrote the inventory to `/tmp`, not to
