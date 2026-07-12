@@ -70,14 +70,20 @@ baseline.
 | Mapped shadow cost | $1,201.89 | $3,903.43 | 3.2× |
 | Shadow cost per million total tokens | $0.865 | $0.677 | lower during burst |
 
-This is a much stronger diagnosis than the month-level comparison: the burst
-was caused by both substantially more fan-out and substantially larger,
-higher-effort rollouts. The model/workflow switch is visible too: July 1–10 was
-83.1% GPT-5.5 and 16.8% Sol, while July 11–12 was 86.8% Sol, 9.4% Terra, and
-3.8% Luna. That switch did not make tokens more expensive; the burst's
-per-token mapped cost was lower.
+This gives an accounting identity for the incident rather than a correlation:
 
-For broader context, the June-to-July comparison remains:
+```text
+tokens per active day = rollouts per active day × tokens per rollout
+                    ≈ 5.4 × 3.4 = 18.4×
+```
+
+Rounding accounts for the small difference from the measured 18.7×. Thus both
+more parallel calls and larger calls are required to explain the burst. The
+model/workflow switch is visible too: July 1–10 was 83.1% GPT-5.5 and 16.8%
+Sol, while July 11–12 was 86.8% Sol, 9.4% Terra, and 3.8% Luna. That switch did
+not make tokens more expensive; the burst's per-token mapped cost was lower.
+
+For broader context only, the June-to-July comparison remains:
 
 | Metric | June | July through 12 | Change |
 |---|---:|---:|---:|
@@ -97,23 +103,77 @@ in cache reuse: absolute uncached input fell from 490.0M tokens in June to
 cheaper on average because Terra and Luna appeared; Sol and GPT-5.5 have the
 same mapped rates in the current shadow model.
 
-A repository-read proxy provides no evidence that July's increase came from a
-worsening read pattern. In raw tool-call arguments, June had approximately
-30,327 `sed`, 17,376 `git`, and 8,563 `rg` command occurrences; July had 9,485,
-5,289, and 3,304 respectively. Per active day, `sed` and `git` occurrences
-were lower in July and `rg` was similar. This is only a command-text proxy: it
-does not reconstruct exact file bytes, cache keys, or tool-output tokens, so it
-cannot rule out all repeated-content effects. It does rule out a simple claim
-that July had more visible repository-read commands per day.
+A repository-read proxy needs the same incident-local comparison; a whole-month
+denominator hides the July 11–12 event. In raw tool-call arguments, July 1–10
+versus July 11–12 had these occurrences:
+
+| Command text | July 1–10 total | July 11–12 total | Per active day | Per million tokens |
+|---|---:|---:|---:|---:|
+| `sed` | 5,923 | 3,565 | 592 → 1,783 | 4.26 → 0.62 |
+| `git` | 2,872 | 2,422 | 287 → 1,211 | 2.07 → 0.42 |
+| `rg` | 1,263 | 2,041 | 126 → 1,021 | 0.91 → 0.35 |
+| `find` | 747 | 637 | 75 → 319 | 0.54 → 0.11 |
+| `cargo` | 303 | 679 | 30 → 340 | 0.22 → 0.12 |
+
+So visible repository/tool activity did increase during the burst, especially
+search and compilation, but it increased sublinearly relative to token volume.
+The most frequently referenced individual paths in the burst occurred only in
+the low hundreds (the largest were
+`crates/symplectic/src/algorithms/orbit_search.rs` at 356 and
+`experiments/dev-gradient-ascent/local-geometry-probe/main.rs` at 346 across
+all rollout arguments). There is no evidence for a single file being read
+thousands of times. This rules out a simple repository-read storm as the
+primary explanation, but not the possibility that a few large tool outputs
+were repeatedly included: the local logs do not expose tool-output token
+counts or cache keys.
 
 The proxy can be regenerated with:
 
 ```bash
 uv run --script experiments/ai-use/scripts/analyze_rollout_tool_patterns.py \
   --rollout-csv /tmp/codex-token-usage-lifetime-refresh/rollout-daily.csv \
-  --start 2026-06-01 --end 2026-07-12 \
-  --out-dir /tmp/codex-rollout-tool-patterns
+  --start 2026-07-01 --end 2026-07-12 \
+  --period pre=2026-07-01:2026-07-10 \
+  --period burst=2026-07-11:2026-07-12 \
+  --out-dir /tmp/codex-rollout-tool-patterns-split
 ```
+
+The optional `--period` arguments are important here: grouping the whole
+month would hide the incident inside a larger denominator.
+
+## Causal hypothesis audit
+
+The following is the strongest conclusion supported by the logs, with the
+remaining uncertainty stated explicitly.
+
+| Hypothesis | Evidence in the July 1–10 → July 11–12 comparison | Status |
+|---|---|---|
+| More work or parallelism | Rollouts per active day rose 5.4×; subagent share rose from 48.2% to 84.6%. The top three parent tasks account for about 64.9% of burst tokens. | Strongly supported; primary factor. |
+| Harder/larger reasoning calls | Tokens per rollout rose 3.4×; high/xhigh effort rose from 13.2% to 66.7%; long-context requests rose 32.2×. | Strongly supported; co-primary factor. |
+| A more expensive 5.6/model mixture | Burst cost per total token was $0.677/M versus $0.865/M before it. Terra/Luna appeared, and the mapped Sol rate equals GPT-5.5. | Ruled out as the cause of the increase. |
+| Cache collapse or cache misses | Hit rate improved from 94.84% to 97.81%. Uncached input did rise in absolute terms (71.4M → 126.1M), but its share fell (5.13% → 2.19%). | Not the primary cause; cache-write/cache-key details remain unobservable. |
+| Pathological repeated repository reads | Visible command counts rose per day but fell per million tokens; individual path references stay in the low hundreds, not thousands. | Not supported as the primary cause; large repeated tool outputs cannot be fully excluded. |
+| More productive thesis work | The top roots correspond to real numerics, experiment, harness, and AI-use work, but logs do not score accepted mathematical value. | Plausible but unmeasured; cannot justify the spend. |
+| Model inefficiency or rework | Several top roots contain explicit user corrections about scope, acceptance gates, and reports, but this is observational and not a token-level counterfactual. | Possible contributor; not identifiable from logs alone. |
+
+The burst is therefore not explained by one hidden price or cache bug. The
+remaining explanation is a measurable workload multiplication: a small number
+of broad parent tasks spawned many subagents, and those calls ran at higher
+effort with much longer contexts. Whether that multiplication was worth its
+mathematical output is a separate value question; the current logs cannot
+collapse it into a truthful productivity number.
+
+The dominant parent-task concentration is:
+
+| Parent thread | Short task description from its root prompt | Burst tokens | Share |
+|---|---|---:|---:|
+| `019f50cf…` | Forward-test the experiment workflow and run the sys-datascience exploration. | 1.499B | 26.0% |
+| `019f5306…` | Numerics session: mathematical/code closure and parallel verification. | 1.383B | 24.0% |
+| `019f4adc…` | GPT-5.6 Sol/Terra/Luna migration and harness/delegation exploration. | 859.1M | 14.9% |
+
+These are not independent random samples: the first two alone consumed about
+half of the burst, and both explicitly involved broad parallel work. This is
+why a month-level model or cache comparison was insufficient.
 
 The practical compensation order is therefore:
 
