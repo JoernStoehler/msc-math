@@ -73,6 +73,16 @@ Detailed per-session tables are not committed. They are too large and too close
 to raw transcript data for ordinary repo use. If needed, regenerate them in
 scratch space from the prompt and logs.
 
+The privacy concern is content- and scale-dependent, not a categorical ban on
+provenance metadata. Bulk conversational material and row-level behavioral data
+can expose unrelated private content or support profiling. Ordinary repository
+and container paths, session IDs, commit IDs, dates, model/tool metadata, and
+lineage are not sensitive by default. A few task-relevant prompts or excerpts
+may be retained after individual review when they materially improve audit or
+reproduction. Before tracking derived material, inspect it for secrets,
+third-party or private content, host-specific identifiers, distinctive unrelated
+excerpts, and accidental bulk disclosure.
+
 ## Trust Boundary
 
 - Raw session logs under `/home/vscode/.codex` and `/home/vscode/.claude` are
@@ -137,7 +147,6 @@ python3 experiments/ai-use/scripts/collect_process_events.py \
   --codex-root /home/vscode/.codex/archived_sessions \
   --claude-root /home/vscode/.claude/projects/-workspaces-msc-math \
   --claude-root /home/vscode/.claude/projects/-workspaces-msc-viterbo \
-  --claude-root /home/vscode/.claude/projects/-workspaces-msc-viterbo \
   --key-file experiments/ai-use/artifacts/process-events.hmac-key \
   --start 2026-01-01T00:00:00Z \
   --out experiments/ai-use/artifacts/process-events.jsonl
@@ -164,6 +173,7 @@ python3 experiments/ai-use/scripts/prefilter_labor_tasks.py \
   --codex-root /home/vscode/.codex/sessions \
   --codex-root /home/vscode/.codex/archived_sessions \
   --claude-root /home/vscode/.claude/projects/-workspaces-msc-math \
+  --claude-root /home/vscode/.claude/projects/-workspaces-msc-viterbo \
   --key-file experiments/ai-use/artifacts/process-events.hmac-key \
   --start 2026-01-01T00:00:00Z \
   --out experiments/ai-use/artifacts/labor-candidates.jsonl
