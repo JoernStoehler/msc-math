@@ -96,6 +96,7 @@ scratch space from the prompt and logs.
 | `prompts/ai-provenance-investigation-prompt.md` | Prompt used to rerun the provenance investigation in a fresh session. |
 | `scripts/collect_log_inventory.py` | Deterministically inventories visible Codex/Claude session logs. |
 | `scripts/collect_process_events.py` | Extracts private keyed-pseudonymous structural process events from local Codex/Claude JSONL. |
+| `scripts/prefilter_labor_tasks.py` | Prefilters visible direct-user messages into overlapping, deterministic candidate mathematical-labor labels. |
 | `scripts/derive_process_relations.py` | Joins structural events into auditable candidate lifecycle relations. |
 | `scripts/check_report_evidence.py` | Checks absolute evidence paths cited by a report and writes a JSON check artifact. |
 
@@ -136,6 +137,7 @@ python3 experiments/ai-use/scripts/collect_process_events.py \
   --codex-root /home/vscode/.codex/archived_sessions \
   --claude-root /home/vscode/.claude/projects/-workspaces-msc-math \
   --claude-root /home/vscode/.claude/projects/-workspaces-msc-viterbo \
+  --claude-root /home/vscode/.claude/projects/-workspaces-msc-viterbo \
   --key-file experiments/ai-use/artifacts/process-events.hmac-key \
   --start 2026-01-01T00:00:00Z \
   --out experiments/ai-use/artifacts/process-events.jsonl
@@ -153,6 +155,29 @@ key, row-level excerpts, or identifying derived tables.
 The collector rejects a regular key file with group/world permissions. Both producers
 create or replace datasets and manifests with mode `0600`; the `umask` command above
 also protects the key at creation time.
+
+Prefilter candidate labor tasks from the same private logs (direct user prompts are
+the default; add `--include-agent-outputs` only when assistant labor is in scope):
+
+```bash
+python3 experiments/ai-use/scripts/prefilter_labor_tasks.py \
+  --codex-root /home/vscode/.codex/sessions \
+  --codex-root /home/vscode/.codex/archived_sessions \
+  --claude-root /home/vscode/.claude/projects/-workspaces-msc-math \
+  --key-file experiments/ai-use/artifacts/process-events.hmac-key \
+  --start 2026-01-01T00:00:00Z \
+  --out experiments/ai-use/artifacts/labor-candidates.jsonl
+```
+
+The prefilter emits only keyed session/source/message pointers, text shape counts,
+model era, and public overlapping labels (proof search/generation, proof checking,
+conjecture/examples/counterexamples, formalization, explanation/literature, code,
+numerics/performance, experiments/data, review/interpretation, and research
+prioritization/integration). It emits no transcript text, prompts, commands, paths,
+or matched terms. Labels are high-recall rule candidates, not semantic
+classifications; manually validate a sample before using them as provenance claims.
+Its JSONL and manifest are private mode `0600` artifacts and must not be committed or
+published.
 
 The collector recognizes explicit session lineage and conservative structural actions
 such as worktree creation/removal, real merges and cherry-picks, commits, branch
