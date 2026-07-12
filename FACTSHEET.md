@@ -258,18 +258,20 @@ maintenance low. The numbers are stable and can be out of order.
 44. Formal `unverified` blocks are proof-route material, not accepted thesis
     proof.
 
-45. The thesis has two distinct AI-facing artifacts:
+45. Jörn's 2026-07-11 steering distinguishes two AI-facing thesis
+    artifacts:
 
-    45.1. An unnumbered factual AI-use disclosure page states the material forms
-          of AI assistance, Jörn's responsibility for retained claims, and the
-          provenance limits needed for honest attribution.
+    45.1. An unnumbered disclosure page answers provenance questions and
+          explains how to interpret authorship of the thesis.
 
-    45.2. Numbered section 13 discusses how AI was used in mathematical
-          research, its impact on the research process, and lessons for future
-          work.
+    45.2. Numbered section 13 discusses how mathematicians can use AI in
+          mathematical research, using this project to examine its effects on
+          the research process and lessons for future work.
 
-    Neither artifact substitutes for the other. Their final length, tone, and
-    level of detail remain Jörn's decision.
+    These answer different questions and therefore belong in separate artifacts
+    rather than one chapter; this does not require zero overlap. Their final
+    structure, length, tone, and level of detail remain Jörn's thesis-design
+    decisions.
 
 ## Agent Limits And Advisor Risk
 
