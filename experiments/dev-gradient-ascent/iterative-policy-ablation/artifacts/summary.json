@@ -1,0 +1,50 @@
+{
+  "method": "dev-gradient-ascent-local-geometry-probe",
+  "run_provenance_path": "run-provenance.json",
+  "run_provenance_blake3": "1e4be439ea8daf26c3f14a845bdf614852b13f1cced90ef452f0ed2eb0f00533",
+  "direction_model": "candidate_window",
+  "include_candidate_window_directions": false,
+  "audit_iterations": null,
+  "audit_step_policies": [
+    "fixed"
+  ],
+  "audit_direction_limit": null,
+  "audit_policy_proposal_limit": null,
+  "iterative_ablation_policies": [
+    "fixed",
+    "dyadic_expand_backtrack",
+    "boundary_scaled"
+  ],
+  "iterative_exact_evaluation_budget": 8,
+  "iterative_proposal_limit": 4,
+  "iterative_ablation_proposal_rows": 44,
+  "iterative_ablation_outcome_rows": 6,
+  "selection_threshold_relative": 0.001,
+  "max_fixtures_per_label": 2,
+  "skip_fixtures_per_label": 0,
+  "degeneracy_labels": [
+    "narrow_gap"
+  ],
+  "selected_fixtures": 2,
+  "probe_rows": 0,
+  "run_trace_rows": 0,
+  "endpoint_diagnostic_rows": 0,
+  "endpoint_direction_scan_rows": 0,
+  "audited_state_rows": 0,
+  "selected_audited_state_rows": 0,
+  "audit_state_status_counts": {},
+  "failed_probe_rows": 0,
+  "failed_endpoint_direction_scan_rows": 0,
+  "degeneracy_counts": {
+    "narrow_gap": 2
+  },
+  "status_counts": {},
+  "trace_stop_reason_counts": {},
+  "trace_line_search_status_counts": {},
+  "endpoint_status_counts": {},
+  "endpoint_line_search_status_counts": {},
+  "endpoint_direction_scan_status_counts": {},
+  "endpoint_direction_scan_threshold_counts": {},
+  "out_dir": "experiments/dev-gradient-ascent/iterative-policy-ablation/artifacts",
+  "caveat": "finite local probe only; this does not certify endpoint local maximality"
+}

@@ -1,0 +1,71 @@
+{
+  "full_cli_args": [
+    "target/release/dev-gradient-ascent-local-geometry-probe",
+    "--diagnostic-dir",
+    "experiments/dev-sys-prediction/facet-scale-baseline-error/branch-diagnostic",
+    "--polytope-table",
+    "experiments/dev-sys-prediction/facet-scale-baseline-error/polytope-panel.jsonl",
+    "--out-dir",
+    "experiments/dev-gradient-ascent/iterative-policy-ablation/artifacts",
+    "--steps",
+    "1e-3",
+    "--max-fixtures-per-label",
+    "2",
+    "--degeneracy-labels",
+    "narrow_gap",
+    "--trace-iterations",
+    "8",
+    "--direction-model",
+    "candidate-window",
+    "--iterative-ablation-policies",
+    "fixed,geometric,boundary-scaled",
+    "--iterative-exact-evaluation-budget",
+    "8",
+    "--iterative-proposal-limit",
+    "4"
+  ],
+  "parameters": {
+    "selection_threshold_relative": 0.001,
+    "action_window_relative": 0.01,
+    "steps": [
+      0.001
+    ],
+    "endpoint_steps": null,
+    "trace_iterations": 8,
+    "audit_iterations": null,
+    "audit_step_policies": [
+      "fixed"
+    ],
+    "audit_direction_limit": null,
+    "audit_policy_proposal_limit": null,
+    "iterative_ablation_policies": [
+      "fixed",
+      "dyadic_expand_backtrack",
+      "boundary_scaled"
+    ],
+    "iterative_exact_evaluation_budget": 8,
+    "iterative_proposal_limit": 4,
+    "min_observed_delta": 0.0,
+    "min_observed_relative_delta": 0.0
+  },
+  "inputs": [
+    {
+      "role": "branch_set_diagnostic",
+      "observed_path": "experiments/dev-sys-prediction/facet-scale-baseline-error/branch-diagnostic/branch-set-diagnostic.jsonl",
+      "portable_path": "repo:experiments/dev-sys-prediction/facet-scale-baseline-error/branch-diagnostic/branch-set-diagnostic.jsonl",
+      "blake3": "9e14765788eafe121308718a508870dce6bb725906b420145d44b0d1f2376d95"
+    },
+    {
+      "role": "polytope_table",
+      "observed_path": "experiments/dev-sys-prediction/facet-scale-baseline-error/polytope-panel.jsonl",
+      "portable_path": "repo:experiments/dev-sys-prediction/facet-scale-baseline-error/polytope-panel.jsonl",
+      "blake3": "ccf1a5544bdea7e10dca340e948244fe820686cfc04da75e4987f8ac67aaaac0"
+    }
+  ],
+  "source": {
+    "repo_head": "ce8c9799ec909faa2f1267970411c55187d7ea95",
+    "worktree_diff_blake3": "af1349b9f5f9a1a6a0404dea36dcc9499bcb25c9adc112b7cc9a93cae41f3262",
+    "source_file": "repo:experiments/dev-gradient-ascent/local-geometry-probe/main.rs",
+    "source_file_blake3": "940f35dd9157c1cf7d5958ab1db40362dc75001ed256ad80f90e4195d55ca86c"
+  }
+}
