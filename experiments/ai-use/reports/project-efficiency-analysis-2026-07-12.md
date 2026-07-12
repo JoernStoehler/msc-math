@@ -29,6 +29,9 @@ uv run --script experiments/ai-use/scripts/summarize_project_efficiency_monthly.
 The generated machine-readable table is
 `/tmp/codex-project-efficiency-monthly/monthly.csv`.
 
+The month-end Git/resource/value records are in
+[`reports/project-efficiency-checkpoints/`](project-efficiency-checkpoints/).
+
 ## Monthly resource series
 
 | Month | Active days | Tokens | Cache hit | Mapped shadow cost* | Model mixture | Month-end `main` |
