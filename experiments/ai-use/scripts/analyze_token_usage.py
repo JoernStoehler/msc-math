@@ -48,6 +48,7 @@ DEFAULT_ROOTS = (
     "/home/vscode/.codex/archived_sessions",
 )
 SHADOW_PRICES = {
+    "gpt-5.4": (2.50, 0.25, 15.00),
     "gpt-5.5": (5.00, 0.50, 30.00),
     "gpt-5.6-sol": (5.00, 0.50, 30.00),
     "gpt-5.6-terra": (2.50, 0.25, 15.00),
@@ -96,6 +97,12 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Also write token-usage-overview.png (requires matplotlib)",
     )
+    parser.add_argument(
+        "--plot-bucket",
+        choices=("daily", "month"),
+        default="daily",
+        help="Time bucket for the optional plot (CSV outputs remain daily)",
+    )
     args = parser.parse_args()
     if args.start > args.end:
         parser.error("--start must not be later than --end")
@@ -125,13 +132,18 @@ def json_objects(path: Path) -> Iterator[dict[str, Any]]:
 
 def rollout_paths(roots: Iterable[Path]) -> Iterator[Path]:
     seen: set[Path] = set()
+    seen_names: set[str] = set()
     for root in roots:
         if not root.exists():
             continue
         for path in sorted(root.rglob("rollout-*.jsonl")):
             resolved = path.resolve()
-            if resolved not in seen:
+            # Imported archives can contain a second copy of a native rollout.
+            # Prefer the first root supplied by the caller and de-duplicate by
+            # rollout filename as well as resolved path.
+            if resolved not in seen and path.name not in seen_names:
                 seen.add(resolved)
+                seen_names.add(path.name)
                 yield resolved
 
 
@@ -375,7 +387,7 @@ def write_csv(path: Path, rows: list[dict[str, Any]]) -> None:
         writer.writerows(rows)
 
 
-def plot_overview(groups: dict[str, list[dict[str, Any]]], out_path: Path) -> None:
+def plot_overview(groups: dict[str, list[dict[str, Any]]], out_path: Path, bucket: str) -> None:
     try:
         import matplotlib.pyplot as plt
     except ImportError as exc:
@@ -386,12 +398,45 @@ def plot_overview(groups: dict[str, list[dict[str, Any]]], out_path: Path) -> No
     from figure_config import FIGSIZE_DUAL, setup  # type: ignore[import-not-found]
 
     setup()
-    daily = {row["date"]: row for row in groups["daily"]}
-    model_rows = groups["model_effort"]
+    def bucket_date(date: str) -> str:
+        return date[:7] if bucket == "month" else date
+
+    daily: dict[str, dict[str, Any]] = {}
+    for row in groups["daily"]:
+        target = daily.setdefault(bucket_date(row["date"]), {"total_tokens": 0, "input_tokens": 0, "cached_input_tokens": 0})
+        for key in ("total_tokens", "input_tokens", "cached_input_tokens"):
+            target[key] += row[key]
+    for target in daily.values():
+        target["cache_hit_rate"] = (
+            target["cached_input_tokens"] / target["input_tokens"]
+            if target["input_tokens"]
+            else float("nan")
+        )
+    model_rows: list[dict[str, Any]] = []
+    for row in groups["model_effort"]:
+        target = next((candidate for candidate in model_rows if candidate["date"] == bucket_date(row["date"]) and candidate["model"] == row["model"]), None)
+        if target is None:
+            target = {"date": bucket_date(row["date"]), "model": row["model"], "total_tokens": 0}
+            model_rows.append(target)
+        target["total_tokens"] += row["total_tokens"]
+    lineage_rows: list[dict[str, Any]] = []
+    for row in groups["lineage"]:
+        target = next((candidate for candidate in lineage_rows if candidate["date"] == bucket_date(row["date"]) and candidate["source"] == row["source"]), None)
+        if target is None:
+            target = {"date": bucket_date(row["date"]), "source": row["source"], "total_tokens": 0}
+            lineage_rows.append(target)
+        target["total_tokens"] += row["total_tokens"]
     dates = sorted(daily)
-    models = sorted({row["model"] for row in model_rows})
+    model_totals: dict[str, int] = defaultdict(int)
+    for row in model_rows:
+        model_totals[row["model"]] += row["total_tokens"]
+    top_models = [model for model, _ in sorted(model_totals.items(), key=lambda item: item[1], reverse=True)[:5]]
+    models = top_models + (["other models"] if len(top_models) < len(model_totals) else [])
     colors = {
         "gpt-5.4-mini": "#777777",
+        "gpt-5": "#332288",
+        "gpt-5-codex": "#88ccee",
+        "gpt-5.4": "#ee6677",
         "gpt-5.5": "#4477aa",
         "gpt-5.6-sol": "#228833",
         "gpt-5.6-terra": "#cc6677",
@@ -402,8 +447,9 @@ def plot_overview(groups: dict[str, list[dict[str, Any]]], out_path: Path) -> No
     x = list(range(len(dates)))
     bottoms = [0.0] * len(dates)
     for model in models:
+        model_names = set(model_totals) - set(top_models) if model == "other models" else {model}
         values = [
-            sum(row["total_tokens"] for row in model_rows if row["date"] == date and row["model"] == model) / 1e9
+            sum(row["total_tokens"] for row in model_rows if row["date"] == date and row["model"] in model_names) / 1e9
             for date in dates
         ]
         axes[0].bar(x, values, bottom=bottoms, label=model, color=colors.get(model, "#999999"))
@@ -414,7 +460,7 @@ def plot_overview(groups: dict[str, list[dict[str, Any]]], out_path: Path) -> No
 
     cache = [100 * daily[date]["cache_hit_rate"] if daily[date]["cache_hit_rate"] is not None else float("nan") for date in dates]
     total_subagent = {date: 0 for date in dates}
-    for row in groups["lineage"]:
+    for row in lineage_rows:
         if row["source"] == "subagent":
             total_subagent[row["date"]] = total_subagent.get(row["date"], 0) + row["total_tokens"]
     subagent_share = [100 * total_subagent[date] / daily[date]["total_tokens"] if daily[date]["total_tokens"] else float("nan") for date in dates]
@@ -459,6 +505,7 @@ def main() -> None:
                 for model, prices in SHADOW_PRICES.items()
             },
             "sources": [
+                "https://developers.openai.com/api/docs/models/gpt-5.4",
                 "https://developers.openai.com/api/docs/models/gpt-5.5",
                 "https://developers.openai.com/api/docs/models/gpt-5.6-sol",
                 "https://developers.openai.com/api/docs/models/gpt-5.6-terra",
@@ -475,7 +522,7 @@ def main() -> None:
     }
     (args.out_dir / "summary.json").write_text(json.dumps(metadata, indent=2) + "\n", encoding="utf-8")
     if args.plot:
-        plot_overview(groups, args.out_dir / "token-usage-overview.png")
+        plot_overview(groups, args.out_dir / "token-usage-overview.png", args.plot_bucket)
     print(f"wrote {len(events)} usage events to {args.out_dir}")
 
 
