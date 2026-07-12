@@ -51,12 +51,6 @@ thesis states.
 map and therefore must not be read as zero cost. April also contains a small
 unmapped Spark component. The actual subscription cost remains zero.
 
-The monthly producer makes a one-point-per-month refresh cheap after the token
-packet exists: it reads the daily/model/lineage/shadow-cost CSVs and resolves
-month-end Git snapshots. A full raw-log refresh is the expensive local step,
-but it is still a short batch operation in the current environment rather than
-another long model investigation.
-
 ## Value ledger
 
 The following records are intentionally coarse and source-backed. “Support
