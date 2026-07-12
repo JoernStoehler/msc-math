@@ -1,1 +1,54 @@
-\section{Side Result: Visualization In 3D}\label{sec:visualization-3d}
+\section{Three-Dimensional Visualization}
+\label{sec:visualization-3d}
+
+A four-dimensional polytope cannot be drawn directly, but its boundary can be
+viewed in three dimensions after choosing a projection.  For a polytope
+\(K\subset\mathbb R^4\) with the origin in its interior, we first apply the
+radial map
+\[
+  \partial K\longrightarrow S^3,
+  \qquad x\longmapsto \frac{x}{\lVert x\rVert},
+\]
+and then stereographically project \(S^3\) from the north pole
+\(e_4=(0,0,0,1)\) to \(\mathbb R^3\).  The viewer samples projected edges and
+Reeb segments along great-circle arcs.  Its coloured two-face interiors are
+interpolated spherical meshes, included to make the boundary structure easier
+to see rather than to preserve metric geometry.  The stereographic projection
+also distorts scale and clips arcs close to its pole.
+
+Figure~\ref{fig:visualization-projections} shows projected two-faces of the
+four-dimensional cube and the projected one-skeleton of the HKO polytope
+\(K_{\mathrm{HKO}}\) from Section~\ref{sec:hko-local-maximum} with one
+numerically recovered minimum-action generalized Reeb orbit.  The producer
+exports only recovered orbits passing numerical closure and containment checks
+within fixed tolerances.  The orbit shown is therefore a computed example, not
+a proof of a capacity statement.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.62\linewidth]{figures/visualization/viz-hypercube-ridges.png}
+
+  \small (a) Projected two-faces of the four-dimensional cube.
+
+  \medskip
+  \includegraphics[width=0.62\linewidth]{figures/visualization/viz-hko-pentagon-min-orbit.png}
+
+  \small (b) The HKO one-skeleton and a minimum-action orbit.
+  \normalsize
+  \caption{Radial and stereographic views of four-dimensional polytopes.  In
+    (a), colour separates projected two-face meshes of the cube.  In (b), the
+    grey one-skeleton belongs to the Lagrangian product of two regular
+    pentagons and the purple curve is a recovered six-segment closed Reeb
+    orbit.  Both panels use the pole \(e_4\) and omit parts mapped beyond the
+    viewer's clipping radius.  They are qualitative explanatory views, not
+    symplectic invariants or proof evidence.}
+  \label{fig:visualization-projections}
+\end{figure}
+
+The interactive views were also explored as a possible source of geometric
+patterns for our exploratory search.  In practice, passing from four dimensions to a
+three-dimensional projection discarded too much visible Reeb-geometric
+information, and the impressions changed with the projection pole.  We found
+no visual pattern that gave a reliable hypothesis or candidate-selection rule.
+For this exploration, the useful outcome is therefore limited to the explanatory role illustrated
+above.

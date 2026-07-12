@@ -32,8 +32,10 @@ complete taxonomy.
   formal status, or accepted review status?
 - **Claim strength:** Does the wording distinguish theorem, empirical evidence,
   conjecture, and cited literature without strengthening the source?
-- **Thesis fit:** Does the material help the surrounding thesis argument,
-  exposition, or evidence chain?
+- **Thesis fit:** Does the material answer the questions its reader needs
+  answered and serve its assigned downstream use? If the task and owner-local
+  context point to different purposes or deliverables, make the conflict
+  explicit and resolve it before treating the draft as ready.
 - **Reader understanding:** Can the intended reader form the intended
   understanding without repo archaeology or guessing why an object appears?
 - **Writing quality:** Do purpose, dependency order, coherence, precision,

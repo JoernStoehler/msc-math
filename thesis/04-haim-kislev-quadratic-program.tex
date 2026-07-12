@@ -103,6 +103,19 @@ reversal is a bijection on the words in the maximum, their formula reads
 \]
 \end{proof}
 
+For a fixed active word, the KKT system is a stationarity condition on the
+relative interior of the corresponding support face.  A solution with
+positive coordinates is therefore an exact feasible stationary witness; it is
+not, by itself, a certificate that this fixed word maximizes~$Q_\sigma$, nor
+that it represents a Reeb orbit.  This distinction does not prevent the finite
+Haim--Kislev algorithm from computing the scalar capacity.  Every positive
+witness is feasible and hence has value at most~$Q_{\max}$, while a global
+maximizer becomes a positive KKT solution after its zero coordinates are
+deleted.  Thus exact KKT solutions suffice when the complete candidate family
+is enumerated.  A claim about a particular maximizing word, a physical orbit,
+or a complete minimizer set requires the corresponding additional coverage
+and geometric argument.
+
 The normalization is compatible with our Reeb-orbit convention. Suppose a
 simple orbit is traversed in the active order
 \(\sigma=(\sigma_1,\ldots,\sigma_m)\), with dwell times \(\tau_k>0\) and period
@@ -190,8 +203,10 @@ algebraic assertions: feasibility, positivity, branch formulas, sign decisions,
 rank statements, or inequalities. Numerical searches may suggest the finite
 list or the expected branch, but they are not used as proof unless replaced by
 such exact assertions. The numerical issues are discussed in
-Section~\ref{sec:numerics}; the exact certificate runs are recorded in
-Appendix~\ref{app:sagemath-computations}.
+Section~\ref{sec:numerics}.  The exact certificates and their trust boundaries are
+described with the HKO argument in
+Section~\ref{subsec:hko-local-maximum-computation-with-sagemath} and with the
+rotated-pentagon argument in Section~\ref{sec:rotated-regular-polygons}.
 
 \subsection{Finite enumeration for Lagrangian products}
 \label{subsec:quadratic-program-algorithm-hk2019-lagrangian-products}

@@ -45,11 +45,40 @@ The algorithm contract and result-control surface live in
 
 - `flow-graph-visualize-tube-data`
   - Emits one JSON object for a generated polytope and one closed tube word.
-  - Defaults to the current mismatch row:
-    `facet_count=7`, `master_seed=20260605`, `attempt=31`, `sigma=0,4,2,6`.
+  - Defaults to the retained thesis example:
+    `facet_count=6`, `master_seed=20260605`, `attempt=3`, `sigma=1,2,4,5,3`.
   - `visualize-tube/render.py` renders that JSON to a PNG with matplotlib.
   - Two-face panels use ordered local frames, so `F_i cap F_j` and
     `F_j cap F_i` are separate panels when both are needed.
+  - `render.py --layout sequence` shows only the facet-pair sections visited by
+    the word; `--layout projection` shows the same closed orbit in a radial and
+    stereographic projection, with two camera views of the polytope's
+    one-skeleton and translucent two-faces.
+
+The retained thesis example uses `facet_count=6`, `attempt=3`, and
+`sigma=1,2,4,5,3`.  Its generated owner artifacts are
+`visualize-tube/flow-graph-f6-tube.json`,
+`visualize-tube/flow-graph-f6-tube-sequence.pdf`, and
+`visualize-tube/flow-graph-f6-projection.pdf`.  Regenerate them from the repo
+root with:
+
+```bash
+cargo run -p exp-dev-flow-graph --release --bin flow-graph-visualize-tube-data -- \
+  --facet-count 6 --attempt 3 --sigma 1,2,4,5,3 \
+  --output experiments/dev-flow-graph/visualize-tube/flow-graph-f6-tube.json
+uv run --script experiments/dev-flow-graph/visualize-tube/render.py \
+  --layout sequence \
+  --input experiments/dev-flow-graph/visualize-tube/flow-graph-f6-tube.json \
+  --output experiments/dev-flow-graph/visualize-tube/flow-graph-f6-tube-sequence.pdf
+uv run --script experiments/dev-flow-graph/visualize-tube/render.py \
+  --layout projection \
+  --input experiments/dev-flow-graph/visualize-tube/flow-graph-f6-tube.json \
+  --output experiments/dev-flow-graph/visualize-tube/flow-graph-f6-projection.pdf
+```
+
+These are explanatory assets.  The local-section axes use unrelated affine
+coordinates, while the global view distorts geometry through radial and
+stereographic projection.  Neither figure is proof or numerical validation.
 
 - `flow-graph-unresolved-diagnostic`
   - Diagnoses unresolved f64 closed words using exact tube resolution, exact

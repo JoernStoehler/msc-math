@@ -21,8 +21,8 @@ questions:
 
 - `verification/`: small manifest of expected f64 output behavior, including
   edge fixtures.
-- `numerics/`: JSONL observations for f64-vs-exact or stored-label numerical
-  comparisons.
+- `numerics/`: JSONL observations for f64-vs-reference-route or stored-label
+  numerical comparisons.
 - `performance/`: f64-specific timing binaries, summarizers, and
   workflow-shaped timing on the verification manifest rows.
 Do not maintain a separate aggregate status report for these packets. Rerun the
@@ -57,9 +57,6 @@ or preprocessing changes:
   are the main viability evidence for random empirical scans.
 - Random products are the row family for product rounding and product sigma
   enumeration.
-- Ascent product endpoints sometimes contain nearly redundant factor facets.
-  Compare product and generic near-redundant facet removal on the same retained
-  endpoints before deciding which policy is sufficient.
 - HKO2024 and HKO-like highly degenerate inputs are degenerate stress fixtures
   or exact-fallback cases, not targets for a clean f64-only claim.
 
@@ -67,8 +64,9 @@ or preprocessing changes:
 
 - `f64-capacity-scan --input-source generated` generates rounded f64 inputs,
   validates them with f64 predicates, and runs f64 capacity only when validation
-  accepts the row.  Pass `--audit-generated all` to exact-audit generated rows
-  after the f64 decision has been recorded.
+  accepts the row. Pass `--audit-generated all` to validate generated geometry
+  exactly and record the mixed reference-route comparison label after the f64
+  decision has been recorded.
 - `generated_random_f64` is a rejection-sampled source: raw independent f64
   dual-vertex samples are drawn until the exact-backed datascience cache accepts
   the H-rep. The accepted raw attempt id is recorded in `generated_attempt`;
@@ -135,51 +133,6 @@ cargo run -p exp-dev-quadratic-program --release --bin f64-capacity-analyze -- \
   --json-output /tmp/f64-capacity-smoke-summary.json
 ```
 
-Targeted development scan:
-
-Use named rows for debugging mechanism changes. Prefer one row, or a small
-diverse set, before running family-level scans.
-
-```bash
-cargo run -p exp-dev-quadratic-program --release --bin f64-capacity-scan -- \
-  --input-source artifacts \
-  --max-rows-per-family 0 \
-  --source-id-filter ascent_product_60:F10,ascent_product_131:F10,ascent_product_3222:F10 \
-  --output /tmp/f64-capacity-dev-rows.jsonl
-```
-
-Targeted near-redundant facet-removal comparison:
-
-```bash
-cargo run -p exp-dev-quadratic-program --release --bin f64-capacity-scan -- \
-  --input-source artifacts \
-  --max-rows-per-family 0 \
-  --family-filter ascent_product_endpoint \
-  --source-id-filter ascent_product_60:F10,ascent_product_131:F10,ascent_product_3222:F10 \
-  --output /tmp/f64-capacity-product-facet-removal-off.jsonl
-cargo run -p exp-dev-quadratic-program --release --bin f64-capacity-scan -- \
-  --input-source artifacts \
-  --max-rows-per-family 0 \
-  --family-filter ascent_product_endpoint \
-  --source-id-filter ascent_product_60:F10,ascent_product_131:F10,ascent_product_3222:F10 \
-  --near-redundant-facet-removal product \
-  --near-redundant-facet-removal-delta 1e-8 \
-  --audit-preprocessed all \
-  --output /tmp/f64-capacity-product-facet-removal-on.jsonl
-cargo run -p exp-dev-quadratic-program --release --bin f64-capacity-scan -- \
-  --input-source artifacts \
-  --max-rows-per-family 0 \
-  --family-filter ascent_product_endpoint \
-  --source-id-filter ascent_product_60:F10,ascent_product_131:F10,ascent_product_3222:F10 \
-  --near-redundant-facet-removal generic \
-  --near-redundant-facet-removal-delta 1e-8 \
-  --audit-preprocessed all \
-  --output /tmp/f64-capacity-generic-facet-removal-on.jsonl
-cargo run -p exp-dev-quadratic-program --release --bin f64-capacity-analyze -- \
-  --input /tmp/f64-capacity-generic-facet-removal-on.jsonl \
-  --json-output /tmp/f64-capacity-generic-facet-removal-on-summary.json
-```
-
 Full generated scan:
 
 ```bash
@@ -234,16 +187,6 @@ cargo run -p exp-dev-quadratic-program --release --bin f64-capacity-scan -- \
 cargo run -p exp-dev-quadratic-program --release --bin f64-capacity-analyze -- \
   --input /tmp/f64-capacity-artifacts-full.jsonl \
   --json-output /tmp/f64-capacity-artifacts-full-summary.json
-```
-
-Targeted hard-family retained scan:
-
-```bash
-cargo run -p exp-dev-quadratic-program --release --bin f64-capacity-scan -- \
-  --input-source artifacts \
-  --family-filter ascent_general_endpoint,ascent_product_endpoint,hko2024_f64 \
-  --max-rows-per-family 0 \
-  --output /tmp/f64-capacity-artifacts-hard-families.jsonl
 ```
 
 Full-LP artifact subset:
@@ -319,8 +262,10 @@ Rows contain both validation and capacity/audit fields.
   the numeric error fields remain populated when labels exist, but the
   `*_within_bound` field is unavailable because no rounding distortion bound is
   reported. These are not same-polytope equality checks.
-- `preprocessed_f64_vs_preprocessed_audit_*` is the same-polytope f64-vs-exact
-  comparison when exact audit of the preprocessed row is requested.
+- `preprocessed_f64_vs_preprocessed_audit_*` is the same-polytope comparison
+  between the f64 result and the fresh mixed reference-route label when the
+  legacy-named audit of the preprocessed row is requested. It is not an exact
+  capacity error.
 - `validation_reasons` records f64 validation predicates and does not replace
   raw counters.
 - `origin_status` and `facet_extremality_status` are tri-state strings:
@@ -401,9 +346,9 @@ f64-exact-fallback path instead of a reject-if-inadmissible f64-only path.
 
 Known product rows may arrive with numerical off-block drift. Product
 preprocessing only rounds rows that are already block-structured within a
-relative minor-block tolerance. Retained `random_product` and
-`ascent_product_endpoint` rows are rounded at load time because their producers
-own the product structure. If a product-labeled retained row is not
+relative minor-block tolerance. Retained `random_product` rows are rounded at
+load time because their producer owns the product structure. If a
+product-labeled retained row is not
 block-structured within the tolerance, loading fails instead of silently
 projecting it to a different polytope.
 
@@ -422,8 +367,9 @@ geometry because then the f64 vertex list is not a trusted list of all vertices
 of the facet being tested.
 
 The default is `--near-redundant-facet-removal none`. Use
-`--audit-preprocessed all` to exact-audit the preprocessed row after the
-measured f64 decision has been recorded. The formal implication from a valid
+`--audit-preprocessed all` to validate the preprocessed geometry exactly and
+record its mixed reference-route comparison label after the measured f64
+decision. The formal implication from a valid
 `delta_bound` to the reported capacity, volume, and sys distortion factors is
 recorded in `formal/near-redundant-facet-removal-bounds.tex`
 (`rem:near-redundant-facet-removal-experiment-contract` and

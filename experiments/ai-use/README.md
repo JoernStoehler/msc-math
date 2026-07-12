@@ -1,8 +1,10 @@
 # AI-Use Provenance
 
 This folder owns the evidence packet for thesis AI-use provenance. It supports
-the thesis disclosure and PaperOrchestra inputs; it does not prove mathematical
-correctness of any thesis result.
+two distinct thesis consumers: the factual front-matter disclosure and section
+13's discussion of AI-assisted mathematical research. It also supports
+PaperOrchestra inputs. The packet supports interaction-provenance claims; it
+does not prove mathematical correctness or measured research impact.
 
 The current committed report is
 [`reports/ai-provenance-log-backed-summary.md`](reports/ai-provenance-log-backed-summary.md).
@@ -160,6 +162,12 @@ Use this workflow when the provenance model needs to be updated:
   later Jörn correction supports them.
 
 ## Current Use
+
+For the factual disclosure, use the report for qualitative labor categories,
+Jörn's documented steering and correction, and the limits on origin,
+acceptance, and correctness claims. For section 13, use it for documented
+workflow facts but support research-impact and future-lesson claims separately;
+the provenance report is not a causal evaluation of AI-assisted research.
 
 For the PaperOrchestra trial, use this report as the AI-use provenance source.
 If origin is uncertain in the report, keep it uncertain in generated inputs or

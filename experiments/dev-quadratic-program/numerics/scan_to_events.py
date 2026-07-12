@@ -130,23 +130,41 @@ def context_fields(case: dict[str, Any], row: dict[str, Any]) -> dict[str, Any]:
         "object_id": row["source_id"],
         "object_family": row["family"],
         "input_pair_kind": input_pair_kind(row),
+        "exact_geometry_validation_status": exact_geometry_validation_status(row),
         "sigma": row.get("f64_sigma") or [],
         "sample_policy": "verification_manifest",
     }
 
 
 def input_pair_kind(row: dict[str, Any]) -> str:
-    if row.get("exact_audit_status") == "exact_valid_capacity_success":
-        return "f64_input_with_exact_audit"
+    if (
+        row.get("exact_audit_status") == "reference_route_capacity_success"
+        and row.get("audit_capacity_label") is not None
+    ):
+        return "f64_input_with_fresh_reference_route_label"
     if row.get("audit_capacity_label") is not None:
         return "f64_input_with_stored_capacity_label"
-    return "f64_input_without_oracle"
+    return "f64_input_without_capacity_label"
+
+
+def exact_geometry_validation_status(row: dict[str, Any]) -> str:
+    status = row.get("exact_audit_status")
+    if status == "not_requested":
+        return "not_requested"
+    if status in {
+        "reference_route_capacity_success",
+        "reference_route_capacity_failure",
+    }:
+        return "accepted"
+    if status == "exact_validation_rejected":
+        return "rejected"
+    return "unknown"
 
 
 def capacity_observation(context: dict[str, Any], row: dict[str, Any]) -> dict[str, Any]:
     f64_value = row.get("f64_capacity")
-    oracle_value = row.get("audit_capacity_label")
-    oracle_kind = capacity_oracle_kind(row)
+    comparison_label = row.get("audit_capacity_label")
+    label_kind = capacity_comparison_label_kind(row)
     event = observation_base(context, "capacity", f64_value)
     event.update(
         {
@@ -155,21 +173,21 @@ def capacity_observation(context: dict[str, Any], row: dict[str, Any]) -> dict[s
             "status": "ok" if f64_value is not None else "missing_f64_capacity",
         }
     )
-    if oracle_value is not None and oracle_kind is not None:
-        event.update(error_fields(f64_value, oracle_value))
-        event["oracle_kind"] = oracle_kind
-        event["exact"] = repr(oracle_value)
-        event["oracle_f64"] = oracle_value
-    elif oracle_value is not None:
-        event["comparison_label_kind"] = "stored_artifact_label"
-        event["comparison_label_f64"] = oracle_value
-        event.update(label_difference_fields(f64_value, oracle_value))
+    if comparison_label is not None and label_kind is not None:
+        event["comparison_label_kind"] = label_kind
+        event["comparison_label_f64"] = comparison_label
+        event.update(label_difference_fields(f64_value, comparison_label))
     return event
 
 
-def capacity_oracle_kind(row: dict[str, Any]) -> str | None:
-    if row.get("exact_audit_status") == "exact_valid_capacity_success":
-        return "exact_audit"
+def capacity_comparison_label_kind(row: dict[str, Any]) -> str | None:
+    if (
+        row.get("exact_audit_status") == "reference_route_capacity_success"
+        and row.get("audit_capacity_label") is not None
+    ):
+        return "fresh_reference_route_capacity_label"
+    if row.get("audit_capacity_label") is not None:
+        return "stored_artifact_label"
     return None
 
 
@@ -198,18 +216,6 @@ def observation_base(context: dict[str, Any], variable: str, value: Any) -> dict
     if value is not None:
         event["f64"] = float(value)
     return event
-
-
-def error_fields(f64_value: Any, oracle_value: Any) -> dict[str, float]:
-    if f64_value is None:
-        return {}
-    f64_number = float(f64_value)
-    oracle_number = float(oracle_value)
-    abs_error = abs(f64_number - oracle_number)
-    fields = {"abs_error": abs_error}
-    if oracle_number != 0.0:
-        fields["rel_error"] = abs_error / abs(oracle_number)
-    return fields
 
 
 def label_difference_fields(f64_value: Any, label_value: Any) -> dict[str, float]:

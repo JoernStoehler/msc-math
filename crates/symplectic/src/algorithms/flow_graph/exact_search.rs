@@ -240,6 +240,9 @@ fn validate_no_geometric_zero_omega_transition(
 ) -> Result<(), ExactFlowGraphSearchError> {
     for first in 0..input.facet_count() {
         for second in 0..input.facet_count() {
+            if first == second {
+                continue;
+            }
             if input.facet_intersection_is_nonempty[(first, second)]
                 && input.omega_signs[(first, second)] == 0
             {
@@ -435,6 +438,24 @@ mod tests {
     fn exact_search_rejects_geometric_zero_omega_transition() {
         let fixture = known_polytopes::hko_pentagon();
         assert_exact_search_rejects_zero_omega_fixture(fixture);
+    }
+
+    #[test]
+    fn exact_search_ignores_diagonal_intersection_entries() {
+        let dual_vertices = vec![[q(1), q(0), q(0), q(0)], [q(0), q(1), q(0), q(0)]];
+        let facet_intersection_is_nonempty =
+            nalgebra::DMatrix::from_fn(2, 2, |first, second| first == second);
+        let omega_signs = nalgebra::DMatrix::from_element(2, 2, 0);
+        let input = ExactFlatTubeInput {
+            dual_vertices: &dual_vertices,
+            facet_intersection_is_nonempty: &facet_intersection_is_nonempty,
+            omega_signs: &omega_signs,
+        };
+
+        assert!(matches!(
+            search_closed_orbits_exact(&input, q(0), ExactActionCutoffPolicy::Disabled),
+            Err(ExactFlowGraphSearchError::NoPositiveOrbit { .. })
+        ));
     }
 
     #[test]

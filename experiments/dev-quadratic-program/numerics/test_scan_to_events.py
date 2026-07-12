@@ -7,7 +7,7 @@ import scan_to_events
 
 
 class ScanToEventsTest(unittest.TestCase):
-    def test_capacity_observation_uses_exact_audit_oracle(self):
+    def test_capacity_observation_uses_fresh_reference_route_label(self):
         case = {
             "case_id": "generated",
             "source_id": "row-1",
@@ -18,16 +18,27 @@ class ScanToEventsTest(unittest.TestCase):
             "f64_sigma": [0, 1],
             "f64_capacity": 2.0,
             "audit_capacity_label": 2.25,
-            "exact_audit_status": "exact_valid_capacity_success",
+            "exact_audit_status": "reference_route_capacity_success",
         }
 
         events = scan_to_events.events_for_case(case, row)
         capacity = next(row for row in events if row.get("variable") == "capacity")
 
-        self.assertEqual(capacity["oracle_kind"], "exact_audit")
+        self.assertEqual(
+            capacity["input_pair_kind"],
+            "f64_input_with_fresh_reference_route_label",
+        )
+        self.assertEqual(capacity["exact_geometry_validation_status"], "accepted")
         self.assertEqual(capacity["f64"], 2.0)
-        self.assertEqual(capacity["oracle_f64"], 2.25)
-        self.assertAlmostEqual(capacity["abs_error"], 0.25)
+        self.assertEqual(
+            capacity["comparison_label_kind"],
+            "fresh_reference_route_capacity_label",
+        )
+        self.assertEqual(capacity["comparison_label_f64"], 2.25)
+        self.assertAlmostEqual(capacity["comparison_label_abs_difference"], 0.25)
+        self.assertNotIn("oracle_kind", capacity)
+        self.assertNotIn("exact", capacity)
+        self.assertNotIn("abs_error", capacity)
 
     def test_retained_label_is_context_label_not_oracle(self):
         context = scan_to_events.context_fields(
@@ -42,6 +53,7 @@ class ScanToEventsTest(unittest.TestCase):
         )
 
         self.assertEqual(context["input_pair_kind"], "f64_input_with_stored_capacity_label")
+        self.assertEqual(context["exact_geometry_validation_status"], "not_requested")
         events = scan_to_events.events_for_case(
             {"case_id": "retained", "source_id": "row-1"},
             {
@@ -112,6 +124,24 @@ class ScanToEventsTest(unittest.TestCase):
             1e-8,
         )
         self.assertAlmostEqual(by_variable["capacity_ratio_upper_bound"]["f64"], 1.0001)
+
+    def test_exact_geometry_rejection_is_separate_from_capacity_comparison(self):
+        events = scan_to_events.events_for_case(
+            {"case_id": "rejected", "source_id": "row-1"},
+            {
+                "source_id": "row-1",
+                "family": "edge",
+                "f64_capacity": None,
+                "audit_capacity_label": None,
+                "exact_audit_status": "exact_validation_rejected",
+            },
+        )
+
+        capacity = next(row for row in events if row.get("variable") == "capacity")
+        self.assertEqual(capacity["exact_geometry_validation_status"], "rejected")
+        self.assertEqual(capacity["input_pair_kind"], "f64_input_without_capacity_label")
+        self.assertNotIn("comparison_label_kind", capacity)
+        self.assertNotIn("oracle_kind", capacity)
 
 
 if __name__ == "__main__":

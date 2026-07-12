@@ -22,6 +22,19 @@ manifest = json.load(open(sys.argv[1], encoding="utf-8"))
 print(",".join(case["source_id"] for case in manifest["cases"] if case["run"] == "artifacts"))
 PY
 )"
+artifact_family_filter="$(
+  python3 - "$MANIFEST" <<'PY'
+import json
+import sys
+manifest = json.load(open(sys.argv[1], encoding="utf-8"))
+families = {
+    case["expect"]["family"]
+    for case in manifest["cases"]
+    if case["run"] == "artifacts"
+}
+print(",".join(sorted(families)))
+PY
+)"
 edge_default_source_ids="$(
   python3 - "$MANIFEST" <<'PY'
 import json
@@ -50,6 +63,7 @@ cargo run -p exp-dev-quadratic-program --bin f64-capacity-scan -- \
 cargo run -p exp-dev-quadratic-program --bin f64-capacity-scan -- \
   --input-source artifacts \
   --max-rows-per-family 3 \
+  --family-filter "$artifact_family_filter" \
   --source-id-filter "$artifact_source_ids" \
   --output "$OUT_DIR/artifact-scan.jsonl"
 

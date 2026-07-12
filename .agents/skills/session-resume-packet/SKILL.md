@@ -1,6 +1,6 @@
 ---
 name: session-resume-packet
-description: Write Jörn a cold-resumption packet when he asks for one or returns after being away; also use when a nontrivial session explicitly becomes inactive and will likely resume later. Do not use for live discussion, ordinary reports, generic handoffs, or routine waits.
+description: Write Jörn a cold-resumption packet when he asks for one or returns after being away; also use when a nontrivial session explicitly becomes inactive and will likely resume later. Do not use for live discussion, ordinary reports, new-agent handoffs, or routine waits.
 ---
 
 # Session Resume Packet
@@ -32,6 +32,12 @@ file lists, dead ends, and recently salient facts that do not change his next
 action. Translate code symbols into the controlling project issue. An immediate
 next command can be an execution cursor, but cannot replace objective, status,
 and reason.
+
+Resolve temporal references for the later reader. Identify mutable state and
+what must be rechecked only when drift could change the continuation; otherwise
+avoid unnecessary dates, commits, and status metadata. Do not use references
+such as “this session” or “current draft” when they could point to a different
+session or artifact at resumption time.
 
 When replacing an inadequate earlier message, make the packet self-contained;
 do not ask Jörn to mentally patch the old message with scattered corrections.

@@ -39,7 +39,8 @@ use nalgebra::{DMatrix, DVector, Vector4};
 /// # Panics
 /// - If any index in `perm` is out of bounds for `dual_vertices`.
 ///
-/// [lem:kkt]: KKT optimality conditions characterize the EHZ capacity optimum.
+/// [lem:kkt]: the assembled system encodes the KKT stationarity equations for
+/// one finite HK candidate. It is not by itself a global maximum certificate.
 pub fn build_qp_from_dual_vertices(dual_vertices: &[Vector4<f64>], perm: &[usize]) -> QP {
     assert_permutation_indices_in_bounds(dual_vertices, perm);
 

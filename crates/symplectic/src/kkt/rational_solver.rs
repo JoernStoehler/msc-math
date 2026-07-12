@@ -1,15 +1,18 @@
 //! Exact KKT solver over BigRational (rational arithmetic).
 //!
-//! Solves the same constrained optimization as the f64 solvers in this module —
-//! max Q(beta) subject to closure + normalization + beta > 0 — but using exact
-//! arithmetic over Q. Input polytopes provide dual vertices y_i = n_i / h_i
-//! in exact rational form; the KKT system is assembled here and solved by the
-//! shared exact linear solver with null-space handling.
+//! Solves the KKT stationarity system for the constrained QP used by the f64
+//! solvers — closure + normalization + beta > 0 — using exact arithmetic over
+//! Q. Input polytopes provide dual vertices y_i = n_i / h_i in exact rational
+//! form; the KKT system is assembled here and solved by the shared exact linear
+//! solver with null-space handling.
 //!
-//! **Role in the crate:** The exact solver serves as ground truth for validating
-//! the f64 solver's error bounds and for computing exact capacity values when
-//! floating-point ambiguity is unacceptable. It is NOT used in the main capacity
-//! enumeration pipeline (too slow for sweeping all permutations).
+//! **Role in the crate:** The exact solver produces exact one-word KKT
+//! witnesses for validating f64 behavior and for exact aggregation. A returned
+//! witness is not by itself a fixed-word maximum or a physical Reeb orbit. A
+//! complete exact HK enumeration may use the values of all such feasible
+//! witnesses to recover the scalar capacity; that outer completeness contract
+//! is separate from this solver. The solver is NOT used in the main f64
+//! capacity enumeration pipeline (too slow for sweeping all permutations).
 //!
 //! **Rank-deficient systems:** When the KKT matrix is exactly rank-deficient
 //! over `Q` (common for polytopes with axis-aligned normals in symplectic
@@ -27,10 +30,13 @@ use num_bigint::BigInt;
 use num_rational::BigRational;
 use num_traits::{One, Signed, Zero};
 
-/// Result of an exact KKT solve over BigRational.
+/// Exact KKT witness for one ordered support over `BigRational`.
 ///
 /// Contains the exact rational beta vector, exact Q value, and a convenient
-/// f64 approximation of Q for comparison with the numerical solver.
+/// f64 approximation of Q for comparison with the numerical solver. The
+/// result establishes stationarity, closure, normalization, positivity, and
+/// the reported objective value. It does not by itself establish a fixed-word
+/// maximum, a physical Reeb orbit, or global capacity.
 ///
 /// Mathematical correspondence: [lem:kkt]
 #[derive(Clone, Debug)]
@@ -56,7 +62,7 @@ pub struct ExactKktResult {
 /// equivalent to the f64 system (which uses separate n_i and h_i with eta_i = h_i):
 /// the change of variable beta_rational_i = beta_f64_i * h_i preserves Q(beta).
 ///
-/// Returns `None` (certified) if:
+/// Returns `None` if exact arithmetic certifies that:
 /// - the KKT system is inconsistent, or
 /// - no beta > 0 solution exists (certified via Fourier-Motzkin elimination).
 ///

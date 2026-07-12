@@ -8,6 +8,10 @@ Status: navigation cache for the active thesis surface.
   no legacy thesis prose.
 - `00-abstract.tex`: abstract thesis surface.
 - `abstract-content.md`: section-local abstract content notes.
+- `ai-use-disclosure.tex`: unnumbered front-matter factual disclosure of
+  material AI assistance, author responsibility, and provenance limits.
+- `ai-use-disclosure-content.md`: content companion for the factual disclosure
+  page. It is separate from section 13's research-method reflection.
 - `01-introduction.tex`: introduction thesis surface.
 - `introduction-content.md`: section-local introduction content notes.
 - `02-preliminaries.tex`: contains `\section{Preliminaries}`, the section
@@ -60,19 +64,17 @@ Status: navigation cache for the active thesis surface.
 - `12-published-code-data.tex`: published code and data thesis surface.
 - `published-code-data-content.md`: section-local publication/reproducibility
   content notes.
-- `13-use-of-ai.tex`: AI-use thesis surface.
-- `use-of-ai-content.md`: section-local AI-use content notes.
+- `13-use-of-ai.tex`: numbered discussion of AI use in mathematical research,
+  its impact on the research process, and lessons for future work.
+- `use-of-ai-content.md`: section-local content notes for that research-method
+  discussion; not the factual disclosure companion.
 - `14-conclusion.tex`: conclusion thesis surface.
 - `conclusion-content.md`: section-local conclusion content notes.
 - `a-datascience-results.tex`: data-science appendix thesis surface.
 - `appendix-datascience-results-content.md`: section-local data-science appendix
   content notes.
-- `b-numerics-proofs.tex`: numerics appendix thesis surface.
-- `appendix-numerics-proofs-content.md`: section-local numerics appendix
-  content notes.
-- `c-sagemath-computations.tex`: SageMath computation appendix thesis surface.
-- `appendix-sagemath-computations-content.md`: section-local SageMath appendix
-  content notes.
+- `appendix-numerics-proofs-content.md`: decision record for omitting the
+  numerics-proofs appendix.
 - `central-claim-control.md`: thesis-wide content companion for central claims,
   support sources, caveats, paragraph placement, and review gates. Not source
   truth; use the named source files before relying on claims.
@@ -105,9 +107,9 @@ Status: navigation cache for the active thesis surface.
   `legacy/general-case-algorithm-proof.tex`, and
   `legacy/pruned-general-case-algorithm.tex`: likely source material for
   `02-preliminaries.tex`, `03-generalized-reeb-orbits-polytopes.tex`,
-  `04-haim-kislev-quadratic-program.tex`, and `b-numerics-proofs.tex`.
+  and `04-haim-kislev-quadratic-program.tex`.
 - `legacy/appendix-numerical.tex` and `legacy/numerical-story.md`: likely
-  source material for `11-numerics.tex` and `b-numerics-proofs.tex`.
+  source material for `11-numerics.tex`.
 - `legacy/experiments.tex`: likely source material for
   `08-black-box-datascience.tex`, `09-rotated-regular-polygons.tex`, and
   `10-visualization-3d.tex`.

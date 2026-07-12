@@ -1,1 +1,29 @@
 \section{Published Code And Data}\label{sec:published-code-data}
+
+\subsection{Exact certificate packets}
+
+The theorem-facing SageMath sources and their retained generated records are
+stored with their owning computations.  The repository and archive locations
+will be added when the thesis release is fixed; the paths below are relative to
+the repository root:
+\begin{itemize}
+  \item HKO:
+    \par{\small\path{experiments/hko-local-maximum/theorem/}};
+  \item rotated pentagons:
+    \par{\small\path{experiments/regular-products/pentagon-rotation-formula-proof/}}.
+\end{itemize}
+The HKO verifier uses explicit exceptions for every proof-facing check; the
+rotated-pentagon executable uses ordinary Python assertions and must therefore
+be run without Python optimization.  The packet READMEs give the rerun entry
+points.  The retained HKO records are
+\begin{itemize}
+  \item \path{witness.json}, the Rust-generated verifier input, which is not
+    proof-facing by itself;
+  \item \path{verification-summary.json}, the SageMath verifier output.
+\end{itemize}
+The retained rotated-pentagon record is
+\path{executable_proof.full.stdout.txt}.  These records do not embed a source
+digest or a complete SageMath environment identity, so each packet must be
+checked by rerunning the current source rather than treating its records as
+self-authenticating artifacts.  The pentagon record includes elapsed time and
+is not expected to reproduce byte-for-byte.

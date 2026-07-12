@@ -17,6 +17,10 @@ Update rule: add or change a claim only with a source pointer or an explicit
 
 ## Content Inventory
 
+- Current text records the two exact SageMath packet locations, the differing
+  explicit-check/Python-assertion boundaries, their owner-local rerun READMEs,
+  and the lack of embedded source/environment identity in retained generated
+  records.  This material was moved from the rejected standalone Sage appendix.
 - State the repository structure at a high level.
 - State the live GitHub repository, with the caveat that it may retire in a few
   years, and the permanent uploads on chosen archive sites once known.

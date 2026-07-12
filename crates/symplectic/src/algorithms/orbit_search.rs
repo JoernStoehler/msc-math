@@ -20,7 +20,7 @@ use serde::{Deserialize, Serialize};
 use std::time::Instant;
 use tracing::{info, info_span, Level};
 
-/// Admissibility status of a numerically solved orbit candidate.
+/// Admissibility status of a numerically solved KKT candidate.
 ///
 /// Known-inadmissible candidates are discarded before they become
 /// `OrbitKktData`. This enum therefore describes only the surviving states.
@@ -49,17 +49,20 @@ pub enum OrbitGuaranteeMode {
     AllSafe,
 }
 
-/// Exact orbit-set contract for certified aggregation.
+/// Exact candidate-set contract for certified aggregation.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum CertifiedOrbitSetMode {
-    /// Return the exact capacity and all exact minimizers.
+    /// Return the exact action minimum and all tied exact candidates among the
+    /// candidates resolved by the aggregation policy. A global capacity or
+    /// complete minimizer claim needs candidate-family coverage.
     MinimizersOnly,
-    /// Return the exact capacity, all exact minimizers, and all exact orbits
-    /// whose action lies in `capacity_exact + action_gap_exact`.
+    /// Return the exact action minimum, tied exact candidates, and all exact
+    /// resolved candidates whose action lies in the requested window. These
+    /// are not automatically all physical orbits.
     GapWindow,
 }
 
-/// Solved orbit payload used by all capacity frontends.
+/// Solved KKT-candidate payload used by all capacity frontends.
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct OrbitKktData {
     /// Cyclic facet sequence σ. Entries are distinct facet indices, not a full
@@ -98,7 +101,7 @@ impl OrbitKktData {
     }
 }
 
-/// Shared result of collecting near-minimum solved orbits.
+/// Shared result of collecting near-minimum solved KKT candidates.
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct OrbitSearchResult {
     /// Returned orbits, sorted by lower action bound ascending.
@@ -113,7 +116,7 @@ pub struct OrbitSearchResult {
     pub iterations: u64,
 }
 
-/// Exact rational certificate for one admissible sigma.
+/// Exact rational KKT witness for one admissible sigma.
 #[derive(Clone, Debug, PartialEq)]
 pub struct CertifiedOrbitKktData {
     /// Cyclic facet sequence σ. Entries are distinct facet indices, not a full
@@ -129,21 +132,23 @@ pub struct CertifiedOrbitKktData {
     pub action: f64,
 }
 
-/// Exact rational result for callers that need a certified orbit set, not only
-/// an interval-safe scalar capacity.
+/// Exact rational aggregation result over the candidates resolved by the
+/// selected policy. Its scalar is a global capacity only when the input stream
+/// and resolution policy establish coverage of the relevant HK candidates;
+/// its candidate list is not automatically a physical-orbit set.
 #[derive(Clone, Debug, PartialEq)]
 pub struct CertifiedOrbitSearchResult {
-    /// Exact capacity, i.e. the minimum exact action among certified candidates.
+    /// Exact action minimum among the certified candidates.
     pub capacity_exact: BigRational,
     /// f64 convenience copy of `capacity_exact`.
     pub capacity: f64,
     /// Exact action gap requested by the caller.
     pub action_gap_exact: BigRational,
-    /// Exact minimizers, sorted by sigma.
+    /// Certified candidates tied at the exact action minimum, sorted by sigma.
     pub minimizers: Vec<CertifiedOrbitKktData>,
-    /// Returned exact orbit set. In `MinimizersOnly` mode this equals
-    /// `minimizers`; in `GapWindow` mode it contains all certified orbits with
-    /// action at most `capacity_exact + action_gap_exact`.
+    /// Returned exact candidate set. In `MinimizersOnly` mode this equals
+    /// `minimizers`; in `GapWindow` mode it contains all resolved candidates
+    /// with action at most `capacity_exact + action_gap_exact`.
     pub orbits: Vec<CertifiedOrbitKktData>,
     /// Number of sigma candidates examined by the search frontend.
     pub iterations: u64,
@@ -153,7 +158,7 @@ pub struct CertifiedOrbitSearchResult {
 }
 
 impl OrbitSearchResult {
-    /// Canonical best/minimum orbit used by scalar-style consumers.
+    /// Canonical best/minimum retained candidate used by scalar-style consumers.
     ///
     /// The constructor guarantees `orbits` is nonempty.
     pub fn best_orbit(&self) -> &OrbitKktData {
@@ -356,7 +361,7 @@ fn exact_orbit_from_sigma_with_dual_vertices_exact(
     }
     let beta: Vec<f64> = exact.beta.iter().map(rational_to_f64).collect();
     let beta_margin = beta.iter().copied().fold(f64::INFINITY, f64::min);
-    let action = 0.5 / exact.q_exact_f64;
+    let action = exact_action_f64_from_q(&exact.q_exact);
 
     Some(OrbitKktData {
         sigma: sigma.to_vec(),
@@ -378,6 +383,10 @@ fn exact_orbit_from_sigma_with_dual_vertices_exact(
 
 fn exact_action_from_q(q_exact: &BigRational) -> BigRational {
     BigRational::one() / (q_exact.clone() + q_exact.clone())
+}
+
+fn exact_action_f64_from_q(q_exact: &BigRational) -> f64 {
+    rational_to_f64(&exact_action_from_q(q_exact))
 }
 
 fn certified_orbit_from_sigma_with_dual_vertices_exact(

@@ -1,1 +1,19 @@
 \section{Numerics}\label{sec:numerics}
+
+The computations in this thesis use different arithmetic according to the
+claim they support.  Finite checks that enter a proof are performed with exact
+rational or algebraic arithmetic.  In particular, the HKO certificate and the
+rotated-pentagon certificate are verified in SageMath over ordered algebraic
+fields; floating-point values may help to find candidate data, but the
+verifiers reconstruct the proof-facing objects and decide the required
+equalities, inequalities, and ranks exactly.  By contrast, high-throughput
+search and exploration use binary64 arithmetic.  Selected numerical paths use
+route-local true, false, or indeterminate labels for positivity and related
+branch decisions; an indeterminate case may be rejected, propagated, or have
+its KKT equations and positivity checked exactly where a local fallback is
+implemented.  Such fallback proves neither that the KKT witness is the maximum
+for that fixed word~\(\sigma\) nor that every relevant candidate was retained.
+Conditional error estimates and small exact-versus-floating-point audits provide
+engineering and regression evidence on selected cases, not coverage theorems.
+Thus theorem-level finite claims in this thesis rest on the exact arguments
+and SageMath certificates, not on floating-point acceptance.

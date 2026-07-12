@@ -81,8 +81,13 @@ Current regression evidence lives in `crates/symplectic/src/kkt/rational_solver.
 and certified aggregation guards check beta length, `beta_i > 0`, `Q > 0`,
 exact normalization, and exact closure in
 `crates/symplectic/src/algorithms/orbit_search.rs` and this packet's local
-`src/fallback_route/`. Revalidate those guards before relying on a stronger
-exact/certified capacity claim.
+`src/fallback_route/`. These checks establish exact feasible KKT witnesses for
+the resolved sigmas. They do not by themselves establish a fixed-word maximum,
+a physical orbit, or candidate-family coverage. For the scalar HK capacity,
+second-order maximality is not required if a complete candidate family is
+enumerated: every positive witness is feasible, and the global maximizer is a
+positive KKT candidate on its support. Revalidate candidate coverage and input
+provenance before relying on a stronger global capacity or minimizer-set claim.
 
 `q_error_bound` is a code/formal obligation, not a thesis-writing task. The
 current f64 KKT result stores `q_error_bound` and `q_corrected` for auditing,
@@ -155,9 +160,11 @@ custom enumeration, or local proof packets:
   `True/False` must be theorem-backed. Shared by certified-f64 and f64+fallback
   route development.
 - **Exact one-sigma KKT solve:** `dual_vertices_exact + sigma -> exact
-  beta/q/action or exact non-success`. Proof-level one-sigma oracle. Shared by
-  fallback, theorem packets, exact derivatives, audits, and exact certification
-  of any retained sigma.
+  beta/q/action or exact non-success`. Proof-level exact KKT witness for one
+  sigma, not by itself a fixed-word maximum or orbit certificate. A complete
+  outer HK enumeration may use these feasible witness values to recover the
+  scalar capacity. Shared by fallback, theorem packets, exact derivatives,
+  audits, and exact certification of any retained sigma.
 - **HK unpruned sigma enumeration:** reference exhaustive HK candidate
   traversal. Shared for verification, small fixtures, regression, and checking
   pruning-sensitive claims.
@@ -202,17 +209,19 @@ custom enumeration, or local proof packets:
   one-sigma solve for unresolved capacity-relevant candidates. This route is
   only as strong as the f64 candidate filter plus fallback policy. The active
   route-development implementation lives in `src/fallback_route/`.
-- **Retained-candidate exact minimizer/gap-window capacity:** exact one-sigma
-  solves/certification over the retained f64 candidate set. Proof-level over
-  that retained set; global only when candidate filtering is separately safe
-  for the claim. Shared by current crate certified aggregation consumers and
-  route-development comparisons.
+- **Retained-candidate exact aggregation:** exact one-sigma solves over the
+  retained f64 candidate set. It gives an exact action minimum and exact
+  witnesses for that set; it is globally a capacity route only when candidate
+  filtering is separately safe. Its returned witnesses are not automatically
+  all physical minimizers.
 - **Exact-all-visited-sigma rational capacity:** transition-pruned or unpruned
-  sigma enumeration plus exact one-sigma solves for every visited sigma,
-  returning exact capacity and minimizers/gap-window orbits over that visited
-  stream. Shared by small/targeted reference checks, candidate-filter safety
-  audits, flow-graph scalar comparison, and thesis/verification packets needing
-  a result that does not depend on f64 candidate retention.
+  sigma enumeration plus exact one-sigma solves for every visited sigma. With a
+  source-backed complete HK candidate stream and valid exact input provenance,
+  the least action certifies the scalar capacity without a per-word
+  second-order test. Otherwise describe the result as exact witness/action
+  aggregation over the visited stream. Shared by small/targeted reference
+  checks, candidate-filter audits, flow-graph scalar comparison, and
+  verification packets needing a result independent of f64 retention.
 
 Do not encode use sites as separate methods. For example, exact certification
 of an f64-retained sigma is a use of the exact one-sigma KKT solve, not a

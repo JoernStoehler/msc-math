@@ -1,7 +1,4 @@
 interface:
   display_name: "Post Mortem"
   short_description: "Write useful postmortems for Jörn"
-  default_prompt: "Use $post-mortem to write a concise postmortem for this session."
-
-policy:
-  allow_implicit_invocation: false
+  default_prompt: "Use $post-mortem to identify what was imperfect or unexpectedly successful in this session and what the model, repository, harness, prompts, or Jörn should learn from it."

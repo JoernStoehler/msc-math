@@ -11,7 +11,7 @@ const TRAJ_SAMPLES = 96;
 // Visual parameters (light theme, tuned for white background)
 const VERTEX_RADIUS = 0.05;
 const VERTEX_SEGMENTS = 14;
-const EDGE_OPACITY = 0.7;
+var EDGE_OPACITY = 0.7; // screenshot producer may override for figure-specific emphasis
 const RIDGE_FILL_OPACITY = 0.18;
 const RIDGE_WIRE_OPACITY = 0.12;
 const ARROW_COLOR = 0x24292f;
@@ -19,6 +19,8 @@ const ARROW_HEAD_LENGTH = 0.08;
 const ARROW_HEAD_WIDTH = 0.04;
 const FACET_SATURATION = 0.65;
 const FACET_LIGHTNESS = 0.42;
+var STRUCTURE_COLOR_OVERRIDE = null;
+var TRAJECTORY_COLOR_OVERRIDE = null;
 
 // ---- State ----
 let scene, camera, renderer, controls;
@@ -256,7 +258,9 @@ function rebuildScene() {
             if (dot4(onSphere, northPole) >= dotThreshold) continue;
             const p = stereographicProject(onSphere, northPole, orthoBasis, MAX_RADIUS);
             const fc = poly.vertex_facets[i][0] || 0;
-            const color = facetColor(fc, poly.facet_count);
+            const color = STRUCTURE_COLOR_OVERRIDE === null
+                ? facetColor(fc, poly.facet_count)
+                : new THREE.Color(STRUCTURE_COLOR_OVERRIDE);
             const colorKey = color.getHex();
 
             if (!verticesByColor.has(colorKey)) {
@@ -294,7 +298,9 @@ function rebuildScene() {
             );
 
             const sharedFacets = poly.vertex_facets[vi].filter(f => poly.vertex_facets[vj].includes(f));
-            const color = facetColor(sharedFacets[0] || 0, poly.facet_count);
+            const color = STRUCTURE_COLOR_OVERRIDE === null
+                ? facetColor(sharedFacets[0] || 0, poly.facet_count)
+                : new THREE.Color(STRUCTURE_COLOR_OVERRIDE);
             const colorKey = color.getHex();
 
             if (!edgesByColor.has(colorKey)) {
@@ -401,7 +407,9 @@ function rebuildScene() {
                     northPole, orthoBasis, MAX_RADIUS, TRAJ_SAMPLES
                 );
 
-                const color = facetColor(seg.facet, poly.facet_count);
+                const color = TRAJECTORY_COLOR_OVERRIDE === null
+                    ? facetColor(seg.facet, poly.facet_count)
+                    : new THREE.Color(TRAJECTORY_COLOR_OVERRIDE);
                 const colorKey = color.getHex();
 
                 if (!trajsByColor.has(colorKey)) {

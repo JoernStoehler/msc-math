@@ -166,7 +166,7 @@ def observed_summary(row: dict[str, Any] | None) -> dict[str, Any]:
         "outcome": row.get("outcome"),
         "f64_capacity": row.get("f64_capacity"),
         "audit_capacity_label": row.get("audit_capacity_label"),
-        "rel_action_error": row.get("rel_action_error"),
+        "comparison_label_rel_difference": row.get("rel_action_error"),
         "f64_sigma": row.get("f64_sigma"),
         "sigma_count": row.get("sigma_count"),
         "near_minimizing_sigma_count": row.get("near_minimizing_sigma_count"),
@@ -180,16 +180,34 @@ def observed_summary(row: dict[str, Any] | None) -> dict[str, Any]:
         "epistemic_reasons": epistemics.get("reasons", []),
         "trust_class": row.get("trust_class"),
         "exact_audit_status": row.get("exact_audit_status"),
-        "support_kind": support_kind(row),
+        "exact_geometry_validation_status": exact_geometry_validation_status(row),
+        "comparison_label_kind": comparison_label_kind(row),
     }
 
 
-def support_kind(row: dict[str, Any]) -> str:
-    if row.get("exact_audit_status") == "exact_valid_capacity_success":
-        return "exact_audit"
+def exact_geometry_validation_status(row: dict[str, Any]) -> str:
+    status = row.get("exact_audit_status")
+    if status == "not_requested":
+        return "not_requested"
+    if status in {
+        "reference_route_capacity_success",
+        "reference_route_capacity_failure",
+    }:
+        return "accepted"
+    if status == "exact_validation_rejected":
+        return "rejected"
+    return "unknown"
+
+
+def comparison_label_kind(row: dict[str, Any]) -> str:
+    if (
+        row.get("exact_audit_status") == "reference_route_capacity_success"
+        and row.get("audit_capacity_label") is not None
+    ):
+        return "fresh_reference_route_capacity_label"
     if row.get("audit_capacity_label") is not None:
-        return "stored_label"
-    return "no_label"
+        return "stored_artifact_label"
+    return "no_capacity_label"
 
 
 def write_outputs(out_dir: Path, comparison_rows: list[dict[str, Any]]) -> Path:

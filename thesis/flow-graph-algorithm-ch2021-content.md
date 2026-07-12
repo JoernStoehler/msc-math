@@ -1,215 +1,108 @@
-# Flow-Graph Thesis Support Ledger
+# Flow-Graph Algorithm / CH2021 — Section Companion
 
-Status: section-local support ledger for
-`thesis/05-flow-graph-algorithm-ch2021.tex`.
+Status: source, claim-boundary, and review ledger for
+`thesis/05-flow-graph-algorithm-ch2021.tex`. This file is not thesis prose or
+mathematical evidence.
 
-This file is not thesis prose, not a proof file, and not a Rust design log. Its
-job is to keep the thesis-writing boundary clear until the flow-graph section is
-ready to draft.
+## Intended Thesis Role
 
-The active `.tex` file currently contains only the scaffold. Do not draft
-reader-facing correctness prose from this note alone. The next thesis-facing
-step is to review the proof-development surface and then translate only the
-surviving theorem/caveat boundary into thesis prose.
+The section presents a second finite algorithm for the four-dimensional EHZ
+capacity. Its two thesis-facing mathematical results are:
 
-## Source Truth
+1. Under the explicit flow-graph regularity conditions, exhaustive exact tube
+   search returns `c_EHZ`.
+2. For fixed facet count, those regularity conditions hold on an open dense
+   subset of every nonempty Euclidean-open chamber of ordered normalized
+   irredundant facet presentations.
 
-Use these sources directly when drafting or reviewing the section.
+Jörn confirmed on 2026-07-11 that both proved results should be retained; the
+genericity result is what makes the conditional correctness theorem broadly
+useful.
 
-- Active thesis background:
-  `thesis/03-generalized-reeb-orbits-polytopes.tex`.
-  Checked labels:
-  `thm:generalized-reeb-simple-minimizer` and
-  `subsec:generalized-reeb-orbits-polytopes-ch2021`.
-- Flow-graph proof development:
-  `formal/flow-graph-real-algorithm.tex`.
-  Checked labels:
-  `def:fg-nondegenerate-facet-presentation`,
-  `lem:fg-local-transition-regularity-positive-sign`,
-  `def:fg-closed-tube-search-data`,
-  `lem:fg-primitive-tubes-affine`,
-  `lem:fg-tube-gluing`,
-  `lem:fg-empty-subtube-pruning`,
-  `lem:fg-closed-tube-fixed-points`,
-  `lem:fg-action-cutoff-preserves-below-cutoff-fixed-points`,
-  `lem:fg-dynamic-action-cutoffs-preserve-retained-output`,
-  `lem:fg-nonpositive-fixed-set-no-strict-orbit`, and
-  `thm:fg-real-capacity-correctness`.
-- Auxiliary flow-graph proof scaffolds, mined from the stale
-  `flow-graph-formal-axioms` worktree on 2026-06-22:
-  `formal/flow-graph-capacity.tex`,
-  `formal/flow-graph-ch2021-comparison.tex`, and
-  `formal/flow-graph-proof-risk.tex`.
-  These are unapproved developer-facing surfaces.  They organize semantic
-  contracts, CH2021 non-transfer guardrails, and proof-risk ordering; they do
-  not replace `formal/flow-graph-real-algorithm.tex`.
-- Flow-graph implementation/control surface:
-  `crates/symplectic/src/algorithms/flow_graph/README.md`.
-- Exact Rust path:
-  `crates/symplectic/src/algorithms/flow_graph/exact_search.rs` and
-  `crates/symplectic/src/algorithms/flow_graph/exact_tube.rs`.
-- f64 Rust path:
-  `crates/symplectic/src/algorithms/flow_graph/f64_tube_search.rs`.
-- Experiment/evidence routing:
-  `experiments/dev-flow-graph/README.md` and `experiments/MAP.md`.
-- Raw/recovered tube sources:
-  `crates/symplectic/src/algorithms/flow_graph/tube-algorithm-raw-jorn-2026-05-04.md`,
-  `crates/symplectic/src/algorithms/flow_graph/tube-algorithm-legacy-source-note.md`,
-  and historical formal source
-  `git show 25dd8b9acb8aeaaa6aa3abd80fc6d95db00c4747:formal/tube-algorithm.tex`.
+The correctness proof uses the simple-minimizer theorem from Section 3. It does
+not use the CH2021 Type 1/2/3 capacity theorem as a black box.
 
-`formal/flow-graph-real-algorithm.tex`, the auxiliary flow-graph scaffold
-files, and the historical formal files are agent-written proof-development
-surfaces. They are useful for reconstruction, but they are not accepted thesis
-proof until reviewed.
+## Proof Sources
 
-## Thesis Role
+- `formal/flow-graph-real-algorithm.tex`: transition signs, affine primitive
+  tubes, gluing, fixed-point semantics, strict-time boundary, short-word
+  exclusion, long-word determinant nonvanishing, chamber genericity, and the
+  idealized exact-search correctness theorem.
+- `formal/flow-graph-ch2021-comparison.tex`: exact boundary between the
+  project theorem and CH2021.
+- `thesis/03-generalized-reeb-orbits-simple-minimizers.tex`: the
+  simple-minimizer theorem used for completeness.
+- `papers/CH2021/`: source cache for the cited flow-graph terminology and
+  comparison. Check published numbering before hardcoding any numbered
+  reference.
 
-The FG section should present a second capacity algorithm developed in the
-project. Its thesis value is theorem-level, subject to the proof gates below:
+## Claim Boundary
 
-- correctness theorem: the idealized exact flow-graph/tube algorithm computes
-  \(c_{\mathrm{EHZ}}\) for a generic class of four-dimensional polytopes, stated
-  as an open dense finite-orbit-regular/nondegenerate condition;
-- implementation: the project implements the exact flow-graph/tube route and
-  uses exact rational arithmetic for theorem-relevant predicates. The current
-  public FG capacity-search wrapper is rational. Full algebraic FG capacity
-  search and algebraic FG-vs-QP agreement are intentionally out of scope for
-  thesis reliance;
-- verification: exact FG gives an independent scalar comparison against the
-  HK/QP capacity route on eligible examples, increasing confidence that neither
-  implementation path is carrying a shared local bug;
-- positioning: QP remains the practical workhorse for the main thesis
-  computations, while FG is an independent algorithm/correctness contribution
-  with narrower supported inputs and more expensive exact semantics.
+The theorem concerns an idealized exact-arithmetic exhaustive search on a
+bounded full-dimensional four-polytope with an ordered normalized irredundant
+facet presentation. Its regularity hypotheses are stated in the thesis.
 
-Do not frame FG as a universal certified solver, as support for HKO or
-Lagrangian-product degeneracies, or as a performance replacement for QP.
+The genericity proposition is chamber-relative genericity of presentations.
+It is not the CH2021 conjecture that generic polytopes have no Type 2 orbit
+below a prescribed action bound.
 
-## Draft-Planning Claim Boundary
+The Rust exact implementation uses rational inputs and caller-supplied
+incidence and symplectic-sign matrices. Tests provide implementation
+correspondence and falsification evidence; they are not the proof of the two
+mathematical results. The f64 path is diagnostic and is not an exact capacity
+certificate.
 
-The following claims are the current draft-planning boundary, subject to the
-review gates below.
+## Explanatory Figures
 
-- The theorem target is the idealized exact flow-graph/tube algorithm:
-  for flow-graph-nondegenerate four-dimensional polytopes satisfying a generic
-  finite-orbit-regular condition, exhaustive simple-word tube search returns
-  \(c_{\mathrm{EHZ}}\).
-- The exact FG capacity-search path is a rational implementation for selected
-  four-dimensional rational polytope inputs.
-- The exact path enumerates transition-pruned simple cyclic facet words,
-  constructs affine tube data, solves closed-word fixed-point equations using
-  rational arithmetic, filters positive outputs by strict segment times, and
-  reports retained FG words up to the exact action threshold.
-- Exact rejection/caveat behavior includes nonempty facet-pair
-  zero-\(\omega_0\) candidates and singular fixed sets with positive-action
-  closed candidates.
-- HKO and Lagrangian-product zero-\(\omega_0\) examples are outside this
-  implementation scope.
-- f64 output is approximate output, not an exact certificate. A theorem-level
-  f64 claim would need sound-predicate or numerical-error analysis that is not
-  currently present.
-- HK/QP is scalar comparison for eligible examples. It is not a retained-word
-  oracle for FG words.
+Figures `fig:flow-graph-projected-orbit` and
+`fig:flow-graph-tube-sequence` use the deterministic generated
+six-facet case with master seed `20260605`, attempt `3`, and facet word
+`(1,2,4,5,3)`. The exact resolver and retained regression tests identify this
+word as a positive capacity word; the plotted geometry is generated by the f64
+visualization path and is explanatory rather than proof evidence.
 
-The exact theorem wording is now directed toward the generic correctness route,
-not a mere implementation-status section. Do not write that the full Rust
-runtime boundary computes \(c_{\mathrm{EHZ}}\) until the formal/Rust
-correspondence below is reviewed.
+The owner artifacts and reproduction commands are in
+`experiments/dev-flow-graph/visualize-tube/` and
+`experiments/dev-flow-graph/README.md`. The two PDFs are copied deliberately to
+`thesis/figures/flow-graph/` so the thesis build is self-contained.
 
-## Mathematical Support Ledger
+- The projection figure shows two camera views of the same projected
+  one-skeleton, translucent two-faces, and orbit after radial projection to
+  `S^3` and stereographic projection to `R^3`; it distorts metric geometry.
+- The sequence panel shows only the visited facet-pair charts. Its axes are
+  Euclidean-orthonormal in the corresponding affine two-plane, constructed by
+  Gram--Schmidt from the producer's coordinate split. Affine origins and
+  orientations are chosen independently, and the renderer autoscales panels
+  separately; apparent cross-panel display size is therefore not comparable.
+- Both panels explain the construction. Neither supports correctness,
+  genericity, or implementation-validation claims.
 
-| Thesis ingredient | Source/status | Thesis consequence |
-| --- | --- | --- |
-| A capacity-realizing generalized Reeb orbit can be chosen simple. | Active theorem `thm:generalized-reeb-simple-minimizer`; source notes cite HK2017 Theorem 1.5. | Do not assume simple minimizers as an FG hypothesis; cite the active thesis theorem. |
-| CH2021 flow-graph/tube background. | Active background at `subsec:generalized-reeb-orbits-polytopes-ch2021`, plus `papers/ch2021/`. | This motivates the construction. It is not by itself a proof that the Rust exact search computes capacity. |
-| Adjacent facet-pair pruning. | `alg:fg-real-exhaustive-search`; Rust `exact_search.rs` uses `build_transition_matrix_from_facet_intersections_and_omega`. | This is a necessary pruning condition. Do not describe the transition matrix as an exact physical-transition oracle. |
-| Local transition signs from nonzero \(\omega_0\). | Active proof-development labels `def:fg-nondegenerate-facet-presentation` and `lem:fg-local-transition-regularity-positive-sign`; Jörn reviewed the sign convention on 2026-07-01. | The current formal/Rust route uses the stronger nonempty facet-pair nonzero-\(\omega_0\) condition. Do not silently replace it by the weaker local trajectory condition. This is formal-support material, not prose Kai needs to read in full. |
-| Closed tube search data and strict-time output. | `def:fg-closed-tube-search-data`; Rust `exact_tube.rs` has `NonStrictNoOrbit` and strict segment-time filtering. | Reader-facing prose must distinguish closed search domains \(\tau_r\ge0\) from returned orbits for a displayed word, which require \(\tau_r>0\). |
-| Empty subtube pruning and action normalization. | `lem:fg-empty-subtube-pruning` and `lem:fg-action-normalization`; Rust `exact_tube.rs::build_tube` returns empty for empty recursive subtubes and `exact_tube.rs::intersect_tubes` composes action by pullback and addition. | This supports exact closed-search pruning and action bookkeeping. It is not an f64 predicate-soundness claim. |
-| Action cutoffs. | `lem:fg-action-cutoff-preserves-below-cutoff-fixed-points` and `lem:fg-dynamic-action-cutoffs-preserve-retained-output`; Rust `exact_search.rs` constructs the cutoff from the best exact positive action plus threshold, `exact_tube.rs::restrict_tube_to_action_cutoff` applies the exact action halfspace before fixed-point solving, and final search output filters against the final minimum. | This supports the exact action-cutoff optimization. It does not analyze f64 cutoffs or remove the separate finite-orbit/singular-classifier boundary. |
-| Primitive affine tubes, gluing, and fixed points. | `lem:fg-primitive-tubes-affine`, `lem:fg-tube-gluing`, `lem:fg-closed-tube-fixed-points`; unapproved proof-development text. | These are the main proof pieces to review before theorem-strength thesis prose. |
-| Singular fixed-point equations. | Rust classifies exact singular fixed sets; `lem:fg-nonpositive-fixed-set-no-strict-orbit` covers the no-orbit side for nonpositive-action fixed sets; the finite-orbit-regular theorem route still excludes relevant singular fixed maps from the capacity theorem. | Do not identify the finite-orbit-regular theorem route with the full Rust singular-classifier runtime boundary until the singular-classifier correspondence is reviewed. |
-| Short simple words. | `lem:fg-short-words-no-positive-orbit` lets the idealized theorem skip all simple words of length at most four under linear independence. Rust now validates linear independence up to size four and skips those words at exact-search boundary; the closed-word resolver still keeps `length_three_zero_time` as a diagnostic/test outcome. | This closes the short-word formal/Rust mismatch for the theorem-facing exact search. Keep the length-three resolver tests as demonstrations that zero-time singular fixed sets exist and are not capacity candidates. |
-| Determinant-generic regularity. | `fact:fg-finite-orbit-regular-open-dense`, `prop:fg-presentation-chamber-genericity`, and `cor:fg-real-capacity-correctness-generic`; Jörn reviewed the chamber model on 2026-07-01. | The current formal route states density relative to a fixed ordered normalized irredundant presentation chamber that is open in dual-row coordinates. It uses all-pair nonzero-\(\omega_0\) for a clean domain; this is more restrictive than necessary but accepted for the thesis theorem. |
-| Exact implementation boundary. | `exact_search.rs`, `exact_tube.rs`, and flow-graph README. | State implementation behavior separately from mathematical theorem hypotheses. |
-| f64 behavior. | `f64_tube_search.rs` and flow-graph README. | State as approximate/numerical implementation behavior unless a later numerical-analysis task proves sound predicates. |
-| HK/QP comparison. | Exact accepted examples and verification code. | Use only for scalar capacity comparison on eligible examples; do not use as a word-level oracle. |
+## Review Status
 
-## Implementation Facts That Matter For Thesis Wording
+The proof chain is agent-developed. Independent mathematical review checked
+the sign conventions, higher-codimension breakpoint boundary, tube semantics,
+simple-minimizer bridge, short-word exclusion, contraction identity, explicit
+determinant witnesses, and chamber-density argument. The determinant values
+were recomputed independently.
 
-These are code facts, not theorem hypotheses.
+Jörn's 2026-07-11 direction settles retention of both mathematical results. It
+does not replace final line-by-line mathematical or advisor review of the
+printed proof.
 
-- `exact_search.rs::search_closed_orbits_exact` validates nonnegative action
-  threshold, rejects nonempty facet-pair zero-\(\omega_0\) candidates, enumerates
-  transition-pruned simple words, and treats
-  `EmptyTube`, `ZeroActionNoOrbit`, and `NonStrictNoOrbit` as no-orbit outcomes.
-  If exhaustive search finds no positive orbit, it returns typed non-success
-  rather than panicking.
-- `exact_tube.rs` reconstructs segment times before returning `PositiveOrbit`.
-  Positive total action alone is not enough.
-- `exact_tube.rs::solve_singular_fixed_tube` and
-  `exact_tube.rs::singular_fixed_polygon_result` classify singular fixed sets
-  exactly on the uncut tube or on the tube remaining after an action cutoff.
-  Singular fixed sets with positive-action closed candidates in that searched
-  domain become `UnsupportedPositiveSingular`; nonpositive-action singular
-  fixed sets become `ZeroActionNoOrbit`.
-- `f64_tube_search.rs::capacity_f64` resolves f64 closed-word errors with exact
-  closed-word arithmetic, but direct f64 positive words remain f64 outputs. If
-  no positive orbit remains, it returns typed non-success rather than panicking.
+A focused human review should check:
 
-The code-design comparison for singular fixed maps belongs in the flow-graph
-README, not in this thesis ledger.
+1. the regularity definition and the completeness step using the
+   simple-minimizer theorem;
+2. the repeated-section contraction used to cover every word length;
+3. the restriction of the nonzero rational determinant conditions to each
+   presentation chamber;
+4. whether the section gives enough geometric motivation relative to the rest
+   of the thesis.
 
-## Future Evidence And Asset Prompts
+## Deliberately Excluded From This Section
 
-These prompts were mined from the obsolete `fg-ch2021-content-gaps` worktree on
-2026-06-22. They are future task prompts, not current thesis evidence.
-
-- If the thesis keeps a flow-graph performance claim, separate release-mode
-  counts for word enumeration, tube construction, exact search, f64 diagnostic
-  search, exact fallback, and action-cutoff enabled versus disabled behavior.
-  Unpromoted development counters should be described as diagnostics only.
-- A compact explanatory asset may be useful before drafting final reader-facing
-  prose. Candidate assets are an algorithm pipeline display, an
-  evidence/caveat table, or a reduced tube-visualization figure. CH2021's
-  `flow_graph.svg` or `.png` can serve only as background for their
-  terminology; it does not explain this project's tube implementation by
-  itself.
-
-## Drafting Gates
-
-Before treating `thesis/05-flow-graph-algorithm-ch2021.tex` as final
-theorem-strength prose, complete these gates.
-
-1. Review `formal/flow-graph-real-algorithm.tex` for false statements, missing
-   hypotheses, sign/orientation mistakes, and theorem/code mismatch.
-2. Review the auxiliary files
-   `formal/flow-graph-capacity.tex`,
-   `formal/flow-graph-ch2021-comparison.tex`, and
-   `formal/flow-graph-proof-risk.tex` for consistency with the real-algorithm
-   surface and the Rust README.  In particular, keep the strict-time rejection
-   and typed no-positive-orbit behavior from current `main`.
-3. Close the generic theorem route for reader-facing prose:
-   use finite-orbit regularity plus a determinant-generic/open-dense corollary.
-   First close the relative-genericity gap recorded in
-   `rem:fg-real-missing-work`, or state the open dense condition relative to
-   the exact parameter domain actually proved.
-4. Write a theorem/input paragraph in mathematical language:
-   start from \(K\subset\mathbb R^4\) a bounded convex polytope with
-   \(0\in\operatorname{int}K\). Keep rational data, matrices, validators, and
-   f64 behavior in implementation paragraphs.
-5. State exact and f64 behavior separately.
-6. State HK/QP comparison as scalar comparison only.
-7. Check that no reader-facing sentence depends on hidden repo state through
-   words such as "current", "supported", "route", or "style".
-
-## What Not To Import
-
-- Do not import CH2021 rotation pruning as implemented behavior.
-- Do not claim support for HKO, Lagrangian products, or Type 2/Type 3
-  degeneracies.
-- Do not present f64 output as an exact certificate.
-- Do not use HK/QP as a retained-word oracle.
-- Do not move code-design option comparisons, commit archaeology, or session
-  repair notes into this thesis-side file.
+- fixture-by-fixture verification output;
+- experiment provenance and cutoff-counter details;
+- the f64/exact mixed API;
+- CH2021 rotation pruning and Type 2/Type 3 implementation;
+- claims of correctness for arbitrary raw halfspace input.
