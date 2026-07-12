@@ -86,6 +86,23 @@ This chronology prevents a clean intrinsic 5.5-versus-5.6 causal comparison:
 the model transition coincides with a major change in agent orchestration and
 parallelism.
 
+The model mixture is not constant. An active-day comparison is more useful than
+comparing July 12 with July 5, which has no visible token-count events:
+
+| Active day | Dominant model mix | Total tokens | Cache hit | Subagent share | Shadow cost, long-context adjusted |
+|---|---|---:|---:|---:|---:|
+| 2026-07-04 | 5.5: 100% | 425.9M | 94.66% | 72.9% | $375.90 |
+| 2026-07-06 | 5.5: 99.5% | 302.0M | 94.80% | 54.4% | $252.46 |
+| 2026-07-10 | 5.6 Sol: 100% | 233.8M | 97.18% | 47.5% | $179.72 |
+| 2026-07-11 | Sol: 98.6%, Terra: 1.1%, Luna: 0.3% | 3.444B | 97.74% | 87.2% | $2,572.16 |
+| 2026-07-12 | Sol: 75.3%, Terra: 14.4%, Luna: 10.3% | 1.846B | 97.72% | 79.2% | $1,113.60 |
+
+This does not isolate model quality or reasoning effort: workload and
+subagent fan-out changed at the same time. It does establish that the price
+mixture changed materially. Sol and 5.5 have the same mapped API rates, Terra
+is half-price, and Luna is one-fifth-price; therefore raw token totals cannot
+be converted to cost using one constant rate.
+
 ## Subagent transition
 
 Before April 2026, the visible logs have no subagent lineage records. From
