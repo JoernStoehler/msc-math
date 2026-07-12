@@ -4,9 +4,10 @@ This directory coordinates the current sys-datascience exploration. It is not
 a second source for experiment metrics.
 
 Current phase: the corrected broad-first exploration/research slice is
-feature-complete. Start with `final-research-account-2026-07-12.md`; use
-research-direction-review-2026-07-11.md as the exhaustive assessed inventory,
-not a launch queue. Generated
+feature-complete. Start with `final-research-account-2026-07-12.md` and use
+`next-session-candidates.md` for current launch/routing. Use
+`research-direction-review-2026-07-11.md` only as the closed-cycle exhaustive
+assessed inventory, not as current authority or a launch queue. Generated
 metrics and packet interpretation remain under ../methods/; producer and table
 contracts remain under ../produce/ and ../prepare/.
 

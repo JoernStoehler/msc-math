@@ -2,10 +2,13 @@
 
 Date: 2026-07-11.
 
-Status: current research-taste and portfolio review surface. This is the
-exhaustive set of directions seriously brainstormed or reassessed in this
-session, not a launch queue. Generated artifacts and producers remain the
-source of detailed metrics. Comment by ID when useful.
+Status: closed-cycle, exhaustive inventory of directions seriously brainstormed
+or reassessed in this session. It is non-authoritative for current
+launch/routing: use `final-research-account-2026-07-12.md` and
+`next-session-candidates.md` instead. Its rows record their 2026-07-11 review
+state, so `Open`, `Conditional`, and priority language below do not authorize
+new work. Generated artifacts and producers remain the source of detailed
+metrics. Use the IDs only for historical traceability.
 
 ## Correction And Purpose
 
@@ -99,7 +102,7 @@ rule is frozen and tested on candidates selected before target evaluation.
 | F1B-AREA-FIELD | Treat two-face areas as a field on the incidence graph: assortativity, Laplacian energy, low-area components, load balance, adjacent contrasts. | First compact incidence-aware panel executed negative: no statistic had one direction across all four pairs. Broader definitions are conditional, not an automatic queue. |
 | F1C-INCIDENCE-PAIRINGS | Translation-safe symplectic pairings of primal differences/incident edge vectors over invariant incidence-defined tuples. | Principled replacement for historically strong representative-dependent pairings. High upside, nontrivial contract. |
 | F1D-DISTRIBUTION-SHAPE | Add only nonredundant CV/skew/Gini/Lorenz/trimmed-tail summaries. | Cheap but high fishing risk. Conditional after F0. |
-| F1E-SYMPLECTIC-MOMENTS | Symplectic covariance/inertia or symplectic eigenvalues of a centered geometric measure. | Could capture global shape; definition and measure may make it ill-posed. Design hypothesis only. |
+| F1E-SYMPLECTIC-MOMENTS | Symplectic covariance/inertia or symplectic eigenvalues of a centered geometric measure. | Canonical extreme-vertex covariance rho now has a bounded same-generator prospective enrichment result, competitive with but not better than ridge. It is not a mechanism or transfer result; park further covariance search absent a named claim. |
 | F1F-CAPACITY-BOUNDS | Cheap geometric/capacity bounds and slack as multi-fidelity signals. | Could direct search/suggest inequalities; target leakage and cost must be separated. Interface scout needed. |
 | F1G-CANONICAL-COORDS | Use the working generic coordinate canonizer for invariant coordinate features. | Broadens generic support; canonical-frame artifacts and nongeneric failures are serious. Conditional. |
 | F1H-INVARIANT-LEARNING | Face-graph/set representation learning from invariant attributes. | Lower priority before explicit families because the table is small and no raw equivariant representation is settled. Parked. |
@@ -119,7 +122,7 @@ but not independently validated pre-target prediction.
 
 | ID | Candidate object and method | Assessment and status |
 | --- | --- | --- |
-| S0-IID-LOCAL-ADAPTIVE | Equal exact-budget product comparison: IID, multi-start branch-aware local ascent, and one adaptive population method; retain maxima, threshold progress, diversity, invalidity, genealogy. | Highest near-term direct-search VOI. Tests local/adaptive value and scalar-filter opportunity cost at once. Leading bounded execution candidate after interface/budget audit. |
+| S0-IID-LOCAL-ADAPTIVE | Equal exact-budget product comparison: IID, multi-start branch-aware local ascent, and one adaptive population method; retain maxima, threshold progress, diversity, invalidity, genealogy. | Parked. The bounded scheduler ablation leaves no default policy and does not raise the value of a real target run; reopen only for a named portfolio decision. |
 | S1-LOCAL-BASIN | Multi-start nonsmooth local search/basin hopping in fixed-F dual coordinates. | Existing interface and exact reevaluation; endpoints are not certified maxima. One S0 arm or later generic search. |
 | S2-SPLITTING | Adaptive multilevel splitting/subset simulation with rising sys levels and valid mutations. | Direct rare-event method; genealogy is informative. Probability estimates require correct weighting. Alternative S0 arm. |
 | S3-CEM | Cross-entropy adaptation in positive cyclic angle gaps plus log-heights, quotienting scale/rotation. | Cheap if parameterization is stable; premature collapse risk. Leading S0 adaptive arm. |
@@ -144,9 +147,9 @@ learn that gauge.
 
 | ID | Mathematical question | Assessment and status |
 | --- | --- | --- |
-| M0-ACTION-SPECTRUM | Do class-specific two-/three-bounce minima, their normalized gap, or quotient-aware near-active structure organize sys? | Full retained product table confirms a large, all-bucket bounce-winner association; minimal ridge adjustment retains 73% of the standardized coefficient. The winner label is target-derived and unstable at ties. Next computation is conditional on mathematical value of the `(A_2,A_3)` competition, not automatic. |
+| M0-ACTION-SPECTRUM | Do class-specific two-/three-bounce minima, their normalized gap, or quotient-aware near-active structure organize sys? | Full retained product table confirms a large, all-bucket bounce-winner association; the exact audit identifies class minima only within the existing f64 solved stream, with missing three-bounce entries preserved as availability states. No branch mechanism follows. Reopen for a named `(A_2,A_3)` proof or pre-target rule. |
 | M1-MECHANISM-TOURNAMENT | Force ridge magnitude, concentration, proxy, branch crowding, symmetry/tie, and generator-artifact hypotheses to make conflicting predictions. | Highest route toward mechanism; hypotheses must not flex. After F3/F4/M0. |
-| M2-STRUCTURED-PHASES | Map regular-product parameters to sys, orbit signature, action gap, and combinatorial type; seek piecewise regimes/transition curves. | Existing-data scout found the exact smooth pentagon formula and known midpoint symmetry, sparse broader sweeps, and no unexplained competitive phase. Closed unless a named general `(n,m)` theorem or branch-feasibility question justifies new data. |
+| M2-STRUCTURED-PHASES | Map regular-product parameters to sys, orbit signature, action gap, and combinatorial type; seek piecewise regimes/transition curves. | Existing-data scout found the exact smooth pentagon formula and no unexplained competitive phase. On triangle--hexagon, the mathematical handoff gives `sys <= (3/4)sec^2(delta) <= 1` on the interval and endpoint equality; all-branch minimality is optional exact-profile work, not a new-sweep or completion gate. |
 | M3-TRANSITION-ATLAS | Which combinatorial crossings align with branch switches, kinks, derivative changes, or failures? | Existing first-boundary data mined. Retains omega-flip/selected-word/kink hypotheses plus explicit incidence, symmetric-gradient, and failure exceptions; no mechanism claim or automatic new run. |
 | M4-ACTIVE-GERMS | Which directional-response and branch/germ types are needed on generic, product, and HKO-like panels? | Could sharpen a formal statement or yield a minimal obstruction. Finite sampling never proves completeness. |
 | M5-MINIMAL-WITNESSES | Remove/merge facets, project toward symmetry, or rationally simplify an exemplar while preserving its phenomenon. | Highly usable concrete mathematics; greedy minimal is not global minimal. Depends on F3/F4/M3/S6. |
@@ -172,18 +175,21 @@ learn that gauge.
 | I6-GRADIENT-INTEGRATION | Audit the project-level random/gradient story required by FACTSHEET 30. High project value; folder scope cannot settle it. |
 | I7-HKO-REFERENCE | Correctly normalized HKO ranks and branch anatomy. Potentially valuable, but HKO local maximality stays separately owned. |
 | I8-REBUILD | Repeat full source-to-table/P2 reconstruction. Rejected as redundant given Git identity, hashes, artifacts, and reviewed 2026-07-10 rebuild. |
-| I9-DEMONSTRATION | Determine future table/figure roles and source inputs. Parked until exploration stops; no polish or thesis prose now. |
+| I9-DEMONSTRATION | Determine future table/figure roles and source inputs. Current after empirical closure: readiness/demonstration may select source-backed roles without reopening exploration or drafting thesis prose. |
 
 ## Final Ordering And Value Judgment
 
-The corrected cycle is complete; see
-`final-research-account-2026-07-12.md` for the current synthesis. F0, F3/F4,
-the compact F1B negative, M3, the full-table product-bounce packet, and the
-project-level random-start gradient packet are executed. Existing-data M2 found
-no unexplained competitive phase. S0, a ridge pressure curve, generator
-transfer, broader invariant construction, and class-specific bounce minima are
-parked with named reopen conditions. They are research opportunities, not a
-current launch queue.
+The corrected cycle closed after this review; see
+`final-research-account-2026-07-12.md` and `next-session-candidates.md` for
+the current synthesis and routing. F0, F3/F4, the compact F1B negative, M3,
+product-bounce/class-minimum, endpoint/symmetry, covariance, and bounded
+optimizer packets were executed. Existing-data M2 found no unexplained
+competitive phase; triangle--hexagon has a settled path bound, with only
+optional exact-profile mathematics remaining. S0, a ridge pressure curve,
+generator transfer, broader invariant
+construction, and further covariance/scheduler work are parked with named
+reopen conditions. They are historical research opportunities, not a launch
+queue.
 
 ## Decision Cruxes For Jörn
 

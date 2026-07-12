@@ -13,9 +13,10 @@ project requirements, and was too narrow in both features and search objects.
 It remains useful only as the bounded account of the retained-table work
 recovered on 2026-07-10.
 
-Current exploration state and the exhaustive direction map are in
-research-direction-review-2026-07-11.md and research-ledger.md. Detailed
-metrics remain in their method packets.
+The final account and next-session board own current routing.
+`research-direction-review-2026-07-11.md` is the closed-cycle exhaustive
+direction inventory, while `research-ledger.md` records current beliefs.
+Detailed metrics remain in their method packets.
 
 ## What Survived Audit
 

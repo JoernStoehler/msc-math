@@ -11,32 +11,32 @@ filters, and feature-first generated-candidate pipelines.
 
 Status block:
 
-- topic-status: independent sub-threshold enrichment validated; portfolio review
-- spawn-status: no further proposer packet before the cross-family value review
-- next-role: parent session after Jörn feedback
-- next-action: either select one claim-changing follow-up or route the reviewed
-  packet to demonstration
+- topic-status: two bounded same-generator pool-screening rules reviewed
+- spawn-status: parked for empirical execution
+- next-role: demonstration/readiness owner
+- next-action: assign distinct source roles to ridge and covariance-rho, if
+  both are used
 - review-gate: no proposer overclaim; generated candidates must be selected
   before `sys`; normal review before thesis use
 - belief-update-owner: generated-candidate topic owner; research-map steward for
   cross-topic propagation
-- last-reviewed: 2026-07-11 independent validation and split
-  technical/interpretation review
+- last-reviewed: 2026-07-12 covariance technical and interpretation reviews
 - source-of-truth: `../../methods/extreme-scalar-rejection-proposer/`
 - stale-if: runner configs/artifact paths change, new generated-candidate
   evidence lands, or thesis wording needs proposer claims
-- allowed-downstream-use: evidence for the exact frozen sub-threshold enrichment
-  rule; not threshold-directed evidence regardless of the chosen vocabulary
+- allowed-downstream-use: evidence for exact frozen same-generator,
+  sub-threshold pool-screening rules; not threshold-directed evidence
 
-Current belief: low ridge-area sum is a real bucket-local enrichment signal. On
-a fresh 100k generated sample, the frozen add-on selecting low ridge-area
-maximum share within the lowest 1% ridge-sum tail passed its predeclared
-descriptive incremental-enrichment criterion. No evaluated row had `sys > 1`.
-This is reviewed generated-candidate evidence for sub-threshold enrichment, not
-threshold reach, mechanism, or cross-generator transfer.
+Current belief: the reviewed ridge cascade and frozen low canonical
+vertex-covariance-rho rule are two distinct same-generator pool-screening rules
+with prospective sub-threshold enrichment evidence. Rho is competitive with,
+not better than, ridge; neither reached `sys > 1`, establishes mechanism, or
+transfers beyond its named random-product height law.
 
-Owner-readiness/status: reviewed packet at a Jörn terminology/role gate. Source:
-`../../methods/extreme-scalar-rejection-proposer/artifacts/100k-ridge-concentration-validation/`.
+Owner-readiness/status: ready for bounded demonstration/readiness, with exact
+terminology still a later Jörn choice. Sources:
+`../../methods/extreme-scalar-rejection-proposer/artifacts/100k-ridge-concentration-validation/`
+and `../../methods/extreme-scalar-rejection-proposer/artifacts/covariance-rho-frozen-validation/`.
 
 Current implementation boundary: the runner supports scalar-rule unions and a
 typed two-stage per-bucket cascade with a stage-1 comparator. The cascade
@@ -52,34 +52,24 @@ Evidence sources:
 - `../../methods/extreme-scalar-rejection-proposer/artifacts/100k-promising-scalars/selection-summary.tsv`
 - `../../methods/extreme-scalar-rejection-proposer/configs/100k-promising-scalars-durable.json`
 - `../../methods/extreme-scalar-rejection-proposer/artifacts/100k-ridge-concentration-validation/review.md`
+- `../../methods/extreme-scalar-rejection-proposer/artifacts/covariance-rho-frozen-validation/`
 - `../../prepare/feature_cost.rs`, infrastructure for measuring feature cost
 
 Candidate hypotheses:
 
-- Low ridge-area sum is a proxy for a broader geometric concentration property
-  that raises `sys` within product buckets.
-- Extreme scalar filtering goodharts: it selects unusual low-ridge examples
-  whose remaining variation is no longer aligned with `sys`.
-- A second feature can separate high selected candidates from mediocre selected
-  candidates.
+- Ridge and low-rho selection may be competing descriptions of the same
+  generator-local favorable geometry; the current comparison cannot decide.
+- A lower scalar objective need not be a useful optimizer objective: the ridge
+  endpoint paths reverse it locally, without proving a general Goodhart law.
 - Product bucket matching is essential; pooled proposer evidence mostly
   measures bucket/combinatorial structure.
 
 Current boundary decision:
 
-- Do not launch a broad two-feature selected-tail rescue executor immediately.
-- Launch only a short sharpening step if this topic is reopened. Its output
-  should be one frozen candidate conjunction design, one independent validation
-  config or runner-change plan, exact stop/escalation criteria, and an explicit
-  statement about whether the local full feature cache is used only for
-  sharpening or regenerated for a durable packet.
-- Park/close scalar-filter proposers for now if no one can freeze one
-  conjunction rule without browsing many features. Current opportunity-cost
-  comparison favors method-surface expansion or geometric feature mechanisms
-  unless this rescue becomes sharply constrained.
-- Reopen immediately if a new candidate source, non-ridge feature family, or
-  thesis-writing need makes generated-candidate proposers more valuable than
-  the current boundary evidence suggests.
+- Do not launch a rescue, cutoff search, same-generator repetition, or scale-up
+  merely to improve the story.
+- Reopen only for a named transfer or another missing claim, with a frozen rule,
+  target-free selection, stopping criterion, and independent review plan.
 
 Adjacent topics to read:
 

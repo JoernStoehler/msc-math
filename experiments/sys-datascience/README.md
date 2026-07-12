@@ -88,8 +88,10 @@ uv run --script experiments/sys-datascience/fingerprint-dataset.py \
 
 Read first:
 
-- `coordination/research-direction-review-2026-07-11.md` for the current
-  broad-first portfolio and status;
+- `coordination/final-research-account-2026-07-12.md` and
+  `coordination/next-session-candidates.md` for current routing and status;
+- `coordination/research-direction-review-2026-07-11.md` for the closed-cycle
+  exhaustive inventory only, not current portfolio or launch authority;
 - `coordination/exploration-result.md` for the audit of the recovery agent's
   premature exploration closure;
 - `produce/README.md`

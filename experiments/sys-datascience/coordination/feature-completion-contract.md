@@ -29,9 +29,12 @@ explicit source-backed value/cost disposition:
 - project-level random/gradient search requirements are reconciled rather than
   excluded by the sys-datascience folder boundary.
 
-Use research-direction-review-2026-07-11.md for the current portfolio and
-exploration-result.md for the audit of the recovery closure. Generated
-artifacts and producers own detailed metrics.
+Use `final-research-account-2026-07-12.md` and
+`next-session-candidates.md` for current routing. The closed-cycle
+`research-direction-review-2026-07-11.md` is an exhaustive historical
+inventory, not a current portfolio or launch authority.
+`exploration-result.md` audits the recovery closure. Generated artifacts and
+producers own detailed metrics.
 
 The 2026-07-10 rebuild already establishes current table identity. Resolve new
 questions with existing artifacts or the cheapest bounded probe first. Do not
@@ -49,16 +52,30 @@ In particular:
 
 - ridge sum/mean redundancy is algebraic within fixed-count buckets, while the
   frozen concentration cascade is a validated sub-threshold pool-screening
-  proposer under one generator;
+  rule under one generator;
 - existing artifacts cannot identify a ridge selection-pressure/Goodhart
   curve, and a new stratified target run is parked because it would not change
   current allocation;
+- the reviewed endpoint paths show only a path-specific reversal as ridge
+  magnitude decreases, so they park a ridge-only optimizer without licensing a
+  general Goodhart claim; the triangle--hexagon interval already has the
+  admissible-competitor Viterbo bound and endpoint equality in
+  `../methods/ridge-symmetry-completion/MATHEMATICAL-HANDOFF.md`; all-branch
+  minimality is optional exact-profile work rather than more sampling;
 - the apparent fourfold product branch signal was a pair-order overcount;
   corrected full-table work instead finds a reviewed two-/three-bounce winner
   association;
+- the frozen low-rho covariance selector has prospective same-generator
+  enrichment evidence competitive with, but not better than, ridge; further
+  covariance search is parked absent a transfer or other named claim;
 - existing regular-product data contain the known exact pentagon profile and
   no unexplained competitive phase worth a new producer;
 - the retained random-start gradient panel supplies bounded project-level
   method evidence and explicitly fails to support an endpoint claim at cap 8;
-- direct adaptive S0, new generator data, broader invariant construction, and
-  class-specific bounce minima are parked with named reopen conditions.
+- the two-start iterative scheduler ablation has a start-dependent regime
+  split, not a selected default policy; it is parked with a downstream-method
+  reopen condition;
+- direct adaptive S0, new generator data, and broader invariant construction
+  are parked with named reopen conditions; the executed class-minimum audit
+  identifies the bounce label as the post-target winning class and finds no
+  simple angular-gap mechanism worth expanding.

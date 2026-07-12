@@ -44,7 +44,7 @@ No new dataset was collected merely because a producer or method existed.
    `../methods/statistical-associations/` and
    `../methods/extreme-scalar-rejection-proposer/`.
 
-3. **Validated pool-screening proposer.** On a fresh 100k random-product pool,
+3. **Validated pool-screening rule.** On a fresh 100k random-product pool,
    the frozen cascade first selected the lowest 1% normalized ridge sums within
    each bucket and then the lower max-share half. The second stage improved mean
    `sys` relative to its stage-one complement in the predeclared number of
@@ -80,6 +80,33 @@ No new dataset was collected merely because a producer or method existed.
    with no single event explanation. Sources:
    `../methods/residual-exemplar-seeds/` and its indexed transition owner.
 
+7. **Bounded path evidence and interval bound.** On two frozen equality-family paths,
+   decreasing ridge magnitude was accompanied by decreasing `sys`; this is a
+   path-level reason not to build an optimizer with ridge magnitude as its only
+   objective, not a general Goodhart law. Separately, two frozen interior
+   triangle--hexagon points remained below one and agreed with the predicted
+   secant branch. More importantly, an explicit admissible three-bounce
+   competitor proves `sys <= (3/4)sec^2(delta) <= 1` on the full interval, and
+   a separate endpoint lower bound proves `sys=1` there. All-branch minimality
+   is optional exact-interior-profile work, not a Viterbo-on-path blocker.
+   Sources:
+   `../methods/ridge-endpoint-path/` and
+   `../methods/ridge-symmetry-completion/MATHEMATICAL-HANDOFF.md`.
+
+8. **Second prospective same-generator selector.** The frozen low canonical
+   vertex-covariance-rho rule enriches `sys` relative to its disjoint controls
+   on the named random-product height law and is competitive with, but not
+   better than, the frozen ridge cascade. It is a bounded prospective
+   pool-screening result, not transfer, mechanism, or threshold evidence.
+   Source:
+   `../methods/extreme-scalar-rejection-proposer/artifacts/covariance-rho-frozen-validation/`.
+
+9. **Bounded optimizer scheduler result.** In the two-start narrow-gap
+   ablation, dyadic expand/backtrack beat fixed step on both starts, while
+   boundary scaling split by start. The strict default-policy gate failed, so
+   no optimizer policy is selected and the line is parked. Source:
+   `../../dev-gradient-ascent/iterative-policy-ablation/`.
+
 ## Corrected Interpretations
 
 - The four exact cyclic classes seen in two lower-`sys` product examples were
@@ -98,6 +125,14 @@ No new dataset was collected merely because a producer or method existed.
 - Existing 100k/1m generated artifacts do not sample broad nested ridge bands.
   They support enrichment and an incremental concentration effect, not a
   monotone saturation or Goodhart curve.
+- The frozen ridge endpoint paths give a stronger but still narrow caution:
+  their exact hand-designed trajectories reverse the scalar objective. They
+  rule out treating ridge minimization alone as a justified optimizer objective
+  at current evidence, not ridge enrichment or a universal Goodhart mechanism.
+- The triangle--hexagon continuation is numerical path evidence below one.
+  Its full-interval Viterbo bound instead comes from an explicit admissible
+  three-bounce competitor; the endpoint lower bound supplies equality. An
+  all-branch proof would refine the exact interior profile only.
 - Existing regular-product artifacts show the exact smooth pentagon profile,
   known midpoint symmetry, sparse wider sweeps, and no unexplained competitive
   phase that justifies another broad producer.
@@ -109,6 +144,10 @@ No new dataset was collected merely because a producer or method existed.
 - **Ridge selection-pressure curve:** parked. Reopen only if distinguishing
   sustained ordering, saturation, reversal, or generator mixture would change
   whether scalar-proposer work receives resources.
+- **Ridge-only optimization and triangle--hexagon densification:** parked.
+  Reopen the former only for an objective beyond ridge magnitude; reopen the
+  latter only for a new named empirical question. Optional all-branch work is
+  exact-profile mathematics, not a reason to resume sampling.
 - **Regular-product phase mining:** closed at current scope. Reopen for a named
   general `(n,m)` theorem or branch-feasibility question, not another sweep.
 - **Class-specific bounce minima `(A_2,A_3)` and gap:** scientifically plausible
@@ -122,6 +161,12 @@ No new dataset was collected merely because a producer or method existed.
 - **Alternative generator and broader invariant families:** technically viable,
   not forbidden. Reopen for a named transfer, counterexample, or geometric
   uniqueness question whose possible outcomes outrank current integration work.
+- **Covariance-rho follow-up:** parked. Same-generator repetition, scale-up,
+  cutoff search, and post-target bucket refinement have no current decision
+  role; reopen for a frozen transfer question or another named missing claim.
+- **Optimizer scheduler comparison:** parked. Reopen only if a downstream
+  method must select one default scheduler or a concrete trajectory failure
+  needs to distinguish the dyadic and boundary regimes.
 - **Blind same-generator scale, more ordinary models on the same columns,
   feature zoos, deep generation, generic RL/MCMC, and LICCA without a local
   blocker:** rejected for current exploration by value/cost comparison.
@@ -134,8 +179,11 @@ Current evidence does not establish:
 - a calibrated threshold hit rate;
 - ridge geometry as a mechanism or a unique natural invariant family;
 - a ridge Goodhart/saturation law;
+- a universal consequence of the two frozen ridge paths;
 - producer-recorded bounce label as a proposer, cause, complete tie
   classification, or generator-independent law;
+- covariance rho as better than ridge, transferable, or mechanistic;
+- a default optimizer scheduler, endpoint, or local maximum;
 - completeness of HK branch or transition types;
 - gradient endpoints, local maxima, or absence of nearby improvements;
 - theorem evidence from any empirical packet.
@@ -150,6 +198,10 @@ Current evidence does not establish:
 - The gradient packet followed a plumbing smoke, one source/contract review,
   bounded retained-mode repairs, a one-seed preflight, the fixed twelve-seed
   run, and one final combined source/artifact/interpretation review.
+- The endpoint and symmetry-continuation packets have independent readiness
+  reviews; the covariance selector has separate technical and interpretation
+  reviews; the optimizer ablation retains source-qualified provenance and its
+  predeclared decision rule.
 - Mixed observations were repaired rather than globally discarded: cyclic-word
   counts remain correct under their computation convention, while the defective
   branch interpretation was removed and the bounce-pattern signal retained.
@@ -162,6 +214,10 @@ A later session may select presentation roles and exact source inputs from:
 - the independently validated ridge-concentration pool-screening packet;
 - the reviewed product-bounce distribution as a descriptive structural result;
 - the retained random-start gradient panel as bounded method evidence;
+- the path-level ridge caution, triangle--hexagon interval bound/equality
+  source, and two prospective pool-screening packets under their respective
+  source boundaries;
+- the parked optimizer ablation only as development-method evidence;
 - the exact regular-pentagon owner for the separately proved structured result.
 
 It must preserve the prohibited claims above, keep known HKO/reference positives
@@ -172,12 +228,11 @@ in this exploration cycle.
 ## Remaining Uncertainty
 
 The main remaining exploration uncertainties are scientific opportunities:
-whether class-specific bounce competition deserves future mathematical work,
-whether a meaningful alternative generator would reverse current feature
-relations, and whether a longer/different gradient policy reaches useful
-heuristic endpoints. None currently has a cheap unrun packet likely to change
-the retained claims or the decision to move into later integration and
-demonstration. Separately, FACTSHEET 34.1 requires more data before thesis-level
-data-science closure; the later session must choose its datasets and budgets for
-the actual thesis consumer rather than infer them from these parked research
-families.
+whether class-specific bounce competition deserves proof work, whether a
+meaningful alternative generator changes the bounded pool-screening results,
+and whether a named optimizer objective needs a scheduler decision. None has a
+cheap unrun packet likely to change the retained claims or the decision to move
+into later integration and demonstration. Separately, FACTSHEET 34.1 requires
+more data before thesis-level data-science closure; the later session must
+choose datasets and budgets for its actual consumer rather than infer them from
+these parked research families.

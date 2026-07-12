@@ -11,28 +11,27 @@ and how these might relate to `sys`.
 
 Status block:
 
-- topic-status: promoted diagnostic available; mechanism theorem absent
-- spawn-status: reopen if current milestone needs mechanism wording or a frozen
-  concentration-rule validation plan
-- next-role: topic owner if reopened
-- next-action: synthesize thesis-safe ridge mechanism wording or freeze one
-  concentration-rule validation plan
+- topic-status: empirical diagnostics and path-level ridge caution available;
+  mechanism theorem absent
+- spawn-status: parked pending a named mechanism or proof question
+- next-role: thesis-interpretation owner; proof owner only for optional profile work
+- next-action: retain bounded wording; do not create another mechanism packet
 - review-gate: diagnostic-only unless independently validated; no proposer
   claim from post-`sys` splits
 - belief-update-owner: mechanism topic owner; research-map steward for
   cross-topic propagation
-- last-reviewed: 2026-07-04 topic-owner update; 2026-07-06 workflow hardening
-  pass added status metadata only
+- last-reviewed: 2026-07-12 endpoint-path and covariance updates
 - source-of-truth: `../../methods/ridge-mechanism-discriminator/` plus feature
   code listed below
 - stale-if: ridge feature definitions, discriminator artifacts, HKO reference
   evidence, or thesis mechanism wording change
-- allowed-downstream-use: empirical mechanism diagnostics and prompt seed; not a
-  theorem or validated candidate proposer
+- allowed-downstream-use: bounded empirical diagnostics and path caution; not a
+  theorem or mechanism claim
 
-Current belief: ridge-area summaries are empirically important, but the project
-does not yet have a mechanism theorem. Current claims should stay empirical
-unless a mathematical argument is developed.
+Current belief: ridge-area summaries are empirically important, but neither the
+ridge/covariance selector comparison nor two frozen endpoint paths supplies a
+mechanism theorem. The path reversal parks ridge magnitude as a sole optimizer
+objective; it is not a general Goodhart mechanism.
 
 Owner-readiness/status: topic seed, ready for a topic research lead if Jörn
 wants a mechanism-focused session.
@@ -78,6 +77,18 @@ Current ridge observations:
 - The 1M generated-candidate per-bucket low-ridge run supports enrichment
   within product buckets, but does not show monotone extrapolation toward
   `sys > 1`.
+- Two frozen equality-family paths decrease in `sys` as ridge magnitude falls;
+  this is a direct path-specific optimizer caution, not a population curve or
+  causal explanation. See `../../methods/ridge-endpoint-path/`.
+- The triangle--hexagon continuation remained below one and follows its
+  predicted branch at sampled points. Its full-interval Viterbo bound follows
+  from an explicit admissible three-bounce competitor, with endpoint equality
+  from a separate lower bound; all-branch minimality is optional exact-profile
+  work, not a feature-mechanism experiment. See
+  `../../methods/ridge-symmetry-completion/MATHEMATICAL-HANDOFF.md`.
+- Low covariance rho is prospectively competitive with ridge on one generator,
+  but that comparison supplies no independent mechanism conclusion. See
+  `../../methods/extreme-scalar-rejection-proposer/artifacts/covariance-rho-frozen-validation/`.
 - Pooled/global ridge conclusions are unsafe without product-bucket or
   combinatorial controls.
 - HKO ridge-rank evidence may be useful for mechanism hypotheses, but parked
@@ -120,12 +131,9 @@ Candidate hypotheses:
   selected rows from mediocre selected rows. Falsified by: no within-selected
   association after bucket control.
 - Extreme low-ridge filtering may saturate, lose within-tail resolution, or
-  reverse. Existing generated packets observe enrichment at extreme selections
-  and an incremental concentration effect inside a lowest-1% sum tail. They do
-  not sample broad nested ridge-sum bands and therefore do not identify a
-  selection-pressure curve. A real test would compare frozen,
-  bucket-stratified bands and distinguish sustained ordering, saturation,
-  reversal, mixture, and insufficient resolution.
+  reverse. Existing generated packets do not identify a selection-pressure
+  curve. The endpoint paths show reversal on their two hand-designed
+  trajectories, which is insufficient to generalize beyond those paths.
 - HKO shares the ridge-area mechanism but not the current random-product support
   route. Measured object: HKO invariant-feature ranks and corrected HKO-local
   perturbation features. Explains: possible HKO/ridge relation. Predicts:
