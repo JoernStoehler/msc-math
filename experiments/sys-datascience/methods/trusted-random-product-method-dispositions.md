@@ -71,7 +71,7 @@ claim, not schema repair.
 | independent same-distribution reruns | `park-low-value` | none | Useful for stability only after a current fact or claim is named as needing it; another seed does not broaden the producer model. |
 | broader height intervals, facet ranges, product side ranges, or new distributions | `future-work` | none | These could support stronger producer-axis wording only after a new research decision names the distribution and exact claim. |
 | Latin-hypercube and other space-filling designs | `future-work` | `../produce/` | No continuous parameter domain, sampling measure, or claim is fixed. Reopen only through a new producer-axis research decision. |
-| rejection sampling with cheap scalar predicates | `current-reviewed-packet` | `extreme-scalar-rejection-proposer/` | Frozen scalar rules were evaluated before `sys` on generated candidates; this is negative boundary evidence, not a positive proposer. |
+| rejection sampling with cheap scalar predicates | `current-reviewed-packet` | `extreme-scalar-rejection-proposer/` | Frozen scalar rules were evaluated before `sys`; one independent cascade validates sub-threshold pool-screening enrichment under its named generator, not threshold crossing or a calibrated hit rate. |
 | local pattern/generalized-pattern/MADS and Nelder--Mead search | `future-work` | none | These require a candidate parameterization and generated-candidate evaluation loop; they are not retrospective retained-table methods. |
 | derivative-free trust-region, local interpolation/quadratic search | `future-work` | none | No continuous local candidate interface or validated cheap objective is fixed. |
 | stochastic global, hybrid local/global, constrained black-box search | `future-work` | none | Requires a named candidate domain, constraints, budget, and selection-before-`sys` review gate. |
@@ -104,7 +104,7 @@ claim, not schema repair.
 | multilayer perceptrons, autoencoders, learned representations | `park-low-value` | none | The retained scalar table is small, correlated, and already modeled well enough for its bounded role; learned representations weaken interpretability without fixing proposer validation. |
 | feature-family ablation | `current-invariant-run` | `standard-baseline-p2/` | P2 compared combinatorial-count and ridge symplectic-area feature families under grouped holdout. |
 | metadata-only prediction baselines | `current-invariant-run` | `prediction-ranking/` | Current metadata-only baselines ran. |
-| generated-candidate proposer loop | `current-reviewed-packet` | `extreme-scalar-rejection-proposer/artifacts/100k-ridge-concentration-validation/` | One frozen two-stage rule passed its independent sub-threshold enrichment criterion. It did not find `sys > 1`; Jörn must settle whether thesis vocabulary calls this a candidate-proposer or reserves that term for threshold-directed evidence. |
+| generated-candidate proposer loop | `current-reviewed-packet` | `extreme-scalar-rejection-proposer/artifacts/100k-ridge-concentration-validation/` | One frozen two-stage rule independently validated sub-threshold pool-screening enrichment. It did not validate threshold crossing or a calibrated hit rate. |
 
 ## Unsupervised, Density, And Anomaly Methods
 

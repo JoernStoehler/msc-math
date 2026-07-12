@@ -119,12 +119,12 @@ Current method-surface disposition table:
 | Claim strength | Current status | Supporting sources | Missing work if promoted |
 | --- | --- | --- | --- |
 | retained random/product table has no recorded trusted `sys > 1` row | source-backed for current retained table | `../../methods/scan-sys-gt-1/`, `../../methods/trusted-random-dataset/`, `../../methods/trusted-random-product-closure-summary.md` | none for table-scoped absence; refresh if retained tables change |
-| named current method packets found in-table structure but no validated candidate-proposer | supported with caveats | `../../methods/README.md`, `../../methods/trusted-random-product-method-dispositions.md`, current method packet READMEs | thesis-use interpretation and wording; no new run needed for bounded wording |
-| data-science slice found no new source of `sys > 1` examples and no validated candidate-proposer, beyond known HKO/structured examples | plausible bounded thesis wording | `../../../../thesis/central-claim-control.md`, `../../../../thesis/black-box-datascience-content.md`, retained method sources above | writing packet must name the retained scope and caveats |
+| named current method packets found in-table structure and one validated sub-threshold pool-screening cascade, but no threshold-directed proposer | supported with caveats | `../../methods/README.md`, `../../methods/trusted-random-product-method-dispositions.md`, current method packet READMEs | thesis-use interpretation and wording; no new run needed for bounded wording |
+| data-science slice found no new source of `sys > 1` examples and no proposer validated for finding one, beyond known HKO/structured examples | plausible bounded thesis wording | `../../../../thesis/central-claim-control.md`, `../../../../thesis/black-box-datascience-content.md`, retained method sources above | writing packet must name the retained scope and caveats |
 | ordinary data-science methods broadly fail on this table | not currently licensed as broad wording | current retained method packets cover several families | run or explicitly reject the parked tiny standard-method baseline |
 | arbitrary random distributions or producer variants do not find positives | not supported | current producer contract only | design and run new producer/distribution packet |
 | calibrated probability/density of `sys > 1` under current or broader generators | not supported as calibrated claim | `../../methods/tail-survival-1m-posterior/` gives model-sensitive evidence | stronger tail/backtest/model packet and thesis-level acceptance |
-| positive generated-candidate proposer exists | not supported | current generated-candidate scalar filters are boundary evidence only | independent proposer validation with frozen rule and selected-before-`sys` candidates |
+| threshold-directed generated-candidate proposer exists | not supported | one frozen scalar cascade validates sub-threshold screening only | independent threshold-relevant validation with a frozen rule and selected-before-`sys` candidates |
 
 Cheap discriminators:
 

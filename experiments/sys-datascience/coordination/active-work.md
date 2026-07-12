@@ -9,18 +9,14 @@ entries after merge, durable parking, discard, or handoff.
 - Branch/worktree: sys-datascience-forward-test /
   .worktrees/sys-datascience-forward-test
 - Started: 2026-07-11
-- Milestone: first corrected research cycle interpreted and paused at one
-  mathematical/stakeholder crux
-- Active work: retain the reviewed product-bounce distribution and corrected
-  ridge/proposer boundaries; decide whether normalized two-/three-bounce
-  competition or the unresolved FACTSHEET 30 gradient obligation owns the next
-  exploration packet
+- Milestone: corrected exploration feature-complete; final object/process
+  review and merge preparation
+- Active work: verify the final research account, control-surface reconciliation,
+  workflow changes, and clean branch walkthrough
 - Owned surface: the in-scope experiment workflow harness and sys-datascience
   code, data, artifacts, and coordination needed by the task
-- Blocking crux: Jörn's mathematical assessment of whether normalized
-  two-/three-bounce competition is routine or thesis-worthy, followed separately
-  by confirmation of whether FACTSHEET 30 still requires a promoted gradient
-  method
+- Blocking crux: none
 - Review state: product-bounce packet accepted by an independent narrow rerun;
   M2 closed after existing-data scout; ridge pressure curve parked after
-  coverage audit; S0 remains target-free without `GO` or target evaluation
+  coverage audit; retained random-start gradient packet accepted; S0 remains
+  target-free without `GO` or target evaluation; final cross-cutting review pending

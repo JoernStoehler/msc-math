@@ -174,35 +174,16 @@ learn that gauge.
 | I8-REBUILD | Repeat full source-to-table/P2 reconstruction. Rejected as redundant given Git identity, hashes, artifacts, and reviewed 2026-07-10 rebuild. |
 | I9-DEMONSTRATION | Determine future table/figure roles and source inputs. Parked until exploration stops; no polish or thesis prose now. |
 
-## Ordering And Current Value Judgment
+## Final Ordering And Value Judgment
 
-The corrected ordering is broad-first, with bounded parallel scouts. Current
-execution state is:
-
-1. F0, F3, F4, the compact F1B panel, M0 panel inspection, and existing-data
-   M3 atlas are executed. F1B stopped negative; M0 retained one bounded product
-   hypothesis; F0 prevents treating ridge sum as unique.
-2. Finish the process-calibration and packet integration review, then run the
-   already-audited S0 equal-budget product comparison if its fixed budget still
-   dominates the remaining cheap alternatives. Ridge selection is one arm, not
-   the program.
-3. In parallel only after one research-lead workflow is validated, mine existing
-   regular-product material for M2 and audit I6. Do not produce a dataset merely
-   to brainstorm.
-4. Use S0/M0/M2/M3 outcomes to select at most one of F2/F8, M1/M4/M5/M6, or a
-   broader S family. Do not launch all feasible continuations.
-
-Current priority classes:
-
-- completed bounded scouts: F0, F3, F4, compact F1B, M0 panel, existing-data M3;
-- remaining immediate/cheap: existing-data M2 and I6;
-- leading bounded execution: S0, using CEM or splitting and retaining traces
-  for M9/M10;
-- high-upside follow-up: F1B/F1C, M0, M1, M4, M5, M6;
-- conditional broadening: F8/F9, S6--S10, I0;
-- parked/rejected now: more ridge-rule variants, blind scale-up, arbitrary
-  generator knobs, model-count expansion, deep generation, method names
-  without objects.
+The corrected cycle is complete; see
+`final-research-account-2026-07-12.md` for the current synthesis. F0, F3/F4,
+the compact F1B negative, M3, the full-table product-bounce packet, and the
+project-level random-start gradient packet are executed. Existing-data M2 found
+no unexplained competitive phase. S0, a ridge pressure curve, generator
+transfer, broader invariant construction, and class-specific bounce minima are
+parked with named reopen conditions. They are research opportunities, not a
+current launch queue.
 
 ## Decision Cruxes For Jörn
 

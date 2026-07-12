@@ -107,16 +107,19 @@ method summaries are tracked under `methods/<method>/artifacts/` when a README
 cites current numbers. Keep durable packet conclusions in
 `methods/<method>/README.md`, not only in `/tmp`.
 
-Current coordination status: broad-first exploration is active. Existing
-evidence supports a controlled negative hostile-search benchmark plus
-sub-threshold enrichment under one random-product generator, but the current
-feature map is narrow and direct-search and mathematics-informing routes remain
-under review. `LICCA.md` classifies the retained dormant scripts; none is
-selected merely because exploration is open.
+Current coordination status: the corrected exploration/research slice is
+feature-complete under
+`coordination/final-research-account-2026-07-12.md`. Existing evidence supports
+a controlled negative hostile-search benchmark, a validated sub-threshold
+pool-screening cascade under one random-product generator, a descriptive
+product bounce-label result, and bounded random-start gradient progress. The
+feature map remains narrow; parked routes have named reopen conditions rather
+than forming a queue. FACTSHEET 34.1 still requires later thesis-level data.
+`LICCA.md` classifies retained dormant scripts; none is selected by default.
 
 Escalate before unrelated work only when an active method produces a trusted
 new `sys > 1` candidate or source beyond the already-known HKO/rotated-pentagon
 family and declared reference/control rows, or produces a credible new
-candidate-proposer. A known positive reference is expected comparison or
+threshold-directed proposer. A known positive reference is expected comparison or
 plumbing evidence unless its value, provenance, or relation to the active
 question is newly surprising.

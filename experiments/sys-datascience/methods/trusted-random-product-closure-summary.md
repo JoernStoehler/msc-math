@@ -54,8 +54,9 @@ Currently supported by the integrated invariant-schema rerun:
 
 - the random/product method table used an explicit trusted filter;
 - the scoped random/product table had no recorded `sys > 1` row;
-- EDA/model artifacts found in-table structure but no validated
-  generated-candidate proposer.
+- EDA/model artifacts found in-table structure. A later fresh generated packet
+  validated one exact sub-threshold ridge-concentration pool-screening rule;
+  it did not validate threshold crossing.
 - the integrated invariant-schema rerun found high-tail enrichment from ridge
   symplectic-area invariants, while separately reported coarse
   strata/provenance feature sets were much weaker on grouped holdouts. This
@@ -66,7 +67,7 @@ Not yet supported:
 
 - claims about arbitrary random distributions beyond the retained producer
   contract.
-- a validated generated-candidate proposer.
+- a proposer validated for finding `sys > 1` or a calibrated threshold hit rate.
 
 ## Reopen Triggers
 

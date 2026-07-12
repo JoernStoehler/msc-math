@@ -142,8 +142,11 @@ maintenance low. The numbers are stable and can be out of order.
 
 ## Data Science And Search
 
-30. The random/gradient search story remains a major novel method needed for
-    the data-science part, not merely supporting background.
+30. The random/gradient search story is a major novel method for the
+    data-science part, not merely supporting background. Current retained
+    random-start gradient evidence supports systematic finite-step improvement
+    and a measured cost profile on its named fixed-`F` panel; it does not
+    support endpoint or local-maximality claims.
 
 31. For data-science method coverage, do not weaken the standard-method
     expectation to merely representative families. Exhaust everything known

@@ -28,19 +28,12 @@ direction inventory.
 
 ## Current Prioritization
 
-Jörn rejected the ridge-centered portfolio as too narrow. Broad-first
-exploration is active. Selected cheap work:
+The corrected broad-first exploration is feature-complete. Current supported
+claims, prohibited claims, and reopen conditions are in
+`final-research-account-2026-07-12.md`. No experiment packet is selected merely
+from the open questions below; they are future research opportunities.
 
-- quotient redundant current feature directions;
-- find stable discordant pairs and residual exemplars;
-- mine existing regular-product and transition evidence for sharp questions;
-- audit an equal-budget IID/local/adaptive direct-search comparison;
-- design a small invariant incidence-aware feature map.
-
-Another ridge rule, blind scale-up, arbitrary generator knob, model-count
-expansion, or demonstration session is not selected.
-
-## Open Discriminators
+## Future Discriminators
 
 - How many independent ridge-area directions remain after quotienting?
 - Which natural invariant geometry adds residual information?

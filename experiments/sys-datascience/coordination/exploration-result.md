@@ -2,6 +2,11 @@
 
 Status: audited and rejected as current phase authority on 2026-07-11.
 
+The corrected exploration cycle subsequently closed on 2026-07-12. Its
+current source-backed synthesis is `final-research-account-2026-07-12.md`;
+that later account, not the recovery judgment preserved below, routes future
+integration/demonstration work.
+
 This file previously said exploration was complete and demonstration was next.
 That judgment came from a recovery agent, did not reconcile the higher-authority
 project requirements, and was too narrow in both features and search objects.
