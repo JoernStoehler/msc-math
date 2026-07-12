@@ -118,33 +118,41 @@ gives the strict-time condition.  Since
 action.
 \end{proof}
 
-Figure~\ref{fig:flow-graph-tube-example} shows the two complementary views used
+Figures~\ref{fig:flow-graph-projected-orbit}
+and~\ref{fig:flow-graph-tube-sequence} show the two complementary views used
 by the construction.  The first places one closed orbit on the projected
 polytope boundary.  The second follows the same word through the
-two-dimensional polygons \(P_{ij}\).  Each local panel uses its own affine coordinates: the blue polygon
-is the full section \(P_{ij}\), the coloured polygon is the cross-section of
-the surviving tube, and the black cross is the breakpoint of the closed
-orbit.  The start and return panels use the same facet pair.  Thus the
+two-dimensional polygons \(P_{ij}\).  Within each panel, the coordinate axes
+are orthonormal for the Euclidean metric induced from \(\mathbb R^4\).  Their
+affine origins and orientations are chosen independently, and the panels are
+autoscaled separately.  The blue polygon is the full section \(P_{ij}\), the
+coloured polygon is the cross-section of the surviving tube, and the black
+cross is the breakpoint of the closed orbit.  The start and return panels use
+the same facet pair.  Thus the
 return-map fixed-point equation is visible as the return of the black cross to
 its initial local coordinates.
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=0.40\linewidth]{figures/flow-graph/flow-graph-f6-projection.pdf}
+  \includegraphics[width=\linewidth]{figures/flow-graph/flow-graph-f6-projection.pdf}
+  \caption{Two camera views of the same radial and stereographic projection of
+    an example polytope with six facets.  The translucent surfaces are
+    projected two-faces, the grey curves are the projected one-skeleton, and
+    the purple curve is the closed Reeb orbit with facet word
+    \(\sigma=(1,2,4,5,3)\).  Projection distorts the geometry; the figure is
+    explanatory, not proof input.}
+  \label{fig:flow-graph-projected-orbit}
+\end{figure}
 
-  \small (a) Projected polytope and closed orbit.
-
-  \medskip
-  \includegraphics[width=0.86\linewidth]{figures/flow-graph/flow-graph-f6-tube-sequence.pdf}
-
-  \small (b) The same word in successive local sections.
-  \normalsize
-  \caption{Two views of the deterministic six-facet example with facet word
-    \(\sigma=(1,2,4,5,3)\).  Panel (a) is a geometry-distorting radial and
-    stereographic projection.  In (b), coordinates and scales differ between
-    panels; the arrows show the affine passages, and the black cross returns to
-    its initial coordinates.  Both views are explanatory, not proof input.}
-  \label{fig:flow-graph-tube-example}
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\linewidth]{figures/flow-graph/flow-graph-f6-tube-sequence.pdf}
+  \caption{The same word in successive local sections.  Each panel uses a
+    Euclidean-orthonormal basis for the corresponding affine two-plane.  The
+    affine origins and orientations are chosen independently, and panels are
+    autoscaled separately.  The arrows show the affine passages, and the black
+    cross returns to its initial coordinates.}
+  \label{fig:flow-graph-tube-sequence}
 \end{figure}
 
 \subsection{Exhaustive search and correctness}

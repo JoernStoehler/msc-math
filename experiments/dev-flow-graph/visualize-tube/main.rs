@@ -44,6 +44,7 @@ struct VisualizationData {
     dual_vertices_f64: Vec<[f64; 4]>,
     vertices_f64: Vec<[f64; 4]>,
     edges: Vec<[usize; 2]>,
+    two_faces: Vec<TwoFaceSnapshot>,
     facet_intersection_is_nonempty: Vec<Vec<bool>>,
     omega_signs: Vec<Vec<i8>>,
     all_two_faces: Vec<FacePolygonSnapshot>,
@@ -56,6 +57,12 @@ struct ClosedOrbitSnapshot {
     facets: Vec<usize>,
     action: f64,
     breakpoints: Vec<[f64; 4]>,
+}
+
+#[derive(Debug, Serialize)]
+struct TwoFaceSnapshot {
+    facets: [usize; 2],
+    vertices: Vec<usize>,
 }
 
 fn main() -> Result<(), String> {
@@ -136,6 +143,7 @@ fn main() -> Result<(), String> {
             .map(|point| [point[0], point[1], point[2], point[3]])
             .collect(),
         edges: polytope_edges(&polytope.vertex_facet_incidence),
+        two_faces: polytope_two_faces(&polytope.vertex_facet_incidence),
         facet_intersection_is_nonempty: matrix_rows(&polytope.facet_intersection_is_nonempty),
         omega_signs: matrix_rows(&polytope.omega_signs),
         all_two_faces,
@@ -220,6 +228,24 @@ fn polytope_edges(incidence: &nalgebra::DMatrix<bool>) -> Vec<[usize; 2]> {
         }
     }
     edges
+}
+
+fn polytope_two_faces(incidence: &nalgebra::DMatrix<bool>) -> Vec<TwoFaceSnapshot> {
+    let mut two_faces = Vec::new();
+    for first in 0..incidence.ncols() {
+        for second in first + 1..incidence.ncols() {
+            let vertices: Vec<usize> = (0..incidence.nrows())
+                .filter(|&vertex| incidence[(vertex, first)] && incidence[(vertex, second)])
+                .collect();
+            if vertices.len() >= 3 {
+                two_faces.push(TwoFaceSnapshot {
+                    facets: [first, second],
+                    vertices,
+                });
+            }
+        }
+    }
+    two_faces
 }
 
 fn matrix_rows<T: Copy>(matrix: &nalgebra::DMatrix<T>) -> Vec<Vec<T>> {

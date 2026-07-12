@@ -52,7 +52,8 @@ The algorithm contract and result-control surface live in
     `F_j cap F_i` are separate panels when both are needed.
   - `render.py --layout sequence` shows only the facet-pair sections visited by
     the word; `--layout projection` shows the same closed orbit in a radial and
-    stereographic projection of the polytope's one-skeleton.
+    stereographic projection, with two camera views of the polytope's
+    one-skeleton and translucent two-faces.
 
 The retained thesis example uses `facet_count=6`, `attempt=3`, and
 `sigma=1,2,4,5,3`.  Its generated owner artifacts are

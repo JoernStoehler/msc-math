@@ -26,6 +26,7 @@ setup()
 import matplotlib.pyplot as plt
 from matplotlib.patches import FancyArrowPatch, Patch, Polygon
 from matplotlib.lines import Line2D
+from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 
 
 FACE_COLOR = "#b7c9e2"
@@ -36,6 +37,7 @@ TUBE_COLORS = {
 }
 FIXED_COLOR = "#111111"
 PROJECTION_CLIP_RADIUS = 3.5
+PROJECTION_FACE_CLIP_RADIUS = 6.0
 
 
 def main() -> None:
@@ -154,7 +156,7 @@ def render_sequence(data, output):
         if ax not in panel_axes:
             ax.axis("off")
 
-    fig.tight_layout(rect=(0.0, 0.12, 1.0, 0.94))
+    fig.tight_layout(rect=(0.0, 0.12, 1.0, 0.94), w_pad=2.2, h_pad=2.0)
     fig.canvas.draw()
     for index, (source, target) in enumerate(zip(panel_axes, panel_axes[1:])):
         source_box = source.get_position()
@@ -164,8 +166,9 @@ def render_sequence(data, output):
                 start = (source_box.x1 + 0.004, 0.5 * (source_box.y0 + source_box.y1))
                 end = (target_box.x0 - 0.004, 0.5 * (target_box.y0 + target_box.y1))
             elif index == 2:
-                start = (0.5 * (source_box.x0 + source_box.x1), source_box.y0 - 0.004)
-                end = (0.5 * (target_box.x0 + target_box.x1), target_box.y1 + 0.004)
+                arrow_x = target_box.x1 + 0.012
+                start = (arrow_x, source_box.y0 - 0.004)
+                end = (arrow_x, target_box.y1 + 0.004)
             else:
                 start = (source_box.x0 - 0.004, 0.5 * (source_box.y0 + source_box.y1))
                 end = (target_box.x1 + 0.004, 0.5 * (target_box.y0 + target_box.y1))
@@ -187,8 +190,9 @@ def render_sequence(data, output):
             )
         )
         pair = panels[index]["pair"]
+        label_x = 0.5 * (start[0] + end[0]) + (0.012 if len(panels) == 6 and index == 2 else 0.0)
         fig.text(
-            0.5 * (start[0] + end[0]),
+            label_x,
             0.5 * (start[1] + end[1]),
             rf"$R_{{{pair[1]}}}$",
             fontsize=FONT_SIZE_SMALL,
@@ -231,16 +235,12 @@ def render_projection(data, output):
     if len(breakpoints) != len(orbit["facets"]):
         raise ValueError("closed orbit must have one breakpoint per facet segment")
 
-    fig = plt.figure(figsize=(TEXT_WIDTH, 3.0))
-    ax = fig.add_subplot(111, projection="3d")
-
     projected_edge_points = []
     for first, second in data["edges"]:
         curve = projected_segment(vertices[first], vertices[second])
         if len(curve) < 2:
             continue
         projected_edge_points.append(curve)
-        ax.plot(curve[:, 0], curve[:, 1], curve[:, 2], color="#73787d", alpha=0.68, linewidth=0.9)
 
     projected_orbit_points = []
     for index, start in enumerate(breakpoints):
@@ -249,15 +249,50 @@ def render_projection(data, output):
         if len(curve) < 2:
             continue
         projected_orbit_points.append(curve)
-        ax.plot(curve[:, 0], curve[:, 1], curve[:, 2], color="#6f2dbd", linewidth=3.0)
+
+    projected_faces = []
+    for index, face in enumerate(data["two_faces"]):
+        points = project_points(vertices[face["vertices"]])
+        if len(points) != len(face["vertices"]):
+            continue
+        projected_faces.append((order_polygon_3d(points), index))
 
     all_points = projected_edge_points + projected_orbit_points
     if not all_points:
         raise ValueError("stereographic projection produced no visible geometry")
-    set_equal_3d_limits(ax, np.concatenate(all_points))
-    ax.view_init(elev=22, azim=-58)
-    ax.set_axis_off()
-    ax.set_position([0.0, 0.0, 1.0, 1.0])
+
+    fig = plt.figure(figsize=(TEXT_WIDTH, 2.9))
+    cameras = ((20, -58), (27, 28))
+    colors = plt.get_cmap("tab20")
+    for panel, (elevation, azimuth) in enumerate(cameras, start=1):
+        ax = fig.add_subplot(1, 2, panel, projection="3d")
+        for polygon, face_index in projected_faces:
+            face_color = colors(face_index % 20)
+            ax.add_collection3d(
+                Poly3DCollection(
+                    [polygon],
+                    facecolor=face_color,
+                    edgecolor=face_color,
+                    linewidth=0.35,
+                    alpha=0.22,
+                )
+            )
+        for curve in projected_edge_points:
+            ax.plot(
+                curve[:, 0],
+                curve[:, 1],
+                curve[:, 2],
+                color="#5f6469",
+                alpha=0.72,
+                linewidth=0.8,
+            )
+        for curve in projected_orbit_points:
+            ax.plot(curve[:, 0], curve[:, 1], curve[:, 2], color="#6f2dbd", linewidth=2.7)
+        set_equal_3d_limits(ax, np.concatenate(all_points))
+        ax.view_init(elev=elevation, azim=azimuth)
+        ax.set_axis_off()
+        ax.text2D(0.04, 0.94, f"view {panel}", transform=ax.transAxes, fontsize=FONT_SIZE_SMALL)
+    fig.subplots_adjust(left=0.0, right=1.0, bottom=0.0, top=1.0, wspace=-0.04)
     output.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(output, facecolor="white", transparent=False)
     plt.close(fig)
@@ -280,9 +315,33 @@ def projected_segment(start, end, samples=48):
     return projected[np.linalg.norm(projected, axis=1) <= PROJECTION_CLIP_RADIUS]
 
 
+def project_points(points):
+    points = np.asarray(points, dtype=float)
+    norms = np.linalg.norm(points, axis=1)
+    if np.any(norms <= 1e-12):
+        return np.empty((0, 3))
+    sphere = points / norms[:, None]
+    denominators = 1.0 - sphere[:, 3]
+    if np.any(np.abs(denominators) <= 0.04):
+        return np.empty((0, 3))
+    projected = sphere[:, :3] / denominators[:, None]
+    if np.any(np.linalg.norm(projected, axis=1) > PROJECTION_FACE_CLIP_RADIUS):
+        return np.empty((0, 3))
+    return projected
+
+
+def order_polygon_3d(points):
+    center = points.mean(axis=0)
+    _, _, basis = np.linalg.svd(points - center, full_matrices=False)
+    first = (points - center) @ basis[0]
+    second = (points - center) @ basis[1]
+    angles = np.arctan2(second, first)
+    return points[np.argsort(angles)]
+
+
 def set_equal_3d_limits(ax, points):
     center = 0.5 * (points.min(axis=0) + points.max(axis=0))
-    radius = 0.55 * np.max(points.max(axis=0) - points.min(axis=0))
+    radius = 0.38 * np.max(points.max(axis=0) - points.min(axis=0))
     radius = max(radius, 1e-6)
     ax.set_xlim(center[0] - radius, center[0] + radius)
     ax.set_ylim(center[1] - radius, center[1] + radius)
