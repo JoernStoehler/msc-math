@@ -8,10 +8,11 @@ description: Use only when Jörn asks for a postmortem, session reflection, less
 ## Purpose
 
 Turn a completed or paused session into evidence for improving expected thesis
-success. The report should help decide what to change in future work: the repo,
-harness, prompts, task approach, Jörn's involvement, or beliefs about model
-capability. It is not a completion summary, blame exercise, or exhaustive event
-log. Invocation authorizes inspection, analysis, and proposals, not edits.
+success. The report should help decide what future work should learn about the
+repo, harness, prompts, task approach, Jörn's involvement, or model capability,
+and whether that learning justifies a durable change. It is not a completion
+summary, blame exercise, or exhaustive event log. Invocation authorizes
+inspection, analysis, and proposals, not edits.
 
 ## Process
 
@@ -55,8 +56,14 @@ error into a permanent rule.
 
 Translate model and process learning into the surfaces that can actually
 change: Jörn's behavior, ordinary repo files or structure, and harness files.
-Say when the evidence supports no change to a surface; a model-capability update
-is an input to these decisions, not itself an intervention.
+When recommending a durable change, name its owner: Jörn's future behavior, an
+ordinary repo file or structural boundary, or a harness file. Do not list
+session-local prompts or task approaches as change surfaces: they disappear
+with the session unless assigned to a reusable owner. Desired agent behavior
+describes an outcome rather than the control that would produce it, and a
+model-capability update is evidence for choosing an intervention rather than an
+intervention itself. Map a recurring lesson to a concrete owner above, or say
+that no durable change is justified.
 
 Do not say there was nothing to learn merely because the outcome was good.
 Silence is justified only when outcome and process were effectively perfect and

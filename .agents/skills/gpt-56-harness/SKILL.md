@@ -1,6 +1,6 @@
 ---
 name: gpt-56-harness
-description: Use when designing, editing, reviewing, diagnosing, or evaluating agent-facing repository instructions for GPT-5.6, including AGENTS.md, repo-local skills, Codex configuration ownership, custom agents, reusable subagent/reviewer prompts, and model-family migrations. Do not use for ordinary task prompts or domain work merely because Codex performs it.
+description: Use when designing, editing, reviewing, diagnosing, or evaluating agent-facing instructions for GPT-5.6, including AGENTS.md, repo-local skills, Codex configuration ownership, custom agents, reusable subagent/reviewer prompts, cold-start prompts intended to replace missing session context for a new autonomous session, and model-family migrations. Do not use for ordinary task prompts, ordinary delegation, or domain work merely because Codex performs it.
 ---
 
 # GPT-5.6 Harness
@@ -41,6 +41,10 @@ matters, ask what the reviewer actually understood, inferred, missed, or found
 ambiguous. Preserve the exact prompt, raw output, evaluation verdict, and
 designer interpretation as separate layers when they guide a durable harness
 change.
+
+When reviewing a reusable or cold-start prompt, check that accepted constraints,
+mutable observations, provisional diagnoses, and proposed strategy remain
+distinguishable where conflating them could suppress useful reassessment.
 
 An explicit harness task authorizes worktree edits and commits. Jörn's approval
 is required before a harness commit reaches Main; a worktree commit is not that
