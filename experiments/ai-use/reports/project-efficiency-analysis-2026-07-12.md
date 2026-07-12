@@ -51,10 +51,33 @@ The month-end Git/resource/value records are in
 \* Mapped shadow cost excludes historical labels without a pinned pricing map;
 “not mapped” is not zero cost. The actual subscription cost is zero.
 
-## Why July became expensive
+## Why July 11–12 became expensive
 
-The June-to-July comparison identifies a leading cause rather than merely a
-correlation:
+The immediate incident is concentrated in the last two days: July 11–12
+contain 5.768B tokens, or 80.6% of July's 7.158B tokens so far. The relevant
+comparison is therefore July 1–10 versus July 11–12; June is only a broader
+baseline.
+
+| Metric | July 1–10 | July 11–12 | Change |
+|---|---:|---:|---:|
+| Tokens per active day | 154.5M | 2.884B | 18.7× |
+| Rollouts per active day | 33.6 | 183.0 | 5.4× |
+| Tokens per rollout | 4.60M | 15.76M | 3.4× |
+| Subagent token share | 48.2% | 84.6% | +36.4 percentage points |
+| High or xhigh effort share | 13.2% | 66.7% | +53.5 percentage points |
+| Cache-hit share | 94.84% | 97.81% | +2.97 percentage points |
+| Long-context requests | 70 | 2,252 | 32.2× |
+| Mapped shadow cost | $1,201.89 | $3,903.43 | 3.2× |
+| Shadow cost per million total tokens | $0.865 | $0.677 | lower during burst |
+
+This is a much stronger diagnosis than the month-level comparison: the burst
+was caused by both substantially more fan-out and substantially larger,
+higher-effort rollouts. The model/workflow switch is visible too: July 1–10 was
+83.1% GPT-5.5 and 16.8% Sol, while July 11–12 was 86.8% Sol, 9.4% Terra, and
+3.8% Luna. That switch did not make tokens more expensive; the burst's
+per-token mapped cost was lower.
+
+For broader context, the June-to-July comparison remains:
 
 | Metric | June | July through 12 | Change |
 |---|---:|---:|---:|
