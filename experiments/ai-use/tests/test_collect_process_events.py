@@ -1,5 +1,6 @@
 import importlib.util
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -173,7 +174,7 @@ def test_codex_schemas_lineage_outcome_privacy_and_bounds(tmp_path):
                 },
             },
             {
-                "timestamp": "2026-01-01T00:00:02Z",
+                "timestamp": "2026-01-01T00:00:01Z",
                 "payload": {
                     "type": "function_call_output",
                     "call_id": "a",
@@ -338,6 +339,7 @@ def test_cli_manifest_provenance_and_no_paths(tmp_path):
     root.mkdir()
     key = tmp_path / "key"
     key.write_bytes(KEY)
+    key.chmod(0o600)
     out = tmp_path / "events.jsonl"
     write(
         root / "rollout.jsonl",
@@ -390,6 +392,8 @@ def test_cli_manifest_provenance_and_no_paths(tmp_path):
         manifest["output_hash"]
         == "sha256:" + __import__("hashlib").sha256(out.read_bytes()).hexdigest()
     )
+    assert manifest["config"]["include_message_fingerprints"] is False
+    assert manifest["config"]["message_min_chars"] == 40
     assert "/secret" not in out.read_text() and "/secret" not in json.dumps(manifest)
     first = manifest["input_inventory"]["hash"]
     with (root / "rollout.jsonl").open("a") as handle:
@@ -412,3 +416,321 @@ def test_cli_manifest_provenance_and_no_paths(tmp_path):
         "input_inventory"
     ]["hash"]
     assert first != second
+
+
+def test_message_fingerprints_roles_dedup_edits_and_privacy(tmp_path):
+    path = tmp_path / "messages.jsonl"
+    base = "Please inspect the exact worktree lifecycle and preserve every useful artifact before cleanup."
+    edited = "Please carefully inspect the exact worktree lifecycle and preserve every useful artifact before final cleanup."
+    write(
+        path,
+        [
+            {
+                "timestamp": "2026-01-01T00:00:00Z",
+                "type": "session_meta",
+                "payload": {"id": "s"},
+            },
+            {
+                "timestamp": "2026-01-01T00:00:01Z",
+                "payload": {"type": "user_message", "message": base},
+            },
+            {
+                "timestamp": "2026-01-01T00:00:01Z",
+                "payload": {
+                    "type": "message",
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "input_text",
+                            "text": "  Please inspect the exact worktree lifecycle\n and preserve every useful artifact before cleanup.  ",
+                        }
+                    ],
+                },
+            },
+            {
+                "timestamp": "2026-01-01T00:00:03Z",
+                "payload": {"type": "agent_message", "message": edited},
+            },
+            {
+                "timestamp": "2026-01-01T00:00:04Z",
+                "payload": {
+                    "type": "message",
+                    "role": "developer",
+                    "content": [
+                        {
+                            "type": "input_text",
+                            "text": "private developer instruction that must never appear",
+                        }
+                    ],
+                },
+            },
+            {
+                "timestamp": "2026-01-01T00:00:05Z",
+                "payload": {
+                    "type": "reasoning",
+                    "encrypted_content": "secret encrypted reasoning",
+                },
+            },
+            {
+                "timestamp": "2026-01-01T00:00:06Z",
+                "payload": {"type": "function_call_output", "output": base},
+            },
+        ],
+    )
+    rows, stats = c.extract(
+        path, "codex", KEY, include_message_fingerprints=True, message_min_chars=20
+    )
+    messages = [r for r in rows if r["record_type"] == "message_fingerprint"]
+    assert [r["role"] for r in messages] == ["user", "agent"]
+    assert (
+        stats["duplicate_message_representations"] == 1
+        and stats["message_blocks_excluded"] >= 2
+    )
+    assert messages[0]["duplicate_schema_occurrences"][0]["event_ordinal"] == 3
+    assert set(messages[0]["winnowed_fingerprint_ids"]) & set(
+        messages[1]["winnowed_fingerprint_ids"]
+    )
+    serialized = json.dumps(rows)
+    assert not any(
+        raw in serialized
+        for raw in [
+            "worktree lifecycle",
+            "developer instruction",
+            "encrypted reasoning",
+        ]
+    )
+    again, _ = c.extract(
+        path, "codex", KEY, include_message_fingerprints=True, message_min_chars=20
+    )
+    other, _ = c.extract(
+        path,
+        "codex",
+        b"different-key",
+        include_message_fingerprints=True,
+        message_min_chars=20,
+    )
+    assert rows == again
+    assert (
+        messages[0]["normalized_text_id"]
+        != next(r for r in other if r["record_type"] == "message_fingerprint")[
+            "normalized_text_id"
+        ]
+    )
+
+
+def test_message_origin_envelopes_and_repeat_chronology(tmp_path):
+    path = tmp_path / "origin.jsonl"
+    envelope = "Message Type: NEW_TASK\nTask name: /root/a\nSender: /root\nPayload:\nPerform the bounded extraction task and report evidence."
+    ordinary = (
+        "Please perform the bounded extraction task and report the evidence clearly."
+    )
+    write(
+        path,
+        [
+            {
+                "timestamp": "2026-01-01T00:00:00Z",
+                "type": "session_meta",
+                "payload": {"id": "s"},
+            },
+            {
+                "timestamp": "2026-01-01T00:00:01Z",
+                "payload": {"type": "user_message", "message": envelope},
+            },
+            {
+                "timestamp": "2026-01-01T00:00:02Z",
+                "payload": {"type": "user_message", "message": ordinary},
+            },
+            {
+                "timestamp": "2026-01-01T00:00:03Z",
+                "payload": {"type": "user_message", "message": ordinary},
+            },
+            {
+                "timestamp": "2026-01-01T00:00:04Z",
+                "payload": {
+                    "type": "agent_message",
+                    "message": "I completed the bounded extraction task and preserved the requested evidence.",
+                },
+            },
+        ],
+    )
+    rows, stats = c.extract(
+        path, "codex", KEY, include_message_fingerprints=True, message_min_chars=20
+    )
+    messages = [r for r in rows if r["record_type"] == "message_fingerprint"]
+    assert [(r["message_origin"], r["delivery_kind"]) for r in messages] == [
+        ("nonhuman_agent", "subagent_delivery"),
+        ("human_user_candidate", "direct_user_prompt"),
+        ("human_user_candidate", "direct_user_prompt"),
+        ("agent", "agent_output"),
+    ]
+    repeats = [
+        r
+        for r in messages
+        if r["normalized_text_id"] == messages[1]["normalized_text_id"]
+    ]
+    assert [r["event_ordinal"] for r in repeats] == [3, 4]
+    assert stats["message_delivery_subagent_delivery"] == 1
+
+
+def test_claude_message_blocks_and_short_threshold(tmp_path):
+    path = tmp_path / "claude-messages.jsonl"
+    write(
+        path,
+        [
+            {
+                "timestamp": "2026-01-01T00:00:00Z",
+                "sessionId": "s",
+                "message": {
+                    "role": "user",
+                    "content": "This is a sufficiently long visible Claude user request for fingerprint extraction.",
+                },
+            },
+            {
+                "timestamp": "2026-01-01T00:00:01Z",
+                "sessionId": "s",
+                "message": {
+                    "role": "assistant",
+                    "content": [
+                        {"type": "thinking", "thinking": "hidden chain"},
+                        {
+                            "type": "text",
+                            "text": "This is a sufficiently long visible Claude agent response for fingerprint extraction.",
+                        },
+                        {
+                            "type": "tool_use",
+                            "id": "x",
+                            "name": "Bash",
+                            "input": {"command": "secret"},
+                        },
+                    ],
+                },
+            },
+            {
+                "timestamp": "2026-01-01T00:00:02Z",
+                "sessionId": "s",
+                "message": {
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "tool_result",
+                            "tool_use_id": "x",
+                            "content": "private output",
+                        }
+                    ],
+                },
+            },
+            {
+                "timestamp": "2026-01-01T00:00:03Z",
+                "sessionId": "s",
+                "message": {"role": "user", "content": "short"},
+            },
+        ],
+    )
+    rows, stats = c.extract(
+        path, "claude", KEY, include_message_fingerprints=True, message_min_chars=20
+    )
+    messages = [r for r in rows if r["record_type"] == "message_fingerprint"]
+    assert [r["role"] for r in messages] == ["user", "agent"]
+    assert (
+        stats["messages_below_threshold"] == 1 and stats["message_blocks_excluded"] == 3
+    )
+    assert all(r["shingle_size"] == 5 and r["char_count"] >= 20 for r in messages)
+
+
+def test_message_fingerprints_opt_in_default_unchanged(tmp_path):
+    path = tmp_path / "only-message.jsonl"
+    write(
+        path,
+        [
+            {
+                "timestamp": "2026-01-01T00:00:00Z",
+                "payload": {
+                    "type": "user_message",
+                    "message": "A visible message that is definitely long enough for the configured threshold.",
+                },
+            }
+        ],
+    )
+    rows, _ = c.extract(path, "codex", KEY)
+    assert rows == []
+
+
+def test_claude_system_reminder_origins(tmp_path):
+    path = tmp_path / "claude-origin.jsonl"
+    write(
+        path,
+        [
+            {
+                "timestamp": "2026-01-01T00:00:00Z",
+                "sessionId": "s",
+                "message": {
+                    "role": "user",
+                    "content": "<system-reminder>This injected reminder is structural and not a human-authored request.</system-reminder>",
+                },
+            },
+            {
+                "timestamp": "2026-01-01T00:00:01Z",
+                "sessionId": "s",
+                "message": {
+                    "role": "user",
+                    "content": "Please inspect the current result. <system-reminder>Injected structural context follows here.</system-reminder>",
+                },
+            },
+        ],
+    )
+    rows, _ = c.extract(
+        path, "claude", KEY, include_message_fingerprints=True, message_min_chars=20
+    )
+    messages = [r for r in rows if r["record_type"] == "message_fingerprint"]
+    assert [(r["message_origin"], r["delivery_kind"]) for r in messages] == [
+        ("nonhuman_injected", "system_injection"),
+        ("mixed_or_injected", "mixed_system_injection"),
+    ]
+
+
+def test_private_outputs_and_key_permissions(tmp_path):
+    root = tmp_path / "logs"
+    root.mkdir()
+    write(
+        root / "rollout.jsonl",
+        [
+            {
+                "timestamp": "2026-01-01T00:00:00Z",
+                "payload": {
+                    "type": "user_message",
+                    "message": "A long visible message for the private output permission test.",
+                },
+            }
+        ],
+    )
+    key = tmp_path / "key"
+    key.write_bytes(KEY)
+    out = tmp_path / "events.jsonl"
+    manifest = tmp_path / "manifest.json"
+    out.write_text("old permissive data")
+    manifest.write_text("old permissive manifest")
+    out.chmod(0o644)
+    manifest.chmod(0o644)
+    key.chmod(0o644)
+    command = [
+        sys.executable,
+        str(SCRIPT),
+        "--codex-root",
+        str(root),
+        "--key-file",
+        str(key),
+        "--out",
+        str(out),
+        "--manifest",
+        str(manifest),
+    ]
+    rejected = subprocess.run(command, text=True, capture_output=True)
+    assert rejected.returncode != 0 and "group- or world-readable" in rejected.stderr
+    key.chmod(0o600)
+    old_umask = os.umask(0o022)
+    try:
+        subprocess.run(command, check=True)
+    finally:
+        os.umask(old_umask)
+    assert (out.stat().st_mode & 0o777) == 0o600
+    assert (manifest.stat().st_mode & 0o777) == 0o600

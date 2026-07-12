@@ -150,6 +150,10 @@ key, but the local rows remain sensitive because timestamps, action patterns, an
 cross-row linkage can still identify work. Do not commit or publish the dataset, its
 key, row-level excerpts, or identifying derived tables.
 
+The collector rejects a regular key file with group/world permissions. Both producers
+create or replace datasets and manifests with mode `0600`; the `umask` command above
+also protects the key at creation time.
+
 The collector recognizes explicit session lineage and conservative structural actions
 such as worktree creation/removal, real merges and cherry-picks, commits, branch
 deletion, and file transfer/deletion. It records authoritative exit status where the
@@ -157,6 +161,16 @@ log exposes one and otherwise distinguishes wrapper completion or an unverified
 reported outcome. Dynamic shell constructs, heredoc bodies, unparseable segments, and
 unmatched tool outputs are excluded or downgraded and counted in the manifest rather
 than guessed.
+
+For cross-session prompt/handoff analysis, append
+`--include-message-fingerprints` to the collector command.
+
+This adds no transcript text. It stores keyed normalized-message identifiers and a
+sparse keyed fingerprint of five-token shingles for visible user/agent messages;
+system/developer instructions, reasoning, encrypted content, and tool results are
+excluded. These rows remain sensitive and private under the same policy as structural
+events. The feature is opt-in because it increases runtime, memory, linkage, and output
+size.
 
 This is a candidate-event dataset, not a semantic history. In particular, a worktree
 removal does not establish failure, a file transfer does not establish vetted salvage,
@@ -188,6 +202,12 @@ the relation filter retains those chronological lifecycle candidates for validat
 but marks them `wrapper_completed_unverified` and ineligible. Claude Bash results with
 an explicit non-error tool status provide stronger command evidence, except where a
 compound shell command prevents the final status from establishing an earlier action.
+When message fingerprints are present, the relation filter also produces exact or
+edited `prompt_reuse_candidate` rows from earlier agent messages to later user prompts.
+It uses only chronology, roles, normalized keyed identifiers, and keyed shingle overlap;
+common fingerprints are suppressed. These matches remain ineligible pending sampled
+review because shared templates, copied broadcasts, and coincidental overlap can still
+produce false attribution.
 
 The last smoke run before committing this packet found 5,880 visible Codex and
 Claude logs in the local environment and wrote the inventory to `/tmp`, not to

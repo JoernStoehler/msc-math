@@ -5,6 +5,8 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
+import tempfile
 from collections import Counter, defaultdict
 from datetime import datetime
 from pathlib import Path
@@ -21,6 +23,7 @@ TYPES = {
     "branch_created_then_merged",
     "file_transferred",
     "file_deleted",
+    "prompt_reuse_candidate",
 }
 
 
@@ -37,6 +40,28 @@ def digest(x: Any) -> str:
 
 def file_hash(p: Path) -> str:
     return "sha256:" + hashlib.sha256(p.read_bytes()).hexdigest()
+
+
+def private_write(path: Path, text: str) -> None:
+    """Atomically replace path with a file that was private from creation."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fd, temporary = tempfile.mkstemp(prefix=f".{path.name}.", dir=path.parent)
+    try:
+        os.fchmod(fd, 0o600)
+        with os.fdopen(fd, "w", encoding="utf-8") as handle:
+            fd = -1
+            handle.write(text)
+            handle.flush()
+            os.fsync(handle.fileno())
+        os.replace(temporary, path)
+        os.chmod(path, 0o600)
+    finally:
+        if fd >= 0:
+            os.close(fd)
+        try:
+            os.unlink(temporary)
+        except FileNotFoundError:
+            pass
 
 
 def when(x: Any) -> datetime | None:
@@ -163,7 +188,228 @@ def direct_relation(e, kind):
     return rel(kind, [e], fields, a.get("confidence", "medium"), ok, reason)
 
 
-def derive(rows, selected=None):
+def prompt_reuse(
+    rows,
+    min_overlap=3,
+    min_similarity=0.5,
+    max_shingle_df=20,
+    min_token_ratio=0.5,
+    exact_frequency_ceiling=1000,
+    ambiguity_group_cap=200,
+    stats=None,
+):
+    stats = stats if stats is not None else Counter()
+    messages = [
+        x
+        for x in rows
+        if x.get("record_type") == "message_fingerprint"
+        and (
+            (
+                x.get("role") in {"agent", "assistant"}
+                and x.get("delivery_kind") == "agent_output"
+            )
+            or (
+                x.get("role") == "user"
+                and x.get("message_origin") == "human_user_candidate"
+            )
+        )
+    ]
+    groups = {}
+    for m in messages:
+        shingles = tuple(sorted(set(m.get("winnowed_fingerprint_ids") or [])))
+        role = "agent" if m["role"] in {"agent", "assistant"} else "user"
+        key = (role, m.get("normalized_text_id"), shingles, m.get("token_count"))
+        groups.setdefault(
+            key,
+            {
+                "role": role,
+                "normalized_text_id": key[1],
+                "shingles": set(shingles),
+                "token_count": key[3],
+                "members": [],
+            },
+        )["members"].append(m)
+    sources = [g for g in groups.values() if g["role"] == "agent"]
+    targets = [g for g in groups.values() if g["role"] == "user"]
+    exact, posting, df = defaultdict(list), defaultdict(list), Counter()
+    for i, g in enumerate(sources):
+        if g["normalized_text_id"]:
+            exact[g["normalized_text_id"]].append(i)
+        for shingle in g["shingles"]:
+            # Session prevalence, not grouped-document count: broadcasts of an
+            # identical template must still make its shingles non-distinctive.
+            df[shingle] += len({m.get("session_id") for m in g["members"]})
+    for i, g in enumerate(sources):
+        for shingle in g["shingles"]:
+            if df[shingle] <= max_shingle_df:
+                posting[shingle].append(i)
+    stats["high_prevalence_shingles_suppressed"] += sum(
+        count > max_shingle_df for count in df.values()
+    )
+    result = []
+    for target in targets:
+        overlap_counts = Counter()
+        for shingle in target["shingles"]:
+            if df[shingle] <= max_shingle_df:
+                overlap_counts.update(posting.get(shingle, []))
+        candidates = set(exact.get(target["normalized_text_id"], [])) | {
+            i for i, n in overlap_counts.items() if n >= min_overlap
+        }
+        for i in candidates:
+            source = sources[i]
+            is_exact = bool(
+                target["normalized_text_id"]
+                and target["normalized_text_id"] == source["normalized_text_id"]
+            )
+            overlap = len(source["shingles"] & target["shingles"])
+            union = len(source["shingles"] | target["shingles"])
+            similarity = 1.0 if is_exact else (overlap / union if union else 0.0)
+            st, tt = source["token_count"], target["token_count"]
+            ratio = (
+                min(st, tt) / max(st, tt)
+                if isinstance(st, int) and isinstance(tt, int) and max(st, tt)
+                else None
+            )
+            if not is_exact and (
+                overlap < min_overlap
+                or similarity < min_similarity
+                or ratio is None
+                or ratio < min_token_ratio
+            ):
+                continue
+            frequency = len(source["members"]) + len(target["members"])
+            if is_exact and frequency > exact_frequency_ceiling:
+                stats["exact_frequency_ceiling_suppressed"] += 1
+                continue
+            # Cap before membership checks: runtime is bounded independently of
+            # broadcast multiplicity and no source×target pairs are materialized.
+            src_all = sorted(
+                source["members"],
+                key=lambda m: (m.get("timestamp") or "", m.get("message_id") or ""),
+            )
+            tgt_all = sorted(
+                target["members"],
+                key=lambda m: (m.get("timestamp") or "", m.get("message_id") or ""),
+            )
+            truncated = (
+                len(src_all) > ambiguity_group_cap or len(tgt_all) > ambiguity_group_cap
+            )
+            src = src_all[:ambiguity_group_cap]
+            tgt = tgt_all[:ambiguity_group_cap]
+            if truncated:
+                stats["ambiguity_groups_truncated"] += 1
+            # Sweep chronology with inclusion/exclusion counts. This computes
+            # member sets in O((S+T) log(S+T)), without materializing pairs.
+            src = [m for m in src if when(m.get("timestamp")) is not None]
+            tgt = [m for m in tgt if when(m.get("timestamp")) is not None]
+            prior_total = 0
+            by_session = Counter()
+            by_log = Counter()
+            by_pair = Counter()
+            si = 0
+            tmembers = {}
+            for tm in tgt:
+                while si < len(src) and before(src[si], tm):
+                    sm = src[si]
+                    pair = (sm.get("session_id"), sm.get("source_log_id"))
+                    prior_total += 1
+                    by_session[pair[0]] += 1
+                    by_log[pair[1]] += 1
+                    by_pair[pair] += 1
+                    si += 1
+                pair = (tm.get("session_id"), tm.get("source_log_id"))
+                if (
+                    prior_total - by_session[pair[0]] - by_log[pair[1]] + by_pair[pair]
+                    > 0
+                ):
+                    tmembers[tm.get("message_id")] = tm
+            if not tmembers:
+                continue
+            valid_targets = sorted(
+                tmembers.values(), key=lambda m: when(m.get("timestamp")), reverse=True
+            )
+            later_total = 0
+            by_session = Counter()
+            by_log = Counter()
+            by_pair = Counter()
+            ti = 0
+            smembers = {}
+            for sm in sorted(src, key=lambda m: when(m.get("timestamp")), reverse=True):
+                while ti < len(valid_targets) and before(sm, valid_targets[ti]):
+                    tm = valid_targets[ti]
+                    pair = (tm.get("session_id"), tm.get("source_log_id"))
+                    later_total += 1
+                    by_session[pair[0]] += 1
+                    by_log[pair[1]] += 1
+                    by_pair[pair] += 1
+                    ti += 1
+                pair = (sm.get("session_id"), sm.get("source_log_id"))
+                if (
+                    later_total - by_session[pair[0]] - by_log[pair[1]] + by_pair[pair]
+                    > 0
+                ):
+                    smembers[sm.get("message_id")] = sm
+            if not smembers:
+                continue
+            ev = []
+            for m in [*smembers.values(), *tmembers.values()]:
+                ev.append(
+                    {
+                        "event_id": m.get("message_id")
+                        or digest(
+                            {
+                                "source_log_id": m.get("source_log_id"),
+                                "event_ordinal": m.get("event_ordinal"),
+                            }
+                        ),
+                        "source_log_id": m.get("source_log_id"),
+                        "timestamp": m.get("timestamp"),
+                        "evidence_status": {
+                            "issued": True,
+                            "command_outcome": "unknown",
+                        },
+                    }
+                )
+            fields = {
+                "reuse_label": "exact" if is_exact else "edited",
+                "normalized_text_id": target["normalized_text_id"]
+                if is_exact
+                else None,
+                "source_message_ids": sorted(smembers),
+                "target_message_ids": sorted(tmembers),
+                "source_session_ids": sorted(
+                    {m.get("session_id") for m in smembers.values()}
+                ),
+                "target_session_ids": sorted(
+                    {m.get("session_id") for m in tmembers.values()}
+                ),
+                "ambiguity_group_id": digest(
+                    {"source": sorted(smembers), "target": sorted(tmembers)}
+                ),
+                "source_occurrence_count": len(source["members"]),
+                "target_occurrence_count": len(target["members"]),
+                "ambiguity_group_truncated": truncated,
+                "exact_common_broadcast": is_exact and frequency > max_shingle_df,
+                "overlap_count": overlap,
+                "source_shingle_count": len(source["shingles"]),
+                "target_shingle_count": len(target["shingles"]),
+                "jaccard_similarity": round(similarity, 6),
+                "token_count_ratio": round(ratio, 6) if ratio is not None else None,
+            }
+            result.append(
+                rel(
+                    "prompt_reuse_candidate",
+                    ev,
+                    fields,
+                    "high" if is_exact else "medium",
+                    False,
+                    "pending_review",
+                )
+            )
+    return result
+
+
+def derive(rows, selected=None, reuse_config=None):
     wanted = selected or TYPES
     out = []
     for row in rows:
@@ -481,6 +727,8 @@ def derive(rows, selected=None):
                         "command_outcome_unknown",
                     )
                 )
+    if "prompt_reuse_candidate" in wanted:
+        out.extend(prompt_reuse(rows, **(reuse_config or {})))
     # IDs are content-derived; collapse exact duplicates.
     return sorted(
         {x["relation_id"]: x for x in out}.values(),
@@ -507,18 +755,42 @@ def main():
     p.add_argument("--output", required=True, type=Path)
     p.add_argument("--manifest", type=Path)
     p.add_argument("--relation-type", action="append", choices=sorted(TYPES))
+    p.add_argument("--reuse-min-overlap", type=int, default=3)
+    p.add_argument("--reuse-min-similarity", type=float, default=0.5)
+    p.add_argument("--reuse-max-shingle-df", type=int, default=20)
+    p.add_argument("--reuse-min-token-ratio", type=float, default=0.5)
+    p.add_argument("--reuse-exact-frequency-ceiling", type=int, default=1000)
+    p.add_argument("--reuse-ambiguity-group-cap", type=int, default=200)
     a = p.parse_args()
     source = json.loads(a.input_manifest.read_text())
     if source.get("schema") != EVENT_SCHEMA:
         p.error(f"input manifest schema must be {EVENT_SCHEMA}")
     if source.get("output_hash") != file_hash(a.input):
         p.error("input manifest output_hash does not match input")
+    if (
+        a.reuse_min_overlap < 1
+        or not 0 <= a.reuse_min_similarity <= 1
+        or a.reuse_max_shingle_df < 1
+        or not 0 <= a.reuse_min_token_ratio <= 1
+        or a.reuse_exact_frequency_ceiling < 1
+        or a.reuse_ambiguity_group_cap < 1
+    ):
+        p.error("invalid prompt reuse threshold")
     rows = read_jsonl(a.input)
     selected = set(a.relation_type) if a.relation_type else None
-    relations = derive(rows, selected)
+    reuse_stats = Counter()
+    reuse_config = {
+        "min_overlap": a.reuse_min_overlap,
+        "min_similarity": a.reuse_min_similarity,
+        "max_shingle_df": a.reuse_max_shingle_df,
+        "min_token_ratio": a.reuse_min_token_ratio,
+        "exact_frequency_ceiling": a.reuse_exact_frequency_ceiling,
+        "ambiguity_group_cap": a.reuse_ambiguity_group_cap,
+        "stats": reuse_stats,
+    }
+    relations = derive(rows, selected, reuse_config)
     data = "".join(json.dumps(x, sort_keys=True) + "\n" for x in relations)
-    a.output.parent.mkdir(parents=True, exist_ok=True)
-    a.output.write_text(data)
+    private_write(a.output, data)
     propagated = {
         k: source.get(k)
         for k in (
@@ -538,6 +810,8 @@ def main():
         "output_hash": "sha256:" + hashlib.sha256(data.encode()).hexdigest(),
         "script_hash": file_hash(Path(__file__)),
         "relation_types": sorted(selected or TYPES),
+        "prompt_reuse_config": {k: v for k, v in reuse_config.items() if k != "stats"},
+        "prompt_reuse_suppressions": dict(sorted(reuse_stats.items())),
         "rows": len(relations),
         "by_relation_type": dict(
             sorted(Counter(x["relation_type"] for x in relations).items())
@@ -571,8 +845,9 @@ def main():
             )
         ),
     }
-    (a.manifest or a.output.with_suffix(a.output.suffix + ".manifest.json")).write_text(
-        json.dumps(manifest, indent=2, sort_keys=True) + "\n"
+    private_write(
+        a.manifest or a.output.with_suffix(a.output.suffix + ".manifest.json"),
+        json.dumps(manifest, indent=2, sort_keys=True) + "\n",
     )
 
 

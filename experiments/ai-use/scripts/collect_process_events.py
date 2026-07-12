@@ -9,6 +9,7 @@ import json
 import os
 import re
 import shlex
+import unicodedata
 from collections import Counter
 from datetime import datetime
 from pathlib import Path
@@ -54,6 +55,132 @@ def action_identity(
 ) -> str:
     coordinate = f"{source_log_id}\0{ordinal}\0{nested_index if nested_index is not None else 'direct'}\0{action_index}"
     return pseudonym(key, "action_event", coordinate)
+
+
+def normalize_visible_text(text: str) -> str:
+    return " ".join(unicodedata.normalize("NFKC", text).split())
+
+
+def message_tokens(text: str) -> list[str]:
+    return re.findall(r"\w+|[^\w\s]", text.casefold(), flags=re.UNICODE)
+
+
+def winnowed_fingerprints(
+    tokens: list[str], key: bytes, shingle_size: int = 5, window: int = 4
+) -> list[str]:
+    if len(tokens) < shingle_size:
+        return []
+    hashes = [
+        pseudonym(key, "message_shingle", "\0".join(tokens[i : i + shingle_size]))
+        for i in range(len(tokens) - shingle_size + 1)
+    ]
+    if len(hashes) <= window:
+        return sorted(set(hashes))
+    selected: list[tuple[int, str]] = []
+    for i in range(len(hashes) - window + 1):
+        chunk = hashes[i : i + window]
+        minimum = min(chunk)
+        right = i + max(j for j, value in enumerate(chunk) if value == minimum)
+        if not selected or selected[-1][0] != right:
+            selected.append((right, minimum))
+    return [value for _, value in selected]
+
+
+SUBAGENT_ENVELOPE = re.compile(
+    r"^Message Type: (?:NEW_TASK|MESSAGE|FINAL_ANSWER)\s*\n"
+    r"Task name: .+\nSender: .+\nPayload:\s*\n",
+    re.MULTILINE,
+)
+SYSTEM_REMINDER = re.compile(r"</?system-reminder>|<system-reminder\b", re.I)
+
+
+def classify_message_origin(role: str, text: str, source: str) -> tuple[str, str]:
+    if role == "agent":
+        return "agent", "agent_output"
+    # The multiline envelope is checked before whitespace normalization.
+    if source == "codex" and SUBAGENT_ENVELOPE.match(text.strip()):
+        return "nonhuman_agent", "subagent_delivery"
+    if source == "claude" and SYSTEM_REMINDER.search(text):
+        stripped = text.strip().casefold()
+        if stripped.startswith("<system-reminder") and stripped.endswith(
+            "</system-reminder>"
+        ):
+            return "nonhuman_injected", "system_injection"
+        return "mixed_or_injected", "mixed_system_injection"
+    return "human_user_candidate", "direct_user_prompt"
+
+
+def visible_messages(
+    event: dict[str, Any], source: str
+) -> tuple[list[tuple[str, str, str, str]], Counter[str]]:
+    """Extract visible user/agent prose, excluding instructions and opaque blocks."""
+    raw_found: list[tuple[str, str]] = []
+    coverage: Counter[str] = Counter()
+    if source == "codex":
+        payload = event.get("payload") if isinstance(event.get("payload"), dict) else {}
+        ptype, role = payload.get("type"), payload.get("role")
+        if ptype == "user_message" and isinstance(payload.get("message"), str):
+            raw_found.append(("user", payload["message"]))
+            coverage["message_schema_codex_user_message"] += 1
+        elif ptype == "agent_message" and isinstance(payload.get("message"), str):
+            raw_found.append(("agent", payload["message"]))
+            coverage["message_schema_codex_agent_message"] += 1
+        elif ptype == "message" and role in {"user", "assistant"}:
+            mapped = "agent" if role == "assistant" else "user"
+            content = payload.get("content", [])
+            if isinstance(content, list):
+                texts = [
+                    block.get("text")
+                    for block in content
+                    if isinstance(block, dict)
+                    and block.get("type") in {"input_text", "output_text", "text"}
+                    and isinstance(block.get("text"), str)
+                ]
+                if texts:
+                    raw_found.append((mapped, "\n".join(texts)))
+                    coverage["message_schema_codex_role_message"] += 1
+        elif ptype in {
+            "developer_message",
+            "system_message",
+            "reasoning",
+            "encrypted_content",
+        } or role in {"developer", "system"}:
+            coverage["message_blocks_excluded"] += 1
+    else:
+        message = event.get("message") if isinstance(event.get("message"), dict) else {}
+        role = message.get("role")
+        if role in {"user", "assistant"}:
+            mapped = "agent" if role == "assistant" else "user"
+            content = message.get("content")
+            if isinstance(content, str):
+                raw_found.append((mapped, content))
+                coverage["message_schema_claude_string"] += 1
+            elif isinstance(content, list):
+                texts = []
+                for block in content:
+                    if not isinstance(block, dict):
+                        continue
+                    if block.get("type") == "text" and isinstance(
+                        block.get("text"), str
+                    ):
+                        texts.append(block["text"])
+                    elif block.get("type") in {
+                        "tool_result",
+                        "tool_use",
+                        "thinking",
+                        "redacted_thinking",
+                    }:
+                        coverage["message_blocks_excluded"] += 1
+                if texts:
+                    raw_found.append((mapped, "\n".join(texts)))
+                    coverage["message_schema_claude_blocks"] += 1
+        elif role in {"system", "developer"}:
+            coverage["message_blocks_excluded"] += 1
+    found = [
+        (role, text, *classify_message_origin(role, text, source))
+        for role, text in raw_found
+    ]
+    return found, coverage
 
 
 def parse_time(value: object) -> datetime | None:
@@ -470,6 +597,8 @@ def extract(
     end: datetime | None = None,
     include_empty_tool_calls: bool = False,
     content_hash: str | None = None,
+    include_message_fingerprints: bool = False,
+    message_min_chars: int = 40,
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     rows, calls, stats = [], {}, Counter()
     variants, included_variants = Counter(), Counter()
@@ -485,6 +614,7 @@ def extract(
         key, "source_log", source + "\0" + (content_hash or file_hash(path))
     )
     bounded = start is not None or end is not None
+    seen_messages: dict[tuple[str, str, str], int] = {}
     with path.open(encoding="utf-8", errors="replace") as handle:
         for line_no, line in enumerate(handle, 1):
             stats["events_scanned"] += 1
@@ -564,6 +694,76 @@ def extract(
             stats["events_in_range"] += 1
             if variant:
                 included_variants[variant] += 1
+            if source == "claude":
+                session_id = str(event.get("sessionId") or session_id)
+            if include_message_fingerprints:
+                messages, message_coverage = visible_messages(event, source)
+                stats.update(message_coverage)
+                for message_index, (
+                    role,
+                    text,
+                    message_origin,
+                    delivery_kind,
+                ) in enumerate(messages):
+                    stats["message_candidates"] += 1
+                    normalized = normalize_visible_text(text)
+                    if len(normalized) < message_min_chars:
+                        stats["messages_below_threshold"] += 1
+                        continue
+                    normalized_id = pseudonym(key, "normalized_message", normalized)
+                    # Collapse only parallel schema representations at the same
+                    # timestamp. Later repetitions remain separate chronology.
+                    dedup_key = (
+                        role,
+                        normalized_id,
+                        str(timestamp)
+                        if timestamp is not None
+                        else f"ordinal:{line_no}",
+                    )
+                    message_id = pseudonym(
+                        key,
+                        "message",
+                        f"{source_log_id}\0{line_no}\0{message_index}\0{role}",
+                    )
+                    if dedup_key in seen_messages:
+                        stats["duplicate_message_representations"] += 1
+                        rows[seen_messages[dedup_key]].setdefault(
+                            "duplicate_schema_occurrences", []
+                        ).append(
+                            {
+                                "message_id": message_id,
+                                "event_ordinal": line_no,
+                                "timestamp": timestamp,
+                            }
+                        )
+                        continue
+                    tokens = message_tokens(normalized)
+                    rows.append(
+                        {
+                            "record_type": "message_fingerprint",
+                            "source": source,
+                            "source_log_id": source_log_id,
+                            "event_ordinal": line_no,
+                            "session_id": pseudonym(key, "session", session_id),
+                            "timestamp": timestamp,
+                            "role": role,
+                            "message_origin": message_origin,
+                            "delivery_kind": delivery_kind,
+                            "message_id": message_id,
+                            "normalized_text_id": normalized_id,
+                            "char_count": len(normalized),
+                            "token_count": len(tokens),
+                            "shingle_size": 5,
+                            "winnow_window": 4,
+                            "winnowed_fingerprint_ids": winnowed_fingerprints(
+                                tokens, key
+                            ),
+                        }
+                    )
+                    seen_messages[dedup_key] = len(rows) - 1
+                    stats["message_fingerprints_emitted"] += 1
+                    stats[f"message_origin_{message_origin}"] += 1
+                    stats[f"message_delivery_{delivery_kind}"] += 1
             blocks: list[tuple[str, str, str, object]] = []
             if source == "codex" and ptype in {"function_call", "custom_tool_call"}:
                 blocks = [
@@ -575,7 +775,6 @@ def extract(
                     )
                 ]
             elif source == "claude":
-                session_id = str(event.get("sessionId") or session_id)
                 content = (event.get("message") or {}).get("content", [])
                 if isinstance(content, list):
                     blocks = [
@@ -755,6 +954,27 @@ def inventory_hash(items: list[tuple[str, str]]) -> str:
     return "sha256:" + hashlib.sha256(payload).hexdigest()
 
 
+def private_write_text(path: Path, text: str) -> None:
+    """Replace text with mode 0600, including an already permissive target."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    flags = (
+        os.O_WRONLY
+        | os.O_CREAT
+        | getattr(os, "O_CLOEXEC", 0)
+        | getattr(os, "O_NOFOLLOW", 0)
+    )
+    fd = os.open(path, flags, 0o600)
+    try:
+        os.fchmod(fd, 0o600)
+        os.ftruncate(fd, 0)
+        with os.fdopen(fd, "w", encoding="utf-8", closefd=False) as handle:
+            handle.write(text)
+            handle.flush()
+            os.fsync(handle.fileno())
+    finally:
+        os.close(fd)
+
+
 def main() -> None:
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--codex-root", action="append", type=Path, default=[])
@@ -765,6 +985,8 @@ def main() -> None:
     p.add_argument("--out", required=True, type=Path)
     p.add_argument("--manifest", type=Path)
     p.add_argument("--include-empty-tool-calls", action="store_true")
+    p.add_argument("--include-message-fingerprints", action="store_true")
+    p.add_argument("--message-min-chars", type=int, default=40)
     args = p.parse_args()
     if not args.codex_root and not args.claude_root:
         p.error("at least one explicit source root is required")
@@ -774,6 +996,14 @@ def main() -> None:
         p.error(str(exc))
     if start and end and start >= end:
         p.error("--start must precede --end")
+    if args.message_min_chars < 1:
+        p.error("--message-min-chars must be positive")
+    try:
+        key_stat = args.key_file.stat()
+    except OSError as exc:
+        p.error(f"cannot stat --key-file: {exc}")
+    if args.key_file.is_file() and key_stat.st_mode & 0o077:
+        p.error("--key-file must not be group- or world-readable; chmod it to 0600")
     key = args.key_file.read_bytes()
     if not key:
         p.error("--key-file must not be empty")
@@ -789,7 +1019,15 @@ def main() -> None:
         inventory.append((source, digest))
         files_by_source[source] += 1
         rows, stats = extract(
-            path, source, key, start, end, args.include_empty_tool_calls, digest
+            path,
+            source,
+            key,
+            start,
+            end,
+            args.include_empty_tool_calls,
+            digest,
+            args.include_message_fingerprints,
+            args.message_min_chars,
         )
         all_rows.extend(rows)
         if rows:
@@ -806,9 +1044,8 @@ def main() -> None:
             r.get("call_id", ""),
         )
     )
-    args.out.parent.mkdir(parents=True, exist_ok=True)
     data = "".join(json.dumps(r, sort_keys=True) + "\n" for r in all_rows)
-    args.out.write_text(data, encoding="utf-8")
+    private_write_text(args.out, data)
     actions = [a for r in all_rows for a in r.get("actions", [])] + [
         a
         for r in all_rows
@@ -834,7 +1071,13 @@ def main() -> None:
             "hash": inventory_hash(inventory),
             "by_source": per_source,
         },
-        "config": {"include_empty_tool_calls": args.include_empty_tool_calls},
+        "config": {
+            "include_empty_tool_calls": args.include_empty_tool_calls,
+            "include_message_fingerprints": args.include_message_fingerprints,
+            "message_min_chars": args.message_min_chars,
+            "message_shingle_size": 5,
+            "message_winnow_window": 4,
+        },
         "key_fingerprint": "sha256:" + hashlib.sha256(key).hexdigest()[:16],
         "script_hash": file_hash(Path(__file__)),
         "output_hash": "sha256:" + hashlib.sha256(data.encode()).hexdigest(),
@@ -851,9 +1094,7 @@ def main() -> None:
         ),
     }
     target = args.manifest or args.out.with_suffix(args.out.suffix + ".manifest.json")
-    target.write_text(
-        json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8"
-    )
+    private_write_text(target, json.dumps(manifest, indent=2, sort_keys=True) + "\n")
 
 
 if __name__ == "__main__":

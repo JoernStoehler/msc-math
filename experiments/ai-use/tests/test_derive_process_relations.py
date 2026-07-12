@@ -279,6 +279,38 @@ def test_cli_manifest_validation_propagation_filter(tmp_path):
     assert p.returncode and b"does not match" in p.stderr
 
 
+def test_cli_outputs_are_private_under_umask_and_replace_public_targets(tmp_path):
+    inp, source_manifest = tmp_path / "events.jsonl", tmp_path / "events.manifest.json"
+    out, manifest = tmp_path / "relations.jsonl", tmp_path / "relations.manifest.json"
+    inp.write_text("")
+    source_manifest.write_text(
+        json.dumps({"schema": r.EVENT_SCHEMA, "output_hash": r.file_hash(inp)})
+    )
+    out.write_text("public old output")
+    manifest.write_text("public old manifest")
+    out.chmod(0o644)
+    manifest.chmod(0o644)
+    subprocess.run(
+        [
+            sys.executable,
+            str(SCRIPT),
+            "--input",
+            str(inp),
+            "--input-manifest",
+            str(source_manifest),
+            "--output",
+            str(out),
+            "--manifest",
+            str(manifest),
+        ],
+        check=True,
+        preexec_fn=lambda: __import__("os").umask(0o022),
+    )
+    assert out.stat().st_mode & 0o777 == 0o600
+    assert manifest.stat().st_mode & 0o777 == 0o600
+    assert out.read_text() == "" and json.loads(manifest.read_text())["rows"] == 0
+
+
 def test_stress_linear_episode_shape():
     rows = []
     for i in range(200):
@@ -374,3 +406,198 @@ def test_wrapper_branch_candidate_is_scoped_deduped_and_ineligible():
     assert len(got) == 1 and not got[0]["eligible"]
     assert got[0]["transition_evidence"] == "wrapper_completed_unverified"
     assert got[0]["exclusion_reason"] == "command_outcome_unknown"
+
+
+def msg(mid, role, session, log, time, norm, shingles, tokens=10):
+    return {
+        "record_type": "message_fingerprint",
+        "source_log_id": log,
+        "event_ordinal": 1,
+        "session_id": session,
+        "timestamp": time,
+        "role": role,
+        "message_origin": "agent"
+        if role in {"agent", "assistant"}
+        else "human_user_candidate",
+        "delivery_kind": "agent_output"
+        if role in {"agent", "assistant"}
+        else "direct_user_prompt",
+        "message_id": mid,
+        "normalized_text_id": norm,
+        "char_count": 100,
+        "token_count": tokens,
+        "winnowed_fingerprint_ids": shingles,
+    }
+
+
+def test_prompt_reuse_exact_normalized_and_light_edit():
+    rows = [
+        msg(
+            "a",
+            "agent",
+            "s1",
+            "l1",
+            "2026-01-01T00:00:01Z",
+            "same",
+            ["1", "2", "3", "4"],
+        ),
+        msg(
+            "u",
+            "user",
+            "s2",
+            "l2",
+            "2026-01-01T00:00:02Z",
+            "same",
+            ["1", "2", "3", "4"],
+        ),
+        msg(
+            "a2",
+            "assistant",
+            "s3",
+            "l3",
+            "2026-01-01T00:00:03Z",
+            "old",
+            ["5", "6", "7", "8"],
+        ),
+        msg(
+            "u2",
+            "user",
+            "s4",
+            "l4",
+            "2026-01-01T00:00:04Z",
+            "new",
+            ["5", "6", "7", "9"],
+        ),
+    ]
+    got = typ(
+        r.derive(
+            rows,
+            reuse_config={
+                "min_overlap": 3,
+                "min_similarity": 0.5,
+                "max_shingle_df": 20,
+                "min_token_ratio": 0.5,
+            },
+        ),
+        "prompt_reuse_candidate",
+    )
+    assert {x["reuse_label"] for x in got} == {"exact", "edited"}
+    assert all(
+        not x["eligible"] and x["exclusion_reason"] == "pending_review" for x in got
+    )
+
+
+def test_prompt_reuse_chronology_session_and_common_template_controls():
+    common = ["c1", "c2", "c3"]
+    rows = [
+        msg("a1", "agent", "s1", "l1", "2026-01-01T00:00:02Z", "n1", common + ["x"]),
+        msg("a2", "agent", "s2", "l2", "2026-01-01T00:00:02Z", "n2", common + ["y"]),
+        msg("early", "user", "s3", "l3", "2026-01-01T00:00:01Z", "n1", common + ["x"]),
+        msg("same", "user", "s1", "l4", "2026-01-01T00:00:03Z", "n1", common + ["x"]),
+        msg(
+            "target",
+            "user",
+            "s4",
+            "l4",
+            "2026-01-01T00:00:03Z",
+            "other",
+            common + ["z"],
+        ),
+    ]
+    assert (
+        r.prompt_reuse(
+            rows,
+            min_overlap=3,
+            min_similarity=0.5,
+            max_shingle_df=1,
+            min_token_ratio=0.5,
+        )
+        == []
+    )
+
+
+def test_prompt_reuse_broadcast_group_and_scalability():
+    rows = [
+        msg(
+            f"a{i}",
+            "agent",
+            f"s{i}",
+            f"l{i}",
+            "2026-01-01T00:00:01Z",
+            "same",
+            ["1", "2", "3"],
+        )
+        for i in range(30)
+    ]
+    rows += [
+        msg(
+            f"u{i}",
+            "user",
+            f"t{i}",
+            f"m{i}",
+            "2026-01-01T00:00:02Z",
+            "same",
+            ["1", "2", "3"],
+        )
+        for i in range(30)
+    ]
+    rows += [
+        msg(
+            f"noise{i}",
+            "user",
+            f"n{i}",
+            f"z{i}",
+            "2026-01-01T00:00:03Z",
+            f"n{i}",
+            [f"q{i}"],
+            2,
+        )
+        for i in range(1000)
+    ]
+    got = r.prompt_reuse(rows)
+    assert (
+        len(got) == 1
+        and len(got[0]["source_message_ids"]) == 30
+        and len(got[0]["target_message_ids"]) == 30
+    )
+
+
+def test_prompt_reuse_subagent_delivery_is_not_a_human_target():
+    source = msg(
+        "a", "agent", "s1", "l1", "2026-01-01T00:00:01Z", "same", ["1", "2", "3"]
+    )
+    delivered = msg(
+        "u", "user", "s2", "l2", "2026-01-01T00:00:02Z", "same", ["1", "2", "3"]
+    )
+    delivered["message_origin"] = "subagent_delivery"
+    assert r.prompt_reuse([source, delivered]) == []
+
+
+def test_prompt_reuse_5000_by_5000_exact_broadcast_suppressed_without_pairs():
+    rows = [
+        msg(
+            f"a{i}",
+            "agent",
+            f"s{i}",
+            f"l{i}",
+            "2026-01-01T00:00:01Z",
+            "same",
+            ["1", "2", "3"],
+        )
+        for i in range(5000)
+    ]
+    rows += [
+        msg(
+            f"u{i}",
+            "user",
+            f"t{i}",
+            f"m{i}",
+            "2026-01-01T00:00:02Z",
+            "same",
+            ["1", "2", "3"],
+        )
+        for i in range(5000)
+    ]
+    stats = __import__("collections").Counter()
+    assert r.prompt_reuse(rows, exact_frequency_ceiling=1000, stats=stats) == []
+    assert stats["exact_frequency_ceiling_suppressed"] == 1
