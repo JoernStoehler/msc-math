@@ -1,46 +1,122 @@
-# Use Of AI Content Notes
+# AI In The Research Process: Content Companion
 
-Status: section-local content companion for `thesis/13-use-of-ai.tex`. Not source
-truth.
+Status: section-local evidence and maintenance companion for
+`thesis/13-use-of-ai.tex`. Not source truth and not thesis text.
 
-Purpose: develop section 13's account of how AI was used in mathematical
-research, how it affected the research process, and what the project learned
-for future work. The separate factual declaration is owned by
-`thesis/ai-use-disclosure.tex` and `thesis/ai-use-disclosure-content.md`.
+Purpose: keep the publication-facing claims tied to their evidential roles. The
+separate factual declaration is owned by `thesis/ai-use-disclosure.tex` and
+`thesis/ai-use-disclosure-content.md`.
 
-Overruled by: project evidence, accepted Jörn/Kai decisions, and final thesis
-review.
+Overruled by: project artifacts, accepted Jörn/Kai decisions, and final thesis
+review. Raw session text and row-level derived data remain private and must not
+be committed.
 
-Lifecycle: keep while the AI-use section is unsettled. After the section is
-stable, delete this file or reduce it to a short maintenance note.
+## Evidence design
 
-Update rule: add or change a claim only with a source pointer or an explicit
-`needs source` marker.
+The section uses selected complete episodes plus one controlled replay. It does
+not estimate net productivity or reconstruct an exhaustive research timeline.
+Recorded sessions establish observed requests, actions, reviews, and handoffs;
+Git establishes retained artifact states and branch integration; surviving
+tests and code establish only what they directly check. Jörn's retrospective
+account supplies subjective and offline context and is identified as such.
 
-## Content Inventory
+The investigation stopped when the four reader-facing questions below had
+enough evidence to decide whether they belonged in the section. Broader event
+aggregation would not presently change a thesis-facing conclusion enough to
+justify its cost.
 
-- How AI connected literature work, proof development, coding, experiments,
-  writing, review, and project orchestration.
-- Whether and how the documented workflow affected movement between theory,
-  exact computation, numerics, and exposition.
-- What the evidence documents Jörn doing---steering, correction, evaluation,
-  selected acceptance or rejection, and taking responsibility for retained
-  claims---and what remains uncertain about problem and idea origin.
-- What evidence supports describing effective AI use as a learned skill rather
-  than straightforward tool use.
-- Whether model changes materially affected the workflow, and what evidence
-  supports that retrospective judgment.
-- What failed; which verification and review structures were used; and what
-  evidence supports lessons for future mathematical research projects.
-- Observed costs, benefits, and limits of this workflow. Any human-only
-  comparison is retrospective judgment and must state its evidential limits.
+## Retained claims and sources
 
-## Pacing And Evidence
+### Earlier inspectable artifacts
 
-- Keep the section factual.
-- Do not let AI use become the main thesis story unless there is a specific
-  reader-facing reason.
-- Use provenance evidence for documented interaction claims, but do not mistake
-  it for evidence of mathematical correctness or measured causal impact.
-- Earlier page-count guesses were rough and low-information. Let the section's
-  questions and thesis fit determine its length.
+Claim: with an explicit executable contract and relevant infrastructure,
+delegation can produce an inspectable artifact early and move experimentation
+earlier. This is not a claim of trustworthy completion or causal labor saving.
+
+Sources:
+
+- HK2017 implementation: Jörn's 2026-07-12 account records the early MATLAB-to-
+  Rust translation, approximate speed relation, wrong results, poor code, and
+  missing pruning. The later repository history establishes extensive repair
+  but does not time a human-only counterfactual.
+- Crosspolytope episode on 2026-02-24: recorded session/tool chronology gives a
+  running binary and correct volume smoke test after about eight minutes and
+  initial commit `d0985fcd` after about nine. Commit `9c592c47` adds the longer
+  search machinery; merge `da5049f2` records the same-day retained result; later
+  phase work appears in `b567adca`.
+
+### Production and verification
+
+Claim: tests and reviews help only when they discriminate the relevant error;
+separating verifier construction from production remained useful in the tested
+GPT-5.5/GPT-5.6 comparison.
+
+Source: controlled four-run replay from base `f3d36cc9`, before the historical
+projection reduced-gradient sign repair. All runs received the same known issue
+without the historical fixture or answer. The independent audit restored the
+bad sign and ran each proposed regression:
+
+| Model | Prompt | Repair | Discriminating regression |
+|---|---|---:|---:|
+| GPT-5.5 | minimal | yes | yes |
+| GPT-5.5 | verifier first | yes | yes |
+| GPT-5.6 | minimal | yes | no |
+| GPT-5.6 | verifier first | yes | yes |
+
+The two verifier-first agents demonstrated fail-before/pass-after themselves.
+The GPT-5.5 minimal test was independently shown to fail at its predicted
+mirrored point under mutation. The GPT-5.6 minimal change still passed under
+mutation. This single benchmark does not rank the generations or estimate a
+general success rate.
+
+Run costs, retained only to avoid flattening unlike quantities:
+
+- GPT-5.5 minimal: 227 s; 58,161 uncached input, 638,976 cached input, 4,680
+  output tokens.
+- GPT-5.5 verifier first: 219 s; 38,608 uncached input, 540,416 cached input,
+  4,376 output tokens.
+- GPT-5.6 minimal: 126 s; 46,311 uncached input, 603,648 cached input, 3,106
+  output tokens.
+- GPT-5.6 verifier first: 155 s; 45,420 uncached input, 708,096 cached input,
+  3,846 output tokens.
+
+Do not sum these token categories or translate them into monetary cost without
+the applicable pricing and cache rules.
+
+### Breadth, selection, and integration
+
+Claim: cheap parallel production increased the importance of prioritization,
+verification, stopping, and integration. The record supports coexistence, not
+a measured causal bottleneck coefficient.
+
+Sources:
+
+- Sys-data-science root session `019f50cf...` on 2026-07-11--12: 30
+  structurally linked descendants, about nine object-level lines, explicit
+  reprioritizations and stops, and an equal-budget S0 implementation with 7,312
+  inserted lines. Commits `8d60eb79`, `b5074ff3`, `07efc22b`, and `1fcc728e`
+  survive on branch/worktree `sys-datascience-forward-test` but were not
+  ancestors of Main when checked on 2026-07-12. The real target run had not
+  occurred. These are candidate supply and option value, not accepted empirical
+  thesis results.
+- Profiling episode on 2026-06-08--09: the record contains useful measurements
+  together with an overconfident recommendation and contaminated handoff;
+  factual rewrite, fresh audit, and a provenance decision preceded retained
+  commits `054c689b` and `95aa3506`.
+
+## Deliberately omitted claims
+
+- A global coefficient for AI productivity or net benefit.
+- A human-only counterfactual inferred from session duration.
+- Exhaustive session, token, commit, or changed-line statistics.
+- General superiority of GPT-5.5 or GPT-5.6.
+- Git history as evidence of idea origin or semantic acceptance.
+- The aggregate log report as evidence of mathematical correctness or causal
+  impact.
+
+## Maintenance
+
+If the prose changes, preserve the distinction between direct observation,
+Jörn's retrospective judgment, and inference. Delete or reduce this companion
+after section 13 is stable; do not turn private process data into a tracked
+appendix by default.
