@@ -169,8 +169,8 @@ def session_observations(
     return observations
 
 
-def snapshot_commit(target: str, git_ref: str) -> str:
-    return run_git("rev-list", "-1", f"--before={target} 23:59:59 UTC", git_ref)
+def snapshot_commit(target: str, git_ref: str) -> str | None:
+    return run_git("rev-list", "-1", f"--before={target} 23:59:59 UTC", git_ref) or None
 
 
 def required_surface_states(commit: str) -> dict[str, int]:
@@ -234,21 +234,27 @@ def analyze(args: argparse.Namespace) -> list[dict[str, Any]]:
     previous_commit: str | None = None
     for target in dates:
         commit = snapshot_commit(target, args.git_ref)
-        commit_info = run_git("show", "-s", "--format=%H%x09%ad%x09%s", "--date=iso", commit)
-        full_hash, committed_at, subject = commit_info.split("\t", 2)
         row: dict[str, Any] = {
             "snapshot_date": target,
-            "git_commit": full_hash,
-            "git_committed_at": committed_at,
-            "git_subject": subject,
-            "required_surface_states": json_text(required_surface_states(commit)),
+            "git_commit": commit or "",
+            "git_committed_at": "",
+            "git_subject": "",
+            "required_surface_states": json_text(
+                required_surface_states(commit) if commit else {"git_snapshot_unavailable": 1}
+            ),
         }
-        row.update(diff_summary(previous_commit, commit))
+        if commit:
+            commit_info = run_git(
+                "show", "-s", "--format=%H%x09%ad%x09%s", "--date=iso", commit
+            )
+            _, row["git_committed_at"], row["git_subject"] = commit_info.split("\t", 2)
+        row.update(diff_summary(previous_commit, commit) if commit else diff_summary(None, target))
         row.update(token_data.get(target, {}))
         row.update(session_data.get(target, {}))
         row["models"] = json_text(row.get("models", {}))
         rows.append(row)
-        previous_commit = commit
+        if commit:
+            previous_commit = commit
     return rows
 
 
