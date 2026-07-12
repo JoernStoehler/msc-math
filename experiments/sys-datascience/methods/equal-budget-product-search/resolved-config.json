@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "packet_version": "s0-equal-budget-product-search-v1",
+  "bucket": { "q_facets": 5, "p_facets": 5, "h_min": 0.8, "h_max": 1.2 },
+  "master_seeds": [202607110001, 202607110002, 202607110003],
+  "arms": ["iid", "multistart_branch_local_phase0", "diagonal_cem"],
+  "target_attempts_per_arm_replicate": 256,
+  "checkpoints": [64, 128, 192, 256],
+  "descriptive_levels": [0.85, 0.90, 0.95, 1.0],
+  "local": {
+    "within_step_fractions": [0.1, 0.25, 0.5, 0.75, 0.95],
+    "overshoot_multipliers": [1.5, 2.0, 3.0],
+    "overshoot_step_bound_cutoff": 100.0,
+    "improvement_threshold": 0.000001,
+    "wiggle_or_escape_rounds": false
+  },
+  "cem": {
+    "generations": 4,
+    "population": 64,
+    "elites": 16,
+    "smoothing": 0.5,
+    "variance_floor_fraction_of_generation_0": 0.05,
+    "construction_attempt_cap_per_generation": 640,
+    "phase_zero_resultant_fallback": "previous circular mean; generation 0 uses wrapped phase of lexicographically smallest candidate_id",
+    "elite_order": "descending sys, then ascending candidate_id",
+    "iid_fill_on_incomplete_generation": false
+  },
+  "common_base_streams": {
+    "iid_indices": "0..255",
+    "cem_generation_0_indices": "0..63",
+    "local_trajectory_starts": "successive base indices beginning at 0"
+  },
+  "pooled_top_eight": "best successful row per exact polytope_key across all replicates; eight largest sys; ordinary median of positions 4 and 5",
+  "normalized_auc": "mean best-so-far value over charged attempts 1..256",
+  "material_ahead": {
+    "paired_replicates_required": 2,
+    "final_best_margin_over_iid": 0.02,
+    "pooled_top_eight_median_margin_over_iid": 0.01
+  },
+  "stop": "flush and stop on a newly generated trusted sys > 1 unless demonstrably known-equivalent to a declared HKO/rotated-pentagon control"
+}

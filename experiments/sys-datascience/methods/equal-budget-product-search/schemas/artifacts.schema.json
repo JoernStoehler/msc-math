@@ -1,0 +1,126 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "s0-equal-budget-product-search-artifacts-v1",
+  "title": "Frozen S0 packet interfaces",
+  "$defs": {
+    "candidate_id": { "type": "string", "pattern": "^s0v1-[0-9a-f]{24}$" },
+    "chart": {
+      "type": "object",
+      "required": ["q_gap_logits", "q_centered_log_radii", "p_gap_logits", "p_centered_log_radii", "relative_phase", "near_tie"],
+      "properties": {
+        "q_gap_logits": { "type": "array", "minItems": 4, "maxItems": 4, "items": { "type": "number" } },
+        "q_centered_log_radii": { "type": "array", "minItems": 5, "maxItems": 5, "items": { "type": "number" } },
+        "p_gap_logits": { "type": "array", "minItems": 4, "maxItems": 4, "items": { "type": "number" } },
+        "p_centered_log_radii": { "type": "array", "minItems": 5, "maxItems": 5, "items": { "type": "number" } },
+        "relative_phase": { "type": "number" },
+        "near_tie": { "type": "boolean" }
+      }
+    },
+    "target_row": {
+      "type": "object",
+      "required": ["candidate_id", "polytope_key", "poly_id", "arm", "replicate", "attempt_index", "generation", "trajectory", "iteration", "proposal_index", "construction_attempt", "construction_sequence_index", "construction_rejections_before", "role", "parent_candidate_id", "elite_set_id", "became_next_state", "evaluation_status", "cache_status", "wall_time_ms", "capacity", "volume", "sys", "capacity_iterations", "raw_returned_word_count", "raw_admissible_word_count", "distinct_cyclic_class_count", "support_lengths", "product_chart"],
+      "properties": {
+        "candidate_id": { "$ref": "#/$defs/candidate_id" },
+        "polytope_key": { "type": ["string", "null"] },
+        "poly_id": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "arm": { "enum": ["iid", "multistart_branch_local_phase0", "diagonal_cem"] },
+        "replicate": { "type": "integer", "minimum": 0, "maximum": 2 },
+        "attempt_index": { "type": "integer", "minimum": 1, "maximum": 256 },
+        "generation": { "type": ["integer", "null"] },
+        "trajectory": { "type": ["integer", "null"] },
+        "iteration": { "type": ["integer", "null"] },
+        "proposal_index": { "type": "integer", "minimum": 0 },
+        "construction_attempt": { "type": "integer", "minimum": 0 },
+        "construction_sequence_index": { "type": "integer", "minimum": 0 },
+        "construction_rejections_before": { "type": "integer", "minimum": 0 },
+        "role": { "enum": ["iid", "cem_population", "local_start", "within_step", "overshoot"] },
+        "parent_candidate_id": { "type": ["string", "null"] },
+        "elite_set_id": { "type": ["string", "null"] },
+        "became_next_state": { "type": "boolean" },
+        "evaluation_status": { "enum": ["success", "failure"] },
+        "cache_status": { "enum": ["miss", "hit", "failed_miss"] },
+        "wall_time_ms": { "type": "number", "minimum": 0 },
+        "capacity": { "type": ["number", "null"] },
+        "volume": { "type": ["number", "null"] },
+        "sys": { "type": ["number", "null"] },
+        "capacity_iterations": { "type": ["integer", "null"] },
+        "raw_returned_word_count": { "type": ["integer", "null"] },
+        "raw_admissible_word_count": { "type": ["integer", "null"] },
+        "distinct_cyclic_class_count": { "type": ["integer", "null"] },
+        "support_lengths": { "type": "array", "items": { "type": "integer" } }
+        ,"product_chart": { "anyOf": [{ "$ref": "#/$defs/chart" }, { "type": "null" }] }
+      }
+    },
+    "cache_row": {
+      "type": "object",
+      "required": ["arm", "replicate", "polytope_key", "poly_id", "dual_vertices_rational", "capacity_result", "volume", "sys"],
+      "properties": {
+        "arm": { "type": "string" }, "replicate": { "type": "integer" }, "polytope_key": { "type": "string" }, "poly_id": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "dual_vertices_rational": { "type": "array", "minItems": 10, "maxItems": 10, "items": { "type": "array", "minItems": 4, "maxItems": 4, "items": { "type": "string" } } }, "capacity_result": { "type": "object" }, "volume": { "type": "number" }, "sys": { "type": "number" }
+      }
+    },
+    "cem_generation": {
+      "type": "object",
+      "required": ["replicate", "generation", "elite_set_id", "member_candidate_ids", "distribution", "complete", "construction_attempts", "construction_rejections"],
+      "properties": {
+        "replicate": { "type": "integer" }, "generation": { "type": "integer", "minimum": 0, "maximum": 3 },
+        "elite_set_id": { "type": "string" }, "parent_elite_set_id": { "type": ["string", "null"] },
+        "member_candidate_ids": { "type": "array", "items": { "$ref": "#/$defs/candidate_id" } },
+        "elite_candidate_ids": { "type": "array", "items": { "$ref": "#/$defs/candidate_id" } },
+        "distribution": { "type": "object" }, "complete": { "type": "boolean" },
+        "construction_attempts": { "type": "integer" }, "construction_rejections": { "type": "integer" }
+      }
+    },
+    "lineage": {
+      "type": "object",
+      "required": ["candidate_id", "parent_kind", "parent_candidate_id", "elite_set_id"],
+      "properties": {
+        "candidate_id": { "$ref": "#/$defs/candidate_id" },
+        "parent_kind": { "enum": ["none", "candidate", "distribution"] },
+        "parent_candidate_id": { "type": ["string", "null"] },
+        "elite_set_id": { "type": ["string", "null"] }
+      }
+    },
+    "construction_rejection": {
+      "type": "object",
+      "required": ["candidate_id", "arm", "replicate", "generation", "trajectory", "iteration", "proposal_index", "construction_attempt", "construction_sequence_index", "role", "reason"],
+      "properties": {
+        "candidate_id": { "$ref": "#/$defs/candidate_id" },
+        "arm": { "enum": ["iid", "multistart_branch_local_phase0", "diagonal_cem"] },
+        "replicate": { "type": "integer", "minimum": 0, "maximum": 2 },
+        "generation": { "type": ["integer", "null"] },
+        "trajectory": { "type": ["integer", "null"] },
+        "iteration": { "type": ["integer", "null"] },
+        "proposal_index": { "type": "integer", "minimum": 0 },
+        "construction_attempt": { "type": "integer", "minimum": 0 },
+        "construction_sequence_index": { "type": "integer", "minimum": 0 },
+        "role": { "enum": ["iid", "cem_population", "local_start", "within_step", "overshoot"] },
+        "reason": { "type": "string", "minLength": 1 }
+      }
+    },
+    "local_trajectory": {
+      "type": "object",
+      "required": ["arm", "replicate", "trajectory", "start_candidate_id", "final_candidate_id", "start_sys", "final_sys", "accepted_iterations", "stop", "complete"],
+      "properties": {
+        "arm": { "const": "multistart_branch_local_phase0" },
+        "replicate": { "type": "integer", "minimum": 0, "maximum": 2 },
+        "trajectory": { "type": "integer", "minimum": 0 },
+        "start_candidate_id": { "$ref": "#/$defs/candidate_id" },
+        "final_candidate_id": { "$ref": "#/$defs/candidate_id" },
+        "start_sys": { "type": "number" },
+        "final_sys": { "type": "number" },
+        "accepted_iterations": { "type": "integer", "minimum": 0 },
+        "stop": { "enum": ["no_direction", "invalid_step_bound", "no_improvement", "improvement_below_threshold", "incomplete_grid"] },
+        "complete": { "type": "boolean" }
+      }
+    },
+    "arm_run": {
+      "type": "object",
+      "required": ["arm", "replicate", "target_attempts", "successful_new_computations", "cache_hits", "failed_new_computations", "construction_attempts", "construction_rejections", "target_wall_time_ms", "total_wall_time_ms", "status"]
+    },
+    "run_status": {
+      "type": "object",
+      "required": ["packet_version", "complete", "charged_target_attempts", "overall_wall_time_ms", "stop"]
+    }
+  }
+}

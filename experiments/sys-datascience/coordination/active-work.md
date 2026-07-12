@@ -9,12 +9,13 @@ entries after merge, durable parking, discard, or handoff.
 - Branch/worktree: sys-datascience-forward-test /
   .worktrees/sys-datascience-forward-test
 - Started: 2026-07-11
-- Milestone: process-calibrated broad exploration; fixed equal-budget product
-  search is the next bounded execution packet
-- Active work: integrate reviewed F0/F3/F4/F1B/M0/M3 scouts; implement and
-  review S0 IID/local/CEM comparison; reassess remaining portfolio afterward
+- Milestone: process/research frontier paused for Jörn review before the next
+  execution cycle
+- Active work: compare the reviewed F0/F3/F4/F1B/M0/M3 frontier and parked S0
+  prototype against M0/M2/I6 and other portfolio alternatives
 - Owned surface: the in-scope experiment workflow harness and sys-datascience
   code, data, artifacts, and coordination needed by the task
 - Blocking crux: none
-- Review state: active; harness is separated; broad scout packet has combined
-  review plus focused fresh M0 repair/acceptance review; S0 not yet executed
+- Review state: paused; harness is separated; broad scout packet has combined
+  review plus focused fresh M0 repair/acceptance review; S0 target-free
+  prototype is parked without a pre-run `GO` or any real target evaluation

@@ -42,6 +42,9 @@ Read first:
 - `residual-exemplar-seeds/`: target-free matched-pair construction plus
   post-target model-consistent residual inspection candidates for bounded
   geometry/HK-branch hypothesis formation; exploratory (`G`) only.
+- `equal-budget-product-search/`: parked target-free S0 prototype for a fixed
+  `5 x 5` IID/local/CEM comparison. It has no real-run artifacts or empirical
+  result and must not be resumed without a new portfolio decision.
 
 Exploratory fixed-bucket distribution-shape packets:
 
